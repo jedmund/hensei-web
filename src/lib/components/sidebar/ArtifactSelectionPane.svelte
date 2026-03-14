@@ -126,7 +126,7 @@
 				{@const imageUrl = getArtifactImage(artifact.artifact?.granblueId)}
 				{@const displayName = getDisplayName(artifact)}
 				{@const proficiency = getProficiency(artifact)}
-				{@const gradeLetter = artifact.grade?.letter}
+				{@const totalScore = artifact.score?.total ?? null}
 
 				<button
 					type="button"
@@ -143,8 +143,8 @@
 							<ElementLabel element={artifact.element} size="small" />
 							<ProficiencyLabel {proficiency} size="small" />
 							<span class="artifact-level">Lv.{artifact.level}</span>
-							{#if gradeLetter}
-								<span class="grade-badge grade-{gradeLetter.toLowerCase()}">{gradeLetter}</span>
+							{#if totalScore !== null}
+								<span class="score-value">{totalScore}</span>
 							{/if}
 						</div>
 					</div>
@@ -182,7 +182,6 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
-	@use '$src/themes/grades' as grades;
 
 	.artifact-selection-pane {
 		display: flex;
@@ -282,14 +281,11 @@
 		color: var(--text-secondary);
 	}
 
-	.grade-badge {
+	.score-value {
 		font-size: $font-tiny;
 		font-weight: $bold;
-		padding: 1px 4px;
-		border-radius: 3px;
 		line-height: 1;
-
-		@include grades.badge-colors;
+		color: var(--text-secondary);
 	}
 
 	.equipped-badge {

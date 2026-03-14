@@ -26,9 +26,16 @@
 		(isQuirk ? artifact.proficiency : artifact.artifact?.proficiency) ?? undefined
 	)
 
-	// Grade letter
-	const gradeLetter = $derived(artifact.grade?.letter)
-	const gradeClass = $derived(gradeLetter?.toLowerCase() ?? 'none')
+	// Score
+	const totalScore = $derived(artifact.score?.total ?? null)
+
+	function scoreColor(total: number): string {
+		if (total >= 16) return 'var(--score-high, #ffd700)'
+		if (total >= 12) return 'var(--score-good, #4ade80)'
+		if (total >= 8) return 'var(--score-mid, inherit)'
+		if (total >= 4) return 'var(--score-low, #f87171)'
+		return 'var(--score-none, var(--text-tertiary))'
+	}
 
 	// Skills count
 	const skillCount = $derived(artifact.skills?.filter((s) => s !== null).length ?? 0)
@@ -43,8 +50,8 @@
 			<span class="name">{displayName}</span>
 			<div class="meta">
 				<ElementLabel element={artifact.element} size="small" />
-				{#if gradeLetter}
-					<span class="grade-badge grade-{gradeClass}">{gradeLetter}</span>
+				{#if totalScore !== null}
+					<span class="score-value" style:color={scoreColor(totalScore)}>{totalScore}</span>
 				{/if}
 			</div>
 		</div>
@@ -81,10 +88,10 @@
 					<span class="quirk-badge">{m.details_artifact_quirk()}</span>
 				</div>
 			{/if}
-			{#if gradeLetter}
+			{#if totalScore !== null}
 				<div class="stat">
-					<span class="stat-label">{m.details_artifact_grade()}</span>
-					<span class="grade-badge grade-{gradeClass}">{gradeLetter}</span>
+					<span class="stat-label">{m.details_artifact_score()}</span>
+					<span class="score-value" style:color={scoreColor(totalScore)}>{totalScore}</span>
 				</div>
 			{/if}
 		</div>
@@ -95,7 +102,6 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
-	@use '$src/themes/grades' as grades;
 
 	.artifact-summary {
 		display: flex;
@@ -199,18 +205,10 @@
 		}
 	}
 
-	// Grade badge
-	.grade-badge {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
+	.score-value {
 		font-size: $font-tiny;
 		font-weight: $bold;
-		padding: 2px 6px;
-		border-radius: $item-corner-small;
 		line-height: 1;
-
-		@include grades.badge-colors;
 	}
 
 	// Quirk badge

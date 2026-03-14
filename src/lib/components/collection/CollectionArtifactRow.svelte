@@ -17,9 +17,16 @@
 
 	const displayName = $derived(localizedName(artifact.artifact?.name))
 
-	// Get grade display
-	const gradeLetter = $derived(artifact.grade?.letter)
-	const gradeClass = $derived(gradeLetter?.toLowerCase() ?? 'none')
+	// Get score display
+	const totalScore = $derived(artifact.score?.total ?? null)
+
+	function scoreColor(total: number): string {
+		if (total >= 16) return 'var(--score-high, #ffd700)'
+		if (total >= 12) return 'var(--score-good, #4ade80)'
+		if (total >= 8) return 'var(--score-mid, inherit)'
+		if (total >= 4) return 'var(--score-low, #f87171)'
+		return 'var(--score-none, var(--text-tertiary))'
+	}
 
 	// Is this a quirk artifact?
 	const isQuirk = $derived(artifact.artifact?.rarity === 'quirk')
@@ -71,9 +78,9 @@
 		{/if}
 	</div>
 
-	<div class="grade-cell">
-		{#if gradeLetter}
-			<span class="grade-badge grade-{gradeClass}">{gradeLetter}</span>
+	<div class="score-cell">
+		{#if totalScore !== null}
+			<span class="score-value" style:color={scoreColor(totalScore)}>{totalScore}</span>
 		{:else}
 			<span class="placeholder">—</span>
 		{/if}
@@ -84,7 +91,6 @@
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
-	@use '$src/themes/grades' as grades;
 
 	.artifact-row {
 		display: flex;
@@ -197,21 +203,17 @@
 		}
 	}
 
-	.grade-cell {
+	.score-cell {
 		width: 40px;
 		display: flex;
 		justify-content: center;
 		flex-shrink: 0;
 	}
 
-	.grade-badge {
+	.score-value {
 		font-size: $font-small;
 		font-weight: $bold;
-		padding: 2px 8px;
-		border-radius: $item-corner-small;
 		line-height: 1;
-
-		@include grades.badge-colors;
 	}
 
 	.placeholder {

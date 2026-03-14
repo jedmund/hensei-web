@@ -507,7 +507,7 @@
 	"details_artifact_level": "Lv.{level}",
 	"details_artifact_type": "タイプ",
 	"details_artifact_quirk": "個性",
-	"details_artifact_grade": "グレード",
+	"details_artifact_score": "スコア",
 
 	"details_weapon_key_pendulums": "ペンデュラム・チェイン",
 	"details_weapon_key_telumas": "テルマ",

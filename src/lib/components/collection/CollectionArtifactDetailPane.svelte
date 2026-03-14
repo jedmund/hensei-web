@@ -20,7 +20,7 @@
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
-	import ArtifactGradeDisplay from '$lib/components/artifact/ArtifactGradeDisplay.svelte'
+	import ArtifactScoreDisplay from '$lib/components/artifact/ArtifactScoreDisplay.svelte'
 	import ArtifactSkillDisplay from '$lib/components/artifact/ArtifactSkillDisplay.svelte'
 	import CollectionArtifactEditPane from './CollectionArtifactEditPane.svelte'
 	import EquippableCharactersSection from './EquippableCharactersSection.svelte'
@@ -174,9 +174,9 @@
 			/>
 		{/if}
 
-		<DetailsSection title="Grade">
-			<div class="grade-section">
-				<ArtifactGradeDisplay grade={artifact.grade} />
+		<DetailsSection title="Score">
+			<div class="score-section">
+				<ArtifactScoreDisplay score={artifact.score} />
 			</div>
 		</DetailsSection>
 	</div>
@@ -219,7 +219,7 @@
 		padding-bottom: $unit-2x;
 	}
 
-	.grade-section {
+	.score-section {
 		padding: $unit;
 	}
 </style>
