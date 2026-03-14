@@ -11,6 +11,7 @@
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
 	import { GW_ROUND_LABELS, type GwIndividualScore, type GwRound } from '$lib/types/api/gw'
 	import { formatScore, parseScore } from '$lib/utils/gw'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		open: boolean
@@ -63,7 +64,7 @@
 	// Get label for a score
 	function getScoreLabel(score: GwIndividualScore): string {
 		if (score.isCumulative) {
-			return 'Total'
+			return m.crew_score_total()
 		}
 		return GW_ROUND_LABELS[score.round as GwRound]
 	}
@@ -141,7 +142,7 @@
 	}
 
 	async function handleDelete(scoreId: string) {
-		if (!confirm('Are you sure you want to delete this score?')) return
+		if (!confirm(m.crew_score_confirm_delete())) return
 
 		try {
 			await deleteScoreMutation.mutateAsync(scoreId)
@@ -154,12 +155,12 @@
 				open = false
 			}
 		} catch (err) {
-			error = err instanceof Error ? err.message : 'Failed to delete score'
+			error = err instanceof Error ? err.message : m.crew_score_delete_failed()
 		}
 	}
 
 	async function handleDeleteAll() {
-		if (!confirm('Are you sure you want to delete all scores for this player?')) return
+		if (!confirm(m.crew_score_confirm_delete_all())) return
 
 		try {
 			for (const score of scores) {
@@ -168,7 +169,7 @@
 			queryClient.invalidateQueries({ queryKey: ['crew', 'gw', 'event', eventNumber] })
 			open = false
 		} catch (err) {
-			error = err instanceof Error ? err.message : 'Failed to delete scores'
+			error = err instanceof Error ? err.message : m.crew_score_delete_all_failed()
 		}
 	}
 
@@ -185,12 +186,12 @@
 </script>
 
 <Dialog bind:open>
-	<ModalHeader title={playerName} description="Edit score" />
+	<ModalHeader title={playerName} description={m.crew_edit_score_title()} />
 
 	<ModalBody>
 		<div class="edit-content">
 			{#if scores.length === 0}
-				<p class="empty-message">No scores to edit</p>
+				<p class="empty-message">{m.crew_edit_no_scores()}</p>
 			{:else}
 				<div class="score-list">
 					{#each scores as score (score.id)}
@@ -207,13 +208,13 @@
 								<div class="excused-section">
 									<label class="checkbox-row">
 										<Checkbox bind:checked={excusedValues[score.id]} size="small" contained />
-										<span>Excused?</span>
+										<span>{m.crew_score_excused_q()}</span>
 									</label>
 									{#if excusedValues[score.id]}
 										<textarea
 											class="excuse-textarea"
 											bind:value={excuseReasonValues[score.id]}
-											placeholder="Excusal reason (optional)"
+											placeholder={m.crew_score_excusal_reason()}
 											rows="2"
 										></textarea>
 									{/if}
@@ -235,7 +236,7 @@
 	<ModalFooter
 		onCancel={handleCancel}
 		primaryAction={{
-			label: isSubmitting ? 'Saving...' : 'Save',
+			label: isSubmitting ? m.crew_score_saving() : m.action_save(),
 			onclick: handleSave,
 			disabled: isSubmitting || !hasChanges
 		}}
@@ -247,7 +248,7 @@
 					onclick={() => handleDelete(scores[0].id)}
 					disabled={deleteScoreMutation.isPending}
 				>
-					Delete score
+					{m.crew_score_delete()}
 				</Button>
 			{:else if scores.length > 1}
 				<Button
@@ -255,7 +256,7 @@
 					onclick={handleDeleteAll}
 					disabled={deleteScoreMutation.isPending}
 				>
-					Delete all scores
+					{m.crew_score_delete_all()}
 				</Button>
 			{/if}
 		{/snippet}
