@@ -1198,5 +1198,10 @@
 	"mention_search_hint": "2文字以上入力して検索",
 	"mention_no_results": "結果が見つかりません",
 
-	"modifier_unknown": "不明 +{strength}"
+	"modifier_unknown": "不明 +{strength}",
+
+	"party_untitled": "無題の編成",
+	"party_using_own_collection": "{username}のコレクションで作成",
+	"party_using_others_collection": "{username}が{otherUsername}のコレクションで作成",
+	"party_remixed": "{username}が{otherUsername}の編成をリミックス"
 }

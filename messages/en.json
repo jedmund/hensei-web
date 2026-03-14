@@ -1198,5 +1198,10 @@
 	"mention_search_hint": "Type at least 2 characters to search",
 	"mention_no_results": "No results found",
 
-	"modifier_unknown": "Unknown +{strength}"
+	"modifier_unknown": "Unknown +{strength}",
+
+	"party_untitled": "Untitled team",
+	"party_using_own_collection": "{username} using their collection",
+	"party_using_others_collection": "{username} using {otherUsername}'s collection",
+	"party_remixed": "{username} remixed {otherUsername}'s team"
 }
