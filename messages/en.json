@@ -507,7 +507,7 @@
 	"details_artifact_level": "Lv.{level}",
 	"details_artifact_type": "Type",
 	"details_artifact_quirk": "Quirk",
-	"details_artifact_grade": "Grade",
+	"details_artifact_score": "Score",
 
 	"details_weapon_key_pendulums": "Pendulums & Chains",
 	"details_weapon_key_telumas": "Telumas",
