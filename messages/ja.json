@@ -941,5 +941,15 @@
 	"collection_filter_quirk": "個性",
 	"collection_filter_element": "属性",
 	"collection_filter_proficiency": "得意武器",
-	"collection_filter_slot": "{num}行"
+	"collection_filter_slot": "{num}行",
+
+	"substitution_show": "代替を表示",
+	"substitution_title": "代替",
+	"substitution_role": "役割",
+	"substitution_note": "メモ",
+	"substitution_note_placeholder": "このスロットに合うものを説明…",
+	"substitution_add": "代替を追加",
+	"substitution_empty": "代替はまだありません",
+	"substitution_remove": "代替を削除",
+	"substitution_count": "{count}件の代替"
 }
