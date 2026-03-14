@@ -19,6 +19,24 @@ import type { AugmentSkill, Befoulment } from './weaponStatModifier'
 import type { CollectionCharacter, CollectionWeapon, CollectionSummon } from './collection'
 import type { PartyShare } from './partyShare'
 
+// Role from RoleBlueprint
+export interface Role {
+  id: string
+  nameEn: string
+  nameJp?: string
+  slotType: string
+  sortOrder?: number
+}
+
+// Substitution from SubstitutionBlueprint
+export interface Substitution {
+  id: string
+  position: number
+  gridCharacter?: GridCharacter
+  gridWeapon?: GridWeapon
+  gridSummon?: GridSummon
+}
+
 /** Embedded collection data for a single user, scoped to the party's items */
 export interface PartyCollection {
   characters: CollectionCharacter[]
@@ -60,6 +78,12 @@ export interface GridWeapon {
   orphaned?: boolean
   /** Embedded party stub from :full view (collection source fields only) */
   party?: PartyCollectionSource
+  /** Role assigned to this grid slot */
+  role?: Role
+  /** Note explaining substitution philosophy for this slot */
+  substitutionNote?: string
+  /** Ordered list of substitute items for this slot */
+  substitutions?: Substitution[]
 }
 
 // GridCharacter from GridCharacterBlueprint
@@ -86,6 +110,12 @@ export interface GridCharacter {
   orphaned?: boolean
   /** Embedded party stub from :full view (collection source fields only) */
   party?: PartyCollectionSource
+  /** Role assigned to this grid slot */
+  role?: Role
+  /** Note explaining substitution philosophy for this slot */
+  substitutionNote?: string
+  /** Ordered list of substitute items for this slot */
+  substitutions?: Substitution[]
 }
 
 // GridSummon from GridSummonBlueprint
@@ -106,6 +136,12 @@ export interface GridSummon {
   orphaned?: boolean
   /** Embedded party stub from :full view (collection source fields only) */
   party?: PartyCollectionSource
+  /** Role assigned to this grid slot */
+  role?: Role
+  /** Note explaining substitution philosophy for this slot */
+  substitutionNote?: string
+  /** Ordered list of substitute items for this slot */
+  substitutions?: Substitution[]
 }
 
 // JobSkillList for party job skills
