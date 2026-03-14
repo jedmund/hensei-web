@@ -87,6 +87,8 @@ export interface ExploreFilterParams {
 	includes?: string
 	excludes?: string
 	collectionFilter?: boolean
+	boostMod?: string
+	boostSide?: string
 }
 
 /**

@@ -369,6 +369,15 @@
 	"filter_cat_weapon": "武器",
 	"filter_cat_summon": "召喚石",
 	"filter_cat_party": "編成設定",
+	"filter_cat_boost": "ブースト",
+	"filter_cat_side": "方面",
+
+	"boost_omega": "マグナ",
+	"boost_primal": "神石",
+	"boost_odious": "禁禍",
+	"boost_unboosted": "ブーストなし",
+	"side_double": "両面",
+	"side_single": "片面",
 
 	"explore_collection_only": "コレクションのみ",
 	"explore_collection_aria": "コレクションで絞り込む",

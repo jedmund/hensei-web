@@ -369,6 +369,15 @@
 	"filter_cat_weapon": "Weapon",
 	"filter_cat_summon": "Summon",
 	"filter_cat_party": "Party",
+	"filter_cat_boost": "Boost",
+	"filter_cat_side": "Side",
+
+	"boost_omega": "Omega",
+	"boost_primal": "Primal",
+	"boost_odious": "Odious",
+	"boost_unboosted": "Unboosted",
+	"side_double": "Double",
+	"side_single": "Single",
 
 	"explore_collection_only": "Collection only",
 	"explore_collection_aria": "Filter by my collection",

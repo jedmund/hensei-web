@@ -145,6 +145,8 @@ export interface Party {
   extra?: boolean
   remix?: boolean
   editKey?: string
+  /** Boost mod (omega, primal, odious, unboosted) and side (double, single, none) */
+  boost?: { mod: string | null; side: string | null }
   /** Whether the party contains any orphaned grid items */
   hasOrphanedItems?: boolean
   /** The user whose collection is linked to this party (null if no collection items) */
@@ -185,6 +187,7 @@ export interface PartyPreview {
   shortcode: string
   name?: string
   favorited?: boolean
+  boost?: { mod: string | null; side: string | null }
   visibility?: import('$lib/types/visibility').PartyVisibility
   raid?: {
     name: { en: string; ja: string }
