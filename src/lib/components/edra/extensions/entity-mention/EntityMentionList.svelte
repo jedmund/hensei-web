@@ -5,6 +5,7 @@
 	 * Shows search results for characters, weapons, and summons when typing @
 	 * Supports keyboard navigation and displays entity images with element colors.
 	 */
+	import * as m from '$lib/paraglide/messages'
 	import { getBasePath } from '$lib/utils/images'
 	import { getElementClass } from '$lib/utils/element'
 	import type { UnifiedSearchResult } from '$lib/api/adapters/search.adapter'
@@ -64,8 +65,8 @@
 		command({
 			granblue_id: item.granblueId,
 			name: {
-				en: item.nameEn ?? 'Unknown',
-				ja: item.nameJp ?? 'Unknown'
+				en: item.nameEn ?? m.mention_unknown(),
+				ja: item.nameJp ?? m.mention_unknown()
 			},
 			type: item.searchableType.toLowerCase(),
 			element: {
@@ -123,15 +124,15 @@
 				<div class="item-image {item.searchableType.toLowerCase()}">
 					<img src={getEntityImageUrl(item)} alt={item.nameEn ?? ''} loading="lazy" />
 				</div>
-				<span class="item-name">{item.nameEn ?? item.nameJp ?? 'Unknown'}</span>
+				<span class="item-name">{item.nameEn ?? item.nameJp ?? m.mention_unknown()}</span>
 			</button>
 		{/each}
 	{:else}
 		<div class="no-results">
 			{#if query.length < 2}
-				Type at least 2 characters to search
+				{m.mention_search_hint()}
 			{:else}
-				No results found
+				{m.mention_no_results()}
 			{/if}
 		</div>
 	{/if}

@@ -3,6 +3,7 @@
 	import MasteryRow from './MasteryRow.svelte'
 	import { overMastery, type ItemSkill } from '$lib/data/overMastery'
 	import { localizedName } from '$lib/utils/locale'
+	import * as m from '$lib/paraglide/messages'
 
 	interface ExtendedMastery {
 		modifier: number
@@ -51,7 +52,7 @@
 
 	// Build options for secondary/tertiary modifiers (rings 3&4)
 	function buildModifierOptions(): Array<{ value: number; label: string }> {
-		const options: Array<{ value: number; label: string }> = [{ value: 0, label: 'None' }]
+		const options: Array<{ value: number; label: string }> = [{ value: 0, label: m.option_none() }]
 
 		// Add secondary options (3-9)
 		for (const skill of overMastery.b) {

@@ -37,7 +37,7 @@
 
 	// Build primary skill options
 	const primaryOptions = $derived.by(() => {
-		const items: Array<{ value: string; label: string }> = [{ value: '', label: 'No skill' }]
+		const items: Array<{ value: string; label: string }> = [{ value: '', label: m.ax_no_skill() }]
 
 		for (const skill of primaryAxSkills) {
 			items.push({
@@ -51,7 +51,7 @@
 
 	// Build secondary skill options
 	const secondaryOptions = $derived.by(() => {
-		const items: Array<{ value: string; label: string }> = [{ value: '', label: 'No skill' }]
+		const items: Array<{ value: string; label: string }> = [{ value: '', label: m.ax_no_skill() }]
 
 		for (const skill of secondaryAxSkills) {
 			items.push({
