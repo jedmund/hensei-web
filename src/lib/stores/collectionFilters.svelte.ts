@@ -33,6 +33,7 @@ interface ArtifactFilters {
 	slot2: number[]
 	slot3: number[]
 	slot4: number[]
+	sort: CollectionSortKey
 }
 
 type EntityFilters = {
@@ -60,7 +61,8 @@ const DEFAULTS: EntityFilters = {
 		slot1: [],
 		slot2: [],
 		slot3: [],
-		slot4: []
+		slot4: [],
+		sort: 'score_desc'
 	}
 }
 
