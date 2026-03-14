@@ -154,6 +154,12 @@
 			{/if}
 		</DetailsSection>
 
+		<DetailsSection title={m.artifact_score()}>
+			<div class="score-section">
+				<ArtifactScoreDisplay score={artifact.score} />
+			</div>
+		</DetailsSection>
+
 		{#if hasSkills}
 			<DetailsSection title={m.artifact_skills()}>
 				{#each skills as skill, index}
@@ -174,12 +180,6 @@
 				{proficiency}
 			/>
 		{/if}
-
-		<DetailsSection title={m.artifact_score()}>
-			<div class="score-section">
-				<ArtifactScoreDisplay score={artifact.score} />
-			</div>
-		</DetailsSection>
 	</div>
 </div>
 
