@@ -7,6 +7,7 @@
 	import CollectionViewerSwitcher from './CollectionViewerSwitcher.svelte'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { localizeHref } from '$lib/paraglide/runtime'
+	import { localizedName } from '$lib/utils/locale'
 
 	type AvatarUser = {
 		username?: string
@@ -85,9 +86,9 @@
 			const getNodeText = (node: JSONContent): string => {
 				if (node.type === 'text') return node.text ?? ''
 				if (node.type === 'mention') {
-					// EntityMention stores name in attrs.id
-					const id = node.attrs?.id as { name?: { en?: string }; granblue_en?: string } | undefined
-					return id?.name?.en ?? id?.granblue_en ?? ''
+					const id = node.attrs?.id as { name?: { en?: string; ja?: string }; granblue_en?: string } | undefined
+					const name = localizedName(id?.name)
+					return name !== '—' ? name : (id?.granblue_en ?? '')
 				}
 				return ''
 			}

@@ -2,12 +2,13 @@
 <script lang="ts">
 	import type { Cell } from 'wx-svelte-grid'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
+	import { localizedName } from '$lib/utils/locale'
 
 	const { row }: Cell = $props()
 </script>
 
 <div class="image-cell">
-	<img src={getJobIconUrl(row.granblueId)} alt={row.name?.en || ''} class="job-icon" />
+	<img src={getJobIconUrl(row.granblueId)} alt={localizedName(row.name)} class="job-icon" />
 </div>
 
 <style lang="scss">

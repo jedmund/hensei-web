@@ -259,8 +259,9 @@
 			const getNodeText = (node: JSONContent): string => {
 				if (node.type === 'text') return node.text ?? ''
 				if (node.type === 'mention') {
-					const id = node.attrs?.id as { name?: { en?: string }; granblue_en?: string } | undefined
-					return id?.name?.en ?? id?.granblue_en ?? ''
+					const id = node.attrs?.id as { name?: { en?: string; ja?: string }; granblue_en?: string } | undefined
+					const name = localizedName(id?.name)
+					return name !== '—' ? name : (id?.granblue_en ?? '')
 				}
 				return ''
 			}

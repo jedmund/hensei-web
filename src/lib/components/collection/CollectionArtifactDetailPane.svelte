@@ -7,6 +7,7 @@
 	 * provides Edit button in header to push edit pane onto stack.
 	 */
 	import * as m from '$lib/paraglide/messages'
+	import { localizedName } from '$lib/utils/locale'
 	import { onMount } from 'svelte'
 	import type { CollectionArtifact, ArtifactSkillInstance } from '$lib/types/api/artifact'
 	import { isQuirkArtifact, getSkillGroupForSlot } from '$lib/types/api/artifact'
@@ -68,7 +69,7 @@
 		const skillDef = skillsQuery.data?.find(
 			(s) => s.modifier === skill.modifier && s.skillGroup === group
 		)
-		return skillDef?.name?.en ?? 'Unknown Skill'
+		return localizedName(skillDef?.name)
 	}
 
 	// Convert numeric element to ElementType string

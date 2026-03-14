@@ -2,6 +2,7 @@
 <script lang="ts">
 	import DisclosureRow from '$lib/components/ui/DisclosureRow.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
+	import { localizedName } from '$lib/utils/locale'
 	import {
 		calculateSkillDisplayValue,
 		type ArtifactSkill,
@@ -44,7 +45,7 @@
 	)
 
 	// Get modifier name for display
-	const modifierName = $derived(currentSkillDef?.name?.en ?? 'Unknown')
+	const modifierName = $derived(localizedName(currentSkillDef?.name))
 
 	// Build strength options from the skill's baseValues
 	// Display values are calculated based on current level, but stored value is the base
