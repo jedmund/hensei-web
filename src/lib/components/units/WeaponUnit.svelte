@@ -226,7 +226,7 @@
 									<img
 										class="awakening"
 										src={awakeningImage}
-										alt={`${item?.awakening?.type?.name?.en || 'Awakening'} Lv${item?.awakening?.level || 0}`}
+										alt={`${localizedName(item?.awakening?.type?.name)} Lv${item?.awakening?.level || 0}`}
 									/>
 								{/if}
 								<div class="skills">

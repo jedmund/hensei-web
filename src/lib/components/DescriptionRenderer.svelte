@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { JSONContent } from '@tiptap/core'
+	import { localizedName } from '$lib/utils/locale'
 
 	interface Props {
 		content?: string
@@ -130,9 +131,11 @@
 
 			case 'mention':
 				// Handle game item mentions
-				const mentionName = node.attrs?.id?.name?.en || node.attrs?.id?.granblue_en || 'Unknown'
-				const wikiUrl = `https://gbf.wiki/${mentionName}`
-				return `<a href="${wikiUrl}" target="_blank" rel="noopener noreferrer" class="mention">${mentionName}</a>`
+				const wikiName = node.attrs?.id?.name?.en || node.attrs?.id?.granblue_en || 'Unknown'
+				const mentionName = localizedName(node.attrs?.id?.name)
+				const displayName = mentionName !== '—' ? mentionName : (node.attrs?.id?.granblue_en || 'Unknown')
+				const wikiUrl = `https://gbf.wiki/${wikiName}`
+				return `<a href="${wikiUrl}" target="_blank" rel="noopener noreferrer" class="mention">${displayName}</a>`
 
 			default:
 				// For unknown types, try to render content if it exists

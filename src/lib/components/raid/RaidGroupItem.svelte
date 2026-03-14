@@ -8,6 +8,7 @@
 	import type { RaidGroupFull, RaidFull } from '$lib/types/api/raid'
 	import { getRaidImage } from '$lib/utils/images'
 	import Icon from '$lib/components/Icon.svelte'
+	import { localizedName } from '$lib/utils/locale'
 
 	interface Props {
 		group: RaidGroupFull
@@ -18,13 +19,11 @@
 	let { group, selectedRaidId, onSelect }: Props = $props()
 
 	function getRaidName(raid: RaidFull): string {
-		if (typeof raid.name === 'string') return raid.name
-		return raid.name?.en || raid.name?.ja || 'Unknown Raid'
+		return localizedName(raid.name)
 	}
 
 	function getGroupName(group: RaidGroupFull): string {
-		if (typeof group.name === 'string') return group.name
-		return group.name?.en || group.name?.ja || 'Unknown Group'
+		return localizedName(group.name)
 	}
 </script>
 
