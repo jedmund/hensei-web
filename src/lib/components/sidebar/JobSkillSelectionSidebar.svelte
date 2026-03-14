@@ -32,15 +32,15 @@
 	// Skill category filter options
 	// Values match Rails search_controller expectations:
 	// -1: All, 0-3: Color categories, 4: EMP, 5: Base
-	const skillCategoryOptions = [
-		{ value: -1, label: 'All Skills' },
-		{ value: 2, label: 'Damaging' },
-		{ value: 0, label: 'Buffing' },
-		{ value: 1, label: 'Debuffing' },
-		{ value: 3, label: 'Healing' },
-		{ value: 4, label: 'EMP' },
-		{ value: 5, label: 'Base' }
-	]
+	const skillCategoryOptions = $derived([
+		{ value: -1, label: m.skill_filter_all() },
+		{ value: 2, label: m.skill_filter_damaging() },
+		{ value: 0, label: m.skill_filter_buffing() },
+		{ value: 1, label: m.skill_filter_debuffing() },
+		{ value: 3, label: m.skill_filter_healing() },
+		{ value: 4, label: m.skill_category_emp() },
+		{ value: 5, label: m.skill_category_base() }
+	])
 
 	// State for filtering (local UI state, not server state)
 	let searchQuery = $state('')
@@ -238,12 +238,12 @@
 							<div class="clear-filters">
 								{#if searchQuery}
 									<Button size="small" variant="ghost" onclick={() => searchQuery = ''}>
-										Clear search
+										{m.skill_clear_search()}
 									</Button>
 								{/if}
 								{#if skillCategory >= 0}
 									<Button size="small" variant="ghost" onclick={() => skillCategory = -1}>
-										Clear filter
+										{m.filter_clear()}
 									</Button>
 								{/if}
 							</div>

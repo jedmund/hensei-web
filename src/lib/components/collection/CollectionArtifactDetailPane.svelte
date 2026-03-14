@@ -87,7 +87,7 @@
 	function handleEdit() {
 		const config: PaneConfig = {
 			id: `artifact-edit-${artifact.id}`,
-			title: 'Edit Artifact',
+			title: m.pane_edit_artifact(),
 			component: CollectionArtifactEditPane,
 			props: {
 				artifact,
@@ -99,7 +99,7 @@
 
 	// Handle delete
 	function handleDelete() {
-		if (confirm('Are you sure you want to remove this artifact from your collection?')) {
+		if (confirm(m.collection_remove_confirm_artifact())) {
 			deleteMutation.mutate(artifact.id, {
 				onSuccess: () => {
 					onClose?.()
@@ -114,7 +114,7 @@
 			sidebar.setAction(handleEdit, m.action_edit(), elementType)
 			sidebar.setOverflowMenu([
 				{
-					label: 'Remove from collection',
+					label: m.collection_remove_from(),
 					handler: handleDelete,
 					variant: 'danger'
 				}
@@ -134,7 +134,7 @@
 	</div>
 
 	<div class="pane-content">
-		<DetailsSection title="General">
+		<DetailsSection title={m.section_general()}>
 			{#if artifact.nickname}
 				<DetailRow label="Nickname" value={artifact.nickname} />
 			{/if}
@@ -155,7 +155,7 @@
 		</DetailsSection>
 
 		{#if hasSkills}
-			<DetailsSection title="Skills">
+			<DetailsSection title={m.artifact_skills()}>
 				{#each skills as skill, index}
 					{@const skillSlot = index + 1}
 					{#if skill}
@@ -175,7 +175,7 @@
 			/>
 		{/if}
 
-		<DetailsSection title="Grade">
+		<DetailsSection title={m.artifact_grade()}>
 			<div class="grade-section">
 				<ArtifactGradeDisplay grade={artifact.grade} />
 			</div>

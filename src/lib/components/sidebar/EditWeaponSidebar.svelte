@@ -263,7 +263,7 @@
 
 	<div class="edit-sections">
 		{#if canChangeElement}
-			<DetailsSection title="Element">
+			<DetailsSection title={m.details_element()}>
 				<div class="element-select">
 					<Select
 						options={elementOptions}
@@ -278,7 +278,7 @@
 		{/if}
 
 		{#if hasWeaponKeys && seriesSlug}
-			<DetailsSection title="Weapon Keys">
+			<DetailsSection title={m.details_weapon_keys()}>
 				<div class="key-selects">
 					{#if keySlotCount >= 1}
 						<WeaponKeySelect
@@ -309,7 +309,7 @@
 		{/if}
 
 		{#if hasAxSkills}
-			<DetailsSection title="AX Skills">
+			<DetailsSection title={m.details_ax_skills()}>
 				<div class="ax-skills-wrapper">
 					<AxSkillSelect
 						currentSkills={axSkills}
@@ -322,7 +322,7 @@
 		{/if}
 
 		{#if hasBefoulment}
-			<DetailsSection title="Befoulment">
+			<DetailsSection title={m.details_befoulment()}>
 				<div class="befoulment-wrapper">
 					<BefoulmentSelect
 						currentBefoulment={befoulment}
@@ -336,7 +336,7 @@
 		{/if}
 
 		{#if hasAwakening && availableAwakenings.length > 0}
-			<DetailsSection title="Awakening">
+			<DetailsSection title={m.details_awakening()}>
 				<div class="awakening-select-wrapper">
 					<AwakeningSelect
 						awakenings={availableAwakenings}

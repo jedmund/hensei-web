@@ -304,7 +304,7 @@
 </script>
 
 <div class="artifact-edit-pane">
-	<DetailsSection title="Basic Info">
+	<DetailsSection title={m.details_basic_info()}>
 		<DetailRow label="Nickname" noHover>
 			{#if disabled}
 				<span>{nickname || '—'}</span>
@@ -376,7 +376,7 @@
 	</DetailsSection>
 
 	{#if !isQuirk}
-		<DetailsSection title="Skills">
+		<DetailsSection title={m.artifact_skills()}>
 			<div class="skills-list">
 				{#each [1, 2, 3, 4] as slot}
 					<ArtifactSkillRow

@@ -317,7 +317,7 @@
 
 <div class="add-artifact-sidebar">
 	<div class="form-sections">
-		<DetailsSection title="Base Properties">
+		<DetailsSection title={m.section_base_properties()}>
 			<DetailRow label="Proficiency" noHover>
 				<Select
 					options={proficiencyOptions}
@@ -342,7 +342,7 @@
 		</DetailsSection>
 
 		{#if proficiency !== undefined}
-			<DetailsSection title="Artifact">
+			<DetailsSection title={m.artifact_title()}>
 				<div class="artifact-select">
 					{#if artifactsQuery.isPending}
 						<p class="loading">{m.sidebar_loading_artifacts()}</p>
@@ -366,7 +366,7 @@
 		{/if}
 
 		{#if selectedArtifact}
-			<DetailsSection title="Configuration">
+			<DetailsSection title={m.section_configuration()}>
 				<DetailRow label="Level" noHover>
 					{#if isQuirk}
 						<span>1</span>
@@ -386,7 +386,7 @@
 			</DetailsSection>
 
 			{#if !isQuirk}
-				<DetailsSection title="Skills">
+				<DetailsSection title={m.artifact_skills()}>
 					<div class="skills-list">
 						{#each [1, 2, 3, 4] as slot}
 							<ArtifactSkillRow

@@ -32,7 +32,7 @@
 	function openEditPane() {
 		paneStack.push({
 			id: 'edit-description',
-			title: 'Edit Description',
+			title: m.pane_edit_description(),
 			component: EditDescriptionPane,
 			props: {
 				description,

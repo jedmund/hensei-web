@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import InfoTile from './InfoTile.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 
@@ -40,10 +41,10 @@
 	}
 
 	const settings: Setting[] = $derived([
-		{ key: 'chargeAttack', label: `CA ${chargeAttack ?? true ? 'On' : 'Off'}`, tooltip: 'Charge Attack', active: chargeAttack ?? true },
-		{ key: 'fullAuto', label: `FA ${fullAuto ? 'On' : 'Off'}`, tooltip: 'Full Auto', active: fullAuto ?? false },
-		{ key: 'autoSummon', label: `AS ${autoSummon ? 'On' : 'Off'}`, tooltip: 'Auto Summon', active: autoSummon ?? false },
-		{ key: 'autoGuard', label: `AG ${autoGuard ? 'On' : 'Off'}`, tooltip: 'Auto Guard', active: autoGuard ?? false }
+		{ key: 'chargeAttack', label: `CA ${chargeAttack ?? true ? m.battle_on() : m.battle_off()}`, tooltip: m.battle_charge_attack(), active: chargeAttack ?? true },
+		{ key: 'fullAuto', label: `FA ${fullAuto ? m.battle_on() : m.battle_off()}`, tooltip: m.battle_full_auto(), active: fullAuto ?? false },
+		{ key: 'autoSummon', label: `AS ${autoSummon ? m.battle_on() : m.battle_off()}`, tooltip: m.battle_auto_summon(), active: autoSummon ?? false },
+		{ key: 'autoGuard', label: `AG ${autoGuard ? m.battle_on() : m.battle_off()}`, tooltip: m.battle_auto_guard(), active: autoGuard ?? false }
 	])
 
 	// Performance display - only show non-null values
@@ -68,7 +69,7 @@
 	const hasPerformanceData = $derived(formattedClearTime || bcsItems().length > 0)
 </script>
 
-<InfoTile label="Battle" class="battle-tile" {clickable} {onclick}>
+<InfoTile label={m.battle_label()} class="battle-tile" {clickable} {onclick}>
 	<div class="battle-content">
 		<!-- Settings tokens -->
 		<div class="settings-tokens">

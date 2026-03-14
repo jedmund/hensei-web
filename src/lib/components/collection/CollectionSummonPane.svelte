@@ -124,7 +124,7 @@
 
 	// Handle delete from collection
 	function handleDelete() {
-		if (confirm('Are you sure you want to remove this summon from your collection?')) {
+		if (confirm(m.collection_remove_confirm_summon())) {
 			deleteMutation.mutate(summon.id, {
 				onSuccess: () => {
 					onClose?.()
@@ -145,7 +145,7 @@
 				sidebar.setAction(enterEditMode, m.action_edit(), elementName)
 				sidebar.setOverflowMenu([
 					{
-						label: 'Remove from collection',
+						label: m.collection_remove_from(),
 						handler: handleDelete,
 						variant: 'danger'
 					}
@@ -222,7 +222,7 @@
 			/>
 		{:else}
 			<div class="collection-view">
-				<DetailsSection title="General">
+				<DetailsSection title={m.section_general()}>
 					<DetailRow label="Uncap Level">
 						<UncapIndicator
 							type="summon"

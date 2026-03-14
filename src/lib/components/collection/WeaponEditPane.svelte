@@ -220,7 +220,7 @@
 
 <div class="weapon-edit-pane">
 	<div class="edit-sections">
-		<DetailsSection title="Uncap Level">
+		<DetailsSection title={m.section_uncap_level()}>
 			<div class="section-content uncap-section">
 				<UncapIndicator
 					type="weapon"
@@ -237,7 +237,7 @@
 		</DetailsSection>
 
 		{#if canChangeElement}
-			<DetailsSection title="Element">
+			<DetailsSection title={m.details_element()}>
 				<div class="section-content">
 					<Select
 						options={elementOptions}
@@ -252,7 +252,7 @@
 		{/if}
 
 		{#if hasWeaponKeys}
-			<DetailsSection title="Weapon Keys">
+			<DetailsSection title={m.details_weapon_keys()}>
 				<div class="section-content key-selects">
 					{#if keySlotCount >= 1}
 						<WeaponKeySelect
@@ -283,7 +283,7 @@
 		{/if}
 
 		{#if hasAxSkills}
-			<DetailsSection title="AX Skills">
+			<DetailsSection title={m.details_ax_skills()}>
 				<div class="section-content">
 					<AxSkillSelect
 						currentSkills={axSkills}
@@ -296,7 +296,7 @@
 		{/if}
 
 		{#if hasBefoulment}
-			<DetailsSection title="Befoulment">
+			<DetailsSection title={m.details_befoulment()}>
 				<div class="section-content">
 					<BefoulmentSelect
 						currentBefoulment={befoulment}
@@ -310,7 +310,7 @@
 		{/if}
 
 		{#if hasAwakening && availableAwakenings.length > 0}
-			<DetailsSection title="Awakening">
+			<DetailsSection title={m.details_awakening()}>
 				<div class="section-content">
 					<AwakeningSelect
 						awakenings={availableAwakenings}

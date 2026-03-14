@@ -30,11 +30,11 @@
 	)
 
 	// Action display mapping
-	const actionLabels: Record<string, { label: string; class: string }> = {
-		keep: { label: 'Keep', class: 'action-keep' },
-		reroll: { label: 'Reroll', class: 'action-reroll' },
-		scrap: { label: 'Scrap', class: 'action-scrap' }
-	}
+	const actionLabels: Record<string, { label: string; class: string }> = $derived({
+		keep: { label: m.artifact_keep(), class: 'action-keep' },
+		reroll: { label: m.artifact_reroll(), class: 'action-reroll' },
+		scrap: { label: m.artifact_scrap(), class: 'action-scrap' }
+	})
 </script>
 
 <div class="grade-display" class:size-small={size === 'small'} class:size-large={size === 'large'}>
@@ -76,7 +76,7 @@
 		{/if}
 	{:else}
 		<div class="no-grade">
-			<span class="no-grade-text">{grade.note ?? 'No grade'}</span>
+			<span class="no-grade-text">{grade.note ?? m.artifact_no_grade()}</span>
 		</div>
 	{/if}
 </div>

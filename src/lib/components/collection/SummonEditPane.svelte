@@ -8,6 +8,7 @@
 	 *
 	 * Summons are simpler than weapons/characters - they only track uncap and transcendence.
 	 */
+	import * as m from '$lib/paraglide/messages'
 	import type { Summon } from '$lib/types/api/entities'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
@@ -74,7 +75,7 @@
 
 <div class="summon-edit-pane">
 	<div class="edit-sections">
-		<DetailsSection title="Uncap Level">
+		<DetailsSection title={m.section_uncap_level()}>
 			<div class="section-content uncap-section">
 				<UncapIndicator
 					type="summon"

@@ -210,7 +210,7 @@
 		const member = members.find((m) => m.userId === lockedId)
 		return member
 			? { label: member.username, image: getAvatarSrc(member.avatarPicture) }
-			: { label: 'Linked user', image: undefined }
+			: { label: m.search_linked_user(), image: undefined }
 	})
 
 	const selectedMemberName = $derived.by(() => {
