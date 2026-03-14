@@ -9,6 +9,7 @@ import type { Job, JobSkill } from '$lib/types/api/entities'
 import type { JobSkillList } from '$lib/types/api/party'
 import { getImageBaseUrl } from '$lib/api/adapters/config'
 import { getGenericPlaceholder } from './images'
+import { localizedName } from '$lib/utils/locale'
 
 /**
  * Gets the base path for images
@@ -279,7 +280,7 @@ export function validateSkillConfiguration(
 		const skill = skills[i as keyof JobSkillList]
 		if (skill) {
 			if (skillIds.has(skill.id)) {
-				errors.push(`Duplicate skill: ${skill.name.en}`)
+				errors.push(`Duplicate skill: ${localizedName(skill.name)}`)
 			}
 			skillIds.add(skill.id)
 		}

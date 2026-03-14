@@ -9,6 +9,7 @@
 
 import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
+import { localizedName } from '$lib/utils/locale'
 
 /**
  * Slugs for series that share the Opus/Draconic conflict rule.
@@ -37,13 +38,13 @@ export function isOpusDraconicSeries(series: WeaponSeriesRef | null | undefined)
  * @returns The localized series name, or 'Unknown' if not available
  */
 export function getSeriesDisplayName(
-	series: WeaponSeriesRef | null | undefined,
-	locale: 'en' | 'ja' = 'en'
+	series: WeaponSeriesRef | null | undefined
 ): string {
 	if (!isWeaponSeriesRef(series)) {
 		return 'Unknown'
 	}
-	return series.name[locale] || series.name.en || 'Unknown'
+	const name = localizedName(series.name)
+	return name === '—' ? 'Unknown' : name
 }
 
 /**
