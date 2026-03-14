@@ -10,6 +10,7 @@
 	import CollectionArtifactRow from '$lib/components/collection/CollectionArtifactRow.svelte'
 	import SelectableCollectionCard from '$lib/components/collection/SelectableCollectionCard.svelte'
 	import SelectableCollectionRow from '$lib/components/collection/SelectableCollectionRow.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import ViewModeToggle from '$lib/components/ui/ViewModeToggle.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
@@ -220,7 +221,7 @@
 
 <div class="collection-page">
 	<!-- Filters bar -->
-	<div class="filters-bar">
+	<div class="filters-bar" style:--accent-color={userElement ? `var(--${userElement}-button-bg)` : undefined}>
 		<div class="filter-group">
 			<Select
 				value={rarityFilter}
@@ -272,7 +273,9 @@
 			/>
 
 			{#if hasActiveFilters}
-				<button class="clear-filters-btn" onclick={clearAllFilters}>{m.filter_clear()}</button>
+				<Button variant="element-ghost" size="small" element={userElement} onclick={clearAllFilters} class="clear-btn">
+					{m.filter_clear()}
+				</Button>
 			{/if}
 		</div>
 
@@ -377,18 +380,9 @@
 		flex-shrink: 0;
 	}
 
-	.clear-filters-btn {
-		background: none;
-		border: none;
-		padding: $unit-half $unit;
-		font-size: $font-small;
-		font-weight: $medium;
-		color: var(--accent-color);
-		cursor: pointer;
-
-		&:hover {
-			text-decoration: underline;
-		}
+	:global([data-button-root].clear-btn) {
+		padding: 6px 12px;
+		min-height: 26px;
 	}
 
 	.grid-area {
