@@ -30,6 +30,7 @@
 	}
 
 	const sections = [
+		{ value: RaidSection.Farming, label: getRaidSectionLabel(RaidSection.Farming) },
 		{ value: RaidSection.Raid, label: getRaidSectionLabel(RaidSection.Raid) },
 		{ value: RaidSection.Event, label: getRaidSectionLabel(RaidSection.Event) },
 		{ value: RaidSection.Solo, label: getRaidSectionLabel(RaidSection.Solo) }
