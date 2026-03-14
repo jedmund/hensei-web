@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { Chart } from 'svelte-echarts'
 	import { init, CHART_FONT_FAMILY, CHART_SPLIT_LINE, CHART_AXIS_LINE, CHART_LABEL_COLOR } from './echarts-setup'
 	import { formatScore, formatScoreCompact, type HistoryDataPoint } from '$lib/utils/gw'
@@ -56,7 +57,7 @@
 				if (!point) return ''
 				const dataPoint = data[point.dataIndex]
 				if (dataPoint?.isGap) {
-					return `${point.name}<br/><span style="color: var(--text-tertiary)">Not in crew</span><br/>${dataPoint?.date ?? ''}`
+					return `${point.name}<br/><span style="color: var(--text-tertiary)">${m.gw_chart_not_in_crew()}</span><br/>${dataPoint?.date ?? ''}`
 				}
 				return `${point.name}<br/>Score: ${formatScore(point.value ?? 0)}<br/>${dataPoint?.date ?? ''}`
 			}
@@ -155,7 +156,7 @@
 	<div class="chart-container" style:height="{height}px">
 		<Chart {init} {options} />
 	</div>
-	<p class="chart-hint">Drag to pan &bull; Shift+scroll to zoom &bull; Use slider below chart</p>
+	<p class="chart-hint">{m.gw_chart_hint()}</p>
 </div>
 
 <style lang="scss">

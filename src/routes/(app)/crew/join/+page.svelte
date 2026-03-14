@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -84,7 +85,7 @@
 
 	{#if invitationsQuery.isLoading}
 		<div class="loading-state">
-			<p>Loading invitations...</p>
+			<p>{m.crew_loading_invitations()}</p>
 		</div>
 	{:else if invitationsQuery.isError}
 		<div class="error-state">

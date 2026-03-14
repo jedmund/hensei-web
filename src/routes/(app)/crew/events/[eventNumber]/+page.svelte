@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { goto, replaceState } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { page } from '$app/stores'
@@ -160,7 +161,7 @@
 	<div class="card">
 		{#if eventQuery.isLoading}
 			<div class="loading-state">
-				<p>Loading...</p>
+				<p>{m.crew_loading_generic()}</p>
 			</div>
 		{:else if !gwEvent}
 			<div class="error-state">
@@ -185,7 +186,7 @@
 				{/snippet}
 				{#snippet actions()}
 					{#if crewStore.isOfficer && gwEvent.status !== 'upcoming' && activeTab === 'individual'}
-						<Button variant="primary" size="small" onclick={() => (showScoreModal = true)}>Add Score</Button>
+						<Button variant="primary" size="small" onclick={() => (showScoreModal = true)}>{m.crew_gw_add_score()}</Button>
 					{/if}
 				{/snippet}
 			</CrewHeader>
