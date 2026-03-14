@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
@@ -19,7 +20,7 @@
 	{#snippet children()}
 		<ModalHeader title="Delete {partyName}?" />
 		<ModalBody>
-			<p class="message">Are you sure you want to permanently delete this team?</p>
+			<p class="message">{m.delete_team_confirm()}</p>
 		</ModalBody>
 		<ModalFooter
 			{onCancel}

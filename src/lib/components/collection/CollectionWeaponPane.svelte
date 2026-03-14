@@ -285,8 +285,8 @@
 			size="small"
 			grow
 		>
-			<Segment value="info">Info</Segment>
-			<Segment value="collection">My Collection</Segment>
+			<Segment value="info">{m.collection_pane_info()}</Segment>
+			<Segment value="collection">{m.collection_pane_my_collection()}</Segment>
 		</SegmentedControl>
 	</div>
 
