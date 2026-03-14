@@ -136,21 +136,21 @@
 	<div class="pane-content">
 		<DetailsSection title={m.section_general()}>
 			{#if artifact.nickname}
-				<DetailRow label="Nickname" value={artifact.nickname} />
+				<DetailRow label={m.label_nickname()} value={artifact.nickname} />
 			{/if}
 
-			<DetailRow label="Element">
+			<DetailRow label={m.label_element()}>
 				<ElementLabel element={artifact.element} size="medium" />
 			</DetailRow>
 
-			<DetailRow label="Proficiency">
+			<DetailRow label={m.label_proficiency()}>
 				<ProficiencyLabel {proficiency} size="medium" />
 			</DetailRow>
 
-			<DetailRow label="Level" value="Lv.{artifact.level}" />
+			<DetailRow label={m.label_level()} value="Lv.{artifact.level}" />
 
 			{#if isQuirk}
-				<DetailRow label="Type" value="Quirk" />
+				<DetailRow label={m.label_type()} value={m.artifact_quirk()} />
 			{/if}
 		</DetailsSection>
 

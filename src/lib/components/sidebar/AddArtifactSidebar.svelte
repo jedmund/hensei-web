@@ -134,7 +134,7 @@
 	function handleSelectModifier(slot: number) {
 		const config: PaneConfig = {
 			id: `modifier-select-${slot}`,
-			title: `Select Skill ${slot}`,
+			title: m.artifact_select_skill({ slot: String(slot) }),
 			component: ArtifactModifierList,
 			props: {
 				slot,
@@ -318,7 +318,7 @@
 <div class="add-artifact-sidebar">
 	<div class="form-sections">
 		<DetailsSection title={m.section_base_properties()}>
-			<DetailRow label="Proficiency" noHover>
+			<DetailRow label={m.label_proficiency()} noHover>
 				<Select
 					options={proficiencyOptions}
 					value={proficiency}
@@ -329,7 +329,7 @@
 				/>
 			</DetailRow>
 
-			<DetailRow label="Element" noHover>
+			<DetailRow label={m.label_element()} noHover>
 				<Select
 					options={elementOptions}
 					value={element}
@@ -367,7 +367,7 @@
 
 		{#if selectedArtifact}
 			<DetailsSection title={m.section_configuration()}>
-				<DetailRow label="Level" noHover>
+				<DetailRow label={m.label_level()} noHover>
 					{#if isQuirk}
 						<span>1</span>
 					{:else}
@@ -380,7 +380,7 @@
 					{/if}
 				</DetailRow>
 
-				<DetailRow label="Nickname" noHover>
+				<DetailRow label={m.label_nickname()} noHover>
 					<Input bind:value={nickname} placeholder={m.placeholder_optional_nickname()} maxLength={50} />
 				</DetailRow>
 			</DetailsSection>

@@ -88,7 +88,7 @@ export default (
 			MathMatics.configure({
 				blockOptions: {
 					onClick: (node, pos) => {
-						const newCalculation = prompt('Enter new calculation:', node.attrs.latex);
+						const newCalculation = prompt(m.editor_prompt_calculation(), node.attrs.latex);
 						if (newCalculation) {
 							editor
 								.chain()
@@ -101,7 +101,7 @@ export default (
 				},
 				inlineOptions: {
 					onClick: (node, pos) => {
-						const newCalculation = prompt('Enter new calculation:', node.attrs.latex);
+						const newCalculation = prompt(m.editor_prompt_calculation(), node.attrs.latex);
 						if (newCalculation) {
 							editor
 								.chain()

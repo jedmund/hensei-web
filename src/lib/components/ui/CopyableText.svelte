@@ -1,6 +1,7 @@
 
 <script lang="ts">
 	import { toast } from 'svelte-sonner'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		value: string | number
@@ -12,14 +13,14 @@
 		if (!value) return
 		try {
 			await navigator.clipboard.writeText(String(value))
-			toast.success('Copied to clipboard')
+			toast.success(m.toast_copied())
 		} catch (err) {
-			toast.error('Failed to copy')
+			toast.error(m.toast_copy_failed())
 		}
 	}
 </script>
 
-<button class="copyable-text" onclick={copyToClipboard} title="Click to copy">
+<button class="copyable-text" onclick={copyToClipboard} title={m.tooltip_click_to_copy()}>
 	<span class="text">{value}</span>
 </button>
 

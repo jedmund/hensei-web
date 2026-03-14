@@ -161,7 +161,7 @@
 	function handleSelectModifier(slot: number) {
 		const config: PaneConfig = {
 			id: `modifier-select-${slot}`,
-			title: `Select Skill ${slot}`,
+			title: m.artifact_select_skill({ slot: String(slot) }),
 			component: ArtifactModifierList,
 			props: {
 				slot,
@@ -305,7 +305,7 @@
 
 <div class="artifact-edit-pane">
 	<DetailsSection title={m.details_basic_info()}>
-		<DetailRow label="Nickname" noHover>
+		<DetailRow label={m.label_nickname()} noHover>
 			{#if disabled}
 				<span>{nickname || '—'}</span>
 			{:else}
@@ -313,14 +313,14 @@
 					class="nickname-input"
 					value={nickname}
 					oninput={handleNicknameChange}
-					placeholder="Optional nickname"
+					placeholder={m.placeholder_optional_nickname()}
 					maxLength={50}
 					contained
 				/>
 			{/if}
 		</DetailRow>
 		{#if canChangeProficiency}
-			<DetailRow label="Proficiency" noHover>
+			<DetailRow label={m.label_proficiency()} noHover>
 				{#if disabled}
 					<ProficiencyLabel {proficiency} size="medium" />
 				{:else}
@@ -330,18 +330,18 @@
 						onValueChange={handleProficiencyChange}
 						size="small"
 						contained
-						placeholder="Select proficiency"
+						placeholder={m.placeholder_select_proficiency()}
 						{disabled}
 					/>
 				{/if}
 			</DetailRow>
 		{:else}
-			<DetailRow label="Proficiency" noHover>
+			<DetailRow label={m.label_proficiency()} noHover>
 				<ProficiencyLabel proficiency={artifactData.proficiency ?? undefined} size="medium" />
 			</DetailRow>
 		{/if}
 
-		<DetailRow label="Element" noHover>
+		<DetailRow label={m.label_element()} noHover>
 			{#if disabled}
 				{@const elementOption = elementOptions.find((o) => o.value === element)}
 				<span class="element-display">
@@ -360,7 +360,7 @@
 			{/if}
 		</DetailRow>
 
-		<DetailRow label="Level" noHover>
+		<DetailRow label={m.label_level()} noHover>
 			{#if disabled || isQuirk}
 				<span>{level}</span>
 			{:else}

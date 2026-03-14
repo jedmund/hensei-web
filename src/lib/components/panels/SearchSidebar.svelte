@@ -231,7 +231,7 @@
       bind:this={searchInput}
       bind:value={searchQuery}
       type="text"
-      placeholder="Search by name..."
+      placeholder={m.placeholder_search_by_name()}
       aria-label="Search"
       class="search-input"
     />

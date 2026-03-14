@@ -335,7 +335,7 @@
 			<!-- My Collection view: user's customizations -->
 			<div class="collection-view">
 				<DetailsSection title={m.section_general()}>
-					<DetailRow label="Uncap Level">
+					<DetailRow label={m.label_uncap_level()}>
 						<UncapIndicator
 							type="character"
 							uncapLevel={character.uncapLevel}
@@ -346,12 +346,12 @@
 							transcendence={characterData?.uncap?.transcendence}
 						/>
 					</DetailRow>
-					<DetailRow label="Perpetuity Ring" value={character.perpetuity ? 'Equipped' : '—'} />
+					<DetailRow label={m.label_perpetuity_ring()} value={character.perpetuity ? m.label_equipped() : '—'} />
 				</DetailsSection>
 
 				<DetailsSection title={m.details_awakening()} empty={!hasAwakening} emptyMessage={m.collection_not_set()}>
-					<DetailRow label="Type" value={getAwakeningType()} />
-					<DetailRow label="Level" value={getAwakeningLevel()} />
+					<DetailRow label={m.label_type()} value={getAwakeningType()} />
+					<DetailRow label={m.label_level()} value={getAwakeningLevel()} />
 				</DetailsSection>
 
 				<DetailsSection title={m.details_over_mastery()} empty={!hasRings} emptyMessage={m.collection_no_ring()}>

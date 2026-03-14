@@ -151,7 +151,7 @@
 			{/if}
 		</div>
 		{#if hasSelection}
-			<button type="button" class="clearButton" onclick={handleClear}> Clear </button>
+			<button type="button" class="clearButton" onclick={handleClear}> {m.button_clear()} </button>
 		{/if}
 	</div>
 {:else}

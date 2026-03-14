@@ -223,7 +223,7 @@
 		{:else}
 			<div class="collection-view">
 				<DetailsSection title={m.section_general()}>
-					<DetailRow label="Uncap Level">
+					<DetailRow label={m.label_uncap_level()}>
 						<UncapIndicator
 							type="summon"
 							uncapLevel={summon.uncapLevel}

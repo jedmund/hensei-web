@@ -93,7 +93,7 @@
 		if (editor?.isActive('link')) {
 			editor?.chain().focus().unsetLink().run()
 		} else {
-			const url = window.prompt('Enter the URL:')
+			const url = window.prompt(m.editor_prompt_url())
 			if (url) {
 				editor?.chain().focus().toggleLink({ href: url }).run()
 			}

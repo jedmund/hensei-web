@@ -136,7 +136,7 @@
 	</div>
 
 	{#if !isNoAwakening}
-		<DetailRow label="Level" noHover noPadding>
+		<DetailRow label={m.label_level()} noHover noPadding>
 			<Input
 				type="number"
 				min={1}

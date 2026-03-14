@@ -3,6 +3,7 @@
 	import { ToggleGroup } from 'bits-ui'
 	import Tooltip from '../Tooltip.svelte'
 	import { getProficiencyLabel, getProficiencyImage } from '$lib/utils/proficiency'
+	import * as m from '$lib/paraglide/messages'
 
 	// Proficiency display order: Sabre, Dagger, Spear, Axe, Staff, Gun, Melee, Bow, Harp, Katana
 	// Using values from PROFICIENCY_LABELS: 1=Sabre, 2=Dagger, 3=Axe, 4=Spear, 5=Bow, 6=Staff, 7=Melee, 8=Harp, 9=Gun, 10=Katana
@@ -144,7 +145,7 @@
 			{/if}
 		</div>
 		{#if hasSelection}
-			<button type="button" class="clearButton" onclick={handleClear}> Clear </button>
+			<button type="button" class="clearButton" onclick={handleClear}> {m.button_clear()} </button>
 		{/if}
 	</div>
 {:else}

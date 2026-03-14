@@ -91,7 +91,7 @@
 			iconOnly
 			icon={sortAscending ? 'arrow-up' : 'arrow-down'}
 			onclick={toggleSort}
-			title="Toggle sort order"
+			title={m.tooltip_toggle_sort()}
 		/>
 	</div>
 

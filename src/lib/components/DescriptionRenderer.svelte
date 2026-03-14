@@ -123,7 +123,7 @@
 				return `<div class="video-wrapper">
 					<iframe
 						src="https://www.youtube.com/embed/${videoId}"
-						title="YouTube video"
+						title="${m.tooltip_youtube_video()}"
 						frameborder="0"
 						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 						allowfullscreen

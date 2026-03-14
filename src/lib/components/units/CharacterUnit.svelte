@@ -204,29 +204,29 @@
 									class="perpetuity"
 									class:active={item.perpetuity}
 									onclick={togglePerpetuity}
-									title={item.perpetuity ? 'Remove Perpetuity Ring' : 'Add Perpetuity Ring'}
+									title={item.perpetuity ? m.tooltip_remove_perpetuity_ring() : m.tooltip_add_perpetuity_ring()}
 								>
 									<img
 										class="perpetuity-icon filled"
 										src={perpetuityFilled}
-										alt="Perpetuity Ring"
+										alt={m.label_perpetuity_ring()}
 									/>
 									<img
 										class="perpetuity-icon empty"
 										src={perpetuityEmpty}
-										alt="Add Perpetuity Ring"
+										alt={m.tooltip_add_perpetuity_ring()}
 									/>
 								</button>
 							{:else if item.perpetuity}
 								<img
 									class="perpetuity static"
 									src={perpetuityFilled}
-									alt="Perpetuity Ring"
-									title="Perpetuity Ring"
+									alt={m.label_perpetuity_ring()}
+									title={m.label_perpetuity_ring()}
 								/>
 							{/if}
 							{#if item?.orphaned}
-								<div class="orphaned-badge" title="This item is no longer in your collection">
+								<div class="orphaned-badge" title={m.tooltip_not_in_collection()}>
 									<Icon name="alertTriangle" size={16} />
 								</div>
 							{/if}

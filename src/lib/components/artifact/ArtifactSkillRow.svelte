@@ -114,8 +114,8 @@
 	{#if !skill?.modifier}
 		<!-- Unset: Show disclosure to select modifier -->
 		<DisclosureRow
-			label="Skill {slot}"
-			sublabel="Tap to select"
+			label={m.artifact_skill_label({ slot: String(slot) })}
+			sublabel={m.artifact_tap_to_select()}
 			onclick={onSelectModifier}
 			{disabled}
 		/>

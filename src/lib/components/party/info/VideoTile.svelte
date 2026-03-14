@@ -67,7 +67,7 @@
 				<div class="embed-container">
 					<iframe
 						src={embedUrl}
-						title={videoTitle ?? 'YouTube video'}
+						title={videoTitle ?? m.tooltip_youtube_video()}
 						frameborder="0"
 						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 						allowfullscreen
