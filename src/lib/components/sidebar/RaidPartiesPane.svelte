@@ -25,9 +25,10 @@
 	let { raid }: Props = $props()
 
 	// Pinned raid filter — always present, not removable
+	// Uses raid.id (UUID) because the API filters by raid_id column directly
 	const pinnedRaidFilter: FilterItem = $derived({
 		kind: 'raid',
-		value: raid.slug,
+		value: raid.id,
 		label: localizedName(raid.name) ?? raid.slug,
 		pinned: true
 	})
@@ -179,7 +180,6 @@
 		gap: $unit;
 		padding: $unit-4x;
 		color: var(--text-tertiary);
-		font-style: italic;
 	}
 
 	.error-state button {
