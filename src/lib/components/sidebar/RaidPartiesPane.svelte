@@ -64,13 +64,13 @@
 
 	// Element filter options
 	const elementOptions = [
-		{ value: undefined, label: 'All' },
-		{ value: 1, label: 'Wind' },
-		{ value: 2, label: 'Fire' },
-		{ value: 3, label: 'Water' },
-		{ value: 4, label: 'Earth' },
-		{ value: 5, label: 'Dark' },
-		{ value: 6, label: 'Light' }
+		{ value: undefined, label: m.filter_all() },
+		{ value: 1, label: m.element_wind() },
+		{ value: 2, label: m.element_fire() },
+		{ value: 3, label: m.element_water() },
+		{ value: 4, label: m.element_earth() },
+		{ value: 5, label: m.element_dark() },
+		{ value: 6, label: m.element_light() }
 	]
 
 	// Battle setting definitions
@@ -112,7 +112,7 @@
 	function getBattleSettingLabel(setting: (typeof battleSettings)[0]): string {
 		const value = setting.value
 		if (value === undefined) return setting.label
-		return `${setting.label} ${value ? 'On' : 'Off'}`
+		return value ? m.battle_setting_on({ setting: setting.label }) : m.battle_setting_off({ setting: setting.label })
 	}
 </script>
 
@@ -121,7 +121,7 @@
 	<div class="filters-section">
 		<!-- Element filter -->
 		<div class="filter-group">
-			<span class="filter-label">Element</span>
+			<span class="filter-label">{m.filter_element()}</span>
 			<div class="filter-buttons">
 				{#each elementOptions as option (option.label)}
 					<button
@@ -139,7 +139,7 @@
 
 		<!-- Battle settings filter -->
 		<div class="filter-group">
-			<span class="filter-label">Battle</span>
+			<span class="filter-label">{m.filter_battle()}</span>
 			<div class="filter-buttons">
 				{#each battleSettings as setting (setting.key)}
 					<button
