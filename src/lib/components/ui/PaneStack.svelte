@@ -21,11 +21,6 @@
 	// Set context so child components can access the pane stack
 	setPaneStackContext(stack)
 
-	// Derive values from the stack
-	const panes = $derived(stack.panes)
-	const isAnimating = $derived(stack.isAnimating)
-	const animationDirection = $derived(stack.animationDirection)
-
 	function handleBack(pane: PaneConfig, index: number) {
 		if (index === 0 && pane.onback) {
 			// Root pane with custom back handler
@@ -41,22 +36,22 @@
 
 	// Determine if a pane is the one being pushed (for entry animation)
 	function isPushing(index: number): boolean {
-		return isAnimating && animationDirection === 'push' && index === panes.length - 1
+		return stack.isAnimating && stack.animationDirection === 'push' && index === stack.panes.length - 1
 	}
 
 	// Determine if a pane is the one being popped (for exit animation)
 	function isPopping(index: number): boolean {
-		return isAnimating && animationDirection === 'pop' && index === panes.length - 1
+		return stack.isAnimating && stack.animationDirection === 'pop' && index === stack.panes.length - 1
 	}
 
 	// Determine if a pane is becoming active (the one behind a popping pane)
 	function isBecomingActive(index: number): boolean {
-		return isAnimating && animationDirection === 'pop' && index === panes.length - 2
+		return stack.isAnimating && stack.animationDirection === 'pop' && index === stack.panes.length - 2
 	}
 
 	// Determine the visual depth of a pane (0 = active, 1 = one behind, 2+ = hidden)
 	function getDepth(index: number): number {
-		return panes.length - 1 - index
+		return stack.panes.length - 1 - index
 	}
 
 	// Panes more than 1 level deep should be hidden
@@ -66,9 +61,9 @@
 </script>
 
 <div class="pane-stack">
-	{#each panes as pane, index (pane.id)}
-		{@const isActive = index === panes.length - 1}
-		{@const isBehind = index < panes.length - 1}
+	{#each stack.panes as pane, index (pane.id)}
+		{@const isActive = index === stack.panes.length - 1}
+		{@const isBehind = index < stack.panes.length - 1}
 		{@const showBackButton = index > 0 || pane.onback || onClose}
 		{@const PaneComponent = pane.component}
 		{@const depth = getDepth(index)}
@@ -141,7 +136,9 @@
 			</SidebarHeader>
 
 			<div class="pane-content">
-				<PaneComponent {...pane.props ?? {}} paneId={pane.id} />
+				{#key pane.id}
+					<PaneComponent {...pane.props ?? {}} paneId={pane.id} />
+				{/key}
 			</div>
 		</div>
 	{/each}
