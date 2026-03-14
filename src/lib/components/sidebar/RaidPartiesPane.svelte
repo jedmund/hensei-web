@@ -17,12 +17,15 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { localizedName } from '$lib/utils/locale'
+	import { getElementLabel } from '$lib/utils/element'
 
 	interface Props {
 		raid: Raid
+		/** Fallback element when raid.element is null (e.g. party's element) */
+		partyElement?: number
 	}
 
-	let { raid }: Props = $props()
+	let { raid, partyElement }: Props = $props()
 
 	// Pinned raid filter — always present, not removable
 	// Uses raid.id (UUID) because the API filters by raid_id column directly
@@ -33,8 +36,28 @@
 		pinned: true
 	})
 
+	// Build default element filter from the party's mainhand element
+	// (raid element is the enemy's element, not what you fight with)
+	function defaultElementFilter(): FilterItem[] {
+		if (!partyElement) return []
+		return [{
+			kind: 'element' as const,
+			value: partyElement,
+			label: getElementLabel(partyElement)
+		}]
+	}
+
 	// User-added filters (element, entity, party settings, etc.)
-	let userFilters = $state<FilterItem[]>([])
+	let userFilters = $state<FilterItem[]>(defaultElementFilter())
+
+	// Reset user filters when raid changes
+	let prevRaidId = raid.id
+	$effect(() => {
+		if (raid.id !== prevRaidId) {
+			prevRaidId = raid.id
+			userFilters = defaultElementFilter()
+		}
+	})
 
 	// Combined filters: pinned raid + user selections
 	const allFilters = $derived<FilterItem[]>([pinnedRaidFilter, ...userFilters])
