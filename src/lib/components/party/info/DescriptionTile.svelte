@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import type { Snippet } from 'svelte'
 	import type { JSONContent } from '@tiptap/core'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -131,7 +132,7 @@
 					/>
 				{/if}
 				{#if canEdit}
-					<Button variant="secondary" size="small" onclick={onOpenEdit}>Edit</Button>
+					<Button variant="secondary" size="small" onclick={onOpenEdit}>{m.action_edit()}</Button>
 				{/if}
 				{#if menu}
 					{@render menu()}

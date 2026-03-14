@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { onMount } from 'svelte'
 	import type { Editor, Content } from '@tiptap/core'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
@@ -56,14 +57,14 @@
 	// Function calls in templates don't create reactive tracking
 	const styleLabel = $derived.by(() => {
 		void editorVersion // Force re-evaluation when version changes
-		if (editor?.isActive('heading', { level: 1 })) return 'Heading 1'
-		if (editor?.isActive('heading', { level: 2 })) return 'Heading 2'
-		if (editor?.isActive('heading', { level: 3 })) return 'Heading 3'
-		return 'Paragraph'
+		if (editor?.isActive('heading', { level: 1 })) return m.editor_heading_1()
+		if (editor?.isActive('heading', { level: 2 })) return m.editor_heading_2()
+		if (editor?.isActive('heading', { level: 3 })) return m.editor_heading_3()
+		return m.editor_paragraph()
 	})
 
 	onMount(() => {
-		sidebar.setAction(save, 'Save')
+		sidebar.setAction(save, m.action_save())
 	})
 
 	function save() {
@@ -118,28 +119,28 @@
 						onSelect={() => setHeading(1)}
 					>
 						<Heading1 size={16} />
-						<span>Heading 1</span>
+						<span>{m.editor_heading_1()}</span>
 					</DropdownMenuBase.Item>
 					<DropdownMenuBase.Item
 						class="dropdown-menu-item {editor?.isActive('heading', { level: 2 }) ? 'active' : ''}"
 						onSelect={() => setHeading(2)}
 					>
 						<Heading2 size={16} />
-						<span>Heading 2</span>
+						<span>{m.editor_heading_2()}</span>
 					</DropdownMenuBase.Item>
 					<DropdownMenuBase.Item
 						class="dropdown-menu-item {editor?.isActive('heading', { level: 3 }) ? 'active' : ''}"
 						onSelect={() => setHeading(3)}
 					>
 						<Heading3 size={16} />
-						<span>Heading 3</span>
+						<span>{m.editor_heading_3()}</span>
 					</DropdownMenuBase.Item>
 					<DropdownMenuBase.Item
 						class="dropdown-menu-item {editor?.isActive('paragraph') ? 'active' : ''}"
 						onSelect={setParagraph}
 					>
 						<Pilcrow size={16} />
-						<span>Paragraph</span>
+						<span>{m.editor_paragraph()}</span>
 					</DropdownMenuBase.Item>
 				{/snippet}
 			</DropdownMenu>
