@@ -5,6 +5,7 @@
 		onEdit?: (() => void) | undefined
 		onViewDetails?: (() => void) | undefined
 		onViewInDatabase?: (() => void) | undefined
+		onShowSubstitutions?: (() => void) | undefined
 		onReplace?: (() => void) | undefined
 		onDuplicate?: (() => void) | undefined
 		onRemove?: (() => void | Promise<void>) | undefined
@@ -13,6 +14,7 @@
 		editLabel?: string | undefined
 		viewDetailsLabel?: string | undefined
 		viewInDatabaseLabel?: string | undefined
+		showSubstitutionsLabel?: string | undefined
 		replaceLabel?: string | undefined
 		duplicateLabel?: string | undefined
 		duplicateDisabled?: boolean | undefined
@@ -23,6 +25,7 @@
 		onEdit,
 		onViewDetails,
 		onViewInDatabase,
+		onShowSubstitutions,
 		onReplace,
 		onDuplicate,
 		onRemove,
@@ -31,6 +34,7 @@
 		editLabel = 'Edit',
 		viewDetailsLabel = 'View details',
 		viewInDatabaseLabel = 'View in Database',
+		showSubstitutionsLabel = 'Show substitutions',
 		replaceLabel = 'Replace',
 		duplicateLabel = 'Duplicate',
 		duplicateDisabled = false,
@@ -65,13 +69,19 @@
 	</Item>
 {/if}
 
-{#if hasEditSection && (onViewDetails || onViewInDatabase)}
+{#if hasEditSection && (onViewDetails || onViewInDatabase || onShowSubstitutions)}
 	<Separator class={separatorClass} />
 {/if}
 
 {#if onViewDetails}
 	<Item class={itemClass} onclick={onViewDetails}>
 		{viewDetailsLabel}
+	</Item>
+{/if}
+
+{#if onShowSubstitutions}
+	<Item class={itemClass} onclick={onShowSubstitutions}>
+		{showSubstitutionsLabel}
 	</Item>
 {/if}
 
