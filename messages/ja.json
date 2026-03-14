@@ -26,6 +26,27 @@
 	"nav_artifact_skills": "アーティファクトスキル",
 	"nav_unite_and_fight": "古戦場",
 	"nav_language": "言語",
+	"nav_new_entity": "新しい{entity}",
+	"nav_new_raid": "新しいクエスト",
+	"nav_new_raid_group": "新しいクエストグループ",
+	"nav_new_job": "新しいジョブ",
+	"nav_new_job_accessory": "新しいジョブアクセサリー",
+	"nav_new_single": "単体{entity}",
+	"nav_new_multiple": "複数{entity}",
+	"nav_new_weapon_series": "武器シリーズ",
+
+	"action_save": "保存",
+	"action_saving": "保存中",
+	"action_edit": "編集",
+	"action_add": "追加",
+
+	"editor_heading_1": "見出し1",
+	"editor_heading_2": "見出し2",
+	"editor_heading_3": "見出し3",
+	"editor_paragraph": "本文",
+
+	"type_job": "ジョブ",
+	"type_raid": "クエスト",
 
 	"error_something_went_wrong": "エラーが発生しました",
 	"error_404_title": "正しい空域にいますか？",
