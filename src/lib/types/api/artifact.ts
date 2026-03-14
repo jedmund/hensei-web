@@ -16,11 +16,13 @@ export type ArtifactSkillGroup = 'group_i' | 'group_ii' | 'group_iii'
 /** Artifact skill polarity - positive or negative modifier */
 export type ArtifactSkillPolarity = 'positive' | 'negative'
 
-/** Grade letter for artifact grading */
-export type ArtifactGradeLetter = 'S' | 'A' | 'B' | 'C' | 'D' | 'F'
-
-/** Recommendation action from grader */
-export type ArtifactRecommendationAction = 'keep' | 'reroll' | 'scrap'
+/** Cygames artifact score breakdown */
+export interface ArtifactScore {
+	attack: number
+	defense: number
+	special: number
+	total: number
+}
 
 /**
  * Artifact reference data (ArtifactBlueprint)
@@ -59,6 +61,8 @@ export interface ArtifactSkill {
 	growth?: number
 	/** Display suffix for the value (e.g., "%", "ATK") */
 	suffix: LocalizedName
+	/** Cygames score category: 1=attack, 2=defense, 3=special */
+	scoreCategory?: number
 }
 
 // ============================================
@@ -79,69 +83,6 @@ export interface ArtifactSkillInstance {
 }
 
 /**
- * Per-skill grade breakdown from the grader
- */
-export interface ArtifactGradeLine {
-	slot: number
-	group: ArtifactSkillGroup
-	modifier: number
-	tier: 'ideal' | 'good' | 'neutral' | 'bad'
-	tierScore: number
-	strengthScore: number
-	combinedScore: number
-	level: number
-}
-
-/**
- * Recommendation from the artifact grader
- */
-export interface ArtifactRecommendation {
-	action: ArtifactRecommendationAction
-	reason: string
-	/** Which slot to target for reroll */
-	slot?: number
-	/** Current skill name in target slot */
-	currentSkill?: string
-	/** Current tier of target slot */
-	currentTier?: string
-	/** Potential score gain from reroll */
-	potentialGain?: number
-	/** Priority level for the recommendation */
-	priority?: 'high' | 'medium' | 'low'
-	/** Suggested replacement skills */
-	targetSkills?: Array<{ modifier: number; nameEn: string; nameJp: string }>
-	/** Detailed breakdown of skill quality */
-	details?: {
-		badSkills?: string[]
-		neutralSkills?: string[]
-		idealSkills?: string[]
-		goodSkills?: string[]
-	}
-}
-
-/**
- * Artifact grade result from ArtifactGrader
- */
-export interface ArtifactGrade {
-	/** Letter grade (null for quirk artifacts) */
-	letter: ArtifactGradeLetter | null
-	/** Numeric score 0-100 (null for quirk artifacts) */
-	score: number | null
-	/** Score breakdown by category */
-	breakdown: {
-		skillSelection: number
-		baseStrength: number
-		synergy: number
-	} | null
-	/** Per-skill grade details */
-	lines: ArtifactGradeLine[] | null
-	/** Recommendation for what to do with this artifact */
-	recommendation: ArtifactRecommendation | null
-	/** Note explaining why grade is null (e.g., "Quirk artifacts cannot be graded") */
-	note?: string
-}
-
-/**
  * Collection artifact instance (CollectionArtifactBlueprint)
  * Represents an artifact in the user's inventory
  */
@@ -159,8 +100,8 @@ export interface CollectionArtifact {
 	proficiency?: number
 	/** Skills array (4 items for standard, empty for quirk) */
 	skills: (ArtifactSkillInstance | null)[]
-	/** Calculated grade from the grader */
-	grade: ArtifactGrade
+	/** Cygames artifact score (null for non-imported artifacts) */
+	score: ArtifactScore | null
 	/** Reference to the base artifact */
 	artifact: Artifact
 	createdAt: string
@@ -183,8 +124,8 @@ export interface GridArtifact {
 	proficiency?: number
 	/** Skills array (4 items for standard, empty for quirk) */
 	skills: (ArtifactSkillInstance | null)[]
-	/** Calculated grade from the grader */
-	grade: ArtifactGrade
+	/** Cygames artifact score (null for non-imported artifacts) */
+	score: ArtifactScore | null
 	/** Reference to the base artifact */
 	artifact: Artifact
 	/** Reference to the source collection artifact if linked */
@@ -243,17 +184,6 @@ export interface GridArtifactUpdateInput {
 	rerollSlot?: number
 	/** Only for quirk artifacts */
 	proficiency?: number
-	skill1?: ArtifactSkillInstance
-	skill2?: ArtifactSkillInstance
-	skill3?: ArtifactSkillInstance
-	skill4?: ArtifactSkillInstance
-}
-
-/**
- * Input for grading artifact skills (stateless)
- */
-export interface ArtifactGradeInput {
-	artifactId?: string
 	skill1?: ArtifactSkillInstance
 	skill2?: ArtifactSkillInstance
 	skill3?: ArtifactSkillInstance

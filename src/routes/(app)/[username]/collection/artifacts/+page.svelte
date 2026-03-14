@@ -16,6 +16,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { collectionFilters } from '$lib/stores/collectionFilters.svelte'
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
+	import type { CollectionSortKey } from '$lib/types/api/collection'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { getArtifactImage } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
@@ -42,6 +43,18 @@
 	let slot2Filters = $state<number[]>(collectionFilters.artifacts.slot2)
 	let slot3Filters = $state<number[]>(collectionFilters.artifacts.slot3)
 	let slot4Filters = $state<number[]>(collectionFilters.artifacts.slot4)
+
+	// Sort state
+	let sortBy = $state<CollectionSortKey>(collectionFilters.artifacts.sort)
+
+	const sortOptions: { value: CollectionSortKey; label: string }[] = [
+		{ value: 'score_desc', label: 'Score ↓' },
+		{ value: 'score_asc', label: 'Score ↑' },
+		{ value: 'name_asc', label: 'Name A → Z' },
+		{ value: 'name_desc', label: 'Name Z → A' },
+		{ value: 'element_asc', label: 'Element ↑' },
+		{ value: 'element_desc', label: 'Element ↓' }
+	]
 
 	// Element options for MultiSelect
 	const elementOptions = [
@@ -121,7 +134,8 @@
 			slot1: slot1Filters,
 			slot2: slot2Filters,
 			slot3: slot3Filters,
-			slot4: slot4Filters
+			slot4: slot4Filters,
+			sort: sortBy
 		}
 		untrack(() => collectionFilters.setArtifacts(filters))
 	})
@@ -137,7 +151,8 @@
 		skill1: slot1Filters.length > 0 ? slot1Filters : undefined,
 		skill2: slot2Filters.length > 0 ? slot2Filters : undefined,
 		skill3: slot3Filters.length > 0 ? slot3Filters : undefined,
-		skill4: slot4Filters.length > 0 ? slot4Filters : undefined
+		skill4: slot4Filters.length > 0 ? slot4Filters : undefined,
+		sort: sortBy
 	})
 
 	// Query for artifacts collection
@@ -261,7 +276,15 @@
 			{/if}
 		</div>
 
-		<ViewModeToggle value={currentViewMode} onValueChange={handleViewModeChange} element={userElement} />
+		<div class="right-controls">
+			<Select
+				value={sortBy}
+				onValueChange={(v) => (sortBy = v as CollectionSortKey)}
+				options={sortOptions}
+				size="small"
+			/>
+			<ViewModeToggle value={currentViewMode} onValueChange={handleViewModeChange} element={userElement} />
+		</div>
 	</div>
 
 	<!-- Collection grid -->
@@ -345,6 +368,13 @@
 		align-items: center;
 		gap: $unit;
 		flex-wrap: wrap;
+	}
+
+	.right-controls {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+		flex-shrink: 0;
 	}
 
 	.clear-filters-btn {

@@ -151,7 +151,7 @@
 	"artifact_quirk": "Quirk",
 	"artifact_skills": "Skills",
 	"artifact_skill_slot": "Skill {slot}",
-	"artifact_grade": "Grade",
+	"artifact_score": "Score",
 	"artifact_scrap": "Scrap",
 	"artifact_keep": "Keep",
 	"artifact_reroll": "Reroll",
@@ -531,7 +531,7 @@
 	"details_artifact_level": "Lv.{level}",
 	"details_artifact_type": "Type",
 	"details_artifact_quirk": "Quirk",
-	"details_artifact_grade": "Grade",
+	"details_artifact_score": "Score",
 
 	"details_weapon_key_pendulums": "Pendulums & Chains",
 	"details_weapon_key_telumas": "Telumas",
@@ -1115,11 +1115,7 @@
 	"label_level": "Level",
 	"label_value": "Value",
 
-	"artifact_grade_selection": "Selection",
-	"artifact_grade_strength": "Strength",
-	"artifact_grade_synergy": "Synergy",
-
-	"toolbar_bold": "Bold",
+"toolbar_bold": "Bold",
 	"toolbar_italic": "Italic",
 	"toolbar_underline": "Underline",
 	"toolbar_strikethrough": "Strikethrough",
@@ -1287,8 +1283,7 @@
 	"weapon_key_select": "Select {keyType}",
 	"placeholder_select_earring": "Select earring",
 	"transcendence_stage": "Stage {step}",
-	"artifact_no_grade": "No grade",
-	"search_linked_user": "Linked user",
+"search_linked_user": "Linked user",
 	"skill_clear_search": "Clear search",
 
 	"editor_text_color": "Text Color",

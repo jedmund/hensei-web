@@ -151,7 +151,7 @@
 	"artifact_quirk": "個性",
 	"artifact_skills": "スキル",
 	"artifact_skill_slot": "スキル {slot}",
-	"artifact_grade": "グレード",
+	"artifact_score": "スコア",
 	"artifact_scrap": "廃棄",
 	"artifact_keep": "保持",
 	"artifact_reroll": "リロール",
@@ -531,7 +531,7 @@
 	"details_artifact_level": "Lv.{level}",
 	"details_artifact_type": "タイプ",
 	"details_artifact_quirk": "個性",
-	"details_artifact_grade": "グレード",
+	"details_artifact_score": "スコア",
 
 	"details_weapon_key_pendulums": "ペンデュラム・チェイン",
 	"details_weapon_key_telumas": "テルマ",
@@ -1115,11 +1115,7 @@
 	"label_level": "レベル",
 	"label_value": "値",
 
-	"artifact_grade_selection": "厳選度",
-	"artifact_grade_strength": "効果値",
-	"artifact_grade_synergy": "相性度",
-
-	"toolbar_bold": "太字",
+"toolbar_bold": "太字",
 	"toolbar_italic": "斜体",
 	"toolbar_underline": "下線",
 	"toolbar_strikethrough": "取り消し線",
@@ -1287,8 +1283,7 @@
 	"weapon_key_select": "{keyType}を選択",
 	"placeholder_select_earring": "耳飾りを選択",
 	"transcendence_stage": "段階{step}",
-	"artifact_no_grade": "グレードなし",
-	"search_linked_user": "リンクユーザー",
+"search_linked_user": "リンクユーザー",
 	"skill_clear_search": "検索をクリア",
 
 	"editor_text_color": "文字色",

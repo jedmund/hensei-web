@@ -12,12 +12,13 @@
   import * as m from '$lib/paraglide/messages'
   import { getLocale } from '$lib/paraglide/runtime'
   import { localizedName } from '$lib/utils/locale'
+  import { getElementImage } from '$lib/utils/element'
 
   export type FilterItem =
-    | { kind: 'element'; value: number; label: string }
-    | { kind: 'raid'; value: string; label: string }
-    | { kind: 'recency'; value: number; label: string }
-    | { kind: 'class'; value: string; label: string }
+    | { kind: 'element'; value: number; label: string; pinned?: boolean }
+    | { kind: 'raid'; value: string; label: string; pinned?: boolean }
+    | { kind: 'recency'; value: number; label: string; pinned?: boolean }
+    | { kind: 'class'; value: string; label: string; pinned?: boolean }
     | {
         kind: 'entity'
         value: string
@@ -26,15 +27,17 @@
         granblueId: string
         mode: 'include' | 'exclude'
         element?: number
+        pinned?: boolean
       }
-    | { kind: 'party'; value: string; label: string }
+    | { kind: 'party'; value: string; label: string; pinned?: boolean }
 
   interface Props {
     filters: FilterItem[]
     onFiltersChange: (filters: FilterItem[]) => void
+    excludedKinds?: FilterItem['kind'][]
   }
 
-  let { filters = $bindable([]), onFiltersChange }: Props = $props()
+  let { filters = $bindable([]), onFiltersChange, excludedKinds = [] }: Props = $props()
 
   let inputValue = $state('')
   let dropdownOpen = $state(false)
@@ -105,70 +108,80 @@
     const picks: PlaceholderSuggestion[] = []
 
     // Element (random)
-    const el = pickRandom(elementSuggestions)
-    if (el) picks.push({ label: el.label, category: m.filter_cat_element(), option: el })
+    if (!excludedKinds.includes('element')) {
+      const el = pickRandom(elementSuggestions)
+      if (el) picks.push({ label: el.label, category: m.filter_cat_element(), option: el })
+    }
 
     // Raid (random from loaded data)
-    const raidPool = allRaids.filter(
-      (r) => !filters.some((f) => f.kind === 'raid' && f.value === r.slug)
-    )
-    const raid = pickRandom(raidPool)
-    if (raid) {
-      const opt: FilterOption = {
-        kind: 'raid',
-        value: raid.slug,
-        label: localizedName(raid.name) ?? raid.slug,
-        category: m.filter_cat_raid()
+    if (!excludedKinds.includes('raid')) {
+      const raidPool = allRaids.filter(
+        (r) => !filters.some((f) => f.kind === 'raid' && f.value === r.id)
+      )
+      const raid = pickRandom(raidPool)
+      if (raid) {
+        const opt: FilterOption = {
+          kind: 'raid',
+          value: raid.id,
+          label: localizedName(raid.name) ?? raid.slug,
+          category: m.filter_cat_raid()
+        }
+        picks.push({ label: opt.label, category: m.filter_cat_raid(), option: opt })
       }
-      picks.push({ label: opt.label, category: m.filter_cat_raid(), option: opt })
     }
 
     // Recency (always "Last week")
-    picks.push({
-      label: m.recency_week(),
-      category: m.filter_cat_recency(),
-      option: { kind: 'recency', value: 604800, label: m.recency_week(), category: m.filter_cat_recency() }
-    })
+    if (!excludedKinds.includes('recency')) {
+      picks.push({
+        label: m.recency_week(),
+        category: m.filter_cat_recency(),
+        option: { kind: 'recency', value: 604800, label: m.recency_week(), category: m.filter_cat_recency() }
+      })
+    }
 
     // Entity from API (pick one random from a pool of 12)
-    try {
-      const { suggestions } = await searchAdapter.getRandomSuggestions()
-      const entity = pickRandom(suggestions)
-      if (entity) {
-        const category = entity.type === 'character' ? m.filter_cat_character()
-          : entity.type === 'weapon' ? m.filter_cat_weapon() : m.filter_cat_summon()
-        const entityLabel = localizedName(entity.name as { en: string; ja: string }) ?? 'Unknown'
-        picks.push({
-          label: entityLabel,
-          category,
-          option: {
-            kind: 'entity',
-            value: entity.id,
+    if (!excludedKinds.includes('entity')) {
+      try {
+        const { suggestions } = await searchAdapter.getRandomSuggestions()
+        const entity = pickRandom(suggestions)
+        if (entity) {
+          const category = entity.type === 'character' ? m.filter_cat_character()
+            : entity.type === 'weapon' ? m.filter_cat_weapon() : m.filter_cat_summon()
+          const entityLabel = localizedName(entity.name as { en: string; ja: string }) ?? 'Unknown'
+          picks.push({
             label: entityLabel,
             category,
-            entityType: entity.type,
-            granblueId: entity.granblueId,
-            element: entity.element
-          }
-        })
+            option: {
+              kind: 'entity',
+              value: entity.id,
+              label: entityLabel,
+              category,
+              entityType: entity.type,
+              granblueId: entity.granblueId,
+              element: entity.element
+            }
+          })
+        }
+      } catch {
+        // Non-critical — other suggestions still show
       }
-    } catch {
-      // Non-critical — other suggestions still show
     }
 
     // Full Auto (always)
-    picks.push({
-      label: m.filter_full_auto(),
-      category: m.filter_cat_party(),
-      option: { kind: 'party', value: 'full_auto', label: m.filter_full_auto(), category: m.filter_cat_party() }
-    })
+    if (!excludedKinds.includes('party')) {
+      picks.push({
+        label: m.filter_full_auto(),
+        category: m.filter_cat_party(),
+        option: { kind: 'party', value: 'full_auto', label: m.filter_full_auto(), category: m.filter_cat_party() }
+      })
 
-    // Youtube (always)
-    picks.push({
-      label: m.filter_youtube(),
-      category: m.filter_cat_party(),
-      option: { kind: 'party', value: 'youtube', label: m.filter_youtube(), category: m.filter_cat_party() }
-    })
+      // Youtube (always)
+      picks.push({
+        label: m.filter_youtube(),
+        category: m.filter_cat_party(),
+        option: { kind: 'party', value: 'youtube', label: m.filter_youtube(), category: m.filter_cat_party() }
+      })
+    }
 
     placeholderSuggestions = picks
   }
@@ -198,60 +211,68 @@
     const results: FilterOption[] = []
 
     // Elements
-    for (const el of elementOptions) {
-      if (el.label.toLowerCase().includes(q)) {
-        const alreadySelected = filters.some((f) => f.kind === 'element' && f.value === el.value)
-        if (!alreadySelected) {
-          results.push({ kind: 'element', value: el.value, label: el.label, category: m.filter_cat_element() })
+    if (!excludedKinds.includes('element')) {
+      for (const el of elementOptions) {
+        if (el.label.toLowerCase().includes(q)) {
+          const alreadySelected = filters.some((f) => f.kind === 'element' && f.value === el.value)
+          if (!alreadySelected) {
+            results.push({ kind: 'element', value: el.value, label: el.label, category: m.filter_cat_element() })
+          }
         }
       }
     }
 
     // Recency
-    for (const rec of recencyOptions) {
-      if (rec.label.toLowerCase().includes(q)) {
-        const alreadySelected = filters.some((f) => f.kind === 'recency')
-        if (!alreadySelected) {
-          results.push({
-            kind: 'recency',
-            value: rec.value,
-            label: rec.label,
-            category: m.filter_cat_recency()
-          })
+    if (!excludedKinds.includes('recency')) {
+      for (const rec of recencyOptions) {
+        if (rec.label.toLowerCase().includes(q)) {
+          const alreadySelected = filters.some((f) => f.kind === 'recency')
+          if (!alreadySelected) {
+            results.push({
+              kind: 'recency',
+              value: rec.value,
+              label: rec.label,
+              category: m.filter_cat_recency()
+            })
+          }
         }
       }
     }
 
     // Party settings
-    for (const party of partyOptions) {
-      if (party.label.toLowerCase().includes(q)) {
-        const alreadySelected = filters.some(
-          (f) => f.kind === 'party' && f.value === party.value
-        )
-        if (!alreadySelected) {
-          results.push({
-            kind: 'party',
-            value: party.value,
-            label: party.label,
-            category: m.filter_cat_party()
-          })
+    if (!excludedKinds.includes('party')) {
+      for (const party of partyOptions) {
+        if (party.label.toLowerCase().includes(q)) {
+          const alreadySelected = filters.some(
+            (f) => f.kind === 'party' && f.value === party.value
+          )
+          if (!alreadySelected) {
+            results.push({
+              kind: 'party',
+              value: party.value,
+              label: party.label,
+              category: m.filter_cat_party()
+            })
+          }
         }
       }
     }
 
     // Raids
-    for (const raid of allRaids) {
-      const nameEn = raid.name?.en?.toLowerCase() ?? ''
-      const nameJa = raid.name?.ja ?? ''
-      if (nameEn.includes(q) || nameJa.includes(q)) {
-        const alreadySelected = filters.some((f) => f.kind === 'raid' && f.value === raid.slug)
-        if (!alreadySelected) {
-          results.push({
-            kind: 'raid',
-            value: raid.slug,
-            label: localizedName(raid.name) ?? raid.slug,
-            category: m.filter_cat_raid()
-          })
+    if (!excludedKinds.includes('raid')) {
+      for (const raid of allRaids) {
+        const nameEn = raid.name?.en?.toLowerCase() ?? ''
+        const nameJa = raid.name?.ja ?? ''
+        if (nameEn.includes(q) || nameJa.includes(q)) {
+          const alreadySelected = filters.some((f) => f.kind === 'raid' && f.value === raid.id)
+          if (!alreadySelected) {
+            results.push({
+              kind: 'raid',
+              value: raid.id,
+              label: localizedName(raid.name) ?? raid.slug,
+              category: m.filter_cat_raid()
+            })
+          }
         }
       }
     }
@@ -392,6 +413,7 @@
   }
 
   function removeFilter(index: number) {
+    if (filters[index]?.pinned) return
     filters = filters.filter((_, i) => i !== index)
     onFiltersChange(filters)
   }
@@ -443,7 +465,13 @@
     } else if (e.key === 'Escape') {
       closeDropdown()
     } else if (e.key === 'Backspace' && inputValue === '' && filters.length > 0) {
-      removeFilter(filters.length - 1)
+      // Find the last non-pinned filter to remove
+      for (let i = filters.length - 1; i >= 0; i--) {
+        if (!filters[i]?.pinned) {
+          removeFilter(i)
+          break
+        }
+      }
     }
   }
 
@@ -494,6 +522,7 @@
         kind={filter.kind}
         mode={filter.kind === 'entity' ? filter.mode : undefined}
         element={pillElement}
+        pinned={filter.pinned}
         onRemove={() => removeFilter(i)}
         onToggleMode={() => toggleEntityMode(i)}
       />
@@ -539,6 +568,16 @@
                   showType={false}
                   imageSize={32}
                 />
+              {:else if option.kind === 'element'}
+                <div class="result-with-image">
+                  <img
+                    src={getElementImage(option.value as number)}
+                    alt=""
+                    class="result-image"
+                  />
+                  <span class="result-label">{option.label}</span>
+                </div>
+                <span class="result-category">{option.category}</span>
               {:else}
                 <span class="result-label">{option.label}</span>
                 <span class="result-category">{option.category}</span>
@@ -774,6 +813,19 @@
     .empty & {
       color: var(--text-tertiary);
     }
+  }
+
+  .result-with-image {
+    display: flex;
+    align-items: center;
+    gap: $unit;
+  }
+
+  .result-image {
+    width: 32px;
+    height: 32px;
+    border-radius: $item-corner-small;
+    flex-shrink: 0;
   }
 
   .result-category {

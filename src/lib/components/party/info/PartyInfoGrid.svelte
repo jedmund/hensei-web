@@ -51,7 +51,7 @@
 		sidebar.openWithComponent(
 			raidName,
 			RaidPartiesPane,
-			{ raid: party.raid },
+			{ raid: party.raid, partyElement: party.element },
 			{
 				scrollable: true,
 				image: getRaidImage(party.raid.slug)

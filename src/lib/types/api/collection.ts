@@ -163,6 +163,8 @@ export type CollectionSortKey =
 	| 'element_desc'
 	| 'proficiency_asc'
 	| 'proficiency_desc'
+	| 'score_desc'
+	| 'score_asc'
 
 /**
  * Filters for listing collection items
