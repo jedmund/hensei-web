@@ -305,7 +305,7 @@
 
 <div class="party-edit-sidebar">
 	<div class="top-section">
-		<h3>Details</h3>
+		<h3>{m.party_details()}</h3>
 		<div class="top-fields">
 			<Input
 				label="Title"
@@ -316,7 +316,7 @@
 			/>
 			<YouTubeUrlInput label="Video" bind:value={videoUrl} contained />
 			<div class="raid-field">
-				<span class="raid-label">Raid</span>
+				<span class="raid-label">{m.party_raid()}</span>
 				<button
 					type="button"
 					class="raid-select-button {getRaidElementClass(raid)}"
@@ -325,7 +325,7 @@
 					{#if raid}
 						<span class="raid-name">{getRaidName(raid)}</span>
 					{:else}
-						<span class="placeholder">Select raid...</span>
+						<span class="placeholder">{m.party_select_raid()}</span>
 					{/if}
 					<Icon name="chevron-right" size={16} class="chevron-icon" />
 				</button>
@@ -337,7 +337,7 @@
 
 	<button type="button" class="description-button" onclick={openDescriptionPane}>
 		<div class="description-header">
-			<span class="description-label">Description</span>
+			<span class="description-label">{m.party_description()}</span>
 			<Icon name="chevron-right" size={16} class="description-chevron" />
 		</div>
 		{#if descriptionPreview}

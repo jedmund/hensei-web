@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import type { Job } from '$lib/types/api/entities'
 	import { getJobFullImageUrl, getJobIconUrl, Gender } from '$lib/utils/jobUtils'
 	import { localizedName } from '$lib/utils/locale'
@@ -64,7 +65,7 @@
 		{/if}
 	{:else if showPlaceholder}
 		<div class="placeholder">
-			<span>No Job</span>
+			<span>{m.job_no_job()}</span>
 		</div>
 	{/if}
 </div>

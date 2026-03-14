@@ -122,7 +122,7 @@
 		error = undefined
 
 		if (slotLocked) {
-			error = 'This slot cannot be changed'
+			error = m.skill_slot_locked()
 			return
 		}
 
@@ -134,7 +134,7 @@
 		})
 
 		if (alreadyEquipped) {
-			error = 'This skill is already equipped in another slot'
+			error = m.skill_slot_already_equipped()
 			return
 		}
 
@@ -153,13 +153,13 @@
 	{#if slotLocked && currentSkill}
 		<div class="locked-notice">
 			<Icon name="arrow-left" size={16} />
-			<p>This slot cannot be changed</p>
+			<p>{m.skill_slot_locked()}</p>
 		</div>
 	{/if}
 
 	{#if currentSkill && !slotLocked}
 		<div class="current-skill">
-			<h4>Current Skill</h4>
+			<h4>{m.skill_slot_current()}</h4>
 			<JobSkillItem
 				skill={currentSkill}
 				variant="current"
@@ -203,12 +203,12 @@
 		{#if !job}
 			<div class="empty-state">
 				<Icon name="briefcase" size={32} />
-				<p>Select a job first</p>
+				<p>{m.skill_slot_select_job_first()}</p>
 			</div>
 		{:else if slotLocked}
 			<div class="empty-state">
 				<Icon name="arrow-left" size={32} />
-				<p>This slot cannot be changed</p>
+				<p>{m.skill_slot_locked()}</p>
 			</div>
 		{:else if skillsQuery.isLoading}
 			<div class="loading-state">
