@@ -113,6 +113,29 @@ describe('filterItemsToParams', () => {
 		expect(params.includes).toBe('3040215000')
 	})
 
+	it('maps a boost filter to boostMod param', () => {
+		const items: FilterItem[] = [
+			{ kind: 'boost', value: 'omega', label: 'Omega' }
+		]
+		expect(filterItemsToParams(items).boostMod).toBe('omega')
+	})
+
+	it('maps a side filter to boostSide param', () => {
+		const items: FilterItem[] = [
+			{ kind: 'side', value: 'double', label: 'Double' }
+		]
+		expect(filterItemsToParams(items).boostSide).toBe('double')
+	})
+
+	it('omits boost/side params when no boost or side filter is present', () => {
+		const items: FilterItem[] = [
+			{ kind: 'element', value: 1, label: 'Wind' }
+		]
+		const params = filterItemsToParams(items)
+		expect(params.boostMod).toBeUndefined()
+		expect(params.boostSide).toBeUndefined()
+	})
+
 	it('treats pinned filters identically to non-pinned', () => {
 		const pinned: FilterItem[] = [
 			{ kind: 'raid', value: 'akasha', label: 'Akasha', pinned: true }

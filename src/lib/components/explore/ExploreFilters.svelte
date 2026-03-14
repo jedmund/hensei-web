@@ -30,6 +30,8 @@
         pinned?: boolean
       }
     | { kind: 'party'; value: string; label: string; pinned?: boolean }
+    | { kind: 'boost'; value: string; label: string }
+    | { kind: 'side'; value: string; label: string }
 
   interface Props {
     filters: FilterItem[]
@@ -82,6 +84,18 @@
     { value: 'auto_guard', label: m.filter_auto_guard() },
     { value: 'charge_attack', label: m.filter_charge_attack() },
     { value: 'youtube', label: m.filter_youtube() }
+  ])
+
+  const boostOptions = $derived([
+    { value: 'omega', label: m.boost_omega(), aliases: ['magna'] },
+    { value: 'primal', label: m.boost_primal() },
+    { value: 'odious', label: m.boost_odious() },
+    { value: 'unboosted', label: m.boost_unboosted() }
+  ])
+
+  const sideOptions = $derived([
+    { value: 'double', label: m.side_double() },
+    { value: 'single', label: m.side_single() }
   ])
 
   // Suggestion pools per category
@@ -277,6 +291,35 @@
       }
     }
 
+    // Boost
+    if (!filters.some((f) => f.kind === 'boost')) {
+      for (const boost of boostOptions) {
+        const aliases = 'aliases' in boost ? (boost.aliases as string[]) : []
+        if (boost.label.toLowerCase().includes(q) || aliases.some((a) => a.includes(q))) {
+          results.push({
+            kind: 'boost',
+            value: boost.value,
+            label: boost.label,
+            category: m.filter_cat_boost()
+          })
+        }
+      }
+    }
+
+    // Side
+    if (!filters.some((f) => f.kind === 'side')) {
+      for (const side of sideOptions) {
+        if (side.label.toLowerCase().includes(q)) {
+          results.push({
+            kind: 'side',
+            value: side.value,
+            label: side.label,
+            category: m.filter_cat_side()
+          })
+        }
+      }
+    }
+
     return results
   }
 
@@ -393,6 +436,24 @@
       // Replace existing recency filter
       const without = filters.filter((f) => f.kind !== 'recency')
       newFilter = { kind: 'recency', value: option.value as number, label: option.label }
+      filters = [...without, newFilter]
+      onFiltersChange(filters)
+      inputValue = ''
+      searchResults = []
+      return
+    } else if (option.kind === 'boost') {
+      // Single-select: replace existing boost filter
+      const without = filters.filter((f) => f.kind !== 'boost')
+      newFilter = { kind: 'boost', value: option.value as string, label: option.label }
+      filters = [...without, newFilter]
+      onFiltersChange(filters)
+      inputValue = ''
+      searchResults = []
+      return
+    } else if (option.kind === 'side') {
+      // Single-select: replace existing side filter
+      const without = filters.filter((f) => f.kind !== 'side')
+      newFilter = { kind: 'side', value: option.value as string, label: option.label }
       filters = [...without, newFilter]
       onFiltersChange(filters)
       inputValue = ''
