@@ -9,7 +9,6 @@ import {
 	updateGridArtifactOptions,
 	deleteGridArtifactOptions,
 	equipCollectionArtifactOptions,
-	gradeArtifactOptions,
 	syncGridArtifactOptions
 } from '../artifact.mutations'
 import { createTestQueryClient } from './helpers'
@@ -26,7 +25,6 @@ vi.mock('$lib/api/adapters/artifact.adapter', () => ({
 		updateGridArtifact: vi.fn(),
 		deleteGridArtifact: vi.fn(),
 		equipCollectionArtifact: vi.fn(),
-		gradeArtifact: vi.fn(),
 		syncGridArtifact: vi.fn()
 	}
 }))
@@ -154,19 +152,8 @@ describe('equipCollectionArtifactOptions', () => {
 })
 
 // ============================================================================
-// Grading & Sync
+// Sync
 // ============================================================================
-
-describe('gradeArtifactOptions', () => {
-	it('has no cache side effects', () => {
-		const opts = gradeArtifactOptions()
-
-		expect(opts.mutationFn).toBeDefined()
-		expect((opts as any).onSuccess).toBeUndefined()
-		expect((opts as any).onSettled).toBeUndefined()
-		expect((opts as any).onMutate).toBeUndefined()
-	})
-})
 
 describe('syncGridArtifactOptions', () => {
 	it('invalidates party detail by shortcode on success', () => {

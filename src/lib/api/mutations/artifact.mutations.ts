@@ -15,8 +15,7 @@ import { artifactKeys } from '$lib/api/queries/artifact.queries'
 import type {
 	CollectionArtifactInput,
 	GridArtifactInput,
-	GridArtifactUpdateInput,
-	ArtifactGradeInput
+	GridArtifactUpdateInput
 } from '$lib/types/api/artifact'
 
 // ============================================================================
@@ -121,14 +120,8 @@ export function equipCollectionArtifactOptions(queryClient: QueryClient) {
 }
 
 // ============================================================================
-// Options Factories — Grading & Sync
+// Options Factories — Sync
 // ============================================================================
-
-export function gradeArtifactOptions() {
-	return {
-		mutationFn: (input: ArtifactGradeInput) => artifactAdapter.gradeArtifact(input)
-	}
-}
 
 export function syncGridArtifactOptions(queryClient: QueryClient) {
 	return {
@@ -187,10 +180,6 @@ export function useDeleteGridArtifact() {
 export function useEquipCollectionArtifact() {
 	const queryClient = useQueryClient()
 	return createMutation(() => equipCollectionArtifactOptions(queryClient))
-}
-
-export function useGradeArtifact() {
-	return createMutation(() => gradeArtifactOptions())
 }
 
 export function useSyncGridArtifact() {

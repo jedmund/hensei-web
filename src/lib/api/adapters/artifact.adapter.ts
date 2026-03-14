@@ -21,9 +21,7 @@ import type {
 	CollectionArtifactInput,
 	GridArtifact,
 	GridArtifactInput,
-	GridArtifactUpdateInput,
-	ArtifactGrade,
-	ArtifactGradeInput
+	GridArtifactUpdateInput
 } from '$lib/types/api/artifact'
 
 /**
@@ -49,6 +47,7 @@ export interface CollectionArtifactListParams {
 	skill2?: number[]
 	skill3?: number[]
 	skill4?: number[]
+	sort?: string
 }
 
 /**
@@ -345,21 +344,6 @@ export class ArtifactAdapter extends BaseAdapter {
 				}
 			}
 		)
-	}
-
-	// ============================================
-	// Artifact Grading (Stateless)
-	// ============================================
-
-	/**
-	 * Grades artifact skills without persisting
-	 * Useful for preview/what-if scenarios
-	 */
-	async gradeArtifact(input: ArtifactGradeInput): Promise<ArtifactGrade> {
-		return this.request<ArtifactGrade>('/artifact_skills/grade', {
-			method: 'POST',
-			body: input
-		})
 	}
 
 	// ============================================
