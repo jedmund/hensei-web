@@ -19,6 +19,7 @@
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import { localizedName } from '$lib/utils/locale'
 
 	interface Props {
 		/** User ID whose collection to load */
@@ -74,10 +75,7 @@
 
 	// Get display name for artifact
 	function getDisplayName(artifact: CollectionArtifact): string {
-		const name = artifact.artifact?.name
-		if (!name) return '—'
-		if (typeof name === 'string') return name
-		return name.en || name.ja || '—'
+		return localizedName(artifact.artifact?.name)
 	}
 
 	// Get proficiency for artifact

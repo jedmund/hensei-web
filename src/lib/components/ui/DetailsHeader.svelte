@@ -5,6 +5,7 @@
 	import Button from './Button.svelte'
 	import { getJobTierName } from '$lib/utils/jobUtils'
 	import { getPlaceholderImage, getBasePath } from '$lib/utils/images'
+	import { localizedName } from '$lib/utils/locale'
 
 	// Props
 	interface Props {
@@ -56,9 +57,7 @@
 
 	// Helper function to get display name
 	function getDisplayName(nameObj: string | { en?: string; ja?: string }): string {
-		if (!nameObj) return 'Unknown'
-		if (typeof nameObj === 'string') return nameObj
-		return nameObj.en || nameObj.ja || 'Unknown'
+		return localizedName(nameObj)
 	}
 </script>
 

@@ -8,6 +8,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import RaidPartiesPane from '$lib/components/sidebar/RaidPartiesPane.svelte'
 	import { getRaidImage } from '$lib/utils/images'
+	import { localizedName } from '$lib/utils/locale'
 
 	type AvatarUser = {
 		username?: string
@@ -45,8 +46,7 @@
 	function handleRaidClick() {
 		if (!party.raid) return
 
-		const raidName =
-			typeof party.raid.name === 'string' ? party.raid.name : party.raid.name?.en || 'Raid Parties'
+		const raidName = localizedName(party.raid.name)
 
 		sidebar.openWithComponent(
 			raidName,
