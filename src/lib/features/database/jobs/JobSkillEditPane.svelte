@@ -1,5 +1,6 @@
 
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import type { JobSkill } from '$lib/types/api/entities'
 	import type { JobSkillPayload } from '$lib/api/adapters/job.adapter'
 	import { jobAdapter } from '$lib/api/adapters/job.adapter'
@@ -129,7 +130,7 @@
 
 		// Use untrack to prevent setAction from triggering re-runs
 		untrack(() => {
-			sidebar.setAction(valid && !saving ? handleSave : undefined, saving ? 'Saving...' : 'Save', undefined, true)
+			sidebar.setAction(valid && !saving ? handleSave : undefined, saving ? m.action_saving() : m.action_save(), undefined, true)
 		})
 	})
 </script>

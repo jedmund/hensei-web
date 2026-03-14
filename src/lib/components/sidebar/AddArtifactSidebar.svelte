@@ -294,7 +294,7 @@
 	// Update the header action button based on form validity and element
 	function updateHeaderAction() {
 		if (isValid && !createMutation.isPending) {
-			sidebar.setAction(handleSave, 'Add', elementType)
+			sidebar.setAction(handleSave, m.action_add(), elementType)
 		} else {
 			sidebar.clearAction()
 		}

@@ -6,6 +6,7 @@
 	 * Shows artifact info in read-only mode. If user is owner,
 	 * provides Edit button in header to push edit pane onto stack.
 	 */
+	import * as m from '$lib/paraglide/messages'
 	import { onMount } from 'svelte'
 	import type { CollectionArtifact, ArtifactSkillInstance } from '$lib/types/api/artifact'
 	import { isQuirkArtifact, getSkillGroupForSlot } from '$lib/types/api/artifact'
@@ -109,7 +110,7 @@
 	// Set up the Edit action button and overflow menu for owners
 	onMount(() => {
 		if (isOwner) {
-			sidebar.setAction(handleEdit, 'Edit', elementType)
+			sidebar.setAction(handleEdit, m.action_edit(), elementType)
 			sidebar.setOverflowMenu([
 				{
 					label: 'Remove from collection',

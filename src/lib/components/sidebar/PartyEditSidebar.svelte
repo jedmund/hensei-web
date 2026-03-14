@@ -156,14 +156,14 @@
 				sidebar.setActionForPane(
 					paneId,
 					changed ? save : undefined,
-					'Save',
+					m.action_save(),
 					element
 				)
 			} else {
 				if (changed) {
-					sidebar.setAction(save, 'Save', element)
+					sidebar.setAction(save, m.action_save(), element)
 				} else {
-					sidebar.setAction(undefined, 'Save', element)
+					sidebar.setAction(undefined, m.action_save(), element)
 				}
 			}
 		})

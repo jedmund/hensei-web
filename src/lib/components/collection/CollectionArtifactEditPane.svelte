@@ -6,6 +6,7 @@
 	 * Pushed onto pane stack from CollectionArtifactDetailPane.
 	 * Handles saving and deleting artifacts.
 	 */
+	import * as m from '$lib/paraglide/messages'
 	import { onMount, untrack } from 'svelte'
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
 	import { useUpdateCollectionArtifact } from '$lib/api/mutations/artifact.mutations'
@@ -81,7 +82,7 @@
 	// Set up header action (Save button always visible, disabled when no changes)
 	function updateHeader() {
 		const canSave = hasChanges && !updateMutation.isPending
-		sidebar.setAction(canSave ? handleSave : undefined, 'Save', elementType)
+		sidebar.setAction(canSave ? handleSave : undefined, m.action_save(), elementType)
 	}
 
 	onMount(() => {
