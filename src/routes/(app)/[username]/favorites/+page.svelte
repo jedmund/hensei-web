@@ -77,13 +77,13 @@
 			{#if favoritesQuery.isFetchingNextPage}
 				<div class="loading-more">
 					<Icon name="loader-2" size={20} />
-					<span>Loading more...</span>
+					<span>{m.loading_more()}</span>
 				</div>
 			{/if}
 
 			{#if !favoritesQuery.hasNextPage && items().length > 0}
 				<div class="end">
-					<p>You've seen all favorites!</p>
+					<p>{m.favorites_seen_all()}</p>
 				</div>
 			{/if}
 		</div>
