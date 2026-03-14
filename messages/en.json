@@ -26,6 +26,27 @@
 	"nav_artifact_skills": "Artifact Skills",
 	"nav_unite_and_fight": "Unite & Fight",
 	"nav_language": "Language",
+	"nav_new_entity": "New {entity}",
+	"nav_new_raid": "New raid",
+	"nav_new_raid_group": "New raid group",
+	"nav_new_job": "New job",
+	"nav_new_job_accessory": "New job accessory",
+	"nav_new_single": "Single {entity}",
+	"nav_new_multiple": "Multiple {entity}s",
+	"nav_new_weapon_series": "Weapon series",
+
+	"action_save": "Save",
+	"action_saving": "Saving...",
+	"action_edit": "Edit",
+	"action_add": "Add",
+
+	"editor_heading_1": "Heading 1",
+	"editor_heading_2": "Heading 2",
+	"editor_heading_3": "Heading 3",
+	"editor_paragraph": "Paragraph",
+
+	"type_job": "job",
+	"type_raid": "raid",
 
 	"error_something_went_wrong": "Something went wrong",
 	"error_404_title": "Are you in the right skydom?",

@@ -50,7 +50,7 @@
 	// Set up Edit button in sidebar header when canEdit is true
 	onMount(() => {
 		if (canEdit) {
-			sidebar.setAction(openEditPane, 'Edit')
+			sidebar.setAction(openEditPane, m.action_edit())
 		}
 	})
 </script>

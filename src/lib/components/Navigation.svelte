@@ -90,15 +90,15 @@
 	// Database "New" dropdown config
 	const databaseEntityLabel = $derived(
 		currentDatabaseEntity === 'character'
-			? 'character'
+			? m.type_character()
 			: currentDatabaseEntity === 'weapon'
-				? 'weapon'
+				? m.type_weapon()
 				: currentDatabaseEntity === 'summon'
-					? 'summon'
+					? m.type_summon()
 					: currentDatabaseEntity === 'job'
-						? 'job'
+						? m.type_job()
 						: currentDatabaseEntity === 'raid'
-							? 'raid'
+							? m.type_raid()
 							: null
 	)
 	const databaseNewHref = $derived(
@@ -368,7 +368,7 @@
 	{#if isDatabaseRoute && databaseEntityLabel}
 		<DropdownMenu.Root>
 			<DropdownMenu.Trigger class="new-item-trigger {userElement ?? ''}">
-				<span>New {databaseEntityLabel}</span>
+				<span>{m.nav_new_entity({ entity: databaseEntityLabel ?? '' })}</span>
 				<Icon name="chevron-down" size={12} />
 			</DropdownMenu.Trigger>
 
@@ -376,33 +376,33 @@
 				<DropdownMenu.Content class="dropdown-content" sideOffset={5} align="end">
 					{#if currentDatabaseEntity === 'raid'}
 						<DropdownItem>
-							<a href={localizeHref('/database/raids/new')}>New raid</a>
+							<a href={localizeHref('/database/raids/new')}>{m.nav_new_raid()}</a>
 						</DropdownItem>
 						<DropdownItem>
-							<a href={localizeHref('/database/raid-groups/new')}>New raid group</a>
+							<a href={localizeHref('/database/raid-groups/new')}>{m.nav_new_raid_group()}</a>
 						</DropdownItem>
 					{:else if currentDatabaseEntity === 'job'}
 						<DropdownItem>
-							<a href={localizeHref('/database/jobs/new')}>New job</a>
+							<a href={localizeHref('/database/jobs/new')}>{m.nav_new_job()}</a>
 						</DropdownItem>
 						<DropdownItem>
-							<a href={localizeHref('/database/job-accessories/new')}>New job accessory</a>
+							<a href={localizeHref('/database/job-accessories/new')}>{m.nav_new_job_accessory()}</a>
 						</DropdownItem>
 					{:else}
 						{#if databaseNewHref}
 							<DropdownItem>
-								<a href={databaseNewHref}>Single {databaseEntityLabel}</a>
+								<a href={databaseNewHref}>{m.nav_new_single({ entity: databaseEntityLabel ?? '' })}</a>
 							</DropdownItem>
 						{/if}
 						{#if databaseImportHref}
 							<DropdownItem>
-								<a href={databaseImportHref}>Multiple {databaseEntityLabel}s</a>
+								<a href={databaseImportHref}>{m.nav_new_multiple({ entity: databaseEntityLabel ?? '' })}</a>
 							</DropdownItem>
 						{/if}
 						{#if currentDatabaseEntity === 'weapon'}
 							<DropdownMenu.Separator class="dropdown-separator" />
 							<DropdownItem>
-								<a href={localizeHref('/database/series/weapons/new')}>Weapon series</a>
+								<a href={localizeHref('/database/series/weapons/new')}>{m.nav_new_weapon_series()}</a>
 							</DropdownItem>
 						{/if}
 					{/if}

@@ -8,6 +8,7 @@
 	 *
 	 * The "My Collection" tab includes an edit mode using CharacterEditPane.
 	 */
+	import * as m from '$lib/paraglide/messages'
 	import { onMount } from 'svelte'
 	import type { CollectionCharacter, ExtendedMastery } from '$lib/types/api/collection'
 	import {
@@ -169,7 +170,7 @@
 	function enterEditMode() {
 		isEditing = true
 		// Update header to show Save button
-		sidebar.setAction(() => editPaneRef?.save(), 'Save', elementName)
+		sidebar.setAction(() => editPaneRef?.save(), m.action_save(), elementName)
 	}
 
 	// Handle delete from collection
@@ -188,11 +189,11 @@
 		if (isOwner && selectedTab === 'collection') {
 			if (isEditing) {
 				// Show Save button when editing, hide overflow menu
-				sidebar.setAction(() => editPaneRef?.save(), 'Save', elementName)
+				sidebar.setAction(() => editPaneRef?.save(), m.action_save(), elementName)
 				sidebar.clearOverflowMenu()
 			} else {
 				// Show Edit button and overflow menu when viewing
-				sidebar.setAction(enterEditMode, 'Edit', elementName)
+				sidebar.setAction(enterEditMode, m.action_edit(), elementName)
 				sidebar.setOverflowMenu([
 					{
 						label: 'Remove from collection',

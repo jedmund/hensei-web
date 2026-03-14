@@ -1,5 +1,6 @@
 <script lang="ts">
 	// Components
+	import * as m from '$lib/paraglide/messages'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import Button from './Button.svelte'
@@ -125,10 +126,10 @@
 					onclick={onSave}
 					disabled={isSaving}
 				>
-					{isSaving ? 'Saving...' : 'Save'}
+					{isSaving ? m.action_saving() : m.action_save()}
 				</Button>
 			{:else if editUrl}
-				<Button variant="secondary" size="medium" href={editUrl}>Edit</Button>
+				<Button variant="secondary" size="medium" href={editUrl}>{m.action_edit()}</Button>
 			{/if}
 		</div>
 	{/if}
