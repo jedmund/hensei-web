@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { CollectionSummon } from '$lib/types/api/collection'
+	import { localizedName } from '$lib/utils/locale'
 	import { getSummonImage, getSummonTransformation } from '$lib/utils/images'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
@@ -14,12 +15,7 @@
 
 	const imageUrl = $derived(getSummonImage(summon.summon?.granblueId, 'wide', transformation))
 
-	const displayName = $derived.by(() => {
-		const name = summon.summon?.name
-		if (!name) return '—'
-		if (typeof name === 'string') return name
-		return name.en || name.ja || '—'
-	})
+	const displayName = $derived(localizedName(summon.summon?.name))
 </script>
 
 <button type="button" class="summon-card" onclick={onClick}>

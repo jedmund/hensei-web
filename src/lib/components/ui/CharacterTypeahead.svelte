@@ -5,6 +5,7 @@
 	import Icon from '../Icon.svelte'
 	import { searchAdapter, type SearchResult } from '$lib/api/adapters/search.adapter'
 	import { getCharacterImage } from '$lib/utils/images'
+	import { localizedName, appLocale } from '$lib/utils/locale'
 
 	interface CharacterOption {
 		id: string
@@ -101,12 +102,12 @@
 			const response = await searchAdapter.searchCharacters({
 				query,
 				per: 20,
-				locale: 'en'
+				locale: appLocale()
 			})
 
 			searchResults = response.results.map((result: SearchResult) => ({
 				id: result.id,
-				label: result.name?.en || result.name?.ja || result.granblueId,
+				label: localizedName(result.name) !== '—' ? localizedName(result.name) : result.granblueId,
 				granblueId: result.granblueId,
 				element: result.element
 			}))

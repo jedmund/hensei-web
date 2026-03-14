@@ -2,6 +2,7 @@
 	import type { CollectionWeapon } from '$lib/types/api/collection'
 	import { getWeaponImage } from '$lib/utils/images'
 	import { getAwakeningImage } from '$lib/utils/modifiers'
+	import { localizedName } from '$lib/utils/locale'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
 	interface Props {
@@ -24,12 +25,7 @@
 	// Get awakening image URL
 	const awakeningImage = $derived(getAwakeningImage(weapon.awakening ?? undefined))
 
-	const displayName = $derived.by(() => {
-		const name = weapon.weapon?.name
-		if (!name) return '—'
-		if (typeof name === 'string') return name
-		return name.en || name.ja || '—'
-	})
+	const displayName = $derived(localizedName(weapon.weapon?.name))
 </script>
 
 <button type="button" class="weapon-card" onclick={onClick}>
@@ -38,7 +34,7 @@
 			<img
 				class="awakening"
 				src={awakeningImage}
-				alt={`${weapon.awakening?.type?.name?.en || 'Awakening'} Lv${weapon.awakening?.level || 0}`}
+				alt={`${weapon.awakening?.type?.name ? localizedName(weapon.awakening.type.name) : 'Awakening'} Lv${weapon.awakening?.level || 0}`}
 			/>
 		{/if}
 		<img class="weapon-image" src={imageUrl} alt={displayName} loading="lazy" />

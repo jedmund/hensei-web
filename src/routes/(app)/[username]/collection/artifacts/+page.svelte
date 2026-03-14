@@ -185,10 +185,7 @@
 	}
 
 	function openArtifactDetails(artifact: CollectionArtifact) {
-		const artifactName =
-			typeof artifact.artifact?.name === 'string'
-				? artifact.artifact.name
-				: artifact.artifact?.name?.en || 'Artifact'
+		const artifactName = localizedName(artifact.artifact?.name)
 
 		sidebar.openWithComponent(
 			artifactName,

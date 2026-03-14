@@ -9,6 +9,7 @@
 	 * The "My Collection" tab includes an edit mode using WeaponEditPane.
 	 */
 	import { onMount } from 'svelte'
+	import { localizedName } from '$lib/utils/locale'
 	import type { CollectionWeapon } from '$lib/types/api/collection'
 	import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'
 	import {
@@ -235,11 +236,7 @@
 
 	function getAwakeningType(): string {
 		if (!weapon.awakening) return '—'
-		const name =
-			typeof weapon.awakening.type.name === 'string'
-				? weapon.awakening.type.name
-				: weapon.awakening.type.name?.en || 'Unknown'
-		return name
+		return localizedName(weapon.awakening.type.name)
 	}
 
 	function getAwakeningLevel(): string {
@@ -250,9 +247,7 @@
 	function getWeaponKeyName(index: number): string {
 		const key = weapon.weaponKeys?.[index]
 		if (!key) return '—'
-		const name = key.name
-		if (typeof name === 'string') return name
-		return name?.en || name?.ja || '—'
+		return localizedName(key.name)
 	}
 
 	// Check conditions

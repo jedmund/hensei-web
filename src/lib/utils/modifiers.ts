@@ -6,6 +6,7 @@ import type { Awakening, WeaponKey } from '$lib/types/api/entities'
 import type { AugmentSkill } from '$lib/types/api/weaponStatModifier'
 import { isWeaponSeriesRef, type WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 import { getBasePath } from '$lib/utils/images'
+import { localizedName } from '$lib/utils/locale'
 
 /**
  * Get the image URL for an awakening type
@@ -105,7 +106,7 @@ export function getWeaponKeyImages(
 		.filter(key => key.slug)
 		.map(key => ({
 			url: getWeaponKeyImage(key, weaponElement, proficiency, weaponSeries, weaponName),
-			alt: key.name?.en || key.slug || 'Weapon Key'
+			alt: key.name ? localizedName(key.name) : (key.slug || 'Weapon Key')
 		}))
 }
 

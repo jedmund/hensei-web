@@ -26,6 +26,7 @@
 	import type { RaidFull } from '$lib/types/api/raid'
 	import type { PartyVisibility } from '$lib/types/visibility'
 	import Icon from '$lib/components/Icon.svelte'
+	import { localizedName } from '$lib/utils/locale'
 
 	export interface PartyEditValues {
 		name: string
@@ -180,8 +181,7 @@
 
 	function getRaidName(r: Raid | null): string {
 		if (!r) return ''
-		if (typeof r.name === 'string') return r.name
-		return r.name?.en || r.name?.ja || 'Unknown Raid'
+		return localizedName(r.name)
 	}
 
 	function openRaidPane() {

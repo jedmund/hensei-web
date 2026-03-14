@@ -5,6 +5,7 @@
 	 * Used in the add to collection modal for selecting summons with
 	 * quantity support (users can own multiple copies).
 	 */
+	import { localizedName } from '$lib/utils/locale'
 	import { getSummonImage } from '$lib/utils/images'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import QuantityCounter from './QuantityCounter.svelte'
@@ -22,11 +23,7 @@
 
 	const imageUrl = $derived(getSummonImage(summon.granblueId, 'grid'))
 
-	const name = $derived(
-		typeof summon.name === 'string'
-			? summon.name
-			: summon.name?.en || summon.name?.ja || 'Unknown'
-	)
+	const name = $derived(localizedName(summon.name))
 
 	const element = $derived(summon.element)
 

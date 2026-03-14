@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { localizedName } from '$lib/utils/locale'
 	import { getCharacterImage } from '$lib/utils/images'
 	import Icon from '$lib/components/Icon.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
@@ -16,11 +17,7 @@
 
 	const imageUrl = $derived(getCharacterImage(character.granblueId, 'grid', '01'))
 
-	const name = $derived(
-		typeof character.name === 'string'
-			? character.name
-			: character.name?.en || character.name?.ja || 'Unknown'
-	)
+	const name = $derived(localizedName(character.name))
 
 	const element = $derived(character.element)
 

@@ -83,7 +83,7 @@
 		}
 
 		// Get series name for message - use localized name from series object
-		const seriesName = getSeriesDisplayName(weapon.series, locale)
+		const seriesName = getSeriesDisplayName(weapon.series)
 
 		return m.conflict_weapon_series({ series: seriesName })
 	})

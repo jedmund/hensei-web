@@ -31,6 +31,7 @@
 	import { getRingStat, getElementalizedEarringStat } from '$lib/utils/masteryUtils'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { localizedName } from '$lib/utils/locale'
 
 	interface Props {
 		character: CollectionCharacter
@@ -224,7 +225,7 @@
 	function getRingLabel(ring: ExtendedMastery | null): string {
 		if (!ring || ring.modifier === 0) return '—'
 		const stat = getRingStat(ring.modifier)
-		return stat?.name?.en ?? '—'
+		return localizedName(stat?.name)
 	}
 
 	function getRingValue(ring: ExtendedMastery | null): string {
@@ -237,7 +238,7 @@
 	function getEarringLabel(): string {
 		if (!character.earring || character.earring.modifier === 0) return '—'
 		const stat = getElementalizedEarringStat(character.earring.modifier, characterData?.element)
-		return stat?.name?.en ?? '—'
+		return localizedName(stat?.name)
 	}
 
 	function getEarringValue(): string {
@@ -249,11 +250,7 @@
 
 	function getAwakeningType(): string {
 		if (!character.awakening) return '—'
-		const name =
-			typeof character.awakening.type.name === 'string'
-				? character.awakening.type.name
-				: character.awakening.type.name?.en || 'Unknown'
-		return name
+		return localizedName(character.awakening.type.name)
 	}
 
 	function getAwakeningLevel(): string {

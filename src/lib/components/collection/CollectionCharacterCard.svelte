@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { CollectionCharacter } from '$lib/types/api/collection'
+	import { localizedName } from '$lib/utils/locale'
 	import { getCharacterImageWithPose } from '$lib/utils/images'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
@@ -24,12 +25,7 @@
 		)
 	)
 
-	const displayName = $derived.by(() => {
-		const name = character.character?.name
-		if (!name) return '—'
-		if (typeof name === 'string') return name
-		return name.en || name.ja || '—'
-	})
+	const displayName = $derived(localizedName(character.character?.name))
 </script>
 
 <button type="button" class="character-card" onclick={onClick}>

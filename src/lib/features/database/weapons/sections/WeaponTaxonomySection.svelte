@@ -55,7 +55,7 @@
 	// Format series label for display mode
 	function formatSeriesLabel(series: WeaponSeriesRef | null | undefined): string {
 		if (!series) return '—'
-		return getSeriesDisplayName(series, 'en') || '—'
+		return getSeriesDisplayName(series) || '—'
 	}
 </script>
 

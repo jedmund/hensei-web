@@ -5,6 +5,7 @@
 	import Icon from '../Icon.svelte'
 	import { searchAdapter, type SearchResult } from '$lib/api/adapters/search.adapter'
 	import { getWeaponGridImage } from '$lib/utils/images'
+	import { localizedName, appLocale } from '$lib/utils/locale'
 
 	interface WeaponOption {
 		id: string
@@ -101,12 +102,12 @@
 			const response = await searchAdapter.searchWeapons({
 				query,
 				per: 20,
-				locale: 'en'
+				locale: appLocale()
 			})
 
 			searchResults = response.results.map((result: SearchResult) => ({
 				id: result.id,
-				label: result.name?.en || result.name?.ja || result.granblueId,
+				label: localizedName(result.name) !== '—' ? localizedName(result.name) : result.granblueId,
 				granblueId: result.granblueId,
 				element: result.element
 			}))

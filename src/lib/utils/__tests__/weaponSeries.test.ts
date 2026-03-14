@@ -83,9 +83,10 @@ describe('getSeriesDisplayName', () => {
 		)
 	})
 
-	it('returns Japanese name', () => {
-		expect(getSeriesDisplayName(makeSeries({ name: { en: 'Dark Opus', ja: '暗黒' } }), 'ja')).toBe(
-			'暗黒'
+	it('returns localized name from app locale', () => {
+		// localizedName() uses the app locale (defaults to 'en' in tests)
+		expect(getSeriesDisplayName(makeSeries({ name: { en: 'Dark Opus', ja: '暗黒' } }))).toBe(
+			'Dark Opus'
 		)
 	})
 

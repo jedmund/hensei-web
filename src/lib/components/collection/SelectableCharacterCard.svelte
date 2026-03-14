@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { localizedName } from '$lib/utils/locale'
 	import { getCharacterImage } from '$lib/utils/images'
 	import Icon from '$lib/components/Icon.svelte'
 	import type { SearchPageResult } from '$lib/api/queries/search.queries'
@@ -17,11 +18,7 @@
 		getCharacterImage(character.granblueId, 'grid', '01')
 	)
 
-	const name = $derived(
-		typeof character.name === 'string'
-			? character.name
-			: character.name?.en || character.name?.ja || 'Unknown'
-	)
+	const name = $derived(localizedName(character.name))
 
 	function handleClick() {
 		onToggle?.(character)

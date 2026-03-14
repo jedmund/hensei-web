@@ -6,6 +6,7 @@
   import { toast } from 'svelte-sonner'
   import { extractErrorMessage } from '$lib/utils/errors'
   import { getElementColor } from '$lib/utils/gw'
+  import { localizedName } from '$lib/utils/locale'
 
   interface Props {
     open?: boolean
@@ -208,9 +209,7 @@
   }
 
   function getItemName(item: SearchResult): string {
-    const name = item.name
-    if (typeof name === 'string') return name
-    return name?.en || name?.ja || 'Unknown'
+    return localizedName(item.name)
   }
 </script>
 

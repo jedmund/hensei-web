@@ -19,6 +19,7 @@
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
 	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
+	import { localizedName } from '$lib/utils/locale'
 
 	const { data }: { data: PageData } = $props()
 
@@ -119,10 +120,7 @@
 	}
 
 	function openCharacterDetails(character: CollectionCharacter) {
-		const characterName =
-			typeof character.character?.name === 'string'
-				? character.character.name
-				: character.character?.name?.en || 'Character'
+		const characterName = localizedName(character.character?.name)
 
 		sidebar.openWithComponent(characterName, CollectionCharacterPane, {
 			character,

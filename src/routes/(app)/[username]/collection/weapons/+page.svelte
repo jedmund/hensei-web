@@ -19,6 +19,7 @@
 	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
 	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
+	import { localizedName } from '$lib/utils/locale'
 
 	const { data }: { data: PageData } = $props()
 
@@ -115,10 +116,7 @@
 	}
 
 	function openWeaponDetails(weapon: CollectionWeapon) {
-		const weaponName =
-			typeof weapon.weapon?.name === 'string'
-				? weapon.weapon.name
-				: weapon.weapon?.name?.en || 'Weapon'
+		const weaponName = localizedName(weapon.weapon?.name)
 
 		sidebar.openWithComponent(weaponName, CollectionWeaponPane, {
 			weapon,

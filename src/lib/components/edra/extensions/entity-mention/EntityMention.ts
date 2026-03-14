@@ -6,6 +6,7 @@
  */
 import Mention from '@tiptap/extension-mention'
 import { mergeAttributes } from '@tiptap/core'
+import { localizedName } from '$lib/utils/locale'
 
 /** Element ID to slug mapping */
 const ELEMENT_SLUGS: Record<number, string> = {
@@ -44,8 +45,12 @@ export const EntityMention = Mention.extend({
 	renderHTML({ node, HTMLAttributes }) {
 		const id = node.attrs.id
 
-		// Extract name - handle various formats from legacy data
-		const name = id?.name?.en ?? id?.granblue_en ?? 'Unknown'
+		// English name for wiki URL (wiki is English-only)
+		const wikiName = id?.name?.en ?? id?.granblue_en ?? 'Unknown'
+
+		// Localized name for display text
+		const localized = localizedName(id?.name)
+		const displayName = localized !== '—' ? localized : (id?.granblue_en ?? 'Unknown')
 
 		// Get element slug for styling
 		const elementSlug = getElementSlug(id?.element)
@@ -57,7 +62,7 @@ export const EntityMention = Mention.extend({
 			'a',
 			mergeAttributes(
 				{
-					href: `https://gbf.wiki/${encodeURIComponent(name.replace(/ /g, '_'))}`,
+					href: `https://gbf.wiki/${encodeURIComponent(wikiName.replace(/ /g, '_'))}`,
 					target: '_blank',
 					rel: 'noopener noreferrer'
 				},
@@ -67,7 +72,7 @@ export const EntityMention = Mention.extend({
 				this.options.HTMLAttributes,
 				HTMLAttributes
 			),
-			name
+			displayName
 		]
 	}
 })
