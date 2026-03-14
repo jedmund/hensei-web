@@ -155,6 +155,7 @@
 	"artifact_score_atk": "ATK",
 	"artifact_score_def": "DEF",
 	"artifact_score_special": "Special",
+	"artifact_score_total": "Total",
 	"artifact_no_score": "No score",
 	"artifact_scrap": "Scrap",
 	"artifact_keep": "Keep",

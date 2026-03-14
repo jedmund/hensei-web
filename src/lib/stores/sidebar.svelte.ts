@@ -218,6 +218,14 @@ class SidebarStore {
 	}
 
 	/**
+	 * Set the overflow menu items for a specific pane by ID.
+	 * Use this when the pane may not be on top of the stack.
+	 */
+	setOverflowMenuForPane(paneId: string, items: OverflowMenuItem[] | undefined) {
+		this.paneStack.updatePaneById(paneId, { overflowMenu: items })
+	}
+
+	/**
 	 * Clear the overflow menu for the current pane
 	 */
 	clearOverflowMenu() {
