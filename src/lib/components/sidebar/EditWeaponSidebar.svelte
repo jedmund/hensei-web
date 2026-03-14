@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages'
 	import { localizedName } from '$lib/utils/locale'
 	import type { GridWeapon } from '$lib/types/api/party'
 	import type { WeaponKey } from '$lib/api/adapters/entity.adapter'
@@ -103,13 +104,13 @@
 
 	// Element options
 	const elementOptions = [
-		{ value: 0, label: 'No element', image: getElementIcon(0) },
-		{ value: 1, label: 'Wind', image: getElementIcon(1) },
-		{ value: 2, label: 'Fire', image: getElementIcon(2) },
-		{ value: 3, label: 'Water', image: getElementIcon(3) },
-		{ value: 4, label: 'Earth', image: getElementIcon(4) },
-		{ value: 5, label: 'Dark', image: getElementIcon(5) },
-		{ value: 6, label: 'Light', image: getElementIcon(6) }
+		{ value: 0, label: m.element_no_element(), image: getElementIcon(0) },
+		{ value: 1, label: m.element_wind(), image: getElementIcon(1) },
+		{ value: 2, label: m.element_fire(), image: getElementIcon(2) },
+		{ value: 3, label: m.element_water(), image: getElementIcon(3) },
+		{ value: 4, label: m.element_earth(), image: getElementIcon(4) },
+		{ value: 5, label: m.element_dark(), image: getElementIcon(5) },
+		{ value: 6, label: m.element_light(), image: getElementIcon(6) }
 	]
 
 	function displayName(input: any): string {
@@ -248,14 +249,14 @@
 		<div class="sync-banner">
 			<div class="sync-message">
 				<Icon name="refresh-cw" size={14} />
-				<span>Out of sync with collection</span>
+				<span>{m.sidebar_weapon_out_of_sync()}</span>
 			</div>
 			<button
 				class="sync-button"
 				onclick={handleSync}
 				disabled={isSyncing}
 			>
-				{isSyncing ? 'Syncing...' : 'Sync'}
+				{isSyncing ? m.sidebar_weapon_syncing() : m.sidebar_weapon_sync()}
 			</button>
 		</div>
 	{/if}
@@ -355,9 +356,9 @@
 	</div>
 
 	<div class="edit-footer">
-		<Button variant="secondary" onclick={handleCancel}>Cancel</Button>
+		<Button variant="secondary" onclick={handleCancel}>{m.action_cancel()}</Button>
 		<Button variant="primary" element={elementName} elementStyle={!!elementName} onclick={handleSave}>
-			Save
+			{m.action_save()}
 		</Button>
 	</div>
 </div>

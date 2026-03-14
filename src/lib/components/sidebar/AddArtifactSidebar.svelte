@@ -64,26 +64,26 @@
 
 	// Proficiency options - matches database enum values
 	const proficiencyOptions = [
-		{ value: 1, label: 'Sabre' },
-		{ value: 2, label: 'Dagger' },
-		{ value: 3, label: 'Axe' },
-		{ value: 4, label: 'Spear' },
-		{ value: 5, label: 'Bow' },
-		{ value: 6, label: 'Staff' },
-		{ value: 7, label: 'Melee' },
-		{ value: 8, label: 'Harp' },
-		{ value: 9, label: 'Gun' },
-		{ value: 10, label: 'Katana' }
+		{ value: 1, label: m.proficiency_sabre() },
+		{ value: 2, label: m.proficiency_dagger() },
+		{ value: 3, label: m.proficiency_axe() },
+		{ value: 4, label: m.proficiency_spear() },
+		{ value: 5, label: m.proficiency_bow() },
+		{ value: 6, label: m.proficiency_staff() },
+		{ value: 7, label: m.proficiency_melee() },
+		{ value: 8, label: m.proficiency_harp() },
+		{ value: 9, label: m.proficiency_gun() },
+		{ value: 10, label: m.proficiency_katana() }
 	]
 
 	// Element options with colored dots
 	const elementOptions = [
-		{ value: 1, label: 'Wind', color: getElementColor(1) },
-		{ value: 2, label: 'Fire', color: getElementColor(2) },
-		{ value: 3, label: 'Water', color: getElementColor(3) },
-		{ value: 4, label: 'Earth', color: getElementColor(4) },
-		{ value: 5, label: 'Dark', color: getElementColor(5) },
-		{ value: 6, label: 'Light', color: getElementColor(6) }
+		{ value: 1, label: m.element_wind(), color: getElementColor(1) },
+		{ value: 2, label: m.element_fire(), color: getElementColor(2) },
+		{ value: 3, label: m.element_water(), color: getElementColor(3) },
+		{ value: 4, label: m.element_earth(), color: getElementColor(4) },
+		{ value: 5, label: m.element_dark(), color: getElementColor(5) },
+		{ value: 6, label: m.element_light(), color: getElementColor(6) }
 	]
 
 	// Filter artifacts by selected proficiency

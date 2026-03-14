@@ -10,6 +10,7 @@
 	 * - AX skills (for weapons with AX support)
 	 * - Awakening (for weapons with awakening support)
 	 */
+	import * as m from '$lib/paraglide/messages'
 	import type { Weapon, Awakening } from '$lib/types/api/entities'
 	import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
@@ -134,12 +135,12 @@
 
 	// Element options
 	const elementOptions = [
-		{ value: 1, label: 'Wind', image: getElementIcon(1) },
-		{ value: 2, label: 'Fire', image: getElementIcon(2) },
-		{ value: 3, label: 'Water', image: getElementIcon(3) },
-		{ value: 4, label: 'Earth', image: getElementIcon(4) },
-		{ value: 5, label: 'Dark', image: getElementIcon(5) },
-		{ value: 6, label: 'Light', image: getElementIcon(6) }
+		{ value: 1, label: m.element_wind(), image: getElementIcon(1) },
+		{ value: 2, label: m.element_fire(), image: getElementIcon(2) },
+		{ value: 3, label: m.element_water(), image: getElementIcon(3) },
+		{ value: 4, label: m.element_earth(), image: getElementIcon(4) },
+		{ value: 5, label: m.element_dark(), image: getElementIcon(5) },
+		{ value: 6, label: m.element_light(), image: getElementIcon(6) }
 	]
 
 	// Awakening slug to UUID map
