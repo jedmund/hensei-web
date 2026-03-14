@@ -59,16 +59,16 @@
 				if (dataPoint?.isGap) {
 					return `${point.name}<br/><span style="color: var(--text-tertiary)">${m.gw_chart_not_in_crew()}</span><br/>${dataPoint?.date ?? ''}`
 				}
-				return `${point.name}<br/>Score: ${formatScore(point.value ?? 0)}<br/>${dataPoint?.date ?? ''}`
+				return `${point.name}<br/>${m.gw_chart_score_label({ score: formatScore(point.value ?? 0) })}<br/>${dataPoint?.date ?? ''}`
 			}
 		},
 		toolbox: {
 			feature: {
 				dataZoom: {
 					yAxisIndex: 'none' as const,
-					title: { zoom: 'Zoom', back: 'Reset' }
+					title: { zoom: m.gw_chart_zoom(), back: m.gw_chart_reset() }
 				},
-				restore: { title: 'Reset' }
+				restore: { title: m.gw_chart_reset() }
 			},
 			right: 20
 		},
