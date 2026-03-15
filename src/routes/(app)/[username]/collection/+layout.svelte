@@ -333,7 +333,9 @@
 	@use '$src/themes/typography' as *;
 
 	.collection {
-		padding: $unit-2x 0;
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
 	}
 
 	.card-container {

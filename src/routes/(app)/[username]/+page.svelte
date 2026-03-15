@@ -130,7 +130,9 @@
 	@use '$src/themes/colors' as *;
 
 	.profile {
-		padding: $unit-2x 0;
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
 	}
 
 	.empty,
