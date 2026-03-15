@@ -11,6 +11,7 @@
   import { getPlaceholderImage, getSummonTransformation } from '$lib/utils/images'
   import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
   import { sidebar } from '$lib/stores/sidebar.svelte'
+  import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
   import { GridType } from '$lib/types/enums'
   import * as m from '$lib/paraglide/messages'
   import { localizedName } from '$lib/utils/locale'
@@ -91,7 +92,7 @@
 
   function viewInDatabase() {
     if (!item?.summon?.granblueId) return
-    goto(`/database/summons/${item.summon.granblueId}`)
+    goto(getDatabaseUrl('summon', item.summon.granblueId))
   }
 
   // Duplicate: find the first empty sub-summon slot (0-3)
@@ -136,7 +137,7 @@
   }
 
   // Check if user can view database (role >= 7)
-  let canViewDatabase = $derived(($page.data.account?.role ?? 0) >= 7)
+  let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
 
 </script>
 

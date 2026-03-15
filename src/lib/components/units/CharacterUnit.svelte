@@ -12,6 +12,7 @@
 	import { getCharacterImageWithPose, getPlaceholderImage } from '$lib/utils/images'
 	import { openDetailsSidebar, openCharacterEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { canCharacterBeModified } from '$lib/utils/modificationDetector'
+	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { GridType } from '$lib/types/enums'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
@@ -131,12 +132,11 @@
 
 	function viewInDatabase() {
 		if (!item?.character?.granblueId) return
-		const styleSuffix = item.character.styleSwap ? '/style' : ''
-		goto(`/database/characters/${item.character.granblueId}${styleSuffix}`)
+		goto(getDatabaseUrl('character', item.character.granblueId, item.character.styleSwap))
 	}
 
 	// Check if user can view database (role >= 7)
-	let canViewDatabase = $derived(($page.data.account?.role ?? 0) >= 7)
+	let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
 
 	// Check if character has a style swap variant available
 	let hasStyleVariant = $derived.by(() => {

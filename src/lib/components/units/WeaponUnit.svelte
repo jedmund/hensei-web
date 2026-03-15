@@ -11,6 +11,7 @@
 	import { getPlaceholderImage } from '$lib/utils/images'
 	import { openDetailsSidebar, openWeaponEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { canWeaponBeModified } from '$lib/utils/modificationDetector'
+	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { getAwakeningImage, getWeaponKeyImages, getAxSkillImages } from '$lib/utils/modifiers'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { GridType } from '$lib/types/enums'
@@ -140,7 +141,7 @@
 
 	function viewInDatabase() {
 		if (!item?.weapon?.granblueId) return
-		goto(`/database/weapons/${item.weapon.granblueId}`)
+		goto(getDatabaseUrl('weapon', item.weapon.granblueId))
 	}
 
 	// Duplicate: find the first empty sub-weapon slot (0-8)
@@ -185,7 +186,7 @@
 	}
 
 	// Check if user can view database (role >= 7)
-	let canViewDatabase = $derived(($page.data.account?.role ?? 0) >= 7)
+	let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
 </script>
 
 <div

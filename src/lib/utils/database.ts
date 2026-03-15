@@ -15,6 +15,19 @@ export function getSummonImageUrl(gbid?: string | number): string {
 	return getSummonImage(gbid, 'square')
 }
 
+export function getDatabaseUrl(
+	type: 'character' | 'weapon' | 'summon',
+	granblueId: string,
+	styleSwap?: boolean
+): string {
+	const base = `/database/${type}s/${granblueId}`
+	return type === 'character' && styleSwap ? `${base}/style` : base
+}
+
+export function canAccessDatabase(role: number | undefined | null): boolean {
+	return (role ?? 0) >= 7
+}
+
 export function getItemName(item: { name?: string | { en?: string; ja?: string } }): string {
 	const name = item.name
 
