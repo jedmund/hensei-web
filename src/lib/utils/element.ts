@@ -28,6 +28,31 @@ const ELEMENT_KEYS: Record<number, string> = {
 	6: 'Light'
 }
 
+// Hex colors for each element (used in charts, filters, SVG rendering)
+const ELEMENT_COLORS: Record<number, string> = {
+	0: '#888888',
+	1: '#3ee489',
+	2: '#fa6d6d',
+	3: '#6cc9ff',
+	4: '#fd9f5b',
+	5: '#de7bff',
+	6: '#e8d633'
+}
+
+// Emoji for each element (used in embed titles, text representations)
+const ELEMENT_EMOJIS: Record<number, string> = {
+	0: '⚪',
+	1: '🟢',
+	2: '🔴',
+	3: '🔵',
+	4: '🟤',
+	5: '🟣',
+	6: '🟡'
+}
+
+// Display order: Fire → Water → Earth → Wind → Light → Dark
+export const ELEMENT_DISPLAY_ORDER = [2, 3, 4, 1, 6, 5] as const
+
 const ELEMENT_MESSAGES: Record<number, () => string> = {
 	0: m.element_null,
 	1: m.element_wind,
@@ -60,6 +85,20 @@ export function getElementIcon(element?: number): string {
 	if (key === 'Null') return `${getBasePath()}/labels/element/Label_Element_Any.png`
 	const capitalizedKey = key.charAt(0).toUpperCase() + key.slice(1)
 	return `${getBasePath()}/labels/element/Label_Element_${capitalizedKey}.png`
+}
+
+export function getElementKey(element?: number): string {
+	if (element === undefined || element === null) return 'null'
+	return (ELEMENT_KEYS[element] ?? 'null').toLowerCase()
+}
+
+export function getElementColor(element?: number): string {
+	if (element === undefined || element === null) return '#888888'
+	return ELEMENT_COLORS[element] ?? '#888888'
+}
+
+export function getElementEmoji(element?: number | null): string {
+	return ELEMENT_EMOJIS[element ?? 0] ?? '⚪'
 }
 
 export function getElementOptions() {
