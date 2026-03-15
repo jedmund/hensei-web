@@ -23,23 +23,13 @@
 
   let { open = $bindable(false), filters, onSave, onOpenChange, element }: Props = $props()
 
-  // Local editing state
-  let minCharacters = $state(filters.characters_count ?? 3)
-  let minWeapons = $state(filters.weapons_count ?? 5)
-  let minSummons = $state(filters.summons_count ?? 2)
-  let nameQuality = $state(filters.name_quality ?? false)
-  let userQuality = $state(filters.user_quality ?? false)
-  let originalOnly = $state(filters.original ?? false)
-
-  // Sync when filters prop changes
-  $effect(() => {
-    minCharacters = filters.characters_count ?? 3
-    minWeapons = filters.weapons_count ?? 5
-    minSummons = filters.summons_count ?? 2
-    nameQuality = filters.name_quality ?? false
-    userQuality = filters.user_quality ?? false
-    originalOnly = filters.original ?? false
-  })
+  // Local editing state derived from props — overrides are temporary
+  let minCharacters = $derived(filters.characters_count ?? 3)
+  let minWeapons = $derived(filters.weapons_count ?? 5)
+  let minSummons = $derived(filters.summons_count ?? 2)
+  let nameQuality = $derived(filters.name_quality ?? false)
+  let userQuality = $derived(filters.user_quality ?? false)
+  let originalOnly = $derived(filters.original ?? false)
 
   function save() {
     const result: FilterSet = {

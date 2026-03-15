@@ -34,13 +34,13 @@
 	let activeSection = $state<string>('profile')
 
 	// Form state - Account section (initialized empty, populated from API)
-	let formUsername = $state(username)
+	let formUsername = $derived(username)
 	let formEmail = $state('')
 	let emailVerified = $state(false)
 	let currentPassword = $state('')
 	let newPassword = $state('')
 	let confirmPassword = $state('')
-	let bahamut = $state(user.bahamut ?? false) // Client-side preference, kept in cookie
+	let bahamut = $derived(user.bahamut ?? false) // Client-side preference, kept in cookie
 
 	// Form state - Profile section (initialized with defaults, populated from API)
 	let picture = $state('')
