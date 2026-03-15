@@ -143,6 +143,7 @@ export interface Summon {
     transcendence: boolean
   }
   subaura: boolean
+  limit: boolean
   hp: {
     minHp: number
     maxHp: number

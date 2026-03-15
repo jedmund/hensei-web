@@ -273,6 +273,7 @@ export interface Summon {
 		transcendence?: boolean
 	}
 	subaura?: boolean
+	limit?: boolean
 	cooldown?: number
 	callName?: string
 	callDescription?: string
