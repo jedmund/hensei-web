@@ -322,7 +322,7 @@
 			special={item.character?.special}
 			flb={item.character?.uncap?.flb}
 			ulb={item.character?.uncap?.ulb}
-			transcendence={!item.character?.special && item.character?.uncap?.ulb}
+			transcendence={item.character?.uncap?.transcendence}
 			editable={ctx?.canEdit()}
 			updateUncap={async (level) => {
 				if (!item?.id || !ctx) return

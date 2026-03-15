@@ -48,7 +48,7 @@
 		special={character.character?.special}
 		flb={character.character?.uncap?.flb}
 		ulb={character.character?.uncap?.ulb}
-		transcendence={!character.character?.special && character.character?.uncap?.ulb}
+		transcendence={character.character?.uncap?.transcendence}
 	/>
 	<span class="character-name">{displayName}</span>
 	{#if character.character}
