@@ -10,11 +10,13 @@
 		showAdd?: boolean
 		/** Callback when + button or header is clicked */
 		onAdd?: () => void
+		/** Optional snippet rendered to the right of the header label */
+		headerAction?: Snippet
 		class?: string
 		children: Snippet
 	}
 
-	let { label, clickable = false, onclick, showAdd = false, onAdd, class: className = '', children }: Props = $props()
+	let { label, clickable = false, onclick, showAdd = false, onAdd, headerAction, class: className = '', children }: Props = $props()
 </script>
 
 <div
@@ -26,7 +28,7 @@
 	onkeydown={clickable ? (e) => e.key === 'Enter' && onclick?.() : undefined}
 >
 	{#if label}
-		<div class="tile-header">
+		<div class="tile-header" class:has-action={headerAction || (showAdd && onAdd)}>
 			{#if showAdd && onAdd}
 				<button type="button" class="tile-header-button" onclick={onAdd}>
 					<h3 class="tile-label">{label}</h3>
@@ -34,6 +36,9 @@
 				</button>
 			{:else}
 				<h3 class="tile-label">{label}</h3>
+				{#if headerAction}
+					{@render headerAction()}
+				{/if}
 			{/if}
 		</div>
 	{/if}
@@ -52,7 +57,7 @@
 		background: var(--card-bg);
 		border: 0.5px solid var(--button-bg);
 		border-radius: $card-corner;
-		padding: $unit-2x;
+		padding: $unit $unit $unit-2x $unit-2x;
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
@@ -75,6 +80,11 @@
 		.tile-header {
 			display: flex;
 			align-items: center;
+			min-height: 30px;
+
+			&.has-action {
+				justify-content: space-between;
+			}
 		}
 
 		.tile-label {
