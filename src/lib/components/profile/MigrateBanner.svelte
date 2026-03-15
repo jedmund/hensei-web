@@ -8,6 +8,12 @@
 	import { hasEditKeys } from '$lib/utils/editKeys'
 	import { userQueries } from '$lib/api/queries/user.queries'
 
+	interface Props {
+		element?: string
+	}
+
+	let { element = 'water' }: Props = $props()
+
 	let showDialog = $state(false)
 	let dismissed = $state(false)
 
@@ -25,7 +31,7 @@
 </script>
 
 {#if visible}
-	<div class="migrate-banner">
+	<div class="migrate-banner element-{element}">
 		<div class="banner-content">
 			<Icon name="info" size={18} />
 			<p>{m.migrate_banner_text()}</p>
@@ -47,9 +53,8 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: $unit-2x;
-		padding: $unit-half $unit-2x;
-		background: var(--toast-info-bg);
-		border: 1px solid var(--border-subtle);
+		padding: $unit-2x;
+		padding-left: $unit-3x;
 		border-radius: $unit;
 		margin-bottom: $unit-2x;
 	}
@@ -58,17 +63,54 @@
 		display: flex;
 		align-items: center;
 		gap: $unit;
-		color: var(--text-primary);
 
 		p {
 			margin: 0;
 			font-size: $font-small;
 			line-height: 1.4;
 		}
+	}
 
-		:global(svg) {
-			flex-shrink: 0;
-			color: var(--accent-blue);
-		}
+	// Element-specific styles
+	.element-wind {
+		background: var(--wind-bg);
+		color: var(--wind-text);
+
+		:global(svg) { color: var(--wind-text); }
+	}
+
+	.element-fire {
+		background: var(--fire-bg);
+		color: var(--fire-text);
+
+		:global(svg) { color: var(--fire-text); }
+	}
+
+	.element-water {
+		background: var(--water-bg);
+		color: var(--water-text);
+
+		:global(svg) { color: var(--water-text); }
+	}
+
+	.element-earth {
+		background: var(--earth-bg);
+		color: var(--earth-text);
+
+		:global(svg) { color: var(--earth-text); }
+	}
+
+	.element-dark {
+		background: var(--dark-bg);
+		color: var(--dark-text);
+
+		:global(svg) { color: var(--dark-text); }
+	}
+
+	.element-light {
+		background: var(--light-bg);
+		color: var(--light-text);
+
+		:global(svg) { color: var(--light-text); }
 	}
 </style>

@@ -81,7 +81,7 @@
 	/>
 
 	{#if isOwner}
-		<MigrateBanner />
+		<MigrateBanner element={data.user?.avatar?.element} />
 	{/if}
 
 	{#if partiesQuery.isLoading}
