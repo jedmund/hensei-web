@@ -121,6 +121,76 @@ describe('getCharacterPose', () => {
 })
 
 // ============================================================================
+// getSummonTransformation
+// ============================================================================
+
+import { getSummonTransformation, getWeaponTransformation } from '../images'
+
+describe('getSummonTransformation', () => {
+	const ALT_ART_SUMMON = '2040094000' // Bahamut
+
+	it('returns undefined for summons not in the alt art set', () => {
+		expect(getSummonTransformation('9999999999', 5)).toBeUndefined()
+	})
+
+	it('returns undefined for null/undefined id', () => {
+		expect(getSummonTransformation(null, 5)).toBeUndefined()
+		expect(getSummonTransformation(undefined, 5)).toBeUndefined()
+	})
+
+	it('returns undefined for base uncap (< 5)', () => {
+		expect(getSummonTransformation(ALT_ART_SUMMON, 4)).toBeUndefined()
+	})
+
+	it('returns 02 for ULB (uncap >= 5, no transcendence)', () => {
+		expect(getSummonTransformation(ALT_ART_SUMMON, 5)).toBe('02')
+		expect(getSummonTransformation(ALT_ART_SUMMON, 5, 0)).toBe('02')
+	})
+
+	it('returns 03 for transcendence steps 1-4', () => {
+		expect(getSummonTransformation(ALT_ART_SUMMON, 5, 1)).toBe('03')
+		expect(getSummonTransformation(ALT_ART_SUMMON, 5, 4)).toBe('03')
+	})
+
+	it('returns 04 for transcendence step 5+', () => {
+		expect(getSummonTransformation(ALT_ART_SUMMON, 5, 5)).toBe('04')
+		expect(getSummonTransformation(ALT_ART_SUMMON, 5, 6)).toBe('04')
+	})
+
+	it('accepts numeric id', () => {
+		expect(getSummonTransformation(2040094000, 5)).toBe('02')
+	})
+})
+
+// ============================================================================
+// getWeaponTransformation
+// ============================================================================
+
+describe('getWeaponTransformation', () => {
+	it('returns undefined when weapon has no transcendence', () => {
+		expect(getWeaponTransformation(false, 5, 0)).toBeUndefined()
+	})
+
+	it('returns undefined when uncap level is not 6', () => {
+		expect(getWeaponTransformation(true, 5, 1)).toBeUndefined()
+	})
+
+	it('returns 02 for transcendence steps 1-4', () => {
+		expect(getWeaponTransformation(true, 6, 1)).toBe('02')
+		expect(getWeaponTransformation(true, 6, 4)).toBe('02')
+	})
+
+	it('returns 03 for transcendence step 5', () => {
+		expect(getWeaponTransformation(true, 6, 5)).toBe('03')
+	})
+
+	it('returns undefined at uncap 6 with no transcendence steps', () => {
+		expect(getWeaponTransformation(true, 6, 0)).toBeUndefined()
+		expect(getWeaponTransformation(true, 6)).toBeUndefined()
+	})
+})
+
+// ============================================================================
 // getImageUrl
 // ============================================================================
 
