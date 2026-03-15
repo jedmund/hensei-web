@@ -127,18 +127,19 @@
 		/>
 
 		<!-- Email -->
-		<Input
-			label={m.settings_email()}
-			type="email"
-			placeholder={m.settings_email_placeholder()}
-			contained
-			fullWidth
-			bind:value={localEmail}
-			handleInput={handleEmailInput}
-		/>
+		<div class="email-group">
+			<Input
+				label={m.settings_email()}
+				type="email"
+				placeholder={m.settings_email_placeholder()}
+				contained
+				fullWidth
+				bind:value={localEmail}
+				handleInput={handleEmailInput}
+			/>
 
-		<!-- Email verification status -->
-		<div class="verification-status">
+			<!-- Email verification status -->
+			<div class="verification-status">
 			{#if emailVerified}
 				<span class="verified">{m.settings_email_verified()}</span>
 			{:else}
@@ -154,6 +155,7 @@
 					<span class="resend-message">{resendMessage}</span>
 				{/if}
 			{/if}
+			</div>
 		</div>
 
 		<hr class="separator" />
@@ -242,6 +244,12 @@
 		border: none;
 		border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
 		margin: 0;
+	}
+
+	.email-group {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit-half;
 	}
 
 	.verification-status {
