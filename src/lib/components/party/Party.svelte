@@ -94,7 +94,7 @@
 		characters: GridType.Character
 	}
 
-	let activeTab = $state<GridType>(initialTab ?? GridType.Weapon)
+	let activeTab = $derived<GridType>(initialTab ?? GridType.Weapon)
 	let routerReady = $state(false)
 	let selectedSlot = $state<number>(0)
 

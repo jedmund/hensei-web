@@ -37,7 +37,7 @@
 	let { userId, character, currentArtifactId, onSelect, onEquip }: Props = $props()
 
 	// Filter state - auto-filter by character's element
-	let elementFilter = $state<number | undefined>(character?.element)
+	let elementFilter = $derived<number | undefined>(character?.element)
 
 	// Sentinel for infinite scroll
 	let sentinelEl = $state<HTMLElement>()

@@ -85,7 +85,7 @@
 	let rarityFilters = $state<number[]>([])
 	let proficiencyFilters = $state<number[]>([])
 	let seriesFilter = $state<string | undefined>(undefined)
-	let subauraFilter = $state(isSubauraSlot)
+	let subauraFilter = $derived(isSubauraSlot)
 
 	// External user query for collection source from URL param
 	const externalUserQuery = createQuery(() => ({
@@ -95,11 +95,10 @@
 
 	// Search mode state (only available when authUserId is provided)
 	// Default to 'collection' when a collection source is already set on the party
-	const initialSourceUserId = partyStore.party?.collectionSourceUserId
-	let searchMode = $state<SearchMode>(!isFriendSlot && (initialSourceUserId || initialCollectionSourceUsername) ? 'collection' : 'all')
+	let searchMode = $derived<SearchMode>(!isFriendSlot && (collectionSourceUserId || initialCollectionSourceUsername) ? 'collection' : 'all')
 
 	// Crew member selection state (defaults to self; collectionSourceUserId is reactive via partyStore)
-	let selectedMemberId = $state<string | undefined>(authUserId)
+	let selectedMemberId = $derived<string | undefined>(authUserId)
 	let unlinkDialogOpen = $state(false)
 
 	// When external user loads, set selectedMemberId to their userId
@@ -107,11 +106,6 @@
 		if (externalUserQuery.data && !collectionSourceUserId) {
 			selectedMemberId = externalUserQuery.data.id
 		}
-	})
-
-	// Sync subaura filter when slot type changes
-	$effect(() => {
-		subauraFilter = isSubauraSlot
 	})
 
 	// Filter visibility (open by default)
