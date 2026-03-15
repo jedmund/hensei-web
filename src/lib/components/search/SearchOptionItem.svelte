@@ -91,6 +91,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+		color: var(--text-primary);
 	}
 
 	.option-type {
