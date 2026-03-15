@@ -18,13 +18,11 @@
 
 	const { primaryAxSkills, secondaryAxSkills, findAxSkill, isLoading } = useWeaponStatModifiers()
 
-	// State for primary skill
-	let selectedPrimaryId = $state<string>(currentSkills[0]?.modifier?.id ?? '')
-	let primaryStrength = $state<number>(currentSkills[0]?.strength ?? 0)
-
-	// State for secondary skill
-	let selectedSecondaryId = $state<string>(currentSkills[1]?.modifier?.id ?? '')
-	let secondaryStrength = $state<number>(currentSkills[1]?.strength ?? 0)
+	// State derived from props — overrides are temporary until currentSkills prop changes
+	let selectedPrimaryId = $derived<string>(currentSkills[0]?.modifier?.id ?? '')
+	let primaryStrength = $derived<number>(currentSkills[0]?.strength ?? 0)
+	let selectedSecondaryId = $derived<string>(currentSkills[1]?.modifier?.id ?? '')
+	let secondaryStrength = $derived<number>(currentSkills[1]?.strength ?? 0)
 
 	// Get selected modifiers
 	const selectedPrimary = $derived(selectedPrimaryId ? findAxSkill(selectedPrimaryId) : undefined)

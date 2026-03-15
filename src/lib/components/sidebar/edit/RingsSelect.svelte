@@ -19,13 +19,13 @@
 
 	let { rings = [], onChange }: Props = $props()
 
-	// Local state for each ring
-	let ring0Strength = $state(rings[0]?.strength ?? 0)
-	let ring1Strength = $state(rings[1]?.strength ?? 0)
-	let ring2Modifier = $state(rings[2]?.modifier ?? 0)
-	let ring2Strength = $state(rings[2]?.strength ?? 0)
-	let ring3Modifier = $state(rings[3]?.modifier ?? 0)
-	let ring3Strength = $state(rings[3]?.strength ?? 0)
+	// Local state derived from props — overrides are temporary until rings prop changes
+	let ring0Strength = $derived(rings[0]?.strength ?? 0)
+	let ring1Strength = $derived(rings[1]?.strength ?? 0)
+	let ring2Modifier = $derived(rings[2]?.modifier ?? 0)
+	let ring2Strength = $derived(rings[2]?.strength ?? 0)
+	let ring3Modifier = $derived(rings[3]?.modifier ?? 0)
+	let ring3Strength = $derived(rings[3]?.strength ?? 0)
 
 	// Ring 0 and 1 have fixed modifiers (ATK=1, HP=2)
 	const ATK_MODIFIER = 1

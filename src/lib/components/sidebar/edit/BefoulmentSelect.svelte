@@ -20,10 +20,10 @@
 
 	const { befoulments, findBefoulment, isLoading } = useWeaponStatModifiers()
 
-	// State
-	let selectedModifierId = $state<string>(currentBefoulment?.modifier?.id ?? '')
-	let strength = $state<number>(currentBefoulment?.strength ?? 0)
-	let exorcismLevel = $state<number>(currentBefoulment?.exorcismLevel ?? 0)
+	// State derived from props — overrides are temporary until currentBefoulment prop changes
+	let selectedModifierId = $derived<string>(currentBefoulment?.modifier?.id ?? '')
+	let strength = $derived<number>(currentBefoulment?.strength ?? 0)
+	let exorcismLevel = $derived<number>(currentBefoulment?.exorcismLevel ?? 0)
 
 	// Get selected modifier
 	const selectedModifier = $derived(

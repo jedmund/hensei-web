@@ -33,9 +33,9 @@
 		onLevelChange
 	}: Props = $props()
 
-	// Local state for the selected awakening ID (use id or slug as key)
-	let selectedId = $state(value ? (value.id || value.slug || NO_AWAKENING.id) : NO_AWAKENING.id)
-	let localLevel = $state(level)
+	// Local state derived from props — overrides are temporary until props change
+	let selectedId = $derived(value ? (value.id || value.slug || NO_AWAKENING.id) : NO_AWAKENING.id)
+	let localLevel = $derived(level)
 
 	// Error state for level input
 	let levelError = $state('')

@@ -22,9 +22,9 @@
 
 	let { value, element, onChange }: Props = $props()
 
-	// Local state
-	let modifier = $state(value?.modifier ?? 0)
-	let strength = $state(value?.strength ?? 0)
+	// Local state derived from props — overrides are temporary until value prop changes
+	let modifier = $derived(value?.modifier ?? 0)
+	let strength = $derived(value?.strength ?? 0)
 
 	// Get the ItemSkill data for a modifier, with element substitution
 	function getSkillData(mod: number): ItemSkill | undefined {

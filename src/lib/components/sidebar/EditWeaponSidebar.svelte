@@ -44,23 +44,15 @@
 		})
 	}
 
-	// Local state for edits
-	let element = $state(weapon.element ?? weapon.weapon?.element ?? 0)
-
-	// Weapon key state - initialize from existing weapon keys
-	let weaponKey1 = $state<string | undefined>(weapon.weaponKeys?.[0]?.id)
-	let weaponKey2 = $state<string | undefined>(weapon.weaponKeys?.[1]?.id)
-	let weaponKey3 = $state<string | undefined>(weapon.weaponKeys?.[2]?.id)
-
-	// Awakening state - initialize from existing awakening
-	let selectedAwakening = $state<Awakening | undefined>(weapon.awakening?.type)
-	let awakeningLevel = $state(weapon.awakening?.level ?? 1)
-
-	// AX skill state - initialize from existing AX skills
-	let axSkills = $state<AugmentSkill[]>(weapon.ax ?? [])
-
-	// Befoulment state - initialize from existing befoulment
-	let befoulment = $state<Befoulment | null>(weapon.befoulment ?? null)
+	// Local state derived from props — overrides are temporary until weapon prop changes
+	let element = $derived(weapon.element ?? weapon.weapon?.element ?? 0)
+	let weaponKey1 = $derived<string | undefined>(weapon.weaponKeys?.[0]?.id)
+	let weaponKey2 = $derived<string | undefined>(weapon.weaponKeys?.[1]?.id)
+	let weaponKey3 = $derived<string | undefined>(weapon.weaponKeys?.[2]?.id)
+	let selectedAwakening = $derived<Awakening | undefined>(weapon.awakening?.type)
+	let awakeningLevel = $derived(weapon.awakening?.level ?? 1)
+	let axSkills = $derived<AugmentSkill[]>(weapon.ax ?? [])
+	let befoulment = $derived<Befoulment | null>(weapon.befoulment ?? null)
 
 	// Weapon data shortcuts
 	const weaponData = $derived(weapon.weapon)
