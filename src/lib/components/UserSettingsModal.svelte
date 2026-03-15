@@ -34,6 +34,7 @@
 	// Form state - Account section (initialized empty, populated from API)
 	let formUsername = $state(username)
 	let formEmail = $state('')
+	let emailVerified = $state(false)
 	let currentPassword = $state('')
 	let newPassword = $state('')
 	let confirmPassword = $state('')
@@ -88,6 +89,7 @@
 			const data = currentUserQuery.data
 			// Account
 			formEmail = data.email ?? ''
+			emailVerified = data.emailVerified ?? false
 			// Profile
 			picture = data.avatar?.picture ?? ''
 			element = (data.avatar?.element as ElementType) ?? 'wind'
@@ -264,6 +266,7 @@
 						<AccountSettings
 							username={formUsername}
 							email={formEmail}
+							{emailVerified}
 							{currentPassword}
 							{newPassword}
 							{confirmPassword}

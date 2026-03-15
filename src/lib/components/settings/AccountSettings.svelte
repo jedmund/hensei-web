@@ -5,10 +5,12 @@
 	import Switch from '../ui/switch/Switch.svelte'
 	import SettingsRow from '../ui/SettingsRow.svelte'
 	import type { ElementType } from '../ui/SettingsNav.svelte'
+	import { userAdapter } from '$lib/api/adapters/user.adapter'
 
 	interface Props {
 		username: string
 		email: string
+		emailVerified: boolean
 		currentPassword: string
 		newPassword: string
 		confirmPassword: string
@@ -26,6 +28,7 @@
 	let {
 		username,
 		email,
+		emailVerified,
 		currentPassword,
 		newPassword,
 		confirmPassword,
@@ -39,6 +42,22 @@
 		onConfirmPasswordChange,
 		onBahamutChange
 	}: Props = $props()
+
+	let resending = $state(false)
+	let resendMessage = $state<string | null>(null)
+
+	async function handleResendVerification() {
+		resending = true
+		resendMessage = null
+		try {
+			const result = await userAdapter.resendVerificationEmail()
+			resendMessage = result.message
+		} catch {
+			resendMessage = m.settings_verification_resend_error()
+		} finally {
+			resending = false
+		}
+	}
 
 	// Local state for inputs
 	let localUsername = $state(username)
@@ -117,6 +136,25 @@
 			bind:value={localEmail}
 			handleInput={handleEmailInput}
 		/>
+
+		<!-- Email verification status -->
+		<div class="verification-status">
+			{#if emailVerified}
+				<span class="verified">{m.settings_email_verified()}</span>
+			{:else}
+				<span class="unverified">{m.settings_email_unverified()}</span>
+				<button
+					class="resend-link"
+					onclick={handleResendVerification}
+					disabled={resending}
+				>
+					{resending ? m.settings_verification_resending() : m.settings_verification_resend()}
+				</button>
+				{#if resendMessage}
+					<span class="resend-message">{resendMessage}</span>
+				{/if}
+			{/if}
+		</div>
 
 		<hr class="separator" />
 
@@ -204,5 +242,43 @@
 		border: none;
 		border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
 		margin: 0;
+	}
+
+	.verification-status {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+		font-size: typography.$font-small;
+	}
+
+	.verified {
+		color: var(--wind-button-bg, #1dc688);
+	}
+
+	.unverified {
+		color: var(--text-secondary);
+	}
+
+	.resend-link {
+		background: none;
+		border: none;
+		padding: 0;
+		font-size: typography.$font-small;
+		color: var(--text-tertiary);
+		text-decoration: underline;
+		cursor: pointer;
+
+		&:hover {
+			color: var(--text-primary);
+		}
+
+		&:disabled {
+			opacity: 0.5;
+			cursor: default;
+		}
+	}
+
+	.resend-message {
+		color: var(--text-tertiary);
 	}
 </style>
