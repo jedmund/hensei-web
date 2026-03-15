@@ -22,6 +22,7 @@ interface ApiUserResponse {
   collectionPrivacy?: number  // transformed from collection_privacy (0=everyone, 1=crew_only, 2=private)
   gamertag?: string
   email?: string  // Only included in settings view
+  emailVerified?: boolean  // Only included in settings view
   avatar: {
     picture: string
     element: string
@@ -56,6 +57,7 @@ export interface UserInfo {
  */
 export interface UserSettings extends UserInfo {
   email: string
+  emailVerified: boolean
 }
 
 export interface UserProfile extends UserInfo {
@@ -103,7 +105,8 @@ function transformUserResponse(apiUser: ApiUserResponse): UserInfo {
 function transformSettingsResponse(apiUser: ApiUserResponse): UserSettings {
   return {
     ...transformUserResponse(apiUser),
-    email: apiUser.email ?? ''
+    email: apiUser.email ?? '',
+    emailVerified: apiUser.emailVerified ?? false
   }
 }
 
@@ -263,6 +266,15 @@ export class UserAdapter extends BaseAdapter {
     this.clearCache('/users/me')
 
     return transformUserResponse(result)
+  }
+
+  /**
+   * Resend email verification
+   */
+  async resendVerificationEmail(): Promise<{ message: string }> {
+    return this.request<{ message: string }>('/email_verifications', {
+      method: 'POST'
+    })
   }
 
   /**
