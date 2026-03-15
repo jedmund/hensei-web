@@ -367,7 +367,7 @@
 	.settings-content {
 		flex: 1;
 		overflow-y: auto;
-		padding: spacing.$unit-3x;
+		padding: 0 spacing.$unit-3x;
 	}
 
 	.loading-state {
