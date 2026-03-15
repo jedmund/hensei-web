@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import Dialog from './ui/Dialog.svelte'
+	import ModalHeader from './ui/ModalHeader.svelte'
 	import ModalBody from './ui/ModalBody.svelte'
 	import ModalFooter from './ui/ModalFooter.svelte'
 	import SettingsNav, { type ElementType } from './ui/SettingsNav.svelte'
@@ -244,6 +245,7 @@
 
 <Dialog bind:open {...onOpenChange ? { onOpenChange } : {}} size="medium" hideClose>
 	{#snippet children()}
+		<ModalHeader title={m.settings_title()} description={'@' + username} />
 		<ModalBody noPadding>
 			<div class="settings-layout">
 				{#if error}
@@ -251,10 +253,6 @@
 				{/if}
 
 				<aside class="settings-sidebar">
-					<div class="sidebar-header">
-						<h2 class="title">{m.settings_title()}</h2>
-						<p class="username">@{username}</p>
-					</div>
 					<SettingsNav bind:value={activeSection} {element} items={navItems} />
 				</aside>
 
@@ -357,25 +355,6 @@
 		padding-right: 0;
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-2x;
-	}
-
-	.sidebar-header {
-		padding: spacing.$unit spacing.$unit-2x;
-
-		.title {
-			font-size: typography.$font-large;
-			font-weight: typography.$medium;
-			color: var(--text-primary);
-			margin: 0;
-		}
-
-		.username {
-			font-size: typography.$font-small;
-			color: var(--text-secondary);
-			margin: 0;
-			margin-top: spacing.$unit-half;
-		}
 	}
 
 	.settings-content {
