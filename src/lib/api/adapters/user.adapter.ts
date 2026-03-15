@@ -58,6 +58,7 @@ export interface UserInfo {
 export interface UserSettings extends UserInfo {
   email: string
   emailVerified: boolean
+  hasStoredEditKeys?: boolean
 }
 
 export interface UserProfile extends UserInfo {
@@ -102,11 +103,12 @@ function transformUserResponse(apiUser: ApiUserResponse): UserInfo {
 /**
  * Transform API user response to frontend UserSettings format (includes email)
  */
-function transformSettingsResponse(apiUser: ApiUserResponse): UserSettings {
+function transformSettingsResponse(apiUser: ApiUserResponse & { hasStoredEditKeys?: boolean }): UserSettings {
   return {
     ...transformUserResponse(apiUser),
     email: apiUser.email ?? '',
-    emailVerified: apiUser.emailVerified ?? false
+    emailVerified: apiUser.emailVerified ?? false,
+    hasStoredEditKeys: apiUser.hasStoredEditKeys ?? false
   }
 }
 
@@ -283,6 +285,16 @@ export class UserAdapter extends BaseAdapter {
   async getCurrentUser(): Promise<UserSettings> {
     const result = await this.request<ApiUserResponse>('/users/me')
     return transformSettingsResponse(result)
+  }
+
+  /**
+   * Deposit edit keys to the server for safekeeping
+   */
+  async depositEditKeys(editKeys: Array<{ shortcode: string; editKey: string }>): Promise<{ deposited: number }> {
+    return this.request<{ deposited: number }>('/users/edit_keys', {
+      method: 'POST',
+      body: { editKeys }
+    })
   }
 }
 

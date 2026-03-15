@@ -185,6 +185,17 @@ export function removePartyShareOptions(queryClient: QueryClient) {
 	}
 }
 
+export function migratePartiesOptions(queryClient: QueryClient) {
+	return {
+		mutationFn: (parties: Array<{ shortcode: string; editKey: string }>) =>
+			partyAdapter.migrate(parties),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: partyKeys.lists() })
+			queryClient.invalidateQueries({ queryKey: userKeys.all })
+		}
+	}
+}
+
 // ============================================================================
 // Hooks (thin wrappers for component use)
 // ============================================================================
@@ -232,4 +243,9 @@ export function useSharePartyWithCrew() {
 export function useRemovePartyShare() {
 	const queryClient = useQueryClient()
 	return createMutation(() => removePartyShareOptions(queryClient))
+}
+
+export function useMigrateParties() {
+	const queryClient = useQueryClient()
+	return createMutation(() => migratePartiesOptions(queryClient))
 }

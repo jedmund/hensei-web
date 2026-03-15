@@ -493,6 +493,19 @@ export class PartyAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Migrate anonymous parties to the authenticated user's account
+	 */
+	async migrate(parties: Array<{ shortcode: string; editKey: string }>): Promise<{
+		results: Array<{ shortcode: string; status: string }>
+		migratedCount: number
+	}> {
+		return this.request('/parties/migrate', {
+			method: 'POST',
+			body: { parties }
+		})
+	}
+
+	/**
 	 * Clears the cache for party-related data
 	 */
 	clearPartyCache(shortcode?: string) {
