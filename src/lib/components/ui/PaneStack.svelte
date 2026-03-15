@@ -21,6 +21,9 @@
 	// Set context so child components can access the pane stack
 	setPaneStackContext(stack)
 
+	// Track scroll state per pane for header shadow
+	let paneScrolled: Record<string, boolean> = $state({})
+
 	function handleBack(pane: PaneConfig, index: number) {
 		if (index === 0 && pane.onback) {
 			// Root pane with custom back handler
@@ -78,7 +81,7 @@
 			class:scrollable={pane.scrollable !== false}
 			style:--pane-depth={depth}
 		>
-			<SidebarHeader title={pane.title} image={pane.image}>
+			<SidebarHeader title={pane.title} image={pane.image} scrolled={paneScrolled[pane.id] ?? false}>
 				{#snippet leftAccessory()}
 					{#if showBackButton}
 						<Button
@@ -135,7 +138,12 @@
 				{/snippet}
 			</SidebarHeader>
 
-			<div class="pane-content">
+			<div
+			class="pane-content"
+			onscroll={(e) => {
+				paneScrolled[pane.id] = e.currentTarget.scrollTop > 0
+			}}
+		>
 				{#key pane.id}
 					<PaneComponent {...pane.props ?? {}} paneId={pane.id} />
 				{/key}

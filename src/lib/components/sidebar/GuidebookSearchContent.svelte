@@ -30,6 +30,9 @@
 	// Refs
 	let sentinelEl = $state<HTMLElement>()
 
+	// Scroll shadow state
+	let resultsScrolled = $state(false)
+
 	// IME composition handlers
 	function handleCompositionStart() {
 		isComposing = true
@@ -97,7 +100,7 @@
 </script>
 
 <div class="search-content">
-	<div class="controls">
+	<div class="controls" class:scrolled={resultsScrolled}>
 		<div class="search-section">
 			<Input
 				bind:value={searchQuery}
@@ -113,7 +116,7 @@
 		</div>
 	</div>
 
-	<div class="results-section">
+	<div class="results-section" onscroll={(e) => { resultsScrolled = e.currentTarget.scrollTop > 0 }}>
 		{#if searchQueryResult.isLoading}
 			<div class="loading">
 				<Icon name="loader-2" size={24} />
@@ -190,6 +193,14 @@
 		padding: 0 $unit-2x $unit;
 		flex-shrink: 0;
 		border-bottom: 1px solid var(--border-primary);
+		position: relative;
+		z-index: 1;
+		transition: box-shadow 0.2s ease;
+
+		&.scrolled {
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+			border-bottom: 1px solid rgba(0, 0, 0, 0.01);
+		}
 
 		:global(.search-input) {
 			border-radius: $card-corner;

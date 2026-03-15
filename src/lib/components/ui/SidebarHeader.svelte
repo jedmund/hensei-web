@@ -7,16 +7,18 @@
 		title: string
 		/** Optional image URL to display next to the title */
 		image?: string
+		/** Whether the content below has been scrolled */
+		scrolled?: boolean
 		/** Left accessory content (e.g., close/back button) */
 		leftAccessory?: Snippet
 		/** Right accessory content (e.g., save/edit button) */
 		rightAccessory?: Snippet
 	}
 
-	const { title, image, leftAccessory, rightAccessory }: Props = $props()
+	const { title, image, scrolled = false, leftAccessory, rightAccessory }: Props = $props()
 </script>
 
-<div class="sidebar-header">
+<div class="sidebar-header" class:scrolled>
 	<div class="header-left">
 		{#if leftAccessory}
 			{@render leftAccessory()}
@@ -51,6 +53,14 @@
 		border-bottom: 1px solid var(--border-primary);
 		flex-shrink: 0;
 		background: var(--bg-primary);
+		position: relative;
+		z-index: 1;
+		transition: box-shadow 0.2s ease;
+
+		&.scrolled {
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+			border-bottom-color: rgba(0, 0, 0, 0.1);
+		}
 
 		// Match mobile navigation height
 		@media (max-width: 768px) {
