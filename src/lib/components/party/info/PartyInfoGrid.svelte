@@ -1,9 +1,9 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 	import type { Party } from '$lib/types/api/party'
+	import type { RaidFull } from '$lib/types/api/raid'
 	import DescriptionTile from './DescriptionTile.svelte'
 	import RaidTile from './RaidTile.svelte'
-	import BattleTile from './BattleTile.svelte'
 	import VideoTile from './VideoTile.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import RaidPartiesPane from '$lib/components/sidebar/RaidPartiesPane.svelte'
@@ -22,26 +22,22 @@
 		party: Party
 		canEdit: boolean
 		onOpenDescription: () => void
+		onEditDescription?: () => void
 		onOpenEdit?: () => void
+		onRaidSelect?: (raid: RaidFull | null) => void
 		menu?: Snippet
 		authUser?: AvatarUser | null
 		activeCollectionUser?: 'viewer' | 'source'
 		onSwitchCollectionUser?: (target: 'viewer' | 'source') => void
 	}
 
-	let { party, canEdit, onOpenDescription, onOpenEdit, menu, authUser, activeCollectionUser, onSwitchCollectionUser }: Props = $props()
+	let { party, canEdit, onOpenDescription, onEditDescription, onOpenEdit, onRaidSelect, menu, authUser, activeCollectionUser, onSwitchCollectionUser }: Props = $props()
 
 	// Check if data exists for each tile
-	const hasDescription = $derived(!!party.description)
 	const hasRaid = $derived(!!party.raid)
-	const hasVideo = $derived(!!party.videoUrl)
 
 	// Show tile if: has data OR (is owner's team and can prompt to fill)
-	const showDescription = $derived(hasDescription || canEdit)
 	const showRaid = $derived(hasRaid || canEdit)
-	// Video tile only shown when there's a video (no empty placeholder)
-	const showVideo = $derived(hasVideo)
-	// Battle tile always shown - settings have default values
 
 	function handleRaidClick() {
 		if (!party.raid) return
@@ -61,8 +57,8 @@
 </script>
 
 <div class="party-info-grid">
-	<!-- Row 1: Description + Video -->
-	<div class="row row-1" class:single={!showVideo}>
+	<!-- Row 1: Description -->
+	<div class="row row-1">
 		<DescriptionTile
 			name={party.name}
 			description={party.description}
@@ -74,18 +70,9 @@
 			{onSwitchCollectionUser}
 			{canEdit}
 			{onOpenDescription}
+			{onEditDescription}
 			{onOpenEdit}
 			{menu}
-		/>
-
-		{#if showVideo}
-			<VideoTile videoUrl={party.videoUrl} />
-		{/if}
-	</div>
-
-	<!-- Row 2: Battle + Raid -->
-	<div class="row row-2" class:single={!showRaid}>
-		<BattleTile
 			fullAuto={party.fullAuto}
 			autoGuard={party.autoGuard}
 			autoSummon={party.autoSummon}
@@ -94,12 +81,15 @@
 			buttonCount={party.buttonCount}
 			chainCount={party.chainCount}
 			summonCount={party.summonCount}
-			clickable={canEdit}
-			onclick={onOpenEdit}
 		/>
+	</div>
+
+	<!-- Row 2: Video + Raid -->
+	<div class="row row-2" class:single={!showRaid}>
+		<VideoTile videoUrl={party.videoUrl} {canEdit} onAdd={onOpenEdit} />
 
 		{#if showRaid}
-			<RaidTile raid={party.raid} onclick={handleRaidClick} />
+			<RaidTile raid={party.raid} {canEdit} onclick={handleRaidClick} {onRaidSelect} />
 		{/if}
 	</div>
 </div>
@@ -119,11 +109,7 @@
 	}
 
 	.row-1 {
-		grid-template-columns: 2fr 1fr;
-
-		&.single {
-			grid-template-columns: 1fr;
-		}
+		grid-template-columns: 1fr;
 	}
 
 	.row-2 {
@@ -134,20 +120,8 @@
 		}
 	}
 
-	// Tablet breakpoint
-	@media (max-width: 1024px) {
-		.row-1 {
-			grid-template-columns: 1fr;
-		}
-
-		.row-2 {
-			grid-template-columns: repeat(2, 1fr);
-		}
-	}
-
 	// Mobile breakpoint
 	@media (max-width: 768px) {
-		.row-1,
 		.row-2 {
 			grid-template-columns: 1fr;
 		}

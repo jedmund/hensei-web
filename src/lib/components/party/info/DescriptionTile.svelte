@@ -4,6 +4,7 @@
 	import type { JSONContent } from '@tiptap/core'
 	import Button from '$lib/components/ui/Button.svelte'
 	import AvatarPair from '$lib/components/ui/AvatarPair.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import CollectionViewerSwitcher from './CollectionViewerSwitcher.svelte'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -35,8 +36,19 @@
 		onSwitchCollectionUser?: (target: 'viewer' | 'source') => void
 		canEdit?: boolean
 		onOpenDescription: () => void
+		onEditDescription?: () => void
 		onOpenEdit?: () => void
 		menu?: Snippet
+		// Battle settings
+		fullAuto?: boolean
+		autoGuard?: boolean
+		autoSummon?: boolean
+		chargeAttack?: boolean
+		// Performance
+		clearTime?: number | null
+		buttonCount?: number | null
+		chainCount?: number | null
+		summonCount?: number | null
 	}
 
 	let {
@@ -50,8 +62,17 @@
 		onSwitchCollectionUser,
 		canEdit = false,
 		onOpenDescription,
+		onEditDescription,
 		onOpenEdit,
-		menu
+		menu,
+		fullAuto,
+		autoGuard,
+		autoSummon,
+		chargeAttack,
+		clearTime,
+		buttonCount,
+		chainCount,
+		summonCount
 	}: Props = $props()
 
 	const showCollectionSwitcher = $derived(
@@ -116,6 +137,31 @@
 	}
 
 	const previewParagraphs = $derived(getPreviewParagraphs(description))
+
+	// Battle settings tokens
+	interface Setting {
+		key: string
+		label: string
+		tooltip: string
+		active: boolean
+	}
+
+	const settings: Setting[] = $derived([
+		{ key: 'chargeAttack', label: `CA ${chargeAttack ?? true ? m.battle_on() : m.battle_off()}`, tooltip: m.battle_charge_attack(), active: chargeAttack ?? true },
+		{ key: 'fullAuto', label: `FA ${fullAuto ? m.battle_on() : m.battle_off()}`, tooltip: m.battle_full_auto(), active: fullAuto ?? false },
+		{ key: 'autoSummon', label: `AS ${autoSummon ? m.battle_on() : m.battle_off()}`, tooltip: m.battle_auto_summon(), active: autoSummon ?? false },
+		{ key: 'autoGuard', label: `AG ${autoGuard ? m.battle_on() : m.battle_off()}`, tooltip: m.battle_auto_guard(), active: autoGuard ?? false }
+	])
+
+	function formatClearTime(seconds?: number | null): string | null {
+		if (seconds == null || seconds <= 0) return null
+		const minutes = Math.floor(seconds / 60)
+		const secs = seconds % 60
+		return `${minutes}:${secs.toString().padStart(2, '0')}`
+	}
+
+	const formattedClearTime = $derived(formatClearTime(clearTime))
+
 </script>
 
 <div class="description-tile" class:has-fade={needsFade}>
@@ -195,8 +241,41 @@
 		{/if}
 	</div>
 
+	<!-- Battle settings & performance -->
+	<div class="battle-section">
+		<div class="settings-tokens">
+			{#each settings as setting (setting.key)}
+				<Tooltip content={setting.tooltip}>
+					<span class="token {setting.key}" class:on={setting.active} class:off={!setting.active}>
+						{setting.label}
+					</span>
+				</Tooltip>
+			{/each}
+			{#if formattedClearTime}
+				<Tooltip content={m.party_edit_clear_time()}>
+					<span class="token metric">{formattedClearTime}</span>
+				</Tooltip>
+			{/if}
+			{#if buttonCount != null}
+				<Tooltip content={m.party_edit_button_count()}>
+					<span class="token metric">{buttonCount}B</span>
+				</Tooltip>
+			{/if}
+			{#if chainCount != null}
+				<Tooltip content={m.party_edit_chain_count()}>
+					<span class="token metric">{chainCount}C</span>
+				</Tooltip>
+			{/if}
+			{#if summonCount != null}
+				<Tooltip content={m.party_edit_summon_count()}>
+					<span class="token metric">{summonCount}S</span>
+				</Tooltip>
+			{/if}
+		</div>
+	</div>
+
 	<!-- Description content (clickable) -->
-	<button type="button" class="description-content" onclick={onOpenDescription}>
+	<button type="button" class="description-content" onclick={canEdit && !previewParagraphs.length && onEditDescription ? onEditDescription : onOpenDescription}>
 		{#if previewParagraphs.length}
 			<div class="preview-text" bind:this={contentEl}>
 				{#each previewParagraphs as paragraph}
@@ -204,7 +283,7 @@
 				{/each}
 			</div>
 		{:else}
-			<span class="empty-state">{m.party_no_description()}</span>
+			<span class="empty-state">{canEdit ? m.party_write_description() : m.party_no_description()}</span>
 		{/if}
 	</button>
 </div>
@@ -383,7 +462,59 @@
 		flex: 1;
 		font-size: $font-regular;
 		color: var(--text-tertiary);
-		font-style: italic;
+	}
+
+	// Battle settings & performance
+	.battle-section {
+		display: flex;
+		flex-direction: column;
+		gap: $unit;
+	}
+
+	.settings-tokens {
+		display: flex;
+		flex-wrap: wrap;
+		gap: $unit;
+	}
+
+	.token {
+		display: inline-flex;
+		align-items: center;
+		padding: $unit-half $unit;
+		border-radius: $full-corner;
+		font-size: $font-small;
+		font-weight: $bold;
+		line-height: 1;
+		text-align: center;
+		user-select: none;
+		background: var(--input-bg);
+
+		&.off {
+			background: var(--button-bg);
+			color: var(--text-secondary);
+		}
+
+		&.metric {
+			background: var(--button-bg);
+			color: var(--text-secondary);
+			font-variant-numeric: tabular-nums;
+		}
+
+		&.chargeAttack.on {
+			background: var(--charge-attack-bg);
+			color: var(--charge-attack-text);
+		}
+
+		&.fullAuto.on,
+		&.autoSummon.on {
+			background: var(--full-auto-bg);
+			color: var(--full-auto-text);
+		}
+
+		&.autoGuard.on {
+			background: var(--auto-guard-bg);
+			color: var(--auto-guard-text);
+		}
 	}
 
 </style>

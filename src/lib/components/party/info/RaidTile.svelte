@@ -1,20 +1,29 @@
 <script lang="ts">
 	import InfoTile from './InfoTile.svelte'
 	import type { Raid } from '$lib/types/api/entities'
+	import type { RaidFull } from '$lib/types/api/raid'
 	import { getRaidImage } from '$lib/utils/images'
 	import { getElementLabel } from '$lib/utils/element'
 	import { localizedName } from '$lib/utils/locale'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import EditRaidPane from '$lib/components/sidebar/EditRaidPane.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		raid?: Raid
+		canEdit?: boolean
 		onclick?: () => void
+		/** Callback when a raid is selected via EditRaidPane */
+		onRaidSelect?: (raid: RaidFull | null) => void
 	}
 
-	let { raid, onclick }: Props = $props()
+	let { raid, canEdit = false, onclick, onRaidSelect }: Props = $props()
 
-	// Only clickable if raid exists and onclick is provided
-	const clickable = $derived(!!raid && !!onclick)
+	const isEmpty = $derived(!raid)
+	const showAdd = $derived(canEdit && isEmpty)
+
+	// Clickable if raid exists (view raid parties) or empty+editable (open edit)
+	const clickable = $derived((!!raid && !!onclick) || showAdd)
 
 	const raidName = $derived(() => {
 		if (!raid) return null
@@ -22,9 +31,24 @@
 	})
 
 	const elementLabel = $derived(raid ? getElementLabel(raid.element) : null)
+
+	function openEditRaidPane() {
+		sidebar.openWithComponent(
+			m.pane_select_raid(),
+			EditRaidPane,
+			{
+				currentRaid: raid,
+				onSelect: (selected: RaidFull | null) => {
+					onRaidSelect?.(selected)
+					sidebar.close()
+				}
+			},
+			{ scrollable: true }
+		)
+	}
 </script>
 
-<InfoTile label={m.party_raid_label()} class="raid-tile" {clickable} {onclick}>
+<InfoTile label={m.party_raid_label()} class="raid-tile" {clickable} onclick={showAdd ? openEditRaidPane : onclick} {showAdd} onAdd={openEditRaidPane}>
 	{#if raid}
 		<div class="raid-info">
 			<img src={getRaidImage(raid.slug)} alt="" class="raid-image" />
@@ -34,7 +58,7 @@
 			</div>
 		</div>
 	{:else}
-		<span class="empty-state">{m.party_raid_empty()}</span>
+		<span class="empty-state">{canEdit ? m.party_add_raid() : m.party_raid_empty()}</span>
 	{/if}
 </InfoTile>
 
@@ -75,6 +99,5 @@
 	.empty-state {
 		font-size: $font-regular;
 		color: var(--text-tertiary);
-		font-style: italic;
 	}
 </style>

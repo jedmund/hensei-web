@@ -4,9 +4,11 @@
 
 	interface Props {
 		videoUrl?: string
+		canEdit?: boolean
+		onAdd?: () => void
 	}
 
-	let { videoUrl }: Props = $props()
+	let { videoUrl, canEdit = false, onAdd }: Props = $props()
 
 	// State for video playback
 	let isPlaying = $state(false)
@@ -22,6 +24,9 @@
 		videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : null
 	)
 	const embedUrl = $derived(videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : null)
+
+	const isEmpty = $derived(!videoUrl)
+	const showAdd = $derived(canEdit && isEmpty)
 
 	// Fetch video title when videoId changes
 	$effect(() => {
@@ -60,7 +65,7 @@
 	}
 </script>
 
-<InfoTile label={m.party_video()} class="video-tile">
+<InfoTile label={m.party_video()} class="video-tile" {showAdd} {onAdd} clickable={showAdd} onclick={showAdd ? onAdd : undefined}>
 	{#if videoUrl && videoId}
 		<div class="video-container">
 			{#if isPlaying && embedUrl}
@@ -94,7 +99,7 @@
 			{/if}
 		</div>
 	{:else}
-		<span class="empty-state">{m.party_no_video()}</span>
+		<span class="empty-state">{canEdit ? m.party_add_video() : m.party_no_video()}</span>
 	{/if}
 </InfoTile>
 
@@ -191,6 +196,5 @@
 	.empty-state {
 		font-size: $font-regular;
 		color: var(--text-tertiary);
-		font-style: italic;
 	}
 </style>

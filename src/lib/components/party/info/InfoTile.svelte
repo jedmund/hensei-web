@@ -1,15 +1,20 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
+	import Icon from '$lib/components/Icon.svelte'
 
 	interface Props {
 		label?: string
 		clickable?: boolean
 		onclick?: () => void
+		/** Show a + button in the header */
+		showAdd?: boolean
+		/** Callback when + button or header is clicked */
+		onAdd?: () => void
 		class?: string
 		children: Snippet
 	}
 
-	let { label, clickable = false, onclick, class: className = '', children }: Props = $props()
+	let { label, clickable = false, onclick, showAdd = false, onAdd, class: className = '', children }: Props = $props()
 </script>
 
 <div
@@ -21,7 +26,16 @@
 	onkeydown={clickable ? (e) => e.key === 'Enter' && onclick?.() : undefined}
 >
 	{#if label}
-		<h3 class="tile-label">{label}</h3>
+		<div class="tile-header">
+			{#if showAdd && onAdd}
+				<button type="button" class="tile-header-button" onclick={onAdd}>
+					<h3 class="tile-label">{label}</h3>
+					<Icon name="plus" size={16} class="add-icon" />
+				</button>
+			{:else}
+				<h3 class="tile-label">{label}</h3>
+			{/if}
+		</div>
 	{/if}
 	<div class="tile-content">
 		{@render children()}
@@ -58,11 +72,42 @@
 			}
 		}
 
+		.tile-header {
+			display: flex;
+			align-items: center;
+		}
+
 		.tile-label {
 			font-size: $font-small;
 			font-weight: $medium;
 			color: var(--text-secondary);
 			margin: 0;
+		}
+
+		.tile-header-button {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			width: 100%;
+			padding: 0;
+			background: none;
+			border: none;
+			cursor: pointer;
+
+			&:hover {
+				.tile-label {
+					color: var(--text-primary);
+				}
+
+				:global(.add-icon) {
+					color: var(--text-primary);
+				}
+			}
+		}
+
+		:global(.add-icon) {
+			color: var(--icon-secondary);
+			flex-shrink: 0;
 		}
 
 		.tile-content {
