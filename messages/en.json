@@ -183,6 +183,8 @@
 	"auth_login_noAccount": "Don't have an account?",
 	"auth_login_register": "Sign up",
 	"auth_login_forgotPassword": "Forgot password?",
+	"auth_login_errors_fieldsRequired": "Email and password are required",
+	"auth_login_errors_failed": "Login failed",
 
 	"auth_forgotPassword_title": "Reset password",
 	"auth_forgotPassword_email": "Email address",
@@ -190,6 +192,7 @@
 	"auth_forgotPassword_submitting": "Sending...",
 	"auth_forgotPassword_success": "If an account with that email exists, we've sent a password reset link.",
 	"auth_forgotPassword_backToLogin": "Back to sign in",
+	"auth_forgotPassword_errors_emailRequired": "Email is required",
 
 	"auth_resetPassword_title": "Set new password",
 	"auth_resetPassword_password": "New password",
@@ -200,8 +203,10 @@
 	"auth_resetPassword_signIn": "Sign in",
 	"auth_resetPassword_invalidToken": "This reset link is invalid or has expired.",
 	"auth_resetPassword_requestNew": "Request a new reset link",
+	"auth_resetPassword_errors_fieldsRequired": "All fields are required",
 	"auth_resetPassword_errors_passwordMin": "Password must be at least 8 characters",
 	"auth_resetPassword_errors_passwordMismatch": "Passwords don't match",
+	"auth_resetPassword_errors_failed": "Password reset failed",
 
 	"auth_register_title": "Sign up",
 	"auth_register_username": "Username",
@@ -221,6 +226,8 @@
 	"auth_register_errors_emailTaken": "Email is already registered",
 	"auth_register_errors_passwordMin": "Password must be at least 8 characters",
 	"auth_register_errors_passwordMismatch": "Passwords don't match",
+	"auth_register_errors_fieldsRequired": "All fields are required",
+	"auth_register_errors_failed": "Registration failed",
 
 	"page_title_home": "granblue.team",
 	"page_title_about": "About / granblue.team",

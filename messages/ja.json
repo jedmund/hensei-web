@@ -183,6 +183,8 @@
 	"auth_login_noAccount": "アカウントをお持ちでない方は",
 	"auth_login_register": "新規登録",
 	"auth_login_forgotPassword": "パスワードをお忘れですか？",
+	"auth_login_errors_fieldsRequired": "メールアドレスとパスワードを入力してください",
+	"auth_login_errors_failed": "ログインに失敗しました",
 
 	"auth_forgotPassword_title": "パスワードをリセット",
 	"auth_forgotPassword_email": "メールアドレス",
@@ -190,6 +192,7 @@
 	"auth_forgotPassword_submitting": "送信中...",
 	"auth_forgotPassword_success": "このメールアドレスにアカウントがある場合は、パスワードリセットのリンクを送信しました。",
 	"auth_forgotPassword_backToLogin": "ログインに戻る",
+	"auth_forgotPassword_errors_emailRequired": "メールアドレスを入力してください",
 
 	"auth_resetPassword_title": "新しいパスワードを設定",
 	"auth_resetPassword_password": "新しいパスワード",
@@ -200,8 +203,10 @@
 	"auth_resetPassword_signIn": "ログイン",
 	"auth_resetPassword_invalidToken": "このリセットリンクは無効または期限切れです。",
 	"auth_resetPassword_requestNew": "新しいリセットリンクをリクエスト",
+	"auth_resetPassword_errors_fieldsRequired": "すべての項目を入力してください",
 	"auth_resetPassword_errors_passwordMin": "パスワードは8文字以上にしてください",
 	"auth_resetPassword_errors_passwordMismatch": "パスワードが一致しません",
+	"auth_resetPassword_errors_failed": "パスワードのリセットに失敗しました",
 
 	"auth_register_title": "アカウント作成",
 	"auth_register_username": "ユーザー名",
@@ -221,6 +226,8 @@
 	"auth_register_errors_emailTaken": "このメールアドレスは既に登録されています",
 	"auth_register_errors_passwordMin": "パスワードは8文字以上で入力してください",
 	"auth_register_errors_passwordMismatch": "パスワードが一致しません",
+	"auth_register_errors_fieldsRequired": "すべての項目を入力してください",
+	"auth_register_errors_failed": "アカウントの作成に失敗しました",
 
 	"page_title_home": "granblue.team",
 	"page_title_about": "サイトについて / granblue.team",
