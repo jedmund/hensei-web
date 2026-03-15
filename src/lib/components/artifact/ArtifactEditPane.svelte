@@ -33,13 +33,12 @@
 	// Get the pane stack from context for pushing modifier selection panes
 	const paneStack = usePaneStack()
 
-	// Local state for edits
-	// Use type assertion since this pane is used with CollectionArtifact which has nickname
-	let nickname = $state((artifact as { nickname?: string }).nickname ?? '')
-	let element = $state(artifact.element)
-	let level = $state(artifact.level)
-	let proficiency = $state(artifact.proficiency)
-	let skills = $state<(ArtifactSkillInstance | null)[]>(initializeSkillLevels([...artifact.skills]))
+	// Local state derived from props — overrides are temporary until artifact prop changes
+	let nickname = $derived((artifact as { nickname?: string }).nickname ?? '')
+	let element = $derived(artifact.element)
+	let level = $derived(artifact.level)
+	let proficiency = $derived(artifact.proficiency)
+	let skills = $derived<(ArtifactSkillInstance | null)[]>(initializeSkillLevels([...artifact.skills]))
 
 	// Initialize skill levels to meet the constraint (artifact.level + 3)
 	// This handles cases where imported data has incorrect skill levels
