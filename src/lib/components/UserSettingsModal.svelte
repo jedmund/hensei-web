@@ -5,6 +5,7 @@
 	import ModalFooter from './ui/ModalFooter.svelte'
 	import SettingsNav, { type ElementType } from './ui/SettingsNav.svelte'
 	import AccountSettings from './settings/AccountSettings.svelte'
+	import PasswordSettings from './settings/PasswordSettings.svelte'
 	import ProfileSettings from './settings/ProfileSettings.svelte'
 	import PrivacySettings from './settings/PrivacySettings.svelte'
 	import { users } from '$lib/api/resources/users'
@@ -118,6 +119,7 @@
 	// Navigation items
 	const navItems = [
 		{ value: 'account', label: m.settings_nav_account() },
+		{ value: 'password', label: m.settings_nav_password() },
 		{ value: 'profile', label: m.settings_nav_profile() },
 		{ value: 'privacy', label: m.settings_nav_privacy() }
 	]
@@ -267,18 +269,21 @@
 							username={formUsername}
 							email={formEmail}
 							{emailVerified}
-							{currentPassword}
-							{newPassword}
-							{confirmPassword}
 							{bahamut}
 							{role}
 							{element}
 							onUsernameChange={(v) => (formUsername = v)}
 							onEmailChange={(v) => (formEmail = v)}
+							onBahamutChange={(v) => (bahamut = v)}
+						/>
+					{:else if activeSection === 'password'}
+						<PasswordSettings
+							{currentPassword}
+							{newPassword}
+							{confirmPassword}
 							onCurrentPasswordChange={(v) => (currentPassword = v)}
 							onNewPasswordChange={(v) => (newPassword = v)}
 							onConfirmPasswordChange={(v) => (confirmPassword = v)}
-							onBahamutChange={(v) => (bahamut = v)}
 						/>
 					{:else if activeSection === 'profile'}
 						<ProfileSettings
