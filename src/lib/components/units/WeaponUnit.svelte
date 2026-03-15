@@ -156,7 +156,7 @@
 	})
 
 	let canDuplicate = $derived(
-		!!item && position !== -1 && firstEmptySlot !== undefined && !item.weapon?.limit
+		!!item && firstEmptySlot !== undefined && !item.weapon?.limit
 	)
 
 	let duplicateCollectionDialogOpen = $state(false)

@@ -107,7 +107,7 @@
   })
 
   let canDuplicate = $derived(
-    !!item && position !== -1 && position !== 6 && firstEmptySlot !== undefined
+    !!item && position !== 6 && firstEmptySlot !== undefined
   )
 
   let duplicateCollectionDialogOpen = $state(false)
