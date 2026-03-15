@@ -40,7 +40,7 @@
 					<Segment value="about">{m.about_tab_about()}</Segment>
 					<Segment value="updates">{m.about_tab_updates()}</Segment>
 					<Segment value="roadmap">{m.about_tab_roadmap()}</Segment>
-				</SegmentedControl>
+					</SegmentedControl>
 			</nav>
 			<div class="about-intro">
 				<h2>{m.about_subtitle_before_cygames()}<a href="https://www.cygames.co.jp/" target="_blank" rel="noopener noreferrer">Cygames</a>{m.about_subtitle_after_cygames()}</h2>
@@ -65,7 +65,7 @@
 					<Segment value="about">{m.about_tab_about()}</Segment>
 					<Segment value="updates">{m.about_tab_updates()}</Segment>
 					<Segment value="roadmap">{m.about_tab_roadmap()}</Segment>
-				</SegmentedControl>
+					</SegmentedControl>
 			</nav>
 			<div class="about-content">
 				{@render children?.()}
@@ -153,6 +153,15 @@
 			font-size: $font-medium;
 			line-height: 1.35;
 			color: var(--text-primary);
+		}
+
+		a {
+			color: var(--accent-blue);
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 	}
 
