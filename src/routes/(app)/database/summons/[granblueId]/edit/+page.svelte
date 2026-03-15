@@ -127,7 +127,7 @@
 				ulb: summon.uncap?.ulb || false,
 				transcendence: summon.uncap?.transcendence || false,
 				subaura: summon.subaura || false,
-				limit: false,
+				limit: summon.limit || false,
 				releaseDate: summon.releaseDate || '',
 				flbDate: summon.flbDate || '',
 				ulbDate: summon.ulbDate || '',

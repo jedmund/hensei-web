@@ -52,6 +52,12 @@
 			cell: SummonUncapCell
 		},
 		{
+			id: 'subaura',
+			header: 'Subaura',
+			width: 80,
+			template: (val: any) => (val ? 'Yes' : 'No')
+		},
+		{
 			id: 'last_updated',
 			header: 'Last Updated',
 			width: 120,

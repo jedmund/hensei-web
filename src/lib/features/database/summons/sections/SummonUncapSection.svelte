@@ -32,6 +32,7 @@
 	const ulb = $derived(uncap.ulb ?? false)
 	const transcendence = $derived(uncap.transcendence ?? false)
 	const subaura = $derived(editMode ? editData.subaura : (summon?.subaura ?? false))
+	const limit = $derived(editMode ? editData.limit : (summon?.limit ?? false))
 	const uncapLevel = $derived(getSummonMaxUncapLevel({ uncap }))
 	const transcendenceStage = $derived(transcendence ? 5 : 0)
 
@@ -127,5 +128,8 @@
 			type="checkbox"
 			element={elementName}
 		/>
+	{:else}
+		<DetailItem label="Subaura" value={subaura ? 'Yes' : 'No'} />
+		<DetailItem label="Limit" value={limit ? 'Yes' : 'No'} />
 	{/if}
 </DetailsContainer>
