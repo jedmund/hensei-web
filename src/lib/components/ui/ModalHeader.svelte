@@ -28,6 +28,9 @@
 	@use '$src/themes/typography' as typography;
 
 	.modal-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		padding: spacing.$unit-2x;
 		padding-bottom: spacing.$unit;
 	}

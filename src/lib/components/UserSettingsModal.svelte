@@ -245,7 +245,9 @@
 
 <Dialog bind:open {...onOpenChange ? { onOpenChange } : {}} size="medium" hideClose>
 	{#snippet children()}
-		<ModalHeader title={m.settings_title()} description={'@' + username} />
+		<ModalHeader title={m.settings_title()}>
+			<span class="header-username">@{username}</span>
+		</ModalHeader>
 		<ModalBody noPadding>
 			<div class="settings-layout">
 				{#if error}
@@ -333,6 +335,11 @@
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
+
+	.header-username {
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
+	}
 
 	.settings-layout {
 		display: flex;
