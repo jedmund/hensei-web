@@ -55,19 +55,17 @@
 	// Migration
 	const migrateMutation = useMigrateParties()
 	let migrating = $state(false)
+	let migrated = $state(false)
 
 	async function handleMigrate() {
 		migrating = true
 		try {
-			const response = await $migrateMutation.mutateAsync(editKeys)
+			const response = await migrateMutation.mutateAsync(editKeys)
 			const completedShortcodes = response.results
 				.filter((r) => r.status === 'migrated' || r.status === 'already_claimed')
 				.map((r) => r.shortcode)
 			removeEditKeys(completedShortcodes)
-
-			if (currentUser?.username) {
-				goto(localizeHref(`/${currentUser.username}`))
-			}
+			migrated = true
 		} finally {
 			migrating = false
 		}
@@ -83,9 +81,16 @@
 				<p>{m.migrate_page_description()}</p>
 			</div>
 			{#if !previewQuery.isLoading && readyCount > 0}
-				<Button size="small" onclick={handleMigrate} disabled={migrating || readyCount === 0}>
-					{migrating ? m.migrate_page_migrating() : m.migrate_page_button()}
-				</Button>
+				{#if migrated}
+					<div class="success-badge">
+						<Icon name="check" size={14} />
+						Migrated
+					</div>
+				{:else}
+					<Button size="small" onclick={handleMigrate} disabled={migrating || readyCount === 0}>
+						{migrating ? m.migrate_page_migrating() : m.migrate_page_button()}
+					</Button>
+				{/if}
 			{/if}
 		</div>
 	</div>
@@ -105,7 +110,7 @@
 			{/if}
 		</div>
 	{:else}
-		<div class="migrate-grid">
+		<div class="migrate-grid" class:migrated>
 			<ExploreGrid items={readyParties} />
 		</div>
 	{/if}
@@ -139,13 +144,6 @@
 	.card-text {
 		display: flex;
 		flex-direction: column;
-
-		h1 {
-			margin: 0;
-			font-size: $font-regular;
-			font-weight: $medium;
-			color: var(--text-primary);
-		}
 
 		p {
 			margin: 0;
@@ -187,6 +185,28 @@
 		:global(button) {
 			margin-top: $unit-2x;
 		}
+	}
+
+	.success-badge {
+		display: flex;
+		align-items: center;
+		gap: $unit-half;
+		padding: $unit $unit + $unit-half;
+		font-size: $font-small;
+		font-weight: $medium;
+		color: white;
+		background: var(--toast-success-text);
+		border-radius: $card-corner;
+		white-space: nowrap;
+
+		:global(svg) {
+			color: white;
+		}
+	}
+
+	.migrate-grid.migrated {
+		opacity: 0.6;
+		pointer-events: none;
 	}
 
 	@keyframes spin {
