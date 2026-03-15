@@ -294,7 +294,7 @@
 
 	.grid-container {
 		background: var(--card-bg);
-		border: 0.5px solid rgba(0, 0, 0, 0.18);
+		border: 0.5px solid var(--border-subtle);
 		border-radius: layout.$page-corner;
 		box-shadow: effects.$page-elevation;
 		overflow: hidden;
@@ -336,21 +336,22 @@
 		td {
 			padding: spacing.$unit-2x spacing.$unit-2x;
 			text-align: left;
-			border-bottom: 1px solid #e5e5e5;
+			color: var(--text-primary);
 		}
 
 		th {
-			background: #f8f9fa;
+			background: var(--bar-bg);
 			font-weight: typography.$bold;
-			color: #495057;
+			color: var(--text-secondary);
 			font-size: typography.$font-small;
+			border-bottom: 1px solid var(--border-medium);
 		}
 
 		tr.clickable {
 			cursor: pointer;
 
 			&:hover {
-				background: #f8f9fa;
+				background: var(--table-row-hover);
 			}
 		}
 
@@ -368,7 +369,7 @@
 
 			code {
 				font-size: typography.$font-small;
-				background: #f0f0f0;
+				background: var(--bar-bg);
 				padding: 2px 6px;
 				border-radius: 3px;
 			}
@@ -395,7 +396,7 @@
 	}
 
 	.no-image {
-		color: #999;
+		color: var(--text-secondary);
 	}
 
 	.series-name {
@@ -403,7 +404,7 @@
 	}
 
 	.no-flags {
-		color: #999;
+		color: var(--text-secondary);
 	}
 
 	.flags {
@@ -450,12 +451,12 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: spacing.$unit;
-		border-top: 1px solid #e5e5e5;
-		background: #f8f9fa;
+		border-top: 1px solid var(--border-subtle);
+		background: var(--bar-bg);
 
 		.pagination-info {
 			font-size: typography.$font-small;
-			color: #6c757d;
+			color: var(--text-secondary);
 		}
 	}
 </style>
