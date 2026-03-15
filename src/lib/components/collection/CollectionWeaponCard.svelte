@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { CollectionWeapon } from '$lib/types/api/collection'
-	import { getWeaponImage } from '$lib/utils/images'
+	import { getWeaponImage, getWeaponTransformation } from '$lib/utils/images'
 	import { getAwakeningImage } from '$lib/utils/modifiers'
 	import { localizedName } from '$lib/utils/locale'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
@@ -13,7 +13,9 @@
 	let { weapon, onClick }: Props = $props()
 
 	// Get transformation suffix for transcendence
-	const transformation = $derived(weapon.transcendenceStep > 0 ? '02' : undefined)
+	const transformation = $derived(
+		getWeaponTransformation(weapon.weapon?.uncap?.transcendence, weapon.uncapLevel, weapon.transcendenceStep)
+	)
 
 	// Use instance element for element-changeable weapons, default to 0 (no element image) if not set
 	const displayElement = $derived(weapon.weapon?.element === 0 ? (weapon.element ?? 0) : undefined)
