@@ -253,8 +253,7 @@
 
 	.toolbar-container {
 		flex-shrink: 0;
-		padding: $unit-2x;
-		padding-bottom: 0;
+		padding: 0 $unit-2x;
 	}
 
 	.description-toolbar {
