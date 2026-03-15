@@ -259,6 +259,17 @@ $button--secondary--bg--dark--hover: $grey-30;
 $button--secondary--text--dark: $grey-60;
 $button--secondary--text--dark--hover: $grey-70;
 
+// Color Definitions: Tier Button (job tier selector)
+$tier--button--bg--light: $grey-90;
+$tier--button--bg--light--hover: $grey-85;
+$tier--button--text--light: $grey-50;
+$tier--button--text--light--hover: $grey-40;
+
+$tier--button--bg--dark: $grey-30;
+$tier--button--bg--dark--hover: $grey-40;
+$tier--button--text--dark: $grey-60;
+$tier--button--text--dark--hover: $grey-70;
+
 // Color Definitions: Button Primary (for selected tiers)
 $button--primary--bg--light: $accent--blue--light;
 $button--primary--bg--light--hover: $accent--blue--light--focus;

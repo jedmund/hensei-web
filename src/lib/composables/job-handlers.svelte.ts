@@ -9,10 +9,13 @@ import { toast } from 'svelte-sonner'
 import { extractErrorMessage } from '$lib/utils/errors'
 import * as m from '$lib/paraglide/messages'
 
+type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+
 interface JobHandlerOptions {
 	mutations: PartyMutations
 	getParty: () => Party
 	canEdit: () => boolean
+	getUserElement?: () => ElementType | undefined
 	ensurePartyExists?: () => Promise<{ id: string; shortcode: string }>
 }
 
@@ -35,6 +38,7 @@ export function useJobHandlers(opts: JobHandlerOptions) {
 
 		openJobSelectionSidebar({
 			currentJobId: opts.getParty().job?.id,
+			element: opts.getUserElement?.(),
 			onSelectJob: async (job) => {
 				loading = true
 				error = null

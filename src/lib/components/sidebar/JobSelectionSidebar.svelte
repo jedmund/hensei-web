@@ -10,12 +10,15 @@
 	import Icon from '../Icon.svelte'
 	import * as m from '$lib/paraglide/messages'
 
+	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+
 	interface Props {
 		currentJobId?: string
 		onSelectJob?: (job: Job) => void
+		element?: ElementType
 	}
 
-	let { currentJobId, onSelectJob }: Props = $props()
+	let { currentJobId, onSelectJob, element }: Props = $props()
 
 	const jobsQuery = createQuery(() => jobQueries.list())
 
@@ -101,7 +104,7 @@
 			contained={true}
 		/>
 
-		<JobTierSelector {tiers} {selectedTiers} onToggleTier={toggleTier} />
+		<JobTierSelector {tiers} {selectedTiers} onToggleTier={toggleTier} {element} />
 	</div>
 
 	<div class="results-section" onscroll={(e) => { resultsScrolled = e.currentTarget.scrollTop > 0 }}>

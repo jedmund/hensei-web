@@ -4,9 +4,12 @@ import JobSkillSelectionSidebar from '$lib/components/sidebar/JobSkillSelectionS
 import type { Job, JobSkill } from '$lib/types/api/entities'
 import type { JobSkillList } from '$lib/types/api/party'
 
+type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+
 interface JobSelectionOptions {
 	currentJobId?: string | undefined
 	onSelectJob?: ((job: Job) => void) | undefined
+	element?: ElementType
 }
 
 interface JobSkillSelectionOptions {
@@ -18,13 +21,14 @@ interface JobSkillSelectionOptions {
 }
 
 export function openJobSelectionSidebar(options: JobSelectionOptions) {
-	const { currentJobId, onSelectJob } = options
+	const { currentJobId, onSelectJob, element } = options
 
 	sidebar.openWithComponent(
 		'Select Job',
 		JobSelectionSidebar,
 		{
 			currentJobId,
+			element,
 			onSelectJob: (job: Job) => {
 				onSelectJob?.(job)
 				sidebar.close()

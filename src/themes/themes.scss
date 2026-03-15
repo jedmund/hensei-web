@@ -151,6 +151,11 @@
 	--button-primary-text: #{colors.$button--primary--text--light};
 	--button-primary-border: #{colors.$button--primary--border--light};
 
+	--tier-button-bg: #{colors.$tier--button--bg--light};
+	--tier-button-bg-hover: #{colors.$tier--button--bg--light--hover};
+	--tier-button-text: #{colors.$tier--button--text--light};
+	--tier-button-text-hover: #{colors.$tier--button--text--light--hover};
+
 	// Light - Inputs
 	--input-bg: #{colors.$input--bg--light};
 	--input-bg-hover: #{colors.$input--bg--light--hover};
@@ -576,6 +581,11 @@ html[data-theme='dark'] {
 	--button-primary-bg-hover: #{colors.$button--primary--bg--dark--hover};
 	--button-primary-text: #{colors.$button--primary--text--dark};
 	--button-primary-border: #{colors.$button--primary--border--dark};
+
+	--tier-button-bg: #{colors.$tier--button--bg--dark};
+	--tier-button-bg-hover: #{colors.$tier--button--bg--dark--hover};
+	--tier-button-text: #{colors.$tier--button--text--dark};
+	--tier-button-text-hover: #{colors.$tier--button--text--dark--hover};
 
 	// Dark - Inputs
 	--input-bg: #{colors.$input--bg--dark};

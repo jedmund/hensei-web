@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ComponentProps } from 'svelte'
+	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Tier {
 		value: string
@@ -11,9 +11,10 @@
 		tiers: Tier[]
 		selectedTiers: Set<string>
 		onToggleTier: (value: string) => void
+		element?: ElementType
 	}
 
-	let { tiers, selectedTiers, onToggleTier }: Props = $props()
+	let { tiers, selectedTiers, onToggleTier, element }: Props = $props()
 
 	// Split tiers into two rows
 	const firstRowTiers = $derived(tiers.filter(t => ['1', '2', '3', '4', '5'].includes(t.value)))
@@ -24,7 +25,7 @@
 	}
 </script>
 
-<div class="tier-selector">
+<div class="tier-selector {element ?? ''}">
 	<div class="tier-row">
 		{#each firstRowTiers as tier (tier.value)}
 			<button
@@ -52,53 +53,43 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/layout' as layout;
-	@use '$src/themes/typography' as typography;
-	@use '$src/themes/effects' as effects;
+	@use '$src/themes/spacing' as *;
+	@use '$src/themes/layout' as *;
+	@use '$src/themes/typography' as *;
+	@use '$src/themes/effects' as *;
 
 	.tier-selector {
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-half;
+		gap: $unit-half;
 	}
 
 	.tier-row {
 		display: flex;
-		gap: spacing.$unit-half;
+		gap: $unit-half;
 
-		&:first-child {
-			// First row with 5 items
-			.tier-button {
-				flex: 1;
-			}
-		}
-
-		&:last-child {
-			// Second row with 3 items
-			.tier-button {
-				flex: 1;
-			}
+		.tier-button {
+			flex: 1;
 		}
 	}
 
 	.tier-button {
-		padding: spacing.$unit spacing.$unit-2x;
-		background: var(--button-secondary-bg);
+		padding: $unit $unit-2x;
+		background: var(--tier-button-bg);
 		border: 1px solid transparent;
-		border-radius: layout.$card-corner;
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-		color: var(--button-secondary-text);
+		border-radius: $card-corner;
+		font-size: $font-small;
+		font-weight: $medium;
+		color: var(--tier-button-text);
 		cursor: pointer;
-		transition: all effects.$duration-quick ease;
+		@include smooth-transition($duration-quick, background-color, color, border-color);
 		user-select: none;
 		font-family: var(--font-family);
 		text-align: center;
 
 		&:hover:not(.selected) {
-			background: var(--button-secondary-bg-hover);
-			color: var(--button-secondary-text-hover);
+			background: var(--tier-button-bg-hover);
+			color: var(--tier-button-text-hover);
 		}
 
 		&.selected {
@@ -113,6 +104,40 @@
 
 		&:active {
 			transform: translateY(1px);
+		}
+	}
+
+	// Element-specific selected colors
+	.tier-selector {
+		&.wind .tier-button.selected {
+			background: var(--wind-nav-selected-bg);
+			color: var(--wind-nav-selected-text);
+			border-color: transparent;
+		}
+		&.fire .tier-button.selected {
+			background: var(--fire-nav-selected-bg);
+			color: var(--fire-nav-selected-text);
+			border-color: transparent;
+		}
+		&.water .tier-button.selected {
+			background: var(--water-nav-selected-bg);
+			color: var(--water-nav-selected-text);
+			border-color: transparent;
+		}
+		&.earth .tier-button.selected {
+			background: var(--earth-nav-selected-bg);
+			color: var(--earth-nav-selected-text);
+			border-color: transparent;
+		}
+		&.dark .tier-button.selected {
+			background: var(--dark-nav-selected-bg);
+			color: var(--dark-nav-selected-text);
+			border-color: transparent;
+		}
+		&.light .tier-button.selected {
+			background: var(--light-nav-selected-bg);
+			color: var(--light-nav-selected-text);
+			border-color: transparent;
 		}
 	}
 </style>
