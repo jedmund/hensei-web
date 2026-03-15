@@ -73,42 +73,42 @@
 
 	// Element-specific styles
 	.element-wind {
-		background: var(--wind-bg);
+		background: var(--wind-portrait-bg);
 		color: var(--wind-text);
 
 		:global(svg) { color: var(--wind-text); }
 	}
 
 	.element-fire {
-		background: var(--fire-bg);
+		background: var(--fire-portrait-bg);
 		color: var(--fire-text);
 
 		:global(svg) { color: var(--fire-text); }
 	}
 
 	.element-water {
-		background: var(--water-bg);
+		background: var(--water-portrait-bg);
 		color: var(--water-text);
 
 		:global(svg) { color: var(--water-text); }
 	}
 
 	.element-earth {
-		background: var(--earth-bg);
+		background: var(--earth-portrait-bg);
 		color: var(--earth-text);
 
 		:global(svg) { color: var(--earth-text); }
 	}
 
 	.element-dark {
-		background: var(--dark-bg);
+		background: var(--dark-portrait-bg);
 		color: var(--dark-text);
 
 		:global(svg) { color: var(--dark-text); }
 	}
 
 	.element-light {
-		background: var(--light-bg);
+		background: var(--light-portrait-bg);
 		color: var(--light-text);
 
 		:global(svg) { color: var(--light-text); }
