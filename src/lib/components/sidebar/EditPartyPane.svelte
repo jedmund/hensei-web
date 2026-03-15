@@ -1,8 +1,8 @@
 <script lang="ts">
 	/**
-	 * PartyEditSidebar - Edit party metadata (settings, performance, video)
+	 * EditPartyPane - Edit party metadata (settings, performance, video)
 	 *
-	 * This sidebar is opened via openPartyEditSidebar() and provides
+	 * This pane is opened via openPartyEditSidebar() and provides
 	 * editing for battle settings, clear time, metrics, video URL, and raid.
 	 */
 	import * as m from '$lib/paraglide/messages'
@@ -15,7 +15,7 @@
 	import MetricField from '$lib/components/party/edit/MetricField.svelte'
 	import EditRaidPane from '$lib/components/sidebar/EditRaidPane.svelte'
 	import EditDescriptionPane from '$lib/components/sidebar/EditDescriptionPane.svelte'
-	import Select from '$lib/components/ui/Select.svelte'
+	import PrivacySelector from '$lib/components/party/edit/PrivacySelector.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { usePaneStack } from '$lib/stores/paneStack.svelte'
@@ -94,13 +94,6 @@
 	let raid = $state<Raid | null>(initial.raid)
 	let raidId = $state<string | null>(initial.raidId)
 	let description = $state(initial.description)
-
-	// Visibility options for select (1=Public, 2=Unlisted, 3=Private per Rails API)
-	const visibilityOptions: Array<{ value: PartyVisibility; label: string }> = [
-		{ value: 1, label: m.visibility_public() },
-		{ value: 2, label: m.visibility_unlisted() },
-		{ value: 3, label: m.visibility_private() }
-	]
 
 	// Check if any values have changed (compared against snapshot, not proxy)
 	const hasChanges = $derived(
@@ -330,35 +323,24 @@
 					<Icon name="chevron-right" size={16} class="chevron-icon" />
 				</button>
 			</div>
+			<div class="description-field">
+				<span class="description-label">{m.party_description()}</span>
+				<button type="button" class="description-button" onclick={openDescriptionPane}>
+					{#if descriptionPreview}
+						<span class="description-preview">{descriptionPreview}</span>
+					{:else}
+						<span class="description-placeholder">{m.sidebar_add_description()}</span>
+					{/if}
+					<Icon name="chevron-right" size={16} class="description-chevron" />
+				</button>
+			</div>
 		</div>
 	</div>
 
 	<hr class="divider" />
 
-	<button type="button" class="description-button" onclick={openDescriptionPane}>
-		<div class="description-header">
-			<span class="description-label">{m.party_description()}</span>
-			<Icon name="chevron-right" size={16} class="description-chevron" />
-		</div>
-		{#if descriptionPreview}
-			<p class="description-preview">{descriptionPreview}</p>
-		{:else}
-			<span class="description-placeholder">{m.sidebar_add_description()}</span>
-		{/if}
-	</button>
-
-	<hr class="divider" />
-
-	<DetailsSection title={m.section_sharing()}>
-		<DetailRow label={m.visibility_label()} noHover compact>
-			{#snippet children()}
-				<Select
-					options={visibilityOptions}
-					bind:value={visibility}
-					contained
-				/>
-			{/snippet}
-		</DetailRow>
+	<DetailsSection title={m.visibility_label()}>
+		<PrivacySelector bind:value={visibility} {element} showLabel={false} />
 		{#if isInCrew}
 			<DetailRow label={m.party_edit_share_crew()} noHover compact>
 				{#snippet children()}
@@ -441,7 +423,7 @@
 	.top-fields {
 		display: flex;
 		flex-direction: column;
-		gap: $unit-2x;
+		gap: $unit-3x;
 		padding: 0 $unit;
 
 		// Override Input label styling to match DetailRow
@@ -454,7 +436,7 @@
 
 	.divider {
 		border: none;
-		border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.04));
+		border-top: 1px solid var(--border-subtle);
 		margin: 0;
 	}
 
@@ -472,7 +454,8 @@
 	.raid-select-button {
 		display: flex;
 		align-items: center;
-		gap: $unit;
+		justify-content: space-between;
+		width: 100%;
 		padding: 0;
 		background: none;
 		border: none;
@@ -488,20 +471,30 @@
 
 	.placeholder {
 		font-size: $font-regular;
-		font-weight: $medium;
-		color: var(--text-secondary);
+		color: var(--text-tertiary);
 	}
 
-	.chevron-icon {
-		color: var(--text-secondary);
+	:global(.chevron-icon) {
+		color: var(--icon-secondary);
 		flex-shrink: 0;
+	}
+
+	.description-field {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-half;
+	}
+
+	.description-label {
+		font-size: $font-regular;
+		color: var(--text-secondary);
 	}
 
 	.description-button {
 		display: flex;
-		flex-direction: column;
-		gap: $unit-half;
-		margin: 0 $unit-2x;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
 		padding: 0;
 		background: none;
 		border: none;
@@ -509,38 +502,21 @@
 		text-align: left;
 	}
 
-	.description-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		width: 100%;
-	}
-
-	.description-label {
-		font-size: $font-name;
-		font-weight: $medium;
-		color: var(--text-primary);
-	}
-
 	.description-preview {
-		margin: 0;
-		overflow: hidden;
 		font-size: $font-regular;
 		color: var(--text-secondary);
-		line-height: 1.5;
-		display: -webkit-box;
-		-webkit-line-clamp: 3;
-		-webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.description-placeholder {
 		font-size: $font-regular;
 		color: var(--text-tertiary);
-		font-style: italic;
 	}
 
-	.description-chevron {
-		color: var(--text-secondary);
+	:global(.description-chevron) {
+		color: var(--icon-secondary);
 		flex-shrink: 0;
 	}
 
@@ -548,37 +524,37 @@
 	.raid-select-button {
 		&.wind {
 			.raid-name,
-			.chevron-icon {
+			:global(.chevron-icon) {
 				color: $wind-text-30;
 			}
 		}
 		&.fire {
 			.raid-name,
-			.chevron-icon {
+			:global(.chevron-icon) {
 				color: $fire-text-30;
 			}
 		}
 		&.water {
 			.raid-name,
-			.chevron-icon {
+			:global(.chevron-icon) {
 				color: $water-text-30;
 			}
 		}
 		&.earth {
 			.raid-name,
-			.chevron-icon {
+			:global(.chevron-icon) {
 				color: $earth-text-30;
 			}
 		}
 		&.dark {
 			.raid-name,
-			.chevron-icon {
+			:global(.chevron-icon) {
 				color: $dark-text-30;
 			}
 		}
 		&.light {
 			.raid-name,
-			.chevron-icon {
+			:global(.chevron-icon) {
 				color: $light-text-30;
 			}
 		}

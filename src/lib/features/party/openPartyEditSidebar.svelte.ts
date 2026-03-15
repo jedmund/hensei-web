@@ -1,7 +1,7 @@
 import { sidebar } from '$lib/stores/sidebar.svelte'
-import PartyEditSidebar, {
+import EditPartyPane, {
 	type PartyEditValues
-} from '$lib/components/sidebar/PartyEditSidebar.svelte'
+} from '$lib/components/sidebar/EditPartyPane.svelte'
 
 type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -20,7 +20,7 @@ interface PartyEditSidebarOptions {
 export function openPartyEditSidebar(options: PartyEditSidebarOptions) {
 	const { initialValues, element, onSave } = options
 
-	sidebar.openWithComponent('Edit Party Settings', PartyEditSidebar, {
+	sidebar.openWithComponent('Edit Team Settings', EditPartyPane, {
 		initialValues,
 		element,
 		onSave
