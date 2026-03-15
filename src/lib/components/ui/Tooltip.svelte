@@ -58,5 +58,6 @@
 		box-shadow: var(--shadow-md);
 		max-width: calc($unit * 31.25);
 		line-height: 1.4;
+		text-align: center;
 	}
 </style>

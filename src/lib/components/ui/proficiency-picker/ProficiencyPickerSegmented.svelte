@@ -99,7 +99,7 @@
 					{disabled}
 				>
 					{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
-						<Tooltip content={getLabel(proficiency)}>
+						<Tooltip content={getLabel(proficiency)} disabled={disabled}>
 							{#snippet children()}
 								<ToggleGroup.Item
 									value={String(proficiency)}
@@ -125,7 +125,7 @@
 					{disabled}
 				>
 					{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
-						<Tooltip content={getLabel(proficiency)}>
+						<Tooltip content={getLabel(proficiency)} disabled={disabled}>
 							{#snippet children()}
 								<ToggleGroup.Item
 									value={String(proficiency)}
@@ -159,7 +159,7 @@
 				{disabled}
 			>
 				{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
-					<Tooltip content={getLabel(proficiency)}>
+					<Tooltip content={getLabel(proficiency)} disabled={disabled}>
 						{#snippet children()}
 							<ToggleGroup.Item
 								value={String(proficiency)}
@@ -181,7 +181,7 @@
 				{disabled}
 			>
 				{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
-					<Tooltip content={getLabel(proficiency)}>
+					<Tooltip content={getLabel(proficiency)} disabled={disabled}>
 						{#snippet children()}
 							<ToggleGroup.Item
 								value={String(proficiency)}

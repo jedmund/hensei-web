@@ -17,6 +17,7 @@
 	// Utilities
 	import { getLocalId } from '$lib/utils/localId'
 	import { getEditKey, computeEditability } from '$lib/utils/editKeys'
+	import { localizedName } from '$lib/utils/locale'
 
 	import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
 	import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
@@ -150,6 +151,22 @@
 		getSelectedSlot: () => selectedSlot,
 		setSelectedSlot: (n) => {
 			selectedSlot = n
+		},
+		onSlotAdvance: (newSlot) => {
+			const tab = activeTab
+			if (tab === GridType.Summon) {
+				openSearchSidebar({
+					type: 'summon',
+					onAddItems: itemAddition.handleAddItems,
+					canAddMore: true,
+					authUserId,
+					userElement,
+					onUnlinkCollection: actions.handleUnlinkCollection,
+					initialCollectionSourceUsername,
+					isFriendSlot: newSlot === 6,
+					isSubauraSlot: newSlot === 4 || newSlot === 5
+				})
+			}
 		},
 		ensurePartyExists: ensurePartyExists ? (() => ensurePartyExists()) : undefined
 	})
@@ -362,9 +379,12 @@
 				canAddMore: true,
 				authUserId,
 				requiredProficiencies,
+				jobName: requiredProficiencies ? localizedName(party.job?.name) : undefined,
 				userElement,
 				onUnlinkCollection: actions.handleUnlinkCollection,
-				initialCollectionSourceUsername
+				initialCollectionSourceUsername,
+				isFriendSlot: opts.type === 'summon' && opts.position === 6,
+				isSubauraSlot: opts.type === 'summon' && (opts.position === 4 || opts.position === 5)
 			})
 		}
 	})
