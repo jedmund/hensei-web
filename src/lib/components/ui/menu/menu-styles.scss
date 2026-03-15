@@ -41,11 +41,6 @@
 		border-bottom-right-radius: $item-corner;
 	}
 
-	&:disabled {
-		opacity: 0.5;
-		cursor: not-allowed;
-	}
-
 	&.danger {
 		color: var(--danger);
 
@@ -84,6 +79,15 @@
 	@include menu-item;
 }
 
+:global(.context-menu-item[data-disabled]) {
+	color: var(--menu-text-disabled);
+	cursor: not-allowed;
+}
+
+:global(.context-menu-item[data-disabled]:hover) {
+	background: transparent;
+}
+
 :global(.context-menu-item.danger) {
 	color: var(--danger);
 
@@ -103,6 +107,15 @@
 
 :global(.dropdown-menu-item) {
 	@include menu-item;
+}
+
+:global(.dropdown-menu-item[data-disabled]) {
+	color: var(--menu-text-disabled);
+	cursor: not-allowed;
+}
+
+:global(.dropdown-menu-item[data-disabled]:hover) {
+	background: transparent;
 }
 
 :global(.dropdown-menu-item.danger) {

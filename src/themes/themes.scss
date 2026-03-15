@@ -89,6 +89,7 @@
 	--menu-text: #{colors.$menu--text--light};
 	--menu-bg-item-hover: #{colors.$menu--item--bg--light--hover};
 	--menu-text-hover: #{colors.$menu--text--light--hover};
+	--menu-text-disabled: #{colors.$menu--text--light--disabled};
 
 	// Light - Formatting menu
 	--formatting-menu-bg: #{colors.$formatting--menu--bg--light};
@@ -514,6 +515,7 @@ html[data-theme='dark'] {
 	--menu-separator: #{colors.$menu--separator--dark};
 	--menu-bg-item-hover: #{colors.$menu--item--bg--dark--hover};
 	--menu-text-hover: #{colors.$menu--text--dark--hover};
+	--menu-text-disabled: #{colors.$menu--text--dark--disabled};
 
 	// Dark - Formatting menu
 	--formatting-menu-bg: #{colors.$formatting--menu--bg--dark};
