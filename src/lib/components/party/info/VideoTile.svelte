@@ -63,7 +63,7 @@
 	}
 </script>
 
-<InfoTile label={m.party_video()} class="video-tile" {showAdd} {onAdd} clickable={showAdd} onclick={showAdd ? onAdd : undefined}>
+<InfoTile label={m.party_video()} class="video-tile {!isEmpty ? 'has-video' : ''}" {showAdd} {onAdd} clickable={showAdd} onclick={showAdd ? onAdd : undefined}>
 	{#snippet headerAction()}
 		{#if videoUrl && videoId}
 			<Tooltip content={m.tooltip_expand_video()}>
@@ -101,6 +101,10 @@
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/effects' as *;
 	@use '$src/themes/typography' as *;
+
+	:global(.video-tile.has-video) {
+		padding-right: $unit !important;
+	}
 
 	.video-container {
 		display: flex;
@@ -170,7 +174,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		color: inherit;
+		color: var(--icon-secondary);
 	}
 
 	.empty-state {

@@ -57,7 +57,7 @@
 		background: var(--card-bg);
 		border: 0.5px solid var(--button-bg);
 		border-radius: $card-corner;
-		padding: $unit $unit $unit-2x $unit-2x;
+		padding: $unit $unit-2x $unit-2x $unit-2x;
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
