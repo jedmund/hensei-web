@@ -16,11 +16,12 @@
 		summon: SearchResultItem
 		quantity?: number
 		onQuantityChange?: (summon: SearchResultItem, quantity: number) => void
+		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	}
 
-	let { summon, quantity = 0, onQuantityChange }: Props = $props()
+	let { summon, quantity = 0, onQuantityChange, userElement }: Props = $props()
 
-	const imageUrl = $derived(getSummonImage(summon.granblueId, 'grid'))
+	const imageUrl = $derived(getSummonImage(summon.granblueId, 'wide'))
 
 	const name = $derived(localizedName(summon.name))
 
@@ -43,7 +44,6 @@
 
 <div
 	class="card"
-	class:selected={quantity > 0}
 	role="button"
 	tabindex="0"
 	onclick={handleClick}
@@ -51,8 +51,8 @@
 	aria-label="Select {name}, current quantity: {quantity}"
 >
 	<img src={imageUrl} alt={name} class="image" loading="lazy" />
-	<div class="counter-overlay" onclick={(e) => e.stopPropagation()}>
-		<QuantityCounter value={quantity} onChange={handleQuantityChange} />
+	<div class="counter-row" onclick={(e) => e.stopPropagation()}>
+		<QuantityCounter value={quantity} onChange={handleQuantityChange} element={userElement} />
 	</div>
 </div>
 
@@ -62,44 +62,47 @@
 	@use '$src/themes/layout' as layout;
 
 	.card {
-		position: relative;
-		width: 100px;
-		// Summon grid images are typically square
-		aspect-ratio: 1 / 1;
+		display: flex;
+		flex-direction: column;
+		width: 140px;
 		padding: 0;
-		border: 2px solid transparent;
 		border-radius: layout.$input-corner;
-		background: var(--card-bg, #f5f5f5);
+		background: var(--card-bg);
 		cursor: pointer;
 		overflow: hidden;
 		flex-shrink: 0;
-		@include smooth-transition(0.15s, all);
+		@include smooth-transition(0.15s, transform);
 
 		&:hover {
-			border-color: var(--accent-color, #3366ff);
 			transform: scale(1.02);
 		}
 
 		&:focus-visible {
-			outline: 2px solid var(--focus-ring, #3366ff);
+			outline: 2px solid var(--accent-blue);
 			outline-offset: 2px;
-		}
-
-		&.selected {
-			border-color: var(--accent-color, #3366ff);
-			box-shadow: 0 0 0 2px var(--accent-color, #3366ff);
 		}
 	}
 
 	.image {
 		width: 100%;
-		height: 100%;
-		object-fit: contain;
+		aspect-ratio: 280 / 160;
+		object-fit: cover;
 	}
 
-	.counter-overlay {
-		position: absolute;
-		bottom: 4px;
-		right: 4px;
+	.counter-row {
+		display: flex;
+		padding: $unit-fourth;
+
+		:global(.quantity-counter) {
+			width: 100%;
+		}
+
+		:global(.counter-btn) {
+			flex: 1;
+		}
+
+		:global(.value) {
+			min-width: 28px;
+		}
 	}
 </style>

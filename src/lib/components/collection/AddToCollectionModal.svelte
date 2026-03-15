@@ -41,9 +41,11 @@
 		entityType?: EntityType
 		open?: boolean
 		onOpenChange?: (open: boolean) => void
+		/** User's element for elemental checkbox styling */
+		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	}
 
-	let { userId, entityType = 'character', open = $bindable(false), onOpenChange }: Props = $props()
+	let { userId, entityType = 'character', open = $bindable(false), onOpenChange, userElement }: Props = $props()
 
 	// Search state
 	let searchQuery = $state('')
@@ -64,6 +66,20 @@
 
 	// Refs
 	let sentinelEl = $state<HTMLElement>()
+	let resultsAreaEl = $state<HTMLElement>()
+	let footerShadow = $state(false)
+
+	function handleResultsScroll() {
+		if (!resultsAreaEl) return
+		const { scrollTop, scrollHeight, clientHeight } = resultsAreaEl
+		footerShadow = scrollTop + clientHeight < scrollHeight - 1
+	}
+
+	// Re-check shadow when results change
+	$effect(() => {
+		void displayedResults
+		requestAnimationFrame(handleResultsScroll)
+	})
 
 	// Localized entity type display names
 	const entityNames: Record<EntityType, { singular: string; plural: string }> = {
@@ -331,17 +347,6 @@
 	{#snippet children()}
 		<ModalHeader title={dialogTitle} />
 		<div class="modal-content">
-			<!-- Search input -->
-			<div class="search-bar">
-				<Icon name="search" size={18} />
-				<input
-					type="text"
-					bind:value={searchQuery}
-					placeholder={searchPlaceholder}
-					class="search-input"
-				/>
-			</div>
-
 			<!-- Filters -->
 			<div class="filters-bar">
 				<CollectionFilters
@@ -353,6 +358,7 @@
 					bind:raceFilters
 					bind:proficiencyFilters
 					bind:genderFilters
+					bind:searchQuery
 					onFiltersChange={handleFiltersChange}
 					showSort={false}
 					showViewToggle={true}
@@ -362,7 +368,7 @@
 			</div>
 
 			<!-- Results -->
-			<div class="results-area">
+			<div class="results-area" bind:this={resultsAreaEl} onscroll={handleResultsScroll}>
 				{#if isLoading}
 					<div class="loading-state">
 						<Icon name="loader-2" size={32} />
@@ -389,6 +395,7 @@
 									{character}
 									selected={selectedIds.has(character.id)}
 									onToggle={toggleCharacterSelection}
+								{userElement}
 								/>
 							{/each}
 						{:else if entityType === 'weapon'}
@@ -397,6 +404,7 @@
 									{weapon}
 									quantity={selectedQuantities.get(weapon.id) ?? 0}
 									onQuantityChange={handleQuantityChange}
+									{userElement}
 								/>
 							{/each}
 						{:else}
@@ -405,6 +413,7 @@
 									{summon}
 									quantity={selectedQuantities.get(summon.id) ?? 0}
 									onQuantityChange={handleQuantityChange}
+									{userElement}
 								/>
 							{/each}
 						{/if}
@@ -417,6 +426,7 @@
 									{character}
 									selected={selectedIds.has(character.id)}
 									onToggle={toggleCharacterSelection}
+								{userElement}
 								/>
 							{/each}
 						{:else if entityType === 'weapon'}
@@ -425,6 +435,7 @@
 									{weapon}
 									quantity={selectedQuantities.get(weapon.id) ?? 0}
 									onQuantityChange={handleQuantityChange}
+									{userElement}
 								/>
 							{/each}
 						{:else}
@@ -433,6 +444,7 @@
 									{summon}
 									quantity={selectedQuantities.get(summon.id) ?? 0}
 									onQuantityChange={handleQuantityChange}
+									{userElement}
 								/>
 							{/each}
 						{/if}
@@ -457,6 +469,7 @@
 		</div>
 		<ModalFooter
 			onCancel={() => (open = false)}
+			showShadow={footerShadow}
 			primaryAction={{
 				label: currentMutation.isPending ? m.collection_adding() : m.collection_add_button(),
 				onclick: handleAdd,
@@ -483,6 +496,7 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/effects' as effects;
 
 	.modal-content {
 		display: flex;
@@ -490,46 +504,10 @@
 		flex: 1;
 		min-height: 0;
 		overflow: hidden;
-		gap: $unit-2x;
-		padding: $unit-2x;
-		padding-top: 0;
-	}
-
-	.search-bar {
-		display: flex;
-		align-items: center;
-		gap: $unit;
-		padding: $unit-half $unit;
-		background: var(--input-bg, #f5f5f5);
-		border-radius: layout.$input-corner;
-		border: 1px solid var(--border-color, #ddd);
-
-		:global(svg) {
-			color: var(--text-secondary, #666);
-			flex-shrink: 0;
-		}
-	}
-
-	.search-input {
-		flex: 1;
-		border: none;
-		background: transparent;
-		font-size: typography.$font-body;
-		padding: $unit-half 0;
-		color: var(--text-primary, #333);
-
-		&::placeholder {
-			color: var(--text-tertiary, #999);
-		}
-
-		&:focus {
-			outline: none;
-		}
+		padding: 0 $unit-2x;
 	}
 
 	.filters-bar {
-		padding-bottom: $unit;
-		border-bottom: 1px solid var(--border-color, #eee);
 		overflow-x: auto;
 	}
 
@@ -560,7 +538,7 @@
 		align-items: center;
 		justify-content: center;
 		height: 200px;
-		color: var(--text-secondary, #666);
+		color: var(--text-secondary);
 		gap: $unit;
 
 		:global(svg) {
@@ -587,7 +565,7 @@
 		justify-content: center;
 		gap: $unit;
 		padding: $unit-2x;
-		color: var(--text-secondary, #666);
+		color: var(--text-secondary);
 
 		:global(svg) {
 			animation: spin 1s linear infinite;
@@ -595,25 +573,25 @@
 	}
 
 	.selected-link {
-		background: none;
-		border: none;
-		color: var(--accent-color, #3366ff);
-		font-size: typography.$font-body;
+		all: unset;
 		cursor: pointer;
+		color: var(--accent-blue);
+		font-size: typography.$font-small;
 		padding: $unit-half $unit;
 		border-radius: layout.$item-corner-small;
+		@include effects.smooth-transition(effects.$duration-quick, background-color, color);
 
 		&:hover {
-			background: var(--button-bg-hover, #f0f0f0);
+			background: var(--button-bg-hover);
 			text-decoration: underline;
 		}
 
 		&.active {
-			background: var(--accent-color, #3366ff);
+			background: var(--accent-blue);
 			color: white;
 
 			&:hover {
-				background: var(--accent-color-hover, #2255ee);
+				background: var(--accent-blue-focus);
 				text-decoration: none;
 			}
 		}

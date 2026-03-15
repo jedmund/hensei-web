@@ -7,8 +7,13 @@
 
 	const { data, children }: { data: LayoutData; children: () => any } = $props()
 
-	// Query for the user's crew
-	const crewQuery = createQuery(() => crewQueries.myCrew())
+	const isAuthenticated = $derived(data.isAuthenticated)
+
+	// Query for the user's crew (only when authenticated)
+	const crewQuery = createQuery(() => ({
+		...crewQueries.myCrew(),
+		enabled: isAuthenticated
+	}))
 
 	// Update crew store when query data changes
 	$effect(() => {

@@ -28,9 +28,10 @@
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
+	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
+	import ProficiencyPicker from '$lib/components/ui/proficiency-picker/ProficiencyPicker.svelte'
 	import ArtifactSkillRow from '$lib/components/artifact/ArtifactSkillRow.svelte'
 	import ArtifactModifierList from '$lib/components/artifact/ArtifactModifierList.svelte'
-	import { getElementColor } from '$lib/utils/gw'
 	import { localizedName } from '$lib/utils/locale'
 
 	interface Props {
@@ -61,30 +62,6 @@
 	let level = $state<number>(1)
 	let nickname = $state<string>('')
 	let skills = $state<(ArtifactSkillInstance | null)[]>([null, null, null, null])
-
-	// Proficiency options - matches database enum values
-	const proficiencyOptions = [
-		{ value: 1, label: m.proficiency_sabre() },
-		{ value: 2, label: m.proficiency_dagger() },
-		{ value: 3, label: m.proficiency_axe() },
-		{ value: 4, label: m.proficiency_spear() },
-		{ value: 5, label: m.proficiency_bow() },
-		{ value: 6, label: m.proficiency_staff() },
-		{ value: 7, label: m.proficiency_melee() },
-		{ value: 8, label: m.proficiency_harp() },
-		{ value: 9, label: m.proficiency_gun() },
-		{ value: 10, label: m.proficiency_katana() }
-	]
-
-	// Element options with colored dots
-	const elementOptions = [
-		{ value: 1, label: m.element_wind(), color: getElementColor(1) },
-		{ value: 2, label: m.element_fire(), color: getElementColor(2) },
-		{ value: 3, label: m.element_water(), color: getElementColor(3) },
-		{ value: 4, label: m.element_earth(), color: getElementColor(4) },
-		{ value: 5, label: m.element_dark(), color: getElementColor(5) },
-		{ value: 6, label: m.element_light(), color: getElementColor(6) }
-	]
 
 	// Filter artifacts by selected proficiency
 	// Standard artifacts have a fixed proficiency, quirk artifacts match any proficiency
@@ -177,11 +154,16 @@
 	}
 
 	// Handle proficiency change - reset artifact selection
-	function handleProficiencyChange(newProficiency: number | undefined) {
-		proficiency = newProficiency
+	function handleProficiencyChange(newProficiency: number | number[]) {
+		proficiency = typeof newProficiency === 'number' ? newProficiency : newProficiency[0]
 		// Reset artifact selection when proficiency changes
 		selectedArtifactId = undefined
 		skills = [null, null, null, null]
+	}
+
+	// Handle element change
+	function handleElementChange(newElement: number | number[]) {
+		element = typeof newElement === 'number' ? newElement : newElement[0]
 	}
 
 	// Handle artifact selection change
@@ -318,27 +300,29 @@
 <div class="add-artifact-sidebar">
 	<div class="form-sections">
 		<DetailsSection title={m.section_base_properties()}>
-			<DetailRow label={m.label_proficiency()} noHover>
-				<Select
-					options={proficiencyOptions}
-					value={proficiency}
-					onValueChange={handleProficiencyChange}
-					size="small"
-					contained
-					placeholder={m.placeholder_select_proficiency()}
-				/>
-			</DetailRow>
+			<div class="picker-filters">
+				<div class="filter-group">
+					<label class="filter-label">{m.label_element()}</label>
+					<ElementPicker
+						value={element}
+						onValueChange={handleElementChange}
+						mode="segmented"
+						size="small"
+						contained
+					/>
+				</div>
 
-			<DetailRow label={m.label_element()} noHover>
-				<Select
-					options={elementOptions}
-					value={element}
-					onValueChange={(v) => (element = v)}
-					size="small"
-					contained
-					placeholder={m.placeholder_select_element()}
-				/>
-			</DetailRow>
+				<div class="filter-group">
+					<label class="filter-label">{m.label_proficiency()}</label>
+					<ProficiencyPicker
+						value={proficiency}
+						onValueChange={handleProficiencyChange}
+						mode="segmented"
+						size="small"
+						contained
+					/>
+				</div>
+			</div>
 		</DetailsSection>
 
 		{#if proficiency !== undefined}
@@ -427,6 +411,55 @@
 		padding-bottom: spacing.$unit-4x;
 	}
 
+	.picker-filters {
+		display: flex;
+		flex-direction: column;
+		gap: calc(spacing.$unit * 1.5);
+		padding: 0 spacing.$unit;
+
+		// Make element picker stretch to full width
+		:global(.container) {
+			width: 100%;
+			box-sizing: border-box;
+			padding-left: 0;
+			padding-right: 0;
+		}
+
+		:global(.element-group) {
+			width: 100%;
+		}
+
+		// Tooltip trigger span wraps each element-item
+		:global(.element-group > span) {
+			flex: 1;
+			display: flex;
+		}
+
+		:global(.element-item) {
+			flex: 1;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		:global(.proficiency-group) {
+			padding: 0 4px;
+		}
+	}
+
+	.filter-group {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit;
+	}
+
+	.filter-label {
+		display: block;
+		font-size: typography.$font-small;
+		font-weight: typography.$bold;
+		color: var(--text-secondary);
+	}
+
 	.artifact-select {
 		padding: spacing.$unit;
 	}
@@ -447,5 +480,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit;
+		padding: 0 spacing.$unit;
 	}
 </style>

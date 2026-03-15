@@ -146,15 +146,18 @@
 		h2 {
 			font-weight: $bold;
 			font-size: $font-medium;
+			color: var(--text-primary);
 		}
 
 		p {
 			font-size: $font-medium;
 			line-height: 1.35;
+			color: var(--text-primary);
 		}
 	}
 
 	.about-content {
 		padding: $unit $unit-3x $unit-3x;
+		color: var(--text-primary);
 	}
 </style>

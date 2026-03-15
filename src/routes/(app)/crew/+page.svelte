@@ -28,13 +28,20 @@
 
 	let { data }: Props = $props()
 
+	const isAuthenticated = $derived(data.isAuthenticated)
 	const queryClient = useQueryClient()
 
-	// Query for the user's crew
-	const crewQuery = createQuery(() => crewQueries.myCrew())
+	// Query for the user's crew (only when authenticated)
+	const crewQuery = createQuery(() => ({
+		...crewQueries.myCrew(),
+		enabled: isAuthenticated
+	}))
 
-	// Query for pending invitations (shown when no crew)
-	const invitationsQuery = createQuery(() => crewQueries.pendingInvitations())
+	// Query for pending invitations (only when authenticated)
+	const invitationsQuery = createQuery(() => ({
+		...crewQueries.pendingInvitations(),
+		enabled: isAuthenticated
+	}))
 
 	// Query for GW events (only when in crew)
 	const eventsQuery = createQuery(() => ({
@@ -172,7 +179,7 @@
 			<div class="loading-state">
 				<p>{m.crew_loading()}</p>
 			</div>
-		{:else if crewQuery.isError || !crewStore.isInCrew}
+		{:else if !isAuthenticated || crewQuery.isError || !crewStore.isInCrew}
 			<!-- No crew state -->
 			<div class="no-crew">
 				<div class="no-crew-content">
@@ -181,13 +188,22 @@
 					</p>
 
 					<div class="actions">
-						<Button variant="primary" size="small" onclick={() => (createModalOpen = true)}>
-							{m.crew_create()}
-						</Button>
+						{#if isAuthenticated}
+							<Button variant="primary" size="small" onclick={() => (createModalOpen = true)}>
+								{m.crew_create()}
+							</Button>
+						{:else}
+							<Button variant="primary" size="small" onclick={() => goto(localizeHref('/auth/register'))}>
+								{m.crew_sign_up()}
+							</Button>
+							<Button variant="secondary" size="small" onclick={() => goto(localizeHref('/auth/login'))}>
+								{m.crew_log_in()}
+							</Button>
+						{/if}
 					</div>
 				</div>
 
-				{#if invitationsQuery.data && invitationsQuery.data.length > 0}
+				{#if isAuthenticated && invitationsQuery.data && invitationsQuery.data.length > 0}
 					<div class="invitations-section">
 						<ul class="invitation-list">
 							{#each invitationsQuery.data as invitation}
@@ -443,6 +459,7 @@
 	.actions {
 		display: flex;
 		justify-content: center;
+		gap: spacing.$unit;
 	}
 
 	.invitations-section {

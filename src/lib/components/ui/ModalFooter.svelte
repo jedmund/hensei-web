@@ -63,7 +63,11 @@
 		@include effects.smooth-transition(effects.$duration-quick, box-shadow);
 
 		&.shadow {
-			box-shadow: var(--shadow-lg);
+			box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+
+			:global(html[data-theme='dark']) & {
+				box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+			}
 		}
 	}
 

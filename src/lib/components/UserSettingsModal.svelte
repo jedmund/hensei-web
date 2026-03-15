@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import Dialog from './ui/Dialog.svelte'
@@ -191,20 +190,22 @@
 			})
 
 			// Update the TanStack Query cache so reopening the modal shows the saved values
-			queryClient.setQueryData(['currentUser', 'settings'], (oldData: Record<string, unknown> | undefined) =>
-				oldData
-					? {
-							...oldData,
-							avatar: { ...(oldData.avatar as Record<string, unknown>), picture, element },
-							granblueId,
-							gender,
-							language,
-							theme,
-							showGranblueId,
-							collectionPrivacy,
-							showCrewGamertag
-						}
-					: oldData
+			queryClient.setQueryData(
+				['currentUser', 'settings'],
+				(oldData: Record<string, unknown> | undefined) =>
+					oldData
+						? {
+								...oldData,
+								avatar: { ...(oldData.avatar as Record<string, unknown>), picture, element },
+								granblueId,
+								gender,
+								language,
+								theme,
+								showGranblueId,
+								collectionPrivacy,
+								showCrewGamertag
+							}
+						: oldData
 			)
 
 			// Apply theme change immediately without reload
@@ -250,11 +251,7 @@
 						<h2 class="title">{m.settings_title()}</h2>
 						<p class="username">@{username}</p>
 					</div>
-					<SettingsNav
-						bind:value={activeSection}
-						{element}
-						items={navItems}
-					/>
+					<SettingsNav bind:value={activeSection} {element} items={navItems} />
 				</aside>
 
 				<main class="settings-content" bind:this={contentElement} onscroll={checkScrollPosition}>
@@ -333,7 +330,7 @@
 
 	.settings-layout {
 		display: flex;
-		height: 480px;
+		height: 500px;
 	}
 
 	.error-message {

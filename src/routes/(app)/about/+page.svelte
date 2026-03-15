@@ -21,8 +21,8 @@
 
 <div class="about-card">
 	<h2>{m.about_credits_title()}</h2>
-	<p>{m.about_credits_maintainer()}</p>
-	<p>{m.about_credits_assistance()}</p>
+	<p>{m.about_credits_maintainer_before()}<a href="https://jedmund.com" target="_blank" rel="noreferrer">@jedmund</a>{m.about_credits_maintainer_after()}</p>
+	<p>{m.about_credits_assistance_before()}<a href="https://tarng.com" target="_blank" rel="noreferrer">@tarngerine</a>{m.about_credits_assistance_after()}</p>
 	<p>{m.about_credits_support()}</p>
 </div>
 
@@ -53,11 +53,22 @@
 		h2 {
 			font-weight: $bold;
 			font-size: $font-medium;
+			color: var(--text-primary);
 		}
 
 		p {
 			font-size: $font-medium;
 			line-height: 1.35;
+			color: var(--text-primary);
+		}
+
+		a {
+			color: var(--accent-blue);
+			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 	}
 </style>

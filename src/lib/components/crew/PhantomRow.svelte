@@ -47,7 +47,7 @@
 			<div class="phantom-details">
 				<span class="name">{phantom.name}</span>
 				{#if phantom.joinedAt}
-					<span class="joined-date">{m.crew_joined_date({ date: formatDate(phantom.joinedAt) })}</span>
+					<span class="joined-date">{phantom.retired ? 'Retired' : 'Active'}&nbsp;&middot;&nbsp;{m.crew_joined_date({ date: formatDate(phantom.joinedAt) })}</span>
 				{/if}
 			</div>
 		</div>
@@ -162,6 +162,10 @@
 	.joined-date {
 		font-size: typography.$font-small;
 		color: var(--text-tertiary);
+
+		.retired & {
+			color: var(--text-secondary);
+		}
 	}
 
 	.phantom-actions {

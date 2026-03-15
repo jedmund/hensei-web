@@ -108,6 +108,7 @@
 			filters={allFilters}
 			onFiltersChange={handleFiltersChange}
 			excludedKinds={['raid']}
+			contained
 		/>
 	</div>
 

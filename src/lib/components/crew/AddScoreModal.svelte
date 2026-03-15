@@ -26,6 +26,8 @@
 		retired: boolean
 	}
 
+	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+
 	interface Props {
 		open: boolean
 		eventId: string
@@ -33,6 +35,7 @@
 		membersDuringEvent: MemberDuringEvent[]
 		phantomPlayers: PhantomPlayerMinimal[]
 		existingScores: GwIndividualScore[]
+		element?: ElementName
 	}
 
 	let {
@@ -41,7 +44,8 @@
 		eventNumber,
 		membersDuringEvent,
 		phantomPlayers,
-		existingScores
+		existingScores,
+		element
 	}: Props = $props()
 
 	const queryClient = useQueryClient()
@@ -262,7 +266,7 @@
 			/>
 
 			<label class="checkbox-row">
-				<Checkbox bind:checked={isCumulative} size="small" />
+				<Checkbox bind:checked={isCumulative} size="small" {element} />
 				<span>{m.crew_score_cumulative_label()}</span>
 			</label>
 
@@ -283,7 +287,7 @@
 
 			<div class="excused-section">
 				<label class="checkbox-row">
-					<Checkbox bind:checked={isExcused} size="small" contained />
+					<Checkbox bind:checked={isExcused} size="small" contained {element} />
 					<span>{m.crew_score_excused_q()}</span>
 				</label>
 				{#if isExcused}
@@ -331,6 +335,7 @@
 		gap: spacing.$unit;
 		cursor: pointer;
 		font-size: typography.$font-small;
+		color: var(--text-primary);
 	}
 
 	.round-scores {

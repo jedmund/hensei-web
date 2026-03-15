@@ -17,11 +17,13 @@
 		summon: SearchResultItem
 		quantity?: number
 		onQuantityChange?: (summon: SearchResultItem, quantity: number) => void
+		/** User's element for counter styling */
+		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	}
 
-	let { summon, quantity = 0, onQuantityChange }: Props = $props()
+	let { summon, quantity = 0, onQuantityChange, userElement }: Props = $props()
 
-	const imageUrl = $derived(getSummonImage(summon.granblueId, 'grid'))
+	const imageUrl = $derived(getSummonImage(summon.granblueId, 'square'))
 
 	const name = $derived(localizedName(summon.name))
 
@@ -55,7 +57,7 @@
 >
 	<!-- onclick stops propagation to prevent row click from firing -->
 	<div class="counter-cell" onclick={(e) => e.stopPropagation()}>
-		<QuantityCounter value={quantity} onChange={handleQuantityChange} />
+		<QuantityCounter value={quantity} onChange={handleQuantityChange} element={userElement} />
 	</div>
 
 	<div class="thumbnail">
@@ -80,7 +82,7 @@
 		gap: $unit;
 		padding: $unit $unit-2x $unit $unit;
 		border: none;
-		background: var(--list-cell-bg);
+		background: transparent;
 		cursor: pointer;
 		width: 100%;
 		text-align: left;
@@ -91,20 +93,11 @@
 
 		&:hover {
 			background: var(--list-cell-bg-hover);
-			box-shadow: var(--shadow-md);
 		}
 
 		&:focus-visible {
-			outline: 2px solid var(--accent-color, #3366ff);
+			outline: 2px solid var(--accent-blue);
 			outline-offset: -2px;
-		}
-
-		&.selected {
-			background: rgba(51, 102, 255, 0.1);
-
-			&:hover {
-				background: rgba(51, 102, 255, 0.15);
-			}
 		}
 	}
 
@@ -113,11 +106,11 @@
 	}
 
 	.thumbnail {
-		width: 80px;
-		aspect-ratio: 1 / 1;
+		width: 64px;
+		height: 64px;
 		border-radius: layout.$bubble-menu-item-corner;
 		overflow: hidden;
-		background: var(--card-bg, #f5f5f5);
+		background: var(--card-bg);
 		flex-shrink: 0;
 
 		img {

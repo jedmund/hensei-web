@@ -11,14 +11,17 @@
   import { defaultFilterSet } from '$lib/utils/defaultFilters'
   import * as m from '$lib/paraglide/messages'
 
+  type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+
   interface Props {
     open: boolean
     filters: FilterSet
     onSave: (filters: FilterSet) => void
     onOpenChange?: (open: boolean) => void
+    element?: ElementName
   }
 
-  let { open = $bindable(false), filters, onSave, onOpenChange }: Props = $props()
+  let { open = $bindable(false), filters, onSave, onOpenChange, element }: Props = $props()
 
   // Local editing state
   let minCharacters = $state(filters.characters_count ?? 3)
@@ -77,6 +80,7 @@
                 max={5}
                 step={1}
                 onValueChange={(v) => (minCharacters = v)}
+                {element}
               />
               <span class="slider-value">{m.counter_characters({ count: String(minCharacters) })}</span>
             </div>
@@ -91,6 +95,7 @@
                 max={13}
                 step={1}
                 onValueChange={(v) => (minWeapons = v)}
+                {element}
               />
               <span class="slider-value">{m.counter_weapons({ count: String(minWeapons) })}</span>
             </div>
@@ -105,6 +110,7 @@
                 max={8}
                 step={1}
                 onValueChange={(v) => (minSummons = v)}
+                {element}
               />
               <span class="slider-value">{m.counter_summons({ count: String(minSummons) })}</span>
             </div>
@@ -149,22 +155,20 @@
   .sections {
     display: flex;
     flex-direction: column;
-    gap: $unit-3x;
+    gap: $unit-5x;
   }
 
   section {
     display: flex;
     flex-direction: column;
-    gap: $unit;
+    gap: $unit-3x;
   }
 
   h3 {
     font-size: $font-small;
     font-weight: $bold;
     color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin: 0 0 $unit-half 0;
+    margin: 0;
   }
 
   .slider-row {

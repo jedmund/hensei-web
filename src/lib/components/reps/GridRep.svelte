@@ -300,7 +300,7 @@
 			transition: background-color 0.12s ease-in-out;
 			height: spacing.$unit;
 			border-radius: spacing.$unit-half;
-			background-color: var(--button-contained-bg-hover);
+			background-color: var(--indicator-bg);
 		}
 	}
 

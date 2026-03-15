@@ -47,6 +47,7 @@
 .tiptap,
 .ProseMirror {
 	outline: none !important;
+	color: var(--text-primary);
 }
 
 .tiptap a {

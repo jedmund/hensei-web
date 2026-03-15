@@ -339,6 +339,7 @@
 		{membersDuringEvent}
 		{phantomPlayers}
 		existingScores={participation?.individualScores ?? []}
+		element={data.user?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined}
 	/>
 {/if}
 

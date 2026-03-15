@@ -37,9 +37,11 @@
     filters: FilterItem[]
     onFiltersChange: (filters: FilterItem[]) => void
     excludedKinds?: FilterItem['kind'][]
+    /** Use when placed on a card/white surface — gives the pill a visible background */
+    contained?: boolean
   }
 
-  let { filters = $bindable([]), onFiltersChange, excludedKinds = [] }: Props = $props()
+  let { filters = $bindable([]), onFiltersChange, excludedKinds = [], contained = false }: Props = $props()
 
   let inputValue = $state('')
   let dropdownOpen = $state(false)
@@ -580,7 +582,7 @@
 
 <svelte:window onclick={handleWindowClick} />
 
-<div class="explore-filters" bind:this={containerEl}>
+<div class="explore-filters" class:contained bind:this={containerEl}>
   <div class="filter-row">
     {#if dropdownOpen}
       <div class="filter-input-wrapper">
@@ -785,6 +787,12 @@
     :global(.icon) {
       color: var(--text-secondary);
     }
+
+    .contained & {
+      &::after {
+        border: 1px solid var(--stroked-button-border);
+      }
+    }
   }
 
   @keyframes spin-aura {
@@ -835,6 +843,12 @@
       background: var(--card-bg);
       box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.01);
       z-index: $z-raised;
+    }
+
+    .contained & {
+      &::after {
+        border: 1px solid var(--stroked-button-border);
+      }
     }
   }
 

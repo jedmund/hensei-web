@@ -173,6 +173,7 @@
     bind:open={settingsOpen}
     filters={advancedFilters}
     onSave={handleSettingsSave}
+    element={currentUser?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined}
   />
 
   {#if showCollectionPrompt}

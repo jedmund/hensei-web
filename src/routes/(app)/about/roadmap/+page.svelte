@@ -72,6 +72,11 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-4x;
+		color: var(--text-primary);
+
+		h1 {
+			color: var(--text-primary);
+		}
 
 		.notes {
 			display: flex;
@@ -80,6 +85,7 @@
 
 			p {
 				font-size: $font-medium;
+				color: var(--text-primary);
 			}
 		}
 

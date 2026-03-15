@@ -1,30 +1,68 @@
 
 <script lang="ts">
-	import { page } from '$app/stores'
-	import PageMeta from '$lib/components/PageMeta.svelte'
+	import { goto } from '$app/navigation'
+	import { localizeHref } from '$lib/paraglide/runtime'
+	import Button from '$lib/components/ui/Button.svelte'
 	import * as m from '$lib/paraglide/messages'
 </script>
 
-<PageMeta title={m.page_title_collection()} description={m.page_desc_collection()} />
+<svelte:head>
+	<title>{m.page_title_collection()}</title>
+</svelte:head>
 
-<div class="container">
-	<h1>Collection</h1>
-	<p>Your collection in Granblue Fantasy</p>
-	<!-- Content will be added here -->
+<div class="page">
+	<div class="card">
+		<div class="empty-content">
+			<p class="description">{m.collection_intro()}</p>
+
+			<div class="actions">
+				<Button variant="primary" size="small" onclick={() => goto(localizeHref('/auth/register'))}>
+					{m.collection_sign_up()}
+				</Button>
+				<Button variant="secondary" size="small" onclick={() => goto(localizeHref('/auth/login'))}>
+					{m.collection_log_in()}
+				</Button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <style lang="scss">
-	.container {
-		padding: 2rem;
-		max-width: 1200px;
+	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
+
+	.page {
 		margin: 0 auto;
+		max-width: var(--main-max-width);
+	}
 
-		h1 {
-			margin-bottom: 1rem;
-		}
+	.card {
+		background: var(--card-bg);
+		border: 0.5px solid rgba(0, 0, 0, 0.18);
+		border-radius: layout.$page-corner;
+		box-shadow: effects.$page-elevation;
+	}
 
-		p {
-			color: var(--text-secondary);
+	.empty-content {
+		padding: spacing.$unit-3x spacing.$unit-2x;
+		text-align: center;
+
+		.description {
+			color: var(--text-primary);
+			font-size: typography.$font-small;
+			line-height: 1.5;
+			max-width: 360px;
+			margin-left: auto;
+			margin-right: auto;
 		}
+	}
+
+	.actions {
+		display: flex;
+		justify-content: center;
+		gap: spacing.$unit;
+		margin-top: spacing.$unit-2x;
 	}
 </style>

@@ -34,7 +34,7 @@
 		gap: $unit-2x;
 		padding: $unit-2x;
 		text-decoration: none;
-		color: inherit;
+		color: var(--text-primary);
 		transition:
 			background $duration-zoom ease-in,
 			transform $duration-zoom ease-in;
