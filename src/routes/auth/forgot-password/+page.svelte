@@ -13,7 +13,7 @@
 
 	let { form }: Props = $props()
 
-	let email = $state(form?.email ?? '')
+	let email = $derived(form?.email ?? '')
 	let isSubmitting = $state(false)
 
 	const errorMessages: Record<string, () => string> = {

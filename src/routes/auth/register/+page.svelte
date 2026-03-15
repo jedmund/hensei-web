@@ -19,8 +19,8 @@
 
 	let { form }: Props = $props()
 
-	let username = $state(form?.username ?? '')
-	let email = $state(form?.email ?? '')
+	let username = $derived(form?.username ?? '')
+	let email = $derived(form?.email ?? '')
 	let password = $state('')
 	let passwordConfirmation = $state('')
 	let isSubmitting = $state(false)
