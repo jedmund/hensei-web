@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Party, GridSummon } from '$lib/types/api/party'
 	import { getSummonImage } from '$lib/features/database/detail/image'
+	import { getSummonTransformation } from '$lib/utils/images'
 
 	interface Props {
 		party?: Party
@@ -29,7 +30,8 @@
 		const id = s?.summon?.granblueId
 		if (!id) return isMain ? mainPlaceholder : gridPlaceholder
 		const size = isMain ? 'main' : 'grid'
-		return getSummonImage(id, size)
+		const transformation = getSummonTransformation(id, s?.uncapLevel, s?.transcendenceStep)
+		return getSummonImage(id, size, transformation)
 	}
 </script>
 
