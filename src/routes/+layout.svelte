@@ -6,6 +6,7 @@
 	import { browser } from '$app/environment'
 	import { QueryClientProvider } from '@tanstack/svelte-query'
 	import { Toaster } from 'svelte-sonner'
+	import { untrack } from 'svelte'
 	import { themeStore, type ThemePreference } from '$lib/stores/theme.svelte'
 	import type { LayoutData } from './$types'
 
@@ -18,7 +19,7 @@
 	$effect(() => {
 		if (browser) {
 			const userTheme = (data.currentUser?.theme as ThemePreference) ?? 'system'
-			themeStore.init(userTheme)
+			untrack(() => themeStore.init(userTheme))
 		}
 	})
 </script>
