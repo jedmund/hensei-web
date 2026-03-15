@@ -239,7 +239,7 @@
 			}
 		}}
 	>
-		<section class="input-group">
+		<section class="input-group username-group">
 			<Input
 				type="text"
 				name="username"
@@ -333,6 +333,10 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
+
+		&.username-group {
+			gap: $unit-2x;
+		}
 
 		.note {
 			color: var(--text-secondary);

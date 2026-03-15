@@ -71,6 +71,9 @@
 			{m.auth_login_noAccount()}
 			<a href={localizeHref('/auth/register')}>{m.auth_login_register()}</a>
 		</p>
+		<p>
+			<a href={localizeHref('/auth/forgot-password')}>{m.auth_login_forgotPassword()}</a>
+		</p>
 	{/snippet}
 </AuthCard>
 
