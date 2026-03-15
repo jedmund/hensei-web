@@ -32,6 +32,48 @@ export function removeEditKey(shortcode: string): void {
 }
 
 /**
+ * Get all stored edit keys from localStorage
+ */
+export function getAllEditKeys(): Array<{ shortcode: string; editKey: string }> {
+	if (typeof window === 'undefined') return []
+
+	const keys: Array<{ shortcode: string; editKey: string }> = []
+	for (let i = 0; i < localStorage.length; i++) {
+		const key = localStorage.key(i)
+		if (key && key.startsWith(EDIT_KEY_PREFIX)) {
+			const shortcode = key.slice(EDIT_KEY_PREFIX.length)
+			const editKey = localStorage.getItem(key)
+			if (editKey) {
+				keys.push({ shortcode, editKey })
+			}
+		}
+	}
+	return keys
+}
+
+/**
+ * Check if any edit keys are stored in localStorage
+ */
+export function hasEditKeys(): boolean {
+	if (typeof window === 'undefined') return false
+	for (let i = 0; i < localStorage.length; i++) {
+		const key = localStorage.key(i)
+		if (key && key.startsWith(EDIT_KEY_PREFIX)) return true
+	}
+	return false
+}
+
+/**
+ * Remove multiple edit keys from localStorage
+ */
+export function removeEditKeys(shortcodes: string[]): void {
+	if (typeof window === 'undefined') return
+	for (const shortcode of shortcodes) {
+		localStorage.removeItem(`${EDIT_KEY_PREFIX}${shortcode}`)
+	}
+}
+
+/**
  * Compute editability of a party based on ownership and edit keys
  */
 export function computeEditability(
