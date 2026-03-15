@@ -6,23 +6,11 @@
 	import { withInitialData } from '$lib/query/ssr'
 	import { GridType } from '$lib/types/enums'
 	import PageMeta from '$lib/components/PageMeta.svelte'
+	import { getElementEmoji } from '$lib/utils/element'
+	import { getLocale } from '$lib/paraglide/runtime'
 	import * as m from '$lib/paraglide/messages'
 
 	let { data }: { data: PageData } = $props()
-
-	// Element emoji mapping for party titles
-	function getElementEmoji(element: number | undefined | null): string {
-		const emojis: Record<number, string> = {
-			0: '⚪', // null/unknown
-			1: '🔴', // fire
-			2: '🔵', // water
-			3: '🟤', // earth
-			4: '🟢', // wind
-			5: '🟡', // light
-			6: '🟣'  // dark
-		}
-		return emojis[element ?? 0] ?? '⚪'
-	}
 
 	// Map URL segment to GridType
 	const tabMap: Record<string, GridType> = {
@@ -69,7 +57,8 @@
 
 	const pageDescription = $derived(() => {
 		if (!party) return m.page_desc_home()
-		const raidName = party.raid?.name || m.party_raid_unknown()
+		const locale = getLocale() as 'en' | 'ja'
+		const raidName = party.raid?.name?.[locale] || party.raid?.name?.en || m.party_raid_unknown()
 		const username = party.user?.username || 'Anonymous'
 		return m.page_desc_party({ raidName, username })
 	})
