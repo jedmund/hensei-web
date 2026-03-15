@@ -91,6 +91,18 @@ export function getSummonTransformation(granblueId?: string | number | null, unc
 }
 
 /**
+ * Calculates the weapon transformation suffix based on transcendence step.
+ * Returns undefined for base art, '02' for transcendence 1-4, '03' for transcendence 5.
+ * Only applies to weapons that have transcendence and are at uncap level 6.
+ */
+export function getWeaponTransformation(hasTranscendence?: boolean, uncapLevel?: number, transcendenceStep?: number): string | undefined {
+	if (!hasTranscendence || uncapLevel !== 6) return undefined
+	if (transcendenceStep === 5) return '03'
+	if (transcendenceStep && transcendenceStep >= 1) return '02'
+	return undefined
+}
+
+/**
  * Calculates the character pose based on uncap level and transcendence
  */
 export function getCharacterPose(uncapLevel?: number, transcendenceStep?: number): string {

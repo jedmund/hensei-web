@@ -8,7 +8,7 @@
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getWeaponImage } from '$lib/features/database/detail/image'
-	import { getPlaceholderImage } from '$lib/utils/images'
+	import { getPlaceholderImage, getWeaponTransformation } from '$lib/utils/images'
 	import { openDetailsSidebar, openWeaponEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { canWeaponBeModified } from '$lib/utils/modificationDetector'
 	import { getAwakeningImage, getWeaponKeyImages, getAxSkillImages } from '$lib/utils/modifiers'
@@ -39,8 +39,9 @@
 
 		// For element-changeable weapons (element === 0), use instance element or default to 0 (no element image)
 		const element = item?.weapon?.element === 0 ? (item?.element ?? 0) : undefined
+		const transformation = getWeaponTransformation(item?.weapon?.uncap?.transcendence, item?.uncapLevel, item?.transcendenceStep)
 
-		return getWeaponImage(item?.weapon?.granblueId, variant, element)
+		return getWeaponImage(item?.weapon?.granblueId, variant, element, transformation)
 	})
 
 	// Get awakening image URL using utility

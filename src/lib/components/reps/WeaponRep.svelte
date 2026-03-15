@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Party, GridWeapon } from '$lib/types/api/party'
 	import { getWeaponImage } from '$lib/features/database/detail/image'
+	import { getWeaponTransformation } from '$lib/utils/images'
 
 	interface Props {
 		party?: Party
@@ -24,7 +25,8 @@
 		const variant = isMain ? 'main' : 'grid'
 		// For weapons with null element that have an instance element, use it
 		const element = (w?.weapon?.element === 0 && w?.element) ? w.element : undefined
-		return getWeaponImage(w?.weapon?.granblueId, variant, element)
+		const transformation = getWeaponTransformation(w?.weapon?.uncap?.transcendence, w?.uncapLevel, w?.transcendenceStep)
+		return getWeaponImage(w?.weapon?.granblueId, variant, element, transformation)
 	}
 </script>
 
