@@ -1,6 +1,11 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import InfoTile from './InfoTile.svelte'
+	import VideoDialog from './VideoDialog.svelte'
+	import YouTubePlayIcon from './YouTubePlayIcon.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
+	import expandIcon from '$src/assets/icons/expand.svg?raw'
 
 	interface Props {
 		videoUrl?: string
@@ -10,8 +15,8 @@
 
 	let { videoUrl, canEdit = false, onAdd }: Props = $props()
 
-	// State for video playback
-	let isPlaying = $state(false)
+	let dialogOpen = $state(false)
+
 	let videoTitle = $state<string | null>(null)
 
 	function extractYoutubeId(url: string): string | null {
@@ -23,8 +28,6 @@
 	const thumbnailUrl = $derived(
 		videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : null
 	)
-	const embedUrl = $derived(videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : null)
-
 	const isEmpty = $derived(!videoUrl)
 	const showAdd = $derived(canEdit && isEmpty)
 
@@ -54,42 +57,30 @@
 		return () => controller.abort()
 	})
 
-	// Reset playing state when videoUrl changes
-	$effect(() => {
-		videoUrl
-		isPlaying = false
-	})
-
-	function handlePlay() {
-		isPlaying = true
+	function openDialog(e: MouseEvent) {
+		e.stopPropagation()
+		dialogOpen = true
 	}
 </script>
 
 <InfoTile label={m.party_video()} class="video-tile" {showAdd} {onAdd} clickable={showAdd} onclick={showAdd ? onAdd : undefined}>
+	{#snippet headerAction()}
+		{#if videoUrl && videoId}
+			<Tooltip content={m.tooltip_expand_video()}>
+				<Button variant="ghost" size="small" iconOnly onclick={openDialog}>
+					<span class="expand-icon">{@html expandIcon}</span>
+				</Button>
+			</Tooltip>
+		{/if}
+	{/snippet}
 	{#if videoUrl && videoId}
 		<div class="video-container">
-			{#if isPlaying && embedUrl}
-				<div class="embed-container">
-					<iframe
-						src={embedUrl}
-						title={videoTitle ?? m.tooltip_youtube_video()}
-						frameborder="0"
-						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-						allowfullscreen
-					></iframe>
-				</div>
-			{:else if thumbnailUrl}
-				<button type="button" class="thumbnail-button" onclick={handlePlay}>
+			{#if thumbnailUrl}
+				<button type="button" class="thumbnail-button" onclick={openDialog}>
 					<div class="thumbnail-container">
 						<img src={thumbnailUrl} alt={videoTitle ?? 'Video thumbnail'} class="thumbnail" />
 						<div class="play-overlay">
-							<svg viewBox="0 0 68 48" class="play-icon">
-								<path
-									d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z"
-									fill="#f00"
-								/>
-								<path d="M45 24L27 14v20" fill="#fff" />
-							</svg>
+							<YouTubePlayIcon class="play-icon" />
 						</div>
 					</div>
 				</button>
@@ -98,6 +89,8 @@
 				<p class="video-title">{videoTitle}</p>
 			{/if}
 		</div>
+
+		<VideoDialog bind:open={dialogOpen} {videoId} {videoTitle} />
 	{:else}
 		<span class="empty-state">{canEdit ? m.party_add_video() : m.party_no_video()}</span>
 	{/if}
@@ -111,23 +104,23 @@
 
 	.video-container {
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
 		gap: $unit;
 	}
 
 	.thumbnail-button {
 		display: block;
-		width: 100%;
 		padding: 0;
 		border: none;
 		background: none;
 		cursor: pointer;
+		flex-shrink: 0;
 	}
 
 	.thumbnail-container {
 		position: relative;
-		width: 100%;
-		aspect-ratio: 16 / 9;
+		width: 176px;
+		height: 99px;
 		border-radius: $item-corner;
 		overflow: hidden;
 	}
@@ -147,7 +140,7 @@
 		background: rgba(0, 0, 0, 0.1);
 		@include smooth-transition($duration-quick, background);
 
-		.play-icon {
+		:global(.play-icon) {
 			width: 68px;
 			height: 48px;
 			opacity: 0.9;
@@ -158,24 +151,9 @@
 	.thumbnail-button:hover .play-overlay {
 		background: rgba(0, 0, 0, 0.2);
 
-		.play-icon {
+		:global(.play-icon) {
 			opacity: 1;
 			transform: scale(1.1);
-		}
-	}
-
-	.embed-container {
-		position: relative;
-		width: 100%;
-		aspect-ratio: 16 / 9;
-		border-radius: $card-corner;
-		overflow: hidden;
-
-		iframe {
-			position: absolute;
-			inset: 0;
-			width: 100%;
-			height: 100%;
 		}
 	}
 
@@ -185,12 +163,14 @@
 		font-weight: $medium;
 		color: var(--text-primary);
 		line-height: 1.3;
+		align-self: center;
+	}
 
-		// Truncate to 2 lines
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
+	.expand-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: inherit;
 	}
 
 	.empty-state {

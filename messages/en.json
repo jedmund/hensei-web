@@ -1435,6 +1435,7 @@
 	"artifact_quirk": "Quirk",
 
 	"tooltip_youtube_video": "YouTube video",
+	"tooltip_expand_video": "Expand video",
 	"tooltip_toggle_sort": "Toggle sort order",
 	"tooltip_click_to_copy": "Click to copy",
 	"tooltip_add_perpetuity_ring": "Add Perpetuity Ring",
