@@ -1459,7 +1459,7 @@
 	"crew_join_joining": "Joining...",
 	"crew_join_accept": "Accept",
 
-	"migrate_banner_text": "You have anonymous teams that can be linked to your account.",
+	"migrate_banner_text": "You have anonymous teams that can be linked to your account",
 	"migrate_banner_action": "Migrate teams",
 	"migrate_dialog_title": "Migrate anonymous teams",
 	"migrate_dialog_body": "This will link your anonymous teams to your account. Once migrated, these teams will appear on your profile and you'll be able to edit them while logged in without needing the original edit key.",
