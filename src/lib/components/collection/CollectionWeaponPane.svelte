@@ -32,8 +32,11 @@
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
+	import { page } from '$app/stores'
+	import { goto } from '$app/navigation'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 
 	interface Props {
 		weapon: CollectionWeapon
@@ -192,23 +195,29 @@
 	function updateActionVisibility() {
 		if (!paneId) return
 
+		const dbMenuItem = canViewDatabase
+			? { label: m.context_view_in_database(), handler: viewInDatabase }
+			: undefined
+
 		if (isOwner && selectedTab === 'collection') {
 			if (isEditing) {
 				sidebar.setActionForPane(paneId, () => editPaneRef?.save(), m.action_save(), elementName)
 				sidebar.setOverflowMenuForPane(paneId, undefined)
 			} else {
 				sidebar.setActionForPane(paneId, enterEditMode, m.action_edit(), elementName)
-				sidebar.setOverflowMenuForPane(paneId, [
+				const menuItems = [
+					...(dbMenuItem ? [dbMenuItem] : []),
 					{
 						label: m.collection_remove_from(),
 						handler: handleDelete,
-						variant: 'danger'
+						variant: 'danger' as const
 					}
-				])
+				]
+				sidebar.setOverflowMenuForPane(paneId, menuItems)
 			}
 		} else {
 			sidebar.setActionForPane(paneId, undefined)
-			sidebar.setOverflowMenuForPane(paneId, undefined)
+			sidebar.setOverflowMenuForPane(paneId, dbMenuItem ? [dbMenuItem] : undefined)
 		}
 	}
 
@@ -246,6 +255,14 @@
 	const hasWeaponKeys = $derived((weapon.weaponKeys?.length ?? 0) > 0)
 	const hasAxSkills = $derived((weapon.ax?.length ?? 0) > 0 && weapon.ax?.some(ax => ax.modifier?.id))
 	const canChangeElement = $derived(weaponData?.element === 0)
+
+	// Check if user can view database (role >= 7)
+	let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
+
+	function viewInDatabase() {
+		if (!weaponData?.granblueId) return
+		goto(getDatabaseUrl('weapon', weaponData.granblueId))
+	}
 
 	// Set up sidebar action on mount and clean up on destroy
 	onMount(() => {

@@ -28,8 +28,11 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import { page } from '$app/stores'
+	import { goto } from '$app/navigation'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 
 	interface Props {
 		summon: CollectionSummon
@@ -127,23 +130,29 @@
 	function updateActionVisibility() {
 		if (!paneId) return
 
+		const dbMenuItem = canViewDatabase
+			? { label: m.context_view_in_database(), handler: viewInDatabase }
+			: undefined
+
 		if (isOwner && selectedTab === 'collection') {
 			if (isEditing) {
 				sidebar.setActionForPane(paneId, () => editPaneRef?.save(), m.action_save(), elementName)
 				sidebar.setOverflowMenuForPane(paneId, undefined)
 			} else {
 				sidebar.setActionForPane(paneId, enterEditMode, m.action_edit(), elementName)
-				sidebar.setOverflowMenuForPane(paneId, [
+				const menuItems = [
+					...(dbMenuItem ? [dbMenuItem] : []),
 					{
 						label: m.collection_remove_from(),
 						handler: handleDelete,
-						variant: 'danger'
+						variant: 'danger' as const
 					}
-				])
+				]
+				sidebar.setOverflowMenuForPane(paneId, menuItems)
 			}
 		} else {
 			sidebar.setActionForPane(paneId, undefined)
-			sidebar.setOverflowMenuForPane(paneId, undefined)
+			sidebar.setOverflowMenuForPane(paneId, dbMenuItem ? [dbMenuItem] : undefined)
 		}
 	}
 
@@ -158,6 +167,14 @@
 			isEditing = false
 		}
 		updateActionVisibility()
+	}
+
+	// Check if user can view database (role >= 7)
+	let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
+
+	function viewInDatabase() {
+		if (!summonData?.granblueId) return
+		goto(getDatabaseUrl('summon', summonData.granblueId))
 	}
 
 	// Set up sidebar action on mount and clean up on destroy

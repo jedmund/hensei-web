@@ -30,9 +30,12 @@
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getRingStat, getElementalizedEarringStat } from '$lib/utils/masteryUtils'
+	import { page } from '$app/stores'
+	import { goto } from '$app/navigation'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { localizedName } from '$lib/utils/locale'
+	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 
 	interface Props {
 		character: CollectionCharacter
@@ -178,6 +181,10 @@
 	function updateActionVisibility() {
 		if (!paneId) return
 
+		const dbMenuItem = canViewDatabase
+			? { label: m.context_view_in_database(), handler: viewInDatabase }
+			: undefined
+
 		if (isOwner && selectedTab === 'collection') {
 			if (isEditing) {
 				// Show Save button when editing, hide overflow menu
@@ -186,17 +193,19 @@
 			} else {
 				// Show Edit button and overflow menu when viewing
 				sidebar.setActionForPane(paneId, enterEditMode, m.action_edit(), elementName)
-				sidebar.setOverflowMenuForPane(paneId, [
+				const menuItems = [
+					...(dbMenuItem ? [dbMenuItem] : []),
 					{
 						label: m.collection_remove_from(),
 						handler: handleDelete,
-						variant: 'danger'
+						variant: 'danger' as const
 					}
-				])
+				]
+				sidebar.setOverflowMenuForPane(paneId, menuItems)
 			}
 		} else {
 			sidebar.setActionForPane(paneId, undefined)
-			sidebar.setOverflowMenuForPane(paneId, undefined)
+			sidebar.setOverflowMenuForPane(paneId, dbMenuItem ? [dbMenuItem] : undefined)
 		}
 	}
 
@@ -266,6 +275,14 @@
 	const hasEarring = $derived(
 		character.earring && character.earring.modifier != null && character.earring.modifier !== 0
 	)
+
+	// Check if user can view database (role >= 7)
+	let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
+
+	function viewInDatabase() {
+		if (!characterData?.granblueId) return
+		goto(getDatabaseUrl('character', characterData.granblueId, characterData.styleSwap))
+	}
 
 	// Set up sidebar action on mount and clean up on destroy
 	onMount(() => {
