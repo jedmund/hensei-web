@@ -15,7 +15,7 @@ export const actions: Actions = {
 		const password = String(form.get('password') ?? '')
 
 		if (!email || !password) {
-			return fail(400, { error: 'Email and password are required', email })
+			return fail(400, { error: 'fields_required' as const, email })
 		}
 
 		const res = await fetch('/auth/login', {
@@ -29,6 +29,6 @@ export const actions: Actions = {
 		}
 
 		const j = await res.json().catch(() => ({}))
-		return fail(res.status, { error: j.error ?? 'Login failed', email })
+		return fail(res.status, { error: 'failed' as const, email })
 	}
 }

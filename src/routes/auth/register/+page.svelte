@@ -31,6 +31,16 @@
 	let passwordError = $state('')
 	let passwordConfirmationError = $state('')
 
+	const errorMessages: Record<string, () => string> = {
+		fields_required: m.auth_register_errors_fieldsRequired,
+		password_mismatch: m.auth_register_errors_passwordMismatch,
+		failed: m.auth_register_errors_failed
+	}
+
+	const errorMessage = $derived(
+		form?.error ? (errorMessages[form.error]?.() ?? form.error) : undefined
+	)
+
 	let isCheckingUsername = $state(false)
 	let isCheckingEmail = $state(false)
 	let usernameAvailable = $state<boolean | null>(null)
@@ -301,8 +311,8 @@
 			/>
 		</section>
 
-		{#if form?.error}
-			<p class="error">{form.error}</p>
+		{#if errorMessage}
+			<p class="error">{errorMessage}</p>
 		{/if}
 
 		<Button type="submit" variant="primary" fullWidth disabled={isSubmitting || !isFormValid}>

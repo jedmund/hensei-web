@@ -17,6 +17,15 @@
 	let password = $state('')
 	let isSubmitting = $state(false)
 
+	const errorMessages: Record<string, () => string> = {
+		fields_required: m.auth_login_errors_fieldsRequired,
+		failed: m.auth_login_errors_failed
+	}
+
+	const errorMessage = $derived(
+		form?.error ? (errorMessages[form.error]?.() ?? form.error) : undefined
+	)
+
 	const placeholders = ['gran@grancypher.com', 'djeeta@grancypher.com']
 	const randomPlaceholder = placeholders[Math.floor(Math.random() * placeholders.length)]
 </script>
@@ -57,8 +66,8 @@
 			contained
 		/>
 
-		{#if form?.error}
-			<p class="error">{form.error}</p>
+		{#if errorMessage}
+			<p class="error">{errorMessage}</p>
 		{/if}
 
 		<Button type="submit" variant="primary" fullWidth disabled={isSubmitting}>

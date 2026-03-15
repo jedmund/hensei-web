@@ -15,7 +15,7 @@ export const actions: Actions = {
 		const email = String(form.get('email') ?? '')
 
 		if (!email) {
-			return fail(400, { error: 'Email is required', email })
+			return fail(400, { error: 'email_required' as const, email })
 		}
 
 		// Always return success to the user to avoid leaking account existence

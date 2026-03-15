@@ -15,6 +15,14 @@
 
 	let email = $state(form?.email ?? '')
 	let isSubmitting = $state(false)
+
+	const errorMessages: Record<string, () => string> = {
+		email_required: m.auth_forgotPassword_errors_emailRequired
+	}
+
+	const errorMessage = $derived(
+		form?.error ? (errorMessages[form.error]?.() ?? form.error) : undefined
+	)
 </script>
 
 <PageMeta title={m.auth_forgotPassword_title()} description={m.page_desc_home()} />
@@ -44,8 +52,8 @@
 				contained
 			/>
 
-			{#if form?.error}
-				<p class="error">{form.error}</p>
+			{#if errorMessage}
+				<p class="error">{errorMessage}</p>
 			{/if}
 
 			<Button type="submit" variant="primary" fullWidth disabled={isSubmitting}>

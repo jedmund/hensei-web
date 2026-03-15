@@ -19,7 +19,7 @@ export const actions: Actions = {
 		// Basic validation
 		if (!username || !email || !password || !password_confirmation) {
 			return fail(400, {
-				error: 'All fields are required',
+				error: 'fields_required' as const,
 				username,
 				email
 			})
@@ -27,7 +27,7 @@ export const actions: Actions = {
 
 		if (password !== password_confirmation) {
 			return fail(400, {
-				error: "Passwords don't match",
+				error: 'password_mismatch' as const,
 				username,
 				email
 			})
@@ -45,7 +45,7 @@ export const actions: Actions = {
 
 		const j = await res.json().catch(() => ({}))
 		return fail(res.status, {
-			error: j.error ?? 'Registration failed',
+			error: 'failed' as const,
 			details: j.details,
 			username,
 			email

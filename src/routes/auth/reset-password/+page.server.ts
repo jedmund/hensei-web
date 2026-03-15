@@ -30,15 +30,15 @@ export const actions: Actions = {
 		}
 
 		if (!password || !password_confirmation) {
-			return fail(400, { error: 'All fields are required' })
+			return fail(400, { error: 'fields_required' as const })
 		}
 
 		if (password.length < 8) {
-			return fail(400, { error: 'Password must be at least 8 characters' })
+			return fail(400, { error: 'password_min' as const })
 		}
 
 		if (password !== password_confirmation) {
-			return fail(400, { error: "Passwords don't match" })
+			return fail(400, { error: 'password_mismatch' as const })
 		}
 
 		const res = await fetch(`${getApiBaseUrl()}/password_resets`, {
@@ -57,6 +57,6 @@ export const actions: Actions = {
 			return fail(400, { invalidToken: true })
 		}
 
-		return fail(res.status, { error: j.errors ?? j.error ?? 'Password reset failed' })
+		return fail(res.status, { error: 'failed' as const })
 	}
 }

@@ -18,6 +18,17 @@
 	let passwordConfirmation = $state('')
 	let isSubmitting = $state(false)
 
+	const errorMessages: Record<string, () => string> = {
+		fields_required: m.auth_resetPassword_errors_fieldsRequired,
+		password_min: m.auth_resetPassword_errors_passwordMin,
+		password_mismatch: m.auth_resetPassword_errors_passwordMismatch,
+		failed: m.auth_resetPassword_errors_failed
+	}
+
+	const errorMessage = $derived(
+		form?.error ? (errorMessages[form.error]?.() ?? form.error) : undefined
+	)
+
 	let passwordError = $state('')
 	let passwordConfirmationError = $state('')
 
@@ -122,8 +133,8 @@
 				error={passwordConfirmationError}
 			/>
 
-			{#if form?.error}
-				<p class="error">{form.error}</p>
+			{#if errorMessage}
+				<p class="error">{errorMessage}</p>
 			{/if}
 
 			<Button type="submit" variant="primary" fullWidth disabled={isSubmitting || !isFormValid}>
