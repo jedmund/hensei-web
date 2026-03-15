@@ -88,10 +88,10 @@
 
 	:global(.slider-thumb) {
 		display: block;
-		width: calc($unit * 2.5);
-		height: calc($unit * 2.5);
+		width: calc($unit * 2.75);
+		height: calc($unit * 2.75);
 		background: var(--slider-thumb-bg, white);
-		border: 2px solid var(--slider-thumb-border, var(--accent-blue));
+		border: none;
 		border-radius: $full-corner;
 		cursor: grab;
 		@include smooth-transition($duration-quick, transform, box-shadow);
@@ -113,37 +113,31 @@
 	// Element-specific colors
 	:global(.slider.wind) {
 		--slider-range-bg: var(--wind-button-bg);
-		--slider-thumb-border: var(--wind-button-bg);
 		--slider-focus-ring: var(--wind-nav-selected-bg);
 	}
 
 	:global(.slider.fire) {
 		--slider-range-bg: var(--fire-button-bg);
-		--slider-thumb-border: var(--fire-button-bg);
 		--slider-focus-ring: var(--fire-nav-selected-bg);
 	}
 
 	:global(.slider.water) {
 		--slider-range-bg: var(--water-button-bg);
-		--slider-thumb-border: var(--water-button-bg);
 		--slider-focus-ring: var(--water-nav-selected-bg);
 	}
 
 	:global(.slider.earth) {
 		--slider-range-bg: var(--earth-button-bg);
-		--slider-thumb-border: var(--earth-button-bg);
 		--slider-focus-ring: var(--earth-nav-selected-bg);
 	}
 
 	:global(.slider.dark) {
 		--slider-range-bg: var(--dark-button-bg);
-		--slider-thumb-border: var(--dark-button-bg);
 		--slider-focus-ring: var(--dark-nav-selected-bg);
 	}
 
 	:global(.slider.light) {
 		--slider-range-bg: var(--light-button-bg);
-		--slider-thumb-border: var(--light-button-bg);
 		--slider-focus-ring: var(--light-nav-selected-bg);
 	}
 </style>

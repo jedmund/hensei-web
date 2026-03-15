@@ -80,7 +80,7 @@
 		--cb-checked-bg-hover: var(--null-bg-hover);
 		--cb-checked-fg: #{$grey-45};
 
-		background-color: var(--input-bg);
+		background-color: var(--checkbox-bg);
 		border: none;
 		cursor: pointer;
 		display: inline-flex;
@@ -90,7 +90,7 @@
 	}
 
 	:global(.checkbox:hover:not(:disabled)) {
-		background-color: var(--input-bg-hover);
+		background-color: var(--checkbox-bg-hover);
 	}
 
 	:global(.checkbox:focus),
@@ -114,11 +114,11 @@
 	}
 
 	:global(.checkbox.bound) {
-		background-color: var(--input-bound-bg);
+		background-color: var(--checkbox-bound-bg);
 	}
 
 	:global(.checkbox.bound:hover:not(:disabled)) {
-		background-color: var(--input-bound-bg-hover);
+		background-color: var(--checkbox-bound-bg-hover);
 	}
 
 	// Element-specific color overrides

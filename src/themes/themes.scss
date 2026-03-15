@@ -56,6 +56,8 @@
 	--full-auto-label-text: #{colors.$text--full--auto--light};
 
 	--separator-bg: #{colors.$separator--bg--light};
+	--indicator-bg: #{colors.$indicator--bg--light};
+	--stroked-button-border: #{colors.$stroked--button--border--light};
 
 	--accent-blue: #{colors.$accent--blue--light};
 	--accent-blue-focus: #{colors.$accent--blue--light--focus};
@@ -158,6 +160,8 @@
 	// Light - Checkboxes
 	--checkbox-bg: #{colors.$checkbox--bg--light};
 	--checkbox-bg-hover: #{colors.$checkbox--bg--light--hover};
+	--checkbox-bound-bg: #{colors.$checkbox--bound--bg--light};
+	--checkbox-bound-bg-hover: #{colors.$checkbox--bound--bg--light--hover};
 	--checkbox-text: #{colors.$checkbox--text--light};
 	--checkbox-text-hover: #{colors.$checkbox--text--light--hover};
 
@@ -476,6 +480,8 @@ html[data-theme='dark'] {
 	--full-auto-label-text: #{colors.$text--full--auto--dark};
 
 	--separator-bg: #{colors.$separator--bg--dark};
+	--indicator-bg: #{colors.$indicator--bg--dark};
+	--stroked-button-border: #{colors.$stroked--button--border--dark};
 
 	--accent-blue: #{colors.$accent--blue--dark};
 	--accent-blue-focus: #{colors.$accent--blue--dark--focus};
@@ -579,6 +585,8 @@ html[data-theme='dark'] {
 	// Dark - Checkboxes
 	--checkbox-bg: #{colors.$checkbox--bg--dark};
 	--checkbox-bg-hover: #{colors.$checkbox--bg--dark--hover};
+	--checkbox-bound-bg: #{colors.$checkbox--bound--bg--dark};
+	--checkbox-bound-bg-hover: #{colors.$checkbox--bound--bg--dark--hover};
 	--checkbox-text: #{colors.$checkbox--text--dark};
 	--checkbox-text-hover: #{colors.$checkbox--text--dark--hover};
 
