@@ -70,6 +70,9 @@
 }
 
 .label {
+	display: flex;
+	align-items: center;
+	gap: $unit-half;
 	font-size: $font-small;
 	font-weight: $medium;
 	color: var(--text-secondary);
@@ -78,4 +81,9 @@
 	[data-state='checked'] & {
 		color: var(--text-primary);
 	}
+}
+
+.labelIcon {
+	height: 16px;
+	width: auto;
 }

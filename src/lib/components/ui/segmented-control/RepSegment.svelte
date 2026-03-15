@@ -8,6 +8,7 @@
 	interface Props {
 		value: string
 		label: string
+		labelIcon?: string
 		class?: string
 		selected?: boolean
 		disabled?: boolean
@@ -17,6 +18,7 @@
 	let {
 		value,
 		label,
+		labelIcon,
 		class: className,
 		selected = false,
 		disabled,
@@ -37,7 +39,12 @@
 			<div class={styles.content}>
 				{@render content?.()}
 			</div>
-			<div class={styles.label}>{label}</div>
+			<div class={styles.label}>
+				{#if labelIcon}
+					<img src={labelIcon} alt="" class={styles.labelIcon} />
+				{/if}
+				{label}
+			</div>
 		</div>
 	{/snippet}
 </RadioGroupPrimitive.Item>
