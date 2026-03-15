@@ -116,7 +116,7 @@
 		-webkit-box-orient: vertical;
 		font-size: typography.$font-small;
 		line-height: 1.4;
-		color: var(--text-tertiary);
+		color: var(--text-secondary);
 		text-align: center;
 		overflow: hidden;
 		text-overflow: ellipsis;
