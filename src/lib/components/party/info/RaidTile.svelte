@@ -74,7 +74,7 @@
 	}
 
 	.raid-image {
-		height: 48px;
+		height: 95px;
 		width: auto;
 		border-radius: $item-corner;
 	}
