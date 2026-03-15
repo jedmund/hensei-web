@@ -10,6 +10,8 @@
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
+	import { hasEditKeys, getAllEditKeys } from '$lib/utils/editKeys'
+	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import type { LayoutData } from './$types'
 
 	const { data, children } = $props<{
@@ -33,6 +35,13 @@
 
 	$effect(() => {
 		crewStore.setLoading(crewQuery.isLoading)
+	})
+
+	// Deposit edit keys to server on login (fire-and-forget)
+	$effect(() => {
+		if (data?.isAuthenticated && browser && hasEditKeys()) {
+			userAdapter.depositEditKeys(getAllEditKeys()).catch(() => {})
+		}
 	})
 
 	// Reference to the scrolling container

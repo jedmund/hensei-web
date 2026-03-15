@@ -4,6 +4,7 @@
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
+	import MigrateBanner from '$lib/components/profile/MigrateBanner.svelte'
 	import { userQueries } from '$lib/api/queries/user.queries'
 	import { page } from '$app/stores'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
@@ -78,6 +79,10 @@
 		collectionPrivacy={data.user?.collectionPrivacy}
 		isAuthenticated={$page.data?.isAuthenticated}
 	/>
+
+	{#if isOwner}
+		<MigrateBanner />
+	{/if}
 
 	{#if partiesQuery.isLoading}
 		<div class="loading">
