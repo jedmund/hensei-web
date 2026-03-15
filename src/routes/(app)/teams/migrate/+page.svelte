@@ -80,7 +80,6 @@
 	<div class="card">
 		<div class="card-header">
 			<div class="card-text">
-				<h1>{m.migrate_page_title()}</h1>
 				<p>{m.migrate_page_description()}</p>
 			</div>
 			{#if !previewQuery.isLoading && readyCount > 0}
@@ -132,7 +131,7 @@
 
 	.card-header {
 		display: flex;
-		align-items: flex-start;
+		align-items: center;
 		justify-content: space-between;
 		gap: $unit-2x;
 	}
