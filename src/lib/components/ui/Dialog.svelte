@@ -69,6 +69,7 @@
 		top: 50%;
 		transform: translate(-50%, -50%);
 		background: var(--dialog-bg);
+		color: var(--text-primary);
 		border-radius: $card-corner;
 		box-shadow: var(--shadow-xl);
 		max-width: 90vw;
