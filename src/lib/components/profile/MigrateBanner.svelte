@@ -47,6 +47,7 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
+	@use '$src/themes/layout' as *;
 
 	.migrate-banner {
 		display: flex;
@@ -54,8 +55,8 @@
 		justify-content: space-between;
 		gap: $unit-2x;
 		padding: $unit-2x;
-		padding-left: $unit-3x;
-		border-radius: $unit;
+		padding-left: $unit + $unit-half;
+		border-radius: $card-corner;
 		margin-bottom: $unit-2x;
 	}
 
