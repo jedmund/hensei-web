@@ -704,6 +704,7 @@
 	"crew_scout_assign_later": "後から割り当てできます",
 	"crew_scout_sending": "送信中",
 	"crew_scout_send": "スカウトする",
+	"crew_already_member": "すでに騎空団のメンバーです",
 	"crew_invite_title": "騎空団にスカウト",
 	"crew_invite_desc": "このプレイヤーを騎空団にスカウト",
 	"crew_invite_success": "{username}をスカウトしました！",
@@ -822,6 +823,7 @@
 	"profile_tab_teams": "編成",
 	"profile_tab_favorites": "お気に入り",
 	"profile_tab_collection": "コレクション",
+	"profile_create_team_collection": "{name}のコレクションでチームを作成",
 
 	"crew_roster_search": "キャラ、武器、召喚石を検索",
 	"crew_roster_no_members": "団員が見つかりません",

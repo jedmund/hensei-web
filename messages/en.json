@@ -704,6 +704,7 @@
 	"crew_scout_assign_later": "You can assign this later",
 	"crew_scout_sending": "Sending…",
 	"crew_scout_send": "Send Invitation",
+	"crew_already_member": "Already in your crew",
 	"crew_invite_title": "Invite to Crew",
 	"crew_invite_desc": "Send a crew invitation to this user",
 	"crew_invite_success": "Invitation sent to {username}!",
@@ -822,6 +823,7 @@
 	"profile_tab_teams": "Teams",
 	"profile_tab_favorites": "Favorites",
 	"profile_tab_collection": "Collection",
+	"profile_create_team_collection": "Create team with {name}'s collection",
 
 	"crew_roster_search": "Search characters, weapons, summons…",
 	"crew_roster_no_members": "No crew members found",

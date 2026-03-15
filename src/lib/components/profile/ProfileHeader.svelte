@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
+	import { createQuery } from '@tanstack/svelte-query'
 	import { DropdownMenu } from 'bits-ui'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import DropdownItem from '$lib/components/ui/dropdown/DropdownItem.svelte'
 	import InviteUserModal from '$lib/components/crew/InviteUserModal.svelte'
+	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import type { CrewRole } from '$lib/types/api/crew'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import * as m from '$lib/paraglide/messages'
@@ -30,8 +32,10 @@
 		viewerCrewRole?: CrewRole | null
 		/** Current user's crew ID */
 		viewerCrewId?: string | null
-		/** Whether the target user is in a crew */
-		targetUserHasCrew?: boolean
+		/** Collection privacy setting: 1=everyone, 2=crew_only, 3=private */
+		collectionPrivacy?: number
+		/** Whether the viewer is logged in */
+		isAuthenticated?: boolean
 	}
 
 	let {
@@ -48,7 +52,8 @@
 		crewGamertag,
 		viewerCrewRole = null,
 		viewerCrewId = null,
-		targetUserHasCrew = false
+		collectionPrivacy,
+		isAuthenticated = false
 	}: Props = $props()
 
 	// GBF profile URL - only show if user has enabled the setting
@@ -62,17 +67,39 @@
 	const avatarSrcSet = $derived(getAvatarSrcSet(avatarPicture))
 	const displayTitle = $derived(title || username)
 
-	// Can invite if: viewer is captain/vice_captain AND target user is not in a crew AND not viewing own profile
+	// Viewer is a crew officer
+	const isCrewOfficer = $derived(
+		viewerCrewRole === 'captain' || viewerCrewRole === 'vice_captain'
+	)
+
+	// Query crew members to check if target user is already in viewer's crew
+	const crewMembersQuery = createQuery(() => ({
+		...crewQueries.members('active'),
+		enabled: !isOwner && isCrewOfficer && !!userId
+	}))
+
+	const isInViewerCrew = $derived.by(() => {
+		if (!userId || !crewMembersQuery.data) return false
+		return crewMembersQuery.data.members.some((m) => m.user?.id === userId)
+	})
+
+	// Can invite if: viewer is crew officer AND target user is not in viewer's crew
 	const canInvite = $derived(
-		!isOwner &&
-			viewerCrewRole !== null &&
-			(viewerCrewRole === 'captain' || viewerCrewRole === 'vice_captain') &&
-			!targetUserHasCrew &&
-			userId
+		!isOwner && isCrewOfficer && !isInViewerCrew && userId
+	)
+
+	// Show "Already in your crew" when target IS in viewer's crew
+	const showAlreadyInCrew = $derived(
+		!isOwner && isCrewOfficer && isInViewerCrew && userId
+	)
+
+	// Can create team from collection if: not owner, logged in, collection is public, and user exists
+	const canCreateTeam = $derived(
+		!isOwner && isAuthenticated && collectionPrivacy === 1 && userId
 	)
 
 	// Show menu if there are any actions available
-	const showMenu = $derived(canInvite)
+	const showMenu = $derived(canInvite || showAlreadyInCrew || canCreateTeam)
 
 	// Invite modal state
 	let inviteModalOpen = $state(false)
@@ -131,6 +158,21 @@
 										<Icon name="user-plus" size={14} />
 										<span>{m.crew_invite_title()}</span>
 									</button>
+								</DropdownItem>
+							{:else if showAlreadyInCrew}
+								<DropdownItem>
+									<button disabled class="disabled-item">
+										<Icon name="user-check" size={14} />
+										<span>{m.crew_already_member()}</span>
+									</button>
+								</DropdownItem>
+							{/if}
+							{#if canCreateTeam}
+								<DropdownItem>
+									<a href={localizeHref(`/teams/new?collectionSource=${username}`)}>
+										<Icon name="users" size={14} />
+										<span>{m.profile_create_team_collection({ name: username })}</span>
+									</a>
 								</DropdownItem>
 							{/if}
 						</DropdownMenu.Content>
@@ -395,11 +437,14 @@
 		box-shadow: var(--shadow-xl);
 		z-index: effects.$z-popover;
 
-		button {
-			display: flex;
-			align-items: center;
+		:global(.dropdown-item button),
+		:global(.dropdown-item a) {
 			gap: $unit-half;
-			width: 100%;
+		}
+
+		:global(.dropdown-item button.disabled-item) {
+			opacity: 0.5;
+			cursor: default;
 		}
 	}
 </style>

@@ -5,6 +5,7 @@
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import { userQueries } from '$lib/api/queries/user.queries'
+	import { page } from '$app/stores'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import Icon from '$lib/components/Icon.svelte'
@@ -74,6 +75,8 @@
 		{isOwner}
 		{viewerCrewRole}
 		{viewerCrewId}
+		collectionPrivacy={data.user?.collectionPrivacy}
+		isAuthenticated={$page.data?.isAuthenticated}
 	/>
 
 	{#if partiesQuery.isLoading}

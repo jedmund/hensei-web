@@ -186,6 +186,8 @@
 		title={username ?? ''}
 		activeTab="collection"
 		isOwner={data.isOwner}
+		collectionPrivacy={data.user?.collectionPrivacy}
+		isAuthenticated={$page.data?.isAuthenticated}
 	/>
 
 	<div class="card-container">
