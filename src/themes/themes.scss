@@ -723,8 +723,8 @@ html[data-theme='dark'] {
 	--grid-border-color: #{colors.$grid--border--color--dark};
 
 	// Dark - Database
-	--table-row-hover: #{colors.$grey-25};
-	--table-header-hover: #{colors.$grey-30};
+	--table-row-hover: #{colors.$grey-30};
+	--table-header-hover: #{colors.$grey-40};
 	--badge-extra-bg: #3b1f5e;
 	--badge-extra-text: #d8b4fe;
 	--badge-element-bg: linear-gradient(to right, #7f1d1d, #78350f, #14532d, #1e3a5f, #4c1d95, #831843);
