@@ -312,6 +312,7 @@
 		userId={data.user.id}
 		entityType={modalEntityType}
 		bind:open={addModalOpen}
+		{userElement}
 	/>
 {/if}
 

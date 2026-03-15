@@ -9,6 +9,9 @@
 	"nav_login": "ログイン",
 	"nav_register": "登録",
 	"nav_settings": "設定",
+	"nav_about": "概要",
+	"nav_extension": "拡張機能",
+	"nav_theme": "テーマ",
 	"nav_logout": "ログアウト",
 	"nav_account_aria": "アカウント",
 	"nav_menu_button": "メニュー",
@@ -245,8 +248,10 @@
 	"about_feedback_explanation": "もし、機能的な要望がある場合・バグを報告したい場合・あるいはこのサイトは役に立っているなら、Discordのサーバーに連絡ができます。",
 	"about_feedback_solicit": "ご意見、ご感想をお待ちしております。",
 	"about_credits_title": "謝意",
-	"about_credits_maintainer": "Granblue.teamの創造者・維持者は@jedmund.",
-	"about_credits_assistance": "@lalalalilnaさんと@tarngerineさんがプロジェクト開始の時にたくさん助かりました。",
+	"about_credits_maintainer_before": "Granblue.teamの創造者・維持者は",
+	"about_credits_maintainer_after": "。",
+	"about_credits_assistance_before": "@lalalalilnaさんと",
+	"about_credits_assistance_after": "さんがプロジェクト開始の時にたくさん助かりました。",
 	"about_credits_support": "Fireplace団とgranblue-toolsのDiscordの皆さんの協力も感謝しています。(募集中です！)",
 	"about_contributing_title": "協力",
 	"about_contributing_explanation": "このサイトはオープンソースで協力したい方であったら、ご遠慮なくGitHubへ",
@@ -559,6 +564,8 @@
 
 	"crew_loading": "読み込み中",
 	"crew_intro": "騎空団を作って他のプレイヤーと編成を組み、古戦場の貢献度を記録し、戦略を共有しましょう。",
+	"crew_sign_up": "新規登録",
+	"crew_log_in": "ログイン",
 	"crew_create": "騎空団を作成",
 	"crew_unite_and_fight": "古戦場",
 	"crew_loading_events": "イベントを読み込み中",
@@ -841,6 +848,10 @@
 
 	"crew_update_failed": "騎空団の更新に失敗しました",
 
+	"collection_intro": "キャラ・武器・召喚石を管理して、編成の計画や進捗の共有に役立てましょう。",
+	"collection_sign_up": "新規登録",
+	"collection_log_in": "ログイン",
+
 	"collection_loading": "コレクションを読み込み中",
 	"collection_empty_characters": "コレクションは空です",
 	"collection_empty_characters_hint": "上の「コレクションに追加」ボタンから始めましょう",
@@ -868,6 +879,8 @@
 	"page_title_guides": "ガイド",
 	"guides_heading": "ガイド",
 	"guides_description": "グランブルーファンタジーのガイドとリソース",
+	"coming_soon": "近日公開",
+	"guides_coming_soon": "ガイドは近日公開予定です。",
 
 	"sidebar_loading_jobs": "ジョブを読み込み中",
 	"sidebar_jobs_error": "ジョブの読み込みに失敗しました",

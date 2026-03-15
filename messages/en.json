@@ -9,6 +9,9 @@
 	"nav_login": "Log in",
 	"nav_register": "Register",
 	"nav_settings": "Settings",
+	"nav_about": "About",
+	"nav_extension": "Extension",
+	"nav_theme": "Theme",
 	"nav_logout": "Log out",
 	"nav_account_aria": "Your account",
 	"nav_menu_button": "Menu",
@@ -245,8 +248,10 @@
 	"about_feedback_explanation": "If you have a feature request, would like to report a bug, or are enjoying the tool and want to say thanks, come hang out in Discord.",
 	"about_feedback_solicit": "Feedback and suggestions are greatly appreciated!",
 	"about_credits_title": "Credits",
-	"about_credits_maintainer": "Granblue.team was built and is maintained by @jedmund.",
-	"about_credits_assistance": "Many thanks to @lalalalinna and @tarngerine, who both provided a lot of help and advice as I was ramping up.",
+	"about_credits_maintainer_before": "Granblue.team was built and is maintained by ",
+	"about_credits_maintainer_after": ".",
+	"about_credits_assistance_before": "Many thanks to @lalalalinna and ",
+	"about_credits_assistance_after": ", who both provided a lot of help and advice as I was ramping up.",
 	"about_credits_support": "Many thanks also go to everyone in Fireplace and the granblue-tools Discord for all of their help with bug testing, feature requests, and moral support. (P.S. We're recruiting!)",
 	"about_contributing_title": "Contributing",
 	"about_contributing_explanation": "If you know how to program, this app is completely open-source. There's an abundance of features to build and bugs to fix, so help is always greatly appreciated!",
@@ -559,6 +564,8 @@
 
 	"crew_loading": "Loading…",
 	"crew_intro": "Crews let you team up with other players, track Guild War scores, and share strategies.",
+	"crew_sign_up": "Sign up",
+	"crew_log_in": "Log in",
 	"crew_create": "Create a Crew",
 	"crew_unite_and_fight": "Unite and Fight",
 	"crew_loading_events": "Loading events…",
@@ -841,6 +848,10 @@
 
 	"crew_update_failed": "Failed to update crew",
 
+	"collection_intro": "Track your characters, weapons, and summons to help plan your teams and share your progress.",
+	"collection_sign_up": "Sign up",
+	"collection_log_in": "Log in",
+
 	"collection_loading": "Loading collection",
 	"collection_empty_characters": "Your collection is empty",
 	"collection_empty_characters_hint": "Use the \"Add to Collection\" button above to get started",
@@ -868,6 +879,8 @@
 	"page_title_guides": "Guides",
 	"guides_heading": "Guides",
 	"guides_description": "Guides and resources for Granblue Fantasy players.",
+	"coming_soon": "Coming soon",
+	"guides_coming_soon": "Guides are coming soon.",
 
 	"sidebar_loading_jobs": "Loading jobs",
 	"sidebar_jobs_error": "Failed to load jobs",
