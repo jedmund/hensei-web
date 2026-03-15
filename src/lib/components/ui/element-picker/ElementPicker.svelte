@@ -5,10 +5,7 @@
 	import Select from '../Select.svelte'
 	import MultiSelect from '../MultiSelect.svelte'
 	import ElementPickerSegmented from './ElementPickerSegmented.svelte'
-	import { ELEMENT_LABELS, getElementImage } from '$lib/utils/element'
-
-	// Element display order: Fire(2) → Water(3) → Earth(4) → Wind(1) → Light(6) → Dark(5)
-	const ELEMENT_DISPLAY_ORDER = [2, 3, 4, 1, 6, 5]
+	import { ELEMENT_LABELS, ELEMENT_DISPLAY_ORDER, getElementImage } from '$lib/utils/element'
 
 	interface Props {
 		value?: number | number[]

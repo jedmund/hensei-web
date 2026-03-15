@@ -1,6 +1,6 @@
 
 <script lang="ts">
-	import { ELEMENT_LABELS, ELEMENT_CSS_CLASSES } from '$lib/utils/gw'
+	import { getElementLabel, getElementKey } from '$lib/utils/element'
 
 	interface Props {
 		element: number
@@ -9,8 +9,8 @@
 
 	let { element, size = 'small' }: Props = $props()
 
-	const label = $derived(ELEMENT_LABELS[element] ?? 'Unknown')
-	const cssClass = $derived(ELEMENT_CSS_CLASSES[element] ?? 'null')
+	const label = $derived(getElementLabel(element))
+	const cssClass = $derived(getElementKey(element))
 </script>
 
 <span class="element-badge element-{cssClass}" class:medium={size === 'medium'}>

@@ -12,7 +12,7 @@
   import * as m from '$lib/paraglide/messages'
   import { getLocale } from '$lib/paraglide/runtime'
   import { localizedName } from '$lib/utils/locale'
-  import { getElementImage } from '$lib/utils/element'
+  import { getElementImage, getElementOptions } from '$lib/utils/element'
 
   export type FilterItem =
     | { kind: 'element'; value: number; label: string; pinned?: boolean }
@@ -63,15 +63,7 @@
   )
 
   // Static filter options
-  const elementOptions = $derived([
-    { value: 0, label: m.element_null() },
-    { value: 1, label: m.element_wind() },
-    { value: 2, label: m.element_fire() },
-    { value: 3, label: m.element_water() },
-    { value: 4, label: m.element_earth() },
-    { value: 5, label: m.element_dark() },
-    { value: 6, label: m.element_light() }
-  ])
+  const elementOptions = $derived(getElementOptions())
 
   const recencyOptions = $derived([
     { value: 86400, label: m.recency_day() },

@@ -15,6 +15,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import { getElementIcon } from '$lib/utils/images'
+	import { getElementKey, getElementOptions } from '$lib/utils/element'
 	import { seriesHasWeaponKeys, getSeriesSlug } from '$lib/utils/weaponSeries'
 	import { useSyncGridWeapon } from '$lib/api/mutations/grid.mutations'
 
@@ -91,27 +92,15 @@
 	const availableAwakenings = $derived(weaponData?.awakenings ?? [])
 
 	// Element name for button styling
-	const ELEMENT_MAP: Record<number, 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'> = {
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
 	const weaponElement = $derived(element || weaponData?.element)
-	const elementName = $derived(weaponElement ? ELEMENT_MAP[weaponElement] : undefined)
+	const elementName = $derived(weaponElement ? getElementKey(weaponElement) : undefined)
 
 	// Element options
-	const elementOptions = [
-		{ value: 0, label: m.element_no_element(), image: getElementIcon(0) },
-		{ value: 1, label: m.element_wind(), image: getElementIcon(1) },
-		{ value: 2, label: m.element_fire(), image: getElementIcon(2) },
-		{ value: 3, label: m.element_water(), image: getElementIcon(3) },
-		{ value: 4, label: m.element_earth(), image: getElementIcon(4) },
-		{ value: 5, label: m.element_dark(), image: getElementIcon(5) },
-		{ value: 6, label: m.element_light(), image: getElementIcon(6) }
-	]
+	const elementOptions = getElementOptions().map((opt) => ({
+		...opt,
+		label: opt.value === 0 ? m.element_no_element() : opt.label,
+		image: getElementIcon(opt.value)
+	}))
 
 	function displayName(input: any): string {
 		if (!input) return '—'

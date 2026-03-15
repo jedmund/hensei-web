@@ -2,11 +2,8 @@
 <script lang="ts">
 	import { ToggleGroup } from 'bits-ui'
 	import Tooltip from '../Tooltip.svelte'
-	import { getElementLabel, getElementImage } from '$lib/utils/element'
+	import { getElementLabel, getElementImage, ELEMENT_DISPLAY_ORDER } from '$lib/utils/element'
 	import * as m from '$lib/paraglide/messages'
-
-	// Element display order: Fire(2) → Water(3) → Earth(4) → Wind(1) → Light(6) → Dark(5)
-	const ELEMENT_DISPLAY_ORDER = [2, 3, 4, 1, 6, 5]
 
 	interface Props {
 		value?: number | number[]

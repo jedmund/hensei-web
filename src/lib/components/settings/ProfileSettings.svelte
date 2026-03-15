@@ -7,7 +7,7 @@
 	import { pictureData } from '$lib/utils/pictureData'
 	import { localizedName } from '$lib/utils/locale'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
-	import { ELEMENT_HEX_COLORS } from '$lib/utils/gw'
+	import { getElementColor, getElementKey } from '$lib/utils/element'
 	import type { ElementType } from '../ui/SettingsNav.svelte'
 
 	interface Props {
@@ -52,19 +52,19 @@
 	)
 
 	// Create SVG circle data URL for element color
-	function getElementCircle(el: string): string {
-		const color = ELEMENT_HEX_COLORS[el] || '#888'
+	function getElementCircle(elementId: number): string {
+		const color = getElementColor(elementId)
 		const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="${color}"/></svg>`
 		return `data:image/svg+xml,${encodeURIComponent(svg)}`
 	}
 
 	const elementOptions = [
-		{ value: 'wind', label: m.settings_element_wind(), image: getElementCircle('wind') },
-		{ value: 'fire', label: m.settings_element_fire(), image: getElementCircle('fire') },
-		{ value: 'water', label: m.settings_element_water(), image: getElementCircle('water') },
-		{ value: 'earth', label: m.settings_element_earth(), image: getElementCircle('earth') },
-		{ value: 'dark', label: m.settings_element_dark(), image: getElementCircle('dark') },
-		{ value: 'light', label: m.settings_element_light(), image: getElementCircle('light') }
+		{ value: getElementKey(1), label: m.settings_element_wind(), image: getElementCircle(1) },
+		{ value: getElementKey(2), label: m.settings_element_fire(), image: getElementCircle(2) },
+		{ value: getElementKey(3), label: m.settings_element_water(), image: getElementCircle(3) },
+		{ value: getElementKey(4), label: m.settings_element_earth(), image: getElementCircle(4) },
+		{ value: getElementKey(5), label: m.settings_element_dark(), image: getElementCircle(5) },
+		{ value: getElementKey(6), label: m.settings_element_light(), image: getElementCircle(6) }
 	]
 
 	const genderOptions = [

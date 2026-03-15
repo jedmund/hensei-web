@@ -17,7 +17,7 @@
 	import ArtifactModifierList from './ArtifactModifierList.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import * as m from '$lib/paraglide/messages'
-	import { getElementColor } from '$lib/utils/gw'
+	import { getElementColor, getElementKey, getElementOptions } from '$lib/utils/element'
 
 	interface Props {
 		/** The artifact instance being edited */
@@ -109,26 +109,12 @@
 	}
 
 	// Element options with color dots
-	const elementOptions = [
-		{ value: 1, label: m.element_wind(), color: getElementColor(1) },
-		{ value: 2, label: m.element_fire(), color: getElementColor(2) },
-		{ value: 3, label: m.element_water(), color: getElementColor(3) },
-		{ value: 4, label: m.element_earth(), color: getElementColor(4) },
-		{ value: 5, label: m.element_dark(), color: getElementColor(5) },
-		{ value: 6, label: m.element_light(), color: getElementColor(6) }
-	]
+	const elementOptions = getElementOptions()
+		.filter((opt) => opt.value !== 0)
+		.map((opt) => ({ ...opt, color: getElementColor(opt.value) }))
 
 	// Convert numeric element to ElementType string
-	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
-	const elementTypeMap: Record<number, ElementType> = {
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
-	const elementType = $derived(elementTypeMap[element])
+	const elementType = $derived(getElementKey(element))
 
 	// Level options (1-5 for standard, fixed at 1 for quirk)
 	const levelOptions = $derived(

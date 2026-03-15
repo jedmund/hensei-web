@@ -21,6 +21,7 @@
 	import BefoulmentSelect from '$lib/components/sidebar/edit/BefoulmentSelect.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getElementIcon } from '$lib/utils/images'
+	import { getElementKey, getElementOptions } from '$lib/utils/element'
 	import { seriesHasWeaponKeys, getSeriesSlug } from '$lib/utils/weaponSeries'
 
 	export interface WeaponEditValues {
@@ -122,26 +123,13 @@
 	const availableAwakenings = $derived(weaponData?.awakenings ?? [])
 
 	// Element name for theming
-	const ELEMENT_MAP: Record<number, 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'> = {
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
 	const weaponElement = $derived(element || weaponData?.element)
-	const elementName = $derived(weaponElement ? ELEMENT_MAP[weaponElement] : undefined)
+	const elementName = $derived(weaponElement ? getElementKey(weaponElement) : undefined)
 
 	// Element options
-	const elementOptions = [
-		{ value: 1, label: m.element_wind(), image: getElementIcon(1) },
-		{ value: 2, label: m.element_fire(), image: getElementIcon(2) },
-		{ value: 3, label: m.element_water(), image: getElementIcon(3) },
-		{ value: 4, label: m.element_earth(), image: getElementIcon(4) },
-		{ value: 5, label: m.element_dark(), image: getElementIcon(5) },
-		{ value: 6, label: m.element_light(), image: getElementIcon(6) }
-	]
+	const elementOptions = getElementOptions()
+		.filter((opt) => opt.value !== 0)
+		.map((opt) => ({ ...opt, image: getElementIcon(opt.value) }))
 
 	// Awakening slug to UUID map
 	const AWAKENING_MAP: Record<string, string> = {

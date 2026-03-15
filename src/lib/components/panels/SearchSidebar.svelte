@@ -5,7 +5,7 @@
   import { getCharacterImage, getWeaponImage, getSummonImage, getPlaceholderImage } from '$lib/utils/images'
   import { toast } from 'svelte-sonner'
   import { extractErrorMessage } from '$lib/utils/errors'
-  import { getElementColor } from '$lib/utils/gw'
+  import { getElementColor, getElementOptions } from '$lib/utils/element'
   import { localizedName } from '$lib/utils/locale'
   import * as m from '$lib/paraglide/messages'
 
@@ -45,15 +45,10 @@
   let resultsContainer: HTMLDivElement
 
   // Constants
-  const elements = [
-    { value: 0, label: m.element_null(), color: getElementColor(0) },
-    { value: 1, label: m.element_wind(), color: getElementColor(1) },
-    { value: 2, label: m.element_fire(), color: getElementColor(2) },
-    { value: 3, label: m.element_water(), color: getElementColor(3) },
-    { value: 4, label: m.element_earth(), color: getElementColor(4) },
-    { value: 5, label: m.element_dark(), color: getElementColor(5) },
-    { value: 6, label: m.element_light(), color: getElementColor(6) }
-  ]
+  const elements = getElementOptions().map((opt) => ({
+    ...opt,
+    color: getElementColor(opt.value)
+  }))
 
   const rarities = [
     { value: 1, label: 'R' },

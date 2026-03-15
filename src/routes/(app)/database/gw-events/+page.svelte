@@ -7,7 +7,7 @@
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { formatDateJST } from '$lib/utils/date'
-	import { ELEMENT_LABELS } from '$lib/utils/gw'
+	import { ELEMENT_LABELS } from '$lib/utils/element'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
 	import type { GwEvent } from '$lib/types/api/gw'
 	import type { PageData } from './$types'

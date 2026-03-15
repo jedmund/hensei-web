@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
+	import { getElementColor, getElementOptions } from '$lib/utils/element'
 	import { CHARACTER_SEASON_NAMES, CHARACTER_SERIES_NAMES } from '$lib/types/enums'
 	import { RACE_LABELS } from '$lib/utils/race'
 	import { GENDER_LABELS } from '$lib/utils/gender'
@@ -141,15 +142,10 @@
 	]
 
 	// Constants
-	const elements = [
-		{ value: 0, label: m.element_null(), color: '#888' },
-		{ value: 1, label: m.element_wind(), color: '#4A9B3F' },
-		{ value: 2, label: m.element_fire(), color: '#D94444' },
-		{ value: 3, label: m.element_water(), color: '#4A7FB8' },
-		{ value: 4, label: m.element_earth(), color: '#9B6E3F' },
-		{ value: 5, label: m.element_dark(), color: '#6B3E9B' },
-		{ value: 6, label: m.element_light(), color: '#F4B643' }
-	]
+	const elements = getElementOptions().map((opt) => ({
+		...opt,
+		color: getElementColor(opt.value)
+	}))
 
 	const rarities = [
 		{ value: 1, label: 'R' },
