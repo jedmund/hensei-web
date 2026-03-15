@@ -241,7 +241,7 @@
 
 	.separator {
 		border: none;
-		border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.08));
+		border-top: 1px solid var(--separator-bg);
 		margin: 0;
 	}
 
