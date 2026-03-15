@@ -1461,12 +1461,11 @@
 
 	"migrate_banner_text": "アカウントに紐付けられていない匿名編成があります。",
 	"migrate_banner_action": "編成を移行",
-	"migrate_dialog_title": "匿名編成の移行",
-	"migrate_dialog_body": "匿名で作成した編成をアカウントに紐付けます。移行後はプロフィールに表示され、ログイン状態で編集できるようになります。",
-	"migrate_dialog_count": "{count}件の編成が見つかりました",
-	"migrate_dialog_confirm": "移行する",
-	"migrate_dialog_migrating": "移行中...",
-	"migrate_dialog_success": "{count}件の編成を移行しました。",
-	"migrate_dialog_partial": "{total}件中{migrated}件の編成を移行しました。一部は移行できませんでした。",
-	"migrate_dialog_done": "完了"
+	"migrate_page_title": "編成の移行",
+	"migrate_page_description": "以下の匿名編成がアカウントに紐付けられます",
+	"migrate_page_empty": "匿名編成が見つかりません",
+	"migrate_page_empty_description": "移行できる匿名編成がありません",
+	"migrate_page_button": "すべての編成を移行",
+	"migrate_page_migrating": "移行中...",
+	"migrate_page_success": "編成の移行が完了しました"
 }

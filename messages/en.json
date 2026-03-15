@@ -1461,12 +1461,11 @@
 
 	"migrate_banner_text": "You have anonymous teams that can be linked to your account",
 	"migrate_banner_action": "Migrate teams",
-	"migrate_dialog_title": "Migrate anonymous teams",
-	"migrate_dialog_body": "This will link your anonymous teams to your account. Once migrated, these teams will appear on your profile and you'll be able to edit them while logged in without needing the original edit key.",
-	"migrate_dialog_count": "{count} teams found",
-	"migrate_dialog_confirm": "Migrate",
-	"migrate_dialog_migrating": "Migrating...",
-	"migrate_dialog_success": "Successfully migrated {count} teams.",
-	"migrate_dialog_partial": "Migrated {migrated} of {total} teams. Some could not be migrated.",
-	"migrate_dialog_done": "Done"
+	"migrate_page_title": "Migrate Teams",
+	"migrate_page_description": "These are the anonymous teams that will be linked to your account",
+	"migrate_page_empty": "No anonymous teams found",
+	"migrate_page_empty_description": "You don't have any anonymous teams to migrate",
+	"migrate_page_button": "Migrate all teams",
+	"migrate_page_migrating": "Migrating...",
+	"migrate_page_success": "Teams migrated successfully"
 }
