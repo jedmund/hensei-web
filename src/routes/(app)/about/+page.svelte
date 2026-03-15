@@ -17,6 +17,8 @@
 	<h2>{m.about_contributing_title()}</h2>
 	<p>{m.about_contributing_explanation()}</p>
 	<LinkItem title="jedmund/hensei-web" link="https://github.com/jedmund/hensei-web" icon="github" class="github" />
+	<LinkItem title="jedmund/hensei-api" link="https://github.com/jedmund/hensei-api" icon="github" class="github" />
+	<LinkItem title="jedmund/hensei-extractor" link="https://github.com/jedmund/hensei-extractor" icon="github" class="github" />
 </div>
 
 <div class="about-card">
