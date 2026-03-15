@@ -11,9 +11,13 @@
 		min?: number
 		max?: number
 		onChange?: (value: number) => void
+		/** Element color theme for active state */
+		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	}
 
-	let { value = 0, min = 0, max = 99, onChange }: Props = $props()
+	let { value = 0, min = 0, max = 99, onChange, element }: Props = $props()
+
+	const accentColor = $derived(element ? `var(--${element}-button-bg)` : undefined)
 
 	function increment() {
 		if (value < max) {
@@ -39,7 +43,7 @@
 	}
 </script>
 
-<div class="quantity-counter" class:active={value > 0}>
+<div class="quantity-counter" class:active={value > 0} style:--counter-active-bg={accentColor}>
 	<button
 		type="button"
 		class="counter-btn"
@@ -79,7 +83,7 @@
 		@include smooth-transition(0.15s, all);
 
 		&.active {
-			background: var(--accent-color, #3366ff);
+			background: var(--counter-active-bg, var(--accent-blue));
 		}
 	}
 

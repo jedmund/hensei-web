@@ -627,7 +627,7 @@
 		box-shadow: var(--shadow-lg);
 		padding: $unit-half;
 		min-width: calc($unit * 18);
-		z-index: $z-popover;
+		z-index: $z-modal + 1;
 		animation: fadeIn 0.15s ease-out;
 
 		@keyframes fadeIn {
@@ -690,7 +690,7 @@
 		min-width: calc($unit * 16);
 		max-height: 280px;
 		overflow: auto;
-		z-index: $z-popover + 1;
+		z-index: $z-modal + 2;
 	}
 
 	// Submenu items

@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { localizedName } from '$lib/utils/locale'
 	import { getCharacterImage } from '$lib/utils/images'
-	import Icon from '$lib/components/Icon.svelte'
+	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
+	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import type { SearchPageResult } from '$lib/api/queries/search.queries'
 
 	type SearchResultItem = SearchPageResult['results'][number]
@@ -11,11 +12,13 @@
 		character: SearchResultItem
 		selected?: boolean
 		onToggle?: (character: SearchResultItem) => void
+		/** User's element for checkbox styling */
+		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	}
 
-	let { character, selected = false, onToggle }: Props = $props()
+	let { character, selected = false, onToggle, userElement }: Props = $props()
 
-	const imageUrl = $derived(getCharacterImage(character.granblueId, 'grid', '01'))
+	const imageUrl = $derived(getCharacterImage(character.granblueId, 'square', '01'))
 
 	const name = $derived(localizedName(character.name))
 
@@ -42,17 +45,20 @@
 	aria-pressed={selected}
 	aria-label="{selected ? 'Deselect' : 'Select'} {name}"
 >
-	<div class="checkbox">
-		{#if selected}
-			<Icon name="check" size={14} />
-		{/if}
-	</div>
+	<Checkbox checked={selected} element={userElement} size="small" contained />
 
 	<div class="thumbnail">
 		<img src={imageUrl} alt={name} loading="lazy" />
 	</div>
 
-	<span class="name">{name}</span>
+	<div class="info">
+		<span class="name">{name}</span>
+		<CharacterTags character={{
+			element: character.element,
+			season: character.season,
+			series: character.series
+		}} />
+	</div>
 
 	<div class="element-cell">
 		<ElementLabel {element} size="medium" />
@@ -63,6 +69,7 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/colors' as colors;
 
 	.row {
 		display: flex;
@@ -70,7 +77,7 @@
 		gap: $unit;
 		padding: $unit $unit-2x $unit $unit;
 		border: none;
-		background: var(--list-cell-bg);
+		background: transparent;
 		cursor: pointer;
 		width: 100%;
 		text-align: left;
@@ -81,49 +88,24 @@
 
 		&:hover {
 			background: var(--list-cell-bg-hover);
-			box-shadow: var(--shadow-md);
+
+			:global(.checkbox.bound:not([data-state='checked'])) {
+				background-color: var(--checkbox-bound-bg-hover);
+			}
 		}
 
 		&:focus-visible {
-			outline: 2px solid var(--accent-color, #3366ff);
+			outline: 2px solid var(--accent-blue);
 			outline-offset: -2px;
-		}
-
-		&.selected {
-			background: rgba(51, 102, 255, 0.1);
-
-			&:hover {
-				background: rgba(51, 102, 255, 0.15);
-			}
-		}
-	}
-
-	.checkbox {
-		width: 18px;
-		height: 18px;
-		border: 2px solid var(--border-color, #ccc);
-		border-radius: layout.$item-corner-small;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-shrink: 0;
-		transition:
-			background 0.15s,
-			border-color 0.15s;
-
-		.selected & {
-			background: var(--accent-color, #3366ff);
-			border-color: var(--accent-color, #3366ff);
-			color: white;
 		}
 	}
 
 	.thumbnail {
-		width: 100px;
-		aspect-ratio: 280 / 160;
+		width: 64px;
+		height: 64px;
 		border-radius: layout.$bubble-menu-item-corner;
 		overflow: hidden;
-		background: var(--card-bg, #f5f5f5);
+		background: var(--card-bg);
 		flex-shrink: 0;
 
 		img {
@@ -133,8 +115,15 @@
 		}
 	}
 
-	.name {
+	.info {
 		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: $unit-fourth;
+		min-width: 0;
+	}
+
+	.name {
 		font-size: $font-regular;
 		color: var(--text-primary);
 		white-space: nowrap;
