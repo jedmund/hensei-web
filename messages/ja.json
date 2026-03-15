@@ -1457,5 +1457,16 @@
 	"crew_join_declining": "辞退中",
 	"crew_join_decline": "辞退する",
 	"crew_join_joining": "参加中",
-	"crew_join_accept": "参加する"
+	"crew_join_accept": "参加する",
+
+	"migrate_banner_text": "アカウントに紐付けられていない匿名編成があります。",
+	"migrate_banner_action": "編成を移行",
+	"migrate_dialog_title": "匿名編成の移行",
+	"migrate_dialog_body": "匿名で作成した編成をアカウントに紐付けます。移行後はプロフィールに表示され、ログイン状態で編集できるようになります。",
+	"migrate_dialog_count": "{count}件の編成が見つかりました",
+	"migrate_dialog_confirm": "移行する",
+	"migrate_dialog_migrating": "移行中...",
+	"migrate_dialog_success": "{count}件の編成を移行しました。",
+	"migrate_dialog_partial": "{total}件中{migrated}件の編成を移行しました。一部は移行できませんでした。",
+	"migrate_dialog_done": "完了"
 }
