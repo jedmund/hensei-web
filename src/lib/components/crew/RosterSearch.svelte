@@ -5,6 +5,7 @@
 		type UnifiedSearchResult,
 		type UnifiedSearchSeriesRef
 	} from '$lib/api/adapters/search.adapter'
+	import Input from '$lib/components/ui/Input.svelte'
 	import SearchOptionItem from '$lib/components/search/SearchOptionItem.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
@@ -32,7 +33,6 @@
 
 	let inputValue = $state('')
 	let dropdownOpen = $state(false)
-	let inputEl = $state<HTMLInputElement>()
 	let containerEl = $state<HTMLDivElement>()
 	let listEl = $state<HTMLUListElement>()
 	let selectedIndex = $state(0)
@@ -138,7 +138,7 @@
 			if (result) selectResult(result)
 		} else if (e.key === 'Escape') {
 			dropdownOpen = false
-			inputEl?.blur()
+			;(document.activeElement as HTMLElement)?.blur()
 		}
 	}
 
@@ -154,13 +154,12 @@
 <svelte:window onclick={handleWindowClick} />
 
 <div class="roster-search" bind:this={containerEl}>
-	<input
-		bind:this={inputEl}
+	<Input
 		bind:value={inputValue}
-		type="text"
-		class="search-input"
+		contained
+		fullWidth
 		{placeholder}
-		onfocus={handleFocus}
+		handleFocus={handleFocus}
 		onkeydown={handleKeydown}
 		oncompositionstart={() => (isComposing = true)}
 		oncompositionend={(e) => {
@@ -219,33 +218,6 @@
 
 	.roster-search {
 		position: relative;
-	}
-
-	.search-input {
-		all: unset;
-		box-sizing: border-box;
-		width: 100%;
-		background-color: var(--input-bg);
-		border-radius: $input-corner;
-		border: 1px solid transparent;
-		color: var(--text-primary);
-		font-family: var(--font-family);
-		font-size: $font-regular;
-		padding: $unit $unit-2x;
-		min-height: $unit-4x;
-		@include smooth-transition($duration-quick, background-color, border-color);
-
-		&::placeholder {
-			color: var(--text-tertiary);
-		}
-
-		&:hover {
-			background-color: var(--input-bg-hover);
-		}
-
-		&:focus {
-			border-color: var(--accent-blue);
-		}
 	}
 
 	.dropdown {
