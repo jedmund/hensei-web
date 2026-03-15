@@ -24,8 +24,31 @@
 <div class="about-card">
 	<h2>{m.about_credits_title()}</h2>
 	<p>{m.about_credits_maintainer_before()}<a href="https://jedmund.com" target="_blank" rel="noreferrer">@jedmund</a>{m.about_credits_maintainer_after()}</p>
-	<p>{m.about_credits_assistance_before()}<a href="https://tarng.com" target="_blank" rel="noreferrer">@tarngerine</a>{m.about_credits_assistance_after()}</p>
-	<p>{m.about_credits_support()}</p>
+	<p>{m.about_credits_thanks()}</p>
+	<p>{m.about_credits_special_thanks()}</p>
+</div>
+
+<div class="about-card">
+	<h2>{m.about_data_title()}</h2>
+	<p>{m.about_data_explanation()}</p>
+	<ul class="data-sources">
+		<li>
+			<img src="/images/external/gbf-wiki-en.png" alt="" width="16" height="16" />
+			<a href="https://gbf.wiki" target="_blank" rel="noreferrer">gbf.wiki</a>
+		</li>
+		<li>
+			<img src="/images/external/gbf-wiki-jp.png" alt="" width="16" height="16" />
+			<a href="https://gbf-wiki.com/" target="_blank" rel="noreferrer">gbf-wiki</a>
+		</li>
+		<li>
+			<img src="/images/external/kamigame.png" alt="" width="16" height="16" />
+			<a href="https://kamigame.jp/%E3%82%B0%E3%83%A9%E3%83%96%E3%83%AB/index.html" target="_blank" rel="noreferrer">Kamigame</a>
+		</li>
+		<li>
+			<img src="/images/external/gamewith.png" alt="" width="16" height="16" />
+			<a href="https://xn--bck3aza1a2if6kra4ee0hf.gamewith.jp/" target="_blank" rel="noreferrer">Gamewith</a>
+		</li>
+	</ul>
 </div>
 
 <div class="about-card">
@@ -70,6 +93,27 @@
 
 			&:hover {
 				text-decoration: underline;
+			}
+		}
+
+		.data-sources {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+			display: flex;
+			flex-direction: column;
+			gap: $unit;
+
+			li {
+				display: flex;
+				align-items: center;
+				gap: $unit;
+				font-size: $font-medium;
+				line-height: 1.35;
+
+				img {
+					flex-shrink: 0;
+				}
 			}
 		}
 	}
