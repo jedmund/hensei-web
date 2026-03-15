@@ -18,7 +18,8 @@
 	}
 </script>
 
-<div class="language-row">
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class="language-row" onpointerdown={(e) => e.stopPropagation()} onclick={(e) => e.stopPropagation()}>
 	<span class="language-label">{m.nav_language()}</span>
 	<SwitchPrimitive.Root
 		checked={isJapanese}

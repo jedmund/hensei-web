@@ -15,7 +15,8 @@
 	}
 </script>
 
-<div class="theme-row">
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div class="theme-row" onpointerdown={(e) => e.stopPropagation()} onclick={(e) => e.stopPropagation()}>
 	<span class="theme-label">{m.nav_theme()}</span>
 	<SwitchPrimitive.Root
 		checked={isDark}
