@@ -1,10 +1,13 @@
 <script lang="ts">
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { createQuery } from '@tanstack/svelte-query'
+	import { goto } from '$app/navigation'
 	import { DropdownMenu } from 'bits-ui'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import DropdownItem from '$lib/components/ui/dropdown/DropdownItem.svelte'
+	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
+	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import InviteUserModal from '$lib/components/crew/InviteUserModal.svelte'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import type { CrewRole } from '$lib/types/api/crew'
@@ -101,6 +104,21 @@
 	// Show menu if there are any actions available
 	const showMenu = $derived(canInvite || showAlreadyInCrew || canCreateTeam)
 
+	// Typed element for SegmentedControl
+	const typedElement = $derived(
+		element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined ?? undefined
+	)
+
+	function handleTabChange(value: string) {
+		if (value === 'teams') {
+			goto(localizeHref(`/${username}`))
+		} else if (value === 'favorites') {
+			goto(localizeHref(`/${username}/favorites`))
+		} else if (value === 'collection') {
+			goto(localizeHref(`/${username}/collection/characters`))
+		}
+	}
+
 	// Invite modal state
 	let inviteModalOpen = $state(false)
 </script>
@@ -182,26 +200,21 @@
 		</div>
 	</div>
 
-	<nav class="tabs" aria-label="Profile sections" data-element={element}>
-		<a class:active={activeTab === 'teams'} href={localizeHref(`/${username}`)} data-sveltekit-preload-data="hover">
-			{m.profile_tab_teams()}
-		</a>
-		{#if isOwner}
-			<a
-				class:active={activeTab === 'favorites'}
-				href={localizeHref(`/${username}/favorites`)}
-				data-sveltekit-preload-data="hover"
-			>
-				{m.profile_tab_favorites()}
-			</a>
-		{/if}
-		<a
-			class:active={activeTab === 'collection'}
-			href={localizeHref(`/${username}/collection/characters`)}
-			data-sveltekit-preload-data="hover"
+	<nav class="tabs" aria-label="Profile sections">
+		<SegmentedControl
+			value={activeTab}
+			onValueChange={handleTabChange}
+			variant="background"
+			size="small"
+			element={typedElement}
+			grow
 		>
-			{m.profile_tab_collection()}
-		</a>
+			<Segment value="teams">{m.profile_tab_teams()}</Segment>
+			{#if isOwner}
+				<Segment value="favorites">{m.profile_tab_favorites()}</Segment>
+			{/if}
+			<Segment value="collection">{m.profile_tab_collection()}</Segment>
+		</SegmentedControl>
 	</nav>
 </header>
 
@@ -219,7 +232,7 @@
 	.header {
 		background: var(--card-bg);
 		border-radius: $card-corner;
-		margin-bottom: $unit-2x;
+
 		overflow: hidden;
 	}
 
@@ -335,65 +348,7 @@
 	}
 
 	.tabs {
-		display: flex;
-	}
-
-	.tabs a {
-		flex: 1;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: $unit-2x $unit;
-		border-top: 1px solid var(--border-subtle);
-		text-decoration: none;
-		color: var(--text-secondary);
-		font-size: $font-small;
-		font-weight: $medium;
-		transition:
-			color 0.15s ease,
-			background-color 0.15s ease;
-
-		&:hover {
-			color: var(--text-primary);
-			background: var(--list-cell-bg-hover, rgba(0, 0, 0, 0.02));
-		}
-	}
-
-	// Element-based active tab colors
-	.tabs[data-element='wind'] a.active {
-		color: var(--wind-nav-selected-text);
-		background: var(--wind-nav-selected-bg);
-	}
-
-	.tabs[data-element='fire'] a.active {
-		color: var(--fire-nav-selected-text);
-		background: var(--fire-nav-selected-bg);
-	}
-
-	.tabs[data-element='water'] a.active {
-		color: var(--water-nav-selected-text);
-		background: var(--water-nav-selected-bg);
-	}
-
-	.tabs[data-element='earth'] a.active {
-		color: var(--earth-nav-selected-text);
-		background: var(--earth-nav-selected-bg);
-	}
-
-	.tabs[data-element='light'] a.active {
-		color: var(--light-nav-selected-text);
-		background: var(--light-nav-selected-bg);
-	}
-
-	.tabs[data-element='dark'] a.active {
-		color: var(--dark-nav-selected-text);
-		background: var(--dark-nav-selected-bg);
-	}
-
-	.tabs[data-element='null'] a.active,
-	.tabs:not([data-element]) a.active {
-		color: var(--null-nav-selected-text);
-		background: var(--null-nav-selected-bg);
+		padding: 0 $unit-2x $unit-2x;
 	}
 
 	.header-actions {
