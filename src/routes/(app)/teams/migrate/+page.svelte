@@ -77,10 +77,15 @@
 <PageMeta title={m.migrate_page_title()} description={m.migrate_page_description()} />
 
 <section class="migrate-page">
-	<header>
+	<div class="card">
 		<h1>{m.migrate_page_title()}</h1>
 		<p>{m.migrate_page_description()}</p>
-	</header>
+		{#if !previewQuery.isLoading && readyCount > 0}
+			<Button onclick={handleMigrate} disabled={migrating || readyCount === 0}>
+				{migrating ? m.migrate_page_migrating() : m.migrate_page_button()}
+			</Button>
+		{/if}
+	</div>
 
 	{#if previewQuery.isLoading || (meQuery.isLoading && !hasLocalKeys)}
 		<div class="loading">
@@ -100,12 +105,6 @@
 		<div class="migrate-grid">
 			<ExploreGrid items={readyParties} />
 		</div>
-
-		<div class="migrate-actions">
-			<Button onclick={handleMigrate} disabled={migrating || readyCount === 0}>
-				{migrating ? m.migrate_page_migrating() : m.migrate_page_button()}
-			</Button>
-		</div>
 	{/if}
 </section>
 
@@ -113,16 +112,24 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
+	@use '$src/themes/effects' as *;
 
 	.migrate-page {
 		padding: $unit-2x 0;
 	}
 
-	header {
-		margin-bottom: $unit-2x;
+	.card {
+		background: var(--card-bg);
+		border: $card-border;
+		border-radius: $page-corner;
+		box-shadow: $page-elevation;
+		padding: $unit-3x;
+		display: flex;
+		flex-direction: column;
+		gap: $unit;
 
 		h1 {
-			margin: 0 0 $unit-half;
+			margin: 0;
 			font-size: $font-xlarge;
 			font-weight: $bold;
 			color: var(--text-primary);
@@ -133,6 +140,11 @@
 			font-size: $font-regular;
 			color: var(--text-secondary);
 			line-height: 1.5;
+		}
+
+		:global(button) {
+			align-self: flex-start;
+			margin-top: $unit;
 		}
 	}
 
@@ -168,12 +180,6 @@
 		:global(button) {
 			margin-top: $unit-2x;
 		}
-	}
-
-	.migrate-actions {
-		display: flex;
-		justify-content: center;
-		padding: $unit-2x 0;
 	}
 
 	@keyframes spin {
