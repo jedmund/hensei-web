@@ -78,13 +78,17 @@
 
 <section class="migrate-page">
 	<div class="card">
-		<h1>{m.migrate_page_title()}</h1>
-		<p>{m.migrate_page_description()}</p>
-		{#if !previewQuery.isLoading && readyCount > 0}
-			<Button onclick={handleMigrate} disabled={migrating || readyCount === 0}>
-				{migrating ? m.migrate_page_migrating() : m.migrate_page_button()}
-			</Button>
-		{/if}
+		<div class="card-header">
+			<div class="card-text">
+				<h1>{m.migrate_page_title()}</h1>
+				<p>{m.migrate_page_description()}</p>
+			</div>
+			{#if !previewQuery.isLoading && readyCount > 0}
+				<Button size="small" onclick={handleMigrate} disabled={migrating || readyCount === 0}>
+					{migrating ? m.migrate_page_migrating() : m.migrate_page_button()}
+				</Button>
+			{/if}
+		</div>
 	</div>
 
 	{#if previewQuery.isLoading || (meQuery.isLoading && !hasLocalKeys)}
@@ -124,6 +128,16 @@
 		border-radius: $page-corner;
 		box-shadow: $page-elevation;
 		padding: $unit-3x;
+	}
+
+	.card-header {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: $unit-2x;
+	}
+
+	.card-text {
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
@@ -140,11 +154,6 @@
 			font-size: $font-regular;
 			color: var(--text-secondary);
 			line-height: 1.5;
-		}
-
-		:global(button) {
-			align-self: flex-start;
-			margin-top: $unit;
 		}
 	}
 
