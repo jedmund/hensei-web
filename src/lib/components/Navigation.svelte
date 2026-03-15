@@ -282,9 +282,6 @@
 					<a href={crewHref} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
 				</li>
 				<li>
-					<a href={collectionHref} class:selected={isNavSelected(collectionHref)}>{m.nav_collection()}</a>
-				</li>
-				<li>
 					<a
 						href={meHref}
 						class:selected={isProfileSelected}

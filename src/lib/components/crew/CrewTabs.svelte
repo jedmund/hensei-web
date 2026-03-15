@@ -1,6 +1,9 @@
 
 <script lang="ts">
 	import { page } from '$app/stores'
+	import { goto } from '$app/navigation'
+	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
+	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	type Element = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
@@ -11,7 +14,12 @@
 
 	const { userElement }: Props = $props()
 
+	const typedElement = $derived(
+		userElement as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined ?? undefined
+	)
+
 	interface Tab {
+		value: string
 		href: string
 		label: string
 		match: (pathname: string) => boolean
@@ -19,105 +27,62 @@
 
 	const tabs: Tab[] = [
 		{
+			value: 'events',
 			href: '/crew',
 			label: m.crew_tab_events(),
 			match: (pathname) => pathname === '/crew'
 		},
 		{
+			value: 'members',
 			href: '/crew/members',
 			label: m.crew_tab_members(),
 			match: (pathname) => pathname.startsWith('/crew/members')
 		},
 		{
+			value: 'teams',
 			href: '/crew/teams',
 			label: m.crew_tab_teams(),
 			match: (pathname) => pathname.startsWith('/crew/teams')
 		},
 		{
+			value: 'roster',
 			href: '/crew/roster',
 			label: m.crew_tab_roster(),
 			match: (pathname) => pathname === '/crew/roster'
 		}
 	]
 
-	const currentTab = $derived(tabs.find((tab) => tab.match($page.url.pathname))?.href ?? '/crew')
-	const elementClass = $derived(userElement ? `element-${userElement}` : '')
+	const currentTab = $derived(
+		tabs.find((tab) => tab.match($page.url.pathname))?.value ?? 'events'
+	)
+
+	function handleTabChange(value: string) {
+		const tab = tabs.find((t) => t.value === value)
+		if (tab) {
+			goto(tab.href)
+		}
+	}
 </script>
 
-<nav class="crew-tabs {elementClass}" aria-label="Crew navigation">
-	{#each tabs as tab (tab.href)}
-		<a href={tab.href} class="tab" class:active={currentTab === tab.href}>
-			{tab.label}
-		</a>
-	{/each}
+<nav class="crew-tabs" aria-label="Crew navigation">
+	<SegmentedControl
+		value={currentTab}
+		onValueChange={handleTabChange}
+		variant="background"
+		size="small"
+		element={typedElement}
+		grow
+	>
+		{#each tabs as tab (tab.value)}
+			<Segment value={tab.value}>{tab.label}</Segment>
+		{/each}
+	</SegmentedControl>
 </nav>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/layout' as layout;
-	@use '$src/themes/typography' as typography;
 
 	.crew-tabs {
-		display: flex;
-		gap: spacing.$unit-quarter;
-		padding: 0 spacing.$unit-2x spacing.$unit;
-		background: var(--menu-bg);
-		border-bottom: 1px solid var(--border-subtle);
-	}
-
-	.tab {
-		flex: 1;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: spacing.$unit-2x spacing.$unit-2x;
-		border-radius: layout.$card-corner;
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-		color: var(--menu-text);
-		text-decoration: none;
-		transition:
-			color 0.15s,
-			background-color 0.15s;
-
-		&:hover {
-			background: var(--menu-bg-item-hover);
-		}
-
-		&.active {
-			font-weight: typography.$bold;
-			background: var(--menu-bg-item-selected, var(--menu-bg-item-hover));
-		}
-	}
-
-	// Element-specific active states
-	nav.element-wind .tab.active {
-		background-color: var(--wind-nav-selected-bg);
-		color: var(--wind-nav-selected-text);
-	}
-
-	nav.element-fire .tab.active {
-		background-color: var(--fire-nav-selected-bg);
-		color: var(--fire-nav-selected-text);
-	}
-
-	nav.element-water .tab.active {
-		background-color: var(--water-nav-selected-bg);
-		color: var(--water-nav-selected-text);
-	}
-
-	nav.element-earth .tab.active {
-		background-color: var(--earth-nav-selected-bg);
-		color: var(--earth-nav-selected-text);
-	}
-
-	nav.element-dark .tab.active {
-		background-color: var(--dark-nav-selected-bg);
-		color: var(--dark-nav-selected-text);
-	}
-
-	nav.element-light .tab.active {
-		background-color: var(--light-nav-selected-bg);
-		color: var(--light-nav-selected-text);
+		padding: 0 spacing.$unit-2x spacing.$unit-2x;
 	}
 </style>
