@@ -2,23 +2,19 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import Svelecte from 'svelecte'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { crewAdapter } from '$lib/api/adapters/crew.adapter'
-	import {
-		searchAdapter,
-		type UnifiedSearchResult,
-		type UnifiedSearchSeriesRef
-	} from '$lib/api/adapters/search.adapter'
+	import { type UnifiedSearchSeriesRef } from '$lib/api/adapters/search.adapter'
 	import { getCharacterImage, getWeaponImage, getSummonImage } from '$lib/utils/images'
 	import Icon from '$lib/components/Icon.svelte'
 	import RichTooltip from '$lib/components/ui/RichTooltip.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
-	import SearchOptionItem from '$lib/components/search/SearchOptionItem.svelte'
-	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
 	import CrewTabs from '$lib/components/crew/CrewTabs.svelte'
-	import type { RosterMember, RosterItem } from '$lib/types/api/crew'
+	import RosterRow from '$lib/components/crew/RosterRow.svelte'
+	import RosterSearch from '$lib/components/crew/RosterSearch.svelte'
+	import type { RosterSearchResult } from '$lib/components/crew/RosterSearch.svelte'
+	import type { RosterMember } from '$lib/types/api/crew'
 	import * as m from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 	import { toast } from 'svelte-sonner'
@@ -39,33 +35,15 @@
 		granblueId: string
 		name: string
 		type: ItemType
-		// Character-specific fields for CharacterTags
-		element?: number
-		season?: number | null
-		series?: UnifiedSearchSeriesRef[] | null
-	}
-
-	// Option format for Svelecte
-	interface SearchOption {
-		value: string // composite key: id|type
-		label: string
-		id: string
-		granblueId: string
-		type: ItemType
-		// Character-specific fields
 		element?: number
 		season?: number | null
 		series?: UnifiedSearchSeriesRef[] | null
 	}
 
 	// State
-	let searchOptions = $state<SearchOption[]>([])
-	let isSearching = $state(false)
 	let selectedItems = $state<SelectedItem[]>([])
 	let rosterData = $state<RosterMember[]>([])
 	let isLoadingRoster = $state(false)
-	let searchTimeout: ReturnType<typeof setTimeout> | null = null
-	let svelecteValue: SearchOption | null = $state(null)
 
 	// Check if user is an officer
 	$effect(() => {
@@ -81,66 +59,21 @@
 		fetchRoster()
 	})
 
-	async function searchItems(query: string) {
-		if (query.length < 2) {
-			searchOptions = []
-			return
-		}
-
-		isSearching = true
-		try {
-			const response = await searchAdapter.searchAll({ query, per: 20 })
-			searchOptions = (response?.results ?? []).map((result: UnifiedSearchResult) => ({
-				value: `${result.searchableId}|${result.searchableType}`,
-				label: result.nameEn || 'Unknown',
-				id: result.searchableId,
-				granblueId: result.granblueId,
-				type: result.searchableType,
-				element: result.element,
-				season: result.season,
-				series: result.series
-			}))
-		} catch (error) {
-			console.error('Search failed:', error)
-			toast.error(extractErrorMessage(error, 'Search failed'))
-			searchOptions = []
-		} finally {
-			isSearching = false
-		}
-	}
-
-	function handleInput(event: Event) {
-		const target = event.target as HTMLInputElement | null
-		const query = target?.value ?? ''
-
-		if (searchTimeout) clearTimeout(searchTimeout)
-		searchTimeout = setTimeout(() => searchItems(query), 300)
-	}
-
-	function handleChange(selected: SearchOption | null) {
-		if (!selected) return
-
-		// Don't add duplicates
-		if (selectedItems.some((item) => item.id === selected.id && item.type === selected.type)) {
-			return
-		}
+	function handleSelect(result: RosterSearchResult) {
+		if (selectedItems.some((item) => item.id === result.id && item.type === result.type)) return
 
 		selectedItems = [
 			...selectedItems,
 			{
-				id: selected.id,
-				granblueId: selected.granblueId,
-				name: selected.label,
-				type: selected.type,
-				element: selected.element,
-				season: selected.season,
-				series: selected.series
+				id: result.id,
+				granblueId: result.granblueId,
+				name: result.name,
+				type: result.type,
+				element: result.element,
+				season: result.season,
+				series: result.series
 			}
 		]
-
-		// Clear selection and input after adding
-		searchOptions = []
-		svelecteValue = null
 	}
 
 	function removeItem(id: string, type: ItemType) {
@@ -178,31 +111,6 @@
 		}
 	}
 
-	function getOwnershipInfo(member: RosterMember, item: SelectedItem): RosterItem | null {
-		const collection =
-			item.type === 'Character'
-				? member.characters
-				: item.type === 'Weapon'
-					? member.weapons
-					: member.summons
-
-		return collection.find((c) => c.id === item.id) || null
-	}
-
-	function getItemTypeForUncap(type: ItemType): 'character' | 'weapon' | 'summon' {
-		return type.toLowerCase() as 'character' | 'weapon' | 'summon'
-	}
-
-	function getRoleLabel(role: string): string {
-		switch (role) {
-			case 'captain':
-				return m.crew_role_captain()
-			case 'vice_captain':
-				return m.crew_role_vice_captain()
-			default:
-				return m.crew_role_member()
-		}
-	}
 </script>
 
 <svelte:head>
@@ -220,35 +128,7 @@
 		<CrewTabs userElement={data.currentUser?.element} />
 
 		<div class="roster-content">
-			<!-- Search Input -->
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<div class="search-section" oninput={handleInput}>
-				<Svelecte
-					options={searchOptions}
-					bind:value={svelecteValue}
-					labelField="label"
-					valueField="value"
-					searchable={true}
-					placeholder={m.crew_roster_search()}
-					clearable={false}
-					onChange={handleChange}
-				>
-					{#snippet option(opt)}
-						{@const item = opt as SearchOption}
-						<SearchOptionItem
-							label={item.label}
-							granblueId={item.granblueId}
-							type={item.type}
-							element={item.element}
-							season={item.season}
-							series={item.series}
-						/>
-					{/snippet}
-				</Svelecte>
-				{#if isSearching}
-					<span class="loading-indicator">...</span>
-				{/if}
-			</div>
+			<RosterSearch onSelect={handleSelect} />
 
 			<!-- Roster Grid -->
 			<div class="roster-section">
@@ -299,34 +179,7 @@
 						{/if}
 						<div class="roster-body">
 							{#each rosterData as member (member.userId)}
-								<div class="roster-row">
-									<div class="member-col">
-										<span class="member-name">{member.username}</span>
-										{#if member.role !== 'member'}
-											<span class="member-role">{getRoleLabel(member.role)}</span>
-										{/if}
-									</div>
-									{#each selectedItems as item (item.id + item.type)}
-										{@const ownership = getOwnershipInfo(member, item)}
-										<div class="item-col ownership-cell">
-											{#if ownership}
-												<UncapIndicator
-													type={getItemTypeForUncap(item.type)}
-													uncapLevel={ownership.uncapLevel}
-													transcendenceStage={ownership.transcendenceStep}
-													flb={ownership.flb}
-													ulb={ownership.ulb}
-													transcendence={ownership.transcendence}
-													special={item.type === 'Character' ? ownership.special : undefined}
-													size="small"
-													contained
-												/>
-											{:else}
-												<span class="not-owned">—</span>
-											{/if}
-										</div>
-									{/each}
-								</div>
+								<RosterRow {member} {selectedItems} />
 							{/each}
 						</div>
 					</div>
@@ -355,7 +208,6 @@
 		border: 0.5px solid rgba(0, 0, 0, 0.18);
 		border-radius: layout.$page-corner;
 		box-shadow: effects.$page-elevation;
-		// Allow dropdown to overflow - don't clip Svelecte dropdown
 		overflow: visible;
 	}
 
@@ -366,146 +218,16 @@
 		gap: spacing.$unit-2x;
 	}
 
-	.search-section {
-		position: relative;
-
-		// Svelecte CSS variable overrides
-		--sv-bg: var(--select-contained-bg);
-		--sv-border-color: transparent;
-		--sv-border: 1px solid var(--sv-border-color);
-		--sv-active-border: 1px solid var(--blue);
-		--sv-active-outline: none;
-		--sv-border-radius: #{layout.$input-corner};
-		--sv-min-height: #{spacing.$unit-4x};
-		--sv-placeholder-color: var(--text-tertiary);
-		--sv-color: var(--text-primary);
-
-		--sv-dropdown-bg: var(--dialog-bg);
-		--sv-dropdown-border-radius: #{layout.$card-corner};
-		--sv-dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-		--sv-dropdown-offset: #{spacing.$unit-half};
-
-		--sv-item-color: var(--text-primary);
-		--sv-item-active-bg: var(--option-bg-hover);
-		--sv-item-selected-bg: var(--option-bg-hover);
-
-		--sv-icon-color: var(--text-tertiary);
-		--sv-icon-hover-color: var(--text-primary);
-
-		// Target Svelecte control for hover states
-		:global(.sv-control) {
-			padding: calc(spacing.$unit-half + 1px) spacing.$unit calc(spacing.$unit-half + 1px) spacing.$unit-half;
-		}
-
-		&:hover :global(.sv-control) {
-			background-color: var(--select-contained-bg-hover);
-		}
-
-		// Style the dropdown
-		:global(.sv_dropdown) {
-			border: 1px solid rgba(0, 0, 0, 0.1);
-			border-radius: layout.$card-corner !important;
-			max-height: 40vh;
-			z-index: effects.$z-modal + 2;
-		}
-
-		// Style dropdown item wrappers
-		:global(.sv-item--wrap.in-dropdown) {
-			padding: spacing.$unit-half spacing.$unit spacing.$unit-half spacing.$unit-half;
-			border-radius: layout.$item-corner;
-		}
-
-		// Style active/highlighted dropdown item
-		:global(.in-dropdown.sv-dd-item-active),
-		:global(.in-dropdown:hover),
-		:global(.in-dropdown:active) {
-			background-color: var(--list-cell-bg-hover);
-		}
-
-		// Style dropdown items
-		:global(.sv-item) {
-			padding: spacing.$unit spacing.$unit-2x;
-			gap: spacing.$unit;
-		}
-
-		// Style the input text
-		:global(.sv-input--text) {
-			font-family: var(--font-family);
-		}
-
-		// Hide the separator bar between buttons
-		:global(.sv-btn-separator) {
-			display: none;
-		}
-	}
-
-	.loading-indicator {
-		position: absolute;
-		right: spacing.$unit-3x;
-		top: 50%;
-		transform: translateY(-50%);
-		color: var(--text-tertiary);
-		font-size: typography.$font-small;
-		pointer-events: none;
-	}
-
-	.roster-section {
-		h2 {
-			font-size: 1rem;
-			margin-bottom: spacing.$unit;
-		}
-	}
-
 	.roster-grid {
 		overflow-x: auto;
 		font-size: typography.$font-regular;
 	}
 
-	.roster-header,
-	.roster-row {
+	.roster-header {
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit;
-	}
-
-	.roster-header {
 		padding: spacing.$unit spacing.$unit-2x spacing.$unit 0;
-	}
-
-	.roster-row {
-		padding: spacing.$unit spacing.$unit-2x spacing.$unit 0;
-		border-radius: layout.$card-corner;
-		transition: background-color 0.1s;
-
-		&:hover {
-			background: var(--list-cell-bg-hover);
-		}
-	}
-
-	.member-col {
-		flex: 1;
-		min-width: 150px;
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-fourth;
-		position: sticky;
-		left: 0;
-		padding-left: spacing.$unit-2x;
-		background: var(--card-bg);
-		z-index: effects.$z-raised;
-
-		.member-name {
-			font-weight: typography.$medium;
-		}
-
-		.member-role {
-			font-size: typography.$font-small;
-			color: var(--text-secondary);
-		}
-	}
-
-	.roster-row:hover .member-col {
-		background: var(--list-cell-bg-hover);
 	}
 
 	.item-col {
@@ -565,12 +287,6 @@
 
 	.item-col:hover .remove-item-btn {
 		opacity: 1;
-	}
-
-	.ownership-cell {
-		.not-owned {
-			color: var(--text-secondary);
-		}
 	}
 
 	.loading-roster,
