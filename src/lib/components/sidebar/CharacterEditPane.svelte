@@ -67,12 +67,13 @@
 		onSave
 	}: Props = $props()
 
-	// Internal state - initialized from currentValues
-	let uncapLevel = $state(currentValues.uncapLevel)
-	let transcendenceStep = $state(currentValues.transcendenceStep)
-	let selectedAwakening = $state<Awakening | undefined>(currentValues.awakening?.type)
-	let awakeningLevel = $state(currentValues.awakening?.level ?? 1)
-	let rings = $state<ExtendedMastery[]>(
+	// Local state derived from props — $derived tracks changes reactively,
+	// and overrides (via handlers) are temporary until currentValues changes again.
+	let uncapLevel = $derived(currentValues.uncapLevel)
+	let transcendenceStep = $derived(currentValues.transcendenceStep)
+	let selectedAwakening = $derived<Awakening | undefined>(currentValues.awakening?.type)
+	let awakeningLevel = $derived(currentValues.awakening?.level ?? 1)
+	let rings = $derived<ExtendedMastery[]>(
 		currentValues.rings.length > 0
 			? currentValues.rings
 			: [
@@ -82,27 +83,8 @@
 					{ modifier: 0, strength: 0 }
 				]
 	)
-	let earring = $state<ExtendedMastery | undefined>(currentValues.earring ?? undefined)
-	let perpetuity = $state(currentValues.perpetuity)
-
-	// Re-initialize when currentValues changes (e.g., switching between characters)
-	$effect(() => {
-		uncapLevel = currentValues.uncapLevel
-		transcendenceStep = currentValues.transcendenceStep
-		selectedAwakening = currentValues.awakening?.type
-		awakeningLevel = currentValues.awakening?.level ?? 1
-		rings =
-			currentValues.rings.length > 0
-				? currentValues.rings
-				: [
-						{ modifier: 1, strength: 0 },
-						{ modifier: 2, strength: 0 },
-						{ modifier: 0, strength: 0 },
-						{ modifier: 0, strength: 0 }
-					]
-		earring = currentValues.earring ?? undefined
-		perpetuity = currentValues.perpetuity
-	})
+	let earring = $derived<ExtendedMastery | undefined>(currentValues.earring ?? undefined)
+	let perpetuity = $derived(currentValues.perpetuity)
 
 	// Derived conditions
 	const characterElement = $derived(characterData?.element)

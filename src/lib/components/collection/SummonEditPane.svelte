@@ -35,15 +35,9 @@
 
 	let { summonData, currentValues, onSave }: Props = $props()
 
-	// Internal state
-	let uncapLevel = $state(currentValues.uncapLevel)
-	let transcendenceStep = $state(currentValues.transcendenceStep)
-
-	// Re-initialize when currentValues changes
-	$effect(() => {
-		uncapLevel = currentValues.uncapLevel
-		transcendenceStep = currentValues.transcendenceStep
-	})
+	// Local state derived from props — overrides are temporary until currentValues changes
+	let uncapLevel = $derived(currentValues.uncapLevel)
+	let transcendenceStep = $derived(currentValues.transcendenceStep)
 
 	// Element name for theming
 	const elementName = $derived(summonData?.element ? getElementKey(summonData.element) : undefined)

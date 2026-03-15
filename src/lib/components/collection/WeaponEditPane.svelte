@@ -71,31 +71,17 @@
 
 	let { weaponData, currentValues, onSave }: Props = $props()
 
-	// Internal state
-	let uncapLevel = $state(currentValues.uncapLevel)
-	let transcendenceStep = $state(currentValues.transcendenceStep)
-	let element = $state(currentValues.element ?? weaponData?.element ?? 0)
-	let weaponKey1 = $state<string | undefined>(currentValues.weaponKey1Id)
-	let weaponKey2 = $state<string | undefined>(currentValues.weaponKey2Id)
-	let weaponKey3 = $state<string | undefined>(currentValues.weaponKey3Id)
-	let selectedAwakening = $state<Awakening | undefined>(currentValues.awakening?.type)
-	let awakeningLevel = $state(currentValues.awakening?.level ?? 1)
-	let axSkills = $state<AugmentSkill[]>(currentValues.axSkills ?? [])
-	let befoulment = $state<Befoulment | null>(currentValues.befoulment ?? null)
-
-	// Re-initialize when currentValues changes
-	$effect(() => {
-		uncapLevel = currentValues.uncapLevel
-		transcendenceStep = currentValues.transcendenceStep
-		element = currentValues.element ?? weaponData?.element ?? 0
-		weaponKey1 = currentValues.weaponKey1Id
-		weaponKey2 = currentValues.weaponKey2Id
-		weaponKey3 = currentValues.weaponKey3Id
-		selectedAwakening = currentValues.awakening?.type
-		awakeningLevel = currentValues.awakening?.level ?? 1
-		axSkills = currentValues.axSkills ?? []
-		befoulment = currentValues.befoulment ?? null
-	})
+	// Local state derived from props — overrides are temporary until currentValues changes
+	let uncapLevel = $derived(currentValues.uncapLevel)
+	let transcendenceStep = $derived(currentValues.transcendenceStep)
+	let element = $derived(currentValues.element ?? weaponData?.element ?? 0)
+	let weaponKey1 = $derived<string | undefined>(currentValues.weaponKey1Id)
+	let weaponKey2 = $derived<string | undefined>(currentValues.weaponKey2Id)
+	let weaponKey3 = $derived<string | undefined>(currentValues.weaponKey3Id)
+	let selectedAwakening = $derived<Awakening | undefined>(currentValues.awakening?.type)
+	let awakeningLevel = $derived(currentValues.awakening?.level ?? 1)
+	let axSkills = $derived<AugmentSkill[]>(currentValues.axSkills ?? [])
+	let befoulment = $derived<Befoulment | null>(currentValues.befoulment ?? null)
 
 	// Derived conditions
 	const canChangeElement = $derived(weaponData?.element === 0)
