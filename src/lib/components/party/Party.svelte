@@ -47,6 +47,7 @@
 		initialTab?: GridType
 		isNew?: boolean
 		ensurePartyExists?: () => Promise<{ id: string; shortcode: string }>
+		initialCollectionSourceUsername?: string
 	}
 
 	let {
@@ -57,7 +58,8 @@
 		authUserAvatar,
 		initialTab,
 		isNew = false,
-		ensurePartyExists
+		ensurePartyExists,
+		initialCollectionSourceUsername
 	}: Props = $props()
 
 	// Default empty party
@@ -314,7 +316,8 @@
 					onAddItems: itemAddition.handleAddItems,
 					canAddMore: true,
 					authUserId,
-					userElement
+					userElement,
+					initialCollectionSourceUsername
 				})
 			}, 100)
 		}
@@ -360,7 +363,8 @@
 				authUserId,
 				requiredProficiencies,
 				userElement,
-				onUnlinkCollection: actions.handleUnlinkCollection
+				onUnlinkCollection: actions.handleUnlinkCollection,
+				initialCollectionSourceUsername
 			})
 		}
 	})

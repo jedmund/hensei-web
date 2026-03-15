@@ -6,6 +6,7 @@
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { partyQueries, partyKeys } from '$lib/api/queries/party.queries'
 	import { useCreateParty } from '$lib/api/mutations/party.mutations'
+	import { page } from '$app/stores'
 	import { replaceState } from '$app/navigation'
 	import { getLocalId } from '$lib/utils/localId'
 	import { storeEditKey } from '$lib/utils/editKeys'
@@ -17,6 +18,8 @@
 	}
 
 	let { data }: Props = $props()
+
+	const collectionSourceUsername = $derived($page.url.searchParams.get('collectionSource'))
 
 	let partyId = $state<string | null>(null)
 	let shortcode = $state<string | null>(null)
@@ -97,4 +100,5 @@
 	authUserId={data.account?.userId}
 	isNew={true}
 	{ensurePartyExists}
+	initialCollectionSourceUsername={collectionSourceUsername}
 />

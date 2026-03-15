@@ -16,10 +16,12 @@ interface SearchSidebarOptions {
 	userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	/** Callback to unlink all collection items from the party */
 	onUnlinkCollection?: () => Promise<void>
+	/** Username to pre-populate collection source from an external user */
+	initialCollectionSourceUsername?: string
 }
 
 export function openSearchSidebar(options: SearchSidebarOptions) {
-	const { type, onAddItems, canAddMore = true, authUserId, requiredProficiencies, userElement, onUnlinkCollection } = options
+	const { type, onAddItems, canAddMore = true, authUserId, requiredProficiencies, userElement, onUnlinkCollection, initialCollectionSourceUsername } = options
 
 	// If sidebar is already open with SearchContent for the same entity type,
 	// update props without remounting to preserve filter state
@@ -46,7 +48,8 @@ export function openSearchSidebar(options: SearchSidebarOptions) {
 		authUserId,
 		requiredProficiencies,
 		userElement,
-		onUnlinkCollection
+		onUnlinkCollection,
+		initialCollectionSourceUsername
 	})
 }
 
