@@ -46,6 +46,7 @@
 	let searchQuery = $state('')
 	let skillCategory = $state(-1) // -1 = All
 	let error = $state<string | undefined>()
+	let resultsScrolled = $state(false)
 
 	// Debounced search value for query
 	let debouncedSearchQuery = $state('')
@@ -75,14 +76,11 @@
 	const currentSkill = $derived(currentSkills[targetSlot as keyof JobSkillList])
 	const canSearch = $derived(Boolean(job) && !slotLocked)
 
-	// TanStack Query v6: Use createInfiniteQuery with thunk pattern for reactivity
-	// Query automatically updates when job, debouncedSearchQuery, or skillCategory changes
 	const skillsQuery = createInfiniteQuery(() => {
 		const jobId = job?.id
 		const query = debouncedSearchQuery
 		const category = skillCategory
 
-		// Build filter params
 		const filters = category >= 0 ? { group: category } : undefined
 
 		return {
@@ -90,35 +88,27 @@
 				query: query || undefined,
 				filters
 			}),
-			// Disable query when no job or slot is locked
 			enabled: !!jobId && !slotLocked
 		}
 	})
 
-	// Flatten all pages into a single items array
 	const skills = $derived(skillsQuery.data?.pages.flatMap((page) => page.results) ?? [])
 
-	// Sentinel element for intersection observation
 	let sentinelEl = $state<HTMLElement>()
 
-	// State-gated infinite scroll
 	const loader = useInfiniteLoader(() => skillsQuery, () => sentinelEl, { rootMargin: '200px' })
 
-	// Reset loader when filters change
 	$effect(() => {
 		void debouncedSearchQuery
 		void skillCategory
 		loader.reset()
 	})
 
-	// Cleanup on destroy
 	onDestroy(() => loader.destroy())
 
-	// Computed states
 	const isEmpty = $derived(skills.length === 0 && !skillsQuery.isLoading && !skillsQuery.isError)
 
 	function handleSelectSkill(skill: JobSkill) {
-		// Clear any previous errors
 		error = undefined
 
 		if (slotLocked) {
@@ -126,9 +116,7 @@
 			return
 		}
 
-		// Check if skill is already equipped in a different slot
 		const alreadyEquipped = Object.entries(currentSkills).some(([slotKey, s]) => {
-			// Skip checking the current slot we're updating
 			if (parseInt(slotKey) === targetSlot) return false
 			return s?.id === skill.id
 		})
@@ -178,7 +166,7 @@
 		</div>
 	{/if}
 
-	<div class="search-section">
+	<div class="controls" class:scrolled={resultsScrolled}>
 		<Input
 			type="text"
 			placeholder={m.skill_selection_search_placeholder()}
@@ -186,38 +174,35 @@
 			leftIcon="search"
 			disabled={!canSearch}
 			fullWidth={true}
+			contained={true}
 		/>
-		<div class="filter-row">
-			<Select
-				options={skillCategoryOptions}
-				bind:value={skillCategory}
-				placeholder={m.sidebar_filter_category()}
-				disabled={!canSearch}
-				size="small"
-				fullWidth={true}
-			/>
-		</div>
+		<Select
+			options={skillCategoryOptions}
+			bind:value={skillCategory}
+			placeholder={m.sidebar_filter_category()}
+			disabled={!canSearch}
+			fullWidth={true}
+			contained={true}
+		/>
 	</div>
 
-	<div class="skills-container">
+	<div class="results-section" onscroll={(e) => { resultsScrolled = e.currentTarget.scrollTop > 0 }}>
 		{#if !job}
-			<div class="empty-state">
-				<Icon name="briefcase" size={32} />
-				<p>{m.skill_slot_select_job_first()}</p>
+			<div class="no-results">
+				{m.skill_slot_select_job_first()}
 			</div>
 		{:else if slotLocked}
-			<div class="empty-state">
-				<Icon name="arrow-left" size={32} />
-				<p>{m.skill_slot_locked()}</p>
+			<div class="no-results">
+				{m.skill_slot_locked()}
 			</div>
 		{:else if skillsQuery.isLoading}
-			<div class="loading-state">
-				<Icon name="loader-2" size={32} />
-				<p>{m.sidebar_loading_skills()}</p>
+			<div class="loading">
+				<Icon name="loader-2" size={24} />
+				<span>{m.sidebar_loading_skills()}</span>
 			</div>
 		{:else if skillsQuery.isError}
 			<div class="error-state">
-				<Icon name="alert-circle" size={32} />
+				<Icon name="alert-circle" size={24} />
 				<p>{skillsQuery.error?.message || m.sidebar_skills_error()}</p>
 				<Button size="small" onclick={() => skillsQuery.refetch()}>{m.retry()}</Button>
 			</div>
@@ -231,23 +216,8 @@
 				{/each}
 
 				{#if isEmpty}
-					<div class="empty-state">
-						<Icon name="search-x" size={32} />
-						<p>{m.sidebar_no_skills()}</p>
-						{#if searchQuery || skillCategory >= 0}
-							<div class="clear-filters">
-								{#if searchQuery}
-									<Button size="small" variant="ghost" onclick={() => searchQuery = ''}>
-										{m.skill_clear_search()}
-									</Button>
-								{/if}
-								{#if skillCategory >= 0}
-									<Button size="small" variant="ghost" onclick={() => skillCategory = -1}>
-										{m.filter_clear()}
-									</Button>
-								{/if}
-							</div>
-						{/if}
+					<div class="no-results">
+						{m.sidebar_no_skills()}
 					</div>
 				{/if}
 
@@ -271,12 +241,12 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as *;
-	@use '$src/themes/typography' as typography;
+	@use '$src/themes/typography' as *;
 
 	.skill-selection-content {
 		display: flex;
 		flex-direction: column;
-		height: 100%;
+		height: calc(100vh - 60px);
 		overflow: hidden;
 	}
 
@@ -284,9 +254,9 @@
 		display: flex;
 		align-items: center;
 		gap: $unit;
-		padding: $unit-2x 0;
+		padding: $unit $unit-2x;
 		background: var(--warning-bg);
-		border-bottom: 1px solid var(--border-subtle);
+		border-bottom: 1px solid var(--border-primary);
 
 		:global(svg) {
 			color: var(--warning-text);
@@ -294,19 +264,19 @@
 
 		p {
 			margin: 0;
-			font-size: typography.$font-body;
+			font-size: $font-regular;
 			color: var(--warning-text);
 		}
 	}
 
 	.current-skill {
-		padding: $unit-2x 0;
-		border-bottom: 1px solid var(--border-subtle);
+		padding: $unit $unit-2x;
+		border-bottom: 1px solid var(--border-primary);
 
 		h4 {
 			margin: 0 0 $unit 0;
-			font-size: 12px;
-			font-weight: typography.$bold;
+			font-size: $font-small;
+			font-weight: $bold;
 			text-transform: uppercase;
 			letter-spacing: 0.5px;
 			color: var(--text-secondary);
@@ -317,7 +287,7 @@
 		display: flex;
 		align-items: center;
 		gap: $unit;
-		padding: $unit;
+		padding: $unit $unit-2x;
 		background: var(--error-bg);
 		border-bottom: 1px solid var(--error-border);
 
@@ -329,7 +299,7 @@
 		p {
 			flex: 1;
 			margin: 0;
-			font-size: 13px;
+			font-size: $font-regular;
 			color: var(--error-text);
 		}
 
@@ -351,67 +321,72 @@
 		}
 	}
 
-	.search-section {
+	.controls {
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
-		padding: $unit-2x 0;
-		border-bottom: 1px solid var(--border-subtle);
+		padding: 0 $unit-2x $unit;
 		flex-shrink: 0;
+		border-bottom: 1px solid var(--border-primary);
+		position: relative;
+		z-index: 1;
+		transition: box-shadow 0.2s ease;
+
+		&.scrolled {
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+			border-bottom: 1px solid rgba(0, 0, 0, 0.01);
+		}
 	}
 
-	.filter-row {
-		display: flex;
-		gap: $unit;
-	}
-
-	.skills-container {
+	.results-section {
 		flex: 1;
 		overflow-y: auto;
-		padding: $unit-2x 0;
+		padding: 0 $unit-2x;
 		min-height: 0;
-	}
 
-	.loading-state,
-	.error-state,
-	.empty-state {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: $unit;
-		padding: $unit-4x;
-		color: var(--text-secondary);
-
-		:global(svg) {
-			color: var(--text-tertiary);
+		.loading,
+		.no-results {
+			text-align: center;
+			padding: $unit-3x;
+			color: var(--text-secondary);
+			font-size: $font-regular;
 		}
 
-		p {
-			margin: 0;
-			font-size: typography.$font-body;
-		}
-
-		.clear-filters {
+		.loading {
 			display: flex;
+			flex-direction: column;
+			align-items: center;
 			gap: $unit;
-			margin-top: $unit;
+
+			:global(svg) {
+				animation: spin 1s linear infinite;
+			}
 		}
-	}
 
-	.loading-state :global(svg) {
-		animation: spin 1s linear infinite;
-	}
+		.error-state {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: $unit;
+			padding: $unit-3x;
+			color: var(--text-secondary);
 
-	@keyframes spin {
-		from { transform: rotate(0deg); }
-		to { transform: rotate(360deg); }
+			:global(svg) {
+				color: var(--text-tertiary);
+			}
+
+			p {
+				margin: 0;
+				font-size: $font-regular;
+			}
+		}
 	}
 
 	.skills-list {
 		display: flex;
 		flex-direction: column;
-		gap: $unit-half;
+		padding-top: $unit;
 	}
 
 	.load-more-sentinel {
@@ -430,10 +405,19 @@
 		gap: $unit;
 		padding: $unit-2x;
 		color: var(--text-secondary);
-		font-size: typography.$font-body;
+		font-size: $font-regular;
 
 		:global(svg) {
 			animation: spin 1s linear infinite;
+		}
+	}
+
+	@keyframes spin {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
 		}
 	}
 </style>

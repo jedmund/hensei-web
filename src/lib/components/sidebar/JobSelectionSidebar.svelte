@@ -17,15 +17,11 @@
 
 	let { currentJobId, onSelectJob }: Props = $props()
 
-	// TanStack Query v6: Use createQuery with thunk pattern for reactivity
-	// Jobs are cached for 30 minutes and shared across all components
 	const jobsQuery = createQuery(() => jobQueries.list())
 
-	// State for filtering (local UI state, not server state)
 	let searchQuery = $state('')
-	let selectedTiers = $state<Set<string>>(new Set(['4', '5', 'ex2', 'o1'])) // Default to IV, V, EXII, OI
-
-	// Available tiers with short labels for display
+	let selectedTiers = $state<Set<string>>(new Set(['4', '5', 'ex2', 'o1']))
+	let resultsScrolled = $state(false)
 	const tiers = [
 		{ value: '1', label: m.job_tier_class_1(), shortLabel: 'I' },
 		{ value: '2', label: m.job_tier_class_2(), shortLabel: 'II' },
@@ -47,13 +43,10 @@
 		selectedTiers = newSet
 	}
 
-	// Filter jobs based on search and filters
-	// TanStack Query handles loading/error states, we just filter the data
 	const filteredJobs = $derived(
 		(() => {
 			let jobs = jobsQuery.data || []
 
-			// Filter by search query
 			if (searchQuery) {
 				const query = searchQuery.toLowerCase()
 				jobs = jobs.filter(
@@ -62,7 +55,6 @@
 				)
 			}
 
-			// Filter by selected tiers
 			if (selectedTiers.size > 0) {
 				jobs = jobs.filter((job) => {
 					const jobTier = job.row.toString().toLowerCase()
@@ -70,15 +62,12 @@
 				})
 			}
 
-			// Sort by tier and then by order field (create a copy to avoid mutating state)
 			jobs = [...jobs].sort((a, b) => {
 				const tierDiff = getJobTierOrder(a.row) - getJobTierOrder(b.row)
 				if (tierDiff !== 0) return tierDiff
-				// Use the order field for sorting within the same tier
 				return a.order - b.order
 			})
 
-			// Group by tier
 			const grouped: Record<string, Job[]> = {}
 			for (const job of jobs) {
 				const tierName = getJobTierName(job.row)
@@ -102,7 +91,7 @@
 </script>
 
 <div class="job-selection-content">
-	<div class="search-section">
+	<div class="controls" class:scrolled={resultsScrolled}>
 		<Input
 			type="text"
 			placeholder={m.job_selection_search_placeholder()}
@@ -115,33 +104,24 @@
 		<JobTierSelector {tiers} {selectedTiers} onToggleTier={toggleTier} />
 	</div>
 
-	<div class="jobs-container">
+	<div class="results-section" onscroll={(e) => { resultsScrolled = e.currentTarget.scrollTop > 0 }}>
 		{#if jobsQuery.isLoading}
-			<div class="loading-state">
-				<Icon name="loader-2" size={32} />
-				<p>{m.sidebar_loading_jobs()}</p>
+			<div class="loading">
+				<Icon name="loader-2" size={24} />
+				<span>{m.sidebar_loading_jobs()}</span>
 			</div>
 		{:else if jobsQuery.isError}
 			<div class="error-state">
-				<Icon name="alert-circle" size={32} />
+				<Icon name="alert-circle" size={24} />
 				<p>{jobsQuery.error?.message || m.sidebar_jobs_error()}</p>
 				<Button size="small" onclick={() => jobsQuery.refetch()}>{m.retry()}</Button>
 			</div>
 		{:else if Object.keys(filteredJobs).length === 0}
-			<div class="empty-state">
-				<Icon name="briefcase" size={32} />
-				<p>{m.sidebar_no_jobs()}</p>
+			<div class="no-results">
 				{#if searchQuery || selectedTiers.size > 0}
-					<Button
-						size="small"
-						variant="ghost"
-						onclick={() => {
-							searchQuery = ''
-							selectedTiers = new Set(['4', '5', 'ex2', 'o1'])
-						}}
-					>
-						{m.sidebar_clear_filters()}
-					</Button>
+					{m.sidebar_no_jobs()}
+				{:else}
+					{m.sidebar_no_jobs()}
 				{/if}
 			</div>
 		{:else}
@@ -164,54 +144,105 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/layout' as layout;
-	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
+	@use '$src/themes/spacing' as *;
+	@use '$src/themes/typography' as *;
 
 	.job-selection-content {
 		display: flex;
 		flex-direction: column;
-		height: 100%;
+		height: calc(100vh - 60px);
 		overflow: hidden;
 	}
 
-	.search-section {
-		flex-shrink: 0;
+	.controls {
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit;
-		padding: 0 spacing.$unit-2x spacing.$unit-2x;
+		gap: $unit;
+		padding: 0 $unit-2x $unit;
+		flex-shrink: 0;
+		border-bottom: 1px solid var(--border-primary);
+		position: relative;
+		z-index: 1;
+		transition: box-shadow 0.2s ease;
+
+		&.scrolled {
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+			border-bottom: 1px solid rgba(0, 0, 0, 0.01);
+		}
 	}
 
-	.jobs-container {
+	.results-section {
 		flex: 1;
 		overflow-y: auto;
-		padding: spacing.$unit-2x 0;
+		padding: 0 $unit-2x;
+		min-height: 0;
+
+		.loading,
+		.no-results {
+			text-align: center;
+			padding: $unit-3x;
+			color: var(--text-secondary);
+			font-size: $font-regular;
+		}
+
+		.loading {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: $unit;
+
+			:global(svg) {
+				animation: spin 1s linear infinite;
+			}
+		}
+
+		.error-state {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: $unit;
+			padding: $unit-3x;
+			color: var(--text-secondary);
+
+			:global(svg) {
+				color: var(--text-tertiary);
+			}
+
+			p {
+				margin: 0;
+				font-size: $font-regular;
+			}
+		}
 	}
 
-	.loading-state,
-	.error-state,
-	.empty-state {
+	.jobs-grid {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: spacing.$unit;
-		padding: spacing.$unit-4x;
-		color: var(--text-secondary);
-
-		:global(svg) {
-			color: var(--text-tertiary);
-		}
-
-		p {
-			margin: 0;
-			font-size: typography.$font-regular;
-		}
+		gap: $unit-3x;
+		padding-top: $unit;
 	}
 
-	.loading-state :global(svg) {
-		animation: spin 1s linear infinite;
+	.tier-group {
+		.tier-header {
+			display: flex;
+			align-items: center;
+			margin-bottom: $unit;
+			padding: 0 $unit-half;
+
+			h4 {
+				margin: 0;
+				font-size: $font-small;
+				font-weight: $medium;
+				color: var(--text-secondary);
+				letter-spacing: 0.5px;
+			}
+		}
+
+		.jobs-list {
+			display: flex;
+			flex-direction: column;
+		}
 	}
 
 	@keyframes spin {
@@ -220,44 +251,6 @@
 		}
 		to {
 			transform: rotate(360deg);
-		}
-	}
-
-	.jobs-grid {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-3x;
-	}
-
-	.tier-group {
-		.tier-header {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			margin-bottom: spacing.$unit;
-			padding: 0 spacing.$unit-2x spacing.$unit-half;
-
-			h4 {
-				margin: 0;
-				font-size: typography.$font-small;
-				font-weight: typography.$medium;
-				color: var(--text-secondary);
-				letter-spacing: 0.5px;
-			}
-
-			.job-count {
-				padding: spacing.$unit-half spacing.$unit-2x;
-				background: var(--badge-bg);
-				border-radius: layout.$card-corner;
-				font-size: typography.$font-small;
-				color: var(--text-secondary);
-			}
-		}
-
-		.jobs-list {
-			display: grid;
-			grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-			padding: 0 spacing.$unit;
 		}
 	}
 </style>

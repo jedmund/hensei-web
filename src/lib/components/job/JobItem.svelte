@@ -83,20 +83,7 @@
 
 		&.selected {
 			background: var(--primary-10);
-
-			&::before {
-				content: '';
-				position: absolute;
-				left: 0;
-				top: 0;
-				bottom: 0;
-				width: 3px;
-				background: var(--primary-50);
-				border-radius: layout.$item-corner 0 0 layout.$item-corner;
-			}
 		}
-
-		position: relative;
 
 		.job-image-container {
 			position: relative;
