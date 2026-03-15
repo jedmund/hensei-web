@@ -268,9 +268,10 @@
 	"about_tab_updates": "更新履歴",
 	"about_tab_roadmap": "ロードマップ",
 
-	"about_subtitle": "Granblue.teamはグランブルーファンタジーの編成を作成・保存・共有するサイトです。",
-	"about_explanation_0": "新しい編成にキャラクター・武器・召喚石を追加するだけで、好きな場所で共有できるURLが作成されます—アカウントなしで！",
-	"about_explanation_1": "しかしアカウントを作れば、見つけた編成を保存して今後の参考にすることができますし、すべての編成を1つの場所にまとめておくことができます。",
+	"about_subtitle_before_cygames": "Granblue.teamは、",
+	"about_subtitle_after_cygames": "のソーシャルRPG「グランブルーファンタジー」の編成を保存・共有できるサイトです。",
+	"about_explanation_0": "編成はアイテムを追加だけで作成。URLをコピペすればどこでも共有でき、アカウント不要です。",
+	"about_explanation_1": "アカウントを作ると、編成を保存したり、ゲーム内のアイテムをインポートしたり、古戦場貢献度を記録したりできます。アカウントなしでも編成はいくつでも作成でき、後からアカウントにインポートすることもできます。",
 	"about_feedback_title": "フィードバック",
 	"about_feedback_explanation": "もし、機能的な要望がある場合・バグを報告したい場合・あるいはこのサイトは役に立っているなら、Discordのサーバーに連絡ができます。",
 	"about_feedback_solicit": "ご意見、ご感想をお待ちしております。",

@@ -268,9 +268,10 @@
 	"about_tab_updates": "Updates",
 	"about_tab_roadmap": "Roadmap",
 
-	"about_subtitle": "Granblue.team is a tool to save and share team compositions for Granblue Fantasy, a social RPG from Cygames.",
-	"about_explanation_0": "To get started, all you have to do is add an item to a team and a URL will be created for you to share wherever you like, no account needed.",
-	"about_explanation_1": "If you do make an account, you can save any teams you find for future reference and keep all of your teams together in one place.",
+	"about_subtitle_before_cygames": "Granblue.team helps you save and share teams for Granblue Fantasy, a mobile game from ",
+	"about_subtitle_after_cygames": ".",
+	"about_explanation_0": "Creating a team is as simple as adding an item, and you can share by copy-and-pasting the URL wherever you like, no account needed.",
+	"about_explanation_1": "Making an account lets you save teams for later, import your in-game collection, and keep track of Guild Wars scores. You can also make as many teams as you want without an account and import them to an account later.",
 	"about_feedback_title": "Feedback",
 	"about_feedback_explanation": "If you have a feature request, would like to report a bug, or are enjoying the tool and want to say thanks, come hang out in Discord.",
 	"about_feedback_solicit": "Feedback and suggestions are greatly appreciated!",
