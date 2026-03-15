@@ -468,8 +468,8 @@ describe('getElementIcon', () => {
 		expect(getElementIcon(6)).toBe('/images/elements/element-light.png')
 	})
 
-	it('returns none for unknown element', () => {
-		expect(getElementIcon(99)).toBe('/images/elements/element-none.png')
+	it('returns null element for unknown element', () => {
+		expect(getElementIcon(99)).toBe('/images/elements/element-null.png')
 	})
 })
 

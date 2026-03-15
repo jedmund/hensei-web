@@ -3,16 +3,13 @@ import {
 	formatScore,
 	formatScoreCompact,
 	parseScore,
-	getElementColor,
 	toPlayerChartData,
 	toCrewBattleChartData,
 	toMultiPlayerChartData,
 	toCrewHistoryChartData,
-	toPlayerHistoryChartData,
-	ELEMENT_LABELS,
-	ELEMENT_CSS_CLASSES,
-	ELEMENT_HEX_COLORS
+	toPlayerHistoryChartData
 } from '../gw'
+import { ELEMENT_LABELS, getElementKey, getElementColor } from '../element'
 import type { GwIndividualScore, GwCrewScore, GwEvent, EventScoreSummary } from '$lib/types/api/gw'
 
 // ============================================================================
@@ -80,26 +77,25 @@ describe('ELEMENT_LABELS', () => {
 	})
 })
 
-describe('ELEMENT_CSS_CLASSES', () => {
-	it('maps all elements 0-6', () => {
-		expect(ELEMENT_CSS_CLASSES[0]).toBe('null')
-		expect(ELEMENT_CSS_CLASSES[2]).toBe('fire')
+describe('getElementKey', () => {
+	it('maps all elements 0-6 to lowercase keys', () => {
+		expect(getElementKey(0)).toBe('null')
+		expect(getElementKey(2)).toBe('fire')
 	})
 })
 
 describe('getElementColor', () => {
 	it('returns hex color for valid element', () => {
-		expect(getElementColor(1)).toBe(ELEMENT_HEX_COLORS['wind'])
-		expect(getElementColor(2)).toBe(ELEMENT_HEX_COLORS['fire'])
+		expect(getElementColor(1)).toBe('#3ee489')
+		expect(getElementColor(2)).toBe('#fa6d6d')
 	})
 
-	it('returns #888 for unknown element', () => {
-		expect(getElementColor(99)).toBe('#888')
+	it('returns fallback for unknown element', () => {
+		expect(getElementColor(99)).toBe('#888888')
 	})
 
-	it('returns #888 for null element (0)', () => {
-		// ELEMENT_CSS_CLASSES[0] = 'null', which is not in ELEMENT_HEX_COLORS
-		expect(getElementColor(0)).toBe('#888')
+	it('returns fallback for null element (0)', () => {
+		expect(getElementColor(0)).toBe('#888888')
 	})
 })
 

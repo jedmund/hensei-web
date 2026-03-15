@@ -6,6 +6,7 @@
  */
 
 import { getImageBaseUrl } from '$lib/api/adapters/config'
+import { getElementKey } from '$lib/utils/element'
 
 export type ResourceType = 'character' | 'weapon' | 'summon'
 export type ImageVariant = 'main' | 'tall' | 'grid' | 'square' | 'detail' | 'base' | 'wide'
@@ -431,16 +432,7 @@ export function getGenderLabelImage(genderLabel: string): string {
  * Get element icon image URL (for select dropdowns, etc.)
  */
 export function getElementIcon(element: number): string {
-	const elementNames: Record<number, string> = {
-		0: 'null',
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
-	const name = elementNames[element] || 'none'
+	const name = getElementKey(element)
 	return `${getBasePath()}/elements/element-${name}.png`
 }
 

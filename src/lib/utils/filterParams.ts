@@ -7,30 +7,19 @@
 
 import type { CollectionFilterState } from '$lib/components/collection/CollectionFilters.svelte'
 import type { WeaponSeries } from '$lib/types/api/weaponSeries'
+import { getElementKey, ELEMENTS } from '$lib/utils/element'
 
 // ============================================================================
-// Element Mapping (0-6)
+// Element Mapping (0-6) — derived from central element utils
 // ============================================================================
 
-export const ELEMENT_TO_PARAM: Record<number, string> = {
-	0: 'null',
-	1: 'wind',
-	2: 'fire',
-	3: 'water',
-	4: 'earth',
-	5: 'dark',
-	6: 'light'
-}
+export const ELEMENT_TO_PARAM: Record<number, string> = Object.fromEntries(
+	Object.keys(ELEMENTS).map((id) => [Number(id), getElementKey(Number(id))])
+)
 
-export const PARAM_TO_ELEMENT: Record<string, number> = {
-	null: 0,
-	wind: 1,
-	fire: 2,
-	water: 3,
-	earth: 4,
-	dark: 5,
-	light: 6
-}
+export const PARAM_TO_ELEMENT: Record<string, number> = Object.fromEntries(
+	Object.keys(ELEMENTS).map((id) => [getElementKey(Number(id)), Number(id)])
+)
 
 // ============================================================================
 // Rarity Mapping (1-3)
