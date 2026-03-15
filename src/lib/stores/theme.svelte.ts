@@ -20,9 +20,17 @@ class ThemeStore {
 	 * This should be called once on app startup from the root layout
 	 */
 	init(initial: ThemePreference = 'system') {
-		if (this.#initialized || typeof window === 'undefined') return
-		this.#initialized = true
+		if (typeof window === 'undefined') return
 
+		if (this.#initialized) {
+			// Re-apply if preference changed (e.g. after login)
+			if (initial !== this.#preference) {
+				this.setTheme(initial)
+			}
+			return
+		}
+
+		this.#initialized = true
 		this.#preference = initial
 		this.#resolved = this.#resolveTheme(initial)
 		this.#applyTheme(this.#resolved)
