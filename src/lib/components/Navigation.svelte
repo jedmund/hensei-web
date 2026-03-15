@@ -20,6 +20,7 @@
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import LanguageToggle from './LanguageToggle.svelte'
+	import ThemeToggle from './ThemeToggle.svelte'
 
 	// Props from layout data
 	const {
@@ -54,6 +55,11 @@
 	const databaseHref = $derived(localizeHref('/database'))
 	const newTeamHref = $derived(localizeHref('/teams/new'))
 	const crewHref = $derived(localizeHref('/crew'))
+	const collectionHref = $derived(
+		isAuth ? localizeHref(`/${username}/collection`) : localizeHref('/collection')
+	)
+	const aboutHref = $derived(localizeHref('/about'))
+	const extensionHref = $derived(localizeHref('/extension'))
 
 	// Get the element class for styling
 	const elementClass = $derived(userElement ? `element-${userElement}` : '')
@@ -265,17 +271,18 @@
 				</li>
 			</ul>
 		</div>
-	{:else}
-		<!-- Normal navigation mode -->
-		<ul role="list">
-			<li>
-				<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
-			</li>
-			{#if isAuth}
-				<!-- Authenticated: show Guides and Crew in nav -->
-				<li><a href={guidesHref} class:selected={isNavSelected(guidesHref)}>{m.nav_guides()}</a></li>
+	{:else if isAuth}
+		<!-- Authenticated navigation -->
+		<div class="nav-links">
+			<ul role="list">
+				<li>
+					<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
+				</li>
 				<li>
 					<a href={crewHref} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
+				</li>
+				<li>
+					<a href={collectionHref} class:selected={isNavSelected(collectionHref)}>{m.nav_collection()}</a>
 				</li>
 				<li>
 					<a
@@ -297,46 +304,32 @@
 						<span>{username}</span>
 					</a>
 				</li>
-			{:else}
-				<!-- Not authenticated: show Register and Log in -->
 				<li>
-					<a href={registerHref} class:selected={isNavSelected(registerHref)}
-						>{m.nav_register()}</a
-					>
-				</li>
-				<li>
-					<a href={loginHref} class:selected={isNavSelected(loginHref)}>{m.nav_login()}</a>
-				</li>
-			{/if}
-
-			<li>
-				<DropdownMenu.Root>
-					<DropdownMenu.Trigger
-						class="nav-more-trigger {totalNotificationCount > 0 ? `has-notification ${userElement ?? ''}` : ''}"
-					>
-						{#if totalNotificationCount > 0}
-							<Icon name="mail" size={18} />
-						{:else}
-							<Icon name="ellipsis" size={14} />
-						{/if}
-					</DropdownMenu.Trigger>
-
-					<DropdownMenu.Portal>
-						<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
-							{#if !isAuth}
-								<!-- Not authenticated: show Guides in dropdown -->
-								<DropdownItem>
-									<a href={guidesHref}>{m.nav_guides()}</a>
-								</DropdownItem>
-								<DropdownMenu.Separator class="dropdown-separator" />
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger
+							class="nav-more-trigger {totalNotificationCount > 0 ? `has-notification ${userElement ?? ''}` : ''}"
+						>
+							{#if totalNotificationCount > 0}
+								<Icon name="mail" size={18} />
+							{:else}
+								<Icon name="ellipsis" size={14} />
 							{/if}
-							{#if role !== null && role >= 7}
+						</DropdownMenu.Trigger>
+
+						<DropdownMenu.Portal>
+							<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
 								<DropdownItem>
-									<a href={databaseHref}>{m.nav_database()}</a>
+									<a href={aboutHref}>{m.nav_about()}</a>
 								</DropdownItem>
+								<DropdownItem>
+									<a href={extensionHref}>{m.nav_extension()}</a>
+								</DropdownItem>
+								{#if role !== null && role >= 7}
+									<DropdownItem>
+										<a href={databaseHref}>{m.nav_database()}</a>
+									</DropdownItem>
+								{/if}
 								<DropdownMenu.Separator class="dropdown-separator" />
-							{/if}
-							{#if isAuth}
 								<DropdownItem>
 									<button class="dropdown-button-with-badge" onclick={() => (invitationsModalOpen = true)}>
 										<span>{m.nav_notifications()}</span>
@@ -345,25 +338,69 @@
 										{/if}
 									</button>
 								</DropdownItem>
-							{/if}
-							<LanguageToggle />
-							<DropdownMenu.Separator class="dropdown-separator" />
-							<DropdownItem>
-								<button onclick={() => (settingsModalOpen = true)}>
-									{m.nav_settings()}
-								</button>
-							</DropdownItem>
-							{#if isAuth}
+								<DropdownMenu.Separator class="dropdown-separator" />
+								<LanguageToggle />
+								<ThemeToggle />
+								<DropdownItem>
+									<button onclick={() => (settingsModalOpen = true)}>
+										{m.nav_settings()}
+									</button>
+								</DropdownItem>
 								<DropdownMenu.Separator class="dropdown-separator" />
 								<DropdownItem>
 									<button onclick={handleLogout}>{m.nav_logout()}</button>
 								</DropdownItem>
-							{/if}
-						</DropdownMenu.Content>
-					</DropdownMenu.Portal>
-				</DropdownMenu.Root>
-			</li>
-		</ul>
+							</DropdownMenu.Content>
+						</DropdownMenu.Portal>
+					</DropdownMenu.Root>
+				</li>
+			</ul>
+		</div>
+	{:else}
+		<!-- Unauthenticated navigation -->
+		<div class="nav-links">
+			<ul role="list">
+				<li>
+					<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
+				</li>
+				<li>
+					<a href={crewHref} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
+				</li>
+				<li>
+					<a href={collectionHref} class:selected={isNavSelected(collectionHref)}>{m.nav_collection()}</a>
+				</li>
+				<li>
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger class="nav-more-trigger">
+							<Icon name="ellipsis" size={14} />
+						</DropdownMenu.Trigger>
+
+						<DropdownMenu.Portal>
+							<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
+								<DropdownItem>
+									<a href={aboutHref}>{m.nav_about()}</a>
+								</DropdownItem>
+								<DropdownItem>
+									<a href={extensionHref}>{m.nav_extension()}</a>
+								</DropdownItem>
+								<DropdownMenu.Separator class="dropdown-separator" />
+								<LanguageToggle />
+								<ThemeToggle />
+							</DropdownMenu.Content>
+						</DropdownMenu.Portal>
+					</DropdownMenu.Root>
+				</li>
+			</ul>
+
+			<ul role="list">
+				<li>
+					<a href={registerHref} class:selected={isNavSelected(registerHref)}>{m.nav_register()}</a>
+				</li>
+				<li>
+					<a href={loginHref} class:selected={isNavSelected(loginHref)}>{m.nav_login()}</a>
+				</li>
+			</ul>
+		</div>
 	{/if}
 	{#if isDatabaseRoute && databaseEntityLabel}
 		<DropdownMenu.Root>
@@ -414,7 +451,7 @@
 			icon="plus"
 			iconOnly
 			shape="circle"
-			variant="primary"
+			variant={userElement ? 'primary' : 'subtle'}
 			{...(userElement ? { element: userElement } : {})}
 			elementStyle={Boolean(userElement)}
 			class="new-team-button"
@@ -514,6 +551,13 @@
 					font-weight: typography.$bold;
 				}
 			}
+		}
+
+		// Group nav pills together so space-between doesn't split them
+		.nav-links {
+			display: flex;
+			gap: spacing.$unit;
+			align-items: center;
 		}
 
 		// Database navigation mode
