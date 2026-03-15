@@ -284,6 +284,16 @@
 	// Light - Database
 	--table-row-hover: #{colors.$grey-95};
 	--table-header-hover: #{colors.$grey-90};
+	--badge-extra-bg: #f3e8ff;
+	--badge-extra-text: #6b21a8;
+	--badge-element-bg: linear-gradient(to right, #fecaca, #fef08a, #bbf7d0, #bfdbfe, #e9d5ff, #fbcfe8);
+	--badge-element-text: #374151;
+	--badge-keys-bg: #fef3c7;
+	--badge-keys-text: #92400e;
+	--badge-awaken-bg: #dcfce7;
+	--badge-awaken-text: #166534;
+	--badge-ax-bg: #ffe4e6;
+	--badge-ax-text: #9f1239;
 
 	// Light - Element theming
 	--null-bg: #{colors.$null--bg--light};
@@ -715,6 +725,16 @@ html[data-theme='dark'] {
 	// Dark - Database
 	--table-row-hover: #{colors.$grey-25};
 	--table-header-hover: #{colors.$grey-30};
+	--badge-extra-bg: #3b1f5e;
+	--badge-extra-text: #d8b4fe;
+	--badge-element-bg: linear-gradient(to right, #7f1d1d, #78350f, #14532d, #1e3a5f, #4c1d95, #831843);
+	--badge-element-text: #d1d5db;
+	--badge-keys-bg: #78350f;
+	--badge-keys-text: #fde68a;
+	--badge-awaken-bg: #14532d;
+	--badge-awaken-text: #bbf7d0;
+	--badge-ax-bg: #881337;
+	--badge-ax-text: #fecdd3;
 
 	// Dark - Element theming
 	--null-bg: #{colors.$null--bg--dark};

@@ -421,28 +421,28 @@
 		font-weight: typography.$medium;
 
 		&.extra {
-			background: #f3e8ff;
-			color: #6b21a8;
+			background: var(--badge-extra-bg);
+			color: var(--badge-extra-text);
 		}
 
 		&.element {
-			background: linear-gradient(to right, #fecaca, #fef08a, #bbf7d0, #bfdbfe, #e9d5ff, #fbcfe8);
-			color: #374151;
+			background: var(--badge-element-bg);
+			color: var(--badge-element-text);
 		}
 
 		&.keys {
-			background: #fef3c7;
-			color: #92400e;
+			background: var(--badge-keys-bg);
+			color: var(--badge-keys-text);
 		}
 
 		&.awaken {
-			background: #dcfce7;
-			color: #166534;
+			background: var(--badge-awaken-bg);
+			color: var(--badge-awaken-text);
 		}
 
 		&.ax {
-			background: #ffe4e6;
-			color: #9f1239;
+			background: var(--badge-ax-bg);
+			color: var(--badge-ax-text);
 		}
 	}
 
