@@ -76,7 +76,7 @@
 		align-items: center;
 		gap: $unit;
 		padding: $unit $unit-2x;
-		background: $grey-90;
+		background: var(--input-bg);
 		position: sticky;
 		top: 0;
 		z-index: $z-raised;

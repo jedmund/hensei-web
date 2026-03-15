@@ -134,7 +134,7 @@
 		align-items: center;
 		gap: $unit;
 		padding: $unit $unit-2x $unit-2x $unit-2x;
-		border-bottom: 1px solid var(--border-secondary);
+		border-bottom: 1px solid var(--border-subtle);
 	}
 
 	.raid-list-container {
