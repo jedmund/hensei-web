@@ -99,14 +99,14 @@
 	}
 
 	// Available image sizes for summons
-	const summonSizes = ['detail', 'grid', 'main', 'square', 'wide']
+	const summonSizes = ['detail', 'grid', 'main', 'tall', 'square', 'wide']
 
-	// Generate image items for summon (detail, grid, main, square, wide variants)
+	// Generate image items for summon (detail, grid, main, tall, square, wide variants)
 	// Summons have transformations: Base (no suffix), ULB (_02), Transcendence Stage 1 (_03), Transcendence Stage 5 (_04)
 	const summonImages = $derived.by((): ImageItem[] => {
 		if (!summon?.granblueId) return []
 
-		const variants = ['detail', 'grid', 'main', 'square', 'wide'] as const
+		const variants = ['detail', 'grid', 'main', 'tall', 'square', 'wide'] as const
 		const images: ImageItem[] = []
 
 		// Only include transformations that are available
