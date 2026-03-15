@@ -8,6 +8,7 @@
 	import CharacterRep from '$lib/components/reps/CharacterRep.svelte'
 	import WeaponRep from '$lib/components/reps/WeaponRep.svelte'
 	import SummonRep from '$lib/components/reps/SummonRep.svelte'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -35,6 +36,7 @@
 
 	function handleValueChange(newValue: string) {
 		value = newValue as GridType
+		sidebar.close()
 		onTabChange?.(newValue as GridType)
 	}
 
