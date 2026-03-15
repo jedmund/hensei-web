@@ -127,7 +127,7 @@
 		border: $card-border;
 		border-radius: $page-corner;
 		box-shadow: $page-elevation;
-		padding: $unit-3x;
+		padding: $unit-2x;
 	}
 
 	.card-header {
@@ -140,18 +140,17 @@
 	.card-text {
 		display: flex;
 		flex-direction: column;
-		gap: $unit;
 
 		h1 {
 			margin: 0;
-			font-size: $font-xlarge;
-			font-weight: $bold;
+			font-size: $font-regular;
+			font-weight: $medium;
 			color: var(--text-primary);
 		}
 
 		p {
 			margin: 0;
-			font-size: $font-regular;
+			font-size: $font-small;
 			color: var(--text-secondary);
 			line-height: 1.5;
 		}
