@@ -95,6 +95,7 @@
 
 	.card {
 		background: var(--card-bg);
+		color: var(--text-primary);
 		border: $card-border;
 		border-radius: $page-corner;
 		box-shadow: $page-elevation;
