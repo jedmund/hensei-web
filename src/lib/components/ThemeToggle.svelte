@@ -2,6 +2,8 @@
 	import { Switch as SwitchPrimitive } from 'bits-ui'
 	import * as m from '$lib/paraglide/messages'
 	import { themeStore } from '$lib/stores/theme.svelte'
+	import { authStore } from '$lib/stores/auth.store.svelte'
+	import { users } from '$lib/api/resources/users'
 	import SunIcon from '$src/assets/icons/sun.svg?raw'
 	import MoonIcon from '$src/assets/icons/moon.svg?raw'
 
@@ -10,8 +12,11 @@
 	function handleToggle(checked: boolean) {
 		const newTheme = checked ? 'dark' : 'light'
 		themeStore.setTheme(newTheme)
-		// Persist for logged-out users via cookie
 		document.cookie = `theme=${newTheme};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`
+
+		if (authStore.isAuthenticated && authStore.user) {
+			users.update(authStore.user.id, { theme: newTheme })
+		}
 	}
 </script>
 

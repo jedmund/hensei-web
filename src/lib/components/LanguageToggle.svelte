@@ -3,6 +3,8 @@
 	import { invalidateAll } from '$app/navigation'
 	import { Switch as SwitchPrimitive } from 'bits-ui'
 	import * as m from '$lib/paraglide/messages'
+	import { authStore } from '$lib/stores/auth.store.svelte'
+	import { users } from '$lib/api/resources/users'
 	import type { AppLocale } from '$lib/utils/locale'
 
 	const locale = $derived(getLocale() as AppLocale)
@@ -13,6 +15,11 @@
 		if (newLocale === locale) return
 
 		document.cookie = `PARAGLIDE_LOCALE=${newLocale};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`
+
+		if (authStore.isAuthenticated && authStore.user) {
+			users.update(authStore.user.id, { language: newLocale })
+		}
+
 		await invalidateAll()
 		window.location.reload()
 	}
