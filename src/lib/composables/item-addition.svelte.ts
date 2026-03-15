@@ -12,6 +12,7 @@ interface ItemAdditionOptions {
 	getActiveTab: () => GridType
 	getSelectedSlot: () => number
 	setSelectedSlot: (n: number) => void
+	onSlotAdvance?: (newSlot: number) => void
 	ensurePartyExists?: () => Promise<{ id: string; shortcode: string }>
 }
 
@@ -89,6 +90,7 @@ export function useItemAddition(opts: ItemAdditionOptions) {
 			const nextEmptySlot = findNextEmptySlot(currentParty, activeTab, targetSlot)
 			if (nextEmptySlot !== SLOT_NOT_FOUND) {
 				opts.setSelectedSlot(nextEmptySlot)
+				opts.onSlotAdvance?.(nextEmptySlot)
 			}
 		} catch (err: any) {
 			error = err.message || 'Failed to add item'

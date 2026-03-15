@@ -58,7 +58,7 @@
 
 		check(main, -1)
 		subSummonSlots.forEach((s, i) => check(s, i))
-		check(friend, 6)
+		// Skip friend slot — friend summons aren't owned, so collection doesn't apply
 		return status
 	})
 </script>
@@ -103,7 +103,7 @@
 		</section>
 
 		<div class="LabeledUnit">
-			<SummonUnit item={friend} position={6} notInCollection={collectionStatus != null && !!friend?.summon?.granblueId && !collectionStatus.get(6)} inCollection={collectionStatus != null && !!friend?.summon?.granblueId && !!collectionStatus.get(6)} />
+			<SummonUnit item={friend} position={6} />
 		</div>
 	</div>
 	<ExtraSummons {summons} offset={4} />

@@ -1,9 +1,12 @@
 
 <script lang="ts">
 	import Select from '../../ui/Select.svelte'
+	import Switch from '../../ui/switch/Switch.svelte'
 	import ElementPicker from '../../ui/element-picker/ElementPicker.svelte'
 	import RarityPicker from '../../ui/rarity-picker/RarityPicker.svelte'
 	import ProficiencyPicker from '../../ui/proficiency-picker/ProficiencyPicker.svelte'
+	import Tooltip from '../../ui/Tooltip.svelte'
+	import { getProficiencyLabel } from '$lib/utils/proficiency'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -14,10 +17,17 @@
 		seriesFilter: string | undefined
 		seriesOptions: { value: string; label: string }[]
 		requiredProficiencies?: number[]
+		/** Localized job name for the proficiency lock tooltip */
+		jobName?: string
+		/** Whether subaura filter is active (summon type only) */
+		subauraFilter?: boolean
+		/** Whether the subaura filter is locked on (subaura slots) */
+		subauraLocked?: boolean
 		onElementChange: (values: number[]) => void
 		onRarityChange: (values: number[]) => void
 		onProficiencyChange: (values: number[]) => void
 		onSeriesChange: (value: string | undefined) => void
+		onSubauraChange?: (value: boolean) => void
 	}
 
 	let {
@@ -28,10 +38,14 @@
 		seriesFilter,
 		seriesOptions,
 		requiredProficiencies,
+		jobName,
+		subauraFilter = false,
+		subauraLocked = false,
 		onElementChange,
 		onRarityChange,
 		onProficiencyChange,
-		onSeriesChange
+		onSeriesChange,
+		onSubauraChange
 	}: Props = $props()
 
 	function handleElementChange(value: number | number[]) {
@@ -46,9 +60,24 @@
 		onProficiencyChange(Array.isArray(value) ? value : value !== undefined ? [value] : [])
 	}
 
-	const showProficiency = $derived(
-		(type === 'weapon' || type === 'character') && !requiredProficiencies
-	)
+	const showProficiency = $derived(type === 'weapon' || type === 'character')
+	const isLockedProficiency = $derived(!!requiredProficiencies)
+
+	const lockedProficiencyTooltip = $derived.by(() => {
+		if (!requiredProficiencies || !jobName) return ''
+		const labels = requiredProficiencies.map(getProficiencyLabel)
+		if (labels.length === 2) {
+			return m.search_filter_proficiency_locked_two({
+				jobName,
+				proficiency1: labels[0]!,
+				proficiency2: labels[1]!
+			})
+		}
+		return m.search_filter_proficiency_locked_one({
+			jobName,
+			proficiency1: labels[0]!
+		})
+	})
 </script>
 
 <div class="filters-section">
@@ -105,7 +134,7 @@
 		<div class="filter-group">
 			<div class="filter-header">
 				<label class="filter-label">{m.search_filter_proficiency()}</label>
-				{#if proficiencyFilters.length > 0}
+				{#if !isLockedProficiency && proficiencyFilters.length > 0}
 					<a
 						href="#"
 						class="clear-link"
@@ -116,13 +145,25 @@
 					>
 				{/if}
 			</div>
-			<ProficiencyPicker
-				value={proficiencyFilters}
-				onValueChange={handleProficiencyChange}
-				multiple={true}
-				contained={true}
-				size="small"
-			/>
+			{#if isLockedProficiency}
+				<Tooltip content={lockedProficiencyTooltip}>
+					<ProficiencyPicker
+						value={requiredProficiencies}
+						multiple={true}
+						contained={true}
+						size="small"
+						disabled={true}
+					/>
+				</Tooltip>
+			{:else}
+				<ProficiencyPicker
+					value={proficiencyFilters}
+					onValueChange={handleProficiencyChange}
+					multiple={true}
+					contained={true}
+					size="small"
+				/>
+			{/if}
 		</div>
 	{/if}
 
@@ -149,6 +190,27 @@
 			fullWidth={true}
 		/>
 	</div>
+
+	{#if type === 'summon'}
+		<div class="filter-group switch-row">
+			<label class="filter-label">{m.extra_summons_subaura()}</label>
+			{#if subauraLocked}
+				<Tooltip content={m.search_filter_subaura_locked()}>
+					<Switch
+						checked={subauraFilter}
+						size="small"
+						disabled={true}
+					/>
+				</Tooltip>
+			{:else}
+				<Switch
+					checked={subauraFilter}
+					size="small"
+					onCheckedChange={(v) => onSubauraChange?.(v)}
+				/>
+			{/if}
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -197,6 +259,13 @@
 			&:hover {
 				color: var(--text-primary);
 			}
+		}
+
+		.switch-row {
+			flex-direction: row;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0 $unit-half;
 		}
 	}
 </style>

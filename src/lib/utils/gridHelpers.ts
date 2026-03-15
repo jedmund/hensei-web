@@ -13,12 +13,13 @@ export interface SlotRange {
 	start: number
 	end: number
 	specialSlots?: number[] // e.g., mainhand (-1), friend summon (6)
+	trailingSlots?: number[] // slots checked after regular slots (e.g., friend summon)
 }
 
 /** Grid slot configuration for each grid type */
 const GRID_CONFIGS: Record<GridType, SlotRange> = {
 	[GridType.Weapon]: { start: 0, end: 8, specialSlots: [-1] }, // mainhand + 9 grid slots
-	[GridType.Summon]: { start: 0, end: 5, specialSlots: [-1, 6] }, // main + 6 grid + friend
+	[GridType.Summon]: { start: 0, end: 5, specialSlots: [-1], trailingSlots: [6] }, // main + 6 grid + friend last
 	[GridType.Character]: { start: 0, end: 4, specialSlots: [] } // 5 character slots (0-4)
 }
 
@@ -58,6 +59,14 @@ export function findNextEmptySlot(
 		if (i === skipSlot) continue
 		if (!isSlotOccupied(collection, i, gridType)) {
 			return i
+		}
+	}
+
+	// Check trailing slots last (e.g., friend summon)
+	for (const trailingSlot of config.trailingSlots || []) {
+		if (trailingSlot === skipSlot) continue
+		if (!isSlotOccupied(collection, trailingSlot, gridType)) {
+			return trailingSlot
 		}
 	}
 

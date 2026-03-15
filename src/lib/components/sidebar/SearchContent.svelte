@@ -40,12 +40,18 @@
 		authUserId?: string
 		/** Required proficiencies for mainhand weapon selection */
 		requiredProficiencies?: number[]
+		/** Localized job name for proficiency lock tooltip */
+		jobName?: string
 		/** User's element for styling the collection toggle */
 		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 		/** Callback to unlink all collection items from the party */
 		onUnlinkCollection?: () => Promise<void>
 		/** Username to pre-populate collection source from an external user */
 		initialCollectionSourceUsername?: string
+		/** Whether the current slot is a friend summon (hides collection toggle) */
+		isFriendSlot?: boolean
+		/** Whether the current slot is a subaura summon slot (filters to subaura summons only) */
+		isSubauraSlot?: boolean
 	}
 
 	let {
@@ -54,9 +60,12 @@
 		canAddMore = true,
 		authUserId,
 		requiredProficiencies,
+		jobName,
 		userElement,
 		onUnlinkCollection,
-		initialCollectionSourceUsername
+		initialCollectionSourceUsername,
+		isFriendSlot = false,
+		isSubauraSlot = false
 	}: Props = $props()
 
 	// Reactively derive collection source from party store (stays in sync after mutations)
@@ -73,6 +82,7 @@
 	let rarityFilters = $state<number[]>([])
 	let proficiencyFilters = $state<number[]>([])
 	let seriesFilter = $state<string | undefined>(undefined)
+	let subauraFilter = $state(isSubauraSlot)
 
 	// External user query for collection source from URL param
 	const externalUserQuery = createQuery(() => ({
@@ -83,7 +93,7 @@
 	// Search mode state (only available when authUserId is provided)
 	// Default to 'collection' when a collection source is already set on the party
 	const initialSourceUserId = partyStore.party?.collectionSourceUserId
-	let searchMode = $state<SearchMode>(initialSourceUserId || initialCollectionSourceUsername ? 'collection' : 'all')
+	let searchMode = $state<SearchMode>(!isFriendSlot && (initialSourceUserId || initialCollectionSourceUsername) ? 'collection' : 'all')
 
 	// Crew member selection state (defaults to self; collectionSourceUserId is reactive via partyStore)
 	let selectedMemberId = $state<string | undefined>(authUserId)
@@ -96,8 +106,16 @@
 		}
 	})
 
+	// Sync subaura filter when slot type changes
+	$effect(() => {
+		subauraFilter = isSubauraSlot
+	})
+
 	// Filter visibility (open by default)
 	let filtersOpen = $state(true)
+
+	// Scroll shadow state
+	let resultsScrolled = $state(false)
 
 	// Refs
 	let sentinelEl = $state<HTMLElement>()
@@ -270,7 +288,8 @@
 			(type === 'weapon' || type === 'character') && effectiveProficiencies
 				? effectiveProficiencies
 				: undefined,
-		series: seriesFilter ? [seriesFilter] : undefined
+		series: seriesFilter ? [seriesFilter] : undefined,
+		subaura: subauraFilter ? true : undefined
 	})
 
 	// --- Collection helpers ---
@@ -444,8 +463,8 @@
 </script>
 
 <div class="search-content">
-	<div class="controls">
-		{#if authUserId}
+	<div class="controls" class:scrolled={resultsScrolled}>
+		{#if authUserId && !isFriendSlot}
 			<div class="mode-toggle">
 				<SegmentedControl
 					value={searchMode}
@@ -499,6 +518,9 @@
 				{seriesFilter}
 				{seriesOptions}
 				{requiredProficiencies}
+				{jobName}
+				{subauraFilter}
+				subauraLocked={isSubauraSlot}
 				onElementChange={(v) => {
 					elementFilters = v
 				}}
@@ -510,6 +532,9 @@
 				}}
 				onSeriesChange={(v) => {
 					seriesFilter = v
+				}}
+				onSubauraChange={(v) => {
+					subauraFilter = v
 				}}
 			/>
 		{/if}
@@ -530,7 +555,7 @@
 		</div>
 	</div>
 
-	<div class="results-section">
+	<div class="results-section" onscroll={(e) => { resultsScrolled = e.currentTarget.scrollTop > 0 }}>
 		{#if activeQuery.isLoading}
 			<div class="loading">
 				<Icon name="loader-2" size={24} />
@@ -614,6 +639,14 @@
 		gap: $unit;
 		padding: 0 $unit-2x;
 		flex-shrink: 0;
+		position: relative;
+		z-index: 1;
+		transition: box-shadow 0.2s ease;
+
+		&.scrolled {
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+			border-bottom: 1px solid rgba(0, 0, 0, 0.01);
+		}
 
 		.search-section {
 			&.filters-open {

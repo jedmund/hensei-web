@@ -12,16 +12,22 @@ interface SearchSidebarOptions {
 	authUserId?: string
 	/** Required proficiencies for mainhand weapon selection */
 	requiredProficiencies?: number[]
+	/** Localized job name for proficiency lock tooltip */
+	jobName?: string
 	/** User's element for styling the collection toggle */
 	userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	/** Callback to unlink all collection items from the party */
 	onUnlinkCollection?: () => Promise<void>
 	/** Username to pre-populate collection source from an external user */
 	initialCollectionSourceUsername?: string
+	/** Whether the current slot is a friend summon (hides collection toggle) */
+	isFriendSlot?: boolean
+	/** Whether the current slot is a subaura summon slot (filters to subaura summons only) */
+	isSubauraSlot?: boolean
 }
 
 export function openSearchSidebar(options: SearchSidebarOptions) {
-	const { type, onAddItems, canAddMore = true, authUserId, requiredProficiencies, userElement, onUnlinkCollection, initialCollectionSourceUsername } = options
+	const { type, onAddItems, canAddMore = true, authUserId, requiredProficiencies, jobName, userElement, onUnlinkCollection, initialCollectionSourceUsername, isFriendSlot, isSubauraSlot } = options
 
 	// If sidebar is already open with SearchContent for the same entity type,
 	// update props without remounting to preserve filter state
@@ -34,7 +40,10 @@ export function openSearchSidebar(options: SearchSidebarOptions) {
 		sidebar.paneStack.updateCurrentProps({
 			onAddItems,
 			canAddMore,
-			requiredProficiencies
+			requiredProficiencies,
+			jobName,
+			isFriendSlot,
+			isSubauraSlot
 		})
 		return
 	}
@@ -47,9 +56,12 @@ export function openSearchSidebar(options: SearchSidebarOptions) {
 		canAddMore,
 		authUserId,
 		requiredProficiencies,
+		jobName,
 		userElement,
 		onUnlinkCollection,
-		initialCollectionSourceUsername
+		initialCollectionSourceUsername,
+		isFriendSlot,
+		isSubauraSlot
 	})
 }
 
