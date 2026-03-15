@@ -47,17 +47,9 @@
 		}
 	}
 
-	// Local state for inputs
-	let localUsername = $state(username)
-	let localEmail = $state(email)
-
-	// Sync local state with props when props change
-	$effect(() => {
-		localUsername = username
-	})
-	$effect(() => {
-		localEmail = email
-	})
+	// Local state derived from props — overrides via bind:value are temporary
+	let localUsername = $derived(username)
+	let localEmail = $derived(email)
 
 	// Propagate changes back to parent
 	function handleUsernameInput() {

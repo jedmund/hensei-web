@@ -21,21 +21,10 @@
 		onConfirmPasswordChange
 	}: Props = $props()
 
-	// Local state for inputs
-	let localCurrentPassword = $state(currentPassword)
-	let localNewPassword = $state(newPassword)
-	let localConfirmPassword = $state(confirmPassword)
-
-	// Sync local state with props when props change
-	$effect(() => {
-		localCurrentPassword = currentPassword
-	})
-	$effect(() => {
-		localNewPassword = newPassword
-	})
-	$effect(() => {
-		localConfirmPassword = confirmPassword
-	})
+	// Local state derived from props — overrides via bind:value are temporary
+	let localCurrentPassword = $derived(currentPassword)
+	let localNewPassword = $derived(newPassword)
+	let localConfirmPassword = $derived(confirmPassword)
 
 	// Propagate changes back to parent
 	function handleCurrentPasswordInput() {

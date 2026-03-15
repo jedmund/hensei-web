@@ -90,37 +90,14 @@
 	// Get current picture data
 	const currentPicture = $derived(pictureData.find((p) => p.filename === picture))
 
-	// Local state for bound values
-	let localPicture = $state(picture)
-	let localElement = $state(element)
-	let localGranblueId = $state(granblueId)
-	let localWikiProfile = $state(wikiProfile)
-	let localGender = $state(gender)
-	let localLanguage = $state(language)
-	let localTheme = $state(theme)
-
-	// Sync local state with props
-	$effect(() => {
-		localPicture = picture
-	})
-	$effect(() => {
-		localElement = element
-	})
-	$effect(() => {
-		localGranblueId = granblueId
-	})
-	$effect(() => {
-		localWikiProfile = wikiProfile
-	})
-	$effect(() => {
-		localGender = gender
-	})
-	$effect(() => {
-		localLanguage = language
-	})
-	$effect(() => {
-		localTheme = theme
-	})
+	// Local state derived from props — overrides via bind:value are temporary
+	let localPicture = $derived(picture)
+	let localElement = $derived(element)
+	let localGranblueId = $derived(granblueId)
+	let localWikiProfile = $derived(wikiProfile)
+	let localGender = $derived(gender)
+	let localLanguage = $derived(language)
+	let localTheme = $derived(theme)
 
 	// Propagate changes
 	$effect(() => {
