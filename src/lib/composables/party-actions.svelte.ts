@@ -2,6 +2,8 @@ import type { PartyMutations } from './party-mutations.svelte'
 import type { Party } from '$lib/types/api/party'
 import type { UpdatePartyParams } from '$lib/api/adapters/party.adapter'
 import { openDescriptionPane } from '$lib/features/description/openDescriptionPane.svelte'
+import EditDescriptionPane from '$lib/components/sidebar/EditDescriptionPane.svelte'
+import { sidebar } from '$lib/stores/sidebar.svelte'
 import {
 	openPartyEditSidebar,
 	type PartyEditValues
@@ -158,6 +160,17 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		})
 	}
 
+	function editDescriptionPanel() {
+		const party = opts.getParty()
+		sidebar.openWithComponent(m.pane_edit_description(), EditDescriptionPane, {
+			description: party.description,
+			onSave: async (content: string) => {
+				await updatePartyDetails({ description: content })
+				sidebar.close()
+			}
+		})
+	}
+
 	function openSettingsPanel() {
 		if (!opts.canEdit()) return
 
@@ -262,6 +275,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		syncFromCollection,
 		handleUnlinkCollection,
 		openDescriptionPanel,
+		editDescriptionPanel,
 		openSettingsPanel
 	}
 }

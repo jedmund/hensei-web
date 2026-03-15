@@ -67,6 +67,12 @@
 		sidebar.setAction(save, m.action_save())
 	})
 
+	$effect(() => {
+		if (editor) {
+			editor.commands.focus('end')
+		}
+	})
+
 	function save() {
 		if (!editor) return
 		const json = editor.getJSON()

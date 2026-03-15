@@ -131,6 +131,7 @@
 		mutations,
 		getParty: () => party,
 		canEdit: () => canEdit(),
+		getUserElement: () => userElement,
 		ensurePartyExists: ensurePartyExists ? (() => ensurePartyExists()) : undefined
 	})
 
@@ -401,7 +402,11 @@
 				{party}
 				canEdit={canEdit()}
 				onOpenDescription={actions.openDescriptionPanel}
+				onEditDescription={actions.editDescriptionPanel}
 				onOpenEdit={actions.openSettingsPanel}
+				onRaidSelect={async (raid) => {
+					await actions.updatePartyDetails({ raidId: raid?.id ?? null })
+				}}
 				{authUser}
 				{activeCollectionUser}
 				onSwitchCollectionUser={handleSwitchCollectionUser}
