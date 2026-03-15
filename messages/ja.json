@@ -355,6 +355,7 @@
 	"party_raid_label": "クエスト",
 	"party_raid_unknown": "不明なクエスト",
 	"party_raid_empty": "クエスト未選択",
+	"party_add_raid": "クエストを選択",
 	"party_job_no_job": "ジョブ未選択",
 	"party_job_select_accessory": "アクセサリー選択",
 	"party_sync_collection": "コレクションから同期",
@@ -1255,8 +1256,10 @@
 	"gw_failed_load": "貢献度の読み込みに失敗しました",
 
 	"party_no_description": "説明なし",
+	"party_write_description": "説明を書く",
 	"party_video": "動画",
 	"party_no_video": "動画なし",
+	"party_add_video": "動画を追加",
 
 	"artifact_equip": "アーティファクトを装備",
 	"artifact_none_equipped": "アーティファクト未装備",
@@ -1302,6 +1305,9 @@
 	"visibility_unlisted": "限定公開",
 	"visibility_private": "非公開",
 	"visibility_label": "公開設定",
+	"visibility_public_description": "誰でもこのチームを見ることができます",
+	"visibility_unlisted_description": "リンクを知っている人だけがこのチームを見ることができます",
+	"visibility_private_description": "自分だけがこのチームを見ることができます",
 	"pane_select_raid": "クエスト選択",
 	"pane_edit_description": "説明を編集",
 
