@@ -171,9 +171,7 @@
 		{#if weapon.maxSkillLevel}
 			<DetailItem label="Max Skill Level" value={weapon.maxSkillLevel} />
 		{/if}
-		{#if weapon.maxAwakeningLevel}
-			<DetailItem label="Max Awakening Level" value={weapon.maxAwakeningLevel} />
-		{/if}
+		<DetailItem label="Max Awakening Level" value={weapon.maxAwakeningLevel ?? 0} />
 		{#if weapon.maxExorcismLevel != null}
 			<DetailItem label="Max Exorcism Level" value={weapon.maxExorcismLevel} />
 		{/if}
