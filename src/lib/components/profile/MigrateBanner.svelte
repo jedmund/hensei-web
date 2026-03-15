@@ -57,7 +57,6 @@
 		padding: $unit-2x;
 		padding-left: $unit + $unit-half;
 		border-radius: $card-corner;
-		margin-bottom: $unit-2x;
 	}
 
 	.banner-content {
