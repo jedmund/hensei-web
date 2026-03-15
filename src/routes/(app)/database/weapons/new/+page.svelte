@@ -73,7 +73,7 @@
 		maxAtkUlb: 0,
 		maxLevel: 100,
 		maxSkillLevel: 10,
-		maxAwakeningLevel: 0,
+		maxAwakeningLevel: null as number | null,
 		maxExorcismLevel: null as number | null,
 
 		// Uncap
@@ -183,7 +183,7 @@
 				max_atk_ulb: editData.maxAtkUlb,
 				max_level: editData.maxLevel,
 				max_skill_level: editData.maxSkillLevel,
-				max_awakening_level: editData.maxAwakeningLevel,
+				max_awakening_level: editData.maxAwakeningLevel || null,
 				max_exorcism_level: editData.maxExorcismLevel,
 
 				// Uncap

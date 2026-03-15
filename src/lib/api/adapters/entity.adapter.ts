@@ -476,7 +476,7 @@ export interface CreateWeaponPayload {
 	max_atk_ulb?: number
 	max_level?: number
 	max_skill_level?: number
-	max_awakening_level?: number
+	max_awakening_level?: number | null
 	flb?: boolean
 	ulb?: boolean
 	transcendence?: boolean
