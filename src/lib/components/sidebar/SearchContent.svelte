@@ -6,6 +6,7 @@
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
+	import { userQueries } from '$lib/api/queries/user.queries'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import { getAvatarSrc } from '$lib/utils/avatar'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
@@ -43,6 +44,8 @@
 		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 		/** Callback to unlink all collection items from the party */
 		onUnlinkCollection?: () => Promise<void>
+		/** Username to pre-populate collection source from an external user */
+		initialCollectionSourceUsername?: string
 	}
 
 	let {
@@ -52,7 +55,8 @@
 		authUserId,
 		requiredProficiencies,
 		userElement,
-		onUnlinkCollection
+		onUnlinkCollection,
+		initialCollectionSourceUsername
 	}: Props = $props()
 
 	// Reactively derive collection source from party store (stays in sync after mutations)
@@ -70,14 +74,27 @@
 	let proficiencyFilters = $state<number[]>([])
 	let seriesFilter = $state<string | undefined>(undefined)
 
+	// External user query for collection source from URL param
+	const externalUserQuery = createQuery(() => ({
+		...userQueries.info(initialCollectionSourceUsername ?? ''),
+		enabled: !!initialCollectionSourceUsername
+	}))
+
 	// Search mode state (only available when authUserId is provided)
 	// Default to 'collection' when a collection source is already set on the party
 	const initialSourceUserId = partyStore.party?.collectionSourceUserId
-	let searchMode = $state<SearchMode>(initialSourceUserId ? 'collection' : 'all')
+	let searchMode = $state<SearchMode>(initialSourceUserId || initialCollectionSourceUsername ? 'collection' : 'all')
 
 	// Crew member selection state (defaults to self; collectionSourceUserId is reactive via partyStore)
 	let selectedMemberId = $state<string | undefined>(authUserId)
 	let unlinkDialogOpen = $state(false)
+
+	// When external user loads, set selectedMemberId to their userId
+	$effect(() => {
+		if (externalUserQuery.data && !collectionSourceUserId) {
+			selectedMemberId = externalUserQuery.data.id
+		}
+	})
 
 	// Filter visibility (open by default)
 	let filtersOpen = $state(true)
@@ -178,6 +195,16 @@
 			}
 		}
 
+		// Add external collection source user if not already in list
+		const externalUser = externalUserQuery.data
+		if (externalUser && !options.some(o => o.value === externalUser.id)) {
+			options.push({
+				value: externalUser.id,
+				label: externalUser.username,
+				image: getAvatarSrc(externalUser.avatar?.picture)
+			})
+		}
+
 		return options
 	})
 
@@ -193,7 +220,7 @@
 
 	const showMemberSection = $derived(
 		searchMode === 'collection' &&
-			(isCollectionLocked || (isInCrew && memberOptions.length > 1))
+			(isCollectionLocked || (isInCrew && memberOptions.length > 1) || !!externalUserQuery.data)
 	)
 
 	const lockedMember = $derived.by(() => {
@@ -208,15 +235,26 @@
 			}
 		}
 		const member = members.find((m) => m.userId === lockedId)
-		return member
-			? { label: member.username, image: getAvatarSrc(member.avatarPicture) }
-			: { label: m.search_linked_user(), image: undefined }
+		if (member) {
+			return { label: member.username, image: getAvatarSrc(member.avatarPicture) }
+		}
+		// Check external user
+		const externalUser = externalUserQuery.data
+		if (externalUser && externalUser.id === lockedId) {
+			return { label: externalUser.username, image: getAvatarSrc(externalUser.avatar?.picture) }
+		}
+		return { label: m.search_linked_user(), image: undefined }
 	})
 
 	const selectedMemberName = $derived.by(() => {
 		if (!selectedMemberId || selectedMemberId === authUserId) return undefined
 		const members = crewMembersQuery.data ?? []
-		return members.find((m) => m.userId === selectedMemberId)?.username
+		const member = members.find((m) => m.userId === selectedMemberId)
+		if (member) return member.username
+		// Check external user
+		const externalUser = externalUserQuery.data
+		if (externalUser && externalUser.id === selectedMemberId) return externalUser.username
+		return undefined
 	})
 
 	// --- Filters ---
