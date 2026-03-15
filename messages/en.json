@@ -935,6 +935,7 @@
 	"settings_save": "Save Changes",
 	"settings_save_error": "Failed to update settings. Please try again.",
 	"settings_nav_account": "Account",
+	"settings_nav_password": "Password",
 	"settings_nav_profile": "Profile",
 	"settings_nav_privacy": "Privacy",
 
