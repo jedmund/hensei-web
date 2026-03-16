@@ -1,8 +1,8 @@
-
 <script lang="ts">
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import WeaponTypeahead from '$lib/components/ui/WeaponTypeahead.svelte'
+	import Icon from '$lib/components/Icon.svelte'
 	import { getWeaponImage } from '$lib/utils/images'
 	import { getElementKey } from '$lib/utils/element'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -55,7 +55,9 @@
 					<div class="forge-chain">
 						{#each forgeChain as chainWeapon, index}
 							{#if index > 0}
-								<span class="chain-arrow">↓</span>
+								<span class="chain-arrow">
+									<Icon name="arrow-down" size={14} />
+								</span>
 							{/if}
 							<a
 								href={localizeHref(`/database/weapons/${chainWeapon.granblueId}`)}
@@ -63,7 +65,11 @@
 								class:current={chainWeapon.granblueId === weapon.granblueId}
 							>
 								<img
-									src={getWeaponImage(chainWeapon.granblueId, 'square', weapon.element)}
+									src={getWeaponImage(
+										chainWeapon.granblueId,
+										'square',
+										weapon.element === 0 ? weapon.element : undefined
+									)}
 									alt=""
 									class="chain-image"
 								/>
@@ -76,7 +82,10 @@
 
 			{#if forgedFrom && forgeChain.length === 0}
 				<DetailItem label="Forged From">
-					<a href={localizeHref(`/database/weapons/${forgedFrom.granblueId}`)} class="forged-from-link">
+					<a
+						href={localizeHref(`/database/weapons/${forgedFrom.granblueId}`)}
+						class="forged-from-link"
+					>
 						{forgedFrom.name?.en || forgedFrom.name?.ja}
 					</a>
 				</DetailItem>
@@ -98,42 +107,45 @@
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
-		gap: spacing.$unit-half;
+		gap: spacing.$unit;
 	}
 
 	.chain-item {
 		display: inline-flex;
 		align-items: center;
-		gap: spacing.$unit-half;
-		padding: spacing.$unit-quarter spacing.$unit-half;
+		gap: spacing.$unit;
+		padding: spacing.$unit-half spacing.$unit-half spacing.$unit-half spacing.$unit-half;
 		background: var(--card-bg);
-		border-radius: layout.$item-corner-small;
+		border-radius: layout.$item-corner;
 		text-decoration: none;
 		color: var(--text-primary);
 		transition: background-color 0.15s ease;
+		width: 100%;
 
 		&:hover {
-			background: var(--card-bg-hover);
+			background: var(--unit-bg-hover);
 		}
 
 		&.current {
+			margin: spacing.$unit 0;
+
 			&.wind {
-				background: var(--wind-nav-hover-bg);
+				background: var(--wind-nav-bg);
 			}
 			&.fire {
-				background: var(--fire-nav-hover-bg);
+				background: var(--fire-nav-bg);
 			}
 			&.water {
-				background: var(--water-nav-hover-bg);
+				background: var(--water-nav-bg);
 			}
 			&.earth {
-				background: var(--earth-nav-hover-bg);
+				background: var(--earth-nav-bg);
 			}
 			&.light {
-				background: var(--light-nav-hover-bg);
+				background: var(--light-button-bg);
 			}
 			&.dark {
-				background: var(--dark-nav-hover-bg);
+				background: var(--dark-button-bg);
 			}
 			&.null {
 				background: var(--card-bg-hover);
@@ -154,8 +166,9 @@
 
 	.chain-arrow {
 		color: var(--text-tertiary);
-		font-size: typography.$font-small;
-		line-height: 1;
+		display: flex;
+		align-items: center;
+		align-self: center;
 	}
 
 	.forged-from-link {
