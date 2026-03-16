@@ -301,6 +301,7 @@
 
 	onMount(() => {
 		expanded = localStorage.getItem(EXPAND_STORAGE_KEY) === 'true'
+		restoreColumnVisibility()
 
 		if (resource !== 'weapons') {
 			initializeFromUrl()
