@@ -246,6 +246,11 @@
 	<!-- Battle settings & performance -->
 	<div class="battle-section">
 		<div class="settings-tokens">
+			{#if solo}
+				<Tooltip content={m.battle_solo()}>
+					<span class="token solo on">{m.battle_solo()}</span>
+				</Tooltip>
+			{/if}
 			{#each settings as setting (setting.key)}
 				<Tooltip content={setting.tooltip}>
 					<span class="token {setting.key}" class:on={setting.active} class:off={!setting.active}>
@@ -253,11 +258,6 @@
 					</span>
 				</Tooltip>
 			{/each}
-			{#if solo}
-				<Tooltip content={m.battle_solo()}>
-					<span class="token solo on">{m.battle_solo()}</span>
-				</Tooltip>
-			{/if}
 			{#if formattedClearTime}
 				<Tooltip content={m.party_edit_clear_time()}>
 					<span class="token metric">{formattedClearTime}</span>
