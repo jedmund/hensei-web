@@ -197,15 +197,9 @@
 						</DetailItem>
 						{#if raid.group}
 							<DetailItem label="Difficulty" value={raid.group.difficulty?.toString() ?? '—'} />
-							<DetailItem label="HL">
-								<span class="badge" class:active={raid.group.hl}>{raid.group.hl ? 'Yes' : 'No'}</span>
-							</DetailItem>
-							<DetailItem label="Extra">
-								<span class="badge" class:active={raid.extra}>{raid.extra ? 'Yes' : 'No'}</span>
-							</DetailItem>
-							<DetailItem label="Guidebooks">
-								<span class="badge" class:active={raid.group.guidebooks}>{raid.group.guidebooks ? 'Yes' : 'No'}</span>
-							</DetailItem>
+							<DetailItem label="HL" value={raid.group.hl ? 'Yes' : 'No'} />
+							<DetailItem label="Extra" value={raid.extra ? 'Yes' : 'No'} />
+							<DetailItem label="Guidebooks" value={raid.group.guidebooks ? 'Yes' : 'No'} />
 						{/if}
 					</DetailsContainer>
 				</section>
@@ -276,20 +270,6 @@
 
 	.no-value {
 		color: var(--text-tertiary);
-	}
-
-	.badge {
-		display: inline-block;
-		padding: 2px 8px;
-		border-radius: layout.$item-corner-small;
-		font-size: typography.$font-small;
-		background: var(--table-header-bg);
-		color: var(--text-secondary);
-
-		&.active {
-			background: var(--wind-bg);
-			color: white;
-		}
 	}
 
 	.raw-placeholder {
