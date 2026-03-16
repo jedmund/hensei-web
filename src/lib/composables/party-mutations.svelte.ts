@@ -18,7 +18,8 @@ import {
 	useDuplicateGridSummon,
 	useSwitchCharacterStyle,
 	useSyncAllPartyItems,
-	useUnlinkCollectionSource
+	useUnlinkCollectionSource,
+	useUpdateQuickSummon
 } from '$lib/api/mutations/grid.mutations'
 
 import {
@@ -60,6 +61,7 @@ export function usePartyMutations() {
 	const switchCharacterStyle = useSwitchCharacterStyle()
 	const syncAllItems = useSyncAllPartyItems()
 	const unlinkCollectionSource = useUnlinkCollectionSource()
+	const updateQuickSummon = useUpdateQuickSummon()
 
 	// Party mutations
 	const createParty = useCreateParty()
@@ -97,7 +99,8 @@ export function usePartyMutations() {
 			duplicateSummon,
 			switchCharacterStyle,
 			syncAllItems,
-			unlinkCollectionSource
+			unlinkCollectionSource,
+			updateQuickSummon
 		},
 		party: {
 			create: createParty,

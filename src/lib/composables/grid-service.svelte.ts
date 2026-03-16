@@ -176,6 +176,23 @@ export function useGridService(
 				throw err
 			}
 		},
+		async updateQuickSummon(
+			gridSummonId: string,
+			quickSummon: boolean
+		) {
+			try {
+				await mutations.grid.updateQuickSummon.mutateAsync({
+					id: gridSummonId,
+					partyId: getPartyId(),
+					partyShortcode: getPartyShortcode(),
+					quickSummon
+				})
+			} catch (err) {
+				console.error('Failed to update quick summon:', err)
+				toast.error(extractErrorMessage(err, m.toast_failed_update_summon()))
+				throw err
+			}
+		},
 		async updateSummonUncap(
 			gridSummonId: string,
 			uncapLevel?: number,

@@ -136,6 +136,20 @@
     }
   }
 
+  // Quick summon badge — visible on main and grid positions, not friend
+  let showQuickSummon = $derived(item && position !== 6)
+
+  async function toggleQuickSummon(e: MouseEvent) {
+    e.stopPropagation()
+    if (!item?.id || !ctx?.canEdit()) return
+    try {
+      await ctx.services.gridService.updateQuickSummon(item.id, !item.quickSummon)
+    } catch (err) {
+      console.error('Error toggling quick summon:', err)
+      toast.error(extractErrorMessage(err, 'Failed to update quick summon'))
+    }
+  }
+
   // Check if user can view database (role >= 7)
   let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
 
@@ -172,6 +186,24 @@
             />
           </div>
           {/key}
+          {#if showQuickSummon && ctx?.canEdit()}
+            <button
+              class="quick-summon"
+              class:active={item?.quickSummon}
+              class:main={position === -1}
+              onclick={toggleQuickSummon}
+            >
+              <img class="quick-summon-icon filled" src="/icons/quick_summon/filled.svg" alt={m.details_quick_summon()} />
+              <img class="quick-summon-icon empty" src="/icons/quick_summon/empty.svg" alt={m.details_quick_summon()} />
+            </button>
+          {:else if item?.quickSummon}
+            <img
+              class="quick-summon static"
+              class:main={position === -1}
+              src="/icons/quick_summon/filled.svg"
+              alt={m.details_quick_summon()}
+            />
+          {/if}
         </div>
       {/snippet}
 
@@ -434,6 +466,89 @@
     pointer-events: auto;
     cursor: help;
     box-shadow: var(--shadow-sm);
+  }
+
+  .quick-summon {
+    position: absolute;
+    z-index: effects.$z-tooltip;
+    top: -2%;
+    right: 22%;
+    width: spacing.$unit-5x;
+    height: spacing.$unit-5x;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+
+    &:not(.active) {
+      display: none;
+    }
+
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    &.main {
+      right: 28%;
+      width: spacing.$unit-6x;
+      height: spacing.$unit-6x;
+    }
+
+    &.static {
+      cursor: default;
+      &:hover {
+        transform: none;
+      }
+    }
+  }
+
+  .focus-ring-wrapper:hover .quick-summon:not(.active) {
+    display: block;
+  }
+
+  .quick-summon-icon {
+    width: 100%;
+    height: 100%;
+    display: block;
+
+    &.filled {
+      display: none;
+    }
+
+    &.empty {
+      display: block;
+    }
+  }
+
+  .quick-summon.active {
+    .quick-summon-icon.filled {
+      display: block;
+    }
+
+    .quick-summon-icon.empty {
+      display: none;
+    }
+
+    &:hover {
+      .quick-summon-icon.filled {
+        display: none;
+      }
+
+      .quick-summon-icon.empty {
+        display: block;
+      }
+    }
+  }
+
+  .quick-summon:not(.active):hover {
+    .quick-summon-icon.filled {
+      display: block;
+    }
+
+    .quick-summon-icon.empty {
+      display: none;
+    }
   }
 
   // Orphaned state
