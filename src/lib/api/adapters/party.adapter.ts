@@ -38,6 +38,7 @@ export interface UpdatePartyParams extends CreatePartyParams {
 	shortcode: string
 	// Battle settings
 	fullAuto?: boolean
+	solo?: boolean
 	autoGuard?: boolean
 	autoSummon?: boolean
 	chargeAttack?: boolean
@@ -75,6 +76,7 @@ export interface ExploreFilterParams {
 	recency?: number
 	job?: string
 	fullAuto?: number
+	solo?: number
 	autoGuard?: number
 	chargeAttack?: number
 	hasVideo?: boolean
@@ -100,6 +102,7 @@ export interface ListRaidPartiesParams {
 	per?: number
 	element?: number
 	fullAuto?: boolean
+	solo?: boolean
 	autoGuard?: boolean
 	chargeAttack?: boolean
 }
@@ -252,7 +255,7 @@ export class PartyAdapter extends BaseAdapter {
 	 * Lists public parties for a specific raid
 	 */
 	async listRaidParties(params: ListRaidPartiesParams): Promise<PaginatedResponse<Party>> {
-		const { raidId, element, fullAuto, autoGuard, chargeAttack, ...rest } = params
+		const { raidId, element, fullAuto, solo, autoGuard, chargeAttack, ...rest } = params
 
 		// Build query with raid filter and convert booleans to API format
 		const query: Record<string, unknown> = {
@@ -262,6 +265,7 @@ export class PartyAdapter extends BaseAdapter {
 
 		if (element !== undefined && element >= 0) query.element = element
 		if (fullAuto !== undefined) query.full_auto = fullAuto ? 1 : 0
+		if (solo !== undefined) query.solo = solo ? 1 : 0
 		if (autoGuard !== undefined) query.auto_guard = autoGuard ? 1 : 0
 		if (chargeAttack !== undefined) query.charge_attack = chargeAttack ? 1 : 0
 

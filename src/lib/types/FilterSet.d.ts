@@ -3,6 +3,7 @@ export interface FilterSet {
 	raid?: string
 	recency?: number
 	full_auto?: number
+	solo?: number
 	auto_guard?: number
 	charge_attack?: number
 	characters_count?: number

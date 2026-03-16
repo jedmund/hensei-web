@@ -113,6 +113,7 @@ const MinimalScalarsSchema = z
   .object({
     favorited: z.boolean().nullish().optional(),
     fullAuto: z.boolean().nullish().optional(),
+    solo: z.boolean().nullish().optional(),
     autoGuard: z.boolean().nullish().optional(),
     autoSummon: z.boolean().nullish().optional(),
     chargeAttack: z.boolean().nullish().optional(),
@@ -396,6 +397,7 @@ export const PartySchemaRaw = z.object({
   
   // Battle settings
   full_auto: z.boolean().nullish().default(false),
+  solo: z.boolean().nullish().default(false),
   auto_guard: z.boolean().nullish().default(false),
   auto_summon: z.boolean().nullish().default(false),
   charge_attack: z.boolean().nullish().default(true),
