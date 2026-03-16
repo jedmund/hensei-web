@@ -4,10 +4,10 @@
 	import { page } from '$app/stores'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { raidAdapter } from '$lib/api/adapters/raid.adapter'
-	import Button from '$lib/components/ui/Button.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
-	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
+	import DatabaseFormHeader from '$lib/components/database/DatabaseFormHeader.svelte'
+	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 	import { getElementOptions } from '$lib/utils/element'
 	import type { PageData } from './$types'
 
@@ -161,16 +161,7 @@
 			<p>Loading raid...</p>
 		</div>
 	{:else if raid}
-		<SidebarHeader title="Edit Raid">
-			{#snippet leftAccessory()}
-				<Button variant="secondary" size="small" onclick={handleCancel}>Cancel</Button>
-			{/snippet}
-			{#snippet rightAccessory()}
-				<Button variant="primary" size="small" onclick={handleSave} disabled={!canSave || isSaving}>
-					{isSaving ? 'Saving...' : 'Save'}
-				</Button>
-			{/snippet}
-		</SidebarHeader>
+		<DatabaseFormHeader title="Edit Raid" onCancel={handleCancel} onSave={handleSave} {isSaving} disabled={!canSave} />
 
 		{#if saveError}
 			<div class="error-banner">{saveError}</div>
@@ -260,22 +251,14 @@
 			</DetailsContainer>
 		</section>
 	{:else}
-		<div class="not-found">
-			<h2>Raid Not Found</h2>
-			<p>The raid you're looking for could not be found.</p>
-			<Button variant="secondary" onclick={() => goto('/database/raids')}>
-				Back to Raids
-			</Button>
-		</div>
+		<NotFoundPlaceholder title="Raid Not Found" backHref="/database/raids" backLabel="Back to Raids" />
 	{/if}
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
+	@use '$src/themes/database' as database;
 	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
-	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
 
 	.page {
 		background: var(--card-bg);
@@ -285,38 +268,14 @@
 	}
 
 	.loading-state {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		min-height: 200px;
-		gap: spacing.$unit-2x;
-		color: var(--text-secondary);
-	}
-
-	.not-found {
-		text-align: center;
-		padding: spacing.$unit-4x;
-
-		h2 {
-			margin-bottom: spacing.$unit;
-		}
-
-		p {
-			color: var(--text-secondary);
-			margin-bottom: spacing.$unit-2x;
-		}
+		@include database.loading-state;
 	}
 
 	.error-banner {
-		color: var(--danger);
-		font-size: typography.$font-small;
-		padding: spacing.$unit-2x;
-		background: var(--danger-bg);
+		@include database.error-banner;
 	}
 
 	.details {
-		display: flex;
-		flex-direction: column;
+		@include database.details;
 	}
 </style>

@@ -8,6 +8,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
+	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 	import DetailScaffold, { type DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
@@ -216,20 +217,15 @@
 			{/if}
 		</DetailScaffold>
 	{:else}
-		<div class="not-found">
-			<h2>Raid Not Found</h2>
-			<p>The raid you're looking for could not be found.</p>
-			<Button variant="secondary" onclick={handleBack}>Back to Raids</Button>
-		</div>
+		<NotFoundPlaceholder title="Raid Not Found" backHref="/database/raids" backLabel="Back to Raids" />
 	{/if}
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
+	@use '$src/themes/database' as database;
 	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
 
 	.page {
 		background: var(--card-bg);
@@ -240,32 +236,11 @@
 
 	.loading-state,
 	.error-state {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		min-height: 200px;
-		gap: spacing.$unit-2x;
-		color: var(--text-secondary);
-	}
-
-	.not-found {
-		text-align: center;
-		padding: spacing.$unit-4x;
-
-		h2 {
-			margin-bottom: spacing.$unit;
-		}
-
-		p {
-			color: var(--text-secondary);
-			margin-bottom: spacing.$unit-2x;
-		}
+		@include database.loading-state;
 	}
 
 	.details {
-		display: flex;
-		flex-direction: column;
+		@include database.details;
 	}
 
 	.no-value {

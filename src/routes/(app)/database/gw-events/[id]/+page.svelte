@@ -8,6 +8,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
+	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 	import { formatDateJST, formatDateLongJST } from '$lib/utils/date'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
 	import type { PageData } from './$types'
@@ -85,20 +86,14 @@
 			{/if}
 		</section>
 	{:else}
-		<div class="not-found">
-			<h2>Event Not Found</h2>
-			<p>The event you're looking for could not be found.</p>
-			<Button variant="secondary" onclick={handleBack}>Back to Events</Button>
-		</div>
+		<NotFoundPlaceholder title="Event Not Found" backHref="/database/gw-events" backLabel="Back to Events" />
 	{/if}
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
+	@use '$src/themes/database' as database;
 	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
-	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
 
 	.page {
 		background: var(--card-bg);
@@ -109,31 +104,10 @@
 
 	.loading-state,
 	.error-state {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		min-height: 200px;
-		gap: spacing.$unit-2x;
-		color: var(--text-secondary);
-	}
-
-	.not-found {
-		text-align: center;
-		padding: spacing.$unit-4x;
-
-		h2 {
-			margin-bottom: spacing.$unit;
-		}
-
-		p {
-			color: var(--text-secondary);
-			margin-bottom: spacing.$unit-2x;
-		}
+		@include database.loading-state;
 	}
 
 	.details {
-		display: flex;
-		flex-direction: column;
+		@include database.details;
 	}
 </style>
