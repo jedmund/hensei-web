@@ -1,6 +1,6 @@
 
 <script lang="ts">
-	import { goto } from '$app/navigation'
+
 	import type { Job, JobSkill } from '$lib/types/api/entities'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { jobQueries, jobKeys } from '$lib/api/queries/job.queries'
@@ -59,10 +59,6 @@
 		return groups
 	})
 
-	function handleAddSkill() {
-		goto(localizeHref(`/database/job-skills/new?job=${job.granblueId}`))
-	}
-
 	function handleDeleteClick(skill: JobSkill) {
 		skillToDelete = skill
 		deleteDialogOpen = true
@@ -99,7 +95,7 @@
 		<div class="empty">
 			<p>No skills found for this job</p>
 			{#if canEdit}
-				<Button variant="secondary" onclick={handleAddSkill}>Add Skill</Button>
+				<Button variant="secondary" size="small" fullWidth href={localizeHref(`/database/job-skills/new?job=${job.granblueId}`)}>Add Skill</Button>
 			{/if}
 		</div>
 	{:else}
@@ -118,7 +114,7 @@
 
 		{#if canEdit}
 			<div class="add-skill-section">
-				<Button variant="secondary" onclick={handleAddSkill}>Add Skill</Button>
+				<Button variant="secondary" size="small" fullWidth href={localizeHref(`/database/job-skills/new?job=${job.granblueId}`)}>Add Skill</Button>
 			</div>
 		{/if}
 	{/if}
@@ -190,8 +186,6 @@
 
 	.add-skill-section {
 		padding: spacing.$unit-2x;
-		display: flex;
-		justify-content: center;
 	}
 
 	.delete-message {
