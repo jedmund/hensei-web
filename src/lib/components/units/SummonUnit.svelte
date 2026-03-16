@@ -136,8 +136,8 @@
     }
   }
 
-  // Quick summon badge — visible on main and grid positions, not friend
-  let showQuickSummon = $derived(item && position !== 6)
+  // Quick summon badge — visible on main and grid positions, not friend or subaura
+  let showQuickSummon = $derived(item && position !== undefined && position < 4)
 
   async function toggleQuickSummon(e: MouseEvent) {
     e.stopPropagation()
