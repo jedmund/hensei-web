@@ -215,10 +215,12 @@ describe('remixPartyOptions', () => {
 // ============================================================================
 
 describe('favoritePartyOptions', () => {
+	const favoriteParams = { id: MOCK_PARTY.id, shortcode: MOCK_SHORTCODE }
+
 	it('optimistically sets favorited to true', async () => {
 		const opts = favoritePartyOptions(queryClient)
 
-		await opts.onMutate(MOCK_SHORTCODE)
+		await opts.onMutate(favoriteParams)
 
 		const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
 		expect(cached?.favorited).toBe(true)
@@ -227,7 +229,7 @@ describe('favoritePartyOptions', () => {
 	it('returns snapshot for rollback', async () => {
 		const opts = favoritePartyOptions(queryClient)
 
-		const context = await opts.onMutate(MOCK_SHORTCODE)
+		const context = await opts.onMutate(favoriteParams)
 
 		expect(context.previousParty?.favorited).toBe(false)
 	})
@@ -235,10 +237,10 @@ describe('favoritePartyOptions', () => {
 	it('rolls back on error', async () => {
 		const opts = favoritePartyOptions(queryClient)
 
-		const context = await opts.onMutate(MOCK_SHORTCODE)
+		const context = await opts.onMutate(favoriteParams)
 		expect(getCachedParty(queryClient, MOCK_SHORTCODE)?.favorited).toBe(true)
 
-		opts.onError(new Error('fail'), MOCK_SHORTCODE, context)
+		opts.onError(new Error('fail'), favoriteParams, context)
 
 		expect(getCachedParty(queryClient, MOCK_SHORTCODE)?.favorited).toBe(false)
 	})
@@ -247,7 +249,7 @@ describe('favoritePartyOptions', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = favoritePartyOptions(queryClient)
 
-		opts.onSettled(undefined, undefined, MOCK_SHORTCODE)
+		opts.onSettled(undefined, undefined, favoriteParams)
 
 		const keys = spy.mock.calls.map((c) => c[0].queryKey)
 		expect(keys).toContainEqual(['user', 'favorites'])
@@ -260,13 +262,15 @@ describe('favoritePartyOptions', () => {
 // ============================================================================
 
 describe('unfavoritePartyOptions', () => {
+	const favoriteParams = { id: MOCK_PARTY.id, shortcode: MOCK_SHORTCODE }
+
 	it('optimistically sets favorited to false', async () => {
 		// seed a favorited party
 		const favParty = { ...MOCK_PARTY, favorited: true }
 		seedPartyCache(queryClient, favParty)
 
 		const opts = unfavoritePartyOptions(queryClient)
-		await opts.onMutate(MOCK_SHORTCODE)
+		await opts.onMutate(favoriteParams)
 
 		const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
 		expect(cached?.favorited).toBe(false)
@@ -277,7 +281,7 @@ describe('unfavoritePartyOptions', () => {
 		seedPartyCache(queryClient, favParty)
 
 		const opts = unfavoritePartyOptions(queryClient)
-		const context = await opts.onMutate(MOCK_SHORTCODE)
+		const context = await opts.onMutate(favoriteParams)
 
 		expect(context.previousParty?.favorited).toBe(true)
 	})
@@ -287,10 +291,10 @@ describe('unfavoritePartyOptions', () => {
 		seedPartyCache(queryClient, favParty)
 
 		const opts = unfavoritePartyOptions(queryClient)
-		const context = await opts.onMutate(MOCK_SHORTCODE)
+		const context = await opts.onMutate(favoriteParams)
 		expect(getCachedParty(queryClient, MOCK_SHORTCODE)?.favorited).toBe(false)
 
-		opts.onError(new Error('fail'), MOCK_SHORTCODE, context)
+		opts.onError(new Error('fail'), favoriteParams, context)
 
 		expect(getCachedParty(queryClient, MOCK_SHORTCODE)?.favorited).toBe(true)
 	})
@@ -299,7 +303,7 @@ describe('unfavoritePartyOptions', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = unfavoritePartyOptions(queryClient)
 
-		opts.onSettled(undefined, undefined, MOCK_SHORTCODE)
+		opts.onSettled(undefined, undefined, favoriteParams)
 
 		const keys = spy.mock.calls.map((c) => c[0].queryKey)
 		expect(keys).toContainEqual(['user', 'favorites'])

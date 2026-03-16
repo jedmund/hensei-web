@@ -96,10 +96,15 @@ export function remixPartyOptions(queryClient: QueryClient) {
 	}
 }
 
+export interface FavoriteParams {
+	id: string
+	shortcode: string
+}
+
 export function favoritePartyOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (shortcode: string) => partyAdapter.favorite(shortcode),
-		onMutate: async (shortcode: string) => {
+		mutationFn: ({ id, shortcode }: FavoriteParams) => partyAdapter.favorite(id, shortcode),
+		onMutate: async ({ shortcode }: FavoriteParams) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(shortcode) })
 
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(shortcode))
@@ -113,12 +118,16 @@ export function favoritePartyOptions(queryClient: QueryClient) {
 
 			return { previousParty }
 		},
-		onError: (_err: unknown, shortcode: string, context: { previousParty?: Party } | undefined) => {
+		onError: (
+			_err: unknown,
+			{ shortcode }: FavoriteParams,
+			context: { previousParty?: Party } | undefined
+		) => {
 			if (context?.previousParty) {
 				queryClient.setQueryData(partyKeys.detail(shortcode), context.previousParty)
 			}
 		},
-		onSettled: (_data: unknown, _err: unknown, shortcode: string) => {
+		onSettled: (_data: unknown, _err: unknown, { shortcode }: FavoriteParams) => {
 			queryClient.invalidateQueries({ queryKey: userKeys.favorites() })
 			queryClient.invalidateQueries({ queryKey: partyKeys.detail(shortcode) })
 		}
@@ -127,8 +136,8 @@ export function favoritePartyOptions(queryClient: QueryClient) {
 
 export function unfavoritePartyOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (shortcode: string) => partyAdapter.unfavorite(shortcode),
-		onMutate: async (shortcode: string) => {
+		mutationFn: ({ id, shortcode }: FavoriteParams) => partyAdapter.unfavorite(id, shortcode),
+		onMutate: async ({ shortcode }: FavoriteParams) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(shortcode) })
 
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(shortcode))
@@ -142,12 +151,16 @@ export function unfavoritePartyOptions(queryClient: QueryClient) {
 
 			return { previousParty }
 		},
-		onError: (_err: unknown, shortcode: string, context: { previousParty?: Party } | undefined) => {
+		onError: (
+			_err: unknown,
+			{ shortcode }: FavoriteParams,
+			context: { previousParty?: Party } | undefined
+		) => {
 			if (context?.previousParty) {
 				queryClient.setQueryData(partyKeys.detail(shortcode), context.previousParty)
 			}
 		},
-		onSettled: (_data: unknown, _err: unknown, shortcode: string) => {
+		onSettled: (_data: unknown, _err: unknown, { shortcode }: FavoriteParams) => {
 			queryClient.invalidateQueries({ queryKey: userKeys.favorites() })
 			queryClient.invalidateQueries({ queryKey: partyKeys.detail(shortcode) })
 		}
