@@ -35,6 +35,7 @@
 		visibility: PartyVisibility
 		sharedWithCrew: boolean
 		fullAuto: boolean
+		solo: boolean
 		autoGuard: boolean
 		autoSummon: boolean
 		chargeAttack: boolean
@@ -84,6 +85,7 @@
 	let visibility = $state<PartyVisibility>(initial.visibility)
 	let sharedWithCrew = $state(initial.sharedWithCrew)
 	let fullAuto = $state(initial.fullAuto)
+	let solo = $state(initial.solo)
 	let autoGuard = $state(initial.autoGuard)
 	let autoSummon = $state(initial.autoSummon)
 	let chargeAttack = $state(initial.chargeAttack)
@@ -102,6 +104,7 @@
 			visibility !== initial.visibility ||
 			sharedWithCrew !== initial.sharedWithCrew ||
 			fullAuto !== initial.fullAuto ||
+			solo !== initial.solo ||
 			autoGuard !== initial.autoGuard ||
 			autoSummon !== initial.autoSummon ||
 			chargeAttack !== initial.chargeAttack ||
@@ -122,6 +125,7 @@
 			visibility,
 			sharedWithCrew,
 			fullAuto,
+			solo,
 			autoGuard,
 			autoSummon,
 			chargeAttack,
@@ -164,10 +168,11 @@
 	})
 
 	function handleSettingsChange(
-		field: 'fullAuto' | 'autoGuard' | 'autoSummon' | 'chargeAttack',
+		field: 'fullAuto' | 'solo' | 'autoGuard' | 'autoSummon' | 'chargeAttack',
 		value: boolean
 	) {
 		if (field === 'fullAuto') fullAuto = value
+		else if (field === 'solo') solo = value
 		else if (field === 'autoGuard') autoGuard = value
 		else if (field === 'autoSummon') autoSummon = value
 		else chargeAttack = value
@@ -351,6 +356,7 @@
 
 	<BattleSettingsSection
 		bind:fullAuto
+		bind:solo
 		bind:autoGuard
 		bind:autoSummon
 		bind:chargeAttack
