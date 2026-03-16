@@ -19,6 +19,8 @@
   import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
   import { toast } from 'svelte-sonner'
   import { extractErrorMessage } from '$lib/utils/errors'
+  import quickSummonFilled from '$src/assets/icons/quick-summon/filled.svg'
+  import quickSummonEmpty from '$src/assets/icons/quick-summon/empty.svg'
 
   interface Props {
     item?: GridSummon | undefined
@@ -193,14 +195,14 @@
               class:main={position === -1}
               onclick={toggleQuickSummon}
             >
-              <img class="quick-summon-icon filled" src="/icons/quick_summon/filled.svg" alt={m.details_quick_summon()} />
-              <img class="quick-summon-icon empty" src="/icons/quick_summon/empty.svg" alt={m.details_quick_summon()} />
+              <img class="quick-summon-icon filled" src={quickSummonFilled} alt={m.details_quick_summon()} />
+              <img class="quick-summon-icon empty" src={quickSummonEmpty} alt={m.details_quick_summon()} />
             </button>
           {:else if item?.quickSummon}
             <img
               class="quick-summon static"
               class:main={position === -1}
-              src="/icons/quick_summon/filled.svg"
+              src={quickSummonFilled}
               alt={m.details_quick_summon()}
             />
           {/if}
