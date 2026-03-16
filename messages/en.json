@@ -1294,6 +1294,15 @@
 	"party_using_others_collection": "{username} using {otherUsername}'s collection",
 	"party_remixed": "{username} remixed {otherUsername}'s team",
 
+	"time_just_now": "Just now",
+	"time_minute_ago": "1 minute ago",
+	"time_minutes_ago": "{count} minutes ago",
+	"time_hour_ago": "1 hour ago",
+	"time_hours_ago": "{count} hours ago",
+	"time_yesterday": "Yesterday",
+	"time_days_ago": "{count} days ago",
+	"time_one_week_ago": "1 week ago",
+
 	"section_general": "General",
 	"section_uncap_level": "Uncap Level",
 	"section_sharing": "Sharing",

@@ -1294,6 +1294,15 @@
 	"party_using_others_collection": "{username}が{otherUsername}のコレクションで作成",
 	"party_remixed": "{username}が{otherUsername}の編成をリミックス",
 
+	"time_just_now": "たった今",
+	"time_minute_ago": "1分前",
+	"time_minutes_ago": "{count}分前",
+	"time_hour_ago": "1時間前",
+	"time_hours_ago": "{count}時間前",
+	"time_yesterday": "昨日",
+	"time_days_ago": "{count}日前",
+	"time_one_week_ago": "1週間前",
+
 	"section_general": "一般",
 	"section_uncap_level": "上限解放",
 	"section_sharing": "共有",
