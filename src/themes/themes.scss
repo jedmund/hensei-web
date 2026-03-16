@@ -282,8 +282,10 @@
 	--grid-border-color: #{colors.$grid--border--color--light};
 
 	// Light - Database
+	--table-header-bg: #{colors.$grey-95};
 	--table-row-hover: #{colors.$grey-95};
 	--table-header-hover: #{colors.$grey-90};
+	--table-border: #{colors.$grey-90};
 	--badge-extra-bg: #f3e8ff;
 	--badge-extra-text: #6b21a8;
 	--badge-element-bg: linear-gradient(to right, #fecaca, #fef08a, #bbf7d0, #bfdbfe, #e9d5ff, #fbcfe8);
@@ -723,8 +725,10 @@ html[data-theme='dark'] {
 	--grid-border-color: #{colors.$grid--border--color--dark};
 
 	// Dark - Database
+	--table-header-bg: #{colors.$grey-30};
 	--table-row-hover: #{colors.$grey-30};
 	--table-header-hover: #{colors.$grey-40};
+	--table-border: #{colors.$grey-40};
 	--badge-extra-bg: #3b1f5e;
 	--badge-extra-text: #d8b4fe;
 	--badge-element-bg: linear-gradient(to right, #7f1d1d, #78350f, #14532d, #1e3a5f, #4c1d95, #831843);
