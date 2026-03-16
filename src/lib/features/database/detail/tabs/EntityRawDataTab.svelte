@@ -120,6 +120,7 @@
 
 	.raw-content {
 		background: var(--card-bg);
+		color: var(--text-primary);
 		border: 1px solid var(--border-medium);
 		border-radius: layout.$item-corner;
 		padding: spacing.$unit-2x;
