@@ -867,6 +867,7 @@
 	"crew_score_delete_all_failed": "Failed to delete scores",
 
 	"profile_ingame": "In-game profile",
+	"profile_wiki": "Wiki profile",
 	"profile_tab_teams": "Teams",
 	"profile_tab_favorites": "Favorites",
 	"profile_tab_collection": "Collection",
@@ -995,6 +996,9 @@
 	"settings_granblue_id": "Granblue ID",
 	"settings_granblue_id_subtitle": "Your in-game player ID",
 	"settings_granblue_id_placeholder": "Enter ID",
+	"settings_wiki_profile": "Wiki Profile",
+	"settings_wiki_profile_subtitle": "Your gbf.wiki username",
+	"settings_wiki_profile_placeholder": "Enter username",
 	"settings_gender": "Gender",
 	"settings_gender_subtitle": "Your in-game character",
 	"settings_gender_placeholder": "Select gender",
@@ -1016,6 +1020,8 @@
 
 	"settings_show_granblue_id": "Show Granblue ID on profile",
 	"settings_show_granblue_id_subtitle": "Display your in-game ID on your public profile",
+	"settings_show_wiki_profile": "Show wiki link on profile",
+	"settings_show_wiki_profile_subtitle": "Display a link to your gbf.wiki page on your public profile",
 	"settings_show_crew_tag": "Show crew tag on profile",
 	"settings_show_crew_tag_subtitle": "Display \"{gamertag}\" next to your name",
 	"settings_collection_visibility": "Collection visibility",

@@ -867,6 +867,7 @@
 	"crew_score_delete_all_failed": "貢献度の削除に失敗しました",
 
 	"profile_ingame": "ゲーム内プロフィール",
+	"profile_wiki": "Wikiページ",
 	"profile_tab_teams": "編成",
 	"profile_tab_favorites": "お気に入り",
 	"profile_tab_collection": "コレクション",
@@ -995,6 +996,9 @@
 	"settings_granblue_id": "グランブルーID",
 	"settings_granblue_id_subtitle": "ゲーム内のプレイヤーID",
 	"settings_granblue_id_placeholder": "IDを入力",
+	"settings_wiki_profile": "Wikiユーザー名",
+	"settings_wiki_profile_subtitle": "gbf.wikiでのユーザー名",
+	"settings_wiki_profile_placeholder": "ユーザー名を入力",
 	"settings_gender": "主人公",
 	"settings_gender_subtitle": "ゲーム内の主人公キャラクター",
 	"settings_gender_placeholder": "主人公を選択",
@@ -1016,6 +1020,8 @@
 
 	"settings_show_granblue_id": "プロフィールにグランブルーIDを表示",
 	"settings_show_granblue_id_subtitle": "公開プロフィールにゲーム内IDを表示する",
+	"settings_show_wiki_profile": "プロフィールにWikiリンクを表示",
+	"settings_show_wiki_profile_subtitle": "公開プロフィールにgbf.wikiページへのリンクを表示する",
 	"settings_show_crew_tag": "プロフィールに騎空団タグを表示",
 	"settings_show_crew_tag_subtitle": "名前の横に「{gamertag}」を表示する",
 	"settings_collection_visibility": "コレクションの公開範囲",
