@@ -17,6 +17,7 @@
 	import DetailScaffold, { type DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 
@@ -31,6 +32,7 @@
 
 	// Utils
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
+	import { localizeHref } from '$lib/paraglide/runtime'
 
 	// Types
 	import type { PageData } from './$types'
@@ -111,17 +113,19 @@
 			{/if}
 		</DetailScaffold>
 	{:else}
-		<div class="not-found">
-			<h2>Job Not Found</h2>
-			<p>The job you're looking for could not be found.</p>
-			<Button variant="secondary" size="small" href="/database/jobs">Back to Jobs</Button>
-		</div>
+		<NotFoundPlaceholder
+			title="Job Not Found"
+			message="The job you're looking for could not be found."
+			backHref={localizeHref('/database/jobs')}
+			backLabel="Back to Jobs"
+		/>
 	{/if}
 </div>
 
 <style lang="scss">
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/database' as database;
 
 	.page {
 		background: var(--card-bg);
@@ -135,13 +139,6 @@
 	}
 
 	.details {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.not-found {
-		text-align: center;
-		padding: spacing.$unit * 4;
-		color: var(--text-secondary);
+		@include database.details;
 	}
 </style>

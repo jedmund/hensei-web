@@ -1,7 +1,5 @@
 
 <script lang="ts">
-	import { goto } from '$app/navigation'
-
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 
@@ -13,6 +11,8 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
+	import DetailEntityHeader from '$lib/components/database/DetailEntityHeader.svelte'
+	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 	import SkillTypeBadge from '$lib/components/database/SkillTypeBadge.svelte'
 
 	import { getJobSkillIcon } from '$lib/utils/images'
@@ -70,21 +70,13 @@
 
 	{#if skill}
 		<div class="content">
-			<header class="detail-header">
-				<div class="detail-header-left">
-					<div class="skill-image">
-						<img src={getJobSkillIcon(skill)} alt={displayName} />
-					</div>
-					<div class="detail-header-info">
-						<h2>{displayName}</h2>
-						<div class="meta">
-							{#if skillType}
-								<SkillTypeBadge {skill} />
-							{/if}
-						</div>
-					</div>
-				</div>
-			</header>
+			<DetailEntityHeader imageUrl={getJobSkillIcon(skill)} name={displayName}>
+				{#snippet meta()}
+					{#if skillType}
+						<SkillTypeBadge {skill} />
+					{/if}
+				{/snippet}
+			</DetailEntityHeader>
 
 			<section class="details">
 				<DetailsContainer title="Metadata">
@@ -128,20 +120,19 @@
 	{:else if skillQuery.isLoading}
 		<div class="loading">Loading skill...</div>
 	{:else}
-		<div class="not-found">
-			<h2>Skill Not Found</h2>
-			<p>The job skill you're looking for could not be found.</p>
-			<Button variant="secondary" size="small" href={localizeHref('/database/job-skills')}>
-				Back to Skills
-			</Button>
-		</div>
+		<NotFoundPlaceholder
+			title="Skill Not Found"
+			message="The job skill you're looking for could not be found."
+			backHref={localizeHref('/database/job-skills')}
+			backLabel="Back to Skills"
+		/>
 	{/if}
 </div>
 
 <style lang="scss">
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
+	@use '$src/themes/database' as database;
 
 	.page {
 		background: var(--card-bg);
@@ -154,51 +145,8 @@
 		position: relative;
 	}
 
-	.detail-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: spacing.$unit-2x;
-		padding: 0 spacing.$unit-2x spacing.$unit-2x;
-	}
-
-	.detail-header-left {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit-2x;
-	}
-
-	.skill-image {
-		flex-shrink: 0;
-
-		img {
-			width: 64px;
-			height: auto;
-			border-radius: layout.$item-corner;
-		}
-	}
-
-	.detail-header-info {
-		flex: 1;
-
-		h2 {
-			font-size: typography.$font-xlarge;
-			font-weight: typography.$bold;
-			margin: 0 0 spacing.$unit 0;
-			color: var(--text-primary);
-		}
-
-		.meta {
-			display: flex;
-			flex-direction: row;
-			gap: spacing.$unit;
-			align-items: center;
-		}
-	}
-
 	.details {
-		display: flex;
-		flex-direction: column;
+		@include database.details;
 	}
 
 	.job-link {
@@ -227,20 +175,9 @@
 		color: var(--text-secondary);
 	}
 
-	.loading,
-	.not-found {
+	.loading {
 		text-align: center;
 		padding: spacing.$unit * 4;
 		color: var(--text-secondary);
-	}
-
-	@media (max-width: 768px) {
-		.detail-header {
-			flex-direction: column;
-		}
-
-		.skill-image img {
-			width: 48px;
-		}
 	}
 </style>

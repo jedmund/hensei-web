@@ -14,8 +14,8 @@
 	import { withInitialData } from '$lib/query/ssr'
 
 	// Components
-	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
+	import DatabaseFormHeader from '$lib/components/database/DatabaseFormHeader.svelte'
+	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 
 	// Section Components
 	import JobMetadataSection from '$lib/features/database/jobs/sections/JobMetadataSection.svelte'
@@ -24,6 +24,7 @@
 
 	// Utils
 	import { localizedName } from '$lib/utils/locale'
+	import { localizeHref } from '$lib/paraglide/runtime'
 
 	// Types
 	import type { PageData } from './$types'
@@ -137,18 +138,12 @@
 
 <div class="page">
 	{#if job}
-		<SidebarHeader title="Edit: {localizedName(job.name)}">
-			{#snippet leftAccessory()}
-				<Button variant="secondary" size="small" onclick={handleCancel} disabled={isSaving}>
-					Cancel
-				</Button>
-			{/snippet}
-			{#snippet rightAccessory()}
-				<Button variant="primary" size="small" onclick={saveChanges} disabled={isSaving}>
-					{isSaving ? 'Saving...' : 'Save'}
-				</Button>
-			{/snippet}
-		</SidebarHeader>
+		<DatabaseFormHeader
+			title="Edit: {localizedName(job.name)}"
+			onCancel={handleCancel}
+			onSave={saveChanges}
+			{isSaving}
+		/>
 
 		{#if saveError}
 			<div class="error-banner">{saveError}</div>
@@ -164,18 +159,18 @@
 			<JobFeaturesSection {job} {editMode} bind:editData />
 		</section>
 	{:else}
-		<div class="not-found">
-			<h2>Job Not Found</h2>
-			<p>The job you're looking for could not be found.</p>
-			<Button variant="secondary" size="small" href="/database/jobs">Back to Jobs</Button>
-		</div>
+		<NotFoundPlaceholder
+			title="Job Not Found"
+			message="The job you're looking for could not be found."
+			backHref={localizeHref('/database/jobs')}
+			backLabel="Back to Jobs"
+		/>
 	{/if}
 </div>
 
 <style lang="scss">
 	@use '$src/themes/layout' as layout;
-	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
+	@use '$src/themes/database' as database;
 
 	.page {
 		background: var(--card-bg);
@@ -184,27 +179,14 @@
 	}
 
 	.details {
-		display: flex;
-		flex-direction: column;
+		@include database.details;
 	}
 
 	.error-banner {
-		color: var(--danger);
-		font-size: typography.$font-small;
-		padding: spacing.$unit-2x;
-		background: var(--danger-bg);
+		@include database.error-banner;
 	}
 
 	.success-banner {
-		color: var(--success);
-		font-size: typography.$font-small;
-		padding: spacing.$unit-2x;
-		background: var(--success-bg);
-	}
-
-	.not-found {
-		text-align: center;
-		padding: spacing.$unit * 4;
-		color: var(--text-secondary);
+		@include database.success-banner;
 	}
 </style>

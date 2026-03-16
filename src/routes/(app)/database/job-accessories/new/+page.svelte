@@ -13,8 +13,7 @@
 	import { jobAdapter } from '$lib/api/adapters/job.adapter'
 
 	// Components
-	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
+	import DatabaseFormHeader from '$lib/components/database/DatabaseFormHeader.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 
@@ -85,21 +84,15 @@
 <PageMeta title={m.page_title_db_new({ type: 'Job Accessory' })} description={m.page_desc_home()} />
 
 <div class="page">
-	<SidebarHeader title="New Job Accessory">
-		{#snippet leftAccessory()}
-			<Button variant="secondary" size="small" onclick={handleCancel}>Cancel</Button>
-		{/snippet}
-		{#snippet rightAccessory()}
-			<Button
-				variant="primary"
-				size="small"
-				onclick={handleCreate}
-				disabled={!canCreate || isSaving}
-			>
-				{isSaving ? 'Creating...' : 'Create'}
-			</Button>
-		{/snippet}
-	</SidebarHeader>
+	<DatabaseFormHeader
+		title="New Job Accessory"
+		onCancel={handleCancel}
+		onSave={handleCreate}
+		{isSaving}
+		disabled={!canCreate}
+		saveLabel="Create"
+		savingLabel="Creating..."
+	/>
 
 	{#if saveError}
 		<div class="error-banner">{saveError}</div>
@@ -157,9 +150,8 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/database' as database;
 
 	.page {
 		background: var(--card-bg);
@@ -168,14 +160,10 @@
 	}
 
 	.details {
-		display: flex;
-		flex-direction: column;
+		@include database.details;
 	}
 
 	.error-banner {
-		color: var(--danger);
-		font-size: typography.$font-small;
-		padding: spacing.$unit-2x;
-		background: var(--danger-bg);
+		@include database.error-banner;
 	}
 </style>

@@ -10,8 +10,7 @@
 	import { jobAdapter } from '$lib/api/adapters/job.adapter'
 	import { withInitialData } from '$lib/query/ssr'
 
-	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
+	import DatabaseFormHeader from '$lib/components/database/DatabaseFormHeader.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 
@@ -139,18 +138,12 @@
 
 <div class="page">
 	{#if skill}
-		<SidebarHeader title="Edit: {localizedName(skill.name)}">
-			{#snippet leftAccessory()}
-				<Button variant="secondary" size="small" onclick={handleCancel} disabled={isSaving}>
-					Cancel
-				</Button>
-			{/snippet}
-			{#snippet rightAccessory()}
-				<Button variant="primary" size="small" onclick={saveChanges} disabled={isSaving}>
-					{isSaving ? 'Saving...' : 'Save'}
-				</Button>
-			{/snippet}
-		</SidebarHeader>
+		<DatabaseFormHeader
+			title="Edit: {localizedName(skill.name)}"
+			onCancel={handleCancel}
+			onSave={saveChanges}
+			{isSaving}
+		/>
 
 		{#if saveError}
 			<div class="error-banner">{saveError}</div>
@@ -235,8 +228,8 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/database' as database;
 
 	.page {
 		background: var(--card-bg);
@@ -245,22 +238,15 @@
 	}
 
 	.details {
-		display: flex;
-		flex-direction: column;
+		@include database.details;
 	}
 
 	.error-banner {
-		color: var(--danger);
-		font-size: typography.$font-small;
-		padding: spacing.$unit-2x;
-		background: var(--danger-bg);
+		@include database.error-banner;
 	}
 
 	.success-banner {
-		color: var(--success);
-		font-size: typography.$font-small;
-		padding: spacing.$unit-2x;
-		background: var(--success-bg);
+		@include database.success-banner;
 	}
 
 	.loading,
