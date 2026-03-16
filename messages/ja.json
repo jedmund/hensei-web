@@ -1164,6 +1164,7 @@
 	"skill_slot_locked": "この枠は変更できません",
 	"skill_slot_already_equipped": "このアビリティは別の枠に装備済みです",
 	"skill_slot_select": "アビリティを選択",
+	"skill_slot_empty": "未選択",
 
 	"job_no_job": "ジョブなし",
 

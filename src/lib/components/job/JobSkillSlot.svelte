@@ -115,10 +115,15 @@
 
 {#snippet EmptyState({ slot }: { slot: number })}
 	<div class="empty-content">
-		<div class="placeholder-icon">
-			<Icon name="plus" size={16} />
-		</div>
-		<span class="placeholder-text">{m.skill_slot_select()}</span>
+		{#if editable}
+			<div class="placeholder-icon">
+				<Icon name="plus" size={16} />
+			</div>
+			<span class="placeholder-text">{m.skill_slot_select()}</span>
+		{:else}
+			<div class="placeholder-icon readonly"></div>
+			<span class="placeholder-text">{m.skill_slot_empty()}</span>
+		{/if}
 	</div>
 {/snippet}
 
@@ -253,6 +258,10 @@
 			flex-shrink: 0;
 			color: var(--icon-secondary);
 			transition: all 0.15s ease;
+
+			&.readonly {
+				background: var(--card-bg-disabled);
+			}
 		}
 
 		.placeholder-text {

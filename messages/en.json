@@ -1164,6 +1164,7 @@
 	"skill_slot_locked": "This slot cannot be changed",
 	"skill_slot_already_equipped": "This skill is already equipped in another slot",
 	"skill_slot_select": "Select a skill",
+	"skill_slot_empty": "No skill selected",
 
 	"job_no_job": "No Job",
 
