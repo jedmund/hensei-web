@@ -77,9 +77,9 @@
 
 	"error_something_went_wrong": "Something went wrong",
 	"error_404_title": "Are you in the right skydom?",
-	"error_random_team_or_browse": "Here's a random team.",
-	"error_or": "Or,",
-	"error_browse_teams": "Browse teams",
+	"error_random_team_label": "Here's a random team.",
+	"error_or_browse_gallery": "Or browse teams in the ",
+	"error_gallery": "Gallery",
 
 	"party_segmented_control_characters": "Characters",
 	"party_segmented_control_weapons": "Weapons",

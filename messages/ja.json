@@ -77,9 +77,9 @@
 
 	"error_something_went_wrong": "エラーが発生しました",
 	"error_404_title": "正しい空域にいますか？",
-	"error_random_team_or_browse": "ランダムな編成をどうぞ。",
-	"error_or": "または、",
-	"error_browse_teams": "ギャラリーで編成を探す",
+	"error_random_team_label": "ランダムな編成をどうぞ。",
+	"error_or_browse_gallery": "または",
+	"error_gallery": "ギャラリーで編成を探す",
 
 	"party_segmented_control_characters": "キャラ",
 	"party_segmented_control_weapons": "武器",

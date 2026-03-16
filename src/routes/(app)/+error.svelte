@@ -42,15 +42,15 @@
 
 	{#if is404 && randomParty}
 		<div class="random-team">
-			<p class="random-label" class:ja={isJa}>{m.error_random_team_or_browse()}<br>{m.error_or()} <a href={localizeHref('/teams/explore')} style:color={linkColor}>{m.error_browse_teams()}</a></p>
+			<p class="random-label" class:ja={isJa}>{m.error_random_team_label()}<br>{m.error_or_browse_gallery()} <a href={localizeHref('/teams/explore')} style:color={linkColor}>{m.error_gallery()}</a></p>
 			<div class="random-team-card">
 				<GridRep party={randomParty} />
 			</div>
 		</div>
 	{:else if is404}
-		<a class="browse-link" href={localizeHref('/teams/explore')} style:color={linkColor}>{m.error_browse_teams()}</a>
+		<p class="browse-link">{m.error_or_browse_gallery()} <a href={localizeHref('/teams/explore')} style:color={linkColor}>{m.error_gallery()}</a></p>
 	{:else}
-		<a class="browse-link" href={localizeHref('/teams/explore')}>{m.error_browse_teams()}</a>
+		<a class="browse-link" href={localizeHref('/teams/explore')}>{m.error_gallery()}</a>
 	{/if}
 </div>
 
@@ -88,14 +88,18 @@
 	}
 
 	.browse-link {
-		color: var(--link);
-		text-decoration: none;
-		font-weight: typography.$medium;
+		color: var(--text-secondary);
 		font-size: typography.$font-body;
 		margin-top: spacing.$unit-3x;
 
-		&:hover {
-			text-decoration: underline;
+		a {
+			color: var(--link);
+			text-decoration: none;
+			font-weight: typography.$medium;
+
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 	}
 
