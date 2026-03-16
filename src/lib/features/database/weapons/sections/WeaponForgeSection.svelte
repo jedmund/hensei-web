@@ -130,22 +130,22 @@
 			margin: spacing.$unit 0;
 
 			&.wind {
-				background: var(--wind-nav-bg);
+				background: var(--wind-nav-hover-bg);
 			}
 			&.fire {
-				background: var(--fire-nav-bg);
+				background: var(--fire-nav-hover-bg);
 			}
 			&.water {
-				background: var(--water-nav-bg);
+				background: var(--water-nav-hover-bg);
 			}
 			&.earth {
-				background: var(--earth-nav-bg);
+				background: var(--earth-nav-hover-bg);
 			}
 			&.light {
-				background: var(--light-button-bg);
+				background: var(--light-nav-hover-bg);
 			}
 			&.dark {
-				background: var(--dark-button-bg);
+				background: var(--dark-nav-hover-bg);
 			}
 			&.null {
 				background: var(--card-bg-hover);
