@@ -30,6 +30,7 @@
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
+	import { toast } from 'svelte-sonner'
 	import { getWeaponGridImage, getWeaponImage as getWeaponImageUrl } from '$lib/utils/images'
 	import { getElementLabel, ELEMENT_DISPLAY_ORDER } from '$lib/utils/element'
 	import {
@@ -160,6 +161,31 @@
 		return images
 	})
 
+	// Poll the batch download status until it completes or fails
+	async function pollDownloadStatus(weaponId: string): Promise<void> {
+		const maxAttempts = 60
+		for (let i = 0; i < maxAttempts; i++) {
+			await new Promise((r) => setTimeout(r, 2000))
+			const status = await entityAdapter.getWeaponDownloadStatus(weaponId)
+			if (status.status === 'completed') {
+				toast.success(`Downloaded ${status.imagesDownloaded ?? ''} images`)
+				return
+			}
+			if (status.status === 'failed') {
+				toast.error(status.error ?? 'Download failed')
+				return
+			}
+		}
+		toast.error('Download timed out')
+	}
+
+	// Kick off batch download and poll for completion
+	async function batchDownload(weaponId: string, options: { force?: boolean; size?: string }) {
+		toast.info('Downloading images…')
+		await entityAdapter.downloadWeaponImages(weaponId, options)
+		await pollDownloadStatus(weaponId)
+	}
+
 	// Image download handlers
 	async function handleDownloadImage(
 		size: string,
@@ -169,12 +195,11 @@
 		if (!weapon?.id) return
 
 		if (weapon.element === 0) {
-			// Element-changeable weapons: use batch endpoint which handles element variants
-			await entityAdapter.downloadWeaponImages(weapon.id, { force, size })
+			await batchDownload(weapon.id, { force, size })
 		} else {
-			// For weapons, '01' means base (no transformation suffix)
 			const trans = transformation === '01' ? undefined : transformation
 			await entityAdapter.downloadWeaponImage(weapon.id, size, trans, force)
+			toast.success('Image downloaded')
 		}
 	}
 
@@ -182,30 +207,27 @@
 		if (!weapon?.id) return
 
 		if (weapon.element === 0) {
-			// Element-changeable weapons: use batch endpoint which handles element variants
-			await entityAdapter.downloadWeaponImages(weapon.id, { force })
+			await batchDownload(weapon.id, { force })
 		} else {
 			const trans = pose === '01' ? undefined : pose
-			// Download all sizes for this pose
 			for (const size of weaponSizes) {
 				await entityAdapter.downloadWeaponImage(weapon.id, size, trans, force)
 			}
+			toast.success('Images downloaded')
 		}
 	}
 
 	async function handleDownloadAllImages(force: boolean) {
 		if (!weapon?.id) return
-		await entityAdapter.downloadWeaponImages(weapon.id, { force })
+		await batchDownload(weapon.id, { force })
 	}
 
 	async function handleDownloadSize(size: string) {
 		if (!weapon?.id) return
 
 		if (weapon.element === 0) {
-			// Element-changeable weapons: use batch endpoint which handles element variants
-			await entityAdapter.downloadWeaponImages(weapon.id, { force: false, size })
+			await batchDownload(weapon.id, { force: false, size })
 		} else {
-			// Download this size for all available transformations
 			const transformations: (string | undefined)[] = [undefined]
 			if (weapon.uncap?.transcendence) {
 				transformations.push('02', '03')
@@ -214,6 +236,7 @@
 			for (const trans of transformations) {
 				await entityAdapter.downloadWeaponImage(weapon.id, size, trans, false)
 			}
+			toast.success('Images downloaded')
 		}
 	}
 
