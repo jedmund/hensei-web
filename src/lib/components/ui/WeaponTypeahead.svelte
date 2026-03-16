@@ -193,29 +193,27 @@
 			{/if}
 		</div>
 
-		<Combobox.Portal>
-			<Combobox.Content class="combobox-content">
-				<Combobox.Viewport>
-					{#each searchResults as weapon (weapon.granblueId)}
-						<Combobox.Item value={weapon.granblueId} label={weapon.label} class="combobox-item">
-							{#snippet children({ selected })}
-								<img
-									src={getWeaponGridImage(weapon.granblueId, weapon.element)}
-									alt=""
-									class="item-image"
-								/>
-								<span class="item-label">{weapon.label}</span>
-								{#if selected}
-									<span class="item-check">
-										<Icon name="check" size={14} />
-									</span>
-								{/if}
-							{/snippet}
-						</Combobox.Item>
-					{/each}
-				</Combobox.Viewport>
-			</Combobox.Content>
-		</Combobox.Portal>
+		<Combobox.Content class="combobox-content">
+			<Combobox.Viewport>
+				{#each searchResults as weapon (weapon.granblueId)}
+					<Combobox.Item value={weapon.granblueId} label={weapon.label} class="combobox-item">
+						{#snippet children({ selected })}
+							<img
+								src={getWeaponGridImage(weapon.granblueId, weapon.element)}
+								alt=""
+								class="item-image"
+							/>
+							<span class="item-label">{weapon.label}</span>
+							{#if selected}
+								<span class="item-check">
+									<Icon name="check" size={14} />
+								</span>
+							{/if}
+						{/snippet}
+					</Combobox.Item>
+				{/each}
+			</Combobox.Viewport>
+		</Combobox.Content>
 	</Combobox.Root>
 </div>
 

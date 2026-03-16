@@ -193,29 +193,27 @@
 			{/if}
 		</div>
 
-		<Combobox.Portal>
-			<Combobox.Content class="combobox-content">
-				<Combobox.Viewport>
-					{#each searchResults as character (character.granblueId)}
-						<Combobox.Item value={character.granblueId} label={character.label} class="combobox-item">
-							{#snippet children({ selected })}
-								<img
-									src={getCharacterImage(character.granblueId, 'square', '01')}
-									alt=""
-									class="item-image"
-								/>
-								<span class="item-label">{character.label}</span>
-								{#if selected}
-									<span class="item-check">
-										<Icon name="check" size={14} />
-									</span>
-								{/if}
-							{/snippet}
-						</Combobox.Item>
-					{/each}
-				</Combobox.Viewport>
-			</Combobox.Content>
-		</Combobox.Portal>
+		<Combobox.Content class="combobox-content">
+			<Combobox.Viewport>
+				{#each searchResults as character (character.granblueId)}
+					<Combobox.Item value={character.granblueId} label={character.label} class="combobox-item">
+						{#snippet children({ selected })}
+							<img
+								src={getCharacterImage(character.granblueId, 'square', '01')}
+								alt=""
+								class="item-image"
+							/>
+							<span class="item-label">{character.label}</span>
+							{#if selected}
+								<span class="item-check">
+									<Icon name="check" size={14} />
+								</span>
+							{/if}
+						{/snippet}
+					</Combobox.Item>
+				{/each}
+			</Combobox.Viewport>
+		</Combobox.Content>
 	</Combobox.Root>
 </div>
 
