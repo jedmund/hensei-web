@@ -15,7 +15,7 @@
 
 	const currentUser = $derived($page.data?.currentUser as UserCookie | null)
 	const userElement = $derived(currentUser?.element ?? '')
-	const linkColor = $derived(userElement ? `var(--${userElement}-bg)` : 'var(--link)')
+	const linkColor = $derived(userElement ? `var(--${userElement}-text)` : 'var(--link)')
 
 	$effect(() => {
 		if (!is404) return
