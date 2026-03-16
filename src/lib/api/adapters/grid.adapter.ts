@@ -450,7 +450,14 @@ export class GridAdapter extends BaseAdapter {
 	}): Promise<GridSummon> {
 		return this.request<GridSummon>('/grid_summons/update_quick_summon', {
 			method: 'POST',
-			body: params
+			body: {
+				summon: {
+					id: params.id,
+					party_id: params.partyId,
+					position: params.position,
+					quick_summon: params.quickSummon
+				}
+			}
 		})
 	}
 
