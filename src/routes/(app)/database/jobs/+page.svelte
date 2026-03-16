@@ -361,6 +361,7 @@
 	:global(.database-grid-theme) {
 		font-size: typography.$font-small;
 		width: 100%;
+		color: var(--text-primary);
 	}
 
 	:global(.wx-grid .wx-header) {
@@ -401,6 +402,7 @@
 		display: flex;
 		align-items: center;
 		border: none;
+		color: var(--text-primary);
 		--wx-table-cell-border: none;
 	}
 
