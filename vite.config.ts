@@ -4,6 +4,9 @@ import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
+	define: {
+		__BUILD_TIMESTAMP__: JSON.stringify(Date.now().toString())
+	},
 	resolve: {
 		alias: {
 			$src: fileURLToPath(new URL('./src', import.meta.url)),

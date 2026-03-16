@@ -1,3 +1,5 @@
+declare const __BUILD_TIMESTAMP__: string
+
 declare module '*.jpg'
 
 declare module '*.svg' {

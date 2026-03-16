@@ -8,6 +8,8 @@
 import { getImageBaseUrl } from '$lib/api/adapters/config'
 import { getElementKey } from '$lib/utils/element'
 
+const BUILD_TIMESTAMP = __BUILD_TIMESTAMP__
+
 export type ResourceType = 'character' | 'weapon' | 'summon'
 export type ImageVariant = 'main' | 'tall' | 'grid' | 'square' | 'detail' | 'base' | 'wide'
 
@@ -518,7 +520,7 @@ export function getRaidImage(
 ): string {
 	if (!slug) return getGenericPlaceholder()
 	const directory = `raid-${variant}`
-	return `${getBasePath()}/${directory}/${slug}.png`
+	return `${getBasePath()}/${directory}/${slug}.png?v=${BUILD_TIMESTAMP}`
 }
 
 /**
