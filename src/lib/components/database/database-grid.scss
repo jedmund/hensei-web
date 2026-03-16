@@ -1,0 +1,162 @@
+@use '$src/themes/effects' as effects;
+@use '$src/themes/layout' as layout;
+@use '$src/themes/spacing' as spacing;
+@use '$src/themes/typography' as typography;
+
+// Global styles for SVAR Grid elements
+:global(.database-grid-theme) {
+	font-size: typography.$font-small;
+	width: 100%;
+	color: var(--text-primary);
+}
+
+// Fixed column border — must be on :root so scoped component styles can resolve it
+:global(:root) {
+	--wx-table-fixed-column-border: 1px solid var(--border-subtle);
+}
+
+:global(.database-grid .wx-table-box) {
+	width: 100%;
+	max-width: 100%;
+}
+
+:global(.wx-grid .wx-header) {
+	background: var(--bar-bg);
+}
+
+:global(.wx-grid .wx-h-row) {
+	height: auto !important;
+	background: var(--bar-bg);
+	border-bottom: 1px solid var(--border-medium);
+}
+
+:global(.wx-grid .wx-h-row .wx-cell) {
+	box-sizing: border-box;
+	background: var(--bar-bg);
+	font-weight: typography.$bold;
+	color: var(--text-secondary);
+	border-radius: layout.$item-corner;
+	transition: background-color 0.15s ease;
+	cursor: pointer;
+
+	&:hover {
+		background: var(--table-header-hover);
+	}
+}
+
+:global(.wx-grid .wx-h-row .wx-sort) {
+	height: auto;
+	margin-left: spacing.$unit-half;
+	flex-shrink: 0;
+	align-self: center;
+}
+
+:global(.wx-grid .wx-cell) {
+	padding: spacing.$unit * 0.5;
+	vertical-align: middle;
+	display: flex;
+	align-items: center;
+	border: none;
+	color: var(--text-primary);
+	--wx-table-cell-border: none;
+}
+
+:global(.wx-grid .wx-cell:first-child) {
+	padding-left: spacing.$unit-2x;
+}
+
+:global(.wx-grid .wx-cell:not(:last-child)) {
+	border-right: none;
+}
+
+:global(.wx-grid .wx-row:hover) {
+	background: var(--table-row-hover);
+	cursor: pointer;
+}
+
+:global(.wx-grid .wx-cell:nth-child(2)) {
+	white-space: normal;
+	line-height: 1.3;
+}
+
+// Fixed/pinned column backgrounds — need opaque bg so scrolling content doesn't show through
+:global(.wx-grid .wx-cell.wx-fixed),
+:global(.wx-grid .wx-cell.wx-shadow) {
+	background: var(--card-bg);
+	z-index: 1;
+}
+
+:global(.wx-grid .wx-h-row .wx-cell.wx-fixed),
+:global(.wx-grid .wx-h-row .wx-cell.wx-shadow) {
+	background: var(--bar-bg);
+	border-radius: 0;
+}
+
+:global(.wx-grid .wx-row:hover .wx-cell.wx-fixed),
+:global(.wx-grid .wx-row:hover .wx-cell.wx-shadow) {
+	background: var(--table-row-hover);
+}
+
+// Element color classes
+:global(.element-fire) {
+	color: var(--fire-text);
+}
+:global(.element-water) {
+	color: var(--water-text);
+}
+:global(.element-earth) {
+	color: var(--earth-text);
+}
+:global(.element-wind) {
+	color: var(--wind-text);
+}
+:global(.element-light) {
+	color: var(--light-text);
+}
+:global(.element-dark) {
+	color: var(--dark-text);
+}
+
+// Override wx-svelte-menu to match our design system
+:global(.wx-menu) {
+	--wx-border-radius: #{layout.$card-corner};
+	background: var(--menu-bg) !important;
+	border: 1px solid var(--border-subtle);
+	border-radius: layout.$card-corner;
+	box-shadow: var(--shadow-md) !important;
+	padding: spacing.$unit-half !important;
+	z-index: effects.$z-modal !important;
+	min-width: calc(spacing.$unit * 22.5);
+	overflow: hidden;
+}
+
+:global(.wx-menu .wx-item) {
+	font-family: 'AGrot', system-ui, sans-serif;
+	font-size: typography.$font-regular;
+	color: var(--menu-text);
+	padding: spacing.$unit spacing.$unit-2x;
+	border-radius: layout.$item-corner-small;
+	height: auto;
+	line-height: normal;
+
+	&:hover {
+		background: var(--menu-bg-item-hover) !important;
+	}
+}
+
+:global(.wx-menu .wx-item .wx-value) {
+	color: var(--menu-text);
+}
+
+:global(.wx-menu .wx-item .wx-icon) {
+	color: var(--text-secondary);
+}
+
+:global(.wx-menu .wx-item .wx-hidden) {
+	color: var(--menu-text-disabled);
+}
+
+:global(.wx-menu .wx-separator) {
+	border-top-color: var(--menu-separator);
+	margin: spacing.$unit-half 0;
+}
