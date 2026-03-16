@@ -56,6 +56,8 @@
 		neutralViewToggle?: boolean
 		/** Whether to show contained background styling (default: true) */
 		contained?: boolean
+		/** Whether to show the search input (default: true) */
+		showSearch?: boolean
 		/** Search query for plaintext name search */
 		searchQuery?: string
 	}
@@ -122,6 +124,7 @@
 		element,
 		neutralViewToggle = false,
 		contained = true,
+		showSearch = true,
 		searchQuery = $bindable('')
 	}: Props = $props()
 
@@ -405,12 +408,14 @@
 
 <div class="filters-container" class:contained style:--accent-color={element ? `var(--${element}-button-bg)` : undefined}>
 	<div class="filters">
-		<input
-			type="text"
-			class="search-input"
-			placeholder={m.placeholder_search()}
-			bind:value={searchQuery}
-		/>
+		{#if showSearch}
+			<input
+				type="text"
+				class="search-input"
+				placeholder={m.placeholder_search()}
+				bind:value={searchQuery}
+			/>
+		{/if}
 		{#each visibleFilters as filter (filter.key)}
 			<MultiSelect
 				options={filter.options}

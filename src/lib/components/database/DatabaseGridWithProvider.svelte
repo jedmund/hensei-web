@@ -467,6 +467,7 @@
 				bind:seasonFilters
 				onFiltersChange={handleFiltersChange}
 				showSort={false}
+				showSearch={false}
 				contained={false}
 			/>
 		</div>
