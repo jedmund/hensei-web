@@ -591,6 +591,7 @@
 				input {
 					padding: spacing.$unit spacing.$unit-2x;
 					background: var(--input-bound-bg);
+					color: var(--text-primary);
 					border: none;
 					border-radius: layout.$item-corner;
 					font-family: 'AGrot', system-ui, sans-serif;
