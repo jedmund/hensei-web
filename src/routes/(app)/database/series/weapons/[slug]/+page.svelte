@@ -33,7 +33,10 @@
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
 
 <div class="page">
-	<DatabasePageHeader title="Weapon Series" backHref="/database/weapons?view=series">
+	<DatabasePageHeader title="Weapon Series">
+		{#snippet leftAction()}
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/weapons?view=series">Back</Button>
+		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
 				<Button variant="ghost" size="small" href={editUrl}>Edit</Button>

@@ -16,11 +16,11 @@
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import DetailEntityHeader from '$lib/components/database/DetailEntityHeader.svelte'
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
+	import AssociatedEntityLink from '$lib/components/database/AssociatedEntityLink.svelte'
 
 	// Utils
 	import { getAccessoryTypeName } from '$lib/utils/jobAccessoryUtils'
 	import { getJobAccessoryImageUrl } from '$lib/utils/jobAccessoryUtils'
-	import { getJobIconUrl } from '$lib/utils/jobUtils'
 	import { localizedName } from '$lib/utils/locale'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { getRarityLabel } from '$lib/utils/rarity'
@@ -65,7 +65,10 @@
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
 
 <div class="page">
-	<DatabasePageHeader title="Job Accessory" backHref="/database/jobs?view=accessories">
+	<DatabasePageHeader title="Job Accessory">
+		{#snippet leftAction()}
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/jobs?view=accessories">Back</Button>
+		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
 				<Button variant="secondary" size="small" href={editUrl}>Edit</Button>
@@ -111,14 +114,7 @@
 				<DetailsContainer title="Associated Job">
 					<DetailItem label="Job">
 						{#if accessory.job}
-							<a href={localizeHref(`/database/jobs/${accessory.job.granblueId}`)} class="job-link">
-								<img
-									src={getJobIconUrl(accessory.job.granblueId)}
-									alt=""
-									class="job-link-icon"
-								/>
-								{localizedName(accessory.job.name)}
-							</a>
+							<AssociatedEntityLink type="job" entity={accessory.job} />
 						{:else}
 							<span class="empty-value">—</span>
 						{/if}
@@ -175,28 +171,6 @@
 			background: color-mix(in srgb, var(--fire-button-bg) 20%, transparent);
 			color: var(--fire-text);
 		}
-	}
-
-	.job-link {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit-half;
-		padding: spacing.$unit-half;
-		border-radius: layout.$item-corner;
-		color: var(--blue);
-		text-decoration: none;
-		transition: background-color 0.15s ease;
-
-		&:hover {
-			background: var(--button-contained-bg-hover);
-		}
-	}
-
-	.job-link-icon {
-		width: auto;
-		height: 24px;
-		object-fit: contain;
-		border-radius: layout.$item-corner-small;
 	}
 
 	.empty-value {

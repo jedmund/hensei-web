@@ -14,9 +14,9 @@
 	import DetailEntityHeader from '$lib/components/database/DetailEntityHeader.svelte'
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 	import SkillTypeBadge from '$lib/components/database/SkillTypeBadge.svelte'
+	import AssociatedEntityLink from '$lib/components/database/AssociatedEntityLink.svelte'
 
 	import { getJobSkillIcon } from '$lib/utils/images'
-	import { getJobIconUrl } from '$lib/utils/jobUtils'
 	import { getSkillCategoryName, getSkillCategoryColor, getSkillColorName } from '$lib/utils/jobUtils'
 	import { localizedName } from '$lib/utils/locale'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -60,7 +60,10 @@
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
 
 <div class="page">
-	<DatabasePageHeader title="Job Skill" backHref="/database/job-skills">
+	<DatabasePageHeader title="Job Skill">
+		{#snippet leftAction()}
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/job-skills">Back</Button>
+		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
 				<Button variant="secondary" size="small" href={editUrl}>Edit</Button>
@@ -102,14 +105,7 @@
 				<DetailsContainer title="Associated Job">
 					<DetailItem label="Job">
 						{#if skill.job}
-							<a href={localizeHref(`/database/jobs/${skill.job.granblueId}`)} class="job-link">
-								<img
-									src={getJobIconUrl(skill.job.granblueId)}
-									alt=""
-									class="job-link-icon"
-								/>
-								{localizedName(skill.job.name)}
-							</a>
+							<AssociatedEntityLink type="job" entity={skill.job} />
 						{:else}
 							<span class="empty-value">—</span>
 						{/if}
@@ -149,27 +145,6 @@
 		@include database.details;
 	}
 
-	.job-link {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit-half;
-		padding: spacing.$unit-half;
-		border-radius: layout.$item-corner;
-		color: var(--text-primary);
-		text-decoration: none;
-		transition: background-color 0.15s ease;
-
-		&:hover {
-			background: var(--button-contained-bg-hover);
-		}
-	}
-
-	.job-link-icon {
-		width: auto;
-		height: 24px;
-		object-fit: contain;
-		border-radius: layout.$item-corner-small;
-	}
 
 	.empty-value {
 		color: var(--text-secondary);

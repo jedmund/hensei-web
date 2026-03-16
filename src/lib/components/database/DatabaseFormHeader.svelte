@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
+	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 
 	interface Props {
@@ -23,13 +23,13 @@
 	}: Props = $props()
 </script>
 
-<SidebarHeader {title}>
-	{#snippet leftAccessory()}
+<DatabasePageHeader {title}>
+	{#snippet leftAction()}
 		<Button variant="secondary" size="small" onclick={onCancel}>Cancel</Button>
 	{/snippet}
-	{#snippet rightAccessory()}
+	{#snippet rightAction()}
 		<Button variant="primary" size="small" onclick={onSave} disabled={disabled || isSaving}>
 			{isSaving ? savingLabel : saveLabel}
 		</Button>
 	{/snippet}
-</SidebarHeader>
+</DatabasePageHeader>

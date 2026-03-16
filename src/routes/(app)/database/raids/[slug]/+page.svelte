@@ -135,7 +135,10 @@
 </script>
 
 <div class="page">
-	<DatabasePageHeader title="Raid" backHref="/database/raids">
+	<DatabasePageHeader title="Raid">
+		{#snippet leftAction()}
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/raids">Back</Button>
+		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
 				<Button variant="secondary" size="small" href={editUrl}>Edit</Button>

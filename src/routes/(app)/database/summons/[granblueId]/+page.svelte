@@ -186,7 +186,10 @@
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
 
 <div class="page">
-	<DatabasePageHeader title="Summon" backHref={getListUrl('summons')}>
+	<DatabasePageHeader title="Summon">
+		{#snippet leftAction()}
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href={getListUrl('summons')}>Back</Button>
+		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
 				<Button variant="element-ghost" element={elementName} size="small" href={editUrl}>Edit</Button>

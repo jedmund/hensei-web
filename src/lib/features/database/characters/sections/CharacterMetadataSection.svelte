@@ -6,10 +6,9 @@
   import Select from '$lib/components/ui/Select.svelte'
   import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
   import { getRarityLabel, getRarityOptions } from '$lib/utils/rarity'
-  import { getWeaponImage } from '$lib/utils/images'
+  import AssociatedEntityLink from '$lib/components/database/AssociatedEntityLink.svelte'
   import { CHARACTER_SEASON_NAMES, CHARACTER_SERIES_NAMES, getSeasonName, getSeriesNames } from '$lib/types/enums'
   import { localizedName } from '$lib/utils/locale'
-  import { localizeHref } from '$lib/paraglide/runtime'
 
   interface Props {
     character: any
@@ -106,14 +105,7 @@
     />
     {#if character.recruitedBy}
       <DetailItem label="Recruited By">
-        <a href={localizeHref(`/database/weapons/${character.recruitedBy.granblueId}`)} class="recruited-by-link">
-          <img
-            src={getWeaponImage(character.recruitedBy.granblueId, 'square')}
-            alt={localizedName(character.recruitedBy.name)}
-            class="recruited-by-image"
-          />
-          <span class="recruited-by-name">{localizedName(character.recruitedBy.name)}</span>
-        </a>
+        <AssociatedEntityLink type="weapon" entity={character.recruitedBy} />
       </DetailItem>
       <DetailItem
         label="Promotions"
@@ -160,14 +152,7 @@
     {/if}
     {#if character.recruitedBy}
       <DetailItem label="Recruited By">
-        <a href={localizeHref(`/database/weapons/${character.recruitedBy.granblueId}`)} class="recruited-by-link">
-          <img
-            src={getWeaponImage(character.recruitedBy.granblueId, 'square')}
-            alt={localizedName(character.recruitedBy.name)}
-            class="recruited-by-image"
-          />
-          <span class="recruited-by-name">{localizedName(character.recruitedBy.name)}</span>
-        </a>
+        <AssociatedEntityLink type="weapon" entity={character.recruitedBy} />
       </DetailItem>
       <DetailItem
         label="Promotions"
@@ -180,34 +165,4 @@
   {/if}
 </DetailsContainer>
 
-<style lang="scss">
-  @use '$src/themes/spacing' as spacing;
-  @use '$src/themes/typography' as typography;
-  @use '$src/themes/layout' as layout;
-
-  .recruited-by-link {
-    display: flex;
-    align-items: center;
-    gap: spacing.$unit-half;
-    padding: spacing.$unit-half;
-    border-radius: layout.$item-corner;
-    text-decoration: none;
-    color: var(--text-primary);
-    transition: background-color 0.15s ease;
-
-    &:hover {
-      background: var(--button-contained-bg-hover);
-    }
-  }
-
-  .recruited-by-image {
-    width: 32px;
-    height: 32px;
-    border-radius: layout.$item-corner-small;
-  }
-
-  .recruited-by-name {
-    font-size: typography.$font-regular;
-  }
-</style>
 

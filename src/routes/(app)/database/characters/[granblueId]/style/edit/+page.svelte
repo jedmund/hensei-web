@@ -271,7 +271,10 @@
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
 
 <div class="page">
-	<DatabasePageHeader title="Edit Character" backHref={`/database/characters/${character?.granblueId}/style`}>
+	<DatabasePageHeader title="Edit Character">
+		{#snippet leftAction()}
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href={`/database/characters/${character?.granblueId}/style`}>Back</Button>
+		{/snippet}
 		{#snippet rightAction()}
 			<Button variant="element-ghost" element={elementName} size="small" onclick={saveChanges} disabled={isSaving}>
 				{isSaving ? 'Saving...' : 'Save'}

@@ -9,8 +9,7 @@
 	import { getGenderLabel, getGenderOptions } from '$lib/utils/gender'
 	import { getProficiencyOptions } from '$lib/utils/proficiency'
 	import { getElementLabel } from '$lib/utils/element'
-	import { getCharacterImage } from '$lib/utils/images'
-	import { localizeHref } from '$lib/paraglide/runtime'
+	import AssociatedEntityLink from '$lib/components/database/AssociatedEntityLink.svelte'
 
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -130,47 +129,10 @@
 			{/if}
 			{#if character.baseCharacter}
 				<DetailItem label="Base Character">
-					<a href={localizeHref(`/database/characters/${character.baseCharacter.granblueId}`)} class="base-character-link">
-						<img
-							src={getCharacterImage(character.baseCharacter.granblueId, 'square', '01')}
-							alt={character.baseCharacter.name?.en || 'Base character'}
-							class="base-character-image"
-						/>
-						<span class="base-character-name">{character.baseCharacter.name?.en}</span>
-					</a>
+					<AssociatedEntityLink type="character" entity={character.baseCharacter} />
 				</DetailItem>
 			{/if}
 		{/if}
 	{/if}
 </DetailsContainer>
 
-<style lang="scss">
-	@use '$src/themes/layout' as layout;
-	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
-
-	.base-character-link {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit-half;
-		padding: spacing.$unit-half;
-		border-radius: layout.$item-corner;
-		text-decoration: none;
-		color: var(--text-primary);
-		transition: background-color 0.15s ease;
-
-		&:hover {
-			background: var(--button-contained-bg-hover);
-		}
-	}
-
-	.base-character-image {
-		width: 32px;
-		height: 32px;
-		border-radius: layout.$item-corner-small;
-	}
-
-	.base-character-name {
-		font-size: typography.$font-regular;
-	}
-</style>

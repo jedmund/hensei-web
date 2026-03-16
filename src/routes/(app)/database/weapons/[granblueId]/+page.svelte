@@ -272,7 +272,10 @@
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
 
 <div class="page">
-	<DatabasePageHeader title="Weapon" backHref={getListUrl('weapons')}>
+	<DatabasePageHeader title="Weapon">
+		{#snippet leftAction()}
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href={getListUrl('weapons')}>Back</Button>
+		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
 				<Button variant="element-ghost" element={elementName} size="small" href={editUrl}>Edit</Button>

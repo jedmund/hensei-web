@@ -5,8 +5,7 @@
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import CharacterTypeahead from '$lib/components/ui/CharacterTypeahead.svelte'
 	import { PROMOTION_NAMES, getPromotionNames } from '$lib/types/enums'
-	import { getCharacterImage } from '$lib/utils/images'
-	import { localizeHref } from '$lib/paraglide/runtime'
+	import AssociatedEntityLink from '$lib/components/database/AssociatedEntityLink.svelte'
 
 	interface Props {
 		weapon: any
@@ -60,14 +59,7 @@
 		/>
 		<DetailItem label="Recruits" sublabel="Character recruited by this weapon">
 			{#if weapon.recruits}
-				<a href={localizeHref(`/database/characters/${weapon.recruits.granblueId}`)} class="recruits-link">
-					<img
-						src={getCharacterImage(weapon.recruits.granblueId, 'square', '01')}
-						alt={weapon.recruits.name?.en || 'Recruited character'}
-						class="recruits-image"
-					/>
-					<span class="recruits-name">{weapon.recruits.name?.en}</span>
-				</a>
+				<AssociatedEntityLink type="character" entity={weapon.recruits} />
 			{:else}
 				<span class="empty-value">—</span>
 			{/if}
@@ -75,33 +67,3 @@
 	{/if}
 </DetailsContainer>
 
-<style lang="scss">
-	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
-	@use '$src/themes/layout' as layout;
-
-	.recruits-link {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit-half;
-		padding: spacing.$unit-half;
-		border-radius: layout.$item-corner;
-		text-decoration: none;
-		color: var(--text-primary);
-		transition: background-color 0.15s ease;
-
-		&:hover {
-			background: var(--button-contained-bg-hover);
-		}
-	}
-
-	.recruits-image {
-		width: 32px;
-		height: 32px;
-		border-radius: layout.$item-corner-small;
-	}
-
-	.recruits-name {
-		font-size: typography.$font-regular;
-	}
-</style>

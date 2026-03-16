@@ -83,7 +83,10 @@
 <PageMeta title="New Weapon Series" description={m.page_desc_home()} />
 
 <div class="page">
-	<DatabasePageHeader title="New Weapon Series" backHref="/database/weapons?view=series">
+	<DatabasePageHeader title="New Weapon Series">
+		{#snippet leftAction()}
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/weapons?view=series">Back</Button>
+		{/snippet}
 		{#snippet rightAction()}
 			<Button variant="ghost" size="small" onclick={createSeries} disabled={isSaving}>
 				{isSaving ? 'Creating...' : 'Create'}

@@ -113,7 +113,10 @@
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
 
 <div class="page">
-	<DatabasePageHeader title="Edit Weapon Series" backHref={`/database/series/weapons/${series?.slug}`}>
+	<DatabasePageHeader title="Edit Weapon Series">
+		{#snippet leftAction()}
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href={`/database/series/weapons/${series?.slug}`}>Back</Button>
+		{/snippet}
 		{#snippet rightAction()}
 			<Button variant="ghost" size="small" onclick={saveChanges} disabled={isSaving}>
 				{isSaving ? 'Saving...' : 'Save'}

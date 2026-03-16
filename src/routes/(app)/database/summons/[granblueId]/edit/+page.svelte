@@ -212,7 +212,10 @@
 </script>
 
 <div class="page">
-	<DatabasePageHeader title="Edit Summon" backHref={`/database/summons/${summon?.granblueId}`}>
+	<DatabasePageHeader title="Edit Summon">
+		{#snippet leftAction()}
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href={`/database/summons/${summon?.granblueId}`}>Back</Button>
+		{/snippet}
 		{#snippet rightAction()}
 			<Button variant="element-ghost" element={elementName} size="small" onclick={saveChanges} disabled={isSaving}>
 				{isSaving ? 'Saving...' : 'Save'}

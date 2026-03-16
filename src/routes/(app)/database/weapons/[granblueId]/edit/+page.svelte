@@ -245,7 +245,10 @@
 </script>
 
 <div class="page">
-	<DatabasePageHeader title="Edit Weapon" backHref={`/database/weapons/${weapon?.granblueId}`}>
+	<DatabasePageHeader title="Edit Weapon">
+		{#snippet leftAction()}
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href={`/database/weapons/${weapon?.granblueId}`}>Back</Button>
+		{/snippet}
 		{#snippet rightAction()}
 			<Button variant="element-ghost" element={elementName} size="small" onclick={saveChanges} disabled={isSaving}>
 				{isSaving ? 'Saving...' : 'Save'}

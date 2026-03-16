@@ -1,25 +1,21 @@
 
 <script lang="ts">
-	import Button from '$lib/components/ui/Button.svelte'
 	import type { Snippet } from 'svelte'
 
 	interface Props {
-		/** Page title (not the item name) */
 		title: string
-		/** Custom right action content */
+		leftAction?: Snippet | undefined
 		rightAction?: Snippet | undefined
-		/** URL to navigate to when back is clicked */
-		backHref: string
 	}
 
-	let { title, rightAction, backHref }: Props = $props()
+	let { title, leftAction, rightAction }: Props = $props()
 </script>
 
 <header class="header">
 	<div class="left">
-		<Button variant="ghost" size="small" leftIcon="chevron-left" href={backHref}>
-			Back
-		</Button>
+		{#if leftAction}
+			{@render leftAction()}
+		{/if}
 	</div>
 
 	<h1 class="title">{title}</h1>
