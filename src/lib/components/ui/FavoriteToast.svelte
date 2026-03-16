@@ -15,7 +15,7 @@
 <div class="favorite-toast">
 	<div class="content">
 		<span class="toast-icon">
-			<Icon name={icon} size={14} color="var(--toast-text)" />
+			<Icon name={icon} size={14} />
 		</span>
 		<p class="message">{message}</p>
 	</div>
