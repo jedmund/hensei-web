@@ -167,17 +167,29 @@
 		force: boolean
 	) {
 		if (!weapon?.id) return
-		// For weapons, '01' means base (no transformation suffix)
-		const trans = transformation === '01' ? undefined : transformation
-		await entityAdapter.downloadWeaponImage(weapon.id, size, trans, force)
+
+		if (weapon.element === 0) {
+			// Element-changeable weapons: use batch endpoint which handles element variants
+			await entityAdapter.downloadWeaponImages(weapon.id, { force, size })
+		} else {
+			// For weapons, '01' means base (no transformation suffix)
+			const trans = transformation === '01' ? undefined : transformation
+			await entityAdapter.downloadWeaponImage(weapon.id, size, trans, force)
+		}
 	}
 
 	async function handleDownloadAllPose(pose: string, force: boolean) {
 		if (!weapon?.id) return
-		const trans = pose === '01' ? undefined : pose
-		// Download all sizes for this pose
-		for (const size of weaponSizes) {
-			await entityAdapter.downloadWeaponImage(weapon.id, size, trans, force)
+
+		if (weapon.element === 0) {
+			// Element-changeable weapons: use batch endpoint which handles element variants
+			await entityAdapter.downloadWeaponImages(weapon.id, { force })
+		} else {
+			const trans = pose === '01' ? undefined : pose
+			// Download all sizes for this pose
+			for (const size of weaponSizes) {
+				await entityAdapter.downloadWeaponImage(weapon.id, size, trans, force)
+			}
 		}
 	}
 
@@ -188,14 +200,20 @@
 
 	async function handleDownloadSize(size: string) {
 		if (!weapon?.id) return
-		// Download this size for all available transformations
-		const transformations: (string | undefined)[] = [undefined]
-		if (weapon.uncap?.transcendence) {
-			transformations.push('02', '03')
-		}
 
-		for (const trans of transformations) {
-			await entityAdapter.downloadWeaponImage(weapon.id, size, trans, false)
+		if (weapon.element === 0) {
+			// Element-changeable weapons: use batch endpoint which handles element variants
+			await entityAdapter.downloadWeaponImages(weapon.id, { force: false, size })
+		} else {
+			// Download this size for all available transformations
+			const transformations: (string | undefined)[] = [undefined]
+			if (weapon.uncap?.transcendence) {
+				transformations.push('02', '03')
+			}
+
+			for (const trans of transformations) {
+				await entityAdapter.downloadWeaponImage(weapon.id, size, trans, false)
+			}
 		}
 	}
 
