@@ -59,7 +59,7 @@ export interface Weapon {
   kamigame?: string
   nicknames?: { en?: string[]; ja?: string[] }
   recruits?: string | { id: string; granblueId: string; name: LocalizedName }
-  // Forge chain fields
+  // Forge chain fields (forgedFrom available in :grid and :full views)
   forgeOrder?: number | null
   forgedFrom?: { id: string; granblueId: string; name: LocalizedName } | null
   forgeChain?: Array<{ id: string; granblueId: string; name: LocalizedName; forgeOrder: number }> | null
