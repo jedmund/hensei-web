@@ -49,8 +49,7 @@
 		enemy_id: undefined as number | undefined,
 		summon_id: undefined as number | undefined,
 		quest_id: undefined as number | undefined,
-		extra: false,
-		guidebooks: false
+		extra: false
 	})
 
 	// Element options from canonical mapping (Wind=1, Fire=2, Water=3, Earth=4, Dark=5, Light=6)
@@ -103,8 +102,7 @@
 				enemy_id: toNumberOrUndefined(editData.enemy_id),
 				summon_id: toNumberOrUndefined(editData.summon_id),
 				quest_id: toNumberOrUndefined(editData.quest_id),
-				extra: editData.extra,
-				guidebooks: editData.guidebooks
+				extra: editData.extra
 			})
 
 			// Invalidate queries
@@ -219,13 +217,6 @@
 				label="Extra"
 				sublabel="Raid appears in Extra section"
 				bind:value={editData.extra}
-				editable={true}
-				type="checkbox"
-			/>
-			<DetailItem
-				label="Guidebooks"
-				sublabel="Raid has guidebook content"
-				bind:value={editData.guidebooks}
 				editable={true}
 				type="checkbox"
 			/>

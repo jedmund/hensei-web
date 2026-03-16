@@ -62,8 +62,7 @@
 		enemy_id: undefined as number | undefined,
 		summon_id: undefined as number | undefined,
 		quest_id: undefined as number | undefined,
-		extra: false,
-		guidebooks: false
+		extra: false
 	})
 
 	// Sync edit data when raid changes
@@ -80,8 +79,7 @@
 				enemy_id: raid.enemyId,
 				summon_id: raid.summonId,
 				quest_id: raid.questId,
-				extra: raid.extra ?? false,
-				guidebooks: raid.guidebooks ?? false
+				extra: raid.extra ?? false
 			}
 		}
 	})
@@ -136,8 +134,7 @@
 				enemy_id: toNumberOrUndefined(editData.enemy_id),
 				summon_id: toNumberOrUndefined(editData.summon_id),
 				quest_id: toNumberOrUndefined(editData.quest_id),
-				extra: editData.extra,
-				guidebooks: editData.guidebooks
+				extra: editData.extra
 			})
 
 			// Invalidate queries
@@ -257,13 +254,6 @@
 					label="Extra"
 					sublabel="Raid appears in Extra section"
 					bind:value={editData.extra}
-					editable={true}
-					type="checkbox"
-				/>
-				<DetailItem
-					label="Guidebooks"
-					sublabel="Raid has guidebook content"
-					bind:value={editData.guidebooks}
 					editable={true}
 					type="checkbox"
 				/>
