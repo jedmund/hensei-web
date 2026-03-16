@@ -16,6 +16,7 @@
 	import { DatabaseSearch } from './useDatabaseSearch.svelte'
 	import DatabaseGridControls from './DatabaseGridControls.svelte'
 	import DatabaseGridFooter from './DatabaseGridFooter.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	import type { Snippet } from 'svelte'
 
@@ -124,6 +125,85 @@
 		}
 	}
 
+	// --- Column visibility persistence ---
+
+	const COLUMNS_STORAGE_KEY = `database-columns-${resource}`
+	let hasCustomColumns = $state(false)
+
+	function saveColumnVisibility() {
+		if (!api) return
+		const cols = api.getReactiveState()._columns
+		const hidden: Record<string, boolean> = {}
+		for (const col of cols) {
+			if (col.hidden) hidden[col.id] = true
+		}
+		localStorage.setItem(COLUMNS_STORAGE_KEY, JSON.stringify(hidden))
+		hasCustomColumns = checkHasCustomColumns()
+	}
+
+	function restoreColumnVisibility() {
+		if (!api) return
+		const saved = localStorage.getItem(COLUMNS_STORAGE_KEY)
+		if (!saved) return
+
+		try {
+			const hidden: Record<string, boolean> = JSON.parse(saved)
+			const cols = api.getReactiveState()._columns
+			for (const col of cols) {
+				const shouldBeHidden = !!hidden[col.id]
+				if (col.hidden !== shouldBeHidden) {
+					api.exec('hide-column', { id: col.id, mode: shouldBeHidden })
+				}
+			}
+			hasCustomColumns = checkHasCustomColumns()
+		} catch {
+			// ignore corrupt data
+		}
+	}
+
+	function checkHasCustomColumns(): boolean {
+		return localStorage.getItem(COLUMNS_STORAGE_KEY) !== null
+	}
+
+	function resetColumns() {
+		if (!api) return
+		localStorage.removeItem(COLUMNS_STORAGE_KEY)
+		const cols = api.getReactiveState()._columns
+		for (const col of cols) {
+			const originalCol = columns.find((c) => c.id === col.id)
+			const shouldBeHidden = originalCol?.hidden ?? false
+			if (col.hidden !== shouldBeHidden) {
+				api.exec('hide-column', { id: col.id, mode: shouldBeHidden })
+			}
+		}
+		hasCustomColumns = false
+	}
+
+	// --- Expand mode ---
+
+	const EXPAND_STORAGE_KEY = `database-expanded-${resource}`
+	let expanded = $state(false)
+
+	function toggleExpanded() {
+		expanded = !expanded
+		if (expanded) {
+			localStorage.setItem(EXPAND_STORAGE_KEY, 'true')
+		} else {
+			localStorage.removeItem(EXPAND_STORAGE_KEY)
+		}
+	}
+
+	$effect(() => {
+		if (expanded) {
+			document.documentElement.style.setProperty('--main-max-width', '90vw')
+		} else {
+			document.documentElement.style.removeProperty('--main-max-width')
+		}
+		return () => {
+			document.documentElement.style.removeProperty('--main-max-width')
+		}
+	})
+
 	// --- Grid init ---
 
 	let api: any
@@ -136,6 +216,14 @@
 
 		const { data: dataStore } = api.getStores()
 		gridDataStore = dataStore
+
+		// Restore saved column visibility
+		restoreColumnVisibility()
+
+		// Persist column visibility on toggle
+		api.on('hide-column', () => {
+			saveColumnVisibility()
+		})
 
 		// Intercept sort to do server-side sorting
 		api.intercept('sort-rows', (ev: { key: string; add: boolean }) => {
@@ -208,6 +296,8 @@
 	}
 
 	onMount(() => {
+		expanded = localStorage.getItem(EXPAND_STORAGE_KEY) === 'true'
+
 		if (resource !== 'weapons') {
 			initializeFromUrl()
 		}
@@ -257,11 +347,13 @@
 	<DatabaseGridControls
 		hasActiveFilters={filters.hasActiveFilters}
 		filterCount={filters.filterCount}
+		{hasCustomColumns}
 		selectedElement={filters.selectedElement}
 		{supportsCollectionFilters}
 		{leftActions}
 		{headerActions}
 		onToggleFilters={() => (filters.showFilters = !filters.showFilters)}
+		onResetColumns={resetColumns}
 	>
 		{#snippet rightActions()}
 			<input
@@ -270,6 +362,13 @@
 				placeholder="Search..."
 				value={search.searchTerm}
 				oninput={(e) => { search.searchTerm = e.currentTarget.value }}
+			/>
+			<Button
+				variant="ghost"
+				size="small"
+				iconOnly
+				icon={expanded ? 'collapse' : 'expand'}
+				onclick={toggleExpanded}
 			/>
 		{/snippet}
 	</DatabaseGridControls>

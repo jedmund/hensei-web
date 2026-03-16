@@ -5,23 +5,27 @@
 	interface Props {
 		hasActiveFilters: boolean
 		filterCount: number
+		hasCustomColumns?: boolean
 		selectedElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 		supportsCollectionFilters: boolean
 		leftActions?: Snippet
 		headerActions?: Snippet
 		rightActions?: Snippet
 		onToggleFilters: () => void
+		onResetColumns?: () => void
 	}
 
 	const {
 		hasActiveFilters,
 		filterCount,
+		hasCustomColumns = false,
 		selectedElement,
 		supportsCollectionFilters,
 		leftActions,
 		headerActions,
 		rightActions,
-		onToggleFilters
+		onToggleFilters,
+		onResetColumns
 	}: Props = $props()
 </script>
 
@@ -33,6 +37,16 @@
 	<div class="controls-right">
 		{#if headerActions}
 			{@render headerActions()}
+		{/if}
+
+		{#if hasCustomColumns && onResetColumns}
+			<Button
+				variant="ghost"
+				size="small"
+				onclick={onResetColumns}
+			>
+				Reset columns
+			</Button>
 		{/if}
 
 		{#if supportsCollectionFilters}
