@@ -56,23 +56,18 @@
 	// The selected granblueId used as the combobox value
 	let selectedGranblueId = $state<string>(value ?? '')
 
-	// Sync external value changes into combobox
-	$effect(() => {
-		selectedGranblueId = value ?? ''
-	})
-
-	// Set initial input display text from initialCharacter
-	$effect(() => {
-		if (initialCharacter && value && initialCharacter.granblueId === value && !inputValue) {
-			inputValue = initialCharacter.name
-		}
-	})
-
 	// Track the currently displayed character for the selection display
 	let displayedCharacter = $state<CharacterOption | null>(null)
 
+	// Sync external value changes into combobox and reset internal state
 	$effect(() => {
-		if (value && initialCharacter && initialCharacter.granblueId === value && !displayedCharacter) {
+		selectedGranblueId = value ?? ''
+
+		if (!value) {
+			inputValue = ''
+			displayedCharacter = null
+		} else if (initialCharacter && initialCharacter.granblueId === value) {
+			inputValue = initialCharacter.name
 			displayedCharacter = {
 				id: initialCharacter.id,
 				label: initialCharacter.name,
