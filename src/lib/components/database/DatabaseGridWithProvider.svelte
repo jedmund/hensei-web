@@ -406,6 +406,30 @@
 		}
 	})
 
+	// Track horizontal scroll for pinned column shadow
+	let gridWrapperEl = $state<HTMLDivElement | undefined>(undefined)
+	let isScrolled = $state(false)
+	let scrollContainer: Element | null = null
+
+	function onGridScroll() {
+		isScrolled = scrollContainer ? scrollContainer.scrollLeft > 0 : false
+	}
+
+	$effect(() => {
+		if (gridWrapperEl && !scrollContainer) {
+			scrollContainer = gridWrapperEl.querySelector('.wx-scroll')
+			if (scrollContainer) {
+				scrollContainer.addEventListener('scroll', onGridScroll, { passive: true })
+			}
+		}
+		return () => {
+			if (scrollContainer) {
+				scrollContainer.removeEventListener('scroll', onGridScroll)
+				scrollContainer = null
+			}
+		}
+	})
+
 	// Clean up timeout on destroy
 	onDestroy(() => {
 		if (searchTimeout) {
@@ -474,7 +498,7 @@
 		</div>
 	{/if}
 
-	<div class="grid-wrapper" class:loading>
+	<div class="grid-wrapper" class:loading class:scrolled={isScrolled} bind:this={gridWrapperEl}>
 		{#if loading}
 			<div class="loading-overlay">
 				<div class="loading-spinner">Loading...</div>
@@ -488,6 +512,7 @@
 				{columns}
 				{init}
 				sizes={{ rowHeight: 80 }}
+				split={{ left: 2 }}
 				class="database-grid-theme"
 			/>
 		</HeaderMenu>
@@ -697,6 +722,11 @@
 		color: var(--text-primary);
 	}
 
+	// Fixed column border — must be on :root so scoped component styles can resolve it
+	:global(:root) {
+		--wx-table-fixed-column-border: 1px solid var(--border-subtle);
+	}
+
 	:global(.database-grid .wx-table-box) {
 		width: 100%;
 		max-width: 100%;
@@ -709,7 +739,6 @@
 	:global(.wx-grid .wx-h-row) {
 		height: auto !important;
 		background: var(--bar-bg);
-		padding-bottom: spacing.$unit-half;
 		border-bottom: 1px solid var(--border-medium);
 	}
 
@@ -755,6 +784,43 @@
 	:global(.wx-grid .wx-row:hover) {
 		background: var(--table-row-hover);
 		cursor: pointer;
+	}
+
+	:global(.wx-grid .wx-cell:nth-child(2)) {
+		white-space: normal;
+		line-height: 1.3;
+	}
+
+	// Fixed/pinned column backgrounds — need opaque bg so scrolling content doesn't show through
+	:global(.wx-grid .wx-cell.wx-fixed),
+	:global(.wx-grid .wx-cell.wx-shadow) {
+		background: var(--card-bg);
+		z-index: 1;
+	}
+
+	:global(.wx-grid .wx-h-row .wx-cell.wx-fixed),
+	:global(.wx-grid .wx-h-row .wx-cell.wx-shadow) {
+		background: var(--bar-bg);
+		border-radius: 0;
+	}
+
+	:global(.wx-grid .wx-row:hover .wx-cell.wx-fixed),
+	:global(.wx-grid .wx-row:hover .wx-cell.wx-shadow) {
+		background: var(--table-row-hover);
+	}
+
+	// Only show shadow/border on pinned cells when scrolled
+	.grid-wrapper:not(.scrolled) {
+		:global(.wx-grid .wx-cell.wx-shadow) {
+			box-shadow: none;
+			border-right-color: transparent !important;
+		}
+	}
+
+	.grid-wrapper.scrolled {
+		:global(.wx-grid .wx-cell.wx-shadow) {
+			box-shadow: 4px 0 8px -2px rgba(0, 0, 0, 0.08);
+		}
 	}
 
 	// Element color classes
