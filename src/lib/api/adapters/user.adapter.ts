@@ -19,6 +19,8 @@ interface ApiUserResponse {
   granblueId?: number | string | null  // API returns number, transformed to camelCase
   showGamertag?: boolean  // transformed from show_gamertag
   showGranblueId?: boolean  // transformed from show_granblue_id
+  wikiProfile?: string | null  // transformed from wiki_profile
+  showWikiProfile?: boolean  // transformed from show_wiki_profile
   collectionPrivacy?: number  // transformed from collection_privacy (0=everyone, 1=crew_only, 2=private)
   gamertag?: string
   email?: string  // Only included in settings view
@@ -44,6 +46,8 @@ export interface UserInfo {
   granblueId?: string
   showCrewGamertag?: boolean
   showGranblueId?: boolean
+  wikiProfile?: string
+  showWikiProfile?: boolean
   collectionPrivacy?: number
   crewGamertag?: string
   avatar: {
@@ -93,6 +97,8 @@ function transformUserResponse(apiUser: ApiUserResponse): UserInfo {
     showCrewGamertag: apiUser.showGamertag,
     // Privacy settings
     showGranblueId: apiUser.showGranblueId,
+    wikiProfile: apiUser.wikiProfile ?? undefined,
+    showWikiProfile: apiUser.showWikiProfile,
     collectionPrivacy: apiUser.collectionPrivacy,
     // Rename gamertag to crewGamertag
     crewGamertag: apiUser.gamertag,

@@ -9,6 +9,8 @@ export interface UserUpdateParams {
 	granblueId?: string | undefined
 	showCrewGamertag?: boolean | undefined
 	showGranblueId?: boolean | undefined
+	wikiProfile?: string | undefined
+	showWikiProfile?: boolean | undefined
 	collectionPrivacy?: number | undefined
 }
 
@@ -26,6 +28,8 @@ export interface UserResponse {
 	granblueId?: string
 	showCrewGamertag?: boolean
 	showGranblueId?: boolean
+	wikiProfile?: string
+	showWikiProfile?: boolean
 	collectionPrivacy?: number
 }
 
@@ -44,6 +48,8 @@ export const users = {
 			granblue_id?: string | undefined
 			show_gamertag?: boolean | undefined
 			show_granblue_id?: boolean | undefined
+			wiki_profile?: string | undefined
+			show_wiki_profile?: boolean | undefined
 			collection_privacy?: number | undefined
 		} = {}
 
@@ -55,6 +61,8 @@ export const users = {
 		if (params.granblueId !== undefined) updates.granblue_id = params.granblueId
 		if (params.showCrewGamertag !== undefined) updates.show_gamertag = params.showCrewGamertag
 		if (params.showGranblueId !== undefined) updates.show_granblue_id = params.showGranblueId
+		if (params.wikiProfile !== undefined) updates.wiki_profile = params.wikiProfile
+		if (params.showWikiProfile !== undefined) updates.show_wiki_profile = params.showWikiProfile
 		if (params.collectionPrivacy !== undefined) updates.collection_privacy = params.collectionPrivacy
 
 		const result = await userAdapter.updateProfile(updates)
@@ -69,6 +77,8 @@ export const users = {
 			granblueId: result.granblueId,
 			showCrewGamertag: result.showCrewGamertag,
 			showGranblueId: result.showGranblueId,
+			wikiProfile: result.wikiProfile,
+			showWikiProfile: result.showWikiProfile,
 			collectionPrivacy: result.collectionPrivacy
 		}
 	}

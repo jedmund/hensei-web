@@ -2,6 +2,7 @@ export interface User {
 	id: string
 	username: string
 	granblueId: string
+	wikiProfile?: string
 	avatar: {
 		picture: string
 		element: string

@@ -8,5 +8,7 @@ export interface UserCookie {
 	granblueId?: string
 	showCrewGamertag?: boolean
 	showGranblueId?: boolean
+	wikiProfile?: string
+	showWikiProfile?: boolean
 	collectionPrivacy?: number
 }
