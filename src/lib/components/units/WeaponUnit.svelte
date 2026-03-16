@@ -616,12 +616,13 @@
 		}
 
 		.skills {
-			bottom: 12%;
-			right: -3.5%;
+			bottom: 1%;
+			left: auto;
+			right: 2%;
 			justify-content: flex-end;
 
 			.skill {
-				width: 25%;
+				height: 25%;
 			}
 		}
 	}
