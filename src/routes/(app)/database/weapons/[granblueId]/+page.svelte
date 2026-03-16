@@ -162,28 +162,40 @@
 	})
 
 	// Poll the batch download status until it completes or fails
-	async function pollDownloadStatus(weaponId: string): Promise<void> {
+	async function pollDownloadStatus(weaponId: string, toastId: string | number): Promise<void> {
 		const maxAttempts = 60
 		for (let i = 0; i < maxAttempts; i++) {
 			await new Promise((r) => setTimeout(r, 2000))
 			const status = await entityAdapter.getWeaponDownloadStatus(weaponId)
+
+			if (status.status === 'processing') {
+				const downloaded = status.imagesDownloaded ?? 0
+				const total = status.imagesTotal ?? 0
+				toast.loading(`Downloading images… ${downloaded}/${total}`, { id: toastId })
+			}
+
 			if (status.status === 'completed') {
-				toast.success(`Downloaded ${status.imagesDownloaded ?? ''} images`)
+				toast.success(`Downloaded ${status.imagesDownloaded ?? ''} images`, { id: toastId })
 				return
 			}
 			if (status.status === 'failed') {
-				toast.error(status.error ?? 'Download failed')
+				toast.error(status.error ?? 'Download failed', { id: toastId })
 				return
 			}
 		}
-		toast.error('Download timed out')
+		toast.error('Download timed out', { id: toastId })
 	}
 
 	// Kick off batch download and poll for completion
 	async function batchDownload(weaponId: string, options: { force?: boolean; size?: string }) {
-		toast.info('Downloading images…')
-		await entityAdapter.downloadWeaponImages(weaponId, options)
-		await pollDownloadStatus(weaponId)
+		const toastId = toast.loading('Queuing download…')
+		try {
+			await entityAdapter.downloadWeaponImages(weaponId, options)
+			toast.loading('Downloading images…', { id: toastId })
+			await pollDownloadStatus(weaponId, toastId)
+		} catch (e) {
+			toast.error('Failed to start download', { id: toastId })
+		}
 	}
 
 	// Image download handlers
