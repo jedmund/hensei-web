@@ -16,6 +16,7 @@
 		editable?: boolean | undefined
 		contained?: boolean | undefined
 		size?: 'regular' | 'small' | undefined
+		minUncapLevel?: number | undefined
 		updateUncap?: ((index: number) => void) | undefined
 		updateTranscendence?: ((index: number) => void) | undefined
 	}
@@ -63,6 +64,7 @@
 		editable = false,
 		contained = false,
 		size = 'regular',
+		minUncapLevel,
 		updateUncap,
 		updateTranscendence
 	}: Props = $props()
@@ -87,11 +89,9 @@
 
 	function toggleStar(index: number, empty: boolean) {
 		if (updateUncap && editable) {
-			if (empty && index > 0) {
-				updateUncap(index + 1)
-			} else {
-				updateUncap(index)
-			}
+			const newLevel = empty && index > 0 ? index + 1 : index
+			if (minUncapLevel !== undefined && newLevel < minUncapLevel) return
+			updateUncap(newLevel)
 		}
 	}
 
