@@ -56,7 +56,7 @@ export function getWeaponKeyImage(
 
 	// Handle element-specific telumas (Draconic weapons)
 	const elementalTelumas = [15008, 16001, 16002]
-	const granblueId = key.granblue_id ?? 0
+	const granblueId = key.granblueId ?? 0
 
 	if (elementalTelumas.includes(granblueId) && weaponElement) {
 		filename += `-${weaponElement}`

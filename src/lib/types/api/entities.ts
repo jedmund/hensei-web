@@ -265,10 +265,10 @@ export const NO_AWAKENING: Awakening = {
   order: 0
 }
 
-// WeaponKey entity
+// WeaponKey entity (camelCased to match CamelCasedKeysDeep runtime data)
 export interface WeaponKey {
   id: string
-  granblue_id: number
+  granblueId: number
   name: LocalizedName
   slug: string
   series: number[]

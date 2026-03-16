@@ -22,7 +22,7 @@ function makeKey(overrides: Partial<WeaponKey> = {}): WeaponKey {
 	return {
 		slug: 'alpha',
 		slot: 0,
-		granblue_id: 10000,
+		granblueId: 10000,
 		name: { en: 'Alpha', ja: 'アルファ' },
 		...overrides
 	} as WeaponKey
@@ -83,12 +83,12 @@ describe('getWeaponKeyImage', () => {
 	})
 
 	it('adds element suffix for elemental teluma keys', () => {
-		const key = makeKey({ slug: 'teluma', granblue_id: 15008 })
+		const key = makeKey({ slug: 'teluma', granblueId: 15008 })
 		expect(getWeaponKeyImage(key, 3)).toBe('/images/weapon-keys/teluma-3.png')
 	})
 
 	it('does not add element for non-teluma keys', () => {
-		const key = makeKey({ slug: 'alpha', granblue_id: 10000 })
+		const key = makeKey({ slug: 'alpha', granblueId: 10000 })
 		expect(getWeaponKeyImage(key, 3)).toBe('/images/weapon-keys/alpha.png')
 	})
 
