@@ -40,7 +40,7 @@
 		background: var(--toast-bg);
 		color: var(--toast-text);
 		border: 1px solid var(--toast-border);
-		border-radius: $input-corner;
+		border-radius: $card-corner;
 		box-shadow: var(--shadow-lg);
 		font-family: var(--font-family);
 	}
@@ -68,5 +68,6 @@
 
 	.action {
 		display: flex;
+		justify-content: flex-end;
 	}
 </style>
