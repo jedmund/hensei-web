@@ -73,7 +73,7 @@
 		flex-wrap: wrap;
 		gap: $unit;
 		padding: $unit-2x;
-		background: $grey-95;
+		background: var(--card-bg);
 		border-radius: $card-corner;
 	}
 
@@ -84,14 +84,14 @@
 		padding: 0;
 		border: 2px solid transparent;
 		border-radius: $item-corner;
-		background: $grey-90;
+		background: var(--page-bg);
 		cursor: pointer;
 		overflow: hidden;
 		transition: border-color 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
 
 		&:hover:not(:disabled) {
 			transform: scale(1.05);
-			border-color: $grey-60;
+			border-color: var(--border-medium);
 		}
 
 		&.selected {
