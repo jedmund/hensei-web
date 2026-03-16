@@ -520,6 +520,10 @@
 		cursor: pointer;
 		transition: transform 0.2s ease;
 
+		&:not(.active) {
+			display: none;
+		}
+
 		&:hover {
 			transform: scale(1.1);
 		}
@@ -530,6 +534,10 @@
 				transform: none;
 			}
 		}
+	}
+
+	.focus-ring-wrapper:hover .perpetuity:not(.active) {
+		display: block;
 	}
 
 	.perpetuity-icon {
