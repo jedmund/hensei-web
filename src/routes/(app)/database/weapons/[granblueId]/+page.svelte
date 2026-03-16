@@ -31,7 +31,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getWeaponGridImage, getWeaponImage as getWeaponImageUrl } from '$lib/utils/images'
-	import { getElementLabel } from '$lib/utils/element'
+	import { getElementLabel, ELEMENT_DISPLAY_ORDER } from '$lib/utils/element'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,
@@ -109,33 +109,51 @@
 
 	// Generate image items for weapon (base, grid, main, square variants)
 	// Weapons have transformations: Base (no suffix), Transcendence Stage 1 (_02), Transcendence Stage 5 (_03)
+	// Element-changeable weapons (element === 0) show all elements at all sizes
 	const weaponImages = $derived.by((): ImageItem[] => {
 		if (!weapon?.granblueId) return []
 
 		const variants = ['base', 'grid', 'main', 'square'] as const
 		const images: ImageItem[] = []
 
-		// Only include transformations that are available
-		const transformations: { id: string; label: string; suffix?: string }[] = [
-			{ id: '01', label: 'Base', suffix: undefined }
-		]
+		if (weapon.element === 0) {
+			// Element-changeable: show all elements (including base _0) at all sizes
+			const elements = [0, ...ELEMENT_DISPLAY_ORDER]
+			for (const element of elements) {
+				const elementLabel = getElementLabel(element)
+				for (const variant of variants) {
+					images.push({
+						url: getWeaponImageUrl(weapon.granblueId, variant, element),
+						label: `${variant} (${elementLabel})`,
+						variant,
+						pose: `element-${element}`,
+						poseLabel: elementLabel
+					})
+				}
+			}
+		} else {
+			// Only include transformations that are available
+			const transformations: { id: string; label: string; suffix?: string }[] = [
+				{ id: '01', label: 'Base', suffix: undefined }
+			]
 
-		if (weapon.uncap?.transcendence) {
-			transformations.push(
-				{ id: '02', label: 'Transcendence (1)', suffix: '02' },
-				{ id: '03', label: 'Transcendence (5)', suffix: '03' }
-			)
-		}
+			if (weapon.uncap?.transcendence) {
+				transformations.push(
+					{ id: '02', label: 'Transcendence (1)', suffix: '02' },
+					{ id: '03', label: 'Transcendence (5)', suffix: '03' }
+				)
+			}
 
-		for (const transformation of transformations) {
-			for (const variant of variants) {
-				images.push({
-					url: getWeaponImageUrl(weapon.granblueId, variant, undefined, transformation.suffix),
-					label: `${variant} (${transformation.label})`,
-					variant,
-					pose: transformation.id,
-					poseLabel: transformation.label
-				})
+			for (const transformation of transformations) {
+				for (const variant of variants) {
+					images.push({
+						url: getWeaponImageUrl(weapon.granblueId, variant, undefined, transformation.suffix),
+						label: `${variant} (${transformation.label})`,
+						variant,
+						pose: transformation.id,
+						poseLabel: transformation.label
+					})
+				}
 			}
 		}
 

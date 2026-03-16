@@ -197,7 +197,7 @@ export function getWeaponImage(
 	const basePath = `${getBasePath()}/${directory}`
 
 	// Handle element-specific weapons (including element 0 for null-element weapons)
-	if ((variant === 'grid' || variant === 'main' || variant === 'square') && element !== undefined && element >= 0) {
+	if (element !== undefined && element >= 0) {
 		return `${basePath}/${id}_${element}${extension}`
 	}
 
