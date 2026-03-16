@@ -58,10 +58,11 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		error = null
 
 		try {
+			const params = { id: party.id, shortcode: party.shortcode }
 			if (party.favorited) {
-				await opts.mutations.party.unfavorite.mutateAsync(party.shortcode)
+				await opts.mutations.party.unfavorite.mutateAsync(params)
 			} else {
-				await opts.mutations.party.favorite.mutateAsync(party.shortcode)
+				await opts.mutations.party.favorite.mutateAsync(params)
 			}
 		} catch (err: any) {
 			error = err.message || m.toast_failed_update_favorite()
