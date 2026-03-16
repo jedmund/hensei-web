@@ -61,6 +61,18 @@
 		value = dateToString(newValue)
 	}
 
+	// Handle paste events to support pasting full date strings (e.g. "2026-03-10")
+	function handlePaste(event: ClipboardEvent) {
+		const text = event.clipboardData?.getData('text')?.trim()
+		if (!text) return
+
+		const parsed = stringToDate(text)
+		if (parsed) {
+			event.preventDefault()
+			handleValueChange(parsed)
+		}
+	}
+
 	// Convert min/max values
 	const minDateValue = $derived(stringToDate(minValue))
 	const maxDateValue = $derived(stringToDate(maxValue))
@@ -87,7 +99,8 @@
 			maxValue={maxDateValue}
 			placeholder={placeholderDate()}
 		>
-			<div class="date-picker-field" class:contained>
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div class="date-picker-field" class:contained onpaste={handlePaste}>
 				<BitsDatePicker.Input>
 					{#snippet children({ segments })}
 						{#each segments as { part, value: segValue }}
@@ -158,7 +171,8 @@
 		maxValue={maxDateValue}
 		placeholder={placeholderDate()}
 	>
-		<div class="date-picker-field" class:contained>
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div class="date-picker-field" class:contained onpaste={handlePaste}>
 			<BitsDatePicker.Input>
 				{#snippet children({ segments })}
 					{#each segments as { part, value: segValue }}
