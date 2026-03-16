@@ -619,16 +619,20 @@ describe('getGuidebookImage', () => {
 
 describe('getRaidImage', () => {
 	it('returns stored raid image by variant', () => {
-		expect(getRaidImage('proto-bahamut', 'icon')).toBe(
+		expect(getRaidImage('proto-bahamut', 'icon')).toContain(
 			'/images/raid-icon/proto-bahamut.png'
 		)
-		expect(getRaidImage('proto-bahamut', 'thumbnail')).toBe(
+		expect(getRaidImage('proto-bahamut', 'thumbnail')).toContain(
 			'/images/raid-thumbnail/proto-bahamut.png'
 		)
 	})
 
 	it('defaults to thumbnail', () => {
-		expect(getRaidImage('proto-bahamut')).toBe('/images/raid-thumbnail/proto-bahamut.png')
+		expect(getRaidImage('proto-bahamut')).toContain('/images/raid-thumbnail/proto-bahamut.png')
+	})
+
+	it('includes cache-busting query parameter', () => {
+		expect(getRaidImage('proto-bahamut')).toMatch(/\?v=\d+$/)
 	})
 
 	it('returns generic placeholder for undefined', () => {
