@@ -43,6 +43,8 @@
 		element={data.user?.avatar?.element}
 		granblueId={data.user?.granblueId}
 		showGranblueId={data.user?.showGranblueId}
+		wikiProfile={data.user?.wikiProfile}
+		showWikiProfile={data.user?.showWikiProfile}
 		showCrewGamertag={data.user?.showCrewGamertag}
 		crewGamertag={data.user?.crewGamertag}
 		activeTab="favorites"

@@ -27,6 +27,10 @@
 		granblueId?: string
 		/** Whether the user wants to show their Granblue ID on profile */
 		showGranblueId?: boolean
+		/** User's gbf.wiki username */
+		wikiProfile?: string
+		/** Whether the user wants to show their wiki profile on profile */
+		showWikiProfile?: boolean
 		/** Whether to show crew gamertag */
 		showCrewGamertag?: boolean
 		/** The crew's gamertag to display */
@@ -51,6 +55,8 @@
 		element = 'null',
 		granblueId,
 		showGranblueId = false,
+		wikiProfile,
+		showWikiProfile = false,
 		showCrewGamertag = false,
 		crewGamertag,
 		viewerCrewRole = null,
@@ -63,6 +69,13 @@
 	const gbfProfileUrl = $derived(
 		granblueId && showGranblueId
 			? `https://game.granbluefantasy.jp/#profile/${granblueId}`
+			: null
+	)
+
+	// Wiki profile URL - only show if user has enabled the setting
+	const wikiProfileUrl = $derived(
+		wikiProfile && showWikiProfile
+			? `https://gbf.wiki/User:${encodeURIComponent(wikiProfile)}`
 			: null
 	)
 
@@ -158,6 +171,18 @@
 						class="gbf-profile-link"
 					>
 						<Icon name="sword" size={24} />
+					</a>
+				</Tooltip>
+			{/if}
+			{#if wikiProfileUrl}
+				<Tooltip content={m.profile_wiki()}>
+					<a
+						href={wikiProfileUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="gbf-profile-link"
+					>
+						<Icon name="link" size={24} />
 					</a>
 				</Tooltip>
 			{/if}
