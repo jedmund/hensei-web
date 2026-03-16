@@ -9,6 +9,7 @@
 		variant: string
 		pose?: string
 		poseLabel?: string // Custom label for the pose group (e.g., "ULB" for summons)
+		placeholder?: boolean
 	}
 
 	interface Props {
@@ -129,7 +130,12 @@
 				{@const imageKey = getImageKey(image)}
 				{@const isDownloading = downloadingImages.has(imageKey)}
 
-				{#if canEdit && onDownloadImage}
+				{#if image.placeholder}
+					<div class="image-item placeholder">
+						<div class="image-container empty"></div>
+						<span class="image-label">{image.variant}</span>
+					</div>
+				{:else if canEdit && onDownloadImage}
 					<ContextMenuWrapper>
 						{#snippet trigger()}
 							<div class="image-item" class:downloading={isDownloading}>
@@ -254,6 +260,14 @@
 
 		&:hover {
 			transform: scale(1.02);
+		}
+
+		&.empty {
+			opacity: 0.3;
+
+			&:hover {
+				transform: none;
+			}
 		}
 
 		img {

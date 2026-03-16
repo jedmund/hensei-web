@@ -118,18 +118,30 @@
 		const images: ImageItem[] = []
 
 		if (weapon.element === 0) {
-			// Element-changeable: show all elements (including base _0) at all sizes
+			// Element-changeable: show all elements at all sizes
+			// Element 0 (Null) has no base art, so show a placeholder there
 			const elements = [0, ...ELEMENT_DISPLAY_ORDER]
 			for (const element of elements) {
 				const elementLabel = getElementLabel(element)
 				for (const variant of variants) {
-					images.push({
-						url: getWeaponImageUrl(weapon.granblueId, variant, element),
-						label: `${variant} (${elementLabel})`,
-						variant,
-						pose: `element-${element}`,
-						poseLabel: elementLabel
-					})
+					if (element === 0 && variant === 'base') {
+						images.push({
+							url: '',
+							label: `${variant} (${elementLabel})`,
+							variant,
+							pose: `element-${element}`,
+							poseLabel: elementLabel,
+							placeholder: true
+						})
+					} else {
+						images.push({
+							url: getWeaponImageUrl(weapon.granblueId, variant, element),
+							label: `${variant} (${elementLabel})`,
+							variant,
+							pose: `element-${element}`,
+							poseLabel: elementLabel
+						})
+					}
 				}
 			}
 		} else {
