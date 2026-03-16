@@ -17,6 +17,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import type { Character, Awakening } from '$lib/types/api/entities'
 	import type { ExtendedMastery } from '$lib/types/api/collection'
+	import { getElementKey } from '$lib/utils/element'
 	import DetailsSection from './details/DetailsSection.svelte'
 	import AwakeningSelect from './edit/AwakeningSelect.svelte'
 	import RingsSelect from './edit/RingsSelect.svelte'
@@ -110,23 +111,7 @@
 	const maxAwakeningLevel = 10
 
 	// Element name for theming
-	const ELEMENT_MAP: Record<number, 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'> = {
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
-	const elementName = $derived(characterElement ? ELEMENT_MAP[characterElement] : undefined)
-
-	// Awakening slug to UUID map (awakenings from API have id: null, only slugs)
-	const AWAKENING_MAP: Record<string, string> = {
-		'character-balanced': 'b1847c82-ece0-4d7a-8af1-c7868d90f34a',
-		'character-atk': '6e233877-8cda-4c8f-a091-3db6f68749e2',
-		'character-def': 'c95441de-f949-4a62-b02b-101aa2e0a638',
-		'character-multi': 'e36b0573-79c3-4dd2-9524-c95def4bbb1a'
-	}
+	const elementName = $derived(characterElement ? getElementKey(characterElement) : undefined)
 
 	// Handlers for UncapIndicator
 	function handleUncapUpdate(newLevel: number) {
@@ -148,13 +133,10 @@
 
 		// Format awakening for API
 		if (hasAwakening) {
-			if (selectedAwakening?.slug) {
-				const awakeningId = AWAKENING_MAP[selectedAwakening.slug]
-				if (awakeningId) {
-					updates.awakening = {
-						id: awakeningId,
-						level: awakeningLevel
-					}
+			if (selectedAwakening?.id) {
+				updates.awakening = {
+					id: selectedAwakening.id,
+					level: awakeningLevel
 				}
 			} else {
 				updates.awakening = null

@@ -131,14 +131,6 @@
 		.filter((opt) => opt.value !== 0)
 		.map((opt) => ({ ...opt, image: getElementIcon(opt.value) }))
 
-	// Awakening slug to UUID map
-	const AWAKENING_MAP: Record<string, string> = {
-		'weapon-balanced': 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
-		'weapon-atk': 'b2c3d4e5-f6a7-8901-bcde-f12345678901',
-		'weapon-def': 'c3d4e5f6-a7b8-9012-cdef-123456789012',
-		'weapon-multi': 'd4e5f6a7-b8c9-0123-def0-234567890123'
-	}
-
 	function handleUncapUpdate(newLevel: number) {
 		uncapLevel = newLevel
 	}
@@ -168,13 +160,10 @@
 
 		// Awakening
 		if (hasAwakening) {
-			if (selectedAwakening?.slug) {
-				const awakeningId = AWAKENING_MAP[selectedAwakening.slug]
-				if (awakeningId) {
-					updates.awakening = {
-						id: awakeningId,
-						level: awakeningLevel
-					}
+			if (selectedAwakening?.id) {
+				updates.awakening = {
+					id: selectedAwakening.id,
+					level: awakeningLevel
 				}
 			} else {
 				updates.awakening = null
