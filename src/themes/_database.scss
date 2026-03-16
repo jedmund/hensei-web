@@ -1,0 +1,45 @@
+@use '$src/themes/spacing' as spacing;
+@use '$src/themes/typography' as typography;
+
+@mixin details {
+	display: flex;
+	flex-direction: column;
+}
+
+@mixin error-banner {
+	color: var(--danger);
+	font-size: typography.$font-small;
+	padding: spacing.$unit-2x;
+	background: var(--danger-bg);
+}
+
+@mixin success-banner {
+	color: var(--success);
+	font-size: typography.$font-small;
+	padding: spacing.$unit-2x;
+	background: var(--success-bg);
+}
+
+@mixin not-found {
+	text-align: center;
+	padding: spacing.$unit-4x;
+
+	h2 {
+		margin-bottom: spacing.$unit;
+	}
+
+	p {
+		color: var(--text-secondary);
+		margin-bottom: spacing.$unit-2x;
+	}
+}
+
+@mixin loading-state {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	min-height: 200px;
+	gap: spacing.$unit-2x;
+	color: var(--text-secondary);
+}
