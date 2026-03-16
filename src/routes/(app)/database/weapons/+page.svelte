@@ -17,12 +17,21 @@
 	import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svelte'
 	import LastUpdatedCell from '$lib/components/database/cells/LastUpdatedCell.svelte'
 	import BooleanCell from '$lib/components/database/cells/BooleanCell.svelte'
+	import BaseWeaponCell from '$lib/components/database/cells/BaseWeaponCell.svelte'
+	import RecruitsCell from '$lib/components/database/cells/RecruitsCell.svelte'
 	import DateCell from '$lib/components/database/cells/DateCell.svelte'
 	import AwakeningModal from '$lib/features/database/weapons/AwakeningModal.svelte'
 	import { getRarityLabel } from '$lib/utils/rarity'
 	import { getBasePath } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
 	import type { Awakening } from '$lib/types/api/entities'
+
+	const extraPrerequisiteLabels: Record<number, string> = {
+		3: 'MLB',
+		4: 'FLB',
+		5: 'ULB',
+		6: 'Transcendence'
+	}
 
 	type ViewMode = 'weapons' | 'series' | 'awakenings'
 
@@ -217,6 +226,17 @@
 			yesClass: 'extra'
 		},
 		{
+			id: 'extraPrerequisite',
+			header: 'Extra Prereq.',
+			width: 110,
+			hidden: true,
+			getter: (row: any) => row.uncap?.extraPrerequisite,
+			template: (value: any) => {
+				if (value == null) return '—'
+				return extraPrerequisiteLabels[value as number] ?? '—'
+			}
+		},
+		{
 			id: 'limit',
 			header: 'Limit',
 			width: 70,
@@ -228,6 +248,20 @@
 			header: 'Forge Order',
 			width: 100,
 			hidden: true
+		},
+		{
+			id: 'forgedFrom',
+			header: 'Base Weapon',
+			width: 200,
+			hidden: true,
+			cell: BaseWeaponCell
+		},
+		{
+			id: 'recruits',
+			header: 'Recruits',
+			width: 200,
+			hidden: true,
+			cell: RecruitsCell
 		},
 		{
 			id: 'releaseDate',
