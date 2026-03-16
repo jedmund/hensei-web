@@ -57,7 +57,7 @@
 		display: flex;
 		align-items: center;
 		flex-shrink: 0;
-		color: var(--toast-text);
+		color: var(--text-secondary);
 		margin-top: 2px;
 	}
 
