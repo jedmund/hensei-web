@@ -172,11 +172,11 @@
 		padding: 2px 8px;
 		border-radius: layout.$item-corner-small;
 		font-size: typography.$font-small;
-		background: #f0f0f0;
-		color: #666;
+		background: var(--table-header-bg);
+		color: var(--text-secondary);
 
 		&.active {
-			background: #28a745;
+			background: var(--wind-bg);
 			color: white;
 		}
 	}
@@ -193,14 +193,14 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: spacing.$unit spacing.$unit-2x;
-		background: #f8f9fa;
-		border: 1px solid #e5e5e5;
+		background: var(--table-header-bg);
+		border: 1px solid var(--table-border);
 		border-radius: layout.$item-corner;
 		cursor: pointer;
 		text-align: left;
 
 		&:hover {
-			background: #e9ecef;
+			background: var(--table-row-hover);
 		}
 
 		.raid-name {

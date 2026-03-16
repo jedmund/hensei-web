@@ -410,7 +410,7 @@
 
 	.weapon-skills {
 		padding: spacing.$unit-2x;
-		border-bottom: 1px solid #e5e5e5;
+		border-bottom: 1px solid var(--table-border);
 
 		&:last-child {
 			border-bottom: none;
@@ -429,19 +429,19 @@
 
 			.skill-item {
 				padding: spacing.$unit;
-				background: #f8f9fa;
+				background: var(--table-header-bg);
 				border-radius: layout.$item-corner-small;
 
 				.skill-name {
 					font-size: typography.$font-medium;
 					font-weight: typography.$medium;
 					margin: 0 0 spacing.$unit * 0.5 0;
-					color: #333;
+					color: var(--text-primary);
 				}
 
 				.skill-description {
 					font-size: typography.$font-small;
-					color: #666;
+					color: var(--text-secondary);
 					margin: 0;
 					line-height: 1.4;
 				}
@@ -450,7 +450,7 @@
 			.no-skills {
 				grid-column: 1 / -1;
 				text-align: center;
-				color: #666;
+				color: var(--text-secondary);
 				font-style: italic;
 			}
 		}

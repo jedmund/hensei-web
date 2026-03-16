@@ -161,7 +161,7 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: spacing.$unit;
-		border-bottom: 1px solid #e5e5e5;
+		border-bottom: 1px solid var(--table-border);
 		gap: spacing.$unit;
 
 		.search {
@@ -206,13 +206,13 @@
 		td {
 			padding: spacing.$unit-2x spacing.$unit;
 			text-align: left;
-			border-bottom: 1px solid #dee2e6;
+			border-bottom: 1px solid var(--table-border);
 		}
 
 		th {
-			background: #f8f9fa;
+			background: var(--table-header-bg);
 			font-weight: typography.$bold;
-			color: #495057;
+			color: var(--text-secondary);
 			white-space: nowrap;
 		}
 
@@ -221,7 +221,7 @@
 				cursor: pointer;
 
 				&:hover {
-					background: #f8f9fa;
+					background: var(--table-row-hover);
 				}
 			}
 		}
@@ -238,8 +238,8 @@
 		align-items: center;
 		margin: 0;
 		padding: spacing.$unit spacing.$unit-2x;
-		background: #f8f9fa;
-		border-bottom: 1px solid #dee2e6;
+		background: var(--table-header-bg);
+		border-bottom: 1px solid var(--table-border);
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
 		color: var(--text-secondary);
@@ -338,7 +338,7 @@
 		text-align: center;
 		color: var(--text-secondary);
 		font-size: typography.$font-small;
-		background: #f8f9fa;
-		border-top: 1px solid #e5e5e5;
+		background: var(--table-header-bg);
+		border-top: 1px solid var(--table-border);
 	}
 </style>

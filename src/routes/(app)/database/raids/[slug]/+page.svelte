@@ -283,11 +283,11 @@
 		padding: 2px 8px;
 		border-radius: layout.$item-corner-small;
 		font-size: typography.$font-small;
-		background: #f0f0f0;
-		color: #666;
+		background: var(--table-header-bg);
+		color: var(--text-secondary);
 
 		&.active {
-			background: #28a745;
+			background: var(--wind-bg);
 			color: white;
 		}
 	}

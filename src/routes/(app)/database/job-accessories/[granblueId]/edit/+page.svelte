@@ -234,7 +234,7 @@
 		select {
 			padding: spacing.$unit spacing.$unit-2x;
 			background: var(--input-bound-bg);
-			border: 1px solid #dee2e6;
+			border: 1px solid var(--table-border);
 			border-radius: layout.$item-corner;
 			font-size: typography.$font-medium;
 

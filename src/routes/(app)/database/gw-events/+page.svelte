@@ -136,7 +136,7 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: spacing.$unit;
-		border-bottom: 1px solid #e5e5e5;
+		border-bottom: 1px solid var(--table-border);
 		gap: spacing.$unit;
 
 		input {
@@ -145,6 +145,7 @@
 			border: none;
 			border-radius: layout.$item-corner;
 			font-size: typography.$font-medium;
+			color: var(--text-primary);
 			width: 100%;
 			max-width: 300px;
 
@@ -154,7 +155,6 @@
 
 			&:focus {
 				outline: none;
-				border-color: #007bff;
 			}
 		}
 
@@ -181,7 +181,7 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background: rgba(255, 255, 255, 0.9);
+		background: rgba(var(--background-rgb), 0.9);
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -189,7 +189,7 @@
 
 		.loading-spinner {
 			font-size: typography.$font-medium;
-			color: #666;
+			color: var(--text-secondary);
 		}
 	}
 
@@ -201,13 +201,13 @@
 		td {
 			padding: spacing.$unit spacing.$unit-2x;
 			text-align: left;
-			border-bottom: 1px solid #e5e5e5;
+			border-bottom: 1px solid var(--table-border);
 		}
 
 		th {
-			background: #f8f9fa;
+			background: var(--table-header-bg);
 			font-weight: typography.$bold;
-			color: #495057;
+			color: var(--text-secondary);
 			font-size: typography.$font-small;
 		}
 
@@ -215,7 +215,7 @@
 			cursor: pointer;
 
 			&:hover {
-				background: #f8f9fa;
+				background: var(--table-row-hover);
 			}
 		}
 
@@ -234,17 +234,17 @@
 
 	.event-number {
 		font-weight: typography.$bold;
-		color: #666;
+		color: var(--text-primary);
 	}
 
 	.dates {
 		font-size: typography.$font-small;
-		color: #666;
+		color: var(--text-secondary);
 	}
 
 	.empty-state {
 		text-align: center;
-		color: #666;
+		color: var(--text-secondary);
 		padding: spacing.$unit-4x !important;
 	}
 
@@ -253,12 +253,12 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: spacing.$unit;
-		border-top: 1px solid #e5e5e5;
-		background: #f8f9fa;
+		border-top: 1px solid var(--table-border);
+		background: var(--table-header-bg);
 
 		.pagination-info {
 			font-size: typography.$font-small;
-			color: #6c757d;
+			color: var(--text-secondary);
 		}
 	}
 </style>
