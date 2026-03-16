@@ -192,6 +192,13 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 			}
 
 			if (target.type === 'weapon' && target.position === -1) return false
+
+			// Block non-extra weapons from being dragged to extra slots
+			if (target.type === 'weapon' && target.position >= 9) {
+				const party = opts.getParty()
+				const gridWeapon = party.weapons.find((w: GridWeapon) => w.id === source.itemId)
+				if (gridWeapon && !gridWeapon.weapon?.extra) return false
+			}
 			if (target.type === 'summon' && (target.position === -1 || target.position === 6))
 				return false
 

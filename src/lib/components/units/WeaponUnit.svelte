@@ -326,6 +326,7 @@
 			ulb={item.weapon?.uncap?.ulb}
 			transcendence={item.weapon?.uncap?.transcendence}
 			editable={ctx?.canEdit()}
+			minUncapLevel={position >= 9 ? item.weapon?.uncap?.extraPrerequisite ?? undefined : undefined}
 			updateUncap={async (level) => {
 				if (!item?.id || !ctx) return
 				try {
