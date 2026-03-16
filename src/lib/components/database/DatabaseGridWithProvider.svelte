@@ -133,7 +133,7 @@
 
 	function saveColumnVisibility() {
 		if (!api || !isBrowser) return
-		const cols = api.getReactiveState()._columns
+		const cols = api.getState()._columns
 		const hidden: Record<string, boolean> = {}
 		for (const col of cols) {
 			if (col.hidden) hidden[col.id] = true
@@ -149,7 +149,7 @@
 
 		try {
 			const hidden: Record<string, boolean> = JSON.parse(saved)
-			const cols = api.getReactiveState()._columns
+			const cols = api.getState()._columns
 			for (const col of cols) {
 				const shouldBeHidden = !!hidden[col.id]
 				if (col.hidden !== shouldBeHidden) {
@@ -170,7 +170,7 @@
 	function resetColumns() {
 		if (!api || !isBrowser) return
 		localStorage.removeItem(COLUMNS_STORAGE_KEY)
-		const cols = api.getReactiveState()._columns
+		const cols = api.getState()._columns
 		for (const col of cols) {
 			const originalCol = columns.find((c) => c.id === col.id)
 			const shouldBeHidden = originalCol?.hidden ?? false
