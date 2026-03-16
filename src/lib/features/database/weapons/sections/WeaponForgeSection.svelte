@@ -118,22 +118,22 @@
 
 		&.current {
 			&.wind {
-				background: color-mix(in srgb, var(--wind-button-bg) 15%, transparent);
+				background: var(--wind-nav-hover-bg);
 			}
 			&.fire {
-				background: color-mix(in srgb, var(--fire-button-bg) 15%, transparent);
+				background: var(--fire-nav-hover-bg);
 			}
 			&.water {
-				background: color-mix(in srgb, var(--water-button-bg) 15%, transparent);
+				background: var(--water-nav-hover-bg);
 			}
 			&.earth {
-				background: color-mix(in srgb, var(--earth-button-bg) 15%, transparent);
+				background: var(--earth-nav-hover-bg);
 			}
 			&.light {
-				background: color-mix(in srgb, var(--light-button-bg) 15%, transparent);
+				background: var(--light-nav-hover-bg);
 			}
 			&.dark {
-				background: color-mix(in srgb, var(--dark-button-bg) 15%, transparent);
+				background: var(--dark-nav-hover-bg);
 			}
 			&.null {
 				background: var(--card-bg-hover);
