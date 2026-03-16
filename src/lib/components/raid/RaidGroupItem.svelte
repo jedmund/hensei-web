@@ -18,6 +18,15 @@
 
 	let { group, selectedRaidId, onSelect }: Props = $props()
 
+	// Sort raids by element, then by level as tiebreaker
+	const sortedRaids = $derived(
+		[...group.raids].sort((a, b) => {
+			const elementDiff = (a.element ?? 0) - (b.element ?? 0)
+			if (elementDiff !== 0) return elementDiff
+			return (a.level ?? 0) - (b.level ?? 0)
+		})
+	)
+
 	function getRaidName(raid: RaidFull): string {
 		return localizedName(raid.name)
 	}
@@ -36,7 +45,7 @@
 	</div>
 
 	<div class="raid-list">
-		{#each group.raids as raid (raid.id)}
+		{#each sortedRaids as raid (raid.id)}
 			{@const isSelected = raid.id === selectedRaidId}
 			<button
 				type="button"

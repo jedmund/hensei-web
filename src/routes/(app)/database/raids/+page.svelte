@@ -136,7 +136,10 @@
 				return groupOrderA - groupOrderB
 			}
 			// Then element
-			return (a.element ?? 999) - (b.element ?? 999)
+			const elementDiff = (a.element ?? 999) - (b.element ?? 999)
+			if (elementDiff !== 0) return elementDiff
+			// Then level
+			return (a.level ?? 0) - (b.level ?? 0)
 		})
 	})
 
