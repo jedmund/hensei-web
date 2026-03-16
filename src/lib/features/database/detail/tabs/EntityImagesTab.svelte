@@ -50,7 +50,7 @@
 	// Characters: 01=Base, 02=MLB, 03=FLB, 04=Transcendence
 	// Summons: 01=Base, 02=ULB, 03=Transcendence
 	// Weapons: 01=Base, 02=Transcendence
-	const poseOrder = ['01', '02', '03', '04', 'default']
+	const poseOrder = ['01', '02', '03', '04', '01_style', 'default']
 	const poseLabels: Record<string, string> = {
 		'01': 'Base',
 		'02': 'MLB', // Will be overridden by label from page for summons/weapons

@@ -165,6 +165,19 @@
 			}
 		}
 
+		// Include style swap images if this base character has style variants
+		if (character.styleSwaps?.length) {
+			for (const variant of variants) {
+				images.push({
+					url: getCharacterImage(character.granblueId, variant, '01_style'),
+					label: `${variant} (Style)`,
+					variant,
+					pose: '01_style',
+					poseLabel: 'Style'
+				})
+			}
+		}
+
 		return images
 	})
 
