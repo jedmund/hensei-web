@@ -64,6 +64,12 @@ declare module 'wx-svelte-grid' {
     children?: any
   }> {}
 
+  export class HeaderMenu extends SvelteComponent<{
+    api?: any
+    columns?: Record<string, boolean>
+    children?: any
+  }> {}
+
   export class Material extends SvelteComponent<{
     fonts?: boolean
     children?: any

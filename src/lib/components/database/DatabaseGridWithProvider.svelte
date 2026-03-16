@@ -4,7 +4,7 @@
 -->
 
 <script lang="ts">
-	import { Grid } from 'wx-svelte-grid'
+	import { Grid, HeaderMenu } from 'wx-svelte-grid'
 	import type { IColumn, IRow } from 'wx-svelte-grid'
 	import { DatabaseProvider } from '$lib/providers/DatabaseProvider'
 	import CollectionFilters from '$lib/components/collection/CollectionFilters.svelte'
@@ -139,6 +139,7 @@
 
 	// Grid API reference
 	let api: any
+	let gridRef = $state<any>(undefined)
 	let gridDataStore: any
 
 	// Build current filter state for URL building
@@ -480,13 +481,16 @@
 			</div>
 		{/if}
 
-		<Grid
-			{data}
-			{columns}
-			{init}
-			sizes={{ rowHeight: 80 }}
-			class="database-grid-theme"
-		/>
+		<HeaderMenu api={gridRef}>
+			<Grid
+				bind:this={gridRef}
+				{data}
+				{columns}
+				{init}
+				sizes={{ rowHeight: 80 }}
+				class="database-grid-theme"
+			/>
+		</HeaderMenu>
 	</div>
 
 	<div class="grid-footer">
@@ -774,4 +778,48 @@
 	}
 
 	// Database image styling - removed to allow cells to control sizing
+
+	// Override wx-svelte-menu to match our design system
+	:global(.wx-menu) {
+		--wx-border-radius: #{layout.$card-corner};
+		background: var(--menu-bg) !important;
+		border: 1px solid var(--border-subtle);
+		border-radius: layout.$card-corner;
+		box-shadow: var(--shadow-md) !important;
+		padding: spacing.$unit-half !important;
+		z-index: effects.$z-modal !important;
+		min-width: calc(spacing.$unit * 22.5);
+		overflow: hidden;
+	}
+
+	:global(.wx-menu .wx-item) {
+		font-family: 'AGrot', system-ui, sans-serif;
+		font-size: typography.$font-regular;
+		color: var(--menu-text);
+		padding: spacing.$unit spacing.$unit-2x;
+		border-radius: layout.$item-corner-small;
+		height: auto;
+		line-height: normal;
+
+		&:hover {
+			background: var(--menu-bg-item-hover) !important;
+		}
+	}
+
+	:global(.wx-menu .wx-item .wx-value) {
+		color: var(--menu-text);
+	}
+
+	:global(.wx-menu .wx-item .wx-icon) {
+		color: var(--text-secondary);
+	}
+
+	:global(.wx-menu .wx-item .wx-hidden) {
+		color: var(--menu-text-disabled);
+	}
+
+	:global(.wx-menu .wx-separator) {
+		border-top-color: var(--menu-separator);
+		margin: spacing.$unit-half 0;
+	}
 </style>
