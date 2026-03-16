@@ -42,7 +42,8 @@
 		elementChangeable: false,
 		hasWeaponKeys: false,
 		hasAwakening: false,
-		augmentType: 'no_augment' as AugmentType
+		augmentType: 'no_augment' as AugmentType,
+		numWeaponKeys: null as number | null
 	})
 
 	// Populate edit data when series loads
@@ -57,7 +58,8 @@
 				elementChangeable: series.elementChangeable || false,
 				hasWeaponKeys: series.hasWeaponKeys || false,
 				hasAwakening: series.hasAwakening || false,
-				augmentType: series.augmentType || 'no_augment'
+				augmentType: series.augmentType || 'no_augment',
+				numWeaponKeys: series.numWeaponKeys ?? null
 			}
 		}
 	})
@@ -84,7 +86,8 @@
 				element_changeable: editData.elementChangeable,
 				has_weapon_keys: editData.hasWeaponKeys,
 				has_awakening: editData.hasAwakening,
-				augment_type: editData.augmentType
+				augment_type: editData.augmentType,
+				num_weapon_keys: editData.numWeaponKeys
 			}
 
 			await entityAdapter.updateWeaponSeries(series.id, payload)
@@ -179,6 +182,16 @@
 					editable={true}
 					type="checkbox"
 				/>
+				{#if editData.hasWeaponKeys}
+					<DetailItem
+						label="Weapon Key Slots"
+						sublabel="Number of key slots (e.g. 2 for Opus, 3 for Ultima)"
+						bind:value={editData.numWeaponKeys}
+						editable={true}
+						type="number"
+						placeholder="0"
+					/>
+				{/if}
 				<DetailItem
 					label="Has Awakening"
 					sublabel="Weapon can be awakened"

@@ -28,7 +28,8 @@
 		elementChangeable: false,
 		hasWeaponKeys: false,
 		hasAwakening: false,
-		augmentType: 'no_augment' as AugmentType
+		augmentType: 'no_augment' as AugmentType,
+		numWeaponKeys: null as number | null
 	})
 
 	// Augment type options for dropdown
@@ -56,7 +57,8 @@
 				element_changeable: formData.elementChangeable,
 				has_weapon_keys: formData.hasWeaponKeys,
 				has_awakening: formData.hasAwakening,
-				augment_type: formData.augmentType
+				augment_type: formData.augmentType,
+				num_weapon_keys: formData.numWeaponKeys
 			}
 
 			await entityAdapter.createWeaponSeries(payload)
@@ -150,6 +152,16 @@
 				editable={true}
 				type="checkbox"
 			/>
+			{#if formData.hasWeaponKeys}
+				<DetailItem
+					label="Weapon Key Slots"
+					sublabel="Number of key slots (e.g. 2 for Opus, 3 for Ultima)"
+					bind:value={formData.numWeaponKeys}
+					editable={true}
+					type="number"
+					placeholder="0"
+				/>
+			{/if}
 			<DetailItem
 				label="Has Awakening"
 				sublabel="Weapon can be awakened"
