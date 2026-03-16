@@ -4,17 +4,18 @@
 
 	interface Props {
 		message: string
+		icon?: string | undefined
 		actionLabel?: string | undefined
 		actionHref?: string | undefined
 	}
 
-	const { message, actionLabel, actionHref }: Props = $props()
+	const { message, icon = 'favorite', actionLabel, actionHref }: Props = $props()
 </script>
 
 <div class="favorite-toast">
 	<div class="content">
-		<span class="check-icon">
-			<Icon name="check" size={14} />
+		<span class="toast-icon">
+			<Icon name={icon} size={14} />
 		</span>
 		<p class="message">{message}</p>
 	</div>
@@ -52,11 +53,11 @@
 		gap: calc($unit * 1.5);
 	}
 
-	.check-icon {
+	.toast-icon {
 		display: flex;
 		align-items: center;
 		flex-shrink: 0;
-		color: var(--toast-success-text);
+		color: var(--toast-text);
 		margin-top: 2px;
 	}
 

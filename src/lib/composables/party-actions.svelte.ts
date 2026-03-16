@@ -67,7 +67,8 @@ export function usePartyActions(opts: PartyActionsOptions) {
 				await opts.mutations.party.unfavorite.mutateAsync(params)
 				toast.custom(FavoriteToast, {
 					componentProps: {
-						message: m.toast_removed_favorite({ name: partyName })
+						message: m.toast_removed_favorite({ name: partyName }),
+						icon: 'unfavorite'
 					}
 				})
 			} else {
