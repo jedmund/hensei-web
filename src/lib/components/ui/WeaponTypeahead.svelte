@@ -1,7 +1,7 @@
-<!-- WeaponTypeahead Component - Async weapon search with Svelecte -->
+<!-- WeaponTypeahead Component - Async weapon search with bits-ui Combobox -->
 
 <script lang="ts">
-	import Svelecte from 'svelecte'
+	import { Combobox } from 'bits-ui'
 	import Icon from '../Icon.svelte'
 	import { searchAdapter, type SearchResult } from '$lib/api/adapters/search.adapter'
 	import { getWeaponGridImage } from '$lib/utils/images'
@@ -48,44 +48,44 @@
 	}: Props = $props()
 
 	let searchResults = $state<WeaponOption[]>([])
-	// Only used when user selects something NEW (different from initialWeapon)
-	let userSelectedOption = $state<WeaponOption | null>(null)
 	let isLoading = $state(false)
 	let searchTimeout: ReturnType<typeof setTimeout> | null = null
+	let comboboxOpen = $state(false)
+	let inputValue = $state('')
 
-	// Clear userSelectedOption when value is cleared
+	// The selected granblueId used as the combobox value
+	let selectedGranblueId = $state<string>(value ?? '')
+
+	// Sync external value changes into combobox
 	$effect(() => {
-		if (!value) {
-			userSelectedOption = null
+		selectedGranblueId = value ?? ''
+	})
+
+	// Set initial input display text from initialWeapon
+	$effect(() => {
+		if (initialWeapon && value && initialWeapon.granblueId === value && !inputValue) {
+			inputValue = initialWeapon.name
 		}
 	})
 
-	// Derive options: include initialWeapon or userSelectedOption so Svelecte can find the value
-	const options = $derived.by(() => {
-		const results = [...searchResults]
+	// Track the currently displayed weapon for the selection display
+	let displayedWeapon = $state<WeaponOption | null>(null)
 
-		// If user selected something new, prioritize that
-		const userSelected = userSelectedOption
-		if (userSelected && !results.find((o) => o.granblueId === userSelected.granblueId)) {
-			return [userSelected, ...results]
-		}
-
-		// Otherwise, include initialWeapon if we have a value matching it
-		if (value && initialWeapon && initialWeapon.granblueId === value) {
-			const initOption: WeaponOption = {
+	$effect(() => {
+		if (value && initialWeapon && initialWeapon.granblueId === value && !displayedWeapon) {
+			displayedWeapon = {
 				id: initialWeapon.id,
 				label: initialWeapon.name,
 				granblueId: initialWeapon.granblueId
 			}
-			if (!results.find((o) => o.granblueId === initOption.granblueId)) {
-				return [initOption, ...results]
-			}
 		}
-
-		return results
 	})
 
-	const typeaheadClasses = $derived(
+	const comboboxItems = $derived(
+		searchResults.map((w) => ({ value: w.granblueId, label: w.label }))
+	)
+
+	const wrapperClasses = $derived(
 		['weapon-typeahead', size, contained && 'contained', disabled && 'disabled']
 			.filter(Boolean)
 			.join(' ')
@@ -111,6 +111,9 @@
 				granblueId: result.granblueId,
 				element: result.element
 			}))
+			if (searchResults.length > 0) {
+				comboboxOpen = true
+			}
 		} catch (error) {
 			if (import.meta.env.DEV) {
 				console.error('Weapon search error:', error)
@@ -121,77 +124,99 @@
 		}
 	}
 
-	function handleInput(event: Event) {
-		const target = event.target as HTMLInputElement | null
-		const query = target?.value ?? ''
+	function handleInputChange(val: string) {
+		inputValue = val
+		if (searchTimeout) clearTimeout(searchTimeout)
+		searchTimeout = setTimeout(() => searchWeapons(val), 300)
 
-		// Debounce the search
-		if (searchTimeout) {
-			clearTimeout(searchTimeout)
+		if (!val.trim()) {
+			selectedGranblueId = ''
+			displayedWeapon = null
+			value = null
+			onValueChange?.(null)
 		}
-
-		searchTimeout = setTimeout(() => {
-			searchWeapons(query)
-		}, 300)
 	}
 
-	function handleChange(selected: WeaponOption | null) {
-		const newValue = selected?.granblueId || null
-		value = newValue
-		// Only track as userSelectedOption if it's different from initialWeapon
-		if (selected && initialWeapon && selected.granblueId === initialWeapon.granblueId) {
-			userSelectedOption = null // Use initialWeapon instead
+	function handleValueChange(granblueId: string) {
+		selectedGranblueId = granblueId
+		if (granblueId) {
+			const match = searchResults.find((w) => w.granblueId === granblueId)
+			if (match) {
+				displayedWeapon = match
+				inputValue = match.label
+				value = granblueId
+				onValueChange?.(granblueId)
+			}
 		} else {
-			userSelectedOption = selected
+			displayedWeapon = null
+			value = null
+			onValueChange?.(null)
 		}
-		onValueChange?.(newValue)
+		comboboxOpen = false
+	}
+
+	function handleClear() {
+		selectedGranblueId = ''
+		inputValue = ''
+		displayedWeapon = null
+		searchResults = []
+		value = null
+		onValueChange?.(null)
 	}
 </script>
 
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class={typeaheadClasses} oninput={handleInput}>
-	<Svelecte
-		{options}
-		value={value}
-		labelField="label"
-		valueField="granblueId"
-		searchable={true}
-		{placeholder}
-		{disabled}
-		{clearable}
-		onChange={handleChange}
+<div class={wrapperClasses}>
+	<Combobox.Root
+		type="single"
+		bind:value={selectedGranblueId}
+		onValueChange={handleValueChange}
+		bind:open={comboboxOpen}
+		bind:inputValue
+		items={comboboxItems}
+		disabled={disabled}
 	>
-		{#snippet toggleIcon(dropdownShow)}
-			<Icon name="chevron-down-small" size={14} class="chevron" />
-		{/snippet}
-		{#snippet option(opt)}
-			{@const weapon = opt as WeaponOption}
-			<div class="option-item">
-				<img
-					src={getWeaponGridImage(weapon.granblueId, weapon.element)}
-					alt=""
-					class="option-image"
-				/>
-				<span class="option-label">{weapon.label}</span>
-			</div>
-		{/snippet}
-		{#snippet selection(sel)}
-			{@const weapon = (sel as WeaponOption[])[0]}
-			{#if weapon}
-				<div class="selection-item">
-					<img
-						src={getWeaponGridImage(weapon.granblueId, weapon.element)}
-						alt=""
-						class="selection-image"
-					/>
-					<span class="selection-label">{weapon.label}</span>
-				</div>
+		<div class="combobox-input-wrapper">
+			<Combobox.Input
+				class="combobox-input"
+				{placeholder}
+				oninput={(e) => handleInputChange(e.currentTarget.value)}
+				{disabled}
+			/>
+			{#if isLoading}
+				<span class="input-loading">
+					<Icon name="loader-2" size={14} />
+				</span>
+			{:else if clearable && displayedWeapon}
+				<button type="button" class="clear-button" onclick={handleClear}>
+					<Icon name="close" size={12} />
+				</button>
 			{/if}
-		{/snippet}
-	</Svelecte>
-	{#if isLoading}
-		<span class="loading-indicator">...</span>
-	{/if}
+		</div>
+
+		<Combobox.Portal>
+			<Combobox.Content class="combobox-content">
+				<Combobox.Viewport>
+					{#each searchResults as weapon (weapon.granblueId)}
+						<Combobox.Item value={weapon.granblueId} label={weapon.label} class="combobox-item">
+							{#snippet children({ selected })}
+								<img
+									src={getWeaponGridImage(weapon.granblueId, weapon.element)}
+									alt=""
+									class="item-image"
+								/>
+								<span class="item-label">{weapon.label}</span>
+								{#if selected}
+									<span class="item-check">
+										<Icon name="check" size={14} />
+									</span>
+								{/if}
+							{/snippet}
+						</Combobox.Item>
+					{/each}
+				</Combobox.Viewport>
+			</Combobox.Content>
+		</Combobox.Portal>
+	</Combobox.Root>
 </div>
 
 <style lang="scss">
@@ -206,159 +231,186 @@
 		position: relative;
 		width: 100%;
 
-		// Svelecte CSS variable overrides
-		--sv-bg: var(--input-bg);
-		--sv-border-color: transparent;
-		--sv-border: 1px solid var(--sv-border-color);
-		--sv-active-border: 1px solid #{$blue};
-		--sv-active-outline: none;
-		--sv-border-radius: #{$input-corner};
-		--sv-min-height: #{$unit-4x};
-		--sv-placeholder-color: var(--text-tertiary);
-		--sv-color: var(--text-primary);
-
-		--sv-dropdown-bg: var(--dialog-bg);
-		--sv-dropdown-border-radius: #{$card-corner};
-		--sv-dropdown-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-		--sv-dropdown-offset: #{$unit-half};
-
-		--sv-item-color: var(--text-primary);
-		--sv-item-active-bg: var(--option-bg-hover);
-		--sv-item-selected-bg: var(--option-bg-hover);
-
-		--sv-icon-color: var(--text-tertiary);
-		--sv-icon-hover-color: var(--text-primary);
-
 		&.disabled {
 			opacity: 0.5;
 			pointer-events: none;
 		}
+	}
 
-		// Target Svelecte control for hover states
-		:global(.sv-control) {
-			padding: calc($unit-half + 1px) $unit calc($unit-half + 1px) $unit-half;
-			@include smooth-transition($duration-quick, background-color, border-color);
+	.combobox-input-wrapper {
+		position: relative;
+	}
+
+	:global(.weapon-typeahead .combobox-input) {
+		all: unset;
+		box-sizing: border-box;
+		-webkit-font-smoothing: antialiased;
+		background-color: var(--input-bg);
+		border-radius: $input-corner;
+		border: 1px solid transparent;
+		color: var(--text-primary);
+		display: block;
+		font-family: var(--font-family);
+		font-size: $font-regular;
+		min-height: $unit-4x;
+		padding: $unit calc($unit * 1.5);
+		width: 100%;
+		@include smooth-transition($duration-quick, background-color, border-color);
+
+		&::placeholder {
+			color: var(--text-tertiary);
+			opacity: 1;
 		}
 
-		&:hover:not(.disabled) :global(.sv-control) {
+		&:hover {
 			background-color: var(--input-bg-hover);
 		}
 
-		// Contained variant
-		&.contained {
-			--sv-bg: var(--select-contained-bg);
-
-			&:hover:not(.disabled) :global(.sv-control) {
-				background-color: var(--select-contained-bg-hover);
-			}
+		&:focus {
+			border-color: $blue;
 		}
 
-		// Style the dropdown
-		:global(.sv_dropdown) {
-			border: 1px solid rgba(0, 0, 0, 0.1);
-			max-height: 40vh;
-			z-index: $z-modal + 2;
-		}
-
-		// Style dropdown items
-		:global(.sv-item) {
-			border-radius: $item-corner-small;
-			padding: $unit $unit-2x;
-			gap: $unit;
-			@include smooth-transition($duration-quick, background-color);
-		}
-
-		// Style the input text
-		:global(.sv-input--text) {
-			font-family: var(--font-family);
-		}
-
-		// Style the indicator buttons
-		:global(.sv-btn-indicator) {
-			color: var(--text-tertiary);
-			@include smooth-transition($duration-quick, color);
-
-			&:hover {
-				color: var(--text-primary);
-			}
-		}
-
-		// Style our custom chevron icon
-		:global(.chevron) {
-			flex-shrink: 0;
-			color: var(--text-tertiary);
-		}
-
-		// Hide the separator bar between buttons
-		:global(.sv-btn-separator) {
-			display: none;
-		}
-
-		// Custom option item styling
-		.option-item {
-			display: flex;
-			align-items: center;
-			gap: $unit;
-		}
-
-		.option-image {
-			width: 24px;
-			height: 24px;
-			border-radius: $item-corner-small;
-			flex-shrink: 0;
-		}
-
-		.option-label {
-			flex: 1;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-		}
-
-		// Custom selection item styling (shown in input when value selected)
-		.selection-item {
-			display: flex;
-			align-items: center;
-			gap: $unit-half;
-		}
-
-		.selection-image {
-			width: 20px;
-			height: 20px;
-			border-radius: $item-corner-small;
-			flex-shrink: 0;
-		}
-
-		.selection-label {
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
+		&:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
 		}
 	}
 
-	// Size variants
-	.weapon-typeahead.small {
-		--sv-min-height: #{$unit-3x};
-		--sv-font-size: #{$font-small};
+	// Contained variant
+	.weapon-typeahead.contained :global(.combobox-input) {
+		background-color: var(--select-contained-bg);
+
+		&:hover {
+			background-color: var(--select-contained-bg-hover);
+		}
 	}
 
-	.weapon-typeahead.medium {
-		--sv-min-height: #{$unit-4x};
-		--sv-font-size: #{$font-regular};
-	}
-
-	.weapon-typeahead.large {
-		--sv-min-height: calc(#{$unit} * 6);
-		--sv-font-size: #{$font-large};
-	}
-
-	.loading-indicator {
+	.input-loading {
 		position: absolute;
-		right: $unit-3x;
+		right: $unit-2x;
 		top: 50%;
 		transform: translateY(-50%);
 		color: var(--text-tertiary);
-		font-size: $font-small;
+		display: flex;
+		align-items: center;
 		pointer-events: none;
+
+		:global(svg) {
+			animation: spin 1s linear infinite;
+		}
+	}
+
+	.clear-button {
+		position: absolute;
+		right: $unit;
+		top: 50%;
+		transform: translateY(-50%);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 20px;
+		height: 20px;
+		padding: 0;
+		border: none;
+		background: transparent;
+		color: var(--text-secondary);
+		cursor: pointer;
+		border-radius: $unit-half;
+		@include smooth-transition($duration-quick, background-color, color);
+
+		&:hover {
+			background: var(--surface-tertiary);
+			color: var(--text-primary);
+		}
+
+		:global(svg) {
+			fill: currentColor;
+		}
+	}
+
+	// Dropdown
+	:global(.weapon-typeahead .combobox-content) {
+		background: var(--dialog-bg);
+		border-radius: $card-corner;
+		border: 1px solid rgba(0, 0, 0, 0.1);
+		box-shadow: var(--shadow-lg);
+		padding: $unit-half;
+		min-width: var(--bits-combobox-anchor-width);
+		max-height: 40vh;
+		overflow: auto;
+		z-index: $z-modal + 2;
+		animation: fadeIn $duration-opacity-fade ease-out;
+	}
+
+	// Items
+	:global(.weapon-typeahead .combobox-item) {
+		align-items: center;
+		border-radius: $item-corner-small;
+		color: var(--text-primary);
+		cursor: pointer;
+		display: flex;
+		gap: $unit;
+		padding: $unit $unit-2x;
+		user-select: none;
+		@include smooth-transition($duration-quick, background-color);
+
+		&:hover,
+		&[data-highlighted] {
+			background-color: var(--option-bg-hover);
+		}
+
+		&[data-selected] {
+			font-weight: $medium;
+		}
+	}
+
+	.item-image {
+		width: 24px;
+		height: 24px;
+		border-radius: $item-corner-small;
+		flex-shrink: 0;
+	}
+
+	.item-label {
+		flex: 1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.item-check {
+		margin-left: auto;
+		color: var(--accent-color);
+	}
+
+	// Size variants
+	.weapon-typeahead.small :global(.combobox-input) {
+		min-height: $unit-3x;
+		font-size: $font-small;
+	}
+
+	.weapon-typeahead.large :global(.combobox-input) {
+		min-height: calc($unit * 6);
+		font-size: $font-large;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+			transform: translateY(-4px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@keyframes spin {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
 	}
 </style>
