@@ -167,6 +167,17 @@
 					isFriendSlot: newSlot === 6,
 					isSubauraSlot: newSlot === 4 || newSlot === 5
 				})
+			} else if (tab === GridType.Weapon) {
+				openSearchSidebar({
+					type: 'weapon',
+					onAddItems: itemAddition.handleAddItems,
+					canAddMore: true,
+					authUserId,
+					userElement,
+					onUnlinkCollection: actions.handleUnlinkCollection,
+					initialCollectionSourceUsername,
+					isExtraSlot: newSlot >= 9
+				})
 			}
 		},
 		ensurePartyExists: ensurePartyExists ? (() => ensurePartyExists()) : undefined
@@ -385,7 +396,8 @@
 				onUnlinkCollection: actions.handleUnlinkCollection,
 				initialCollectionSourceUsername,
 				isFriendSlot: opts.type === 'summon' && opts.position === 6,
-				isSubauraSlot: opts.type === 'summon' && (opts.position === 4 || opts.position === 5)
+				isSubauraSlot: opts.type === 'summon' && (opts.position === 4 || opts.position === 5),
+				isExtraSlot: opts.type === 'weapon' && opts.position >= 9
 			})
 		}
 	})

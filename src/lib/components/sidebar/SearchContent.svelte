@@ -52,6 +52,8 @@
 		isFriendSlot?: boolean
 		/** Whether the current slot is a subaura summon slot (filters to subaura summons only) */
 		isSubauraSlot?: boolean
+		/** Whether the current slot is an extra weapon slot (filters to extra-eligible weapons only) */
+		isExtraSlot?: boolean
 	}
 
 	let {
@@ -65,7 +67,8 @@
 		onUnlinkCollection,
 		initialCollectionSourceUsername,
 		isFriendSlot = false,
-		isSubauraSlot = false
+		isSubauraSlot = false,
+		isExtraSlot = false
 	}: Props = $props()
 
 	// Reactively derive collection source from party store (stays in sync after mutations)
@@ -289,7 +292,8 @@
 				? effectiveProficiencies
 				: undefined,
 		series: seriesFilter ? [seriesFilter] : undefined,
-		subaura: subauraFilter ? true : undefined
+		subaura: subauraFilter ? true : undefined,
+		extra: isExtraSlot ? true : undefined
 	})
 
 	// --- Collection helpers ---

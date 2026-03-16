@@ -24,10 +24,12 @@ interface SearchSidebarOptions {
 	isFriendSlot?: boolean
 	/** Whether the current slot is a subaura summon slot (filters to subaura summons only) */
 	isSubauraSlot?: boolean
+	/** Whether the current slot is an extra weapon slot (filters to extra-eligible weapons only) */
+	isExtraSlot?: boolean
 }
 
 export function openSearchSidebar(options: SearchSidebarOptions) {
-	const { type, onAddItems, canAddMore = true, authUserId, requiredProficiencies, jobName, userElement, onUnlinkCollection, initialCollectionSourceUsername, isFriendSlot, isSubauraSlot } = options
+	const { type, onAddItems, canAddMore = true, authUserId, requiredProficiencies, jobName, userElement, onUnlinkCollection, initialCollectionSourceUsername, isFriendSlot, isSubauraSlot, isExtraSlot } = options
 
 	// If sidebar is already open with SearchContent for the same entity type,
 	// update props without remounting to preserve filter state
@@ -43,7 +45,8 @@ export function openSearchSidebar(options: SearchSidebarOptions) {
 			requiredProficiencies,
 			jobName,
 			isFriendSlot,
-			isSubauraSlot
+			isSubauraSlot,
+			isExtraSlot
 		})
 		return
 	}
@@ -61,7 +64,8 @@ export function openSearchSidebar(options: SearchSidebarOptions) {
 		onUnlinkCollection,
 		initialCollectionSourceUsername,
 		isFriendSlot,
-		isSubauraSlot
+		isSubauraSlot,
+		isExtraSlot
 	})
 }
 
