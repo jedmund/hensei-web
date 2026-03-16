@@ -122,7 +122,7 @@
 <div class="page">
 	{#if accessory}
 		<DatabaseFormHeader
-			title="Edit: {localizedName(accessory.name)}"
+			title="Edit Job Accessory"
 			onCancel={handleCancel}
 			onSave={saveChanges}
 			{isSaving}

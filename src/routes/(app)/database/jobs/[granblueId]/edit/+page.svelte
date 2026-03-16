@@ -139,7 +139,7 @@
 <div class="page">
 	{#if job}
 		<DatabaseFormHeader
-			title="Edit: {localizedName(job.name)}"
+			title="Edit Job"
 			onCancel={handleCancel}
 			onSave={saveChanges}
 			{isSaving}

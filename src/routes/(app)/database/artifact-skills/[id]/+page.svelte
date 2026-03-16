@@ -127,7 +127,7 @@
 		{ value: 'negative', label: 'Negative' }
 	]
 
-	const pageTitle = $derived(`Edit: ${skill?.name?.en ?? 'Artifact Skill'}`)
+	const pageTitle = $derived('Edit Artifact Skill')
 </script>
 
 <PageMeta title={pageTitle} description="Edit artifact skill" />
