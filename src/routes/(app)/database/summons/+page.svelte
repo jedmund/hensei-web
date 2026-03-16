@@ -63,7 +63,6 @@
 			id: 'last_updated',
 			header: 'Last Updated',
 			width: 120,
-			flexgrow: 1,
 			sort: true,
 			cell: LastUpdatedCell
 		},
