@@ -407,6 +407,7 @@
 	"recency_year": "1年以内",
 
 	"filter_full_auto": "フルオート",
+	"filter_solo": "ソロ",
 	"filter_auto_guard": "オートガード",
 	"filter_charge_attack": "奥義",
 	"filter_youtube": "Youtube有",
@@ -1323,6 +1324,7 @@
 	"battle_off": "オフ",
 	"battle_charge_attack": "奥義",
 	"battle_full_auto": "フルオート",
+	"battle_solo": "ソロ",
 	"battle_auto_summon": "オート召喚",
 	"battle_auto_guard": "オートガード",
 

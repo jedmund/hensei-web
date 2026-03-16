@@ -407,6 +407,7 @@
 	"recency_year": "Last year",
 
 	"filter_full_auto": "Full Auto",
+	"filter_solo": "Solo",
 	"filter_auto_guard": "Auto Guard",
 	"filter_charge_attack": "Charge Attack",
 	"filter_youtube": "Youtube",
@@ -1323,6 +1324,7 @@
 	"battle_off": "Off",
 	"battle_charge_attack": "Charge Attack",
 	"battle_full_auto": "Full Auto",
+	"battle_solo": "Solo",
 	"battle_auto_summon": "Auto Summon",
 	"battle_auto_guard": "Auto Guard",
 
