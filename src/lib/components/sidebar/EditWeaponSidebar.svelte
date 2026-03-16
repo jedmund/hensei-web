@@ -69,20 +69,9 @@
 	const seriesSlug = $derived(getSeriesSlug(series))
 	const transcendenceStep = $derived(weapon.transcendenceStep ?? 0)
 
-	// Weapon key slot configuration by series slug
-	// Maps series slug → number of weapon key slots
-	const WEAPON_KEY_SLOTS: Record<string, number> = {
-		'dark-opus': 2, // Pendulum (slot 0) + Chain/Pendulum (slot 1)
-		'ultima': 3, // Gauph Key (slot 0) + Ultima Key (slot 1) + Gate (slot 2)
-		'draconic': 2, // Teluma (slot 0) + Teluma (slot 1)
-		'draconic-providence': 2, // Same as Draconic
-		'superlative': 2, // Teluma (slot 0) + Teluma (slot 1)
-		// Add more as needed
-	}
-
 	// Check if series has weapon keys using the utility (handles both formats)
 	const hasWeaponKeys = $derived(seriesHasWeaponKeys(series))
-	const keySlotCount = $derived(seriesSlug ? (WEAPON_KEY_SLOTS[seriesSlug] ?? 2) : 0)
+	const keySlotCount = $derived(series?.numWeaponKeys ?? 0)
 
 	// Augment type from series determines AX skills vs befoulment
 	const augmentType = $derived(series?.augmentType ?? 'no_augment')

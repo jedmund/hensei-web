@@ -102,18 +102,9 @@
 	const series = $derived(weaponData?.series)
 	const seriesSlug = $derived(getSeriesSlug(series))
 
-	// Weapon key slot configuration by series slug
-	const WEAPON_KEY_SLOTS: Record<string, number> = {
-		'dark-opus': 2,
-		'ultima': 3,
-		'draconic': 2,
-		'draconic-providence': 2,
-		'superlative': 2
-	}
-
 	// Check if series has weapon keys using the utility (handles both formats)
 	const hasWeaponKeys = $derived(seriesHasWeaponKeys(series))
-	const keySlotCount = $derived(seriesSlug ? (WEAPON_KEY_SLOTS[seriesSlug] ?? 2) : 0)
+	const keySlotCount = $derived(series?.numWeaponKeys ?? 0)
 
 	// Augment type from series determines AX skills vs befoulment
 	const augmentType = $derived(series?.augmentType ?? 'no_augment')
