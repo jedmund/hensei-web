@@ -41,6 +41,7 @@
 		menu?: Snippet
 		// Battle settings
 		fullAuto?: boolean
+		solo?: boolean
 		autoGuard?: boolean
 		autoSummon?: boolean
 		chargeAttack?: boolean
@@ -66,6 +67,7 @@
 		onOpenEdit,
 		menu,
 		fullAuto,
+		solo,
 		autoGuard,
 		autoSummon,
 		chargeAttack,
@@ -251,6 +253,11 @@
 					</span>
 				</Tooltip>
 			{/each}
+			{#if solo}
+				<Tooltip content={m.battle_solo()}>
+					<span class="token solo on">{m.battle_solo()}</span>
+				</Tooltip>
+			{/if}
 			{#if formattedClearTime}
 				<Tooltip content={m.party_edit_clear_time()}>
 					<span class="token metric">{formattedClearTime}</span>
@@ -506,7 +513,8 @@
 		}
 
 		&.fullAuto.on,
-		&.autoSummon.on {
+		&.autoSummon.on,
+		&.solo.on {
 			background: var(--full-auto-bg);
 			color: var(--full-auto-text);
 		}

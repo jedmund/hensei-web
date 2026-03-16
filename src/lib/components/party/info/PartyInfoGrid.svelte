@@ -74,6 +74,7 @@
 			{onOpenEdit}
 			{menu}
 			fullAuto={party.fullAuto}
+			solo={party.solo}
 			autoGuard={party.autoGuard}
 			autoSummon={party.autoSummon}
 			chargeAttack={party.chargeAttack}
