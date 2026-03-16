@@ -181,7 +181,7 @@
 
 	function resetColumns() {
 		if (!api || !isBrowser) return
-		localStorage.removeItem(COLUMNS_STORAGE_KEY)
+		restoringColumns = true
 		const cols = api.getState()._columns
 		for (const col of cols) {
 			const originalCol = columns.find((c) => c.id === col.id)
@@ -190,6 +190,8 @@
 				api.exec('hide-column', { id: col.id, mode: shouldBeHidden })
 			}
 		}
+		restoringColumns = false
+		localStorage.removeItem(COLUMNS_STORAGE_KEY)
 		hasCustomColumns = false
 	}
 
