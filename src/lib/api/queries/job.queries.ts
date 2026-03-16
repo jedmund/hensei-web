@@ -167,6 +167,18 @@ export const jobQueries = {
 			gcTime: 1000 * 60 * 60 // 1 hour
 		}),
 
+	/**
+	 * Single job skill query options
+	 */
+	skillById: (id: string) =>
+		queryOptions({
+			queryKey: ['jobSkills', id] as const,
+			queryFn: () => jobAdapter.getSkillById(id),
+			enabled: !!id,
+			staleTime: 1000 * 60 * 30,
+			gcTime: 1000 * 60 * 60
+		}),
+
 	// ============================================
 	// Job Accessory Database Queries
 	// ============================================
@@ -228,6 +240,14 @@ export const jobKeys = {
 		[...jobKeys.skills(jobId), 'search', params] as const,
 	accessoriesForJob: (jobId: string) => [...jobKeys.all, jobId, 'accessories'] as const,
 	allSkills: () => [...jobKeys.all, 'skills', 'all'] as const
+}
+
+/**
+ * Job skill query key helpers for cache invalidation
+ */
+export const jobSkillKeys = {
+	all: ['jobSkills'] as const,
+	detail: (id: string) => [...jobSkillKeys.all, id] as const
 }
 
 /**

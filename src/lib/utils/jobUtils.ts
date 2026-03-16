@@ -166,6 +166,20 @@ export function isSkillSlotLocked(
 }
 
 /**
+ * Get skill color display name from numeric value
+ */
+export function getSkillColorName(color: number): string {
+	switch (color) {
+		case 0: return 'Yellow'
+		case 1: return 'Blue'
+		case 2: return 'Red'
+		case 3: return 'Green'
+		case 4: return 'Purple'
+		default: return `Unknown (${color})`
+	}
+}
+
+/**
  * Get skill category display name
  */
 export function getSkillCategoryName(skill: JobSkill): string {

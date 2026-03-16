@@ -212,6 +212,13 @@ export class JobAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Gets a single job skill by ID
+	 */
+	async getSkillById(id: string): Promise<JobSkill> {
+		return this.request<JobSkill>(`/jobs/skills/${id}`)
+	}
+
+	/**
 	 * Gets EMP skills from other jobs (for party skill selection)
 	 * Returns skills that can be used with the specified job
 	 */
