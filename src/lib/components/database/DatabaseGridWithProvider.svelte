@@ -226,11 +226,6 @@
 			saveColumnVisibility()
 		})
 
-		// Restore saved column visibility after grid is ready
-		tick().then(() => {
-			restoreColumnVisibility()
-		})
-
 		// Intercept sort to do server-side sorting
 		api.intercept('sort-rows', (ev: { key: string; add: boolean }) => {
 			const { key } = ev
@@ -303,6 +298,7 @@
 
 	onMount(() => {
 		expanded = localStorage.getItem(EXPAND_STORAGE_KEY) === 'true'
+		restoreColumnVisibility()
 
 		if (resource !== 'weapons') {
 			initializeFromUrl()
