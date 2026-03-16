@@ -76,6 +76,7 @@
 
   const partyOptions = $derived([
     { value: 'full_auto', label: m.filter_full_auto() },
+    { value: 'solo', label: m.filter_solo() },
     { value: 'auto_guard', label: m.filter_auto_guard() },
     { value: 'charge_attack', label: m.filter_charge_attack() },
     { value: 'youtube', label: m.filter_youtube() }
@@ -182,6 +183,13 @@
         label: m.filter_full_auto(),
         category: m.filter_cat_party(),
         option: { kind: 'party', value: 'full_auto', label: m.filter_full_auto(), category: m.filter_cat_party() }
+      })
+
+      // Solo (always)
+      picks.push({
+        label: m.filter_solo(),
+        category: m.filter_cat_party(),
+        option: { kind: 'party', value: 'solo', label: m.filter_solo(), category: m.filter_cat_party() }
       })
 
       // Youtube (always)

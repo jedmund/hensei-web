@@ -30,6 +30,7 @@ export function filterItemsToParams(filterItems: FilterItem[]): ExploreFilterPar
 	for (const f of filterItems.filter((f) => f.kind === 'party')) {
 		const val = f.value as string
 		if (val === 'full_auto') params.fullAuto = 1
+		else if (val === 'solo') params.solo = 1
 		else if (val === 'auto_guard') params.autoGuard = 1
 		else if (val === 'charge_attack') params.chargeAttack = 1
 		else if (val === 'youtube') params.hasVideo = true
