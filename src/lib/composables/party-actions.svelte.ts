@@ -19,6 +19,7 @@ interface PartyActionsOptions {
 	getParty: () => Party
 	canEdit: () => boolean
 	getAuthUserId: () => string | undefined
+	getAuthUsername: () => string | undefined
 	getUserElement: () => ElementType | undefined
 	getHasCollectionLinks: () => boolean
 }
@@ -54,18 +55,31 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		if (!authUserId) return
 
 		const party = opts.getParty()
+		const wasFavorited = party.favorited
 		loading = true
 		error = null
 
 		try {
 			const params = { id: party.id, shortcode: party.shortcode }
-			if (party.favorited) {
+			if (wasFavorited) {
 				await opts.mutations.party.unfavorite.mutateAsync(params)
+				toast.success(m.toast_removed_favorite({ name: party.name || m.party_untitled() }))
 			} else {
 				await opts.mutations.party.favorite.mutateAsync(params)
+				const username = opts.getAuthUsername()
+				toast.success(m.toast_added_favorite({ name: party.name || m.party_untitled() }), {
+					action: username
+						? {
+								label: m.toast_view_favorites(),
+								onClick: () => {
+									window.location.href = `/${username}/favorites`
+								}
+							}
+						: undefined
+				})
 			}
 		} catch (err: any) {
-			error = err.message || m.toast_failed_update_favorite()
+			toast.error(extractErrorMessage(err, m.toast_failed_update_favorite()))
 		} finally {
 			loading = false
 		}

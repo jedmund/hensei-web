@@ -123,6 +123,7 @@
 		getParty: () => party,
 		canEdit: () => canEdit(),
 		getAuthUserId: () => authUserId,
+		getAuthUsername: () => authUsername,
 		getUserElement: () => userElement,
 		getHasCollectionLinks: () => hasCollectionLinks
 	})

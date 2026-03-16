@@ -41,6 +41,7 @@ describe('usePartyActions', () => {
 			getParty: () => party,
 			canEdit: () => true,
 			getAuthUserId: () => 'user-1',
+			getAuthUsername: () => 'testuser',
 			getUserElement: () => 'wind',
 			getHasCollectionLinks: () => false,
 			...overrides
