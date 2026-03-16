@@ -221,12 +221,14 @@
 		const { data: dataStore } = api.getStores()
 		gridDataStore = dataStore
 
-		// Restore saved column visibility
-		restoreColumnVisibility()
-
 		// Persist column visibility on toggle
 		api.on('hide-column', () => {
 			saveColumnVisibility()
+		})
+
+		// Restore saved column visibility after grid is ready
+		tick().then(() => {
+			restoreColumnVisibility()
 		})
 
 		// Intercept sort to do server-side sorting
