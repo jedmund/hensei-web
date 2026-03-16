@@ -84,6 +84,13 @@
 		onClear?.()
 	}
 
+	// Select all text on focus for easier editing
+	function onFocus(event: FocusEvent) {
+		const input = event.currentTarget as HTMLInputElement
+		input.select()
+		handleFocus?.()
+	}
+
 	const fieldsetClasses = $derived(
 		['fieldset', hidden && 'hidden', fullWidth && 'full', className].filter(Boolean).join(' ')
 	)
@@ -135,7 +142,7 @@
 				maxlength={maxLength}
 				data-1p-ignore={no1password}
 				onblur={handleBlur}
-				onfocus={handleFocus}
+				onfocus={onFocus}
 				oninput={handleInput}
 				{...restProps}
 			/>
@@ -176,7 +183,7 @@
 			maxlength={maxLength}
 			data-1p-ignore={no1password}
 			onblur={handleBlur}
-			onfocus={handleFocus}
+			onfocus={onFocus}
 			oninput={handleInput}
 			{...restProps}
 		/>
