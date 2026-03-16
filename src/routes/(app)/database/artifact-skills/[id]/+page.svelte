@@ -7,6 +7,7 @@
 	import { artifactAdapter } from '$lib/api/adapters/artifact.adapter'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
@@ -262,15 +263,17 @@
 			</section>
 		</div>
 	{:else}
-		<div class="not-found">
-			<h2>Skill Not Found</h2>
-			<p>The skill you're looking for could not be found.</p>
-			<button onclick={() => goto('/database/artifact-skills')}>Back to Skills</button>
-		</div>
+		<NotFoundPlaceholder
+			title="Skill Not Found"
+			message="The skill you're looking for could not be found."
+			backHref="/database/artifact-skills"
+			backLabel="Back to Skills"
+		/>
 	{/if}
 </div>
 
 <style lang="scss">
+	@use '$src/themes/database' as database;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
@@ -390,26 +393,6 @@
 	}
 
 	.details {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.not-found {
-		text-align: center;
-		padding: spacing.$unit * 4;
-
-		button {
-			background: var(--blue);
-			color: white;
-			border: none;
-			padding: spacing.$unit spacing.$unit-2x;
-			border-radius: layout.$item-corner;
-			cursor: pointer;
-			margin-top: spacing.$unit;
-
-			&:hover {
-				filter: brightness(0.9);
-			}
-		}
+		@include database.details;
 	}
 </style>

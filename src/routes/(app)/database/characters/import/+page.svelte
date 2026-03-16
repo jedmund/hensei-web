@@ -563,6 +563,7 @@
 </div>
 
 <style lang="scss">
+	@use '$src/themes/database' as database;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -647,15 +648,11 @@
 	}
 
 	.details {
-		display: flex;
-		flex-direction: column;
+		@include database.details;
 	}
 
 	.error-banner {
-		color: var(--danger);
-		font-size: typography.$font-small;
-		padding: spacing.$unit-2x;
-		background: var(--danger-bg);
+		@include database.error-banner;
 	}
 
 	.entity-error,

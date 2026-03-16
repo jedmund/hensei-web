@@ -11,6 +11,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 	import { getAugmentTypeOptions } from '$lib/utils/augmentType'
 	import { localizedName } from '$lib/utils/locale'
 	import type { AugmentType } from '$lib/types/api/weaponStatModifier'
@@ -210,19 +211,18 @@
 			</DetailsContainer>
 		</div>
 	{:else}
-		<div class="not-found">
-			<h2>Series Not Found</h2>
-			<p>The weapon series you're looking for could not be found.</p>
-			<button onclick={() => goto('/database/weapons?view=series')}>Back to Series</button>
-		</div>
+		<NotFoundPlaceholder
+			title="Series Not Found"
+			message="The weapon series you're looking for could not be found."
+			backHref="/database/weapons?view=series"
+			backLabel="Back to Series"
+		/>
 	{/if}
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
+	@use '$src/themes/database' as database;
 	@use '$src/themes/layout' as layout;
-	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
 
 	.page {
 		background: var(--card-bg);
@@ -231,35 +231,10 @@
 	}
 
 	.content {
-		display: flex;
-		flex-direction: column;
+		@include database.details;
 	}
 
 	.error-banner {
-		background: #fef2f2;
-		border: 1px solid #fecaca;
-		color: #dc2626;
-		padding: spacing.$unit-2x;
-		margin: spacing.$unit-2x;
-		border-radius: layout.$item-corner;
-	}
-
-	.not-found {
-		text-align: center;
-		padding: spacing.$unit * 4;
-
-		button {
-			background: #007bff;
-			color: white;
-			border: none;
-			padding: spacing.$unit-half spacing.$unit;
-			border-radius: layout.$item-corner-small;
-			cursor: pointer;
-			margin-top: spacing.$unit;
-
-			&:hover {
-				background: #0056b3;
-			}
-		}
+		@include database.error-banner;
 	}
 </style>

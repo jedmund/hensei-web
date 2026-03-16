@@ -38,6 +38,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
+	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 	import { getListUrl } from '$lib/utils/listNavigation'
 	import { localizedName } from '$lib/utils/locale'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -401,15 +402,17 @@
 			{/if}
 		</DetailScaffold>
 	{:else}
-		<div class="not-found">
-			<h2>Character Not Found</h2>
-			<p>The character you're looking for could not be found.</p>
-			<button onclick={() => goto('/database/characters')}>Back to Characters</button>
-		</div>
+		<NotFoundPlaceholder
+			title="Character Not Found"
+			message="The character you're looking for could not be found."
+			backHref={localizeHref('/database/characters')}
+			backLabel="Back to Characters"
+		/>
 	{/if}
 </div>
 
 <style lang="scss">
+	@use '$src/themes/database' as database;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
@@ -420,28 +423,8 @@
 		box-shadow: var(--shadow-sm);
 	}
 
-	.not-found {
-		text-align: center;
-		padding: spacing.$unit * 4;
-
-		button {
-			background: #007bff;
-			color: white;
-			border: none;
-			padding: spacing.$unit * 0.5 spacing.$unit;
-			border-radius: layout.$item-corner-small;
-			cursor: pointer;
-			margin-top: spacing.$unit;
-
-			&:hover {
-				background: #0056b3;
-			}
-		}
-	}
-
 	.details {
-		display: flex;
-		flex-direction: column;
+		@include database.details;
 	}
 
 	.related-units {
