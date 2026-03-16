@@ -8,6 +8,8 @@
 	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
 	import SummonUncapCell from '$lib/components/database/cells/SummonUncapCell.svelte'
 	import LastUpdatedCell from '$lib/components/database/cells/LastUpdatedCell.svelte'
+	import BooleanCell from '$lib/components/database/cells/BooleanCell.svelte'
+	import DateCell from '$lib/components/database/cells/DateCell.svelte'
 	import { getRarityLabel } from '$lib/utils/rarity'
 
 	// Column configuration for summons
@@ -63,6 +65,71 @@
 			width: 120,
 			sort: true,
 			cell: LastUpdatedCell
+		},
+		{
+			id: 'flb',
+			header: 'FLB',
+			width: 70,
+			hidden: true,
+			cell: BooleanCell,
+			getter: (row: any) => row.uncap?.flb
+		},
+		{
+			id: 'ulb',
+			header: 'ULB',
+			width: 70,
+			hidden: true,
+			cell: BooleanCell,
+			getter: (row: any) => row.uncap?.ulb
+		},
+		{
+			id: 'transcendence',
+			header: 'Transcendence',
+			width: 120,
+			hidden: true,
+			cell: BooleanCell,
+			getter: (row: any) => row.uncap?.transcendence
+		},
+		{
+			id: 'maxLevel',
+			header: 'Max Level',
+			width: 90,
+			hidden: true
+		},
+		{
+			id: 'limit',
+			header: 'Limit',
+			width: 70,
+			hidden: true,
+			cell: BooleanCell
+		},
+		{
+			id: 'releaseDate',
+			header: 'Release Date',
+			width: 110,
+			hidden: true,
+			cell: DateCell
+		},
+		{
+			id: 'flbDate',
+			header: 'FLB Date',
+			width: 110,
+			hidden: true,
+			cell: DateCell
+		},
+		{
+			id: 'ulbDate',
+			header: 'ULB Date',
+			width: 110,
+			hidden: true,
+			cell: DateCell
+		},
+		{
+			id: 'transcendenceDate',
+			header: 'Transcend Date',
+			width: 110,
+			hidden: true,
+			cell: DateCell
 		}
 	]
 </script>

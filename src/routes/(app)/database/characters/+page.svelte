@@ -10,9 +10,13 @@
 	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
 	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
 	import LastUpdatedCell from '$lib/components/database/cells/LastUpdatedCell.svelte'
+	import BooleanCell from '$lib/components/database/cells/BooleanCell.svelte'
+	import DateCell from '$lib/components/database/cells/DateCell.svelte'
 
 	// Utilities
 	import { getRarityLabel } from '$lib/utils/rarity'
+	import { getGenderLabel } from '$lib/utils/gender'
+	import { getSeasonName } from '$lib/types/enums'
 
 	const columns = [
 		{
@@ -54,6 +58,83 @@
 			width: 120,
 			sort: true,
 			cell: LastUpdatedCell
+		},
+		{
+			id: 'flb',
+			header: 'FLB',
+			width: 70,
+			hidden: true,
+			cell: BooleanCell,
+			getter: (row: any) => row.uncap?.flb
+		},
+		{
+			id: 'ulb',
+			header: 'ULB',
+			width: 70,
+			hidden: true,
+			cell: BooleanCell,
+			getter: (row: any) => row.uncap?.ulb
+		},
+		{
+			id: 'maxLevel',
+			header: 'Max Level',
+			width: 90,
+			hidden: true
+		},
+		{
+			id: 'maxAwakeningLevel',
+			header: 'Max Awaken Lv',
+			width: 110,
+			hidden: true
+		},
+		{
+			id: 'gender',
+			header: 'Gender',
+			width: 80,
+			hidden: true,
+			template: (val: number) => getGenderLabel(val)
+		},
+		{
+			id: 'special',
+			header: 'Special',
+			width: 70,
+			hidden: true,
+			cell: BooleanCell
+		},
+		{
+			id: 'season',
+			header: 'Season',
+			width: 100,
+			hidden: true,
+			template: (val: number | null) => getSeasonName(val) ?? '—'
+		},
+		{
+			id: 'styleSwap',
+			header: 'Style Swap',
+			width: 90,
+			hidden: true,
+			cell: BooleanCell
+		},
+		{
+			id: 'releaseDate',
+			header: 'Release Date',
+			width: 110,
+			hidden: true,
+			cell: DateCell
+		},
+		{
+			id: 'flbDate',
+			header: 'FLB Date',
+			width: 110,
+			hidden: true,
+			cell: DateCell
+		},
+		{
+			id: 'ulbDate',
+			header: 'ULB Date',
+			width: 110,
+			hidden: true,
+			cell: DateCell
 		}
 	]
 </script>
