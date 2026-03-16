@@ -10,6 +10,7 @@
 	 */
 	import * as m from '$lib/paraglide/messages'
 	import type { Summon } from '$lib/types/api/entities'
+	import { getElementKey } from '$lib/utils/element'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
@@ -45,15 +46,7 @@
 	})
 
 	// Element name for theming
-	const ELEMENT_MAP: Record<number, 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'> = {
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
-	const elementName = $derived(summonData?.element ? ELEMENT_MAP[summonData.element] : undefined)
+	const elementName = $derived(summonData?.element ? getElementKey(summonData.element) : undefined)
 
 	function handleUncapUpdate(newLevel: number) {
 		uncapLevel = newLevel

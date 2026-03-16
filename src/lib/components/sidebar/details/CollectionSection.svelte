@@ -2,6 +2,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import * as m from '$lib/paraglide/messages'
+	import { getElementKey } from '$lib/utils/element'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
@@ -23,16 +24,7 @@
 		(type !== 'weapon' && count === 0)
 	)
 
-	const ELEMENT_NAMES: Record<number, string> = {
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
-
-	const elementName = $derived(element ? ELEMENT_NAMES[element] ?? 'null' : 'null')
+	const elementName = $derived(element ? getElementKey(element) : 'null')
 </script>
 
 {#if hasCollection || isOutOfSync}

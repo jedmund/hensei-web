@@ -7,6 +7,7 @@
 	import { getJobTierName } from '$lib/utils/jobUtils'
 	import { getPlaceholderImage, getBasePath } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
+	import { getElementKey } from '$lib/utils/element'
 
 	// Props
 	interface Props {
@@ -42,18 +43,7 @@
 
 	// Get element name for button styling
 	const elementName = $derived(
-		(() => {
-			const elementMap: Record<number, string | undefined> = {
-				0: undefined, // Null element
-				1: 'wind',
-				2: 'fire',
-				3: 'water',
-				4: 'earth',
-				5: 'dark',
-				6: 'light'
-			}
-			return elementMap[element] || undefined
-		})()
+		element ? getElementKey(element) : undefined
 	)
 
 	// Helper function to get display name

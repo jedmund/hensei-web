@@ -22,6 +22,7 @@
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { untrack } from 'svelte'
+	import { getElementKey } from '$lib/utils/element'
 	import type { Raid } from '$lib/types/api/entities'
 	import type { RaidFull } from '$lib/types/api/raid'
 	import type { PartyVisibility } from '$lib/types/visibility'
@@ -192,15 +193,7 @@
 
 	function getRaidElementClass(r: Raid | null): string {
 		if (!r) return ''
-		const elementMap: Record<number, string> = {
-			1: 'wind',
-			2: 'fire',
-			3: 'water',
-			4: 'earth',
-			5: 'dark',
-			6: 'light'
-		}
-		return elementMap[r.element] ?? ''
+		return getElementKey(r.element)
 	}
 
 	function handleRaidSelected(selectedRaid: RaidFull | null) {

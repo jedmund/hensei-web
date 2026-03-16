@@ -9,6 +9,7 @@
 	} from '$lib/utils/images'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { localizedName } from '$lib/utils/locale'
+	import { getElementKey } from '$lib/utils/element'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
@@ -65,16 +66,7 @@
 	// Special characters have different star counts (SR characters, etc.)
 	const special = $derived(type === 'character' && (itemData?.rarity ?? 3) < 3)
 
-	const ELEMENT_NAMES: Record<number, string> = {
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
-
-	const elementName = $derived(ELEMENT_NAMES[itemData?.element] ?? 'null')
+	const elementName = $derived(getElementKey(itemData?.element))
 
 	const reliefBackgroundUrl = `${getBasePath()}/relief.png`
 </script>

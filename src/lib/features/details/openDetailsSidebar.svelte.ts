@@ -1,4 +1,5 @@
 import { localizedName } from '$lib/utils/locale'
+import { getElementKey } from '$lib/utils/element'
 import { sidebar } from '$lib/stores/sidebar.svelte'
 import { partyStore } from '$lib/stores/partyStore.svelte'
 import DetailsSidebar from '$lib/components/sidebar/DetailsSidebar.svelte'
@@ -14,18 +15,7 @@ interface DetailsSidebarOptions {
   onSaveCharacter?: (id: string, updates: Partial<GridCharacter>) => Promise<void>
 }
 
-type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
-
-const ELEMENT_MAP: Record<number, ElementName> = {
-  1: 'wind',
-  2: 'fire',
-  3: 'water',
-  4: 'earth',
-  5: 'dark',
-  6: 'light'
-}
-
-function getItemElement(type: 'weapon' | 'character' | 'summon', item: GridCharacter | GridWeapon | GridSummon): ElementName | undefined {
+function getItemElement(type: 'weapon' | 'character' | 'summon', item: GridCharacter | GridWeapon | GridSummon): string | undefined {
   let elementId: number | undefined
 
   if (type === 'character') {
@@ -38,7 +28,7 @@ function getItemElement(type: 'weapon' | 'character' | 'summon', item: GridChara
     elementId = (item as GridSummon).summon?.element
   }
 
-  return elementId ? ELEMENT_MAP[elementId] : undefined
+  return elementId ? getElementKey(elementId) : undefined
 }
 
 export function openDetailsSidebar(options: DetailsSidebarOptions) {

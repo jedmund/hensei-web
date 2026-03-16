@@ -37,6 +37,7 @@
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
+	import { getElementKey } from '$lib/utils/element'
 
 	interface Props {
 		weapon: CollectionWeapon
@@ -90,15 +91,7 @@
 	})
 
 	// Element name for theming
-	const ELEMENT_MAP: Record<number, 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'> = {
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
-	const elementName = $derived(displayElement ? ELEMENT_MAP[displayElement] : undefined)
+	const elementName = $derived(displayElement ? getElementKey(displayElement) : undefined)
 
 	async function handleSave(updates: WeaponEditUpdates) {
 		try {

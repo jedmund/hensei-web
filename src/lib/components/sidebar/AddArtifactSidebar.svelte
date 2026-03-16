@@ -29,6 +29,7 @@
 	import Select from '$lib/components/ui/Select.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
+	import { getElementKey } from '$lib/utils/element'
 	import ProficiencyPicker from '$lib/components/ui/proficiency-picker/ProficiencyPicker.svelte'
 	import ArtifactSkillRow from '$lib/components/artifact/ArtifactSkillRow.svelte'
 	import ArtifactModifierList from '$lib/components/artifact/ArtifactModifierList.svelte'
@@ -238,15 +239,7 @@
 	)
 
 	// Convert numeric element to ElementType string for button styling
-	const elementTypeMap: Record<number, ElementType> = {
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
-	const elementType = $derived(element !== undefined ? elementTypeMap[element] : undefined)
+	const elementType = $derived(element !== undefined ? getElementKey(element) as ElementType : undefined)
 
 	// Handle save
 	async function handleSave() {

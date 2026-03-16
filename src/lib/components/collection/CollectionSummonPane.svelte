@@ -33,6 +33,7 @@
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
+	import { getElementKey } from '$lib/utils/element'
 
 	interface Props {
 		summon: CollectionSummon
@@ -69,15 +70,7 @@
 	})
 
 	// Element name for theming
-	const ELEMENT_MAP: Record<number, 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'> = {
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
-	const elementName = $derived(summonData?.element ? ELEMENT_MAP[summonData.element] : undefined)
+	const elementName = $derived(summonData?.element ? getElementKey(summonData.element) : undefined)
 
 	async function handleSave(updates: SummonEditUpdates) {
 		try {
