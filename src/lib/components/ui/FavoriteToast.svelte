@@ -58,7 +58,6 @@
 		align-items: center;
 		flex-shrink: 0;
 		color: var(--text-secondary);
-		margin-top: 2px;
 	}
 
 	.message {
