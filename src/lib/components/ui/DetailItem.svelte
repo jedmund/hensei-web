@@ -157,7 +157,6 @@
 		justify-content: space-between;
 		align-items: center;
 		padding: spacing.$unit 0;
-		border-radius: layout.$item-corner;
 		font-size: typography.$font-regular;
 		min-height: calc(spacing.$unit * 5);
 
@@ -168,11 +167,6 @@
 
 		&:hover:not(.editable):not(.hasChildren) {
 			background: var(--background);
-		}
-
-		&.editable,
-		&.hasChildren {
-			background: var(--input-bg);
 		}
 
 		.label-container {
