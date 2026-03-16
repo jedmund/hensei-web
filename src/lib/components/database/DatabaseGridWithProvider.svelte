@@ -127,11 +127,12 @@
 
 	// --- Column visibility persistence ---
 
+	const isBrowser = typeof window !== 'undefined'
 	const COLUMNS_STORAGE_KEY = `database-columns-${resource}`
 	let hasCustomColumns = $state(false)
 
 	function saveColumnVisibility() {
-		if (!api) return
+		if (!api || !isBrowser) return
 		const cols = api.getReactiveState()._columns
 		const hidden: Record<string, boolean> = {}
 		for (const col of cols) {
@@ -142,7 +143,7 @@
 	}
 
 	function restoreColumnVisibility() {
-		if (!api) return
+		if (!api || !isBrowser) return
 		const saved = localStorage.getItem(COLUMNS_STORAGE_KEY)
 		if (!saved) return
 
@@ -162,11 +163,12 @@
 	}
 
 	function checkHasCustomColumns(): boolean {
+		if (!isBrowser) return false
 		return localStorage.getItem(COLUMNS_STORAGE_KEY) !== null
 	}
 
 	function resetColumns() {
-		if (!api) return
+		if (!api || !isBrowser) return
 		localStorage.removeItem(COLUMNS_STORAGE_KEY)
 		const cols = api.getReactiveState()._columns
 		for (const col of cols) {
@@ -186,10 +188,12 @@
 
 	function toggleExpanded() {
 		expanded = !expanded
-		if (expanded) {
-			localStorage.setItem(EXPAND_STORAGE_KEY, 'true')
-		} else {
-			localStorage.removeItem(EXPAND_STORAGE_KEY)
+		if (isBrowser) {
+			if (expanded) {
+				localStorage.setItem(EXPAND_STORAGE_KEY, 'true')
+			} else {
+				localStorage.removeItem(EXPAND_STORAGE_KEY)
+			}
 		}
 	}
 
