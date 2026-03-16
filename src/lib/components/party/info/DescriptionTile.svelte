@@ -9,6 +9,7 @@
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'
+	import { formatRelativeTime } from '$lib/utils/date'
 
 	type AvatarUser = {
 		username?: string
@@ -34,6 +35,7 @@
 		activeCollectionUser?: 'viewer' | 'source'
 		/** Callback when collection viewer is switched */
 		onSwitchCollectionUser?: (target: 'viewer' | 'source') => void
+		updatedAt?: string
 		canEdit?: boolean
 		onOpenDescription: () => void
 		onEditDescription?: () => void
@@ -61,6 +63,7 @@
 		authUser,
 		activeCollectionUser = 'viewer',
 		onSwitchCollectionUser,
+		updatedAt,
 		canEdit = false,
 		onOpenDescription,
 		onEditDescription,
@@ -84,6 +87,7 @@
 
 	const avatarSrc = $derived(getAvatarSrc(user?.avatar?.picture))
 	const avatarSrcSet = $derived(getAvatarSrcSet(user?.avatar?.picture))
+	const relativeTime = $derived(updatedAt ? formatRelativeTime(updatedAt) : null)
 
 	// Measure content height to determine if fade gradient is needed
 	let contentEl = $state<HTMLDivElement | undefined>(undefined)
@@ -191,29 +195,37 @@
 
 		<!-- Creator info -->
 		{#if user && collectionSourceUser?.username && user.username === collectionSourceUser.username}
-			<a href={localizeHref(`/${user.username}`)} class="creator-link">
-				<div class="avatar-wrapper {user.avatar?.element || ''}">
-					{#if user.avatar?.picture}
-						<img
-							class="avatar"
-							alt={`Avatar of ${user.username}`}
-							src={getAvatarSrc(user.avatar.picture)}
-							srcset={getAvatarSrcSet(user.avatar.picture)}
-							width="24"
-							height="24"
-						/>
-					{:else}
-						<div class="avatar-placeholder" aria-hidden="true"></div>
-					{/if}
-				</div>
-				<span class="username">{m.party_using_own_collection({ username: user.username ?? '' })}</span>
-			</a>
+			<div class="creator-line">
+				<a href={localizeHref(`/${user.username}`)} class="creator-link">
+					<div class="avatar-wrapper {user.avatar?.element || ''}">
+						{#if user.avatar?.picture}
+							<img
+								class="avatar"
+								alt={`Avatar of ${user.username}`}
+								src={getAvatarSrc(user.avatar.picture)}
+								srcset={getAvatarSrcSet(user.avatar.picture)}
+								width="24"
+								height="24"
+							/>
+						{:else}
+							<div class="avatar-placeholder" aria-hidden="true"></div>
+						{/if}
+					</div>
+					<span class="username">{m.party_using_own_collection({ username: user.username ?? '' })}</span>
+				</a>
+				{#if relativeTime}
+					<span class="updated-time"> · {relativeTime}</span>
+				{/if}
+			</div>
 		{:else if user && collectionSourceUser?.username}
 			<div class="creator-pair-line">
 				<AvatarPair back={user} front={collectionSourceUser} size={24} />
 				<span class="creator-pair-text">
 					{m.party_using_others_collection({ username: user.username ?? '', otherUsername: collectionSourceUser.username ?? '' })}
 				</span>
+				{#if relativeTime}
+					<span class="updated-time"> · {relativeTime}</span>
+				{/if}
 			</div>
 		{:else if user && sourceParty?.user?.username}
 			<div class="creator-pair-line">
@@ -221,25 +233,33 @@
 				<span class="creator-pair-text">
 					{m.party_remixed({ username: user.username ?? '', otherUsername: sourceParty.user.username ?? '' })}
 				</span>
+				{#if relativeTime}
+					<span class="updated-time"> · {relativeTime}</span>
+				{/if}
 			</div>
 		{:else if user}
-			<a href="/{user.username}" class="creator-link">
-				<div class="avatar-wrapper {user.avatar?.element || ''}">
-					{#if user.avatar?.picture}
-						<img
-							class="avatar"
-							alt={`Avatar of ${user.username}`}
-							src={avatarSrc}
-							srcset={avatarSrcSet}
-							width="24"
-							height="24"
-						/>
-					{:else}
-						<div class="avatar-placeholder" aria-hidden="true"></div>
-					{/if}
-				</div>
-				<span class="username">{user.username}</span>
-			</a>
+			<div class="creator-line">
+				<a href="/{user.username}" class="creator-link">
+					<div class="avatar-wrapper {user.avatar?.element || ''}">
+						{#if user.avatar?.picture}
+							<img
+								class="avatar"
+								alt={`Avatar of ${user.username}`}
+								src={avatarSrc}
+								srcset={avatarSrcSet}
+								width="24"
+								height="24"
+							/>
+						{:else}
+							<div class="avatar-placeholder" aria-hidden="true"></div>
+						{/if}
+					</div>
+					<span class="username">{user.username}</span>
+				</a>
+				{#if relativeTime}
+					<span class="updated-time"> · {relativeTime}</span>
+				{/if}
+			</div>
 		{/if}
 	</div>
 
@@ -361,6 +381,12 @@
 		flex-shrink: 0;
 	}
 
+	.creator-line {
+		display: inline-flex;
+		align-items: center;
+		gap: 0;
+	}
+
 	.creator-link {
 		display: inline-flex;
 		align-items: center;
@@ -402,6 +428,11 @@
 	.username {
 		font-size: $font-small;
 		font-weight: $medium;
+	}
+
+	.updated-time {
+		font-size: $font-small;
+		color: var(--text-tertiary);
 	}
 
 	.creator-pair-line {

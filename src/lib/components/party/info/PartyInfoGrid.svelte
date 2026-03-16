@@ -62,6 +62,7 @@
 		<DescriptionTile
 			name={party.name}
 			description={party.description}
+			updatedAt={party.updatedAt}
 			user={party.user}
 			collectionSourceUser={party.collectionSourceUser}
 			sourceParty={party.sourceParty}
