@@ -10,6 +10,7 @@ import {
 } from '$lib/features/party/openPartyEditSidebar.svelte'
 import { toast } from 'svelte-sonner'
 import { extractErrorMessage } from '$lib/utils/errors'
+import FavoriteToast from '$lib/components/ui/FavoriteToast.svelte'
 import * as m from '$lib/paraglide/messages'
 
 type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
@@ -61,21 +62,23 @@ export function usePartyActions(opts: PartyActionsOptions) {
 
 		try {
 			const params = { id: party.id, shortcode: party.shortcode }
+			const partyName = party.name || m.party_untitled()
 			if (wasFavorited) {
 				await opts.mutations.party.unfavorite.mutateAsync(params)
-				toast.success(m.toast_removed_favorite({ name: party.name || m.party_untitled() }))
+				toast.custom(FavoriteToast, {
+					componentProps: {
+						message: m.toast_removed_favorite({ name: partyName })
+					}
+				})
 			} else {
 				await opts.mutations.party.favorite.mutateAsync(params)
 				const username = opts.getAuthUsername()
-				toast.success(m.toast_added_favorite({ name: party.name || m.party_untitled() }), {
-					action: username
-						? {
-								label: m.toast_view_favorites(),
-								onClick: () => {
-									window.location.href = `/${username}/favorites`
-								}
-							}
-						: undefined
+				toast.custom(FavoriteToast, {
+					componentProps: {
+						message: m.toast_added_favorite({ name: partyName }),
+						actionLabel: username ? m.toast_view_favorites() : undefined,
+						actionHref: username ? `/${username}/favorites` : undefined
+					}
 				})
 			}
 		} catch (err: any) {
