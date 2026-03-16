@@ -30,13 +30,19 @@
 
 	// View mode state - read initial value from URL
 	const initialView = $page.url.searchParams.get('view')
-	let viewMode = $state<'jobs' | 'accessories'>(initialView === 'accessories' ? 'accessories' : 'jobs')
+	let viewMode = $state<'jobs' | 'accessories' | 'skills'>(
+		initialView === 'accessories' ? 'accessories' : 'jobs'
+	)
 
 	// Accessory type filter
 	let accessoryTypeFilter = $state<number | undefined>(undefined)
 
 	// Sync viewMode changes to URL
 	$effect(() => {
+		if (viewMode === 'skills') {
+			goto('/database/job-skills', { replaceState: true, noScroll: true })
+			return
+		}
 		const currentView = $page.url.searchParams.get('view')
 		if (viewMode === 'accessories' && currentView !== 'accessories') {
 			goto('?view=accessories', { replaceState: true, noScroll: true })
@@ -200,6 +206,7 @@
 				<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
 					<Segment value="jobs">Jobs</Segment>
 					<Segment value="accessories">Accessories</Segment>
+					<Segment value="skills">Skills</Segment>
 				</SegmentedControl>
 			{/snippet}
 		</DatabaseGridWithProvider>
@@ -210,6 +217,7 @@
 					<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
 						<Segment value="jobs">Jobs</Segment>
 						<Segment value="accessories">Accessories</Segment>
+						<Segment value="skills">Skills</Segment>
 					</SegmentedControl>
 
 					<Select

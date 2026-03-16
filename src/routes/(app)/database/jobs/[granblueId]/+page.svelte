@@ -15,6 +15,8 @@
 
 	// Components
 	import DetailScaffold, { type DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
+	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 
@@ -71,13 +73,19 @@
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
 
 <div class="page">
+	<DatabasePageHeader title="Job" backHref="/database/jobs">
+		{#snippet rightAction()}
+			{#if canEdit && editUrl}
+				<Button variant="secondary" size="small" href={editUrl}>Edit</Button>
+			{/if}
+		{/snippet}
+	</DatabasePageHeader>
+
 	{#if job}
 		<DetailScaffold
 			type="job"
 			item={job}
 			image={getJobIconUrl(job.granblueId)}
-			showEdit={canEdit}
-			editUrl={canEdit ? editUrl : undefined}
 			currentTab={currentTab as DetailTab}
 			onTabChange={handleTabChange}
 			showTabs={false}
@@ -106,7 +114,7 @@
 		<div class="not-found">
 			<h2>Job Not Found</h2>
 			<p>The job you're looking for could not be found.</p>
-			<button onclick={() => goto('/database/jobs')}>Back to Jobs</button>
+			<Button variant="secondary" size="small" href="/database/jobs">Back to Jobs</Button>
 		</div>
 	{/if}
 </div>
@@ -134,19 +142,6 @@
 	.not-found {
 		text-align: center;
 		padding: spacing.$unit * 4;
-
-		button {
-			background: var(--blue);
-			color: white;
-			border: none;
-			padding: spacing.$unit spacing.$unit-2x;
-			border-radius: layout.$item-corner;
-			cursor: pointer;
-			margin-top: spacing.$unit;
-
-			&:hover {
-				filter: brightness(0.9);
-			}
-		}
+		color: var(--text-secondary);
 	}
 </style>

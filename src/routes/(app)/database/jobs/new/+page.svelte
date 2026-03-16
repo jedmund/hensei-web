@@ -8,8 +8,8 @@
 	import * as m from '$lib/paraglide/messages'
 
 	// TanStack Query
-	import { useQueryClient } from '@tanstack/svelte-query'
-	import { jobKeys } from '$lib/api/queries/job.queries'
+	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
+	import { jobQueries, jobKeys } from '$lib/api/queries/job.queries'
 	import { jobAdapter } from '$lib/api/adapters/job.adapter'
 
 	// Components
@@ -25,6 +25,16 @@
 	import JobFeaturesSection from '$lib/features/database/jobs/sections/JobFeaturesSection.svelte'
 
 	const queryClient = useQueryClient()
+
+	// Fetch all jobs to compute next order per row
+	const allJobsQuery = createQuery(() => jobQueries.list())
+
+	function getNextOrderForRow(row: string): number {
+		const jobs = allJobsQuery.data ?? []
+		const jobsInRow = jobs.filter((j) => String(j.row) === row)
+		if (jobsInRow.length === 0) return 1
+		return Math.max(...jobsInRow.map((j) => j.order ?? 0)) + 1
+	}
 
 	// Save state
 	let isSaving = $state(false)
@@ -62,6 +72,13 @@
 		auxWeapon: false,
 		accessory: false,
 		accessoryType: 0
+	})
+
+	// Auto-set order when row changes or jobs load
+	$effect(() => {
+		if (allJobsQuery.data) {
+			editData.order = getNextOrderForRow(editData.row)
+		}
 	})
 
 	// Validation

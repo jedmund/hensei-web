@@ -14,7 +14,8 @@
 	import { withInitialData } from '$lib/query/ssr'
 
 	// Components
-	import DetailScaffold from '$lib/features/database/detail/DetailScaffold.svelte'
+	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 
 	// Section Components
 	import JobMetadataSection from '$lib/features/database/jobs/sections/JobMetadataSection.svelte'
@@ -22,7 +23,7 @@
 	import JobFeaturesSection from '$lib/features/database/jobs/sections/JobFeaturesSection.svelte'
 
 	// Utils
-	import { getJobIconUrl } from '$lib/utils/jobUtils'
+	import { localizedName } from '$lib/utils/locale'
 
 	// Types
 	import type { PageData } from './$types'
@@ -92,7 +93,6 @@
 		saveSuccess = false
 
 		try {
-			// Prepare the data for API (flat snake_case format)
 			const payload = {
 				name_en: editData.name,
 				name_jp: editData.nameJp,
@@ -110,12 +110,10 @@
 
 			await jobAdapter.updateJob(job.granblueId, payload)
 
-			// Invalidate TanStack Query cache to refetch fresh data
 			await queryClient.invalidateQueries({ queryKey: jobKeys.all })
 
 			saveSuccess = true
 
-			// Navigate back to detail page after a short delay
 			setTimeout(() => {
 				goto(`/database/jobs/${editData.granblueId}`)
 			}, 500)
@@ -139,37 +137,45 @@
 
 <div class="page">
 	{#if job}
-		<DetailScaffold
-			type="job"
-			item={job}
-			image={getJobIconUrl(job.granblueId)}
-			showEdit={true}
-			{editMode}
-			{isSaving}
-			{saveSuccess}
-			{saveError}
-			onSave={saveChanges}
-			onCancel={handleCancel}
-		>
-			<section class="details">
-				<JobMetadataSection {job} {editMode} bind:editData />
-				<JobProficiencySection {job} {editMode} bind:editData />
-				<JobFeaturesSection {job} {editMode} bind:editData />
-			</section>
-		</DetailScaffold>
+		<SidebarHeader title="Edit: {localizedName(job.name)}">
+			{#snippet leftAccessory()}
+				<Button variant="secondary" size="small" onclick={handleCancel} disabled={isSaving}>
+					Cancel
+				</Button>
+			{/snippet}
+			{#snippet rightAccessory()}
+				<Button variant="primary" size="small" onclick={saveChanges} disabled={isSaving}>
+					{isSaving ? 'Saving...' : 'Save'}
+				</Button>
+			{/snippet}
+		</SidebarHeader>
+
+		{#if saveError}
+			<div class="error-banner">{saveError}</div>
+		{/if}
+
+		{#if saveSuccess}
+			<div class="success-banner">Changes saved successfully!</div>
+		{/if}
+
+		<section class="details">
+			<JobMetadataSection {job} {editMode} bind:editData />
+			<JobProficiencySection {job} {editMode} bind:editData />
+			<JobFeaturesSection {job} {editMode} bind:editData />
+		</section>
 	{:else}
 		<div class="not-found">
 			<h2>Job Not Found</h2>
 			<p>The job you're looking for could not be found.</p>
-			<button onclick={() => goto('/database/jobs')}>Back to Jobs</button>
+			<Button variant="secondary" size="small" href="/database/jobs">Back to Jobs</Button>
 		</div>
 	{/if}
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/typography' as typography;
 
 	.page {
 		background: var(--card-bg);
@@ -182,22 +188,23 @@
 		flex-direction: column;
 	}
 
+	.error-banner {
+		color: var(--danger);
+		font-size: typography.$font-small;
+		padding: spacing.$unit-2x;
+		background: var(--danger-bg);
+	}
+
+	.success-banner {
+		color: var(--success);
+		font-size: typography.$font-small;
+		padding: spacing.$unit-2x;
+		background: var(--success-bg);
+	}
+
 	.not-found {
 		text-align: center;
 		padding: spacing.$unit * 4;
-
-		button {
-			background: var(--blue);
-			color: white;
-			border: none;
-			padding: spacing.$unit spacing.$unit-2x;
-			border-radius: layout.$item-corner;
-			cursor: pointer;
-			margin-top: spacing.$unit;
-
-			&:hover {
-				filter: brightness(0.9);
-			}
-		}
+		color: var(--text-secondary);
 	}
 </style>
