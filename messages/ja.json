@@ -1302,6 +1302,7 @@
 	"time_yesterday": "昨日",
 	"time_days_ago": "{count}日前",
 	"time_one_week_ago": "1週間前",
+	"time_last_updated": "最終更新 {time}",
 
 	"section_general": "一般",
 	"section_uncap_level": "上限解放",

@@ -1302,6 +1302,7 @@
 	"time_yesterday": "Yesterday",
 	"time_days_ago": "{count} days ago",
 	"time_one_week_ago": "1 week ago",
+	"time_last_updated": "Last updated {time}",
 
 	"section_general": "General",
 	"section_uncap_level": "Uncap Level",

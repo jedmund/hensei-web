@@ -87,7 +87,7 @@
 
 	const avatarSrc = $derived(getAvatarSrc(user?.avatar?.picture))
 	const avatarSrcSet = $derived(getAvatarSrcSet(user?.avatar?.picture))
-	const relativeTime = $derived(updatedAt ? formatRelativeTime(updatedAt) : null)
+	const relativeTime = $derived(updatedAt ? m.time_last_updated({ time: formatRelativeTime(updatedAt) }) : null)
 
 	// Measure content height to determine if fade gradient is needed
 	let contentEl = $state<HTMLDivElement | undefined>(undefined)
@@ -214,7 +214,7 @@
 					<span class="username">{m.party_using_own_collection({ username: user.username ?? '' })}</span>
 				</a>
 				{#if relativeTime}
-					<span class="updated-time"> · {relativeTime}</span>
+					<span class="updated-time">&nbsp;·&nbsp;{relativeTime}</span>
 				{/if}
 			</div>
 		{:else if user && collectionSourceUser?.username}
@@ -224,7 +224,7 @@
 					{m.party_using_others_collection({ username: user.username ?? '', otherUsername: collectionSourceUser.username ?? '' })}
 				</span>
 				{#if relativeTime}
-					<span class="updated-time"> · {relativeTime}</span>
+					<span class="updated-time">&nbsp;·&nbsp;{relativeTime}</span>
 				{/if}
 			</div>
 		{:else if user && sourceParty?.user?.username}
@@ -234,7 +234,7 @@
 					{m.party_remixed({ username: user.username ?? '', otherUsername: sourceParty.user.username ?? '' })}
 				</span>
 				{#if relativeTime}
-					<span class="updated-time"> · {relativeTime}</span>
+					<span class="updated-time">&nbsp;·&nbsp;{relativeTime}</span>
 				{/if}
 			</div>
 		{:else if user}
@@ -257,7 +257,7 @@
 					<span class="username">{user.username}</span>
 				</a>
 				{#if relativeTime}
-					<span class="updated-time"> · {relativeTime}</span>
+					<span class="updated-time">&nbsp;·&nbsp;{relativeTime}</span>
 				{/if}
 			</div>
 		{/if}
