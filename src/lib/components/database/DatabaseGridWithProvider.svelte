@@ -130,15 +130,16 @@
 	const isBrowser = typeof window !== 'undefined'
 	const COLUMNS_STORAGE_KEY = `database-columns-${resource}`
 	let hasCustomColumns = $state(false)
+	let restoringColumns = false
 
 	function saveColumnVisibility() {
-		if (!api || !isBrowser) return
+		if (!api || !isBrowser || restoringColumns) return
 		const cols = api.getState()._columns
-		const hidden: Record<string, boolean> = {}
+		const visibility: Record<string, boolean> = {}
 		for (const col of cols) {
-			if (col.hidden) hidden[col.id] = true
+			visibility[col.id] = !col.hidden
 		}
-		localStorage.setItem(COLUMNS_STORAGE_KEY, JSON.stringify(hidden))
+		localStorage.setItem(COLUMNS_STORAGE_KEY, JSON.stringify(visibility))
 		hasCustomColumns = checkHasCustomColumns()
 	}
 
@@ -148,17 +149,28 @@
 		if (!saved) return
 
 		try {
-			const hidden: Record<string, boolean> = JSON.parse(saved)
+			const visibility: Record<string, boolean> = JSON.parse(saved)
+
+			// Migrate old format: old saves only stored hidden columns (all true values)
+			// New format stores all columns with true=visible, false=hidden
+			if (!Object.values(visibility).includes(false)) {
+				localStorage.removeItem(COLUMNS_STORAGE_KEY)
+				return
+			}
+
 			const cols = api.getState()._columns
+			restoringColumns = true
 			for (const col of cols) {
-				const shouldBeHidden = !!hidden[col.id]
-				if (col.hidden !== shouldBeHidden) {
-					api.exec('hide-column', { id: col.id, mode: shouldBeHidden })
+				if (!(col.id in visibility)) continue
+				const shouldBeVisible = visibility[col.id]
+				if (col.hidden === shouldBeVisible) {
+					api.exec('hide-column', { id: col.id, mode: !shouldBeVisible })
 				}
 			}
+			restoringColumns = false
 			hasCustomColumns = checkHasCustomColumns()
 		} catch {
-			// ignore corrupt data
+			restoringColumns = false
 		}
 	}
 
