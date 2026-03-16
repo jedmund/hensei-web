@@ -13,13 +13,15 @@
 
 <div class="boolean-cell">
 	{#if value}
-		<span class="yes">Yes</span>
+		<span class="yes {column.yesClass ?? ''}">Yes</span>
 	{:else}
 		<span class="no">No</span>
 	{/if}
 </div>
 
 <style lang="scss">
+	@use '$src/themes/typography' as typography;
+
 	.boolean-cell {
 		display: flex;
 		align-items: center;
@@ -27,6 +29,11 @@
 
 		.yes {
 			color: var(--text-primary);
+
+			&:global(.extra) {
+				color: var(--extra-purple-primary);
+				font-weight: typography.$bold;
+			}
 		}
 
 		.no {
