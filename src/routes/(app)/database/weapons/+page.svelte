@@ -105,6 +105,7 @@
 			id: 'name',
 			header: 'Name',
 			width: 180,
+			flexgrow: 1,
 			sort: true,
 			template: (nameObj: any) => {
 				// nameObj is the name property itself, not the full item
