@@ -1,31 +1,21 @@
-<!--
-  DatabaseGridWithProvider component using SVAR DataGrid with RestDataProvider
-  Provides client-side pagination and data management with REST API integration
--->
-
 <script lang="ts">
 	import { Grid, HeaderMenu } from 'wx-svelte-grid'
-	import type { IColumn, IRow } from 'wx-svelte-grid'
+	import type { IColumn } from 'wx-svelte-grid'
 	import { DatabaseProvider } from '$lib/providers/DatabaseProvider'
 	import CollectionFilters from '$lib/components/collection/CollectionFilters.svelte'
-	import type { CollectionFilterState } from '$lib/components/collection/CollectionFilters.svelte'
 	import { onMount, onDestroy, tick } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { createQuery, queryOptions } from '@tanstack/svelte-query'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
-	import {
-		parseFiltersFromUrl,
-		buildUrlFromFilters,
-		type ParsedFilters,
-		ELEMENT_TO_PARAM
-	} from '$lib/utils/filterParams'
-	import Button from '$lib/components/ui/Button.svelte'
-	import Icon from '$lib/components/Icon.svelte'
 	import { storeListUrl } from '$lib/utils/listNavigation'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
-	import * as m from '$lib/paraglide/messages'
+
+	import { DatabaseFilters } from './useDatabaseFilters.svelte'
+	import { DatabaseSearch } from './useDatabaseSearch.svelte'
+	import DatabaseGridControls from './DatabaseGridControls.svelte'
+	import DatabaseGridFooter from './DatabaseGridFooter.svelte'
 
 	import type { Snippet } from 'svelte'
 
@@ -52,8 +42,10 @@
 		resource === 'jobs' ? 'job' : 'weapon'
 	)
 
-	// Jobs don't use the standard CollectionFilters component
 	const supportsCollectionFilters = $derived(resource !== 'jobs')
+
+	// Create provider
+	const provider = new DatabaseProvider({ resource, pageSize: initialPageSize })
 
 	// Fetch weapon series list for URL slug mapping (only for weapons)
 	const weaponSeriesQuery = createQuery(() =>
@@ -61,116 +53,44 @@
 			queryKey: ['weaponSeries', 'list'] as const,
 			queryFn: () => entityAdapter.getWeaponSeriesList(),
 			enabled: resource === 'weapons',
-			staleTime: 1000 * 60 * 60, // 1 hour
-			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+			staleTime: 1000 * 60 * 60,
+			gcTime: 1000 * 60 * 60 * 24
 		})
 	)
 
-	// State
+	// --- Composables ---
+
+	const filters = new DatabaseFilters(
+		resource,
+		entityType,
+		provider,
+		() => weaponSeriesQuery.data,
+		(pg) => loadData(pg)
+	)
+
+	const search = new DatabaseSearch(provider, (pg) => loadData(pg))
+
+	// Watch for search term changes
+	$effect(() => {
+		search.handleSearch(search.searchTerm)
+	})
+
+	// --- Data loading ---
+
 	let data = $state<any[]>([])
 	let loading = $state(true)
 	let currentPage = $state(1)
 	let totalPages = $state(1)
 	let total = $state(0)
-	let searchTerm = $state('')
-	let lastSearchTerm = $state('')
 	let pageSize = $state(initialPageSize)
-	let searchTimeout: ReturnType<typeof setTimeout> | undefined
 
-	// Sort state - tracks which column is sorted and in which direction
+	// Sort state
 	let sortMarks = $state<Record<string, { order: 'asc' | 'desc' }>>({})
 
-	// Filter state
-	let elementFilters = $state<number[]>([])
-	let rarityFilters = $state<number[]>([])
-	let seriesFilters = $state<(number | string)[]>([])
-	let proficiencyFilters = $state<number[]>([])
-	let seasonFilters = $state<number[]>([])
+	// Computed pagination values
+	const startItem = $derived((currentPage - 1) * pageSize + 1)
+	const endItem = $derived(Math.min(currentPage * pageSize, total))
 
-	// Filter visibility state
-	let showFilters = $state(false)
-
-	// Check if any filters are active (for button indicator)
-	const hasActiveFilters = $derived(
-		elementFilters.length > 0 ||
-			rarityFilters.length > 0 ||
-			seriesFilters.length > 0 ||
-			proficiencyFilters.length > 0 ||
-			seasonFilters.length > 0
-	)
-
-	// Get selected element name for button styling (only when exactly one element is selected)
-	const selectedElement = $derived.by(() => {
-		if (elementFilters.length === 1) {
-			const elemId = elementFilters[0]
-			if (elemId !== undefined) {
-				const elemName = ELEMENT_TO_PARAM[elemId]
-				if (elemName && elemName !== 'null') {
-					return elemName as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
-				}
-			}
-		}
-		return undefined
-	})
-
-	// Handle filter changes from CollectionFilters component
-	function handleFiltersChange(filters: CollectionFilterState) {
-		// Convert series to string[] (weapon series are UUIDs, character series are numbers that need conversion)
-		const seriesAsStrings =
-			filters.series.length > 0 ? filters.series.map((s) => String(s)) : undefined
-
-		provider.setFilters({
-			element: filters.element.length > 0 ? filters.element : undefined,
-			rarity: filters.rarity.length > 0 ? filters.rarity : undefined,
-			series: seriesAsStrings,
-			proficiency1: filters.proficiency.length > 0 ? filters.proficiency : undefined,
-			season: filters.season.length > 0 ? filters.season : undefined,
-			// For characters, also pass series as characterSeries (they use number enum values)
-			characterSeries:
-				resource === 'characters' && filters.series.length > 0
-					? filters.series.filter((s): s is number => typeof s === 'number')
-					: undefined
-		})
-		loadData(1) // Reset to first page when filters change (this will update URL)
-	}
-
-	// Create provider
-	const provider = new DatabaseProvider({ resource, pageSize: initialPageSize })
-
-	// Grid API reference
-	let api: any
-	let gridRef = $state<any>(undefined)
-	let gridDataStore: any
-
-	// Build current filter state for URL building
-	function getCurrentFilterState(): CollectionFilterState {
-		return {
-			element: elementFilters,
-			rarity: rarityFilters,
-			proficiency: proficiencyFilters,
-			season: seasonFilters,
-			series: seriesFilters,
-			race: [],
-			gender: []
-		}
-	}
-
-	// Update URL with current filters, search, and page (without triggering navigation)
-	function updateUrl(pageNum: number) {
-		const params = buildUrlFromFilters(
-			getCurrentFilterState(),
-			searchTerm,
-			pageNum,
-			entityType,
-			weaponSeriesQuery.data
-		)
-		const search = params.toString()
-		const url = search ? `${$page.url.pathname}?${search}` : $page.url.pathname
-		// Use replaceState to update URL without adding history entry
-		goto(url, { replaceState: true, noScroll: true, keepFocus: true })
-	}
-
-	// Load data
 	async function loadData(pageNum: number = 1, updateUrlParam: boolean = true, showLoading: boolean = true) {
 		if (showLoading) loading = true
 		try {
@@ -178,20 +98,18 @@
 			data = result
 			currentPage = pageNum
 
-			// Get pagination metadata from provider
 			const meta = provider.getPaginationMeta()
 			if (meta) {
 				total = meta.total || 0
 				totalPages = meta.totalPages || 1
-				// Update pageSize if provider has a different value
 				if (meta.pageSize && meta.pageSize !== pageSize) {
 					pageSize = meta.pageSize
 				}
 			}
 
-			// Update URL to reflect current page
 			if (updateUrlParam) {
-				updateUrl(pageNum)
+				const url = filters.buildUrlParams(search.searchTerm, pageNum, $page.url.pathname)
+				goto(url, { replaceState: true, noScroll: true, keepFocus: true })
 			}
 		} catch (error) {
 			console.error('Failed to load data:', error)
@@ -199,9 +117,6 @@
 		} finally {
 			loading = false
 
-			// Re-apply sort marks after data load. We must wait for tick() because
-			// the data change triggers Grid's reinitStore effect which resets sortMarks.
-			// tick() ensures that effect has flushed before we re-apply.
 			if (gridDataStore && Object.keys(sortMarks).length > 0) {
 				await tick()
 				gridDataStore.setState({ sortMarks })
@@ -209,22 +124,24 @@
 		}
 	}
 
-	// Initialize grid
+	// --- Grid init ---
+
+	let api: any
+	let gridRef = $state<any>(undefined)
+	let gridDataStore: any
+
 	const init = (apiRef: any) => {
 		api = apiRef
-		// Connect provider to grid
 		api.setNext(provider)
 
-		// Get direct access to the data store for surgical state updates
 		const { data: dataStore } = api.getStores()
 		gridDataStore = dataStore
 
-		// Intercept sort-rows to prevent client-side sorting and do server-side instead
+		// Intercept sort to do server-side sorting
 		api.intercept('sort-rows', (ev: { key: string; add: boolean }) => {
 			const { key } = ev
 			const currentOrder = sortMarks[key]?.order
 
-			// Toggle: asc -> desc -> clear
 			let newSortKey: string | null = null
 			let newSortOrder: 'asc' | 'desc' = 'asc'
 
@@ -233,7 +150,7 @@
 				newSortKey = key
 				newSortOrder = 'desc'
 			} else if (currentOrder === 'desc') {
-				sortMarks = {} // Clear sort
+				sortMarks = {}
 				newSortKey = null
 			} else {
 				sortMarks = { [key]: { order: 'asc' } }
@@ -241,24 +158,19 @@
 				newSortOrder = 'asc'
 			}
 
-			// Update sort marks directly in the store (bypasses reinitStore cycle)
 			dataStore.setState({ sortMarks })
-
-			// Update provider and reload from server
 			provider.setSort(newSortKey, newSortOrder)
-			loadData(1, true, false) // Reset to first page, no loading overlay
+			loadData(1, true, false)
 
-			return false // Prevent default client-side sorting
+			return false
 		})
 
-		// Add row click handler
+		// Row click navigation
 		api.on('select-row', (ev: any) => {
 			const rowId = ev.id
 			if (rowId) {
-				// Find the row data to get the granblueId
 				const rowData = data.find((item: any) => item.id === rowId)
 				if (rowData && rowData.granblueId) {
-					// Store current list URL before navigating so Back button can return here
 					storeListUrl($page.url.href, resource)
 					const styleSuffix = resource === 'characters' && rowData.styleSwap ? '/style' : ''
 					goto(`/database/${resource}/${rowData.granblueId}${styleSuffix}`)
@@ -267,146 +179,48 @@
 		})
 	}
 
-	// Handle pagination
+	// --- Pagination ---
+
 	const handlePrevPage = () => {
-		if (currentPage > 1) {
-			loadData(currentPage - 1)
-		}
+		if (currentPage > 1) loadData(currentPage - 1)
 	}
 
 	const handleNextPage = () => {
-		if (currentPage < totalPages) {
-			loadData(currentPage + 1)
-		}
+		if (currentPage < totalPages) loadData(currentPage + 1)
 	}
 
-	const handlePageSizeChange = async (event: Event) => {
-		const target = event.target as HTMLSelectElement
-		const newPageSize = Number(target.value)
-		pageSize = newPageSize // Update local state immediately
-		await provider.setPageSize(newPageSize)
-		loadData(1)
-	}
+	// --- URL initialization ---
 
-	// Handle search with debounce
-	const handleSearch = (term: string) => {
-		// Clear existing timeout
-		if (searchTimeout) {
-			clearTimeout(searchTimeout)
-		}
-
-		const trimmed = term.trim()
-
-		// Avoid triggering a fetch on initial mount when search is empty
-		// Only clear search and reload if we previously had a non-empty query
-		if (trimmed.length < 2) {
-			if (lastSearchTerm !== '') {
-				searchTimeout = setTimeout(() => {
-					provider.clearSearch()
-					lastSearchTerm = ''
-					loadData(1)
-				}, 300)
-			}
-			return
-		}
-
-		// Debounced search when user has typed enough characters
-		searchTimeout = setTimeout(() => {
-			lastSearchTerm = trimmed
-			provider.setSearchQuery(trimmed)
-			loadData(1) // Reset to first page when searching
-		}, 300)
-	}
-
-	// Watch for search term changes
-	$effect(() => {
-		handleSearch(searchTerm)
-	})
-
-	// Computed values
-	const startItem = $derived((currentPage - 1) * pageSize + 1)
-	const endItem = $derived(Math.min(currentPage * pageSize, total))
-
-	// Track if we've initialized from URL
 	let urlInitialized = $state(false)
 
-	// Initialize filters from URL (for weapons, wait for series list)
 	function initializeFromUrl() {
 		if (urlInitialized) return
-		if (resource === 'weapons' && !weaponSeriesQuery.data) return // Wait for weapon series
+		if (resource === 'weapons' && !weaponSeriesQuery.data) return
 
-		const parsed = parseFiltersFromUrl($page.url.searchParams, entityType, weaponSeriesQuery.data)
-
-		// Set filter state
-		elementFilters = parsed.element
-		rarityFilters = parsed.rarity
-		proficiencyFilters = parsed.proficiency
-		seasonFilters = parsed.season
-		seriesFilters = parsed.series
-		searchTerm = parsed.searchQuery
-
-		// Apply filters to provider
-		if (
-			parsed.element.length > 0 ||
-			parsed.rarity.length > 0 ||
-			parsed.proficiency.length > 0 ||
-			parsed.season.length > 0 ||
-			parsed.series.length > 0
-		) {
-			const seriesAsStrings =
-				parsed.series.length > 0 ? parsed.series.map((s) => String(s)) : undefined
-
-			provider.setFilters({
-				element: parsed.element.length > 0 ? parsed.element : undefined,
-				rarity: parsed.rarity.length > 0 ? parsed.rarity : undefined,
-				series: seriesAsStrings,
-				proficiency1: parsed.proficiency.length > 0 ? parsed.proficiency : undefined,
-				season: parsed.season.length > 0 ? parsed.season : undefined,
-				characterSeries:
-					resource === 'characters' && parsed.series.length > 0
-						? parsed.series.filter((s): s is number => typeof s === 'number')
-						: undefined
-			})
-		}
-
-		// Apply search query to provider
-		if (parsed.searchQuery.length >= 2) {
-			provider.setSearchQuery(parsed.searchQuery)
-			lastSearchTerm = parsed.searchQuery
-		}
-
-		// Show filters panel if any filters are active from URL
-		if (
-			parsed.element.length > 0 ||
-			parsed.rarity.length > 0 ||
-			parsed.proficiency.length > 0 ||
-			parsed.season.length > 0 ||
-			parsed.series.length > 0
-		) {
-			showFilters = true
-		}
+		const startPage = filters.initializeFromUrl(
+			$page.url.searchParams,
+			(v) => { search.searchTerm = v },
+			(v) => { search.lastSearchTerm = v }
+		)
 
 		urlInitialized = true
-		loadData(parsed.page, false) // Don't update URL on initial load
+		loadData(startPage, false)
 	}
 
-	// Load initial data from URL params
 	onMount(() => {
-		// For non-weapon resources, initialize immediately
-		// For weapons, wait for series query to complete
 		if (resource !== 'weapons') {
 			initializeFromUrl()
 		}
 	})
 
-	// For weapons, initialize once series list is loaded
 	$effect(() => {
 		if (resource === 'weapons' && weaponSeriesQuery.data && !urlInitialized) {
 			initializeFromUrl()
 		}
 	})
 
-	// Track horizontal scroll for pinned column shadow
+	// --- Scroll tracking for pinned column shadow ---
+
 	let gridWrapperEl = $state<HTMLDivElement | undefined>(undefined)
 	let isScrolled = $state(false)
 	let scrollContainer: Element | null = null
@@ -430,11 +244,8 @@
 		}
 	})
 
-	// Clean up timeout on destroy
 	onDestroy(() => {
-		if (searchTimeout) {
-			clearTimeout(searchTimeout)
-		}
+		search.cleanup()
 	})
 </script>
 
@@ -443,41 +254,27 @@
 </svelte:head>
 
 <div class="grid">
-	<div class="controls">
-		{#if leftActions}
-			{@render leftActions()}
-		{/if}
+	<DatabaseGridControls
+		hasActiveFilters={filters.hasActiveFilters}
+		filterCount={filters.filterCount}
+		selectedElement={filters.selectedElement}
+		{supportsCollectionFilters}
+		{leftActions}
+		{headerActions}
+		onToggleFilters={() => (filters.showFilters = !filters.showFilters)}
+	>
+		{#snippet rightActions()}
+			<input
+				type="text"
+				class="search-input"
+				placeholder="Search..."
+				value={search.searchTerm}
+				oninput={(e) => { search.searchTerm = e.currentTarget.value }}
+			/>
+		{/snippet}
+	</DatabaseGridControls>
 
-		<div class="controls-right">
-			{#if headerActions}
-				{@render headerActions()}
-			{/if}
-
-			{#if supportsCollectionFilters}
-				<Button
-					variant="ghost"
-					size="small"
-					onclick={() => (showFilters = !showFilters)}
-					class="filter-toggle {hasActiveFilters ? 'has-active' : ''}"
-				>
-					Filters
-					{#if hasActiveFilters}
-						<span class="filter-count {selectedElement ?? ''}">
-							{elementFilters.length +
-								rarityFilters.length +
-								seriesFilters.length +
-								proficiencyFilters.length +
-								seasonFilters.length}
-						</span>
-					{/if}
-				</Button>
-			{/if}
-
-			<input type="text" placeholder={m.placeholder_search()} bind:value={searchTerm} />
-		</div>
-	</div>
-
-	{#if showFilters && supportsCollectionFilters}
+	{#if filters.showFilters && supportsCollectionFilters}
 		<div class="filters-row">
 			<CollectionFilters
 				entityType={resource === 'characters'
@@ -485,12 +282,12 @@
 					: resource === 'summons'
 						? 'summon'
 						: 'weapon'}
-				bind:elementFilters
-				bind:rarityFilters
-				bind:seriesFilters
-				bind:proficiencyFilters
-				bind:seasonFilters
-				onFiltersChange={handleFiltersChange}
+				bind:elementFilters={filters.elementFilters}
+				bind:rarityFilters={filters.rarityFilters}
+				bind:seriesFilters={filters.seriesFilters}
+				bind:proficiencyFilters={filters.proficiencyFilters}
+				bind:seasonFilters={filters.seasonFilters}
+				onFiltersChange={(f) => filters.handleFiltersChange(f)}
 				showSort={false}
 				showSearch={false}
 				contained={false}
@@ -518,29 +315,15 @@
 		</HeaderMenu>
 	</div>
 
-	<div class="grid-footer">
-		<div class="pagination-info">
-			{#if total > 0}
-				Showing {startItem} to {endItem} of {total} entries
-			{:else}
-				No entries found
-			{/if}
-		</div>
-
-		<div class="pagination-controls">
-			<Button variant="ghost" size="small" onclick={handlePrevPage} disabled={currentPage <= 1}>
-				Previous
-			</Button>
-
-			<span class="page-display">
-				Page {currentPage} of {totalPages}
-			</span>
-
-			<Button variant="ghost" size="small" onclick={handleNextPage} disabled={currentPage >= totalPages}>
-				Next
-			</Button>
-		</div>
-	</div>
+	<DatabaseGridFooter
+		{currentPage}
+		{totalPages}
+		{total}
+		{startItem}
+		{endItem}
+		onPrevPage={handlePrevPage}
+		onNextPage={handleNextPage}
+	/>
 </div>
 
 <style lang="scss">
@@ -548,6 +331,7 @@
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use './database-grid.scss';
 
 	.grid {
 		width: 100%;
@@ -556,89 +340,6 @@
 		border-radius: layout.$page-corner;
 		box-shadow: effects.$page-elevation;
 		overflow: hidden;
-
-		.controls {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-			justify-content: space-between;
-			padding: spacing.$unit-2x;
-			gap: spacing.$unit;
-
-			.controls-right {
-				display: flex;
-				align-items: center;
-				gap: spacing.$unit;
-				margin-left: auto;
-
-				:global(.filter-toggle) {
-					gap: spacing.$unit-half;
-
-					:global(svg) {
-						transition: transform 0.15s ease;
-					}
-
-					&:global(.has-active) {
-						color: var(--accent-color);
-					}
-				}
-
-				.filter-count {
-					display: inline-flex;
-					align-items: center;
-					justify-content: center;
-					min-width: 18px;
-					height: 18px;
-					margin-left: spacing.$unit;
-					padding: 0 spacing.$unit-half;
-					background: var(--accent-color);
-					color: white;
-					font-size: 11px;
-					font-weight: typography.$medium;
-					border-radius: 9px;
-
-					// Element-colored badges
-					&:global(.wind) {
-						background: var(--wind-button-bg);
-					}
-					&:global(.fire) {
-						background: var(--fire-button-bg);
-					}
-					&:global(.water) {
-						background: var(--water-button-bg);
-					}
-					&:global(.earth) {
-						background: var(--earth-button-bg);
-					}
-					&:global(.dark) {
-						background: var(--dark-button-bg);
-					}
-					&:global(.light) {
-						background: var(--light-button-bg);
-					}
-				}
-
-				input {
-					padding: spacing.$unit spacing.$unit-2x;
-					background: var(--input-bound-bg);
-					color: var(--text-primary);
-					border: none;
-					border-radius: layout.$item-corner;
-					font-family: 'AGrot', system-ui, sans-serif;
-					font-size: typography.$font-small;
-					width: 200px;
-
-					&:hover {
-						background: var(--input-bound-bg-hover);
-					}
-
-					&:focus {
-						outline: none;
-						border-color: var(--accent-blue);
-					}
-				}
-			}
-		}
 
 		.filters-row {
 			display: flex;
@@ -651,7 +352,6 @@
 				flex: 1;
 				min-width: 0;
 
-				// Override filter trigger padding
 				:global([data-select-trigger]) {
 					padding-top: 7px;
 					padding-bottom: 7px;
@@ -686,130 +386,28 @@
 				}
 			}
 		}
-
-		.grid-footer {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			padding: spacing.$unit-2x;
-			border-top: 1px solid var(--border-subtle);
-			background: var(--bar-bg);
-
-			.pagination-info {
-				font-size: typography.$font-small;
-				color: var(--text-secondary);
-			}
-
-			.pagination-controls {
-				display: flex;
-				align-items: center;
-				gap: spacing.$unit;
-
-				.page-display {
-					font-size: typography.$font-small;
-					color: var(--text-primary);
-					min-width: 100px;
-					text-align: center;
-				}
-			}
-		}
 	}
 
-	// Global styles for SVAR Grid elements
-	:global(.database-grid-theme) {
+	.search-input {
+		padding: spacing.$unit spacing.$unit-2x;
+		border: 1px solid var(--border-subtle);
+		border-radius: layout.$card-corner;
+		background: var(--input-bg, var(--card-bg));
+		color: var(--text-primary);
 		font-size: typography.$font-small;
-		width: 100%;
-		color: var(--text-primary);
-	}
+		outline: none;
+		width: 200px;
 
-	// Fixed column border — must be on :root so scoped component styles can resolve it
-	:global(:root) {
-		--wx-table-fixed-column-border: 1px solid var(--border-subtle);
-	}
+		&:focus {
+			border-color: var(--accent-color);
+		}
 
-	:global(.database-grid .wx-table-box) {
-		width: 100%;
-		max-width: 100%;
-	}
-
-	:global(.wx-grid .wx-header) {
-		background: var(--bar-bg);
-	}
-
-	:global(.wx-grid .wx-h-row) {
-		height: auto !important;
-		background: var(--bar-bg);
-		border-bottom: 1px solid var(--border-medium);
-	}
-
-	:global(.wx-grid .wx-h-row .wx-cell) {
-		box-sizing: border-box;
-		background: var(--bar-bg);
-		font-weight: typography.$bold;
-		color: var(--text-secondary);
-		border-radius: layout.$item-corner;
-		transition: background-color 0.15s ease;
-		cursor: pointer;
-
-		&:hover {
-			background: var(--table-header-hover);
+		&::placeholder {
+			color: var(--text-tertiary);
 		}
 	}
 
-	:global(.wx-grid .wx-h-row .wx-sort) {
-		height: auto;
-		margin-left: spacing.$unit-half;
-		flex-shrink: 0;
-		align-self: center;
-	}
-
-	:global(.wx-grid .wx-cell) {
-		padding: spacing.$unit * 0.5;
-		vertical-align: middle;
-		display: flex;
-		align-items: center;
-		border: none;
-		color: var(--text-primary);
-		--wx-table-cell-border: none;
-	}
-
-	:global(.wx-grid .wx-cell:first-child) {
-		padding-left: spacing.$unit-2x;
-	}
-
-	:global(.wx-grid .wx-cell:not(:last-child)) {
-		border-right: none;
-	}
-
-	:global(.wx-grid .wx-row:hover) {
-		background: var(--table-row-hover);
-		cursor: pointer;
-	}
-
-	:global(.wx-grid .wx-cell:nth-child(2)) {
-		white-space: normal;
-		line-height: 1.3;
-	}
-
-	// Fixed/pinned column backgrounds — need opaque bg so scrolling content doesn't show through
-	:global(.wx-grid .wx-cell.wx-fixed),
-	:global(.wx-grid .wx-cell.wx-shadow) {
-		background: var(--card-bg);
-		z-index: 1;
-	}
-
-	:global(.wx-grid .wx-h-row .wx-cell.wx-fixed),
-	:global(.wx-grid .wx-h-row .wx-cell.wx-shadow) {
-		background: var(--bar-bg);
-		border-radius: 0;
-	}
-
-	:global(.wx-grid .wx-row:hover .wx-cell.wx-fixed),
-	:global(.wx-grid .wx-row:hover .wx-cell.wx-shadow) {
-		background: var(--table-row-hover);
-	}
-
-	// Only show shadow/border on pinned cells when scrolled
+	// Scroll-dependent pinned column shadow (needs scoped .grid-wrapper class)
 	.grid-wrapper:not(.scrolled) {
 		:global(.wx-grid .wx-cell.wx-shadow) {
 			box-shadow: none;
@@ -821,71 +419,5 @@
 		:global(.wx-grid .wx-cell.wx-shadow) {
 			box-shadow: 4px 0 8px -2px rgba(0, 0, 0, 0.08);
 		}
-	}
-
-	// Element color classes
-	:global(.element-fire) {
-		color: var(--fire-text);
-	}
-	:global(.element-water) {
-		color: var(--water-text);
-	}
-	:global(.element-earth) {
-		color: var(--earth-text);
-	}
-	:global(.element-wind) {
-		color: var(--wind-text);
-	}
-	:global(.element-light) {
-		color: var(--light-text);
-	}
-	:global(.element-dark) {
-		color: var(--dark-text);
-	}
-
-	// Database image styling - removed to allow cells to control sizing
-
-	// Override wx-svelte-menu to match our design system
-	:global(.wx-menu) {
-		--wx-border-radius: #{layout.$card-corner};
-		background: var(--menu-bg) !important;
-		border: 1px solid var(--border-subtle);
-		border-radius: layout.$card-corner;
-		box-shadow: var(--shadow-md) !important;
-		padding: spacing.$unit-half !important;
-		z-index: effects.$z-modal !important;
-		min-width: calc(spacing.$unit * 22.5);
-		overflow: hidden;
-	}
-
-	:global(.wx-menu .wx-item) {
-		font-family: 'AGrot', system-ui, sans-serif;
-		font-size: typography.$font-regular;
-		color: var(--menu-text);
-		padding: spacing.$unit spacing.$unit-2x;
-		border-radius: layout.$item-corner-small;
-		height: auto;
-		line-height: normal;
-
-		&:hover {
-			background: var(--menu-bg-item-hover) !important;
-		}
-	}
-
-	:global(.wx-menu .wx-item .wx-value) {
-		color: var(--menu-text);
-	}
-
-	:global(.wx-menu .wx-item .wx-icon) {
-		color: var(--text-secondary);
-	}
-
-	:global(.wx-menu .wx-item .wx-hidden) {
-		color: var(--menu-text-disabled);
-	}
-
-	:global(.wx-menu .wx-separator) {
-		border-top-color: var(--menu-separator);
-		margin: spacing.$unit-half 0;
 	}
 </style>
