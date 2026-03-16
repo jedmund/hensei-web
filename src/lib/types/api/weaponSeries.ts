@@ -24,6 +24,8 @@ export interface WeaponSeriesRef {
 	augmentType: AugmentType
 	extra: boolean
 	elementChangeable: boolean
+	/** Number of weapon key slots this series supports (null if no keys) */
+	numWeaponKeys: number | null
 }
 
 /**
@@ -42,6 +44,8 @@ export interface WeaponSeries {
 	hasAwakening: boolean
 	/** Type of augment this series supports: "ax", "befoulment", or "no_augment" */
 	augmentType: AugmentType
+	/** Number of weapon key slots this series supports (null if no keys) */
+	numWeaponKeys: number | null
 	// Only included in :full view (show endpoint)
 	weaponCount?: number
 }
@@ -59,6 +63,7 @@ export interface WeaponSeriesInput {
 	has_weapon_keys: boolean
 	has_awakening: boolean
 	augment_type: AugmentType
+	num_weapon_keys: number | null
 }
 
 /**
@@ -74,6 +79,7 @@ export interface CreateWeaponSeriesPayload {
 	has_weapon_keys?: boolean
 	has_awakening?: boolean
 	augment_type?: AugmentType
+	num_weapon_keys?: number | null
 }
 
 /**
@@ -89,6 +95,7 @@ export interface UpdateWeaponSeriesPayload {
 	has_weapon_keys?: boolean
 	has_awakening?: boolean
 	augment_type?: AugmentType
+	num_weapon_keys?: number | null
 }
 
 /**
