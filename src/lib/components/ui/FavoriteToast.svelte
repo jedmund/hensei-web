@@ -15,7 +15,7 @@
 <div class="favorite-toast">
 	<div class="content">
 		<span class="toast-icon">
-			<Icon name={icon} size={14} />
+			<Icon name={icon} size={18} />
 		</span>
 		<p class="message">{message}</p>
 	</div>
@@ -36,7 +36,7 @@
 	.favorite-toast {
 		display: flex;
 		flex-direction: column;
-		gap: calc($unit * 1.5);
+		gap: $unit;
 		padding: calc($unit * 1.5) $unit-2x;
 		background: var(--toast-bg);
 		color: var(--toast-text);
@@ -50,7 +50,7 @@
 		display: flex;
 		flex-direction: row;
 		align-items: flex-start;
-		gap: calc($unit * 1.5);
+		gap: $unit;
 	}
 
 	.toast-icon {
