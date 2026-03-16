@@ -23,7 +23,7 @@
 		{
 			id: 'name',
 			header: 'Name',
-			flexgrow: 1,
+			width: 180,
 			sort: true,
 			template: (nameObj: any) => {
 				// nameObj is the name property itself, not the full item
@@ -43,7 +43,7 @@
 		{
 			id: 'element',
 			header: 'Element',
-			width: 100,
+			width: 56,
 			sort: true,
 			cell: ElementCell
 		},
@@ -63,6 +63,7 @@
 			id: 'last_updated',
 			header: 'Last Updated',
 			width: 120,
+			flexgrow: 1,
 			sort: true,
 			cell: LastUpdatedCell
 		},
