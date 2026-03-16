@@ -3,13 +3,18 @@
 	import Icon from '../Icon.svelte'
 
 	interface Props {
+		partyName: string
 		message: string
 		icon?: string | undefined
 		actionLabel?: string | undefined
 		actionHref?: string | undefined
 	}
 
-	const { message, icon = 'favorite', actionLabel, actionHref }: Props = $props()
+	const { partyName, message, icon = 'favorite', actionLabel, actionHref }: Props = $props()
+
+	const nameIndex = $derived(message.indexOf(partyName))
+	const beforeName = $derived(nameIndex >= 0 ? message.slice(0, nameIndex) : '')
+	const afterName = $derived(nameIndex >= 0 ? message.slice(nameIndex + partyName.length) : message)
 </script>
 
 <div class="favorite-toast">
@@ -17,7 +22,7 @@
 		<span class="toast-icon">
 			<Icon name={icon} size={18} />
 		</span>
-		<p class="message">{message}</p>
+		<p class="message">{#if nameIndex >= 0}{beforeName}<span class="party-name">{partyName}</span>{afterName}{:else}{message}{/if}</p>
 	</div>
 	{#if actionLabel && actionHref}
 		<div class="action">
@@ -64,6 +69,10 @@
 		margin: 0;
 		font-size: $font-body;
 		line-height: 1.4;
+	}
+
+	.party-name {
+		font-weight: $medium;
 	}
 
 	.action {

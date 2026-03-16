@@ -67,6 +67,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 				await opts.mutations.party.unfavorite.mutateAsync(params)
 				toast.custom(FavoriteToast, {
 					componentProps: {
+						partyName,
 						message: m.toast_removed_favorite({ name: partyName }),
 						icon: 'unfavorite'
 					}
@@ -76,6 +77,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 				const username = opts.getAuthUsername()
 				toast.custom(FavoriteToast, {
 					componentProps: {
+						partyName,
 						message: m.toast_added_favorite({ name: partyName }),
 						actionLabel: username ? m.toast_view_favorites() : undefined,
 						actionHref: username ? `/${username}/favorites` : undefined
