@@ -49,6 +49,18 @@
 </script>
 
 <DetailsSection title={m.section_battle_settings()}>
+	<DetailRow label={m.battle_solo()} noHover compact>
+		{#snippet children()}
+			<Switch
+				checked={solo}
+				size="small"
+				{element}
+				{disabled}
+				onCheckedChange={(v) => handleChange('solo', v)}
+			/>
+		{/snippet}
+	</DetailRow>
+
 	<DetailRow label={m.battle_charge_attack()} noHover compact>
 		{#snippet children()}
 			<Switch
