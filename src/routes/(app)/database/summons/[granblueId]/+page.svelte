@@ -415,6 +415,7 @@
 			font-size: typography.$font-large;
 			font-weight: typography.$bold;
 			margin: 0 0 spacing.$unit 0;
+			color: var(--text-primary);
 		}
 
 		.abilities-section {
