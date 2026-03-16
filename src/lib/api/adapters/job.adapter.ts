@@ -215,7 +215,7 @@ export class JobAdapter extends BaseAdapter {
 	 * Gets a single job skill by ID
 	 */
 	async getSkillById(id: string): Promise<JobSkill> {
-		return this.request<JobSkill>(`/jobs/skills/${id}`)
+		return this.request<JobSkill>(`/job_skills/${id}`)
 	}
 
 	/**
