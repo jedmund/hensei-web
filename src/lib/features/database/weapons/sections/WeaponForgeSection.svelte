@@ -4,6 +4,7 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import WeaponTypeahead from '$lib/components/ui/WeaponTypeahead.svelte'
 	import { getWeaponGridImage } from '$lib/utils/images'
+	import { getElementKey } from '$lib/utils/element'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {
@@ -23,6 +24,8 @@
 	const hasForgeData = $derived(
 		forgeChain.length > 0 || forgedFrom != null || forgeOrder != null || editMode
 	)
+
+	const elementKey = $derived(getElementKey(weapon?.element))
 
 	// Get initial weapon data for typeahead
 	const initialForgedFrom = $derived.by(() => {
@@ -51,22 +54,23 @@
 				<DetailItem label="Forge Chain">
 					<div class="forge-chain">
 						{#each forgeChain as chainWeapon, index}
-							<a
-								href={localizeHref(`/database/weapons/${chainWeapon.granblueId}`)}
-								class="chain-item"
-								class:current={chainWeapon.granblueId === weapon.granblueId}
-							>
-								<img
-									src={getWeaponGridImage(chainWeapon.granblueId, weapon.element)}
-									alt=""
-									class="chain-image"
-								/>
-								<span class="chain-name">{chainWeapon.name?.en || chainWeapon.name?.ja}</span>
-								<span class="chain-order">({chainWeapon.forgeOrder})</span>
-							</a>
-							{#if index < forgeChain.length - 1}
-								<span class="chain-arrow">→</span>
-							{/if}
+							<div class="chain-step">
+								{#if index > 0}
+									<span class="chain-arrow">↓</span>
+								{/if}
+								<a
+									href={localizeHref(`/database/weapons/${chainWeapon.granblueId}`)}
+									class="chain-item {elementKey}"
+									class:current={chainWeapon.granblueId === weapon.granblueId}
+								>
+									<img
+										src={getWeaponGridImage(chainWeapon.granblueId, weapon.element)}
+										alt=""
+										class="chain-image"
+									/>
+									<span class="chain-name">{chainWeapon.name?.en || chainWeapon.name?.ja}</span>
+								</a>
+							</div>
 						{/each}
 					</div>
 				</DetailItem>
@@ -89,22 +93,26 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
 
 	.forge-chain {
 		display: flex;
-		align-items: center;
-		gap: spacing.$unit;
-		flex-wrap: wrap;
+		flex-direction: column;
+		gap: 0;
+	}
+
+	.chain-step {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
 	}
 
 	.chain-item {
-		display: flex;
+		display: inline-flex;
 		align-items: center;
 		gap: spacing.$unit-half;
-		padding: spacing.$unit-half spacing.$unit;
+		padding: spacing.$unit-quarter spacing.$unit-half;
 		background: var(--card-bg);
 		border-radius: layout.$item-corner-small;
 		text-decoration: none;
@@ -116,8 +124,34 @@
 		}
 
 		&.current {
-			background: var(--blue-subtle);
-			outline: 1px solid var(--blue);
+			&.wind {
+				background: var(--wind-nav-selected-bg);
+				outline: 1px solid var(--wind-button-bg);
+			}
+			&.fire {
+				background: var(--fire-nav-selected-bg);
+				outline: 1px solid var(--fire-button-bg);
+			}
+			&.water {
+				background: var(--water-nav-selected-bg);
+				outline: 1px solid var(--water-button-bg);
+			}
+			&.earth {
+				background: var(--earth-nav-selected-bg);
+				outline: 1px solid var(--earth-button-bg);
+			}
+			&.light {
+				background: var(--light-nav-selected-bg);
+				outline: 1px solid var(--light-button-bg);
+			}
+			&.dark {
+				background: var(--dark-nav-selected-bg);
+				outline: 1px solid var(--dark-button-bg);
+			}
+			&.null {
+				background: var(--card-bg-hover);
+				outline: 1px solid var(--text-tertiary);
+			}
 		}
 	}
 
@@ -131,13 +165,11 @@
 		font-size: typography.$font-small;
 	}
 
-	.chain-order {
-		font-size: typography.$font-small;
-		color: var(--text-tertiary);
-	}
-
 	.chain-arrow {
 		color: var(--text-tertiary);
+		font-size: typography.$font-small;
+		padding-left: spacing.$unit;
+		line-height: 1;
 	}
 
 	.forged-from-link {
