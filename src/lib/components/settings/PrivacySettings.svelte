@@ -8,24 +8,28 @@
 
 	interface Props {
 		showGranblueId: boolean
+		showWikiProfile: boolean
 		collectionPrivacy: number
 		showCrewGamertag: boolean
 		isInCrew: boolean
 		crewGamertag?: string
 		element: ElementType
 		onShowGranblueIdChange: (value: boolean) => void
+		onShowWikiProfileChange: (value: boolean) => void
 		onCollectionPrivacyChange: (value: number) => void
 		onShowCrewGamertagChange: (value: boolean) => void
 	}
 
 	let {
 		showGranblueId,
+		showWikiProfile,
 		collectionPrivacy,
 		showCrewGamertag,
 		isInCrew,
 		crewGamertag,
 		element,
 		onShowGranblueIdChange,
+		onShowWikiProfileChange,
 		onCollectionPrivacyChange,
 		onShowCrewGamertagChange
 	}: Props = $props()
@@ -52,6 +56,21 @@
 					name="show-granblue-id"
 					{element}
 					onCheckedChange={onShowGranblueIdChange}
+				/>
+			{/snippet}
+		</SettingsRow>
+
+		<!-- Show Wiki Profile on profile -->
+		<SettingsRow
+			title={m.settings_show_wiki_profile()}
+			subtitle={m.settings_show_wiki_profile_subtitle()}
+		>
+			{#snippet control()}
+				<Switch
+					checked={showWikiProfile}
+					name="show-wiki-profile"
+					{element}
+					onCheckedChange={onShowWikiProfileChange}
 				/>
 			{/snippet}
 		</SettingsRow>

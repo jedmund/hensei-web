@@ -14,12 +14,14 @@
 		picture: string
 		element: ElementType
 		granblueId: string
+		wikiProfile: string
 		gender: number
 		language: string
 		theme: string
 		onPictureChange: (value: string) => void
 		onElementChange: (value: string) => void
 		onGranblueIdChange: (value: string) => void
+		onWikiProfileChange: (value: string) => void
 		onGenderChange: (value: number) => void
 		onLanguageChange: (value: string) => void
 		onThemeChange: (value: string) => void
@@ -29,12 +31,14 @@
 		picture,
 		element,
 		granblueId,
+		wikiProfile,
 		gender,
 		language,
 		theme,
 		onPictureChange,
 		onElementChange,
 		onGranblueIdChange,
+		onWikiProfileChange,
 		onGenderChange,
 		onLanguageChange,
 		onThemeChange
@@ -90,6 +94,7 @@
 	let localPicture = $state(picture)
 	let localElement = $state(element)
 	let localGranblueId = $state(granblueId)
+	let localWikiProfile = $state(wikiProfile)
 	let localGender = $state(gender)
 	let localLanguage = $state(language)
 	let localTheme = $state(theme)
@@ -103,6 +108,9 @@
 	})
 	$effect(() => {
 		localGranblueId = granblueId
+	})
+	$effect(() => {
+		localWikiProfile = wikiProfile
 	})
 	$effect(() => {
 		localGender = gender
@@ -123,6 +131,9 @@
 	})
 	$effect(() => {
 		if (localGranblueId !== granblueId) onGranblueIdChange(localGranblueId)
+	})
+	$effect(() => {
+		if (localWikiProfile !== wikiProfile) onWikiProfileChange(localWikiProfile)
 	})
 	$effect(() => {
 		if (localGender !== gender) onGenderChange(localGender)
@@ -177,6 +188,13 @@
 		<SettingsRow title={m.settings_granblue_id()} subtitle={m.settings_granblue_id_subtitle()}>
 			{#snippet control()}
 				<Input bind:value={localGranblueId} placeholder={m.settings_granblue_id_placeholder()} contained />
+			{/snippet}
+		</SettingsRow>
+
+		<!-- Wiki Profile -->
+		<SettingsRow title={m.settings_wiki_profile()} subtitle={m.settings_wiki_profile_subtitle()}>
+			{#snippet control()}
+				<Input bind:value={localWikiProfile} placeholder={m.settings_wiki_profile_placeholder()} contained />
 			{/snippet}
 		</SettingsRow>
 

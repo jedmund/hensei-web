@@ -46,12 +46,14 @@
 	let picture = $state('')
 	let element = $state<ElementType>('wind')
 	let granblueId = $state('')
+	let wikiProfile = $state('')
 	let gender = $state(0)
 	let language = $state('en')
 	let theme = $state('system')
 
 	// Form state - Privacy section (initialized with defaults, populated from API)
 	let showGranblueId = $state(false)
+	let showWikiProfile = $state(false)
 	let collectionPrivacy = $state(1) // 1 = Everyone (1-based to avoid JS falsy 0)
 	let showCrewGamertag = $state(false)
 
@@ -96,11 +98,13 @@
 			picture = data.avatar?.picture ?? ''
 			element = (data.avatar?.element as ElementType) ?? 'wind'
 			granblueId = data.granblueId ?? ''
+			wikiProfile = data.wikiProfile ?? ''
 			gender = data.gender ?? 0
 			language = data.language ?? 'en'
 			theme = data.theme ?? 'system'
 			// Privacy
 			showGranblueId = data.showGranblueId ?? false
+			showWikiProfile = data.showWikiProfile ?? false
 			collectionPrivacy = data.collectionPrivacy ?? 1
 			showCrewGamertag = data.showCrewGamertag ?? false
 			// Store original values for comparison
@@ -163,8 +167,10 @@
 				language,
 				theme,
 				granblueId: granblueId || undefined,
+				wikiProfile: wikiProfile || undefined,
 				showCrewGamertag,
 				showGranblueId,
+				showWikiProfile,
 				collectionPrivacy
 			}
 
@@ -180,8 +186,10 @@
 				theme: response.theme,
 				bahamut,
 				granblueId: response.granblueId,
+				wikiProfile: response.wikiProfile,
 				showCrewGamertag: response.showCrewGamertag,
 				showGranblueId: response.showGranblueId,
+				showWikiProfile: response.showWikiProfile,
 				collectionPrivacy: response.collectionPrivacy
 			}
 
@@ -203,10 +211,12 @@
 								...oldData,
 								avatar: { ...(oldData.avatar as Record<string, unknown>), picture, element },
 								granblueId,
+								wikiProfile,
 								gender,
 								language,
 								theme,
 								showGranblueId,
+								showWikiProfile,
 								collectionPrivacy,
 								showCrewGamertag
 							}
@@ -290,12 +300,14 @@
 							{picture}
 							{element}
 							{granblueId}
+							{wikiProfile}
 							{gender}
 							{language}
 							{theme}
 							onPictureChange={(v) => (picture = v)}
 							onElementChange={(v) => (element = v as ElementType)}
 							onGranblueIdChange={(v) => (granblueId = v)}
+							onWikiProfileChange={(v) => (wikiProfile = v)}
 							onGenderChange={(v) => (gender = v)}
 							onLanguageChange={(v) => (language = v)}
 							onThemeChange={(v) => (theme = v)}
@@ -303,12 +315,14 @@
 					{:else if activeSection === 'privacy'}
 						<PrivacySettings
 							{showGranblueId}
+							{showWikiProfile}
 							{collectionPrivacy}
 							{showCrewGamertag}
 							{isInCrew}
 							{crewGamertag}
 							{element}
 							onShowGranblueIdChange={(v) => (showGranblueId = v)}
+							onShowWikiProfileChange={(v) => (showWikiProfile = v)}
 							onCollectionPrivacyChange={(v) => (collectionPrivacy = v)}
 							onShowCrewGamertagChange={(v) => (showCrewGamertag = v)}
 						/>
