@@ -1,14 +1,20 @@
 <script lang="ts">
 	import type { PageData } from './$types'
+	import type { Playlist } from '$lib/types/api/playlist'
 	import { onDestroy } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
+	import { ContextMenu } from 'bits-ui'
+	import { goto } from '$app/navigation'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import PlaylistCard from '$lib/components/playlist/PlaylistCard.svelte'
 	import CreatePlaylistDialog from '$lib/components/playlist/CreatePlaylistDialog.svelte'
+	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import { playlistQueries } from '$lib/api/queries/playlist.queries'
+	import { useDeletePlaylist } from '$lib/api/mutations/playlist.mutations'
 	import { page } from '$app/stores'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
@@ -38,6 +44,23 @@
 	})
 
 	const isEmpty = $derived(!playlistsQuery.isLoading && items().length === 0)
+
+	// Delete playlist
+	const deletePlaylist = useDeletePlaylist()
+	let deleteTarget = $state<Playlist | null>(null)
+	let deleteDialogOpen = $state(false)
+
+	function confirmDeletePlaylist(playlist: Playlist) {
+		deleteTarget = playlist
+		deleteDialogOpen = true
+	}
+
+	async function handleDeletePlaylist() {
+		if (!deleteTarget) return
+		await deletePlaylist.mutateAsync(deleteTarget.id)
+		deleteDialogOpen = false
+		deleteTarget = null
+	}
 </script>
 
 <PageMeta
@@ -96,7 +119,36 @@
 				{/if}
 				{#each items() as playlist (playlist.id)}
 					<li>
-						<PlaylistCard {playlist} username={data.user.username} />
+						{#if isOwner}
+							<ContextMenu.Root>
+								<ContextMenu.Trigger>
+									{#snippet child({ props })}
+										<div {...props}>
+											<PlaylistCard {playlist} username={data.user.username} />
+										</div>
+									{/snippet}
+								</ContextMenu.Trigger>
+								<ContextMenu.Portal>
+									<ContextMenu.Content class="context-menu">
+										<ContextMenu.Item
+											class="context-menu-item"
+											onclick={() => goto(localizeHref(`/${data.user.username}/playlists/${playlist.slug}`))}
+										>
+											{m.context_view_playlist()}
+										</ContextMenu.Item>
+										<ContextMenu.Separator class="context-menu-separator" />
+										<ContextMenu.Item
+											class="context-menu-item danger"
+											onclick={() => confirmDeletePlaylist(playlist)}
+										>
+											{m.context_delete_playlist()}
+										</ContextMenu.Item>
+									</ContextMenu.Content>
+								</ContextMenu.Portal>
+							</ContextMenu.Root>
+						{:else}
+							<PlaylistCard {playlist} username={data.user.username} />
+						{/if}
 					</li>
 				{/each}
 			</ul>
@@ -125,12 +177,21 @@
 
 <CreatePlaylistDialog bind:open={createDialogOpen} />
 
+<ConfirmDialog
+	bind:open={deleteDialogOpen}
+	title={m.confirm_delete_playlist_title()}
+	message={m.confirm_delete_playlist_message()}
+	loading={deletePlaylist.isPending}
+	onconfirm={handleDeletePlaylist}
+/>
+
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/colors' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/mixins' as *;
+	@use '$lib/components/ui/menu/menu-styles';
 
 	.profile {
 		display: flex;
@@ -145,7 +206,7 @@
 		justify-content: center;
 		gap: $unit;
 		width: 100%;
-		min-height: 120px;
+		height: 238px;
 		background: var(--card-bg);
 		border: 1px dashed var(--border-subtle, var(--button-bg));
 		border-radius: $card-corner;

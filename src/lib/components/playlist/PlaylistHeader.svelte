@@ -42,7 +42,7 @@
 		{#snippet menu()}
 			{#if isOwner}
 				<Button size="small" contained onclick={onAddTeams}>
-					{m.playlist_add_teams()}
+					{(playlist.parties?.length ?? 0) > 0 ? m.playlist_manage_teams() : m.playlist_add_teams()}
 				</Button>
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger class="menu-trigger">

@@ -10,7 +10,9 @@
 
 	let { open = $bindable(false), videoId, videoTitle }: Props = $props()
 
-	const embedUrl = $derived(`https://www.youtube.com/embed/${videoId}?autoplay=1`)
+	const embedUrl = $derived(
+		`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1`
+	)
 </script>
 
 <Dialog bind:open size="medium">

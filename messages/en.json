@@ -1569,9 +1569,19 @@
 	"playlist_field_video_url": "YouTube video",
 	"playlist_field_video_url_placeholder": "https://youtube.com/watch?v=...",
 	"playlist_add_teams": "Add teams",
+	"playlist_manage_teams": "Manage teams",
 	"playlist_already_added": "Already in playlist",
 	"playlist_updated": "Updated {time}",
 	"playlist_page_title": "{title} / A playlist by {username} / granblue.team",
 	"toast_added_to_playlist": "Added to your {name} playlist",
-	"toast_view_playlist": "View playlist"
+	"toast_view_playlist": "View playlist",
+
+	"context_view_team": "View team",
+	"context_delete_team": "Delete team",
+	"context_view_playlist": "View playlist",
+	"context_delete_playlist": "Delete playlist",
+	"confirm_delete_team_title": "Delete team",
+	"confirm_delete_team_message": "Are you sure you want to delete this team? This action cannot be undone.",
+	"confirm_delete_playlist_title": "Delete playlist",
+	"confirm_delete_playlist_message": "Are you sure you want to delete this playlist? This action cannot be undone."
 }

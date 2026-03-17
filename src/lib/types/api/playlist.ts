@@ -12,6 +12,7 @@ export interface Playlist {
 	parties?: Party[]
 	partyCount?: number
 	partyIds?: string[]
+	raidSlugs?: string[]
 	createdAt: string
 	updatedAt: string
 }

@@ -41,8 +41,15 @@
 		field: 'fullAuto' | 'solo' | 'autoGuard' | 'autoSummon' | 'chargeAttack',
 		value: boolean
 	) {
-		if (field === 'fullAuto') fullAuto = value
-		else if (field === 'solo') solo = value
+		if (field === 'fullAuto') {
+			fullAuto = value
+			if (!value) {
+				autoGuard = false
+				autoSummon = false
+				onchange?.('autoGuard', false)
+				onchange?.('autoSummon', false)
+			}
+		} else if (field === 'solo') solo = value
 		else if (field === 'autoGuard') autoGuard = value
 		else if (field === 'autoSummon') autoSummon = value
 		else chargeAttack = value
@@ -94,7 +101,7 @@
 				checked={autoSummon}
 				size="small"
 				{element}
-				{disabled}
+				disabled={disabled || !fullAuto}
 				onCheckedChange={(v) => handleChange('autoSummon', v)}
 			/>
 		{/snippet}
@@ -106,7 +113,7 @@
 				checked={autoGuard}
 				size="small"
 				{element}
-				{disabled}
+				disabled={disabled || !fullAuto}
 				onCheckedChange={(v) => handleChange('autoGuard', v)}
 			/>
 		{/snippet}

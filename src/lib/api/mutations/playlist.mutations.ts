@@ -92,6 +92,7 @@ export function addPartyToPlaylistOptions(queryClient: QueryClient) {
 			playlistAdapter.addParty(playlistId, partyId),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: playlistKeys.all })
+			queryClient.invalidateQueries({ queryKey: playlistKeys.details() })
 		}
 	}
 }
@@ -102,6 +103,7 @@ export function removePartyFromPlaylistOptions(queryClient: QueryClient) {
 			playlistAdapter.removeParty(playlistId, partyId),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: playlistKeys.all })
+			queryClient.invalidateQueries({ queryKey: playlistKeys.details() })
 		}
 	}
 }
