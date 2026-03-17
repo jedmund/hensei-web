@@ -157,7 +157,9 @@
 			recruits: parsedData?.recruits ?? null,
 			// Forge chain
 			forgedFrom: null as string | null,
-			forgeOrder: null as number | null
+			forgeOrder: null as number | null,
+			// Variant
+			weaponSeriesVariantId: '' as string
 		}
 	}
 
@@ -299,7 +301,9 @@
 				wiki_raw: wikiRawByPage[selectedWikiPage] || undefined,
 				// Forge chain
 				forged_from: formData.forgedFrom || null,
-				forge_order: formData.forgeOrder
+				forge_order: formData.forgeOrder,
+				// Variant
+				weapon_series_variant_id: formData.weaponSeriesVariantId || null
 			}
 
 			const newWeapon = await entityAdapter.createWeapon(payload)

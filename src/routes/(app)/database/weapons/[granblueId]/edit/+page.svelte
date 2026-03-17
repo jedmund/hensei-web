@@ -112,7 +112,9 @@
 		forgedFrom: '' as string | null,
 		forgeOrder: null as number | null,
 		// Awakenings
-		awakeningIds: [] as string[]
+		awakeningIds: [] as string[],
+		// Variant
+		weaponSeriesVariantId: '' as string
 	})
 
 	// Populate edit data when weapon loads
@@ -162,7 +164,9 @@
 				forgedFrom: weapon.forgedFrom?.granblueId || null,
 				forgeOrder: weapon.forgeOrder ?? null,
 				// Awakenings
-				awakeningIds: (weapon.awakenings ?? []).map((a: any) => a.id)
+				awakeningIds: (weapon.awakenings ?? []).map((a: any) => a.id),
+				// Variant
+				weaponSeriesVariantId: weapon.series?.weaponSeriesVariantId || ''
 			}
 		}
 	})
@@ -217,7 +221,9 @@
 				forged_from: editData.forgedFrom || null,
 				forge_order: editData.forgeOrder,
 				// Awakenings
-				awakening_ids: editData.awakeningIds
+				awakening_ids: editData.awakeningIds,
+				// Variant
+				weapon_series_variant_id: editData.weaponSeriesVariantId || null
 			}
 
 			await entityAdapter.updateWeapon(weapon.id, payload)

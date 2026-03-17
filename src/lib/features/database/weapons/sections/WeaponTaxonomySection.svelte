@@ -29,6 +29,49 @@
 	// Fetch weapon series list from API
 	const weaponSeriesQuery = createQuery(() => entityQueries.weaponSeriesList())
 
+	// Fetch selected series detail to get variants (only in edit mode when a series is selected)
+	const selectedSeriesId = $derived(editMode ? editData?.series : null)
+	const selectedSeriesQuery = createQuery(() => ({
+		...entityQueries.weaponSeries(selectedSeriesId ?? ''),
+		enabled: !!selectedSeriesId
+	}))
+
+	const selectedSeriesData = $derived(selectedSeriesQuery.data)
+	const hasVariants = $derived((selectedSeriesData?.variants?.length ?? 0) > 0)
+
+	// Build variant options when the selected series has variants
+	const variantOptions = $derived.by(() => {
+		const variants = selectedSeriesData?.variants ?? []
+		if (variants.length === 0) return []
+		return [
+			{ value: '', label: 'None' },
+			...variants.map((v) => {
+				const parts: string[] = []
+				if (v.hasWeaponKeys !== null) parts.push(`Keys: ${v.hasWeaponKeys ? 'Yes' : 'No'}`)
+				if (v.hasAwakening !== null) parts.push(`Awakening: ${v.hasAwakening ? 'Yes' : 'No'}`)
+				if (v.extra !== null) parts.push(`Extra: ${v.extra ? 'Yes' : 'No'}`)
+				return {
+					value: v.id,
+					label: parts.length > 0 ? parts.join(', ') : `Variant ${v.id.slice(0, 8)}`
+				}
+			})
+		]
+	})
+
+	// Clear variant when series changes
+	$effect(() => {
+		if (editMode && editData) {
+			const seriesId = editData.series
+			// When series changes, if the current variant doesn't belong to the new series, clear it
+			if (selectedSeriesData && editData.weaponSeriesVariantId) {
+				const validIds = (selectedSeriesData.variants ?? []).map((v) => v.id)
+				if (!validIds.includes(editData.weaponSeriesVariantId)) {
+					editData.weaponSeriesVariantId = ''
+				}
+			}
+		}
+	})
+
 	const elementOptions = getElementOptions()
 	const proficiencyOptions = getProficiencyOptions()
 
@@ -57,6 +100,12 @@
 		if (!series) return '—'
 		return getSeriesDisplayName(series) || '—'
 	}
+
+	// Format variant label for display mode
+	function formatVariantLabel(weapon: any): string {
+		if (!weapon?.series?.weaponSeriesVariantId) return '—'
+		return `Variant ${weapon.series.weaponSeriesVariantId.slice(0, 8)}`
+	}
 </script>
 
 <DetailsContainer title="Details">
@@ -82,6 +131,16 @@
 			type="select"
 			options={seriesOptions}
 		/>
+		{#if hasVariants}
+			<DetailItem
+				label="Variant"
+				sublabel="Override series capabilities for this weapon"
+				bind:value={editData.weaponSeriesVariantId}
+				editable={true}
+				type="select"
+				options={variantOptions}
+			/>
+		{/if}
 		<DetailItem
 			label="Extra"
 			sublabel="Can be placed in Additional Weapons"
@@ -117,6 +176,9 @@
 			/>
 		</DetailItem>
 		<DetailItem label="Series" value={formatSeriesLabel(weapon.series)} />
+		{#if weapon.series?.weaponSeriesVariantId}
+			<DetailItem label="Variant" value={formatVariantLabel(weapon)} />
+		{/if}
 		<DetailItem
 			label="Extra"
 			sublabel="Can be placed in Additional Weapons"
