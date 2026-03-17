@@ -171,18 +171,15 @@ export class PaneStackStore {
 	}
 
 	/**
-	 * Replace a pane at a specific index, creating a new array so
-	 * $derived(stack.panes) sees a changed reference and propagates.
-	 * The panes getter always returns the same proxy object, so
-	 * in-place mutations (array[i] = ...) don't change the getter's
-	 * return value and $derived short-circuits.
+	 * Update a pane at a specific index by mutating its properties
+	 * through the $state proxy. This triggers fine-grained reactivity
+	 * on individual properties (e.g. pane.action) so that template
+	 * expressions like {#if pane.action} re-evaluate correctly.
 	 */
 	updatePaneAt(index: number, updates: Partial<PaneConfig>) {
 		const pane = this.state.panes[index]
 		if (!pane) return
-		this.state.panes = this.state.panes.map((p, i) =>
-			i === index ? { ...p, ...updates } : p
-		)
+		Object.assign(pane, updates)
 	}
 
 	/**
