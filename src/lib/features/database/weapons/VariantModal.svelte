@@ -4,9 +4,9 @@
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
-	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import type { WeaponSeriesVariant } from '$lib/types/api/weaponSeriesVariant'
+	import type { AugmentType } from '$lib/types/api/weaponStatModifier'
 	import {
 		useCreateWeaponSeriesVariant,
 		useUpdateWeaponSeriesVariant,
@@ -28,19 +28,13 @@
 	const isEditing = $derived(!!variant)
 	const title = $derived(isEditing ? 'Edit Variant' : 'Add Variant')
 
-	// Override toggles — when true, the field is being overridden
-	let overrideHasWeaponKeys = $state(false)
-	let overrideHasAwakening = $state(false)
-	let overrideNumWeaponKeys = $state(false)
-	let overrideAugmentType = $state(false)
-	let overrideElementChangeable = $state(false)
-	let overrideExtra = $state(false)
-
-	// Override values
+	// Form fields
+	let name = $state('')
 	let hasWeaponKeys = $state(false)
 	let hasAwakening = $state(false)
-	let numWeaponKeys = $state<number>(0)
-	let augmentType = $state<string>('no_augment')
+	let numWeaponKeysValue = $state<number>(0)
+	let augmentType = $state(false)
+	let augmentTypeValue = $state<AugmentType>('ax')
 	let elementChangeable = $state(false)
 	let extra = $state(false)
 
@@ -52,40 +46,34 @@
 	const isSaving = $derived(createMut.isPending || updateMut.isPending)
 	const isDeleting = $derived(deleteMut.isPending)
 
-	const augmentTypeOptions = getAugmentTypeOptions().map((opt) => ({
-		value: opt.value,
-		label: opt.label
-	}))
+	const augmentTypeOptions = getAugmentTypeOptions().filter((opt) => opt.value !== 'no_augment')
 
 	// Reset form when modal opens
 	$effect(() => {
 		if (open) {
 			if (variant) {
-				overrideHasWeaponKeys = variant.hasWeaponKeys !== null
-				overrideHasAwakening = variant.hasAwakening !== null
-				overrideNumWeaponKeys = variant.numWeaponKeys !== null
-				overrideAugmentType = variant.augmentType !== null
-				overrideElementChangeable = variant.elementChangeable !== null
-				overrideExtra = variant.extra !== null
+				name = variant.name || ''
+				hasWeaponKeys = variant.hasWeaponKeys !== null
+				hasAwakening = variant.hasAwakening !== null
+				elementChangeable = variant.elementChangeable !== null
+				extra = variant.extra !== null
 
-				hasWeaponKeys = variant.hasWeaponKeys ?? false
-				hasAwakening = variant.hasAwakening ?? false
-				numWeaponKeys = variant.numWeaponKeys ?? 0
-				augmentType = variant.augmentType ?? 'no_augment'
-				elementChangeable = variant.elementChangeable ?? false
-				extra = variant.extra ?? false
+				numWeaponKeysValue = variant.numWeaponKeys ?? 0
+
+				if (variant.augmentType !== null && variant.augmentType !== 'no_augment') {
+					augmentType = true
+					augmentTypeValue = variant.augmentType
+				} else {
+					augmentType = false
+					augmentTypeValue = 'ax'
+				}
 			} else {
-				overrideHasWeaponKeys = false
-				overrideHasAwakening = false
-				overrideNumWeaponKeys = false
-				overrideAugmentType = false
-				overrideElementChangeable = false
-				overrideExtra = false
-
+				name = ''
 				hasWeaponKeys = false
 				hasAwakening = false
-				numWeaponKeys = 0
-				augmentType = 'no_augment'
+				numWeaponKeysValue = 0
+				augmentType = false
+				augmentTypeValue = 'ax'
 				elementChangeable = false
 				extra = false
 			}
@@ -94,27 +82,21 @@
 
 	function buildPayload() {
 		return {
-			has_weapon_keys: overrideHasWeaponKeys ? hasWeaponKeys : null,
-			has_awakening: overrideHasAwakening ? hasAwakening : null,
-			num_weapon_keys: overrideNumWeaponKeys ? numWeaponKeys : null,
-			augment_type: overrideAugmentType ? augmentType : null,
-			element_changeable: overrideElementChangeable ? elementChangeable : null,
-			extra: overrideExtra ? extra : null
+			name,
+			has_weapon_keys: hasWeaponKeys ? true : null,
+			has_awakening: hasAwakening ? true : null,
+			num_weapon_keys: hasWeaponKeys ? numWeaponKeysValue : null,
+			augment_type: augmentType ? augmentTypeValue : null,
+			element_changeable: elementChangeable ? true : null,
+			extra: extra ? true : null
 		}
 	}
 
-	const hasAnyOverride = $derived(
-		overrideHasWeaponKeys ||
-			overrideHasAwakening ||
-			overrideNumWeaponKeys ||
-			overrideAugmentType ||
-			overrideElementChangeable ||
-			overrideExtra
-	)
+	const canSave = $derived(name.trim().length > 0)
 
 	async function handleSave() {
-		if (!hasAnyOverride) {
-			toast.error('At least one override must be enabled')
+		if (!canSave) {
+			toast.error('Variant name is required')
 			return
 		}
 
@@ -158,132 +140,84 @@
 
 <Dialog bind:open {onOpenChange}>
 	{#snippet children()}
-		<ModalHeader {title} description="Toggle overrides to diverge from series defaults" />
+		<ModalHeader {title} />
 		<div class="modal-body">
-			<DetailsContainer title="Capability Overrides">
-				<DetailItem
-					label="Has Weapon Keys"
-					sublabel="Override whether weapons in this variant support keys"
-					bind:value={overrideHasWeaponKeys}
-					editable={true}
-					type="checkbox"
-				/>
-				{#if overrideHasWeaponKeys}
-					<div class="override-value">
-						<DetailItem
-							label="Weapon Keys"
-							bind:value={hasWeaponKeys}
-							editable={true}
-							type="checkbox"
-						/>
-					</div>
-				{/if}
-
-				<DetailItem
-					label="Has Awakening"
-					sublabel="Override whether weapons in this variant support awakenings"
-					bind:value={overrideHasAwakening}
-					editable={true}
-					type="checkbox"
-				/>
-				{#if overrideHasAwakening}
-					<div class="override-value">
-						<DetailItem
-							label="Awakening"
-							bind:value={hasAwakening}
-							editable={true}
-							type="checkbox"
-						/>
-					</div>
-				{/if}
-
+			<DetailItem
+				label="Name"
+				bind:value={name}
+				editable={true}
+				type="text"
+				placeholder="e.g. Revans, Ennead"
+				width="240px"
+			/>
+			<h4 class="section-header">Overrides</h4>
+			<DetailItem
+				label="Has Weapon Keys"
+				value={hasWeaponKeys}
+				editable={true}
+				type="checkbox"
+				onchange={(checked) => (hasWeaponKeys = checked)}
+			/>
+			{#if hasWeaponKeys}
 				<DetailItem
 					label="Num Weapon Keys"
-					sublabel="Override the number of key slots"
-					bind:value={overrideNumWeaponKeys}
+					bind:value={numWeaponKeysValue}
 					editable={true}
-					type="checkbox"
+					type="number"
+					placeholder="0"
 				/>
-				{#if overrideNumWeaponKeys}
-					<div class="override-value">
-						<DetailItem
-							label="Key Slots"
-							bind:value={numWeaponKeys}
-							editable={true}
-							type="number"
-							placeholder="0"
-						/>
-					</div>
-				{/if}
-
+			{/if}
+			<DetailItem
+				label="Has Awakening"
+				value={hasAwakening}
+				editable={true}
+				type="checkbox"
+				onchange={(checked) => (hasAwakening = checked)}
+			/>
+			<DetailItem
+				label="Augment Type"
+				value={augmentType}
+				editable={true}
+				type="checkbox"
+				onchange={(checked) => (augmentType = checked)}
+			/>
+			{#if augmentType}
 				<DetailItem
-					label="Augment Type"
-					sublabel="Override the augment type"
-					bind:value={overrideAugmentType}
+					label="Augment"
+					bind:value={augmentTypeValue}
 					editable={true}
-					type="checkbox"
+					type="select"
+					options={augmentTypeOptions}
 				/>
-				{#if overrideAugmentType}
-					<div class="override-value">
-						<DetailItem
-							label="Type"
-							bind:value={augmentType}
-							editable={true}
-							type="select"
-							options={augmentTypeOptions}
-						/>
-					</div>
-				{/if}
-
-				<DetailItem
-					label="Element Changeable"
-					sublabel="Override whether weapons can change element"
-					bind:value={overrideElementChangeable}
-					editable={true}
-					type="checkbox"
-				/>
-				{#if overrideElementChangeable}
-					<div class="override-value">
-						<DetailItem
-							label="Changeable"
-							bind:value={elementChangeable}
-							editable={true}
-							type="checkbox"
-						/>
-					</div>
-				{/if}
-
-				<DetailItem
-					label="Extra"
-					sublabel="Override whether weapons can go in extra grid"
-					bind:value={overrideExtra}
-					editable={true}
-					type="checkbox"
-				/>
-				{#if overrideExtra}
-					<div class="override-value">
-						<DetailItem
-							label="Extra Grid"
-							bind:value={extra}
-							editable={true}
-							type="checkbox"
-						/>
-					</div>
-				{/if}
-			</DetailsContainer>
+			{/if}
+			<DetailItem
+				label="Element Changeable"
+				value={elementChangeable}
+				editable={true}
+				type="checkbox"
+				onchange={(checked) => (elementChangeable = checked)}
+			/>
+			<DetailItem
+				label="Extra Grid"
+				value={extra}
+				editable={true}
+				type="checkbox"
+				onchange={(checked) => (extra = checked)}
+			/>
 		</div>
 		<ModalFooter
 			onCancel={() => (open = false)}
 			primaryAction={{
 				label: isSaving ? 'Saving...' : isEditing ? 'Save' : 'Create',
 				onclick: handleSave,
-				disabled: isSaving || isDeleting || !hasAnyOverride
+				disabled: isSaving || isDeleting || !canSave
 			}}
 		>
 			{#snippet left()}
 				{#if isEditing}
 					<Button
 						variant="destructive-ghost"
+						size="small"
 						onclick={handleDeleteClick}
 						disabled={isDeleting || isSaving}
 					>
@@ -319,9 +253,18 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
-	@use '$src/themes/layout' as layout;
+
+	.section-header {
+		margin: 0;
+		font-size: typography.$font-regular;
+		font-weight: typography.$bold;
+		color: var(--text-secondary);
+	}
 
 	.modal-body {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit;
 		padding: spacing.$unit-2x;
 		padding-top: 0;
 		max-height: 60vh;
@@ -340,11 +283,5 @@
 			font-size: typography.$font-body;
 			color: var(--text-primary);
 		}
-	}
-
-	.override-value {
-		padding-left: spacing.$unit-2x;
-		border-left: 2px solid var(--separator-bg);
-		margin-left: spacing.$unit;
 	}
 </style>
