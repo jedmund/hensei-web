@@ -16,6 +16,8 @@
 	import { DropdownMenu } from 'bits-ui'
 	import Icon from '$lib/components/Icon.svelte'
 
+	import type { ElementType } from '$lib/stores/paneStack.svelte'
+
 	type EntityType = 'character' | 'weapon' | 'summon'
 
 	interface Props {
@@ -51,7 +53,7 @@
 		/** Whether to show the view toggle */
 		showViewToggle?: boolean
 		/** Element color theme for active toggle state */
-		element?: string
+		element?: ElementType
 		/** Use neutral gray styling for view toggle */
 		neutralViewToggle?: boolean
 		/** Whether to show contained background styling (default: true) */

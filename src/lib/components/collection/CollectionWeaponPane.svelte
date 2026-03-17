@@ -38,6 +38,7 @@
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { getElementKey } from '$lib/utils/element'
+	import type { ElementType } from '$lib/stores/paneStack.svelte'
 
 	interface Props {
 		weapon: CollectionWeapon
@@ -91,7 +92,7 @@
 	})
 
 	// Element name for theming
-	const elementName = $derived(displayElement ? getElementKey(displayElement) : undefined)
+	const elementName = $derived(displayElement ? getElementKey(displayElement) as ElementType : undefined)
 
 	async function handleSave(updates: WeaponEditUpdates) {
 		try {

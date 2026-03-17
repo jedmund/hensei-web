@@ -37,6 +37,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { getElementKey } from '$lib/utils/element'
+	import type { ElementType } from '$lib/stores/paneStack.svelte'
 
 	interface Props {
 		character: CollectionCharacter
@@ -88,7 +89,7 @@
 
 	// Element name for theming
 	const elementName = $derived(
-		characterData?.element ? getElementKey(characterData.element) : undefined
+		characterData?.element ? getElementKey(characterData.element) as ElementType : undefined
 	)
 
 	async function handleSave(updates: CharacterEditUpdates) {

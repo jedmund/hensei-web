@@ -34,6 +34,7 @@
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { getElementKey } from '$lib/utils/element'
+	import type { ElementType } from '$lib/stores/paneStack.svelte'
 
 	interface Props {
 		summon: CollectionSummon
@@ -70,7 +71,7 @@
 	})
 
 	// Element name for theming
-	const elementName = $derived(summonData?.element ? getElementKey(summonData.element) : undefined)
+	const elementName = $derived(summonData?.element ? getElementKey(summonData.element) as ElementType : undefined)
 
 	async function handleSave(updates: SummonEditUpdates) {
 		try {
