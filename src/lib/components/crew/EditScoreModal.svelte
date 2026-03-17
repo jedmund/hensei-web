@@ -245,7 +245,7 @@
 			{#if scores.length === 1}
 				<Button
 					variant="destructive-ghost"
-					onclick={() => handleDelete(scores[0].id)}
+					onclick={() => handleDelete(scores[0]!.id)}
 					disabled={deleteScoreMutation.isPending}
 				>
 					{m.crew_score_delete()}
