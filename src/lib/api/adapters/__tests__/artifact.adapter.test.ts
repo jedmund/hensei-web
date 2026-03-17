@@ -99,6 +99,11 @@ describe('ArtifactAdapter', () => {
 		it('should build correct URL and body for createGridArtifact', async () => {
 			global.fetch = mockApiResponse({ id: 'ga-1' })
 
+			const skill1 = { modifier: 10, strength: 5, level: 2 }
+			const skill2 = { modifier: 20, strength: 5, level: 2 }
+			const skill3 = { modifier: 30, strength: 5, level: 2 }
+			const skill4 = { modifier: 40, strength: 5, level: 2 }
+
 			await adapter.createGridArtifact({
 				partyId: 'party-1',
 				gridCharacterId: 'gc-1',
@@ -107,10 +112,10 @@ describe('ArtifactAdapter', () => {
 				level: 3,
 				rerollSlot: 2,
 				proficiency: 1,
-				skill1: 10,
-				skill2: 20,
-				skill3: 30,
-				skill4: 40
+				skill1,
+				skill2,
+				skill3,
+				skill4
 			})
 
 			expect(global.fetch).toHaveBeenCalledWith(
@@ -124,10 +129,10 @@ describe('ArtifactAdapter', () => {
 							level: 3,
 							reroll_slot: 2,
 							proficiency: 1,
-							skill1: 10,
-							skill2: 20,
-							skill3: 30,
-							skill4: 40
+							skill1,
+							skill2,
+							skill3,
+							skill4
 						}
 					})
 				})

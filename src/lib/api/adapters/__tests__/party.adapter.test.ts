@@ -190,7 +190,7 @@ describe('PartyAdapter', () => {
 				page: 1,
 				per: 20,
 				visibility: 1,
-				raidId: 'raid-1'
+				filters: { raid: 'raid-1' }
 			})
 
 			expect(result).toEqual(mockResponse)

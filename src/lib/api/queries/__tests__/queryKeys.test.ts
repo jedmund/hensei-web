@@ -264,7 +264,7 @@ describe('entityKeys', () => {
 	})
 
 	it('weaponKeys matches query queryKey', () => {
-		const params = { seriesSlug: 'dark-opus', slot: 1, group: 'a' }
+		const params = { seriesSlug: 'dark-opus', slot: 1, group: 1 }
 		expect(entityKeys.weaponKeys(params)).toEqual(entityQueries.weaponKeys(params).queryKey)
 	})
 

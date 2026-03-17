@@ -16,6 +16,7 @@ describe('PlaylistAdapter', () => {
 	const mockPlaylist: Playlist = {
 		id: 'playlist-1',
 		title: 'Test Playlist',
+		slug: 'test-playlist',
 		description: 'A test playlist',
 		visibility: 1,
 		partyCount: 2,

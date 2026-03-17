@@ -43,6 +43,7 @@ const MOCK_PLAYLIST_ID = 'playlist-uuid-1'
 const MOCK_PLAYLIST: Playlist = {
 	id: MOCK_PLAYLIST_ID,
 	title: 'Test Playlist',
+	slug: 'test-playlist',
 	description: 'A test playlist',
 	visibility: 1,
 	partyCount: 2,
@@ -94,7 +95,7 @@ describe('createPlaylistOptions', () => {
 
 		opts.onSuccess(MOCK_PLAYLIST)
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(playlistKeys.userLists())
 	})
 })
@@ -106,7 +107,7 @@ describe('createPlaylistOptions', () => {
 describe('updatePlaylistOptions', () => {
 	it('optimistically merges updates into cached playlist', async () => {
 		const opts = updatePlaylistOptions(queryClient)
-		const params = { id: MOCK_PLAYLIST_ID, title: 'Updated Title' }
+		const params = { id: MOCK_PLAYLIST_ID, slug: 'test-playlist', title: 'Updated Title' }
 
 		await opts.onMutate(params)
 
@@ -116,7 +117,7 @@ describe('updatePlaylistOptions', () => {
 
 	it('rolls back to previous state on error', async () => {
 		const opts = updatePlaylistOptions(queryClient)
-		const params = { id: MOCK_PLAYLIST_ID, title: 'Failed Update' }
+		const params = { id: MOCK_PLAYLIST_ID, slug: 'test-playlist', title: 'Failed Update' }
 
 		const context = await opts.onMutate(params)
 		opts.onError(new Error('fail'), params, context)
@@ -129,7 +130,7 @@ describe('updatePlaylistOptions', () => {
 		const opts = updatePlaylistOptions(queryClient)
 		const serverResponse: Playlist = { ...MOCK_PLAYLIST, title: 'Server Title' }
 
-		opts.onSuccess(serverResponse, { id: MOCK_PLAYLIST_ID })
+		opts.onSuccess(serverResponse, { id: MOCK_PLAYLIST_ID, slug: 'test-playlist' })
 
 		const cached = getCachedPlaylist(queryClient, MOCK_PLAYLIST_ID)
 		expect(cached?.title).toBe('Server Title')
@@ -139,9 +140,9 @@ describe('updatePlaylistOptions', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = updatePlaylistOptions(queryClient)
 
-		opts.onSettled(undefined, undefined, { id: MOCK_PLAYLIST_ID })
+		opts.onSettled(undefined, undefined, { id: MOCK_PLAYLIST_ID, slug: 'test-playlist' })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(playlistKeys.detail(MOCK_PLAYLIST_ID))
 		expect(keys).toContainEqual(playlistKeys.userLists())
 	})
@@ -167,7 +168,7 @@ describe('deletePlaylistOptions', () => {
 
 		opts.onSuccess(undefined, MOCK_PLAYLIST_ID)
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(playlistKeys.userLists())
 	})
 })
@@ -193,7 +194,7 @@ describe('addPartyToPlaylistOptions', () => {
 
 		opts.onSuccess(MOCK_PLAYLIST)
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(playlistKeys.userLists())
 	})
 })
@@ -209,7 +210,7 @@ describe('removePartyFromPlaylistOptions', () => {
 
 		opts.onSuccess(undefined, { playlistId: MOCK_PLAYLIST_ID, partyId: 'party-1' })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(playlistKeys.detail(MOCK_PLAYLIST_ID))
 	})
 
@@ -219,7 +220,7 @@ describe('removePartyFromPlaylistOptions', () => {
 
 		opts.onSuccess(undefined, { playlistId: MOCK_PLAYLIST_ID, partyId: 'party-1' })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(playlistKeys.userLists())
 	})
 })
