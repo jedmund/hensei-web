@@ -86,7 +86,7 @@
 		e.preventDefault();
 		resizing = true;
 		resizingPosition = position;
-		resizingInitialMouseX = e.touches[0].clientX;
+		resizingInitialMouseX = e.touches[0]!.clientX;
 		if (mediaRef && nodeRef?.parentElement) {
 			const currentWidth = mediaRef.offsetWidth;
 			const parentWidth = nodeRef.parentElement.offsetWidth;
@@ -96,9 +96,9 @@
 
 	function handleTouchMove(e: TouchEvent) {
 		if (!resizing || !nodeRef?.parentElement) return;
-		let dx = e.touches[0].clientX - resizingInitialMouseX;
+		let dx = e.touches[0]!.clientX - resizingInitialMouseX;
 		if (resizingPosition === 'left') {
-			dx = resizingInitialMouseX - e.touches[0].clientX;
+			dx = resizingInitialMouseX - e.touches[0]!.clientX;
 		}
 		const parentWidth = nodeRef.parentElement.offsetWidth;
 		const deltaPercent = (dx / parentWidth) * 100;

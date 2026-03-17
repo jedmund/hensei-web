@@ -104,8 +104,8 @@ function processSearches(
 		if (node.isText) {
 			if (textNodesWithPosition[index]) {
 				textNodesWithPosition[index] = {
-					text: textNodesWithPosition[index].text + node.text,
-					pos: textNodesWithPosition[index].pos
+					text: textNodesWithPosition[index]!.text + node.text,
+					pos: textNodesWithPosition[index]!.pos
 				};
 			} else {
 				textNodesWithPosition[index] = {
@@ -137,7 +137,7 @@ function processSearches(
 	}
 
 	for (let i = 0; i < results.length; i += 1) {
-		const r = results[i];
+		const r = results[i]!;
 		const className =
 			i === resultIndex ? `${searchResultClass} ${searchResultClass}-current` : searchResultClass;
 		const decoration: Decoration = Decoration.inline(r.from, r.to, {

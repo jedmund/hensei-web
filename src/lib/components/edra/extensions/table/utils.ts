@@ -14,7 +14,7 @@ export const isRectSelected = (rect: Rect) => (selection: CellSelection) => {
 	);
 
 	for (let i = 0, count = cells.length; i < count; i += 1) {
-		if (selectedCells.indexOf(cells[i]) === -1) {
+		if (selectedCells.indexOf(cells[i]!) === -1) {
 			return false;
 		}
 	}
@@ -225,8 +225,8 @@ const select = (type: 'row' | 'column') => (index: number) => (tr: Transaction) 
 							bottom
 						});
 
-			const head = table.start + cellsInFirstRow[0];
-			const anchor = table.start + cellsInLastRow[cellsInLastRow.length - 1];
+			const head = table.start + cellsInFirstRow[0]!;
+			const anchor = table.start + cellsInLastRow[cellsInLastRow.length - 1]!;
 			const $head = tr.doc.resolve(head);
 			const $anchor = tr.doc.resolve(anchor);
 
@@ -247,8 +247,8 @@ export const selectTable = (tr: Transaction) => {
 		const { map } = TableMap.get(table.node);
 
 		if (map && map.length) {
-			const head = table.start + map[0];
-			const anchor = table.start + map[map.length - 1];
+			const head = table.start + map[0]!;
+			const anchor = table.start + map[map.length - 1]!;
 			const $head = tr.doc.resolve(head);
 			const $anchor = tr.doc.resolve(anchor);
 
