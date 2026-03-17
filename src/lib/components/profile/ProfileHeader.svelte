@@ -19,7 +19,7 @@
 		userId?: string
 		avatarPicture?: string
 		title?: string
-		activeTab: 'teams' | 'favorites' | 'collection'
+		activeTab: 'teams' | 'favorites' | 'playlists' | 'collection'
 		isOwner?: boolean
 		/** User's selected element for theming */
 		element?: string
@@ -127,6 +127,8 @@
 			goto(localizeHref(`/${username}`))
 		} else if (value === 'favorites') {
 			goto(localizeHref(`/${username}/favorites`))
+		} else if (value === 'playlists') {
+			goto(localizeHref(`/${username}/playlists`))
 		} else if (value === 'collection') {
 			goto(localizeHref(`/${username}/collection/characters`))
 		}
@@ -235,10 +237,11 @@
 			grow
 		>
 			<Segment value="teams">{m.profile_tab_teams()}</Segment>
+			<Segment value="playlists">{m.profile_tab_playlists()}</Segment>
+			<Segment value="collection">{m.profile_tab_collection()}</Segment>
 			{#if isOwner}
 				<Segment value="favorites">{m.profile_tab_favorites()}</Segment>
 			{/if}
-			<Segment value="collection">{m.profile_tab_collection()}</Segment>
 		</SegmentedControl>
 	</nav>
 </header>
@@ -298,7 +301,7 @@
 
 	h1 {
 		margin: 0;
-		font-size: 20px;
+		font-size: $font-large;
 		font-weight: $medium;
 		color: var(--text-primary);
 	}
