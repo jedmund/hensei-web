@@ -115,7 +115,7 @@ describe('setRefreshCookie', () => {
 
 		setRefreshCookie(cookies as any, 'ref-tok', { secure: true, expires })
 
-		expect(cookies.setCalls[0].opts.expires).toEqual(expires)
+		expect(cookies.setCalls[0]!.opts.expires).toEqual(expires)
 	})
 
 	it('omits expires when not provided', () => {
@@ -123,7 +123,7 @@ describe('setRefreshCookie', () => {
 
 		setRefreshCookie(cookies as any, 'ref-tok', { secure: true })
 
-		expect(cookies.setCalls[0].opts).not.toHaveProperty('expires')
+		expect(cookies.setCalls[0]!.opts).not.toHaveProperty('expires')
 	})
 })
 

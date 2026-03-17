@@ -61,7 +61,7 @@ describe('addCharactersToCollectionOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.characters())
 		expect(keys).toContainEqual(collectionKeys.characterIds())
 	})
@@ -74,7 +74,7 @@ describe('addCharacterToCollectionOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.characters())
 		expect(keys).toContainEqual(collectionKeys.characterIds())
 	})
@@ -131,7 +131,7 @@ describe('updateCollectionCharacterOptions', () => {
 
 		opts.onSettled(undefined, undefined, { id: 'cc-1', input: {} as any })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.character('cc-1'))
 		expect(keys).toContainEqual(collectionKeys.characters())
 	})
@@ -144,7 +144,7 @@ describe('removeCharacterFromCollectionOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.characters())
 		expect(keys).toContainEqual(collectionKeys.characterIds())
 	})
@@ -157,7 +157,7 @@ describe('bulkRemoveCharactersFromCollectionOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.characters())
 		expect(keys).toContainEqual(collectionKeys.characterIds())
 	})
@@ -174,7 +174,7 @@ describe('addWeaponToCollectionOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.weapons())
 	})
 })
@@ -186,7 +186,7 @@ describe('addWeaponsToCollectionOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.weapons())
 	})
 })
@@ -198,7 +198,7 @@ describe('updateCollectionWeaponOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.weapons())
 	})
 })
@@ -210,7 +210,7 @@ describe('removeWeaponFromCollectionOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.weapons())
 	})
 })
@@ -222,7 +222,7 @@ describe('bulkRemoveWeaponsFromCollectionOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.weapons())
 	})
 })
@@ -238,7 +238,7 @@ describe('addSummonToCollectionOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.summons())
 	})
 })
@@ -250,7 +250,7 @@ describe('addSummonsToCollectionOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.summons())
 	})
 })
@@ -262,7 +262,7 @@ describe('updateCollectionSummonOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.summons())
 	})
 })
@@ -274,7 +274,7 @@ describe('removeSummonFromCollectionOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.summons())
 	})
 })
@@ -286,7 +286,7 @@ describe('bulkRemoveSummonsFromCollectionOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.summons())
 	})
 })
@@ -302,7 +302,7 @@ describe('addJobAccessoryToCollectionOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.all)
 	})
 })
@@ -314,7 +314,7 @@ describe('removeJobAccessoryFromCollectionOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.all)
 	})
 })

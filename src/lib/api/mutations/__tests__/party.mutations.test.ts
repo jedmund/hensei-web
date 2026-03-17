@@ -74,7 +74,7 @@ describe('createPartyOptions', () => {
 
 		opts.onSuccess(newParty)
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['parties', 'list'])
 	})
 
@@ -85,7 +85,7 @@ describe('createPartyOptions', () => {
 
 		opts.onSuccess(newParty)
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['user'])
 	})
 })
@@ -143,7 +143,7 @@ describe('updatePartyOptions', () => {
 
 		opts.onSettled(undefined, undefined, params)
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['party', MOCK_SHORTCODE])
 	})
 })
@@ -168,7 +168,7 @@ describe('deletePartyOptions', () => {
 
 		opts.onSuccess(undefined, { id: MOCK_PARTY.id, shortcode: MOCK_SHORTCODE })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['parties', 'list'])
 	})
 
@@ -178,7 +178,7 @@ describe('deletePartyOptions', () => {
 
 		opts.onSuccess(undefined, { id: MOCK_PARTY.id, shortcode: MOCK_SHORTCODE })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['user'])
 	})
 })
@@ -204,7 +204,7 @@ describe('remixPartyOptions', () => {
 
 		opts.onSuccess(remixed)
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['parties', 'list'])
 		expect(keys).toContainEqual(['user'])
 	})
@@ -251,7 +251,7 @@ describe('favoritePartyOptions', () => {
 
 		opts.onSettled(undefined, undefined, favoriteParams)
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['user', 'favorites'])
 		expect(keys).toContainEqual(['party', MOCK_SHORTCODE])
 	})
@@ -305,7 +305,7 @@ describe('unfavoritePartyOptions', () => {
 
 		opts.onSettled(undefined, undefined, favoriteParams)
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['user', 'favorites'])
 		expect(keys).toContainEqual(['party', MOCK_SHORTCODE])
 	})
@@ -322,7 +322,7 @@ describe('regeneratePreviewOptions', () => {
 
 		opts.onSuccess(undefined, MOCK_SHORTCODE)
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['party', MOCK_SHORTCODE, 'preview'])
 	})
 })
@@ -338,7 +338,7 @@ describe('sharePartyWithCrewOptions', () => {
 
 		opts.onSuccess(undefined, { partyId: MOCK_PARTY.id, shortcode: MOCK_SHORTCODE })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['party', MOCK_SHORTCODE])
 	})
 
@@ -348,7 +348,7 @@ describe('sharePartyWithCrewOptions', () => {
 
 		opts.onSuccess(undefined, { partyId: MOCK_PARTY.id, shortcode: MOCK_SHORTCODE })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['crew', 'shared_parties'])
 	})
 })
@@ -364,7 +364,7 @@ describe('removePartyShareOptions', () => {
 
 		opts.onSuccess(undefined, { partyId: MOCK_PARTY.id, shareId: 'share-1', shortcode: MOCK_SHORTCODE })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['party', MOCK_SHORTCODE])
 	})
 
@@ -374,7 +374,7 @@ describe('removePartyShareOptions', () => {
 
 		opts.onSuccess(undefined, { partyId: MOCK_PARTY.id, shareId: 'share-1', shortcode: MOCK_SHORTCODE })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['crew', 'shared_parties'])
 	})
 })

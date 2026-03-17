@@ -68,7 +68,7 @@ describe('createCrewOptions', () => {
 
 		opts.onSuccess({ id: 'crew-1' })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(crewKeys.invitations.pending())
 	})
 })
@@ -104,7 +104,7 @@ describe('transferCaptainOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(crewKeys.myCrew())
 		expect(keys).toContainEqual(crewKeys.membersAll())
 	})
@@ -121,7 +121,7 @@ describe('updateMembershipOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(crewKeys.membersAll())
 	})
 })
@@ -133,7 +133,7 @@ describe('removeMemberOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(crewKeys.membersAll())
 		expect(keys).toContainEqual(crewKeys.myCrew())
 	})
@@ -150,7 +150,7 @@ describe('sendInvitationOptions', () => {
 
 		opts.onSuccess(undefined, { crewId: 'crew-1', userId: 'user-1' })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(crewKeys.crewInvitations('crew-1'))
 	})
 })
@@ -162,7 +162,7 @@ describe('acceptInvitationOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(crewKeys.myCrew())
 		expect(keys).toContainEqual(crewKeys.invitations.pending())
 	})
@@ -175,7 +175,7 @@ describe('rejectInvitationOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(crewKeys.invitations.pending())
 	})
 })
@@ -191,7 +191,7 @@ describe('createPhantomOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(crewKeys.membersAll())
 	})
 })
@@ -203,7 +203,7 @@ describe('bulkCreatePhantomsOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(crewKeys.membersAll())
 	})
 })
@@ -215,7 +215,7 @@ describe('updatePhantomOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(crewKeys.membersAll())
 	})
 })
@@ -227,7 +227,7 @@ describe('deletePhantomOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(crewKeys.membersAll())
 	})
 })
@@ -239,7 +239,7 @@ describe('assignPhantomOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(crewKeys.membersAll())
 	})
 })
@@ -251,7 +251,7 @@ describe('confirmPhantomClaimOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(crewKeys.membersAll())
 		expect(keys).toContainEqual(crewKeys.phantomClaims.pending())
 	})
@@ -264,7 +264,7 @@ describe('declinePhantomClaimOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(crewKeys.membersAll())
 		expect(keys).toContainEqual(crewKeys.phantomClaims.pending())
 	})

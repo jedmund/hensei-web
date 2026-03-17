@@ -11,6 +11,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { usePartyActions } from '../party-actions.svelte'
 import { createMockMutations, createTestParty } from './helpers'
+import { MOCK_PARTY } from '$lib/api/mutations/__tests__/fixtures'
 import type { PartyMutations } from '../party-mutations.svelte'
 import type { Party } from '$lib/types/api/party'
 
@@ -80,7 +81,7 @@ describe('usePartyActions', () => {
 			expect(actions.error).toBe('first fail')
 
 			// Second call succeeds — error should be cleared
-			vi.mocked(mutations.party.update.mutateAsync).mockResolvedValueOnce(undefined)
+			vi.mocked(mutations.party.update.mutateAsync).mockResolvedValueOnce(MOCK_PARTY)
 			await actions.updatePartyDetails({ name: 'Name 2' })
 			expect(actions.error).toBeNull()
 		})
@@ -94,7 +95,7 @@ describe('usePartyActions', () => {
 			await actions.syncFromCollection()
 			expect(actions.error).toBe('sync fail')
 
-			vi.mocked(mutations.party.update.mutateAsync).mockResolvedValue(undefined)
+			vi.mocked(mutations.party.update.mutateAsync).mockResolvedValue(MOCK_PARTY)
 			await actions.updatePartyDetails({ name: 'Clean' })
 			expect(actions.error).toBeNull()
 		})

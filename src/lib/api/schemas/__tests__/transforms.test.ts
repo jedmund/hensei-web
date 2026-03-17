@@ -86,7 +86,7 @@ describe('camelToSnake', () => {
 
 	it('preserves wiki_data/wikiData values as-is', () => {
 		const input = { wikiData: { 'Page Name': { some_key: 'val' } } }
-		const result = camelToSnake(input)
+		const result = camelToSnake(input) as Record<string, unknown>
 		// wikiData key gets converted to wiki_data, but value is not transformed
 		expect(result).toHaveProperty('wiki_data')
 		expect(result.wiki_data).toEqual({ 'Page Name': { some_key: 'val' } })
@@ -94,7 +94,7 @@ describe('camelToSnake', () => {
 
 	it('preserves wiki_data when key is already snake_case', () => {
 		const input = { wiki_data: { 'Page/Name': { nested_key: 'v' } } }
-		const result = camelToSnake(input)
+		const result = camelToSnake(input) as Record<string, unknown>
 		expect(result.wiki_data).toEqual({ 'Page/Name': { nested_key: 'v' } })
 	})
 })

@@ -46,7 +46,7 @@ describe('createCollectionArtifactOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['collection', 'artifacts'])
 	})
 })
@@ -58,7 +58,7 @@ describe('createCollectionArtifactsBatchOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['collection', 'artifacts'])
 	})
 })
@@ -70,7 +70,7 @@ describe('updateCollectionArtifactOptions', () => {
 
 		opts.onSettled()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['collection', 'artifacts'])
 	})
 })
@@ -82,7 +82,7 @@ describe('deleteCollectionArtifactOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['collection', 'artifacts'])
 	})
 })
@@ -94,7 +94,7 @@ describe('bulkDeleteCollectionArtifactsOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['collection', 'artifacts'])
 	})
 })
@@ -110,7 +110,7 @@ describe('createGridArtifactOptions', () => {
 
 		opts.onSuccess(undefined, { partyId: 'party-1', gridCharacterId: 'gc-1', artifactId: 'a-1' } as any)
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['parties', 'party-1'])
 	})
 })
@@ -122,7 +122,7 @@ describe('updateGridArtifactOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['parties'])
 	})
 })
@@ -134,7 +134,7 @@ describe('deleteGridArtifactOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['parties'])
 	})
 })
@@ -146,7 +146,7 @@ describe('equipCollectionArtifactOptions', () => {
 
 		opts.onSuccess(undefined, { partyId: 'party-1', gridCharacterId: 'gc-1', collectionArtifactId: 'ca-1' })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['parties', 'party-1'])
 	})
 })
@@ -162,7 +162,7 @@ describe('syncGridArtifactOptions', () => {
 
 		opts.onSuccess(undefined, { id: 'ga-1', partyShortcode: 'ABC123' })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['parties', 'detail', 'ABC123'])
 	})
 })

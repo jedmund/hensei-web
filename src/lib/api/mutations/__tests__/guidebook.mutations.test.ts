@@ -126,7 +126,7 @@ describe('updatePartyGuidebookOptions', () => {
 			position: 1
 		})
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['party', MOCK_SHORTCODE])
 	})
 })
@@ -199,7 +199,7 @@ describe('removePartyGuidebookOptions', () => {
 			position: 1
 		})
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['party', MOCK_SHORTCODE])
 	})
 })

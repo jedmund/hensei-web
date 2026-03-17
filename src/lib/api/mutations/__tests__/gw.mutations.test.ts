@@ -47,7 +47,7 @@ describe('createGwEventOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(gwKeys.events())
 	})
 })
@@ -59,7 +59,7 @@ describe('updateGwEventOptions', () => {
 
 		opts.onSuccess(undefined, { eventId: 'gw-1', input: {} as any })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(gwKeys.events())
 		expect(keys).toContainEqual(gwKeys.event('gw-1'))
 	})
@@ -76,7 +76,7 @@ describe('joinGwEventOptions', () => {
 
 		opts.onSuccess()
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(gwKeys.participationsAll())
 	})
 })
@@ -88,7 +88,7 @@ describe('updateParticipationRankingOptions', () => {
 
 		opts.onSuccess(undefined, { participationId: 'part-1', input: {} as any })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(gwKeys.participationsAll())
 		expect(keys).toContainEqual(gwKeys.participation('part-1'))
 	})
@@ -105,7 +105,7 @@ describe('addCrewScoreOptions', () => {
 
 		opts.onSuccess(undefined, { participationId: 'part-1', input: {} as any })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(gwKeys.participation('part-1'))
 	})
 })
@@ -117,7 +117,7 @@ describe('updateCrewScoreOptions', () => {
 
 		opts.onSuccess(undefined, { participationId: 'part-1', scoreId: 's-1', input: {} as any })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(gwKeys.participation('part-1'))
 	})
 })
@@ -133,7 +133,7 @@ describe('addIndividualScoreOptions', () => {
 
 		opts.onSuccess(undefined, { participationId: 'part-1', input: {} as any })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(gwKeys.participation('part-1'))
 	})
 })
@@ -145,7 +145,7 @@ describe('batchAddIndividualScoresOptions', () => {
 
 		opts.onSuccess(undefined, { participationId: 'part-1', input: {} as any })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(gwKeys.participation('part-1'))
 	})
 })
@@ -157,7 +157,7 @@ describe('updateIndividualScoreOptions', () => {
 
 		opts.onSuccess(undefined, { participationId: 'part-1', scoreId: 's-1', input: {} as any })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(gwKeys.participation('part-1'))
 	})
 })
@@ -169,7 +169,7 @@ describe('deleteIndividualScoreOptions', () => {
 
 		opts.onSuccess(undefined, { participationId: 'part-1', scoreId: 's-1' })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(gwKeys.participation('part-1'))
 	})
 })

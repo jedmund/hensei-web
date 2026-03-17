@@ -135,7 +135,7 @@ describe('grid mutations', () => {
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
 			expect(cached?.weapons[0]).toMatchObject({ id: 'gw-1', element: 3 })
-			expect(cached?.weapons[1].id).toBe('gw-2') // other weapon untouched
+			expect(cached?.weapons[1]!.id).toBe('gw-2') // other weapon untouched
 			expect(context?.previousParty).toEqual(MOCK_PARTY)
 		})
 
@@ -191,7 +191,7 @@ describe('grid mutations', () => {
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
 			expect(cached?.weapons).toHaveLength(1)
-			expect(cached?.weapons[0].id).toBe('gw-2')
+			expect(cached?.weapons[0]!.id).toBe('gw-2')
 		})
 
 		it('onMutate removes weapon by position when id is undefined', async () => {
@@ -201,7 +201,7 @@ describe('grid mutations', () => {
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
 			expect(cached?.weapons).toHaveLength(1)
-			expect(cached?.weapons[0].id).toBe('gw-1')
+			expect(cached?.weapons[0]!.id).toBe('gw-1')
 		})
 
 		it('onError restores deleted weapon', async () => {
@@ -229,8 +229,8 @@ describe('grid mutations', () => {
 			})
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
-			expect(cached?.weapons[0].uncapLevel).toBe(6)
-			expect(cached?.weapons[1].uncapLevel).toBe(4) // untouched
+			expect(cached?.weapons[0]!.uncapLevel).toBe(6)
+			expect(cached?.weapons[1]!.uncapLevel).toBe(4) // untouched
 		})
 
 		it('onMutate updates transcendenceStep when provided', async () => {
@@ -245,7 +245,7 @@ describe('grid mutations', () => {
 			})
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
-			expect(cached?.weapons[0].transcendenceStep).toBe(3)
+			expect(cached?.weapons[0]!.transcendenceStep).toBe(3)
 		})
 
 		it('onMutate does not set transcendenceStep when undefined', async () => {
@@ -260,7 +260,7 @@ describe('grid mutations', () => {
 			})
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
-			expect(cached?.weapons[0].transcendenceStep).toBe(0) // original value preserved
+			expect(cached?.weapons[0]!.transcendenceStep).toBe(0) // original value preserved
 		})
 	})
 
@@ -280,7 +280,7 @@ describe('grid mutations', () => {
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
 			expect(cached?.characters[0]).toMatchObject({ id: 'gc-1', perpetuity: true })
-			expect(cached?.characters[1].id).toBe('gc-2')
+			expect(cached?.characters[1]!.id).toBe('gc-2')
 			expect(context?.previousParty).toEqual(MOCK_PARTY)
 		})
 
@@ -303,7 +303,7 @@ describe('grid mutations', () => {
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
 			expect(cached?.characters).toHaveLength(1)
-			expect(cached?.characters[0].id).toBe('gc-2')
+			expect(cached?.characters[0]!.id).toBe('gc-2')
 		})
 
 		it('onMutate removes character by position', async () => {
@@ -313,7 +313,7 @@ describe('grid mutations', () => {
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
 			expect(cached?.characters).toHaveLength(1)
-			expect(cached?.characters[0].id).toBe('gc-1')
+			expect(cached?.characters[0]!.id).toBe('gc-1')
 		})
 	})
 
@@ -330,8 +330,8 @@ describe('grid mutations', () => {
 			})
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
-			expect(cached?.characters[0].uncapLevel).toBe(6)
-			expect(cached?.characters[0].transcendenceStep).toBe(2)
+			expect(cached?.characters[0]!.uncapLevel).toBe(6)
+			expect(cached?.characters[0]!.transcendenceStep).toBe(2)
 		})
 	})
 
@@ -351,7 +351,7 @@ describe('grid mutations', () => {
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
 			expect(cached?.summons[0]).toMatchObject({ id: 'gs-1', quickSummon: false })
-			expect(cached?.summons[1].id).toBe('gs-2')
+			expect(cached?.summons[1]!.id).toBe('gs-2')
 			expect(context?.previousParty).toEqual(MOCK_PARTY)
 		})
 
@@ -374,7 +374,7 @@ describe('grid mutations', () => {
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
 			expect(cached?.summons).toHaveLength(1)
-			expect(cached?.summons[0].id).toBe('gs-2')
+			expect(cached?.summons[0]!.id).toBe('gs-2')
 		})
 
 		it('onMutate removes summon by position', async () => {
@@ -384,7 +384,7 @@ describe('grid mutations', () => {
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
 			expect(cached?.summons).toHaveLength(1)
-			expect(cached?.summons[0].id).toBe('gs-1')
+			expect(cached?.summons[0]!.id).toBe('gs-1')
 		})
 	})
 
@@ -401,8 +401,8 @@ describe('grid mutations', () => {
 			})
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
-			expect(cached?.summons[0].uncapLevel).toBe(6)
-			expect(cached?.summons[0].transcendenceStep).toBe(4)
+			expect(cached?.summons[0]!.uncapLevel).toBe(6)
+			expect(cached?.summons[0]!.transcendenceStep).toBe(4)
 		})
 
 		it('onMutate preserves original transcendenceStep when undefined', async () => {
@@ -417,7 +417,7 @@ describe('grid mutations', () => {
 			})
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
-			expect(cached?.summons[0].transcendenceStep).toBe(2) // original value
+			expect(cached?.summons[0]!.transcendenceStep).toBe(2) // original value
 		})
 	})
 
@@ -432,7 +432,7 @@ describe('grid mutations', () => {
 			})
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
-			expect(cached?.summons[0].quickSummon).toBe(false)
+			expect(cached?.summons[0]!.quickSummon).toBe(false)
 		})
 
 		it('onMutate toggles quickSummon to true', async () => {
@@ -445,7 +445,7 @@ describe('grid mutations', () => {
 			})
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
-			expect(cached?.summons[1].quickSummon).toBe(true)
+			expect(cached?.summons[1]!.quickSummon).toBe(true)
 		})
 
 		it('onError rolls back quickSummon change', async () => {
@@ -460,7 +460,7 @@ describe('grid mutations', () => {
 			opts.onError(new Error('fail'), { partyShortcode: MOCK_SHORTCODE } as any, context)
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
-			expect(cached?.summons[0].quickSummon).toBe(true) // restored
+			expect(cached?.summons[0]!.quickSummon).toBe(true) // restored
 		})
 	})
 

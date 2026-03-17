@@ -467,7 +467,7 @@ describe('SearchAdapter', () => {
 			)
 
 			// Verifies snake_case → camelCase transformation by BaseAdapter
-			expect(result.results[0].granblueId).toBe(101)
+			expect(result.results[0]!.granblueId).toBe(101)
 			expect(result.meta?.perPage).toBe(50)
 			expect(result.meta?.totalPages).toBe(1)
 		})
