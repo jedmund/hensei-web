@@ -38,8 +38,9 @@
 		const isMain = position === -1 || item?.mainhand
 		const variant = isMain ? 'main' : 'grid'
 
-		// For element-changeable weapons (element === 0), use instance element or default to 0 (no element image)
-		const element = item?.weapon?.element === 0 ? (item?.element ?? 0) : undefined
+		// For element-changeable weapons (element === 0), use instance element.
+		// Mainhand images don't have a null-element variant, so default to fire (2).
+		const element = item?.weapon?.element === 0 ? (item?.element ?? (isMain ? 2 : 0)) : undefined
 		const transformation = getWeaponTransformation(item?.weapon?.uncap?.transcendence, item?.uncapLevel, item?.transcendenceStep)
 
 		return getWeaponImage(item?.weapon?.granblueId, variant, element, transformation)
