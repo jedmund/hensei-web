@@ -7,6 +7,7 @@
 	import { queryOptions } from '@tanstack/svelte-query'
 	import { localizedName } from '$lib/utils/locale'
 	import { getLocale } from '$lib/paraglide/runtime'
+	import { getWeaponKeyImage } from '$lib/utils/images'
 
 	interface Props {
 		/** The weapon series slug (determines which keys are available) */
@@ -84,7 +85,7 @@
 		}
 
 		// Sort within groups and flatten
-		const result: Array<{ value: string; label: string; disabled?: boolean }> = []
+		const result: Array<{ value: string; label: string; disabled?: boolean; image?: string }> = []
 
 		// Add "No key" option first
 		result.push({
@@ -103,7 +104,8 @@
 				result.push({
 					value: key.id,
 					label: localizedName(key.name),
-					disabled: isDisabled
+					disabled: isDisabled,
+					image: getWeaponKeyImage(key.slug)
 				})
 			}
 		}
@@ -147,6 +149,13 @@
 
 	.weapon-key-select {
 		width: 100%;
+
+		:global(.image) {
+			width: 32px !important;
+			height: 32px !important;
+			border-radius: 0;
+			padding: 4px;
+		}
 	}
 
 	.loading,
