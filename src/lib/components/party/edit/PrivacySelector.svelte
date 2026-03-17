@@ -10,9 +10,10 @@
 		value: PartyVisibility
 		element?: ElementType
 		showLabel?: boolean
+		context?: 'team' | 'playlist'
 	}
 
-	let { value = $bindable(), element, showLabel = true }: Props = $props()
+	let { value = $bindable(), element, showLabel = true, context = 'team' }: Props = $props()
 
 	// SegmentedControl uses string values
 	let stringValue = $derived(String(value))
@@ -21,10 +22,12 @@
 		value = Number(newValue) as PartyVisibility
 	}
 
+	const contextLabel = $derived(context === 'playlist' ? m.visibility_context_playlist() : m.visibility_context_team())
+
 	const descriptions: Record<string, () => string> = {
-		'1': () => m.visibility_public_description(),
-		'2': () => m.visibility_unlisted_description(),
-		'3': () => m.visibility_private_description()
+		'1': () => m.visibility_public_description({ context: contextLabel }),
+		'2': () => m.visibility_unlisted_description({ context: contextLabel }),
+		'3': () => m.visibility_private_description({ context: contextLabel })
 	}
 
 	const currentDescription = $derived(descriptions[stringValue]?.() ?? '')
@@ -47,6 +50,9 @@
 		<Segment value="3">{m.visibility_private()}</Segment>
 	</SegmentedControl>
 	<p class="privacy-description">{currentDescription}</p>
+	{#if context === 'playlist'}
+		<p class="privacy-note">{m.visibility_playlist_note()}</p>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -66,7 +72,8 @@
 		padding: 0 $unit;
 	}
 
-	.privacy-description {
+	.privacy-description,
+	.privacy-note {
 		margin: 0;
 		padding: 0 $unit;
 		font-size: $font-small;

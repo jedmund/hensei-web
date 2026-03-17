@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte'
 	import type { Party } from '$lib/types/api/party'
 	import WeaponRep from '$lib/components/reps/WeaponRep.svelte'
 	import SummonRep from '$lib/components/reps/SummonRep.svelte'
@@ -13,9 +14,12 @@
 		party: Party
 		href?: string
 		loading?: boolean
+		disabled?: boolean
+		dimmed?: boolean
+		indicator?: Snippet
 	}
 
-	let { party, href: hrefProp, loading = false }: Props = $props()
+	let { party, href: hrefProp, loading = false, disabled = false, dimmed = false, indicator }: Props = $props()
 
 	let currentView: 'weapons' | 'summons' | 'characters' = $state('weapons')
 
@@ -28,6 +32,8 @@
 			)
 	)
 
+	const tag = $derived(disabled ? 'div' : 'a')
+
 	function displayName(input: any): string {
 		if (!input) return '—'
 		const maybe = input.name ?? input
@@ -38,13 +44,24 @@
 
 <div
 	class={`gridRep ${loading ? 'hidden' : 'visible'}`}
-	role="link"
-	tabindex="0"
+	class:disabled
+	class:dimmed
+	role={disabled ? undefined : 'link'}
+	tabindex={disabled ? undefined : 0}
 	onmouseleave={() => (currentView = 'weapons')}
 >
-	<a {href} data-sveltekit-preload-data="hover">
+	<svelte:element this={tag}
+		class="inner"
+		href={disabled ? undefined : href}
+		data-sveltekit-preload-data={disabled ? undefined : 'hover'}
+	>
 		<div class="info">
-			<h2 class:empty={!party.name}>{party.name || m.grid_untitled()}</h2>
+			<div class="name-row">
+				{#if indicator}
+					{@render indicator()}
+				{/if}
+				<h2 class:empty={!party.name}>{party.name || m.grid_untitled()}</h2>
+			</div>
 			<div class="details">
 				<div class="details-text">
 					<span class={`raid ${!party.raid ? 'empty' : ''}`}
@@ -113,7 +130,7 @@
 				<span class="sr-only">{m.nav_summons()}</span>
 			</li>
 		</ul>
-	</a>
+	</svelte:element>
 </div>
 
 <style lang="scss">
@@ -140,7 +157,20 @@
 			transition: opacity 0.12s ease-in-out;
 		}
 
-		a {
+		&.disabled .inner {
+			cursor: default;
+		}
+
+		&.dimmed {
+			.info h2,
+			.info .details,
+			.gridContainer,
+			.indicators {
+				opacity: 0.7;
+			}
+		}
+
+		.inner {
 			display: grid;
 			grid-template-rows: auto 1fr;
 			gap: spacing.$unit;
@@ -190,6 +220,13 @@
 		gap: spacing.$unit-fourth;
 		padding: spacing.$unit-half 0;
 		min-width: 0; /* Critical: allows flex child to shrink below content size */
+
+		.name-row {
+			display: flex;
+			align-items: center;
+			gap: spacing.$unit-half;
+			min-width: 0;
+		}
 
 		h2 {
 			color: var(--text-primary);

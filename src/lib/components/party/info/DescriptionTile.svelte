@@ -340,7 +340,7 @@
 
 	.party-name {
 		font-size: $font-large;
-		font-weight: $bold;
+		font-weight: $medium;
 		color: var(--text-primary);
 		margin: 0;
 		flex: 1;

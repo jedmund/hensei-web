@@ -61,10 +61,7 @@ export interface ListUserPartiesParams {
 	page?: number
 	per?: number
 	visibility?: PartyVisibility | 'all'
-	raidId?: string
-	characterId?: string
-	weaponId?: string
-	summonId?: string
+	filters?: ExploreFilterParams
 }
 
 /**
@@ -245,9 +242,9 @@ export class PartyAdapter extends BaseAdapter {
 	 * Lists parties for a specific user
 	 */
 	async listUserParties(params: ListUserPartiesParams): Promise<PaginatedResponse<Party>> {
-		const { username, ...queryParams } = params
+		const { username, filters, ...queryParams } = params
 		return this.request<PaginatedResponse<Party>>(`/users/${username}/parties`, {
-			query: queryParams
+			query: { ...queryParams, ...filters }
 		})
 	}
 

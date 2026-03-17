@@ -47,3 +47,37 @@ export function formatDateLongJST(dateString: string): string {
 		day: 'numeric'
 	})
 }
+
+/**
+ * Format a date as a relative time string using the browser's Intl.RelativeTimeFormat.
+ * Automatically selects the best unit (seconds → minutes → hours → days → months → years).
+ */
+export function formatRelativeTime(dateString: string, locale?: string): string {
+	const date = new Date(dateString)
+	const now = Date.now()
+	const diffMs = date.getTime() - now
+	const absDiffMs = Math.abs(diffMs)
+
+	const units: [Intl.RelativeTimeFormatUnit, number][] = [
+		['second', 1000],
+		['minute', 60_000],
+		['hour', 3_600_000],
+		['day', 86_400_000],
+		['month', 2_592_000_000],
+		['year', 31_536_000_000]
+	]
+
+	let unit: Intl.RelativeTimeFormatUnit = 'second'
+	let value = Math.round(diffMs / 1000)
+
+	for (let i = units.length - 1; i >= 0; i--) {
+		if (absDiffMs >= units[i][1]) {
+			unit = units[i][0]
+			value = Math.round(diffMs / units[i][1])
+			break
+		}
+	}
+
+	const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' })
+	return rtf.format(value, unit)
+}
