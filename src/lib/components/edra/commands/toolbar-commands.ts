@@ -33,7 +33,16 @@ import SquareRadical from '@lucide/svelte/icons/square-radical';
 import { isTextSelection } from '@tiptap/core';
 import Pilcrow from '@lucide/svelte/icons/pilcrow';
 
-const commands: Record<string, EdraToolBarCommands[]> = {
+const commands: {
+	'undo-redo': EdraToolBarCommands[];
+	headings: EdraToolBarCommands[];
+	'text-formatting': EdraToolBarCommands[];
+	alignment: EdraToolBarCommands[];
+	lists: EdraToolBarCommands[];
+	media: EdraToolBarCommands[];
+	table: EdraToolBarCommands[];
+	math: EdraToolBarCommands[];
+} = {
 	'undo-redo': [
 		{
 			icon: Undo,

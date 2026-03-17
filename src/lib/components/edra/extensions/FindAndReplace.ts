@@ -26,6 +26,9 @@ import { Plugin, PluginKey, type EditorState, type Transaction } from '@tiptap/p
 import { Node as PMNode } from '@tiptap/pm/model';
 
 declare module '@tiptap/core' {
+	interface Storage {
+		searchAndReplace: SearchAndReplaceStorage;
+	}
 	interface Commands<ReturnType> {
 		search: {
 			/**

@@ -8,6 +8,14 @@ import SvelteRenderer from '../../svelte-renderer.js';
 
 import type { Component } from 'svelte';
 
+declare module '@tiptap/core' {
+	interface Storage {
+		slashCommand: {
+			rect: { width: number; height: number; left: number; top: number; right: number; bottom: number };
+		};
+	}
+}
+
 const extensionName = 'slashCommand';
 
 interface PopupState {

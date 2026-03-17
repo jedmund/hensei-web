@@ -8,7 +8,8 @@
 
 	const { editor, class: className, excludedCommands, children }: EdraToolbarProps = $props();
 
-	const toolbarCommands = Object.keys(commands).filter((key) => !excludedCommands?.includes(key));
+	const commandKeys = Object.keys(commands) as (keyof typeof commands)[];
+	const toolbarCommands = commandKeys.filter((key) => !excludedCommands?.includes(key));
 
 	let show = $state<boolean>(false);
 </script>
