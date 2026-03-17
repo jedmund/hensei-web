@@ -164,9 +164,23 @@ export class GridAdapter extends BaseAdapter {
 	 * Updates a grid weapon instance
 	 */
     async updateWeapon(id: string, params: Partial<GridWeapon>, headers?: Record<string, string>): Promise<GridWeapon> {
+        // Flatten nested awakening object into awakening_id/awakening_level
+        // since the Rails API expects flat params, not nested attributes
+        const { awakening, ...rest } = params as Partial<GridWeapon> & { awakening?: { id: string; level: number } | null }
+        const body: Record<string, unknown> = { ...rest }
+        if (awakening !== undefined) {
+            if (awakening === null) {
+                body.awakeningId = null
+                body.awakeningLevel = null
+            } else {
+                body.awakeningId = awakening.id
+                body.awakeningLevel = awakening.level
+            }
+        }
+
         const response = await this.request<{ gridWeapon: GridWeapon }>(`/grid_weapons/${id}`, {
             method: 'PUT',
-            body: { weapon: params },
+            body: { weapon: body },
             headers
         })
         return response.gridWeapon
@@ -282,9 +296,23 @@ export class GridAdapter extends BaseAdapter {
 	 * Updates a grid character instance
 	 */
     async updateCharacter(id: string, params: Partial<GridCharacter>, headers?: Record<string, string>): Promise<GridCharacter> {
+        // Flatten nested awakening object into awakening_id/awakening_level
+        // since the Rails API expects flat params, not nested attributes
+        const { awakening, ...rest } = params as Partial<GridCharacter> & { awakening?: { id: string; level: number } | null }
+        const body: Record<string, unknown> = { ...rest }
+        if (awakening !== undefined) {
+            if (awakening === null) {
+                body.awakeningId = null
+                body.awakeningLevel = null
+            } else {
+                body.awakeningId = awakening.id
+                body.awakeningLevel = awakening.level
+            }
+        }
+
         const response = await this.request<{ gridCharacter: GridCharacter }>(`/grid_characters/${id}`, {
             method: 'PUT',
-            body: { character: params },
+            body: { character: body },
             headers
         })
         return response.gridCharacter
