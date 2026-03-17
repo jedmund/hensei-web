@@ -10,10 +10,9 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
-	import VariantModal from '$lib/features/database/weapons/VariantModal.svelte'
+	import VariantRow from '$lib/features/database/weapons/VariantRow.svelte'
 	import { getAugmentTypeLabel } from '$lib/utils/augmentType'
 	import { localizedName } from '$lib/utils/locale'
-	import type { WeaponSeriesVariant } from '$lib/types/api/weaponSeriesVariant'
 	import type { PageData } from './$types'
 
 	let { data }: { data: PageData } = $props()
@@ -28,34 +27,9 @@
 	const canEdit = $derived(userRole >= 7)
 	const editUrl = $derived(series?.slug ? `/database/series/weapons/${series.slug}/edit` : undefined)
 	const variants = $derived(series?.variants ?? [])
-	const showVariantsSection = $derived(variants.length > 0 || canEdit)
 
 	const pageTitle = $derived(series?.name ? `${localizedName(series.name)} Series` : 'Weapon Series')
 
-	// Variant modal state
-	let variantModalOpen = $state(false)
-	let editingVariant = $state<WeaponSeriesVariant | null>(null)
-
-	function openCreateVariant() {
-		editingVariant = null
-		variantModalOpen = true
-	}
-
-	function openEditVariant(variant: WeaponSeriesVariant) {
-		editingVariant = variant
-		variantModalOpen = true
-	}
-
-	function formatOverrides(variant: WeaponSeriesVariant): string {
-		const parts: string[] = []
-		if (variant.hasWeaponKeys !== null) parts.push(`Keys: ${variant.hasWeaponKeys ? 'Yes' : 'No'}`)
-		if (variant.hasAwakening !== null) parts.push(`Awakening: ${variant.hasAwakening ? 'Yes' : 'No'}`)
-		if (variant.numWeaponKeys !== null) parts.push(`Key Slots: ${variant.numWeaponKeys}`)
-		if (variant.augmentType !== null) parts.push(`Augment: ${getAugmentTypeLabel(variant.augmentType)}`)
-		if (variant.elementChangeable !== null) parts.push(`Element Change: ${variant.elementChangeable ? 'Yes' : 'No'}`)
-		if (variant.extra !== null) parts.push(`Extra: ${variant.extra ? 'Yes' : 'No'}`)
-		return parts.join(', ') || 'No overrides'
-	}
 </script>
 
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
@@ -89,30 +63,15 @@
 				<DetailItem label="Augment Type" value={getAugmentTypeLabel(series.augmentType)} />
 			</DetailsContainer>
 
-			{#if showVariantsSection}
-				<DetailsContainer title="Variants">
-					{#if variants.length > 0}
-						{#each variants as variant (variant.id)}
-							<DetailItem label={`Variant ${variant.id.slice(0, 8)}`}>
-								{#if canEdit}
-									<button class="variant-row" onclick={() => openEditVariant(variant)}>
-										{formatOverrides(variant)}
-									</button>
-								{:else}
-									<span>{formatOverrides(variant)}</span>
-								{/if}
-							</DetailItem>
-						{/each}
-					{:else}
-						<DetailItem label="No variants" value="This series has no variant overrides" />
-					{/if}
-					{#if canEdit}
-						<div class="variant-actions">
-							<Button variant="ghost" size="small" leftIcon="plus" onclick={openCreateVariant}>Add Variant</Button>
-						</div>
-					{/if}
-				</DetailsContainer>
-			{/if}
+			<DetailsContainer title="Variants">
+				{#if variants.length > 0}
+					{#each variants as variant (variant.id)}
+						<VariantRow {variant} />
+					{/each}
+				{:else}
+					<p class="no-variants">No variants</p>
+				{/if}
+			</DetailsContainer>
 
 			{#if series.weaponCount !== undefined}
 				<DetailsContainer title="Statistics">
@@ -130,14 +89,6 @@
 	{/if}
 </div>
 
-{#if series && canEdit}
-	<VariantModal
-		bind:open={variantModalOpen}
-		seriesId={series.id}
-		variant={editingVariant}
-	/>
-{/if}
-
 <style lang="scss">
 	@use '$src/themes/database' as database;
 	@use '$src/themes/layout' as layout;
@@ -153,21 +104,10 @@
 		@include database.details;
 	}
 
-	.variant-row {
-		background: none;
-		border: none;
-		color: var(--text-link);
-		cursor: pointer;
-		padding: 0;
-		font-size: inherit;
-		text-align: left;
-
-		&:hover {
-			text-decoration: underline;
-		}
-	}
-
-	.variant-actions {
-		padding-top: spacing.$unit;
+	.no-variants {
+		color: var(--text-secondary);
+		text-align: center;
+		margin: 0;
+		padding-bottom: spacing.$unit-2x;
 	}
 </style>

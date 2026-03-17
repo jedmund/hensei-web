@@ -45,16 +45,10 @@
 		if (variants.length === 0) return []
 		return [
 			{ value: '', label: 'None' },
-			...variants.map((v) => {
-				const parts: string[] = []
-				if (v.hasWeaponKeys !== null) parts.push(`Keys: ${v.hasWeaponKeys ? 'Yes' : 'No'}`)
-				if (v.hasAwakening !== null) parts.push(`Awakening: ${v.hasAwakening ? 'Yes' : 'No'}`)
-				if (v.extra !== null) parts.push(`Extra: ${v.extra ? 'Yes' : 'No'}`)
-				return {
-					value: v.id,
-					label: parts.length > 0 ? parts.join(', ') : `Variant ${v.id.slice(0, 8)}`
-				}
-			})
+			...variants.map((v) => ({
+				value: v.id,
+				label: v.name || 'Unnamed'
+			}))
 		]
 	})
 
@@ -104,7 +98,7 @@
 	// Format variant label for display mode
 	function formatVariantLabel(weapon: any): string {
 		if (!weapon?.series?.weaponSeriesVariantId) return '—'
-		return `Variant ${weapon.series.weaponSeriesVariantId.slice(0, 8)}`
+		return weapon.series.weaponSeriesVariantName || '—'
 	}
 </script>
 

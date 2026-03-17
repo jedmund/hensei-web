@@ -12,9 +12,12 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
+	import VariantModal from '$lib/features/database/weapons/VariantModal.svelte'
+	import VariantRow from '$lib/features/database/weapons/VariantRow.svelte'
 	import { getAugmentTypeOptions } from '$lib/utils/augmentType'
 	import { localizedName } from '$lib/utils/locale'
 	import type { AugmentType } from '$lib/types/api/weaponStatModifier'
+	import type { WeaponSeriesVariant } from '$lib/types/api/weaponSeriesVariant'
 	import type { PageData } from './$types'
 
 	let { data }: { data: PageData } = $props()
@@ -27,7 +30,22 @@
 	}))
 
 	const series = $derived(seriesQuery.data)
+	const variants = $derived(series?.variants ?? [])
 	const pageTitle = $derived(series?.name ? `Edit ${localizedName(series.name)}` : 'Edit Weapon Series')
+
+	// Variant modal state
+	let variantModalOpen = $state(false)
+	let editingVariant = $state<WeaponSeriesVariant | null>(null)
+
+	function openCreateVariant() {
+		editingVariant = null
+		variantModalOpen = true
+	}
+
+	function openEditVariant(variant: WeaponSeriesVariant) {
+		editingVariant = variant
+		variantModalOpen = true
+	}
 
 	// Save state
 	let isSaving = $state(false)
@@ -212,6 +230,22 @@
 					options={augmentTypeOptions}
 				/>
 			</DetailsContainer>
+
+			<div class="variants-section">
+				<div class="variants-header">
+					<h4>Variants</h4>
+					<Button variant="ghost" size="small" leftIcon="plus" onclick={openCreateVariant}>Add Variant</Button>
+				</div>
+				<div class="details">
+					{#if variants.length > 0}
+						{#each variants as variant (variant.id)}
+							<VariantRow {variant} onclick={() => openEditVariant(variant)} />
+						{/each}
+					{:else}
+						<p class="no-variants">No variants</p>
+					{/if}
+				</div>
+			</div>
 		</div>
 	{:else}
 		<NotFoundPlaceholder
@@ -223,9 +257,19 @@
 	{/if}
 </div>
 
+{#if series}
+	<VariantModal
+		bind:open={variantModalOpen}
+		seriesId={series.id}
+		variant={editingVariant}
+	/>
+{/if}
+
 <style lang="scss">
 	@use '$src/themes/database' as database;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/typography' as typography;
 
 	.page {
 		background: var(--card-bg);
@@ -240,4 +284,44 @@
 	.error-banner {
 		@include database.error-banner;
 	}
+
+	.variants-section {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit;
+		padding: spacing.$unit-2x;
+		border-bottom: 1px solid var(--border-subtle);
+
+		&:last-child {
+			border-bottom: none;
+		}
+	}
+
+	.variants-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: spacing.$unit;
+
+		h4 {
+			color: var(--text-primary);
+			font-size: typography.$font-medium;
+			font-weight: typography.$bold;
+			margin: 0;
+		}
+	}
+
+	.details {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit;
+	}
+
+	.no-variants {
+		color: var(--text-secondary);
+		text-align: center;
+		margin: 0;
+		padding-bottom: spacing.$unit-2x;
+	}
+
 </style>
