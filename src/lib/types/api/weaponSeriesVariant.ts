@@ -2,6 +2,7 @@ import type { AugmentType } from './weaponStatModifier'
 
 export interface WeaponSeriesVariant {
 	id: string
+	name: string
 	hasWeaponKeys: boolean | null
 	hasAwakening: boolean | null
 	numWeaponKeys: number | null
@@ -11,6 +12,7 @@ export interface WeaponSeriesVariant {
 }
 
 export interface CreateWeaponSeriesVariantPayload {
+	name: string
 	has_weapon_keys?: boolean | null
 	has_awakening?: boolean | null
 	num_weapon_keys?: number | null
@@ -20,6 +22,7 @@ export interface CreateWeaponSeriesVariantPayload {
 }
 
 export interface UpdateWeaponSeriesVariantPayload {
+	name?: string
 	has_weapon_keys?: boolean | null
 	has_awakening?: boolean | null
 	num_weapon_keys?: number | null

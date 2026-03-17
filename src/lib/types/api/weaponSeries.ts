@@ -29,6 +29,8 @@ export interface WeaponSeriesRef {
 	numWeaponKeys: number | null
 	/** Variant ID if this weapon has a variant override */
 	weaponSeriesVariantId?: string | null
+	/** Variant name if this weapon has a variant override */
+	weaponSeriesVariantName?: string | null
 }
 
 /**
