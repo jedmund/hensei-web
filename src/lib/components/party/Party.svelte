@@ -533,9 +533,7 @@
 							onSelectJob={jobHandlers.handleSelectJob}
 							onSelectSkill={jobHandlers.handleSelectJobSkill}
 							onRemoveSkill={jobHandlers.handleRemoveJobSkill}
-							onSelectAccessory={() => {
-								// TODO: Open accessory selection sidebar
-							}}
+							onSelectAccessory={jobHandlers.handleSelectAccessory}
 						/>
 						<CharacterGrid
 							characters={party.characters}

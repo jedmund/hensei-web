@@ -2,7 +2,8 @@ import type { PartyMutations } from './party-mutations.svelte'
 import type { Party } from '$lib/types/api/party'
 import {
 	openJobSelectionSidebar,
-	openJobSkillSelectionSidebar
+	openJobSkillSelectionSidebar,
+	openJobAccessorySelectionSidebar
 } from '$lib/features/job/openJobSidebar.svelte'
 import { transformSkillsToArray } from '$lib/utils/jobSkills'
 import { toast } from 'svelte-sonner'
@@ -123,10 +124,59 @@ export function useJobHandlers(opts: JobHandlerOptions) {
 		}
 	}
 
+	async function handleSelectAccessory() {
+		if (!opts.canEdit()) return
+
+		openJobAccessorySelectionSidebar({
+			job: opts.getParty().job,
+			currentAccessory: opts.getParty().accessory,
+			onSelectAccessory: async (accessory) => {
+				loading = true
+				error = null
+
+				try {
+					const shortcode = await getShortcode()
+					if (!shortcode) return
+
+					await opts.mutations.job.updateAccessory.mutateAsync({
+						shortcode,
+						accessoryId: accessory.id
+					})
+				} catch (e) {
+					error = e instanceof Error ? e.message : m.toast_failed_update_accessory()
+					console.error('Failed to update accessory:', e)
+					toast.error(extractErrorMessage(e, m.toast_failed_update_accessory()))
+				} finally {
+					loading = false
+				}
+			},
+			onRemoveAccessory: async () => {
+				loading = true
+				error = null
+
+				try {
+					const shortcode = await getShortcode()
+					if (!shortcode) return
+
+					await opts.mutations.job.removeAccessory.mutateAsync({
+						shortcode
+					})
+				} catch (e) {
+					error = e instanceof Error ? e.message : m.toast_failed_remove_accessory()
+					console.error('Failed to remove accessory:', e)
+					toast.error(extractErrorMessage(e, m.toast_failed_remove_accessory()))
+				} finally {
+					loading = false
+				}
+			}
+		})
+	}
+
 	return {
 		handleSelectJob,
 		handleSelectJobSkill,
 		handleRemoveJobSkill,
+		handleSelectAccessory,
 		get loading() {
 			return loading
 		}

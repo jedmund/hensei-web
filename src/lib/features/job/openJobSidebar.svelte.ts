@@ -1,8 +1,11 @@
 import { sidebar } from '$lib/stores/sidebar.svelte'
 import JobSelectionSidebar from '$lib/components/sidebar/JobSelectionSidebar.svelte'
 import JobSkillSelectionSidebar from '$lib/components/sidebar/JobSkillSelectionSidebar.svelte'
-import type { Job, JobSkill } from '$lib/types/api/entities'
+import JobAccessorySelectionSidebar from '$lib/components/sidebar/JobAccessorySelectionSidebar.svelte'
+import type { Job, JobSkill, JobAccessory } from '$lib/types/api/entities'
 import type { JobSkillList } from '$lib/types/api/party'
+import { getAccessoryTypeName } from '$lib/utils/jobAccessoryUtils'
+import * as m from '$lib/paraglide/messages'
 
 type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -54,6 +57,37 @@ export function openJobSkillSelectionSidebar(options: JobSkillSelectionOptions) 
 			},
 			onRemoveSkill: () => {
 				onRemoveSkill?.()
+				sidebar.close()
+			}
+		},
+		false // scrollable = false
+	)
+}
+
+interface JobAccessorySelectionOptions {
+	job?: Job | undefined
+	currentAccessory?: JobAccessory | undefined
+	onSelectAccessory?: ((accessory: JobAccessory) => void) | undefined
+	onRemoveAccessory?: (() => void) | undefined
+}
+
+export function openJobAccessorySelectionSidebar(options: JobAccessorySelectionOptions) {
+	const { job, currentAccessory, onSelectAccessory, onRemoveAccessory } = options
+
+	const typeName = job?.accessoryType ? getAccessoryTypeName(job.accessoryType) : 'Accessory'
+
+	sidebar.openWithComponent(
+		m.party_job_select_accessory({ type: typeName }),
+		JobAccessorySelectionSidebar,
+		{
+			job,
+			currentAccessory,
+			onSelectAccessory: (accessory: JobAccessory) => {
+				onSelectAccessory?.(accessory)
+				sidebar.close()
+			},
+			onRemoveAccessory: () => {
+				onRemoveAccessory?.()
 				sidebar.close()
 			}
 		},
