@@ -1035,8 +1035,8 @@
 	"settings_privacy_crew_desc": "騎空団員のみ閲覧可能",
 	"settings_privacy_private": "非公開",
 	"settings_privacy_private_desc": "自分だけがコレクションを閲覧できます",
-	"settings_import_weapons": "武器をコレクションにインポート",
-	"settings_import_weapons_subtitle": "インポートした編成の武器を自動的にコレクションに追加します",
+	"settings_import_weapons": "アイテムをコレクションにインポート",
+	"settings_import_weapons_subtitle": "インポートした編成のアイテムを自動的にコレクションに追加します",
 	"settings_default_import_visibility": "インポート時のデフォルト公開設定",
 	"settings_default_import_visibility_subtitle": "拡張機能からインポートした編成の公開設定",
 
