@@ -32,7 +32,7 @@ function makeArtifact(overrides: Partial<GridArtifact> = {}): GridArtifact {
 		artifact: {
 			id: 'ref-1',
 			granblueId: 'g-1',
-			name: { en: 'Test', jp: 'テスト' },
+			name: { en: 'Test', ja: 'テスト' },
 			proficiency: 1,
 			rarity: 'standard'
 		},
@@ -44,7 +44,7 @@ function makeCharacter(overrides: Partial<Character> = {}): Character {
 	return {
 		id: 'char-1',
 		granblueId: 'c-1',
-		name: { en: 'Test Char', jp: 'テスト' },
+		name: { en: 'Test Char', ja: 'テスト' },
 		element: 1,
 		proficiency: [1],
 		rarity: 3,
@@ -188,7 +188,7 @@ describe('isCompatibleWithCharacter', () => {
 			artifact: {
 				id: 'ref-1',
 				granblueId: 'g-1',
-				name: { en: 'Quirk', jp: 'クーク' },
+				name: { en: 'Quirk', ja: 'クーク' },
 				proficiency: null,
 				rarity: 'quirk'
 			}
@@ -214,7 +214,7 @@ describe('getArtifactProficiency', () => {
 			artifact: {
 				id: 'ref-1',
 				granblueId: 'g-1',
-				name: { en: 'Q', jp: 'Q' },
+				name: { en: 'Q', ja: 'Q' },
 				proficiency: null,
 				rarity: 'quirk'
 			}
@@ -227,7 +227,7 @@ describe('getArtifactProficiency', () => {
 			artifact: {
 				id: 'ref-1',
 				granblueId: 'g-1',
-				name: { en: 'Q', jp: 'Q' },
+				name: { en: 'Q', ja: 'Q' },
 				proficiency: null,
 				rarity: 'quirk'
 			}
@@ -244,7 +244,7 @@ describe('isQuirkArtifact', () => {
 	it('returns true for quirk', () => {
 		const artifact = makeArtifact({
 			artifact: {
-				id: 'r', granblueId: 'g', name: { en: '', jp: '' }, proficiency: null, rarity: 'quirk'
+				id: 'r', granblueId: 'g', name: { en: '', ja: '' }, proficiency: null, rarity: 'quirk'
 			}
 		})
 		expect(isQuirkArtifact(artifact)).toBe(true)
