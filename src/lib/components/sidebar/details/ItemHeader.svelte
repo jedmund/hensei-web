@@ -17,9 +17,10 @@
 		itemData: any
 		gridUncapLevel: number | null | undefined
 		gridTranscendence: number | null | undefined
+		showUncap?: boolean
 	}
 
-	let { type, item, itemData, gridUncapLevel, gridTranscendence }: Props = $props()
+	let { type, item, itemData, gridUncapLevel, gridTranscendence, showUncap = true }: Props = $props()
 
 	// Get image URL based on type using detail/base variants
 	function getImageUrl(): string {
@@ -78,18 +79,20 @@
 		style:background-image="url({reliefBackgroundUrl}), linear-gradient(to right, #000, #484440, #000)"
 		style:--element-color="var(--{elementName}-bg)"
 	>
-		<div class="uncap-overlay">
-			<UncapIndicator
-				{type}
-				uncapLevel={gridUncapLevel}
-				transcendenceStage={gridTranscendence}
-				flb={itemData?.uncap?.flb}
-				ulb={itemData?.uncap?.ulb}
-				transcendence={itemData?.uncap?.transcendence}
-				{special}
-				editable={false}
-			/>
-		</div>
+		{#if showUncap}
+			<div class="uncap-overlay">
+				<UncapIndicator
+					{type}
+					uncapLevel={gridUncapLevel}
+					transcendenceStage={gridTranscendence}
+					flb={itemData?.uncap?.flb}
+					ulb={itemData?.uncap?.ulb}
+					transcendence={itemData?.uncap?.transcendence}
+					{special}
+					editable={false}
+				/>
+			</div>
+		{/if}
 		<img src={getImageUrl()} alt={displayName(itemData)} class="item-image {type}" />
 	</div>
 </div>

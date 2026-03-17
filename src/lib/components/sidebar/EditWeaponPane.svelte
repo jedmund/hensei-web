@@ -96,6 +96,7 @@
 		itemData={weaponData}
 		gridUncapLevel={weapon.uncapLevel}
 		gridTranscendence={weapon.transcendenceStep}
+		showUncap={false}
 	/>
 
 	{#if isLinkedToCollection && isOutOfSync}
