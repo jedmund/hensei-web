@@ -57,7 +57,6 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
-	@use '$src/themes/colors' as *;
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/effects' as *;
 
@@ -67,7 +66,7 @@
 		--sw-checked-bg: var(--null-button-bg);
 		--sw-checked-bg-hover: var(--null-button-bg-hover);
 
-		background: $grey-70;
+		background: var(--switch-track);
 		border: none;
 		box-sizing: border-box;
 		position: relative;
@@ -83,7 +82,7 @@
 	}
 
 	:global([data-switch-root].switch:hover:not(:disabled)) {
-		background: $grey-75;
+		background: var(--switch-track-hover);
 	}
 
 	:global([data-switch-root].switch[data-state='checked']) {
@@ -136,7 +135,7 @@
 	}
 
 	:global([data-switch-root].switch:disabled .thumb) {
-		background: $grey-80;
+		background: var(--switch-nub-disabled);
 		cursor: not-allowed;
 	}
 

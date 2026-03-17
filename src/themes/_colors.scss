@@ -350,8 +350,14 @@ $slider--thumb--shadow--light--hover: $grey-50;
 $slider--thumb--shadow--dark--hover: $grey-00;
 
 // Color Definitions: Switch
-$switch--nub--bg--light: $grey-80;
+$switch--nub--bg--light: $grey-100;
 $switch--nub--bg--dark: $grey-30;
+$switch--track--bg--light: $grey-70;
+$switch--track--bg--dark: $grey-70;
+$switch--track--bg--light--hover: $grey-75;
+$switch--track--bg--dark--hover: $grey-75;
+$switch--nub--bg--light--disabled: $grey-80;
+$switch--nub--bg--dark--disabled: $grey-80;
 
 // Color Definitions: Link Items
 $link--item--bg--light: $grey-80;

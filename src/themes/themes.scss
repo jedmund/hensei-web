@@ -261,6 +261,9 @@
 	--extra-purple-text-dark: #{colors.$extra--purple--dark--text--dark};
 
 	--switch-nub: #{colors.$switch--nub--bg--light};
+	--switch-track: #{colors.$switch--track--bg--light};
+	--switch-track-hover: #{colors.$switch--track--bg--light--hover};
+	--switch-nub-disabled: #{colors.$switch--nub--bg--light--disabled};
 
 	// Light - Subaura Summons
 	--subaura-orange-bg: #{colors.$subaura--orange--bg--light};
@@ -704,6 +707,9 @@ html[data-theme='dark'] {
 	--extra-purple-text-dark: #{colors.$extra--purple--dark--text--dark};
 
 	--switch-nub: #{colors.$switch--nub--bg--dark};
+	--switch-track: #{colors.$switch--track--bg--dark};
+	--switch-track-hover: #{colors.$switch--track--bg--dark--hover};
+	--switch-nub-disabled: #{colors.$switch--nub--bg--dark--disabled};
 
 	// Dark - Subaura Summons
 	--subaura-orange-bg: #{colors.$subaura--orange--bg--dark};
