@@ -1,13 +1,13 @@
 
 <script lang="ts">
 	import type { Cell } from 'wx-svelte-grid'
-	import { getJobAccessoryImageUrl } from '$lib/utils/jobAccessoryUtils'
+	import { getAccessoryImage } from '$lib/utils/images'
 
 	const { row }: Cell = $props()
 </script>
 
 <div class="image-cell">
-	<img src={getJobAccessoryImageUrl(row.granblueId)} alt="" class="database-image" />
+	<img src={getAccessoryImage(row.granblueId)} alt="" class="database-image" />
 </div>
 
 <style lang="scss">

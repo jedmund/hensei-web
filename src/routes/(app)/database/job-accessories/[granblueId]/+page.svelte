@@ -20,7 +20,7 @@
 
 	// Utils
 	import { getAccessoryTypeName } from '$lib/utils/jobAccessoryUtils'
-	import { getJobAccessoryImageUrl } from '$lib/utils/jobAccessoryUtils'
+	import { getAccessoryImage } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { getRarityLabel } from '$lib/utils/rarity'
@@ -78,7 +78,7 @@
 
 	{#if accessory}
 		<div class="content">
-			<DetailEntityHeader imageUrl={getJobAccessoryImageUrl(accessory.granblueId)} name={displayName} imageSize={96}>
+			<DetailEntityHeader imageUrl={getAccessoryImage(accessory.granblueId)} name={displayName} imageSize={96}>
 				{#snippet meta()}
 					<span
 						class="type-badge"
