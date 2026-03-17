@@ -171,6 +171,7 @@
 				background: var(--button-bg-hover);
 
 				.placeholder-icon {
+					background: white;
 					border-color: var(--border-medium);
 					box-shadow: var(--hover-shadow);
 				}
@@ -249,14 +250,14 @@
 		.placeholder-icon {
 			width: 32px;
 			height: 32px;
-			background: var(--card-bg);
+			background: var(--button-contained-bg);
 			border: 1px solid transparent;
 			border-radius: $unit-half;
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			flex-shrink: 0;
-			color: var(--icon-secondary);
+			color: var(--text-tertiary);
 			transition: all 0.15s ease;
 
 			&.readonly {

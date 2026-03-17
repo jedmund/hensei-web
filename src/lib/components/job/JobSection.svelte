@@ -70,10 +70,25 @@
 			<div class="empty-portrait"></div>
 		{/if}
 
-		{#if canEdit && job}
-			<Tooltip content={m.job_change()}>
-				<button class="change-job-button" onclick={onSelectJob} aria-label={m.job_change()}>
-					<Icon name="swap" size={16} />
+		{#if job?.accessory && accessory}
+			<Tooltip content={localizedName(accessory.name)}>
+				<button
+					class="accessory-button"
+					onclick={canEdit ? onSelectAccessory : undefined}
+					class:interactive={canEdit}
+					aria-label={localizedName(accessory.name)}
+				>
+					<img
+						src={getAccessoryImage(accessory.granblueId)}
+						alt={localizedName(accessory.name)}
+						class="accessory-button-img"
+					/>
+				</button>
+			</Tooltip>
+		{:else if canEdit && job?.accessory}
+			<Tooltip content={m.party_job_select_accessory()}>
+				<button class="accessory-button interactive" onclick={onSelectAccessory} aria-label={m.party_job_select_accessory()}>
+					<Icon name="plus" size={16} />
 				</button>
 			</Tooltip>
 		{/if}
@@ -85,37 +100,38 @@
 			<div class="job-header">
 				{#if canEdit}
 					<button class="job-name clickable" onclick={onSelectJob}>
-						<div class="job-name-row">
+						<div class="job-name-left">
 							<img src={jobIconUrl} alt="{localizedName(job.name)} icon" class="job-icon" />
 							<h3>{localizedName(job.name)}</h3>
+							{#if job.masterLevel || job.ultimateMastery}
+								<div class="job-badges">
+									{#if job.masterLevel}
+										<span class="badge master">ML</span>
+									{/if}
+									{#if job.ultimateMastery}
+										<span class="badge ultimate">UM</span>
+									{/if}
+								</div>
+							{/if}
 						</div>
-						{#if job.masterLevel || job.ultimateMastery}
-							<div class="job-badges">
-								{#if job.masterLevel}
-									<span class="badge master">ML</span>
-								{/if}
-								{#if job.ultimateMastery}
-									<span class="badge ultimate">UM</span>
-								{/if}
-							</div>
-						{/if}
+						<Icon name="chevron-right" size={16} />
 					</button>
 				{:else}
 					<div class="job-name">
-						<div class="job-name-row">
+						<div class="job-name-left">
 							<img src={jobIconUrl} alt="{localizedName(job.name)} icon" class="job-icon" />
 							<h3>{localizedName(job.name)}</h3>
+							{#if job.masterLevel || job.ultimateMastery}
+								<div class="job-badges">
+									{#if job.masterLevel}
+										<span class="badge master">ML</span>
+									{/if}
+									{#if job.ultimateMastery}
+										<span class="badge ultimate">UM</span>
+									{/if}
+								</div>
+							{/if}
 						</div>
-						{#if job.masterLevel || job.ultimateMastery}
-							<div class="job-badges">
-								{#if job.masterLevel}
-									<span class="badge master">ML</span>
-								{/if}
-								{#if job.ultimateMastery}
-									<span class="badge ultimate">UM</span>
-								{/if}
-							</div>
-						{/if}
 					</div>
 				{/if}
 			</div>
@@ -136,37 +152,7 @@
 				{/each}
 			</div>
 
-			{#if job.accessory}
-				<div class="job-accessory">
-					<div
-						class="accessory-slot"
-						class:empty={!accessory}
-						class:editable={canEdit}
-						role={canEdit ? 'button' : undefined}
-						tabindex={canEdit ? 0 : undefined}
-						onclick={() => canEdit && onSelectAccessory?.()}
-						onkeydown={(e) => {
-							if (canEdit && onSelectAccessory && (e.key === 'Enter' || e.key === ' ')) {
-								e.preventDefault()
-								onSelectAccessory()
-							}
-						}}
-					>
-						{#if accessory}
-							<img
-								src={getAccessoryImage(accessory.granblueId)}
-								alt={localizedName(accessory.name)}
-								class="accessory-icon"
-							/>
-							<span class="accessory-name">{localizedName(accessory.name)}</span>
-						{:else}
-							<Icon name="plus" size={16} />
-							<span>{m.party_job_select_accessory()}</span>
-						{/if}
-					</div>
-				</div>
-			{/if}
-		{:else}
+			{:else}
 			<div class="no-job-message" class:readonly={!canEdit}>
 				{#if canEdit}
 					<Button onclick={onSelectJob} small>{m.job_choose()}</Button>
@@ -250,7 +236,7 @@
 			z-index: effects.$z-badge;
 		}
 
-		.change-job-button {
+		.accessory-button {
 			position: absolute;
 			top: spacing.$unit;
 			right: spacing.$unit;
@@ -258,18 +244,30 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			width: 32px;
-			height: 32px;
+			width: 64px;
+			height: 64px;
 			padding: 0;
-			background: rgba(0, 0, 0, 0.6);
-			color: white;
+			background: var(--button-contained-bg);
+			color: var(--text-tertiary);
 			border: none;
-			border-radius: layout.$card-corner;
-			cursor: pointer;
+			border-radius: 0;
+			box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+			cursor: default;
 			transition: background 0.2s ease;
+			overflow: hidden;
 
-			&:hover {
-				background: rgba(0, 0, 0, 0.8);
+			&.interactive {
+				cursor: pointer;
+
+				&:hover {
+					background: var(--button-contained-bg-hover);
+				}
+			}
+
+			.accessory-button-img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
 			}
 		}
 	}
@@ -291,7 +289,7 @@
 				align-items: center;
 				justify-content: space-between;
 				gap: spacing.$unit;
-				padding: spacing.$unit;
+				padding: spacing.$unit calc(spacing.$unit * 1.5) spacing.$unit spacing.$unit;
 				border-radius: layout.$card-corner;
 				width: 100%;
 				border: none;
@@ -309,23 +307,26 @@
 					}
 				}
 
-				.job-name-row {
+				.job-name-left {
 					display: flex;
 					align-items: center;
 					gap: spacing.$unit-half;
 				}
 
 				.job-icon {
-					width: 32px;
 					height: 32px;
-					border-radius: layout.$item-corner;
 				}
 
 				h3 {
 					margin: 0;
-					font-size: typography.$font-regular;
-					font-weight: typography.$bold;
+					font-size: typography.$font-body;
+					font-weight: typography.$medium;
 					color: var(--text-primary);
+				}
+
+				:global(svg) {
+					color: var(--text-tertiary);
+					flex-shrink: 0;
 				}
 			}
 
@@ -334,7 +335,7 @@
 				gap: spacing.$unit-half;
 
 				.badge {
-					padding: 2px 8px;
+					padding: spacing.$unit-quarter spacing.$unit;
 					border-radius: layout.$item-corner;
 					font-size: typography.$font-small;
 					font-weight: typography.$bold;
@@ -360,58 +361,13 @@
 			flex: 1;
 		}
 
-		.job-accessory {
-			.accessory-slot {
-				display: flex;
-				align-items: center;
-				gap: spacing.$unit;
-				padding: spacing.$unit;
-				border: 1px solid var(--border-subtle);
-				border-radius: layout.$item-corner;
-				background: var(--card-bg);
-				min-height: 48px;
-				transition: all 0.2s ease;
-
-				&.empty {
-					border-style: dashed;
-					background: var(--placeholder-bg);
-					color: var(--text-tertiary);
-					justify-content: center;
-				}
-
-				&.editable {
-					cursor: pointer;
-
-					&:hover {
-						background: var(--button-contained-bg-hover);
-						border-color: var(--border-medium);
-
-						&.empty {
-							border-style: solid;
-						}
-					}
-				}
-
-				.accessory-icon {
-					width: 32px;
-					height: 32px;
-					border-radius: layout.$item-corner;
-				}
-
-				.accessory-name {
-					font-size: typography.$font-regular;
-					color: var(--text-primary);
-				}
-			}
-		}
-
 		.no-job-message {
 			display: flex;
 			align-items: center;
 			justify-content: center;
 			height: 100%;
 			color: var(--text-tertiary);
-			font-size: typography.$font-regular;
+			font-size: typography.$font-body;
 
 			&.readonly {
 				color: var(--text-secondary);
