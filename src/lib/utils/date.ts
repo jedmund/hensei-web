@@ -71,9 +71,10 @@ export function formatRelativeTime(dateString: string, locale?: string): string 
 	let value = Math.round(diffMs / 1000)
 
 	for (let i = units.length - 1; i >= 0; i--) {
-		if (absDiffMs >= units[i][1]) {
-			unit = units[i][0]
-			value = Math.round(diffMs / units[i][1])
+		const entry = units[i]
+		if (entry && absDiffMs >= entry[1]) {
+			unit = entry[0]
+			value = Math.round(diffMs / entry[1])
 			break
 		}
 	}
