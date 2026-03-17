@@ -24,6 +24,15 @@ export interface ArtifactScore {
 	total: number
 }
 
+/** Cygames artifact grade assessment */
+export interface ArtifactGrade {
+	letter: string | null
+	score: number | null
+	breakdown: Record<string, number> | null
+	lines: number | null
+	recommendation: string | null
+}
+
 /**
  * Artifact reference data (ArtifactBlueprint)
  * Represents the canonical artifact type from the game
@@ -126,6 +135,8 @@ export interface GridArtifact {
 	skills: (ArtifactSkillInstance | null)[]
 	/** Cygames artifact score (null for non-imported artifacts) */
 	score: ArtifactScore | null
+	/** Cygames artifact grade assessment */
+	grade?: ArtifactGrade | null
 	/** Reference to the base artifact */
 	artifact: Artifact
 	/** Reference to the source collection artifact if linked */

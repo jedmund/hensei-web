@@ -28,6 +28,7 @@ function makeArtifact(overrides: Partial<GridArtifact> = {}): GridArtifact {
 		element: 1,
 		level: 5,
 		skills: [],
+		score: null,
 		grade: { letter: null, score: null, breakdown: null, lines: null, recommendation: null },
 		artifact: {
 			id: 'ref-1',
@@ -37,7 +38,7 @@ function makeArtifact(overrides: Partial<GridArtifact> = {}): GridArtifact {
 			rarity: 'standard'
 		},
 		...overrides
-	}
+	} as GridArtifact
 }
 
 function makeCharacter(overrides: Partial<Character> = {}): Character {

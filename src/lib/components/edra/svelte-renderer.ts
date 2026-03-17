@@ -57,7 +57,7 @@ class SvelteRenderer<R = unknown, P extends Record<string, any> = object> {
 
 	updateAttributes(attributes: Record<string, string>): void {
 		Object.keys(attributes).forEach((key) => {
-			this.element.setAttribute(key, attributes[key]);
+			this.element.setAttribute(key, attributes[key]!);
 		});
 		this.destroy();
 		this.render();

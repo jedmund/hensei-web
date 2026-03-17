@@ -94,7 +94,8 @@
 		if (e.key === 'Enter') {
 			e.preventDefault()
 			if (focusedIndex >= 0 && focusedIndex < filtered.length) {
-				togglePlaylist(filtered[focusedIndex])
+				const item = filtered[focusedIndex]
+				if (item) togglePlaylist(item)
 			} else if (filtered.length > 0 && focusedIndex === -1) {
 				focusedIndex = 0
 			} else if (search.trim()) {
