@@ -37,6 +37,8 @@
 	import ConflictDialog from '$lib/components/dialogs/ConflictDialog.svelte'
 	import DeleteTeamDialog from '$lib/components/dialogs/DeleteTeamDialog.svelte'
 	import DuplicateCollectionDialog from '$lib/components/dialogs/DuplicateCollectionDialog.svelte'
+	import PickPlaylistPane from '$lib/components/sidebar/PickPlaylistPane.svelte'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -446,6 +448,21 @@
 										<DropdownItem>
 											<button onclick={actions.toggleFavorite} disabled={actions.loading}>
 												{party.favorited ? m.party_remove_favorite() : m.party_add_favorite()}
+											</button>
+										</DropdownItem>
+									{/if}
+
+									{#if party.user?.id === authUserId && authUsername}
+										<DropdownItem>
+											<button onclick={() => {
+												sidebar.openWithComponent(
+													m.playlist_add_to(),
+													PickPlaylistPane,
+													{ partyId: party.id, username: authUsername },
+													{ scrollable: false }
+												)
+											}} disabled={actions.loading}>
+												{m.playlist_add_to()}
 											</button>
 										</DropdownItem>
 									{/if}
