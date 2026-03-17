@@ -14,14 +14,13 @@
 	import type { Weapon, Awakening } from '$lib/types/api/entities'
 	import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
-	import Select from '$lib/components/ui/Select.svelte'
+	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import WeaponKeySelect from '$lib/components/sidebar/edit/WeaponKeySelect.svelte'
 	import AwakeningSelect from '$lib/components/sidebar/edit/AwakeningSelect.svelte'
 	import AxSkillSelect from '$lib/components/sidebar/edit/AxSkillSelect.svelte'
 	import BefoulmentSelect from '$lib/components/sidebar/edit/BefoulmentSelect.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
-	import { getElementIcon } from '$lib/utils/images'
-	import { getElementKey, getElementOptions } from '$lib/utils/element'
+	import { getElementKey } from '$lib/utils/element'
 	import { seriesHasWeaponKeys, getSeriesSlug } from '$lib/utils/weaponSeries'
 
 	export interface WeaponEditValues {
@@ -102,11 +101,6 @@
 	// Element name for theming
 	const weaponElement = $derived(element || weaponData?.element)
 	const elementName = $derived(weaponElement ? getElementKey(weaponElement) : undefined)
-
-	// Element options
-	const elementOptions = getElementOptions()
-		.filter((opt) => opt.value !== 0)
-		.map((opt) => ({ ...opt, image: getElementIcon(opt.value) }))
 
 	function handleUncapUpdate(newLevel: number) {
 		uncapLevel = newLevel
@@ -193,12 +187,9 @@
 		{#if canChangeElement}
 			<DetailsSection title={m.details_element()}>
 				<div class="section-content">
-					<Select
-						options={elementOptions}
+					<ElementPicker
 						bind:value={element}
-						placeholder={m.placeholder_select_element()}
-						size="medium"
-						fullWidth
+						mode="segmented"
 						contained
 					/>
 				</div>
