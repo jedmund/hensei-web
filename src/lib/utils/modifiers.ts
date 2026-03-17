@@ -27,24 +27,34 @@ export function getAwakeningImage(awakening?: { type?: Awakening; level?: number
 
 /**
  * Get the image URL for a weapon key
+ * Gauph keys (ultima slot 0) require a proficiency suffix for the correct image variant
  */
-export function getWeaponKeyImage(key: WeaponKey): string {
+export function getWeaponKeyImage(key: WeaponKey, weaponProficiency?: number): string {
 	if (!key.slug) return ''
-	return `${getBasePath()}/weapon-keys/${key.slug}.png`
+
+	let filename = key.slug
+
+	// Gauph keys have proficiency-specific image variants
+	if (key.slug.startsWith('gauph-') && weaponProficiency) {
+		filename += `-${weaponProficiency}`
+	}
+
+	return `${getBasePath()}/weapon-keys/${filename}.png`
 }
 
 /**
  * Get all weapon key images for a weapon
  */
 export function getWeaponKeyImages(
-	keys?: WeaponKey[]
+	keys?: WeaponKey[],
+	weaponProficiency?: number
 ): Array<{ url: string; alt: string }> {
 	if (!keys || keys.length === 0) return []
 
 	return keys
 		.filter(key => key.slug)
 		.map(key => ({
-			url: getWeaponKeyImage(key),
+			url: getWeaponKeyImage(key, weaponProficiency),
 			alt: key.name ? localizedName(key.name) : (key.slug || 'Weapon Key')
 		}))
 }

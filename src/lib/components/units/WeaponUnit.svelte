@@ -6,6 +6,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getWeaponImage } from '$lib/features/database/detail/image'
 	import { getPlaceholderImage, getWeaponTransformation } from '$lib/utils/images'
@@ -50,7 +51,7 @@
 	let awakeningImage = $derived(getAwakeningImage(item?.awakening))
 
 	// Get weapon key images using utility
-	let weaponKeyImages = $derived(getWeaponKeyImages(item?.weaponKeys))
+	let weaponKeyImages = $derived(getWeaponKeyImages(item?.weaponKeys, item?.weapon?.proficiency))
 
 	// Get AX skill images using utility
 	let axSkillImages = $derived(getAxSkillImages(item?.ax))
@@ -229,7 +230,9 @@
 										<img class="skill" src={skill.url} alt={skill.alt} />
 									{/each}
 									{#each weaponKeyImages as skill}
-										<img class="skill" src={skill.url} alt={skill.alt} />
+										<Tooltip content={skill.alt}>
+											<img class="skill" src={skill.url} alt={skill.alt} />
+										</Tooltip>
 									{/each}
 								</div>
 							</div>
@@ -563,6 +566,11 @@
 			display: flex;
 			gap: calc(spacing.$unit / 4);
 			padding: calc(spacing.$unit / 2);
+			pointer-events: auto;
+
+			:global(span) {
+				display: flex;
+			}
 
 			.skill {
 				width: 30px;

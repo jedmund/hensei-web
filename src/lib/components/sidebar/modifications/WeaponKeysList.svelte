@@ -19,7 +19,10 @@
 
 	let { weaponKeys, weaponData, layout = 'list' }: Props = $props()
 
-	let keyImages = $derived(getWeaponKeyImages(weaponKeys))
+	const proficiency = $derived(
+		Array.isArray(weaponData?.proficiency) ? weaponData?.proficiency[0] : weaponData?.proficiency
+	)
+	let keyImages = $derived(getWeaponKeyImages(weaponKeys, proficiency))
 
 	function getKeyDescription(key: WeaponKey): string {
 		const name = localizedName(key.name)
