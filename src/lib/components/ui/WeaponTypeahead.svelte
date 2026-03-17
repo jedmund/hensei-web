@@ -171,7 +171,7 @@
 		bind:value={selectedGranblueId}
 		onValueChange={handleValueChange}
 		bind:open={comboboxOpen}
-		bind:inputValue
+		inputValue={inputValue}
 		items={comboboxItems}
 		disabled={disabled}
 	>
