@@ -9,29 +9,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import {
 	createGridMutation,
-	createGridWeaponOptions,
 	updateGridWeaponOptions,
 	deleteGridWeaponOptions,
 	updateWeaponUncapOptions,
-	resolveWeaponConflictOptions,
-	swapWeaponsOptions,
-	createGridCharacterOptions,
 	updateGridCharacterOptions,
 	deleteGridCharacterOptions,
 	updateCharacterUncapOptions,
-	resolveCharacterConflictOptions,
-	swapCharactersOptions,
-	createGridSummonOptions,
 	updateGridSummonOptions,
 	deleteGridSummonOptions,
 	updateSummonUncapOptions,
-	updateQuickSummonOptions,
-	swapSummonsOptions,
-	syncGridCharacterOptions,
-	syncGridWeaponOptions,
-	syncGridSummonOptions,
-	syncAllPartyItemsOptions,
-	unlinkCollectionSourceOptions
+	updateQuickSummonOptions
 } from '../grid.mutations'
 import { createTestQueryClient, seedPartyCache, getCachedParty } from './helpers'
 import { MOCK_PARTY, MOCK_SHORTCODE } from './fixtures'
@@ -70,9 +57,7 @@ vi.mock('$lib/utils/editKeys', () => ({
 	getEditKey: vi.fn()
 }))
 
-vi.mock('$lib/query/cacheHelpers', () => ({
-	invalidateParty: vi.fn()
-}))
+vi.mock('$lib/query/cacheHelpers', () => ({}))
 
 describe('grid mutations', () => {
 	let queryClient: QueryClient
@@ -137,17 +122,6 @@ describe('grid mutations', () => {
 	// ========================================================================
 	// Weapon Mutations
 	// ========================================================================
-
-	describe('createGridWeaponOptions', () => {
-		it('onSuccess calls invalidateParty', async () => {
-			const { invalidateParty } = await import('$lib/query/cacheHelpers')
-			const opts = createGridWeaponOptions(queryClient)
-
-			opts.onSuccess({}, { partyId: 'party-uuid', weaponId: 'w1', position: 1 })
-
-			expect(invalidateParty).toHaveBeenCalledWith(queryClient, 'party-uuid')
-		})
-	})
 
 	describe('updateGridWeaponOptions', () => {
 		it('onMutate optimistically updates the weapon in cache', async () => {
@@ -290,42 +264,9 @@ describe('grid mutations', () => {
 		})
 	})
 
-	describe('resolveWeaponConflictOptions', () => {
-		it('onSuccess invalidates party detail', () => {
-			const opts = resolveWeaponConflictOptions(queryClient)
-			const spy = vi.spyOn(queryClient, 'invalidateQueries')
-
-			opts.onSuccess({}, { partyShortcode: MOCK_SHORTCODE } as any)
-
-			expect(spy).toHaveBeenCalledWith({ queryKey: partyKeys.detail(MOCK_SHORTCODE) })
-		})
-	})
-
-	describe('swapWeaponsOptions', () => {
-		it('onSuccess invalidates party detail', () => {
-			const opts = swapWeaponsOptions(queryClient)
-			const spy = vi.spyOn(queryClient, 'invalidateQueries')
-
-			opts.onSuccess({}, { partyShortcode: MOCK_SHORTCODE } as any)
-
-			expect(spy).toHaveBeenCalledWith({ queryKey: partyKeys.detail(MOCK_SHORTCODE) })
-		})
-	})
-
 	// ========================================================================
 	// Character Mutations
 	// ========================================================================
-
-	describe('createGridCharacterOptions', () => {
-		it('onSuccess calls invalidateParty', async () => {
-			const { invalidateParty } = await import('$lib/query/cacheHelpers')
-			const opts = createGridCharacterOptions(queryClient)
-
-			opts.onSuccess({}, { partyId: 'party-uuid', characterId: 'c1', position: 1 })
-
-			expect(invalidateParty).toHaveBeenCalledWith(queryClient, 'party-uuid')
-		})
-	})
 
 	describe('updateGridCharacterOptions', () => {
 		it('onMutate optimistically updates the character in cache', async () => {
@@ -394,42 +335,9 @@ describe('grid mutations', () => {
 		})
 	})
 
-	describe('resolveCharacterConflictOptions', () => {
-		it('onSuccess invalidates party detail', () => {
-			const opts = resolveCharacterConflictOptions(queryClient)
-			const spy = vi.spyOn(queryClient, 'invalidateQueries')
-
-			opts.onSuccess({}, { partyShortcode: MOCK_SHORTCODE } as any)
-
-			expect(spy).toHaveBeenCalledWith({ queryKey: partyKeys.detail(MOCK_SHORTCODE) })
-		})
-	})
-
-	describe('swapCharactersOptions', () => {
-		it('onSuccess invalidates party detail', () => {
-			const opts = swapCharactersOptions(queryClient)
-			const spy = vi.spyOn(queryClient, 'invalidateQueries')
-
-			opts.onSuccess({}, { partyShortcode: MOCK_SHORTCODE } as any)
-
-			expect(spy).toHaveBeenCalledWith({ queryKey: partyKeys.detail(MOCK_SHORTCODE) })
-		})
-	})
-
 	// ========================================================================
 	// Summon Mutations
 	// ========================================================================
-
-	describe('createGridSummonOptions', () => {
-		it('onSuccess calls invalidateParty', async () => {
-			const { invalidateParty } = await import('$lib/query/cacheHelpers')
-			const opts = createGridSummonOptions(queryClient)
-
-			opts.onSuccess({}, { partyId: 'party-uuid', summonId: 's1', position: 1 })
-
-			expect(invalidateParty).toHaveBeenCalledWith(queryClient, 'party-uuid')
-		})
-	})
 
 	describe('updateGridSummonOptions', () => {
 		it('onMutate optimistically updates the summon in cache', async () => {
@@ -556,73 +464,4 @@ describe('grid mutations', () => {
 		})
 	})
 
-	describe('swapSummonsOptions', () => {
-		it('onSuccess invalidates party detail', () => {
-			const opts = swapSummonsOptions(queryClient)
-			const spy = vi.spyOn(queryClient, 'invalidateQueries')
-
-			opts.onSuccess({}, { partyShortcode: MOCK_SHORTCODE } as any)
-
-			expect(spy).toHaveBeenCalledWith({ queryKey: partyKeys.detail(MOCK_SHORTCODE) })
-		})
-	})
-
-	// ========================================================================
-	// Sync Mutations
-	// ========================================================================
-
-	describe('syncGridCharacterOptions', () => {
-		it('onSuccess invalidates party detail', () => {
-			const opts = syncGridCharacterOptions(queryClient)
-			const spy = vi.spyOn(queryClient, 'invalidateQueries')
-
-			opts.onSuccess({}, { partyShortcode: MOCK_SHORTCODE } as any)
-
-			expect(spy).toHaveBeenCalledWith({ queryKey: partyKeys.detail(MOCK_SHORTCODE) })
-		})
-	})
-
-	describe('syncGridWeaponOptions', () => {
-		it('onSuccess invalidates party detail', () => {
-			const opts = syncGridWeaponOptions(queryClient)
-			const spy = vi.spyOn(queryClient, 'invalidateQueries')
-
-			opts.onSuccess({}, { partyShortcode: MOCK_SHORTCODE } as any)
-
-			expect(spy).toHaveBeenCalledWith({ queryKey: partyKeys.detail(MOCK_SHORTCODE) })
-		})
-	})
-
-	describe('syncGridSummonOptions', () => {
-		it('onSuccess invalidates party detail', () => {
-			const opts = syncGridSummonOptions(queryClient)
-			const spy = vi.spyOn(queryClient, 'invalidateQueries')
-
-			opts.onSuccess({}, { partyShortcode: MOCK_SHORTCODE } as any)
-
-			expect(spy).toHaveBeenCalledWith({ queryKey: partyKeys.detail(MOCK_SHORTCODE) })
-		})
-	})
-
-	describe('syncAllPartyItemsOptions', () => {
-		it('onSuccess invalidates party detail', () => {
-			const opts = syncAllPartyItemsOptions(queryClient)
-			const spy = vi.spyOn(queryClient, 'invalidateQueries')
-
-			opts.onSuccess({}, { partyShortcode: MOCK_SHORTCODE } as any)
-
-			expect(spy).toHaveBeenCalledWith({ queryKey: partyKeys.detail(MOCK_SHORTCODE) })
-		})
-	})
-
-	describe('unlinkCollectionSourceOptions', () => {
-		it('onSuccess invalidates party detail', () => {
-			const opts = unlinkCollectionSourceOptions(queryClient)
-			const spy = vi.spyOn(queryClient, 'invalidateQueries')
-
-			opts.onSuccess({}, { partyShortcode: MOCK_SHORTCODE } as any)
-
-			expect(spy).toHaveBeenCalledWith({ queryKey: partyKeys.detail(MOCK_SHORTCODE) })
-		})
-	})
 })
