@@ -56,6 +56,8 @@
 	let showWikiProfile = $state(false)
 	let collectionPrivacy = $state(1) // 1 = Everyone (1-based to avoid JS falsy 0)
 	let showCrewGamertag = $state(false)
+	let importWeapons = $state(true)
+	let defaultImportVisibility = $state(1)
 
 	// Track whether form has been initialized from API
 	let formInitialized = $state(false)
@@ -107,6 +109,8 @@
 			showWikiProfile = data.showWikiProfile ?? false
 			collectionPrivacy = data.collectionPrivacy ?? 1
 			showCrewGamertag = data.showCrewGamertag ?? false
+			importWeapons = data.importWeapons ?? true
+			defaultImportVisibility = data.defaultImportVisibility ?? 1
 			// Store original values for comparison
 			originalLanguage = data.language ?? 'en'
 			originalTheme = data.theme ?? 'system'
@@ -171,7 +175,9 @@
 				showCrewGamertag,
 				showGranblueId,
 				showWikiProfile,
-				collectionPrivacy
+				collectionPrivacy,
+				importWeapons,
+				defaultImportVisibility
 			}
 
 			// Call API to update user settings
@@ -190,7 +196,9 @@
 				showCrewGamertag: response.showCrewGamertag,
 				showGranblueId: response.showGranblueId,
 				showWikiProfile: response.showWikiProfile,
-				collectionPrivacy: response.collectionPrivacy
+				collectionPrivacy: response.collectionPrivacy,
+				importWeapons: response.importWeapons,
+				defaultImportVisibility: response.defaultImportVisibility
 			}
 
 			// Make a request to update the cookie server-side
@@ -218,7 +226,9 @@
 								showGranblueId,
 								showWikiProfile,
 								collectionPrivacy,
-								showCrewGamertag
+								showCrewGamertag,
+								importWeapons,
+								defaultImportVisibility
 							}
 						: oldData
 			)
@@ -318,6 +328,8 @@
 							{showWikiProfile}
 							{collectionPrivacy}
 							{showCrewGamertag}
+							{importWeapons}
+							{defaultImportVisibility}
 							{isInCrew}
 							{crewGamertag}
 							{element}
@@ -325,6 +337,8 @@
 							onShowWikiProfileChange={(v) => (showWikiProfile = v)}
 							onCollectionPrivacyChange={(v) => (collectionPrivacy = v)}
 							onShowCrewGamertagChange={(v) => (showCrewGamertag = v)}
+							onImportWeaponsChange={(v) => (importWeapons = v)}
+							onDefaultImportVisibilityChange={(v) => (defaultImportVisibility = v)}
 						/>
 					{/if}
 				</main>

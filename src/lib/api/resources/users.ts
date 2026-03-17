@@ -12,6 +12,8 @@ export interface UserUpdateParams {
 	wikiProfile?: string | undefined
 	showWikiProfile?: boolean | undefined
 	collectionPrivacy?: number | undefined
+	importWeapons?: boolean | undefined
+	defaultImportVisibility?: number | undefined
 }
 
 export interface UserResponse {
@@ -31,6 +33,8 @@ export interface UserResponse {
 	wikiProfile?: string
 	showWikiProfile?: boolean
 	collectionPrivacy?: number
+	importWeapons?: boolean
+	defaultImportVisibility?: number
 }
 
 export const users = {
@@ -51,6 +55,8 @@ export const users = {
 			wiki_profile?: string | undefined
 			show_wiki_profile?: boolean | undefined
 			collection_privacy?: number | undefined
+			import_weapons?: boolean | undefined
+			default_import_visibility?: number | undefined
 		} = {}
 
 		if (params.picture !== undefined) updates.picture = params.picture
@@ -64,6 +70,8 @@ export const users = {
 		if (params.wikiProfile !== undefined) updates.wiki_profile = params.wikiProfile
 		if (params.showWikiProfile !== undefined) updates.show_wiki_profile = params.showWikiProfile
 		if (params.collectionPrivacy !== undefined) updates.collection_privacy = params.collectionPrivacy
+		if (params.importWeapons !== undefined) updates.import_weapons = params.importWeapons
+		if (params.defaultImportVisibility !== undefined) updates.default_import_visibility = params.defaultImportVisibility
 
 		const result = await userAdapter.updateProfile(updates)
 		return {
@@ -79,7 +87,9 @@ export const users = {
 			showGranblueId: result.showGranblueId,
 			wikiProfile: result.wikiProfile,
 			showWikiProfile: result.showWikiProfile,
-			collectionPrivacy: result.collectionPrivacy
+			collectionPrivacy: result.collectionPrivacy,
+			importWeapons: result.importWeapons,
+			defaultImportVisibility: result.defaultImportVisibility
 		}
 	}
 }

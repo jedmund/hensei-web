@@ -22,6 +22,8 @@ interface ApiUserResponse {
   wikiProfile?: string | null  // transformed from wiki_profile
   showWikiProfile?: boolean  // transformed from show_wiki_profile
   collectionPrivacy?: number  // transformed from collection_privacy (0=everyone, 1=crew_only, 2=private)
+  importWeapons?: boolean  // transformed from import_weapons
+  defaultImportVisibility?: number  // transformed from default_import_visibility
   gamertag?: string
   email?: string  // Only included in settings view
   emailVerified?: boolean  // Only included in settings view
@@ -49,6 +51,8 @@ export interface UserInfo {
   wikiProfile?: string
   showWikiProfile?: boolean
   collectionPrivacy?: number
+  importWeapons?: boolean
+  defaultImportVisibility?: number
   crewGamertag?: string
   avatar: {
     picture: string
@@ -100,6 +104,8 @@ function transformUserResponse(apiUser: ApiUserResponse): UserInfo {
     wikiProfile: apiUser.wikiProfile ?? undefined,
     showWikiProfile: apiUser.showWikiProfile,
     collectionPrivacy: apiUser.collectionPrivacy,
+    importWeapons: apiUser.importWeapons,
+    defaultImportVisibility: apiUser.defaultImportVisibility,
     // Rename gamertag to crewGamertag
     crewGamertag: apiUser.gamertag,
     avatar: apiUser.avatar

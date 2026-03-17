@@ -11,6 +11,8 @@
 		showWikiProfile: boolean
 		collectionPrivacy: number
 		showCrewGamertag: boolean
+		importWeapons: boolean
+		defaultImportVisibility: number
 		isInCrew: boolean
 		crewGamertag?: string
 		element: ElementType
@@ -18,6 +20,8 @@
 		onShowWikiProfileChange: (value: boolean) => void
 		onCollectionPrivacyChange: (value: number) => void
 		onShowCrewGamertagChange: (value: boolean) => void
+		onImportWeaponsChange: (value: boolean) => void
+		onDefaultImportVisibilityChange: (value: number) => void
 	}
 
 	let {
@@ -25,13 +29,17 @@
 		showWikiProfile,
 		collectionPrivacy,
 		showCrewGamertag,
+		importWeapons,
+		defaultImportVisibility,
 		isInCrew,
 		crewGamertag,
 		element,
 		onShowGranblueIdChange,
 		onShowWikiProfileChange,
 		onCollectionPrivacyChange,
-		onShowCrewGamertagChange
+		onShowCrewGamertagChange,
+		onImportWeaponsChange,
+		onDefaultImportVisibilityChange
 	}: Props = $props()
 
 	// Collection privacy options (1-based to avoid JavaScript falsy 0 issues)
@@ -39,6 +47,13 @@
 		{ value: 1, label: m.settings_privacy_everyone(), description: m.settings_privacy_everyone_desc() },
 		{ value: 2, label: m.settings_privacy_crew(), description: m.settings_privacy_crew_desc() },
 		{ value: 3, label: m.settings_privacy_private(), description: m.settings_privacy_private_desc() }
+	]
+
+	// Default import visibility options (mirrors party visibility, not collection privacy)
+	const importVisibilityOptions = [
+		{ value: 1, label: m.visibility_public() },
+		{ value: 2, label: m.visibility_unlisted() },
+		{ value: 3, label: m.visibility_private() }
 	]
 
 </script>
@@ -105,6 +120,39 @@
 					onValueChange={onCollectionPrivacyChange}
 					options={collectionPrivacyOptions}
 					placeholder={m.settings_collection_visibility_placeholder()}
+					contained
+					portal
+				/>
+			{/snippet}
+		</SettingsRow>
+
+		<hr class="separator" />
+
+		<!-- Import Weapons -->
+		<SettingsRow
+			title={m.settings_import_weapons()}
+			subtitle={m.settings_import_weapons_subtitle()}
+		>
+			{#snippet control()}
+				<Switch
+					checked={importWeapons}
+					name="import-weapons"
+					{element}
+					onCheckedChange={onImportWeaponsChange}
+				/>
+			{/snippet}
+		</SettingsRow>
+
+		<!-- Default Import Visibility -->
+		<SettingsRow
+			title={m.settings_default_import_visibility()}
+			subtitle={m.settings_default_import_visibility_subtitle()}
+		>
+			{#snippet control()}
+				<Select
+					value={defaultImportVisibility}
+					onValueChange={onDefaultImportVisibilityChange}
+					options={importVisibilityOptions}
 					contained
 					portal
 				/>

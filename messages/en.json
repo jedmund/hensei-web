@@ -1035,6 +1035,10 @@
 	"settings_privacy_crew_desc": "Only crew members can view",
 	"settings_privacy_private": "Private",
 	"settings_privacy_private_desc": "Only you can view your collection",
+	"settings_import_weapons": "Import weapons to collection",
+	"settings_import_weapons_subtitle": "Automatically add weapons from imported parties to your collection",
+	"settings_default_import_visibility": "Default import visibility",
+	"settings_default_import_visibility_subtitle": "Privacy setting for parties imported from the extension",
 
 	"collection_tab_characters": "Characters",
 	"collection_tab_weapons": "Weapons",

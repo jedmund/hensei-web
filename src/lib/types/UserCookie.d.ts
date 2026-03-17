@@ -11,4 +11,6 @@ export interface UserCookie {
 	wikiProfile?: string
 	showWikiProfile?: boolean
 	collectionPrivacy?: number
+	importWeapons?: boolean
+	defaultImportVisibility?: number
 }
