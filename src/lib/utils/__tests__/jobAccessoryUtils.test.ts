@@ -2,8 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
 	ACCESSORY_TYPES,
 	getAccessoryTypeName,
-	getAccessoryTypeOptions,
-	getJobAccessoryImageUrl
+	getAccessoryTypeOptions
 } from '../jobAccessoryUtils'
 
 describe('ACCESSORY_TYPES', () => {
@@ -37,14 +36,3 @@ describe('getAccessoryTypeOptions', () => {
 	})
 })
 
-describe('getJobAccessoryImageUrl', () => {
-	it('returns square path by default', () => {
-		expect(getJobAccessoryImageUrl('399001')).toBe('/images/accessory-square/399001.jpg')
-	})
-
-	it('returns grid path when specified', () => {
-		expect(getJobAccessoryImageUrl('399002', 'grid')).toBe(
-			'/images/accessory-grid/399002.jpg'
-		)
-	})
-})

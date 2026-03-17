@@ -40,14 +40,3 @@ export function getAccessoryTypeOptions(): Array<{ value: number; label: string 
 	]
 }
 
-/**
- * Gets the image URL for a job accessory
- * @param granblueId The accessory's granblue_id
- * @param size The image size variant ('square' or 'grid')
- */
-export function getJobAccessoryImageUrl(
-	granblueId: string,
-	size: 'square' | 'grid' = 'square'
-): string {
-	return `/images/accessory-${size}/${granblueId}.jpg`
-}
