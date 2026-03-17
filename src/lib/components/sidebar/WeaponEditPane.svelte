@@ -21,7 +21,7 @@
 	import BefoulmentSelect from '$lib/components/sidebar/edit/BefoulmentSelect.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getElementKey } from '$lib/utils/element'
-	import { seriesHasWeaponKeys, getSeriesSlug } from '$lib/utils/weaponSeries'
+	import { seriesHasWeaponKeys, seriesHasAwakening, getSeriesSlug } from '$lib/utils/weaponSeries'
 
 	export interface WeaponEditValues {
 		uncapLevel: number
@@ -95,7 +95,7 @@
 	const augmentType = $derived(series?.augmentType ?? 'no_augment')
 	const hasAxSkills = $derived(augmentType === 'ax')
 	const hasBefoulment = $derived(augmentType === 'befoulment')
-	const hasAwakening = $derived((weaponData?.maxAwakeningLevel ?? 0) > 0)
+	const hasAwakening = $derived(seriesHasAwakening(series) && (weaponData?.maxAwakeningLevel ?? 0) > 0)
 	const availableAwakenings = $derived(weaponData?.awakenings ?? [])
 
 	// Element name for theming
