@@ -14,14 +14,20 @@
 	} from './CharacterEditPane.svelte'
 	import { useSyncGridCharacter, useSwitchCharacterStyle } from '$lib/api/mutations/grid.mutations'
 	import Icon from '$lib/components/Icon.svelte'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import { getElementKey } from '$lib/utils/element'
+	import { untrack } from 'svelte'
 
 	interface Props {
+		paneId?: string
 		character: GridCharacter
 		onSave?: (updates: Partial<GridCharacter>) => void
 		onCancel?: () => void
 	}
 
-	let { character, onSave, onCancel }: Props = $props()
+	let { paneId, character, onSave, onCancel }: Props = $props()
+
+	let editPaneRef: ReturnType<typeof CharacterEditPane> | undefined = $state()
 
 	// Sync mutation
 	const syncMutation = useSyncGridCharacter()
@@ -86,6 +92,22 @@
 		perpetuity: character.perpetuity ?? false
 	})
 
+	// Element name for action button theming
+	const elementId = $derived(characterData?.element)
+	const elementName = $derived(
+		elementId ? (getElementKey(elementId) as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light') : undefined
+	)
+
+	// Register save action in the pane header
+	$effect(() => {
+		const el = elementName
+		untrack(() => {
+			if (paneId) {
+				sidebar.setActionForPane(paneId, () => editPaneRef?.save(), m.action_save(), el)
+			}
+		})
+	})
+
 	function handleSave(updates: CharacterEditUpdates) {
 		// Transform CharacterEditUpdates to GridCharacter API format
 		// The CharacterEditPane already formats awakening with id/level
@@ -134,6 +156,7 @@
 	{/if}
 
 	<CharacterEditPane
+		bind:this={editPaneRef}
 		{characterData}
 		{currentValues}
 		showPerpetuity={canHavePerpetuity}

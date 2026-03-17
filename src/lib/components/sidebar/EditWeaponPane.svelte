@@ -14,14 +14,20 @@
 	} from './WeaponEditPane.svelte'
 	import { useSyncGridWeapon } from '$lib/api/mutations/grid.mutations'
 	import Icon from '$lib/components/Icon.svelte'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import { getElementKey } from '$lib/utils/element'
+	import { untrack } from 'svelte'
 
 	interface Props {
+		paneId?: string
 		weapon: GridWeapon
 		onSave?: (updates: Partial<GridWeapon>) => void
 		onCancel?: () => void
 	}
 
-	let { weapon, onSave, onCancel }: Props = $props()
+	let { paneId, weapon, onSave, onCancel }: Props = $props()
+
+	let editPaneRef: ReturnType<typeof WeaponEditPane> | undefined = $state()
 
 	// Sync mutation
 	const syncMutation = useSyncGridWeapon()
@@ -61,6 +67,23 @@
 		befoulment: weapon.befoulment ?? null
 	})
 
+	// Element name for action button theming
+	const elementId = $derived(weapon.element || weaponData?.element)
+	const elementName = $derived(
+		elementId ? (getElementKey(elementId) as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light') : undefined
+	)
+
+	// Register save action in the pane header
+	$effect(() => {
+		// Read elementName to track it
+		const el = elementName
+		untrack(() => {
+			if (paneId) {
+				sidebar.setActionForPane(paneId, () => editPaneRef?.save(), m.action_save(), el)
+			}
+		})
+	})
+
 	function handleSave(updates: WeaponEditUpdates) {
 		onSave?.(updates as Partial<GridWeapon>)
 	}
@@ -92,6 +115,7 @@
 	{/if}
 
 	<WeaponEditPane
+		bind:this={editPaneRef}
 		{weaponData}
 		{currentValues}
 		onSave={handleSave}
