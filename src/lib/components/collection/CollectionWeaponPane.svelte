@@ -26,7 +26,7 @@
 	import WeaponEditPane, {
 		type WeaponEditValues,
 		type WeaponEditUpdates
-	} from '$lib/components/collection/WeaponEditPane.svelte'
+	} from '$lib/components/sidebar/WeaponEditPane.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
