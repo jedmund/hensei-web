@@ -3,7 +3,7 @@ import { getElementKey } from '$lib/utils/element'
 import { sidebar } from '$lib/stores/sidebar.svelte'
 import { partyStore } from '$lib/stores/partyStore.svelte'
 import DetailsSidebar from '$lib/components/sidebar/DetailsSidebar.svelte'
-import EditWeaponSidebar from '$lib/components/sidebar/EditWeaponSidebar.svelte'
+import EditWeaponPane from '$lib/components/sidebar/EditWeaponPane.svelte'
 import EditCharacterSidebar from '$lib/components/sidebar/EditCharacterSidebar.svelte'
 import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 import { canWeaponBeModified, canCharacterBeModified } from '$lib/utils/modificationDetector'
@@ -123,7 +123,7 @@ export function openWeaponEditSidebar(weapon: GridWeapon, onSaveWeapon?: (id: st
   const paneConfig = {
     id: editPaneId,
     title,
-    component: EditWeaponSidebar,
+    component: EditWeaponPane,
     props: {
       weapon,
       onSave: handleSave,
