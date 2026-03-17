@@ -31,6 +31,11 @@ import type {
 	UpdateSummonSeriesPayload
 } from '$lib/types/api/summonSeries'
 import type { Awakening } from '$lib/types/api/entities'
+import type {
+	WeaponSeriesVariant,
+	CreateWeaponSeriesVariantPayload,
+	UpdateWeaponSeriesVariantPayload
+} from '$lib/types/api/weaponSeriesVariant'
 
 /**
  * Canonical weapon data from the game
@@ -1391,6 +1396,43 @@ export class EntityAdapter extends BaseAdapter {
 	 */
 	clearWeaponSeriesCache() {
 		this.clearCache('/weapon_series')
+	}
+
+	// ============================================================
+	// WEAPON SERIES VARIANT METHODS
+	// ============================================================
+
+	async createWeaponSeriesVariant(
+		seriesId: string,
+		payload: CreateWeaponSeriesVariantPayload
+	): Promise<WeaponSeriesVariant> {
+		return this.request<WeaponSeriesVariant>(
+			`/weapon_series/${seriesId}/weapon_series_variants`,
+			{
+				method: 'POST',
+				body: { weapon_series_variant: payload }
+			}
+		)
+	}
+
+	async updateWeaponSeriesVariant(
+		seriesId: string,
+		variantId: string,
+		payload: UpdateWeaponSeriesVariantPayload
+	): Promise<WeaponSeriesVariant> {
+		return this.request<WeaponSeriesVariant>(
+			`/weapon_series/${seriesId}/weapon_series_variants/${variantId}`,
+			{
+				method: 'PATCH',
+				body: { weapon_series_variant: payload }
+			}
+		)
+	}
+
+	async deleteWeaponSeriesVariant(seriesId: string, variantId: string): Promise<void> {
+		await this.request(`/weapon_series/${seriesId}/weapon_series_variants/${variantId}`, {
+			method: 'DELETE'
+		})
 	}
 
 	// ============================================================
