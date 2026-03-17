@@ -1569,6 +1569,7 @@
 	"playlist_field_video_url": "YouTube video",
 	"playlist_field_video_url_placeholder": "https://youtube.com/watch?v=...",
 	"playlist_add_teams": "Add teams",
+	"playlist_manage_teams": "Manage teams",
 	"playlist_already_added": "Already in playlist",
 	"playlist_updated": "Updated {time}",
 	"playlist_page_title": "{title} / A playlist by {username} / granblue.team",

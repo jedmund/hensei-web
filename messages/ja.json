@@ -1568,6 +1568,7 @@
 	"playlist_field_video_url": "YouTube動画",
 	"playlist_field_video_url_placeholder": "https://youtube.com/watch?v=...",
 	"playlist_add_teams": "編成を追加",
+	"playlist_manage_teams": "編成を管理する",
 	"playlist_already_added": "追加済み",
 	"playlist_updated": "{time}に更新",
 	"playlist_page_title": "{title} / {username}のプレイリスト / granblue.team",
