@@ -136,7 +136,7 @@
 	</div>
 
 	{#if !isNoAwakening}
-		<DetailRow label={m.label_level()} noHover noPadding>
+		<DetailRow label={m.label_level()} noHover noPadding error={levelError || undefined}>
 			<Input
 				type="number"
 				min={1}
@@ -144,23 +144,16 @@
 				step={1}
 				value={localLevel}
 				oninput={handleLevelChange}
-				error={levelError || undefined}
 				contained
 				variant="number"
 				placeholder="1~{maxLevel}"
 			/>
 		</DetailRow>
 	{/if}
-
-	{#if levelError}
-		<p class="level-error">{levelError}</p>
-	{/if}
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
 
 	.awakening-select {
 		display: flex;
@@ -172,9 +165,4 @@
 		flex: 1;
 	}
 
-	.level-error {
-		margin: 0;
-		font-size: typography.$font-small;
-		color: var(--danger);
-	}
 </style>
