@@ -12,6 +12,7 @@
 	} from '$lib/utils/jobUtils'
 	import { getAccessoryImage, getBasePath } from '$lib/utils/images'
 	import Icon from '$lib/components/Icon.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { localizedName } from '$lib/utils/locale'
@@ -70,9 +71,11 @@
 		{/if}
 
 		{#if canEdit && job}
-			<button class="change-job-button" onclick={onSelectJob} aria-label="Change job">
-				<Icon name="arrow-left" size={16} />
-			</button>
+			<Tooltip content={m.job_change()}>
+				<button class="change-job-button" onclick={onSelectJob} aria-label={m.job_change()}>
+					<Icon name="swap" size={16} />
+				</button>
+			</Tooltip>
 		{/if}
 	</div>
 

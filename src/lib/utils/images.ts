@@ -356,27 +356,8 @@ export function getAwakeningImage(slug: string | undefined, extension: 'png' | '
 /**
  * Get weapon key image URL
  */
-export function getWeaponKeyImage(slug: string, element?: number): string {
-	const basePath = `${getBasePath()}/weapon-keys`
-
-	// Check if this key type needs element suffix
-	if (element && isElementalWeaponKey(slug)) {
-		return `${basePath}/${slug}-${element}.png`
-	}
-	return `${basePath}/${slug}.png`
-}
-
-/**
- * Check if weapon key slug requires element suffix
- */
-function isElementalWeaponKey(slug: string): boolean {
-	const elementalKeys = [
-		'elemental-teluma',
-		'pendulum',
-		'chain-of-causality',
-		'ultima'
-	]
-	return elementalKeys.some((key) => slug.includes(key))
+export function getWeaponKeyImage(slug: string): string {
+	return `${getBasePath()}/weapon-keys/${slug}.png`
 }
 
 /**

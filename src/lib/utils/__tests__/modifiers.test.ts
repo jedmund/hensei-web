@@ -4,10 +4,6 @@ vi.mock('$lib/utils/images', () => ({
 	getBasePath: vi.fn(() => '/images')
 }))
 
-vi.mock('$lib/types/api/weaponSeries', () => ({
-	isWeaponSeriesRef: vi.fn((s: any) => s !== null && typeof s === 'object' && 'slug' in s && 'id' in s && 'name' in s)
-}))
-
 import {
 	getAwakeningImage,
 	getWeaponKeyImage,
@@ -16,7 +12,6 @@ import {
 	getAxSkillImages
 } from '../modifiers'
 import type { WeaponKey } from '$lib/types/api/entities'
-import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 
 function makeKey(overrides: Partial<WeaponKey> = {}): WeaponKey {
 	return {
@@ -26,19 +21,6 @@ function makeKey(overrides: Partial<WeaponKey> = {}): WeaponKey {
 		name: { en: 'Alpha', ja: 'アルファ' },
 		...overrides
 	} as WeaponKey
-}
-
-function makeSeries(slug: string): WeaponSeriesRef {
-	return {
-		id: 's-1',
-		slug,
-		name: { en: slug, ja: slug },
-		hasWeaponKeys: true,
-		hasAwakening: false,
-		augmentType: 'no_augment',
-		extra: false,
-		elementChangeable: false
-	}
 }
 
 // ============================================================================
@@ -78,62 +60,13 @@ describe('getWeaponKeyImage', () => {
 		expect(getWeaponKeyImage(makeKey({ slug: '' }))).toBe('')
 	})
 
-	it('returns basic key image', () => {
+	it('returns key image using slug directly', () => {
 		expect(getWeaponKeyImage(makeKey())).toBe('/images/weapon-keys/alpha.png')
 	})
 
-	it('adds element suffix for elemental teluma keys', () => {
-		const key = makeKey({ slug: 'teluma', granblueId: 15008 })
-		expect(getWeaponKeyImage(key, 3)).toBe('/images/weapon-keys/teluma-3.png')
-	})
-
-	it('does not add element for non-teluma keys', () => {
-		const key = makeKey({ slug: 'alpha', granblueId: 10000 })
-		expect(getWeaponKeyImage(key, 3)).toBe('/images/weapon-keys/alpha.png')
-	})
-
-	it('adds proficiency suffix for ultima slot 0', () => {
-		const key = makeKey({ slug: 'strife', slot: 0 })
-		expect(getWeaponKeyImage(key, undefined, 1, makeSeries('ultima'))).toBe(
-			'/images/weapon-keys/strife-1.png'
-		)
-	})
-
-	it('does not add proficiency for non-ultima', () => {
-		const key = makeKey({ slug: 'strife', slot: 0 })
-		expect(getWeaponKeyImage(key, undefined, 1, makeSeries('dark-opus'))).toBe(
-			'/images/weapon-keys/strife.png'
-		)
-	})
-
-	it('adds mod and element suffix for dark-opus slot 1 pendulums', () => {
-		const key = makeKey({ slug: 'pendulum-strength', slot: 1 })
-		const url = getWeaponKeyImage(
-			key,
-			2,
-			undefined,
-			makeSeries('dark-opus'),
-			{ en: 'Repudiation' }
-		)
-		expect(url).toBe('/images/weapon-keys/pendulum-strength-primal-2.png')
-	})
-
-	it('uses magna for non-Repudiation opus weapons', () => {
-		const key = makeKey({ slug: 'pendulum-zeal', slot: 1 })
-		const url = getWeaponKeyImage(
-			key,
-			4,
-			undefined,
-			makeSeries('dark-opus'),
-			{ en: 'Renunciation' }
-		)
-		expect(url).toBe('/images/weapon-keys/pendulum-zeal-magna-4.png')
-	})
-
-	it('does not add opus suffix for non-matching slugs', () => {
-		const key = makeKey({ slug: 'alpha', slot: 1 })
-		const url = getWeaponKeyImage(key, 2, undefined, makeSeries('dark-opus'), { en: 'Repudiation' })
-		expect(url).toBe('/images/weapon-keys/alpha.png')
+	it('does not add any suffixes', () => {
+		const key = makeKey({ slug: 'pendulum-strength', slot: 1, granblueId: 15008 })
+		expect(getWeaponKeyImage(key)).toBe('/images/weapon-keys/pendulum-strength.png')
 	})
 })
 
@@ -161,10 +94,10 @@ describe('getWeaponKeyImages', () => {
 		expect(getWeaponKeyImages(keys)).toHaveLength(1)
 	})
 
-	it('handles array proficiency (takes first)', () => {
+	it('uses slug directly without suffixes', () => {
 		const keys = [makeKey({ slug: 'strife', slot: 0 })]
-		const result = getWeaponKeyImages(keys, undefined, [1, 2], makeSeries('ultima'))
-		expect(result[0]!.url).toContain('strife-1')
+		const result = getWeaponKeyImages(keys)
+		expect(result[0]!.url).toBe('/images/weapon-keys/strife.png')
 	})
 })
 

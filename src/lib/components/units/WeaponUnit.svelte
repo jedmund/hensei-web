@@ -49,15 +49,7 @@
 	let awakeningImage = $derived(getAwakeningImage(item?.awakening))
 
 	// Get weapon key images using utility
-	let weaponKeyImages = $derived(
-		getWeaponKeyImages(
-			item?.weaponKeys,
-			item?.weapon?.element,
-			item?.weapon?.proficiency,
-			item?.weapon?.series,
-			item?.weapon?.name
-		)
-	)
+	let weaponKeyImages = $derived(getWeaponKeyImages(item?.weaponKeys))
 
 	// Get AX skill images using utility
 	let axSkillImages = $derived(getAxSkillImages(item?.ax))
@@ -572,8 +564,8 @@
 			padding: calc(spacing.$unit / 2);
 
 			.skill {
-				width: 20%;
-				height: auto;
+				width: 30px;
+				height: 30px;
 			}
 		}
 	}
@@ -622,7 +614,8 @@
 			justify-content: flex-end;
 
 			.skill {
-				height: 25%;
+				width: 38px;
+				height: 38px;
 			}
 		}
 	}

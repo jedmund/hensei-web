@@ -1,3 +1,34 @@
+import * as m from '$lib/paraglide/messages'
+
+/**
+ * Format a date string as relative time (e.g. "2 days ago") up to 1 week,
+ * then as an absolute date (e.g. "March 1, 2026").
+ */
+export function formatRelativeTime(dateString: string): string {
+	const date = new Date(dateString)
+	const now = new Date()
+	const diffMs = now.getTime() - date.getTime()
+	const diffSeconds = Math.floor(diffMs / 1000)
+	const diffMinutes = Math.floor(diffSeconds / 60)
+	const diffHours = Math.floor(diffMinutes / 60)
+	const diffDays = Math.floor(diffHours / 24)
+
+	if (diffSeconds < 60) return m.time_just_now()
+	if (diffMinutes === 1) return m.time_minute_ago()
+	if (diffMinutes < 60) return m.time_minutes_ago({ count: diffMinutes })
+	if (diffHours === 1) return m.time_hour_ago()
+	if (diffHours < 24) return m.time_hours_ago({ count: diffHours })
+	if (diffDays === 1) return m.time_yesterday()
+	if (diffDays < 7) return m.time_days_ago({ count: diffDays })
+	if (diffDays < 14) return m.time_one_week_ago()
+
+	return date.toLocaleDateString(undefined, {
+		year: 'numeric',
+		month: 'long',
+		day: 'numeric'
+	})
+}
+
 /**
  * Format a date string in JST (Japan Standard Time).
  * Use this for game-related dates like GW events, as Granblue Fantasy uses JST.

@@ -88,6 +88,7 @@
 	"job_selection_title": "Select Job",
 	"job_selection_search_placeholder": "Search jobs...",
 	"job_choose": "Choose a job",
+	"job_change": "Change job",
 
 	"skill_selection_title": "Select Skill",
 	"skill_selection_search_placeholder": "Search skills...",
@@ -1292,6 +1293,16 @@
 	"party_using_own_collection": "{username} using their collection",
 	"party_using_others_collection": "{username} using {otherUsername}'s collection",
 	"party_remixed": "{username} remixed {otherUsername}'s team",
+
+	"time_just_now": "Just now",
+	"time_minute_ago": "1 minute ago",
+	"time_minutes_ago": "{count} minutes ago",
+	"time_hour_ago": "1 hour ago",
+	"time_hours_ago": "{count} hours ago",
+	"time_yesterday": "Yesterday",
+	"time_days_ago": "{count} days ago",
+	"time_one_week_ago": "1 week ago",
+	"time_last_updated": "Last updated {time}",
 
 	"section_general": "General",
 	"section_uncap_level": "Uncap Level",
