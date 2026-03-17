@@ -35,6 +35,10 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 			throw new Error(m.toast_unsaved_swap())
 		}
 
+		if (!target.itemId) {
+			throw new Error('Cannot swap: target has no itemId')
+		}
+
 		const swapParams = {
 			partyId: party.id,
 			partyShortcode: party.shortcode,

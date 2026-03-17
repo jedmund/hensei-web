@@ -210,6 +210,7 @@
 				name: selectedRaid.name,
 				level: selectedRaid.level,
 				element: selectedRaid.element,
+				extra: selectedRaid.extra ?? false,
 				group: selectedRaid.group
 					? {
 							id: selectedRaid.group.id,

@@ -10,6 +10,7 @@ export interface Position {
 
 export interface DragSource extends Position {
 	type: GridItemType
+	itemId?: string
 }
 
 export interface DraggedItem {
