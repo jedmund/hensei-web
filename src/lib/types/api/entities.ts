@@ -23,6 +23,8 @@ export interface Weapon {
   maxExorcismLevel?: number | null
   /** Weapon series - object with slug/name/flags */
   series: WeaponSeriesRef | null
+  /** Variant override ID (via series.weaponSeriesVariantId from API) */
+  weaponSeriesVariantId?: string | null
   ax: boolean
   axType: number
   limit?: number
