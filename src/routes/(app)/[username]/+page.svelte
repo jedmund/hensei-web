@@ -1,14 +1,20 @@
 <script lang="ts">
 	import type { PageData } from './$types'
+	import type { Party } from '$lib/types/api/party'
 	import { onDestroy } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
-	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
+	import { ContextMenu } from 'bits-ui'
+	import { goto } from '$app/navigation'
+	import GridRep from '$lib/components/reps/GridRep.svelte'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import MigrateBanner from '$lib/components/profile/MigrateBanner.svelte'
+	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import { userQueries } from '$lib/api/queries/user.queries'
+	import { useDeleteParty } from '$lib/api/mutations/party.mutations'
 	import { page } from '$app/stores'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
@@ -55,6 +61,23 @@
 	})
 
 	const isEmpty = $derived(!partiesQuery.isLoading && items().length === 0)
+
+	// Delete team
+	const deleteParty = useDeleteParty()
+	let deleteTarget = $state<Party | null>(null)
+	let deleteDialogOpen = $state(false)
+
+	function confirmDeleteTeam(party: Party) {
+		deleteTarget = party
+		deleteDialogOpen = true
+	}
+
+	async function handleDeleteTeam() {
+		if (!deleteTarget) return
+		await deleteParty.mutateAsync({ id: deleteTarget.id, shortcode: deleteTarget.shortcode })
+		deleteDialogOpen = false
+		deleteTarget = null
+	}
 </script>
 
 <PageMeta
@@ -103,7 +126,42 @@
 		</div>
 	{:else}
 		<div class="profile-grid">
-			<ExploreGrid items={items()} />
+			<ul class="grid" role="list">
+				{#each items() as party (party.id)}
+					<li>
+						{#if isOwner}
+							<ContextMenu.Root>
+								<ContextMenu.Trigger>
+									{#snippet child({ props })}
+										<div {...props}>
+											<GridRep {party} />
+										</div>
+									{/snippet}
+								</ContextMenu.Trigger>
+								<ContextMenu.Portal>
+									<ContextMenu.Content class="context-menu">
+										<ContextMenu.Item
+											class="context-menu-item"
+											onclick={() => goto(localizeHref(`/teams/${party.shortcode}`))}
+										>
+											{m.context_view_team()}
+										</ContextMenu.Item>
+										<ContextMenu.Separator class="context-menu-separator" />
+										<ContextMenu.Item
+											class="context-menu-item danger"
+											onclick={() => confirmDeleteTeam(party)}
+										>
+											{m.context_delete_team()}
+										</ContextMenu.Item>
+									</ContextMenu.Content>
+								</ContextMenu.Portal>
+							</ContextMenu.Root>
+						{:else}
+							<GridRep {party} />
+						{/if}
+					</li>
+				{/each}
+			</ul>
 
 			<div
 				class="load-more-sentinel"
@@ -127,14 +185,36 @@
 	{/if}
 </section>
 
+<ConfirmDialog
+	bind:open={deleteDialogOpen}
+	title={m.confirm_delete_team_title()}
+	message={m.confirm_delete_team_message()}
+	loading={deleteParty.isPending}
+	onconfirm={handleDeleteTeam}
+/>
+
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/colors' as *;
+	@use '$src/themes/mixins' as *;
+	@use '$lib/components/ui/menu/menu-styles';
 
 	.profile {
 		display: flex;
 		flex-direction: column;
 		gap: $unit-2x;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: $unit-3x;
+		padding: 0;
+
+		@include breakpoint(tablet) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: $unit-2x; }
+		@include breakpoint(phone) { grid-template-columns: 1fr; gap: $unit; }
+
+		& > li { list-style: none; }
 	}
 
 	.empty,

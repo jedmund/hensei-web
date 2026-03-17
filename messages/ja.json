@@ -1573,5 +1573,14 @@
 	"playlist_updated": "{time}に更新",
 	"playlist_page_title": "{title} / {username}のプレイリスト / granblue.team",
 	"toast_added_to_playlist": "「{name}」プレイリストに追加しました",
-	"toast_view_playlist": "プレイリストを見る"
+	"toast_view_playlist": "プレイリストを見る",
+
+	"context_view_team": "編成を見る",
+	"context_delete_team": "編成を削除",
+	"context_view_playlist": "プレイリストを見る",
+	"context_delete_playlist": "プレイリストを削除",
+	"confirm_delete_team_title": "編成を削除",
+	"confirm_delete_team_message": "この編成を削除しますか？この操作は元に戻せません。",
+	"confirm_delete_playlist_title": "プレイリストを削除",
+	"confirm_delete_playlist_message": "このプレイリストを削除しますか？この操作は元に戻せません。"
 }
