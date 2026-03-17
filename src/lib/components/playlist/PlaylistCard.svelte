@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Playlist } from '$lib/types/api/playlist'
 	import { localizeHref } from '$lib/paraglide/runtime'
+	import { getRaidImage } from '$lib/utils/images'
 	import Icon from '$lib/components/Icon.svelte'
 	import * as m from '$lib/paraglide/messages'
 
@@ -14,13 +15,22 @@
 	const visibilityIcon = $derived(
 		playlist.visibility === 1 ? 'globe' : playlist.visibility === 2 ? 'link' : 'lock'
 	)
+
+	const raidSlugs = $derived(playlist.raidSlugs?.slice(0, 4) ?? [])
+	const isGrid = $derived(raidSlugs.length > 1)
 </script>
 
 <a class="card" href={localizeHref(`/${username}/playlists/${playlist.slug}`)}>
 	<div class="card-body">
 		<h3 class="title">{playlist.title}</h3>
-		{#if playlist.description}
-			<p class="description">{playlist.description}</p>
+		{#if raidSlugs.length > 0}
+			<div class="raid-images" class:grid={isGrid}>
+				{#each raidSlugs as slug}
+					<img src={getRaidImage(slug, 'thumbnail')} alt="" class="raid-thumbnail" />
+				{/each}
+			</div>
+		{:else}
+			<div class="raid-placeholder"></div>
 		{/if}
 	</div>
 	<div class="card-footer">
@@ -39,6 +49,7 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/colors' as *;
 	@use '$src/themes/typography' as *;
+	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
 
 	.card {
@@ -46,22 +57,26 @@
 		flex-direction: column;
 		justify-content: space-between;
 		background: var(--card-bg);
+		border: 1px solid transparent;
 		border-radius: layout.$card-corner;
 		padding: $unit-2x;
 		text-decoration: none;
 		color: inherit;
-		min-height: 120px;
+		height: 238px;
 		transition: background-color 0.15s ease;
 
 		&:hover {
-			background: var(--card-bg-hover, var(--button-contained-bg-hover));
+			background: var(--grid-rep-hover);
+			box-shadow:
+				0 0 0 1px rgba(0, 0, 0, 0.1),
+				effects.$card-elevation;
 		}
 	}
 
 	.card-body {
 		display: flex;
 		flex-direction: column;
-		gap: $unit-half;
+		gap: $unit;
 	}
 
 	.title {
@@ -71,14 +86,27 @@
 		color: var(--text-primary);
 	}
 
-	.description {
-		margin: 0;
-		font-size: $font-small;
-		color: var(--text-secondary);
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
+	.raid-images {
+		border-radius: layout.$item-corner;
 		overflow: hidden;
+
+		&.grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: $unit;
+		}
+	}
+
+	.raid-thumbnail {
+		width: 100%;
+		display: block;
+	}
+
+	.raid-placeholder {
+		width: 100%;
+		aspect-ratio: 180 / 126;
+		border-radius: layout.$item-corner;
+		background: var(--button-contained-bg);
 	}
 
 	.card-footer {
