@@ -13,18 +13,20 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { useJobHandlers } from '../job-handlers.svelte'
 import { createMockMutations, createTestParty } from './helpers'
-import { MOCK_JOB, MOCK_JOB_SKILL_1, MOCK_JOB_SKILL_2 } from '$lib/api/mutations/__tests__/fixtures'
+import { MOCK_JOB, MOCK_JOB_SKILL_1, MOCK_JOB_SKILL_2, MOCK_JOB_ACCESSORY } from '$lib/api/mutations/__tests__/fixtures'
 import type { PartyMutations } from '../party-mutations.svelte'
 import type { Party } from '$lib/types/api/party'
-import type { Job, JobSkill } from '$lib/types/api/entities'
+import type { Job, JobSkill, JobAccessory } from '$lib/types/api/entities'
 
 // Capture sidebar openers so we can invoke their callbacks
 const mockOpenJobSidebar = vi.fn()
 const mockOpenSkillSidebar = vi.fn()
+const mockOpenAccessorySidebar = vi.fn()
 
 vi.mock('$lib/features/job/openJobSidebar.svelte', () => ({
 	openJobSelectionSidebar: (...args: unknown[]) => mockOpenJobSidebar(...args),
-	openJobSkillSelectionSidebar: (...args: unknown[]) => mockOpenSkillSidebar(...args)
+	openJobSkillSelectionSidebar: (...args: unknown[]) => mockOpenSkillSidebar(...args),
+	openJobAccessorySelectionSidebar: (...args: unknown[]) => mockOpenAccessorySidebar(...args)
 }))
 
 vi.mock('svelte-sonner', () => ({
@@ -62,6 +64,15 @@ describe('useJobHandlers', () => {
 	} {
 		const call = mockOpenSkillSidebar.mock.calls.at(-1)?.[0]
 		return { onSelectSkill: call.onSelectSkill, onRemoveSkill: call.onRemoveSkill }
+	}
+
+	/** Extracts callbacks from the last openJobAccessorySelectionSidebar call */
+	function getAccessoryCallbacks(): {
+		onSelectAccessory: (accessory: JobAccessory) => Promise<void>
+		onRemoveAccessory: () => Promise<void>
+	} {
+		const call = mockOpenAccessorySidebar.mock.calls.at(-1)?.[0]
+		return { onSelectAccessory: call.onSelectAccessory, onRemoveAccessory: call.onRemoveAccessory }
 	}
 
 	beforeEach(() => {
@@ -143,6 +154,12 @@ describe('useJobHandlers', () => {
 			handlers = createHandlers({ canEdit: () => false })
 			await handlers.handleRemoveJobSkill(0)
 			expect(mutations.job.removeJobSkill.mutateAsync).not.toHaveBeenCalled()
+		})
+
+		it('handleSelectAccessory does not open sidebar when canEdit is false', () => {
+			handlers = createHandlers({ canEdit: () => false })
+			handlers.handleSelectAccessory()
+			expect(mockOpenAccessorySidebar).not.toHaveBeenCalled()
 		})
 	})
 
@@ -259,6 +276,81 @@ describe('useJobHandlers', () => {
 			await handlers.handleRemoveJobSkill(0)
 
 			expect(handlers.loading).toBe(false)
+		})
+	})
+
+	// ========================================================================
+	// Accessory selection
+	// ========================================================================
+
+	describe('handleSelectAccessory', () => {
+		it('opens sidebar with current job and accessory', () => {
+			handlers.handleSelectAccessory()
+
+			expect(mockOpenAccessorySidebar).toHaveBeenCalledWith(
+				expect.objectContaining({
+					job: party.job,
+					currentAccessory: party.accessory
+				})
+			)
+		})
+
+		it('fires updateAccessory mutation when user selects an accessory', async () => {
+			handlers.handleSelectAccessory()
+			const { onSelectAccessory } = getAccessoryCallbacks()
+
+			const newAccessory = { ...MOCK_JOB_ACCESSORY, id: 'new-acc-id' }
+			await onSelectAccessory(newAccessory)
+
+			expect(mutations.job.updateAccessory.mutateAsync).toHaveBeenCalledWith({
+				shortcode: party.shortcode,
+				accessoryId: 'new-acc-id'
+			})
+		})
+
+		it('fires removeAccessory mutation when user removes accessory', async () => {
+			handlers.handleSelectAccessory()
+			const { onRemoveAccessory } = getAccessoryCallbacks()
+
+			await onRemoveAccessory()
+
+			expect(mutations.job.removeAccessory.mutateAsync).toHaveBeenCalledWith({
+				shortcode: party.shortcode
+			})
+		})
+
+		it('loading resets after successful accessory selection', async () => {
+			handlers.handleSelectAccessory()
+			const { onSelectAccessory } = getAccessoryCallbacks()
+
+			await onSelectAccessory(MOCK_JOB_ACCESSORY)
+
+			expect(handlers.loading).toBe(false)
+		})
+
+		it('loading resets after failed accessory selection', async () => {
+			vi.mocked(mutations.job.updateAccessory.mutateAsync).mockRejectedValue(new Error('fail'))
+			handlers.handleSelectAccessory()
+			const { onSelectAccessory } = getAccessoryCallbacks()
+
+			await onSelectAccessory(MOCK_JOB_ACCESSORY)
+
+			expect(handlers.loading).toBe(false)
+		})
+
+		it('resolves shortcode via ensurePartyExists for new parties', async () => {
+			party = createTestParty({ shortcode: 'new' })
+			const ensurePartyExists = vi.fn().mockResolvedValue({ id: 'x', shortcode: 'CREATED' })
+			handlers = createHandlers({ ensurePartyExists })
+
+			handlers.handleSelectAccessory()
+			const { onSelectAccessory } = getAccessoryCallbacks()
+			await onSelectAccessory(MOCK_JOB_ACCESSORY)
+
+			expect(ensurePartyExists).toHaveBeenCalledTimes(1)
+			expect(mutations.job.updateAccessory.mutateAsync).toHaveBeenCalledWith(
+				expect.objectContaining({ shortcode: 'CREATED' })
+			)
 		})
 	})
 

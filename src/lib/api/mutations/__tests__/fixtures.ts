@@ -7,7 +7,7 @@
  */
 
 import type { Party, GridWeapon, GridCharacter, GridSummon, JobSkillList, GuidebookList } from '$lib/types/api/party'
-import type { Weapon, Character, Summon, Job, JobSkill, Guidebook } from '$lib/types/api/entities'
+import type { Weapon, Character, Summon, Job, JobSkill, JobAccessory, Guidebook } from '$lib/types/api/entities'
 
 // ============================================================================
 // Base Entities
@@ -175,6 +175,18 @@ export const MOCK_JOB_SKILLS: JobSkillList = {
 }
 
 // ============================================================================
+// Job Accessories
+// ============================================================================
+
+export const MOCK_JOB_ACCESSORY: JobAccessory = {
+	id: 'acc-1',
+	name: { en: 'Test Shield', ja: 'テスト盾' },
+	granblueId: '400001',
+	rarity: 5,
+	accessoryType: 1
+}
+
+// ============================================================================
 // Guidebooks
 // ============================================================================
 
@@ -213,6 +225,7 @@ export const MOCK_PARTY: Party = {
 	job: MOCK_JOB,
 	jobSkills: MOCK_JOB_SKILLS,
 	guidebooks: MOCK_GUIDEBOOK_LIST,
+	accessory: MOCK_JOB_ACCESSORY,
 	favorited: false,
 	user: { id: 'user-1', username: 'testuser' },
 	createdAt: '2024-01-01T00:00:00Z',

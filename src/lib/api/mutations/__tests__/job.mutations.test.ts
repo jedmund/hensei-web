@@ -3,7 +3,8 @@ import {
 	updatePartyJobOptions,
 	updatePartyJobSkillsOptions,
 	removePartyJobSkillOptions,
-	updatePartyAccessoryOptions
+	updatePartyAccessoryOptions,
+	removePartyAccessoryOptions
 } from '../job.mutations'
 import { createTestQueryClient, seedPartyCache, getCachedParty } from './helpers'
 import { MOCK_PARTY, MOCK_SHORTCODE } from './fixtures'
@@ -14,7 +15,8 @@ vi.mock('$lib/api/adapters/party.adapter', () => ({
 		updateJob: vi.fn(),
 		updateJobSkills: vi.fn(),
 		removeJobSkill: vi.fn(),
-		updateAccessory: vi.fn()
+		updateAccessory: vi.fn(),
+		removeAccessory: vi.fn()
 	}
 }))
 
@@ -74,16 +76,6 @@ describe('updatePartyJobOptions', () => {
 
 		expect(getCachedParty(queryClient, MOCK_SHORTCODE)).toEqual(MOCK_PARTY)
 	})
-
-	it('invalidates party on settled', () => {
-		const spy = vi.spyOn(queryClient, 'invalidateQueries')
-		const opts = updatePartyJobOptions(queryClient)
-
-		opts.onSettled(undefined, undefined, { shortcode: MOCK_SHORTCODE, jobId: 'x' })
-
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
-		expect(keys).toContainEqual(['party', MOCK_SHORTCODE])
-	})
 })
 
 // ============================================================================
@@ -91,14 +83,14 @@ describe('updatePartyJobOptions', () => {
 // ============================================================================
 
 describe('updatePartyJobSkillsOptions', () => {
-	it('invalidates party detail on success', () => {
-		const spy = vi.spyOn(queryClient, 'invalidateQueries')
+	it('calls adapter with transformed skill params', async () => {
+		const { partyAdapter } = await import('$lib/api/adapters/party.adapter')
 		const opts = updatePartyJobSkillsOptions(queryClient)
+		const skills = [{ id: 'skill-a', slot: 1 }]
 
-		opts.onSuccess(undefined, { shortcode: MOCK_SHORTCODE, skills: [] })
+		await opts.mutationFn({ shortcode: MOCK_SHORTCODE, skills })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
-		expect(keys).toContainEqual(['party', MOCK_SHORTCODE])
+		expect(partyAdapter.updateJobSkills).toHaveBeenCalledWith(MOCK_SHORTCODE, skills)
 	})
 })
 
@@ -143,16 +135,6 @@ describe('removePartyJobSkillOptions', () => {
 
 		expect(getCachedParty(queryClient, MOCK_SHORTCODE)).toEqual(MOCK_PARTY)
 	})
-
-	it('invalidates party on settled', () => {
-		const spy = vi.spyOn(queryClient, 'invalidateQueries')
-		const opts = removePartyJobSkillOptions(queryClient)
-
-		opts.onSettled(undefined, undefined, { shortcode: MOCK_SHORTCODE, slot: 0 })
-
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
-		expect(keys).toContainEqual(['party', MOCK_SHORTCODE])
-	})
 })
 
 // ============================================================================
@@ -160,13 +142,90 @@ describe('removePartyJobSkillOptions', () => {
 // ============================================================================
 
 describe('updatePartyAccessoryOptions', () => {
-	it('invalidates party detail on success', () => {
-		const spy = vi.spyOn(queryClient, 'invalidateQueries')
+	it('optimistically updates accessory ID in cached party', async () => {
 		const opts = updatePartyAccessoryOptions(queryClient)
 
-		opts.onSuccess(undefined, { shortcode: MOCK_SHORTCODE, accessoryId: 'acc-1' })
+		await opts.onMutate({ shortcode: MOCK_SHORTCODE, accessoryId: 'new-acc-id' })
 
-		const keys = spy.mock.calls.map((c) => c[0].queryKey)
-		expect(keys).toContainEqual(['party', MOCK_SHORTCODE])
+		const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
+		expect(cached?.accessory?.id).toBe('new-acc-id')
+	})
+
+	it('preserves other accessory fields during optimistic update', async () => {
+		const opts = updatePartyAccessoryOptions(queryClient)
+
+		await opts.onMutate({ shortcode: MOCK_SHORTCODE, accessoryId: 'new-acc-id' })
+
+		const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
+		expect(cached?.accessory?.name).toEqual(MOCK_PARTY.accessory?.name)
+	})
+
+	it('returns snapshot for rollback', async () => {
+		const opts = updatePartyAccessoryOptions(queryClient)
+
+		const context = await opts.onMutate({ shortcode: MOCK_SHORTCODE, accessoryId: 'new-acc-id' })
+
+		expect(context.previousParty?.accessory).toEqual(MOCK_PARTY.accessory)
+	})
+
+	it('rolls back on error', async () => {
+		const opts = updatePartyAccessoryOptions(queryClient)
+		const params = { shortcode: MOCK_SHORTCODE, accessoryId: 'new-acc-id' }
+
+		const context = await opts.onMutate(params)
+		opts.onError(new Error('fail'), params, context)
+
+		const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
+		expect(cached?.accessory?.id).toBe(MOCK_PARTY.accessory?.id)
+	})
+
+	it('does nothing on error without context', () => {
+		const opts = updatePartyAccessoryOptions(queryClient)
+
+		opts.onError(new Error('fail'), { shortcode: MOCK_SHORTCODE, accessoryId: 'x' }, undefined)
+
+		expect(getCachedParty(queryClient, MOCK_SHORTCODE)).toEqual(MOCK_PARTY)
+	})
+})
+
+// ============================================================================
+// removePartyAccessory
+// ============================================================================
+
+describe('removePartyAccessoryOptions', () => {
+	it('optimistically clears accessory in cached party', async () => {
+		const opts = removePartyAccessoryOptions(queryClient)
+
+		await opts.onMutate({ shortcode: MOCK_SHORTCODE })
+
+		const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
+		expect(cached?.accessory).toBeUndefined()
+	})
+
+	it('returns snapshot with original accessory for rollback', async () => {
+		const opts = removePartyAccessoryOptions(queryClient)
+
+		const context = await opts.onMutate({ shortcode: MOCK_SHORTCODE })
+
+		expect(context.previousParty?.accessory).toEqual(MOCK_PARTY.accessory)
+	})
+
+	it('rolls back on error', async () => {
+		const opts = removePartyAccessoryOptions(queryClient)
+		const params = { shortcode: MOCK_SHORTCODE }
+
+		const context = await opts.onMutate(params)
+		opts.onError(new Error('fail'), params, context)
+
+		const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
+		expect(cached?.accessory).toEqual(MOCK_PARTY.accessory)
+	})
+
+	it('does nothing on error without context', () => {
+		const opts = removePartyAccessoryOptions(queryClient)
+
+		opts.onError(new Error('fail'), { shortcode: MOCK_SHORTCODE }, undefined)
+
+		expect(getCachedParty(queryClient, MOCK_SHORTCODE)).toEqual(MOCK_PARTY)
 	})
 })

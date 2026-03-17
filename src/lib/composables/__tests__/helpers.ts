@@ -57,7 +57,9 @@ export function createMockMutations(): PartyMutations {
 		job: {
 			updateJob: mockMutation(),
 			updateJobSkills: mockMutation(),
-			removeJobSkill: mockMutation()
+			removeJobSkill: mockMutation(),
+			updateAccessory: mockMutation(),
+			removeAccessory: mockMutation()
 		}
 	} as unknown as PartyMutations
 }
