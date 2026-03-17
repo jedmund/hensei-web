@@ -564,8 +564,8 @@
 			padding: calc(spacing.$unit / 2);
 
 			.skill {
-				width: 20%;
-				height: auto;
+				width: 30px;
+				height: 30px;
 			}
 		}
 	}
@@ -614,7 +614,8 @@
 			justify-content: flex-end;
 
 			.skill {
-				height: 25%;
+				width: 38px;
+				height: 38px;
 			}
 		}
 	}
