@@ -107,7 +107,7 @@
 		<MigrateBanner element={data.user?.avatar?.element} />
 	{/if}
 
-	<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} contained />
+	<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} />
 
 	{#if partiesQuery.isLoading}
 		<div class="loading">
