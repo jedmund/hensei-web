@@ -10,6 +10,7 @@ export const mockSummon: Summon = {
 	rarity: 3, // SSR
 	maxLevel: 200,
 	subaura: true,
+	limit: false,
 	uncap: { flb: true, ulb: true, transcendence: true },
 	hp: { minHp: 1000, maxHp: 2000, maxHpFlb: 2500, maxHpUlb: 3000 },
 	atk: { minAtk: 3000, maxAtk: 4500, maxAtkFlb: 5500, maxAtkUlb: 6500 }

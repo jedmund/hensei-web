@@ -10,7 +10,8 @@ const mockOmegaSeries = {
 	hasAwakening: true,
 	augmentType: 'ax' as const,
 	extra: false,
-	elementChangeable: false
+	elementChangeable: false,
+	numWeaponKeys: null
 };
 
 const mockOpusSeries = {
@@ -21,7 +22,8 @@ const mockOpusSeries = {
 	hasAwakening: true,
 	augmentType: 'no_augment' as const,
 	extra: false,
-	elementChangeable: false
+	elementChangeable: false,
+	numWeaponKeys: 3
 };
 
 const mockDraconicSeries = {
@@ -32,7 +34,8 @@ const mockDraconicSeries = {
 	hasAwakening: false,
 	augmentType: 'no_augment' as const,
 	extra: false,
-	elementChangeable: false
+	elementChangeable: false,
+	numWeaponKeys: 2
 };
 
 /** Mock weapon data for Storybook stories */

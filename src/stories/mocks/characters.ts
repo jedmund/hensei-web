@@ -16,7 +16,8 @@ export const mockCharacter: Character = {
 	uncap: { flb: true, ulb: true, transcendence: false },
 	proficiency: [1, 2], // Sabre, Dagger
 	hp: { minHp: 200, maxHp: 1200, maxHpFlb: 1500 },
-	atk: { minAtk: 6000, maxAtk: 8500, maxAtkFlb: 10000 }
+	atk: { minAtk: 6000, maxAtk: 8500, maxAtkFlb: 10000 },
+	styleSwap: false
 };
 
 export const mockSpecialCharacter: Character = {
@@ -33,7 +34,8 @@ export const mockSpecialCharacter: Character = {
 	uncap: { flb: true, ulb: true, transcendence: false },
 	proficiency: [6, 0], // Staff
 	hp: { minHp: 180, maxHp: 1100, maxHpFlb: 1400 },
-	atk: { minAtk: 5500, maxAtk: 8000, maxAtkFlb: 9500 }
+	atk: { minAtk: 5500, maxAtk: 8000, maxAtkFlb: 9500 },
+	styleSwap: false
 };
 
 export const mockGridCharacter: GridCharacter = {
