@@ -45,8 +45,7 @@
 	}
 
 	.error {
-		margin: spacing.$unit-half 0 0 0;
-		padding: 0 spacing.$unit;
+		margin: 0;
 		font-size: typography.$font-small;
 		color: var(--danger);
 	}
