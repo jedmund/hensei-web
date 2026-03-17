@@ -346,8 +346,8 @@
 											{#if series.elementChangeable}<span class="flag element">Element</span>{/if}
 											{#if series.hasWeaponKeys}<span class="flag keys">Keys</span>{/if}
 											{#if series.hasAwakening}<span class="flag awaken">Awaken</span>{/if}
-											{#if series.hasAxSkills}<span class="flag ax">AX</span>{/if}
-											{#if !series.extra && !series.elementChangeable && !series.hasWeaponKeys && !series.hasAwakening && !series.hasAxSkills}
+											{#if series.augmentType === 'ax'}<span class="flag ax">AX</span>{/if}
+											{#if !series.extra && !series.elementChangeable && !series.hasWeaponKeys && !series.hasAwakening && series.augmentType !== 'ax'}
 												<span class="no-flags">-</span>
 											{/if}
 										</div>

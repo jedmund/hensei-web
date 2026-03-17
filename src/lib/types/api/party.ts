@@ -143,6 +143,7 @@ export interface Party {
   element?: number
   favorited?: boolean
   extra?: boolean
+  solo?: boolean
   remix?: boolean
   editKey?: string
   /** Boost mod (omega, primal, odious, unboosted) and side (double, single, none) */

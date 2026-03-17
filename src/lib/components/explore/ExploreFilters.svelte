@@ -30,8 +30,8 @@
         pinned?: boolean
       }
     | { kind: 'party'; value: string; label: string; pinned?: boolean }
-    | { kind: 'boost'; value: string; label: string }
-    | { kind: 'side'; value: string; label: string }
+    | { kind: 'boost'; value: string; label: string; pinned?: boolean }
+    | { kind: 'side'; value: string; label: string; pinned?: boolean }
 
   interface Props {
     filters: FilterItem[]

@@ -1,6 +1,6 @@
 
 <script lang="ts">
-	import type { Element } from '$lib/types/api/shared'
+	type Element = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
 		/** Number of notifications */
