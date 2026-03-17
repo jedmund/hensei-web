@@ -6,10 +6,10 @@
 	import type { JobSkillList } from '$lib/types/api/party'
 	import { jobQueries } from '$lib/api/queries/job.queries'
 	import JobSkillItem from '../job/JobSkillItem.svelte'
-	import Button from '../ui/Button.svelte'
 	import Input from '../ui/Input.svelte'
 	import Select from '../ui/Select.svelte'
 	import Icon from '../Icon.svelte'
+	import SelectionSidebarLayout from './SelectionSidebarLayout.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import * as m from '$lib/paraglide/messages'
 
@@ -46,7 +46,6 @@
 	let searchQuery = $state('')
 	let skillCategory = $state(-1) // -1 = All
 	let error = $state<string | undefined>()
-	let resultsScrolled = $state(false)
 
 	// Debounced search value for query
 	let debouncedSearchQuery = $state('')
@@ -108,6 +107,15 @@
 
 	const isEmpty = $derived(skills.length === 0 && !skillsQuery.isLoading && !skillsQuery.isError)
 
+	const layoutEmpty = $derived(!job || slotLocked || isEmpty)
+	const layoutEmptyMessage = $derived(
+		!job
+			? m.skill_slot_select_job_first()
+			: slotLocked
+				? m.skill_slot_locked()
+				: m.sidebar_no_skills()
+	)
+
 	function handleSelectSkill(skill: JobSkill) {
 		error = undefined
 
@@ -166,47 +174,37 @@
 		</div>
 	{/if}
 
-	<div class="controls" class:scrolled={resultsScrolled}>
-		<Input
-			type="text"
-			placeholder={m.skill_selection_search_placeholder()}
-			bind:value={searchQuery}
-			leftIcon="search"
-			disabled={!canSearch}
-			fullWidth={true}
-			contained={true}
-		/>
-		<Select
-			options={skillCategoryOptions}
-			bind:value={skillCategory}
-			placeholder={m.sidebar_filter_category()}
-			disabled={!canSearch}
-			fullWidth={true}
-			contained={true}
-		/>
-	</div>
+	<SelectionSidebarLayout
+		isLoading={skillsQuery.isLoading}
+		isError={skillsQuery.isError}
+		isEmpty={layoutEmpty}
+		error={skillsQuery.error?.message}
+		onRetry={() => skillsQuery.refetch()}
+		loadingMessage={m.sidebar_loading_skills()}
+		emptyMessage={layoutEmptyMessage}
+		errorMessage={m.sidebar_skills_error()}
+	>
+		{#snippet controls()}
+			<Input
+				type="text"
+				placeholder={m.skill_selection_search_placeholder()}
+				bind:value={searchQuery}
+				leftIcon="search"
+				disabled={!canSearch}
+				fullWidth={true}
+				contained={true}
+			/>
+			<Select
+				options={skillCategoryOptions}
+				bind:value={skillCategory}
+				placeholder={m.sidebar_filter_category()}
+				disabled={!canSearch}
+				fullWidth={true}
+				contained={true}
+			/>
+		{/snippet}
 
-	<div class="results-section" onscroll={(e) => { resultsScrolled = e.currentTarget.scrollTop > 0 }}>
-		{#if !job}
-			<div class="no-results">
-				{m.skill_slot_select_job_first()}
-			</div>
-		{:else if slotLocked}
-			<div class="no-results">
-				{m.skill_slot_locked()}
-			</div>
-		{:else if skillsQuery.isLoading}
-			<div class="loading">
-				<Icon name="loader-2" size={24} />
-				<span>{m.sidebar_loading_skills()}</span>
-			</div>
-		{:else if skillsQuery.isError}
-			<div class="error-state">
-				<Icon name="alert-circle" size={24} />
-				<p>{skillsQuery.error?.message || m.sidebar_skills_error()}</p>
-				<Button size="small" onclick={() => skillsQuery.refetch()}>{m.retry()}</Button>
-			</div>
-		{:else}
+		{#snippet results()}
 			<div class="skills-list">
 				{#each skills as skill (skill.id)}
 					<JobSkillItem
@@ -214,12 +212,6 @@
 						onClick={() => handleSelectSkill(skill)}
 					/>
 				{/each}
-
-				{#if isEmpty}
-					<div class="no-results">
-						{m.sidebar_no_skills()}
-					</div>
-				{/if}
 
 				<div
 					class="load-more-sentinel"
@@ -234,8 +226,8 @@
 					</div>
 				{/if}
 			</div>
-		{/if}
-	</div>
+		{/snippet}
+	</SelectionSidebarLayout>
 </div>
 
 <style lang="scss">
@@ -317,68 +309,6 @@
 
 			&:hover {
 				opacity: 1;
-			}
-		}
-	}
-
-	.controls {
-		display: flex;
-		flex-direction: column;
-		gap: $unit;
-		padding: 0 $unit-2x $unit;
-		flex-shrink: 0;
-		border-bottom: 1px solid var(--border-primary);
-		position: relative;
-		z-index: 1;
-		transition: box-shadow 0.2s ease;
-
-		&.scrolled {
-			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-			border-bottom: 1px solid rgba(0, 0, 0, 0.01);
-		}
-	}
-
-	.results-section {
-		flex: 1;
-		overflow-y: auto;
-		padding: 0 $unit-2x;
-		min-height: 0;
-
-		.loading,
-		.no-results {
-			text-align: center;
-			padding: $unit-3x;
-			color: var(--text-secondary);
-			font-size: $font-regular;
-		}
-
-		.loading {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			gap: $unit;
-
-			:global(svg) {
-				animation: spin 1s linear infinite;
-			}
-		}
-
-		.error-state {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			gap: $unit;
-			padding: $unit-3x;
-			color: var(--text-secondary);
-
-			:global(svg) {
-				color: var(--text-tertiary);
-			}
-
-			p {
-				margin: 0;
-				font-size: $font-regular;
 			}
 		}
 	}
