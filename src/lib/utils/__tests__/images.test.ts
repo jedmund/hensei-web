@@ -447,23 +447,10 @@ describe('getAwakeningImage', () => {
 })
 
 describe('getWeaponKeyImage', () => {
-	it('returns key image without element', () => {
+	it('returns key image using slug directly', () => {
 		expect(getWeaponKeyImage('alpha')).toBe('/images/weapon-keys/alpha.png')
-	})
-
-	it('adds element suffix for elemental keys', () => {
-		expect(getWeaponKeyImage('pendulum', 3)).toBe('/images/weapon-keys/pendulum-3.png')
-		expect(getWeaponKeyImage('elemental-teluma', 1)).toBe(
-			'/images/weapon-keys/elemental-teluma-1.png'
-		)
-		expect(getWeaponKeyImage('chain-of-causality', 5)).toBe(
-			'/images/weapon-keys/chain-of-causality-5.png'
-		)
-		expect(getWeaponKeyImage('ultima', 2)).toBe('/images/weapon-keys/ultima-2.png')
-	})
-
-	it('does not add element for non-elemental keys', () => {
-		expect(getWeaponKeyImage('alpha', 3)).toBe('/images/weapon-keys/alpha.png')
+		expect(getWeaponKeyImage('pendulum')).toBe('/images/weapon-keys/pendulum.png')
+		expect(getWeaponKeyImage('elemental-teluma')).toBe('/images/weapon-keys/elemental-teluma.png')
 	})
 })
 
