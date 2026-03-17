@@ -362,7 +362,20 @@ export class PartyAdapter extends BaseAdapter {
 	async updateAccessory(partyId: string, accessoryId: string): Promise<Party> {
 		return this.request<Party>(`/parties/${partyId}/accessory`, {
 			method: 'PUT',
-			body: { accessory_id: accessoryId }
+			body: {
+				party: {
+					accessory_id: accessoryId
+				}
+			}
+		})
+	}
+
+	/**
+	 * Removes the accessory from a party
+	 */
+	async removeAccessory(partyId: string): Promise<Party> {
+		return this.request<Party>(`/parties/${partyId}/accessory`, {
+			method: 'DELETE'
 		})
 	}
 

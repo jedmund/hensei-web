@@ -119,7 +119,73 @@ export function updatePartyAccessoryOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ shortcode, accessoryId }: { shortcode: string; accessoryId: string }) =>
 			partyAdapter.updateAccessory(shortcode, accessoryId),
-		onSuccess: (_data: unknown, { shortcode }: { shortcode: string; accessoryId: string }) => {
+		onMutate: async ({ shortcode, accessoryId }: { shortcode: string; accessoryId: string }) => {
+			await queryClient.cancelQueries({ queryKey: partyKeys.detail(shortcode) })
+
+			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(shortcode))
+
+			if (previousParty) {
+				queryClient.setQueryData(partyKeys.detail(shortcode), {
+					...previousParty,
+					accessory: previousParty.accessory
+						? { ...previousParty.accessory, id: accessoryId }
+						: { id: accessoryId }
+				})
+			}
+
+			return { previousParty }
+		},
+		onError: (
+			_err: unknown,
+			{ shortcode }: { shortcode: string; accessoryId: string },
+			context: { previousParty?: Party } | undefined
+		) => {
+			if (context?.previousParty) {
+				queryClient.setQueryData(partyKeys.detail(shortcode), context.previousParty)
+			}
+		},
+		onSettled: (
+			_data: unknown,
+			_err: unknown,
+			{ shortcode }: { shortcode: string; accessoryId: string }
+		) => {
+			queryClient.invalidateQueries({ queryKey: partyKeys.detail(shortcode) })
+		}
+	}
+}
+
+export function removePartyAccessoryOptions(queryClient: QueryClient) {
+	return {
+		mutationFn: ({ shortcode }: { shortcode: string }) =>
+			partyAdapter.removeAccessory(shortcode),
+		onMutate: async ({ shortcode }: { shortcode: string }) => {
+			await queryClient.cancelQueries({ queryKey: partyKeys.detail(shortcode) })
+
+			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(shortcode))
+
+			if (previousParty) {
+				queryClient.setQueryData(partyKeys.detail(shortcode), {
+					...previousParty,
+					accessory: undefined
+				})
+			}
+
+			return { previousParty }
+		},
+		onError: (
+			_err: unknown,
+			{ shortcode }: { shortcode: string },
+			context: { previousParty?: Party } | undefined
+		) => {
+			if (context?.previousParty) {
+				queryClient.setQueryData(partyKeys.detail(shortcode), context.previousParty)
+			}
+		},
+		onSettled: (
+			_data: unknown,
+			_err: unknown,
+			{ shortcode }: { shortcode: string }
+		) => {
 			queryClient.invalidateQueries({ queryKey: partyKeys.detail(shortcode) })
 		}
 	}
@@ -147,4 +213,9 @@ export function useRemovePartyJobSkill() {
 export function useUpdatePartyAccessory() {
 	const queryClient = useQueryClient()
 	return createMutation(() => updatePartyAccessoryOptions(queryClient))
+}
+
+export function useRemovePartyAccessory() {
+	const queryClient = useQueryClient()
+	return createMutation(() => removePartyAccessoryOptions(queryClient))
 }

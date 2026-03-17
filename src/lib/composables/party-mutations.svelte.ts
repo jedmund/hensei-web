@@ -36,7 +36,9 @@ import {
 import {
 	useUpdatePartyJob,
 	useUpdatePartyJobSkills,
-	useRemovePartyJobSkill
+	useRemovePartyJobSkill,
+	useUpdatePartyAccessory,
+	useRemovePartyAccessory
 } from '$lib/api/mutations/job.mutations'
 
 export function usePartyMutations() {
@@ -77,6 +79,8 @@ export function usePartyMutations() {
 	const updateJob = useUpdatePartyJob()
 	const updateJobSkills = useUpdatePartyJobSkills()
 	const removeJobSkill = useRemovePartyJobSkill()
+	const updateAccessory = useUpdatePartyAccessory()
+	const removeAccessory = useRemovePartyAccessory()
 
 	return {
 		grid: {
@@ -115,7 +119,9 @@ export function usePartyMutations() {
 		job: {
 			updateJob,
 			updateJobSkills,
-			removeJobSkill
+			removeJobSkill,
+			updateAccessory,
+			removeAccessory
 		}
 	}
 }
