@@ -30,7 +30,8 @@ export const MOCK_WEAPON: Weapon = {
 		hasAwakening: true,
 		augmentType: 'no_augment',
 		extra: false,
-		elementChangeable: false
+		elementChangeable: false,
+		numWeaponKeys: 3
 	},
 	proficiency: 1,
 	ax: true,
@@ -53,6 +54,7 @@ export const MOCK_CHARACTER: Character = {
 	gender: 0,
 	race: { race1: 1, race2: 0 },
 	proficiency: [1],
+	styleSwap: false,
 	hp: { minHp: 150, maxHp: 750, maxHpFlb: 900 },
 	atk: { minAtk: 250, maxAtk: 1250, maxAtkFlb: 1500 }
 }
@@ -66,6 +68,7 @@ export const MOCK_SUMMON: Summon = {
 	maxLevel: 150,
 	uncap: { flb: true, ulb: true, transcendence: false },
 	subaura: false,
+	limit: false,
 	hp: { minHp: 100, maxHp: 500, maxHpFlb: 600, maxHpUlb: 700 },
 	atk: { minAtk: 200, maxAtk: 1000, maxAtkFlb: 1200, maxAtkUlb: 1400 }
 }

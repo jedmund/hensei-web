@@ -268,7 +268,8 @@ describe('canWeaponBeModified', () => {
 			hasAwakening: false,
 			augmentType: 'no_augment',
 			extra: false,
-			elementChangeable: false
+			elementChangeable: false,
+			numWeaponKeys: 3
 		}
 		expect(canWeaponBeModified(weapon)).toBe(true)
 	})
@@ -283,7 +284,8 @@ describe('canWeaponBeModified', () => {
 			hasAwakening: false,
 			augmentType: 'ax',
 			extra: false,
-			elementChangeable: false
+			elementChangeable: false,
+			numWeaponKeys: null
 		}
 		expect(canWeaponBeModified(weapon)).toBe(true)
 	})

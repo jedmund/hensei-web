@@ -19,7 +19,8 @@ function makeSeries(slug: string): WeaponSeriesRef {
 		hasAwakening: false,
 		augmentType: 'no_augment',
 		extra: false,
-		elementChangeable: false
+		elementChangeable: false,
+		numWeaponKeys: 3
 	}
 }
 

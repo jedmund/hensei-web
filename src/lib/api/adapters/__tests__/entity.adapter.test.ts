@@ -31,7 +31,8 @@ describe('EntityAdapter', () => {
 			hasAwakening: true,
 			augmentType: 'no_augment',
 			extra: false,
-			elementChangeable: false
+			elementChangeable: false,
+			numWeaponKeys: 3
 		},
 		weaponType: 1,
 		minHp: 100,

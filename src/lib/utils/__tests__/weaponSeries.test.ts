@@ -22,6 +22,7 @@ function makeSeries(overrides: Partial<WeaponSeriesRef> = {}): WeaponSeriesRef {
 		augmentType: 'no_augment',
 		extra: false,
 		elementChangeable: false,
+		numWeaponKeys: null,
 		...overrides
 	}
 }
