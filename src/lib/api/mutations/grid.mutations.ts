@@ -54,6 +54,15 @@ export function createGridMutation<TParams extends { partyId: number | string }>
 }
 
 // ============================================================================
+// Edit key helper
+// ============================================================================
+
+function editKeyHeaders(partyShortcode: string): Record<string, string> | undefined {
+	const editKey = getEditKey(partyShortcode)
+	return editKey ? { 'X-Edit-Key': editKey } : undefined
+}
+
+// ============================================================================
 // Shared optimistic update helpers
 // ============================================================================
 
@@ -88,8 +97,8 @@ export function createGridWeaponOptions(queryClient: QueryClient) {
 
 export function updateGridWeaponOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: ({ id, updates }: { id: string; partyShortcode: string; updates: Partial<GridWeapon> }) =>
-			gridAdapter.updateWeapon(id, updates),
+		mutationFn: ({ id, partyShortcode, updates }: { id: string; partyShortcode: string; updates: Partial<GridWeapon> }) =>
+			gridAdapter.updateWeapon(id, updates, editKeyHeaders(partyShortcode)),
 		onMutate: async ({ id, partyShortcode, updates }: { id: string; partyShortcode: string; updates: Partial<GridWeapon> }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
@@ -119,7 +128,7 @@ export function updateGridWeaponOptions(queryClient: QueryClient) {
 export function deleteGridWeaponOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: { id?: string; partyId: string; partyShortcode: string; position?: number }) =>
-			gridAdapter.deleteWeapon({ id: params.id, partyId: params.partyId, position: params.position }),
+			gridAdapter.deleteWeapon({ id: params.id, partyId: params.partyId, position: params.position }, editKeyHeaders(params.partyShortcode)),
 		onMutate: async ({ partyShortcode, id, position }: { partyShortcode: string; id?: string; position?: number }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
@@ -149,7 +158,7 @@ export function deleteGridWeaponOptions(queryClient: QueryClient) {
 export function updateWeaponUncapOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: UpdateUncapParams & { partyShortcode: string }) =>
-			gridAdapter.updateWeaponUncap(params),
+			gridAdapter.updateWeaponUncap(params, editKeyHeaders(params.partyShortcode)),
 		onMutate: async ({ partyShortcode, id, uncapLevel, transcendenceStep }: UpdateUncapParams & { partyShortcode: string }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
@@ -185,7 +194,7 @@ export function updateWeaponUncapOptions(queryClient: QueryClient) {
 export function resolveWeaponConflictOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: ResolveConflictParams & { partyShortcode: string }) =>
-			gridAdapter.resolveWeaponConflict(params),
+			gridAdapter.resolveWeaponConflict(params, editKeyHeaders(params.partyShortcode)),
 		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
@@ -195,7 +204,7 @@ export function resolveWeaponConflictOptions(queryClient: QueryClient) {
 export function swapWeaponsOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
-			gridAdapter.swapWeapons(params),
+			gridAdapter.swapWeapons(params, editKeyHeaders(params.partyShortcode)),
 		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
@@ -205,7 +214,7 @@ export function swapWeaponsOptions(queryClient: QueryClient) {
 export function duplicateGridWeaponOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: { id: string; partyShortcode: string; position: number }) =>
-			gridAdapter.duplicateWeapon({ id: params.id, position: params.position }),
+			gridAdapter.duplicateWeapon({ id: params.id, position: params.position }, editKeyHeaders(params.partyShortcode)),
 		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
@@ -229,8 +238,8 @@ export function createGridCharacterOptions(queryClient: QueryClient) {
 
 export function updateGridCharacterOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: ({ id, updates }: { id: string; partyShortcode: string; updates: Partial<GridCharacter> }) =>
-			gridAdapter.updateCharacter(id, updates),
+		mutationFn: ({ id, partyShortcode, updates }: { id: string; partyShortcode: string; updates: Partial<GridCharacter> }) =>
+			gridAdapter.updateCharacter(id, updates, editKeyHeaders(partyShortcode)),
 		onMutate: async ({ id, partyShortcode, updates }: { id: string; partyShortcode: string; updates: Partial<GridCharacter> }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
@@ -260,7 +269,7 @@ export function updateGridCharacterOptions(queryClient: QueryClient) {
 export function deleteGridCharacterOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: { id?: string; partyId: string; partyShortcode: string; position?: number }) =>
-			gridAdapter.deleteCharacter({ id: params.id, partyId: params.partyId, position: params.position }),
+			gridAdapter.deleteCharacter({ id: params.id, partyId: params.partyId, position: params.position }, editKeyHeaders(params.partyShortcode)),
 		onMutate: async ({ partyShortcode, id, position }: { partyShortcode: string; id?: string; position?: number }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
@@ -290,7 +299,7 @@ export function deleteGridCharacterOptions(queryClient: QueryClient) {
 export function updateCharacterUncapOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: UpdateUncapParams & { partyShortcode: string }) =>
-			gridAdapter.updateCharacterUncap(params),
+			gridAdapter.updateCharacterUncap(params, editKeyHeaders(params.partyShortcode)),
 		onMutate: async ({ partyShortcode, id, uncapLevel, transcendenceStep }: UpdateUncapParams & { partyShortcode: string }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
@@ -326,7 +335,7 @@ export function updateCharacterUncapOptions(queryClient: QueryClient) {
 export function resolveCharacterConflictOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: ResolveConflictParams & { partyShortcode: string }) =>
-			gridAdapter.resolveCharacterConflict(params),
+			gridAdapter.resolveCharacterConflict(params, editKeyHeaders(params.partyShortcode)),
 		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
@@ -336,7 +345,7 @@ export function resolveCharacterConflictOptions(queryClient: QueryClient) {
 export function swapCharactersOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
-			gridAdapter.swapCharacters(params),
+			gridAdapter.swapCharacters(params, editKeyHeaders(params.partyShortcode)),
 		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
@@ -360,8 +369,8 @@ export function createGridSummonOptions(queryClient: QueryClient) {
 
 export function updateGridSummonOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: ({ id, updates }: { id: string; partyShortcode: string; updates: Partial<GridSummon> }) =>
-			gridAdapter.updateSummon(id, updates),
+		mutationFn: ({ id, partyShortcode, updates }: { id: string; partyShortcode: string; updates: Partial<GridSummon> }) =>
+			gridAdapter.updateSummon(id, updates, editKeyHeaders(partyShortcode)),
 		onMutate: async ({ id, partyShortcode, updates }: { id: string; partyShortcode: string; updates: Partial<GridSummon> }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
@@ -391,7 +400,7 @@ export function updateGridSummonOptions(queryClient: QueryClient) {
 export function deleteGridSummonOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: { id?: string; partyId: string; partyShortcode: string; position?: number }) =>
-			gridAdapter.deleteSummon({ id: params.id, partyId: params.partyId, position: params.position }),
+			gridAdapter.deleteSummon({ id: params.id, partyId: params.partyId, position: params.position }, editKeyHeaders(params.partyShortcode)),
 		onMutate: async ({ partyShortcode, id, position }: { partyShortcode: string; id?: string; position?: number }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
@@ -421,7 +430,7 @@ export function deleteGridSummonOptions(queryClient: QueryClient) {
 export function updateSummonUncapOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: UpdateUncapParams & { partyShortcode: string }) =>
-			gridAdapter.updateSummonUncap(params),
+			gridAdapter.updateSummonUncap(params, editKeyHeaders(params.partyShortcode)),
 		onMutate: async ({ partyShortcode, id, uncapLevel, transcendenceStep }: UpdateUncapParams & { partyShortcode: string }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
@@ -468,7 +477,7 @@ export function updateQuickSummonOptions(queryClient: QueryClient) {
 				partyId: params.partyId,
 				position: params.position,
 				quickSummon: params.quickSummon
-			}),
+			}, editKeyHeaders(params.partyShortcode)),
 		onMutate: async ({ partyShortcode, id, quickSummon }: { partyShortcode: string; id?: string; quickSummon: boolean }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
 
@@ -498,7 +507,7 @@ export function updateQuickSummonOptions(queryClient: QueryClient) {
 export function swapSummonsOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
-			gridAdapter.swapSummons(params),
+			gridAdapter.swapSummons(params, editKeyHeaders(params.partyShortcode)),
 		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
@@ -508,7 +517,7 @@ export function swapSummonsOptions(queryClient: QueryClient) {
 export function duplicateGridSummonOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: { id: string; partyShortcode: string; position: number }) =>
-			gridAdapter.duplicateSummon({ id: params.id, position: params.position }),
+			gridAdapter.duplicateSummon({ id: params.id, position: params.position }, editKeyHeaders(params.partyShortcode)),
 		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
@@ -522,7 +531,7 @@ export function duplicateGridSummonOptions(queryClient: QueryClient) {
 export function switchCharacterStyleOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.switchCharacterStyle(params.id),
+			gridAdapter.switchCharacterStyle(params.id, editKeyHeaders(params.partyShortcode)),
 		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
@@ -536,7 +545,7 @@ export function switchCharacterStyleOptions(queryClient: QueryClient) {
 export function syncGridCharacterOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.syncCharacter(params.id),
+			gridAdapter.syncCharacter(params.id, editKeyHeaders(params.partyShortcode)),
 		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
@@ -546,7 +555,7 @@ export function syncGridCharacterOptions(queryClient: QueryClient) {
 export function syncGridWeaponOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.syncWeapon(params.id),
+			gridAdapter.syncWeapon(params.id, editKeyHeaders(params.partyShortcode)),
 		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
@@ -556,7 +565,7 @@ export function syncGridWeaponOptions(queryClient: QueryClient) {
 export function syncGridSummonOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.syncSummon(params.id),
+			gridAdapter.syncSummon(params.id, editKeyHeaders(params.partyShortcode)),
 		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
@@ -566,7 +575,7 @@ export function syncGridSummonOptions(queryClient: QueryClient) {
 export function syncAllPartyItemsOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: { partyId: string; partyShortcode: string }) =>
-			gridAdapter.syncAllPartyItems(params.partyId),
+			gridAdapter.syncAllPartyItems(params.partyId, editKeyHeaders(params.partyShortcode)),
 		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
@@ -576,7 +585,7 @@ export function syncAllPartyItemsOptions(queryClient: QueryClient) {
 export function unlinkCollectionSourceOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: { partyId: string; partyShortcode: string }) =>
-			gridAdapter.unlinkCollectionSource(params.partyId),
+			gridAdapter.unlinkCollectionSource(params.partyId, editKeyHeaders(params.partyShortcode)),
 		onSuccess: (_data: any, { partyShortcode }: { partyShortcode: string }) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
