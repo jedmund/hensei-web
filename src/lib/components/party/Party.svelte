@@ -39,6 +39,7 @@
 	import DuplicateCollectionDialog from '$lib/components/dialogs/DuplicateCollectionDialog.svelte'
 	import PickPlaylistPane from '$lib/components/sidebar/PickPlaylistPane.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import Notice from '$lib/components/ui/Notice.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -104,6 +105,9 @@
 	let localId = $state<string>('')
 	let editKey = $state<string | undefined>(undefined)
 
+	// Track whether the user has edited party info on a new unsaved party
+	let hasEditedInfo = $state(false)
+
 	let canEdit = $derived(() => {
 		if (isNew) return true
 		if (canEditServer) return true
@@ -127,7 +131,10 @@
 		getAuthUserId: () => authUserId,
 		getAuthUsername: () => authUsername,
 		getUserElement: () => userElement,
-		getHasCollectionLinks: () => hasCollectionLinks
+		getHasCollectionLinks: () => hasCollectionLinks,
+		onDetailsUpdated: () => {
+			if (isNew && party.id === 'new') hasEditedInfo = true
+		}
 	})
 
 	const jobHandlers = useJobHandlers({
@@ -486,18 +493,16 @@
 				{/snippet}
 			</PartyInfoGrid>
 
-			{#if isNew && party.id === 'new'}
-				<div class="unsaved-notice" role="status">
-					<Icon name="alertTriangle" size={16} />
-					<span>{m.party_unsaved_notice()}</span>
-				</div>
+			{#if hasEditedInfo && isNew && party.id === 'new'}
+				<Notice variant="blue">
+					{m.party_unsaved_notice()}
+				</Notice>
 			{/if}
 
 			{#if hasOrphanedItems}
-				<div class="orphan-warning" role="alert">
-					<Icon name="alertTriangle" size={16} />
-					<span>{m.party_orphan_warning()}</span>
-				</div>
+				<Notice variant="yellow">
+					{m.party_orphan_warning()}
+				</Notice>
 			{/if}
 
 			<PartySegmentedControl
@@ -667,36 +672,4 @@
 		gap: $unit-2x;
 	}
 
-	.unsaved-notice {
-		display: flex;
-		align-items: center;
-		gap: $unit;
-		padding: $unit $unit-2x;
-		background: var(--blue-subtle);
-		border: 1px solid var(--accent-blue);
-		border-radius: $unit-half;
-		color: var(--accent-blue);
-		font-size: $font-small;
-
-		:global(svg) {
-			flex-shrink: 0;
-		}
-	}
-
-	.orphan-warning {
-		display: flex;
-		align-items: center;
-		gap: $unit;
-		padding: $unit $unit-2x;
-		background: rgba(209, 137, 58, 0.15);
-		border: 1px solid rgba(209, 137, 58, 0.4);
-		border-radius: $unit-half;
-		color: var(--accent-yellow);
-		font-size: $font-small;
-
-		:global(svg) {
-			flex-shrink: 0;
-			color: var(--accent-yellow);
-		}
-	}
 </style>

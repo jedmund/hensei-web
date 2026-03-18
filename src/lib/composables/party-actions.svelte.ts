@@ -23,6 +23,7 @@ interface PartyActionsOptions {
 	getAuthUsername: () => string | undefined
 	getUserElement: () => ElementType | undefined
 	getHasCollectionLinks: () => boolean
+	onDetailsUpdated?: () => void
 }
 
 export function usePartyActions(opts: PartyActionsOptions) {
@@ -48,6 +49,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 			error = err.message || m.toast_failed_update_party()
 		} finally {
 			loading = false
+			opts.onDetailsUpdated?.()
 		}
 	}
 
