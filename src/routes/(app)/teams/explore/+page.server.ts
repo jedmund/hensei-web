@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types'
 import { error } from '@sveltejs/kit'
 import { partyAdapter } from '$lib/api/adapters/party.adapter'
 
-export const load: PageServerLoad = async ({ url, depends }) => {
+export const load: PageServerLoad = async ({ url, depends, fetch }) => {
   depends('app:parties:list')
 
   const pageParam = url.searchParams.get('page')
@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ url, depends }) => {
 
 
   try {
-    const response = await partyAdapter.list({ page })
+    const response = await partyAdapter.list({ page }, { fetch })
 
     return {
       items: response.results,

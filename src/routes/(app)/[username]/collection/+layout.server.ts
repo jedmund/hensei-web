@@ -2,13 +2,13 @@ import type { LayoutServerLoad } from './$types'
 import { error } from '@sveltejs/kit'
 import { userAdapter } from '$lib/api/adapters/user.adapter'
 
-export const load: LayoutServerLoad = async ({ params, locals }) => {
+export const load: LayoutServerLoad = async ({ params, locals, fetch }) => {
 	const username = params.username
 	const isOwner = locals.session?.account?.username === username
 
 	try {
 		// Get basic user info
-		const userInfo = await userAdapter.getInfo(username)
+		const userInfo = await userAdapter.getInfo(username, { fetch })
 
 		return {
 			user: userInfo,

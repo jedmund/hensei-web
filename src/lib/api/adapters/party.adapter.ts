@@ -9,7 +9,7 @@
  */
 
 import { BaseAdapter } from './base.adapter'
-import type { AdapterOptions, PaginatedResponse } from './types'
+import type { AdapterOptions, PaginatedResponse, RequestOptions } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { Party, GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
 import type { PartyShare } from '$lib/types/api/partyShare'
@@ -165,7 +165,7 @@ export class PartyAdapter extends BaseAdapter {
 	/**
 	 * Gets a party by shortcode
 	 */
-	async getByShortcode(shortcode: string, options?: { headers?: Record<string, string> }): Promise<Party> {
+	async getByShortcode(shortcode: string, options?: RequestOptions): Promise<Party> {
 		const response = await this.request<{ party: Party }>(`/parties/${shortcode}`, options)
 		return response.party
 	}
@@ -209,7 +209,8 @@ export class PartyAdapter extends BaseAdapter {
 	 * Lists all public parties (explore page)
 	 */
 	async list(
-		params: { page?: number; per?: number } & Partial<ExploreFilterParams> = {}
+		params: { page?: number; per?: number } & Partial<ExploreFilterParams> = {},
+		options?: RequestOptions
 	): Promise<PaginatedResponse<Party>> {
 		const query: Record<string, unknown> = {}
 		for (const [key, value] of Object.entries(params)) {
@@ -226,7 +227,8 @@ export class PartyAdapter extends BaseAdapter {
 				perPage?: number
 			}
 		}>('/parties', {
-			query
+			query,
+			...options
 		})
 
 		return {

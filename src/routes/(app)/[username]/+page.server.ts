@@ -3,7 +3,7 @@ import { error } from '@sveltejs/kit'
 import { userAdapter } from '$lib/api/adapters/user.adapter'
 import { parseParty } from '$lib/api/schemas/party'
 
-export const load: PageServerLoad = async ({ params, url, depends, locals }) => {
+export const load: PageServerLoad = async ({ params, url, depends, locals, fetch }) => {
   depends('app:profile')
   const username = params.username
   const pageParam = url.searchParams.get('page')
@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ params, url, depends, locals }) => 
   const isOwner = locals.session?.account?.username === username
 
   try {
-    const { user, items, total, totalPages, perPage } = await userAdapter.getProfile(username, page)
+    const { user, items, total, totalPages, perPage } = await userAdapter.getProfile(username, page, { fetch })
     const parties = items.map((p) => parseParty(p))
     return { user, items: parties, page, total, totalPages, perPage, isOwner }
   } catch (e: any) {

@@ -153,7 +153,7 @@ export class UserAdapter extends BaseAdapter {
   /**
    * Get user profile with their parties
    */
-  async getProfile(username: string, page = 1): Promise<UserProfileResponse> {
+  async getProfile(username: string, page = 1, options?: RequestOptions): Promise<UserProfileResponse> {
     const params = page > 1 ? { page } : undefined
     const response = await this.request<{
       profile: ApiUserResponse & { parties?: Party[] }
@@ -164,7 +164,7 @@ export class UserAdapter extends BaseAdapter {
         per_page?: number
         perPage?: number
       }
-    }>(`/users/${encodeURIComponent(username)}`, { params })
+    }>(`/users/${encodeURIComponent(username)}`, { params, ...options })
 
     const items = Array.isArray(response.profile?.parties) ? response.profile.parties : []
 

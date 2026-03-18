@@ -108,6 +108,8 @@ export abstract class BaseAdapter {
 		this.abortControllers.set(requestId, controller)
 
 		// Get Bearer token from auth store (only in browser)
+		// On the server, auth is handled by SvelteKit's handleFetch hook when
+		// a custom fetch function is provided via options.fetch
 		let authHeaders: Record<string, string> = {}
 		if (browser) {
 			const token = await authStore.checkAndRefresh()
@@ -117,6 +119,9 @@ export abstract class BaseAdapter {
 				if (import.meta.env.DEV) console.warn('[BaseAdapter] No auth token available in authStore for request:', path)
 			}
 		}
+
+		// Use custom fetch (e.g., SvelteKit's load fetch for SSR auth) or global fetch
+		const fetchFn = options.fetch ?? fetch
 
 		// Prepare request options
 		const fetchOptions: RequestInit = {
@@ -150,7 +155,7 @@ export abstract class BaseAdapter {
 
 		try {
 			// Make the request with retry logic (errors handled inside fetchWithRetry)
-			const response = await this.fetchWithRetry(url, fetchOptions, options.retries)
+			const response = await this.fetchWithRetry(url, fetchOptions, options.retries, 1, fetchFn)
 
 			// Handle 204 No Content responses (e.g., DELETE operations)
 			if (response.status === 204) {
@@ -252,7 +257,8 @@ export abstract class BaseAdapter {
 		url: string,
 		options: RequestInit,
 		maxRetries?: number,
-		attempt = 1
+		attempt = 1,
+		fetchFn: typeof globalThis.fetch = fetch
 	): Promise<Response> {
 		const retries = maxRetries ?? this.options.retries
 
@@ -267,10 +273,10 @@ export abstract class BaseAdapter {
 					controller?.abort()
 				}, this.options.timeout)
 
-				response = await fetch(url, options)
+				response = await fetchFn(url, options)
 				clearTimeout(timeoutId)
 			} else {
-				response = await fetch(url, options)
+				response = await fetchFn(url, options)
 			}
 
 			// Check if response has an error status that should be retried
@@ -286,7 +292,7 @@ export abstract class BaseAdapter {
 					await this.delay(delay)
 
 					// Recursive retry
-					return this.fetchWithRetry(url, options, retries, attempt + 1)
+					return this.fetchWithRetry(url, options, retries, attempt + 1, fetchFn)
 				}
 
 				// Not retryable or max retries reached
@@ -312,7 +318,7 @@ export abstract class BaseAdapter {
 				await this.delay(delay)
 
 				// Recursive retry
-				return this.fetchWithRetry(url, options, retries, attempt + 1)
+				return this.fetchWithRetry(url, options, retries, attempt + 1, fetchFn)
 			}
 
 			// Max retries reached or non-retryable error

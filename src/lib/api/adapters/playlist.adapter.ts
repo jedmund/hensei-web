@@ -8,7 +8,7 @@
  */
 
 import { BaseAdapter } from './base.adapter'
-import type { AdapterOptions, PaginatedResponse } from './types'
+import type { AdapterOptions, PaginatedResponse, RequestOptions } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { Playlist } from '$lib/types/api/playlist'
 
@@ -55,9 +55,10 @@ export class PlaylistAdapter extends BaseAdapter {
 	/**
 	 * Gets a single playlist with its parties
 	 */
-	async get(username: string, id: string): Promise<Playlist> {
+	async get(username: string, id: string, options?: RequestOptions): Promise<Playlist> {
 		const response = await this.request<{ playlist: Playlist }>(
-			`/users/${username}/playlists/${id}`
+			`/users/${username}/playlists/${id}`,
+			{ ...options }
 		)
 		return response.playlist
 	}

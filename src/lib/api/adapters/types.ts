@@ -50,6 +50,9 @@ export interface RequestOptions extends Omit<RequestInit, 'body' | 'cache'> {
 
 	/** HTTP headers for the request */
 	headers?: Record<string, string> | undefined
+
+	/** Custom fetch function for SSR auth (SvelteKit's load-function fetch) */
+	fetch?: typeof globalThis.fetch | undefined
 }
 
 /**
