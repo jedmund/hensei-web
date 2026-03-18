@@ -16,7 +16,7 @@
   }: Props = $props()
 
   const flb = $derived(editMode ? Boolean(editData.flb) : Boolean(character?.uncap?.flb))
-  const ulb = $derived(editMode ? Boolean(editData.ulb) : Boolean(character?.uncap?.ulb))
+  const transcendence = $derived(editMode ? Boolean(editData.transcendence) : Boolean(character?.uncap?.transcendence))
 </script>
 
 <DetailsContainer title="HP Stats">
@@ -44,8 +44,8 @@
         placeholder="0"
       />
     {/if}
-    {#if ulb}
-      <DetailItem label="Max HP (ULB)" bind:value={editData.maxHpUlb} editable={true} type="number" placeholder="0" />
+    {#if transcendence}
+      <DetailItem label="Max HP (Transcendence)" bind:value={editData.maxHpTranscendence} editable={true} type="number" placeholder="0" />
     {/if}
   {:else}
     <DetailItem label="Base HP" value={character.hp?.minHp} />
@@ -53,8 +53,8 @@
     {#if flb}
       <DetailItem label="Max HP (FLB)" value={character.hp?.maxHpFlb} />
     {/if}
-    {#if ulb}
-      <DetailItem label="Max HP (ULB)" value={character.hp?.maxHpUlb} />
+    {#if transcendence}
+      <DetailItem label="Max HP (Transcendence)" value={character.hp?.maxHpTranscendence} />
     {/if}
   {/if}
 </DetailsContainer>
@@ -84,8 +84,8 @@
         placeholder="0"
       />
     {/if}
-    {#if ulb}
-      <DetailItem label="Max Attack (ULB)" bind:value={editData.maxAtkUlb} editable={true} type="number" placeholder="0" />
+    {#if transcendence}
+      <DetailItem label="Max Attack (Transcendence)" bind:value={editData.maxAtkTranscendence} editable={true} type="number" placeholder="0" />
     {/if}
   {:else}
     <DetailItem label="Base Attack" value={character.atk?.minAtk} />
@@ -93,8 +93,8 @@
     {#if flb}
       <DetailItem label="Max Attack (FLB)" value={character.atk?.maxAtkFlb} />
     {/if}
-    {#if ulb}
-      <DetailItem label="Max Attack (ULB)" value={character.atk?.maxAtkUlb} />
+    {#if transcendence}
+      <DetailItem label="Max Attack (Transcendence)" value={character.atk?.maxAtkTranscendence} />
     {/if}
   {/if}
 </DetailsContainer>

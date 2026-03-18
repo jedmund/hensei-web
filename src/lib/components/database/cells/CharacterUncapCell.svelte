@@ -9,18 +9,17 @@
 	// Not the user's current uncap level
 	const uncap = $derived(row.uncap ?? {})
 	const flb = $derived(uncap.flb ?? false)
-	const ulb = $derived(uncap.ulb ?? false)
 	const transcendence = $derived(uncap.transcendence ?? false)
 	const special = $derived(row.special ?? false)
 
 	// Calculate maximum uncap level based on available uncaps
 	const getMaxUncapLevel = () => {
 		if (special) {
-			// Special characters: 3 base + FLB + ULB
-			return ulb ? 5 : flb ? 4 : 3
+			// Special characters: 3 base + FLB + Transcendence
+			return transcendence ? 5 : flb ? 4 : 3
 		} else {
-			// Regular characters: 4 base + FLB + ULB/transcendence
-			return ulb ? 6 : flb ? 5 : 4
+			// Regular characters: 4 base + FLB + Transcendence
+			return transcendence ? 6 : flb ? 5 : 4
 		}
 	}
 
@@ -50,7 +49,7 @@
 		{uncapLevel}
 		{transcendenceStage}
 		{flb}
-		{ulb}
+		ulb={transcendence}
 		{transcendence}
 		{special}
 		editable={false}

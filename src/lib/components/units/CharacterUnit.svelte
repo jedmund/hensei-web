@@ -321,7 +321,7 @@
 			transcendenceStage={item.transcendenceStep}
 			special={item.character?.special}
 			flb={item.character?.uncap?.flb}
-			ulb={item.character?.uncap?.ulb}
+			ulb={item.character?.uncap?.transcendence}
 			transcendence={item.character?.uncap?.transcendence}
 			editable={ctx?.canEdit()}
 			updateUncap={async (level) => {

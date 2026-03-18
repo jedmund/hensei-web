@@ -144,7 +144,7 @@
 					transcendenceStage={transcendenceStep}
 					special={characterData?.special}
 					flb={characterData?.uncap?.flb}
-					ulb={characterData?.uncap?.ulb}
+					ulb={characterData?.uncap?.transcendence}
 					transcendence={characterData?.uncap?.transcendence}
 					editable={true}
 					updateUncap={handleUncapUpdate}

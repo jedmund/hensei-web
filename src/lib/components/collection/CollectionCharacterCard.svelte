@@ -47,7 +47,7 @@
 		transcendenceStage={character.transcendenceStep}
 		special={character.character?.special}
 		flb={character.character?.uncap?.flb}
-		ulb={character.character?.uncap?.ulb}
+		ulb={character.character?.uncap?.transcendence}
 		transcendence={character.character?.uncap?.transcendence}
 	/>
 	<span class="character-name">{displayName}</span>

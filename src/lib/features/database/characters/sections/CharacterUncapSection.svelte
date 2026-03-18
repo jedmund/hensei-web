@@ -25,11 +25,10 @@
 
 	const uncap = $derived(
 		editMode
-			? { flb: editData.flb, ulb: editData.ulb, transcendence: editData.transcendence }
+			? { flb: editData.flb, transcendence: editData.transcendence }
 			: (character?.uncap ?? {})
 	)
 	const flb = $derived(uncap.flb ?? false)
-	const ulb = $derived(uncap.ulb ?? false)
 	const transcendence = $derived(uncap.transcendence ?? false)
 	const special = $derived(editMode ? editData.special : (character?.special ?? false))
 	const uncapLevel = $derived(getCharacterMaxUncapLevel({ special, uncap }))
@@ -42,22 +41,10 @@
 		return label !== '—' && label !== 'Null' ? (label.toLowerCase() as ElementName) : undefined
 	})
 
-	// Auto-check/uncheck uncap levels in hierarchy: Transcendence > ULB > FLB
+	// Auto-check/uncheck uncap levels in hierarchy: Transcendence > FLB
 	function handleFlbChange(checked: boolean) {
 		if (!checked) {
-			// Unchecking FLB should also uncheck ULB and Transcendence
-			editData.ulb = false
-			editData.transcendence = false
-		}
-		onDataChange?.()
-	}
-
-	function handleUlbChange(checked: boolean) {
-		if (checked && !editData.flb) {
-			// Checking ULB should also check FLB
-			editData.flb = true
-		} else if (!checked) {
-			// Unchecking ULB should also uncheck Transcendence
+			// Unchecking FLB should also uncheck Transcendence
 			editData.transcendence = false
 		}
 		onDataChange?.()
@@ -65,8 +52,7 @@
 
 	function handleTranscendenceChange(checked: boolean) {
 		if (checked) {
-			// Checking Transcendence should also check ULB and FLB
-			if (!editData.ulb) editData.ulb = true
+			// Checking Transcendence should also check FLB
 			if (!editData.flb) editData.flb = true
 		}
 		onDataChange?.()
@@ -76,7 +62,6 @@
 		if (checked) {
 			// Special characters (Story SRs) don't have standard uncap levels
 			editData.flb = false
-			editData.ulb = false
 			editData.transcendence = false
 		}
 		onDataChange?.()
@@ -90,7 +75,7 @@
 			{uncapLevel}
 			{transcendenceStage}
 			{flb}
-			{ulb}
+			ulb={transcendence}
 			{transcendence}
 			{special}
 			editable={false}
@@ -99,7 +84,6 @@
 
 	{#if !editMode}
 		<DetailItem label="FLB" value={flb ? 'Yes' : 'No'} />
-		<DetailItem label="ULB" value={ulb ? 'Yes' : 'No'} />
 		<DetailItem label="Transcendence" value={transcendence ? 'Yes' : 'No'} />
 		<DetailItem label="Special" value={special ? 'Yes' : 'No'} />
 	{:else}
@@ -110,14 +94,6 @@
 			type="checkbox"
 			element={elementName}
 			onchange={handleFlbChange}
-		/>
-		<DetailItem
-			label="ULB"
-			bind:value={editData.ulb}
-			editable={true}
-			type="checkbox"
-			element={elementName}
-			onchange={handleUlbChange}
 		/>
 		<DetailItem
 			label="Transcendence"

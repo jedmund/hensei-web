@@ -28,7 +28,7 @@
 		if (type === 'character') {
 			const char = item as GridCharacter
 			const uncap = char.character?.uncap
-			return { flb: uncap?.flb, ulb: uncap?.ulb, transcendence: false }
+			return { flb: uncap?.flb, ulb: uncap?.transcendence, transcendence: uncap?.transcendence ?? false }
 		} else if (type === 'weapon') {
 			const weapon = item as GridWeapon
 			const uncap = weapon.weapon?.uncap
