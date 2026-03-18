@@ -56,6 +56,17 @@ export interface JobAccessoryPayload {
 }
 
 /**
+ * Status for accessory image download jobs
+ */
+export interface AccessoryDownloadStatus {
+	status: 'queued' | 'processing' | 'completed' | 'failed' | 'not_found'
+	progress?: number
+	imagesDownloaded?: number
+	imagesTotal?: number
+	error?: string
+}
+
+/**
  * Payload for updating a job entity
  */
 export interface JobUpdatePayload {
@@ -397,6 +408,60 @@ export class JobAdapter extends BaseAdapter {
 			method: 'DELETE'
 		})
 		this.clearCache('/job_accessories')
+	}
+
+	// ============================================
+	// Job Accessory Image Download Methods
+	// ============================================
+
+	/**
+	 * Downloads a single accessory image (synchronous)
+	 */
+	async downloadAccessoryImage(
+		accessoryId: string,
+		size: string,
+		force?: boolean
+	): Promise<{ success: boolean; error?: string }> {
+		return this.request(`/job_accessories/${accessoryId}/download_image`, {
+			method: 'POST',
+			body: { size, force }
+		})
+	}
+
+	/**
+	 * Queues async download of all accessory images
+	 */
+	async downloadAccessoryImages(
+		accessoryId: string,
+		options?: { force?: boolean; size?: 'all' | string }
+	): Promise<{ status: string; message: string }> {
+		return this.request(`/job_accessories/${accessoryId}/download_images`, {
+			method: 'POST',
+			body: { options }
+		})
+	}
+
+	/**
+	 * Gets the download status for an accessory image job
+	 */
+	async getAccessoryDownloadStatus(accessoryId: string): Promise<AccessoryDownloadStatus> {
+		const response = await this.request<{
+			status: string
+			progress?: number
+			images_downloaded?: number
+			images_total?: number
+			error?: string
+		}>(`/job_accessories/${accessoryId}/download_status`, {
+			method: 'GET'
+		})
+
+		return {
+			status: response.status as AccessoryDownloadStatus['status'],
+			progress: response.progress,
+			imagesDownloaded: response.images_downloaded,
+			imagesTotal: response.images_total,
+			error: response.error
+		}
 	}
 
 	/**

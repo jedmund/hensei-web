@@ -11,7 +11,7 @@
 
 	// Props
 	interface Props {
-		type: 'character' | 'summon' | 'weapon' | 'job' | 'raid'
+		type: 'character' | 'summon' | 'weapon' | 'job' | 'raid' | 'accessory'
 		item: any // The character/summon/weapon/job object
 		image: string
 		editUrl?: string // URL to navigate to for editing (view mode)
@@ -54,7 +54,7 @@
 
 <header class="container">
 	<div class="left">
-		<div class="image" class:job={type === 'job'}>
+		<div class="image" class:job={type === 'job'} class:accessory={type === 'accessory'}>
 			<img
 				src={image}
 				alt={getDisplayName(name)}
@@ -64,7 +64,9 @@
 							? `${getBasePath()}/placeholders/placeholder-job.png`
 							: type === 'raid'
 								? `${getBasePath()}/placeholders/placeholder-raid-thumbnail.png`
-								: getPlaceholderImage(type, 'main')
+								: type === 'accessory'
+									? `${getBasePath()}/placeholders/placeholder-weapon-grid.png`
+									: getPlaceholderImage(type, 'main')
 					;(e.currentTarget as HTMLImageElement).src = placeholder
 				}}
 			/>
@@ -160,6 +162,11 @@
 
 			&.job img {
 				width: 32px;
+				height: auto;
+			}
+
+			&.accessory img {
+				width: 96px;
 				height: auto;
 			}
 		}

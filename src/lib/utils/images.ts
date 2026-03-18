@@ -342,11 +342,12 @@ export function getJobSkillIcon(skill: { imageId?: string; slug?: string } | str
 }
 
 /**
- * Get accessory square image URL
+ * Get accessory image URL
+ * @param variant - 'square' for thumbnails/icons, 'grid' for grid-sized display
  */
-export function getAccessoryImage(granblueId: string | undefined): string {
+export function getAccessoryImage(granblueId: string | undefined, variant: 'square' | 'grid' = 'square'): string {
 	if (!granblueId) return getGenericPlaceholder()
-	return `${getBasePath()}/accessory-square/${granblueId}.jpg`
+	return `${getBasePath()}/accessory-${variant}/${granblueId}.jpg`
 }
 
 // ===== Modification Images =====
