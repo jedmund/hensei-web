@@ -233,7 +233,7 @@
 										<img class="skill" src={skill.url} alt={skill.alt} />
 									{/each}
 									{#each befoulmentImages as skill}
-										<img class="skill" src={skill.url} alt={skill.alt} />
+										<img class="skill befoulment" src={skill.url} alt={skill.alt} />
 									{/each}
 									{#each weaponKeyImages as skill}
 										<Tooltip content={skill.alt}>
@@ -581,6 +581,11 @@
 			.skill {
 				width: 30px;
 				height: 30px;
+
+				&.befoulment {
+					width: 42px;
+					height: 42px;
+				}
 			}
 		}
 	}
@@ -631,6 +636,11 @@
 			.skill {
 				width: 38px;
 				height: 38px;
+
+				&.befoulment {
+					width: 42px;
+					height: 42px;
+				}
 			}
 		}
 	}
