@@ -438,6 +438,7 @@
 					{canEdit}
 					onDownloadImage={canEdit ? handleDownloadImage : undefined}
 					onDownloadAllPose={canEdit ? handleDownloadAllPose : undefined}
+					onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
 				/>
 			{:else if currentTab === 'raw'}
 				<EntityRawDataTab

@@ -21,17 +21,23 @@
 			force: boolean
 		) => Promise<void>
 		onDownloadAllPose?: (pose: string, force: boolean) => Promise<void>
+		onDownloadAllImages?: (force: boolean) => Promise<void>
 	}
 
 	let {
 		images,
 		canEdit = false,
 		onDownloadImage,
-		onDownloadAllPose
+		onDownloadAllPose,
+		onDownloadAllImages
 	}: Props = $props()
 
 	// Track download status per image
 	let downloadingImages = $state<Set<string>>(new Set())
+	let downloadingAll = $state(false)
+
+	// Cache-buster: increment to force image reload after downloads
+	let cacheBuster = $state(0)
 
 	// Group images by pose for better layout
 	const imagesByPose = $derived.by(() => {
@@ -77,6 +83,13 @@
 		return `${image.pose ?? 'default'}-${image.variant}`
 	}
 
+	// Append cache-buster to image URL to force reload after download
+	function bustUrl(url: string): string {
+		if (!url || cacheBuster === 0) return url
+		const sep = url.includes('?') ? '&' : '?'
+		return `${url}${sep}v=${cacheBuster}`
+	}
+
 	// Handle single image download
 	async function handleDownload(image: ImageItem, force: boolean) {
 		if (!onDownloadImage) return
@@ -87,6 +100,7 @@
 
 		try {
 			await onDownloadImage(image.variant, image.pose, force)
+			cacheBuster++
 		} finally {
 			downloadingImages.delete(key)
 			downloadingImages = new Set(downloadingImages)
@@ -106,10 +120,32 @@
 
 		try {
 			await onDownloadAllPose(pose, force)
+			cacheBuster++
 		} finally {
 			for (const img of poseImages) {
 				downloadingImages.delete(getImageKey(img))
 			}
+			downloadingImages = new Set(downloadingImages)
+		}
+	}
+
+	// Handle download all images across all poses/elements
+	async function handleDownloadAll(force: boolean) {
+		if (!onDownloadAllImages) return
+
+		downloadingAll = true
+		// Mark every image as downloading
+		for (const image of images) {
+			downloadingImages.add(getImageKey(image))
+		}
+		downloadingImages = new Set(downloadingImages)
+
+		try {
+			await onDownloadAllImages(force)
+			cacheBuster++
+		} finally {
+			downloadingAll = false
+			downloadingImages.clear()
 			downloadingImages = new Set(downloadingImages)
 		}
 	}
@@ -140,12 +176,12 @@
 						{#snippet trigger()}
 							<div class="image-item" class:downloading={isDownloading}>
 								<a
-									href={image.url}
+									href={bustUrl(image.url)}
 									target="_blank"
 									rel="noopener noreferrer"
 									class="image-container"
 								>
-									<img src={image.url} alt={image.label} loading="lazy" />
+									<img src={bustUrl(image.url)} alt={image.label} loading="lazy" />
 									{#if isDownloading}
 										<div class="download-overlay">
 											<span class="download-spinner"></span>
@@ -180,10 +216,19 @@
 									Download All {poseLabel} Images
 								</ContextMenu.Item>
 							{/if}
+							{#if onDownloadAllImages}
+								<ContextMenu.Item
+									class="context-menu-item"
+									onclick={() => handleDownloadAll(false)}
+									disabled={downloadingAll}
+								>
+									Download All Images
+								</ContextMenu.Item>
+							{/if}
 							<ContextMenu.Separator class="context-menu-separator" />
 							<ContextMenu.Item
 								class="context-menu-item"
-								onclick={() => window.open(image.url, '_blank')}
+								onclick={() => window.open(bustUrl(image.url), '_blank')}
 							>
 								Open in New Tab
 							</ContextMenu.Item>
@@ -192,12 +237,12 @@
 				{:else}
 					<div class="image-item">
 						<a
-							href={image.url}
+							href={bustUrl(image.url)}
 							target="_blank"
 							rel="noopener noreferrer"
 							class="image-container"
 						>
-							<img src={image.url} alt={image.label} loading="lazy" />
+							<img src={bustUrl(image.url)} alt={image.label} loading="lazy" />
 						</a>
 						<span class="image-label">{image.variant}</span>
 					</div>
