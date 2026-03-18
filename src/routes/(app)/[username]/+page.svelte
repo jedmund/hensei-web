@@ -9,10 +9,12 @@
 	import ExploreFilters, { type FilterItem } from '$lib/components/explore/ExploreFilters.svelte'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import MigrateBanner from '$lib/components/profile/MigrateBanner.svelte'
+	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import { partyQueries } from '$lib/api/queries/party.queries'
 	import { filterItemsToParams } from '$lib/utils/filterConversion'
 	import { useDeleteParty } from '$lib/api/mutations/party.mutations'
+	import { PartyVisibility } from '$lib/types/visibility'
 	import { page } from '$app/stores'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
@@ -24,6 +26,31 @@
 
 	const { data }: { data: PageData } = $props()
 	const isOwner = $derived(data.isOwner || false)
+
+	// Admin + bahamut mode check for visibility filter
+	const isAdmin = $derived($page.data?.account?.role === 9)
+	const isBahamut = $derived($page.data?.currentUser?.bahamut === true)
+	const showVisibilityFilter = $derived((isOwner || (isAdmin && isBahamut)))
+
+	// Visibility filter state (all selected by default)
+	const visibilityOptions = [
+		{ value: PartyVisibility.PUBLIC, label: m.visibility_public() },
+		{ value: PartyVisibility.UNLISTED, label: m.visibility_unlisted() },
+		{ value: PartyVisibility.PRIVATE, label: m.visibility_private() }
+	]
+	let selectedVisibilities = $state<number[]>([
+		PartyVisibility.PUBLIC,
+		PartyVisibility.UNLISTED,
+		PartyVisibility.PRIVATE
+	])
+
+	const visibilityDisplayText = $derived.by(() => {
+		if (selectedVisibilities.length === 3) return m.profile_visibility_all()
+		const labels = selectedVisibilities.map(
+			(v) => visibilityOptions.find((o) => o.value === v)?.label ?? ''
+		)
+		return labels.join(' and ')
+	})
 
 	// Crew info for invite functionality
 	const viewerCrewRole = $derived(crewStore.membership?.role ?? null)
@@ -73,8 +100,15 @@
 	// Cleanup on destroy
 	onDestroy(() => loader.destroy())
 
-	const items = $derived(
+	const allItems = $derived(
 		partiesQuery.data?.pages.flatMap((page) => page.results) ?? data.items ?? []
+	)
+
+	// Apply client-side visibility filter when the visibility dropdown is active
+	const items = $derived(
+		showVisibilityFilter && selectedVisibilities.length < 3
+			? allItems.filter((p) => p.visibility != null && selectedVisibilities.includes(p.visibility))
+			: allItems
 	)
 
 	const isEmpty = $derived(!partiesQuery.isLoading && items.length === 0)
@@ -130,7 +164,19 @@
 		<MigrateBanner element={data.user?.avatar?.element} />
 	{/if}
 
-	<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} />
+	<div class="filters-row">
+		<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} />
+		{#if showVisibilityFilter}
+			<MultiSelect
+				options={visibilityOptions}
+				bind:value={selectedVisibilities}
+				displayText={visibilityDisplayText}
+				placeholder={m.profile_visibility_all()}
+				size="small"
+				minSelected={1}
+			/>
+		{/if}
+	</div>
 
 	{#if partiesQuery.isLoading}
 		<div class="loading">
@@ -226,6 +272,13 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-2x;
+	}
+
+	.filters-row {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: $unit;
 	}
 
 	.grid {

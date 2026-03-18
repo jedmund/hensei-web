@@ -70,6 +70,7 @@ export function updatePartyOptions(queryClient: QueryClient) {
 		},
 		onSettled: (_data: unknown, _err: unknown, params: UpdatePartyParams) => {
 			queryClient.invalidateQueries({ queryKey: partyKeys.detail(params.shortcode) })
+			queryClient.invalidateQueries({ queryKey: partyKeys.userLists() })
 		}
 	}
 }

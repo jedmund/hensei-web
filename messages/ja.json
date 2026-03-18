@@ -873,8 +873,10 @@
 	"profile_wiki": "Wikiページ",
 	"profile_tab_teams": "編成",
 	"profile_tab_favorites": "お気に入り",
+	"profile_tab_playlists": "プレイリスト",
 	"profile_tab_collection": "コレクション",
 	"profile_create_team_collection": "{name}のコレクションでチームを作成",
+	"profile_visibility_all": "すべての編成",
 
 	"crew_roster_search": "キャラ、武器、召喚石を検索",
 	"crew_roster_no_members": "団員が見つかりません",

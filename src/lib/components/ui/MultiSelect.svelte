@@ -16,6 +16,10 @@
 		value?: T[]
 		onValueChange?: (value: T[]) => void
 		placeholder?: string
+		/** Override the trigger display text (bypasses default "N selected" logic) */
+		displayText?: string
+		/** Minimum number of items that must stay selected (default: 0) */
+		minSelected?: number
 		disabled?: boolean
 		size?: 'small' | 'medium' | 'large'
 		contained?: boolean
@@ -28,6 +32,8 @@
 		value = $bindable([]),
 		onValueChange,
 		placeholder = 'Select...',
+		displayText,
+		minSelected = 0,
 		disabled = false,
 		size = 'small',
 		contained = false,
@@ -35,11 +41,16 @@
 		class: className = ''
 	}: Props = $props()
 
-	// Convert options to string values for Bits UI
+	// Convert options to string values for Bits UI, disabling the last selected item
 	const stringOptions = $derived(
 		options.map((opt) => ({
 			...opt,
-			value: String(opt.value)
+			value: String(opt.value),
+			disabled:
+				opt.disabled ||
+				(minSelected > 0 &&
+					value.length <= minSelected &&
+					value.includes(opt.value))
 		}))
 	)
 
@@ -97,15 +108,15 @@
 		{:else if firstSelectedOption?.color}
 			<span class="trigger-color-dot" style="background-color: {firstSelectedOption.color}"></span>
 		{/if}
-		<span class="text">{selectedLabels() || placeholder}</span>
+		<span class="text">{displayText ?? selectedLabels() ?? placeholder}</span>
 		<Icon name="chevron-down-small" size={14} class="chevron" />
 	</SelectPrimitive.Trigger>
 
 	<SelectPrimitive.Content class="multi-content">
 		<SelectPrimitive.Viewport>
-			{#each options as option}
+			{#each stringOptions as option}
 				<SelectPrimitive.Item
-					value={String(option.value)}
+					value={option.value}
 					label={option.label}
 					disabled={option.disabled}
 					class="multi-item"
