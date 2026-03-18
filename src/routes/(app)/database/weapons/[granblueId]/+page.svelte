@@ -103,7 +103,7 @@
 
 	// Helper function for weapon grid image
 	function getWeaponImage(weapon: any): string {
-		return getWeaponGridImage(weapon?.granblueId, weapon?.element, weapon?.instanceElement)
+		return getWeaponGridImage(weapon?.granblueId, weapon?.element, weapon?.instanceElement, weapon?.elementVariantIds)
 	}
 
 	// Available image sizes for weapons
@@ -136,7 +136,7 @@
 						})
 					} else {
 						images.push({
-							url: getWeaponImageUrl(weapon.granblueId, variant, element),
+							url: getWeaponImageUrl(weapon.granblueId, variant, element, undefined, weapon.elementVariantIds),
 							label: `${variant} (${elementLabel})`,
 							variant,
 							pose: `element-${element}`,
@@ -297,6 +297,17 @@
 			{#if currentTab === 'info'}
 				<section class="details">
 					<WeaponMetadataSection {weapon} />
+
+					{#if weapon.element === 0}
+						<DetailsContainer title="Element Variant IDs">
+							{#each ELEMENT_DISPLAY_ORDER as elementNum}
+								<DetailItem label={getElementLabel(elementNum)}>
+									{weapon.elementVariantIds?.[String(elementNum)] || '—'}
+								</DetailItem>
+							{/each}
+						</DetailsContainer>
+					{/if}
+
 					<WeaponGachaSection {weapon} />
 					<WeaponUncapSection {weapon} />
 					<WeaponTaxonomySection {weapon} />
