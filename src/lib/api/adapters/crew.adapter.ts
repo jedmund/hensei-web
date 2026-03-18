@@ -25,6 +25,16 @@ export class CrewAdapter extends BaseAdapter {
   // ==================== Crew Operations ====================
 
   /**
+   * Check if a gamertag is available
+   */
+  async checkGametagAvailability(gamertag: string): Promise<{ available: boolean }> {
+    return this.request<{ available: boolean }>('/check/gamertag', {
+      method: 'POST',
+      body: JSON.stringify({ gamertag })
+    })
+  }
+
+  /**
    * Get current user's crew
    */
   async getMyCrew(options?: RequestOptions): Promise<Crew> {

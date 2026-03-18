@@ -170,6 +170,20 @@ export const crewQueries = {
       },
       staleTime: 1000 * 60 * 5, // 5 minutes
       gcTime: 1000 * 60 * 30 // 30 minutes
+    }),
+
+  /**
+   * Gamertag availability check query options
+   *
+   * @param gamertag - Gamertag to check availability for
+   */
+  checkGamertag: (gamertag: string) =>
+    queryOptions({
+      queryKey: ['crew', 'check', 'gamertag', gamertag] as const,
+      queryFn: () => crewAdapter.checkGametagAvailability(gamertag),
+      enabled: gamertag.length >= 1,
+      staleTime: 1000 * 30, // 30 seconds - availability can change
+      gcTime: 1000 * 60 * 5 // 5 minutes
     })
 }
 
@@ -198,6 +212,7 @@ export const crewKeys = {
   crewInvitations: (crewId: string) => [...crewKeys.all, crewId, 'invitations'] as const,
   sharedParties: () => [...crewKeys.all, 'shared_parties'] as const,
   accessibleCollectionMembers: () => [...crewKeys.all, 'members', 'accessible-collections'] as const,
+  checkGamertag: (gamertag: string) => [...crewKeys.all, 'check', 'gamertag', gamertag] as const,
   invitations: {
     all: ['invitations'] as const,
     pending: () => ['invitations', 'pending'] as const
