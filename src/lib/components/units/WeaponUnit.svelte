@@ -44,7 +44,7 @@
 		const element = item?.weapon?.element === 0 ? (item?.element ?? (isMain ? 2 : 0)) : undefined
 		const transformation = getWeaponTransformation(item?.weapon?.uncap?.transcendence, item?.uncapLevel, item?.transcendenceStep)
 
-		return getWeaponImage(item?.weapon?.granblueId, variant, element, transformation)
+		return getWeaponImage(item?.weapon?.granblueId, variant, element, transformation, item?.weapon?.elementVariantIds)
 	})
 
 	// Get awakening image URL using utility

@@ -27,7 +27,7 @@
 		// Mainhand images don't have a null-element variant, so default to fire (2).
 		const element = w?.weapon?.element === 0 ? (w?.element || (isMain ? 2 : undefined)) : undefined
 		const transformation = getWeaponTransformation(w?.weapon?.uncap?.transcendence, w?.uncapLevel, w?.transcendenceStep)
-		return getWeaponImage(w?.weapon?.granblueId, variant, element, transformation)
+		return getWeaponImage(w?.weapon?.granblueId, variant, element, transformation, w?.weapon?.elementVariantIds)
 	}
 </script>
 

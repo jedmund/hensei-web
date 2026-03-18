@@ -20,7 +20,7 @@
 	const displayElement = $derived(weapon.weapon?.element === 0 ? (weapon.element ?? 0) : undefined)
 
 	const imageUrl = $derived(
-		getWeaponImage(weapon.weapon?.granblueId, 'grid', displayElement, transformation)
+		getWeaponImage(weapon.weapon?.granblueId, 'grid', displayElement, transformation, weapon.weapon?.elementVariantIds)
 	)
 
 	const displayName = $derived(localizedName(weapon.weapon?.name))
