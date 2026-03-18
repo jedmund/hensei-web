@@ -5,7 +5,7 @@
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
-	import { useCreateCrew, useUpdateCrew } from '$lib/api/mutations/crew.mutations'
+	import { useCreateCrew } from '$lib/api/mutations/crew.mutations'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
@@ -13,8 +13,11 @@
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
+	import Icon from '$lib/components/Icon.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
 	import CrewTabs from '$lib/components/crew/CrewTabs.svelte'
+	import CrewSettingsDialog from '$lib/components/crew/CrewSettingsDialog.svelte'
 	import { formatDateJST } from '$lib/utils/date'
 	import { formatScore, toCrewHistoryChartData } from '$lib/utils/gw'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
@@ -53,7 +56,6 @@
 
 	// Mutations
 	const createCrewMutation = useCreateCrew()
-	const updateCrewMutation = useUpdateCrew()
 
 	// Modal state
 	let createModalOpen = $state(false)
@@ -62,27 +64,12 @@
 	// Create form state
 	let crewName = $state('')
 	let crewGamertag = $state('')
+	let crewGranblueCrewId = $state('')
 	let crewDescription = $state('')
 	let error = $state<string | null>(null)
 
-	// Settings form state
-	let settingsName = $state('')
-	let settingsGamertag = $state('')
-	let settingsDescription = $state('')
-	let settingsError = $state<string | null>(null)
-
-	// Sync settings form when modal opens
-	function openSettingsModal() {
-		settingsName = crewStore.crew?.name ?? ''
-		settingsGamertag = crewStore.crew?.gamertag ?? ''
-		settingsDescription = crewStore.crew?.description ?? ''
-		settingsError = null
-		settingsModalOpen = true
-	}
-
 	// Validation
 	const canCreate = $derived(crewName.trim().length > 0)
-	const canSaveSettings = $derived(settingsName.trim().length > 0)
 
 	// Handle create crew
 	async function handleCreateCrew() {
@@ -94,6 +81,7 @@
 			const crew = await createCrewMutation.mutateAsync({
 				name: crewName.trim(),
 				gamertag: crewGamertag.trim() || undefined,
+				granblueCrewId: crewGranblueCrewId.trim() || undefined,
 				description: crewDescription.trim() || undefined
 			})
 
@@ -111,6 +99,7 @@
 			createModalOpen = false
 			crewName = ''
 			crewGamertag = ''
+			crewGranblueCrewId = ''
 			crewDescription = ''
 		} catch (err: any) {
 			error = err.message || 'Failed to create crew'
@@ -120,34 +109,6 @@
 	function handleCloseModal() {
 		createModalOpen = false
 		error = null
-	}
-
-	// Handle update crew settings
-	async function handleUpdateSettings() {
-		if (!canSaveSettings) return
-
-		settingsError = null
-
-		try {
-			const crew = await updateCrewMutation.mutateAsync({
-				name: settingsName.trim(),
-				gamertag: settingsGamertag.trim() || undefined,
-				description: settingsDescription.trim() || undefined
-			})
-
-			// Update the store
-			crewStore.setCrew(crew, crewStore.membership)
-
-			// Close modal
-			settingsModalOpen = false
-		} catch (err: any) {
-			settingsError = err.message || 'Failed to update crew'
-		}
-	}
-
-	function handleCloseSettingsModal() {
-		settingsModalOpen = false
-		settingsError = null
 	}
 
 	function formatEventStatus(status: string, startDate: string): string {
@@ -238,8 +199,20 @@
 					description={crewStore.crew?.description ?? undefined}
 				>
 					{#snippet actions()}
+						{#if crewStore.crew?.granblueCrewId}
+							<Tooltip content={m.crew_ingame()}>
+								<a
+									href={`https://game.granbluefantasy.jp/#guild/detail/${crewStore.crew.granblueCrewId}`}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="crew-profile-link"
+								>
+									<Icon name="sword" size={24} />
+								</a>
+							</Tooltip>
+						{/if}
 						{#if crewStore.isOfficer}
-							<Button variant="secondary" size="small" onclick={openSettingsModal}>{m.crew_settings_title()}</Button>
+							<Button variant="secondary" size="small" onclick={() => (settingsModalOpen = true)}>{m.crew_settings_title()}</Button>
 						{/if}
 					{/snippet}
 				</CrewHeader>
@@ -317,7 +290,15 @@
 							label="{m.crew_gamertag_label()} {m.crew_gamertag_optional()}"
 							bind:value={crewGamertag}
 							placeholder={m.crew_gamertag_placeholder()}
-							maxLength={5}
+							maxLength={4}
+							fullWidth
+							contained
+						/>
+
+						<Input
+							label="{m.crew_granblue_id_label()} {m.crew_gamertag_optional()}"
+							bind:value={crewGranblueCrewId}
+							placeholder={m.crew_granblue_id_placeholder()}
 							fullWidth
 							contained
 						/>
@@ -351,65 +332,7 @@
 	{/snippet}
 </Dialog>
 
-<!-- Crew Settings Modal -->
-<Dialog bind:open={settingsModalOpen} onOpenChange={(open) => !open && handleCloseSettingsModal()}>
-	{#snippet children()}
-		<ModalHeader title={m.crew_settings_title()} />
-
-		<ModalBody>
-			{#snippet children()}
-				<div class="modal-form">
-					{#if settingsError}
-						<div class="error-message">{settingsError}</div>
-					{/if}
-
-					<div class="form-fields">
-						<Input
-							label={m.crew_name_label()}
-							bind:value={settingsName}
-							placeholder={m.crew_name_placeholder_short()}
-							maxLength={100}
-							fullWidth
-							contained
-						/>
-
-						<Input
-							label="{m.crew_gamertag_label()} {m.crew_gamertag_optional()}"
-							bind:value={settingsGamertag}
-							placeholder={m.crew_gamertag_placeholder()}
-							maxLength={5}
-							fullWidth
-							contained
-						/>
-
-						<div class="form-field">
-							<label for="settings-description"
-								>{m.crew_description_label()} <span class="optional">{m.crew_gamertag_optional()}</span></label
-							>
-							<textarea
-								id="settings-description"
-								bind:value={settingsDescription}
-								placeholder={m.crew_description_placeholder()}
-								maxlength="500"
-								rows="3"
-							></textarea>
-						</div>
-					</div>
-				</div>
-			{/snippet}
-		</ModalBody>
-
-		<ModalFooter
-			onCancel={handleCloseSettingsModal}
-			cancelDisabled={updateCrewMutation.isPending}
-			primaryAction={{
-				label: updateCrewMutation.isPending ? m.crew_saving() : m.crew_save_button(),
-				onclick: handleUpdateSettings,
-				disabled: !canSaveSettings || updateCrewMutation.isPending
-			}}
-		/>
-	{/snippet}
-</Dialog>
+<CrewSettingsDialog bind:open={settingsModalOpen} />
 
 <style lang="scss">
 	@use '$src/themes/effects' as effects;
@@ -665,5 +588,34 @@
 		border: none;
 		padding: 0;
 		margin: 0;
+	}
+
+	.crew-profile-link {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 40px;
+		height: 40px;
+		border-radius: layout.$card-corner;
+		color: var(--text-secondary);
+		text-decoration: none;
+		cursor: pointer;
+		transition:
+			background-color 0.15s ease,
+			color 0.15s ease;
+
+		:global(svg) {
+			stroke-width: 2px;
+		}
+
+		&:hover {
+			background: var(--button-contained-bg-hover, colors.$grey-90);
+			color: var(--text-primary);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--focus-ring);
+			outline-offset: 2px;
+		}
 	}
 </style>
