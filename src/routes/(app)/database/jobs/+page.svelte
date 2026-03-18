@@ -304,11 +304,16 @@
 				input {
 					padding: spacing.$unit spacing.$unit-2x;
 					background: var(--input-bound-bg);
+					color: var(--text-primary);
 					border: none;
 					border-radius: layout.$item-corner;
 					font-family: 'AGrot', system-ui, sans-serif;
 					font-size: typography.$font-small;
 					width: 200px;
+
+					&::placeholder {
+						color: var(--text-tertiary);
+					}
 
 					&:hover {
 						background: var(--input-bound-bg-hover);
