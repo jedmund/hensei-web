@@ -366,6 +366,7 @@
 	"party_remix": "Remix",
 	"party_delete": "Delete",
 	"party_orphan_warning": "Some items in this party are no longer in your collection and may have outdated data.",
+	"party_unsaved_notice": "This party won't be saved until you add a character, weapon, summon, or job.",
 	"party_grid_error": "Failed to render grid",
 	"party_not_found": "Party not found",
 	"party_no_data": "No party data available for this code.",

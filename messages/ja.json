@@ -366,6 +366,7 @@
 	"party_remix": "リミックス",
 	"party_delete": "削除",
 	"party_orphan_warning": "この編成の一部のアイテムはコレクションから削除されており、データが古い可能性があります。",
+	"party_unsaved_notice": "キャラ・武器・召喚石・ジョブを追加するまで、この編成は保存されません。",
 	"party_grid_error": "グリッドの表示に失敗しました",
 	"party_not_found": "編成が見つかりません",
 	"party_no_data": "このコードに対応する編成データがありません。",

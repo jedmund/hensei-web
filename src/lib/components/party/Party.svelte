@@ -486,6 +486,13 @@
 				{/snippet}
 			</PartyInfoGrid>
 
+			{#if isNew && party.id === 'new'}
+				<div class="unsaved-notice" role="status">
+					<Icon name="alertTriangle" size={16} />
+					<span>{m.party_unsaved_notice()}</span>
+				</div>
+			{/if}
+
 			{#if hasOrphanedItems}
 				<div class="orphan-warning" role="alert">
 					<Icon name="alertTriangle" size={16} />
@@ -658,6 +665,22 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-2x;
+	}
+
+	.unsaved-notice {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+		padding: $unit $unit-2x;
+		background: var(--blue-subtle);
+		border: 1px solid var(--accent-blue);
+		border-radius: $unit-half;
+		color: var(--accent-blue);
+		font-size: $font-small;
+
+		:global(svg) {
+			flex-shrink: 0;
+		}
 	}
 
 	.orphan-warning {
