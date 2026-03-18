@@ -1,43 +1,49 @@
 
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
+	import { createQuery } from '@tanstack/svelte-query'
+	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import type { AugmentSkill, WeaponStatModifier } from '$lib/types/api/weaponStatModifier'
-	import { useWeaponStatModifiers } from '$lib/composables/useWeaponStatModifiers.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
+	import Input from '$lib/components/ui/Input.svelte'
+
+	const PRIMARY_AX_SLUGS = ['ax_atk', 'ax_def', 'ax_hp', 'ax_ca_dmg', 'ax_multiattack']
 
 	interface Props {
-		/** Current AX skills on the weapon */
+		/** Current AX skills on the weapon (bindable) */
 		currentSkills?: AugmentSkill[]
-		/** Called when skills change */
-		onChange?: (skills: AugmentSkill[]) => void
 		/** Language for display */
 		locale?: 'en' | 'ja'
 	}
 
-	let { currentSkills = [], onChange, locale = 'en' }: Props = $props()
+	let { currentSkills = $bindable<AugmentSkill[]>([]), locale = 'en' }: Props = $props()
 
-	const { primaryAxSkills, secondaryAxSkills, findAxSkill, isLoading } = useWeaponStatModifiers()
+	const axQuery = createQuery(() => entityQueries.axSkills())
 
-	// State derived from props — overrides are temporary until currentSkills prop changes
-	let selectedPrimaryId = $derived<string>(currentSkills[0]?.modifier?.id ?? '')
-	let primaryStrength = $derived<number>(currentSkills[0]?.strength ?? 0)
-	let selectedSecondaryId = $derived<string>(currentSkills[1]?.modifier?.id ?? '')
-	let secondaryStrength = $derived<number>(currentSkills[1]?.strength ?? 0)
+	// Derive display values directly from the bound prop
+	const selectedPrimaryId = $derived(currentSkills[0]?.modifier?.id ?? '')
+	const primaryStrength = $derived(currentSkills[0]?.strength ?? 0)
+	const selectedSecondaryId = $derived(currentSkills[1]?.modifier?.id ?? '')
+	const secondaryStrength = $derived(currentSkills[1]?.strength ?? 0)
 
-	// Get selected modifiers
-	const selectedPrimary = $derived(selectedPrimaryId ? findAxSkill(selectedPrimaryId) : undefined)
+	const selectedPrimary = $derived(
+		selectedPrimaryId
+			? (axQuery.data ?? []).find((m) => m.id === selectedPrimaryId)
+			: undefined
+	)
 	const selectedSecondary = $derived(
-		selectedSecondaryId ? findAxSkill(selectedSecondaryId) : undefined
+		selectedSecondaryId
+			? (axQuery.data ?? []).find((m) => m.id === selectedSecondaryId)
+			: undefined
 	)
 
-	// Whether secondary skill selection should be shown
 	const showSecondary = $derived(!!selectedPrimary)
 
 	// Build primary skill options
 	const primaryOptions = $derived.by(() => {
 		const items: Array<{ value: string; label: string }> = [{ value: '', label: m.ax_no_skill() }]
 
-		for (const skill of primaryAxSkills) {
+		for (const skill of (axQuery.data ?? []).filter((s) => PRIMARY_AX_SLUGS.includes(s.slug))) {
 			items.push({
 				value: skill.id,
 				label: locale === 'ja' ? skill.nameJp : skill.nameEn
@@ -51,7 +57,7 @@
 	const secondaryOptions = $derived.by(() => {
 		const items: Array<{ value: string; label: string }> = [{ value: '', label: m.ax_no_skill() }]
 
-		for (const skill of secondaryAxSkills) {
+		for (const skill of (axQuery.data ?? []).filter((s) => !PRIMARY_AX_SLUGS.includes(s.slug))) {
 			items.push({
 				value: skill.id,
 				label: locale === 'ja' ? skill.nameJp : skill.nameEn
@@ -66,60 +72,63 @@
 		return modifier?.suffix ?? ''
 	}
 
-	// Handle primary skill change
 	function handlePrimaryChange(value: string | undefined) {
-		selectedPrimaryId = value ?? ''
-		if (!value) {
-			primaryStrength = 0
-			// Reset secondary when primary is cleared
-			selectedSecondaryId = ''
-			secondaryStrength = 0
+		const modifier = value ? (axQuery.data ?? []).find((m) => m.id === value) : undefined
+		if (!modifier) {
+			currentSkills = []
+			return
 		}
-		emitChange()
+		currentSkills = [
+			{ modifier, strength: currentSkills[0]?.strength ?? 0 },
+			...(currentSkills.length > 1 ? [currentSkills[1]] : [])
+		]
 	}
 
-	// Handle primary value change
 	function handlePrimaryStrengthChange(event: Event) {
 		const input = event.target as HTMLInputElement
-		primaryStrength = parseFloat(input.value) || 0
-		emitChange()
-	}
-
-	// Handle secondary skill change
-	function handleSecondaryChange(value: string | undefined) {
-		selectedSecondaryId = value ?? ''
-		if (!value) {
-			secondaryStrength = 0
+		const val = parseFloat(input.value) || 0
+		const max = selectedPrimary?.baseMax ?? 999
+		const clamped = Math.min(val, max)
+		if (val > max) input.value = String(clamped)
+		if (currentSkills[0]) {
+			currentSkills = [
+				{ ...currentSkills[0], strength: clamped },
+				...(currentSkills.length > 1 ? [currentSkills[1]] : [])
+			]
 		}
-		emitChange()
 	}
 
-	// Handle secondary value change
+	function handleSecondaryChange(value: string | undefined) {
+		const modifier = value ? (axQuery.data ?? []).find((m) => m.id === value) : undefined
+		if (!modifier) {
+			currentSkills = currentSkills.length > 0 ? [currentSkills[0]] : []
+			return
+		}
+		currentSkills = [
+			currentSkills[0],
+			{ modifier, strength: currentSkills[1]?.strength ?? 0 }
+		]
+	}
+
 	function handleSecondaryStrengthChange(event: Event) {
 		const input = event.target as HTMLInputElement
-		secondaryStrength = parseFloat(input.value) || 0
-		emitChange()
-	}
-
-	// Emit change to parent
-	function emitChange() {
-		const skills: AugmentSkill[] = []
-
-		if (selectedPrimary && primaryStrength > 0) {
-			skills.push({ modifier: selectedPrimary, strength: primaryStrength })
+		const val = parseFloat(input.value) || 0
+		const max = selectedSecondary?.baseMax ?? 999
+		const clamped = Math.min(val, max)
+		if (val > max) input.value = String(clamped)
+		if (currentSkills[1]) {
+			currentSkills = [currentSkills[0], { ...currentSkills[1], strength: clamped }]
 		}
-
-		if (selectedSecondary && secondaryStrength > 0) {
-			skills.push({ modifier: selectedSecondary, strength: secondaryStrength })
-		}
-
-		onChange?.(skills)
 	}
 </script>
 
-{#if isLoading}
+{#if axQuery.isPending}
 	<div class="ax-skill-select loading">
 		<div class="skeleton"></div>
+	</div>
+{:else if axQuery.error}
+	<div class="ax-skill-select">
+		<div class="error">{m.sidebar_keys_error()}</div>
 	</div>
 {:else}
 	<div class="ax-skill-select">
@@ -139,17 +148,22 @@
 				</div>
 
 				{#if selectedPrimary}
-					<input
-						type="number"
-						class="skill-value"
-						step="0.5"
-						placeholder={m.placeholder_value()}
-						value={primaryStrength || ''}
-						oninput={handlePrimaryStrengthChange}
-					/>
-					{#if getSuffix(selectedPrimary)}
-						<span class="suffix">{getSuffix(selectedPrimary)}</span>
-					{/if}
+					<div class="skill-value-group">
+						<div class="skill-value-input">
+							<Input
+								type="number"
+								min={selectedPrimary.baseMin}
+								max={selectedPrimary.baseMax}
+								step={0.5}
+								value={primaryStrength || ''}
+								oninput={handlePrimaryStrengthChange}
+								contained
+								variant="number"
+								placeholder="{selectedPrimary.baseMin}~{selectedPrimary.baseMax}"
+							/>
+						</div>
+						<span class="suffix">{getSuffix(selectedPrimary) ?? ''}</span>
+					</div>
 				{/if}
 			</div>
 		</div>
@@ -171,17 +185,22 @@
 					</div>
 
 					{#if selectedSecondary}
-						<input
-							type="number"
-							class="skill-value"
-							step="0.5"
-							placeholder={m.placeholder_value()}
-							value={secondaryStrength || ''}
-							oninput={handleSecondaryStrengthChange}
-						/>
-						{#if getSuffix(selectedSecondary)}
-							<span class="suffix">{getSuffix(selectedSecondary)}</span>
-						{/if}
+						<div class="skill-value-group">
+							<div class="skill-value-input">
+								<Input
+									type="number"
+									min={selectedSecondary.baseMin}
+									max={selectedSecondary.baseMax}
+									step={0.5}
+									value={secondaryStrength || ''}
+									oninput={handleSecondaryStrengthChange}
+									contained
+									variant="number"
+									placeholder="{selectedSecondary.baseMin}~{selectedSecondary.baseMax}"
+								/>
+							</div>
+							<span class="suffix">{getSuffix(selectedSecondary) ?? ''}</span>
+						</div>
 					{/if}
 				</div>
 			</div>
@@ -238,34 +257,22 @@
 		min-width: 0;
 	}
 
-	.skill-value {
-		width: 80px;
+	.skill-value-group {
+		display: flex;
+		align-items: center;
 		flex-shrink: 0;
-		padding: spacing.$unit spacing.$unit-2x;
-		background: var(--input-bg);
-		border: 1px solid var(--border-secondary);
-		border-radius: layout.$item-corner-small;
-		color: var(--text-primary);
-		font-size: typography.$font-regular;
-		text-align: center;
-
-		&:focus {
-			outline: none;
-			border-color: var(--accent-primary);
-		}
-
-		// Remove spin buttons
-		-moz-appearance: textfield;
-		&::-webkit-outer-spin-button,
-		&::-webkit-inner-spin-button {
-			-webkit-appearance: none;
-			margin: 0;
-		}
 	}
 
-	.suffix {
+.suffix {
 		color: var(--text-secondary);
 		font-size: typography.$font-small;
-		flex-shrink: 0;
+		min-width: 1.5em;
+		text-align: right;
+	}
+
+	.error {
+		padding: spacing.$unit-2x;
+		font-size: typography.$font-small;
+		color: var(--text-error);
 	}
 </style>

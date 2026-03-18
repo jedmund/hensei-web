@@ -231,10 +231,7 @@
 			<DetailsSection title={m.details_ax_skills()}>
 				<div class="section-content">
 					<AxSkillSelect
-						currentSkills={axSkills}
-						onChange={(skills) => {
-							axSkills = skills
-						}}
+						bind:currentSkills={axSkills}
 					/>
 				</div>
 			</DetailsSection>
@@ -244,10 +241,7 @@
 			<DetailsSection title={m.details_befoulment()}>
 				<div class="section-content">
 					<BefoulmentSelect
-						currentBefoulment={befoulment}
-						onChange={(bef) => {
-							befoulment = bef
-						}}
+						bind:currentBefoulment={befoulment}
 						maxExorcismLevel={weaponData?.maxExorcismLevel}
 					/>
 				</div>

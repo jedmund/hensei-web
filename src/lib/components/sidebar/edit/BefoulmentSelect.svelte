@@ -1,33 +1,35 @@
 
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
+	import { createQuery } from '@tanstack/svelte-query'
+	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import type { Befoulment, WeaponStatModifier } from '$lib/types/api/weaponStatModifier'
-	import { useWeaponStatModifiers } from '$lib/composables/useWeaponStatModifiers.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
+	import Input from '$lib/components/ui/Input.svelte'
 
 	interface Props {
-		/** Current befoulment on the weapon */
+		/** Current befoulment on the weapon (bindable) */
 		currentBefoulment?: Befoulment | null
-		/** Called when befoulment changes */
-		onChange?: (befoulment: Befoulment | null) => void
 		/** Language for display */
 		locale?: 'en' | 'ja'
 		/** Maximum exorcism level for this weapon (from weapon's maxExorcismLevel) */
 		maxExorcismLevel?: number | null
 	}
 
-	let { currentBefoulment = null, onChange, locale = 'en', maxExorcismLevel = null }: Props = $props()
+	let { currentBefoulment = $bindable<Befoulment | null>(null), locale = 'en', maxExorcismLevel = null }: Props = $props()
 
-	const { befoulments, findBefoulment, isLoading } = useWeaponStatModifiers()
+	const befoulmentQuery = createQuery(() => entityQueries.befoulments())
 
-	// State derived from props — overrides are temporary until currentBefoulment prop changes
-	let selectedModifierId = $derived<string>(currentBefoulment?.modifier?.id ?? '')
-	let strength = $derived<number>(currentBefoulment?.strength ?? 0)
-	let exorcismLevel = $derived<number>(currentBefoulment?.exorcismLevel ?? 0)
+	// Derive display values directly from the bound prop
+	const selectedModifierId = $derived(currentBefoulment?.modifier?.id ?? '')
+	const strength = $derived(currentBefoulment?.strength ?? 0)
+	const exorcismLevel = $derived(currentBefoulment?.exorcismLevel ?? 0)
 
-	// Get selected modifier
+	// Get selected modifier from query data
 	const selectedModifier = $derived(
-		selectedModifierId ? findBefoulment(selectedModifierId) : undefined
+		selectedModifierId
+			? (befoulmentQuery.data ?? []).find((m) => m.id === selectedModifierId)
+			: undefined
 	)
 
 	// Build befoulment options
@@ -36,7 +38,7 @@
 			{ value: '', label: m.befoulment_none() }
 		]
 
-		for (const bef of befoulments) {
+		for (const bef of befoulmentQuery.data ?? []) {
 			items.push({
 				value: bef.id,
 				label: locale === 'ja' ? bef.nameJp : bef.nameEn
@@ -60,95 +62,98 @@
 		return modifier?.suffix ?? ''
 	}
 
-	// Handle befoulment type change
 	function handleModifierChange(value: string | undefined) {
-		selectedModifierId = value ?? ''
-		if (!value) {
-			strength = 0
-			exorcismLevel = 0
-		}
-		emitChange()
-	}
-
-	// Handle strength change
-	function handleStrengthChange(event: Event) {
-		const input = event.target as HTMLInputElement
-		strength = parseFloat(input.value) || 0
-		emitChange()
-	}
-
-	// Handle exorcism level change
-	function handleExorcismChange(value: number | undefined) {
-		exorcismLevel = value ?? 0
-		emitChange()
-	}
-
-	// Emit change to parent
-	function emitChange() {
-		if (!selectedModifier) {
-			onChange?.(null)
+		const modifier = value ? (befoulmentQuery.data ?? []).find((m) => m.id === value) : undefined
+		if (!modifier) {
+			currentBefoulment = null
 			return
 		}
+		currentBefoulment = {
+			modifier,
+			strength: currentBefoulment?.strength ?? 0,
+			exorcismLevel: currentBefoulment?.exorcismLevel ?? 0
+		}
+	}
 
-		onChange?.({
-			modifier: selectedModifier,
-			strength,
-			exorcismLevel
-		})
+	function handleStrengthChange(event: Event) {
+		const input = event.target as HTMLInputElement
+		const val = parseFloat(input.value) || 0
+		const max = selectedModifier?.baseMax ?? 999
+		const clamped = Math.min(val, max)
+		if (val > max) input.value = String(clamped)
+		if (currentBefoulment) {
+			currentBefoulment = { ...currentBefoulment, strength: clamped }
+		}
+	}
+
+	function handleExorcismChange(value: number | undefined) {
+		if (currentBefoulment) {
+			currentBefoulment = { ...currentBefoulment, exorcismLevel: value ?? 0 }
+		}
 	}
 </script>
 
-{#if isLoading}
+{#if befoulmentQuery.isPending}
 	<div class="befoulment-select loading">
 		<div class="skeleton"></div>
 	</div>
+{:else if befoulmentQuery.error}
+	<div class="befoulment-select">
+		<div class="error">{m.sidebar_keys_error()}</div>
+	</div>
 {:else}
 	<div class="befoulment-select">
-		<!-- Befoulment Type -->
-		<div class="field-row">
-			<label class="field-label">{m.label_befoulment_type()}</label>
-			<Select
-				options={befoulmentOptions}
-				value={selectedModifierId}
-				onValueChange={handleModifierChange}
-				placeholder={m.placeholder_select_befoulment()}
-				size="medium"
-				fullWidth
-				contained
-			/>
+		<!-- Befoulment Type + Strength -->
+		<div class="skill-row">
+			<div class="skill-fields">
+				<div class="skill-select">
+					<Select
+						options={befoulmentOptions}
+						value={selectedModifierId}
+						onValueChange={handleModifierChange}
+						placeholder={m.placeholder_select_befoulment()}
+						size="medium"
+						fullWidth
+						contained
+					/>
+				</div>
+
+				{#if selectedModifier}
+					<div class="skill-value-group">
+						<div class="skill-value-input">
+							<Input
+								type="number"
+								min={selectedModifier.baseMin}
+								max={selectedModifier.baseMax}
+								step={0.5}
+								value={strength || ''}
+								oninput={handleStrengthChange}
+								contained
+								variant="number"
+								placeholder="{selectedModifier.baseMin}~{selectedModifier.baseMax}"
+							/>
+						</div>
+						<span class="suffix">{getSuffix(selectedModifier) ?? ''}</span>
+					</div>
+				{/if}
+			</div>
 		</div>
 
+		<!-- Exorcism Level -->
 		{#if selectedModifier}
-			<!-- Strength -->
-			<div class="field-row">
-				<label class="field-label">
-					{m.befoulment_strength()}
-					{#if getSuffix(selectedModifier)}
-						<span class="suffix">({getSuffix(selectedModifier)})</span>
-					{/if}
-				</label>
-				<input
-					type="number"
-					class="strength-input"
-					step="0.5"
-					placeholder={m.placeholder_value()}
-					value={strength || ''}
-					oninput={handleStrengthChange}
-				/>
-			</div>
-
-			<!-- Exorcism Level -->
-			<div class="field-row">
-				<label class="field-label">{m.label_exorcism_level()}</label>
-				<Select
-					options={exorcismOptions}
-					value={exorcismLevel}
-					onValueChange={handleExorcismChange}
-					size="medium"
-					fullWidth
-					contained
-				/>
-				<p class="help-text">{m.label_exorcism_hint()}</p>
+			<div class="skill-row">
+				<div class="skill-fields">
+					<div class="skill-select">
+						<Select
+							options={exorcismOptions}
+							value={exorcismLevel}
+							onValueChange={handleExorcismChange}
+							size="medium"
+							fullWidth
+							contained
+						/>
+					</div>
+				</div>
 			</div>
 		{/if}
 	</div>
@@ -186,50 +191,39 @@
 		}
 	}
 
-	.field-row {
+	.skill-row {
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit;
 	}
 
-	.field-label {
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-		color: var(--text-primary);
-
-		.suffix {
-			color: var(--text-secondary);
-			font-weight: 400;
-		}
+	.skill-fields {
+		display: flex;
+		gap: spacing.$unit-2x;
+		align-items: center;
 	}
 
-	.strength-input {
-		width: 100%;
-		max-width: 120px;
-		padding: spacing.$unit spacing.$unit-2x;
-		background: var(--input-bg);
-		border: 1px solid var(--border-secondary);
-		border-radius: layout.$item-corner-small;
-		color: var(--text-primary);
-		font-size: typography.$font-regular;
-
-		&:focus {
-			outline: none;
-			border-color: var(--accent-primary);
-		}
-
-		// Remove spin buttons
-		-moz-appearance: textfield;
-		&::-webkit-outer-spin-button,
-		&::-webkit-inner-spin-button {
-			-webkit-appearance: none;
-			margin: 0;
-		}
+	.skill-select {
+		flex: 1;
+		min-width: 0;
 	}
 
-	.help-text {
-		margin: 0;
+	.skill-value-group {
+		display: flex;
+		align-items: center;
+		flex-shrink: 0;
+	}
+
+	.suffix {
+		color: var(--text-secondary);
 		font-size: typography.$font-small;
-		color: var(--text-tertiary);
+		min-width: 1.5em;
+		text-align: right;
+	}
+
+	.error {
+		padding: spacing.$unit-2x;
+		font-size: typography.$font-small;
+		color: var(--text-error);
 	}
 </style>
