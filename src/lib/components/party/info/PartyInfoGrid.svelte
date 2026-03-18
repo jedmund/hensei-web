@@ -63,6 +63,7 @@
 			name={party.name}
 			description={party.description}
 			updatedAt={party.updatedAt}
+			visibility={party.visibility}
 			user={party.user}
 			collectionSourceUser={party.collectionSourceUser}
 			sourceParty={party.sourceParty}

@@ -10,6 +10,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'
 	import { formatRelativeTime } from '$lib/utils/date'
+	import { PartyVisibility } from '$lib/types/visibility'
 
 	type AvatarUser = {
 		username?: string
@@ -36,6 +37,7 @@
 		/** Callback when collection viewer is switched */
 		onSwitchCollectionUser?: (target: 'viewer' | 'source') => void
 		updatedAt?: string
+		visibility?: import('$lib/types/visibility').PartyVisibility
 		canEdit?: boolean
 		onOpenDescription: () => void
 		onEditDescription?: () => void
@@ -64,6 +66,7 @@
 		activeCollectionUser = 'viewer',
 		onSwitchCollectionUser,
 		updatedAt,
+		visibility,
 		canEdit = false,
 		onOpenDescription,
 		onEditDescription,
@@ -88,6 +91,11 @@
 	const avatarSrc = $derived(getAvatarSrc(user?.avatar?.picture))
 	const avatarSrcSet = $derived(getAvatarSrcSet(user?.avatar?.picture))
 	const relativeTime = $derived(updatedAt ? m.time_last_updated({ time: formatRelativeTime(updatedAt) }) : null)
+	const visibilityLabel = $derived(
+		visibility === PartyVisibility.UNLISTED ? m.visibility_unlisted()
+		: visibility === PartyVisibility.PRIVATE ? m.visibility_private()
+		: null
+	)
 
 	// Measure content height to determine if fade gradient is needed
 	let contentEl = $state<HTMLDivElement | undefined>(undefined)
@@ -213,6 +221,9 @@
 					</div>
 					<span class="username">{m.party_using_own_collection({ username: user.username ?? '' })}</span>
 				</a>
+				{#if visibilityLabel}
+					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
+				{/if}
 				{#if relativeTime}
 					<span class="updated-time">&nbsp;&middot;&nbsp;{relativeTime}</span>
 				{/if}
@@ -223,6 +234,9 @@
 				<span class="creator-pair-text">
 					{m.party_using_others_collection({ username: user.username ?? '', otherUsername: collectionSourceUser.username ?? '' })}
 				</span>
+				{#if visibilityLabel}
+					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
+				{/if}
 				{#if relativeTime}
 					<span class="updated-time">&nbsp;&middot;&nbsp;{relativeTime}</span>
 				{/if}
@@ -233,6 +247,9 @@
 				<span class="creator-pair-text">
 					{m.party_remixed({ username: user.username ?? '', otherUsername: sourceParty.user.username ?? '' })}
 				</span>
+				{#if visibilityLabel}
+					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
+				{/if}
 				{#if relativeTime}
 					<span class="updated-time">&nbsp;&middot;&nbsp;{relativeTime}</span>
 				{/if}
@@ -256,6 +273,9 @@
 					</div>
 					<span class="username">{user.username}</span>
 				</a>
+				{#if visibilityLabel}
+					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
+				{/if}
 				{#if relativeTime}
 					<span class="updated-time">&nbsp;&middot;&nbsp;{relativeTime}</span>
 				{/if}
@@ -430,7 +450,8 @@
 		font-weight: $medium;
 	}
 
-	.updated-time {
+	.updated-time,
+	.visibility-label {
 		font-size: $font-small;
 		color: var(--text-tertiary);
 	}
