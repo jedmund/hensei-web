@@ -3,7 +3,7 @@
  */
 
 import type { Awakening, WeaponKey } from '$lib/types/api/entities'
-import type { AugmentSkill } from '$lib/types/api/weaponStatModifier'
+import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'
 import { getBasePath } from '$lib/utils/images'
 import { localizedName } from '$lib/utils/locale'
 
@@ -80,4 +80,16 @@ export function getAxSkillImages(ax?: AugmentSkill[]): Array<{ url: string; alt:
 			url: `${getBasePath()}/ax/${skill.modifier.slug}.png`,
 			alt: skill.modifier.nameEn || skill.modifier.slug || 'AX Skill'
 		}))
+}
+
+/**
+ * Get befoulment image for a weapon
+ */
+export function getBefoulmentImages(befoulment?: Befoulment | null): Array<{ url: string; alt: string }> {
+	if (!befoulment?.modifier?.slug) return []
+
+	return [{
+		url: `${getBasePath()}/ax/${befoulment.modifier.slug}.png`,
+		alt: befoulment.modifier.nameEn || befoulment.modifier.slug || 'Befoulment'
+	}]
 }

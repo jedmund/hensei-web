@@ -13,7 +13,7 @@
 	import { openDetailsSidebar, openWeaponEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { canWeaponBeModified } from '$lib/utils/modificationDetector'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
-	import { getAwakeningImage, getWeaponKeyImages, getAxSkillImages } from '$lib/utils/modifiers'
+	import { getAwakeningImage, getWeaponKeyImages, getAxSkillImages, getBefoulmentImages } from '$lib/utils/modifiers'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { GridType } from '$lib/types/enums'
 	import * as m from '$lib/paraglide/messages'
@@ -55,6 +55,9 @@
 
 	// Get AX skill images using utility
 	let axSkillImages = $derived(getAxSkillImages(item?.ax))
+
+	// Get befoulment images using utility
+	let befoulmentImages = $derived(getBefoulmentImages(item?.befoulment))
 
 	// Check if this item is currently active in the sidebar
 	let isActive = $derived(item?.id && sidebar.activeItemId === String(item.id))
@@ -227,6 +230,9 @@
 								{/if}
 								<div class="skills">
 									{#each axSkillImages as skill}
+										<img class="skill" src={skill.url} alt={skill.alt} />
+									{/each}
+									{#each befoulmentImages as skill}
 										<img class="skill" src={skill.url} alt={skill.alt} />
 									{/each}
 									{#each weaponKeyImages as skill}
