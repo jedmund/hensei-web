@@ -28,7 +28,7 @@
 		buildGamewithUrl,
 		buildKamigameUrl
 	} from '$lib/utils/external-links'
-	import { getElementLabel } from '$lib/utils/element'
+	import { getElementLabel, getElementIcon, ELEMENT_DISPLAY_ORDER } from '$lib/utils/element'
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -114,7 +114,9 @@
 		// Awakenings
 		awakeningIds: [] as string[],
 		// Variant
-		weaponSeriesVariantId: '' as string
+		weaponSeriesVariantId: '' as string,
+		// Element variant IDs
+		elementVariantIds: {} as Record<string, string>
 	})
 
 	// Populate edit data when weapon loads
@@ -166,7 +168,9 @@
 				// Awakenings
 				awakeningIds: (weapon.awakenings ?? []).map((a: any) => a.id),
 				// Variant
-				weaponSeriesVariantId: weapon.series?.weaponSeriesVariantId || ''
+				weaponSeriesVariantId: weapon.series?.weaponSeriesVariantId || '',
+				// Element variant IDs
+				elementVariantIds: weapon.elementVariantIds || {}
 			}
 		}
 	})
@@ -223,7 +227,9 @@
 				// Awakenings
 				awakening_ids: editData.awakeningIds,
 				// Variant
-				weapon_series_variant_id: editData.weaponSeriesVariantId || null
+				weapon_series_variant_id: editData.weaponSeriesVariantId || null,
+				// Element variant IDs
+				element_variant_ids: Object.keys(editData.elementVariantIds).length > 0 ? editData.elementVariantIds : null
 			}
 
 			await entityAdapter.updateWeapon(weapon.id, payload)
@@ -246,7 +252,7 @@
 
 	// Helper function for weapon grid image
 	function getWeaponImage(weapon: any): string {
-		return getWeaponGridImage(weapon?.granblueId, weapon?.element, weapon?.instanceElement)
+		return getWeaponGridImage(weapon?.granblueId, weapon?.element, weapon?.instanceElement, weapon?.elementVariantIds)
 	}
 </script>
 
@@ -271,6 +277,32 @@
 		>
 			<section class="details">
 				<WeaponMetadataSection {weapon} {editMode} bind:editData />
+				{#if editData.element === 0}
+					<DetailsContainer title="Element Variant IDs">
+						{#each ELEMENT_DISPLAY_ORDER as elementNum}
+							{@const key = String(elementNum)}
+							<div class="variant-id-row">
+								<img class="element-icon" src={getElementIcon(elementNum)} alt={getElementLabel(elementNum)} />
+								<input
+									class="variant-input"
+									type="text"
+									placeholder="Variant ID"
+									value={editData.elementVariantIds[key] || ''}
+									oninput={(e) => {
+										const val = e.currentTarget.value
+										if (val) {
+											editData.elementVariantIds = { ...editData.elementVariantIds, [key]: val }
+										} else {
+											const { [key]: _, ...rest } = editData.elementVariantIds
+											editData.elementVariantIds = rest
+										}
+									}}
+								/>
+							</div>
+						{/each}
+					</DetailsContainer>
+				{/if}
+
 				<WeaponGachaSection {weapon} {editMode} bind:editData />
 				<WeaponUncapSection {weapon} {editMode} bind:editData />
 				<WeaponTaxonomySection {weapon} {editMode} bind:editData />
@@ -390,5 +422,37 @@
 
 	.details {
 		@include database.details;
+	}
+
+	.variant-id-row {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 4px 0;
+
+		.element-icon {
+			width: 24px;
+			height: 24px;
+			flex-shrink: 0;
+		}
+
+		.variant-input {
+			flex: 1;
+			background: var(--input-bg, var(--background));
+			border: 1px solid var(--border-color);
+			border-radius: layout.$input-corner;
+			color: var(--text-primary);
+			font-size: 14px;
+			padding: 6px 10px;
+			outline: none;
+
+			&::placeholder {
+				color: var(--text-tertiary);
+			}
+
+			&:focus {
+				border-color: var(--accent-color, #3366ff);
+			}
+		}
 	}
 </style>
