@@ -39,7 +39,7 @@
 
 	const username = $derived(account?.username ?? '')
 	// Use reactive authStore instead of static server prop for real-time auth state
-	const isAuth = $derived(authStore.isAuthenticated)
+	const isAuth = $derived(authStore.isAuthenticated || (isAuthProp ?? false))
 	const role = $derived(account?.role ?? null)
 	// Element from UserCookie is already a string like "fire", "water", etc.
 	const userElement = $derived(
