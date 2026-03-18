@@ -284,8 +284,8 @@
 						{#if character.uncap?.flb}
 							<DetailItem label="FLB Date" value={character.flbDate || '—'} />
 						{/if}
-						{#if character.uncap?.ulb}
-							<DetailItem label="ULB Date" value={character.ulbDate || '—'} />
+						{#if character.uncap?.transcendence}
+							<DetailItem label="Transcendence Date" value={character.transcendenceDate || '—'} />
 						{/if}
 					</DetailsContainer>
 

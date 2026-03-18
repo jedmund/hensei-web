@@ -68,12 +68,12 @@
 			getter: (row: any) => row.uncap?.flb
 		},
 		{
-			id: 'ulb',
-			header: 'ULB',
+			id: 'transcendence',
+			header: 'Transcendence',
 			width: 70,
 			hidden: true,
 			cell: BooleanCell,
-			getter: (row: any) => row.uncap?.ulb
+			getter: (row: any) => row.uncap?.transcendence
 		},
 		{
 			id: 'maxLevel',
@@ -130,8 +130,8 @@
 			cell: DateCell
 		},
 		{
-			id: 'ulbDate',
-			header: 'ULB Date',
+			id: 'transcendenceDate',
+			header: 'Transcendence Date',
 			width: 110,
 			hidden: true,
 			cell: DateCell

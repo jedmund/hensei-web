@@ -48,7 +48,7 @@
 		proficiency: [0, 0],
 		hp: { minHp: 0, maxHp: 0, maxHpFlb: 0 },
 		atk: { minAtk: 0, maxAtk: 0, maxAtkFlb: 0 },
-		uncap: { flb: false, ulb: false, transcendence: false },
+		uncap: { flb: false, transcendence: false },
 		special: false
 	}
 
@@ -76,11 +76,11 @@
 		minHp: 0,
 		maxHp: 0,
 		maxHpFlb: 0,
-		maxHpUlb: 0,
+		maxHpTranscendence: 0,
 		minAtk: 0,
 		maxAtk: 0,
 		maxAtkFlb: 0,
-		maxAtkUlb: 0,
+		maxAtkTranscendence: 0,
 		baseDa: 0,
 		baseTa: 0,
 		ougiRatio: 0,
@@ -88,7 +88,7 @@
 
 		// Uncap
 		flb: false,
-		ulb: false,
+		transcendence: false,
 		special: false,
 
 		// Style swap
@@ -99,7 +99,7 @@
 		// Dates
 		releaseDate: '',
 		flbDate: '',
-		ulbDate: '',
+		transcendenceDate: '',
 
 		// Links
 		wikiEn: '',
@@ -188,11 +188,11 @@
 				min_hp: editData.minHp,
 				max_hp: editData.maxHp,
 				max_hp_flb: editData.maxHpFlb,
-				max_hp_ulb: editData.maxHpUlb,
+				max_hp_transcendence: editData.maxHpTranscendence,
 				min_atk: editData.minAtk,
 				max_atk: editData.maxAtk,
 				max_atk_flb: editData.maxAtkFlb,
-				max_atk_ulb: editData.maxAtkUlb,
+				max_atk_transcendence: editData.maxAtkTranscendence,
 				base_da: editData.baseDa,
 				base_ta: editData.baseTa,
 				ougi_ratio: editData.ougiRatio,
@@ -200,7 +200,7 @@
 
 				// Uncap
 				flb: editData.flb,
-				ulb: editData.ulb,
+				transcendence: editData.transcendence,
 				special: editData.special,
 
 				// Style swap
@@ -211,7 +211,7 @@
 				// Dates
 				release_date: editData.releaseDate || null,
 				flb_date: editData.flbDate || null,
-				ulb_date: editData.ulbDate || null,
+				transcendence_date: editData.transcendenceDate || null,
 
 				// Links
 				wiki_en: editData.wikiEn,
@@ -338,10 +338,10 @@
 					placeholder="YYYY-MM-DD"
 				/>
 			{/if}
-			{#if editData.ulb}
+			{#if editData.transcendence}
 				<DetailItem
-					label="ULB Date"
-					bind:value={editData.ulbDate}
+					label="Transcendence Date"
+					bind:value={editData.transcendenceDate}
 					editable={true}
 					type="text"
 					placeholder="YYYY-MM-DD"
