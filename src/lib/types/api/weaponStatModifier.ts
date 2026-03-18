@@ -34,6 +34,10 @@ export interface WeaponStatModifier {
 	polarity: 1 | -1
 	/** Display suffix for values (e.g., "%") */
 	suffix: string | null
+	/** Minimum valid strength value */
+	baseMin: number
+	/** Maximum valid strength value */
+	baseMax: number
 }
 
 /**
