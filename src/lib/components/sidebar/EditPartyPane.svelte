@@ -443,6 +443,10 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-half;
+
+		&:hover .raid-label {
+			color: var(--text-primary);
+		}
 	}
 
 	.raid-label {
@@ -460,6 +464,18 @@
 		border: none;
 		cursor: pointer;
 		text-align: left;
+
+		&:hover .raid-name {
+			color: var(--text-primary);
+		}
+
+		&:hover .placeholder {
+			color: var(--text-secondary);
+		}
+
+		&:hover :global(.chevron-icon) {
+			color: var(--icon-secondary-hover);
+		}
 	}
 
 	.raid-name {
@@ -482,6 +498,10 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-half;
+
+		&:hover .description-label {
+			color: var(--text-primary);
+		}
 	}
 
 	.description-label {
@@ -499,6 +519,18 @@
 		border: none;
 		cursor: pointer;
 		text-align: left;
+
+		&:hover .description-preview {
+			color: var(--text-primary);
+		}
+
+		&:hover .description-placeholder {
+			color: var(--text-secondary);
+		}
+
+		&:hover :global(.description-chevron) {
+			color: var(--icon-secondary-hover);
+		}
 	}
 
 	.description-preview {
@@ -526,11 +558,19 @@
 			:global(.chevron-icon) {
 				color: $wind-text-30;
 			}
+			&:hover .raid-name,
+			&:hover :global(.chevron-icon) {
+				color: $wind-text-20;
+			}
 		}
 		&.fire {
 			.raid-name,
 			:global(.chevron-icon) {
 				color: $fire-text-30;
+			}
+			&:hover .raid-name,
+			&:hover :global(.chevron-icon) {
+				color: $fire-text-20;
 			}
 		}
 		&.water {
@@ -538,11 +578,19 @@
 			:global(.chevron-icon) {
 				color: $water-text-30;
 			}
+			&:hover .raid-name,
+			&:hover :global(.chevron-icon) {
+				color: $water-text-20;
+			}
 		}
 		&.earth {
 			.raid-name,
 			:global(.chevron-icon) {
 				color: $earth-text-30;
+			}
+			&:hover .raid-name,
+			&:hover :global(.chevron-icon) {
+				color: $earth-text-20;
 			}
 		}
 		&.dark {
@@ -550,11 +598,19 @@
 			:global(.chevron-icon) {
 				color: $dark-text-30;
 			}
+			&:hover .raid-name,
+			&:hover :global(.chevron-icon) {
+				color: $dark-text-20;
+			}
 		}
 		&.light {
 			.raid-name,
 			:global(.chevron-icon) {
 				color: $light-text-30;
+			}
+			&:hover .raid-name,
+			&:hover :global(.chevron-icon) {
+				color: $light-text-20;
 			}
 		}
 	}
