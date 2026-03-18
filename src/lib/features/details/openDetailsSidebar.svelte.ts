@@ -53,12 +53,16 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
   const canEdit = canEditWeapon || canEditCharacter
 
   // Create edit handler for editable items
+  // Look up fresh data from partyStore each time (same pattern as DetailsSidebar line 36)
+  // to avoid stale closure references after save
   const onsave = canEdit
     ? () => {
         if (canEditWeapon) {
-          openWeaponEditSidebar(item as GridWeapon, options.onSaveWeapon)
+          const freshWeapon = (partyStore.getItem('weapon', (item as GridWeapon).id!) ?? item) as GridWeapon
+          openWeaponEditSidebar(freshWeapon, options.onSaveWeapon)
         } else if (canEditCharacter) {
-          openCharacterEditSidebar(item as GridCharacter, options.onSaveCharacter)
+          const freshChar = (partyStore.getItem('character', (item as GridCharacter).id!) ?? item) as GridCharacter
+          openCharacterEditSidebar(freshChar, options.onSaveCharacter)
         }
       }
     : undefined
