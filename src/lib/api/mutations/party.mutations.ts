@@ -77,10 +77,40 @@ export function updatePartyOptions(queryClient: QueryClient) {
 export function deletePartyOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: { id: string; shortcode: string }) => partyAdapter.delete(params.id),
+		onMutate: async (params: { id: string; shortcode: string }) => {
+			await queryClient.cancelQueries({ queryKey: partyKeys.userLists() })
+
+			const previousQueries = queryClient.getQueriesData({ queryKey: partyKeys.userLists() })
+
+			queryClient.setQueriesData(
+				{ queryKey: partyKeys.userLists() },
+				(old: { pages: Array<{ results: Party[]; [k: string]: unknown }>; pageParams: number[] } | undefined) => {
+					if (!old) return old
+					return {
+						...old,
+						pages: old.pages.map((page) => ({
+							...page,
+							results: page.results.filter((p) => p.id !== params.id)
+						}))
+					}
+				}
+			)
+
+			return { previousQueries }
+		},
 		onSuccess: (_data: unknown, params: { id: string; shortcode: string }) => {
 			queryClient.removeQueries({ queryKey: partyKeys.detail(params.shortcode) })
 			queryClient.invalidateQueries({ queryKey: partyKeys.lists() })
 			queryClient.invalidateQueries({ queryKey: userKeys.all })
+		},
+		onError: (
+			_err: unknown,
+			_params: { id: string; shortcode: string },
+			context: { previousQueries?: Array<[unknown, unknown]> } | undefined
+		) => {
+			context?.previousQueries?.forEach(([queryKey, data]) => {
+				queryClient.setQueryData(queryKey as readonly unknown[], data)
+			})
 		}
 	}
 }

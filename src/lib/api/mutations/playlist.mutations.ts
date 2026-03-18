@@ -78,10 +78,40 @@ export function updatePlaylistOptions(queryClient: QueryClient) {
 export function deletePlaylistOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (id: string) => playlistAdapter.destroy(id),
+		onMutate: async (id: string) => {
+			await queryClient.cancelQueries({ queryKey: playlistKeys.userLists() })
+
+			const previousQueries = queryClient.getQueriesData({ queryKey: playlistKeys.userLists() })
+
+			queryClient.setQueriesData(
+				{ queryKey: playlistKeys.userLists() },
+				(old: { pages: Array<{ results: Playlist[]; [k: string]: unknown }>; pageParams: number[] } | undefined) => {
+					if (!old) return old
+					return {
+						...old,
+						pages: old.pages.map((page) => ({
+							...page,
+							results: page.results.filter((p) => p.id !== id)
+						}))
+					}
+				}
+			)
+
+			return { previousQueries }
+		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: playlistKeys.details() })
 			queryClient.invalidateQueries({ queryKey: playlistKeys.userLists() })
 			queryClient.invalidateQueries({ queryKey: playlistKeys.all })
+		},
+		onError: (
+			_err: unknown,
+			_id: string,
+			context: { previousQueries?: Array<[unknown, unknown]> } | undefined
+		) => {
+			context?.previousQueries?.forEach(([queryKey, data]) => {
+				queryClient.setQueryData(queryKey as readonly unknown[], data)
+			})
 		}
 	}
 }
