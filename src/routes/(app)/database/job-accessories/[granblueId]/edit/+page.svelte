@@ -39,6 +39,14 @@
 	// Get accessory from query
 	const accessory = $derived(accessoryQuery.data)
 
+	// Fetch all jobs to auto-resolve job_id from accessory type
+	const jobsQuery = createQuery(() => jobQueries.list())
+	const matchedJob = $derived(
+		jobsQuery.data?.find(
+			(job) => job.accessory && job.accessoryType === editData.accessoryType
+		)
+	)
+
 	// Save state
 	let isSaving = $state(false)
 	let saveError = $state<string | null>(null)
@@ -85,7 +93,8 @@
 				granblue_id: editData.granblueId,
 				accessory_type: editData.accessoryType,
 				rarity: editData.rarity,
-				release_date: editData.releaseDate || undefined
+				release_date: editData.releaseDate || undefined,
+				job_id: matchedJob?.id
 			}
 
 			await jobAdapter.updateAccessory(accessory.granblueId, payload)
@@ -180,8 +189,7 @@
 					label="Release Date"
 					bind:value={editData.releaseDate}
 					editable={true}
-					type="text"
-					placeholder="YYYY-MM-DD"
+					type="date"
 				/>
 			</DetailsContainer>
 		</section>

@@ -8,8 +8,8 @@
 	import * as m from '$lib/paraglide/messages'
 
 	// TanStack Query
-	import { useQueryClient } from '@tanstack/svelte-query'
-	import { jobAccessoryKeys } from '$lib/api/queries/job.queries'
+	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
+	import { jobQueries, jobAccessoryKeys } from '$lib/api/queries/job.queries'
 	import { jobAdapter } from '$lib/api/adapters/job.adapter'
 
 	// Components
@@ -22,6 +22,14 @@
 	import { getRarityOptions } from '$lib/utils/rarity'
 
 	const queryClient = useQueryClient()
+
+	// Fetch all jobs to auto-resolve job_id from accessory type
+	const jobsQuery = createQuery(() => jobQueries.list())
+	const matchedJob = $derived(
+		jobsQuery.data?.find(
+			(job) => job.accessory && job.accessoryType === editData.accessoryType
+		)
+	)
 
 	// Save state
 	let isSaving = $state(false)
@@ -58,7 +66,8 @@
 				granblue_id: editData.granblueId,
 				accessory_type: editData.accessoryType,
 				rarity: editData.rarity,
-				release_date: editData.releaseDate || undefined
+				release_date: editData.releaseDate || undefined,
+				job_id: matchedJob?.id
 			}
 
 			const accessory = await jobAdapter.createAccessory(payload)
@@ -142,8 +151,7 @@
 				label="Release Date"
 				bind:value={editData.releaseDate}
 				editable={true}
-				type="text"
-				placeholder="YYYY-MM-DD"
+				type="date"
 			/>
 		</DetailsContainer>
 	</section>
