@@ -188,7 +188,8 @@ export function getWeaponImage(
 	id: string | number | null | undefined,
 	variant: ImageVariant = 'main',
 	element?: number,
-	transformation?: string
+	transformation?: string,
+	elementVariantIds?: Record<string, string> | null
 ): string {
 	if (!id) {
 		return getPlaceholderImage('weapon', variant)
@@ -200,6 +201,10 @@ export function getWeaponImage(
 
 	// Handle element-specific weapons (including element 0 for null-element weapons)
 	if (element !== undefined && element >= 0) {
+		const variantId = elementVariantIds?.[String(element)]
+		if (variantId) {
+			return `${basePath}/${variantId}${extension}`
+		}
 		return `${basePath}/${id}_${element}${extension}`
 	}
 
@@ -304,14 +309,15 @@ export function getCharacterImageWithPose(
 export function getWeaponGridImage(
 	id: string | number | null | undefined,
 	element?: number,
-	instanceElement?: number
+	instanceElement?: number,
+	elementVariantIds?: Record<string, string> | null
 ): string {
 	// Handle element-changeable weapons (element 0 means null/changeable)
 	// Use instance element if set, otherwise default to 0 (no element selected image)
 	if (id && element === 0) {
-		return getImageUrl('weapon', id, 'grid', { element: instanceElement ?? 0 })
+		return getWeaponImage(id, 'grid', instanceElement ?? 0, undefined, elementVariantIds)
 	}
-	return getImageUrl('weapon', id, 'grid')
+	return getWeaponImage(id, 'grid')
 }
 
 // ===== Job-Related Images =====

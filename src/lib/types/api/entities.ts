@@ -65,6 +65,8 @@ export interface Weapon {
   forgeOrder?: number | null
   forgedFrom?: { id: string; granblueId: string; name: LocalizedName } | null
   forgeChain?: Array<{ id: string; granblueId: string; name: LocalizedName; forgeOrder: number }> | null
+  // Element variant IDs: maps element number (as string key) to variant game ID
+  elementVariantIds?: Record<string, string> | null
 }
 
 // Character entity from CharacterBlueprint
