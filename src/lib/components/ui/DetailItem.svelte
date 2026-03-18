@@ -206,7 +206,8 @@
 			:global(.select),
 			:global(.multi-select),
 			:global(.character-typeahead),
-			:global(.weapon-typeahead) {
+			:global(.weapon-typeahead),
+			:global(.date-picker-field) {
 				width: var(--custom-width, 240px);
 			}
 
