@@ -36,6 +36,14 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		if (!opts.canEdit()) return
 
 		const party = opts.getParty()
+
+		// Party doesn't exist on the server yet — skip the API call
+		// but still notify so the unsaved-notice can appear
+		if (party.id === 'new') {
+			opts.onDetailsUpdated?.()
+			return
+		}
+
 		loading = true
 		error = null
 
