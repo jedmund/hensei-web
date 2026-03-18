@@ -290,6 +290,14 @@
 			width: 110,
 			hidden: true,
 			cell: DateCell
+		},
+		{
+			id: 'hasVariants',
+			header: 'Has Variants',
+			width: 100,
+			hidden: true,
+			cell: BooleanCell,
+			getter: (row: any) => row.elementVariantIds != null && Object.keys(row.elementVariantIds).length > 0
 		}
 	]
 </script>
