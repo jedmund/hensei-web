@@ -21,7 +21,6 @@ export const CharacterEditSchema = z.object({
   max_atk: z.number().int().min(0),
   max_atk_flb: z.number().int().min(0),
   flb: z.boolean(),
-  ulb: z.boolean(),
   transcendence: z.boolean(),
   special: z.boolean(),
   style_swap: z.boolean(),
@@ -53,7 +52,6 @@ export function toEditData(model: any): CharacterEdit {
     max_atk: model?.atk?.maxAtk ?? model?.atk?.max_atk ?? 0,
     max_atk_flb: model?.atk?.maxAtkFlb ?? model?.atk?.max_atk_flb ?? 0,
     flb: model?.uncap?.flb ?? false,
-    ulb: model?.uncap?.ulb ?? false,
     transcendence: model?.uncap?.transcendence ?? false,
     special: model?.special ?? false,
     style_swap: model?.styleSwap ?? model?.style_swap ?? false,
@@ -87,7 +85,6 @@ export function toPayload(edit: CharacterEdit) {
     },
     uncap: {
       flb: edit.flb,
-      ulb: edit.ulb,
       transcendence: edit.transcendence
     },
     special: edit.special,

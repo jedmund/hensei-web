@@ -153,13 +153,13 @@ export interface Character {
 		minHp?: number
 		maxHp?: number
 		maxHpFlb?: number
-		maxHpUlb?: number
+		maxHpTranscendence?: number
 	}
 	atk?: {
 		minAtk?: number
 		maxAtk?: number
 		maxAtkFlb?: number
-		maxAtkUlb?: number
+		maxAtkTranscendence?: number
 	}
 	// Other stats
 	baseDa?: number
@@ -170,7 +170,6 @@ export interface Character {
 	}
 	uncap?: {
 		flb?: boolean
-		ulb?: boolean
 		transcendence?: boolean
 	}
 	special?: boolean
@@ -197,7 +196,7 @@ export interface Character {
 	// Date fields
 	releaseDate?: string
 	flbDate?: string
-	ulbDate?: string
+	transcendenceDate?: string
 	wiki?: { en?: string; ja?: string }
 	gamewith?: string
 	kamigame?: string
@@ -333,21 +332,21 @@ export interface CreateCharacterPayload {
 	min_hp?: number
 	max_hp?: number
 	max_hp_flb?: number
-	max_hp_ulb?: number
+	max_hp_transcendence?: number
 	min_atk?: number
 	max_atk?: number
 	max_atk_flb?: number
-	max_atk_ulb?: number
+	max_atk_transcendence?: number
 	base_da?: number
 	base_ta?: number
 	ougi_ratio?: number
 	ougi_ratio_flb?: number
 	flb?: boolean
-	ulb?: boolean
+	transcendence?: boolean
 	special?: boolean
 	release_date?: string | null
 	flb_date?: string | null
-	ulb_date?: string | null
+	transcendence_date?: string | null
 	wiki_en?: string
 	wiki_ja?: string
 	gamewith?: string
@@ -571,12 +570,12 @@ export interface ParsedCharacterData {
 	maxAtk?: number
 	maxAtkFlb?: number
 	flb?: boolean
-	ulb?: boolean
+	transcendence?: boolean
 	/** Series array (e.g., [2] for Grand, [3] for Zodiac) */
 	series?: number[]
 	releaseDate?: string
 	flbDate?: string
-	ulbDate?: string
+	transcendenceDate?: string
 	gamewith?: string
 	kamigame?: string
 	/** Season enum value (1=Standard, 2=Valentine, etc.) */

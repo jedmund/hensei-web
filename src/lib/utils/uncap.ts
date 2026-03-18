@@ -4,7 +4,7 @@
 
 export interface UncapData {
 	flb: boolean
-	ulb: boolean
+	ulb?: boolean
 	transcendence?: boolean
 }
 
@@ -41,7 +41,7 @@ export function getMaxUncapLevel(special: boolean, flb: boolean, ulb: boolean): 
  */
 export function getCharacterMaxUncapLevel(character: CharacterUncapData): number {
 	const { special, uncap } = character
-	return getMaxUncapLevel(special, uncap.flb, uncap.ulb)
+	return getMaxUncapLevel(special, uncap.flb, uncap.transcendence ?? uncap.ulb ?? false)
 }
 
 /**
