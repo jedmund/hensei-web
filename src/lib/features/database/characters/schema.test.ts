@@ -12,7 +12,7 @@ describe('characters/schema', () => {
     proficiency: [1, 5],
     hp: { min_hp: 200, max_hp: 1500, max_hp_flb: 1600 },
     atk: { min_atk: 800, max_atk: 7200, max_atk_flb: 7400 },
-    uncap: { flb: true, ulb: false, transcendence: false },
+    uncap: { flb: true, transcendence: false },
     special: false
   }
 

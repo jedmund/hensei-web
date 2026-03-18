@@ -46,8 +46,8 @@ describe('getMaxUncapLevel', () => {
 
 describe('getCharacterMaxUncapLevel', () => {
 	it('delegates to getMaxUncapLevel', () => {
-		expect(getCharacterMaxUncapLevel({ special: true, uncap: { flb: true, ulb: false } })).toBe(4)
-		expect(getCharacterMaxUncapLevel({ special: false, uncap: { flb: true, ulb: true } })).toBe(6)
+		expect(getCharacterMaxUncapLevel({ special: true, uncap: { flb: true, transcendence: false } })).toBe(4)
+		expect(getCharacterMaxUncapLevel({ special: false, uncap: { flb: true, transcendence: true } })).toBe(6)
 	})
 })
 

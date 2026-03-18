@@ -48,7 +48,7 @@ export const MOCK_CHARACTER: Character = {
 	rarity: 5,
 	element: 1,
 	maxLevel: 100,
-	uncap: { flb: true, ulb: true },
+	uncap: { flb: true, transcendence: true },
 	special: false,
 	recruits: null,
 	gender: 0,

@@ -65,7 +65,7 @@ describe('EntityAdapter', () => {
 		element: 2,
 		uncap: {
 			flb: true,
-			ulb: true
+			transcendence: true
 		},
 		special: false,
 		gender: 0,

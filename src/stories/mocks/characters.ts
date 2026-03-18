@@ -13,7 +13,7 @@ export const mockCharacter: Character = {
 	recruits: null,
 	gender: 2, // Female
 	race: { race1: 1, race2: 0 }, // Human
-	uncap: { flb: true, ulb: true, transcendence: false },
+	uncap: { flb: true, transcendence: false },
 	proficiency: [1, 2], // Sabre, Dagger
 	hp: { minHp: 200, maxHp: 1200, maxHpFlb: 1500 },
 	atk: { minAtk: 6000, maxAtk: 8500, maxAtkFlb: 10000 }
@@ -30,7 +30,7 @@ export const mockSpecialCharacter: Character = {
 	recruits: null,
 	gender: 2, // Female (canonical)
 	race: { race1: 1, race2: 0 }, // Human
-	uncap: { flb: true, ulb: true, transcendence: false },
+	uncap: { flb: true, transcendence: false },
 	proficiency: [6, 0], // Staff
 	hp: { minHp: 180, maxHp: 1100, maxHpFlb: 1400 },
 	atk: { minAtk: 5500, maxAtk: 8000, maxAtkFlb: 9500 }
