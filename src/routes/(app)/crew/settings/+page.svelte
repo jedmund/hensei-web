@@ -72,7 +72,7 @@
 			newErrors.name = m.crew_error_name_max()
 		}
 
-		if (gamertag && gamertag.length > 10) {
+		if (gamertag && gamertag.length > 4) {
 			newErrors.gamertag = m.crew_error_gamertag_max()
 		}
 
@@ -187,7 +187,7 @@
 				bind:value={gamertag}
 				class="form-input"
 				class:error={errors.gamertag}
-				maxlength="10"
+				maxlength="4"
 			/>
 			{#if errors.gamertag}
 				<span class="field-error">{errors.gamertag}</span>
