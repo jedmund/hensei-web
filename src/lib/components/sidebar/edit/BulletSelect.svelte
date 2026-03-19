@@ -5,6 +5,7 @@
 	import { BULLET_TYPES } from '$lib/types/api/entities'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { localizedName } from '$lib/utils/locale'
+	import { getBulletImage } from '$lib/utils/images'
 
 	interface Props {
 		/** The bullet type for this slot (1=Parabellum, 2=Rifle, 3=Cartridge, 4=Aetherial) */
@@ -30,14 +31,18 @@
 
 	const options = $derived.by(() => {
 		const bullets = bulletsQuery.data ?? []
-		const result: Array<{ value: string; label: string }> = [
+		const result: Array<{ value: string; label: string; image?: string }> = [
 			{ value: '', label: `No ${typeName}` }
 		]
 
 		for (const bullet of bullets.sort((a, b) => a.order - b.order)) {
 			const name = localizedName(bullet.name)
 			const label = bullet.atk > 0 ? `${name} (ATK ${bullet.atk})` : name
-			result.push({ value: bullet.id, label })
+			result.push({
+				value: bullet.id,
+				label,
+				image: bullet.granblueId ? getBulletImage(bullet.granblueId) : undefined
+			})
 		}
 
 		return result
