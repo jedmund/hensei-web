@@ -12,11 +12,10 @@
 	import SelectableCollectionRow from '$lib/components/collection/SelectableCollectionRow.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
-	import ViewModeToggle from '$lib/components/ui/ViewModeToggle.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { collectionFilters } from '$lib/stores/collectionFilters.svelte'
-	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
+	import { viewMode } from '$lib/stores/viewMode.svelte'
 	import type { CollectionSortKey } from '$lib/types/api/collection'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { getArtifactImage } from '$lib/utils/images'
@@ -196,10 +195,6 @@
 	// Current view mode from store
 	const currentViewMode = $derived(viewMode.collectionView)
 
-	function handleViewModeChange(mode: ViewMode) {
-		viewMode.setCollectionView(mode)
-	}
-
 	function openArtifactDetails(artifact: CollectionArtifact) {
 		const artifactName = localizedName(artifact.artifact?.name)
 
@@ -286,7 +281,6 @@
 				options={sortOptions}
 				size="small"
 			/>
-			<ViewModeToggle value={currentViewMode} onValueChange={handleViewModeChange} element={userElement} />
 		</div>
 	</div>
 

@@ -7,8 +7,10 @@
 	import { setContext } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import { viewMode } from '$lib/stores/viewMode.svelte'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import CollectionSegmentedControl from '$lib/components/collection/CollectionSegmentedControl.svelte'
+	import ViewModeToggle from '$lib/components/ui/ViewModeToggle.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import AddToCollectionModal from '$lib/components/collection/AddToCollectionModal.svelte'
@@ -231,27 +233,34 @@
 					counts={countsQuery.data}
 				/>
 
-				{#if data.isOwner}
-					<DropdownMenu>
-						{#snippet trigger({ props })}
-							<Button {...props} variant="ghost" size="small" iconOnly icon="ellipsis" />
-						{/snippet}
-						{#snippet menu()}
-							{#if supportsAddModal}
-								<button type="button" class="dropdown-menu-item" onclick={() => (addModalOpen = true)}>
-									{addButtonText}
+				<div class="nav-right">
+					<ViewModeToggle
+						value={viewMode.collectionView}
+						onValueChange={(mode) => viewMode.setCollectionView(mode)}
+						element={userElement}
+					/>
+					{#if data.isOwner}
+						<DropdownMenu>
+							{#snippet trigger({ props })}
+								<Button {...props} variant="ghost" size="small" iconOnly icon="ellipsis" />
+							{/snippet}
+							{#snippet menu()}
+								{#if supportsAddModal}
+									<button type="button" class="dropdown-menu-item" onclick={() => (addModalOpen = true)}>
+										{addButtonText}
+									</button>
+								{:else if isArtifacts}
+									<button type="button" class="dropdown-menu-item" onclick={handleAddArtifact}>
+										{m.collection_add_artifact()}
+									</button>
+								{/if}
+								<button type="button" class="dropdown-menu-item" onclick={handleEnterSelectionMode}>
+									{m.collection_select_type({ type: entityNameMap[activeEntityType] ?? activeEntityType })}
 								</button>
-							{:else if isArtifacts}
-								<button type="button" class="dropdown-menu-item" onclick={handleAddArtifact}>
-									{m.collection_add_artifact()}
-								</button>
-							{/if}
-							<button type="button" class="dropdown-menu-item" onclick={handleEnterSelectionMode}>
-								{m.collection_select_type({ type: entityNameMap[activeEntityType] ?? activeEntityType })}
-							</button>
-						{/snippet}
-					</DropdownMenu>
-				{/if}
+							{/snippet}
+						</DropdownMenu>
+					{/if}
+				</div>
 			{/if}
 		</nav>
 
@@ -315,6 +324,12 @@
 	.content {
 		padding: 0 $unit-2x $unit-2x;
 		min-height: 400px;
+	}
+
+	.nav-right {
+		display: flex;
+		align-items: center;
+		gap: $unit;
 	}
 
 	// Selection mode controls

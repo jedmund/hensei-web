@@ -16,7 +16,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { collectionFilters } from '$lib/stores/collectionFilters.svelte'
-	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
+	import { viewMode } from '$lib/stores/viewMode.svelte'
 	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { localizedName } from '$lib/utils/locale'
@@ -113,10 +113,6 @@
 		untrack(() => collectionFilters.setWeapons(filters))
 	})
 
-	function handleViewModeChange(mode: ViewMode) {
-		viewMode.setCollectionView(mode)
-	}
-
 	function openWeaponDetails(weapon: CollectionWeapon) {
 		const weaponName = localizedName(weapon.weapon?.name)
 
@@ -140,9 +136,6 @@
 			bind:searchQuery
 			bind:sortBy
 			onFiltersChange={handleFiltersChange}
-			showViewToggle={true}
-			viewMode={currentViewMode}
-			onViewModeChange={handleViewModeChange}
 			element={userElement}
 		/>
 	</div>

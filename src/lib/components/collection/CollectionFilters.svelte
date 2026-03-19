@@ -5,11 +5,9 @@
 	import { RACE_LABELS } from '$lib/utils/race'
 	import { GENDER_LABELS } from '$lib/utils/gender'
 	import type { CollectionSortKey } from '$lib/types/api/collection'
-	import type { ViewMode } from '$lib/stores/viewMode.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
-	import ViewModeToggle from '$lib/components/ui/ViewModeToggle.svelte'
 	import { createQuery, queryOptions } from '@tanstack/svelte-query'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import { localizedName } from '$lib/utils/locale'
@@ -44,16 +42,8 @@
 		}
 		/** Whether to show the sort dropdown */
 		showSort?: boolean
-		/** Current view mode */
-		viewMode?: ViewMode
-		/** Callback when view mode changes */
-		onViewModeChange?: (mode: ViewMode) => void
-		/** Whether to show the view toggle */
-		showViewToggle?: boolean
 		/** Element color theme for active toggle state */
 		element?: string
-		/** Use neutral gray styling for view toggle */
-		neutralViewToggle?: boolean
 		/** Whether to show contained background styling (default: true) */
 		contained?: boolean
 		/** Whether to show the search input (default: true) */
@@ -118,11 +108,7 @@
 		onSortChange,
 		showFilters,
 		showSort = true,
-		viewMode = 'grid',
-		onViewModeChange,
-		showViewToggle = false,
 		element,
-		neutralViewToggle = false,
 		contained = true,
 		showSearch = true,
 		searchQuery = $bindable('')
@@ -508,14 +494,6 @@
 			</div>
 		{/if}
 
-		{#if showViewToggle}
-			<ViewModeToggle
-				value={viewMode}
-				onValueChange={onViewModeChange}
-				{element}
-				neutral={neutralViewToggle}
-			/>
-		{/if}
 	</div>
 </div>
 
