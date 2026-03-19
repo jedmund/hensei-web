@@ -65,13 +65,12 @@
 			</div>
 			<div class="details">
 				<div class="details-text">
+					{#if party.job}
+						<img class="job-icon" src={getJobIconUrl(party.job.granblueId)} alt="" loading="lazy" />
+					{/if}
 					<span class={`raid ${!party.raid ? 'empty' : ''}`}
 						>{party.raid ? displayName(party.raid) : m.grid_no_raid()}</span
 					>
-					{#if party.job}
-						<span class="separator">•</span>
-						<img class="job-icon" src={getJobIconUrl(party.job.granblueId)} alt="" loading="lazy" />
-					{/if}
 				</div>
 
 				<div class="pills">
@@ -261,11 +260,6 @@
 			overflow: hidden;
 			flex: 0 1 auto;
 			min-width: 0;
-
-			.separator {
-				color: var(--text-tertiary);
-				flex-shrink: 0;
-			}
 
 			.job-icon {
 				width: 20px;
