@@ -1060,7 +1060,7 @@
 	"collection_cancel": "キャンセル",
 	"collection_add_type": "{type}を追加",
 	"collection_add_artifact": "アーティファクトを追加",
-	"collection_select_type": "{type}を選択…",
+	"collection_delete_type": "{type}を削除…",
 	"collection_load_error": "コレクションの読み込みに失敗しました",
 	"collection_delete_error": "削除に失敗しました",
 

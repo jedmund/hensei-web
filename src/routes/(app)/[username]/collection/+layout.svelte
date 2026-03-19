@@ -254,8 +254,9 @@
 										{m.collection_add_artifact()}
 									</button>
 								{/if}
-								<button type="button" class="dropdown-menu-item" onclick={handleEnterSelectionMode}>
-									{m.collection_select_type({ type: entityNameMap[activeEntityType] ?? activeEntityType })}
+								<div class="dropdown-menu-separator"></div>
+								<button type="button" class="dropdown-menu-item danger" onclick={handleEnterSelectionMode}>
+									{m.collection_delete_type({ type: entityNameMap[activeEntityType] ?? activeEntityType })}
 								</button>
 							{/snippet}
 						</DropdownMenu>

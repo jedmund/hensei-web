@@ -1060,7 +1060,7 @@
 	"collection_cancel": "Cancel",
 	"collection_add_type": "Add {type}",
 	"collection_add_artifact": "Add artifact",
-	"collection_select_type": "Select {type}...",
+	"collection_delete_type": "Delete {type}...",
 	"collection_load_error": "Failed to load collection",
 	"collection_delete_error": "Failed to delete items",
 
