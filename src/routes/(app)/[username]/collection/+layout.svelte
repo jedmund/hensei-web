@@ -232,40 +232,25 @@
 				/>
 
 				{#if data.isOwner}
-					<div class="action-buttons">
-						{#if supportsAddModal}
-							<Button
-								variant="primary"
-								size="small"
-								onclick={() => (addModalOpen = true)}
-								icon="plus"
-								iconPosition="left"
-							>
-								{addButtonText}
-							</Button>
-						{:else if isArtifacts}
-							<Button
-								variant="primary"
-								size="small"
-								onclick={handleAddArtifact}
-								icon="plus"
-								iconPosition="left"
-							>
-								{m.collection_add_artifact()}
-							</Button>
-						{/if}
-
-						<DropdownMenu>
-							{#snippet trigger({ props })}
-								<Button {...props} variant="ghost" size="small" iconOnly icon="ellipsis" />
-							{/snippet}
-							{#snippet menu()}
-								<button type="button" class="dropdown-menu-item" onclick={handleEnterSelectionMode}>
-									{m.collection_select_type({ type: entityNameMap[activeEntityType] ?? activeEntityType })}
+					<DropdownMenu>
+						{#snippet trigger({ props })}
+							<Button {...props} variant="ghost" size="small" iconOnly icon="ellipsis" />
+						{/snippet}
+						{#snippet menu()}
+							{#if supportsAddModal}
+								<button type="button" class="dropdown-menu-item" onclick={() => (addModalOpen = true)}>
+									{addButtonText}
 								</button>
-							{/snippet}
-						</DropdownMenu>
-					</div>
+							{:else if isArtifacts}
+								<button type="button" class="dropdown-menu-item" onclick={handleAddArtifact}>
+									{m.collection_add_artifact()}
+								</button>
+							{/if}
+							<button type="button" class="dropdown-menu-item" onclick={handleEnterSelectionMode}>
+								{m.collection_select_type({ type: entityNameMap[activeEntityType] ?? activeEntityType })}
+							</button>
+						{/snippet}
+					</DropdownMenu>
 				{/if}
 			{/if}
 		</nav>
@@ -330,13 +315,6 @@
 	.content {
 		padding: 0 $unit-2x $unit-2x;
 		min-height: 400px;
-	}
-
-	// Action buttons container
-	.action-buttons {
-		display: flex;
-		align-items: center;
-		gap: $unit;
 	}
 
 	// Selection mode controls
