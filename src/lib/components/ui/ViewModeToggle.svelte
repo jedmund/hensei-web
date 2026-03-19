@@ -11,20 +11,18 @@
 		onValueChange?: (mode: ViewMode) => void
 		/** Element color theme for active state */
 		element?: string
-		/** Use neutral gray styling instead of element colors */
-		neutral?: boolean
 		/** Additional class name */
 		class?: string
 	}
 
-	let { value = 'grid', onValueChange, element, neutral = false, class: className }: Props = $props()
+	let { value = 'grid', onValueChange, element, class: className }: Props = $props()
 
 	function handleModeChange(mode: ViewMode) {
 		onValueChange?.(mode)
 	}
 
 	const containerClass = $derived(
-		['view-mode-toggle', neutral ? 'neutral' : element, className].filter(Boolean).join(' ')
+		['view-mode-toggle', element, className].filter(Boolean).join(' ')
 	)
 </script>
 
@@ -38,7 +36,7 @@
 			aria-label="Grid view"
 			aria-pressed={value === 'grid'}
 		>
-			<Icon name="grid" size={18} />
+			<Icon name="grid" size={16} />
 		</button>
 	</Tooltip>
 	<Tooltip content="List view">
@@ -50,7 +48,7 @@
 			aria-label="List view"
 			aria-pressed={value === 'list'}
 		>
-			<Icon name="list" size={18} />
+			<Icon name="list" size={16} />
 		</button>
 	</Tooltip>
 </div>
@@ -62,17 +60,19 @@
 	@use '$src/themes/colors' as *;
 
 	.view-mode-toggle {
-		display: flex;
-		gap: $unit-fourth;
-		padding: $unit-fourth;
-		background: var(--segmented-control-blended-bg);
-		border-radius: $item-corner;
+		display: inline-flex;
+		gap: $unit-half;
+		padding: $unit-half;
+		background: var(--segmented-control-background-bg);
+		border-radius: $full-corner;
 
 		// Default colors (no element)
-		--toggle-active-bg: var(--segmented-control-blended-segment-bg-checked);
-		--toggle-active-icon: var(--segmented-control-blended-segment-text-checked);
+		--toggle-active-bg: var(--segmented-control-background-segment-bg-checked);
+		--toggle-active-icon: var(--segmented-control-background-segment-text-checked);
+		--toggle-hover-bg: var(--segmented-control-background-segment-bg-hover);
+		--toggle-hover-icon: var(--segmented-control-background-segment-text-hover);
 
-		// Element-specific colors (match SegmentedControl)
+		// Element-specific colors
 		&.wind {
 			--toggle-active-bg: var(--wind-nav-selected-bg);
 			--toggle-active-icon: var(--wind-nav-selected-text);
@@ -102,29 +102,23 @@
 			--toggle-active-bg: var(--light-nav-selected-bg);
 			--toggle-active-icon: var(--light-nav-selected-text);
 		}
-
-		// Neutral gray styling (no element colors)
-		&.neutral {
-			--toggle-active-bg: var(--segmented-control-blended-segment-bg-checked);
-			--toggle-active-icon: var(--segmented-control-blended-segment-text-checked);
-		}
 	}
 
 	.toggle-btn {
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: $unit-half;
-		border: none;
-		background: transparent;
-		border-radius: $item-corner-small;
+		padding: $unit-half $unit;
+		border: 0.5px solid transparent;
+		background: var(--segmented-control-background-segment-bg);
+		border-radius: $full-corner;
 		cursor: pointer;
-		color: var(--text-secondary);
-		@include smooth-transition($duration-instant, all);
+		color: var(--segmented-control-background-segment-text);
+		transition: all 0.15s ease-in-out;
 
 		&:hover:not(.active) {
-			color: var(--text-tertiary);
-			background: var(--button-bg-hover);
+			background: var(--toggle-hover-bg);
+			color: var(--toggle-hover-icon);
 		}
 
 		&:focus-visible {
@@ -134,6 +128,8 @@
 		&.active {
 			background: var(--toggle-active-bg);
 			color: var(--toggle-active-icon);
+			border: 0.5px solid rgba(0, 0, 0, 0.12);
+			box-shadow: var(--shadow-xs);
 		}
 	}
 </style>
