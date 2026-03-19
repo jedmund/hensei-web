@@ -1,11 +1,10 @@
-import type { PageLoad } from './$types'
+import type { PageServerLoad } from './$types'
 import { error, redirect } from '@sveltejs/kit'
 import { userAdapter } from '$lib/api/adapters/user.adapter'
 
-export const load: PageLoad = async ({ params, parent, fetch }) => {
+export const load: PageServerLoad = async ({ params, locals, fetch }) => {
   const username = params.username
-  const { account } = await parent()
-  const isOwner = account?.username === username
+  const isOwner = locals.session?.account?.username === username
 
   // Only the owner can view their favorites
   if (!isOwner) {
