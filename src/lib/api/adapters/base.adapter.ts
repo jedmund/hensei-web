@@ -100,8 +100,12 @@ export abstract class BaseAdapter {
 		// Use full URL (including query params) for cache key to differentiate filtered requests
 		const requestId = this.generateRequestId(url, options.method, bodyString)
 
-		// Cancel any existing request to the same endpoint
-		this.cancelRequest(requestId)
+		// Cancel any existing request to the same endpoint (client-side only).
+		// On the server, the adapter singleton is shared across concurrent requests,
+		// so cancelling by request ID would abort other users' in-flight requests.
+		if (browser) {
+			this.cancelRequest(requestId)
+		}
 
 		// Create new abort controller for this request
 		const controller = new AbortController()
