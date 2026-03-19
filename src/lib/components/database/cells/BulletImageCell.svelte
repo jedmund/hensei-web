@@ -24,7 +24,7 @@
 
 	.database-image {
 		max-width: 100%;
-		max-height: 48px;
+		max-height: 36px;
 		width: auto;
 		height: auto;
 		object-fit: contain;
