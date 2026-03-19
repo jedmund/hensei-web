@@ -120,6 +120,7 @@
 		bind:this={editPaneRef}
 		{weaponData}
 		{currentValues}
+		position={weapon.position}
 		onSave={handleSave}
 	/>
 </div>

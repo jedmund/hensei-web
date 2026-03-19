@@ -68,11 +68,13 @@
 		weaponData: Weapon | undefined
 		/** Current values for all edit fields */
 		currentValues: WeaponEditValues
+		/** Grid position (-1 = mainhand). Bullets only available on mainhand guns. */
+		position?: number
 		/** Callback when save is clicked */
 		onSave?: (updates: WeaponEditUpdates) => void
 	}
 
-	let { weaponData, currentValues, onSave }: Props = $props()
+	let { weaponData, currentValues, position, onSave }: Props = $props()
 
 	// Local state derived from props — overrides are temporary until currentValues changes
 	let uncapLevel = $derived(currentValues.uncapLevel)
@@ -111,7 +113,8 @@
 	const hasBefoulment = $derived(augmentType === 'befoulment')
 	const hasAwakening = $derived(seriesHasAwakening(series) && (weaponData?.maxAwakeningLevel ?? 0) > 0)
 	const bulletSlots = $derived(weaponData?.bulletSlots ?? [])
-	const hasBullets = $derived(bulletSlots.length > 0 && weaponData?.proficiency === 9)
+	const isMainhand = $derived(position === -1)
+	const hasBullets = $derived(bulletSlots.length > 0 && isMainhand && weaponData?.proficiency === 9)
 	const availableAwakenings = $derived(weaponData?.awakenings ?? [])
 
 	// Element name for theming
