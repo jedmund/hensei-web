@@ -63,7 +63,7 @@
 	)
 
 	// Get selected labels for display
-	const selectedLabels = $derived(() => {
+	const selectedLabels = $derived.by(() => {
 		if (value.length === 0) return null
 		if (value.length === 1) {
 			return options.find((opt) => opt.value === value[0])?.label
@@ -108,7 +108,7 @@
 		{:else if firstSelectedOption?.color}
 			<span class="trigger-color-dot" style="background-color: {firstSelectedOption.color}"></span>
 		{/if}
-		<span class="text">{displayText ?? selectedLabels() ?? placeholder}</span>
+		<span class="text">{displayText ?? selectedLabels ?? placeholder}</span>
 		<Icon name="chevron-down-small" size={14} class="chevron" />
 	</SelectPrimitive.Trigger>
 
