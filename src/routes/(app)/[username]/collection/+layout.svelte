@@ -8,8 +8,7 @@
 	import { createQuery } from '@tanstack/svelte-query'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
-	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
-	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import CollectionSegmentedControl from '$lib/components/collection/CollectionSegmentedControl.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import AddToCollectionModal from '$lib/components/collection/AddToCollectionModal.svelte'
@@ -225,38 +224,12 @@
 				</div>
 			{:else}
 				<!-- Normal UI -->
-				<SegmentedControl
-					value={activeEntityType}
+				<CollectionSegmentedControl
+					{activeEntityType}
 					onValueChange={handleTabChange}
-					variant="blended"
-					size="small"
 					element={userElement}
-				>
-					<Segment value="characters">
-						{m.collection_tab_characters()}
-						{#if countsQuery.data?.characters != null}
-							<span class="count">{countsQuery.data.characters}</span>
-						{/if}
-					</Segment>
-					<Segment value="weapons">
-						{m.collection_tab_weapons()}
-						{#if countsQuery.data?.weapons != null}
-							<span class="count">{countsQuery.data.weapons}</span>
-						{/if}
-					</Segment>
-					<Segment value="summons">
-						{m.collection_tab_summons()}
-						{#if countsQuery.data?.summons != null}
-							<span class="count">{countsQuery.data.summons}</span>
-						{/if}
-					</Segment>
-					<Segment value="artifacts">
-						{m.collection_tab_artifacts()}
-						{#if countsQuery.data?.artifacts != null}
-							<span class="count">{countsQuery.data.artifacts}</span>
-						{/if}
-					</Segment>
-				</SegmentedControl>
+					counts={countsQuery.data}
+				/>
 
 				{#if data.isOwner}
 					<div class="action-buttons">
@@ -390,10 +363,4 @@
 		gap: $unit;
 	}
 
-	// Count badge in segment tabs
-	.count {
-		margin-left: $unit-half;
-		color: inherit;
-		opacity: 0.7;
-	}
 </style>
