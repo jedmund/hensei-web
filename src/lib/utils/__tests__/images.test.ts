@@ -127,7 +127,8 @@ describe('getCharacterPose', () => {
 import { getSummonTransformation, getWeaponTransformation } from '../images'
 
 describe('getSummonTransformation', () => {
-	const ALT_ART_SUMMON = '2040094000' // Bahamut
+	const PRIMAL_SUMMON = '2040094000' // Agni (first upgrade at uncap 5)
+	const OMEGA_SUMMON = '2040020000' // Tiamat Omega (first upgrade at uncap 4)
 
 	it('returns undefined for summons not in the alt art set', () => {
 		expect(getSummonTransformation('9999999999', 5)).toBeUndefined()
@@ -138,23 +139,33 @@ describe('getSummonTransformation', () => {
 		expect(getSummonTransformation(undefined, 5)).toBeUndefined()
 	})
 
-	it('returns undefined for base uncap (< 5)', () => {
-		expect(getSummonTransformation(ALT_ART_SUMMON, 4)).toBeUndefined()
+	it('returns undefined for base uncap (below threshold)', () => {
+		expect(getSummonTransformation(PRIMAL_SUMMON, 4)).toBeUndefined()
+		expect(getSummonTransformation(OMEGA_SUMMON, 3)).toBeUndefined()
 	})
 
-	it('returns 02 for ULB (uncap >= 5, no transcendence)', () => {
-		expect(getSummonTransformation(ALT_ART_SUMMON, 5)).toBe('02')
-		expect(getSummonTransformation(ALT_ART_SUMMON, 5, 0)).toBe('02')
+	it('returns 02 for first upgrade (at per-summon threshold)', () => {
+		// Primal: threshold 5
+		expect(getSummonTransformation(PRIMAL_SUMMON, 5)).toBe('02')
+		expect(getSummonTransformation(PRIMAL_SUMMON, 5, 0)).toBe('02')
+		// Omega: threshold 4
+		expect(getSummonTransformation(OMEGA_SUMMON, 4)).toBe('02')
+		expect(getSummonTransformation(OMEGA_SUMMON, 5)).toBe('02')
+		expect(getSummonTransformation(OMEGA_SUMMON, 5, 0)).toBe('02')
 	})
 
-	it('returns 03 for transcendence steps 1-4', () => {
-		expect(getSummonTransformation(ALT_ART_SUMMON, 5, 1)).toBe('03')
-		expect(getSummonTransformation(ALT_ART_SUMMON, 5, 4)).toBe('03')
+	it('returns 03 for second upgrade (uncap 6)', () => {
+		expect(getSummonTransformation(PRIMAL_SUMMON, 6)).toBe('03')
+		expect(getSummonTransformation(PRIMAL_SUMMON, 6, 0)).toBe('03')
+		expect(getSummonTransformation(PRIMAL_SUMMON, 6, 4)).toBe('03')
+		expect(getSummonTransformation(OMEGA_SUMMON, 6)).toBe('03')
+		expect(getSummonTransformation(OMEGA_SUMMON, 6, 4)).toBe('03')
 	})
 
-	it('returns 04 for transcendence step 5+', () => {
-		expect(getSummonTransformation(ALT_ART_SUMMON, 5, 5)).toBe('04')
-		expect(getSummonTransformation(ALT_ART_SUMMON, 5, 6)).toBe('04')
+	it('returns 04 for third upgrade (uncap 6 + transcendence 5)', () => {
+		expect(getSummonTransformation(PRIMAL_SUMMON, 6, 5)).toBe('04')
+		expect(getSummonTransformation(PRIMAL_SUMMON, 6, 6)).toBe('04')
+		expect(getSummonTransformation(OMEGA_SUMMON, 6, 5)).toBe('04')
 	})
 
 	it('accepts numeric id', () => {

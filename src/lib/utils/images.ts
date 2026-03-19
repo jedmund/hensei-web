@@ -60,36 +60,49 @@ export function getGenericPlaceholder(): string {
 }
 
 /**
- * Summon IDs that have alternate art at different uncap levels.
- * Only these summons change their image based on uncap/transcendence.
+ * Summon IDs that have alternate art, mapped to the uncap level at which the first art upgrade occurs.
+ *
+ * All summons in this map follow the same 3-tier art progression:
+ *   '02' — first upgrade (at the per-summon threshold below)
+ *   '03' — second upgrade (uncap_level 6)
+ *   '04' — third upgrade (uncap_level 6 + transcendence_step 5)
+ *
+ * Omega summons (Tiamat, Colossus, etc.) upgrade first at FLB (uncap 4).
+ * Primal summons (Agni, Varuna, etc.) upgrade first at ULB (uncap 5).
  */
-const SUMMONS_WITH_ALT_ART = new Set([
-	'2040094000',
-	'2040100000',
-	'2040080000',
-	'2040098000',
-	'2040090000',
-	'2040084000',
-	'2040003000',
-	'2040056000',
-	'2040020000',
-	'2040034000',
-	'2040028000',
-	'2040027000',
-	'2040046000',
-	'2040047000',
+const SUMMON_ALT_ART_THRESHOLD: Map<string, number> = new Map([
+	// Primal summons — first upgrade at uncap 5
+	['2040094000', 5], // Agni
+	['2040100000', 5], // Varuna
+	['2040080000', 5], // Zeus
+	['2040098000', 5], // Zephyrus
+	['2040090000', 5], // Hades
+	['2040084000', 5], // Titan
+	['2040003000', 5], // Bahamut
+	['2040056000', 5], // Lucifer
+	['2040065000', 5],
+	// Omega summons — first upgrade at uncap 4
+	['2040020000', 4], // Tiamat Omega
+	['2040034000', 4], // Colossus Omega
+	['2040028000', 4], // Leviathan Omega
+	['2040027000', 4], // Yggdrasil Omega
+	['2040046000', 4], // Celeste Omega
+	['2040047000', 4], // Luminiera Omega
+	['2040430000', 4],
 ])
 
 /**
- * Calculates the summon transformation suffix based on uncap level and transcendence
- * Returns undefined for base art, '02' for ULB, '03' for transcendence 1-4, '04' for transcendence 5+
- * Only applies to summons in the SUMMONS_WITH_ALT_ART set.
+ * Calculates the summon transformation suffix based on uncap level and transcendence.
+ * Returns undefined for base art, '02' for first upgrade, '03' for uncap 6, '04' for uncap 6 + transcendence 5.
+ * The first upgrade threshold varies per summon (see SUMMON_ALT_ART_THRESHOLD).
  */
 export function getSummonTransformation(granblueId?: string | number | null, uncapLevel?: number, transcendenceStep?: number): string | undefined {
-	if (!granblueId || !SUMMONS_WITH_ALT_ART.has(String(granblueId))) return undefined
-	if (transcendenceStep && transcendenceStep >= 5) return '04'
-	if (transcendenceStep && transcendenceStep > 0) return '03'
-	if (uncapLevel && uncapLevel >= 5) return '02'
+	const id = String(granblueId)
+	const threshold = granblueId ? SUMMON_ALT_ART_THRESHOLD.get(id) : undefined
+	if (threshold === undefined) return undefined
+	if (uncapLevel !== undefined && uncapLevel >= 6 && transcendenceStep !== undefined && transcendenceStep >= 5) return '04'
+	if (uncapLevel !== undefined && uncapLevel >= 6) return '03'
+	if (uncapLevel !== undefined && uncapLevel >= threshold) return '02'
 	return undefined
 }
 
