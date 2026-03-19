@@ -5,7 +5,7 @@ const STORAGE_KEY_PREFIX = 'collection-filters'
 interface CharacterFilters {
 	element: number[]
 	rarity: number[]
-	series: number[]
+	series: string[]
 	race: number[]
 	proficiency: number[]
 	gender: number[]

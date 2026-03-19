@@ -34,7 +34,7 @@
 	// Filter state (initialized from localStorage)
 	let elementFilters = $state<number[]>(collectionFilters.characters.element)
 	let rarityFilters = $state<number[]>(collectionFilters.characters.rarity)
-	let seriesFilters = $state<number[]>(collectionFilters.characters.series)
+	let seriesFilters = $state<string[]>(collectionFilters.characters.series)
 	let raceFilters = $state<number[]>(collectionFilters.characters.race)
 	let proficiencyFilters = $state<number[]>(collectionFilters.characters.proficiency)
 	let genderFilters = $state<number[]>(collectionFilters.characters.gender)
@@ -101,7 +101,7 @@
 	function handleFiltersChange(filters: CollectionFilterState) {
 		elementFilters = filters.element
 		rarityFilters = filters.rarity
-		seriesFilters = filters.series as number[]
+		seriesFilters = filters.series as string[]
 		raceFilters = filters.race
 		proficiencyFilters = filters.proficiency
 		genderFilters = filters.gender

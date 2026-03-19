@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { getElementColor, getElementOptions } from '$lib/utils/element'
-	import { CHARACTER_SEASON_NAMES, CHARACTER_SERIES_NAMES } from '$lib/types/enums'
+	import { CHARACTER_SEASON_NAMES } from '$lib/types/enums'
 	import { RACE_LABELS } from '$lib/utils/race'
 	import { GENDER_LABELS } from '$lib/utils/gender'
 	import type { CollectionSortKey } from '$lib/types/api/collection'
@@ -180,6 +180,17 @@
 		})
 	)
 
+	// Fetch character series from API (only when entityType is character)
+	const characterSeriesQuery = createQuery(() =>
+		queryOptions({
+			queryKey: ['characterSeries', 'list'] as const,
+			queryFn: () => entityAdapter.getCharacterSeriesList(),
+			enabled: entityType === 'character',
+			staleTime: 1000 * 60 * 60,
+			gcTime: 1000 * 60 * 60 * 24
+		})
+	)
+
 	// Fetch summon series from API (only when entityType is summon)
 	const summonSeriesQuery = createQuery(() =>
 		queryOptions({
@@ -197,16 +208,17 @@
 		label
 	}))
 
-	// Character series (hardcoded enum)
-	const characterSeries = Object.entries(CHARACTER_SERIES_NAMES).map(([value, label]) => ({
-		value: Number(value),
-		label
-	}))
-
 	// Build series options based on entity type
-	// For weapons/summons: use API-fetched series with string IDs
-	// For characters: use hardcoded enum with number values
+	// All entity types use API-fetched series with string (UUID) IDs
 	const seriesOptions = $derived.by(() => {
+		if (entityType === 'character' && characterSeriesQuery.data) {
+			return characterSeriesQuery.data
+				.sort((a, b) => a.order - b.order)
+				.map((s) => ({
+					value: s.id,
+					label: localizedName(s.name)
+				}))
+		}
 		if (entityType === 'weapon' && weaponSeriesQuery.data) {
 			return weaponSeriesQuery.data
 				.sort((a, b) => a.order - b.order)
@@ -223,7 +235,7 @@
 					label: localizedName(s.name)
 				}))
 		}
-		return characterSeries
+		return []
 	})
 
 	const races = Object.entries(RACE_LABELS)
