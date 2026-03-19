@@ -7,8 +7,10 @@
   import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
   import { getRarityLabel, getRarityOptions } from '$lib/utils/rarity'
   import AssociatedEntityLink from '$lib/components/database/AssociatedEntityLink.svelte'
-  import { CHARACTER_SEASON_NAMES, CHARACTER_SERIES_NAMES, getSeasonName, getSeriesNames } from '$lib/types/enums'
+  import { CHARACTER_SEASON_NAMES, getSeasonName } from '$lib/types/enums'
   import { localizedName } from '$lib/utils/locale'
+  import { createQuery, queryOptions } from '@tanstack/svelte-query'
+  import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 
   interface Props {
     character: any
@@ -33,33 +35,46 @@
     }))
   ]
 
-  // Series options for multiselect
-  const seriesOptions = Object.entries(CHARACTER_SERIES_NAMES).map(([value, label]) => ({
-    value: Number(value),
-    label
-  }))
+  // Fetch series from API
+  const characterSeriesQuery = createQuery(() =>
+    queryOptions({
+      queryKey: ['characterSeries', 'list'] as const,
+      queryFn: () => entityAdapter.getCharacterSeriesList(),
+      enabled: editMode,
+      staleTime: 1000 * 60 * 60,
+      gcTime: 1000 * 60 * 60 * 24
+    })
+  )
+
+  // Series options for multiselect (UUID-based)
+  const seriesOptions = $derived(
+    (characterSeriesQuery.data ?? [])
+      .toSorted((a, b) => a.order - b.order)
+      .map((s) => ({
+        value: s.id,
+        label: localizedName(s.name)
+      }))
+  )
 
   function formatPromotions(promotionNames: string[] | undefined): string {
     if (!promotionNames || promotionNames.length === 0) return '—'
     return promotionNames.join(', ')
   }
 
-  // Format series for display - use API-provided seriesNames if available
+  // Format series for display - use API-provided series objects or seriesNames
   function formatSeriesDisplay(): string {
     // Use pre-computed seriesNames from API if available
     if (character.seriesNames && character.seriesNames.length > 0) {
       return character.seriesNames.join(', ')
     }
-    // Fallback for legacy integer array
+    // CharacterSeriesRef[] objects
     if (Array.isArray(character.series) && character.series.length > 0) {
       const first = character.series[0]
-      if (typeof first === 'number') {
-        return getSeriesNames(character.series as number[]).join(', ')
+      if (typeof first === 'object' && first !== null && 'name' in first) {
+        return (character.series as Array<{ name: { en?: string; ja?: string } }>)
+          .map((s) => localizedName(s.name))
+          .join(', ')
       }
-      // CharacterSeriesRef[] - extract names
-      return (character.series as Array<{ name: { en?: string; ja?: string } }>)
-        .map((s) => localizedName(s.name))
-        .join(', ')
     }
     return '—'
   }

@@ -23,7 +23,6 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
-	import { CHARACTER_SERIES_NAMES } from '$lib/types/enums'
 	import { getElementLabel } from '$lib/utils/element'
 	import {
 		buildWikiEnUrl,
@@ -37,11 +36,6 @@
 
 	// Types
 	import type { PageData } from './$types'
-
-	// Create reverse mapping from series name to integer
-	const SERIES_NAME_TO_INT: Record<string, number> = Object.fromEntries(
-		Object.entries(CHARACTER_SERIES_NAMES).map(([key, name]) => [name, Number(key)])
-	)
 
 	let { data }: { data: PageData } = $props()
 
@@ -89,7 +83,7 @@
 		proficiency1: 0,
 		proficiency2: 0,
 		season: 0,
-		series: [] as number[],
+		series: [] as string[],
 		// HP stats
 		minHp: 0,
 		maxHp: 0,
@@ -127,23 +121,12 @@
 		kamigame: ''
 	})
 
-	// Helper to convert series to number array (handles both legacy integer and object formats)
-	function seriesAsNumbers(
-		series: number[] | Array<{ id: string; name?: { en?: string } }> | undefined
-	): number[] {
-		if (!series || series.length === 0) return []
-		// Check if first element is an object (CharacterSeriesRef) or number
-		const first = series[0]
-		if (typeof first === 'object' && first !== null && 'id' in first) {
-			// It's CharacterSeriesRef[] - convert using name.en to look up enum value
-			return (series as Array<{ id: string; name?: { en?: string } }>)
-				.map((s) => {
-					const name = s.name?.en
-					return name ? SERIES_NAME_TO_INT[name] : undefined
-				})
-				.filter((n): n is number => n !== undefined)
-		}
-		return series as number[]
+	// Extract series UUIDs from character data (handles both CharacterSeriesRef[] and legacy formats)
+	function seriesAsUUIDs(series: unknown): string[] {
+		if (!Array.isArray(series) || series.length === 0) return []
+		return series
+			.filter((s): s is { id: string } => typeof s === 'object' && s !== null && 'id' in s)
+			.map((s) => s.id)
 	}
 
 	// Populate edit data when character loads
@@ -162,7 +145,7 @@
 				proficiency1: character.proficiency?.[0] || 0,
 				proficiency2: character.proficiency?.[1] || 0,
 				season: character.season || 0,
-				series: seriesAsNumbers(character.series),
+				series: seriesAsUUIDs(character.series),
 				// HP stats
 				minHp: character.hp?.minHp || 0,
 				maxHp: character.hp?.maxHp || 0,
