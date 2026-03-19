@@ -9,6 +9,9 @@
 	import { formatAxSkill, getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import { BULLET_TYPES } from '$lib/types/api/entities'
+	import { getBulletImage } from '$lib/utils/images'
+	import { localizedName } from '$lib/utils/locale'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -139,6 +142,19 @@
 				</DetailRow>
 			</DetailsSection>
 		{/if}
+
+		{#if modificationStatus.hasBullets && weapon.bullets?.length}
+			<DetailsSection title={m.details_bullets()}>
+				{#each weapon.bullets as loadout}
+					<DetailRow label={BULLET_TYPES[loadout.bullet.bulletType] ?? 'Unknown'}>
+						<span class="bullet-value">
+							<img src={getBulletImage(loadout.bullet.granblueId)} alt="" class="bullet-icon" />
+							{localizedName(loadout.bullet.name)}
+						</span>
+					</DetailRow>
+				{/each}
+			</DetailsSection>
+		{/if}
 	{:else if type === 'summon'}
 		{@const summon = item as GridSummon}
 
@@ -162,5 +178,17 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-3x;
+	}
+
+	.bullet-value {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+	}
+
+	.bullet-icon {
+		width: 24px;
+		height: 24px;
+		object-fit: contain;
 	}
 </style>
