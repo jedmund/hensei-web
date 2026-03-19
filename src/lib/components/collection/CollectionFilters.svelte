@@ -565,7 +565,7 @@
 		font-family: var(--font-family);
 		font-size: $font-small;
 		padding: $unit-half $unit;
-		min-height: $unit-3x;
+		min-height: calc($unit * 3.5);
 		width: 140px;
 		@include smooth-transition($duration-quick, background-color, border-color);
 
