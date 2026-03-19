@@ -1,6 +1,6 @@
-import type { PageServerLoad } from './$types'
+import type { PageLoad } from './$types'
 
-export const load: PageServerLoad = async ({ parent }) => {
+export const load: PageLoad = async ({ parent }) => {
 	const { user, isOwner } = await parent()
 
 	// User info comes from layout, collection data is fetched client-side via TanStack Query
