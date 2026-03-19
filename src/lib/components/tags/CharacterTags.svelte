@@ -27,37 +27,48 @@
 		return CHARACTER_SEASON_NAMES[character.season] ?? null
 	})
 
-	// Get first series English name for dedup (season names are always English)
-	const seriesEnglishName = $derived.by(() => {
-		if (!character.series || !Array.isArray(character.series) || character.series.length === 0) {
-			return null
+	// Get English name for a single series entry (for dedup comparisons)
+	function getSeriesEntryEnglishName(entry: number | CharacterSeriesRef): string | null {
+		if (typeof entry === 'object' && entry !== null && 'name' in entry) {
+			return entry.name.en
 		}
-		const seriesValue = character.series[0] as number | CharacterSeriesRef
-		if (typeof seriesValue === 'object' && seriesValue !== null && 'name' in seriesValue) {
-			return seriesValue.name.en
-		}
-		if (typeof seriesValue === 'number') {
-			return CHARACTER_SERIES_NAMES[seriesValue] ?? null
+		if (typeof entry === 'number') {
+			return CHARACTER_SERIES_NAMES[entry] ?? null
 		}
 		return null
+	}
+
+	// Compute displayable series indices: filter out Standard and season-duplicate names
+	const displayableSeriesIndices = $derived.by(() => {
+		if (!character.series || !Array.isArray(character.series) || character.series.length === 0) {
+			return []
+		}
+		const indices: number[] = []
+		for (let i = 0; i < character.series.length; i++) {
+			const name = getSeriesEntryEnglishName(character.series[i] as number | CharacterSeriesRef)
+			if (name === null || name === 'Standard' || name === seasonText) continue
+			indices.push(i)
+		}
+		return indices
 	})
 
-	// Special case: Yukata is more specific than Summer, so hide Summer if Yukata is present
-	const isYukataWithSummer = $derived(seriesEnglishName === 'Yukata' && seasonText === 'Summer')
+	// Special case: Yukata is more specific than Summer, so hide Summer season if Yukata is present
+	const hasYukataSeries = $derived.by(() => {
+		if (!character.series || !Array.isArray(character.series)) return false
+		return character.series.some(
+			(entry) => getSeriesEntryEnglishName(entry as number | CharacterSeriesRef) === 'Yukata'
+		)
+	})
+	const isYukataWithSummer = $derived(hasYukataSeries && seasonText === 'Summer')
 
 	// Check if character has season (seasonal variant), but hide if Yukata+Summer
 	const hasSeason = $derived(seasonText !== null && !isYukataWithSummer)
-
-	// Check if character has series with different text than season (exclude "Standard")
-	const hasDistinctSeries = $derived(
-		seriesEnglishName !== null && seriesEnglishName !== seasonText && seriesEnglishName !== 'Standard'
-	)
 
 	// Check if character is a style swap
 	const isStyleSwap = $derived(character.styleSwap === true)
 
 	// Whether any tags should be shown
-	const hasTags = $derived(hasSeason || hasDistinctSeries || isStyleSwap)
+	const hasTags = $derived(hasSeason || displayableSeriesIndices.length > 0 || isStyleSwap)
 </script>
 
 {#if hasTags}
@@ -68,9 +79,9 @@
 		{#if hasSeason}
 			<CharacterTag {character} type="season" />
 		{/if}
-		{#if hasDistinctSeries}
-			<CharacterTag {character} type="series" />
-		{/if}
+		{#each displayableSeriesIndices as seriesIndex}
+			<CharacterTag {character} type="series" {seriesIndex} />
+		{/each}
 	</div>
 {/if}
 
