@@ -89,7 +89,8 @@
 		if (path.startsWith(databaseCharactersHref)) return 'character'
 		if (path.startsWith(databaseWeaponsHref)) return 'weapon'
 		if (path.startsWith(databaseSummonsHref)) return 'summon'
-		if (path.startsWith(databaseJobsHref)) return 'job'
+		if (path.startsWith(databaseJobsHref) || path.startsWith(localizeHref('/database/job-skills')))
+			return 'job'
 		if (path.startsWith(databaseRaidsHref) || path.startsWith(databaseRaidGroupsHref)) return 'raid'
 		return null
 	})

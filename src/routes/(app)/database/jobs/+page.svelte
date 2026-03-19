@@ -10,6 +10,8 @@
 	import * as m from '$lib/paraglide/messages'
 	import { getAccessoryTypeName, ACCESSORY_TYPES } from '$lib/utils/jobAccessoryUtils'
 	import { getRarityLabel } from '$lib/utils/rarity'
+	import { localizedName } from '$lib/utils/locale'
+	import { getSkillColorName } from '$lib/utils/jobUtils'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
@@ -28,10 +30,14 @@
 	import AccessoryNameCell from '$lib/components/database/cells/AccessoryNameCell.svelte'
 	import AccessoryTypeCell from '$lib/components/database/cells/AccessoryTypeCell.svelte'
 
+	// Skill cell components
+	import JobSkillIconCell from '$lib/components/database/cells/JobSkillIconCell.svelte'
+	import JobSkillTypeCell from '$lib/components/database/cells/JobSkillTypeCell.svelte'
+
 	// View mode state - read initial value from URL
 	const initialView = $page.url.searchParams.get('view')
 	let viewMode = $state<'jobs' | 'accessories' | 'skills'>(
-		initialView === 'accessories' ? 'accessories' : 'jobs'
+		initialView === 'accessories' ? 'accessories' : initialView === 'skills' ? 'skills' : 'jobs'
 	)
 
 	// Accessory type filter
@@ -39,14 +45,12 @@
 
 	// Sync viewMode changes to URL
 	$effect(() => {
-		if (viewMode === 'skills') {
-			goto('/database/job-skills', { replaceState: true, noScroll: true })
-			return
-		}
 		const currentView = $page.url.searchParams.get('view')
-		if (viewMode === 'accessories' && currentView !== 'accessories') {
+		if (viewMode === 'skills' && currentView !== 'skills') {
+			goto('?view=skills', { replaceState: true, noScroll: true })
+		} else if (viewMode === 'accessories' && currentView !== 'accessories') {
 			goto('?view=accessories', { replaceState: true, noScroll: true })
-		} else if (viewMode === 'jobs' && currentView === 'accessories') {
+		} else if (viewMode === 'jobs' && currentView != null) {
 			goto('/database/jobs', { replaceState: true, noScroll: true })
 		}
 	})
@@ -191,6 +195,123 @@
 			}
 		})
 	}
+
+	// --- Skills view ---
+
+	// Skill type filter
+	let selectedSkillType = $state<string>('all')
+
+	const skillTypeOptions = [
+		{ value: 'all', label: 'All types' },
+		{ value: 'main', label: 'Main' },
+		{ value: 'sub', label: 'Subskill' },
+		{ value: 'emp', label: 'EMP' },
+		{ value: 'base', label: 'Base' }
+	]
+
+	// Fetch all skills
+	const skillsQuery = createQuery(() => ({
+		...jobQueries.allSkills(),
+		enabled: viewMode === 'skills'
+	}))
+
+	// Search state
+	let skillSearchTerm = $state('')
+
+	// Filter and sort skills
+	const skillData = $derived.by(() => {
+		const skills = skillsQuery.data ?? []
+		let filtered = skills
+
+		// Type filter
+		if (selectedSkillType !== 'all') {
+			filtered = filtered.filter((s) => {
+				if (selectedSkillType === 'main') return s.main
+				if (selectedSkillType === 'sub') return s.sub
+				if (selectedSkillType === 'emp') return s.emp
+				if (selectedSkillType === 'base') return s.base
+				return true
+			})
+		}
+
+		// Search filter
+		if (skillSearchTerm.trim()) {
+			const term = skillSearchTerm.toLowerCase()
+			filtered = filtered.filter(
+				(s) =>
+					s.name.en?.toLowerCase().includes(term) ||
+					s.name.ja?.toLowerCase().includes(term) ||
+					localizedName(s.job?.name)?.toLowerCase().includes(term) ||
+					s.slug?.toLowerCase().includes(term)
+			)
+		}
+
+		return [...filtered].sort((a, b) => {
+			const jobCompare = localizedName(a.job?.name).localeCompare(localizedName(b.job?.name))
+			if (jobCompare !== 0) return jobCompare
+			return (a.order ?? 0) - (b.order ?? 0)
+		})
+	})
+
+	// Skill grid columns
+	const skillColumns: IColumn[] = [
+		{
+			id: 'slug',
+			header: '',
+			width: 60,
+			cell: JobSkillIconCell
+		},
+		{
+			id: 'name',
+			header: 'Name',
+			flexgrow: 1,
+			sort: true,
+			template: (nameObj: any) => {
+				if (!nameObj) return '—'
+				if (typeof nameObj === 'string') return nameObj
+				return nameObj.en || nameObj.ja || '—'
+			}
+		},
+		{
+			id: 'skillType',
+			header: 'Type',
+			width: 100,
+			cell: JobSkillTypeCell
+		},
+		{
+			id: 'job',
+			header: 'Job',
+			width: 180,
+			sort: true,
+			cell: AccessoryJobCell
+		},
+		{
+			id: 'color',
+			header: 'Color',
+			width: 80,
+			sort: true,
+			template: (color: number) => getSkillColorName(color)
+		},
+		{
+			id: 'order',
+			header: 'Order',
+			width: 80,
+			sort: true
+		}
+	]
+
+	// Skill grid init
+	const initSkillGrid = (apiRef: any) => {
+		apiRef.on('select-row', (ev: any) => {
+			const rowId = ev.id
+			if (rowId) {
+				const rowData = skillData.find((item) => item.id === rowId)
+				if (rowData) {
+					goto(`/database/job-skills/${rowData.id}`)
+				}
+			}
+		})
+	}
 </script>
 
 <PageMeta title={m.page_title_db_jobs()} description={m.page_desc_home()} />
@@ -210,7 +331,7 @@
 				</SegmentedControl>
 			{/snippet}
 		</DatabaseGridWithProvider>
-	{:else}
+	{:else if viewMode === 'accessories'}
 		<div class="grid">
 			<div class="controls">
 				<div class="controls-left">
@@ -255,6 +376,55 @@
 						Showing {accessoryData.length} of {accessoriesQuery.data?.length ?? 0} accessories
 					{:else}
 						No accessories found
+					{/if}
+				</div>
+			</div>
+		</div>
+	{:else}
+		<div class="grid">
+			<div class="controls">
+				<div class="controls-left">
+					<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
+						<Segment value="jobs">Jobs</Segment>
+						<Segment value="accessories">Accessories</Segment>
+						<Segment value="skills">Skills</Segment>
+					</SegmentedControl>
+
+					<Select
+						options={skillTypeOptions}
+						bind:value={selectedSkillType}
+						placeholder="All types"
+						size="small"
+					/>
+				</div>
+
+				<div class="controls-right">
+					<input type="text" placeholder="Search..." bind:value={skillSearchTerm} />
+				</div>
+			</div>
+
+			<div class="grid-wrapper" class:loading={skillsQuery.isLoading}>
+				{#if skillsQuery.isLoading}
+					<div class="loading-overlay">
+						<div class="loading-spinner">Loading...</div>
+					</div>
+				{/if}
+
+				<Grid
+					data={skillData}
+					columns={skillColumns}
+					init={initSkillGrid}
+					sizes={{ rowHeight: 60 }}
+					class="database-grid-theme"
+				/>
+			</div>
+
+			<div class="grid-footer">
+				<div class="pagination-info">
+					{#if skillData.length > 0}
+						Showing {skillData.length} of {skillsQuery.data?.length ?? 0} skills
+					{:else}
+						No skills found
 					{/if}
 				</div>
 			</div>
