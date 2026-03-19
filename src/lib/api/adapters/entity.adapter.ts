@@ -810,6 +810,33 @@ export class EntityAdapter extends BaseAdapter {
 		this.clearCache('/bullets')
 	}
 
+	async downloadBulletImage(
+		bulletId: string,
+		size: string,
+		force?: boolean
+	): Promise<{ success: boolean; error?: string }> {
+		return this.request(`/bullets/${bulletId}/download_image`, {
+			method: 'POST',
+			body: JSON.stringify({ size, force: force ?? false })
+		})
+	}
+
+	async downloadBulletImages(
+		bulletId: string,
+		options?: { force?: boolean; size?: 'all' | string }
+	): Promise<{ status: string; bulletId: string; message: string }> {
+		return this.request(`/bullets/${bulletId}/download_images`, {
+			method: 'POST',
+			body: JSON.stringify({ options: options ?? {} })
+		})
+	}
+
+	async getBulletDownloadStatus(
+		bulletId: string
+	): Promise<{ status: string; progress?: number; error?: string }> {
+		return this.request(`/bullets/${bulletId}/download_status`)
+	}
+
 	// ============================================
 	// Weapon Stat Modifier Methods (AX Skills & Befoulments)
 	// ============================================
