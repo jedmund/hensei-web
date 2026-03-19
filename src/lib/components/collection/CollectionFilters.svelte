@@ -301,6 +301,7 @@
 		proficiencyFilters = []
 		genderFilters = []
 		searchQuery = ''
+		searchExpanded = false
 		emitChange()
 	}
 
@@ -314,6 +315,27 @@
 			genderFilters.length > 0 ||
 			searchQuery.length > 0
 	)
+
+	// Search expansion state
+	let searchExpanded = $state(false)
+	let searchInputEl = $state<HTMLInputElement>()
+
+	function expandSearch() {
+		searchExpanded = true
+	}
+
+	function collapseSearch() {
+		if (searchQuery.length === 0) {
+			searchExpanded = false
+		}
+	}
+
+	// Auto-focus when expanded
+	$effect(() => {
+		if (searchExpanded && searchInputEl) {
+			searchInputEl.focus()
+		}
+	})
 
 	// Overflow detection state
 	type FilterKey = 'element' | 'rarity' | 'season' | 'series' | 'race' | 'proficiency' | 'gender'
@@ -407,12 +429,19 @@
 <div class="filters-container" class:contained style:--accent-color={element ? `var(--${element}-button-bg)` : undefined}>
 	<div class="filters">
 		{#if showSearch}
-			<input
-				type="text"
-				class="search-input"
-				placeholder={m.placeholder_search()}
-				bind:value={searchQuery}
-			/>
+			{#if searchExpanded}
+				<input
+					type="text"
+					class="search-input"
+					placeholder={m.placeholder_search()}
+					bind:value={searchQuery}
+					bind:this={searchInputEl}
+					onblur={collapseSearch}
+					onkeydown={(e) => { if (e.key === 'Escape') { searchQuery = ''; searchExpanded = false } }}
+				/>
+			{:else}
+				<Button variant="ghost" size="small" iconOnly icon="search" onclick={expandSearch} />
+			{/if}
 		{/if}
 		{#each visibleFilters as filter (filter.key)}
 			<MultiSelect
