@@ -142,7 +142,7 @@
 			{@render children()}
 		</div>
 	{:else}
-		<span class="value">{value || '—'}</span>
+		<span class="value">{value ?? '—'}</span>
 	{/if}
 </div>
 

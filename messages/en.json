@@ -38,6 +38,7 @@
 	"nav_new_single": "Single {entity}",
 	"nav_new_multiple": "Multiple {entity}s",
 	"nav_new_weapon_series": "Weapon series",
+	"nav_new_character_series": "Character series",
 
 	"action_save": "Save",
 	"action_saving": "Saving...",

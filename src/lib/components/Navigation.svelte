@@ -444,6 +444,12 @@
 								<a href={localizeHref('/database/series/weapons/new')}>{m.nav_new_weapon_series()}</a>
 							</DropdownItem>
 						{/if}
+						{#if currentDatabaseEntity === 'character'}
+							<DropdownMenu.Separator class="dropdown-separator" />
+							<DropdownItem>
+								<a href={localizeHref('/database/series/characters/new')}>{m.nav_new_character_series()}</a>
+							</DropdownItem>
+						{/if}
 					{/if}
 				</DropdownMenu.Content>
 			</DropdownMenu.Portal>

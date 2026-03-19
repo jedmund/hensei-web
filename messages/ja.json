@@ -38,6 +38,7 @@
 	"nav_new_single": "単体{entity}",
 	"nav_new_multiple": "複数{entity}",
 	"nav_new_weapon_series": "武器シリーズ",
+	"nav_new_character_series": "キャラシリーズ",
 
 	"action_save": "保存",
 	"action_saving": "保存中",
