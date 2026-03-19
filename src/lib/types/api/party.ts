@@ -12,7 +12,8 @@ import type {
   Guidebook,
   User,
   Awakening,
-  WeaponKey
+  WeaponKey,
+  BulletLoadout
 } from './entities'
 import type { GridArtifact, CollectionArtifact } from './artifact'
 import type { AugmentSkill, Befoulment } from './weaponStatModifier'
@@ -52,6 +53,8 @@ export interface GridWeapon {
     type?: Awakening
     level?: number
   }
+  /** Bullet loadout for gun-proficiency mainhand weapons */
+  bullets?: BulletLoadout[]
   /** Reference to the source collection weapon if linked */
   collectionWeaponId?: string
   /** Whether the grid item is out of sync with its collection source */

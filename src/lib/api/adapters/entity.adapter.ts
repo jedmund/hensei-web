@@ -30,7 +30,7 @@ import type {
 	CreateSummonSeriesPayload,
 	UpdateSummonSeriesPayload
 } from '$lib/types/api/summonSeries'
-import type { Awakening } from '$lib/types/api/entities'
+import type { Awakening, Bullet } from '$lib/types/api/entities'
 import type {
 	WeaponSeriesVariant,
 	CreateWeaponSeriesVariantPayload,
@@ -91,6 +91,7 @@ export interface Weapon {
 	extra?: boolean
 	ax?: boolean
 	axType?: number
+	bulletSlots?: number[]
 	skillLevelCap?: number
 	weapon_skills?: Array<{
 		name?: string
@@ -540,6 +541,19 @@ export interface UpdateAwakeningPayload {
 	order?: number
 }
 
+export interface BulletPayload {
+	name_en: string
+	name_jp?: string
+	effect_en?: string
+	effect_jp?: string
+	granblue_id?: string
+	slug: string
+	bullet_type: number
+	atk?: number
+	hits_all?: boolean
+	order?: number
+}
+
 /**
  * Raw data response from /raw endpoint
  */
@@ -746,6 +760,55 @@ export class EntityAdapter extends BaseAdapter {
 		const url = queryString ? `/weapon_keys?${queryString}` : '/weapon_keys'
 
 		return this.request<WeaponKey[]>(url)
+	}
+
+	// ============================================
+	// Bullet Methods
+	// ============================================
+
+	/**
+	 * Gets all bullets, optionally filtered by bullet type
+	 * @param bulletType - Optional filter: 1=Parabellum, 2=Rifle, 3=Cartridge, 4=Aetherial
+	 */
+	async getBullets(bulletType?: number): Promise<Bullet[]> {
+		const searchParams = new URLSearchParams()
+		if (bulletType !== undefined) searchParams.set('bullet_type', String(bulletType))
+
+		const queryString = searchParams.toString()
+		const url = queryString ? `/bullets?${queryString}` : '/bullets'
+
+		const response = await this.request<{ bullets: Bullet[] }>(url)
+		return response.bullets
+	}
+
+	async getBulletById(id: string): Promise<Bullet> {
+		return this.request<Bullet>(`/bullets/${id}`)
+	}
+
+	async createBullet(data: BulletPayload): Promise<Bullet> {
+		const response = await this.request<Bullet>('/bullets', {
+			method: 'POST',
+			body: data
+		})
+		this.clearCache('/bullets')
+		return response
+	}
+
+	async updateBullet(id: string, data: Partial<BulletPayload>): Promise<Bullet> {
+		const response = await this.request<Bullet>(`/bullets/${id}`, {
+			method: 'PUT',
+			body: data
+		})
+		this.clearCache('/bullets')
+		this.clearCache(`/bullets/${id}`)
+		return response
+	}
+
+	async deleteBullet(id: string): Promise<void> {
+		await this.request(`/bullets/${id}`, {
+			method: 'DELETE'
+		})
+		this.clearCache('/bullets')
 	}
 
 	// ============================================

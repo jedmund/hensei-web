@@ -67,6 +67,8 @@ export interface Weapon {
   forgeChain?: Array<{ id: string; granblueId: string; name: LocalizedName; forgeOrder: number }> | null
   // Element variant IDs: maps element number (as string key) to variant game ID
   elementVariantIds?: Record<string, string> | null
+  // Bullet slots for gun-proficiency weapons (array of bullet type integers)
+  bulletSlots?: number[]
 }
 
 // Character entity from CharacterBlueprint
@@ -280,6 +282,33 @@ export interface WeaponKey {
   group: number
   order: number
 }
+
+// Bullet entity for gun-proficiency weapons
+export interface Bullet {
+  id: string
+  granblueId: string
+  slug: string
+  name: LocalizedName
+  effect: { en?: string; ja?: string }
+  bulletType: number
+  atk: number
+  hitsAll: boolean
+  order: number
+}
+
+// Bullet slot entry on a grid/collection weapon
+export interface BulletLoadout {
+  position: number
+  bullet: Bullet
+}
+
+// Bullet type enum values
+export const BULLET_TYPES: Record<number, string> = {
+  1: 'Parabellum',
+  2: 'Rifle',
+  3: 'Cartridge',
+  4: 'Aetherial'
+} as const
 
 // Guidebook entity
 export interface Guidebook {

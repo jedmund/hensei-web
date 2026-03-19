@@ -1,7 +1,7 @@
 // Collection types based on Rails CollectionCharacter/Weapon/Summon blueprints
 // These define user-owned items with customizations
 
-import type { Character, Weapon, Summon, JobAccessory, Awakening } from './entities'
+import type { Character, Weapon, Summon, JobAccessory, Awakening, BulletLoadout } from './entities'
 import type { AugmentSkill, Befoulment } from './weaponStatModifier'
 
 /**
@@ -57,6 +57,8 @@ export interface CollectionWeapon {
 		name: { en: string; ja: string }
 		slot: number
 	}>
+	/** Bullet loadout for gun-proficiency weapons */
+	bullets?: BulletLoadout[]
 	weapon: Weapon
 	createdAt: string
 	updatedAt: string

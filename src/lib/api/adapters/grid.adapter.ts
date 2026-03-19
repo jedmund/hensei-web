@@ -166,7 +166,7 @@ export class GridAdapter extends BaseAdapter {
     async updateWeapon(id: string, params: Partial<GridWeapon>, headers?: Record<string, string>): Promise<GridWeapon> {
         // Flatten nested awakening object into awakening_id/awakening_level
         // since the Rails API expects flat params, not nested attributes
-        const { awakening, ...rest } = params as Partial<GridWeapon> & { awakening?: { id: string; level: number } | null }
+        const { awakening, bullets, ...rest } = params as Partial<GridWeapon> & { awakening?: { id: string; level: number } | null }
         const body: Record<string, unknown> = { ...rest }
         if (awakening !== undefined) {
             if (awakening === null) {
@@ -176,6 +176,14 @@ export class GridAdapter extends BaseAdapter {
                 body.awakeningId = awakening.id
                 body.awakeningLevel = awakening.level
             }
+        }
+
+        // Flatten bullet loadout into array of { position, bullet_id }
+        if (bullets !== undefined) {
+            body.bullets = bullets?.map(b => ({
+                position: b.position,
+                bulletId: b.bullet.id
+            })) ?? []
         }
 
         const response = await this.request<{ gridWeapon: GridWeapon }>(`/grid_weapons/${id}`, {
