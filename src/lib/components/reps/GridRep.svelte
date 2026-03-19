@@ -61,13 +61,13 @@
 				{#if indicator}
 					{@render indicator()}
 				{/if}
-				{#if party.job}
-					<img class="job-icon" src={getJobIconUrl(party.job.granblueId)} alt="" loading="lazy" />
-				{/if}
 				<h2 class:empty={!party.name}>{party.name || m.grid_untitled()}</h2>
 			</div>
 			<div class="details">
 				<div class="details-text">
+					{#if party.job}
+						<img class="job-icon" src={getJobIconUrl(party.job.granblueId)} alt="" loading="lazy" />
+					{/if}
 					<span class={`raid ${!party.raid ? 'empty' : ''}`}
 						>{party.raid ? displayName(party.raid) : m.grid_no_raid()}</span
 					>
@@ -226,13 +226,6 @@
 			align-items: center;
 			gap: spacing.$unit-half;
 			min-width: 0;
-
-			.job-icon {
-				width: 20px;
-				height: 20px;
-				object-fit: contain;
-				flex-shrink: 0;
-			}
 		}
 
 		h2 {
@@ -268,6 +261,12 @@
 			flex: 0 1 auto;
 			min-width: 0;
 
+			.job-icon {
+				width: 20px;
+				height: 20px;
+				object-fit: contain;
+				flex-shrink: 0;
+			}
 		}
 
 		.raid {
