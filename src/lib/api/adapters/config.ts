@@ -9,10 +9,12 @@ import { PUBLIC_SIERO_API_URL, PUBLIC_SIERO_IMG_URL } from '$env/static/public'
  */
 export function getApiBaseUrl(): string {
 	const base = PUBLIC_SIERO_API_URL || 'http://localhost:3000'
-	// Production API uses /v1, development uses /api/v1
-	const apiPath = import.meta.env.PROD ? '/v1' : '/api/v1'
+	// Production uses api.granblue.team with /v1 path
+	// Local dev (including preview) uses localhost with /api/v1 path
+	const isDeployedApi = base.includes('granblue.team')
+	const apiPath = isDeployedApi ? '/v1' : '/api/v1'
 	const url = `${base}${apiPath}`
-	if (import.meta.env.DEV) console.log('[API Config]', { base, apiPath, url, isProd: import.meta.env.PROD })
+	if (import.meta.env.DEV) console.log('[API Config]', { base, apiPath, url })
 	return url
 }
 
