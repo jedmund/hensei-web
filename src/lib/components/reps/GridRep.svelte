@@ -7,14 +7,9 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { localizedName, appLocale } from '$lib/utils/locale'
+	import { localizedName } from '$lib/utils/locale'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
 	import * as m from '$lib/paraglide/messages'
-
-	const RAID_ABBREVIATIONS: Record<string, Record<string, string>> = {
-		'Ultimate Bahamut': { en: 'UBHL', ja: 'アルバハ' },
-		'Proto Bahamut': { en: 'PBHL', ja: 'PBHL' }
-	}
 
 	interface Props {
 		party: Party
@@ -43,14 +38,8 @@
 	function displayName(input: any): string {
 		if (!input) return '—'
 		const maybe = input.name ?? input
-		const name = typeof maybe === 'string' ? maybe : localizedName(maybe)
-
-		const enName = typeof maybe === 'string' ? maybe : maybe.en ?? ''
-		for (const [key, abbr] of Object.entries(RAID_ABBREVIATIONS)) {
-			if (enName.startsWith(key)) return abbr[appLocale()] ?? abbr.en
-		}
-
-		return name
+		if (typeof maybe === 'string') return maybe
+		return localizedName(maybe)
 	}
 </script>
 
