@@ -1,8 +1,9 @@
-import type { PageServerLoad } from './$types'
+import type { PageLoad } from './$types'
 import { partyAdapter } from '$lib/api/adapters/party.adapter'
 
-export const load: PageServerLoad = async ({ params, locals, fetch }) => {
-	const authUserId = locals.session?.account?.userId
+export const load: PageLoad = async ({ params, parent, fetch }) => {
+	const { account } = await parent()
+	const authUserId = account?.userId ?? null
 
 	let partyFound = false
 	let party = null
