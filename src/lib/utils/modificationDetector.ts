@@ -13,6 +13,7 @@ export interface ModificationStatus {
 	hasTranscendence: boolean
 	hasUncapLevel: boolean
 	hasElement: boolean
+	hasBullets: boolean
 	hasQuickSummon: boolean
 	hasFriendSummon: boolean
 }
@@ -27,6 +28,7 @@ export function detectModifications(
 		hasWeaponKeys: false,
 		hasAxSkills: false,
 		hasBefoulment: false,
+		hasBullets: false,
 		hasRings: false,
 		hasEarring: false,
 		hasPerpetuity: false,
@@ -63,6 +65,7 @@ export function detectModifications(
 		status.hasWeaponKeys = !!(weapon.weaponKeys && weapon.weaponKeys.length > 0)
 		status.hasAxSkills = !!(weapon.ax && weapon.ax.length > 0)
 		status.hasBefoulment = !!weapon.befoulment?.modifier
+		status.hasBullets = !!(weapon.bullets && weapon.bullets.length > 0)
 		status.hasTranscendence = !!(weapon.transcendenceStep && weapon.transcendenceStep > 0)
 		status.hasUncapLevel = weapon.uncapLevel !== undefined && weapon.uncapLevel !== null
 		status.hasElement = !!(weapon.element && weapon.weapon?.element === 0)
@@ -72,6 +75,7 @@ export function detectModifications(
 			status.hasWeaponKeys ||
 			status.hasAxSkills ||
 			status.hasBefoulment ||
+			status.hasBullets ||
 			status.hasTranscendence ||
 			status.hasUncapLevel ||
 			status.hasElement
