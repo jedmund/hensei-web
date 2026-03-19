@@ -177,6 +177,19 @@ export const crewQueries = {
    *
    * @param gamertag - Gamertag to check availability for
    */
+  /**
+   * Crew roster query options
+   * Returns ownership info for specified items across all active crew members
+   */
+  roster: (characterIds: string[], weaponIds: string[], summonIds: string[]) =>
+    queryOptions({
+      queryKey: ['crew', 'roster', { characterIds, weaponIds, summonIds }] as const,
+      queryFn: () => crewAdapter.getRoster({ characterIds, weaponIds, summonIds }),
+      enabled: characterIds.length + weaponIds.length + summonIds.length > 0,
+      staleTime: 1000 * 60 * 2,
+      gcTime: 1000 * 60 * 15
+    }),
+
   checkGamertag: (gamertag: string) =>
     queryOptions({
       queryKey: ['crew', 'check', 'gamertag', gamertag] as const,
@@ -212,6 +225,8 @@ export const crewKeys = {
   crewInvitations: (crewId: string) => [...crewKeys.all, crewId, 'invitations'] as const,
   sharedParties: () => [...crewKeys.all, 'shared_parties'] as const,
   accessibleCollectionMembers: () => [...crewKeys.all, 'members', 'accessible-collections'] as const,
+  roster: (characterIds: string[], weaponIds: string[], summonIds: string[]) =>
+    [...crewKeys.all, 'roster', { characterIds, weaponIds, summonIds }] as const,
   checkGamertag: (gamertag: string) => [...crewKeys.all, 'check', 'gamertag', gamertag] as const,
   invitations: {
     all: ['invitations'] as const,

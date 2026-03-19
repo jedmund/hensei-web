@@ -1,9 +1,10 @@
 
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { createQuery } from '@tanstack/svelte-query'
+	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
-	import { crewAdapter } from '$lib/api/adapters/crew.adapter'
 	import { type UnifiedSearchSeriesRef } from '$lib/api/adapters/search.adapter'
 	import { getCharacterImage, getWeaponImage, getSummonImage } from '$lib/utils/images'
 	import Icon from '$lib/components/Icon.svelte'
@@ -14,7 +15,6 @@
 	import RosterRow from '$lib/components/crew/RosterRow.svelte'
 	import RosterSearch from '$lib/components/crew/RosterSearch.svelte'
 	import type { RosterSearchResult } from '$lib/components/crew/RosterSearch.svelte'
-	import type { RosterMember } from '$lib/types/api/crew'
 	import * as m from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 	import { toast } from 'svelte-sonner'
@@ -42,21 +42,38 @@
 
 	// State
 	let selectedItems = $state<SelectedItem[]>([])
-	let rosterData = $state<RosterMember[]>([])
-	let isLoadingRoster = $state(false)
+	let hasCheckedOfficer = $state(false)
 
-	// Check if user is an officer
+	// Check if user is an officer (one-time after initial load)
 	$effect(() => {
-		if (!crewStore.isLoading && !crewStore.isOfficer) {
+		if (crewStore.isLoading) return
+		if (hasCheckedOfficer) return
+		hasCheckedOfficer = true
+		if (!crewStore.isOfficer) {
 			goto(localizeHref('/crew'))
 		}
 	})
 
-	// Fetch roster on mount and when items change
+	// Derived ID arrays for the roster query key
+	const characterIds = $derived(
+		selectedItems.filter((i) => i.type === 'Character').map((i) => i.id)
+	)
+	const weaponIds = $derived(selectedItems.filter((i) => i.type === 'Weapon').map((i) => i.id))
+	const summonIds = $derived(selectedItems.filter((i) => i.type === 'Summon').map((i) => i.id))
+
+	// TanStack Query handles deduplication, cancellation, caching
+	const rosterQuery = createQuery(() => ({
+		...crewQueries.roster(characterIds, weaponIds, summonIds)
+	}))
+
+	const rosterData = $derived(rosterQuery.data?.members ?? [])
+	const isLoadingRoster = $derived(rosterQuery.isLoading && selectedItems.length > 0)
+
+	// Show error toast on query failure
 	$effect(() => {
-		// Track selectedItems to trigger refetch
-		const _ = selectedItems.length
-		fetchRoster()
+		if (rosterQuery.isError) {
+			toast.error(extractErrorMessage(rosterQuery.error, 'Failed to load roster'))
+		}
 	})
 
 	function handleSelect(result: RosterSearchResult) {
@@ -78,26 +95,6 @@
 
 	function removeItem(id: string, type: ItemType) {
 		selectedItems = selectedItems.filter((item) => !(item.id === id && item.type === type))
-	}
-
-	async function fetchRoster() {
-		isLoadingRoster = true
-		try {
-			const query = {
-				characterIds: selectedItems.filter((i) => i.type === 'Character').map((i) => i.id),
-				weaponIds: selectedItems.filter((i) => i.type === 'Weapon').map((i) => i.id),
-				summonIds: selectedItems.filter((i) => i.type === 'Summon').map((i) => i.id)
-			}
-
-			const response = await crewAdapter.getRoster(query)
-			rosterData = response.members
-		} catch (error) {
-			console.error('Failed to fetch roster:', error)
-			toast.error(extractErrorMessage(error, 'Failed to load roster'))
-			rosterData = []
-		} finally {
-			isLoadingRoster = false
-		}
 	}
 
 	function getItemImage(item: SelectedItem): string {
