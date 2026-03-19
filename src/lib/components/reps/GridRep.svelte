@@ -66,7 +66,11 @@
 			<div class="details">
 				<div class="details-text">
 					{#if party.job}
-						<img class="job-icon" src={getJobIconUrl(party.job.granblueId)} alt="" loading="lazy" />
+						<Tooltip content={displayName(party.job)}>
+							{#snippet children()}
+								<img class="job-icon" src={getJobIconUrl(party.job.granblueId)} alt="" loading="lazy" />
+							{/snippet}
+						</Tooltip>
 					{/if}
 					<span class={`raid ${!party.raid ? 'empty' : ''}`}
 						>{party.raid ? displayName(party.raid) : m.grid_no_raid()}</span
