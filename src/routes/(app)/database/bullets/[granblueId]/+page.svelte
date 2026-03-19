@@ -13,6 +13,7 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
+	import { getBulletImage } from '$lib/utils/images'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import type { PageData } from './$types'
 
@@ -56,6 +57,12 @@
 
 	{#if bullet}
 		<section class="details">
+			{#if bullet.granblueId}
+				<div class="bullet-image-section">
+					<img src={getBulletImage(bullet.granblueId)} alt={bullet.name.en ?? 'Bullet'} class="bullet-image" />
+				</div>
+			{/if}
+
 			<DetailsContainer title="Metadata">
 				<DetailItem label="Name (EN)" value={bullet.name.en} />
 				<DetailItem label="Name (JP)" value={bullet.name.ja ?? '—'} />
@@ -105,6 +112,20 @@
 
 	.details {
 		@include database.details;
+	}
+
+	.bullet-image-section {
+		display: flex;
+		justify-content: center;
+		padding: spacing.$unit * 3;
+		border-bottom: 1px solid var(--border-subtle);
+	}
+
+	.bullet-image {
+		max-width: 120px;
+		height: auto;
+		object-fit: contain;
+		border-radius: layout.$item-corner;
 	}
 
 	.type-badge {
