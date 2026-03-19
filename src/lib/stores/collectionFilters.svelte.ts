@@ -5,6 +5,7 @@ const STORAGE_KEY_PREFIX = 'collection-filters'
 interface CharacterFilters {
 	element: number[]
 	rarity: number[]
+	series: number[]
 	race: number[]
 	proficiency: number[]
 	gender: number[]
@@ -48,6 +49,7 @@ const DEFAULTS: EntityFilters = {
 	characters: {
 		element: [],
 		rarity: [],
+		series: [],
 		race: [],
 		proficiency: [],
 		gender: [],

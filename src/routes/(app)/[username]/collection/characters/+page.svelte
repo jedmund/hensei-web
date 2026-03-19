@@ -34,6 +34,7 @@
 	// Filter state (initialized from localStorage)
 	let elementFilters = $state<number[]>(collectionFilters.characters.element)
 	let rarityFilters = $state<number[]>(collectionFilters.characters.rarity)
+	let seriesFilters = $state<number[]>(collectionFilters.characters.series)
 	let raceFilters = $state<number[]>(collectionFilters.characters.race)
 	let proficiencyFilters = $state<number[]>(collectionFilters.characters.proficiency)
 	let genderFilters = $state<number[]>(collectionFilters.characters.gender)
@@ -49,6 +50,7 @@
 	const queryFilters = $derived({
 		element: elementFilters.length > 0 ? elementFilters : undefined,
 		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
+		series: seriesFilters.length > 0 ? seriesFilters : undefined,
 		race: raceFilters.length > 0 ? raceFilters : undefined,
 		proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined,
 		gender: genderFilters.length > 0 ? genderFilters : undefined,
@@ -99,6 +101,7 @@
 	function handleFiltersChange(filters: CollectionFilterState) {
 		elementFilters = filters.element
 		rarityFilters = filters.rarity
+		seriesFilters = filters.series as number[]
 		raceFilters = filters.race
 		proficiencyFilters = filters.proficiency
 		genderFilters = filters.gender
@@ -109,6 +112,7 @@
 		const filters = {
 			element: elementFilters,
 			rarity: rarityFilters,
+			series: seriesFilters,
 			race: raceFilters,
 			proficiency: proficiencyFilters,
 			gender: genderFilters,
@@ -138,6 +142,7 @@
 		<CollectionFilters
 			bind:elementFilters
 			bind:rarityFilters
+			bind:seriesFilters
 			bind:raceFilters
 			bind:proficiencyFilters
 			bind:genderFilters
@@ -148,7 +153,7 @@
 				element: true,
 				rarity: true,
 				season: false,
-				series: false,
+				series: true,
 				race: true,
 				proficiency: true,
 				gender: true
