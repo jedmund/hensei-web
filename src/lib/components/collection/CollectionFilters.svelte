@@ -578,7 +578,7 @@
 		}
 
 		&:focus {
-			border-color: var(--accent-blue);
+			border-color: var(--accent-color, var(--accent-blue));
 		}
 	}
 
