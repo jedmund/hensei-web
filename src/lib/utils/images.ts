@@ -443,6 +443,18 @@ export function getArtifactImage(
 	return `${getBasePath()}/${directory}/${granblueId}.jpg`
 }
 
+// ===== Bullet Images =====
+
+/**
+ * Get bullet image URL
+ */
+export function getBulletImage(
+	granblueId: string | number | null | undefined
+): string {
+	if (!granblueId) return getGenericPlaceholder()
+	return `${getBasePath()}/bullet-square/${granblueId}.jpg`
+}
+
 // ===== Game CDN Images =====
 // For new items not yet in our AWS CDN (used in batch import)
 

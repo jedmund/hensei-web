@@ -8,6 +8,7 @@
 	import { BULLET_TYPES } from '$lib/types/api/entities'
 	import type { Bullet } from '$lib/types/api/entities'
 	import { localizedName } from '$lib/utils/locale'
+	import BulletImageCell from '$lib/components/database/cells/BulletImageCell.svelte'
 	import { Grid } from 'wx-svelte-grid'
 	import type { IColumn } from 'wx-svelte-grid'
 
@@ -43,6 +44,12 @@
 	let gridApi: any
 
 	const columns: IColumn[] = [
+		{
+			id: 'granblueId',
+			header: '',
+			width: 80,
+			cell: BulletImageCell
+		},
 		{
 			id: 'name',
 			header: 'Name',
