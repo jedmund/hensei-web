@@ -64,7 +64,8 @@
 				}
 			: null,
 		axSkills: weapon.ax ?? [],
-		befoulment: weapon.befoulment ?? null
+		befoulment: weapon.befoulment ?? null,
+		bullets: weapon.bullets ?? []
 	})
 
 	// Element name for action button theming
@@ -119,6 +120,7 @@
 		bind:this={editPaneRef}
 		{weaponData}
 		{currentValues}
+		position={weapon.position}
 		onSave={handleSave}
 	/>
 </div>

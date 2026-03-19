@@ -11,7 +11,8 @@
 	 * - Awakening (for weapons with awakening support)
 	 */
 	import * as m from '$lib/paraglide/messages'
-	import type { Weapon, Awakening } from '$lib/types/api/entities'
+	import type { Weapon, Awakening, Bullet, BulletLoadout } from '$lib/types/api/entities'
+	import { BULLET_TYPES } from '$lib/types/api/entities'
 	import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
@@ -19,6 +20,7 @@
 	import AwakeningSelect from '$lib/components/sidebar/edit/AwakeningSelect.svelte'
 	import AxSkillSelect from '$lib/components/sidebar/edit/AxSkillSelect.svelte'
 	import BefoulmentSelect from '$lib/components/sidebar/edit/BefoulmentSelect.svelte'
+	import BulletSelect from '$lib/components/sidebar/edit/BulletSelect.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getElementKey } from '$lib/utils/element'
 	import { seriesHasWeaponKeys, seriesHasAwakening, getSeriesSlug } from '$lib/utils/weaponSeries'
@@ -36,6 +38,7 @@
 		} | null
 		axSkills: AugmentSkill[]
 		befoulment?: Befoulment | null
+		bullets?: BulletLoadout[]
 	}
 
 	export interface WeaponEditUpdates {
@@ -57,6 +60,7 @@
 		befoulmentModifierId?: string
 		befoulmentStrength?: number
 		exorcismLevel?: number
+		bullets?: BulletLoadout[]
 	}
 
 	interface Props {
@@ -64,11 +68,13 @@
 		weaponData: Weapon | undefined
 		/** Current values for all edit fields */
 		currentValues: WeaponEditValues
+		/** Grid position (-1 = mainhand). Bullets only show on mainhand guns. */
+		position?: number
 		/** Callback when save is clicked */
 		onSave?: (updates: WeaponEditUpdates) => void
 	}
 
-	let { weaponData, currentValues, onSave }: Props = $props()
+	let { weaponData, currentValues, position, onSave }: Props = $props()
 
 	// Local state derived from props — overrides are temporary until currentValues changes
 	let uncapLevel = $derived(currentValues.uncapLevel)
@@ -81,6 +87,16 @@
 	let awakeningLevel = $derived(currentValues.awakening?.level ?? 1)
 	let axSkills = $derived<AugmentSkill[]>(currentValues.axSkills ?? [])
 	let befoulment = $derived<Befoulment | null>(currentValues.befoulment ?? null)
+	let bulletSelections = $state<Map<number, Bullet | undefined>>(new Map())
+
+	// Initialize bullet selections from current values
+	$effect(() => {
+		const newSelections = new Map<number, Bullet | undefined>()
+		for (const entry of currentValues.bullets ?? []) {
+			newSelections.set(entry.position, entry.bullet)
+		}
+		bulletSelections = newSelections
+	})
 
 	// Derived conditions
 	const canChangeElement = $derived(weaponData?.element === 0)
@@ -96,6 +112,9 @@
 	const hasAxSkills = $derived(augmentType === 'ax')
 	const hasBefoulment = $derived(augmentType === 'befoulment')
 	const hasAwakening = $derived(seriesHasAwakening(series) && (weaponData?.maxAwakeningLevel ?? 0) > 0)
+	const bulletSlots = $derived(weaponData?.bulletSlots ?? [])
+	const isMainhand = $derived(position === -1)
+	const hasBullets = $derived(bulletSlots.length > 0 && isMainhand && weaponData?.proficiency === 9)
 	const availableAwakenings = $derived(weaponData?.awakenings ?? [])
 
 	// Element name for theming
@@ -160,6 +179,17 @@
 				updates.befoulmentStrength = befoulment.strength
 				updates.exorcismLevel = befoulment.exorcismLevel
 			}
+		}
+
+		// Bullets
+		if (hasBullets) {
+			const loadout: BulletLoadout[] = []
+			for (const [pos, bullet] of bulletSelections) {
+				if (bullet) {
+					loadout.push({ position: pos, bullet })
+				}
+			}
+			updates.bullets = loadout
 		}
 
 		onSave?.(updates)
@@ -272,11 +302,37 @@
 				</div>
 			</DetailsSection>
 		{/if}
+
+		{#if hasBullets}
+			<DetailsSection title="Bullets">
+				<div class="section-content bullet-selects">
+					{#each bulletSlots as slotType, i}
+						<div class="bullet-slot">
+							<span class="bullet-slot-label">{BULLET_TYPES[slotType] ?? 'Unknown'}</span>
+							<BulletSelect
+								bulletType={slotType}
+								value={bulletSelections.get(i)?.id}
+								onchange={(bullet) => {
+									const updated = new Map(bulletSelections)
+									if (bullet) {
+										updated.set(i, bullet)
+									} else {
+										updated.delete(i)
+									}
+									bulletSelections = updated
+								}}
+							/>
+						</div>
+					{/each}
+				</div>
+			</DetailsSection>
+		{/if}
 	</div>
 </div>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/typography' as typography;
 
 	.weapon-edit-pane {
 		display: flex;
@@ -296,9 +352,22 @@
 		padding: spacing.$unit;
 	}
 
-	.key-selects {
+	.key-selects,
+	.bullet-selects {
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-2x;
+	}
+
+	.bullet-slot {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit-half;
+	}
+
+	.bullet-slot-label {
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
+		font-weight: typography.$medium;
 	}
 </style>

@@ -26,6 +26,7 @@
 	import WeaponGachaSection from '$lib/features/database/weapons/sections/WeaponGachaSection.svelte'
 	import WeaponAwakeningSection from '$lib/features/database/weapons/sections/WeaponAwakeningSection.svelte'
 	import WeaponForgeSection from '$lib/features/database/weapons/sections/WeaponForgeSection.svelte'
+	import { BULLET_TYPES } from '$lib/types/api/entities'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
@@ -314,6 +315,14 @@
 					<WeaponStatsSection {weapon} />
 					<WeaponAwakeningSection {weapon} />
 					<WeaponForgeSection {weapon} />
+
+					{#if weapon.bulletSlots?.length}
+						<DetailsContainer title="Bullet Slots">
+							{#each weapon.bulletSlots as slotType, i}
+								<DetailItem label="Slot {i + 1}" value={BULLET_TYPES[slotType] ?? 'Unknown'} />
+							{/each}
+						</DetailsContainer>
+					{/if}
 
 					<DetailsContainer title="Nicknames">
 						<DetailItem label="English">

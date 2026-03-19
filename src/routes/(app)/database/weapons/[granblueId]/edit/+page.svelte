@@ -21,6 +21,8 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
+	import Select from '$lib/components/ui/Select.svelte'
+	import { BULLET_TYPES } from '$lib/types/api/entities'
 	import { getWeaponGridImage } from '$lib/utils/images'
 	import {
 		buildWikiEnUrl,
@@ -116,8 +118,12 @@
 		// Variant
 		weaponSeriesVariantId: '' as string,
 		// Element variant IDs
-		elementVariantIds: {} as Record<string, string>
+		elementVariantIds: {} as Record<string, string>,
+		// Bullet slots (guns only)
+		bulletSlots: [] as number[]
 	})
+
+	const isGun = $derived(editData.proficiency === 9)
 
 	// Populate edit data when weapon loads
 	$effect(() => {
@@ -170,7 +176,9 @@
 				// Variant
 				weaponSeriesVariantId: weapon.series?.weaponSeriesVariantId || '',
 				// Element variant IDs
-				elementVariantIds: weapon.elementVariantIds || {}
+				elementVariantIds: weapon.elementVariantIds || {},
+				// Bullet slots
+				bulletSlots: weapon.bulletSlots || []
 			}
 		}
 	})
@@ -229,7 +237,9 @@
 				// Variant
 				weapon_series_variant_id: editData.weaponSeriesVariantId || null,
 				// Element variant IDs
-				element_variant_ids: Object.keys(editData.elementVariantIds).length > 0 ? editData.elementVariantIds : null
+				element_variant_ids: Object.keys(editData.elementVariantIds).length > 0 ? editData.elementVariantIds : null,
+				// Bullet slots
+				bullet_slots: editData.bulletSlots
 			}
 
 			await entityAdapter.updateWeapon(weapon.id, payload)
@@ -311,6 +321,49 @@
 				<WeaponStatsSection {weapon} {editMode} bind:editData />
 				<WeaponAwakeningSection {weapon} {editMode} bind:editData />
 				<WeaponForgeSection {weapon} {editMode} bind:editData />
+
+				{#if isGun}
+					<DetailsContainer title="Bullet Slots">
+						<div class="bullet-slots-editor">
+							{#each editData.bulletSlots as slotType, i}
+								<div class="bullet-slot-row">
+									<span class="bullet-slot-index">Slot {i + 1}</span>
+									<Select
+										options={Object.entries(BULLET_TYPES).map(([v, l]) => ({ value: Number(v), label: l }))}
+										value={slotType}
+										onValueChange={(val) => {
+											const updated = [...editData.bulletSlots]
+											updated[i] = Number(val)
+											editData.bulletSlots = updated
+										}}
+										size="small"
+										contained
+									/>
+									<button
+										type="button"
+										class="remove-slot-btn"
+										onclick={() => {
+											editData.bulletSlots = editData.bulletSlots.filter((_, idx) => idx !== i)
+										}}
+									>
+										&times;
+									</button>
+								</div>
+							{/each}
+							{#if editData.bulletSlots.length < 6}
+								<button
+									type="button"
+									class="add-slot-btn"
+									onclick={() => {
+										editData.bulletSlots = [...editData.bulletSlots, 1]
+									}}
+								>
+									+ Add slot
+								</button>
+							{/if}
+						</div>
+					</DetailsContainer>
+				{/if}
 
 				<DetailsContainer title="Nicknames">
 					<DetailItem label="Nicknames (EN)">
@@ -426,6 +479,57 @@
 
 	.details {
 		@include database.details;
+	}
+
+	.bullet-slots-editor {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit;
+		padding: spacing.$unit spacing.$unit-2x;
+	}
+
+	.bullet-slot-row {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+	}
+
+	.bullet-slot-index {
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		color: var(--text-secondary);
+		min-width: 48px;
+	}
+
+	.remove-slot-btn {
+		background: none;
+		border: none;
+		color: var(--text-tertiary);
+		font-size: typography.$font-large;
+		cursor: pointer;
+		padding: 0 spacing.$unit-half;
+		line-height: 1;
+
+		&:hover {
+			color: var(--red);
+		}
+	}
+
+	.add-slot-btn {
+		background: none;
+		border: 1px dashed var(--border-subtle);
+		border-radius: layout.$item-corner;
+		padding: spacing.$unit-half spacing.$unit;
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		color: var(--accent-blue);
+		cursor: pointer;
+		align-self: flex-start;
+
+		&:hover {
+			border-color: var(--accent-blue);
+			background: color-mix(in srgb, var(--accent-blue) 10%, transparent);
+		}
 	}
 
 	.variant-id-input {
