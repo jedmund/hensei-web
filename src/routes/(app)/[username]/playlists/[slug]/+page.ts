@@ -1,10 +1,11 @@
-import type { PageServerLoad } from './$types'
+import type { PageLoad } from './$types'
 import { error } from '@sveltejs/kit'
 import { playlistAdapter } from '$lib/api/adapters/playlist.adapter'
 
-export const load: PageServerLoad = async ({ params, locals, fetch }) => {
+export const load: PageLoad = async ({ params, parent, fetch }) => {
   const { username, slug } = params
-  const isOwner = locals.session?.account?.username === username
+  const { account } = await parent()
+  const isOwner = account?.username === username
 
   try {
     const playlist = await playlistAdapter.get(username, slug, { fetch })
