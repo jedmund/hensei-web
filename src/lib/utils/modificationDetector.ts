@@ -122,7 +122,10 @@ export function canWeaponBeModified(gridWeapon: GridWeapon | undefined): boolean
 	// Awakening (maxAwakeningLevel > 0 means it can have awakening)
 	const hasAwakening = (weapon.maxAwakeningLevel ?? 0) > 0
 
-	return canChangeElement || hasWeaponKeys || hasAugments || hasAwakening
+	// Guns with bullet slots
+	const hasBulletSlots = (weapon.bulletSlots?.length ?? 0) > 0
+
+	return canChangeElement || hasWeaponKeys || hasAugments || hasAwakening || hasBulletSlots
 }
 
 /**
