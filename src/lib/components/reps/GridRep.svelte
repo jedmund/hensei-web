@@ -8,6 +8,7 @@
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'
+	import { getJobIconUrl } from '$lib/utils/jobUtils'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -69,7 +70,7 @@
 					>
 					{#if party.job}
 						<span class="separator">•</span>
-						<span class="job">{displayName(party.job)}</span>
+						<img class="job-icon" src={getJobIconUrl(party.job.granblueId)} alt="" loading="lazy" />
 					{/if}
 				</div>
 
@@ -266,11 +267,11 @@
 				flex-shrink: 0;
 			}
 
-			.job {
-				color: var(--text-secondary);
-				overflow: hidden;
-				text-overflow: ellipsis;
-				white-space: nowrap;
+			.job-icon {
+				width: 20px;
+				height: 20px;
+				object-fit: contain;
+				flex-shrink: 0;
 			}
 		}
 
