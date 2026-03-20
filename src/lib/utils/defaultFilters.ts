@@ -7,7 +7,7 @@ export const defaultFilterSet: FilterSet = {
   characters_count: 3,
   weapons_count: 5,
   summons_count: 2,
-  name_quality: false,
-  user_quality: false,
+  name_quality: true,
+  user_quality: true,
   original: false
 }
