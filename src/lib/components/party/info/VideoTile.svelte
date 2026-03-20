@@ -2,18 +2,19 @@
 	import * as m from '$lib/paraglide/messages'
 	import InfoTile from './InfoTile.svelte'
 	import VideoDialog from './VideoDialog.svelte'
-	import YouTubePlayIcon from './YouTubePlayIcon.svelte'
+	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import expandIcon from '$src/assets/icons/expand.svg?raw'
 
 	interface Props {
 		videoUrl?: string
+		videoDuration?: string
 		canEdit?: boolean
 		onAdd?: () => void
 	}
 
-	let { videoUrl, canEdit = false, onAdd }: Props = $props()
+	let { videoUrl, videoDuration, canEdit = false, onAdd }: Props = $props()
 
 	let dialogOpen = $state(false)
 
@@ -79,8 +80,11 @@
 				<button type="button" class="thumbnail-button" onclick={openDialog}>
 					<div class="thumbnail-container">
 						<img src={thumbnailUrl} alt={videoTitle ?? 'Video thumbnail'} class="thumbnail" />
-						<div class="play-overlay">
-							<YouTubePlayIcon class="play-icon" />
+						<div class="play-badge">
+							<Icon name="play" size={10} />
+							{#if videoDuration}
+								<span class="duration">{videoDuration}</span>
+							{/if}
 						</div>
 					</div>
 				</button>
@@ -123,42 +127,34 @@
 
 	.thumbnail-container {
 		position: relative;
-		width: 176px;
-		height: 99px;
+		height: 60px;
 		border-radius: $item-corner;
 		overflow: hidden;
 	}
 
 	.thumbnail {
-		width: 100%;
 		height: 100%;
+		width: auto;
 		object-fit: cover;
 	}
 
-	.play-overlay {
+	.play-badge {
 		position: absolute;
-		inset: 0;
+		bottom: $unit-half;
+		left: $unit-half;
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		background: rgba(0, 0, 0, 0.1);
-		@include smooth-transition($duration-quick, background);
-
-		:global(.play-icon) {
-			width: 68px;
-			height: 48px;
-			opacity: 0.9;
-			@include smooth-transition($duration-quick, opacity, transform);
-		}
+		gap: $unit-half;
+		padding: 2px $unit-half;
+		border-radius: $item-corner;
+		background: rgba(0, 0, 0, 0.7);
+		color: white;
 	}
 
-	.thumbnail-button:hover .play-overlay {
-		background: rgba(0, 0, 0, 0.2);
-
-		:global(.play-icon) {
-			opacity: 1;
-			transform: scale(1.1);
-		}
+	.duration {
+		font-size: $font-tiny;
+		font-weight: $bold;
+		font-variant-numeric: tabular-nums;
 	}
 
 	.video-title {
