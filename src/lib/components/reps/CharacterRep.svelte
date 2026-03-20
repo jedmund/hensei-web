@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Party, GridWeapon, GridCharacter } from '$lib/types/api/party'
 	import { getCharacterImageWithPose } from '$lib/utils/images'
-
 	interface Props {
 		party?: Party
 		characters?: GridCharacter[]
@@ -99,7 +98,6 @@
 <style lang="scss">
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/spacing' as *;
-
 	.rep {
 		width: 100%;
 		height: 100%;

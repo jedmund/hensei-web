@@ -2,7 +2,6 @@
 	import type { Party, GridSummon } from '$lib/types/api/party'
 	import { getSummonImage } from '$lib/features/database/detail/image'
 	import { getSummonTransformation } from '$lib/utils/images'
-
 	interface Props {
 		party?: Party
 		summons?: GridSummon[]
@@ -37,27 +36,39 @@
 
 <div class="rep" class:extended={extendedView}>
 	<div class="mainSummon" class:empty={!main}>
-		<img
-			alt={main ? 'Main Summon' : ''}
-			src={summonImageUrl(main, true)}
-			loading="lazy"
-			decoding="async"
-		/>
+		{#if main}
+			<img
+				alt="Main Summon"
+				src={summonImageUrl(main, true)}
+				loading="lazy"
+				decoding="async"
+			/>
+		{:else}
+			<img alt="" src={summonImageUrl(undefined, true)} />
+		{/if}
 	</div>
 	<ul class="summons">
 		{#each grid as s, i}
 			<li class="summon" class:empty={!s}>
-				<img alt={s ? 'Summon' : ''} src={summonImageUrl(s)} loading="lazy" decoding="async" />
+				{#if s}
+					<img alt="Summon" src={summonImageUrl(s)} loading="lazy" decoding="async" />
+				{:else}
+					<img alt="" src={summonImageUrl(undefined)} />
+				{/if}
 			</li>
 		{/each}
 	</ul>
 	<div class="friendSummon" class:empty={!friend}>
-		<img
-			alt={friend ? 'Friend Summon' : ''}
-			src={summonImageUrl(friend, true)}
-			loading="lazy"
-			decoding="async"
-		/>
+		{#if friend}
+			<img
+				alt="Friend Summon"
+				src={summonImageUrl(friend, true)}
+				loading="lazy"
+				decoding="async"
+			/>
+		{:else}
+			<img alt="" src={summonImageUrl(undefined, true)} />
+		{/if}
 	</div>
 </div>
 
@@ -65,7 +76,6 @@
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/rep' as rep;
-
 	.rep {
 		width: 100%;
 		height: 100%;
