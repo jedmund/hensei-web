@@ -9,6 +9,7 @@
 	interface Props {
 		showGranblueId: boolean
 		showWikiProfile: boolean
+		showYoutube: boolean
 		collectionPrivacy: number
 		showCrewGamertag: boolean
 		importWeapons: boolean
@@ -18,6 +19,7 @@
 		element: ElementType
 		onShowGranblueIdChange: (value: boolean) => void
 		onShowWikiProfileChange: (value: boolean) => void
+		onShowYoutubeChange: (value: boolean) => void
 		onCollectionPrivacyChange: (value: number) => void
 		onShowCrewGamertagChange: (value: boolean) => void
 		onImportWeaponsChange: (value: boolean) => void
@@ -27,6 +29,7 @@
 	let {
 		showGranblueId,
 		showWikiProfile,
+		showYoutube,
 		collectionPrivacy,
 		showCrewGamertag,
 		importWeapons,
@@ -36,6 +39,7 @@
 		element,
 		onShowGranblueIdChange,
 		onShowWikiProfileChange,
+		onShowYoutubeChange,
 		onCollectionPrivacyChange,
 		onShowCrewGamertagChange,
 		onImportWeaponsChange,
@@ -86,6 +90,21 @@
 					name="show-wiki-profile"
 					{element}
 					onCheckedChange={onShowWikiProfileChange}
+				/>
+			{/snippet}
+		</SettingsRow>
+
+		<!-- Show YouTube on profile -->
+		<SettingsRow
+			title={m.settings_show_youtube()}
+			subtitle={m.settings_show_youtube_subtitle()}
+		>
+			{#snippet control()}
+				<Switch
+					checked={showYoutube}
+					name="show-youtube"
+					{element}
+					onCheckedChange={onShowYoutubeChange}
 				/>
 			{/snippet}
 		</SettingsRow>

@@ -15,6 +15,7 @@
 		element: ElementType
 		granblueId: string
 		wikiProfile: string
+		youtube: string
 		gender: number
 		language: string
 		theme: string
@@ -22,6 +23,7 @@
 		onElementChange: (value: string) => void
 		onGranblueIdChange: (value: string) => void
 		onWikiProfileChange: (value: string) => void
+		onYoutubeChange: (value: string) => void
 		onGenderChange: (value: number) => void
 		onLanguageChange: (value: string) => void
 		onThemeChange: (value: string) => void
@@ -32,6 +34,7 @@
 		element,
 		granblueId,
 		wikiProfile,
+		youtube,
 		gender,
 		language,
 		theme,
@@ -39,6 +42,7 @@
 		onElementChange,
 		onGranblueIdChange,
 		onWikiProfileChange,
+		onYoutubeChange,
 		onGenderChange,
 		onLanguageChange,
 		onThemeChange
@@ -95,6 +99,7 @@
 	let localElement = $derived(element)
 	let localGranblueId = $derived(granblueId)
 	let localWikiProfile = $derived(wikiProfile)
+	let localYoutube = $derived(youtube)
 	let localGender = $derived(gender)
 	let localLanguage = $derived(language)
 	let localTheme = $derived(theme)
@@ -111,6 +116,9 @@
 	})
 	$effect(() => {
 		if (localWikiProfile !== wikiProfile) onWikiProfileChange(localWikiProfile)
+	})
+	$effect(() => {
+		if (localYoutube !== youtube) onYoutubeChange(localYoutube)
 	})
 	$effect(() => {
 		if (localGender !== gender) onGenderChange(localGender)
@@ -172,6 +180,13 @@
 		<SettingsRow title={m.settings_wiki_profile()} subtitle={m.settings_wiki_profile_subtitle()}>
 			{#snippet control()}
 				<Input bind:value={localWikiProfile} placeholder={m.settings_wiki_profile_placeholder()} contained />
+			{/snippet}
+		</SettingsRow>
+
+		<!-- YouTube -->
+		<SettingsRow title={m.settings_youtube()} subtitle={m.settings_youtube_subtitle()}>
+			{#snippet control()}
+				<Input bind:value={localYoutube} placeholder={m.settings_youtube_placeholder()} contained />
 			{/snippet}
 		</SettingsRow>
 

@@ -47,6 +47,7 @@
 	let element = $state<ElementType>('wind')
 	let granblueId = $state('')
 	let wikiProfile = $state('')
+	let youtube = $state('')
 	let gender = $state(0)
 	let language = $state('en')
 	let theme = $state('system')
@@ -54,6 +55,7 @@
 	// Form state - Privacy section (initialized with defaults, populated from API)
 	let showGranblueId = $state(false)
 	let showWikiProfile = $state(false)
+	let showYoutube = $state(false)
 	let collectionPrivacy = $state(1) // 1 = Everyone (1-based to avoid JS falsy 0)
 	let showCrewGamertag = $state(false)
 	let importWeapons = $state(true)
@@ -101,12 +103,14 @@
 			element = (data.avatar?.element as ElementType) ?? 'wind'
 			granblueId = data.granblueId ?? ''
 			wikiProfile = data.wikiProfile ?? ''
+			youtube = data.youtube ?? ''
 			gender = data.gender ?? 0
 			language = data.language ?? 'en'
 			theme = data.theme ?? 'system'
 			// Privacy
 			showGranblueId = data.showGranblueId ?? false
 			showWikiProfile = data.showWikiProfile ?? false
+			showYoutube = data.showYoutube ?? false
 			collectionPrivacy = data.collectionPrivacy ?? 1
 			showCrewGamertag = data.showCrewGamertag ?? false
 			importWeapons = data.importWeapons ?? true
@@ -172,9 +176,11 @@
 				theme,
 				granblueId: granblueId || undefined,
 				wikiProfile: wikiProfile || undefined,
+				youtube: youtube || undefined,
 				showCrewGamertag,
 				showGranblueId,
 				showWikiProfile,
+				showYoutube,
 				collectionPrivacy,
 				importWeapons,
 				defaultImportVisibility
@@ -193,9 +199,11 @@
 				bahamut,
 				granblueId: response.granblueId,
 				wikiProfile: response.wikiProfile,
+				youtube: response.youtube,
 				showCrewGamertag: response.showCrewGamertag,
 				showGranblueId: response.showGranblueId,
 				showWikiProfile: response.showWikiProfile,
+				showYoutube: response.showYoutube,
 				collectionPrivacy: response.collectionPrivacy,
 				importWeapons: response.importWeapons,
 				defaultImportVisibility: response.defaultImportVisibility
@@ -220,11 +228,13 @@
 								avatar: { ...(oldData.avatar as Record<string, unknown>), picture, element },
 								granblueId,
 								wikiProfile,
+								youtube,
 								gender,
 								language,
 								theme,
 								showGranblueId,
 								showWikiProfile,
+								showYoutube,
 								collectionPrivacy,
 								showCrewGamertag,
 								importWeapons,
@@ -311,6 +321,7 @@
 							{element}
 							{granblueId}
 							{wikiProfile}
+							{youtube}
 							{gender}
 							{language}
 							{theme}
@@ -318,6 +329,7 @@
 							onElementChange={(v) => (element = v as ElementType)}
 							onGranblueIdChange={(v) => (granblueId = v)}
 							onWikiProfileChange={(v) => (wikiProfile = v)}
+							onYoutubeChange={(v) => (youtube = v)}
 							onGenderChange={(v) => (gender = v)}
 							onLanguageChange={(v) => (language = v)}
 							onThemeChange={(v) => (theme = v)}
@@ -326,6 +338,7 @@
 						<PrivacySettings
 							{showGranblueId}
 							{showWikiProfile}
+							{showYoutube}
 							{collectionPrivacy}
 							{showCrewGamertag}
 							{importWeapons}
@@ -335,6 +348,7 @@
 							{element}
 							onShowGranblueIdChange={(v) => (showGranblueId = v)}
 							onShowWikiProfileChange={(v) => (showWikiProfile = v)}
+							onShowYoutubeChange={(v) => (showYoutube = v)}
 							onCollectionPrivacyChange={(v) => (collectionPrivacy = v)}
 							onShowCrewGamertagChange={(v) => (showCrewGamertag = v)}
 							onImportWeaponsChange={(v) => (importWeapons = v)}
