@@ -1312,6 +1312,10 @@
 	"party_using_own_collection": "{username} using their collection",
 	"party_using_others_collection": "{username} using {otherUsername}'s collection",
 	"party_remixed": "{username} remixed {otherUsername}'s team",
+	"party_remixed_with_collection": "{username} remixed {otherUsername}'s team using {collectionUsername}'s collection",
+	"party_remixed_anonymous": "Remixed from {otherUsername}'s team",
+	"party_remixed_anonymous_source": "Remix",
+	"party_remixed_from_anonymous": "{username} remixed an anonymous team",
 
 	"time_just_now": "Just now",
 	"time_minute_ago": "1 minute ago",
