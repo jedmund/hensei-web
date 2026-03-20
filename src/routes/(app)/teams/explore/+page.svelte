@@ -14,6 +14,7 @@
   import type { FilterSet } from '$lib/types/FilterSet'
   import Icon from '$lib/components/Icon.svelte'
   import Button from '$lib/components/ui/Button.svelte'
+  import Tooltip from '$lib/components/ui/Tooltip.svelte'
   import PageMeta from '$lib/components/PageMeta.svelte'
   import * as m from '$lib/paraglide/messages'
   import { localizeHref } from '$lib/paraglide/runtime'
@@ -81,7 +82,56 @@
     return params
   })
 
-  const hasActiveFilters = $derived(filterItems.length > 0)
+  const hasActiveFilters = $derived(
+    filterItems.length > 0 ||
+      !!advancedFilters.name_quality ||
+      !!advancedFilters.user_quality ||
+      !!advancedFilters.original ||
+      (advancedFilters.characters_count !== undefined &&
+        advancedFilters.characters_count !== defaultFilterSet.characters_count) ||
+      (advancedFilters.weapons_count !== undefined &&
+        advancedFilters.weapons_count !== defaultFilterSet.weapons_count) ||
+      (advancedFilters.summons_count !== undefined &&
+        advancedFilters.summons_count !== defaultFilterSet.summons_count)
+  )
+
+  // Count of active advanced settings and tooltip summary
+  const advancedFilterCount = $derived.by(() => {
+    let count = 0
+    if (advancedFilters.name_quality) count++
+    if (advancedFilters.user_quality) count++
+    if (advancedFilters.original) count++
+    if (
+      advancedFilters.characters_count !== undefined &&
+      advancedFilters.characters_count !== defaultFilterSet.characters_count
+    )
+      count++
+    if (
+      advancedFilters.weapons_count !== undefined &&
+      advancedFilters.weapons_count !== defaultFilterSet.weapons_count
+    )
+      count++
+    if (
+      advancedFilters.summons_count !== undefined &&
+      advancedFilters.summons_count !== defaultFilterSet.summons_count
+    )
+      count++
+    return count
+  })
+
+  const advancedFilterTooltip = $derived.by(() => {
+    const parts: string[] = []
+    if (advancedFilters.name_quality) parts.push(m.explore_settings_name_quality())
+    if (advancedFilters.user_quality) parts.push(m.explore_settings_user_quality())
+    if (advancedFilters.original) parts.push(m.explore_settings_original())
+    if (advancedFilters.characters_count !== undefined && advancedFilters.characters_count > 0)
+      parts.push(`${m.explore_settings_min_characters()}: ${advancedFilters.characters_count}`)
+    if (advancedFilters.weapons_count !== undefined && advancedFilters.weapons_count > 0)
+      parts.push(`${m.explore_settings_min_weapons()}: ${advancedFilters.weapons_count}`)
+    if (advancedFilters.summons_count !== undefined && advancedFilters.summons_count > 0)
+      parts.push(`${m.explore_settings_min_summons()}: ${advancedFilters.summons_count}`)
+    return parts.join(', ')
+  })
 
   // Query with filters
   const partiesQuery = createInfiniteQuery(() => ({
@@ -147,25 +197,34 @@
     <ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} />
     <div class="filters-actions">
       {#if isAuthenticated}
-        <button
-          type="button"
-          class="collection-toggle"
-          class:active={collectionFilterActive}
+        <Button
+          variant="ghost"
+          size="small"
+          shape="pill"
+          active={collectionFilterActive}
           onclick={() => (collectionFilterActive = !collectionFilterActive)}
           aria-label={m.explore_collection_aria()}
           aria-pressed={collectionFilterActive}
         >
           {m.explore_collection_only()}
-        </button>
+        </Button>
       {/if}
-      <button
-        type="button"
-        class="settings-btn"
-        onclick={() => (settingsOpen = true)}
-        aria-label={m.explore_settings_aria()}
-      >
-        {m.explore_settings()}
-      </button>
+      <Tooltip content={advancedFilterTooltip} disabled={advancedFilterCount === 0}>
+        <Button
+          variant="ghost"
+          size="small"
+          shape="pill"
+          onclick={() => (settingsOpen = true)}
+          aria-label={m.explore_settings_aria()}
+        >
+          {#snippet leftAccessory()}
+            <Icon name="gear" size={14} />
+          {/snippet}
+          {#if advancedFilterCount > 0}
+            {advancedFilterCount}
+          {/if}
+        </Button>
+      </Tooltip>
     </div>
   </div>
 
@@ -250,47 +309,6 @@
     align-items: center;
     gap: $unit;
     flex-shrink: 0;
-  }
-
-  .collection-toggle {
-    all: unset;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    padding: calc($unit-half + 1px) $unit;
-    border-radius: $full-corner;
-    font-size: $font-small;
-    font-weight: $medium;
-    color: var(--text-secondary);
-    white-space: nowrap;
-    @include smooth-transition($duration-quick, color, background-color);
-
-    &:hover {
-      color: var(--text-primary);
-      background-color: var(--bg-tertiary);
-    }
-
-    &.active {
-      color: var(--text-primary);
-      background-color: var(--null-bg);
-    }
-  }
-
-  .settings-btn {
-    all: unset;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    padding: calc($unit-half + 1px) $unit;
-    border-radius: $full-corner;
-    font-size: $font-small;
-    color: var(--text-secondary);
-    white-space: nowrap;
-    @include smooth-transition($duration-quick, color);
-
-    &:hover {
-      color: var(--text-primary);
-    }
   }
 
   .empty-collection {
