@@ -5,6 +5,8 @@
 		onEdit?: (() => void) | undefined
 		onViewDetails?: (() => void) | undefined
 		onViewInDatabase?: (() => void) | undefined
+		onViewTeams?: (() => void) | undefined
+		onAddToTeamsView?: (() => void) | undefined
 		onReplace?: (() => void) | undefined
 		onDuplicate?: (() => void) | undefined
 		onRemove?: (() => void | Promise<void>) | undefined
@@ -13,6 +15,8 @@
 		editLabel?: string | undefined
 		viewDetailsLabel?: string | undefined
 		viewInDatabaseLabel?: string | undefined
+		viewTeamsLabel?: string | undefined
+		addToTeamsViewLabel?: string | undefined
 		replaceLabel?: string | undefined
 		duplicateLabel?: string | undefined
 		duplicateDisabled?: boolean | undefined
@@ -23,6 +27,8 @@
 		onEdit,
 		onViewDetails,
 		onViewInDatabase,
+		onViewTeams,
+		onAddToTeamsView,
 		onReplace,
 		onDuplicate,
 		onRemove,
@@ -31,6 +37,8 @@
 		editLabel = 'Edit',
 		viewDetailsLabel = 'View details',
 		viewInDatabaseLabel = 'View in Database',
+		viewTeamsLabel = 'View teams',
+		addToTeamsViewLabel = 'Add to teams view',
 		replaceLabel = 'Replace',
 		duplicateLabel = 'Duplicate',
 		duplicateDisabled = false,
@@ -45,6 +53,8 @@
 
 	// Track whether we've rendered any items above the details/database section (for separator logic)
 	const hasEditSection = canEdit && (onEdit || onReplace || onDuplicate)
+	const hasViewSection = onViewDetails || onViewInDatabase
+	const hasTeamsSection = onViewTeams || onAddToTeamsView
 </script>
 
 {#if canEdit && onEdit}
@@ -78,6 +88,22 @@
 {#if onViewInDatabase}
 	<Item class={itemClass} onclick={onViewInDatabase}>
 		{viewInDatabaseLabel}
+	</Item>
+{/if}
+
+{#if hasTeamsSection && (hasEditSection || hasViewSection)}
+	<Separator class={separatorClass} />
+{/if}
+
+{#if onViewTeams}
+	<Item class={itemClass} onclick={onViewTeams}>
+		{viewTeamsLabel}
+	</Item>
+{/if}
+
+{#if onAddToTeamsView}
+	<Item class={itemClass} onclick={onAddToTeamsView}>
+		{addToTeamsViewLabel}
 	</Item>
 {/if}
 

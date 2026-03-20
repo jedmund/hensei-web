@@ -13,7 +13,12 @@
 	import { openDetailsSidebar, openCharacterEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { canCharacterBeModified } from '$lib/utils/modificationDetector'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
+	import { getElementKey } from '$lib/utils/element'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
+	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
+	import type { ElementType } from '$lib/stores/paneStack.svelte'
+	import type { FilterItem } from '$lib/components/explore/ExploreFilters.svelte'
 	import { GridType } from '$lib/types/enums'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 	import perpetuityEmpty from '$src/assets/icons/perpetuity/empty.svg'
@@ -138,6 +143,47 @@
 	// Check if user can view database (role >= 7)
 	let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
 
+	// Teams pane state
+	let isTeamsPaneOpen = $derived(collectionTeamsPane.isOpen)
+
+	function viewTeamsWithCharacter() {
+		if (!item?.character) return
+		const charData = item.character
+		const entityFilter: FilterItem = {
+			kind: 'entity',
+			value: charData.granblueId,
+			label: localizedName(charData.name) ?? charData.granblueId,
+			entityType: 'character',
+			granblueId: charData.granblueId,
+			mode: 'include',
+			element: charData.element,
+			pinned: true
+		}
+		collectionTeamsPane.reset(entityFilter)
+		const name = localizedName(charData.name)
+		const elementName = charData.element ? getElementKey(charData.element) as ElementType : undefined
+		sidebar.openWithComponent(name, PartiesPane, {
+			pinnedFilters: [entityFilter],
+			defaultElement: charData.element,
+			useCollectionTeamsStore: true,
+			resetKey: charData.granblueId
+		}, { scrollable: true, element: elementName })
+	}
+
+	function addCharacterToTeamsView() {
+		if (!item?.character) return
+		const charData = item.character
+		collectionTeamsPane.addEntity({
+			kind: 'entity',
+			value: charData.granblueId,
+			label: localizedName(charData.name) ?? charData.granblueId,
+			entityType: 'character',
+			granblueId: charData.granblueId,
+			mode: 'include',
+			element: charData.element
+		})
+	}
+
 	// Check if character has a style swap variant available
 	let hasStyleVariant = $derived.by(() => {
 		if (!item?.character) return false
@@ -261,6 +307,8 @@
 					onEdit={canEditItem ? editItem : undefined}
 					onViewDetails={viewDetails}
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
+					onViewTeams={viewTeamsWithCharacter}
+					onAddToTeamsView={isTeamsPaneOpen ? addCharacterToTeamsView : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
@@ -268,6 +316,8 @@
 					editLabel={m.context_edit({ type: m.type_character() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
+					viewTeamsLabel={m.context_view_teams_character()}
+					addToTeamsViewLabel={m.context_add_to_teams_view()}
 					replaceLabel={m.context_replace({ type: m.type_character() })}
 					removeLabel={m.context_remove()}
 				/>
@@ -278,6 +328,8 @@
 					onEdit={canEditItem ? editItem : undefined}
 					onViewDetails={viewDetails}
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
+					onViewTeams={viewTeamsWithCharacter}
+					onAddToTeamsView={isTeamsPaneOpen ? addCharacterToTeamsView : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
@@ -285,6 +337,8 @@
 					editLabel={m.context_edit({ type: m.type_character() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
+					viewTeamsLabel={m.context_view_teams_character()}
+					addToTeamsViewLabel={m.context_add_to_teams_view()}
 					replaceLabel={m.context_replace({ type: m.type_character() })}
 					removeLabel={m.context_remove()}
 				/>

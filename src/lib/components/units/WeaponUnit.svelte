@@ -13,6 +13,11 @@
 	import { openDetailsSidebar, openWeaponEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { canWeaponBeModified } from '$lib/utils/modificationDetector'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
+	import { getElementKey } from '$lib/utils/element'
+	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
+	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
+	import type { ElementType } from '$lib/stores/paneStack.svelte'
+	import type { FilterItem } from '$lib/components/explore/ExploreFilters.svelte'
 	import { getAwakeningImage, getWeaponKeyImages, getAxSkillImages, getBefoulmentImages } from '$lib/utils/modifiers'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { GridType } from '$lib/types/enums'
@@ -185,6 +190,47 @@
 
 	// Check if user can view database (role >= 7)
 	let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
+
+	// Teams pane state
+	let isTeamsPaneOpen = $derived(collectionTeamsPane.isOpen)
+
+	function viewTeamsWithWeapon() {
+		if (!item?.weapon) return
+		const weaponData = item.weapon
+		const entityFilter: FilterItem = {
+			kind: 'entity',
+			value: weaponData.granblueId,
+			label: localizedName(weaponData.name) ?? weaponData.granblueId,
+			entityType: 'weapon',
+			granblueId: weaponData.granblueId,
+			mode: 'include',
+			element: weaponData.element,
+			pinned: true
+		}
+		collectionTeamsPane.reset(entityFilter)
+		const name = localizedName(weaponData.name)
+		const elementName = weaponData.element ? getElementKey(weaponData.element) as ElementType : undefined
+		sidebar.openWithComponent(name, PartiesPane, {
+			pinnedFilters: [entityFilter],
+			defaultElement: weaponData.element,
+			useCollectionTeamsStore: true,
+			resetKey: weaponData.granblueId
+		}, { scrollable: true, element: elementName })
+	}
+
+	function addWeaponToTeamsView() {
+		if (!item?.weapon) return
+		const weaponData = item.weapon
+		collectionTeamsPane.addEntity({
+			kind: 'entity',
+			value: weaponData.granblueId,
+			label: localizedName(weaponData.name) ?? weaponData.granblueId,
+			entityType: 'weapon',
+			granblueId: weaponData.granblueId,
+			mode: 'include',
+			element: weaponData.element
+		})
+	}
 </script>
 
 <div
@@ -259,6 +305,8 @@
 					onEdit={canEditItem ? editItem : undefined}
 					onViewDetails={viewDetails}
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
+					onViewTeams={viewTeamsWithWeapon}
+					onAddToTeamsView={isTeamsPaneOpen ? addWeaponToTeamsView : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onDuplicate={ctx?.canEdit() ? duplicate : undefined}
 					duplicateDisabled={!canDuplicate}
@@ -268,6 +316,8 @@
 					editLabel={m.context_edit({ type: m.type_weapon() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
+					viewTeamsLabel={m.context_view_teams_weapon()}
+					addToTeamsViewLabel={m.context_add_to_teams_view()}
 					replaceLabel={m.context_replace({ type: m.type_weapon() })}
 					duplicateLabel={m.context_duplicate({ type: m.type_weapon() })}
 					removeLabel={m.context_remove()}
@@ -279,6 +329,8 @@
 					onEdit={canEditItem ? editItem : undefined}
 					onViewDetails={viewDetails}
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
+					onViewTeams={viewTeamsWithWeapon}
+					onAddToTeamsView={isTeamsPaneOpen ? addWeaponToTeamsView : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onDuplicate={ctx?.canEdit() ? duplicate : undefined}
 					duplicateDisabled={!canDuplicate}
@@ -288,6 +340,8 @@
 					editLabel={m.context_edit({ type: m.type_weapon() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
+					viewTeamsLabel={m.context_view_teams_weapon()}
+					addToTeamsViewLabel={m.context_add_to_teams_view()}
 					replaceLabel={m.context_replace({ type: m.type_weapon() })}
 					duplicateLabel={m.context_duplicate({ type: m.type_weapon() })}
 					removeLabel={m.context_remove()}

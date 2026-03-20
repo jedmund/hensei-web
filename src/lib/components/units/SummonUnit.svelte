@@ -12,6 +12,11 @@
   import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
   import { sidebar } from '$lib/stores/sidebar.svelte'
   import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
+  import { getElementKey } from '$lib/utils/element'
+  import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
+  import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
+  import type { ElementType } from '$lib/stores/paneStack.svelte'
+  import type { FilterItem } from '$lib/components/explore/ExploreFilters.svelte'
   import { GridType } from '$lib/types/enums'
   import * as m from '$lib/paraglide/messages'
   import { localizedName } from '$lib/utils/locale'
@@ -155,6 +160,47 @@
   // Check if user can view database (role >= 7)
   let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
 
+  // Teams pane state
+  let isTeamsPaneOpen = $derived(collectionTeamsPane.isOpen)
+
+  function viewTeamsWithSummon() {
+    if (!item?.summon) return
+    const summonData = item.summon
+    const entityFilter: FilterItem = {
+      kind: 'entity',
+      value: summonData.granblueId,
+      label: localizedName(summonData.name) ?? summonData.granblueId,
+      entityType: 'summon',
+      granblueId: summonData.granblueId,
+      mode: 'include',
+      element: summonData.element,
+      pinned: true
+    }
+    collectionTeamsPane.reset(entityFilter)
+    const name = localizedName(summonData.name)
+    const elementName = summonData.element ? getElementKey(summonData.element) as ElementType : undefined
+    sidebar.openWithComponent(name, PartiesPane, {
+      pinnedFilters: [entityFilter],
+      defaultElement: summonData.element,
+      useCollectionTeamsStore: true,
+      resetKey: summonData.granblueId
+    }, { scrollable: true, element: elementName })
+  }
+
+  function addSummonToTeamsView() {
+    if (!item?.summon) return
+    const summonData = item.summon
+    collectionTeamsPane.addEntity({
+      kind: 'entity',
+      value: summonData.granblueId,
+      label: localizedName(summonData.name) ?? summonData.granblueId,
+      entityType: 'summon',
+      granblueId: summonData.granblueId,
+      mode: 'include',
+      element: summonData.element
+    })
+  }
+
 </script>
 
 <div class="unit {elementClass}" class:empty={!item} class:is-active={isActive} class:orphaned={item?.orphaned}>
@@ -213,6 +259,8 @@
         <MenuItems
           onViewDetails={viewDetails}
           onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
+          onViewTeams={viewTeamsWithSummon}
+          onAddToTeamsView={isTeamsPaneOpen ? addSummonToTeamsView : undefined}
           onReplace={ctx?.canEdit() ? replace : undefined}
           onDuplicate={ctx?.canEdit() ? duplicate : undefined}
           duplicateDisabled={!canDuplicate}
@@ -221,6 +269,8 @@
           variant="context"
           viewDetailsLabel={m.context_view_details()}
           viewInDatabaseLabel={m.context_view_in_database()}
+          viewTeamsLabel={m.context_view_teams_summon()}
+          addToTeamsViewLabel={m.context_add_to_teams_view()}
           replaceLabel={m.context_replace({ type: m.type_summon() })}
           duplicateLabel={m.context_duplicate({ type: m.type_summon() })}
           removeLabel={m.context_remove()}
@@ -231,6 +281,8 @@
         <MenuItems
           onViewDetails={viewDetails}
           onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
+          onViewTeams={viewTeamsWithSummon}
+          onAddToTeamsView={isTeamsPaneOpen ? addSummonToTeamsView : undefined}
           onReplace={ctx?.canEdit() ? replace : undefined}
           onDuplicate={ctx?.canEdit() ? duplicate : undefined}
           duplicateDisabled={!canDuplicate}
@@ -239,6 +291,8 @@
           variant="dropdown"
           viewDetailsLabel={m.context_view_details()}
           viewInDatabaseLabel={m.context_view_in_database()}
+          viewTeamsLabel={m.context_view_teams_summon()}
+          addToTeamsViewLabel={m.context_add_to_teams_view()}
           replaceLabel={m.context_replace({ type: m.type_summon() })}
           duplicateLabel={m.context_duplicate({ type: m.type_summon() })}
           removeLabel={m.context_remove()}
