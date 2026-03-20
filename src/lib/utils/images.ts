@@ -99,23 +99,24 @@ export interface TransformationStage {
 
 /**
  * Returns the list of available transformation stages for a summon.
- * Uses the uncap flags (ulb, transcendence) to determine which stages exist.
+ * Uses the SUMMON_ALT_ART_THRESHOLD map to determine which stages exist
+ * and what to label the first art upgrade (FLB vs ULB).
  */
-export function getSummonTransformationStages(uncap?: { ulb?: boolean; transcendence?: boolean }): TransformationStage[] {
+export function getSummonTransformationStages(granblueId?: string | number | null): TransformationStage[] {
 	const stages: TransformationStage[] = [
 		{ id: '01', label: 'Base', suffix: undefined }
 	]
 
-	if (uncap?.ulb) {
-		stages.push({ id: '02', label: 'ULB', suffix: '02' })
-	}
+	const id = String(granblueId)
+	const threshold = granblueId ? SUMMON_ALT_ART_THRESHOLD.get(id) : undefined
+	if (threshold === undefined) return stages
 
-	if (uncap?.transcendence) {
-		stages.push(
-			{ id: '03', label: 'Transcendence (1)', suffix: '03' },
-			{ id: '04', label: 'Transcendence (5)', suffix: '04' }
-		)
-	}
+	const firstLabel = threshold <= 4 ? 'FLB' : 'ULB'
+	stages.push({ id: '02', label: firstLabel, suffix: '02' })
+	stages.push(
+		{ id: '03', label: 'Transcendence (1)', suffix: '03' },
+		{ id: '04', label: 'Transcendence (5)', suffix: '04' }
+	)
 
 	return stages
 }

@@ -109,7 +109,7 @@
 
 		const variants = ['detail', 'grid', 'main', 'tall', 'square', 'wide'] as const
 		const images: ImageItem[] = []
-		const transformations = getSummonTransformationStages(summon.uncap)
+		const transformations = getSummonTransformationStages(summon.granblueId)
 
 		for (const transformation of transformations) {
 			for (const variant of variants) {
@@ -150,7 +150,7 @@
 
 	async function handleDownloadSize(size: string) {
 		if (!summon?.id) return
-		const stages = getSummonTransformationStages(summon.uncap)
+		const stages = getSummonTransformationStages(summon.granblueId)
 		for (const stage of stages) {
 			await entityAdapter.downloadSummonImage(summon.id, size, stage.suffix, false)
 		}
