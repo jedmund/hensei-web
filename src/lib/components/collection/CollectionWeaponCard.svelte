@@ -4,7 +4,6 @@
 	import { getAwakeningImage } from '$lib/utils/modifiers'
 	import { localizedName } from '$lib/utils/locale'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
-
 	interface Props {
 		weapon: CollectionWeapon
 		onClick?: () => void

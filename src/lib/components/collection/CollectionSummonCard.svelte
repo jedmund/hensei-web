@@ -3,7 +3,6 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { getSummonImage, getSummonTransformation } from '$lib/utils/images'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
-
 	interface Props {
 		summon: CollectionSummon
 		onClick?: () => void

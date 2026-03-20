@@ -5,7 +5,6 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '../labels/ProficiencyLabel.svelte'
-
 	interface Props {
 		weapon: CollectionWeapon
 		onClick?: () => void

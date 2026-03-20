@@ -21,7 +21,6 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
-
 	interface Props {
 		item?: GridCharacter | undefined
 		position: number
