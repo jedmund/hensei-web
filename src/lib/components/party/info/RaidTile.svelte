@@ -7,6 +7,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import EditRaidPane from '$lib/components/sidebar/EditRaidPane.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -49,6 +50,11 @@
 </script>
 
 <InfoTile label={m.party_raid_label()} class="raid-tile" {clickable} onclick={showAdd ? openEditRaidPane : onclick} {showAdd} onAdd={openEditRaidPane}>
+	{#snippet headerAction()}
+		{#if canEdit && raid}
+			<Button variant="ghost" size="small" onclick={(e) => { e.stopPropagation(); openEditRaidPane() }}>{m.action_edit()}</Button>
+		{/if}
+	{/snippet}
 	{#if raid}
 		<div class="raid-info">
 			<img src={getRaidImage(raid.slug)} alt="" class="raid-image" />
@@ -74,7 +80,7 @@
 	}
 
 	.raid-image {
-		height: 95px;
+		height: 60px;
 		width: auto;
 		border-radius: $item-corner;
 	}
