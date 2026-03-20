@@ -1,66 +1,103 @@
 <script lang="ts">
-	/**
-	 * RaidPartiesPane - Shows parties that use a specific raid
-	 *
-	 * Displays a filterable list of public parties for a given raid.
-	 * Uses ExploreFilters with a pinned raid filter for consistency
-	 * with the gallery/explore page filtering experience.
-	 */
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { onDestroy } from 'svelte'
-	import type { Raid } from '$lib/types/api/entities'
 	import { partyQueries } from '$lib/api/queries/party.queries'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
+	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
 	import { filterItemsToParams } from '$lib/utils/filterConversion'
 	import ExploreFilters, { type FilterItem } from '$lib/components/explore/ExploreFilters.svelte'
 	import GridRep from '$lib/components/reps/GridRep.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import * as m from '$lib/paraglide/messages'
-	import { localizedName } from '$lib/utils/locale'
 	import { getElementLabel } from '$lib/utils/element'
 
 	interface Props {
-		raid: Raid
-		/** Fallback element when raid.element is null (e.g. party's element) */
-		partyElement?: number
+		/** Primary pinned filter(s) — always present, not user-removable */
+		pinnedFilters: FilterItem[]
+		/** Default element for initial filter state */
+		defaultElement?: number
+		/** Filter kinds to exclude from the filter dropdown */
+		excludedKinds?: FilterItem['kind'][]
+		/** Empty state message override */
+		emptyMessage?: string
+		/** When true, reads additional entity filters from collectionTeamsPane store
+		 *  and manages its open/close lifecycle */
+		useCollectionTeamsStore?: boolean
+		/** Identity key for resetting user filters when subject changes */
+		resetKey: string
 	}
 
-	let { raid, partyElement }: Props = $props()
+	let {
+		pinnedFilters,
+		defaultElement,
+		excludedKinds,
+		emptyMessage,
+		useCollectionTeamsStore = false,
+		resetKey
+	}: Props = $props()
 
-	// Pinned raid filter — always present, not removable
-	// Uses raid.id (UUID) because the API filters by raid_id column directly
-	const pinnedRaidFilter: FilterItem = $derived({
-		kind: 'raid',
-		value: raid.id,
-		label: localizedName(raid.name) ?? raid.slug,
-		pinned: true
-	})
+	// Mode overrides for pinned entity filters (granblueId → mode)
+	// Persists exclude toggles that would otherwise be lost when pinned filters re-derive
+	let modeOverrides = $state<Map<string, 'include' | 'exclude'>>(new Map())
 
-	// Build default element filter from the party's mainhand element
-	// (raid element is the enemy's element, not what you fight with)
+	// Build default element filter from defaultElement prop
 	function defaultElementFilter(): FilterItem[] {
-		if (!partyElement) return []
+		if (!defaultElement) return []
 		return [{
 			kind: 'element' as const,
-			value: partyElement,
-			label: getElementLabel(partyElement)
+			value: defaultElement,
+			label: getElementLabel(defaultElement)
 		}]
 	}
 
-	// User-added filters (element, entity, party settings, etc.)
+	// User-added filters (element, other entities, party settings, etc.)
 	let userFilters = $state<FilterItem[]>(defaultElementFilter())
 
-	// Reset user filters when raid changes
-	let prevRaidId = raid.id
+	// Reset user filters when resetKey changes
+	let prevResetKey = $state(resetKey)
 	$effect(() => {
-		if (raid.id !== prevRaidId) {
-			prevRaidId = raid.id
+		if (resetKey !== prevResetKey) {
+			prevResetKey = resetKey
 			userFilters = defaultElementFilter()
+			modeOverrides = new Map()
 		}
 	})
 
-	// Combined filters: pinned raid + user selections
-	const allFilters = $derived<FilterItem[]>([pinnedRaidFilter, ...userFilters])
+	// Apply mode overrides to pinned filters
+	function applyModeOverrides(filters: FilterItem[]): FilterItem[] {
+		return filters.map((f) => {
+			if (f.kind === 'entity' && 'granblueId' in f && modeOverrides.has(f.granblueId)) {
+				return { ...f, mode: modeOverrides.get(f.granblueId)! }
+			}
+			return f
+		})
+	}
+
+	// Track store entities and merge as additional pinned filters (only when useCollectionTeamsStore)
+	const storeEntityFilters = $derived<FilterItem[]>(
+		useCollectionTeamsStore
+			? collectionTeamsPane.entities
+					.filter((e): e is FilterItem & { kind: 'entity'; granblueId: string; mode: 'include' | 'exclude' } => {
+						if (e.kind !== 'entity') return false
+						// Exclude entities that are already in pinnedFilters
+						return !pinnedFilters.some(
+							(p) => p.kind === 'entity' && 'granblueId' in p && p.granblueId === e.granblueId
+						)
+					})
+					.map((e) => ({
+						...e,
+						mode: modeOverrides.get(e.granblueId) ?? e.mode,
+						pinned: true
+					}))
+			: []
+	)
+
+	// Combined filters: pinned + store entities + user selections
+	const allFilters = $derived<FilterItem[]>([
+		...applyModeOverrides(pinnedFilters),
+		...storeEntityFilters,
+		...userFilters
+	])
 
 	// Convert to API query params
 	const filterParams = $derived(filterItemsToParams(allFilters))
@@ -68,7 +105,7 @@
 	// Sentinel for infinite scroll
 	let sentinelEl = $state<HTMLElement>()
 
-	// Query for parties using the shared list endpoint
+	// Query for parties
 	const partiesQuery = createInfiniteQuery(() =>
 		partyQueries.list({ filters: filterParams })
 	)
@@ -86,6 +123,16 @@
 		loader.reset()
 	})
 
+	// Manage collection teams pane lifecycle
+	$effect(() => {
+		if (useCollectionTeamsStore) {
+			collectionTeamsPane.open()
+			return () => {
+				collectionTeamsPane.close()
+			}
+		}
+	})
+
 	onDestroy(() => loader.destroy())
 
 	// Flatten results
@@ -96,18 +143,27 @@
 	)
 
 	function handleFiltersChange(newFilters: FilterItem[]) {
+		// Capture mode changes on pinned entity filters before stripping them
+		const updated = new Map(modeOverrides)
+		for (const f of newFilters) {
+			if (f.kind === 'entity' && 'pinned' in f && f.pinned && 'granblueId' in f) {
+				updated.set(f.granblueId, f.mode)
+			}
+		}
+		modeOverrides = updated
+
 		// Strip pinned filters — only keep user-added ones
-		userFilters = newFilters.filter((f) => !f.pinned)
+		userFilters = newFilters.filter((f) => !('pinned' in f && f.pinned))
 	}
 </script>
 
-<div class="raid-parties-pane">
+<div class="parties-pane">
 	<!-- Filters -->
 	<div class="filters-section">
 		<ExploreFilters
 			filters={allFilters}
 			onFiltersChange={handleFiltersChange}
-			excludedKinds={['raid']}
+			{excludedKinds}
 			contained
 		/>
 	</div>
@@ -127,7 +183,7 @@
 			</div>
 		{:else if isEmpty}
 			<div class="empty-state">
-				<p>{m.sidebar_no_parties()}</p>
+				<p>{emptyMessage ?? m.sidebar_no_parties()}</p>
 			</div>
 		{:else}
 			<div class="parties-grid">
@@ -157,7 +213,7 @@
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
 
-	.raid-parties-pane {
+	.parties-pane {
 		display: flex;
 		flex-direction: column;
 		height: 100%;

@@ -4,6 +4,8 @@
 	import type { CollectionSummon, CollectionSortKey } from '$lib/types/api/collection'
 	import { getContext, onDestroy, untrack } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
+	import { page } from '$app/stores'
+	import { goto } from '$app/navigation'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import CollectionFilters, {
 		type CollectionFilterState
@@ -11,15 +13,22 @@
 	import CollectionSummonPane from '$lib/components/collection/CollectionSummonPane.svelte'
 	import CollectionSummonCard from '$lib/components/collection/CollectionSummonCard.svelte'
 	import CollectionSummonRow from '$lib/components/collection/CollectionSummonRow.svelte'
+	import CollectionContextMenu from '$lib/components/collection/CollectionContextMenu.svelte'
+	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
 	import SelectableCollectionCard from '$lib/components/collection/SelectableCollectionCard.svelte'
 	import SelectableCollectionRow from '$lib/components/collection/SelectableCollectionRow.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { collectionFilters } from '$lib/stores/collectionFilters.svelte'
+	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
 	import { viewMode } from '$lib/stores/viewMode.svelte'
 	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { localizedName } from '$lib/utils/locale'
+	import { canAccessDatabase, getDatabaseUrl } from '$lib/utils/database'
+	import { getElementKey } from '$lib/utils/element'
+	import type { ElementType } from '$lib/stores/paneStack.svelte'
+	import type { FilterItem } from '$lib/components/explore/ExploreFilters.svelte'
 
 	const { data }: { data: PageData } = $props()
 
@@ -109,6 +118,11 @@
 		untrack(() => collectionFilters.setSummons(filters))
 	})
 
+	// Derived state for context menu
+	const canAccessDb = $derived(canAccessDatabase($page.data.account?.role))
+	const isTeamsPaneOpen = $derived(collectionTeamsPane.isOpen)
+
+
 	function openSummonDetails(summon: CollectionSummon) {
 		const summonName = localizedName(summon.summon?.name)
 
@@ -117,6 +131,66 @@
 			isOwner: data.isOwner,
 			onClose: () => sidebar.close()
 		})
+	}
+
+	function openSummonEdit(summon: CollectionSummon) {
+		const summonName = localizedName(summon.summon?.name)
+
+		sidebar.openWithComponent(summonName, CollectionSummonPane, {
+			summon,
+			isOwner: data.isOwner,
+			initialEdit: true,
+			onClose: () => sidebar.close()
+		})
+	}
+
+	function viewTeamsWithSummon(summon: CollectionSummon) {
+		const summonData = summon.summon
+		if (!summonData) return
+
+		const entityFilter: FilterItem = {
+			kind: 'entity',
+			value: summonData.granblueId,
+			label: localizedName(summonData.name) ?? summonData.granblueId,
+			entityType: 'summon',
+			granblueId: summonData.granblueId,
+			mode: 'include',
+			element: summonData.element,
+			pinned: true
+		}
+
+		collectionTeamsPane.reset(entityFilter)
+
+		const summonName = localizedName(summonData.name)
+		const elementName = summonData.element ? getElementKey(summonData.element) as ElementType : undefined
+
+		sidebar.openWithComponent(summonName, PartiesPane, {
+			pinnedFilters: [entityFilter],
+			defaultElement: summonData.element,
+			useCollectionTeamsStore: true,
+			resetKey: summonData.granblueId
+		}, { scrollable: true, element: elementName })
+	}
+
+	function addSummonToTeamsView(summon: CollectionSummon) {
+		const summonData = summon.summon
+		if (!summonData) return
+
+		collectionTeamsPane.addEntity({
+			kind: 'entity',
+			value: summonData.granblueId,
+			label: localizedName(summonData.name) ?? summonData.granblueId,
+			entityType: 'summon',
+			granblueId: summonData.granblueId,
+			mode: 'include',
+			element: summonData.element
+		})
+	}
+
+	function viewSummonInDatabase(summon: CollectionSummon) {
+		const summonData = summon.summon
+		if (!summonData) return
+		goto(getDatabaseUrl('summon', summonData.granblueId))
 	}
 </script>
 
@@ -156,17 +230,41 @@
 		{:else if currentViewMode === 'grid'}
 			<div class="summon-grid">
 				{#each allSummons as summon, i (i)}
-					<SelectableCollectionCard id={summon.id} onClick={() => openSummonDetails(summon)}>
-						<CollectionSummonCard {summon} />
-					</SelectableCollectionCard>
+					<CollectionContextMenu
+						itemType="summon"
+						onView={() => openSummonDetails(summon)}
+						onEdit={() => openSummonEdit(summon)}
+						canEdit={data.isOwner}
+						{isTeamsPaneOpen}
+						onViewTeams={() => viewTeamsWithSummon(summon)}
+						onAddToTeamsView={() => addSummonToTeamsView(summon)}
+						{canAccessDb}
+						onViewInDatabase={() => viewSummonInDatabase(summon)}
+					>
+						<SelectableCollectionCard id={summon.id} onClick={() => openSummonDetails(summon)}>
+							<CollectionSummonCard {summon} />
+						</SelectableCollectionCard>
+					</CollectionContextMenu>
 				{/each}
 			</div>
 		{:else}
 			<div class="summon-list">
 				{#each allSummons as summon, i (i)}
-					<SelectableCollectionRow id={summon.id} onClick={() => openSummonDetails(summon)}>
-						<CollectionSummonRow {summon} />
-					</SelectableCollectionRow>
+					<CollectionContextMenu
+						itemType="summon"
+						onView={() => openSummonDetails(summon)}
+						onEdit={() => openSummonEdit(summon)}
+						canEdit={data.isOwner}
+						{isTeamsPaneOpen}
+						onViewTeams={() => viewTeamsWithSummon(summon)}
+						onAddToTeamsView={() => addSummonToTeamsView(summon)}
+						{canAccessDb}
+						onViewInDatabase={() => viewSummonInDatabase(summon)}
+					>
+						<SelectableCollectionRow id={summon.id} onClick={() => openSummonDetails(summon)}>
+							<CollectionSummonRow {summon} />
+						</SelectableCollectionRow>
+					</CollectionContextMenu>
 				{/each}
 			</div>
 		{/if}

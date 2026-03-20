@@ -4,6 +4,8 @@
 	import type { CollectionCharacter, CollectionSortKey } from '$lib/types/api/collection'
 	import { getContext, onDestroy, untrack } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
+	import { page } from '$app/stores'
+	import { goto } from '$app/navigation'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import CollectionFilters, {
 		type CollectionFilterState
@@ -11,15 +13,22 @@
 	import CollectionCharacterPane from '$lib/components/collection/CollectionCharacterPane.svelte'
 	import CollectionCharacterCard from '$lib/components/collection/CollectionCharacterCard.svelte'
 	import CollectionCharacterRow from '$lib/components/collection/CollectionCharacterRow.svelte'
+	import CollectionContextMenu from '$lib/components/collection/CollectionContextMenu.svelte'
+	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
 	import SelectableCollectionCard from '$lib/components/collection/SelectableCollectionCard.svelte'
 	import SelectableCollectionRow from '$lib/components/collection/SelectableCollectionRow.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { collectionFilters } from '$lib/stores/collectionFilters.svelte'
+	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
 	import { viewMode } from '$lib/stores/viewMode.svelte'
 	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { localizedName } from '$lib/utils/locale'
+	import { canAccessDatabase, getDatabaseUrl } from '$lib/utils/database'
+	import { getElementKey } from '$lib/utils/element'
+	import type { ElementType } from '$lib/stores/paneStack.svelte'
+	import type { FilterItem } from '$lib/components/explore/ExploreFilters.svelte'
 
 	const { data }: { data: PageData } = $props()
 
@@ -121,6 +130,11 @@
 		untrack(() => collectionFilters.setCharacters(filters))
 	})
 
+	// Derived state for context menu
+	const canAccessDb = $derived(canAccessDatabase($page.data.account?.role))
+	const isTeamsPaneOpen = $derived(collectionTeamsPane.isOpen)
+
+
 	function openCharacterDetails(character: CollectionCharacter) {
 		const characterName = localizedName(character.character?.name)
 
@@ -129,6 +143,66 @@
 			isOwner: data.isOwner,
 			onClose: () => sidebar.close()
 		})
+	}
+
+	function openCharacterEdit(character: CollectionCharacter) {
+		const characterName = localizedName(character.character?.name)
+
+		sidebar.openWithComponent(characterName, CollectionCharacterPane, {
+			character,
+			isOwner: data.isOwner,
+			initialEdit: true,
+			onClose: () => sidebar.close()
+		})
+	}
+
+	function viewTeamsWithCharacter(character: CollectionCharacter) {
+		const charData = character.character
+		if (!charData) return
+
+		const entityFilter: FilterItem = {
+			kind: 'entity',
+			value: charData.granblueId,
+			label: localizedName(charData.name) ?? charData.granblueId,
+			entityType: 'character',
+			granblueId: charData.granblueId,
+			mode: 'include',
+			element: charData.element,
+			pinned: true
+		}
+
+		collectionTeamsPane.reset(entityFilter)
+
+		const characterName = localizedName(charData.name)
+		const elementName = charData.element ? getElementKey(charData.element) as ElementType : undefined
+
+		sidebar.openWithComponent(characterName, PartiesPane, {
+			pinnedFilters: [entityFilter],
+			defaultElement: charData.element,
+			useCollectionTeamsStore: true,
+			resetKey: charData.granblueId
+		}, { scrollable: true, element: elementName })
+	}
+
+	function addCharacterToTeamsView(character: CollectionCharacter) {
+		const charData = character.character
+		if (!charData) return
+
+		collectionTeamsPane.addEntity({
+			kind: 'entity',
+			value: charData.granblueId,
+			label: localizedName(charData.name) ?? charData.granblueId,
+			entityType: 'character',
+			granblueId: charData.granblueId,
+			mode: 'include',
+			element: charData.element
+		})
+	}
+
+	function viewCharacterInDatabase(character: CollectionCharacter) {
+		const charData = character.character
+		if (!charData) return
+		goto(getDatabaseUrl('character', charData.granblueId, charData.styleSwap))
 	}
 </script>
 
@@ -179,17 +253,41 @@
 		{:else if currentViewMode === 'grid'}
 			<div class="character-grid">
 				{#each allCharacters as character, i (i)}
-					<SelectableCollectionCard id={character.id} onClick={() => openCharacterDetails(character)}>
-						<CollectionCharacterCard {character} />
-					</SelectableCollectionCard>
+					<CollectionContextMenu
+						itemType="character"
+						onView={() => openCharacterDetails(character)}
+						onEdit={() => openCharacterEdit(character)}
+						canEdit={data.isOwner}
+						{isTeamsPaneOpen}
+						onViewTeams={() => viewTeamsWithCharacter(character)}
+						onAddToTeamsView={() => addCharacterToTeamsView(character)}
+						{canAccessDb}
+						onViewInDatabase={() => viewCharacterInDatabase(character)}
+					>
+						<SelectableCollectionCard id={character.id} onClick={() => openCharacterDetails(character)}>
+							<CollectionCharacterCard {character} />
+						</SelectableCollectionCard>
+					</CollectionContextMenu>
 				{/each}
 			</div>
 		{:else}
 			<div class="character-list">
 				{#each allCharacters as character, i (i)}
-					<SelectableCollectionRow id={character.id} onClick={() => openCharacterDetails(character)}>
-						<CollectionCharacterRow {character} />
-					</SelectableCollectionRow>
+					<CollectionContextMenu
+						itemType="character"
+						onView={() => openCharacterDetails(character)}
+						onEdit={() => openCharacterEdit(character)}
+						canEdit={data.isOwner}
+						{isTeamsPaneOpen}
+						onViewTeams={() => viewTeamsWithCharacter(character)}
+						onAddToTeamsView={() => addCharacterToTeamsView(character)}
+						{canAccessDb}
+						onViewInDatabase={() => viewCharacterInDatabase(character)}
+					>
+						<SelectableCollectionRow id={character.id} onClick={() => openCharacterDetails(character)}>
+							<CollectionCharacterRow {character} />
+						</SelectableCollectionRow>
+					</CollectionContextMenu>
 				{/each}
 			</div>
 		{/if}

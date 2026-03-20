@@ -6,7 +6,7 @@
 	import RaidTile from './RaidTile.svelte'
 	import VideoTile from './VideoTile.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import RaidPartiesPane from '$lib/components/sidebar/RaidPartiesPane.svelte'
+	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
 	import { getRaidImage } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
 
@@ -46,8 +46,18 @@
 
 		sidebar.openWithComponent(
 			raidName,
-			RaidPartiesPane,
-			{ raid: party.raid, partyElement: party.element },
+			PartiesPane,
+			{
+				pinnedFilters: [{
+					kind: 'raid' as const,
+					value: party.raid.id,
+					label: localizedName(party.raid.name) ?? party.raid.slug,
+					pinned: true
+				}],
+				defaultElement: party.element,
+				excludedKinds: ['raid'] as const,
+				resetKey: party.raid.id
+			},
 			{
 				scrollable: true,
 				image: getRaidImage(party.raid.slug)

@@ -4,6 +4,8 @@
 	import type { CollectionWeapon, CollectionSortKey } from '$lib/types/api/collection'
 	import { getContext, onDestroy, untrack } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
+	import { page } from '$app/stores'
+	import { goto } from '$app/navigation'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import CollectionFilters, {
 		type CollectionFilterState
@@ -11,15 +13,22 @@
 	import CollectionWeaponPane from '$lib/components/collection/CollectionWeaponPane.svelte'
 	import CollectionWeaponCard from '$lib/components/collection/CollectionWeaponCard.svelte'
 	import CollectionWeaponRow from '$lib/components/collection/CollectionWeaponRow.svelte'
+	import CollectionContextMenu from '$lib/components/collection/CollectionContextMenu.svelte'
+	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
 	import SelectableCollectionCard from '$lib/components/collection/SelectableCollectionCard.svelte'
 	import SelectableCollectionRow from '$lib/components/collection/SelectableCollectionRow.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { collectionFilters } from '$lib/stores/collectionFilters.svelte'
+	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
 	import { viewMode } from '$lib/stores/viewMode.svelte'
 	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { localizedName } from '$lib/utils/locale'
+	import { canAccessDatabase, getDatabaseUrl } from '$lib/utils/database'
+	import { getElementKey } from '$lib/utils/element'
+	import type { ElementType } from '$lib/stores/paneStack.svelte'
+	import type { FilterItem } from '$lib/components/explore/ExploreFilters.svelte'
 
 	const { data }: { data: PageData } = $props()
 
@@ -113,6 +122,11 @@
 		untrack(() => collectionFilters.setWeapons(filters))
 	})
 
+	// Derived state for context menu
+	const canAccessDb = $derived(canAccessDatabase($page.data.account?.role))
+	const isTeamsPaneOpen = $derived(collectionTeamsPane.isOpen)
+
+
 	function openWeaponDetails(weapon: CollectionWeapon) {
 		const weaponName = localizedName(weapon.weapon?.name)
 
@@ -121,6 +135,66 @@
 			isOwner: data.isOwner,
 			onClose: () => sidebar.close()
 		})
+	}
+
+	function openWeaponEdit(weapon: CollectionWeapon) {
+		const weaponName = localizedName(weapon.weapon?.name)
+
+		sidebar.openWithComponent(weaponName, CollectionWeaponPane, {
+			weapon,
+			isOwner: data.isOwner,
+			initialEdit: true,
+			onClose: () => sidebar.close()
+		})
+	}
+
+	function viewTeamsWithWeapon(weapon: CollectionWeapon) {
+		const weaponData = weapon.weapon
+		if (!weaponData) return
+
+		const entityFilter: FilterItem = {
+			kind: 'entity',
+			value: weaponData.granblueId,
+			label: localizedName(weaponData.name) ?? weaponData.granblueId,
+			entityType: 'weapon',
+			granblueId: weaponData.granblueId,
+			mode: 'include',
+			element: weaponData.element,
+			pinned: true
+		}
+
+		collectionTeamsPane.reset(entityFilter)
+
+		const weaponName = localizedName(weaponData.name)
+		const elementName = weaponData.element ? getElementKey(weaponData.element) as ElementType : undefined
+
+		sidebar.openWithComponent(weaponName, PartiesPane, {
+			pinnedFilters: [entityFilter],
+			defaultElement: weaponData.element,
+			useCollectionTeamsStore: true,
+			resetKey: weaponData.granblueId
+		}, { scrollable: true, element: elementName })
+	}
+
+	function addWeaponToTeamsView(weapon: CollectionWeapon) {
+		const weaponData = weapon.weapon
+		if (!weaponData) return
+
+		collectionTeamsPane.addEntity({
+			kind: 'entity',
+			value: weaponData.granblueId,
+			label: localizedName(weaponData.name) ?? weaponData.granblueId,
+			entityType: 'weapon',
+			granblueId: weaponData.granblueId,
+			mode: 'include',
+			element: weaponData.element
+		})
+	}
+
+	function viewWeaponInDatabase(weapon: CollectionWeapon) {
+		const weaponData = weapon.weapon
+		if (!weaponData) return
+		goto(getDatabaseUrl('weapon', weaponData.granblueId))
 	}
 </script>
 
@@ -161,17 +235,41 @@
 		{:else if currentViewMode === 'grid'}
 			<div class="weapon-grid">
 				{#each allWeapons as weapon, i (i)}
-					<SelectableCollectionCard id={weapon.id} onClick={() => openWeaponDetails(weapon)}>
-						<CollectionWeaponCard {weapon} />
-					</SelectableCollectionCard>
+					<CollectionContextMenu
+						itemType="weapon"
+						onView={() => openWeaponDetails(weapon)}
+						onEdit={() => openWeaponEdit(weapon)}
+						canEdit={data.isOwner}
+						{isTeamsPaneOpen}
+						onViewTeams={() => viewTeamsWithWeapon(weapon)}
+						onAddToTeamsView={() => addWeaponToTeamsView(weapon)}
+						{canAccessDb}
+						onViewInDatabase={() => viewWeaponInDatabase(weapon)}
+					>
+						<SelectableCollectionCard id={weapon.id} onClick={() => openWeaponDetails(weapon)}>
+							<CollectionWeaponCard {weapon} />
+						</SelectableCollectionCard>
+					</CollectionContextMenu>
 				{/each}
 			</div>
 		{:else}
 			<div class="weapon-list">
 				{#each allWeapons as weapon, i (i)}
-					<SelectableCollectionRow id={weapon.id} onClick={() => openWeaponDetails(weapon)}>
-						<CollectionWeaponRow {weapon} />
-					</SelectableCollectionRow>
+					<CollectionContextMenu
+						itemType="weapon"
+						onView={() => openWeaponDetails(weapon)}
+						onEdit={() => openWeaponEdit(weapon)}
+						canEdit={data.isOwner}
+						{isTeamsPaneOpen}
+						onViewTeams={() => viewTeamsWithWeapon(weapon)}
+						onAddToTeamsView={() => addWeaponToTeamsView(weapon)}
+						{canAccessDb}
+						onViewInDatabase={() => viewWeaponInDatabase(weapon)}
+					>
+						<SelectableCollectionRow id={weapon.id} onClick={() => openWeaponDetails(weapon)}>
+							<CollectionWeaponRow {weapon} />
+						</SelectableCollectionRow>
+					</CollectionContextMenu>
 				{/each}
 			</div>
 		{/if}
