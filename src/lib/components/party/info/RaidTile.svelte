@@ -23,9 +23,6 @@
 	const isEmpty = $derived(!raid)
 	const showAdd = $derived(canEdit && isEmpty)
 
-	// Clickable if raid exists (view raid parties) or empty+editable (open edit)
-	const clickable = $derived((!!raid && !!onclick) || showAdd)
-
 	const raidName = $derived(() => {
 		if (!raid) return null
 		return localizedName(raid.name)
@@ -49,22 +46,20 @@
 	}
 </script>
 
-<InfoTile label={m.party_raid_label()} class="raid-tile" {clickable} onclick={showAdd ? openEditRaidPane : onclick} {showAdd} onAdd={openEditRaidPane}>
+<InfoTile label={m.party_raid_label()} class="raid-tile" {showAdd} onAdd={openEditRaidPane}>
 	{#snippet headerAction()}
 		{#if canEdit && raid}
-			<span role="presentation" onclick={(e) => e.stopPropagation()}>
-				<Button variant="ghost" size="small" onclick={openEditRaidPane}>{m.action_edit()}</Button>
-			</span>
+			<Button variant="ghost" size="small" onclick={openEditRaidPane}>{m.action_edit()}</Button>
 		{/if}
 	{/snippet}
 	{#if raid}
-		<div class="raid-info">
+		<button type="button" class="raid-info" onclick={onclick}>
 			<img src={getRaidImage(raid.slug)} alt="" class="raid-image" />
 			<div class="raid-details">
 				<span class="raid-name">{raidName()}</span>
 				<span class="raid-meta">Lv. {raid.level} · {elementLabel}</span>
 			</div>
-		</div>
+		</button>
 	{:else}
 		<span class="empty-state">{canEdit ? m.party_add_raid() : m.party_raid_empty()}</span>
 	{/if}
@@ -83,6 +78,13 @@
 		margin: 0 (-$unit) (-$unit) (-$unit);
 		padding: $unit;
 		border-radius: $item-corner;
+		background: none;
+		border: none;
+		cursor: pointer;
+		color: inherit;
+		font: inherit;
+		text-align: left;
+		width: calc(100% + #{$unit * 2});
 		@include smooth-transition($duration-quick, background-color);
 
 		&:hover {
