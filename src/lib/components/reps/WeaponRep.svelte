@@ -2,7 +2,6 @@
 	import type { Party, GridWeapon } from '$lib/types/api/party'
 	import { getWeaponImage } from '$lib/features/database/detail/image'
 	import { getWeaponTransformation } from '$lib/utils/images'
-
 	interface Props {
 		party?: Party
 		weapons?: GridWeapon[]
@@ -57,7 +56,6 @@
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/rep' as rep;
-
 	.rep {
 		width: 100%;
 		height: 100%;
@@ -101,7 +99,7 @@
 				flex: 1;
 
 				.weapon {
-					background: var(--unit-bg);
+					background: var(--placeholder-bg);
 					border-radius: $item-corner-small;
 					overflow: hidden;
 					display: flex;

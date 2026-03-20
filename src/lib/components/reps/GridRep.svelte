@@ -188,6 +188,7 @@
 			box-sizing: border-box;
 			background: var(--card-bg);
 			overflow: hidden;
+			user-select: none;
 
 			&:hover {
 				background: var(--grid-rep-hover);
