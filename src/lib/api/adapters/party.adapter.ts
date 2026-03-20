@@ -174,13 +174,14 @@ export class PartyAdapter extends BaseAdapter {
 	 * Updates a party
 	 * Note: API expects UUID for update, not shortcode
 	 */
-	async update(params: UpdatePartyParams): Promise<Party> {
+	async update(params: UpdatePartyParams, headers?: Record<string, string>): Promise<Party> {
 		const { id, shortcode, ...updateParams } = params
 		const response = await this.request<{ party: Party }>(`/parties/${id}`, {
 			method: 'PATCH',
 			body: {
 				party: updateParams
-			}
+			},
+			headers
 		})
 		return response.party
 	}
@@ -189,9 +190,10 @@ export class PartyAdapter extends BaseAdapter {
 	 * Deletes a party
 	 * @param id - The party's UUID (not shortcode - API requires UUID for delete)
 	 */
-	async delete(id: string): Promise<void> {
+	async delete(id: string, headers?: Record<string, string>): Promise<void> {
 		return this.request<void>(`/parties/${id}`, {
-			method: 'DELETE'
+			method: 'DELETE',
+			headers
 		})
 	}
 

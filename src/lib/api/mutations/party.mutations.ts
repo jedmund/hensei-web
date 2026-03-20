@@ -19,6 +19,12 @@ import { partyKeys } from '$lib/api/queries/party.queries'
 import { userKeys } from '$lib/api/queries/user.queries'
 import { crewKeys } from '$lib/api/queries/crew.queries'
 import type { Party } from '$lib/types/api/party'
+import { getEditKey } from '$lib/utils/editKeys'
+
+function editKeyHeaders(shortcode: string): Record<string, string> | undefined {
+	const editKey = getEditKey(shortcode)
+	return editKey ? { 'X-Edit-Key': editKey } : undefined
+}
 
 // ============================================================================
 // Options Factories
@@ -37,7 +43,7 @@ export function createPartyOptions(queryClient: QueryClient) {
 
 export function updatePartyOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: UpdatePartyParams) => partyAdapter.update(params),
+		mutationFn: (params: UpdatePartyParams) => partyAdapter.update(params, editKeyHeaders(params.shortcode)),
 		onMutate: async (params: UpdatePartyParams) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(params.shortcode) })
 
@@ -77,7 +83,7 @@ export function updatePartyOptions(queryClient: QueryClient) {
 
 export function deletePartyOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: { id: string; shortcode: string }) => partyAdapter.delete(params.id),
+		mutationFn: (params: { id: string; shortcode: string }) => partyAdapter.delete(params.id, editKeyHeaders(params.shortcode)),
 		onMutate: async (params: { id: string; shortcode: string }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.userLists() })
 
