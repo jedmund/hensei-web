@@ -40,9 +40,10 @@
 		isOwner: boolean
 		onClose?: () => void
 		paneId?: string
+		initialEdit?: boolean
 	}
 
-	let { summon: initialSummon, isOwner, onClose, paneId }: Props = $props()
+	let { summon: initialSummon, isOwner, onClose, paneId, initialEdit = false }: Props = $props()
 
 	// Local state for the summon - updated when mutation succeeds
 	let summon = $state<CollectionSummon>(initialSummon)
@@ -172,7 +173,12 @@
 
 	// Set up sidebar action on mount and clean up on destroy
 	onMount(() => {
-		updateActionVisibility()
+		if (initialEdit && isOwner) {
+			selectedTab = 'collection'
+			enterEditMode()
+		} else {
+			updateActionVisibility()
+		}
 
 		return () => {
 			if (paneId) {

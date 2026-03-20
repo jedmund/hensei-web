@@ -44,9 +44,10 @@
 		isOwner: boolean
 		onClose?: () => void
 		paneId?: string
+		initialEdit?: boolean
 	}
 
-	let { weapon: initialWeapon, isOwner, onClose, paneId }: Props = $props()
+	let { weapon: initialWeapon, isOwner, onClose, paneId, initialEdit = false }: Props = $props()
 
 	// Local state for the weapon - updated when mutation succeeds
 	let weapon = $state<CollectionWeapon>(initialWeapon)
@@ -259,7 +260,12 @@
 
 	// Set up sidebar action on mount and clean up on destroy
 	onMount(() => {
-		updateActionVisibility()
+		if (initialEdit && isOwner) {
+			selectedTab = 'collection'
+			enterEditMode()
+		} else {
+			updateActionVisibility()
+		}
 
 		return () => {
 			if (paneId) {
