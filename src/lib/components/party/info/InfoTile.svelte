@@ -60,7 +60,6 @@
 		padding: $unit $unit-2x $unit-2x $unit-2x;
 		display: flex;
 		flex-direction: column;
-		gap: $unit;
 
 		&.clickable {
 			cursor: pointer;
@@ -81,6 +80,7 @@
 			display: flex;
 			align-items: center;
 			min-height: 30px;
+			margin-right: -$unit;
 
 			&.has-action {
 				justify-content: space-between;

@@ -52,7 +52,9 @@
 <InfoTile label={m.party_raid_label()} class="raid-tile" {clickable} onclick={showAdd ? openEditRaidPane : onclick} {showAdd} onAdd={openEditRaidPane}>
 	{#snippet headerAction()}
 		{#if canEdit && raid}
-			<Button variant="ghost" size="small" onclick={(e) => { e.stopPropagation(); openEditRaidPane() }}>{m.action_edit()}</Button>
+			<span role="presentation" onclick={(e) => e.stopPropagation()}>
+				<Button variant="ghost" size="small" onclick={openEditRaidPane}>{m.action_edit()}</Button>
+			</span>
 		{/if}
 	{/snippet}
 	{#if raid}
@@ -72,11 +74,20 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
+	@use '$src/themes/effects' as *;
 
 	.raid-info {
 		display: flex;
 		align-items: center;
 		gap: $unit;
+		margin: 0 (-$unit) (-$unit) (-$unit);
+		padding: $unit;
+		border-radius: $item-corner;
+		@include smooth-transition($duration-quick, background-color);
+
+		&:hover {
+			background: var(--button-bg);
+		}
 	}
 
 	.raid-image {

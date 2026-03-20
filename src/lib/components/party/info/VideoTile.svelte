@@ -75,24 +75,22 @@
 		{/if}
 	{/snippet}
 	{#if videoUrl && videoId}
-		<div class="video-container">
+		<button type="button" class="video-container" onclick={openDialog}>
 			{#if thumbnailUrl}
-				<button type="button" class="thumbnail-button" onclick={openDialog}>
-					<div class="thumbnail-container">
-						<img src={thumbnailUrl} alt={videoTitle ?? 'Video thumbnail'} class="thumbnail" />
-						<div class="play-badge">
-							<Icon name="play" size={10} />
-							{#if videoDuration}
-								<span class="duration">{videoDuration}</span>
-							{/if}
-						</div>
+				<div class="thumbnail-container">
+					<img src={thumbnailUrl} alt={videoTitle ?? 'Video thumbnail'} class="thumbnail" />
+					<div class="play-badge">
+						<Icon name="play" size={10} />
+						{#if videoDuration}
+							<span class="duration">{videoDuration}</span>
+						{/if}
 					</div>
-				</button>
+				</div>
 			{/if}
 			{#if videoTitle}
 				<p class="video-title">{videoTitle}</p>
 			{/if}
-		</div>
+		</button>
 
 		<VideoDialog bind:open={dialogOpen} {videoId} {videoTitle} />
 	{:else}
@@ -106,35 +104,40 @@
 	@use '$src/themes/effects' as *;
 	@use '$src/themes/typography' as *;
 
-	:global(.video-tile.has-video) {
-		padding-right: $unit !important;
-	}
-
 	.video-container {
 		display: flex;
 		flex-direction: row;
+		align-items: center;
 		gap: $unit;
-	}
-
-	.thumbnail-button {
-		display: block;
-		padding: 0;
-		border: none;
+		margin: 0 (-$unit) (-$unit) (-$unit);
+		padding: $unit;
+		border-radius: $item-corner;
 		background: none;
+		border: none;
 		cursor: pointer;
-		flex-shrink: 0;
+		color: inherit;
+		font: inherit;
+		text-align: left;
+		width: calc(100% + #{$unit * 2});
+		@include smooth-transition($duration-quick, background-color);
+
+		&:hover {
+			background: var(--button-bg);
+		}
 	}
 
 	.thumbnail-container {
 		position: relative;
 		height: 60px;
+		aspect-ratio: 16 / 9;
 		border-radius: $item-corner;
 		overflow: hidden;
+		flex-shrink: 0;
 	}
 
 	.thumbnail {
+		width: 100%;
 		height: 100%;
-		width: auto;
 		object-fit: cover;
 	}
 
