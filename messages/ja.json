@@ -1589,5 +1589,18 @@
 	"confirm_delete_team_title": "編成を削除",
 	"confirm_delete_team_message": "この編成を削除しますか？この操作は元に戻せません。",
 	"confirm_delete_playlist_title": "プレイリストを削除",
-	"confirm_delete_playlist_message": "このプレイリストを削除しますか？この操作は元に戻せません。"
+	"confirm_delete_playlist_message": "このプレイリストを削除しますか？この操作は元に戻せません。",
+
+	"context_view_character": "キャラクターを見る",
+	"context_view_weapon": "武器を見る",
+	"context_view_summon": "召喚石を見る",
+	"context_edit_character": "キャラクターを編集",
+	"context_edit_weapon": "武器を編集",
+	"context_edit_summon": "召喚石を編集",
+	"context_view_teams_character": "このキャラクターの編成を見る",
+	"context_view_teams_weapon": "この武器の編成を見る",
+	"context_view_teams_summon": "この召喚石の編成を見る",
+	"context_add_to_teams_view": "編成ビューに追加",
+	"context_view_in_database": "データベースで見る",
+	"sidebar_no_parties_entity": "このアイテムの編成が見つかりません"
 }

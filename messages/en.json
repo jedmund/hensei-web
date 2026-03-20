@@ -1590,5 +1590,18 @@
 	"confirm_delete_team_title": "Delete team",
 	"confirm_delete_team_message": "Are you sure you want to delete this team? This action cannot be undone.",
 	"confirm_delete_playlist_title": "Delete playlist",
-	"confirm_delete_playlist_message": "Are you sure you want to delete this playlist? This action cannot be undone."
+	"confirm_delete_playlist_message": "Are you sure you want to delete this playlist? This action cannot be undone.",
+
+	"context_view_character": "View character",
+	"context_view_weapon": "View weapon",
+	"context_view_summon": "View summon",
+	"context_edit_character": "Edit character",
+	"context_edit_weapon": "Edit weapon",
+	"context_edit_summon": "Edit summon",
+	"context_view_teams_character": "View teams with this character",
+	"context_view_teams_weapon": "View teams with this weapon",
+	"context_view_teams_summon": "View teams with this summon",
+	"context_add_to_teams_view": "Add to teams view",
+	"context_view_in_database": "View in Database",
+	"sidebar_no_parties_entity": "No teams found with this item"
 }
