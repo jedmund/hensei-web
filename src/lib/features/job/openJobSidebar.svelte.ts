@@ -15,11 +15,18 @@ interface JobSelectionOptions {
 	element?: ElementType
 }
 
+export interface SkillFilterState {
+	searchQuery: string
+	skillCategory: number
+}
+
 interface JobSkillSelectionOptions {
 	job?: Job | undefined
 	currentSkills?: JobSkillList | undefined
 	targetSlot: number
-	onSelectSkill?: ((skill: JobSkill) => void) | undefined
+	initialSearchQuery?: string
+	initialSkillCategory?: number
+	onSelectSkill?: ((skill: JobSkill, filterState: SkillFilterState) => void) | undefined
 	onRemoveSkill?: (() => void) | undefined
 }
 
@@ -42,7 +49,7 @@ export function openJobSelectionSidebar(options: JobSelectionOptions) {
 }
 
 export function openJobSkillSelectionSidebar(options: JobSkillSelectionOptions) {
-	const { job, currentSkills, targetSlot, onSelectSkill, onRemoveSkill } = options
+	const { job, currentSkills, targetSlot, initialSearchQuery, initialSkillCategory, onSelectSkill, onRemoveSkill } = options
 
 	sidebar.openWithComponent(
 		`Select Skill - Slot ${targetSlot + 1}`,
@@ -51,9 +58,10 @@ export function openJobSkillSelectionSidebar(options: JobSkillSelectionOptions) 
 			job,
 			currentSkills,
 			targetSlot,
-			onSelectSkill: (skill: JobSkill) => {
-				onSelectSkill?.(skill)
-				sidebar.close()
+			initialSearchQuery,
+			initialSkillCategory,
+			onSelectSkill: (skill: JobSkill, filterState: SkillFilterState) => {
+				onSelectSkill?.(skill, filterState)
 			},
 			onRemoveSkill: () => {
 				onRemoveSkill?.()

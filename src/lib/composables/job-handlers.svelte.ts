@@ -3,7 +3,9 @@ import type { Party } from '$lib/types/api/party'
 import {
 	openJobSelectionSidebar,
 	openJobSkillSelectionSidebar,
-	openJobAccessorySelectionSidebar
+	openJobAccessorySelectionSidebar,
+	closeJobSidebar,
+	type SkillFilterState
 } from '$lib/features/job/openJobSidebar.svelte'
 import { transformSkillsToArray } from '$lib/utils/jobSkills'
 import { toast } from 'svelte-sonner'
@@ -63,14 +65,16 @@ export function useJobHandlers(opts: JobHandlerOptions) {
 		})
 	}
 
-	async function handleSelectJobSkill(slot: number) {
+	async function handleSelectJobSkill(slot: number, filterState?: SkillFilterState) {
 		if (!opts.canEdit()) return
 
 		openJobSkillSelectionSidebar({
 			job: opts.getParty().job,
 			currentSkills: opts.getParty().jobSkills,
 			targetSlot: slot,
-			onSelectSkill: async (skill) => {
+			initialSearchQuery: filterState?.searchQuery,
+			initialSkillCategory: filterState?.skillCategory,
+			onSelectSkill: async (skill, currentFilterState) => {
 				loading = true
 				error = null
 
@@ -87,10 +91,19 @@ export function useJobHandlers(opts: JobHandlerOptions) {
 						shortcode,
 						skills: skillsArray
 					})
+
+					// Advance to the next empty slot, or close if all filled
+					const nextSlot = findNextEmptySlot(slot, updatedSkills)
+					if (nextSlot !== null) {
+						handleSelectJobSkill(nextSlot, currentFilterState)
+					} else {
+						closeJobSidebar()
+					}
 				} catch (e: any) {
 					error = extractErrorMessage(e, m.toast_failed_update_skill())
 					console.error('Failed to update skill:', e)
 					toast.error(extractErrorMessage(e, m.toast_failed_update_skill()))
+					closeJobSidebar()
 				} finally {
 					loading = false
 				}
@@ -99,6 +112,18 @@ export function useJobHandlers(opts: JobHandlerOptions) {
 				await handleRemoveJobSkill(slot)
 			}
 		})
+	}
+
+	function findNextEmptySlot(
+		currentSlot: number,
+		updatedSkills: Record<string, unknown>
+	): number | null {
+		// Check slots after the current one first, then wrap around
+		for (let i = 1; i <= 3; i++) {
+			const candidate = ((currentSlot - 1 + i) % 3) + 1
+			if (!updatedSkills[String(candidate)]) return candidate
+		}
+		return null
 	}
 
 	async function handleRemoveJobSkill(slot: number) {

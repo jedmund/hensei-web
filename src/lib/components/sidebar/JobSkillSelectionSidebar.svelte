@@ -17,7 +17,9 @@
 		job?: Job
 		currentSkills?: JobSkillList
 		targetSlot: number
-		onSelectSkill?: (skill: JobSkill) => void
+		initialSearchQuery?: string
+		initialSkillCategory?: number
+		onSelectSkill?: (skill: JobSkill, filterState: { searchQuery: string; skillCategory: number }) => void
 		onRemoveSkill?: () => void
 	}
 
@@ -25,6 +27,8 @@
 		job,
 		currentSkills = {},
 		targetSlot = 0,
+		initialSearchQuery = '',
+		initialSkillCategory = -1,
 		onSelectSkill,
 		onRemoveSkill
 	}: Props = $props()
@@ -43,8 +47,8 @@
 	])
 
 	// State for filtering (local UI state, not server state)
-	let searchQuery = $state('')
-	let skillCategory = $state(-1) // -1 = All
+	let searchQuery = $state(initialSearchQuery)
+	let skillCategory = $state(initialSkillCategory)
 	let error = $state<string | undefined>()
 
 	// Debounced search value for query
@@ -134,7 +138,7 @@
 			return
 		}
 
-		onSelectSkill?.(skill)
+		onSelectSkill?.(skill, { searchQuery, skillCategory })
 	}
 
 	function handleRemoveSkill() {
