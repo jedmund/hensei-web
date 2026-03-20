@@ -93,6 +93,7 @@
 		background: var(--slider-thumb-bg, white);
 		border: none;
 		border-radius: $full-corner;
+		box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
 		cursor: grab;
 		@include smooth-transition($duration-quick, transform, box-shadow);
 
