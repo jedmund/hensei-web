@@ -479,7 +479,7 @@
 	"explore_settings_name_quality": "Name Quality",
 	"explore_settings_name_quality_desc": "Only show named teams",
 	"explore_settings_user_quality": "User Quality",
-	"explore_settings_user_quality_desc": "Only show verified users",
+	"explore_settings_user_quality_desc": "Only show registered users",
 	"explore_settings_original": "Original Only",
 	"explore_settings_original_desc": "Exclude remixes",
 	"explore_settings_apply": "Apply",

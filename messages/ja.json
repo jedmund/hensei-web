@@ -479,7 +479,7 @@
 	"explore_settings_name_quality": "名前あり",
 	"explore_settings_name_quality_desc": "名前のある編成のみ表示",
 	"explore_settings_user_quality": "認証ユーザー",
-	"explore_settings_user_quality_desc": "認証ユーザーの編成のみ表示",
+	"explore_settings_user_quality_desc": "登録ユーザーの編成のみ表示",
 	"explore_settings_original": "オリジナルのみ",
 	"explore_settings_original_desc": "リミックスを除外",
 	"explore_settings_apply": "フィルターを保存する",
