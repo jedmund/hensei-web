@@ -211,6 +211,11 @@
 	"auth_resetPassword_errors_passwordMismatch": "パスワードが一致しません",
 	"auth_resetPassword_errors_failed": "パスワードのリセットに失敗しました",
 
+	"auth_verifyEmail_title": "メール認証",
+	"auth_verifyEmail_success": "メールアドレスが認証されました。",
+	"auth_verifyEmail_invalidToken": "この認証リンクは無効または期限切れです。",
+	"auth_verifyEmail_signIn": "ログイン",
+
 	"auth_register_title": "アカウント作成",
 	"auth_register_username": "ユーザー名",
 	"auth_register_usernameNote": "後から変更できます",
