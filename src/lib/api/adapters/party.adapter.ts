@@ -309,14 +309,15 @@ export class PartyAdapter extends BaseAdapter {
 	/**
 	 * Updates the job for a party
 	 */
-	async updateJob(shortcode: string, jobId: string): Promise<Party> {
+	async updateJob(shortcode: string, jobId: string, headers?: Record<string, string>): Promise<Party> {
 		return this.request<Party>(`/parties/${shortcode}/jobs`, {
 			method: 'PUT',
 			body: {
 				party: {
 					job_id: jobId
 				}
-			}
+			},
+			headers
 		})
 	}
 
@@ -325,7 +326,8 @@ export class PartyAdapter extends BaseAdapter {
 	 */
 	async updateJobSkills(
 		partyId: string,
-		skills: Array<{ id: string; slot: number }>
+		skills: Array<{ id: string; slot: number }>,
+		headers?: Record<string, string>
 	): Promise<Party> {
 		if (import.meta.env.DEV) console.log('[updateJobSkills] Input skills array:', skills)
 
@@ -354,44 +356,48 @@ export class PartyAdapter extends BaseAdapter {
 
 		return this.request<Party>(`/parties/${partyId}/job_skills`, {
 			method: 'PUT',
-			body: requestBody
+			body: requestBody,
+			headers
 		})
 	}
 
 	/**
 	 * Updates the accessory for a party
 	 */
-	async updateAccessory(partyId: string, accessoryId: string): Promise<Party> {
+	async updateAccessory(partyId: string, accessoryId: string, headers?: Record<string, string>): Promise<Party> {
 		return this.request<Party>(`/parties/${partyId}/accessory`, {
 			method: 'PUT',
 			body: {
 				party: {
 					accessory_id: accessoryId
 				}
-			}
+			},
+			headers
 		})
 	}
 
 	/**
 	 * Removes the accessory from a party
 	 */
-	async removeAccessory(partyId: string): Promise<Party> {
+	async removeAccessory(partyId: string, headers?: Record<string, string>): Promise<Party> {
 		return this.request<Party>(`/parties/${partyId}/accessory`, {
-			method: 'DELETE'
+			method: 'DELETE',
+			headers
 		})
 	}
 
 	/**
 	 * Removes a job skill from a party
 	 */
-	async removeJobSkill(partyId: string, skillSlot: number): Promise<Party> {
+	async removeJobSkill(partyId: string, skillSlot: number, headers?: Record<string, string>): Promise<Party> {
 		return this.request<Party>(`/parties/${partyId}/job_skills`, {
 			method: 'DELETE',
 			body: {
 				party: {
 					skill_position: skillSlot
 				}
-			}
+			},
+			headers
 		})
 	}
 
@@ -401,14 +407,15 @@ export class PartyAdapter extends BaseAdapter {
 	 * @param guidebookId - The guidebook's UUID
 	 * @param position - Guidebook position (1, 2, or 3)
 	 */
-	async updateGuidebook(partyId: string, guidebookId: string, position: number): Promise<Party> {
+	async updateGuidebook(partyId: string, guidebookId: string, position: number, headers?: Record<string, string>): Promise<Party> {
 		const response = await this.request<{ party: Party }>(`/parties/${partyId}`, {
 			method: 'PATCH',
 			body: {
 				party: {
 					[`guidebook${position}_id`]: guidebookId
 				}
-			}
+			},
+			headers
 		})
 		return response.party
 	}
@@ -418,14 +425,15 @@ export class PartyAdapter extends BaseAdapter {
 	 * @param partyId - The party's UUID
 	 * @param position - Guidebook position (1, 2, or 3)
 	 */
-	async removeGuidebook(partyId: string, position: number): Promise<Party> {
+	async removeGuidebook(partyId: string, position: number, headers?: Record<string, string>): Promise<Party> {
 		const response = await this.request<{ party: Party }>(`/parties/${partyId}`, {
 			method: 'PATCH',
 			body: {
 				party: {
 					[`guidebook${position}_id`]: null
 				}
-			}
+			},
+			headers
 		})
 		return response.party
 	}

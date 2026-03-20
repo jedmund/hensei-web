@@ -14,6 +14,12 @@ import { partyAdapter } from '$lib/api/adapters/party.adapter'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import type { Party, GuidebookList } from '$lib/types/api/party'
 import type { Guidebook } from '$lib/types/api/entities'
+import { getEditKey } from '$lib/utils/editKeys'
+
+function editKeyHeaders(shortcode: string): Record<string, string> | undefined {
+	const editKey = getEditKey(shortcode)
+	return editKey ? { 'X-Edit-Key': editKey } : undefined
+}
 
 // ============================================================================
 // Options Factories
@@ -39,7 +45,7 @@ export interface RemoveGuidebookParams {
 export function updatePartyGuidebookOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: UpdateGuidebookParams) =>
-			partyAdapter.updateGuidebook(params.partyId, params.guidebookId, params.position),
+			partyAdapter.updateGuidebook(params.partyId, params.guidebookId, params.position, editKeyHeaders(params.shortcode)),
 		onMutate: async (params: UpdateGuidebookParams) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(params.shortcode) })
 
@@ -80,7 +86,7 @@ export function updatePartyGuidebookOptions(queryClient: QueryClient) {
 export function removePartyGuidebookOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: RemoveGuidebookParams) =>
-			partyAdapter.removeGuidebook(params.partyId, params.position),
+			partyAdapter.removeGuidebook(params.partyId, params.position, editKeyHeaders(params.shortcode)),
 		onMutate: async (params: RemoveGuidebookParams) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(params.shortcode) })
 

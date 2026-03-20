@@ -13,6 +13,12 @@ import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svel
 import { partyAdapter } from '$lib/api/adapters/party.adapter'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import type { Party } from '$lib/types/api/party'
+import { getEditKey } from '$lib/utils/editKeys'
+
+function editKeyHeaders(shortcode: string): Record<string, string> | undefined {
+	const editKey = getEditKey(shortcode)
+	return editKey ? { 'X-Edit-Key': editKey } : undefined
+}
 
 // ============================================================================
 // Options Factories
@@ -21,7 +27,7 @@ import type { Party } from '$lib/types/api/party'
 export function updatePartyJobOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ shortcode, jobId }: { shortcode: string; jobId: string }) =>
-			partyAdapter.updateJob(shortcode, jobId),
+			partyAdapter.updateJob(shortcode, jobId, editKeyHeaders(shortcode)),
 		onMutate: async ({ shortcode, jobId }: { shortcode: string; jobId: string }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(shortcode) })
 
@@ -66,7 +72,7 @@ export function updatePartyJobSkillsOptions(queryClient: QueryClient) {
 		}: {
 			shortcode: string
 			skills: Array<{ id: string; slot: number }>
-		}) => partyAdapter.updateJobSkills(shortcode, skills),
+		}) => partyAdapter.updateJobSkills(shortcode, skills, editKeyHeaders(shortcode)),
 		onSuccess: (_data: unknown, { shortcode }: { shortcode: string; skills: Array<{ id: string; slot: number }> }) => {
 			queryClient.invalidateQueries({ queryKey: partyKeys.detail(shortcode) })
 		}
@@ -76,7 +82,7 @@ export function updatePartyJobSkillsOptions(queryClient: QueryClient) {
 export function removePartyJobSkillOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ shortcode, slot }: { shortcode: string; slot: number }) =>
-			partyAdapter.removeJobSkill(shortcode, slot),
+			partyAdapter.removeJobSkill(shortcode, slot, editKeyHeaders(shortcode)),
 		onMutate: async ({ shortcode, slot }: { shortcode: string; slot: number }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(shortcode) })
 
@@ -118,7 +124,7 @@ export function removePartyJobSkillOptions(queryClient: QueryClient) {
 export function updatePartyAccessoryOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ shortcode, accessoryId }: { shortcode: string; accessoryId: string }) =>
-			partyAdapter.updateAccessory(shortcode, accessoryId),
+			partyAdapter.updateAccessory(shortcode, accessoryId, editKeyHeaders(shortcode)),
 		onMutate: async ({ shortcode, accessoryId }: { shortcode: string; accessoryId: string }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(shortcode) })
 
@@ -157,7 +163,7 @@ export function updatePartyAccessoryOptions(queryClient: QueryClient) {
 export function removePartyAccessoryOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ shortcode }: { shortcode: string }) =>
-			partyAdapter.removeAccessory(shortcode),
+			partyAdapter.removeAccessory(shortcode, editKeyHeaders(shortcode)),
 		onMutate: async ({ shortcode }: { shortcode: string }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(shortcode) })
 
