@@ -11,6 +11,8 @@ export interface UserUpdateParams {
 	showGranblueId?: boolean | undefined
 	wikiProfile?: string | undefined
 	showWikiProfile?: boolean | undefined
+	youtube?: string | undefined
+	showYoutube?: boolean | undefined
 	collectionPrivacy?: number | undefined
 	importWeapons?: boolean | undefined
 	defaultImportVisibility?: number | undefined
@@ -32,6 +34,8 @@ export interface UserResponse {
 	showGranblueId?: boolean
 	wikiProfile?: string
 	showWikiProfile?: boolean
+	youtube?: string
+	showYoutube?: boolean
 	collectionPrivacy?: number
 	importWeapons?: boolean
 	defaultImportVisibility?: number
@@ -54,6 +58,8 @@ export const users = {
 			show_granblue_id?: boolean | undefined
 			wiki_profile?: string | undefined
 			show_wiki_profile?: boolean | undefined
+			youtube?: string | undefined
+			show_youtube?: boolean | undefined
 			collection_privacy?: number | undefined
 			import_weapons?: boolean | undefined
 			default_import_visibility?: number | undefined
@@ -69,6 +75,8 @@ export const users = {
 		if (params.showGranblueId !== undefined) updates.show_granblue_id = params.showGranblueId
 		if (params.wikiProfile !== undefined) updates.wiki_profile = params.wikiProfile
 		if (params.showWikiProfile !== undefined) updates.show_wiki_profile = params.showWikiProfile
+		if (params.youtube !== undefined) updates.youtube = params.youtube
+		if (params.showYoutube !== undefined) updates.show_youtube = params.showYoutube
 		if (params.collectionPrivacy !== undefined) updates.collection_privacy = params.collectionPrivacy
 		if (params.importWeapons !== undefined) updates.import_weapons = params.importWeapons
 		if (params.defaultImportVisibility !== undefined) updates.default_import_visibility = params.defaultImportVisibility
@@ -87,6 +95,8 @@ export const users = {
 			showGranblueId: result.showGranblueId,
 			wikiProfile: result.wikiProfile,
 			showWikiProfile: result.showWikiProfile,
+			youtube: result.youtube,
+			showYoutube: result.showYoutube,
 			collectionPrivacy: result.collectionPrivacy,
 			importWeapons: result.importWeapons,
 			defaultImportVisibility: result.defaultImportVisibility

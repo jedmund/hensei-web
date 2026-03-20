@@ -10,6 +10,8 @@ export interface UserCookie {
 	showGranblueId?: boolean
 	wikiProfile?: string
 	showWikiProfile?: boolean
+	youtube?: string
+	showYoutube?: boolean
 	collectionPrivacy?: number
 	importWeapons?: boolean
 	defaultImportVisibility?: number

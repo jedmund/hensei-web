@@ -326,6 +326,8 @@ export interface User {
   role?: string
   createdAt?: string
   updatedAt?: string
+  youtube?: string
+  showYoutube?: boolean
   avatar?: {
     picture?: string
     element?: string
