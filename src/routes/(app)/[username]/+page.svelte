@@ -150,6 +150,8 @@
 		showGranblueId={data.user?.showGranblueId}
 		wikiProfile={data.user?.wikiProfile}
 		showWikiProfile={data.user?.showWikiProfile}
+		youtube={data.user?.youtube}
+		showYoutube={data.user?.showYoutube}
 		showCrewGamertag={data.user?.showCrewGamertag}
 		crewGamertag={data.user?.crewGamertag}
 		activeTab="teams"

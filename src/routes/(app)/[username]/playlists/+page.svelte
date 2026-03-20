@@ -76,6 +76,8 @@
 		element={data.user?.avatar?.element}
 		granblueId={data.user?.granblueId}
 		showGranblueId={data.user?.showGranblueId}
+		youtube={data.user?.youtube}
+		showYoutube={data.user?.showYoutube}
 		showCrewGamertag={data.user?.showCrewGamertag}
 		crewGamertag={data.user?.crewGamertag}
 		activeTab="playlists"

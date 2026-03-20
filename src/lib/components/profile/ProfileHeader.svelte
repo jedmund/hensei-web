@@ -31,6 +31,10 @@
 		wikiProfile?: string
 		/** Whether the user wants to show their wiki profile on profile */
 		showWikiProfile?: boolean
+		/** User's YouTube channel handle */
+		youtube?: string
+		/** Whether the user wants to show their YouTube on profile */
+		showYoutube?: boolean
 		/** Whether to show crew gamertag */
 		showCrewGamertag?: boolean
 		/** The crew's gamertag to display */
@@ -57,6 +61,8 @@
 		showGranblueId = false,
 		wikiProfile,
 		showWikiProfile = false,
+		youtube,
+		showYoutube = false,
 		showCrewGamertag = false,
 		crewGamertag,
 		viewerCrewRole = null,
@@ -76,6 +82,13 @@
 	const wikiProfileUrl = $derived(
 		wikiProfile && showWikiProfile
 			? `https://gbf.wiki/User:${encodeURIComponent(wikiProfile)}`
+			: null
+	)
+
+	// YouTube channel URL - only show if user has enabled the setting
+	const youtubeUrl = $derived(
+		youtube && showYoutube
+			? `https://www.youtube.com/@${youtube.replace(/^@/, '')}`
 			: null
 	)
 
@@ -185,6 +198,18 @@
 						class="gbf-profile-link"
 					>
 						<Icon name="link" size={24} />
+					</a>
+				</Tooltip>
+			{/if}
+			{#if youtubeUrl}
+				<Tooltip content={m.profile_youtube()}>
+					<a
+						href={youtubeUrl}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="gbf-profile-link"
+					>
+						<Icon name="youtube" size={24} />
 					</a>
 				</Tooltip>
 			{/if}
