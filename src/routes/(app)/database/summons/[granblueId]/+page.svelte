@@ -26,7 +26,7 @@
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
-	import { getSummonImage } from '$lib/utils/images'
+	import { getSummonImage, getSummonTransformationStages } from '$lib/utils/images'
 	import { getElementLabel } from '$lib/utils/element'
 	import {
 		buildWikiEnUrl,
@@ -109,22 +109,7 @@
 
 		const variants = ['detail', 'grid', 'main', 'tall', 'square', 'wide'] as const
 		const images: ImageItem[] = []
-
-		// Only include transformations that are available
-		const transformations: { id: string; label: string; suffix?: string }[] = [
-			{ id: '01', label: 'Base', suffix: undefined }
-		]
-
-		if (summon.uncap?.ulb) {
-			transformations.push({ id: '02', label: 'ULB', suffix: '02' })
-		}
-
-		if (summon.uncap?.transcendence) {
-			transformations.push(
-				{ id: '03', label: 'Transcendence (1)', suffix: '03' },
-				{ id: '04', label: 'Transcendence (5)', suffix: '04' }
-			)
-		}
+		const transformations = getSummonTransformationStages(summon.uncap)
 
 		for (const transformation of transformations) {
 			for (const variant of variants) {
@@ -165,17 +150,9 @@
 
 	async function handleDownloadSize(size: string) {
 		if (!summon?.id) return
-		// Download this size for all available transformations
-		const transformations: (string | undefined)[] = [undefined]
-		if (summon.uncap?.ulb) {
-			transformations.push('02')
-		}
-		if (summon.uncap?.transcendence) {
-			transformations.push('03', '04')
-		}
-
-		for (const trans of transformations) {
-			await entityAdapter.downloadSummonImage(summon.id, size, trans, false)
+		const stages = getSummonTransformationStages(summon.uncap)
+		for (const stage of stages) {
+			await entityAdapter.downloadSummonImage(summon.id, size, stage.suffix, false)
 		}
 	}
 

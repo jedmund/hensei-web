@@ -91,6 +91,35 @@ const SUMMON_ALT_ART_THRESHOLD: Map<string, number> = new Map([
 	['2040430000', 4],
 ])
 
+export interface TransformationStage {
+	id: string
+	label: string
+	suffix: string | undefined
+}
+
+/**
+ * Returns the list of available transformation stages for a summon.
+ * Uses the uncap flags (ulb, transcendence) to determine which stages exist.
+ */
+export function getSummonTransformationStages(uncap?: { ulb?: boolean; transcendence?: boolean }): TransformationStage[] {
+	const stages: TransformationStage[] = [
+		{ id: '01', label: 'Base', suffix: undefined }
+	]
+
+	if (uncap?.ulb) {
+		stages.push({ id: '02', label: 'ULB', suffix: '02' })
+	}
+
+	if (uncap?.transcendence) {
+		stages.push(
+			{ id: '03', label: 'Transcendence (1)', suffix: '03' },
+			{ id: '04', label: 'Transcendence (5)', suffix: '04' }
+		)
+	}
+
+	return stages
+}
+
 /**
  * Calculates the summon transformation suffix based on uncap level and transcendence.
  * Returns undefined for base art, '02' for first upgrade, '03' for uncap 6, '04' for uncap 6 + transcendence 5.
@@ -104,6 +133,25 @@ export function getSummonTransformation(granblueId?: string | number | null, unc
 	if (uncapLevel !== undefined && uncapLevel >= 6) return '03'
 	if (uncapLevel !== undefined && uncapLevel >= threshold) return '02'
 	return undefined
+}
+
+/**
+ * Returns the list of available transformation stages for a weapon.
+ * Uses the uncap flags (transcendence) to determine which stages exist.
+ */
+export function getWeaponTransformationStages(uncap?: { transcendence?: boolean }): TransformationStage[] {
+	const stages: TransformationStage[] = [
+		{ id: '01', label: 'Base', suffix: undefined }
+	]
+
+	if (uncap?.transcendence) {
+		stages.push(
+			{ id: '02', label: 'Transcendence (1)', suffix: '02' },
+			{ id: '03', label: 'Transcendence (5)', suffix: '03' }
+		)
+	}
+
+	return stages
 }
 
 /**

@@ -32,7 +32,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { toast } from 'svelte-sonner'
-	import { getWeaponGridImage, getWeaponImage as getWeaponImageUrl } from '$lib/utils/images'
+	import { getWeaponGridImage, getWeaponImage as getWeaponImageUrl, getWeaponTransformationStages } from '$lib/utils/images'
 	import { getElementLabel, ELEMENT_DISPLAY_ORDER } from '$lib/utils/element'
 	import {
 		buildWikiEnUrl,
@@ -147,17 +147,7 @@
 				}
 			}
 		} else {
-			// Only include transformations that are available
-			const transformations: { id: string; label: string; suffix?: string }[] = [
-				{ id: '01', label: 'Base', suffix: undefined }
-			]
-
-			if (weapon.uncap?.transcendence) {
-				transformations.push(
-					{ id: '02', label: 'Transcendence (1)', suffix: '02' },
-					{ id: '03', label: 'Transcendence (5)', suffix: '03' }
-				)
-			}
+			const transformations = getWeaponTransformationStages(weapon.uncap)
 
 			for (const transformation of transformations) {
 				for (const variant of variants) {
