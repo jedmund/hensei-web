@@ -466,9 +466,15 @@ export abstract class BaseAdapter {
 			const errorData = await response.json()
 
 			// Extract error message from various possible formats
+			// errorData.error may be a string or an object like {message, code}
+			const errorField = errorData.error
+			const errorMessage = typeof errorField === 'object' && errorField !== null
+				? errorField.message
+				: errorField
+
 			message =
 				errorData.message ||
-				errorData.error ||
+				errorMessage ||
 				errorData.errors?.[0]?.message ||
 				response.statusText
 
