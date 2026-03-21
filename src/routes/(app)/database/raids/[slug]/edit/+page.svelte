@@ -8,7 +8,7 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import DatabaseFormHeader from '$lib/components/database/DatabaseFormHeader.svelte'
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
-	import { getElementOptions } from '$lib/utils/element'
+	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import type { PageData } from './$types'
 
 	function displayName(input: any): string {
@@ -84,15 +84,12 @@
 		}
 	})
 
-	// Element options from canonical mapping (Wind=1, Fire=2, Water=3, Earth=4, Dark=5, Light=6)
-	const elementOptions = getElementOptions()
-
 	// Player count options
 	const playerCountOptions = [
 		{ value: 1, label: 'Solo' },
-		{ value: 6, label: '6' },
-		{ value: 18, label: '18' },
-		{ value: 30, label: '30' }
+		{ value: 6, label: '6 players' },
+		{ value: 18, label: '18 players' },
+		{ value: 30, label: '30 players' }
 	]
 
 	// Group options derived from query
@@ -198,11 +195,15 @@
 				/>
 				<DetailItem
 					label="Element"
-					bind:value={editData.element}
 					editable={true}
-					type="select"
-					options={elementOptions}
-				/>
+				>
+					<ElementPicker
+						bind:value={editData.element}
+						includeAny
+						mode="dropdown"
+						contained
+					/>
+				</DetailItem>
 				<DetailItem
 					label="Players"
 					bind:value={editData.player_count}
