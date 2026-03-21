@@ -14,11 +14,10 @@
 	import { getLocale } from '$lib/paraglide/runtime'
 	import * as m from '$lib/paraglide/messages'
 	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
-	import type {
-		CollectionCharacter,
-		CollectionWeapon,
-		CollectionSummon
-	} from '$lib/types/api/collection'
+	import {
+		mapCollectionToSearchResult,
+		filterCollectionByQuery
+	} from './search/collection-search.utils'
 
 	import Button from '../ui/Button.svelte'
 	import Icon from '../Icon.svelte'
@@ -153,16 +152,7 @@
 	// --- Queries ---
 
 	// Series query - fetch list based on current type
-	const seriesQuery = createQuery(() => {
-		switch (type) {
-			case 'weapon':
-				return entityQueries.weaponSeriesList()
-			case 'character':
-				return entityQueries.characterSeriesList()
-			case 'summon':
-				return entityQueries.summonSeriesList()
-		}
-	})
+	const seriesQuery = createQuery(() => entityQueries.seriesListByType(type))
 
 	const seriesOptions = $derived.by(() => {
 		const data = seriesQuery.data
@@ -238,38 +228,32 @@
 			(isCollectionLocked || (isInCrew && memberOptions.length > 1) || !!externalUserQuery.data)
 	)
 
-	const lockedMember = $derived.by(() => {
-		const lockedId = collectionSourceUserId
-		if (!lockedId) return undefined
+	function resolveMember(userId: string | undefined): { label: string; image?: string } | undefined {
+		if (!userId) return undefined
 		const members = crewMembersQuery.data ?? []
-		if (lockedId === authUserId) {
+		if (userId === authUserId) {
 			const self = members.find((m) => m.userId === authUserId)
 			return {
 				label: self?.username ?? 'You',
 				image: self ? getAvatarSrc(self.avatarPicture) : undefined
 			}
 		}
-		const member = members.find((m) => m.userId === lockedId)
-		if (member) {
-			return { label: member.username, image: getAvatarSrc(member.avatarPicture) }
+		const member = members.find((m) => m.userId === userId)
+		if (member) return { label: member.username, image: getAvatarSrc(member.avatarPicture) }
+		const ext = externalUserQuery.data
+		if (ext && ext.id === userId) {
+			return { label: ext.username, image: getAvatarSrc(ext.avatar?.picture) }
 		}
-		// Check external user
-		const externalUser = externalUserQuery.data
-		if (externalUser && externalUser.id === lockedId) {
-			return { label: externalUser.username, image: getAvatarSrc(externalUser.avatar?.picture) }
-		}
-		return { label: m.search_linked_user(), image: undefined }
-	})
+		return undefined
+	}
+
+	const lockedMember = $derived(
+		resolveMember(collectionSourceUserId) ?? { label: m.search_linked_user(), image: undefined }
+	)
 
 	const selectedMemberName = $derived.by(() => {
 		if (!selectedMemberId || selectedMemberId === authUserId) return undefined
-		const members = crewMembersQuery.data ?? []
-		const member = members.find((m) => m.userId === selectedMemberId)
-		if (member) return member.username
-		// Check external user
-		const externalUser = externalUserQuery.data
-		if (externalUser && externalUser.id === selectedMemberId) return externalUser.username
-		return undefined
+		return resolveMember(selectedMemberId)?.label
 	})
 
 	// --- Filters ---
@@ -282,68 +266,23 @@
 		element: elementFilters.length > 0 ? elementFilters : undefined,
 		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
 		proficiency:
-			(type === 'weapon' || type === 'character') && effectiveProficiencies
-				? effectiveProficiencies
+			type === 'weapon' || type === 'character'
+				? searchMode === 'collection'
+					? proficiencyFilters.length > 0
+						? proficiencyFilters
+						: undefined
+					: effectiveProficiencies
 				: undefined,
 		series: seriesFilter ? [seriesFilter] : undefined,
 		subaura: subauraFilter ? true : undefined,
 		extra: isExtraSlot ? true : undefined
 	})
 
-	// --- Collection helpers ---
-
-	function mapCollectionToSearchResult(
-		item: CollectionCharacter | CollectionWeapon | CollectionSummon
-	): AddItemResult {
-		const entity =
-			'character' in item ? item.character : 'weapon' in item ? item.weapon : item.summon
-		return {
-			id: entity.id,
-			granblueId: entity.granblueId,
-			name: entity.name,
-			element: entity.element,
-			rarity: entity.rarity,
-			collectionId: item.id
-		}
-	}
-
-	function filterCollectionByQuery<
-		T extends CollectionCharacter | CollectionWeapon | CollectionSummon
-	>(items: T[], query: string): T[] {
-		if (!query.trim()) return items
-		const lowerQuery = query.toLowerCase()
-		return items.filter((item) => {
-			const entity =
-				'character' in item ? item.character : 'weapon' in item ? item.weapon : item.summon
-			const name = entity.name
-			const nameEn = typeof name === 'string' ? name : name?.en || ''
-			const nameJa = typeof name === 'string' ? '' : name?.ja || ''
-			return (
-				nameEn.toLowerCase().includes(lowerQuery) || nameJa.toLowerCase().includes(lowerQuery)
-			)
-		})
-	}
-
 	// --- Search queries ---
 
-	const searchQueryResult = createInfiniteQuery(() => {
-		const query = debouncedSearchQuery
-		const currentFilters = filters
-		const locale = getLocale() as 'en' | 'ja'
-
-		switch (type) {
-			case 'weapon':
-				return searchQueries.weapons(query, currentFilters, locale)
-			case 'character':
-				return searchQueries.characters(query, currentFilters, locale) as unknown as ReturnType<
-					typeof searchQueries.weapons
-				>
-			case 'summon':
-				return searchQueries.summons(query, currentFilters, locale) as unknown as ReturnType<
-					typeof searchQueries.weapons
-				>
-		}
-	})
+	const searchQueryResult = createInfiniteQuery(() =>
+		searchQueries.byType(type, debouncedSearchQuery, filters, getLocale() as 'en' | 'ja')
+	)
 
 	const collectionQueryResult = createInfiniteQuery(() => {
 		const userId = collectionUserId
@@ -354,32 +293,9 @@
 			} as ReturnType<typeof collectionQueries.characters>
 		}
 
-		const currentFilters =
-			searchMode === 'collection'
-				? {
-						element: elementFilters.length > 0 ? elementFilters : undefined,
-						rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
-						proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined,
-						series: seriesFilter ? [seriesFilter] : undefined
-					}
-				: {}
-
-		switch (type) {
-			case 'weapon':
-				return {
-					...collectionQueries.weapons(userId, currentFilters),
-					enabled: true
-				} as unknown as ReturnType<typeof collectionQueries.characters>
-			case 'character':
-				return {
-					...collectionQueries.characters(userId, currentFilters),
-					enabled: true
-				}
-			case 'summon':
-				return {
-					...collectionQueries.summons(userId, currentFilters),
-					enabled: true
-				} as unknown as ReturnType<typeof collectionQueries.characters>
+		return {
+			...collectionQueries.byType(type, userId, searchMode === 'collection' ? filters : {}),
+			enabled: true
 		}
 	})
 
