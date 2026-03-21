@@ -3,25 +3,34 @@
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
+	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
+	import ModalBody from '$lib/components/ui/ModalBody.svelte'
+	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
+	import AssignPhantomModal from '$lib/components/crew/AssignPhantomModal.svelte'
+	import ConfirmClaimModal from '$lib/components/crew/ConfirmClaimModal.svelte'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
+	import { useDeletePhantom, useDeclinePhantomClaim } from '$lib/api/mutations/crew.mutations'
 	import { formatDate } from '$lib/utils/date'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 	import type { PhantomPlayer } from '$lib/types/api/crew'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		phantom: PhantomPlayer
+		crewId: string
 		currentUserId?: string
 		onEdit?: () => void
-		onDelete?: () => void
-		onAssign?: () => void
-		onAccept?: () => void
-		onDecline?: () => void
 	}
 
-	const { phantom, currentUserId, onEdit, onDelete, onAssign, onAccept, onDecline }: Props =
-		$props()
+	const { phantom, crewId, currentUserId, onEdit }: Props = $props()
+
+	// Mutations
+	const deletePhantomMutation = useDeletePhantom()
+	const declinePhantomClaimMutation = useDeclinePhantomClaim()
 
 	// Status badge type
 	type ClaimStatus = 'unclaimed' | 'pending' | 'claimed'
@@ -39,6 +48,41 @@
 			phantom.claimedBy.id === currentUserId &&
 			!phantom.claimConfirmed
 	)
+
+	// Delete confirmation dialog
+	let deleteDialogOpen = $state(false)
+
+	async function handleConfirmDelete() {
+		try {
+			await deletePhantomMutation.mutateAsync({
+				crewId,
+				phantomId: phantom.id
+			})
+		} catch (error) {
+			console.error('Failed to delete phantom:', error)
+			toast.error(extractErrorMessage(error, 'Failed to delete phantom'))
+		}
+		deleteDialogOpen = false
+	}
+
+	// Assign phantom modal
+	let assignDialogOpen = $state(false)
+
+	// Confirm claim modal
+	let confirmClaimDialogOpen = $state(false)
+
+	// Decline claim (direct action)
+	async function handleDecline() {
+		try {
+			await declinePhantomClaimMutation.mutateAsync({
+				crewId,
+				phantomId: phantom.id
+			})
+		} catch (error) {
+			console.error('Failed to decline phantom claim:', error)
+			toast.error(extractErrorMessage(error, 'Failed to decline claim'))
+		}
+	}
 </script>
 
 <li class="phantom-row" class:retired={phantom.retired}>
@@ -80,36 +124,64 @@
 							{m.crew_edit()}
 						</DropdownMenuBase.Item>
 					{/if}
-					{#if claimStatus === 'unclaimed' && onAssign}
-						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onAssign}>
+					{#if claimStatus === 'unclaimed'}
+						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={() => (assignDialogOpen = true)}>
 							{m.crew_phantom_assign()}
 						</DropdownMenuBase.Item>
 					{/if}
-					{#if onDelete}
-						<DropdownMenuBase.Separator class="dropdown-menu-separator" />
-						<DropdownMenuBase.Item class="dropdown-menu-item danger" onclick={onDelete}>
-							{m.crew_phantom_delete()}
-						</DropdownMenuBase.Item>
-					{/if}
+					<DropdownMenuBase.Separator class="dropdown-menu-separator" />
+					<DropdownMenuBase.Item class="dropdown-menu-item danger" onclick={() => (deleteDialogOpen = true)}>
+						{m.crew_phantom_delete()}
+					</DropdownMenuBase.Item>
 				{/snippet}
 			</DropdownMenu>
 		{:else if canClaim}
 			<!-- Non-officers who can accept/decline get two buttons -->
 			<div class="claim-buttons">
-				{#if onDecline}
-					<Button variant="secondary" size="small" onclick={onDecline}>
-						{m.crew_phantom_decline()}
-					</Button>
-				{/if}
-				{#if onAccept}
-					<Button variant="primary" size="small" onclick={onAccept}>
-						{m.crew_phantom_accept()}
-					</Button>
-				{/if}
+				<Button variant="secondary" size="small" onclick={handleDecline}>
+					{m.crew_phantom_decline()}
+				</Button>
+				<Button variant="primary" size="small" onclick={() => (confirmClaimDialogOpen = true)}>
+					{m.crew_phantom_accept()}
+				</Button>
 			</div>
 		{/if}
 	</div>
 </li>
+
+<!-- Delete Phantom Confirmation -->
+<Dialog bind:open={deleteDialogOpen}>
+	{#snippet children()}
+		<ModalHeader title={m.crew_delete_phantom_title()} />
+		<ModalBody>
+			<p class="confirm-message">
+				{m.crew_confirm_delete_phantom({ name: phantom.name })}
+			</p>
+		</ModalBody>
+		<ModalFooter
+			onCancel={() => (deleteDialogOpen = false)}
+			primaryAction={{
+				label: m.crew_phantom_delete(),
+				onclick: handleConfirmDelete,
+				destructive: true
+			}}
+		/>
+	{/snippet}
+</Dialog>
+
+<!-- Assign Phantom Modal -->
+<AssignPhantomModal
+	bind:open={assignDialogOpen}
+	{crewId}
+	{phantom}
+/>
+
+<!-- Confirm Claim Modal -->
+<ConfirmClaimModal
+	bind:open={confirmClaimDialogOpen}
+	{crewId}
+	{phantom}
+/>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
@@ -200,5 +272,11 @@
 			background: var(--color-green-light, #dcfce7);
 			color: var(--color-green-dark, #166534);
 		}
+	}
+
+	.confirm-message {
+		color: var(--text-primary);
+		line-height: 1.5;
+		margin: 0;
 	}
 </style>
