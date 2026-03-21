@@ -7,7 +7,6 @@
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import Button from './ui/Button.svelte'
-	import Tooltip from './ui/Tooltip.svelte'
 	import Icon from './Icon.svelte'
 	import DropdownItem from './ui/dropdown/DropdownItem.svelte'
 	import NotificationBadge from './ui/NotificationBadge.svelte'
@@ -16,6 +15,7 @@
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import UserSettingsModal from './UserSettingsModal.svelte'
 	import InvitationsModal from './crew/InvitationsModal.svelte'
+	import DatabaseNavigation from './DatabaseNavigation.svelte'
 	import { authStore } from '$lib/stores/auth.store.svelte'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -48,7 +48,6 @@
 
 	// Localized links
 	const galleryHref = $derived(localizeHref('/teams/explore'))
-	const guidesHref = $derived(localizeHref('/guides'))
 	const meHref = $derived(localizeHref('/me'))
 	const loginHref = $derived(localizeHref('/auth/login'))
 	const registerHref = $derived(localizeHref('/auth/register'))
@@ -68,65 +67,8 @@
 	const avatarSrc = $derived(getAvatarSrc(currentUser?.picture))
 	const avatarSrcSet = $derived(getAvatarSrcSet(currentUser?.picture))
 
-	// Database-specific links
-	const databaseCharactersHref = $derived(localizeHref('/database/characters'))
-	const databaseWeaponsHref = $derived(localizeHref('/database/weapons'))
-	const databaseSummonsHref = $derived(localizeHref('/database/summons'))
-	const databaseJobsHref = $derived(localizeHref('/database/jobs'))
-	const databaseSeriesHref = $derived(localizeHref('/database/series'))
-	const databaseGwEventsHref = $derived(localizeHref('/database/gw-events'))
-	const databaseArtifactSkillsHref = $derived(localizeHref('/database/artifact-skills'))
-	const databaseBulletsHref = $derived(localizeHref('/database/bullets'))
-	const databaseRaidsHref = $derived(localizeHref('/database/raids'))
-	const databaseRaidGroupsHref = $derived(localizeHref('/database/raid-groups'))
-
 	// Database route detection
 	const isDatabaseRoute = $derived($page.url.pathname.startsWith(localizeHref('/database')))
-
-	// Detect current database entity type
-	const currentDatabaseEntity = $derived.by(() => {
-		const path = $page.url.pathname
-		if (path.startsWith(databaseCharactersHref)) return 'character'
-		if (path.startsWith(databaseWeaponsHref)) return 'weapon'
-		if (path.startsWith(databaseSummonsHref)) return 'summon'
-		if (path.startsWith(databaseJobsHref) || path.startsWith(localizeHref('/database/job-skills')))
-			return 'job'
-		if (path.startsWith(databaseRaidsHref) || path.startsWith(databaseRaidGroupsHref)) return 'raid'
-		return null
-	})
-
-	// Database "New" dropdown config
-	const databaseEntityLabel = $derived(
-		currentDatabaseEntity === 'character'
-			? m.type_character()
-			: currentDatabaseEntity === 'weapon'
-				? m.type_weapon()
-				: currentDatabaseEntity === 'summon'
-					? m.type_summon()
-					: currentDatabaseEntity === 'job'
-						? m.type_job()
-						: currentDatabaseEntity === 'raid'
-							? m.type_raid()
-							: null
-	)
-	const databaseNewHref = $derived(
-		currentDatabaseEntity === 'character'
-			? localizeHref('/database/characters/new')
-			: currentDatabaseEntity === 'weapon'
-				? localizeHref('/database/weapons/new')
-				: currentDatabaseEntity === 'summon'
-					? localizeHref('/database/summons/new')
-					: null
-	)
-	const databaseImportHref = $derived(
-		currentDatabaseEntity === 'character'
-			? localizeHref('/database/characters/import')
-			: currentDatabaseEntity === 'weapon'
-				? localizeHref('/database/weapons/import')
-				: currentDatabaseEntity === 'summon'
-					? localizeHref('/database/summons/import')
-					: null
-	)
 
 	// Function to check if a nav item is selected
 	function isNavSelected(href: string): boolean {
@@ -139,11 +81,6 @@
 
 		// Exact match or starts with href + /
 		return path === href || path.startsWith(href + '/')
-	}
-
-	// Function to check if a database nav item is selected
-	function isDatabaseNavSelected(href: string): boolean {
-		return $page.url.pathname === href || $page.url.pathname.startsWith(href + '/')
 	}
 
 	// Check if the user profile link is selected (includes sub-routes like /favorites, /collection)
@@ -208,74 +145,7 @@
 
 <nav aria-label="Global" class={elementClass}>
 	{#if isDatabaseRoute}
-		<!-- Database navigation mode -->
-		<div class="database-nav">
-			<!-- Back button -->
-			<ul role="list" class="database-back-section">
-				<li>
-					<Tooltip content={m.nav_back_to_site()}>
-						<a
-							href={galleryHref}
-							class="database-back-button"
-							aria-label={m.nav_back_to_site()}
-						>
-							<Icon name="home" size={21} />
-						</a>
-					</Tooltip>
-				</li>
-			</ul>
-
-			<!-- Database sub-navigation -->
-			<ul role="list" class="database-subnav">
-				<li>
-					<a
-						href={databaseCharactersHref}
-						class:selected={isDatabaseNavSelected(databaseCharactersHref)}
-					>
-						{m.nav_characters()}
-					</a>
-				</li>
-				<li>
-					<a href={databaseWeaponsHref} class:selected={isDatabaseNavSelected(databaseWeaponsHref)}>
-						{m.nav_weapons()}
-					</a>
-				</li>
-				<li>
-					<a href={databaseSummonsHref} class:selected={isDatabaseNavSelected(databaseSummonsHref)}>
-						{m.nav_summons()}
-					</a>
-				</li>
-				<li>
-					<DropdownMenu.Root>
-						<DropdownMenu.Trigger class="nav-more-trigger">
-							<Icon name="ellipsis" size={14} />
-						</DropdownMenu.Trigger>
-
-						<DropdownMenu.Portal>
-							<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
-								<DropdownItem>
-									<a href={databaseJobsHref}>{m.nav_jobs()}</a>
-								</DropdownItem>
-								<DropdownItem>
-									<a href={databaseRaidsHref}>{m.nav_raids()}</a>
-								</DropdownItem>
-								<DropdownMenu.Separator class="dropdown-separator" />
-								<DropdownItem>
-									<a href={databaseArtifactSkillsHref}>{m.nav_artifact_skills()}</a>
-								</DropdownItem>
-								<DropdownItem>
-									<a href={databaseBulletsHref}>{m.nav_bullets()}</a>
-								</DropdownItem>
-								<DropdownMenu.Separator class="dropdown-separator" />
-								<DropdownItem>
-									<a href={databaseGwEventsHref}>{m.nav_unite_and_fight()}</a>
-								</DropdownItem>
-							</DropdownMenu.Content>
-						</DropdownMenu.Portal>
-					</DropdownMenu.Root>
-				</li>
-			</ul>
-		</div>
+		<DatabaseNavigation {userElement} />
 	{:else if isAuth}
 		<!-- Authenticated navigation -->
 		<div class="nav-links">
@@ -404,57 +274,7 @@
 			</ul>
 		</div>
 	{/if}
-	{#if isDatabaseRoute && databaseEntityLabel}
-		<DropdownMenu.Root>
-			<DropdownMenu.Trigger class="new-item-trigger {userElement ?? ''}">
-				<span>{m.nav_new_entity({ entity: databaseEntityLabel ?? '' })}</span>
-				<Icon name="chevron-down" size={12} />
-			</DropdownMenu.Trigger>
-
-			<DropdownMenu.Portal>
-				<DropdownMenu.Content class="dropdown-content" sideOffset={5} align="end">
-					{#if currentDatabaseEntity === 'raid'}
-						<DropdownItem>
-							<a href={localizeHref('/database/raids/new')}>{m.nav_new_raid()}</a>
-						</DropdownItem>
-						<DropdownItem>
-							<a href={localizeHref('/database/raid-groups/new')}>{m.nav_new_raid_group()}</a>
-						</DropdownItem>
-					{:else if currentDatabaseEntity === 'job'}
-						<DropdownItem>
-							<a href={localizeHref('/database/jobs/new')}>{m.nav_new_job()}</a>
-						</DropdownItem>
-						<DropdownItem>
-							<a href={localizeHref('/database/job-accessories/new')}>{m.nav_new_job_accessory()}</a>
-						</DropdownItem>
-					{:else}
-						{#if databaseNewHref}
-							<DropdownItem>
-								<a href={databaseNewHref}>{m.nav_new_single({ entity: databaseEntityLabel ?? '' })}</a>
-							</DropdownItem>
-						{/if}
-						{#if databaseImportHref}
-							<DropdownItem>
-								<a href={databaseImportHref}>{m.nav_new_multiple({ entity: databaseEntityLabel ?? '' })}</a>
-							</DropdownItem>
-						{/if}
-						{#if currentDatabaseEntity === 'weapon'}
-							<DropdownMenu.Separator class="dropdown-separator" />
-							<DropdownItem>
-								<a href={localizeHref('/database/series/weapons/new')}>{m.nav_new_weapon_series()}</a>
-							</DropdownItem>
-						{/if}
-						{#if currentDatabaseEntity === 'character'}
-							<DropdownMenu.Separator class="dropdown-separator" />
-							<DropdownItem>
-								<a href={localizeHref('/database/series/characters/new')}>{m.nav_new_character_series()}</a>
-							</DropdownItem>
-						{/if}
-					{/if}
-				</DropdownMenu.Content>
-			</DropdownMenu.Portal>
-		</DropdownMenu.Root>
-	{:else}
+	{#if !isDatabaseRoute}
 		<Button
 			icon="plus"
 			iconOnly
@@ -492,11 +312,13 @@
 {/if}
 
 <style lang="scss">
+	@use '$src/themes/dropdown' as dropdown;
 	@use '$src/themes/effects' as effects;
-	@use '$src/themes/themes' as themes;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+
+	$elements: wind, fire, water, earth, dark, light;
 
 	nav {
 		display: flex;
@@ -567,80 +389,6 @@
 			gap: spacing.$unit;
 			align-items: center;
 		}
-
-		// Database navigation mode
-		.database-nav {
-			display: flex;
-			gap: spacing.$unit;
-			align-items: center;
-
-			.database-back-section {
-				min-height: 49px;
-				min-width: 49px;
-
-				ul {
-					background-color: var(--menu-bg);
-					border-radius: layout.$full-corner;
-					display: flex;
-					flex-direction: row;
-					padding: spacing.$unit-half;
-					list-style: none;
-				}
-
-				.database-back-button {
-					border-radius: layout.$full-corner;
-					color: var(--text-secondary);
-					font-size: typography.$font-small;
-					font-weight: typography.$medium;
-					text-decoration: none;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					padding: calc(spacing.$unit * 1.25);
-					aspect-ratio: 1;
-
-					&:hover {
-						color: var(--text-primary);
-					}
-				}
-			}
-
-			.database-subnav {
-				background-color: var(--menu-bg);
-				border-radius: layout.$full-corner;
-				display: flex;
-				gap: spacing.$unit-quarter;
-				flex-direction: row;
-				padding: spacing.$unit-half;
-				list-style: none;
-				min-height: 49px;
-
-				a {
-					border-radius: layout.$full-corner;
-					color: var(--menu-text);
-					font-size: typography.$font-small;
-					font-weight: typography.$medium;
-					text-decoration: none;
-					display: flex;
-					align-items: center;
-					justify-content: center;
-					padding: spacing.$unit (spacing.$unit * 1.5);
-
-					&:hover {
-						background-color: var(--menu-bg-item-hover);
-					}
-
-					&:visited {
-						color: var(--menu-text);
-					}
-
-					&.selected {
-						background-color: var(--menu-bg-item-selected, var(--menu-bg-item-hover));
-						font-weight: typography.$bold;
-					}
-				}
-			}
-		}
 	}
 
 	// Profile link with avatar
@@ -691,7 +439,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		align-self: stretch; // Make it stretch to full height
+		align-self: stretch;
 		padding: spacing.$unit calc(spacing.$unit * 1.5 + 1px);
 		border-radius: layout.$full-corner;
 		background-color: transparent;
@@ -723,10 +471,8 @@
 
 	:global(.nav-more-trigger.has-notification) {
 		animation: notification-pulse 2s ease-in-out infinite;
-		// Default pulse color (no element selected)
 		background-color: var(--button-primary-bg);
 		color: white;
-		// Compensate for larger mail icon (18px vs 14px ellipsis)
 		padding: spacing.$unit calc(spacing.$unit + 3px);
 
 		&:hover {
@@ -736,197 +482,38 @@
 	}
 
 	// Element-specific notification colors
-	:global(.nav-more-trigger.has-notification.wind) {
-		background-color: var(--wind-button-bg);
-		&:hover {
-			background-color: var(--wind-button-bg-hover);
+	@each $el in $elements {
+		:global(.nav-more-trigger.has-notification.#{$el}) {
+			background-color: var(--#{$el}-button-bg);
+			color: if($el == light, black, white);
+			&:hover {
+				background-color: var(--#{$el}-button-bg-hover);
+			}
 		}
-	}
-	:global(.nav-more-trigger.has-notification.fire) {
-		background-color: var(--fire-button-bg);
-		&:hover {
-			background-color: var(--fire-button-bg-hover);
-		}
-	}
-	:global(.nav-more-trigger.has-notification.water) {
-		background-color: var(--water-button-bg);
-		&:hover {
-			background-color: var(--water-button-bg-hover);
-		}
-	}
-	:global(.nav-more-trigger.has-notification.earth) {
-		background-color: var(--earth-button-bg);
-		&:hover {
-			background-color: var(--earth-button-bg-hover);
-		}
-	}
-	:global(.nav-more-trigger.has-notification.light) {
-		background-color: var(--light-button-bg);
-		color: black;
-		&:hover {
-			background-color: var(--light-button-bg-hover);
-		}
-	}
-	:global(.nav-more-trigger.has-notification.dark) {
-		background-color: var(--dark-button-bg);
-		&:hover {
-			background-color: var(--dark-button-bg-hover);
-		}
-	}
-
-	// Style the new team button as a prominent circular button
-	// Remove redundant styles that the Button component already handles
-	:global(.new-team-button) {
-		// Only add styles that are specific overrides, not duplicates
-		// The Button component already handles size, shape, colors, etc.
-	}
-
-	// Style the database "New item" dropdown trigger
-	:global(.new-item-trigger) {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit-half;
-		padding: calc(spacing.$unit * 1.5) spacing.$unit-2x;
-		border-radius: layout.$full-corner;
-		background-color: var(--button-primary-bg);
-		color: var(--button-primary-text);
-		border: none;
-		cursor: pointer;
-		font-family: var(--font-family);
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-		transition: background-color 0.2s ease;
-	}
-	:global(.new-item-trigger:hover) {
-		background-color: var(--button-primary-bg-hover);
-	}
-
-	// Element-specific colors for new item trigger
-	:global(.new-item-trigger.wind) {
-		background-color: var(--wind-button-bg);
-		color: white;
-	}
-	:global(.new-item-trigger.wind:hover) {
-		background-color: var(--wind-button-bg-hover);
-	}
-	:global(.new-item-trigger.fire) {
-		background-color: var(--fire-button-bg);
-		color: white;
-	}
-	:global(.new-item-trigger.fire:hover) {
-		background-color: var(--fire-button-bg-hover);
-	}
-	:global(.new-item-trigger.water) {
-		background-color: var(--water-button-bg);
-		color: white;
-	}
-	:global(.new-item-trigger.water:hover) {
-		background-color: var(--water-button-bg-hover);
-	}
-	:global(.new-item-trigger.earth) {
-		background-color: var(--earth-button-bg);
-		color: white;
-	}
-	:global(.new-item-trigger.earth:hover) {
-		background-color: var(--earth-button-bg-hover);
-	}
-	:global(.new-item-trigger.light) {
-		background-color: var(--light-button-bg);
-		color: black;
-	}
-	:global(.new-item-trigger.light:hover) {
-		background-color: var(--light-button-bg-hover);
-	}
-	:global(.new-item-trigger.dark) {
-		background-color: var(--dark-button-bg);
-		color: white;
-	}
-	:global(.new-item-trigger.dark:hover) {
-		background-color: var(--dark-button-bg-hover);
 	}
 
 	// Element-specific SELECTED states for navigation links
-	// Hover states remain the default grey (defined in base styles above)
-	nav.element-wind {
-		ul a.selected,
-		.database-nav a.selected {
-			background-color: var(--wind-nav-selected-bg);
-			color: var(--wind-nav-selected-text);
+	@each $el in $elements {
+		nav.element-#{$el} {
+			ul a.selected {
+				background-color: var(--#{$el}-nav-selected-bg);
+				color: var(--#{$el}-nav-selected-text);
+				font-weight: typography.$bold;
+			}
+		}
+
+		:global(nav.element-#{$el} .database-nav a.selected) {
+			background-color: var(--#{$el}-nav-selected-bg);
+			color: var(--#{$el}-nav-selected-text);
 			font-weight: typography.$bold;
 		}
 	}
 
-	nav.element-fire {
-		ul a.selected,
-		.database-nav a.selected {
-			background-color: var(--fire-nav-selected-bg);
-			color: var(--fire-nav-selected-text);
-			font-weight: typography.$bold;
-		}
-	}
-
-	nav.element-water {
-		ul a.selected,
-		.database-nav a.selected {
-			background-color: var(--water-nav-selected-bg);
-			color: var(--water-nav-selected-text);
-			font-weight: typography.$bold;
-		}
-	}
-
-	nav.element-earth {
-		ul a.selected,
-		.database-nav a.selected {
-			background-color: var(--earth-nav-selected-bg);
-			color: var(--earth-nav-selected-text);
-			font-weight: typography.$bold;
-		}
-	}
-
-	nav.element-dark {
-		ul a.selected,
-		.database-nav a.selected {
-			background-color: var(--dark-nav-selected-bg);
-			color: var(--dark-nav-selected-text);
-			font-weight: typography.$bold;
-		}
-	}
-
-	nav.element-light {
-		ul a.selected,
-		.database-nav a.selected {
-			background-color: var(--light-nav-selected-bg);
-			color: var(--light-nav-selected-text);
-			font-weight: typography.$bold;
-		}
-	}
-
-	// Dropdown menu styles
 	:global(.dropdown-content) {
-		background-color: var(--menu-bg);
-		border-radius: layout.$input-corner;
-		padding: spacing.$unit-half;
-		min-width: 160px;
-		box-shadow: var(--shadow-xl);
-		animation: dropdownSlideIn 0.2s ease;
-		z-index: effects.$z-popover;
-
-		@keyframes dropdownSlideIn {
-			from {
-				opacity: 0;
-				transform: translateY(-2px);
-			}
-			to {
-				opacity: 1;
-				transform: translateY(0);
-			}
-		}
+		@include dropdown.dropdown-content;
 	}
 
-	// Dropdown separator styles
 	:global(.dropdown-separator) {
-		height: 1px;
-		background-color: var(--menu-border, rgba(0, 0, 0, 0.1));
-		margin: spacing.$unit-half 0;
+		@include dropdown.dropdown-separator;
 	}
 </style>
