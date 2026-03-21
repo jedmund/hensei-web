@@ -4,7 +4,7 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
-	import { getElementOptions } from '$lib/utils/element'
+	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import { getRaceLabel, getRaceOptions } from '$lib/utils/race'
 	import { getGenderLabel, getGenderOptions } from '$lib/utils/gender'
 	import { getProficiencyOptions } from '$lib/utils/proficiency'
@@ -25,7 +25,6 @@
 		editData = $bindable()
 	}: Props = $props()
 
-	const elementOptions = getElementOptions()
 	const raceOptions = getRaceOptions()
 	const genderOptions = getGenderOptions()
 	const proficiencyOptions = getProficiencyOptions()
@@ -41,11 +40,15 @@
 	{#if editMode}
 		<DetailItem
 			label="Element"
-			bind:value={editData.element}
 			editable={true}
-			type="select"
-			options={elementOptions}
-		/>
+		>
+			<ElementPicker
+				bind:value={editData.element}
+				includeAny
+				mode="dropdown"
+				contained
+			/>
+		</DetailItem>
 		<DetailItem
 			label="Race 1"
 			bind:value={editData.race1}

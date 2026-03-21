@@ -5,7 +5,8 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
-	import { getElementLabel, getElementOptions } from '$lib/utils/element'
+	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
+	import { getElementLabel } from '$lib/utils/element'
 	import { localizedName } from '$lib/utils/locale'
 	import type { SummonSeriesRef } from '$lib/types/api/summonSeries'
 
@@ -25,8 +26,6 @@
 
 	// Fetch summon series list from API
 	const summonSeriesQuery = createQuery(() => entityQueries.summonSeriesList())
-
-	const elementOptions = getElementOptions()
 
 	// Build series options from fetched data
 	const seriesOptions = $derived.by(() => {
@@ -58,11 +57,15 @@
 	{#if editMode}
 		<DetailItem
 			label="Element"
-			bind:value={editData.element}
 			editable={true}
-			type="select"
-			options={elementOptions}
-		/>
+		>
+			<ElementPicker
+				bind:value={editData.element}
+				includeAny
+				mode="dropdown"
+				contained
+			/>
+		</DetailItem>
 		<DetailItem
 			label="Series"
 			bind:value={editData.series}

@@ -6,7 +6,8 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
-	import { getElementLabel, getElementOptions } from '$lib/utils/element'
+	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
+	import { getElementLabel } from '$lib/utils/element'
 	import { localizedName } from '$lib/utils/locale'
 	import { getProficiencyOptions } from '$lib/utils/proficiency'
 	import { getSeriesDisplayName } from '$lib/utils/weaponSeries'
@@ -66,7 +67,6 @@
 		}
 	})
 
-	const elementOptions = getElementOptions()
 	const proficiencyOptions = getProficiencyOptions()
 
 	// Build series options from fetched data
@@ -106,11 +106,15 @@
 	{#if editMode}
 		<DetailItem
 			label="Element"
-			bind:value={editData.element}
 			editable={true}
-			type="select"
-			options={elementOptions}
-		/>
+		>
+			<ElementPicker
+				bind:value={editData.element}
+				includeAny
+				mode="dropdown"
+				contained
+			/>
+		</DetailItem>
 		<DetailItem
 			label="Proficiency"
 			bind:value={editData.proficiency}

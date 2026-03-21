@@ -6,6 +6,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import DatabaseFormHeader from '$lib/components/database/DatabaseFormHeader.svelte'
+	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import type { PageData } from './$types'
 
 	interface Props {
@@ -27,16 +28,6 @@
 		startDate: '',
 		endDate: ''
 	})
-
-	// Element options (matches GranblueEnums::ELEMENTS, excluding Null)
-	const elementOptions = [
-		{ value: 1, label: 'Wind' },
-		{ value: 2, label: 'Fire' },
-		{ value: 3, label: 'Water' },
-		{ value: 4, label: 'Earth' },
-		{ value: 5, label: 'Dark' },
-		{ value: 6, label: 'Light' }
-	]
 
 	// Validation
 	const canSave = $derived(
@@ -93,11 +84,14 @@
 			/>
 			<DetailItem
 				label="Element advantage"
-				bind:value={editData.element}
 				editable={true}
-				type="select"
-				options={elementOptions}
-			/>
+			>
+				<ElementPicker
+					bind:value={editData.element}
+					mode="dropdown"
+					contained
+				/>
+			</DetailItem>
 			<DetailItem label="Start date" bind:value={editData.startDate} editable={true} type="date" />
 			<DetailItem label="End date" bind:value={editData.endDate} editable={true} type="date" />
 		</DetailsContainer>
