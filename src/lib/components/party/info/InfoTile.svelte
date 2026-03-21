@@ -28,7 +28,7 @@
 	onkeydown={clickable ? (e) => e.key === 'Enter' && onclick?.() : undefined}
 >
 	{#if label}
-		<div class="tile-header" class:has-action={headerAction || (showAdd && onAdd)}>
+		<div class="tile-header" class:has-action={headerAction || (showAdd && onAdd)} class:show-add={showAdd && onAdd}>
 			{#if showAdd && onAdd}
 				<button type="button" class="tile-header-button" onclick={onAdd}>
 					<h3 class="tile-label">{label}</h3>
@@ -80,7 +80,10 @@
 			display: flex;
 			align-items: center;
 			min-height: 30px;
-			margin-right: -$unit;
+
+			&:not(.show-add) {
+				margin-right: -$unit;
+			}
 
 			&.has-action {
 				justify-content: space-between;
