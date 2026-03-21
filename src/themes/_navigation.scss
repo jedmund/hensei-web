@@ -1,0 +1,48 @@
+@use 'effects' as effects;
+@use 'layout' as layout;
+@use 'spacing' as spacing;
+@use 'typography' as typography;
+
+// Shared navigation pill-bar styles (used by Navigation and DatabaseNavigation)
+@mixin nav-pill-bar {
+	background-color: var(--menu-bg);
+	border: effects.$page-border;
+	box-shadow: effects.$page-elevation;
+	border-radius: layout.$full-corner;
+	display: flex;
+	flex-direction: row;
+	gap: spacing.$unit-quarter;
+	padding: spacing.$unit-half;
+	list-style: none;
+}
+
+@mixin nav-pill-item {
+	display: flex;
+	align-items: stretch;
+}
+
+@mixin nav-pill-link {
+	border-radius: layout.$full-corner;
+	color: var(--menu-text);
+	font-size: typography.$font-small;
+	font-weight: typography.$medium;
+	text-decoration: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	vertical-align: middle;
+	padding: spacing.$unit (spacing.$unit * 1.5);
+
+	&:hover {
+		background-color: var(--menu-bg-item-hover);
+	}
+
+	&:visited {
+		color: var(--menu-text);
+	}
+
+	&.selected {
+		background-color: var(--menu-bg-item-selected, var(--menu-bg-item-hover));
+		font-weight: typography.$bold;
+	}
+}
