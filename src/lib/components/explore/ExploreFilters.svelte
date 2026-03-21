@@ -15,8 +15,6 @@
   import { localizedName } from '$lib/utils/locale'
   import { getElementOptions } from '$lib/utils/element'
 
-  export type { FilterItem } from '$lib/types/filter'
-
   interface Props {
     filters: FilterItem[]
     onFiltersChange: (filters: FilterItem[]) => void
