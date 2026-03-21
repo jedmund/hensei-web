@@ -1,0 +1,112 @@
+@use 'colors' as colors;
+@use 'typography' as typography;
+
+// Shared styles for unit components (CharacterUnit, WeaponUnit, SummonUnit)
+
+@mixin unit-focus-rings {
+	@keyframes pulse-focus-ring {
+		0%,
+		100% {
+			box-shadow: 0 0 4px 3px currentColor;
+		}
+		50% {
+			box-shadow: 0 0 4px 6px currentColor;
+		}
+	}
+
+	.focus-ring-wrapper.is-active::before {
+		animation: pulse-focus-ring 2s ease-in-out infinite;
+	}
+
+	.focus-ring-wrapper.is-active {
+		&.fire::before {
+			@include colors.focus-ring-fire();
+			color: rgba(250, 109, 109, 0.2);
+		}
+
+		&.water::before {
+			@include colors.focus-ring-water();
+			color: rgba(108, 201, 255, 0.2);
+		}
+
+		&.earth::before {
+			@include colors.focus-ring-earth();
+			color: rgba(253, 159, 91, 0.2);
+		}
+
+		&.wind::before {
+			@include colors.focus-ring-wind();
+			color: rgba(62, 228, 137, 0.2);
+		}
+
+		&.light::before {
+			@include colors.focus-ring-light();
+			color: rgba(232, 214, 51, 0.2);
+		}
+
+		&.dark::before {
+			@include colors.focus-ring-dark();
+			color: rgba(222, 123, 255, 0.2);
+		}
+
+		&.neutral::before {
+			@include colors.focus-ring-neutral();
+			color: rgba(0, 0, 0, 0.1);
+		}
+	}
+}
+
+@mixin unit-active-names {
+	.unit.is-active {
+		.name {
+			font-weight: typography.$bold;
+		}
+
+		&.fire .name {
+			color: var(--fire-text);
+		}
+
+		&.water .name {
+			color: var(--water-text);
+		}
+
+		&.earth .name {
+			color: var(--earth-text);
+		}
+
+		&.wind .name {
+			color: var(--wind-text);
+		}
+
+		&.light .name {
+			color: var(--light-text);
+		}
+
+		&.dark .name {
+			color: var(--dark-text);
+		}
+
+		&.neutral .name {
+			color: var(--text-secondary);
+		}
+	}
+}
+
+@mixin unit-orphaned {
+	.unit.orphaned {
+		.frame {
+			opacity: 0.7;
+			border: 2px solid colors.$error;
+		}
+
+		.name {
+			color: colors.$error;
+		}
+	}
+}
+
+@mixin unit-shared-styles {
+	@include unit-focus-rings;
+	@include unit-active-names;
+	@include unit-orphaned;
+}

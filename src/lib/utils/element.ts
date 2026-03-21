@@ -92,6 +92,15 @@ export function getElementKey(element?: number): string {
 	return (ELEMENT_KEYS[element] ?? 'null').toLowerCase()
 }
 
+/**
+ * Get CSS class name for an element, returning 'neutral' for unknown/null elements.
+ * Used by unit components for focus rings and element-specific styling.
+ */
+export function getElementClassName(element?: number | null): string {
+	const key = getElementKey(element ?? undefined)
+	return key === 'null' ? 'neutral' : key
+}
+
 export function getElementColor(element?: number): string {
 	if (element === undefined || element === null) return '#888888'
 	return ELEMENT_COLORS[element] ?? '#888888'
