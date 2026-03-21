@@ -5,33 +5,17 @@
   import { searchAdapter } from '$lib/api/adapters/search.adapter'
   import type { UnifiedSearchResult } from '$lib/api/adapters/search.adapter'
   import type { RaidFull } from '$lib/types/api/raid'
+  import type { FilterItem, FilterOption, PlaceholderSuggestion } from '$lib/types/filter'
+  import { matchLocal, rankResults } from '$lib/utils/filterMatching'
   import ExploreFilterPill from './ExploreFilterPill.svelte'
-  import SearchOptionItem from '$lib/components/search/SearchOptionItem.svelte'
-  import type { UnifiedSearchSeriesRef } from '$lib/api/adapters/search.adapter'
+  import FilterDropdown from './FilterDropdown.svelte'
   import Icon from '$lib/components/Icon.svelte'
   import * as m from '$lib/paraglide/messages'
   import { getLocale } from '$lib/paraglide/runtime'
   import { localizedName } from '$lib/utils/locale'
-  import { getElementImage, getElementOptions } from '$lib/utils/element'
+  import { getElementOptions } from '$lib/utils/element'
 
-  export type FilterItem =
-    | { kind: 'element'; value: number; label: string; pinned?: boolean }
-    | { kind: 'raid'; value: string; label: string; pinned?: boolean }
-    | { kind: 'recency'; value: number; label: string; pinned?: boolean }
-    | { kind: 'class'; value: string; label: string; pinned?: boolean }
-    | {
-        kind: 'entity'
-        value: string
-        label: string
-        entityType: string
-        granblueId: string
-        mode: 'include' | 'exclude'
-        element?: number
-        pinned?: boolean
-      }
-    | { kind: 'party'; value: string; label: string; pinned?: boolean }
-    | { kind: 'boost'; value: string; label: string }
-    | { kind: 'side'; value: string; label: string }
+  export type { FilterItem } from '$lib/types/filter'
 
   interface Props {
     filters: FilterItem[]
@@ -47,7 +31,6 @@
   let dropdownOpen = $state(false)
   let inputEl = $state<HTMLInputElement>()
   let containerEl = $state<HTMLDivElement>()
-  let listEl = $state<HTMLUListElement>()
   let selectedIndex = $state(0)
   let searchResults = $state<UnifiedSearchResult[]>([])
   let isSearching = $state(false)
@@ -94,36 +77,35 @@
     { value: 'single', label: m.side_single() }
   ])
 
+  const categoryLabels = $derived({
+    element: m.filter_cat_element(),
+    recency: m.filter_cat_recency(),
+    party: m.filter_cat_party(),
+    raid: m.filter_cat_raid(),
+    boost: m.filter_cat_boost(),
+    side: m.filter_cat_side()
+  })
+
   // Suggestion pools per category
   const elementSuggestions = $derived<FilterOption[]>(elementOptions
     .filter((e) => e.value !== 0)
-    .map((e) => ({ kind: 'element', value: e.value, label: e.label, category: m.filter_cat_element() })))
+    .map((e) => ({ kind: 'element', value: e.value, label: e.label, category: categoryLabels.element })))
 
-  // Pick one random item from an array
   function pickRandom<T>(arr: T[]): T | undefined {
     if (arr.length === 0) return undefined
     return arr[Math.floor(Math.random() * arr.length)]
   }
 
-  interface PlaceholderSuggestion {
-    label: string
-    category: string
-    option?: FilterOption // if set, clicking adds the filter directly
-  }
-
-  // Randomized suggestions, refreshed each time dropdown opens
   let placeholderSuggestions = $state<PlaceholderSuggestion[]>([])
 
   async function refreshSuggestions() {
     const picks: PlaceholderSuggestion[] = []
 
-    // Element (random)
     if (!excludedKinds.includes('element')) {
       const el = pickRandom(elementSuggestions)
-      if (el) picks.push({ label: el.label, category: m.filter_cat_element(), option: el })
+      if (el) picks.push({ label: el.label, category: categoryLabels.element, option: el })
     }
 
-    // Raid (random from loaded data)
     if (!excludedKinds.includes('raid')) {
       const raidPool = allRaids.filter(
         (r) => !filters.some((f) => f.kind === 'raid' && f.value === r.id)
@@ -134,22 +116,20 @@
           kind: 'raid',
           value: raid.id,
           label: localizedName(raid.name) ?? raid.slug,
-          category: m.filter_cat_raid()
+          category: categoryLabels.raid
         }
-        picks.push({ label: opt.label, category: m.filter_cat_raid(), option: opt })
+        picks.push({ label: opt.label, category: categoryLabels.raid, option: opt })
       }
     }
 
-    // Recency (always "Last week")
     if (!excludedKinds.includes('recency')) {
       picks.push({
         label: m.recency_week(),
-        category: m.filter_cat_recency(),
-        option: { kind: 'recency', value: 604800, label: m.recency_week(), category: m.filter_cat_recency() }
+        category: categoryLabels.recency,
+        option: { kind: 'recency', value: 604800, label: m.recency_week(), category: categoryLabels.recency }
       })
     }
 
-    // Entity from API (pick one random from a pool of 12)
     if (!excludedKinds.includes('entity')) {
       try {
         const { suggestions } = await searchAdapter.getRandomSuggestions()
@@ -177,176 +157,25 @@
       }
     }
 
-    // Full Auto (always)
     if (!excludedKinds.includes('party')) {
       picks.push({
         label: m.filter_full_auto(),
-        category: m.filter_cat_party(),
-        option: { kind: 'party', value: 'full_auto', label: m.filter_full_auto(), category: m.filter_cat_party() }
+        category: categoryLabels.party,
+        option: { kind: 'party', value: 'full_auto', label: m.filter_full_auto(), category: categoryLabels.party }
       })
-
-      // Solo (always)
       picks.push({
         label: m.filter_solo(),
-        category: m.filter_cat_party(),
-        option: { kind: 'party', value: 'solo', label: m.filter_solo(), category: m.filter_cat_party() }
+        category: categoryLabels.party,
+        option: { kind: 'party', value: 'solo', label: m.filter_solo(), category: categoryLabels.party }
       })
-
-      // Youtube (always)
       picks.push({
         label: m.filter_youtube(),
-        category: m.filter_cat_party(),
-        option: { kind: 'party', value: 'youtube', label: m.filter_youtube(), category: m.filter_cat_party() }
+        category: categoryLabels.party,
+        option: { kind: 'party', value: 'youtube', label: m.filter_youtube(), category: categoryLabels.party }
       })
     }
 
     placeholderSuggestions = picks
-  }
-
-  function handleSuggestionClick(suggestion: PlaceholderSuggestion) {
-    if (suggestion.option) {
-      selectOption(suggestion.option)
-    }
-  }
-
-  // Search result type for display
-  interface FilterOption {
-    kind: FilterItem['kind']
-    value: string | number
-    label: string
-    category: string
-    entityType?: string
-    granblueId?: string
-    element?: number
-    season?: number | null
-    series?: UnifiedSearchSeriesRef[] | null
-  }
-
-  // Rank results so exact/prefix matches and filter options appear first
-  function rankResults(results: FilterOption[], query: string): FilterOption[] {
-    const filterKinds = new Set(['element', 'recency', 'party', 'boost', 'side', 'class'])
-
-    return results.toSorted((a, b) => {
-      const aLabel = a.label.toLowerCase()
-      const bLabel = b.label.toLowerCase()
-      const aExact = aLabel === query
-      const bExact = bLabel === query
-      if (aExact !== bExact) return aExact ? -1 : 1
-
-      const aPrefix = aLabel.startsWith(query)
-      const bPrefix = bLabel.startsWith(query)
-      if (aPrefix !== bPrefix) return aPrefix ? -1 : 1
-
-      const aFilter = filterKinds.has(a.kind)
-      const bFilter = filterKinds.has(b.kind)
-      if (aFilter !== bFilter) return aFilter ? -1 : 1
-
-      return 0
-    })
-  }
-
-  // Filter local static options based on input
-  function matchLocal(query: string): FilterOption[] {
-    const q = query.toLowerCase()
-    const results: FilterOption[] = []
-
-    // Elements
-    if (!excludedKinds.includes('element')) {
-      for (const el of elementOptions) {
-        if (el.label.toLowerCase().includes(q)) {
-          const alreadySelected = filters.some((f) => f.kind === 'element' && f.value === el.value)
-          if (!alreadySelected) {
-            results.push({ kind: 'element', value: el.value, label: el.label, category: m.filter_cat_element() })
-          }
-        }
-      }
-    }
-
-    // Recency
-    if (!excludedKinds.includes('recency')) {
-      for (const rec of recencyOptions) {
-        if (rec.label.toLowerCase().includes(q)) {
-          const alreadySelected = filters.some((f) => f.kind === 'recency')
-          if (!alreadySelected) {
-            results.push({
-              kind: 'recency',
-              value: rec.value,
-              label: rec.label,
-              category: m.filter_cat_recency()
-            })
-          }
-        }
-      }
-    }
-
-    // Party settings
-    if (!excludedKinds.includes('party')) {
-      for (const party of partyOptions) {
-        if (party.label.toLowerCase().includes(q)) {
-          const alreadySelected = filters.some(
-            (f) => f.kind === 'party' && f.value === party.value
-          )
-          if (!alreadySelected) {
-            results.push({
-              kind: 'party',
-              value: party.value,
-              label: party.label,
-              category: m.filter_cat_party()
-            })
-          }
-        }
-      }
-    }
-
-    // Raids
-    if (!excludedKinds.includes('raid')) {
-      for (const raid of allRaids) {
-        const nameEn = raid.name?.en?.toLowerCase() ?? ''
-        const nameJa = raid.name?.ja ?? ''
-        if (nameEn.includes(q) || nameJa.includes(q)) {
-          const alreadySelected = filters.some((f) => f.kind === 'raid' && f.value === raid.id)
-          if (!alreadySelected) {
-            results.push({
-              kind: 'raid',
-              value: raid.id,
-              label: localizedName(raid.name) ?? raid.slug,
-              category: m.filter_cat_raid()
-            })
-          }
-        }
-      }
-    }
-
-    // Boost
-    if (!filters.some((f) => f.kind === 'boost')) {
-      for (const boost of boostOptions) {
-        const aliases = 'aliases' in boost ? (boost.aliases as string[]) : []
-        if (boost.label.toLowerCase().includes(q) || aliases.some((a) => a.includes(q))) {
-          results.push({
-            kind: 'boost',
-            value: boost.value,
-            label: boost.label,
-            category: m.filter_cat_boost()
-          })
-        }
-      }
-    }
-
-    // Side
-    if (!filters.some((f) => f.kind === 'side')) {
-      for (const side of sideOptions) {
-        if (side.label.toLowerCase().includes(q)) {
-          results.push({
-            kind: 'side',
-            value: side.value,
-            label: side.label,
-            category: m.filter_cat_side()
-          })
-        }
-      }
-    }
-
-    return results
   }
 
   // Debounced API search
@@ -374,21 +203,23 @@
 
   // Combined results: local + API
   const displayResults = $derived.by((): FilterOption[] => {
-    if (!dropdownOpen) return []
+    if (!dropdownOpen || !inputValue.trim()) return []
 
-    if (!inputValue.trim()) {
-      return []
-    }
+    const local = matchLocal({
+      query: inputValue,
+      filters,
+      excludedKinds,
+      elementOptions,
+      recencyOptions,
+      partyOptions,
+      boostOptions,
+      sideOptions,
+      allRaids,
+      categoryLabels
+    })
 
-    const local = matchLocal(inputValue)
-
-    // Map API search results to FilterOption
     const apiResults: FilterOption[] = searchResults
-      .filter((r) => {
-        return !filters.some(
-          (f) => f.kind === 'entity' && f.granblueId === r.granblueId
-        )
-      })
+      .filter((r) => !filters.some((f) => f.kind === 'entity' && f.granblueId === r.granblueId))
       .map((r) => {
         const type = r.searchableType.toLowerCase()
         const category =
@@ -415,12 +246,6 @@
     selectedIndex = 0
   })
 
-  // Scroll the selected item into view on keyboard navigation
-  $effect(() => {
-    const item = listEl?.children[selectedIndex] as HTMLElement | undefined
-    item?.scrollIntoView({ block: 'nearest' })
-  })
-
   // Trigger search on input change (skip during IME composition)
   $effect(() => {
     if (!isComposing) searchEntities(inputValue)
@@ -429,7 +254,6 @@
   function openDropdown() {
     refreshSuggestions()
     dropdownOpen = true
-    // Focus input after open
     requestAnimationFrame(() => inputEl?.focus())
   }
 
@@ -446,6 +270,9 @@
       return f.value === option.value
     })
   }
+
+  // Single-select kinds replace existing filter of the same kind
+  const singleSelectKinds = new Set(['recency', 'boost', 'side'])
 
   function selectOption(option: FilterOption) {
     if (isAlreadySelected(option)) return
@@ -464,28 +291,9 @@
       }
     } else if (option.kind === 'element') {
       newFilter = { kind: 'element', value: option.value as number, label: option.label }
-    } else if (option.kind === 'recency') {
-      // Replace existing recency filter
-      const without = filters.filter((f) => f.kind !== 'recency')
-      newFilter = { kind: 'recency', value: option.value as number, label: option.label }
-      filters = [...without, newFilter]
-      onFiltersChange(filters)
-      inputValue = ''
-      searchResults = []
-      return
-    } else if (option.kind === 'boost') {
-      // Single-select: replace existing boost filter
-      const without = filters.filter((f) => f.kind !== 'boost')
-      newFilter = { kind: 'boost', value: option.value as string, label: option.label }
-      filters = [...without, newFilter]
-      onFiltersChange(filters)
-      inputValue = ''
-      searchResults = []
-      return
-    } else if (option.kind === 'side') {
-      // Single-select: replace existing side filter
-      const without = filters.filter((f) => f.kind !== 'side')
-      newFilter = { kind: 'side', value: option.value as string, label: option.label }
+    } else if (singleSelectKinds.has(option.kind)) {
+      const without = filters.filter((f) => f.kind !== option.kind)
+      newFilter = { kind: option.kind, value: option.value, label: option.label } as FilterItem
       filters = [...without, newFilter]
       onFiltersChange(filters)
       inputValue = ''
@@ -526,7 +334,6 @@
   }
 
   function handleCompositionEnd(e: CompositionEvent) {
-    // Small delay for Safari, which fires compositionend before keydown
     setTimeout(() => {
       isComposing = false
       const value = (e.target as HTMLInputElement)?.value ?? ''
@@ -550,7 +357,7 @@
       e.preventDefault()
       if (isPlaceholder) {
         const suggestion = placeholderSuggestions[selectedIndex]
-        if (suggestion) handleSuggestionClick(suggestion)
+        if (suggestion?.option) selectOption(suggestion.option)
       } else {
         const option = displayResults[selectedIndex]
         if (option) selectOption(option)
@@ -558,7 +365,6 @@
     } else if (e.key === 'Escape') {
       closeDropdown()
     } else if (e.key === 'Backspace' && inputValue === '' && filters.length > 0) {
-      // Find the last non-pinned filter to remove
       for (let i = filters.length - 1; i >= 0; i--) {
         if (!filters[i]?.pinned) {
           removeFilter(i)
@@ -568,11 +374,8 @@
     }
   }
 
-  // Close dropdown on outside click
   function handleWindowClick(e: MouseEvent) {
     const target = e.target as Node
-    // If the target was removed from the DOM (e.g. the button swapped out by {#if}),
-    // don't treat it as an outside click
     if (!target.isConnected) return
     if (containerEl && !containerEl.contains(target)) {
       closeDropdown()
@@ -623,71 +426,16 @@
   </div>
 
   {#if dropdownOpen}
-    <div class="dropdown">
-      <ul class="results" role="listbox" bind:this={listEl}>
-        {#if !inputValue.trim()}
-          {#each placeholderSuggestions as suggestion, i (suggestion.label)}
-            <li
-              class="result-item"
-              class:selected={i === selectedIndex}
-              role="option"
-              aria-selected={i === selectedIndex}
-              onmouseenter={() => (selectedIndex = i)}
-              onclick={() => handleSuggestionClick(suggestion)}
-            >
-              <span class="result-label">{suggestion.label}</span>
-              <span class="result-category">{suggestion.category}</span>
-            </li>
-          {/each}
-        {:else if displayResults.length > 0}
-          {#each displayResults as option, i (option.kind + '-' + option.value)}
-            <li
-              class="result-item"
-              class:entity={option.kind === 'entity'}
-              class:selected={i === selectedIndex}
-              role="option"
-              aria-selected={i === selectedIndex}
-              onmouseenter={() => (selectedIndex = i)}
-              onclick={() => selectOption(option)}
-            >
-              {#if option.kind === 'entity' && option.granblueId}
-                <SearchOptionItem
-                  label={option.label}
-                  granblueId={option.granblueId}
-                  type={option.entityType === 'character' ? 'Character' : option.entityType === 'weapon' ? 'Weapon' : 'Summon'}
-                  element={option.element}
-                  season={option.season}
-                  series={option.series}
-                  showType={false}
-                  imageSize={32}
-                />
-              {:else if option.kind === 'element'}
-                <div class="result-with-image">
-                  <img
-                    src={getElementImage(option.value as number)}
-                    alt=""
-                    class="result-image"
-                  />
-                  <span class="result-label">{option.label}</span>
-                </div>
-                <span class="result-category">{option.category}</span>
-              {:else}
-                <span class="result-label">{option.label}</span>
-                <span class="result-category">{option.category}</span>
-              {/if}
-            </li>
-          {/each}
-        {:else if isSearching}
-          <li class="result-item loading">
-            <span class="result-label">{m.explore_searching()}</span>
-          </li>
-        {:else}
-          <li class="result-item empty">
-            <span class="result-label">{m.explore_no_results()}</span>
-          </li>
-        {/if}
-      </ul>
-    </div>
+    <FilterDropdown
+      {inputValue}
+      {isSearching}
+      {placeholderSuggestions}
+      {displayResults}
+      {selectedIndex}
+      onSelectedIndexChange={(i) => (selectedIndex = i)}
+      onSelectOption={selectOption}
+      onSuggestionClick={(s) => { if (s.option) selectOption(s.option) }}
+    />
   {/if}
 </div>
 
@@ -866,78 +614,5 @@
     &::placeholder {
       color: var(--text-tertiary);
     }
-  }
-
-  .dropdown {
-    position: absolute;
-    top: calc(100% + $unit);
-    left: 0;
-    width: 340px;
-    background: var(--menu-bg);
-    border: $card-border;
-    border-radius: $card-corner;
-    box-shadow: $dialog-elevation;
-    z-index: $z-popover;
-    overflow: hidden;
-  }
-
-  .results {
-    list-style: none;
-    margin: 0;
-    padding: $unit-half;
-    min-height: 200px;
-    max-height: 280px;
-    overflow-y: auto;
-  }
-
-  .result-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: $unit;
-    border-radius: $item-corner;
-    cursor: pointer;
-    @include smooth-transition($duration-quick, background);
-
-    &:hover,
-    &.selected {
-      background: var(--menu-bg-item-hover);
-    }
-
-    &.loading,
-    &.empty {
-      cursor: default;
-      color: var(--text-tertiary);
-      justify-content: center;
-      min-height: calc(200px - $unit);
-    }
-  }
-
-  .result-label {
-    font-size: $font-small;
-    color: var(--text-primary);
-
-    .loading &,
-    .empty & {
-      color: var(--text-tertiary);
-    }
-  }
-
-  .result-with-image {
-    display: flex;
-    align-items: center;
-    gap: $unit;
-  }
-
-  .result-image {
-    width: 32px;
-    height: 32px;
-    border-radius: $item-corner-small;
-    flex-shrink: 0;
-  }
-
-  .result-category {
-    font-size: $font-tiny;
-    color: var(--text-tertiary);
   }
 </style>
