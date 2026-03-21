@@ -78,7 +78,7 @@
 		// Default (no element) colors - light grey bg with dark grey check
 		--cb-checked-bg: var(--null-bg);
 		--cb-checked-bg-hover: var(--null-bg-hover);
-		--cb-checked-fg: #{$grey-45};
+		--cb-checked-fg: var(--checkbox-checked-fg);
 
 		background-color: var(--checkbox-bg);
 		border: none;

@@ -170,6 +170,7 @@
 	--checkbox-bound-bg-hover: #{colors.$checkbox--bound--bg--light--hover};
 	--checkbox-text: #{colors.$checkbox--text--light};
 	--checkbox-text-hover: #{colors.$checkbox--text--light--hover};
+	--checkbox-checked-fg: #{colors.$grey-45};
 
 	// Light - Selects
 	--select-bg: #{colors.$select--trigger--bg--light};
@@ -616,6 +617,7 @@ html[data-theme='dark'] {
 	--checkbox-bound-bg-hover: #{colors.$checkbox--bound--bg--dark--hover};
 	--checkbox-text: #{colors.$checkbox--text--dark};
 	--checkbox-text-hover: #{colors.$checkbox--text--dark--hover};
+	--checkbox-checked-fg: white;
 
 	// Dark - Selects
 	--select-bg: #{colors.$select--trigger--bg--dark};
