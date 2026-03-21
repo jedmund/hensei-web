@@ -188,6 +188,7 @@
 		showYoutube={data.user?.showYoutube}
 		showCrewGamertag={data.user?.showCrewGamertag}
 		crewGamertag={data.user?.crewGamertag}
+		crewName={data.user?.crewName}
 		title={username ?? ''}
 		activeTab="collection"
 		isOwner={data.isOwner}

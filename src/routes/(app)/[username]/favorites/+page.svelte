@@ -49,6 +49,7 @@
 		showYoutube={data.user?.showYoutube}
 		showCrewGamertag={data.user?.showCrewGamertag}
 		crewGamertag={data.user?.crewGamertag}
+		crewName={data.user?.crewName}
 		activeTab="favorites"
 		isOwner={true}
 	/>

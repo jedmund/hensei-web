@@ -39,6 +39,8 @@
 		showCrewGamertag?: boolean
 		/** The crew's gamertag to display */
 		crewGamertag?: string
+		/** The crew's full name for tooltip display */
+		crewName?: string
 		/** Current user's crew role (null if not in a crew) */
 		viewerCrewRole?: CrewRole | null
 		/** Current user's crew ID */
@@ -65,6 +67,7 @@
 		showYoutube = false,
 		showCrewGamertag = false,
 		crewGamertag,
+		crewName,
 		viewerCrewRole = null,
 		viewerCrewId = null,
 		collectionPrivacy,
@@ -170,7 +173,9 @@
 				<div class="name-row">
 					<h1>{displayTitle}</h1>
 					{#if showCrewGamertag && crewGamertag}
+						<Tooltip content={crewName ?? crewGamertag}>
 						<span class="gamertag-pill" data-element={element}>{crewGamertag}</span>
+					</Tooltip>
 					{/if}
 				</div>
 			</div>
