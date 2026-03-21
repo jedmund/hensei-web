@@ -315,6 +315,7 @@
 	@use '$src/themes/dropdown' as dropdown;
 	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/navigation' as navigation;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 
@@ -341,45 +342,14 @@
 		}
 
 		ul {
-			background-color: var(--menu-bg);
-			border: effects.$page-border;
-			box-shadow: effects.$page-elevation;
-			border-radius: layout.$full-corner;
-			display: flex;
-			flex-direction: row;
-			gap: spacing.$unit-quarter;
-			padding: spacing.$unit-half;
-			list-style: none;
+			@include navigation.nav-pill-bar;
 
 			li {
-				display: flex;
-				align-items: stretch;
+				@include navigation.nav-pill-item;
 			}
 
 			a {
-				border-radius: layout.$full-corner;
-				color: var(--menu-text);
-				font-size: typography.$font-small;
-				font-weight: typography.$medium;
-				text-decoration: none;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				vertical-align: middle;
-				padding: spacing.$unit (spacing.$unit * 1.5);
-
-				&:hover {
-					background-color: var(--menu-bg-item-hover);
-				}
-
-				&:visited {
-					color: var(--menu-text);
-				}
-
-				&.selected {
-					background-color: var(--menu-bg-item-selected, var(--menu-bg-item-hover));
-					font-weight: typography.$bold;
-				}
+				@include navigation.nav-pill-link;
 			}
 		}
 

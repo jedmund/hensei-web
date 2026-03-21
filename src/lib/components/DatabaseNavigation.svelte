@@ -197,7 +197,9 @@
 
 <style lang="scss">
 	@use '$src/themes/dropdown' as dropdown;
+	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/navigation' as navigation;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 
@@ -209,6 +211,7 @@
 		align-items: center;
 
 		.database-back-section {
+			@include navigation.nav-pill-bar;
 			min-height: 49px;
 			min-width: 49px;
 
@@ -231,7 +234,16 @@
 		}
 
 		.database-subnav {
+			@include navigation.nav-pill-bar;
 			min-height: 49px;
+
+			li {
+				@include navigation.nav-pill-item;
+			}
+
+			a {
+				@include navigation.nav-pill-link;
+			}
 		}
 	}
 
