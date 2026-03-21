@@ -27,6 +27,7 @@ interface ApiUserResponse {
   importWeapons?: boolean  // transformed from import_weapons
   defaultImportVisibility?: number  // transformed from default_import_visibility
   gamertag?: string
+  crewName?: string
   email?: string  // Only included in settings view
   emailVerified?: boolean  // Only included in settings view
   avatar: {
@@ -58,6 +59,7 @@ export interface UserInfo {
   importWeapons?: boolean
   defaultImportVisibility?: number
   crewGamertag?: string
+  crewName?: string
   avatar: {
     picture: string
     element: string
@@ -114,6 +116,7 @@ function transformUserResponse(apiUser: ApiUserResponse): UserInfo {
     defaultImportVisibility: apiUser.defaultImportVisibility,
     // Rename gamertag to crewGamertag
     crewGamertag: apiUser.gamertag,
+    crewName: apiUser.crewName,
     avatar: apiUser.avatar
   }
 }
