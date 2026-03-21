@@ -13,12 +13,9 @@
 	import { openDetailsSidebar, openCharacterEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { canCharacterBeModified } from '$lib/utils/modificationDetector'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
-	import { getElementKey } from '$lib/utils/element'
+	import { getElementClassName } from '$lib/utils/element'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
 	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
-	import type { ElementType } from '$lib/stores/paneStack.svelte'
-	import type { FilterItem } from '$lib/types/filter'
 	import { GridType } from '$lib/types/enums'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 	import perpetuityEmpty from '$src/assets/icons/perpetuity/empty.svg'
@@ -68,26 +65,7 @@
 	)
 
 	// Determine element class for focus ring
-	let elementClass = $derived.by(() => {
-		const element = item?.character?.element || partyElement
-
-		switch (element) {
-			case 1:
-				return 'wind'
-			case 2:
-				return 'fire'
-			case 3:
-				return 'water'
-			case 4:
-				return 'earth'
-			case 5:
-				return 'dark'
-			case 6:
-				return 'light'
-			default:
-				return 'neutral'
-		}
-	})
+	let elementClass = $derived(getElementClassName(item?.character?.element || partyElement))
 
 	async function remove() {
 		if (!item?.id) return
@@ -147,40 +125,12 @@
 
 	function viewTeamsWithCharacter() {
 		if (!item?.character) return
-		const charData = item.character
-		const entityFilter: FilterItem = {
-			kind: 'entity',
-			value: charData.granblueId,
-			label: localizedName(charData.name) ?? charData.granblueId,
-			entityType: 'character',
-			granblueId: charData.granblueId,
-			mode: 'include',
-			element: charData.element,
-			pinned: true
-		}
-		collectionTeamsPane.reset(entityFilter)
-		const name = localizedName(charData.name)
-		const elementName = charData.element ? getElementKey(charData.element) as ElementType : undefined
-		sidebar.openWithComponent(name, PartiesPane, {
-			pinnedFilters: [entityFilter],
-			defaultElement: charData.element,
-			useCollectionTeamsStore: true,
-			resetKey: charData.granblueId
-		}, { scrollable: true, element: elementName })
+		collectionTeamsPane.openTeamsPaneForEntity(item.character, 'character')
 	}
 
 	function addCharacterToTeamsView() {
 		if (!item?.character) return
-		const charData = item.character
-		collectionTeamsPane.addEntity({
-			kind: 'entity',
-			value: charData.granblueId,
-			label: localizedName(charData.name) ?? charData.granblueId,
-			entityType: 'character',
-			granblueId: charData.granblueId,
-			mode: 'include',
-			element: charData.element
-		})
+		collectionTeamsPane.addEntityToTeamsView(item.character, 'character')
 	}
 
 	// Check if character has a style swap variant available
@@ -301,8 +251,9 @@
 				</div>
 			{/snippet}
 
-			{#snippet contextMenu()}
+			{#snippet menu(variant: 'context' | 'dropdown')}
 				<MenuItems
+					{variant}
 					onEdit={canEditItem ? editItem : undefined}
 					onViewDetails={viewDetails}
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
@@ -311,28 +262,6 @@
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
-					variant="context"
-					editLabel={m.context_edit({ type: m.type_character() })}
-					viewDetailsLabel={m.context_view_details()}
-					viewInDatabaseLabel={m.context_view_in_database()}
-					viewTeamsLabel={m.context_view_teams_character()}
-					addToTeamsViewLabel={m.context_add_to_teams_view()}
-					replaceLabel={m.context_replace({ type: m.type_character() })}
-					removeLabel={m.context_remove()}
-				/>
-			{/snippet}
-
-			{#snippet dropdownMenu()}
-				<MenuItems
-					onEdit={canEditItem ? editItem : undefined}
-					onViewDetails={viewDetails}
-					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
-					onViewTeams={viewTeamsWithCharacter}
-					onAddToTeamsView={isTeamsPaneOpen ? addCharacterToTeamsView : undefined}
-					onReplace={ctx?.canEdit() ? replace : undefined}
-					onRemove={ctx?.canEdit() ? remove : undefined}
-					canEdit={ctx?.canEdit()}
-					variant="dropdown"
 					editLabel={m.context_edit({ type: m.type_character() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
@@ -428,6 +357,7 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/rep' as rep;
+	@use '$src/themes/unit' as unit;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/effects' as effects;
 
@@ -665,93 +595,7 @@
 		}
 	}
 
-	// Pulsing focus ring animation
-	@keyframes pulse-focus-ring {
-		0%,
-		100% {
-			box-shadow: 0 0 4px 3px currentColor;
-		}
-		50% {
-			box-shadow: 0 0 4px 6px currentColor;
-		}
-	}
-
-	// Element-specific focus rings
-	.focus-ring-wrapper.is-active::before {
-		animation: pulse-focus-ring 2s ease-in-out infinite;
-	}
-
-	.focus-ring-wrapper.is-active {
-		&.fire::before {
-			@include colors.focus-ring-fire();
-			color: rgba(250, 109, 109, 0.2);
-		}
-
-		&.water::before {
-			@include colors.focus-ring-water();
-			color: rgba(108, 201, 255, 0.2);
-		}
-
-		&.earth::before {
-			@include colors.focus-ring-earth();
-			color: rgba(253, 159, 91, 0.2);
-		}
-
-		&.wind::before {
-			@include colors.focus-ring-wind();
-			color: rgba(62, 228, 137, 0.2);
-		}
-
-		&.light::before {
-			@include colors.focus-ring-light();
-			color: rgba(232, 214, 51, 0.2);
-		}
-
-		&.dark::before {
-			@include colors.focus-ring-dark();
-			color: rgba(222, 123, 255, 0.2);
-		}
-
-		&.neutral::before {
-			@include colors.focus-ring-neutral();
-			color: rgba(0, 0, 0, 0.1);
-		}
-	}
-
-	// Element-specific name colors when active
-	.unit.is-active {
-		.name {
-			font-weight: typography.$bold;
-		}
-
-		&.fire .name {
-			color: var(--fire-text);
-		}
-
-		&.water .name {
-			color: var(--water-text);
-		}
-
-		&.earth .name {
-			color: var(--earth-text);
-		}
-
-		&.wind .name {
-			color: var(--wind-text);
-		}
-
-		&.light .name {
-			color: var(--light-text);
-		}
-
-		&.dark .name {
-			color: var(--dark-text);
-		}
-
-		&.neutral .name {
-			color: var(--text-secondary);
-		}
-	}
+	@include unit.unit-shared-styles;
 
 	.orphaned-badge {
 		position: absolute;
@@ -771,15 +615,4 @@
 		box-shadow: var(--shadow-sm);
 	}
 
-	// Orphaned state
-	.unit.orphaned {
-		.frame {
-			opacity: 0.7;
-			border: 2px solid colors.$error;
-		}
-
-		.name {
-			color: colors.$error;
-		}
-	}
 </style>
