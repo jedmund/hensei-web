@@ -14,6 +14,8 @@
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import SettingsRow from '$lib/components/ui/SettingsRow.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
+	import MembershipHistoryEditor from '$lib/components/crew/MembershipHistoryEditor.svelte'
+	import type { EditableMembershipPeriod } from '$lib/components/crew/MembershipHistoryEditor.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -38,12 +40,6 @@
 	let editGranblueId = $state('')
 
 	// Membership history for boomerang players
-	interface EditableMembershipPeriod {
-		id: string
-		joinedAt: string
-		retiredAt: string
-		retired: boolean
-	}
 	let membershipHistory = $state<EditableMembershipPeriod[]>([])
 	let loadingHistory = $state(false)
 
@@ -169,59 +165,11 @@
 					{#if loadingHistory}
 						<p class="loading-text">{m.crew_membership_loading()}</p>
 					{:else if membershipHistory.length > 1}
-						<!-- Multiple membership periods (boomerang player) -->
-						<div class="membership-periods">
-							<h4 class="periods-title">{m.crew_membership_periods()}</h4>
-							<p class="help-text">
-								{m.crew_membership_hint()}
-							</p>
-							{#each membershipHistory as period, i}
-								<div class="period-row">
-									<span class="period-label">
-										{#if i === 0}
-											{m.crew_period_current()}
-										{:else}
-											{m.crew_period_number({ n: String(membershipHistory.length - i) })}
-										{/if}
-									</span>
-									<div class="period-fields">
-										<DatePicker
-											label={m.crew_joined()}
-											bind:value={period.joinedAt}
-											contained
-										/>
-										{#if period.retired || i > 0}
-											<DatePicker
-												label={m.crew_left()}
-												bind:value={period.retiredAt}
-												contained
-											/>
-										{/if}
-									</div>
-								</div>
-							{/each}
-						</div>
-
-						<!-- Retired toggle only affects current membership -->
-						{#if !membershipHistory[0]?.retired}
-							<SettingsRow title={m.crew_retired()} subtitle={m.crew_mark_retired()}>
-								{#snippet control()}
-									<Switch
-										checked={editRetired}
-										name="retired"
-										onCheckedChange={(checked) => {
-											editRetired = checked
-											if (membershipHistory[0]) {
-												membershipHistory[0].retired = checked
-											}
-										}}
-									/>
-								{/snippet}
-							</SettingsRow>
-							{#if editRetired && membershipHistory[0]}
-								<DatePicker label={m.crew_retired_date()} bind:value={membershipHistory[0].retiredAt} contained />
-							{/if}
-						{/if}
+						<MembershipHistoryEditor
+							bind:periods={membershipHistory}
+							{editRetired}
+							onRetiredChange={(checked) => (editRetired = checked)}
+						/>
 					{:else}
 						<!-- Single membership period (normal case) -->
 						<DatePicker label={m.crew_join_date()} bind:value={editJoinDate} contained />
@@ -258,7 +206,6 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
-	@use '$src/themes/layout' as layout;
 
 	.modal-form {
 		display: flex;
@@ -290,43 +237,5 @@
 		color: var(--text-secondary);
 		margin: 0;
 		font-style: italic;
-	}
-
-	.membership-periods {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-2x;
-	}
-
-	.periods-title {
-		font-size: typography.$font-regular;
-		font-weight: typography.$medium;
-		margin: 0;
-		color: var(--text-primary);
-	}
-
-	.period-row {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit;
-		padding: spacing.$unit-2x;
-		background: rgba(0, 0, 0, 0.02);
-		border-radius: layout.$item-corner;
-		border: 1px solid rgba(0, 0, 0, 0.06);
-	}
-
-	.period-label {
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-		color: var(--text-secondary);
-	}
-
-	.period-fields {
-		display: flex;
-		gap: spacing.$unit-2x;
-
-		:global(.date-picker) {
-			flex: 1;
-		}
 	}
 </style>
