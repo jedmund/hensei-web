@@ -219,9 +219,9 @@ describe('GridAdapter', () => {
 
 			const result = await adapter.resolveWeaponConflict({
 				partyId: 'party-1',
-				incomingId: 'weapon-2',
+				incoming: 'weapon-2',
 				position: 1,
-				conflictingIds: ['gw-1']
+				conflicting: ['gw-1']
 			})
 
 			expect(result).toEqual(mockGridWeapon)
@@ -232,9 +232,9 @@ describe('GridAdapter', () => {
 					body: JSON.stringify({
 						resolve: {
 							party_id: 'party-1',
-							incoming_id: 'weapon-2',
+							incoming: 'weapon-2',
 							position: 1,
-							conflicting_ids: ['gw-1']
+							conflicting: ['gw-1']
 						}
 					})
 				})

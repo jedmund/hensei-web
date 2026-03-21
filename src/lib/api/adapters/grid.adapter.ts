@@ -91,9 +91,9 @@ export interface SwapPositionsParams {
  */
 export interface ResolveConflictParams {
 	partyId: string
-	incomingId: string
+	incoming: string
 	position: number
-	conflictingIds: string[]
+	conflicting: string[]
 }
 
 /**

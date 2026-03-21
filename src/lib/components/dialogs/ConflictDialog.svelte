@@ -97,9 +97,9 @@
 		const resolveParams = {
 			partyId,
 			partyShortcode,
-			incomingId: conflict.incoming.id,
+			incoming: conflict.incoming.id,
 			position: conflict.position,
-			conflictingIds: conflict.conflicts.map((c) => c.id)
+			conflicting: conflict.conflicts.map((c) => c.id)
 		}
 
 		isLoading = true
