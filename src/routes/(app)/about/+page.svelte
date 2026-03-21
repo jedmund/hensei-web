@@ -2,6 +2,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import LinkItem from '$lib/components/about/LinkItem.svelte'
 	import * as m from '$lib/paraglide/messages'
+	import { getBasePath } from '$lib/utils/images'
 </script>
 
 <PageMeta title={m.page_title_about()} description={m.page_desc_about()} />
@@ -33,19 +34,19 @@
 	<p>{m.about_data_explanation()}</p>
 	<ul class="data-sources">
 		<li>
-			<img src="/images/external/gbf-wiki-en.png" alt="" width="16" height="16" />
+			<img src="{getBasePath()}/external/gbf-wiki-en.png" alt="" width="16" height="16" />
 			<a href="https://gbf.wiki" target="_blank" rel="noreferrer">gbf.wiki</a>
 		</li>
 		<li>
-			<img src="/images/external/gbf-wiki-jp.png" alt="" width="16" height="16" />
+			<img src="{getBasePath()}/external/gbf-wiki-jp.png" alt="" width="16" height="16" />
 			<a href="https://gbf-wiki.com/" target="_blank" rel="noreferrer">gbf-wiki</a>
 		</li>
 		<li>
-			<img src="/images/external/kamigame.png" alt="" width="16" height="16" />
+			<img src="{getBasePath()}/external/kamigame.png" alt="" width="16" height="16" />
 			<a href="https://kamigame.jp/%E3%82%B0%E3%83%A9%E3%83%96%E3%83%AB/index.html" target="_blank" rel="noreferrer">Kamigame</a>
 		</li>
 		<li>
-			<img src="/images/external/gamewith.png" alt="" width="16" height="16" />
+			<img src="{getBasePath()}/external/gamewith.png" alt="" width="16" height="16" />
 			<a href="https://xn--bck3aza1a2if6kra4ee0hf.gamewith.jp/" target="_blank" rel="noreferrer">Gamewith</a>
 		</li>
 	</ul>
