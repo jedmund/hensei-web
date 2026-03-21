@@ -8,6 +8,7 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import DatabaseFormHeader from '$lib/components/database/DatabaseFormHeader.svelte'
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
+	import { getSectionOptions } from '$lib/utils/raidSection'
 	import type { PageData } from './$types'
 
 	interface Props {
@@ -139,7 +140,8 @@
 					label="Section"
 					bind:value={editData.section}
 					editable={true}
-					type="number"
+					type="select"
+					options={getSectionOptions()}
 				/>
 				<DetailItem
 					label="Order"

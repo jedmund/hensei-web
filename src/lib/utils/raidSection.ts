@@ -12,6 +12,18 @@ export enum RaidSection {
 }
 
 /**
+ * Get section options for select dropdowns
+ */
+export function getSectionOptions() {
+	return [
+		{ value: RaidSection.Farming, label: m.raid_section_farming() },
+		{ value: RaidSection.Raid, label: m.raid_section_raid() },
+		{ value: RaidSection.Event, label: m.raid_section_event() },
+		{ value: RaidSection.Solo, label: m.raid_section_solo() }
+	]
+}
+
+/**
  * Get the localized display name for a raid section
  */
 export function getRaidSectionLabel(section: number | string | null | undefined): string {

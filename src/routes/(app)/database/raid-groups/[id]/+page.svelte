@@ -9,6 +9,7 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
+	import { getRaidSectionLabel } from '$lib/utils/raidSection'
 	import type { PageData } from './$types'
 
 	function displayName(input: any): string {
@@ -81,7 +82,7 @@
 			<DetailsContainer title="Group Details">
 				<DetailItem label="Name (EN)" value={group.name.en || '—'} />
 				<DetailItem label="Name (JA)" value={group.name.ja || '—'} />
-				<DetailItem label="Section" value={group.section?.toString() ?? '—'} />
+				<DetailItem label="Section" value={getRaidSectionLabel(group.section)} />
 				<DetailItem label="Order" value={group.order?.toString() ?? '—'} />
 				<DetailItem label="Difficulty" value={group.difficulty?.toString() ?? '—'} />
 			</DetailsContainer>
@@ -172,6 +173,7 @@
 		background: var(--table-header-bg);
 		border: 1px solid var(--table-border);
 		border-radius: layout.$item-corner;
+		color: var(--text-primary);
 		cursor: pointer;
 		text-align: left;
 
