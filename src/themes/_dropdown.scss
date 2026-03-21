@@ -1,0 +1,31 @@
+@use 'effects' as effects;
+@use 'layout' as layout;
+@use 'spacing' as spacing;
+
+// Shared dropdown menu styles (used with bits-ui DropdownMenu)
+@mixin dropdown-content {
+	background-color: var(--menu-bg);
+	border-radius: layout.$input-corner;
+	padding: spacing.$unit-half;
+	min-width: 160px;
+	box-shadow: var(--shadow-xl);
+	animation: dropdownSlideIn 0.2s ease;
+	z-index: effects.$z-popover;
+
+	@keyframes dropdownSlideIn {
+		from {
+			opacity: 0;
+			transform: translateY(-2px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+}
+
+@mixin dropdown-separator {
+	height: 1px;
+	background-color: var(--menu-border, rgba(0, 0, 0, 0.1));
+	margin: spacing.$unit-half 0;
+}
