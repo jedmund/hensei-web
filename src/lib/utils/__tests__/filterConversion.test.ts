@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { filterItemsToParams } from '../filterConversion'
-import type { FilterItem } from '$lib/components/explore/ExploreFilters.svelte'
+import type { FilterItem } from '$lib/types/filter'
 
 describe('filterItemsToParams', () => {
 	it('returns empty params for an empty array', () => {

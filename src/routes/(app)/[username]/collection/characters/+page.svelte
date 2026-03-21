@@ -28,7 +28,7 @@
 	import { canAccessDatabase, getDatabaseUrl } from '$lib/utils/database'
 	import { getElementKey } from '$lib/utils/element'
 	import type { ElementType } from '$lib/stores/paneStack.svelte'
-	import type { FilterItem } from '$lib/components/explore/ExploreFilters.svelte'
+	import type { FilterItem } from '$lib/types/filter'
 
 	const { data }: { data: PageData } = $props()
 

@@ -17,7 +17,7 @@
 	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
 	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
 	import type { ElementType } from '$lib/stores/paneStack.svelte'
-	import type { FilterItem } from '$lib/components/explore/ExploreFilters.svelte'
+	import type { FilterItem } from '$lib/types/filter'
 	import { getAwakeningImage, getWeaponKeyImages, getAxSkillImages, getBefoulmentImages } from '$lib/utils/modifiers'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { GridType } from '$lib/types/enums'

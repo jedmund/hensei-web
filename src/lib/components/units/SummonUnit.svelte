@@ -16,7 +16,7 @@
   import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
   import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
   import type { ElementType } from '$lib/stores/paneStack.svelte'
-  import type { FilterItem } from '$lib/components/explore/ExploreFilters.svelte'
+  import type { FilterItem } from '$lib/types/filter'
   import { GridType } from '$lib/types/enums'
   import * as m from '$lib/paraglide/messages'
   import { localizedName } from '$lib/utils/locale'

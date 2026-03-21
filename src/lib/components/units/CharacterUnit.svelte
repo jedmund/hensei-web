@@ -18,7 +18,7 @@
 	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
 	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
 	import type { ElementType } from '$lib/stores/paneStack.svelte'
-	import type { FilterItem } from '$lib/components/explore/ExploreFilters.svelte'
+	import type { FilterItem } from '$lib/types/filter'
 	import { GridType } from '$lib/types/enums'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 	import perpetuityEmpty from '$src/assets/icons/perpetuity/empty.svg'

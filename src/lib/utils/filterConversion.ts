@@ -1,4 +1,4 @@
-import type { FilterItem } from '$lib/components/explore/ExploreFilters.svelte'
+import type { FilterItem } from '$lib/types/filter'
 import type { ExploreFilterParams } from '$lib/api/adapters/party.adapter'
 
 /**
