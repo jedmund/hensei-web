@@ -14,7 +14,6 @@
 	import CollectionSummonCard from '$lib/components/collection/CollectionSummonCard.svelte'
 	import CollectionSummonRow from '$lib/components/collection/CollectionSummonRow.svelte'
 	import CollectionContextMenu from '$lib/components/collection/CollectionContextMenu.svelte'
-	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
 	import SelectableCollectionCard from '$lib/components/collection/SelectableCollectionCard.svelte'
 	import SelectableCollectionRow from '$lib/components/collection/SelectableCollectionRow.svelte'
 	import Icon from '$lib/components/Icon.svelte'
@@ -26,9 +25,6 @@
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import { canAccessDatabase, getDatabaseUrl } from '$lib/utils/database'
-	import { getElementKey } from '$lib/utils/element'
-	import type { ElementType } from '$lib/stores/paneStack.svelte'
-	import type { FilterItem } from '$lib/types/filter'
 
 	const { data }: { data: PageData } = $props()
 
@@ -145,46 +141,13 @@
 	}
 
 	function viewTeamsWithSummon(summon: CollectionSummon) {
-		const summonData = summon.summon
-		if (!summonData) return
-
-		const entityFilter: FilterItem = {
-			kind: 'entity',
-			value: summonData.granblueId,
-			label: localizedName(summonData.name) ?? summonData.granblueId,
-			entityType: 'summon',
-			granblueId: summonData.granblueId,
-			mode: 'include',
-			element: summonData.element,
-			pinned: true
-		}
-
-		collectionTeamsPane.reset(entityFilter)
-
-		const summonName = localizedName(summonData.name)
-		const elementName = summonData.element ? getElementKey(summonData.element) as ElementType : undefined
-
-		sidebar.openWithComponent(summonName, PartiesPane, {
-			pinnedFilters: [entityFilter],
-			defaultElement: summonData.element,
-			useCollectionTeamsStore: true,
-			resetKey: summonData.granblueId
-		}, { scrollable: true, element: elementName })
+		if (!summon.summon) return
+		collectionTeamsPane.openTeamsPaneForEntity(summon.summon, 'summon')
 	}
 
 	function addSummonToTeamsView(summon: CollectionSummon) {
-		const summonData = summon.summon
-		if (!summonData) return
-
-		collectionTeamsPane.addEntity({
-			kind: 'entity',
-			value: summonData.granblueId,
-			label: localizedName(summonData.name) ?? summonData.granblueId,
-			entityType: 'summon',
-			granblueId: summonData.granblueId,
-			mode: 'include',
-			element: summonData.element
-		})
+		if (!summon.summon) return
+		collectionTeamsPane.addEntityToTeamsView(summon.summon, 'summon')
 	}
 
 	function viewSummonInDatabase(summon: CollectionSummon) {

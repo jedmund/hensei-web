@@ -14,7 +14,6 @@
 	import CollectionWeaponCard from '$lib/components/collection/CollectionWeaponCard.svelte'
 	import CollectionWeaponRow from '$lib/components/collection/CollectionWeaponRow.svelte'
 	import CollectionContextMenu from '$lib/components/collection/CollectionContextMenu.svelte'
-	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
 	import SelectableCollectionCard from '$lib/components/collection/SelectableCollectionCard.svelte'
 	import SelectableCollectionRow from '$lib/components/collection/SelectableCollectionRow.svelte'
 	import Icon from '$lib/components/Icon.svelte'
@@ -26,9 +25,6 @@
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import { canAccessDatabase, getDatabaseUrl } from '$lib/utils/database'
-	import { getElementKey } from '$lib/utils/element'
-	import type { ElementType } from '$lib/stores/paneStack.svelte'
-	import type { FilterItem } from '$lib/types/filter'
 
 	const { data }: { data: PageData } = $props()
 
@@ -149,46 +145,13 @@
 	}
 
 	function viewTeamsWithWeapon(weapon: CollectionWeapon) {
-		const weaponData = weapon.weapon
-		if (!weaponData) return
-
-		const entityFilter: FilterItem = {
-			kind: 'entity',
-			value: weaponData.granblueId,
-			label: localizedName(weaponData.name) ?? weaponData.granblueId,
-			entityType: 'weapon',
-			granblueId: weaponData.granblueId,
-			mode: 'include',
-			element: weaponData.element,
-			pinned: true
-		}
-
-		collectionTeamsPane.reset(entityFilter)
-
-		const weaponName = localizedName(weaponData.name)
-		const elementName = weaponData.element ? getElementKey(weaponData.element) as ElementType : undefined
-
-		sidebar.openWithComponent(weaponName, PartiesPane, {
-			pinnedFilters: [entityFilter],
-			defaultElement: weaponData.element,
-			useCollectionTeamsStore: true,
-			resetKey: weaponData.granblueId
-		}, { scrollable: true, element: elementName })
+		if (!weapon.weapon) return
+		collectionTeamsPane.openTeamsPaneForEntity(weapon.weapon, 'weapon')
 	}
 
 	function addWeaponToTeamsView(weapon: CollectionWeapon) {
-		const weaponData = weapon.weapon
-		if (!weaponData) return
-
-		collectionTeamsPane.addEntity({
-			kind: 'entity',
-			value: weaponData.granblueId,
-			label: localizedName(weaponData.name) ?? weaponData.granblueId,
-			entityType: 'weapon',
-			granblueId: weaponData.granblueId,
-			mode: 'include',
-			element: weaponData.element
-		})
+		if (!weapon.weapon) return
+		collectionTeamsPane.addEntityToTeamsView(weapon.weapon, 'weapon')
 	}
 
 	function viewWeaponInDatabase(weapon: CollectionWeapon) {

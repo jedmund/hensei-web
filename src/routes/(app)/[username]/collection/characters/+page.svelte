@@ -14,7 +14,6 @@
 	import CollectionCharacterCard from '$lib/components/collection/CollectionCharacterCard.svelte'
 	import CollectionCharacterRow from '$lib/components/collection/CollectionCharacterRow.svelte'
 	import CollectionContextMenu from '$lib/components/collection/CollectionContextMenu.svelte'
-	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
 	import SelectableCollectionCard from '$lib/components/collection/SelectableCollectionCard.svelte'
 	import SelectableCollectionRow from '$lib/components/collection/SelectableCollectionRow.svelte'
 	import Icon from '$lib/components/Icon.svelte'
@@ -26,9 +25,6 @@
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import { canAccessDatabase, getDatabaseUrl } from '$lib/utils/database'
-	import { getElementKey } from '$lib/utils/element'
-	import type { ElementType } from '$lib/stores/paneStack.svelte'
-	import type { FilterItem } from '$lib/types/filter'
 
 	const { data }: { data: PageData } = $props()
 
@@ -157,46 +153,13 @@
 	}
 
 	function viewTeamsWithCharacter(character: CollectionCharacter) {
-		const charData = character.character
-		if (!charData) return
-
-		const entityFilter: FilterItem = {
-			kind: 'entity',
-			value: charData.granblueId,
-			label: localizedName(charData.name) ?? charData.granblueId,
-			entityType: 'character',
-			granblueId: charData.granblueId,
-			mode: 'include',
-			element: charData.element,
-			pinned: true
-		}
-
-		collectionTeamsPane.reset(entityFilter)
-
-		const characterName = localizedName(charData.name)
-		const elementName = charData.element ? getElementKey(charData.element) as ElementType : undefined
-
-		sidebar.openWithComponent(characterName, PartiesPane, {
-			pinnedFilters: [entityFilter],
-			defaultElement: charData.element,
-			useCollectionTeamsStore: true,
-			resetKey: charData.granblueId
-		}, { scrollable: true, element: elementName })
+		if (!character.character) return
+		collectionTeamsPane.openTeamsPaneForEntity(character.character, 'character')
 	}
 
 	function addCharacterToTeamsView(character: CollectionCharacter) {
-		const charData = character.character
-		if (!charData) return
-
-		collectionTeamsPane.addEntity({
-			kind: 'entity',
-			value: charData.granblueId,
-			label: localizedName(charData.name) ?? charData.granblueId,
-			entityType: 'character',
-			granblueId: charData.granblueId,
-			mode: 'include',
-			element: charData.element
-		})
+		if (!character.character) return
+		collectionTeamsPane.addEntityToTeamsView(character.character, 'character')
 	}
 
 	function viewCharacterInDatabase(character: CollectionCharacter) {
