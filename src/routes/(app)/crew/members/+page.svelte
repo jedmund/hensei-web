@@ -4,29 +4,18 @@
 	import { goto } from '$app/navigation'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
-	import {
-		useRemoveMember,
-		useUpdateMembership,
-		useDeletePhantom,
-		useDeclinePhantomClaim
-	} from '$lib/api/mutations/crew.mutations'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
-	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
-	import ModalBody from '$lib/components/ui/ModalBody.svelte'
-	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
 	import CrewTabs from '$lib/components/crew/CrewTabs.svelte'
 	import MemberRow from '$lib/components/crew/MemberRow.svelte'
 	import PhantomRow from '$lib/components/crew/PhantomRow.svelte'
 	import InvitationRow from '$lib/components/crew/InvitationRow.svelte'
 	import EditMemberDialog from '$lib/components/crew/EditMemberDialog.svelte'
+	import ConfirmMemberActionDialog from '$lib/components/crew/ConfirmMemberActionDialog.svelte'
 	import ScoutUserModal from '$lib/components/crew/ScoutUserModal.svelte'
 	import BulkPhantomModal from '$lib/components/crew/BulkPhantomModal.svelte'
-	import AssignPhantomModal from '$lib/components/crew/AssignPhantomModal.svelte'
-	import ConfirmClaimModal from '$lib/components/crew/ConfirmClaimModal.svelte'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import type {
 		MemberFilter,
@@ -34,8 +23,6 @@
 		PhantomPlayer
 	} from '$lib/types/api/crew'
 	import type { PageData } from './$types'
-	import { toast } from 'svelte-sonner'
-	import { extractErrorMessage } from '$lib/utils/errors'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -81,12 +68,6 @@
 
 	const isRosterFull = $derived(activeMemberCount >= 30)
 
-	// Mutations
-	const removeMemberMutation = useRemoveMember()
-	const updateMembershipMutation = useUpdateMembership()
-	const deletePhantomMutation = useDeletePhantom()
-	const declinePhantomClaimMutation = useDeclinePhantomClaim()
-
 	// Filter options - Pending only shown to officers
 	const filterOptions = $derived.by(() => {
 		const options: { value: MemberFilter; label: string }[] = [
@@ -111,85 +92,24 @@
 		goto(url.toString(), { replaceState: true })
 	}
 
-	// Dialog state for member actions
-	let confirmDialogOpen = $state(false)
+	// Confirm action dialog state (remove/promote/demote)
+	let confirmMember = $state<CrewMembership | null>(null)
 	let confirmAction = $state<'remove' | 'promote' | 'demote' | null>(null)
-	let selectedMember = $state<CrewMembership | null>(null)
 
-	// Dialog state for editing member/phantom
-	let editingMember = $state<CrewMembership | null>(null)
-	let editingPhantom = $state<PhantomPlayer | null>(null)
-
-	// Dialog state for scout modal
-	let scoutModalOpen = $state(false)
-
-	// Dialog state for phantom creation
-	let bulkPhantomDialogOpen = $state(false)
-
-	// Dialog state for phantom deletion confirmation
-	let deletePhantomDialogOpen = $state(false)
-	let phantomToDelete = $state<PhantomPlayer | null>(null)
-
-	// Dialog state for phantom assignment
-	let assignPhantomDialogOpen = $state(false)
-	let phantomToAssign = $state<PhantomPlayer | null>(null)
-
-	// Dialog state for confirm claim
-	let confirmClaimDialogOpen = $state(false)
-	let phantomToClaim = $state<PhantomPlayer | null>(null)
-
-	// Member actions
-	function openRemoveDialog(member: CrewMembership) {
-		selectedMember = member
-		confirmAction = 'remove'
-		confirmDialogOpen = true
+	function openConfirmDialog(member: CrewMembership, action: 'remove' | 'promote' | 'demote') {
+		confirmMember = member
+		confirmAction = action
 	}
 
-	function openPromoteDialog(member: CrewMembership) {
-		selectedMember = member
-		confirmAction = 'promote'
-		confirmDialogOpen = true
-	}
-
-	function openDemoteDialog(member: CrewMembership) {
-		selectedMember = member
-		confirmAction = 'demote'
-		confirmDialogOpen = true
-	}
-
-	async function handleConfirmAction() {
-		if (!selectedMember || !crewStore.crew) return
-
-		try {
-			if (confirmAction === 'remove') {
-				await removeMemberMutation.mutateAsync({
-					crewId: crewStore.crew.id,
-					membershipId: selectedMember.id
-				})
-			} else if (confirmAction === 'promote') {
-				await updateMembershipMutation.mutateAsync({
-					crewId: crewStore.crew.id,
-					membershipId: selectedMember.id,
-					input: { role: 'vice_captain' }
-				})
-			} else if (confirmAction === 'demote') {
-				await updateMembershipMutation.mutateAsync({
-					crewId: crewStore.crew.id,
-					membershipId: selectedMember.id,
-					input: { role: 'member' }
-				})
-			}
-		} catch (error) {
-			console.error('Action failed:', error)
-			toast.error(extractErrorMessage(error, 'Action failed'))
-		}
-
-		confirmDialogOpen = false
-		selectedMember = null
+	function handleConfirmClose() {
+		confirmMember = null
 		confirmAction = null
 	}
 
-	// Member/phantom editing
+	// Edit dialog state
+	let editingMember = $state<CrewMembership | null>(null)
+	let editingPhantom = $state<PhantomPlayer | null>(null)
+
 	function openEditMemberDialog(member: CrewMembership) {
 		editingPhantom = null
 		editingMember = member
@@ -209,54 +129,9 @@
 		membersQuery.refetch()
 	}
 
-	function openDeletePhantomDialog(phantom: PhantomPlayer) {
-		phantomToDelete = phantom
-		deletePhantomDialogOpen = true
-	}
-
-	async function handleConfirmDeletePhantom() {
-		if (!crewStore.crew || !phantomToDelete) return
-
-		try {
-			await deletePhantomMutation.mutateAsync({
-				crewId: crewStore.crew.id,
-				phantomId: phantomToDelete.id
-			})
-		} catch (error) {
-			console.error('Failed to delete phantom:', error)
-			toast.error(extractErrorMessage(error, 'Failed to delete phantom'))
-		}
-
-		deletePhantomDialogOpen = false
-		phantomToDelete = null
-	}
-
-	// Phantom assignment
-	function openAssignPhantomDialog(phantom: PhantomPlayer) {
-		phantomToAssign = phantom
-		assignPhantomDialogOpen = true
-	}
-
-	// Confirm claim (opens modal)
-	function openConfirmClaimDialog(phantom: PhantomPlayer) {
-		phantomToClaim = phantom
-		confirmClaimDialogOpen = true
-	}
-
-	// Decline claim (direct action, no confirmation needed)
-	async function handleDeclineClaim(phantom: PhantomPlayer) {
-		if (!crewStore.crew) return
-
-		try {
-			await declinePhantomClaimMutation.mutateAsync({
-				crewId: crewStore.crew.id,
-				phantomId: phantom.id
-			})
-		} catch (error) {
-			console.error('Failed to decline phantom claim:', error)
-			toast.error(extractErrorMessage(error, 'Failed to decline claim'))
-		}
-	}
+	// Scout and phantom creation modals
+	let scoutModalOpen = $state(false)
+	let bulkPhantomDialogOpen = $state(false)
 
 	// Check if invitation is expired
 	function isInvitationExpired(expiresAt: string): boolean {
@@ -359,12 +234,9 @@
 						{#each pendingClaimPhantoms as phantom}
 							<PhantomRow
 								{phantom}
+								crewId={crewStore.crew?.id ?? ''}
 								currentUserId={crewStore.membership?.user?.id}
 								onEdit={() => openEditPhantomDialog(phantom)}
-								onDelete={() => openDeletePhantomDialog(phantom)}
-								onAssign={() => openAssignPhantomDialog(phantom)}
-								onAccept={() => openConfirmClaimDialog(phantom)}
-								onDecline={() => handleDeclineClaim(phantom)}
 							/>
 						{/each}
 					</ul>
@@ -406,9 +278,9 @@
 							<MemberRow
 								{member}
 								onEdit={() => openEditMemberDialog(member)}
-								onPromote={() => openPromoteDialog(member)}
-								onDemote={() => openDemoteDialog(member)}
-								onRemove={() => openRemoveDialog(member)}
+								onPromote={() => openConfirmDialog(member, 'promote')}
+								onDemote={() => openConfirmDialog(member, 'demote')}
+								onRemove={() => openConfirmDialog(member, 'remove')}
 							/>
 						{/each}
 					</ul>
@@ -425,12 +297,9 @@
 						{#each membersQuery.data?.phantoms ?? [] as phantom}
 							<PhantomRow
 								{phantom}
+								crewId={crewStore.crew?.id ?? ''}
 								currentUserId={crewStore.membership?.user?.id}
 								onEdit={() => openEditPhantomDialog(phantom)}
-								onDelete={() => openDeletePhantomDialog(phantom)}
-								onAssign={() => openAssignPhantomDialog(phantom)}
-								onAccept={() => openConfirmClaimDialog(phantom)}
-								onDecline={() => handleDeclineClaim(phantom)}
 							/>
 						{/each}
 					</ul>
@@ -440,44 +309,12 @@
 	</div>
 </div>
 
-<!-- Confirm Action Dialog -->
-<Dialog bind:open={confirmDialogOpen}>
-	{#snippet children()}
-		<ModalHeader
-			title={confirmAction === 'remove'
-				? m.crew_remove_member()
-				: confirmAction === 'promote'
-					? m.crew_promote_member()
-					: m.crew_demote_member()}
-		/>
-
-		<ModalBody>
-			<p class="confirm-message">
-				{#if confirmAction === 'remove'}
-					{m.crew_confirm_remove({ name: selectedMember?.user?.username ?? '' })}
-				{:else if confirmAction === 'promote'}
-					{m.crew_confirm_promote({ name: selectedMember?.user?.username ?? '' })}
-				{:else if confirmAction === 'demote'}
-					{m.crew_confirm_demote({ name: selectedMember?.user?.username ?? '' })}
-				{/if}
-			</p>
-		</ModalBody>
-
-		<ModalFooter
-			onCancel={() => (confirmDialogOpen = false)}
-			primaryAction={{
-				label:
-					confirmAction === 'remove'
-						? m.crew_remove()
-						: confirmAction === 'promote'
-							? m.crew_promote()
-							: m.crew_demote(),
-				onclick: handleConfirmAction,
-				destructive: confirmAction === 'remove'
-			}}
-		/>
-	{/snippet}
-</Dialog>
+<!-- Confirm Member Action Dialog (remove/promote/demote) -->
+<ConfirmMemberActionDialog
+	member={confirmMember}
+	action={confirmAction}
+	onClose={handleConfirmClose}
+/>
 
 <!-- Edit Member/Phantom Dialog -->
 <EditMemberDialog
@@ -487,46 +324,13 @@
 	onSaved={handleEditSaved}
 />
 
-<!-- Delete Phantom Confirmation Dialog -->
-<Dialog bind:open={deletePhantomDialogOpen}>
-	{#snippet children()}
-		<ModalHeader title={m.crew_delete_phantom_title()} />
-
-		<ModalBody>
-			<p class="confirm-message">
-				{m.crew_confirm_delete_phantom({ name: phantomToDelete?.name ?? '' })}
-			</p>
-		</ModalBody>
-
-		<ModalFooter
-			onCancel={() => (deletePhantomDialogOpen = false)}
-			primaryAction={{
-				label: m.crew_phantom_delete(),
-				onclick: handleConfirmDeletePhantom,
-				destructive: true
-			}}
-		/>
-	{/snippet}
-</Dialog>
-
-<!-- Scout User Modal -->
+<!-- Scout & Phantom Modals -->
 {#if crewStore.crew?.id}
 	<ScoutUserModal bind:open={scoutModalOpen} crewId={crewStore.crew.id} />
 	<BulkPhantomModal bind:open={bulkPhantomDialogOpen} crewId={crewStore.crew.id} />
-	<AssignPhantomModal
-		bind:open={assignPhantomDialogOpen}
-		crewId={crewStore.crew.id}
-		phantom={phantomToAssign}
-	/>
-	<ConfirmClaimModal
-		bind:open={confirmClaimDialogOpen}
-		crewId={crewStore.crew.id}
-		phantom={phantomToClaim}
-	/>
 {/if}
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/effects' as effects;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
@@ -625,26 +429,10 @@
 		background: rgba(0, 0, 0, 0.02);
 		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 
-		&.pending-claims {
-			background: var(--color-yellow-light, #fef9c3);
-			border-bottom-color: var(--color-yellow-dark, #854d0e);
-
-			span {
-				color: var(--color-yellow-dark, #854d0e);
-			}
-		}
-
 		span {
 			font-size: typography.$font-small;
 			font-weight: typography.$medium;
 			color: var(--text-secondary);
 		}
-	}
-
-	// Confirm dialog styles
-	.confirm-message {
-		color: var(--text-primary);
-		line-height: 1.5;
-		margin: 0;
 	}
 </style>
