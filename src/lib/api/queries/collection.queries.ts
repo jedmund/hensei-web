@@ -174,6 +174,20 @@ export const collectionQueries = {
 		}),
 
 	/**
+	 * Collection query options dispatched by entity type
+	 */
+	byType: (type: 'weapon' | 'character' | 'summon', userId: string, filters?: CollectionFilters) => {
+		switch (type) {
+			case 'weapon':
+				return collectionQueries.weapons(userId, filters)
+			case 'character':
+				return collectionQueries.characters(userId, filters)
+			case 'summon':
+				return collectionQueries.summons(userId, filters)
+		}
+	},
+
+	/**
 	 * Get IDs of characters already in a user's collection
 	 * Used to filter out owned characters in the add modal
 	 *

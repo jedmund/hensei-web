@@ -256,6 +256,25 @@ export const searchQueries = {
 	 * Guidebook search infinite query options
 	 * Simple search with no filters — just query and pagination
 	 */
+	/**
+	 * Search query options dispatched by entity type
+	 */
+	byType: (
+		type: 'weapon' | 'character' | 'summon',
+		query: string = '',
+		filters?: SearchFilters,
+		locale: 'en' | 'ja' = 'en'
+	) => {
+		switch (type) {
+			case 'weapon':
+				return searchQueries.weapons(query, filters, locale)
+			case 'character':
+				return searchQueries.characters(query, filters, locale)
+			case 'summon':
+				return searchQueries.summons(query, filters, locale)
+		}
+	},
+
 	guidebooks: (query: string = '', locale: 'en' | 'ja' = 'en') =>
 		infiniteQueryOptions({
 			queryKey: ['search', 'guidebooks', query, locale] as const,

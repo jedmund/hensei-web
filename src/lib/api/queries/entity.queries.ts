@@ -221,7 +221,21 @@ export const entityQueries = {
 			queryFn: () => entityAdapter.getAwakenings(objectType),
 			staleTime: 1000 * 60 * 60,
 			gcTime: 1000 * 60 * 60 * 24
-		})
+		}),
+
+	/**
+	 * Series list query options dispatched by entity type
+	 */
+	seriesListByType: (type: 'weapon' | 'character' | 'summon') => {
+		switch (type) {
+			case 'weapon':
+				return entityQueries.weaponSeriesList()
+			case 'character':
+				return entityQueries.characterSeriesList()
+			case 'summon':
+				return entityQueries.summonSeriesList()
+		}
+	}
 }
 
 /**
@@ -265,5 +279,15 @@ export const entityKeys = {
 	axSkills: () => ['weaponStatModifiers', 'ax'] as const,
 	befoulments: () => ['weaponStatModifiers', 'befoulment'] as const,
 	awakenings: (objectType?: string) => ['awakenings', objectType ?? 'all'] as const,
-	allAwakenings: () => ['awakenings'] as const
+	allAwakenings: () => ['awakenings'] as const,
+	seriesListByType: (type: 'weapon' | 'character' | 'summon') => {
+		switch (type) {
+			case 'weapon':
+				return entityKeys.weaponSeriesList()
+			case 'character':
+				return entityKeys.characterSeriesList()
+			case 'summon':
+				return entityKeys.summonSeriesList()
+		}
+	}
 }
