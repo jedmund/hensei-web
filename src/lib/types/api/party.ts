@@ -182,6 +182,7 @@ export interface Party {
   // Timestamps
   createdAt?: string
   updatedAt?: string
+  lastUpdated?: string
 }
 
 // Minimal party for list views
@@ -233,4 +234,5 @@ export interface PartyPreview {
   }
   createdAt?: string
   updatedAt?: string
+  lastUpdated?: string
 }

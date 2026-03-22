@@ -72,7 +72,7 @@
 		<DescriptionTile
 			name={party.name}
 			description={party.description}
-			updatedAt={party.updatedAt}
+			updatedAt={party.lastUpdated ?? party.updatedAt}
 			visibility={party.visibility}
 			user={party.user}
 			collectionSourceUser={party.collectionSourceUser}

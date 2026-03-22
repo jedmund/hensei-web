@@ -470,7 +470,8 @@ export const PartySchemaRaw = z.object({
   
   // Timestamps
   created_at: z.string().nullish(),
-  updated_at: z.string().nullish()
+  updated_at: z.string().nullish(),
+  last_updated: z.string().nullish()
 })
 
 // Apply transform after parsing (do NOT nest this schema inside other schemas)

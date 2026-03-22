@@ -15,4 +15,5 @@ export interface Playlist {
 	raidSlugs?: string[]
 	createdAt: string
 	updatedAt: string
+	lastUpdated?: string
 }

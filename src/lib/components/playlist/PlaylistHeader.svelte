@@ -37,7 +37,7 @@
 		title={playlist.title}
 		description={playlist.description}
 		user={playlist.user}
-		updatedAt={playlist.updatedAt}
+		updatedAt={playlist.lastUpdated ?? playlist.updatedAt}
 	>
 		{#snippet menu()}
 			{#if isOwner}
