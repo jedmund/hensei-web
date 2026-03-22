@@ -489,7 +489,7 @@
 
 		:global(.indicator) {
 			margin-left: auto;
-			color: var(--accent-color);
+			color: var(--accent-color, var(--text-tertiary));
 		}
 	}
 

@@ -5,7 +5,7 @@
 	import Select from '../Select.svelte'
 	import MultiSelect from '../MultiSelect.svelte'
 	import ElementPickerSegmented from './ElementPickerSegmented.svelte'
-	import { ELEMENT_LABELS, ELEMENT_DISPLAY_ORDER, getElementImage } from '$lib/utils/element'
+	import { ELEMENT_LABELS, ELEMENT_DISPLAY_ORDER, getElementImage, getElementKey } from '$lib/utils/element'
 
 	interface Props {
 		value?: number | number[]
@@ -52,6 +52,14 @@
 		}))
 	})
 
+	// Accent color using themed CSS variable for the selected element
+	const accentColor = $derived.by(() => {
+		const selected = typeof value === 'number' ? value : Array.isArray(value) ? value[0] : undefined
+		if (selected === undefined) return undefined
+		const key = getElementKey(selected)
+		return key !== 'null' ? `var(--${key}-text)` : undefined
+	})
+
 	// Handle value changes for single-select dropdown
 	function handleSingleChange(newValue: number | undefined) {
 		if (newValue !== undefined) {
@@ -74,31 +82,34 @@
 </script>
 
 {#if shouldUseDropdown}
-	{#if multiple}
-		<MultiSelect
-			{options}
-			value={Array.isArray(value) ? value : value !== undefined ? [value] : []}
-			onValueChange={handleMultipleChange}
-			size="medium"
-			{contained}
-			disabled={disabled}
-			placeholder={m.placeholder_select_elements()}
-			fullWidth={true}
-			class={className}
-		/>
-	{:else}
-		<Select
-			{options}
-			value={typeof value === 'number' ? value : undefined}
-			onValueChange={handleSingleChange}
-			size="medium"
-			{contained}
-			disabled={disabled}
-			placeholder={m.placeholder_select_element()}
-			fullWidth={true}
-			class={className}
-		/>
-	{/if}
+	<!-- svelte-ignore css_unused_selector -->
+	<div class="element-picker-dropdown" style:--accent-color={accentColor}>
+		{#if multiple}
+			<MultiSelect
+				{options}
+				value={Array.isArray(value) ? value : value !== undefined ? [value] : []}
+				onValueChange={handleMultipleChange}
+				size="medium"
+				{contained}
+				disabled={disabled}
+				placeholder={m.placeholder_select_elements()}
+				fullWidth={true}
+				class={className}
+			/>
+		{:else}
+			<Select
+				{options}
+				value={typeof value === 'number' ? value : undefined}
+				onValueChange={handleSingleChange}
+				size="medium"
+				{contained}
+				disabled={disabled}
+				placeholder={m.placeholder_select_element()}
+				fullWidth={true}
+				class={className}
+			/>
+		{/if}
+	</div>
 {:else}
 	<ElementPickerSegmented
 		{value}
@@ -112,3 +123,9 @@
 		class={className}
 	/>
 {/if}
+
+<style>
+	.element-picker-dropdown {
+		display: contents;
+	}
+</style>
