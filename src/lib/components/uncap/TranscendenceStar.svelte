@@ -2,7 +2,10 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import TranscendenceFragment from './TranscendenceFragment.svelte'
-	import { Portal } from 'bits-ui'
+	import Button from '$lib/components/ui/Button.svelte'
+	import { Popover } from 'bits-ui'
+	import plusIcon from '$src/assets/icons/plus.svg?raw'
+	import minusIcon from '$src/assets/icons/minus.svg?raw'
 
 	interface Props {
 		className?: string
@@ -32,100 +35,28 @@
 
 	const NUM_FRAGMENTS = 5
 
-	interface PopoverPosition {
-		top: number
-		left: number
-		placement: 'above' | 'below'
-	}
-
 	let visibleStage = $state(stage)
 	let currentStage = $state(stage)
+	let prevStage = $state(stage)
 	let immutable = $state(false)
 	let isPopoverOpen = $state(false)
-	let popoverPosition = $state<PopoverPosition | null>(null)
-	let starElement: HTMLDivElement
-	let popoverElement: HTMLDivElement
 
 	const baseLevel = $derived(type === 'character' ? 100 : 200)
 	const displayLevel = $derived(baseLevel + 10 * visibleStage)
 
-	function calculatePopoverPosition(): PopoverPosition | null {
-		if (!starElement) return null
-
-		const rect = starElement.getBoundingClientRect()
-		const popoverWidth = 100 // Approximate width
-		const popoverHeight = 120 // Approximate height
-		const gap = 8 // Gap between star and popover
-
-		// Calculate available space
-		const spaceBelow = window.innerHeight - rect.bottom
-		const spaceAbove = rect.top
-
-		// Determine vertical placement
-		const placement: 'above' | 'below' =
-			spaceBelow < popoverHeight && spaceAbove > spaceBelow ? 'above' : 'below'
-
-		// Calculate vertical position
-		let top = placement === 'below' ? rect.bottom + gap : rect.top - popoverHeight - gap
-
-		// Center horizontally on star
-		let left = rect.left + rect.width / 2 - popoverWidth / 2
-
-		// Adjust horizontal position if too close to edges
-		const edgeMargin = 8
-		if (left < edgeMargin) {
-			left = edgeMargin
-		} else if (left + popoverWidth > window.innerWidth - edgeMargin) {
-			left = window.innerWidth - popoverWidth - edgeMargin
-		}
-
-		return { top, left, placement }
-	}
-
 	$effect(() => {
-		visibleStage = stage
-		currentStage = stage
-	})
-
-	$effect(() => {
-		if (isPopoverOpen) {
-			// Update position when popover opens
-			popoverPosition = calculatePopoverPosition()
-
-			const handleClickOutside = (event: MouseEvent) => {
-				if (
-					starElement &&
-					!starElement.contains(event.target as Node) &&
-					popoverElement &&
-					!popoverElement.contains(event.target as Node)
-				) {
-					isPopoverOpen = false
-					popoverPosition = null
-				}
-			}
-
-			const updatePosition = () => {
-				popoverPosition = calculatePopoverPosition()
-			}
-
-			// Add listeners
-			document.addEventListener('click', handleClickOutside)
-			window.addEventListener('scroll', updatePosition, true)
-			window.addEventListener('resize', updatePosition)
-
-			return () => {
-				document.removeEventListener('click', handleClickOutside)
-				window.removeEventListener('scroll', updatePosition, true)
-				window.removeEventListener('resize', updatePosition)
-			}
+		if (stage !== prevStage) {
+			prevStage = stage
+			visibleStage = stage
+			currentStage = stage
 		}
 	})
 
-	function handleClick() {
+	function handleClick(event: MouseEvent) {
 		if (editable && onStarClick) {
+			// Prevent trigger from toggling the popover
+			event.stopPropagation()
 			onStarClick()
-		} else if (interactive) {
-			isPopoverOpen = !isPopoverOpen
 		}
 	}
 
@@ -156,32 +87,64 @@
 			onFragmentHover(currentStage)
 		}
 	}
+
+	function incrementStage() {
+		if (currentStage < NUM_FRAGMENTS) {
+			const newStage = currentStage + 1
+			visibleStage = newStage
+			currentStage = newStage
+			if (onFragmentClick) {
+				onFragmentClick(newStage)
+			}
+		}
+	}
+
+	function decrementStage() {
+		if (currentStage > 0) {
+			const newStage = currentStage - 1
+			visibleStage = newStage
+			currentStage = newStage
+			if (onFragmentClick) {
+				onFragmentClick(newStage)
+			}
+		}
+	}
 </script>
 
-<div
-	class="star TranscendenceStar"
-	class:immutable
-	class:empty={stage === 0}
-	class:stage1={stage === 1}
-	class:stage2={stage === 2}
-	class:stage3={stage === 3}
-	class:stage4={stage === 4}
-	class:stage5={stage === 5}
-	class:small={size === 'small'}
-	onclick={handleClick}
-	onmouseleave={interactive ? handleMouseLeave : undefined}
-	bind:this={starElement}
-	{tabindex}
-	role={editable ? 'button' : undefined}
-	aria-label={editable ? 'Transcendence star' : undefined}
->
-	{#if interactive && isPopoverOpen && popoverPosition}
-		<Portal>
+<Popover.Root bind:open={isPopoverOpen}>
+	<Popover.Trigger disabled={!interactive}>
+		{#snippet child({ props })}
 			<div
-				class="popover"
-				class:above={popoverPosition.placement === 'above'}
-				style="top: {popoverPosition.top}px; left: {popoverPosition.left}px"
-				bind:this={popoverElement}
+				{...props}
+				class="star TranscendenceStar"
+				class:immutable
+				class:empty={currentStage === 0}
+				class:stage1={currentStage === 1}
+				class:stage2={currentStage === 2}
+				class:stage3={currentStage === 3}
+				class:stage4={currentStage === 4}
+				class:stage5={currentStage === 5}
+				class:small={size === 'small'}
+				onmouseleave={interactive ? handleMouseLeave : undefined}
+				{tabindex}
+				role={editable ? 'button' : undefined}
+				aria-label={editable ? 'Transcendence star' : undefined}
+			>
+				<i class="figure {className || ''}" class:interactive class:base={className?.includes('base')} />
+			</div>
+		{/snippet}
+	</Popover.Trigger>
+
+	{#if interactive}
+		<Popover.Portal>
+			<Popover.Content
+				class="transcendence-popover"
+				side="bottom"
+				sideOffset={8}
+				align="center"
+				avoidCollisions={true}
+				collisionPadding={8}
+				onOpenAutoFocus={(e) => e.preventDefault()}
 			>
 				<div class="fragments">
 					{#each Array(NUM_FRAGMENTS) as _, i}
@@ -199,11 +162,32 @@
 					<span>{m.label_level()}</span>
 					<span class="level-value" class:pending={visibleStage !== currentStage}>{displayLevel}</span>
 				</div>
-			</div>
-		</Portal>
+				<div class="stage-controls">
+					<Button
+						variant="ghost"
+						size="small"
+						iconOnly
+						shape="circular"
+						onclick={decrementStage}
+						disabled={currentStage <= 0}
+					>
+						{@html minusIcon}
+					</Button>
+					<Button
+						variant="ghost"
+						size="small"
+						iconOnly
+						shape="circular"
+						onclick={incrementStage}
+						disabled={currentStage >= NUM_FRAGMENTS}
+					>
+						{@html plusIcon}
+					</Button>
+				</div>
+			</Popover.Content>
+		</Popover.Portal>
 	{/if}
-	<i class="figure {className || ''}" class:interactive class:base={className?.includes('base')} />
-</div>
+</Popover.Root>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
@@ -347,8 +331,7 @@
 		}
 	}
 
-	.popover {
-		position: fixed;
+	:global(.transcendence-popover) {
 		z-index: effects.$z-notification + 1;
 		background: var(--card-bg);
 		border-radius: layout.$input-corner;
@@ -361,51 +344,57 @@
 		align-items: center;
 		justify-content: center;
 		gap: spacing.$unit;
-		animation: popover-appear 0.2s ease-out;
+		animation: transcendence-popover-appear 0.2s ease-out;
+	}
 
-		&.above {
-			animation: popover-appear-above 0.2s ease-out;
-		}
+	:global(.transcendence-popover .fragments) {
+		position: relative;
+		width: 48px;
+		height: 48px;
+		background-image: url('$src/assets/icons/transcendence/interactive/interactive-base.png');
+		background-size: 48px 48px;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
 
-		.fragments {
-			position: relative;
-			width: 48px;
-			height: 48px;
-		}
-
-		.level {
-			font-size: typography.$font-small;
-			text-align: center;
-			white-space: nowrap;
-			display: flex;
-			gap: spacing.$unit-half;
-			color: var(--text-primary);
-
-			.level-value {
-				font-weight: typography.$medium;
-
-				&.pending {
-					color: var(--text-tertiary);
-				}
-			}
+	@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+		:global(.transcendence-popover .fragments) {
+			background-image: url('$src/assets/icons/transcendence/interactive/interactive-base@2x.png');
 		}
 	}
 
-	@keyframes popover-appear {
+	@media (-webkit-min-device-pixel-ratio: 3), (min-resolution: 288dpi) {
+		:global(.transcendence-popover .fragments) {
+			background-image: url('$src/assets/icons/transcendence/interactive/interactive-base@3x.png');
+		}
+	}
+
+	:global(.transcendence-popover .level) {
+		font-size: typography.$font-small;
+		text-align: center;
+		white-space: nowrap;
+		display: flex;
+		gap: spacing.$unit-half;
+		color: var(--text-primary);
+	}
+
+	:global(.transcendence-popover .level-value) {
+		font-weight: typography.$medium;
+	}
+
+	:global(.transcendence-popover .level-value.pending) {
+		color: var(--text-tertiary);
+	}
+
+	:global(.transcendence-popover .stage-controls) {
+		display: flex;
+		gap: spacing.$unit-half;
+	}
+
+	@keyframes transcendence-popover-appear {
 		from {
 			opacity: 0;
 			transform: translateY(-4px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-
-	@keyframes popover-appear-above {
-		from {
-			opacity: 0;
-			transform: translateY(4px);
 		}
 		to {
 			opacity: 1;
