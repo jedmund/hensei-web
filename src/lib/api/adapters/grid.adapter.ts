@@ -574,6 +574,41 @@ export class GridAdapter extends BaseAdapter {
 		return response.gridSummon
 	}
 
+	// Sync to collection operations
+
+	/**
+	 * Syncs a grid character's data to its linked collection entry
+	 */
+	async syncCharacterToCollection(id: string, headers?: Record<string, string>): Promise<GridCharacter> {
+		const response = await this.request<{ gridCharacter: GridCharacter }>(`/grid_characters/${id}/sync_to_collection`, {
+			method: 'POST',
+			headers
+		})
+		return response.gridCharacter
+	}
+
+	/**
+	 * Syncs a grid weapon's data to its linked collection entry
+	 */
+	async syncWeaponToCollection(id: string, headers?: Record<string, string>): Promise<GridWeapon> {
+		const response = await this.request<{ gridWeapon: GridWeapon }>(`/grid_weapons/${id}/sync_to_collection`, {
+			method: 'POST',
+			headers
+		})
+		return response.gridWeapon
+	}
+
+	/**
+	 * Syncs a grid summon's data to its linked collection entry
+	 */
+	async syncSummonToCollection(id: string, headers?: Record<string, string>): Promise<GridSummon> {
+		const response = await this.request<{ gridSummon: GridSummon }>(`/grid_summons/${id}/sync_to_collection`, {
+			method: 'POST',
+			headers
+		})
+		return response.gridSummon
+	}
+
 	/**
 	 * Duplicates a grid weapon to a new position
 	 */

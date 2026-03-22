@@ -292,7 +292,15 @@
 	--table-border: #{colors.$grey-90};
 	--badge-extra-bg: #f3e8ff;
 	--badge-extra-text: #6b21a8;
-	--badge-element-bg: linear-gradient(to right, #fecaca, #fef08a, #bbf7d0, #bfdbfe, #e9d5ff, #fbcfe8);
+	--badge-element-bg: linear-gradient(
+		to right,
+		#fecaca,
+		#fef08a,
+		#bbf7d0,
+		#bfdbfe,
+		#e9d5ff,
+		#fbcfe8
+	);
 	--badge-element-text: #374151;
 	--badge-keys-bg: #fef3c7;
 	--badge-keys-text: #92400e;
@@ -318,7 +326,7 @@
 	--fire-button-bg: #{colors.$fire-text-30};
 	--water-button-bg: #{colors.$water-text-30};
 	--earth-button-bg: #{colors.$earth-text-20};
-	--light-button-bg: #{colors.$light-text-30};
+	--light-button-bg: #{color.adjust(colors.$light-text-30, $lightness: 8%)};
 	--dark-button-bg: #{colors.$dark-text-30};
 
 	// Light - Element button hover colors (slightly lighter than button-bg)
@@ -327,7 +335,7 @@
 	--fire-button-bg-hover: #{color.adjust(colors.$fire-text-30, $lightness: 8%)};
 	--water-button-bg-hover: #{color.adjust(colors.$water-text-30, $lightness: 8%)};
 	--earth-button-bg-hover: #{color.adjust(colors.$earth-text-20, $lightness: 8%)};
-	--light-button-bg-hover: #{color.adjust(colors.$light-text-30, $lightness: 8%)};
+	--light-button-bg-hover: #{color.adjust(colors.$light-text-30, $lightness: 16%)};
 	--dark-button-bg-hover: #{color.adjust(colors.$dark-text-30, $lightness: 8%)};
 
 	// Light - Element navigation selected background
@@ -739,7 +747,15 @@ html[data-theme='dark'] {
 	--table-border: #{colors.$grey-40};
 	--badge-extra-bg: #3b1f5e;
 	--badge-extra-text: #d8b4fe;
-	--badge-element-bg: linear-gradient(to right, #7f1d1d, #78350f, #14532d, #1e3a5f, #4c1d95, #831843);
+	--badge-element-bg: linear-gradient(
+		to right,
+		#7f1d1d,
+		#78350f,
+		#14532d,
+		#1e3a5f,
+		#4c1d95,
+		#831843
+	);
 	--badge-element-text: #d1d5db;
 	--badge-keys-bg: #78350f;
 	--badge-keys-text: #fde68a;

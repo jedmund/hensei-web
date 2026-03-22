@@ -17,6 +17,7 @@
 			| 'destructive-ghost'
 			| 'notice'
 			| 'subtle'
+			| 'raised'
 			| undefined
 		/** Button size */
 		size?: 'small' | 'medium' | 'large' | 'icon' | undefined
@@ -205,7 +206,6 @@
 		font-family: inherit;
 		@include smooth-transition($duration-zoom, background-color, color, border-color);
 
-
 		&:disabled {
 			cursor: not-allowed;
 			opacity: 0.5;
@@ -287,6 +287,16 @@
 
 		&:focus-visible {
 			@include focus-ring($blue);
+		}
+	}
+
+	// Raised variant: card-like without border
+	:global([data-button-root].raised) {
+		background-color: var(--card-bg);
+		color: var(--text-primary);
+
+		&:hover:not(:disabled) {
+			background-color: var(--button-bg-hover);
 		}
 	}
 
@@ -490,7 +500,7 @@
 
 	:global([data-button-root].element-styled.light) {
 		background: var(--light-button-bg);
-		color: black;
+		color: white;
 
 		&:hover:not(:disabled) {
 			background: var(--light-button-bg-hover);

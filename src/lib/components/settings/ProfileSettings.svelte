@@ -4,11 +4,11 @@
 	import Select from '../ui/Select.svelte'
 	import Input from '../ui/Input.svelte'
 	import SettingsRow from '../ui/SettingsRow.svelte'
+	import ElementPicker from '../ui/element-picker/ElementPicker.svelte'
 	import { pictureData } from '$lib/utils/pictureData'
 	import { localizedName } from '$lib/utils/locale'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
-	import { getElementKey, getElementFromKey } from '$lib/utils/element'
-	import ElementPicker from '../ui/element-picker/ElementPicker.svelte'
+	import { getElementKey } from '$lib/utils/element'
 	import type { ElementType } from '../ui/SettingsNav.svelte'
 
 	interface Props {
@@ -49,6 +49,12 @@
 		onThemeChange
 	}: Props = $props()
 
+	// Element key ↔ numeric ID conversion
+	const ELEMENT_KEY_TO_ID: Record<string, number> = {
+		wind: 1, fire: 2, water: 3, earth: 4, dark: 5, light: 6
+	}
+	const elementId = $derived(ELEMENT_KEY_TO_ID[element] ?? 1)
+
 	// Prepare options for selects
 	const pictureOptions = $derived(
 		pictureData
@@ -59,13 +65,6 @@
 				image: getAvatarSrc(p.filename)
 			}))
 	)
-
-	function handleElementPickerChange(value: number | number[]) {
-		const numVal = typeof value === 'number' ? value : value[0]
-		if (numVal !== undefined) {
-			localElement = getElementKey(numVal) as ElementType
-		}
-	}
 
 	const genderOptions = [
 		{ value: 0, label: 'Gran' },
@@ -89,7 +88,6 @@
 	// Local state derived from props — overrides via bind:value are temporary
 	let localPicture = $derived(picture)
 	let localElement = $derived(element)
-	const elementAsNumber = $derived(getElementFromKey(localElement))
 	let localGranblueId = $derived(granblueId)
 	let localWikiProfile = $derived(wikiProfile)
 	let localYoutube = $derived(youtube)
@@ -151,8 +149,11 @@
 		<SettingsRow title={m.settings_element()} subtitle={m.settings_element_subtitle()}>
 			{#snippet control()}
 				<ElementPicker
-					value={elementAsNumber}
-					onValueChange={handleElementPickerChange}
+					value={elementId}
+					onValueChange={(v) => {
+						const key = getElementKey(v as number)
+						localElement = key as ElementType
+					}}
 					mode="dropdown"
 					contained
 				/>
