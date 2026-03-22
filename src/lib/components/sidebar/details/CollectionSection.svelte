@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Icon from '$lib/components/Icon.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { getElementKey } from '$lib/utils/element'
@@ -85,14 +86,14 @@
 				{#if isPartyOwner || isCollectionOwner}
 					<div class="sync-buttons">
 						{#if isPartyOwner}
-							<button class="sync-button" onclick={onSync} disabled={isSyncing}>
+							<Button variant="secondary" size="small" class="sync-button" onclick={onSync} disabled={isSyncing}>
 								{isSyncing ? m.details_collection_syncing() : m.details_collection_sync_item({ type: typeLabel })}
-							</button>
+							</Button>
 						{/if}
 						{#if isCollectionOwner}
-							<button class="sync-button" onclick={onSyncToCollection} disabled={isSyncingToCollection}>
+							<Button variant="secondary" size="small" class="sync-button" onclick={onSyncToCollection} disabled={isSyncingToCollection}>
 								{isSyncingToCollection ? m.details_collection_syncing_collection() : m.details_collection_sync_collection()}
-							</button>
+							</Button>
 						{/if}
 					</div>
 				{/if}
@@ -156,29 +157,9 @@
 	.sync-buttons {
 		display: flex;
 		gap: spacing.$unit-half;
-		flex-shrink: 0;
-	}
 
-	.sync-button {
-		flex-grow: 1;
-		padding: spacing.$unit-half spacing.$unit;
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-		color: var(--text-primary);
-		background: var(--card-bg);
-		border: 1px solid var(--button-border);
-		border-radius: spacing.$unit-half;
-		cursor: pointer;
-		flex-shrink: 0;
-		@include smooth-transition($duration-quick, background-color);
-
-		&:hover:not(:disabled) {
-			background: var(--button-bg-hover);
-		}
-
-		&:disabled {
-			opacity: 0.6;
-			cursor: not-allowed;
+		:global(.sync-button) {
+			flex: 1;
 		}
 	}
 </style>
