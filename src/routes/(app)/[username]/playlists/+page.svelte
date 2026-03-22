@@ -71,6 +71,7 @@
 <section class="profile">
 	<ProfileHeader
 		username={data.user.username}
+		displayName={data.user?.displayName}
 		userId={data.user?.id}
 		avatarPicture={data.user?.avatar?.picture}
 		element={data.user?.avatar?.element}

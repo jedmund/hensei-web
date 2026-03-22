@@ -60,7 +60,7 @@
 		<div class="member-info">
 			<div class="member-details">
 				{#if member.user?.username}
-					<span class="username">{member.user.username}</span>
+					<span class="username">{member.user.displayName || member.user.username}</span>
 				{:else}
 					<span class="username">{m.crew_unknown()}</span>
 				{/if}
