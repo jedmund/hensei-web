@@ -16,7 +16,9 @@
 	let { value, class: className, disabled, children: content }: Props = $props()
 
 	// Get variant, size, grow, and element from parent context
-	const { variant, size, grow, element } = getSegmentedControlContext()
+	// Keep ctx as object so the element getter stays reactive
+	const ctx = getSegmentedControlContext()
+	const { variant, size, grow } = ctx
 
 	// Apply variant-specific classes
 	const variantClasses = {
@@ -47,7 +49,7 @@
 			styles.segment,
 			variantClasses[variant],
 			sizeClasses[size],
-			element ? elementClasses[element] : '',
+			ctx.element ? elementClasses[ctx.element] : '',
 			grow ? styles.grow : '',
 			className || ''
 		]

@@ -37,7 +37,15 @@
 	}: Props = $props()
 
 	// Provide variant, size, grow, and element to child segments via context
-	setSegmentedControlContext({ variant, size, grow, element })
+	// Use a getter for element so it stays reactive when the prop changes
+	setSegmentedControlContext({
+		variant,
+		size,
+		grow,
+		get element() {
+			return element
+		}
+	})
 
 	// Track previous value to only fire callback on actual changes (not initialization)
 	let previousValue = $state<string | undefined>(undefined)
