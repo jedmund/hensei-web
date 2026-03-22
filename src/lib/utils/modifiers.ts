@@ -35,7 +35,16 @@ export function getWeaponKeyImage(key: WeaponKey, weaponProficiency?: number): s
 	let filename = key.slug
 
 	// Gauph keys have proficiency-specific image variants
-	if (key.slug.startsWith('gauph-') && weaponProficiency) {
+	const hasVariant = [
+		'gauph-courage',
+		'gauph-strength',
+		'gauph-strife',
+		'gauph-vitality',
+		'gauph-will',
+		'gauph-zeal'
+	]
+
+	if (hasVariant.includes(key.slug)) {
 		filename += `-${weaponProficiency}`
 	}
 
@@ -52,10 +61,10 @@ export function getWeaponKeyImages(
 	if (!keys || keys.length === 0) return []
 
 	return keys
-		.filter(key => key.slug)
-		.map(key => ({
+		.filter((key) => key.slug)
+		.map((key) => ({
 			url: getWeaponKeyImage(key, weaponProficiency),
-			alt: key.name ? localizedName(key.name) : (key.slug || 'Weapon Key')
+			alt: key.name ? localizedName(key.name) : key.slug || 'Weapon Key'
 		}))
 }
 
@@ -85,11 +94,15 @@ export function getAxSkillImages(ax?: AugmentSkill[]): Array<{ url: string; alt:
 /**
  * Get befoulment image for a weapon
  */
-export function getBefoulmentImages(befoulment?: Befoulment | null): Array<{ url: string; alt: string }> {
+export function getBefoulmentImages(
+	befoulment?: Befoulment | null
+): Array<{ url: string; alt: string }> {
 	if (!befoulment?.modifier?.slug) return []
 
-	return [{
-		url: `${getBasePath()}/ax/${befoulment.modifier.slug}.png`,
-		alt: befoulment.modifier.nameEn || befoulment.modifier.slug || 'Befoulment'
-	}]
+	return [
+		{
+			url: `${getBasePath()}/ax/${befoulment.modifier.slug}.png`,
+			alt: befoulment.modifier.nameEn || befoulment.modifier.slug || 'Befoulment'
+		}
+	]
 }
