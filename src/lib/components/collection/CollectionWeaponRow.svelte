@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { CollectionWeapon } from '$lib/types/api/collection'
-	import { getWeaponImage } from '$lib/utils/images'
+	import { getWeaponImage, getWeaponFallbackImage, handleImageFallback } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
@@ -20,6 +20,11 @@
 
 	const imageUrl = $derived(
 		getWeaponImage(weapon.weapon?.granblueId, 'grid', displayElement, transformation, weapon.weapon?.elementVariantIds)
+	)
+
+	// Fallback URL for element-changeable weapons whose _0 image doesn't exist
+	const weaponFallbackUrl = $derived(
+		weapon.weapon?.element === 0 ? getWeaponFallbackImage(weapon.weapon?.granblueId, 'grid', transformation) : undefined
 	)
 
 	const displayName = $derived(localizedName(weapon.weapon?.name))
@@ -53,7 +58,7 @@
 <button type="button" class="weapon-row" onclick={onClick}>
 	<div class="core-info">
 		<div class="thumbnail">
-			<img src={imageUrl} alt={displayName} loading="lazy" />
+			<img src={imageUrl} alt={displayName} loading="lazy" onerror={(e) => handleImageFallback(e, weaponFallbackUrl)} />
 		</div>
 
 		<div class="name-cell">

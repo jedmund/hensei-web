@@ -5,7 +5,7 @@
 	 * Used in the add to collection modal for selecting weapons with
 	 * quantity support (users can own multiple copies).
 	 */
-	import { getWeaponImage } from '$lib/utils/images'
+	import { getWeaponImage, getWeaponFallbackImage, handleImageFallback } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import QuantityCounter from './QuantityCounter.svelte'
@@ -24,6 +24,10 @@
 	let { weapon, quantity = 0, onQuantityChange, userElement }: Props = $props()
 
 	const imageUrl = $derived(getWeaponImage(weapon.granblueId, 'square', weapon.element === 0 ? 0 : undefined))
+
+	const weaponFallbackUrl = $derived(
+		weapon.element === 0 ? getWeaponFallbackImage(weapon.granblueId, 'square') : undefined
+	)
 
 	const name = $derived(localizedName(weapon.name))
 
@@ -61,7 +65,7 @@
 	</div>
 
 	<div class="thumbnail">
-		<img src={imageUrl} alt={name} loading="lazy" />
+		<img src={imageUrl} alt={name} loading="lazy" onerror={(e) => handleImageFallback(e, weaponFallbackUrl)} />
 	</div>
 
 	<span class="name">{name}</span>

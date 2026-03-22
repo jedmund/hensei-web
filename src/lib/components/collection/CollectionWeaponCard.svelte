@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { CollectionWeapon } from '$lib/types/api/collection'
-	import { getWeaponImage, getWeaponTransformation } from '$lib/utils/images'
+	import { getWeaponImage, getWeaponTransformation, getWeaponFallbackImage, handleImageFallback } from '$lib/utils/images'
 	import { getAwakeningImage } from '$lib/utils/modifiers'
 	import { localizedName } from '$lib/utils/locale'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
@@ -23,6 +23,11 @@
 		getWeaponImage(weapon.weapon?.granblueId, 'grid', displayElement, transformation, weapon.weapon?.elementVariantIds)
 	)
 
+	// Fallback URL for element-changeable weapons whose _0 image doesn't exist
+	const weaponFallbackUrl = $derived(
+		weapon.weapon?.element === 0 ? getWeaponFallbackImage(weapon.weapon?.granblueId, 'grid', transformation) : undefined
+	)
+
 	// Get awakening image URL
 	const awakeningImage = $derived(getAwakeningImage(weapon.awakening ?? undefined))
 
@@ -38,7 +43,7 @@
 				alt={`${weapon.awakening?.type?.name ? localizedName(weapon.awakening.type.name) : 'Awakening'} Lv${weapon.awakening?.level || 0}`}
 			/>
 		{/if}
-		<img class="weapon-image" src={imageUrl} alt={displayName} loading="lazy" />
+		<img class="weapon-image" src={imageUrl} alt={displayName} loading="lazy" onerror={(e) => handleImageFallback(e, weaponFallbackUrl)} />
 	</div>
 	<UncapIndicator
 		type="weapon"

@@ -5,7 +5,7 @@
 	 * Used in the add to collection modal for selecting weapons with
 	 * quantity support (users can own multiple copies).
 	 */
-	import { getWeaponImage } from '$lib/utils/images'
+	import { getWeaponImage, getWeaponFallbackImage, handleImageFallback } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
 	import QuantityCounter from './QuantityCounter.svelte'
 	import type { SearchPageResult } from '$lib/api/queries/search.queries'
@@ -22,6 +22,10 @@
 	let { weapon, quantity = 0, onQuantityChange, userElement }: Props = $props()
 
 	const imageUrl = $derived(getWeaponImage(weapon.granblueId, 'grid', weapon.element === 0 ? 0 : undefined))
+
+	const weaponFallbackUrl = $derived(
+		weapon.element === 0 ? getWeaponFallbackImage(weapon.granblueId, 'grid') : undefined
+	)
 
 	const name = $derived(localizedName(weapon.name))
 
@@ -50,7 +54,7 @@
 	onkeydown={handleKeyDown}
 	aria-label="Select {name}, current quantity: {quantity}"
 >
-	<img src={imageUrl} alt={name} class="image" loading="lazy" />
+	<img src={imageUrl} alt={name} class="image" loading="lazy" onerror={(e) => handleImageFallback(e, weaponFallbackUrl)} />
 	<div class="counter-row" onclick={(e) => e.stopPropagation()}>
 		<QuantityCounter value={quantity} onChange={handleQuantityChange} element={userElement} />
 	</div>

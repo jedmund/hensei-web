@@ -9,7 +9,7 @@
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getWeaponImage } from '$lib/features/database/detail/image'
-	import { getPlaceholderImage, getWeaponTransformation } from '$lib/utils/images'
+	import { getPlaceholderImage, getWeaponTransformation, getWeaponFallbackImage, handleImageFallback } from '$lib/utils/images'
 	import { openDetailsSidebar, openWeaponEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { canWeaponBeModified } from '$lib/utils/modificationDetector'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
@@ -46,6 +46,15 @@
 		const transformation = getWeaponTransformation(item?.weapon?.uncap?.transcendence, item?.uncapLevel, item?.transcendenceStep)
 
 		return getWeaponImage(item?.weapon?.granblueId, variant, element, transformation, item?.weapon?.elementVariantIds)
+	})
+
+	// Fallback URL for element-changeable weapons whose _0 image doesn't exist
+	let fallbackUrl = $derived.by(() => {
+		if (item?.weapon?.element !== 0) return undefined
+		const isMain = position === -1 || item?.mainhand
+		const variant = isMain ? 'main' : 'grid'
+		const transformation = getWeaponTransformation(item?.weapon?.uncap?.transcendence, item?.uncapLevel, item?.transcendenceStep)
+		return getWeaponFallbackImage(item?.weapon?.granblueId, variant, transformation)
 	})
 
 	// Get awakening image URL using utility
@@ -244,6 +253,7 @@
 								class:not-in-collection={notInCollection}
 								alt={localizedName(item?.weapon?.name)}
 								src={imageUrl}
+								onerror={(e) => handleImageFallback(e, fallbackUrl)}
 							/>
 						</div>
 					{/key}
