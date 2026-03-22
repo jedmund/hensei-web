@@ -40,7 +40,7 @@
 	const isOwnCollection = $derived(!sourceUsername)
 	const isInsufficient = $derived(
 		(type === 'weapon' && gridCount != null && count < gridCount) ||
-		(type !== 'weapon' && count === 0)
+			(type !== 'weapon' && count === 0)
 	)
 
 	const typeLabel = $derived(
@@ -56,22 +56,52 @@
 
 {#if hasCollection || isOutOfSync}
 	<div class="collection-section-wrapper">
-		<div
-			class="collection-section"
-			class:insufficient={isInsufficient}
-			style:background={isInsufficient ? 'var(--button-bg)' : `var(--${elementName}-nav-selected-bg)`}
-			style:color={isInsufficient ? 'var(--danger)' : `var(--${elementName}-nav-selected-text)`}
-		>
-			{#if type === 'character' && count > 0}
-				<span>{isOwnCollection ? m.details_collection_in_your() : m.details_collection_in_other({ owner: sourceUsername ?? '' })}</span>
-			{:else if type === 'character'}
-				<span>{isOwnCollection ? m.details_collection_not_in_your() : m.details_collection_not_in_other({ owner: sourceUsername ?? '' })}</span>
-			{:else if type === 'weapon' && gridCount != null}
-				<span>{isOwnCollection ? m.details_collection_count_grid_your({ count: String(count), gridCount: String(gridCount) }) : m.details_collection_count_grid_other({ count: String(count), gridCount: String(gridCount), owner: sourceUsername ?? '' })}</span>
-			{:else}
-				<span>{isOwnCollection ? m.details_collection_count_your({ count: String(count) }) : m.details_collection_count_other({ count: String(count), owner: sourceUsername ?? '' })}</span>
-			{/if}
-		</div>
+		{#if !isOutOfSync}
+			<div
+				class="collection-section"
+				class:insufficient={isInsufficient}
+				style:background={isInsufficient
+					? 'var(--button-bg)'
+					: `var(--${elementName}-nav-selected-bg)`}
+				style:color={isInsufficient ? 'var(--danger)' : `var(--${elementName}-nav-selected-text)`}
+			>
+				{#if type === 'character' && count > 0}
+					<span
+						>{isOwnCollection
+							? m.details_collection_in_your()
+							: m.details_collection_in_other({ owner: sourceUsername ?? '' })}</span
+					>
+				{:else if type === 'character'}
+					<span
+						>{isOwnCollection
+							? m.details_collection_not_in_your()
+							: m.details_collection_not_in_other({ owner: sourceUsername ?? '' })}</span
+					>
+				{:else if type === 'weapon' && gridCount != null}
+					<span
+						>{isOwnCollection
+							? m.details_collection_count_grid_your({
+									count: String(count),
+									gridCount: String(gridCount)
+								})
+							: m.details_collection_count_grid_other({
+									count: String(count),
+									gridCount: String(gridCount),
+									owner: sourceUsername ?? ''
+								})}</span
+					>
+				{:else}
+					<span
+						>{isOwnCollection
+							? m.details_collection_count_your({ count: String(count) })
+							: m.details_collection_count_other({
+									count: String(count),
+									owner: sourceUsername ?? ''
+								})}</span
+					>
+				{/if}
+			</div>
+		{/if}
 
 		{#if isOutOfSync}
 			<div class="sync-banner">
@@ -86,13 +116,29 @@
 				{#if isPartyOwner || isCollectionOwner}
 					<div class="sync-buttons">
 						{#if isPartyOwner}
-							<Button variant="secondary" size="small" class="sync-button" onclick={onSync} disabled={isSyncing}>
-								{isSyncing ? m.details_collection_syncing() : m.details_collection_sync_item({ type: typeLabel })}
+							<Button
+								variant="raised"
+								size="small"
+								class="sync-button"
+								onclick={onSync}
+								disabled={isSyncing}
+							>
+								{isSyncing
+									? m.details_collection_syncing()
+									: m.details_collection_sync_item({ type: typeLabel })}
 							</Button>
 						{/if}
 						{#if isCollectionOwner}
-							<Button variant="secondary" size="small" class="sync-button" onclick={onSyncToCollection} disabled={isSyncingToCollection}>
-								{isSyncingToCollection ? m.details_collection_syncing_collection() : m.details_collection_sync_collection()}
+							<Button
+								variant="raised"
+								size="small"
+								class="sync-button"
+								onclick={onSyncToCollection}
+								disabled={isSyncingToCollection}
+							>
+								{isSyncingToCollection
+									? m.details_collection_syncing_collection()
+									: m.details_collection_sync_collection()}
 							</Button>
 						{/if}
 					</div>
@@ -105,6 +151,7 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
 	@use '$src/themes/effects' as *;
 
 	.collection-section-wrapper {
@@ -120,16 +167,16 @@
 		justify-content: center;
 		gap: spacing.$unit-half;
 		padding: spacing.$unit calc(spacing.$unit * 1.5);
-		border-radius: spacing.$unit;
+		border-radius: layout.$item-corner;
 		font-size: typography.$font-small;
 	}
 
 	.sync-banner {
 		display: flex;
 		flex-direction: column;
-		padding: spacing.$unit calc(spacing.$unit * 1.5);
-		background: var(--button-bg);
-		border-radius: spacing.$unit;
+		padding: spacing.$unit-2x;
+		background: var(--button-contained-bg);
+		border-radius: layout.$card-corner;
 		gap: spacing.$unit;
 	}
 
