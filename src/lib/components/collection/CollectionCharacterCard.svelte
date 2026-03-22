@@ -90,16 +90,16 @@
 		width: 100%;
 		aspect-ratio: 280 / 160;
 		border-radius: layout.$input-corner;
-		overflow: hidden;
+		overflow: visible;
 		background: var(--card-bg, #f5f5f5);
 	}
 
 	.perpetuity-badge {
 		position: absolute;
-		top: -$unit-half;
-		right: $unit;
-		width: $unit-3x;
-		height: $unit-3x;
+		top: calc($unit * -1);
+		right: $unit-3x;
+		width: $unit-4x;
+		height: $unit-4x;
 		z-index: effects.$z-sticky;
 	}
 
@@ -107,7 +107,7 @@
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		border-radius: layout.$input-corner;
+		border-radius: inherit;
 	}
 
 	.character-name {

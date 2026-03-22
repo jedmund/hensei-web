@@ -38,18 +38,18 @@
 	<div class="core-info">
 		<div class="thumbnail">
 			<img src={imageUrl} alt={displayName} loading="lazy" />
+			{#if character.perpetuity}
+				<img
+					class="perpetuity-badge"
+					src={perpetuityFilled}
+					alt={m.label_perpetuity_ring()}
+					title={m.label_perpetuity_ring()}
+				/>
+			{/if}
 		</div>
 		<div class="name-cell">
 			<div class="name-row">
 				<span class="name">{displayName}</span>
-				{#if character.perpetuity}
-					<img
-						class="perpetuity-badge"
-						src={perpetuityFilled}
-						alt={m.label_perpetuity_ring()}
-						title={m.label_perpetuity_ring()}
-					/>
-				{/if}
 			</div>
 			{#if character.character}
 				<CharacterTags character={character.character} />
@@ -84,6 +84,7 @@
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
+	@use '$src/themes/effects' as effects;
 
 	.character-row {
 		display: flex;
@@ -118,10 +119,11 @@
 		flex-grow: 1;
 
 		.thumbnail {
+			position: relative;
 			width: 100px;
 			aspect-ratio: 280 / 160;
 			border-radius: $item-corner;
-			overflow: hidden;
+			overflow: visible;
 			background: var(--card-bg, #f5f5f5);
 			flex-shrink: 0;
 
@@ -129,6 +131,16 @@
 				width: 100%;
 				height: 100%;
 				object-fit: cover;
+				border-radius: $item-corner;
+			}
+
+			.perpetuity-badge {
+				position: absolute;
+				top: calc($unit * -1);
+				right: $unit-2x;
+				width: $unit-3x;
+				height: $unit-3x;
+				z-index: effects.$z-sticky;
 			}
 		}
 
@@ -154,11 +166,6 @@
 				text-overflow: ellipsis;
 			}
 
-			.perpetuity-badge {
-				width: 16px;
-				height: 16px;
-				flex-shrink: 0;
-			}
 		}
 	}
 
