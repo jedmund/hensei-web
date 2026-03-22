@@ -322,6 +322,7 @@ export interface Guidebook {
 export interface User {
   id: string
   username: string
+  displayName?: string | null
   profilePicture?: string
   role?: string
   createdAt?: string

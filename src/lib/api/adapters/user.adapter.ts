@@ -11,6 +11,7 @@ import { DEFAULT_ADAPTER_CONFIG } from './config'
 interface ApiUserResponse {
   id: string
   username: string
+  displayName?: string | null  // transformed from display_name
   language: string
   private: boolean
   gender: number
@@ -43,6 +44,7 @@ interface ApiUserResponse {
 export interface UserInfo {
   id: string
   username: string
+  displayName?: string | null
   language: string
   private: boolean
   gender: number
@@ -96,6 +98,7 @@ function transformUserResponse(apiUser: ApiUserResponse): UserInfo {
   return {
     id: apiUser.id,
     username: apiUser.username,
+    displayName: apiUser.displayName ?? undefined,
     language: apiUser.language,
     private: apiUser.private,
     gender: apiUser.gender,
