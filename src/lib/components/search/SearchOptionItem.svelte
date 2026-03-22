@@ -1,6 +1,6 @@
 
 <script lang="ts">
-	import { getCharacterImage, getWeaponImage, getSummonImage } from '$lib/utils/images'
+	import { getCharacterImage, getWeaponImage, getSummonImage, getWeaponFallbackImage, handleImageFallback } from '$lib/utils/images'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import type { UnifiedSearchSeriesRef } from '$lib/api/adapters/search.adapter'
 
@@ -46,10 +46,14 @@
 				return getSummonImage(granblueId, 'square')
 		}
 	}
+
+	const weaponFallbackUrl = $derived(
+		type === 'Weapon' && element === 0 ? getWeaponFallbackImage(granblueId, 'square') : undefined
+	)
 </script>
 
 <div class="option-item">
-	<img src={getImage()} alt="" class="option-image" style="width: {imageSize}px; height: {imageSize}px;" />
+	<img src={getImage()} alt="" class="option-image" style="width: {imageSize}px; height: {imageSize}px;" onerror={(e) => handleImageFallback(e, weaponFallbackUrl)} />
 	<div class="option-info">
 		<span class="option-label">{label}</span>
 		{#if type === 'Character'}

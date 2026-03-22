@@ -2,7 +2,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { searchAdapter, type SearchResult } from '$lib/api/adapters'
-  import { getCharacterImage, getWeaponImage, getSummonImage, getPlaceholderImage } from '$lib/utils/images'
+  import { getCharacterImage, getWeaponImage, getSummonImage, getPlaceholderImage, getWeaponFallbackImage, handleImageFallback } from '$lib/utils/images'
   import { toast } from 'svelte-sonner'
   import { extractErrorMessage } from '$lib/utils/errors'
   import { getElementColor, getElementOptions } from '$lib/utils/element'
@@ -204,6 +204,13 @@
     }
   }
 
+  function getFallbackUrl(item: SearchResult): string | undefined {
+    if (type === 'weapon' && item.element === 0) {
+      return getWeaponFallbackImage(item.granblueId, 'grid')
+    }
+    return undefined
+  }
+
   function getItemName(item: SearchResult): string {
     return localizedName(item.name)
   }
@@ -307,6 +314,7 @@
                 src={getImageUrl(item)}
                 alt={getItemName(item)}
                 class="result-image"
+                onerror={(e) => handleImageFallback(e, getFallbackUrl(item))}
               />
               <span class="result-name">{getItemName(item)}</span>
               {#if item.element !== undefined}

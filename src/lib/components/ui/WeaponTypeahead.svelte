@@ -4,7 +4,7 @@
 	import { Combobox } from 'bits-ui'
 	import Icon from '../Icon.svelte'
 	import { searchAdapter, type SearchResult } from '$lib/api/adapters/search.adapter'
-	import { getWeaponGridImage } from '$lib/utils/images'
+	import { getWeaponGridImage, getWeaponFallbackImage, handleImageFallback } from '$lib/utils/images'
 	import { localizedName, appLocale } from '$lib/utils/locale'
 
 	interface WeaponOption {
@@ -202,6 +202,7 @@
 								src={getWeaponGridImage(weapon.granblueId, weapon.element)}
 								alt=""
 								class="item-image"
+								onerror={(e) => handleImageFallback(e, weapon.element === 0 ? getWeaponFallbackImage(weapon.granblueId, 'grid') : undefined)}
 							/>
 							<span class="item-label">{weapon.label}</span>
 							{#if selected}

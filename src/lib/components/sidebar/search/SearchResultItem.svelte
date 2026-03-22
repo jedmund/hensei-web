@@ -12,6 +12,7 @@
 		getSummonImage,
 		getPlaceholder
 	} from '$lib/features/database/detail/image'
+	import { getWeaponFallbackImage, handleImageFallback } from '$lib/utils/images'
 	import type { AddItemResult } from '$lib/types/api/search'
 
 	interface Props {
@@ -56,6 +57,9 @@
 
 	const itemName = $derived(getItemName(item))
 	const imageUrl = $derived(getImageUrl(item))
+	const weaponFallbackUrl = $derived(
+		type === 'weapon' && item.element === 0 ? getWeaponFallbackImage(item.granblueId, 'square') : undefined
+	)
 	const isDisabled = $derived(disabled || inTeam)
 </script>
 
@@ -69,7 +73,7 @@
 		aria-label={inTeam ? m.search_already_in_team() : isDisabled ? m.search_grid_full() : m.search_add_item({ name: itemName })}
 		disabled={isDisabled}
 	>
-		<img src={imageUrl} alt={itemName} class="result-image" loading="lazy" />
+		<img src={imageUrl} alt={itemName} class="result-image" loading="lazy" onerror={(e) => handleImageFallback(e, weaponFallbackUrl)} />
 		<div class="result-info">
 			<span class="result-name">{itemName}</span>
 			<div class="result-labels">
