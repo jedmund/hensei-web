@@ -37,7 +37,9 @@ import {
 	getGameCdnSummonImage,
 	getGuidebookImage,
 	getRaidImage,
-	getRaidCdnImage
+	getRaidCdnImage,
+	getWeaponFallbackImage,
+	handleImageFallback
 } from '../images'
 
 const mockedGetImageBaseUrl = vi.mocked(getImageBaseUrl)
@@ -674,5 +676,56 @@ describe('with remote base URL', () => {
 		expect(getWeaponImage('1040001')).toMatch(/^https:\/\/cdn\.example\.com\//)
 		expect(getSummonImage('2040001')).toMatch(/^https:\/\/cdn\.example\.com\//)
 		expect(getPlaceholderImage('character', 'grid')).toMatch(/^https:\/\/cdn\.example\.com\//)
+	})
+})
+
+// ============================================================================
+// Weapon image fallback
+// ============================================================================
+
+describe('getWeaponFallbackImage', () => {
+	it('returns URL without element suffix', () => {
+		expect(getWeaponFallbackImage('1040001', 'grid')).toBe('/images/weapon-grid/1040001.jpg')
+	})
+
+	it('returns URL with transformation suffix', () => {
+		expect(getWeaponFallbackImage('1040001', 'main', '02')).toBe(
+			'/images/weapon-main/1040001_02.jpg'
+		)
+	})
+
+	it('returns undefined for null id', () => {
+		expect(getWeaponFallbackImage(null)).toBeUndefined()
+	})
+
+	it('returns undefined for undefined id', () => {
+		expect(getWeaponFallbackImage(undefined)).toBeUndefined()
+	})
+
+	it('uses correct extension for base variant', () => {
+		expect(getWeaponFallbackImage('1040001', 'base')).toBe('/images/weapon-base/1040001.png')
+	})
+})
+
+describe('handleImageFallback', () => {
+	it('swaps src to fallback URL', () => {
+		const img = { src: 'https://cdn.example.com/weapon-grid/1040001_0.jpg' } as HTMLImageElement
+		const event = { currentTarget: img } as unknown as Event
+		handleImageFallback(event, 'https://cdn.example.com/weapon-grid/1040001.jpg')
+		expect(img.src).toBe('https://cdn.example.com/weapon-grid/1040001.jpg')
+	})
+
+	it('does not swap when fallback matches current src', () => {
+		const img = { src: 'https://cdn.example.com/weapon-grid/1040001.jpg' } as HTMLImageElement
+		const event = { currentTarget: img } as unknown as Event
+		handleImageFallback(event, 'https://cdn.example.com/weapon-grid/1040001.jpg')
+		expect(img.src).toBe('https://cdn.example.com/weapon-grid/1040001.jpg')
+	})
+
+	it('does nothing when no fallback provided', () => {
+		const img = { src: 'https://cdn.example.com/weapon-grid/1040001_0.jpg' } as HTMLImageElement
+		const event = { currentTarget: img } as unknown as Event
+		handleImageFallback(event, undefined)
+		expect(img.src).toBe('https://cdn.example.com/weapon-grid/1040001_0.jpg')
 	})
 })

@@ -279,6 +279,35 @@ export function getWeaponImage(
 }
 
 /**
+ * Get weapon fallback image URL (without element suffix)
+ * Used as onerror fallback for element-changeable weapons whose _0 image doesn't exist
+ */
+export function getWeaponFallbackImage(
+	id: string | number | null | undefined,
+	variant: ImageVariant = 'main',
+	transformation?: string
+): string | undefined {
+	if (!id) return undefined
+	const directory = getImageDirectory('weapon', variant)
+	const extension = getFileExtension('weapon', variant)
+	const basePath = `${getBasePath()}/${directory}`
+	if (transformation) {
+		return `${basePath}/${id}_${transformation}${extension}`
+	}
+	return `${basePath}/${id}${extension}`
+}
+
+/**
+ * Swap an image's src to a fallback URL on error, preventing infinite loops
+ */
+export function handleImageFallback(event: Event, fallbackUrl?: string): void {
+	const img = event.currentTarget as HTMLImageElement
+	if (fallbackUrl && img.src !== fallbackUrl) {
+		img.src = fallbackUrl
+	}
+}
+
+/**
  * Get weapon base image (PNG)
  */
 export function getWeaponBaseImage(
