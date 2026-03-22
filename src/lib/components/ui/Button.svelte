@@ -205,7 +205,6 @@
 		font-family: inherit;
 		@include smooth-transition($duration-zoom, background-color, color, border-color);
 
-
 		&:disabled {
 			cursor: not-allowed;
 			opacity: 0.5;
@@ -490,7 +489,7 @@
 
 	:global([data-button-root].element-styled.light) {
 		background: var(--light-button-bg);
-		color: black;
+		color: white;
 
 		&:hover:not(:disabled) {
 			background: var(--light-button-bg-hover);
