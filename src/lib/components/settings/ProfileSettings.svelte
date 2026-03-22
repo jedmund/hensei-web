@@ -4,10 +4,11 @@
 	import Select from '../ui/Select.svelte'
 	import Input from '../ui/Input.svelte'
 	import SettingsRow from '../ui/SettingsRow.svelte'
+	import ElementPicker from '../ui/element-picker/ElementPicker.svelte'
 	import { pictureData } from '$lib/utils/pictureData'
 	import { localizedName } from '$lib/utils/locale'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
-	import { getElementColor, getElementKey } from '$lib/utils/element'
+	import { getElementKey } from '$lib/utils/element'
 	import type { ElementType } from '../ui/SettingsNav.svelte'
 
 	interface Props {
@@ -48,6 +49,12 @@
 		onThemeChange
 	}: Props = $props()
 
+	// Element key ↔ numeric ID conversion
+	const ELEMENT_KEY_TO_ID: Record<string, number> = {
+		wind: 1, fire: 2, water: 3, earth: 4, dark: 5, light: 6
+	}
+	const elementId = $derived(ELEMENT_KEY_TO_ID[element] ?? 1)
+
 	// Prepare options for selects
 	const pictureOptions = $derived(
 		pictureData
@@ -58,22 +65,6 @@
 				image: getAvatarSrc(p.filename)
 			}))
 	)
-
-	// Create SVG circle data URL for element color
-	function getElementCircle(elementId: number): string {
-		const color = getElementColor(elementId)
-		const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="${color}"/></svg>`
-		return `data:image/svg+xml,${encodeURIComponent(svg)}`
-	}
-
-	const elementOptions = [
-		{ value: getElementKey(1), label: m.settings_element_wind(), image: getElementCircle(1) },
-		{ value: getElementKey(2), label: m.settings_element_fire(), image: getElementCircle(2) },
-		{ value: getElementKey(3), label: m.settings_element_water(), image: getElementCircle(3) },
-		{ value: getElementKey(4), label: m.settings_element_earth(), image: getElementCircle(4) },
-		{ value: getElementKey(5), label: m.settings_element_dark(), image: getElementCircle(5) },
-		{ value: getElementKey(6), label: m.settings_element_light(), image: getElementCircle(6) }
-	]
 
 	const genderOptions = [
 		{ value: 0, label: 'Gran' },
@@ -157,12 +148,14 @@
 		<!-- Element Selection -->
 		<SettingsRow title={m.settings_element()} subtitle={m.settings_element_subtitle()}>
 			{#snippet control()}
-				<Select
-					bind:value={localElement}
-					options={elementOptions}
-					placeholder={m.settings_element_placeholder()}
+				<ElementPicker
+					value={elementId}
+					onValueChange={(v) => {
+						const key = getElementKey(v as number)
+						localElement = key as ElementType
+					}}
+					mode="dropdown"
 					contained
-					portal
 				/>
 			{/snippet}
 		</SettingsRow>
