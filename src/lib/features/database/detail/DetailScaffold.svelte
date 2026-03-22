@@ -13,6 +13,7 @@
 		type: 'character' | 'summon' | 'weapon' | 'job' | 'raid' | 'accessory'
 		item: any
 		image: string
+		fallbackImage?: string
 		showEdit?: boolean
 		editUrl?: string
 		editMode?: boolean
@@ -35,6 +36,7 @@
 		type,
 		item,
 		image,
+		fallbackImage,
 		showEdit = false,
 		editUrl,
 		editMode = false,
@@ -92,6 +94,7 @@
 		{type}
 		{item}
 		{image}
+		{fallbackImage}
 		{editMode}
 		{showEdit}
 		{editUrl}

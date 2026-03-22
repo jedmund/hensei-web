@@ -23,7 +23,7 @@
 	import TagInput from '$lib/components/ui/TagInput.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
-	import { getWeaponGridImage } from '$lib/utils/images'
+	import { getWeaponGridImage, getWeaponFallbackImage } from '$lib/utils/images'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,
@@ -264,6 +264,11 @@
 	function getWeaponImage(weapon: any): string {
 		return getWeaponGridImage(weapon?.granblueId, weapon?.element, weapon?.instanceElement, weapon?.elementVariantIds)
 	}
+
+	// Fallback image for element-changeable weapons whose _0 image doesn't exist
+	const headerFallbackImage = $derived(
+		weapon?.element === 0 ? getWeaponFallbackImage(weapon?.granblueId, 'grid') : undefined
+	)
 </script>
 
 <div class="page">
@@ -283,6 +288,7 @@
 			type="weapon"
 			item={weapon}
 			image={getWeaponImage(weapon)}
+			fallbackImage={headerFallbackImage}
 			{editMode}
 		>
 			<section class="details">

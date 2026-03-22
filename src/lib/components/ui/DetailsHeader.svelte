@@ -14,6 +14,7 @@
 		type: 'character' | 'summon' | 'weapon' | 'job' | 'raid' | 'accessory'
 		item: any // The character/summon/weapon/job object
 		image: string
+		fallbackImage?: string // Intermediate fallback before placeholder (e.g., weapon without element suffix)
 		editUrl?: string // URL to navigate to for editing (view mode)
 		showEdit?: boolean // Whether to show the edit button
 		editMode?: boolean // Whether currently in edit mode
@@ -26,6 +27,7 @@
 		type,
 		item,
 		image,
+		fallbackImage,
 		editUrl,
 		showEdit = false,
 		editMode = false,
@@ -59,6 +61,11 @@
 				src={image}
 				alt={getDisplayName(name)}
 				onerror={(e) => {
+					const img = e.currentTarget as HTMLImageElement
+					if (fallbackImage && img.src !== fallbackImage) {
+						img.src = fallbackImage
+						return
+					}
 					const placeholder =
 						type === 'job'
 							? `${getBasePath()}/placeholders/placeholder-job.png`
@@ -66,8 +73,8 @@
 								? `${getBasePath()}/placeholders/placeholder-raid-thumbnail.png`
 								: type === 'accessory'
 									? `${getBasePath()}/placeholders/placeholder-weapon-grid.png`
-									: getPlaceholderImage(type, 'main')
-					;(e.currentTarget as HTMLImageElement).src = placeholder
+									: getPlaceholderImage(type, 'grid')
+					img.src = placeholder
 				}}
 			/>
 		</div>

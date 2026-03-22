@@ -32,7 +32,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { toast } from 'svelte-sonner'
-	import { getWeaponGridImage, getWeaponImage as getWeaponImageUrl, getWeaponTransformationStages } from '$lib/utils/images'
+	import { getWeaponGridImage, getWeaponImage as getWeaponImageUrl, getWeaponTransformationStages, getWeaponFallbackImage } from '$lib/utils/images'
 	import { getElementLabel, ELEMENT_DISPLAY_ORDER } from '$lib/utils/element'
 	import {
 		buildWikiEnUrl,
@@ -107,6 +107,11 @@
 		return getWeaponGridImage(weapon?.granblueId, weapon?.element, weapon?.instanceElement, weapon?.elementVariantIds)
 	}
 
+	// Fallback image for element-changeable weapons whose _0 image doesn't exist
+	const headerFallbackImage = $derived(
+		weapon?.element === 0 ? getWeaponFallbackImage(weapon?.granblueId, 'grid') : undefined
+	)
+
 	// Available image sizes for weapons
 	const weaponSizes = ['base', 'grid', 'main', 'square']
 
@@ -141,7 +146,8 @@
 							label: `${variant} (${elementLabel})`,
 							variant,
 							pose: `element-${element}`,
-							poseLabel: elementLabel
+							poseLabel: elementLabel,
+							fallbackUrl: element === 0 ? getWeaponFallbackImage(weapon.granblueId, variant) : undefined
 						})
 					}
 				}
@@ -279,6 +285,7 @@
 			type="weapon"
 			item={weapon}
 			image={getWeaponImage(weapon)}
+			fallbackImage={headerFallbackImage}
 			{currentTab}
 			onTabChange={handleTabChange}
 			onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}

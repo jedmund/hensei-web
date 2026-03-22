@@ -10,6 +10,7 @@
 		pose?: string
 		poseLabel?: string // Custom label for the pose group (e.g., "ULB" for summons)
 		placeholder?: boolean
+		fallbackUrl?: string // Fallback URL when primary image doesn't exist (e.g., _0 suffix missing)
 	}
 
 	interface Props {
@@ -35,6 +36,9 @@
 	// Track download status per image
 	let downloadingImages = $state<Set<string>>(new Set())
 	let downloadingAll = $state(false)
+
+	// Track images that failed and fell back (download should be disabled for these)
+	let failedImages = $state<Set<string>>(new Set())
 
 	// Cache-buster: increment to force image reload after downloads
 	let cacheBuster = $state(0)
@@ -165,6 +169,7 @@
 			{#each poseImages as image}
 				{@const imageKey = getImageKey(image)}
 				{@const isDownloading = downloadingImages.has(imageKey)}
+				{@const isFailed = failedImages.has(imageKey)}
 
 				{#if image.placeholder}
 					<div class="image-item placeholder">
@@ -174,14 +179,26 @@
 				{:else if canEdit && onDownloadImage}
 					<ContextMenuWrapper>
 						{#snippet trigger()}
-							<div class="image-item" class:downloading={isDownloading}>
+							<div class="image-item" class:downloading={isDownloading} class:fallback={isFailed}>
 								<a
 									href={bustUrl(image.url)}
 									target="_blank"
 									rel="noopener noreferrer"
 									class="image-container"
 								>
-									<img src={bustUrl(image.url)} alt={image.label} loading="lazy" />
+									<img
+										src={bustUrl(image.url)}
+										alt={image.label}
+										loading="lazy"
+										onerror={(e) => {
+											const img = e.currentTarget as HTMLImageElement
+											if (image.fallbackUrl && img.src !== image.fallbackUrl) {
+												img.src = image.fallbackUrl
+												failedImages.add(imageKey)
+												failedImages = new Set(failedImages)
+											}
+										}}
+									/>
 									{#if isDownloading}
 										<div class="download-overlay">
 											<span class="download-spinner"></span>
@@ -196,14 +213,14 @@
 							<ContextMenu.Item
 								class="context-menu-item"
 								onclick={() => handleDownload(image, false)}
-								disabled={isDownloading}
+								disabled={isDownloading || isFailed}
 							>
 								Download Image
 							</ContextMenu.Item>
 							<ContextMenu.Item
 								class="context-menu-item"
 								onclick={() => handleDownload(image, true)}
-								disabled={isDownloading}
+								disabled={isDownloading || isFailed}
 							>
 								Re-download Image
 							</ContextMenu.Item>
@@ -235,14 +252,26 @@
 						{/snippet}
 					</ContextMenuWrapper>
 				{:else}
-					<div class="image-item">
+					<div class="image-item" class:fallback={isFailed}>
 						<a
 							href={bustUrl(image.url)}
 							target="_blank"
 							rel="noopener noreferrer"
 							class="image-container"
 						>
-							<img src={bustUrl(image.url)} alt={image.label} loading="lazy" />
+							<img
+								src={bustUrl(image.url)}
+								alt={image.label}
+								loading="lazy"
+								onerror={(e) => {
+									const img = e.currentTarget as HTMLImageElement
+									if (image.fallbackUrl && img.src !== image.fallbackUrl) {
+										img.src = image.fallbackUrl
+										failedImages.add(imageKey)
+										failedImages = new Set(failedImages)
+									}
+								}}
+							/>
 						</a>
 						<span class="image-label">{image.variant}</span>
 					</div>
@@ -288,6 +317,10 @@
 
 		&.downloading {
 			opacity: 0.7;
+		}
+
+		&.fallback {
+			opacity: 0.5;
 		}
 	}
 
