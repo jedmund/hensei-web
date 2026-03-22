@@ -17,6 +17,7 @@
 			| 'destructive-ghost'
 			| 'notice'
 			| 'subtle'
+			| 'raised'
 			| undefined
 		/** Button size */
 		size?: 'small' | 'medium' | 'large' | 'icon' | undefined
@@ -286,6 +287,16 @@
 
 		&:focus-visible {
 			@include focus-ring($blue);
+		}
+	}
+
+	// Raised variant: card-like without border
+	:global([data-button-root].raised) {
+		background-color: var(--card-bg);
+		color: var(--text-primary);
+
+		&:hover:not(:disabled) {
+			background-color: var(--button-bg-hover);
 		}
 	}
 
