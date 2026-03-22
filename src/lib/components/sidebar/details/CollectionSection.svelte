@@ -135,6 +135,7 @@
 	.sync-message {
 		display: flex;
 		align-items: center;
+		justify-content: center;
 		gap: spacing.$unit-half;
 		font-size: typography.$font-small;
 		color: var(--text-secondary);
@@ -159,6 +160,7 @@
 	}
 
 	.sync-button {
+		flex-grow: 1;
 		padding: spacing.$unit-half spacing.$unit;
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
