@@ -89,7 +89,7 @@
 
 	function toggleStar(index: number, empty: boolean) {
 		if (updateUncap && editable) {
-			const newLevel = empty && index > 0 ? index + 1 : index
+			const newLevel = empty ? index + 1 : index
 			if (minUncapLevel !== undefined && newLevel < minUncapLevel) return
 			updateUncap(newLevel)
 		}
