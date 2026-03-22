@@ -7,7 +7,8 @@
 	import { pictureData } from '$lib/utils/pictureData'
 	import { localizedName } from '$lib/utils/locale'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
-	import { getElementColor, getElementKey } from '$lib/utils/element'
+	import { getElementKey, getElementFromKey } from '$lib/utils/element'
+	import ElementPicker from '../ui/element-picker/ElementPicker.svelte'
 	import type { ElementType } from '../ui/SettingsNav.svelte'
 
 	interface Props {
@@ -59,21 +60,12 @@
 			}))
 	)
 
-	// Create SVG circle data URL for element color
-	function getElementCircle(elementId: number): string {
-		const color = getElementColor(elementId)
-		const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="${color}"/></svg>`
-		return `data:image/svg+xml,${encodeURIComponent(svg)}`
+	function handleElementPickerChange(value: number | number[]) {
+		const numVal = typeof value === 'number' ? value : value[0]
+		if (numVal !== undefined) {
+			localElement = getElementKey(numVal) as ElementType
+		}
 	}
-
-	const elementOptions = [
-		{ value: getElementKey(1), label: m.settings_element_wind(), image: getElementCircle(1) },
-		{ value: getElementKey(2), label: m.settings_element_fire(), image: getElementCircle(2) },
-		{ value: getElementKey(3), label: m.settings_element_water(), image: getElementCircle(3) },
-		{ value: getElementKey(4), label: m.settings_element_earth(), image: getElementCircle(4) },
-		{ value: getElementKey(5), label: m.settings_element_dark(), image: getElementCircle(5) },
-		{ value: getElementKey(6), label: m.settings_element_light(), image: getElementCircle(6) }
-	]
 
 	const genderOptions = [
 		{ value: 0, label: 'Gran' },
@@ -97,6 +89,7 @@
 	// Local state derived from props — overrides via bind:value are temporary
 	let localPicture = $derived(picture)
 	let localElement = $derived(element)
+	const elementAsNumber = $derived(getElementFromKey(localElement))
 	let localGranblueId = $derived(granblueId)
 	let localWikiProfile = $derived(wikiProfile)
 	let localYoutube = $derived(youtube)
@@ -157,12 +150,11 @@
 		<!-- Element Selection -->
 		<SettingsRow title={m.settings_element()} subtitle={m.settings_element_subtitle()}>
 			{#snippet control()}
-				<Select
-					bind:value={localElement}
-					options={elementOptions}
-					placeholder={m.settings_element_placeholder()}
+				<ElementPicker
+					value={elementAsNumber}
+					onValueChange={handleElementPickerChange}
+					mode="dropdown"
 					contained
-					portal
 				/>
 			{/snippet}
 		</SettingsRow>

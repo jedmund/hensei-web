@@ -92,6 +92,14 @@ export function getElementKey(element?: number): string {
 	return (ELEMENT_KEYS[element] ?? 'null').toLowerCase()
 }
 
+/** Reverse lookup: string key (e.g. "fire") → numeric element ID */
+export function getElementFromKey(key?: string): number | undefined {
+	if (!key) return undefined
+	const lower = key.toLowerCase()
+	const entry = Object.entries(ELEMENT_KEYS).find(([, v]) => v.toLowerCase() === lower)
+	return entry ? Number(entry[0]) : undefined
+}
+
 /**
  * Get CSS class name for an element, returning 'neutral' for unknown/null elements.
  * Used by unit components for focus rings and element-specific styling.
