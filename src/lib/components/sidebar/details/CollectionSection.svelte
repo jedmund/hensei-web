@@ -125,8 +125,7 @@
 
 	.sync-banner {
 		display: flex;
-		align-items: center;
-		justify-content: space-between;
+		flex-direction: column;
 		padding: spacing.$unit calc(spacing.$unit * 1.5);
 		background: var(--button-bg);
 		border-radius: spacing.$unit;
