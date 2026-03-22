@@ -7,9 +7,12 @@ import type {
   CrewMembership,
   CrewMembersResponse,
   CrewInvitation,
+  CrewRoster,
+  CrewRosterWithMembers,
   PhantomPlayer,
   CreateCrewInput,
   UpdateCrewInput,
+  UpdateCrewRosterInput,
   CreatePhantomPlayerInput,
   UpdatePhantomPlayerInput,
   UpdateMembershipInput,
@@ -108,6 +111,42 @@ export class CrewAdapter extends BaseAdapter {
     const url = queryString ? `/crew/roster?${queryString}` : '/crew/roster'
 
     return this.request<RosterResponse>(url, options)
+  }
+
+  // ==================== Crew Roster Operations ====================
+
+  /**
+   * List all saved rosters for the current user's crew
+   */
+  async getCrewRosters(options?: RequestOptions): Promise<CrewRoster[]> {
+    const response = await this.request<{ crewRosters: CrewRoster[] }>('/crew/crew_rosters', options)
+    return response.crewRosters
+  }
+
+  /**
+   * Get a single roster with member ownership data
+   */
+  async getCrewRoster(rosterId: string, options?: RequestOptions): Promise<CrewRosterWithMembers> {
+    return this.request<CrewRosterWithMembers>(`/crew/crew_rosters/${rosterId}`, options)
+  }
+
+  /**
+   * Update a roster's name or items (officers only)
+   */
+  async updateCrewRoster(
+    rosterId: string,
+    input: UpdateCrewRosterInput,
+    options?: RequestOptions
+  ): Promise<CrewRoster> {
+    const response = await this.request<{ crewRoster: CrewRoster }>(
+      `/crew/crew_rosters/${rosterId}`,
+      {
+        ...options,
+        method: 'PUT',
+        body: JSON.stringify(input)
+      }
+    )
+    return response.crewRoster
   }
 
   /**

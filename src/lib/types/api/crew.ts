@@ -129,6 +129,52 @@ export interface UpdateMembershipInput {
   retiredAt?: string
 }
 
+// Crew roster (persisted per-element roster configs)
+
+export type RosterItemRef = {
+  id: string
+  type: 'Character' | 'Weapon' | 'Summon'
+}
+
+export interface CrewRoster {
+  id: string
+  name: string
+  element: number
+  items: RosterItemRef[]
+  createdAt: string
+  updatedAt: string
+  createdBy?: {
+    id: string
+    username: string
+  }
+}
+
+export interface EnrichedRosterItem {
+  id: string
+  type: 'Character' | 'Weapon' | 'Summon'
+  granblueId: string
+  name: string
+  element?: number
+  season?: number | null
+  uncap?: {
+    flb: boolean
+    ulb?: boolean
+    transcendence: boolean
+  }
+  special?: boolean
+}
+
+export interface CrewRosterWithMembers {
+  roster: CrewRoster
+  items: EnrichedRosterItem[]
+  members: RosterMember[]
+}
+
+export interface UpdateCrewRosterInput {
+  name?: string
+  items?: RosterItemRef[]
+}
+
 // Roster feature types
 
 export interface RosterItem {
