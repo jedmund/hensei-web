@@ -113,20 +113,21 @@
 			// Invalidate the detail query to refetch member ownership
 			queryClient.invalidateQueries({ queryKey: crewKeys.crewRoster(updatedRoster.id) })
 		},
-		onError: (error) => {
-			toast.error(extractErrorMessage(error, 'Failed to save roster'))
+		onError: (_error, vars) => {
+			toast.error(extractErrorMessage(_error, 'Failed to save roster'))
+			// Rollback: invalidate to refetch server state
+			queryClient.invalidateQueries({ queryKey: crewKeys.crewRosters() })
+			queryClient.invalidateQueries({ queryKey: crewKeys.crewRoster(vars.rosterId) })
 		}
 	}))
 
 	const isSaving = $derived(updateRosterMutation.isPending)
 
-	function saveRoster(items: RosterItemRef[]) {
-		if (!activeRosterId) return
-
-		// Debounce saves
+	function saveRoster(rosterId: string, items: RosterItemRef[]) {
+		// Debounce saves — capture rosterId at call time to avoid race with tab switching
 		if (saveTimeout) clearTimeout(saveTimeout)
 		saveTimeout = setTimeout(() => {
-			updateRosterMutation.mutate({ rosterId: activeRosterId, items })
+			updateRosterMutation.mutate({ rosterId, items })
 		}, 500)
 	}
 
@@ -135,27 +136,29 @@
 		if (activeRoster.items.some((item) => item.id === result.id && item.type === result.type))
 			return
 
+		const rosterId = activeRoster.id
 		const newItems: RosterItemRef[] = [...activeRoster.items, { id: result.id, type: result.type }]
 
 		// Optimistically update the rosters list cache
 		queryClient.setQueryData(crewKeys.crewRosters(), (old: CrewRoster[] | undefined) =>
-			old?.map((r) => (r.id === activeRoster.id ? { ...r, items: newItems } : r))
+			old?.map((r) => (r.id === rosterId ? { ...r, items: newItems } : r))
 		)
 
-		saveRoster(newItems)
+		saveRoster(rosterId, newItems)
 	}
 
 	function removeItem(id: string, type: ItemType) {
 		if (!activeRoster) return
 
+		const rosterId = activeRoster.id
 		const newItems = activeRoster.items.filter((item) => !(item.id === id && item.type === type))
 
 		// Optimistically update the rosters list cache
 		queryClient.setQueryData(crewKeys.crewRosters(), (old: CrewRoster[] | undefined) =>
-			old?.map((r) => (r.id === activeRoster.id ? { ...r, items: newItems } : r))
+			old?.map((r) => (r.id === rosterId ? { ...r, items: newItems } : r))
 		)
 
-		saveRoster(newItems)
+		saveRoster(rosterId, newItems)
 	}
 
 	function getItemImage(item: SelectedItem): string {
