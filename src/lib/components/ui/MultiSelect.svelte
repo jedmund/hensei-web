@@ -1,4 +1,3 @@
-
 <script lang="ts" generics="T extends string | number">
 	import { Select as SelectPrimitive } from 'bits-ui'
 	import Icon from '../Icon.svelte'
@@ -8,6 +7,8 @@
 		label: string
 		disabled?: boolean
 		color?: string
+		/** CSS color applied only to the check indicator, without rendering a color dot */
+		indicatorColor?: string
 		image?: string
 	}
 
@@ -48,9 +49,7 @@
 			value: String(opt.value),
 			disabled:
 				opt.disabled ||
-				(minSelected > 0 &&
-					value.length <= minSelected &&
-					value.includes(opt.value))
+				(minSelected > 0 && value.length <= minSelected && value.includes(opt.value))
 		}))
 	)
 
@@ -114,13 +113,13 @@
 
 	<SelectPrimitive.Content class="multi-content">
 		<SelectPrimitive.Viewport>
-			{#each stringOptions as option}
+			{#each stringOptions as option (option.value)}
 				<SelectPrimitive.Item
 					value={option.value}
 					label={option.label}
 					disabled={option.disabled}
 					class="multi-item"
-					style={option.color ? `--option-color: ${option.color}` : ''}
+					style={option.indicatorColor ? `--option-color: ${option.indicatorColor}` : option.color ? `--option-color: ${option.color}` : ''}
 				>
 					{#snippet children({ selected })}
 						{#if option.image}
@@ -270,7 +269,7 @@
 	// Dropdown items
 	:global([data-select-item].multi-item) {
 		align-items: center;
-		border-radius: $item-corner-small;
+		border-radius: $item-corner;
 		color: var(--text-primary);
 		cursor: pointer;
 		display: flex;
@@ -311,7 +310,7 @@
 		:global(.check-icon) {
 			opacity: 0;
 			transition: opacity $duration-quick ease;
-			color: var(--text-tertiary);
+			color: inherit;
 		}
 
 		:global(.check-icon.visible) {
@@ -341,7 +340,7 @@
 
 		:global(.indicator) {
 			margin-left: auto;
-			color: var(--accent-color);
+			color: var(--option-color, var(--text-tertiary));
 		}
 	}
 

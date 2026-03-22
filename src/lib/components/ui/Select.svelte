@@ -1,4 +1,3 @@
-
 <script lang="ts" generics="T extends string | number">
 	import type { Snippet } from 'svelte'
 	import { Select as SelectPrimitive } from 'bits-ui'
@@ -12,6 +11,8 @@
 		image?: string
 		/** CSS color for a colored dot indicator */
 		color?: string
+		/** CSS color applied only to the check indicator, without rendering a color dot */
+		indicatorColor?: string
 		/** Optional suffix text displayed in muted style */
 		suffix?: string
 		/** Display label in muted/tertiary color */
@@ -135,6 +136,7 @@
 									value={String(option.value)}
 									{...option.disabled !== undefined ? { disabled: option.disabled } : {}}
 									class="item"
+									style={option.indicatorColor ? `--option-color: ${option.indicatorColor}` : option.color ? `--option-color: ${option.color}` : ''}
 								>
 									{#snippet children({ selected })}
 										{#if option.color}
@@ -166,6 +168,7 @@
 								label={option.label}
 								disabled={option.disabled}
 								class="item"
+								style={option.indicatorColor ? `--option-color: ${option.indicatorColor}` : option.color ? `--option-color: ${option.color}` : ''}
 							>
 								{#snippet children({ selected })}
 									{#if option.color}
@@ -222,6 +225,7 @@
 								label={option.label}
 								disabled={option.disabled}
 								class="item"
+								style={option.indicatorColor ? `--option-color: ${option.indicatorColor}` : option.color ? `--option-color: ${option.color}` : ''}
 							>
 								{#snippet children({ selected })}
 									{#if option.color}
@@ -252,6 +256,7 @@
 							value={String(option.value)}
 							{...option.disabled !== undefined ? { disabled: option.disabled } : {}}
 							class="item"
+							style={option.indicatorColor ? `--option-color: ${option.indicatorColor}` : option.color ? `--option-color: ${option.color}` : ''}
 						>
 							{#snippet children({ selected })}
 								{#if option.color}
@@ -438,7 +443,7 @@
 	// Dropdown items
 	:global([data-select-item].item) {
 		align-items: center;
-		border-radius: $item-corner-small;
+		border-radius: $item-corner;
 		color: var(--text-primary);
 		cursor: pointer;
 		display: flex;
@@ -489,7 +494,7 @@
 
 		:global(.indicator) {
 			margin-left: auto;
-			color: var(--accent-color);
+			color: var(--option-color, var(--text-tertiary));
 		}
 	}
 
