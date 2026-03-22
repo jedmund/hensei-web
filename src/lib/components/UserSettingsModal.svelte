@@ -35,6 +35,7 @@
 
 	// Form state - Account section (initialized empty, populated from API)
 	let formUsername = $derived(username)
+	let formDisplayName = $state('')
 	let formEmail = $state('')
 	let emailVerified = $state(false)
 	let currentPassword = $state('')
@@ -96,6 +97,7 @@
 		if (currentUserQuery.data && !formInitialized) {
 			const data = currentUserQuery.data
 			// Account
+			formDisplayName = data.displayName ?? ''
 			formEmail = data.email ?? ''
 			emailVerified = data.emailVerified ?? false
 			// Profile
@@ -169,6 +171,7 @@
 		try {
 			// Prepare the update data
 			const updateData: Parameters<typeof users.update>[1] = {
+				displayName: formDisplayName || undefined,
 				picture,
 				element,
 				gender,
@@ -297,12 +300,14 @@
 					{:else if activeSection === 'account'}
 						<AccountSettings
 							username={formUsername}
+							displayName={formDisplayName}
 							email={formEmail}
 							{emailVerified}
 							{bahamut}
 							{role}
 							{element}
 							onUsernameChange={(v) => (formUsername = v)}
+							onDisplayNameChange={(v) => (formDisplayName = v)}
 							onEmailChange={(v) => (formEmail = v)}
 							onBahamutChange={(v) => (bahamut = v)}
 						/>
