@@ -10,10 +10,16 @@
 	import SkillsSection from './details/SkillsSection.svelte'
 	import TeamView from './details/TeamView.svelte'
 	import CollectionSection from './details/CollectionSection.svelte'
+	import SyncToCollectionDialog from './details/SyncToCollectionDialog.svelte'
+	import { authStore } from '$lib/stores/auth.store.svelte'
+	import { getEditKey } from '$lib/utils/editKeys'
 	import {
 		useSyncGridCharacter,
 		useSyncGridWeapon,
-		useSyncGridSummon
+		useSyncGridSummon,
+		useSyncGridCharacterToCollection,
+		useSyncGridWeaponToCollection,
+		useSyncGridSummonToCollection
 	} from '$lib/api/mutations/grid.mutations'
 
 	interface Props {
@@ -23,10 +29,18 @@
 
 	let { type, item: initialItem }: Props = $props()
 
-	// Sync mutations
+	// Sync mutations (collection → grid)
 	const syncCharacterMutation = useSyncGridCharacter()
 	const syncWeaponMutation = useSyncGridWeapon()
 	const syncSummonMutation = useSyncGridSummon()
+
+	// Sync mutations (grid → collection)
+	const syncCharacterToCollectionMutation = useSyncGridCharacterToCollection()
+	const syncWeaponToCollectionMutation = useSyncGridWeaponToCollection()
+	const syncSummonToCollectionMutation = useSyncGridSummonToCollection()
+
+	// Dialog state
+	let syncToCollectionDialogOpen = $state(false)
 
 	// Derive item from partyStore for reactivity, fall back to prop if not in store
 	// This ensures the sidebar updates when party data changes (e.g., uncap level)
@@ -143,10 +157,29 @@
 		return false
 	})
 
+	// Permission checks
+	const isPartyOwner = $derived.by(() => {
+		const party = partyStore.party
+		if (!party) return false
+		if (authStore.user?.id && party.user?.id === authStore.user.id) return true
+		if (!party.user && party.shortcode && getEditKey(party.shortcode)) return true
+		return false
+	})
+
+	const isCollectionOwner = $derived(
+		!!authStore.user && partyStore.party?.collectionSourceUserId === authStore.user.id
+	)
+
 	const isSyncing = $derived(
 		syncCharacterMutation.isPending ||
 			syncWeaponMutation.isPending ||
 			syncSummonMutation.isPending
+	)
+
+	const isSyncingToCollection = $derived(
+		syncCharacterToCollectionMutation.isPending ||
+			syncWeaponToCollectionMutation.isPending ||
+			syncSummonToCollectionMutation.isPending
 	)
 
 	// Handle sync from collection
@@ -161,6 +194,21 @@
 			await syncWeaponMutation.mutateAsync({ id: itemId, partyShortcode })
 		} else if (type === 'summon') {
 			await syncSummonMutation.mutateAsync({ id: itemId, partyShortcode })
+		}
+	}
+
+	// Handle sync to collection (grid → collection)
+	async function handleSyncToCollection() {
+		const itemId = item && 'id' in item ? item.id : undefined
+		const partyShortcode = partyStore.party?.shortcode ?? ''
+		if (!itemId || !isLinkedToCollection || !partyShortcode) return
+
+		if (type === 'character') {
+			await syncCharacterToCollectionMutation.mutateAsync({ id: itemId, partyShortcode })
+		} else if (type === 'weapon') {
+			await syncWeaponToCollectionMutation.mutateAsync({ id: itemId, partyShortcode })
+		} else if (type === 'summon') {
+			await syncSummonToCollectionMutation.mutateAsync({ id: itemId, partyShortcode })
 		}
 	}
 </script>
@@ -181,8 +229,18 @@
 		hasCollection={!!partyStore.activeCollection}
 		sourceUsername={partyStore.activeCollectionUser === 'source' ? partyStore.party?.collectionSourceUser?.username : undefined}
 		isOutOfSync={isLinkedToCollection && isOutOfSync}
+		{isPartyOwner}
+		{isCollectionOwner}
 		{isSyncing}
+		{isSyncingToCollection}
 		onSync={handleSync}
+		onSyncToCollection={() => { syncToCollectionDialogOpen = true }}
+	/>
+
+	<SyncToCollectionDialog
+		bind:open={syncToCollectionDialogOpen}
+		{type}
+		onConfirm={handleSyncToCollection}
 	/>
 
 	{#if selectedView === 'canonical'}

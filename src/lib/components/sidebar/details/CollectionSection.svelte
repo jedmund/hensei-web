@@ -12,16 +12,42 @@
 		hasCollection?: boolean
 		sourceUsername?: string
 		isOutOfSync?: boolean
+		isPartyOwner?: boolean
+		isCollectionOwner?: boolean
 		isSyncing?: boolean
+		isSyncingToCollection?: boolean
 		onSync?: () => void
+		onSyncToCollection?: () => void
 	}
 
-	let { type, count, element, gridCount, hasCollection = false, sourceUsername, isOutOfSync = false, isSyncing = false, onSync }: Props = $props()
+	let {
+		type,
+		count,
+		element,
+		gridCount,
+		hasCollection = false,
+		sourceUsername,
+		isOutOfSync = false,
+		isPartyOwner = false,
+		isCollectionOwner = false,
+		isSyncing = false,
+		isSyncingToCollection = false,
+		onSync,
+		onSyncToCollection
+	}: Props = $props()
 
 	const isOwnCollection = $derived(!sourceUsername)
 	const isInsufficient = $derived(
 		(type === 'weapon' && gridCount != null && count < gridCount) ||
 		(type !== 'weapon' && count === 0)
+	)
+
+	const typeLabel = $derived(
+		type === 'character'
+			? m.type_character()
+			: type === 'weapon'
+				? m.type_weapon()
+				: m.type_summon()
 	)
 
 	const elementName = $derived(element ? getElementKey(element) : 'null')
@@ -56,9 +82,20 @@
 						</span>
 					</Tooltip>
 				</div>
-				<button class="sync-button" onclick={onSync} disabled={isSyncing}>
-					{isSyncing ? m.details_collection_syncing() : m.details_collection_sync()}
-				</button>
+				{#if isPartyOwner || isCollectionOwner}
+					<div class="sync-buttons">
+						{#if isPartyOwner}
+							<button class="sync-button" onclick={onSync} disabled={isSyncing}>
+								{isSyncing ? m.details_collection_syncing() : m.details_collection_sync_item({ type: typeLabel })}
+							</button>
+						{/if}
+						{#if isCollectionOwner}
+							<button class="sync-button" onclick={onSyncToCollection} disabled={isSyncingToCollection}>
+								{isSyncingToCollection ? m.details_collection_syncing_collection() : m.details_collection_sync_collection()}
+							</button>
+						{/if}
+					</div>
+				{/if}
 			</div>
 		{/if}
 	</div>
@@ -114,6 +151,12 @@
 		&:hover {
 			color: var(--text-secondary);
 		}
+	}
+
+	.sync-buttons {
+		display: flex;
+		gap: spacing.$unit-half;
+		flex-shrink: 0;
 	}
 
 	.sync-button {
