@@ -901,6 +901,8 @@
 
 	"crew_roster_loading": "Loading...",
 	"crew_roster_remove_aria": "Remove {name}",
+	"crew_roster_empty_items": "Search and add characters, weapons, or summons to check crew ownership",
+	"crew_roster_saving": "Saving…",
 
 	"crew_teams_not_in_crew": "You're not in a crew",
 	"crew_teams_loading": "Loading shared teams...",

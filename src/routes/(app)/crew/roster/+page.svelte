@@ -1,12 +1,18 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { createQuery } from '@tanstack/svelte-query'
-	import { crewQueries } from '$lib/api/queries/crew.queries'
+	import { createQuery, createMutation, useQueryClient } from '@tanstack/svelte-query'
+	import { crewQueries, crewKeys } from '$lib/api/queries/crew.queries'
+	import { crewAdapter } from '$lib/api/adapters/crew.adapter'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
-	import { type UnifiedSearchSeriesRef } from '$lib/api/adapters/search.adapter'
 	import { getCharacterImage, getWeaponImage, getSummonImage } from '$lib/utils/images'
+	import {
+		ELEMENT_DISPLAY_ORDER,
+		getElementClass,
+		getElementImage,
+		getElementLabel
+	} from '$lib/utils/element'
+	import type { CrewRoster, EnrichedRosterItem, RosterItemRef } from '$lib/types/api/crew'
 	import Icon from '$lib/components/Icon.svelte'
 	import RichTooltip from '$lib/components/ui/RichTooltip.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
@@ -29,7 +35,7 @@
 	// Item type for roster
 	type ItemType = 'Character' | 'Weapon' | 'Summon'
 
-	// Selected item with metadata
+	// Selected item with metadata (local UI state enriched beyond what's persisted)
 	interface SelectedItem {
 		id: string
 		granblueId: string
@@ -37,16 +43,21 @@
 		type: ItemType
 		element?: number
 		season?: number | null
-		series?: UnifiedSearchSeriesRef[] | null
 	}
 
-	// State
-	let selectedItems = $state<SelectedItem[]>([])
+	// State — default to first element in display order (Fire)
+	let activeElement = $state<number>(ELEMENT_DISPLAY_ORDER[0])
 	let hasCheckedOfficer = $state(false)
+	let saveTimeout: ReturnType<typeof setTimeout> | null = null
 
-	// Check if user is an officer (one-time after initial load)
+	const queryClient = useQueryClient()
+
+	// Check if user is an officer (one-time after crew data loads)
+	// We wait for membership to be populated rather than checking isLoading,
+	// because cached query data can cause isLoading to be false before the
+	// setCrew effect runs.
 	$effect(() => {
-		if (crewStore.isLoading) return
+		if (!crewStore.membership) return
 		if (hasCheckedOfficer) return
 		hasCheckedOfficer = true
 		if (!crewStore.isOfficer) {
@@ -54,47 +65,97 @@
 		}
 	})
 
-	// Derived ID arrays for the roster query key
-	const characterIds = $derived(
-		selectedItems.filter((i) => i.type === 'Character').map((i) => i.id)
+	// Fetch all rosters for the crew
+	const rostersQuery = createQuery(() => crewQueries.crewRosters())
+	const rosters = $derived(rostersQuery.data ?? [])
+
+	// Find the active roster by element
+	const activeRoster = $derived(rosters.find((r) => r.element === activeElement))
+	const activeRosterId = $derived(activeRoster?.id ?? '')
+
+	// Fetch the active roster's data (items + member ownership)
+	const rosterDetailQuery = createQuery(() => crewQueries.crewRoster(activeRosterId))
+	const rosterDetail = $derived(rosterDetailQuery.data)
+	const rosterMembers = $derived(rosterDetail?.members ?? [])
+	const isLoadingRoster = $derived(rosterDetailQuery.isLoading && !!activeRosterId)
+
+	// Enriched items from the API (includes granblueId, name, element, etc.)
+	const enrichedItems = $derived<EnrichedRosterItem[]>(rosterDetail?.items ?? [])
+
+	// Build selectedItems from the enriched API data
+	const selectedItems = $derived<SelectedItem[]>(
+		enrichedItems.map((item) => ({
+			id: item.id,
+			granblueId: item.granblueId,
+			name: item.name,
+			type: item.type,
+			element: item.element,
+			season: item.season
+		}))
 	)
-	const weaponIds = $derived(selectedItems.filter((i) => i.type === 'Weapon').map((i) => i.id))
-	const summonIds = $derived(selectedItems.filter((i) => i.type === 'Summon').map((i) => i.id))
-
-	// TanStack Query handles deduplication, cancellation, caching
-	const rosterQuery = createQuery(() => ({
-		...crewQueries.roster(characterIds, weaponIds, summonIds)
-	}))
-
-	const rosterData = $derived(rosterQuery.data?.members ?? [])
-	const isLoadingRoster = $derived(rosterQuery.isLoading && selectedItems.length > 0)
 
 	// Show error toast on query failure
 	$effect(() => {
-		if (rosterQuery.isError) {
-			toast.error(extractErrorMessage(rosterQuery.error, 'Failed to load roster'))
+		if (rosterDetailQuery.isError) {
+			toast.error(extractErrorMessage(rosterDetailQuery.error, 'Failed to load roster'))
 		}
 	})
 
-	function handleSelect(result: RosterSearchResult) {
-		if (selectedItems.some((item) => item.id === result.id && item.type === result.type)) return
+	// Mutation for saving roster items
+	const updateRosterMutation = createMutation(() => ({
+		mutationFn: (vars: { rosterId: string; items: RosterItemRef[] }) =>
+			crewAdapter.updateCrewRoster(vars.rosterId, { items: vars.items }),
+		onSuccess: (updatedRoster) => {
+			// Update the rosters list cache
+			queryClient.setQueryData(crewKeys.crewRosters(), (old: CrewRoster[] | undefined) =>
+				old?.map((r) => (r.id === updatedRoster.id ? { ...r, items: updatedRoster.items } : r))
+			)
+			// Invalidate the detail query to refetch member ownership
+			queryClient.invalidateQueries({ queryKey: crewKeys.crewRoster(updatedRoster.id) })
+		},
+		onError: (error) => {
+			toast.error(extractErrorMessage(error, 'Failed to save roster'))
+		}
+	}))
 
-		selectedItems = [
-			...selectedItems,
-			{
-				id: result.id,
-				granblueId: result.granblueId,
-				name: result.name,
-				type: result.type,
-				element: result.element,
-				season: result.season,
-				series: result.series
-			}
-		]
+	const isSaving = $derived(updateRosterMutation.isPending)
+
+	function saveRoster(items: RosterItemRef[]) {
+		if (!activeRosterId) return
+
+		// Debounce saves
+		if (saveTimeout) clearTimeout(saveTimeout)
+		saveTimeout = setTimeout(() => {
+			updateRosterMutation.mutate({ rosterId: activeRosterId, items })
+		}, 500)
+	}
+
+	function handleSelect(result: RosterSearchResult) {
+		if (!activeRoster) return
+		if (activeRoster.items.some((item) => item.id === result.id && item.type === result.type))
+			return
+
+		const newItems: RosterItemRef[] = [...activeRoster.items, { id: result.id, type: result.type }]
+
+		// Optimistically update the rosters list cache
+		queryClient.setQueryData(crewKeys.crewRosters(), (old: CrewRoster[] | undefined) =>
+			old?.map((r) => (r.id === activeRoster.id ? { ...r, items: newItems } : r))
+		)
+
+		saveRoster(newItems)
 	}
 
 	function removeItem(id: string, type: ItemType) {
-		selectedItems = selectedItems.filter((item) => !(item.id === id && item.type === type))
+		if (!activeRoster) return
+
+		const newItems = activeRoster.items.filter((item) => !(item.id === id && item.type === type))
+
+		// Optimistically update the rosters list cache
+		queryClient.setQueryData(crewKeys.crewRosters(), (old: CrewRoster[] | undefined) =>
+			old?.map((r) => (r.id === activeRoster.id ? { ...r, items: newItems } : r))
+		)
+
+		saveRoster(newItems)
 	}
 
 	function getItemImage(item: SelectedItem): string {
@@ -107,7 +168,6 @@
 				return getSummonImage(item.granblueId, 'square')
 		}
 	}
-
 </script>
 
 <svelte:head>
@@ -125,57 +185,79 @@
 		<CrewTabs userElement={data.currentUser?.element} />
 
 		<div class="roster-content">
-			<RosterSearch onSelect={handleSelect} />
+			<!-- Element tabs -->
+			<div class="element-tabs">
+				{#each ELEMENT_DISPLAY_ORDER as element (element)}
+					<button
+						class="element-tab {getElementClass(element)}"
+						class:active={activeElement === element}
+						onclick={() => (activeElement = element)}
+					>
+						<img
+							src={getElementImage(element)}
+							alt={getElementLabel(element)}
+							class="element-icon"
+						/>
+						{getElementLabel(element)}
+					</button>
+				{/each}
+			</div>
+			{#if isSaving}
+				<span class="save-indicator">{m.crew_roster_saving()}</span>
+			{/if}
+
+			{#if crewStore.isOfficer}
+				<RosterSearch onSelect={handleSelect} />
+			{/if}
 
 			<!-- Roster Grid -->
 			<div class="roster-section">
-				{#if isLoadingRoster}
+				{#if rostersQuery.isLoading}
 					<div class="loading-roster">{m.crew_roster_loading()}</div>
-				{:else if rosterData.length > 0}
+				{:else if !activeRoster}
+					<div class="empty-roster">{m.crew_roster_no_members()}</div>
+				{:else if activeRoster.items.length === 0}
+					<div class="empty-roster">{m.crew_roster_empty_items()}</div>
+				{:else if isLoadingRoster}
+					<div class="loading-roster">{m.crew_roster_loading()}</div>
+				{:else if rosterMembers.length > 0}
 					<div class="roster-grid">
-						{#if selectedItems.length > 0}
-							<div class="roster-header">
-								<div class="member-col"></div>
-								{#each selectedItems as item (item.id + item.type)}
-									<div class="item-col">
-										<RichTooltip>
-											{#snippet content()}
-												<div class="tooltip-content">
-													<span class="item-name">{item.name}</span>
-													{#if item.type === 'Character'}
-														<CharacterTags
-															character={{
-																element: item.element,
-																season: item.season,
-																series: item.series
-															}}
-														/>
-													{/if}
-												</div>
-											{/snippet}
-											{#snippet children()}
-												<div class="header-item-wrapper">
-													<img
-														src={getItemImage(item)}
-														alt={item.name}
-														class="header-item-image"
+						<div class="roster-header">
+							<div class="member-col"></div>
+							{#each selectedItems as item (item.id + item.type)}
+								<div class="item-col">
+									<RichTooltip>
+										{#snippet content()}
+											<div class="tooltip-content">
+												<span class="item-name">{item.name}</span>
+												{#if item.type === 'Character'}
+													<CharacterTags
+														character={{
+															element: item.element,
+															season: item.season
+														}}
 													/>
-													<button
-														class="remove-item-btn"
-														onclick={() => removeItem(item.id, item.type)}
-														aria-label={m.crew_roster_remove_aria({ name: item.name })}
-													>
-														<Icon name="close" size={12} />
-													</button>
-												</div>
-											{/snippet}
-										</RichTooltip>
-									</div>
-								{/each}
-							</div>
-						{/if}
+												{/if}
+											</div>
+										{/snippet}
+										<div class="header-item-wrapper">
+											<img src={getItemImage(item)} alt={item.name} class="header-item-image" />
+											{#if crewStore.isOfficer}
+												<button
+													class="remove-item-btn"
+													onclick={() => removeItem(item.id, item.type)}
+													aria-label={m.crew_roster_remove_aria({ name: item.name })}
+												>
+													<Icon name="close" size={12} />
+												</button>
+											{/if}
+										</div>
+									</RichTooltip>
+								</div>
+							{/each}
+						</div>
 						<div class="roster-body">
-							{#each rosterData as member (member.userId)}
+							{#each rosterMembers as member (member.userId)}
 								<RosterRow {member} {selectedItems} />
 							{/each}
 						</div>
@@ -189,7 +271,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
@@ -209,10 +290,106 @@
 	}
 
 	.roster-content {
-		padding: spacing.$unit-2x;
+		padding: 0 spacing.$unit-2x spacing.$unit-2x;
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-2x;
+	}
+
+	.element-tabs {
+		display: flex;
+		gap: spacing.$unit-half;
+		align-items: center;
+	}
+
+	.element-tab {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: spacing.$unit-half;
+		padding: spacing.$unit spacing.$unit;
+		border: none;
+		border-radius: layout.$item-corner;
+		background: var(--pill-bg);
+		color: var(--text-primary);
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
+		cursor: pointer;
+		transition:
+			background-color 0.15s,
+			color 0.15s;
+
+		&.element-fire {
+			&.active {
+				background: var(--fire-nav-selected-bg);
+				color: var(--fire-nav-selected-text);
+			}
+			&:hover:not(.active) {
+				background: var(--fire-nav-selected-bg);
+				color: var(--fire-nav-selected-text);
+			}
+		}
+		&.element-water {
+			&.active {
+				background: var(--water-nav-selected-bg);
+				color: var(--water-nav-selected-text);
+			}
+			&:hover:not(.active) {
+				background: var(--water-nav-selected-bg);
+				color: var(--water-nav-selected-text);
+			}
+		}
+		&.element-earth {
+			&.active {
+				background: var(--earth-nav-selected-bg);
+				color: var(--earth-nav-selected-text);
+			}
+			&:hover:not(.active) {
+				background: var(--earth-nav-selected-bg);
+				color: var(--earth-nav-selected-text);
+			}
+		}
+		&.element-wind {
+			&.active {
+				background: var(--wind-nav-selected-bg);
+				color: var(--wind-nav-selected-text);
+			}
+			&:hover:not(.active) {
+				background: var(--wind-nav-selected-bg);
+				color: var(--wind-nav-selected-text);
+			}
+		}
+		&.element-dark {
+			&.active {
+				background: var(--dark-nav-selected-bg);
+				color: var(--dark-nav-selected-text);
+			}
+			&:hover:not(.active) {
+				background: var(--dark-nav-selected-bg);
+				color: var(--dark-nav-selected-text);
+			}
+		}
+		&.element-light {
+			&.active {
+				background: var(--light-nav-selected-bg);
+				color: var(--light-nav-selected-text);
+			}
+			&:hover:not(.active) {
+				background: var(--light-nav-selected-bg);
+				color: var(--light-nav-selected-text);
+			}
+		}
+	}
+
+	.element-icon {
+		width: 16px;
+		height: 16px;
+	}
+
+	.save-indicator {
+		font-size: typography.$font-small;
+		color: var(--text-tertiary);
 	}
 
 	.roster-grid {
@@ -264,7 +441,7 @@
 		height: 24px;
 		border-radius: 50%;
 		border: none;
-		background: var(--surface-hover, #e5e5e5);
+		background: var(--pill-bg);
 		color: var(--text-primary);
 		cursor: pointer;
 		display: flex;
@@ -284,6 +461,16 @@
 
 	.item-col:hover .remove-item-btn {
 		opacity: 1;
+	}
+
+	.member-col {
+		flex: 1;
+		min-width: 150px;
+		position: sticky;
+		left: 0;
+		padding-left: spacing.$unit-2x;
+		background: var(--card-bg);
+		z-index: effects.$z-raised;
 	}
 
 	.loading-roster,

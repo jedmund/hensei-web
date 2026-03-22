@@ -901,6 +901,8 @@
 
 	"crew_roster_loading": "読み込み中",
 	"crew_roster_remove_aria": "{name}を外す",
+	"crew_roster_empty_items": "キャラ・武器・召喚石を検索して団員の所持状況を確認",
+	"crew_roster_saving": "保存中…",
 
 	"crew_teams_not_in_crew": "騎空団に所属していません",
 	"crew_teams_loading": "共有編成を読み込み中",

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import type { RosterMember, RosterItem } from '$lib/types/api/crew'
@@ -70,7 +69,7 @@
 					contained
 				/>
 			{:else}
-				<span class="not-owned">—</span>
+				<span class="not-owned">N/A</span>
 			{/if}
 		</div>
 	{/each}
@@ -89,6 +88,7 @@
 		padding: spacing.$unit spacing.$unit-2x spacing.$unit 0;
 		border-radius: layout.$card-corner;
 		transition: background-color 0.1s;
+		min-height: 52px;
 
 		&:hover {
 			background: var(--list-cell-bg-hover);
@@ -115,7 +115,7 @@
 
 		.member-role {
 			font-size: typography.$font-small;
-			color: var(--text-secondary);
+			color: var(--text-tertiary);
 		}
 	}
 
@@ -133,7 +133,9 @@
 
 	.ownership-cell {
 		.not-owned {
-			color: var(--text-secondary);
+			color: var(--text-tertiary);
+			font-size: typography.$font-small;
+			font-weight: typography.$medium;
 		}
 	}
 </style>
