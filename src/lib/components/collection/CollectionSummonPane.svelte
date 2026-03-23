@@ -45,8 +45,16 @@
 
 	let { summon: initialSummon, isOwner, onClose, paneId, initialEdit = false }: Props = $props()
 
-	// Local state for the summon - updated when mutation succeeds
+	// Local state for the summon - updated when mutation succeeds or prop changes
 	let summon = $state<CollectionSummon>(initialSummon)
+
+	// Sync from parent when prop changes (e.g. inline uncap edit on card/row)
+	$effect(() => {
+		const updated = initialSummon
+		if (!isEditing) {
+			summon = updated
+		}
+	})
 
 	// Tab state
 	let selectedTab = $state<'info' | 'collection'>('collection')
