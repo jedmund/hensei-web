@@ -324,6 +324,7 @@ export interface User {
   username: string
   displayName?: string | null
   profilePicture?: string
+  gender?: number
   role?: string
   createdAt?: string
   updatedAt?: string
