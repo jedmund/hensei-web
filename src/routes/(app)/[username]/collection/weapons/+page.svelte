@@ -218,12 +218,20 @@
 								{weapon}
 								editable={data.isOwner}
 								onUncapChange={async (level) => {
-									await updateMutation.mutateAsync({ id: weapon.id, input: { uncapLevel: level } })
+									const input: Record<string, number> = { uncapLevel: level }
+									if (level < 6 && weapon.transcendenceStep > 0) input.transcendenceStep = 0
+									const updated = await updateMutation.mutateAsync({ id: weapon.id, input })
+									if (sidebar.paneStack.currentPane?.props?.weapon?.id === weapon.id) {
+										sidebar.paneStack.updateCurrentProps({ weapon: updated })
+									}
 								}}
 								onTranscendenceChange={async (stage) => {
 									const input: Record<string, number> = { transcendenceStep: stage }
 									if (stage > 0) input.uncapLevel = 6
-									await updateMutation.mutateAsync({ id: weapon.id, input })
+									const updated = await updateMutation.mutateAsync({ id: weapon.id, input })
+									if (sidebar.paneStack.currentPane?.props?.weapon?.id === weapon.id) {
+										sidebar.paneStack.updateCurrentProps({ weapon: updated })
+									}
 								}}
 							/>
 						</SelectableCollectionCard>
@@ -249,12 +257,20 @@
 								{weapon}
 								editable={data.isOwner}
 								onUncapChange={async (level) => {
-									await updateMutation.mutateAsync({ id: weapon.id, input: { uncapLevel: level } })
+									const input: Record<string, number> = { uncapLevel: level }
+									if (level < 6 && weapon.transcendenceStep > 0) input.transcendenceStep = 0
+									const updated = await updateMutation.mutateAsync({ id: weapon.id, input })
+									if (sidebar.paneStack.currentPane?.props?.weapon?.id === weapon.id) {
+										sidebar.paneStack.updateCurrentProps({ weapon: updated })
+									}
 								}}
 								onTranscendenceChange={async (stage) => {
 									const input: Record<string, number> = { transcendenceStep: stage }
 									if (stage > 0) input.uncapLevel = 6
-									await updateMutation.mutateAsync({ id: weapon.id, input })
+									const updated = await updateMutation.mutateAsync({ id: weapon.id, input })
+									if (sidebar.paneStack.currentPane?.props?.weapon?.id === weapon.id) {
+										sidebar.paneStack.updateCurrentProps({ weapon: updated })
+									}
 								}}
 							/>
 						</SelectableCollectionRow>

@@ -236,12 +236,20 @@
 								{character}
 								editable={data.isOwner}
 								onUncapChange={async (level) => {
-									await updateMutation.mutateAsync({ id: character.id, input: { uncapLevel: level } })
+									const input: Record<string, number> = { uncapLevel: level }
+									if (level < 6 && character.transcendenceStep > 0) input.transcendenceStep = 0
+									const updated = await updateMutation.mutateAsync({ id: character.id, input })
+									if (sidebar.paneStack.currentPane?.props?.character?.id === character.id) {
+										sidebar.paneStack.updateCurrentProps({ character: updated })
+									}
 								}}
 								onTranscendenceChange={async (stage) => {
 									const input: Record<string, number> = { transcendenceStep: stage }
 									if (stage > 0) input.uncapLevel = 6
-									await updateMutation.mutateAsync({ id: character.id, input })
+									const updated = await updateMutation.mutateAsync({ id: character.id, input })
+									if (sidebar.paneStack.currentPane?.props?.character?.id === character.id) {
+										sidebar.paneStack.updateCurrentProps({ character: updated })
+									}
 								}}
 							/>
 						</SelectableCollectionCard>
@@ -267,12 +275,20 @@
 								{character}
 								editable={data.isOwner}
 								onUncapChange={async (level) => {
-									await updateMutation.mutateAsync({ id: character.id, input: { uncapLevel: level } })
+									const input: Record<string, number> = { uncapLevel: level }
+									if (level < 6 && character.transcendenceStep > 0) input.transcendenceStep = 0
+									const updated = await updateMutation.mutateAsync({ id: character.id, input })
+									if (sidebar.paneStack.currentPane?.props?.character?.id === character.id) {
+										sidebar.paneStack.updateCurrentProps({ character: updated })
+									}
 								}}
 								onTranscendenceChange={async (stage) => {
 									const input: Record<string, number> = { transcendenceStep: stage }
 									if (stage > 0) input.uncapLevel = 6
-									await updateMutation.mutateAsync({ id: character.id, input })
+									const updated = await updateMutation.mutateAsync({ id: character.id, input })
+									if (sidebar.paneStack.currentPane?.props?.character?.id === character.id) {
+										sidebar.paneStack.updateCurrentProps({ character: updated })
+									}
 								}}
 							/>
 						</SelectableCollectionRow>
