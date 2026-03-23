@@ -23,11 +23,13 @@ export interface SearchFilters {
 	proficiency2?: number[]
 	subaura?: boolean
 	extra?: boolean
-	// Series filter (by slug) - works for weapons, summons, and characters
+	// Series filter (by UUID) - works for weapons, summons, and characters
 	series?: string[]
 	// Character-specific filters
 	season?: number[]
 	characterSeries?: number[]
+	race?: number[]
+	gender?: number[]
 	gachaAvailable?: boolean
 }
 
@@ -113,6 +115,12 @@ export function buildSearchParams(
 		}
 		if (filters.characterSeries && filters.characterSeries.length > 0) {
 			apiFilters.characterSeries = filters.characterSeries
+		}
+		if (filters.race && filters.race.length > 0) {
+			apiFilters.race = filters.race
+		}
+		if (filters.gender && filters.gender.length > 0) {
+			apiFilters.gender = filters.gender
 		}
 		if (filters.gachaAvailable !== undefined) {
 			apiFilters.gachaAvailable = filters.gachaAvailable

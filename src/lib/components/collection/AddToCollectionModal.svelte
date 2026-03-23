@@ -94,16 +94,18 @@
 	)
 
 	// Build filters for search (using SearchFilters type from search.queries)
-	// Filter seriesFilters to only numbers for characterSeries (strings are weapon UUIDs)
-	const numericSeriesFilters = $derived(
-		seriesFilters.filter((s): s is number => typeof s === 'number')
+	// All series filters use string UUIDs
+	const stringSeriesFilters = $derived(
+		seriesFilters.filter((s): s is string => typeof s === 'string')
 	)
 	const searchFilters = $derived<SearchFilters>({
 		element: elementFilters.length > 0 ? elementFilters : undefined,
 		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
 		season: seasonFilters.length > 0 ? seasonFilters : undefined,
-		characterSeries: numericSeriesFilters.length > 0 ? numericSeriesFilters : undefined,
-		proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined
+		series: stringSeriesFilters.length > 0 ? stringSeriesFilters : undefined,
+		proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined,
+		race: raceFilters.length > 0 ? raceFilters : undefined,
+		gender: genderFilters.length > 0 ? genderFilters : undefined
 	})
 
 	// Search query with infinite scroll - dynamic based on entity type
