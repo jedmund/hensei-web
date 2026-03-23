@@ -22,7 +22,8 @@
 		onStarClick
 	}: Props = $props()
 
-	function handleClick() {
+	function handleClick(e: Event) {
+		e.stopPropagation()
 		onStarClick(index, empty)
 	}
 </script>

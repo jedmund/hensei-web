@@ -45,13 +45,16 @@ export function extractErrorMessage(
 			return errorDetails.errors.message
 		}
 
-		// Field-based errors - combine all messages
+		// Field-based errors - combine all messages with humanized field names
 		const errorMessages = Object.entries(errorDetails.errors)
 			.map(([field, messages]) => {
+				const fieldName = field
+					.replace(/_/g, ' ')
+					.replace(/\b\w/g, (c) => c.toUpperCase())
 				if (Array.isArray(messages)) {
-					return messages.join(', ')
+					return `${fieldName} ${messages.join(', ')}`
 				}
-				return String(messages)
+				return `${fieldName} ${String(messages)}`
 			})
 			.filter((msg) => msg && msg !== 'undefined')
 			.join('; ')

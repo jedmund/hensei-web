@@ -8,9 +8,12 @@
 	interface Props {
 		weapon: CollectionWeapon
 		onClick?: () => void
+		editable?: boolean
+		onUncapChange?: (level: number) => Promise<void>
+		onTranscendenceChange?: (stage: number) => Promise<void>
 	}
 
-	let { weapon, onClick }: Props = $props()
+	let { weapon, onClick, editable = false, onUncapChange, onTranscendenceChange }: Props = $props()
 
 	// Get transformation suffix for transcendence
 	const transformation = $derived(weapon.transcendenceStep > 0 ? '02' : undefined)
@@ -19,12 +22,20 @@
 	const displayElement = $derived(weapon.weapon?.element === 0 ? (weapon.element ?? 0) : undefined)
 
 	const imageUrl = $derived(
-		getWeaponImage(weapon.weapon?.granblueId, 'grid', displayElement, transformation, weapon.weapon?.elementVariantIds)
+		getWeaponImage(
+			weapon.weapon?.granblueId,
+			'grid',
+			displayElement,
+			transformation,
+			weapon.weapon?.elementVariantIds
+		)
 	)
 
 	// Fallback URL for element-changeable weapons whose _0 image doesn't exist
 	const weaponFallbackUrl = $derived(
-		weapon.weapon?.element === 0 ? getWeaponFallbackImage(weapon.weapon?.granblueId, 'grid', transformation) : undefined
+		weapon.weapon?.element === 0
+			? getWeaponFallbackImage(weapon.weapon?.granblueId, 'grid', transformation)
+			: undefined
 	)
 
 	const displayName = $derived(localizedName(weapon.weapon?.name))
@@ -38,7 +49,9 @@
 	// Awakening display
 	const awakeningDisplay = $derived.by(() => {
 		if (!weapon.awakening) return null
-		const type = weapon.awakening.type?.name ? localizedName(weapon.awakening.type.name) : 'Balanced'
+		const type = weapon.awakening.type?.name
+			? localizedName(weapon.awakening.type.name)
+			: 'Balanced'
 		const level = weapon.awakening.level || 1
 		const abbrev =
 			type === 'Balanced'
@@ -58,7 +71,12 @@
 <button type="button" class="weapon-row" onclick={onClick}>
 	<div class="core-info">
 		<div class="thumbnail">
-			<img src={imageUrl} alt={displayName} loading="lazy" onerror={(e) => handleImageFallback(e, weaponFallbackUrl)} />
+			<img
+				src={imageUrl}
+				alt={displayName}
+				loading="lazy"
+				onerror={(e) => handleImageFallback(e, weaponFallbackUrl)}
+			/>
 		</div>
 
 		<div class="name-cell">
@@ -78,6 +96,9 @@
 			flb={weapon.weapon?.uncap?.flb}
 			ulb={weapon.weapon?.uncap?.ulb}
 			transcendence={weapon.weapon?.uncap?.transcendence}
+			{editable}
+			updateUncap={onUncapChange}
+			updateTranscendence={onTranscendenceChange}
 		/>
 	</div>
 
@@ -118,7 +139,6 @@
 
 		&:hover {
 			background: var(--list-cell-bg-hover);
-			box-shadow: var(--shadow-md);
 		}
 
 		&:focus-visible {

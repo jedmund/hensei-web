@@ -12,9 +12,12 @@
 	interface Props {
 		character: CollectionCharacter
 		onClick?: () => void
+		editable?: boolean
+		onUncapChange?: (level: number) => Promise<void>
+		onTranscendenceChange?: (stage: number) => Promise<void>
 	}
 
-	let { character, onClick }: Props = $props()
+	let { character, onClick, editable = false, onUncapChange, onTranscendenceChange }: Props = $props()
 
 	const imageUrl = $derived(
 		getCharacterImageWithPose(
@@ -70,6 +73,9 @@
 			flb={character.character?.uncap?.flb}
 			ulb={character.character?.uncap?.transcendence}
 			transcendence={character.character?.uncap?.transcendence}
+			{editable}
+			updateUncap={onUncapChange}
+			updateTranscendence={onTranscendenceChange}
 		/>
 	</div>
 
@@ -103,7 +109,6 @@
 
 		&:hover {
 			background: var(--list-cell-bg-hover);
-			box-shadow: var(--shadow-md);
 		}
 
 		&:focus-visible {
@@ -165,7 +170,6 @@
 				overflow: hidden;
 				text-overflow: ellipsis;
 			}
-
 		}
 	}
 

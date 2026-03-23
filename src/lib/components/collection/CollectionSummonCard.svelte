@@ -6,9 +6,12 @@
 	interface Props {
 		summon: CollectionSummon
 		onClick?: () => void
+		editable?: boolean
+		onUncapChange?: (level: number) => Promise<void>
+		onTranscendenceChange?: (stage: number) => Promise<void>
 	}
 
-	let { summon, onClick }: Props = $props()
+	let { summon, onClick, editable = false, onUncapChange, onTranscendenceChange }: Props = $props()
 
 	const transformation = $derived(getSummonTransformation(summon.summon?.granblueId, summon.uncapLevel, summon.transcendenceStep))
 
@@ -28,6 +31,9 @@
 		flb={summon.summon?.uncap?.flb}
 		ulb={summon.summon?.uncap?.ulb}
 		transcendence={summon.summon?.uncap?.transcendence}
+		{editable}
+		updateUncap={onUncapChange}
+		updateTranscendence={onTranscendenceChange}
 	/>
 	<span class="summon-name">{displayName}</span>
 </button>
@@ -46,11 +52,6 @@
 		border: none;
 		background: transparent;
 		cursor: pointer;
-		transition: transform 0.2s ease;
-
-		&:hover {
-			transform: scale(1.05);
-		}
 
 		&:focus-visible {
 			outline: 2px solid var(--accent-color, #3366ff);
@@ -65,6 +66,11 @@
 		border-radius: layout.$input-corner;
 		overflow: hidden;
 		background: var(--card-bg, #f5f5f5);
+		transition: transform 0.2s ease;
+
+		.summon-card:hover & {
+			transform: scale(1.05);
+		}
 	}
 
 	.summon-image {

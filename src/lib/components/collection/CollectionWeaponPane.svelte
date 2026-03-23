@@ -49,8 +49,16 @@
 
 	let { weapon: initialWeapon, isOwner, onClose, paneId, initialEdit = false }: Props = $props()
 
-	// Local state for the weapon - updated when mutation succeeds
+	// Local state for the weapon - updated when mutation succeeds or prop changes
 	let weapon = $state<CollectionWeapon>(initialWeapon)
+
+	// Sync from parent when prop changes (e.g. inline uncap edit on card/row)
+	$effect(() => {
+		const updated = initialWeapon
+		if (!isEditing) {
+			weapon = updated
+		}
+	})
 
 	// Tab state
 	let selectedTab = $state<'info' | 'collection'>('collection')
@@ -126,7 +134,7 @@
 			if (updates.awakening !== undefined) {
 				if (updates.awakening === null) {
 					input.awakeningId = null
-					input.awakeningLevel = null
+					input.awakeningLevel = 1
 				} else {
 					input.awakeningId = updates.awakening.id
 					input.awakeningLevel = updates.awakening.level

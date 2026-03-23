@@ -7,9 +7,12 @@
 	interface Props {
 		weapon: CollectionWeapon
 		onClick?: () => void
+		editable?: boolean
+		onUncapChange?: (level: number) => Promise<void>
+		onTranscendenceChange?: (stage: number) => Promise<void>
 	}
 
-	let { weapon, onClick }: Props = $props()
+	let { weapon, onClick, editable = false, onUncapChange, onTranscendenceChange }: Props = $props()
 
 	// Get transformation suffix for transcendence
 	const transformation = $derived(
@@ -52,6 +55,9 @@
 		flb={weapon.weapon?.uncap?.flb}
 		ulb={weapon.weapon?.uncap?.ulb}
 		transcendence={weapon.weapon?.uncap?.transcendence}
+		{editable}
+		updateUncap={onUncapChange}
+		updateTranscendence={onTranscendenceChange}
 	/>
 	<span class="weapon-name">{displayName}</span>
 </button>
@@ -71,11 +77,6 @@
 		border: none;
 		background: transparent;
 		cursor: pointer;
-		transition: transform 0.2s ease;
-
-		&:hover {
-			transform: scale(1.05);
-		}
 
 		&:focus-visible {
 			outline: 2px solid var(--accent-color, #3366ff);
@@ -90,6 +91,11 @@
 		border-radius: layout.$input-corner;
 		overflow: hidden;
 		background: var(--card-bg, #f5f5f5);
+		transition: transform 0.2s ease;
+
+		.weapon-card:hover & {
+			transform: scale(1.05);
+		}
 
 		.awakening {
 			position: absolute;
