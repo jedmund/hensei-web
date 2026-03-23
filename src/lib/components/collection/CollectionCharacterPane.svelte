@@ -111,7 +111,7 @@
 			if (updates.awakening !== undefined) {
 				if (updates.awakening === null) {
 					input.awakeningId = null
-					input.awakeningLevel = null
+					input.awakeningLevel = 1
 				} else {
 					input.awakeningId = updates.awakening.id
 					input.awakeningLevel = updates.awakening.level
