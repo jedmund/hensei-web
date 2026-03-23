@@ -203,6 +203,8 @@ export class SearchAdapter extends BaseAdapter {
 			promotions?: boolean
 			extra?: boolean
 			subaura?: boolean
+			race?: boolean
+			gender?: boolean
 		} = {}
 	): any {
 		const body: any = {
@@ -270,6 +272,12 @@ export class SearchAdapter extends BaseAdapter {
 			}
 			if (includeFilters.subaura && params.filters.subaura !== undefined) {
 				filters.subaura = params.filters.subaura
+			}
+			if (includeFilters.race && params.filters.race?.length) {
+				filters.race = params.filters.race
+			}
+			if (includeFilters.gender && params.filters.gender?.length) {
+				filters.gender = params.filters.gender
 			}
 
 			if (Object.keys(filters).length > 0) {
@@ -354,7 +362,9 @@ export class SearchAdapter extends BaseAdapter {
 			series: true,
 			season: true,
 			characterSeries: true,
-			gachaAvailable: true
+			gachaAvailable: true,
+			race: true,
+			gender: true
 		})
 
 		// Rails expects params nested under 'search' key

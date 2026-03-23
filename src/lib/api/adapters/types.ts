@@ -185,6 +185,12 @@ export interface SearchFilters {
 	/** Filter special characters */
 	special?: boolean | undefined
 
+	/** Filter by character race (matches race1 or race2) */
+	race?: number[] | undefined
+
+	/** Filter by character gender */
+	gender?: number[] | undefined
+
 	// Job-specific filters
 
 	/** Filter by job row (1-5, ex, ex2, o1) */
