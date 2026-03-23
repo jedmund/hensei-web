@@ -308,13 +308,12 @@
 	"about_data_title": "データの出典",
 	"about_data_explanation": "本サイトのデータは、以下のサイトの編集者・貢献者の方々のおかげで成り立っています。",
 	"about_contributing_title": "協力",
-	"about_contributing_explanation": "このサイトはオープンソースで協力したい方であったら、ご遠慮なくGitHubへ",
+	"about_contributing_explanation": "RailsやJavascriptが書ける方なら、このサイトはオープンソースのためご投稿をありがたくお待ちしております。ご遠慮なくGitHubへ",
 	"about_license_title": "ライセンス",
 	"about_license_text": "このサイトはGNU AGPLv3のライセンスで提供されています。",
 	"about_license_explanation": "派生のプロジェクトを作成したら、このプロジェクトをちゃんとリンクし・派生のプロジェクトもオープンソースで同じライセンスで提供されたら、自由にソースコードをダウンロード・改変・再配布を許可されています。",
 	"about_copyright_title": "著作権",
 	"about_copyright_explanation": "このサイトはファン制作です。グランブルーファンタジーおよびすべてのキャラクター・武器・召喚石・アイテム・イラストなどは、株式会社Cygamesの完全所有物です。",
-
 
 	"page_title_updates": "更新履歴 / granblue.team",
 	"page_title_roadmap": "ロードマップ / granblue.team",
@@ -1242,7 +1241,7 @@
 	"label_level": "レベル",
 	"label_value": "値",
 
-"toolbar_bold": "太字",
+	"toolbar_bold": "太字",
 	"toolbar_italic": "斜体",
 	"toolbar_underline": "下線",
 	"toolbar_strikethrough": "取り消し線",
@@ -1438,7 +1437,7 @@
 	"weapon_key_select": "{keyType}を選択",
 	"placeholder_select_earring": "耳飾りを選択",
 	"transcendence_stage": "段階{step}",
-"search_linked_user": "リンクユーザー",
+	"search_linked_user": "リンクユーザー",
 	"skill_clear_search": "検索をクリア",
 
 	"editor_text_color": "文字色",

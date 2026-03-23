@@ -308,13 +308,12 @@
 	"about_data_title": "Data Attribution",
 	"about_data_explanation": "Data for this site was pulled from a variety of sources. This site wouldn't be possible without the editors and contributors of the following sites:",
 	"about_contributing_title": "Contributing",
-	"about_contributing_explanation": "If you know how to program, this app is completely open-source. There's an abundance of features to build and bugs to fix, so help is always greatly appreciated!",
+	"about_contributing_explanation": "If you know how to code in Rails or Javascript, consider contributing! This app is completely open-source and there's an abundance of features to build and bugs to fix. Help is always greatly appreciated!",
 	"about_license_title": "License",
 	"about_license_text": "This app is licensed under GNU AGPLv3.",
 	"about_license_explanation": "Plainly, that means you can download the source, modify it, and redistribute it as long as you attribute this project, use the same license, and keep your derivative work open source as well.",
 	"about_copyright_title": "Copyright",
 	"about_copyright_explanation": "This app is a fan work. Granblue Fantasy and all characters, weapons, summons, items and artwork are wholly owned by Cygames, Inc.",
-
 
 	"page_title_updates": "Updates / granblue.team",
 	"page_title_roadmap": "Roadmap / granblue.team",
@@ -1242,7 +1241,7 @@
 	"label_level": "Level",
 	"label_value": "Value",
 
-"toolbar_bold": "Bold",
+	"toolbar_bold": "Bold",
 	"toolbar_italic": "Italic",
 	"toolbar_underline": "Underline",
 	"toolbar_strikethrough": "Strikethrough",
@@ -1438,7 +1437,7 @@
 	"weapon_key_select": "Select {keyType}",
 	"placeholder_select_earring": "Select earring",
 	"transcendence_stage": "Stage {step}",
-"search_linked_user": "Linked user",
+	"search_linked_user": "Linked user",
 	"skill_clear_search": "Clear search",
 
 	"editor_text_color": "Text Color",
