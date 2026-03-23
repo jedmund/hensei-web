@@ -24,7 +24,9 @@
 
 <div class="extension-page">
 	<div class="hero card">
-		<div class="image-placeholder"></div>
+		<video class="hero-video" autoplay loop muted playsinline>
+			<source src="/images/media/extension.mp4" type="video/mp4" />
+		</video>
 		<p>{m.ext_description()}</p>
 		<a
 			href="https://github.com/jedmund/hensei-extractor/releases/latest/download/granblue-team-extension.zip"
@@ -121,12 +123,11 @@
 		align-items: center;
 	}
 
-	.image-placeholder {
+	.hero-video {
 		width: 100%;
 		aspect-ratio: 16 / 9;
-		background: var(--button-bg);
 		border-radius: $card-corner;
-		box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.12);
+		object-fit: cover;
 	}
 
 	.download-link {
