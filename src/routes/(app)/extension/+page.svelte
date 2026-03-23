@@ -11,7 +11,8 @@
 		{ value: 'how', title: () => m.ext_faq_how_title(), desc: () => m.ext_faq_desc() },
 		{ value: 'safe', title: () => m.ext_faq_safe_title(), desc: () => m.ext_faq_safe_desc() },
 		{ value: 'ban', title: () => m.ext_faq_ban_title(), desc: () => m.ext_faq_ban_desc() },
-		{ value: 'install', title: () => m.ext_faq_install_title(), desc: () => m.ext_faq_install_desc() }
+		{ value: 'install', title: () => m.ext_faq_install_title(), desc: () => m.ext_faq_install_desc() },
+		{ value: 'debug', title: () => m.ext_faq_debug_workaround_title(), desc: () => m.ext_faq_debug_workaround_desc() }
 	]
 
 	const currentUser = $derived(page.data?.currentUser as UserCookie | null)
