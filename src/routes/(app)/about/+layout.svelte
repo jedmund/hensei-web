@@ -40,10 +40,16 @@
 					<Segment value="about">{m.about_tab_about()}</Segment>
 					<Segment value="updates">{m.about_tab_updates()}</Segment>
 					<Segment value="roadmap">{m.about_tab_roadmap()}</Segment>
-					</SegmentedControl>
+				</SegmentedControl>
 			</nav>
 			<div class="about-intro">
-				<h2>{m.about_subtitle_before_cygames()}<a href="https://www.cygames.co.jp/" target="_blank" rel="noopener noreferrer">Cygames</a>{m.about_subtitle_after_cygames()}</h2>
+				<h2>
+					{m.about_subtitle_before_cygames()}<a
+						href="https://www.cygames.co.jp/"
+						target="_blank"
+						rel="noopener noreferrer">Cygames</a
+					>{m.about_subtitle_after_cygames()}
+				</h2>
 				<p>{m.about_explanation_0()}</p>
 				<p>{m.about_explanation_1()}</p>
 			</div>
@@ -65,7 +71,7 @@
 					<Segment value="about">{m.about_tab_about()}</Segment>
 					<Segment value="updates">{m.about_tab_updates()}</Segment>
 					<Segment value="roadmap">{m.about_tab_roadmap()}</Segment>
-					</SegmentedControl>
+				</SegmentedControl>
 			</nav>
 			<div class="about-content">
 				{@render children?.()}
@@ -112,7 +118,7 @@
 		img {
 			display: block;
 			width: 100%;
-			height: 200px;
+			height: auto;
 			object-fit: cover;
 			object-position: center 40%;
 			border-radius: $input-corner;
