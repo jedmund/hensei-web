@@ -298,6 +298,15 @@ export function useInfiniteLoader<TData, TError>(
 							`[InfiniteLoader] ${new Date().toISOString()} Ready for next page (waiting for sentinel exit)`
 						)
 					state.loaded()
+
+					// If sentinel is still visible after DOM updates (large viewport where
+					// content doesn't fill the scroll area), clear the gate so the $effect
+					// can trigger another load. LoopTracker guards against runaway fetches.
+					requestAnimationFrame(() => {
+						if (inViewport.current && state.status === STATUS.READY) {
+							waitingForSentinelExit = false
+						}
+					})
 				}
 			}
 		} catch (error) {
