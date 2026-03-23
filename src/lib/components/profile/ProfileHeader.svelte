@@ -16,6 +16,7 @@
 
 	interface Props {
 		username: string
+		displayName?: string | null
 		userId?: string
 		avatarPicture?: string
 		title?: string
@@ -53,6 +54,7 @@
 
 	let {
 		username,
+		displayName,
 		userId,
 		avatarPicture = '',
 		title,
@@ -97,7 +99,7 @@
 
 	const avatarSrc = $derived(getAvatarSrc(avatarPicture))
 	const avatarSrcSet = $derived(getAvatarSrcSet(avatarPicture))
-	const displayTitle = $derived(title || username)
+	const displayTitle = $derived(title || displayName || username)
 
 	// Viewer is a crew officer
 	const isCrewOfficer = $derived(

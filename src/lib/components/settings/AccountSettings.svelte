@@ -9,24 +9,28 @@
 
 	interface Props {
 		username: string
+		displayName: string
 		email: string
 		emailVerified: boolean
 		bahamut: boolean
 		role: number
 		element: ElementType
 		onUsernameChange: (value: string) => void
+		onDisplayNameChange: (value: string) => void
 		onEmailChange: (value: string) => void
 		onBahamutChange: (value: boolean) => void
 	}
 
 	let {
 		username,
+		displayName,
 		email,
 		emailVerified,
 		bahamut,
 		role,
 		element,
 		onUsernameChange,
+		onDisplayNameChange,
 		onEmailChange,
 		onBahamutChange
 	}: Props = $props()
@@ -49,11 +53,15 @@
 
 	// Local state derived from props — overrides via bind:value are temporary
 	let localUsername = $derived(username)
+	let localDisplayName = $derived(displayName)
 	let localEmail = $derived(email)
 
 	// Propagate changes back to parent
 	function handleUsernameInput() {
 		onUsernameChange(localUsername)
+	}
+	function handleDisplayNameInput() {
+		onDisplayNameChange(localDisplayName)
 	}
 	function handleEmailInput() {
 		onEmailChange(localEmail)
@@ -73,6 +81,16 @@
 			fullWidth
 			bind:value={localUsername}
 			handleInput={handleUsernameInput}
+		/>
+
+		<!-- Display Name -->
+		<Input
+			label={m.settings_display_name()}
+			placeholder={m.settings_display_name_placeholder()}
+			contained
+			fullWidth
+			bind:value={localDisplayName}
+			handleInput={handleDisplayNameInput}
 		/>
 
 		<!-- Email -->

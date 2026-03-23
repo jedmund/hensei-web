@@ -57,7 +57,7 @@
 	// Computed validation
 	const isFormValid = $derived(
 		username.length >= 3 &&
-			username.length <= 20 &&
+			username.length <= 26 &&
 			usernameRegex.test(username) &&
 			usernameAvailable === true &&
 			emailRegex.test(email) &&
@@ -81,7 +81,7 @@
 			usernameAvailable = null
 			return
 		}
-		if (value.length > 20) {
+		if (value.length > 26) {
 			usernameError = m.auth_register_errors_usernameMax()
 			usernameAvailable = null
 			return
@@ -257,7 +257,7 @@
 				value={username}
 				oninput={onUsernameInput}
 				minlength={3}
-				maxLength={20}
+				maxLength={26}
 				required
 				fullWidth
 				contained

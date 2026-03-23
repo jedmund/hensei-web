@@ -999,6 +999,8 @@
 
 	"settings_username": "Username",
 	"settings_username_placeholder": "Enter username",
+	"settings_display_name": "Display name",
+	"settings_display_name_placeholder": "Enter display name",
 	"settings_email": "Email",
 	"settings_email_placeholder": "Enter email",
 	"settings_email_verified": "Verified",

@@ -178,6 +178,7 @@
 <section class="collection">
 	<ProfileHeader
 		username={username ?? ''}
+		displayName={data.user?.displayName}
 		avatarPicture={data.user?.avatar?.picture}
 		element={data.user?.avatar?.element}
 		granblueId={data.user?.granblueId}
