@@ -14,10 +14,7 @@
 	import { getLocale } from '$lib/paraglide/runtime'
 	import * as m from '$lib/paraglide/messages'
 	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
-	import {
-		mapCollectionToSearchResult,
-		filterCollectionByQuery
-	} from './search/collection-search.utils'
+	import { mapCollectionToSearchResult } from './search/collection-search.utils'
 
 	import Button from '../ui/Button.svelte'
 	import Icon from '../Icon.svelte'
@@ -294,7 +291,10 @@
 		}
 
 		return {
-			...collectionQueries.byType(type, userId, searchMode === 'collection' ? filters : {}),
+			...collectionQueries.byType(type, userId, searchMode === 'collection' ? {
+				...filters,
+				search: debouncedSearchQuery || undefined
+			} : {}),
 			enabled: true
 		}
 	})
@@ -305,11 +305,9 @@
 		searchQueryResult.data?.pages.flatMap((page) => page.results) ?? []
 	)
 
-	const rawCollectionResults = $derived.by(() => {
-		const pages = collectionQueryResult.data?.pages ?? []
-		const allItems = pages.flatMap((page) => page.results)
-		return filterCollectionByQuery(allItems, debouncedSearchQuery)
-	})
+	const rawCollectionResults = $derived(
+		collectionQueryResult.data?.pages.flatMap((page) => page.results) ?? []
+	)
 
 	const searchResults = $derived.by<AddItemResult[]>(() => {
 		if (searchMode === 'collection' && authUserId) {
