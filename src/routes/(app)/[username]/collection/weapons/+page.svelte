@@ -11,6 +11,7 @@
 		type CollectionFilterState
 	} from '$lib/components/collection/CollectionFilters.svelte'
 	import CollectionWeaponPane from '$lib/components/collection/CollectionWeaponPane.svelte'
+	import { useUpdateCollectionWeapon } from '$lib/api/mutations/collection.mutations'
 	import CollectionWeaponCard from '$lib/components/collection/CollectionWeaponCard.svelte'
 	import CollectionWeaponRow from '$lib/components/collection/CollectionWeaponRow.svelte'
 	import CollectionContextMenu from '$lib/components/collection/CollectionContextMenu.svelte'
@@ -118,6 +119,9 @@
 		untrack(() => collectionFilters.setWeapons(filters))
 	})
 
+	// Collection update mutation for inline editing
+	const updateMutation = useUpdateCollectionWeapon()
+
 	// Derived state for context menu
 	const canAccessDb = $derived(canAccessDatabase($page.data.account?.role))
 	const isTeamsPaneOpen = $derived(collectionTeamsPane.isOpen)
@@ -210,7 +214,18 @@
 						onViewInDatabase={() => viewWeaponInDatabase(weapon)}
 					>
 						<SelectableCollectionCard id={weapon.id} onClick={() => openWeaponDetails(weapon)}>
-							<CollectionWeaponCard {weapon} />
+							<CollectionWeaponCard
+								{weapon}
+								editable={data.isOwner}
+								onUncapChange={async (level) => {
+									await updateMutation.mutateAsync({ id: weapon.id, input: { uncapLevel: level } })
+								}}
+								onTranscendenceChange={async (stage) => {
+									const input: Record<string, number> = { transcendenceStep: stage }
+									if (stage > 0) input.uncapLevel = 6
+									await updateMutation.mutateAsync({ id: weapon.id, input })
+								}}
+							/>
 						</SelectableCollectionCard>
 					</CollectionContextMenu>
 				{/each}
@@ -230,7 +245,18 @@
 						onViewInDatabase={() => viewWeaponInDatabase(weapon)}
 					>
 						<SelectableCollectionRow id={weapon.id} onClick={() => openWeaponDetails(weapon)}>
-							<CollectionWeaponRow {weapon} />
+							<CollectionWeaponRow
+								{weapon}
+								editable={data.isOwner}
+								onUncapChange={async (level) => {
+									await updateMutation.mutateAsync({ id: weapon.id, input: { uncapLevel: level } })
+								}}
+								onTranscendenceChange={async (stage) => {
+									const input: Record<string, number> = { transcendenceStep: stage }
+									if (stage > 0) input.uncapLevel = 6
+									await updateMutation.mutateAsync({ id: weapon.id, input })
+								}}
+							/>
 						</SelectableCollectionRow>
 					</CollectionContextMenu>
 				{/each}

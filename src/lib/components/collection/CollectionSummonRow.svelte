@@ -7,11 +7,16 @@
 	interface Props {
 		summon: CollectionSummon
 		onClick?: () => void
+		editable?: boolean
+		onUncapChange?: (level: number) => Promise<void>
+		onTranscendenceChange?: (stage: number) => Promise<void>
 	}
 
-	let { summon, onClick }: Props = $props()
+	let { summon, onClick, editable = false, onUncapChange, onTranscendenceChange }: Props = $props()
 
-	const transformation = $derived(getSummonTransformation(summon.summon?.granblueId, summon.uncapLevel, summon.transcendenceStep))
+	const transformation = $derived(
+		getSummonTransformation(summon.summon?.granblueId, summon.uncapLevel, summon.transcendenceStep)
+	)
 
 	const imageUrl = $derived(getSummonImage(summon.summon?.granblueId, 'wide', transformation))
 
@@ -44,6 +49,9 @@
 			flb={summon.summon?.uncap?.flb}
 			ulb={summon.summon?.uncap?.ulb}
 			transcendence={summon.summon?.uncap?.transcendence}
+			{editable}
+			updateUncap={onUncapChange}
+			updateTranscendence={onTranscendenceChange}
 		/>
 	</div>
 </button>
@@ -70,7 +78,6 @@
 
 		&:hover {
 			background: var(--list-cell-bg-hover);
-			box-shadow: var(--shadow-md);
 		}
 
 		&:focus-visible {

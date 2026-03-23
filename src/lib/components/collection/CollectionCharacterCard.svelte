@@ -10,9 +10,12 @@
 	interface Props {
 		character: CollectionCharacter
 		onClick?: () => void
+		editable?: boolean
+		onUncapChange?: (level: number) => Promise<void>
+		onTranscendenceChange?: (stage: number) => Promise<void>
 	}
 
-	let { character, onClick }: Props = $props()
+	let { character, onClick, editable = false, onUncapChange, onTranscendenceChange }: Props = $props()
 
 	const imageUrl = $derived(
 		getCharacterImageWithPose(
@@ -49,6 +52,9 @@
 		flb={character.character?.uncap?.flb}
 		ulb={character.character?.uncap?.transcendence}
 		transcendence={character.character?.uncap?.transcendence}
+		{editable}
+		updateUncap={onUncapChange}
+		updateTranscendence={onTranscendenceChange}
 	/>
 	<span class="character-name">{displayName}</span>
 	{#if character.character}
@@ -72,11 +78,6 @@
 		border: none;
 		background: transparent;
 		cursor: pointer;
-		transition: transform 0.2s ease;
-
-		&:hover {
-			transform: scale(1.05);
-		}
 
 		&:focus-visible {
 			outline: 2px solid var(--accent-color, #3366ff);
@@ -92,6 +93,11 @@
 		border-radius: layout.$input-corner;
 		overflow: visible;
 		background: var(--card-bg, #f5f5f5);
+		transition: transform 0.2s ease;
+
+		.character-card:hover & {
+			transform: scale(1.05);
+		}
 	}
 
 	.perpetuity-badge {
