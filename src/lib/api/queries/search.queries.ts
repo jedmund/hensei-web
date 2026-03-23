@@ -47,6 +47,7 @@ export interface SearchPageResult {
 		series?: { id: string; slug: string; name: { en: string; ja: string } } | number[]
 		imageUrl?: string
 		searchableType: 'Weapon' | 'Character' | 'Summon'
+		uncap?: { flb?: boolean; ulb?: boolean; transcendence?: boolean }
 	}>
 	page: number
 	totalPages: number

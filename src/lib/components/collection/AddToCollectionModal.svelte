@@ -243,34 +243,39 @@
 		showOnlySelected = !showOnlySelected
 	}
 
+	function getMaxLevels(item: SearchResultItem | undefined, isCharacter: boolean) {
+		const uncap = item?.uncap
+		const baseLevel = isCharacter ? 4 : 3
+		if (!uncap) return { uncapLevel: baseLevel, transcendenceStep: 0 }
+		if (uncap.transcendence) return { uncapLevel: 6, transcendenceStep: 5 }
+		if (uncap.ulb) return { uncapLevel: 5, transcendenceStep: 0 }
+		if (uncap.flb) return { uncapLevel: isCharacter ? 5 : 4, transcendenceStep: 0 }
+		return { uncapLevel: baseLevel, transcendenceStep: 0 }
+	}
+
 	async function handleAdd() {
 		// Capture selected data before any state changes
 		const currentEntityType = entityType
 		const characterInputs =
 			currentEntityType === 'character'
-				? Array.from(selectedIds).map((characterId) => ({
-						characterId,
-						uncapLevel: 4,
-						transcendenceStep: 0
-					}))
+				? Array.from(selectedIds).map((characterId) => {
+						const item = allResults.find((r) => r.id === characterId)
+						return { characterId, ...getMaxLevels(item, true) }
+					})
 				: []
 		const weaponInputs =
 			currentEntityType === 'weapon'
-				? Array.from(selectedQuantities.entries()).map(([weaponId, quantity]) => ({
-						weaponId,
-						quantity,
-						uncapLevel: 3,
-						transcendenceStep: 0
-					}))
+				? Array.from(selectedQuantities.entries()).map(([weaponId, quantity]) => {
+						const item = allResults.find((r) => r.id === weaponId)
+						return { weaponId, quantity, ...getMaxLevels(item, false) }
+					})
 				: []
 		const summonInputs =
 			currentEntityType === 'summon'
-				? Array.from(selectedQuantities.entries()).map(([summonId, quantity]) => ({
-						summonId,
-						quantity,
-						uncapLevel: 3,
-						transcendenceStep: 0
-					}))
+				? Array.from(selectedQuantities.entries()).map(([summonId, quantity]) => {
+						const item = allResults.find((r) => r.id === summonId)
+						return { summonId, quantity, ...getMaxLevels(item, false) }
+					})
 				: []
 
 		try {
