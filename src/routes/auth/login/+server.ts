@@ -39,6 +39,19 @@ export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
 		setUserCookie(cookies, user, { secure, expires: accessTokenExpiresAt })
 		setRefreshCookie(cookies, refresh, { secure, expires: accessTokenExpiresAt })
 
+		// Sync locale cookie so Paraglide renders the correct language
+		if (user.language && user.language !== 'en') {
+			cookies.set('PARAGLIDE_LOCALE', user.language, {
+				path: '/',
+				httpOnly: false,
+				sameSite: 'lax',
+				secure,
+				maxAge: 34560000
+			})
+		} else {
+			cookies.delete('PARAGLIDE_LOCALE', { path: '/' })
+		}
+
 		// Return access token for client-side storage
 		return json({
 			success: true,
