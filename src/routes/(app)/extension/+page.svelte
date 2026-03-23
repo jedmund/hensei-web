@@ -5,6 +5,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import * as m from '$lib/paraglide/messages'
+	import { getImageBaseUrl } from '$lib/api/adapters/config'
 	import type { UserCookie } from '$lib/types/UserCookie'
 
 	const faqItems = [
@@ -26,7 +27,7 @@
 <div class="extension-page">
 	<div class="hero card">
 		<video class="hero-video" autoplay loop muted playsinline>
-			<source src="/images/media/extension.mp4" type="video/mp4" />
+			<source src="{getImageBaseUrl()}/images/media/extension.mp4" type="video/mp4" />
 		</video>
 		<p>{m.ext_description()}</p>
 		<a
