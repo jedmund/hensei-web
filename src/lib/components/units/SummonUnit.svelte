@@ -473,7 +473,7 @@
     cursor: pointer;
     transition: transform 0.2s ease;
 
-    &:not(.active) {
+    &:not(.active):not(.static) {
       display: none;
     }
 
