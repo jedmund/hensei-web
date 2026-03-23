@@ -540,7 +540,7 @@
 							jobSkills={party.jobSkills}
 							accessory={party.accessory}
 							canEdit={canEdit()}
-							gender={Gender.Gran}
+							gender={party.user?.gender ?? Gender.Gran}
 							element={mainWeaponElement}
 							onSelectJob={jobHandlers.handleSelectJob}
 							onSelectSkill={jobHandlers.handleSelectJobSkill}
