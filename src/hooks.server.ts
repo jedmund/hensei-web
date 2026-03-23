@@ -1,6 +1,7 @@
 import type { Handle, HandleFetch } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 import { paraglideMiddleware } from '$lib/paraglide/server'
+import { dev } from '$app/environment'
 import { getAccountFromCookies, getUserFromCookies } from '$lib/auth/cookies'
 import { PUBLIC_SIERO_API_URL } from '$env/static/public'
 import { generateFontFaceCSS, getFontPreloadLinks } from '$lib/utils/fonts'
@@ -35,6 +36,22 @@ export const handleSession: Handle = async ({ event, resolve }) => {
 		account,
 		user,
 		isAuthenticated: Boolean(account?.token)
+	}
+
+	// Sync PARAGLIDE_LOCALE cookie from user language preference
+	// This runs before handleParaglide so the correct locale is used for rendering
+	if (user?.language && user.language !== 'en') {
+		if (event.cookies.get('PARAGLIDE_LOCALE') !== user.language) {
+			event.cookies.set('PARAGLIDE_LOCALE', user.language, {
+				path: '/',
+				httpOnly: false,
+				sameSite: 'lax',
+				secure: !dev,
+				maxAge: 34560000
+			})
+		}
+	} else if (user?.language === 'en' && event.cookies.get('PARAGLIDE_LOCALE')) {
+		event.cookies.delete('PARAGLIDE_LOCALE', { path: '/' })
 	}
 
 	// Pass auth data for client-side auth store initialization
