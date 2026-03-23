@@ -11,7 +11,7 @@
 	<h2>{m.about_feedback_title()}</h2>
 	<p>{m.about_feedback_explanation()}</p>
 	<p>{m.about_feedback_solicit()}</p>
-	<LinkItem title="granblue-tools" link="https://discord.gg/qyZ5hGdPC8" icon="discord" class="discord" />
+	<LinkItem title="granblue-tools" link="https://discord.gg/pSjUAYNDzN" icon="discord" class="discord" />
 </div>
 
 <div class="about-card">
