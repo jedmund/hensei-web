@@ -7,6 +7,7 @@
 	import { setContext } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { viewMode } from '$lib/stores/viewMode.svelte'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import CollectionSegmentedControl from '$lib/components/collection/CollectionSegmentedControl.svelte'
@@ -33,6 +34,9 @@
 	import { extractErrorMessage } from '$lib/utils/errors'
 
 	let { data, children }: { data: LayoutData; children: any } = $props()
+
+	const viewerCrewRole = $derived(crewStore.membership?.role ?? null)
+	const viewerCrewId = $derived(crewStore.crew?.id ?? null)
 
 	// Query for collection counts
 	const countsQuery = createQuery(() => collectionQueries.counts(data.user?.id ?? ''))
@@ -190,9 +194,12 @@
 		showCrewGamertag={data.user?.showCrewGamertag}
 		crewGamertag={data.user?.crewGamertag}
 		crewName={data.user?.crewName}
+		userId={data.user?.id}
 		title={username ?? ''}
 		activeTab="collection"
 		isOwner={data.isOwner}
+		{viewerCrewRole}
+		{viewerCrewId}
 		collectionPrivacy={data.user?.collectionPrivacy}
 		isAuthenticated={$page.data?.isAuthenticated}
 	/>
