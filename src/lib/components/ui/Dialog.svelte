@@ -87,12 +87,12 @@
 	}
 
 	:global(.dialog-overlay[data-nested]) {
-		display: none;
+		background: rgba(0, 0, 0, 0.3);
 	}
 
 	:global(.dialog-content[data-nested-open]) {
 		transform: translate(-50%, -50%)
-			scale(calc(1 - var(--bits-dialog-nested-count) * 0.05));
+			scale(calc(1 - var(--bits-dialog-nested-count) * 0.08));
 		filter: blur(calc(var(--bits-dialog-nested-count) * 2px));
 	}
 
