@@ -9,7 +9,7 @@ export function snakeToCamel<T>(obj: T): T {
 	}
 
 	if (typeof obj === 'object') {
-		const result: any = {}
+		const result: Record<string, unknown> = {}
 		for (const [key, value] of Object.entries(obj)) {
 			const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
 			result[camelKey] = snakeToCamel(value)
@@ -39,7 +39,7 @@ export function camelToSnake<T>(obj: T, skipValueTransform = false): T {
 	}
 
 	if (typeof obj === 'object') {
-		const result: any = {}
+		const result: Record<string, unknown> = {}
 		for (const [key, value] of Object.entries(obj)) {
 			const snakeKey = skipValueTransform
 				? key
@@ -60,7 +60,7 @@ export function camelToSnake<T>(obj: T, skipValueTransform = false): T {
 /**
  * Renames "object" fields to proper entity names in response data
  */
-function renameObjectFields(obj: any): any {
+function renameObjectFields(obj: unknown): unknown {
 	if (obj === null || obj === undefined) return obj
 
 	if (Array.isArray(obj)) {
@@ -68,14 +68,14 @@ function renameObjectFields(obj: any): any {
 	}
 
 	if (typeof obj === 'object') {
-		const result: any = {}
+		const result: Record<string, unknown> = {}
 
 		for (const [key, value] of Object.entries(obj)) {
 			// Handle weapons array
 			if (key === 'weapons' && Array.isArray(value)) {
-				result.weapons = value.map((item: any) => {
+				result.weapons = value.map((item: unknown) => {
 					if (item && typeof item === 'object' && 'object' in item) {
-						const { object, ...rest } = item
+						const { object, ...rest } = item as Record<string, unknown>
 						return { ...rest, weapon: renameObjectFields(object) }
 					}
 					return renameObjectFields(item)
@@ -83,9 +83,9 @@ function renameObjectFields(obj: any): any {
 			}
 			// Handle characters array
 			else if (key === 'characters' && Array.isArray(value)) {
-				result.characters = value.map((item: any) => {
+				result.characters = value.map((item: unknown) => {
 					if (item && typeof item === 'object' && 'object' in item) {
-						const { object, ...rest } = item
+						const { object, ...rest } = item as Record<string, unknown>
 						return { ...rest, character: renameObjectFields(object) }
 					}
 					return renameObjectFields(item)
@@ -93,9 +93,9 @@ function renameObjectFields(obj: any): any {
 			}
 			// Handle summons array
 			else if (key === 'summons' && Array.isArray(value)) {
-				result.summons = value.map((item: any) => {
+				result.summons = value.map((item: unknown) => {
 					if (item && typeof item === 'object' && 'object' in item) {
-						const { object, ...rest } = item
+						const { object, ...rest } = item as Record<string, unknown>
 						return { ...rest, summon: renameObjectFields(object) }
 					}
 					return renameObjectFields(item)
@@ -116,7 +116,7 @@ function renameObjectFields(obj: any): any {
 /**
  * Renames entity fields back to "object" for API requests
  */
-function renameEntityFields(obj: any): any {
+function renameEntityFields(obj: unknown): unknown {
 	if (obj === null || obj === undefined) return obj
 
 	if (Array.isArray(obj)) {
@@ -124,14 +124,14 @@ function renameEntityFields(obj: any): any {
 	}
 
 	if (typeof obj === 'object') {
-		const result: any = {}
+		const result: Record<string, unknown> = {}
 
 		for (const [key, value] of Object.entries(obj)) {
 			// Handle weapons array
 			if (key === 'weapons' && Array.isArray(value)) {
-				result.weapons = value.map((item: any) => {
+				result.weapons = value.map((item: unknown) => {
 					if (item && typeof item === 'object' && 'weapon' in item) {
-						const { weapon, ...rest } = item
+						const { weapon, ...rest } = item as Record<string, unknown>
 						return { ...rest, object: renameEntityFields(weapon) }
 					}
 					return renameEntityFields(item)
@@ -139,9 +139,9 @@ function renameEntityFields(obj: any): any {
 			}
 			// Handle characters array
 			else if (key === 'characters' && Array.isArray(value)) {
-				result.characters = value.map((item: any) => {
+				result.characters = value.map((item: unknown) => {
 					if (item && typeof item === 'object' && 'character' in item) {
-						const { character, ...rest } = item
+						const { character, ...rest } = item as Record<string, unknown>
 						return { ...rest, object: renameEntityFields(character) }
 					}
 					return renameEntityFields(item)
@@ -149,9 +149,9 @@ function renameEntityFields(obj: any): any {
 			}
 			// Handle summons array
 			else if (key === 'summons' && Array.isArray(value)) {
-				result.summons = value.map((item: any) => {
+				result.summons = value.map((item: unknown) => {
 					if (item && typeof item === 'object' && 'summon' in item) {
-						const { summon, ...rest } = item
+						const { summon, ...rest } = item as Record<string, unknown>
 						return { ...rest, object: renameEntityFields(summon) }
 					}
 					return renameEntityFields(item)
@@ -174,7 +174,7 @@ function renameEntityFields(obj: any): any {
  * - Converts snake_case to camelCase
  * - Renames "object" to proper entity names (weapon, character, summon)
  */
-export function transformResponse<T>(data: any): T {
+export function transformResponse<T>(data: unknown): T {
 	if (data === null || data === undefined) return data
 
 	// First convert snake_case to camelCase
@@ -189,7 +189,7 @@ export function transformResponse<T>(data: any): T {
  * - Converts camelCase to snake_case
  * - Renames entity names back to "object" for API
  */
-export function transformRequest<T>(data: T): any {
+export function transformRequest<T>(data: T): unknown {
 	if (data === null || data === undefined) return data
 
 	// First rename entity fields back to "object"

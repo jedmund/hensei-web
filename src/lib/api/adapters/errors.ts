@@ -92,9 +92,9 @@ export class TimeoutError extends ApiError {
  * Error class for request cancellation
  */
 export class CancelledError extends ApiError {
-	constructor(details?: any) {
+	constructor(details?: unknown) {
 		super('CANCELLED', 0, 'Request was cancelled', details)
-		this.name = 'CancelledError' as any
+		this.name = 'CancelledError'
 	}
 }
 
@@ -102,9 +102,9 @@ export class CancelledError extends ApiError {
  * Error class for validation failures
  */
 export class ValidationError extends ApiError {
-	constructor(message: string, details?: any) {
+	constructor(message: string, details?: unknown) {
 		super('VALIDATION_ERROR', 422, message, details)
-		this.name = 'ValidationError' as any
+		this.name = 'ValidationError'
 	}
 }
 
@@ -112,9 +112,9 @@ export class ValidationError extends ApiError {
  * Error class for authentication failures
  */
 export class AuthenticationError extends ApiError {
-	constructor(message = 'Authentication required', details?: any) {
+	constructor(message = 'Authentication required', details?: unknown) {
 		super('UNAUTHORIZED', 401, message, details)
-		this.name = 'AuthenticationError' as any
+		this.name = 'AuthenticationError'
 	}
 }
 
@@ -122,9 +122,9 @@ export class AuthenticationError extends ApiError {
  * Error class for authorization failures
  */
 export class AuthorizationError extends ApiError {
-	constructor(message = 'Access denied', details?: any) {
+	constructor(message = 'Access denied', details?: unknown) {
 		super('FORBIDDEN', 403, message, details)
-		this.name = 'AuthorizationError' as any
+		this.name = 'AuthorizationError'
 	}
 }
 
@@ -132,10 +132,10 @@ export class AuthorizationError extends ApiError {
  * Error class for resource not found
  */
 export class NotFoundError extends ApiError {
-	constructor(resource?: string, details?: any) {
+	constructor(resource?: string, details?: unknown) {
 		const message = resource ? `${resource} not found` : 'Resource not found'
 		super('NOT_FOUND', 404, message, details)
-		this.name = 'NotFoundError' as any
+		this.name = 'NotFoundError'
 	}
 }
 
@@ -143,9 +143,9 @@ export class NotFoundError extends ApiError {
  * Error class for conflict errors (e.g., duplicate resources)
  */
 export class ConflictError extends ApiError {
-	constructor(message = 'Resource conflict', details?: any) {
+	constructor(message = 'Resource conflict', details?: unknown) {
 		super('CONFLICT', 409, message, details)
-		this.name = 'ConflictError' as any
+		this.name = 'ConflictError'
 	}
 }
 
@@ -155,13 +155,13 @@ export class ConflictError extends ApiError {
 export class RateLimitError extends ApiError {
 	retryAfter?: number
 
-	constructor(retryAfter?: number, details?: any) {
+	constructor(retryAfter?: number, details?: unknown) {
 		const message = retryAfter
 			? `Rate limit exceeded. Retry after ${retryAfter} seconds`
 			: 'Rate limit exceeded'
 
 		super('RATE_LIMITED', 429, message, details)
-		this.name = 'RateLimitError' as any
+		this.name = 'RateLimitError'
 		if (retryAfter !== undefined) {
 			this.retryAfter = retryAfter
 		}
@@ -176,7 +176,7 @@ export class RateLimitError extends ApiError {
  * @param details - Additional error details
  * @returns Appropriate error instance based on status code
  */
-export function createErrorFromStatus(status: number, message?: string, details?: any): ApiError {
+export function createErrorFromStatus(status: number, message?: string, details?: unknown): ApiError {
 	switch (status) {
 		case 400:
 			return new ApiError('BAD_REQUEST', status, message || 'Bad request', details)
@@ -199,10 +199,13 @@ export function createErrorFromStatus(status: number, message?: string, details?
 		case 422:
 			return new ValidationError(message || 'Validation failed', details)
 
-		case 429:
+		case 429: {
 			// Try to extract retry-after header from details
-			const retryAfter = details?.headers?.['retry-after']
+			const detailsObj = details as Record<string, unknown> | undefined
+			const headers = detailsObj?.headers as Record<string, unknown> | undefined
+			const retryAfter = typeof headers?.['retry-after'] === 'number' ? headers['retry-after'] : undefined
 			return new RateLimitError(retryAfter, details)
+		}
 
 		case 500:
 			return new ApiError('SERVER_ERROR', status, message || m.error_internal_server(), details)
@@ -239,17 +242,10 @@ export function createErrorFromStatus(status: number, message?: string, details?
  * @param error - The error to check
  * @returns True if the error is retryable
  */
-export function isRetryableError(error: any): boolean {
+export function isRetryableError(error: unknown): boolean {
 	// Network-like conditions are retryable
 	// Handle both class instances and normalized plain objects
-	if (
-		error instanceof NetworkError ||
-		error instanceof TimeoutError ||
-		error?.name === 'NetworkError' ||
-		error?.code === 'NETWORK_ERROR' ||
-		// Some environments normalize to status 0 without specific codes
-		error?.status === 0
-	) {
+	if (error instanceof NetworkError || error instanceof TimeoutError) {
 		return true
 	}
 
@@ -258,13 +254,24 @@ export function isRetryableError(error: any): boolean {
 		return true
 	}
 
+	// For duck-typed error objects, safely extract properties
+	const err = error as Record<string, unknown> | null | undefined
+	const name = typeof err?.name === 'string' ? err.name : undefined
+	const code = typeof err?.code === 'string' ? err.code : undefined
+	const status = typeof err?.status === 'number' ? err.status : undefined
+
+	if (
+		name === 'NetworkError' ||
+		code === 'NETWORK_ERROR' ||
+		// Some environments normalize to status 0 without specific codes
+		status === 0
+	) {
+		return true
+	}
+
 	// Check by error code (handles both ApiError instances and plain objects)
 	// Note: NetworkError sets name to 'NetworkError' but still has AdapterError structure
-	if (
-		error instanceof ApiError ||
-		error?.name === 'AdapterError' ||
-		error?.name === 'NetworkError'
-	) {
+	if (error instanceof ApiError || name === 'AdapterError' || name === 'NetworkError') {
 		const retryableCodes = [
 			'NETWORK_ERROR',
 			'TIMEOUT',
@@ -274,24 +281,24 @@ export function isRetryableError(error: any): boolean {
 			'SERVER_ERROR'
 		]
 
-		if (retryableCodes.includes(error.code)) {
+		if (code && retryableCodes.includes(code)) {
 			return true
 		}
 
 		// Server errors (5xx) are generally retryable
-		if (error.status >= 500 && error.status < 600) {
+		if (status !== undefined && status >= 500 && status < 600) {
 			return true
 		}
 	}
 
 	// Check for specific error properties
-	if (error.code === 'ECONNRESET' || error.code === 'ETIMEDOUT' || error.code === 'ENOTFOUND') {
+	if (code === 'ECONNRESET' || code === 'ETIMEDOUT' || code === 'ENOTFOUND') {
 		return true
 	}
 
 	// Client errors (4xx) are not retryable except rate limits
-	if (error.status >= 400 && error.status < 500) {
-		return error.status === 429 // Only rate limit is retryable
+	if (status !== undefined && status >= 400 && status < 500) {
+		return status === 429 // Only rate limit is retryable
 	}
 
 	return false
@@ -303,10 +310,17 @@ export function isRetryableError(error: any): boolean {
  * @param error - Any error type
  * @returns Normalized AdapterError
  */
-export function normalizeError(error: any): AdapterError {
+export function normalizeError(error: unknown): AdapterError {
+	const err = error as Record<string, unknown> | null | undefined
+	const name = typeof err?.name === 'string' ? err.name : undefined
+	const code = typeof err?.code === 'string' ? err.code : undefined
+	const status = typeof err?.status === 'number' ? err.status : undefined
+	const message = typeof err?.message === 'string' ? err.message : undefined
+	const statusText = typeof err?.statusText === 'string' ? err.statusText : undefined
+
 	// Already an AdapterError
-	if (error?.name === 'AdapterError') {
-		return error
+	if (name === 'AdapterError') {
+		return err as unknown as AdapterError
 	}
 
 	// ApiError instance
@@ -315,30 +329,30 @@ export function normalizeError(error: any): AdapterError {
 	}
 
 	// Fetch abort error
-	if (error?.name === 'AbortError') {
+	if (name === 'AbortError') {
 		return new CancelledError().toJSON()
 	}
 
 	// Network error
-	if (error?.name === 'NetworkError' || error?.name === 'TypeError') {
-		return new NetworkError(error.message).toJSON()
+	if (name === 'NetworkError' || name === 'TypeError') {
+		return new NetworkError(message).toJSON()
 	}
 
 	// Timeout error
-	if (error?.name === 'TimeoutError') {
+	if (name === 'TimeoutError') {
 		return new TimeoutError(0, error).toJSON()
 	}
 
 	// Generic Error with status
-	if (error?.status) {
-		return createErrorFromStatus(error.status, error.message || error.statusText, error).toJSON()
+	if (status) {
+		return createErrorFromStatus(status, message || statusText, error).toJSON()
 	}
 
 	// Fallback to generic error
 	return new ApiError(
-		error?.code || 'UNKNOWN_ERROR',
-		error?.status || 0,
-		error?.message || m.error_unknown(),
+		code || 'UNKNOWN_ERROR',
+		status || 0,
+		message || m.error_unknown(),
 		error
 	).toJSON()
 }
@@ -349,17 +363,20 @@ export function normalizeError(error: any): AdapterError {
  * @param error - The error to extract message from
  * @returns User-friendly error message
  */
-export function getErrorMessage(error: any): string {
+export function getErrorMessage(error: unknown): string {
 	if (!error) {
 		return m.error_unknown()
 	}
 
+	const err = error as Record<string, unknown>
+	const errors = Array.isArray(err.errors) ? err.errors : undefined
+
 	// Try to get message from various error formats
 	const message =
-		error.message ||
-		error.error ||
-		error.errors?.[0]?.message ||
-		error.statusText ||
+		(typeof err.message === 'string' ? err.message : undefined) ||
+		(typeof err.error === 'string' ? err.error : undefined) ||
+		(typeof errors?.[0]?.message === 'string' ? errors[0].message : undefined) ||
+		(typeof err.statusText === 'string' ? err.statusText : undefined) ||
 		m.error_unknown()
 
 	// Make network errors more user-friendly
@@ -389,7 +406,7 @@ export function getErrorMessage(error: any): string {
  */
 export function calculateRetryDelay(
 	attempt: number,
-	error: any,
+	error: unknown,
 	baseDelay = 1000,
 	maxDelay = 30000
 ): number {
