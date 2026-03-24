@@ -25,7 +25,7 @@
 		<h3 class="title">{playlist.title}</h3>
 		{#if raidSlugs.length > 0}
 			<div class="raid-images" class:grid={isGrid}>
-				{#each raidSlugs as slug}
+				{#each raidSlugs as slug (slug)}
 					<img src={getRaidImage(slug, 'thumbnail')} alt="" class="raid-thumbnail" />
 				{/each}
 			</div>

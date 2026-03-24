@@ -53,7 +53,7 @@
 			{#if forgeChain.length > 0}
 				<DetailItem label="Forge Chain">
 					<div class="forge-chain">
-						{#each forgeChain as chainWeapon, index}
+						{#each forgeChain as chainWeapon, index (chainWeapon.granblueId)}
 							{#if index > 0}
 								<span class="chain-arrow">
 									<Icon name="arrow-down" size={14} />

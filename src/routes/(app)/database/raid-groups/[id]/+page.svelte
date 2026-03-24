@@ -106,7 +106,7 @@
 			{#if group.raids && group.raids.length > 0}
 				<DetailsContainer title="Member Raids ({group.raids.length})">
 					<div class="raids-list">
-						{#each group.raids as raid}
+						{#each group.raids as raid (raid.id)}
 							<button class="raid-item" onclick={() => handleRaidClick(raid.slug)}>
 								<span class="raid-name">{displayName(raid)}</span>
 								<span class="raid-level">Lv. {raid.level ?? '—'}</span>

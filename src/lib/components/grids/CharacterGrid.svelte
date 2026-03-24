@@ -78,7 +78,7 @@
 
 <div class="wrapper">
 	<ul class="characters" class:unlimited aria-label="Character Grid">
-		{#each characterSlots as character, i}
+		{#each characterSlots as character, i (i)}
 			<li aria-label={`Character slot ${i}`} class:Empty={!character}>
 				{#if dragContext}
 					<DropZone

@@ -99,7 +99,7 @@
 					class="element-group"
 					{disabled}
 				>
-					{#each elements as element}
+					{#each elements as element (element)}
 						<Tooltip content={getLabel(element)}>
 								<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
 									<img
@@ -119,7 +119,7 @@
 					class="element-group"
 					{disabled}
 				>
-					{#each elements as element}
+					{#each elements as element (element)}
 						<Tooltip content={getLabel(element)}>
 								<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
 									<img
@@ -147,7 +147,7 @@
 				class="element-group"
 				{disabled}
 			>
-				{#each elements as element}
+				{#each elements as element (element)}
 					<Tooltip content={getLabel(element)}>
 							<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
 								<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
@@ -163,7 +163,7 @@
 				class="element-group"
 				{disabled}
 			>
-				{#each elements as element}
+				{#each elements as element (element)}
 					<Tooltip content={getLabel(element)}>
 							<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
 								<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />

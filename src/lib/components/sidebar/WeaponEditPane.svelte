@@ -281,7 +281,7 @@
 		{#if hasBullets}
 			<DetailsSection title="Bullets">
 				<div class="section-content bullet-selects">
-					{#each bulletSlots as slotType, i}
+					{#each bulletSlots as slotType, i (i)}
 						<div class="bullet-slot">
 							<span class="bullet-slot-label">{BULLET_TYPES[slotType] ?? 'Unknown'}</span>
 							<BulletSelect

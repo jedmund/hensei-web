@@ -103,7 +103,7 @@
 			</div>
 		{:else}
 			<div class="members-list">
-				{#each availableMembers as member}
+				{#each availableMembers as member (member.id)}
 					<button
 						type="button"
 						class="member-option"

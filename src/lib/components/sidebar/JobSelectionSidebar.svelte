@@ -117,7 +117,7 @@
 
 		{#snippet results()}
 			<div class="jobs-grid">
-				{#each Object.entries(filteredJobs) as [tierName, jobs]}
+				{#each Object.entries(filteredJobs) as [tierName, jobs] (tierName)}
 					<div class="tier-group">
 						<div class="tier-header">
 							<h4>{tierName}</h4>

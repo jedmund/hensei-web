@@ -87,7 +87,7 @@
 
 		<section>
 			<ul class="summons">
-				{#each subSummonSlots as summon, i}
+				{#each subSummonSlots as summon, i (i)}
 					<li aria-label={`Summon slot ${i}`} class:Empty={!summon}>
 						{#if dragContext}
 							<DropZone

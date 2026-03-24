@@ -153,7 +153,7 @@
 </script>
 
 <div class="images-tab">
-	{#each sortedPoses as pose}
+	{#each sortedPoses as pose (pose)}
 		{@const poseImages = imagesByPose.get(pose) ?? []}
 		{@const poseLabel = getPoseLabel(pose, poseImages)}
 		{@const showHeader = poseLabel && sortedPoses.length > 1}
@@ -163,7 +163,7 @@
 		{/if}
 
 		<div class="images-grid">
-			{#each poseImages as image}
+			{#each poseImages as image (image.url)}
 				{@const imageKey = getImageKey(image)}
 				{@const isDownloading = downloadingImages.has(imageKey)}
 				{@const isFailed = failedImages.has(imageKey)}

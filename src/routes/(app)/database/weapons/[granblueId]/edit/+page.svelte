@@ -314,7 +314,7 @@
 				<WeaponMetadataSection {weapon} {editMode} bind:editData />
 				{#if editData.element === 0}
 					<DetailsContainer title="Element Variant IDs">
-						{#each ELEMENT_DISPLAY_ORDER as elementNum}
+						{#each ELEMENT_DISPLAY_ORDER as elementNum (elementNum)}
 							{@const key = String(elementNum)}
 							<DetailItem label={getElementLabel(elementNum)} editable={true}>
 								<div class="variant-id-input">
@@ -354,7 +354,7 @@
 				{#if isGun}
 					<DetailsContainer title="Bullet Slots">
 						<div class="bullet-slots-editor">
-							{#each editData.bulletSlots as slotType, i}
+							{#each editData.bulletSlots as slotType, i (i)}
 								<div class="bullet-slot-row">
 									<span class="bullet-slot-index">Slot {i + 1}</span>
 									<Select

@@ -141,7 +141,7 @@
 			</div>
 
 			<div class="job-skills">
-				{#each Array(4) as _, slot}
+				{#each Array(4) as _, slot (slot)}
 					{#if isSkillSlotAvailable(job, slot)}
 						<JobSkillSlot
 							skill={jobSkills[slot as keyof JobSkillList]}

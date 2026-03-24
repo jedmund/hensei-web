@@ -108,7 +108,7 @@
 
 <div class="entity-mention-list">
 	{#if items.length > 0}
-		{#each items as item, index}
+		{#each items as item, index (item.searchableId)}
 			<button
 				type="button"
 				class="mention-item"

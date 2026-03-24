@@ -132,7 +132,7 @@
 					<h3 class="section-title">{m.crew_notifications_phantom_section()}</h3>
 					<p class="section-description">{m.crew_notifications_phantom_desc()}</p>
 					<div class="notifications-list">
-						{#each phantomClaims as phantom}
+						{#each phantomClaims as phantom (phantom.id)}
 							{@const crew = phantom.crew}
 							{@const isProcessing = processingId === phantom.id}
 
@@ -191,7 +191,7 @@
 				<div class="section">
 					<h3 class="section-title">{m.crew_notifications_crew_section()}</h3>
 					<div class="notifications-list">
-						{#each invitations as invitation}
+						{#each invitations as invitation (invitation.id)}
 							{@const expired = isExpired(invitation.expiresAt)}
 							{@const crew = invitation.crew}
 							{@const invitedBy = invitation.invitedBy}

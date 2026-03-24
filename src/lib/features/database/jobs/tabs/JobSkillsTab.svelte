@@ -102,7 +102,7 @@
 			{/if}
 		</div>
 	{:else}
-		{#each skillGroups as group}
+		{#each skillGroups as group (group.key)}
 			{#if groupedSkills[group.key].length > 0}
 				<section class="skill-group">
 					<h3 class="group-title">{group.title}</h3>

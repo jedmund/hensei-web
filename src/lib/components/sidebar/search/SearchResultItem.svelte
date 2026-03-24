@@ -95,7 +95,7 @@
 					<span class="in-team-pill">{m.search_added_pill()}</span>
 				{/if}
 				{#if Array.isArray(item.proficiency)}
-					{#each item.proficiency as prof}
+					{#each item.proficiency as prof (prof)}
 						<ProficiencyLabel proficiency={prof} size="small" />
 					{/each}
 				{:else if item.proficiency !== undefined}

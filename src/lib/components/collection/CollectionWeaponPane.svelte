@@ -353,7 +353,7 @@
 					empty={!hasWeaponKeys}
 					emptyMessage={m.collection_not_set()}
 				>
-					{#each weapon.weaponKeys ?? [] as key, i}
+					{#each weapon.weaponKeys ?? [] as key, i (key.id)}
 						<DetailRow label="Key {i + 1}" value={getWeaponKeyName(i)} />
 					{/each}
 				</DetailsSection>
@@ -363,7 +363,7 @@
 					empty={!hasAxSkills}
 					emptyMessage={m.collection_not_set()}
 				>
-					{#each weapon.ax ?? [] as ax, i}
+					{#each weapon.ax ?? [] as ax, i (i)}
 						{#if ax.modifier?.id}
 							<DetailRow
 								label="Skill {i + 1}"

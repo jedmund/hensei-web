@@ -318,7 +318,7 @@
 
 					{#if weapon.element === 0}
 						<DetailsContainer title="Element Variant IDs">
-							{#each ELEMENT_DISPLAY_ORDER as elementNum}
+							{#each ELEMENT_DISPLAY_ORDER as elementNum (elementNum)}
 								<DetailItem label={getElementLabel(elementNum)}>
 									{weapon.elementVariantIds?.[String(elementNum)] || '—'}
 								</DetailItem>
@@ -335,7 +335,7 @@
 
 					{#if weapon.bulletSlots?.length}
 						<DetailsContainer title="Bullet Slots">
-							{#each weapon.bulletSlots as slotType, i}
+							{#each weapon.bulletSlots as slotType, i (i)}
 								<DetailItem label="Slot {i + 1}" value={BULLET_TYPES[slotType] ?? 'Unknown'} />
 							{/each}
 						</DetailsContainer>
@@ -345,7 +345,7 @@
 						<DetailItem label="English">
 							{#if weapon.nicknames?.en?.length}
 								<div class="nickname-tags">
-									{#each weapon.nicknames.en as nickname}
+									{#each weapon.nicknames.en as nickname (nickname)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>
@@ -356,7 +356,7 @@
 						<DetailItem label="Japanese">
 							{#if weapon.nicknames?.ja?.length}
 								<div class="nickname-tags">
-									{#each weapon.nicknames.ja as nickname}
+									{#each weapon.nicknames.ja as nickname (nickname)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>
@@ -444,7 +444,7 @@
 						<h3>Skills</h3>
 						<div class="skills-grid">
 							{#if weapon.weapon_skills && weapon.weapon_skills.length > 0}
-								{#each weapon.weapon_skills as skill}
+								{#each weapon.weapon_skills as skill (skill.id)}
 									<div class="skill-item">
 										<h4 class="skill-name">{skill.name || 'Unknown Skill'}</h4>
 										<p class="skill-description">

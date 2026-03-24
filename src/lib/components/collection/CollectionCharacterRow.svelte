@@ -86,7 +86,7 @@
 	</div>
 
 	<div class="proficiency-cell">
-		{#each proficiencies as proficiency}
+		{#each proficiencies as proficiency (proficiency)}
 			<ProficiencyLabel {proficiency} size="medium" />
 		{/each}
 	</div>

@@ -63,7 +63,7 @@
 		{#if itemData?.proficiency && itemData.proficiency.length > 0}
 			<DetailRow label={m.details_proficiencies()}>
 				<span class="proficiency-list">
-					{#each itemData.proficiency as prof}
+					{#each itemData.proficiency as prof (prof)}
 						<ProficiencyLabel proficiency={prof} size="medium" />
 					{/each}
 				</span>

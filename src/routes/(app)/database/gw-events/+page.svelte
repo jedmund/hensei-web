@@ -82,7 +82,7 @@
 							</td>
 						</tr>
 					{:else}
-						{#each filteredEvents as event}
+						{#each filteredEvents as event (event.id)}
 							<tr onclick={() => handleRowClick(event)} class="clickable">
 								<td class="col-number">
 									<span class="event-number">{event.eventNumber}</span>

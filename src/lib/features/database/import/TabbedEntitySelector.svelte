@@ -25,7 +25,7 @@
 </script>
 
 <div class="entity-selector">
-	{#each entities as entity}
+	{#each entities as entity (entity.wikiPage)}
 		<button
 			type="button"
 			class="entity-tab"

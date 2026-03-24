@@ -78,7 +78,7 @@
 		{#if hasSeason}
 			<CharacterTag {character} type="season" />
 		{/if}
-		{#each displayableSeriesIndices as seriesIndex}
+		{#each displayableSeriesIndices as seriesIndex (seriesIndex)}
 			<CharacterTag {character} type="series" {seriesIndex} />
 		{/each}
 	</div>

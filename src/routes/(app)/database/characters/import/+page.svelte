@@ -395,7 +395,7 @@
 				</Button>
 			</div>
 			<div class="wiki-inputs">
-				{#each wikiPagesInputs as _, index}
+				{#each wikiPagesInputs as _, index (index)}
 					<div class="input-row">
 						<Input
 							bind:value={wikiPagesInputs[index]}

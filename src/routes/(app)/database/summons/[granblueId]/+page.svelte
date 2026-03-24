@@ -208,7 +208,7 @@
 						<DetailItem label="English">
 							{#if summon.nicknames?.en?.length}
 								<div class="nickname-tags">
-									{#each summon.nicknames.en as nickname}
+									{#each summon.nicknames.en as nickname (nickname)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>
@@ -219,7 +219,7 @@
 						<DetailItem label="Japanese">
 							{#if summon.nicknames?.ja?.length}
 								<div class="nickname-tags">
-									{#each summon.nicknames.ja as nickname}
+									{#each summon.nicknames.ja as nickname (nickname)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>

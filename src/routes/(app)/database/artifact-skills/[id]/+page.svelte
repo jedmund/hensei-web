@@ -222,7 +222,7 @@
 				</DetailsContainer>
 
 				<DetailsContainer title="Base Values (Quality 1-5)">
-					{#each [0, 1, 2, 3, 4] as index}
+					{#each [0, 1, 2, 3, 4] as index (index)}
 						<DetailItem label="Quality {index + 1}" editable={true}>
 							<Input
 								type="number"

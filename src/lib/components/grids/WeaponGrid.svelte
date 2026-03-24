@@ -101,7 +101,7 @@
 		</div>
 
 		<ul class="weapons" aria-label="Weapon Grid">
-			{#each subWeaponSlots as weapon, i}
+			{#each subWeaponSlots as weapon, i (i)}
 				<li
 					aria-label={weapon ? `Weapon ${i}` : `Empty slot ${i}`}
 					data-index={i}

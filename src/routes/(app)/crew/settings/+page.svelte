@@ -288,7 +288,7 @@
 				</p>
 			{:else}
 				<div class="transfer-list">
-					{#each transferCandidates as member}
+					{#each transferCandidates as member (member.id)}
 						<label class="transfer-option">
 							<input
 								type="radio"

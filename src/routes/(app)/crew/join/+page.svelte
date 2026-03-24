@@ -102,7 +102,7 @@
 		</div>
 	{:else}
 		<div class="invitations-list">
-			{#each invitationsQuery.data as invitation}
+			{#each invitationsQuery.data as invitation (invitation.id)}
 				{@const expired = isExpired(invitation.expiresAt)}
 				{@const highlighted = invitation.id === selectedInvitationId}
 				{@const crew = invitation.crew}

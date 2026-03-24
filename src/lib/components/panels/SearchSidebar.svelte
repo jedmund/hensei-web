@@ -261,7 +261,7 @@
 		<div class="filter-group">
 			<label class="filter-label">{m.search_sidebar_element()}</label>
 			<div class="filter-buttons">
-				{#each elements as element}
+				{#each elements as element (element)}
 					<button
 						class="filter-btn element-btn"
 						class:active={elementFilters.includes(element.value)}
@@ -279,7 +279,7 @@
 		<div class="filter-group">
 			<label class="filter-label">{m.search_sidebar_rarity()}</label>
 			<div class="filter-buttons">
-				{#each rarities as rarity}
+				{#each rarities as rarity (rarity)}
 					<button
 						class="filter-btn rarity-btn"
 						class:active={rarityFilters.includes(rarity.value)}
@@ -297,7 +297,7 @@
 			<div class="filter-group">
 				<label class="filter-label">{m.search_sidebar_proficiency()}</label>
 				<div class="filter-buttons proficiency-grid">
-					{#each proficiencies as prof}
+					{#each proficiencies as prof (prof)}
 						<button
 							class="filter-btn prof-btn"
 							class:active={proficiencyFilters.includes(prof.value)}

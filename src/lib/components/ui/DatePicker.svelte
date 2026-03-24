@@ -102,7 +102,7 @@
 			<div class="date-picker-field" class:contained onpaste={handlePaste}>
 				<BitsDatePicker.Input>
 					{#snippet children({ segments })}
-						{#each segments as { part, value: segValue }}
+						{#each segments as { part, value: segValue } (part)}
 							<BitsDatePicker.Segment {part} class="segment">
 								{segValue}
 							</BitsDatePicker.Segment>
@@ -128,11 +128,11 @@
 							</BitsDatePicker.NextButton>
 						</BitsDatePicker.Header>
 
-						{#each months as month}
+						{#each months as month (month)}
 							<BitsDatePicker.Grid class="grid">
 								<BitsDatePicker.GridHead>
 									<BitsDatePicker.GridRow class="grid-row">
-										{#each weekdays as day}
+										{#each weekdays as day (day)}
 											<BitsDatePicker.HeadCell class="head-cell">
 												{day}
 											</BitsDatePicker.HeadCell>
@@ -140,9 +140,9 @@
 									</BitsDatePicker.GridRow>
 								</BitsDatePicker.GridHead>
 								<BitsDatePicker.GridBody>
-									{#each month.weeks as weekDates}
+									{#each month.weeks as weekDates (weekDates)}
 										<BitsDatePicker.GridRow class="grid-row">
-											{#each weekDates as date}
+											{#each weekDates as date (date)}
 												<BitsDatePicker.Cell {date} month={month.value} class="cell">
 													<BitsDatePicker.Day class="day">
 														{date.day}
@@ -174,7 +174,7 @@
 		<div class="date-picker-field" class:contained onpaste={handlePaste}>
 			<BitsDatePicker.Input>
 				{#snippet children({ segments })}
-					{#each segments as { part, value: segValue }}
+					{#each segments as { part, value: segValue } (part)}
 						<BitsDatePicker.Segment {part} class="segment">
 							{segValue}
 						</BitsDatePicker.Segment>
@@ -200,11 +200,11 @@
 						</BitsDatePicker.NextButton>
 					</BitsDatePicker.Header>
 
-					{#each months as month}
+					{#each months as month (month)}
 						<BitsDatePicker.Grid class="grid">
 							<BitsDatePicker.GridHead>
 								<BitsDatePicker.GridRow class="grid-row">
-									{#each weekdays as day}
+									{#each weekdays as day (day)}
 										<BitsDatePicker.HeadCell class="head-cell">
 											{day}
 										</BitsDatePicker.HeadCell>
@@ -212,9 +212,9 @@
 								</BitsDatePicker.GridRow>
 							</BitsDatePicker.GridHead>
 							<BitsDatePicker.GridBody>
-								{#each month.weeks as weekDates}
+								{#each month.weeks as weekDates (weekDates)}
 									<BitsDatePicker.GridRow class="grid-row">
-										{#each weekDates as date}
+										{#each weekDates as date (date)}
 											<BitsDatePicker.Cell {date} month={month.value} class="cell">
 												<BitsDatePicker.Day class="day">
 													{date.day}

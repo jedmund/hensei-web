@@ -47,7 +47,7 @@
 <!-- All Elements (custom layout - uses asChild to prevent double render) -->
 <Story name="All Elements" asChild>
 	<div style="display: flex; gap: 16px; align-items: center;">
-		{#each elements as el}
+		{#each elements as el (el)}
 			<div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
 				<ElementLabel element={el.id} />
 				<span style="font-size: 12px; color: #666;">{el.name}</span>
@@ -61,25 +61,25 @@
 	<div style="display: flex; flex-direction: column; gap: 16px;">
 		<div style="display: flex; align-items: center; gap: 12px;">
 			<span style="width: 80px; font-size: 12px; color: #666;">Small:</span>
-			{#each elements as el}
+			{#each elements as el (el)}
 				<ElementLabel element={el.id} size="small" />
 			{/each}
 		</div>
 		<div style="display: flex; align-items: center; gap: 12px;">
 			<span style="width: 80px; font-size: 12px; color: #666;">Medium:</span>
-			{#each elements as el}
+			{#each elements as el (el)}
 				<ElementLabel element={el.id} size="medium" />
 			{/each}
 		</div>
 		<div style="display: flex; align-items: center; gap: 12px;">
 			<span style="width: 80px; font-size: 12px; color: #666;">Large:</span>
-			{#each elements as el}
+			{#each elements as el (el)}
 				<ElementLabel element={el.id} size="large" />
 			{/each}
 		</div>
 		<div style="display: flex; align-items: center; gap: 12px;">
 			<span style="width: 80px; font-size: 12px; color: #666;">X-Large:</span>
-			{#each elements as el}
+			{#each elements as el (el)}
 				<ElementLabel element={el.id} size="xlarge" />
 			{/each}
 		</div>

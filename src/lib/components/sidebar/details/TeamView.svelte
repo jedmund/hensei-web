@@ -115,7 +115,7 @@
 
 		{#if modificationStatus.hasAxSkills && weapon.ax?.length}
 			<DetailsSection title={m.details_ax_skills()}>
-				{#each weapon.ax as axSkill}
+				{#each weapon.ax as axSkill, i (i)}
 					{#if axSkill.modifier?.id}
 						<DetailRow
 							label={axSkill.modifier.nameEn}
@@ -149,7 +149,7 @@
 
 		{#if modificationStatus.hasBullets && weapon.bullets?.length}
 			<DetailsSection title={m.details_bullets()}>
-				{#each weapon.bullets as loadout}
+				{#each weapon.bullets as loadout (loadout.id)}
 					<DetailRow label={BULLET_TYPES[loadout.bullet.bulletType] ?? 'Unknown'}>
 						<span class="bullet-value">
 							<img src={getBulletImage(loadout.bullet.granblueId)} alt="" class="bullet-icon" />

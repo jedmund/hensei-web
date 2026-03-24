@@ -66,7 +66,7 @@
 			type="single"
 			style={userElement ? `--faq-accent: var(--${userElement}-button-bg)` : undefined}
 		>
-			{#each faqItems as item}
+			{#each faqItems as item (item.value)}
 				<Accordion.Item value={item.value}>
 					<Accordion.Header>
 						<Accordion.Trigger class="faq-trigger">

@@ -370,7 +370,7 @@
 			{#if !isQuirk}
 				<DetailsSection title={m.artifact_skills()}>
 					<div class="skills-list">
-						{#each [1, 2, 3, 4] as slot}
+						{#each [1, 2, 3, 4] as slot (slot)}
 							<ArtifactSkillRow
 								{slot}
 								skill={skills[slot - 1] ?? null}

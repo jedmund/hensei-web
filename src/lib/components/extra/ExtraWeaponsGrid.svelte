@@ -19,7 +19,7 @@
 
 <ExtraContainerItem title={m.extra_weapons()}>
 	<ul class="grid">
-		{#each extraWeaponSlots as weapon, i}
+		{#each extraWeaponSlots as weapon, i (i)}
 			<li class:empty={!weapon}>
 				<WeaponUnit item={weapon} position={offset + i} />
 			</li>

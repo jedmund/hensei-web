@@ -97,7 +97,7 @@
 					class="proficiency-group"
 					{disabled}
 				>
-					{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
+					{#each PROFICIENCY_DISPLAY_ORDER as proficiency (proficiency)}
 						<Tooltip content={getLabel(proficiency)} {disabled}>
 								<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
 									<img
@@ -117,7 +117,7 @@
 					class="proficiency-group"
 					{disabled}
 				>
-					{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
+					{#each PROFICIENCY_DISPLAY_ORDER as proficiency (proficiency)}
 						<Tooltip content={getLabel(proficiency)} {disabled}>
 								<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
 									<img
@@ -145,7 +145,7 @@
 				class="proficiency-group"
 				{disabled}
 			>
-				{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
+				{#each PROFICIENCY_DISPLAY_ORDER as proficiency (proficiency)}
 					<Tooltip content={getLabel(proficiency)} {disabled}>
 							<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
 								<img
@@ -165,7 +165,7 @@
 				class="proficiency-group"
 				{disabled}
 			>
-				{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
+				{#each PROFICIENCY_DISPLAY_ORDER as proficiency (proficiency)}
 					<Tooltip content={getLabel(proficiency)} {disabled}>
 							<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
 								<img

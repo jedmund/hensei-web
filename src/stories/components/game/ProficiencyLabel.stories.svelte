@@ -55,7 +55,7 @@
 <!-- All Proficiencies (custom layout - uses asChild to prevent double render) -->
 <Story name="All Proficiencies" asChild>
 	<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;">
-		{#each proficiencies as prof}
+		{#each proficiencies as prof (prof)}
 			<div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
 				<ProficiencyLabel proficiency={prof.id} />
 				<span style="font-size: 12px; color: #666;">{prof.name}</span>
@@ -69,25 +69,25 @@
 	<div style="display: flex; flex-direction: column; gap: 16px;">
 		<div style="display: flex; align-items: center; gap: 12px;">
 			<span style="width: 80px; font-size: 12px; color: #666;">Small:</span>
-			{#each proficiencies.slice(0, 5) as prof}
+			{#each proficiencies.slice(0, 5) as prof (prof)}
 				<ProficiencyLabel proficiency={prof.id} size="small" />
 			{/each}
 		</div>
 		<div style="display: flex; align-items: center; gap: 12px;">
 			<span style="width: 80px; font-size: 12px; color: #666;">Medium:</span>
-			{#each proficiencies.slice(0, 5) as prof}
+			{#each proficiencies.slice(0, 5) as prof (prof)}
 				<ProficiencyLabel proficiency={prof.id} size="medium" />
 			{/each}
 		</div>
 		<div style="display: flex; align-items: center; gap: 12px;">
 			<span style="width: 80px; font-size: 12px; color: #666;">Large:</span>
-			{#each proficiencies.slice(0, 5) as prof}
+			{#each proficiencies.slice(0, 5) as prof (prof)}
 				<ProficiencyLabel proficiency={prof.id} size="large" />
 			{/each}
 		</div>
 		<div style="display: flex; align-items: center; gap: 12px;">
 			<span style="width: 80px; font-size: 12px; color: #666;">X-Large:</span>
-			{#each proficiencies.slice(0, 5) as prof}
+			{#each proficiencies.slice(0, 5) as prof (prof)}
 				<ProficiencyLabel proficiency={prof.id} size="xlarge" />
 			{/each}
 		</div>

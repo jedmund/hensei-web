@@ -174,7 +174,7 @@
 				{#if isAuthenticated && invitationsQuery.data && invitationsQuery.data.length > 0}
 					<div class="invitations-section">
 						<ul class="invitation-list">
-							{#each invitationsQuery.data as invitation}
+							{#each invitationsQuery.data as invitation (invitation.id)}
 								{#if invitation.crew && invitation.invitedBy}
 									<li class="invitation-item">
 										<div class="invitation-info">
@@ -245,7 +245,7 @@
 					</div>
 				{:else if eventsQuery.data && eventsQuery.data.length > 0}
 					<ul class="event-list">
-						{#each eventsQuery.data as event}
+						{#each eventsQuery.data as event (event.id)}
 							<li
 								class="event-item"
 								onclick={() => goto(localizeHref(`/crew/events/${event.eventNumber}`))}

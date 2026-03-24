@@ -256,13 +256,13 @@
 									/>
 								{/if}
 								<div class="skills">
-									{#each axSkillImages as skill}
+									{#each axSkillImages as skill (skill.url)}
 										<img class="skill" src={skill.url} alt={skill.alt} />
 									{/each}
-									{#each befoulmentImages as skill}
+									{#each befoulmentImages as skill (skill.url)}
 										<img class="skill befoulment" src={skill.url} alt={skill.alt} />
 									{/each}
-									{#each weaponKeyImages as skill}
+									{#each weaponKeyImages as skill (skill.url)}
 										<Tooltip content={skill.alt}>
 											<img class="skill" src={skill.url} alt={skill.alt} />
 										</Tooltip>

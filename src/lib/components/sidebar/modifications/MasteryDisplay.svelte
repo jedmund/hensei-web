@@ -42,7 +42,7 @@
 			<h4 class="mastery-title">{m.details_over_mastery()}</h4>
 		{/if}
 		<ul class="mastery-list">
-			{#each rings as ring}
+			{#each rings as ring, i (i)}
 				<li class="mastery-item">
 					{#if showIcons}
 						{@const iconUrl = getMasteryIcon('ring', ring.modifier)}

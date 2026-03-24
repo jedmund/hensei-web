@@ -238,7 +238,7 @@
 
 					{#if playerScores.length > 0}
 						<ul class="player-list">
-							{#each playerScores as player, index}
+							{#each playerScores as player, index (player.id)}
 								<PlayerScoreRow
 									{player}
 									rank={index + 1}

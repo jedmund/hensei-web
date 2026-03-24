@@ -71,7 +71,7 @@
 <!-- All Variants -->
 <Story name="All Variants" asChild>
 	<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
-		{#each variants as variant}
+		{#each variants as variant (variant)}
 			<Button {variant}>{variant}</Button>
 		{/each}
 	</div>
@@ -80,7 +80,7 @@
 <!-- All Sizes -->
 <Story name="All Sizes" asChild>
 	<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
-		{#each sizes as size}
+		{#each sizes as size (size)}
 			<Button {size}>{size}</Button>
 		{/each}
 		<Button size="icon" icon="settings" iconOnly />
@@ -90,7 +90,7 @@
 <!-- Disabled States -->
 <Story name="Disabled States" asChild>
 	<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
-		{#each variants as variant}
+		{#each variants as variant (variant)}
 			<Button {variant} disabled>{variant}</Button>
 		{/each}
 	</div>
@@ -120,7 +120,7 @@
 		<div>
 			<h4 style="margin: 0 0 8px; font-size: 14px; color: #666;">Without elementStyle</h4>
 			<div style="display: flex; flex-wrap: wrap; gap: 12px;">
-				{#each elements as element}
+				{#each elements as element (element)}
 					<Button {element}>{element}</Button>
 				{/each}
 			</div>
@@ -128,7 +128,7 @@
 		<div>
 			<h4 style="margin: 0 0 8px; font-size: 14px; color: #666;">With elementStyle</h4>
 			<div style="display: flex; flex-wrap: wrap; gap: 12px;">
-				{#each elements as element}
+				{#each elements as element (element)}
 					<Button {element} elementStyle>{element}</Button>
 				{/each}
 			</div>
@@ -159,16 +159,16 @@
 			style="display: grid; grid-template-columns: 80px repeat({variants.length}, 1fr); gap: 8px; align-items: center;"
 		>
 			<span></span>
-			{#each variants as variant}
+			{#each variants as variant (variant)}
 				<span style="font-size: 12px; text-align: center; color: #666;">{variant}</span>
 			{/each}
 		</div>
-		{#each sizes as size}
+		{#each sizes as size (size)}
 			<div
 				style="display: grid; grid-template-columns: 80px repeat({variants.length}, 1fr); gap: 8px; align-items: center;"
 			>
 				<span style="font-size: 12px; color: #666;">{size}</span>
-				{#each variants as variant}
+				{#each variants as variant (variant)}
 					<Button {variant} {size}>{size}</Button>
 				{/each}
 			</div>

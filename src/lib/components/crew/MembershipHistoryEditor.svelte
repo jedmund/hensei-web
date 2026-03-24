@@ -25,7 +25,7 @@
 	<p class="help-text">
 		{m.crew_membership_hint()}
 	</p>
-	{#each periods as period, i}
+	{#each periods as period, i (i)}
 		<div class="period-row">
 			<span class="period-label">
 				{#if i === 0}

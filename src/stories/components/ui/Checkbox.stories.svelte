@@ -107,7 +107,7 @@
 <!-- Element Colors -->
 <Story name="Element Colors" asChild>
 	<div style="display: flex; flex-direction: column; gap: 16px;">
-		{#each ['wind', 'fire', 'water', 'earth', 'dark', 'light'] as element}
+		{#each ['wind', 'fire', 'water', 'earth', 'dark', 'light'] as element (element)}
 			<div style="display: flex; align-items: center; gap: 12px;">
 				<span style="width: 50px; font-size: 12px; color: #666;">{element}</span>
 				<Checkbox {element} />

@@ -137,7 +137,7 @@
 									align="end"
 									sideOffset={4}
 								>
-									{#each pane.overflowMenu as item}
+									{#each pane.overflowMenu as item (item.label)}
 										<DropdownMenu.Item
 											class="overflow-menu-item {item.variant === 'danger' ? 'danger' : ''}"
 											onSelect={item.handler}

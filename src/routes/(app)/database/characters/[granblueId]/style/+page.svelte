@@ -210,7 +210,7 @@
 						<DetailItem label="Nicknames (EN)">
 							{#if character.nicknames?.en?.length}
 								<div class="nickname-tags">
-									{#each character.nicknames.en as nickname}
+									{#each character.nicknames.en as nickname (nickname)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>
@@ -221,7 +221,7 @@
 						<DetailItem label="Nicknames (JP)">
 							{#if character.nicknames?.ja?.length}
 								<div class="nickname-tags">
-									{#each character.nicknames.ja as nickname}
+									{#each character.nicknames.ja as nickname (nickname)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>
@@ -311,7 +311,7 @@
 					{#if relatedQuery.data?.length}
 						<DetailsContainer title="Related Units">
 							<div class="related-units">
-								{#each relatedQuery.data as related}
+								{#each relatedQuery.data as related (related.id)}
 									<a
 										href={localizeHref(
 											`/database/characters/${related.granblueId}${related.styleSwap ? '/style' : ''}`

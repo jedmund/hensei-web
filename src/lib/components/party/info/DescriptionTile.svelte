@@ -438,7 +438,7 @@
 	>
 		{#if previewParagraphs.length}
 			<div class="preview-text" bind:this={contentEl}>
-				{#each previewParagraphs as paragraph}
+				{#each previewParagraphs as paragraph (paragraph)}
 					<p>{paragraph}</p>
 				{/each}
 			</div>

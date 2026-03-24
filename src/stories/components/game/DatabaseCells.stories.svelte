@@ -106,7 +106,7 @@
 	<div
 		style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; height: 60px; align-items: center;"
 	>
-		{#each elements as el}
+		{#each elements as el (el)}
 			<div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
 				<ElementCell row={{ element: el.id }} />
 				<span style="font-size: 10px; color: #666;">{el.name}</span>
@@ -120,7 +120,7 @@
 	<div
 		style="display: flex; flex-wrap: wrap; gap: 12px; background: #f5f5f5; padding: 16px; border-radius: 8px; align-items: center;"
 	>
-		{#each proficiencies as prof}
+		{#each proficiencies as prof (prof)}
 			<div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
 				<ProficiencyCell row={{ proficiency: [prof.id] }} />
 				<span style="font-size: 10px; color: #666;">{prof.name}</span>

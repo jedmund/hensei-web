@@ -142,7 +142,7 @@
 								</DropdownMenu.Item>
 								{#if availableSizes.length > 0}
 									<DropdownMenu.Separator class="dropdown-menu-separator" />
-									{#each availableSizes as size}
+									{#each availableSizes as size (size)}
 										<DropdownMenu.Item
 											class="dropdown-menu-item"
 											onclick={() => handleDownloadSize(size)}

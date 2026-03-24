@@ -138,7 +138,7 @@
 				<SelectPrimitive.Portal>
 					<SelectPrimitive.Content class="content">
 						<SelectPrimitive.Viewport>
-							{#each options as option}
+							{#each options as option (option.value)}
 								<SelectPrimitive.Item
 									value={String(option.value)}
 									{...option.disabled !== undefined ? { disabled: option.disabled } : {}}
@@ -180,7 +180,7 @@
 			{:else}
 				<SelectPrimitive.Content class="content">
 					<SelectPrimitive.Viewport>
-						{#each options as option}
+						{#each options as option (option.value)}
 							<SelectPrimitive.Item
 								value={String(option.value)}
 								label={option.label}
@@ -253,7 +253,7 @@
 			<SelectPrimitive.Portal>
 				<SelectPrimitive.Content class="content">
 					<SelectPrimitive.Viewport>
-						{#each options as option}
+						{#each options as option (option.value)}
 							<SelectPrimitive.Item
 								value={String(option.value)}
 								label={option.label}
@@ -296,7 +296,7 @@
 		{:else}
 			<SelectPrimitive.Content class="content">
 				<SelectPrimitive.Viewport>
-					{#each options as option}
+					{#each options as option (option.value)}
 						<SelectPrimitive.Item
 							value={String(option.value)}
 							{...option.disabled !== undefined ? { disabled: option.disabled } : {}}

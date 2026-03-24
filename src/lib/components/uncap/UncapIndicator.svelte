@@ -202,7 +202,7 @@
 
 <div class="uncap-indicator {className || ''}" class:contained class:small={size === 'small'}>
 	<ul class="stars">
-		{#each Array(numStars) as _, i}
+		{#each Array(numStars) as _, i (i)}
 			{@const star = renderStar(i)}
 			{#if star}
 				{#if star.type === 'transcendence'}

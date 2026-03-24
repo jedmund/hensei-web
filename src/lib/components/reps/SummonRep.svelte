@@ -43,7 +43,7 @@
 		{/if}
 	</div>
 	<ul class="summons">
-		{#each grid as s, i}
+		{#each grid as s, i (i)}
 			<li class="summon" class:empty={!s}>
 				{#if s}
 					<img alt="Summon" src={summonImageUrl(s)} loading="lazy" decoding="async" />

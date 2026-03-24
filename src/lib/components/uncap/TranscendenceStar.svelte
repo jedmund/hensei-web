@@ -150,7 +150,7 @@
 				onOpenAutoFocus={(e) => e.preventDefault()}
 			>
 				<div class="fragments">
-					{#each Array(NUM_FRAGMENTS) as _, i}
+					{#each Array(NUM_FRAGMENTS) as _, i (i)}
 						{@const loopStage = i + 1}
 						<TranscendenceFragment
 							stage={loopStage}

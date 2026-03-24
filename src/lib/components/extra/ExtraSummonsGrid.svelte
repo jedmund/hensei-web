@@ -22,7 +22,7 @@
 <div class="container">
 	<h3>{m.extra_summons_subaura()}</h3>
 	<ul class="grid" id="ExtraSummons">
-		{#each subauraSlots() as summon, i}
+		{#each subauraSlots() as summon, i (i)}
 			<li>
 				<SummonUnit item={summon} position={offset + i} />
 			</li>
