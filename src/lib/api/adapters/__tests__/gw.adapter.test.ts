@@ -36,11 +36,11 @@ describe('GwAdapter', () => {
 
 		it('should wrap body in gw_event for createEvent', async () => {
 			global.fetch = mockApiResponse(API.createEvent)
-			const clearSpy = vi.spyOn(adapter as any, 'clearCache')
+			const clearSpy = vi.spyOn(adapter as unknown as Record<string, unknown>, 'clearCache')
 
-			await adapter.createEvent({ event_number: 79 } as any)
+			await adapter.createEvent({ event_number: 79 } as Record<string, unknown>)
 
-			const body = JSON.parse((global.fetch as any).mock.calls[0][1].body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
 			expect(body.gw_event).toBeDefined()
 			expect(clearSpy).toHaveBeenCalledWith('/gw_events')
 		})
@@ -68,13 +68,13 @@ describe('GwAdapter', () => {
 
 			await adapter.getEventWithParticipation(78)
 
-			const url = (global.fetch as any).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0][0]
 			expect(url).toContain('/crew/gw_participations/by_event/78')
 		})
 
 		it('should unwrap participation from joinEvent and clear cache', async () => {
 			global.fetch = mockApiResponse(API.joinEvent)
-			const clearSpy = vi.spyOn(adapter as any, 'clearCache')
+			const clearSpy = vi.spyOn(adapter as unknown as Record<string, unknown>, 'clearCache')
 
 			const result = await adapter.joinEvent('gw-1')
 
@@ -95,30 +95,30 @@ describe('GwAdapter', () => {
 		it('should POST addIndividualScoreByEvent to correct URL', async () => {
 			global.fetch = mockApiResponse(API.addIndividualScore)
 
-			await adapter.addIndividualScoreByEvent('gw-1', { round: 1, score: 100000 } as any)
+			await adapter.addIndividualScoreByEvent('gw-1', { round: 1, score: 100000 } as Record<string, unknown>)
 
-			const url = (global.fetch as any).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0][0]
 			expect(url).toContain('/crew/gw_events/gw-1/individual_scores')
-			expect((global.fetch as any).mock.calls[0][1].method).toBe('POST')
+			expect(vi.mocked(global.fetch).mock.calls[0][1].method).toBe('POST')
 		})
 
 		it('should POST batchAddIndividualScoresByEvent to correct URL', async () => {
 			global.fetch = mockApiResponse(API.batchAddIndividualScores)
 
-			await adapter.batchAddIndividualScoresByEvent('gw-1', { scores: [] } as any)
+			await adapter.batchAddIndividualScoresByEvent('gw-1', { scores: [] } as Record<string, unknown>)
 
-			const url = (global.fetch as any).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0][0]
 			expect(url).toContain('/crew/gw_events/gw-1/individual_scores/batch')
-			expect((global.fetch as any).mock.calls[0][1].method).toBe('POST')
+			expect(vi.mocked(global.fetch).mock.calls[0][1].method).toBe('POST')
 		})
 
 		it('should wrap body in crew_score for addCrewScore and clear participation cache', async () => {
 			global.fetch = mockApiResponse(API.addCrewScore)
-			const clearSpy = vi.spyOn(adapter as any, 'clearCache')
+			const clearSpy = vi.spyOn(adapter as unknown as Record<string, unknown>, 'clearCache')
 
-			await adapter.addCrewScore('part-1', { round: 1, score: 500000 } as any)
+			await adapter.addCrewScore('part-1', { round: 1, score: 500000 } as Record<string, unknown>)
 
-			const body = JSON.parse((global.fetch as any).mock.calls[0][1].body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
 			expect(body.crew_score).toBeDefined()
 			expect(clearSpy).toHaveBeenCalledWith('/crew/gw_participations/part-1')
 		})

@@ -1,7 +1,7 @@
 import { vi } from 'vitest'
 
 /** Creates a mock fetch that returns the given data as JSON */
-export function mockApiResponse(data: any) {
+export function mockApiResponse(data: unknown) {
 	return vi.fn().mockResolvedValue({
 		ok: true,
 		json: async () => data

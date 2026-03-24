@@ -270,7 +270,7 @@ describe('SearchAdapter', () => {
 
 			await adapter.searchWeapons(params)
 
-			const calledBody = JSON.parse((global.fetch as any).mock.calls[0][1].body)
+			const calledBody = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
 			expect(calledBody.filters).toBeUndefined()
 		})
 	})
