@@ -34,7 +34,7 @@
 	let activeSection = $state<string>('profile')
 
 	// Form state - Account section (initialized empty, populated from API)
-	let formUsername = $derived(username)
+	let formUsername = $state(username)
 	let formDisplayName = $state('')
 	let formEmail = $state('')
 	let emailVerified = $state(false)
@@ -171,6 +171,7 @@
 		try {
 			// Prepare the update data
 			const updateData: Parameters<typeof users.update>[1] = {
+				username: formUsername,
 				displayName: formDisplayName || undefined,
 				picture,
 				element,

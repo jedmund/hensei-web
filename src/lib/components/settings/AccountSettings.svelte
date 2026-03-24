@@ -51,10 +51,10 @@
 		}
 	}
 
-	// Local state derived from props — overrides via bind:value are temporary
-	let localUsername = $derived(username)
-	let localDisplayName = $derived(displayName)
-	let localEmail = $derived(email)
+	// Local state initialized from props — mutable for form editing
+	let localUsername = $state(username)
+	let localDisplayName = $state(displayName)
+	let localEmail = $state(email)
 
 	// Propagate changes back to parent
 	function handleUsernameInput() {
