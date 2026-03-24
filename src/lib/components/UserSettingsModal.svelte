@@ -286,15 +286,14 @@
 		</ModalHeader>
 		<ModalBody noPadding>
 			<div class="settings-layout">
-				{#if error}
-					<div class="error-message">{error}</div>
-				{/if}
-
 				<aside class="settings-sidebar">
 					<SettingsNav bind:value={activeSection} {element} items={navItems} />
 				</aside>
 
 				<main class="settings-content" bind:this={contentElement} onscroll={checkScrollPosition}>
+					{#if error}
+						<div class="error-message">{error}</div>
+					{/if}
 					{#if isLoading}
 						<div class="loading-state">
 							<div class="spinner"></div>
@@ -402,9 +401,9 @@
 		border: 1px solid var(--danger);
 		border-radius: layout.$card-corner;
 		color: var(--danger);
+		font-size: typography.$font-small;
 		padding: spacing.$unit-2x;
 		margin-bottom: spacing.$unit-2x;
-		width: 100%;
 	}
 
 	.settings-sidebar {

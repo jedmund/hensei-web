@@ -91,7 +91,8 @@
 			return
 		}
 		usernameError = ''
-		onUsernameValidChange?.(true)
+		// Don't set valid yet — wait for availability check to confirm
+		onUsernameValidChange?.(false)
 	}
 
 	async function checkUsernameAvailability(value: string) {
@@ -110,7 +111,8 @@
 				}
 			}
 		} catch {
-			// Silently fail availability check
+			// If availability check fails, allow save — backend will validate
+			onUsernameValidChange?.(true)
 		} finally {
 			isCheckingUsername = false
 		}
