@@ -99,7 +99,8 @@
 	}))
 
 	// Helper function for summon grid image
-	function getSummonGridImage(summon: Record<string, unknown>): string {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
+	function getSummonGridImage(summon: any): string {
 		return getSummonImage(summon?.granblueId, 'grid')
 	}
 

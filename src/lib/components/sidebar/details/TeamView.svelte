@@ -17,10 +17,12 @@
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
 		item: GridCharacter | GridWeapon | GridSummon
-		itemData: Record<string, unknown>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
+		itemData: any
 		gridUncapLevel: number | null
 		gridTranscendence: number | null
-		modificationStatus: Record<string, unknown>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic modification status
+		modificationStatus: any
 	}
 
 	let { type, item, itemData, gridUncapLevel, gridTranscendence, modificationStatus }: Props =

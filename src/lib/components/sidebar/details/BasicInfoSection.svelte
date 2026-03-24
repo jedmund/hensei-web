@@ -12,7 +12,8 @@
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
-		itemData: Record<string, unknown>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
+		itemData: any
 	}
 
 	let { type, itemData }: Props = $props()
@@ -50,11 +51,11 @@
 	</DetailRow>
 
 	{#if type === 'character'}
-		{#if itemData?.race && Array.isArray(itemData.race) && itemData.race.length > 0}
+		{#if itemData?.race && itemData.race.length > 0}
 			<DetailRow
 				label={m.details_race()}
-				value={(itemData.race as number[])
-					.map((r) => getRaceLabel(r))
+				value={itemData.race
+					.map((r: number) => getRaceLabel(r))
 					.filter(Boolean)
 					.join(', ') || '—'}
 			/>

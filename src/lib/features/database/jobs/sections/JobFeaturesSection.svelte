@@ -8,7 +8,8 @@
 	interface Props {
 		job: Job
 		editMode?: boolean
-		editData?: Record<string, unknown>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
+		editData?: any
 	}
 
 	let { job, editMode = false, editData = $bindable() }: Props = $props()

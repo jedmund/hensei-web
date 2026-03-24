@@ -182,7 +182,7 @@ export abstract class BaseAdapter {
 			// Error is already normalized from fetchWithRetry (or handleErrorResponse)
 			// Only normalize if it's not already an AdapterError structure
 			const errObj = error as Record<string, unknown>
-			const normalizedError = errObj?.name === 'AdapterError' ? (errObj as AdapterError) : normalizeError(error)
+			const normalizedError = errObj?.name === 'AdapterError' ? (errObj as unknown as AdapterError) : normalizeError(error)
 
 			// Call global error handler if provided
 			if (this.options.onError) {
@@ -205,7 +205,7 @@ export abstract class BaseAdapter {
 	 */
 	protected transformResponse<T>(data: unknown): T {
 		if (data === null || data === undefined) {
-			return data
+			return data as T
 		}
 
 		// Apply full transformation: snake_case->camelCase and object->entity

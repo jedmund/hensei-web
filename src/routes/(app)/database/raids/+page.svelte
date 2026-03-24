@@ -212,7 +212,7 @@
 			header: 'Level',
 			width: 80,
 			sort: true,
-			template: (val: any) => val?.toString() ?? '-'
+			template: (val: unknown) => val?.toString() ?? '-'
 		},
 		{
 			id: 'element',
@@ -225,14 +225,17 @@
 			id: 'group',
 			header: 'Group',
 			width: 180,
-			template: (_val: any, row: any) => (row.group ? displayName(row.group) : '-')
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			template: (_val: unknown, row: any) => (row.group ? displayName(row.group) : '-')
 		}
 	]
 
 	// Raids grid API reference
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
 	let raidsGridApi: any
 
 	// Initialize raids grid
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
 	const initRaidsGrid = (apiRef: any) => {
 		raidsGridApi = apiRef
 
@@ -253,9 +256,11 @@
 		})
 
 		// Row click handler
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		raidsGridApi.on('select-row', (ev: any) => {
 			const rowId = ev.id
 			if (rowId) {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 				const raid = filteredRaids.find((r: any) => r.id === rowId)
 				if (raid) {
 					handleRaidClick(raid)
@@ -270,6 +275,7 @@
 		if (!sortKey) return filteredRaids
 
 		const order = raidsSortMarks[sortKey]?.order
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		return [...filteredRaids].sort((a: any, b: any) => {
 			let valA = a[sortKey]
 			let valB = b[sortKey]
@@ -311,15 +317,17 @@
 			header: 'Section',
 			width: 100,
 			sort: true,
-			template: (val: any) => getRaidSectionLabel(val)
+			template: (val: unknown) => getRaidSectionLabel(val)
 		},
 		{
 			id: 'player_count',
 			header: 'Players',
 			width: 100,
-			template: (_val: any, row: any) => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			template: (_val: unknown, row: any) => {
 				const raids = row.raids ?? []
 				const counts: number[] = [
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 					...new Set<number>(raids.map((r: any) => r.playerCount).filter(Boolean))
 				]
 				counts.sort((a, b) => a - b)
@@ -331,7 +339,7 @@
 			header: 'Difficulty',
 			width: 100,
 			sort: true,
-			template: (val: any) => val?.toString() ?? '-'
+			template: (val: unknown) => val?.toString() ?? '-'
 		},
 		{
 			id: 'flags',
@@ -343,7 +351,8 @@
 			id: 'raids',
 			header: 'Raids',
 			width: 80,
-			template: (_val: any, row: any) => row.raids?.length?.toString() ?? '0'
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			template: (_val: unknown, row: any) => row.raids?.length?.toString() ?? '0'
 		}
 	]
 
@@ -354,6 +363,7 @@
 		if (!sortKey) return groups
 
 		const order = groupsSortMarks[sortKey]?.order
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		return [...groups].sort((a: any, b: any) => {
 			let valA = a[sortKey]
 			let valB = b[sortKey]
@@ -377,9 +387,11 @@
 	})
 
 	// Groups grid API reference
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
 	let groupsGridApi: any
 
 	// Initialize groups grid
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
 	const initGroupsGrid = (apiRef: any) => {
 		groupsGridApi = apiRef
 
@@ -401,9 +413,11 @@
 		})
 
 		// Row click handler
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		groupsGridApi.on('select-row', (ev: any) => {
 			const rowId = ev.id
 			if (rowId) {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 				const group = (groupsQuery.data ?? []).find((g: any) => g.id === rowId)
 				if (group) {
 					handleGroupClick(group)

@@ -12,7 +12,8 @@
 	// Props
 	interface Props {
 		type: 'character' | 'summon' | 'weapon' | 'job' | 'raid' | 'accessory'
-		item: Record<string, unknown> // The character/summon/weapon/job object
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
+		item: any // The character/summon/weapon/job object
 		image: string
 		fallbackImage?: string // Intermediate fallback before placeholder (e.g., weapon without element suffix)
 		editUrl?: string // URL to navigate to for editing (view mode)

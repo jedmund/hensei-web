@@ -4,7 +4,8 @@
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
-		itemData: Record<string, unknown>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
+		itemData: any
 		gridUncapLevel: number | null
 		gridTranscendence: number | null
 	}

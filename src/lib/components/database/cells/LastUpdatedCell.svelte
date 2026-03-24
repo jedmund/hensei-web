@@ -4,7 +4,8 @@
 	const { row }: Cell = $props()
 
 	// Get the most recent date from various date fields
-	const getLastUpdated = (item: Record<string, unknown>): Date | null => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid row data
+	const getLastUpdated = (item: any): Date | null => {
 		if (!item) return null
 
 		const dates: Date[] = []
@@ -47,7 +48,8 @@
 	const formattedDate = $derived(formatDate(lastUpdated))
 
 	// Determine what type of update this was
-	const getUpdateType = (item: Record<string, unknown>): string => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid row data
+	const getUpdateType = (item: any): string => {
 		const lastDate = getLastUpdated(item)
 		if (!lastDate) return ''
 

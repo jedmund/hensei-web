@@ -108,7 +108,8 @@
 	}))
 
 	// Helper function for weapon grid image
-	function getWeaponImage(weapon: Record<string, unknown>): string {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
+	function getWeaponImage(weapon: any): string {
 		return getWeaponGridImage(
 			weapon?.granblueId,
 			weapon?.element,

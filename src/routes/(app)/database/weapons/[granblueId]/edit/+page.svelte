@@ -175,6 +175,7 @@
 				forgedFrom: weapon.forgedFrom?.granblueId || null,
 				forgeOrder: weapon.forgeOrder ?? null,
 				// Awakenings
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic awakening data
 				awakeningIds: (weapon.awakenings ?? []).map((a: any) => a.id),
 				// Variant
 				weaponSeriesVariantId: weapon.series?.weaponSeriesVariantId || '',
@@ -265,7 +266,8 @@
 	}
 
 	// Helper function for weapon grid image
-	function getWeaponImage(weapon: Record<string, unknown>): string {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
+	function getWeaponImage(weapon: any): string {
 		return getWeaponGridImage(
 			weapon?.granblueId,
 			weapon?.element,

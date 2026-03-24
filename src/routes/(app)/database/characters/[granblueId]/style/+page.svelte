@@ -111,7 +111,8 @@
 	}))
 
 	// Helper function for character grid image
-	function getCharacterGridImage(character: Record<string, unknown>): string {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
+	function getCharacterGridImage(character: any): string {
 		return getCharacterImage(character?.granblueId, 'grid', '01_style')
 	}
 

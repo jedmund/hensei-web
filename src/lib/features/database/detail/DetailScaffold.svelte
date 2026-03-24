@@ -10,7 +10,8 @@
 
 	interface Props {
 		type: 'character' | 'summon' | 'weapon' | 'job' | 'raid' | 'accessory'
-		item: Record<string, unknown>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
+		item: any
 		image: string
 		fallbackImage?: string
 		showEdit?: boolean

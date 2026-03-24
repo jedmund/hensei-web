@@ -2,7 +2,8 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
 	interface Props {
-		row: Record<string, unknown>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid IRow type uses any
+		row: any
 		type: 'character' | 'weapon' | 'summon'
 	}
 

@@ -269,7 +269,8 @@
 	}
 
 	// Helper function for character grid image
-	function getCharacterGridImage(character: Record<string, unknown>): string {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
+	function getCharacterGridImage(character: any): string {
 		const pose = character?.styleSwap ? '01_style' : '01'
 		return getCharacterImage(character?.granblueId, 'grid', pose)
 	}

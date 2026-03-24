@@ -102,6 +102,7 @@
 			width: 70,
 			hidden: true,
 			cell: BooleanCell,
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) => row.uncap?.flb
 		},
 		{
@@ -110,6 +111,7 @@
 			width: 70,
 			hidden: true,
 			cell: BooleanCell,
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) => row.uncap?.transcendence
 		},
 		{

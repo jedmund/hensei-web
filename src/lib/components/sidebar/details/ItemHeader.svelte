@@ -14,7 +14,8 @@
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
 		item: GridCharacter | GridWeapon | GridSummon
-		itemData: Record<string, unknown>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
+		itemData: any
 		gridUncapLevel: number | null | undefined
 		gridTranscendence: number | null | undefined
 		showUncap?: boolean
@@ -67,7 +68,8 @@
 		}
 	}
 
-	function displayName(input: unknown): string {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data
+	function displayName(input: any): string {
 		if (!input) return '—'
 		const name = input.name ?? input
 		return localizedName(name)

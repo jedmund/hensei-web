@@ -41,6 +41,7 @@
 
 	// Grid configuration
 	let sortMarks = $state<Record<string, { order: 'asc' | 'desc' }>>({})
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
 	let gridApi: any
 
 	const columns: IColumn[] = [
@@ -55,36 +56,39 @@
 			header: 'Name',
 			flexgrow: 1,
 			sort: true,
-			template: (_val: any, row: any) => localizedName(row.name)
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			template: (_val: unknown, row: any) => localizedName(row.name)
 		},
 		{
 			id: 'bulletType',
 			header: 'Type',
 			width: 120,
 			sort: true,
-			template: (val: any) => BULLET_TYPES[val] ?? 'Unknown'
+			template: (val: unknown) => BULLET_TYPES[val] ?? 'Unknown'
 		},
 		{
 			id: 'atk',
 			header: 'ATK',
 			width: 80,
 			sort: true,
-			template: (val: any) => val?.toString() ?? '0'
+			template: (val: unknown) => val?.toString() ?? '0'
 		},
 		{
 			id: 'hitsAll',
 			header: 'Hits All',
 			width: 80,
-			template: (val: any) => (val ? 'Yes' : 'No')
+			template: (val: unknown) => (val ? 'Yes' : 'No')
 		},
 		{
 			id: 'effect',
 			header: 'Effect',
 			flexgrow: 1,
-			template: (_val: any, row: any) => row.effect?.en ?? '—'
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			template: (_val: unknown, row: any) => row.effect?.en ?? '—'
 		}
 	]
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
 	const initGrid = (apiRef: any) => {
 		gridApi = apiRef
 
@@ -103,9 +107,11 @@
 			return false
 		})
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		gridApi.on('select-row', (ev: any) => {
 			const rowId = ev.id
 			if (rowId) {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 				const bullet = filteredBullets.find((b: any) => b.id === rowId)
 				if (bullet) {
 					handleBulletClick(bullet)
@@ -119,6 +125,7 @@
 		if (!sortKey) return filteredBullets
 
 		const order = sortMarks[sortKey]?.order
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		return [...filteredBullets].sort((a: any, b: any) => {
 			let valA = a[sortKey]
 			let valB = b[sortKey]

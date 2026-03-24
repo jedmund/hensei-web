@@ -65,7 +65,7 @@
 			header: 'Name',
 			flexgrow: 1,
 			sort: true,
-			template: (nameObj: any) => {
+			template: (nameObj: unknown) => {
 				if (!nameObj) return '—'
 				if (typeof nameObj === 'string') return nameObj
 				return nameObj.en || nameObj.ja || '—'
@@ -126,7 +126,7 @@
 			header: 'Rarity',
 			width: 80,
 			sort: true,
-			template: (rarity: any) => getRarityLabel(rarity)
+			template: (rarity: unknown) => getRarityLabel(rarity)
 		}
 	]
 
@@ -175,11 +175,14 @@
 	})
 
 	// Grid API reference for accessories
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
 	let accessoryApi: any
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
 	const initAccessoryGrid = (apiRef: any) => {
 		accessoryApi = apiRef
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		apiRef.on('select-row', (ev: any) => {
 			const rowId = ev.id
 			if (rowId) {
@@ -261,7 +264,7 @@
 			header: 'Name',
 			flexgrow: 1,
 			sort: true,
-			template: (nameObj: any) => {
+			template: (nameObj: unknown) => {
 				if (!nameObj) return '—'
 				if (typeof nameObj === 'string') return nameObj
 				return nameObj.en || nameObj.ja || '—'
@@ -296,7 +299,9 @@
 	]
 
 	// Skill grid init
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
 	const initSkillGrid = (apiRef: any) => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		apiRef.on('select-row', (ev: any) => {
 			const rowId = ev.id
 			if (rowId) {

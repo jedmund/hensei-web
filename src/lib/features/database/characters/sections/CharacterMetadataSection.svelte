@@ -12,9 +12,11 @@
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 
 	interface Props {
-		character: Record<string, unknown>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
+		character: any
 		editMode?: boolean
-		editData?: Record<string, unknown>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
+		editData?: any
 	}
 
 	let { character, editMode = false, editData = $bindable() }: Props = $props()

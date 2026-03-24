@@ -15,9 +15,11 @@
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
-		weapon: Record<string, unknown>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
+		weapon: any
 		editMode?: boolean
-		editData?: Record<string, unknown>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
+		editData?: any
 	}
 
 	let { weapon, editMode = false, editData = $bindable() }: Props = $props()
@@ -91,7 +93,8 @@
 	}
 
 	// Format variant label for display mode
-	function formatVariantLabel(weapon: Record<string, unknown>): string {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
+	function formatVariantLabel(weapon: any): string {
 		if (!weapon?.series?.weaponSeriesVariantId) return '—'
 		return weapon.series.weaponSeriesVariantName || '—'
 	}

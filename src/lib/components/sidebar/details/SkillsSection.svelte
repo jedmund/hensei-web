@@ -4,12 +4,14 @@
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
-		itemData: Record<string, unknown>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
+		itemData: any
 	}
 
 	let { type, itemData }: Props = $props()
 
-	function displayName(input: unknown): string {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data
+	function displayName(input: any): string {
 		if (!input) return '—'
 		const name = input.name ?? input
 		return localizedName(name)

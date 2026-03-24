@@ -9,9 +9,11 @@
 
 	import { resolve } from '$app/paths'
 	interface Props {
-		weapon: Record<string, unknown>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
+		weapon: any
 		editMode?: boolean
-		editData?: Record<string, unknown>
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
+		editData?: any
 	}
 
 	let { weapon, editMode = false, editData = $bindable() }: Props = $props()
