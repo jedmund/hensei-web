@@ -52,7 +52,7 @@
 
 		.control {
 			flex-shrink: 0;
-			width: 160px;
+			width: 200px;
 			display: flex;
 			justify-content: flex-end;
 
@@ -62,5 +62,6 @@
 				width: 100%;
 			}
 		}
+
 	}
 </style>

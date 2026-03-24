@@ -6,7 +6,6 @@
 	import ModalFooter from './ui/ModalFooter.svelte'
 	import SettingsNav, { type ElementType } from './ui/SettingsNav.svelte'
 	import AccountSettings from './settings/AccountSettings.svelte'
-	import PasswordSettings from './settings/PasswordSettings.svelte'
 	import ProfileSettings from './settings/ProfileSettings.svelte'
 	import PrivacySettings from './settings/PrivacySettings.svelte'
 	import ConfirmDialog from './ui/ConfirmDialog.svelte'
@@ -130,9 +129,8 @@
 
 	// Navigation items
 	const navItems = [
-		{ value: 'account', label: m.settings_nav_account() },
-		{ value: 'password', label: m.settings_nav_password() },
 		{ value: 'profile', label: m.settings_nav_profile() },
+		{ value: 'account', label: m.settings_nav_account() },
 		{ value: 'privacy', label: m.settings_nav_privacy() }
 	]
 
@@ -296,48 +294,46 @@
 							<div class="spinner"></div>
 							<span>{m.settings_loading()}</span>
 						</div>
+					{:else if activeSection === 'profile'}
+						<ProfileSettings
+							{picture}
+							{element}
+							{username}
+							displayName={formDisplayName}
+							{granblueId}
+							{wikiProfile}
+							{youtube}
+							{gender}
+							onPictureChange={(v) => (picture = v)}
+							onDisplayNameChange={(v) => (formDisplayName = v)}
+							onGranblueIdChange={(v) => (granblueId = v)}
+							onWikiProfileChange={(v) => (wikiProfile = v)}
+							onYoutubeChange={(v) => (youtube = v)}
+							onGenderChange={(v) => (gender = v)}
+						/>
 					{:else if activeSection === 'account'}
 						<AccountSettings
 							username={formUsername}
-							displayName={formDisplayName}
 							email={formEmail}
 							{emailVerified}
 							{bahamut}
 							{role}
 							{element}
-							onUsernameChange={(v) => (formUsername = v)}
-							onDisplayNameChange={(v) => (formDisplayName = v)}
-							onEmailChange={(v) => (formEmail = v)}
-							onBahamutChange={(v) => (bahamut = v)}
-							onUsernameValidChange={(v) => (usernameValid = v)}
-						/>
-					{:else if activeSection === 'password'}
-						<PasswordSettings
+							{language}
+							{theme}
 							{currentPassword}
 							{newPassword}
 							{confirmPassword}
+							onUsernameChange={(v) => (formUsername = v)}
+							onEmailChange={(v) => (formEmail = v)}
+							onBahamutChange={(v) => (bahamut = v)}
+							onUsernameValidChange={(v) => (usernameValid = v)}
+							onElementChange={(v) => (element = v as ElementType)}
+							onLanguageChange={(v) => (language = v)}
+							onThemeChange={(v) => (theme = v)}
 							onCurrentPasswordChange={(v) => (currentPassword = v)}
 							onNewPasswordChange={(v) => (newPassword = v)}
 							onConfirmPasswordChange={(v) => (confirmPassword = v)}
-						/>
-					{:else if activeSection === 'profile'}
-						<ProfileSettings
-							{picture}
-							{element}
-							{granblueId}
-							{wikiProfile}
-							{youtube}
-							{gender}
-							{language}
-							{theme}
-							onPictureChange={(v) => (picture = v)}
-							onElementChange={(v) => (element = v as ElementType)}
-							onGranblueIdChange={(v) => (granblueId = v)}
-							onWikiProfileChange={(v) => (wikiProfile = v)}
-							onYoutubeChange={(v) => (youtube = v)}
-							onGenderChange={(v) => (gender = v)}
-							onLanguageChange={(v) => (language = v)}
-							onThemeChange={(v) => (theme = v)}
 						/>
 					{:else if activeSection === 'privacy'}
 						<PrivacySettings
