@@ -9,6 +9,8 @@
 		label: string
 		disabled?: boolean
 		image?: string
+		/** CSS background color behind the image thumbnail */
+		imageBackground?: string
 		/** CSS color for a colored dot indicator */
 		color?: string
 		/** CSS color applied only to the check indicator, without rendering a color dot */
@@ -121,7 +123,7 @@
 				{#if selected?.color}
 					<span class="color-dot" style="background-color: {selected.color}"></span>
 				{:else if selected?.image}
-					<img src={selected.image} alt={selected.label} class="image" />
+					<img src={selected.image} alt={selected.label} class="image" style={selected.imageBackground ? `background-color: ${selected.imageBackground}` : ''} />
 				{/if}
 				<span class="text">{selected !== undefined ? selected.label : placeholder}</span>
 				<Icon name="chevron-down-small" size={14} class="chevron" />
@@ -142,7 +144,7 @@
 										{#if option.color}
 											<span class="color-dot" style="background-color: {option.color}"></span>
 										{:else if option.image}
-											<img src={option.image} alt={option.label} class="image" />
+											<img src={option.image} alt={option.label} class="image" style={option.imageBackground ? `background-color: ${option.imageBackground}` : ''} />
 										{/if}
 										<span class="text" class:muted={option.muted}>{option.label}</span>
 										{#if option.suffix}
@@ -174,7 +176,7 @@
 									{#if option.color}
 										<span class="color-dot" style="background-color: {option.color}"></span>
 									{:else if option.image}
-										<img src={option.image} alt={option.label} class="image" />
+										<img src={option.image} alt={option.label} class="image" style={option.imageBackground ? `background-color: ${option.imageBackground}` : ''} />
 									{/if}
 									<span class="text" class:muted={option.muted}>{option.label}</span>
 									{#if option.suffix}
@@ -209,7 +211,7 @@
 			{#if selected?.color}
 				<span class="color-dot" style="background-color: {selected.color}"></span>
 			{:else if selected?.image}
-				<img src={selected.image} alt={selected.label} class="image" />
+				<img src={selected.image} alt={selected.label} class="image" style={selected.imageBackground ? `background-color: ${selected.imageBackground}` : ''} />
 			{/if}
 			<span class="text">{selected !== undefined ? selected.label : placeholder}</span>
 			<Icon name="chevron-down-small" size={14} class="chevron" />
@@ -231,7 +233,7 @@
 									{#if option.color}
 										<span class="color-dot" style="background-color: {option.color}"></span>
 									{:else if option.image}
-										<img src={option.image} alt={option.label} class="image" />
+										<img src={option.image} alt={option.label} class="image" style={option.imageBackground ? `background-color: ${option.imageBackground}` : ''} />
 									{/if}
 									<span class="text" class:muted={option.muted}>{option.label}</span>
 									{#if option.suffix}
@@ -363,8 +365,10 @@
 
 		.image {
 			width: $unit-3x;
-			height: auto;
+			height: $unit-3x;
 			flex-shrink: 0;
+			border-radius: $full-corner;
+			object-fit: cover;
 		}
 
 		.color-dot {
@@ -423,6 +427,7 @@
 		box-shadow: var(--shadow-lg);
 		padding: $unit-half;
 		min-width: var(--bits-select-anchor-width);
+		max-width: var(--bits-select-anchor-width);
 		max-height: 40vh;
 		overflow: auto;
 		z-index: $z-modal + 2;
@@ -448,7 +453,7 @@
 		cursor: pointer;
 		display: flex;
 		gap: $unit;
-		padding: $unit $unit-2x;
+		padding: $unit $unit-2x $unit $unit;
 		user-select: none;
 		@include smooth-transition($duration-quick, background-color);
 
@@ -481,8 +486,10 @@
 
 		.image {
 			width: $unit-3x;
-			height: auto;
+			height: $unit-3x;
 			flex-shrink: 0;
+			border-radius: $full-corner;
+			object-fit: cover;
 		}
 
 		.color-dot {
