@@ -1,7 +1,7 @@
 import { redirect } from '@sveltejs/kit'
 import type { LayoutServerLoad } from './$types'
 
-export const load: LayoutServerLoad = async ({ locals, url }) => {
+export const load: LayoutServerLoad = async ({ locals }) => {
 	// Check authentication first
 	if (!locals.session.isAuthenticated) {
 		throw redirect(302, '/auth/login')

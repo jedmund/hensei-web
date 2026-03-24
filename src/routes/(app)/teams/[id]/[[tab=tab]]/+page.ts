@@ -16,7 +16,7 @@ export const load: PageLoad = async ({ params, parent, fetch }) => {
 
 		// Determine if user can edit
 		canEdit = authUserId ? party.user?.id === authUserId : false
-	} catch (err) {
+	} catch (_err) {
 		// Error is expected for test/invalid IDs
 	}
 

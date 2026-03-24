@@ -109,8 +109,8 @@
 
 			crewStore.setCrew(crew, crewStore.membership)
 			open = false
-		} catch (err: any) {
-			settingsError = err.message || 'Failed to update crew'
+		} catch (err: unknown) {
+			settingsError = err instanceof Error ? err.message : 'Failed to update crew'
 		}
 	}
 
