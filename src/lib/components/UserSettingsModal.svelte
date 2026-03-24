@@ -214,12 +214,13 @@
 			}
 
 			// Make a request to update the cookie server-side
+			// Include username so the account cookie gets updated too
 			await fetch('/api/settings', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(updatedUser)
+				body: JSON.stringify({ ...updatedUser, username: response.username })
 			})
 
 			// Update the TanStack Query cache so reopening the modal shows the saved values

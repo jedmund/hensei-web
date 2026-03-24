@@ -1,16 +1,30 @@
 import { dev } from '$app/environment'
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
-import { setUserCookie } from '$lib/auth/cookies'
+import { getAccountFromCookies, setAccountCookie, setUserCookie } from '$lib/auth/cookies'
 import type { UserCookie } from '$lib/types/UserCookie'
 
 export const POST: RequestHandler = async ({ cookies, request }) => {
 	try {
-		const userCookie = await request.json() as UserCookie
+		const body = await request.json() as UserCookie & { username?: string }
 
 		// Calculate expiry date (60 days from now)
 		const expires = new Date()
 		expires.setDate(expires.getDate() + 60)
+
+		// If a username was provided, update the account cookie too
+		if (body.username) {
+			const account = getAccountFromCookies(cookies)
+			if (account) {
+				setAccountCookie(cookies, { ...account, username: body.username }, {
+					secure: true,
+					expires
+				})
+			}
+		}
+
+		// Strip username before storing as user cookie (it doesn't belong there)
+		const { username: _, ...userCookie } = body
 
 		// Set the user cookie with the updated data
 		setUserCookie(cookies, userCookie, {
