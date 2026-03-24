@@ -81,8 +81,8 @@
 
 			// Navigate back to detail page
 			goto(resolve(localizeHref(`/database/gw-events/${eventId}`)))
-		} catch (error: any) {
-			saveError = error.message || 'Failed to save event'
+		} catch (error: unknown) {
+			saveError = error instanceof Error ? error.message : 'Failed to save event'
 		} finally {
 			isSaving = false
 		}

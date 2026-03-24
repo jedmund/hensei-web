@@ -5,12 +5,12 @@
 	import { getRarityLabel, getRarityOptions } from '$lib/utils/rarity'
 
 	interface Props {
-		summon: any
+		summon: Record<string, unknown>
 		editMode?: boolean
-		editData?: any
+		editData?: Record<string, unknown>
 	}
 
-	let { summon, editMode = false, editData = $bindable<any>() }: Props = $props()
+	let { summon, editMode = false, editData = $bindable() }: Props = $props()
 
 	const rarityOptions = getRarityOptions()
 </script>

@@ -79,12 +79,13 @@
 
 			// Navigate to crew dashboard
 			goto(resolve(localizeHref('/crew')))
-		} catch (error: any) {
+		} catch (error: unknown) {
 			// Handle API errors
-			if (error.errors) {
-				errors = error.errors
+			const err = error as Record<string, unknown>
+			if (err.errors) {
+				errors = err.errors as Record<string, string>
 			} else {
-				errors = { form: error.message || 'Failed to create crew' }
+				errors = { form: error instanceof Error ? error.message : 'Failed to create crew' }
 			}
 		}
 	}

@@ -1,10 +1,11 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { onMount } from 'svelte'
 	import { page } from '$app/stores'
 	import type { PageData } from './$types'
 
-	const { data, children }: { data: PageData; children: () => any } = $props()
+	const { data, children }: { data: PageData; children: Snippet } = $props()
 
 	const baseHref = localizeHref('/database')
 	const summonsHref = localizeHref('/database/summons')
@@ -17,7 +18,9 @@
 	}
 
 	// Get user's element for styling
-	const userElement = $derived((data as any)?.user?.element || 'null')
+	const userElement = $derived(
+		(data as unknown as Record<string, Record<string, unknown> | undefined>)?.user?.element || 'null'
+	)
 </script>
 
 {@render children?.()}

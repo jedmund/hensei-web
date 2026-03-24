@@ -44,6 +44,7 @@
 			onValueChange?.([])
 		} else {
 			value = undefined
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- clear action sends undefined to callback typed as number | number[]
 			onValueChange?.(undefined as any)
 		}
 	}

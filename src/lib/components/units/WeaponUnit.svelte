@@ -118,7 +118,7 @@
 		try {
 			const party = ctx.getParty()
 			const editKey = ctx.getEditKey()
-			await ctx.services.gridService.removeWeapon(party.id, item.id as any, editKey || undefined)
+			await ctx.services.gridService.removeWeapon(party.id, item.id, editKey || undefined)
 		} catch (err) {
 			console.error('Error removing weapon:', err)
 			toast.error(extractErrorMessage(err, 'Failed to remove weapon'))

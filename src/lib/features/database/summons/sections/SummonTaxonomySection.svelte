@@ -12,9 +12,9 @@
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
-		summon: any
+		summon: Record<string, unknown>
 		editMode?: boolean
-		editData?: any
+		editData?: Record<string, unknown>
 	}
 
 	let { summon, editMode = false, editData = $bindable() }: Props = $props()

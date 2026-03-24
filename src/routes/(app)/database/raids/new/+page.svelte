@@ -106,8 +106,8 @@
 
 			// Navigate to the new raid's detail page
 			goto(resolve(`/database/raids/${newRaid.slug}`))
-		} catch (error: any) {
-			saveError = error.message || 'Failed to create raid'
+		} catch (error: unknown) {
+			saveError = error instanceof Error ? error.message : 'Failed to create raid'
 		} finally {
 			isSaving = false
 		}

@@ -111,7 +111,7 @@
 	}))
 
 	// Helper function for character grid image
-	function getCharacterGridImage(character: any): string {
+	function getCharacterGridImage(character: Record<string, unknown>): string {
 		const pose = character?.styleSwap ? '01_style' : '01'
 		return getCharacterImage(character?.granblueId, 'grid', pose)
 	}

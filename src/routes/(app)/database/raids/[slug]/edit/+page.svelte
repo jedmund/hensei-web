@@ -139,8 +139,8 @@
 
 			// Navigate to the new slug if it changed
 			goto(resolve(`/database/raids/${result.slug}`))
-		} catch (error: any) {
-			saveError = error.message || 'Failed to save raid'
+		} catch (error: unknown) {
+			saveError = error instanceof Error ? error.message : 'Failed to save raid'
 		} finally {
 			isSaving = false
 		}

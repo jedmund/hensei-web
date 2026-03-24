@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte'
 	import { page } from '$app/state'
 	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
@@ -6,7 +7,7 @@
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import * as m from '$lib/paraglide/messages'
 
-	const { children }: { children: () => any } = $props()
+	const { children }: { children: Snippet } = $props()
 
 	const tabs = [
 		{ value: 'about', path: '/about' },

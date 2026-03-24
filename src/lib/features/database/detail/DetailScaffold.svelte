@@ -10,7 +10,7 @@
 
 	interface Props {
 		type: 'character' | 'summon' | 'weapon' | 'job' | 'raid' | 'accessory'
-		item: any
+		item: Record<string, unknown>
 		image: string
 		fallbackImage?: string
 		showEdit?: boolean

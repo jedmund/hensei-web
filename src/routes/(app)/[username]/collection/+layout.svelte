@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte'
 	import type { LayoutData } from './$types'
 	import { page } from '$app/stores'
 	import { resolve } from '$app/paths'
@@ -34,7 +35,7 @@
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 
-	let { data, children }: { data: LayoutData; children: any } = $props()
+	let { data, children }: { data: LayoutData; children: Snippet } = $props()
 
 	const viewerCrewRole = $derived(crewStore.membership?.role ?? null)
 	const viewerCrewId = $derived(crewStore.crew?.id ?? null)

@@ -60,7 +60,7 @@
 
 		creationPromise = (async () => {
 			try {
-				const payload: any = {
+				const payload: Record<string, unknown> = {
 					name: 'New Team',
 					visibility: 1,
 					element: party.element || 0

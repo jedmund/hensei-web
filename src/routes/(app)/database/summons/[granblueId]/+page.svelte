@@ -99,7 +99,7 @@
 	}))
 
 	// Helper function for summon grid image
-	function getSummonGridImage(summon: any): string {
+	function getSummonGridImage(summon: Record<string, unknown>): string {
 		return getSummonImage(summon?.granblueId, 'grid')
 	}
 

@@ -265,7 +265,7 @@
 	}
 
 	// Helper function for weapon grid image
-	function getWeaponImage(weapon: any): string {
+	function getWeaponImage(weapon: Record<string, unknown>): string {
 		return getWeaponGridImage(
 			weapon?.granblueId,
 			weapon?.element,

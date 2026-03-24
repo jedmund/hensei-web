@@ -358,6 +358,7 @@
 
 	 
 	const loader = useInfiniteLoader(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- createInfiniteQuery result type doesn't match useInfiniteLoader generic exactly
 		() => activeQuery as any,
 		() => sentinelEl,
 		{ rootMargin: '200px' }

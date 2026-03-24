@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte'
 	import * as m from '$lib/paraglide/messages'
 	import Navigation from '$lib/components/Navigation.svelte'
 	import Sidebar from '$lib/components/ui/Sidebar.svelte'
@@ -16,8 +17,8 @@
 	import type { LayoutData } from './$types'
 
 	const { data, children } = $props<{
-		data: LayoutData & { [key: string]: any }
-		children: () => any
+		data: LayoutData & { [key: string]: unknown }
+		children: Snippet
 	}>()
 
 	// Populate crew store for authenticated users (needed globally for collection features)

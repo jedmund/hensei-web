@@ -93,8 +93,8 @@
 
 			// Navigate back to detail page
 			goto(resolve(`/database/raid-groups/${groupId}`))
-		} catch (error: any) {
-			saveError = error.message || 'Failed to save raid group'
+		} catch (error: unknown) {
+			saveError = error instanceof Error ? error.message : 'Failed to save raid group'
 		} finally {
 			isSaving = false
 		}

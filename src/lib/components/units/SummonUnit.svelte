@@ -65,7 +65,7 @@
 		try {
 			const party = ctx.getParty()
 			const editKey = ctx.getEditKey()
-			await ctx.services.gridService.removeSummon(party.id, item.id as any, editKey || undefined)
+			await ctx.services.gridService.removeSummon(party.id, item.id, editKey || undefined)
 		} catch (err) {
 			console.error('Error removing summon:', err)
 			toast.error(extractErrorMessage(err, 'Failed to remove summon'))

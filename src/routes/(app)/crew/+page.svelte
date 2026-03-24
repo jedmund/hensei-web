@@ -101,8 +101,8 @@
 			crewGamertag = ''
 			crewGranblueCrewId = ''
 			crewDescription = ''
-		} catch (err: any) {
-			error = err.message || 'Failed to create crew'
+		} catch (err: unknown) {
+			error = err instanceof Error ? err.message : 'Failed to create crew'
 		}
 	}
 

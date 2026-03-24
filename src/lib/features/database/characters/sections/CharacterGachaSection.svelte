@@ -15,9 +15,9 @@
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
-		character: any
+		character: Record<string, unknown>
 		editMode?: boolean
-		editData?: any
+		editData?: Record<string, unknown>
 	}
 
 	let { character, editMode = false, editData = $bindable() }: Props = $props()

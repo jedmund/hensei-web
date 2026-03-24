@@ -5,9 +5,9 @@
 	import { PROMOTION_NAMES, getPromotionNames } from '$lib/types/enums'
 
 	interface Props {
-		summon: any
+		summon: Record<string, unknown>
 		editMode?: boolean
-		editData?: any
+		editData?: Record<string, unknown>
 	}
 
 	let { summon, editMode = false, editData = $bindable() }: Props = $props()

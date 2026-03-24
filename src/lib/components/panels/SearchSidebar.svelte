@@ -118,30 +118,32 @@
 		isLoading = true
 
 		try {
-			const params: Record<string, unknown> = {
-				page: currentPage,
-				filters: {} as Record<string, unknown>
-			}
-
-			// Only add query if not empty
-			if (searchQuery) {
-				params.query = searchQuery
-			}
+			const filters: Record<string, unknown> = {}
 
 			// Only add filters if they have values
 			if (elementFilters.length > 0) {
-				params.filters.element = elementFilters
+				filters.element = elementFilters
 			}
 			if (rarityFilters.length > 0) {
-				params.filters.rarity = rarityFilters
+				filters.rarity = rarityFilters
 			}
 			if (type === 'weapon') {
 				// Use required proficiencies (for mainhand) if set, otherwise use user-selected filters
 				const profs =
 					requiredProficiencies ?? (proficiencyFilters.length > 0 ? proficiencyFilters : undefined)
 				if (profs && profs.length > 0) {
-					params.filters.proficiency1 = profs
+					filters.proficiency1 = profs
 				}
+			}
+
+			const params: Record<string, unknown> = {
+				page: currentPage,
+				filters
+			}
+
+			// Only add query if not empty
+			if (searchQuery) {
+				params.query = searchQuery
 			}
 
 			let response

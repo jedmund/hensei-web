@@ -240,7 +240,7 @@
 	// --- Derived values ---
 	const mainWeapon = $derived((party?.weapons ?? []).find((w) => w?.mainhand || w?.position === -1))
 	const mainWeaponElement = $derived(mainWeapon?.element ?? mainWeapon?.weapon?.element)
-	const partyElement = $derived((party as any)?.element)
+	const partyElement = $derived(party?.element)
 
 	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	const userElement = $derived(party.user?.avatar?.element as ElementType | undefined)
@@ -388,7 +388,7 @@
 		openPicker: (opts: {
 			type: 'weapon' | 'summon' | 'character'
 			position: number
-			item?: any
+			item?: GridCharacter | GridWeapon | GridSummon
 		}) => {
 			if (!canEdit()) return
 			selectedSlot = opts.position
@@ -577,7 +577,7 @@
 								characters={party.characters}
 								{mainWeaponElement}
 								{partyElement}
-								unlimited={(party as any)?.raid?.group?.unlimited}
+								unlimited={party?.raid?.group?.unlimited}
 								{collectionCharacterItems}
 							/>
 						</div>

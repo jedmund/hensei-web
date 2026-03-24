@@ -100,11 +100,12 @@
 
 			// Update the store
 			crewStore.setCrew(crew, crewStore.membership)
-		} catch (error: any) {
-			if (error.errors) {
-				errors = error.errors
+		} catch (error: unknown) {
+			const err = error as Record<string, unknown>
+			if (err.errors) {
+				errors = err.errors as Record<string, string>
 			} else {
-				errors = { form: error.message || m.crew_update_failed() }
+				errors = { form: error instanceof Error ? error.message : m.crew_update_failed() }
 			}
 		}
 	}

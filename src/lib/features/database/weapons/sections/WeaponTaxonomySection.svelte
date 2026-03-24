@@ -15,9 +15,9 @@
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
-		weapon: any
+		weapon: Record<string, unknown>
 		editMode?: boolean
-		editData?: any
+		editData?: Record<string, unknown>
 	}
 
 	let { weapon, editMode = false, editData = $bindable() }: Props = $props()
@@ -91,7 +91,7 @@
 	}
 
 	// Format variant label for display mode
-	function formatVariantLabel(weapon: any): string {
+	function formatVariantLabel(weapon: Record<string, unknown>): string {
 		if (!weapon?.series?.weaponSeriesVariantId) return '—'
 		return weapon.series.weaponSeriesVariantName || '—'
 	}

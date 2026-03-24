@@ -9,9 +9,9 @@
 
 	import { resolve } from '$app/paths'
 	interface Props {
-		weapon: any
+		weapon: Record<string, unknown>
 		editMode?: boolean
-		editData?: any
+		editData?: Record<string, unknown>
 	}
 
 	let { weapon, editMode = false, editData = $bindable() }: Props = $props()

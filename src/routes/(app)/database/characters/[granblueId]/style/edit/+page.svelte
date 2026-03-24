@@ -258,7 +258,7 @@
 	}
 
 	// Helper function for character grid image
-	function getCharacterGridImage(character: any): string {
+	function getCharacterGridImage(character: Record<string, unknown>): string {
 		return getCharacterImage(character?.granblueId, 'grid', '01_style')
 	}
 

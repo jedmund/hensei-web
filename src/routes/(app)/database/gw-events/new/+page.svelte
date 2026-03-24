@@ -54,8 +54,8 @@
 
 			// Navigate to the new event's detail page
 			goto(resolve(`/database/gw-events/${newEvent.id}`))
-		} catch (error: any) {
-			saveError = error.message || 'Failed to create event'
+		} catch (error: unknown) {
+			saveError = error instanceof Error ? error.message : 'Failed to create event'
 		} finally {
 			isSaving = false
 		}

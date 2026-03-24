@@ -62,8 +62,8 @@
 
 			// Navigate to the new group's detail page
 			goto(resolve(`/database/raid-groups/${newGroup.id}`))
-		} catch (error: any) {
-			saveError = error.message || 'Failed to create raid group'
+		} catch (error: unknown) {
+			saveError = error instanceof Error ? error.message : 'Failed to create raid group'
 		} finally {
 			isSaving = false
 		}

@@ -26,7 +26,7 @@ export interface SelectionModeContext {
 export function createSelectionModeContext(): SelectionModeContext {
 	let isActive = $state(false)
 	let entityType = $state<EntityType | null>(null)
-	let selectedIds = $state<Set<string>>(new SvelteSet())
+	const selectedIds = new SvelteSet<string>()
 
 	return {
 		get isActive() {
@@ -45,31 +45,32 @@ export function createSelectionModeContext(): SelectionModeContext {
 		enter(type: EntityType) {
 			isActive = true
 			entityType = type
-			selectedIds = new SvelteSet()
+			selectedIds.clear()
 		},
 
 		exit() {
 			isActive = false
 			entityType = null
-			selectedIds = new SvelteSet()
+			selectedIds.clear()
 		},
 
 		toggle(id: string) {
-			const newSet = new SvelteSet(selectedIds)
-			if (newSet.has(id)) {
-				newSet.delete(id)
+			if (selectedIds.has(id)) {
+				selectedIds.delete(id)
 			} else {
-				newSet.add(id)
+				selectedIds.add(id)
 			}
-			selectedIds = newSet
 		},
 
 		selectAll(ids: string[]) {
-			selectedIds = new SvelteSet(ids)
+			selectedIds.clear()
+			for (const id of ids) {
+				selectedIds.add(id)
+			}
 		},
 
 		clearSelection() {
-			selectedIds = new SvelteSet()
+			selectedIds.clear()
 		},
 
 		isSelected(id: string) {

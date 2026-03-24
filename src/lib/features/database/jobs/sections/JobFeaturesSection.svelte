@@ -8,7 +8,7 @@
 	interface Props {
 		job: Job
 		editMode?: boolean
-		editData?: any
+		editData?: Record<string, unknown>
 	}
 
 	let { job, editMode = false, editData = $bindable() }: Props = $props()
