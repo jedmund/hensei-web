@@ -18,7 +18,7 @@
 	// Initialize theme from user cookie preference
 	$effect(() => {
 		if (browser) {
-			const userTheme = (data.currentUser?.theme as ThemePreference) ?? 'system'
+			const userTheme = (data.themePreference as ThemePreference) ?? 'system'
 			untrack(() => themeStore.init(userTheme))
 		}
 	})

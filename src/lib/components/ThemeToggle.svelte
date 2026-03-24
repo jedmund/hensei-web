@@ -12,16 +12,19 @@
 
 	function handleToggle(checked: boolean) {
 		const newTheme = checked ? 'dark' : 'light'
+		const previousTheme = themeStore.preference
 
 		// Apply immediately for responsiveness
 		themeStore.setTheme(newTheme)
 
-		// Persist to DB + user cookie if authenticated
 		if (authStore.isAuthenticated && authStore.user) {
 			const userCookie = $page.data.currentUser
 			if (userCookie) {
-				syncTheme(authStore.user.id, userCookie, newTheme)
+				syncTheme(authStore.user.id, userCookie, newTheme, previousTheme)
 			}
+		} else {
+			// Unauthenticated: persist to a standalone cookie so it survives reload
+			document.cookie = `theme=${newTheme};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`
 		}
 	}
 </script>

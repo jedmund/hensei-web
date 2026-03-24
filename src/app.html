@@ -8,7 +8,8 @@
 				try {
 					var c = document.cookie.split('; ').find(function (c) { return c.startsWith('user=') })
 					var u = c ? JSON.parse(decodeURIComponent(c.split('=')[1])) : null
-					var p = (u && u.theme) || 'system'
+					var tc = document.cookie.split('; ').find(function (c) { return c.startsWith('theme=') })
+				var p = (u && u.theme) || (tc ? tc.split('=')[1] : null) || 'system'
 					var d = p === 'dark' || (p === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
 					document.documentElement.setAttribute('data-theme', d ? 'dark' : 'light')
 				} catch (e) {}
