@@ -6,7 +6,6 @@ vi.mock('$lib/utils/images', () => ({
 
 import {
 	ELEMENTS,
-	ELEMENT_LABELS,
 	getElementLabel,
 	getElementClass,
 	getElementIcon,

@@ -9,7 +9,7 @@ import {
 	toCrewHistoryChartData,
 	toPlayerHistoryChartData
 } from '../gw'
-import { ELEMENT_LABELS, getElementKey, getElementColor } from '../element'
+import { getElementKey, getElementColor } from '../element'
 import type { GwIndividualScore, GwCrewScore, GwEvent, EventScoreSummary } from '$lib/types/api/gw'
 
 // ============================================================================
@@ -68,14 +68,6 @@ describe('parseScore', () => {
 // ============================================================================
 // Element utilities
 // ============================================================================
-
-describe('ELEMENT_LABELS', () => {
-	it('maps all elements 0-6', () => {
-		expect(ELEMENT_LABELS[0]).toBe('Null')
-		expect(ELEMENT_LABELS[1]).toBe('Wind')
-		expect(ELEMENT_LABELS[6]).toBe('Light')
-	})
-})
 
 describe('getElementKey', () => {
 	it('maps all elements 0-6 to lowercase keys', () => {
