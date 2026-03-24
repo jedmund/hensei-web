@@ -58,6 +58,9 @@
 	let localDisplayName = $state(displayName)
 	let localEmail = $state(email)
 
+	// Capture original username for comparison (prop gets mutated by parent on each keystroke)
+	const originalUsername = username
+
 	// Username validation
 	const usernameRegex = /^[a-zA-Z0-9_-]+$/
 	let usernameError = $state('')
@@ -66,7 +69,7 @@
 	let usernameTimer: ReturnType<typeof setTimeout>
 
 	function validateUsername(value: string) {
-		if (value === username) {
+		if (value === originalUsername) {
 			usernameError = ''
 			usernameAvailable = null
 			onUsernameValidChange?.(true)
@@ -96,7 +99,7 @@
 	}
 
 	async function checkUsernameAvailability(value: string) {
-		if (value.length < 3 || !usernameRegex.test(value) || value === username) return
+		if (value.length < 3 || !usernameRegex.test(value) || value === originalUsername) return
 
 		isCheckingUsername = true
 		try {
@@ -119,7 +122,7 @@
 	}
 
 	const usernameIcon = $derived(
-		localUsername === username
+		localUsername === originalUsername
 			? undefined
 			: isCheckingUsername
 				? 'loader'
@@ -137,7 +140,7 @@
 		validateUsername(localUsername)
 		onUsernameChange(localUsername)
 
-		if (localUsername !== username && localUsername.length >= 3 && !usernameError) {
+		if (localUsername !== originalUsername && localUsername.length >= 3 && !usernameError) {
 			usernameTimer = setTimeout(() => checkUsernameAvailability(localUsername), 300)
 		}
 	}
