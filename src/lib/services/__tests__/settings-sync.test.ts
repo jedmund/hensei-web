@@ -30,6 +30,13 @@ vi.mock('$app/navigation', () => ({
 	invalidateAll: () => mockInvalidateAll()
 }))
 
+// Mock Paraglide runtime — deLocalizeHref strips locale prefix, localizeHref adds it
+vi.mock('$lib/paraglide/runtime', () => ({
+	deLocalizeHref: (href: string) => href.replace(/^\/ja/, '') || '/',
+	localizeHref: (href: string, opts?: { locale?: string }) =>
+		opts?.locale === 'ja' ? `/ja${href}` : href
+}))
+
 const mockFetch = vi.fn(async () => new Response(JSON.stringify({ success: true })))
 
 const baseUser: UserCookie = {
@@ -44,7 +51,9 @@ beforeEach(() => {
 	callOrder = []
 	vi.clearAllMocks()
 	vi.stubGlobal('fetch', mockFetch)
-	vi.stubGlobal('window', { location: { reload: vi.fn() } })
+	vi.stubGlobal('window', {
+		location: { href: '', pathname: '/ja/teams', search: '', hash: '', reload: vi.fn() }
+	})
 
 	// Track ordering
 	mockUsersUpdate.mockImplementation(async () => {
@@ -137,7 +146,7 @@ describe('syncTheme', () => {
 })
 
 describe('syncLanguage', () => {
-	it('persists to DB, updates cookie, then reloads', async () => {
+	it('persists to DB, updates cookie, then navigates to localized URL', async () => {
 		const { syncLanguage } = await import('../settings-sync')
 
 		await syncLanguage('user-1', baseUser, 'ja')
@@ -147,7 +156,7 @@ describe('syncLanguage', () => {
 			'fetch:/api/settings',
 			'invalidateAll'
 		])
-		expect(window.location.reload).toHaveBeenCalled()
+		expect(window.location.href).toBe('/ja/teams')
 	})
 
 	it('calls users.update with the new language', async () => {
@@ -168,10 +177,10 @@ describe('syncLanguage', () => {
 		expect(body.theme).toBe('system')
 	})
 
-	it('awaits DB and cookie update before reloading', async () => {
+	it('awaits DB and cookie update before navigating', async () => {
 		const { syncLanguage } = await import('../settings-sync')
 
-		// Make users.update slow to verify we don't reload early
+		// Make users.update slow to verify we don't navigate early
 		mockUsersUpdate.mockImplementation(
 			() => new Promise((resolve) => {
 				setTimeout(() => {
@@ -183,28 +192,39 @@ describe('syncLanguage', () => {
 
 		await syncLanguage('user-1', baseUser, 'ja')
 
-		// reload must come after both async steps
-		const reloadIndex = callOrder.indexOf('invalidateAll')
+		// navigation must come after both async steps
+		const navIndex = callOrder.indexOf('invalidateAll')
 		const updateIndex = callOrder.indexOf('users.update')
 		const fetchIndex = callOrder.indexOf('fetch:/api/settings')
 
 		expect(updateIndex).toBeLessThan(fetchIndex)
-		expect(fetchIndex).toBeLessThan(reloadIndex)
+		expect(fetchIndex).toBeLessThan(navIndex)
 	})
 
-	it('does not reload on API failure', async () => {
+	it('navigates to correct URL when switching to English', async () => {
 		const { syncLanguage } = await import('../settings-sync')
+
+		await syncLanguage('user-1', baseUser, 'en')
+
+		// /ja/teams delocalized → /teams, localized for 'en' → /teams
+		expect(window.location.href).toBe('/teams')
+	})
+
+	it('does not navigate on API failure', async () => {
+		const { syncLanguage } = await import('../settings-sync')
+		const originalHref = window.location.href
 
 		mockUsersUpdate.mockRejectedValue(new Error('network error'))
 
 		await syncLanguage('user-1', baseUser, 'ja')
 
 		expect(mockInvalidateAll).not.toHaveBeenCalled()
-		expect(window.location.reload).not.toHaveBeenCalled()
+		expect(window.location.href).toBe(originalHref)
 	})
 
-	it('does not reload on non-ok /api/settings response', async () => {
+	it('does not navigate on non-ok /api/settings response', async () => {
 		const { syncLanguage } = await import('../settings-sync')
+		const originalHref = window.location.href
 
 		mockFetch.mockImplementation(async () => {
 			callOrder.push('fetch:/api/settings')
@@ -213,6 +233,6 @@ describe('syncLanguage', () => {
 
 		await syncLanguage('user-1', baseUser, 'ja')
 
-		expect(window.location.reload).not.toHaveBeenCalled()
+		expect(window.location.href).toBe(originalHref)
 	})
 })
