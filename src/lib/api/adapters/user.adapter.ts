@@ -19,11 +19,8 @@ interface ApiUserResponse {
   role: number
   granblueId?: number | string | null  // API returns number, transformed to camelCase
   showGamertag?: boolean  // transformed from show_gamertag
-  showGranblueId?: boolean  // transformed from show_granblue_id
   wikiProfile?: string | null  // transformed from wiki_profile
-  showWikiProfile?: boolean  // transformed from show_wiki_profile
   youtube?: string | null
-  showYoutube?: boolean  // transformed from show_youtube
   collectionPrivacy?: number  // transformed from collection_privacy (0=everyone, 1=crew_only, 2=private)
   importWeapons?: boolean  // transformed from import_weapons
   defaultImportVisibility?: number  // transformed from default_import_visibility
@@ -52,11 +49,8 @@ export interface UserInfo {
   role: number
   granblueId?: string
   showCrewGamertag?: boolean
-  showGranblueId?: boolean
   wikiProfile?: string
-  showWikiProfile?: boolean
   youtube?: string
-  showYoutube?: boolean
   collectionPrivacy?: number
   importWeapons?: boolean
   defaultImportVisibility?: number
@@ -108,12 +102,8 @@ function transformUserResponse(apiUser: ApiUserResponse): UserInfo {
     granblueId: apiUser.granblueId != null ? String(apiUser.granblueId) : undefined,
     // Rename showGamertag to showCrewGamertag
     showCrewGamertag: apiUser.showGamertag,
-    // Privacy settings
-    showGranblueId: apiUser.showGranblueId,
     wikiProfile: apiUser.wikiProfile ?? undefined,
-    showWikiProfile: apiUser.showWikiProfile,
     youtube: apiUser.youtube ?? undefined,
-    showYoutube: apiUser.showYoutube,
     collectionPrivacy: apiUser.collectionPrivacy,
     importWeapons: apiUser.importWeapons,
     defaultImportVisibility: apiUser.defaultImportVisibility,
