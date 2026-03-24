@@ -18,7 +18,7 @@
 	import type { ImageItem } from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import { getRaidImage, getRaidCdnImage, type RaidImageVariant } from '$lib/utils/images'
 
-	function displayName(input: any): string {
+	function displayName(input: unknown): string {
 		if (!input) return '—'
 		const maybe = input.name ?? input
 		if (typeof maybe === 'string') return maybe

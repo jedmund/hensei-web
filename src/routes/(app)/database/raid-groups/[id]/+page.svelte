@@ -12,7 +12,7 @@
 	import { getRaidSectionLabel } from '$lib/utils/raidSection'
 	import type { PageData } from './$types'
 
-	function displayName(input: any): string {
+	function displayName(input: unknown): string {
 		if (!input) return '—'
 		const maybe = input.name ?? input
 		if (typeof maybe === 'string') return maybe

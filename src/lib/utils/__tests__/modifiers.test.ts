@@ -33,20 +33,20 @@ describe('getAwakeningImage', () => {
 	})
 
 	it('returns null when type has no slug', () => {
-		expect(getAwakeningImage({ type: {} as any })).toBeNull()
+		expect(getAwakeningImage({ type: {} as Record<string, unknown> })).toBeNull()
 	})
 
 	it('returns null for character-balanced', () => {
-		expect(getAwakeningImage({ type: { slug: 'character-balanced' } as any })).toBeNull()
+		expect(getAwakeningImage({ type: { slug: 'character-balanced' } as Record<string, unknown> })).toBeNull()
 	})
 
 	it('returns jpg for character awakenings', () => {
-		const url = getAwakeningImage({ type: { slug: 'character-attack' } as any })
+		const url = getAwakeningImage({ type: { slug: 'character-attack' } as Record<string, unknown> })
 		expect(url).toBe('/images/awakening/character-attack.jpg')
 	})
 
 	it('returns png for weapon awakenings', () => {
-		const url = getAwakeningImage({ type: { slug: 'attack' } as any })
+		const url = getAwakeningImage({ type: { slug: 'attack' } as Record<string, unknown> })
 		expect(url).toBe('/images/awakening/attack.png')
 	})
 })

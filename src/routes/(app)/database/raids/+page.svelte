@@ -23,10 +23,11 @@
 	import { getRaidSectionLabel } from '$lib/utils/raidSection'
 	import { localizedName } from '$lib/utils/locale'
 
-	function displayName(input: any): string {
+	function displayName(input: unknown): string {
 		if (!input) return '—'
-		const name = input.name ?? input
-		return localizedName(name)
+		const obj = input as Record<string, unknown>
+		const name = obj.name ?? input
+		return localizedName(name as string)
 	}
 
 	// State
