@@ -245,7 +245,7 @@
 					<span class="field-label">{m.settings_username()}</span>
 					<span class="field-value">{username}</span>
 				</div>
-				<Button variant="text" size="small" onclick={() => (editingUsername = true)}>
+				<Button variant="ghost" size="small" onclick={() => (editingUsername = true)}>
 					{m.action_change()}
 				</Button>
 			</div>
@@ -289,13 +289,15 @@
 					<span class="field-label">{m.settings_email()}</span>
 					<span class="field-value">{email}</span>
 				</div>
-				<Button variant="text" size="small" onclick={() => (editingEmail = true)}>
+				<Button variant="ghost" size="small" onclick={() => (editingEmail = true)}>
 					{m.action_change()}
 				</Button>
 			</div>
 		{/if}
 
-		<!-- Element Selection -->
+		<!-- Appearance -->
+		<h3 class="section-header">{m.settings_section_appearance()}</h3>
+
 		<SettingsRow title={m.settings_element()} subtitle={m.settings_element_subtitle()}>
 			{#snippet control()}
 				<ElementPicker
@@ -310,20 +312,6 @@
 			{/snippet}
 		</SettingsRow>
 
-		<!-- Language Selection -->
-		<SettingsRow title={m.settings_language()} subtitle={m.settings_language_subtitle()}>
-			{#snippet control()}
-				<Select
-					bind:value={localLanguage}
-					options={languageOptions}
-					placeholder={m.settings_language_placeholder()}
-					contained
-					portal
-				/>
-			{/snippet}
-		</SettingsRow>
-
-		<!-- Theme Selection -->
 		<SettingsRow title={m.settings_theme()} subtitle={m.settings_theme_subtitle()}>
 			{#snippet control()}
 				<Select
@@ -336,8 +324,67 @@
 			{/snippet}
 		</SettingsRow>
 
-		<!-- Bahamut Mode (admin only) -->
+		<SettingsRow title={m.settings_language()} subtitle={m.settings_language_subtitle()}>
+			{#snippet control()}
+				<Select
+					bind:value={localLanguage}
+					options={languageOptions}
+					placeholder={m.settings_language_placeholder()}
+					contained
+					portal
+				/>
+			{/snippet}
+		</SettingsRow>
+
+		<!-- Security -->
+		<h3 class="section-header">{m.settings_section_security()}</h3>
+
+		<SettingsRow title={m.settings_current_password()}>
+			{#snippet control()}
+				<Input
+					type="password"
+					placeholder={m.settings_current_password_placeholder()}
+					contained
+					fullWidth
+					required={hasSecurityChanges}
+					error={currentPasswordRequired ? m.settings_current_password_required() : ''}
+					bind:value={localCurrentPassword}
+					handleInput={handleCurrentPasswordInput}
+				/>
+			{/snippet}
+		</SettingsRow>
+
+		<SettingsRow title={m.settings_new_password()}>
+			{#snippet control()}
+				<Input
+					type="password"
+					placeholder={m.settings_new_password_placeholder()}
+					contained
+					fullWidth
+					bind:value={localNewPassword}
+					handleInput={handleNewPasswordInput}
+				/>
+			{/snippet}
+		</SettingsRow>
+
+		<SettingsRow title={m.settings_confirm_password()}>
+			{#snippet control()}
+				<Input
+					type="password"
+					placeholder={m.settings_confirm_password_placeholder()}
+					contained
+					fullWidth
+					error={passwordError}
+					bind:value={localConfirmPassword}
+					handleInput={handleConfirmPasswordInput}
+				/>
+			{/snippet}
+		</SettingsRow>
+
+		<!-- Admin (admin only) -->
 		{#if isAdmin}
+			<h3 class="section-header">{m.settings_section_admin()}</h3>
+
 			<SettingsRow title={m.settings_bahamut_mode()} subtitle={m.settings_bahamut_subtitle()}>
 				{#snippet control()}
 					<Switch
@@ -349,46 +396,6 @@
 				{/snippet}
 			</SettingsRow>
 		{/if}
-
-		<!-- Password Section -->
-		<h3 class="section-header">{m.settings_nav_password()}</h3>
-
-		<p class="section-note">
-			{m.settings_password_note()}
-		</p>
-
-		<Input
-			label={m.settings_current_password()}
-			type="password"
-			placeholder={m.settings_current_password_placeholder()}
-			contained
-			fullWidth
-			required={hasSecurityChanges}
-			error={currentPasswordRequired ? m.settings_current_password_required() : ''}
-			bind:value={localCurrentPassword}
-			handleInput={handleCurrentPasswordInput}
-		/>
-
-		<Input
-			label={m.settings_new_password()}
-			type="password"
-			placeholder={m.settings_new_password_placeholder()}
-			contained
-			fullWidth
-			bind:value={localNewPassword}
-			handleInput={handleNewPasswordInput}
-		/>
-
-		<Input
-			label={m.settings_confirm_password()}
-			type="password"
-			placeholder={m.settings_confirm_password_placeholder()}
-			contained
-			fullWidth
-			error={passwordError}
-			bind:value={localConfirmPassword}
-			handleInput={handleConfirmPasswordInput}
-		/>
 	</div>
 </div>
 
@@ -411,7 +418,7 @@
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
 		color: var(--text-secondary);
-		margin: 0;
+		margin: spacing.$unit-2x 0 0;
 	}
 
 	.readonly-row {
@@ -437,13 +444,7 @@
 		color: var(--text-primary);
 	}
 
-	.section-note {
-		font-size: typography.$font-small;
-		color: var(--text-secondary);
-		margin: 0;
-	}
-
-	.email-group {
+.email-group {
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit;
