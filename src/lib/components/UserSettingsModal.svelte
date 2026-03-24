@@ -70,6 +70,7 @@
 	let originalTheme = $state('')
 
 	let saving = $state(false)
+	let usernameValid = $state(true)
 	let error = $state<string | null>(null)
 	let contentElement: HTMLElement | undefined = $state()
 	let isScrolledToBottom = $state(true)
@@ -312,6 +313,7 @@
 							onDisplayNameChange={(v) => (formDisplayName = v)}
 							onEmailChange={(v) => (formEmail = v)}
 							onBahamutChange={(v) => (bahamut = v)}
+							onUsernameValidChange={(v) => (usernameValid = v)}
 						/>
 					{:else if activeSection === 'password'}
 						<PasswordSettings
@@ -372,7 +374,7 @@
 			primaryAction={{
 				label: saving ? m.settings_saving() : m.settings_save(),
 				onclick: handleSave,
-				disabled: saving || isLoading
+				disabled: saving || isLoading || !usernameValid
 			}}
 			showShadow={!isScrolledToBottom}
 		/>
