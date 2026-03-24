@@ -10,110 +10,6 @@ const LocalizedNameSchema = z.union([
 	})
 ])
 
-// Minimal grid item guards (post camelCase)
-const MinimalGridWeaponItemSchema = z
-	.object({
-		position: z.number(),
-		mainhand: z.boolean().nullish().optional(),
-		object: z
-			.object({
-				name: LocalizedNameSchema.nullish().optional()
-			})
-			.passthrough()
-			.nullish()
-			.optional()
-	})
-	.passthrough()
-
-const MinimalGridSummonItemSchema = z
-	.object({
-		position: z.number(),
-		main: z.boolean().nullish().optional(),
-		friend: z.boolean().nullish().optional(),
-		quickSummon: z.boolean().nullish().optional(),
-		object: z
-			.object({
-				name: LocalizedNameSchema.nullish().optional()
-			})
-			.passthrough()
-			.nullish()
-			.optional()
-	})
-	.passthrough()
-
-const MinimalGridCharacterItemSchema = z
-	.object({
-		position: z.number(),
-		perpetuity: z.boolean().nullish().optional(),
-		transcendenceStep: z.number().nullish().optional(),
-		object: z
-			.object({
-				name: LocalizedNameSchema.nullish().optional()
-			})
-			.passthrough()
-			.nullish()
-			.optional()
-	})
-	.passthrough()
-
-const MinimalGridsSchema = z
-	.object({
-		weapons: z.array(MinimalGridWeaponItemSchema).optional(),
-		summons: z.array(MinimalGridSummonItemSchema).optional(),
-		characters: z.array(MinimalGridCharacterItemSchema).optional()
-	})
-	.partial()
-
-// Minimal header associations (raid/job) and core scalar flags/counters
-const MinimalHeaderSchema = z
-	.object({
-		raid: z
-			.object({
-				name: LocalizedNameSchema.nullish().optional(),
-				group: z
-					.object({
-						difficulty: z.number().nullish().optional(),
-						extra: z.boolean().nullish().optional(),
-						guidebooks: z.boolean().nullish().optional()
-					})
-					.passthrough()
-					.nullish()
-					.optional()
-			})
-			.passthrough()
-			.nullish()
-			.optional(),
-		job: z
-			.object({
-				name: LocalizedNameSchema.nullish().optional()
-			})
-			.passthrough()
-			.nullish()
-			.optional()
-	})
-	.partial()
-
-const MinimalScalarsSchema = z
-	.object({
-		favorited: z.boolean().nullish().optional(),
-		fullAuto: z.boolean().nullish().optional(),
-		solo: z.boolean().nullish().optional(),
-		autoGuard: z.boolean().nullish().optional(),
-		autoSummon: z.boolean().nullish().optional(),
-		chargeAttack: z.boolean().nullish().optional(),
-		clearTime: z.number().nullish().optional(),
-		buttonCount: z.number().nullish().optional(),
-		chainCount: z.number().nullish().optional(),
-		turnCount: z.number().nullish().optional(),
-		summonCount: z.number().nullish().optional(),
-		videoUrl: z.string().nullish().optional(),
-		visibility: z
-			.union([z.literal(1), z.literal(2), z.literal(3)])
-			.nullish()
-			.optional()
-	})
-	.partial()
-
 // User schema
 const UserSchema = z.object({
 	id: z.string(),
@@ -156,7 +52,7 @@ const JobSchema = z.object({
 	order: z.number().nullish()
 })
 
-const JobSkillSchema = z.object({
+export const JobSkillSchema = z.object({
 	id: z.string(),
 	name: z.string(),
 	name_jp: z.string().optional(),
