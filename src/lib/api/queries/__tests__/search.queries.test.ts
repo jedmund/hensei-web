@@ -71,7 +71,7 @@ describe('buildSearchParams', () => {
 		const filters: SearchFilters = { proficiency: [1, 7] }
 		const result = buildSearchParams('', filters, 1)
 		expect(result.filters!.proficiency1).toEqual([1, 7])
-		expect((result.filters as any).proficiency).toBeUndefined()
+		expect((result.filters as Record<string, unknown>).proficiency).toBeUndefined()
 	})
 
 	it('passes through proficiency2', () => {

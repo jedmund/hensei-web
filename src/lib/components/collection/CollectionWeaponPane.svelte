@@ -12,6 +12,7 @@
 	import { onMount } from 'svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import type { CollectionWeapon } from '$lib/types/api/collection'
+	import type { GridWeapon } from '$lib/types/api/party'
 	import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'
 	import {
 		useUpdateCollectionWeapon,
@@ -222,11 +223,6 @@
 		}
 	}
 
-	function handleCancel() {
-		isEditing = false
-		updateActionVisibility()
-	}
-
 	function handleTabChange(value: string) {
 		selectedTab = value as 'info' | 'collection'
 		if (isEditing) {
@@ -288,7 +284,7 @@
 <div class="collection-weapon-pane">
 	<ItemHeader
 		type="weapon"
-		item={weapon as any}
+		item={weapon as unknown as GridWeapon}
 		itemData={weaponData}
 		gridUncapLevel={weapon.uncapLevel}
 		gridTranscendence={weapon.transcendenceStep}

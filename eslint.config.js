@@ -46,6 +46,11 @@ export default ts.config(
 				parser: ts.parser,
 				svelteConfig
 			}
+		},
+		rules: {
+			// svelte template usage is invisible to typescript-eslint;
+			// rely on svelte-check for unused-var detection in .svelte files
+			'@typescript-eslint/no-unused-vars': 'off'
 		}
 	},
 	storybook.configs['flat/recommended']

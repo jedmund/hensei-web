@@ -95,7 +95,6 @@
 	// Derived values
 	const artifactData = $derived(artifact.artifact)
 	const isQuirk = $derived(isQuirkArtifact(artifactData))
-	const canChangeElement = $derived(true) // Artifacts can always change element
 	const canChangeProficiency = $derived(isQuirk) // Only quirk artifacts have variable proficiency
 
 	// Query all skills for skill rows

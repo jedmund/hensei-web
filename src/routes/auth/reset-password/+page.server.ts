@@ -51,8 +51,6 @@ export const actions: Actions = {
 			return { success: true }
 		}
 
-		const j = await res.json().catch(() => ({}))
-
 		if (res.status === 400) {
 			return fail(400, { invalidToken: true })
 		}

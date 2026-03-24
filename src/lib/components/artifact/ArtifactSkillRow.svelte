@@ -82,9 +82,6 @@
 			return sum + s.level
 		}, 0)
 
-		// Count skills that are set (excluding this one) - they each need at least level 1
-		const otherSetSkillsCount = allSkills.filter((s, i) => i !== currentSlotIndex && s).length
-
 		// Remaining budget for this skill
 		// We need to reserve 1 level for each unset skill slot (since they'll need at least 1 when set)
 		const unsetSlotsCount = allSkills.filter((s, i) => i !== currentSlotIndex && !s).length

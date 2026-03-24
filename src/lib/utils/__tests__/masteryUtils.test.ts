@@ -5,7 +5,7 @@ import {
 	getEarringStat,
 	getElementalizedEarringStat
 } from '../masteryUtils'
-import { overMastery, aetherialMastery } from '$lib/data/overMastery'
+import { overMastery } from '$lib/data/overMastery'
 
 // ============================================================================
 // getRingMasteryCategory

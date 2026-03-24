@@ -11,6 +11,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import { onMount } from 'svelte'
 	import type { CollectionCharacter, ExtendedMastery } from '$lib/types/api/collection'
+	import type { GridCharacter } from '$lib/types/api/party'
 	import {
 		useUpdateCollectionCharacter,
 		useRemoveCharacterFromCollection
@@ -218,11 +219,6 @@
 		}
 	}
 
-	function handleCancel() {
-		isEditing = false
-		updateActionVisibility()
-	}
-
 	function handleTabChange(value: string) {
 		selectedTab = value as 'info' | 'collection'
 		// Exit edit mode when switching tabs
@@ -314,7 +310,7 @@
 <div class="collection-character-pane">
 	<ItemHeader
 		type="character"
-		item={character as any}
+		item={character as unknown as GridCharacter}
 		itemData={characterData}
 		gridUncapLevel={character.uncapLevel}
 		gridTranscendence={character.transcendenceStep}

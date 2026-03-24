@@ -13,8 +13,7 @@ import {
 } from '../artifactValidation'
 import type {
 	ArtifactSkillInstance,
-	GridArtifact,
-	CollectionArtifact
+	GridArtifact
 } from '$lib/types/api/artifact'
 import type { Character } from '$lib/types/api/entities'
 
