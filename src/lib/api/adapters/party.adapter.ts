@@ -214,10 +214,10 @@ export class PartyAdapter extends BaseAdapter {
 		params: { page?: number; per?: number } & Partial<ExploreFilterParams> = {},
 		options?: RequestOptions
 	): Promise<PaginatedResponse<Party>> {
-		const query: Record<string, unknown> = {}
+		const query: Record<string, string | number | boolean | string[] | number[]> = {}
 		for (const [key, value] of Object.entries(params)) {
 			if (value !== undefined && value !== null) {
-				query[key] = value
+				query[key] = value as string | number | boolean | string[] | number[]
 			}
 		}
 
@@ -259,7 +259,7 @@ export class PartyAdapter extends BaseAdapter {
 		const { raidId, element, fullAuto, solo, autoGuard, chargeAttack, ...rest } = params
 
 		// Build query with raid filter and convert booleans to API format
-		const query: Record<string, unknown> = {
+		const query: Record<string, string | number | boolean | string[] | number[]> = {
 			...rest,
 			raid: raidId
 		}

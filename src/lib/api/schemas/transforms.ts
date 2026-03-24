@@ -14,7 +14,7 @@ export function snakeToCamel<T>(obj: T): T {
 			const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
 			result[camelKey] = snakeToCamel(value)
 		}
-		return result
+		return result as T
 	}
 
 	return obj
@@ -51,7 +51,7 @@ export function camelToSnake<T>(obj: T, skipValueTransform = false): T {
 				result[snakeKey] = camelToSnake(value, skipValueTransform)
 			}
 		}
-		return result
+		return result as T
 	}
 
 	return obj
@@ -175,7 +175,7 @@ function renameEntityFields(obj: unknown): unknown {
  * - Renames "object" to proper entity names (weapon, character, summon)
  */
 export function transformResponse<T>(data: unknown): T {
-	if (data === null || data === undefined) return data
+	if (data === null || data === undefined) return data as T
 
 	// First convert snake_case to camelCase
 	const camelCased = snakeToCamel(data)
