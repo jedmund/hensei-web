@@ -1047,6 +1047,8 @@
 	"settings_gender": "MC Gender",
 	"settings_gender_subtitle": "Your in-game character",
 	"settings_gender_placeholder": "Select gender",
+	"settings_gender_gran": "Gran",
+	"settings_gender_djeeta": "Djeeta",
 	"settings_language": "Language",
 	"settings_language_subtitle": "Display language for the site",
 	"settings_language_placeholder": "Select language",

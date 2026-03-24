@@ -5,7 +5,7 @@
 	import Select from '../Select.svelte'
 	import MultiSelect from '../MultiSelect.svelte'
 	import ElementPickerSegmented from './ElementPickerSegmented.svelte'
-	import { ELEMENT_LABELS, ELEMENT_DISPLAY_ORDER, getElementImage, getElementColor } from '$lib/utils/element'
+	import { ELEMENT_DISPLAY_ORDER, getElementLabel, getElementImage, getElementColor } from '$lib/utils/element'
 
 	interface Props {
 		value?: number | number[]
@@ -47,7 +47,7 @@
 		const order = includeAny ? [0, ...ELEMENT_DISPLAY_ORDER] : ELEMENT_DISPLAY_ORDER
 		return order.map((element) => ({
 			value: element,
-			label: element === 0 ? 'Any' : (ELEMENT_LABELS[element] ?? 'Unknown'),
+			label: getElementLabel(element),
 			image: getElementImage(element),
 			indicatorColor: getElementColor(element)
 		}))
