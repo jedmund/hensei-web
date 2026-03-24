@@ -9,6 +9,7 @@
 	import PasswordSettings from './settings/PasswordSettings.svelte'
 	import ProfileSettings from './settings/ProfileSettings.svelte'
 	import PrivacySettings from './settings/PrivacySettings.svelte'
+	import ConfirmDialog from './ui/ConfirmDialog.svelte'
 	import { users } from '$lib/api/resources/users'
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { invalidateAll } from '$app/navigation'
@@ -34,7 +35,7 @@
 	let activeSection = $state<string>('profile')
 
 	// Form state - Account section (initialized empty, populated from API)
-	let formUsername = $derived(username)
+	let formUsername = $state(username)
 	let formDisplayName = $state('')
 	let formEmail = $state('')
 	let emailVerified = $state(false)
@@ -70,6 +71,8 @@
 	let originalTheme = $state('')
 
 	let saving = $state(false)
+	let usernameValid = $state(true)
+	let usernameConfirmOpen = $state(false)
 	let error = $state<string | null>(null)
 	let contentElement: HTMLElement | undefined = $state()
 	let isScrolledToBottom = $state(true)
@@ -163,14 +166,25 @@
 		}
 	})
 
+	// Check if username changed before saving
+	function handleSaveClick() {
+		if (formUsername !== username) {
+			usernameConfirmOpen = true
+		} else {
+			handleSave()
+		}
+	}
+
 	// Handle form submission
 	async function handleSave() {
+		usernameConfirmOpen = false
 		error = null
 		saving = true
 
 		try {
 			// Prepare the update data
 			const updateData: Parameters<typeof users.update>[1] = {
+				username: formUsername,
 				displayName: formDisplayName || undefined,
 				picture,
 				element,
@@ -213,12 +227,13 @@
 			}
 
 			// Make a request to update the cookie server-side
+			// Include username so the account cookie gets updated too
 			await fetch('/api/settings', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify(updatedUser)
+				body: JSON.stringify({ ...updatedUser, username: response.username })
 			})
 
 			// Update the TanStack Query cache so reopening the modal shows the saved values
@@ -283,15 +298,14 @@
 		</ModalHeader>
 		<ModalBody noPadding>
 			<div class="settings-layout">
-				{#if error}
-					<div class="error-message">{error}</div>
-				{/if}
-
 				<aside class="settings-sidebar">
 					<SettingsNav bind:value={activeSection} {element} items={navItems} />
 				</aside>
 
 				<main class="settings-content" bind:this={contentElement} onscroll={checkScrollPosition}>
+					{#if error}
+						<div class="error-message">{error}</div>
+					{/if}
 					{#if isLoading}
 						<div class="loading-state">
 							<div class="spinner"></div>
@@ -310,6 +324,7 @@
 							onDisplayNameChange={(v) => (formDisplayName = v)}
 							onEmailChange={(v) => (formEmail = v)}
 							onBahamutChange={(v) => (bahamut = v)}
+							onUsernameValidChange={(v) => (usernameValid = v)}
 						/>
 					{:else if activeSection === 'password'}
 						<PasswordSettings
@@ -369,10 +384,17 @@
 			cancelDisabled={saving}
 			primaryAction={{
 				label: saving ? m.settings_saving() : m.settings_save(),
-				onclick: handleSave,
-				disabled: saving || isLoading
+				onclick: handleSaveClick,
+				disabled: saving || isLoading || !usernameValid
 			}}
 			showShadow={!isScrolledToBottom}
+		/>
+		<ConfirmDialog
+			bind:open={usernameConfirmOpen}
+			title={m.settings_username_confirm_title()}
+			message={m.settings_username_confirm_message()}
+			confirmLabel={m.settings_username_confirm_action()}
+			onconfirm={handleSave}
 		/>
 	{/snippet}
 </Dialog>
@@ -398,9 +420,9 @@
 		border: 1px solid var(--danger);
 		border-radius: layout.$card-corner;
 		color: var(--danger);
+		font-size: typography.$font-small;
 		padding: spacing.$unit-2x;
 		margin-bottom: spacing.$unit-2x;
-		width: 100%;
 	}
 
 	.settings-sidebar {

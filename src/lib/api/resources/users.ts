@@ -1,6 +1,7 @@
 import { userAdapter } from '../adapters/user.adapter'
 
 export interface UserUpdateParams {
+	username?: string | undefined
 	displayName?: string | undefined
 	picture?: string | undefined
 	element?: string | undefined
@@ -50,6 +51,7 @@ export const users = {
 	update: async (userId: string, params: UserUpdateParams): Promise<UserResponse> => {
 		// Pass flat params directly - backend expects flat picture/element fields
 		const updates: {
+			username?: string | undefined
 			display_name?: string | undefined
 			picture?: string | undefined
 			element?: string | undefined
@@ -68,6 +70,7 @@ export const users = {
 			default_import_visibility?: number | undefined
 		} = {}
 
+		if (params.username !== undefined) updates.username = params.username
 		if (params.displayName !== undefined) updates.display_name = params.displayName
 		if (params.picture !== undefined) updates.picture = params.picture
 		if (params.element !== undefined) updates.element = params.element

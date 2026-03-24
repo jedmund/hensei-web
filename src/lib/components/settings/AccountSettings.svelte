@@ -19,6 +19,7 @@
 		onDisplayNameChange: (value: string) => void
 		onEmailChange: (value: string) => void
 		onBahamutChange: (value: boolean) => void
+		onUsernameValidChange?: (valid: boolean) => void
 	}
 
 	let {
@@ -32,7 +33,8 @@
 		onUsernameChange,
 		onDisplayNameChange,
 		onEmailChange,
-		onBahamutChange
+		onBahamutChange,
+		onUsernameValidChange
 	}: Props = $props()
 
 	let resending = $state(false)
@@ -51,14 +53,96 @@
 		}
 	}
 
-	// Local state derived from props — overrides via bind:value are temporary
-	let localUsername = $derived(username)
-	let localDisplayName = $derived(displayName)
-	let localEmail = $derived(email)
+	// Local state initialized from props — mutable for form editing
+	let localUsername = $state(username)
+	let localDisplayName = $state(displayName)
+	let localEmail = $state(email)
+
+	// Capture original username for comparison (prop gets mutated by parent on each keystroke)
+	const originalUsername = username
+
+	// Username validation
+	const usernameRegex = /^[a-zA-Z0-9_-]+$/
+	let usernameError = $state('')
+	let isCheckingUsername = $state(false)
+	let usernameAvailable = $state<boolean | null>(null)
+	let usernameTimer: ReturnType<typeof setTimeout>
+
+	function validateUsername(value: string) {
+		if (value === originalUsername) {
+			usernameError = ''
+			usernameAvailable = null
+			onUsernameValidChange?.(true)
+			return
+		}
+		if (value.length < 3) {
+			usernameError = m.auth_register_errors_usernameMin()
+			usernameAvailable = null
+			onUsernameValidChange?.(false)
+			return
+		}
+		if (value.length > 26) {
+			usernameError = m.auth_register_errors_usernameMax()
+			usernameAvailable = null
+			onUsernameValidChange?.(false)
+			return
+		}
+		if (!usernameRegex.test(value)) {
+			usernameError = m.auth_register_errors_usernameFormat()
+			usernameAvailable = null
+			onUsernameValidChange?.(false)
+			return
+		}
+		usernameError = ''
+		// Don't set valid yet — wait for availability check to confirm
+		onUsernameValidChange?.(false)
+	}
+
+	async function checkUsernameAvailability(value: string) {
+		if (value.length < 3 || !usernameRegex.test(value) || value === originalUsername) return
+
+		isCheckingUsername = true
+		try {
+			const result = await userAdapter.checkUsernameAvailability(value)
+			if (localUsername === value) {
+				usernameAvailable = result.available
+				if (!result.available) {
+					usernameError = m.auth_register_errors_usernameTaken()
+					onUsernameValidChange?.(false)
+				} else {
+					onUsernameValidChange?.(true)
+				}
+			}
+		} catch {
+			// If availability check fails, allow save — backend will validate
+			onUsernameValidChange?.(true)
+		} finally {
+			isCheckingUsername = false
+		}
+	}
+
+	const usernameIcon = $derived(
+		localUsername === originalUsername
+			? undefined
+			: isCheckingUsername
+				? 'loader'
+				: usernameAvailable === true
+					? 'check'
+					: usernameAvailable === false
+						? 'close'
+						: undefined
+	)
 
 	// Propagate changes back to parent
 	function handleUsernameInput() {
+		usernameAvailable = null
+		clearTimeout(usernameTimer)
+		validateUsername(localUsername)
 		onUsernameChange(localUsername)
+
+		if (localUsername !== originalUsername && localUsername.length >= 3 && !usernameError) {
+			usernameTimer = setTimeout(() => checkUsernameAvailability(localUsername), 300)
+		}
 	}
 	function handleDisplayNameInput() {
 		onDisplayNameChange(localDisplayName)
@@ -81,6 +165,8 @@
 			fullWidth
 			bind:value={localUsername}
 			handleInput={handleUsernameInput}
+			error={usernameError}
+			rightIcon={usernameIcon}
 		/>
 
 		<!-- Display Name -->
