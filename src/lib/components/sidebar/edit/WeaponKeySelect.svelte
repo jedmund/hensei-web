@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { SvelteMap } from 'svelte/reactivity'
 	import * as m from '$lib/paraglide/messages'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
@@ -81,7 +82,7 @@
 		if (keys.length === 0) return []
 
 		// Group by group property
-		const groups = new Map<number, WeaponKey[]>()
+		const groups = new SvelteMap<number, WeaponKey[]>()
 		for (const key of keys) {
 			const existing = groups.get(key.group) ?? []
 			existing.push(key)

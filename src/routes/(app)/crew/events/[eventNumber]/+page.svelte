@@ -5,6 +5,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
+	import { SvelteMap } from 'svelte/reactivity'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -75,7 +76,7 @@
 	const crewBattleChartData = $derived(toCrewBattleChartData(crewScores))
 
 	const playerScores = $derived.by(() => {
-		const scoreMap = new Map<string, PlayerScore>()
+		const scoreMap = new SvelteMap<string, PlayerScore>()
 
 		// First, add all members who were active during the event (with 0 score)
 		for (const member of membersDuringEvent) {

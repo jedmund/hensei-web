@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { GridWeapon, GuidebookList } from '$lib/types/api/party'
+	import { SvelteMap } from 'svelte/reactivity'
 	import { usePartyContext } from '$lib/types/party-context'
 	import { getDragDropContext } from '$lib/composables/drag-drop.svelte'
 	import DraggableItem from '$lib/components/dnd/DraggableItem.svelte'
@@ -53,7 +54,7 @@
 	const collectionStatus = $derived.by(() => {
 		if (!collectionWeaponItems) return null
 		const remaining = new Map(Array.from(collectionWeaponItems, ([k, v]) => [k, [...v]]))
-		const status = new Map<number, boolean>()
+		const status = new SvelteMap<number, boolean>()
 
 		const check = (weapon: GridWeapon | undefined, position: number) => {
 			const gid = weapon?.weapon?.granblueId

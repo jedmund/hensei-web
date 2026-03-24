@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createQuery, createInfiniteQuery } from '@tanstack/svelte-query'
 	import { onDestroy } from 'svelte'
+	import { SvelteMap, SvelteSet } from 'svelte/reactivity'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import {
 		searchQueries,
@@ -14,7 +15,6 @@
 	} from '$lib/api/mutations/collection.mutations'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
-	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
@@ -64,8 +64,8 @@
 	let genderFilters = $state<number[]>([])
 
 	// Selection state - characters use Set<string>, weapons/summons use Map<string, number> for quantities
-	let selectedIds = $state<Set<string>>(new Set())
-	let selectedQuantities = $state<Map<string, number>>(new Map())
+	let selectedIds = $state(new SvelteSet<string>())
+	let selectedQuantities = $state(new SvelteMap<string, number>())
 	let showOnlySelected = $state(false)
 
 	// Refs
@@ -144,7 +144,7 @@
 	// Flatten results and deduplicate by ID
 	const allResults = $derived.by(() => {
 		const pages = searchResults.data?.pages ?? []
-		const seen = new Set<string>()
+		const seen = new SvelteSet<string>()
 		const results: (typeof pages)[number]['results'] = []
 
 		for (const page of pages) {
@@ -209,8 +209,8 @@
 	})
 
 	function resetState() {
-		selectedIds = new Set()
-		selectedQuantities = new Map()
+		selectedIds = new SvelteSet()
+		selectedQuantities = new SvelteMap()
 		showOnlySelected = false
 		searchQuery = ''
 		elementFilters = []
@@ -224,7 +224,7 @@
 
 	// Character toggle (binary selection)
 	function toggleCharacterSelection(character: SearchResultItem) {
-		const newSet = new Set(selectedIds)
+		const newSet = new SvelteSet(selectedIds)
 		if (newSet.has(character.id)) {
 			newSet.delete(character.id)
 		} else {
@@ -235,7 +235,7 @@
 
 	// Weapon/Summon quantity change
 	function handleQuantityChange(item: SearchResultItem, quantity: number) {
-		const newMap = new Map(selectedQuantities)
+		const newMap = new SvelteMap(selectedQuantities)
 		if (quantity <= 0) {
 			newMap.delete(item.id)
 		} else {
@@ -344,11 +344,6 @@
 
 	// Dialog title based on entity type
 	const dialogTitle = $derived(m.collection_add_title({ type: entityNames[entityType].plural }))
-
-	// Placeholder text based on entity type
-	const searchPlaceholder = $derived(
-		m.collection_add_search({ type: entityNames[entityType].plural })
-	)
 
 	// Footer text based on entity type
 	const selectedText = $derived.by(() => {

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { SvelteSet } from 'svelte/reactivity'
 	import { createMutation, useQueryClient } from '@tanstack/svelte-query'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
@@ -80,7 +81,7 @@
 
 	// Track which players already have scores for this event
 	const playersWithScores = $derived.by(() => {
-		const ids = new Set<string>()
+		const ids = new SvelteSet<string>()
 		for (const score of existingScores) {
 			if (score.member?.id) {
 				ids.add(`member:${score.member.id}`)

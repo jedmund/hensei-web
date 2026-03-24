@@ -4,6 +4,7 @@
 	import Sidebar from '$lib/components/ui/Sidebar.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { Tooltip } from 'bits-ui'
+	import { SvelteMap } from 'svelte/reactivity'
 	import { beforeNavigate, afterNavigate } from '$app/navigation'
 	import { browser, dev } from '$app/environment'
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
@@ -58,7 +59,7 @@
 	}
 
 	// Store scroll positions for each visited route
-	const scrollPositions = new Map<string, number>()
+	const scrollPositions = new SvelteMap<string, number>()
 
 	// Save scroll position before navigating away and close sidebar
 	beforeNavigate(({ from }) => {

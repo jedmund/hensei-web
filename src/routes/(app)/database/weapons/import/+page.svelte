@@ -13,6 +13,7 @@
 		buildKamigameUrl
 	} from '$lib/utils/external-links'
 	import { getRarityPrefix } from '$lib/utils/rarity'
+	import { SvelteMap, SvelteSet } from 'svelte/reactivity'
 
 	// Components
 	import WeaponUncapSection from '$lib/features/database/weapons/sections/WeaponUncapSection.svelte'
@@ -50,12 +51,12 @@
 	let fetchError = $state<string | null>(null)
 
 	// Fetched entities
-	let entities = $state<Map<string, EntityState>>(new Map())
+	let entities = $state(new SvelteMap<string, EntityState>())
 	let selectedWikiPage = $state<string | null>(null)
 
 	// Form data per entity (keyed by wikiPage) - using Record for proper reactivity
 	let formDataByPage = $state<Record<string, any>>({})
-	let savedEntities = $state<Set<string>>(new Set())
+	let savedEntities = $state(new SvelteSet<string>())
 
 	// Store wiki raw data per entity for sending with create request
 	let wikiRawByPage = $state<Record<string, string>>({})
@@ -191,7 +192,7 @@
 		fetchError = null
 
 		// Initialize entities as loading
-		const newEntities = new Map<string, EntityState>()
+		const newEntities = new SvelteMap<string, EntityState>()
 		pages.forEach((page) => {
 			newEntities.set(page, {
 				wikiPage: page,
@@ -216,7 +217,7 @@
 			const response = await entityAdapter.batchPreviewWeapons(finalPages, wikiData)
 
 			// Update entities with results
-			const updatedEntities = new Map<string, EntityState>()
+			const updatedEntities = new SvelteMap<string, EntityState>()
 			response.results.forEach((result) => {
 				updatedEntities.set(result.wikiPage, {
 					wikiPage: result.wikiPage,
@@ -310,7 +311,7 @@
 			// Trigger image download in background (don't await - it queues a job)
 			entityAdapter.downloadWeaponImages(newWeapon.id).catch(console.error)
 			savedEntities.add(selectedWikiPage)
-			savedEntities = new Set(savedEntities)
+			savedEntities = new SvelteSet(savedEntities)
 
 			// Select next unsaved entity
 			const unsaved = entityTabs.find(

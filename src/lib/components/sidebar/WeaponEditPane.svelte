@@ -10,6 +10,7 @@
 	 * - AX skills (for weapons with AX support)
 	 * - Awakening (for weapons with awakening support)
 	 */
+	import { SvelteMap } from 'svelte/reactivity'
 	import * as m from '$lib/paraglide/messages'
 	import type { Weapon, Awakening, Bullet, BulletLoadout } from '$lib/types/api/entities'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
@@ -87,11 +88,11 @@
 	let awakeningLevel = $derived(currentValues.awakening?.level ?? 1)
 	let axSkills = $derived<AugmentSkill[]>(currentValues.axSkills ?? [])
 	let befoulment = $derived<Befoulment | null>(currentValues.befoulment ?? null)
-	let bulletSelections = $state<Map<number, Bullet | undefined>>(new Map())
+	let bulletSelections = $state(new SvelteMap<number, Bullet | undefined>())
 
 	// Initialize bullet selections from current values
 	$effect(() => {
-		const newSelections = new Map<number, Bullet | undefined>()
+		const newSelections = new SvelteMap<number, Bullet | undefined>()
 		for (const entry of currentValues.bullets ?? []) {
 			newSelections.set(entry.position, entry.bullet)
 		}
@@ -288,7 +289,7 @@
 								bulletType={slotType}
 								value={bulletSelections.get(i)?.id}
 								onchange={(bullet) => {
-									const updated = new Map(bulletSelections)
+									const updated = new SvelteMap(bulletSelections)
 									if (bullet) {
 										updated.set(i, bullet)
 									} else {
