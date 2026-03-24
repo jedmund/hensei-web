@@ -4,7 +4,9 @@
 	import ModalHeader from './ui/ModalHeader.svelte'
 	import ModalBody from './ui/ModalBody.svelte'
 	import ModalFooter from './ui/ModalFooter.svelte'
-	import SettingsNav, { type ElementType } from './ui/SettingsNav.svelte'
+	import SegmentedControl from './ui/segmented-control/SegmentedControl.svelte'
+	import Segment from './ui/segmented-control/Segment.svelte'
+	import type { ElementType } from './ui/SettingsNav.svelte'
 	import AccountSettings from './settings/AccountSettings.svelte'
 	import ProfileSettings from './settings/ProfileSettings.svelte'
 	import PrivacySettings from './settings/PrivacySettings.svelte'
@@ -72,6 +74,7 @@
 	let error = $state<string | null>(null)
 	let contentElement: HTMLElement | undefined = $state()
 	let isScrolledToBottom = $state(true)
+	let isScrolledFromTop = $state(false)
 
 	// Fetch current user data from API
 	const currentUserQuery = createQuery(() => ({
@@ -127,18 +130,17 @@
 		}
 	})
 
-	// Navigation items
-	const navItems = [
-		{ value: 'profile', label: m.settings_nav_profile() },
-		{ value: 'account', label: m.settings_nav_account() },
-		{ value: 'privacy', label: m.settings_nav_privacy() }
-	]
+	// Handle section change from segmented control
+	function handleSectionChange(value: string) {
+		activeSection = value
+	}
 
 	// Check if scrolled to bottom
 	function checkScrollPosition() {
 		if (!contentElement) return
 		const { scrollTop, scrollHeight, clientHeight } = contentElement
 		// Consider "at bottom" if within 5px of the bottom
+		isScrolledFromTop = scrollTop > 5
 		isScrolledToBottom = scrollTop + clientHeight >= scrollHeight - 5
 	}
 
@@ -274,18 +276,29 @@
 	}
 </script>
 
-<Dialog bind:open {...onOpenChange ? { onOpenChange } : {}} size="medium" hideClose>
+<Dialog bind:open {...onOpenChange ? { onOpenChange } : {}} size="small" hideClose>
 	{#snippet children()}
 		<ModalHeader title={m.settings_title()}>
 			<span class="header-username">@{username}</span>
 		</ModalHeader>
 		<ModalBody noPadding>
 			<div class="settings-layout">
-				<aside class="settings-sidebar">
-					<SettingsNav bind:value={activeSection} {element} items={navItems} />
-				</aside>
+				<div class="settings-nav" class:scrolled={isScrolledFromTop}>
+					<SegmentedControl
+						value={activeSection}
+						onValueChange={handleSectionChange}
+						variant="background"
+						size="small"
+						element={element}
+						grow
+					>
+						<Segment value="profile">{m.settings_nav_profile()}</Segment>
+						<Segment value="account">{m.settings_nav_account()}</Segment>
+						<Segment value="privacy">{m.settings_nav_privacy()}</Segment>
+					</SegmentedControl>
+				</div>
 
-				<main class="settings-content" bind:this={contentElement} onscroll={checkScrollPosition}>
+				<div class="settings-content" bind:this={contentElement} onscroll={checkScrollPosition}>
 					{#if error}
 						<div class="error-message">{error}</div>
 					{/if}
@@ -350,7 +363,7 @@
 							onDefaultImportVisibilityChange={(v) => (defaultImportVisibility = v)}
 						/>
 					{/if}
-				</main>
+				</div>
 			</div>
 		</ModalBody>
 
@@ -379,6 +392,7 @@
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/effects' as effects;
 
 	.header-username {
 		font-size: typography.$font-small;
@@ -387,7 +401,24 @@
 
 	.settings-layout {
 		display: flex;
+		flex-direction: column;
 		height: 500px;
+	}
+
+	.settings-nav {
+		padding: spacing.$unit-2x spacing.$unit-3x;
+		flex-shrink: 0;
+		position: relative;
+		z-index: 1;
+		@include effects.smooth-transition(effects.$duration-quick, box-shadow);
+
+		&.scrolled {
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+			:global([data-theme='dark']) & {
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+			}
+		}
 	}
 
 	.error-message {
@@ -400,18 +431,15 @@
 		margin-bottom: spacing.$unit-2x;
 	}
 
-	.settings-sidebar {
-		flex-shrink: 0;
-		padding: spacing.$unit;
-		padding-right: 0;
-		display: flex;
-		flex-direction: column;
-	}
-
 	.settings-content {
 		flex: 1;
 		overflow-y: auto;
 		padding: 0 spacing.$unit-3x;
+		scrollbar-width: none;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
 	}
 
 	.loading-state {
