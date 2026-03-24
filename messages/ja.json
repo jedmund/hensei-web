@@ -1025,6 +1025,7 @@
 	"settings_bahamut_subtitle": "管理者機能とツールを有効にする",
 
 	"settings_avatar": "アバター",
+	"settings_avatar_subtitle": "プロフィール画像",
 	"settings_avatar_placeholder": "アバターを選択",
 	"settings_element": "属性",
 	"settings_element_subtitle": "プロフィールのアクセントカラー",
@@ -1040,6 +1041,9 @@
 	"settings_youtube_placeholder": "ハンドルを入力",
 	"settings_section_teams": "チーム",
 	"settings_section_elsewhere": "その他",
+	"settings_section_appearance": "外観",
+	"settings_section_security": "セキュリティ",
+	"settings_section_admin": "管理者",
 	"settings_gender": "主人公",
 	"settings_gender_subtitle": "ゲーム内の主人公キャラクター",
 	"settings_gender_placeholder": "主人公を選択",
