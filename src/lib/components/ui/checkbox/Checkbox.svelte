@@ -60,6 +60,7 @@
 			{#if isIndeterminate}
 				<span class="icon indeterminate"></span>
 			{:else if isChecked}
+				<!-- svelte-ignore svelte/no-at-html-tags -->
 				<span class="icon">{@html CheckIcon}</span>
 			{/if}
 		</span>

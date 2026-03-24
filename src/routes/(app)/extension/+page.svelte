@@ -75,6 +75,7 @@
 						</Accordion.Trigger>
 					</Accordion.Header>
 					<Accordion.Content class="faq-content">
+						<!-- svelte-ignore svelte/no-at-html-tags -->
 						<p class="faq-answer">{@html item.desc()}</p>
 						{#if item.value === 'safe'}
 							<LinkItem

@@ -176,6 +176,7 @@
 						onclick={decrementStage}
 						disabled={currentStage <= 0}
 					>
+						<!-- svelte-ignore svelte/no-at-html-tags -->
 						{@html minusIcon}
 					</Button>
 					<Button
@@ -186,6 +187,7 @@
 						onclick={incrementStage}
 						disabled={currentStage >= NUM_FRAGMENTS}
 					>
+						<!-- svelte-ignore svelte/no-at-html-tags -->
 						{@html plusIcon}
 					</Button>
 				</div>

@@ -76,6 +76,7 @@
 		{#if videoUrl && videoId}
 			<Tooltip content={m.tooltip_expand_video()}>
 				<Button variant="ghost" size="small" iconOnly onclick={openDialog}>
+					<!-- svelte-ignore svelte/no-at-html-tags -->
 					<span class="expand-icon">{@html expandIcon}</span>
 				</Button>
 			</Tooltip>
