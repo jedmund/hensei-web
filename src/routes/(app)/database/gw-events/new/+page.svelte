@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { useQueryClient } from '@tanstack/svelte-query'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
@@ -52,7 +53,7 @@
 			await queryClient.invalidateQueries({ queryKey: ['gw', 'events'] })
 
 			// Navigate to the new event's detail page
-			goto(`/database/gw-events/${newEvent.id}`)
+			goto(resolve(`/database/gw-events/${newEvent.id}`))
 		} catch (error: any) {
 			saveError = error.message || 'Failed to create event'
 		} finally {
@@ -62,7 +63,7 @@
 
 	// Cancel and go back
 	function handleCancel() {
-		goto('/database/gw-events')
+		goto(resolve('/database/gw-events'))
 	}
 </script>
 

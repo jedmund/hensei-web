@@ -140,7 +140,7 @@ describe('grid mutations', () => {
 		})
 
 		it('onMutate handles missing weapons array', async () => {
-			const partyWithoutWeapons = { ...MOCK_PARTY, weapons: undefined as any }
+			const partyWithoutWeapons = { ...MOCK_PARTY, weapons: undefined as unknown as Party['weapons'] }
 			queryClient.setQueryData(partyKeys.detail(MOCK_SHORTCODE), partyWithoutWeapons)
 
 			const opts = updateGridWeaponOptions(queryClient)
@@ -158,7 +158,7 @@ describe('grid mutations', () => {
 			const modifiedParty = { ...MOCK_PARTY, name: 'Modified' }
 			queryClient.setQueryData(partyKeys.detail(MOCK_SHORTCODE), modifiedParty)
 
-			opts.onError(new Error('fail'), { partyShortcode: MOCK_SHORTCODE } as any, {
+			opts.onError(new Error('fail'), { partyShortcode: MOCK_SHORTCODE } as unknown as { id: string; partyShortcode: string }, {
 				previousParty: MOCK_PARTY
 			})
 
@@ -168,7 +168,7 @@ describe('grid mutations', () => {
 		it('onError does nothing without context', () => {
 			const opts = updateGridWeaponOptions(queryClient)
 
-			opts.onError(new Error('fail'), { partyShortcode: MOCK_SHORTCODE } as any, undefined)
+			opts.onError(new Error('fail'), { partyShortcode: MOCK_SHORTCODE } as unknown as { id: string; partyShortcode: string }, undefined)
 
 			expect(getCachedParty(queryClient, MOCK_SHORTCODE)).toEqual(MOCK_PARTY)
 		})
@@ -177,7 +177,7 @@ describe('grid mutations', () => {
 			const opts = updateGridWeaponOptions(queryClient)
 			const spy = vi.spyOn(queryClient, 'invalidateQueries')
 
-			opts.onSettled(null, null, { partyShortcode: MOCK_SHORTCODE } as any)
+			opts.onSettled(null, null, { partyShortcode: MOCK_SHORTCODE } as unknown as { id: string; partyShortcode: string })
 
 			expect(spy).toHaveBeenCalledWith({ queryKey: partyKeys.detail(MOCK_SHORTCODE) })
 		})
@@ -208,7 +208,7 @@ describe('grid mutations', () => {
 			const opts = deleteGridWeaponOptions(queryClient)
 
 			await opts.onMutate({ partyShortcode: MOCK_SHORTCODE, id: 'gw-1' })
-			opts.onError(new Error('fail'), { partyShortcode: MOCK_SHORTCODE } as any, {
+			opts.onError(new Error('fail'), { partyShortcode: MOCK_SHORTCODE } as unknown as { id: string; partyShortcode: string }, {
 				previousParty: MOCK_PARTY
 			})
 
@@ -287,7 +287,7 @@ describe('grid mutations', () => {
 		it('onError rolls back to previous party', () => {
 			const opts = updateGridCharacterOptions(queryClient)
 
-			opts.onError(new Error('fail'), { partyShortcode: MOCK_SHORTCODE } as any, {
+			opts.onError(new Error('fail'), { partyShortcode: MOCK_SHORTCODE } as unknown as { id: string; partyShortcode: string }, {
 				previousParty: MOCK_PARTY
 			})
 
@@ -358,7 +358,7 @@ describe('grid mutations', () => {
 		it('onError rolls back to previous party', () => {
 			const opts = updateGridSummonOptions(queryClient)
 
-			opts.onError(new Error('fail'), { partyShortcode: MOCK_SHORTCODE } as any, {
+			opts.onError(new Error('fail'), { partyShortcode: MOCK_SHORTCODE } as unknown as { id: string; partyShortcode: string }, {
 				previousParty: MOCK_PARTY
 			})
 
@@ -457,7 +457,7 @@ describe('grid mutations', () => {
 				quickSummon: false
 			})
 
-			opts.onError(new Error('fail'), { partyShortcode: MOCK_SHORTCODE } as any, context)
+			opts.onError(new Error('fail'), { partyShortcode: MOCK_SHORTCODE } as unknown as { id: string; partyShortcode: string }, context)
 
 			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
 			expect(cached?.summons[0]!.quickSummon).toBe(true) // restored

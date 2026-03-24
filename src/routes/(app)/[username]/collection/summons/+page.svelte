@@ -5,6 +5,7 @@
 	import { getContext, onDestroy, untrack } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { page } from '$app/stores'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import CollectionFilters, {
@@ -159,7 +160,7 @@
 	function viewSummonInDatabase(summon: CollectionSummon) {
 		const summonData = summon.summon
 		if (!summonData) return
-		goto(getDatabaseUrl('summon', summonData.granblueId))
+		goto(resolve(getDatabaseUrl('summon'), summonData.granblueId))
 	}
 </script>
 

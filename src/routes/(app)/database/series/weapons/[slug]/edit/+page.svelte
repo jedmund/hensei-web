@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
@@ -119,7 +120,7 @@
 			})
 
 			// Navigate back to detail page (use new slug if changed)
-			goto(`/database/series/weapons/${editData.slug}`)
+			goto(resolve(`/database/series/weapons/${editData.slug}`))
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
 			console.error('Save error:', error)
@@ -138,7 +139,7 @@
 				variant="ghost"
 				size="small"
 				leftIcon="chevron-left"
-				href={`/database/series/weapons/${series?.slug}`}>Back</Button
+				href={resolve(`/database/series/weapons/${series?.slug}`)}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}

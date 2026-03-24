@@ -2,6 +2,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { entityAdapter, type ParsedSummonData } from '$lib/api/adapters/entity.adapter'
 	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'
@@ -308,7 +309,7 @@
 	}
 
 	function handleCancel() {
-		goto(localizeHref('/database/summons'))
+		goto(resolve(localizeHref('/database/summons')))
 	}
 
 	// Can save current entity

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { ContextMenu } from 'bits-ui'
+	import { resolve } from '$app/paths'
 	import ContextMenuWrapper from '$lib/components/ui/menu/ContextMenuWrapper.svelte'
 
 	export interface ImageItem {
@@ -178,7 +179,7 @@
 						{#snippet trigger()}
 							<div class="image-item" class:downloading={isDownloading} class:fallback={isFailed}>
 								<a
-									href={bustUrl(image.url)}
+									href={resolve(bustUrl(image.url))}
 									target="_blank"
 									rel="noopener noreferrer"
 									class="image-container"
@@ -251,7 +252,7 @@
 				{:else}
 					<div class="image-item" class:fallback={isFailed}>
 						<a
-							href={bustUrl(image.url)}
+							href={resolve(bustUrl(image.url))}
 							target="_blank"
 							rel="noopener noreferrer"
 							class="image-container"

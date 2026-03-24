@@ -135,7 +135,7 @@ describe('getAxSkillImages', () => {
 	it('returns url/alt pairs', () => {
 		const ax = [
 			{ modifier: { slug: 'might', nameEn: 'Might', nameJp: '攻刃' }, strength: 3 }
-		] as any
+		] as unknown as Record<string, unknown>[]
 		const result = getAxSkillImages(ax)
 		expect(result).toHaveLength(1)
 		expect(result[0]!.url).toContain('might')
@@ -146,7 +146,7 @@ describe('getAxSkillImages', () => {
 		const ax = [
 			{ modifier: { slug: 'might', nameEn: 'Might' }, strength: 3 },
 			{ modifier: { slug: '', nameEn: '' }, strength: 1 }
-		] as any
+		] as unknown as Record<string, unknown>[]
 		expect(getAxSkillImages(ax)).toHaveLength(1)
 	})
 })

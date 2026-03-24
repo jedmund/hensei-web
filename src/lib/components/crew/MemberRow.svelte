@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
@@ -53,7 +54,7 @@
 </script>
 
 <li class="member-row" class:retired={member.retired}>
-	<a href={localizeHref(`/crew/members/${member.user?.username}`)} class="member-link">
+	<a href={resolve(localizeHref(`/crew/members/${member.user?.username}`))} class="member-link">
 		<div class="member-info">
 			<div class="member-details">
 				{#if member.user?.username}
@@ -83,13 +84,13 @@
 				{#if member.user?.username}
 					<DropdownMenuBase.Item
 						class="dropdown-menu-item"
-						onclick={() => goto(localizeHref(`/crew/members/${member.user?.username}`))}
+						onclick={() => goto(resolve(localizeHref(`/crew/members/${member.user?.username}`)))}
 					>
 						{m.crew_view_crew_profile()}
 					</DropdownMenuBase.Item>
 					<DropdownMenuBase.Item
 						class="dropdown-menu-item"
-						onclick={() => goto(localizeHref(`/${member.user?.username}`))}
+						onclick={() => goto(resolve(localizeHref(`/${member.user?.username}`)))}
 					>
 						{m.crew_view_profile()}
 					</DropdownMenuBase.Item>

@@ -2,6 +2,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { bulletQueries } from '$lib/api/queries/bullet.queries'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
@@ -35,7 +36,7 @@
 	})
 
 	function handleBulletClick(bullet: Bullet) {
-		goto(`/database/bullets/${bullet.granblueId || bullet.id}`)
+		goto(resolve(`/database/bullets/${bullet.granblueId || bullet.id}`))
 	}
 
 	// Grid configuration

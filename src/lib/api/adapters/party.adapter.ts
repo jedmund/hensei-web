@@ -11,7 +11,7 @@
 import { BaseAdapter } from './base.adapter'
 import type { AdapterOptions, PaginatedResponse, RequestOptions } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
-import type { Party, GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
+import type { Party } from '$lib/types/api/party'
 import type { PartyShare } from '$lib/types/api/partyShare'
 import type { PartyVisibility } from '$lib/types/visibility'
 
@@ -175,7 +175,7 @@ export class PartyAdapter extends BaseAdapter {
 	 * Note: API expects UUID for update, not shortcode
 	 */
 	async update(params: UpdatePartyParams, headers?: Record<string, string>): Promise<Party> {
-		const { id, shortcode, ...updateParams } = params
+		const { id, shortcode: _shortcode, ...updateParams } = params
 		const response = await this.request<{ party: Party }>(`/parties/${id}`, {
 			method: 'PATCH',
 			body: {

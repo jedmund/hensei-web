@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { artifactQueries } from '$lib/api/queries/artifact.queries'
 	import PageMeta from '$lib/components/PageMeta.svelte'
@@ -48,7 +49,7 @@
 	)
 
 	function handleRowClick(skill: ArtifactSkill) {
-		goto(`/database/artifact-skills/${skill.id}`)
+		goto(resolve(`/database/artifact-skills/${skill.id}`))
 	}
 
 	function getPolarityClass(polarity: string): string {

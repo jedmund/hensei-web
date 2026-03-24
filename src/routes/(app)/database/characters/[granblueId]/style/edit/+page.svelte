@@ -2,6 +2,7 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
+	import { resolve } from '$app/paths'
 	// Page metadata
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -247,7 +248,7 @@
 				refetchType: 'all'
 			})
 
-			goto(`/database/characters/${character.granblueId}/style`)
+			goto(resolve(`/database/characters/${character.granblueId}/style`))
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
 			console.error('Save error:', error)
@@ -274,7 +275,7 @@
 				variant="ghost"
 				size="small"
 				leftIcon="chevron-left"
-				href={`/database/characters/${character?.granblueId}/style`}>Back</Button
+				href={resolve(`/database/characters/${character?.granblueId)}/style`}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}

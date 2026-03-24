@@ -1,6 +1,7 @@
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 
 	// Page metadata
@@ -58,7 +59,7 @@
 		} else {
 			url.searchParams.set('tab', tab)
 		}
-		goto(url.toString(), { replaceState: true })
+		goto(resolve(url.toString()), { replaceState: true })
 	}
 
 	// Use TanStack Query with SSR initial data — style swap variant
@@ -175,13 +176,13 @@
 <div class="page">
 	<DatabasePageHeader title="Character">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={getListUrl('characters')}
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href={resolve(getListUrl('characters'))}
 				>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
-				<Button variant="element-ghost" element={elementName} size="small" href={editUrl}
+				<Button variant="element-ghost" element={elementName} size="small" href={resolve(editUrl)}
 					>Edit</Button
 				>
 			{/if}
@@ -245,7 +246,7 @@
 						<DetailItem label="Wiki (EN)">
 							{#if character.wiki?.en}
 								<Button
-									href={buildWikiEnUrl(character.wiki.en) ?? undefined}
+									href={resolve(buildWikiEnUrl(character.wiki.en) ?? undefined)}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -261,7 +262,7 @@
 						<DetailItem label="Wiki (JP)">
 							{#if character.wiki?.ja}
 								<Button
-									href={buildWikiJaUrl(character.wiki.ja, 'character') ?? undefined}
+									href={resolve(buildWikiJaUrl(character.wiki.ja, 'character') ?? undefined)}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -277,7 +278,7 @@
 						<DetailItem label="Gamewith">
 							{#if character.gamewith}
 								<Button
-									href={buildGamewithUrl(character.gamewith) ?? undefined}
+									href={resolve(buildGamewithUrl(character.gamewith) ?? undefined)}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -293,7 +294,7 @@
 						<DetailItem label="Kamigame">
 							{#if character.kamigame}
 								<Button
-									href={buildKamigameUrl(character.kamigame, 'character') ?? undefined}
+									href={resolve(buildKamigameUrl(character.kamigame, 'character') ?? undefined)}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -313,8 +314,8 @@
 							<div class="related-units">
 								{#each relatedQuery.data as related (related.id)}
 									<a
-										href={localizeHref(
-											`/database/characters/${related.granblueId}${related.styleSwap ? '/style' : ''}`
+										href={resolve(localizeHref(
+											`/database/characters/${related.granblueId)}${related.styleSwap ? '/style' : ''}`
 										)}
 										class="related-unit"
 									>

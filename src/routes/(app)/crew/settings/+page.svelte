@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
@@ -25,7 +26,7 @@
 	// Check if user is an officer
 	$effect(() => {
 		if (!crewStore.isLoading && !crewStore.isOfficer) {
-			goto(localizeHref('/crew'))
+			goto(resolve(localizeHref('/crew')))
 		}
 	})
 
@@ -113,7 +114,7 @@
 		try {
 			await leaveCrewMutation.mutateAsync()
 			crewStore.clear()
-			goto(localizeHref('/crew'))
+			goto(resolve(localizeHref('/crew')))
 		} catch (error) {
 			console.error('Failed to leave crew:', error)
 			toast.error(extractErrorMessage(error, 'Failed to leave crew'))
@@ -131,7 +132,7 @@
 				userId: selectedTransferUserId
 			})
 			// Membership will be updated via query invalidation
-			goto(localizeHref('/crew'))
+			goto(resolve(localizeHref('/crew')))
 		} catch (error) {
 			console.error('Failed to transfer captain:', error)
 			toast.error(extractErrorMessage(error, 'Failed to transfer captain role'))

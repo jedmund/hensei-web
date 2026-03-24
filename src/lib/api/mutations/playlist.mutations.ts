@@ -68,7 +68,7 @@ export function updatePlaylistOptions(queryClient: QueryClient) {
 				queryClient.setQueryData(playlistKeys.detail(params.slug), context.previous)
 			}
 		},
-		onSettled: (_data: unknown, _err: unknown, params: UpdatePlaylistParams & { slug: string }) => {
+		onSettled: (_data: unknown, _err: unknown, _params: UpdatePlaylistParams & { slug: string }) => {
 			queryClient.invalidateQueries({ queryKey: playlistKeys.details() })
 			queryClient.invalidateQueries({ queryKey: playlistKeys.userLists() })
 		}

@@ -2,6 +2,7 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
+	import { resolve } from '$app/paths'
 	// TanStack Query
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
@@ -195,7 +196,7 @@
 			})
 
 			// Navigate back to detail page
-			goto(`/database/summons/${summon.granblueId}`)
+			goto(resolve(`/database/summons/${summon.granblueId}`))
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
 			console.error('Save error:', error)
@@ -217,7 +218,7 @@
 				variant="ghost"
 				size="small"
 				leftIcon="chevron-left"
-				href={`/database/summons/${summon?.granblueId}`}>Back</Button
+				href={resolve(`/database/summons/${summon?.granblueId)}`}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}

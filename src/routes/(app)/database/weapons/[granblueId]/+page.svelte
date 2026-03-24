@@ -1,6 +1,7 @@
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 
 	// Page metadata
@@ -65,7 +66,7 @@
 		} else {
 			url.searchParams.set('tab', tab)
 		}
-		goto(url.toString(), { replaceState: true })
+		goto(resolve(url.toString()), { replaceState: true })
 	}
 
 	// Use TanStack Query with SSR initial data
@@ -287,13 +288,13 @@
 <div class="page">
 	<DatabasePageHeader title="Weapon">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={getListUrl('weapons')}
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href={resolve(getListUrl('weapons'))}
 				>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
-				<Button variant="element-ghost" element={elementName} size="small" href={editUrl}
+				<Button variant="element-ghost" element={elementName} size="small" href={resolve(editUrl)}
 					>Edit</Button
 				>
 			{/if}
@@ -377,7 +378,7 @@
 						<DetailItem label="Wiki (EN)">
 							{#if weapon.wiki?.en}
 								<Button
-									href={buildWikiEnUrl(weapon.wiki.en) ?? undefined}
+									href={resolve(buildWikiEnUrl(weapon.wiki.en) ?? undefined)}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -393,7 +394,7 @@
 						<DetailItem label="Wiki (JP)">
 							{#if weapon.wiki?.ja}
 								<Button
-									href={buildWikiJaUrl(weapon.wiki.ja, 'weapon') ?? undefined}
+									href={resolve(buildWikiJaUrl(weapon.wiki.ja, 'weapon') ?? undefined)}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -409,7 +410,7 @@
 						<DetailItem label="Gamewith">
 							{#if weapon.gamewith}
 								<Button
-									href={buildGamewithUrl(weapon.gamewith) ?? undefined}
+									href={resolve(buildGamewithUrl(weapon.gamewith) ?? undefined)}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -425,7 +426,7 @@
 						<DetailItem label="Kamigame">
 							{#if weapon.kamigame}
 								<Button
-									href={buildKamigameUrl(weapon.kamigame, 'weapon', weapon.rarity) ?? undefined}
+									href={resolve(buildKamigameUrl(weapon.kamigame, 'weapon', weapon.rarity) ?? undefined)}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}

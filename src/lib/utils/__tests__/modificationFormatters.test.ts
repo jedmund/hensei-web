@@ -81,7 +81,7 @@ describe('formatAxSkill', () => {
 		const ax = {
 			modifier: { nameEn: 'Might', nameJp: '攻刃', slug: 'might', suffix: '%' },
 			strength: 3
-		} as any
+		} as Record<string, unknown>
 		expect(formatAxSkill(ax)).toBe('Might +3%')
 	})
 
@@ -89,7 +89,7 @@ describe('formatAxSkill', () => {
 		const ax = {
 			modifier: { nameEn: 'Might', nameJp: '攻刃', slug: 'might', suffix: '%' },
 			strength: 3
-		} as any
+		} as Record<string, unknown>
 		expect(formatAxSkill(ax, 'ja')).toBe('攻刃 +3%')
 	})
 
@@ -97,7 +97,7 @@ describe('formatAxSkill', () => {
 		const ax = {
 			modifier: { nameEn: 'Test', nameJp: 'テスト', slug: 'test' },
 			strength: 5
-		} as any
+		} as Record<string, unknown>
 		expect(formatAxSkill(ax)).toBe('Test +5')
 	})
 })

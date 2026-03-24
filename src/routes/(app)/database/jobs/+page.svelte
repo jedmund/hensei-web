@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { Grid } from 'wx-svelte-grid'
@@ -46,11 +47,11 @@
 	$effect(() => {
 		const currentView = $page.url.searchParams.get('view')
 		if (viewMode === 'skills' && currentView !== 'skills') {
-			goto('?view=skills', { replaceState: true, noScroll: true })
+			goto(resolve('?view=skills'), { replaceState: true, noScroll: true })
 		} else if (viewMode === 'accessories' && currentView !== 'accessories') {
-			goto('?view=accessories', { replaceState: true, noScroll: true })
+			goto(resolve('?view=accessories'), { replaceState: true, noScroll: true })
 		} else if (viewMode === 'jobs' && currentView != null) {
-			goto('/database/jobs', { replaceState: true, noScroll: true })
+			goto(resolve('/database/jobs'), { replaceState: true, noScroll: true })
 		}
 	})
 
@@ -189,7 +190,7 @@
 			if (rowId) {
 				const rowData = accessoryData.find((item) => item.id === rowId)
 				if (rowData) {
-					goto(`/database/job-accessories/${rowData.granblueId}`)
+					goto(resolve(`/database/job-accessories/${rowData.granblueId}`))
 				}
 			}
 		})
@@ -306,7 +307,7 @@
 			if (rowId) {
 				const rowData = skillData.find((item) => item.id === rowId)
 				if (rowData) {
-					goto(`/database/job-skills/${rowData.id}`)
+					goto(resolve(`/database/job-skills/${rowData.id}`))
 				}
 			}
 		})

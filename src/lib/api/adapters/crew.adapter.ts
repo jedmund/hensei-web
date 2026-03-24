@@ -1,6 +1,6 @@
 import { BaseAdapter } from './base.adapter'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
-import type { RequestOptions, PaginatedResponse } from './types'
+import type { RequestOptions } from './types'
 import type { Party } from '$lib/types/api/party'
 import type {
 	Crew,

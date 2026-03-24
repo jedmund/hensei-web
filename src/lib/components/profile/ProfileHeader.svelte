@@ -2,6 +2,7 @@
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { DropdownMenu } from 'bits-ui'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
@@ -119,13 +120,13 @@
 
 	function handleTabChange(value: string) {
 		if (value === 'teams') {
-			goto(localizeHref(`/${username}`))
+			goto(resolve(localizeHref(`/${username}`)))
 		} else if (value === 'favorites') {
-			goto(localizeHref(`/${username}/favorites`))
+			goto(resolve(localizeHref(`/${username}/favorites`)))
 		} else if (value === 'playlists') {
-			goto(localizeHref(`/${username}/playlists`))
+			goto(resolve(localizeHref(`/${username}/playlists`)))
 		} else if (value === 'collection') {
-			goto(localizeHref(`/${username}/collection/characters`))
+			goto(resolve(localizeHref(`/${username}/collection/characters`)))
 		}
 	}
 
@@ -163,6 +164,7 @@
 		<div class="header-actions">
 			{#if gbfProfileUrl}
 				<Tooltip content={m.profile_ingame()}>
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external URL -->
 					<a
 						href={gbfProfileUrl}
 						target="_blank"
@@ -175,6 +177,7 @@
 			{/if}
 			{#if wikiProfileUrl}
 				<Tooltip content={m.profile_wiki()}>
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external URL -->
 					<a
 						href={wikiProfileUrl}
 						target="_blank"
@@ -187,6 +190,7 @@
 			{/if}
 			{#if youtubeUrl}
 				<Tooltip content={m.profile_youtube()}>
+					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external URL -->
 					<a href={youtubeUrl} target="_blank" rel="noopener noreferrer" class="gbf-profile-link">
 						<Icon name="youtube" size={24} />
 					</a>
@@ -218,7 +222,7 @@
 							{/if}
 							{#if canCreateTeam}
 								<DropdownItem>
-									<a href={localizeHref(`/teams/new?collectionSource=${username}`)}>
+									<a href={resolve(localizeHref(`/teams/new?collectionSource=${username}`))}>
 										<Icon name="users" size={14} />
 										<span>{m.profile_create_team_collection({ name: username })}</span>
 									</a>

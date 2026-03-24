@@ -9,7 +9,6 @@
 
 import { queryOptions } from '@tanstack/svelte-query'
 import { raidAdapter } from '$lib/api/adapters/raid.adapter'
-import type { RaidFull, RaidGroupFull } from '$lib/types/api/raid'
 
 /**
  * Raid query options factory

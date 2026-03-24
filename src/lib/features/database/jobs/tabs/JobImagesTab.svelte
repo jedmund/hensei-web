@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Job } from '$lib/types/api/entities'
+	import { resolve } from '$app/paths'
 	import {
 		getJobPortraitUrl,
 		getJobFullImageUrl,
@@ -47,7 +48,7 @@
 	<div class="images-grid">
 		<div class="image-item">
 			<a
-				href={images.portrait}
+				href={resolve(images.portrait)}
 				target="_blank"
 				rel="noopener noreferrer"
 				class="image-container portrait"
@@ -58,14 +59,14 @@
 		</div>
 
 		<div class="image-item">
-			<a href={images.full} target="_blank" rel="noopener noreferrer" class="image-container full">
+			<a href={resolve(images.full)} target="_blank" rel="noopener noreferrer" class="image-container full">
 				<img src={images.full} alt="{localizedName(job.name)} Full" loading="lazy" />
 			</a>
 			<span class="image-label">Full</span>
 		</div>
 
 		<div class="image-item">
-			<a href={images.icon} target="_blank" rel="noopener noreferrer" class="image-container icon">
+			<a href={resolve(images.icon)} target="_blank" rel="noopener noreferrer" class="image-container icon">
 				<img src={images.icon} alt="{localizedName(job.name)} Icon" loading="lazy" />
 			</a>
 			<span class="image-label">Icon</span>
@@ -73,7 +74,7 @@
 		</div>
 
 		<div class="image-item wide-item">
-			<a href={images.wide} target="_blank" rel="noopener noreferrer" class="image-container wide">
+			<a href={resolve(images.wide)} target="_blank" rel="noopener noreferrer" class="image-container wide">
 				<img src={images.wide} alt="{localizedName(job.name)} Wide" loading="lazy" />
 			</a>
 			<span class="image-label">Wide Banner</span>

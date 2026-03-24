@@ -8,7 +8,7 @@
  */
 
 import { queryOptions, infiniteQueryOptions } from '@tanstack/svelte-query'
-import { userAdapter, type UserInfo, type UserProfile } from '$lib/api/adapters/user.adapter'
+import { userAdapter } from '$lib/api/adapters/user.adapter'
 import type { Party } from '$lib/types/api/party'
 
 /**

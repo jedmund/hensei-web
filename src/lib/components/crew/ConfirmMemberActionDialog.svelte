@@ -23,11 +23,7 @@
 	const removeMemberMutation = useRemoveMember()
 	const updateMembershipMutation = useUpdateMembership()
 
-	let open = $state(false)
-
-	$effect(() => {
-		open = !!member && !!action
-	})
+	let open = $derived(!!member && !!action)
 
 	function handleOpenChange(isOpen: boolean) {
 		if (!isOpen) {

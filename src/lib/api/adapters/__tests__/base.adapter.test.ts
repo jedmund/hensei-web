@@ -7,7 +7,6 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { BaseAdapter } from '../base.adapter'
-import { ApiError, NetworkError } from '../errors'
 import type { AdapterOptions } from '../types'
 
 /**
@@ -45,7 +44,7 @@ class FastRetryAdapter extends BaseAdapter {
 	}
 
 	// Override delay for instant retries in tests
-	protected delay(ms: number): Promise<void> {
+	protected delay(_ms: number): Promise<void> {
 		// Instant return for fast tests
 		return Promise.resolve()
 	}

@@ -15,7 +15,7 @@ async function ensureMSW() {
 		mockServer = mswNode.setupServer()
 		http = msw.http
 		HttpResponse = msw.HttpResponse
-	} catch (e) {
+	} catch (_e) {
 		// MSW is not installed; skip server wiring
 		mockServer = null
 	}

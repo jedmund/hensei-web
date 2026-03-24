@@ -11,7 +11,6 @@ import { queryOptions, infiniteQueryOptions } from '@tanstack/svelte-query'
 import {
 	partyAdapter,
 	type ListUserPartiesParams,
-	type ListRaidPartiesParams,
 	type ExploreFilterParams
 } from '$lib/api/adapters/party.adapter'
 import type { Party } from '$lib/types/api/party'

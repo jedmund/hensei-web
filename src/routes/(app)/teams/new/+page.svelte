@@ -7,6 +7,7 @@
 	import { partyQueries, partyKeys } from '$lib/api/queries/party.queries'
 	import { useCreateParty } from '$lib/api/mutations/party.mutations'
 	import { page } from '$app/stores'
+	import { resolve } from '$app/paths'
 	import { replaceState } from '$app/navigation'
 	import { getLocalId } from '$lib/utils/localId'
 	import { storeEditKey } from '$lib/utils/editKeys'
@@ -79,7 +80,7 @@
 				}
 
 				queryClient.setQueryData(partyKeys.detail(created.shortcode), created)
-				replaceState(`/teams/${created.shortcode}`, {})
+				replaceState(resolve(`/teams/${created.shortcode}`), {})
 
 				return { id: created.id, shortcode: created.shortcode }
 			} catch (err) {

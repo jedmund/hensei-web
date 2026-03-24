@@ -301,7 +301,7 @@ describe('isAdvancedJob', () => {
 	})
 
 	it('returns true for ex2', () => {
-		expect(isAdvancedJob(makeJob({ row: 'ex2' as any }))).toBe(true)
+		expect(isAdvancedJob(makeJob({ row: 'ex2' as unknown as number }))).toBe(true)
 	})
 
 	it('returns false for row 1', () => {

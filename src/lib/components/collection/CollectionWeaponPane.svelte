@@ -33,6 +33,7 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import { page } from '$app/stores'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -263,7 +264,7 @@
 
 	function viewInDatabase() {
 		if (!weaponData?.granblueId) return
-		goto(getDatabaseUrl('weapon', weaponData.granblueId))
+		goto(resolve(getDatabaseUrl('weapon'), weaponData.granblueId))
 	}
 
 	// Set up sidebar action on mount and clean up on destroy

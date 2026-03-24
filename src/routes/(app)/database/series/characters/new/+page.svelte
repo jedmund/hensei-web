@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { useQueryClient } from '@tanstack/svelte-query'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import PageMeta from '$lib/components/PageMeta.svelte'
@@ -49,7 +50,7 @@
 			})
 
 			// Navigate to the new series detail page
-			goto(`/database/series/characters/${formData.slug}`)
+			goto(resolve(`/database/series/characters/${formData.slug}`))
 		} catch (error) {
 			saveError = 'Failed to create character series. Please try again.'
 			console.error('Create error:', error)
@@ -68,7 +69,7 @@
 				variant="ghost"
 				size="small"
 				leftIcon="chevron-left"
-				href="/database/characters?view=series">Back</Button
+				href={resolve('/database/characters?view=series')}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}

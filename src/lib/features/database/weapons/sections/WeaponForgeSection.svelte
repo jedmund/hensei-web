@@ -7,6 +7,7 @@
 	import { getElementKey } from '$lib/utils/element'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
+	import { resolve } from '$app/paths'
 	interface Props {
 		weapon: any
 		editMode?: boolean
@@ -60,7 +61,7 @@
 								</span>
 							{/if}
 							<a
-								href={localizeHref(`/database/weapons/${chainWeapon.granblueId}`)}
+								href={resolve(localizeHref(`/database/weapons/${chainWeapon.granblueId)}`)}
 								class="chain-item {elementKey}"
 								class:current={chainWeapon.granblueId === weapon.granblueId}
 							>
@@ -83,7 +84,7 @@
 			{#if forgedFrom && forgeChain.length === 0}
 				<DetailItem label="Forged From">
 					<a
-						href={localizeHref(`/database/weapons/${forgedFrom.granblueId}`)}
+						href={resolve(localizeHref(`/database/weapons/${forgedFrom.granblueId)}`)}
 						class="forged-from-link"
 					>
 						{forgedFrom.name?.en || forgedFrom.name?.ja}

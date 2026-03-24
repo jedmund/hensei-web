@@ -2,6 +2,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -42,7 +43,7 @@
 
 	// Navigate to event detail/edit
 	function handleRowClick(event: GwEvent) {
-		goto(`/database/gw-events/${event.id}`)
+		goto(resolve(`/database/gw-events/${event.id}`))
 	}
 </script>
 
@@ -53,7 +54,7 @@
 		<div class="controls">
 			<input type="text" placeholder="Search events..." bind:value={searchTerm} />
 			<div class="controls-right">
-				<Button variant="primary" size="small" onclick={() => goto('/database/gw-events/new')}>
+				<Button variant="primary" size="small" onclick={() => goto(resolve('/database/gw-events/new'))}>
 					New Event
 				</Button>
 			</div>

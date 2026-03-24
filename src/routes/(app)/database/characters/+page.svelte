@@ -2,6 +2,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
@@ -34,9 +35,9 @@
 	$effect(() => {
 		const currentView = $page.url.searchParams.get('view')
 		if (viewMode !== 'characters' && currentView !== viewMode) {
-			goto(`?view=${viewMode}`, { replaceState: true, noScroll: true })
+			goto(resolve(`?view=${viewMode}`), { replaceState: true, noScroll: true })
 		} else if (viewMode === 'characters' && currentView) {
-			goto('/database/characters', { replaceState: true, noScroll: true })
+			goto(resolve('/database/characters'), { replaceState: true, noScroll: true })
 		}
 	})
 
@@ -51,7 +52,7 @@
 
 	// Navigate to series detail
 	function handleSeriesClick(slug: string) {
-		goto(`/database/series/characters/${slug}`)
+		goto(resolve(`/database/series/characters/${slug}`))
 	}
 
 	const columns = [

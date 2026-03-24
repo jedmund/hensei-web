@@ -91,7 +91,7 @@ describe('getToken', () => {
 		authStore.setAuth('old-tok', { id: 'u1', username: 'grug' }, -1)
 
 		// Stub window + fetch so the async refresh side effect doesn't explode
-		;(globalThis as any).window = { location: { href: '' } }
+		;(globalThis as unknown as Record<string, unknown>).window = { location: { href: '' } }
 		vi.spyOn(globalThis, 'fetch').mockResolvedValue(
 			new Response(
 				JSON.stringify({ access_token: 'x', user: { id: 'u1', username: 'grug' }, expires_in: 60 }),
@@ -104,7 +104,7 @@ describe('getToken', () => {
 		// Let the fire-and-forget refresh() settle
 		await vi.waitFor(() => expect(authStore.isRefreshing).toBe(false))
 
-		delete (globalThis as any).window
+		delete (globalThis as unknown as Record<string, unknown>).window
 	})
 })
 
@@ -190,7 +190,7 @@ describe('refresh', () => {
 
 		// Stub window for Node environment
 		const fakeLocation = { href: '' }
-		;(globalThis as any).window = { location: fakeLocation }
+		;(globalThis as unknown as Record<string, unknown>).window = { location: fakeLocation }
 
 		const result = await authStore.refresh()
 
@@ -198,7 +198,7 @@ describe('refresh', () => {
 		expect(authStore.isAuthenticated).toBe(false)
 		expect(fakeLocation.href).toBe('/auth/login')
 
-		delete (globalThis as any).window
+		delete (globalThis as unknown as Record<string, unknown>).window
 	})
 
 	it('deduplicates concurrent refresh calls', async () => {
@@ -279,14 +279,14 @@ describe('checkAndRefresh', () => {
 		vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response('', { status: 401 }))
 
 		const fakeLocation = { href: '' }
-		;(globalThis as any).window = { location: fakeLocation }
+		;(globalThis as unknown as Record<string, unknown>).window = { location: fakeLocation }
 
 		const result = await authStore.checkAndRefresh()
 
 		expect(result).toBeNull()
 		expect(authStore.isAuthenticated).toBe(false)
 
-		delete (globalThis as any).window
+		delete (globalThis as unknown as Record<string, unknown>).window
 	})
 })
 
@@ -298,7 +298,7 @@ describe('getToken recovery', () => {
 	it('returns new token after refresh triggered by expired getToken', async () => {
 		// Set an expired token
 		authStore.setAuth('expired-tok', { id: 'u1', username: 'grug' }, -1)
-		;(globalThis as any).window = { location: { href: '' } }
+		;(globalThis as unknown as Record<string, unknown>).window = { location: { href: '' } }
 		vi.spyOn(globalThis, 'fetch').mockResolvedValue(
 			new Response(
 				JSON.stringify({
@@ -319,6 +319,6 @@ describe('getToken recovery', () => {
 		// Now getToken should return the refreshed token
 		expect(authStore.getToken()).toBe('recovered-tok')
 
-		delete (globalThis as any).window
+		delete (globalThis as unknown as Record<string, unknown>).window
 	})
 })

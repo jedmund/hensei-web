@@ -3,7 +3,7 @@ import type { Component } from 'svelte'
 
 const { sidebar } = await import('../sidebar.svelte')
 
-const DummyComponent = {} as Component<any, any, any>
+const DummyComponent = (() => {}) as unknown as Component<Record<string, unknown>>
 
 beforeEach(() => {
 	vi.useFakeTimers()

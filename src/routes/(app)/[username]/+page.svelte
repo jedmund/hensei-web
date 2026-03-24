@@ -5,6 +5,7 @@
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { ContextMenu } from 'bits-ui'
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import GridRep from '$lib/components/reps/GridRep.svelte'
 	import type { FilterItem } from '$lib/types/filter'
 	import ExploreFilters from '$lib/components/explore/ExploreFilters.svelte'
@@ -218,7 +219,7 @@
 									<ContextMenu.Content class="context-menu">
 										<ContextMenu.Item
 											class="context-menu-item"
-											onclick={() => goto(localizeHref(`/teams/${party.shortcode}`))}
+											onclick={() => goto(resolve(localizeHref(`/teams/${party.shortcode}`)))}
 										>
 											{m.context_view_team()}
 										</ContextMenu.Item>

@@ -1,19 +1,6 @@
 import { z } from 'zod'
 import { snakeToCamel } from './transforms'
 
-// Minimal camelCase validation to start small and safe
-const MinimalCamelPartySchema = z
-	.object({
-		id: z.string(),
-		shortcode: z.string(),
-		user: z.object({ id: z.string().optional() }).nullish().optional(),
-		localId: z.string().nullish().optional()
-	})
-	.passthrough()
-
-// NOTE: These old types are deprecated - use types from $lib/types/api/party instead
-// Keeping minimal exports for backward compatibility during migration
-
 // Helper for localized names
 const LocalizedNameSchema = z.union([
 	z.string(),

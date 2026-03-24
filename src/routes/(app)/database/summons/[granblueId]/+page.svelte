@@ -1,6 +1,7 @@
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 
 	// Page metadata
@@ -56,7 +57,7 @@
 		} else {
 			url.searchParams.set('tab', tab)
 		}
-		goto(url.toString(), { replaceState: true })
+		goto(resolve(url.toString()), { replaceState: true })
 	}
 
 	// Use TanStack Query with SSR initial data
@@ -172,13 +173,13 @@
 <div class="page">
 	<DatabasePageHeader title="Summon">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={getListUrl('summons')}
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href={resolve(getListUrl('summons'))}
 				>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
-				<Button variant="element-ghost" element={elementName} size="small" href={editUrl}
+				<Button variant="element-ghost" element={elementName} size="small" href={resolve(editUrl)}
 					>Edit</Button
 				>
 			{/if}
@@ -240,7 +241,7 @@
 						<DetailItem label="Wiki (EN)">
 							{#if summon.wiki?.en}
 								<Button
-									href={buildWikiEnUrl(summon.wiki.en) ?? undefined}
+									href={resolve(buildWikiEnUrl(summon.wiki.en) ?? undefined)}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -256,7 +257,7 @@
 						<DetailItem label="Wiki (JP)">
 							{#if summon.wiki?.ja}
 								<Button
-									href={buildWikiJaUrl(summon.wiki.ja, 'summon') ?? undefined}
+									href={resolve(buildWikiJaUrl(summon.wiki.ja, 'summon') ?? undefined)}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -272,7 +273,7 @@
 						<DetailItem label="Gamewith">
 							{#if summon.gamewith}
 								<Button
-									href={buildGamewithUrl(summon.gamewith) ?? undefined}
+									href={resolve(buildGamewithUrl(summon.gamewith) ?? undefined)}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -288,7 +289,7 @@
 						<DetailItem label="Kamigame">
 							{#if summon.kamigame}
 								<Button
-									href={buildKamigameUrl(summon.kamigame, 'summon') ?? undefined}
+									href={resolve(buildKamigameUrl(summon.kamigame, 'summon') ?? undefined)}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}

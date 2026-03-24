@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import {
 		useAcceptInvitation,
 		useRejectInvitation,
@@ -49,7 +50,7 @@
 			await acceptMutation.mutateAsync(invitationId)
 			// Successfully joined - close modal and redirect to crew
 			open = false
-			goto('/crew')
+			goto(resolve('/crew'))
 		} catch (error) {
 			console.error('Failed to accept invitation:', error)
 			toast.error(extractErrorMessage(error, 'Failed to accept invitation'))

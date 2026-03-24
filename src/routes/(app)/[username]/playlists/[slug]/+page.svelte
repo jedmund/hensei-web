@@ -2,6 +2,7 @@
 	import type { PageData } from './$types'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
 	import PlaylistHeader from '$lib/components/playlist/PlaylistHeader.svelte'
 	import AddPartiesToPlaylistPane from '$lib/components/sidebar/AddPartiesToPlaylistPane.svelte'
@@ -32,7 +33,7 @@
 
 	async function handleDelete() {
 		await deleteMutation.mutateAsync(playlist.id)
-		goto(localizeHref(`/${data.username}/playlists`))
+		goto(resolve(localizeHref(`/${data.username}/playlists`)))
 	}
 
 	async function handleRemoveParty(partyId: string) {

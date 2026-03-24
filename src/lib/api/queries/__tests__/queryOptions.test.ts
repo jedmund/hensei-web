@@ -133,35 +133,35 @@ describe('getNextPageParam', () => {
 	it('returns next page when more pages available', () => {
 		const opts = partyQueries.list()
 		const getNext = opts.getNextPageParam!
-		const result = getNext({ results: [], page: 2, totalPages: 5 } as any, [], 2, [])
+		const result = getNext({ results: [], page: 2, totalPages: 5 } as Record<string, unknown>, [], 2, [])
 		expect(result).toBe(3)
 	})
 
 	it('returns undefined on last page', () => {
 		const opts = partyQueries.list()
 		const getNext = opts.getNextPageParam!
-		const result = getNext({ results: [], page: 5, totalPages: 5 } as any, [], 5, [])
+		const result = getNext({ results: [], page: 5, totalPages: 5 } as Record<string, unknown>, [], 5, [])
 		expect(result).toBeUndefined()
 	})
 
 	it('works for search queries', () => {
 		const opts = searchQueries.weapons()
 		const getNext = opts.getNextPageParam!
-		expect(getNext({ results: [], page: 1, totalPages: 3 } as any, [], 1, [])).toBe(2)
-		expect(getNext({ results: [], page: 3, totalPages: 3 } as any, [], 3, [])).toBeUndefined()
+		expect(getNext({ results: [], page: 1, totalPages: 3 } as Record<string, unknown>, [], 1, [])).toBe(2)
+		expect(getNext({ results: [], page: 3, totalPages: 3 } as Record<string, unknown>, [], 3, [])).toBeUndefined()
 	})
 
 	it('works for user parties', () => {
 		const opts = userQueries.parties('alice')
 		const getNext = opts.getNextPageParam!
-		expect(getNext({ results: [], page: 1, totalPages: 2 } as any, [], 1, [])).toBe(2)
-		expect(getNext({ results: [], page: 2, totalPages: 2 } as any, [], 2, [])).toBeUndefined()
+		expect(getNext({ results: [], page: 1, totalPages: 2 } as Record<string, unknown>, [], 1, [])).toBe(2)
+		expect(getNext({ results: [], page: 2, totalPages: 2 } as Record<string, unknown>, [], 2, [])).toBeUndefined()
 	})
 
 	it('works for crew shared parties', () => {
 		const opts = crewQueries.sharedParties()
 		const getNext = opts.getNextPageParam!
-		expect(getNext({ page: 1, totalPages: 4 } as any, [], 1, [])).toBe(2)
-		expect(getNext({ page: 4, totalPages: 4 } as any, [], 4, [])).toBeUndefined()
+		expect(getNext({ page: 1, totalPages: 4 } as Record<string, unknown>, [], 1, [])).toBe(2)
+		expect(getNext({ page: 4, totalPages: 4 } as Record<string, unknown>, [], 4, [])).toBeUndefined()
 	})
 })

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { LayoutData } from './$types'
 	import { page } from '$app/stores'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import * as m from '$lib/paraglide/messages'
@@ -111,7 +112,7 @@
 			selectionMode.exit()
 		}
 		sidebar.close()
-		goto(localizeHref(`/${username}/collection/${value}`))
+		goto(resolve(localizeHref(`/${username}/collection/${value}`)))
 	}
 
 	function handleAddArtifact() {
