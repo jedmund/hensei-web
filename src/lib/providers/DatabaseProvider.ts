@@ -9,16 +9,6 @@ interface DatabaseProviderOptions {
 	pageSize?: number
 }
 
-interface APIResponse {
-	data: Record<string, unknown>[]
-	meta: {
-		page: number
-		totalPages: number
-		pageSize: number
-		total: number
-	}
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- RestDataProvider generic requires any for compatibility
 export class DatabaseProvider extends RestDataProvider<any> {
 	private resource: 'weapons' | 'characters' | 'summons' | 'jobs'

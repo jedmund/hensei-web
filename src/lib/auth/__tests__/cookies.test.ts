@@ -35,8 +35,6 @@ function createMockCookies() {
 	}
 }
 
-type MockCookies = ReturnType<typeof createMockCookies>
-
 const mockAccount: AccountCookie = {
 	userId: 'u1',
 	username: 'grug',
