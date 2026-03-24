@@ -25,7 +25,7 @@ export interface CreatePartyParams {
 	jobId?: string | undefined
 	raidId?: string | null | undefined
 	guidebookId?: string | undefined
-	extras?: Record<string, any> | undefined
+	extras?: Record<string, unknown> | undefined
 }
 
 /**

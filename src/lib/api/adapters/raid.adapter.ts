@@ -38,7 +38,7 @@ export class RaidAdapter extends BaseAdapter {
 	 * Get all raids with optional filtering
 	 */
 	async getAll(filters?: RaidFilters, options?: RequestOptions): Promise<Raid[]> {
-		const queryParams: Record<string, any> = {}
+		const queryParams: Record<string, string | number | boolean> = {}
 
 		if (filters) {
 			if (filters.element !== undefined) queryParams.element = filters.element

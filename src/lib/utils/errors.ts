@@ -5,7 +5,7 @@
 
 export interface NestedErrorDetails {
 	details?: NestedErrorDetails
-	errors?: { message?: string; [key: string]: any }
+	errors?: { message?: string; [key: string]: unknown }
 	message?: string
 }
 
@@ -27,13 +27,15 @@ export interface NestedErrorDetails {
  * ```
  */
 export function extractErrorMessage(
-	error: any,
+	error: unknown,
 	fallbackMessage: string = 'An error occurred'
 ): string {
 	if (!error) return fallbackMessage
 
+	const err = error as Record<string, unknown>
+
 	// Navigate through nested details structure
-	let errorDetails: NestedErrorDetails | undefined = error?.details
+	let errorDetails: NestedErrorDetails | undefined = err?.details as NestedErrorDetails | undefined
 	while (errorDetails?.details) {
 		errorDetails = errorDetails.details
 	}
@@ -61,5 +63,5 @@ export function extractErrorMessage(
 	}
 
 	// Fallback to error.message
-	return error?.message || fallbackMessage
+	return (typeof err?.message === 'string' ? err.message : undefined) || fallbackMessage
 }

@@ -132,8 +132,8 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 		try {
 			loading = true
 			await executeDuplicate(sourceId, position, type)
-		} catch (err: any) {
-			error = err.message || m.toast_failed_duplicate()
+		} catch (err: unknown) {
+			error = extractErrorMessage(err, m.toast_failed_duplicate())
 			console.error('Duplicate failed:', err)
 			toast.error(extractErrorMessage(err, m.toast_failed_duplicate()))
 		} finally {
@@ -176,8 +176,8 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 			} else if (operation.type === 'duplicate') {
 				await handleDuplicate(operation.source, operation.target)
 			}
-		} catch (err: any) {
-			error = err.message || m.toast_failed_update_party()
+		} catch (err: unknown) {
+			error = extractErrorMessage(err, m.toast_failed_update_party())
 			console.error('Drag operation failed:', err)
 			toast.error(extractErrorMessage(err, m.toast_drag_failed()))
 		} finally {

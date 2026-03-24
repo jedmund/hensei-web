@@ -92,8 +92,8 @@ export function useItemAddition(opts: ItemAdditionOptions) {
 				opts.setSelectedSlot(nextEmptySlot)
 				opts.onSlotAdvance?.(nextEmptySlot)
 			}
-		} catch (err: any) {
-			error = err.message || 'Failed to add item'
+		} catch (err: unknown) {
+			error = err instanceof Error ? err.message : 'Failed to add item'
 		} finally {
 			loading = false
 		}
