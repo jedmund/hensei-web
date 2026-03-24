@@ -18,6 +18,7 @@
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import { themeStore, type ThemePreference } from '$lib/stores/theme.svelte'
+	import { localizeHref, deLocalizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {
 		open: boolean
@@ -251,10 +252,11 @@
 				themeStore.setTheme(theme as ThemePreference)
 			}
 
-			// If language or bahamut mode changed, we need a full page reload
+			// If language or bahamut mode changed, navigate to the re-localized URL
 			if (originalLanguage !== language || user.bahamut !== bahamut) {
 				await invalidateAll()
-				window.location.reload()
+				const basePath = deLocalizeHref(window.location.pathname + window.location.search + window.location.hash)
+				window.location.href = localizeHref(basePath, { locale: language })
 			} else {
 				// For other changes (element, picture, gender, theme), invalidate to refresh layout data
 				await invalidateAll()

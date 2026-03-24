@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getLocale } from '$lib/paraglide/runtime.js'
+	import { getLocale, localizeHref, deLocalizeHref } from '$lib/paraglide/runtime.js'
 	import { invalidateAll } from '$app/navigation'
 	import { Switch as SwitchPrimitive } from 'bits-ui'
 	import * as m from '$lib/paraglide/messages'
@@ -24,10 +24,11 @@
 			}
 		}
 
-		// Unauthenticated fallback: set locale cookie directly and reload
+		// Unauthenticated fallback: set locale cookie directly and navigate
 		document.cookie = `PARAGLIDE_LOCALE=${newLocale};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`
 		await invalidateAll()
-		window.location.reload()
+		const basePath = deLocalizeHref(window.location.pathname + window.location.search + window.location.hash)
+		window.location.href = localizeHref(basePath, { locale: newLocale })
 	}
 </script>
 
