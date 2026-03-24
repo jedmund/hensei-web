@@ -1,7 +1,7 @@
-import { SvelteNodeViewRenderer } from 'svelte-tiptap';
-import { Audio } from './AudioExtension.js';
-import type { NodeViewProps } from '@tiptap/core';
-import type { Component } from 'svelte';
+import { SvelteNodeViewRenderer } from 'svelte-tiptap'
+import { Audio } from './AudioExtension.js'
+import type { NodeViewProps } from '@tiptap/core'
+import type { Component } from 'svelte'
 
 export const AudioExtended = (content: Component<NodeViewProps>) =>
 	Audio.extend({
@@ -25,10 +25,10 @@ export const AudioExtended = (content: Component<NodeViewProps>) =>
 				align: {
 					default: 'left'
 				}
-			};
+			}
 		},
 
 		addNodeView: () => {
-			return SvelteNodeViewRenderer(content);
+			return SvelteNodeViewRenderer(content)
 		}
-	});
+	})

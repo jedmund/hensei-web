@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
@@ -165,10 +164,10 @@
 				flb: character.uncap?.flb || false,
 				transcendence: character.uncap?.transcendence || false,
 				special: character.special || false,
-			// Style swap
-			styleSwap: character.styleSwap || false,
-			styleNameEn: character.styleName?.en || '',
-		styleNameJp: character.styleName?.ja || '',
+				// Style swap
+				styleSwap: character.styleSwap || false,
+				styleNameEn: character.styleName?.en || '',
+				styleNameJp: character.styleName?.ja || '',
 				// Dates
 				releaseDate: character.releaseDate || '',
 				flbDate: character.flbDate || '',
@@ -283,10 +282,21 @@
 <div class="page">
 	<DatabasePageHeader title="Edit Character">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={`/database/characters/${character?.granblueId}`}>Back</Button>
+			<Button
+				variant="ghost"
+				size="small"
+				leftIcon="chevron-left"
+				href={`/database/characters/${character?.granblueId}`}>Back</Button
+			>
 		{/snippet}
 		{#snippet rightAction()}
-			<Button variant="element-ghost" element={elementName} size="small" onclick={saveChanges} disabled={isSaving}>
+			<Button
+				variant="element-ghost"
+				element={elementName}
+				size="small"
+				onclick={saveChanges}
+				disabled={isSaving}
+			>
 				{isSaving ? 'Saving...' : 'Save'}
 			</Button>
 		{/snippet}

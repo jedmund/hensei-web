@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
@@ -14,7 +13,9 @@
 	import { withInitialData } from '$lib/query/ssr'
 
 	// Components
-	import DetailScaffold, { type DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
+	import DetailScaffold, {
+		type DetailTab
+	} from '$lib/features/database/detail/DetailScaffold.svelte'
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
@@ -77,7 +78,9 @@
 <div class="page">
 	<DatabasePageHeader title="Job">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/jobs">Back</Button>
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/jobs"
+				>Back</Button
+			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
@@ -96,7 +99,12 @@
 			showTabs={false}
 		>
 			<div class="tabs-bar">
-				<SegmentedControl value={currentTab} onValueChange={handleTabChange} variant="background" size="small">
+				<SegmentedControl
+					value={currentTab}
+					onValueChange={handleTabChange}
+					variant="background"
+					size="small"
+				>
 					<Segment value="info">Info</Segment>
 					<Segment value="skills">Skills</Segment>
 					<Segment value="images">Images</Segment>

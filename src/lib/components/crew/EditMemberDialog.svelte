@@ -193,7 +193,10 @@
 		</ModalBody>
 
 		<ModalFooter
-			onCancel={() => { open = false; onClose() }}
+			onCancel={() => {
+				open = false
+				onClose()
+			}}
 			primaryAction={{
 				label: m.crew_save_button(),
 				onclick: handleSave,

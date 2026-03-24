@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
@@ -31,7 +30,9 @@
 
 	const series = $derived(seriesQuery.data)
 	const variants = $derived(series?.variants ?? [])
-	const pageTitle = $derived(series?.name ? `Edit ${localizedName(series.name)}` : 'Edit Weapon Series')
+	const pageTitle = $derived(
+		series?.name ? `Edit ${localizedName(series.name)}` : 'Edit Weapon Series'
+	)
 
 	// Variant modal state
 	let variantModalOpen = $state(false)
@@ -133,7 +134,12 @@
 <div class="page">
 	<DatabasePageHeader title="Edit Weapon Series">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={`/database/series/weapons/${series?.slug}`}>Back</Button>
+			<Button
+				variant="ghost"
+				size="small"
+				leftIcon="chevron-left"
+				href={`/database/series/weapons/${series?.slug}`}>Back</Button
+			>
 		{/snippet}
 		{#snippet rightAction()}
 			<Button variant="ghost" size="small" onclick={saveChanges} disabled={isSaving}>
@@ -234,7 +240,9 @@
 			<div class="variants-section">
 				<div class="variants-header">
 					<h4>Variants</h4>
-					<Button variant="ghost" size="small" leftIcon="plus" onclick={openCreateVariant}>Add Variant</Button>
+					<Button variant="ghost" size="small" leftIcon="plus" onclick={openCreateVariant}
+						>Add Variant</Button
+					>
 				</div>
 				<div class="details">
 					{#if variants.length > 0}
@@ -258,11 +266,7 @@
 </div>
 
 {#if series}
-	<VariantModal
-		bind:open={variantModalOpen}
-		seriesId={series.id}
-		variant={editingVariant}
-	/>
+	<VariantModal bind:open={variantModalOpen} seriesId={series.id} variant={editingVariant} />
 {/if}
 
 <style lang="scss">
@@ -323,5 +327,4 @@
 		margin: 0;
 		padding-bottom: spacing.$unit-2x;
 	}
-
 </style>

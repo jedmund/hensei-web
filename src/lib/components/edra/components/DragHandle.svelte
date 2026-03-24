@@ -1,16 +1,16 @@
 <script lang="ts">
-	import type { Editor } from '@tiptap/core';
-	import { onMount } from 'svelte';
-	import GripVertical from '@lucide/svelte/icons/grip-vertical';
-	import { DragHandlePlugin } from '../extensions/drag-handle/index.js';
+	import type { Editor } from '@tiptap/core'
+	import { onMount } from 'svelte'
+	import GripVertical from '@lucide/svelte/icons/grip-vertical'
+	import { DragHandlePlugin } from '../extensions/drag-handle/index.js'
 
 	interface Props {
-		editor: Editor;
+		editor: Editor
 	}
 
-	const { editor }: Props = $props();
+	const { editor }: Props = $props()
 
-	const pluginKey = 'globalDragHandle';
+	const pluginKey = 'globalDragHandle'
 
 	onMount(() => {
 		const plugin = DragHandlePlugin({
@@ -20,10 +20,10 @@
 			dragHandleSelector: '.drag-handle',
 			excludedTags: ['pre', 'code', 'table p'],
 			customNodes: []
-		});
-		editor.registerPlugin(plugin);
-		return () => editor.unregisterPlugin(pluginKey);
-	});
+		})
+		editor.registerPlugin(plugin)
+		return () => editor.unregisterPlugin(pluginKey)
+	})
 </script>
 
 <div class="drag-handle">

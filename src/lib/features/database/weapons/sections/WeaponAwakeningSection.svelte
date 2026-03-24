@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
@@ -14,11 +13,7 @@
 		editData?: any
 	}
 
-	let {
-		weapon,
-		editMode = false,
-		editData = $bindable()
-	}: Props = $props()
+	let { weapon, editMode = false, editData = $bindable() }: Props = $props()
 
 	// Fetch all weapon awakenings from the API
 	const allAwakeningsQuery = createQuery(() => ({
@@ -76,7 +71,11 @@
 					{@const imageUrl = getAwakeningImage({ type: awakening })}
 					<div class="awakening-item">
 						{#if imageUrl}
-							<img src={imageUrl} alt={awakening.name?.en ?? awakening.slug} class="awakening-icon" />
+							<img
+								src={imageUrl}
+								alt={awakening.name?.en ?? awakening.slug}
+								class="awakening-icon"
+							/>
 						{:else}
 							<div class="awakening-icon placeholder"></div>
 						{/if}

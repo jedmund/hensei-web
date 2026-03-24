@@ -73,7 +73,10 @@ export function updatePartyJobSkillsOptions(queryClient: QueryClient) {
 			shortcode: string
 			skills: Array<{ id: string; slot: number }>
 		}) => partyAdapter.updateJobSkills(shortcode, skills, editKeyHeaders(shortcode)),
-		onSuccess: (_data: unknown, { shortcode }: { shortcode: string; skills: Array<{ id: string; slot: number }> }) => {
+		onSuccess: (
+			_data: unknown,
+			{ shortcode }: { shortcode: string; skills: Array<{ id: string; slot: number }> }
+		) => {
 			queryClient.invalidateQueries({ queryKey: partyKeys.detail(shortcode) })
 		}
 	}
@@ -187,11 +190,7 @@ export function removePartyAccessoryOptions(queryClient: QueryClient) {
 				queryClient.setQueryData(partyKeys.detail(shortcode), context.previousParty)
 			}
 		},
-		onSettled: (
-			_data: unknown,
-			_err: unknown,
-			{ shortcode }: { shortcode: string }
-		) => {
+		onSettled: (_data: unknown, _err: unknown, { shortcode }: { shortcode: string }) => {
 			queryClient.invalidateQueries({ queryKey: partyKeys.detail(shortcode) })
 		}
 	}

@@ -159,7 +159,10 @@ describe('CrewAdapter', () => {
 		it('should unwrap phantomPlayers from bulkCreatePhantoms response', async () => {
 			global.fetch = mockApiResponse(API.bulkCreatePhantoms)
 
-			const result = await adapter.bulkCreatePhantoms('crew-1', [{ name: 'Ghost1' }, { name: 'Ghost2' }] as any)
+			const result = await adapter.bulkCreatePhantoms('crew-1', [
+				{ name: 'Ghost1' },
+				{ name: 'Ghost2' }
+			] as any)
 
 			expect(result).toEqual(EXPECTED.bulkCreatePhantoms)
 		})

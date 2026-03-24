@@ -18,8 +18,7 @@ class CollectionTeamsPaneStore {
 
 	addEntity(filter: FilterItem) {
 		if (filter.kind !== 'entity') return
-		if (this.entities.some((e) => e.kind === 'entity' && e.granblueId === filter.granblueId))
-			return
+		if (this.entities.some((e) => e.kind === 'entity' && e.granblueId === filter.granblueId)) return
 		this.entities = [...this.entities, filter]
 	}
 
@@ -49,9 +48,7 @@ class CollectionTeamsPaneStore {
 		}
 		this.reset(entityFilter)
 		const name = localizedName(data.name)
-		const elementName = data.element
-			? (getElementKey(data.element) as ElementType)
-			: undefined
+		const elementName = data.element ? (getElementKey(data.element) as ElementType) : undefined
 		sidebar.openWithComponent(
 			name,
 			PartiesPane,

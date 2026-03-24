@@ -39,7 +39,12 @@
 	</div>
 {/if}
 
-<div class="results-section" onscroll={(e) => { resultsScrolled = e.currentTarget.scrollTop > 0 }}>
+<div
+	class="results-section"
+	onscroll={(e) => {
+		resultsScrolled = e.currentTarget.scrollTop > 0
+	}}
+>
 	{#if isLoading}
 		<div class="loading">
 			<Icon name="loader-2" size={24} />

@@ -107,12 +107,9 @@ export class ArtifactAdapter extends BaseAdapter {
 			throw new Error(`Invalid slot number: ${slot}. Must be 1-4.`)
 		}
 
-		const response = await this.request<{ artifactSkills: ArtifactSkill[] }>(
-			'/artifact_skills',
-			{
-				query: { group }
-			}
-		)
+		const response = await this.request<{ artifactSkills: ArtifactSkill[] }>('/artifact_skills', {
+			query: { group }
+		})
 		return response.artifactSkills
 	}
 
@@ -320,9 +317,12 @@ export class ArtifactAdapter extends BaseAdapter {
 	 * Syncs a grid artifact from its linked collection source
 	 */
 	async syncGridArtifact(id: string): Promise<GridArtifact> {
-		const response = await this.request<{ gridArtifact: GridArtifact }>(`/grid_artifacts/${id}/sync`, {
-			method: 'POST'
-		})
+		const response = await this.request<{ gridArtifact: GridArtifact }>(
+			`/grid_artifacts/${id}/sync`,
+			{
+				method: 'POST'
+			}
+		)
 		return response.gridArtifact
 	}
 

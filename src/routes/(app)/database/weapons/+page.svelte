@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -297,7 +296,8 @@
 			width: 100,
 			hidden: true,
 			cell: BooleanCell,
-			getter: (row: any) => row.elementVariantIds != null && Object.keys(row.elementVariantIds).length > 0
+			getter: (row: any) =>
+				row.elementVariantIds != null && Object.keys(row.elementVariantIds).length > 0
 		}
 	]
 </script>

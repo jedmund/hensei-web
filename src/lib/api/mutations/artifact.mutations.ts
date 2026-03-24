@@ -24,8 +24,7 @@ import type {
 
 export function createCollectionArtifactOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (input: CollectionArtifactInput) =>
-			artifactAdapter.createCollectionArtifact(input),
+		mutationFn: (input: CollectionArtifactInput) => artifactAdapter.createCollectionArtifact(input),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: artifactKeys.collectionBase })
 		}
@@ -113,7 +112,10 @@ export function equipCollectionArtifactOptions(queryClient: QueryClient) {
 			gridCharacterId: string
 			collectionArtifactId: string
 		}) => artifactAdapter.equipCollectionArtifact(partyId, gridCharacterId, collectionArtifactId),
-		onSuccess: (_data: unknown, { partyId }: { partyId: string; gridCharacterId: string; collectionArtifactId: string }) => {
+		onSuccess: (
+			_data: unknown,
+			{ partyId }: { partyId: string; gridCharacterId: string; collectionArtifactId: string }
+		) => {
 			queryClient.invalidateQueries({ queryKey: ['parties', partyId] })
 		}
 	}

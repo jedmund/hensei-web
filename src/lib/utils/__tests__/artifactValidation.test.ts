@@ -11,7 +11,11 @@ import {
 	validateArtifactSkills,
 	calculateAvailableLevelPoints
 } from '../artifactValidation'
-import type { ArtifactSkillInstance, GridArtifact, CollectionArtifact } from '$lib/types/api/artifact'
+import type {
+	ArtifactSkillInstance,
+	GridArtifact,
+	CollectionArtifact
+} from '$lib/types/api/artifact'
 import type { Character } from '$lib/types/api/entities'
 
 // ============================================================================
@@ -244,7 +248,11 @@ describe('isQuirkArtifact', () => {
 	it('returns true for quirk', () => {
 		const artifact = makeArtifact({
 			artifact: {
-				id: 'r', granblueId: 'g', name: { en: '', ja: '' }, proficiency: null, rarity: 'quirk'
+				id: 'r',
+				granblueId: 'g',
+				name: { en: '', ja: '' },
+				proficiency: null,
+				rarity: 'quirk'
 			}
 		})
 		expect(isQuirkArtifact(artifact)).toBe(true)

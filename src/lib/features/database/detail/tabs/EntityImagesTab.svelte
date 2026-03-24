@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { ContextMenu } from 'bits-ui'
 	import ContextMenuWrapper from '$lib/components/ui/menu/ContextMenuWrapper.svelte'
@@ -70,9 +69,7 @@
 	}
 
 	const sortedPoses = $derived(
-		Array.from(imagesByPose.keys()).sort(
-			(a, b) => poseOrder.indexOf(a) - poseOrder.indexOf(b)
-		)
+		Array.from(imagesByPose.keys()).sort((a, b) => poseOrder.indexOf(a) - poseOrder.indexOf(b))
 	)
 
 	// Get the pose label from the first image in each group, or fall back to default

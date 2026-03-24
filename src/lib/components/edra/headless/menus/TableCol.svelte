@@ -1,33 +1,33 @@
 <script lang="ts">
-	import { type Editor } from '@tiptap/core';
-	import * as m from '$lib/paraglide/messages';
-	import ArrowLeftFromLine from '@lucide/svelte/icons/arrow-left-from-line';
-	import ArrowRightFromLine from '@lucide/svelte/icons/arrow-right-from-line';
-	import Trash from '@lucide/svelte/icons/trash';
-	import type { ShouldShowProps } from '../../types.js';
-	import { isColumnGripSelected } from '../../extensions/table/utils.js';
-	import BubbleMenu from '../../components/BubbleMenu.svelte';
+	import { type Editor } from '@tiptap/core'
+	import * as m from '$lib/paraglide/messages'
+	import ArrowLeftFromLine from '@lucide/svelte/icons/arrow-left-from-line'
+	import ArrowRightFromLine from '@lucide/svelte/icons/arrow-right-from-line'
+	import Trash from '@lucide/svelte/icons/trash'
+	import type { ShouldShowProps } from '../../types.js'
+	import { isColumnGripSelected } from '../../extensions/table/utils.js'
+	import BubbleMenu from '../../components/BubbleMenu.svelte'
 	interface Props {
-		editor: Editor;
+		editor: Editor
 	}
 
-	let { editor }: Props = $props();
+	let { editor }: Props = $props()
 </script>
 
 <BubbleMenu
 	{editor}
 	pluginKey="table-col-menu"
 	shouldShow={(props: ShouldShowProps) => {
-		if (!props.editor.isEditable) return false;
+		if (!props.editor.isEditable) return false
 		if (!props.state) {
-			return false;
+			return false
 		}
 		return isColumnGripSelected({
 			editor: props.editor,
 			view: props.view,
 			state: props.state,
 			from: props.from
-		});
+		})
 	}}
 >
 	<button

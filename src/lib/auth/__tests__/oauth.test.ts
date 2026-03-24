@@ -26,14 +26,11 @@ describe('passwordGrantLogin', () => {
 		const result = await passwordGrantLogin(mockFetch, loginBody)
 
 		expect(result).toEqual(mockResponse)
-		expect(mockFetch).toHaveBeenCalledWith(
-			'http://localhost:3000/oauth/token',
-			{
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(loginBody)
-			}
-		)
+		expect(mockFetch).toHaveBeenCalledWith('http://localhost:3000/oauth/token', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(loginBody)
+		})
 	})
 
 	it('throws "unauthorized" on 401', async () => {

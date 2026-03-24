@@ -21,7 +21,9 @@
 
 	let { weapon, quantity = 0, onQuantityChange, userElement }: Props = $props()
 
-	const imageUrl = $derived(getWeaponImage(weapon.granblueId, 'grid', weapon.element === 0 ? 0 : undefined))
+	const imageUrl = $derived(
+		getWeaponImage(weapon.granblueId, 'grid', weapon.element === 0 ? 0 : undefined)
+	)
 
 	const weaponFallbackUrl = $derived(
 		weapon.element === 0 ? getWeaponFallbackImage(weapon.granblueId, 'grid') : undefined
@@ -54,7 +56,13 @@
 	onkeydown={handleKeyDown}
 	aria-label="Select {name}, current quantity: {quantity}"
 >
-	<img src={imageUrl} alt={name} class="image" loading="lazy" onerror={(e) => handleImageFallback(e, weaponFallbackUrl)} />
+	<img
+		src={imageUrl}
+		alt={name}
+		class="image"
+		loading="lazy"
+		onerror={(e) => handleImageFallback(e, weaponFallbackUrl)}
+	/>
 	<div class="counter-row" onclick={(e) => e.stopPropagation()}>
 		<QuantityCounter value={quantity} onChange={handleQuantityChange} element={userElement} />
 	</div>

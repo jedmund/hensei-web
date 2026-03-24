@@ -160,10 +160,7 @@ export const partyQueries = {
 	 * @param params - Optional filter parameters
 	 * @returns Infinite query options for listing user's parties
 	 */
-	userParties: (
-		username: string,
-		params?: Omit<ListUserPartiesParams, 'username' | 'page'>
-	) =>
+	userParties: (username: string, params?: Omit<ListUserPartiesParams, 'username' | 'page'>) =>
 		infiniteQueryOptions({
 			queryKey: ['parties', 'user', username, params] as const,
 			queryFn: async ({ pageParam }): Promise<PartyPageResult> => {

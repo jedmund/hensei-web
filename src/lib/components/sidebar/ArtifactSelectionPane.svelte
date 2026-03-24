@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	/**
 	 * ArtifactSelectionPane - Pane for selecting artifacts from user's collection
@@ -59,7 +58,11 @@
 	})
 
 	// State-gated infinite scroll
-	const loader = useInfiniteLoader(() => collectionQuery, () => sentinelEl, { rootMargin: '200px' })
+	const loader = useInfiniteLoader(
+		() => collectionQuery,
+		() => sentinelEl,
+		{ rootMargin: '200px' }
+	)
 
 	// Reset loader when filters change
 	$effect(() => {
@@ -81,7 +84,7 @@
 	// Get proficiency for artifact
 	function getProficiency(artifact: CollectionArtifact): number | undefined {
 		const isQuirk = artifact.artifact?.rarity === 'quirk'
-		return ((isQuirk ? artifact.proficiency : artifact.artifact?.proficiency) ?? undefined)
+		return (isQuirk ? artifact.proficiency : artifact.artifact?.proficiency) ?? undefined
 	}
 
 	function handleSelect(artifact: CollectionArtifact) {

@@ -67,7 +67,10 @@
 
 	// State-gated infinite scroll (inspired by svelte-infinite)
 	// Encapsulates intersection observer, state machine, and all reactive effects
-	const loader = useInfiniteLoader(() => collectionQuery, () => sentinelEl)
+	const loader = useInfiniteLoader(
+		() => collectionQuery,
+		() => sentinelEl
+	)
 
 	// Flatten all summons from pages
 	const allSummons = $derived.by((): CollectionSummon[] => {
@@ -121,7 +124,6 @@
 	// Derived state for context menu
 	const canAccessDb = $derived(canAccessDatabase($page.data.account?.role))
 	const isTeamsPaneOpen = $derived(collectionTeamsPane.isOpen)
-
 
 	function openSummonDetails(summon: CollectionSummon) {
 		const summonName = localizedName(summon.summon?.name)

@@ -2,15 +2,15 @@
 
 /* Allow scrolling in Storybook (app.scss sets overflow: hidden for custom layout scrolling) */
 body {
-  overflow: auto !important;
-  height: auto !important;
+	overflow: auto !important;
+	height: auto !important;
 }
 
 html {
-  height: auto !important;
+	height: auto !important;
 }
 
 /* Ensure docs pages can scroll */
 .sbdocs-wrapper {
-  overflow: auto !important;
+	overflow: auto !important;
 }

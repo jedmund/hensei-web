@@ -8,10 +8,7 @@
  */
 
 import { queryOptions, infiniteQueryOptions } from '@tanstack/svelte-query'
-import {
-	jobAdapter,
-	type SearchJobSkillsParams
-} from '$lib/api/adapters/job.adapter'
+import { jobAdapter, type SearchJobSkillsParams } from '$lib/api/adapters/job.adapter'
 import type { Job, JobSkill, JobAccessory } from '$lib/types/api/entities'
 
 /**
@@ -108,10 +105,7 @@ export const jobQueries = {
 	 * @param params - Optional search parameters (query, filters, locale)
 	 * @returns Infinite query options for searching job skills
 	 */
-	skills: (
-		jobId: string,
-		params?: Omit<SearchJobSkillsParams, 'jobId' | 'page'>
-	) =>
+	skills: (jobId: string, params?: Omit<SearchJobSkillsParams, 'jobId' | 'page'>) =>
 		infiniteQueryOptions({
 			queryKey: ['jobs', jobId, 'skills', 'search', params] as const,
 			queryFn: async ({ pageParam }): Promise<JobSkillPageResult> => {

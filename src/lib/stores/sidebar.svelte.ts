@@ -70,7 +70,7 @@ class SidebarStore {
 
 		// Handle backward compatibility where 4th param was scrollable boolean
 		const opts: OpenWithComponentOptions =
-			typeof options === 'boolean' ? { scrollable: options } : options ?? {}
+			typeof options === 'boolean' ? { scrollable: options } : (options ?? {})
 
 		// Build the pane config
 		const paneConfig: PaneConfig = {
@@ -81,14 +81,13 @@ class SidebarStore {
 			props,
 			onback: opts.onback,
 			scrollable: opts.scrollable ?? true,
-			action:
-				opts.onsave ?
-					{
+			action: opts.onsave
+				? {
 						label: opts.saveLabel ?? 'Done',
 						handler: opts.onsave,
 						element: opts.element
 					}
-				:	undefined
+				: undefined
 		}
 
 		// Reset the pane stack with this as the root pane
@@ -166,12 +165,15 @@ class SidebarStore {
 		const currentIndex = panes.length - 1
 		if (currentIndex >= 0 && panes[currentIndex]) {
 			this.paneStack.updatePaneAt(currentIndex, {
-				action: show && label ? {
-					label,
-					handler: handler ?? (() => {}),
-					element,
-					disabled: !handler
-				} : undefined
+				action:
+					show && label
+						? {
+								label,
+								handler: handler ?? (() => {}),
+								element,
+								disabled: !handler
+							}
+						: undefined
 			})
 		}
 	}

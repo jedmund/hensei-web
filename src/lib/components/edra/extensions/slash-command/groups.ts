@@ -1,15 +1,15 @@
-import commands from '../../commands/toolbar-commands.js';
+import commands from '../../commands/toolbar-commands.js'
 
-import type { EdraToolBarCommands } from '../../commands/types.js';
-import type { Editor } from '@tiptap/core';
-import Quote from '@lucide/svelte/icons/quote';
-import SquareCode from '@lucide/svelte/icons/square-code';
-import Minus from '@lucide/svelte/icons/minus';
+import type { EdraToolBarCommands } from '../../commands/types.js'
+import type { Editor } from '@tiptap/core'
+import Quote from '@lucide/svelte/icons/quote'
+import SquareCode from '@lucide/svelte/icons/square-code'
+import Minus from '@lucide/svelte/icons/minus'
 
 export interface Group {
-	name: string;
-	title: string;
-	actions: EdraToolBarCommands[];
+	name: string
+	title: string
+	actions: EdraToolBarCommands[]
 }
 
 export const GROUPS: Group[] = [
@@ -23,7 +23,7 @@ export const GROUPS: Group[] = [
 				name: 'blockquote',
 				tooltip: 'Blockquote',
 				onClick: (editor: Editor) => {
-					editor.chain().focus().setBlockquote().run();
+					editor.chain().focus().setBlockquote().run()
 				}
 			},
 			{
@@ -31,7 +31,7 @@ export const GROUPS: Group[] = [
 				name: 'codeBlock',
 				tooltip: 'Code Block',
 				onClick: (editor: Editor) => {
-					editor.chain().focus().setCodeBlock().run();
+					editor.chain().focus().setCodeBlock().run()
 				}
 			},
 			...commands.lists
@@ -49,11 +49,11 @@ export const GROUPS: Group[] = [
 				name: 'horizontalRule',
 				tooltip: 'Horizontal Rule',
 				onClick: (editor: Editor) => {
-					editor.chain().focus().setHorizontalRule().run();
+					editor.chain().focus().setHorizontalRule().run()
 				}
 			}
 		]
 	}
-];
+]
 
-export default GROUPS;
+export default GROUPS

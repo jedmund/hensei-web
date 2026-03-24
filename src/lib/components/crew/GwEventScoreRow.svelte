@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'

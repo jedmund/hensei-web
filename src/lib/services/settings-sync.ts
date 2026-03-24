@@ -67,7 +67,9 @@ export async function syncLanguage(
 
 		// Navigate to the re-localized URL so the locale prefix is correct
 		// (e.g. /ja/teams → /teams when switching to English)
-		const basePath = deLocalizeHref(window.location.pathname + window.location.search + window.location.hash)
+		const basePath = deLocalizeHref(
+			window.location.pathname + window.location.search + window.location.hash
+		)
 		const newPath = localizeHref(basePath, { locale: newLanguage })
 		window.location.href = newPath
 	} catch (err) {

@@ -5,7 +5,11 @@
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
 	import { playlistQueries } from '$lib/api/queries/playlist.queries'
-	import { useAddPartyToPlaylist, useRemovePartyFromPlaylist, useCreatePlaylist } from '$lib/api/mutations/playlist.mutations'
+	import {
+		useAddPartyToPlaylist,
+		useRemovePartyFromPlaylist,
+		useCreatePlaylist
+	} from '$lib/api/mutations/playlist.mutations'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { toast } from 'svelte-sonner'
@@ -47,7 +51,9 @@
 			? playlists.filter((p) => p.title.toLowerCase().includes(search.trim().toLowerCase()))
 			: playlists
 	)
-	const busy = $derived(addMutation.isPending || removeMutation.isPending || createMutation.isPending)
+	const busy = $derived(
+		addMutation.isPending || removeMutation.isPending || createMutation.isPending
+	)
 
 	function isInPlaylist(playlist: Playlist): boolean {
 		return playlist.partyIds?.includes(partyId) ?? false

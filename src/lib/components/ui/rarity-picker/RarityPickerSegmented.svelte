@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { ToggleGroup } from 'bits-ui'
 	import Tooltip from '../Tooltip.svelte'
@@ -100,16 +99,8 @@
 					{#each RARITY_DISPLAY_ORDER as rarity}
 						<Tooltip content={getLabel(rarity)}>
 							{#snippet children()}
-								<ToggleGroup.Item
-									value={String(rarity)}
-									class="rarity-item"
-									{disabled}
-								>
-									<img
-										src={getRarityImage(rarity)}
-										alt={getLabel(rarity)}
-										class="rarity-image"
-									/>
+								<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
+									<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
 								</ToggleGroup.Item>
 							{/snippet}
 						</Tooltip>
@@ -126,16 +117,8 @@
 					{#each RARITY_DISPLAY_ORDER as rarity}
 						<Tooltip content={getLabel(rarity)}>
 							{#snippet children()}
-								<ToggleGroup.Item
-									value={String(rarity)}
-									class="rarity-item"
-									{disabled}
-								>
-									<img
-										src={getRarityImage(rarity)}
-										alt={getLabel(rarity)}
-										class="rarity-image"
-									/>
+								<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
+									<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
 								</ToggleGroup.Item>
 							{/snippet}
 						</Tooltip>
@@ -160,11 +143,7 @@
 				{#each RARITY_DISPLAY_ORDER as rarity}
 					<Tooltip content={getLabel(rarity)}>
 						{#snippet children()}
-							<ToggleGroup.Item
-								value={String(rarity)}
-								class="rarity-item"
-								{disabled}
-							>
+							<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
 								<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
 							</ToggleGroup.Item>
 						{/snippet}
@@ -182,11 +161,7 @@
 				{#each RARITY_DISPLAY_ORDER as rarity}
 					<Tooltip content={getLabel(rarity)}>
 						{#snippet children()}
-							<ToggleGroup.Item
-								value={String(rarity)}
-								class="rarity-item"
-								{disabled}
-							>
+							<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
 								<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
 							</ToggleGroup.Item>
 						{/snippet}

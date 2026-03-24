@@ -1,5 +1,5 @@
-import type { Character } from '$lib/types/api/entities';
-import type { GridCharacter } from '$lib/types/api/party';
+import type { Character } from '$lib/types/api/entities'
+import type { GridCharacter } from '$lib/types/api/party'
 
 /** Mock character data for Storybook stories */
 export const mockCharacter: Character = {
@@ -17,7 +17,7 @@ export const mockCharacter: Character = {
 	proficiency: [1, 2], // Sabre, Dagger
 	hp: { minHp: 200, maxHp: 1200, maxHpFlb: 1500 },
 	atk: { minAtk: 6000, maxAtk: 8500, maxAtkFlb: 10000 }
-};
+}
 
 export const mockSpecialCharacter: Character = {
 	id: 'char-2',
@@ -34,7 +34,7 @@ export const mockSpecialCharacter: Character = {
 	proficiency: [6, 0], // Staff
 	hp: { minHp: 180, maxHp: 1100, maxHpFlb: 1400 },
 	atk: { minAtk: 5500, maxAtk: 8000, maxAtkFlb: 9500 }
-};
+}
 
 export const mockGridCharacter: GridCharacter = {
 	id: 'grid-char-1',
@@ -43,7 +43,7 @@ export const mockGridCharacter: GridCharacter = {
 	transcendenceStep: 0,
 	perpetuity: false,
 	character: mockCharacter
-};
+}
 
 export const mockGridCharacterWithRing: GridCharacter = {
 	id: 'grid-char-2',
@@ -52,19 +52,29 @@ export const mockGridCharacterWithRing: GridCharacter = {
 	transcendenceStep: 3,
 	perpetuity: true,
 	character: mockCharacter
-};
+}
 
 /** Characters organized by element for element-specific stories */
 export const mockCharactersByElement: Record<string, Character> = {
 	wind: { ...mockCharacter, id: 'char-wind', element: 1, name: { en: 'Tiamat', ja: 'ティアマト' } },
-	fire: { ...mockCharacter, id: 'char-fire', element: 2, name: { en: 'Colossus', ja: 'コロッサス' } },
+	fire: {
+		...mockCharacter,
+		id: 'char-fire',
+		element: 2,
+		name: { en: 'Colossus', ja: 'コロッサス' }
+	},
 	water: {
 		...mockCharacter,
 		id: 'char-water',
 		element: 3,
 		name: { en: 'Leviathan', ja: 'リヴァイアサン' }
 	},
-	earth: { ...mockCharacter, id: 'char-earth', element: 4, name: { en: 'Yggdrasil', ja: 'ユグドラシル' } },
+	earth: {
+		...mockCharacter,
+		id: 'char-earth',
+		element: 4,
+		name: { en: 'Yggdrasil', ja: 'ユグドラシル' }
+	},
 	dark: { ...mockCharacter, id: 'char-dark', element: 5, name: { en: 'Celeste', ja: 'セレスト' } },
 	light: {
 		...mockCharacter,
@@ -72,4 +82,4 @@ export const mockCharactersByElement: Record<string, Character> = {
 		element: 6,
 		name: { en: 'Luminiera', ja: 'シュヴァリエ' }
 	}
-};
+}

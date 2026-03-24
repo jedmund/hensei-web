@@ -23,11 +23,12 @@
 	function getMasteryIcon(type: 'ring' | 'earring', modifier: number): string | null {
 		if (!showIcons) return null
 
-		const stat = type === 'ring'
-			? getRingStat(modifier)
-			: (characterElement !== undefined && (modifier === 3 || modifier === 4))
-				? getElementalizedEarringStat(modifier, characterElement, locale)
-				: getElementalizedEarringStat(modifier, undefined, locale)
+		const stat =
+			type === 'ring'
+				? getRingStat(modifier)
+				: characterElement !== undefined && (modifier === 3 || modifier === 4)
+					? getElementalizedEarringStat(modifier, characterElement, locale)
+					: getElementalizedEarringStat(modifier, undefined, locale)
 
 		if (!stat || !stat.slug) return null
 
@@ -48,7 +49,8 @@
 						{#if iconUrl}
 							<img
 								src={iconUrl}
-								alt={formatRingStat(ring.modifier, ring.strength, locale).split('+')[0]?.trim() ?? ''}
+								alt={formatRingStat(ring.modifier, ring.strength, locale).split('+')[0]?.trim() ??
+									''}
 								class="mastery-icon"
 							/>
 						{/if}
@@ -83,7 +85,9 @@
 					{#if iconUrl}
 						<img
 							src={iconUrl}
-							alt={formatEarringStat(earring.modifier, earring.strength, locale, characterElement).split('+')[0]?.trim() ?? ''}
+							alt={formatEarringStat(earring.modifier, earring.strength, locale, characterElement)
+								.split('+')[0]
+								?.trim() ?? ''}
 							class="mastery-icon"
 						/>
 					{/if}
@@ -91,10 +95,16 @@
 				<span class="mastery-content">
 					{#if variant === 'detailed'}
 						<strong class="mastery-label">
-							{formatEarringStat(earring.modifier, earring.strength, locale, characterElement).split('+')[0]?.trim() ?? ''}
+							{formatEarringStat(earring.modifier, earring.strength, locale, characterElement)
+								.split('+')[0]
+								?.trim() ?? ''}
 						</strong>
 						<span class="mastery-value enhanced">
-							+{earring.strength}{getElementalizedEarringStat(earring.modifier, characterElement, locale)?.suffix || ''}
+							+{earring.strength}{getElementalizedEarringStat(
+								earring.modifier,
+								characterElement,
+								locale
+							)?.suffix || ''}
 						</span>
 					{:else}
 						{formatEarringStat(earring.modifier, earring.strength, locale, characterElement)}

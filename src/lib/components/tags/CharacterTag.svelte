@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'
 	import { getElementLabel } from '$lib/utils/element'

@@ -111,7 +111,9 @@
 	const augmentType = $derived(series?.augmentType ?? 'no_augment')
 	const hasAxSkills = $derived(augmentType === 'ax')
 	const hasBefoulment = $derived(augmentType === 'befoulment')
-	const hasAwakening = $derived(seriesHasAwakening(series) && (weaponData?.maxAwakeningLevel ?? 0) > 0)
+	const hasAwakening = $derived(
+		seriesHasAwakening(series) && (weaponData?.maxAwakeningLevel ?? 0) > 0
+	)
 	const bulletSlots = $derived(weaponData?.bulletSlots ?? [])
 	const isMainhand = $derived(position === -1)
 	const hasBullets = $derived(bulletSlots.length > 0 && isMainhand && weaponData?.proficiency === 9)
@@ -217,11 +219,7 @@
 		{#if canChangeElement}
 			<DetailsSection title={m.details_element()}>
 				<div class="section-content">
-					<ElementPicker
-						bind:value={element}
-						mode="segmented"
-						contained
-					/>
+					<ElementPicker bind:value={element} mode="segmented" contained />
 				</div>
 			</DetailsSection>
 		{/if}
@@ -230,28 +228,13 @@
 			<DetailsSection title={m.details_weapon_keys()}>
 				<div class="section-content key-selects">
 					{#if keySlotCount >= 1}
-						<WeaponKeySelect
-							{seriesSlug}
-							slot={0}
-							bind:value={weaponKey1}
-							{transcendenceStep}
-						/>
+						<WeaponKeySelect {seriesSlug} slot={0} bind:value={weaponKey1} {transcendenceStep} />
 					{/if}
 					{#if keySlotCount >= 2}
-						<WeaponKeySelect
-							{seriesSlug}
-							slot={1}
-							bind:value={weaponKey2}
-							{transcendenceStep}
-						/>
+						<WeaponKeySelect {seriesSlug} slot={1} bind:value={weaponKey2} {transcendenceStep} />
 					{/if}
 					{#if keySlotCount >= 3}
-						<WeaponKeySelect
-							{seriesSlug}
-							slot={2}
-							bind:value={weaponKey3}
-							{transcendenceStep}
-						/>
+						<WeaponKeySelect {seriesSlug} slot={2} bind:value={weaponKey3} {transcendenceStep} />
 					{/if}
 				</div>
 			</DetailsSection>
@@ -260,9 +243,7 @@
 		{#if hasAxSkills}
 			<DetailsSection title={m.details_ax_skills()}>
 				<div class="section-content">
-					<AxSkillSelect
-						bind:currentSkills={axSkills}
-					/>
+					<AxSkillSelect bind:currentSkills={axSkills} />
 				</div>
 			</DetailsSection>
 		{/if}

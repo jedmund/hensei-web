@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	/**
 	 * ArtifactSkillDisplay - Read-only display of an artifact skill value
@@ -32,9 +31,7 @@
 	// Find the skill definition (must match both modifier and skill group)
 	const skillDef = $derived.by(() => {
 		const group = getSkillGroupForSlot(skillSlot)
-		return skillsQuery.data?.find(
-			(s) => s.modifier === skill.modifier && s.skillGroup === group
-		)
+		return skillsQuery.data?.find((s) => s.modifier === skill.modifier && s.skillGroup === group)
 	})
 
 	const suffix = $derived(skillDef?.suffix?.en ?? '')

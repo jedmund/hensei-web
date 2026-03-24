@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { Cell } from 'wx-svelte-grid'
 	import { getJobTierName } from '$lib/utils/jobUtils'

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { createMutation, useQueryClient } from '@tanstack/svelte-query'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'

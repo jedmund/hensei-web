@@ -7,7 +7,13 @@
 
 <script lang="ts">
 	import { Chart } from 'svelte-echarts'
-	import { init, CHART_FONT_FAMILY, CHART_SPLIT_LINE, CHART_AXIS_LINE, CHART_LABEL_COLOR } from './echarts-setup'
+	import {
+		init,
+		CHART_FONT_FAMILY,
+		CHART_SPLIT_LINE,
+		CHART_AXIS_LINE,
+		CHART_LABEL_COLOR
+	} from './echarts-setup'
 	import { formatScore, formatScoreCompact, type PlayerRoundScore } from '$lib/utils/gw'
 
 	interface Props {
@@ -21,7 +27,11 @@
 	const options = $derived({
 		textStyle: { fontFamily: CHART_FONT_FAMILY, color: CHART_LABEL_COLOR },
 		title: title
-			? { text: title, left: 'center', textStyle: { fontSize: 14, fontFamily: CHART_FONT_FAMILY, color: CHART_LABEL_COLOR } }
+			? {
+					text: title,
+					left: 'center',
+					textStyle: { fontSize: 14, fontFamily: CHART_FONT_FAMILY, color: CHART_LABEL_COLOR }
+				}
 			: undefined,
 		tooltip: {
 			trigger: 'axis' as const,

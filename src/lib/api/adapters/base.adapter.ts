@@ -120,7 +120,8 @@ export abstract class BaseAdapter {
 			if (token) {
 				authHeaders['Authorization'] = `Bearer ${token}`
 			} else {
-				if (import.meta.env.DEV) console.warn('[BaseAdapter] No auth token available in authStore for request:', path)
+				if (import.meta.env.DEV)
+					console.warn('[BaseAdapter] No auth token available in authStore for request:', path)
 			}
 		}
 
@@ -468,15 +469,11 @@ export abstract class BaseAdapter {
 			// Extract error message from various possible formats
 			// errorData.error may be a string or an object like {message, code}
 			const errorField = errorData.error
-			const errorMessage = typeof errorField === 'object' && errorField !== null
-				? errorField.message
-				: errorField
+			const errorMessage =
+				typeof errorField === 'object' && errorField !== null ? errorField.message : errorField
 
 			message =
-				errorData.message ||
-				errorMessage ||
-				errorData.errors?.[0]?.message ||
-				response.statusText
+				errorData.message || errorMessage || errorData.errors?.[0]?.message || response.statusText
 
 			details = errorData
 		} catch {

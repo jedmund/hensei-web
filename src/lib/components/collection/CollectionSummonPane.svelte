@@ -230,12 +230,7 @@
 				/>
 			</div>
 		{:else if isEditing}
-			<SummonEditPane
-				bind:this={editPaneRef}
-				{summonData}
-				{currentValues}
-				onSave={handleSave}
-			/>
+			<SummonEditPane bind:this={editPaneRef} {summonData} {currentValues} onSave={handleSave} />
 		{:else}
 			<div class="collection-view">
 				<DetailsSection title={m.section_general()}>
@@ -289,5 +284,4 @@
 		flex-direction: column;
 		gap: spacing.$unit-3x;
 	}
-
 </style>

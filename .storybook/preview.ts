@@ -1,9 +1,9 @@
-import type { Preview } from '@storybook/sveltekit';
-import '$src/app.scss';
-import './storybook-overrides.css';
+import type { Preview } from '@storybook/sveltekit'
+import '$src/app.scss'
+import './storybook-overrides.css'
 
 const preview: Preview = {
-    parameters: {
+	parameters: {
 		controls: {
 			matchers: {
 				color: /(background|color)$/i,
@@ -19,19 +19,19 @@ const preview: Preview = {
 			}
 		},
 		backgrounds: {
-            options: {
-                light: { name: 'light', value: '#f5f5f5' },
-                dark: { name: 'dark', value: '#191919' },
-                "card-light": { name: 'card-light', value: '#ffffff' },
-                "card-dark": { name: 'card-dark', value: '#212121' }
-            }
-        },
+			options: {
+				light: { name: 'light', value: '#f5f5f5' },
+				dark: { name: 'dark', value: '#191919' },
+				'card-light': { name: 'card-light', value: '#ffffff' },
+				'card-dark': { name: 'card-dark', value: '#212121' }
+			}
+		},
 		docs: {
 			toc: true
 		}
 	},
 
-    globalTypes: {
+	globalTypes: {
 		theme: {
 			name: 'Theme',
 			description: 'Global theme for components',
@@ -44,11 +44,11 @@ const preview: Preview = {
 		}
 	},
 
-    initialGlobals: {
-        backgrounds: {
-            value: 'light'
-        }
-    }
-};
+	initialGlobals: {
+		backgrounds: {
+			value: 'light'
+		}
+	}
+}
 
-export default preview;
+export default preview

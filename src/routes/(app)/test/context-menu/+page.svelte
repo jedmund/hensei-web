@@ -20,9 +20,7 @@
 <div class="test-page">
 	<h1>Context Menu Test Page</h1>
 
-	<p class="instructions">
-		Test both interaction methods:
-	</p>
+	<p class="instructions">Test both interaction methods:</p>
 	<ul class="instructions">
 		<li><strong>Right-click</strong> on the weapon image to open the context menu</li>
 		<li><strong>Hover</strong> over the weapon to see the gear button appear</li>
@@ -71,7 +69,8 @@
 	</div>
 
 	<div class="result">
-		<strong>Last action:</strong> {message}
+		<strong>Last action:</strong>
+		{message}
 	</div>
 </div>
 

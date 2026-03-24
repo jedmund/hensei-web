@@ -1,9 +1,5 @@
 import type { CollectionFilterState } from '$lib/components/collection/CollectionFilters.svelte'
-import {
-	parseFiltersFromUrl,
-	buildUrlFromFilters,
-	ELEMENT_TO_PARAM
-} from '$lib/utils/filterParams'
+import { parseFiltersFromUrl, buildUrlFromFilters, ELEMENT_TO_PARAM } from '$lib/utils/filterParams'
 import type { DatabaseProvider } from '$lib/providers/DatabaseProvider'
 import type { WeaponSeries } from '$lib/types/api/weaponSeries'
 
@@ -112,11 +108,7 @@ export class DatabaseFilters {
 		setSearchTerm: (term: string) => void,
 		setLastSearchTerm: (term: string) => void
 	): number {
-		const parsed = parseFiltersFromUrl(
-			searchParams,
-			this.#entityType,
-			this.#getWeaponSeriesData()
-		)
+		const parsed = parseFiltersFromUrl(searchParams, this.#entityType, this.#getWeaponSeriesData())
 
 		this.elementFilters = parsed.element
 		this.rarityFilters = parsed.rarity

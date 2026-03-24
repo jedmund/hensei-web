@@ -8,7 +8,9 @@ import type { AddItemResult } from '$lib/types/api/search'
 /**
  * Extract the underlying entity from a collection item regardless of type
  */
-export function getCollectionEntity(item: CollectionCharacter | CollectionWeapon | CollectionSummon) {
+export function getCollectionEntity(
+	item: CollectionCharacter | CollectionWeapon | CollectionSummon
+) {
 	return 'character' in item ? item.character : 'weapon' in item ? item.weapon : item.summon
 }
 
@@ -46,8 +48,6 @@ export function filterCollectionByQuery<
 		const name = entity.name
 		const nameEn = typeof name === 'string' ? name : name?.en || ''
 		const nameJa = typeof name === 'string' ? '' : name?.ja || ''
-		return (
-			nameEn.toLowerCase().includes(lowerQuery) || nameJa.toLowerCase().includes(lowerQuery)
-		)
+		return nameEn.toLowerCase().includes(lowerQuery) || nameJa.toLowerCase().includes(lowerQuery)
 	})
 }

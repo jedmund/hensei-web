@@ -1,6 +1,6 @@
 <script module>
-	import { defineMeta } from '@storybook/addon-svelte-csf';
-	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte';
+	import { defineMeta } from '@storybook/addon-svelte-csf'
+	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
 	const { Story } = defineMeta({
 		title: 'Components/Game/UncapIndicator',
@@ -45,12 +45,12 @@
 				description: 'Allow interactive editing'
 			}
 		}
-	});
+	})
 </script>
 
 <script>
-	let editableUncap = $state(2);
-	let editableTrans = $state(0);
+	let editableUncap = $state(2)
+	let editableTrans = $state(0)
 </script>
 
 <!-- Default - args-only for autodocs -->
@@ -63,7 +63,17 @@
 <Story name="Character - FLB" args={{ type: 'character', flb: true, uncapLevel: 5 }} />
 
 <!-- Character - With Transcendence -->
-<Story name="Character - Transcendence" args={{ type: 'character', flb: true, ulb: true, transcendence: true, uncapLevel: 5, transcendenceStage: 3 }} />
+<Story
+	name="Character - Transcendence"
+	args={{
+		type: 'character',
+		flb: true,
+		ulb: true,
+		transcendence: true,
+		uncapLevel: 5,
+		transcendenceStage: 3
+	}}
+/>
 
 <!-- Character - Special (Story SRs) -->
 <Story name="Character - Special (Story SR)" asChild>
@@ -159,7 +169,14 @@
 		{#each [0, 1, 2, 3, 4, 5] as stage}
 			<div style="display: flex; align-items: center; gap: 8px;">
 				<span style="width: 100px; font-size: 12px;">Stage {stage}:</span>
-				<UncapIndicator type="weapon" flb ulb transcendence uncapLevel={5} transcendenceStage={stage} />
+				<UncapIndicator
+					type="weapon"
+					flb
+					ulb
+					transcendence
+					uncapLevel={5}
+					transcendenceStage={stage}
+				/>
 			</div>
 		{/each}
 	</div>
@@ -185,4 +202,3 @@
 		</p>
 	</div>
 </Story>
-

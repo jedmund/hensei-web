@@ -1,6 +1,4 @@
-
 <script lang="ts">
-
 	import type { Job, JobSkill } from '$lib/types/api/entities'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { jobQueries, jobKeys } from '$lib/api/queries/job.queries'
@@ -95,7 +93,12 @@
 		<div class="empty">
 			<p>No skills found for this job</p>
 			{#if canEdit}
-				<Button variant="secondary" size="small" fullWidth href={localizeHref(`/database/job-skills/new?job=${job.granblueId}`)}>Add Skill</Button>
+				<Button
+					variant="secondary"
+					size="small"
+					fullWidth
+					href={localizeHref(`/database/job-skills/new?job=${job.granblueId}`)}>Add Skill</Button
+				>
 			{/if}
 		</div>
 	{:else}
@@ -114,7 +117,12 @@
 
 		{#if canEdit}
 			<div class="add-skill-section">
-				<Button variant="secondary" size="small" fullWidth href={localizeHref(`/database/job-skills/new?job=${job.granblueId}`)}>Add Skill</Button>
+				<Button
+					variant="secondary"
+					size="small"
+					fullWidth
+					href={localizeHref(`/database/job-skills/new?job=${job.granblueId}`)}>Add Skill</Button
+				>
 			</div>
 		{/if}
 	{/if}
@@ -125,8 +133,8 @@
 		<ModalHeader title="Delete Skill?" />
 		<ModalBody>
 			<p class="delete-message">
-				Are you sure you want to delete "{skillToDelete?.name?.en ?? 'this skill'}"?
-				This action cannot be undone.
+				Are you sure you want to delete "{skillToDelete?.name?.en ?? 'this skill'}"? This action
+				cannot be undone.
 			</p>
 		</ModalBody>
 		<ModalFooter

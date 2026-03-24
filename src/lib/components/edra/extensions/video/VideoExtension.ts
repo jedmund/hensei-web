@@ -1,8 +1,8 @@
-import { Node, nodeInputRule } from '@tiptap/core';
-import { Plugin, PluginKey } from '@tiptap/pm/state';
+import { Node, nodeInputRule } from '@tiptap/core'
+import { Plugin, PluginKey } from '@tiptap/pm/state'
 
 export interface VideoOptions {
-	HTMLAttributes: Record<string, unknown>;
+	HTMLAttributes: Record<string, unknown>
 }
 
 declare module '@tiptap/core' {
@@ -11,20 +11,20 @@ declare module '@tiptap/core' {
 			/**
 			 * Set a video node
 			 */
-			setVideo: (src: string) => ReturnType;
+			setVideo: (src: string) => ReturnType
 			/**
 			 * Toggle a video
 			 */
-			toggleVideo: (src: string) => ReturnType;
+			toggleVideo: (src: string) => ReturnType
 			/**
 			 * Remove a video
 			 */
-			removeVideo: () => ReturnType;
-		};
+			removeVideo: () => ReturnType
+		}
 	}
 }
 
-const VIDEO_INPUT_REGEX = /!\[(.+|:?)]\((\S+)(?:(?:\s+)["'](\S+)["'])?\)/;
+const VIDEO_INPUT_REGEX = /!\[(.+|:?)]\((\S+)(?:(?:\s+)["'](\S+)["'])?\)/
 
 export const Video = Node.create<VideoOptions>({
 	name: 'video',
@@ -35,7 +35,7 @@ export const Video = Node.create<VideoOptions>({
 	addOptions() {
 		return {
 			HTMLAttributes: {}
-		};
+		}
 	},
 	addAttributes() {
 		return {
@@ -44,7 +44,7 @@ export const Video = Node.create<VideoOptions>({
 				parseHTML: (el) => (el as HTMLSpanElement).getAttribute('src'),
 				renderHTML: (attrs) => ({ src: attrs.src })
 			}
-		};
+		}
 	},
 	parseHTML() {
 		return [
@@ -52,7 +52,7 @@ export const Video = Node.create<VideoOptions>({
 				tag: 'video',
 				getAttrs: (el) => ({ src: (el as HTMLVideoElement).getAttribute('src') })
 			}
-		];
+		]
 	},
 
 	renderHTML({ HTMLAttributes }) {
@@ -60,7 +60,7 @@ export const Video = Node.create<VideoOptions>({
 			'video',
 			{ controls: 'true', style: 'width: fit-content;', ...HTMLAttributes },
 			['source', HTMLAttributes]
-		];
+		]
 	},
 	addCommands() {
 		return {
@@ -79,7 +79,7 @@ export const Video = Node.create<VideoOptions>({
 				() =>
 				({ commands }) =>
 					commands.deleteNode(this.name)
-		};
+		}
 	},
 	addInputRules() {
 		return [
@@ -87,12 +87,12 @@ export const Video = Node.create<VideoOptions>({
 				find: VIDEO_INPUT_REGEX,
 				type: this.type,
 				getAttributes: (match) => {
-					const [, , src] = match;
+					const [, , src] = match
 
-					return { src };
+					return { src }
 				}
 			})
-		];
+		]
 	},
 	addProseMirrorPlugins() {
 		return [
@@ -105,43 +105,43 @@ export const Video = Node.create<VideoOptions>({
 							const {
 								state: { schema, tr },
 								dispatch
-							} = view;
+							} = view
 							const hasFiles =
-								event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files.length;
+								event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files.length
 
-							if (!hasFiles) return false;
+							if (!hasFiles) return false
 
 							const videos = Array.from(event.dataTransfer.files).filter((file) =>
 								/video/i.test(file.type)
-							);
+							)
 
-							if (videos.length === 0) return false;
+							if (videos.length === 0) return false
 
-							event.preventDefault();
+							event.preventDefault()
 
-							const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
+							const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY })
 
 							videos.forEach((video) => {
-								const reader = new FileReader();
+								const reader = new FileReader()
 
 								reader.onload = (readerEvent) => {
-									const node = schema.nodes.video.create({ src: readerEvent.target?.result });
+									const node = schema.nodes.video.create({ src: readerEvent.target?.result })
 
 									if (coordinates && typeof coordinates.pos === 'number') {
-										const transaction = tr.insert(coordinates?.pos, node);
+										const transaction = tr.insert(coordinates?.pos, node)
 
-										dispatch(transaction);
+										dispatch(transaction)
 									}
-								};
+								}
 
-								reader.readAsDataURL(video);
-							});
+								reader.readAsDataURL(video)
+							})
 
-							return true;
+							return true
 						}
 					}
 				}
 			})
-		];
+		]
 	}
-});
+})

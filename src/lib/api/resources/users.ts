@@ -72,9 +72,11 @@ export const users = {
 		if (params.showCrewGamertag !== undefined) updates.show_gamertag = params.showCrewGamertag
 		if (params.wikiProfile !== undefined) updates.wiki_profile = params.wikiProfile
 		if (params.youtube !== undefined) updates.youtube = params.youtube
-		if (params.collectionPrivacy !== undefined) updates.collection_privacy = params.collectionPrivacy
+		if (params.collectionPrivacy !== undefined)
+			updates.collection_privacy = params.collectionPrivacy
 		if (params.importWeapons !== undefined) updates.import_weapons = params.importWeapons
-		if (params.defaultImportVisibility !== undefined) updates.default_import_visibility = params.defaultImportVisibility
+		if (params.defaultImportVisibility !== undefined)
+			updates.default_import_visibility = params.defaultImportVisibility
 
 		const result = await userAdapter.updateProfile(updates)
 		return {

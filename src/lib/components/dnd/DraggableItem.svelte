@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import type { GridItem, GridItemType } from '$lib/composables/drag-drop.svelte'
@@ -28,13 +27,11 @@
 	let elementRef: HTMLElement | undefined = $state()
 	let isDragging = $derived(
 		dragContext?.state.isDragging &&
-		dragContext?.state.draggedItem?.source.container === container &&
-		dragContext?.state.draggedItem?.source.position === position
+			dragContext?.state.draggedItem?.source.container === container &&
+			dragContext?.state.draggedItem?.source.position === position
 	)
 
-	let isDuplicating = $derived(
-		dragContext?.state.isDragging && dragContext?.state.isDuplicating
-	)
+	let isDuplicating = $derived(dragContext?.state.isDragging && dragContext?.state.isDuplicating)
 
 	function handleDragStart(e: DragEvent) {
 		if (!canDrag || !item || !dragContext) {
@@ -43,12 +40,15 @@
 		}
 
 		e.dataTransfer!.effectAllowed = 'copyMove'
-		e.dataTransfer!.setData('application/json', JSON.stringify({
-			item,
-			container,
-			position,
-			type
-		}))
+		e.dataTransfer!.setData(
+			'application/json',
+			JSON.stringify({
+				item,
+				container,
+				position,
+				type
+			})
+		)
 
 		if (customPreview && elementRef) {
 			const ghost = createCustomGhost()
@@ -172,7 +172,9 @@
 <style lang="scss">
 	.draggable-item {
 		position: relative;
-		transition: opacity 0.2s, transform 0.2s;
+		transition:
+			opacity 0.2s,
+			transform 0.2s;
 
 		&.dragging {
 			opacity: 0.5;

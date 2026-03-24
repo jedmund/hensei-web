@@ -13,7 +13,9 @@
 
 	let { summon, onClick, editable = false, onUncapChange, onTranscendenceChange }: Props = $props()
 
-	const transformation = $derived(getSummonTransformation(summon.summon?.granblueId, summon.uncapLevel, summon.transcendenceStep))
+	const transformation = $derived(
+		getSummonTransformation(summon.summon?.granblueId, summon.uncapLevel, summon.transcendenceStep)
+	)
 
 	const imageUrl = $derived(getSummonImage(summon.summon?.granblueId, 'wide', transformation))
 

@@ -14,7 +14,7 @@ export type FilterItem =
 			mode: 'include' | 'exclude'
 			element?: number
 			pinned?: boolean
-		}
+	  }
 	| { kind: 'party'; value: string; label: string; pinned?: boolean }
 	| { kind: 'boost'; value: string; label: string; pinned?: boolean }
 	| { kind: 'side'; value: string; label: string; pinned?: boolean }

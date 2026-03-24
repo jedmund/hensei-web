@@ -61,7 +61,11 @@
 				type="checkbox"
 				element={elementName}
 			/>
-			<DetailItem label="Promotions" sublabel="Gacha pools where this character appears" editable={true}>
+			<DetailItem
+				label="Promotions"
+				sublabel="Gacha pools where this character appears"
+				editable={true}
+			>
 				<MultiSelect
 					size="medium"
 					options={promotionOptions}

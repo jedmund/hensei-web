@@ -66,7 +66,7 @@
 		<div class="error">Failed to load bullets</div>
 	{:else}
 		<Select
-			options={options}
+			{options}
 			value={value ?? ''}
 			onValueChange={handleChange}
 			placeholder="Select {typeName}"

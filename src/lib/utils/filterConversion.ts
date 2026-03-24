@@ -48,12 +48,8 @@ export function filterItemsToParams(filterItems: FilterItem[]): ExploreFilterPar
 	const entities = filterItems.filter(
 		(f): f is FilterItem & { kind: 'entity' } => f.kind === 'entity'
 	)
-	const includeIds = entities
-		.filter((f) => f.mode === 'include')
-		.map((f) => f.granblueId)
-	const excludeIds = entities
-		.filter((f) => f.mode === 'exclude')
-		.map((f) => f.granblueId)
+	const includeIds = entities.filter((f) => f.mode === 'include').map((f) => f.granblueId)
+	const excludeIds = entities.filter((f) => f.mode === 'exclude').map((f) => f.granblueId)
 	if (includeIds.length > 0) params.includes = includeIds.join(',')
 	if (excludeIds.length > 0) params.excludes = excludeIds.join(',')
 

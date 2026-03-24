@@ -82,9 +82,7 @@ export function matchLocal(params: MatchLocalParams): FilterOption[] {
 	if (!excludedKinds.includes('party')) {
 		for (const party of partyOptions) {
 			if (party.label.toLowerCase().includes(q)) {
-				const alreadySelected = filters.some(
-					(f) => f.kind === 'party' && f.value === party.value
-				)
+				const alreadySelected = filters.some((f) => f.kind === 'party' && f.value === party.value)
 				if (!alreadySelected) {
 					results.push({
 						kind: 'party',

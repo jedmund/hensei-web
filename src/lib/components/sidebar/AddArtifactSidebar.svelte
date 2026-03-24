@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	/**
 	 * AddArtifactSidebar - Root pane for adding a new artifact to collection
@@ -239,7 +238,9 @@
 	)
 
 	// Convert numeric element to ElementType string for button styling
-	const elementType = $derived(element !== undefined ? getElementKey(element) as ElementType : undefined)
+	const elementType = $derived(
+		element !== undefined ? (getElementKey(element) as ElementType) : undefined
+	)
 
 	// Handle save
 	async function handleSave() {
@@ -358,7 +359,11 @@
 				</DetailRow>
 
 				<DetailRow label={m.label_nickname()} noHover>
-					<Input bind:value={nickname} placeholder={m.placeholder_optional_nickname()} maxLength={50} />
+					<Input
+						bind:value={nickname}
+						placeholder={m.placeholder_optional_nickname()}
+						maxLength={50}
+					/>
 				</DetailRow>
 			</DetailsSection>
 

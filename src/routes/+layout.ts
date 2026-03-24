@@ -15,11 +15,7 @@ export const load: LayoutLoad = async ({ data }) => {
 	// Initialize auth store from server data BEFORE creating QueryClient
 	// Defensive check: data might be null/undefined during error scenarios
 	if (browser && data?.auth) {
-		authStore.initFromServer(
-			data.auth.accessToken,
-			data.auth.user,
-			data.auth.expiresAt
-		)
+		authStore.initFromServer(data.auth.accessToken, data.auth.user, data.auth.expiresAt)
 	}
 
 	const queryClient = new QueryClient({

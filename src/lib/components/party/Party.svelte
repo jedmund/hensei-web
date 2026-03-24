@@ -22,8 +22,14 @@
 	import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
 	import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
 	import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
-	import { openSearchSidebar, openGuidebookSearchSidebar } from '$lib/features/search/openSearchSidebar.svelte'
-	import { useUpdatePartyGuidebook, useRemovePartyGuidebook } from '$lib/api/mutations/guidebook.mutations'
+	import {
+		openSearchSidebar,
+		openGuidebookSearchSidebar
+	} from '$lib/features/search/openSearchSidebar.svelte'
+	import {
+		useUpdatePartyGuidebook,
+		useRemovePartyGuidebook
+	} from '$lib/api/mutations/guidebook.mutations'
 	import type { Guidebook } from '$lib/types/api/entities'
 	import PartySegmentedControl from '$lib/components/party/PartySegmentedControl.svelte'
 	import { GridType } from '$lib/types/enums'
@@ -142,7 +148,7 @@
 		getParty: () => party,
 		canEdit: () => canEdit(),
 		getUserElement: () => userElement,
-		ensurePartyExists: ensurePartyExists ? (() => ensurePartyExists()) : undefined
+		ensurePartyExists: ensurePartyExists ? () => ensurePartyExists() : undefined
 	})
 
 	const partyDragDrop = usePartyDragDrop({
@@ -150,7 +156,9 @@
 		getParty: () => party,
 		canEdit: () => canEdit(),
 		getActiveTab: () => activeTab,
-		setSelectedSlot: (n) => { selectedSlot = n }
+		setSelectedSlot: (n) => {
+			selectedSlot = n
+		}
 	})
 	const dragContext = partyDragDrop.dragContext
 
@@ -190,7 +198,7 @@
 				})
 			}
 		},
-		ensurePartyExists: ensurePartyExists ? (() => ensurePartyExists()) : undefined
+		ensurePartyExists: ensurePartyExists ? () => ensurePartyExists() : undefined
 	})
 
 	// --- Guidebook mutations ---
@@ -369,7 +377,9 @@
 		canEdit: () => canEdit(),
 		getEditKey: () => editKey,
 		getSelectedSlot: () => selectedSlot,
-		setSelectedSlot: (n: number) => { selectedSlot = n },
+		setSelectedSlot: (n: number) => {
+			selectedSlot = n
+		},
 		getActiveTab: () => activeTab,
 		services: {
 			gridService
@@ -444,7 +454,10 @@
 								<DropdownMenu.Content class="dropdown-content" sideOffset={6} align="end">
 									{#if canEdit() && hasCollectionLinks}
 										<DropdownItem>
-											<button onclick={actions.syncFromCollection} disabled={actions.loading || actions.isSyncingAll}>
+											<button
+												onclick={actions.syncFromCollection}
+												disabled={actions.loading || actions.isSyncingAll}
+											>
 												{actions.isSyncingAll ? m.party_syncing() : m.party_sync_collection()}
 											</button>
 										</DropdownItem>
@@ -461,27 +474,35 @@
 
 									{#if party.user?.id === authUserId && authUsername}
 										<DropdownItem>
-											<button onclick={() => {
-												sidebar.openWithComponent(
-													m.playlist_add_to(),
-													PickPlaylistPane,
-													{ partyId: party.id, username: authUsername },
-													{ scrollable: false }
-												)
-											}} disabled={actions.loading}>
+											<button
+												onclick={() => {
+													sidebar.openWithComponent(
+														m.playlist_add_to(),
+														PickPlaylistPane,
+														{ partyId: party.id, username: authUsername },
+														{ scrollable: false }
+													)
+												}}
+												disabled={actions.loading}
+											>
 												{m.playlist_add_to()}
 											</button>
 										</DropdownItem>
 									{/if}
 
 									<DropdownItem>
-										<button onclick={actions.remixParty} disabled={actions.loading}>{m.party_remix()}</button>
+										<button onclick={actions.remixParty} disabled={actions.loading}
+											>{m.party_remix()}</button
+										>
 									</DropdownItem>
 
 									{#if party.user?.id === authUserId}
 										<DropdownMenu.Separator class="dropdown-separator" />
 										<DropdownItem>
-											<button onclick={() => (actions.deleteDialogOpen = true)} disabled={actions.loading}>
+											<button
+												onclick={() => (actions.deleteDialogOpen = true)}
+												disabled={actions.loading}
+											>
 												{m.party_delete()}
 											</button>
 										</DropdownItem>
@@ -519,49 +540,53 @@
 			{/if}
 
 			<div class="party-content">
-				<svelte:boundary onerror={(e) => { if (import.meta.env.DEV) console.error('Grid render error:', e) }}>
-				{#if activeTab === GridType.Weapon}
-					<WeaponGrid
-						weapons={party.weapons}
-						raidExtra={party.raid?.extra}
-						showGuidebooks={party.raid?.group?.guidebooks}
-						guidebooks={party.guidebooks}
-						canEdit={canEdit()}
-						onClickGuidebookSlot={handleClickGuidebookSlot}
-						onRemoveGuidebook={handleRemoveGuidebook}
-						{collectionWeaponItems}
-					/>
-				{:else if activeTab === GridType.Summon}
-					<SummonGrid summons={party.summons} {collectionSummonItems} />
-				{:else}
-					<div class="character-tab-content">
-						<JobSection
-							job={party.job}
-							jobSkills={party.jobSkills}
-							accessory={party.accessory}
+				<svelte:boundary
+					onerror={(e) => {
+						if (import.meta.env.DEV) console.error('Grid render error:', e)
+					}}
+				>
+					{#if activeTab === GridType.Weapon}
+						<WeaponGrid
+							weapons={party.weapons}
+							raidExtra={party.raid?.extra}
+							showGuidebooks={party.raid?.group?.guidebooks}
+							guidebooks={party.guidebooks}
 							canEdit={canEdit()}
-							gender={party.user?.gender ?? Gender.Gran}
-							element={mainWeaponElement}
-							onSelectJob={jobHandlers.handleSelectJob}
-							onSelectSkill={jobHandlers.handleSelectJobSkill}
-							onRemoveSkill={jobHandlers.handleRemoveJobSkill}
-							onSelectAccessory={jobHandlers.handleSelectAccessory}
+							onClickGuidebookSlot={handleClickGuidebookSlot}
+							onRemoveGuidebook={handleRemoveGuidebook}
+							{collectionWeaponItems}
 						/>
-						<CharacterGrid
-							characters={party.characters}
-							{mainWeaponElement}
-							{partyElement}
-							unlimited={(party as any)?.raid?.group?.unlimited}
-							{collectionCharacterItems}
-						/>
-					</div>
-				{/if}
-				{#snippet failed(error, reset)}
-					<div class="grid-error" role="alert">
-						<p>{m.party_grid_error()}</p>
-						<button onclick={reset}>{m.retry()}</button>
-					</div>
-				{/snippet}
+					{:else if activeTab === GridType.Summon}
+						<SummonGrid summons={party.summons} {collectionSummonItems} />
+					{:else}
+						<div class="character-tab-content">
+							<JobSection
+								job={party.job}
+								jobSkills={party.jobSkills}
+								accessory={party.accessory}
+								canEdit={canEdit()}
+								gender={party.user?.gender ?? Gender.Gran}
+								element={mainWeaponElement}
+								onSelectJob={jobHandlers.handleSelectJob}
+								onSelectSkill={jobHandlers.handleSelectJobSkill}
+								onRemoveSkill={jobHandlers.handleRemoveJobSkill}
+								onSelectAccessory={jobHandlers.handleSelectAccessory}
+							/>
+							<CharacterGrid
+								characters={party.characters}
+								{mainWeaponElement}
+								{partyElement}
+								unlimited={(party as any)?.raid?.group?.unlimited}
+								{collectionCharacterItems}
+							/>
+						</div>
+					{/if}
+					{#snippet failed(error, reset)}
+						<div class="grid-error" role="alert">
+							<p>{m.party_grid_error()}</p>
+							<button onclick={reset}>{m.retry()}</button>
+						</div>
+					{/snippet}
 				</svelte:boundary>
 			</div>
 		</section>
@@ -671,5 +696,4 @@
 		flex-direction: column;
 		gap: $unit-2x;
 	}
-
 </style>

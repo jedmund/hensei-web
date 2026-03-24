@@ -310,27 +310,25 @@ describe('EntityAdapter', () => {
 		})
 
 		it('should clear all entity caches', async () => {
-			global.fetch = vi
-				.fn()
-				.mockImplementation((url) => {
-					if (url.includes('/weapons/')) {
-						return Promise.resolve({
-							ok: true,
-							json: async () => mockWeapon
-						})
-					} else if (url.includes('/characters/')) {
-						return Promise.resolve({
-							ok: true,
-							json: async () => mockCharacter
-						})
-					} else if (url.includes('/summons/')) {
-						return Promise.resolve({
-							ok: true,
-							json: async () => mockSummon
-						})
-					}
-					return Promise.reject(new Error('Unknown URL'))
-				})
+			global.fetch = vi.fn().mockImplementation((url) => {
+				if (url.includes('/weapons/')) {
+					return Promise.resolve({
+						ok: true,
+						json: async () => mockWeapon
+					})
+				} else if (url.includes('/characters/')) {
+					return Promise.resolve({
+						ok: true,
+						json: async () => mockCharacter
+					})
+				} else if (url.includes('/summons/')) {
+					return Promise.resolve({
+						ok: true,
+						json: async () => mockSummon
+					})
+				}
+				return Promise.reject(new Error('Unknown URL'))
+			})
 
 			// First calls
 			await adapter.getWeapon('weapon-1')

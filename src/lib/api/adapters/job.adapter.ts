@@ -18,7 +18,7 @@ import type { Job, JobSkill, JobAccessory } from '$lib/types/api/entities'
  */
 export interface SearchJobSkillsParams {
 	query?: string
-	jobId: string  // Required for API
+	jobId: string // Required for API
 	page?: number
 	per?: number
 	locale?: string
@@ -51,7 +51,7 @@ export interface JobAccessoryPayload {
 	granblue_id: string
 	rarity?: number
 	release_date?: string
-	accessory_type: number  // 1 = Shield, 2 = Manatura
+	accessory_type: number // 1 = Shield, 2 = Manatura
 	job_id?: string
 }
 
@@ -205,12 +205,14 @@ export class JobAdapter extends BaseAdapter {
 			page: params.page || 1,
 			total: response.meta?.count || 0,
 			totalPages: response.meta?.totalPages || 1,
-			meta: response.meta ? {
-				count: response.meta.count ?? 0,
-				page: params.page || 1,
-				perPage: response.meta.perPage ?? 10,
-				totalPages: response.meta.totalPages ?? 1
-			} : undefined
+			meta: response.meta
+				? {
+						count: response.meta.count ?? 0,
+						page: params.page || 1,
+						perPage: response.meta.perPage ?? 10,
+						totalPages: response.meta.totalPages ?? 1
+					}
+				: undefined
 		}
 	}
 
@@ -284,10 +286,16 @@ export class JobAdapter extends BaseAdapter {
 	 * @param skillId The skill's ID
 	 * @returns Object with success status and filename
 	 */
-	async downloadSkillImage(jobId: string, skillId: string): Promise<{ success: boolean; filename: string }> {
-		return this.request<{ success: boolean; filename: string }>(`/jobs/${jobId}/skills/${skillId}/download_image`, {
-			method: 'POST'
-		})
+	async downloadSkillImage(
+		jobId: string,
+		skillId: string
+	): Promise<{ success: boolean; filename: string }> {
+		return this.request<{ success: boolean; filename: string }>(
+			`/jobs/${jobId}/skills/${skillId}/download_image`,
+			{
+				method: 'POST'
+			}
+		)
 	}
 
 	/**
@@ -324,7 +332,7 @@ export class JobAdapter extends BaseAdapter {
 		}
 
 		// Set the provided skills
-		skills.forEach(skill => {
+		skills.forEach((skill) => {
 			// Rails expects skill1_id, skill2_id, skill3_id, skill4_id
 			party[`skill${skill.slot + 1}_id`] = skill.id
 		})

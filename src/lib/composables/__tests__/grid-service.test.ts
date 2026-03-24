@@ -91,7 +91,8 @@ describe('useGridService', () => {
 		it('delete mutations include partyId for cache invalidation', async () => {
 			await service.removeWeapon(party.id, 'gw-1')
 
-			const args = vi.mocked(mutations.grid.deleteWeapon.mutateAsync).mock.calls[0]![0] as unknown as Record<string, unknown>
+			const args = vi.mocked(mutations.grid.deleteWeapon.mutateAsync).mock
+				.calls[0]![0] as unknown as Record<string, unknown>
 			expect(args).toHaveProperty('partyId', party.id)
 			expect(args).toHaveProperty('partyShortcode', party.shortcode)
 		})
@@ -99,7 +100,8 @@ describe('useGridService', () => {
 		it('update mutations use partyShortcode but NOT partyId', async () => {
 			await service.updateWeapon(party.id, 'gw-1', { position: 3 })
 
-			const args = vi.mocked(mutations.grid.updateWeapon.mutateAsync).mock.calls[0]![0] as unknown as Record<string, unknown>
+			const args = vi.mocked(mutations.grid.updateWeapon.mutateAsync).mock
+				.calls[0]![0] as unknown as Record<string, unknown>
 			expect(args).toHaveProperty('partyShortcode', party.shortcode)
 			expect(args).not.toHaveProperty('partyId')
 		})
@@ -107,7 +109,8 @@ describe('useGridService', () => {
 		it('uncap mutations include BOTH partyId and partyShortcode', async () => {
 			await service.updateWeaponUncap('gw-1', 5, 2)
 
-			const args = vi.mocked(mutations.grid.updateWeaponUncap.mutateAsync).mock.calls[0]![0] as unknown as Record<string, unknown>
+			const args = vi.mocked(mutations.grid.updateWeaponUncap.mutateAsync).mock
+				.calls[0]![0] as unknown as Record<string, unknown>
 			expect(args).toHaveProperty('partyId', party.id)
 			expect(args).toHaveProperty('partyShortcode', party.shortcode)
 			expect(args).toHaveProperty('uncapLevel', 5)
@@ -198,7 +201,8 @@ describe('useGridService', () => {
 			currentShortcode = 'NEW'
 			await freshService.removeWeapon(party.id, 'gw-1')
 
-			const args = vi.mocked(mutations.grid.deleteWeapon.mutateAsync).mock.calls[0]![0] as unknown as Record<string, unknown>
+			const args = vi.mocked(mutations.grid.deleteWeapon.mutateAsync).mock
+				.calls[0]![0] as unknown as Record<string, unknown>
 			expect(args).toHaveProperty('partyShortcode', 'NEW')
 		})
 	})

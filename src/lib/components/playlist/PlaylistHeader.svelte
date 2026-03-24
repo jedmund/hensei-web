@@ -18,7 +18,14 @@
 		isDeleting?: boolean
 	}
 
-	let { playlist, username, isOwner = false, onDelete, onAddTeams, isDeleting = false }: Props = $props()
+	let {
+		playlist,
+		username,
+		isOwner = false,
+		onDelete,
+		onAddTeams,
+		isDeleting = false
+	}: Props = $props()
 
 	let confirmingDelete = $state(false)
 	let editDialogOpen = $state(false)
@@ -100,7 +107,9 @@
 		border: none;
 		cursor: pointer;
 		color: var(--text-secondary);
-		transition: background-color 0.2s ease, color 0.2s ease;
+		transition:
+			background-color 0.2s ease,
+			color 0.2s ease;
 		outline: none;
 
 		&:hover {

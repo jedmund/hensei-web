@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type {
 		ArtifactInstance,
@@ -38,7 +37,9 @@
 	let element = $derived(artifact.element)
 	let level = $derived(artifact.level)
 	let proficiency = $derived(artifact.proficiency)
-	let skills = $derived<(ArtifactSkillInstance | null)[]>(initializeSkillLevels([...artifact.skills]))
+	let skills = $derived<(ArtifactSkillInstance | null)[]>(
+		initializeSkillLevels([...artifact.skills])
+	)
 
 	// Initialize skill levels to meet the constraint (artifact.level + 3)
 	// This handles cases where imported data has incorrect skill levels

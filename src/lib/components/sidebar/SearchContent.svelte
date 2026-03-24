@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
 	import { onDestroy } from 'svelte'
@@ -91,7 +90,11 @@
 
 	// Search mode state (only available when authUserId is provided)
 	// Default to 'collection' when a collection source is already set on the party
-	let searchMode = $derived<SearchMode>(!isFriendSlot && (collectionSourceUserId || initialCollectionSourceUsername) ? 'collection' : 'all')
+	let searchMode = $derived<SearchMode>(
+		!isFriendSlot && (collectionSourceUserId || initialCollectionSourceUsername)
+			? 'collection'
+			: 'all'
+	)
 
 	// Crew member selection state (defaults to self; collectionSourceUserId is reactive via partyStore)
 	let selectedMemberId = $derived<string | undefined>(authUserId)
@@ -199,7 +202,7 @@
 
 		// Add external collection source user if not already in list
 		const externalUser = externalUserQuery.data
-		if (externalUser && !options.some(o => o.value === externalUser.id)) {
+		if (externalUser && !options.some((o) => o.value === externalUser.id)) {
 			options.push({
 				value: externalUser.id,
 				label: externalUser.username,
@@ -225,7 +228,9 @@
 			(isCollectionLocked || (isInCrew && memberOptions.length > 1) || !!externalUserQuery.data)
 	)
 
-	function resolveMember(userId: string | undefined): { label: string; image?: string } | undefined {
+	function resolveMember(
+		userId: string | undefined
+	): { label: string; image?: string } | undefined {
 		if (!userId) return undefined
 		const members = crewMembersQuery.data ?? []
 		if (userId === authUserId) {
@@ -291,19 +296,23 @@
 		}
 
 		return {
-			...collectionQueries.byType(type, userId, searchMode === 'collection' ? {
-				...filters,
-				search: debouncedSearchQuery || undefined
-			} : {}),
+			...collectionQueries.byType(
+				type,
+				userId,
+				searchMode === 'collection'
+					? {
+							...filters,
+							search: debouncedSearchQuery || undefined
+						}
+					: {}
+			),
 			enabled: true
 		}
 	})
 
 	// --- Results processing ---
 
-	const rawResults = $derived(
-		searchQueryResult.data?.pages.flatMap((page) => page.results) ?? []
-	)
+	const rawResults = $derived(searchQueryResult.data?.pages.flatMap((page) => page.results) ?? [])
 
 	const rawCollectionResults = $derived(
 		collectionQueryResult.data?.pages.flatMap((page) => page.results) ?? []
@@ -467,7 +476,12 @@
 		</div>
 	</div>
 
-	<div class="results-section" onscroll={(e) => { resultsScrolled = e.currentTarget.scrollTop > 0 }}>
+	<div
+		class="results-section"
+		onscroll={(e) => {
+			resultsScrolled = e.currentTarget.scrollTop > 0
+		}}
+	>
 		{#if activeQuery.isLoading}
 			<div class="loading">
 				<Icon name="loader-2" size={24} />

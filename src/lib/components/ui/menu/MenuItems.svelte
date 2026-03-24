@@ -49,7 +49,8 @@
 	const Item = variant === 'context' ? ContextMenu.Item : DropdownMenu.Item
 	const Separator = variant === 'context' ? ContextMenu.Separator : DropdownMenu.Separator
 	const itemClass = variant === 'context' ? 'context-menu-item' : 'dropdown-menu-item'
-	const separatorClass = variant === 'context' ? 'context-menu-separator' : 'dropdown-menu-separator'
+	const separatorClass =
+		variant === 'context' ? 'context-menu-separator' : 'dropdown-menu-separator'
 
 	// Track whether we've rendered any items above the details/database section (for separator logic)
 	const hasEditSection = canEdit && (onEdit || onReplace || onDuplicate)

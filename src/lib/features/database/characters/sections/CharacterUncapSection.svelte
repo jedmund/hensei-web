@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
@@ -16,12 +15,7 @@
 		onDataChange?: () => void
 	}
 
-	let {
-		character,
-		editMode = false,
-		editData = $bindable(),
-		onDataChange
-	}: Props = $props()
+	let { character, editMode = false, editData = $bindable(), onDataChange }: Props = $props()
 
 	const uncap = $derived(
 		editMode

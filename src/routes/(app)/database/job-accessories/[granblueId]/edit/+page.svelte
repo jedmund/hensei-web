@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
@@ -42,9 +41,7 @@
 	// Fetch all jobs to auto-resolve job_id from accessory type
 	const jobsQuery = createQuery(() => jobQueries.list())
 	const matchedJob = $derived(
-		jobsQuery.data?.find(
-			(job) => job.accessory && job.accessoryType === editData.accessoryType
-		)
+		jobsQuery.data?.find((job) => job.accessory && job.accessoryType === editData.accessoryType)
 	)
 
 	// Save state
@@ -121,9 +118,7 @@
 	}
 
 	// Page title
-	const pageTitle = $derived(
-		m.page_title_db_edit({ name: accessory?.name?.en ?? 'Job Accessory' })
-	)
+	const pageTitle = $derived(m.page_title_db_edit({ name: accessory?.name?.en ?? 'Job Accessory' }))
 </script>
 
 <PageMeta title={pageTitle} description={m.page_desc_home()} />

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -83,7 +82,9 @@
 <Dialog bind:open>
 	<ModalHeader
 		title={m.crew_assign_phantom_title()}
-		description={phantom ? m.crew_assign_phantom_desc({ name: phantom.name }) : m.crew_assign_phantom_desc_generic()}
+		description={phantom
+			? m.crew_assign_phantom_desc({ name: phantom.name })
+			: m.crew_assign_phantom_desc_generic()}
 	/>
 
 	<ModalBody>

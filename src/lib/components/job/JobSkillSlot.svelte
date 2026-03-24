@@ -95,7 +95,15 @@
 	{/if}
 {/snippet}
 
-{#snippet SkillContent({ skill, skillIconUrl, locked }: { skill: JobSkill; skillIconUrl: string; locked: boolean })}
+{#snippet SkillContent({
+	skill,
+	skillIconUrl,
+	locked
+}: {
+	skill: JobSkill
+	skillIconUrl: string
+	locked: boolean
+})}
 	<div class="skill-content">
 		{#if skillIconUrl}
 			<img src={skillIconUrl} alt={localizedName(skill.name)} class="skill-icon" loading="lazy" />

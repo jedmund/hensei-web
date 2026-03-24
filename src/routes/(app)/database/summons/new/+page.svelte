@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'

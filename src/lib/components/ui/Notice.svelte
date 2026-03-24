@@ -15,11 +15,7 @@
 	const isElement = $derived(elementVariants.includes(variant))
 </script>
 
-<div
-	class="notice {variant}"
-	class:element={isElement}
-	role="status"
->
+<div class="notice {variant}" class:element={isElement} role="status">
 	{#if icon}
 		<span class="notice-icon">
 			{@render icon()}

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { PageData } from './$types'
 	import { onDestroy } from 'svelte'
@@ -18,7 +17,11 @@
 	const favoritesQuery = createInfiniteQuery(() => userQueries.favorites())
 
 	// State-gated infinite scroll
-	const loader = useInfiniteLoader(() => favoritesQuery, () => sentinelEl, { rootMargin: '300px' })
+	const loader = useInfiniteLoader(
+		() => favoritesQuery,
+		() => sentinelEl,
+		{ rootMargin: '300px' }
+	)
 
 	// Cleanup on destroy
 	onDestroy(() => loader.destroy())

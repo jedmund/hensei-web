@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { Cell } from 'wx-svelte-grid'
 	import { getCharacterImage } from '$lib/features/database/detail/image'
@@ -7,7 +6,11 @@
 </script>
 
 <div class="image-cell">
-	<img src={getCharacterImage(row.granblueId, 'square', row.styleSwap ? '01_style' : '01')} alt="" class="database-image" />
+	<img
+		src={getCharacterImage(row.granblueId, 'square', row.styleSwap ? '01_style' : '01')}
+		alt=""
+		class="database-image"
+	/>
 </div>
 
 <style lang="scss">

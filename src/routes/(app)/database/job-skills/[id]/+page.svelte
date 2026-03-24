@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -17,7 +16,11 @@
 	import AssociatedEntityLink from '$lib/components/database/AssociatedEntityLink.svelte'
 
 	import { getJobSkillIcon } from '$lib/utils/images'
-	import { getSkillCategoryName, getSkillCategoryColor, getSkillColorName } from '$lib/utils/jobUtils'
+	import {
+		getSkillCategoryName,
+		getSkillCategoryColor,
+		getSkillColorName
+	} from '$lib/utils/jobUtils'
 	import { localizedName } from '$lib/utils/locale'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
@@ -36,9 +39,7 @@
 
 	const editUrl = $derived(skill?.id ? `/database/job-skills/${skill.id}/edit` : undefined)
 
-	const pageTitle = $derived(
-		m.page_title_db_entity({ name: skill?.name?.en ?? 'Job Skill' })
-	)
+	const pageTitle = $derived(m.page_title_db_entity({ name: skill?.name?.en ?? 'Job Skill' }))
 
 	const displayName = $derived.by(() => {
 		const nameObj = skill?.name
@@ -62,7 +63,9 @@
 <div class="page">
 	<DatabasePageHeader title="Job Skill">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/job-skills">Back</Button>
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/job-skills"
+				>Back</Button
+			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
@@ -87,7 +90,10 @@
 					<DetailItem label="Name (JP)" value={skill.name.ja ?? '—'} />
 					<DetailItem label="Slug" value={skill.slug ?? '—'} />
 					<DetailItem label="Image ID" value={skill.imageId ?? '—'} />
-					<DetailItem label="Action ID" value={skill.actionId != null ? String(skill.actionId) : '—'} />
+					<DetailItem
+						label="Action ID"
+						value={skill.actionId != null ? String(skill.actionId) : '—'}
+					/>
 				</DetailsContainer>
 
 				<DetailsContainer title="Classification">
@@ -144,7 +150,6 @@
 	.details {
 		@include database.details;
 	}
-
 
 	.empty-value {
 		color: var(--text-secondary);

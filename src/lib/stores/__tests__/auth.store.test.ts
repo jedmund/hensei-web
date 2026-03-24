@@ -186,9 +186,7 @@ describe('refresh', () => {
 	})
 
 	it('clears auth and redirects on failure', async () => {
-		vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-			new Response('', { status: 401 })
-		)
+		vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response('', { status: 401 }))
 
 		// Stub window for Node environment
 		const fakeLocation = { href: '' }
@@ -300,7 +298,6 @@ describe('getToken recovery', () => {
 	it('returns new token after refresh triggered by expired getToken', async () => {
 		// Set an expired token
 		authStore.setAuth('expired-tok', { id: 'u1', username: 'grug' }, -1)
-
 		;(globalThis as any).window = { location: { href: '' } }
 		vi.spyOn(globalThis, 'fetch').mockResolvedValue(
 			new Response(

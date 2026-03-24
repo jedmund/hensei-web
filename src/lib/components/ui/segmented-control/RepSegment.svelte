@@ -28,7 +28,7 @@
 
 <RadioGroupPrimitive.Item
 	{value}
-	{...(disabled !== undefined ? { disabled } : {})}
+	{...disabled !== undefined ? { disabled } : {}}
 	class={`${styles.repSegment} ${selected ? styles.selected : ''} ${className || ''}`}
 >
 	{#snippet children({ checked })}

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import PageMeta from '$lib/components/PageMeta.svelte'
@@ -34,9 +33,7 @@
 		label
 	}))
 
-	const canCreate = $derived(
-		editData.nameEn.trim() !== '' && editData.slug.trim() !== ''
-	)
+	const canCreate = $derived(editData.nameEn.trim() !== '' && editData.slug.trim() !== '')
 
 	async function handleCreate() {
 		if (!canCreate) return
@@ -133,24 +130,9 @@
 				type="select"
 				options={bulletTypeOptions}
 			/>
-			<DetailItem
-				label="ATK"
-				bind:value={editData.atk}
-				editable={true}
-				type="number"
-			/>
-			<DetailItem
-				label="Hits All"
-				bind:value={editData.hitsAll}
-				editable={true}
-				type="checkbox"
-			/>
-			<DetailItem
-				label="Order"
-				bind:value={editData.order}
-				editable={true}
-				type="number"
-			/>
+			<DetailItem label="ATK" bind:value={editData.atk} editable={true} type="number" />
+			<DetailItem label="Hits All" bind:value={editData.hitsAll} editable={true} type="checkbox" />
+			<DetailItem label="Order" bind:value={editData.order} editable={true} type="number" />
 		</DetailsContainer>
 
 		<DetailsContainer title="Effect">

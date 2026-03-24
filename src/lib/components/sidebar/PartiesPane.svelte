@@ -44,11 +44,13 @@
 	// Build default element filter from defaultElement prop
 	function defaultElementFilter(): FilterItem[] {
 		if (!defaultElement) return []
-		return [{
-			kind: 'element' as const,
-			value: defaultElement,
-			label: getElementLabel(defaultElement)
-		}]
+		return [
+			{
+				kind: 'element' as const,
+				value: defaultElement,
+				label: getElementLabel(defaultElement)
+			}
+		]
 	}
 
 	// User-added filters (element, other entities, party settings, etc.)
@@ -78,13 +80,21 @@
 	const storeEntityFilters = $derived<FilterItem[]>(
 		useCollectionTeamsStore
 			? collectionTeamsPane.entities
-					.filter((e): e is FilterItem & { kind: 'entity'; granblueId: string; mode: 'include' | 'exclude' } => {
-						if (e.kind !== 'entity') return false
-						// Exclude entities that are already in pinnedFilters
-						return !pinnedFilters.some(
-							(p) => p.kind === 'entity' && 'granblueId' in p && p.granblueId === e.granblueId
-						)
-					})
+					.filter(
+						(
+							e
+						): e is FilterItem & {
+							kind: 'entity'
+							granblueId: string
+							mode: 'include' | 'exclude'
+						} => {
+							if (e.kind !== 'entity') return false
+							// Exclude entities that are already in pinnedFilters
+							return !pinnedFilters.some(
+								(p) => p.kind === 'entity' && 'granblueId' in p && p.granblueId === e.granblueId
+							)
+						}
+					)
 					.map((e) => ({
 						...e,
 						mode: modeOverrides.get(e.granblueId) ?? e.mode,
@@ -107,9 +117,7 @@
 	let sentinelEl = $state<HTMLElement>()
 
 	// Query for parties
-	const partiesQuery = createInfiniteQuery(() =>
-		partyQueries.list({ filters: filterParams })
-	)
+	const partiesQuery = createInfiniteQuery(() => partyQueries.list({ filters: filterParams }))
 
 	// Infinite loader
 	const loader = useInfiniteLoader(
@@ -139,9 +147,7 @@
 	// Flatten results
 	const parties = $derived(partiesQuery.data?.pages.flatMap((page) => page.results) ?? [])
 
-	const isEmpty = $derived(
-		parties.length === 0 && !partiesQuery.isLoading && !partiesQuery.isError
-	)
+	const isEmpty = $derived(parties.length === 0 && !partiesQuery.isLoading && !partiesQuery.isError)
 
 	function handleFiltersChange(newFilters: FilterItem[]) {
 		// Capture mode changes on pinned entity filters before stripping them

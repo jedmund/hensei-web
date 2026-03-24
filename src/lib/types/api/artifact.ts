@@ -209,9 +209,7 @@ export function isQuirkArtifact(artifact: Artifact): boolean {
 /**
  * Check if an artifact instance is a collection artifact
  */
-export function isCollectionArtifact(
-	instance: ArtifactInstance
-): instance is CollectionArtifact {
+export function isCollectionArtifact(instance: ArtifactInstance): instance is CollectionArtifact {
 	return 'createdAt' in instance
 }
 

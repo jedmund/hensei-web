@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import Select from '../ui/Select.svelte'
@@ -107,7 +106,11 @@
 
 		<SettingsRow title={m.settings_display_name()} subtitle={m.settings_display_name_subtitle()}>
 			{#snippet control()}
-				<Input bind:value={localDisplayName} placeholder={displayName ? m.settings_display_name_placeholder() : username} contained />
+				<Input
+					bind:value={localDisplayName}
+					placeholder={displayName ? m.settings_display_name_placeholder() : username}
+					contained
+				/>
 			{/snippet}
 		</SettingsRow>
 
@@ -131,13 +134,21 @@
 
 		<SettingsRow title={m.settings_granblue_id()} subtitle={m.settings_granblue_id_subtitle()}>
 			{#snippet control()}
-				<Input bind:value={localGranblueId} placeholder={m.settings_granblue_id_placeholder()} contained />
+				<Input
+					bind:value={localGranblueId}
+					placeholder={m.settings_granblue_id_placeholder()}
+					contained
+				/>
 			{/snippet}
 		</SettingsRow>
 
 		<SettingsRow title={m.settings_wiki_profile()} subtitle={m.settings_wiki_profile_subtitle()}>
 			{#snippet control()}
-				<Input bind:value={localWikiProfile} placeholder={m.settings_wiki_profile_placeholder()} contained />
+				<Input
+					bind:value={localWikiProfile}
+					placeholder={m.settings_wiki_profile_placeholder()}
+					contained
+				/>
 			{/snippet}
 		</SettingsRow>
 
@@ -170,5 +181,4 @@
 		color: var(--text-secondary);
 		margin: spacing.$unit-2x 0 0;
 	}
-
 </style>

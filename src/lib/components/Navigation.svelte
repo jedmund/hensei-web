@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { m } from '$lib/paraglide/messages'
@@ -179,7 +178,9 @@
 				<li>
 					<DropdownMenu.Root>
 						<DropdownMenu.Trigger
-							class="nav-more-trigger {totalNotificationCount > 0 ? `has-notification ${userElement ?? ''}` : ''}"
+							class="nav-more-trigger {totalNotificationCount > 0
+								? `has-notification ${userElement ?? ''}`
+								: ''}"
 						>
 							{#if totalNotificationCount > 0}
 								<Icon name="mail" size={18} />
@@ -203,10 +204,17 @@
 								{/if}
 								<DropdownMenu.Separator class="dropdown-separator" />
 								<DropdownItem>
-									<button class="dropdown-button-with-badge" onclick={() => (invitationsModalOpen = true)}>
+									<button
+										class="dropdown-button-with-badge"
+										onclick={() => (invitationsModalOpen = true)}
+									>
 										<span>{m.nav_notifications()}</span>
 										{#if totalNotificationCount > 0}
-											<NotificationBadge count={totalNotificationCount} showCount element={userElement} />
+											<NotificationBadge
+												count={totalNotificationCount}
+												showCount
+												element={userElement}
+											/>
 										{/if}
 									</button>
 								</DropdownItem>
@@ -239,7 +247,9 @@
 					<a href={crewHref} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
 				</li>
 				<li>
-					<a href={collectionHref} class:selected={isNavSelected(collectionHref)}>{m.nav_collection()}</a>
+					<a href={collectionHref} class:selected={isNavSelected(collectionHref)}
+						>{m.nav_collection()}</a
+					>
 				</li>
 				<li>
 					<DropdownMenu.Root>
@@ -280,7 +290,7 @@
 			iconOnly
 			shape="circle"
 			variant={userElement ? 'primary' : 'subtle'}
-			{...(userElement ? { element: userElement } : {})}
+			{...userElement ? { element: userElement } : {}}
 			elementStyle={Boolean(userElement)}
 			class="new-team-button"
 			aria-label={m.nav_new_team()}

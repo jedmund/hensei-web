@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { DropdownMenu } from 'bits-ui'
 	import DetailsHeader from '$lib/components/ui/DetailsHeader.svelte'

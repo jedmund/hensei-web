@@ -117,7 +117,7 @@ function makeIndividualScore(
 		excused: false,
 		playerName,
 		playerType: 'member',
-		member: memberId ? { id: memberId } as any : undefined
+		member: memberId ? ({ id: memberId } as any) : undefined
 	}
 }
 
@@ -174,10 +174,42 @@ describe('toPlayerChartData', () => {
 describe('toCrewBattleChartData', () => {
 	it('filters to finals rounds only (>= 2)', () => {
 		const crewScores: GwCrewScore[] = [
-			{ id: '1', round: 0, crewScore: 100, opponentScore: 50, opponentName: null, opponentGranblueId: null, victory: null },
-			{ id: '2', round: 1, crewScore: 200, opponentScore: 150, opponentName: null, opponentGranblueId: null, victory: null },
-			{ id: '3', round: 2, crewScore: 300, opponentScore: 250, opponentName: 'OppCrew', opponentGranblueId: null, victory: true },
-			{ id: '4', round: 3, crewScore: 400, opponentScore: 350, opponentName: 'OppCrew2', opponentGranblueId: null, victory: true }
+			{
+				id: '1',
+				round: 0,
+				crewScore: 100,
+				opponentScore: 50,
+				opponentName: null,
+				opponentGranblueId: null,
+				victory: null
+			},
+			{
+				id: '2',
+				round: 1,
+				crewScore: 200,
+				opponentScore: 150,
+				opponentName: null,
+				opponentGranblueId: null,
+				victory: null
+			},
+			{
+				id: '3',
+				round: 2,
+				crewScore: 300,
+				opponentScore: 250,
+				opponentName: 'OppCrew',
+				opponentGranblueId: null,
+				victory: true
+			},
+			{
+				id: '4',
+				round: 3,
+				crewScore: 400,
+				opponentScore: 350,
+				opponentName: 'OppCrew2',
+				opponentGranblueId: null,
+				victory: true
+			}
 		]
 
 		const result = toCrewBattleChartData(crewScores)
@@ -188,8 +220,24 @@ describe('toCrewBattleChartData', () => {
 
 	it('sorts by round', () => {
 		const crewScores: GwCrewScore[] = [
-			{ id: '1', round: 5, crewScore: 500, opponentScore: 400, opponentName: null, opponentGranblueId: null, victory: null },
-			{ id: '2', round: 2, crewScore: 200, opponentScore: 100, opponentName: null, opponentGranblueId: null, victory: null }
+			{
+				id: '1',
+				round: 5,
+				crewScore: 500,
+				opponentScore: 400,
+				opponentName: null,
+				opponentGranblueId: null,
+				victory: null
+			},
+			{
+				id: '2',
+				round: 2,
+				crewScore: 200,
+				opponentScore: 100,
+				opponentName: null,
+				opponentGranblueId: null,
+				victory: null
+			}
 		]
 
 		const result = toCrewBattleChartData(crewScores)
@@ -199,7 +247,15 @@ describe('toCrewBattleChartData', () => {
 
 	it('returns empty array when no finals rounds', () => {
 		const crewScores: GwCrewScore[] = [
-			{ id: '1', round: 0, crewScore: 100, opponentScore: 50, opponentName: null, opponentGranblueId: null, victory: null }
+			{
+				id: '1',
+				round: 0,
+				crewScore: 100,
+				opponentScore: 50,
+				opponentName: null,
+				opponentGranblueId: null,
+				victory: null
+			}
 		]
 		expect(toCrewBattleChartData(crewScores)).toHaveLength(0)
 	})
@@ -235,8 +291,22 @@ describe('toCrewHistoryChartData', () => {
 
 	it('transforms events into history points', () => {
 		const events: GwEvent[] = [
-			{ id: '1', element: 1, startDate: '2025-01', endDate: '2025-02', eventNumber: 72, crewTotalScore: 5000 },
-			{ id: '2', element: 2, startDate: '2025-03', endDate: '2025-04', eventNumber: 73, crewTotalScore: 8000 }
+			{
+				id: '1',
+				element: 1,
+				startDate: '2025-01',
+				endDate: '2025-02',
+				eventNumber: 72,
+				crewTotalScore: 5000
+			},
+			{
+				id: '2',
+				element: 2,
+				startDate: '2025-03',
+				endDate: '2025-04',
+				eventNumber: 73,
+				crewTotalScore: 8000
+			}
 		]
 
 		const result = toCrewHistoryChartData(events, formatDate)

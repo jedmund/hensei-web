@@ -16,16 +16,19 @@ While we've eliminated all TypeScript errors, several opportunities exist to imp
 **Problem:** Using `as any` to spread props loses type safety
 
 **Files:**
+
 - `src/lib/components/uncap/UncapIndicator.svelte` (lines 167, 169)
 - `src/lib/components/ui/segmented-control/SegmentedControl.svelte` (line 88)
 
 **Tasks:**
+
 - [ ] Create proper union type for StarRender props
 - [ ] Define TranscendenceStarProps and UncapStarProps interfaces
 - [ ] Replace `{...(star.props as any)}` with properly typed spread
 - [ ] Create typed wrapper for RadioGroupPrimitive or fix optionalProps spreading
 
 **Acceptance Criteria:**
+
 - No `as any` casts in component prop spreading
 - Full IntelliSense support for star component props
 - Type errors caught at compile time
@@ -37,11 +40,13 @@ While we've eliminated all TypeScript errors, several opportunities exist to imp
 **Problem:** Number/string mismatch between frontend and API requiring runtime conversion
 
 **Files:**
+
 - `src/lib/types/api/party.ts` (visibility: number)
 - `src/lib/api/adapters/party.adapter.ts` (visibility: string literal)
 - `src/lib/services/party.service.ts` (runtime mapping)
 
 **Tasks:**
+
 - [ ] Create PartyVisibility enum/const
 - [ ] Update Party type to use string literals
 - [ ] Remove number-to-string mapping in party.service.ts
@@ -49,6 +54,7 @@ While we've eliminated all TypeScript errors, several opportunities exist to imp
 - [ ] Update API serialization if needed
 
 **Acceptance Criteria:**
+
 - Single source of truth for visibility values
 - No runtime type conversion needed
 - Type safety when setting visibility
@@ -66,11 +72,13 @@ While we've eliminated all TypeScript errors, several opportunities exist to imp
 **Problem:** Using `optionalProps()` workaround for type incompatibilities
 
 **Files:**
+
 - `src/lib/components/ui/Select.svelte`
 - `src/lib/components/ui/segmented-control/SegmentedControl.svelte`
 - `src/lib/components/ui/RadioGroup.svelte` (if exists)
 
 **Tasks:**
+
 - [ ] Create `src/lib/components/ui/bits-ui-wrappers/` directory
 - [ ] Create SelectRoot wrapper with explicit prop typing
 - [ ] Create RadioGroupRoot wrapper with explicit prop typing
@@ -78,6 +86,7 @@ While we've eliminated all TypeScript errors, several opportunities exist to imp
 - [ ] Document why wrappers exist (bits-ui type issues)
 
 **Acceptance Criteria:**
+
 - No `optionalProps()` calls for bits-ui components
 - Clear prop types for each wrapper
 - Wrappers forward only supported props
@@ -89,16 +98,19 @@ While we've eliminated all TypeScript errors, several opportunities exist to imp
 **Problem:** Missing Cell export causing workaround with loose types
 
 **Files:**
+
 - `src/lib/components/database/cells/LastUpdatedCell.svelte`
 - Other cell components using wx-svelte-grid
 
 **Tasks:**
+
 - [ ] Create `src/lib/types/wx-svelte-grid.d.ts`
 - [ ] Define Cell, Grid, and other used types
 - [ ] Replace `[key: string]: any` with proper Cell interface
 - [ ] Update all cell components to use typed Cell props
 
 **Acceptance Criteria:**
+
 - Proper Cell type available for import
 - No `[key: string]: any` in cell components
 - IntelliSense support for grid props
@@ -114,10 +126,12 @@ While we've eliminated all TypeScript errors, several opportunities exist to imp
 **Problem:** Two different Awakening interfaces exist
 
 **Files:**
+
 - `src/lib/types/Awakening.d.ts`
 - `src/lib/types/api/entities.ts`
 
 **Tasks:**
+
 - [ ] Compare both definitions and identify differences
 - [ ] Choose canonical location (prefer entities.ts)
 - [ ] Remove duplicate definition
@@ -125,6 +139,7 @@ While we've eliminated all TypeScript errors, several opportunities exist to imp
 - [ ] Ensure LocalizedName is properly defined
 
 **Acceptance Criteria:**
+
 - Single Awakening type definition
 - All imports use same source
 - No breaking changes to existing code
@@ -136,11 +151,13 @@ While we've eliminated all TypeScript errors, several opportunities exist to imp
 **Problem:** Loose typing in services and adapters
 
 **Files to audit:**
+
 ```bash
 grep -r ": any" src/lib --include="*.ts" --include="*.svelte"
 ```
 
 **Common patterns to fix:**
+
 - `row: any` → `row: DatabaseRow` (or specific entity type)
 - `item: any` → `item: GridItem`
 - `mapped: any` → `mapped: CreatePartyParams`
@@ -148,12 +165,14 @@ grep -r ": any" src/lib --include="*.ts" --include="*.svelte"
 - Context types using `any`
 
 **Tasks:**
+
 - [ ] Audit all `any` usages and categorize
 - [ ] Create proper types for common patterns (DatabaseRow, GridItem, etc.)
 - [ ] Replace `any` with specific types
 - [ ] Add generics where appropriate
 
 **Acceptance Criteria:**
+
 - Minimal `any` usage (only where truly necessary)
 - Clear justification comment for remaining `any` usages
 - Improved IntelliSense throughout codebase
@@ -169,11 +188,13 @@ grep -r ": any" src/lib --include="*.ts" --include="*.svelte"
 **Problem:** Test mocks are brittle and require manual updates when types change
 
 **Files:**
+
 - `src/lib/api/adapters/__tests__/entity.adapter.test.ts`
 - `src/lib/api/adapters/__tests__/grid.adapter.test.ts`
 - Other test files
 
 **Tasks:**
+
 - [ ] Create `src/lib/testing/factories.ts`
 - [ ] Implement `createMockWeapon(overrides?)`
 - [ ] Implement `createMockCharacter(overrides?)`
@@ -183,6 +204,7 @@ grep -r ": any" src/lib --include="*.ts" --include="*.svelte"
 - [ ] Add JSDoc examples for each factory
 
 **Acceptance Criteria:**
+
 - All test mocks use factory functions
 - Overrides supported for customization
 - Type-safe mock creation
@@ -193,12 +215,14 @@ grep -r ": any" src/lib --include="*.ts" --include="*.svelte"
 ### 4.2 Improve Test Coverage for Type Transformations
 
 **Focus areas:**
+
 - Visibility mapping (number → string)
 - Awakening type handling
 - Party payload transformations
 - Grid item CRUD operations
 
 **Tasks:**
+
 - [ ] Add tests for mapToApiPayload visibility conversion
 - [ ] Add tests for awakening null/undefined handling
 - [ ] Test edge cases in type transformations
@@ -215,12 +239,14 @@ grep -r ": any" src/lib --include="*.ts" --include="*.svelte"
 **Current status:** 190 warnings
 
 **Categories to review:**
+
 - Unused CSS selectors
 - Non-reactive updates
 - Accessibility warnings
 - Import warnings
 
 **Tasks:**
+
 - [ ] Run `pnpm check 2>&1 | grep "Warn:" | sort | uniq -c`
 - [ ] Categorize warnings by type and severity
 - [ ] Fix or suppress unused CSS warnings
@@ -228,6 +254,7 @@ grep -r ": any" src/lib --include="*.ts" --include="*.svelte"
 - [ ] Address accessibility issues
 
 **Acceptance Criteria:**
+
 - Warnings reduced by 50% or more
 - All critical warnings addressed
 - Suppressions documented with reason
@@ -239,18 +266,21 @@ grep -r ": any" src/lib --include="*.ts" --include="*.svelte"
 **Problem:** Complex type transformations lack explanation
 
 **Target areas:**
+
 - `mapToApiPayload()` in party.service.ts
 - Visibility mapping logic
 - Type assertion workarounds
 - Third-party wrapper purposes
 
 **Tasks:**
+
 - [ ] Document visibility mapping with TODO for unification
 - [ ] Explain why type assertions are needed
 - [ ] Add examples to complex type transformations
 - [ ] Document third-party library workarounds
 
 **Acceptance Criteria:**
+
 - All workarounds have explanation comments
 - Complex transformations documented
 - TODOs added for future improvements
@@ -262,6 +292,7 @@ grep -r ": any" src/lib --include="*.ts" --include="*.svelte"
 **Problem:** Some null handling is implicit or unclear
 
 **Tasks:**
+
 - [ ] Review null coalescing operators (`??`)
 - [ ] Document what empty string defaults mean
 - [ ] Consider making related properties required together (e.g., avatar.picture + avatar.element)
@@ -276,21 +307,15 @@ grep -r ": any" src/lib --include="*.ts" --include="*.svelte"
 ### Recommended Order:
 
 **Week 1: Critical Type Safety**
+
 1. Remove type assertions in UncapIndicator (1.1)
 2. Unify visibility types (1.2)
 
-**Week 2: Third-Party Libraries**
-3. Create bits-ui wrappers (2.1)
-4. Add wx-svelte-grid types (2.2)
+**Week 2: Third-Party Libraries** 3. Create bits-ui wrappers (2.1) 4. Add wx-svelte-grid types (2.2)
 
-**Week 3: Type Consolidation**
-5. Consolidate Awakening types (3.1)
-6. Type the `any` usages (3.2) - ongoing
+**Week 3: Type Consolidation** 5. Consolidate Awakening types (3.1) 6. Type the `any` usages (3.2) - ongoing
 
-**Week 4: Polish**
-7. Create test factories (4.1)
-8. Address warnings (5.1)
-9. Add JSDoc (5.2)
+**Week 4: Polish** 7. Create test factories (4.1) 8. Address warnings (5.1) 9. Add JSDoc (5.2)
 
 ### Success Metrics:
 
@@ -310,18 +335,21 @@ grep -r ": any" src/lib --include="*.ts" --include="*.svelte"
 ## Notes
 
 ### Philosophy:
+
 - Incremental improvement over big rewrites
 - Document "why" for workarounds
 - Type safety where it adds value
 - Pragmatic trade-offs are okay
 
 ### When to Use `any`:
+
 - Truly dynamic data (rare)
 - Third-party library gaps (with comment)
 - Overly complex generic inference
 - Always add `// eslint-disable-next-line @typescript-eslint/no-explicit-any` and justification
 
 ### When to Create Wrappers:
+
 - Type incompatibilities we can't fix upstream
 - Need to restrict API surface
 - Want better defaults

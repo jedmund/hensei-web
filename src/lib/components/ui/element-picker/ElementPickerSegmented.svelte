@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { ToggleGroup } from 'bits-ui'
 	import Tooltip from '../Tooltip.svelte'
@@ -28,7 +27,6 @@
 		showClear = false,
 		class: className = ''
 	}: Props = $props()
-
 
 	// Check if any elements are selected
 	const hasSelection = $derived.by(() => {
@@ -104,11 +102,7 @@
 					{#each elements as element}
 						<Tooltip content={getLabel(element)}>
 							{#snippet children()}
-								<ToggleGroup.Item
-									value={String(element)}
-									class="element-item"
-									{disabled}
-								>
+								<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
 									<img
 										src={getElementImage(element)}
 										alt={getLabel(element)}
@@ -130,11 +124,7 @@
 					{#each elements as element}
 						<Tooltip content={getLabel(element)}>
 							{#snippet children()}
-								<ToggleGroup.Item
-									value={String(element)}
-									class="element-item"
-									{disabled}
-								>
+								<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
 									<img
 										src={getElementImage(element)}
 										alt={getLabel(element)}
@@ -164,11 +154,7 @@
 				{#each elements as element}
 					<Tooltip content={getLabel(element)}>
 						{#snippet children()}
-							<ToggleGroup.Item
-								value={String(element)}
-								class="element-item"
-								{disabled}
-							>
+							<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
 								<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
 							</ToggleGroup.Item>
 						{/snippet}
@@ -186,11 +172,7 @@
 				{#each elements as element}
 					<Tooltip content={getLabel(element)}>
 						{#snippet children()}
-							<ToggleGroup.Item
-								value={String(element)}
-								class="element-item"
-								{disabled}
-							>
+							<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
 								<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
 							</ToggleGroup.Item>
 						{/snippet}

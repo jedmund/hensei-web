@@ -88,7 +88,7 @@ const SUMMON_ALT_ART_THRESHOLD: Map<string, number> = new Map([
 	['2040027000', 4], // Yggdrasil Omega
 	['2040046000', 4], // Celeste Omega
 	['2040047000', 4], // Luminiera Omega
-	['2040430000', 4],
+	['2040430000', 4]
 ])
 
 export interface TransformationStage {
@@ -102,10 +102,10 @@ export interface TransformationStage {
  * Uses the SUMMON_ALT_ART_THRESHOLD map to determine which stages exist
  * and what to label the first art upgrade (FLB vs ULB).
  */
-export function getSummonTransformationStages(granblueId?: string | number | null): TransformationStage[] {
-	const stages: TransformationStage[] = [
-		{ id: '01', label: 'Base', suffix: undefined }
-	]
+export function getSummonTransformationStages(
+	granblueId?: string | number | null
+): TransformationStage[] {
+	const stages: TransformationStage[] = [{ id: '01', label: 'Base', suffix: undefined }]
 
 	const id = String(granblueId)
 	const threshold = granblueId ? SUMMON_ALT_ART_THRESHOLD.get(id) : undefined
@@ -126,11 +126,21 @@ export function getSummonTransformationStages(granblueId?: string | number | nul
  * Returns undefined for base art, '02' for first upgrade, '03' for uncap 6, '04' for uncap 6 + transcendence 5.
  * The first upgrade threshold varies per summon (see SUMMON_ALT_ART_THRESHOLD).
  */
-export function getSummonTransformation(granblueId?: string | number | null, uncapLevel?: number, transcendenceStep?: number): string | undefined {
+export function getSummonTransformation(
+	granblueId?: string | number | null,
+	uncapLevel?: number,
+	transcendenceStep?: number
+): string | undefined {
 	const id = String(granblueId)
 	const threshold = granblueId ? SUMMON_ALT_ART_THRESHOLD.get(id) : undefined
 	if (threshold === undefined) return undefined
-	if (uncapLevel !== undefined && uncapLevel >= 6 && transcendenceStep !== undefined && transcendenceStep >= 5) return '04'
+	if (
+		uncapLevel !== undefined &&
+		uncapLevel >= 6 &&
+		transcendenceStep !== undefined &&
+		transcendenceStep >= 5
+	)
+		return '04'
 	if (uncapLevel !== undefined && uncapLevel >= 6) return '03'
 	if (uncapLevel !== undefined && uncapLevel >= threshold) return '02'
 	return undefined
@@ -140,10 +150,10 @@ export function getSummonTransformation(granblueId?: string | number | null, unc
  * Returns the list of available transformation stages for a weapon.
  * Uses the uncap flags (transcendence) to determine which stages exist.
  */
-export function getWeaponTransformationStages(uncap?: { transcendence?: boolean }): TransformationStage[] {
-	const stages: TransformationStage[] = [
-		{ id: '01', label: 'Base', suffix: undefined }
-	]
+export function getWeaponTransformationStages(uncap?: {
+	transcendence?: boolean
+}): TransformationStage[] {
+	const stages: TransformationStage[] = [{ id: '01', label: 'Base', suffix: undefined }]
 
 	if (uncap?.transcendence) {
 		stages.push(
@@ -160,7 +170,11 @@ export function getWeaponTransformationStages(uncap?: { transcendence?: boolean 
  * Returns undefined for base art, '02' for transcendence 1-4, '03' for transcendence 5.
  * Only applies to weapons that have transcendence and are at uncap level 6.
  */
-export function getWeaponTransformation(hasTranscendence?: boolean, uncapLevel?: number, transcendenceStep?: number): string | undefined {
+export function getWeaponTransformation(
+	hasTranscendence?: boolean,
+	uncapLevel?: number,
+	transcendenceStep?: number
+): string | undefined {
 	if (!hasTranscendence || uncapLevel !== 6) return undefined
 	if (transcendenceStep === 5) return '03'
 	if (transcendenceStep && transcendenceStep >= 1) return '02'
@@ -211,7 +225,12 @@ export function getImageUrl(
 	}
 
 	// Handle weapon element variants (including element 0 for null-element weapons)
-	if (type === 'weapon' && (variant === 'grid' || variant === 'main' || variant === 'square') && options?.element !== undefined && options.element >= 0) {
+	if (
+		type === 'weapon' &&
+		(variant === 'grid' || variant === 'main' || variant === 'square') &&
+		options?.element !== undefined &&
+		options.element >= 0
+	) {
 		return `${basePath}/${id}_${options.element}${extension}`
 	}
 
@@ -310,9 +329,7 @@ export function handleImageFallback(event: Event, fallbackUrl?: string): void {
 /**
  * Get weapon base image (PNG)
  */
-export function getWeaponBaseImage(
-	id: string | number | null | undefined
-): string {
+export function getWeaponBaseImage(id: string | number | null | undefined): string {
 	return getImageUrl('weapon', id, 'base')
 }
 
@@ -344,18 +361,14 @@ export function getSummonImage(
 /**
  * Get summon detail image (PNG)
  */
-export function getSummonDetailImage(
-	id: string | number | null | undefined
-): string {
+export function getSummonDetailImage(id: string | number | null | undefined): string {
 	return getImageUrl('summon', id, 'detail')
 }
 
 /**
  * Get summon wide image
  */
-export function getSummonWideImage(
-	id: string | number | null | undefined
-): string {
+export function getSummonWideImage(id: string | number | null | undefined): string {
 	return getImageUrl('summon', id, 'wide')
 }
 
@@ -417,7 +430,9 @@ export function getWeaponGridImage(
  * Get job skill icon URL
  * Uses slug for the image path
  */
-export function getJobSkillIcon(skill: { imageId?: string; slug?: string } | string | undefined): string {
+export function getJobSkillIcon(
+	skill: { imageId?: string; slug?: string } | string | undefined
+): string {
 	if (!skill) return '/images/job-skills/default.png'
 
 	// Handle string input (backward compatibility)
@@ -436,7 +451,10 @@ export function getJobSkillIcon(skill: { imageId?: string; slug?: string } | str
  * Get accessory image URL
  * @param variant - 'square' for thumbnails/icons, 'grid' for grid-sized display
  */
-export function getAccessoryImage(granblueId: string | undefined, variant: 'square' | 'grid' = 'square'): string {
+export function getAccessoryImage(
+	granblueId: string | undefined,
+	variant: 'square' | 'grid' = 'square'
+): string {
 	if (!granblueId) return getGenericPlaceholder()
 	return `${getBasePath()}/accessory-${variant}/${granblueId}.jpg`
 }
@@ -446,7 +464,10 @@ export function getAccessoryImage(granblueId: string | undefined, variant: 'squa
 /**
  * Get awakening image URL
  */
-export function getAwakeningImage(slug: string | undefined, extension: 'png' | 'jpg' = 'jpg'): string {
+export function getAwakeningImage(
+	slug: string | undefined,
+	extension: 'png' | 'jpg' = 'jpg'
+): string {
 	if (!slug) return ''
 	return `${getBasePath()}/awakening/${slug}.${extension}`
 }
@@ -539,9 +560,7 @@ export function getArtifactImage(
 /**
  * Get bullet image URL
  */
-export function getBulletImage(
-	granblueId: string | number | null | undefined
-): string {
+export function getBulletImage(granblueId: string | number | null | undefined): string {
 	if (!granblueId) return getGenericPlaceholder()
 	return `${getBasePath()}/bullet-square/${granblueId}.jpg`
 }
@@ -596,10 +615,14 @@ export function getGuidebookImage(granblueId: string | number | undefined): stri
 export type RaidImageVariant = 'icon' | 'thumbnail' | 'lobby' | 'background'
 
 // Game CDN URLs for raid images
-const RAID_ICON_CDN = 'https://prd-game-a-granbluefantasy.akamaized.net/assets_en/img/sp/assets/enemy/m'
-const RAID_THUMBNAIL_CDN = 'https://prd-game-a1-granbluefantasy.akamaized.net/assets_en/img/sp/assets/summon/qm'
-const RAID_LOBBY_CDN = 'https://prd-game-a1-granbluefantasy.akamaized.net/assets_en/img/sp/quest/assets/lobby'
-const RAID_BACKGROUND_CDN = 'https://prd-game-a-granbluefantasy.akamaized.net/assets_en/img/sp/quest/assets/treasureraid'
+const RAID_ICON_CDN =
+	'https://prd-game-a-granbluefantasy.akamaized.net/assets_en/img/sp/assets/enemy/m'
+const RAID_THUMBNAIL_CDN =
+	'https://prd-game-a1-granbluefantasy.akamaized.net/assets_en/img/sp/assets/summon/qm'
+const RAID_LOBBY_CDN =
+	'https://prd-game-a1-granbluefantasy.akamaized.net/assets_en/img/sp/quest/assets/lobby'
+const RAID_BACKGROUND_CDN =
+	'https://prd-game-a-granbluefantasy.akamaized.net/assets_en/img/sp/quest/assets/treasureraid'
 
 /**
  * Get raid image URL (stored images from our CDN/local)
@@ -619,10 +642,7 @@ export function getRaidImage(
  * @param variant - 'icon', 'thumbnail', 'lobby', or 'background'
  * @param id - enemy_id for icon, summon_id for thumbnail, quest_id for lobby/background
  */
-export function getRaidCdnImage(
-	variant: RaidImageVariant,
-	id: number | undefined
-): string {
+export function getRaidCdnImage(variant: RaidImageVariant, id: number | undefined): string {
 	if (!id) return getGenericPlaceholder()
 
 	switch (variant) {

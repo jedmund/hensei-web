@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { createMutation, useQueryClient } from '@tanstack/svelte-query'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
@@ -21,8 +20,13 @@
 		scores: GwIndividualScore[]
 	}
 
-	let { open = $bindable(false), participationId, eventNumber, playerName, scores }: Props =
-		$props()
+	let {
+		open = $bindable(false),
+		participationId,
+		eventNumber,
+		playerName,
+		scores
+	}: Props = $props()
 
 	const queryClient = useQueryClient()
 
@@ -353,5 +357,4 @@
 			color: var(--danger);
 		}
 	}
-
 </style>

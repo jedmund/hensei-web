@@ -21,7 +21,9 @@
 	function extractVideoId(url?: string): string | null {
 		if (!url) return null
 		// Match youtube.com/watch?v=ID, youtu.be/ID, youtube.com/embed/ID
-		const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/)
+		const match = url.match(
+			/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+		)
 		return match?.[1] ?? null
 	}
 

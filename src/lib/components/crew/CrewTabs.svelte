@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
@@ -15,7 +14,7 @@
 	const { userElement }: Props = $props()
 
 	const typedElement = $derived(
-		userElement as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined ?? undefined
+		(userElement as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined) ?? undefined
 	)
 
 	interface Tab {
@@ -52,9 +51,7 @@
 		}
 	]
 
-	const currentTab = $derived(
-		tabs.find((tab) => tab.match($page.url.pathname))?.value ?? 'events'
-	)
+	const currentTab = $derived(tabs.find((tab) => tab.match($page.url.pathname))?.value ?? 'events')
 
 	function handleTabChange(value: string) {
 		const tab = tabs.find((t) => t.value === value)

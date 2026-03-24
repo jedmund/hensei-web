@@ -11,12 +11,12 @@ export function getRingMasteryCategory(modifier: number): ItemSkill[] {
 // Helper to get ring stat
 export function getRingStat(modifier: number): ItemSkill | undefined {
 	const category = getRingMasteryCategory(modifier)
-	return category.find(item => item.id === modifier)
+	return category.find((item) => item.id === modifier)
 }
 
 // Helper to get earring stat
 export function getEarringStat(modifier: number): ItemSkill | undefined {
-	return aetherialMastery.find(item => item.id === modifier)
+	return aetherialMastery.find((item) => item.id === modifier)
 }
 
 // Helper to get earring stat with element substitution
@@ -39,7 +39,10 @@ export function getElementalizedEarringStat(
 			if (locale === 'en') {
 				elementalizedStat.name.en = elementalizedStat.name.en.replace('{Element}', elementName)
 			} else {
-				elementalizedStat.name.ja = elementalizedStat.name.ja.replace('{属性}', `${elementName}属性`)
+				elementalizedStat.name.ja = elementalizedStat.name.ja.replace(
+					'{属性}',
+					`${elementName}属性`
+				)
 			}
 			// Update slug for icon purposes - using element ID for icon path
 			elementalizedStat.slug = `ele-${characterElement}`
@@ -51,7 +54,10 @@ export function getElementalizedEarringStat(
 				if (locale === 'en') {
 					elementalizedStat.name.en = elementalizedStat.name.en.replace('{Element}', elementName)
 				} else {
-					elementalizedStat.name.ja = elementalizedStat.name.ja.replace('{属性}', `${elementName}属性`)
+					elementalizedStat.name.ja = elementalizedStat.name.ja.replace(
+						'{属性}',
+						`${elementName}属性`
+					)
 				}
 				// Update slug for icon purposes - using element ID for icon path
 				elementalizedStat.slug = `ele-${oppositeElementId}`

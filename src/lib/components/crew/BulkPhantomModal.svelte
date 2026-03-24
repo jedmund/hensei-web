@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { untrack } from 'svelte'
@@ -95,10 +94,7 @@
 
 <Dialog bind:open size="medium">
 	{#snippet children()}
-		<ModalHeader
-			title={m.crew_bulk_phantom_title()}
-			description={m.crew_bulk_phantom_desc()}
-		/>
+		<ModalHeader title={m.crew_bulk_phantom_title()} description={m.crew_bulk_phantom_desc()} />
 
 		<ModalBody>
 			<div class="phantom-rows">

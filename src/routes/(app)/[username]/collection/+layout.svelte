@@ -99,7 +99,9 @@
 		artifacts: m.collection_entity_artifacts()
 	} as Record<string, string>
 
-	const addButtonText = $derived(m.collection_add_type({ type: entityNameMap[activeEntityType] ?? activeEntityType }))
+	const addButtonText = $derived(
+		m.collection_add_type({ type: entityNameMap[activeEntityType] ?? activeEntityType })
+	)
 
 	const username = $derived(data.user?.username || $page.params.username)
 
@@ -207,13 +209,25 @@
 			{#if selectionMode.isActive}
 				<!-- Selection mode UI -->
 				<div class="selection-controls-left">
-					<span class="selection-count">{m.collection_selected_count({ count: selectionMode.selectedCount })}</span>
+					<span class="selection-count"
+						>{m.collection_selected_count({ count: selectionMode.selectedCount })}</span
+					>
 					<div class="selection-buttons">
-						<Button variant="element-ghost" size="small" element={userElement} onclick={handleSelectAll}>
+						<Button
+							variant="element-ghost"
+							size="small"
+							element={userElement}
+							onclick={handleSelectAll}
+						>
 							{m.collection_select_all()}
 						</Button>
 						{#if selectionMode.selectedCount > 0}
-							<Button variant="element-ghost" size="small" element={userElement} onclick={handleClearSelection}>
+							<Button
+								variant="element-ghost"
+								size="small"
+								element={userElement}
+								onclick={handleClearSelection}
+							>
 								{m.collection_clear_selection()}
 							</Button>
 						{/if}
@@ -254,7 +268,11 @@
 							{/snippet}
 							{#snippet menu()}
 								{#if supportsAddModal}
-									<button type="button" class="dropdown-menu-item" onclick={() => (addModalOpen = true)}>
+									<button
+										type="button"
+										class="dropdown-menu-item"
+										onclick={() => (addModalOpen = true)}
+									>
 										{addButtonText}
 									</button>
 								{:else if isArtifacts}
@@ -263,8 +281,14 @@
 									</button>
 								{/if}
 								<div class="dropdown-menu-separator"></div>
-								<button type="button" class="dropdown-menu-item danger" onclick={handleEnterSelectionMode}>
-									{m.collection_delete_type({ type: entityNameMap[activeEntityType] ?? activeEntityType })}
+								<button
+									type="button"
+									class="dropdown-menu-item danger"
+									onclick={handleEnterSelectionMode}
+								>
+									{m.collection_delete_type({
+										type: entityNameMap[activeEntityType] ?? activeEntityType
+									})}
 								</button>
 							{/snippet}
 						</DropdownMenu>
@@ -274,7 +298,11 @@
 		</nav>
 
 		<div class="content">
-			<svelte:boundary onerror={(e) => { if (import.meta.env.DEV) console.error('Collection render error:', e) }}>
+			<svelte:boundary
+				onerror={(e) => {
+					if (import.meta.env.DEV) console.error('Collection render error:', e)
+				}}
+			>
 				{@render children()}
 				{#snippet failed(error, reset)}
 					<div class="collection-error" role="alert">
@@ -364,5 +392,4 @@
 		align-items: center;
 		gap: $unit;
 	}
-
 </style>

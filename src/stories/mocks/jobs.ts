@@ -1,4 +1,4 @@
-import type { Job } from '$lib/types/api/entities';
+import type { Job } from '$lib/types/api/entities'
 
 /** Mock job data for Storybook stories */
 export const mockJob: Job = {
@@ -9,7 +9,7 @@ export const mockJob: Job = {
 	row: 5,
 	order: 1,
 	ultimateMastery: true
-};
+}
 
 export const mockJobNoUM: Job = {
 	id: 'job-2',
@@ -19,7 +19,7 @@ export const mockJobNoUM: Job = {
 	row: 3,
 	order: 1,
 	ultimateMastery: false
-};
+}
 
 export const mockJobMultiProf: Job = {
 	id: 'job-3',
@@ -29,7 +29,7 @@ export const mockJobMultiProf: Job = {
 	row: 5,
 	order: 1,
 	ultimateMastery: true
-};
+}
 
 /** Jobs organized by row/tier */
 export const mockJobsByRow: Record<string, Job> = {
@@ -38,4 +38,4 @@ export const mockJobsByRow: Record<string, Job> = {
 	row3: { ...mockJob, id: 'job-row3', granblueId: '120001', row: 3, ultimateMastery: false },
 	row4: { ...mockJob, id: 'job-row4', granblueId: '130001', row: 4, ultimateMastery: true },
 	row5: { ...mockJob, id: 'job-row5', granblueId: '180001', row: 5, ultimateMastery: true }
-};
+}

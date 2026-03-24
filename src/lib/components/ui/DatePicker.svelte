@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { DatePicker as BitsDatePicker, Label } from 'bits-ui'
 	import { parseDate, type DateValue, CalendarDate } from '@internationalized/date'

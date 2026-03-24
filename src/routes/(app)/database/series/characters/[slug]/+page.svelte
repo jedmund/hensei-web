@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
@@ -23,9 +22,13 @@
 	const series = $derived(seriesQuery.data)
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
-	const editUrl = $derived(series?.slug ? `/database/series/characters/${series.slug}/edit` : undefined)
+	const editUrl = $derived(
+		series?.slug ? `/database/series/characters/${series.slug}/edit` : undefined
+	)
 
-	const pageTitle = $derived(series?.name ? `${localizedName(series.name)} Series` : 'Character Series')
+	const pageTitle = $derived(
+		series?.name ? `${localizedName(series.name)} Series` : 'Character Series'
+	)
 </script>
 
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
@@ -33,7 +36,12 @@
 <div class="page">
 	<DatabasePageHeader title="Character Series">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/characters?view=series">Back</Button>
+			<Button
+				variant="ghost"
+				size="small"
+				leftIcon="chevron-left"
+				href="/database/characters?view=series">Back</Button
+			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}

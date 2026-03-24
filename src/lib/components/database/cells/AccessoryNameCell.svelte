@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { Cell } from 'wx-svelte-grid'
 	import type { JobAccessory } from '$lib/types/api/entities'

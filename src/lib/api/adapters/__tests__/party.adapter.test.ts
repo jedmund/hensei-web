@@ -253,11 +253,9 @@ describe('PartyAdapter', () => {
 				}
 			]
 
-			const result = await adapter.gridUpdate(
-				'ABC123',
-				operations,
-				{ maintainCharacterSequence: true }
-			)
+			const result = await adapter.gridUpdate('ABC123', operations, {
+				maintainCharacterSequence: true
+			})
 
 			expect(result.operationsApplied).toBe(2)
 			expect(result.changes).toHaveLength(2)
@@ -336,13 +334,10 @@ describe('PartyAdapter', () => {
 				json: async () => updatedParty
 			})
 
-			const result = await adapter.updateJobSkills(
-				'ABC123',
-				[
-					{ id: 'skill-1', slot: 1 },
-					{ id: 'skill-2', slot: 2 }
-				]
-			)
+			const result = await adapter.updateJobSkills('ABC123', [
+				{ id: 'skill-1', slot: 1 },
+				{ id: 'skill-2', slot: 2 }
+			])
 
 			expect(result).toEqual(updatedParty)
 			expect(global.fetch).toHaveBeenCalledWith(

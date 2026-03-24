@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { useQueryClient } from '@tanstack/svelte-query'
@@ -35,9 +34,7 @@
 	})
 
 	// Validation
-	const canSave = $derived(
-		editData.name_en.trim() !== '' && editData.name_jp.trim() !== ''
-	)
+	const canSave = $derived(editData.name_en.trim() !== '' && editData.name_jp.trim() !== '')
 
 	// Create group
 	async function handleSave() {
@@ -78,7 +75,13 @@
 </script>
 
 <div class="page">
-	<DatabaseFormHeader title="New Raid Group" onCancel={handleCancel} onSave={handleSave} {isSaving} disabled={!canSave} />
+	<DatabaseFormHeader
+		title="New Raid Group"
+		onCancel={handleCancel}
+		onSave={handleSave}
+		{isSaving}
+		disabled={!canSave}
+	/>
 
 	{#if saveError}
 		<div class="error-banner">{saveError}</div>
@@ -107,12 +110,7 @@
 				type="select"
 				options={getSectionOptions()}
 			/>
-			<DetailItem
-				label="Order"
-				bind:value={editData.order}
-				editable={true}
-				type="number"
-			/>
+			<DetailItem label="Order" bind:value={editData.order} editable={true} type="number" />
 			<DetailItem
 				label="Difficulty"
 				bind:value={editData.difficulty}
@@ -122,18 +120,8 @@
 		</DetailsContainer>
 
 		<DetailsContainer title="Flags">
-			<DetailItem
-				label="HL"
-				bind:value={editData.hl}
-				editable={true}
-				type="checkbox"
-			/>
-			<DetailItem
-				label="Extra"
-				bind:value={editData.extra}
-				editable={true}
-				type="checkbox"
-			/>
+			<DetailItem label="HL" bind:value={editData.hl} editable={true} type="checkbox" />
+			<DetailItem label="Extra" bind:value={editData.extra} editable={true} type="checkbox" />
 			<DetailItem
 				label="Guidebooks"
 				bind:value={editData.guidebooks}

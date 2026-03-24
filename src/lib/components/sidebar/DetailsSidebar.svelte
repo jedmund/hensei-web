@@ -111,9 +111,24 @@
 		const reqTrans = gridTranscendence ?? 0
 		const meetsLevel = (uncap: number, trans: number) => uncap >= reqUncap && trans >= reqTrans
 
-		if (type === 'character') return vc.characters.filter((c) => String(c.character.granblueId) === String(gid) && meetsLevel(c.uncapLevel ?? 0, c.transcendenceStep ?? 0)).length
-		if (type === 'weapon') return vc.weapons.filter((w) => String(w.weapon.granblueId) === String(gid) && meetsLevel(w.uncapLevel ?? 0, w.transcendenceStep ?? 0)).length
-		if (type === 'summon') return vc.summons.filter((s) => String(s.summon.granblueId) === String(gid) && meetsLevel(s.uncapLevel ?? 0, s.transcendenceStep ?? 0)).length
+		if (type === 'character')
+			return vc.characters.filter(
+				(c) =>
+					String(c.character.granblueId) === String(gid) &&
+					meetsLevel(c.uncapLevel ?? 0, c.transcendenceStep ?? 0)
+			).length
+		if (type === 'weapon')
+			return vc.weapons.filter(
+				(w) =>
+					String(w.weapon.granblueId) === String(gid) &&
+					meetsLevel(w.uncapLevel ?? 0, w.transcendenceStep ?? 0)
+			).length
+		if (type === 'summon')
+			return vc.summons.filter(
+				(s) =>
+					String(s.summon.granblueId) === String(gid) &&
+					meetsLevel(s.uncapLevel ?? 0, s.transcendenceStep ?? 0)
+			).length
 		return 0
 	})
 
@@ -122,7 +137,8 @@
 		if (type !== 'weapon') return undefined
 		const gid = itemData?.granblueId
 		if (!gid || !partyStore.party) return undefined
-		return partyStore.party.weapons.filter((w) => String(w.weapon?.granblueId) === String(gid)).length
+		return partyStore.party.weapons.filter((w) => String(w.weapon?.granblueId) === String(gid))
+			.length
 	})
 
 	// Grid item info (uncap levels from the grid item itself) - convert undefined to null
@@ -171,9 +187,7 @@
 	)
 
 	const isSyncing = $derived(
-		syncCharacterMutation.isPending ||
-			syncWeaponMutation.isPending ||
-			syncSummonMutation.isPending
+		syncCharacterMutation.isPending || syncWeaponMutation.isPending || syncSummonMutation.isPending
 	)
 
 	const isSyncingToCollection = $derived(
@@ -216,10 +230,7 @@
 <div class="details-sidebar">
 	<ItemHeader {type} {item} {itemData} {gridUncapLevel} {gridTranscendence} />
 
-	<DetailsSidebarSegmentedControl
-		hasModifications={showSegmentedControl}
-		bind:selectedView
-	/>
+	<DetailsSidebarSegmentedControl hasModifications={showSegmentedControl} bind:selectedView />
 
 	<CollectionSection
 		{type}
@@ -227,14 +238,18 @@
 		{gridCount}
 		element={itemData?.element}
 		hasCollection={!!partyStore.activeCollection}
-		sourceUsername={partyStore.activeCollectionUser === 'source' ? partyStore.party?.collectionSourceUser?.username : undefined}
+		sourceUsername={partyStore.activeCollectionUser === 'source'
+			? partyStore.party?.collectionSourceUser?.username
+			: undefined}
 		isOutOfSync={isLinkedToCollection && isOutOfSync}
 		{isPartyOwner}
 		{isCollectionOwner}
 		{isSyncing}
 		{isSyncingToCollection}
 		onSync={handleSync}
-		onSyncToCollection={() => { syncToCollectionDialogOpen = true }}
+		onSyncToCollection={() => {
+			syncToCollectionDialogOpen = true
+		}}
 	/>
 
 	<SyncToCollectionDialog

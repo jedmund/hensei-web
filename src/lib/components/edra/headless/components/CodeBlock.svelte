@@ -1,29 +1,29 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
-	import { NodeViewWrapper, NodeViewContent } from 'svelte-tiptap';
-	import type { NodeViewProps } from '@tiptap/core';
-	const { node, updateAttributes, extension }: NodeViewProps = $props();
+	import { NodeViewWrapper, NodeViewContent } from 'svelte-tiptap'
+	import type { NodeViewProps } from '@tiptap/core'
+	const { node, updateAttributes, extension }: NodeViewProps = $props()
 
-	let preRef = $state<HTMLPreElement>();
+	let preRef = $state<HTMLPreElement>()
 
-	let isCopying = $state(false);
+	let isCopying = $state(false)
 
-	const languages: string[] = extension.options.lowlight.listLanguages().sort();
+	const languages: string[] = extension.options.lowlight.listLanguages().sort()
 
-	let defaultLanguage = $state(node.attrs.language);
+	let defaultLanguage = $state(node.attrs.language)
 
 	$effect(() => {
-		updateAttributes({ language: defaultLanguage });
-	});
+		updateAttributes({ language: defaultLanguage })
+	})
 
 	function copyCode() {
-		if (isCopying) return;
-		if (!preRef) return;
-		isCopying = true;
-		navigator.clipboard.writeText(preRef.innerText);
+		if (isCopying) return
+		if (!preRef) return
+		isCopying = true
+		navigator.clipboard.writeText(preRef.innerText)
 		setTimeout(() => {
-			isCopying = false;
-		}, 1000);
+			isCopying = false
+		}, 1000)
 	}
 </script>
 

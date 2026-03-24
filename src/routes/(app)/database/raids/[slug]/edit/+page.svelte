@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
@@ -158,7 +157,13 @@
 			<p>Loading raid...</p>
 		</div>
 	{:else if raid}
-		<DatabaseFormHeader title="Edit Raid" onCancel={handleCancel} onSave={handleSave} {isSaving} disabled={!canSave} />
+		<DatabaseFormHeader
+			title="Edit Raid"
+			onCancel={handleCancel}
+			onSave={handleSave}
+			{isSaving}
+			disabled={!canSave}
+		/>
 
 		{#if saveError}
 			<div class="error-banner">{saveError}</div>
@@ -187,22 +192,9 @@
 					type="text"
 					placeholder="url-friendly-slug"
 				/>
-				<DetailItem
-					label="Level"
-					bind:value={editData.level}
-					editable={true}
-					type="number"
-				/>
-				<DetailItem
-					label="Element"
-					editable={true}
-				>
-					<ElementPicker
-						bind:value={editData.element}
-						includeAny
-						mode="dropdown"
-						contained
-					/>
+				<DetailItem label="Level" bind:value={editData.level} editable={true} type="number" />
+				<DetailItem label="Element" editable={true}>
+					<ElementPicker bind:value={editData.element} includeAny mode="dropdown" contained />
 				</DetailItem>
 				<DetailItem
 					label="Players"
@@ -214,24 +206,14 @@
 			</DetailsContainer>
 
 			<DetailsContainer title="IDs">
-				<DetailItem
-					label="Enemy ID"
-					bind:value={editData.enemy_id}
-					editable={true}
-					type="number"
-				/>
+				<DetailItem label="Enemy ID" bind:value={editData.enemy_id} editable={true} type="number" />
 				<DetailItem
 					label="Summon ID"
 					bind:value={editData.summon_id}
 					editable={true}
 					type="number"
 				/>
-				<DetailItem
-					label="Quest ID"
-					bind:value={editData.quest_id}
-					editable={true}
-					type="number"
-				/>
+				<DetailItem label="Quest ID" bind:value={editData.quest_id} editable={true} type="number" />
 			</DetailsContainer>
 
 			<DetailsContainer title="Classification">
@@ -252,7 +234,11 @@
 			</DetailsContainer>
 		</section>
 	{:else}
-		<NotFoundPlaceholder title="Raid Not Found" backHref="/database/raids" backLabel="Back to Raids" />
+		<NotFoundPlaceholder
+			title="Raid Not Found"
+			backHref="/database/raids"
+			backLabel="Back to Raids"
+		/>
 	{/if}
 </div>
 

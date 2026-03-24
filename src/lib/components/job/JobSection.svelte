@@ -87,7 +87,11 @@
 			</Tooltip>
 		{:else if canEdit && job?.accessory}
 			<Tooltip content={m.party_job_select_accessory()}>
-				<button class="accessory-button interactive" onclick={onSelectAccessory} aria-label={m.party_job_select_accessory()}>
+				<button
+					class="accessory-button interactive"
+					onclick={onSelectAccessory}
+					aria-label={m.party_job_select_accessory()}
+				>
 					<Icon name="plus" size={16} />
 				</button>
 			</Tooltip>
@@ -151,8 +155,7 @@
 					{/if}
 				{/each}
 			</div>
-
-			{:else}
+		{:else}
 			<div class="no-job-message" class:readonly={!canEdit}>
 				{#if canEdit}
 					<Button onclick={onSelectJob} small>{m.job_choose()}</Button>

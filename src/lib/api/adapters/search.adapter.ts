@@ -179,7 +179,7 @@ export class SearchAdapter extends BaseAdapter {
 	 */
 	constructor(options?: AdapterOptions) {
 		super({
-			...options,
+			...options
 			// Search endpoints don't use credentials to avoid CORS issues
 			// This is handled per-request instead
 		})

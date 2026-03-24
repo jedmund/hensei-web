@@ -1,22 +1,22 @@
 <!-- Switch Component -->
 <script lang="ts">
-	import { Switch as SwitchPrimitive } from 'bits-ui';
+	import { Switch as SwitchPrimitive } from 'bits-ui'
 
 	interface Props {
-		checked?: boolean;
-		disabled?: boolean;
-		required?: boolean;
-		name?: string;
-		value?: string;
+		checked?: boolean
+		disabled?: boolean
+		required?: boolean
+		name?: string
+		value?: string
 		/** Switch size */
-		size?: 'small' | 'medium' | 'large';
+		size?: 'small' | 'medium' | 'large'
 		/** Full width switch */
-		fullWidth?: boolean;
+		fullWidth?: boolean
 		/** Element color theme for checked state */
-		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined;
-		onCheckedChange?: (checked: boolean) => void;
-		class?: string;
-		thumbClass?: string;
+		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
+		onCheckedChange?: (checked: boolean) => void
+		class?: string
+		thumbClass?: string
 	}
 
 	let {
@@ -31,25 +31,25 @@
 		onCheckedChange,
 		class: className,
 		thumbClass
-	}: Props = $props();
+	}: Props = $props()
 
 	$effect(() => {
 		if (onCheckedChange && checked !== undefined) {
-			onCheckedChange(checked);
+			onCheckedChange(checked)
 		}
-	});
+	})
 
 	const switchClass = $derived(
 		['switch', size, fullWidth && 'full', element, className].filter(Boolean).join(' ')
-	);
+	)
 </script>
 
 <SwitchPrimitive.Root
 	bind:checked
 	{disabled}
 	{required}
-	{...(name !== undefined ? { name } : {})}
-	{...(value !== undefined ? { value } : {})}
+	{...name !== undefined ? { name } : {}}
+	{...value !== undefined ? { value } : {}}
 	class={switchClass}
 >
 	<SwitchPrimitive.Thumb class="thumb {thumbClass || ''}" />

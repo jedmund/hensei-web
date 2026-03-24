@@ -53,11 +53,13 @@
 
 	<div class="info">
 		<span class="name">{name}</span>
-		<CharacterTags character={{
-			element: character.element,
-			season: character.season,
-			series: character.series
-		}} />
+		<CharacterTags
+			character={{
+				element: character.element,
+				season: character.season,
+				series: character.series
+			}}
+		/>
 	</div>
 
 	<div class="element-cell">

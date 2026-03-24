@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -16,7 +15,11 @@
 		maxExorcismLevel?: number | null
 	}
 
-	let { currentBefoulment = $bindable<Befoulment | null>(null), locale = 'en', maxExorcismLevel = null }: Props = $props()
+	let {
+		currentBefoulment = $bindable<Befoulment | null>(null),
+		locale = 'en',
+		maxExorcismLevel = null
+	}: Props = $props()
 
 	const befoulmentQuery = createQuery(() => entityQueries.befoulments())
 

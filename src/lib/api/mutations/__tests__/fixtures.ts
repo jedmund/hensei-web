@@ -6,8 +6,23 @@
  * that mutations actually read or transform.
  */
 
-import type { Party, GridWeapon, GridCharacter, GridSummon, JobSkillList, GuidebookList } from '$lib/types/api/party'
-import type { Weapon, Character, Summon, Job, JobSkill, JobAccessory, Guidebook } from '$lib/types/api/entities'
+import type {
+	Party,
+	GridWeapon,
+	GridCharacter,
+	GridSummon,
+	JobSkillList,
+	GuidebookList
+} from '$lib/types/api/party'
+import type {
+	Weapon,
+	Character,
+	Summon,
+	Job,
+	JobSkill,
+	JobAccessory,
+	Guidebook
+} from '$lib/types/api/entities'
 
 // ============================================================================
 // Base Entities

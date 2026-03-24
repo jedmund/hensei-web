@@ -31,7 +31,9 @@
 	}
 
 	const videoId = $derived(videoUrl ? extractYoutubeId(videoUrl) : null)
-	const thumbnailUrl = $derived(videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : null)
+	const thumbnailUrl = $derived(
+		videoId ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg` : null
+	)
 
 	let videoTitle = $state<string | null>(null)
 
@@ -93,10 +95,7 @@
 </script>
 
 <Dialog bind:open>
-	<ModalHeader
-		title={m.playlist_edit()}
-		description={m.playlist_edit_desc()}
-	/>
+	<ModalHeader title={m.playlist_edit()} description={m.playlist_edit_desc()} />
 
 	<ModalBody>
 		<div class="form">

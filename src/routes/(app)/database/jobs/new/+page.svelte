@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
@@ -81,9 +80,7 @@
 	})
 
 	// Validation
-	const canCreate = $derived(
-		editData.name.trim() !== '' && editData.granblueId.trim() !== ''
-	)
+	const canCreate = $derived(editData.name.trim() !== '' && editData.granblueId.trim() !== '')
 
 	async function handleCreate() {
 		if (!canCreate) return

@@ -46,7 +46,13 @@
 		initialEdit?: boolean
 	}
 
-	let { character: initialCharacter, isOwner, onClose, paneId, initialEdit = false }: Props = $props()
+	let {
+		character: initialCharacter,
+		isOwner,
+		onClose,
+		paneId,
+		initialEdit = false
+	}: Props = $props()
 
 	// Local state for the character - updated when mutation succeeds or prop changes
 	let character = $state<CollectionCharacter>(initialCharacter)
@@ -363,15 +369,26 @@
 							transcendence={characterData?.uncap?.transcendence}
 						/>
 					</DetailRow>
-					<DetailRow label={m.label_perpetuity_ring()} value={character.perpetuity ? m.label_equipped() : '—'} />
+					<DetailRow
+						label={m.label_perpetuity_ring()}
+						value={character.perpetuity ? m.label_equipped() : '—'}
+					/>
 				</DetailsSection>
 
-				<DetailsSection title={m.details_awakening()} empty={!hasAwakening} emptyMessage={m.collection_not_set()}>
+				<DetailsSection
+					title={m.details_awakening()}
+					empty={!hasAwakening}
+					emptyMessage={m.collection_not_set()}
+				>
 					<DetailRow label={m.label_type()} value={getAwakeningType()} />
 					<DetailRow label={m.label_level()} value={getAwakeningLevel()} />
 				</DetailsSection>
 
-				<DetailsSection title={m.details_over_mastery()} empty={!hasRings} emptyMessage={m.collection_no_ring()}>
+				<DetailsSection
+					title={m.details_over_mastery()}
+					empty={!hasRings}
+					emptyMessage={m.collection_no_ring()}
+				>
 					{#if character.ring1?.modifier != null && character.ring1.modifier !== 0}
 						<DetailRow
 							label={getRingLabel(character.ring1)}

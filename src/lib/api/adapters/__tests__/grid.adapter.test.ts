@@ -513,9 +513,7 @@ describe('GridAdapter', () => {
 				json: async () => ({ error: 'Grid weapon not found' })
 			})
 
-			await expect(
-				adapter.updateWeapon('invalid-id', { uncapLevel: 5 })
-			).rejects.toThrow()
+			await expect(adapter.updateWeapon('invalid-id', { uncapLevel: 5 })).rejects.toThrow()
 		})
 
 		it('should handle validation errors', async () => {

@@ -39,4 +39,3 @@ export function getAccessoryTypeOptions(): Array<{ value: number; label: string 
 		{ value: ACCESSORY_TYPES.MANATURA, label: m.accessory_type_manatura() }
 	]
 }
-

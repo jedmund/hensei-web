@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { createMutation, useQueryClient } from '@tanstack/svelte-query'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
@@ -85,7 +84,8 @@
 	function initializeForm() {
 		if (existingScore) {
 			crewScore = formatScore(existingScore.crewScore)
-			opponentScore = existingScore.opponentScore !== null ? formatScore(existingScore.opponentScore) : ''
+			opponentScore =
+				existingScore.opponentScore !== null ? formatScore(existingScore.opponentScore) : ''
 			opponentName = existingScore.opponentName ?? ''
 			opponentCrewId = existingScore.opponentGranblueId ?? ''
 		} else {

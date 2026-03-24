@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import PageMeta from '$lib/components/PageMeta.svelte'
@@ -105,9 +104,7 @@
 		goto(`/database/bullets/${bullet?.granblueId || bullet?.id}`)
 	}
 
-	const pageTitle = $derived(
-		m.page_title_db_edit({ name: bullet?.name?.en ?? 'Bullet' })
-	)
+	const pageTitle = $derived(m.page_title_db_edit({ name: bullet?.name?.en ?? 'Bullet' }))
 </script>
 
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
@@ -169,24 +166,14 @@
 					type="select"
 					options={bulletTypeOptions}
 				/>
-				<DetailItem
-					label="ATK"
-					bind:value={editData.atk}
-					editable={true}
-					type="number"
-				/>
+				<DetailItem label="ATK" bind:value={editData.atk} editable={true} type="number" />
 				<DetailItem
 					label="Hits All"
 					bind:value={editData.hitsAll}
 					editable={true}
 					type="checkbox"
 				/>
-				<DetailItem
-					label="Order"
-					bind:value={editData.order}
-					editable={true}
-					type="number"
-				/>
+				<DetailItem label="Order" bind:value={editData.order} editable={true} type="number" />
 			</DetailsContainer>
 
 			<DetailsContainer title="Effect">

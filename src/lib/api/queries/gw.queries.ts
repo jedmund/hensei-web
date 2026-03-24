@@ -32,97 +32,97 @@ import { gwAdapter } from '$lib/api/adapters/gw.adapter'
  * ```
  */
 export const gwQueries = {
-  /**
-   * All GW events query options
-   */
-  events: () =>
-    queryOptions({
-      queryKey: ['gw', 'events'] as const,
-      queryFn: () => gwAdapter.getEvents(),
-      staleTime: 1000 * 60 * 10, // 10 minutes - events don't change often
-      gcTime: 1000 * 60 * 60 // 1 hour
-    }),
+	/**
+	 * All GW events query options
+	 */
+	events: () =>
+		queryOptions({
+			queryKey: ['gw', 'events'] as const,
+			queryFn: () => gwAdapter.getEvents(),
+			staleTime: 1000 * 60 * 10, // 10 minutes - events don't change often
+			gcTime: 1000 * 60 * 60 // 1 hour
+		}),
 
-  /**
-   * Single GW event query options
-   *
-   * @param eventId - Event ID
-   */
-  event: (eventId: string) =>
-    queryOptions({
-      queryKey: ['gw', 'events', eventId] as const,
-      queryFn: () => gwAdapter.getEvent(eventId),
-      enabled: !!eventId,
-      staleTime: 1000 * 60 * 10, // 10 minutes
-      gcTime: 1000 * 60 * 60 // 1 hour
-    }),
+	/**
+	 * Single GW event query options
+	 *
+	 * @param eventId - Event ID
+	 */
+	event: (eventId: string) =>
+		queryOptions({
+			queryKey: ['gw', 'events', eventId] as const,
+			queryFn: () => gwAdapter.getEvent(eventId),
+			enabled: !!eventId,
+			staleTime: 1000 * 60 * 10, // 10 minutes
+			gcTime: 1000 * 60 * 60 // 1 hour
+		}),
 
-  /**
-   * Crew's GW participations query options
-   */
-  participations: () =>
-    queryOptions({
-      queryKey: ['gw', 'participations'] as const,
-      queryFn: () => gwAdapter.getParticipations(),
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30 // 30 minutes
-    }),
+	/**
+	 * Crew's GW participations query options
+	 */
+	participations: () =>
+		queryOptions({
+			queryKey: ['gw', 'participations'] as const,
+			queryFn: () => gwAdapter.getParticipations(),
+			staleTime: 1000 * 60 * 5, // 5 minutes
+			gcTime: 1000 * 60 * 30 // 30 minutes
+		}),
 
-  /**
-   * Single participation with scores query options
-   *
-   * @param participationId - Participation ID
-   */
-  participation: (participationId: string) =>
-    queryOptions({
-      queryKey: ['gw', 'participations', participationId] as const,
-      queryFn: () => gwAdapter.getParticipation(participationId),
-      enabled: !!participationId,
-      staleTime: 1000 * 60 * 2, // 2 minutes - scores change during event
-      gcTime: 1000 * 60 * 15 // 15 minutes
-    }),
+	/**
+	 * Single participation with scores query options
+	 *
+	 * @param participationId - Participation ID
+	 */
+	participation: (participationId: string) =>
+		queryOptions({
+			queryKey: ['gw', 'participations', participationId] as const,
+			queryFn: () => gwAdapter.getParticipation(participationId),
+			enabled: !!participationId,
+			staleTime: 1000 * 60 * 2, // 2 minutes - scores change during event
+			gcTime: 1000 * 60 * 15 // 15 minutes
+		}),
 
-  /**
-   * Member's GW scores history query options (by membership ID)
-   *
-   * @param membershipId - Crew membership ID
-   */
-  memberGwScores: (membershipId: string) =>
-    queryOptions({
-      queryKey: ['crew', 'member', membershipId, 'gw_scores'] as const,
-      queryFn: () => gwAdapter.getMemberGwScores(membershipId),
-      enabled: !!membershipId,
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30 // 30 minutes
-    }),
+	/**
+	 * Member's GW scores history query options (by membership ID)
+	 *
+	 * @param membershipId - Crew membership ID
+	 */
+	memberGwScores: (membershipId: string) =>
+		queryOptions({
+			queryKey: ['crew', 'member', membershipId, 'gw_scores'] as const,
+			queryFn: () => gwAdapter.getMemberGwScores(membershipId),
+			enabled: !!membershipId,
+			staleTime: 1000 * 60 * 5, // 5 minutes
+			gcTime: 1000 * 60 * 30 // 30 minutes
+		}),
 
-  /**
-   * Member's GW scores history query options (by username)
-   *
-   * @param username - User's username
-   */
-  memberGwScoresByUsername: (username: string) =>
-    queryOptions({
-      queryKey: ['crew', 'member', 'username', username, 'gw_scores'] as const,
-      queryFn: () => gwAdapter.getMemberGwScoresByUsername(username),
-      enabled: !!username,
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30 // 30 minutes
-    }),
+	/**
+	 * Member's GW scores history query options (by username)
+	 *
+	 * @param username - User's username
+	 */
+	memberGwScoresByUsername: (username: string) =>
+		queryOptions({
+			queryKey: ['crew', 'member', 'username', username, 'gw_scores'] as const,
+			queryFn: () => gwAdapter.getMemberGwScoresByUsername(username),
+			enabled: !!username,
+			staleTime: 1000 * 60 * 5, // 5 minutes
+			gcTime: 1000 * 60 * 30 // 30 minutes
+		}),
 
-  /**
-   * Phantom's GW scores history query options
-   *
-   * @param phantomId - Phantom player ID
-   */
-  phantomGwScores: (phantomId: string) =>
-    queryOptions({
-      queryKey: ['crew', 'phantom', phantomId, 'gw_scores'] as const,
-      queryFn: () => gwAdapter.getPhantomGwScores(phantomId),
-      enabled: !!phantomId,
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      gcTime: 1000 * 60 * 30 // 30 minutes
-    })
+	/**
+	 * Phantom's GW scores history query options
+	 *
+	 * @param phantomId - Phantom player ID
+	 */
+	phantomGwScores: (phantomId: string) =>
+		queryOptions({
+			queryKey: ['crew', 'phantom', phantomId, 'gw_scores'] as const,
+			queryFn: () => gwAdapter.getPhantomGwScores(phantomId),
+			enabled: !!phantomId,
+			staleTime: 1000 * 60 * 5, // 5 minutes
+			gcTime: 1000 * 60 * 30 // 30 minutes
+		})
 }
 
 /**
@@ -143,12 +143,14 @@ export const gwQueries = {
  * ```
  */
 export const gwKeys = {
-  all: ['gw'] as const,
-  events: () => [...gwKeys.all, 'events'] as const,
-  event: (eventId: string) => [...gwKeys.all, 'events', eventId] as const,
-  participationsAll: () => [...gwKeys.all, 'participations'] as const,
-  participation: (participationId: string) => [...gwKeys.all, 'participations', participationId] as const,
-  memberGwScores: (membershipId: string) => ['crew', 'member', membershipId, 'gw_scores'] as const,
-  memberGwScoresByUsername: (username: string) => ['crew', 'member', 'username', username, 'gw_scores'] as const,
-  phantomGwScores: (phantomId: string) => ['crew', 'phantom', phantomId, 'gw_scores'] as const
+	all: ['gw'] as const,
+	events: () => [...gwKeys.all, 'events'] as const,
+	event: (eventId: string) => [...gwKeys.all, 'events', eventId] as const,
+	participationsAll: () => [...gwKeys.all, 'participations'] as const,
+	participation: (participationId: string) =>
+		[...gwKeys.all, 'participations', participationId] as const,
+	memberGwScores: (membershipId: string) => ['crew', 'member', membershipId, 'gw_scores'] as const,
+	memberGwScoresByUsername: (username: string) =>
+		['crew', 'member', 'username', username, 'gw_scores'] as const,
+	phantomGwScores: (phantomId: string) => ['crew', 'phantom', phantomId, 'gw_scores'] as const
 }

@@ -14,9 +14,7 @@
 
 	let { character, selected = false, onToggle }: Props = $props()
 
-	const imageUrl = $derived(
-		getCharacterImage(character.granblueId, 'grid', '01')
-	)
+	const imageUrl = $derived(getCharacterImage(character.granblueId, 'grid', '01'))
 
 	const name = $derived(localizedName(character.name))
 

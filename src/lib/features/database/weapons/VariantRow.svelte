@@ -15,7 +15,8 @@
 		if (v.hasAwakening !== null) parts.push(`Awakening: ${v.hasAwakening ? 'Yes' : 'No'}`)
 		if (v.numWeaponKeys !== null) parts.push(`Key Slots: ${v.numWeaponKeys}`)
 		if (v.augmentType !== null) parts.push(`Augment: ${getAugmentTypeLabel(v.augmentType)}`)
-		if (v.elementChangeable !== null) parts.push(`Element Change: ${v.elementChangeable ? 'Yes' : 'No'}`)
+		if (v.elementChangeable !== null)
+			parts.push(`Element Change: ${v.elementChangeable ? 'Yes' : 'No'}`)
 		if (v.extra !== null) parts.push(`Extra: ${v.extra ? 'Yes' : 'No'}`)
 		return parts.join(', ') || 'No overrides'
 	}

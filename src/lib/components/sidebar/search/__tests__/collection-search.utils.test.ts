@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import type { CollectionCharacter, CollectionWeapon, CollectionSummon } from '$lib/types/api/collection'
+import type {
+	CollectionCharacter,
+	CollectionWeapon,
+	CollectionSummon
+} from '$lib/types/api/collection'
 import type { Character, Weapon, Summon } from '$lib/types/api/entities'
 import {
 	getCollectionEntity,

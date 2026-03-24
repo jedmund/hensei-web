@@ -60,7 +60,7 @@
 
 <RadioGroupPrimitive.Item
 	{value}
-	{...(disabled !== undefined ? { disabled } : {})}
+	{...disabled !== undefined ? { disabled } : {}}
 	class={segmentClass}
 >
 	{#snippet children({ checked })}

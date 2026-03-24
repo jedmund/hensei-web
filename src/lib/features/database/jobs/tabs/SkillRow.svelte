@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import type { JobSkill } from '$lib/types/api/entities'
@@ -46,10 +45,16 @@
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Portal>
 					<DropdownMenu.Content class="dropdown-menu" side="bottom" align="end" sideOffset={4}>
-						<DropdownMenu.Item class="dropdown-menu-item" onSelect={() => goto(localizeHref(`/database/job-skills/${skill.id}`))}>
+						<DropdownMenu.Item
+							class="dropdown-menu-item"
+							onSelect={() => goto(localizeHref(`/database/job-skills/${skill.id}`))}
+						>
 							View skill
 						</DropdownMenu.Item>
-						<DropdownMenu.Item class="dropdown-menu-item" onSelect={() => goto(localizeHref(`/database/job-skills/${skill.id}/edit`))}>
+						<DropdownMenu.Item
+							class="dropdown-menu-item"
+							onSelect={() => goto(localizeHref(`/database/job-skills/${skill.id}/edit`))}
+						>
 							Edit skill
 						</DropdownMenu.Item>
 						<DropdownMenu.Item class="dropdown-menu-item danger" onSelect={() => onDelete?.(skill)}>

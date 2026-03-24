@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import Icon from '$lib/components/Icon.svelte'
 	import { getPlaceholderImage } from '$lib/utils/images'
@@ -87,7 +86,10 @@
 		background: var(--page-bg);
 		cursor: pointer;
 		overflow: hidden;
-		transition: border-color 0.15s ease, transform 0.15s ease, opacity 0.15s ease;
+		transition:
+			border-color 0.15s ease,
+			transform 0.15s ease,
+			opacity 0.15s ease;
 
 		&:hover:not(:disabled) {
 			transform: scale(1.05);

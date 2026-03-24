@@ -14,11 +14,7 @@
 
 <div class="recruits-cell">
 	{#if recruits && displayName}
-		<img
-			src={getCharacterImage(recruits.granblueId, 'square')}
-			alt=""
-			class="recruits-image"
-		/>
+		<img src={getCharacterImage(recruits.granblueId, 'square')} alt="" class="recruits-image" />
 		<span class="recruits-name" title={displayName}>{displayName}</span>
 	{:else}
 		<span class="empty">—</span>

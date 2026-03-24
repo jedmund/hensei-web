@@ -322,7 +322,7 @@ export interface CreateCharacterPayload {
 	granblue_id: string
 	name_en: string
 	name_jp?: string
-	character_id?: number[]  // Array for dual/trio units
+	character_id?: number[] // Array for dual/trio units
 	rarity?: number
 	element?: number
 	race1?: number | null
@@ -403,12 +403,12 @@ export interface CreateSummonPayload {
 	max_hp?: number
 	max_hp_flb?: number
 	max_hp_ulb?: number
-	max_hp_xlb?: number  // transcendence HP
+	max_hp_xlb?: number // transcendence HP
 	min_atk?: number
 	max_atk?: number
 	max_atk_flb?: number
 	max_atk_ulb?: number
-	max_atk_xlb?: number  // transcendence ATK
+	max_atk_xlb?: number // transcendence ATK
 	max_level?: number
 	flb?: boolean
 	ulb?: boolean
@@ -497,7 +497,7 @@ export interface CreateWeaponPayload {
 	wiki_raw?: string
 	gamewith?: string
 	kamigame?: string
-	recruits?: string | null  // Character ID reference
+	recruits?: string | null // Character ID reference
 	nicknames_en?: string[]
 	nicknames_jp?: string[]
 	awakening_ids?: string[]
@@ -689,7 +689,6 @@ export interface BatchPreviewResponse<T> {
  * Entity adapter for accessing canonical game data
  */
 export class EntityAdapter extends BaseAdapter {
-
 	/**
 	 * Gets canonical weapon data by ID
 	 */
@@ -724,7 +723,7 @@ export class EntityAdapter extends BaseAdapter {
 	 */
 	async getWeapons(ids: string[]): Promise<Weapon[]> {
 		// Fetch in parallel with individual caching
-		const promises = ids.map(id => this.getWeapon(id))
+		const promises = ids.map((id) => this.getWeapon(id))
 		return Promise.all(promises)
 	}
 
@@ -732,7 +731,7 @@ export class EntityAdapter extends BaseAdapter {
 	 * Batch fetch multiple characters
 	 */
 	async getCharacters(ids: string[]): Promise<Character[]> {
-		const promises = ids.map(id => this.getCharacter(id))
+		const promises = ids.map((id) => this.getCharacter(id))
 		return Promise.all(promises)
 	}
 
@@ -740,7 +739,7 @@ export class EntityAdapter extends BaseAdapter {
 	 * Batch fetch multiple summons
 	 */
 	async getSummons(ids: string[]): Promise<Summon[]> {
-		const promises = ids.map(id => this.getSummon(id))
+		const promises = ids.map((id) => this.getSummon(id))
 		return Promise.all(promises)
 	}
 
@@ -874,7 +873,15 @@ export class EntityAdapter extends BaseAdapter {
 	/**
 	 * Clears entity cache
 	 */
-	clearEntityCache(type?: 'weapons' | 'characters' | 'summons' | 'weapon_keys' | 'weapon_series' | 'weapon_stat_modifiers') {
+	clearEntityCache(
+		type?:
+			| 'weapons'
+			| 'characters'
+			| 'summons'
+			| 'weapon_keys'
+			| 'weapon_series'
+			| 'weapon_stat_modifiers'
+	) {
 		if (type) {
 			this.clearCache(`/${type}`)
 		} else {
@@ -1495,13 +1502,10 @@ export class EntityAdapter extends BaseAdapter {
 		seriesId: string,
 		payload: CreateWeaponSeriesVariantPayload
 	): Promise<WeaponSeriesVariant> {
-		return this.request<WeaponSeriesVariant>(
-			`/weapon_series/${seriesId}/weapon_series_variants`,
-			{
-				method: 'POST',
-				body: { weapon_series_variant: payload }
-			}
-		)
+		return this.request<WeaponSeriesVariant>(`/weapon_series/${seriesId}/weapon_series_variants`, {
+			method: 'POST',
+			body: { weapon_series_variant: payload }
+		})
 	}
 
 	async updateWeaponSeriesVariant(

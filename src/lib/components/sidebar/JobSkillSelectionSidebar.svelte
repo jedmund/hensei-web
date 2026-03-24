@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { onDestroy } from 'svelte'
@@ -19,7 +18,10 @@
 		targetSlot: number
 		initialSearchQuery?: string
 		initialSkillCategory?: number
-		onSelectSkill?: (skill: JobSkill, filterState: { searchQuery: string; skillCategory: number }) => void
+		onSelectSkill?: (
+			skill: JobSkill,
+			filterState: { searchQuery: string; skillCategory: number }
+		) => void
 		onRemoveSkill?: () => void
 	}
 
@@ -99,7 +101,11 @@
 
 	let sentinelEl = $state<HTMLElement>()
 
-	const loader = useInfiniteLoader(() => skillsQuery, () => sentinelEl, { rootMargin: '200px' })
+	const loader = useInfiniteLoader(
+		() => skillsQuery,
+		() => sentinelEl,
+		{ rootMargin: '200px' }
+	)
 
 	$effect(() => {
 		void debouncedSearchQuery
@@ -160,11 +166,7 @@
 	{#if currentSkill && !slotLocked}
 		<div class="current-skill">
 			<h4>{m.skill_slot_current()}</h4>
-			<JobSkillItem
-				skill={currentSkill}
-				variant="current"
-				onRemove={handleRemoveSkill}
-			/>
+			<JobSkillItem skill={currentSkill} variant="current" onRemove={handleRemoveSkill} />
 		</div>
 	{/if}
 
@@ -172,7 +174,7 @@
 		<div class="error-banner">
 			<Icon name="alert-circle" size={16} />
 			<p>{error}</p>
-			<button class="close-error" onclick={() => error = undefined}>
+			<button class="close-error" onclick={() => (error = undefined)}>
 				<Icon name="x" size={16} />
 			</button>
 		</div>
@@ -211,10 +213,7 @@
 		{#snippet results()}
 			<div class="skills-list">
 				{#each skills as skill (skill.id)}
-					<JobSkillItem
-						{skill}
-						onClick={() => handleSelectSkill(skill)}
-					/>
+					<JobSkillItem {skill} onClick={() => handleSelectSkill(skill)} />
 				{/each}
 
 				<div

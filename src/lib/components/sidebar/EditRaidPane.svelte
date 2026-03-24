@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	/**
 	 * EditRaidPane - Raid selection pane for the sidebar

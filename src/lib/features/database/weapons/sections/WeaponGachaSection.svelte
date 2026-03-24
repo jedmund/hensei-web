@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
@@ -13,11 +12,7 @@
 		editData?: any
 	}
 
-	let {
-		weapon,
-		editMode = false,
-		editData = $bindable()
-	}: Props = $props()
+	let { weapon, editMode = false, editData = $bindable() }: Props = $props()
 
 	// Promotion options for multiselect
 	const promotionOptions = Object.entries(PROMOTION_NAMES).map(([value, label]) => ({
@@ -46,7 +41,13 @@
 		<DetailItem label="Recruits" sublabel="Character recruited by this weapon" editable={true}>
 			<CharacterTypeahead
 				bind:value={editData.recruits}
-				initialCharacter={weapon.recruits ? { id: weapon.recruits.id, name: weapon.recruits.name?.en || weapon.recruits.granblueId, granblueId: weapon.recruits.granblueId } : null}
+				initialCharacter={weapon.recruits
+					? {
+							id: weapon.recruits.id,
+							name: weapon.recruits.name?.en || weapon.recruits.granblueId,
+							granblueId: weapon.recruits.granblueId
+						}
+					: null}
 				placeholder="Search for character..."
 				contained
 			/>
@@ -66,4 +67,3 @@
 		</DetailItem>
 	{/if}
 </DetailsContainer>
-

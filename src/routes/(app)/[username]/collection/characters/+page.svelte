@@ -73,7 +73,10 @@
 
 	// State-gated infinite scroll (inspired by svelte-infinite)
 	// Encapsulates intersection observer, state machine, and all reactive effects
-	const loader = useInfiniteLoader(() => collectionQuery, () => sentinelEl)
+	const loader = useInfiniteLoader(
+		() => collectionQuery,
+		() => sentinelEl
+	)
 
 	// Flatten all characters from pages
 	const allCharacters = $derived.by((): CollectionCharacter[] => {
@@ -133,7 +136,6 @@
 	// Derived state for context menu
 	const canAccessDb = $derived(canAccessDatabase($page.data.account?.role))
 	const isTeamsPaneOpen = $derived(collectionTeamsPane.isOpen)
-
 
 	function openCharacterDetails(character: CollectionCharacter) {
 		const characterName = localizedName(character.character?.name)
@@ -231,7 +233,10 @@
 						{canAccessDb}
 						onViewInDatabase={() => viewCharacterInDatabase(character)}
 					>
-						<SelectableCollectionCard id={character.id} onClick={() => openCharacterDetails(character)}>
+						<SelectableCollectionCard
+							id={character.id}
+							onClick={() => openCharacterDetails(character)}
+						>
 							<CollectionCharacterCard
 								{character}
 								editable={data.isOwner}
@@ -270,7 +275,10 @@
 						{canAccessDb}
 						onViewInDatabase={() => viewCharacterInDatabase(character)}
 					>
-						<SelectableCollectionRow id={character.id} onClick={() => openCharacterDetails(character)}>
+						<SelectableCollectionRow
+							id={character.id}
+							onClick={() => openCharacterDetails(character)}
+						>
 							<CollectionCharacterRow
 								{character}
 								editable={data.isOwner}

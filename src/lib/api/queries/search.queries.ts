@@ -8,10 +8,7 @@
  */
 
 import { infiniteQueryOptions } from '@tanstack/svelte-query'
-import {
-	searchAdapter,
-	type SearchParams
-} from '$lib/api/adapters/search.adapter'
+import { searchAdapter, type SearchParams } from '$lib/api/adapters/search.adapter'
 
 /**
  * Filter configuration for search queries
@@ -185,7 +182,7 @@ export const searchQueries = {
 				return undefined
 			},
 			staleTime: 1000 * 60 * 5, // 5 minutes
-			gcTime: 1000 * 60 * 30, // 30 minutes
+			gcTime: 1000 * 60 * 30 // 30 minutes
 		}),
 
 	/**
@@ -258,7 +255,7 @@ export const searchQueries = {
 				return undefined
 			},
 			staleTime: 1000 * 60 * 5, // 5 minutes
-			gcTime: 1000 * 60 * 30, // 30 minutes
+			gcTime: 1000 * 60 * 30 // 30 minutes
 		}),
 
 	/**
@@ -309,6 +306,6 @@ export const searchQueries = {
 				return undefined
 			},
 			staleTime: 1000 * 60 * 5, // 5 minutes
-			gcTime: 1000 * 60 * 30, // 30 minutes
+			gcTime: 1000 * 60 * 30 // 30 minutes
 		})
 }

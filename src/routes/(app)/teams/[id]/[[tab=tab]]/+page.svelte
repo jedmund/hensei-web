@@ -68,11 +68,13 @@
 
 {#if party}
 	<Party
-		party={party}
+		{party}
 		canEdit={data.canEdit || false}
 		authUserId={data.authUserId}
 		authUsername={data.account?.username}
-		authUserAvatar={data.currentUser ? { picture: data.currentUser.picture, element: data.currentUser.element } : undefined}
+		authUserAvatar={data.currentUser
+			? { picture: data.currentUser.picture, element: data.currentUser.element }
+			: undefined}
 		{initialTab}
 	/>
 {:else}

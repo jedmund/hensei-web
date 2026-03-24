@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import Input from '../ui/Input.svelte'
@@ -178,7 +177,12 @@
 
 	// Element key ↔ numeric ID conversion
 	const ELEMENT_KEY_TO_ID: Record<string, number> = {
-		wind: 1, fire: 2, water: 3, earth: 4, dark: 5, light: 6
+		wind: 1,
+		fire: 2,
+		water: 3,
+		earth: 4,
+		dark: 5,
+		light: 6
 	}
 	const elementId = $derived(ELEMENT_KEY_TO_ID[element] ?? 1)
 
@@ -233,7 +237,9 @@
 	}
 
 	const hasSecurityChanges = $derived(localNewPassword !== '' || localConfirmPassword !== '')
-	const passwordsMatch = $derived(localNewPassword === '' || localNewPassword === localConfirmPassword)
+	const passwordsMatch = $derived(
+		localNewPassword === '' || localNewPassword === localConfirmPassword
+	)
 	const passwordError = $derived(!passwordsMatch ? m.settings_password_mismatch() : '')
 	const currentPasswordRequired = $derived(hasSecurityChanges && localCurrentPassword === '')
 </script>
@@ -279,21 +285,17 @@
 
 				<!-- Email verification status -->
 				<div class="verification-status">
-				{#if emailVerified}
-					<span class="verified">{m.settings_email_verified()}</span>
-				{:else}
-					<span class="unverified">{m.settings_email_unverified()}</span>
-					<button
-						class="resend-link"
-						onclick={handleResendVerification}
-						disabled={resending}
-					>
-						{resending ? m.settings_verification_resending() : m.settings_verification_resend()}
-					</button>
-					{#if resendMessage}
-						<span class="resend-message">{resendMessage}</span>
+					{#if emailVerified}
+						<span class="verified">{m.settings_email_verified()}</span>
+					{:else}
+						<span class="unverified">{m.settings_email_unverified()}</span>
+						<button class="resend-link" onclick={handleResendVerification} disabled={resending}>
+							{resending ? m.settings_verification_resending() : m.settings_verification_resend()}
+						</button>
+						{#if resendMessage}
+							<span class="resend-message">{resendMessage}</span>
+						{/if}
 					{/if}
-				{/if}
 				</div>
 			</div>
 		{:else}
@@ -459,7 +461,7 @@
 		color: var(--text-primary);
 	}
 
-.email-group {
+	.email-group {
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit;

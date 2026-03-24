@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { useConfirmPhantomClaim } from '$lib/api/mutations/crew.mutations'
 	import * as m from '$lib/paraglide/messages'
@@ -91,7 +90,9 @@
 		<ModalFooter
 			onCancel={handleCancel}
 			primaryAction={{
-				label: confirmMutation.isPending ? m.crew_confirm_claim_confirming() : m.crew_confirm_claim_button(),
+				label: confirmMutation.isPending
+					? m.crew_confirm_claim_confirming()
+					: m.crew_confirm_claim_button(),
 				onclick: handleConfirm,
 				disabled: confirmMutation.isPending
 			}}

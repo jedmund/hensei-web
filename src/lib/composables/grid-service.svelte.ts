@@ -49,7 +49,12 @@ export function useGridService(
 				throw err
 			}
 		},
-		async updateWeapon(partyId: string, gridWeaponId: string, updates: Partial<GridWeapon>, _editKey?: string) {
+		async updateWeapon(
+			partyId: string,
+			gridWeaponId: string,
+			updates: Partial<GridWeapon>,
+			_editKey?: string
+		) {
 			try {
 				await mutations.grid.updateWeapon.mutateAsync({
 					id: gridWeaponId,
@@ -62,7 +67,12 @@ export function useGridService(
 				throw err
 			}
 		},
-		async updateSummon(partyId: string, gridSummonId: string, updates: Partial<GridSummon>, _editKey?: string) {
+		async updateSummon(
+			partyId: string,
+			gridSummonId: string,
+			updates: Partial<GridSummon>,
+			_editKey?: string
+		) {
 			try {
 				await mutations.grid.updateSummon.mutateAsync({
 					id: gridSummonId,
@@ -93,10 +103,7 @@ export function useGridService(
 				throw err
 			}
 		},
-		async switchCharacterStyle(
-			gridCharacterId: string,
-			_editKey?: string
-		) {
+		async switchCharacterStyle(gridCharacterId: string, _editKey?: string) {
 			try {
 				await mutations.grid.switchCharacterStyle.mutateAsync({
 					id: gridCharacterId,
@@ -176,10 +183,7 @@ export function useGridService(
 				throw err
 			}
 		},
-		async updateQuickSummon(
-			gridSummonId: string,
-			quickSummon: boolean
-		) {
+		async updateQuickSummon(gridSummonId: string, quickSummon: boolean) {
 			try {
 				await mutations.grid.updateQuickSummon.mutateAsync({
 					id: gridSummonId,

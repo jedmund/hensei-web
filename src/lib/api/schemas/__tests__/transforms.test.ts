@@ -108,15 +108,9 @@ describe('transformResponse', () => {
 		const apiResponse = {
 			id: 'party-1',
 			user_id: 'u-1',
-			weapons: [
-				{ id: 'gw-1', position: 0, object: { id: 'w-1', weapon_name: 'Sword' } }
-			],
-			characters: [
-				{ id: 'gc-1', position: 0, object: { id: 'c-1', char_name: 'Alice' } }
-			],
-			summons: [
-				{ id: 'gs-1', position: 0, object: { id: 's-1', summon_name: 'Bahamut' } }
-			]
+			weapons: [{ id: 'gw-1', position: 0, object: { id: 'w-1', weapon_name: 'Sword' } }],
+			characters: [{ id: 'gc-1', position: 0, object: { id: 'c-1', char_name: 'Alice' } }],
+			summons: [{ id: 'gs-1', position: 0, object: { id: 's-1', summon_name: 'Bahamut' } }]
 		}
 
 		const result = transformResponse<any>(apiResponse)
@@ -160,15 +154,9 @@ describe('transformRequest', () => {
 	it('converts camelCase and renames entity → object', () => {
 		const requestData = {
 			userId: 'u-1',
-			weapons: [
-				{ id: 'gw-1', position: 0, weapon: { id: 'w-1', weaponName: 'Sword' } }
-			],
-			characters: [
-				{ id: 'gc-1', position: 0, character: { id: 'c-1', charName: 'Alice' } }
-			],
-			summons: [
-				{ id: 'gs-1', position: 0, summon: { id: 's-1', summonName: 'Bahamut' } }
-			]
+			weapons: [{ id: 'gw-1', position: 0, weapon: { id: 'w-1', weaponName: 'Sword' } }],
+			characters: [{ id: 'gc-1', position: 0, character: { id: 'c-1', charName: 'Alice' } }],
+			summons: [{ id: 'gs-1', position: 0, summon: { id: 's-1', summonName: 'Bahamut' } }]
 		}
 
 		const result = transformRequest(requestData)
@@ -204,9 +192,7 @@ describe('round-trip', () => {
 	it('transformResponse → transformRequest preserves structure', () => {
 		const original = {
 			party_id: 'p-1',
-			weapons: [
-				{ id: 'gw-1', main_hand: true, object: { id: 'w-1', weapon_type: 'sword' } }
-			]
+			weapons: [{ id: 'gw-1', main_hand: true, object: { id: 'w-1', weapon_type: 'sword' } }]
 		}
 
 		const toClient = transformResponse<any>(original)

@@ -31,7 +31,11 @@
 		if (type === 'character') {
 			const char = item as GridCharacter
 			const uncap = char.character?.uncap
-			return { flb: uncap?.flb, ulb: uncap?.transcendence, transcendence: uncap?.transcendence ?? false }
+			return {
+				flb: uncap?.flb,
+				ulb: uncap?.transcendence,
+				transcendence: uncap?.transcendence ?? false
+			}
 		} else if (type === 'weapon') {
 			const weapon = item as GridWeapon
 			const uncap = weapon.weapon?.uncap
@@ -64,7 +68,7 @@
 		{#if modificationStatus.hasAwakening}
 			<DetailsSection title={m.details_awakening()}>
 				<AwakeningDisplay
-					{...(char.awakening ? { awakening: char.awakening } : {})}
+					{...char.awakening ? { awakening: char.awakening } : {}}
 					size="medium"
 					showLevel={true}
 				/>

@@ -71,7 +71,10 @@
 	const imageUrl = $derived(
 		getImageUrl(resourceType as ResourceType, itemId || null, variant as ImageVariant, {
 			pose: finalPose,
-			element: (resourceType as ResourceType) === 'weapon' && (variant as ImageVariant) === 'grid' ? weaponElement : undefined
+			element:
+				(resourceType as ResourceType) === 'weapon' && (variant as ImageVariant) === 'grid'
+					? weaponElement
+					: undefined
 		})
 	)
 

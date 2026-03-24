@@ -71,7 +71,9 @@
 	// Element name for action button theming
 	const elementId = $derived(weapon.element || weaponData?.element)
 	const elementName = $derived(
-		elementId ? (getElementKey(elementId) as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light') : undefined
+		elementId
+			? (getElementKey(elementId) as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light')
+			: undefined
 	)
 
 	// Register save action in the pane header
@@ -106,11 +108,7 @@
 				<Icon name="refresh-cw" size={14} />
 				<span>{m.sidebar_weapon_out_of_sync()}</span>
 			</div>
-			<button
-				class="sync-button"
-				onclick={handleSync}
-				disabled={isSyncing}
-			>
+			<button class="sync-button" onclick={handleSync} disabled={isSyncing}>
 				{isSyncing ? m.sidebar_weapon_syncing() : m.sidebar_weapon_sync()}
 			</button>
 		</div>

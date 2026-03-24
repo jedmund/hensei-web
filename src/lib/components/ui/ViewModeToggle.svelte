@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import Icon from '../Icon.svelte'
 	import Tooltip from './Tooltip.svelte'

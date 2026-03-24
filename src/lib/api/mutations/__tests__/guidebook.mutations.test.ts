@@ -1,8 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import {
-	updatePartyGuidebookOptions,
-	removePartyGuidebookOptions
-} from '../guidebook.mutations'
+import { updatePartyGuidebookOptions, removePartyGuidebookOptions } from '../guidebook.mutations'
 import { createTestQueryClient, seedPartyCache, getCachedParty } from './helpers'
 import { MOCK_PARTY, MOCK_SHORTCODE, MOCK_GUIDEBOOK_1, MOCK_GUIDEBOOK_2 } from './fixtures'
 import type { QueryClient } from '@tanstack/svelte-query'

@@ -45,9 +45,7 @@
 		}
 	})
 
-	const canSave = $derived(
-		settingsName.trim().length > 0 && !gamertagError && !isCheckingGamertag
-	)
+	const canSave = $derived(settingsName.trim().length > 0 && !gamertagError && !isCheckingGamertag)
 
 	async function checkGamertagAvailability(value: string) {
 		if (value.length < 1) return
@@ -123,7 +121,13 @@
 	}
 </script>
 
-<Dialog bind:open onOpenChange={(o) => { if (!o) handleClose(); onOpenChange?.(o) }}>
+<Dialog
+	bind:open
+	onOpenChange={(o) => {
+		if (!o) handleClose()
+		onOpenChange?.(o)
+	}}
+>
 	{#snippet children()}
 		<ModalHeader title={m.crew_settings_title()} />
 
@@ -166,7 +170,8 @@
 
 						<div class="form-field">
 							<label for="settings-description"
-								>{m.crew_description_label()} <span class="optional">{m.crew_gamertag_optional()}</span></label
+								>{m.crew_description_label()}
+								<span class="optional">{m.crew_gamertag_optional()}</span></label
 							>
 							<textarea
 								id="settings-description"

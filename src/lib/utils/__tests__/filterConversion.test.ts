@@ -24,16 +24,12 @@ describe('filterItemsToParams', () => {
 	})
 
 	it('maps recency filter to a numeric seconds value', () => {
-		const items: FilterItem[] = [
-			{ kind: 'recency', value: 604800, label: 'Last week' }
-		]
+		const items: FilterItem[] = [{ kind: 'recency', value: 604800, label: 'Last week' }]
 		expect(filterItemsToParams(items).recency).toBe(604800)
 	})
 
 	it('maps class filter to a job string', () => {
-		const items: FilterItem[] = [
-			{ kind: 'class', value: 'berserker', label: 'Berserker' }
-		]
+		const items: FilterItem[] = [{ kind: 'class', value: 'berserker', label: 'Berserker' }]
 		expect(filterItemsToParams(items).job).toBe('berserker')
 	})
 
@@ -84,9 +80,7 @@ describe('filterItemsToParams', () => {
 	})
 
 	it('omits entity fields when no entities are present', () => {
-		const items: FilterItem[] = [
-			{ kind: 'element', value: 1, label: 'Wind' }
-		]
+		const items: FilterItem[] = [{ kind: 'element', value: 1, label: 'Wind' }]
 		const params = filterItemsToParams(items)
 		expect(params.includes).toBeUndefined()
 		expect(params.excludes).toBeUndefined()
@@ -114,35 +108,25 @@ describe('filterItemsToParams', () => {
 	})
 
 	it('maps a boost filter to boostMod param', () => {
-		const items: FilterItem[] = [
-			{ kind: 'boost', value: 'omega', label: 'Omega' }
-		]
+		const items: FilterItem[] = [{ kind: 'boost', value: 'omega', label: 'Omega' }]
 		expect(filterItemsToParams(items).boostMod).toBe('omega')
 	})
 
 	it('maps a side filter to boostSide param', () => {
-		const items: FilterItem[] = [
-			{ kind: 'side', value: 'double', label: 'Double' }
-		]
+		const items: FilterItem[] = [{ kind: 'side', value: 'double', label: 'Double' }]
 		expect(filterItemsToParams(items).boostSide).toBe('double')
 	})
 
 	it('omits boost/side params when no boost or side filter is present', () => {
-		const items: FilterItem[] = [
-			{ kind: 'element', value: 1, label: 'Wind' }
-		]
+		const items: FilterItem[] = [{ kind: 'element', value: 1, label: 'Wind' }]
 		const params = filterItemsToParams(items)
 		expect(params.boostMod).toBeUndefined()
 		expect(params.boostSide).toBeUndefined()
 	})
 
 	it('treats pinned filters identically to non-pinned', () => {
-		const pinned: FilterItem[] = [
-			{ kind: 'raid', value: 'akasha', label: 'Akasha', pinned: true }
-		]
-		const unpinned: FilterItem[] = [
-			{ kind: 'raid', value: 'akasha', label: 'Akasha' }
-		]
+		const pinned: FilterItem[] = [{ kind: 'raid', value: 'akasha', label: 'Akasha', pinned: true }]
+		const unpinned: FilterItem[] = [{ kind: 'raid', value: 'akasha', label: 'Akasha' }]
 		expect(filterItemsToParams(pinned)).toEqual(filterItemsToParams(unpinned))
 	})
 })

@@ -14,11 +14,7 @@
 
 <div class="base-weapon-cell">
 	{#if forgedFrom && displayName}
-		<img
-			src={getWeaponImage(forgedFrom.granblueId, 'square')}
-			alt=""
-			class="base-weapon-image"
-		/>
+		<img src={getWeaponImage(forgedFrom.granblueId, 'square')} alt="" class="base-weapon-image" />
 		<span class="base-weapon-name" title={displayName}>{displayName}</span>
 	{:else}
 		<span class="empty">—</span>

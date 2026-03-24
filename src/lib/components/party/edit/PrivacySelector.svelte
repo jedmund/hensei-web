@@ -22,7 +22,9 @@
 		value = Number(newValue) as PartyVisibility
 	}
 
-	const contextLabel = $derived(context === 'playlist' ? m.visibility_context_playlist() : m.visibility_context_team())
+	const contextLabel = $derived(
+		context === 'playlist' ? m.visibility_context_playlist() : m.visibility_context_team()
+	)
 
 	const descriptions: Record<string, () => string> = {
 		'1': () => m.visibility_public_description({ context: contextLabel }),

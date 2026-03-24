@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -154,10 +153,18 @@
 								{m.crew_create()}
 							</Button>
 						{:else}
-							<Button variant="primary" size="small" onclick={() => goto(localizeHref('/auth/register'))}>
+							<Button
+								variant="primary"
+								size="small"
+								onclick={() => goto(localizeHref('/auth/register'))}
+							>
 								{m.crew_sign_up()}
 							</Button>
-							<Button variant="secondary" size="small" onclick={() => goto(localizeHref('/auth/login'))}>
+							<Button
+								variant="secondary"
+								size="small"
+								onclick={() => goto(localizeHref('/auth/login'))}
+							>
 								{m.crew_log_in()}
 							</Button>
 						{/if}
@@ -212,7 +219,9 @@
 							</Tooltip>
 						{/if}
 						{#if crewStore.isOfficer}
-							<Button variant="secondary" size="small" onclick={() => (settingsModalOpen = true)}>{m.crew_settings_title()}</Button>
+							<Button variant="secondary" size="small" onclick={() => (settingsModalOpen = true)}
+								>{m.crew_settings_title()}</Button
+							>
 						{/if}
 					{/snippet}
 				</CrewHeader>
@@ -237,7 +246,10 @@
 				{:else if eventsQuery.data && eventsQuery.data.length > 0}
 					<ul class="event-list">
 						{#each eventsQuery.data as event}
-							<li class="event-item" onclick={() => goto(localizeHref(`/crew/events/${event.eventNumber}`))}>
+							<li
+								class="event-item"
+								onclick={() => goto(localizeHref(`/crew/events/${event.eventNumber}`))}
+							>
 								<div class="event-info">
 									<span class="event-number">{event.eventNumber}</span>
 									<ElementBadge element={event.element} />
@@ -305,7 +317,8 @@
 
 						<div class="form-field">
 							<label for="crew-description"
-								>{m.crew_description_label()} <span class="optional">{m.crew_gamertag_optional()}</span></label
+								>{m.crew_description_label()}
+								<span class="optional">{m.crew_gamertag_optional()}</span></label
 							>
 							<textarea
 								id="crew-description"

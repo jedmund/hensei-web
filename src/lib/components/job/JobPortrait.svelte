@@ -59,9 +59,21 @@
 	onkeydown={handleKeydown}
 >
 	{#if job}
-		<img src={portraitUrl} alt={localizedName(job.name)} class="portrait" loading="lazy" decoding="async" />
+		<img
+			src={portraitUrl}
+			alt={localizedName(job.name)}
+			class="portrait"
+			loading="lazy"
+			decoding="async"
+		/>
 		{#if size !== 'small'}
-			<img src={iconUrl} alt="{localizedName(job.name)} icon" class="icon" loading="lazy" decoding="async" />
+			<img
+				src={iconUrl}
+				alt="{localizedName(job.name)} icon"
+				class="icon"
+				loading="lazy"
+				decoding="async"
+			/>
 		{/if}
 	{:else if showPlaceholder}
 		<div class="placeholder">
@@ -85,7 +97,9 @@
 
 		&.clickable {
 			cursor: pointer;
-			transition: transform 0.2s ease, box-shadow 0.2s ease;
+			transition:
+				transform 0.2s ease,
+				box-shadow 0.2s ease;
 
 			&:hover {
 				transform: translateY(-2px);

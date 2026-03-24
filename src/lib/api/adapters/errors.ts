@@ -211,7 +211,12 @@ export function createErrorFromStatus(status: number, message?: string, details?
 			return new ApiError('BAD_GATEWAY', status, message || m.error_bad_gateway(), details)
 
 		case 503:
-			return new ApiError('SERVICE_UNAVAILABLE', status, message || m.error_service_unavailable(), details)
+			return new ApiError(
+				'SERVICE_UNAVAILABLE',
+				status,
+				message || m.error_service_unavailable(),
+				details
+			)
 
 		case 504:
 			return new ApiError('GATEWAY_TIMEOUT', status, message || m.error_gateway_timeout(), details)

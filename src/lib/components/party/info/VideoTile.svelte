@@ -64,7 +64,14 @@
 	}
 </script>
 
-<InfoTile label={m.party_video()} class="video-tile {!isEmpty ? 'has-video' : ''}" {showAdd} {onAdd} clickable={showAdd} onclick={showAdd ? onAdd : undefined}>
+<InfoTile
+	label={m.party_video()}
+	class="video-tile {!isEmpty ? 'has-video' : ''}"
+	{showAdd}
+	{onAdd}
+	clickable={showAdd}
+	onclick={showAdd ? onAdd : undefined}
+>
 	{#snippet headerAction()}
 		{#if videoUrl && videoId}
 			<Tooltip content={m.tooltip_expand_video()}>

@@ -153,7 +153,10 @@ describe('setAction / clearAction', () => {
 	})
 
 	it('clearAction removes action', () => {
-		sidebar.openWithComponent('Test', DummyComponent, undefined, { onsave: vi.fn(), saveLabel: 'Done' })
+		sidebar.openWithComponent('Test', DummyComponent, undefined, {
+			onsave: vi.fn(),
+			saveLabel: 'Done'
+		})
 		sidebar.clearAction()
 		expect(sidebar.onsave).toBeUndefined()
 	})

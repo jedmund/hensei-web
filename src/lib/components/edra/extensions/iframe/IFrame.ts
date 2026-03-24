@@ -1,10 +1,10 @@
-import { Node } from '@tiptap/core';
+import { Node } from '@tiptap/core'
 
 export interface IframeOptions {
-	allowFullscreen: boolean;
+	allowFullscreen: boolean
 	HTMLAttributes: {
-		[key: string]: unknown;
-	};
+		[key: string]: unknown
+	}
 }
 
 declare module '@tiptap/core' {
@@ -13,9 +13,9 @@ declare module '@tiptap/core' {
 			/**
 			 * Add an iframe with src
 			 */
-			setIframe: (options: { src: string }) => ReturnType;
-			removeIframe: () => ReturnType;
-		};
+			setIframe: (options: { src: string }) => ReturnType
+			removeIframe: () => ReturnType
+		}
 	}
 }
 
@@ -32,7 +32,7 @@ export default Node.create<IframeOptions>({
 			HTMLAttributes: {
 				class: 'iframe-wrapper'
 			}
-		};
+		}
 	},
 
 	addAttributes() {
@@ -47,7 +47,7 @@ export default Node.create<IframeOptions>({
 				default: this.options.allowFullscreen,
 				parseHTML: () => this.options.allowFullscreen
 			}
-		};
+		}
 	},
 
 	parseHTML() {
@@ -55,11 +55,11 @@ export default Node.create<IframeOptions>({
 			{
 				tag: 'iframe'
 			}
-		];
+		]
 	},
 
 	renderHTML({ HTMLAttributes }) {
-		return ['div', this.options.HTMLAttributes, ['iframe', HTMLAttributes]];
+		return ['div', this.options.HTMLAttributes, ['iframe', HTMLAttributes]]
 	},
 
 	addCommands() {
@@ -67,19 +67,19 @@ export default Node.create<IframeOptions>({
 			setIframe:
 				(options: { src: string }) =>
 				({ tr, dispatch }) => {
-					const { selection } = tr;
-					const node = this.type.create(options);
+					const { selection } = tr
+					const node = this.type.create(options)
 
 					if (dispatch) {
-						tr.replaceRangeWith(selection.from, selection.to, node);
+						tr.replaceRangeWith(selection.from, selection.to, node)
 					}
 
-					return true;
+					return true
 				},
 			removeIframe:
 				() =>
 				({ commands }) =>
 					commands.deleteNode(this.name)
-		};
+		}
 	}
-});
+})

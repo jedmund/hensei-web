@@ -30,7 +30,9 @@
 	}))
 
 	const accessories = $derived(accessoriesQuery.data ?? [])
-	const isEmpty = $derived(accessories.length === 0 && !accessoriesQuery.isLoading && !accessoriesQuery.isError)
+	const isEmpty = $derived(
+		accessories.length === 0 && !accessoriesQuery.isLoading && !accessoriesQuery.isError
+	)
 
 	function handleClick(accessory: JobAccessory) {
 		if (isSelected(accessory)) {

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { toast } from 'svelte-sonner'
 	import * as m from '$lib/paraglide/messages'

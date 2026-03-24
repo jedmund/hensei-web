@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { GridArtifact, CollectionArtifact } from '$lib/types/api/artifact'
 	import { getArtifactImage } from '$lib/utils/images'

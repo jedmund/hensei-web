@@ -31,7 +31,7 @@
 	// Admin + bahamut mode check for visibility filter
 	const isAdmin = $derived($page.data?.account?.role === 9)
 	const isBahamut = $derived($page.data?.currentUser?.bahamut === true)
-	const showVisibilityFilter = $derived((isOwner || (isAdmin && isBahamut)))
+	const showVisibilityFilter = $derived(isOwner || (isAdmin && isBahamut))
 
 	// Visibility filter state (all selected by default)
 	const visibilityOptions = [
@@ -72,25 +72,30 @@
 			filters: filterParams
 		}),
 		enabled: !!data.user?.username,
-		initialData: !hasActiveFilters && data.items
-			? {
-					pages: [
-						{
-							results: data.items,
-							page: data.page || 1,
-							totalPages: data.totalPages ?? 1,
-							total: data.total ?? data.items.length,
-							perPage: data.perPage || 20
-						}
-					],
-					pageParams: [1]
-				}
-			: undefined,
+		initialData:
+			!hasActiveFilters && data.items
+				? {
+						pages: [
+							{
+								results: data.items,
+								page: data.page || 1,
+								totalPages: data.totalPages ?? 1,
+								total: data.total ?? data.items.length,
+								perPage: data.perPage || 20
+							}
+						],
+						pageParams: [1]
+					}
+				: undefined,
 		initialDataUpdatedAt: Date.now()
 	}))
 
 	// State-gated infinite scroll
-	const loader = useInfiniteLoader(() => partiesQuery, () => sentinelEl, { rootMargin: '300px' })
+	const loader = useInfiniteLoader(
+		() => partiesQuery,
+		() => sentinelEl,
+		{ rootMargin: '300px' }
+	)
 
 	// Reset loader when filters change
 	$effect(() => {
@@ -289,10 +294,18 @@
 		gap: $unit-3x;
 		padding: 0;
 
-		@include breakpoint(tablet) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: $unit-2x; }
-		@include breakpoint(phone) { grid-template-columns: 1fr; gap: $unit; }
+		@include breakpoint(tablet) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: $unit-2x;
+		}
+		@include breakpoint(phone) {
+			grid-template-columns: 1fr;
+			gap: $unit;
+		}
 
-		& > li { list-style: none; }
+		& > li {
+			list-style: none;
+		}
 	}
 
 	.empty,
@@ -352,7 +365,11 @@
 	}
 
 	@keyframes spin {
-		from { transform: rotate(0deg); }
-		to { transform: rotate(360deg); }
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
 	}
 </style>

@@ -45,7 +45,12 @@ export interface RemoveGuidebookParams {
 export function updatePartyGuidebookOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: UpdateGuidebookParams) =>
-			partyAdapter.updateGuidebook(params.partyId, params.guidebookId, params.position, editKeyHeaders(params.shortcode)),
+			partyAdapter.updateGuidebook(
+				params.partyId,
+				params.guidebookId,
+				params.position,
+				editKeyHeaders(params.shortcode)
+			),
 		onMutate: async (params: UpdateGuidebookParams) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(params.shortcode) })
 
@@ -73,11 +78,7 @@ export function updatePartyGuidebookOptions(queryClient: QueryClient) {
 				queryClient.setQueryData(partyKeys.detail(params.shortcode), context.previousParty)
 			}
 		},
-		onSettled: (
-			_data: unknown,
-			_err: unknown,
-			params: UpdateGuidebookParams
-		) => {
+		onSettled: (_data: unknown, _err: unknown, params: UpdateGuidebookParams) => {
 			queryClient.invalidateQueries({ queryKey: partyKeys.detail(params.shortcode) })
 		}
 	}
@@ -86,7 +87,11 @@ export function updatePartyGuidebookOptions(queryClient: QueryClient) {
 export function removePartyGuidebookOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: RemoveGuidebookParams) =>
-			partyAdapter.removeGuidebook(params.partyId, params.position, editKeyHeaders(params.shortcode)),
+			partyAdapter.removeGuidebook(
+				params.partyId,
+				params.position,
+				editKeyHeaders(params.shortcode)
+			),
 		onMutate: async (params: RemoveGuidebookParams) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(params.shortcode) })
 
@@ -112,11 +117,7 @@ export function removePartyGuidebookOptions(queryClient: QueryClient) {
 				queryClient.setQueryData(partyKeys.detail(params.shortcode), context.previousParty)
 			}
 		},
-		onSettled: (
-			_data: unknown,
-			_err: unknown,
-			params: RemoveGuidebookParams
-		) => {
+		onSettled: (_data: unknown, _err: unknown, params: RemoveGuidebookParams) => {
 			queryClient.invalidateQueries({ queryKey: partyKeys.detail(params.shortcode) })
 		}
 	}

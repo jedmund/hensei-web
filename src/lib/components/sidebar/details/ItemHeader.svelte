@@ -20,7 +20,14 @@
 		showUncap?: boolean
 	}
 
-	let { type, item, itemData, gridUncapLevel, gridTranscendence, showUncap = true }: Props = $props()
+	let {
+		type,
+		item,
+		itemData,
+		gridUncapLevel,
+		gridTranscendence,
+		showUncap = true
+	}: Props = $props()
 
 	// Get image URL based on type using detail/base variants
 	function getImageUrl(): string {
@@ -28,7 +35,9 @@
 
 		if (type === 'character') {
 			const isStyle = (item as GridCharacter).character?.styleSwap
-			const pose = isStyle ? '01_style' : getCharacterPose(gridUncapLevel ?? undefined, gridTranscendence ?? undefined)
+			const pose = isStyle
+				? '01_style'
+				: getCharacterPose(gridUncapLevel ?? undefined, gridTranscendence ?? undefined)
 			return getCharacterDetailImage(id, pose)
 		} else if (type === 'weapon') {
 			return getWeaponBaseImage(id)
@@ -76,7 +85,8 @@
 	<div
 		class="item-header"
 		data-type={type}
-		style:background-image="url({reliefBackgroundUrl}), linear-gradient(to right, #000, #484440, #000)"
+		style:background-image="url({reliefBackgroundUrl}), linear-gradient(to right, #000, #484440,
+		#000)"
 		style:--element-color="var(--{elementName}-bg)"
 	>
 		{#if showUncap}

@@ -49,7 +49,15 @@ export function openJobSelectionSidebar(options: JobSelectionOptions) {
 }
 
 export function openJobSkillSelectionSidebar(options: JobSkillSelectionOptions) {
-	const { job, currentSkills, targetSlot, initialSearchQuery, initialSkillCategory, onSelectSkill, onRemoveSkill } = options
+	const {
+		job,
+		currentSkills,
+		targetSlot,
+		initialSearchQuery,
+		initialSkillCategory,
+		onSelectSkill,
+		onRemoveSkill
+	} = options
 
 	sidebar.openWithComponent(
 		`Select Skill - Slot ${targetSlot + 1}`,

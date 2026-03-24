@@ -30,13 +30,13 @@
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="theme-row" onpointerdown={(e) => e.stopPropagation()} onclick={(e) => e.stopPropagation()}>
+<div
+	class="theme-row"
+	onpointerdown={(e) => e.stopPropagation()}
+	onclick={(e) => e.stopPropagation()}
+>
 	<span class="theme-label">{m.nav_theme()}</span>
-	<SwitchPrimitive.Root
-		checked={isDark}
-		onCheckedChange={handleToggle}
-		class="theme-switch"
-	>
+	<SwitchPrimitive.Root checked={isDark} onCheckedChange={handleToggle} class="theme-switch">
 		<SwitchPrimitive.Thumb class="theme-thumb" />
 		<span class="track-label left">{@html MoonIcon}</span>
 		<span class="track-label right">{@html SunIcon}</span>

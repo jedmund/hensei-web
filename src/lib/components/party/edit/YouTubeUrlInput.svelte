@@ -137,8 +137,8 @@
 		type="url"
 		placeholder="https://youtube.com/watch?v=..."
 		bind:value={inputValue}
-		handleInput={handleInput}
-		handleBlur={handleBlur}
+		{handleInput}
+		{handleBlur}
 		{disabled}
 		{contained}
 		clearable

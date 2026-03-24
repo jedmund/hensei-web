@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
@@ -15,12 +14,7 @@
 		onDataChange?: () => void
 	}
 
-	let {
-		weapon,
-		editMode = false,
-		editData = $bindable(),
-		onDataChange
-	}: Props = $props()
+	let { weapon, editMode = false, editData = $bindable(), onDataChange }: Props = $props()
 
 	const uncap = $derived(
 		editMode
@@ -137,6 +131,9 @@
 			options={extraPrerequisiteOptions}
 		/>
 	{:else if weapon?.uncap?.extraPrerequisite != null}
-		<DetailItem label="Extra Prerequisite" value={getExtraPrerequisiteLabel(weapon.uncap.extraPrerequisite)} />
+		<DetailItem
+			label="Extra Prerequisite"
+			value={getExtraPrerequisiteLabel(weapon.uncap.extraPrerequisite)}
+		/>
 	{/if}
 </DetailsContainer>

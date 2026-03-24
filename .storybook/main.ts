@@ -1,5 +1,5 @@
-import type { StorybookConfig } from '@storybook/sveltekit';
-import remarkGfm from 'remark-gfm';
+import type { StorybookConfig } from '@storybook/sveltekit'
+import remarkGfm from 'remark-gfm'
 
 const config: StorybookConfig = {
 	stories: ['../src/stories/**/*.mdx', '../src/stories/**/*.stories.@(js|ts|svelte)'],
@@ -24,6 +24,6 @@ const config: StorybookConfig = {
 		options: {}
 	},
 	staticDirs: ['../static']
-};
+}
 
-export default config;
+export default config

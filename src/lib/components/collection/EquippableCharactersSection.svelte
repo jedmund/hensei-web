@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -65,11 +64,7 @@
 					{/snippet}
 					{#snippet children()}
 						<div class="character-portrait">
-							<img
-								src={getImage(character)}
-								alt={getDisplayName(character)}
-								loading="lazy"
-							/>
+							<img src={getImage(character)} alt={getDisplayName(character)} loading="lazy" />
 						</div>
 					{/snippet}
 				</RichTooltip>

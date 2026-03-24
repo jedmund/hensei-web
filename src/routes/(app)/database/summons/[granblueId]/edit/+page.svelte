@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
@@ -214,22 +213,28 @@
 <div class="page">
 	<DatabasePageHeader title="Edit Summon">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={`/database/summons/${summon?.granblueId}`}>Back</Button>
+			<Button
+				variant="ghost"
+				size="small"
+				leftIcon="chevron-left"
+				href={`/database/summons/${summon?.granblueId}`}>Back</Button
+			>
 		{/snippet}
 		{#snippet rightAction()}
-			<Button variant="element-ghost" element={elementName} size="small" onclick={saveChanges} disabled={isSaving}>
+			<Button
+				variant="element-ghost"
+				element={elementName}
+				size="small"
+				onclick={saveChanges}
+				disabled={isSaving}
+			>
 				{isSaving ? 'Saving...' : 'Save'}
 			</Button>
 		{/snippet}
 	</DatabasePageHeader>
 
 	{#if summon}
-		<DetailScaffold
-			type="summon"
-			item={summon}
-			image={getSummonGridImage(summon)}
-			{editMode}
-		>
+		<DetailScaffold type="summon" item={summon} image={getSummonGridImage(summon)} {editMode}>
 			<section class="details">
 				<SummonMetadataSection {summon} {editMode} bind:editData />
 				<SummonGachaSection {summon} {editMode} bind:editData />

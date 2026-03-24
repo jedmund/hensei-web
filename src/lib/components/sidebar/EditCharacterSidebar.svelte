@@ -49,8 +49,10 @@
 	// Style swap
 	const hasStyleVariant = $derived.by(() => {
 		if (!characterData) return false
-		return (characterData.styleSwaps && characterData.styleSwaps.length > 0) ||
+		return (
+			(characterData.styleSwaps && characterData.styleSwaps.length > 0) ||
 			(characterData.styleSwap && characterData.baseCharacter != null)
+		)
 	})
 
 	const styleSwitching = $derived(styleMutation.isPending)
@@ -95,7 +97,9 @@
 	// Element name for action button theming
 	const elementId = $derived(characterData?.element)
 	const elementName = $derived(
-		elementId ? (getElementKey(elementId) as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light') : undefined
+		elementId
+			? (getElementKey(elementId) as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light')
+			: undefined
 	)
 
 	// Register save action in the pane header
@@ -129,11 +133,7 @@
 	/>
 
 	{#if hasStyleVariant}
-		<button
-			class="style-switch-banner"
-			onclick={handleSwitchStyle}
-			disabled={styleSwitching}
-		>
+		<button class="style-switch-banner" onclick={handleSwitchStyle} disabled={styleSwitching}>
 			<Icon name="swap" size={16} />
 			<span>{styleSwitching ? 'Switching...' : 'Switch Style'}</span>
 		</button>
@@ -145,11 +145,7 @@
 				<Icon name="refresh-cw" size={14} />
 				<span>{m.details_collection_out_of_sync()}</span>
 			</div>
-			<button
-				class="sync-button"
-				onclick={handleSync}
-				disabled={isSyncing}
-			>
+			<button class="sync-button" onclick={handleSync} disabled={isSyncing}>
 				{isSyncing ? 'Syncing...' : 'Sync'}
 			</button>
 		</div>

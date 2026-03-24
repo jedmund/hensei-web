@@ -33,9 +33,7 @@
 	)
 
 	const playlistQuery = createQuery(() => playlistQueries.detail(username, playlistSlug))
-	const partyIds = $derived(
-		new Set((playlistQuery.data?.parties ?? []).map((p) => p.id))
-	)
+	const partyIds = $derived(new Set((playlistQuery.data?.parties ?? []).map((p) => p.id)))
 
 	const addMutation = useAddPartyToPlaylist()
 	const removeMutation = useRemovePartyFromPlaylist()
@@ -124,10 +122,7 @@
 								<GridRep {party} disabled dimmed={alreadyIn}>
 									{#snippet indicator()}
 										{#if alreadyIn}
-											<span
-												class="in-playlist-badge"
-												style:background-color={badgeColor}
-											>
+											<span class="in-playlist-badge" style:background-color={badgeColor}>
 												<Icon name="check" size={10} />
 											</span>
 										{/if}

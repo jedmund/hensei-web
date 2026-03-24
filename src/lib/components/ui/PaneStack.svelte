@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { DropdownMenu } from 'bits-ui'
 	import {
@@ -39,17 +38,23 @@
 
 	// Determine if a pane is the one being pushed (for entry animation)
 	function isPushing(index: number): boolean {
-		return stack.isAnimating && stack.animationDirection === 'push' && index === stack.panes.length - 1
+		return (
+			stack.isAnimating && stack.animationDirection === 'push' && index === stack.panes.length - 1
+		)
 	}
 
 	// Determine if a pane is the one being popped (for exit animation)
 	function isPopping(index: number): boolean {
-		return stack.isAnimating && stack.animationDirection === 'pop' && index === stack.panes.length - 1
+		return (
+			stack.isAnimating && stack.animationDirection === 'pop' && index === stack.panes.length - 1
+		)
 	}
 
 	// Determine if a pane is becoming active (the one behind a popping pane)
 	function isBecomingActive(index: number): boolean {
-		return stack.isAnimating && stack.animationDirection === 'pop' && index === stack.panes.length - 2
+		return (
+			stack.isAnimating && stack.animationDirection === 'pop' && index === stack.panes.length - 2
+		)
 	}
 
 	// Determine the visual depth of a pane (0 = active, 1 = one behind, 2+ = hidden)
@@ -81,7 +86,11 @@
 			class:scrollable={pane.scrollable !== false}
 			style:--pane-depth={depth}
 		>
-			<SidebarHeader title={pane.title} image={pane.image} scrolled={paneScrolled[pane.id] ?? false}>
+			<SidebarHeader
+				title={pane.title}
+				image={pane.image}
+				scrolled={paneScrolled[pane.id] ?? false}
+			>
 				{#snippet leftAccessory()}
 					{#if showBackButton}
 						<Button
@@ -122,7 +131,12 @@
 								{/snippet}
 							</DropdownMenu.Trigger>
 							<DropdownMenu.Portal>
-								<DropdownMenu.Content class="overflow-menu" side="bottom" align="end" sideOffset={4}>
+								<DropdownMenu.Content
+									class="overflow-menu"
+									side="bottom"
+									align="end"
+									sideOffset={4}
+								>
 									{#each pane.overflowMenu as item}
 										<DropdownMenu.Item
 											class="overflow-menu-item {item.variant === 'danger' ? 'danger' : ''}"
@@ -139,11 +153,11 @@
 			</SidebarHeader>
 
 			<div
-			class="pane-content"
-			onscroll={(e) => {
-				paneScrolled[pane.id] = e.currentTarget.scrollTop > 0
-			}}
-		>
+				class="pane-content"
+				onscroll={(e) => {
+					paneScrolled[pane.id] = e.currentTarget.scrollTop > 0
+				}}
+			>
 				{#key pane.id}
 					<PaneComponent {...pane.props ?? {}} paneId={pane.id} />
 				{/key}

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
@@ -32,7 +31,12 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { toast } from 'svelte-sonner'
-	import { getWeaponGridImage, getWeaponImage as getWeaponImageUrl, getWeaponTransformationStages, getWeaponFallbackImage } from '$lib/utils/images'
+	import {
+		getWeaponGridImage,
+		getWeaponImage as getWeaponImageUrl,
+		getWeaponTransformationStages,
+		getWeaponFallbackImage
+	} from '$lib/utils/images'
 	import { getElementLabel, ELEMENT_DISPLAY_ORDER } from '$lib/utils/element'
 	import {
 		buildWikiEnUrl,
@@ -104,7 +108,12 @@
 
 	// Helper function for weapon grid image
 	function getWeaponImage(weapon: any): string {
-		return getWeaponGridImage(weapon?.granblueId, weapon?.element, weapon?.instanceElement, weapon?.elementVariantIds)
+		return getWeaponGridImage(
+			weapon?.granblueId,
+			weapon?.element,
+			weapon?.instanceElement,
+			weapon?.elementVariantIds
+		)
 	}
 
 	// Fallback image for element-changeable weapons whose _0 image doesn't exist
@@ -142,12 +151,19 @@
 						})
 					} else {
 						images.push({
-							url: getWeaponImageUrl(weapon.granblueId, variant, element, undefined, weapon.elementVariantIds),
+							url: getWeaponImageUrl(
+								weapon.granblueId,
+								variant,
+								element,
+								undefined,
+								weapon.elementVariantIds
+							),
 							label: `${variant} (${elementLabel})`,
 							variant,
 							pose: `element-${element}`,
 							poseLabel: elementLabel,
-							fallbackUrl: element === 0 ? getWeaponFallbackImage(weapon.granblueId, variant) : undefined
+							fallbackUrl:
+								element === 0 ? getWeaponFallbackImage(weapon.granblueId, variant) : undefined
 						})
 					}
 				}
@@ -271,11 +287,15 @@
 <div class="page">
 	<DatabasePageHeader title="Weapon">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={getListUrl('weapons')}>Back</Button>
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href={getListUrl('weapons')}
+				>Back</Button
+			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
-				<Button variant="element-ghost" element={elementName} size="small" href={editUrl}>Edit</Button>
+				<Button variant="element-ghost" element={elementName} size="small" href={editUrl}
+					>Edit</Button
+				>
 			{/if}
 		{/snippet}
 	</DatabasePageHeader>

@@ -34,7 +34,11 @@
 		enabled: !!data.user?.username
 	}))
 
-	const loader = useInfiniteLoader(() => playlistsQuery, () => sentinelEl, { rootMargin: '300px' })
+	const loader = useInfiniteLoader(
+		() => playlistsQuery,
+		() => sentinelEl,
+		{ rootMargin: '300px' }
+	)
 
 	onDestroy(() => loader.destroy())
 
@@ -135,7 +139,8 @@
 									<ContextMenu.Content class="context-menu">
 										<ContextMenu.Item
 											class="context-menu-item"
-											onclick={() => goto(localizeHref(`/${data.user.username}/playlists/${playlist.slug}`))}
+											onclick={() =>
+												goto(localizeHref(`/${data.user.username}/playlists/${playlist.slug}`))}
 										>
 											{m.context_view_playlist()}
 										</ContextMenu.Item>
@@ -218,7 +223,9 @@
 		color: var(--text-secondary);
 		font-size: $font-small;
 		font-weight: $medium;
-		transition: background-color 0.15s ease, color 0.15s ease;
+		transition:
+			background-color 0.15s ease,
+			color 0.15s ease;
 
 		&:hover {
 			background: var(--card-bg-hover, var(--button-contained-bg-hover));
@@ -232,10 +239,18 @@
 		gap: $unit-3x;
 		padding: 0;
 
-		@include breakpoint(tablet) { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: $unit-2x; }
-		@include breakpoint(phone) { grid-template-columns: 1fr; gap: $unit; }
+		@include breakpoint(tablet) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: $unit-2x;
+		}
+		@include breakpoint(phone) {
+			grid-template-columns: 1fr;
+			gap: $unit;
+		}
 
-		& > li { list-style: none; }
+		& > li {
+			list-style: none;
+		}
 	}
 
 	.empty,
@@ -249,7 +264,9 @@
 		padding: $unit-4x;
 		color: var(--text-secondary);
 
-		p { margin: 0; }
+		p {
+			margin: 0;
+		}
 	}
 
 	.error {
@@ -265,15 +282,21 @@
 		padding: $unit-4x;
 		color: var(--text-secondary);
 
-		:global(svg) { animation: spin 1s linear infinite; }
-		p { margin: 0; }
+		:global(svg) {
+			animation: spin 1s linear infinite;
+		}
+		p {
+			margin: 0;
+		}
 	}
 
 	.load-more-sentinel {
 		height: 1px;
 		margin-top: $unit;
 
-		&.hidden { display: none; }
+		&.hidden {
+			display: none;
+		}
 	}
 
 	.loading-more {
@@ -284,11 +307,17 @@
 		padding: $unit-2x;
 		color: var(--text-secondary);
 
-		:global(svg) { animation: spin 1s linear infinite; }
+		:global(svg) {
+			animation: spin 1s linear infinite;
+		}
 	}
 
 	@keyframes spin {
-		from { transform: rotate(0deg); }
-		to { transform: rotate(360deg); }
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
 	}
 </style>

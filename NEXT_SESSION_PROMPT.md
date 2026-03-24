@@ -1,17 +1,21 @@
 # Prompt for Next Devin Session
 
 ## Task
+
 Continue cleaning up type errors in the `svelte-main` branch of `jedmund/hensei-web`. The goal is to get the build green by fixing all remaining type errors.
 
 ## Context
+
 This is a Svelte 5 rewrite of a Granblue Fantasy team composition app. The previous sessions reduced type errors from ~412 to ~161. A detailed plan of completed and remaining work is in `CLEANUP_PLAN.md`.
 
 ## Starting Point
+
 1. Checkout the `svelte-main` branch in `/home/ubuntu/repos/hensei-web`
 2. Run `pnpm check 2>&1 | grep -c "Error:"` to see current error count (~161)
 3. Review this file for detailed context on what's been fixed and what remains
 
 ## Completed Fixes (This Session - 219 -> 161 errors)
+
 - Fixed teams/new/+page.svelte position type assertions (non-null assertions for array access after length check)
 - Fixed Party.svelte editKey type (string | null -> string | undefined)
 - Fixed sidebar.svelte.ts Component type to accept any props (Component<any, any, any>)
@@ -24,6 +28,7 @@ This is a Svelte 5 rewrite of a Granblue Fantasy team composition app. The previ
 ## Remaining Type Errors to Fix (~161 errors)
 
 ### Files with Most Errors
+
 1. Party.svelte - 22 errors
 2. database/characters/[id]/+page.svelte - 19 errors
 3. Checkbox.svelte - 19 errors
@@ -83,6 +88,7 @@ This is a Svelte 5 rewrite of a Granblue Fantasy team composition app. The previ
 15. **Parameter implicitly has 'any' type** (6 errors)
 
 ## Commands Reference
+
 ```bash
 # Check error count
 pnpm check 2>&1 | grep -c "Error:"
@@ -104,6 +110,7 @@ pnpm paraglide-js compile --project ./project.inlang
 ```
 
 ## Important Notes
+
 - This project uses `exactOptionalPropertyTypes: true` in tsconfig, which is stricter than normal TypeScript
 - The codebase uses Svelte 5 runes (`$state`, `$derived`, `$effect`)
 - bits-ui v2.9.6 is used for UI components - check their docs for correct API
@@ -111,6 +118,7 @@ pnpm paraglide-js compile --project ./project.inlang
 - The branch `devin/1764361948-fix-type-errors` contains the latest fixes - merge into svelte-main or continue from there
 
 ## Success Criteria
+
 - `pnpm check` returns 0 errors
 - `pnpm lint` passes
 - `pnpm build` succeeds

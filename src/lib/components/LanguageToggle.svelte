@@ -27,19 +27,21 @@
 		// Unauthenticated fallback: set locale cookie directly and navigate
 		document.cookie = `PARAGLIDE_LOCALE=${newLocale};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`
 		await invalidateAll()
-		const basePath = deLocalizeHref(window.location.pathname + window.location.search + window.location.hash)
+		const basePath = deLocalizeHref(
+			window.location.pathname + window.location.search + window.location.hash
+		)
 		window.location.href = localizeHref(basePath, { locale: newLocale })
 	}
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
-<div class="language-row" onpointerdown={(e) => e.stopPropagation()} onclick={(e) => e.stopPropagation()}>
+<div
+	class="language-row"
+	onpointerdown={(e) => e.stopPropagation()}
+	onclick={(e) => e.stopPropagation()}
+>
 	<span class="language-label">{m.nav_language()}</span>
-	<SwitchPrimitive.Root
-		checked={isJapanese}
-		onCheckedChange={handleToggle}
-		class="language-switch"
-	>
+	<SwitchPrimitive.Root checked={isJapanese} onCheckedChange={handleToggle} class="language-switch">
 		<SwitchPrimitive.Thumb class="language-thumb" />
 		<span class="track-label left">JP</span>
 		<span class="track-label right">EN</span>

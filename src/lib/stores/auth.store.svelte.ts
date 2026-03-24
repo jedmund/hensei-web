@@ -121,11 +121,7 @@ class AuthStore {
 		return this.accessToken
 	}
 
-	initFromServer(
-		accessToken: string | null,
-		user: UserInfo | null,
-		expiresAt: string | null
-	) {
+	initFromServer(accessToken: string | null, user: UserInfo | null, expiresAt: string | null) {
 		if (accessToken && user && expiresAt) {
 			this.accessToken = accessToken
 			this.refreshToken = null

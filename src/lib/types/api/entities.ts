@@ -5,332 +5,342 @@ import type { WeaponSeriesRef } from './weaponSeries'
 import type { CharacterSeriesRef } from './characterSeries'
 
 export interface LocalizedName {
-  en: string
-  ja: string
+	en: string
+	ja: string
 }
 
 // Weapon entity from WeaponBlueprint
 export interface Weapon {
-  id: string
-  granblueId: string
-  name: LocalizedName
-  element: number
-  proficiency: number
-  rarity: number
-  maxLevel: number
-  maxSkillLevel: number
-  maxAwakeningLevel: number | null
-  maxExorcismLevel?: number | null
-  /** Weapon series - object with slug/name/flags */
-  series: WeaponSeriesRef | null
-  /** Variant override ID (via series.weaponSeriesVariantId from API) */
-  weaponSeriesVariantId?: string | null
-  ax: boolean
-  axType: number
-  limit?: number
-  extra?: boolean
-  hp: {
-    minHp: number
-    maxHp: number
-    maxHpFlb: number
-    maxHpUlb: number
-  }
-  atk: {
-    minAtk: number
-    maxAtk: number
-    maxAtkFlb: number
-    maxAtkUlb: number
-  }
-  uncap: {
-    flb: boolean
-    ulb: boolean
-    transcendence: boolean
-    extraPrerequisite?: number | null
-  }
-  transcendenceHp?: number
-  transcendenceAtk?: number
-  // Available awakenings for this weapon (from :full view)
-  awakenings?: Awakening[]
-  // Database/admin fields
-  releaseDate?: string
-  flbDate?: string
-  ulbDate?: string
-  transcendenceDate?: string
-  wiki?: { en?: string; ja?: string }
-  gamewith?: string
-  kamigame?: string
-  nicknames?: { en?: string[]; ja?: string[] }
-  recruits?: string | { id: string; granblueId: string; name: LocalizedName }
-  // Forge chain fields (forgedFrom available in :grid and :full views)
-  forgeOrder?: number | null
-  forgedFrom?: { id: string; granblueId: string; name: LocalizedName } | null
-  forgeChain?: Array<{ id: string; granblueId: string; name: LocalizedName; forgeOrder: number }> | null
-  // Element variant IDs: maps element number (as string key) to variant game ID
-  elementVariantIds?: Record<string, string> | null
-  // Bullet slots for gun-proficiency weapons (array of bullet type integers)
-  bulletSlots?: number[]
+	id: string
+	granblueId: string
+	name: LocalizedName
+	element: number
+	proficiency: number
+	rarity: number
+	maxLevel: number
+	maxSkillLevel: number
+	maxAwakeningLevel: number | null
+	maxExorcismLevel?: number | null
+	/** Weapon series - object with slug/name/flags */
+	series: WeaponSeriesRef | null
+	/** Variant override ID (via series.weaponSeriesVariantId from API) */
+	weaponSeriesVariantId?: string | null
+	ax: boolean
+	axType: number
+	limit?: number
+	extra?: boolean
+	hp: {
+		minHp: number
+		maxHp: number
+		maxHpFlb: number
+		maxHpUlb: number
+	}
+	atk: {
+		minAtk: number
+		maxAtk: number
+		maxAtkFlb: number
+		maxAtkUlb: number
+	}
+	uncap: {
+		flb: boolean
+		ulb: boolean
+		transcendence: boolean
+		extraPrerequisite?: number | null
+	}
+	transcendenceHp?: number
+	transcendenceAtk?: number
+	// Available awakenings for this weapon (from :full view)
+	awakenings?: Awakening[]
+	// Database/admin fields
+	releaseDate?: string
+	flbDate?: string
+	ulbDate?: string
+	transcendenceDate?: string
+	wiki?: { en?: string; ja?: string }
+	gamewith?: string
+	kamigame?: string
+	nicknames?: { en?: string[]; ja?: string[] }
+	recruits?: string | { id: string; granblueId: string; name: LocalizedName }
+	// Forge chain fields (forgedFrom available in :grid and :full views)
+	forgeOrder?: number | null
+	forgedFrom?: { id: string; granblueId: string; name: LocalizedName } | null
+	forgeChain?: Array<{
+		id: string
+		granblueId: string
+		name: LocalizedName
+		forgeOrder: number
+	}> | null
+	// Element variant IDs: maps element number (as string key) to variant game ID
+	elementVariantIds?: Record<string, string> | null
+	// Bullet slots for gun-proficiency weapons (array of bullet type integers)
+	bulletSlots?: number[]
 }
 
 // Character entity from CharacterBlueprint
 export interface Character {
-  id: string
-  granblueId: string
-  name: LocalizedName
-  element: number
-  rarity: number
-  maxLevel: number
-  maxAwakeningLevel?: number
-  uncap: {
-    flb: boolean
-    transcendence: boolean
-  }
-  special: boolean
-  recruits: string | null
-  gender: number
-  race: {
-    race1: number
-    race2: number
-  }
-  proficiency: number[]
-  hp?: {
-    minHp?: number
-    maxHp?: number
-    maxHpFlb?: number
-    maxHpTranscendence?: number
-  }
-  atk?: {
-    minAtk?: number
-    maxAtk?: number
-    maxAtkFlb?: number
-    maxAtkTranscendence?: number
-  }
-  // Other stats
-  baseDa?: number
-  baseTa?: number
-  ougiRatio?: {
-    ougiRatio?: number
-    ougiRatioFlb?: number
-  }
-  // Available awakenings for this character (from :full view)
-  awakenings?: Awakening[]
-  // Database/admin fields
-  characterId?: number[]
-  season?: number
-  series?: number[] | CharacterSeriesRef[]
-  /** Human-readable series names (computed by API) */
-  seriesNames?: string[]
-  releaseDate?: string
-  flbDate?: string
-  transcendenceDate?: string
-  wiki?: { en?: string; ja?: string }
-  gamewith?: string
-  kamigame?: string
-  nicknames?: { en?: string[]; ja?: string[] }
-  recruitedBy?: { id: string; granblueId: string; name: LocalizedName; promotionNames?: string[] }
-  // Style swap fields
-  styleSwap: boolean
-  styleName?: LocalizedName | null
-  baseCharacter?: { id: string; granblueId: string; name: LocalizedName } | null
-  styleSwaps?: Array<{ id: string; granblueId: string; name: LocalizedName; styleName: LocalizedName | null }>
+	id: string
+	granblueId: string
+	name: LocalizedName
+	element: number
+	rarity: number
+	maxLevel: number
+	maxAwakeningLevel?: number
+	uncap: {
+		flb: boolean
+		transcendence: boolean
+	}
+	special: boolean
+	recruits: string | null
+	gender: number
+	race: {
+		race1: number
+		race2: number
+	}
+	proficiency: number[]
+	hp?: {
+		minHp?: number
+		maxHp?: number
+		maxHpFlb?: number
+		maxHpTranscendence?: number
+	}
+	atk?: {
+		minAtk?: number
+		maxAtk?: number
+		maxAtkFlb?: number
+		maxAtkTranscendence?: number
+	}
+	// Other stats
+	baseDa?: number
+	baseTa?: number
+	ougiRatio?: {
+		ougiRatio?: number
+		ougiRatioFlb?: number
+	}
+	// Available awakenings for this character (from :full view)
+	awakenings?: Awakening[]
+	// Database/admin fields
+	characterId?: number[]
+	season?: number
+	series?: number[] | CharacterSeriesRef[]
+	/** Human-readable series names (computed by API) */
+	seriesNames?: string[]
+	releaseDate?: string
+	flbDate?: string
+	transcendenceDate?: string
+	wiki?: { en?: string; ja?: string }
+	gamewith?: string
+	kamigame?: string
+	nicknames?: { en?: string[]; ja?: string[] }
+	recruitedBy?: { id: string; granblueId: string; name: LocalizedName; promotionNames?: string[] }
+	// Style swap fields
+	styleSwap: boolean
+	styleName?: LocalizedName | null
+	baseCharacter?: { id: string; granblueId: string; name: LocalizedName } | null
+	styleSwaps?: Array<{
+		id: string
+		granblueId: string
+		name: LocalizedName
+		styleName: LocalizedName | null
+	}>
 }
 
 // Summon entity from SummonBlueprint
 export interface Summon {
-  id: string
-  granblueId: string
-  name: LocalizedName
-  element: number
-  rarity: number
-  maxLevel: number
-  uncap: {
-    flb: boolean
-    ulb: boolean
-    transcendence: boolean
-  }
-  subaura: boolean
-  limit: boolean
-  hp: {
-    minHp: number
-    maxHp: number
-    maxHpFlb: number
-    maxHpUlb: number
-  }
-  atk: {
-    minAtk: number
-    maxAtk: number
-    maxAtkFlb: number
-    maxAtkUlb: number
-  }
-  transcendenceHp?: number
-  transcendenceAtk?: number
-  series?: number
-  // Database/admin fields
-  releaseDate?: string
-  flbDate?: string
-  ulbDate?: string
-  transcendenceDate?: string
-  wiki?: { en?: string; ja?: string }
-  gamewith?: string
-  kamigame?: string
-  nicknames?: { en?: string[]; ja?: string[] }
+	id: string
+	granblueId: string
+	name: LocalizedName
+	element: number
+	rarity: number
+	maxLevel: number
+	uncap: {
+		flb: boolean
+		ulb: boolean
+		transcendence: boolean
+	}
+	subaura: boolean
+	limit: boolean
+	hp: {
+		minHp: number
+		maxHp: number
+		maxHpFlb: number
+		maxHpUlb: number
+	}
+	atk: {
+		minAtk: number
+		maxAtk: number
+		maxAtkFlb: number
+		maxAtkUlb: number
+	}
+	transcendenceHp?: number
+	transcendenceAtk?: number
+	series?: number
+	// Database/admin fields
+	releaseDate?: string
+	flbDate?: string
+	ulbDate?: string
+	transcendenceDate?: string
+	wiki?: { en?: string; ja?: string }
+	gamewith?: string
+	kamigame?: string
+	nicknames?: { en?: string[]; ja?: string[] }
 }
 
 // Raw data response from separate /raw endpoint
 export interface EntityRawData {
-  wikiRaw: string | null
-  gameRawEn: Record<string, unknown> | null
-  gameRawJp: Record<string, unknown> | null
+	wikiRaw: string | null
+	gameRawEn: Record<string, unknown> | null
+	gameRawJp: Record<string, unknown> | null
 }
 
 // Job entity from JobBlueprint
 export interface Job {
-  id: string
-  granblueId: string
-  name: LocalizedName
-  row: number
-  order: number
-  proficiency: [number, number]
-  masterLevel?: boolean    // Whether this job supports master level
-  ultimateMastery?: boolean // Whether this job supports ultimate mastery
-  accessory?: boolean
-  accessoryType?: number
-  auxWeapon?: boolean      // Whether this job requires an aux weapon in the first non-mainhand slot
+	id: string
+	granblueId: string
+	name: LocalizedName
+	row: number
+	order: number
+	proficiency: [number, number]
+	masterLevel?: boolean // Whether this job supports master level
+	ultimateMastery?: boolean // Whether this job supports ultimate mastery
+	accessory?: boolean
+	accessoryType?: number
+	auxWeapon?: boolean // Whether this job requires an aux weapon in the first non-mainhand slot
 }
 
 // JobSkill entity from JobSkillBlueprint
 export interface JobSkill {
-  id: string
-  name: LocalizedName
-  slug: string
-  color: number       // Skill category (0-3 for colors, relates to skill type)
-  main: boolean       // Primary job skill
-  sub: boolean        // Sub-skill (transferable)
-  emp: boolean        // EMP skill
-  base: boolean       // Base skill (for advanced jobs)
-  order: number       // Display order
-  job: Job            // Associated job
-  imageId?: string    // Image filename (e.g., "2710_3")
-  actionId?: number   // Unique game ID
+	id: string
+	name: LocalizedName
+	slug: string
+	color: number // Skill category (0-3 for colors, relates to skill type)
+	main: boolean // Primary job skill
+	sub: boolean // Sub-skill (transferable)
+	emp: boolean // EMP skill
+	base: boolean // Base skill (for advanced jobs)
+	order: number // Display order
+	job: Job // Associated job
+	imageId?: string // Image filename (e.g., "2710_3")
+	actionId?: number // Unique game ID
 }
 
 // JobAccessory entity from JobAccessoryBlueprint
 export interface JobAccessory {
-  id: string
-  name: LocalizedName
-  granblueId: string
-  rarity: number
-  releaseDate?: string
-  accessoryType: number  // 1 = Shield, 2 = Manatura
-  job?: Job              // Associated job (optional, included when available)
+	id: string
+	name: LocalizedName
+	granblueId: string
+	rarity: number
+	releaseDate?: string
+	accessoryType: number // 1 = Shield, 2 = Manatura
+	job?: Job // Associated job (optional, included when available)
 }
 
 // Raid entity from RaidBlueprint
 // Properties are camelCase because BaseAdapter transforms snake_case responses
 export interface Raid {
-  id: string
-  slug: string
-  name: LocalizedName
-  level: number
-  element: number
-  extra: boolean
-  playerCount?: number
-  enemyId?: number
-  summonId?: number
-  questId?: number
-  group?: RaidGroup
+	id: string
+	slug: string
+	name: LocalizedName
+	level: number
+	element: number
+	extra: boolean
+	playerCount?: number
+	enemyId?: number
+	summonId?: number
+	questId?: number
+	group?: RaidGroup
 }
 
 // RaidGroup entity from RaidGroupBlueprint
 export interface RaidGroup {
-  id: string
-  name: LocalizedName
-  section: string
-  order: number
-  difficulty: number
-  hl: boolean
-  extra: boolean
-  guidebooks: boolean
-  unlimited: boolean
+	id: string
+	name: LocalizedName
+	section: string
+	order: number
+	difficulty: number
+	hl: boolean
+	extra: boolean
+	guidebooks: boolean
+	unlimited: boolean
 }
 
 // Awakening entity
 export interface Awakening {
-  id: string
-  name: LocalizedName
-  slug: string
-  objectType?: string
-  order?: number
+	id: string
+	name: LocalizedName
+	slug: string
+	objectType?: string
+	order?: number
 }
 
 // No awakening constant
 export const NO_AWAKENING: Awakening = {
-  id: '0',
-  name: { en: 'No awakening', ja: '覚醒なし' },
-  slug: 'no-awakening',
-  order: 0
+	id: '0',
+	name: { en: 'No awakening', ja: '覚醒なし' },
+	slug: 'no-awakening',
+	order: 0
 }
 
 // WeaponKey entity (camelCased to match CamelCasedKeysDeep runtime data)
 export interface WeaponKey {
-  id: string
-  granblueId: number
-  name: LocalizedName
-  slug: string
-  series: number[]
-  slot: number
-  group: number
-  order: number
+	id: string
+	granblueId: number
+	name: LocalizedName
+	slug: string
+	series: number[]
+	slot: number
+	group: number
+	order: number
 }
 
 // Bullet entity for gun-proficiency weapons
 export interface Bullet {
-  id: string
-  granblueId: string
-  slug: string
-  name: LocalizedName
-  effect: { en?: string; ja?: string }
-  bulletType: number
-  atk: number
-  hitsAll: boolean
-  order: number
+	id: string
+	granblueId: string
+	slug: string
+	name: LocalizedName
+	effect: { en?: string; ja?: string }
+	bulletType: number
+	atk: number
+	hitsAll: boolean
+	order: number
 }
 
 // Bullet slot entry on a grid/collection weapon
 export interface BulletLoadout {
-  position: number
-  bullet: Bullet
+	position: number
+	bullet: Bullet
 }
 
 // Bullet type enum values
 export const BULLET_TYPES: Record<number, string> = {
-  1: 'Parabellum',
-  2: 'Rifle',
-  3: 'Cartridge',
-  4: 'Aetherial'
+	1: 'Parabellum',
+	2: 'Rifle',
+	3: 'Cartridge',
+	4: 'Aetherial'
 } as const
 
 // Guidebook entity
 export interface Guidebook {
-  id: string
-  granblueId: number
-  name: LocalizedName
-  description?: LocalizedName
-  slug: string
+	id: string
+	granblueId: number
+	name: LocalizedName
+	description?: LocalizedName
+	slug: string
 }
 
 // User entity
 export interface User {
-  id: string
-  username: string
-  displayName?: string | null
-  profilePicture?: string
-  gender?: number
-  role?: string
-  createdAt?: string
-  updatedAt?: string
-  youtube?: string
-  avatar?: {
-    picture?: string
-    element?: string
-  }
+	id: string
+	username: string
+	displayName?: string | null
+	profilePicture?: string
+	gender?: number
+	role?: string
+	createdAt?: string
+	updatedAt?: string
+	youtube?: string
+	avatar?: {
+		picture?: string
+		element?: string
+	}
 }

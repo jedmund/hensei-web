@@ -17,7 +17,13 @@
 		onTranscendenceChange?: (stage: number) => Promise<void>
 	}
 
-	let { character, onClick, editable = false, onUncapChange, onTranscendenceChange }: Props = $props()
+	let {
+		character,
+		onClick,
+		editable = false,
+		onUncapChange,
+		onTranscendenceChange
+	}: Props = $props()
 
 	const imageUrl = $derived(
 		getCharacterImageWithPose(

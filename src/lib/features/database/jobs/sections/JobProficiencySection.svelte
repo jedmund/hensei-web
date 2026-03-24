@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { Job } from '$lib/types/api/entities'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
@@ -37,10 +36,20 @@
 <DetailsContainer title="Proficiencies">
 	{#if editMode}
 		<DetailItem label="Proficiency 1" editable={true}>
-			<Select size="medium" options={proficiencyOptions} bind:value={editData.proficiency1} contained />
+			<Select
+				size="medium"
+				options={proficiencyOptions}
+				bind:value={editData.proficiency1}
+				contained
+			/>
 		</DetailItem>
 		<DetailItem label="Proficiency 2" editable={true}>
-			<Select size="medium" options={proficiencyOptions} bind:value={editData.proficiency2} contained />
+			<Select
+				size="medium"
+				options={proficiencyOptions}
+				bind:value={editData.proficiency2}
+				contained
+			/>
 		</DetailItem>
 	{:else}
 		<DetailItem label="Proficiency 1">

@@ -108,7 +108,11 @@ describe('createGridArtifactOptions', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = createGridArtifactOptions(queryClient)
 
-		opts.onSuccess(undefined, { partyId: 'party-1', gridCharacterId: 'gc-1', artifactId: 'a-1' } as any)
+		opts.onSuccess(undefined, {
+			partyId: 'party-1',
+			gridCharacterId: 'gc-1',
+			artifactId: 'a-1'
+		} as any)
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['parties', 'party-1'])
@@ -144,7 +148,11 @@ describe('equipCollectionArtifactOptions', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = equipCollectionArtifactOptions(queryClient)
 
-		opts.onSuccess(undefined, { partyId: 'party-1', gridCharacterId: 'gc-1', collectionArtifactId: 'ca-1' })
+		opts.onSuccess(undefined, {
+			partyId: 'party-1',
+			gridCharacterId: 'gc-1',
+			collectionArtifactId: 'ca-1'
+		})
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['parties', 'party-1'])

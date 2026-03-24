@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { onDestroy } from 'svelte'
 	import { Tooltip } from 'bits-ui'

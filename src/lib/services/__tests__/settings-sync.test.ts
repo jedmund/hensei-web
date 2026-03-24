@@ -82,11 +82,7 @@ describe('syncTheme', () => {
 
 		await syncTheme('user-1', baseUser, 'dark', 'system')
 
-		expect(callOrder).toEqual([
-			'users.update',
-			'fetch:/api/settings',
-			'themeStore.setTheme'
-		])
+		expect(callOrder).toEqual(['users.update', 'fetch:/api/settings', 'themeStore.setTheme'])
 	})
 
 	it('calls users.update with the new theme', async () => {
@@ -102,9 +98,12 @@ describe('syncTheme', () => {
 
 		await syncTheme('user-1', baseUser, 'dark', 'system')
 
-		expect(mockFetch).toHaveBeenCalledWith('/api/settings', expect.objectContaining({
-			method: 'POST'
-		}))
+		expect(mockFetch).toHaveBeenCalledWith(
+			'/api/settings',
+			expect.objectContaining({
+				method: 'POST'
+			})
+		)
 
 		const body = JSON.parse(mockFetch.mock.calls[0]![1].body as string)
 		expect(body.theme).toBe('dark')
@@ -151,11 +150,7 @@ describe('syncLanguage', () => {
 
 		await syncLanguage('user-1', baseUser, 'ja')
 
-		expect(callOrder).toEqual([
-			'users.update',
-			'fetch:/api/settings',
-			'invalidateAll'
-		])
+		expect(callOrder).toEqual(['users.update', 'fetch:/api/settings', 'invalidateAll'])
 		expect(window.location.href).toBe('/ja/teams')
 	})
 
@@ -182,12 +177,13 @@ describe('syncLanguage', () => {
 
 		// Make users.update slow to verify we don't navigate early
 		mockUsersUpdate.mockImplementation(
-			() => new Promise((resolve) => {
-				setTimeout(() => {
-					callOrder.push('users.update')
-					resolve({})
-				}, 10)
-			})
+			() =>
+				new Promise((resolve) => {
+					setTimeout(() => {
+						callOrder.push('users.update')
+						resolve({})
+					}, 10)
+				})
 		)
 
 		await syncLanguage('user-1', baseUser, 'ja')

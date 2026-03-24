@@ -24,9 +24,19 @@
 		const variant = isMain ? 'main' : 'grid'
 		// For weapons with null element that have an instance element, use it.
 		// Mainhand images don't have a null-element variant, so default to fire (2).
-		const element = w?.weapon?.element === 0 ? (w?.element || (isMain ? 2 : undefined)) : undefined
-		const transformation = getWeaponTransformation(w?.weapon?.uncap?.transcendence, w?.uncapLevel, w?.transcendenceStep)
-		return getWeaponImage(w?.weapon?.granblueId, variant, element, transformation, w?.weapon?.elementVariantIds)
+		const element = w?.weapon?.element === 0 ? w?.element || (isMain ? 2 : undefined) : undefined
+		const transformation = getWeaponTransformation(
+			w?.weapon?.uncap?.transcendence,
+			w?.uncapLevel,
+			w?.transcendenceStep
+		)
+		return getWeaponImage(
+			w?.weapon?.granblueId,
+			variant,
+			element,
+			transformation,
+			w?.weapon?.elementVariantIds
+		)
 	}
 </script>
 

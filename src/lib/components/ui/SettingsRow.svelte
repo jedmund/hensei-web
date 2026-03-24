@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 
@@ -62,6 +61,5 @@
 				width: 100%;
 			}
 		}
-
 	}
 </style>

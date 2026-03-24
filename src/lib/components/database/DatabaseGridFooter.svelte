@@ -11,15 +11,8 @@
 		onNextPage: () => void
 	}
 
-	const {
-		currentPage,
-		totalPages,
-		total,
-		startItem,
-		endItem,
-		onPrevPage,
-		onNextPage
-	}: Props = $props()
+	const { currentPage, totalPages, total, startItem, endItem, onPrevPage, onNextPage }: Props =
+		$props()
 </script>
 
 <div class="grid-footer">

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import type { ArtifactScore } from '$lib/types/api/artifact'

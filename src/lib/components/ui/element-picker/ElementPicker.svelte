@@ -1,11 +1,15 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { MediaQuery } from 'svelte/reactivity'
 	import Select from '../Select.svelte'
 	import MultiSelect from '../MultiSelect.svelte'
 	import ElementPickerSegmented from './ElementPickerSegmented.svelte'
-	import { ELEMENT_LABELS, ELEMENT_DISPLAY_ORDER, getElementImage, getElementColor } from '$lib/utils/element'
+	import {
+		ELEMENT_LABELS,
+		ELEMENT_DISPLAY_ORDER,
+		getElementImage,
+		getElementColor
+	} from '$lib/utils/element'
 
 	interface Props {
 		value?: number | number[]
@@ -82,7 +86,7 @@
 			onValueChange={handleMultipleChange}
 			size="medium"
 			{contained}
-			disabled={disabled}
+			{disabled}
 			placeholder={m.placeholder_select_elements()}
 			fullWidth={true}
 			class={className}
@@ -94,7 +98,7 @@
 			onValueChange={handleSingleChange}
 			size="medium"
 			{contained}
-			disabled={disabled}
+			{disabled}
 			placeholder={m.placeholder_select_element()}
 			fullWidth={true}
 			class={className}
@@ -109,7 +113,7 @@
 		{contained}
 		{showClear}
 		size={segmentedSize}
-		disabled={disabled}
+		{disabled}
 		class={className}
 	/>
 {/if}
