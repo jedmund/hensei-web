@@ -10,11 +10,8 @@ export interface UserUpdateParams {
 	theme?: string | undefined
 	granblueId?: string | undefined
 	showCrewGamertag?: boolean | undefined
-	showGranblueId?: boolean | undefined
 	wikiProfile?: string | undefined
-	showWikiProfile?: boolean | undefined
 	youtube?: string | undefined
-	showYoutube?: boolean | undefined
 	collectionPrivacy?: number | undefined
 	importWeapons?: boolean | undefined
 	defaultImportVisibility?: number | undefined
@@ -34,11 +31,8 @@ export interface UserResponse {
 	role: number
 	granblueId?: string
 	showCrewGamertag?: boolean
-	showGranblueId?: boolean
 	wikiProfile?: string
-	showWikiProfile?: boolean
 	youtube?: string
-	showYoutube?: boolean
 	collectionPrivacy?: number
 	importWeapons?: boolean
 	defaultImportVisibility?: number
@@ -60,11 +54,8 @@ export const users = {
 			theme?: string | undefined
 			granblue_id?: string | undefined
 			show_gamertag?: boolean | undefined
-			show_granblue_id?: boolean | undefined
 			wiki_profile?: string | undefined
-			show_wiki_profile?: boolean | undefined
 			youtube?: string | undefined
-			show_youtube?: boolean | undefined
 			collection_privacy?: number | undefined
 			import_weapons?: boolean | undefined
 			default_import_visibility?: number | undefined
@@ -79,11 +70,8 @@ export const users = {
 		if (params.theme !== undefined) updates.theme = params.theme
 		if (params.granblueId !== undefined) updates.granblue_id = params.granblueId
 		if (params.showCrewGamertag !== undefined) updates.show_gamertag = params.showCrewGamertag
-		if (params.showGranblueId !== undefined) updates.show_granblue_id = params.showGranblueId
 		if (params.wikiProfile !== undefined) updates.wiki_profile = params.wikiProfile
-		if (params.showWikiProfile !== undefined) updates.show_wiki_profile = params.showWikiProfile
 		if (params.youtube !== undefined) updates.youtube = params.youtube
-		if (params.showYoutube !== undefined) updates.show_youtube = params.showYoutube
 		if (params.collectionPrivacy !== undefined) updates.collection_privacy = params.collectionPrivacy
 		if (params.importWeapons !== undefined) updates.import_weapons = params.importWeapons
 		if (params.defaultImportVisibility !== undefined) updates.default_import_visibility = params.defaultImportVisibility
@@ -100,11 +88,8 @@ export const users = {
 			role: result.role,
 			granblueId: result.granblueId,
 			showCrewGamertag: result.showCrewGamertag,
-			showGranblueId: result.showGranblueId,
 			wikiProfile: result.wikiProfile,
-			showWikiProfile: result.showWikiProfile,
 			youtube: result.youtube,
-			showYoutube: result.showYoutube,
 			collectionPrivacy: result.collectionPrivacy,
 			importWeapons: result.importWeapons,
 			defaultImportVisibility: result.defaultImportVisibility

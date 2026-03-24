@@ -55,9 +55,6 @@
 	let theme = $state('system')
 
 	// Form state - Privacy section (initialized with defaults, populated from API)
-	let showGranblueId = $state(false)
-	let showWikiProfile = $state(false)
-	let showYoutube = $state(false)
 	let collectionPrivacy = $state(1) // 1 = Everyone (1-based to avoid JS falsy 0)
 	let showCrewGamertag = $state(false)
 	let importWeapons = $state(true)
@@ -113,9 +110,6 @@
 			language = data.language ?? 'en'
 			theme = data.theme ?? 'system'
 			// Privacy
-			showGranblueId = data.showGranblueId ?? false
-			showWikiProfile = data.showWikiProfile ?? false
-			showYoutube = data.showYoutube ?? false
 			collectionPrivacy = data.collectionPrivacy ?? 1
 			showCrewGamertag = data.showCrewGamertag ?? false
 			importWeapons = data.importWeapons ?? true
@@ -195,9 +189,6 @@
 				wikiProfile: wikiProfile || undefined,
 				youtube: youtube || undefined,
 				showCrewGamertag,
-				showGranblueId,
-				showWikiProfile,
-				showYoutube,
 				collectionPrivacy,
 				importWeapons,
 				defaultImportVisibility
@@ -218,9 +209,6 @@
 				wikiProfile: response.wikiProfile,
 				youtube: response.youtube,
 				showCrewGamertag: response.showCrewGamertag,
-				showGranblueId: response.showGranblueId,
-				showWikiProfile: response.showWikiProfile,
-				showYoutube: response.showYoutube,
 				collectionPrivacy: response.collectionPrivacy,
 				importWeapons: response.importWeapons,
 				defaultImportVisibility: response.defaultImportVisibility
@@ -250,9 +238,6 @@
 								gender,
 								language,
 								theme,
-								showGranblueId,
-								showWikiProfile,
-								showYoutube,
 								collectionPrivacy,
 								showCrewGamertag,
 								importWeapons,
@@ -356,9 +341,6 @@
 						/>
 					{:else if activeSection === 'privacy'}
 						<PrivacySettings
-							{showGranblueId}
-							{showWikiProfile}
-							{showYoutube}
 							{collectionPrivacy}
 							{showCrewGamertag}
 							{importWeapons}
@@ -366,9 +348,6 @@
 							{isInCrew}
 							{crewGamertag}
 							{element}
-							onShowGranblueIdChange={(v) => (showGranblueId = v)}
-							onShowWikiProfileChange={(v) => (showWikiProfile = v)}
-							onShowYoutubeChange={(v) => (showYoutube = v)}
 							onCollectionPrivacyChange={(v) => (collectionPrivacy = v)}
 							onShowCrewGamertagChange={(v) => (showCrewGamertag = v)}
 							onImportWeaponsChange={(v) => (importWeapons = v)}

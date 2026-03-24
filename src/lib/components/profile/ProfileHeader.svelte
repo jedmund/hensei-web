@@ -26,16 +26,10 @@
 		element?: string
 		/** User's Granblue Fantasy ID for profile link */
 		granblueId?: string
-		/** Whether the user wants to show their Granblue ID on profile */
-		showGranblueId?: boolean
 		/** User's gbf.wiki username */
 		wikiProfile?: string
-		/** Whether the user wants to show their wiki profile on profile */
-		showWikiProfile?: boolean
 		/** User's YouTube channel handle */
 		youtube?: string
-		/** Whether the user wants to show their YouTube on profile */
-		showYoutube?: boolean
 		/** Whether to show crew gamertag */
 		showCrewGamertag?: boolean
 		/** The crew's gamertag to display */
@@ -62,11 +56,8 @@
 		isOwner = false,
 		element = 'null',
 		granblueId,
-		showGranblueId = false,
 		wikiProfile,
-		showWikiProfile = false,
 		youtube,
-		showYoutube = false,
 		showCrewGamertag = false,
 		crewGamertag,
 		crewName,
@@ -76,25 +67,19 @@
 		isAuthenticated = false
 	}: Props = $props()
 
-	// GBF profile URL - only show if user has enabled the setting
+	// GBF profile URL - shown if user has filled in their Granblue ID
 	const gbfProfileUrl = $derived(
-		granblueId && showGranblueId
-			? `https://game.granbluefantasy.jp/#profile/${granblueId}`
-			: null
+		granblueId ? `https://game.granbluefantasy.jp/#profile/${granblueId}` : null
 	)
 
-	// Wiki profile URL - only show if user has enabled the setting
+	// Wiki profile URL - shown if user has filled in their wiki username
 	const wikiProfileUrl = $derived(
-		wikiProfile && showWikiProfile
-			? `https://gbf.wiki/User:${encodeURIComponent(wikiProfile)}`
-			: null
+		wikiProfile ? `https://gbf.wiki/User:${encodeURIComponent(wikiProfile)}` : null
 	)
 
-	// YouTube channel URL - only show if user has enabled the setting
+	// YouTube channel URL - shown if user has filled in their YouTube handle
 	const youtubeUrl = $derived(
-		youtube && showYoutube
-			? `https://www.youtube.com/@${youtube.replace(/^@/, '')}`
-			: null
+		youtube ? `https://www.youtube.com/@${youtube.replace(/^@/, '')}` : null
 	)
 
 	const avatarSrc = $derived(getAvatarSrc(avatarPicture))

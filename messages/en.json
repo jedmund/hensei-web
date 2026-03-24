@@ -1056,12 +1056,6 @@
 	"settings_theme_light": "Light",
 	"settings_theme_dark": "Dark",
 
-	"settings_show_granblue_id": "Show Granblue ID on profile",
-	"settings_show_granblue_id_subtitle": "Display your in-game ID on your public profile",
-	"settings_show_wiki_profile": "Show wiki link on profile",
-	"settings_show_wiki_profile_subtitle": "Display a link to your gbf.wiki page on your public profile",
-	"settings_show_youtube": "Show YouTube on profile",
-	"settings_show_youtube_subtitle": "Display a link to your YouTube channel on your public profile",
 	"settings_show_crew_tag": "Show crew tag on profile",
 	"settings_show_crew_tag_subtitle": "Display \"{gamertag}\" next to your name",
 	"settings_collection_visibility": "Collection visibility",

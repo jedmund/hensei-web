@@ -329,7 +329,6 @@ export interface User {
   createdAt?: string
   updatedAt?: string
   youtube?: string
-  showYoutube?: boolean
   avatar?: {
     picture?: string
     element?: string

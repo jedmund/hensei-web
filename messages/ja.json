@@ -1056,12 +1056,6 @@
 	"settings_theme_light": "ライト",
 	"settings_theme_dark": "ダーク",
 
-	"settings_show_granblue_id": "プロフィールにグランブルーIDを表示",
-	"settings_show_granblue_id_subtitle": "公開プロフィールにゲーム内IDを表示する",
-	"settings_show_wiki_profile": "プロフィールにWikiリンクを表示",
-	"settings_show_wiki_profile_subtitle": "公開プロフィールにgbf.wikiページへのリンクを表示する",
-	"settings_show_youtube": "プロフィールにYouTubeを表示",
-	"settings_show_youtube_subtitle": "公開プロフィールにYouTubeチャンネルへのリンクを表示する",
 	"settings_show_crew_tag": "プロフィールに騎空団タグを表示",
 	"settings_show_crew_tag_subtitle": "名前の横に「{gamertag}」を表示する",
 	"settings_collection_visibility": "コレクションの公開範囲",
