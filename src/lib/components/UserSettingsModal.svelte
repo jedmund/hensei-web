@@ -9,6 +9,7 @@
 	import PasswordSettings from './settings/PasswordSettings.svelte'
 	import ProfileSettings from './settings/ProfileSettings.svelte'
 	import PrivacySettings from './settings/PrivacySettings.svelte'
+	import ConfirmDialog from './ui/ConfirmDialog.svelte'
 	import { users } from '$lib/api/resources/users'
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { invalidateAll } from '$app/navigation'
@@ -71,6 +72,7 @@
 
 	let saving = $state(false)
 	let usernameValid = $state(true)
+	let usernameConfirmOpen = $state(false)
 	let error = $state<string | null>(null)
 	let contentElement: HTMLElement | undefined = $state()
 	let isScrolledToBottom = $state(true)
@@ -164,8 +166,18 @@
 		}
 	})
 
+	// Check if username changed before saving
+	function handleSaveClick() {
+		if (formUsername !== username) {
+			usernameConfirmOpen = true
+		} else {
+			handleSave()
+		}
+	}
+
 	// Handle form submission
 	async function handleSave() {
+		usernameConfirmOpen = false
 		error = null
 		saving = true
 
@@ -372,13 +384,21 @@
 			cancelDisabled={saving}
 			primaryAction={{
 				label: saving ? m.settings_saving() : m.settings_save(),
-				onclick: handleSave,
+				onclick: handleSaveClick,
 				disabled: saving || isLoading || !usernameValid
 			}}
 			showShadow={!isScrolledToBottom}
 		/>
 	{/snippet}
 </Dialog>
+
+<ConfirmDialog
+	bind:open={usernameConfirmOpen}
+	title={m.settings_username_confirm_title()}
+	message={m.settings_username_confirm_message()}
+	confirmLabel={m.settings_username_confirm_action()}
+	onconfirm={handleSave}
+/>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
