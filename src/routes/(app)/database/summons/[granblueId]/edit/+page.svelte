@@ -218,7 +218,7 @@
 				variant="ghost"
 				size="small"
 				leftIcon="chevron-left"
-				href={resolve(`/database/summons/${summon?.granblueId)}`}>Back</Button
+				href={resolve(`/database/summons/${summon?.granblueId}`)}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}

@@ -241,7 +241,7 @@
 						<DetailItem label="Wiki (EN)">
 							{#if summon.wiki?.en}
 								<Button
-									href={resolve(buildWikiEnUrl(summon.wiki.en) ?? undefined)}
+									href={buildWikiEnUrl(summon.wiki.en) ?? undefined}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -257,7 +257,7 @@
 						<DetailItem label="Wiki (JP)">
 							{#if summon.wiki?.ja}
 								<Button
-									href={resolve(buildWikiJaUrl(summon.wiki.ja, 'summon') ?? undefined)}
+									href={buildWikiJaUrl(summon.wiki.ja, 'summon') ?? undefined}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -273,7 +273,7 @@
 						<DetailItem label="Gamewith">
 							{#if summon.gamewith}
 								<Button
-									href={resolve(buildGamewithUrl(summon.gamewith) ?? undefined)}
+									href={buildGamewithUrl(summon.gamewith) ?? undefined}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -289,7 +289,7 @@
 						<DetailItem label="Kamigame">
 							{#if summon.kamigame}
 								<Button
-									href={resolve(buildKamigameUrl(summon.kamigame, 'summon') ?? undefined)}
+									href={buildKamigameUrl(summon.kamigame, 'summon') ?? undefined}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}

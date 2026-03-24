@@ -378,7 +378,7 @@
 						<DetailItem label="Wiki (EN)">
 							{#if weapon.wiki?.en}
 								<Button
-									href={resolve(buildWikiEnUrl(weapon.wiki.en) ?? undefined)}
+									href={buildWikiEnUrl(weapon.wiki.en) ?? undefined}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -394,7 +394,7 @@
 						<DetailItem label="Wiki (JP)">
 							{#if weapon.wiki?.ja}
 								<Button
-									href={resolve(buildWikiJaUrl(weapon.wiki.ja, 'weapon') ?? undefined)}
+									href={buildWikiJaUrl(weapon.wiki.ja, 'weapon') ?? undefined}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -410,7 +410,7 @@
 						<DetailItem label="Gamewith">
 							{#if weapon.gamewith}
 								<Button
-									href={resolve(buildGamewithUrl(weapon.gamewith) ?? undefined)}
+									href={buildGamewithUrl(weapon.gamewith) ?? undefined}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -426,7 +426,7 @@
 						<DetailItem label="Kamigame">
 							{#if weapon.kamigame}
 								<Button
-									href={resolve(buildKamigameUrl(weapon.kamigame, 'weapon', weapon.rarity) ?? undefined)}
+									href={buildKamigameUrl(weapon.kamigame, 'weapon', weapon.rarity) ?? undefined}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}

@@ -162,9 +162,9 @@
 		</div>
 
 		<div class="header-actions">
+			<!-- eslint-disable svelte/no-navigation-without-resolve -- external URLs -->
 			{#if gbfProfileUrl}
 				<Tooltip content={m.profile_ingame()}>
-					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external URL -->
 					<a
 						href={gbfProfileUrl}
 						target="_blank"
@@ -177,7 +177,6 @@
 			{/if}
 			{#if wikiProfileUrl}
 				<Tooltip content={m.profile_wiki()}>
-					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external URL -->
 					<a
 						href={wikiProfileUrl}
 						target="_blank"
@@ -190,12 +189,12 @@
 			{/if}
 			{#if youtubeUrl}
 				<Tooltip content={m.profile_youtube()}>
-					<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external URL -->
 					<a href={youtubeUrl} target="_blank" rel="noopener noreferrer" class="gbf-profile-link">
 						<Icon name="youtube" size={24} />
 					</a>
 				</Tooltip>
 			{/if}
+			<!-- eslint-enable svelte/no-navigation-without-resolve -->
 
 			{#if showMenu}
 				<DropdownMenu.Root>

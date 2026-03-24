@@ -297,7 +297,7 @@
 						<DetailItem label="Wiki (EN)">
 							{#if character.wiki?.en}
 								<Button
-									href={resolve(buildWikiEnUrl(character.wiki.en) ?? undefined)}
+									href={buildWikiEnUrl(character.wiki.en) ?? undefined}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -313,7 +313,7 @@
 						<DetailItem label="Wiki (JP)">
 							{#if character.wiki?.ja}
 								<Button
-									href={resolve(buildWikiJaUrl(character.wiki.ja, 'character') ?? undefined)}
+									href={buildWikiJaUrl(character.wiki.ja, 'character') ?? undefined}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -329,7 +329,7 @@
 						<DetailItem label="Gamewith">
 							{#if character.gamewith}
 								<Button
-									href={resolve(buildGamewithUrl(character.gamewith) ?? undefined)}
+									href={buildGamewithUrl(character.gamewith) ?? undefined}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -345,7 +345,7 @@
 						<DetailItem label="Kamigame">
 							{#if character.kamigame}
 								<Button
-									href={resolve(buildKamigameUrl(character.kamigame, 'character') ?? undefined)}
+									href={buildKamigameUrl(character.kamigame, 'character') ?? undefined}
 									target="_blank"
 									variant="element-ghost"
 									element={elementName}
@@ -366,8 +366,8 @@
 								{#each relatedQuery.data as related (related.id)}
 									<a
 										href={resolve(localizeHref(
-											`/database/characters/${related.granblueId)}${related.styleSwap ? '/style' : ''}`
-										)}
+											`/database/characters/${related.granblueId}${related.styleSwap ? '/style' : ''}`
+										))}
 										class="related-unit"
 									>
 										<img

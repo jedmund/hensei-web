@@ -275,7 +275,7 @@
 				variant="ghost"
 				size="small"
 				leftIcon="chevron-left"
-				href={resolve(`/database/characters/${character?.granblueId)}/style`}>Back</Button
+				href={resolve(`/database/characters/${character?.granblueId}/style`)}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}
