@@ -86,6 +86,10 @@
 			filter $duration-standard ease;
 	}
 
+	:global(.dialog-overlay[data-nested]) {
+		display: none;
+	}
+
 	:global(.dialog-content[data-nested-open]) {
 		transform: translate(-50%, -50%)
 			scale(calc(1 - var(--bits-dialog-nested-count) * 0.05));

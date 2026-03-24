@@ -389,16 +389,15 @@
 			}}
 			showShadow={!isScrolledToBottom}
 		/>
+		<ConfirmDialog
+			bind:open={usernameConfirmOpen}
+			title={m.settings_username_confirm_title()}
+			message={m.settings_username_confirm_message()}
+			confirmLabel={m.settings_username_confirm_action()}
+			onconfirm={handleSave}
+		/>
 	{/snippet}
 </Dialog>
-
-<ConfirmDialog
-	bind:open={usernameConfirmOpen}
-	title={m.settings_username_confirm_title()}
-	message={m.settings_username_confirm_message()}
-	confirmLabel={m.settings_username_confirm_action()}
-	onconfirm={handleSave}
-/>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
