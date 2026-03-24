@@ -3,7 +3,8 @@
 	import * as m from '$lib/paraglide/messages'
 	import { themeStore } from '$lib/stores/theme.svelte'
 	import { authStore } from '$lib/stores/auth.store.svelte'
-	import { users } from '$lib/api/resources/users'
+	import { syncTheme } from '$lib/services/settings-sync'
+	import { page } from '$app/stores'
 	import SunIcon from '$src/assets/icons/sun.svg?raw'
 	import MoonIcon from '$src/assets/icons/moon.svg?raw'
 
@@ -11,11 +12,16 @@
 
 	function handleToggle(checked: boolean) {
 		const newTheme = checked ? 'dark' : 'light'
-		themeStore.setTheme(newTheme)
-		document.cookie = `theme=${newTheme};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`
 
+		// Apply immediately for responsiveness
+		themeStore.setTheme(newTheme)
+
+		// Persist to DB + user cookie if authenticated
 		if (authStore.isAuthenticated && authStore.user) {
-			users.update(authStore.user.id, { theme: newTheme })
+			const userCookie = $page.data.currentUser
+			if (userCookie) {
+				syncTheme(authStore.user.id, userCookie, newTheme)
+			}
 		}
 	}
 </script>
