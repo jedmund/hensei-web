@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- third-party module type shims require any */
 declare const __BUILD_TIMESTAMP__: string
 
 declare module '*.jpg'

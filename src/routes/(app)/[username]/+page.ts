@@ -19,7 +19,8 @@ export const load: PageLoad = async ({ params, url, depends, parent, fetch }) =>
 		)
 		const parties = items.map((p) => parseParty(p))
 		return { user, items: parties, page, total, totalPages, perPage, isOwner }
-	} catch (e: any) {
-		throw error(e?.status || 502, e?.message || 'Failed to load profile')
+	} catch (e: unknown) {
+		const err = e as Record<string, unknown>
+		throw error((typeof err?.status === 'number' ? err.status : undefined) || 502, (typeof err?.message === 'string' ? err.message : undefined) || 'Failed to load profile')
 	}
 }

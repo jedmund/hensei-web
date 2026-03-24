@@ -223,9 +223,9 @@ export function openCharacterEditSidebar(
 	}
 }
 
-function getName(obj: any): string {
+function getName(obj: unknown): string {
 	if (!obj) return 'Details'
-	const name = obj.name ?? obj
+	const name = (typeof obj === 'object' && obj !== null && 'name' in obj ? (obj as Record<string, unknown>).name : obj) ?? obj
 	const resolved = localizedName(name)
 	return resolved === '—' ? 'Details' : resolved
 }

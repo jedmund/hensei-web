@@ -1,5 +1,5 @@
 export interface GranblueElement {
-	[key: string]: any
+	[key: string]: unknown
 	id: number
 	weaknessId: number
 	name: {

@@ -34,9 +34,9 @@ export interface PaneConfig {
 	/** Optional image URL to display next to the title */
 	image?: string
 	/** Component to render in the pane */
-	component: Component<any, any, any>
+	component: Component<Record<string, unknown>>
 	/** Props to pass to the component */
-	props?: Record<string, any>
+	props?: Record<string, unknown>
 	/** Optional callback when back is clicked (for root pane) */
 	onback?: () => void
 	/** Optional save/action button configuration */
@@ -195,7 +195,7 @@ export class PaneStackStore {
 	/**
 	 * Update props for the current (top) pane
 	 */
-	updateCurrentProps(props: Record<string, any>) {
+	updateCurrentProps(props: Record<string, unknown>) {
 		if (this.state.panes.length === 0) return
 
 		const currentIndex = this.state.panes.length - 1

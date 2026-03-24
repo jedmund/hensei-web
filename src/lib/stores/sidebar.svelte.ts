@@ -61,8 +61,8 @@ class SidebarStore {
 	 */
 	openWithComponent(
 		title: string,
-		component: Component<any, any, any>,
-		props?: Record<string, any>,
+		component: Component<Record<string, unknown>>,
+		props?: Record<string, unknown>,
 		options?: OpenWithComponentOptions | boolean
 	) {
 		// Cancel any pending clear from a previous close()

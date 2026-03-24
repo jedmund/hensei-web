@@ -33,11 +33,12 @@ import type { GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party
  * }) // Automatically normalized to 'weapon'
  * ```
  */
-export function validateGridWeapon(raw: any): GridWeapon | null {
+export function validateGridWeapon(raw: unknown): GridWeapon | null {
 	if (!raw || typeof raw !== 'object') return null
 
+	const obj = raw as Record<string, unknown>
 	// Handle legacy API responses that use 'object' instead of 'weapon'
-	const weapon = raw.weapon || raw.object
+	const weapon = (obj.weapon || obj.object) as Record<string, unknown> | undefined
 
 	if (!weapon || !weapon.granblueId) {
 		if (import.meta.env.DEV) console.warn('GridWeapon missing nested weapon data:', raw)
@@ -45,7 +46,7 @@ export function validateGridWeapon(raw: any): GridWeapon | null {
 	}
 
 	return {
-		...raw,
+		...obj,
 		weapon, // Ensure 'weapon' property exists
 		object: undefined // Remove legacy 'object' property
 	} as GridWeapon
@@ -58,10 +59,11 @@ export function validateGridWeapon(raw: any): GridWeapon | null {
  * @param raw - Raw grid character data from API
  * @returns Validated GridCharacter or null if incomplete
  */
-export function validateGridCharacter(raw: any): GridCharacter | null {
+export function validateGridCharacter(raw: unknown): GridCharacter | null {
 	if (!raw || typeof raw !== 'object') return null
 
-	const character = raw.character || raw.object
+	const obj = raw as Record<string, unknown>
+	const character = (obj.character || obj.object) as Record<string, unknown> | undefined
 
 	if (!character || !character.granblueId) {
 		if (import.meta.env.DEV) console.warn('GridCharacter missing nested character data:', raw)
@@ -69,7 +71,7 @@ export function validateGridCharacter(raw: any): GridCharacter | null {
 	}
 
 	return {
-		...raw,
+		...obj,
 		character,
 		object: undefined
 	} as GridCharacter
@@ -82,10 +84,11 @@ export function validateGridCharacter(raw: any): GridCharacter | null {
  * @param raw - Raw grid summon data from API
  * @returns Validated GridSummon or null if incomplete
  */
-export function validateGridSummon(raw: any): GridSummon | null {
+export function validateGridSummon(raw: unknown): GridSummon | null {
 	if (!raw || typeof raw !== 'object') return null
 
-	const summon = raw.summon || raw.object
+	const obj = raw as Record<string, unknown>
+	const summon = (obj.summon || obj.object) as Record<string, unknown> | undefined
 
 	if (!summon || !summon.granblueId) {
 		if (import.meta.env.DEV) console.warn('GridSummon missing nested summon data:', raw)
@@ -93,7 +96,7 @@ export function validateGridSummon(raw: any): GridSummon | null {
 	}
 
 	return {
-		...raw,
+		...obj,
 		summon,
 		object: undefined
 	} as GridSummon

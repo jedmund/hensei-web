@@ -60,12 +60,13 @@ export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
 			expires_in: oauth.expires_in,
 			expires_at: accessTokenExpiresAt.toISOString()
 		})
-	} catch (e: any) {
+	} catch (e: unknown) {
+		const err = e as Record<string, unknown>
 		if (dev) console.error('[Login] Error:', e)
-		if (dev) console.error('[Login] Error message:', e?.message)
-		if (dev) console.error('[Login] Error stack:', e?.stack)
+		if (dev) console.error('[Login] Error message:', err?.message)
+		if (dev) console.error('[Login] Error stack:', err?.stack)
 
-		if (String(e?.message) === 'unauthorized') {
+		if (String(err?.message) === 'unauthorized') {
 			return json({ error: 'Invalid email or password' }, { status: 401 })
 		}
 

@@ -15,11 +15,14 @@ export const load: LayoutLoad = async ({ params, parent, fetch }) => {
 			user: userInfo,
 			isOwner
 		}
-	} catch (e: any) {
+	} catch (e: unknown) {
+		const err = e as Record<string, unknown>
+		const status = typeof err?.status === 'number' ? err.status : undefined
+		const message = typeof err?.message === 'string' ? err.message : undefined
 		// 403 means collection is private
-		if (e?.status === 403) {
+		if (status === 403) {
 			throw error(403, 'This collection is private')
 		}
-		throw error(e?.status || 502, e?.message || 'Failed to load user')
+		throw error(status || 502, message || 'Failed to load user')
 	}
 }

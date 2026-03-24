@@ -11,7 +11,7 @@ export default defineConfig({
 		testTimeout: 5000,
 		// Use forked pool in CI/sandbox to avoid worker kill EPERM issues
 		pool:
-			(process.env.VITEST_POOL as any) ||
+			(process.env.VITEST_POOL as 'threads' | 'forks' | undefined) ||
 			(process.env.CI || process.env.SEATBELT ? 'forks' : undefined),
 		coverage: {
 			provider: 'v8',

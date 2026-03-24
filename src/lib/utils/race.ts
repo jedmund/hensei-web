@@ -49,7 +49,7 @@ export function getRaceOptions() {
 		6: m.race_other
 	}
 	const options = [
-		{ value: null as any, label: m.proficiency_none() },
+		{ value: null as unknown as number, label: m.proficiency_none() },
 		...Object.entries(raceMessages).map(([value, messageFn]) => ({
 			value: Number(value),
 			label: messageFn()
