@@ -54,15 +54,35 @@ beforeEach(() => {
 	vi.clearAllMocks()
 })
 
+function authenticatedLocals() {
+	return { session: { isAuthenticated: true } }
+}
+
+function unauthenticatedLocals() {
+	return { session: { isAuthenticated: false } }
+}
+
 describe('POST /api/settings', () => {
-	async function callEndpoint(body: Record<string, unknown>, cookies = createMockCookies()) {
+	async function callEndpoint(
+		body: Record<string, unknown>,
+		cookies = createMockCookies(),
+		locals = authenticatedLocals()
+	) {
 		const { POST } = await import('../../routes/(app)/api/settings/+server')
 		const response = await POST({
 			cookies: cookies as any,
-			request: makeRequest(body)
+			request: makeRequest(body),
+			locals
 		} as any)
 		return { response, cookies }
 	}
+
+	it('returns 401 when unauthenticated', async () => {
+		const { response } = await callEndpoint(baseUser, createMockCookies(), unauthenticatedLocals())
+
+		expect(response.status).toBe(401)
+		expect(mockSetUserCookie).not.toHaveBeenCalled()
+	})
 
 	it('sets user cookie with provided data', async () => {
 		const { response } = await callEndpoint(baseUser)

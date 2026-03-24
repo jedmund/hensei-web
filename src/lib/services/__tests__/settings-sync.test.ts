@@ -71,7 +71,7 @@ describe('syncTheme', () => {
 	it('persists to DB, updates cookie, then applies theme', async () => {
 		const { syncTheme } = await import('../settings-sync')
 
-		await syncTheme('user-1', baseUser, 'dark')
+		await syncTheme('user-1', baseUser, 'dark', 'system')
 
 		expect(callOrder).toEqual([
 			'users.update',
@@ -83,7 +83,7 @@ describe('syncTheme', () => {
 	it('calls users.update with the new theme', async () => {
 		const { syncTheme } = await import('../settings-sync')
 
-		await syncTheme('user-1', baseUser, 'dark')
+		await syncTheme('user-1', baseUser, 'dark', 'system')
 
 		expect(mockUsersUpdate).toHaveBeenCalledWith('user-1', { theme: 'dark' })
 	})
@@ -91,7 +91,7 @@ describe('syncTheme', () => {
 	it('posts updated cookie with new theme to /api/settings', async () => {
 		const { syncTheme } = await import('../settings-sync')
 
-		await syncTheme('user-1', baseUser, 'dark')
+		await syncTheme('user-1', baseUser, 'dark', 'system')
 
 		expect(mockFetch).toHaveBeenCalledWith('/api/settings', expect.objectContaining({
 			method: 'POST'
@@ -107,7 +107,30 @@ describe('syncTheme', () => {
 	it('applies theme to the store', async () => {
 		const { syncTheme } = await import('../settings-sync')
 
-		await syncTheme('user-1', baseUser, 'light')
+		await syncTheme('user-1', baseUser, 'light', 'system')
+
+		expect(mockSetTheme).toHaveBeenCalledWith('light')
+	})
+
+	it('reverts to previous theme on API failure', async () => {
+		const { syncTheme } = await import('../settings-sync')
+
+		mockUsersUpdate.mockRejectedValue(new Error('network error'))
+
+		await syncTheme('user-1', baseUser, 'dark', 'light')
+
+		expect(mockSetTheme).toHaveBeenCalledWith('light')
+	})
+
+	it('reverts to previous theme on non-ok /api/settings response', async () => {
+		const { syncTheme } = await import('../settings-sync')
+
+		mockFetch.mockImplementation(async () => {
+			callOrder.push('fetch:/api/settings')
+			return new Response('error', { status: 500 })
+		})
+
+		await syncTheme('user-1', baseUser, 'dark', 'light')
 
 		expect(mockSetTheme).toHaveBeenCalledWith('light')
 	})
@@ -167,5 +190,29 @@ describe('syncLanguage', () => {
 
 		expect(updateIndex).toBeLessThan(fetchIndex)
 		expect(fetchIndex).toBeLessThan(reloadIndex)
+	})
+
+	it('does not reload on API failure', async () => {
+		const { syncLanguage } = await import('../settings-sync')
+
+		mockUsersUpdate.mockRejectedValue(new Error('network error'))
+
+		await syncLanguage('user-1', baseUser, 'ja')
+
+		expect(mockInvalidateAll).not.toHaveBeenCalled()
+		expect(window.location.reload).not.toHaveBeenCalled()
+	})
+
+	it('does not reload on non-ok /api/settings response', async () => {
+		const { syncLanguage } = await import('../settings-sync')
+
+		mockFetch.mockImplementation(async () => {
+			callOrder.push('fetch:/api/settings')
+			return new Response('error', { status: 500 })
+		})
+
+		await syncLanguage('user-1', baseUser, 'ja')
+
+		expect(window.location.reload).not.toHaveBeenCalled()
 	})
 })
