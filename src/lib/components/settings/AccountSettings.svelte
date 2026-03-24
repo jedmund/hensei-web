@@ -91,6 +91,7 @@
 			return
 		}
 		usernameError = ''
+		onUsernameValidChange?.(true)
 	}
 
 	async function checkUsernameAvailability(value: string) {
