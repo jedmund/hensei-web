@@ -32,6 +32,21 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
 			expires
 		})
 
+		// Sync PARAGLIDE_LOCALE cookie with the language preference
+		if (userCookie.language && userCookie.language !== 'en') {
+			if (cookies.get('PARAGLIDE_LOCALE') !== userCookie.language) {
+				cookies.set('PARAGLIDE_LOCALE', userCookie.language, {
+					path: '/',
+					httpOnly: false,
+					sameSite: 'lax',
+					secure: !dev,
+					maxAge: 34560000
+				})
+			}
+		} else if (cookies.get('PARAGLIDE_LOCALE')) {
+			cookies.delete('PARAGLIDE_LOCALE', { path: '/' })
+		}
+
 		return json({ success: true })
 	} catch (error) {
 		if (dev) console.error('Failed to update settings cookie:', error)
