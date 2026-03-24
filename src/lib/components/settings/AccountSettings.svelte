@@ -129,7 +129,7 @@
 				: usernameAvailable === true
 					? 'check'
 					: usernameAvailable === false
-						? 'x'
+						? 'close'
 						: undefined
 	)
 
