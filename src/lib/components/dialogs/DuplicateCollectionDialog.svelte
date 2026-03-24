@@ -15,7 +15,6 @@
 </script>
 
 <Dialog bind:open>
-	{#snippet children()}
 		<ModalHeader title={m.duplicate_collection_title()} />
 		<ModalBody>
 			<p class="message">
@@ -29,7 +28,6 @@
 				onclick: onConfirm
 			}}
 		/>
-	{/snippet}
 </Dialog>
 
 <style lang="scss">

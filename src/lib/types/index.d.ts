@@ -78,7 +78,7 @@ interface GridWeaponObject {
 		ax_strength1?: number
 		ax_strength2?: number
 		awakening_id?: string
-		awakening_level?: Number
+		awakening_level?: number
 	}
 }
 

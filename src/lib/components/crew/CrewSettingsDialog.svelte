@@ -128,11 +128,9 @@
 		onOpenChange?.(o)
 	}}
 >
-	{#snippet children()}
 		<ModalHeader title={m.crew_settings_title()} />
 
 		<ModalBody>
-			{#snippet children()}
 				<div class="modal-form">
 					{#if settingsError}
 						<div class="error-message">{settingsError}</div>
@@ -183,7 +181,6 @@
 						</div>
 					</div>
 				</div>
-			{/snippet}
 		</ModalBody>
 
 		<ModalFooter
@@ -195,7 +192,6 @@
 				disabled: !canSave || updateCrewMutation.isPending
 			}}
 		/>
-	{/snippet}
 </Dialog>
 
 <style lang="scss">

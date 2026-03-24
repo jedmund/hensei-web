@@ -147,7 +147,6 @@
 </script>
 
 <Dialog bind:open onOpenChange={handleOpenChange}>
-	{#snippet children()}
 		<ModalHeader title={m.crew_edit_player()} />
 
 		<ModalBody>
@@ -203,7 +202,6 @@
 				disabled: saveDisabled
 			}}
 		/>
-	{/snippet}
 </Dialog>
 
 <style lang="scss">

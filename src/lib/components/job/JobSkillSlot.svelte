@@ -113,9 +113,7 @@
 		</div>
 		{#if locked}
 			<Tooltip content="Main skill (locked)">
-				{#snippet children()}
 					<Icon name="lock" size={16} class="lock-icon" />
-				{/snippet}
 			</Tooltip>
 		{/if}
 	</div>

@@ -167,7 +167,6 @@
 </script>
 
 <Dialog bind:open {onOpenChange}>
-	{#snippet children()}
 		<ModalHeader {title} />
 		<div class="modal-body">
 			<div class="form-grid">
@@ -254,7 +253,6 @@
 				</DialogPrimitive.Content>
 			</DialogPrimitive.Portal>
 		</DialogPrimitive.Root>
-	{/snippet}
 </Dialog>
 
 <style lang="scss">

@@ -164,7 +164,6 @@
 
 <!-- Delete Phantom Confirmation -->
 <Dialog bind:open={deleteDialogOpen}>
-	{#snippet children()}
 		<ModalHeader title={m.crew_delete_phantom_title()} />
 		<ModalBody>
 			<p class="confirm-message">
@@ -179,7 +178,6 @@
 				destructive: true
 			}}
 		/>
-	{/snippet}
 </Dialog>
 
 <!-- Assign Phantom Modal -->

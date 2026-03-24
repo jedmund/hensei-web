@@ -98,11 +98,9 @@
 				>
 					{#each RARITY_DISPLAY_ORDER as rarity}
 						<Tooltip content={getLabel(rarity)}>
-							{#snippet children()}
 								<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
 									<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
 								</ToggleGroup.Item>
-							{/snippet}
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -116,11 +114,9 @@
 				>
 					{#each RARITY_DISPLAY_ORDER as rarity}
 						<Tooltip content={getLabel(rarity)}>
-							{#snippet children()}
 								<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
 									<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
 								</ToggleGroup.Item>
-							{/snippet}
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -142,11 +138,9 @@
 			>
 				{#each RARITY_DISPLAY_ORDER as rarity}
 					<Tooltip content={getLabel(rarity)}>
-						{#snippet children()}
 							<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
 								<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
 							</ToggleGroup.Item>
-						{/snippet}
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>
@@ -160,11 +154,9 @@
 			>
 				{#each RARITY_DISPLAY_ORDER as rarity}
 					<Tooltip content={getLabel(rarity)}>
-						{#snippet children()}
 							<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
 								<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
 							</ToggleGroup.Item>
-						{/snippet}
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>

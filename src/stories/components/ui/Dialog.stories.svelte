@@ -29,14 +29,10 @@
 	<div>
 		<Button onclick={() => (defaultOpen = true)}>Open Dialog</Button>
 		<Dialog bind:open={defaultOpen}>
-			{#snippet children()}
 				<ModalHeader title="Dialog Title" />
 				<ModalBody>
-					{#snippet children()}
 						<p>This is the dialog content. You can put any content here.</p>
-					{/snippet}
 				</ModalBody>
-			{/snippet}
 		</Dialog>
 	</div>
 </Story>
@@ -46,17 +42,13 @@
 	<div>
 		<Button onclick={() => (withDescOpen = true)}>Open Dialog</Button>
 		<Dialog bind:open={withDescOpen}>
-			{#snippet children()}
 				<ModalHeader
 					title="Account Settings"
 					description="Make changes to your account settings here."
 				/>
 				<ModalBody>
-					{#snippet children()}
 						<p>Your account settings form would go here.</p>
-					{/snippet}
 				</ModalBody>
-			{/snippet}
 		</Dialog>
 	</div>
 </Story>
@@ -66,12 +58,9 @@
 	<div>
 		<Button onclick={() => (withFooterOpen = true)}>Open Dialog</Button>
 		<Dialog bind:open={withFooterOpen}>
-			{#snippet children()}
 				<ModalHeader title="Confirm Action" />
 				<ModalBody>
-					{#snippet children()}
 						<p>Are you sure you want to proceed with this action?</p>
-					{/snippet}
 				</ModalBody>
 				<ModalFooter
 					onCancel={() => (withFooterOpen = false)}
@@ -80,7 +69,6 @@
 						onclick: () => (withFooterOpen = false)
 					}}
 				/>
-			{/snippet}
 		</Dialog>
 	</div>
 </Story>
@@ -90,10 +78,8 @@
 	<div>
 		<Button onclick={() => (longContentOpen = true)}>Open Long Dialog</Button>
 		<Dialog bind:open={longContentOpen}>
-			{#snippet children()}
 				<ModalHeader title="Terms and Conditions" />
 				<ModalBody>
-					{#snippet children()}
 						<div style="display: flex; flex-direction: column; gap: 16px;">
 							<p>
 								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
@@ -119,7 +105,6 @@
 								minus id quod maxime placeat facere possimus.
 							</p>
 						</div>
-					{/snippet}
 				</ModalBody>
 				<ModalFooter
 					onCancel={() => (longContentOpen = false)}
@@ -128,7 +113,6 @@
 						onclick: () => (longContentOpen = false)
 					}}
 				/>
-			{/snippet}
 		</Dialog>
 	</div>
 </Story>
@@ -138,10 +122,8 @@
 	<div>
 		<Button onclick={() => (formOpen = true)}>Edit Profile</Button>
 		<Dialog bind:open={formOpen}>
-			{#snippet children()}
 				<ModalHeader title="Edit Profile" description="Update your profile information." />
 				<ModalBody>
-					{#snippet children()}
 						<div style="display: flex; flex-direction: column; gap: 16px;">
 							<div>
 								<label
@@ -168,7 +150,6 @@
 								/>
 							</div>
 						</div>
-					{/snippet}
 				</ModalBody>
 				<ModalFooter
 					onCancel={() => (formOpen = false)}
@@ -177,7 +158,6 @@
 						onclick: () => (formOpen = false)
 					}}
 				/>
-			{/snippet}
 		</Dialog>
 	</div>
 </Story>
@@ -187,15 +167,12 @@
 	<div>
 		<Button variant="destructive" onclick={() => (confirmOpen = true)}>Delete Item</Button>
 		<Dialog bind:open={confirmOpen}>
-			{#snippet children()}
 				<ModalHeader title="Delete Item" />
 				<ModalBody>
-					{#snippet children()}
 						<p>
 							Are you sure you want to delete this item? This action cannot be undone and all
 							associated data will be permanently removed.
 						</p>
-					{/snippet}
 				</ModalBody>
 				<ModalFooter
 					onCancel={() => (confirmOpen = false)}
@@ -205,7 +182,6 @@
 						destructive: true
 					}}
 				/>
-			{/snippet}
 		</Dialog>
 	</div>
 </Story>

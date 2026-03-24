@@ -113,7 +113,6 @@
 				{#each parties as party (party.id)}
 					{@const alreadyIn = isInPlaylist(party)}
 					<Tooltip content={m.playlist_already_added()} disabled={!alreadyIn}>
-						{#snippet children()}
 							<button
 								class="party-item"
 								onclick={() => handleClick(party)}
@@ -129,7 +128,6 @@
 									{/snippet}
 								</GridRep>
 							</button>
-						{/snippet}
 					</Tooltip>
 				{/each}
 			</div>

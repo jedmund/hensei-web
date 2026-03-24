@@ -41,7 +41,7 @@ export function useItemAddition(opts: ItemAdditionOptions) {
 		error = null
 
 		try {
-			let targetSlot = opts.getSelectedSlot()
+			const targetSlot = opts.getSelectedSlot()
 			const activeTab = opts.getActiveTab()
 			let result: unknown
 

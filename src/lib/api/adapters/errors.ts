@@ -15,10 +15,10 @@ import * as m from '$lib/paraglide/messages'
  * Extends the native Error class with additional properties
  */
 export class ApiError extends Error implements AdapterError {
-	name = 'AdapterError' as const
+	override name = 'AdapterError'
 	code: string
 	status: number
-	details?: any
+	details?: unknown
 
 	/**
 	 * Creates a new ApiError instance
@@ -28,7 +28,7 @@ export class ApiError extends Error implements AdapterError {
 	 * @param message - Human-readable error message
 	 * @param details - Additional error details from the API
 	 */
-	constructor(code: string, status: number, message: string, details?: any) {
+	constructor(code: string, status: number, message: string, details?: unknown) {
 		super(message)
 		this.code = code
 		this.status = status
@@ -58,11 +58,11 @@ export class ApiError extends Error implements AdapterError {
 	 * Creates an ApiError from a plain object
 	 * Useful for deserializing errors from API responses
 	 */
-	static fromJSON(json: any): ApiError {
+	static fromJSON(json: Record<string, unknown>): ApiError {
 		return new ApiError(
-			json.code || 'UNKNOWN_ERROR',
-			json.status || 0,
-			json.message || 'An unknown error occurred',
+			(json.code as string) || 'UNKNOWN_ERROR',
+			(json.status as number) || 0,
+			(json.message as string) || 'An unknown error occurred',
 			json.details
 		)
 	}
@@ -72,9 +72,9 @@ export class ApiError extends Error implements AdapterError {
  * Error class for network-related failures
  */
 export class NetworkError extends ApiError {
-	constructor(message = 'Network request failed', details?: any) {
+	constructor(message = 'Network request failed', details?: unknown) {
 		super('NETWORK_ERROR', 0, message, details)
-		this.name = 'NetworkError' as any
+		this.name = 'NetworkError' as const
 	}
 }
 
@@ -82,9 +82,9 @@ export class NetworkError extends ApiError {
  * Error class for request timeout
  */
 export class TimeoutError extends ApiError {
-	constructor(timeout: number, details?: any) {
+	constructor(timeout: number, details?: unknown) {
 		super('TIMEOUT', 0, `Request timed out after ${timeout}ms`, details)
-		this.name = 'TimeoutError' as any
+		this.name = 'TimeoutError'
 	}
 }
 

@@ -72,7 +72,7 @@
 
 	// --- Infinite scroll ---
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	 
 	const loader = useInfiniteLoader(
 		() => searchQueryResult as any,
 		() => sentinelEl,

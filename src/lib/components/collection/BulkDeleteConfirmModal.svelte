@@ -34,7 +34,6 @@
 </script>
 
 <Dialog bind:open>
-	{#snippet children()}
 		<ModalHeader title={m.collection_bulk_delete_title({ count, type: itemLabel })} />
 		<ModalBody>
 			<p class="message">
@@ -51,7 +50,6 @@
 				disabled: deleting
 			}}
 		/>
-	{/snippet}
 </Dialog>
 
 <style lang="scss">

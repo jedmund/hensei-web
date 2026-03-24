@@ -92,7 +92,6 @@
 </script>
 
 <Dialog bind:open onOpenChange={handleOpenChange}>
-	{#snippet children()}
 		<ModalHeader {title} />
 
 		<ModalBody>
@@ -110,7 +109,6 @@
 				destructive: action === 'remove'
 			}}
 		/>
-	{/snippet}
 </Dialog>
 
 <style>

@@ -17,7 +17,6 @@
 </script>
 
 <Dialog bind:open>
-	{#snippet children()}
 		<ModalHeader title="Delete {partyName}?" />
 		<ModalBody>
 			<p class="message">{m.delete_team_confirm()}</p>
@@ -32,7 +31,6 @@
 				disabled: deleting
 			}}
 		/>
-	{/snippet}
 </Dialog>
 
 <style lang="scss">

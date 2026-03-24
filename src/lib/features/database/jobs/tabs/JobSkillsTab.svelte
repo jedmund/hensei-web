@@ -129,7 +129,6 @@
 </div>
 
 <Dialog bind:open={deleteDialogOpen}>
-	{#snippet children()}
 		<ModalHeader title="Delete Skill?" />
 		<ModalBody>
 			<p class="delete-message">
@@ -147,7 +146,6 @@
 				disabled: isDeleting
 			}}
 		/>
-	{/snippet}
 </Dialog>
 
 <style lang="scss">

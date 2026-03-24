@@ -187,10 +187,8 @@
 </script>
 
 <Dialog bind:open onOpenChange={handleOpenChange}>
-	{#snippet children()}
 		<ModalHeader title={m.conflict_title()} />
 		<ModalBody>
-			{#snippet children()}
 				{#if conflict}
 					<div class={styles.content}>
 						<p class={styles.message}>{conflictMessage}</p>
@@ -241,7 +239,6 @@
 						</div>
 					</div>
 				{/if}
-			{/snippet}
 		</ModalBody>
 		<ModalFooter
 			onCancel={handleCancel}
@@ -252,5 +249,4 @@
 				disabled: isLoading
 			}}
 		/>
-	{/snippet}
 </Dialog>

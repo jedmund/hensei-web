@@ -60,8 +60,8 @@ export interface RequestOptions extends Omit<RequestInit, 'body' | 'cache'> {
  * Provides consistent error handling across the application
  */
 export interface AdapterError {
-	/** Error name, always 'AdapterError' for identification */
-	name: 'AdapterError'
+	/** Error name for identification (e.g., 'AdapterError', 'NetworkError') */
+	name: string
 
 	/** Normalized error code (e.g., 'NOT_FOUND', 'UNAUTHORIZED') */
 	code: string
@@ -73,7 +73,7 @@ export interface AdapterError {
 	message: string
 
 	/** Additional error details from the API response */
-	details?: any
+	details?: unknown
 }
 
 /**

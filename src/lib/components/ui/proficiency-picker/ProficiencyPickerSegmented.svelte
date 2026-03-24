@@ -99,7 +99,6 @@
 				>
 					{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
 						<Tooltip content={getLabel(proficiency)} {disabled}>
-							{#snippet children()}
 								<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
 									<img
 										src={getProficiencyImage(proficiency)}
@@ -107,7 +106,6 @@
 										class="proficiency-image"
 									/>
 								</ToggleGroup.Item>
-							{/snippet}
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -121,7 +119,6 @@
 				>
 					{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
 						<Tooltip content={getLabel(proficiency)} {disabled}>
-							{#snippet children()}
 								<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
 									<img
 										src={getProficiencyImage(proficiency)}
@@ -129,7 +126,6 @@
 										class="proficiency-image"
 									/>
 								</ToggleGroup.Item>
-							{/snippet}
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -151,7 +147,6 @@
 			>
 				{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
 					<Tooltip content={getLabel(proficiency)} {disabled}>
-						{#snippet children()}
 							<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
 								<img
 									src={getProficiencyImage(proficiency)}
@@ -159,7 +154,6 @@
 									class="proficiency-image"
 								/>
 							</ToggleGroup.Item>
-						{/snippet}
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>
@@ -173,7 +167,6 @@
 			>
 				{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
 					<Tooltip content={getLabel(proficiency)} {disabled}>
-						{#snippet children()}
 							<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
 								<img
 									src={getProficiencyImage(proficiency)}
@@ -181,7 +174,6 @@
 									class="proficiency-image"
 								/>
 							</ToggleGroup.Item>
-						{/snippet}
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>

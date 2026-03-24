@@ -101,7 +101,6 @@
 				>
 					{#each elements as element}
 						<Tooltip content={getLabel(element)}>
-							{#snippet children()}
 								<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
 									<img
 										src={getElementImage(element)}
@@ -109,7 +108,6 @@
 										class="element-image"
 									/>
 								</ToggleGroup.Item>
-							{/snippet}
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -123,7 +121,6 @@
 				>
 					{#each elements as element}
 						<Tooltip content={getLabel(element)}>
-							{#snippet children()}
 								<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
 									<img
 										src={getElementImage(element)}
@@ -131,7 +128,6 @@
 										class="element-image"
 									/>
 								</ToggleGroup.Item>
-							{/snippet}
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -153,11 +149,9 @@
 			>
 				{#each elements as element}
 					<Tooltip content={getLabel(element)}>
-						{#snippet children()}
 							<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
 								<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
 							</ToggleGroup.Item>
-						{/snippet}
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>
@@ -171,11 +165,9 @@
 			>
 				{#each elements as element}
 					<Tooltip content={getLabel(element)}>
-						{#snippet children()}
 							<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
 								<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
 							</ToggleGroup.Item>
-						{/snippet}
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>

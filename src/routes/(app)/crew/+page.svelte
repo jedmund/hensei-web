@@ -278,11 +278,9 @@
 
 <!-- Create Crew Modal -->
 <Dialog bind:open={createModalOpen} onOpenChange={(open) => !open && handleCloseModal()}>
-	{#snippet children()}
 		<ModalHeader title={m.crew_create()} />
 
 		<ModalBody>
-			{#snippet children()}
 				<div class="modal-form">
 					{#if error}
 						<div class="error-message">{error}</div>
@@ -330,7 +328,6 @@
 						</div>
 					</div>
 				</div>
-			{/snippet}
 		</ModalBody>
 
 		<ModalFooter
@@ -342,7 +339,6 @@
 				disabled: !canCreate || createCrewMutation.isPending
 			}}
 		/>
-	{/snippet}
 </Dialog>
 
 <CrewSettingsDialog bind:open={settingsModalOpen} />

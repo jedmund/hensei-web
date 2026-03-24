@@ -14,7 +14,6 @@
 </script>
 
 <Dialog bind:open>
-	{#snippet children()}
 		<ModalHeader title={m.unlink_collection_title()} />
 		<ModalBody>
 			<p class="unlink-message">
@@ -34,7 +33,6 @@
 				destructive: true
 			}}
 		/>
-	{/snippet}
 </Dialog>
 
 <style lang="scss">

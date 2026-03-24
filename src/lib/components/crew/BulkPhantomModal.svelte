@@ -93,7 +93,6 @@
 </script>
 
 <Dialog bind:open size="medium">
-	{#snippet children()}
 		<ModalHeader title={m.crew_bulk_phantom_title()} description={m.crew_bulk_phantom_desc()} />
 
 		<ModalBody>
@@ -155,7 +154,6 @@
 				disabled: !canSubmit
 			}}
 		/>
-	{/snippet}
 </Dialog>
 
 <style lang="scss">

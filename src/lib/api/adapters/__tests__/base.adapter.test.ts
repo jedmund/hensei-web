@@ -295,7 +295,7 @@ describe('BaseAdapter', () => {
 		})
 
 		it('should cancel duplicate requests to the same endpoint', async () => {
-			let abortHandlers: Array<() => void> = []
+			const abortHandlers: Array<() => void> = []
 
 			// Mock sequential requests with proper abort handling
 			let callCount = 0

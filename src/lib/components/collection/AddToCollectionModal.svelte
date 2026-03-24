@@ -373,7 +373,6 @@
 </script>
 
 <Dialog bind:open {onOpenChange} size="large">
-	{#snippet children()}
 		<ModalHeader title={dialogTitle} />
 		<div class="modal-content">
 			<!-- Filters -->
@@ -518,7 +517,6 @@
 				{/if}
 			{/snippet}
 		</ModalFooter>
-	{/snippet}
 </Dialog>
 
 <style lang="scss">

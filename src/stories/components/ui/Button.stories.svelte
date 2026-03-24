@@ -65,7 +65,7 @@
 
 <!-- Default - args-only for autodocs -->
 <Story name="Default" args={{ variant: 'secondary' }}>
-	{#snippet children()}Button{/snippet}
+	Button
 </Story>
 
 <!-- All Variants -->

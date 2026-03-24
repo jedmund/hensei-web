@@ -281,7 +281,6 @@
 </script>
 
 <Dialog bind:open {...onOpenChange ? { onOpenChange } : {}} size="small" hideClose>
-	{#snippet children()}
 		<ModalHeader title={m.settings_title()}>
 			<span class="header-username">@{username}</span>
 		</ModalHeader>
@@ -388,7 +387,6 @@
 			confirmLabel={m.settings_username_confirm_action()}
 			onconfirm={handleSave}
 		/>
-	{/snippet}
 </Dialog>
 
 <style lang="scss">

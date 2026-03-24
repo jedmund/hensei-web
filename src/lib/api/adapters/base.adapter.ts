@@ -114,7 +114,7 @@ export abstract class BaseAdapter {
 		// Get Bearer token from auth store (only in browser)
 		// On the server, auth is handled by SvelteKit's handleFetch hook when
 		// a custom fetch function is provided via options.fetch
-		let authHeaders: Record<string, string> = {}
+		const authHeaders: Record<string, string> = {}
 		if (browser) {
 			const token = await authStore.checkAndRefresh()
 			if (token) {

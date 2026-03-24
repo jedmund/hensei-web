@@ -23,7 +23,6 @@
 </script>
 
 <Dialog bind:open>
-	{#snippet children()}
 		<ModalHeader title={m.sync_to_collection_title()} />
 		<ModalBody>
 			<p class="sync-message">
@@ -42,7 +41,6 @@
 				}
 			}}
 		/>
-	{/snippet}
 </Dialog>
 
 <style lang="scss">

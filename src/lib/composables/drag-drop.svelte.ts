@@ -84,7 +84,7 @@ function hasCollectionLink(item: GridItem): boolean {
 }
 
 export function createDragDropContext(handlers: DragDropHandlers = {}) {
-	let state = $state<DragDropState>({
+	const state = $state<DragDropState>({
 		isDragging: false,
 		isDuplicating: false,
 		draggedItem: null,
