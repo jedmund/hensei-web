@@ -56,8 +56,8 @@
 	)
 
 	const genderOptions = [
-		{ value: 0, label: 'Gran' },
-		{ value: 1, label: 'Djeeta' }
+		{ value: 0, label: m.settings_gender_gran() },
+		{ value: 1, label: m.settings_gender_djeeta() }
 	]
 
 	// Local state derived from props — overrides via bind:value are temporary

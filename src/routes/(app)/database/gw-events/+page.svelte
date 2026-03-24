@@ -6,7 +6,7 @@
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { formatDateJST } from '$lib/utils/date'
-	import { ELEMENT_LABELS } from '$lib/utils/element'
+	import { getElementLabel } from '$lib/utils/element'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
 	import type { GwEvent } from '$lib/types/api/gw'
 	import type { PageData } from './$types'
@@ -36,7 +36,7 @@
 		return events.filter(
 			(e) =>
 				String(e.eventNumber).includes(term) ||
-				ELEMENT_LABELS[e.element]?.toLowerCase().includes(term)
+				getElementLabel(e.element).toLowerCase().includes(term)
 		)
 	})
 

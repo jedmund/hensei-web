@@ -63,9 +63,6 @@ const ELEMENT_MESSAGES: Record<number, () => string> = {
 	6: m.element_light
 }
 
-/** @deprecated Use getElementLabel() instead for display text */
-export const ELEMENT_LABELS = ELEMENT_KEYS
-
 export function getElementLabel(element?: number): string {
 	if (element === undefined || element === null) return '—'
 	const messageFn = ELEMENT_MESSAGES[element]

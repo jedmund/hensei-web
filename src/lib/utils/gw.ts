@@ -79,7 +79,7 @@ export function parseScore(value: string): number {
 }
 
 // Re-export element utilities from the canonical source
-export { ELEMENT_LABELS, getElementKey, getElementColor } from '$lib/utils/element'
+export { getElementKey, getElementColor } from '$lib/utils/element'
 
 // ============================================================================
 // Chart Data Transformation Utilities
