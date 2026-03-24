@@ -186,17 +186,9 @@
 	}
 	const elementId = $derived(ELEMENT_KEY_TO_ID[element] ?? 1)
 
-	// Language/Theme local state
-	let localLanguage = $state(language)
-	let localTheme = $state(theme)
-
-	// Sync from parent when props change (e.g., API data loads)
-	$effect(() => {
-		localLanguage = language
-	})
-	$effect(() => {
-		localTheme = theme
-	})
+	// Language/Theme local state (writable derived syncs from props)
+	let localLanguage = $derived(language)
+	let localTheme = $derived(theme)
 
 	function handleLanguageSelect(value: string | undefined) {
 		if (value === undefined) return

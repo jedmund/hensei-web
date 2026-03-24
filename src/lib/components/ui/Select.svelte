@@ -66,15 +66,10 @@
 
 	const selected = $derived(options.find((opt) => opt.value === value))
 
-	// Local string value for Bits UI (which manages its own internal state)
-	let internalValue = $state<string | undefined>(
+	// Local string value for Bits UI (writable derived syncs from external value)
+	let internalValue = $derived<string | undefined>(
 		value !== undefined && value !== null ? String(value) : undefined
 	)
-
-	// Sync external value changes to internal state
-	$effect(() => {
-		internalValue = value !== undefined && value !== null ? String(value) : undefined
-	})
 
 	const hasWrapper = $derived(label || error)
 

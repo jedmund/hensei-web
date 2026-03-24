@@ -40,9 +40,6 @@
 		initialView === 'accessories' ? 'accessories' : initialView === 'skills' ? 'skills' : 'jobs'
 	)
 
-	// Accessory type filter
-	let accessoryTypeFilter = $state<number | undefined>(undefined)
-
 	// Sync viewMode changes to URL
 	$effect(() => {
 		const currentView = $page.url.searchParams.get('view')
@@ -142,10 +139,8 @@
 
 	let selectedType = $state<number>(0)
 
-	// Sync selectedType to accessoryTypeFilter
-	$effect(() => {
-		accessoryTypeFilter = selectedType === 0 ? undefined : selectedType
-	})
+	// Accessory type filter derived from selectedType
+	let accessoryTypeFilter = $derived<number | undefined>(selectedType === 0 ? undefined : selectedType)
 
 	// Fetch all accessories
 	const accessoriesQuery = createQuery(() => ({

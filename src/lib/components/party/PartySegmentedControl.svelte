@@ -30,11 +30,7 @@
 	const jobIcon = $derived(party.job ? getJobIconUrl(party.job.granblueId) : undefined)
 
 	// Handle value changes
-	let value = $state(selectedTab)
-
-	$effect(() => {
-		value = selectedTab
-	})
+	let value = $derived(selectedTab)
 
 	function handleValueChange(newValue: string) {
 		value = newValue as GridType
