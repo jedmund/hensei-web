@@ -43,7 +43,7 @@ declare module 'wx-svelte-grid' {
 	}
 
 	// Alias for backward compatibility
-	export interface ICellProps extends Cell {}
+	export type ICellProps = Cell
 
 	export interface IDataConfig {
 		data: IRow[]

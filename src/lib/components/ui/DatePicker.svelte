@@ -98,7 +98,6 @@
 			maxValue={maxDateValue}
 			placeholder={placeholderDate()}
 		>
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
 			<div class="date-picker-field" class:contained onpaste={handlePaste}>
 				<BitsDatePicker.Input>
 					{#snippet children({ segments })}
@@ -170,7 +169,6 @@
 		maxValue={maxDateValue}
 		placeholder={placeholderDate()}
 	>
-		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div class="date-picker-field" class:contained onpaste={handlePaste}>
 			<BitsDatePicker.Input>
 				{#snippet children({ segments })}
