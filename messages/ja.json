@@ -1047,6 +1047,8 @@
 	"settings_gender": "主人公",
 	"settings_gender_subtitle": "ゲーム内の主人公キャラクター",
 	"settings_gender_placeholder": "主人公を選択",
+	"settings_gender_gran": "グラン",
+	"settings_gender_djeeta": "ジータ",
 	"settings_language": "言語",
 	"settings_language_subtitle": "サイトの表示言語",
 	"settings_language_placeholder": "言語を選択",
