@@ -4,7 +4,11 @@ import type { RequestHandler } from './$types'
 import { getAccountFromCookies, setAccountCookie, setUserCookie } from '$lib/auth/cookies'
 import type { UserCookie } from '$lib/types/UserCookie'
 
-export const POST: RequestHandler = async ({ cookies, request }) => {
+export const POST: RequestHandler = async ({ cookies, request, locals }) => {
+	if (!locals.session?.isAuthenticated) {
+		return json({ error: 'Unauthorized' }, { status: 401 })
+	}
+
 	try {
 		const body = await request.json() as UserCookie & { username?: string }
 
