@@ -118,9 +118,9 @@
 		isLoading = true
 
 		try {
-			const params: any = {
+			const params: Record<string, unknown> = {
 				page: currentPage,
-				filters: {}
+				filters: {} as Record<string, unknown>
 			}
 
 			// Only add query if not empty
