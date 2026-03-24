@@ -6,12 +6,11 @@
 	import SettingsRow from '../ui/SettingsRow.svelte'
 	import { pictureData } from '$lib/utils/pictureData'
 	import { localizedName } from '$lib/utils/locale'
-	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
-	import type { ElementType } from '../ui/SettingsNav.svelte'
+	import { getAvatarSrc } from '$lib/utils/avatar'
 
 	interface Props {
 		picture: string
-		element: ElementType
+		element: string
 		username: string
 		displayName: string
 		granblueId: string
@@ -44,13 +43,16 @@
 	}: Props = $props()
 
 	// Prepare options for selects
+	const elementBgVar = $derived(`var(--${element}-portrait-bg)`)
+
 	const pictureOptions = $derived(
 		pictureData
 			.sort((a, b) => localizedName(a.name).localeCompare(localizedName(b.name)))
 			.map((p) => ({
 				value: p.filename,
 				label: localizedName(p.name),
-				image: getAvatarSrc(p.filename)
+				image: getAvatarSrc(p.filename),
+				imageBackground: elementBgVar
 			}))
 	)
 
@@ -58,9 +60,6 @@
 		{ value: 0, label: 'Gran' },
 		{ value: 1, label: 'Djeeta' }
 	]
-
-	// Get current picture data
-	const currentPicture = $derived(pictureData.find((p) => p.filename === picture))
 
 	// Local state derived from props — overrides via bind:value are temporary
 	let localPicture = $derived(picture)
@@ -93,26 +92,18 @@
 
 <div class="section">
 	<div class="form-fields">
-		<!-- Avatar + Display Name (untitled section) -->
-		<div class="picture-section">
-			<div class="current-avatar">
-				<img
-					src={getAvatarSrc(localPicture)}
-					srcset={getAvatarSrcSet(localPicture)}
-					alt={currentPicture ? localizedName(currentPicture.name) : ''}
-					class="avatar-preview element-{element}"
+		<!-- Avatar -->
+		<SettingsRow title={m.settings_avatar()} subtitle={m.settings_avatar_subtitle()}>
+			{#snippet control()}
+				<Select
+					bind:value={localPicture}
+					options={pictureOptions}
+					placeholder={m.settings_avatar_placeholder()}
+					contained
+					portal
 				/>
-			</div>
-			<Select
-				bind:value={localPicture}
-				options={pictureOptions}
-				label={m.settings_avatar()}
-				placeholder={m.settings_avatar_placeholder()}
-				fullWidth
-				contained
-				portal
-			/>
-		</div>
+			{/snippet}
+		</SettingsRow>
 
 		<SettingsRow title={m.settings_display_name()} subtitle={m.settings_display_name_subtitle()}>
 			{#snippet control()}
@@ -161,7 +152,6 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
-	@use '$src/themes/layout' as layout;
 
 	.section {
 		display: flex;
@@ -178,46 +168,7 @@
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
 		color: var(--text-secondary);
-		margin: 0;
+		margin: spacing.$unit-2x 0 0;
 	}
 
-	.picture-section {
-		display: flex;
-		gap: spacing.$unit-3x;
-		align-items: center;
-
-		.current-avatar {
-			flex-shrink: 0;
-			width: 80px;
-			height: 80px;
-
-			.avatar-preview {
-				width: 100%;
-				height: 100%;
-				object-fit: contain;
-				border-radius: layout.$full-corner;
-				padding: spacing.$unit;
-				background-color: var(--placeholder-bg);
-
-				&.element-fire {
-					background-color: var(--fire-nav-selected-bg);
-				}
-				&.element-water {
-					background-color: var(--water-nav-selected-bg);
-				}
-				&.element-earth {
-					background-color: var(--earth-nav-selected-bg);
-				}
-				&.element-wind {
-					background-color: var(--wind-nav-selected-bg);
-				}
-				&.element-light {
-					background-color: var(--light-nav-selected-bg);
-				}
-				&.element-dark {
-					background-color: var(--dark-nav-selected-bg);
-				}
-			}
-		}
-	}
 </style>
