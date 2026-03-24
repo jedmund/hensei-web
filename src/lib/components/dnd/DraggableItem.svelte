@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
+	import type { Snippet } from 'svelte'
 	import type { GridItem, GridItemType } from '$lib/composables/drag-drop.svelte'
 	import { getDragDropContext } from '$lib/composables/drag-drop.svelte'
 
@@ -10,7 +11,7 @@
 		type: GridItemType
 		canDrag?: boolean
 		customPreview?: boolean
-		children?: any
+		children?: Snippet
 	}
 
 	let {

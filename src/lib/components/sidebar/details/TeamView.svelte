@@ -17,10 +17,10 @@
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
 		item: GridCharacter | GridWeapon | GridSummon
-		itemData: any
+		itemData: Record<string, unknown>
 		gridUncapLevel: number | null
 		gridTranscendence: number | null
-		modificationStatus: any
+		modificationStatus: Record<string, unknown>
 	}
 
 	let { type, item, itemData, gridUncapLevel, gridTranscendence, modificationStatus }: Props =

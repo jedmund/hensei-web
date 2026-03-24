@@ -62,7 +62,7 @@
            align-items: center;
            justify-content: center;"
 	>
-		<!-- svelte-ignore svelte/no-at-html-tags -->
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 		{@html svgContent.replace('<svg', `<svg width="100%" height="100%"`)}
 	</span>
 {/if}

@@ -14,7 +14,7 @@
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
 		item: GridCharacter | GridWeapon | GridSummon
-		itemData: any
+		itemData: Record<string, unknown>
 		gridUncapLevel: number | null | undefined
 		gridTranscendence: number | null | undefined
 		showUncap?: boolean
@@ -67,7 +67,7 @@
 		}
 	}
 
-	function displayName(input: any): string {
+	function displayName(input: unknown): string {
 		if (!input) return '—'
 		const name = input.name ?? input
 		return localizedName(name)

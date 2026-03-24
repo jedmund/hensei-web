@@ -42,11 +42,12 @@
 
 	const tag = $derived(disabled ? 'div' : 'a')
 
-	function displayName(input: any): string {
+	function displayName(input: unknown): string {
 		if (!input) return '—'
-		const maybe = input.name ?? input
+		const obj = input as Record<string, unknown>
+		const maybe = obj.name ?? input
 		if (typeof maybe === 'string') return maybe
-		return localizedName(maybe)
+		return localizedName(maybe as string)
 	}
 </script>
 

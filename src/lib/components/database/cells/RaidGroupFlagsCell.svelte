@@ -1,6 +1,6 @@
 <script lang="ts">
 	interface Props {
-		row: any
+		row: Record<string, unknown>
 	}
 
 	const { row }: Props = $props()

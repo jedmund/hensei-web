@@ -4,7 +4,7 @@
 	const { row }: Cell = $props()
 
 	// Get the most recent date from various date fields
-	const getLastUpdated = (item: any): Date | null => {
+	const getLastUpdated = (item: Record<string, unknown>): Date | null => {
 		if (!item) return null
 
 		const dates: Date[] = []
@@ -47,7 +47,7 @@
 	const formattedDate = $derived(formatDate(lastUpdated))
 
 	// Determine what type of update this was
-	const getUpdateType = (item: any): string => {
+	const getUpdateType = (item: Record<string, unknown>): string => {
 		const lastDate = getLastUpdated(item)
 		if (!lastDate) return ''
 

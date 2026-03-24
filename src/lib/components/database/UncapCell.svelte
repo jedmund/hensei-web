@@ -2,7 +2,7 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
 	interface Props {
-		row: any
+		row: Record<string, unknown>
 		type: 'character' | 'weapon' | 'summon'
 	}
 

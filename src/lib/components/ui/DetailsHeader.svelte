@@ -12,7 +12,7 @@
 	// Props
 	interface Props {
 		type: 'character' | 'summon' | 'weapon' | 'job' | 'raid' | 'accessory'
-		item: any // The character/summon/weapon/job object
+		item: Record<string, unknown> // The character/summon/weapon/job object
 		image: string
 		fallbackImage?: string // Intermediate fallback before placeholder (e.g., weapon without element suffix)
 		editUrl?: string // URL to navigate to for editing (view mode)

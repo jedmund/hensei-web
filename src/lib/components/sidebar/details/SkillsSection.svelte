@@ -4,12 +4,12 @@
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
-		itemData: any
+		itemData: Record<string, unknown>
 	}
 
 	let { type, itemData }: Props = $props()
 
-	function displayName(input: any): string {
+	function displayName(input: unknown): string {
 		if (!input) return '—'
 		const name = input.name ?? input
 		return localizedName(name)

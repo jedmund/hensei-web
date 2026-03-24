@@ -4,7 +4,7 @@
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
-		itemData: any
+		itemData: Record<string, unknown>
 		gridUncapLevel: number | null
 		gridTranscendence: number | null
 	}

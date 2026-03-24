@@ -12,7 +12,7 @@
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
-		itemData: any
+		itemData: Record<string, unknown>
 	}
 
 	let { type, itemData }: Props = $props()
@@ -50,11 +50,11 @@
 	</DetailRow>
 
 	{#if type === 'character'}
-		{#if itemData?.race && itemData.race.length > 0}
+		{#if itemData?.race && Array.isArray(itemData.race) && itemData.race.length > 0}
 			<DetailRow
 				label={m.details_race()}
-				value={itemData.race
-					.map((r: any) => getRaceLabel(r))
+				value={(itemData.race as number[])
+					.map((r) => getRaceLabel(r))
 					.filter(Boolean)
 					.join(', ') || '—'}
 			/>

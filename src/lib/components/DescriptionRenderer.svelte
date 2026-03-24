@@ -174,7 +174,7 @@
 </script>
 
 <div class="description-content" class:truncate style={truncate ? `--max-lines: ${maxLines}` : ''}>
-	<!-- svelte-ignore svelte/no-at-html-tags -->
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html parsedHTML}
 </div>
 
