@@ -183,15 +183,28 @@
 	const elementId = $derived(ELEMENT_KEY_TO_ID[element] ?? 1)
 
 	// Language/Theme local state
-	let localLanguage = $derived(language)
-	let localTheme = $derived(theme)
+	let localLanguage = $state(language)
+	let localTheme = $state(theme)
 
+	// Sync from parent when props change (e.g., API data loads)
 	$effect(() => {
-		if (localLanguage !== language) onLanguageChange(localLanguage)
+		localLanguage = language
 	})
 	$effect(() => {
-		if (localTheme !== theme) onThemeChange(localTheme)
+		localTheme = theme
 	})
+
+	function handleLanguageSelect(value: string | undefined) {
+		if (value === undefined) return
+		localLanguage = value
+		onLanguageChange(value)
+	}
+
+	function handleThemeSelect(value: string | undefined) {
+		if (value === undefined) return
+		localTheme = value
+		onThemeChange(value)
+	}
 
 	const languageOptions = [
 		{ value: 'en', label: 'English' },
@@ -315,7 +328,8 @@
 		<SettingsRow title={m.settings_theme()} subtitle={m.settings_theme_subtitle()}>
 			{#snippet control()}
 				<Select
-					bind:value={localTheme}
+					value={localTheme}
+					onValueChange={handleThemeSelect}
 					options={themeOptions}
 					placeholder={m.settings_theme_placeholder()}
 					contained
@@ -327,7 +341,8 @@
 		<SettingsRow title={m.settings_language()} subtitle={m.settings_language_subtitle()}>
 			{#snippet control()}
 				<Select
-					bind:value={localLanguage}
+					value={localLanguage}
+					onValueChange={handleLanguageSelect}
 					options={languageOptions}
 					placeholder={m.settings_language_placeholder()}
 					contained

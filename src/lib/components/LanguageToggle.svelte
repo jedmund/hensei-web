@@ -4,7 +4,8 @@
 	import { Switch as SwitchPrimitive } from 'bits-ui'
 	import * as m from '$lib/paraglide/messages'
 	import { authStore } from '$lib/stores/auth.store.svelte'
-	import { users } from '$lib/api/resources/users'
+	import { syncLanguage } from '$lib/services/settings-sync'
+	import { page } from '$app/stores'
 	import type { AppLocale } from '$lib/utils/locale'
 
 	const locale = $derived(getLocale() as AppLocale)
@@ -14,12 +15,17 @@
 		const newLocale: AppLocale = checked ? 'ja' : 'en'
 		if (newLocale === locale) return
 
-		document.cookie = `PARAGLIDE_LOCALE=${newLocale};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`
-
+		// Authenticated: persist to DB + user cookie, then reload
 		if (authStore.isAuthenticated && authStore.user) {
-			users.update(authStore.user.id, { language: newLocale })
+			const userCookie = $page.data.currentUser
+			if (userCookie) {
+				await syncLanguage(authStore.user.id, userCookie, newLocale)
+				return
+			}
 		}
 
+		// Unauthenticated fallback: set locale cookie directly and reload
+		document.cookie = `PARAGLIDE_LOCALE=${newLocale};path=/;max-age=${60 * 60 * 24 * 365};SameSite=Lax`
 		await invalidateAll()
 		window.location.reload()
 	}

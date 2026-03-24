@@ -4,7 +4,11 @@ import type { RequestHandler } from './$types'
 import { getAccountFromCookies, setAccountCookie, setUserCookie } from '$lib/auth/cookies'
 import type { UserCookie } from '$lib/types/UserCookie'
 
-export const POST: RequestHandler = async ({ cookies, request }) => {
+export const POST: RequestHandler = async ({ cookies, request, locals }) => {
+	if (!locals.session?.isAuthenticated) {
+		return json({ error: 'Unauthorized' }, { status: 401 })
+	}
+
 	try {
 		const body = await request.json() as UserCookie & { username?: string }
 
@@ -31,6 +35,21 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
 			secure: true,
 			expires
 		})
+
+		// Sync PARAGLIDE_LOCALE cookie with the language preference
+		if (userCookie.language && userCookie.language !== 'en') {
+			if (cookies.get('PARAGLIDE_LOCALE') !== userCookie.language) {
+				cookies.set('PARAGLIDE_LOCALE', userCookie.language, {
+					path: '/',
+					httpOnly: false,
+					sameSite: 'lax',
+					secure: !dev,
+					maxAge: 34560000
+				})
+			}
+		} else if (cookies.get('PARAGLIDE_LOCALE')) {
+			cookies.delete('PARAGLIDE_LOCALE', { path: '/' })
+		}
 
 		return json({ success: true })
 	} catch (error) {
