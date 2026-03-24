@@ -31,9 +31,7 @@ describe('extractErrorMessage', () => {
 				}
 			}
 		}
-		expect(extractErrorMessage(error, 'fallback')).toBe(
-			'Awakening Level must be between 1 and 20'
-		)
+		expect(extractErrorMessage(error, 'fallback')).toBe('Awakening Level must be between 1 and 20')
 	})
 
 	it('joins multiple field errors with semicolons', () => {

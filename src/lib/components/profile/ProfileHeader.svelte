@@ -87,9 +87,7 @@
 	const displayTitle = $derived(title || displayName || username)
 
 	// Viewer is a crew officer
-	const isCrewOfficer = $derived(
-		viewerCrewRole === 'captain' || viewerCrewRole === 'vice_captain'
-	)
+	const isCrewOfficer = $derived(viewerCrewRole === 'captain' || viewerCrewRole === 'vice_captain')
 
 	// Query crew members to check if target user is already in viewer's crew
 	const crewMembersQuery = createQuery(() => ({
@@ -103,26 +101,20 @@
 	})
 
 	// Can invite if: viewer is crew officer AND target user is not in viewer's crew
-	const canInvite = $derived(
-		!isOwner && isCrewOfficer && !isInViewerCrew && userId
-	)
+	const canInvite = $derived(!isOwner && isCrewOfficer && !isInViewerCrew && userId)
 
 	// Show "Already in your crew" when target IS in viewer's crew
-	const showAlreadyInCrew = $derived(
-		!isOwner && isCrewOfficer && isInViewerCrew && userId
-	)
+	const showAlreadyInCrew = $derived(!isOwner && isCrewOfficer && isInViewerCrew && userId)
 
 	// Can create team from collection if: not owner, logged in, collection is public, and user exists
-	const canCreateTeam = $derived(
-		!isOwner && isAuthenticated && collectionPrivacy === 1 && userId
-	)
+	const canCreateTeam = $derived(!isOwner && isAuthenticated && collectionPrivacy === 1 && userId)
 
 	// Show menu if there are any actions available
 	const showMenu = $derived(canInvite || showAlreadyInCrew || canCreateTeam)
 
 	// Typed element for SegmentedControl
 	const typedElement = $derived(
-		element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined ?? undefined
+		(element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined) ?? undefined
 	)
 
 	function handleTabChange(value: string) {
@@ -161,8 +153,8 @@
 					<h1>{displayTitle}</h1>
 					{#if showCrewGamertag && crewGamertag}
 						<Tooltip content={crewName ?? crewGamertag}>
-						<span class="gamertag-pill" data-element={element}>{crewGamertag}</span>
-					</Tooltip>
+							<span class="gamertag-pill" data-element={element}>{crewGamertag}</span>
+						</Tooltip>
 					{/if}
 				</div>
 			</div>
@@ -195,12 +187,7 @@
 			{/if}
 			{#if youtubeUrl}
 				<Tooltip content={m.profile_youtube()}>
-					<a
-						href={youtubeUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="gbf-profile-link"
-					>
+					<a href={youtubeUrl} target="_blank" rel="noopener noreferrer" class="gbf-profile-link">
 						<Icon name="youtube" size={24} />
 					</a>
 				</Tooltip>

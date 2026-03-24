@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
@@ -86,7 +85,11 @@
 			{/if}
 		</section>
 	{:else}
-		<NotFoundPlaceholder title="Event Not Found" backHref="/database/gw-events" backLabel="Back to Events" />
+		<NotFoundPlaceholder
+			title="Event Not Found"
+			backHref="/database/gw-events"
+			backLabel="Back to Events"
+		/>
 	{/if}
 </div>
 

@@ -36,8 +36,15 @@ export function deleteAwakeningOptions(queryClient: QueryClient) {
 
 export function uploadAwakeningImageOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: ({ id, imageData, filename }: { id: string; imageData: string; filename: string }) =>
-			entityAdapter.uploadAwakeningImage(id, imageData, filename),
+		mutationFn: ({
+			id,
+			imageData,
+			filename
+		}: {
+			id: string
+			imageData: string
+			filename: string
+		}) => entityAdapter.uploadAwakeningImage(id, imageData, filename),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: entityKeys.allAwakenings() })
 		}

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
@@ -9,11 +8,7 @@
 		editData?: any
 	}
 
-	let {
-		weapon,
-		editMode = false,
-		editData = $bindable()
-	}: Props = $props()
+	let { weapon, editMode = false, editData = $bindable() }: Props = $props()
 
 	const flb = $derived(editMode ? Boolean(editData.flb) : Boolean(weapon?.uncap?.flb))
 	const ulb = $derived(editMode ? Boolean(editData.ulb) : Boolean(weapon?.uncap?.ulb))

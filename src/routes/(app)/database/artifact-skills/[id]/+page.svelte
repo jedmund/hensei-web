@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
@@ -145,7 +144,10 @@
 					<div class="info">
 						<h2>{localizedName(skill.name)}</h2>
 						<div class="meta">
-							<span class="skill-group">{skillGroupOptions.find(o => o.value === getSkillGroupNumber(skill.skillGroup))?.label}</span>
+							<span class="skill-group"
+								>{skillGroupOptions.find((o) => o.value === getSkillGroupNumber(skill.skillGroup))
+									?.label}</span
+							>
 						</div>
 					</div>
 				</div>
@@ -216,12 +218,7 @@
 						type="select"
 						options={polarityOptions}
 					/>
-					<DetailItem
-						label="Growth"
-						bind:value={editData.growth}
-						editable={true}
-						type="number"
-					/>
+					<DetailItem label="Growth" bind:value={editData.growth} editable={true} type="number" />
 				</DetailsContainer>
 
 				<DetailsContainer title="Base Values (Quality 1-5)">

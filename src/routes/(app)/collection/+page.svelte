@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'

@@ -110,7 +110,12 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		throw new Error('Unknown item type')
 	}
 
-	function handlePointerDown(e: PointerEvent, item: GridItem, source: Position, type: GridItemType) {
+	function handlePointerDown(
+		e: PointerEvent,
+		item: GridItem,
+		source: Position,
+		type: GridItemType
+	) {
 		if (e.pointerType === 'touch') {
 			initiateTouchDrag(e, item, source, type)
 		} else {
@@ -121,7 +126,12 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		}
 	}
 
-	function initiateTouchDrag(e: PointerEvent, item: GridItem, source: Position, type: GridItemType) {
+	function initiateTouchDrag(
+		e: PointerEvent,
+		item: GridItem,
+		source: Position,
+		type: GridItemType
+	) {
 		state.touchState.touchStartPos = { x: e.clientX, y: e.clientY }
 		state.touchState.touchStartTime = Date.now()
 
@@ -138,11 +148,15 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 
 		const distance = Math.sqrt(
 			Math.pow(e.clientX - state.touchState.touchStartPos.x, 2) +
-			Math.pow(e.clientY - state.touchState.touchStartPos.y, 2)
+				Math.pow(e.clientY - state.touchState.touchStartPos.y, 2)
 		)
 
 		// For touch events, cancel long press if moved too much
-		if (e.pointerType === 'touch' && distance > state.touchState.touchThreshold && state.touchState.longPressTimer) {
+		if (
+			e.pointerType === 'touch' &&
+			distance > state.touchState.touchThreshold &&
+			state.touchState.longPressTimer
+		) {
 			clearTimeout(state.touchState.longPressTimer)
 			state.touchState.longPressTimer = null
 		}
@@ -219,9 +233,14 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		preview.style.zIndex = '10000'
 		preview.style.opacity = '0.8'
 
-		const itemName = 'character' in item ? item.character.name :
-						 'weapon' in item ? item.weapon.name :
-						 'summon' in item ? item.summon.name : 'Unknown'
+		const itemName =
+			'character' in item
+				? item.character.name
+				: 'weapon' in item
+					? item.weapon.name
+					: 'summon' in item
+						? item.summon.name
+						: 'Unknown'
 
 		preview.innerHTML = `
 			<div class="drag-preview-content" style="padding: 8px; background: white; border: 2px solid #ccc; border-radius: 4px;">
@@ -243,9 +262,14 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		}
 	}
 
-	function determineOperationType(source: Position, target: Position, targetHasItem: boolean): 'move' | 'swap' | 'reorder' | 'duplicate' {
+	function determineOperationType(
+		source: Position,
+		target: Position,
+		targetHasItem: boolean
+	): 'move' | 'swap' | 'reorder' | 'duplicate' {
 		if (state.isDuplicating && !targetHasItem) return 'duplicate'
-		if (source.position === target.position && source.container === target.container) return 'reorder'
+		if (source.position === target.position && source.container === target.container)
+			return 'reorder'
 		if (targetHasItem) return 'swap'
 		return 'move'
 	}
@@ -256,7 +280,11 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 			if (import.meta.env.DEV) console.log('Final state:', { ...state })
 
 			if (state.validDrop && state.draggedItem && state.hoveredOver) {
-				const opType = determineOperationType(state.draggedItem.source, state.hoveredOver, !!targetItem)
+				const opType = determineOperationType(
+					state.draggedItem.source,
+					state.hoveredOver,
+					!!targetItem
+				)
 				const operation: DragOperation = {
 					id: crypto.randomUUID(),
 					type: opType,
@@ -266,7 +294,8 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 						position: state.draggedItem.source.position,
 						itemId: state.draggedItem.data.id,
 						type: state.draggedItem.source.type,
-						collectionLinked: opType === 'duplicate' ? hasCollectionLink(state.draggedItem.data) : undefined
+						collectionLinked:
+							opType === 'duplicate' ? hasCollectionLink(state.draggedItem.data) : undefined
 					},
 					target: {
 						container: state.hoveredOver.container,
@@ -347,7 +376,8 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		// Custom validation
 		if (handlers.onValidate) {
 			const customValid = handlers.onValidate(source, target)
-			if (import.meta.env.DEV) console.log(customValid ? '✅ Custom validation passed' : '❌ Custom validation failed')
+			if (import.meta.env.DEV)
+				console.log(customValid ? '✅ Custom validation passed' : '❌ Custom validation failed')
 			if (import.meta.env.DEV) console.groupEnd()
 			return customValid
 		}
@@ -395,7 +425,7 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 	}
 
 	function getQueuedOperations() {
-		return state.operationQueue.filter(op => op.status === 'pending')
+		return state.operationQueue.filter((op) => op.status === 'pending')
 	}
 
 	function clearQueue() {

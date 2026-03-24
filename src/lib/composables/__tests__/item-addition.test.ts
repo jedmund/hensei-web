@@ -308,17 +308,13 @@ describe('useItemAddition', () => {
 		})
 
 		it('loading resets to false after failure', async () => {
-			vi.mocked(mutations.grid.createWeapon.mutateAsync).mockRejectedValue(
-				new Error('fail')
-			)
+			vi.mocked(mutations.grid.createWeapon.mutateAsync).mockRejectedValue(new Error('fail'))
 			await addition.handleAddItems([MOCK_WEAPON_ITEM])
 			expect(addition.loading).toBe(false)
 		})
 
 		it('error captures failure message', async () => {
-			vi.mocked(mutations.grid.createWeapon.mutateAsync).mockRejectedValue(
-				new Error('Server 500')
-			)
+			vi.mocked(mutations.grid.createWeapon.mutateAsync).mockRejectedValue(new Error('Server 500'))
 			await addition.handleAddItems([MOCK_WEAPON_ITEM])
 			expect(addition.error).toBe('Server 500')
 		})

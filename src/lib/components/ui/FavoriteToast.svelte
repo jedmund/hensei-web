@@ -22,7 +22,10 @@
 		<span class="toast-icon">
 			<Icon name={icon} size={18} />
 		</span>
-		<p class="message">{#if nameIndex >= 0}{beforeName}<span class="party-name">{partyName}</span>{afterName}{:else}{message}{/if}</p>
+		<p class="message">
+			{#if nameIndex >= 0}{beforeName}<span class="party-name">{partyName}</span
+				>{afterName}{:else}{message}{/if}
+		</p>
 	</div>
 	{#if actionLabel && actionHref}
 		<div class="action">

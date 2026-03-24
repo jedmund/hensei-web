@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -91,7 +90,11 @@
 			<div class="phantom-details">
 				<span class="name">{phantom.name}</span>
 				{#if phantom.joinedAt}
-					<span class="joined-date">{phantom.retired ? 'Retired' : 'Active'}&nbsp;&middot;&nbsp;{m.crew_joined_date({ date: formatDate(phantom.joinedAt) })}</span>
+					<span class="joined-date"
+						>{phantom.retired ? 'Retired' : 'Active'}&nbsp;&middot;&nbsp;{m.crew_joined_date({
+							date: formatDate(phantom.joinedAt)
+						})}</span
+					>
 				{/if}
 			</div>
 		</div>
@@ -101,9 +104,13 @@
 		{#if claimStatus === 'unclaimed'}
 			<span class="status-badge unclaimed">{m.crew_phantom_unclaimed()}</span>
 		{:else if claimStatus === 'pending'}
-			<span class="status-badge pending">{m.crew_phantom_pending({ username: phantom.claimedBy?.username ?? '' })}</span>
+			<span class="status-badge pending"
+				>{m.crew_phantom_pending({ username: phantom.claimedBy?.username ?? '' })}</span
+			>
 		{:else if claimStatus === 'claimed'}
-			<span class="status-badge claimed">{m.crew_phantom_claimed({ username: phantom.claimedBy?.username ?? '' })}</span>
+			<span class="status-badge claimed"
+				>{m.crew_phantom_claimed({ username: phantom.claimedBy?.username ?? '' })}</span
+			>
 		{/if}
 
 		{#if crewStore.isOfficer}
@@ -125,12 +132,18 @@
 						</DropdownMenuBase.Item>
 					{/if}
 					{#if claimStatus === 'unclaimed'}
-						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={() => (assignDialogOpen = true)}>
+						<DropdownMenuBase.Item
+							class="dropdown-menu-item"
+							onclick={() => (assignDialogOpen = true)}
+						>
 							{m.crew_phantom_assign()}
 						</DropdownMenuBase.Item>
 					{/if}
 					<DropdownMenuBase.Separator class="dropdown-menu-separator" />
-					<DropdownMenuBase.Item class="dropdown-menu-item danger" onclick={() => (deleteDialogOpen = true)}>
+					<DropdownMenuBase.Item
+						class="dropdown-menu-item danger"
+						onclick={() => (deleteDialogOpen = true)}
+					>
 						{m.crew_phantom_delete()}
 					</DropdownMenuBase.Item>
 				{/snippet}
@@ -170,18 +183,10 @@
 </Dialog>
 
 <!-- Assign Phantom Modal -->
-<AssignPhantomModal
-	bind:open={assignDialogOpen}
-	{crewId}
-	{phantom}
-/>
+<AssignPhantomModal bind:open={assignDialogOpen} {crewId} {phantom} />
 
 <!-- Confirm Claim Modal -->
-<ConfirmClaimModal
-	bind:open={confirmClaimDialogOpen}
-	{crewId}
-	{phantom}
-/>
+<ConfirmClaimModal bind:open={confirmClaimDialogOpen} {crewId} {phantom} />
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;

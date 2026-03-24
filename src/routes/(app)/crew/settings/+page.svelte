@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -265,7 +264,9 @@
 			</Dialog.Description>
 			<div class="dialog-actions">
 				<Dialog.Close class="dialog-button secondary">{m.crew_cancel()}</Dialog.Close>
-				<button class="dialog-button primary danger" onclick={handleLeaveCrew}> {m.crew_leave()} </button>
+				<button class="dialog-button primary danger" onclick={handleLeaveCrew}>
+					{m.crew_leave()}
+				</button>
 			</div>
 		</Dialog.Content>
 	</Dialog.Portal>

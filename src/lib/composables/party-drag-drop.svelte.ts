@@ -1,7 +1,4 @@
-import {
-	createDragDropContext,
-	type DragOperation
-} from '$lib/composables/drag-drop.svelte'
+import { createDragDropContext, type DragOperation } from '$lib/composables/drag-drop.svelte'
 import type { PartyMutations } from './party-mutations.svelte'
 import type { Party, GridWeapon, GridSummon } from '$lib/types/api/party'
 import { toast } from 'svelte-sonner'
@@ -29,7 +26,10 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 	let error = $state<string | null>(null)
 	let pendingDuplicate = $state<PendingDuplicate | null>(null)
 
-	async function handleSwap(source: DragOperation['source'], target: DragOperation['target']): Promise<void> {
+	async function handleSwap(
+		source: DragOperation['source'],
+		target: DragOperation['target']
+	): Promise<void> {
 		const party = opts.getParty()
 		if (!party.id || party.id === 'new') {
 			throw new Error(m.toast_unsaved_swap())
@@ -51,7 +51,10 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 		}
 	}
 
-	async function handleMove(source: DragOperation['source'], target: DragOperation['target']): Promise<void> {
+	async function handleMove(
+		source: DragOperation['source'],
+		target: DragOperation['target']
+	): Promise<void> {
 		const party = opts.getParty()
 		if (!party.id || party.id === 'new') {
 			throw new Error(m.toast_unsaved_move())
@@ -72,7 +75,10 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 		}
 	}
 
-	async function handleDuplicate(source: DragOperation['source'], target: DragOperation['target']): Promise<void> {
+	async function handleDuplicate(
+		source: DragOperation['source'],
+		target: DragOperation['target']
+	): Promise<void> {
 		const party = opts.getParty()
 		if (!party.id || party.id === 'new') {
 			throw new Error(m.toast_unsaved_duplicate())

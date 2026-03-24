@@ -100,7 +100,10 @@
 		</ModalBody>
 
 		<ModalFooter
-			onCancel={() => { open = false; onClose() }}
+			onCancel={() => {
+				open = false
+				onClose()
+			}}
 			primaryAction={{
 				label: confirmLabel,
 				onclick: handleConfirm,

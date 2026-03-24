@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { useQueryClient } from '@tanstack/svelte-query'
@@ -68,7 +67,13 @@
 </script>
 
 <div class="page">
-	<DatabaseFormHeader title="New Event" onCancel={handleCancel} onSave={handleSave} {isSaving} disabled={!canSave} />
+	<DatabaseFormHeader
+		title="New Event"
+		onCancel={handleCancel}
+		onSave={handleSave}
+		{isSaving}
+		disabled={!canSave}
+	/>
 
 	{#if saveError}
 		<div class="error-banner">{saveError}</div>
@@ -82,15 +87,8 @@
 				editable={true}
 				type="number"
 			/>
-			<DetailItem
-				label="Element advantage"
-				editable={true}
-			>
-				<ElementPicker
-					bind:value={editData.element}
-					mode="dropdown"
-					contained
-				/>
+			<DetailItem label="Element advantage" editable={true}>
+				<ElementPicker bind:value={editData.element} mode="dropdown" contained />
 			</DetailItem>
 			<DetailItem label="Start date" bind:value={editData.startDate} editable={true} type="date" />
 			<DetailItem label="End date" bind:value={editData.endDate} editable={true} type="date" />

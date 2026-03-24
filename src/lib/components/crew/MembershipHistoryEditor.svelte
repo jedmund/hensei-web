@@ -35,17 +35,9 @@
 				{/if}
 			</span>
 			<div class="period-fields">
-				<DatePicker
-					label={m.crew_joined()}
-					bind:value={period.joinedAt}
-					contained
-				/>
+				<DatePicker label={m.crew_joined()} bind:value={period.joinedAt} contained />
 				{#if period.retired || i > 0}
-					<DatePicker
-						label={m.crew_left()}
-						bind:value={period.retiredAt}
-						contained
-					/>
+					<DatePicker label={m.crew_left()} bind:value={period.retiredAt} contained />
 				{/if}
 			</div>
 		</div>

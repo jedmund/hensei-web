@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
@@ -18,11 +17,7 @@
 		editData?: any
 	}
 
-	let {
-		summon,
-		editMode = false,
-		editData = $bindable()
-	}: Props = $props()
+	let { summon, editMode = false, editData = $bindable() }: Props = $props()
 
 	// Fetch summon series list from API
 	const summonSeriesQuery = createQuery(() => entityQueries.summonSeriesList())
@@ -55,16 +50,8 @@
 
 <DetailsContainer title="Details">
 	{#if editMode}
-		<DetailItem
-			label="Element"
-			editable={true}
-		>
-			<ElementPicker
-				bind:value={editData.element}
-				includeAny
-				mode="dropdown"
-				contained
-			/>
+		<DetailItem label="Element" editable={true}>
+			<ElementPicker bind:value={editData.element} includeAny mode="dropdown" contained />
 		</DetailItem>
 		<DetailItem
 			label="Series"

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { page } from '$app/stores'
@@ -148,34 +147,38 @@
 							</div>
 						{/if}
 
-					{#if expired}
-						<div class="expired-notice">
-							{m.crew_join_expired()}
-						</div>
-					{:else}
-						<div class="expires-notice">
-							{m.crew_join_expires({ date: formatDate(invitation.expiresAt) })}
-						</div>
+						{#if expired}
+							<div class="expired-notice">
+								{m.crew_join_expired()}
+							</div>
+						{:else}
+							<div class="expires-notice">
+								{m.crew_join_expires({ date: formatDate(invitation.expiresAt) })}
+							</div>
 
-						<div class="invitation-actions">
-							<Button
-								variant="secondary"
-								size="small"
-								onclick={() => handleReject(invitation.id)}
-								disabled={processingId === invitation.id}
-							>
-								{processingId === invitation.id && rejectMutation.isPending ? m.crew_join_declining() : m.crew_join_decline()}
-							</Button>
-							<Button
-								variant="primary"
-								size="small"
-								onclick={() => handleAccept(invitation.id)}
-								disabled={processingId === invitation.id}
-							>
-								{processingId === invitation.id && acceptMutation.isPending ? m.crew_join_joining() : m.crew_join_accept()}
-							</Button>
-						</div>
-					{/if}
+							<div class="invitation-actions">
+								<Button
+									variant="secondary"
+									size="small"
+									onclick={() => handleReject(invitation.id)}
+									disabled={processingId === invitation.id}
+								>
+									{processingId === invitation.id && rejectMutation.isPending
+										? m.crew_join_declining()
+										: m.crew_join_decline()}
+								</Button>
+								<Button
+									variant="primary"
+									size="small"
+									onclick={() => handleAccept(invitation.id)}
+									disabled={processingId === invitation.id}
+								>
+									{processingId === invitation.id && acceptMutation.isPending
+										? m.crew_join_joining()
+										: m.crew_join_accept()}
+								</Button>
+							</div>
+						{/if}
 					</div>
 				{/if}
 			{/each}

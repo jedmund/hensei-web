@@ -32,7 +32,7 @@
 			1: { en: 'Pendulum/Chain', ja: 'ペンデュラム/チェイン' }
 		},
 		// Draconic
-		'draconic': {
+		draconic: {
 			0: { en: 'Teluma', ja: 'テルマ' },
 			1: { en: 'Teluma', ja: 'テルマ' }
 		},
@@ -42,13 +42,13 @@
 			1: { en: 'Teluma', ja: 'テルマ' }
 		},
 		// Ultima
-		'ultima': {
+		ultima: {
 			0: { en: 'Gauph Key', ja: 'ガフスキー' },
 			1: { en: 'Ultima Key', ja: 'ガフスキーΩ' },
 			2: { en: 'Gate of Omnipotence', ja: 'ガフスキー' }
 		},
 		// Superlative
-		'superlative': {
+		superlative: {
 			0: { en: 'Teluma', ja: 'テルマ' },
 			1: { en: 'Teluma', ja: 'テルマ' }
 		}
@@ -69,7 +69,11 @@
 	)
 
 	// Get the key type name for this series/slot
-	const keyTypeName = $derived(seriesSlug ? (KEY_TYPE_NAMES[seriesSlug]?.[slot]?.[getLocale() === 'ja' ? 'ja' : 'en'] ?? 'Key') : 'Key')
+	const keyTypeName = $derived(
+		seriesSlug
+			? (KEY_TYPE_NAMES[seriesSlug]?.[slot]?.[getLocale() === 'ja' ? 'ja' : 'en'] ?? 'Key')
+			: 'Key'
+	)
 
 	// Group and sort weapon keys
 	const groupedOptions = $derived.by(() => {

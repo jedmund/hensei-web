@@ -85,7 +85,11 @@ export function deletePlaylistOptions(queryClient: QueryClient) {
 
 			queryClient.setQueriesData(
 				{ queryKey: playlistKeys.userLists() },
-				(old: { pages: Array<{ results: Playlist[]; [k: string]: unknown }>; pageParams: number[] } | undefined) => {
+				(
+					old:
+						| { pages: Array<{ results: Playlist[]; [k: string]: unknown }>; pageParams: number[] }
+						| undefined
+				) => {
 					if (!old) return old
 					return {
 						...old,

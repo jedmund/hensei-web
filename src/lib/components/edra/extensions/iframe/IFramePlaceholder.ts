@@ -1,9 +1,9 @@
-import { Node, mergeAttributes, type CommandProps, type NodeViewProps } from '@tiptap/core';
-import type { Component } from 'svelte';
-import { SvelteNodeViewRenderer } from 'svelte-tiptap';
+import { Node, mergeAttributes, type CommandProps, type NodeViewProps } from '@tiptap/core'
+import type { Component } from 'svelte'
+import { SvelteNodeViewRenderer } from 'svelte-tiptap'
 
 export interface IFramePlaceholderOptions {
-	HTMLAttributes: Record<string, object>;
+	HTMLAttributes: Record<string, object>
 }
 
 declare module '@tiptap/core' {
@@ -12,8 +12,8 @@ declare module '@tiptap/core' {
 			/**
 			 * Inserts a IFrame placeholder
 			 */
-			insertIFramePlaceholder: () => ReturnType;
-		};
+			insertIFramePlaceholder: () => ReturnType
+		}
 	}
 }
 
@@ -26,14 +26,14 @@ export const IFramePlaceholder = (content: Component<NodeViewProps>) =>
 				onDrop: () => {},
 				onDropRejected: () => {},
 				onEmbed: () => {}
-			};
+			}
 		},
 		parseHTML() {
-			return [{ tag: `div[data-type="${this.name}"]` }];
+			return [{ tag: `div[data-type="${this.name}"]` }]
 		},
 
 		renderHTML({ HTMLAttributes }) {
-			return ['div', mergeAttributes(HTMLAttributes)];
+			return ['div', mergeAttributes(HTMLAttributes)]
 		},
 		group: 'block',
 		draggable: true,
@@ -42,15 +42,15 @@ export const IFramePlaceholder = (content: Component<NodeViewProps>) =>
 		isolating: true,
 
 		addNodeView() {
-			return SvelteNodeViewRenderer(content);
+			return SvelteNodeViewRenderer(content)
 		},
 		addCommands() {
 			return {
 				insertIFramePlaceholder: () => (props: CommandProps) => {
 					return props.commands.insertContent({
 						type: 'iframe-placeholder'
-					});
+					})
 				}
-			};
+			}
 		}
-	});
+	})

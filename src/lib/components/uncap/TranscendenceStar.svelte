@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import TranscendenceFragment from './TranscendenceFragment.svelte'
@@ -130,7 +129,11 @@
 				role={editable ? 'button' : undefined}
 				aria-label={editable ? 'Transcendence star' : undefined}
 			>
-				<i class="figure {className || ''}" class:interactive class:base={className?.includes('base')} />
+				<i
+					class="figure {className || ''}"
+					class:interactive
+					class:base={className?.includes('base')}
+				/>
 			</div>
 		{/snippet}
 	</Popover.Trigger>
@@ -160,7 +163,9 @@
 				</div>
 				<div class="level">
 					<span>{m.label_level()}</span>
-					<span class="level-value" class:pending={visibleStage !== currentStage}>{displayLevel}</span>
+					<span class="level-value" class:pending={visibleStage !== currentStage}
+						>{displayLevel}</span
+					>
 				</div>
 				<div class="stage-controls">
 					<Button

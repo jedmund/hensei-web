@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
@@ -16,7 +15,9 @@
 	import { fetchWikiPage } from '$lib/api/wiki'
 
 	// Components
-	import DetailScaffold, { type DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
+	import DetailScaffold, {
+		type DetailTab
+	} from '$lib/features/database/detail/DetailScaffold.svelte'
 	import SummonMetadataSection from '$lib/features/database/summons/sections/SummonMetadataSection.svelte'
 	import SummonGachaSection from '$lib/features/database/summons/sections/SummonGachaSection.svelte'
 	import SummonUncapSection from '$lib/features/database/summons/sections/SummonUncapSection.svelte'
@@ -82,7 +83,9 @@
 	)
 
 	// Edit URL for navigation
-	const editUrl = $derived(summon?.granblueId ? `/database/summons/${summon.granblueId}/edit` : undefined)
+	const editUrl = $derived(
+		summon?.granblueId ? `/database/summons/${summon.granblueId}/edit` : undefined
+	)
 
 	// Query for raw data (only when on raw tab)
 	const rawDataQuery = createQuery(() => ({
@@ -127,7 +130,11 @@
 	})
 
 	// Image download handlers
-	async function handleDownloadImage(size: string, transformation: string | undefined, force: boolean) {
+	async function handleDownloadImage(
+		size: string,
+		transformation: string | undefined,
+		force: boolean
+	) {
 		if (!summon?.id) return
 		// For summons, '01' means base (no transformation suffix)
 		const trans = transformation === '01' ? undefined : transformation
@@ -165,11 +172,15 @@
 <div class="page">
 	<DatabasePageHeader title="Summon">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={getListUrl('summons')}>Back</Button>
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href={getListUrl('summons')}
+				>Back</Button
+			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
-				<Button variant="element-ghost" element={elementName} size="small" href={editUrl}>Edit</Button>
+				<Button variant="element-ghost" element={elementName} size="small" href={editUrl}
+					>Edit</Button
+				>
 			{/if}
 		{/snippet}
 	</DatabasePageHeader>
@@ -228,8 +239,14 @@
 					<DetailsContainer title="Links">
 						<DetailItem label="Wiki (EN)">
 							{#if summon.wiki?.en}
-								<Button href={buildWikiEnUrl(summon.wiki.en) ?? undefined} target="_blank" variant="element-ghost"
-									element={elementName} size="small" rightIcon="link">
+								<Button
+									href={buildWikiEnUrl(summon.wiki.en) ?? undefined}
+									target="_blank"
+									variant="element-ghost"
+									element={elementName}
+									size="small"
+									rightIcon="link"
+								>
 									Open
 								</Button>
 							{:else}
@@ -238,8 +255,14 @@
 						</DetailItem>
 						<DetailItem label="Wiki (JP)">
 							{#if summon.wiki?.ja}
-								<Button href={buildWikiJaUrl(summon.wiki.ja, 'summon') ?? undefined} target="_blank" variant="element-ghost"
-									element={elementName} size="small" rightIcon="link">
+								<Button
+									href={buildWikiJaUrl(summon.wiki.ja, 'summon') ?? undefined}
+									target="_blank"
+									variant="element-ghost"
+									element={elementName}
+									size="small"
+									rightIcon="link"
+								>
 									Open
 								</Button>
 							{:else}
@@ -248,8 +271,14 @@
 						</DetailItem>
 						<DetailItem label="Gamewith">
 							{#if summon.gamewith}
-								<Button href={buildGamewithUrl(summon.gamewith) ?? undefined} target="_blank" variant="element-ghost"
-									element={elementName} size="small" rightIcon="link">
+								<Button
+									href={buildGamewithUrl(summon.gamewith) ?? undefined}
+									target="_blank"
+									variant="element-ghost"
+									element={elementName}
+									size="small"
+									rightIcon="link"
+								>
 									Open
 								</Button>
 							{:else}
@@ -258,8 +287,14 @@
 						</DetailItem>
 						<DetailItem label="Kamigame">
 							{#if summon.kamigame}
-								<Button href={buildKamigameUrl(summon.kamigame, 'summon') ?? undefined} target="_blank" variant="element-ghost"
-									element={elementName} size="small" rightIcon="link">
+								<Button
+									href={buildKamigameUrl(summon.kamigame, 'summon') ?? undefined}
+									target="_blank"
+									variant="element-ghost"
+									element={elementName}
+									size="small"
+									rightIcon="link"
+								>
 									Open
 								</Button>
 							{:else}

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 	import Input from './Input.svelte'
@@ -228,7 +227,12 @@
 				color: var(--text-secondary);
 				cursor: pointer;
 				flex-shrink: 0;
-				@include effects.smooth-transition(effects.$duration-quick, background-color, color, opacity);
+				@include effects.smooth-transition(
+					effects.$duration-quick,
+					background-color,
+					color,
+					opacity
+				);
 
 				&:hover:not(:disabled) {
 					background: var(--background);

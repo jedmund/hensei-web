@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { Element } from '$lib/types/api/shared'
 

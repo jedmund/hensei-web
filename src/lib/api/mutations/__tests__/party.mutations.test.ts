@@ -362,7 +362,11 @@ describe('removePartyShareOptions', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = removePartyShareOptions(queryClient)
 
-		opts.onSuccess(undefined, { partyId: MOCK_PARTY.id, shareId: 'share-1', shortcode: MOCK_SHORTCODE })
+		opts.onSuccess(undefined, {
+			partyId: MOCK_PARTY.id,
+			shareId: 'share-1',
+			shortcode: MOCK_SHORTCODE
+		})
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['party', MOCK_SHORTCODE])
@@ -372,7 +376,11 @@ describe('removePartyShareOptions', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = removePartyShareOptions(queryClient)
 
-		opts.onSuccess(undefined, { partyId: MOCK_PARTY.id, shareId: 'share-1', shortcode: MOCK_SHORTCODE })
+		opts.onSuccess(undefined, {
+			partyId: MOCK_PARTY.id,
+			shareId: 'share-1',
+			shortcode: MOCK_SHORTCODE
+		})
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['crew', 'shared_parties'])

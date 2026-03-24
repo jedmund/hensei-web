@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
@@ -25,7 +24,9 @@
 	}))
 
 	const series = $derived(seriesQuery.data)
-	const pageTitle = $derived(series?.name ? `Edit ${localizedName(series.name)}` : 'Edit Character Series')
+	const pageTitle = $derived(
+		series?.name ? `Edit ${localizedName(series.name)}` : 'Edit Character Series'
+	)
 
 	// Save state
 	let isSaving = $state(false)
@@ -89,7 +90,12 @@
 <div class="page">
 	<DatabasePageHeader title="Edit Character Series">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={`/database/series/characters/${series?.slug}`}>Back</Button>
+			<Button
+				variant="ghost"
+				size="small"
+				leftIcon="chevron-left"
+				href={`/database/series/characters/${series?.slug}`}>Back</Button
+			>
 		{/snippet}
 		{#snippet rightAction()}
 			<Button variant="ghost" size="small" onclick={saveChanges} disabled={isSaving}>

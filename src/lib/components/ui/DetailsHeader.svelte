@@ -44,9 +44,7 @@
 	const granblueId = $derived(item?.granblue_id)
 
 	// Get element name for button styling
-	const elementName = $derived(
-		element ? getElementKey(element) : undefined
-	)
+	const elementName = $derived(element ? getElementKey(element) : undefined)
 
 	// Helper function to get display name
 	function getDisplayName(nameObj: string | { en?: string; ja?: string }): string {

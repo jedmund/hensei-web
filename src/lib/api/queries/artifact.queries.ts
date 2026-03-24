@@ -8,7 +8,10 @@
  */
 
 import { queryOptions, infiniteQueryOptions } from '@tanstack/svelte-query'
-import { artifactAdapter, type CollectionArtifactListParams } from '$lib/api/adapters/artifact.adapter'
+import {
+	artifactAdapter,
+	type CollectionArtifactListParams
+} from '$lib/api/adapters/artifact.adapter'
 import type { Artifact, ArtifactSkill, CollectionArtifact } from '$lib/types/api/artifact'
 
 /**

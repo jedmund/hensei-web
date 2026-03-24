@@ -1,92 +1,96 @@
 <script lang="ts">
-	import commands from '../../commands/toolbar-commands.js';
-	import BubbleMenu from '../../components/BubbleMenu.svelte';
-	import type { EdraToolbarProps, ShouldShowProps } from '../../types.js';
+	import commands from '../../commands/toolbar-commands.js'
+	import BubbleMenu from '../../components/BubbleMenu.svelte'
+	import type { EdraToolbarProps, ShouldShowProps } from '../../types.js'
 
-	import { isTextSelection } from '@tiptap/core';
-	import FontSize from '../components/toolbar/FontSize.svelte';
-	import QuickColors from '../components/toolbar/QuickColors.svelte';
-	import ToolBarIcon from '../components/ToolBarIcon.svelte';
+	import { isTextSelection } from '@tiptap/core'
+	import FontSize from '../components/toolbar/FontSize.svelte'
+	import QuickColors from '../components/toolbar/QuickColors.svelte'
+	import ToolBarIcon from '../components/ToolBarIcon.svelte'
 
 	const {
 		editor,
 		class: className,
 		excludedCommands = ['undo-redo', 'headings', 'media', 'lists', 'table']
-	}: EdraToolbarProps = $props();
+	}: EdraToolbarProps = $props()
 
-	import { onMount } from 'svelte';
+	import { onMount } from 'svelte'
 
-	const toolbarCommands = Object.keys(commands).filter((key) => !excludedCommands?.includes(key));
+	const toolbarCommands = Object.keys(commands).filter((key) => !excludedCommands?.includes(key))
 
-	let isDragging = $state(false);
+	let isDragging = $state(false)
 
 	onMount(() => {
-		const handleDragStart = () => { isDragging = true; };
+		const handleDragStart = () => {
+			isDragging = true
+		}
 		const handleDrop = () => {
-			isDragging = true;
-			setTimeout(() => { isDragging = false; }, 100);
-		};
+			isDragging = true
+			setTimeout(() => {
+				isDragging = false
+			}, 100)
+		}
 
-		editor.view.dom.addEventListener('dragstart', handleDragStart);
-		editor.view.dom.addEventListener('drop', handleDrop);
+		editor.view.dom.addEventListener('dragstart', handleDragStart)
+		editor.view.dom.addEventListener('drop', handleDrop)
 
 		return () => {
-			editor.view.dom.removeEventListener('dragstart', handleDragStart);
-			editor.view.dom.removeEventListener('drop', handleDrop);
-		};
-	});
+			editor.view.dom.removeEventListener('dragstart', handleDragStart)
+			editor.view.dom.removeEventListener('drop', handleDrop)
+		}
+	})
 
 	function shouldShow(props: ShouldShowProps) {
-		if (!props.editor.isEditable) return false;
-		const { view, editor } = props;
+		if (!props.editor.isEditable) return false
+		const { view, editor } = props
 		if (!view || editor.view.dragging) {
-			return false;
+			return false
 		}
-		if (editor.isActive('link')) return false;
-		if (editor.isActive('codeBlock')) return false;
-		if (editor.isActive('image-placeholder')) return false;
-		if (editor.isActive('video-placeholder')) return false;
-		if (editor.isActive('audio-placeholder')) return false;
-		if (editor.isActive('iframe-placeholder')) return false;
+		if (editor.isActive('link')) return false
+		if (editor.isActive('codeBlock')) return false
+		if (editor.isActive('image-placeholder')) return false
+		if (editor.isActive('video-placeholder')) return false
+		if (editor.isActive('audio-placeholder')) return false
+		if (editor.isActive('iframe-placeholder')) return false
 		const {
 			state: {
 				doc,
 				selection,
 				selection: { empty, from, to }
 			}
-		} = editor;
+		} = editor
 		// check if the selection is a table grip
-		const domAtPos = view.domAtPos(from || 0).node as HTMLElement;
-		const nodeDOM = view.nodeDOM(from || 0) as HTMLElement;
-		const node = nodeDOM || domAtPos;
+		const domAtPos = view.domAtPos(from || 0).node as HTMLElement
+		const nodeDOM = view.nodeDOM(from || 0) as HTMLElement
+		const node = nodeDOM || domAtPos
 
 		if (isTableGripSelected(node)) {
-			return false;
+			return false
 		}
 		// Sometime check for `empty` is not enough.
 		// Doubleclick an empty paragraph returns a node size of 2.
 		// So we check also for an empty text size.
-		const isEmptyTextBlock = !doc.textBetween(from, to).length && isTextSelection(selection);
+		const isEmptyTextBlock = !doc.textBetween(from, to).length && isTextSelection(selection)
 		if (empty || isEmptyTextBlock || !editor.isEditable) {
-			return false;
+			return false
 		}
-		return !isDragging && !editor.state.selection.empty;
+		return !isDragging && !editor.state.selection.empty
 	}
 
 	const isTableGripSelected = (node: HTMLElement) => {
-		let container = node;
+		let container = node
 		while (container && !['TD', 'TH'].includes(container.tagName)) {
-			container = container.parentElement!;
+			container = container.parentElement!
 		}
 		const gripColumn =
-			container && container.querySelector && container.querySelector('a.grip-column.selected');
+			container && container.querySelector && container.querySelector('a.grip-column.selected')
 		const gripRow =
-			container && container.querySelector && container.querySelector('a.grip-row.selected');
+			container && container.querySelector && container.querySelector('a.grip-row.selected')
 		if (gripColumn || gripRow) {
-			return true;
+			return true
 		}
-		return false;
-	};
+		return false
+	}
 </script>
 
 <BubbleMenu {editor} class={className} pluginKey="link-bubble-menu" {shouldShow}>

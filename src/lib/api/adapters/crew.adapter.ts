@@ -3,428 +3,459 @@ import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { RequestOptions, PaginatedResponse } from './types'
 import type { Party } from '$lib/types/api/party'
 import type {
-  Crew,
-  CrewMembership,
-  CrewMembersResponse,
-  CrewInvitation,
-  CrewRoster,
-  CrewRosterWithMembers,
-  PhantomPlayer,
-  CreateCrewInput,
-  UpdateCrewInput,
-  UpdateCrewRosterInput,
-  CreatePhantomPlayerInput,
-  UpdatePhantomPlayerInput,
-  UpdateMembershipInput,
-  MemberFilter,
-  RosterResponse,
-  RosterQuery
+	Crew,
+	CrewMembership,
+	CrewMembersResponse,
+	CrewInvitation,
+	CrewRoster,
+	CrewRosterWithMembers,
+	PhantomPlayer,
+	CreateCrewInput,
+	UpdateCrewInput,
+	UpdateCrewRosterInput,
+	CreatePhantomPlayerInput,
+	UpdatePhantomPlayerInput,
+	UpdateMembershipInput,
+	MemberFilter,
+	RosterResponse,
+	RosterQuery
 } from '$lib/types/api/crew'
 
 /**
  * Adapter for crew-related API operations
  */
 export class CrewAdapter extends BaseAdapter {
-  // ==================== Crew Operations ====================
+	// ==================== Crew Operations ====================
 
-  /**
-   * Check if a gamertag is available
-   */
-  async checkGametagAvailability(gamertag: string): Promise<{ available: boolean }> {
-    return this.request<{ available: boolean }>('/check/gamertag', {
-      method: 'POST',
-      body: JSON.stringify({ gamertag })
-    })
-  }
+	/**
+	 * Check if a gamertag is available
+	 */
+	async checkGametagAvailability(gamertag: string): Promise<{ available: boolean }> {
+		return this.request<{ available: boolean }>('/check/gamertag', {
+			method: 'POST',
+			body: JSON.stringify({ gamertag })
+		})
+	}
 
-  /**
-   * Get current user's crew
-   */
-  async getMyCrew(options?: RequestOptions): Promise<Crew> {
-    const response = await this.request<{ crew: Crew }>('/crew', options)
-    return response.crew
-  }
+	/**
+	 * Get current user's crew
+	 */
+	async getMyCrew(options?: RequestOptions): Promise<Crew> {
+		const response = await this.request<{ crew: Crew }>('/crew', options)
+		return response.crew
+	}
 
-  /**
-   * Get parties shared with the user's crew
-   */
-  async getSharedParties(
-    page = 1,
-    perPage = 20,
-    options?: RequestOptions
-  ): Promise<{ parties: Party[]; meta: { page: number; totalPages: number; count: number; perPage: number } }> {
-    return this.request<{ parties: Party[]; meta: { page: number; totalPages: number; count: number; perPage: number } }>(
-      '/crew/shared_parties',
-      {
-        ...options,
-        params: { page, per_page: perPage }
-      }
-    )
-  }
+	/**
+	 * Get parties shared with the user's crew
+	 */
+	async getSharedParties(
+		page = 1,
+		perPage = 20,
+		options?: RequestOptions
+	): Promise<{
+		parties: Party[]
+		meta: { page: number; totalPages: number; count: number; perPage: number }
+	}> {
+		return this.request<{
+			parties: Party[]
+			meta: { page: number; totalPages: number; count: number; perPage: number }
+		}>('/crew/shared_parties', {
+			...options,
+			params: { page, per_page: perPage }
+		})
+	}
 
-  /**
-   * Create a new crew (user becomes captain)
-   */
-  async create(input: CreateCrewInput, options?: RequestOptions): Promise<Crew> {
-    const response = await this.request<{ crew: Crew }>('/crews', {
-      ...options,
-      method: 'POST',
-      body: JSON.stringify({ crew: input })
-    })
-    return response.crew
-  }
+	/**
+	 * Create a new crew (user becomes captain)
+	 */
+	async create(input: CreateCrewInput, options?: RequestOptions): Promise<Crew> {
+		const response = await this.request<{ crew: Crew }>('/crews', {
+			...options,
+			method: 'POST',
+			body: JSON.stringify({ crew: input })
+		})
+		return response.crew
+	}
 
-  /**
-   * Update current user's crew (officers only)
-   */
-  async update(input: UpdateCrewInput, options?: RequestOptions): Promise<Crew> {
-    const response = await this.request<{ crew: Crew }>('/crew', {
-      ...options,
-      method: 'PUT',
-      body: JSON.stringify({ crew: input })
-    })
-    this.clearCache('/crew')
-    return response.crew
-  }
+	/**
+	 * Update current user's crew (officers only)
+	 */
+	async update(input: UpdateCrewInput, options?: RequestOptions): Promise<Crew> {
+		const response = await this.request<{ crew: Crew }>('/crew', {
+			...options,
+			method: 'PUT',
+			body: JSON.stringify({ crew: input })
+		})
+		this.clearCache('/crew')
+		return response.crew
+	}
 
-  /**
-   * Get crew members with optional filter
-   * @param filter - 'active' (default), 'retired', 'phantom', 'all'
-   */
-  async getMembers(filter: MemberFilter = 'active', options?: RequestOptions): Promise<CrewMembersResponse> {
-    const params = filter !== 'active' ? { filter } : undefined
-    return this.request<CrewMembersResponse>('/crew/members', { ...options, params })
-  }
+	/**
+	 * Get crew members with optional filter
+	 * @param filter - 'active' (default), 'retired', 'phantom', 'all'
+	 */
+	async getMembers(
+		filter: MemberFilter = 'active',
+		options?: RequestOptions
+	): Promise<CrewMembersResponse> {
+		const params = filter !== 'active' ? { filter } : undefined
+		return this.request<CrewMembersResponse>('/crew/members', { ...options, params })
+	}
 
-  /**
-   * Get collection roster for crew members (officers only)
-   * Returns ownership info for specified items across all active crew members
-   */
-  async getRoster(query: RosterQuery, options?: RequestOptions): Promise<RosterResponse> {
-    const searchParams = new URLSearchParams()
+	/**
+	 * Get collection roster for crew members (officers only)
+	 * Returns ownership info for specified items across all active crew members
+	 */
+	async getRoster(query: RosterQuery, options?: RequestOptions): Promise<RosterResponse> {
+		const searchParams = new URLSearchParams()
 
-    query.characterIds?.forEach((id) => searchParams.append('character_ids[]', id))
-    query.weaponIds?.forEach((id) => searchParams.append('weapon_ids[]', id))
-    query.summonIds?.forEach((id) => searchParams.append('summon_ids[]', id))
+		query.characterIds?.forEach((id) => searchParams.append('character_ids[]', id))
+		query.weaponIds?.forEach((id) => searchParams.append('weapon_ids[]', id))
+		query.summonIds?.forEach((id) => searchParams.append('summon_ids[]', id))
 
-    const queryString = searchParams.toString()
-    const url = queryString ? `/crew/roster?${queryString}` : '/crew/roster'
+		const queryString = searchParams.toString()
+		const url = queryString ? `/crew/roster?${queryString}` : '/crew/roster'
 
-    return this.request<RosterResponse>(url, options)
-  }
+		return this.request<RosterResponse>(url, options)
+	}
 
-  // ==================== Crew Roster Operations ====================
+	// ==================== Crew Roster Operations ====================
 
-  /**
-   * List all saved rosters for the current user's crew
-   */
-  async getCrewRosters(options?: RequestOptions): Promise<CrewRoster[]> {
-    const response = await this.request<{ crewRosters: CrewRoster[] }>('/crew/crew_rosters', options)
-    return response.crewRosters
-  }
+	/**
+	 * List all saved rosters for the current user's crew
+	 */
+	async getCrewRosters(options?: RequestOptions): Promise<CrewRoster[]> {
+		const response = await this.request<{ crewRosters: CrewRoster[] }>(
+			'/crew/crew_rosters',
+			options
+		)
+		return response.crewRosters
+	}
 
-  /**
-   * Get a single roster with member ownership data
-   */
-  async getCrewRoster(rosterId: string, options?: RequestOptions): Promise<CrewRosterWithMembers> {
-    return this.request<CrewRosterWithMembers>(`/crew/crew_rosters/${rosterId}`, options)
-  }
+	/**
+	 * Get a single roster with member ownership data
+	 */
+	async getCrewRoster(rosterId: string, options?: RequestOptions): Promise<CrewRosterWithMembers> {
+		return this.request<CrewRosterWithMembers>(`/crew/crew_rosters/${rosterId}`, options)
+	}
 
-  /**
-   * Update a roster's name or items (officers only)
-   */
-  async updateCrewRoster(
-    rosterId: string,
-    input: UpdateCrewRosterInput,
-    options?: RequestOptions
-  ): Promise<CrewRoster> {
-    const response = await this.request<{ crewRoster: CrewRoster }>(
-      `/crew/crew_rosters/${rosterId}`,
-      {
-        ...options,
-        method: 'PUT',
-        body: JSON.stringify(input)
-      }
-    )
-    return response.crewRoster
-  }
+	/**
+	 * Update a roster's name or items (officers only)
+	 */
+	async updateCrewRoster(
+		rosterId: string,
+		input: UpdateCrewRosterInput,
+		options?: RequestOptions
+	): Promise<CrewRoster> {
+		const response = await this.request<{ crewRoster: CrewRoster }>(
+			`/crew/crew_rosters/${rosterId}`,
+			{
+				...options,
+				method: 'PUT',
+				body: JSON.stringify(input)
+			}
+		)
+		return response.crewRoster
+	}
 
-  /**
-   * Leave current crew (not available for captain)
-   */
-  async leave(options?: RequestOptions): Promise<void> {
-    await this.request<void>('/crew/leave', {
-      ...options,
-      method: 'POST'
-    })
-    this.clearCache('/crew')
-    this.clearCache('/crew/members')
-  }
+	/**
+	 * Leave current crew (not available for captain)
+	 */
+	async leave(options?: RequestOptions): Promise<void> {
+		await this.request<void>('/crew/leave', {
+			...options,
+			method: 'POST'
+		})
+		this.clearCache('/crew')
+		this.clearCache('/crew/members')
+	}
 
-  /**
-   * Transfer captain role to another member (captain only)
-   */
-  async transferCaptain(crewId: string, userId: string, options?: RequestOptions): Promise<Crew> {
-    const response = await this.request<{ crew: Crew }>(`/crews/${crewId}/transfer_captain`, {
-      ...options,
-      method: 'POST',
-      body: JSON.stringify({ user_id: userId })
-    })
-    this.clearCache('/crew')
-    this.clearCache('/crew/members')
-    return response.crew
-  }
+	/**
+	 * Transfer captain role to another member (captain only)
+	 */
+	async transferCaptain(crewId: string, userId: string, options?: RequestOptions): Promise<Crew> {
+		const response = await this.request<{ crew: Crew }>(`/crews/${crewId}/transfer_captain`, {
+			...options,
+			method: 'POST',
+			body: JSON.stringify({ user_id: userId })
+		})
+		this.clearCache('/crew')
+		this.clearCache('/crew/members')
+		return response.crew
+	}
 
-  // ==================== Membership Operations ====================
+	// ==================== Membership Operations ====================
 
-  /**
-   * Update a member's role or joined_at (officers for joined_at, captain for role)
-   */
-  async updateMembership(
-    crewId: string,
-    membershipId: string,
-    input: UpdateMembershipInput,
-    options?: RequestOptions
-  ): Promise<CrewMembership> {
-    const response = await this.request<{ membership: CrewMembership }>(
-      `/crews/${crewId}/memberships/${membershipId}`,
-      {
-        ...options,
-        method: 'PUT',
-        body: JSON.stringify({ membership: input })
-      }
-    )
-    this.clearCache('/crew/members')
-    return response.membership
-  }
+	/**
+	 * Update a member's role or joined_at (officers for joined_at, captain for role)
+	 */
+	async updateMembership(
+		crewId: string,
+		membershipId: string,
+		input: UpdateMembershipInput,
+		options?: RequestOptions
+	): Promise<CrewMembership> {
+		const response = await this.request<{ membership: CrewMembership }>(
+			`/crews/${crewId}/memberships/${membershipId}`,
+			{
+				...options,
+				method: 'PUT',
+				body: JSON.stringify({ membership: input })
+			}
+		)
+		this.clearCache('/crew/members')
+		return response.membership
+	}
 
-  /**
-   * Remove a member from crew (officers only)
-   */
-  async removeMember(crewId: string, membershipId: string, options?: RequestOptions): Promise<void> {
-    await this.request<void>(`/crews/${crewId}/memberships/${membershipId}`, {
-      ...options,
-      method: 'DELETE'
-    })
-    this.clearCache('/crew/members')
-  }
+	/**
+	 * Remove a member from crew (officers only)
+	 */
+	async removeMember(
+		crewId: string,
+		membershipId: string,
+		options?: RequestOptions
+	): Promise<void> {
+		await this.request<void>(`/crews/${crewId}/memberships/${membershipId}`, {
+			...options,
+			method: 'DELETE'
+		})
+		this.clearCache('/crew/members')
+	}
 
-  /**
-   * Get all membership periods for a user in a crew (for boomerang players)
-   */
-  async getMembershipHistory(crewId: string, userId: string, options?: RequestOptions): Promise<CrewMembership[]> {
-    const response = await this.request<{ memberships: CrewMembership[] }>(
-      `/crews/${crewId}/memberships/by_user/${userId}`,
-      options
-    )
-    return response.memberships
-  }
+	/**
+	 * Get all membership periods for a user in a crew (for boomerang players)
+	 */
+	async getMembershipHistory(
+		crewId: string,
+		userId: string,
+		options?: RequestOptions
+	): Promise<CrewMembership[]> {
+		const response = await this.request<{ memberships: CrewMembership[] }>(
+			`/crews/${crewId}/memberships/by_user/${userId}`,
+			options
+		)
+		return response.memberships
+	}
 
-  // ==================== Invitation Operations ====================
+	// ==================== Invitation Operations ====================
 
-  /**
-   * Send invitation to a user (officers only)
-   */
-  async sendInvitation(
-    crewId: string,
-    userId: string,
-    phantomPlayerId?: string,
-    options?: RequestOptions
-  ): Promise<CrewInvitation> {
-    const body: Record<string, string> = { user_id: userId }
-    if (phantomPlayerId) {
-      body.phantom_player_id = phantomPlayerId
-    }
-    const response = await this.request<{ invitation: CrewInvitation }>(`/crews/${crewId}/invitations`, {
-      ...options,
-      method: 'POST',
-      body: JSON.stringify(body)
-    })
-    return response.invitation
-  }
+	/**
+	 * Send invitation to a user (officers only)
+	 */
+	async sendInvitation(
+		crewId: string,
+		userId: string,
+		phantomPlayerId?: string,
+		options?: RequestOptions
+	): Promise<CrewInvitation> {
+		const body: Record<string, string> = { user_id: userId }
+		if (phantomPlayerId) {
+			body.phantom_player_id = phantomPlayerId
+		}
+		const response = await this.request<{ invitation: CrewInvitation }>(
+			`/crews/${crewId}/invitations`,
+			{
+				...options,
+				method: 'POST',
+				body: JSON.stringify(body)
+			}
+		)
+		return response.invitation
+	}
 
-  /**
-   * Get crew's sent invitations
-   */
-  async getCrewInvitations(crewId: string, options?: RequestOptions): Promise<CrewInvitation[]> {
-    const response = await this.request<{ invitations: CrewInvitation[] }>(
-      `/crews/${crewId}/invitations`,
-      options
-    )
-    return response.invitations
-  }
+	/**
+	 * Get crew's sent invitations
+	 */
+	async getCrewInvitations(crewId: string, options?: RequestOptions): Promise<CrewInvitation[]> {
+		const response = await this.request<{ invitations: CrewInvitation[] }>(
+			`/crews/${crewId}/invitations`,
+			options
+		)
+		return response.invitations
+	}
 
-  /**
-   * Get current user's pending invitations
-   */
-  async getPendingInvitations(options?: RequestOptions): Promise<CrewInvitation[]> {
-    const response = await this.request<{ invitations: CrewInvitation[] }>('/invitations/pending', options)
-    return response.invitations
-  }
+	/**
+	 * Get current user's pending invitations
+	 */
+	async getPendingInvitations(options?: RequestOptions): Promise<CrewInvitation[]> {
+		const response = await this.request<{ invitations: CrewInvitation[] }>(
+			'/invitations/pending',
+			options
+		)
+		return response.invitations
+	}
 
-  /**
-   * Accept an invitation
-   */
-  async acceptInvitation(invitationId: string, options?: RequestOptions): Promise<CrewMembership> {
-    const response = await this.request<{ membership: CrewMembership }>(
-      `/invitations/${invitationId}/accept`,
-      {
-        ...options,
-        method: 'POST'
-      }
-    )
-    this.clearCache('/crew')
-    this.clearCache('/invitations/pending')
-    return response.membership
-  }
+	/**
+	 * Accept an invitation
+	 */
+	async acceptInvitation(invitationId: string, options?: RequestOptions): Promise<CrewMembership> {
+		const response = await this.request<{ membership: CrewMembership }>(
+			`/invitations/${invitationId}/accept`,
+			{
+				...options,
+				method: 'POST'
+			}
+		)
+		this.clearCache('/crew')
+		this.clearCache('/invitations/pending')
+		return response.membership
+	}
 
-  /**
-   * Reject an invitation
-   */
-  async rejectInvitation(invitationId: string, options?: RequestOptions): Promise<void> {
-    await this.request<void>(`/invitations/${invitationId}/reject`, {
-      ...options,
-      method: 'POST'
-    })
-    this.clearCache('/invitations/pending')
-  }
+	/**
+	 * Reject an invitation
+	 */
+	async rejectInvitation(invitationId: string, options?: RequestOptions): Promise<void> {
+		await this.request<void>(`/invitations/${invitationId}/reject`, {
+			...options,
+			method: 'POST'
+		})
+		this.clearCache('/invitations/pending')
+	}
 
-  // ==================== Phantom Player Operations ====================
+	// ==================== Phantom Player Operations ====================
 
-  /**
-   * Create a phantom player (officers only)
-   */
-  async createPhantom(
-    crewId: string,
-    input: CreatePhantomPlayerInput,
-    options?: RequestOptions
-  ): Promise<PhantomPlayer> {
-    const response = await this.request<{ phantomPlayer: PhantomPlayer }>(
-      `/crews/${crewId}/phantom_players`,
-      {
-        ...options,
-        method: 'POST',
-        body: JSON.stringify({ phantom_player: input })
-      }
-    )
-    this.clearCache('/crew/members')
-    return response.phantomPlayer
-  }
+	/**
+	 * Create a phantom player (officers only)
+	 */
+	async createPhantom(
+		crewId: string,
+		input: CreatePhantomPlayerInput,
+		options?: RequestOptions
+	): Promise<PhantomPlayer> {
+		const response = await this.request<{ phantomPlayer: PhantomPlayer }>(
+			`/crews/${crewId}/phantom_players`,
+			{
+				...options,
+				method: 'POST',
+				body: JSON.stringify({ phantom_player: input })
+			}
+		)
+		this.clearCache('/crew/members')
+		return response.phantomPlayer
+	}
 
-  /**
-   * Create multiple phantom players at once (officers only)
-   */
-  async bulkCreatePhantoms(
-    crewId: string,
-    phantoms: CreatePhantomPlayerInput[],
-    options?: RequestOptions
-  ): Promise<PhantomPlayer[]> {
-    const response = await this.request<{ phantomPlayers: PhantomPlayer[] }>(
-      `/crews/${crewId}/phantom_players/bulk_create`,
-      {
-        ...options,
-        method: 'POST',
-        body: JSON.stringify({ phantom_players: phantoms })
-      }
-    )
-    this.clearCache('/crew/members')
-    return response.phantomPlayers
-  }
+	/**
+	 * Create multiple phantom players at once (officers only)
+	 */
+	async bulkCreatePhantoms(
+		crewId: string,
+		phantoms: CreatePhantomPlayerInput[],
+		options?: RequestOptions
+	): Promise<PhantomPlayer[]> {
+		const response = await this.request<{ phantomPlayers: PhantomPlayer[] }>(
+			`/crews/${crewId}/phantom_players/bulk_create`,
+			{
+				...options,
+				method: 'POST',
+				body: JSON.stringify({ phantom_players: phantoms })
+			}
+		)
+		this.clearCache('/crew/members')
+		return response.phantomPlayers
+	}
 
-  /**
-   * Update a phantom player
-   */
-  async updatePhantom(
-    crewId: string,
-    phantomId: string,
-    input: UpdatePhantomPlayerInput,
-    options?: RequestOptions
-  ): Promise<PhantomPlayer> {
-    const response = await this.request<{ phantomPlayer: PhantomPlayer }>(
-      `/crews/${crewId}/phantom_players/${phantomId}`,
-      {
-        ...options,
-        method: 'PUT',
-        body: JSON.stringify({ phantom_player: input })
-      }
-    )
-    this.clearCache('/crew/members')
-    return response.phantomPlayer
-  }
+	/**
+	 * Update a phantom player
+	 */
+	async updatePhantom(
+		crewId: string,
+		phantomId: string,
+		input: UpdatePhantomPlayerInput,
+		options?: RequestOptions
+	): Promise<PhantomPlayer> {
+		const response = await this.request<{ phantomPlayer: PhantomPlayer }>(
+			`/crews/${crewId}/phantom_players/${phantomId}`,
+			{
+				...options,
+				method: 'PUT',
+				body: JSON.stringify({ phantom_player: input })
+			}
+		)
+		this.clearCache('/crew/members')
+		return response.phantomPlayer
+	}
 
-  /**
-   * Delete a phantom player
-   */
-  async deletePhantom(crewId: string, phantomId: string, options?: RequestOptions): Promise<void> {
-    await this.request<void>(`/crews/${crewId}/phantom_players/${phantomId}`, {
-      ...options,
-      method: 'DELETE'
-    })
-    this.clearCache('/crew/members')
-  }
+	/**
+	 * Delete a phantom player
+	 */
+	async deletePhantom(crewId: string, phantomId: string, options?: RequestOptions): Promise<void> {
+		await this.request<void>(`/crews/${crewId}/phantom_players/${phantomId}`, {
+			...options,
+			method: 'DELETE'
+		})
+		this.clearCache('/crew/members')
+	}
 
-  /**
-   * Assign a phantom player to a user (officers only)
-   */
-  async assignPhantom(
-    crewId: string,
-    phantomId: string,
-    userId: string,
-    options?: RequestOptions
-  ): Promise<PhantomPlayer> {
-    const response = await this.request<{ phantomPlayer: PhantomPlayer }>(
-      `/crews/${crewId}/phantom_players/${phantomId}/assign`,
-      {
-        ...options,
-        method: 'POST',
-        body: JSON.stringify({ user_id: userId })
-      }
-    )
-    this.clearCache('/crew/members')
-    return response.phantomPlayer
-  }
+	/**
+	 * Assign a phantom player to a user (officers only)
+	 */
+	async assignPhantom(
+		crewId: string,
+		phantomId: string,
+		userId: string,
+		options?: RequestOptions
+	): Promise<PhantomPlayer> {
+		const response = await this.request<{ phantomPlayer: PhantomPlayer }>(
+			`/crews/${crewId}/phantom_players/${phantomId}/assign`,
+			{
+				...options,
+				method: 'POST',
+				body: JSON.stringify({ user_id: userId })
+			}
+		)
+		this.clearCache('/crew/members')
+		return response.phantomPlayer
+	}
 
-  /**
-   * Confirm claim of a phantom player (by the assigned user)
-   */
-  async confirmPhantomClaim(crewId: string, phantomId: string, options?: RequestOptions): Promise<PhantomPlayer> {
-    const response = await this.request<{ phantomPlayer: PhantomPlayer }>(
-      `/crews/${crewId}/phantom_players/${phantomId}/confirm_claim`,
-      {
-        ...options,
-        method: 'POST'
-      }
-    )
-    this.clearCache('/crew/members')
-    return response.phantomPlayer
-  }
+	/**
+	 * Confirm claim of a phantom player (by the assigned user)
+	 */
+	async confirmPhantomClaim(
+		crewId: string,
+		phantomId: string,
+		options?: RequestOptions
+	): Promise<PhantomPlayer> {
+		const response = await this.request<{ phantomPlayer: PhantomPlayer }>(
+			`/crews/${crewId}/phantom_players/${phantomId}/confirm_claim`,
+			{
+				...options,
+				method: 'POST'
+			}
+		)
+		this.clearCache('/crew/members')
+		return response.phantomPlayer
+	}
 
-  /**
-   * Decline claim of a phantom player (by the assigned user)
-   */
-  async declinePhantomClaim(crewId: string, phantomId: string, options?: RequestOptions): Promise<PhantomPlayer> {
-    const response = await this.request<{ phantomPlayer: PhantomPlayer }>(
-      `/crews/${crewId}/phantom_players/${phantomId}/decline_claim`,
-      {
-        ...options,
-        method: 'POST'
-      }
-    )
-    this.clearCache('/crew/members')
-    this.clearCache('/pending_phantom_claims')
-    return response.phantomPlayer
-  }
+	/**
+	 * Decline claim of a phantom player (by the assigned user)
+	 */
+	async declinePhantomClaim(
+		crewId: string,
+		phantomId: string,
+		options?: RequestOptions
+	): Promise<PhantomPlayer> {
+		const response = await this.request<{ phantomPlayer: PhantomPlayer }>(
+			`/crews/${crewId}/phantom_players/${phantomId}/decline_claim`,
+			{
+				...options,
+				method: 'POST'
+			}
+		)
+		this.clearCache('/crew/members')
+		this.clearCache('/pending_phantom_claims')
+		return response.phantomPlayer
+	}
 
-  /**
-   * Get pending phantom claims for current user (phantoms assigned but not yet confirmed)
-   */
-  async getPendingPhantomClaims(options?: RequestOptions): Promise<PhantomPlayer[]> {
-    const response = await this.request<{ phantomClaims: PhantomPlayer[] }>(
-      '/pending_phantom_claims',
-      options
-    )
-    return response.phantomClaims
-  }
+	/**
+	 * Get pending phantom claims for current user (phantoms assigned but not yet confirmed)
+	 */
+	async getPendingPhantomClaims(options?: RequestOptions): Promise<PhantomPlayer[]> {
+		const response = await this.request<{ phantomClaims: PhantomPlayer[] }>(
+			'/pending_phantom_claims',
+			options
+		)
+		return response.phantomClaims
+	}
 }
 
 export const crewAdapter = new CrewAdapter(DEFAULT_ADAPTER_CONFIG)

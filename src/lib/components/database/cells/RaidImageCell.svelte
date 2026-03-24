@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { Raid } from '$lib/types/api/entities'
 	import { getRaidImage, getRaidCdnImage } from '$lib/utils/images'

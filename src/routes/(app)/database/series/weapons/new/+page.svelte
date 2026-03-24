@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { useQueryClient } from '@tanstack/svelte-query'
@@ -85,7 +84,12 @@
 <div class="page">
 	<DatabasePageHeader title="New Weapon Series">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/weapons?view=series">Back</Button>
+			<Button
+				variant="ghost"
+				size="small"
+				leftIcon="chevron-left"
+				href="/database/weapons?view=series">Back</Button
+			>
 		{/snippet}
 		{#snippet rightAction()}
 			<Button variant="ghost" size="small" onclick={createSeries} disabled={isSaving}>

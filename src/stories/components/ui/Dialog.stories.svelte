@@ -47,7 +47,10 @@
 		<Button onclick={() => (withDescOpen = true)}>Open Dialog</Button>
 		<Dialog bind:open={withDescOpen}>
 			{#snippet children()}
-				<ModalHeader title="Account Settings" description="Make changes to your account settings here." />
+				<ModalHeader
+					title="Account Settings"
+					description="Make changes to your account settings here."
+				/>
 				<ModalBody>
 					{#snippet children()}
 						<p>Your account settings form would go here.</p>
@@ -93,25 +96,27 @@
 					{#snippet children()}
 						<div style="display: flex; flex-direction: column; gap: 16px;">
 							<p>
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt
-								ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-								ullamco laboris.
+								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+								incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+								exercitation ullamco laboris.
 							</p>
 							<p>
-								Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
-								nulla pariatur. Excepteur sint occaecat cupidatat non proident.
+								Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+								fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
 							</p>
 							<p>
-								Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
-								laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.
+								Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+								doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
+								veritatis.
 							</p>
 							<p>
-								At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium
-								voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint.
+								At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis
+								praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias
+								excepturi sint.
 							</p>
 							<p>
-								Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id
-								quod maxime placeat facere possimus.
+								Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo
+								minus id quod maxime placeat facere possimus.
 							</p>
 						</div>
 					{/snippet}
@@ -187,8 +192,8 @@
 				<ModalBody>
 					{#snippet children()}
 						<p>
-							Are you sure you want to delete this item? This action cannot be undone and all associated
-							data will be permanently removed.
+							Are you sure you want to delete this item? This action cannot be undone and all
+							associated data will be permanently removed.
 						</p>
 					{/snippet}
 				</ModalBody>

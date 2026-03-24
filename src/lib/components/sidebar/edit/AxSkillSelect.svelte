@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -27,14 +26,10 @@
 	const secondaryStrength = $derived(currentSkills[1]?.strength ?? 0)
 
 	const selectedPrimary = $derived(
-		selectedPrimaryId
-			? (axQuery.data ?? []).find((m) => m.id === selectedPrimaryId)
-			: undefined
+		selectedPrimaryId ? (axQuery.data ?? []).find((m) => m.id === selectedPrimaryId) : undefined
 	)
 	const selectedSecondary = $derived(
-		selectedSecondaryId
-			? (axQuery.data ?? []).find((m) => m.id === selectedSecondaryId)
-			: undefined
+		selectedSecondaryId ? (axQuery.data ?? []).find((m) => m.id === selectedSecondaryId) : undefined
 	)
 
 	const showSecondary = $derived(!!selectedPrimary)
@@ -104,10 +99,7 @@
 			currentSkills = currentSkills.length > 0 ? [currentSkills[0]] : []
 			return
 		}
-		currentSkills = [
-			currentSkills[0],
-			{ modifier, strength: currentSkills[1]?.strength ?? 0 }
-		]
+		currentSkills = [currentSkills[0], { modifier, strength: currentSkills[1]?.strength ?? 0 }]
 	}
 
 	function handleSecondaryStrengthChange(event: Event) {
@@ -263,7 +255,7 @@
 		flex-shrink: 0;
 	}
 
-.suffix {
+	.suffix {
 		color: var(--text-secondary);
 		font-size: typography.$font-small;
 		min-width: 1.5em;

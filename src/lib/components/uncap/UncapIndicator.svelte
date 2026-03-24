@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import UncapStar from './UncapStar.svelte'
 	import TranscendenceStar from './TranscendenceStar.svelte'

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	/**
 	 * CollectionArtifactEditPane - Edit pane for modifying artifact properties
@@ -64,19 +63,22 @@
 			skill4: pendingUpdates.skills?.[3] ?? undefined
 		}
 
-		updateMutation.mutate({
-			id: artifact.id,
-			input
-		}, {
-			onSuccess: (updatedArtifact) => {
-				onSaved?.(updatedArtifact)
-				paneStack.pop()
+		updateMutation.mutate(
+			{
+				id: artifact.id,
+				input
 			},
-			onError: (error) => {
-				console.error('[CollectionArtifactEditPane] Save failed:', error)
-				toast.error(extractErrorMessage(error, 'Failed to save artifact'))
+			{
+				onSuccess: (updatedArtifact) => {
+					onSaved?.(updatedArtifact)
+					paneStack.pop()
+				},
+				onError: (error) => {
+					console.error('[CollectionArtifactEditPane] Save failed:', error)
+					toast.error(extractErrorMessage(error, 'Failed to save artifact'))
+				}
 			}
-		})
+		)
 	}
 
 	// Set up header action (Save button always visible, disabled when no changes)
@@ -98,10 +100,7 @@
 </script>
 
 <div class="artifact-edit-pane">
-	<ArtifactEditPane
-		{artifact}
-		onUpdate={handleUpdate}
-	/>
+	<ArtifactEditPane {artifact} onUpdate={handleUpdate} />
 </div>
 
 <style lang="scss">

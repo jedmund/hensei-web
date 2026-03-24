@@ -15,22 +15,19 @@
  * type Fixed = DeepAddUndefined<Original> // { optional?: string | undefined }
  * ```
  */
-export type DeepAddUndefined<Type> =
-	Type extends (infer Element)[]
-		? DeepAddUndefined<Element>[]
-		: Type extends (...args: unknown[]) => unknown
-			? Type
-			: Type extends object
-				? {
-						[Key in keyof Type]: undefined extends Type[Key]
-							? never
-							: DeepAddUndefined<Type[Key]>
-					} & {
-						[Key in keyof Type]?: undefined extends Type[Key]
-							? undefined | DeepAddUndefined<Type[Key]>
-							: never
-					}
-				: Type
+export type DeepAddUndefined<Type> = Type extends (infer Element)[]
+	? DeepAddUndefined<Element>[]
+	: Type extends (...args: unknown[]) => unknown
+		? Type
+		: Type extends object
+			? {
+					[Key in keyof Type]: undefined extends Type[Key] ? never : DeepAddUndefined<Type[Key]>
+				} & {
+					[Key in keyof Type]?: undefined extends Type[Key]
+						? undefined | DeepAddUndefined<Type[Key]>
+						: never
+				}
+			: Type
 
 /**
  * Shim function that "fixes" types for exactOptionalPropertyTypes compatibility.
@@ -96,9 +93,7 @@ export function optionalProp<K extends string, V>(
  * })
  * ```
  */
-export function optionalProps<T extends Record<string, unknown>>(
-	obj: T
-): Partial<T> {
+export function optionalProps<T extends Record<string, unknown>>(obj: T): Partial<T> {
 	const result: Partial<T> = {}
 	for (const [key, value] of Object.entries(obj)) {
 		if (value !== undefined) {

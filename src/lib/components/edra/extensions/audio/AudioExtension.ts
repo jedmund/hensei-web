@@ -1,8 +1,8 @@
-import { Node, nodeInputRule } from '@tiptap/core';
-import { Plugin, PluginKey } from '@tiptap/pm/state';
+import { Node, nodeInputRule } from '@tiptap/core'
+import { Plugin, PluginKey } from '@tiptap/pm/state'
 
 export interface AudioOptions {
-	HTMLAttributes: Record<string, unknown>;
+	HTMLAttributes: Record<string, unknown>
 }
 
 declare module '@tiptap/core' {
@@ -11,20 +11,20 @@ declare module '@tiptap/core' {
 			/**
 			 * Set a audio node
 			 */
-			setAudio: (src: string) => ReturnType;
+			setAudio: (src: string) => ReturnType
 			/**
 			 * Toggle a audio
 			 */
-			toggleAudio: (src: string) => ReturnType;
+			toggleAudio: (src: string) => ReturnType
 			/**
 			 * Remove a audio
 			 */
-			removeAudio: () => ReturnType;
-		};
+			removeAudio: () => ReturnType
+		}
 	}
 }
 
-const AUDIO_INPUT_REGEX = /!\[(.+|:?)]\((\S+)(?:(?:\s+)["'](\S+)["'])?\)/;
+const AUDIO_INPUT_REGEX = /!\[(.+|:?)]\((\S+)(?:(?:\s+)["'](\S+)["'])?\)/
 
 export const Audio = Node.create<AudioOptions>({
 	name: 'audio',
@@ -35,7 +35,7 @@ export const Audio = Node.create<AudioOptions>({
 	addOptions() {
 		return {
 			HTMLAttributes: {}
-		};
+		}
 	},
 	addAttributes() {
 		return {
@@ -44,7 +44,7 @@ export const Audio = Node.create<AudioOptions>({
 				parseHTML: (el) => (el as HTMLSpanElement).getAttribute('src'),
 				renderHTML: (attrs) => ({ src: attrs.src })
 			}
-		};
+		}
 	},
 	parseHTML() {
 		return [
@@ -52,7 +52,7 @@ export const Audio = Node.create<AudioOptions>({
 				tag: 'audio',
 				getAttrs: (el) => ({ src: (el as HTMLAudioElement).getAttribute('src') })
 			}
-		];
+		]
 	},
 
 	renderHTML({ HTMLAttributes }) {
@@ -60,7 +60,7 @@ export const Audio = Node.create<AudioOptions>({
 			'audio',
 			{ controls: 'true', style: 'width: 100%;', ...HTMLAttributes },
 			['source', HTMLAttributes]
-		];
+		]
 	},
 	addCommands() {
 		return {
@@ -79,7 +79,7 @@ export const Audio = Node.create<AudioOptions>({
 				() =>
 				({ commands }) =>
 					commands.deleteNode(this.name)
-		};
+		}
 	},
 	addInputRules() {
 		return [
@@ -87,12 +87,12 @@ export const Audio = Node.create<AudioOptions>({
 				find: AUDIO_INPUT_REGEX,
 				type: this.type,
 				getAttributes: (match) => {
-					const [, , src] = match;
+					const [, , src] = match
 
-					return { src };
+					return { src }
 				}
 			})
-		];
+		]
 	},
 	addProseMirrorPlugins() {
 		return [
@@ -105,43 +105,43 @@ export const Audio = Node.create<AudioOptions>({
 							const {
 								state: { schema, tr },
 								dispatch
-							} = view;
+							} = view
 							const hasFiles =
-								event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files.length;
+								event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files.length
 
-							if (!hasFiles) return false;
+							if (!hasFiles) return false
 
 							const audios = Array.from(event.dataTransfer.files).filter((file) =>
 								/audio/i.test(file.type)
-							);
+							)
 
-							if (audios.length === 0) return false;
+							if (audios.length === 0) return false
 
-							event.preventDefault();
+							event.preventDefault()
 
-							const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY });
+							const coordinates = view.posAtCoords({ left: event.clientX, top: event.clientY })
 
 							audios.forEach((audio) => {
-								const reader = new FileReader();
+								const reader = new FileReader()
 
 								reader.onload = (readerEvent) => {
-									const node = schema.nodes.audio.create({ src: readerEvent.target?.result });
+									const node = schema.nodes.audio.create({ src: readerEvent.target?.result })
 
 									if (coordinates && typeof coordinates.pos === 'number') {
-										const transaction = tr.insert(coordinates?.pos, node);
+										const transaction = tr.insert(coordinates?.pos, node)
 
-										dispatch(transaction);
+										dispatch(transaction)
 									}
-								};
+								}
 
-								reader.readAsDataURL(audio);
-							});
+								reader.readAsDataURL(audio)
+							})
 
-							return true;
+							return true
 						}
 					}
 				}
 			})
-		];
+		]
 	}
-});
+})

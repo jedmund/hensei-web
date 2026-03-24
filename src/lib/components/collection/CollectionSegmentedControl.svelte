@@ -14,13 +14,7 @@
 	let { activeEntityType, onValueChange, element, counts }: Props = $props()
 </script>
 
-<SegmentedControl
-	value={activeEntityType}
-	{onValueChange}
-	variant="blended"
-	size="small"
-	{element}
->
+<SegmentedControl value={activeEntityType} {onValueChange} variant="blended" size="small" {element}>
 	<Segment value="characters">
 		{m.collection_tab_characters()}
 		{#if counts?.characters != null}

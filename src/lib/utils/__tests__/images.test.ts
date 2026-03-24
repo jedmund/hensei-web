@@ -280,9 +280,7 @@ describe('getCharacterImage', () => {
 	})
 
 	it('accepts pose override', () => {
-		expect(getCharacterImage('3040001', 'grid', '03')).toBe(
-			'/images/character-grid/3040001_03.jpg'
-		)
+		expect(getCharacterImage('3040001', 'grid', '03')).toBe('/images/character-grid/3040001_03.jpg')
 	})
 
 	it('returns placeholder for null', () => {
@@ -292,9 +290,7 @@ describe('getCharacterImage', () => {
 
 describe('getCharacterDetailImage', () => {
 	it('returns detail PNG', () => {
-		expect(getCharacterDetailImage('3040001', '02')).toBe(
-			'/images/character-detail/3040001_02.png'
-		)
+		expect(getCharacterDetailImage('3040001', '02')).toBe('/images/character-detail/3040001_02.png')
 	})
 })
 
@@ -619,9 +615,7 @@ describe('getGuidebookImage', () => {
 
 describe('getRaidImage', () => {
 	it('returns stored raid image by variant', () => {
-		expect(getRaidImage('proto-bahamut', 'icon')).toContain(
-			'/images/raid-icon/proto-bahamut.png'
-		)
+		expect(getRaidImage('proto-bahamut', 'icon')).toContain('/images/raid-icon/proto-bahamut.png')
 		expect(getRaidImage('proto-bahamut', 'thumbnail')).toContain(
 			'/images/raid-thumbnail/proto-bahamut.png'
 		)

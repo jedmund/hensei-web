@@ -9,13 +9,26 @@
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getWeaponImage } from '$lib/features/database/detail/image'
-	import { getPlaceholderImage, getWeaponTransformation, getWeaponFallbackImage, handleImageFallback } from '$lib/utils/images'
-	import { openDetailsSidebar, openWeaponEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
+	import {
+		getPlaceholderImage,
+		getWeaponTransformation,
+		getWeaponFallbackImage,
+		handleImageFallback
+	} from '$lib/utils/images'
+	import {
+		openDetailsSidebar,
+		openWeaponEditSidebar
+	} from '$lib/features/details/openDetailsSidebar.svelte'
 	import { canWeaponBeModified } from '$lib/utils/modificationDetector'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName } from '$lib/utils/element'
 	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
-	import { getAwakeningImage, getWeaponKeyImages, getAxSkillImages, getBefoulmentImages } from '$lib/utils/modifiers'
+	import {
+		getAwakeningImage,
+		getWeaponKeyImages,
+		getAxSkillImages,
+		getBefoulmentImages
+	} from '$lib/utils/modifiers'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { GridType } from '$lib/types/enums'
 	import * as m from '$lib/paraglide/messages'
@@ -43,9 +56,19 @@
 		// For element-changeable weapons (element === 0), use instance element.
 		// Mainhand images don't have a null-element variant, so default to fire (2).
 		const element = item?.weapon?.element === 0 ? (item?.element ?? (isMain ? 2 : 0)) : undefined
-		const transformation = getWeaponTransformation(item?.weapon?.uncap?.transcendence, item?.uncapLevel, item?.transcendenceStep)
+		const transformation = getWeaponTransformation(
+			item?.weapon?.uncap?.transcendence,
+			item?.uncapLevel,
+			item?.transcendenceStep
+		)
 
-		return getWeaponImage(item?.weapon?.granblueId, variant, element, transformation, item?.weapon?.elementVariantIds)
+		return getWeaponImage(
+			item?.weapon?.granblueId,
+			variant,
+			element,
+			transformation,
+			item?.weapon?.elementVariantIds
+		)
 	})
 
 	// Fallback URL for element-changeable weapons whose _0 image doesn't exist
@@ -53,7 +76,11 @@
 		if (item?.weapon?.element !== 0) return undefined
 		const isMain = position === -1 || item?.mainhand
 		const variant = isMain ? 'main' : 'grid'
-		const transformation = getWeaponTransformation(item?.weapon?.uncap?.transcendence, item?.uncapLevel, item?.transcendenceStep)
+		const transformation = getWeaponTransformation(
+			item?.weapon?.uncap?.transcendence,
+			item?.uncapLevel,
+			item?.transcendenceStep
+		)
 		return getWeaponFallbackImage(item?.weapon?.granblueId, variant, transformation)
 	})
 
@@ -74,14 +101,15 @@
 
 	// Check if this slot is currently selected for adding/replacing an item
 	let isSelected = $derived(
-		ctx?.getSelectedSlot?.() === position &&
-			ctx?.getActiveTab?.() === GridType.Weapon
+		ctx?.getSelectedSlot?.() === position && ctx?.getActiveTab?.() === GridType.Weapon
 	)
 
 	// Determine element class for focus ring
 	// For weapons with null element that have an instance element, use it
 	let elementClass = $derived(
-		getElementClassName(item?.weapon?.element === 0 && item?.element ? item.element : item?.weapon?.element)
+		getElementClassName(
+			item?.weapon?.element === 0 && item?.element ? item.element : item?.weapon?.element
+		)
 	)
 
 	async function remove() {
@@ -89,11 +117,7 @@
 		try {
 			const party = ctx.getParty()
 			const editKey = ctx.getEditKey()
-			await ctx.services.gridService.removeWeapon(
-				party.id,
-				item.id as any,
-				editKey || undefined
-			)
+			await ctx.services.gridService.removeWeapon(party.id, item.id as any, editKey || undefined)
 		} catch (err) {
 			console.error('Error removing weapon:', err)
 			toast.error(extractErrorMessage(err, 'Failed to remove weapon'))
@@ -146,9 +170,7 @@
 		return undefined
 	})
 
-	let canDuplicate = $derived(
-		!!item && firstEmptySlot !== undefined && !item.weapon?.limit
-	)
+	let canDuplicate = $derived(!!item && firstEmptySlot !== undefined && !item.weapon?.limit)
 
 	let duplicateCollectionDialogOpen = $state(false)
 
@@ -318,7 +340,9 @@
 			ulb={item.weapon?.uncap?.ulb}
 			transcendence={item.weapon?.uncap?.transcendence}
 			editable={ctx?.canEdit()}
-			minUncapLevel={position >= 9 ? item.weapon?.uncap?.extraPrerequisite ?? undefined : undefined}
+			minUncapLevel={position >= 9
+				? (item.weapon?.uncap?.extraPrerequisite ?? undefined)
+				: undefined}
 			updateUncap={async (level) => {
 				if (!item?.id || !ctx) return
 				try {
@@ -461,10 +485,14 @@
 	@keyframes pulse-slot-shadow {
 		0%,
 		100% {
-			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12), 0 0 4px 2px rgba(0, 0, 0, 0.06);
+			box-shadow:
+				0 0 0 1px rgba(0, 0, 0, 0.12),
+				0 0 4px 2px rgba(0, 0, 0, 0.06);
 		}
 		50% {
-			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.24), 0 0 8px 4px rgba(0, 0, 0, 0.12);
+			box-shadow:
+				0 0 0 1px rgba(0, 0, 0, 0.24),
+				0 0 8px 4px rgba(0, 0, 0, 0.12);
 		}
 	}
 
@@ -524,7 +552,6 @@
 			display: inline;
 			vertical-align: -4px;
 		}
-
 	}
 
 	.modifiers {

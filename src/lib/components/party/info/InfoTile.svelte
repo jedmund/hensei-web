@@ -16,7 +16,16 @@
 		children: Snippet
 	}
 
-	let { label, clickable = false, onclick, showAdd = false, onAdd, headerAction, class: className = '', children }: Props = $props()
+	let {
+		label,
+		clickable = false,
+		onclick,
+		showAdd = false,
+		onAdd,
+		headerAction,
+		class: className = '',
+		children
+	}: Props = $props()
 </script>
 
 <div
@@ -28,7 +37,11 @@
 	onkeydown={clickable ? (e) => e.key === 'Enter' && onclick?.() : undefined}
 >
 	{#if label}
-		<div class="tile-header" class:has-action={headerAction || (showAdd && onAdd)} class:show-add={showAdd && onAdd}>
+		<div
+			class="tile-header"
+			class:has-action={headerAction || (showAdd && onAdd)}
+			class:show-add={showAdd && onAdd}
+		>
 			{#if showAdd && onAdd}
 				<button type="button" class="tile-header-button" onclick={onAdd}>
 					<h3 class="tile-label">{label}</h3>

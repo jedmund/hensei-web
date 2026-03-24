@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { GridSummon } from '$lib/types/api/party'
 	import { usePartyContext } from '$lib/types/party-context'
@@ -25,7 +24,7 @@
 	// Create array for sub-summons (positions 0-3)
 	let subSummonSlots = $derived.by(() => {
 		const slots: (GridSummon | undefined)[] = Array(4).fill(undefined)
-		summons.forEach(summon => {
+		summons.forEach((summon) => {
 			if (summon.position >= 0 && summon.position < 4) {
 				slots[summon.position] = summon
 			}
@@ -42,12 +41,20 @@
 
 		const check = (summon: GridSummon | undefined, position: number) => {
 			const gid = summon?.summon?.granblueId
-			if (!gid) { status.set(position, false); return }
+			if (!gid) {
+				status.set(position, false)
+				return
+			}
 			const key = String(gid)
 			const items = remaining.get(key)
-			if (!items) { status.set(position, false); return }
+			if (!items) {
+				status.set(position, false)
+				return
+			}
 			const needed = { uncap: summon.uncapLevel ?? 0, trans: summon.transcendenceStep ?? 0 }
-			const idx = items.findIndex(c => c.uncapLevel >= needed.uncap && c.transcendenceStep >= needed.trans)
+			const idx = items.findIndex(
+				(c) => c.uncapLevel >= needed.uncap && c.transcendenceStep >= needed.trans
+			)
 			if (idx >= 0) {
 				items.splice(idx, 1)
 				status.set(position, true)
@@ -66,16 +73,22 @@
 <div class="wrapper">
 	<div class="grid">
 		<div class="LabeledUnit">
-			<SummonUnit item={main} position={-1} notInCollection={collectionStatus != null && !!main?.summon?.granblueId && !collectionStatus.get(-1)} inCollection={collectionStatus != null && !!main?.summon?.granblueId && !!collectionStatus.get(-1)} />
+			<SummonUnit
+				item={main}
+				position={-1}
+				notInCollection={collectionStatus != null &&
+					!!main?.summon?.granblueId &&
+					!collectionStatus.get(-1)}
+				inCollection={collectionStatus != null &&
+					!!main?.summon?.granblueId &&
+					!!collectionStatus.get(-1)}
+			/>
 		</div>
 
 		<section>
 			<ul class="summons">
 				{#each subSummonSlots as summon, i}
-					<li
-						aria-label={`Summon slot ${i}`}
-						class:Empty={!summon}
-					>
+					<li aria-label={`Summon slot ${i}`} class:Empty={!summon}>
 						{#if dragContext}
 							<DropZone
 								container="main-summons"
@@ -91,11 +104,29 @@
 									type="summon"
 									canDrag={!!summon && (ctx?.canEdit() ?? false)}
 								>
-									<SummonUnit item={summon} position={i} notInCollection={collectionStatus != null && !!summon?.summon?.granblueId && !collectionStatus.get(i)} inCollection={collectionStatus != null && !!summon?.summon?.granblueId && !!collectionStatus.get(i)} />
+									<SummonUnit
+										item={summon}
+										position={i}
+										notInCollection={collectionStatus != null &&
+											!!summon?.summon?.granblueId &&
+											!collectionStatus.get(i)}
+										inCollection={collectionStatus != null &&
+											!!summon?.summon?.granblueId &&
+											!!collectionStatus.get(i)}
+									/>
 								</DraggableItem>
 							</DropZone>
 						{:else}
-							<SummonUnit item={summon} position={i} notInCollection={collectionStatus != null && !!summon?.summon?.granblueId && !collectionStatus.get(i)} inCollection={collectionStatus != null && !!summon?.summon?.granblueId && !!collectionStatus.get(i)} />
+							<SummonUnit
+								item={summon}
+								position={i}
+								notInCollection={collectionStatus != null &&
+									!!summon?.summon?.granblueId &&
+									!collectionStatus.get(i)}
+								inCollection={collectionStatus != null &&
+									!!summon?.summon?.granblueId &&
+									!!collectionStatus.get(i)}
+							/>
 						{/if}
 					</li>
 				{/each}

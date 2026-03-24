@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	/**
 	 * CharacterArtifactSection - Artifact management section for character edit

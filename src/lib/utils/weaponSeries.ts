@@ -37,9 +37,7 @@ export function isOpusDraconicSeries(series: WeaponSeriesRef | null | undefined)
  * @param locale - The locale to use ('en' or 'ja')
  * @returns The localized series name, or 'Unknown' if not available
  */
-export function getSeriesDisplayName(
-	series: WeaponSeriesRef | null | undefined
-): string {
+export function getSeriesDisplayName(series: WeaponSeriesRef | null | undefined): string {
 	if (!isWeaponSeriesRef(series)) {
 		return 'Unknown'
 	}

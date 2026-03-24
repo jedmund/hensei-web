@@ -40,13 +40,7 @@
 		{/if}
 
 		{#if hasCustomColumns && onResetColumns}
-			<Button
-				variant="ghost"
-				size="small"
-				onclick={onResetColumns}
-			>
-				Reset columns
-			</Button>
+			<Button variant="ghost" size="small" onclick={onResetColumns}>Reset columns</Button>
 		{/if}
 
 		{#if supportsCollectionFilters}

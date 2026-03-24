@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import Dialog from '../../ui/Dialog.svelte'
 	import ModalHeader from '../../ui/ModalHeader.svelte'

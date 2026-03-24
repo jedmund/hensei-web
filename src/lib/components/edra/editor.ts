@@ -1,26 +1,26 @@
-import { Editor, type Extensions, type EditorOptions, type Content } from '@tiptap/core';
-import StarterKit from '@tiptap/starter-kit';
-import { getHandlePaste } from './utils.js';
-import Subscript from '@tiptap/extension-subscript';
-import Superscript from '@tiptap/extension-superscript';
-import Typography from '@tiptap/extension-typography';
-import { ColorHighlighter } from './extensions/ColorHighlighter.js';
-import { FontSize, TextStyle, Color } from '@tiptap/extension-text-style';
-import TextAlign from '@tiptap/extension-text-align';
-import Highlight from '@tiptap/extension-highlight';
-import SearchAndReplace from './extensions/FindAndReplace.js';
-import { TaskItem, TaskList } from '@tiptap/extension-list';
-import { Table, TableCell, TableRow, TableHeader } from './extensions/table/index.js';
-import { Placeholder } from '@tiptap/extensions';
-import { Markdown } from '@tiptap/markdown';
-import MathMatics from '@tiptap/extension-mathematics';
-import Youtube from '@tiptap/extension-youtube';
-import { EntityMention, createEntityMentionSuggestion } from './extensions/entity-mention/index.js';
+import { Editor, type Extensions, type EditorOptions, type Content } from '@tiptap/core'
+import StarterKit from '@tiptap/starter-kit'
+import { getHandlePaste } from './utils.js'
+import Subscript from '@tiptap/extension-subscript'
+import Superscript from '@tiptap/extension-superscript'
+import Typography from '@tiptap/extension-typography'
+import { ColorHighlighter } from './extensions/ColorHighlighter.js'
+import { FontSize, TextStyle, Color } from '@tiptap/extension-text-style'
+import TextAlign from '@tiptap/extension-text-align'
+import Highlight from '@tiptap/extension-highlight'
+import SearchAndReplace from './extensions/FindAndReplace.js'
+import { TaskItem, TaskList } from '@tiptap/extension-list'
+import { Table, TableCell, TableRow, TableHeader } from './extensions/table/index.js'
+import { Placeholder } from '@tiptap/extensions'
+import { Markdown } from '@tiptap/markdown'
+import MathMatics from '@tiptap/extension-mathematics'
+import Youtube from '@tiptap/extension-youtube'
+import { EntityMention, createEntityMentionSuggestion } from './extensions/entity-mention/index.js'
 
-import * as m from '$lib/paraglide/messages';
-import AutoJoiner from 'tiptap-extension-auto-joiner';
-import 'katex/dist/katex.min.css';
-import { InlineMathReplacer } from './extensions/InlineMathReplacer.js';
+import * as m from '$lib/paraglide/messages'
+import AutoJoiner from 'tiptap-extension-auto-joiner'
+import 'katex/dist/katex.min.css'
+import { InlineMathReplacer } from './extensions/InlineMathReplacer.js'
 
 export default (
 	element?: HTMLElement,
@@ -62,11 +62,11 @@ export default (
 				// Use different placeholders depending on the node type:
 				placeholder: ({ node }) => {
 					if (node.type.name === 'heading') {
-						return m.editor_title_placeholder();
+						return m.editor_title_placeholder()
 					} else if (node.type.name === 'paragraph') {
-						return m.editor_body_placeholder();
+						return m.editor_body_placeholder()
 					}
-					return '';
+					return ''
 				}
 			}),
 			Color,
@@ -88,27 +88,27 @@ export default (
 			MathMatics.configure({
 				blockOptions: {
 					onClick: (node, pos) => {
-						const newCalculation = prompt(m.editor_prompt_calculation(), node.attrs.latex);
+						const newCalculation = prompt(m.editor_prompt_calculation(), node.attrs.latex)
 						if (newCalculation) {
 							editor
 								.chain()
 								.setNodeSelection(pos)
 								.updateBlockMath({ latex: newCalculation })
 								.focus()
-								.run();
+								.run()
 						}
 					}
 				},
 				inlineOptions: {
 					onClick: (node, pos) => {
-						const newCalculation = prompt(m.editor_prompt_calculation(), node.attrs.latex);
+						const newCalculation = prompt(m.editor_prompt_calculation(), node.attrs.latex)
 						if (newCalculation) {
 							editor
 								.chain()
 								.setNodeSelection(pos)
 								.updateInlineMath({ latex: newCalculation })
 								.focus()
-								.run();
+								.run()
 						}
 					}
 				}
@@ -132,12 +132,12 @@ export default (
 			...(extensions ?? [])
 		],
 		...options
-	});
+	})
 
 	editor.setOptions({
 		editorProps: {
 			handlePaste: getHandlePaste(editor)
 		}
-	});
-	return editor;
-};
+	})
+	return editor
+}

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -156,9 +155,9 @@
 	// Check if any filters are active
 	const hasActiveFilters = $derived(
 		elementFilters.length > 0 ||
-		groupFilter !== undefined ||
-		hlFilter !== undefined ||
-		extraFilter !== undefined
+			groupFilter !== undefined ||
+			hlFilter !== undefined ||
+			extraFilter !== undefined
 	)
 
 	// Clear all filters
@@ -224,7 +223,7 @@
 			id: 'group',
 			header: 'Group',
 			width: 180,
-			template: (_val: any, row: any) => row.group ? displayName(row.group) : '-'
+			template: (_val: any, row: any) => (row.group ? displayName(row.group) : '-')
 		}
 	]
 
@@ -318,7 +317,9 @@
 			width: 100,
 			template: (_val: any, row: any) => {
 				const raids = row.raids ?? []
-				const counts: number[] = [...new Set<number>(raids.map((r: any) => r.playerCount).filter(Boolean))]
+				const counts: number[] = [
+					...new Set<number>(raids.map((r: any) => r.playerCount).filter(Boolean))
+				]
 				counts.sort((a, b) => a - b)
 				return counts.length > 0 ? counts.join(', ') : '-'
 			}
@@ -419,7 +420,12 @@
 <div class="page">
 	<div class="grid">
 		<div class="controls">
-			<SegmentedControl bind:value={viewMode} onValueChange={handleViewModeChange} size="xsmall" variant="background">
+			<SegmentedControl
+				bind:value={viewMode}
+				onValueChange={handleViewModeChange}
+				size="xsmall"
+				variant="background"
+			>
 				<Segment value="raids">Raids</Segment>
 				<Segment value="groups">Groups</Segment>
 			</SegmentedControl>
@@ -440,12 +446,7 @@
 						size="small"
 					/>
 
-					<Select
-						options={booleanOptions}
-						bind:value={hlFilter}
-						placeholder="HL"
-						size="small"
-					/>
+					<Select options={booleanOptions} bind:value={hlFilter} placeholder="HL" size="small" />
 
 					<Select
 						options={booleanOptions}

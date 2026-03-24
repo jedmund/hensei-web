@@ -53,7 +53,7 @@
 		{/if}
 	{/snippet}
 	{#if raid}
-		<button type="button" class="raid-info" onclick={onclick}>
+		<button type="button" class="raid-info" {onclick}>
 			<img src={getRaidImage(raid.slug)} alt="" class="raid-image" />
 			<div class="raid-details">
 				<span class="raid-name">{raidName()}</span>

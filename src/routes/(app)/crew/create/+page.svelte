@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -189,22 +188,16 @@
 					{#if errors.description}
 						<span class="field-error">{errors.description}</span>
 					{/if}
-					<span class="field-hint">{m.crew_description_counter({ length: String(description.length) })}</span>
+					<span class="field-hint"
+						>{m.crew_description_counter({ length: String(description.length) })}</span
+					>
 				</div>
 
 				<div class="form-actions">
-					<Button
-						variant="secondary"
-						type="button"
-						onclick={() => goto(localizeHref('/crew'))}
-					>
+					<Button variant="secondary" type="button" onclick={() => goto(localizeHref('/crew'))}>
 						{m.crew_cancel()}
 					</Button>
-					<Button
-						variant="primary"
-						type="submit"
-						disabled={createCrewMutation.isPending}
-					>
+					<Button variant="primary" type="submit" disabled={createCrewMutation.isPending}>
 						{createCrewMutation.isPending ? m.crew_creating() : m.crew_create()}
 					</Button>
 				</div>

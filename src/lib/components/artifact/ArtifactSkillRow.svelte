@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import DisclosureRow from '$lib/components/ui/DisclosureRow.svelte'
@@ -122,11 +121,7 @@
 	{:else}
 		<!-- Set: Show modifier name (clickable) + value/level controls -->
 		<div class="skill-row-set" class:disabled>
-			<DisclosureRow
-				label={modifierName}
-				onclick={onSelectModifier}
-				{disabled}
-			/>
+			<DisclosureRow label={modifierName} onclick={onSelectModifier} {disabled} />
 			<div class="skill-controls">
 				<div class="control-group">
 					<label class="control-label">{m.label_level()}</label>

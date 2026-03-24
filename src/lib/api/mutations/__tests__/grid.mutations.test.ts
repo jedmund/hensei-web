@@ -463,5 +463,4 @@ describe('grid mutations', () => {
 			expect(cached?.summons[0]!.quickSummon).toBe(true) // restored
 		})
 	})
-
 })

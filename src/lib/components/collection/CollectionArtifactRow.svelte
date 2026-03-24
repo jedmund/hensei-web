@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
 	import { localizedName } from '$lib/utils/locale'
@@ -37,9 +36,7 @@
 	)
 
 	// Skills summary (count of non-null skills)
-	const skillCount = $derived(
-		artifact.skills?.filter((s) => s !== null).length ?? 0
-	)
+	const skillCount = $derived(artifact.skills?.filter((s) => s !== null).length ?? 0)
 </script>
 
 <button type="button" class="artifact-row" onclick={onClick}>

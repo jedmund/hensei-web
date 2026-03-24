@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { Editor } from '@tiptap/core';
-	import * as m from '$lib/paraglide/messages';
+	import { Editor } from '@tiptap/core'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
-		editor: Editor;
+		editor: Editor
 	}
 
-	const { editor }: Props = $props();
+	const { editor }: Props = $props()
 
 	const FONT_SIZE = [
 		{ label: m.font_size_tiny(), value: '0.7rem' },
@@ -15,9 +15,9 @@
 		{ label: m.font_size_default(), value: '' },
 		{ label: m.font_size_large(), value: '1.25rem' },
 		{ label: m.font_size_extra_large(), value: '1.5rem' }
-	];
+	]
 
-	let currentSize = $derived.by(() => editor.getAttributes('textStyle').fontSize || '');
+	let currentSize = $derived.by(() => editor.getAttributes('textStyle').fontSize || '')
 </script>
 
 <select
@@ -27,7 +27,7 @@
 			.chain()
 			.focus()
 			.setFontSize((e.target as HTMLSelectElement).value)
-			.run();
+			.run()
 	}}
 	title="Font Size"
 >

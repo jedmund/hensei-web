@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { ToggleGroup } from 'bits-ui'
 	import Tooltip from '../Tooltip.svelte'
@@ -99,13 +98,9 @@
 					{disabled}
 				>
 					{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
-						<Tooltip content={getLabel(proficiency)} disabled={disabled}>
+						<Tooltip content={getLabel(proficiency)} {disabled}>
 							{#snippet children()}
-								<ToggleGroup.Item
-									value={String(proficiency)}
-									class="proficiency-item"
-									{disabled}
-								>
+								<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
 									<img
 										src={getProficiencyImage(proficiency)}
 										alt={getLabel(proficiency)}
@@ -125,13 +120,9 @@
 					{disabled}
 				>
 					{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
-						<Tooltip content={getLabel(proficiency)} disabled={disabled}>
+						<Tooltip content={getLabel(proficiency)} {disabled}>
 							{#snippet children()}
-								<ToggleGroup.Item
-									value={String(proficiency)}
-									class="proficiency-item"
-									{disabled}
-								>
+								<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
 									<img
 										src={getProficiencyImage(proficiency)}
 										alt={getLabel(proficiency)}
@@ -159,14 +150,14 @@
 				{disabled}
 			>
 				{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
-					<Tooltip content={getLabel(proficiency)} disabled={disabled}>
+					<Tooltip content={getLabel(proficiency)} {disabled}>
 						{#snippet children()}
-							<ToggleGroup.Item
-								value={String(proficiency)}
-								class="proficiency-item"
-								{disabled}
-							>
-								<img src={getProficiencyImage(proficiency)} alt={getLabel(proficiency)} class="proficiency-image" />
+							<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
+								<img
+									src={getProficiencyImage(proficiency)}
+									alt={getLabel(proficiency)}
+									class="proficiency-image"
+								/>
 							</ToggleGroup.Item>
 						{/snippet}
 					</Tooltip>
@@ -181,14 +172,14 @@
 				{disabled}
 			>
 				{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
-					<Tooltip content={getLabel(proficiency)} disabled={disabled}>
+					<Tooltip content={getLabel(proficiency)} {disabled}>
 						{#snippet children()}
-							<ToggleGroup.Item
-								value={String(proficiency)}
-								class="proficiency-item"
-								{disabled}
-							>
-								<img src={getProficiencyImage(proficiency)} alt={getLabel(proficiency)} class="proficiency-image" />
+							<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
+								<img
+									src={getProficiencyImage(proficiency)}
+									alt={getLabel(proficiency)}
+									class="proficiency-image"
+								/>
 							</ToggleGroup.Item>
 						{/snippet}
 					</Tooltip>

@@ -255,7 +255,9 @@
 			// If language or bahamut mode changed, navigate to the re-localized URL
 			if (originalLanguage !== language || user.bahamut !== bahamut) {
 				await invalidateAll()
-				const basePath = deLocalizeHref(window.location.pathname + window.location.search + window.location.hash)
+				const basePath = deLocalizeHref(
+					window.location.pathname + window.location.search + window.location.hash
+				)
 				window.location.href = localizeHref(basePath, { locale: language })
 			} else {
 				// For other changes (element, picture, gender, theme), invalidate to refresh layout data
@@ -291,7 +293,7 @@
 						onValueChange={handleSectionChange}
 						variant="background"
 						size="small"
-						element={element}
+						{element}
 						grow
 					>
 						<Segment value="profile">{m.settings_nav_profile()}</Segment>

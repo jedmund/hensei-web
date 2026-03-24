@@ -259,25 +259,26 @@ describe('BaseAdapter', () => {
 
 		it('should handle request cancellation', async () => {
 			// Mock a delayed response that respects AbortSignal
-			global.fetch = vi.fn().mockImplementation((url, options) =>
-				new Promise((resolve, reject) => {
-					const timeout = setTimeout(() => {
-						resolve({
-							ok: true,
-							json: async () => ({ data: 'test' })
-						})
-					}, 100)
+			global.fetch = vi.fn().mockImplementation(
+				(url, options) =>
+					new Promise((resolve, reject) => {
+						const timeout = setTimeout(() => {
+							resolve({
+								ok: true,
+								json: async () => ({ data: 'test' })
+							})
+						}, 100)
 
-					// Listen for abort signal
-					if (options?.signal) {
-						options.signal.addEventListener('abort', () => {
-							clearTimeout(timeout)
-							const error = new Error('The operation was aborted')
-							error.name = 'AbortError'
-							reject(error)
-						})
-					}
-				})
+						// Listen for abort signal
+						if (options?.signal) {
+							options.signal.addEventListener('abort', () => {
+								clearTimeout(timeout)
+								const error = new Error('The operation was aborted')
+								error.name = 'AbortError'
+								reject(error)
+							})
+						}
+					})
 			)
 
 			// Start request
@@ -326,7 +327,7 @@ describe('BaseAdapter', () => {
 			const promise1 = adapter.testRequest('/api/data')
 
 			// Wait a bit to ensure first request is in progress
-			await new Promise(resolve => setTimeout(resolve, 10))
+			await new Promise((resolve) => setTimeout(resolve, 10))
 
 			// Start second request to same endpoint (should cancel first)
 			const promise2 = adapter.testRequest('/api/data')
@@ -429,7 +430,6 @@ describe('BaseAdapter', () => {
 			expect(result).toEqual({ success: true })
 		})
 	})
-
 
 	describe('error handling', () => {
 		it('should call global error handler', async () => {

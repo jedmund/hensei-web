@@ -60,9 +60,7 @@
 		unclaimedPhantoms.find((p) => p.id === selectedPhantomId)?.name
 	)
 
-	const comboboxItems = $derived(
-		searchResults.map((u) => ({ value: u.id, label: u.username }))
-	)
+	const comboboxItems = $derived(searchResults.map((u) => ({ value: u.id, label: u.username })))
 
 	async function searchUsers(query: string) {
 		if (query.length < 2) {

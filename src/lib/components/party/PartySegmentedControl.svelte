@@ -41,7 +41,6 @@
 		sidebar.close()
 		onTabChange?.(newValue as GridType)
 	}
-
 </script>
 
 <nav class={className}>
@@ -52,7 +51,7 @@
 			labelIcon={jobIcon}
 			selected={value === GridType.Character}
 		>
-			<CharacterRep characters={characters} {unlimited} />
+			<CharacterRep {characters} {unlimited} />
 		</RepSegment>
 
 		<RepSegment
@@ -60,7 +59,7 @@
 			label={m.party_segmented_control_weapons()}
 			selected={value === GridType.Weapon}
 		>
-			<WeaponRep weapons={weapons} />
+			<WeaponRep {weapons} />
 		</RepSegment>
 
 		<RepSegment
@@ -68,7 +67,7 @@
 			label={m.party_segmented_control_summons()}
 			selected={value === GridType.Summon}
 		>
-			<SummonRep summons={summons} />
+			<SummonRep {summons} />
 		</RepSegment>
 	</SegmentedControl>
 </nav>

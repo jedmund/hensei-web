@@ -22,9 +22,7 @@
 	let { authUser, collectionSourceUser, activeCollectionUser, onSwitchCollectionUser }: Props =
 		$props()
 
-	const activeUser = $derived(
-		activeCollectionUser === 'source' ? collectionSourceUser : authUser
-	)
+	const activeUser = $derived(activeCollectionUser === 'source' ? collectionSourceUser : authUser)
 	const activeAvatarSrc = $derived(getAvatarSrc(activeUser?.avatar?.picture))
 	const activeAvatarSrcSet = $derived(getAvatarSrcSet(activeUser?.avatar?.picture))
 
@@ -36,7 +34,11 @@
 	<Tooltip.Trigger>
 		{#snippet child({ props })}
 			<DropdownMenu.Root>
-				<DropdownMenu.Trigger class="collection-switcher-trigger" aria-label="Switch collection view" {...props}>
+				<DropdownMenu.Trigger
+					class="collection-switcher-trigger"
+					aria-label="Switch collection view"
+					{...props}
+				>
 					<div class="switcher-user">
 						<div class="switcher-avatar {activeUser?.avatar?.element || ''}">
 							{#if activeUser?.avatar?.picture}
@@ -52,7 +54,11 @@
 								<div class="avatar-placeholder" aria-hidden="true"></div>
 							{/if}
 						</div>
-						<span class="switcher-name">{activeCollectionUser === 'viewer' ? m.collection_viewer_you() : activeUser?.username}</span>
+						<span class="switcher-name"
+							>{activeCollectionUser === 'viewer'
+								? m.collection_viewer_you()
+								: activeUser?.username}</span
+						>
 					</div>
 					<Icon name="chevron-down" size={10} />
 				</DropdownMenu.Trigger>
@@ -60,7 +66,10 @@
 				<DropdownMenu.Portal>
 					<DropdownMenu.Content class="collection-dropdown-content" sideOffset={6} align="end">
 						<div class="dropdown-label">{m.collection_viewer_viewing_as()}</div>
-						<DropdownMenu.RadioGroup value={activeCollectionUser} onValueChange={(v) => onSwitchCollectionUser(v as 'viewer' | 'source')}>
+						<DropdownMenu.RadioGroup
+							value={activeCollectionUser}
+							onValueChange={(v) => onSwitchCollectionUser(v as 'viewer' | 'source')}
+						>
 							<DropdownMenu.RadioItem value="viewer" class="dropdown-radio-item {authElement}">
 								<div class="switcher-avatar {authElement}">
 									{#if authUser?.avatar?.picture}
@@ -108,9 +117,7 @@
 		{/snippet}
 	</Tooltip.Trigger>
 	<Tooltip.Portal>
-		<Tooltip.Content class="tooltip-content" sideOffset={8}>
-			Viewing as
-		</Tooltip.Content>
+		<Tooltip.Content class="tooltip-content" sideOffset={8}>Viewing as</Tooltip.Content>
 	</Tooltip.Portal>
 </Tooltip.Root>
 
@@ -218,12 +225,24 @@
 		font-weight: $bold;
 	}
 
-	:global(.dropdown-radio-item[data-state='checked'].fire) { color: var(--fire-bg); }
-	:global(.dropdown-radio-item[data-state='checked'].water) { color: var(--water-bg); }
-	:global(.dropdown-radio-item[data-state='checked'].earth) { color: var(--earth-bg); }
-	:global(.dropdown-radio-item[data-state='checked'].wind) { color: var(--wind-bg); }
-	:global(.dropdown-radio-item[data-state='checked'].light) { color: var(--light-bg); }
-	:global(.dropdown-radio-item[data-state='checked'].dark) { color: var(--dark-bg); }
+	:global(.dropdown-radio-item[data-state='checked'].fire) {
+		color: var(--fire-bg);
+	}
+	:global(.dropdown-radio-item[data-state='checked'].water) {
+		color: var(--water-bg);
+	}
+	:global(.dropdown-radio-item[data-state='checked'].earth) {
+		color: var(--earth-bg);
+	}
+	:global(.dropdown-radio-item[data-state='checked'].wind) {
+		color: var(--wind-bg);
+	}
+	:global(.dropdown-radio-item[data-state='checked'].light) {
+		color: var(--light-bg);
+	}
+	:global(.dropdown-radio-item[data-state='checked'].dark) {
+		color: var(--dark-bg);
+	}
 
 	.radio-indicator {
 		margin-left: auto;

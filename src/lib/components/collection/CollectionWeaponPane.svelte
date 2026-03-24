@@ -77,9 +77,7 @@
 	const weaponData = $derived(weapon.weapon)
 
 	// Show instance element for element-changeable, otherwise show weapon's base element
-	const displayElement = $derived(
-		weaponData?.element === 0 ? weapon.element : weaponData?.element
-	)
+	const displayElement = $derived(weaponData?.element === 0 ? weapon.element : weaponData?.element)
 
 	// Current edit values from the collection weapon
 	const currentValues = $derived<WeaponEditValues>({
@@ -255,7 +253,9 @@
 	// Check conditions
 	const hasAwakening = $derived(weapon.awakening !== null)
 	const hasWeaponKeys = $derived((weapon.weaponKeys?.length ?? 0) > 0)
-	const hasAxSkills = $derived((weapon.ax?.length ?? 0) > 0 && weapon.ax?.some(ax => ax.modifier?.id))
+	const hasAxSkills = $derived(
+		(weapon.ax?.length ?? 0) > 0 && weapon.ax?.some((ax) => ax.modifier?.id)
+	)
 	const canChangeElement = $derived(weaponData?.element === 0)
 
 	// Check if user can view database (role >= 7)
@@ -318,12 +318,7 @@
 				<SkillsSection type="weapon" itemData={weaponData} />
 			</div>
 		{:else if isEditing}
-			<WeaponEditPane
-				bind:this={editPaneRef}
-				{weaponData}
-				{currentValues}
-				onSave={handleSave}
-			/>
+			<WeaponEditPane bind:this={editPaneRef} {weaponData} {currentValues} onSave={handleSave} />
 		{:else}
 			<div class="collection-view">
 				<DetailsSection title={m.section_general()}>
@@ -344,21 +339,36 @@
 					{/if}
 				</DetailsSection>
 
-				<DetailsSection title={m.details_awakening()} empty={!hasAwakening} emptyMessage={m.collection_not_set()}>
+				<DetailsSection
+					title={m.details_awakening()}
+					empty={!hasAwakening}
+					emptyMessage={m.collection_not_set()}
+				>
 					<DetailRow label={m.label_type()} value={getAwakeningType()} />
 					<DetailRow label={m.label_level()} value={getAwakeningLevel()} />
 				</DetailsSection>
 
-				<DetailsSection title={m.details_weapon_keys()} empty={!hasWeaponKeys} emptyMessage={m.collection_not_set()}>
+				<DetailsSection
+					title={m.details_weapon_keys()}
+					empty={!hasWeaponKeys}
+					emptyMessage={m.collection_not_set()}
+				>
 					{#each weapon.weaponKeys ?? [] as key, i}
 						<DetailRow label="Key {i + 1}" value={getWeaponKeyName(i)} />
 					{/each}
 				</DetailsSection>
 
-				<DetailsSection title={m.details_ax_skills()} empty={!hasAxSkills} emptyMessage={m.collection_not_set()}>
+				<DetailsSection
+					title={m.details_ax_skills()}
+					empty={!hasAxSkills}
+					emptyMessage={m.collection_not_set()}
+				>
 					{#each weapon.ax ?? [] as ax, i}
 						{#if ax.modifier?.id}
-							<DetailRow label="Skill {i + 1}" value={`${ax.modifier.nameEn} +${ax.strength}${ax.modifier.suffix ?? ''}`} />
+							<DetailRow
+								label="Skill {i + 1}"
+								value={`${ax.modifier.nameEn} +${ax.strength}${ax.modifier.suffix ?? ''}`}
+							/>
 						{/if}
 					{/each}
 				</DetailsSection>

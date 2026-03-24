@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -100,7 +99,13 @@
 			<p>Loading event...</p>
 		</div>
 	{:else if event}
-		<DatabaseFormHeader title="Edit Event" onCancel={handleCancel} onSave={handleSave} {isSaving} disabled={!canSave} />
+		<DatabaseFormHeader
+			title="Edit Event"
+			onCancel={handleCancel}
+			onSave={handleSave}
+			{isSaving}
+			disabled={!canSave}
+		/>
 
 		{#if saveError}
 			<div class="error-banner">{saveError}</div>
@@ -114,15 +119,8 @@
 					editable={true}
 					type="number"
 				/>
-				<DetailItem
-					label="Element"
-					editable={true}
-				>
-					<ElementPicker
-						bind:value={editData.element}
-						mode="dropdown"
-						contained
-					/>
+				<DetailItem label="Element" editable={true}>
+					<ElementPicker bind:value={editData.element} mode="dropdown" contained />
 				</DetailItem>
 				<DetailItem
 					label="Start Date"
@@ -141,7 +139,11 @@
 			</DetailsContainer>
 		</section>
 	{:else}
-		<NotFoundPlaceholder title="Event Not Found" backHref={localizeHref('/database/gw-events')} backLabel="Back to Events" />
+		<NotFoundPlaceholder
+			title="Event Not Found"
+			backHref={localizeHref('/database/gw-events')}
+			backLabel="Back to Events"
+		/>
 	{/if}
 </div>
 

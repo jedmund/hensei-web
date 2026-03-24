@@ -17,8 +17,8 @@
 	let { tiers, selectedTiers, onToggleTier, element }: Props = $props()
 
 	// Split tiers into two rows
-	const firstRowTiers = $derived(tiers.filter(t => ['1', '2', '3', '4', '5'].includes(t.value)))
-	const secondRowTiers = $derived(tiers.filter(t => ['ex', 'ex2', 'o1'].includes(t.value)))
+	const firstRowTiers = $derived(tiers.filter((t) => ['1', '2', '3', '4', '5'].includes(t.value)))
+	const secondRowTiers = $derived(tiers.filter((t) => ['ex', 'ex2', 'o1'].includes(t.value)))
 
 	function handleTierClick(value: string) {
 		onToggleTier(value)

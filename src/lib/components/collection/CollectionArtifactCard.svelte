@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
 	import { getArtifactImage } from '$lib/utils/images'
@@ -146,5 +145,4 @@
 			background: var(--grey-20, #333);
 		}
 	}
-
 </style>

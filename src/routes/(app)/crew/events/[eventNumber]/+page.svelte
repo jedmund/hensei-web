@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { goto, replaceState } from '$app/navigation'
@@ -178,7 +177,13 @@
 						</span>
 					</div>
 					<div class="tab-control">
-						<SegmentedControl value={activeTab} onValueChange={(v) => handleTabChange(v as 'individual' | 'crew')} size="small" variant="background" grow>
+						<SegmentedControl
+							value={activeTab}
+							onValueChange={(v) => handleTabChange(v as 'individual' | 'crew')}
+							size="small"
+							variant="background"
+							grow
+						>
 							<Segment value="individual">{m.gw_tab_individual()}</Segment>
 							<Segment value="crew">{m.gw_tab_crew()}</Segment>
 						</SegmentedControl>
@@ -186,7 +191,9 @@
 				{/snippet}
 				{#snippet actions()}
 					{#if crewStore.isOfficer && gwEvent.status !== 'upcoming' && activeTab === 'individual'}
-						<Button variant="primary" size="small" onclick={() => (showScoreModal = true)}>{m.crew_gw_add_score()}</Button>
+						<Button variant="primary" size="small" onclick={() => (showScoreModal = true)}
+							>{m.crew_gw_add_score()}</Button
+						>
 					{/if}
 				{/snippet}
 			</CrewHeader>
@@ -266,14 +273,20 @@
 								<div class="col-round">
 									<span class="round-label">{GW_ROUND_LABELS[round as GwRound]}</span>
 									{#if score?.victory !== undefined && score.victory !== null}
-										<span class="result-badge" class:win={score.victory} class:loss={!score.victory}>
+										<span
+											class="result-badge"
+											class:win={score.victory}
+											class:loss={!score.victory}
+										>
 											{score.victory ? m.gw_win() : m.gw_loss()}
 										</span>
 									{/if}
 								</div>
 								<div class="col-our-score">
 									{#if score}
-										<span class="score-value" class:winner={score.victory === true}>{formatScore(score.crewScore)}</span>
+										<span class="score-value" class:winner={score.victory === true}
+											>{formatScore(score.crewScore)}</span
+										>
 									{:else}
 										<span class="score-empty">—</span>
 									{/if}
@@ -281,7 +294,9 @@
 								<div class="col-their-score">
 									{#if score}
 										{#if score.opponentScore !== null}
-											<span class="score-value" class:winner={score.victory === false}>{formatScore(score.opponentScore)}</span>
+											<span class="score-value" class:winner={score.victory === false}
+												>{formatScore(score.opponentScore)}</span
+											>
 										{/if}
 										{#if score.opponentName}
 											<span class="opponent-name">({score.opponentName})</span>
@@ -313,12 +328,10 @@
 												{/snippet}
 											</DropdownMenu>
 										{/if}
-									{:else}
-										{#if crewStore.isOfficer}
-											<Button size="small" onclick={() => openCrewScoreModal(round as GwRound)}>
-												{m.gw_record()}
-											</Button>
-										{/if}
+									{:else if crewStore.isOfficer}
+										<Button size="small" onclick={() => openCrewScoreModal(round as GwRound)}>
+											{m.gw_record()}
+										</Button>
 									{/if}
 								</div>
 							</div>
@@ -339,7 +352,14 @@
 		{membersDuringEvent}
 		{phantomPlayers}
 		existingScores={participation?.individualScores ?? []}
-		element={data.user?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined}
+		element={data.user?.element as
+			| 'wind'
+			| 'fire'
+			| 'water'
+			| 'earth'
+			| 'dark'
+			| 'light'
+			| undefined}
 	/>
 {/if}
 
@@ -603,5 +623,4 @@
 			color: var(--danger);
 		}
 	}
-
 </style>

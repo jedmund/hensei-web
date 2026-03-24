@@ -31,9 +31,7 @@ describe('fetchWikiPage', () => {
 	})
 
 	it('returns error from API', async () => {
-		mockFetch.mockResolvedValue(
-			mockJsonResponse({ error: { info: 'Page not found' } })
-		)
+		mockFetch.mockResolvedValue(mockJsonResponse({ error: { info: 'Page not found' } }))
 
 		const result = await fetchWikiPage('NonExistent')
 		expect(result.error).toBe('Page not found')
@@ -41,9 +39,7 @@ describe('fetchWikiPage', () => {
 	})
 
 	it('returns error when no wikitext in response', async () => {
-		mockFetch.mockResolvedValue(
-			mockJsonResponse({ parse: {} })
-		)
+		mockFetch.mockResolvedValue(mockJsonResponse({ parse: {} }))
 
 		const result = await fetchWikiPage('EmptyPage')
 		expect(result.error).toBe('No wikitext in response')
@@ -91,9 +87,7 @@ describe('fetchWikiPage', () => {
 
 describe('fetchWikiPages', () => {
 	it('fetches multiple pages in parallel', async () => {
-		mockFetch.mockResolvedValue(
-			mockJsonResponse({ parse: { wikitext: { '*': 'content' } } })
-		)
+		mockFetch.mockResolvedValue(mockJsonResponse({ parse: { wikitext: { '*': 'content' } } }))
 
 		const results = await fetchWikiPages(['Page1', 'Page2'])
 		expect(results).toHaveLength(2)

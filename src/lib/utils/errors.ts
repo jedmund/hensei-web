@@ -48,9 +48,7 @@ export function extractErrorMessage(
 		// Field-based errors - combine all messages with humanized field names
 		const errorMessages = Object.entries(errorDetails.errors)
 			.map(([field, messages]) => {
-				const fieldName = field
-					.replace(/_/g, ' ')
-					.replace(/\b\w/g, (c) => c.toUpperCase())
+				const fieldName = field.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 				if (Array.isArray(messages)) {
 					return `${fieldName} ${messages.join(', ')}`
 				}

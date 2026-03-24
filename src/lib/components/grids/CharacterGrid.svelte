@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { GridCharacter } from '$lib/types/api/party'
 	import { usePartyContext } from '$lib/types/party-context'
@@ -35,7 +34,7 @@
 	// Create array with proper empty slots
 	let characterSlots = $derived.by(() => {
 		const slots: (GridCharacter | undefined)[] = Array(slotCount).fill(undefined)
-		characters.forEach(char => {
+		characters.forEach((char) => {
 			if (char.position >= 0 && char.position < slotCount) {
 				slots[char.position] = char
 			}
@@ -52,12 +51,20 @@
 
 		characterSlots.forEach((char, i) => {
 			const gid = char?.character?.granblueId
-			if (!gid) { status.set(i, false); return }
+			if (!gid) {
+				status.set(i, false)
+				return
+			}
 			const key = String(gid)
 			const items = remaining.get(key)
-			if (!items) { status.set(i, false); return }
+			if (!items) {
+				status.set(i, false)
+				return
+			}
 			const needed = { uncap: char.uncapLevel ?? 0, trans: char.transcendenceStep ?? 0 }
-			const idx = items.findIndex(c => c.uncapLevel >= needed.uncap && c.transcendenceStep >= needed.trans)
+			const idx = items.findIndex(
+				(c) => c.uncapLevel >= needed.uncap && c.transcendenceStep >= needed.trans
+			)
 			if (idx >= 0) {
 				items.splice(idx, 1)
 				status.set(i, true)
@@ -70,16 +77,9 @@
 </script>
 
 <div class="wrapper">
-	<ul
-		class="characters"
-		class:unlimited
-		aria-label="Character Grid"
-	>
+	<ul class="characters" class:unlimited aria-label="Character Grid">
 		{#each characterSlots as character, i}
-			<li
-				aria-label={`Character slot ${i}`}
-				class:Empty={!character}
-			>
+			<li aria-label={`Character slot ${i}`} class:Empty={!character}>
 				{#if dragContext}
 					<DropZone
 						{container}
@@ -100,8 +100,12 @@
 								position={i}
 								{mainWeaponElement}
 								{partyElement}
-								notInCollection={collectionStatus != null && !!character?.character?.granblueId && !collectionStatus.get(i)}
-								inCollection={collectionStatus != null && !!character?.character?.granblueId && !!collectionStatus.get(i)}
+								notInCollection={collectionStatus != null &&
+									!!character?.character?.granblueId &&
+									!collectionStatus.get(i)}
+								inCollection={collectionStatus != null &&
+									!!character?.character?.granblueId &&
+									!!collectionStatus.get(i)}
 							/>
 						</DraggableItem>
 					</DropZone>
@@ -111,8 +115,12 @@
 						position={i}
 						{mainWeaponElement}
 						{partyElement}
-						notInCollection={collectionStatus != null && !!character?.character?.granblueId && !collectionStatus.get(i)}
-						inCollection={collectionStatus != null && !!character?.character?.granblueId && !!collectionStatus.get(i)}
+						notInCollection={collectionStatus != null &&
+							!!character?.character?.granblueId &&
+							!collectionStatus.get(i)}
+						inCollection={collectionStatus != null &&
+							!!character?.character?.granblueId &&
+							!!collectionStatus.get(i)}
 					/>
 				{/if}
 			</li>

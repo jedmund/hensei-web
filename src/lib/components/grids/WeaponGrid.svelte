@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { GridWeapon, GuidebookList } from '$lib/types/api/party'
 	import { usePartyContext } from '$lib/types/party-context'
@@ -41,7 +40,7 @@
 	// Create array for sub-weapons (positions 0-8)
 	let subWeaponSlots = $derived.by(() => {
 		const slots: (GridWeapon | undefined)[] = Array(9).fill(undefined)
-		weapons.forEach(weapon => {
+		weapons.forEach((weapon) => {
 			if (weapon.position >= 0 && weapon.position < 9) {
 				slots[weapon.position] = weapon
 			}
@@ -58,12 +57,20 @@
 
 		const check = (weapon: GridWeapon | undefined, position: number) => {
 			const gid = weapon?.weapon?.granblueId
-			if (!gid) { status.set(position, false); return }
+			if (!gid) {
+				status.set(position, false)
+				return
+			}
 			const key = String(gid)
 			const items = remaining.get(key)
-			if (!items) { status.set(position, false); return }
+			if (!items) {
+				status.set(position, false)
+				return
+			}
 			const needed = { uncap: weapon.uncapLevel ?? 0, trans: weapon.transcendenceStep ?? 0 }
-			const idx = items.findIndex(c => c.uncapLevel >= needed.uncap && c.transcendenceStep >= needed.trans)
+			const idx = items.findIndex(
+				(c) => c.uncapLevel >= needed.uncap && c.transcendenceStep >= needed.trans
+			)
 			if (idx >= 0) {
 				items.splice(idx, 1)
 				status.set(position, true)
@@ -81,7 +88,16 @@
 <div class="wrapper">
 	<div class="grid">
 		<div aria-label="Mainhand Weapon">
-			<WeaponUnit item={mainhand} position={-1} notInCollection={collectionStatus != null && !!mainhand?.weapon?.granblueId && !collectionStatus.get(-1)} inCollection={collectionStatus != null && !!mainhand?.weapon?.granblueId && !!collectionStatus.get(-1)} />
+			<WeaponUnit
+				item={mainhand}
+				position={-1}
+				notInCollection={collectionStatus != null &&
+					!!mainhand?.weapon?.granblueId &&
+					!collectionStatus.get(-1)}
+				inCollection={collectionStatus != null &&
+					!!mainhand?.weapon?.granblueId &&
+					!!collectionStatus.get(-1)}
+			/>
 		</div>
 
 		<ul class="weapons" aria-label="Weapon Grid">
@@ -106,11 +122,29 @@
 								type="weapon"
 								canDrag={!!weapon && (ctx?.canEdit() ?? false)}
 							>
-								<WeaponUnit item={weapon} position={i} notInCollection={collectionStatus != null && !!weapon?.weapon?.granblueId && !collectionStatus.get(i)} inCollection={collectionStatus != null && !!weapon?.weapon?.granblueId && !!collectionStatus.get(i)} />
+								<WeaponUnit
+									item={weapon}
+									position={i}
+									notInCollection={collectionStatus != null &&
+										!!weapon?.weapon?.granblueId &&
+										!collectionStatus.get(i)}
+									inCollection={collectionStatus != null &&
+										!!weapon?.weapon?.granblueId &&
+										!!collectionStatus.get(i)}
+								/>
 							</DraggableItem>
 						</DropZone>
 					{:else}
-						<WeaponUnit item={weapon} position={i} notInCollection={collectionStatus != null && !!weapon?.weapon?.granblueId && !collectionStatus.get(i)} inCollection={collectionStatus != null && !!weapon?.weapon?.granblueId && !!collectionStatus.get(i)} />
+						<WeaponUnit
+							item={weapon}
+							position={i}
+							notInCollection={collectionStatus != null &&
+								!!weapon?.weapon?.granblueId &&
+								!collectionStatus.get(i)}
+							inCollection={collectionStatus != null &&
+								!!weapon?.weapon?.granblueId &&
+								!!collectionStatus.get(i)}
+						/>
 					{/if}
 				</li>
 			{/each}
@@ -122,7 +156,12 @@
 				<ExtraWeapons {weapons} offset={9} />
 			{/if}
 			{#if showGuidebooks}
-				<Guidebooks {guidebooks} {canEdit} onClickSlot={onClickGuidebookSlot} onRemove={onRemoveGuidebook} />
+				<Guidebooks
+					{guidebooks}
+					{canEdit}
+					onClickSlot={onClickGuidebookSlot}
+					onRemove={onRemoveGuidebook}
+				/>
 			{/if}
 		</ExtraContainer>
 	{/if}

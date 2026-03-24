@@ -1,6 +1,11 @@
 <script lang="ts">
 	import type { CollectionWeapon } from '$lib/types/api/collection'
-	import { getWeaponImage, getWeaponTransformation, getWeaponFallbackImage, handleImageFallback } from '$lib/utils/images'
+	import {
+		getWeaponImage,
+		getWeaponTransformation,
+		getWeaponFallbackImage,
+		handleImageFallback
+	} from '$lib/utils/images'
 	import { getAwakeningImage } from '$lib/utils/modifiers'
 	import { localizedName } from '$lib/utils/locale'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
@@ -16,19 +21,31 @@
 
 	// Get transformation suffix for transcendence
 	const transformation = $derived(
-		getWeaponTransformation(weapon.weapon?.uncap?.transcendence, weapon.uncapLevel, weapon.transcendenceStep)
+		getWeaponTransformation(
+			weapon.weapon?.uncap?.transcendence,
+			weapon.uncapLevel,
+			weapon.transcendenceStep
+		)
 	)
 
 	// Use instance element for element-changeable weapons, default to 0 (no element image) if not set
 	const displayElement = $derived(weapon.weapon?.element === 0 ? (weapon.element ?? 0) : undefined)
 
 	const imageUrl = $derived(
-		getWeaponImage(weapon.weapon?.granblueId, 'grid', displayElement, transformation, weapon.weapon?.elementVariantIds)
+		getWeaponImage(
+			weapon.weapon?.granblueId,
+			'grid',
+			displayElement,
+			transformation,
+			weapon.weapon?.elementVariantIds
+		)
 	)
 
 	// Fallback URL for element-changeable weapons whose _0 image doesn't exist
 	const weaponFallbackUrl = $derived(
-		weapon.weapon?.element === 0 ? getWeaponFallbackImage(weapon.weapon?.granblueId, 'grid', transformation) : undefined
+		weapon.weapon?.element === 0
+			? getWeaponFallbackImage(weapon.weapon?.granblueId, 'grid', transformation)
+			: undefined
 	)
 
 	// Get awakening image URL
@@ -46,7 +63,13 @@
 				alt={`${weapon.awakening?.type?.name ? localizedName(weapon.awakening.type.name) : 'Awakening'} Lv${weapon.awakening?.level || 0}`}
 			/>
 		{/if}
-		<img class="weapon-image" src={imageUrl} alt={displayName} loading="lazy" onerror={(e) => handleImageFallback(e, weaponFallbackUrl)} />
+		<img
+			class="weapon-image"
+			src={imageUrl}
+			alt={displayName}
+			loading="lazy"
+			onerror={(e) => handleImageFallback(e, weaponFallbackUrl)}
+		/>
 	</div>
 	<UncapIndicator
 		type="weapon"

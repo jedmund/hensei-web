@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
@@ -120,7 +119,13 @@
 </script>
 
 <div class="page">
-	<DatabaseFormHeader title="New Raid" onCancel={handleCancel} onSave={handleSave} {isSaving} disabled={!canSave} />
+	<DatabaseFormHeader
+		title="New Raid"
+		onCancel={handleCancel}
+		onSave={handleSave}
+		{isSaving}
+		disabled={!canSave}
+	/>
 
 	{#if saveError}
 		<div class="error-banner">{saveError}</div>
@@ -149,22 +154,9 @@
 				type="text"
 				placeholder="url-friendly-slug"
 			/>
-			<DetailItem
-				label="Level"
-				bind:value={editData.level}
-				editable={true}
-				type="number"
-			/>
-			<DetailItem
-				label="Element"
-				editable={true}
-			>
-				<ElementPicker
-					bind:value={editData.element}
-					includeAny
-					mode="dropdown"
-					contained
-				/>
+			<DetailItem label="Level" bind:value={editData.level} editable={true} type="number" />
+			<DetailItem label="Element" editable={true}>
+				<ElementPicker bind:value={editData.element} includeAny mode="dropdown" contained />
 			</DetailItem>
 			<DetailItem
 				label="Players"
@@ -176,24 +168,9 @@
 		</DetailsContainer>
 
 		<DetailsContainer title="IDs">
-			<DetailItem
-				label="Enemy ID"
-				bind:value={editData.enemy_id}
-				editable={true}
-				type="number"
-			/>
-			<DetailItem
-				label="Summon ID"
-				bind:value={editData.summon_id}
-				editable={true}
-				type="number"
-			/>
-			<DetailItem
-				label="Quest ID"
-				bind:value={editData.quest_id}
-				editable={true}
-				type="number"
-			/>
+			<DetailItem label="Enemy ID" bind:value={editData.enemy_id} editable={true} type="number" />
+			<DetailItem label="Summon ID" bind:value={editData.summon_id} editable={true} type="number" />
+			<DetailItem label="Quest ID" bind:value={editData.quest_id} editable={true} type="number" />
 		</DetailsContainer>
 
 		<DetailsContainer title="Classification">

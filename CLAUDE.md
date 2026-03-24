@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 This is the NEW frontend application for the Hensei system - a Granblue Fantasy team/party management platform. It is a SvelteKit rewrite of the existing Next.js application.
 
 ### System Components:
+
 - **hensei-svelte** (this repository): New SvelteKit frontend (actively being developed)
 - **hensei-web** (../hensei-web): Current Next.js frontend (being migrated from)
 - **hensei-api** (../hensei-api): Rails API backend that provides all data and authentication
@@ -15,6 +16,7 @@ This is the NEW frontend application for the Hensei system - a Granblue Fantasy 
 ## Development Commands
 
 ### Frontend (hensei-svelte)
+
 ```bash
 # Install dependencies (using pnpm)
 pnpm install
@@ -42,6 +44,7 @@ pnpm build-storybook  # Build Storybook for production
 ```
 
 ### Backend API (hensei-api)
+
 ```bash
 cd ../hensei-api
 
@@ -70,9 +73,11 @@ bundle exec sidekiq   # Start background job processor
 ## Migration Status
 
 ### Overview
+
 This SvelteKit application (hensei-svelte) is a complete rewrite of the existing Next.js application (hensei-web). The migration is currently in progress.
 
 ### Migrated Features ✅
+
 - **Routes**:
   - `/about` - About page
   - `/auth` - Authentication flow
@@ -91,6 +96,7 @@ This SvelteKit application (hensei-svelte) is a complete rewrite of the existing
   - Button and Icon components
 
 ### Not Yet Migrated ❌
+
 - **Routes** (from hensei-web):
   - `/new` - New party creation workflow
   - `/p` - Party permalink/sharing
@@ -111,6 +117,7 @@ This SvelteKit application (hensei-svelte) is a complete rewrite of the existing
   - Various dialogs and common components
 
 ### Key Differences in Implementation
+
 - **State Management**: Migrating from Valtio (Next.js) to TanStack Query (SvelteKit)
 - **Styling**: Both use SCSS modules, but component structure differs
 - **i18n**: Migrating from next-i18next to Paraglide.js
@@ -139,6 +146,7 @@ The Hensei system consists of multiple components:
    - Blueprinter for JSON serialization
 
 ### Frontend Tech Stack
+
 - **Framework**: SvelteKit with Svelte 5
 - **Build Tool**: Vite 7
 - **Language**: TypeScript with strict mode enabled
@@ -205,6 +213,7 @@ src/
    - This pattern improves TypeScript performance and makes dependencies explicit
 
    **Correct Import Examples**:
+
    ```typescript
    // ✅ Good - Direct imports
    import { partyAdapter } from '$lib/api/adapters/party.adapter'
@@ -222,6 +231,7 @@ src/
 ### Component Patterns
 
 Components follow a consistent structure:
+
 - `.svelte` file for component logic
 - `.module.scss` for scoped styles (when needed)
 - TypeScript for type safety
@@ -230,6 +240,7 @@ Components follow a consistent structure:
 ### API Integration
 
 The frontend communicates with hensei-api (Rails backend) for:
+
 - **Authentication**: OAuth2 via Doorkeeper (`/oauth/token`)
 - **Party Management**: CRUD operations on party configurations
 - **Grid Management**: Managing characters, weapons, and summons in parties
@@ -240,6 +251,7 @@ The frontend communicates with hensei-api (Rails backend) for:
 - **Raids & Guidebooks**: Game content categorization
 
 Key API patterns:
+
 - All endpoints require Bearer token authentication
 - Responses use Blueprinter serialization
 - Base path: `/api/v1/`
@@ -248,6 +260,7 @@ Key API patterns:
 **📖 For detailed networking architecture, see [TanStack Query Architecture](./docs/TANSTACK_QUERY_ARCHITECTURE.md)**
 
 This document covers:
+
 - TanStack Query v6 integration patterns
 - Query and mutation hooks
 - Cache management strategies
@@ -258,6 +271,7 @@ This document covers:
 ### Domain Models (from hensei-api)
 
 Key models that the frontend interacts with:
+
 - **Party**: Team configurations with characters, weapons, summons, job, and skills
 - **Character/Weapon/Summon**: Game items with various attributes and enhancements
 - **GridCharacter/GridWeapon/GridSummon**: Junction tables for party composition
@@ -271,6 +285,7 @@ Key models that the frontend interacts with:
 ### Testing Configuration
 
 Vitest is configured with two test projects:
+
 - **Client tests**: Browser-based tests for Svelte components using Playwright
 - **Server tests**: Node-based tests for server-side logic
 

@@ -6,7 +6,10 @@
 	import PlaylistHeader from '$lib/components/playlist/PlaylistHeader.svelte'
 	import AddPartiesToPlaylistPane from '$lib/components/sidebar/AddPartiesToPlaylistPane.svelte'
 	import { playlistQueries } from '$lib/api/queries/playlist.queries'
-	import { useDeletePlaylist, useRemovePartyFromPlaylist } from '$lib/api/mutations/playlist.mutations'
+	import {
+		useDeletePlaylist,
+		useRemovePartyFromPlaylist
+	} from '$lib/api/mutations/playlist.mutations'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
@@ -88,6 +91,8 @@
 		padding: $unit-4x;
 		color: var(--text-secondary);
 
-		p { margin: 0; }
+		p {
+			margin: 0;
+		}
 	}
 </style>

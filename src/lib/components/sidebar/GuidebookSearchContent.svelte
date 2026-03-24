@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { onDestroy } from 'svelte'
@@ -116,7 +115,12 @@
 		</div>
 	</div>
 
-	<div class="results-section" onscroll={(e) => { resultsScrolled = e.currentTarget.scrollTop > 0 }}>
+	<div
+		class="results-section"
+		onscroll={(e) => {
+			resultsScrolled = e.currentTarget.scrollTop > 0
+		}}
+	>
 		{#if searchQueryResult.isLoading}
 			<div class="loading">
 				<Icon name="loader-2" size={24} />
@@ -132,10 +136,7 @@
 			<ul class="results-list">
 				{#each searchResults as item (item.id)}
 					<li class="result-item">
-						<button
-							class="result-button"
-							onclick={() => handleItemClick(item)}
-						>
+						<button class="result-button" onclick={() => handleItemClick(item)}>
 							<img
 								src={getGuidebookImage(item.granblueId)}
 								alt={getItemName(item)}
@@ -314,7 +315,11 @@
 	}
 
 	@keyframes spin {
-		from { transform: rotate(0deg); }
-		to { transform: rotate(360deg); }
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
 	}
 </style>

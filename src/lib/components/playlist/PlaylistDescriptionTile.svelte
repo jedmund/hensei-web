@@ -109,7 +109,9 @@
 		color: var(--text-secondary);
 		text-decoration: none;
 		flex-shrink: 0;
-		transition: background-color 0.15s ease, color 0.15s ease;
+		transition:
+			background-color 0.15s ease,
+			color 0.15s ease;
 
 		&:hover {
 			background: var(--button-contained-bg-hover);

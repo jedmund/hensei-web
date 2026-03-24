@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
@@ -167,7 +166,10 @@
 				kamigame: weapon.kamigame || '',
 				nicknamesEn: weapon.nicknames?.en || [],
 				nicknamesJp: weapon.nicknames?.ja || [],
-				recruits: typeof weapon.recruits === 'string' ? weapon.recruits : (weapon.recruits?.granblueId ?? ''),
+				recruits:
+					typeof weapon.recruits === 'string'
+						? weapon.recruits
+						: (weapon.recruits?.granblueId ?? ''),
 				// Forge chain fields
 				forgedFrom: weapon.forgedFrom?.granblueId || null,
 				forgeOrder: weapon.forgeOrder ?? null,
@@ -237,7 +239,8 @@
 				// Variant
 				weapon_series_variant_id: editData.weaponSeriesVariantId || null,
 				// Element variant IDs
-				element_variant_ids: Object.keys(editData.elementVariantIds).length > 0 ? editData.elementVariantIds : null,
+				element_variant_ids:
+					Object.keys(editData.elementVariantIds).length > 0 ? editData.elementVariantIds : null,
 				// Bullet slots
 				bullet_slots: editData.bulletSlots
 			}
@@ -262,7 +265,12 @@
 
 	// Helper function for weapon grid image
 	function getWeaponImage(weapon: any): string {
-		return getWeaponGridImage(weapon?.granblueId, weapon?.element, weapon?.instanceElement, weapon?.elementVariantIds)
+		return getWeaponGridImage(
+			weapon?.granblueId,
+			weapon?.element,
+			weapon?.instanceElement,
+			weapon?.elementVariantIds
+		)
 	}
 
 	// Fallback image for element-changeable weapons whose _0 image doesn't exist
@@ -274,10 +282,21 @@
 <div class="page">
 	<DatabasePageHeader title="Edit Weapon">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={`/database/weapons/${weapon?.granblueId}`}>Back</Button>
+			<Button
+				variant="ghost"
+				size="small"
+				leftIcon="chevron-left"
+				href={`/database/weapons/${weapon?.granblueId}`}>Back</Button
+			>
 		{/snippet}
 		{#snippet rightAction()}
-			<Button variant="element-ghost" element={elementName} size="small" onclick={saveChanges} disabled={isSaving}>
+			<Button
+				variant="element-ghost"
+				element={elementName}
+				size="small"
+				onclick={saveChanges}
+				disabled={isSaving}
+			>
 				{isSaving ? 'Saving...' : 'Save'}
 			</Button>
 		{/snippet}
@@ -299,7 +318,11 @@
 							{@const key = String(elementNum)}
 							<DetailItem label={getElementLabel(elementNum)} editable={true}>
 								<div class="variant-id-input">
-									<img class="element-icon" src={getElementImage(elementNum)} alt={getElementLabel(elementNum)} />
+									<img
+										class="element-icon"
+										src={getElementImage(elementNum)}
+										alt={getElementLabel(elementNum)}
+									/>
 									<input
 										class="variant-input contained"
 										type="text"
@@ -335,7 +358,10 @@
 								<div class="bullet-slot-row">
 									<span class="bullet-slot-index">Slot {i + 1}</span>
 									<Select
-										options={Object.entries(BULLET_TYPES).map(([v, l]) => ({ value: Number(v), label: l }))}
+										options={Object.entries(BULLET_TYPES).map(([v, l]) => ({
+											value: Number(v),
+											label: l
+										}))}
 										value={slotType}
 										onValueChange={(val) => {
 											const updated = [...editData.bulletSlots]

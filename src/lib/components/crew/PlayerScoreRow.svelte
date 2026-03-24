@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -34,9 +33,7 @@
 		// For members, use username (stored in name) for cleaner URLs
 		// For phantoms, use phantom ID since they don't have usernames
 		const path =
-			player.type === 'member'
-				? `/crew/members/${player.name}`
-				: `/crew/phantoms/${player.id}`
+			player.type === 'member' ? `/crew/members/${player.name}` : `/crew/phantoms/${player.id}`
 		goto(path)
 	}
 
@@ -55,7 +52,9 @@
 >
 	<div class="player-info">
 		<span class="player-rank">{rank}</span>
-		<span class="player-name">{player.name}{#if isTopFive}<span class="star">★</span>{/if}</span>
+		<span class="player-name"
+			>{player.name}{#if isTopFive}<span class="star">★</span>{/if}</span
+		>
 		{#if player.isRetired}
 			<span class="player-badge retired">{m.crew_score_retired()}</span>
 		{/if}

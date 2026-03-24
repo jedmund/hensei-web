@@ -173,7 +173,9 @@ export function updateIndividualScoreOptions(queryClient: QueryClient) {
 		}) => gwAdapter.updateIndividualScore(participationId, scoreId, input),
 		onSuccess: (
 			_data: unknown,
-			{ participationId }: { participationId: string; scoreId: string; input: Partial<CreateIndividualScoreInput> }
+			{
+				participationId
+			}: { participationId: string; scoreId: string; input: Partial<CreateIndividualScoreInput> }
 		) => {
 			queryClient.invalidateQueries({ queryKey: gwKeys.participation(participationId) })
 		}

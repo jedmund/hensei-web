@@ -18,9 +18,7 @@
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
-	import CollectionFilters, {
-		type CollectionFilterState
-	} from './CollectionFilters.svelte'
+	import CollectionFilters, { type CollectionFilterState } from './CollectionFilters.svelte'
 	import SelectableCharacterCard from './SelectableCharacterCard.svelte'
 	import SelectableCharacterRow from './SelectableCharacterRow.svelte'
 	import SelectableWeaponCard from './SelectableWeaponCard.svelte'
@@ -45,7 +43,13 @@
 		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	}
 
-	let { userId, entityType = 'character', open = $bindable(false), onOpenChange, userElement }: Props = $props()
+	let {
+		userId,
+		entityType = 'character',
+		open = $bindable(false),
+		onOpenChange,
+		userElement
+	}: Props = $props()
 
 	// Search state
 	let searchQuery = $state('')
@@ -83,7 +87,10 @@
 
 	// Localized entity type display names
 	const entityNames: Record<EntityType, { singular: string; plural: string }> = {
-		character: { singular: m.collection_entity_character(), plural: m.collection_entity_characters() },
+		character: {
+			singular: m.collection_entity_character(),
+			plural: m.collection_entity_characters()
+		},
 		weapon: { singular: m.collection_entity_weapon(), plural: m.collection_entity_weapons() },
 		summon: { singular: m.collection_entity_summon(), plural: m.collection_entity_summons() }
 	}
@@ -130,13 +137,15 @@
 			}
 		}
 	}
-	const searchResults = createInfiniteQuery(getSearchOptions as () => ReturnType<typeof searchQueries.weapons>)
+	const searchResults = createInfiniteQuery(
+		getSearchOptions as () => ReturnType<typeof searchQueries.weapons>
+	)
 
 	// Flatten results and deduplicate by ID
 	const allResults = $derived.by(() => {
 		const pages = searchResults.data?.pages ?? []
 		const seen = new Set<string>()
-		const results: typeof pages[number]['results'] = []
+		const results: (typeof pages)[number]['results'] = []
 
 		for (const page of pages) {
 			for (const result of page.results) {
@@ -176,7 +185,11 @@
 	)
 
 	// State-gated infinite scroll
-	const loader = useInfiniteLoader(() => searchResults, () => sentinelEl, { rootMargin: '200px' })
+	const loader = useInfiniteLoader(
+		() => searchResults,
+		() => sentinelEl,
+		{ rootMargin: '200px' }
+	)
 
 	// Reset loader when filters or showOnlySelected changes
 	$effect(() => {
@@ -333,19 +346,28 @@
 	const dialogTitle = $derived(m.collection_add_title({ type: entityNames[entityType].plural }))
 
 	// Placeholder text based on entity type
-	const searchPlaceholder = $derived(m.collection_add_search({ type: entityNames[entityType].plural }))
+	const searchPlaceholder = $derived(
+		m.collection_add_search({ type: entityNames[entityType].plural })
+	)
 
 	// Footer text based on entity type
 	const selectedText = $derived.by(() => {
 		if (entityType === 'character') {
-			return m.collection_add_selected({ count: selectedCount, type: selectedCount === 1 ? entityNames[entityType].singular : entityNames[entityType].plural })
+			return m.collection_add_selected({
+				count: selectedCount,
+				type:
+					selectedCount === 1 ? entityNames[entityType].singular : entityNames[entityType].plural
+			})
 		} else {
 			// For weapons/summons, show both item count and total quantity
 			if (selectedItemCount === 0) return ''
 			if (selectedCount > selectedItemCount) {
 				return m.collection_add_items_selected({ count: selectedItemCount, total: selectedCount })
 			}
-			return m.collection_add_selected({ count: selectedItemCount, type: entityNames[entityType].plural })
+			return m.collection_add_selected({
+				count: selectedItemCount,
+				type: entityNames[entityType].plural
+			})
 		}
 	})
 </script>
@@ -402,7 +424,7 @@
 									{character}
 									selected={selectedIds.has(character.id)}
 									onToggle={toggleCharacterSelection}
-								{userElement}
+									{userElement}
 								/>
 							{/each}
 						{:else if entityType === 'weapon'}
@@ -433,7 +455,7 @@
 									{character}
 									selected={selectedIds.has(character.id)}
 									onToggle={toggleCharacterSelection}
-								{userElement}
+									{userElement}
 								/>
 							{/each}
 						{:else if entityType === 'weapon'}

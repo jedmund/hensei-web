@@ -6,38 +6,38 @@ let http: any = null
 let HttpResponse: any = null
 
 async function ensureMSW() {
-  if (mockServer) return
-  try {
-    // @ts-expect-error - MSW is an optional dependency for testing
-    const mswNode = await import('msw/node')
-    // @ts-expect-error - MSW is an optional dependency for testing
-    const msw = await import('msw')
-    mockServer = mswNode.setupServer()
-    http = msw.http
-    HttpResponse = msw.HttpResponse
-  } catch (e) {
-    // MSW is not installed; skip server wiring
-    mockServer = null
-  }
+	if (mockServer) return
+	try {
+		// @ts-expect-error - MSW is an optional dependency for testing
+		const mswNode = await import('msw/node')
+		// @ts-expect-error - MSW is an optional dependency for testing
+		const msw = await import('msw')
+		mockServer = mswNode.setupServer()
+		http = msw.http
+		HttpResponse = msw.HttpResponse
+	} catch (e) {
+		// MSW is not installed; skip server wiring
+		mockServer = null
+	}
 }
 
 beforeAll(async () => {
-  await ensureMSW()
-  if (mockServer) mockServer.listen({ onUnhandledRequest: 'error' })
+	await ensureMSW()
+	if (mockServer) mockServer.listen({ onUnhandledRequest: 'error' })
 })
 afterEach(() => {
-  if (mockServer) mockServer.resetHandlers()
+	if (mockServer) mockServer.resetHandlers()
 })
 afterAll(() => {
-  if (mockServer) mockServer.close()
+	if (mockServer) mockServer.close()
 })
 
 // Helper to add mock handlers for POST endpoints under /api/v1
 export function mockAPI(path: string, response: any, status = 200) {
-  if (!mockServer || !http || !HttpResponse) return
-  mockServer.use(
-    http.post(`*/api/v1${path}`, () => {
-      return HttpResponse.json(response, { status })
-    })
-  )
+	if (!mockServer || !http || !HttpResponse) return
+	mockServer.use(
+		http.post(`*/api/v1${path}`, () => {
+			return HttpResponse.json(response, { status })
+		})
+	)
 }

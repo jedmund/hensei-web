@@ -12,7 +12,11 @@ import type { AdapterOptions } from './types'
 import type { Party, GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
 import type { Character, Weapon } from '$lib/types/api/entities'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
-import { validateGridWeapon, validateGridCharacter, validateGridSummon } from '$lib/utils/gridValidation'
+import {
+	validateGridWeapon,
+	validateGridCharacter,
+	validateGridSummon
+} from '$lib/utils/gridValidation'
 import { isConflictResponse } from '$lib/types/api/conflict'
 
 // GridWeapon, GridCharacter, and GridSummon types are imported from types/api/party
@@ -71,10 +75,10 @@ export interface UpdateUncapParams {
  * Parameters for updating positions
  */
 export interface UpdatePositionParams {
-    partyId: string
-    id: string
-    position: number
-    container?: string
+	partyId: string
+	id: string
+	position: number
+	container?: string
 }
 
 /**
@@ -131,146 +135,176 @@ export interface WeaponConflictResponse {
  * Grid adapter for managing user's grid item instances
  */
 export class GridAdapter extends BaseAdapter {
-
 	// Weapon operations
 
 	/**
 	 * Creates a new grid weapon instance
 	 * Returns either a GridWeapon on success, or a WeaponConflictResponse if conflicts are detected
 	 */
-    async createWeapon(params: CreateGridWeaponParams, headers?: Record<string, string>): Promise<GridWeapon | WeaponConflictResponse> {
-        const response = await this.request<{ gridWeapon: GridWeapon } | WeaponConflictResponse>('/grid_weapons', {
-            method: 'POST',
-            body: { weapon: params },
-            headers
-        })
+	async createWeapon(
+		params: CreateGridWeaponParams,
+		headers?: Record<string, string>
+	): Promise<GridWeapon | WeaponConflictResponse> {
+		const response = await this.request<{ gridWeapon: GridWeapon } | WeaponConflictResponse>(
+			'/grid_weapons',
+			{
+				method: 'POST',
+				body: { weapon: params },
+				headers
+			}
+		)
 
-        // Check if this is a conflict response
-        if (isConflictResponse(response)) {
-            return response as WeaponConflictResponse
-        }
+		// Check if this is a conflict response
+		if (isConflictResponse(response)) {
+			return response as WeaponConflictResponse
+		}
 
-        // Normal success response - validate and normalize
-        const gridWeaponResponse = response as { gridWeapon: GridWeapon }
-        const validated = validateGridWeapon(gridWeaponResponse.gridWeapon)
-        if (!validated) {
-            throw new Error('API returned incomplete GridWeapon data')
-        }
+		// Normal success response - validate and normalize
+		const gridWeaponResponse = response as { gridWeapon: GridWeapon }
+		const validated = validateGridWeapon(gridWeaponResponse.gridWeapon)
+		if (!validated) {
+			throw new Error('API returned incomplete GridWeapon data')
+		}
 
-        return validated
-    }
+		return validated
+	}
 
 	/**
 	 * Updates a grid weapon instance
 	 */
-    async updateWeapon(id: string, params: Partial<GridWeapon>, headers?: Record<string, string>): Promise<GridWeapon> {
-        // Flatten nested awakening object into awakening_id/awakening_level
-        // since the Rails API expects flat params, not nested attributes
-        const { awakening, bullets, ...rest } = params as Partial<GridWeapon> & { awakening?: { id: string; level: number } | null }
-        const body: Record<string, unknown> = { ...rest }
-        if (awakening !== undefined) {
-            if (awakening === null) {
-                body.awakeningId = null
-                body.awakeningLevel = null
-            } else {
-                body.awakeningId = awakening.id
-                body.awakeningLevel = awakening.level
-            }
-        }
+	async updateWeapon(
+		id: string,
+		params: Partial<GridWeapon>,
+		headers?: Record<string, string>
+	): Promise<GridWeapon> {
+		// Flatten nested awakening object into awakening_id/awakening_level
+		// since the Rails API expects flat params, not nested attributes
+		const { awakening, bullets, ...rest } = params as Partial<GridWeapon> & {
+			awakening?: { id: string; level: number } | null
+		}
+		const body: Record<string, unknown> = { ...rest }
+		if (awakening !== undefined) {
+			if (awakening === null) {
+				body.awakeningId = null
+				body.awakeningLevel = null
+			} else {
+				body.awakeningId = awakening.id
+				body.awakeningLevel = awakening.level
+			}
+		}
 
-        // Flatten bullet loadout into array of { position, bullet_id }
-        if (bullets !== undefined) {
-            body.bullets = bullets?.map(b => ({
-                position: b.position,
-                bulletId: b.bullet.id
-            })) ?? []
-        }
+		// Flatten bullet loadout into array of { position, bullet_id }
+		if (bullets !== undefined) {
+			body.bullets =
+				bullets?.map((b) => ({
+					position: b.position,
+					bulletId: b.bullet.id
+				})) ?? []
+		}
 
-        const response = await this.request<{ gridWeapon: GridWeapon }>(`/grid_weapons/${id}`, {
-            method: 'PUT',
-            body: { weapon: body },
-            headers
-        })
-        return response.gridWeapon
-    }
+		const response = await this.request<{ gridWeapon: GridWeapon }>(`/grid_weapons/${id}`, {
+			method: 'PUT',
+			body: { weapon: body },
+			headers
+		})
+		return response.gridWeapon
+	}
 
 	/**
 	 * Deletes a grid weapon instance
 	 */
-    async deleteWeapon(params: { id?: string; partyId: string; position?: number }, headers?: Record<string, string>): Promise<void> {
-        // If we have an ID, use it in the URL (standard Rails REST)
-        if (params.id) {
-            return this.request<void>(`/grid_weapons/${params.id}`, {
-                method: 'DELETE',
-                headers
-            })
-        }
-        // Otherwise, send params in body for position-based delete
-        return this.request<void>('/grid_weapons/delete_by_position', {
-            method: 'DELETE',
-            body: params,
-            headers
-        })
-    }
+	async deleteWeapon(
+		params: { id?: string; partyId: string; position?: number },
+		headers?: Record<string, string>
+	): Promise<void> {
+		// If we have an ID, use it in the URL (standard Rails REST)
+		if (params.id) {
+			return this.request<void>(`/grid_weapons/${params.id}`, {
+				method: 'DELETE',
+				headers
+			})
+		}
+		// Otherwise, send params in body for position-based delete
+		return this.request<void>('/grid_weapons/delete_by_position', {
+			method: 'DELETE',
+			body: params,
+			headers
+		})
+	}
 
 	/**
 	 * Updates weapon uncap level
 	 */
-    async updateWeaponUncap(params: UpdateUncapParams, headers?: Record<string, string>): Promise<GridWeapon> {
-        const response = await this.request<{ gridWeapon: GridWeapon }>('/grid_weapons/update_uncap', {
-            method: 'POST',
-            body: {
-                weapon: {
-                    id: params.id,
-                    partyId: params.partyId,
-                    uncapLevel: params.uncapLevel,
-                    transcendenceStep: params.transcendenceStep
-                }
-            },
-            headers
-        })
-        return response.gridWeapon
-    }
+	async updateWeaponUncap(
+		params: UpdateUncapParams,
+		headers?: Record<string, string>
+	): Promise<GridWeapon> {
+		const response = await this.request<{ gridWeapon: GridWeapon }>('/grid_weapons/update_uncap', {
+			method: 'POST',
+			body: {
+				weapon: {
+					id: params.id,
+					partyId: params.partyId,
+					uncapLevel: params.uncapLevel,
+					transcendenceStep: params.transcendenceStep
+				}
+			},
+			headers
+		})
+		return response.gridWeapon
+	}
 
 	/**
 	 * Resolves weapon conflicts
 	 */
-    async resolveWeaponConflict(params: ResolveConflictParams, headers?: Record<string, string>): Promise<GridWeapon> {
-        const response = await this.request<{ gridWeapon: GridWeapon }>('/grid_weapons/resolve', {
-            method: 'POST',
-            body: { resolve: params },
-            headers
-        })
-        return response.gridWeapon
-    }
+	async resolveWeaponConflict(
+		params: ResolveConflictParams,
+		headers?: Record<string, string>
+	): Promise<GridWeapon> {
+		const response = await this.request<{ gridWeapon: GridWeapon }>('/grid_weapons/resolve', {
+			method: 'POST',
+			body: { resolve: params },
+			headers
+		})
+		return response.gridWeapon
+	}
 
 	/**
 	 * Updates weapon position
 	 */
-    async updateWeaponPosition(params: UpdatePositionParams, headers?: Record<string, string>): Promise<GridWeapon> {
-        const { id, position, container, partyId } = params
-        const response = await this.request<{ gridWeapon: GridWeapon }>(`/parties/${partyId}/grid_weapons/${id}/position`, {
-            method: 'PUT',
-            body: { position, container },
-            headers
-        })
-        return response.gridWeapon
-    }
+	async updateWeaponPosition(
+		params: UpdatePositionParams,
+		headers?: Record<string, string>
+	): Promise<GridWeapon> {
+		const { id, position, container, partyId } = params
+		const response = await this.request<{ gridWeapon: GridWeapon }>(
+			`/parties/${partyId}/grid_weapons/${id}/position`,
+			{
+				method: 'PUT',
+				body: { position, container },
+				headers
+			}
+		)
+		return response.gridWeapon
+	}
 
 	/**
 	 * Swaps two weapon positions
 	 */
-    async swapWeapons(params: SwapPositionsParams, headers?: Record<string, string>): Promise<{
-        source: GridWeapon
-        target: GridWeapon
-    }> {
-        const { partyId, sourceId, targetId } = params
-        return this.request(`/parties/${partyId}/grid_weapons/swap`, {
-            method: 'POST',
-            body: { source_id: sourceId, target_id: targetId },
-            headers
-        })
-    }
+	async swapWeapons(
+		params: SwapPositionsParams,
+		headers?: Record<string, string>
+	): Promise<{
+		source: GridWeapon
+		target: GridWeapon
+	}> {
+		const { partyId, sourceId, targetId } = params
+		return this.request(`/parties/${partyId}/grid_weapons/swap`, {
+			method: 'POST',
+			body: { source_id: sourceId, target_id: targetId },
+			headers
+		})
+	}
 
 	// Character operations
 
@@ -278,212 +312,266 @@ export class GridAdapter extends BaseAdapter {
 	 * Creates a new grid character instance
 	 * Returns either a GridCharacter on success, or a CharacterConflictResponse if conflicts are detected
 	 */
-    async createCharacter(params: CreateGridCharacterParams, headers?: Record<string, string>): Promise<GridCharacter | CharacterConflictResponse> {
-        const response = await this.request<{ gridCharacter: GridCharacter } | CharacterConflictResponse>('/grid_characters', {
-            method: 'POST',
-            body: { character: params },
-            headers
-        })
+	async createCharacter(
+		params: CreateGridCharacterParams,
+		headers?: Record<string, string>
+	): Promise<GridCharacter | CharacterConflictResponse> {
+		const response = await this.request<
+			{ gridCharacter: GridCharacter } | CharacterConflictResponse
+		>('/grid_characters', {
+			method: 'POST',
+			body: { character: params },
+			headers
+		})
 
-        // Check if this is a conflict response
-        if (isConflictResponse(response)) {
-            return response as CharacterConflictResponse
-        }
+		// Check if this is a conflict response
+		if (isConflictResponse(response)) {
+			return response as CharacterConflictResponse
+		}
 
-        // Normal success response - validate and normalize
-        const gridCharacterResponse = response as { gridCharacter: GridCharacter }
-        const validated = validateGridCharacter(gridCharacterResponse.gridCharacter)
-        if (!validated) {
-            throw new Error('API returned incomplete GridCharacter data')
-        }
+		// Normal success response - validate and normalize
+		const gridCharacterResponse = response as { gridCharacter: GridCharacter }
+		const validated = validateGridCharacter(gridCharacterResponse.gridCharacter)
+		if (!validated) {
+			throw new Error('API returned incomplete GridCharacter data')
+		}
 
-        return validated
-    }
+		return validated
+	}
 
 	/**
 	 * Updates a grid character instance
 	 */
-    async updateCharacter(id: string, params: Partial<GridCharacter>, headers?: Record<string, string>): Promise<GridCharacter> {
-        // Flatten nested awakening object into awakening_id/awakening_level
-        // since the Rails API expects flat params, not nested attributes
-        const { awakening, ...rest } = params as Partial<GridCharacter> & { awakening?: { id: string; level: number } | null }
-        const body: Record<string, unknown> = { ...rest }
-        if (awakening !== undefined) {
-            if (awakening === null) {
-                body.awakeningId = null
-                body.awakeningLevel = null
-            } else {
-                body.awakeningId = awakening.id
-                body.awakeningLevel = awakening.level
-            }
-        }
+	async updateCharacter(
+		id: string,
+		params: Partial<GridCharacter>,
+		headers?: Record<string, string>
+	): Promise<GridCharacter> {
+		// Flatten nested awakening object into awakening_id/awakening_level
+		// since the Rails API expects flat params, not nested attributes
+		const { awakening, ...rest } = params as Partial<GridCharacter> & {
+			awakening?: { id: string; level: number } | null
+		}
+		const body: Record<string, unknown> = { ...rest }
+		if (awakening !== undefined) {
+			if (awakening === null) {
+				body.awakeningId = null
+				body.awakeningLevel = null
+			} else {
+				body.awakeningId = awakening.id
+				body.awakeningLevel = awakening.level
+			}
+		}
 
-        const response = await this.request<{ gridCharacter: GridCharacter }>(`/grid_characters/${id}`, {
-            method: 'PUT',
-            body: { character: body },
-            headers
-        })
-        return response.gridCharacter
-    }
+		const response = await this.request<{ gridCharacter: GridCharacter }>(
+			`/grid_characters/${id}`,
+			{
+				method: 'PUT',
+				body: { character: body },
+				headers
+			}
+		)
+		return response.gridCharacter
+	}
 
 	/**
 	 * Deletes a grid character instance
 	 */
-    async deleteCharacter(params: { id?: string; partyId: string; position?: number }, headers?: Record<string, string>): Promise<void> {
-        // If we have an ID, use it in the URL (standard Rails REST)
-        if (params.id) {
-            return this.request<void>(`/grid_characters/${params.id}`, {
-                method: 'DELETE',
-                headers
-            })
-        }
-        // Otherwise, send params in body for position-based delete
-        return this.request<void>('/grid_characters/delete_by_position', {
-            method: 'DELETE',
-            body: params,
-            headers
-        })
-    }
+	async deleteCharacter(
+		params: { id?: string; partyId: string; position?: number },
+		headers?: Record<string, string>
+	): Promise<void> {
+		// If we have an ID, use it in the URL (standard Rails REST)
+		if (params.id) {
+			return this.request<void>(`/grid_characters/${params.id}`, {
+				method: 'DELETE',
+				headers
+			})
+		}
+		// Otherwise, send params in body for position-based delete
+		return this.request<void>('/grid_characters/delete_by_position', {
+			method: 'DELETE',
+			body: params,
+			headers
+		})
+	}
 
 	/**
 	 * Updates character uncap level
 	 */
-    async updateCharacterUncap(params: UpdateUncapParams, headers?: Record<string, string>): Promise<GridCharacter> {
-        const response = await this.request<{ gridCharacter: GridCharacter }>('/grid_characters/update_uncap', {
-            method: 'POST',
-            body: {
-                character: {
-                    id: params.id,
-                    partyId: params.partyId,
-                    uncapLevel: params.uncapLevel,
-                    transcendenceStep: params.transcendenceStep
-                }
-            },
-            headers
-        })
-        return response.gridCharacter
-    }
+	async updateCharacterUncap(
+		params: UpdateUncapParams,
+		headers?: Record<string, string>
+	): Promise<GridCharacter> {
+		const response = await this.request<{ gridCharacter: GridCharacter }>(
+			'/grid_characters/update_uncap',
+			{
+				method: 'POST',
+				body: {
+					character: {
+						id: params.id,
+						partyId: params.partyId,
+						uncapLevel: params.uncapLevel,
+						transcendenceStep: params.transcendenceStep
+					}
+				},
+				headers
+			}
+		)
+		return response.gridCharacter
+	}
 
 	/**
 	 * Resolves character conflicts
 	 */
-    async resolveCharacterConflict(params: ResolveConflictParams, headers?: Record<string, string>): Promise<GridCharacter> {
-        const response = await this.request<{ gridCharacter: GridCharacter }>('/grid_characters/resolve', {
-            method: 'POST',
-            body: { resolve: params },
-            headers
-        })
-        return response.gridCharacter
-    }
+	async resolveCharacterConflict(
+		params: ResolveConflictParams,
+		headers?: Record<string, string>
+	): Promise<GridCharacter> {
+		const response = await this.request<{ gridCharacter: GridCharacter }>(
+			'/grid_characters/resolve',
+			{
+				method: 'POST',
+				body: { resolve: params },
+				headers
+			}
+		)
+		return response.gridCharacter
+	}
 
 	/**
 	 * Updates character position
 	 */
-    async updateCharacterPosition(params: UpdatePositionParams, headers?: Record<string, string>): Promise<GridCharacter> {
-        const { id, position, container, partyId } = params
-        const response = await this.request<{ gridCharacter: GridCharacter }>(`/parties/${partyId}/grid_characters/${id}/position`, {
-            method: 'PUT',
-            body: { position, container },
-            headers
-        })
-        return response.gridCharacter
-    }
+	async updateCharacterPosition(
+		params: UpdatePositionParams,
+		headers?: Record<string, string>
+	): Promise<GridCharacter> {
+		const { id, position, container, partyId } = params
+		const response = await this.request<{ gridCharacter: GridCharacter }>(
+			`/parties/${partyId}/grid_characters/${id}/position`,
+			{
+				method: 'PUT',
+				body: { position, container },
+				headers
+			}
+		)
+		return response.gridCharacter
+	}
 
 	/**
 	 * Swaps two character positions
 	 */
-    async swapCharacters(params: SwapPositionsParams, headers?: Record<string, string>): Promise<{
-        source: GridCharacter
-        target: GridCharacter
-    }> {
-        const { partyId, sourceId, targetId } = params
-        return this.request(`/parties/${partyId}/grid_characters/swap`, {
-            method: 'POST',
-            body: { source_id: sourceId, target_id: targetId },
-            headers
-        })
-    }
+	async swapCharacters(
+		params: SwapPositionsParams,
+		headers?: Record<string, string>
+	): Promise<{
+		source: GridCharacter
+		target: GridCharacter
+	}> {
+		const { partyId, sourceId, targetId } = params
+		return this.request(`/parties/${partyId}/grid_characters/swap`, {
+			method: 'POST',
+			body: { source_id: sourceId, target_id: targetId },
+			headers
+		})
+	}
 
 	// Summon operations
 
 	/**
 	 * Creates a new grid summon instance
 	 */
-    async createSummon(params: CreateGridSummonParams, headers?: Record<string, string>): Promise<GridSummon> {
-        const response = await this.request<{ gridSummon: GridSummon }>('/grid_summons', {
-            method: 'POST',
-            body: { summon: params },
-            headers
-        })
+	async createSummon(
+		params: CreateGridSummonParams,
+		headers?: Record<string, string>
+	): Promise<GridSummon> {
+		const response = await this.request<{ gridSummon: GridSummon }>('/grid_summons', {
+			method: 'POST',
+			body: { summon: params },
+			headers
+		})
 
-        // Validate and normalize response
-        const validated = validateGridSummon(response.gridSummon)
-        if (!validated) {
-            throw new Error('API returned incomplete GridSummon data')
-        }
+		// Validate and normalize response
+		const validated = validateGridSummon(response.gridSummon)
+		if (!validated) {
+			throw new Error('API returned incomplete GridSummon data')
+		}
 
-        return validated
-    }
+		return validated
+	}
 
 	/**
 	 * Updates a grid summon instance
 	 */
-    async updateSummon(id: string, params: Partial<GridSummon>, headers?: Record<string, string>): Promise<GridSummon> {
-        const response = await this.request<{ gridSummon: GridSummon }>(`/grid_summons/${id}`, {
-            method: 'PUT',
-            body: { summon: params },
-            headers
-        })
-        return response.gridSummon
-    }
+	async updateSummon(
+		id: string,
+		params: Partial<GridSummon>,
+		headers?: Record<string, string>
+	): Promise<GridSummon> {
+		const response = await this.request<{ gridSummon: GridSummon }>(`/grid_summons/${id}`, {
+			method: 'PUT',
+			body: { summon: params },
+			headers
+		})
+		return response.gridSummon
+	}
 
 	/**
 	 * Deletes a grid summon instance
 	 */
-    async deleteSummon(params: { id?: string; partyId: string; position?: number }, headers?: Record<string, string>): Promise<void> {
-        // If we have an ID, use it in the URL (standard Rails REST)
-        if (params.id) {
-            return this.request<void>(`/grid_summons/${params.id}`, {
-                method: 'DELETE',
-                headers
-            })
-        }
-        // Otherwise, send params in body for position-based delete
-        return this.request<void>('/grid_summons/delete_by_position', {
-            method: 'DELETE',
-            body: params,
-            headers
-        })
-    }
+	async deleteSummon(
+		params: { id?: string; partyId: string; position?: number },
+		headers?: Record<string, string>
+	): Promise<void> {
+		// If we have an ID, use it in the URL (standard Rails REST)
+		if (params.id) {
+			return this.request<void>(`/grid_summons/${params.id}`, {
+				method: 'DELETE',
+				headers
+			})
+		}
+		// Otherwise, send params in body for position-based delete
+		return this.request<void>('/grid_summons/delete_by_position', {
+			method: 'DELETE',
+			body: params,
+			headers
+		})
+	}
 
 	/**
 	 * Updates summon uncap level
 	 */
-    async updateSummonUncap(params: UpdateUncapParams, headers?: Record<string, string>): Promise<GridSummon> {
-        const response = await this.request<{ gridSummon: GridSummon }>('/grid_summons/update_uncap', {
-            method: 'POST',
-            body: {
-                summon: {
-                    id: params.id,
-                    partyId: params.partyId,
-                    uncapLevel: params.uncapLevel,
-                    transcendenceStep: params.transcendenceStep
-                }
-            },
-            headers
-        })
-        return response.gridSummon
-    }
+	async updateSummonUncap(
+		params: UpdateUncapParams,
+		headers?: Record<string, string>
+	): Promise<GridSummon> {
+		const response = await this.request<{ gridSummon: GridSummon }>('/grid_summons/update_uncap', {
+			method: 'POST',
+			body: {
+				summon: {
+					id: params.id,
+					partyId: params.partyId,
+					uncapLevel: params.uncapLevel,
+					transcendenceStep: params.transcendenceStep
+				}
+			},
+			headers
+		})
+		return response.gridSummon
+	}
 
 	/**
 	 * Updates summon quick summon setting
 	 */
-	async updateQuickSummon(params: {
-		id?: string
-		partyId: string
-		position?: number
-		quickSummon: boolean
-	}, headers?: Record<string, string>): Promise<GridSummon> {
+	async updateQuickSummon(
+		params: {
+			id?: string
+			partyId: string
+			position?: number
+			quickSummon: boolean
+		},
+		headers?: Record<string, string>
+	): Promise<GridSummon> {
 		return this.request<GridSummon>('/grid_summons/update_quick_summon', {
 			method: 'POST',
 			body: {
@@ -501,30 +589,39 @@ export class GridAdapter extends BaseAdapter {
 	/**
 	 * Updates summon position
 	 */
-    async updateSummonPosition(params: UpdatePositionParams, headers?: Record<string, string>): Promise<GridSummon> {
-        const { id, position, container, partyId } = params
-        const response = await this.request<{ gridSummon: GridSummon }>(`/parties/${partyId}/grid_summons/${id}/position`, {
-            method: 'PUT',
-            body: { position, container },
-            headers
-        })
-        return response.gridSummon
-    }
+	async updateSummonPosition(
+		params: UpdatePositionParams,
+		headers?: Record<string, string>
+	): Promise<GridSummon> {
+		const { id, position, container, partyId } = params
+		const response = await this.request<{ gridSummon: GridSummon }>(
+			`/parties/${partyId}/grid_summons/${id}/position`,
+			{
+				method: 'PUT',
+				body: { position, container },
+				headers
+			}
+		)
+		return response.gridSummon
+	}
 
 	/**
 	 * Swaps two summon positions
 	 */
-    async swapSummons(params: SwapPositionsParams, headers?: Record<string, string>): Promise<{
-        source: GridSummon
-        target: GridSummon
-    }> {
-        const { partyId, sourceId, targetId } = params
-        return this.request(`/parties/${partyId}/grid_summons/swap`, {
-            method: 'POST',
-            body: { source_id: sourceId, target_id: targetId },
-            headers
-        })
-    }
+	async swapSummons(
+		params: SwapPositionsParams,
+		headers?: Record<string, string>
+	): Promise<{
+		source: GridSummon
+		target: GridSummon
+	}> {
+		const { partyId, sourceId, targetId } = params
+		return this.request(`/parties/${partyId}/grid_summons/swap`, {
+			method: 'POST',
+			body: { source_id: sourceId, target_id: targetId },
+			headers
+		})
+	}
 
 	// Style swap operations
 
@@ -532,10 +629,13 @@ export class GridAdapter extends BaseAdapter {
 	 * Switches a grid character between its base and style swap variant
 	 */
 	async switchCharacterStyle(id: string, headers?: Record<string, string>): Promise<GridCharacter> {
-		const response = await this.request<{ gridCharacter: GridCharacter }>(`/grid_characters/${id}/switch_style`, {
-			method: 'POST',
-			headers
-		})
+		const response = await this.request<{ gridCharacter: GridCharacter }>(
+			`/grid_characters/${id}/switch_style`,
+			{
+				method: 'POST',
+				headers
+			}
+		)
 		return response.gridCharacter
 	}
 
@@ -545,10 +645,13 @@ export class GridAdapter extends BaseAdapter {
 	 * Syncs a grid character from its linked collection source
 	 */
 	async syncCharacter(id: string, headers?: Record<string, string>): Promise<GridCharacter> {
-		const response = await this.request<{ gridCharacter: GridCharacter }>(`/grid_characters/${id}/sync`, {
-			method: 'POST',
-			headers
-		})
+		const response = await this.request<{ gridCharacter: GridCharacter }>(
+			`/grid_characters/${id}/sync`,
+			{
+				method: 'POST',
+				headers
+			}
+		)
 		return response.gridCharacter
 	}
 
@@ -579,11 +682,17 @@ export class GridAdapter extends BaseAdapter {
 	/**
 	 * Syncs a grid character's data to its linked collection entry
 	 */
-	async syncCharacterToCollection(id: string, headers?: Record<string, string>): Promise<GridCharacter> {
-		const response = await this.request<{ gridCharacter: GridCharacter }>(`/grid_characters/${id}/sync_to_collection`, {
-			method: 'POST',
-			headers
-		})
+	async syncCharacterToCollection(
+		id: string,
+		headers?: Record<string, string>
+	): Promise<GridCharacter> {
+		const response = await this.request<{ gridCharacter: GridCharacter }>(
+			`/grid_characters/${id}/sync_to_collection`,
+			{
+				method: 'POST',
+				headers
+			}
+		)
 		return response.gridCharacter
 	}
 
@@ -591,10 +700,13 @@ export class GridAdapter extends BaseAdapter {
 	 * Syncs a grid weapon's data to its linked collection entry
 	 */
 	async syncWeaponToCollection(id: string, headers?: Record<string, string>): Promise<GridWeapon> {
-		const response = await this.request<{ gridWeapon: GridWeapon }>(`/grid_weapons/${id}/sync_to_collection`, {
-			method: 'POST',
-			headers
-		})
+		const response = await this.request<{ gridWeapon: GridWeapon }>(
+			`/grid_weapons/${id}/sync_to_collection`,
+			{
+				method: 'POST',
+				headers
+			}
+		)
 		return response.gridWeapon
 	}
 
@@ -602,41 +714,59 @@ export class GridAdapter extends BaseAdapter {
 	 * Syncs a grid summon's data to its linked collection entry
 	 */
 	async syncSummonToCollection(id: string, headers?: Record<string, string>): Promise<GridSummon> {
-		const response = await this.request<{ gridSummon: GridSummon }>(`/grid_summons/${id}/sync_to_collection`, {
-			method: 'POST',
-			headers
-		})
+		const response = await this.request<{ gridSummon: GridSummon }>(
+			`/grid_summons/${id}/sync_to_collection`,
+			{
+				method: 'POST',
+				headers
+			}
+		)
 		return response.gridSummon
 	}
 
 	/**
 	 * Duplicates a grid weapon to a new position
 	 */
-	async duplicateWeapon(params: { id: string; position: number }, headers?: Record<string, string>): Promise<GridWeapon> {
-		const response = await this.request<{ gridWeapon: GridWeapon }>(`/grid_weapons/${params.id}/duplicate`, {
-			method: 'POST',
-			body: { position: params.position },
-			headers
-		})
+	async duplicateWeapon(
+		params: { id: string; position: number },
+		headers?: Record<string, string>
+	): Promise<GridWeapon> {
+		const response = await this.request<{ gridWeapon: GridWeapon }>(
+			`/grid_weapons/${params.id}/duplicate`,
+			{
+				method: 'POST',
+				body: { position: params.position },
+				headers
+			}
+		)
 		return response.gridWeapon
 	}
 
 	/**
 	 * Duplicates a grid summon to a new position
 	 */
-	async duplicateSummon(params: { id: string; position: number }, headers?: Record<string, string>): Promise<GridSummon> {
-		const response = await this.request<{ gridSummon: GridSummon }>(`/grid_summons/${params.id}/duplicate`, {
-			method: 'POST',
-			body: { position: params.position },
-			headers
-		})
+	async duplicateSummon(
+		params: { id: string; position: number },
+		headers?: Record<string, string>
+	): Promise<GridSummon> {
+		const response = await this.request<{ gridSummon: GridSummon }>(
+			`/grid_summons/${params.id}/duplicate`,
+			{
+				method: 'POST',
+				body: { position: params.position },
+				headers
+			}
+		)
 		return response.gridSummon
 	}
 
 	/**
 	 * Syncs all linked items in a party from their collection sources
 	 */
-	async syncAllPartyItems(partyId: string, headers?: Record<string, string>): Promise<SyncAllPartyItemsResponse> {
+	async syncAllPartyItems(
+		partyId: string,
+		headers?: Record<string, string>
+	): Promise<SyncAllPartyItemsResponse> {
 		return this.request<SyncAllPartyItemsResponse>(`/parties/${partyId}/sync_all`, {
 			method: 'POST',
 			headers
@@ -647,7 +777,10 @@ export class GridAdapter extends BaseAdapter {
 	 * Unlinks all collection items from a party's grid items.
 	 * Keeps the grid items but removes their collection references and clears the collection source.
 	 */
-	async unlinkCollectionSource(partyId: string, headers?: Record<string, string>): Promise<{ party: Party }> {
+	async unlinkCollectionSource(
+		partyId: string,
+		headers?: Record<string, string>
+	): Promise<{ party: Party }> {
 		return this.request<{ party: Party }>(`/parties/${partyId}/unlink_collection`, {
 			method: 'POST',
 			headers

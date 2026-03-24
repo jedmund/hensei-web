@@ -1,5 +1,5 @@
-import type { Summon } from '$lib/types/api/entities';
-import type { GridSummon } from '$lib/types/api/party';
+import type { Summon } from '$lib/types/api/entities'
+import type { GridSummon } from '$lib/types/api/party'
 
 /** Mock summon data for Storybook stories */
 export const mockSummon: Summon = {
@@ -13,7 +13,7 @@ export const mockSummon: Summon = {
 	uncap: { flb: true, ulb: true, transcendence: true },
 	hp: { minHp: 1000, maxHp: 2000, maxHpFlb: 2500, maxHpUlb: 3000 },
 	atk: { minAtk: 3000, maxAtk: 4500, maxAtkFlb: 5500, maxAtkUlb: 6500 }
-};
+}
 
 export const mockGridSummon: GridSummon = {
 	id: 'grid-summon-1',
@@ -23,7 +23,7 @@ export const mockGridSummon: GridSummon = {
 	main: false,
 	friend: false,
 	summon: mockSummon
-};
+}
 
 export const mockMainSummon: GridSummon = {
 	id: 'grid-summon-main',
@@ -33,7 +33,7 @@ export const mockMainSummon: GridSummon = {
 	main: true,
 	friend: false,
 	summon: mockSummon
-};
+}
 
 export const mockFriendSummon: GridSummon = {
 	id: 'grid-summon-friend',
@@ -43,14 +43,34 @@ export const mockFriendSummon: GridSummon = {
 	main: false,
 	friend: true,
 	summon: mockSummon
-};
+}
 
 /** Summons organized by element */
 export const mockSummonsByElement: Record<string, Summon> = {
 	wind: { ...mockSummon, id: 'summon-wind', element: 1, name: { en: 'Tiamat', ja: 'ティアマト' } },
-	fire: { ...mockSummon, id: 'summon-fire', element: 2, name: { en: 'Colossus', ja: 'コロッサス' } },
-	water: { ...mockSummon, id: 'summon-water', element: 3, name: { en: 'Leviathan', ja: 'リヴァイアサン' } },
-	earth: { ...mockSummon, id: 'summon-earth', element: 4, name: { en: 'Yggdrasil', ja: 'ユグドラシル' } },
+	fire: {
+		...mockSummon,
+		id: 'summon-fire',
+		element: 2,
+		name: { en: 'Colossus', ja: 'コロッサス' }
+	},
+	water: {
+		...mockSummon,
+		id: 'summon-water',
+		element: 3,
+		name: { en: 'Leviathan', ja: 'リヴァイアサン' }
+	},
+	earth: {
+		...mockSummon,
+		id: 'summon-earth',
+		element: 4,
+		name: { en: 'Yggdrasil', ja: 'ユグドラシル' }
+	},
 	dark: { ...mockSummon, id: 'summon-dark', element: 5, name: { en: 'Celeste', ja: 'セレスト' } },
-	light: { ...mockSummon, id: 'summon-light', element: 6, name: { en: 'Luminiera', ja: 'シュヴァリエ' } }
-};
+	light: {
+		...mockSummon,
+		id: 'summon-light',
+		element: 6,
+		name: { en: 'Luminiera', ja: 'シュヴァリエ' }
+	}
+}

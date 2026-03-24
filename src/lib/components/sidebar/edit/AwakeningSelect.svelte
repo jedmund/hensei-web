@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import type { Awakening } from '$lib/types/api/entities'
@@ -34,7 +33,7 @@
 	}: Props = $props()
 
 	// Local state derived from props — overrides are temporary until props change
-	let selectedId = $derived(value ? (value.id || value.slug || NO_AWAKENING.id) : NO_AWAKENING.id)
+	let selectedId = $derived(value ? value.id || value.slug || NO_AWAKENING.id : NO_AWAKENING.id)
 	let localLevel = $derived(level)
 
 	// Error state for level input
@@ -125,7 +124,7 @@
 <div class="awakening-select">
 	<div class="awakening-type">
 		<Select
-			options={options}
+			{options}
 			value={selectedId}
 			onValueChange={handleAwakeningChange}
 			placeholder={m.placeholder_select_awakening()}
@@ -164,5 +163,4 @@
 	.awakening-type {
 		flex: 1;
 	}
-
 </style>

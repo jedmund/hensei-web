@@ -426,7 +426,11 @@
 	}
 </script>
 
-<div class="filters-container" class:contained style:--accent-color={element ? `var(--${element}-button-bg)` : undefined}>
+<div
+	class="filters-container"
+	class:contained
+	style:--accent-color={element ? `var(--${element}-button-bg)` : undefined}
+>
 	<div class="filters">
 		{#if showSearch}
 			{#if searchExpanded}
@@ -437,7 +441,12 @@
 					bind:value={searchQuery}
 					bind:this={searchInputEl}
 					onblur={collapseSearch}
-					onkeydown={(e) => { if (e.key === 'Escape') { searchQuery = ''; searchExpanded = false } }}
+					onkeydown={(e) => {
+						if (e.key === 'Escape') {
+							searchQuery = ''
+							searchExpanded = false
+						}
+					}}
 				/>
 			{:else}
 				<Button variant="ghost" size="small" iconOnly icon="search" onclick={expandSearch} />
@@ -505,7 +514,7 @@
 		{/if}
 
 		{#if hasActiveFilters}
-			<Button variant="element-ghost" size="small" element={element} onclick={clearAll} class="clear-btn">
+			<Button variant="element-ghost" size="small" {element} onclick={clearAll} class="clear-btn">
 				{m.filter_clear()}
 			</Button>
 		{/if}
@@ -522,7 +531,6 @@
 				/>
 			</div>
 		{/if}
-
 	</div>
 </div>
 
@@ -601,7 +609,6 @@
 		padding: 6px 12px;
 		min-height: 26px;
 	}
-
 
 	// More button trigger - matches MultiSelect trigger styling
 	:global(.more-trigger) {

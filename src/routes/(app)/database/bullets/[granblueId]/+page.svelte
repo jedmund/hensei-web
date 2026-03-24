@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
@@ -36,9 +35,7 @@
 				: undefined
 	)
 
-	const pageTitle = $derived(
-		m.page_title_db_entity({ name: bullet?.name?.en ?? 'Bullet' })
-	)
+	const pageTitle = $derived(m.page_title_db_entity({ name: bullet?.name?.en ?? 'Bullet' }))
 </script>
 
 <PageMeta title={pageTitle} description={m.page_desc_home()} />
@@ -46,7 +43,9 @@
 <div class="page">
 	<DatabasePageHeader title="Bullet">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/bullets">Back</Button>
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/bullets"
+				>Back</Button
+			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
@@ -59,7 +58,11 @@
 		<section class="details">
 			{#if bullet.granblueId}
 				<div class="bullet-image-section">
-					<img src={getBulletImage(bullet.granblueId)} alt={bullet.name.en ?? 'Bullet'} class="bullet-image" />
+					<img
+						src={getBulletImage(bullet.granblueId)}
+						alt={bullet.name.en ?? 'Bullet'}
+						class="bullet-image"
+					/>
 				</div>
 			{/if}
 
@@ -72,7 +75,13 @@
 
 			<DetailsContainer title="Properties">
 				<DetailItem label="Bullet Type">
-					<span class="type-badge" class:parabellum={bullet.bulletType === 1} class:rifle={bullet.bulletType === 2} class:cartridge={bullet.bulletType === 3} class:aetherial={bullet.bulletType === 4}>
+					<span
+						class="type-badge"
+						class:parabellum={bullet.bulletType === 1}
+						class:rifle={bullet.bulletType === 2}
+						class:cartridge={bullet.bulletType === 3}
+						class:aetherial={bullet.bulletType === 4}
+					>
 						{BULLET_TYPES[bullet.bulletType] ?? 'Unknown'}
 					</span>
 				</DetailItem>

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
@@ -65,9 +64,7 @@
 
 	// Edit URL for navigation
 	const editUrl = $derived(
-		accessory?.granblueId
-			? `/database/job-accessories/${accessory.granblueId}/edit`
-			: undefined
+		accessory?.granblueId ? `/database/job-accessories/${accessory.granblueId}/edit` : undefined
 	)
 
 	// Page title
@@ -149,7 +146,12 @@
 <div class="page">
 	<DatabasePageHeader title="Job Accessory">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/jobs?view=accessories">Back</Button>
+			<Button
+				variant="ghost"
+				size="small"
+				leftIcon="chevron-left"
+				href="/database/jobs?view=accessories">Back</Button
+			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}

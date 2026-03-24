@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { Job } from '$lib/types/api/entities'
 	import {
@@ -47,7 +46,12 @@
 
 	<div class="images-grid">
 		<div class="image-item">
-			<a href={images.portrait} target="_blank" rel="noopener noreferrer" class="image-container portrait">
+			<a
+				href={images.portrait}
+				target="_blank"
+				rel="noopener noreferrer"
+				class="image-container portrait"
+			>
 				<img src={images.portrait} alt="{localizedName(job.name)} Portrait" loading="lazy" />
 			</a>
 			<span class="image-label">Portrait</span>

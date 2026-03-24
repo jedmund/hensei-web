@@ -71,7 +71,11 @@
 			{#if newItems?.[type as ItemType]?.length}
 				<section class="item-section">
 					<h4>
-						{type === 'characters' ? m.updates_label_characters() : type === 'weapons' ? m.updates_label_weapons() : m.updates_label_summons()}
+						{type === 'characters'
+							? m.updates_label_characters()
+							: type === 'weapons'
+								? m.updates_label_weapons()
+								: m.updates_label_summons()}
 					</h4>
 					<div class="items">
 						{#each newItems[type as ItemType] ?? [] as id (id)}
@@ -83,11 +87,19 @@
 			{#if uncappedItems?.[type as ItemType]?.length}
 				<section class="item-section">
 					<h4>
-						{type === 'characters' ? m.updates_label_uncap_characters() : type === 'weapons' ? m.updates_label_uncap_weapons() : m.updates_label_uncap_summons()}
+						{type === 'characters'
+							? m.updates_label_uncap_characters()
+							: type === 'weapons'
+								? m.updates_label_uncap_weapons()
+								: m.updates_label_uncap_summons()}
 					</h4>
 					<div class="items">
 						{#each uncappedItems[type as ItemType] ?? [] as id (id)}
-							<ChangelogUnit {id} type={itemType(type as ItemType)} image={getUncapImage(type as ItemType)} />
+							<ChangelogUnit
+								{id}
+								type={itemType(type as ItemType)}
+								image={getUncapImage(type as ItemType)}
+							/>
 						{/each}
 					</div>
 				</section>
@@ -95,11 +107,19 @@
 			{#if transcendedItems?.[type as ItemType]?.length}
 				<section class="item-section">
 					<h4>
-						{type === 'characters' ? m.updates_label_transcend_characters() : type === 'weapons' ? m.updates_label_transcend_weapons() : m.updates_label_transcend_summons()}
+						{type === 'characters'
+							? m.updates_label_transcend_characters()
+							: type === 'weapons'
+								? m.updates_label_transcend_weapons()
+								: m.updates_label_transcend_summons()}
 					</h4>
 					<div class="items">
 						{#each transcendedItems[type as ItemType] ?? [] as id (id)}
-							<ChangelogUnit {id} type={itemType(type as ItemType)} image={getTranscendImage(type as ItemType)} />
+							<ChangelogUnit
+								{id}
+								type={itemType(type as ItemType)}
+								image={getTranscendImage(type as ItemType)}
+							/>
 						{/each}
 					</div>
 				</section>

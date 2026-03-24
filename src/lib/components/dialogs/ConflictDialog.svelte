@@ -24,7 +24,10 @@
 	import type { ConflictData } from '$lib/types/api/conflict'
 	import type { GridCharacter, GridWeapon } from '$lib/types/api/party'
 	import type { Character, Weapon } from '$lib/types/api/entities'
-	import { useResolveCharacterConflict, useResolveWeaponConflict } from '$lib/api/mutations/grid.mutations'
+	import {
+		useResolveCharacterConflict,
+		useResolveWeaponConflict
+	} from '$lib/api/mutations/grid.mutations'
 	import { getCharacterImageWithPose, getWeaponImage } from '$lib/utils/images'
 	import { isOpusDraconicSeries, getSeriesDisplayName } from '$lib/utils/weaponSeries'
 	import { getLocale } from '$lib/paraglide/runtime.js'
@@ -157,7 +160,15 @@
 	 * Get incoming character image URL (default pose)
 	 */
 	function getIncomingCharacterUrl(character: Character): string {
-		return getCharacterImageWithPose(character.granblueId, 'square', 0, 0, null, null, character.styleSwap)
+		return getCharacterImageWithPose(
+			character.granblueId,
+			'square',
+			0,
+			0,
+			null,
+			null,
+			character.styleSwap
+		)
 	}
 
 	/**
@@ -190,20 +201,14 @@
 								{#if conflict.type === 'character'}
 									{#each conflict.conflicts as gridChar (gridChar.id)}
 										<li class={styles.item}>
-											<img
-												src={getCharacterUrl(gridChar)}
-												alt={gridChar.character.name[locale]}
-											/>
+											<img src={getCharacterUrl(gridChar)} alt={gridChar.character.name[locale]} />
 											<span>{gridChar.character.name[locale]}</span>
 										</li>
 									{/each}
 								{:else}
 									{#each conflict.conflicts as gridWeapon (gridWeapon.id)}
 										<li class={styles.item}>
-											<img
-												src={getWeaponUrl(gridWeapon)}
-												alt={gridWeapon.weapon.name[locale]}
-											/>
+											<img src={getWeaponUrl(gridWeapon)} alt={gridWeapon.weapon.name[locale]} />
 											<span>{gridWeapon.weapon.name[locale]}</span>
 										</li>
 									{/each}

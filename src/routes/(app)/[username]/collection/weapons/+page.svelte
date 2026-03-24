@@ -69,7 +69,10 @@
 
 	// State-gated infinite scroll (inspired by svelte-infinite)
 	// Encapsulates intersection observer, state machine, and all reactive effects
-	const loader = useInfiniteLoader(() => collectionQuery, () => sentinelEl)
+	const loader = useInfiniteLoader(
+		() => collectionQuery,
+		() => sentinelEl
+	)
 
 	// Flatten all weapons from pages
 	const allWeapons = $derived.by((): CollectionWeapon[] => {
@@ -125,7 +128,6 @@
 	// Derived state for context menu
 	const canAccessDb = $derived(canAccessDatabase($page.data.account?.role))
 	const isTeamsPaneOpen = $derived(collectionTeamsPane.isOpen)
-
 
 	function openWeaponDetails(weapon: CollectionWeapon) {
 		const weaponName = localizedName(weapon.weapon?.name)

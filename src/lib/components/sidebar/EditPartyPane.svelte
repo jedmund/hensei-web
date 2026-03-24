@@ -151,12 +151,7 @@
 		const changed = hasChanges
 		untrack(() => {
 			if (paneId) {
-				sidebar.setActionForPane(
-					paneId,
-					changed ? save : undefined,
-					m.action_save(),
-					element
-				)
+				sidebar.setActionForPane(paneId, changed ? save : undefined, m.action_save(), element)
 			} else {
 				if (changed) {
 					sidebar.setAction(save, m.action_save(), element)
@@ -250,7 +245,9 @@
 			const getNodeText = (node: JSONContent): string => {
 				if (node.type === 'text') return node.text ?? ''
 				if (node.type === 'mention') {
-					const id = node.attrs?.id as { name?: { en?: string; ja?: string }; granblue_en?: string } | undefined
+					const id = node.attrs?.id as
+						| { name?: { en?: string; ja?: string }; granblue_en?: string }
+						| undefined
 					const name = localizedName(id?.name)
 					return name !== '—' ? name : (id?.granblue_en ?? '')
 				}
@@ -271,7 +268,12 @@
 			return null
 		} catch {
 			// Legacy plain text - return first non-empty line
-			return desc.split('\n').map((l) => l.trim()).find(Boolean) ?? null
+			return (
+				desc
+					.split('\n')
+					.map((l) => l.trim())
+					.find(Boolean) ?? null
+			)
 		}
 	}
 
@@ -342,11 +344,7 @@
 		{#if isInCrew}
 			<DetailRow label={m.party_edit_share_crew()} noHover compact>
 				{#snippet children()}
-					<Switch
-						bind:checked={sharedWithCrew}
-						size="small"
-						{element}
-					/>
+					<Switch bind:checked={sharedWithCrew} size="small" {element} />
 				{/snippet}
 			</DetailRow>
 		{/if}

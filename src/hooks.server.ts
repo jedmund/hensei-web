@@ -63,7 +63,7 @@ export const handleSession: Handle = async ({ event, resolve }) => {
 					username: account.username
 				},
 				expiresAt: account.expires_at ?? ''
-		  }
+			}
 		: null
 
 	return resolve(event)

@@ -246,9 +246,7 @@ describe('entityKeys', () => {
 	})
 
 	it('weapon key matches query queryKey', () => {
-		expect(entityKeys.weapon('1040001000')).toEqual(
-			entityQueries.weapon('1040001000').queryKey
-		)
+		expect(entityKeys.weapon('1040001000')).toEqual(entityQueries.weapon('1040001000').queryKey)
 	})
 
 	it('character key matches query queryKey', () => {
@@ -258,9 +256,7 @@ describe('entityKeys', () => {
 	})
 
 	it('summon key matches query queryKey', () => {
-		expect(entityKeys.summon('2040001000')).toEqual(
-			entityQueries.summon('2040001000').queryKey
-		)
+		expect(entityKeys.summon('2040001000')).toEqual(entityQueries.summon('2040001000').queryKey)
 	})
 
 	it('weaponKeys matches query queryKey', () => {
@@ -273,9 +269,7 @@ describe('entityKeys', () => {
 		expect(entityKeys.weaponSeries('dark-opus')).toEqual(
 			entityQueries.weaponSeries('dark-opus').queryKey
 		)
-		expect(entityKeys.characterSeriesList()).toEqual(
-			entityQueries.characterSeriesList().queryKey
-		)
+		expect(entityKeys.characterSeriesList()).toEqual(entityQueries.characterSeriesList().queryKey)
 		expect(entityKeys.summonSeriesList()).toEqual(entityQueries.summonSeriesList().queryKey)
 	})
 
@@ -299,13 +293,7 @@ describe('jobKeys', () => {
 		expect(jobKeys.detail('j-1')).toEqual(['jobs', 'j-1'])
 		expect(jobKeys.skills('j-1')).toEqual(['jobs', 'j-1', 'skills'])
 		expect(jobKeys.empSkills('j-1')).toEqual(['jobs', 'j-1', 'emp_skills'])
-		expect(jobKeys.skillsSearch('j-1')).toEqual([
-			'jobs',
-			'j-1',
-			'skills',
-			'search',
-			undefined
-		])
+		expect(jobKeys.skillsSearch('j-1')).toEqual(['jobs', 'j-1', 'skills', 'search', undefined])
 		expect(jobKeys.accessoriesForJob('j-1')).toEqual(['jobs', 'j-1', 'accessories'])
 		expect(jobKeys.allSkills()).toEqual(['jobs', 'skills', 'all'])
 	})
@@ -323,9 +311,7 @@ describe('jobKeys', () => {
 	})
 
 	it('accessoriesForJob key matches query queryKey', () => {
-		expect(jobKeys.accessoriesForJob('j-1')).toEqual(
-			jobQueries.accessoriesForJob('j-1').queryKey
-		)
+		expect(jobKeys.accessoriesForJob('j-1')).toEqual(jobQueries.accessoriesForJob('j-1').queryKey)
 	})
 
 	it('allSkills key matches query queryKey', () => {
@@ -408,9 +394,7 @@ describe('raidKeys', () => {
 	})
 
 	it('detail key matches bySlug queryKey', () => {
-		expect(raidKeys.detail('proto-bahamut')).toEqual(
-			raidQueries.bySlug('proto-bahamut').queryKey
-		)
+		expect(raidKeys.detail('proto-bahamut')).toEqual(raidQueries.bySlug('proto-bahamut').queryKey)
 	})
 })
 

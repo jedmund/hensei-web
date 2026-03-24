@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	interface Props {
 		stage: number
@@ -8,13 +7,7 @@
 		onHover?: (index: number) => void
 	}
 
-	let {
-		stage,
-		interactive = false,
-		visible = false,
-		onClick,
-		onHover
-	}: Props = $props()
+	let { stage, interactive = false, visible = false, onClick, onHover }: Props = $props()
 
 	function handleClick() {
 		if (interactive && onClick) {

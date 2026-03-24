@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -375,7 +374,13 @@
 
 	<!-- Input phase -->
 	{#if entities.size === 0}
-		<form class="input-phase" onsubmit={(e) => { e.preventDefault(); fetchWikiData(); }}>
+		<form
+			class="input-phase"
+			onsubmit={(e) => {
+				e.preventDefault()
+				fetchWikiData()
+			}}
+		>
 			<div class="input-header">
 				<p class="hint">Enter up to 10 wiki page names to import data</p>
 				<Button
@@ -470,10 +475,18 @@
 
 					<DetailsContainer title="Nicknames">
 						<DetailItem label="Nicknames (EN)">
-							<TagInput bind:value={formDataByPage[selectedWikiPage].nicknamesEn} placeholder="Add nickname..." contained />
+							<TagInput
+								bind:value={formDataByPage[selectedWikiPage].nicknamesEn}
+								placeholder="Add nickname..."
+								contained
+							/>
 						</DetailItem>
 						<DetailItem label="Nicknames (JP)">
-							<TagInput bind:value={formDataByPage[selectedWikiPage].nicknamesJp} placeholder="ニックネーム..." contained />
+							<TagInput
+								bind:value={formDataByPage[selectedWikiPage].nicknamesJp}
+								placeholder="ニックネーム..."
+								contained
+							/>
 						</DetailItem>
 					</DetailsContainer>
 

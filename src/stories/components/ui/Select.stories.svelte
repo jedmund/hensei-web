@@ -87,7 +87,12 @@
 <!-- Required Field -->
 <Story
 	name="Required Field"
-	args={{ options: basicOptions, label: 'Primary Element', placeholder: 'Required', required: true }}
+	args={{
+		options: basicOptions,
+		label: 'Primary Element',
+		placeholder: 'Required',
+		required: true
+	}}
 />
 
 <!-- With Error -->
@@ -97,7 +102,10 @@
 />
 
 <!-- Contained Variant -->
-<Story name="Contained" args={{ options: basicOptions, contained: true, placeholder: 'Contained select' }} />
+<Story
+	name="Contained"
+	args={{ options: basicOptions, contained: true, placeholder: 'Contained select' }}
+/>
 
 <!-- All Sizes -->
 <Story name="All Sizes" asChild>
@@ -141,7 +149,12 @@
 <!-- Full Width -->
 <Story
 	name="Full Width"
-	args={{ options: basicOptions, label: 'Full Width Select', fullWidth: true, placeholder: 'Takes full width' }}
+	args={{
+		options: basicOptions,
+		label: 'Full Width Select',
+		fullWidth: true,
+		placeholder: 'Takes full width'
+	}}
 />
 
 <!-- Form Example -->

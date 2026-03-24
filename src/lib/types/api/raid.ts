@@ -12,98 +12,98 @@ export type { Raid, RaidGroup } from './entities'
 // Extended Raid type (from :full view)
 // Properties are camelCase because BaseAdapter transforms snake_case responses
 export interface RaidFull {
-  id: string
-  slug: string
-  name: LocalizedName
-  level: number
-  element: number
-  playerCount: number
-  extra: boolean
-  enemyId?: number
-  summonId?: number
-  questId?: number
-  group?: RaidGroupFlat
+	id: string
+	slug: string
+	name: LocalizedName
+	level: number
+	element: number
+	playerCount: number
+	extra: boolean
+	enemyId?: number
+	summonId?: number
+	questId?: number
+	group?: RaidGroupFlat
 }
 
 // Flat RaidGroup (from :flat view, used in nested Raid responses)
 export interface RaidGroupFlat {
-  id: string
-  name: LocalizedName
-  section: number | string
-  order: number
-  difficulty: number
-  hl: boolean
-  extra: boolean
-  guidebooks: boolean
-  unlimited: boolean
+	id: string
+	name: LocalizedName
+	section: number | string
+	order: number
+	difficulty: number
+	hl: boolean
+	extra: boolean
+	guidebooks: boolean
+	unlimited: boolean
 }
 
 // Full RaidGroup (from :full view, includes raids)
 export interface RaidGroupFull extends RaidGroupFlat {
-  raids: RaidFull[]
+	raids: RaidFull[]
 }
 
 // Input types for creating/updating raids
 export interface CreateRaidInput {
-  name_en: string
-  name_jp: string
-  slug: string
-  level?: number
-  element: number
-  player_count: number
-  group_id: string
-  enemy_id?: number
-  summon_id?: number
-  quest_id?: number
-  extra?: boolean
+	name_en: string
+	name_jp: string
+	slug: string
+	level?: number
+	element: number
+	player_count: number
+	group_id: string
+	enemy_id?: number
+	summon_id?: number
+	quest_id?: number
+	extra?: boolean
 }
 
 export interface UpdateRaidInput {
-  name_en?: string
-  name_jp?: string
-  slug?: string
-  level?: number
-  element?: number
-  player_count?: number
-  group_id?: string
-  enemy_id?: number
-  summon_id?: number
-  quest_id?: number
-  extra?: boolean
+	name_en?: string
+	name_jp?: string
+	slug?: string
+	level?: number
+	element?: number
+	player_count?: number
+	group_id?: string
+	enemy_id?: number
+	summon_id?: number
+	quest_id?: number
+	extra?: boolean
 }
 
 // Input types for creating/updating raid groups
 export interface CreateRaidGroupInput {
-  name_en: string
-  name_jp: string
-  section: number
-  order: number
-  difficulty: number
-  hl: boolean
-  extra: boolean
-  guidebooks: boolean
-  unlimited: boolean
+	name_en: string
+	name_jp: string
+	section: number
+	order: number
+	difficulty: number
+	hl: boolean
+	extra: boolean
+	guidebooks: boolean
+	unlimited: boolean
 }
 
 export interface UpdateRaidGroupInput {
-  name_en?: string
-  name_jp?: string
-  section?: number
-  order?: number
-  difficulty?: number
-  hl?: boolean
-  extra?: boolean
-  guidebooks?: boolean
-  unlimited?: boolean
+	name_en?: string
+	name_jp?: string
+	section?: number
+	order?: number
+	difficulty?: number
+	hl?: boolean
+	extra?: boolean
+	guidebooks?: boolean
+	unlimited?: boolean
 }
 
 // Filter types for raid queries
 export interface RaidFilters {
-  element?: number
-  groupId?: string
-  difficulty?: number
-  hl?: boolean
-  extra?: boolean
-  guidebooks?: boolean
-  unlimited?: boolean
+	element?: number
+	groupId?: string
+	difficulty?: number
+	hl?: boolean
+	extra?: boolean
+	guidebooks?: boolean
+	unlimited?: boolean
 }

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import Select from '../../ui/Select.svelte'
 	import Icon from '../../Icon.svelte'
@@ -25,8 +24,14 @@
 		onUnlinkRequest: () => void
 	}
 
-	let { isLocked, lockedMember, memberOptions, selectedMemberId, onMemberChange, onUnlinkRequest }:
-		Props = $props()
+	let {
+		isLocked,
+		lockedMember,
+		memberOptions,
+		selectedMemberId,
+		onMemberChange,
+		onUnlinkRequest
+	}: Props = $props()
 </script>
 
 <div class="member-select">

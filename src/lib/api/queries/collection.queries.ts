@@ -176,7 +176,11 @@ export const collectionQueries = {
 	/**
 	 * Collection query options dispatched by entity type
 	 */
-	byType: (type: 'weapon' | 'character' | 'summon', userId: string, filters?: CollectionFilters) => {
+	byType: (
+		type: 'weapon' | 'character' | 'summon',
+		userId: string,
+		filters?: CollectionFilters
+	) => {
 		switch (type) {
 			case 'weapon':
 				return collectionQueries.weapons(userId, filters)

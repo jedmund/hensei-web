@@ -41,9 +41,7 @@ describe('loads from localStorage', () => {
 	})
 
 	it('reads stored modal view', async () => {
-		getItemMock.mockImplementation((key: string) =>
-			key === 'modal-view-mode' ? 'list' : null
-		)
+		getItemMock.mockImplementation((key: string) => (key === 'modal-view-mode' ? 'list' : null))
 		const { viewMode } = await import('../viewMode.svelte')
 		expect(viewMode.modalView).toBe('list')
 	})

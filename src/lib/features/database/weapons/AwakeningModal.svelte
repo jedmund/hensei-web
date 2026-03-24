@@ -23,7 +23,12 @@
 		onOpenChange?: (open: boolean) => void
 	}
 
-	let { open = $bindable(false), awakening = null, objectType = 'Weapon', onOpenChange }: Props = $props()
+	let {
+		open = $bindable(false),
+		awakening = null,
+		objectType = 'Weapon',
+		onOpenChange
+	}: Props = $props()
 
 	const isEditing = $derived(!!awakening)
 	const title = $derived(isEditing ? 'Edit Awakening' : 'Add Awakening')
@@ -174,13 +179,7 @@
 					contained
 				/>
 
-				<Input
-					label="Name (JP)"
-					bind:value={nameJp}
-					placeholder="e.g. 攻撃"
-					fullWidth
-					contained
-				/>
+				<Input label="Name (JP)" bind:value={nameJp} placeholder="e.g. 攻撃" fullWidth contained />
 
 				<Input
 					label="Slug"
@@ -190,13 +189,7 @@
 					contained
 				/>
 
-				<Input
-					label="Order"
-					type="number"
-					bind:value={order}
-					contained
-					fullWidth
-				/>
+				<Input label="Order" type="number" bind:value={order} contained fullWidth />
 
 				<div class="field">
 					<span class="label">Image</span>

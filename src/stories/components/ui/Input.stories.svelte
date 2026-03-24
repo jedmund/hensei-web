@@ -67,7 +67,10 @@
 <Story name="With Label" args={{ label: 'Username', placeholder: 'Enter username' }} />
 
 <!-- Required Field -->
-<Story name="Required Field" args={{ label: 'Email', placeholder: 'Enter email', required: true }} />
+<Story
+	name="Required Field"
+	args={{ label: 'Email', placeholder: 'Enter email', required: true }}
+/>
 
 <!-- With Error -->
 <Story
@@ -149,7 +152,8 @@
 		<Input variant="contained" placeholder="Contained variant" label="Contained" />
 		<div style="display: flex; gap: 12px; align-items: end;">
 			<div>
-				<span style="font-size: 12px; color: #666; display: block; margin-bottom: 4px;">Number</span>
+				<span style="font-size: 12px; color: #666; display: block; margin-bottom: 4px;">Number</span
+				>
 				<Input variant="number" type="number" value="42" />
 			</div>
 			<div>

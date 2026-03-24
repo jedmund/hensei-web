@@ -233,7 +233,10 @@
 				<DialogPrimitive.Overlay class="dialog-overlay" />
 				<DialogPrimitive.Content class="dialog-content confirm-dialog">
 					<div class="confirm-body">
-						<p>Are you sure you want to delete this variant? Weapons assigned to it will lose their variant override.</p>
+						<p>
+							Are you sure you want to delete this variant? Weapons assigned to it will lose their
+							variant override.
+						</p>
 					</div>
 					<ModalFooter
 						onCancel={() => (confirmDeleteOpen = false)}

@@ -37,12 +37,7 @@
 <div class="rep" class:extended={extendedView}>
 	<div class="mainSummon" class:empty={!main}>
 		{#if main}
-			<img
-				alt="Main Summon"
-				src={summonImageUrl(main, true)}
-				loading="lazy"
-				decoding="async"
-			/>
+			<img alt="Main Summon" src={summonImageUrl(main, true)} loading="lazy" decoding="async" />
 		{:else}
 			<img alt="" src={summonImageUrl(undefined, true)} />
 		{/if}
@@ -60,12 +55,7 @@
 	</ul>
 	<div class="friendSummon" class:empty={!friend}>
 		{#if friend}
-			<img
-				alt="Friend Summon"
-				src={summonImageUrl(friend, true)}
-				loading="lazy"
-				decoding="async"
-			/>
+			<img alt="Friend Summon" src={summonImageUrl(friend, true)} loading="lazy" decoding="async" />
 		{:else}
 			<img alt="" src={summonImageUrl(undefined, true)} />
 		{/if}

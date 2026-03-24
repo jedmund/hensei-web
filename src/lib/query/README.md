@@ -21,24 +21,24 @@ For pages that already fetch data in `+page.server.ts`:
 ```svelte
 <!-- +page.svelte -->
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
-  import { partyQueries } from '$lib/api/queries/party.queries'
-  import { withInitialData } from '$lib/query/ssr'
-  import type { PageData } from './$types'
+	import { createQuery } from '@tanstack/svelte-query'
+	import { partyQueries } from '$lib/api/queries/party.queries'
+	import { withInitialData } from '$lib/query/ssr'
+	import type { PageData } from './$types'
 
-  let { data } = $props<{ data: PageData }>()
+	let { data } = $props<{ data: PageData }>()
 
-  // Use server-fetched party as initial data
-  // The query won't refetch until the data becomes stale
-  const party = createQuery(() => ({
-    ...partyQueries.byShortcode(data.party?.shortcode ?? ''),
-    ...withInitialData(data.party),
-    enabled: !!data.party?.shortcode
-  }))
+	// Use server-fetched party as initial data
+	// The query won't refetch until the data becomes stale
+	const party = createQuery(() => ({
+		...partyQueries.byShortcode(data.party?.shortcode ?? ''),
+		...withInitialData(data.party),
+		enabled: !!data.party?.shortcode
+	}))
 </script>
 
 {#if $party.data}
-  <h1>{$party.data.name}</h1>
+	<h1>{$party.data.name}</h1>
 {/if}
 ```
 
@@ -53,31 +53,31 @@ import { prefetchQuery } from '$lib/query/ssr'
 import { partyQueries } from '$lib/api/queries/party.queries'
 
 export const load: PageLoad = async ({ parent, params }) => {
-  const { queryClient } = await parent()
+	const { queryClient } = await parent()
 
-  // Prefetch party data into the cache
-  await prefetchQuery(queryClient, partyQueries.byShortcode(params.id))
+	// Prefetch party data into the cache
+	await prefetchQuery(queryClient, partyQueries.byShortcode(params.id))
 
-  // No need to return data - it's already in the QueryClient cache
-  return { shortcode: params.id }
+	// No need to return data - it's already in the QueryClient cache
+	return { shortcode: params.id }
 }
 ```
 
 ```svelte
 <!-- +page.svelte -->
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query'
-  import { partyQueries } from '$lib/api/queries/party.queries'
-  import type { PageData } from './$types'
+	import { createQuery } from '@tanstack/svelte-query'
+	import { partyQueries } from '$lib/api/queries/party.queries'
+	import type { PageData } from './$types'
 
-  let { data } = $props<{ data: PageData }>()
+	let { data } = $props<{ data: PageData }>()
 
-  // Data is already in cache from prefetch - no loading state on initial render
-  const party = createQuery(() => partyQueries.byShortcode(data.shortcode))
+	// Data is already in cache from prefetch - no loading state on initial render
+	const party = createQuery(() => partyQueries.byShortcode(data.shortcode))
 </script>
 
 {#if $party.data}
-  <h1>{$party.data.name}</h1>
+	<h1>{$party.data.name}</h1>
 {/if}
 ```
 
@@ -92,10 +92,10 @@ import { prefetchInfiniteQuery } from '$lib/query/ssr'
 import { partyQueries } from '$lib/api/queries/party.queries'
 
 export const load: PageLoad = async ({ parent }) => {
-  const { queryClient } = await parent()
+	const { queryClient } = await parent()
 
-  // Prefetch first page of parties
-  await prefetchInfiniteQuery(queryClient, partyQueries.list())
+	// Prefetch first page of parties
+	await prefetchInfiniteQuery(queryClient, partyQueries.list())
 }
 ```
 

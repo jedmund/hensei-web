@@ -1,26 +1,26 @@
 <script lang="ts">
-	import type { ShouldShowProps } from '../../types.js';
-	import BubbleMenu from '../../components/BubbleMenu.svelte';
-	import type { Editor } from '@tiptap/core';
-	import * as m from '$lib/paraglide/messages';
-	import Copy from '@lucide/svelte/icons/copy';
-	import Trash from '@lucide/svelte/icons/trash';
+	import type { ShouldShowProps } from '../../types.js'
+	import BubbleMenu from '../../components/BubbleMenu.svelte'
+	import type { Editor } from '@tiptap/core'
+	import * as m from '$lib/paraglide/messages'
+	import Copy from '@lucide/svelte/icons/copy'
+	import Trash from '@lucide/svelte/icons/trash'
 
 	interface Props {
-		editor: Editor;
+		editor: Editor
 	}
 
-	const { editor }: Props = $props();
+	const { editor }: Props = $props()
 
-	let link = $derived.by(() => editor.getAttributes('link').href);
+	let link = $derived.by(() => editor.getAttributes('link').href)
 </script>
 
 <BubbleMenu
 	{editor}
 	pluginKey="link-bubble-menu"
 	shouldShow={(props: ShouldShowProps) => {
-		if (!props.editor.isEditable) return false;
-		return props.editor.isActive('link');
+		if (!props.editor.isEditable) return false
+		return props.editor.isActive('link')
 	}}
 >
 	<a href={link} target="_blank">
@@ -30,7 +30,7 @@
 		title={m.editor_copy_link()}
 		class="edra-command-button"
 		onclick={() => {
-			navigator.clipboard.writeText(link);
+			navigator.clipboard.writeText(link)
 		}}
 	>
 		<Copy class="edra-toolbar-icon" />

@@ -1,5 +1,10 @@
 <script lang="ts">
-	import { getCharacterImage, getWeaponImage, getSummonImage, getRaidImage } from '$lib/utils/images'
+	import {
+		getCharacterImage,
+		getWeaponImage,
+		getSummonImage,
+		getRaidImage
+	} from '$lib/utils/images'
 
 	interface Props {
 		id: string

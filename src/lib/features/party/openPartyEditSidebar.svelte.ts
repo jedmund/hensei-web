@@ -1,7 +1,5 @@
 import { sidebar } from '$lib/stores/sidebar.svelte'
-import EditPartyPane, {
-	type PartyEditValues
-} from '$lib/components/sidebar/EditPartyPane.svelte'
+import EditPartyPane, { type PartyEditValues } from '$lib/components/sidebar/EditPartyPane.svelte'
 
 type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 

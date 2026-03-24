@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { JobSkill } from '$lib/types/api/entities'
 	import { getSkillCategoryName, getSkillCategoryColor } from '$lib/utils/jobUtils'

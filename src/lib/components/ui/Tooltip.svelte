@@ -21,12 +21,7 @@
 	}: TooltipProps = $props()
 </script>
 
-<TooltipBase.Root
-	{delayDuration}
-	{disableCloseOnTriggerClick}
-	{disabled}
-	{disableHoverableContent}
->
+<TooltipBase.Root {delayDuration} {disableCloseOnTriggerClick} {disabled} {disableHoverableContent}>
 	<TooltipBase.Trigger>
 		{#snippet child({ props })}
 			<span {...props}>

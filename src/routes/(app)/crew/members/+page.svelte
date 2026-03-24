@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
@@ -17,11 +16,7 @@
 	import ScoutUserModal from '$lib/components/crew/ScoutUserModal.svelte'
 	import BulkPhantomModal from '$lib/components/crew/BulkPhantomModal.svelte'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
-	import type {
-		MemberFilter,
-		CrewMembership,
-		PhantomPlayer
-	} from '$lib/types/api/crew'
+	import type { MemberFilter, CrewMembership, PhantomPlayer } from '$lib/types/api/crew'
 	import type { PageData } from './$types'
 	import * as m from '$lib/paraglide/messages'
 
@@ -146,9 +141,8 @@
 	// Get phantoms with pending claims (assigned but not confirmed)
 	// Use phantom query when viewing pending filter since it doesn't include phantoms
 	const pendingClaimPhantoms = $derived.by(() => {
-		const phantoms = filter === 'pending'
-			? phantomsQuery.data?.phantoms
-			: membersQuery.data?.phantoms
+		const phantoms =
+			filter === 'pending' ? phantomsQuery.data?.phantoms : membersQuery.data?.phantoms
 		return phantoms?.filter((p) => p.claimedBy && !p.claimConfirmed) ?? []
 	})
 </script>
@@ -217,7 +211,9 @@
 			{:else}
 				{#if invitationsQuery.data && invitationsQuery.data.length > 0}
 					<div class="section-divider">
-						<span>{m.crew_pending_invitations({ count: String(invitationsQuery.data.length) })}</span>
+						<span
+							>{m.crew_pending_invitations({ count: String(invitationsQuery.data.length) })}</span
+						>
 					</div>
 					<ul class="member-list">
 						{#each invitationsQuery.data as invitation (invitation.id)}
@@ -270,7 +266,11 @@
 				{#if hasMembers}
 					{#if (filter === 'active' || filter === 'retired') && hasPhantoms}
 						<div class="section-divider">
-							<span>{m.crew_members_count({ count: String(membersQuery.data?.members.length ?? 0) })}</span>
+							<span
+								>{m.crew_members_count({
+									count: String(membersQuery.data?.members.length ?? 0)
+								})}</span
+							>
 						</div>
 					{/if}
 					<ul class="member-list">
@@ -290,7 +290,11 @@
 				{#if hasPhantoms}
 					{#if filter === 'all' || filter === 'active' || filter === 'retired'}
 						<div class="section-divider">
-							<span>{m.crew_phantoms_count({ count: String(membersQuery.data?.phantoms.length ?? 0) })}</span>
+							<span
+								>{m.crew_phantoms_count({
+									count: String(membersQuery.data?.phantoms.length ?? 0)
+								})}</span
+							>
 						</div>
 					{/if}
 					<ul class="member-list">

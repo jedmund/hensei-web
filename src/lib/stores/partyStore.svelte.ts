@@ -75,9 +75,7 @@ class PartyStore {
 		if (this.party?.characters) {
 			this.party = {
 				...this.party,
-				characters: this.party.characters.map((c) =>
-					String(c.id) === String(id) ? updated : c
-				)
+				characters: this.party.characters.map((c) => (String(c.id) === String(id) ? updated : c))
 			}
 		}
 
@@ -105,9 +103,7 @@ class PartyStore {
 		if (this.party?.weapons) {
 			this.party = {
 				...this.party,
-				weapons: this.party.weapons.map((w) =>
-					String(w.id) === String(id) ? updated : w
-				)
+				weapons: this.party.weapons.map((w) => (String(w.id) === String(id) ? updated : w))
 			}
 		}
 

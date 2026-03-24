@@ -65,7 +65,9 @@ export function createEntityMentionSuggestion(): Omit<SuggestionOptions<MentionI
 
 					// Store reference for keyboard handling
 					// The component exports onKeyDown
-					componentInstance = component as unknown as { onKeyDown: (event: KeyboardEvent) => boolean }
+					componentInstance = component as unknown as {
+						onKeyDown: (event: KeyboardEvent) => boolean
+					}
 
 					// Position the popup
 					updatePosition(container, props.clientRect)
@@ -87,7 +89,9 @@ export function createEntityMentionSuggestion(): Omit<SuggestionOptions<MentionI
 							query: props.query
 						}
 					})
-					componentInstance = component as unknown as { onKeyDown: (event: KeyboardEvent) => boolean }
+					componentInstance = component as unknown as {
+						onKeyDown: (event: KeyboardEvent) => boolean
+					}
 
 					// Update position
 					updatePosition(container, props.clientRect)

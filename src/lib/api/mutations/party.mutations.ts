@@ -43,7 +43,8 @@ export function createPartyOptions(queryClient: QueryClient) {
 
 export function updatePartyOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: UpdatePartyParams) => partyAdapter.update(params, editKeyHeaders(params.shortcode)),
+		mutationFn: (params: UpdatePartyParams) =>
+			partyAdapter.update(params, editKeyHeaders(params.shortcode)),
 		onMutate: async (params: UpdatePartyParams) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.detail(params.shortcode) })
 
@@ -69,7 +70,11 @@ export function updatePartyOptions(queryClient: QueryClient) {
 				return { ...old, ...data }
 			})
 		},
-		onError: (_err: unknown, params: UpdatePartyParams, context: { previousParty?: Party } | undefined) => {
+		onError: (
+			_err: unknown,
+			params: UpdatePartyParams,
+			context: { previousParty?: Party } | undefined
+		) => {
 			if (context?.previousParty) {
 				queryClient.setQueryData(partyKeys.detail(params.shortcode), context.previousParty)
 			}
@@ -83,7 +88,8 @@ export function updatePartyOptions(queryClient: QueryClient) {
 
 export function deletePartyOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: { id: string; shortcode: string }) => partyAdapter.delete(params.id, editKeyHeaders(params.shortcode)),
+		mutationFn: (params: { id: string; shortcode: string }) =>
+			partyAdapter.delete(params.id, editKeyHeaders(params.shortcode)),
 		onMutate: async (params: { id: string; shortcode: string }) => {
 			await queryClient.cancelQueries({ queryKey: partyKeys.userLists() })
 
@@ -91,7 +97,11 @@ export function deletePartyOptions(queryClient: QueryClient) {
 
 			queryClient.setQueriesData(
 				{ queryKey: partyKeys.userLists() },
-				(old: { pages: Array<{ results: Party[]; [k: string]: unknown }>; pageParams: number[] } | undefined) => {
+				(
+					old:
+						| { pages: Array<{ results: Party[]; [k: string]: unknown }>; pageParams: number[] }
+						| undefined
+				) => {
 					if (!old) return old
 					return {
 						...old,
@@ -228,7 +238,10 @@ export function removePartyShareOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ partyId, shareId }: { partyId: string; shareId: string; shortcode: string }) =>
 			partyAdapter.removeShare(partyId, shareId),
-		onSuccess: (_data: unknown, { shortcode }: { partyId: string; shareId: string; shortcode: string }) => {
+		onSuccess: (
+			_data: unknown,
+			{ shortcode }: { partyId: string; shareId: string; shortcode: string }
+		) => {
 			queryClient.invalidateQueries({ queryKey: partyKeys.detail(shortcode) })
 			queryClient.invalidateQueries({ queryKey: crewKeys.sharedParties() })
 		}

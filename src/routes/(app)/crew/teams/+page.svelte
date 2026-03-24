@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { onDestroy } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
@@ -37,9 +36,7 @@
 	// Cleanup on destroy
 	onDestroy(() => loader.destroy())
 
-	const items = $derived(
-		sharedPartiesQuery.data?.pages.flatMap((page) => page.parties) ?? []
-	)
+	const items = $derived(sharedPartiesQuery.data?.pages.flatMap((page) => page.parties) ?? [])
 
 	const isEmpty = $derived(!sharedPartiesQuery.isLoading && items.length === 0)
 </script>
@@ -72,7 +69,11 @@
 			{:else if sharedPartiesQuery.isError}
 				<div class="error-state">
 					<Icon name="alert-circle" size={32} />
-					<p>{m.crew_teams_load_error({ error: sharedPartiesQuery.error?.message || m.crew_teams_unknown_error() })}</p>
+					<p>
+						{m.crew_teams_load_error({
+							error: sharedPartiesQuery.error?.message || m.crew_teams_unknown_error()
+						})}
+					</p>
 					<Button size="small" onclick={() => sharedPartiesQuery.refetch()}>{m.retry()}</Button>
 				</div>
 			{:else if isEmpty}

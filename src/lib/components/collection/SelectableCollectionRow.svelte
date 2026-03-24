@@ -1,9 +1,6 @@
 <script lang="ts">
 	import { getContext } from 'svelte'
-	import {
-		SELECTION_MODE_KEY,
-		type SelectionModeContext
-	} from '$lib/stores/selectionMode.svelte'
+	import { SELECTION_MODE_KEY, type SelectionModeContext } from '$lib/stores/selectionMode.svelte'
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
 	import type { Snippet } from 'svelte'
 
@@ -32,12 +29,21 @@
 	}
 </script>
 
-<div class="selectable-row" class:selected={isSelected} class:selection-active={selectionMode?.isActive}>
+<div
+	class="selectable-row"
+	class:selected={isSelected}
+	class:selection-active={selectionMode?.isActive}
+>
 	{#if selectionMode?.isActive}
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div class="checkbox-cell" onclick={handleCheckboxClick}>
-			<Checkbox checked={isSelected} onCheckedChange={handleCheckboxChange} size="small" contained />
+			<Checkbox
+				checked={isSelected}
+				onCheckedChange={handleCheckboxChange}
+				size="small"
+				contained
+			/>
 		</div>
 	{/if}
 	<!-- svelte-ignore a11y_click_events_have_key_events -->

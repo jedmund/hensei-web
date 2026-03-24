@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
@@ -19,11 +18,7 @@
 		editData?: any
 	}
 
-	let {
-		character,
-		editMode = false,
-		editData = $bindable()
-	}: Props = $props()
+	let { character, editMode = false, editData = $bindable() }: Props = $props()
 
 	const raceOptions = getRaceOptions()
 	const genderOptions = getGenderOptions()
@@ -38,16 +33,8 @@
 
 <DetailsContainer title="Details">
 	{#if editMode}
-		<DetailItem
-			label="Element"
-			editable={true}
-		>
-			<ElementPicker
-				bind:value={editData.element}
-				includeAny
-				mode="dropdown"
-				contained
-			/>
+		<DetailItem label="Element" editable={true}>
+			<ElementPicker bind:value={editData.element} includeAny mode="dropdown" contained />
 		</DetailItem>
 		<DetailItem
 			label="Race 1"
@@ -138,4 +125,3 @@
 		{/if}
 	{/if}
 </DetailsContainer>
-

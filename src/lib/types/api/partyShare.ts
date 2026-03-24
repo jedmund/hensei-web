@@ -2,9 +2,9 @@
 // Based on PartyShareBlueprint from Rails API
 
 export interface PartyShare {
-  id: string
-  shareableType: string
-  shareableId: string
-  shareableName?: string
-  createdAt: string
+	id: string
+	shareableType: string
+	shareableId: string
+	shareableName?: string
+	createdAt: string
 }

@@ -38,11 +38,7 @@ const GRID_CONFIGS: Record<GridType, SlotRange> = {
  * }
  * ```
  */
-export function findNextEmptySlot(
-	party: Party,
-	gridType: GridType,
-	skipSlot?: number
-): number {
+export function findNextEmptySlot(party: Party, gridType: GridType, skipSlot?: number): number {
 	const config = GRID_CONFIGS[gridType]
 	const collection = getCollectionForType(party, gridType)
 

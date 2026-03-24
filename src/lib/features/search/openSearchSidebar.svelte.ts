@@ -29,7 +29,20 @@ interface SearchSidebarOptions {
 }
 
 export function openSearchSidebar(options: SearchSidebarOptions) {
-	const { type, onAddItems, canAddMore = true, authUserId, requiredProficiencies, jobName, userElement, onUnlinkCollection, initialCollectionSourceUsername, isFriendSlot, isSubauraSlot, isExtraSlot } = options
+	const {
+		type,
+		onAddItems,
+		canAddMore = true,
+		authUserId,
+		requiredProficiencies,
+		jobName,
+		userElement,
+		onUnlinkCollection,
+		initialCollectionSourceUsername,
+		isFriendSlot,
+		isSubauraSlot,
+		isExtraSlot
+	} = options
 
 	// If sidebar is already open with SearchContent for the same entity type,
 	// update props without remounting to preserve filter state

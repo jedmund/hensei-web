@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	/**
 	 * CollectionArtifactDetailPane - View-only pane for artifact details
@@ -132,7 +131,10 @@
 </script>
 
 <div class="artifact-detail-pane">
-	<div class="artifact-header" style:background="url({reliefBackgroundUrl}), linear-gradient(to right, #000, #484440, #000)">
+	<div
+		class="artifact-header"
+		style:background="url({reliefBackgroundUrl}), linear-gradient(to right, #000, #484440, #000)"
+	>
 		<img src={wideImageUrl} alt="" class="artifact-image" />
 	</div>
 
@@ -177,11 +179,7 @@
 		{/if}
 
 		{#if proficiency}
-			<EquippableCharactersSection
-				{userId}
-				element={artifact.element}
-				{proficiency}
-			/>
+			<EquippableCharactersSection {userId} element={artifact.element} {proficiency} />
 		{/if}
 	</div>
 </div>

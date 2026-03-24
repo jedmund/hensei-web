@@ -134,7 +134,8 @@
 				// Handle game item mentions
 				const wikiName = node.attrs?.id?.name?.en || node.attrs?.id?.granblue_en || 'Unknown'
 				const mentionName = localizedName(node.attrs?.id?.name)
-				const displayName = mentionName !== '—' ? mentionName : (node.attrs?.id?.granblue_en || 'Unknown')
+				const displayName =
+					mentionName !== '—' ? mentionName : node.attrs?.id?.granblue_en || 'Unknown'
 				const wikiUrl = `https://gbf.wiki/${wikiName}`
 				return `<a href="${wikiUrl}" target="_blank" rel="noopener noreferrer" class="mention">${displayName}</a>`
 

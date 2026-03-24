@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { useSendInvitation } from '$lib/api/mutations/crew.mutations'
 	import * as m from '$lib/paraglide/messages'
@@ -53,10 +52,7 @@
 </script>
 
 <Dialog bind:open>
-	<ModalHeader
-		title={m.crew_invite_title()}
-		description={m.crew_invite_desc()}
-	/>
+	<ModalHeader title={m.crew_invite_title()} description={m.crew_invite_desc()} />
 
 	<ModalBody>
 		{#if success}

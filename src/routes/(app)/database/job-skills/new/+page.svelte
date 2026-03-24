@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 
@@ -94,9 +93,7 @@
 	})
 
 	// Validation
-	const canCreate = $derived(
-		editData.nameEn.trim() !== '' && editData.jobGranblueId !== ''
-	)
+	const canCreate = $derived(editData.nameEn.trim() !== '' && editData.jobGranblueId !== '')
 
 	async function handleCreate() {
 		if (!canCreate) return
@@ -182,11 +179,7 @@
 				type="text"
 				placeholder="日本語名"
 			/>
-			<DetailItem
-				label="Slug"
-				value={slug || '(auto-generated from name)'}
-				editable={false}
-			/>
+			<DetailItem label="Slug" value={slug || '(auto-generated from name)'} editable={false} />
 		</DetailsContainer>
 
 		<DetailsContainer title="Classification">

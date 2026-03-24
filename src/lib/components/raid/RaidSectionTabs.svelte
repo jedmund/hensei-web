@@ -37,7 +37,13 @@
 	]
 </script>
 
-<SegmentedControl bind:value={stringValue} onValueChange={handleChange} variant="background" size="small" grow>
+<SegmentedControl
+	bind:value={stringValue}
+	onValueChange={handleChange}
+	variant="background"
+	size="small"
+	grow
+>
 	{#each sections as section (section.value)}
 		<Segment value={String(section.value)}>{section.label}</Segment>
 	{/each}

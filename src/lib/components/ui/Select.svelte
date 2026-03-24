@@ -123,7 +123,12 @@
 				{#if selected?.color}
 					<span class="color-dot" style="background-color: {selected.color}"></span>
 				{:else if selected?.image}
-					<img src={selected.image} alt={selected.label} class="image" style={selected.imageBackground ? `background-color: ${selected.imageBackground}` : ''} />
+					<img
+						src={selected.image}
+						alt={selected.label}
+						class="image"
+						style={selected.imageBackground ? `background-color: ${selected.imageBackground}` : ''}
+					/>
 				{/if}
 				<span class="text">{selected !== undefined ? selected.label : placeholder}</span>
 				<Icon name="chevron-down-small" size={14} class="chevron" />
@@ -138,13 +143,24 @@
 									value={String(option.value)}
 									{...option.disabled !== undefined ? { disabled: option.disabled } : {}}
 									class="item"
-									style={option.indicatorColor ? `--option-color: ${option.indicatorColor}` : option.color ? `--option-color: ${option.color}` : ''}
+									style={option.indicatorColor
+										? `--option-color: ${option.indicatorColor}`
+										: option.color
+											? `--option-color: ${option.color}`
+											: ''}
 								>
 									{#snippet children({ selected })}
 										{#if option.color}
 											<span class="color-dot" style="background-color: {option.color}"></span>
 										{:else if option.image}
-											<img src={option.image} alt={option.label} class="image" style={option.imageBackground ? `background-color: ${option.imageBackground}` : ''} />
+											<img
+												src={option.image}
+												alt={option.label}
+												class="image"
+												style={option.imageBackground
+													? `background-color: ${option.imageBackground}`
+													: ''}
+											/>
 										{/if}
 										<span class="text" class:muted={option.muted}>{option.label}</span>
 										{#if option.suffix}
@@ -170,13 +186,24 @@
 								label={option.label}
 								disabled={option.disabled}
 								class="item"
-								style={option.indicatorColor ? `--option-color: ${option.indicatorColor}` : option.color ? `--option-color: ${option.color}` : ''}
+								style={option.indicatorColor
+									? `--option-color: ${option.indicatorColor}`
+									: option.color
+										? `--option-color: ${option.color}`
+										: ''}
 							>
 								{#snippet children({ selected })}
 									{#if option.color}
 										<span class="color-dot" style="background-color: {option.color}"></span>
 									{:else if option.image}
-										<img src={option.image} alt={option.label} class="image" style={option.imageBackground ? `background-color: ${option.imageBackground}` : ''} />
+										<img
+											src={option.image}
+											alt={option.label}
+											class="image"
+											style={option.imageBackground
+												? `background-color: ${option.imageBackground}`
+												: ''}
+										/>
 									{/if}
 									<span class="text" class:muted={option.muted}>{option.label}</span>
 									{#if option.suffix}
@@ -211,7 +238,12 @@
 			{#if selected?.color}
 				<span class="color-dot" style="background-color: {selected.color}"></span>
 			{:else if selected?.image}
-				<img src={selected.image} alt={selected.label} class="image" style={selected.imageBackground ? `background-color: ${selected.imageBackground}` : ''} />
+				<img
+					src={selected.image}
+					alt={selected.label}
+					class="image"
+					style={selected.imageBackground ? `background-color: ${selected.imageBackground}` : ''}
+				/>
 			{/if}
 			<span class="text">{selected !== undefined ? selected.label : placeholder}</span>
 			<Icon name="chevron-down-small" size={14} class="chevron" />
@@ -227,13 +259,24 @@
 								label={option.label}
 								disabled={option.disabled}
 								class="item"
-								style={option.indicatorColor ? `--option-color: ${option.indicatorColor}` : option.color ? `--option-color: ${option.color}` : ''}
+								style={option.indicatorColor
+									? `--option-color: ${option.indicatorColor}`
+									: option.color
+										? `--option-color: ${option.color}`
+										: ''}
 							>
 								{#snippet children({ selected })}
 									{#if option.color}
 										<span class="color-dot" style="background-color: {option.color}"></span>
 									{:else if option.image}
-										<img src={option.image} alt={option.label} class="image" style={option.imageBackground ? `background-color: ${option.imageBackground}` : ''} />
+										<img
+											src={option.image}
+											alt={option.label}
+											class="image"
+											style={option.imageBackground
+												? `background-color: ${option.imageBackground}`
+												: ''}
+										/>
 									{/if}
 									<span class="text" class:muted={option.muted}>{option.label}</span>
 									{#if option.suffix}
@@ -258,7 +301,11 @@
 							value={String(option.value)}
 							{...option.disabled !== undefined ? { disabled: option.disabled } : {}}
 							class="item"
-							style={option.indicatorColor ? `--option-color: ${option.indicatorColor}` : option.color ? `--option-color: ${option.color}` : ''}
+							style={option.indicatorColor
+								? `--option-color: ${option.indicatorColor}`
+								: option.color
+									? `--option-color: ${option.color}`
+									: ''}
 						>
 							{#snippet children({ selected })}
 								{#if option.color}

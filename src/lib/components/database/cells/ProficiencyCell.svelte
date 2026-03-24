@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { Cell } from 'wx-svelte-grid'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'

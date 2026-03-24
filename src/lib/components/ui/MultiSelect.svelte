@@ -119,7 +119,11 @@
 					label={option.label}
 					disabled={option.disabled}
 					class="multi-item"
-					style={option.indicatorColor ? `--option-color: ${option.indicatorColor}` : option.color ? `--option-color: ${option.color}` : ''}
+					style={option.indicatorColor
+						? `--option-color: ${option.indicatorColor}`
+						: option.color
+							? `--option-color: ${option.color}`
+							: ''}
 				>
 					{#snippet children({ selected })}
 						{#if option.image}

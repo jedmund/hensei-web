@@ -168,7 +168,7 @@
 		bind:open={comboboxOpen}
 		bind:inputValue
 		items={comboboxItems}
-		disabled={disabled}
+		{disabled}
 	>
 		<div class="combobox-input-wrapper">
 			<Combobox.Input

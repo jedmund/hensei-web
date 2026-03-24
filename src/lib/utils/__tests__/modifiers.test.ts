@@ -81,7 +81,10 @@ describe('getWeaponKeyImages', () => {
 	})
 
 	it('returns url/alt pairs for each key', () => {
-		const keys = [makeKey({ slug: 'alpha' }), makeKey({ slug: 'beta', name: { en: 'Beta', ja: 'ベータ' } })]
+		const keys = [
+			makeKey({ slug: 'alpha' }),
+			makeKey({ slug: 'beta', name: { en: 'Beta', ja: 'ベータ' } })
+		]
 		const result = getWeaponKeyImages(keys)
 		expect(result).toHaveLength(2)
 		expect(result[0]!.url).toContain('alpha')

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { Editor } from '@tiptap/core';
-	import * as m from '$lib/paraglide/messages';
+	import type { Editor } from '@tiptap/core'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
-		editor: Editor;
+		editor: Editor
 	}
-	const { editor }: Props = $props();
+	const { editor }: Props = $props()
 
 	const colors = [
 		{ label: m.editor_color_default(), value: '' },
@@ -18,17 +18,17 @@
 		{ label: m.editor_color_purple(), value: '#800080' },
 		{ label: m.editor_color_red(), value: '#FF0000' },
 		{ label: m.editor_color_yellow(), value: '#FFFF00' }
-	];
+	]
 
-	const currentColor = $derived.by(() => editor.getAttributes('textStyle').color ?? '');
-	const currentHighlight = $derived.by(() => editor.getAttributes('highlight').color ?? '');
+	const currentColor = $derived.by(() => editor.getAttributes('textStyle').color ?? '')
+	const currentHighlight = $derived.by(() => editor.getAttributes('highlight').color ?? '')
 </script>
 
 <select
 	value={currentColor}
 	onchange={(e) => {
-		const color = (e.target as HTMLSelectElement).value;
-		editor.chain().focus().setColor(color).run();
+		const color = (e.target as HTMLSelectElement).value
+		editor.chain().focus().setColor(color).run()
 	}}
 	style={`color: ${currentColor}`}
 	title={m.editor_text_color()}
@@ -42,8 +42,8 @@
 <select
 	value={currentHighlight}
 	onchange={(e) => {
-		const color = (e.target as HTMLSelectElement).value;
-		editor.chain().focus().setHighlight({ color }).run();
+		const color = (e.target as HTMLSelectElement).value
+		editor.chain().focus().setHighlight({ color }).run()
 	}}
 	style={`background-color: ${currentHighlight}50`}
 	title={m.editor_highlight_color()}

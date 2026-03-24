@@ -60,12 +60,7 @@
 		onSave?: (updates: CharacterEditUpdates) => void
 	}
 
-	let {
-		characterData,
-		currentValues,
-		showPerpetuity = true,
-		onSave
-	}: Props = $props()
+	let { characterData, currentValues, showPerpetuity = true, onSave }: Props = $props()
 
 	// Local state derived from props — $derived tracks changes reactively,
 	// and overrides (via handlers) are temporary until currentValues changes again.

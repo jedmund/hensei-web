@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
@@ -227,11 +226,15 @@
 <div class="page">
 	<DatabasePageHeader title="Character">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={getListUrl('characters')}>Back</Button>
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href={getListUrl('characters')}
+				>Back</Button
+			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
-				<Button variant="element-ghost" element={elementName} size="small" href={editUrl}>Edit</Button>
+				<Button variant="element-ghost" element={elementName} size="small" href={editUrl}
+					>Edit</Button
+				>
 			{/if}
 		{/snippet}
 	</DatabasePageHeader>
@@ -360,9 +363,18 @@
 						<DetailsContainer title="Related Units">
 							<div class="related-units">
 								{#each relatedQuery.data as related}
-									<a href={localizeHref(`/database/characters/${related.granblueId}${related.styleSwap ? '/style' : ''}`)} class="related-unit">
+									<a
+										href={localizeHref(
+											`/database/characters/${related.granblueId}${related.styleSwap ? '/style' : ''}`
+										)}
+										class="related-unit"
+									>
 										<img
-											src={getCharacterImage(related.granblueId, 'grid', related.styleSwap ? '01_style' : '01')}
+											src={getCharacterImage(
+												related.granblueId,
+												'grid',
+												related.styleSwap ? '01_style' : '01'
+											)}
 											alt={localizedName(related.name)}
 											class="related-image"
 										/>

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import Select from '../ui/Select.svelte'
@@ -36,9 +35,17 @@
 
 	// Collection privacy options (1-based to avoid JavaScript falsy 0 issues)
 	const collectionPrivacyOptions = [
-		{ value: 1, label: m.settings_privacy_everyone(), description: m.settings_privacy_everyone_desc() },
+		{
+			value: 1,
+			label: m.settings_privacy_everyone(),
+			description: m.settings_privacy_everyone_desc()
+		},
 		{ value: 2, label: m.settings_privacy_crew(), description: m.settings_privacy_crew_desc() },
-		{ value: 3, label: m.settings_privacy_private(), description: m.settings_privacy_private_desc() }
+		{
+			value: 3,
+			label: m.settings_privacy_private(),
+			description: m.settings_privacy_private_desc()
+		}
 	]
 
 	// Default import visibility options (mirrors party visibility, not collection privacy)
@@ -47,7 +54,6 @@
 		{ value: 2, label: m.visibility_unlisted() },
 		{ value: 3, label: m.visibility_private() }
 	]
-
 </script>
 
 <div class="section">

@@ -95,7 +95,7 @@
 <PageMeta title={m.page_title_new()} description={m.page_desc_home()} />
 
 <Party
-	party={party}
+	{party}
 	canEdit={true}
 	authUserId={data.account?.userId}
 	isNew={true}

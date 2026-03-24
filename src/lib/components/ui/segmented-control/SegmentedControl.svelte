@@ -79,13 +79,7 @@
 	)
 
 	const wrapperClassList = $derived(
-		[
-			styles.wrapper,
-			grow ? styles.growWrapper : '',
-			wrapperClass || ''
-		]
-			.filter(Boolean)
-			.join(' ')
+		[styles.wrapper, grow ? styles.growWrapper : '', wrapperClass || ''].filter(Boolean).join(' ')
 	)
 </script>
 

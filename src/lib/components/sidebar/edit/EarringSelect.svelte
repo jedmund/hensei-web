@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import MasteryRow from './MasteryRow.svelte'
 	import { aetherialMastery, type ItemSkill } from '$lib/data/overMastery'

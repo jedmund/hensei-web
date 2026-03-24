@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { Label } from 'bits-ui'
 	import Icon from '../Icon.svelte'

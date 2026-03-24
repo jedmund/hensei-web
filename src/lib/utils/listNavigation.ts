@@ -14,7 +14,10 @@ interface StoredListUrl {
 /**
  * Store the current list URL before navigating to a detail page
  */
-export function storeListUrl(url: string, resource: 'characters' | 'weapons' | 'summons' | 'jobs'): void {
+export function storeListUrl(
+	url: string,
+	resource: 'characters' | 'weapons' | 'summons' | 'jobs'
+): void {
 	try {
 		const data: StoredListUrl = { url, resource }
 		sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data))

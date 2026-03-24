@@ -26,14 +26,26 @@
 	{disabled}
 	aria-label={localizedName(skill.name)}
 >
-	<img src={getSkillIcon(skill)} alt={localizedName(skill.name)} class="skill-icon" loading="lazy" />
+	<img
+		src={getSkillIcon(skill)}
+		alt={localizedName(skill.name)}
+		class="skill-icon"
+		loading="lazy"
+	/>
 
 	<div class="skill-info">
 		<span class="skill-name">{localizedName(skill.name)}</span>
 	</div>
 
 	{#if variant === 'current' && onRemove}
-		<button class="remove-button" onclick={(e) => { e.stopPropagation(); onRemove?.(); }} aria-label="Remove skill">
+		<button
+			class="remove-button"
+			onclick={(e) => {
+				e.stopPropagation()
+				onRemove?.()
+			}}
+			aria-label="Remove skill"
+		>
 			{m.action_remove()}
 		</button>
 	{/if}

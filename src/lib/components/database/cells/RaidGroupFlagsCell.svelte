@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	interface Props {
 		row: any

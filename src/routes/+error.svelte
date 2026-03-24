@@ -10,7 +10,9 @@
 		<h1>{m.error_something_went_wrong()}</h1>
 	</div>
 
-	<p class="browse-link">{m.error_or_browse_gallery()} <a href={localizeHref('/teams/explore')}>{m.error_gallery()}</a></p>
+	<p class="browse-link">
+		{m.error_or_browse_gallery()} <a href={localizeHref('/teams/explore')}>{m.error_gallery()}</a>
+	</p>
 </div>
 
 <style lang="scss">

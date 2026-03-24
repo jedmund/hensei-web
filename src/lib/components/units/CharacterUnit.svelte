@@ -10,7 +10,10 @@
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import { getCharacterImageWithPose, getPlaceholderImage } from '$lib/utils/images'
-	import { openDetailsSidebar, openCharacterEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
+	import {
+		openDetailsSidebar,
+		openCharacterEditSidebar
+	} from '$lib/features/details/openDetailsSidebar.svelte'
 	import { canCharacterBeModified } from '$lib/utils/modificationDetector'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName } from '$lib/utils/element'
@@ -32,7 +35,14 @@
 		inCollection?: boolean
 	}
 
-	let { item, position, mainWeaponElement, partyElement, notInCollection = false, inCollection = false }: Props = $props()
+	let {
+		item,
+		position,
+		mainWeaponElement,
+		partyElement,
+		notInCollection = false,
+		inCollection = false
+	}: Props = $props()
 
 	const ctx = usePartyContext()
 
@@ -59,9 +69,7 @@
 
 	// Check if this empty slot is currently selected for adding an item
 	let isEmptySelected = $derived(
-		!item &&
-			ctx?.getSelectedSlot?.() === position &&
-			ctx?.getActiveTab?.() === GridType.Character
+		!item && ctx?.getSelectedSlot?.() === position && ctx?.getActiveTab?.() === GridType.Character
 	)
 
 	// Determine element class for focus ring
@@ -72,11 +80,7 @@
 		try {
 			const party = ctx.getParty()
 			const editKey = ctx.getEditKey()
-			await ctx.services.gridService.removeCharacter(
-				party.id,
-				item.id as any,
-				editKey || undefined
-			)
+			await ctx.services.gridService.removeCharacter(party.id, item.id as any, editKey || undefined)
 		} catch (err) {
 			console.error('Error removing character:', err)
 			toast.error(extractErrorMessage(err, 'Failed to remove character'))
@@ -147,10 +151,7 @@
 
 		try {
 			const editKey = ctx.getEditKey()
-			await ctx.services.gridService.switchCharacterStyle(
-				item.id,
-				editKey || undefined
-			)
+			await ctx.services.gridService.switchCharacterStyle(item.id, editKey || undefined)
 		} catch (err) {
 			console.error('Error switching style:', err)
 			toast.error(extractErrorMessage(err, 'Failed to switch style'))
@@ -177,7 +178,12 @@
 	}
 </script>
 
-<div class="unit {elementClass}" class:empty={!item} class:is-active={isActive} class:orphaned={item?.orphaned}>
+<div
+	class="unit {elementClass}"
+	class:empty={!item}
+	class:is-active={isActive}
+	class:orphaned={item?.orphaned}
+>
 	{#if item}
 		<UnitMenuContainer showGearButton={true}>
 			{#snippet trigger()}
@@ -199,7 +205,9 @@
 									class="perpetuity"
 									class:active={item.perpetuity}
 									onclick={togglePerpetuity}
-									title={item.perpetuity ? m.tooltip_remove_perpetuity_ring() : m.tooltip_add_perpetuity_ring()}
+									title={item.perpetuity
+										? m.tooltip_remove_perpetuity_ring()
+										: m.tooltip_add_perpetuity_ring()}
 								>
 									<img
 										class="perpetuity-icon filled"
@@ -228,10 +236,7 @@
 							{#if hasStyleVariant && ctx?.canEdit()}
 								<span class="style-switch-wrapper">
 									<Tooltip content="Swap styles">
-										<button
-											class="style-switch"
-											onclick={switchStyle}
-										>
+										<button class="style-switch" onclick={switchStyle}>
 											<Icon name="swap" size={14} />
 										</button>
 									</Tooltip>
@@ -283,11 +288,7 @@
 					ctx?.openPicker &&
 					ctx.openPicker({ type: 'character', position, item })}
 			>
-				<img
-					class="image placeholder"
-					alt=""
-					src={getPlaceholderImage('character', 'grid')}
-				/>
+				<img class="image placeholder" alt="" src={getPlaceholderImage('character', 'grid')} />
 				{#if ctx?.canEdit()}
 					<span class="icon">
 						<Icon name="plus" size={24} />
@@ -419,10 +420,14 @@
 	@keyframes pulse-slot-shadow {
 		0%,
 		100% {
-			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12), 0 0 4px 2px rgba(0, 0, 0, 0.06);
+			box-shadow:
+				0 0 0 1px rgba(0, 0, 0, 0.12),
+				0 0 4px 2px rgba(0, 0, 0, 0.06);
 		}
 		50% {
-			box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.24), 0 0 8px 4px rgba(0, 0, 0, 0.12);
+			box-shadow:
+				0 0 0 1px rgba(0, 0, 0, 0.24),
+				0 0 8px 4px rgba(0, 0, 0, 0.12);
 		}
 	}
 
@@ -587,7 +592,9 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		transition: transform 0.2s ease, box-shadow 0.2s ease;
+		transition:
+			transform 0.2s ease,
+			box-shadow 0.2s ease;
 
 		&:hover {
 			transform: scale(1.15);
@@ -614,5 +621,4 @@
 		cursor: help;
 		box-shadow: var(--shadow-sm);
 	}
-
 </style>

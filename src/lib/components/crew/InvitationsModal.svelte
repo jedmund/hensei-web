@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
@@ -145,7 +144,10 @@
 												<span class="notification-title">{phantom.name}</span>
 											</div>
 											<span class="notification-subtitle">
-												{m.crew_notifications_from_crew({ name: crew.name, tag: crew.gamertag ? ` [${crew.gamertag}]` : '' })}
+												{m.crew_notifications_from_crew({
+													name: crew.name,
+													tag: crew.gamertag ? ` [${crew.gamertag}]` : ''
+												})}
 											</span>
 											{#if phantom.joinedAt}
 												<span class="notification-meta">
@@ -162,7 +164,9 @@
 											onclick={() => handleDeclinePhantomClaim(phantom)}
 											disabled={isProcessing}
 										>
-											{isProcessing && declineClaimMutation.isPending ? m.crew_notifications_declining() : m.crew_notifications_decline()}
+											{isProcessing && declineClaimMutation.isPending
+												? m.crew_notifications_declining()
+												: m.crew_notifications_decline()}
 										</Button>
 										<Button
 											variant="primary"
@@ -170,7 +174,9 @@
 											onclick={() => handleAcceptPhantomClaim(phantom)}
 											disabled={isProcessing}
 										>
-											{isProcessing && confirmClaimMutation.isPending ? m.crew_notifications_accepting() : m.crew_notifications_accept()}
+											{isProcessing && confirmClaimMutation.isPending
+												? m.crew_notifications_accepting()
+												: m.crew_notifications_accept()}
 										</Button>
 									</div>
 								</div>
@@ -208,7 +214,9 @@
 											{/if}
 											{#if invitation.phantomPlayer}
 												<span class="notification-meta">
-													{m.crew_notifications_phantom_assigned({ name: invitation.phantomPlayer.name })}
+													{m.crew_notifications_phantom_assigned({
+														name: invitation.phantomPlayer.name
+													})}
 												</span>
 											{/if}
 										</div>
@@ -230,7 +238,9 @@
 												onclick={() => handleRejectInvitation(invitation.id)}
 												disabled={isProcessing}
 											>
-												{isProcessing && rejectMutation.isPending ? m.crew_notifications_declining() : m.crew_notifications_decline()}
+												{isProcessing && rejectMutation.isPending
+													? m.crew_notifications_declining()
+													: m.crew_notifications_decline()}
 											</Button>
 											<Button
 												variant="primary"
@@ -238,7 +248,9 @@
 												onclick={() => handleAcceptInvitation(invitation.id)}
 												disabled={isProcessing}
 											>
-												{isProcessing && acceptMutation.isPending ? m.crew_notifications_joining() : m.crew_notifications_accept()}
+												{isProcessing && acceptMutation.isPending
+													? m.crew_notifications_joining()
+													: m.crew_notifications_accept()}
 											</Button>
 										</div>
 									{/if}

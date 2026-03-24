@@ -38,9 +38,13 @@
 
 	// Derive entity type from resource
 	const entityType = $derived(
-		resource === 'characters' ? 'character' :
-		resource === 'summons' ? 'summon' :
-		resource === 'jobs' ? 'job' : 'weapon'
+		resource === 'characters'
+			? 'character'
+			: resource === 'summons'
+				? 'summon'
+				: resource === 'jobs'
+					? 'job'
+					: 'weapon'
 	)
 
 	const supportsCollectionFilters = $derived(resource !== 'jobs')
@@ -92,7 +96,11 @@
 	const startItem = $derived((currentPage - 1) * pageSize + 1)
 	const endItem = $derived(Math.min(currentPage * pageSize, total))
 
-	async function loadData(pageNum: number = 1, updateUrlParam: boolean = true, showLoading: boolean = true) {
+	async function loadData(
+		pageNum: number = 1,
+		updateUrlParam: boolean = true,
+		showLoading: boolean = true
+	) {
 		if (showLoading) loading = true
 		try {
 			const result = await provider.loadPage(pageNum)
@@ -302,8 +310,12 @@
 
 		const startPage = filters.initializeFromUrl(
 			$page.url.searchParams,
-			(v) => { search.searchTerm = v },
-			(v) => { search.lastSearchTerm = v }
+			(v) => {
+				search.searchTerm = v
+			},
+			(v) => {
+				search.lastSearchTerm = v
+			}
 		)
 
 		urlInitialized = true
@@ -377,7 +389,9 @@
 				class="search-input"
 				placeholder="Search..."
 				value={search.searchTerm}
-				oninput={(e) => { search.searchTerm = e.currentTarget.value }}
+				oninput={(e) => {
+					search.searchTerm = e.currentTarget.value
+				}}
 			/>
 			<Button
 				variant="ghost"

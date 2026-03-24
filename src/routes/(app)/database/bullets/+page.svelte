@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -75,7 +74,7 @@
 			id: 'hitsAll',
 			header: 'Hits All',
 			width: 80,
-			template: (val: any) => val ? 'Yes' : 'No'
+			template: (val: any) => (val ? 'Yes' : 'No')
 		},
 		{
 			id: 'effect',
@@ -162,7 +161,7 @@
 
 			<Grid
 				data={sortedData}
-				columns={columns}
+				{columns}
 				init={initGrid}
 				{sortMarks}
 				sizes={{ rowHeight: 48 }}

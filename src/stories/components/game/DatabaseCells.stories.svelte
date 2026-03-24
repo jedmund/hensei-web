@@ -1,18 +1,18 @@
 <script module>
-	import { defineMeta } from '@storybook/addon-svelte-csf';
-	import CharacterImageCell from '$lib/components/database/cells/CharacterImageCell.svelte';
-	import WeaponImageCell from '$lib/components/database/cells/WeaponImageCell.svelte';
-	import SummonImageCell from '$lib/components/database/cells/SummonImageCell.svelte';
-	import ElementCell from '$lib/components/database/cells/ElementCell.svelte';
-	import ProficiencyCell from '$lib/components/database/cells/ProficiencyCell.svelte';
-	import CharacterUncapCell from '$lib/components/database/cells/CharacterUncapCell.svelte';
-	import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svelte';
-	import SummonUncapCell from '$lib/components/database/cells/SummonUncapCell.svelte';
+	import { defineMeta } from '@storybook/addon-svelte-csf'
+	import CharacterImageCell from '$lib/components/database/cells/CharacterImageCell.svelte'
+	import WeaponImageCell from '$lib/components/database/cells/WeaponImageCell.svelte'
+	import SummonImageCell from '$lib/components/database/cells/SummonImageCell.svelte'
+	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
+	import ProficiencyCell from '$lib/components/database/cells/ProficiencyCell.svelte'
+	import CharacterUncapCell from '$lib/components/database/cells/CharacterUncapCell.svelte'
+	import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svelte'
+	import SummonUncapCell from '$lib/components/database/cells/SummonUncapCell.svelte'
 
 	const { Story } = defineMeta({
 		title: 'Components/Game/Database Cells',
 		tags: ['autodocs']
-	});
+	})
 
 	// Mock row data for cells
 	const mockCharacterRow = {
@@ -22,7 +22,7 @@
 		proficiency: [1, 2], // Sabre, Dagger
 		special: false,
 		uncap: { flb: true, ulb: true, transcendence: true }
-	};
+	}
 
 	const mockSpecialCharacterRow = {
 		granblueId: '3040100000',
@@ -31,7 +31,7 @@
 		proficiency: [5], // Staff
 		special: true,
 		uncap: { flb: true, ulb: true }
-	};
+	}
 
 	const mockWeaponRow = {
 		granblueId: '1040000000',
@@ -40,7 +40,7 @@
 		proficiency: 1, // Sabre
 		rarity: 3,
 		uncap: { flb: true, ulb: true, transcendence: true }
-	};
+	}
 
 	const mockSummonRow = {
 		granblueId: '2040001000',
@@ -48,7 +48,7 @@
 		element: 5, // Dark
 		rarity: 3,
 		uncap: { flb: true, ulb: true, transcendence: true }
-	};
+	}
 
 	// All elements for comparison
 	const elements = [
@@ -58,7 +58,7 @@
 		{ id: 4, name: 'Earth' },
 		{ id: 5, name: 'Dark' },
 		{ id: 6, name: 'Light' }
-	];
+	]
 
 	const proficiencies = [
 		{ id: 1, name: 'Sabre' },
@@ -71,7 +71,7 @@
 		{ id: 8, name: 'Bow' },
 		{ id: 9, name: 'Harp' },
 		{ id: 10, name: 'Katana' }
-	];
+	]
 </script>
 
 <!-- Character Image Cell -->
@@ -220,4 +220,3 @@
 		</div>
 	</div>
 </Story>
-

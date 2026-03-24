@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
@@ -66,9 +65,7 @@
 	})
 
 	// Validation
-	const canSave = $derived(
-		editData.name_en.trim() !== '' && editData.name_jp.trim() !== ''
-	)
+	const canSave = $derived(editData.name_en.trim() !== '' && editData.name_jp.trim() !== '')
 
 	// Save changes
 	async function handleSave() {
@@ -114,7 +111,13 @@
 			<p>Loading raid group...</p>
 		</div>
 	{:else if group}
-		<DatabaseFormHeader title="Edit Raid Group" onCancel={handleCancel} onSave={handleSave} {isSaving} disabled={!canSave} />
+		<DatabaseFormHeader
+			title="Edit Raid Group"
+			onCancel={handleCancel}
+			onSave={handleSave}
+			{isSaving}
+			disabled={!canSave}
+		/>
 
 		{#if saveError}
 			<div class="error-banner">{saveError}</div>
@@ -143,12 +146,7 @@
 					type="select"
 					options={getSectionOptions()}
 				/>
-				<DetailItem
-					label="Order"
-					bind:value={editData.order}
-					editable={true}
-					type="number"
-				/>
+				<DetailItem label="Order" bind:value={editData.order} editable={true} type="number" />
 				<DetailItem
 					label="Difficulty"
 					bind:value={editData.difficulty}
@@ -158,18 +156,8 @@
 			</DetailsContainer>
 
 			<DetailsContainer title="Flags">
-				<DetailItem
-					label="HL"
-					bind:value={editData.hl}
-					editable={true}
-					type="checkbox"
-				/>
-				<DetailItem
-					label="Extra"
-					bind:value={editData.extra}
-					editable={true}
-					type="checkbox"
-				/>
+				<DetailItem label="HL" bind:value={editData.hl} editable={true} type="checkbox" />
+				<DetailItem label="Extra" bind:value={editData.extra} editable={true} type="checkbox" />
 				<DetailItem
 					label="Guidebooks"
 					bind:value={editData.guidebooks}
@@ -185,7 +173,11 @@
 			</DetailsContainer>
 		</section>
 	{:else}
-		<NotFoundPlaceholder title="Raid Group Not Found" backHref="/database/raids" backLabel="Back to Groups" />
+		<NotFoundPlaceholder
+			title="Raid Group Not Found"
+			backHref="/database/raids"
+			backLabel="Back to Groups"
+		/>
 	{/if}
 </div>
 

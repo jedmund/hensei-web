@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { getElementLabel, getElementKey } from '$lib/utils/element'
 

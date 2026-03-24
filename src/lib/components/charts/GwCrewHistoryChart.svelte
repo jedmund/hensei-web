@@ -1,8 +1,13 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { Chart } from 'svelte-echarts'
-	import { init, CHART_FONT_FAMILY, CHART_SPLIT_LINE, CHART_AXIS_LINE, CHART_LABEL_COLOR } from './echarts-setup'
+	import {
+		init,
+		CHART_FONT_FAMILY,
+		CHART_SPLIT_LINE,
+		CHART_AXIS_LINE,
+		CHART_LABEL_COLOR
+	} from './echarts-setup'
 	import { formatScore, formatScoreCompact, type HistoryDataPoint } from '$lib/utils/gw'
 
 	interface Props {

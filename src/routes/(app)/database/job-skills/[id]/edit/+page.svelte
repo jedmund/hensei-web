@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 
@@ -129,9 +128,7 @@
 		goto(`/database/job-skills/${skill?.id}`)
 	}
 
-	const pageTitle = $derived(
-		m.page_title_db_edit({ name: skill?.name?.en ?? 'Job Skill' })
-	)
+	const pageTitle = $derived(m.page_title_db_edit({ name: skill?.name?.en ?? 'Job Skill' }))
 </script>
 
 <PageMeta title={pageTitle} description={m.page_desc_home()} />

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
@@ -27,18 +26,9 @@
 
 <div class="perpetuity-toggle">
 	<label class="toggle-row">
-		<Checkbox
-			checked={localValue}
-			onCheckedChange={handleChange}
-			contained
-			{element}
-		/>
+		<Checkbox checked={localValue} onCheckedChange={handleChange} contained {element} />
 		<div class="toggle-content">
-			<img
-				src={perpetuityImageUrl}
-				alt="Perpetuity Ring"
-				class="perpetuity-icon"
-			/>
+			<img src={perpetuityImageUrl} alt="Perpetuity Ring" class="perpetuity-icon" />
 			<span class="toggle-label">{m.label_perpetuity_ring()}</span>
 		</div>
 	</label>

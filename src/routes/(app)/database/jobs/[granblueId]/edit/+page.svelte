@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
@@ -138,12 +137,7 @@
 
 <div class="page">
 	{#if job}
-		<DatabaseFormHeader
-			title="Edit Job"
-			onCancel={handleCancel}
-			onSave={saveChanges}
-			{isSaving}
-		/>
+		<DatabaseFormHeader title="Edit Job" onCancel={handleCancel} onSave={saveChanges} {isSaving} />
 
 		{#if saveError}
 			<div class="error-banner">{saveError}</div>

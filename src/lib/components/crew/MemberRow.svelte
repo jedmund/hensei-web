@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -50,9 +49,7 @@
 	)
 
 	const canPromote = $derived(member.role === 'member' && crewStore.canPromoteTo('vice_captain'))
-	const canDemote = $derived(
-		member.role === 'vice_captain' && crewStore.canDemote('vice_captain')
-	)
+	const canDemote = $derived(member.role === 'vice_captain' && crewStore.canDemote('vice_captain'))
 </script>
 
 <li class="member-row" class:retired={member.retired}>
@@ -65,7 +62,9 @@
 					<span class="username">{m.crew_unknown()}</span>
 				{/if}
 				{#if member.joinedAt}
-					<span class="joined-date">{m.crew_joined_date({ date: formatDate(member.joinedAt) })}</span>
+					<span class="joined-date"
+						>{m.crew_joined_date({ date: formatDate(member.joinedAt) })}</span
+					>
 				{/if}
 			</div>
 		</div>
@@ -77,47 +76,47 @@
 		</span>
 
 		<DropdownMenu>
-		{#snippet trigger({ props })}
-			<Button variant="ghost" size="small" iconOnly icon="ellipsis" {...props} />
-		{/snippet}
-		{#snippet menu()}
-			{#if member.user?.username}
-				<DropdownMenuBase.Item
-					class="dropdown-menu-item"
-					onclick={() => goto(localizeHref(`/crew/members/${member.user?.username}`))}
-				>
-					{m.crew_view_crew_profile()}
-				</DropdownMenuBase.Item>
-				<DropdownMenuBase.Item
-					class="dropdown-menu-item"
-					onclick={() => goto(localizeHref(`/${member.user?.username}`))}
-				>
-					{m.crew_view_profile()}
-				</DropdownMenuBase.Item>
-			{/if}
-			{#if crewStore.isOfficer && onEdit}
-				<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onEdit}>
-					{m.crew_edit()}
-				</DropdownMenuBase.Item>
-			{/if}
-			{#if canShowOfficerActions}
-				{#if canPromote && onPromote}
-					<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onPromote}>
-						{m.crew_promote()}
+			{#snippet trigger({ props })}
+				<Button variant="ghost" size="small" iconOnly icon="ellipsis" {...props} />
+			{/snippet}
+			{#snippet menu()}
+				{#if member.user?.username}
+					<DropdownMenuBase.Item
+						class="dropdown-menu-item"
+						onclick={() => goto(localizeHref(`/crew/members/${member.user?.username}`))}
+					>
+						{m.crew_view_crew_profile()}
+					</DropdownMenuBase.Item>
+					<DropdownMenuBase.Item
+						class="dropdown-menu-item"
+						onclick={() => goto(localizeHref(`/${member.user?.username}`))}
+					>
+						{m.crew_view_profile()}
 					</DropdownMenuBase.Item>
 				{/if}
-				{#if canDemote && onDemote}
-					<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onDemote}>
-						{m.crew_demote()}
+				{#if crewStore.isOfficer && onEdit}
+					<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onEdit}>
+						{m.crew_edit()}
 					</DropdownMenuBase.Item>
 				{/if}
-				{#if onRemove}
-					<DropdownMenuBase.Item class="dropdown-menu-item danger" onclick={onRemove}>
-						{m.crew_remove()}
-					</DropdownMenuBase.Item>
+				{#if canShowOfficerActions}
+					{#if canPromote && onPromote}
+						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onPromote}>
+							{m.crew_promote()}
+						</DropdownMenuBase.Item>
+					{/if}
+					{#if canDemote && onDemote}
+						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onDemote}>
+							{m.crew_demote()}
+						</DropdownMenuBase.Item>
+					{/if}
+					{#if onRemove}
+						<DropdownMenuBase.Item class="dropdown-menu-item danger" onclick={onRemove}>
+							{m.crew_remove()}
+						</DropdownMenuBase.Item>
+					{/if}
 				{/if}
-			{/if}
-		{/snippet}
+			{/snippet}
 		</DropdownMenu>
 	</div>
 </li>

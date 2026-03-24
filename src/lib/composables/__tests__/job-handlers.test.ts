@@ -13,7 +13,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { useJobHandlers } from '../job-handlers.svelte'
 import { createMockMutations, createTestParty } from './helpers'
-import { MOCK_JOB, MOCK_JOB_SKILL_1, MOCK_JOB_SKILL_2, MOCK_JOB_ACCESSORY } from '$lib/api/mutations/__tests__/fixtures'
+import {
+	MOCK_JOB,
+	MOCK_JOB_SKILL_1,
+	MOCK_JOB_SKILL_2,
+	MOCK_JOB_ACCESSORY
+} from '$lib/api/mutations/__tests__/fixtures'
 import type { PartyMutations } from '../party-mutations.svelte'
 import type { Party } from '$lib/types/api/party'
 import type { Job, JobSkill, JobAccessory } from '$lib/types/api/entities'
@@ -235,9 +240,7 @@ describe('useJobHandlers', () => {
 
 			expect(mutations.job.updateJobSkills.mutateAsync).toHaveBeenCalledWith({
 				shortcode: party.shortcode,
-				skills: expect.arrayContaining([
-					expect.objectContaining({ slot: 1, id: 'new-skill' })
-				])
+				skills: expect.arrayContaining([expect.objectContaining({ slot: 1, id: 'new-skill' })])
 			})
 		})
 
@@ -269,9 +272,7 @@ describe('useJobHandlers', () => {
 		})
 
 		it('loading resets after failure', async () => {
-			vi.mocked(mutations.job.removeJobSkill.mutateAsync).mockRejectedValue(
-				new Error('fail')
-			)
+			vi.mocked(mutations.job.removeJobSkill.mutateAsync).mockRejectedValue(new Error('fail'))
 
 			await handlers.handleRemoveJobSkill(0)
 

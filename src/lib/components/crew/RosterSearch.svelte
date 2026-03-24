@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import {
 		searchAdapter,
@@ -159,7 +158,7 @@
 		contained
 		fullWidth
 		{placeholder}
-		handleFocus={handleFocus}
+		{handleFocus}
 		onkeydown={handleKeydown}
 		oncompositionstart={() => (isComposing = true)}
 		oncompositionend={(e) => {

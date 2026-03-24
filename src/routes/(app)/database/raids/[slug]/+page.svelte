@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
@@ -9,7 +8,9 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
-	import DetailScaffold, { type DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
+	import DetailScaffold, {
+		type DetailTab
+	} from '$lib/features/database/detail/DetailScaffold.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import type { PageData } from './$types'
@@ -137,7 +138,9 @@
 <div class="page">
 	<DatabasePageHeader title="Raid">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/raids">Back</Button>
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/raids"
+				>Back</Button
+			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
@@ -173,7 +176,10 @@
 						<DetailItem label="Name (JA)" value={raid.name.ja || '—'} />
 						<DetailItem label="Slug" value={raid.slug || '—'} />
 						<DetailItem label="Level" value={raid.level?.toString() ?? '—'} />
-						<DetailItem label="Players" value={raid.playerCount === 1 ? 'Solo' : raid.playerCount?.toString() ?? '—'} />
+						<DetailItem
+							label="Players"
+							value={raid.playerCount === 1 ? 'Solo' : (raid.playerCount?.toString() ?? '—')}
+						/>
 						<DetailItem label="Element">
 							{#if raid.element !== undefined && raid.element !== null}
 								<ElementBadge element={raid.element} />
@@ -192,7 +198,12 @@
 					<DetailsContainer title="Classification">
 						<DetailItem label="Group">
 							{#if raid.group}
-								<Button variant="ghost" size="small" rightIcon="chevron-right-small" onclick={handleGroupClick}>
+								<Button
+									variant="ghost"
+									size="small"
+									rightIcon="chevron-right-small"
+									onclick={handleGroupClick}
+								>
 									{displayName(raid.group)}
 								</Button>
 							{:else}
@@ -220,7 +231,11 @@
 			{/if}
 		</DetailScaffold>
 	{:else}
-		<NotFoundPlaceholder title="Raid Not Found" backHref="/database/raids" backLabel="Back to Raids" />
+		<NotFoundPlaceholder
+			title="Raid Not Found"
+			backHref="/database/raids"
+			backLabel="Back to Raids"
+		/>
 	{/if}
 </div>
 

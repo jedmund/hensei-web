@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import type { ArtifactSkill } from '$lib/types/api/artifact'
@@ -114,27 +113,39 @@
 
 			&.element-wind {
 				background: var(--wind-nav-selected-bg);
-				.name { color: var(--wind-nav-selected-text); }
+				.name {
+					color: var(--wind-nav-selected-text);
+				}
 			}
 			&.element-fire {
 				background: var(--fire-nav-selected-bg);
-				.name { color: var(--fire-nav-selected-text); }
+				.name {
+					color: var(--fire-nav-selected-text);
+				}
 			}
 			&.element-water {
 				background: var(--water-nav-selected-bg);
-				.name { color: var(--water-nav-selected-text); }
+				.name {
+					color: var(--water-nav-selected-text);
+				}
 			}
 			&.element-earth {
 				background: var(--earth-nav-selected-bg);
-				.name { color: var(--earth-nav-selected-text); }
+				.name {
+					color: var(--earth-nav-selected-text);
+				}
 			}
 			&.element-dark {
 				background: var(--dark-nav-selected-bg);
-				.name { color: var(--dark-nav-selected-text); }
+				.name {
+					color: var(--dark-nav-selected-text);
+				}
 			}
 			&.element-light {
 				background: var(--light-nav-selected-bg);
-				.name { color: var(--light-nav-selected-text); }
+				.name {
+					color: var(--light-nav-selected-text);
+				}
 			}
 		}
 

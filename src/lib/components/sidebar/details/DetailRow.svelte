@@ -15,11 +15,25 @@
 		error?: string | undefined
 	}
 
-	let { label, value, children, noHover = false, noPadding = false, compact = false, error = undefined }: Props = $props()
+	let {
+		label,
+		value,
+		children,
+		noHover = false,
+		noPadding = false,
+		compact = false,
+		error = undefined
+	}: Props = $props()
 </script>
 
 <div class="detail-row-wrapper">
-	<div class="detail-row" class:no-hover={noHover} class:no-padding={noPadding} class:compact class:has-control={children}>
+	<div
+		class="detail-row"
+		class:no-hover={noHover}
+		class:no-padding={noPadding}
+		class:compact
+		class:has-control={children}
+	>
 		<span class="label">{label}</span>
 		<span class="value">
 			{#if children}

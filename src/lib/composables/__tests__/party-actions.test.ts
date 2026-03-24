@@ -74,9 +74,7 @@ describe('usePartyActions', () => {
 
 		it('error clears when starting a new operation', async () => {
 			// First call fails
-			vi.mocked(mutations.party.update.mutateAsync).mockRejectedValueOnce(
-				new Error('first fail')
-			)
+			vi.mocked(mutations.party.update.mutateAsync).mockRejectedValueOnce(new Error('first fail'))
 			await actions.updatePartyDetails({ name: 'Name 1' })
 			expect(actions.error).toBe('first fail')
 
@@ -88,9 +86,7 @@ describe('usePartyActions', () => {
 
 		it('error from syncFromCollection does not leak into updatePartyDetails', async () => {
 			actions = createActions({ getHasCollectionLinks: () => true })
-			vi.mocked(mutations.grid.syncAllItems.mutateAsync).mockRejectedValue(
-				new Error('sync fail')
-			)
+			vi.mocked(mutations.grid.syncAllItems.mutateAsync).mockRejectedValue(new Error('sync fail'))
 
 			await actions.syncFromCollection()
 			expect(actions.error).toBe('sync fail')
@@ -150,9 +146,7 @@ describe('usePartyActions', () => {
 
 	describe('UX behaviors', () => {
 		it('deleteParty closes dialog on failure so user is not stuck', async () => {
-			vi.mocked(mutations.party.delete.mutateAsync).mockRejectedValue(
-				new Error('Delete failed')
-			)
+			vi.mocked(mutations.party.delete.mutateAsync).mockRejectedValue(new Error('Delete failed'))
 			actions.deleteDialogOpen = true
 
 			await actions.deleteParty()

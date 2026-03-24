@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { GridItem, GridItemType } from '$lib/composables/drag-drop.svelte'
 	import { getDragDropContext } from '$lib/composables/drag-drop.svelte'
@@ -13,31 +12,19 @@
 		children?: any
 	}
 
-	let {
-		container,
-		position,
-		type,
-		item,
-		canDrop = true,
-		onDrop,
-		children
-	}: Props = $props()
+	let { container, position, type, item, canDrop = true, onDrop, children }: Props = $props()
 
 	const dragContext = getDragDropContext()
 	let elementRef: HTMLElement | undefined = $state()
 
 	let isHovered = $derived(
 		dragContext?.state.hoveredOver?.container === container &&
-		dragContext?.state.hoveredOver?.position === position
+			dragContext?.state.hoveredOver?.position === position
 	)
 
-	let isValidDrop = $derived(
-		isHovered && dragContext?.state.validDrop
-	)
+	let isValidDrop = $derived(isHovered && dragContext?.state.validDrop)
 
-	let isInvalidDrop = $derived(
-		isHovered && !dragContext?.state.validDrop
-	)
+	let isInvalidDrop = $derived(isHovered && !dragContext?.state.validDrop)
 
 	function handleDragOver(e: DragEvent) {
 		if (!canDrop || !dragContext) return
@@ -53,10 +40,7 @@
 			const target = { container, position, type }
 			dragContext.updateHover(target)
 
-			const isValid = dragContext.validateDrop(
-				dragContext.state.draggedItem.source,
-				target
-			)
+			const isValid = dragContext.validateDrop(dragContext.state.draggedItem.source, target)
 
 			if (!isValid) {
 				e.dataTransfer!.dropEffect = 'none'

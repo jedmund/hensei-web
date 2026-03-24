@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
@@ -14,17 +13,21 @@
 		onFetchWiki?: () => Promise<EntityRawData>
 	}
 
-	let { wikiRaw, gameRawEn, gameRawJp, isLoading = false, canEdit = false, onFetchWiki }: Props =
-		$props()
+	let {
+		wikiRaw,
+		gameRawEn,
+		gameRawJp,
+		isLoading = false,
+		canEdit = false,
+		onFetchWiki
+	}: Props = $props()
 
 	let selectedLang = $state('en')
 	let isFetching = $state(false)
 	let fetchError = $state<string | null>(null)
 
 	const currentGameRaw = $derived(selectedLang === 'en' ? gameRawEn : gameRawJp)
-	const formattedGameRaw = $derived(
-		currentGameRaw ? JSON.stringify(currentGameRaw, null, 2) : null
-	)
+	const formattedGameRaw = $derived(currentGameRaw ? JSON.stringify(currentGameRaw, null, 2) : null)
 
 	async function handleFetchWiki() {
 		if (!onFetchWiki) return
@@ -50,12 +53,7 @@
 			<div class="section-header">
 				<h3>Wiki Raw</h3>
 				{#if canEdit && onFetchWiki}
-					<Button
-						variant="secondary"
-						size="small"
-						onclick={handleFetchWiki}
-						disabled={isFetching}
-					>
+					<Button variant="secondary" size="small" onclick={handleFetchWiki} disabled={isFetching}>
 						{isFetching ? 'Fetching...' : 'Fetch Wiki'}
 					</Button>
 				{/if}

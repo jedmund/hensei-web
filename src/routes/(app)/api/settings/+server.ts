@@ -10,7 +10,7 @@ export const POST: RequestHandler = async ({ cookies, request, locals }) => {
 	}
 
 	try {
-		const body = await request.json() as UserCookie & { username?: string }
+		const body = (await request.json()) as UserCookie & { username?: string }
 
 		// Calculate expiry date (60 days from now)
 		const expires = new Date()
@@ -20,10 +20,14 @@ export const POST: RequestHandler = async ({ cookies, request, locals }) => {
 		if (body.username) {
 			const account = getAccountFromCookies(cookies)
 			if (account) {
-				setAccountCookie(cookies, { ...account, username: body.username }, {
-					secure: true,
-					expires
-				})
+				setAccountCookie(
+					cookies,
+					{ ...account, username: body.username },
+					{
+						secure: true,
+						expires
+					}
+				)
 			}
 		}
 

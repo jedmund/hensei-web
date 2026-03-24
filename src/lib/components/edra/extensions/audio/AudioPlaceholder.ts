@@ -1,15 +1,15 @@
-import { Editor, Node, mergeAttributes, type CommandProps, type NodeViewProps } from '@tiptap/core';
-import type { Component } from 'svelte';
-import { SvelteNodeViewRenderer } from 'svelte-tiptap';
+import { Editor, Node, mergeAttributes, type CommandProps, type NodeViewProps } from '@tiptap/core'
+import type { Component } from 'svelte'
+import { SvelteNodeViewRenderer } from 'svelte-tiptap'
 
 export interface AudioPlaceholderOptions {
-	HTMLAttributes: Record<string, object>;
-	onDrop: (files: File[], editor: Editor) => void;
-	onDropRejected?: (files: File[], editor: Editor) => void;
-	onEmbed: (url: string, editor: Editor) => void;
-	allowedMimeTypes?: Record<string, string[]>;
-	maxFiles?: number;
-	maxSize?: number;
+	HTMLAttributes: Record<string, object>
+	onDrop: (files: File[], editor: Editor) => void
+	onDropRejected?: (files: File[], editor: Editor) => void
+	onEmbed: (url: string, editor: Editor) => void
+	allowedMimeTypes?: Record<string, string[]>
+	maxFiles?: number
+	maxSize?: number
 }
 
 declare module '@tiptap/core' {
@@ -18,8 +18,8 @@ declare module '@tiptap/core' {
 			/**
 			 * Inserts an audio placeholder
 			 */
-			insertAudioPlaceholder: () => ReturnType;
-		};
+			insertAudioPlaceholder: () => ReturnType
+		}
 	}
 }
 
@@ -34,14 +34,14 @@ export const AudioPlaceholder = (
 				onDrop: () => {},
 				onDropRejected: () => {},
 				onEmbed: () => {}
-			};
+			}
 		},
 		parseHTML() {
-			return [{ tag: `div[data-type="${this.name}"]` }];
+			return [{ tag: `div[data-type="${this.name}"]` }]
 		},
 
 		renderHTML({ HTMLAttributes }) {
-			return ['div', mergeAttributes(HTMLAttributes)];
+			return ['div', mergeAttributes(HTMLAttributes)]
 		},
 		group: 'block',
 		draggable: true,
@@ -50,15 +50,15 @@ export const AudioPlaceholder = (
 		isolating: true,
 
 		addNodeView() {
-			return SvelteNodeViewRenderer(component);
+			return SvelteNodeViewRenderer(component)
 		},
 		addCommands() {
 			return {
 				insertAudioPlaceholder: () => (props: CommandProps) => {
 					return props.commands.insertContent({
 						type: 'audio-placeholder'
-					});
+					})
 				}
-			};
+			}
 		}
-	});
+	})

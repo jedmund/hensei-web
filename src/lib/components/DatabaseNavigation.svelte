@@ -80,11 +80,7 @@
 	<ul role="list" class="database-back-section">
 		<li>
 			<Tooltip content={m.nav_back_to_site()}>
-				<a
-					href={galleryHref}
-					class="database-back-button"
-					aria-label={m.nav_back_to_site()}
-				>
+				<a href={galleryHref} class="database-back-button" aria-label={m.nav_back_to_site()}>
 					<Icon name="home" size={21} />
 				</a>
 			</Tooltip>
@@ -169,12 +165,15 @@
 				{:else}
 					{#if databaseNewHref}
 						<DropdownItem>
-							<a href={databaseNewHref}>{m.nav_new_single({ entity: databaseEntityLabel ?? '' })}</a>
+							<a href={databaseNewHref}>{m.nav_new_single({ entity: databaseEntityLabel ?? '' })}</a
+							>
 						</DropdownItem>
 					{/if}
 					{#if databaseImportHref}
 						<DropdownItem>
-							<a href={databaseImportHref}>{m.nav_new_multiple({ entity: databaseEntityLabel ?? '' })}</a>
+							<a href={databaseImportHref}
+								>{m.nav_new_multiple({ entity: databaseEntityLabel ?? '' })}</a
+							>
 						</DropdownItem>
 					{/if}
 					{#if currentDatabaseEntity === 'weapon'}
@@ -186,7 +185,9 @@
 					{#if currentDatabaseEntity === 'character'}
 						<DropdownMenu.Separator class="dropdown-separator" />
 						<DropdownItem>
-							<a href={localizeHref('/database/series/characters/new')}>{m.nav_new_character_series()}</a>
+							<a href={localizeHref('/database/series/characters/new')}
+								>{m.nav_new_character_series()}</a
+							>
 						</DropdownItem>
 					{/if}
 				{/if}

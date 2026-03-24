@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
@@ -95,7 +94,9 @@
 					<span class="badge" class:active={group.extra}>{group.extra ? 'Yes' : 'No'}</span>
 				</DetailItem>
 				<DetailItem label="Guidebooks">
-					<span class="badge" class:active={group.guidebooks}>{group.guidebooks ? 'Yes' : 'No'}</span>
+					<span class="badge" class:active={group.guidebooks}
+						>{group.guidebooks ? 'Yes' : 'No'}</span
+					>
 				</DetailItem>
 				<DetailItem label="Unlimited">
 					<span class="badge" class:active={group.unlimited}>{group.unlimited ? 'Yes' : 'No'}</span>
@@ -114,10 +115,13 @@
 					</div>
 				</DetailsContainer>
 			{/if}
-
 		</section>
 	{:else}
-		<NotFoundPlaceholder title="Raid Group Not Found" backHref="/database/raids" backLabel="Back to Groups" />
+		<NotFoundPlaceholder
+			title="Raid Group Not Found"
+			backHref="/database/raids"
+			backLabel="Back to Groups"
+		/>
 	{/if}
 </div>
 

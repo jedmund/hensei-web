@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import type { Job } from '$lib/types/api/entities'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'

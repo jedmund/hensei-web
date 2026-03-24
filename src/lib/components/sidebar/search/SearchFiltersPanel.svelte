@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import Select from '../../ui/Select.svelte'
 	import Switch from '../../ui/switch/Switch.svelte'
@@ -196,11 +195,7 @@
 			<label class="filter-label">{m.extra_summons_subaura()}</label>
 			{#if subauraLocked}
 				<Tooltip content={m.search_filter_subaura_locked()}>
-					<Switch
-						checked={subauraFilter}
-						size="small"
-						disabled={true}
-					/>
+					<Switch checked={subauraFilter} size="small" disabled={true} />
 				</Tooltip>
 			{:else}
 				<Switch

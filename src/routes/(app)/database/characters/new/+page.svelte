@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
@@ -228,7 +227,7 @@
 			// Trigger image download in background (don't await - it queues a job)
 			entityAdapter.downloadCharacterImages(newCharacter.id).catch(console.error)
 			const styleSuffix = newCharacter.styleSwap ? '/style' : ''
-		await goto(`/database/characters/${newCharacter.granblueId}${styleSuffix}`)
+			await goto(`/database/characters/${newCharacter.granblueId}${styleSuffix}`)
 		} catch (error) {
 			saveError = 'Failed to create character. Please try again.'
 			console.error('Create error:', error)

@@ -20,7 +20,14 @@
 		indicator?: Snippet
 	}
 
-	let { party, href: hrefProp, loading = false, disabled = false, dimmed = false, indicator }: Props = $props()
+	let {
+		party,
+		href: hrefProp,
+		loading = false,
+		disabled = false,
+		dimmed = false,
+		indicator
+	}: Props = $props()
 
 	let currentView: 'weapons' | 'summons' | 'characters' = $state('weapons')
 
@@ -51,7 +58,8 @@
 	tabindex={disabled ? undefined : 0}
 	onmouseleave={() => (currentView = 'weapons')}
 >
-	<svelte:element this={tag}
+	<svelte:element
+		this={tag}
 		class="inner"
 		href={disabled ? undefined : href}
 		data-sveltekit-preload-data={disabled ? undefined : 'hover'}
@@ -68,7 +76,12 @@
 					{#if party.job}
 						<Tooltip content={displayName(party.job)}>
 							{#snippet children()}
-								<img class="job-icon" src={getJobIconUrl(party.job.granblueId)} alt="" loading="lazy" />
+								<img
+									class="job-icon"
+									src={getJobIconUrl(party.job.granblueId)}
+									alt=""
+									loading="lazy"
+								/>
 							{/snippet}
 						</Tooltip>
 					{/if}
@@ -110,7 +123,9 @@
 		</div>
 		<div class="gridContainer">
 			{#if currentView === 'characters'}
-				<div class="characterGrid"><CharacterRep {party} unlimited={party.raid?.group?.unlimited} /></div>
+				<div class="characterGrid">
+					<CharacterRep {party} unlimited={party.raid?.group?.unlimited} />
+				</div>
 			{:else if currentView === 'summons'}
 				<div class="summonGrid"><SummonRep {party} extendedView={true} /></div>
 			{:else}

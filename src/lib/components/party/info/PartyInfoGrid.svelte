@@ -31,7 +31,18 @@
 		onSwitchCollectionUser?: (target: 'viewer' | 'source') => void
 	}
 
-	let { party, canEdit, onOpenDescription, onEditDescription, onOpenEdit, onRaidSelect, menu, authUser, activeCollectionUser, onSwitchCollectionUser }: Props = $props()
+	let {
+		party,
+		canEdit,
+		onOpenDescription,
+		onEditDescription,
+		onOpenEdit,
+		onRaidSelect,
+		menu,
+		authUser,
+		activeCollectionUser,
+		onSwitchCollectionUser
+	}: Props = $props()
 
 	// Check if data exists for each tile
 	const hasRaid = $derived(!!party.raid)
@@ -48,12 +59,14 @@
 			raidName,
 			PartiesPane,
 			{
-				pinnedFilters: [{
-					kind: 'raid' as const,
-					value: party.raid.id,
-					label: localizedName(party.raid.name) ?? party.raid.slug,
-					pinned: true
-				}],
+				pinnedFilters: [
+					{
+						kind: 'raid' as const,
+						value: party.raid.id,
+						label: localizedName(party.raid.name) ?? party.raid.slug,
+						pinned: true
+					}
+				],
 				defaultElement: party.element,
 				excludedKinds: ['raid'] as const,
 				resetKey: party.raid.id

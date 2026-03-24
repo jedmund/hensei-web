@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { getProficiencyLabel, getProficiencyIcon } from '$lib/utils/proficiency'
 

@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import MasteryRow from './MasteryRow.svelte'
 	import { overMastery, type ItemSkill } from '$lib/data/overMastery'
@@ -104,8 +103,12 @@
 	const hpSkill = $derived(getSkillData(HP_MODIFIER))
 
 	// Fixed modifier options for ATK and HP (single option, disabled)
-	const atkModifierOptions = $derived([{ value: ATK_MODIFIER, label: atkSkill ? localizedName(atkSkill.name) : 'ATK' }])
-	const hpModifierOptions = $derived([{ value: HP_MODIFIER, label: hpSkill ? localizedName(hpSkill.name) : 'HP' }])
+	const atkModifierOptions = $derived([
+		{ value: ATK_MODIFIER, label: atkSkill ? localizedName(atkSkill.name) : 'ATK' }
+	])
+	const hpModifierOptions = $derived([
+		{ value: HP_MODIFIER, label: hpSkill ? localizedName(hpSkill.name) : 'HP' }
+	])
 
 	// Strength options
 	const atkStrengthOptions = $derived(buildStrengthOptions(atkSkill))

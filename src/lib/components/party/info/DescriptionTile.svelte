@@ -84,17 +84,22 @@
 	}: Props = $props()
 
 	const showCollectionSwitcher = $derived(
-		!!authUser?.username && !!collectionSourceUser?.username &&
-		authUser.username !== collectionSourceUser.username
+		!!authUser?.username &&
+			!!collectionSourceUser?.username &&
+			authUser.username !== collectionSourceUser.username
 	)
 
 	const avatarSrc = $derived(getAvatarSrc(user?.avatar?.picture))
 	const avatarSrcSet = $derived(getAvatarSrcSet(user?.avatar?.picture))
-	const relativeTime = $derived(updatedAt ? m.time_last_updated({ time: formatRelativeTime(updatedAt) }) : null)
+	const relativeTime = $derived(
+		updatedAt ? m.time_last_updated({ time: formatRelativeTime(updatedAt) }) : null
+	)
 	const visibilityLabel = $derived(
-		visibility === PartyVisibility.UNLISTED ? m.visibility_unlisted()
-		: visibility === PartyVisibility.PRIVATE ? m.visibility_private()
-		: null
+		visibility === PartyVisibility.UNLISTED
+			? m.visibility_unlisted()
+			: visibility === PartyVisibility.PRIVATE
+				? m.visibility_private()
+				: null
 	)
 
 	// Measure content height to determine if fade gradient is needed
@@ -121,7 +126,9 @@
 			const getNodeText = (node: JSONContent): string => {
 				if (node.type === 'text') return node.text ?? ''
 				if (node.type === 'mention') {
-					const id = node.attrs?.id as { name?: { en?: string; ja?: string }; granblue_en?: string } | undefined
+					const id = node.attrs?.id as
+						| { name?: { en?: string; ja?: string }; granblue_en?: string }
+						| undefined
 					const name = localizedName(id?.name)
 					return name !== '—' ? name : (id?.granblue_en ?? '')
 				}
@@ -146,7 +153,11 @@
 			return paragraphs
 		} catch {
 			// Plain text fallback - return first two non-empty lines
-			return content.split('\n').map((l) => l.trim()).filter(Boolean).slice(0, 2)
+			return content
+				.split('\n')
+				.map((l) => l.trim())
+				.filter(Boolean)
+				.slice(0, 2)
 		}
 	}
 
@@ -161,10 +172,30 @@
 	}
 
 	const settings: Setting[] = $derived([
-		{ key: 'chargeAttack', label: `CA ${chargeAttack ?? true ? m.battle_on() : m.battle_off()}`, tooltip: m.battle_charge_attack(), active: chargeAttack ?? true },
-		{ key: 'fullAuto', label: `FA ${fullAuto ? m.battle_on() : m.battle_off()}`, tooltip: m.battle_full_auto(), active: fullAuto ?? false },
-		{ key: 'autoSummon', label: `AS ${autoSummon ? m.battle_on() : m.battle_off()}`, tooltip: m.battle_auto_summon(), active: autoSummon ?? false },
-		{ key: 'autoGuard', label: `AG ${autoGuard ? m.battle_on() : m.battle_off()}`, tooltip: m.battle_auto_guard(), active: autoGuard ?? false }
+		{
+			key: 'chargeAttack',
+			label: `CA ${(chargeAttack ?? true) ? m.battle_on() : m.battle_off()}`,
+			tooltip: m.battle_charge_attack(),
+			active: chargeAttack ?? true
+		},
+		{
+			key: 'fullAuto',
+			label: `FA ${fullAuto ? m.battle_on() : m.battle_off()}`,
+			tooltip: m.battle_full_auto(),
+			active: fullAuto ?? false
+		},
+		{
+			key: 'autoSummon',
+			label: `AS ${autoSummon ? m.battle_on() : m.battle_off()}`,
+			tooltip: m.battle_auto_summon(),
+			active: autoSummon ?? false
+		},
+		{
+			key: 'autoGuard',
+			label: `AG ${autoGuard ? m.battle_on() : m.battle_off()}`,
+			tooltip: m.battle_auto_guard(),
+			active: autoGuard ?? false
+		}
 	])
 
 	function formatClearTime(seconds?: number | null): string | null {
@@ -175,7 +206,6 @@
 	}
 
 	const formattedClearTime = $derived(formatClearTime(clearTime))
-
 </script>
 
 <div class="description-tile" class:has-fade={needsFade}>
@@ -206,7 +236,11 @@
 			<div class="creator-pair-line">
 				<AvatarPair back={sourceParty.user} front={user} size={24} />
 				<span class="creator-pair-text">
-					{m.party_remixed_with_collection({ username: user.username ?? '', otherUsername: sourceParty.user.username ?? '', collectionUsername: collectionSourceUser.username ?? '' })}
+					{m.party_remixed_with_collection({
+						username: user.username ?? '',
+						otherUsername: sourceParty.user.username ?? '',
+						collectionUsername: collectionSourceUser.username ?? ''
+					})}
 				</span>
 				{#if visibilityLabel}
 					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
@@ -219,7 +253,10 @@
 			<div class="creator-pair-line">
 				<AvatarPair back={sourceParty.user} front={user} size={24} />
 				<span class="creator-pair-text">
-					{m.party_remixed({ username: user.username ?? '', otherUsername: sourceParty.user.username ?? '' })}
+					{m.party_remixed({
+						username: user.username ?? '',
+						otherUsername: sourceParty.user.username ?? ''
+					})}
 				</span>
 				{#if visibilityLabel}
 					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
@@ -257,7 +294,9 @@
 							<div class="avatar-placeholder" aria-hidden="true"></div>
 						{/if}
 					</div>
-					<span class="username">{m.party_remixed_from_anonymous({ username: user.username ?? '' })}</span>
+					<span class="username"
+						>{m.party_remixed_from_anonymous({ username: user.username ?? '' })}</span
+					>
 				</a>
 				{#if visibilityLabel}
 					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
@@ -295,7 +334,9 @@
 							<div class="avatar-placeholder" aria-hidden="true"></div>
 						{/if}
 					</div>
-					<span class="username">{m.party_using_own_collection({ username: user.username ?? '' })}</span>
+					<span class="username"
+						>{m.party_using_own_collection({ username: user.username ?? '' })}</span
+					>
 				</a>
 				{#if visibilityLabel}
 					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
@@ -308,7 +349,10 @@
 			<div class="creator-pair-line">
 				<AvatarPair back={user} front={collectionSourceUser} size={24} />
 				<span class="creator-pair-text">
-					{m.party_using_others_collection({ username: user.username ?? '', otherUsername: collectionSourceUser.username ?? '' })}
+					{m.party_using_others_collection({
+						username: user.username ?? '',
+						otherUsername: collectionSourceUser.username ?? ''
+					})}
 				</span>
 				{#if visibilityLabel}
 					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
@@ -385,7 +429,13 @@
 	</div>
 
 	<!-- Description content (clickable) -->
-	<button type="button" class="description-content" onclick={canEdit && !previewParagraphs.length && onEditDescription ? onEditDescription : onOpenDescription}>
+	<button
+		type="button"
+		class="description-content"
+		onclick={canEdit && !previewParagraphs.length && onEditDescription
+			? onEditDescription
+			: onOpenDescription}
+	>
 		{#if previewParagraphs.length}
 			<div class="preview-text" bind:this={contentEl}>
 				{#each previewParagraphs as paragraph}
@@ -393,7 +443,9 @@
 				{/each}
 			</div>
 		{:else}
-			<span class="empty-state">{canEdit ? m.party_write_description() : m.party_no_description()}</span>
+			<span class="empty-state"
+				>{canEdit ? m.party_write_description() : m.party_no_description()}</span
+			>
 		{/if}
 	</button>
 </div>
@@ -645,5 +697,4 @@
 			color: var(--auto-guard-text);
 		}
 	}
-
 </style>

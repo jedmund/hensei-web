@@ -164,7 +164,10 @@
 
 	// State-gated infinite scroll (inspired by svelte-infinite)
 	// Encapsulates intersection observer, state machine, and all reactive effects
-	const loader = useInfiniteLoader(() => collectionQuery, () => sentinelEl)
+	const loader = useInfiniteLoader(
+		() => collectionQuery,
+		() => sentinelEl
+	)
 
 	// Flatten all artifacts from pages
 	const allArtifacts = $derived.by((): CollectionArtifact[] => {
@@ -216,7 +219,10 @@
 
 <div class="collection-page">
 	<!-- Filters bar -->
-	<div class="filters-bar" style:--accent-color={userElement ? `var(--${userElement}-button-bg)` : undefined}>
+	<div
+		class="filters-bar"
+		style:--accent-color={userElement ? `var(--${userElement}-button-bg)` : undefined}
+	>
 		<div class="filter-group">
 			<Select
 				value={rarityFilter}
@@ -268,7 +274,13 @@
 			/>
 
 			{#if hasActiveFilters}
-				<Button variant="element-ghost" size="small" element={userElement} onclick={clearAllFilters} class="clear-btn">
+				<Button
+					variant="element-ghost"
+					size="small"
+					element={userElement}
+					onclick={clearAllFilters}
+					class="clear-btn"
+				>
 					{m.filter_clear()}
 				</Button>
 			{/if}

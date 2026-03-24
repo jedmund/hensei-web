@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
@@ -11,11 +10,7 @@
 		editData?: any
 	}
 
-	let {
-		summon,
-		editMode = false,
-		editData = $bindable()
-	}: Props = $props()
+	let { summon, editMode = false, editData = $bindable() }: Props = $props()
 
 	// Promotion options for multiselect
 	const promotionOptions = Object.entries(PROMOTION_NAMES).map(([value, label]) => ({

@@ -28,10 +28,7 @@ import type { Party } from '$lib/types/api/party'
  * resolvePartyShortcode(queryClient, '550e8400-...') // => 'abc123'
  * ```
  */
-export function resolvePartyShortcode(
-	queryClient: QueryClient,
-	partyId: string | number
-): string {
+export function resolvePartyShortcode(queryClient: QueryClient, partyId: string | number): string {
 	const idStr = String(partyId)
 
 	// If it looks like a shortcode (short alphanumeric), return as-is

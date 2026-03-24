@@ -137,7 +137,11 @@
 				/>
 			</div>
 			<main class="main-content" bind:this={mainContent} onscroll={handleScroll}>
-				<svelte:boundary onerror={(e) => { if (import.meta.env.DEV) console.error('Page render error:', e) }}>
+				<svelte:boundary
+					onerror={(e) => {
+						if (import.meta.env.DEV) console.error('Page render error:', e)
+					}}
+				>
 					{@render children?.()}
 					{#snippet failed(error, reset)}
 						<div class="page-error" role="alert">
@@ -190,7 +194,9 @@
 				height: 81px; // Matches $nav-height
 				z-index: $z-sticky - 1; // Above content, below nav
 				pointer-events: none;
-				transition: right $duration-slide ease-in-out, opacity 0.2s ease-in-out;
+				transition:
+					right $duration-slide ease-in-out,
+					opacity 0.2s ease-in-out;
 				opacity: 0;
 
 				// Color gradient for the background

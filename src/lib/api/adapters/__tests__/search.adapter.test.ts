@@ -475,7 +475,10 @@ describe('SearchAdapter', () => {
 		it('should search guidebooks without query', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => ({ results: [], meta: { count: 0, page: 1, per_page: 50, total_pages: 0 } })
+				json: async () => ({
+					results: [],
+					meta: { count: 0, page: 1, per_page: 50, total_pages: 0 }
+				})
 			})
 
 			await adapter.searchGuidebooks({ locale: 'ja' })

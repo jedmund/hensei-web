@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { MediaQuery } from 'svelte/reactivity'
@@ -81,7 +80,7 @@
 			onValueChange={handleMultipleChange}
 			size="medium"
 			{contained}
-			disabled={disabled}
+			{disabled}
 			placeholder={m.placeholder_select_proficiencies()}
 			fullWidth={true}
 			class={className}
@@ -93,7 +92,7 @@
 			onValueChange={handleSingleChange}
 			size="medium"
 			{contained}
-			disabled={disabled}
+			{disabled}
 			placeholder={m.placeholder_select_proficiency()}
 			fullWidth={true}
 			class={className}
@@ -107,7 +106,7 @@
 		{contained}
 		{showClear}
 		size={segmentedSize}
-		disabled={disabled}
+		{disabled}
 		class={className}
 	/>
 {/if}

@@ -247,10 +247,7 @@ export function buildUrlFromFilters(
 	const params = new URLSearchParams()
 
 	// Element
-	const elementParam = buildParamString(
-		filters.element,
-		ELEMENT_TO_PARAM as Record<number, string>
-	)
+	const elementParam = buildParamString(filters.element, ELEMENT_TO_PARAM as Record<number, string>)
 	if (elementParam) params.set('element', elementParam)
 
 	// Rarity
@@ -266,10 +263,7 @@ export function buildUrlFromFilters(
 
 	// Season (characters only)
 	if (entityType === 'character' && filters.season.length > 0) {
-		const seasonParam = buildParamString(
-			filters.season,
-			SEASON_TO_PARAM as Record<number, string>
-		)
+		const seasonParam = buildParamString(filters.season, SEASON_TO_PARAM as Record<number, string>)
 		if (seasonParam) params.set('season', seasonParam)
 	}
 
