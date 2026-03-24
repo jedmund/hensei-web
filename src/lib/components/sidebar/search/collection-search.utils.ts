@@ -25,7 +25,11 @@ export function mapCollectionToSearchResult(
 		name: entity.name,
 		element: entity.element,
 		rarity: entity.rarity,
-		collectionId: item.id
+		proficiency: 'proficiency' in entity ? entity.proficiency : undefined,
+		collectionId: item.id,
+		styleSwap: 'character' in item ? item.character.styleSwap : undefined,
+		season: 'character' in item ? item.character.season : undefined,
+		series: 'character' in item ? item.character.series : undefined
 	}
 }
 

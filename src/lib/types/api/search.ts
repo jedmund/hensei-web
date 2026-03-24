@@ -2,6 +2,7 @@
  * Search-related types for collection-to-grid linking
  */
 
+import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'
 import type { SearchResult } from '$lib/api/adapters/search.adapter'
 
 /**
@@ -34,4 +35,10 @@ export interface AddItemResult {
 	collectionId?: string
 	/** Type of entity */
 	searchableType?: 'Weapon' | 'Character' | 'Summon'
+	/** Whether this character is a style swap variant (characters only) */
+	styleSwap?: boolean
+	/** Season variant (characters only) */
+	season?: number | null
+	/** Character series (characters only) */
+	series?: (number | CharacterSeriesRef)[] | null
 }

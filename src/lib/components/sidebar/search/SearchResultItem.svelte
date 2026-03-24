@@ -12,7 +12,7 @@
 		getSummonImage,
 		getPlaceholder
 	} from '$lib/features/database/detail/image'
-	import { getWeaponFallbackImage, handleImageFallback } from '$lib/utils/images'
+	import { getWeaponFallbackImage, handleImageFallback, STYLE_SWAP_POSE } from '$lib/utils/images'
 	import type { AddItemResult } from '$lib/types/api/search'
 
 	interface Props {
@@ -39,7 +39,7 @@
 
 		switch (type) {
 			case 'character':
-				return getCharacterImage(id, 'square', '01')
+				return getCharacterImage(id, 'square', result.styleSwap ? STYLE_SWAP_POSE : '01')
 			case 'weapon':
 				return getWeaponImage(id, 'square', result.element === 0 ? 0 : undefined)
 			case 'summon':

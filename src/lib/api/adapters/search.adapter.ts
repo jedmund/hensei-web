@@ -63,6 +63,10 @@ export interface SearchResult {
 	type?: 'weapon' | 'character' | 'summon'
 	/** Type of entity */
 	searchableType: 'Weapon' | 'Character' | 'Summon'
+	/** Whether this character is a style swap variant (characters only) */
+	styleSwap?: boolean
+	/** Season variant (characters only) */
+	season?: number | null
 }
 
 /**
