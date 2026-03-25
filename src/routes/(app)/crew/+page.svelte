@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation'
 	import { resolve } from '$app/paths'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
+	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
 	import { useCreateCrew } from '$lib/api/mutations/crew.mutations'
@@ -32,8 +32,6 @@
 	let { data }: Props = $props()
 
 	const isAuthenticated = $derived(data.isAuthenticated)
-	const queryClient = useQueryClient()
-
 	// Query for the user's crew (only when authenticated)
 	const crewQuery = createQuery(() => ({
 		...crewQueries.myCrew(),
@@ -187,7 +185,8 @@
 										<Button
 											variant="secondary"
 											size="small"
-											onclick={() => goto(resolve(localizeHref(`/crew/join?invitation=${invitation.id}`)))}
+											onclick={() =>
+												goto(resolve(localizeHref(`/crew/join?invitation=${invitation.id}`)))}
 										>
 											{m.crew_view()}
 										</Button>
@@ -279,67 +278,67 @@
 
 <!-- Create Crew Modal -->
 <Dialog bind:open={createModalOpen} onOpenChange={(open) => !open && handleCloseModal()}>
-		<ModalHeader title={m.crew_create()} />
+	<ModalHeader title={m.crew_create()} />
 
-		<ModalBody>
-				<div class="modal-form">
-					{#if error}
-						<div class="error-message">{error}</div>
-					{/if}
+	<ModalBody>
+		<div class="modal-form">
+			{#if error}
+				<div class="error-message">{error}</div>
+			{/if}
 
-					<div class="form-fields">
-						<Input
-							label={m.crew_name_label()}
-							bind:value={crewName}
-							placeholder={m.crew_name_placeholder_short()}
-							maxLength={100}
-							fullWidth
-							contained
-						/>
+			<div class="form-fields">
+				<Input
+					label={m.crew_name_label()}
+					bind:value={crewName}
+					placeholder={m.crew_name_placeholder_short()}
+					maxLength={100}
+					fullWidth
+					contained
+				/>
 
-						<Input
-							label="{m.crew_gamertag_label()} {m.crew_gamertag_optional()}"
-							bind:value={crewGamertag}
-							placeholder={m.crew_gamertag_placeholder()}
-							maxLength={4}
-							fullWidth
-							contained
-						/>
+				<Input
+					label="{m.crew_gamertag_label()} {m.crew_gamertag_optional()}"
+					bind:value={crewGamertag}
+					placeholder={m.crew_gamertag_placeholder()}
+					maxLength={4}
+					fullWidth
+					contained
+				/>
 
-						<Input
-							label="{m.crew_granblue_id_label()} {m.crew_gamertag_optional()}"
-							bind:value={crewGranblueCrewId}
-							placeholder={m.crew_granblue_id_placeholder()}
-							fullWidth
-							contained
-						/>
+				<Input
+					label="{m.crew_granblue_id_label()} {m.crew_gamertag_optional()}"
+					bind:value={crewGranblueCrewId}
+					placeholder={m.crew_granblue_id_placeholder()}
+					fullWidth
+					contained
+				/>
 
-						<div class="form-field">
-							<label for="crew-description"
-								>{m.crew_description_label()}
-								<span class="optional">{m.crew_gamertag_optional()}</span></label
-							>
-							<textarea
-								id="crew-description"
-								bind:value={crewDescription}
-								placeholder={m.crew_description_placeholder()}
-								maxlength="500"
-								rows="3"
-							></textarea>
-						</div>
-					</div>
+				<div class="form-field">
+					<label for="crew-description"
+						>{m.crew_description_label()}
+						<span class="optional">{m.crew_gamertag_optional()}</span></label
+					>
+					<textarea
+						id="crew-description"
+						bind:value={crewDescription}
+						placeholder={m.crew_description_placeholder()}
+						maxlength="500"
+						rows="3"
+					></textarea>
 				</div>
-		</ModalBody>
+			</div>
+		</div>
+	</ModalBody>
 
-		<ModalFooter
-			onCancel={handleCloseModal}
-			cancelDisabled={createCrewMutation.isPending}
-			primaryAction={{
-				label: createCrewMutation.isPending ? m.crew_creating() : m.crew_create(),
-				onclick: handleCreateCrew,
-				disabled: !canCreate || createCrewMutation.isPending
-			}}
-		/>
+	<ModalFooter
+		onCancel={handleCloseModal}
+		cancelDisabled={createCrewMutation.isPending}
+		primaryAction={{
+			label: createCrewMutation.isPending ? m.crew_creating() : m.crew_create(),
+			onclick: handleCreateCrew,
+			disabled: !canCreate || createCrewMutation.isPending
+		}}
+	/>
 </Dialog>
 
 <CrewSettingsDialog bind:open={settingsModalOpen} />

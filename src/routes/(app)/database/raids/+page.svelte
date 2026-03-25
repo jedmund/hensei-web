@@ -1,6 +1,5 @@
 <script lang="ts">
 	import PageMeta from '$lib/components/PageMeta.svelte'
-	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
 	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
@@ -54,7 +53,11 @@
 		} else {
 			url.searchParams.delete('view')
 		}
-		goto(resolve(url.pathname + url.search), { replaceState: true, noScroll: true, keepFocus: true })
+		goto(resolve(url.pathname + url.search), {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		})
 	}
 
 	// Handle view mode change from segmented control
@@ -225,7 +228,7 @@
 			id: 'group',
 			header: 'Group',
 			width: 180,
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			template: (_val: unknown, row: any) => (row.group ? displayName(row.group) : '-')
 		}
 	]
@@ -256,11 +259,11 @@
 		})
 
 		// Row click handler
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		raidsGridApi.on('select-row', (ev: any) => {
 			const rowId = ev.id
 			if (rowId) {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 				const raid = filteredRaids.find((r: any) => r.id === rowId)
 				if (raid) {
 					handleRaidClick(raid)
@@ -275,7 +278,7 @@
 		if (!sortKey) return filteredRaids
 
 		const order = raidsSortMarks[sortKey]?.order
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		return [...filteredRaids].sort((a: any, b: any) => {
 			let valA = a[sortKey]
 			let valB = b[sortKey]
@@ -323,11 +326,11 @@
 			id: 'player_count',
 			header: 'Players',
 			width: 100,
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			template: (_val: unknown, row: any) => {
 				const raids = row.raids ?? []
 				const counts: number[] = [
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 					...new Set<number>(raids.map((r: any) => r.playerCount).filter(Boolean))
 				]
 				counts.sort((a, b) => a - b)
@@ -351,7 +354,7 @@
 			id: 'raids',
 			header: 'Raids',
 			width: 80,
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			template: (_val: unknown, row: any) => row.raids?.length?.toString() ?? '0'
 		}
 	]
@@ -363,7 +366,7 @@
 		if (!sortKey) return groups
 
 		const order = groupsSortMarks[sortKey]?.order
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		return [...groups].sort((a: any, b: any) => {
 			let valA = a[sortKey]
 			let valB = b[sortKey]
@@ -413,11 +416,11 @@
 		})
 
 		// Row click handler
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		groupsGridApi.on('select-row', (ev: any) => {
 			const rowId = ev.id
 			if (rowId) {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 				const group = (groupsQuery.data ?? []).find((g: any) => g.id === rowId)
 				if (group) {
 					handleGroupClick(group)

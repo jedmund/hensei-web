@@ -67,6 +67,7 @@
 
 	// Save state
 	let isSaving = $state(false)
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let saveError = $state<string | null>(null)
 
 	// Editable fields - initialized from character data

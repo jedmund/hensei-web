@@ -23,6 +23,7 @@
 	// Types
 	import type { PageData } from './$types'
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { data }: { data: PageData } = $props()
 
 	// Always in edit mode for new character

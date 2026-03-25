@@ -16,6 +16,7 @@
 		data: PageData
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { data }: Props = $props()
 
 	// State
@@ -54,7 +55,11 @@
 		<div class="controls">
 			<input type="text" placeholder="Search events..." bind:value={searchTerm} />
 			<div class="controls-right">
-				<Button variant="primary" size="small" onclick={() => goto(resolve('/database/gw-events/new'))}>
+				<Button
+					variant="primary"
+					size="small"
+					onclick={() => goto(resolve('/database/gw-events/new'))}
+				>
 					New Event
 				</Button>
 			</div>

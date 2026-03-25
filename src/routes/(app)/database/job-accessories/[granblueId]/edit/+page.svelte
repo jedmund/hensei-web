@@ -19,7 +19,6 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 
 	// Utils
-	import { localizedName } from '$lib/utils/locale'
 	import { getAccessoryTypeOptions } from '$lib/utils/jobAccessoryUtils'
 	import { getRarityOptions } from '$lib/utils/rarity'
 

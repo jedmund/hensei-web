@@ -175,6 +175,7 @@ export class PartyAdapter extends BaseAdapter {
 	 * Note: API expects UUID for update, not shortcode
 	 */
 	async update(params: UpdatePartyParams, headers?: Record<string, string>): Promise<Party> {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { id, shortcode: _shortcode, ...updateParams } = params
 		const response = await this.request<{ party: Party }>(`/parties/${id}`, {
 			method: 'PATCH',

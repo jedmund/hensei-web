@@ -16,7 +16,7 @@
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import type { PageData } from './$types'
 	import type { ImageItem } from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
-	import { getRaidImage, getRaidCdnImage, type RaidImageVariant } from '$lib/utils/images'
+	import { getRaidImage, getRaidCdnImage } from '$lib/utils/images'
 
 	function displayName(input: unknown): string {
 		if (!input) return '—'

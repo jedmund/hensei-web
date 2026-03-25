@@ -1,6 +1,5 @@
 <script lang="ts">
 	import PageMeta from '$lib/components/PageMeta.svelte'
-	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
 	import { resolve } from '$app/paths'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -56,7 +55,7 @@
 			header: 'Name',
 			flexgrow: 1,
 			sort: true,
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			template: (_val: unknown, row: any) => localizedName(row.name)
 		},
 		{
@@ -83,7 +82,7 @@
 			id: 'effect',
 			header: 'Effect',
 			flexgrow: 1,
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			template: (_val: unknown, row: any) => row.effect?.en ?? '—'
 		}
 	]
@@ -107,11 +106,11 @@
 			return false
 		})
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		gridApi.on('select-row', (ev: any) => {
 			const rowId = ev.id
 			if (rowId) {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 				const bullet = filteredBullets.find((b: any) => b.id === rowId)
 				if (bullet) {
 					handleBulletClick(bullet)
@@ -125,7 +124,7 @@
 		if (!sortKey) return filteredBullets
 
 		const order = sortMarks[sortKey]?.order
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		return [...filteredBullets].sort((a: any, b: any) => {
 			let valA = a[sortKey]
 			let valB = b[sortKey]

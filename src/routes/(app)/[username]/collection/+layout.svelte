@@ -306,6 +306,7 @@
 				}}
 			>
 				{@render children()}
+				<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
 				{#snippet failed(error, reset)}
 					<div class="collection-error" role="alert">
 						<p>{m.collection_load_error()}</p>

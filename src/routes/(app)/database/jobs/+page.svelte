@@ -8,7 +8,7 @@
 	import { jobQueries } from '$lib/api/queries/job.queries'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
-	import { getAccessoryTypeName, ACCESSORY_TYPES } from '$lib/utils/jobAccessoryUtils'
+	import { ACCESSORY_TYPES } from '$lib/utils/jobAccessoryUtils'
 	import { getRarityLabel } from '$lib/utils/rarity'
 	import { localizedName } from '$lib/utils/locale'
 	import { getSkillColorName } from '$lib/utils/jobUtils'
@@ -16,7 +16,6 @@
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
-	import type { JobAccessory } from '$lib/types/api/entities'
 
 	// Job cell components
 	import JobIconCell from '$lib/components/database/cells/JobIconCell.svelte'
@@ -140,7 +139,9 @@
 	let selectedType = $state<number>(0)
 
 	// Accessory type filter derived from selectedType
-	let accessoryTypeFilter = $derived<number | undefined>(selectedType === 0 ? undefined : selectedType)
+	let accessoryTypeFilter = $derived<number | undefined>(
+		selectedType === 0 ? undefined : selectedType
+	)
 
 	// Fetch all accessories
 	const accessoriesQuery = createQuery(() => ({
@@ -175,14 +176,14 @@
 	})
 
 	// Grid API reference for accessories
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
 	let accessoryApi: any
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
 	const initAccessoryGrid = (apiRef: any) => {
 		accessoryApi = apiRef
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		apiRef.on('select-row', (ev: any) => {
 			const rowId = ev.id
 			if (rowId) {
@@ -301,7 +302,7 @@
 	// Skill grid init
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
 	const initSkillGrid = (apiRef: any) => {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		apiRef.on('select-row', (ev: any) => {
 			const rowId = ev.id
 			if (rowId) {

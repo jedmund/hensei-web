@@ -146,12 +146,6 @@
 		editingCrewScore = existingScore ?? null
 		showCrewScoreModal = true
 	}
-
-	function closeCrewScoreModal() {
-		showCrewScoreModal = false
-		editingCrewScoreRound = null
-		editingCrewScore = null
-	}
 </script>
 
 <svelte:head>

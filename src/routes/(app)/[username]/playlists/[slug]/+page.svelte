@@ -7,12 +7,8 @@
 	import PlaylistHeader from '$lib/components/playlist/PlaylistHeader.svelte'
 	import AddPartiesToPlaylistPane from '$lib/components/sidebar/AddPartiesToPlaylistPane.svelte'
 	import { playlistQueries } from '$lib/api/queries/playlist.queries'
-	import {
-		useDeletePlaylist,
-		useRemovePartyFromPlaylist
-	} from '$lib/api/mutations/playlist.mutations'
+	import { useDeletePlaylist } from '$lib/api/mutations/playlist.mutations'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import Icon from '$lib/components/Icon.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import * as m from '$lib/paraglide/messages'
@@ -26,18 +22,12 @@
 	}))
 
 	const deleteMutation = useDeletePlaylist()
-	const removeMutation = useRemovePartyFromPlaylist()
-
 	const playlist = $derived(playlistQuery.data ?? data.playlist)
 	const parties = $derived(playlist.parties ?? [])
 
 	async function handleDelete() {
 		await deleteMutation.mutateAsync(playlist.id)
 		goto(resolve(localizeHref(`/${data.username}/playlists`)))
-	}
-
-	async function handleRemoveParty(partyId: string) {
-		await removeMutation.mutateAsync({ playlistId: playlist.id, partyId })
 	}
 
 	function handleAddTeams() {

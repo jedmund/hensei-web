@@ -24,6 +24,7 @@ interface JobHandlerOptions {
 
 export function useJobHandlers(opts: JobHandlerOptions) {
 	let loading = $state(false)
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let error = $state<string | null>(null)
 
 	async function getShortcode(): Promise<string | undefined> {

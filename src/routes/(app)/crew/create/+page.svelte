@@ -14,6 +14,7 @@
 		data: PageData
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { data }: Props = $props()
 
 	// Check if user already has a crew
@@ -196,7 +197,11 @@
 				</div>
 
 				<div class="form-actions">
-					<Button variant="secondary" type="button" onclick={() => goto(resolve(localizeHref('/crew')))}>
+					<Button
+						variant="secondary"
+						type="button"
+						onclick={() => goto(resolve(localizeHref('/crew')))}
+					>
 						{m.crew_cancel()}
 					</Button>
 					<Button variant="primary" type="submit" disabled={createCrewMutation.isPending}>

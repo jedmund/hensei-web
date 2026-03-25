@@ -23,7 +23,6 @@
 	import JobFeaturesSection from '$lib/features/database/jobs/sections/JobFeaturesSection.svelte'
 
 	// Utils
-	import { localizedName } from '$lib/utils/locale'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
 	// Types

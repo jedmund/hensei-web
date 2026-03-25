@@ -28,6 +28,7 @@
 	)
 
 	const placeholders = ['gran@grancypher.com', 'djeeta@grancypher.com']
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const randomPlaceholder = placeholders[Math.floor(Math.random() * placeholders.length)]
 </script>
 

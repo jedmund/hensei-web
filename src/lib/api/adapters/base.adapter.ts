@@ -182,7 +182,10 @@ export abstract class BaseAdapter {
 			// Error is already normalized from fetchWithRetry (or handleErrorResponse)
 			// Only normalize if it's not already an AdapterError structure
 			const errObj = error as Record<string, unknown>
-			const normalizedError = errObj?.name === 'AdapterError' ? (errObj as unknown as AdapterError) : normalizeError(error)
+			const normalizedError =
+				errObj?.name === 'AdapterError'
+					? (errObj as unknown as AdapterError)
+					: normalizeError(error)
 
 			// Call global error handler if provided
 			if (this.options.onError) {
@@ -351,7 +354,10 @@ export abstract class BaseAdapter {
 	 * @param params - Optional query parameters
 	 * @returns The complete URL string
 	 */
-	private buildURL(path: string, params?: Record<string, string | number | boolean | string[] | number[]>): string {
+	private buildURL(
+		path: string,
+		params?: Record<string, string | number | boolean | string[] | number[]>
+	): string {
 		// Handle absolute URLs
 		if (path.startsWith('http://') || path.startsWith('https://')) {
 			const url = new URL(path)
@@ -377,7 +383,9 @@ export abstract class BaseAdapter {
 			} else {
 				// On server, construct the query string manually for relative paths
 				if (params && Object.keys(params).length > 0) {
-					const queryString = new URLSearchParams(this.transformRequest(params) as Record<string, string>).toString()
+					const queryString = new URLSearchParams(
+						this.transformRequest(params) as Record<string, string>
+					).toString()
 					return `${fullPath}?${queryString}`
 				}
 				return fullPath
@@ -495,6 +503,7 @@ export abstract class BaseAdapter {
 	 * No-op kept for backwards compatibility.
 	 * Adapter-level caching has been removed; TanStack Query handles all caching.
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	clearCache(_pattern?: string): void {
 		// No-op: adapter-level cache removed
 	}

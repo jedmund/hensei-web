@@ -103,13 +103,6 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		}
 	})
 
-	function detectItemType(item: GridItem): GridItemType {
-		if ('character' in item) return 'character'
-		if ('weapon' in item) return 'weapon'
-		if ('summon' in item) return 'summon'
-		throw new Error('Unknown item type')
-	}
-
 	function handlePointerDown(
 		e: PointerEvent,
 		item: GridItem,

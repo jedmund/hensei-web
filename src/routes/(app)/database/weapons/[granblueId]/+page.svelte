@@ -221,6 +221,7 @@
 			await entityAdapter.downloadWeaponImages(weaponId, options)
 			toast.loading('Downloading images…', { id: toastId })
 			await pollDownloadStatus(weaponId, toastId)
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		} catch (e) {
 			toast.error('Failed to start download', { id: toastId })
 		}
@@ -289,8 +290,11 @@
 <div class="page">
 	<DatabasePageHeader title="Weapon">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={resolve(getListUrl('weapons'))}
-				>Back</Button
+			<Button
+				variant="ghost"
+				size="small"
+				leftIcon="chevron-left"
+				href={resolve(getListUrl('weapons'))}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}

@@ -68,6 +68,7 @@
 
 	// Save state
 	let isSaving = $state(false)
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let saveError = $state<string | null>(null)
 
 	// Editable fields - initialized from weapon data
@@ -336,6 +337,7 @@
 											if (val) {
 												editData.elementVariantIds = { ...editData.elementVariantIds, [key]: val }
 											} else {
+												// eslint-disable-next-line @typescript-eslint/no-unused-vars
 												const { [key]: _, ...rest } = editData.elementVariantIds
 												editData.elementVariantIds = rest
 											}

@@ -75,6 +75,7 @@
 	})
 
 	// Handle scroll restoration or reset after navigation
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	afterNavigate(({ from, to, type }) => {
 		if (!mainContent || !to) return
 
@@ -145,6 +146,7 @@
 					}}
 				>
 					{@render children?.()}
+					<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
 					{#snippet failed(error, reset)}
 						<div class="page-error" role="alert">
 							<h2>{m.error_something_went_wrong()}</h2>

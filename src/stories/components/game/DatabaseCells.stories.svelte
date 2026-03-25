@@ -24,6 +24,7 @@
 		uncap: { flb: true, ulb: true, transcendence: true }
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const mockSpecialCharacterRow = {
 		granblueId: '3040100000',
 		name: { en: 'Cagliostro', ja: 'カリオストロ' },

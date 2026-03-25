@@ -32,6 +32,7 @@ export const POST: RequestHandler = async ({ cookies, request, locals }) => {
 		}
 
 		// Strip username before storing as user cookie (it doesn't belong there)
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { username: _, ...userCookie } = body
 
 		// Set the user cookie with the updated data

@@ -14,8 +14,6 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 
-	import { localizedName } from '$lib/utils/locale'
-
 	import type { PageData } from './$types'
 
 	let { data }: { data: PageData } = $props()

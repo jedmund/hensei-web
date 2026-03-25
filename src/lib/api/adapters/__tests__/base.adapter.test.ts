@@ -44,6 +44,7 @@ class FastRetryAdapter extends BaseAdapter {
 	}
 
 	// Override delay for instant retries in tests
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	protected delay(_ms: number): Promise<void> {
 		// Instant return for fast tests
 		return Promise.resolve()
