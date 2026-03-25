@@ -7,9 +7,9 @@
  * @module stores/loaderState
  */
 
+/* eslint-disable svelte/prefer-svelte-reactivity -- Date() here is only for console.log timestamps, not reactive state */
 import type { CreateInfiniteQueryResult } from '@tanstack/svelte-query'
 import { IsInViewport } from 'runed'
-import { SvelteDate } from 'svelte/reactivity'
 
 export const STATUS = {
 	READY: 'READY',
@@ -205,7 +205,7 @@ export function useInfiniteLoader<TData, TError>(
 		if (!inViewport.current && waitingForSentinelExit) {
 			if (import.meta.env.DEV)
 				console.log(
-					`[InfiniteLoader] ${new SvelteDate().toISOString()} Sentinel exited viewport, ready for next trigger`
+					`[InfiniteLoader] ${new Date().toISOString()} Sentinel exited viewport, ready for next trigger`
 				)
 			waitingForSentinelExit = false
 		}
@@ -220,7 +220,7 @@ export function useInfiniteLoader<TData, TError>(
 
 		if (import.meta.env.DEV)
 			console.log(
-				`[InfiniteLoader] ${new SvelteDate().toISOString()} loadMore called, status=${state.status}, waitingForExit=${waitingForSentinelExit}`
+				`[InfiniteLoader] ${new Date().toISOString()} loadMore called, status=${state.status}, waitingForExit=${waitingForSentinelExit}`
 			)
 
 		// Guard: Only proceed if READY or ERROR (for retry)
@@ -230,7 +230,7 @@ export function useInfiniteLoader<TData, TError>(
 		) {
 			if (import.meta.env.DEV)
 				console.log(
-					`[InfiniteLoader] ${new SvelteDate().toISOString()} Skipped - status is ${state.status}`
+					`[InfiniteLoader] ${new Date().toISOString()} Skipped - status is ${state.status}`
 				)
 			return
 		}
@@ -239,7 +239,7 @@ export function useInfiniteLoader<TData, TError>(
 		if (waitingForSentinelExit) {
 			if (import.meta.env.DEV)
 				console.log(
-					`[InfiniteLoader] ${new SvelteDate().toISOString()} Skipped - waiting for sentinel to leave viewport`
+					`[InfiniteLoader] ${new Date().toISOString()} Skipped - waiting for sentinel to leave viewport`
 				)
 			return
 		}
@@ -247,14 +247,14 @@ export function useInfiniteLoader<TData, TError>(
 		// Skip if cooling off from loop detection
 		if (loopTracker.coolingOff) {
 			if (import.meta.env.DEV)
-				console.log(`[InfiniteLoader] ${new SvelteDate().toISOString()} Skipped - cooling off`)
+				console.log(`[InfiniteLoader] ${new Date().toISOString()} Skipped - cooling off`)
 			return
 		}
 
 		// Check if there's more data to load
 		if (!query.hasNextPage) {
 			if (import.meta.env.DEV)
-				console.log(`[InfiniteLoader] ${new SvelteDate().toISOString()} No more pages available`)
+				console.log(`[InfiniteLoader] ${new Date().toISOString()} No more pages available`)
 			state.complete()
 			return
 		}
@@ -262,7 +262,7 @@ export function useInfiniteLoader<TData, TError>(
 		state.status = STATUS.LOADING
 		if (import.meta.env.DEV)
 			console.log(
-				`[InfiniteLoader] ${new SvelteDate().toISOString()} Status set to LOADING, starting fetch...`
+				`[InfiniteLoader] ${new Date().toISOString()} Status set to LOADING, starting fetch...`
 			)
 
 		const startTime = performance.now()
@@ -277,7 +277,7 @@ export function useInfiniteLoader<TData, TError>(
 			const elapsed = (performance.now() - startTime).toFixed(0)
 			if (import.meta.env.DEV)
 				console.log(
-					`[InfiniteLoader] ${new SvelteDate().toISOString()} Loaded page ${pageCount} (${elapsed}ms)`
+					`[InfiniteLoader] ${new Date().toISOString()} Loaded page ${pageCount} (${elapsed}ms)`
 				)
 
 			// Track AFTER successful load (svelte-infinite pattern)
@@ -287,7 +287,7 @@ export function useInfiniteLoader<TData, TError>(
 			if (state.status === STATUS.LOADING) {
 				if (!query.hasNextPage) {
 					if (import.meta.env.DEV)
-						console.log(`[InfiniteLoader] ${new SvelteDate().toISOString()} Complete - no more pages`)
+						console.log(`[InfiniteLoader] ${new Date().toISOString()} Complete - no more pages`)
 					state.complete()
 				} else {
 					// Set flag to wait for sentinel to leave viewport before next load
@@ -295,7 +295,7 @@ export function useInfiniteLoader<TData, TError>(
 					waitingForSentinelExit = true
 					if (import.meta.env.DEV)
 						console.log(
-							`[InfiniteLoader] ${new SvelteDate().toISOString()} Ready for next page (waiting for sentinel exit)`
+							`[InfiniteLoader] ${new Date().toISOString()} Ready for next page (waiting for sentinel exit)`
 						)
 					state.loaded()
 				}
@@ -303,7 +303,7 @@ export function useInfiniteLoader<TData, TError>(
 		} catch (error) {
 			if (import.meta.env.DEV)
 				console.error(
-					`[InfiniteLoader] ${new SvelteDate().toISOString()} Failed to load next page:`,
+					`[InfiniteLoader] ${new Date().toISOString()} Failed to load next page:`,
 					error
 				)
 			state.error()
