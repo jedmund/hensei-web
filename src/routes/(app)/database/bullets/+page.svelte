@@ -63,7 +63,7 @@
 			header: 'Type',
 			width: 120,
 			sort: true,
-			template: (val: unknown) => BULLET_TYPES[val] ?? 'Unknown'
+			template: (val: unknown) => BULLET_TYPES[val as number] ?? 'Unknown'
 		},
 		{
 			id: 'atk',

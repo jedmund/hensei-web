@@ -19,7 +19,7 @@
 	const skillId = $derived($page.params.id)
 
 	// Fetch skill data
-	const skillQuery = createQuery(() => artifactQueries.skillById(skillId))
+	const skillQuery = createQuery(() => artifactQueries.skillById(skillId ?? ''))
 	const skill = $derived(skillQuery.data)
 
 	// Save state
@@ -72,13 +72,13 @@
 			const payload = {
 				name_en: editData.nameEn,
 				name_jp: editData.nameJp,
-				game_name_en: editData.gameNameEn || null,
-				game_name_jp: editData.gameNameJp || null,
+				game_name_en: editData.gameNameEn || undefined,
+				game_name_jp: editData.gameNameJp || undefined,
 				skill_group: editData.skillGroup,
 				modifier: editData.modifier,
 				polarity: editData.polarity,
 				base_values: editData.baseValues,
-				growth: editData.growth,
+				growth: editData.growth ?? undefined,
 				suffix_en: editData.suffixEn,
 				suffix_jp: editData.suffixJp
 			}

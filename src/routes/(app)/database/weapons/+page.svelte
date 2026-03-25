@@ -122,7 +122,7 @@
 			header: 'Rarity',
 			width: 80,
 			sort: true,
-			template: (rarity: unknown) => getRarityLabel(rarity)
+			template: (rarity: unknown) => getRarityLabel(rarity as number)
 		},
 		{
 			id: 'element',

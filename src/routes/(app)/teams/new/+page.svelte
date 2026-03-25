@@ -101,5 +101,5 @@
 	authUserId={data.account?.userId}
 	isNew={true}
 	{ensurePartyExists}
-	initialCollectionSourceUsername={collectionSourceUsername}
+	initialCollectionSourceUsername={collectionSourceUsername ?? undefined}
 />

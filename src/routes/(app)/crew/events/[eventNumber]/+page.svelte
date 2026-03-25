@@ -61,7 +61,7 @@
 		} else {
 			url.searchParams.delete('crew')
 		}
-		replaceState(resolvePath(url), {})
+		replaceState(resolvePath(url.pathname + url.search), {})
 	}
 
 	// Crew scores from participation (Finals Day 1-4 only: rounds 2-5)

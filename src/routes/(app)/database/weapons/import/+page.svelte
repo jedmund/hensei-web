@@ -83,7 +83,7 @@
 	// Auto-generate wiki URLs when Name (JP) or Rarity changes
 	$effect(() => {
 		if (!selectedWikiPage) return
-		const formData = formDataByPage[selectedWikiPage]
+		const formData = formDataByPage[selectedWikiPage!]
 		if (!formData) return
 
 		const nameJp = formData.nameJp
@@ -249,7 +249,7 @@
 	// Save current entity
 	async function saveCurrentEntity() {
 		if (!selectedWikiPage) return
-		const formData = formDataByPage[selectedWikiPage]
+		const formData = formDataByPage[selectedWikiPage!]
 		if (!formData) return
 
 		isSaving = true
@@ -332,7 +332,7 @@
 	// Can save current entity
 	const canSave = $derived.by(() => {
 		if (!selectedWikiPage) return false
-		const formData = formDataByPage[selectedWikiPage]
+		const formData = formDataByPage[selectedWikiPage!]
 		if (!formData) return false
 		return (
 			formData.name.trim() !== '' &&
@@ -446,34 +446,66 @@
 				<div class="entity-loading">
 					<p>Loading wiki data...</p>
 				</div>
-			{:else if selectedWikiPage && formDataByPage[selectedWikiPage]}
-				{@const formData = formDataByPage[selectedWikiPage]!}
+			{:else if selectedWikiPage && formDataByPage[selectedWikiPage!]}
+				{@const formData = formDataByPage[selectedWikiPage!]!}
 				<section class="details">
-					<WeaponMetadataSection weapon={emptyWeapon} editMode={true} bind:editData={formData} />
+					<WeaponMetadataSection
+						weapon={emptyWeapon}
+						editMode={true}
+						editData={formDataByPage[selectedWikiPage!]}
+					/>
 
-					<WeaponUncapSection weapon={emptyWeapon} editMode={true} bind:editData={formData} />
+					<WeaponUncapSection
+						weapon={emptyWeapon}
+						editMode={true}
+						editData={formDataByPage[selectedWikiPage!]}
+					/>
 
-					<WeaponTaxonomySection weapon={emptyWeapon} editMode={true} bind:editData={formData} />
+					<WeaponTaxonomySection
+						weapon={emptyWeapon}
+						editMode={true}
+						editData={formDataByPage[selectedWikiPage!]}
+					/>
 
-					<WeaponStatsSection weapon={emptyWeapon} editMode={true} bind:editData={formData} />
+					<WeaponStatsSection
+						weapon={emptyWeapon}
+						editMode={true}
+						editData={formDataByPage[selectedWikiPage!]}
+					/>
 
-					<WeaponGachaSection weapon={emptyWeapon} editMode={true} bind:editData={formData} />
+					<WeaponGachaSection
+						weapon={emptyWeapon}
+						editMode={true}
+						editData={formDataByPage[selectedWikiPage!]}
+					/>
 
-					<WeaponForgeSection weapon={emptyWeapon} editMode={true} bind:editData={formData} />
+					<WeaponForgeSection
+						weapon={emptyWeapon}
+						editMode={true}
+						editData={formDataByPage[selectedWikiPage!]}
+					/>
 
 					<DetailsContainer title="Nicknames">
 						<DetailItem label="Nicknames (EN)">
-							<TagInput bind:value={formData.nicknamesEn} placeholder="Add nickname..." contained />
+							<TagInput
+								bind:value={formDataByPage[selectedWikiPage!]!.nicknamesEn}
+								placeholder="Add nickname..."
+								contained
+							/>
 						</DetailItem>
 						<DetailItem label="Nicknames (JP)">
-							<TagInput bind:value={formData.nicknamesJp} placeholder="ニックネーム..." contained />
+							<TagInput
+								bind:value={formDataByPage[selectedWikiPage!]!.nicknamesJp}
+								placeholder="ニックネーム..."
+								contained
+							/>
 						</DetailItem>
 					</DetailsContainer>
 
 					<DetailsContainer title="Dates">
 						<DetailItem
 							label="Release Date"
-							bind:value={formData.releaseDate}
+							bind:value={formDataByPage[selectedWikiPage!]!.releaseDate}
 							editable={true}
 							type="text"
 							placeholder="YYYY-MM-DD"
@@ -481,7 +513,7 @@
 						{#if formData.flb}
 							<DetailItem
 								label="FLB Date"
-								bind:value={formData.flbDate}
+								bind:value={formDataByPage[selectedWikiPage!]!.flbDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
@@ -490,7 +522,7 @@
 						{#if formData.ulb}
 							<DetailItem
 								label="ULB Date"
-								bind:value={formData.ulbDate}
+								bind:value={formDataByPage[selectedWikiPage!]!.ulbDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
@@ -499,7 +531,7 @@
 						{#if formData.transcendence}
 							<DetailItem
 								label="Transcendence Date"
-								bind:value={formData.transcendenceDate}
+								bind:value={formDataByPage[selectedWikiPage!]!.transcendenceDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
@@ -510,7 +542,7 @@
 					<DetailsContainer title="Links">
 						<DetailItem
 							label="Wiki (EN)"
-							bind:value={formData.wikiEn}
+							bind:value={formDataByPage[selectedWikiPage!]!.wikiEn}
 							editable={true}
 							type="text"
 							placeholder="Page name (e.g., Cosmic_Sword)"
@@ -520,7 +552,7 @@
 						/>
 						<DetailItem
 							label="Wiki (JP)"
-							bind:value={formData.wikiJa}
+							bind:value={formDataByPage[selectedWikiPage!]!.wikiJa}
 							editable={true}
 							type="text"
 							placeholder="Japanese page name"
@@ -530,7 +562,7 @@
 						/>
 						<DetailItem
 							label="Gamewith"
-							bind:value={formData.gamewith}
+							bind:value={formDataByPage[selectedWikiPage!]!.gamewith}
 							editable={true}
 							type="text"
 							placeholder="Article ID (e.g., 519325)"
@@ -540,7 +572,7 @@
 						/>
 						<DetailItem
 							label="Kamigame"
-							bind:value={formData.kamigame}
+							bind:value={formDataByPage[selectedWikiPage!]!.kamigame}
 							editable={true}
 							type="text"
 							placeholder="Japanese name (e.g., 神刃エクス・アシャワン)"

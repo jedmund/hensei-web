@@ -164,7 +164,7 @@
 	function viewWeaponInDatabase(weapon: CollectionWeapon) {
 		const weaponData = weapon.weapon
 		if (!weaponData) return
-		goto(resolvePath(getDatabaseUrl('weapon'), weaponData.granblueId))
+		goto(resolvePath(getDatabaseUrl('weapon', weaponData.granblueId)))
 	}
 </script>
 

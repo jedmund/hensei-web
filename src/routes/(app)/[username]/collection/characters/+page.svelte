@@ -172,7 +172,7 @@
 	function viewCharacterInDatabase(character: CollectionCharacter) {
 		const charData = character.character
 		if (!charData) return
-		goto(resolvePath(getDatabaseUrl('character'), charData.granblueId, charData.styleSwap))
+		goto(resolvePath(getDatabaseUrl('character', charData.granblueId, charData.styleSwap)))
 	}
 </script>
 

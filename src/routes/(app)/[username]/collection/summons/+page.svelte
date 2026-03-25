@@ -160,7 +160,7 @@
 	function viewSummonInDatabase(summon: CollectionSummon) {
 		const summonData = summon.summon
 		if (!summonData) return
-		goto(resolvePath(getDatabaseUrl('summon'), summonData.granblueId))
+		goto(resolvePath(getDatabaseUrl('summon', summonData.granblueId)))
 	}
 </script>
 
