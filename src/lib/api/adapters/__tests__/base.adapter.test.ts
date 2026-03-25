@@ -294,52 +294,31 @@ describe('BaseAdapter', () => {
 			})
 		})
 
-		it('should cancel duplicate requests to the same endpoint', async () => {
-			const abortHandlers: Array<() => void> = []
-
-			// Mock sequential requests with proper abort handling
+		it('should not cancel duplicate requests in non-browser environment', async () => {
+			// In non-browser env (test), duplicate request cancellation is disabled
+			// to avoid cancelling other users' requests on the server
 			let callCount = 0
-			global.fetch = vi.fn().mockImplementation((url, options) => {
+			global.fetch = vi.fn().mockImplementation(() => {
 				callCount++
-				return new Promise((resolve, reject) => {
-					const timeout = setTimeout(() => {
+				const count = callCount
+				return new Promise((resolve) => {
+					setTimeout(() => {
 						resolve({
 							ok: true,
-							json: async () => ({ data: `response-${callCount}` })
+							json: async () => ({ data: `response-${count}` })
 						})
 					}, 50)
-
-					// Store abort handler
-					if (options?.signal) {
-						const handler = () => {
-							clearTimeout(timeout)
-							const error = new Error('The operation was aborted')
-							error.name = 'AbortError'
-							reject(error)
-						}
-						options.signal.addEventListener('abort', handler)
-						abortHandlers[callCount - 1] = handler
-					}
 				})
 			})
 
-			// Start first request
+			// Both requests should succeed since cancellation is browser-only
 			const promise1 = adapter.testRequest('/api/data')
-
-			// Wait a bit to ensure first request is in progress
 			await new Promise((resolve) => setTimeout(resolve, 10))
-
-			// Start second request to same endpoint (should cancel first)
 			const promise2 = adapter.testRequest('/api/data')
 
-			// First should be cancelled
-			await expect(promise1).rejects.toMatchObject({
-				code: 'CANCELLED'
-			})
-
-			// Second should succeed
-			const result = await promise2
-			expect(result).toEqual({ data: 'response-2' })
+			const [result1, result2] = await Promise.all([promise1, promise2])
+			expect(result1).toEqual({ data: 'response-1' })
+			expect(result2).toEqual({ data: 'response-2' })
 		})
 	})
 

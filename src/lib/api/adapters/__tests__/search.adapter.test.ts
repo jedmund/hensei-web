@@ -183,19 +183,18 @@ describe('SearchAdapter', () => {
 			)
 		})
 
-		it('should cache results when query is provided', async () => {
+		it('should not cache at adapter level (TanStack Query handles caching)', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
 				json: async () => ({ results: [{ id: '1' }] })
 			})
 
-			// First call
 			await adapter.searchAll({ query: 'test' })
 			expect(global.fetch).toHaveBeenCalledTimes(1)
 
-			// Second call should use cache
+			// Second call also hits fetch since adapter-level caching was removed
 			await adapter.searchAll({ query: 'test' })
-			expect(global.fetch).toHaveBeenCalledTimes(1)
+			expect(global.fetch).toHaveBeenCalledTimes(2)
 		})
 
 		it('should not cache results when query is empty', async () => {
