@@ -11,6 +11,9 @@ const config = {
 	preprocess: vitePreprocess(),
 	kit: {
 		adapter: adapter(),
+		paths: {
+			relative: false
+		},
 		alias: {
 			$types: 'src/lib/types',
 			'$lib/paraglide/messages': 'src/lib/paraglide/messages.js',
