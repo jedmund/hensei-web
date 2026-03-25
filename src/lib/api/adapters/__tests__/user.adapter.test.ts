@@ -145,12 +145,7 @@ describe('UserAdapter', () => {
 
 			await adapter.getProfile('testuser', 2)
 
-			expect(mockFetch).toHaveBeenCalledWith(
-				expect.stringContaining('/users/testuser'),
-				expect.objectContaining({
-					params: { page: 2 }
-				})
-			)
+			expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('page=2'), expect.any(Object))
 		})
 
 		it('should handle empty parties array', async () => {
@@ -177,12 +172,9 @@ describe('UserAdapter', () => {
 
 			await adapter.getProfile('testuser', 1)
 
-			expect(mockFetch).toHaveBeenCalledWith(
-				expect.stringContaining('/users/testuser'),
-				expect.objectContaining({
-					params: undefined
-				})
-			)
+			const url = mockFetch.mock.calls[0]![0] as string
+			expect(url).toContain('/users/testuser')
+			expect(url).not.toContain('page=')
 		})
 	})
 
@@ -230,12 +222,7 @@ describe('UserAdapter', () => {
 
 			await adapter.getFavorites({ page: 2 })
 
-			expect(mockFetch).toHaveBeenCalledWith(
-				expect.stringContaining('/parties/favorites'),
-				expect.objectContaining({
-					params: { page: 2 }
-				})
-			)
+			expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('page=2'), expect.any(Object))
 		})
 
 		it('should use default perPage when not provided', async () => {

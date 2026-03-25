@@ -9,7 +9,7 @@
  */
 
 import { transformResponse, transformRequest } from '../schemas/transforms'
-import type { AdapterOptions, RequestOptions, AdapterError } from './types'
+import type { AdapterOptions, RequestOptions, AdapterError, QueryParams } from './types'
 import {
 	createErrorFromStatus,
 	normalizeError,
@@ -128,9 +128,21 @@ export abstract class BaseAdapter {
 		// Use custom fetch (e.g., SvelteKit's load fetch for SSR auth) or global fetch
 		const fetchFn = options.fetch ?? fetch
 
+		// Destructure adapter-specific options from standard fetch options
+
+		const {
+			params: _p,
+			query: _q,
+			fetch: _f,
+			timeout: _t,
+			retries: _r,
+			body: _b,
+			...fetchInit
+		} = options
+
 		// Prepare request options
 		const fetchOptions: RequestInit = {
-			...options, // Allow overriding defaults
+			...fetchInit, // Allow overriding defaults (only standard RequestInit properties)
 			credentials: 'include', // Still include cookies for CORS and refresh token
 			signal: controller.signal,
 			headers: {
@@ -354,10 +366,7 @@ export abstract class BaseAdapter {
 	 * @param params - Optional query parameters
 	 * @returns The complete URL string
 	 */
-	private buildURL(
-		path: string,
-		params?: Record<string, string | number | boolean | string[] | number[]>
-	): string {
+	private buildURL(path: string, params?: QueryParams): string {
 		// Handle absolute URLs
 		if (path.startsWith('http://') || path.startsWith('https://')) {
 			const url = new URL(path)
