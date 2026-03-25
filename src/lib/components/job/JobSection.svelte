@@ -11,6 +11,7 @@
 		isSkillSlotLocked
 	} from '$lib/utils/jobUtils'
 	import { getAccessoryImage, getBasePath } from '$lib/utils/images'
+	import { getAccessoryTypeName } from '$lib/utils/jobAccessoryUtils'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -86,11 +87,17 @@
 				</button>
 			</Tooltip>
 		{:else if canEdit && job?.accessory}
-			<Tooltip content={m.party_job_select_accessory()}>
+			<Tooltip
+				content={m.party_job_select_accessory({
+					type: getAccessoryTypeName(job.accessoryType ?? 0)
+				})}
+			>
 				<button
 					class="accessory-button interactive"
 					onclick={onSelectAccessory}
-					aria-label={m.party_job_select_accessory()}
+					aria-label={m.party_job_select_accessory({
+						type: getAccessoryTypeName(job.accessoryType ?? 0)
+					})}
 				>
 					<Icon name="plus" size={16} />
 				</button>
