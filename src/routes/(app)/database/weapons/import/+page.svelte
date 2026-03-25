@@ -51,7 +51,8 @@
 	let selectedWikiPage = $state<string | null>(null)
 
 	// Form data per entity (keyed by wikiPage) - using Record for proper reactivity
-	let formDataByPage = $state<Record<string, Record<string, unknown>>>({})
+	type WeaponFormData = ReturnType<typeof createEmptyFormData>
+	let formDataByPage = $state<Record<string, WeaponFormData>>({})
 	let savedEntities = new SvelteSet<string>()
 
 	// Store wiki raw data per entity for sending with create request
@@ -448,56 +449,24 @@
 			{:else if selectedWikiPage && formDataByPage[selectedWikiPage]}
 				{@const formData = formDataByPage[selectedWikiPage]!}
 				<section class="details">
-					<WeaponMetadataSection
-						weapon={emptyWeapon}
-						editMode={true}
-						bind:editData={formData}
-					/>
+					<WeaponMetadataSection weapon={emptyWeapon} editMode={true} bind:editData={formData} />
 
-					<WeaponUncapSection
-						weapon={emptyWeapon}
-						editMode={true}
-						bind:editData={formData}
-					/>
+					<WeaponUncapSection weapon={emptyWeapon} editMode={true} bind:editData={formData} />
 
-					<WeaponTaxonomySection
-						weapon={emptyWeapon}
-						editMode={true}
-						bind:editData={formData}
-					/>
+					<WeaponTaxonomySection weapon={emptyWeapon} editMode={true} bind:editData={formData} />
 
-					<WeaponStatsSection
-						weapon={emptyWeapon}
-						editMode={true}
-						bind:editData={formData}
-					/>
+					<WeaponStatsSection weapon={emptyWeapon} editMode={true} bind:editData={formData} />
 
-					<WeaponGachaSection
-						weapon={emptyWeapon}
-						editMode={true}
-						bind:editData={formData}
-					/>
+					<WeaponGachaSection weapon={emptyWeapon} editMode={true} bind:editData={formData} />
 
-					<WeaponForgeSection
-						weapon={emptyWeapon}
-						editMode={true}
-						bind:editData={formData}
-					/>
+					<WeaponForgeSection weapon={emptyWeapon} editMode={true} bind:editData={formData} />
 
 					<DetailsContainer title="Nicknames">
 						<DetailItem label="Nicknames (EN)">
-							<TagInput
-								bind:value={formData.nicknamesEn}
-								placeholder="Add nickname..."
-								contained
-							/>
+							<TagInput bind:value={formData.nicknamesEn} placeholder="Add nickname..." contained />
 						</DetailItem>
 						<DetailItem label="Nicknames (JP)">
-							<TagInput
-								bind:value={formData.nicknamesJp}
-								placeholder="ニックネーム..."
-								contained
-							/>
+							<TagInput bind:value={formData.nicknamesJp} placeholder="ニックネーム..." contained />
 						</DetailItem>
 					</DetailsContainer>
 
@@ -577,11 +546,7 @@
 							placeholder="Japanese name (e.g., 神刃エクス・アシャワン)"
 							width="480px"
 							hasLinkButton={true}
-							linkUrl={buildKamigameUrl(
-								formData.kamigame,
-								'weapon',
-								formData.rarity
-							)}
+							linkUrl={buildKamigameUrl(formData.kamigame, 'weapon', formData.rarity)}
 						/>
 					</DetailsContainer>
 				</section>

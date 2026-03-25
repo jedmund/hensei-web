@@ -50,7 +50,8 @@
 	let selectedWikiPage = $state<string | null>(null)
 
 	// Form data per entity (keyed by wikiPage) - using Record for proper reactivity
-	let formDataByPage = $state<Record<string, Record<string, unknown>>>({})
+	type SummonFormData = ReturnType<typeof createEmptyFormData>
+	let formDataByPage = $state<Record<string, SummonFormData>>({})
 	let savedEntities = new SvelteSet<string>()
 
 	// Store wiki raw data per entity for sending with create request
