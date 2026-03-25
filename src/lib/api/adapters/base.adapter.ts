@@ -130,15 +130,8 @@ export abstract class BaseAdapter {
 
 		// Destructure adapter-specific options from standard fetch options
 
-		const {
-			params: _p,
-			query: _q,
-			fetch: _f,
-			timeout: _t,
-			retries: _r,
-			body: _b,
-			...fetchInit
-		} = options
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars -- destructure adapter-specific fields out of options
+		const { params, query, fetch: _fetch, timeout, retries, body, ...fetchInit } = options
 
 		// Prepare request options
 		const fetchOptions: RequestInit = {

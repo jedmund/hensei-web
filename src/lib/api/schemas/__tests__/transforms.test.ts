@@ -113,6 +113,7 @@ describe('transformResponse', () => {
 			summons: [{ id: 'gs-1', position: 0, object: { id: 's-1', summon_name: 'Bahamut' } }]
 		}
 
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const result = transformResponse<Record<string, any>>(apiResponse)
 
 		// snake → camel
@@ -136,6 +137,7 @@ describe('transformResponse', () => {
 		const input = {
 			weapons: [{ id: 'w-1', name: 'plain' }] // no "object" key
 		}
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const result = transformResponse<Record<string, any>>(input)
 		expect(result.weapons[0].name).toBe('plain')
 	})
@@ -195,6 +197,7 @@ describe('round-trip', () => {
 			weapons: [{ id: 'gw-1', main_hand: true, object: { id: 'w-1', weapon_type: 'sword' } }]
 		}
 
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const toClient = transformResponse<Record<string, any>>(original)
 		expect(toClient.partyId).toBe('p-1')
 		expect(toClient.weapons[0].weapon.weaponType).toBe('sword')

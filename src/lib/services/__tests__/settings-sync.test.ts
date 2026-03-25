@@ -15,6 +15,7 @@ import type { UserCookie } from '$lib/types/UserCookie'
 // Track call order across all mocks
 let callOrder: string[]
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- typed params document the mock's expected signature
 const mockUsersUpdate = vi.fn(async (_id: string, _data: Record<string, unknown>) => ({}))
 vi.mock('$lib/api/resources/users', () => ({
 	users: { update: (...args: [string, Record<string, unknown>]) => mockUsersUpdate(...args) }

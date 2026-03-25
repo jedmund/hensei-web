@@ -14,6 +14,7 @@
 		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- passed by parent, used for future styling
 	let { character, selected = false, onToggle, userElement }: Props = $props()
 
 	const imageUrl = $derived(getCharacterImage(character.granblueId, 'grid', '01'))

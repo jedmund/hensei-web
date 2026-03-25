@@ -288,6 +288,7 @@
 
 	const searchQueryResult = createInfiniteQuery(
 		() =>
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- polymorphic TanStack Query options
 			searchQueries.byType(type, debouncedSearchQuery, filters, getLocale() as 'en' | 'ja') as any
 	)
 

@@ -50,12 +50,6 @@
 		showSearch?: boolean
 		/** Search query for plaintext name search */
 		searchQuery?: string
-		/** Whether to show the view toggle (grid/list) */
-		showViewToggle?: boolean
-		/** Current view mode */
-		viewMode?: 'grid' | 'list'
-		/** Callback when view mode changes */
-		onViewModeChange?: (mode: 'grid' | 'list') => void
 	}
 
 	export interface CollectionFilterState {
