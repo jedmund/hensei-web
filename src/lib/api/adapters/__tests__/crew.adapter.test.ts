@@ -38,7 +38,8 @@ describe('CrewAdapter', () => {
 
 		it('should clear dual cache on leave', async () => {
 			global.fetch = mockApiResponse({})
-			const clearSpy = vi.spyOn(adapter as unknown as Record<string, unknown>, 'clearCache')
+			const clearSpy = // eslint-disable-next-line @typescript-eslint/no-explicit-any
+			vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.leave()
 
@@ -138,7 +139,8 @@ describe('CrewAdapter', () => {
 
 		it('should clear dual cache on acceptInvitation', async () => {
 			global.fetch = mockApiResponse(API.acceptInvitation)
-			const clearSpy = vi.spyOn(adapter as unknown as Record<string, unknown>, 'clearCache')
+			const clearSpy = // eslint-disable-next-line @typescript-eslint/no-explicit-any
+			vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.acceptInvitation('inv-1')
 
@@ -171,7 +173,8 @@ describe('CrewAdapter', () => {
 
 		it('should clear dual cache on declinePhantomClaim', async () => {
 			global.fetch = mockApiResponse(API.declinePhantomClaim)
-			const clearSpy = vi.spyOn(adapter as unknown as Record<string, unknown>, 'clearCache')
+			const clearSpy = // eslint-disable-next-line @typescript-eslint/no-explicit-any
+			vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.declinePhantomClaim('crew-1', 'p1')
 

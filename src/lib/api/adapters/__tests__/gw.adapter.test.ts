@@ -36,7 +36,8 @@ describe('GwAdapter', () => {
 
 		it('should wrap body in gw_event for createEvent', async () => {
 			global.fetch = mockApiResponse(API.createEvent)
-			const clearSpy = vi.spyOn(adapter as unknown as Record<string, unknown>, 'clearCache')
+			const clearSpy = // eslint-disable-next-line @typescript-eslint/no-explicit-any
+			vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.createEvent({ event_number: 79 } as Record<string, unknown>)
 
@@ -74,7 +75,8 @@ describe('GwAdapter', () => {
 
 		it('should unwrap participation from joinEvent and clear cache', async () => {
 			global.fetch = mockApiResponse(API.joinEvent)
-			const clearSpy = vi.spyOn(adapter as unknown as Record<string, unknown>, 'clearCache')
+			const clearSpy = // eslint-disable-next-line @typescript-eslint/no-explicit-any
+			vi.spyOn(adapter as any, 'clearCache')
 
 			const result = await adapter.joinEvent('gw-1')
 
@@ -120,7 +122,8 @@ describe('GwAdapter', () => {
 
 		it('should wrap body in crew_score for addCrewScore and clear participation cache', async () => {
 			global.fetch = mockApiResponse(API.addCrewScore)
-			const clearSpy = vi.spyOn(adapter as unknown as Record<string, unknown>, 'clearCache')
+			const clearSpy = // eslint-disable-next-line @typescript-eslint/no-explicit-any
+			vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.addCrewScore('part-1', { round: 1, score: 500000 } as Record<string, unknown>)
 

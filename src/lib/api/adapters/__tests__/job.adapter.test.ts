@@ -210,7 +210,8 @@ describe('JobAdapter', () => {
 	describe('cache clearing', () => {
 		it('should clear both job list and detail cache on updateJob', async () => {
 			global.fetch = mockApiResponse({ id: 'job-1' })
-			const clearSpy = vi.spyOn(adapter as unknown as Record<string, unknown>, 'clearCache')
+			const clearSpy = // eslint-disable-next-line @typescript-eslint/no-explicit-any
+			vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.updateJob('gbf-100', { name_en: 'Updated' })
 
@@ -219,7 +220,8 @@ describe('JobAdapter', () => {
 		})
 
 		it('should clear all job-related caches with clearJobCache', () => {
-			const clearSpy = vi.spyOn(adapter as unknown as Record<string, unknown>, 'clearCache')
+			const clearSpy = // eslint-disable-next-line @typescript-eslint/no-explicit-any
+			vi.spyOn(adapter as any, 'clearCache')
 
 			adapter.clearJobCache()
 
