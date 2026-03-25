@@ -497,9 +497,6 @@
 		}
 	}
 
-	.phantom-section {
-	}
-
 	.phantom-hint {
 		display: block;
 		font-size: $font-small;

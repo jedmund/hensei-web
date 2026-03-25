@@ -188,14 +188,13 @@
 		fetchError = null
 
 		// Initialize entities as loading
-		const newEntities = new SvelteMap<string, EntityState>()
+		entities.clear()
 		pages.forEach((page) => {
-			newEntities.set(page, {
+			entities.set(page, {
 				wikiPage: page,
 				status: 'loading'
 			})
 		})
-		entities = newEntities
 		selectedWikiPage = pages[0] ?? null
 
 		try {
@@ -213,9 +212,9 @@
 			const response = await entityAdapter.batchPreviewWeapons(finalPages, wikiData)
 
 			// Update entities with results
-			const updatedEntities = new SvelteMap<string, EntityState>()
+			entities.clear()
 			response.results.forEach((result) => {
-				updatedEntities.set(result.wikiPage, {
+				entities.set(result.wikiPage, {
 					wikiPage: result.wikiPage,
 					status: result.status,
 					granblueId: result.granblueId,
@@ -228,7 +227,6 @@
 					formDataByPage[result.wikiPage] = createEmptyFormData(result.wikiPage, result.parsedData)
 				}
 			})
-			entities = updatedEntities
 
 			// Trigger reactivity by reassigning
 			formDataByPage = { ...formDataByPage }

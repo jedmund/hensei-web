@@ -34,7 +34,7 @@
 	onmouseover={handleHover}
 	role={interactive ? 'button' : undefined}
 	aria-label={interactive ? `Transcendence fragment ${stage}` : undefined}
-/>
+></i>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;

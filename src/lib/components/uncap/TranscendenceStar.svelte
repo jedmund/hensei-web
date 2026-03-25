@@ -125,7 +125,7 @@
 					class="figure {className || ''}"
 					class:interactive
 					class:base={className?.includes('base')}
-				/>
+				></i>
 			</div>
 		{/snippet}
 	</Popover.Trigger>

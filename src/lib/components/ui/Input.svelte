@@ -303,10 +303,6 @@
 				width: 100%;
 				font-family: inherit;
 				@include smooth-transition($duration-quick, border-color);
-
-				&:focus {
-					// @include focus-ring($blue);
-				}
 			}
 
 			.iconLeft,
@@ -444,10 +440,6 @@
 
 		&:hover:not(:disabled):not(.contained) {
 			background-color: var(--input-bg-hover);
-		}
-
-		&:focus {
-			// @include focus-ring($blue);
 		}
 
 		&:disabled {
@@ -606,10 +598,6 @@
 
 		&:hover:not(:disabled):not(.contained) {
 			background-color: var(--input-bg-hover);
-		}
-
-		&:focus {
-			// @include focus-ring($blue);
 		}
 
 		&:disabled {

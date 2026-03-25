@@ -392,10 +392,6 @@
 		gap: spacing.$unit;
 	}
 
-	.invitations-section {
-		// No border - flows naturally from content above
-	}
-
 	.invitation-list {
 		list-style: none;
 		margin: 0;

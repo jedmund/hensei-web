@@ -98,14 +98,12 @@
 
 		const key = getImageKey(image)
 		downloadingImages.add(key)
-		downloadingImages = new SvelteSet(downloadingImages)
 
 		try {
 			await onDownloadImage(image.variant, image.pose, force)
 			cacheBuster++
 		} finally {
 			downloadingImages.delete(key)
-			downloadingImages = new SvelteSet(downloadingImages)
 		}
 	}
 
@@ -118,7 +116,6 @@
 		for (const img of poseImages) {
 			downloadingImages.add(getImageKey(img))
 		}
-		downloadingImages = new SvelteSet(downloadingImages)
 
 		try {
 			await onDownloadAllPose(pose, force)
@@ -127,7 +124,6 @@
 			for (const img of poseImages) {
 				downloadingImages.delete(getImageKey(img))
 			}
-			downloadingImages = new SvelteSet(downloadingImages)
 		}
 	}
 
@@ -140,7 +136,6 @@
 		for (const image of images) {
 			downloadingImages.add(getImageKey(image))
 		}
-		downloadingImages = new SvelteSet(downloadingImages)
 
 		try {
 			await onDownloadAllImages(force)
@@ -148,7 +143,6 @@
 		} finally {
 			downloadingAll = false
 			downloadingImages.clear()
-			downloadingImages = new SvelteSet(downloadingImages)
 		}
 	}
 </script>
@@ -193,7 +187,6 @@
 											if (image.fallbackUrl && img.src !== image.fallbackUrl) {
 												img.src = image.fallbackUrl
 												failedImages.add(imageKey)
-												failedImages = new SvelteSet(failedImages)
 											}
 										}}
 									/>
@@ -266,7 +259,6 @@
 									if (image.fallbackUrl && img.src !== image.fallbackUrl) {
 										img.src = image.fallbackUrl
 										failedImages.add(imageKey)
-										failedImages = new SvelteSet(failedImages)
 									}
 								}}
 							/>
