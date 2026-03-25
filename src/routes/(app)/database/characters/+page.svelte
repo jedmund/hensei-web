@@ -3,6 +3,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
 	import { resolve } from '$app/paths'
+	import { resolvePath } from '$lib/utils/resolvePath'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
@@ -35,7 +36,7 @@
 	$effect(() => {
 		const currentView = $page.url.searchParams.get('view')
 		if (viewMode !== 'characters' && currentView !== viewMode) {
-			goto(resolve(`?view=${viewMode}`), { replaceState: true, noScroll: true })
+			goto(resolvePath(`?view=${viewMode}`), { replaceState: true, noScroll: true })
 		} else if (viewMode === 'characters' && currentView) {
 			goto(resolve('/database/characters'), { replaceState: true, noScroll: true })
 		}

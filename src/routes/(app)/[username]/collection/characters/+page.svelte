@@ -5,7 +5,7 @@
 	import { getContext, onDestroy, untrack } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { page } from '$app/stores'
-	import { resolve } from '$app/paths'
+	import { resolvePath } from '$lib/utils/resolvePath'
 	import { goto } from '$app/navigation'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import CollectionFilters, {
@@ -172,7 +172,7 @@
 	function viewCharacterInDatabase(character: CollectionCharacter) {
 		const charData = character.character
 		if (!charData) return
-		goto(resolve(getDatabaseUrl('character'), charData.granblueId, charData.styleSwap))
+		goto(resolvePath(getDatabaseUrl('character'), charData.granblueId, charData.styleSwap))
 	}
 </script>
 
