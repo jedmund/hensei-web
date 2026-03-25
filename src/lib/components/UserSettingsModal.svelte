@@ -155,7 +155,7 @@
 
 	// Re-check when section changes
 	$effect(() => {
-		activeSection // Track this dependency
+		void activeSection // Track this dependency
 		if (contentElement) {
 			setTimeout(checkScrollPosition, 0)
 		}
@@ -281,112 +281,112 @@
 </script>
 
 <Dialog bind:open {...onOpenChange ? { onOpenChange } : {}} size="small" hideClose>
-		<ModalHeader title={m.settings_title()}>
-			<span class="header-username">@{username}</span>
-		</ModalHeader>
-		<ModalBody noPadding>
-			<div class="settings-layout">
-				<div class="settings-nav" class:scrolled={isScrolledFromTop}>
-					<SegmentedControl
-						value={activeSection}
-						onValueChange={handleSectionChange}
-						variant="background"
-						size="small"
-						{element}
-						grow
-					>
-						<Segment value="profile">{m.settings_nav_profile()}</Segment>
-						<Segment value="account">{m.settings_nav_account()}</Segment>
-						<Segment value="privacy">{m.settings_nav_privacy()}</Segment>
-					</SegmentedControl>
-				</div>
-
-				<div class="settings-content" bind:this={contentElement} onscroll={checkScrollPosition}>
-					{#if error}
-						<div class="error-message">{error}</div>
-					{/if}
-					{#if isLoading}
-						<div class="loading-state">
-							<div class="spinner"></div>
-							<span>{m.settings_loading()}</span>
-						</div>
-					{:else if activeSection === 'profile'}
-						<ProfileSettings
-							{picture}
-							{element}
-							{username}
-							displayName={formDisplayName}
-							{granblueId}
-							{wikiProfile}
-							{youtube}
-							{gender}
-							onPictureChange={(v) => (picture = v)}
-							onDisplayNameChange={(v) => (formDisplayName = v)}
-							onGranblueIdChange={(v) => (granblueId = v)}
-							onWikiProfileChange={(v) => (wikiProfile = v)}
-							onYoutubeChange={(v) => (youtube = v)}
-							onGenderChange={(v) => (gender = v)}
-						/>
-					{:else if activeSection === 'account'}
-						<AccountSettings
-							username={formUsername}
-							email={formEmail}
-							{emailVerified}
-							{bahamut}
-							{role}
-							{element}
-							{language}
-							{theme}
-							{currentPassword}
-							{newPassword}
-							{confirmPassword}
-							onUsernameChange={(v) => (formUsername = v)}
-							onEmailChange={(v) => (formEmail = v)}
-							onBahamutChange={(v) => (bahamut = v)}
-							onUsernameValidChange={(v) => (usernameValid = v)}
-							onElementChange={(v) => (element = v as ElementType)}
-							onLanguageChange={(v) => (language = v)}
-							onThemeChange={(v) => (theme = v)}
-							onCurrentPasswordChange={(v) => (currentPassword = v)}
-							onNewPasswordChange={(v) => (newPassword = v)}
-							onConfirmPasswordChange={(v) => (confirmPassword = v)}
-						/>
-					{:else if activeSection === 'privacy'}
-						<PrivacySettings
-							{collectionPrivacy}
-							{showCrewGamertag}
-							{importWeapons}
-							{defaultImportVisibility}
-							{isInCrew}
-							{crewGamertag}
-							{element}
-							onCollectionPrivacyChange={(v) => (collectionPrivacy = v)}
-							onShowCrewGamertagChange={(v) => (showCrewGamertag = v)}
-							onImportWeaponsChange={(v) => (importWeapons = v)}
-							onDefaultImportVisibilityChange={(v) => (defaultImportVisibility = v)}
-						/>
-					{/if}
-				</div>
+	<ModalHeader title={m.settings_title()}>
+		<span class="header-username">@{username}</span>
+	</ModalHeader>
+	<ModalBody noPadding>
+		<div class="settings-layout">
+			<div class="settings-nav" class:scrolled={isScrolledFromTop}>
+				<SegmentedControl
+					value={activeSection}
+					onValueChange={handleSectionChange}
+					variant="background"
+					size="small"
+					{element}
+					grow
+				>
+					<Segment value="profile">{m.settings_nav_profile()}</Segment>
+					<Segment value="account">{m.settings_nav_account()}</Segment>
+					<Segment value="privacy">{m.settings_nav_privacy()}</Segment>
+				</SegmentedControl>
 			</div>
-		</ModalBody>
 
-		<ModalFooter
-			onCancel={handleClose}
-			cancelDisabled={saving}
-			primaryAction={{
-				label: saving ? m.settings_saving() : m.settings_save(),
-				onclick: handleSaveClick,
-				disabled: saving || isLoading || !usernameValid
-			}}
-			showShadow={!isScrolledToBottom}
-		/>
-		<ConfirmDialog
-			bind:open={usernameConfirmOpen}
-			title={m.settings_username_confirm_title()}
-			message={m.settings_username_confirm_message()}
-			confirmLabel={m.settings_username_confirm_action()}
-			onconfirm={handleSave}
-		/>
+			<div class="settings-content" bind:this={contentElement} onscroll={checkScrollPosition}>
+				{#if error}
+					<div class="error-message">{error}</div>
+				{/if}
+				{#if isLoading}
+					<div class="loading-state">
+						<div class="spinner"></div>
+						<span>{m.settings_loading()}</span>
+					</div>
+				{:else if activeSection === 'profile'}
+					<ProfileSettings
+						{picture}
+						{element}
+						{username}
+						displayName={formDisplayName}
+						{granblueId}
+						{wikiProfile}
+						{youtube}
+						{gender}
+						onPictureChange={(v) => (picture = v)}
+						onDisplayNameChange={(v) => (formDisplayName = v)}
+						onGranblueIdChange={(v) => (granblueId = v)}
+						onWikiProfileChange={(v) => (wikiProfile = v)}
+						onYoutubeChange={(v) => (youtube = v)}
+						onGenderChange={(v) => (gender = v)}
+					/>
+				{:else if activeSection === 'account'}
+					<AccountSettings
+						username={formUsername}
+						email={formEmail}
+						{emailVerified}
+						{bahamut}
+						{role}
+						{element}
+						{language}
+						{theme}
+						{currentPassword}
+						{newPassword}
+						{confirmPassword}
+						onUsernameChange={(v) => (formUsername = v)}
+						onEmailChange={(v) => (formEmail = v)}
+						onBahamutChange={(v) => (bahamut = v)}
+						onUsernameValidChange={(v) => (usernameValid = v)}
+						onElementChange={(v) => (element = v as ElementType)}
+						onLanguageChange={(v) => (language = v)}
+						onThemeChange={(v) => (theme = v)}
+						onCurrentPasswordChange={(v) => (currentPassword = v)}
+						onNewPasswordChange={(v) => (newPassword = v)}
+						onConfirmPasswordChange={(v) => (confirmPassword = v)}
+					/>
+				{:else if activeSection === 'privacy'}
+					<PrivacySettings
+						{collectionPrivacy}
+						{showCrewGamertag}
+						{importWeapons}
+						{defaultImportVisibility}
+						{isInCrew}
+						{crewGamertag}
+						{element}
+						onCollectionPrivacyChange={(v) => (collectionPrivacy = v)}
+						onShowCrewGamertagChange={(v) => (showCrewGamertag = v)}
+						onImportWeaponsChange={(v) => (importWeapons = v)}
+						onDefaultImportVisibilityChange={(v) => (defaultImportVisibility = v)}
+					/>
+				{/if}
+			</div>
+		</div>
+	</ModalBody>
+
+	<ModalFooter
+		onCancel={handleClose}
+		cancelDisabled={saving}
+		primaryAction={{
+			label: saving ? m.settings_saving() : m.settings_save(),
+			onclick: handleSaveClick,
+			disabled: saving || isLoading || !usernameValid
+		}}
+		showShadow={!isScrolledToBottom}
+	/>
+	<ConfirmDialog
+		bind:open={usernameConfirmOpen}
+		title={m.settings_username_confirm_title()}
+		message={m.settings_username_confirm_message()}
+		confirmLabel={m.settings_username_confirm_action()}
+		onconfirm={handleSave}
+	/>
 </Dialog>
 
 <style lang="scss">
