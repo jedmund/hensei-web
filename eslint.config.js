@@ -26,15 +26,7 @@ export default ts.config(
 		rules: {
 			// typescript-eslint strongly recommend that you do not use the no-undef lint rule on TypeScript projects.
 			// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
-			'no-undef': 'off',
-			'@typescript-eslint/no-unused-vars': [
-				'error',
-				{
-					argsIgnorePattern: '^_',
-					varsIgnorePattern: '^_',
-					caughtErrorsIgnorePattern: '^_'
-				}
-			]
+			'no-undef': 'off'
 		}
 	},
 	{
@@ -46,11 +38,6 @@ export default ts.config(
 				parser: ts.parser,
 				svelteConfig
 			}
-		},
-		rules: {
-			// svelte template usage is invisible to typescript-eslint;
-			// rely on svelte-check for unused-var detection in .svelte files
-			'@typescript-eslint/no-unused-vars': 'off'
 		}
 	},
 	storybook.configs['flat/recommended']
