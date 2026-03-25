@@ -67,7 +67,8 @@
 			template: (nameObj: unknown) => {
 				if (!nameObj) return '—'
 				if (typeof nameObj === 'string') return nameObj
-				return nameObj.en || nameObj.ja || '—'
+				const obj = nameObj as Record<string, string>
+				return obj.en || obj.ja || '—'
 			}
 		},
 		{
@@ -268,7 +269,8 @@
 			template: (nameObj: unknown) => {
 				if (!nameObj) return '—'
 				if (typeof nameObj === 'string') return nameObj
-				return nameObj.en || nameObj.ja || '—'
+				const obj = nameObj as Record<string, string>
+				return obj.en || obj.ja || '—'
 			}
 		},
 		{

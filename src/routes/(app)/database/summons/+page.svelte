@@ -29,7 +29,8 @@
 				if (!nameObj) return '—'
 				if (typeof nameObj === 'string') return nameObj
 				// Handle {en: "...", ja: "..."} structure
-				return nameObj.en || nameObj.ja || '—'
+				const obj = nameObj as Record<string, string>
+				return obj.en || obj.ja || '—'
 			}
 		},
 		{
