@@ -6,6 +6,7 @@ node_modules
 .netlify
 .wrangler
 /.svelte-kit
+.claude/worktrees/*/.svelte-kit
 /.next
 /build
 
@@ -37,3 +38,4 @@ project.inlang/cache/
 
 # Documentation
 docs/
+.eslintcache
