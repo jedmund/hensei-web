@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { raidAdapter } from '$lib/api/adapters/raid.adapter'
@@ -143,7 +142,7 @@
 			await queryClient.invalidateQueries({ queryKey: ['raids'] })
 
 			// Navigate to the new slug if it changed
-			goto(resolve(`/database/raids/${result.slug}`))
+			goto(`/database/raids/${result.slug}`)
 		} catch (error: unknown) {
 			saveError = error instanceof Error ? error.message : 'Failed to save raid'
 		} finally {
@@ -153,7 +152,7 @@
 
 	// Cancel and go back
 	function handleCancel() {
-		goto(resolve(`/database/raids/${raidSlug}`))
+		goto(`/database/raids/${raidSlug}`)
 	}
 </script>
 

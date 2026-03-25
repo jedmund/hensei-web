@@ -32,7 +32,6 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getRingStat, getElementalizedEarringStat } from '$lib/utils/masteryUtils'
 	import { page } from '$app/stores'
-	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -104,7 +103,9 @@
 	})
 
 	// Element name for theming
-	const elementName = $derived(getElementTypeKey(characterData?.element))
+	const elementName = $derived(
+		characterData?.element ? getElementTypeKey(characterData.element) : undefined
+	)
 
 	async function handleSave(updates: CharacterEditUpdates) {
 		try {
@@ -284,9 +285,7 @@
 
 	function viewInDatabase() {
 		if (!characterData?.granblueId) return
-		goto(
-			resolve(getDatabaseUrl('character'), characterData.granblueId, characterData.styleSwap)
-		)
+		goto(getDatabaseUrl('character', characterData.granblueId, characterData.styleSwap))
 	}
 
 	// Set up sidebar action on mount and clean up on destroy

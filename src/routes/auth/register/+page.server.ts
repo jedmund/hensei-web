@@ -44,9 +44,9 @@ export const actions: Actions = {
 		}
 
 		const j = await res.json().catch(() => ({}))
-		return fail(res.status, {
+		return fail(Math.min(res.status, 499), {
 			error: 'failed' as const,
-			details: j.details,
+			details: j.messages ?? j.details,
 			username,
 			email
 		})

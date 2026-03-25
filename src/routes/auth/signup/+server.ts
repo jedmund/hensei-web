@@ -56,15 +56,23 @@ export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
 		if (!signupRes.ok) {
 			const errorData = await signupRes.json().catch(() => ({}))
 
-			// Handle specific API errors (username/email already taken)
+			if (dev) console.error('Signup API error:', signupRes.status, errorData)
+
+			// Handle specific API errors (username/email already taken, validation errors)
 			if (signupRes.status === 409 || signupRes.status === 422) {
 				return json(
-					{ error: errorData.error || 'Username or email already in use' },
+					{
+						error: errorData.error || 'Username or email already in use',
+						messages: errorData.messages
+					},
 					{ status: 409 }
 				)
 			}
 
-			return json({ error: errorData.error || 'Signup failed' }, { status: signupRes.status })
+			return json(
+				{ error: errorData.error || 'Signup failed', messages: errorData.messages },
+				{ status: signupRes.status }
+			)
 		}
 
 		// 2. Auto-login the new user

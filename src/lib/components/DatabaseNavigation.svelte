@@ -2,7 +2,6 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { m } from '$lib/paraglide/messages'
 	import { page } from '$app/stores'
-	import { resolve } from '$app/paths'
 	import Icon from './Icon.svelte'
 	import Tooltip from './ui/Tooltip.svelte'
 	import DropdownItem from './ui/dropdown/DropdownItem.svelte'
@@ -81,11 +80,7 @@
 	<ul role="list" class="database-back-section">
 		<li>
 			<Tooltip content={m.nav_back_to_site()}>
-				<a
-					href={resolve(galleryHref)}
-					class="database-back-button"
-					aria-label={m.nav_back_to_site()}
-				>
+				<a href={galleryHref} class="database-back-button" aria-label={m.nav_back_to_site()}>
 					<Icon name="home" size={21} />
 				</a>
 			</Tooltip>
@@ -96,25 +91,19 @@
 	<ul role="list" class="database-subnav">
 		<li>
 			<a
-				href={resolve(databaseCharactersHref)}
+				href={databaseCharactersHref}
 				class:selected={isDatabaseNavSelected(databaseCharactersHref)}
 			>
 				{m.nav_characters()}
 			</a>
 		</li>
 		<li>
-			<a
-				href={resolve(databaseWeaponsHref)}
-				class:selected={isDatabaseNavSelected(databaseWeaponsHref)}
-			>
+			<a href={databaseWeaponsHref} class:selected={isDatabaseNavSelected(databaseWeaponsHref)}>
 				{m.nav_weapons()}
 			</a>
 		</li>
 		<li>
-			<a
-				href={resolve(databaseSummonsHref)}
-				class:selected={isDatabaseNavSelected(databaseSummonsHref)}
-			>
+			<a href={databaseSummonsHref} class:selected={isDatabaseNavSelected(databaseSummonsHref)}>
 				{m.nav_summons()}
 			</a>
 		</li>
@@ -127,21 +116,21 @@
 				<DropdownMenu.Portal>
 					<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
 						<DropdownItem>
-							<a href={resolve(databaseJobsHref)}>{m.nav_jobs()}</a>
+							<a href={databaseJobsHref}>{m.nav_jobs()}</a>
 						</DropdownItem>
 						<DropdownItem>
-							<a href={resolve(databaseRaidsHref)}>{m.nav_raids()}</a>
-						</DropdownItem>
-						<DropdownMenu.Separator class="dropdown-separator" />
-						<DropdownItem>
-							<a href={resolve(databaseArtifactSkillsHref)}>{m.nav_artifact_skills()}</a>
-						</DropdownItem>
-						<DropdownItem>
-							<a href={resolve(databaseBulletsHref)}>{m.nav_bullets()}</a>
+							<a href={databaseRaidsHref}>{m.nav_raids()}</a>
 						</DropdownItem>
 						<DropdownMenu.Separator class="dropdown-separator" />
 						<DropdownItem>
-							<a href={resolve(databaseGwEventsHref)}>{m.nav_unite_and_fight()}</a>
+							<a href={databaseArtifactSkillsHref}>{m.nav_artifact_skills()}</a>
+						</DropdownItem>
+						<DropdownItem>
+							<a href={databaseBulletsHref}>{m.nav_bullets()}</a>
+						</DropdownItem>
+						<DropdownMenu.Separator class="dropdown-separator" />
+						<DropdownItem>
+							<a href={databaseGwEventsHref}>{m.nav_unite_and_fight()}</a>
 						</DropdownItem>
 					</DropdownMenu.Content>
 				</DropdownMenu.Portal>
@@ -161,33 +150,28 @@
 			<DropdownMenu.Content class="dropdown-content" sideOffset={5} align="end">
 				{#if currentDatabaseEntity === 'raid'}
 					<DropdownItem>
-						<a href={resolve(localizeHref('/database/raids/new'))}>{m.nav_new_raid()}</a>
+						<a href={localizeHref('/database/raids/new')}>{m.nav_new_raid()}</a>
 					</DropdownItem>
 					<DropdownItem>
-						<a href={resolve(localizeHref('/database/raid-groups/new'))}
-							>{m.nav_new_raid_group()}</a
-						>
+						<a href={localizeHref('/database/raid-groups/new')}>{m.nav_new_raid_group()}</a>
 					</DropdownItem>
 				{:else if currentDatabaseEntity === 'job'}
 					<DropdownItem>
-						<a href={resolve(localizeHref('/database/jobs/new'))}>{m.nav_new_job()}</a>
+						<a href={localizeHref('/database/jobs/new')}>{m.nav_new_job()}</a>
 					</DropdownItem>
 					<DropdownItem>
-						<a href={resolve(localizeHref('/database/job-accessories/new'))}
-							>{m.nav_new_job_accessory()}</a
-						>
+						<a href={localizeHref('/database/job-accessories/new')}>{m.nav_new_job_accessory()}</a>
 					</DropdownItem>
 				{:else}
 					{#if databaseNewHref}
 						<DropdownItem>
-							<a href={resolve(databaseNewHref)}
-								>{m.nav_new_single({ entity: databaseEntityLabel ?? '' })}</a
+							<a href={databaseNewHref}>{m.nav_new_single({ entity: databaseEntityLabel ?? '' })}</a
 							>
 						</DropdownItem>
 					{/if}
 					{#if databaseImportHref}
 						<DropdownItem>
-							<a href={resolve(databaseImportHref)}
+							<a href={databaseImportHref}
 								>{m.nav_new_multiple({ entity: databaseEntityLabel ?? '' })}</a
 							>
 						</DropdownItem>
@@ -195,15 +179,13 @@
 					{#if currentDatabaseEntity === 'weapon'}
 						<DropdownMenu.Separator class="dropdown-separator" />
 						<DropdownItem>
-							<a href={resolve(localizeHref('/database/series/weapons/new'))}
-								>{m.nav_new_weapon_series()}</a
-							>
+							<a href={localizeHref('/database/series/weapons/new')}>{m.nav_new_weapon_series()}</a>
 						</DropdownItem>
 					{/if}
 					{#if currentDatabaseEntity === 'character'}
 						<DropdownMenu.Separator class="dropdown-separator" />
 						<DropdownItem>
-							<a href={resolve(localizeHref('/database/series/characters/new'))}
+							<a href={localizeHref('/database/series/characters/new')}
 								>{m.nav_new_character_series()}</a
 							>
 						</DropdownItem>

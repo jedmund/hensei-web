@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms'
-	import { resolve } from '$app/paths'
 	import AuthCard from '$lib/components/auth/AuthCard.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -80,10 +79,10 @@
 	{#snippet footer()}
 		<p>
 			{m.auth_login_noAccount()}
-			<a href={resolve(localizeHref('/auth/register'))}>{m.auth_login_register()}</a>
+			<a href={localizeHref('/auth/register')}>{m.auth_login_register()}</a>
 		</p>
 		<p>
-			<a href={resolve(localizeHref('/auth/forgot-password'))}>{m.auth_login_forgotPassword()}</a>
+			<a href={localizeHref('/auth/forgot-password')}>{m.auth_login_forgotPassword()}</a>
 		</p>
 	{/snippet}
 </AuthCard>

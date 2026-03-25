@@ -2,7 +2,6 @@
 	import type { GridSummon } from '$lib/types/api/party'
 	import { usePartyContext } from '$lib/types/party-context'
 	import { page } from '$app/stores'
-	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
@@ -88,7 +87,7 @@
 
 	function viewInDatabase() {
 		if (!item?.summon?.granblueId) return
-		goto(resolve(getDatabaseUrl('summon'), item.summon.granblueId))
+		goto(getDatabaseUrl('summon', item.summon.granblueId))
 	}
 
 	// Duplicate: find the first empty sub-summon slot (0-3)

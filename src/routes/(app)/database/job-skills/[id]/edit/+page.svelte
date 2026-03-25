@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 
-	import { resolve } from '$app/paths'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 
@@ -113,7 +112,7 @@
 
 			saveSuccess = true
 			setTimeout(() => {
-				goto(resolve(`/database/job-skills/${skill!.id}`))
+				goto(`/database/job-skills/${skill!.id}`)
 			}, 500)
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
@@ -124,7 +123,7 @@
 	}
 
 	function handleCancel() {
-		goto(resolve(`/database/job-skills/${skill?.id}`))
+		goto(`/database/job-skills/${skill?.id}`)
 	}
 
 	const pageTitle = $derived(m.page_title_db_edit({ name: skill?.name?.en ?? 'Job Skill' }))

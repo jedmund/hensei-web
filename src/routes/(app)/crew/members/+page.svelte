@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores'
-	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
@@ -85,7 +84,7 @@
 		} else {
 			url.searchParams.set('filter', newFilter)
 		}
-		goto(resolve(url.toString()), { replaceState: true })
+		goto(url.toString(), { replaceState: true })
 	}
 
 	// Confirm action dialog state (remove/promote/demote)

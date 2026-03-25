@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { raidAdapter } from '$lib/api/adapters/raid.adapter'
@@ -46,17 +45,17 @@
 
 	// Navigate to edit
 	function handleEdit() {
-		goto(resolve(`/database/raid-groups/${groupId}/edit`))
+		goto(`/database/raid-groups/${groupId}/edit`)
 	}
 
 	// Navigate back
 	function handleBack() {
-		goto(resolve('/database/raids?view=groups'))
+		goto('/database/raids?view=groups')
 	}
 
 	// Navigate to raid detail
 	function handleRaidClick(slug: string) {
-		goto(resolve(`/database/raids/${slug}`))
+		goto(`/database/raids/${slug}`)
 	}
 </script>
 

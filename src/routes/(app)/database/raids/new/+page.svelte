@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { raidAdapter } from '$lib/api/adapters/raid.adapter'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
@@ -110,7 +109,7 @@
 			await queryClient.invalidateQueries({ queryKey: ['raids'] })
 
 			// Navigate to the new raid's detail page
-			goto(resolve(`/database/raids/${newRaid.slug}`))
+			goto(`/database/raids/${newRaid.slug}`)
 		} catch (error: unknown) {
 			saveError = error instanceof Error ? error.message : 'Failed to create raid'
 		} finally {
@@ -120,7 +119,7 @@
 
 	// Cancel and go back
 	function handleCancel() {
-		goto(resolve('/database/raids'))
+		goto('/database/raids')
 	}
 </script>
 

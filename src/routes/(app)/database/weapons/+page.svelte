@@ -2,7 +2,6 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
@@ -45,9 +44,9 @@
 	$effect(() => {
 		const currentView = $page.url.searchParams.get('view')
 		if (viewMode !== 'weapons' && currentView !== viewMode) {
-			goto(resolve(`?view=${viewMode}`), { replaceState: true, noScroll: true })
+			goto(`?view=${viewMode}`, { replaceState: true, noScroll: true })
 		} else if (viewMode === 'weapons' && currentView) {
-			goto(resolve('/database/weapons'), { replaceState: true, noScroll: true })
+			goto('/database/weapons', { replaceState: true, noScroll: true })
 		}
 	})
 
@@ -71,7 +70,7 @@
 
 	// Navigate to series detail
 	function handleSeriesClick(slug: string) {
-		goto(resolve(`/database/series/weapons/${slug}`))
+		goto(`/database/series/weapons/${slug}`)
 	}
 
 	// Awakening modal state

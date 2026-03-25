@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { ContextMenu } from 'bits-ui'
-	import { resolve } from '$app/paths'
 	import { SvelteMap, SvelteSet } from 'svelte/reactivity'
 	import ContextMenuWrapper from '$lib/components/ui/menu/ContextMenuWrapper.svelte'
 
@@ -35,11 +34,11 @@
 	}: Props = $props()
 
 	// Track download status per image
-	let downloadingImages = $state(new SvelteSet<string>())
+	let downloadingImages = new SvelteSet<string>()
 	let downloadingAll = $state(false)
 
 	// Track images that failed and fell back (download should be disabled for these)
-	let failedImages = $state(new SvelteSet<string>())
+	let failedImages = new SvelteSet<string>()
 
 	// Cache-buster: increment to force image reload after downloads
 	let cacheBuster = $state(0)
@@ -180,7 +179,7 @@
 						{#snippet trigger()}
 							<div class="image-item" class:downloading={isDownloading} class:fallback={isFailed}>
 								<a
-									href={resolve(bustUrl(image.url))}
+									href={bustUrl(image.url)}
 									target="_blank"
 									rel="noopener noreferrer"
 									class="image-container"
@@ -253,7 +252,7 @@
 				{:else}
 					<div class="image-item" class:fallback={isFailed}>
 						<a
-							href={resolve(bustUrl(image.url))}
+							href={bustUrl(image.url)}
 							target="_blank"
 							rel="noopener noreferrer"
 							class="image-container"

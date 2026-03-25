@@ -5,7 +5,6 @@
 	import { getContext, onDestroy, untrack } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { page } from '$app/stores'
-	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import CollectionFilters, {
@@ -164,7 +163,7 @@
 	function viewWeaponInDatabase(weapon: CollectionWeapon) {
 		const weaponData = weapon.weapon
 		if (!weaponData) return
-		goto(resolve(getDatabaseUrl('weapon', weaponData.granblueId)))
+		goto(getDatabaseUrl('weapon', weaponData.granblueId))
 	}
 </script>
 

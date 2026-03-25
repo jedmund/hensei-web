@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Playlist } from '$lib/types/api/playlist'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { resolve } from '$app/paths'
 	import { getRaidImage } from '$lib/utils/images'
 	import Icon from '$lib/components/Icon.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -21,7 +20,7 @@
 	const isGrid = $derived(raidSlugs.length > 1)
 </script>
 
-<a class="card" href={resolve(localizeHref(`/${username}/playlists/${playlist.slug}`))}>
+<a class="card" href={localizeHref(`/${username}/playlists/${playlist.slug}`)}>
 	<div class="card-body">
 		<h3 class="title">{playlist.title}</h3>
 		{#if raidSlugs.length > 0}

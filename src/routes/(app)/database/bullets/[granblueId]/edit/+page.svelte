@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
@@ -91,7 +90,7 @@
 			saveSuccess = true
 
 			setTimeout(() => {
-				goto(resolve(`/database/bullets/${editData.granblueId || bullet.id}`))
+				goto(`/database/bullets/${editData.granblueId || bullet.id}`)
 			}, 500)
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
@@ -102,7 +101,7 @@
 	}
 
 	function handleCancel() {
-		goto(resolve(`/database/bullets/${bullet?.granblueId || bullet?.id}`))
+		goto(`/database/bullets/${bullet?.granblueId || bullet?.id}`)
 	}
 
 	const pageTitle = $derived(m.page_title_db_edit({ name: bullet?.name?.en ?? 'Bullet' }))

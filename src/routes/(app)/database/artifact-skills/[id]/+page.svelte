@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { artifactQueries, artifactKeys } from '$lib/api/queries/artifact.queries'
@@ -89,7 +88,7 @@
 			saveSuccess = true
 
 			setTimeout(() => {
-				goto(resolve('/database/artifact-skills'))
+				goto('/database/artifact-skills')
 			}, 500)
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
@@ -100,7 +99,7 @@
 	}
 
 	function handleCancel() {
-		goto(resolve('/database/artifact-skills'))
+		goto('/database/artifact-skills')
 	}
 
 	function getSkillGroupNumber(group: string): number {

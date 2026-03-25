@@ -2,7 +2,6 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import { entityAdapter, type ParsedWeaponData } from '$lib/api/adapters/entity.adapter'
 	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'
 	import { getGameCdnWeaponImage, getPlaceholderImage } from '$lib/utils/images'
@@ -326,7 +325,7 @@
 	}
 
 	function handleCancel() {
-		goto(resolve('/database/weapons'))
+		goto('/database/weapons')
 	}
 
 	// Can save current entity
