@@ -83,15 +83,10 @@
 	<div class="filter-row">
 		<div class="filter-group">
 			<div class="filter-header">
-				<label class="filter-label">{m.search_filter_rarity()}</label>
+				<span class="filter-label">{m.search_filter_rarity()}</span>
 				{#if rarityFilters.length > 0}
-					<a
-						href="#"
-						class="clear-link"
-						onclick={(e) => {
-							e.preventDefault()
-							onRarityChange([])
-						}}>{m.search_filter_clear()}</a
+					<button type="button" class="clear-link" onclick={() => onRarityChange([])}
+						>{m.search_filter_clear()}</button
 					>
 				{/if}
 			</div>
@@ -106,15 +101,10 @@
 
 		<div class="filter-group">
 			<div class="filter-header">
-				<label class="filter-label">{m.search_filter_element()}</label>
+				<span class="filter-label">{m.search_filter_element()}</span>
 				{#if elementFilters.length > 0}
-					<a
-						href="#"
-						class="clear-link"
-						onclick={(e) => {
-							e.preventDefault()
-							onElementChange([])
-						}}>{m.search_filter_clear()}</a
+					<button type="button" class="clear-link" onclick={() => onElementChange([])}
+						>{m.search_filter_clear()}</button
 					>
 				{/if}
 			</div>
@@ -132,15 +122,10 @@
 	{#if showProficiency}
 		<div class="filter-group">
 			<div class="filter-header">
-				<label class="filter-label">{m.search_filter_proficiency()}</label>
+				<span class="filter-label">{m.search_filter_proficiency()}</span>
 				{#if !isLockedProficiency && proficiencyFilters.length > 0}
-					<a
-						href="#"
-						class="clear-link"
-						onclick={(e) => {
-							e.preventDefault()
-							onProficiencyChange([])
-						}}>{m.search_filter_clear()}</a
+					<button type="button" class="clear-link" onclick={() => onProficiencyChange([])}
+						>{m.search_filter_clear()}</button
 					>
 				{/if}
 			</div>
@@ -168,15 +153,10 @@
 
 	<div class="filter-group">
 		<div class="filter-header">
-			<label class="filter-label">{m.search_filter_series()}</label>
+			<span class="filter-label">{m.search_filter_series()}</span>
 			{#if seriesFilter}
-				<a
-					href="#"
-					class="clear-link"
-					onclick={(e) => {
-						e.preventDefault()
-						onSeriesChange(undefined)
-					}}>{m.search_filter_clear()}</a
+				<button type="button" class="clear-link" onclick={() => onSeriesChange(undefined)}
+					>{m.search_filter_clear()}</button
 				>
 			{/if}
 		</div>
@@ -192,7 +172,7 @@
 
 	{#if type === 'summon'}
 		<div class="filter-group switch-row">
-			<label class="filter-label">{m.extra_summons_subaura()}</label>
+			<span class="filter-label">{m.extra_summons_subaura()}</span>
 			{#if subauraLocked}
 				<Tooltip content={m.search_filter_subaura_locked()}>
 					<Switch checked={subauraFilter} size="small" disabled={true} />
@@ -250,6 +230,9 @@
 			text-decoration: none;
 			cursor: pointer;
 			transition: 0.15s color ease-out;
+			background: none;
+			border: none;
+			padding: 0;
 
 			&:hover {
 				color: var(--text-primary);

@@ -22,6 +22,7 @@
 	}
 </script>
 
+<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <i
 	class="fragment"
 	class:visible
@@ -32,7 +33,15 @@
 	class:stage5={stage === 5}
 	onclick={handleClick}
 	onmouseover={handleHover}
+	onfocus={handleHover}
+	onkeydown={(e) => {
+		if (interactive && (e.key === 'Enter' || e.key === ' ')) {
+			e.preventDefault()
+			handleClick()
+		}
+	}}
 	role={interactive ? 'button' : undefined}
+	tabindex={interactive ? 0 : undefined}
 	aria-label={interactive ? `Transcendence fragment ${stage}` : undefined}
 ></i>
 

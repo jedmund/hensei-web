@@ -11,7 +11,6 @@
 		className?: string
 		stage?: number
 		type?: 'character' | 'weapon' | 'summon'
-		editable?: boolean
 		interactive?: boolean
 		tabindex?: number
 		size?: 'regular' | 'small'
@@ -24,7 +23,6 @@
 		className,
 		stage = 0,
 		type = 'character',
-		editable = false,
 		interactive = false,
 		tabindex,
 		size = 'regular',
@@ -106,6 +104,7 @@
 <Popover.Root bind:open={isPopoverOpen}>
 	<Popover.Trigger disabled={!interactive}>
 		{#snippet child({ props })}
+			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 			<div
 				{...props}
 				class="star TranscendenceStar"
@@ -118,9 +117,9 @@
 				class:stage5={currentStage === 5}
 				class:small={size === 'small'}
 				onmouseleave={interactive ? handleMouseLeave : undefined}
-				{tabindex}
-				role={editable ? 'button' : undefined}
-				aria-label={editable ? 'Transcendence star' : undefined}
+				tabindex={interactive ? (tabindex ?? 0) : undefined}
+				role={interactive ? 'button' : undefined}
+				aria-label={interactive ? 'Transcendence star' : undefined}
 			>
 				<i
 					class="figure {className || ''}"

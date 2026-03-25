@@ -28,6 +28,7 @@
 	}: Props = $props()
 </script>
 
+<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <div
 	class="info-tile {className}"
 	class:clickable

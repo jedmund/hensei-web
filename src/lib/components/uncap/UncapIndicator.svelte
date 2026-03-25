@@ -37,7 +37,6 @@
 		className?: string
 		stage?: number
 		type?: 'character' | 'weapon' | 'summon'
-		editable?: boolean
 		interactive?: boolean
 		tabindex?: number
 		size?: 'regular' | 'small'
@@ -121,7 +120,6 @@
 				props: {
 					stage: transcendenceStage ?? 0,
 					type,
-					editable,
 					interactive: editable,
 					size,
 					onFragmentClick: editable ? handleTranscendenceUpdate : undefined

@@ -198,7 +198,15 @@
 							class:editable={ctx?.canEdit()}
 							class:is-active={isActive}
 							class:not-in-collection={notInCollection}
+							role="button"
+							tabindex="0"
 							onclick={() => viewDetails()}
+							onkeydown={(e) => {
+								if (e.key === 'Enter' || e.key === ' ') {
+									e.preventDefault()
+									viewDetails()
+								}
+							}}
 						>
 							{#if ctx?.canEdit()}
 								<button
@@ -283,10 +291,19 @@
 				class="frame character cell"
 				class:editable={ctx?.canEdit()}
 				class:is-selected={isEmptySelected}
+				role="button"
+				tabindex="0"
 				onclick={() =>
 					ctx?.canEdit() &&
 					ctx?.openPicker &&
 					ctx.openPicker({ type: 'character', position, item })}
+				onkeydown={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						e.preventDefault()
+						if (ctx?.canEdit() && ctx?.openPicker)
+							ctx.openPicker({ type: 'character', position, item })
+					}
+				}}
 			>
 				<img class="image placeholder" alt="" src={getPlaceholderImage('character', 'grid')} />
 				{#if ctx?.canEdit()}

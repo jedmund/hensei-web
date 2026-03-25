@@ -39,6 +39,7 @@
 	class="language-row"
 	onpointerdown={(e) => e.stopPropagation()}
 	onclick={(e) => e.stopPropagation()}
+	onkeydown={(e) => e.stopPropagation()}
 >
 	<span class="language-label">{m.nav_language()}</span>
 	<SwitchPrimitive.Root checked={isJapanese} onCheckedChange={handleToggle} class="language-switch">

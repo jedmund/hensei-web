@@ -244,25 +244,28 @@
 				{:else if eventsQuery.data && eventsQuery.data.length > 0}
 					<ul class="event-list">
 						{#each eventsQuery.data as event (event.id)}
-							<li
-								class="event-item"
-								onclick={() => goto(localizeHref(`/crew/events/${event.eventNumber}`))}
-							>
-								<div class="event-info">
-									<span class="event-number">{event.eventNumber}</span>
-									<ElementBadge element={event.element} />
-								</div>
-								<span class="event-dates">
-									{formatDateJST(event.startDate)} – {formatDateJST(event.endDate)}
-								</span>
-								<span class="event-score">
-									{#if event.crewTotalScore !== undefined}
-										{formatScore(event.crewTotalScore)}
-									{/if}
-								</span>
-								<span class="event-status status-{event.status ?? 'unknown'}"
-									>{formatEventStatus(event.status ?? 'unknown', event.startDate)}</span
+							<li class="event-item">
+								<button
+									type="button"
+									class="event-button"
+									onclick={() => goto(localizeHref(`/crew/events/${event.eventNumber}`))}
 								>
+									<div class="event-info">
+										<span class="event-number">{event.eventNumber}</span>
+										<ElementBadge element={event.element} />
+									</div>
+									<span class="event-dates">
+										{formatDateJST(event.startDate)} – {formatDateJST(event.endDate)}
+									</span>
+									<span class="event-score">
+										{#if event.crewTotalScore !== undefined}
+											{formatScore(event.crewTotalScore)}
+										{/if}
+									</span>
+									<span class="event-status status-{event.status ?? 'unknown'}"
+										>{formatEventStatus(event.status ?? 'unknown', event.startDate)}</span
+									>
+								</button>
 							</li>
 						{/each}
 					</ul>
@@ -455,6 +458,11 @@
 	}
 
 	.event-item {
+		list-style: none;
+	}
+
+	.event-button {
+		all: unset;
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit-2x;
@@ -462,9 +470,16 @@
 		border-radius: layout.$item-corner;
 		transition: background-color 0.15s;
 		cursor: pointer;
+		width: 100%;
+		box-sizing: border-box;
 
 		&:hover {
 			background: var(--list-cell-bg-hover, rgba(0, 0, 0, 0.03));
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--focus-ring-color, #3b82f6);
+			outline-offset: 2px;
 		}
 	}
 
