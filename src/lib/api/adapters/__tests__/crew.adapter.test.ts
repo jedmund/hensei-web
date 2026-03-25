@@ -52,7 +52,7 @@ describe('CrewAdapter', () => {
 
 			await adapter.transferCaptain('crew-1', 'user-2')
 
-			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body as string)
 			expect(body.user_id).toBe('user-2')
 		})
 	})
@@ -112,7 +112,7 @@ describe('CrewAdapter', () => {
 
 			const result = await adapter.sendInvitation('crew-1', 'user-2')
 
-			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body as string)
 			expect(body.user_id).toBe('user-2')
 			expect(result).toEqual(EXPECTED.sendInvitation)
 		})
@@ -122,7 +122,7 @@ describe('CrewAdapter', () => {
 
 			await adapter.sendInvitation('crew-1', 'user-2', 'phantom-1')
 
-			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body as string)
 			expect(body.user_id).toBe('user-2')
 			expect(body.phantom_player_id).toBe('phantom-1')
 		})
@@ -132,7 +132,7 @@ describe('CrewAdapter', () => {
 
 			await adapter.sendInvitation('crew-1', 'user-2')
 
-			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body as string)
 			expect(body.user_id).toBe('user-2')
 			expect(body.phantom_player_id).toBeUndefined()
 		})

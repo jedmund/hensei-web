@@ -41,7 +41,7 @@ describe('GwAdapter', () => {
 
 			await adapter.createEvent({ event_number: 79 } as Record<string, unknown>)
 
-			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body as string)
 			expect(body.gw_event).toBeDefined()
 			expect(clearSpy).toHaveBeenCalledWith('/gw_events')
 		})
@@ -127,7 +127,7 @@ describe('GwAdapter', () => {
 
 			await adapter.addCrewScore('part-1', { round: 1, score: 500000 } as Record<string, unknown>)
 
-			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body as string)
 			expect(body.crew_score).toBeDefined()
 			expect(clearSpy).toHaveBeenCalledWith('/crew/gw_participations/part-1')
 		})
