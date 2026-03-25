@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
 	import { searchAdapter, type SearchResult } from '$lib/api/adapters'
 	import {
 		getCharacterImage,

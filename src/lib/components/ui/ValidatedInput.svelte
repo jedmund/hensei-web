@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte'
-	import { Tooltip } from 'bits-ui'
 	import Input from './Input.svelte'
 
 	interface Props {

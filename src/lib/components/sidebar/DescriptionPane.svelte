@@ -15,6 +15,7 @@
 		onSave?: (description: string) => Promise<void>
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { description, videoUrl, canEdit = false, partyId, partyShortcode, onSave }: Props = $props()
 
 	/** Extract YouTube video ID from various URL formats */

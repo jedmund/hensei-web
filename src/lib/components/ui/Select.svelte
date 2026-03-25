@@ -53,7 +53,7 @@
 		required = false,
 		portal = false,
 		class: className = '',
-		suffixSnippet
+		suffixSnippet // eslint-disable-line @typescript-eslint/no-unused-vars
 	}: Props = $props()
 
 	// Convert options to string values for Bits UI (which expects strings internally)

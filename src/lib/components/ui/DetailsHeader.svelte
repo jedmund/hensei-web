@@ -41,9 +41,6 @@
 	const name = $derived(item?.name)
 	const element = $derived(item?.element)
 	const proficiency = $derived(item?.proficiency)
-	const maxLevel = $derived(item?.max_level)
-	const granblueId = $derived(item?.granblue_id)
-
 	// Get element name for button styling
 	const elementName = $derived(element ? getElementKey(element) : undefined)
 

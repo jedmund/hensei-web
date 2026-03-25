@@ -17,7 +17,7 @@
 
 	let {
 		value = $bindable(),
-		placeholder = 'Select date',
+		placeholder = 'Select date', // eslint-disable-line @typescript-eslint/no-unused-vars
 		disabled = false,
 		readonly = false,
 		contained = false,

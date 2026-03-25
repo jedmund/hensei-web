@@ -582,6 +582,7 @@
 							/>
 						</div>
 					{/if}
+					<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
 					{#snippet failed(error, reset)}
 						<div class="grid-error" role="alert">
 							<p>{m.party_grid_error()}</p>

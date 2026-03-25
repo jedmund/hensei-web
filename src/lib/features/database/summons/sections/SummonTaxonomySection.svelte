@@ -5,11 +5,8 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
-	import { getElementLabel } from '$lib/utils/element'
 	import { localizedName } from '$lib/utils/locale'
 	import type { SummonSeriesRef } from '$lib/types/api/summonSeries'
-
-	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
@@ -34,13 +31,6 @@
 				label: localizedName(s.name)
 			}))
 		]
-	})
-
-	// Get element name for checkbox theming
-	const elementName = $derived.by((): ElementName | undefined => {
-		const el = editMode ? editData?.element : summon?.element
-		const label = getElementLabel(el)
-		return label !== '—' && label !== 'Null' ? (label.toLowerCase() as ElementName) : undefined
 	})
 
 	// Format series label for display mode

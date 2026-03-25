@@ -7,7 +7,6 @@
 	 */
 	import * as m from '$lib/paraglide/messages'
 	import { getBasePath } from '$lib/utils/images'
-	import { getElementClass } from '$lib/utils/element'
 	import type { UnifiedSearchResult } from '$lib/api/adapters/search.adapter'
 
 	interface Props {

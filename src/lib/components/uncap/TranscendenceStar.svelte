@@ -27,7 +27,7 @@
 		interactive = false,
 		tabindex,
 		size = 'regular',
-		onStarClick,
+		onStarClick, // eslint-disable-line @typescript-eslint/no-unused-vars
 		onFragmentClick,
 		onFragmentHover
 	}: Props = $props()
@@ -50,14 +50,6 @@
 			currentStage = stage
 		}
 	})
-
-	function handleClick(event: MouseEvent) {
-		if (editable && onStarClick) {
-			// Prevent trigger from toggling the popover
-			event.stopPropagation()
-			onStarClick()
-		}
-	}
 
 	function handleFragmentClick(index: number) {
 		let newStage = index
@@ -150,6 +142,7 @@
 				onOpenAutoFocus={(e) => e.preventDefault()}
 			>
 				<div class="fragments">
+					<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
 					{#each Array(NUM_FRAGMENTS) as _, i (i)}
 						{@const loopStage = i + 1}
 						<TranscendenceFragment

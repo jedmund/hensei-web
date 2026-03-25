@@ -47,7 +47,7 @@
 		}
 	}
 
-	// Get element-based background color
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for future use
 	function getElementBackground(): string {
 		const element = itemData?.element
 		switch (element) {

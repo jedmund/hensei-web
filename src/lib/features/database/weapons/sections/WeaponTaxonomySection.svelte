@@ -53,6 +53,7 @@
 	// Clear variant when series changes
 	$effect(() => {
 		if (editMode && editData) {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const seriesId = editData.series
 			// When series changes, if the current variant doesn't belong to the new series, clear it
 			if (selectedSeriesData && editData.weaponSeriesVariantId) {

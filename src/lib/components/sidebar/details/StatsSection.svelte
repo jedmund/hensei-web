@@ -10,6 +10,7 @@
 		gridTranscendence: number | null
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { itemData, gridUncapLevel, gridTranscendence }: Props = $props()
 </script>
 

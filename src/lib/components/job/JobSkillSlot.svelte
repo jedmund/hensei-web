@@ -113,12 +113,13 @@
 		</div>
 		{#if locked}
 			<Tooltip content="Main skill (locked)">
-					<Icon name="lock" size={16} class="lock-icon" />
+				<Icon name="lock" size={16} class="lock-icon" />
 			</Tooltip>
 		{/if}
 	</div>
 {/snippet}
 
+<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
 {#snippet EmptyState({ slot }: { slot: number })}
 	<div class="empty-content">
 		{#if editable}

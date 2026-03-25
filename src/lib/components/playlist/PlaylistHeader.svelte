@@ -20,7 +20,7 @@
 
 	let {
 		playlist,
-		username,
+		username, // eslint-disable-line @typescript-eslint/no-unused-vars
 		isOwner = false,
 		onDelete,
 		onAddTeams,

@@ -6,7 +6,7 @@
 	import MasteryDisplay from '../modifications/MasteryDisplay.svelte'
 	import WeaponKeysList from '../modifications/WeaponKeysList.svelte'
 	import ArtifactSummary from '../modifications/ArtifactSummary.svelte'
-	import { formatAxSkill, getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
+	import { getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
@@ -25,6 +25,7 @@
 		modificationStatus: any
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { type, item, itemData, gridUncapLevel, gridTranscendence, modificationStatus }: Props =
 		$props()
 

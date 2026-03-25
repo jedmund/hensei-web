@@ -12,7 +12,6 @@
 	import * as m from '$lib/paraglide/messages'
 	import { onMount, untrack } from 'svelte'
 	import type {
-		Artifact,
 		ArtifactSkill,
 		ArtifactSkillInstance,
 		CollectionArtifactInput
@@ -284,7 +283,7 @@
 
 	// Reactively update action when form state changes
 	$effect(() => {
-		// Access reactive dependencies
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const _ = [isValid, element, createMutation.isPending]
 		// Use untrack to avoid infinite loop when calling sidebar methods
 		untrack(() => updateHeaderAction())

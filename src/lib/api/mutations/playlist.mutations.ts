@@ -68,7 +68,14 @@ export function updatePlaylistOptions(queryClient: QueryClient) {
 				queryClient.setQueryData(playlistKeys.detail(params.slug), context.previous)
 			}
 		},
-		onSettled: (_data: unknown, _err: unknown, _params: UpdatePlaylistParams & { slug: string }) => {
+
+		/* eslint-disable @typescript-eslint/no-unused-vars */
+		onSettled: (
+			_data: unknown,
+			_err: unknown,
+			_params: UpdatePlaylistParams & { slug: string }
+		) => {
+			/* eslint-enable @typescript-eslint/no-unused-vars */
 			queryClient.invalidateQueries({ queryKey: playlistKeys.details() })
 			queryClient.invalidateQueries({ queryKey: playlistKeys.userLists() })
 		}

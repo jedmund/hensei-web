@@ -31,7 +31,7 @@
 
 	let {
 		artifact,
-		character,
+		character, // eslint-disable-line @typescript-eslint/no-unused-vars
 		onSelectArtifact,
 		onRemoveArtifact,
 		editable = true,

@@ -47,6 +47,7 @@
 	const proficiency = $derived(weapon.weapon?.proficiency)
 
 	// Awakening display
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const awakeningDisplay = $derived.by(() => {
 		if (!weapon.awakening) return null
 		const type = weapon.awakening.type?.name
@@ -65,6 +66,7 @@
 	})
 
 	// Weapon keys count (for display)
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const keyCount = $derived(weapon.weaponKeys?.length ?? 0)
 </script>
 

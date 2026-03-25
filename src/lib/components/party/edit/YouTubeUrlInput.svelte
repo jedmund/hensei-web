@@ -118,12 +118,6 @@
 		}
 	}
 
-	function handleKeydown(e: KeyboardEvent) {
-		if (e.key === 'Enter') {
-			;(e.target as HTMLInputElement).blur()
-		}
-	}
-
 	function clearInput() {
 		inputValue = ''
 		touched = false

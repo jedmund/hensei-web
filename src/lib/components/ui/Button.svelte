@@ -90,7 +90,7 @@
 		href,
 		onclick,
 		shape = 'default',
-		as,
+		as, // eslint-disable-line @typescript-eslint/no-unused-vars
 		...restProps
 	}: Props = $props()
 

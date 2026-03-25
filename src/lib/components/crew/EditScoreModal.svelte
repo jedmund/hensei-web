@@ -151,6 +151,7 @@
 		try {
 			await deleteScoreMutation.mutateAsync(scoreId)
 			// Remove from edit values
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const { [scoreId]: _, ...rest } = editValues
 			editValues = rest
 			queryClient.invalidateQueries({ queryKey: ['crew', 'gw', 'event', eventNumber] })

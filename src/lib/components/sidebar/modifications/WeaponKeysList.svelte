@@ -30,6 +30,7 @@
 		return key.slug || m.details_weapon_key_fallback()
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	function getSlotLabel(slot: number, series?: WeaponSeriesRef | null): string {
 		return m.details_skill_slot({ slot: String(slot + 1) })
 	}

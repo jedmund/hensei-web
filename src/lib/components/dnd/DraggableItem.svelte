@@ -60,6 +60,7 @@
 		dragContext.startDrag(item, { container, position, type }, { altKey: e.altKey })
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	function handleDragEnd(e: DragEvent) {
 		if (!dragContext) return
 		dragContext.endDrag()
@@ -97,6 +98,7 @@
 		}
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	function handlePointerUp(e: PointerEvent) {
 		if (!dragContext) return
 		dragContext.handlePointerUp()

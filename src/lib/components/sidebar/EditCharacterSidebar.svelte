@@ -25,6 +25,7 @@
 		onCancel?: () => void
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { paneId, character, onSave, onCancel }: Props = $props()
 
 	let editPaneRef: ReturnType<typeof CharacterEditPane> | undefined = $state()
@@ -116,10 +117,6 @@
 		// Transform CharacterEditUpdates to GridCharacter API format
 		// The CharacterEditPane already formats awakening with id/level
 		onSave?.(updates as Partial<GridCharacter>)
-	}
-
-	function handleCancel() {
-		onCancel?.()
 	}
 </script>
 

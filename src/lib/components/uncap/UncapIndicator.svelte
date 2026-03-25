@@ -52,7 +52,7 @@
 
 	let {
 		type,
-		rarity,
+		rarity, // eslint-disable-line @typescript-eslint/no-unused-vars
 		uncapLevel = 0,
 		transcendenceStage = 0,
 		flb = false,
@@ -202,6 +202,7 @@
 
 <div class="uncap-indicator {className || ''}" class:contained class:small={size === 'small'}>
 	<ul class="stars">
+		<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
 		{#each Array(numStars) as _, i (i)}
 			{@const star = renderStar(i)}
 			{#if star}

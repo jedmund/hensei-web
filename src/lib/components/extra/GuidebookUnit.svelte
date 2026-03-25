@@ -15,6 +15,7 @@
 		onRemove?: () => void
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { item, position, canEdit = false, onclick, onRemove }: Props = $props()
 
 	const name = $derived(item ? localizedName(item.name) || '—' : '—')
