@@ -268,6 +268,7 @@
 
 			&.interactive {
 				cursor: pointer;
+				border-radius: layout.$item-corner-small;
 
 				&:hover {
 					background: var(--button-contained-bg-hover);
