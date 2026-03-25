@@ -152,7 +152,7 @@
 
 		{#if modificationStatus.hasBullets && weapon.bullets?.length}
 			<DetailsSection title={m.details_bullets()}>
-				{#each weapon.bullets as loadout (loadout.id)}
+				{#each weapon.bullets as loadout (loadout.position)}
 					<DetailRow label={BULLET_TYPES[loadout.bullet.bulletType] ?? 'Unknown'}>
 						<span class="bullet-value">
 							<img src={getBulletImage(loadout.bullet.granblueId)} alt="" class="bullet-icon" />

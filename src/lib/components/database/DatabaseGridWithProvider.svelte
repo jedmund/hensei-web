@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Grid, HeaderMenu } from 'wx-svelte-grid'
-	import type { IColumn } from 'wx-svelte-grid'
+	import type { IColumn, IRow } from 'wx-svelte-grid'
 	import { DatabaseProvider } from '$lib/providers/DatabaseProvider'
 	import CollectionFilters from '$lib/components/collection/CollectionFilters.svelte'
 	import { onMount, onDestroy, tick } from 'svelte'
@@ -83,7 +83,7 @@
 
 	// --- Data loading ---
 
-	let data = $state<Record<string, unknown>[]>([])
+	let data = $state<IRow[]>([])
 	let loading = $state(true)
 	let currentPage = $state(1)
 	let totalPages = $state(1)

@@ -133,7 +133,7 @@ export interface Character {
 	nicknames?: { en?: string[]; ja?: string[] }
 	recruitedBy?: { id: string; granblueId: string; name: LocalizedName; promotionNames?: string[] }
 	// Style swap fields
-	styleSwap: boolean
+	styleSwap?: boolean
 	styleName?: LocalizedName | null
 	baseCharacter?: { id: string; granblueId: string; name: LocalizedName } | null
 	styleSwaps?: Array<{

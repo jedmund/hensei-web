@@ -450,7 +450,7 @@
 						<h3>Skills</h3>
 						<div class="skills-grid">
 							{#if weapon.weapon_skills && weapon.weapon_skills.length > 0}
-								{#each weapon.weapon_skills as skill (skill.id)}
+								{#each weapon.weapon_skills as skill, i (i)}
 									<div class="skill-item">
 										<h4 class="skill-name">{skill.name || 'Unknown Skill'}</h4>
 										<p class="skill-description">
