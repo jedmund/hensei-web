@@ -10,9 +10,11 @@
 		character: SearchResultItem
 		selected?: boolean
 		onToggle?: (character: SearchResultItem) => void
+		/** User's element for styling */
+		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	}
 
-	let { character, selected = false, onToggle }: Props = $props()
+	let { character, selected = false, onToggle, userElement }: Props = $props()
 
 	const imageUrl = $derived(getCharacterImage(character.granblueId, 'grid', '01'))
 

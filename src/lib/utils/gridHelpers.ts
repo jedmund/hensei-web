@@ -88,7 +88,7 @@ function getCollectionForType(party: Party, gridType: GridType) {
  * Handles special cases for mainhand weapons, main/friend summons
  */
 function isSlotOccupied(
-	collection: { position?: number; mainhand?: boolean }[],
+	collection: { position?: number; mainhand?: boolean; main?: boolean; friend?: boolean }[],
 	position: number,
 	gridType: GridType
 ): boolean {

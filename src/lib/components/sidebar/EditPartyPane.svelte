@@ -217,7 +217,8 @@
 							guidebooks: selectedRaid.group.guidebooks,
 							unlimited: selectedRaid.group.unlimited
 						}
-					: undefined
+					: undefined,
+				extra: selectedRaid.extra
 			}
 			raidId = selectedRaid.id
 		} else {

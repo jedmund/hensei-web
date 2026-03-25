@@ -17,7 +17,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import type { Character, Awakening } from '$lib/types/api/entities'
 	import type { ExtendedMastery } from '$lib/types/api/collection'
-	import { getElementKey } from '$lib/utils/element'
+	import { getElementTypeKey } from '$lib/utils/element'
 	import DetailsSection from './details/DetailsSection.svelte'
 	import AwakeningSelect from './edit/AwakeningSelect.svelte'
 	import RingsSelect from './edit/RingsSelect.svelte'
@@ -88,7 +88,7 @@
 	const maxAwakeningLevel = 10
 
 	// Element name for theming
-	const elementName = $derived(characterElement ? getElementKey(characterElement) : undefined)
+	const elementName = $derived(getElementTypeKey(characterElement))
 
 	// Handlers for UncapIndicator
 	function handleUncapUpdate(newLevel: number) {

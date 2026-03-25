@@ -38,7 +38,7 @@
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { localizedName } from '$lib/utils/locale'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
-	import { getElementKey } from '$lib/utils/element'
+	import { getElementTypeKey } from '$lib/utils/element'
 
 	interface Props {
 		character: CollectionCharacter
@@ -104,9 +104,7 @@
 	})
 
 	// Element name for theming
-	const elementName = $derived(
-		characterData?.element ? getElementKey(characterData.element) : undefined
-	)
+	const elementName = $derived(getElementTypeKey(characterData?.element))
 
 	async function handleSave(updates: CharacterEditUpdates) {
 		try {

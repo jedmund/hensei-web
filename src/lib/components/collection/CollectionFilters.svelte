@@ -43,13 +43,19 @@
 		/** Whether to show the sort dropdown */
 		showSort?: boolean
 		/** Element color theme for active toggle state */
-		element?: string
+		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 		/** Whether to show contained background styling (default: true) */
 		contained?: boolean
 		/** Whether to show the search input (default: true) */
 		showSearch?: boolean
 		/** Search query for plaintext name search */
 		searchQuery?: string
+		/** Whether to show the view toggle (grid/list) */
+		showViewToggle?: boolean
+		/** Current view mode */
+		viewMode?: 'grid' | 'list'
+		/** Callback when view mode changes */
+		onViewModeChange?: (mode: 'grid' | 'list') => void
 	}
 
 	export interface CollectionFilterState {

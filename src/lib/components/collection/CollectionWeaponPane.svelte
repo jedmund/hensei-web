@@ -39,7 +39,7 @@
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
-	import { getElementKey } from '$lib/utils/element'
+	import { getElementTypeKey } from '$lib/utils/element'
 
 	interface Props {
 		weapon: CollectionWeapon
@@ -100,7 +100,7 @@
 	})
 
 	// Element name for theming
-	const elementName = $derived(displayElement ? getElementKey(displayElement) : undefined)
+	const elementName = $derived(getElementTypeKey(displayElement))
 
 	async function handleSave(updates: WeaponEditUpdates) {
 		try {

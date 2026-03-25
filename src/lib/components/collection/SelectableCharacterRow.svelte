@@ -57,7 +57,11 @@
 			character={{
 				element: character.element,
 				season: character.season,
-				series: character.series
+				series: Array.isArray(character.series)
+					? character.series
+					: character.series
+						? [character.series]
+						: undefined
 			}}
 		/>
 	</div>

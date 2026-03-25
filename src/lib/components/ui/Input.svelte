@@ -3,7 +3,7 @@
 	import type { HTMLInputAttributes } from 'svelte/elements'
 	import Icon from '../Icon.svelte'
 
-	interface Props extends HTMLInputAttributes {
+	interface Props extends Omit<HTMLInputAttributes, 'size'> {
 		variant?: 'default' | 'contained' | 'duration' | 'number' | 'range'
 		contained?: boolean
 		size?: 'small' | 'medium' | 'large'

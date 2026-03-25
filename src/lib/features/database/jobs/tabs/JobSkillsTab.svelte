@@ -86,9 +86,9 @@
 
 <div class="skills-tab">
 	{#if skillsQuery.isLoading}
-		<div class="loading">Loading skills...</div>
+		<div class="loading"><p>Loading skills...</p></div>
 	{:else if skillsQuery.isError}
-		<div class="error">Failed to load skills</div>
+		<div class="error"><p>Failed to load skills</p></div>
 	{:else if !skillsQuery.data?.length}
 		<div class="empty">
 			<p>No skills found for this job</p>

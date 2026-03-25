@@ -206,7 +206,7 @@
 						bind:value={selectedUserId}
 						onValueChange={handleValueChange}
 						bind:open={comboboxOpen}
-						bind:inputValue
+						{inputValue}
 						items={comboboxItems}
 					>
 						<div class="combobox-input-wrapper">

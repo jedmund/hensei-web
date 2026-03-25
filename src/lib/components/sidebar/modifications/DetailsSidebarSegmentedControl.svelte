@@ -39,26 +39,4 @@
 	.details-sidebar-segmented-control {
 		padding: 0 spacing.$unit-2x;
 	}
-
-	.segment-label {
-		font-size: typography.$font-regular;
-		font-weight: typography.$medium;
-
-		&.disabled {
-			color: var(--text-tertiary);
-			opacity: 0.5;
-		}
-	}
-
-	.disabled-segment {
-		flex: 1;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: spacing.$unit;
-		background: var(--background);
-		border-radius: spacing.$unit-half;
-		cursor: not-allowed;
-		user-select: none;
-	}
 </style>

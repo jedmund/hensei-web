@@ -40,8 +40,8 @@
 		{/if}
 	</div>
 	<div class="card-info">
-		<ElementLabel element={artifact.element} size="small" />
-		<ProficiencyLabel {proficiency} size="small" />
+		<ElementLabel element={artifact.element ?? undefined} size="small" />
+		<ProficiencyLabel proficiency={proficiency ?? undefined} size="small" />
 	</div>
 </button>
 

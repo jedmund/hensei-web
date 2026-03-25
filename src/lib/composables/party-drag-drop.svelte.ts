@@ -35,11 +35,16 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 			throw new Error(m.toast_unsaved_swap())
 		}
 
+		const targetId = target.itemId
+		if (!targetId) {
+			throw new Error('Cannot swap: target has no item')
+		}
+
 		const swapParams = {
 			partyId: party.id,
 			partyShortcode: party.shortcode,
 			sourceId: source.itemId,
-			targetId: target.itemId
+			targetId
 		}
 
 		if (source.type === 'weapon') {
@@ -202,7 +207,10 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 			// Block non-extra weapons from being dragged to extra slots
 			if (target.type === 'weapon' && target.position >= 9) {
 				const party = opts.getParty()
-				const gridWeapon = party.weapons.find((w: GridWeapon) => w.id === source.itemId)
+				const draggedId = dragContext.state.draggedItem?.data.id
+				const gridWeapon = draggedId
+					? party.weapons.find((w: GridWeapon) => w.id === draggedId)
+					: undefined
 				if (gridWeapon && !gridWeapon.weapon?.extra) return false
 			}
 			if (target.type === 'summon' && (target.position === -1 || target.position === 6))

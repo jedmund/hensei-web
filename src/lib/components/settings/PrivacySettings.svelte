@@ -13,10 +13,10 @@
 		isInCrew: boolean
 		crewGamertag?: string
 		element: ElementType
-		onCollectionPrivacyChange: (value: number) => void
+		onCollectionPrivacyChange: (value: number | undefined) => void
 		onShowCrewGamertagChange: (value: boolean) => void
 		onImportWeaponsChange: (value: boolean) => void
-		onDefaultImportVisibilityChange: (value: number) => void
+		onDefaultImportVisibilityChange: (value: number | undefined) => void
 	}
 
 	let {

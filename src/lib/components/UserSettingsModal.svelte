@@ -360,10 +360,14 @@
 						{isInCrew}
 						{crewGamertag}
 						{element}
-						onCollectionPrivacyChange={(v) => (collectionPrivacy = v)}
+						onCollectionPrivacyChange={(v) => {
+							if (v !== undefined) collectionPrivacy = v
+						}}
 						onShowCrewGamertagChange={(v) => (showCrewGamertag = v)}
 						onImportWeaponsChange={(v) => (importWeapons = v)}
-						onDefaultImportVisibilityChange={(v) => (defaultImportVisibility = v)}
+						onDefaultImportVisibilityChange={(v) => {
+							if (v !== undefined) defaultImportVisibility = v
+						}}
 					/>
 				{/if}
 			</div>

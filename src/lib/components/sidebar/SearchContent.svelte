@@ -153,10 +153,13 @@
 	// --- Queries ---
 
 	// Series query - fetch list based on current type
-	const seriesQuery = createQuery(() => entityQueries.seriesListByType(type))
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const seriesQuery = createQuery(() => entityQueries.seriesListByType(type) as any)
 
 	const seriesOptions = $derived.by(() => {
-		const data = seriesQuery.data
+		const data = seriesQuery.data as
+			| Array<{ id: string; name: { en?: string; ja?: string } }>
+			| undefined
 		if (!data) return []
 		return data.map((s) => ({
 			value: s.id,
@@ -283,17 +286,19 @@
 
 	// --- Search queries ---
 
-	const searchQueryResult = createInfiniteQuery(() =>
-		searchQueries.byType(type, debouncedSearchQuery, filters, getLocale() as 'en' | 'ja')
+	const searchQueryResult = createInfiniteQuery(
+		() =>
+			searchQueries.byType(type, debouncedSearchQuery, filters, getLocale() as 'en' | 'ja') as any
 	)
 
-	const collectionQueryResult = createInfiniteQuery(() => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const collectionQueryResult = createInfiniteQuery((): any => {
 		const userId = collectionUserId
 		if (!userId) {
 			return {
 				...collectionQueries.characters(userId ?? '', {}, false),
 				enabled: false
-			} as ReturnType<typeof collectionQueries.characters>
+			}
 		}
 
 		return {
@@ -302,7 +307,10 @@
 				userId,
 				searchMode === 'collection'
 					? {
-							...filters,
+							element: filters.element,
+							rarity: filters.rarity,
+							proficiency: filters.proficiency,
+							series: filters.series,
 							search: debouncedSearchQuery || undefined
 						}
 					: {}
@@ -313,15 +321,22 @@
 
 	// --- Results processing ---
 
-	const rawResults = $derived(searchQueryResult.data?.pages.flatMap((page) => page.results) ?? [])
+	const rawResults = $derived(
+		((searchQueryResult.data?.pages ?? []) as Array<{ results: AddItemResult[] }>).flatMap(
+			(page) => page.results
+		)
+	)
 
 	const rawCollectionResults = $derived(
-		collectionQueryResult.data?.pages.flatMap((page) => page.results) ?? []
+		((collectionQueryResult.data?.pages ?? []) as Array<{ results: unknown[] }>).flatMap(
+			(page) => page.results
+		)
 	)
 
 	const searchResults = $derived.by<AddItemResult[]>(() => {
 		if (searchMode === 'collection' && authUserId) {
-			return rawCollectionResults.map(mapCollectionToSearchResult)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			return (rawCollectionResults as any[]).map(mapCollectionToSearchResult)
 		}
 		const deduped = Array.from(new Map(rawResults.map((item) => [item.id, item])).values())
 		return deduped as AddItemResult[]

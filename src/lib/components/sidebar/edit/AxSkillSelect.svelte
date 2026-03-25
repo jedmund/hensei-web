@@ -73,9 +73,10 @@
 			currentSkills = []
 			return
 		}
+		const existing = currentSkills[1]
 		currentSkills = [
 			{ modifier, strength: currentSkills[0]?.strength ?? 0 },
-			...(currentSkills.length > 1 ? [currentSkills[1]] : [])
+			...(existing ? [existing] : [])
 		]
 	}
 
@@ -85,21 +86,23 @@
 		const max = selectedPrimary?.baseMax ?? 999
 		const clamped = Math.min(val, max)
 		if (val > max) input.value = String(clamped)
-		if (currentSkills[0]) {
-			currentSkills = [
-				{ ...currentSkills[0], strength: clamped },
-				...(currentSkills.length > 1 ? [currentSkills[1]] : [])
-			]
+		const first = currentSkills[0]
+		if (first) {
+			const existing = currentSkills[1]
+			currentSkills = [{ ...first, strength: clamped }, ...(existing ? [existing] : [])]
 		}
 	}
 
 	function handleSecondaryChange(value: string | undefined) {
 		const modifier = value ? (axQuery.data ?? []).find((m) => m.id === value) : undefined
+		const first = currentSkills[0]
 		if (!modifier) {
-			currentSkills = currentSkills.length > 0 ? [currentSkills[0]] : []
+			currentSkills = first ? [first] : []
 			return
 		}
-		currentSkills = [currentSkills[0], { modifier, strength: currentSkills[1]?.strength ?? 0 }]
+		if (first) {
+			currentSkills = [first, { modifier, strength: currentSkills[1]?.strength ?? 0 }]
+		}
 	}
 
 	function handleSecondaryStrengthChange(event: Event) {
@@ -108,8 +111,10 @@
 		const max = selectedSecondary?.baseMax ?? 999
 		const clamped = Math.min(val, max)
 		if (val > max) input.value = String(clamped)
-		if (currentSkills[1]) {
-			currentSkills = [currentSkills[0], { ...currentSkills[1], strength: clamped }]
+		const first = currentSkills[0]
+		const second = currentSkills[1]
+		if (first && second) {
+			currentSkills = [first, { ...second, strength: clamped }]
 		}
 	}
 </script>

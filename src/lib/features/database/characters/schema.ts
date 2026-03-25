@@ -39,7 +39,7 @@ interface CharacterModel {
 	granblue_id?: string
 	rarity?: number
 	element?: number
-	race?: number[]
+	race?: (number | null)[]
 	gender?: number
 	proficiency?: number[]
 	season?: number | null

@@ -35,7 +35,7 @@
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
-	import { getElementKey } from '$lib/utils/element'
+	import { getElementTypeKey } from '$lib/utils/element'
 
 	interface Props {
 		summon: CollectionSummon
@@ -81,7 +81,7 @@
 	})
 
 	// Element name for theming
-	const elementName = $derived(summonData?.element ? getElementKey(summonData.element) : undefined)
+	const elementName = $derived(getElementTypeKey(summonData?.element))
 
 	async function handleSave(updates: SummonEditUpdates) {
 		try {

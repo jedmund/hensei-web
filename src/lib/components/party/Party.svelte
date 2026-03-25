@@ -3,7 +3,7 @@
 	import { setPartyContext } from '$lib/types/party-context'
 	import { pushState } from '$app/navigation'
 	import { resolvePath } from '$lib/utils/resolvePath'
-	import type { Party } from '$lib/types/api/party'
+	import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 
 	// Composables
@@ -374,7 +374,6 @@
 	// --- Context setup ---
 	setPartyContext({
 		getParty: () => party,
-		updateParty: () => {},
 		canEdit: () => canEdit(),
 		getEditKey: () => editKey,
 		getSelectedSlot: () => selectedSlot,

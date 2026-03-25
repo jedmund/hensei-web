@@ -42,8 +42,7 @@
 		}
 	}
 
-	function handleRemove(event: Event) {
-		event.stopPropagation()
+	function handleRemove() {
 		if (onRemove) {
 			onRemove()
 		}

@@ -101,7 +101,8 @@
 		if (e.key === 'Enter') {
 			e.preventDefault()
 			if (focusedIndex >= 0 && focusedIndex < filtered.length) {
-				togglePlaylist(filtered[focusedIndex])
+				const playlist = filtered[focusedIndex]
+				if (playlist) togglePlaylist(playlist)
 			} else if (filtered.length > 0 && focusedIndex === -1) {
 				focusedIndex = 0
 			} else if (search.trim()) {
@@ -144,7 +145,8 @@
 </script>
 
 <div class="add-to-playlist-pane">
-	<div class="search-wrapper" bind:this={searchWrapperEl} onkeydown={handleKeydown}>
+	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+	<div class="search-wrapper" bind:this={searchWrapperEl} onkeydown={handleKeydown} role="search">
 		<Input
 			bind:value={search}
 			placeholder={m.playlist_field_title_placeholder()}
@@ -155,7 +157,13 @@
 		/>
 	</div>
 
-	<div class="playlist-list" bind:this={listEl} role="listbox" onkeydown={handleKeydown}>
+	<div
+		class="playlist-list"
+		bind:this={listEl}
+		role="listbox"
+		tabindex="0"
+		onkeydown={handleKeydown}
+	>
 		{#if playlistsQuery.isLoading}
 			<div class="status">
 				<p>{m.playlist_loading()}</p>

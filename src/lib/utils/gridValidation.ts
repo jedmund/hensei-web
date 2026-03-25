@@ -49,7 +49,7 @@ export function validateGridWeapon(raw: unknown): GridWeapon | null {
 		...obj,
 		weapon, // Ensure 'weapon' property exists
 		object: undefined // Remove legacy 'object' property
-	} as GridWeapon
+	} as unknown as GridWeapon
 }
 
 /**
@@ -74,7 +74,7 @@ export function validateGridCharacter(raw: unknown): GridCharacter | null {
 		...obj,
 		character,
 		object: undefined
-	} as GridCharacter
+	} as unknown as GridCharacter
 }
 
 /**
@@ -99,5 +99,5 @@ export function validateGridSummon(raw: unknown): GridSummon | null {
 		...obj,
 		summon,
 		object: undefined
-	} as GridSummon
+	} as unknown as GridSummon
 }
