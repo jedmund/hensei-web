@@ -14,34 +14,34 @@ export interface Weapon {
 	id: string
 	granblueId: string
 	name: LocalizedName
-	element: number
-	proficiency: number
-	rarity: number
-	maxLevel: number
-	maxSkillLevel: number
-	maxAwakeningLevel: number | null
+	element?: number
+	proficiency?: number
+	rarity?: number
+	maxLevel?: number
+	maxSkillLevel?: number
+	maxAwakeningLevel?: number | null
 	maxExorcismLevel?: number | null
 	/** Weapon series - object with slug/name/flags */
-	series: WeaponSeriesRef | null
+	series?: WeaponSeriesRef | null
 	/** Variant override ID (via series.weaponSeriesVariantId from API) */
 	weaponSeriesVariantId?: string | null
-	ax: boolean
-	axType: number
+	ax?: boolean
+	axType?: number
 	limit?: number
 	extra?: boolean
-	hp: {
+	hp?: {
 		minHp: number
 		maxHp: number
 		maxHpFlb: number
 		maxHpUlb: number
 	}
-	atk: {
+	atk?: {
 		minAtk: number
 		maxAtk: number
 		maxAtkFlb: number
 		maxAtkUlb: number
 	}
-	uncap: {
+	uncap?: {
 		flb: boolean
 		ulb: boolean
 		transcendence: boolean
@@ -81,22 +81,22 @@ export interface Character {
 	id: string
 	granblueId: string
 	name: LocalizedName
-	element: number
-	rarity: number
-	maxLevel: number
+	element?: number
+	rarity?: number
+	maxLevel?: number
 	maxAwakeningLevel?: number
-	uncap: {
+	uncap?: {
 		flb: boolean
 		transcendence: boolean
 	}
-	special: boolean
-	recruits: string | null
-	gender: number
-	race: {
+	special?: boolean
+	recruits?: string | null
+	gender?: number
+	race?: {
 		race1: number
 		race2: number
 	}
-	proficiency: number[]
+	proficiency?: number[]
 	hp?: {
 		minHp?: number
 		maxHp?: number
@@ -149,23 +149,23 @@ export interface Summon {
 	id: string
 	granblueId: string
 	name: LocalizedName
-	element: number
-	rarity: number
-	maxLevel: number
-	uncap: {
+	element?: number
+	rarity?: number
+	maxLevel?: number
+	uncap?: {
 		flb: boolean
 		ulb: boolean
 		transcendence: boolean
 	}
-	subaura: boolean
-	limit: boolean
-	hp: {
+	subaura?: boolean
+	limit?: boolean
+	hp?: {
 		minHp: number
 		maxHp: number
 		maxHpFlb: number
 		maxHpUlb: number
 	}
-	atk: {
+	atk?: {
 		minAtk: number
 		maxAtk: number
 		maxAtkFlb: number

@@ -82,10 +82,12 @@ export interface Weapon {
 		flb?: boolean
 		ulb?: boolean
 		transcendence?: boolean
+		extraPrerequisite?: number | null
 	}
 	maxLevel?: number
 	maxSkillLevel?: number
 	maxAwakeningLevel?: number
+	maxExorcismLevel?: number | null
 	limit?: number
 	extra?: boolean
 	ax?: boolean
@@ -113,6 +115,11 @@ export interface Weapon {
 			ja?: string
 		}
 	}
+	// Forge chain fields (from :grid and :full views)
+	forgeOrder?: number | null
+	forgedFrom?: { id: string; granblueId: string; name: { en?: string; ja?: string } } | null
+	// Element variant IDs: maps element number (as string key) to variant game ID
+	elementVariantIds?: Record<string, string> | null
 	// Date fields
 	releaseDate?: string
 	flbDate?: string
@@ -193,6 +200,16 @@ export interface Character {
 		promotions: number[]
 		promotionNames: string[]
 	}
+	// Style swap fields (from :full view)
+	styleSwap?: boolean
+	styleName?: { en?: string; ja?: string } | null
+	baseCharacter?: { id: string; granblueId: string; name: { en?: string; ja?: string } } | null
+	styleSwaps?: Array<{
+		id: string
+		granblueId: string
+		name: { en?: string; ja?: string }
+		styleName: { en?: string; ja?: string } | null
+	}>
 	// Date fields
 	releaseDate?: string
 	flbDate?: string

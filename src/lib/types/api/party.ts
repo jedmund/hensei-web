@@ -133,6 +133,7 @@ export interface Party {
 	name?: string
 	description?: string
 	fullAuto?: boolean
+	solo?: boolean
 	autoGuard?: boolean
 	autoSummon?: boolean
 	chargeAttack?: boolean

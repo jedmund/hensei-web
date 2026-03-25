@@ -51,6 +51,8 @@ export interface WeaponSeries {
 	augmentType: AugmentType
 	/** Number of weapon key slots this series supports (null if no keys) */
 	numWeaponKeys: number | null
+	/** Whether this series supports AX skills (derived from augmentType) */
+	hasAxSkills?: boolean
 	// Only included in :full view (show endpoint)
 	weaponCount?: number
 	variants?: WeaponSeriesVariant[]
