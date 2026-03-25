@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
+	import { untrack } from 'svelte'
 	import { getBasePath } from '$lib/utils/images'
 
 	interface Props {
@@ -14,7 +15,7 @@
 
 	let { value = false, onChange, element }: Props = $props()
 
-	let localValue = $state(value)
+	let localValue = $state(untrack(() => value))
 
 	const perpetuityImageUrl = `${getBasePath()}/perpetuity.png`
 

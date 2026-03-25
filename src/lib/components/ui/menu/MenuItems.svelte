@@ -46,16 +46,17 @@
 	}: MenuItemsProps = $props()
 
 	// Select the appropriate component based on variant
-	const Item = variant === 'context' ? ContextMenu.Item : DropdownMenu.Item
-	const Separator = variant === 'context' ? ContextMenu.Separator : DropdownMenu.Separator
-	const itemClass = variant === 'context' ? 'context-menu-item' : 'dropdown-menu-item'
-	const separatorClass =
+	const Item = $derived(variant === 'context' ? ContextMenu.Item : DropdownMenu.Item)
+	const Separator = $derived(variant === 'context' ? ContextMenu.Separator : DropdownMenu.Separator)
+	const itemClass = $derived(variant === 'context' ? 'context-menu-item' : 'dropdown-menu-item')
+	const separatorClass = $derived(
 		variant === 'context' ? 'context-menu-separator' : 'dropdown-menu-separator'
+	)
 
 	// Track whether we've rendered any items above the details/database section (for separator logic)
-	const hasEditSection = canEdit && (onEdit || onReplace || onDuplicate)
-	const hasViewSection = onViewDetails || onViewInDatabase
-	const hasTeamsSection = onViewTeams || onAddToTeamsView
+	const hasEditSection = $derived(canEdit && (onEdit || onReplace || onDuplicate))
+	const hasViewSection = $derived(onViewDetails || onViewInDatabase)
+	const hasTeamsSection = $derived(onViewTeams || onAddToTeamsView)
 </script>
 
 {#if canEdit && onEdit}

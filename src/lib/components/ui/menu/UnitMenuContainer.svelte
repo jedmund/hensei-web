@@ -27,7 +27,7 @@
 	let gearMenuOpen = $state(false)
 
 	// If no dropdown menu is provided, use the context menu for both
-	const effectiveDropdownMenu = dropdownMenu ?? contextMenu
+	const effectiveDropdownMenu = $derived(dropdownMenu ?? contextMenu)
 </script>
 
 {#snippet contextMenuFromVariant()}

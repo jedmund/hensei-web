@@ -6,7 +6,7 @@
 
 	const { row }: Cell = $props()
 
-	const accessory = row as JobAccessory
+	const accessory = $derived(row as JobAccessory)
 	const jobName = $derived(localizedName(accessory.job?.name))
 	const jobIcon = $derived(accessory.job ? getJobIconUrl(accessory.job.granblueId) : undefined)
 </script>

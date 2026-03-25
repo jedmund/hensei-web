@@ -10,6 +10,7 @@
 	import Icon from '../Icon.svelte'
 	import SelectionSidebarLayout from './SelectionSidebarLayout.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
+	import { untrack } from 'svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -49,8 +50,8 @@
 	])
 
 	// State for filtering (local UI state, not server state)
-	let searchQuery = $state(initialSearchQuery)
-	let skillCategory = $state(initialSkillCategory)
+	let searchQuery = $state(untrack(() => initialSearchQuery))
+	let skillCategory = $state(untrack(() => initialSkillCategory))
 	let error = $state<string | undefined>()
 
 	// Debounced search value for query

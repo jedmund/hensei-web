@@ -9,7 +9,7 @@
 	 * The "My Collection" tab includes an edit mode using SummonEditPane.
 	 */
 	import * as m from '$lib/paraglide/messages'
-	import { onMount } from 'svelte'
+	import { onMount, untrack } from 'svelte'
 	import type { CollectionSummon } from '$lib/types/api/collection'
 	import type { GridSummon } from '$lib/types/api/party'
 	import {
@@ -47,7 +47,7 @@
 	let { summon: initialSummon, isOwner, onClose, paneId, initialEdit = false }: Props = $props()
 
 	// Local state for the summon - updated when mutation succeeds or prop changes
-	let summon = $state<CollectionSummon>(initialSummon)
+	let summon = $state<CollectionSummon>(untrack(() => initialSummon))
 
 	// Sync from parent when prop changes (e.g. inline uncap edit on card/row)
 	$effect(() => {

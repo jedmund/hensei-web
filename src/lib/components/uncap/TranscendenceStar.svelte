@@ -3,6 +3,7 @@
 	import TranscendenceFragment from './TranscendenceFragment.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { Popover } from 'bits-ui'
+	import { untrack } from 'svelte'
 	import plusIcon from '$src/assets/icons/plus.svg?raw'
 	import minusIcon from '$src/assets/icons/minus.svg?raw'
 
@@ -34,9 +35,9 @@
 
 	const NUM_FRAGMENTS = 5
 
-	let visibleStage = $state(stage)
-	let currentStage = $state(stage)
-	let prevStage = $state(stage)
+	let visibleStage = $state(untrack(() => stage))
+	let currentStage = $state(untrack(() => stage))
+	let prevStage = $state(untrack(() => stage))
 	let immutable = $state(false)
 	let isPopoverOpen = $state(false)
 
