@@ -253,10 +253,10 @@ describe('entityKeys', () => {
 		expect(entityKeys.weapon('1040001000')).toEqual(entityQueries.weapon('1040001000').queryKey)
 	})
 
-	it('character key matches query queryKey', () => {
-		expect(entityKeys.character('3040001000')).toEqual(
-			entityQueries.character('3040001000').queryKey
-		)
+	it('character key is a prefix of query queryKey', () => {
+		const queryKey = entityQueries.character('3040001000').queryKey
+		expect(queryKey).toEqual(['character', '3040001000', 'base'])
+		expect(entityKeys.character('3040001000')).toEqual(['character', '3040001000'])
 	})
 
 	it('summon key matches query queryKey', () => {

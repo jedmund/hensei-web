@@ -55,10 +55,17 @@ describe('init', () => {
 		expect(themeStore.resolved).toBe('dark')
 	})
 
-	it('is idempotent (second call is no-op)', async () => {
+	it('re-applies when preference changes on second init', async () => {
 		const { themeStore } = await import('../theme.svelte')
 		themeStore.init('light')
 		themeStore.init('dark')
+		expect(themeStore.preference).toBe('dark')
+	})
+
+	it('is idempotent when preference is the same', async () => {
+		const { themeStore } = await import('../theme.svelte')
+		themeStore.init('light')
+		themeStore.init('light')
 		expect(themeStore.preference).toBe('light')
 	})
 })
