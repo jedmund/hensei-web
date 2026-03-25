@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Icon from '$lib/components/Icon.svelte'
-	import { resolve } from '$app/paths'
 
 	interface Props {
 		title: string
@@ -12,7 +11,7 @@
 	let { title, link, icon, class: className = '' }: Props = $props()
 </script>
 
-<a class="item {className}" href={resolve(link)} target="_blank" rel="noreferrer">
+<a class="item {className}" href={link} target="_blank" rel="noreferrer">
 	{#if icon}
 		<Icon name={icon} size={24} />
 	{/if}

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { raidAdapter } from '$lib/api/adapters/raid.adapter'
@@ -93,7 +92,7 @@
 			await queryClient.invalidateQueries({ queryKey: ['raid-groups'] })
 
 			// Navigate back to detail page
-			goto(resolve(`/database/raid-groups/${groupId}`))
+			goto(`/database/raid-groups/${groupId}`)
 		} catch (error: unknown) {
 			saveError = error instanceof Error ? error.message : 'Failed to save raid group'
 		} finally {
@@ -103,7 +102,7 @@
 
 	// Cancel and go back
 	function handleCancel() {
-		goto(resolve(`/database/raid-groups/${groupId}`))
+		goto(`/database/raid-groups/${groupId}`)
 	}
 </script>
 

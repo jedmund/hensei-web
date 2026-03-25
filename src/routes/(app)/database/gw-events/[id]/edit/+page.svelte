@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { page } from '$app/stores'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
@@ -81,7 +80,7 @@
 			await queryClient.invalidateQueries({ queryKey: ['gw', 'events'] })
 
 			// Navigate back to detail page
-			goto(resolve(localizeHref(`/database/gw-events/${eventId}`)))
+			goto(localizeHref(`/database/gw-events/${eventId}`))
 		} catch (error: unknown) {
 			saveError = error instanceof Error ? error.message : 'Failed to save event'
 		} finally {
@@ -91,7 +90,7 @@
 
 	// Cancel and go back
 	function handleCancel() {
-		goto(resolve(localizeHref(`/database/gw-events/${eventId}`)))
+		goto(localizeHref(`/database/gw-events/${eventId}`))
 	}
 </script>
 

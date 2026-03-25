@@ -2,7 +2,6 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
-	import { resolve } from '$app/paths'
 	// Page metadata
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -111,7 +110,7 @@
 			await queryClient.invalidateQueries({ queryKey: jobKeys.all })
 
 			// Navigate to the new job
-			goto(resolve(`/database/jobs/${job.granblueId}`))
+			goto(`/database/jobs/${job.granblueId}`)
 		} catch (error) {
 			saveError = 'Failed to create job. Please try again.'
 			console.error('Create error:', error)
@@ -121,7 +120,7 @@
 	}
 
 	function handleCancel() {
-		goto(resolve('/database/jobs'))
+		goto('/database/jobs')
 	}
 </script>
 

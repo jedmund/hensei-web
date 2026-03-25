@@ -2,7 +2,6 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
-	import { resolve } from '$app/paths'
 	// Page metadata
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -222,7 +221,7 @@
 			const newWeapon = await entityAdapter.createWeapon(payload)
 			// Trigger image download in background (don't await - it queues a job)
 			entityAdapter.downloadWeaponImages(newWeapon.id).catch(console.error)
-			await goto(resolve(`/database/weapons/${newWeapon.granblueId}`))
+			await goto(`/database/weapons/${newWeapon.granblueId}`)
 		} catch (error) {
 			saveError = 'Failed to create weapon. Please try again.'
 			console.error('Create error:', error)
@@ -232,7 +231,7 @@
 	}
 
 	function handleCancel() {
-		goto(resolve('/database/weapons'))
+		goto('/database/weapons')
 	}
 </script>
 

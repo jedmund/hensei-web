@@ -1,7 +1,6 @@
 <script lang="ts">
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { bulletQueries } from '$lib/api/queries/bullet.queries'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
@@ -35,7 +34,7 @@
 	})
 
 	function handleBulletClick(bullet: Bullet) {
-		goto(resolve(`/database/bullets/${bullet.granblueId || bullet.id}`))
+		goto(`/database/bullets/${bullet.granblueId || bullet.id}`)
 	}
 
 	// Grid configuration

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms'
-	import { resolve } from '$app/paths'
 	import AuthCard from '$lib/components/auth/AuthCard.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -65,7 +64,7 @@
 
 	{#snippet footer()}
 		<p>
-			<a href={resolve(localizeHref('/auth/login'))}>{m.auth_forgotPassword_backToLogin()}</a>
+			<a href={localizeHref('/auth/login')}>{m.auth_forgotPassword_backToLogin()}</a>
 		</p>
 	{/snippet}
 </AuthCard>

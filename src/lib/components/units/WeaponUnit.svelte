@@ -2,7 +2,6 @@
 	import type { GridWeapon } from '$lib/types/api/party'
 	import { usePartyContext } from '$lib/types/party-context'
 	import { page } from '$app/stores'
-	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
@@ -156,7 +155,7 @@
 
 	function viewInDatabase() {
 		if (!item?.weapon?.granblueId) return
-		goto(resolve(getDatabaseUrl('weapon'), item.weapon.granblueId))
+		goto(getDatabaseUrl('weapon', item.weapon.granblueId))
 	}
 
 	// Duplicate: find the first empty sub-weapon slot (0-8)

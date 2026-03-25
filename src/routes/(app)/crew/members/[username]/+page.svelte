@@ -1,7 +1,6 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -83,7 +82,7 @@
 								<button
 									class="gap-button"
 									onclick={() =>
-										goto(resolve(localizeHref(`/crew/events/${eventScore.gwEvent.eventNumber}`)))}
+										goto(localizeHref(`/crew/events/${eventScore.gwEvent.eventNumber}`))}
 								>
 									<div class="gap-info">
 										<span class="event-number">GW #{eventScore.gwEvent.eventNumber}</span>

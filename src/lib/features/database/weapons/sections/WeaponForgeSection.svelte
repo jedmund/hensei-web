@@ -7,7 +7,6 @@
 	import { getElementKey } from '$lib/utils/element'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
-	import { resolve } from '$app/paths'
 	interface Props {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
 		weapon: any
@@ -63,7 +62,7 @@
 								</span>
 							{/if}
 							<a
-								href={resolve(localizeHref(`/database/weapons/${chainWeapon.granblueId}`))}
+								href={localizeHref(`/database/weapons/${chainWeapon.granblueId}`)}
 								class="chain-item {elementKey}"
 								class:current={chainWeapon.granblueId === weapon.granblueId}
 							>
@@ -86,7 +85,7 @@
 			{#if forgedFrom && forgeChain.length === 0}
 				<DetailItem label="Forged From">
 					<a
-						href={resolve(localizeHref(`/database/weapons/${forgedFrom.granblueId}`))}
+						href={localizeHref(`/database/weapons/${forgedFrom.granblueId}`)}
 						class="forged-from-link"
 					>
 						{forgedFrom.name?.en || forgedFrom.name?.ja}

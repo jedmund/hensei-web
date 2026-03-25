@@ -2,7 +2,6 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
-	import { resolve } from '$app/paths'
 	// TanStack Query
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
@@ -257,7 +256,7 @@
 			})
 
 			// Navigate back to detail page
-			goto(resolve(`/database/weapons/${weapon.granblueId}`))
+			goto(`/database/weapons/${weapon.granblueId}`)
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
 			console.error('Save error:', error)
@@ -290,7 +289,7 @@
 				variant="ghost"
 				size="small"
 				leftIcon="chevron-left"
-				href={resolve(`/database/weapons/${weapon?.granblueId}`)}>Back</Button
+				href={`/database/weapons/${weapon?.granblueId}`}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}

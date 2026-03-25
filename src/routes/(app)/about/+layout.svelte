@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 	import { page } from '$app/state'
-	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
@@ -21,7 +20,7 @@
 
 	function handleTabChange(value: string) {
 		const tab = tabs.find((t) => t.value === value)
-		if (tab) goto(resolve(tab.path))
+		if (tab) goto(tab.path)
 	}
 </script>
 
