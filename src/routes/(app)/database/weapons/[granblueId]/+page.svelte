@@ -351,7 +351,7 @@
 						<DetailItem label="English">
 							{#if weapon.nicknames?.en?.length}
 								<div class="nickname-tags">
-									{#each weapon.nicknames.en as nickname (nickname)}
+									{#each weapon.nicknames.en as nickname, i (i)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>
@@ -362,7 +362,7 @@
 						<DetailItem label="Japanese">
 							{#if weapon.nicknames?.ja?.length}
 								<div class="nickname-tags">
-									{#each weapon.nicknames.ja as nickname (nickname)}
+									{#each weapon.nicknames.ja as nickname, i (i)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>

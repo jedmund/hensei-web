@@ -228,8 +228,11 @@
 <div class="page">
 	<DatabasePageHeader title="Character">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={resolve(getListUrl('characters'))}
-				>Back</Button
+			<Button
+				variant="ghost"
+				size="small"
+				leftIcon="chevron-left"
+				href={resolve(getListUrl('characters'))}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}
@@ -263,7 +266,7 @@
 						<DetailItem label="Nicknames (EN)">
 							{#if character.nicknames?.en?.length}
 								<div class="nickname-tags">
-									{#each character.nicknames.en as nickname (nickname)}
+									{#each character.nicknames.en as nickname, i (i)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>
@@ -274,7 +277,7 @@
 						<DetailItem label="Nicknames (JP)">
 							{#if character.nicknames?.ja?.length}
 								<div class="nickname-tags">
-									{#each character.nicknames.ja as nickname (nickname)}
+									{#each character.nicknames.ja as nickname, i (i)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>
@@ -366,9 +369,11 @@
 							<div class="related-units">
 								{#each relatedQuery.data as related (related.id)}
 									<a
-										href={resolve(localizeHref(
-											`/database/characters/${related.granblueId}${related.styleSwap ? '/style' : ''}`
-										))}
+										href={resolve(
+											localizeHref(
+												`/database/characters/${related.granblueId}${related.styleSwap ? '/style' : ''}`
+											)
+										)}
 										class="related-unit"
 									>
 										<img

@@ -174,8 +174,11 @@
 <div class="page">
 	<DatabasePageHeader title="Summon">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={resolve(getListUrl('summons'))}
-				>Back</Button
+			<Button
+				variant="ghost"
+				size="small"
+				leftIcon="chevron-left"
+				href={resolve(getListUrl('summons'))}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}
@@ -210,7 +213,7 @@
 						<DetailItem label="English">
 							{#if summon.nicknames?.en?.length}
 								<div class="nickname-tags">
-									{#each summon.nicknames.en as nickname (nickname)}
+									{#each summon.nicknames.en as nickname, i (i)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>
@@ -221,7 +224,7 @@
 						<DetailItem label="Japanese">
 							{#if summon.nicknames?.ja?.length}
 								<div class="nickname-tags">
-									{#each summon.nicknames.ja as nickname (nickname)}
+									{#each summon.nicknames.ja as nickname, i (i)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>
