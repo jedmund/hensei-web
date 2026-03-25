@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
-	import { onMount } from 'svelte'
+	import { onMount, untrack } from 'svelte'
 	import type { Editor, Content } from '@tiptap/core'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
@@ -45,7 +45,7 @@
 		}
 	}
 
-	const initialContent = parseDescription(description)
+	const initialContent = untrack(() => parseDescription(description))
 
 	// Version counter to trigger reactivity when editor state changes
 	let editorVersion = $state(0)
@@ -346,21 +346,21 @@
 		&:focus {
 			outline: none;
 		}
+	}
 
-		p {
-			margin: 0 0 $unit 0;
-		}
+	:global(.description-editor .ProseMirror p) {
+		margin: 0 0 $unit 0;
+	}
 
-		h1,
-		h2,
-		h3 {
-			margin: $unit-2x 0 $unit 0;
-		}
+	:global(.description-editor .ProseMirror h1),
+	:global(.description-editor .ProseMirror h2),
+	:global(.description-editor .ProseMirror h3) {
+		margin: $unit-2x 0 $unit 0;
+	}
 
-		ul,
-		ol {
-			margin: $unit 0;
-			padding-left: $unit-3x;
-		}
+	:global(.description-editor .ProseMirror ul),
+	:global(.description-editor .ProseMirror ol) {
+		margin: $unit 0;
+		padding-left: $unit-3x;
 	}
 </style>

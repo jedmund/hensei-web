@@ -1,5 +1,6 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
+	import { untrack } from 'svelte'
 	import { NodeViewWrapper, NodeViewContent } from 'svelte-tiptap'
 	import type { NodeViewProps } from '@tiptap/core'
 	const { node, updateAttributes, extension }: NodeViewProps = $props()
@@ -8,9 +9,9 @@
 
 	let isCopying = $state(false)
 
-	const languages: string[] = extension.options.lowlight.listLanguages().sort()
+	const languages: string[] = untrack(() => extension.options.lowlight.listLanguages().sort())
 
-	let defaultLanguage = $state(node.attrs.language)
+	let defaultLanguage = $state(untrack(() => node.attrs.language))
 
 	$effect(() => {
 		updateAttributes({ language: defaultLanguage })

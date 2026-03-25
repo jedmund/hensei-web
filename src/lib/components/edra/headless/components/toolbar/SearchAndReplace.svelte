@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Editor } from '@tiptap/core'
+	import type { Editor, Range as TiptapRange } from '@tiptap/core'
 	import * as m from '$lib/paraglide/messages'
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left'
 	import ArrowRight from '@lucide/svelte/icons/arrow-right'
@@ -32,7 +32,7 @@
 
 	function goToSelection() {
 		const { results, resultIndex } = editor.storage.searchAndReplace
-		const position = results[resultIndex]
+		const position = results[resultIndex] as TiptapRange | undefined
 		if (!position) return
 		editor.commands.setTextSelection(position)
 		const { node } = editor.view.domAtPos(editor.state.selection.anchor)

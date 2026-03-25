@@ -95,7 +95,7 @@
 
 <BubbleMenu {editor} class={className} pluginKey="link-bubble-menu" {shouldShow}>
 	{#each toolbarCommands.filter((c) => !excludedCommands?.includes(c)) as cmd (cmd)}
-		{@const commandGroup = commands[cmd]}
+		{@const commandGroup = commands[cmd] ?? []}
 		{#each commandGroup as command (command)}
 			<ToolBarIcon {editor} {command} />
 		{/each}
