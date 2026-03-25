@@ -11,6 +11,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import { onMount } from 'svelte'
 	import type { CollectionSummon } from '$lib/types/api/collection'
+	import type { GridSummon } from '$lib/types/api/party'
 	import {
 		useUpdateCollectionSummon,
 		useRemoveSummonFromCollection
@@ -29,6 +30,7 @@
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { page } from '$app/stores'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -158,11 +160,6 @@
 		}
 	}
 
-	function handleCancel() {
-		isEditing = false
-		updateActionVisibility()
-	}
-
 	function handleTabChange(value: string) {
 		selectedTab = value as 'info' | 'collection'
 		if (isEditing) {
@@ -176,7 +173,7 @@
 
 	function viewInDatabase() {
 		if (!summonData?.granblueId) return
-		goto(getDatabaseUrl('summon', summonData.granblueId))
+		goto(resolve(getDatabaseUrl('summon'), summonData.granblueId))
 	}
 
 	// Set up sidebar action on mount and clean up on destroy
@@ -200,7 +197,7 @@
 <div class="collection-summon-pane">
 	<ItemHeader
 		type="summon"
-		item={summon as any}
+		item={summon as unknown as GridSummon}
 		itemData={summonData}
 		gridUncapLevel={summon.uncapLevel}
 		gridTranscendence={summon.transcendenceStep}

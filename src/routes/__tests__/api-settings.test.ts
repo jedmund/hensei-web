@@ -70,10 +70,10 @@ describe('POST /api/settings', () => {
 	) {
 		const { POST } = await import('../../routes/(app)/api/settings/+server')
 		const response = await POST({
-			cookies: cookies as any,
+			cookies: cookies as unknown as import('@sveltejs/kit').Cookies,
 			request: makeRequest(body),
 			locals
-		} as any)
+		} as unknown as import('@sveltejs/kit').RequestEvent)
 		return { response, cookies }
 	}
 

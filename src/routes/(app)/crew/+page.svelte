@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
+	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
 	import { useCreateCrew } from '$lib/api/mutations/crew.mutations'
@@ -31,8 +32,6 @@
 	let { data }: Props = $props()
 
 	const isAuthenticated = $derived(data.isAuthenticated)
-	const queryClient = useQueryClient()
-
 	// Query for the user's crew (only when authenticated)
 	const crewQuery = createQuery(() => ({
 		...crewQueries.myCrew(),
@@ -100,8 +99,8 @@
 			crewGamertag = ''
 			crewGranblueCrewId = ''
 			crewDescription = ''
-		} catch (err: any) {
-			error = err.message || 'Failed to create crew'
+		} catch (err: unknown) {
+			error = err instanceof Error ? err.message : 'Failed to create crew'
 		}
 	}
 
@@ -156,14 +155,14 @@
 							<Button
 								variant="primary"
 								size="small"
-								onclick={() => goto(localizeHref('/auth/register'))}
+								onclick={() => goto(resolve(localizeHref('/auth/register')))}
 							>
 								{m.crew_sign_up()}
 							</Button>
 							<Button
 								variant="secondary"
 								size="small"
-								onclick={() => goto(localizeHref('/auth/login'))}
+								onclick={() => goto(resolve(localizeHref('/auth/login')))}
 							>
 								{m.crew_log_in()}
 							</Button>
@@ -174,7 +173,7 @@
 				{#if isAuthenticated && invitationsQuery.data && invitationsQuery.data.length > 0}
 					<div class="invitations-section">
 						<ul class="invitation-list">
-							{#each invitationsQuery.data as invitation}
+							{#each invitationsQuery.data as invitation (invitation.id)}
 								{#if invitation.crew && invitation.invitedBy}
 									<li class="invitation-item">
 										<div class="invitation-info">
@@ -186,7 +185,8 @@
 										<Button
 											variant="secondary"
 											size="small"
-											onclick={() => goto(localizeHref(`/crew/join?invitation=${invitation.id}`))}
+											onclick={() =>
+												goto(resolve(localizeHref(`/crew/join?invitation=${invitation.id}`)))}
 										>
 											{m.crew_view()}
 										</Button>
@@ -245,10 +245,10 @@
 					</div>
 				{:else if eventsQuery.data && eventsQuery.data.length > 0}
 					<ul class="event-list">
-						{#each eventsQuery.data as event}
+						{#each eventsQuery.data as event (event.id)}
 							<li
 								class="event-item"
-								onclick={() => goto(localizeHref(`/crew/events/${event.eventNumber}`))}
+								onclick={() => goto(resolve(localizeHref(`/crew/events/${event.eventNumber}`)))}
 							>
 								<div class="event-info">
 									<span class="event-number">{event.eventNumber}</span>
@@ -278,71 +278,67 @@
 
 <!-- Create Crew Modal -->
 <Dialog bind:open={createModalOpen} onOpenChange={(open) => !open && handleCloseModal()}>
-	{#snippet children()}
-		<ModalHeader title={m.crew_create()} />
+	<ModalHeader title={m.crew_create()} />
 
-		<ModalBody>
-			{#snippet children()}
-				<div class="modal-form">
-					{#if error}
-						<div class="error-message">{error}</div>
-					{/if}
+	<ModalBody>
+		<div class="modal-form">
+			{#if error}
+				<div class="error-message">{error}</div>
+			{/if}
 
-					<div class="form-fields">
-						<Input
-							label={m.crew_name_label()}
-							bind:value={crewName}
-							placeholder={m.crew_name_placeholder_short()}
-							maxLength={100}
-							fullWidth
-							contained
-						/>
+			<div class="form-fields">
+				<Input
+					label={m.crew_name_label()}
+					bind:value={crewName}
+					placeholder={m.crew_name_placeholder_short()}
+					maxLength={100}
+					fullWidth
+					contained
+				/>
 
-						<Input
-							label="{m.crew_gamertag_label()} {m.crew_gamertag_optional()}"
-							bind:value={crewGamertag}
-							placeholder={m.crew_gamertag_placeholder()}
-							maxLength={4}
-							fullWidth
-							contained
-						/>
+				<Input
+					label="{m.crew_gamertag_label()} {m.crew_gamertag_optional()}"
+					bind:value={crewGamertag}
+					placeholder={m.crew_gamertag_placeholder()}
+					maxLength={4}
+					fullWidth
+					contained
+				/>
 
-						<Input
-							label="{m.crew_granblue_id_label()} {m.crew_gamertag_optional()}"
-							bind:value={crewGranblueCrewId}
-							placeholder={m.crew_granblue_id_placeholder()}
-							fullWidth
-							contained
-						/>
+				<Input
+					label="{m.crew_granblue_id_label()} {m.crew_gamertag_optional()}"
+					bind:value={crewGranblueCrewId}
+					placeholder={m.crew_granblue_id_placeholder()}
+					fullWidth
+					contained
+				/>
 
-						<div class="form-field">
-							<label for="crew-description"
-								>{m.crew_description_label()}
-								<span class="optional">{m.crew_gamertag_optional()}</span></label
-							>
-							<textarea
-								id="crew-description"
-								bind:value={crewDescription}
-								placeholder={m.crew_description_placeholder()}
-								maxlength="500"
-								rows="3"
-							></textarea>
-						</div>
-					</div>
+				<div class="form-field">
+					<label for="crew-description"
+						>{m.crew_description_label()}
+						<span class="optional">{m.crew_gamertag_optional()}</span></label
+					>
+					<textarea
+						id="crew-description"
+						bind:value={crewDescription}
+						placeholder={m.crew_description_placeholder()}
+						maxlength="500"
+						rows="3"
+					></textarea>
 				</div>
-			{/snippet}
-		</ModalBody>
+			</div>
+		</div>
+	</ModalBody>
 
-		<ModalFooter
-			onCancel={handleCloseModal}
-			cancelDisabled={createCrewMutation.isPending}
-			primaryAction={{
-				label: createCrewMutation.isPending ? m.crew_creating() : m.crew_create(),
-				onclick: handleCreateCrew,
-				disabled: !canCreate || createCrewMutation.isPending
-			}}
-		/>
-	{/snippet}
+	<ModalFooter
+		onCancel={handleCloseModal}
+		cancelDisabled={createCrewMutation.isPending}
+		primaryAction={{
+			label: createCrewMutation.isPending ? m.crew_creating() : m.crew_create(),
+			onclick: handleCreateCrew,
+			disabled: !canCreate || createCrewMutation.isPending
+		}}
+	/>
 </Dialog>
 
 <CrewSettingsDialog bind:open={settingsModalOpen} />

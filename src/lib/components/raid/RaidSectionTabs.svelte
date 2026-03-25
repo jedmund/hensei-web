@@ -16,12 +16,7 @@
 	let { value = $bindable(RaidSection.Raid), onValueChange }: Props = $props()
 
 	// Convert number to string for SegmentedControl
-	let stringValue = $state(String(value))
-
-	// Sync stringValue when external value changes
-	$effect(() => {
-		stringValue = String(value)
-	})
+	let stringValue = $derived(String(value))
 
 	function handleChange(newValue: string) {
 		const numValue = parseInt(newValue, 10)

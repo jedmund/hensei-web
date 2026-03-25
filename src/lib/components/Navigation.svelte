@@ -3,6 +3,7 @@
 	import { m } from '$lib/paraglide/messages'
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import Button from './ui/Button.svelte'
@@ -133,7 +134,7 @@
 
 			if (response.ok) {
 				// Navigate to login page after successful logout
-				await goto('/auth/login')
+				await goto(resolve('/auth/login'))
 			}
 		} catch (error) {
 			console.error('Logout failed:', error)
@@ -150,14 +151,16 @@
 		<div class="nav-links">
 			<ul role="list">
 				<li>
-					<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
+					<a href={resolve(galleryHref)} class:selected={isNavSelected(galleryHref)}
+						>{m.nav_gallery()}</a
+					>
 				</li>
 				<li>
-					<a href={crewHref} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
+					<a href={resolve(crewHref)} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
 				</li>
 				<li>
 					<a
-						href={meHref}
+						href={resolve(meHref)}
 						class:selected={isProfileSelected}
 						aria-label={m.nav_account_aria()}
 						class="profile-link"
@@ -192,14 +195,14 @@
 						<DropdownMenu.Portal>
 							<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
 								<DropdownItem>
-									<a href={aboutHref}>{m.nav_about()}</a>
+									<a href={resolve(aboutHref)}>{m.nav_about()}</a>
 								</DropdownItem>
 								<DropdownItem>
-									<a href={extensionHref}>{m.nav_extension()}</a>
+									<a href={resolve(extensionHref)}>{m.nav_extension()}</a>
 								</DropdownItem>
 								{#if role !== null && role >= 7}
 									<DropdownItem>
-										<a href={databaseHref}>{m.nav_database()}</a>
+										<a href={resolve(databaseHref)}>{m.nav_database()}</a>
 									</DropdownItem>
 								{/if}
 								<DropdownMenu.Separator class="dropdown-separator" />
@@ -241,13 +244,15 @@
 		<div class="nav-links">
 			<ul role="list">
 				<li>
-					<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
+					<a href={resolve(galleryHref)} class:selected={isNavSelected(galleryHref)}
+						>{m.nav_gallery()}</a
+					>
 				</li>
 				<li>
-					<a href={crewHref} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
+					<a href={resolve(crewHref)} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
 				</li>
 				<li>
-					<a href={collectionHref} class:selected={isNavSelected(collectionHref)}
+					<a href={resolve(collectionHref)} class:selected={isNavSelected(collectionHref)}
 						>{m.nav_collection()}</a
 					>
 				</li>
@@ -260,10 +265,10 @@
 						<DropdownMenu.Portal>
 							<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
 								<DropdownItem>
-									<a href={aboutHref}>{m.nav_about()}</a>
+									<a href={resolve(aboutHref)}>{m.nav_about()}</a>
 								</DropdownItem>
 								<DropdownItem>
-									<a href={extensionHref}>{m.nav_extension()}</a>
+									<a href={resolve(extensionHref)}>{m.nav_extension()}</a>
 								</DropdownItem>
 								<DropdownMenu.Separator class="dropdown-separator" />
 								<LanguageToggle />
@@ -276,10 +281,12 @@
 
 			<ul role="list">
 				<li>
-					<a href={registerHref} class:selected={isNavSelected(registerHref)}>{m.nav_register()}</a>
+					<a href={resolve(registerHref)} class:selected={isNavSelected(registerHref)}
+						>{m.nav_register()}</a
+					>
 				</li>
 				<li>
-					<a href={loginHref} class:selected={isNavSelected(loginHref)}>{m.nav_login()}</a>
+					<a href={resolve(loginHref)} class:selected={isNavSelected(loginHref)}>{m.nav_login()}</a>
 				</li>
 			</ul>
 		</div>
@@ -294,7 +301,7 @@
 			elementStyle={Boolean(userElement)}
 			class="new-team-button"
 			aria-label={m.nav_new_team()}
-			href={newTeamHref}
+			href={resolve(newTeamHref)}
 		/>
 	{/if}
 </nav>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores'
+	import { resolve } from '$app/paths'
 	import { partyAdapter } from '$lib/api/adapters/party.adapter'
 	import type { Party } from '$lib/types/api/party'
 	import type { UserCookie } from '$lib/types/UserCookie'
@@ -44,7 +45,9 @@
 		<div class="random-team">
 			<p class="random-label" class:ja={isJa}>
 				{m.error_random_team_label()}<br />{m.error_or_browse_gallery()}
-				<a href={localizeHref('/teams/explore')} style:color={linkColor}>{m.error_gallery()}</a>
+				<a href={resolve(localizeHref('/teams/explore'))} style:color={linkColor}
+					>{m.error_gallery()}</a
+				>
 			</p>
 			<div class="random-team-card">
 				<GridRep party={randomParty} />
@@ -53,10 +56,12 @@
 	{:else if is404}
 		<p class="browse-link">
 			{m.error_or_browse_gallery()}
-			<a href={localizeHref('/teams/explore')} style:color={linkColor}>{m.error_gallery()}</a>
+			<a href={resolve(localizeHref('/teams/explore'))} style:color={linkColor}
+				>{m.error_gallery()}</a
+			>
 		</p>
 	{:else}
-		<a class="browse-link" href={localizeHref('/teams/explore')}>{m.error_gallery()}</a>
+		<a class="browse-link" href={resolve(localizeHref('/teams/explore'))}>{m.error_gallery()}</a>
 	{/if}
 </div>
 

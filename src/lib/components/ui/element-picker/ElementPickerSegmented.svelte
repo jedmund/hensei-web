@@ -43,6 +43,7 @@
 			onValueChange?.([])
 		} else {
 			value = undefined
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- clear action sends undefined to callback typed as number | number[]
 			onValueChange?.(undefined as any)
 		}
 	}
@@ -99,17 +100,11 @@
 					class="element-group"
 					{disabled}
 				>
-					{#each elements as element}
+					{#each elements as element (element)}
 						<Tooltip content={getLabel(element)}>
-							{#snippet children()}
-								<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
-									<img
-										src={getElementImage(element)}
-										alt={getLabel(element)}
-										class="element-image"
-									/>
-								</ToggleGroup.Item>
-							{/snippet}
+							<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
+								<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
+							</ToggleGroup.Item>
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -121,17 +116,11 @@
 					class="element-group"
 					{disabled}
 				>
-					{#each elements as element}
+					{#each elements as element (element)}
 						<Tooltip content={getLabel(element)}>
-							{#snippet children()}
-								<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
-									<img
-										src={getElementImage(element)}
-										alt={getLabel(element)}
-										class="element-image"
-									/>
-								</ToggleGroup.Item>
-							{/snippet}
+							<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
+								<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
+							</ToggleGroup.Item>
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -151,13 +140,11 @@
 				class="element-group"
 				{disabled}
 			>
-				{#each elements as element}
+				{#each elements as element (element)}
 					<Tooltip content={getLabel(element)}>
-						{#snippet children()}
-							<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
-								<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
-							</ToggleGroup.Item>
-						{/snippet}
+						<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
+							<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
+						</ToggleGroup.Item>
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>
@@ -169,13 +156,11 @@
 				class="element-group"
 				{disabled}
 			>
-				{#each elements as element}
+				{#each elements as element (element)}
 					<Tooltip content={getLabel(element)}>
-						{#snippet children()}
-							<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
-								<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
-							</ToggleGroup.Item>
-						{/snippet}
+						<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
+							<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
+						</ToggleGroup.Item>
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { GridCharacter } from '$lib/types/api/party'
+	import { SvelteMap } from 'svelte/reactivity'
 	import { usePartyContext } from '$lib/types/party-context'
 	import { getDragDropContext } from '$lib/composables/drag-drop.svelte'
 	import DraggableItem from '$lib/components/dnd/DraggableItem.svelte'
@@ -47,7 +48,7 @@
 	const collectionStatus = $derived.by(() => {
 		if (!collectionCharacterItems) return null
 		const remaining = new Map(Array.from(collectionCharacterItems, ([k, v]) => [k, [...v]]))
-		const status = new Map<number, boolean>()
+		const status = new SvelteMap<number, boolean>()
 
 		characterSlots.forEach((char, i) => {
 			const gid = char?.character?.granblueId
@@ -78,7 +79,7 @@
 
 <div class="wrapper">
 	<ul class="characters" class:unlimited aria-label="Character Grid">
-		{#each characterSlots as character, i}
+		{#each characterSlots as character, i (i)}
 			<li aria-label={`Character slot ${i}`} class:Empty={!character}>
 				{#if dragContext}
 					<DropZone

@@ -114,7 +114,7 @@ export abstract class BaseAdapter {
 		// Get Bearer token from auth store (only in browser)
 		// On the server, auth is handled by SvelteKit's handleFetch hook when
 		// a custom fetch function is provided via options.fetch
-		let authHeaders: Record<string, string> = {}
+		const authHeaders: Record<string, string> = {}
 		if (browser) {
 			const token = await authStore.checkAndRefresh()
 			if (token) {
@@ -173,15 +173,19 @@ export abstract class BaseAdapter {
 			const transformed = this.transformResponse<T>(data)
 
 			return transformed
-		} catch (error: any) {
+		} catch (error: unknown) {
 			// Handle request cancellation
-			if (error.name === 'AbortError') {
+			if (error instanceof Error && error.name === 'AbortError') {
 				throw new CancelledError().toJSON()
 			}
 
 			// Error is already normalized from fetchWithRetry (or handleErrorResponse)
 			// Only normalize if it's not already an AdapterError structure
-			const normalizedError = error.name === 'AdapterError' ? error : normalizeError(error)
+			const errObj = error as Record<string, unknown>
+			const normalizedError =
+				errObj?.name === 'AdapterError'
+					? (errObj as unknown as AdapterError)
+					: normalizeError(error)
 
 			// Call global error handler if provided
 			if (this.options.onError) {
@@ -202,9 +206,9 @@ export abstract class BaseAdapter {
 	 * @param data - Raw response data from the API
 	 * @returns Transformed data with camelCase property names and proper entity fields
 	 */
-	protected transformResponse<T>(data: any): T {
+	protected transformResponse<T>(data: unknown): T {
 		if (data === null || data === undefined) {
-			return data
+			return data as T
 		}
 
 		// Apply full transformation: snake_case->camelCase and object->entity
@@ -217,7 +221,7 @@ export abstract class BaseAdapter {
 	 * @param data - Request data with camelCase property names and entity fields
 	 * @returns Transformed data with snake_case property names and object fields
 	 */
-	protected transformRequest(data: any): any {
+	protected transformRequest(data: unknown): unknown {
 		if (data === null || data === undefined) {
 			return data
 		}
@@ -305,9 +309,9 @@ export abstract class BaseAdapter {
 			}
 
 			return response
-		} catch (error: any) {
+		} catch (error: unknown) {
 			// Don't retry on abort
-			if (error.name === 'AbortError') {
+			if (error instanceof Error && error.name === 'AbortError') {
 				throw error
 			}
 
@@ -350,7 +354,10 @@ export abstract class BaseAdapter {
 	 * @param params - Optional query parameters
 	 * @returns The complete URL string
 	 */
-	private buildURL(path: string, params?: Record<string, any>): string {
+	private buildURL(
+		path: string,
+		params?: Record<string, string | number | boolean | string[] | number[]>
+	): string {
 		// Handle absolute URLs
 		if (path.startsWith('http://') || path.startsWith('https://')) {
 			const url = new URL(path)
@@ -376,7 +383,9 @@ export abstract class BaseAdapter {
 			} else {
 				// On server, construct the query string manually for relative paths
 				if (params && Object.keys(params).length > 0) {
-					const queryString = new URLSearchParams(this.transformRequest(params)).toString()
+					const queryString = new URLSearchParams(
+						this.transformRequest(params) as Record<string, string>
+					).toString()
 					return `${fullPath}?${queryString}`
 				}
 				return fullPath
@@ -395,11 +404,11 @@ export abstract class BaseAdapter {
 	 * @param url - The URL object to modify
 	 * @param params - Query parameters to add
 	 */
-	private addQueryParams(url: URL, params?: Record<string, any>): void {
+	private addQueryParams(url: URL, params?: Record<string, unknown>): void {
 		if (!params) return
 
 		// Transform query parameters from camelCase to snake_case
-		const transformed = this.transformRequest(params)
+		const transformed = this.transformRequest(params) as Record<string, unknown>
 
 		Object.entries(transformed).forEach(([key, value]) => {
 			// Skip undefined and null values
@@ -459,21 +468,27 @@ export abstract class BaseAdapter {
 	 * @returns An AdapterError with normalized error information
 	 */
 	private async handleErrorResponse(response: Response): Promise<AdapterError> {
-		let details: any = undefined
+		let details: unknown = undefined
 		let message = response.statusText
 
 		try {
 			// Try to parse error details from response body
-			const errorData = await response.json()
+			const errorData: Record<string, unknown> = await response.json()
 
 			// Extract error message from various possible formats
 			// errorData.error may be a string or an object like {message, code}
 			const errorField = errorData.error
 			const errorMessage =
-				typeof errorField === 'object' && errorField !== null ? errorField.message : errorField
+				typeof errorField === 'object' && errorField !== null
+					? (errorField as Record<string, unknown>).message
+					: errorField
+			const errors = Array.isArray(errorData.errors) ? errorData.errors : undefined
 
 			message =
-				errorData.message || errorMessage || errorData.errors?.[0]?.message || response.statusText
+				(typeof errorData.message === 'string' ? errorData.message : undefined) ||
+				(typeof errorMessage === 'string' ? errorMessage : undefined) ||
+				(typeof errors?.[0]?.message === 'string' ? errors[0].message : undefined) ||
+				response.statusText
 
 			details = errorData
 		} catch {
@@ -488,6 +503,7 @@ export abstract class BaseAdapter {
 	 * No-op kept for backwards compatibility.
 	 * Adapter-level caching has been removed; TanStack Query handles all caching.
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	clearCache(_pattern?: string): void {
 		// No-op: adapter-level cache removed
 	}

@@ -4,11 +4,13 @@
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
 		itemData: any
 	}
 
 	let { type, itemData }: Props = $props()
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data
 	function displayName(input: any): string {
 		if (!input) return '—'
 		const name = input.name ?? input
@@ -20,7 +22,7 @@
 	<div class="details-section">
 		<h3>{m.details_skills()}</h3>
 		<div class="skills-list">
-			{#each itemData.weaponSkills as skill}
+			{#each itemData.weaponSkills as skill (skill.id)}
 				<div class="skill-item">
 					<h4>{displayName(skill) || m.details_unknown_skill()}</h4>
 					{#if skill.description}
@@ -36,7 +38,7 @@
 	<div class="details-section">
 		<h3>{m.details_auras()}</h3>
 		<div class="auras-list">
-			{#each itemData.summonAuras as aura}
+			{#each itemData.summonAuras as aura (aura.id)}
 				<div class="aura-item">
 					<h4>{displayName(aura) || m.details_unknown_aura()}</h4>
 					{#if aura.description}
@@ -52,7 +54,7 @@
 	<div class="details-section">
 		<h3>{m.details_weapon_keys()}</h3>
 		<div class="keys-list">
-			{#each itemData.weaponKeys as key}
+			{#each itemData.weaponKeys as key (key.id)}
 				<div class="key-item">
 					<span class="key-slot">{m.details_slot({ slot: key.slot })}</span>
 					<span class="key-name">{displayName(key.weaponKey1) || '—'}</span>

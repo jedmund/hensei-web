@@ -21,7 +21,7 @@ export const SummonEditSchema = z.object({
 
 export type SummonEdit = z.infer<typeof SummonEditSchema>
 
-export function toEditData(model: any): SummonEdit {
+export function toEditData(model: Record<string, unknown>): SummonEdit {
 	return {
 		name: model?.name ?? '',
 		granblue_id: model?.granblueId ?? model?.granblue_id ?? '',

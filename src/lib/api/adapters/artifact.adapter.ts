@@ -211,7 +211,7 @@ export class ArtifactAdapter extends BaseAdapter {
 
 		const response = await this.request<{
 			artifacts: CollectionArtifact[]
-			meta: { created: number; skipped: number; errors: any[] }
+			meta: { created: number; skipped: number; errors: unknown[] }
 		}>('/collection/artifacts/batch', {
 			method: 'POST',
 			body: {

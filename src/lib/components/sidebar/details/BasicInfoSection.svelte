@@ -12,6 +12,7 @@
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
 		itemData: any
 	}
 
@@ -54,7 +55,7 @@
 			<DetailRow
 				label={m.details_race()}
 				value={itemData.race
-					.map((r: any) => getRaceLabel(r))
+					.map((r: number) => getRaceLabel(r))
 					.filter(Boolean)
 					.join(', ') || '—'}
 			/>
@@ -63,7 +64,7 @@
 		{#if itemData?.proficiency && itemData.proficiency.length > 0}
 			<DetailRow label={m.details_proficiencies()}>
 				<span class="proficiency-list">
-					{#each itemData.proficiency as prof}
+					{#each itemData.proficiency as prof (prof)}
 						<ProficiencyLabel proficiency={prof} size="medium" />
 					{/each}
 				</span>

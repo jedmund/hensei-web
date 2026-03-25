@@ -7,8 +7,10 @@
 	import AssociatedEntityLink from '$lib/components/database/AssociatedEntityLink.svelte'
 
 	interface Props {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
 		weapon: any
 		editMode?: boolean
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
 		editData?: any
 	}
 

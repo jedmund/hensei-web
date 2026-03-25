@@ -40,7 +40,7 @@ describe('getElementLabel', () => {
 
 	it('returns dash for undefined/null', () => {
 		expect(getElementLabel(undefined)).toBe('—')
-		expect(getElementLabel(null as any)).toBe('—')
+		expect(getElementLabel(null as unknown as number)).toBe('—')
 	})
 
 	it('returns dash for unknown element', () => {
@@ -60,7 +60,7 @@ describe('getElementClass', () => {
 
 	it('returns empty string for undefined/null', () => {
 		expect(getElementClass(undefined)).toBe('')
-		expect(getElementClass(null as any)).toBe('')
+		expect(getElementClass(null as unknown as number)).toBe('')
 	})
 
 	it('returns empty string for unknown', () => {
@@ -111,7 +111,7 @@ describe('getElementName', () => {
 
 	it('returns dash for undefined/null', () => {
 		expect(getElementName(undefined)).toBe('—')
-		expect(getElementName(null as any)).toBe('—')
+		expect(getElementName(null as unknown as number)).toBe('—')
 	})
 
 	it('returns dash for unknown', () => {
@@ -139,7 +139,7 @@ describe('getOppositeElement', () => {
 
 	it('returns undefined for undefined/null', () => {
 		expect(getOppositeElement(undefined)).toBeUndefined()
-		expect(getOppositeElement(null as any)).toBeUndefined()
+		expect(getOppositeElement(null as unknown as number)).toBeUndefined()
 	})
 })
 
@@ -158,6 +158,6 @@ describe('getElementImage', () => {
 
 	it('returns empty string for undefined/null', () => {
 		expect(getElementImage(undefined)).toBe('')
-		expect(getElementImage(null as any)).toBe('')
+		expect(getElementImage(null as unknown as number)).toBe('')
 	})
 })

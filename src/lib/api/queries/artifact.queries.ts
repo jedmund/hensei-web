@@ -12,7 +12,7 @@ import {
 	artifactAdapter,
 	type CollectionArtifactListParams
 } from '$lib/api/adapters/artifact.adapter'
-import type { Artifact, ArtifactSkill, CollectionArtifact } from '$lib/types/api/artifact'
+import type { CollectionArtifact } from '$lib/types/api/artifact'
 
 /**
  * Page result format for collection artifact infinite queries

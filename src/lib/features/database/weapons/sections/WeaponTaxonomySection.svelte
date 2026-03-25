@@ -15,8 +15,10 @@
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
 		weapon: any
 		editMode?: boolean
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
 		editData?: any
 	}
 
@@ -51,6 +53,7 @@
 	// Clear variant when series changes
 	$effect(() => {
 		if (editMode && editData) {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const seriesId = editData.series
 			// When series changes, if the current variant doesn't belong to the new series, clear it
 			if (selectedSeriesData && editData.weaponSeriesVariantId) {
@@ -91,6 +94,7 @@
 	}
 
 	// Format variant label for display mode
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
 	function formatVariantLabel(weapon: any): string {
 		if (!weapon?.series?.weaponSeriesVariantId) return '—'
 		return weapon.series.weaponSeriesVariantName || '—'

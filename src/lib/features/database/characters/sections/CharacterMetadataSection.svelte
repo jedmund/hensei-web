@@ -12,8 +12,10 @@
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 
 	interface Props {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
 		character: any
 		editMode?: boolean
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
 		editData?: any
 	}
 

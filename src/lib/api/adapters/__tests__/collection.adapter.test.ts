@@ -99,13 +99,13 @@ describe('CollectionAdapter', () => {
 				meta: { created: 3, errors: [] }
 			})
 
-			await adapter.addWeapons([{ weaponId: 'w1', quantity: 3 } as any])
+			await adapter.addWeapons([{ weaponId: 'w1', quantity: 3 }])
 
-			const body = JSON.parse((global.fetch as any).mock.calls[0][1].body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
 			// BaseAdapter transforms collectionWeapons → collection_weapons
 			const items = body.collection_weapons
 			expect(items).toHaveLength(3)
-			items.forEach((item: any) => {
+			items.forEach((item: Record<string, unknown>) => {
 				expect(item.quantity).toBeUndefined()
 				expect(item.weapon_id).toBe('w1')
 			})
@@ -118,11 +118,11 @@ describe('CollectionAdapter', () => {
 			})
 
 			await adapter.addWeapons([
-				{ weaponId: 'w1', quantity: 3 } as any,
-				{ weaponId: 'w2' } as any // quantity defaults to 1
+				{ weaponId: 'w1', quantity: 3 },
+				{ weaponId: 'w2' } // quantity defaults to 1
 			])
 
-			const body = JSON.parse((global.fetch as any).mock.calls[0][1].body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
 			const items = body.collection_weapons
 			expect(items).toHaveLength(4)
 		})
@@ -169,12 +169,12 @@ describe('CollectionAdapter', () => {
 				meta: { created: 2, errors: [] }
 			})
 
-			await adapter.addSummons([{ summonId: 's1', quantity: 2 } as any])
+			await adapter.addSummons([{ summonId: 's1', quantity: 2 }])
 
-			const body = JSON.parse((global.fetch as any).mock.calls[0][1].body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
 			const items = body.collection_summons
 			expect(items).toHaveLength(2)
-			items.forEach((item: any) => {
+			items.forEach((item: Record<string, unknown>) => {
 				expect(item.quantity).toBeUndefined()
 			})
 		})

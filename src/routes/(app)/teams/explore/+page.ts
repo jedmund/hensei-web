@@ -18,15 +18,18 @@ export const load: PageLoad = async ({ url, depends, fetch }) => {
 			totalPages: response.totalPages,
 			perPage: response.perPage || 20
 		}
-	} catch (e: any) {
+	} catch (e: unknown) {
+		const err = e as Record<string, unknown>
+		const status = typeof err?.status === 'number' ? err.status : undefined
+		const message = typeof err?.message === 'string' ? err.message : undefined
 		console.error('[explore/+page.ts] Failed to load teams:', {
 			error: e,
-			message: e?.message,
-			status: e?.status,
-			stack: e?.stack,
-			details: e?.details
+			message,
+			status,
+			stack: err?.stack,
+			details: err?.details
 		})
-		const errorMessage = `Failed to load teams: ${e?.message || 'Unknown error'}. Status: ${e?.status || 'unknown'}`
-		throw error(e?.status || 502, errorMessage)
+		const errorMessage = `Failed to load teams: ${message || 'Unknown error'}. Status: ${status || 'unknown'}`
+		throw error(status || 502, errorMessage)
 	}
 }

@@ -8,6 +8,7 @@
 	interface Props {
 		job: Job
 		editMode?: boolean
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
 		editData?: any
 	}
 

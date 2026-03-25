@@ -23,11 +23,7 @@
 	const removeMemberMutation = useRemoveMember()
 	const updateMembershipMutation = useUpdateMembership()
 
-	let open = $state(false)
-
-	$effect(() => {
-		open = !!member && !!action
-	})
+	let open = $derived(!!member && !!action)
 
 	function handleOpenChange(isOpen: boolean) {
 		if (!isOpen) {
@@ -92,25 +88,23 @@
 </script>
 
 <Dialog bind:open onOpenChange={handleOpenChange}>
-	{#snippet children()}
-		<ModalHeader {title} />
+	<ModalHeader {title} />
 
-		<ModalBody>
-			<p class="confirm-message">{message}</p>
-		</ModalBody>
+	<ModalBody>
+		<p class="confirm-message">{message}</p>
+	</ModalBody>
 
-		<ModalFooter
-			onCancel={() => {
-				open = false
-				onClose()
-			}}
-			primaryAction={{
-				label: confirmLabel,
-				onclick: handleConfirm,
-				destructive: action === 'remove'
-			}}
-		/>
-	{/snippet}
+	<ModalFooter
+		onCancel={() => {
+			open = false
+			onClose()
+		}}
+		primaryAction={{
+			label: confirmLabel,
+			onclick: handleConfirm,
+			destructive: action === 'remove'
+		}}
+	/>
 </Dialog>
 
 <style>

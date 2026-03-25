@@ -70,7 +70,8 @@ export function formatTranscendenceStep(step?: number | null): string {
 	return m.transcendence_stage({ step: String(step) })
 }
 
-export function getStatModifierIcon(type: 'ring' | 'earring', modifier: number): string | null {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function getStatModifierIcon(_type: 'ring' | 'earring', _modifier: number): string | null {
 	return null
 }
 

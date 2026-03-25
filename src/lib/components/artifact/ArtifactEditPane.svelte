@@ -95,7 +95,6 @@
 	// Derived values
 	const artifactData = $derived(artifact.artifact)
 	const isQuirk = $derived(isQuirkArtifact(artifactData))
-	const canChangeElement = $derived(true) // Artifacts can always change element
 	const canChangeProficiency = $derived(isQuirk) // Only quirk artifacts have variable proficiency
 
 	// Query all skills for skill rows
@@ -364,7 +363,7 @@
 	{#if !isQuirk}
 		<DetailsSection title={m.artifact_skills()}>
 			<div class="skills-list">
-				{#each [1, 2, 3, 4] as slot}
+				{#each [1, 2, 3, 4] as slot (slot)}
 					<ArtifactSkillRow
 						{slot}
 						skill={skills[slot - 1] ?? null}

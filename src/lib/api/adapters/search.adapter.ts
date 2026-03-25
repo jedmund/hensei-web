@@ -210,8 +210,8 @@ export class SearchAdapter extends BaseAdapter {
 			race?: boolean
 			gender?: boolean
 		} = {}
-	): any {
-		const body: any = {
+	): Record<string, unknown> {
+		const body: Record<string, unknown> = {
 			locale: params.locale || 'en',
 			page: params.page || 1
 		}
@@ -241,7 +241,7 @@ export class SearchAdapter extends BaseAdapter {
 
 		// Build filters based on what's allowed for this search type
 		if (params.filters) {
-			const filters: any = {}
+			const filters: Record<string, unknown> = {}
 
 			if (includeFilters.element && params.filters.element?.length) {
 				filters.element = params.filters.element
@@ -413,7 +413,7 @@ export class SearchAdapter extends BaseAdapter {
 	 * @returns Promise resolving to job search results
 	 */
 	async searchJobs(params: SearchParams = {}): Promise<SearchResponse> {
-		const body: any = {
+		const body: Record<string, unknown> = {
 			locale: params.locale || 'en',
 			page: params.page || 1
 		}
@@ -435,7 +435,7 @@ export class SearchAdapter extends BaseAdapter {
 
 		// Build job-specific filters
 		if (params.filters) {
-			const filters: any = {}
+			const filters: Record<string, unknown> = {}
 
 			if (params.filters.row?.length) {
 				filters.row = params.filters.row
@@ -471,7 +471,7 @@ export class SearchAdapter extends BaseAdapter {
 	 * Simple search with no filters — just query and pagination
 	 */
 	async searchGuidebooks(params: SearchParams = {}): Promise<SearchResponse> {
-		const body: any = {
+		const body: Record<string, unknown> = {
 			locale: params.locale || 'en',
 			page: params.page || 1
 		}

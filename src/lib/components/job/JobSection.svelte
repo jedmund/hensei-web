@@ -37,13 +37,14 @@
 		accessory,
 		canEdit = false,
 		gender = Gender.Gran,
-		element,
+		element, // eslint-disable-line @typescript-eslint/no-unused-vars
 		onSelectJob,
 		onSelectSkill,
 		onRemoveSkill,
 		onSelectAccessory
 	}: Props = $props()
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const slotCount = $derived(getJobSkillSlotCount(job))
 	const jobIconUrl = $derived(job ? getJobIconUrl(job.granblueId) : '')
 	const jobImageUrl = $derived(job ? getJobFullImageUrl(job, gender) : '')
@@ -148,7 +149,8 @@
 			</div>
 
 			<div class="job-skills">
-				{#each Array(4) as _, slot}
+				<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
+				{#each { length: 4 } as _, slot (slot)}
 					{#if isSkillSlotAvailable(job, slot)}
 						<JobSkillSlot
 							skill={jobSkills[slot as keyof JobSkillList]}

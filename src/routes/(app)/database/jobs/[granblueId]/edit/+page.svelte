@@ -2,6 +2,7 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
+	import { resolve } from '$app/paths'
 	// Page metadata
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -22,7 +23,6 @@
 	import JobFeaturesSection from '$lib/features/database/jobs/sections/JobFeaturesSection.svelte'
 
 	// Utils
-	import { localizedName } from '$lib/utils/locale'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
 	// Types
@@ -115,7 +115,7 @@
 			saveSuccess = true
 
 			setTimeout(() => {
-				goto(`/database/jobs/${editData.granblueId}`)
+				goto(resolve(`/database/jobs/${editData.granblueId}`))
 			}, 500)
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
@@ -126,7 +126,7 @@
 	}
 
 	function handleCancel() {
-		goto(`/database/jobs/${job?.granblueId}`)
+		goto(resolve(`/database/jobs/${job?.granblueId}`))
 	}
 
 	// Page title

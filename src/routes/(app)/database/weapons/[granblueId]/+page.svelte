@@ -1,6 +1,7 @@
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 
 	// Page metadata
@@ -65,7 +66,7 @@
 		} else {
 			url.searchParams.set('tab', tab)
 		}
-		goto(url.toString(), { replaceState: true })
+		goto(resolve(url.toString()), { replaceState: true })
 	}
 
 	// Use TanStack Query with SSR initial data
@@ -107,6 +108,7 @@
 	}))
 
 	// Helper function for weapon grid image
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
 	function getWeaponImage(weapon: any): string {
 		return getWeaponGridImage(
 			weapon?.granblueId,
@@ -219,6 +221,7 @@
 			await entityAdapter.downloadWeaponImages(weaponId, options)
 			toast.loading('Downloading images…', { id: toastId })
 			await pollDownloadStatus(weaponId, toastId)
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		} catch (e) {
 			toast.error('Failed to start download', { id: toastId })
 		}
@@ -287,13 +290,16 @@
 <div class="page">
 	<DatabasePageHeader title="Weapon">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={getListUrl('weapons')}
-				>Back</Button
+			<Button
+				variant="ghost"
+				size="small"
+				leftIcon="chevron-left"
+				href={resolve(getListUrl('weapons'))}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
-				<Button variant="element-ghost" element={elementName} size="small" href={editUrl}
+				<Button variant="element-ghost" element={elementName} size="small" href={resolve(editUrl)}
 					>Edit</Button
 				>
 			{/if}
@@ -318,7 +324,7 @@
 
 					{#if weapon.element === 0}
 						<DetailsContainer title="Element Variant IDs">
-							{#each ELEMENT_DISPLAY_ORDER as elementNum}
+							{#each ELEMENT_DISPLAY_ORDER as elementNum (elementNum)}
 								<DetailItem label={getElementLabel(elementNum)}>
 									{weapon.elementVariantIds?.[String(elementNum)] || '—'}
 								</DetailItem>
@@ -335,7 +341,7 @@
 
 					{#if weapon.bulletSlots?.length}
 						<DetailsContainer title="Bullet Slots">
-							{#each weapon.bulletSlots as slotType, i}
+							{#each weapon.bulletSlots as slotType, i (i)}
 								<DetailItem label="Slot {i + 1}" value={BULLET_TYPES[slotType] ?? 'Unknown'} />
 							{/each}
 						</DetailsContainer>
@@ -345,7 +351,7 @@
 						<DetailItem label="English">
 							{#if weapon.nicknames?.en?.length}
 								<div class="nickname-tags">
-									{#each weapon.nicknames.en as nickname}
+									{#each weapon.nicknames.en as nickname, i (i)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>
@@ -356,7 +362,7 @@
 						<DetailItem label="Japanese">
 							{#if weapon.nicknames?.ja?.length}
 								<div class="nickname-tags">
-									{#each weapon.nicknames.ja as nickname}
+									{#each weapon.nicknames.ja as nickname, i (i)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>
@@ -444,7 +450,7 @@
 						<h3>Skills</h3>
 						<div class="skills-grid">
 							{#if weapon.weapon_skills && weapon.weapon_skills.length > 0}
-								{#each weapon.weapon_skills as skill}
+								{#each weapon.weapon_skills as skill (skill.id)}
 									<div class="skill-item">
 										<h4 class="skill-name">{skill.name || 'Unknown Skill'}</h4>
 										<p class="skill-description">

@@ -123,7 +123,7 @@ export class CollectionAdapter extends BaseAdapter {
 
 		const response = await this.request<{
 			characters: CollectionCharacter[]
-			meta: { created: number; skipped: number; errors: any[] }
+			meta: { created: number; skipped: number; errors: unknown[] }
 		}>('/collection/characters/batch', {
 			method: 'POST',
 			body: {
@@ -259,7 +259,7 @@ export class CollectionAdapter extends BaseAdapter {
 
 		const response = await this.request<{
 			weapons: CollectionWeapon[]
-			meta: { created: number; errors: any[] }
+			meta: { created: number; errors: unknown[] }
 		}>('/collection/weapons/batch', {
 			method: 'POST',
 			body: {
@@ -372,7 +372,7 @@ export class CollectionAdapter extends BaseAdapter {
 
 		const response = await this.request<{
 			summons: CollectionSummon[]
-			meta: { created: number; errors: any[] }
+			meta: { created: number; errors: unknown[] }
 		}>('/collection/summons/batch', {
 			method: 'POST',
 			body: {

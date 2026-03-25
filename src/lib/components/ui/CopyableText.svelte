@@ -13,6 +13,7 @@
 		try {
 			await navigator.clipboard.writeText(String(value))
 			toast.success(m.toast_copied())
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		} catch (err) {
 			toast.error(m.toast_copy_failed())
 		}

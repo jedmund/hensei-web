@@ -8,7 +8,6 @@
  */
 
 import { BaseAdapter } from './base.adapter'
-import type { AdapterOptions } from './types'
 import type { Party, GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
 import type { Character, Weapon } from '$lib/types/api/entities'
 import { DEFAULT_ADAPTER_CONFIG } from './config'

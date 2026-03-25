@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { GridWeapon, GuidebookList } from '$lib/types/api/party'
+	import { SvelteMap } from 'svelte/reactivity'
 	import { usePartyContext } from '$lib/types/party-context'
 	import { getDragDropContext } from '$lib/composables/drag-drop.svelte'
 	import DraggableItem from '$lib/components/dnd/DraggableItem.svelte'
@@ -35,7 +36,9 @@
 	const ctx = usePartyContext()
 	const dragContext = getDragDropContext()
 
-	let mainhand = $derived(weapons.find((w) => (w as any).mainhand || w.position === -1))
+	let mainhand = $derived(
+		weapons.find((w) => (w as unknown as Record<string, unknown>).mainhand || w.position === -1)
+	)
 
 	// Create array for sub-weapons (positions 0-8)
 	let subWeaponSlots = $derived.by(() => {
@@ -53,7 +56,7 @@
 	const collectionStatus = $derived.by(() => {
 		if (!collectionWeaponItems) return null
 		const remaining = new Map(Array.from(collectionWeaponItems, ([k, v]) => [k, [...v]]))
-		const status = new Map<number, boolean>()
+		const status = new SvelteMap<number, boolean>()
 
 		const check = (weapon: GridWeapon | undefined, position: number) => {
 			const gid = weapon?.weapon?.granblueId
@@ -101,7 +104,7 @@
 		</div>
 
 		<ul class="weapons" aria-label="Weapon Grid">
-			{#each subWeaponSlots as weapon, i}
+			{#each subWeaponSlots as weapon, i (i)}
 				<li
 					aria-label={weapon ? `Weapon ${i}` : `Empty slot ${i}`}
 					data-index={i}

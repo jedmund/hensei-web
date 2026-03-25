@@ -18,6 +18,7 @@
 		position: number
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { onSelect, position }: Props = $props()
 
 	// Search state
@@ -72,8 +73,8 @@
 
 	// --- Infinite scroll ---
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const loader = useInfiniteLoader(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- createInfiniteQuery result type doesn't match useInfiniteLoader generic exactly
 		() => searchQueryResult as any,
 		() => sentinelEl,
 		{ rootMargin: '200px' }

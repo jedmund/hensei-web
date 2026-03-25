@@ -7,7 +7,6 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { BaseAdapter } from '../base.adapter'
-import { ApiError, NetworkError } from '../errors'
 import type { AdapterOptions } from '../types'
 
 /**
@@ -19,15 +18,15 @@ class TestAdapter extends BaseAdapter {
 	}
 
 	// Expose protected methods for testing
-	async testRequest<T>(path: string, options?: any): Promise<T> {
+	async testRequest<T>(path: string, options?: Record<string, unknown>): Promise<T> {
 		return this.request<T>(path, options)
 	}
 
-	testTransformResponse<T>(data: any): T {
+	testTransformResponse<T>(data: unknown): T {
 		return this.transformResponse<T>(data)
 	}
 
-	testTransformRequest(data: any): any {
+	testTransformRequest(data: unknown): unknown {
 		return this.transformRequest(data)
 	}
 
@@ -45,12 +44,13 @@ class FastRetryAdapter extends BaseAdapter {
 	}
 
 	// Override delay for instant retries in tests
-	protected delay(ms: number): Promise<void> {
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	protected delay(_ms: number): Promise<void> {
 		// Instant return for fast tests
 		return Promise.resolve()
 	}
 
-	async testRequest<T>(path: string, options?: any): Promise<T> {
+	async testRequest<T>(path: string, options?: Record<string, unknown>): Promise<T> {
 		return this.request<T>(path, options)
 	}
 }
@@ -223,7 +223,7 @@ describe('BaseAdapter', () => {
 				}
 			})
 
-			const calledUrl = (global.fetch as any).mock.calls[0][0]
+			const calledUrl = vi.mocked(global.fetch).mock.calls[0][0]
 			expect(calledUrl).toContain('query=test')
 			expect(calledUrl).toContain('page=2')
 			// Arrays are serialized as comma-separated values
@@ -295,7 +295,7 @@ describe('BaseAdapter', () => {
 		})
 
 		it('should cancel duplicate requests to the same endpoint', async () => {
-			let abortHandlers: Array<() => void> = []
+			const abortHandlers: Array<() => void> = []
 
 			// Mock sequential requests with proper abort handling
 			let callCount = 0

@@ -11,7 +11,7 @@ import { mount, unmount } from 'svelte'
 import EntityMentionList from './EntityMentionList.svelte'
 import type { EntityMentionData } from './EntityMentionList.svelte'
 
-interface MentionItem extends UnifiedSearchResult {}
+type MentionItem = UnifiedSearchResult
 
 /**
  * Creates the suggestion configuration for entity mentions

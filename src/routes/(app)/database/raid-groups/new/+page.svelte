@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { useQueryClient } from '@tanstack/svelte-query'
 	import { raidAdapter } from '$lib/api/adapters/raid.adapter'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
@@ -12,6 +13,7 @@
 		data: PageData
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { data }: Props = $props()
 
 	const queryClient = useQueryClient()
@@ -60,9 +62,9 @@
 			await queryClient.invalidateQueries({ queryKey: ['raid-groups'] })
 
 			// Navigate to the new group's detail page
-			goto(`/database/raid-groups/${newGroup.id}`)
-		} catch (error: any) {
-			saveError = error.message || 'Failed to create raid group'
+			goto(resolve(`/database/raid-groups/${newGroup.id}`))
+		} catch (error: unknown) {
+			saveError = error instanceof Error ? error.message : 'Failed to create raid group'
 		} finally {
 			isSaving = false
 		}
@@ -70,7 +72,7 @@
 
 	// Cancel and go back
 	function handleCancel() {
-		goto('/database/raid-groups')
+		goto(resolve('/database/raid-groups'))
 	}
 </script>
 

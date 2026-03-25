@@ -14,6 +14,7 @@
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
 		item: GridCharacter | GridWeapon | GridSummon
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
 		itemData: any
 		gridUncapLevel: number | null | undefined
 		gridTranscendence: number | null | undefined
@@ -46,7 +47,7 @@
 		}
 	}
 
-	// Get element-based background color
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for future use
 	function getElementBackground(): string {
 		const element = itemData?.element
 		switch (element) {
@@ -67,6 +68,7 @@
 		}
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data
 	function displayName(input: any): string {
 		if (!input) return '—'
 		const name = input.name ?? input

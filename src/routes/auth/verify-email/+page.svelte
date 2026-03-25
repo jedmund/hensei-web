@@ -4,8 +4,9 @@
 	import * as m from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
+	import { resolve } from '$app/paths'
 	interface Props {
-		data: { success?: boolean; invalidToken?: boolean }
+		data: { success?: boolean }
 	}
 
 	let { data }: Props = $props()
@@ -16,19 +17,19 @@
 <AuthCard title={m.auth_verifyEmail_title()}>
 	{#if data.success}
 		<p class="success">{m.auth_verifyEmail_success()}</p>
-		<a href={localizeHref('/auth/login')} class="action-link">
+		<a href={resolve(localizeHref('/auth/login'))} class="action-link">
 			{m.auth_verifyEmail_signIn()}
 		</a>
 	{:else}
 		<p class="error">{m.auth_verifyEmail_invalidToken()}</p>
-		<a href={localizeHref('/auth/login')} class="action-link">
+		<a href={resolve(localizeHref('/auth/login'))} class="action-link">
 			{m.auth_verifyEmail_signIn()}
 		</a>
 	{/if}
 
 	{#snippet footer()}
 		<p>
-			<a href={localizeHref('/auth/login')}>{m.auth_forgotPassword_backToLogin()}</a>
+			<a href={resolve(localizeHref('/auth/login'))}>{m.auth_forgotPassword_backToLogin()}</a>
 		</p>
 	{/snippet}
 </AuthCard>

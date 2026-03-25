@@ -9,7 +9,6 @@
  */
 
 import { BaseAdapter } from './base.adapter'
-import type { AdapterOptions } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type {
 	WeaponSeriesRef,

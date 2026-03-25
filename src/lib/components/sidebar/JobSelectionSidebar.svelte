@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { SvelteSet } from 'svelte/reactivity'
 	import { createQuery } from '@tanstack/svelte-query'
 	import type { Job } from '$lib/types/api/entities'
 	import { jobQueries } from '$lib/api/queries/job.queries'
@@ -22,7 +23,7 @@
 	const jobsQuery = createQuery(() => jobQueries.list())
 
 	let searchQuery = $state('')
-	let selectedTiers = $state<Set<string>>(new Set(['4', '5', 'ex2', 'o1']))
+	let selectedTiers = new SvelteSet(['4', '5', 'ex2', 'o1'])
 	const tiers = [
 		{ value: '1', label: m.job_tier_class_1(), shortLabel: 'I' },
 		{ value: '2', label: m.job_tier_class_2(), shortLabel: 'II' },
@@ -35,7 +36,7 @@
 	]
 
 	function toggleTier(value: string) {
-		const newSet = new Set(selectedTiers)
+		const newSet = new SvelteSet(selectedTiers)
 		if (newSet.has(value)) {
 			newSet.delete(value)
 		} else {
@@ -117,7 +118,7 @@
 
 		{#snippet results()}
 			<div class="jobs-grid">
-				{#each Object.entries(filteredJobs) as [tierName, jobs]}
+				{#each Object.entries(filteredJobs) as [tierName, jobs] (tierName)}
 					<div class="tier-group">
 						<div class="tier-header">
 							<h4>{tierName}</h4>

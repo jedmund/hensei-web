@@ -42,11 +42,12 @@
 
 	const tag = $derived(disabled ? 'div' : 'a')
 
-	function displayName(input: any): string {
+	function displayName(input: unknown): string {
 		if (!input) return '—'
-		const maybe = input.name ?? input
+		const obj = input as Record<string, unknown>
+		const maybe = obj.name ?? input
 		if (typeof maybe === 'string') return maybe
-		return localizedName(maybe)
+		return localizedName(maybe as string)
 	}
 </script>
 
@@ -75,14 +76,12 @@
 				<div class="details-text">
 					{#if party.job}
 						<Tooltip content={displayName(party.job)}>
-							{#snippet children()}
-								<img
-									class="job-icon"
-									src={getJobIconUrl(party.job.granblueId)}
-									alt=""
-									loading="lazy"
-								/>
-							{/snippet}
+							<img
+								class="job-icon"
+								src={getJobIconUrl(party.job.granblueId)}
+								alt=""
+								loading="lazy"
+							/>
 						</Tooltip>
 					{/if}
 					<span class={`raid ${!party.raid ? 'empty' : ''}`}
@@ -93,29 +92,23 @@
 				<div class="pills">
 					{#if party.chargeAttack}
 						<Tooltip content={m.filter_charge_attack()}>
-							{#snippet children()}
-								<span class="pill chargeAttack">
-									<Icon name="charge-attack" size={16} />
-								</span>
-							{/snippet}
+							<span class="pill chargeAttack">
+								<Icon name="charge-attack" size={16} />
+							</span>
 						</Tooltip>
 					{/if}
 					{#if party.fullAuto}
 						<Tooltip content={m.filter_full_auto()}>
-							{#snippet children()}
-								<span class="pill fullAuto">
-									<Icon name="full-auto" size={16} />
-								</span>
-							{/snippet}
+							<span class="pill fullAuto">
+								<Icon name="full-auto" size={16} />
+							</span>
 						</Tooltip>
 					{/if}
 					{#if party.raid?.extra}
 						<Tooltip content={m.grid_extra()}>
-							{#snippet children()}
-								<span class="pill extra">
-									<Icon name="extra-grid" size={16} />
-								</span>
-							{/snippet}
+							<span class="pill extra">
+								<Icon name="extra-grid" size={16} />
+							</span>
 						</Tooltip>
 					{/if}
 				</div>

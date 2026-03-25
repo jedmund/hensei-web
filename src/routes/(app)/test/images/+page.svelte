@@ -101,7 +101,7 @@
 		<section>
 			<h2>Resource Type</h2>
 			<div class="radio-group">
-				{#each ['character', 'weapon', 'summon'] as type}
+				{#each ['character', 'weapon', 'summon'] as type (type)}
 					<label>
 						<input type="radio" bind:group={resourceType} value={type} />
 						{type.charAt(0).toUpperCase() + type.slice(1)}
@@ -113,7 +113,7 @@
 		<section>
 			<h2>Image Variant</h2>
 			<div class="radio-group">
-				{#each availableVariants as v}
+				{#each availableVariants as v (v)}
 					<label class:special={fileExtension === '.png' && variant === v}>
 						<input type="radio" bind:group={variant} value={v} />
 						{v.charAt(0).toUpperCase() + v.slice(1)}
@@ -132,7 +132,7 @@
 					<input type="radio" bind:group={itemId} value="" />
 					None (Placeholder)
 				</label>
-				{#each sampleIds[resourceType] as item}
+				{#each sampleIds[resourceType] as item (item.id)}
 					<label>
 						<input type="radio" bind:group={itemId} value={item.id} />
 						{item.name}
@@ -159,7 +159,7 @@
 
 				{#if customPose}
 					<div class="radio-group">
-						{#each ['01', '02', '03', '04'] as p}
+						{#each ['01', '02', '03', '04'] as p (p)}
 							<label>
 								<input type="radio" bind:group={pose} value={p} />
 								Pose {p}
@@ -184,7 +184,7 @@
 					<div class="element-group">
 						<h3>Gran/Djeeta Element</h3>
 						<div class="radio-group">
-							{#each [{ value: 0, label: 'None' }, { value: 1, label: 'Wind' }, { value: 2, label: 'Fire' }, { value: 3, label: 'Water' }, { value: 4, label: 'Earth' }, { value: 5, label: 'Dark' }, { value: 6, label: 'Light' }] as elem}
+							{#each [{ value: 0, label: 'None' }, { value: 1, label: 'Wind' }, { value: 2, label: 'Fire' }, { value: 3, label: 'Water' }, { value: 4, label: 'Earth' }, { value: 5, label: 'Dark' }, { value: 6, label: 'Light' }] as elem (elem.value)}
 								<label>
 									<input type="radio" bind:group={weaponElement} value={elem.value} />
 									{elem.label}
@@ -200,7 +200,7 @@
 			<section>
 				<h2>Weapon Element (Grid Only)</h2>
 				<div class="radio-group">
-					{#each [{ value: 0, label: 'Default' }, { value: 1, label: 'Wind' }, { value: 2, label: 'Fire' }, { value: 3, label: 'Water' }, { value: 4, label: 'Earth' }, { value: 5, label: 'Dark' }, { value: 6, label: 'Light' }] as elem}
+					{#each [{ value: 0, label: 'Default' }, { value: 1, label: 'Wind' }, { value: 2, label: 'Fire' }, { value: 3, label: 'Water' }, { value: 4, label: 'Earth' }, { value: 5, label: 'Dark' }, { value: 6, label: 'Light' }] as elem (elem.value)}
 						<label>
 							<input type="radio" bind:group={weaponElement} value={elem.value} />
 							{elem.label}

@@ -2,6 +2,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { entityAdapter, type ParsedCharacterData } from '$lib/api/adapters/entity.adapter'
 	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'
@@ -13,6 +14,7 @@
 		buildKamigameUrl
 	} from '$lib/utils/external-links'
 	import { getRarityPrefix } from '$lib/utils/rarity'
+	import { SvelteMap, SvelteSet } from 'svelte/reactivity'
 
 	// Components
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
@@ -29,8 +31,6 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
 
-	import type { PageData } from './$types'
-
 	// Internal entity state including loading status
 	interface EntityState {
 		wikiPage: string
@@ -41,20 +41,18 @@
 		error?: string
 	}
 
-	let { data }: { data: PageData } = $props()
-
 	// Input phase
 	let wikiPagesInputs = $state<string[]>(['', '', ''])
 	let isFetching = $state(false)
 	let fetchError = $state<string | null>(null)
 
 	// Fetched entities
-	let entities = $state<Map<string, EntityState>>(new Map())
+	let entities = new SvelteMap<string, EntityState>()
 	let selectedWikiPage = $state<string | null>(null)
 
 	// Form data per entity (keyed by wikiPage) - using Record for proper reactivity
-	let formDataByPage = $state<Record<string, any>>({})
-	let savedEntities = $state<Set<string>>(new Set())
+	let formDataByPage = $state<Record<string, Record<string, unknown>>>({})
+	let savedEntities = new SvelteSet<string>()
 
 	// Store wiki raw data per entity for sending with create request
 	let wikiRawByPage = $state<Record<string, string>>({})
@@ -185,7 +183,7 @@
 		fetchError = null
 
 		// Initialize entities as loading
-		const newEntities = new Map<string, EntityState>()
+		const newEntities = new SvelteMap<string, EntityState>()
 		pages.forEach((page) => {
 			newEntities.set(page, {
 				wikiPage: page,
@@ -210,7 +208,7 @@
 			const response = await entityAdapter.batchPreviewCharacters(finalPages, wikiData)
 
 			// Update entities with results
-			const updatedEntities = new Map<string, EntityState>()
+			const updatedEntities = new SvelteMap<string, EntityState>()
 			response.results.forEach((result) => {
 				updatedEntities.set(result.wikiPage, {
 					wikiPage: result.wikiPage,
@@ -248,8 +246,6 @@
 		if (!selectedWikiPage) return
 		const formData = formDataByPage[selectedWikiPage]
 		if (!formData) return
-		const entity = entities.get(selectedWikiPage)
-
 		isSaving = true
 		saveError = null
 
@@ -305,7 +301,7 @@
 			// Trigger image download in background (don't await - it queues a job)
 			entityAdapter.downloadCharacterImages(newCharacter.id).catch(console.error)
 			savedEntities.add(selectedWikiPage)
-			savedEntities = new Set(savedEntities)
+			savedEntities = new SvelteSet(savedEntities)
 
 			// Select next unsaved entity
 			const unsaved = entityTabs.find(
@@ -323,7 +319,7 @@
 	}
 
 	function handleCancel() {
-		goto(localizeHref('/database/characters'))
+		goto(resolve(localizeHref('/database/characters')))
 	}
 
 	// Can save current entity
@@ -395,7 +391,8 @@
 				</Button>
 			</div>
 			<div class="wiki-inputs">
-				{#each wikiPagesInputs as _, index}
+				<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
+				{#each wikiPagesInputs as _input, index (index)}
 					<div class="input-row">
 						<Input
 							bind:value={wikiPagesInputs[index]}

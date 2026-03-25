@@ -66,7 +66,7 @@
 			type="single"
 			style={userElement ? `--faq-accent: var(--${userElement}-button-bg)` : undefined}
 		>
-			{#each faqItems as item}
+			{#each faqItems as item (item.value)}
 				<Accordion.Item value={item.value}>
 					<Accordion.Header>
 						<Accordion.Trigger class="faq-trigger">
@@ -75,6 +75,7 @@
 						</Accordion.Trigger>
 					</Accordion.Header>
 					<Accordion.Content class="faq-content">
+						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 						<p class="faq-answer">{@html item.desc()}</p>
 						{#if item.value === 'safe'}
 							<LinkItem

@@ -30,6 +30,7 @@
 		return key.slug || m.details_weapon_key_fallback()
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	function getSlotLabel(slot: number, series?: WeaponSeriesRef | null): string {
 		return m.details_skill_slot({ slot: String(slot + 1) })
 	}
@@ -37,7 +38,7 @@
 
 {#if weaponKeys && weaponKeys.length > 0}
 	<div class="weapon-keys-list {layout}">
-		{#each weaponKeys as key, index}
+		{#each weaponKeys as key, index (key.id)}
 			{@const imageData = keyImages[index]}
 			<div class="weapon-key-item">
 				{#if imageData}

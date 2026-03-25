@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
 	import { formatScore } from '$lib/utils/gw'
 	import type { EventScoreSummary } from '$lib/types/api/gw'
@@ -14,7 +15,7 @@
 <li class="event-item">
 	<button
 		class="event-button"
-		onclick={() => goto(`/crew/events/${eventScore.gwEvent.eventNumber}`)}
+		onclick={() => goto(resolve(`/crew/events/${eventScore.gwEvent.eventNumber}`))}
 	>
 		<div class="event-info">
 			<span class="event-number">GW #{eventScore.gwEvent.eventNumber}</span>

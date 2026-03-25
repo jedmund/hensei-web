@@ -24,7 +24,7 @@
 			header: 'Name',
 			width: 180,
 			sort: true,
-			template: (nameObj: any) => {
+			template: (nameObj: unknown) => {
 				// nameObj is the name property itself, not the full item
 				if (!nameObj) return '—'
 				if (typeof nameObj === 'string') return nameObj
@@ -37,7 +37,7 @@
 			header: 'Rarity',
 			width: 80,
 			sort: true,
-			template: (rarity: any) => getRarityLabel(rarity)
+			template: (rarity: unknown) => getRarityLabel(rarity)
 		},
 		{
 			id: 'element',
@@ -56,7 +56,7 @@
 			id: 'subaura',
 			header: 'Subaura',
 			width: 80,
-			template: (val: any) => (val ? 'Yes' : 'No')
+			template: (val: unknown) => (val ? 'Yes' : 'No')
 		},
 		{
 			id: 'last_updated',
@@ -71,6 +71,7 @@
 			width: 70,
 			hidden: true,
 			cell: BooleanCell,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) => row.uncap?.flb
 		},
 		{
@@ -79,6 +80,7 @@
 			width: 70,
 			hidden: true,
 			cell: BooleanCell,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) => row.uncap?.ulb
 		},
 		{
@@ -87,6 +89,7 @@
 			width: 120,
 			hidden: true,
 			cell: BooleanCell,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) => row.uncap?.transcendence
 		},
 		{

@@ -13,5 +13,5 @@ if echo "$file_path" | grep -qE '\.(js|ts|svelte|json|css|scss|md|html|yaml|yml)
 fi
 
 if echo "$file_path" | grep -qE '\.(js|ts|svelte)$'; then
-  pnpm exec eslint --fix "$file_path" 2>/dev/null || true
+  pnpm exec eslint --cache --fix "$file_path" 2>/dev/null || true
 fi

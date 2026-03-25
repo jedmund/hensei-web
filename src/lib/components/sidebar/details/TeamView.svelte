@@ -6,7 +6,7 @@
 	import MasteryDisplay from '../modifications/MasteryDisplay.svelte'
 	import WeaponKeysList from '../modifications/WeaponKeysList.svelte'
 	import ArtifactSummary from '../modifications/ArtifactSummary.svelte'
-	import { formatAxSkill, getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
+	import { getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
@@ -17,12 +17,15 @@
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
 		item: GridCharacter | GridWeapon | GridSummon
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
 		itemData: any
 		gridUncapLevel: number | null
 		gridTranscendence: number | null
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic modification status
 		modificationStatus: any
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { type, item, itemData, gridUncapLevel, gridTranscendence, modificationStatus }: Props =
 		$props()
 
@@ -115,7 +118,7 @@
 
 		{#if modificationStatus.hasAxSkills && weapon.ax?.length}
 			<DetailsSection title={m.details_ax_skills()}>
-				{#each weapon.ax as axSkill}
+				{#each weapon.ax as axSkill, i (i)}
 					{#if axSkill.modifier?.id}
 						<DetailRow
 							label={axSkill.modifier.nameEn}
@@ -149,7 +152,7 @@
 
 		{#if modificationStatus.hasBullets && weapon.bullets?.length}
 			<DetailsSection title={m.details_bullets()}>
-				{#each weapon.bullets as loadout}
+				{#each weapon.bullets as loadout (loadout.id)}
 					<DetailRow label={BULLET_TYPES[loadout.bullet.bulletType] ?? 'Unknown'}>
 						<span class="bullet-value">
 							<img src={getBulletImage(loadout.bullet.granblueId)} alt="" class="bullet-icon" />

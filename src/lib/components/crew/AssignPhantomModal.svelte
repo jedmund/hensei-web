@@ -8,7 +8,7 @@
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import Icon from '$lib/components/Icon.svelte'
-	import type { PhantomPlayer, CrewMembership } from '$lib/types/api/crew'
+	import type { PhantomPlayer } from '$lib/types/api/crew'
 
 	interface Props {
 		open: boolean
@@ -103,7 +103,7 @@
 			</div>
 		{:else}
 			<div class="members-list">
-				{#each availableMembers as member}
+				{#each availableMembers as member (member.id)}
 					<button
 						type="button"
 						class="member-option"

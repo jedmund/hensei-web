@@ -55,7 +55,7 @@
 	{#if unlimited}
 		<!-- Unlimited mode: 8 square slots in 4x2 grid -->
 		<ul class="characters unlimited">
-			{#each grid as c, i}
+			{#each grid as c, i (i)}
 				<li class="character" class:empty={!c}>
 					{#if c}<img
 							alt="Character"
@@ -69,7 +69,7 @@
 	{:else}
 		<!-- Standard mode: 3 portraits + 2 stacked squares -->
 		<div class="portraits">
-			{#each portraits as c, i}
+			{#each portraits as c, i (i)}
 				<div class="character portrait" class:empty={!c}>
 					{#if c}<img
 							alt="Character"
@@ -81,7 +81,7 @@
 			{/each}
 		</div>
 		<div class="squares">
-			{#each squares as c, i}
+			{#each squares as c, i (i)}
 				<div class="character square" class:empty={!c}>
 					{#if c}<img
 							alt="Character"

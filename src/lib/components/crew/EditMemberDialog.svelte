@@ -147,63 +147,61 @@
 </script>
 
 <Dialog bind:open onOpenChange={handleOpenChange}>
-	{#snippet children()}
-		<ModalHeader title={m.crew_edit_player()} />
+	<ModalHeader title={m.crew_edit_player()} />
 
-		<ModalBody>
-			<div class="modal-form">
-				<div class="form-fields">
-					{#if phantom}
-						<Input
-							label={m.crew_granblue_id()}
-							bind:value={editGranblueId}
-							maxLength={20}
-							variant="contained"
-						/>
-					{/if}
+	<ModalBody>
+		<div class="modal-form">
+			<div class="form-fields">
+				{#if phantom}
+					<Input
+						label={m.crew_granblue_id()}
+						bind:value={editGranblueId}
+						maxLength={20}
+						variant="contained"
+					/>
+				{/if}
 
-					{#if loadingHistory}
-						<p class="loading-text">{m.crew_membership_loading()}</p>
-					{:else if membershipHistory.length > 1}
-						<MembershipHistoryEditor
-							bind:periods={membershipHistory}
-							{editRetired}
-							onRetiredChange={(checked) => (editRetired = checked)}
-						/>
-					{:else}
-						<!-- Single membership period (normal case) -->
-						<DatePicker label={m.crew_join_date()} bind:value={editJoinDate} contained />
+				{#if loadingHistory}
+					<p class="loading-text">{m.crew_membership_loading()}</p>
+				{:else if membershipHistory.length > 1}
+					<MembershipHistoryEditor
+						bind:periods={membershipHistory}
+						{editRetired}
+						onRetiredChange={(checked) => (editRetired = checked)}
+					/>
+				{:else}
+					<!-- Single membership period (normal case) -->
+					<DatePicker label={m.crew_join_date()} bind:value={editJoinDate} contained />
+					<p class="help-text">
+						{m.crew_join_date_hint()}
+					</p>
+					<SettingsRow title={m.crew_retired()} subtitle={m.crew_retired_hint()}>
+						{#snippet control()}
+							<Switch bind:checked={editRetired} name="retired" />
+						{/snippet}
+					</SettingsRow>
+					{#if editRetired}
+						<DatePicker label={m.crew_retired_date()} bind:value={editRetiredAt} contained />
 						<p class="help-text">
-							{m.crew_join_date_hint()}
+							{m.crew_retired_date_hint()}
 						</p>
-						<SettingsRow title={m.crew_retired()} subtitle={m.crew_retired_hint()}>
-							{#snippet control()}
-								<Switch bind:checked={editRetired} name="retired" />
-							{/snippet}
-						</SettingsRow>
-						{#if editRetired}
-							<DatePicker label={m.crew_retired_date()} bind:value={editRetiredAt} contained />
-							<p class="help-text">
-								{m.crew_retired_date_hint()}
-							</p>
-						{/if}
 					{/if}
-				</div>
+				{/if}
 			</div>
-		</ModalBody>
+		</div>
+	</ModalBody>
 
-		<ModalFooter
-			onCancel={() => {
-				open = false
-				onClose()
-			}}
-			primaryAction={{
-				label: m.crew_save_button(),
-				onclick: handleSave,
-				disabled: saveDisabled
-			}}
-		/>
-	{/snippet}
+	<ModalFooter
+		onCancel={() => {
+			open = false
+			onClose()
+		}}
+		primaryAction={{
+			label: m.crew_save_button(),
+			onclick: handleSave,
+			disabled: saveDisabled
+		}}
+	/>
 </Dialog>
 
 <style lang="scss">

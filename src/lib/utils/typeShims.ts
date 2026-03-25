@@ -74,10 +74,12 @@ export type OptionalUndefined<Type> = {
 export function optionalProp<K extends string, V>(
 	key: K,
 	value: V | undefined
-): V extends undefined ? {} : { [P in K]: V } {
+): V extends undefined ? Record<string, never> : { [P in K]: V } {
 	if (value === undefined) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- conditional return type can't be narrowed
 		return {} as any
 	}
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- conditional return type can't be narrowed
 	return { [key]: value } as any
 }
 

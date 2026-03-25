@@ -84,7 +84,7 @@ function hasCollectionLink(item: GridItem): boolean {
 }
 
 export function createDragDropContext(handlers: DragDropHandlers = {}) {
-	let state = $state<DragDropState>({
+	const state = $state<DragDropState>({
 		isDragging: false,
 		isDuplicating: false,
 		draggedItem: null,
@@ -102,13 +102,6 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 			currentTouch: null
 		}
 	})
-
-	function detectItemType(item: GridItem): GridItemType {
-		if ('character' in item) return 'character'
-		if ('weapon' in item) return 'weapon'
-		if ('summon' in item) return 'summon'
-		throw new Error('Unknown item type')
-	}
 
 	function handlePointerDown(
 		e: PointerEvent,

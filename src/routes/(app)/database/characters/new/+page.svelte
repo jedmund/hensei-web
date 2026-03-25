@@ -2,6 +2,7 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
+	import { resolve } from '$app/paths'
 	// Page metadata
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -22,6 +23,7 @@
 	// Types
 	import type { PageData } from './$types'
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { data }: { data: PageData } = $props()
 
 	// Always in edit mode for new character
@@ -227,7 +229,7 @@
 			// Trigger image download in background (don't await - it queues a job)
 			entityAdapter.downloadCharacterImages(newCharacter.id).catch(console.error)
 			const styleSuffix = newCharacter.styleSwap ? '/style' : ''
-			await goto(`/database/characters/${newCharacter.granblueId}${styleSuffix}`)
+			await goto(resolve(`/database/characters/${newCharacter.granblueId}${styleSuffix}`))
 		} catch (error) {
 			saveError = 'Failed to create character. Please try again.'
 			console.error('Create error:', error)
@@ -237,7 +239,7 @@
 	}
 
 	function handleCancel() {
-		goto('/database/characters')
+		goto(resolve('/database/characters'))
 	}
 </script>
 

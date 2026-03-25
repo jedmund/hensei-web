@@ -1,7 +1,7 @@
 <script lang="ts">
 	import PageMeta from '$lib/components/PageMeta.svelte'
-	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 	import { onMount } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -22,10 +22,11 @@
 	import { getRaidSectionLabel } from '$lib/utils/raidSection'
 	import { localizedName } from '$lib/utils/locale'
 
-	function displayName(input: any): string {
+	function displayName(input: unknown): string {
 		if (!input) return '—'
-		const name = input.name ?? input
-		return localizedName(name)
+		const obj = input as Record<string, unknown>
+		const name = obj.name ?? input
+		return localizedName(name as string)
 	}
 
 	// State
@@ -52,7 +53,11 @@
 		} else {
 			url.searchParams.delete('view')
 		}
-		goto(url.pathname + url.search, { replaceState: true, noScroll: true, keepFocus: true })
+		goto(resolve(url.pathname + url.search), {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		})
 	}
 
 	// Handle view mode change from segmented control
@@ -144,12 +149,12 @@
 
 	// Navigate to raid detail
 	function handleRaidClick(raid: Raid) {
-		goto(`/database/raids/${raid.slug}`)
+		goto(resolve(`/database/raids/${raid.slug}`))
 	}
 
 	// Navigate to raid group detail
 	function handleGroupClick(group: RaidGroupFull) {
-		goto(`/database/raid-groups/${group.id}`)
+		goto(resolve(`/database/raid-groups/${group.id}`))
 	}
 
 	// Check if any filters are active
@@ -210,7 +215,7 @@
 			header: 'Level',
 			width: 80,
 			sort: true,
-			template: (val: any) => val?.toString() ?? '-'
+			template: (val: unknown) => val?.toString() ?? '-'
 		},
 		{
 			id: 'element',
@@ -223,14 +228,17 @@
 			id: 'group',
 			header: 'Group',
 			width: 180,
-			template: (_val: any, row: any) => (row.group ? displayName(row.group) : '-')
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			template: (_val: unknown, row: any) => (row.group ? displayName(row.group) : '-')
 		}
 	]
 
 	// Raids grid API reference
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
 	let raidsGridApi: any
 
 	// Initialize raids grid
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
 	const initRaidsGrid = (apiRef: any) => {
 		raidsGridApi = apiRef
 
@@ -251,9 +259,11 @@
 		})
 
 		// Row click handler
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		raidsGridApi.on('select-row', (ev: any) => {
 			const rowId = ev.id
 			if (rowId) {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 				const raid = filteredRaids.find((r: any) => r.id === rowId)
 				if (raid) {
 					handleRaidClick(raid)
@@ -268,6 +278,7 @@
 		if (!sortKey) return filteredRaids
 
 		const order = raidsSortMarks[sortKey]?.order
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		return [...filteredRaids].sort((a: any, b: any) => {
 			let valA = a[sortKey]
 			let valB = b[sortKey]
@@ -309,15 +320,17 @@
 			header: 'Section',
 			width: 100,
 			sort: true,
-			template: (val: any) => getRaidSectionLabel(val)
+			template: (val: unknown) => getRaidSectionLabel(val)
 		},
 		{
 			id: 'player_count',
 			header: 'Players',
 			width: 100,
-			template: (_val: any, row: any) => {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			template: (_val: unknown, row: any) => {
 				const raids = row.raids ?? []
 				const counts: number[] = [
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 					...new Set<number>(raids.map((r: any) => r.playerCount).filter(Boolean))
 				]
 				counts.sort((a, b) => a - b)
@@ -329,7 +342,7 @@
 			header: 'Difficulty',
 			width: 100,
 			sort: true,
-			template: (val: any) => val?.toString() ?? '-'
+			template: (val: unknown) => val?.toString() ?? '-'
 		},
 		{
 			id: 'flags',
@@ -341,7 +354,8 @@
 			id: 'raids',
 			header: 'Raids',
 			width: 80,
-			template: (_val: any, row: any) => row.raids?.length?.toString() ?? '0'
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			template: (_val: unknown, row: any) => row.raids?.length?.toString() ?? '0'
 		}
 	]
 
@@ -352,6 +366,7 @@
 		if (!sortKey) return groups
 
 		const order = groupsSortMarks[sortKey]?.order
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		return [...groups].sort((a: any, b: any) => {
 			let valA = a[sortKey]
 			let valB = b[sortKey]
@@ -375,9 +390,11 @@
 	})
 
 	// Groups grid API reference
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
 	let groupsGridApi: any
 
 	// Initialize groups grid
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped API
 	const initGroupsGrid = (apiRef: any) => {
 		groupsGridApi = apiRef
 
@@ -399,9 +416,11 @@
 		})
 
 		// Row click handler
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 		groupsGridApi.on('select-row', (ev: any) => {
 			const rowId = ev.id
 			if (rowId) {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 				const group = (groupsQuery.data ?? []).find((g: any) => g.id === rowId)
 				if (group) {
 					handleGroupClick(group)

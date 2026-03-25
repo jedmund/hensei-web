@@ -2,6 +2,7 @@
 	import { onMount, onDestroy } from 'svelte'
 	import { setPartyContext } from '$lib/types/party-context'
 	import { pushState } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import type { Party } from '$lib/types/api/party'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 
@@ -239,7 +240,7 @@
 	// --- Derived values ---
 	const mainWeapon = $derived((party?.weapons ?? []).find((w) => w?.mainhand || w?.position === -1))
 	const mainWeaponElement = $derived(mainWeapon?.element ?? mainWeapon?.weapon?.element)
-	const partyElement = $derived((party as any)?.element)
+	const partyElement = $derived(party?.element)
 
 	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	const userElement = $derived(party.user?.avatar?.element as ElementType | undefined)
@@ -326,7 +327,7 @@
 		if (!isNew && routerReady) {
 			const basePath = `/teams/${party.shortcode}`
 			const newPath = `${basePath}/${tab}s`
-			pushState(newPath, {})
+			pushState(resolve(newPath), {})
 		}
 
 		const nextEmpty = findNextEmptySlot(party, tab)
@@ -387,7 +388,7 @@
 		openPicker: (opts: {
 			type: 'weapon' | 'summon' | 'character'
 			position: number
-			item?: any
+			item?: GridCharacter | GridWeapon | GridSummon
 		}) => {
 			if (!canEdit()) return
 			selectedSlot = opts.position
@@ -576,11 +577,12 @@
 								characters={party.characters}
 								{mainWeaponElement}
 								{partyElement}
-								unlimited={(party as any)?.raid?.group?.unlimited}
+								unlimited={party?.raid?.group?.unlimited}
 								{collectionCharacterItems}
 							/>
 						</div>
 					{/if}
+					<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
 					{#snippet failed(error, reset)}
 						<div class="grid-error" role="alert">
 							<p>{m.party_grid_error()}</p>

@@ -27,7 +27,7 @@ import type {
 export function createCrewOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (input: CreateCrewInput) => crewAdapter.create(input),
-		onSuccess: (crew: any) => {
+		onSuccess: (crew: unknown) => {
 			queryClient.setQueryData(crewKeys.myCrew(), crew)
 			queryClient.invalidateQueries({ queryKey: crewKeys.invitations.pending() })
 		}
@@ -37,7 +37,7 @@ export function createCrewOptions(queryClient: QueryClient) {
 export function updateCrewOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (input: UpdateCrewInput) => crewAdapter.update(input),
-		onSuccess: (crew: any) => {
+		onSuccess: (crew: unknown) => {
 			queryClient.setQueryData(crewKeys.myCrew(), crew)
 		}
 	}

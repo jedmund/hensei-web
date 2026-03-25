@@ -2,6 +2,7 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
+	import { resolve } from '$app/paths'
 	// Page metadata
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -72,6 +73,7 @@
 
 	// Save state
 	let isSaving = $state(false)
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let saveError = $state<string | null>(null)
 
 	// Editable fields - initialized from character data
@@ -247,7 +249,7 @@
 				refetchType: 'all'
 			})
 
-			goto(`/database/characters/${character.granblueId}/style`)
+			goto(resolve(`/database/characters/${character.granblueId}/style`))
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
 			console.error('Save error:', error)
@@ -257,6 +259,7 @@
 	}
 
 	// Helper function for character grid image
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
 	function getCharacterGridImage(character: any): string {
 		return getCharacterImage(character?.granblueId, 'grid', '01_style')
 	}
@@ -274,7 +277,7 @@
 				variant="ghost"
 				size="small"
 				leftIcon="chevron-left"
-				href={`/database/characters/${character?.granblueId}/style`}>Back</Button
+				href={resolve(`/database/characters/${character?.granblueId}/style`)}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}

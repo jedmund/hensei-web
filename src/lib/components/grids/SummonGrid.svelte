@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { GridSummon } from '$lib/types/api/party'
+	import { SvelteMap } from 'svelte/reactivity'
 	import { usePartyContext } from '$lib/types/party-context'
 	import { getDragDropContext } from '$lib/composables/drag-drop.svelte'
 	import DraggableItem from '$lib/components/dnd/DraggableItem.svelte'
@@ -37,7 +38,7 @@
 	const collectionStatus = $derived.by(() => {
 		if (!collectionSummonItems) return null
 		const remaining = new Map(Array.from(collectionSummonItems, ([k, v]) => [k, [...v]]))
-		const status = new Map<number, boolean>()
+		const status = new SvelteMap<number, boolean>()
 
 		const check = (summon: GridSummon | undefined, position: number) => {
 			const gid = summon?.summon?.granblueId
@@ -87,7 +88,7 @@
 
 		<section>
 			<ul class="summons">
-				{#each subSummonSlots as summon, i}
+				{#each subSummonSlots as summon, i (i)}
 					<li aria-label={`Summon slot ${i}`} class:Empty={!summon}>
 						{#if dragContext}
 							<DropZone

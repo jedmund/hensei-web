@@ -2,6 +2,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
@@ -44,9 +45,9 @@
 	$effect(() => {
 		const currentView = $page.url.searchParams.get('view')
 		if (viewMode !== 'weapons' && currentView !== viewMode) {
-			goto(`?view=${viewMode}`, { replaceState: true, noScroll: true })
+			goto(resolve(`?view=${viewMode}`), { replaceState: true, noScroll: true })
 		} else if (viewMode === 'weapons' && currentView) {
-			goto('/database/weapons', { replaceState: true, noScroll: true })
+			goto(resolve('/database/weapons'), { replaceState: true, noScroll: true })
 		}
 	})
 
@@ -70,7 +71,7 @@
 
 	// Navigate to series detail
 	function handleSeriesClick(slug: string) {
-		goto(`/database/series/weapons/${slug}`)
+		goto(resolve(`/database/series/weapons/${slug}`))
 	}
 
 	// Awakening modal state
@@ -106,7 +107,7 @@
 			width: 180,
 			flexgrow: 1,
 			sort: true,
-			template: (nameObj: any) => {
+			template: (nameObj: unknown) => {
 				// nameObj is the name property itself, not the full item
 				if (!nameObj) return '—'
 				if (typeof nameObj === 'string') return nameObj
@@ -119,7 +120,7 @@
 			header: 'Rarity',
 			width: 80,
 			sort: true,
-			template: (rarity: any) => getRarityLabel(rarity)
+			template: (rarity: unknown) => getRarityLabel(rarity)
 		},
 		{
 			id: 'element',
@@ -154,6 +155,7 @@
 			width: 70,
 			hidden: true,
 			cell: BooleanCell,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) => row.uncap?.flb
 		},
 		{
@@ -162,6 +164,7 @@
 			width: 70,
 			hidden: true,
 			cell: BooleanCell,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) => row.uncap?.ulb
 		},
 		{
@@ -170,6 +173,7 @@
 			width: 120,
 			hidden: true,
 			cell: BooleanCell,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) => row.uncap?.transcendence
 		},
 		{
@@ -229,8 +233,9 @@
 			header: 'Extra Prereq.',
 			width: 110,
 			hidden: true,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) => row.uncap?.extraPrerequisite,
-			template: (value: any) => {
+			template: (value: unknown) => {
 				if (value == null) return '—'
 				return extraPrerequisiteLabels[value as number] ?? '—'
 			}
@@ -296,6 +301,7 @@
 			width: 100,
 			hidden: true,
 			cell: BooleanCell,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) =>
 				row.elementVariantIds != null && Object.keys(row.elementVariantIds).length > 0
 		}

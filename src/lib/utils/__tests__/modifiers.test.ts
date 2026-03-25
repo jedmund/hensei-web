@@ -33,20 +33,22 @@ describe('getAwakeningImage', () => {
 	})
 
 	it('returns null when type has no slug', () => {
-		expect(getAwakeningImage({ type: {} as any })).toBeNull()
+		expect(getAwakeningImage({ type: {} as Record<string, unknown> })).toBeNull()
 	})
 
 	it('returns null for character-balanced', () => {
-		expect(getAwakeningImage({ type: { slug: 'character-balanced' } as any })).toBeNull()
+		expect(
+			getAwakeningImage({ type: { slug: 'character-balanced' } as Record<string, unknown> })
+		).toBeNull()
 	})
 
 	it('returns jpg for character awakenings', () => {
-		const url = getAwakeningImage({ type: { slug: 'character-attack' } as any })
+		const url = getAwakeningImage({ type: { slug: 'character-attack' } as Record<string, unknown> })
 		expect(url).toBe('/images/awakening/character-attack.jpg')
 	})
 
 	it('returns png for weapon awakenings', () => {
-		const url = getAwakeningImage({ type: { slug: 'attack' } as any })
+		const url = getAwakeningImage({ type: { slug: 'attack' } as Record<string, unknown> })
 		expect(url).toBe('/images/awakening/attack.png')
 	})
 })
@@ -135,7 +137,7 @@ describe('getAxSkillImages', () => {
 	it('returns url/alt pairs', () => {
 		const ax = [
 			{ modifier: { slug: 'might', nameEn: 'Might', nameJp: '攻刃' }, strength: 3 }
-		] as any
+		] as unknown as Record<string, unknown>[]
 		const result = getAxSkillImages(ax)
 		expect(result).toHaveLength(1)
 		expect(result[0]!.url).toContain('might')
@@ -146,7 +148,7 @@ describe('getAxSkillImages', () => {
 		const ax = [
 			{ modifier: { slug: 'might', nameEn: 'Might' }, strength: 3 },
 			{ modifier: { slug: '', nameEn: '' }, strength: 1 }
-		] as any
+		] as unknown as Record<string, unknown>[]
 		expect(getAxSkillImages(ax)).toHaveLength(1)
 	})
 })

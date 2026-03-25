@@ -12,6 +12,7 @@
 	})
 
 	// Dummy handlers for storybook
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const noop = () => {}
 </script>
 
@@ -29,14 +30,10 @@
 	<div>
 		<Button onclick={() => (defaultOpen = true)}>Open Dialog</Button>
 		<Dialog bind:open={defaultOpen}>
-			{#snippet children()}
-				<ModalHeader title="Dialog Title" />
-				<ModalBody>
-					{#snippet children()}
-						<p>This is the dialog content. You can put any content here.</p>
-					{/snippet}
-				</ModalBody>
-			{/snippet}
+			<ModalHeader title="Dialog Title" />
+			<ModalBody>
+				<p>This is the dialog content. You can put any content here.</p>
+			</ModalBody>
 		</Dialog>
 	</div>
 </Story>
@@ -46,17 +43,13 @@
 	<div>
 		<Button onclick={() => (withDescOpen = true)}>Open Dialog</Button>
 		<Dialog bind:open={withDescOpen}>
-			{#snippet children()}
-				<ModalHeader
-					title="Account Settings"
-					description="Make changes to your account settings here."
-				/>
-				<ModalBody>
-					{#snippet children()}
-						<p>Your account settings form would go here.</p>
-					{/snippet}
-				</ModalBody>
-			{/snippet}
+			<ModalHeader
+				title="Account Settings"
+				description="Make changes to your account settings here."
+			/>
+			<ModalBody>
+				<p>Your account settings form would go here.</p>
+			</ModalBody>
 		</Dialog>
 	</div>
 </Story>
@@ -66,21 +59,17 @@
 	<div>
 		<Button onclick={() => (withFooterOpen = true)}>Open Dialog</Button>
 		<Dialog bind:open={withFooterOpen}>
-			{#snippet children()}
-				<ModalHeader title="Confirm Action" />
-				<ModalBody>
-					{#snippet children()}
-						<p>Are you sure you want to proceed with this action?</p>
-					{/snippet}
-				</ModalBody>
-				<ModalFooter
-					onCancel={() => (withFooterOpen = false)}
-					primaryAction={{
-						label: 'Confirm',
-						onclick: () => (withFooterOpen = false)
-					}}
-				/>
-			{/snippet}
+			<ModalHeader title="Confirm Action" />
+			<ModalBody>
+				<p>Are you sure you want to proceed with this action?</p>
+			</ModalBody>
+			<ModalFooter
+				onCancel={() => (withFooterOpen = false)}
+				primaryAction={{
+					label: 'Confirm',
+					onclick: () => (withFooterOpen = false)
+				}}
+			/>
 		</Dialog>
 	</div>
 </Story>
@@ -90,45 +79,39 @@
 	<div>
 		<Button onclick={() => (longContentOpen = true)}>Open Long Dialog</Button>
 		<Dialog bind:open={longContentOpen}>
-			{#snippet children()}
-				<ModalHeader title="Terms and Conditions" />
-				<ModalBody>
-					{#snippet children()}
-						<div style="display: flex; flex-direction: column; gap: 16px;">
-							<p>
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
-								incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-								exercitation ullamco laboris.
-							</p>
-							<p>
-								Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-								fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
-							</p>
-							<p>
-								Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
-								doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
-								veritatis.
-							</p>
-							<p>
-								At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis
-								praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias
-								excepturi sint.
-							</p>
-							<p>
-								Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo
-								minus id quod maxime placeat facere possimus.
-							</p>
-						</div>
-					{/snippet}
-				</ModalBody>
-				<ModalFooter
-					onCancel={() => (longContentOpen = false)}
-					primaryAction={{
-						label: 'Accept',
-						onclick: () => (longContentOpen = false)
-					}}
-				/>
-			{/snippet}
+			<ModalHeader title="Terms and Conditions" />
+			<ModalBody>
+				<div style="display: flex; flex-direction: column; gap: 16px;">
+					<p>
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+						incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+						exercitation ullamco laboris.
+					</p>
+					<p>
+						Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat
+						nulla pariatur. Excepteur sint occaecat cupidatat non proident.
+					</p>
+					<p>
+						Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+						laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.
+					</p>
+					<p>
+						At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium
+						voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint.
+					</p>
+					<p>
+						Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus
+						id quod maxime placeat facere possimus.
+					</p>
+				</div>
+			</ModalBody>
+			<ModalFooter
+				onCancel={() => (longContentOpen = false)}
+				primaryAction={{
+					label: 'Accept',
+					onclick: () => (longContentOpen = false)
+				}}
+			/>
 		</Dialog>
 	</div>
 </Story>
@@ -138,46 +121,42 @@
 	<div>
 		<Button onclick={() => (formOpen = true)}>Edit Profile</Button>
 		<Dialog bind:open={formOpen}>
-			{#snippet children()}
-				<ModalHeader title="Edit Profile" description="Update your profile information." />
-				<ModalBody>
-					{#snippet children()}
-						<div style="display: flex; flex-direction: column; gap: 16px;">
-							<div>
-								<label
-									style="display: block; font-size: 14px; font-weight: 500; margin-bottom: 4px;"
-									for="name">Name</label
-								>
-								<input
-									id="name"
-									type="text"
-									placeholder="Enter your name"
-									style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px;"
-								/>
-							</div>
-							<div>
-								<label
-									style="display: block; font-size: 14px; font-weight: 500; margin-bottom: 4px;"
-									for="email">Email</label
-								>
-								<input
-									id="email"
-									type="email"
-									placeholder="Enter your email"
-									style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px;"
-								/>
-							</div>
-						</div>
-					{/snippet}
-				</ModalBody>
-				<ModalFooter
-					onCancel={() => (formOpen = false)}
-					primaryAction={{
-						label: 'Save Changes',
-						onclick: () => (formOpen = false)
-					}}
-				/>
-			{/snippet}
+			<ModalHeader title="Edit Profile" description="Update your profile information." />
+			<ModalBody>
+				<div style="display: flex; flex-direction: column; gap: 16px;">
+					<div>
+						<label
+							style="display: block; font-size: 14px; font-weight: 500; margin-bottom: 4px;"
+							for="name">Name</label
+						>
+						<input
+							id="name"
+							type="text"
+							placeholder="Enter your name"
+							style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px;"
+						/>
+					</div>
+					<div>
+						<label
+							style="display: block; font-size: 14px; font-weight: 500; margin-bottom: 4px;"
+							for="email">Email</label
+						>
+						<input
+							id="email"
+							type="email"
+							placeholder="Enter your email"
+							style="width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px;"
+						/>
+					</div>
+				</div>
+			</ModalBody>
+			<ModalFooter
+				onCancel={() => (formOpen = false)}
+				primaryAction={{
+					label: 'Save Changes',
+					onclick: () => (formOpen = false)
+				}}
+			/>
 		</Dialog>
 	</div>
 </Story>
@@ -187,25 +166,21 @@
 	<div>
 		<Button variant="destructive" onclick={() => (confirmOpen = true)}>Delete Item</Button>
 		<Dialog bind:open={confirmOpen}>
-			{#snippet children()}
-				<ModalHeader title="Delete Item" />
-				<ModalBody>
-					{#snippet children()}
-						<p>
-							Are you sure you want to delete this item? This action cannot be undone and all
-							associated data will be permanently removed.
-						</p>
-					{/snippet}
-				</ModalBody>
-				<ModalFooter
-					onCancel={() => (confirmOpen = false)}
-					primaryAction={{
-						label: 'Delete',
-						onclick: () => (confirmOpen = false),
-						destructive: true
-					}}
-				/>
-			{/snippet}
+			<ModalHeader title="Delete Item" />
+			<ModalBody>
+				<p>
+					Are you sure you want to delete this item? This action cannot be undone and all associated
+					data will be permanently removed.
+				</p>
+			</ModalBody>
+			<ModalFooter
+				onCancel={() => (confirmOpen = false)}
+				primaryAction={{
+					label: 'Delete',
+					onclick: () => (confirmOpen = false),
+					destructive: true
+				}}
+			/>
 		</Dialog>
 	</div>
 </Story>

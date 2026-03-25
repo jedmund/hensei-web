@@ -7,9 +7,12 @@
 	import { getElementKey } from '$lib/utils/element'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
+	import { resolve } from '$app/paths'
 	interface Props {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
 		weapon: any
 		editMode?: boolean
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
 		editData?: any
 	}
 
@@ -53,14 +56,14 @@
 			{#if forgeChain.length > 0}
 				<DetailItem label="Forge Chain">
 					<div class="forge-chain">
-						{#each forgeChain as chainWeapon, index}
+						{#each forgeChain as chainWeapon, index (chainWeapon.granblueId)}
 							{#if index > 0}
 								<span class="chain-arrow">
 									<Icon name="arrow-down" size={14} />
 								</span>
 							{/if}
 							<a
-								href={localizeHref(`/database/weapons/${chainWeapon.granblueId}`)}
+								href={resolve(localizeHref(`/database/weapons/${chainWeapon.granblueId}`))}
 								class="chain-item {elementKey}"
 								class:current={chainWeapon.granblueId === weapon.granblueId}
 							>
@@ -83,7 +86,7 @@
 			{#if forgedFrom && forgeChain.length === 0}
 				<DetailItem label="Forged From">
 					<a
-						href={localizeHref(`/database/weapons/${forgedFrom.granblueId}`)}
+						href={resolve(localizeHref(`/database/weapons/${forgedFrom.granblueId}`))}
 						class="forged-from-link"
 					>
 						{forgedFrom.name?.en || forgedFrom.name?.ja}

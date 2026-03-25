@@ -113,7 +113,7 @@ describe('transformResponse', () => {
 			summons: [{ id: 'gs-1', position: 0, object: { id: 's-1', summon_name: 'Bahamut' } }]
 		}
 
-		const result = transformResponse<any>(apiResponse)
+		const result = transformResponse<Record<string, unknown>>(apiResponse)
 
 		// snake → camel
 		expect(result.userId).toBe('u-1')
@@ -136,7 +136,7 @@ describe('transformResponse', () => {
 		const input = {
 			weapons: [{ id: 'w-1', name: 'plain' }] // no "object" key
 		}
-		const result = transformResponse<any>(input)
+		const result = transformResponse<Record<string, unknown>>(input)
 		expect(result.weapons[0].name).toBe('plain')
 	})
 
@@ -195,7 +195,7 @@ describe('round-trip', () => {
 			weapons: [{ id: 'gw-1', main_hand: true, object: { id: 'w-1', weapon_type: 'sword' } }]
 		}
 
-		const toClient = transformResponse<any>(original)
+		const toClient = transformResponse<Record<string, unknown>>(original)
 		expect(toClient.partyId).toBe('p-1')
 		expect(toClient.weapons[0].weapon.weaponType).toBe('sword')
 

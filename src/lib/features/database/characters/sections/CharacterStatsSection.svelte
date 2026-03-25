@@ -3,8 +3,10 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 
 	interface Props {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
 		character: any
 		editMode?: boolean
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
 		editData?: any
 	}
 

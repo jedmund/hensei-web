@@ -109,8 +109,8 @@
 
 			crewStore.setCrew(crew, crewStore.membership)
 			open = false
-		} catch (err: any) {
-			settingsError = err.message || 'Failed to update crew'
+		} catch (err: unknown) {
+			settingsError = err instanceof Error ? err.message : 'Failed to update crew'
 		}
 	}
 
@@ -128,74 +128,70 @@
 		onOpenChange?.(o)
 	}}
 >
-	{#snippet children()}
-		<ModalHeader title={m.crew_settings_title()} />
+	<ModalHeader title={m.crew_settings_title()} />
 
-		<ModalBody>
-			{#snippet children()}
-				<div class="modal-form">
-					{#if settingsError}
-						<div class="error-message">{settingsError}</div>
-					{/if}
+	<ModalBody>
+		<div class="modal-form">
+			{#if settingsError}
+				<div class="error-message">{settingsError}</div>
+			{/if}
 
-					<div class="form-fields">
-						<Input
-							label={m.crew_name_label()}
-							bind:value={settingsName}
-							placeholder={m.crew_name_placeholder_short()}
-							maxLength={100}
-							fullWidth
-							contained
-						/>
+			<div class="form-fields">
+				<Input
+					label={m.crew_name_label()}
+					bind:value={settingsName}
+					placeholder={m.crew_name_placeholder_short()}
+					maxLength={100}
+					fullWidth
+					contained
+				/>
 
-						<Input
-							label="{m.crew_gamertag_label()} {m.crew_gamertag_optional()}"
-							value={settingsGamertag}
-							oninput={onGamertagInput}
-							placeholder={m.crew_gamertag_placeholder()}
-							maxLength={4}
-							fullWidth
-							contained
-							error={gamertagError}
-							rightIcon={gamertagIcon}
-						/>
+				<Input
+					label="{m.crew_gamertag_label()} {m.crew_gamertag_optional()}"
+					value={settingsGamertag}
+					oninput={onGamertagInput}
+					placeholder={m.crew_gamertag_placeholder()}
+					maxLength={4}
+					fullWidth
+					contained
+					error={gamertagError}
+					rightIcon={gamertagIcon}
+				/>
 
-						<Input
-							label="{m.crew_granblue_id_label()} {m.crew_gamertag_optional()}"
-							bind:value={settingsGranblueCrewId}
-							placeholder={m.crew_granblue_id_placeholder()}
-							fullWidth
-							contained
-						/>
+				<Input
+					label="{m.crew_granblue_id_label()} {m.crew_gamertag_optional()}"
+					bind:value={settingsGranblueCrewId}
+					placeholder={m.crew_granblue_id_placeholder()}
+					fullWidth
+					contained
+				/>
 
-						<div class="form-field">
-							<label for="settings-description"
-								>{m.crew_description_label()}
-								<span class="optional">{m.crew_gamertag_optional()}</span></label
-							>
-							<textarea
-								id="settings-description"
-								bind:value={settingsDescription}
-								placeholder={m.crew_description_placeholder()}
-								maxlength="500"
-								rows="3"
-							></textarea>
-						</div>
-					</div>
+				<div class="form-field">
+					<label for="settings-description"
+						>{m.crew_description_label()}
+						<span class="optional">{m.crew_gamertag_optional()}</span></label
+					>
+					<textarea
+						id="settings-description"
+						bind:value={settingsDescription}
+						placeholder={m.crew_description_placeholder()}
+						maxlength="500"
+						rows="3"
+					></textarea>
 				</div>
-			{/snippet}
-		</ModalBody>
+			</div>
+		</div>
+	</ModalBody>
 
-		<ModalFooter
-			onCancel={handleClose}
-			cancelDisabled={updateCrewMutation.isPending}
-			primaryAction={{
-				label: updateCrewMutation.isPending ? m.crew_saving() : m.crew_save_button(),
-				onclick: handleSave,
-				disabled: !canSave || updateCrewMutation.isPending
-			}}
-		/>
-	{/snippet}
+	<ModalFooter
+		onCancel={handleClose}
+		cancelDisabled={updateCrewMutation.isPending}
+		primaryAction={{
+			label: updateCrewMutation.isPending ? m.crew_saving() : m.crew_save_button(),
+			onclick: handleSave,
+			disabled: !canSave || updateCrewMutation.isPending
+		}}
+	/>
 </Dialog>
 
 <style lang="scss">

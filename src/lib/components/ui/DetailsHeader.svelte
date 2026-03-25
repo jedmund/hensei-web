@@ -12,6 +12,7 @@
 	// Props
 	interface Props {
 		type: 'character' | 'summon' | 'weapon' | 'job' | 'raid' | 'accessory'
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
 		item: any // The character/summon/weapon/job object
 		image: string
 		fallbackImage?: string // Intermediate fallback before placeholder (e.g., weapon without element suffix)
@@ -40,9 +41,6 @@
 	const name = $derived(item?.name)
 	const element = $derived(item?.element)
 	const proficiency = $derived(item?.proficiency)
-	const maxLevel = $derived(item?.max_level)
-	const granblueId = $derived(item?.granblue_id)
-
 	// Get element name for button styling
 	const elementName = $derived(element ? getElementKey(element) : undefined)
 

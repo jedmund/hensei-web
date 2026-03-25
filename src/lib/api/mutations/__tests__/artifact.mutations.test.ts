@@ -112,7 +112,7 @@ describe('createGridArtifactOptions', () => {
 			partyId: 'party-1',
 			gridCharacterId: 'gc-1',
 			artifactId: 'a-1'
-		} as any)
+		} as Record<string, unknown>)
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['parties', 'party-1'])

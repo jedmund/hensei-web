@@ -32,7 +32,7 @@
 
 <nav class="settings-nav element-{element}">
 	<RadioGroupPrimitive.Root bind:value class="nav-list">
-		{#each items as item}
+		{#each items as item (item.value)}
 			<RadioGroupPrimitive.Item value={item.value} class="nav-item">
 				{item.label}
 			</RadioGroupPrimitive.Item>

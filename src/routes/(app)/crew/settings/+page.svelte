@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
@@ -20,12 +21,13 @@
 		data: PageData
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { data }: Props = $props()
 
 	// Check if user is an officer
 	$effect(() => {
 		if (!crewStore.isLoading && !crewStore.isOfficer) {
-			goto(localizeHref('/crew'))
+			goto(resolve(localizeHref('/crew')))
 		}
 	})
 
@@ -99,11 +101,12 @@
 
 			// Update the store
 			crewStore.setCrew(crew, crewStore.membership)
-		} catch (error: any) {
-			if (error.errors) {
-				errors = error.errors
+		} catch (error: unknown) {
+			const err = error as Record<string, unknown>
+			if (err.errors) {
+				errors = err.errors as Record<string, string>
 			} else {
-				errors = { form: error.message || m.crew_update_failed() }
+				errors = { form: error instanceof Error ? error.message : m.crew_update_failed() }
 			}
 		}
 	}
@@ -113,7 +116,7 @@
 		try {
 			await leaveCrewMutation.mutateAsync()
 			crewStore.clear()
-			goto(localizeHref('/crew'))
+			goto(resolve(localizeHref('/crew')))
 		} catch (error) {
 			console.error('Failed to leave crew:', error)
 			toast.error(extractErrorMessage(error, 'Failed to leave crew'))
@@ -131,7 +134,7 @@
 				userId: selectedTransferUserId
 			})
 			// Membership will be updated via query invalidation
-			goto(localizeHref('/crew'))
+			goto(resolve(localizeHref('/crew')))
 		} catch (error) {
 			console.error('Failed to transfer captain:', error)
 			toast.error(extractErrorMessage(error, 'Failed to transfer captain role'))
@@ -288,7 +291,7 @@
 				</p>
 			{:else}
 				<div class="transfer-list">
-					{#each transferCandidates as member}
+					{#each transferCandidates as member (member.id)}
 						<label class="transfer-option">
 							<input
 								type="radio"

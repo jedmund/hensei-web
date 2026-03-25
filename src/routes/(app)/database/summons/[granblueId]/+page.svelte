@@ -1,6 +1,7 @@
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 
 	// Page metadata
@@ -56,7 +57,7 @@
 		} else {
 			url.searchParams.set('tab', tab)
 		}
-		goto(url.toString(), { replaceState: true })
+		goto(resolve(url.toString()), { replaceState: true })
 	}
 
 	// Use TanStack Query with SSR initial data
@@ -98,6 +99,7 @@
 	}))
 
 	// Helper function for summon grid image
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
 	function getSummonGridImage(summon: any): string {
 		return getSummonImage(summon?.granblueId, 'grid')
 	}
@@ -172,13 +174,16 @@
 <div class="page">
 	<DatabasePageHeader title="Summon">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={getListUrl('summons')}
-				>Back</Button
+			<Button
+				variant="ghost"
+				size="small"
+				leftIcon="chevron-left"
+				href={resolve(getListUrl('summons'))}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
-				<Button variant="element-ghost" element={elementName} size="small" href={editUrl}
+				<Button variant="element-ghost" element={elementName} size="small" href={resolve(editUrl)}
 					>Edit</Button
 				>
 			{/if}
@@ -208,7 +213,7 @@
 						<DetailItem label="English">
 							{#if summon.nicknames?.en?.length}
 								<div class="nickname-tags">
-									{#each summon.nicknames.en as nickname}
+									{#each summon.nicknames.en as nickname, i (i)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>
@@ -219,7 +224,7 @@
 						<DetailItem label="Japanese">
 							{#if summon.nicknames?.ja?.length}
 								<div class="nickname-tags">
-									{#each summon.nicknames.ja as nickname}
+									{#each summon.nicknames.ja as nickname, i (i)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>

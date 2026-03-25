@@ -87,9 +87,15 @@ describe('updateCollectionCharacterOptions', () => {
 		queryClient.setQueryData(collectionKeys.character('cc-1'), MOCK_COLLECTION_CHAR)
 		const opts = updateCollectionCharacterOptions(queryClient)
 
-		await opts.onMutate({ id: 'cc-1', input: { uncapLevel: 5 } as any })
+		await opts.onMutate({
+			id: 'cc-1',
+			input: { uncapLevel: 5 } as unknown as Record<string, unknown>
+		})
 
-		const cached = queryClient.getQueryData(collectionKeys.character('cc-1')) as any
+		const cached = queryClient.getQueryData(collectionKeys.character('cc-1')) as Record<
+			string,
+			unknown
+		>
 		expect(cached.uncapLevel).toBe(5)
 		expect(cached.name).toBe('Test')
 	})
@@ -98,7 +104,10 @@ describe('updateCollectionCharacterOptions', () => {
 		queryClient.setQueryData(collectionKeys.character('cc-1'), MOCK_COLLECTION_CHAR)
 		const opts = updateCollectionCharacterOptions(queryClient)
 
-		const context = await opts.onMutate({ id: 'cc-1', input: { uncapLevel: 5 } as any })
+		const context = await opts.onMutate({
+			id: 'cc-1',
+			input: { uncapLevel: 5 } as unknown as Record<string, unknown>
+		})
 
 		expect(context.previousCharacter).toEqual(MOCK_COLLECTION_CHAR)
 	})
@@ -106,12 +115,15 @@ describe('updateCollectionCharacterOptions', () => {
 	it('rolls back on error', async () => {
 		queryClient.setQueryData(collectionKeys.character('cc-1'), MOCK_COLLECTION_CHAR)
 		const opts = updateCollectionCharacterOptions(queryClient)
-		const params = { id: 'cc-1', input: { uncapLevel: 5 } as any }
+		const params = { id: 'cc-1', input: { uncapLevel: 5 } as unknown as Record<string, unknown> }
 
 		const context = await opts.onMutate(params)
 		opts.onError(new Error('fail'), params, context)
 
-		const cached = queryClient.getQueryData(collectionKeys.character('cc-1')) as any
+		const cached = queryClient.getQueryData(collectionKeys.character('cc-1')) as Record<
+			string,
+			unknown
+		>
 		expect(cached.uncapLevel).toBe(4)
 	})
 
@@ -119,7 +131,11 @@ describe('updateCollectionCharacterOptions', () => {
 		queryClient.setQueryData(collectionKeys.character('cc-1'), MOCK_COLLECTION_CHAR)
 		const opts = updateCollectionCharacterOptions(queryClient)
 
-		opts.onError(new Error('fail'), { id: 'cc-1', input: {} as any }, undefined)
+		opts.onError(
+			new Error('fail'),
+			{ id: 'cc-1', input: {} as unknown as Record<string, unknown> },
+			undefined
+		)
 
 		const cached = queryClient.getQueryData(collectionKeys.character('cc-1'))
 		expect(cached).toEqual(MOCK_COLLECTION_CHAR)
@@ -129,7 +145,10 @@ describe('updateCollectionCharacterOptions', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = updateCollectionCharacterOptions(queryClient)
 
-		opts.onSettled(undefined, undefined, { id: 'cc-1', input: {} as any })
+		opts.onSettled(undefined, undefined, {
+			id: 'cc-1',
+			input: {} as unknown as Record<string, unknown>
+		})
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(collectionKeys.character('cc-1'))

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
@@ -84,7 +85,7 @@
 		} else {
 			url.searchParams.set('filter', newFilter)
 		}
-		goto(url.toString(), { replaceState: true })
+		goto(resolve(url.toString()), { replaceState: true })
 	}
 
 	// Confirm action dialog state (remove/promote/demote)
@@ -188,7 +189,7 @@
 		<CrewTabs userElement={data.currentUser?.element} />
 
 		<div class="filter-tabs">
-			{#each filterOptions as option}
+			{#each filterOptions as option (option.value)}
 				<button
 					class="filter-tab"
 					class:active={filter === option.value}
@@ -227,7 +228,7 @@
 						<span>{m.crew_pending_claims({ count: String(pendingClaimPhantoms.length) })}</span>
 					</div>
 					<ul class="member-list">
-						{#each pendingClaimPhantoms as phantom}
+						{#each pendingClaimPhantoms as phantom (phantom.id)}
 							<PhantomRow
 								{phantom}
 								crewId={crewStore.crew?.id ?? ''}
@@ -274,7 +275,7 @@
 						</div>
 					{/if}
 					<ul class="member-list">
-						{#each membersQuery.data?.members ?? [] as member}
+						{#each membersQuery.data?.members ?? [] as member (member.id)}
 							<MemberRow
 								{member}
 								onEdit={() => openEditMemberDialog(member)}
@@ -298,7 +299,7 @@
 						</div>
 					{/if}
 					<ul class="member-list">
-						{#each membersQuery.data?.phantoms ?? [] as phantom}
+						{#each membersQuery.data?.phantoms ?? [] as phantom (phantom.id)}
 							<PhantomRow
 								{phantom}
 								crewId={crewStore.crew?.id ?? ''}

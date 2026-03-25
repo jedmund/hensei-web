@@ -5,6 +5,7 @@
 	import CollectionFilters from '$lib/components/collection/CollectionFilters.svelte'
 	import { onMount, onDestroy, tick } from 'svelte'
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 	import { createQuery, queryOptions } from '@tanstack/svelte-query'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
@@ -82,7 +83,7 @@
 
 	// --- Data loading ---
 
-	let data = $state<any[]>([])
+	let data = $state<Record<string, unknown>[]>([])
 	let loading = $state(true)
 	let currentPage = $state(1)
 	let totalPages = $state(1)
@@ -118,7 +119,7 @@
 
 			if (updateUrlParam) {
 				const url = filters.buildUrlParams(search.searchTerm, pageNum, $page.url.pathname)
-				goto(url, { replaceState: true, noScroll: true, keepFocus: true })
+				goto(resolve(url), { replaceState: true, noScroll: true, keepFocus: true })
 			}
 		} catch (error) {
 			console.error('Failed to load data:', error)
@@ -232,10 +233,14 @@
 
 	// --- Grid init ---
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid API doesn't export typed interfaces
 	let api: any
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid grid ref type
 	let gridRef = $state<any>(undefined)
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid data store type
 	let gridDataStore: any
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid API ref type
 	const init = (apiRef: any) => {
 		api = apiRef
 		api.setNext(provider)
@@ -277,14 +282,14 @@
 		})
 
 		// Row click navigation
-		api.on('select-row', (ev: any) => {
+		api.on('select-row', (ev: Record<string, unknown>) => {
 			const rowId = ev.id
 			if (rowId) {
-				const rowData = data.find((item: any) => item.id === rowId)
+				const rowData = data.find((item) => item.id === rowId)
 				if (rowData && rowData.granblueId) {
 					storeListUrl($page.url.href, resource)
 					const styleSuffix = resource === 'characters' && rowData.styleSwap ? '/style' : ''
-					goto(`/database/${resource}/${rowData.granblueId}${styleSuffix}`)
+					goto(resolve(`/database/${resource}/${rowData.granblueId}${styleSuffix}`))
 				}
 			}
 		})

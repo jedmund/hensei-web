@@ -1,7 +1,7 @@
 <!-- PartySegmentedControl Component -->
 
 <script lang="ts">
-	import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
+	import type { Party } from '$lib/types/api/party'
 	import { GridType } from '$lib/types/enums'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import RepSegment from '$lib/components/ui/segmented-control/RepSegment.svelte'
@@ -30,11 +30,7 @@
 	const jobIcon = $derived(party.job ? getJobIconUrl(party.job.granblueId) : undefined)
 
 	// Handle value changes
-	let value = $state(selectedTab)
-
-	$effect(() => {
-		value = selectedTab
-	})
+	let value = $derived(selectedTab)
 
 	function handleValueChange(newValue: string) {
 		value = newValue as GridType

@@ -20,7 +20,9 @@ vi.mock('svelte-sonner', () => ({
 }))
 
 vi.mock('$lib/utils/errors', () => ({
-	extractErrorMessage: vi.fn((_err: unknown, fallback: string) => fallback)
+	extractErrorMessage: vi.fn((err: unknown, fallback: string) =>
+		err instanceof Error ? err.message : fallback
+	)
 }))
 
 vi.mock('$lib/features/description/openDescriptionPane.svelte', () => ({

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 
+	import { resolve } from '$app/paths'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 
@@ -122,7 +123,7 @@
 			await queryClient.invalidateQueries({ queryKey: jobSkillKeys.all })
 			await queryClient.invalidateQueries({ queryKey: jobKeys.skills(editData.jobGranblueId) })
 
-			goto(`/database/job-skills/${skill.id}`)
+			goto(resolve(`/database/job-skills/${skill.id}`))
 		} catch (error) {
 			saveError = 'Failed to create skill. Please try again.'
 			console.error('Create error:', error)
@@ -132,7 +133,7 @@
 	}
 
 	function handleCancel() {
-		goto('/database/job-skills')
+		goto(resolve('/database/job-skills'))
 	}
 </script>
 

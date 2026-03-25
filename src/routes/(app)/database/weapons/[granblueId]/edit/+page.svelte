@@ -2,6 +2,7 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
+	import { resolve } from '$app/paths'
 	// TanStack Query
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
@@ -67,6 +68,7 @@
 
 	// Save state
 	let isSaving = $state(false)
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let saveError = $state<string | null>(null)
 
 	// Editable fields - initialized from weapon data
@@ -174,6 +176,7 @@
 				forgedFrom: weapon.forgedFrom?.granblueId || null,
 				forgeOrder: weapon.forgeOrder ?? null,
 				// Awakenings
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic awakening data
 				awakeningIds: (weapon.awakenings ?? []).map((a: any) => a.id),
 				// Variant
 				weaponSeriesVariantId: weapon.series?.weaponSeriesVariantId || '',
@@ -254,7 +257,7 @@
 			})
 
 			// Navigate back to detail page
-			goto(`/database/weapons/${weapon.granblueId}`)
+			goto(resolve(`/database/weapons/${weapon.granblueId}`))
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
 			console.error('Save error:', error)
@@ -264,6 +267,7 @@
 	}
 
 	// Helper function for weapon grid image
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
 	function getWeaponImage(weapon: any): string {
 		return getWeaponGridImage(
 			weapon?.granblueId,
@@ -286,7 +290,7 @@
 				variant="ghost"
 				size="small"
 				leftIcon="chevron-left"
-				href={`/database/weapons/${weapon?.granblueId}`}>Back</Button
+				href={resolve(`/database/weapons/${weapon?.granblueId}`)}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}
@@ -314,7 +318,7 @@
 				<WeaponMetadataSection {weapon} {editMode} bind:editData />
 				{#if editData.element === 0}
 					<DetailsContainer title="Element Variant IDs">
-						{#each ELEMENT_DISPLAY_ORDER as elementNum}
+						{#each ELEMENT_DISPLAY_ORDER as elementNum (elementNum)}
 							{@const key = String(elementNum)}
 							<DetailItem label={getElementLabel(elementNum)} editable={true}>
 								<div class="variant-id-input">
@@ -333,6 +337,7 @@
 											if (val) {
 												editData.elementVariantIds = { ...editData.elementVariantIds, [key]: val }
 											} else {
+												// eslint-disable-next-line @typescript-eslint/no-unused-vars
 												const { [key]: _, ...rest } = editData.elementVariantIds
 												editData.elementVariantIds = rest
 											}
@@ -354,7 +359,7 @@
 				{#if isGun}
 					<DetailsContainer title="Bullet Slots">
 						<div class="bullet-slots-editor">
-							{#each editData.bulletSlots as slotType, i}
+							{#each editData.bulletSlots as slotType, i (i)}
 								<div class="bullet-slot-row">
 									<span class="bullet-slot-index">Slot {i + 1}</span>
 									<Select

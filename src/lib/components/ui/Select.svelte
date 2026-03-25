@@ -53,7 +53,7 @@
 		required = false,
 		portal = false,
 		class: className = '',
-		suffixSnippet
+		suffixSnippet // eslint-disable-line @typescript-eslint/no-unused-vars
 	}: Props = $props()
 
 	// Convert options to string values for Bits UI (which expects strings internally)
@@ -66,15 +66,10 @@
 
 	const selected = $derived(options.find((opt) => opt.value === value))
 
-	// Local string value for Bits UI (which manages its own internal state)
-	let internalValue = $state<string | undefined>(
+	// Local string value for Bits UI (writable derived syncs from external value)
+	let internalValue = $derived<string | undefined>(
 		value !== undefined && value !== null ? String(value) : undefined
 	)
-
-	// Sync external value changes to internal state
-	$effect(() => {
-		internalValue = value !== undefined && value !== null ? String(value) : undefined
-	})
 
 	const hasWrapper = $derived(label || error)
 
@@ -138,7 +133,7 @@
 				<SelectPrimitive.Portal>
 					<SelectPrimitive.Content class="content">
 						<SelectPrimitive.Viewport>
-							{#each options as option}
+							{#each options as option (option.value)}
 								<SelectPrimitive.Item
 									value={String(option.value)}
 									{...option.disabled !== undefined ? { disabled: option.disabled } : {}}
@@ -180,7 +175,7 @@
 			{:else}
 				<SelectPrimitive.Content class="content">
 					<SelectPrimitive.Viewport>
-						{#each options as option}
+						{#each options as option (option.value)}
 							<SelectPrimitive.Item
 								value={String(option.value)}
 								label={option.label}
@@ -253,7 +248,7 @@
 			<SelectPrimitive.Portal>
 				<SelectPrimitive.Content class="content">
 					<SelectPrimitive.Viewport>
-						{#each options as option}
+						{#each options as option (option.value)}
 							<SelectPrimitive.Item
 								value={String(option.value)}
 								label={option.label}
@@ -296,7 +291,7 @@
 		{:else}
 			<SelectPrimitive.Content class="content">
 				<SelectPrimitive.Viewport>
-					{#each options as option}
+					{#each options as option (option.value)}
 						<SelectPrimitive.Item
 							value={String(option.value)}
 							{...option.disabled !== undefined ? { disabled: option.disabled } : {}}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { raidAdapter } from '$lib/api/adapters/raid.adapter'
@@ -11,7 +12,7 @@
 	import { getRaidSectionLabel } from '$lib/utils/raidSection'
 	import type { PageData } from './$types'
 
-	function displayName(input: any): string {
+	function displayName(input: unknown): string {
 		if (!input) return '—'
 		const maybe = input.name ?? input
 		if (typeof maybe === 'string') return maybe
@@ -41,17 +42,17 @@
 
 	// Navigate to edit
 	function handleEdit() {
-		goto(`/database/raid-groups/${groupId}/edit`)
+		goto(resolve(`/database/raid-groups/${groupId}/edit`))
 	}
 
 	// Navigate back
 	function handleBack() {
-		goto('/database/raids?view=groups')
+		goto(resolve('/database/raids?view=groups'))
 	}
 
 	// Navigate to raid detail
 	function handleRaidClick(slug: string) {
-		goto(`/database/raids/${slug}`)
+		goto(resolve(`/database/raids/${slug}`))
 	}
 </script>
 
@@ -106,7 +107,7 @@
 			{#if group.raids && group.raids.length > 0}
 				<DetailsContainer title="Member Raids ({group.raids.length})">
 					<div class="raids-list">
-						{#each group.raids as raid}
+						{#each group.raids as raid (raid.id)}
 							<button class="raid-item" onclick={() => handleRaidClick(raid.slug)}>
 								<span class="raid-name">{displayName(raid)}</span>
 								<span class="raid-level">Lv. {raid.level ?? '—'}</span>

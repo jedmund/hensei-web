@@ -32,7 +32,7 @@ export const CharacterEditSchema = z.object({
 
 export type CharacterEdit = z.infer<typeof CharacterEditSchema>
 
-export function toEditData(model: any): CharacterEdit {
+export function toEditData(model: Record<string, unknown>): CharacterEdit {
 	return {
 		name: model?.name ?? '',
 		granblue_id: model?.granblueId ?? model?.granblue_id ?? '',

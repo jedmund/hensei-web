@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any -- third-party module type shims require any */
 declare const __BUILD_TIMESTAMP__: string
 
 declare module '*.jpg'
@@ -42,7 +43,7 @@ declare module 'wx-svelte-grid' {
 	}
 
 	// Alias for backward compatibility
-	export interface ICellProps extends Cell {}
+	export type ICellProps = Cell
 
 	export interface IDataConfig {
 		data: IRow[]

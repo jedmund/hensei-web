@@ -167,7 +167,7 @@
 
 		{#if hasSkills}
 			<DetailsSection title={m.artifact_skills()}>
-				{#each skills as skill, index}
+				{#each skills as skill, index (index)}
 					{@const skillSlot = index + 1}
 					{#if skill}
 						<DetailRow label={getSkillName(skill, skillSlot)}>

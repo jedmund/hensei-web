@@ -9,16 +9,7 @@ interface DatabaseProviderOptions {
 	pageSize?: number
 }
 
-interface APIResponse {
-	data: any[]
-	meta: {
-		page: number
-		totalPages: number
-		pageSize: number
-		total: number
-	}
-}
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- RestDataProvider generic requires any for compatibility
 export class DatabaseProvider extends RestDataProvider<any> {
 	private resource: 'weapons' | 'characters' | 'summons' | 'jobs'
 	private pageSize: number
@@ -32,6 +23,7 @@ export class DatabaseProvider extends RestDataProvider<any> {
 
 	constructor(options: DatabaseProviderOptions) {
 		// Pass a dummy URL to parent since we'll override getData
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- RestDataProvider callback typed as any
 		super('dummy', (item: any) => {
 			// Normalize data if needed
 			if (item.name && typeof item.name === 'object') {
@@ -46,6 +38,7 @@ export class DatabaseProvider extends RestDataProvider<any> {
 	}
 
 	// Override getData to handle our API's pagination format
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- overrides RestDataProvider method signature
 	async getData(params?: { page?: number; per_page?: number }): Promise<any[]> {
 		const page = params?.page || this.currentPage
 		const perPage = params?.per_page || this.pageSize

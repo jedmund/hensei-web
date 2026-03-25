@@ -12,6 +12,7 @@
 	import { onMount } from 'svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import type { CollectionWeapon } from '$lib/types/api/collection'
+	import type { GridWeapon } from '$lib/types/api/party'
 	import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'
 	import {
 		useUpdateCollectionWeapon,
@@ -33,6 +34,7 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import { page } from '$app/stores'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -221,11 +223,6 @@
 		}
 	}
 
-	function handleCancel() {
-		isEditing = false
-		updateActionVisibility()
-	}
-
 	function handleTabChange(value: string) {
 		selectedTab = value as 'info' | 'collection'
 		if (isEditing) {
@@ -263,7 +260,7 @@
 
 	function viewInDatabase() {
 		if (!weaponData?.granblueId) return
-		goto(getDatabaseUrl('weapon', weaponData.granblueId))
+		goto(resolve(getDatabaseUrl('weapon'), weaponData.granblueId))
 	}
 
 	// Set up sidebar action on mount and clean up on destroy
@@ -287,7 +284,7 @@
 <div class="collection-weapon-pane">
 	<ItemHeader
 		type="weapon"
-		item={weapon as any}
+		item={weapon as unknown as GridWeapon}
 		itemData={weaponData}
 		gridUncapLevel={weapon.uncapLevel}
 		gridTranscendence={weapon.transcendenceStep}
@@ -353,7 +350,7 @@
 					empty={!hasWeaponKeys}
 					emptyMessage={m.collection_not_set()}
 				>
-					{#each weapon.weaponKeys ?? [] as key, i}
+					{#each weapon.weaponKeys ?? [] as key, i (key.id)}
 						<DetailRow label="Key {i + 1}" value={getWeaponKeyName(i)} />
 					{/each}
 				</DetailsSection>
@@ -363,7 +360,7 @@
 					empty={!hasAxSkills}
 					emptyMessage={m.collection_not_set()}
 				>
-					{#each weapon.ax ?? [] as ax, i}
+					{#each weapon.ax ?? [] as ax, i (i)}
 						{#if ax.modifier?.id}
 							<DetailRow
 								label="Skill {i + 1}"

@@ -53,8 +53,8 @@ export function usePartyActions(opts: PartyActionsOptions) {
 				shortcode: party.shortcode,
 				...updates
 			})
-		} catch (err: any) {
-			error = err.message || m.toast_failed_update_party()
+		} catch (err: unknown) {
+			error = extractErrorMessage(err, m.toast_failed_update_party())
 		} finally {
 			loading = false
 			opts.onDetailsUpdated?.()
@@ -94,7 +94,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 					}
 				})
 			}
-		} catch (err: any) {
+		} catch (err: unknown) {
 			toast.error(extractErrorMessage(err, m.toast_failed_update_favorite()))
 		} finally {
 			loading = false
@@ -109,8 +109,8 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		try {
 			const newParty = await opts.mutations.party.remix.mutateAsync(party.shortcode)
 			window.location.href = `/teams/${newParty.shortcode}`
-		} catch (err: any) {
-			error = err.message || m.toast_failed_remix()
+		} catch (err: unknown) {
+			error = extractErrorMessage(err, m.toast_failed_remix())
 		} finally {
 			loading = false
 		}
@@ -135,8 +135,8 @@ export function usePartyActions(opts: PartyActionsOptions) {
 			} else {
 				window.location.href = '/me'
 			}
-		} catch (err: any) {
-			error = err.message || m.toast_failed_delete_party()
+		} catch (err: unknown) {
+			error = extractErrorMessage(err, m.toast_failed_delete_party())
 			deleteDialogOpen = false
 		} finally {
 			deleting = false
@@ -155,8 +155,8 @@ export function usePartyActions(opts: PartyActionsOptions) {
 				partyId: party.id,
 				partyShortcode: party.shortcode
 			})
-		} catch (err: any) {
-			error = err.message || m.toast_failed_sync_collection()
+		} catch (err: unknown) {
+			error = extractErrorMessage(err, m.toast_failed_sync_collection())
 		} finally {
 			loading = false
 		}
@@ -171,8 +171,8 @@ export function usePartyActions(opts: PartyActionsOptions) {
 				partyId: party.id,
 				partyShortcode: party.shortcode
 			})
-		} catch (err: any) {
-			error = err.message || m.toast_failed_unlink_collection()
+		} catch (err: unknown) {
+			error = extractErrorMessage(err, m.toast_failed_unlink_collection())
 		}
 	}
 
@@ -256,7 +256,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 							partyId: party.id,
 							shortcode: party.shortcode
 						})
-					} catch (err: any) {
+					} catch (err: unknown) {
 						console.error('Failed to share with crew:', err)
 						toast.error(extractErrorMessage(err, m.toast_failed_share_crew()))
 					}
@@ -269,7 +269,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 								shareId: share.id,
 								shortcode: party.shortcode
 							})
-						} catch (err: any) {
+						} catch (err: unknown) {
 							console.error('Failed to remove share:', err)
 							toast.error(extractErrorMessage(err, m.toast_failed_remove_crew_share()))
 						}

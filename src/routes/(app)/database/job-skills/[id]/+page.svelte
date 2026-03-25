@@ -16,12 +16,7 @@
 	import AssociatedEntityLink from '$lib/components/database/AssociatedEntityLink.svelte'
 
 	import { getJobSkillIcon } from '$lib/utils/images'
-	import {
-		getSkillCategoryName,
-		getSkillCategoryColor,
-		getSkillColorName
-	} from '$lib/utils/jobUtils'
-	import { localizedName } from '$lib/utils/locale'
+	import { getSkillColorName } from '$lib/utils/jobUtils'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
 	import type { PageData } from './$types'

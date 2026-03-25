@@ -24,6 +24,7 @@ interface JobHandlerOptions {
 
 export function useJobHandlers(opts: JobHandlerOptions) {
 	let loading = $state(false)
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let error = $state<string | null>(null)
 
 	async function getShortcode(): Promise<string | undefined> {
@@ -99,7 +100,7 @@ export function useJobHandlers(opts: JobHandlerOptions) {
 					} else {
 						closeJobSidebar()
 					}
-				} catch (e: any) {
+				} catch (e: unknown) {
 					error = extractErrorMessage(e, m.toast_failed_update_skill())
 					console.error('Failed to update skill:', e)
 					toast.error(extractErrorMessage(e, m.toast_failed_update_skill()))

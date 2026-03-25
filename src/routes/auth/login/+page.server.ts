@@ -28,7 +28,6 @@ export const actions: Actions = {
 			redirect(303, url.searchParams.get('next') ?? '/me')
 		}
 
-		const j = await res.json().catch(() => ({}))
 		return fail(res.status, { error: 'failed' as const, email })
 	}
 }

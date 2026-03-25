@@ -2,6 +2,7 @@
 	import type { GridWeapon } from '$lib/types/api/party'
 	import { usePartyContext } from '$lib/types/party-context'
 	import { page } from '$app/stores'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
@@ -117,7 +118,7 @@
 		try {
 			const party = ctx.getParty()
 			const editKey = ctx.getEditKey()
-			await ctx.services.gridService.removeWeapon(party.id, item.id as any, editKey || undefined)
+			await ctx.services.gridService.removeWeapon(party.id, item.id, editKey || undefined)
 		} catch (err) {
 			console.error('Error removing weapon:', err)
 			toast.error(extractErrorMessage(err, 'Failed to remove weapon'))
@@ -155,7 +156,7 @@
 
 	function viewInDatabase() {
 		if (!item?.weapon?.granblueId) return
-		goto(getDatabaseUrl('weapon', item.weapon.granblueId))
+		goto(resolve(getDatabaseUrl('weapon'), item.weapon.granblueId))
 	}
 
 	// Duplicate: find the first empty sub-weapon slot (0-8)
@@ -256,13 +257,13 @@
 									/>
 								{/if}
 								<div class="skills">
-									{#each axSkillImages as skill}
+									{#each axSkillImages as skill (skill.url)}
 										<img class="skill" src={skill.url} alt={skill.alt} />
 									{/each}
-									{#each befoulmentImages as skill}
+									{#each befoulmentImages as skill (skill.url)}
 										<img class="skill befoulment" src={skill.url} alt={skill.alt} />
 									{/each}
-									{#each weaponKeyImages as skill}
+									{#each weaponKeyImages as skill (skill.url)}
 										<Tooltip content={skill.alt}>
 											<img class="skill" src={skill.url} alt={skill.alt} />
 										</Tooltip>

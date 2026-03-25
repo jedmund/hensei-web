@@ -5,8 +5,10 @@
 	import { PROMOTION_NAMES, getPromotionNames } from '$lib/types/enums'
 
 	interface Props {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
 		summon: any
 		editMode?: boolean
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
 		editData?: any
 	}
 

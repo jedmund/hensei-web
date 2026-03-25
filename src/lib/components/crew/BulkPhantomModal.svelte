@@ -93,69 +93,67 @@
 </script>
 
 <Dialog bind:open size="medium">
-	{#snippet children()}
-		<ModalHeader title={m.crew_bulk_phantom_title()} description={m.crew_bulk_phantom_desc()} />
+	<ModalHeader title={m.crew_bulk_phantom_title()} description={m.crew_bulk_phantom_desc()} />
 
-		<ModalBody>
-			<div class="phantom-rows">
-				<div class="row-header">
-					<span class="col-name">{m.crew_bulk_name()}</span>
-					<span class="col-id">{m.crew_granblue_id()}</span>
-					<span class="col-date">{m.crew_bulk_join_date()}</span>
-					<span class="col-action"></span>
-				</div>
-
-				{#each rows as row (row.id)}
-					<div class="phantom-row">
-						<input
-							type="text"
-							class="input name-input"
-							placeholder={m.crew_bulk_placeholder()}
-							bind:value={row.name}
-						/>
-						<input
-							type="text"
-							class="input id-input"
-							placeholder={m.crew_bulk_optional()}
-							bind:value={row.granblueId}
-						/>
-						<input type="date" class="input date-input" bind:value={row.joinedAt} />
-						<button
-							type="button"
-							class="remove-btn"
-							onclick={() => removeRow(row.id)}
-							disabled={rows.length <= 1}
-							aria-label="Remove row"
-						>
-							<Icon name="close" size={16} />
-						</button>
-					</div>
-				{/each}
+	<ModalBody>
+		<div class="phantom-rows">
+			<div class="row-header">
+				<span class="col-name">{m.crew_bulk_name()}</span>
+				<span class="col-id">{m.crew_granblue_id()}</span>
+				<span class="col-date">{m.crew_bulk_join_date()}</span>
+				<span class="col-action"></span>
 			</div>
 
-			<Button variant="ghost" size="small" leftIcon="plus" onclick={addRow}>
-				{m.crew_bulk_add_another()}
-			</Button>
+			{#each rows as row (row.id)}
+				<div class="phantom-row">
+					<input
+						type="text"
+						class="input name-input"
+						placeholder={m.crew_bulk_placeholder()}
+						bind:value={row.name}
+					/>
+					<input
+						type="text"
+						class="input id-input"
+						placeholder={m.crew_bulk_optional()}
+						bind:value={row.granblueId}
+					/>
+					<input type="date" class="input date-input" bind:value={row.joinedAt} />
+					<button
+						type="button"
+						class="remove-btn"
+						onclick={() => removeRow(row.id)}
+						disabled={rows.length <= 1}
+						aria-label="Remove row"
+					>
+						<Icon name="close" size={16} />
+					</button>
+				</div>
+			{/each}
+		</div>
 
-			{#if bulkCreateMutation.isError}
-				<p class="error-message">
-					{m.crew_bulk_error()}
-				</p>
-			{/if}
-		</ModalBody>
+		<Button variant="ghost" size="small" leftIcon="plus" onclick={addRow}>
+			{m.crew_bulk_add_another()}
+		</Button>
 
-		<ModalFooter
-			onCancel={handleCancel}
-			cancelDisabled={bulkCreateMutation.isPending}
-			primaryAction={{
-				label: bulkCreateMutation.isPending
-					? m.crew_bulk_creating()
-					: m.crew_bulk_create_count({ count: validPhantoms.length }),
-				onclick: handleSubmit,
-				disabled: !canSubmit
-			}}
-		/>
-	{/snippet}
+		{#if bulkCreateMutation.isError}
+			<p class="error-message">
+				{m.crew_bulk_error()}
+			</p>
+		{/if}
+	</ModalBody>
+
+	<ModalFooter
+		onCancel={handleCancel}
+		cancelDisabled={bulkCreateMutation.isPending}
+		primaryAction={{
+			label: bulkCreateMutation.isPending
+				? m.crew_bulk_creating()
+				: m.crew_bulk_create_count({ count: validPhantoms.length }),
+			onclick: handleSubmit,
+			disabled: !canSubmit
+		}}
+	/>
 </Dialog>
 
 <style lang="scss">

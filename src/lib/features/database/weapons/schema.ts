@@ -23,7 +23,7 @@ export const WeaponEditSchema = z.object({
 
 export type WeaponEdit = z.infer<typeof WeaponEditSchema>
 
-export function toEditData(model: any): WeaponEdit {
+export function toEditData(model: Record<string, unknown>): WeaponEdit {
 	return {
 		name: model?.name ?? '',
 		granblue_id: model?.granblueId ?? model?.granblue_id ?? '',

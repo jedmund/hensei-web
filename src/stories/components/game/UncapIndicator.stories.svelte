@@ -166,7 +166,7 @@
 <!-- Transcendence Stages -->
 <Story name="Transcendence Stages" asChild>
 	<div style="display: flex; flex-direction: column; gap: 16px;">
-		{#each [0, 1, 2, 3, 4, 5] as stage}
+		{#each [0, 1, 2, 3, 4, 5] as stage (stage)}
 			<div style="display: flex; align-items: center; gap: 8px;">
 				<span style="width: 100px; font-size: 12px;">Stage {stage}:</span>
 				<UncapIndicator

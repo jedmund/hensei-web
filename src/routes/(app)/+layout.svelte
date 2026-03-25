@@ -1,9 +1,11 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte'
 	import * as m from '$lib/paraglide/messages'
 	import Navigation from '$lib/components/Navigation.svelte'
 	import Sidebar from '$lib/components/ui/Sidebar.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { Tooltip } from 'bits-ui'
+	import { SvelteMap } from 'svelte/reactivity'
 	import { beforeNavigate, afterNavigate } from '$app/navigation'
 	import { browser, dev } from '$app/environment'
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
@@ -15,8 +17,8 @@
 	import type { LayoutData } from './$types'
 
 	const { data, children } = $props<{
-		data: LayoutData & { [key: string]: any }
-		children: () => any
+		data: LayoutData & { [key: string]: unknown }
+		children: Snippet
 	}>()
 
 	// Populate crew store for authenticated users (needed globally for collection features)
@@ -58,7 +60,7 @@
 	}
 
 	// Store scroll positions for each visited route
-	const scrollPositions = new Map<string, number>()
+	const scrollPositions = new SvelteMap<string, number>()
 
 	// Save scroll position before navigating away and close sidebar
 	beforeNavigate(({ from }) => {
@@ -73,6 +75,7 @@
 	})
 
 	// Handle scroll restoration or reset after navigation
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	afterNavigate(({ from, to, type }) => {
 		if (!mainContent || !to) return
 
@@ -143,6 +146,7 @@
 					}}
 				>
 					{@render children?.()}
+					<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
 					{#snippet failed(error, reset)}
 						<div class="page-error" role="alert">
 							<h2>{m.error_something_went_wrong()}</h2>

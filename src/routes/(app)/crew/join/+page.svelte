@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { page } from '$app/stores'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -17,12 +18,13 @@
 		data: PageData
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { data }: Props = $props()
 
 	// Check if user already has a crew - redirect to crew page
 	$effect(() => {
 		if (crewStore.isInCrew && !crewStore.isLoading) {
-			goto(localizeHref('/crew'))
+			goto(resolve(localizeHref('/crew')))
 		}
 	})
 
@@ -45,7 +47,7 @@
 		try {
 			await acceptMutation.mutateAsync(invitationId)
 			// Successfully joined - redirect to crew
-			goto(localizeHref('/crew'))
+			goto(resolve(localizeHref('/crew')))
 		} catch (error) {
 			console.error('Failed to accept invitation:', error)
 			toast.error(extractErrorMessage(error, 'Failed to accept invitation'))
@@ -96,13 +98,13 @@
 			<p class="hint">
 				{m.crew_join_hint()}
 			</p>
-			<Button variant="secondary" onclick={() => goto(localizeHref('/crew'))}>
+			<Button variant="secondary" onclick={() => goto(resolve(localizeHref('/crew')))}>
 				{m.crew_join_go_back()}
 			</Button>
 		</div>
 	{:else}
 		<div class="invitations-list">
-			{#each invitationsQuery.data as invitation}
+			{#each invitationsQuery.data as invitation (invitation.id)}
 				{@const expired = isExpired(invitation.expiresAt)}
 				{@const highlighted = invitation.id === selectedInvitationId}
 				{@const crew = invitation.crew}

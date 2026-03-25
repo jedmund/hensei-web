@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { SvelteSet } from 'svelte/reactivity'
 	import { createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
 	import { onDestroy } from 'svelte'
 	import { searchQueries, type SearchFilters } from '$lib/api/queries/search.queries'
@@ -334,8 +335,8 @@
 
 	const inTeamCollectionIds = $derived.by(() => {
 		const party = partyStore.party
-		if (!party) return new Set<string>()
-		const ids = new Set<string>()
+		if (!party) return new SvelteSet<string>()
+		const ids = new SvelteSet<string>()
 		for (const w of party.weapons ?? []) {
 			if (w.collectionWeaponId) ids.add(w.collectionWeaponId)
 		}
@@ -355,8 +356,8 @@
 
 	// --- Infinite scroll ---
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const loader = useInfiniteLoader(
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- createInfiniteQuery result type doesn't match useInfiniteLoader generic exactly
 		() => activeQuery as any,
 		() => sentinelEl,
 		{ rootMargin: '200px' }

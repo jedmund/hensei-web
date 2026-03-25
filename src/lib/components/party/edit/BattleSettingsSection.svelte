@@ -60,62 +60,52 @@
 
 <DetailsSection title={m.section_battle_settings()}>
 	<DetailRow label={m.battle_solo()} noHover compact>
-		{#snippet children()}
-			<Switch
-				checked={solo}
-				size="small"
-				{element}
-				{disabled}
-				onCheckedChange={(v) => handleChange('solo', v)}
-			/>
-		{/snippet}
+		<Switch
+			checked={solo}
+			size="small"
+			{element}
+			{disabled}
+			onCheckedChange={(v) => handleChange('solo', v)}
+		/>
 	</DetailRow>
 
 	<DetailRow label={m.battle_charge_attack()} noHover compact>
-		{#snippet children()}
-			<Switch
-				checked={chargeAttack}
-				size="small"
-				{element}
-				{disabled}
-				onCheckedChange={(v) => handleChange('chargeAttack', v)}
-			/>
-		{/snippet}
+		<Switch
+			checked={chargeAttack}
+			size="small"
+			{element}
+			{disabled}
+			onCheckedChange={(v) => handleChange('chargeAttack', v)}
+		/>
 	</DetailRow>
 
 	<DetailRow label={m.battle_full_auto()} noHover compact>
-		{#snippet children()}
-			<Switch
-				checked={fullAuto}
-				size="small"
-				{element}
-				{disabled}
-				onCheckedChange={(v) => handleChange('fullAuto', v)}
-			/>
-		{/snippet}
+		<Switch
+			checked={fullAuto}
+			size="small"
+			{element}
+			{disabled}
+			onCheckedChange={(v) => handleChange('fullAuto', v)}
+		/>
 	</DetailRow>
 
 	<DetailRow label={m.battle_auto_summon()} noHover compact>
-		{#snippet children()}
-			<Switch
-				checked={autoSummon}
-				size="small"
-				{element}
-				disabled={disabled || !fullAuto}
-				onCheckedChange={(v) => handleChange('autoSummon', v)}
-			/>
-		{/snippet}
+		<Switch
+			checked={autoSummon}
+			size="small"
+			{element}
+			disabled={disabled || !fullAuto}
+			onCheckedChange={(v) => handleChange('autoSummon', v)}
+		/>
 	</DetailRow>
 
 	<DetailRow label={m.battle_auto_guard()} noHover compact>
-		{#snippet children()}
-			<Switch
-				checked={autoGuard}
-				size="small"
-				{element}
-				disabled={disabled || !fullAuto}
-				onCheckedChange={(v) => handleChange('autoGuard', v)}
-			/>
-		{/snippet}
+		<Switch
+			checked={autoGuard}
+			size="small"
+			{element}
+			disabled={disabled || !fullAuto}
+			onCheckedChange={(v) => handleChange('autoGuard', v)}
+		/>
 	</DetailRow>
 </DetailsSection>

@@ -2,6 +2,7 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
+	import { resolve } from '$app/paths'
 	// Page metadata
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -201,7 +202,7 @@
 			const newSummon = await entityAdapter.createSummon(payload)
 			// Trigger image download in background (don't await - it queues a job)
 			entityAdapter.downloadSummonImages(newSummon.id).catch(console.error)
-			await goto(`/database/summons/${newSummon.granblueId}`)
+			await goto(resolve(`/database/summons/${newSummon.granblueId}`))
 		} catch (error) {
 			saveError = 'Failed to create summon. Please try again.'
 			console.error('Create error:', error)
@@ -211,7 +212,7 @@
 	}
 
 	function handleCancel() {
-		goto('/database/summons')
+		goto(resolve('/database/summons'))
 	}
 </script>
 

@@ -10,7 +10,11 @@ export const load: PageLoad = async ({ params, parent, fetch }) => {
 	try {
 		const playlist = await playlistAdapter.get(username, slug, { fetch })
 		return { playlist, username, isOwner }
-	} catch (e: any) {
-		throw error(e?.status || 404, e?.message || 'Playlist not found')
+	} catch (e: unknown) {
+		const err = e as Record<string, unknown>
+		throw error(
+			(typeof err?.status === 'number' ? err.status : undefined) || 404,
+			(typeof err?.message === 'string' ? err.message : undefined) || 'Playlist not found'
+		)
 	}
 }

@@ -1,11 +1,13 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte'
 	import { page } from '$app/state'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import * as m from '$lib/paraglide/messages'
 
-	const { children }: { children: () => any } = $props()
+	const { children }: { children: Snippet } = $props()
 
 	const tabs = [
 		{ value: 'about', path: '/about' },
@@ -19,7 +21,7 @@
 
 	function handleTabChange(value: string) {
 		const tab = tabs.find((t) => t.value === value)
-		if (tab) goto(tab.path)
+		if (tab) goto(resolve(tab.path))
 	}
 </script>
 

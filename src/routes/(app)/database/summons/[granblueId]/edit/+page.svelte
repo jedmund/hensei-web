@@ -2,6 +2,7 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
+	import { resolve } from '$app/paths'
 	// TanStack Query
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
@@ -63,6 +64,7 @@
 
 	// Save state
 	let isSaving = $state(false)
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let saveError = $state<string | null>(null)
 
 	// Editable fields - initialized from summon data
@@ -195,7 +197,7 @@
 			})
 
 			// Navigate back to detail page
-			goto(`/database/summons/${summon.granblueId}`)
+			goto(resolve(`/database/summons/${summon.granblueId}`))
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
 			console.error('Save error:', error)
@@ -205,6 +207,7 @@
 	}
 
 	// Helper function for summon grid image
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
 	function getSummonGridImage(summon: any): string {
 		return getSummonImage(summon?.granblueId, 'grid')
 	}
@@ -217,7 +220,7 @@
 				variant="ghost"
 				size="small"
 				leftIcon="chevron-left"
-				href={`/database/summons/${summon?.granblueId}`}>Back</Button
+				href={resolve(`/database/summons/${summon?.granblueId}`)}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}

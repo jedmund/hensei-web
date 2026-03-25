@@ -16,7 +16,11 @@ export const load: PageLoad = async ({ params, parent, fetch }) => {
 		// Just get the user info - favorites are fetched client-side
 		const { user } = await userAdapter.getProfile(username, 1, { fetch })
 		return { user, isOwner }
-	} catch (e: any) {
-		throw error(e?.status || 502, e?.message || 'Failed to load profile')
+	} catch (e: unknown) {
+		const err = e as Record<string, unknown>
+		throw error(
+			(typeof err?.status === 'number' ? err.status : undefined) || 502,
+			(typeof err?.message === 'string' ? err.message : undefined) || 'Failed to load profile'
+		)
 	}
 }

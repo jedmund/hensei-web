@@ -10,6 +10,7 @@
 	 * - AX skills (for weapons with AX support)
 	 * - Awakening (for weapons with awakening support)
 	 */
+	import { SvelteMap } from 'svelte/reactivity'
 	import * as m from '$lib/paraglide/messages'
 	import type { Weapon, Awakening, Bullet, BulletLoadout } from '$lib/types/api/entities'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
@@ -22,7 +23,6 @@
 	import BefoulmentSelect from '$lib/components/sidebar/edit/BefoulmentSelect.svelte'
 	import BulletSelect from '$lib/components/sidebar/edit/BulletSelect.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
-	import { getElementKey } from '$lib/utils/element'
 	import { seriesHasWeaponKeys, seriesHasAwakening, getSeriesSlug } from '$lib/utils/weaponSeries'
 
 	export interface WeaponEditValues {
@@ -87,11 +87,11 @@
 	let awakeningLevel = $derived(currentValues.awakening?.level ?? 1)
 	let axSkills = $derived<AugmentSkill[]>(currentValues.axSkills ?? [])
 	let befoulment = $derived<Befoulment | null>(currentValues.befoulment ?? null)
-	let bulletSelections = $state<Map<number, Bullet | undefined>>(new Map())
+	let bulletSelections = new SvelteMap<number, Bullet | undefined>()
 
 	// Initialize bullet selections from current values
 	$effect(() => {
-		const newSelections = new Map<number, Bullet | undefined>()
+		const newSelections = new SvelteMap<number, Bullet | undefined>()
 		for (const entry of currentValues.bullets ?? []) {
 			newSelections.set(entry.position, entry.bullet)
 		}
@@ -118,10 +118,6 @@
 	const isMainhand = $derived(position === -1)
 	const hasBullets = $derived(bulletSlots.length > 0 && isMainhand && weaponData?.proficiency === 9)
 	const availableAwakenings = $derived(weaponData?.awakenings ?? [])
-
-	// Element name for theming
-	const weaponElement = $derived(element || weaponData?.element)
-	const elementName = $derived(weaponElement ? getElementKey(weaponElement) : undefined)
 
 	function handleUncapUpdate(newLevel: number) {
 		uncapLevel = newLevel
@@ -281,14 +277,14 @@
 		{#if hasBullets}
 			<DetailsSection title="Bullets">
 				<div class="section-content bullet-selects">
-					{#each bulletSlots as slotType, i}
+					{#each bulletSlots as slotType, i (i)}
 						<div class="bullet-slot">
 							<span class="bullet-slot-label">{BULLET_TYPES[slotType] ?? 'Unknown'}</span>
 							<BulletSelect
 								bulletType={slotType}
 								value={bulletSelections.get(i)?.id}
 								onchange={(bullet) => {
-									const updated = new Map(bulletSelections)
+									const updated = new SvelteMap(bulletSelections)
 									if (bullet) {
 										updated.set(i, bullet)
 									} else {

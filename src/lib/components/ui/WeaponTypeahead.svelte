@@ -57,13 +57,8 @@
 	let comboboxOpen = $state(false)
 	let inputValue = $state('')
 
-	// The selected granblueId used as the combobox value
-	let selectedGranblueId = $state<string>(value ?? '')
-
-	// Sync external value changes into combobox
-	$effect(() => {
-		selectedGranblueId = value ?? ''
-	})
+	// The selected granblueId used as the combobox value (writable derived syncs from external value)
+	let selectedGranblueId = $derived<string>(value ?? '')
 
 	// Set initial input display text from initialWeapon
 	$effect(() => {

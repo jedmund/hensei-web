@@ -11,7 +11,7 @@
 		"check": "paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"lint": "prettier --check . && eslint .",
+		"lint": "prettier --check . && eslint --cache --concurrency auto .",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run",
 		"test:adapters": "vitest run --config vitest.config.adapter.ts",

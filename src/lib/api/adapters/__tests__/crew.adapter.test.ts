@@ -31,14 +31,14 @@ describe('CrewAdapter', () => {
 
 			await adapter.getSharedParties(2, 20)
 
-			const url = (global.fetch as any).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0][0]
 			expect(url).toContain('page=2')
 			expect(url).toContain('per_page=20')
 		})
 
 		it('should clear dual cache on leave', async () => {
 			global.fetch = mockApiResponse({})
-			const clearSpy = vi.spyOn(adapter as any, 'clearCache')
+			const clearSpy = vi.spyOn(adapter as unknown as Record<string, unknown>, 'clearCache')
 
 			await adapter.leave()
 
@@ -51,7 +51,7 @@ describe('CrewAdapter', () => {
 
 			await adapter.transferCaptain('crew-1', 'user-2')
 
-			const body = JSON.parse((global.fetch as any).mock.calls[0][1].body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
 			expect(body.user_id).toBe('user-2')
 		})
 	})
@@ -62,7 +62,7 @@ describe('CrewAdapter', () => {
 
 			await adapter.getMembers()
 
-			const url = (global.fetch as any).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0][0]
 			expect(url).not.toContain('filter')
 		})
 
@@ -71,7 +71,7 @@ describe('CrewAdapter', () => {
 
 			await adapter.getMembers('retired')
 
-			const url = (global.fetch as any).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0][0]
 			expect(url).toContain('filter=retired')
 		})
 
@@ -84,7 +84,7 @@ describe('CrewAdapter', () => {
 				summonIds: ['s1']
 			})
 
-			const url = (global.fetch as any).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0][0]
 			expect(url).toContain('character_ids')
 			expect(url).toContain('c1')
 			expect(url).toContain('c2')
@@ -99,7 +99,7 @@ describe('CrewAdapter', () => {
 
 			await adapter.getRoster({})
 
-			const url = (global.fetch as any).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0][0]
 			expect(url).toContain('/crew/roster')
 			expect(url).not.toContain('?')
 		})
@@ -111,7 +111,7 @@ describe('CrewAdapter', () => {
 
 			const result = await adapter.sendInvitation('crew-1', 'user-2')
 
-			const body = JSON.parse((global.fetch as any).mock.calls[0][1].body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
 			expect(body.user_id).toBe('user-2')
 			expect(result).toEqual(EXPECTED.sendInvitation)
 		})
@@ -121,7 +121,7 @@ describe('CrewAdapter', () => {
 
 			await adapter.sendInvitation('crew-1', 'user-2', 'phantom-1')
 
-			const body = JSON.parse((global.fetch as any).mock.calls[0][1].body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
 			expect(body.user_id).toBe('user-2')
 			expect(body.phantom_player_id).toBe('phantom-1')
 		})
@@ -131,14 +131,14 @@ describe('CrewAdapter', () => {
 
 			await adapter.sendInvitation('crew-1', 'user-2')
 
-			const body = JSON.parse((global.fetch as any).mock.calls[0][1].body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
 			expect(body.user_id).toBe('user-2')
 			expect(body.phantom_player_id).toBeUndefined()
 		})
 
 		it('should clear dual cache on acceptInvitation', async () => {
 			global.fetch = mockApiResponse(API.acceptInvitation)
-			const clearSpy = vi.spyOn(adapter as any, 'clearCache')
+			const clearSpy = vi.spyOn(adapter as unknown as Record<string, unknown>, 'clearCache')
 
 			await adapter.acceptInvitation('inv-1')
 
@@ -151,7 +151,9 @@ describe('CrewAdapter', () => {
 		it('should unwrap phantomPlayer from createPhantom response', async () => {
 			global.fetch = mockApiResponse(API.createPhantom)
 
-			const result = await adapter.createPhantom('crew-1', { name: 'Ghost' } as any)
+			const result = await adapter.createPhantom('crew-1', {
+				name: 'Ghost'
+			} as unknown as import('$lib/types/api/crew').CreatePhantomPlayerInput)
 
 			expect(result).toEqual(EXPECTED.createPhantom)
 		})
@@ -162,14 +164,14 @@ describe('CrewAdapter', () => {
 			const result = await adapter.bulkCreatePhantoms('crew-1', [
 				{ name: 'Ghost1' },
 				{ name: 'Ghost2' }
-			] as any)
+			] as unknown as import('$lib/types/api/crew').CreatePhantomPlayerInput[])
 
 			expect(result).toEqual(EXPECTED.bulkCreatePhantoms)
 		})
 
 		it('should clear dual cache on declinePhantomClaim', async () => {
 			global.fetch = mockApiResponse(API.declinePhantomClaim)
-			const clearSpy = vi.spyOn(adapter as any, 'clearCache')
+			const clearSpy = vi.spyOn(adapter as unknown as Record<string, unknown>, 'clearCache')
 
 			await adapter.declinePhantomClaim('crew-1', 'p1')
 

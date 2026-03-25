@@ -9,7 +9,7 @@
 
 import { queryOptions, infiniteQueryOptions } from '@tanstack/svelte-query'
 import { jobAdapter, type SearchJobSkillsParams } from '$lib/api/adapters/job.adapter'
-import type { Job, JobSkill, JobAccessory } from '$lib/types/api/entities'
+import type { JobSkill } from '$lib/types/api/entities'
 
 /**
  * Standard page result format for job skill infinite queries

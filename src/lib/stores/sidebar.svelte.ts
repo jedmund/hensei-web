@@ -45,6 +45,7 @@ class SidebarStore {
 	/**
 	 * Open the sidebar with a snippet content (legacy API)
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	open(title?: string, content?: Snippet, scrollable = true) {
 		// Cancel any pending clear from a previous close()
 		this.cancelPendingClear()
@@ -61,8 +62,8 @@ class SidebarStore {
 	 */
 	openWithComponent(
 		title: string,
-		component: Component<any, any, any>,
-		props?: Record<string, any>,
+		component: Component<Record<string, unknown>>,
+		props?: Record<string, unknown>,
 		options?: OpenWithComponentOptions | boolean
 	) {
 		// Cancel any pending clear from a previous close()

@@ -2,6 +2,7 @@
  * Selection mode store for collection bulk operations.
  * Used to manage multi-select state across collection pages.
  */
+import { SvelteSet } from 'svelte/reactivity'
 
 export type EntityType = 'characters' | 'weapons' | 'summons' | 'artifacts'
 
@@ -25,7 +26,7 @@ export interface SelectionModeContext {
 export function createSelectionModeContext(): SelectionModeContext {
 	let isActive = $state(false)
 	let entityType = $state<EntityType | null>(null)
-	let selectedIds = $state<Set<string>>(new Set())
+	const selectedIds = new SvelteSet<string>()
 
 	return {
 		get isActive() {
@@ -44,31 +45,32 @@ export function createSelectionModeContext(): SelectionModeContext {
 		enter(type: EntityType) {
 			isActive = true
 			entityType = type
-			selectedIds = new Set()
+			selectedIds.clear()
 		},
 
 		exit() {
 			isActive = false
 			entityType = null
-			selectedIds = new Set()
+			selectedIds.clear()
 		},
 
 		toggle(id: string) {
-			const newSet = new Set(selectedIds)
-			if (newSet.has(id)) {
-				newSet.delete(id)
+			if (selectedIds.has(id)) {
+				selectedIds.delete(id)
 			} else {
-				newSet.add(id)
+				selectedIds.add(id)
 			}
-			selectedIds = newSet
 		},
 
 		selectAll(ids: string[]) {
-			selectedIds = new Set(ids)
+			selectedIds.clear()
+			for (const id of ids) {
+				selectedIds.add(id)
+			}
 		},
 
 		clearSelection() {
-			selectedIds = new Set()
+			selectedIds.clear()
 		},
 
 		isSelected(id: string) {

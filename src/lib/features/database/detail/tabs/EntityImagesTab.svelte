@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { ContextMenu } from 'bits-ui'
+	import { resolve } from '$app/paths'
+	import { SvelteMap, SvelteSet } from 'svelte/reactivity'
 	import ContextMenuWrapper from '$lib/components/ui/menu/ContextMenuWrapper.svelte'
 
 	export interface ImageItem {
@@ -33,18 +35,18 @@
 	}: Props = $props()
 
 	// Track download status per image
-	let downloadingImages = $state<Set<string>>(new Set())
+	let downloadingImages = new SvelteSet<string>()
 	let downloadingAll = $state(false)
 
 	// Track images that failed and fell back (download should be disabled for these)
-	let failedImages = $state<Set<string>>(new Set())
+	let failedImages = new SvelteSet<string>()
 
 	// Cache-buster: increment to force image reload after downloads
 	let cacheBuster = $state(0)
 
 	// Group images by pose for better layout
 	const imagesByPose = $derived.by(() => {
-		const groups = new Map<string, ImageItem[]>()
+		const groups = new SvelteMap<string, ImageItem[]>()
 		for (const image of images) {
 			const key = image.pose ?? 'default'
 			if (!groups.has(key)) {
@@ -97,14 +99,14 @@
 
 		const key = getImageKey(image)
 		downloadingImages.add(key)
-		downloadingImages = new Set(downloadingImages)
+		downloadingImages = new SvelteSet(downloadingImages)
 
 		try {
 			await onDownloadImage(image.variant, image.pose, force)
 			cacheBuster++
 		} finally {
 			downloadingImages.delete(key)
-			downloadingImages = new Set(downloadingImages)
+			downloadingImages = new SvelteSet(downloadingImages)
 		}
 	}
 
@@ -117,7 +119,7 @@
 		for (const img of poseImages) {
 			downloadingImages.add(getImageKey(img))
 		}
-		downloadingImages = new Set(downloadingImages)
+		downloadingImages = new SvelteSet(downloadingImages)
 
 		try {
 			await onDownloadAllPose(pose, force)
@@ -126,7 +128,7 @@
 			for (const img of poseImages) {
 				downloadingImages.delete(getImageKey(img))
 			}
-			downloadingImages = new Set(downloadingImages)
+			downloadingImages = new SvelteSet(downloadingImages)
 		}
 	}
 
@@ -139,7 +141,7 @@
 		for (const image of images) {
 			downloadingImages.add(getImageKey(image))
 		}
-		downloadingImages = new Set(downloadingImages)
+		downloadingImages = new SvelteSet(downloadingImages)
 
 		try {
 			await onDownloadAllImages(force)
@@ -147,13 +149,13 @@
 		} finally {
 			downloadingAll = false
 			downloadingImages.clear()
-			downloadingImages = new Set(downloadingImages)
+			downloadingImages = new SvelteSet(downloadingImages)
 		}
 	}
 </script>
 
 <div class="images-tab">
-	{#each sortedPoses as pose}
+	{#each sortedPoses as pose (pose)}
 		{@const poseImages = imagesByPose.get(pose) ?? []}
 		{@const poseLabel = getPoseLabel(pose, poseImages)}
 		{@const showHeader = poseLabel && sortedPoses.length > 1}
@@ -163,7 +165,7 @@
 		{/if}
 
 		<div class="images-grid">
-			{#each poseImages as image}
+			{#each poseImages as image (image.url)}
 				{@const imageKey = getImageKey(image)}
 				{@const isDownloading = downloadingImages.has(imageKey)}
 				{@const isFailed = failedImages.has(imageKey)}
@@ -178,7 +180,7 @@
 						{#snippet trigger()}
 							<div class="image-item" class:downloading={isDownloading} class:fallback={isFailed}>
 								<a
-									href={bustUrl(image.url)}
+									href={resolve(bustUrl(image.url))}
 									target="_blank"
 									rel="noopener noreferrer"
 									class="image-container"
@@ -192,7 +194,7 @@
 											if (image.fallbackUrl && img.src !== image.fallbackUrl) {
 												img.src = image.fallbackUrl
 												failedImages.add(imageKey)
-												failedImages = new Set(failedImages)
+												failedImages = new SvelteSet(failedImages)
 											}
 										}}
 									/>
@@ -251,7 +253,7 @@
 				{:else}
 					<div class="image-item" class:fallback={isFailed}>
 						<a
-							href={bustUrl(image.url)}
+							href={resolve(bustUrl(image.url))}
 							target="_blank"
 							rel="noopener noreferrer"
 							class="image-container"
@@ -265,7 +267,7 @@
 									if (image.fallbackUrl && img.src !== image.fallbackUrl) {
 										img.src = image.fallbackUrl
 										failedImages.add(imageKey)
-										failedImages = new Set(failedImages)
+										failedImages = new SvelteSet(failedImages)
 									}
 								}}
 							/>

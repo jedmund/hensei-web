@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
 	import { searchAdapter, type SearchResult } from '$lib/api/adapters'
 	import {
 		getCharacterImage,
@@ -118,30 +117,32 @@
 		isLoading = true
 
 		try {
-			const params: any = {
-				page: currentPage,
-				filters: {}
-			}
-
-			// Only add query if not empty
-			if (searchQuery) {
-				params.query = searchQuery
-			}
+			const filters: Record<string, unknown> = {}
 
 			// Only add filters if they have values
 			if (elementFilters.length > 0) {
-				params.filters.element = elementFilters
+				filters.element = elementFilters
 			}
 			if (rarityFilters.length > 0) {
-				params.filters.rarity = rarityFilters
+				filters.rarity = rarityFilters
 			}
 			if (type === 'weapon') {
 				// Use required proficiencies (for mainhand) if set, otherwise use user-selected filters
 				const profs =
 					requiredProficiencies ?? (proficiencyFilters.length > 0 ? proficiencyFilters : undefined)
 				if (profs && profs.length > 0) {
-					params.filters.proficiency1 = profs
+					filters.proficiency1 = profs
 				}
+			}
+
+			const params: Record<string, unknown> = {
+				page: currentPage,
+				filters
+			}
+
+			// Only add query if not empty
+			if (searchQuery) {
+				params.query = searchQuery
 			}
 
 			let response
@@ -261,7 +262,7 @@
 		<div class="filter-group">
 			<label class="filter-label">{m.search_sidebar_element()}</label>
 			<div class="filter-buttons">
-				{#each elements as element}
+				{#each elements as element (element)}
 					<button
 						class="filter-btn element-btn"
 						class:active={elementFilters.includes(element.value)}
@@ -279,7 +280,7 @@
 		<div class="filter-group">
 			<label class="filter-label">{m.search_sidebar_rarity()}</label>
 			<div class="filter-buttons">
-				{#each rarities as rarity}
+				{#each rarities as rarity (rarity)}
 					<button
 						class="filter-btn rarity-btn"
 						class:active={rarityFilters.includes(rarity.value)}
@@ -297,7 +298,7 @@
 			<div class="filter-group">
 				<label class="filter-label">{m.search_sidebar_proficiency()}</label>
 				<div class="filter-buttons proficiency-grid">
-					{#each proficiencies as prof}
+					{#each proficiencies as prof (prof)}
 						<button
 							class="filter-btn prof-btn"
 							class:active={proficiencyFilters.includes(prof.value)}

@@ -6,13 +6,13 @@
 	import { browser } from '$app/environment'
 	import { QueryClientProvider } from '@tanstack/svelte-query'
 	import { Toaster } from 'svelte-sonner'
-	import { untrack } from 'svelte'
+	import { untrack, type Snippet } from 'svelte'
 	import { themeStore, type ThemePreference } from '$lib/stores/theme.svelte'
 	import type { LayoutData } from './$types'
 
 	const { data, children } = $props<{
-		data: LayoutData & { [key: string]: any }
-		children: () => any
+		data: LayoutData & { [key: string]: unknown }
+		children: Snippet
 	}>()
 
 	// Initialize theme from user cookie preference

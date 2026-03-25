@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { SvelteMap } from 'svelte/reactivity'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { onDestroy } from 'svelte'
 	import { partyQueries } from '$lib/api/queries/party.queries'
@@ -39,7 +40,7 @@
 
 	// Mode overrides for pinned entity filters (granblueId → mode)
 	// Persists exclude toggles that would otherwise be lost when pinned filters re-derive
-	let modeOverrides = $state<Map<string, 'include' | 'exclude'>>(new Map())
+	let modeOverrides = new SvelteMap<string, 'include' | 'exclude'>()
 
 	// Build default element filter from defaultElement prop
 	function defaultElementFilter(): FilterItem[] {
@@ -62,7 +63,7 @@
 		if (resetKey !== prevResetKey) {
 			prevResetKey = resetKey
 			userFilters = defaultElementFilter()
-			modeOverrides = new Map()
+			modeOverrides = new SvelteMap()
 		}
 	})
 
@@ -151,7 +152,7 @@
 
 	function handleFiltersChange(newFilters: FilterItem[]) {
 		// Capture mode changes on pinned entity filters before stripping them
-		const updated = new Map(modeOverrides)
+		const updated = new SvelteMap(modeOverrides)
 		for (const f of newFilters) {
 			if (f.kind === 'entity' && 'pinned' in f && f.pinned && 'granblueId' in f) {
 				updated.set(f.granblueId, f.mode)

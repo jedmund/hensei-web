@@ -90,7 +90,7 @@
 			role="button"
 			tabindex="-1"
 		>
-			{#each value as tag, index}
+			{#each value as tag, index (index)}
 				<span class="tag">
 					<span class="tagText">{tag}</span>
 					<button
@@ -134,7 +134,7 @@
 		role="button"
 		tabindex="-1"
 	>
-		{#each value as tag, index}
+		{#each value as tag, index (index)}
 			<span class="tag">
 				<span class="tagText">{tag}</span>
 				<button

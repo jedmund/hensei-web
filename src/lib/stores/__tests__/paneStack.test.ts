@@ -7,7 +7,7 @@ function makePane(id: string, overrides: Partial<PaneConfig> = {}): PaneConfig {
 	return {
 		id,
 		title: `Pane ${id}`,
-		component: {} as any,
+		component: (() => {}) as unknown as import('svelte').Component<Record<string, unknown>>,
 		...overrides
 	}
 }

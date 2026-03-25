@@ -1,9 +1,11 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { goto, replaceState } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
+	import { SvelteMap } from 'svelte/reactivity'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -59,7 +61,7 @@
 		} else {
 			url.searchParams.delete('crew')
 		}
-		replaceState(url, {})
+		replaceState(resolve(url), {})
 	}
 
 	// Crew scores from participation (Finals Day 1-4 only: rounds 2-5)
@@ -74,7 +76,7 @@
 	const crewBattleChartData = $derived(toCrewBattleChartData(crewScores))
 
 	const playerScores = $derived.by(() => {
-		const scoreMap = new Map<string, PlayerScore>()
+		const scoreMap = new SvelteMap<string, PlayerScore>()
 
 		// First, add all members who were active during the event (with 0 score)
 		for (const member of membersDuringEvent) {
@@ -119,7 +121,7 @@
 
 	// Navigate back
 	function handleBack() {
-		goto(localizeHref('/crew'))
+		goto(resolve(localizeHref('/crew')))
 	}
 
 	// ==================== Add Score Modal ====================
@@ -143,12 +145,6 @@
 		editingCrewScoreRound = round
 		editingCrewScore = existingScore ?? null
 		showCrewScoreModal = true
-	}
-
-	function closeCrewScoreModal() {
-		showCrewScoreModal = false
-		editingCrewScoreRound = null
-		editingCrewScore = null
 	}
 </script>
 
@@ -238,7 +234,7 @@
 
 					{#if playerScores.length > 0}
 						<ul class="player-list">
-							{#each playerScores as player, index}
+							{#each playerScores as player, index (player.id)}
 								<PlayerScoreRow
 									{player}
 									rank={index + 1}

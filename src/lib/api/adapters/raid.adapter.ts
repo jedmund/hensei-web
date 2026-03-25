@@ -4,14 +4,13 @@ import type { RequestOptions } from './types'
 import type {
 	RaidFull,
 	RaidGroupFull,
-	RaidGroupFlat,
 	CreateRaidInput,
 	UpdateRaidInput,
 	CreateRaidGroupInput,
 	UpdateRaidGroupInput,
 	RaidFilters
 } from '$lib/types/api/raid'
-import type { Raid, RaidGroup } from '$lib/types/api/entities'
+import type { Raid } from '$lib/types/api/entities'
 
 /**
  * Response from raid image download status
@@ -38,7 +37,7 @@ export class RaidAdapter extends BaseAdapter {
 	 * Get all raids with optional filtering
 	 */
 	async getAll(filters?: RaidFilters, options?: RequestOptions): Promise<Raid[]> {
-		const queryParams: Record<string, any> = {}
+		const queryParams: Record<string, string | number | boolean> = {}
 
 		if (filters) {
 			if (filters.element !== undefined) queryParams.element = filters.element

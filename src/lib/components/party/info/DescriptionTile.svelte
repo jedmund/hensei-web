@@ -8,6 +8,7 @@
 	import CollectionViewerSwitcher from './CollectionViewerSwitcher.svelte'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { localizeHref } from '$lib/paraglide/runtime'
+	import { resolve } from '$app/paths'
 	import { localizedName } from '$lib/utils/locale'
 	import { formatRelativeTime } from '$lib/utils/date'
 	import { PartyVisibility } from '$lib/types/visibility'
@@ -279,7 +280,7 @@
 			</div>
 		{:else if user && sourceParty && !sourceParty.user?.username}
 			<div class="creator-line">
-				<a href={localizeHref(`/${user.username}`)} class="creator-link">
+				<a href={resolve(localizeHref(`/${user.username}`))} class="creator-link">
 					<div class="avatar-wrapper {user.avatar?.element || ''}">
 						{#if user.avatar?.picture}
 							<img
@@ -319,7 +320,7 @@
 			</div>
 		{:else if user && collectionSourceUser?.username && user.username === collectionSourceUser.username}
 			<div class="creator-line">
-				<a href={localizeHref(`/${user.username}`)} class="creator-link">
+				<a href={resolve(localizeHref(`/${user.username}`))} class="creator-link">
 					<div class="avatar-wrapper {user.avatar?.element || ''}">
 						{#if user.avatar?.picture}
 							<img
@@ -363,7 +364,7 @@
 			</div>
 		{:else if user}
 			<div class="creator-line">
-				<a href={localizeHref(`/${user.username}`)} class="creator-link">
+				<a href={resolve(localizeHref(`/${user.username}`))} class="creator-link">
 					<div class="avatar-wrapper {user.avatar?.element || ''}">
 						{#if user.avatar?.picture}
 							<img
@@ -438,7 +439,7 @@
 	>
 		{#if previewParagraphs.length}
 			<div class="preview-text" bind:this={contentEl}>
-				{#each previewParagraphs as paragraph}
+				{#each previewParagraphs as paragraph, i (i)}
 					<p>{paragraph}</p>
 				{/each}
 			</div>

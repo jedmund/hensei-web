@@ -87,7 +87,11 @@ function getCollectionForType(party: Party, gridType: GridType) {
  * Checks if a specific slot position is occupied
  * Handles special cases for mainhand weapons, main/friend summons
  */
-function isSlotOccupied(collection: any[], position: number, gridType: GridType): boolean {
+function isSlotOccupied(
+	collection: { position?: number; mainhand?: boolean }[],
+	position: number,
+	gridType: GridType
+): boolean {
 	// For weapons, check both position and mainhand flag
 	if (gridType === GridType.Weapon) {
 		return collection.some(

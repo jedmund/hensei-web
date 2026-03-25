@@ -55,34 +55,41 @@
 			case 'doc':
 				return (node.content || []).map(jsonToHtml).join('')
 
-			case 'paragraph':
+			case 'paragraph': {
 				const content = (node.content || []).map(jsonToHtml).join('')
 				return `<p>${content || '<br>'}</p>`
+			}
 
-			case 'heading':
+			case 'heading': {
 				const level = node.attrs?.level || 1
 				const headingContent = (node.content || []).map(jsonToHtml).join('')
 				return `<h${level}>${headingContent}</h${level}>`
+			}
 
-			case 'bulletList':
+			case 'bulletList': {
 				const listItems = (node.content || []).map(jsonToHtml).join('')
 				return `<ul>${listItems}</ul>`
+			}
 
-			case 'orderedList':
+			case 'orderedList': {
 				const orderedItems = (node.content || []).map(jsonToHtml).join('')
 				return `<ol>${orderedItems}</ol>`
+			}
 
-			case 'listItem':
+			case 'listItem': {
 				const itemContent = (node.content || []).map(jsonToHtml).join('')
 				return `<li>${itemContent}</li>`
+			}
 
-			case 'blockquote':
+			case 'blockquote': {
 				const quoteContent = (node.content || []).map(jsonToHtml).join('')
 				return `<blockquote>${quoteContent}</blockquote>`
+			}
 
-			case 'codeBlock':
+			case 'codeBlock': {
 				const codeContent = (node.content || []).map((n) => n.text || '').join('')
 				return `<pre><code>${codeContent}</code></pre>`
+			}
 
 			case 'hardBreak':
 				return '<br>'
@@ -90,7 +97,7 @@
 			case 'horizontalRule':
 				return '<hr>'
 
-			case 'youtube':
+			case 'youtube': {
 				const videoUrl = node.attrs?.src || ''
 				// Extract video ID from various YouTube URL formats
 				let videoId = ''
@@ -129,8 +136,9 @@
 						allowfullscreen
 					></iframe>
 				</div>`
+			}
 
-			case 'mention':
+			case 'mention': {
 				// Handle game item mentions
 				const wikiName = node.attrs?.id?.name?.en || node.attrs?.id?.granblue_en || 'Unknown'
 				const mentionName = localizedName(node.attrs?.id?.name)
@@ -138,6 +146,7 @@
 					mentionName !== '—' ? mentionName : node.attrs?.id?.granblue_en || 'Unknown'
 				const wikiUrl = `https://gbf.wiki/${wikiName}`
 				return `<a href="${wikiUrl}" target="_blank" rel="noopener noreferrer" class="mention">${displayName}</a>`
+			}
 
 			default:
 				// For unknown types, try to render content if it exists
@@ -174,6 +183,7 @@
 </script>
 
 <div class="description-content" class:truncate style={truncate ? `--max-lines: ${maxLines}` : ''}>
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html parsedHTML}
 </div>
 

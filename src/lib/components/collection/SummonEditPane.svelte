@@ -10,7 +10,6 @@
 	 */
 	import * as m from '$lib/paraglide/messages'
 	import type { Summon } from '$lib/types/api/entities'
-	import { getElementKey } from '$lib/utils/element'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
@@ -38,9 +37,6 @@
 	// Local state derived from props — overrides are temporary until currentValues changes
 	let uncapLevel = $derived(currentValues.uncapLevel)
 	let transcendenceStep = $derived(currentValues.transcendenceStep)
-
-	// Element name for theming
-	const elementName = $derived(summonData?.element ? getElementKey(summonData.element) : undefined)
 
 	function handleUncapUpdate(newLevel: number) {
 		uncapLevel = newLevel

@@ -2,6 +2,7 @@
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { DropdownMenu } from 'bits-ui'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
@@ -119,13 +120,13 @@
 
 	function handleTabChange(value: string) {
 		if (value === 'teams') {
-			goto(localizeHref(`/${username}`))
+			goto(resolve(localizeHref(`/${username}`)))
 		} else if (value === 'favorites') {
-			goto(localizeHref(`/${username}/favorites`))
+			goto(resolve(localizeHref(`/${username}/favorites`)))
 		} else if (value === 'playlists') {
-			goto(localizeHref(`/${username}/playlists`))
+			goto(resolve(localizeHref(`/${username}/playlists`)))
 		} else if (value === 'collection') {
-			goto(localizeHref(`/${username}/collection/characters`))
+			goto(resolve(localizeHref(`/${username}/collection/characters`)))
 		}
 	}
 
@@ -161,6 +162,7 @@
 		</div>
 
 		<div class="header-actions">
+			<!-- eslint-disable svelte/no-navigation-without-resolve -- external URLs -->
 			{#if gbfProfileUrl}
 				<Tooltip content={m.profile_ingame()}>
 					<a
@@ -192,6 +194,7 @@
 					</a>
 				</Tooltip>
 			{/if}
+			<!-- eslint-enable svelte/no-navigation-without-resolve -->
 
 			{#if showMenu}
 				<DropdownMenu.Root>
@@ -218,7 +221,7 @@
 							{/if}
 							{#if canCreateTeam}
 								<DropdownItem>
-									<a href={localizeHref(`/teams/new?collectionSource=${username}`)}>
+									<a href={resolve(localizeHref(`/teams/new?collectionSource=${username}`))}>
 										<Icon name="users" size={14} />
 										<span>{m.profile_create_team_collection({ name: username })}</span>
 									</a>

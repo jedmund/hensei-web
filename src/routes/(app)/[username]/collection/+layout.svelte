@@ -1,6 +1,8 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte'
 	import type { LayoutData } from './$types'
 	import { page } from '$app/stores'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import * as m from '$lib/paraglide/messages'
@@ -33,7 +35,7 @@
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 
-	let { data, children }: { data: LayoutData; children: any } = $props()
+	let { data, children }: { data: LayoutData; children: Snippet } = $props()
 
 	const viewerCrewRole = $derived(crewStore.membership?.role ?? null)
 	const viewerCrewId = $derived(crewStore.crew?.id ?? null)
@@ -111,7 +113,7 @@
 			selectionMode.exit()
 		}
 		sidebar.close()
-		goto(localizeHref(`/${username}/collection/${value}`))
+		goto(resolve(localizeHref(`/${username}/collection/${value}`)))
 	}
 
 	function handleAddArtifact() {
@@ -304,6 +306,7 @@
 				}}
 			>
 				{@render children()}
+				<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
 				{#snippet failed(error, reset)}
 					<div class="collection-error" role="alert">
 						<p>{m.collection_load_error()}</p>

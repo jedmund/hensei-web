@@ -44,6 +44,7 @@
 			onValueChange?.([])
 		} else {
 			value = undefined
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- clear action sends undefined to callback typed as number | number[]
 			onValueChange?.(undefined as any)
 		}
 	}
@@ -96,13 +97,11 @@
 					class="rarity-group"
 					{disabled}
 				>
-					{#each RARITY_DISPLAY_ORDER as rarity}
+					{#each RARITY_DISPLAY_ORDER as rarity (rarity)}
 						<Tooltip content={getLabel(rarity)}>
-							{#snippet children()}
-								<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
-									<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
-								</ToggleGroup.Item>
-							{/snippet}
+							<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
+								<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
+							</ToggleGroup.Item>
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -114,13 +113,11 @@
 					class="rarity-group"
 					{disabled}
 				>
-					{#each RARITY_DISPLAY_ORDER as rarity}
+					{#each RARITY_DISPLAY_ORDER as rarity (rarity)}
 						<Tooltip content={getLabel(rarity)}>
-							{#snippet children()}
-								<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
-									<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
-								</ToggleGroup.Item>
-							{/snippet}
+							<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
+								<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
+							</ToggleGroup.Item>
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -140,13 +137,11 @@
 				class="rarity-group"
 				{disabled}
 			>
-				{#each RARITY_DISPLAY_ORDER as rarity}
+				{#each RARITY_DISPLAY_ORDER as rarity (rarity)}
 					<Tooltip content={getLabel(rarity)}>
-						{#snippet children()}
-							<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
-								<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
-							</ToggleGroup.Item>
-						{/snippet}
+						<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
+							<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
+						</ToggleGroup.Item>
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>
@@ -158,13 +153,11 @@
 				class="rarity-group"
 				{disabled}
 			>
-				{#each RARITY_DISPLAY_ORDER as rarity}
+				{#each RARITY_DISPLAY_ORDER as rarity (rarity)}
 					<Tooltip content={getLabel(rarity)}>
-						{#snippet children()}
-							<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
-								<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
-							</ToggleGroup.Item>
-						{/snippet}
+						<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
+							<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
+						</ToggleGroup.Item>
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>

@@ -7,6 +7,7 @@
  * @module stores/loaderState
  */
 
+/* eslint-disable svelte/prefer-svelte-reactivity -- Date() here is only for console.log timestamps, not reactive state */
 import type { CreateInfiniteQueryResult } from '@tanstack/svelte-query'
 import { IsInViewport } from 'runed'
 

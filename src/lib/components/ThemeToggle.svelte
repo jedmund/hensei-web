@@ -38,7 +38,9 @@
 	<span class="theme-label">{m.nav_theme()}</span>
 	<SwitchPrimitive.Root checked={isDark} onCheckedChange={handleToggle} class="theme-switch">
 		<SwitchPrimitive.Thumb class="theme-thumb" />
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 		<span class="track-label left">{@html MoonIcon}</span>
+		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 		<span class="track-label right">{@html SunIcon}</span>
 	</SwitchPrimitive.Root>
 </div>

@@ -5,6 +5,7 @@
 	 * Validates YouTube URLs and shows a thumbnail preview when valid.
 	 */
 	import { untrack } from 'svelte'
+	import { resolve } from '$app/paths'
 	import Input from '$lib/components/ui/Input.svelte'
 
 	interface Props {
@@ -117,12 +118,6 @@
 		}
 	}
 
-	function handleKeydown(e: KeyboardEvent) {
-		if (e.key === 'Enter') {
-			;(e.target as HTMLInputElement).blur()
-		}
-	}
-
 	function clearInput() {
 		inputValue = ''
 		touched = false
@@ -149,7 +144,7 @@
 
 	{#if showPreview && thumbnailUrl}
 		<div class="preview-card">
-			<a href={inputValue} target="_blank" rel="noopener noreferrer" class="preview-link">
+			<a href={resolve(inputValue)} target="_blank" rel="noopener noreferrer" class="preview-link">
 				<img src={thumbnailUrl} alt="Video thumbnail" class="thumbnail" />
 				<div class="play-overlay">
 					<svg viewBox="0 0 24 24" fill="currentColor" class="play-icon">

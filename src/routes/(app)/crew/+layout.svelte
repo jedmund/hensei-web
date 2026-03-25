@@ -1,10 +1,11 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import type { LayoutData } from './$types'
 
-	const { data, children }: { data: LayoutData; children: () => any } = $props()
+	const { data, children }: { data: LayoutData; children: Snippet } = $props()
 
 	const isAuthenticated = $derived(data.isAuthenticated)
 

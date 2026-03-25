@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { raidAdapter } from '$lib/api/adapters/raid.adapter'
@@ -10,7 +11,7 @@
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import type { PageData } from './$types'
 
-	function displayName(input: any): string {
+	function displayName(input: unknown): string {
 		if (!input) return '—'
 		const maybe = input.name ?? input
 		if (typeof maybe === 'string') return maybe
@@ -22,6 +23,7 @@
 		data: PageData
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { data }: Props = $props()
 
 	const queryClient = useQueryClient()
@@ -137,9 +139,9 @@
 			await queryClient.invalidateQueries({ queryKey: ['raids'] })
 
 			// Navigate to the new slug if it changed
-			goto(`/database/raids/${result.slug}`)
-		} catch (error: any) {
-			saveError = error.message || 'Failed to save raid'
+			goto(resolve(`/database/raids/${result.slug}`))
+		} catch (error: unknown) {
+			saveError = error instanceof Error ? error.message : 'Failed to save raid'
 		} finally {
 			isSaving = false
 		}
@@ -147,7 +149,7 @@
 
 	// Cancel and go back
 	function handleCancel() {
-		goto(`/database/raids/${raidSlug}`)
+		goto(resolve(`/database/raids/${raidSlug}`))
 	}
 </script>
 

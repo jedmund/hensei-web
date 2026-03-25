@@ -45,6 +45,7 @@
 			onValueChange?.([])
 		} else {
 			value = undefined
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- clear action sends undefined to callback typed as number | number[]
 			onValueChange?.(undefined as any)
 		}
 	}
@@ -97,17 +98,15 @@
 					class="proficiency-group"
 					{disabled}
 				>
-					{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
+					{#each PROFICIENCY_DISPLAY_ORDER as proficiency (proficiency)}
 						<Tooltip content={getLabel(proficiency)} {disabled}>
-							{#snippet children()}
-								<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
-									<img
-										src={getProficiencyImage(proficiency)}
-										alt={getLabel(proficiency)}
-										class="proficiency-image"
-									/>
-								</ToggleGroup.Item>
-							{/snippet}
+							<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
+								<img
+									src={getProficiencyImage(proficiency)}
+									alt={getLabel(proficiency)}
+									class="proficiency-image"
+								/>
+							</ToggleGroup.Item>
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -119,17 +118,15 @@
 					class="proficiency-group"
 					{disabled}
 				>
-					{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
+					{#each PROFICIENCY_DISPLAY_ORDER as proficiency (proficiency)}
 						<Tooltip content={getLabel(proficiency)} {disabled}>
-							{#snippet children()}
-								<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
-									<img
-										src={getProficiencyImage(proficiency)}
-										alt={getLabel(proficiency)}
-										class="proficiency-image"
-									/>
-								</ToggleGroup.Item>
-							{/snippet}
+							<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
+								<img
+									src={getProficiencyImage(proficiency)}
+									alt={getLabel(proficiency)}
+									class="proficiency-image"
+								/>
+							</ToggleGroup.Item>
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -149,17 +146,15 @@
 				class="proficiency-group"
 				{disabled}
 			>
-				{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
+				{#each PROFICIENCY_DISPLAY_ORDER as proficiency (proficiency)}
 					<Tooltip content={getLabel(proficiency)} {disabled}>
-						{#snippet children()}
-							<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
-								<img
-									src={getProficiencyImage(proficiency)}
-									alt={getLabel(proficiency)}
-									class="proficiency-image"
-								/>
-							</ToggleGroup.Item>
-						{/snippet}
+						<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
+							<img
+								src={getProficiencyImage(proficiency)}
+								alt={getLabel(proficiency)}
+								class="proficiency-image"
+							/>
+						</ToggleGroup.Item>
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>
@@ -171,17 +166,15 @@
 				class="proficiency-group"
 				{disabled}
 			>
-				{#each PROFICIENCY_DISPLAY_ORDER as proficiency}
+				{#each PROFICIENCY_DISPLAY_ORDER as proficiency (proficiency)}
 					<Tooltip content={getLabel(proficiency)} {disabled}>
-						{#snippet children()}
-							<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
-								<img
-									src={getProficiencyImage(proficiency)}
-									alt={getLabel(proficiency)}
-									class="proficiency-image"
-								/>
-							</ToggleGroup.Item>
-						{/snippet}
+						<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
+							<img
+								src={getProficiencyImage(proficiency)}
+								alt={getLabel(proficiency)}
+								class="proficiency-image"
+							/>
+						</ToggleGroup.Item>
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>

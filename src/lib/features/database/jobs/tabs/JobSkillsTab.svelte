@@ -102,7 +102,7 @@
 			{/if}
 		</div>
 	{:else}
-		{#each skillGroups as group}
+		{#each skillGroups as group (group.key)}
 			{#if groupedSkills[group.key].length > 0}
 				<section class="skill-group">
 					<h3 class="group-title">{group.title}</h3>
@@ -129,25 +129,23 @@
 </div>
 
 <Dialog bind:open={deleteDialogOpen}>
-	{#snippet children()}
-		<ModalHeader title="Delete Skill?" />
-		<ModalBody>
-			<p class="delete-message">
-				Are you sure you want to delete "{skillToDelete?.name?.en ?? 'this skill'}"? This action
-				cannot be undone.
-			</p>
-		</ModalBody>
-		<ModalFooter
-			onCancel={handleDeleteCancel}
-			cancelDisabled={isDeleting}
-			primaryAction={{
-				label: isDeleting ? 'Deleting...' : 'Delete',
-				onclick: handleDeleteConfirm,
-				destructive: true,
-				disabled: isDeleting
-			}}
-		/>
-	{/snippet}
+	<ModalHeader title="Delete Skill?" />
+	<ModalBody>
+		<p class="delete-message">
+			Are you sure you want to delete "{skillToDelete?.name?.en ?? 'this skill'}"? This action
+			cannot be undone.
+		</p>
+	</ModalBody>
+	<ModalFooter
+		onCancel={handleDeleteCancel}
+		cancelDisabled={isDeleting}
+		primaryAction={{
+			label: isDeleting ? 'Deleting...' : 'Delete',
+			onclick: handleDeleteConfirm,
+			destructive: true,
+			disabled: isDeleting
+		}}
+	/>
 </Dialog>
 
 <style lang="scss">

@@ -10,6 +10,7 @@ export function useGridService(
 	getPartyId: () => string
 ) {
 	return {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		async removeWeapon(partyId: string, gridWeaponId: string, _editKey?: string) {
 			try {
 				await mutations.grid.deleteWeapon.mutateAsync({
@@ -23,6 +24,7 @@ export function useGridService(
 				throw err
 			}
 		},
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		async removeSummon(partyId: string, gridSummonId: string, _editKey?: string) {
 			try {
 				await mutations.grid.deleteSummon.mutateAsync({
@@ -36,6 +38,7 @@ export function useGridService(
 				throw err
 			}
 		},
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		async removeCharacter(partyId: string, gridCharacterId: string, _editKey?: string) {
 			try {
 				await mutations.grid.deleteCharacter.mutateAsync({
@@ -49,10 +52,12 @@ export function useGridService(
 				throw err
 			}
 		},
+
 		async updateWeapon(
 			partyId: string,
 			gridWeaponId: string,
 			updates: Partial<GridWeapon>,
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			_editKey?: string
 		) {
 			try {
@@ -71,6 +76,7 @@ export function useGridService(
 			partyId: string,
 			gridSummonId: string,
 			updates: Partial<GridSummon>,
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			_editKey?: string
 		) {
 			try {
@@ -89,6 +95,7 @@ export function useGridService(
 			partyId: string,
 			gridCharacterId: string,
 			updates: Partial<GridCharacter>,
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			_editKey?: string
 		) {
 			try {
@@ -103,6 +110,7 @@ export function useGridService(
 				throw err
 			}
 		},
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		async switchCharacterStyle(gridCharacterId: string, _editKey?: string) {
 			try {
 				await mutations.grid.switchCharacterStyle.mutateAsync({
@@ -119,6 +127,7 @@ export function useGridService(
 			gridCharacterId: string,
 			uncapLevel?: number,
 			transcendenceStep?: number,
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			_editKey?: string
 		) {
 			if (uncapLevel === undefined) return
@@ -140,6 +149,7 @@ export function useGridService(
 			gridWeaponId: string,
 			uncapLevel?: number,
 			transcendenceStep?: number,
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			_editKey?: string
 		) {
 			if (uncapLevel === undefined) return
@@ -201,6 +211,7 @@ export function useGridService(
 			gridSummonId: string,
 			uncapLevel?: number,
 			transcendenceStep?: number,
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			_editKey?: string
 		) {
 			if (uncapLevel === undefined) return

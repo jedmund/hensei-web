@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { page } from '$app/stores'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
@@ -15,6 +16,7 @@
 		data: PageData
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { data }: Props = $props()
 
 	const queryClient = useQueryClient()
@@ -79,9 +81,9 @@
 			await queryClient.invalidateQueries({ queryKey: ['gw', 'events'] })
 
 			// Navigate back to detail page
-			goto(localizeHref(`/database/gw-events/${eventId}`))
-		} catch (error: any) {
-			saveError = error.message || 'Failed to save event'
+			goto(resolve(localizeHref(`/database/gw-events/${eventId}`)))
+		} catch (error: unknown) {
+			saveError = error instanceof Error ? error.message : 'Failed to save event'
 		} finally {
 			isSaving = false
 		}
@@ -89,7 +91,7 @@
 
 	// Cancel and go back
 	function handleCancel() {
-		goto(localizeHref(`/database/gw-events/${eventId}`))
+		goto(resolve(localizeHref(`/database/gw-events/${eventId}`)))
 	}
 </script>
 

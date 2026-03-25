@@ -1,6 +1,7 @@
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 
 	// Page metadata
@@ -58,7 +59,7 @@
 		} else {
 			url.searchParams.set('tab', tab)
 		}
-		goto(url.toString(), { replaceState: true })
+		goto(resolve(url.toString()), { replaceState: true })
 	}
 
 	// Use TanStack Query with SSR initial data
@@ -110,6 +111,7 @@
 	}))
 
 	// Helper function for character grid image
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
 	function getCharacterGridImage(character: any): string {
 		const pose = character?.styleSwap ? '01_style' : '01'
 		return getCharacterImage(character?.granblueId, 'grid', pose)
@@ -226,13 +228,16 @@
 <div class="page">
 	<DatabasePageHeader title="Character">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={getListUrl('characters')}
-				>Back</Button
+			<Button
+				variant="ghost"
+				size="small"
+				leftIcon="chevron-left"
+				href={resolve(getListUrl('characters'))}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
-				<Button variant="element-ghost" element={elementName} size="small" href={editUrl}
+				<Button variant="element-ghost" element={elementName} size="small" href={resolve(editUrl)}
 					>Edit</Button
 				>
 			{/if}
@@ -261,7 +266,7 @@
 						<DetailItem label="Nicknames (EN)">
 							{#if character.nicknames?.en?.length}
 								<div class="nickname-tags">
-									{#each character.nicknames.en as nickname}
+									{#each character.nicknames.en as nickname, i (i)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>
@@ -272,7 +277,7 @@
 						<DetailItem label="Nicknames (JP)">
 							{#if character.nicknames?.ja?.length}
 								<div class="nickname-tags">
-									{#each character.nicknames.ja as nickname}
+									{#each character.nicknames.ja as nickname, i (i)}
 										<span class="nickname-tag">{nickname}</span>
 									{/each}
 								</div>
@@ -362,10 +367,12 @@
 					{#if relatedQuery.data?.length}
 						<DetailsContainer title="Related Units">
 							<div class="related-units">
-								{#each relatedQuery.data as related}
+								{#each relatedQuery.data as related (related.id)}
 									<a
-										href={localizeHref(
-											`/database/characters/${related.granblueId}${related.styleSwap ? '/style' : ''}`
+										href={resolve(
+											localizeHref(
+												`/database/characters/${related.granblueId}${related.styleSwap ? '/style' : ''}`
+											)
 										)}
 										class="related-unit"
 									>

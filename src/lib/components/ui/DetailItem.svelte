@@ -64,7 +64,7 @@
 
 	// Handle checkbox change and call onchange if provided
 	function handleCheckboxChange(checked: boolean) {
-		value = checked as any
+		value = checked
 		onchange?.(checked)
 	}
 

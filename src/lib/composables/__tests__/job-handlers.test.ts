@@ -15,7 +15,6 @@ import { useJobHandlers } from '../job-handlers.svelte'
 import { createMockMutations, createTestParty } from './helpers'
 import {
 	MOCK_JOB,
-	MOCK_JOB_SKILL_1,
 	MOCK_JOB_SKILL_2,
 	MOCK_JOB_ACCESSORY
 } from '$lib/api/mutations/__tests__/fixtures'

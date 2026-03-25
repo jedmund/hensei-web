@@ -1,9 +1,14 @@
 import { beforeAll, afterAll, afterEach } from 'vitest'
 
 // Optional MSW setup to support future adapter tests without adding a hard dependency
-let mockServer: any = null
-let http: any = null
-let HttpResponse: any = null
+let mockServer: {
+	listen: (opts: Record<string, string>) => void
+	resetHandlers: () => void
+	close: () => void
+	use: (handler: unknown) => void
+} | null = null
+let http: { post: (url: string, handler: () => unknown) => unknown } | null = null
+let HttpResponse: { json: (body: unknown, opts: { status: number }) => unknown } | null = null
 
 async function ensureMSW() {
 	if (mockServer) return
@@ -15,7 +20,8 @@ async function ensureMSW() {
 		mockServer = mswNode.setupServer()
 		http = msw.http
 		HttpResponse = msw.HttpResponse
-	} catch (e) {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	} catch (_e) {
 		// MSW is not installed; skip server wiring
 		mockServer = null
 	}
@@ -33,7 +39,7 @@ afterAll(() => {
 })
 
 // Helper to add mock handlers for POST endpoints under /api/v1
-export function mockAPI(path: string, response: any, status = 200) {
+export function mockAPI(path: string, response: unknown, status = 200) {
 	if (!mockServer || !http || !HttpResponse) return
 	mockServer.use(
 		http.post(`*/api/v1${path}`, () => {

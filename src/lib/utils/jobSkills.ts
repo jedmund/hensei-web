@@ -29,12 +29,15 @@ export interface JobSkillPayload {
  * ```
  */
 export function transformSkillsToArray(skillsMap: JobSkillsMap): JobSkillPayload[] {
-	return Object.entries(skillsMap)
-		.filter(([_, skill]) => skill !== null && skill !== undefined)
-		.map(([slotKey, skill]) => ({
-			id: skill!.id,
-			slot: parseInt(slotKey)
-		}))
+	return (
+		Object.entries(skillsMap)
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			.filter(([_, skill]) => skill !== null && skill !== undefined)
+			.map(([slotKey, skill]) => ({
+				id: skill!.id,
+				slot: parseInt(slotKey)
+			}))
+	)
 }
 
 /**

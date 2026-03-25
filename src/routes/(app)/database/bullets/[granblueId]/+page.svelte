@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { goto } from '$app/navigation'
-	import { page } from '$app/stores'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { createQuery } from '@tanstack/svelte-query'

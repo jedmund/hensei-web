@@ -94,6 +94,7 @@
 
 	// Reactively update header when state changes or when returning from sub-pane
 	$effect(() => {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const _ = [hasChanges, updateMutation.isPending, paneStack.panes.length]
 		untrack(() => updateHeader())
 	})

@@ -31,10 +31,10 @@ export interface AdapterOptions {
  */
 export interface RequestOptions extends Omit<RequestInit, 'body' | 'cache'> {
 	/** Query parameters to append to the URL */
-	params?: Record<string, any> | undefined
+	params?: Record<string, string | number | boolean | string[] | number[]> | undefined
 
 	/** Alternative alias for query parameters */
-	query?: Record<string, any> | undefined
+	query?: Record<string, string | number | boolean | string[] | number[]> | undefined
 
 	/** Request timeout in milliseconds. Overrides the adapter's default timeout */
 	timeout?: number | undefined
@@ -46,7 +46,7 @@ export interface RequestOptions extends Omit<RequestInit, 'body' | 'cache'> {
 	cache?: RequestCache | undefined
 
 	/** Request body. Can be any serializable value */
-	body?: any
+	body?: unknown
 
 	/** HTTP headers for the request */
 	headers?: Record<string, string> | undefined
@@ -60,8 +60,8 @@ export interface RequestOptions extends Omit<RequestInit, 'body' | 'cache'> {
  * Provides consistent error handling across the application
  */
 export interface AdapterError {
-	/** Error name, always 'AdapterError' for identification */
-	name: 'AdapterError'
+	/** Error name for identification (e.g., 'AdapterError', 'NetworkError') */
+	name: string
 
 	/** Normalized error code (e.g., 'NOT_FOUND', 'UNAUTHORIZED') */
 	code: string
@@ -73,7 +73,7 @@ export interface AdapterError {
 	message: string
 
 	/** Additional error details from the API response */
-	details?: any
+	details?: unknown
 }
 
 /**
@@ -141,7 +141,7 @@ export interface ApiResponse<T> {
 	error?: {
 		code: string
 		message: string
-		details?: any
+		details?: unknown
 	}
 }
 
@@ -209,7 +209,7 @@ export interface SearchFilters {
 	accessory?: boolean | undefined
 
 	/** Custom filters for specific use cases */
-	[key: string]: any
+	[key: string]: string | number | boolean | string[] | number[] | undefined
 }
 
 /**
@@ -244,7 +244,7 @@ export interface SearchParams {
 /**
  * Cache entry structure
  */
-export interface CacheEntry<T = any> {
+export interface CacheEntry<T = unknown> {
 	/** The cached data */
 	data: T
 
@@ -260,7 +260,7 @@ export interface CacheEntry<T = any> {
  */
 export interface PendingRequest {
 	/** The promise for the pending request */
-	promise: Promise<any>
+	promise: Promise<unknown>
 
 	/** AbortController for cancelling the request */
 	controller: AbortController
@@ -303,7 +303,7 @@ export interface TransformOptions {
 	renameObjectFields?: boolean
 
 	/** Custom transformation function */
-	customTransform?: (data: any) => any
+	customTransform?: (data: unknown) => unknown
 }
 
 /**
@@ -352,5 +352,5 @@ export interface ResourceOptions<T> {
 	onError?: (error: AdapterError) => void
 
 	/** Dependencies that trigger refetch when changed */
-	dependencies?: any[]
+	dependencies?: unknown[]
 }

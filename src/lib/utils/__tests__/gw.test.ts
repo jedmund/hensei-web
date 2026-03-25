@@ -109,7 +109,7 @@ function makeIndividualScore(
 		excused: false,
 		playerName,
 		playerType: 'member',
-		member: memberId ? ({ id: memberId } as any) : undefined
+		member: memberId ? ({ id: memberId } as unknown as Record<string, unknown>) : undefined
 	}
 }
 

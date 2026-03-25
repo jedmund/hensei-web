@@ -2,6 +2,7 @@
 	import type { GridSummon } from '$lib/types/api/party'
 	import { usePartyContext } from '$lib/types/party-context'
 	import { page } from '$app/stores'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
@@ -64,7 +65,7 @@
 		try {
 			const party = ctx.getParty()
 			const editKey = ctx.getEditKey()
-			await ctx.services.gridService.removeSummon(party.id, item.id as any, editKey || undefined)
+			await ctx.services.gridService.removeSummon(party.id, item.id, editKey || undefined)
 		} catch (err) {
 			console.error('Error removing summon:', err)
 			toast.error(extractErrorMessage(err, 'Failed to remove summon'))
@@ -87,7 +88,7 @@
 
 	function viewInDatabase() {
 		if (!item?.summon?.granblueId) return
-		goto(getDatabaseUrl('summon', item.summon.granblueId))
+		goto(resolve(getDatabaseUrl('summon'), item.summon.granblueId))
 	}
 
 	// Duplicate: find the first empty sub-summon slot (0-3)

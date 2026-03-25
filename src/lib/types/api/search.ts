@@ -3,8 +3,6 @@
  */
 
 import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'
-import type { SearchResult } from '$lib/api/adapters/search.adapter'
-
 /**
  * Search mode for toggling between all items and user's collection
  */

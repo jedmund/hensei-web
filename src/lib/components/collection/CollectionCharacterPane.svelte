@@ -11,6 +11,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import { onMount } from 'svelte'
 	import type { CollectionCharacter, ExtendedMastery } from '$lib/types/api/collection'
+	import type { GridCharacter } from '$lib/types/api/party'
 	import {
 		useUpdateCollectionCharacter,
 		useRemoveCharacterFromCollection
@@ -31,6 +32,7 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getRingStat, getElementalizedEarringStat } from '$lib/utils/masteryUtils'
 	import { page } from '$app/stores'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -217,11 +219,6 @@
 		}
 	}
 
-	function handleCancel() {
-		isEditing = false
-		updateActionVisibility()
-	}
-
 	function handleTabChange(value: string) {
 		selectedTab = value as 'info' | 'collection'
 		// Exit edit mode when switching tabs
@@ -289,7 +286,7 @@
 
 	function viewInDatabase() {
 		if (!characterData?.granblueId) return
-		goto(getDatabaseUrl('character', characterData.granblueId, characterData.styleSwap))
+		goto(resolve(getDatabaseUrl('character'), characterData.granblueId, characterData.styleSwap))
 	}
 
 	// Set up sidebar action on mount and clean up on destroy
@@ -313,7 +310,7 @@
 <div class="collection-character-pane">
 	<ItemHeader
 		type="character"
-		item={character as any}
+		item={character as unknown as GridCharacter}
 		itemData={characterData}
 		gridUncapLevel={character.uncapLevel}
 		gridTranscendence={character.transcendenceStep}

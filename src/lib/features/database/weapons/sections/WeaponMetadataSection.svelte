@@ -5,12 +5,14 @@
 	import { getRarityLabel, getRarityOptions } from '$lib/utils/rarity'
 
 	interface Props {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
 		weapon: any
 		editMode?: boolean
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
 		editData?: any
 	}
 
-	let { weapon, editMode = false, editData = $bindable<any>() }: Props = $props()
+	let { weapon, editMode = false, editData = $bindable() }: Props = $props()
 
 	const rarityOptions = getRarityOptions()
 </script>

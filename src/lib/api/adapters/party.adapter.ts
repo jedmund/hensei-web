@@ -11,7 +11,7 @@
 import { BaseAdapter } from './base.adapter'
 import type { AdapterOptions, PaginatedResponse, RequestOptions } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
-import type { Party, GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
+import type { Party } from '$lib/types/api/party'
 import type { PartyShare } from '$lib/types/api/partyShare'
 import type { PartyVisibility } from '$lib/types/visibility'
 
@@ -25,7 +25,7 @@ export interface CreatePartyParams {
 	jobId?: string | undefined
 	raidId?: string | null | undefined
 	guidebookId?: string | undefined
-	extras?: Record<string, any> | undefined
+	extras?: Record<string, unknown> | undefined
 }
 
 /**
@@ -175,7 +175,8 @@ export class PartyAdapter extends BaseAdapter {
 	 * Note: API expects UUID for update, not shortcode
 	 */
 	async update(params: UpdatePartyParams, headers?: Record<string, string>): Promise<Party> {
-		const { id, shortcode, ...updateParams } = params
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		const { id, shortcode: _shortcode, ...updateParams } = params
 		const response = await this.request<{ party: Party }>(`/parties/${id}`, {
 			method: 'PATCH',
 			body: {
@@ -214,10 +215,10 @@ export class PartyAdapter extends BaseAdapter {
 		params: { page?: number; per?: number } & Partial<ExploreFilterParams> = {},
 		options?: RequestOptions
 	): Promise<PaginatedResponse<Party>> {
-		const query: Record<string, unknown> = {}
+		const query: Record<string, string | number | boolean | string[] | number[]> = {}
 		for (const [key, value] of Object.entries(params)) {
 			if (value !== undefined && value !== null) {
-				query[key] = value
+				query[key] = value as string | number | boolean | string[] | number[]
 			}
 		}
 
@@ -259,7 +260,7 @@ export class PartyAdapter extends BaseAdapter {
 		const { raidId, element, fullAuto, solo, autoGuard, chargeAttack, ...rest } = params
 
 		// Build query with raid filter and convert booleans to API format
-		const query: Record<string, unknown> = {
+		const query: Record<string, string | number | boolean | string[] | number[]> = {
 			...rest,
 			raid: raidId
 		}

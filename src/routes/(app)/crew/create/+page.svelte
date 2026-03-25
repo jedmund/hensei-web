@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { resolve } from '$app/paths'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
@@ -13,6 +14,7 @@
 		data: PageData
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { data }: Props = $props()
 
 	// Check if user already has a crew
@@ -21,7 +23,7 @@
 	// Redirect if user already has a crew
 	$effect(() => {
 		if (crewQuery.data && !crewQuery.isLoading) {
-			goto(localizeHref('/crew'))
+			goto(resolve(localizeHref('/crew')))
 		}
 	})
 
@@ -77,13 +79,14 @@
 			crewStore.setCrew(crew, crew.currentMembership ?? null)
 
 			// Navigate to crew dashboard
-			goto(localizeHref('/crew'))
-		} catch (error: any) {
+			goto(resolve(localizeHref('/crew')))
+		} catch (error: unknown) {
 			// Handle API errors
-			if (error.errors) {
-				errors = error.errors
+			const err = error as Record<string, unknown>
+			if (err.errors) {
+				errors = err.errors as Record<string, string>
 			} else {
-				errors = { form: error.message || 'Failed to create crew' }
+				errors = { form: error instanceof Error ? error.message : 'Failed to create crew' }
 			}
 		}
 	}
@@ -194,7 +197,11 @@
 				</div>
 
 				<div class="form-actions">
-					<Button variant="secondary" type="button" onclick={() => goto(localizeHref('/crew'))}>
+					<Button
+						variant="secondary"
+						type="button"
+						onclick={() => goto(resolve(localizeHref('/crew')))}
+					>
 						{m.crew_cancel()}
 					</Button>
 					<Button variant="primary" type="submit" disabled={createCrewMutation.isPending}>

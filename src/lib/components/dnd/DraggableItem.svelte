@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
+	import type { Snippet } from 'svelte'
 	import type { GridItem, GridItemType } from '$lib/composables/drag-drop.svelte'
 	import { getDragDropContext } from '$lib/composables/drag-drop.svelte'
 
@@ -10,7 +11,7 @@
 		type: GridItemType
 		canDrag?: boolean
 		customPreview?: boolean
-		children?: any
+		children?: Snippet
 	}
 
 	let {
@@ -59,6 +60,7 @@
 		dragContext.startDrag(item, { container, position, type }, { altKey: e.altKey })
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	function handleDragEnd(e: DragEvent) {
 		if (!dragContext) return
 		dragContext.endDrag()
@@ -96,6 +98,7 @@
 		}
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	function handlePointerUp(e: PointerEvent) {
 		if (!dragContext) return
 		dragContext.handlePointerUp()

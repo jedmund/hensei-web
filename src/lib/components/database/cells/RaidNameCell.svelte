@@ -3,11 +3,19 @@
 
 	const { row }: Cell = $props()
 
-	function displayName(input: any): string {
+	function displayName(input: unknown): string {
 		if (!input) return '—'
-		const maybe = input.name ?? input
+		const obj = input as Record<string, unknown>
+		const maybe = obj.name ?? input
 		if (typeof maybe === 'string') return maybe
-		if (maybe && typeof maybe === 'object') return maybe.en || maybe.ja || '—'
+		if (maybe && typeof maybe === 'object') {
+			const loc = maybe as Record<string, unknown>
+			return (
+				(typeof loc.en === 'string' ? loc.en : undefined) ||
+				(typeof loc.ja === 'string' ? loc.ja : undefined) ||
+				'—'
+			)
+		}
 		return '—'
 	}
 </script>

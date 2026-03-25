@@ -25,6 +25,7 @@
 		onCancel?: () => void
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { paneId, weapon, onSave, onCancel }: Props = $props()
 
 	let editPaneRef: ReturnType<typeof WeaponEditPane> | undefined = $state()

@@ -8,7 +8,7 @@ beforeEach(() => {
 	mockFetch.mockReset()
 })
 
-function mockJsonResponse(data: any) {
+function mockJsonResponse(data: unknown) {
 	return { json: () => Promise.resolve(data) }
 }
 

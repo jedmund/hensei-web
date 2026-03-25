@@ -64,7 +64,7 @@
 		/** Element tag override (for slots/triggers) */
 		as?: 'button' | 'a' | 'span' | undefined
 		/** Any additional HTML attributes */
-		[key: string]: any
+		[key: string]: unknown
 	}
 
 	const {
@@ -90,7 +90,7 @@
 		href,
 		onclick,
 		shape = 'default',
-		as,
+		as, // eslint-disable-line @typescript-eslint/no-unused-vars
 		...restProps
 	}: Props = $props()
 

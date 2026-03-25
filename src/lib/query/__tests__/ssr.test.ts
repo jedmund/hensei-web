@@ -40,7 +40,7 @@ describe('prefetchQuery', () => {
 	it('calls queryClient.prefetchQuery with options', async () => {
 		const queryClient = {
 			prefetchQuery: vi.fn().mockResolvedValue(undefined)
-		} as any
+		} as unknown as import('@tanstack/svelte-query').QueryClient
 
 		const queryFn = vi.fn()
 		await prefetchQuery(queryClient, {
@@ -67,7 +67,7 @@ describe('prefetchInfiniteQuery', () => {
 	it('calls queryClient.prefetchInfiniteQuery with options', async () => {
 		const queryClient = {
 			prefetchInfiniteQuery: vi.fn().mockResolvedValue(undefined)
-		} as any
+		} as unknown as import('@tanstack/svelte-query').QueryClient
 
 		const queryFn = vi.fn()
 		await prefetchInfiniteQuery(queryClient, {
@@ -95,7 +95,7 @@ describe('setQueryData', () => {
 	it('calls queryClient.setQueryData with key and data', () => {
 		const queryClient = {
 			setQueryData: vi.fn()
-		} as any
+		} as unknown as import('@tanstack/svelte-query').QueryClient
 
 		setQueryData(queryClient, ['my', 'key'], { value: 42 })
 		expect(queryClient.setQueryData).toHaveBeenCalledWith(['my', 'key'], { value: 42 })
