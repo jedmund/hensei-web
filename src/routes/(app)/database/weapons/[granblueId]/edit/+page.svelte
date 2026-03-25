@@ -155,7 +155,6 @@
 				extraPrerequisite: weapon.uncap?.extraPrerequisite ?? '',
 				extra: weapon.extra || false,
 				limit: Boolean(weapon.limit),
-				ax: weapon.ax || false,
 				promotions: weapon.promotions || [],
 				releaseDate: weapon.releaseDate || '',
 				flbDate: weapon.flbDate || '',
