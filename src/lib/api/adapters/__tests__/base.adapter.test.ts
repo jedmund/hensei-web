@@ -223,7 +223,7 @@ describe('BaseAdapter', () => {
 				}
 			})
 
-			const calledUrl = vi.mocked(global.fetch).mock.calls[0][0]
+			const calledUrl = vi.mocked(global.fetch).mock.calls[0]![0]
 			expect(calledUrl).toContain('query=test')
 			expect(calledUrl).toContain('page=2')
 			// Arrays are serialized as comma-separated values

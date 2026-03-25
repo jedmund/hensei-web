@@ -193,7 +193,7 @@ describe('JobAdapter', () => {
 
 			await adapter.getAllAccessories(1)
 
-			const url = vi.mocked(global.fetch).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0]![0]
 			expect(url).toContain('/job_accessories?accessory_type=1')
 		})
 
@@ -202,7 +202,7 @@ describe('JobAdapter', () => {
 
 			await adapter.getAllAccessories()
 
-			const url = vi.mocked(global.fetch).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0]![0]
 			expect(url).toBe('https://api.example.com/job_accessories')
 		})
 	})
@@ -211,7 +211,7 @@ describe('JobAdapter', () => {
 		it('should clear both job list and detail cache on updateJob', async () => {
 			global.fetch = mockApiResponse({ id: 'job-1' })
 			const clearSpy = // eslint-disable-next-line @typescript-eslint/no-explicit-any
-			vi.spyOn(adapter as any, 'clearCache')
+				vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.updateJob('gbf-100', { name_en: 'Updated' })
 
@@ -221,7 +221,7 @@ describe('JobAdapter', () => {
 
 		it('should clear all job-related caches with clearJobCache', () => {
 			const clearSpy = // eslint-disable-next-line @typescript-eslint/no-explicit-any
-			vi.spyOn(adapter as any, 'clearCache')
+				vi.spyOn(adapter as any, 'clearCache')
 
 			adapter.clearJobCache()
 

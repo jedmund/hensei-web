@@ -31,7 +31,7 @@ describe('CrewAdapter', () => {
 
 			await adapter.getSharedParties(2, 20)
 
-			const url = vi.mocked(global.fetch).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0]![0]
 			expect(url).toContain('page=2')
 			expect(url).toContain('per_page=20')
 		})
@@ -39,7 +39,7 @@ describe('CrewAdapter', () => {
 		it('should clear dual cache on leave', async () => {
 			global.fetch = mockApiResponse({})
 			const clearSpy = // eslint-disable-next-line @typescript-eslint/no-explicit-any
-			vi.spyOn(adapter as any, 'clearCache')
+				vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.leave()
 
@@ -52,7 +52,7 @@ describe('CrewAdapter', () => {
 
 			await adapter.transferCaptain('crew-1', 'user-2')
 
-			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body)
 			expect(body.user_id).toBe('user-2')
 		})
 	})
@@ -63,7 +63,7 @@ describe('CrewAdapter', () => {
 
 			await adapter.getMembers()
 
-			const url = vi.mocked(global.fetch).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0]![0]
 			expect(url).not.toContain('filter')
 		})
 
@@ -72,7 +72,7 @@ describe('CrewAdapter', () => {
 
 			await adapter.getMembers('retired')
 
-			const url = vi.mocked(global.fetch).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0]![0]
 			expect(url).toContain('filter=retired')
 		})
 
@@ -85,7 +85,7 @@ describe('CrewAdapter', () => {
 				summonIds: ['s1']
 			})
 
-			const url = vi.mocked(global.fetch).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0]![0]
 			expect(url).toContain('character_ids')
 			expect(url).toContain('c1')
 			expect(url).toContain('c2')
@@ -100,7 +100,7 @@ describe('CrewAdapter', () => {
 
 			await adapter.getRoster({})
 
-			const url = vi.mocked(global.fetch).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0]![0]
 			expect(url).toContain('/crew/roster')
 			expect(url).not.toContain('?')
 		})
@@ -112,7 +112,7 @@ describe('CrewAdapter', () => {
 
 			const result = await adapter.sendInvitation('crew-1', 'user-2')
 
-			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body)
 			expect(body.user_id).toBe('user-2')
 			expect(result).toEqual(EXPECTED.sendInvitation)
 		})
@@ -122,7 +122,7 @@ describe('CrewAdapter', () => {
 
 			await adapter.sendInvitation('crew-1', 'user-2', 'phantom-1')
 
-			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body)
 			expect(body.user_id).toBe('user-2')
 			expect(body.phantom_player_id).toBe('phantom-1')
 		})
@@ -132,7 +132,7 @@ describe('CrewAdapter', () => {
 
 			await adapter.sendInvitation('crew-1', 'user-2')
 
-			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body)
 			expect(body.user_id).toBe('user-2')
 			expect(body.phantom_player_id).toBeUndefined()
 		})
@@ -140,7 +140,7 @@ describe('CrewAdapter', () => {
 		it('should clear dual cache on acceptInvitation', async () => {
 			global.fetch = mockApiResponse(API.acceptInvitation)
 			const clearSpy = // eslint-disable-next-line @typescript-eslint/no-explicit-any
-			vi.spyOn(adapter as any, 'clearCache')
+				vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.acceptInvitation('inv-1')
 
@@ -174,7 +174,7 @@ describe('CrewAdapter', () => {
 		it('should clear dual cache on declinePhantomClaim', async () => {
 			global.fetch = mockApiResponse(API.declinePhantomClaim)
 			const clearSpy = // eslint-disable-next-line @typescript-eslint/no-explicit-any
-			vi.spyOn(adapter as any, 'clearCache')
+				vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.declinePhantomClaim('crew-1', 'p1')
 

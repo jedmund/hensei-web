@@ -105,7 +105,7 @@ describe('syncTheme', () => {
 			})
 		)
 
-		const body = JSON.parse(mockFetch.mock.calls[0]![1].body as string)
+		const body = JSON.parse(((mockFetch.mock.calls[0] as unknown[])[1] as { body: string }).body)
 		expect(body.theme).toBe('dark')
 		// Other fields should be preserved from the original cookie
 		expect(body.element).toBe('fire')
@@ -167,7 +167,7 @@ describe('syncLanguage', () => {
 
 		await syncLanguage('user-1', baseUser, 'ja')
 
-		const body = JSON.parse(mockFetch.mock.calls[0]![1].body as string)
+		const body = JSON.parse(((mockFetch.mock.calls[0] as unknown[])[1] as { body: string }).body)
 		expect(body.language).toBe('ja')
 		expect(body.theme).toBe('system')
 	})

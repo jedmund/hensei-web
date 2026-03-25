@@ -101,7 +101,7 @@ describe('CollectionAdapter', () => {
 
 			await adapter.addWeapons([{ weaponId: 'w1', quantity: 3 }])
 
-			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body)
 			// BaseAdapter transforms collectionWeapons → collection_weapons
 			const items = body.collection_weapons
 			expect(items).toHaveLength(3)
@@ -122,7 +122,7 @@ describe('CollectionAdapter', () => {
 				{ weaponId: 'w2' } // quantity defaults to 1
 			])
 
-			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body)
 			const items = body.collection_weapons
 			expect(items).toHaveLength(4)
 		})
@@ -171,7 +171,7 @@ describe('CollectionAdapter', () => {
 
 			await adapter.addSummons([{ summonId: 's1', quantity: 2 }])
 
-			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0][1].body)
+			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body)
 			const items = body.collection_summons
 			expect(items).toHaveLength(2)
 			items.forEach((item: Record<string, unknown>) => {
