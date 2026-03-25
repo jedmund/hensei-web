@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Job } from '$lib/types/api/entities'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import {
 		getJobPortraitUrl,
 		getJobFullImageUrl,
@@ -48,7 +48,7 @@
 	<div class="images-grid">
 		<div class="image-item">
 			<a
-				href={resolvePath(images.portrait)}
+				href={resolve(images.portrait)}
 				target="_blank"
 				rel="noopener noreferrer"
 				class="image-container portrait"
@@ -60,7 +60,7 @@
 
 		<div class="image-item">
 			<a
-				href={resolvePath(images.full)}
+				href={resolve(images.full)}
 				target="_blank"
 				rel="noopener noreferrer"
 				class="image-container full"
@@ -72,7 +72,7 @@
 
 		<div class="image-item">
 			<a
-				href={resolvePath(images.icon)}
+				href={resolve(images.icon)}
 				target="_blank"
 				rel="noopener noreferrer"
 				class="image-container icon"
@@ -85,7 +85,7 @@
 
 		<div class="image-item wide-item">
 			<a
-				href={resolvePath(images.wide)}
+				href={resolve(images.wide)}
 				target="_blank"
 				rel="noopener noreferrer"
 				class="image-container wide"

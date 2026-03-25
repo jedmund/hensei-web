@@ -1,7 +1,7 @@
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 
 	// Page metadata
@@ -53,7 +53,7 @@
 		} else {
 			url.searchParams.set('tab', tab)
 		}
-		goto(resolvePath(url.toString()), { replaceState: true })
+		goto(resolve(url.toString()), { replaceState: true })
 	}
 
 	// Use TanStack Query with SSR initial data
@@ -83,12 +83,12 @@
 				variant="ghost"
 				size="small"
 				leftIcon="chevron-left"
-				href={resolvePath('/database/jobs')}>Back</Button
+				href={resolve('/database/jobs')}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
-				<Button variant="secondary" size="small" href={resolvePath(editUrl)}>Edit</Button>
+				<Button variant="secondary" size="small" href={resolve(editUrl)}>Edit</Button>
 			{/if}
 		{/snippet}
 	</DatabasePageHeader>

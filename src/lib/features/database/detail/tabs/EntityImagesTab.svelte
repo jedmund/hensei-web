@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ContextMenu } from 'bits-ui'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import { SvelteMap, SvelteSet } from 'svelte/reactivity'
 	import ContextMenuWrapper from '$lib/components/ui/menu/ContextMenuWrapper.svelte'
 
@@ -180,7 +180,7 @@
 						{#snippet trigger()}
 							<div class="image-item" class:downloading={isDownloading} class:fallback={isFailed}>
 								<a
-									href={resolvePath(bustUrl(image.url))}
+									href={resolve(bustUrl(image.url))}
 									target="_blank"
 									rel="noopener noreferrer"
 									class="image-container"
@@ -253,7 +253,7 @@
 				{:else}
 					<div class="image-item" class:fallback={isFailed}>
 						<a
-							href={resolvePath(bustUrl(image.url))}
+							href={resolve(bustUrl(image.url))}
 							target="_blank"
 							rel="noopener noreferrer"
 							class="image-container"

@@ -2,7 +2,7 @@
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { goto } from '$app/navigation'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import { DropdownMenu } from 'bits-ui'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
@@ -120,13 +120,13 @@
 
 	function handleTabChange(value: string) {
 		if (value === 'teams') {
-			goto(resolvePath(localizeHref(`/${username}`)))
+			goto(resolve(localizeHref(`/${username}`)))
 		} else if (value === 'favorites') {
-			goto(resolvePath(localizeHref(`/${username}/favorites`)))
+			goto(resolve(localizeHref(`/${username}/favorites`)))
 		} else if (value === 'playlists') {
-			goto(resolvePath(localizeHref(`/${username}/playlists`)))
+			goto(resolve(localizeHref(`/${username}/playlists`)))
 		} else if (value === 'collection') {
-			goto(resolvePath(localizeHref(`/${username}/collection/characters`)))
+			goto(resolve(localizeHref(`/${username}/collection/characters`)))
 		}
 	}
 
@@ -221,7 +221,7 @@
 							{/if}
 							{#if canCreateTeam}
 								<DropdownItem>
-									<a href={resolvePath(localizeHref(`/teams/new?collectionSource=${username}`))}>
+									<a href={resolve(localizeHref(`/teams/new?collectionSource=${username}`))}>
 										<Icon name="users" size={14} />
 										<span>{m.profile_create_team_collection({ name: username })}</span>
 									</a>

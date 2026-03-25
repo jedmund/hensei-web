@@ -3,7 +3,7 @@
 	import { m } from '$lib/paraglide/messages'
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import Button from './ui/Button.svelte'
@@ -134,7 +134,7 @@
 
 			if (response.ok) {
 				// Navigate to login page after successful logout
-				await goto(resolvePath('/auth/login'))
+				await goto(resolve('/auth/login'))
 			}
 		} catch (error) {
 			console.error('Logout failed:', error)
@@ -151,17 +151,17 @@
 		<div class="nav-links">
 			<ul role="list">
 				<li>
-					<a href={resolvePath(galleryHref)} class:selected={isNavSelected(galleryHref)}
+					<a href={resolve(galleryHref)} class:selected={isNavSelected(galleryHref)}
 						>{m.nav_gallery()}</a
 					>
 				</li>
 				<li>
-					<a href={resolvePath(crewHref)} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a
+					<a href={resolve(crewHref)} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a
 					>
 				</li>
 				<li>
 					<a
-						href={resolvePath(meHref)}
+						href={resolve(meHref)}
 						class:selected={isProfileSelected}
 						aria-label={m.nav_account_aria()}
 						class="profile-link"
@@ -196,14 +196,14 @@
 						<DropdownMenu.Portal>
 							<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
 								<DropdownItem>
-									<a href={resolvePath(aboutHref)}>{m.nav_about()}</a>
+									<a href={resolve(aboutHref)}>{m.nav_about()}</a>
 								</DropdownItem>
 								<DropdownItem>
-									<a href={resolvePath(extensionHref)}>{m.nav_extension()}</a>
+									<a href={resolve(extensionHref)}>{m.nav_extension()}</a>
 								</DropdownItem>
 								{#if role !== null && role >= 7}
 									<DropdownItem>
-										<a href={resolvePath(databaseHref)}>{m.nav_database()}</a>
+										<a href={resolve(databaseHref)}>{m.nav_database()}</a>
 									</DropdownItem>
 								{/if}
 								<DropdownMenu.Separator class="dropdown-separator" />
@@ -245,16 +245,16 @@
 		<div class="nav-links">
 			<ul role="list">
 				<li>
-					<a href={resolvePath(galleryHref)} class:selected={isNavSelected(galleryHref)}
+					<a href={resolve(galleryHref)} class:selected={isNavSelected(galleryHref)}
 						>{m.nav_gallery()}</a
 					>
 				</li>
 				<li>
-					<a href={resolvePath(crewHref)} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a
+					<a href={resolve(crewHref)} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a
 					>
 				</li>
 				<li>
-					<a href={resolvePath(collectionHref)} class:selected={isNavSelected(collectionHref)}
+					<a href={resolve(collectionHref)} class:selected={isNavSelected(collectionHref)}
 						>{m.nav_collection()}</a
 					>
 				</li>
@@ -267,10 +267,10 @@
 						<DropdownMenu.Portal>
 							<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
 								<DropdownItem>
-									<a href={resolvePath(aboutHref)}>{m.nav_about()}</a>
+									<a href={resolve(aboutHref)}>{m.nav_about()}</a>
 								</DropdownItem>
 								<DropdownItem>
-									<a href={resolvePath(extensionHref)}>{m.nav_extension()}</a>
+									<a href={resolve(extensionHref)}>{m.nav_extension()}</a>
 								</DropdownItem>
 								<DropdownMenu.Separator class="dropdown-separator" />
 								<LanguageToggle />
@@ -283,12 +283,12 @@
 
 			<ul role="list">
 				<li>
-					<a href={resolvePath(registerHref)} class:selected={isNavSelected(registerHref)}
+					<a href={resolve(registerHref)} class:selected={isNavSelected(registerHref)}
 						>{m.nav_register()}</a
 					>
 				</li>
 				<li>
-					<a href={resolvePath(loginHref)} class:selected={isNavSelected(loginHref)}
+					<a href={resolve(loginHref)} class:selected={isNavSelected(loginHref)}
 						>{m.nav_login()}</a
 					>
 				</li>
@@ -305,7 +305,7 @@
 			elementStyle={Boolean(userElement)}
 			class="new-team-button"
 			aria-label={m.nav_new_team()}
-			href={resolvePath(newTeamHref)}
+			href={resolve(newTeamHref)}
 		/>
 	{/if}
 </nav>

@@ -5,7 +5,7 @@
 	import CollectionFilters from '$lib/components/collection/CollectionFilters.svelte'
 	import { onMount, onDestroy, tick } from 'svelte'
 	import { goto } from '$app/navigation'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 	import { createQuery, queryOptions } from '@tanstack/svelte-query'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
@@ -119,7 +119,7 @@
 
 			if (updateUrlParam) {
 				const url = filters.buildUrlParams(search.searchTerm, pageNum, $page.url.pathname)
-				goto(resolvePath(url), { replaceState: true, noScroll: true, keepFocus: true })
+				goto(resolve(url), { replaceState: true, noScroll: true, keepFocus: true })
 			}
 		} catch (error) {
 			console.error('Failed to load data:', error)
@@ -289,7 +289,7 @@
 				if (rowData && rowData.granblueId) {
 					storeListUrl($page.url.href, resource)
 					const styleSuffix = resource === 'characters' && rowData.styleSwap ? '/style' : ''
-					goto(resolvePath(`/database/${resource}/${rowData.granblueId}${styleSuffix}`))
+					goto(resolve(`/database/${resource}/${rowData.granblueId}${styleSuffix}`))
 				}
 			}
 		})

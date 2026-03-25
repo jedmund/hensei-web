@@ -1,6 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any -- third-party module type shims require any */
 declare const __BUILD_TIMESTAMP__: string
 
+// Widen SvelteKit's resolve() to accept plain strings.
+// SvelteKit 2.26+ made resolve() type-safe with route ID literals, but we
+// use dynamic strings from localizeHref() extensively. This augmentation
+// lets us use resolve() directly (satisfying the svelte/no-navigation-without-resolve
+// ESLint rule) without TypeScript route-literal errors.
+declare module '$app/paths' {
+	export function resolve(route: string, ...rest: any[]): string
+}
+
 declare module '*.jpg'
 
 declare module '*.svg' {

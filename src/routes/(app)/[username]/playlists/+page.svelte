@@ -5,7 +5,7 @@
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { ContextMenu } from 'bits-ui'
 	import { goto } from '$app/navigation'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import PlaylistCard from '$lib/components/playlist/PlaylistCard.svelte'
 	import CreatePlaylistDialog from '$lib/components/playlist/CreatePlaylistDialog.svelte'
@@ -142,7 +142,7 @@
 											class="context-menu-item"
 											onclick={() =>
 												goto(
-													resolvePath(
+													resolve(
 														localizeHref(`/${data.user.username}/playlists/${playlist.slug}`)
 													)
 												)}

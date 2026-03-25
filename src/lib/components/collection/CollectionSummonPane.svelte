@@ -30,7 +30,7 @@
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { page } from '$app/stores'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -173,7 +173,7 @@
 
 	function viewInDatabase() {
 		if (!summonData?.granblueId) return
-		goto(resolvePath(getDatabaseUrl('summon'), summonData.granblueId))
+		goto(resolve(getDatabaseUrl('summon'), summonData.granblueId))
 	}
 
 	// Set up sidebar action on mount and clean up on destroy

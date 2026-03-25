@@ -32,7 +32,7 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getRingStat, getElementalizedEarringStat } from '$lib/utils/masteryUtils'
 	import { page } from '$app/stores'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -285,7 +285,7 @@
 	function viewInDatabase() {
 		if (!characterData?.granblueId) return
 		goto(
-			resolvePath(getDatabaseUrl('character'), characterData.granblueId, characterData.styleSwap)
+			resolve(getDatabaseUrl('character'), characterData.granblueId, characterData.styleSwap)
 		)
 	}
 

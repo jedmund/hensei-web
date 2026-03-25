@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
@@ -35,7 +35,7 @@
 		// For phantoms, use phantom ID since they don't have usernames
 		const path =
 			player.type === 'member' ? `/crew/members/${player.name}` : `/crew/phantoms/${player.id}`
-		goto(resolvePath(path))
+		goto(resolve(path))
 	}
 
 	function handleDropdownClick(event: MouseEvent) {

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import { resolve } from '$app/paths'
-	import { resolvePath } from '$lib/utils/resolvePath'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { Grid } from 'wx-svelte-grid'
@@ -44,9 +43,9 @@
 	$effect(() => {
 		const currentView = $page.url.searchParams.get('view')
 		if (viewMode === 'skills' && currentView !== 'skills') {
-			goto(resolvePath('?view=skills'), { replaceState: true, noScroll: true })
+			goto(resolve('?view=skills'), { replaceState: true, noScroll: true })
 		} else if (viewMode === 'accessories' && currentView !== 'accessories') {
-			goto(resolvePath('?view=accessories'), { replaceState: true, noScroll: true })
+			goto(resolve('?view=accessories'), { replaceState: true, noScroll: true })
 		} else if (viewMode === 'jobs' && currentView != null) {
 			goto(resolve('/database/jobs'), { replaceState: true, noScroll: true })
 		}

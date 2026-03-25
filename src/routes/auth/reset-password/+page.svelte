@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import AuthCard from '$lib/components/auth/AuthCard.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -85,12 +85,12 @@
 <AuthCard title={m.auth_resetPassword_title()}>
 	{#if form?.success}
 		<p class="success">{m.auth_resetPassword_success()}</p>
-		<a href={resolvePath(localizeHref('/auth/login'))} class="action-link">
+		<a href={resolve(localizeHref('/auth/login'))} class="action-link">
 			{m.auth_resetPassword_signIn()}
 		</a>
 	{:else if data.invalidToken || form?.invalidToken}
 		<p class="error">{m.auth_resetPassword_invalidToken()}</p>
-		<a href={resolvePath(localizeHref('/auth/forgot-password'))} class="action-link">
+		<a href={resolve(localizeHref('/auth/forgot-password'))} class="action-link">
 			{m.auth_resetPassword_requestNew()}
 		</a>
 	{:else}
@@ -146,7 +146,7 @@
 
 	{#snippet footer()}
 		<p>
-			<a href={resolvePath(localizeHref('/auth/login'))}>{m.auth_forgotPassword_backToLogin()}</a>
+			<a href={resolve(localizeHref('/auth/login'))}>{m.auth_forgotPassword_backToLogin()}</a>
 		</p>
 	{/snippet}
 </AuthCard>

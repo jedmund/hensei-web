@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -21,7 +21,7 @@
 	// Redirect unauthenticated users
 	$effect(() => {
 		if (browser && !isAuthenticated) {
-			goto(resolvePath(localizeHref('/')))
+			goto(resolve(localizeHref('/')))
 		}
 	})
 
@@ -105,7 +105,7 @@
 			<p>{m.migrate_page_empty()}</p>
 			<p class="empty-description">{m.migrate_page_empty_description()}</p>
 			{#if currentUser?.username}
-				<Button href={resolvePath(localizeHref(`/${currentUser.username}`))} size="small">
+				<Button href={resolve(localizeHref(`/${currentUser.username}`))} size="small">
 					{m.migrate_banner_action()}
 				</Button>
 			{/if}

@@ -3,7 +3,7 @@
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { page } from '$app/stores'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { playlistQueries } from '$lib/api/queries/playlist.queries'
 	import {
@@ -91,7 +91,7 @@
 			const playlist = await createMutation.mutateAsync({ title: title.trim() })
 			await addMutation.mutateAsync({ playlistId: playlist.id, partyId })
 			sidebar.close()
-			goto(resolvePath(localizeHref(`/${username}/playlists/${playlist.slug}`)))
+			goto(resolve(localizeHref(`/${username}/playlists/${playlist.slug}`)))
 		} catch {
 			// Error handled by mutation state
 		}

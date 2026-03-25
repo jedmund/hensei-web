@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import Button from '$lib/components/ui/Button.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -19,14 +19,14 @@
 				<Button
 					variant="primary"
 					size="small"
-					onclick={() => goto(resolvePath(localizeHref('/auth/register')))}
+					onclick={() => goto(resolve(localizeHref('/auth/register')))}
 				>
 					{m.collection_sign_up()}
 				</Button>
 				<Button
 					variant="secondary"
 					size="small"
-					onclick={() => goto(resolvePath(localizeHref('/auth/login')))}
+					onclick={() => goto(resolve(localizeHref('/auth/login')))}
 				>
 					{m.collection_log_in()}
 				</Button>

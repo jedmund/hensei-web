@@ -1,7 +1,7 @@
 <script lang="ts">
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import { goto } from '$app/navigation'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 	import { onMount } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -53,7 +53,7 @@
 		} else {
 			url.searchParams.delete('view')
 		}
-		goto(resolvePath(url.pathname + url.search), {
+		goto(resolve(url.pathname + url.search), {
 			replaceState: true,
 			noScroll: true,
 			keepFocus: true
@@ -149,12 +149,12 @@
 
 	// Navigate to raid detail
 	function handleRaidClick(raid: Raid) {
-		goto(resolvePath(`/database/raids/${raid.slug}`))
+		goto(resolve(`/database/raids/${raid.slug}`))
 	}
 
 	// Navigate to raid group detail
 	function handleGroupClick(group: RaidGroupFull) {
-		goto(resolvePath(`/database/raid-groups/${group.id}`))
+		goto(resolve(`/database/raid-groups/${group.id}`))
 	}
 
 	// Check if any filters are active

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
@@ -86,7 +86,7 @@
 </script>
 
 <li class="phantom-row" class:retired={phantom.retired}>
-	<a href={resolvePath(localizeHref(`/crew/phantoms/${phantom.id}`))} class="phantom-link">
+	<a href={resolve(localizeHref(`/crew/phantoms/${phantom.id}`))} class="phantom-link">
 		<div class="phantom-info">
 			<div class="phantom-details">
 				<span class="name">{phantom.name}</span>
@@ -123,7 +123,7 @@
 				{#snippet menu()}
 					<DropdownMenuBase.Item
 						class="dropdown-menu-item"
-						onclick={() => goto(resolvePath(localizeHref(`/crew/phantoms/${phantom.id}`)))}
+						onclick={() => goto(resolve(localizeHref(`/crew/phantoms/${phantom.id}`)))}
 					>
 						{m.crew_view_crew_profile()}
 					</DropdownMenuBase.Item>

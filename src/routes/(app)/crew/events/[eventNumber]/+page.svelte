@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { goto, replaceState } from '$app/navigation'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -61,7 +61,7 @@
 		} else {
 			url.searchParams.delete('crew')
 		}
-		replaceState(resolvePath(url.pathname + url.search), {})
+		replaceState(resolve(url.pathname + url.search), {})
 	}
 
 	// Crew scores from participation (Finals Day 1-4 only: rounds 2-5)
@@ -121,7 +121,7 @@
 
 	// Navigate back
 	function handleBack() {
-		goto(resolvePath(localizeHref('/crew')))
+		goto(resolve(localizeHref('/crew')))
 	}
 
 	// ==================== Add Score Modal ====================

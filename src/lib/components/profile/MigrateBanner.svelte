@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { browser } from '$app/environment'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import { goto } from '$app/navigation'
 	import { createQuery } from '@tanstack/svelte-query'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -40,7 +40,7 @@
 		<Button
 			size="small"
 			variant="primary"
-			onclick={() => goto(resolvePath(localizeHref('/teams/migrate')))}
+			onclick={() => goto(resolve(localizeHref('/teams/migrate')))}
 		>
 			{m.migrate_banner_action()}
 		</Button>

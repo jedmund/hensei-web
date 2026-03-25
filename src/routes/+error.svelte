@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores'
-	import { resolvePath } from '$lib/utils/resolvePath'
+	import { resolve } from '$app/paths'
 	import * as m from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 </script>
@@ -13,7 +13,7 @@
 
 	<p class="browse-link">
 		{m.error_or_browse_gallery()}
-		<a href={resolvePath(localizeHref('/teams/explore'))}>{m.error_gallery()}</a>
+		<a href={resolve(localizeHref('/teams/explore'))}>{m.error_gallery()}</a>
 	</p>
 </div>
 
