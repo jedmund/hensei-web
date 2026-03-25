@@ -60,52 +60,52 @@
 
 <DetailsSection title={m.section_battle_settings()}>
 	<DetailRow label={m.battle_solo()} noHover compact>
-			<Switch
-				checked={solo}
-				size="small"
-				{element}
-				{disabled}
-				onCheckedChange={(v) => handleChange('solo', v)}
-			/>
+		<Switch
+			checked={solo}
+			size="small"
+			{element}
+			{disabled}
+			onCheckedChange={(v) => handleChange('solo', v)}
+		/>
 	</DetailRow>
 
 	<DetailRow label={m.battle_charge_attack()} noHover compact>
-			<Switch
-				checked={chargeAttack}
-				size="small"
-				{element}
-				{disabled}
-				onCheckedChange={(v) => handleChange('chargeAttack', v)}
-			/>
+		<Switch
+			checked={chargeAttack}
+			size="small"
+			{element}
+			{disabled}
+			onCheckedChange={(v) => handleChange('chargeAttack', v)}
+		/>
 	</DetailRow>
 
 	<DetailRow label={m.battle_full_auto()} noHover compact>
-			<Switch
-				checked={fullAuto}
-				size="small"
-				{element}
-				{disabled}
-				onCheckedChange={(v) => handleChange('fullAuto', v)}
-			/>
+		<Switch
+			checked={fullAuto}
+			size="small"
+			{element}
+			{disabled}
+			onCheckedChange={(v) => handleChange('fullAuto', v)}
+		/>
 	</DetailRow>
 
 	<DetailRow label={m.battle_auto_summon()} noHover compact>
-			<Switch
-				checked={autoSummon}
-				size="small"
-				{element}
-				disabled={disabled || !fullAuto}
-				onCheckedChange={(v) => handleChange('autoSummon', v)}
-			/>
+		<Switch
+			checked={autoSummon}
+			size="small"
+			{element}
+			disabled={disabled || !fullAuto}
+			onCheckedChange={(v) => handleChange('autoSummon', v)}
+		/>
 	</DetailRow>
 
 	<DetailRow label={m.battle_auto_guard()} noHover compact>
-			<Switch
-				checked={autoGuard}
-				size="small"
-				{element}
-				disabled={disabled || !fullAuto}
-				onCheckedChange={(v) => handleChange('autoGuard', v)}
-			/>
+		<Switch
+			checked={autoGuard}
+			size="small"
+			{element}
+			disabled={disabled || !fullAuto}
+			onCheckedChange={(v) => handleChange('autoGuard', v)}
+		/>
 	</DetailRow>
 </DetailsSection>

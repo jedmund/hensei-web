@@ -141,7 +141,9 @@
 										<ContextMenu.Item
 											class="context-menu-item"
 											onclick={() =>
-												goto(resolve(localizeHref(`/${data.user.username}/playlists/${playlist.slug}`)))}
+												goto(
+													resolve(localizeHref(`/${data.user.username}/playlists/${playlist.slug}`))
+												)}
 										>
 											{m.context_view_playlist()}
 										</ContextMenu.Item>

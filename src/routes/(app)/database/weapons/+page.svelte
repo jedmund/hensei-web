@@ -155,7 +155,7 @@
 			width: 70,
 			hidden: true,
 			cell: BooleanCell,
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) => row.uncap?.flb
 		},
 		{
@@ -164,7 +164,7 @@
 			width: 70,
 			hidden: true,
 			cell: BooleanCell,
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) => row.uncap?.ulb
 		},
 		{
@@ -173,7 +173,7 @@
 			width: 120,
 			hidden: true,
 			cell: BooleanCell,
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) => row.uncap?.transcendence
 		},
 		{
@@ -233,7 +233,7 @@
 			header: 'Extra Prereq.',
 			width: 110,
 			hidden: true,
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) => row.uncap?.extraPrerequisite,
 			template: (value: unknown) => {
 				if (value == null) return '—'
@@ -301,7 +301,7 @@
 			width: 100,
 			hidden: true,
 			cell: BooleanCell,
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) =>
 				row.elementVariantIds != null && Object.keys(row.elementVariantIds).length > 0
 		}

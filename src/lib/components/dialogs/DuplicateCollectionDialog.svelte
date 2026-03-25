@@ -15,19 +15,19 @@
 </script>
 
 <Dialog bind:open>
-		<ModalHeader title={m.duplicate_collection_title()} />
-		<ModalBody>
-			<p class="message">
-				{m.duplicate_collection_body()}
-			</p>
-		</ModalBody>
-		<ModalFooter
-			{onCancel}
-			primaryAction={{
-				label: m.duplicate_collection_confirm(),
-				onclick: onConfirm
-			}}
-		/>
+	<ModalHeader title={m.duplicate_collection_title()} />
+	<ModalBody>
+		<p class="message">
+			{m.duplicate_collection_body()}
+		</p>
+	</ModalBody>
+	<ModalFooter
+		{onCancel}
+		primaryAction={{
+			label: m.duplicate_collection_confirm(),
+			onclick: onConfirm
+		}}
+	/>
 </Dialog>
 
 <style lang="scss">

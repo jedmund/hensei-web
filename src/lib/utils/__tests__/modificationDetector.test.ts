@@ -96,7 +96,9 @@ describe('detectModifications', () => {
 	// --- Character ---
 
 	it('detects character awakening', () => {
-		const char = makeGridCharacter({ awakening: { type: { id: 'a-1' } as unknown as Record<string, unknown>, level: 1 } })
+		const char = makeGridCharacter({
+			awakening: { type: { id: 'a-1' } as unknown as Record<string, unknown>, level: 1 }
+		})
 		const status = detectModifications('character', char)
 		expect(status.hasAwakening).toBe(true)
 		expect(status.hasModifications).toBe(true)
@@ -146,28 +148,36 @@ describe('detectModifications', () => {
 	// --- Weapon ---
 
 	it('detects weapon awakening', () => {
-		const weapon = makeGridWeapon({ awakening: { type: { id: 'a-1' } as unknown as Record<string, unknown>, level: 1 } })
+		const weapon = makeGridWeapon({
+			awakening: { type: { id: 'a-1' } as unknown as Record<string, unknown>, level: 1 }
+		})
 		const status = detectModifications('weapon', weapon)
 		expect(status.hasAwakening).toBe(true)
 		expect(status.hasModifications).toBe(true)
 	})
 
 	it('detects weapon keys', () => {
-		const weapon = makeGridWeapon({ weaponKeys: [{ id: 'k-1' } as unknown as Record<string, unknown>] })
+		const weapon = makeGridWeapon({
+			weaponKeys: [{ id: 'k-1' } as unknown as Record<string, unknown>]
+		})
 		const status = detectModifications('weapon', weapon)
 		expect(status.hasWeaponKeys).toBe(true)
 		expect(status.hasModifications).toBe(true)
 	})
 
 	it('detects weapon ax skills', () => {
-		const weapon = makeGridWeapon({ ax: [{ modifier: 1, strength: 5 } as unknown as Record<string, unknown>] })
+		const weapon = makeGridWeapon({
+			ax: [{ modifier: 1, strength: 5 } as unknown as Record<string, unknown>]
+		})
 		const status = detectModifications('weapon', weapon)
 		expect(status.hasAxSkills).toBe(true)
 		expect(status.hasModifications).toBe(true)
 	})
 
 	it('detects weapon befoulment', () => {
-		const weapon = makeGridWeapon({ befoulment: { modifier: 1 } as unknown as Record<string, unknown> })
+		const weapon = makeGridWeapon({
+			befoulment: { modifier: 1 } as unknown as Record<string, unknown>
+		})
 		const status = detectModifications('weapon', weapon)
 		expect(status.hasBefoulment).toBe(true)
 		expect(status.hasModifications).toBe(true)

@@ -21,6 +21,9 @@ export const load: PageLoad = async ({ params, url, depends, parent, fetch }) =>
 		return { user, items: parties, page, total, totalPages, perPage, isOwner }
 	} catch (e: unknown) {
 		const err = e as Record<string, unknown>
-		throw error((typeof err?.status === 'number' ? err.status : undefined) || 502, (typeof err?.message === 'string' ? err.message : undefined) || 'Failed to load profile')
+		throw error(
+			(typeof err?.status === 'number' ? err.status : undefined) || 502,
+			(typeof err?.message === 'string' ? err.message : undefined) || 'Failed to load profile'
+		)
 	}
 }

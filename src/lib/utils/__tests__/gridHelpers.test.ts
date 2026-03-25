@@ -28,7 +28,12 @@ describe('findNextEmptySlot — weapons', () => {
 
 	it('returns 0 when mainhand is occupied', () => {
 		const party = makeParty({
-			weapons: [{ id: 'w-1', position: -1, mainhand: true }] as unknown as { position?: number; mainhand?: boolean; id?: string; main?: boolean }[]
+			weapons: [{ id: 'w-1', position: -1, mainhand: true }] as unknown as {
+				position?: number
+				mainhand?: boolean
+				id?: string
+				main?: boolean
+			}[]
 		})
 		expect(findNextEmptySlot(party, GridType.Weapon)).toBe(0)
 	})
@@ -45,7 +50,12 @@ describe('findNextEmptySlot — weapons', () => {
 	})
 
 	it('returns SLOT_NOT_FOUND when all weapon slots are full', () => {
-		const weapons = [{ id: 'w-mh', position: -1, mainhand: true }] as unknown as { position?: number; mainhand?: boolean; id?: string; main?: boolean }[]
+		const weapons = [{ id: 'w-mh', position: -1, mainhand: true }] as unknown as {
+			position?: number
+			mainhand?: boolean
+			id?: string
+			main?: boolean
+		}[]
 		for (let i = 0; i <= 8; i++) {
 			weapons.push({ id: `w-${i}`, position: i })
 		}
@@ -65,7 +75,12 @@ describe('findNextEmptySlot — summons', () => {
 	})
 
 	it('returns 6 (friend) when main and regular slots are full', () => {
-		const summons = [{ id: 's-main', position: -1, main: true }] as unknown as { position?: number; mainhand?: boolean; id?: string; main?: boolean }[]
+		const summons = [{ id: 's-main', position: -1, main: true }] as unknown as {
+			position?: number
+			mainhand?: boolean
+			id?: string
+			main?: boolean
+		}[]
 		for (let i = 0; i <= 5; i++) {
 			summons.push({ id: `s-${i}`, position: i })
 		}
@@ -107,7 +122,12 @@ describe('findNextEmptySlot — characters', () => {
 	})
 
 	it('returns SLOT_NOT_FOUND when all character slots are full', () => {
-		const characters = [] as unknown as { position?: number; mainhand?: boolean; id?: string; main?: boolean }[]
+		const characters = [] as unknown as {
+			position?: number
+			mainhand?: boolean
+			id?: string
+			main?: boolean
+		}[]
 		for (let i = 0; i <= 4; i++) {
 			characters.push({ id: `c-${i}`, position: i })
 		}

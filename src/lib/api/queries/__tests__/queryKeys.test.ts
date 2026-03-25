@@ -29,7 +29,11 @@ describe('partyKeys', () => {
 	it('produces correct key arrays', () => {
 		expect(partyKeys.all).toEqual(['parties'])
 		expect(partyKeys.lists()).toEqual(['parties', 'list'])
-		expect(partyKeys.list({ element: [1] } as Record<string, unknown>)).toEqual(['parties', 'list', { element: [1] }])
+		expect(partyKeys.list({ element: [1] } as Record<string, unknown>)).toEqual([
+			'parties',
+			'list',
+			{ element: [1] }
+		])
 		expect(partyKeys.userLists()).toEqual(['parties', 'user'])
 		expect(partyKeys.userList('alice')).toEqual(['parties', 'user', 'alice', undefined])
 		expect(partyKeys.raidLists()).toEqual(['parties', 'raid'])

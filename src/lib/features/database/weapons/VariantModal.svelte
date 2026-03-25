@@ -139,116 +139,116 @@
 </script>
 
 <Dialog bind:open {onOpenChange}>
-		<ModalHeader {title} />
-		<div class="modal-body">
+	<ModalHeader {title} />
+	<div class="modal-body">
+		<DetailItem
+			label="Name"
+			bind:value={name}
+			editable={true}
+			type="text"
+			placeholder="e.g. Revans, Ennead"
+			width="240px"
+		/>
+		<h4 class="section-header">Overrides</h4>
+		<DetailItem
+			label="Has Weapon Keys"
+			value={hasWeaponKeys}
+			editable={true}
+			type="checkbox"
+			onchange={(checked) => (hasWeaponKeys = checked)}
+		/>
+		{#if hasWeaponKeys}
 			<DetailItem
-				label="Name"
-				bind:value={name}
+				label="Num Weapon Keys"
+				bind:value={numWeaponKeysValue}
 				editable={true}
-				type="text"
-				placeholder="e.g. Revans, Ennead"
-				width="240px"
+				type="number"
+				placeholder="0"
 			/>
-			<h4 class="section-header">Overrides</h4>
+		{/if}
+		<DetailItem
+			label="Has Awakening"
+			value={hasAwakening}
+			editable={true}
+			type="checkbox"
+			onchange={(checked) => (hasAwakening = checked)}
+		/>
+		<DetailItem
+			label="Augment Type"
+			value={augmentType}
+			editable={true}
+			type="checkbox"
+			onchange={(checked) => (augmentType = checked)}
+		/>
+		{#if augmentType}
 			<DetailItem
-				label="Has Weapon Keys"
-				value={hasWeaponKeys}
+				label="Augment"
+				bind:value={augmentTypeValue}
 				editable={true}
-				type="checkbox"
-				onchange={(checked) => (hasWeaponKeys = checked)}
+				type="select"
+				options={augmentTypeOptions}
 			/>
-			{#if hasWeaponKeys}
-				<DetailItem
-					label="Num Weapon Keys"
-					bind:value={numWeaponKeysValue}
-					editable={true}
-					type="number"
-					placeholder="0"
-				/>
+		{/if}
+		<DetailItem
+			label="Element Changeable"
+			value={elementChangeable}
+			editable={true}
+			type="checkbox"
+			onchange={(checked) => (elementChangeable = checked)}
+		/>
+		<DetailItem
+			label="Extra Grid"
+			value={extra}
+			editable={true}
+			type="checkbox"
+			onchange={(checked) => (extra = checked)}
+		/>
+	</div>
+	<ModalFooter
+		onCancel={() => (open = false)}
+		primaryAction={{
+			label: isSaving ? 'Saving...' : isEditing ? 'Save' : 'Create',
+			onclick: handleSave,
+			disabled: isSaving || isDeleting || !canSave
+		}}
+	>
+		{#snippet left()}
+			{#if isEditing}
+				<Button
+					variant="destructive-ghost"
+					size="small"
+					onclick={handleDeleteClick}
+					disabled={isDeleting || isSaving}
+				>
+					{isDeleting ? 'Deleting...' : 'Delete'}
+				</Button>
 			{/if}
-			<DetailItem
-				label="Has Awakening"
-				value={hasAwakening}
-				editable={true}
-				type="checkbox"
-				onchange={(checked) => (hasAwakening = checked)}
-			/>
-			<DetailItem
-				label="Augment Type"
-				value={augmentType}
-				editable={true}
-				type="checkbox"
-				onchange={(checked) => (augmentType = checked)}
-			/>
-			{#if augmentType}
-				<DetailItem
-					label="Augment"
-					bind:value={augmentTypeValue}
-					editable={true}
-					type="select"
-					options={augmentTypeOptions}
-				/>
-			{/if}
-			<DetailItem
-				label="Element Changeable"
-				value={elementChangeable}
-				editable={true}
-				type="checkbox"
-				onchange={(checked) => (elementChangeable = checked)}
-			/>
-			<DetailItem
-				label="Extra Grid"
-				value={extra}
-				editable={true}
-				type="checkbox"
-				onchange={(checked) => (extra = checked)}
-			/>
-		</div>
-		<ModalFooter
-			onCancel={() => (open = false)}
-			primaryAction={{
-				label: isSaving ? 'Saving...' : isEditing ? 'Save' : 'Create',
-				onclick: handleSave,
-				disabled: isSaving || isDeleting || !canSave
-			}}
-		>
-			{#snippet left()}
-				{#if isEditing}
-					<Button
-						variant="destructive-ghost"
-						size="small"
-						onclick={handleDeleteClick}
-						disabled={isDeleting || isSaving}
-					>
-						{isDeleting ? 'Deleting...' : 'Delete'}
-					</Button>
-				{/if}
-			{/snippet}
-		</ModalFooter>
+		{/snippet}
+	</ModalFooter>
 
-		<!-- Nested delete confirmation dialog -->
-		<DialogPrimitive.Root bind:open={confirmDeleteOpen}>
-			<DialogPrimitive.Portal>
-				<DialogPrimitive.Overlay class="dialog-overlay" />
-				<DialogPrimitive.Content class="dialog-content confirm-dialog">
-					<div class="confirm-body">
-						<p>
-							Are you sure you want to delete this variant? Weapons assigned to it will lose their
-							variant override.
-						</p>
-					</div>
-					<ModalFooter
-						onCancel={() => (confirmDeleteOpen = false)}
-						primaryAction={{
-							label: isDeleting ? 'Deleting...' : 'Delete',
-							onclick: handleConfirmDelete,
-							destructive: true,
-							disabled: isDeleting
-						}}
-					/>
-				</DialogPrimitive.Content>
-			</DialogPrimitive.Portal>
-		</DialogPrimitive.Root>
+	<!-- Nested delete confirmation dialog -->
+	<DialogPrimitive.Root bind:open={confirmDeleteOpen}>
+		<DialogPrimitive.Portal>
+			<DialogPrimitive.Overlay class="dialog-overlay" />
+			<DialogPrimitive.Content class="dialog-content confirm-dialog">
+				<div class="confirm-body">
+					<p>
+						Are you sure you want to delete this variant? Weapons assigned to it will lose their
+						variant override.
+					</p>
+				</div>
+				<ModalFooter
+					onCancel={() => (confirmDeleteOpen = false)}
+					primaryAction={{
+						label: isDeleting ? 'Deleting...' : 'Delete',
+						onclick: handleConfirmDelete,
+						destructive: true,
+						disabled: isDeleting
+					}}
+				/>
+			</DialogPrimitive.Content>
+		</DialogPrimitive.Portal>
+	</DialogPrimitive.Root>
 </Dialog>
 
 <style lang="scss">

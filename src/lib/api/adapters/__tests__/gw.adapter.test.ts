@@ -95,7 +95,10 @@ describe('GwAdapter', () => {
 		it('should POST addIndividualScoreByEvent to correct URL', async () => {
 			global.fetch = mockApiResponse(API.addIndividualScore)
 
-			await adapter.addIndividualScoreByEvent('gw-1', { round: 1, score: 100000 } as Record<string, unknown>)
+			await adapter.addIndividualScoreByEvent('gw-1', { round: 1, score: 100000 } as Record<
+				string,
+				unknown
+			>)
 
 			const url = vi.mocked(global.fetch).mock.calls[0][0]
 			expect(url).toContain('/crew/gw_events/gw-1/individual_scores')
@@ -105,7 +108,10 @@ describe('GwAdapter', () => {
 		it('should POST batchAddIndividualScoresByEvent to correct URL', async () => {
 			global.fetch = mockApiResponse(API.batchAddIndividualScores)
 
-			await adapter.batchAddIndividualScoresByEvent('gw-1', { scores: [] } as Record<string, unknown>)
+			await adapter.batchAddIndividualScoresByEvent('gw-1', { scores: [] } as Record<
+				string,
+				unknown
+			>)
 
 			const url = vi.mocked(global.fetch).mock.calls[0][0]
 			expect(url).toContain('/crew/gw_events/gw-1/individual_scores/batch')

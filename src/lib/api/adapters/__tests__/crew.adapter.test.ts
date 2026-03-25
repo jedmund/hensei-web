@@ -151,7 +151,9 @@ describe('CrewAdapter', () => {
 		it('should unwrap phantomPlayer from createPhantom response', async () => {
 			global.fetch = mockApiResponse(API.createPhantom)
 
-			const result = await adapter.createPhantom('crew-1', { name: 'Ghost' } as unknown as import('$lib/types/api/crew').CreatePhantomPlayerInput)
+			const result = await adapter.createPhantom('crew-1', {
+				name: 'Ghost'
+			} as unknown as import('$lib/types/api/crew').CreatePhantomPlayerInput)
 
 			expect(result).toEqual(EXPECTED.createPhantom)
 		})

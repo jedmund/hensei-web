@@ -151,7 +151,9 @@
 		<div class="nav-links">
 			<ul role="list">
 				<li>
-					<a href={resolve(galleryHref)} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
+					<a href={resolve(galleryHref)} class:selected={isNavSelected(galleryHref)}
+						>{m.nav_gallery()}</a
+					>
 				</li>
 				<li>
 					<a href={resolve(crewHref)} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
@@ -242,7 +244,9 @@
 		<div class="nav-links">
 			<ul role="list">
 				<li>
-					<a href={resolve(galleryHref)} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
+					<a href={resolve(galleryHref)} class:selected={isNavSelected(galleryHref)}
+						>{m.nav_gallery()}</a
+					>
 				</li>
 				<li>
 					<a href={resolve(crewHref)} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
@@ -277,7 +281,9 @@
 
 			<ul role="list">
 				<li>
-					<a href={resolve(registerHref)} class:selected={isNavSelected(registerHref)}>{m.nav_register()}</a>
+					<a href={resolve(registerHref)} class:selected={isNavSelected(registerHref)}
+						>{m.nav_register()}</a
+					>
 				</li>
 				<li>
 					<a href={resolve(loginHref)} class:selected={isNavSelected(loginHref)}>{m.nav_login()}</a>

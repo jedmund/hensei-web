@@ -100,13 +100,13 @@
 				>
 					{#each PROFICIENCY_DISPLAY_ORDER as proficiency (proficiency)}
 						<Tooltip content={getLabel(proficiency)} {disabled}>
-								<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
-									<img
-										src={getProficiencyImage(proficiency)}
-										alt={getLabel(proficiency)}
-										class="proficiency-image"
-									/>
-								</ToggleGroup.Item>
+							<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
+								<img
+									src={getProficiencyImage(proficiency)}
+									alt={getLabel(proficiency)}
+									class="proficiency-image"
+								/>
+							</ToggleGroup.Item>
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -120,13 +120,13 @@
 				>
 					{#each PROFICIENCY_DISPLAY_ORDER as proficiency (proficiency)}
 						<Tooltip content={getLabel(proficiency)} {disabled}>
-								<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
-									<img
-										src={getProficiencyImage(proficiency)}
-										alt={getLabel(proficiency)}
-										class="proficiency-image"
-									/>
-								</ToggleGroup.Item>
+							<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
+								<img
+									src={getProficiencyImage(proficiency)}
+									alt={getLabel(proficiency)}
+									class="proficiency-image"
+								/>
+							</ToggleGroup.Item>
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -148,13 +148,13 @@
 			>
 				{#each PROFICIENCY_DISPLAY_ORDER as proficiency (proficiency)}
 					<Tooltip content={getLabel(proficiency)} {disabled}>
-							<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
-								<img
-									src={getProficiencyImage(proficiency)}
-									alt={getLabel(proficiency)}
-									class="proficiency-image"
-								/>
-							</ToggleGroup.Item>
+						<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
+							<img
+								src={getProficiencyImage(proficiency)}
+								alt={getLabel(proficiency)}
+								class="proficiency-image"
+							/>
+						</ToggleGroup.Item>
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>
@@ -168,13 +168,13 @@
 			>
 				{#each PROFICIENCY_DISPLAY_ORDER as proficiency (proficiency)}
 					<Tooltip content={getLabel(proficiency)} {disabled}>
-							<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
-								<img
-									src={getProficiencyImage(proficiency)}
-									alt={getLabel(proficiency)}
-									class="proficiency-image"
-								/>
-							</ToggleGroup.Item>
+						<ToggleGroup.Item value={String(proficiency)} class="proficiency-item" {disabled}>
+							<img
+								src={getProficiencyImage(proficiency)}
+								alt={getLabel(proficiency)}
+								class="proficiency-image"
+							/>
+						</ToggleGroup.Item>
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>

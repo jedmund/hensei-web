@@ -129,23 +129,23 @@
 </div>
 
 <Dialog bind:open={deleteDialogOpen}>
-		<ModalHeader title="Delete Skill?" />
-		<ModalBody>
-			<p class="delete-message">
-				Are you sure you want to delete "{skillToDelete?.name?.en ?? 'this skill'}"? This action
-				cannot be undone.
-			</p>
-		</ModalBody>
-		<ModalFooter
-			onCancel={handleDeleteCancel}
-			cancelDisabled={isDeleting}
-			primaryAction={{
-				label: isDeleting ? 'Deleting...' : 'Delete',
-				onclick: handleDeleteConfirm,
-				destructive: true,
-				disabled: isDeleting
-			}}
-		/>
+	<ModalHeader title="Delete Skill?" />
+	<ModalBody>
+		<p class="delete-message">
+			Are you sure you want to delete "{skillToDelete?.name?.en ?? 'this skill'}"? This action
+			cannot be undone.
+		</p>
+	</ModalBody>
+	<ModalFooter
+		onCancel={handleDeleteCancel}
+		cancelDisabled={isDeleting}
+		primaryAction={{
+			label: isDeleting ? 'Deleting...' : 'Delete',
+			onclick: handleDeleteConfirm,
+			destructive: true,
+			disabled: isDeleting
+		}}
+	/>
 </Dialog>
 
 <style lang="scss">

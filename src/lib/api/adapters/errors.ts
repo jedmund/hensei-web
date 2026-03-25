@@ -176,7 +176,11 @@ export class RateLimitError extends ApiError {
  * @param details - Additional error details
  * @returns Appropriate error instance based on status code
  */
-export function createErrorFromStatus(status: number, message?: string, details?: unknown): ApiError {
+export function createErrorFromStatus(
+	status: number,
+	message?: string,
+	details?: unknown
+): ApiError {
 	switch (status) {
 		case 400:
 			return new ApiError('BAD_REQUEST', status, message || 'Bad request', details)
@@ -203,7 +207,8 @@ export function createErrorFromStatus(status: number, message?: string, details?
 			// Try to extract retry-after header from details
 			const detailsObj = details as Record<string, unknown> | undefined
 			const headers = detailsObj?.headers as Record<string, unknown> | undefined
-			const retryAfter = typeof headers?.['retry-after'] === 'number' ? headers['retry-after'] : undefined
+			const retryAfter =
+				typeof headers?.['retry-after'] === 'number' ? headers['retry-after'] : undefined
 			return new RateLimitError(retryAfter, details)
 		}
 

@@ -16,10 +16,18 @@
 			<p class="description">{m.collection_intro()}</p>
 
 			<div class="actions">
-				<Button variant="primary" size="small" onclick={() => goto(resolve(localizeHref('/auth/register')))}>
+				<Button
+					variant="primary"
+					size="small"
+					onclick={() => goto(resolve(localizeHref('/auth/register')))}
+				>
 					{m.collection_sign_up()}
 				</Button>
-				<Button variant="secondary" size="small" onclick={() => goto(resolve(localizeHref('/auth/login')))}>
+				<Button
+					variant="secondary"
+					size="small"
+					onclick={() => goto(resolve(localizeHref('/auth/login')))}
+				>
 					{m.collection_log_in()}
 				</Button>
 			</div>

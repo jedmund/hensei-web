@@ -88,23 +88,23 @@
 </script>
 
 <Dialog bind:open onOpenChange={handleOpenChange}>
-		<ModalHeader {title} />
+	<ModalHeader {title} />
 
-		<ModalBody>
-			<p class="confirm-message">{message}</p>
-		</ModalBody>
+	<ModalBody>
+		<p class="confirm-message">{message}</p>
+	</ModalBody>
 
-		<ModalFooter
-			onCancel={() => {
-				open = false
-				onClose()
-			}}
-			primaryAction={{
-				label: confirmLabel,
-				onclick: handleConfirm,
-				destructive: action === 'remove'
-			}}
-		/>
+	<ModalFooter
+		onCancel={() => {
+			open = false
+			onClose()
+		}}
+		primaryAction={{
+			label: confirmLabel,
+			onclick: handleConfirm,
+			destructive: action === 'remove'
+		}}
+	/>
 </Dialog>
 
 <style>

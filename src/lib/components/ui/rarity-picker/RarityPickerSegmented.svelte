@@ -99,9 +99,9 @@
 				>
 					{#each RARITY_DISPLAY_ORDER as rarity (rarity)}
 						<Tooltip content={getLabel(rarity)}>
-								<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
-									<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
-								</ToggleGroup.Item>
+							<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
+								<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
+							</ToggleGroup.Item>
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -115,9 +115,9 @@
 				>
 					{#each RARITY_DISPLAY_ORDER as rarity (rarity)}
 						<Tooltip content={getLabel(rarity)}>
-								<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
-									<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
-								</ToggleGroup.Item>
+							<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
+								<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
+							</ToggleGroup.Item>
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -139,9 +139,9 @@
 			>
 				{#each RARITY_DISPLAY_ORDER as rarity (rarity)}
 					<Tooltip content={getLabel(rarity)}>
-							<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
-								<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
-							</ToggleGroup.Item>
+						<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
+							<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
+						</ToggleGroup.Item>
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>
@@ -155,9 +155,9 @@
 			>
 				{#each RARITY_DISPLAY_ORDER as rarity (rarity)}
 					<Tooltip content={getLabel(rarity)}>
-							<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
-								<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
-							</ToggleGroup.Item>
+						<ToggleGroup.Item value={String(rarity)} class="rarity-item" {disabled}>
+							<img src={getRarityImage(rarity)} alt={getLabel(rarity)} class="rarity-image" />
+						</ToggleGroup.Item>
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>

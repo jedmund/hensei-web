@@ -10,7 +10,11 @@
 		if (typeof maybe === 'string') return maybe
 		if (maybe && typeof maybe === 'object') {
 			const loc = maybe as Record<string, unknown>
-			return (typeof loc.en === 'string' ? loc.en : undefined) || (typeof loc.ja === 'string' ? loc.ja : undefined) || '—'
+			return (
+				(typeof loc.en === 'string' ? loc.en : undefined) ||
+				(typeof loc.ja === 'string' ? loc.ja : undefined) ||
+				'—'
+			)
 		}
 		return '—'
 	}

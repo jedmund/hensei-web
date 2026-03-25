@@ -12,6 +12,9 @@ export const load: PageLoad = async ({ params, parent, fetch }) => {
 		return { playlist, username, isOwner }
 	} catch (e: unknown) {
 		const err = e as Record<string, unknown>
-		throw error((typeof err?.status === 'number' ? err.status : undefined) || 404, (typeof err?.message === 'string' ? err.message : undefined) || 'Playlist not found')
+		throw error(
+			(typeof err?.status === 'number' ? err.status : undefined) || 404,
+			(typeof err?.message === 'string' ? err.message : undefined) || 'Playlist not found'
+		)
 	}
 }

@@ -56,7 +56,10 @@ describe('setAccountCookie', () => {
 		const cookies = createMockCookies()
 		const expires = new Date('2025-03-01')
 
-		setAccountCookie(cookies as unknown as import('@sveltejs/kit').Cookies, mockAccount, { secure: true, expires })
+		setAccountCookie(cookies as unknown as import('@sveltejs/kit').Cookies, mockAccount, {
+			secure: true,
+			expires
+		})
 
 		expect(cookies.set).toHaveBeenCalledWith(
 			ACCOUNT_COOKIE,
@@ -78,7 +81,10 @@ describe('setUserCookie', () => {
 		const cookies = createMockCookies()
 		const expires = new Date('2025-03-01')
 
-		setUserCookie(cookies as unknown as import('@sveltejs/kit').Cookies, mockUser, { secure: false, expires })
+		setUserCookie(cookies as unknown as import('@sveltejs/kit').Cookies, mockUser, {
+			secure: false,
+			expires
+		})
 
 		expect(cookies.set).toHaveBeenCalledWith(
 			USER_COOKIE,
@@ -95,7 +101,9 @@ describe('setRefreshCookie', () => {
 	it('sets httpOnly cookie with refresh token', () => {
 		const cookies = createMockCookies()
 
-		setRefreshCookie(cookies as unknown as import('@sveltejs/kit').Cookies, 'ref-tok', { secure: true })
+		setRefreshCookie(cookies as unknown as import('@sveltejs/kit').Cookies, 'ref-tok', {
+			secure: true
+		})
 
 		expect(cookies.set).toHaveBeenCalledWith(
 			REFRESH_COOKIE,
@@ -113,7 +121,10 @@ describe('setRefreshCookie', () => {
 		const cookies = createMockCookies()
 		const expires = new Date('2025-06-01')
 
-		setRefreshCookie(cookies as unknown as import('@sveltejs/kit').Cookies, 'ref-tok', { secure: true, expires })
+		setRefreshCookie(cookies as unknown as import('@sveltejs/kit').Cookies, 'ref-tok', {
+			secure: true,
+			expires
+		})
 
 		expect(cookies.setCalls[0]!.opts.expires).toEqual(expires)
 	})
@@ -121,7 +132,9 @@ describe('setRefreshCookie', () => {
 	it('omits expires when not provided', () => {
 		const cookies = createMockCookies()
 
-		setRefreshCookie(cookies as unknown as import('@sveltejs/kit').Cookies, 'ref-tok', { secure: true })
+		setRefreshCookie(cookies as unknown as import('@sveltejs/kit').Cookies, 'ref-tok', {
+			secure: true
+		})
 
 		expect(cookies.setCalls[0]!.opts).not.toHaveProperty('expires')
 	})
@@ -169,7 +182,9 @@ describe('getRefreshFromCookies', () => {
 		const cookies = createMockCookies()
 		cookies.store.set(REFRESH_COOKIE, 'ref-tok')
 
-		expect(getRefreshFromCookies(cookies as unknown as import('@sveltejs/kit').Cookies)).toBe('ref-tok')
+		expect(getRefreshFromCookies(cookies as unknown as import('@sveltejs/kit').Cookies)).toBe(
+			'ref-tok'
+		)
 	})
 
 	it('returns null when cookie missing', () => {

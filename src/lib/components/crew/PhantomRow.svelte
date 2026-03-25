@@ -165,20 +165,20 @@
 
 <!-- Delete Phantom Confirmation -->
 <Dialog bind:open={deleteDialogOpen}>
-		<ModalHeader title={m.crew_delete_phantom_title()} />
-		<ModalBody>
-			<p class="confirm-message">
-				{m.crew_confirm_delete_phantom({ name: phantom.name })}
-			</p>
-		</ModalBody>
-		<ModalFooter
-			onCancel={() => (deleteDialogOpen = false)}
-			primaryAction={{
-				label: m.crew_phantom_delete(),
-				onclick: handleConfirmDelete,
-				destructive: true
-			}}
-		/>
+	<ModalHeader title={m.crew_delete_phantom_title()} />
+	<ModalBody>
+		<p class="confirm-message">
+			{m.crew_confirm_delete_phantom({ name: phantom.name })}
+		</p>
+	</ModalBody>
+	<ModalFooter
+		onCancel={() => (deleteDialogOpen = false)}
+		primaryAction={{
+			label: m.crew_phantom_delete(),
+			onclick: handleConfirmDelete,
+			destructive: true
+		}}
+	/>
 </Dialog>
 
 <!-- Assign Phantom Modal -->

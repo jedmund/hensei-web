@@ -81,7 +81,11 @@
 	<ul role="list" class="database-back-section">
 		<li>
 			<Tooltip content={m.nav_back_to_site()}>
-				<a href={resolve(galleryHref)} class="database-back-button" aria-label={m.nav_back_to_site()}>
+				<a
+					href={resolve(galleryHref)}
+					class="database-back-button"
+					aria-label={m.nav_back_to_site()}
+				>
 					<Icon name="home" size={21} />
 				</a>
 			</Tooltip>
@@ -99,12 +103,18 @@
 			</a>
 		</li>
 		<li>
-			<a href={resolve(databaseWeaponsHref)} class:selected={isDatabaseNavSelected(databaseWeaponsHref)}>
+			<a
+				href={resolve(databaseWeaponsHref)}
+				class:selected={isDatabaseNavSelected(databaseWeaponsHref)}
+			>
 				{m.nav_weapons()}
 			</a>
 		</li>
 		<li>
-			<a href={resolve(databaseSummonsHref)} class:selected={isDatabaseNavSelected(databaseSummonsHref)}>
+			<a
+				href={resolve(databaseSummonsHref)}
+				class:selected={isDatabaseNavSelected(databaseSummonsHref)}
+			>
 				{m.nav_summons()}
 			</a>
 		</li>
@@ -154,19 +164,23 @@
 						<a href={resolve(localizeHref('/database/raids/new'))}>{m.nav_new_raid()}</a>
 					</DropdownItem>
 					<DropdownItem>
-						<a href={resolve(localizeHref('/database/raid-groups/new'))}>{m.nav_new_raid_group()}</a>
+						<a href={resolve(localizeHref('/database/raid-groups/new'))}>{m.nav_new_raid_group()}</a
+						>
 					</DropdownItem>
 				{:else if currentDatabaseEntity === 'job'}
 					<DropdownItem>
 						<a href={resolve(localizeHref('/database/jobs/new'))}>{m.nav_new_job()}</a>
 					</DropdownItem>
 					<DropdownItem>
-						<a href={resolve(localizeHref('/database/job-accessories/new'))}>{m.nav_new_job_accessory()}</a>
+						<a href={resolve(localizeHref('/database/job-accessories/new'))}
+							>{m.nav_new_job_accessory()}</a
+						>
 					</DropdownItem>
 				{:else}
 					{#if databaseNewHref}
 						<DropdownItem>
-							<a href={resolve(databaseNewHref)}>{m.nav_new_single({ entity: databaseEntityLabel ?? '' })}</a
+							<a href={resolve(databaseNewHref)}
+								>{m.nav_new_single({ entity: databaseEntityLabel ?? '' })}</a
 							>
 						</DropdownItem>
 					{/if}
@@ -180,7 +194,9 @@
 					{#if currentDatabaseEntity === 'weapon'}
 						<DropdownMenu.Separator class="dropdown-separator" />
 						<DropdownItem>
-							<a href={resolve(localizeHref('/database/series/weapons/new'))}>{m.nav_new_weapon_series()}</a>
+							<a href={resolve(localizeHref('/database/series/weapons/new'))}
+								>{m.nav_new_weapon_series()}</a
+							>
 						</DropdownItem>
 					{/if}
 					{#if currentDatabaseEntity === 'character'}

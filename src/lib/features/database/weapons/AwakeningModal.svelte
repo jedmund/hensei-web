@@ -167,92 +167,80 @@
 </script>
 
 <Dialog bind:open {onOpenChange}>
-		<ModalHeader {title} />
-		<div class="modal-body">
-			<div class="form-grid">
-				<Input
-					label="Name (EN)"
-					bind:value={nameEn}
-					placeholder="e.g. Attack"
-					fullWidth
-					contained
-				/>
+	<ModalHeader {title} />
+	<div class="modal-body">
+		<div class="form-grid">
+			<Input label="Name (EN)" bind:value={nameEn} placeholder="e.g. Attack" fullWidth contained />
 
-				<Input label="Name (JP)" bind:value={nameJp} placeholder="e.g. 攻撃" fullWidth contained />
+			<Input label="Name (JP)" bind:value={nameJp} placeholder="e.g. 攻撃" fullWidth contained />
 
-				<Input
-					label="Slug"
-					bind:value={slug}
-					placeholder="e.g. weapon-attack"
-					fullWidth
-					contained
-				/>
+			<Input label="Slug" bind:value={slug} placeholder="e.g. weapon-attack" fullWidth contained />
 
-				<Input label="Order" type="number" bind:value={order} contained fullWidth />
+			<Input label="Order" type="number" bind:value={order} contained fullWidth />
 
-				<div class="field">
-					<span class="label">Image</span>
-					<div class="image-upload">
-						{#if imagePreview}
-							<img src={imagePreview} alt="Preview" class="image-preview" />
-						{:else if existingImageUrl}
-							<img src={existingImageUrl} alt={nameEn} class="image-preview" />
-						{/if}
-						<Button variant="ghost" size="small" onclick={() => fileInputEl?.click()}>
-							{existingImageUrl || imagePreview ? 'Change Image' : 'Upload Image'}
-						</Button>
-						<input
-							bind:this={fileInputEl}
-							type="file"
-							accept="image/png,image/jpeg"
-							onchange={handleImageSelect}
-							hidden
-						/>
-					</div>
+			<div class="field">
+				<span class="label">Image</span>
+				<div class="image-upload">
+					{#if imagePreview}
+						<img src={imagePreview} alt="Preview" class="image-preview" />
+					{:else if existingImageUrl}
+						<img src={existingImageUrl} alt={nameEn} class="image-preview" />
+					{/if}
+					<Button variant="ghost" size="small" onclick={() => fileInputEl?.click()}>
+						{existingImageUrl || imagePreview ? 'Change Image' : 'Upload Image'}
+					</Button>
+					<input
+						bind:this={fileInputEl}
+						type="file"
+						accept="image/png,image/jpeg"
+						onchange={handleImageSelect}
+						hidden
+					/>
 				</div>
 			</div>
 		</div>
-		<ModalFooter
-			onCancel={() => (open = false)}
-			primaryAction={{
-				label: isSaving ? 'Saving...' : isEditing ? 'Save' : 'Create',
-				onclick: handleSave,
-				disabled: isSaving || isDeleting || !nameEn || !slug
-			}}
-		>
-			{#snippet left()}
-				{#if isEditing}
-					<Button
-						variant="destructive-ghost"
-						onclick={handleDeleteClick}
-						disabled={isDeleting || isSaving}
-					>
-						{isDeleting ? 'Deleting...' : 'Delete'}
-					</Button>
-				{/if}
-			{/snippet}
-		</ModalFooter>
+	</div>
+	<ModalFooter
+		onCancel={() => (open = false)}
+		primaryAction={{
+			label: isSaving ? 'Saving...' : isEditing ? 'Save' : 'Create',
+			onclick: handleSave,
+			disabled: isSaving || isDeleting || !nameEn || !slug
+		}}
+	>
+		{#snippet left()}
+			{#if isEditing}
+				<Button
+					variant="destructive-ghost"
+					onclick={handleDeleteClick}
+					disabled={isDeleting || isSaving}
+				>
+					{isDeleting ? 'Deleting...' : 'Delete'}
+				</Button>
+			{/if}
+		{/snippet}
+	</ModalFooter>
 
-		<!-- Nested delete confirmation dialog -->
-		<DialogPrimitive.Root bind:open={confirmDeleteOpen}>
-			<DialogPrimitive.Portal>
-				<DialogPrimitive.Overlay class="dialog-overlay" />
-				<DialogPrimitive.Content class="dialog-content confirm-dialog">
-					<div class="confirm-body">
-						<p>Are you sure you want to delete this awakening? This action cannot be undone.</p>
-					</div>
-					<ModalFooter
-						onCancel={() => (confirmDeleteOpen = false)}
-						primaryAction={{
-							label: isDeleting ? 'Deleting...' : 'Delete',
-							onclick: handleConfirmDelete,
-							destructive: true,
-							disabled: isDeleting
-						}}
-					/>
-				</DialogPrimitive.Content>
-			</DialogPrimitive.Portal>
-		</DialogPrimitive.Root>
+	<!-- Nested delete confirmation dialog -->
+	<DialogPrimitive.Root bind:open={confirmDeleteOpen}>
+		<DialogPrimitive.Portal>
+			<DialogPrimitive.Overlay class="dialog-overlay" />
+			<DialogPrimitive.Content class="dialog-content confirm-dialog">
+				<div class="confirm-body">
+					<p>Are you sure you want to delete this awakening? This action cannot be undone.</p>
+				</div>
+				<ModalFooter
+					onCancel={() => (confirmDeleteOpen = false)}
+					primaryAction={{
+						label: isDeleting ? 'Deleting...' : 'Delete',
+						onclick: handleConfirmDelete,
+						destructive: true,
+						disabled: isDeleting
+					}}
+				/>
+			</DialogPrimitive.Content>
+		</DialogPrimitive.Portal>
+	</DialogPrimitive.Root>
 </Dialog>
 
 <style lang="scss">

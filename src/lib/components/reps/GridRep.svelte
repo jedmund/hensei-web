@@ -76,12 +76,12 @@
 				<div class="details-text">
 					{#if party.job}
 						<Tooltip content={displayName(party.job)}>
-								<img
-									class="job-icon"
-									src={getJobIconUrl(party.job.granblueId)}
-									alt=""
-									loading="lazy"
-								/>
+							<img
+								class="job-icon"
+								src={getJobIconUrl(party.job.granblueId)}
+								alt=""
+								loading="lazy"
+							/>
 						</Tooltip>
 					{/if}
 					<span class={`raid ${!party.raid ? 'empty' : ''}`}
@@ -92,23 +92,23 @@
 				<div class="pills">
 					{#if party.chargeAttack}
 						<Tooltip content={m.filter_charge_attack()}>
-								<span class="pill chargeAttack">
-									<Icon name="charge-attack" size={16} />
-								</span>
+							<span class="pill chargeAttack">
+								<Icon name="charge-attack" size={16} />
+							</span>
 						</Tooltip>
 					{/if}
 					{#if party.fullAuto}
 						<Tooltip content={m.filter_full_auto()}>
-								<span class="pill fullAuto">
-									<Icon name="full-auto" size={16} />
-								</span>
+							<span class="pill fullAuto">
+								<Icon name="full-auto" size={16} />
+							</span>
 						</Tooltip>
 					{/if}
 					{#if party.raid?.extra}
 						<Tooltip content={m.grid_extra()}>
-								<span class="pill extra">
-									<Icon name="extra-grid" size={16} />
-								</span>
+							<span class="pill extra">
+								<Icon name="extra-grid" size={16} />
+							</span>
 						</Tooltip>
 					{/if}
 				</div>

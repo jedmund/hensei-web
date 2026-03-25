@@ -34,22 +34,22 @@
 </script>
 
 <Dialog bind:open>
-		<ModalHeader title={m.collection_bulk_delete_title({ count, type: itemLabel })} />
-		<ModalBody>
-			<p class="message">
-				{m.collection_bulk_delete_message({ count, type: itemLabel })}
-			</p>
-		</ModalBody>
-		<ModalFooter
-			{onCancel}
-			cancelDisabled={deleting}
-			primaryAction={{
-				label: deleting ? m.collection_bulk_deleting() : m.collection_bulk_delete_confirm(),
-				onclick: onConfirm,
-				destructive: true,
-				disabled: deleting
-			}}
-		/>
+	<ModalHeader title={m.collection_bulk_delete_title({ count, type: itemLabel })} />
+	<ModalBody>
+		<p class="message">
+			{m.collection_bulk_delete_message({ count, type: itemLabel })}
+		</p>
+	</ModalBody>
+	<ModalFooter
+		{onCancel}
+		cancelDisabled={deleting}
+		primaryAction={{
+			label: deleting ? m.collection_bulk_deleting() : m.collection_bulk_delete_confirm(),
+			onclick: onConfirm,
+			destructive: true,
+			disabled: deleting
+		}}
+	/>
 </Dialog>
 
 <style lang="scss">

@@ -102,13 +102,9 @@
 				>
 					{#each elements as element (element)}
 						<Tooltip content={getLabel(element)}>
-								<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
-									<img
-										src={getElementImage(element)}
-										alt={getLabel(element)}
-										class="element-image"
-									/>
-								</ToggleGroup.Item>
+							<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
+								<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
+							</ToggleGroup.Item>
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -122,13 +118,9 @@
 				>
 					{#each elements as element (element)}
 						<Tooltip content={getLabel(element)}>
-								<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
-									<img
-										src={getElementImage(element)}
-										alt={getLabel(element)}
-										class="element-image"
-									/>
-								</ToggleGroup.Item>
+							<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
+								<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
+							</ToggleGroup.Item>
 						</Tooltip>
 					{/each}
 				</ToggleGroup.Root>
@@ -150,9 +142,9 @@
 			>
 				{#each elements as element (element)}
 					<Tooltip content={getLabel(element)}>
-							<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
-								<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
-							</ToggleGroup.Item>
+						<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
+							<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
+						</ToggleGroup.Item>
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>
@@ -166,9 +158,9 @@
 			>
 				{#each elements as element (element)}
 					<Tooltip content={getLabel(element)}>
-							<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
-								<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
-							</ToggleGroup.Item>
+						<ToggleGroup.Item value={String(element)} class="element-item" {disabled}>
+							<img src={getElementImage(element)} alt={getLabel(element)} class="element-image" />
+						</ToggleGroup.Item>
 					</Tooltip>
 				{/each}
 			</ToggleGroup.Root>

@@ -37,7 +37,11 @@
 			<Icon name="info" size={18} />
 			<p>{m.migrate_banner_text()}</p>
 		</div>
-		<Button size="small" variant="primary" onclick={() => goto(resolve(localizeHref('/teams/migrate')))}>
+		<Button
+			size="small"
+			variant="primary"
+			onclick={() => goto(resolve(localizeHref('/teams/migrate')))}
+		>
 			{m.migrate_banner_action()}
 		</Button>
 	</div>

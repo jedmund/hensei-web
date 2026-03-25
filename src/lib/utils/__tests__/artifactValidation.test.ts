@@ -11,10 +11,7 @@ import {
 	validateArtifactSkills,
 	calculateAvailableLevelPoints
 } from '../artifactValidation'
-import type {
-	ArtifactSkillInstance,
-	GridArtifact
-} from '$lib/types/api/artifact'
+import type { ArtifactSkillInstance, GridArtifact } from '$lib/types/api/artifact'
 import type { Character } from '$lib/types/api/entities'
 
 // ============================================================================

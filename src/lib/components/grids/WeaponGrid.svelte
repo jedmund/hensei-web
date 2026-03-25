@@ -36,7 +36,9 @@
 	const ctx = usePartyContext()
 	const dragContext = getDragDropContext()
 
-	let mainhand = $derived(weapons.find((w) => (w as unknown as Record<string, unknown>).mainhand || w.position === -1))
+	let mainhand = $derived(
+		weapons.find((w) => (w as unknown as Record<string, unknown>).mainhand || w.position === -1)
+	)
 
 	// Create array for sub-weapons (positions 0-8)
 	let subWeaponSlots = $derived.by(() => {

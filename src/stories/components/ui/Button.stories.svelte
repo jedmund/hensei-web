@@ -64,9 +64,7 @@
 </script>
 
 <!-- Default - args-only for autodocs -->
-<Story name="Default" args={{ variant: 'secondary' }}>
-	Button
-</Story>
+<Story name="Default" args={{ variant: 'secondary' }}>Button</Story>
 
 <!-- All Variants -->
 <Story name="All Variants" asChild>

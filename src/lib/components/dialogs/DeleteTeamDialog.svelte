@@ -17,20 +17,20 @@
 </script>
 
 <Dialog bind:open>
-		<ModalHeader title="Delete {partyName}?" />
-		<ModalBody>
-			<p class="message">{m.delete_team_confirm()}</p>
-		</ModalBody>
-		<ModalFooter
-			{onCancel}
-			cancelDisabled={deleting}
-			primaryAction={{
-				label: deleting ? m.action_deleting() : m.action_confirm_delete(),
-				onclick: onDelete,
-				destructive: true,
-				disabled: deleting
-			}}
-		/>
+	<ModalHeader title="Delete {partyName}?" />
+	<ModalBody>
+		<p class="message">{m.delete_team_confirm()}</p>
+	</ModalBody>
+	<ModalFooter
+		{onCancel}
+		cancelDisabled={deleting}
+		primaryAction={{
+			label: deleting ? m.action_deleting() : m.action_confirm_delete(),
+			onclick: onDelete,
+			destructive: true,
+			disabled: deleting
+		}}
+	/>
 </Dialog>
 
 <style lang="scss">

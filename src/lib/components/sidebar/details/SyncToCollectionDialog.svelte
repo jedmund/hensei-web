@@ -23,24 +23,24 @@
 </script>
 
 <Dialog bind:open>
-		<ModalHeader title={m.sync_to_collection_title()} />
-		<ModalBody>
-			<p class="sync-message">
-				{m.sync_to_collection_body({ type: typeLabel })}
-			</p>
-		</ModalBody>
-		<ModalFooter
-			onCancel={() => {
+	<ModalHeader title={m.sync_to_collection_title()} />
+	<ModalBody>
+		<p class="sync-message">
+			{m.sync_to_collection_body({ type: typeLabel })}
+		</p>
+	</ModalBody>
+	<ModalFooter
+		onCancel={() => {
+			open = false
+		}}
+		primaryAction={{
+			label: m.sync_to_collection_confirm(),
+			onclick: async () => {
+				await onConfirm()
 				open = false
-			}}
-			primaryAction={{
-				label: m.sync_to_collection_confirm(),
-				onclick: async () => {
-					await onConfirm()
-					open = false
-				}
-			}}
-		/>
+			}
+		}}
+	/>
 </Dialog>
 
 <style lang="scss">

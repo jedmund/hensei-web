@@ -62,9 +62,9 @@
 							<CharacterTags character={character.character} />
 						</div>
 					{/snippet}
-						<div class="character-portrait">
-							<img src={getImage(character)} alt={getDisplayName(character)} loading="lazy" />
-						</div>
+					<div class="character-portrait">
+						<img src={getImage(character)} alt={getDisplayName(character)} loading="lazy" />
+					</div>
 				</RichTooltip>
 			{/each}
 		</div>

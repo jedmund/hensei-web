@@ -37,7 +37,9 @@ describe('getAwakeningImage', () => {
 	})
 
 	it('returns null for character-balanced', () => {
-		expect(getAwakeningImage({ type: { slug: 'character-balanced' } as Record<string, unknown> })).toBeNull()
+		expect(
+			getAwakeningImage({ type: { slug: 'character-balanced' } as Record<string, unknown> })
+		).toBeNull()
 	})
 
 	it('returns jpg for character awakenings', () => {

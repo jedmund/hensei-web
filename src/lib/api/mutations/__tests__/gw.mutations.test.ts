@@ -86,7 +86,10 @@ describe('updateParticipationRankingOptions', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = updateParticipationRankingOptions(queryClient)
 
-		opts.onSuccess(undefined, { participationId: 'part-1', input: {} as unknown as Record<string, unknown> })
+		opts.onSuccess(undefined, {
+			participationId: 'part-1',
+			input: {} as unknown as Record<string, unknown>
+		})
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(gwKeys.participationsAll())
@@ -103,7 +106,10 @@ describe('addCrewScoreOptions', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = addCrewScoreOptions(queryClient)
 
-		opts.onSuccess(undefined, { participationId: 'part-1', input: {} as unknown as Record<string, unknown> })
+		opts.onSuccess(undefined, {
+			participationId: 'part-1',
+			input: {} as unknown as Record<string, unknown>
+		})
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(gwKeys.participation('part-1'))
@@ -115,7 +121,11 @@ describe('updateCrewScoreOptions', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = updateCrewScoreOptions(queryClient)
 
-		opts.onSuccess(undefined, { participationId: 'part-1', scoreId: 's-1', input: {} as unknown as Record<string, unknown> })
+		opts.onSuccess(undefined, {
+			participationId: 'part-1',
+			scoreId: 's-1',
+			input: {} as unknown as Record<string, unknown>
+		})
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(gwKeys.participation('part-1'))
@@ -131,7 +141,10 @@ describe('addIndividualScoreOptions', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = addIndividualScoreOptions(queryClient)
 
-		opts.onSuccess(undefined, { participationId: 'part-1', input: {} as unknown as Record<string, unknown> })
+		opts.onSuccess(undefined, {
+			participationId: 'part-1',
+			input: {} as unknown as Record<string, unknown>
+		})
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(gwKeys.participation('part-1'))
@@ -143,7 +156,10 @@ describe('batchAddIndividualScoresOptions', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = batchAddIndividualScoresOptions(queryClient)
 
-		opts.onSuccess(undefined, { participationId: 'part-1', input: {} as unknown as Record<string, unknown> })
+		opts.onSuccess(undefined, {
+			participationId: 'part-1',
+			input: {} as unknown as Record<string, unknown>
+		})
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(gwKeys.participation('part-1'))
@@ -155,7 +171,11 @@ describe('updateIndividualScoreOptions', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = updateIndividualScoreOptions(queryClient)
 
-		opts.onSuccess(undefined, { participationId: 'part-1', scoreId: 's-1', input: {} as unknown as Record<string, unknown> })
+		opts.onSuccess(undefined, {
+			participationId: 'part-1',
+			scoreId: 's-1',
+			input: {} as unknown as Record<string, unknown>
+		})
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(gwKeys.participation('part-1'))

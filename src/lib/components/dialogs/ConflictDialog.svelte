@@ -187,66 +187,66 @@
 </script>
 
 <Dialog bind:open onOpenChange={handleOpenChange}>
-		<ModalHeader title={m.conflict_title()} />
-		<ModalBody>
-				{#if conflict}
-					<div class={styles.content}>
-						<p class={styles.message}>{conflictMessage}</p>
+	<ModalHeader title={m.conflict_title()} />
+	<ModalBody>
+		{#if conflict}
+			<div class={styles.content}>
+				<p class={styles.message}>{conflictMessage}</p>
 
-						<div class={styles.diagram}>
-							<!-- Conflicting items (left side) -->
-							<ul class={styles.conflicts}>
-								{#if conflict.type === 'character'}
-									{#each conflict.conflicts as gridChar (gridChar.id)}
-										<li class={styles.item}>
-											<img src={getCharacterUrl(gridChar)} alt={gridChar.character.name[locale]} />
-											<span>{gridChar.character.name[locale]}</span>
-										</li>
-									{/each}
-								{:else}
-									{#each conflict.conflicts as gridWeapon (gridWeapon.id)}
-										<li class={styles.item}>
-											<img src={getWeaponUrl(gridWeapon)} alt={gridWeapon.weapon.name[locale]} />
-											<span>{gridWeapon.weapon.name[locale]}</span>
-										</li>
-									{/each}
-								{/if}
-							</ul>
+				<div class={styles.diagram}>
+					<!-- Conflicting items (left side) -->
+					<ul class={styles.conflicts}>
+						{#if conflict.type === 'character'}
+							{#each conflict.conflicts as gridChar (gridChar.id)}
+								<li class={styles.item}>
+									<img src={getCharacterUrl(gridChar)} alt={gridChar.character.name[locale]} />
+									<span>{gridChar.character.name[locale]}</span>
+								</li>
+							{/each}
+						{:else}
+							{#each conflict.conflicts as gridWeapon (gridWeapon.id)}
+								<li class={styles.item}>
+									<img src={getWeaponUrl(gridWeapon)} alt={gridWeapon.weapon.name[locale]} />
+									<span>{gridWeapon.weapon.name[locale]}</span>
+								</li>
+							{/each}
+						{/if}
+					</ul>
 
-							<!-- Arrow -->
-							<span class={styles.arrow}>&rarr;</span>
+					<!-- Arrow -->
+					<span class={styles.arrow}>&rarr;</span>
 
-							<!-- Incoming item (right side) -->
-							<div class={styles.incoming}>
-								{#if conflict.type === 'character'}
-									<div class={styles.item}>
-										<img
-											src={getIncomingCharacterUrl(conflict.incoming)}
-											alt={conflict.incoming.name[locale]}
-										/>
-										<span>{conflict.incoming.name[locale]}</span>
-									</div>
-								{:else}
-									<div class={styles.item}>
-										<img
-											src={getIncomingWeaponUrl(conflict.incoming)}
-											alt={conflict.incoming.name[locale]}
-										/>
-										<span>{conflict.incoming.name[locale]}</span>
-									</div>
-								{/if}
+					<!-- Incoming item (right side) -->
+					<div class={styles.incoming}>
+						{#if conflict.type === 'character'}
+							<div class={styles.item}>
+								<img
+									src={getIncomingCharacterUrl(conflict.incoming)}
+									alt={conflict.incoming.name[locale]}
+								/>
+								<span>{conflict.incoming.name[locale]}</span>
 							</div>
-						</div>
+						{:else}
+							<div class={styles.item}>
+								<img
+									src={getIncomingWeaponUrl(conflict.incoming)}
+									alt={conflict.incoming.name[locale]}
+								/>
+								<span>{conflict.incoming.name[locale]}</span>
+							</div>
+						{/if}
 					</div>
-				{/if}
-		</ModalBody>
-		<ModalFooter
-			onCancel={handleCancel}
-			cancelDisabled={isLoading}
-			primaryAction={{
-				label: m.conflict_confirm(),
-				onclick: handleResolve,
-				disabled: isLoading
-			}}
-		/>
+				</div>
+			</div>
+		{/if}
+	</ModalBody>
+	<ModalFooter
+		onCancel={handleCancel}
+		cancelDisabled={isLoading}
+		primaryAction={{
+			label: m.conflict_confirm(),
+			onclick: handleResolve,
+			disabled: isLoading
+		}}
+	/>
 </Dialog>

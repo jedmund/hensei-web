@@ -14,25 +14,25 @@
 </script>
 
 <Dialog bind:open>
-		<ModalHeader title={m.unlink_collection_title()} />
-		<ModalBody>
-			<p class="unlink-message">
-				{m.unlink_collection_body()}
-			</p>
-		</ModalBody>
-		<ModalFooter
-			onCancel={() => {
+	<ModalHeader title={m.unlink_collection_title()} />
+	<ModalBody>
+		<p class="unlink-message">
+			{m.unlink_collection_body()}
+		</p>
+	</ModalBody>
+	<ModalFooter
+		onCancel={() => {
+			open = false
+		}}
+		primaryAction={{
+			label: m.unlink_collection_confirm(),
+			onclick: async () => {
+				await onConfirm()
 				open = false
-			}}
-			primaryAction={{
-				label: m.unlink_collection_confirm(),
-				onclick: async () => {
-					await onConfirm()
-					open = false
-				},
-				destructive: true
-			}}
-		/>
+			},
+			destructive: true
+		}}
+	/>
 </Dialog>
 
 <style lang="scss">

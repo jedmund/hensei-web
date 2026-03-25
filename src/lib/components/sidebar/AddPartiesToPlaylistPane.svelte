@@ -113,21 +113,21 @@
 				{#each parties as party (party.id)}
 					{@const alreadyIn = isInPlaylist(party)}
 					<Tooltip content={m.playlist_already_added()} disabled={!alreadyIn}>
-							<button
-								class="party-item"
-								onclick={() => handleClick(party)}
-								disabled={addMutation.isPending || removeMutation.isPending}
-							>
-								<GridRep {party} disabled dimmed={alreadyIn}>
-									{#snippet indicator()}
-										{#if alreadyIn}
-											<span class="in-playlist-badge" style:background-color={badgeColor}>
-												<Icon name="check" size={10} />
-											</span>
-										{/if}
-									{/snippet}
-								</GridRep>
-							</button>
+						<button
+							class="party-item"
+							onclick={() => handleClick(party)}
+							disabled={addMutation.isPending || removeMutation.isPending}
+						>
+							<GridRep {party} disabled dimmed={alreadyIn}>
+								{#snippet indicator()}
+									{#if alreadyIn}
+										<span class="in-playlist-badge" style:background-color={badgeColor}>
+											<Icon name="check" size={10} />
+										</span>
+									{/if}
+								{/snippet}
+							</GridRep>
+						</button>
 					</Tooltip>
 				{/each}
 			</div>
