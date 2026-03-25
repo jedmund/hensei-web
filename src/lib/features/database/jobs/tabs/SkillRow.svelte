@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import type { JobSkill } from '$lib/types/api/entities'
 	import { getJobSkillIcon } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
@@ -18,7 +17,7 @@
 	let { skill, canEdit = false, onDelete }: Props = $props()
 </script>
 
-<a href={resolve(localizeHref(`/database/job-skills/${skill.id}`))} class="skill-item">
+<a href={localizeHref(`/database/job-skills/${skill.id}`)} class="skill-item">
 	<img src={getJobSkillIcon(skill)} alt={localizedName(skill.name)} class="skill-icon" />
 	<div class="skill-info">
 		<span class="skill-name">{localizedName(skill.name)}</span>
@@ -48,13 +47,13 @@
 					<DropdownMenu.Content class="dropdown-menu" side="bottom" align="end" sideOffset={4}>
 						<DropdownMenu.Item
 							class="dropdown-menu-item"
-							onSelect={() => goto(resolve(localizeHref(`/database/job-skills/${skill.id}`)))}
+							onSelect={() => goto(localizeHref(`/database/job-skills/${skill.id}`))}
 						>
 							View skill
 						</DropdownMenu.Item>
 						<DropdownMenu.Item
 							class="dropdown-menu-item"
-							onSelect={() => goto(resolve(localizeHref(`/database/job-skills/${skill.id}/edit`)))}
+							onSelect={() => goto(localizeHref(`/database/job-skills/${skill.id}/edit`))}
 						>
 							Edit skill
 						</DropdownMenu.Item>

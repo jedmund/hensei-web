@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { ShouldShowProps } from '../../types.js'
-	import { resolve } from '$app/paths'
 	import BubbleMenu from '../../components/BubbleMenu.svelte'
 	import type { Editor } from '@tiptap/core'
 	import * as m from '$lib/paraglide/messages'
@@ -24,7 +23,7 @@
 		return props.editor.isActive('link')
 	}}
 >
-	<a href={resolve(link)} target="_blank">
+	<a href={link} target="_blank">
 		{link}
 	</a>
 	<button

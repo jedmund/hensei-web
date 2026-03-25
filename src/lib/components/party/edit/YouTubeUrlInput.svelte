@@ -5,7 +5,6 @@
 	 * Validates YouTube URLs and shows a thumbnail preview when valid.
 	 */
 	import { untrack } from 'svelte'
-	import { resolve } from '$app/paths'
 	import Input from '$lib/components/ui/Input.svelte'
 
 	interface Props {
@@ -144,7 +143,7 @@
 
 	{#if showPreview && thumbnailUrl}
 		<div class="preview-card">
-			<a href={resolve(inputValue)} target="_blank" rel="noopener noreferrer" class="preview-link">
+			<a href={inputValue} target="_blank" rel="noopener noreferrer" class="preview-link">
 				<img src={thumbnailUrl} alt="Video thumbnail" class="thumbnail" />
 				<div class="play-overlay">
 					<svg viewBox="0 0 24 24" fill="currentColor" class="play-icon">

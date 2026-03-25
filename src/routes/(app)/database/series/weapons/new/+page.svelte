@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import { useQueryClient } from '@tanstack/svelte-query'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import PageMeta from '$lib/components/PageMeta.svelte'
@@ -70,7 +69,7 @@
 			})
 
 			// Navigate to the new series detail page
-			goto(resolve(`/database/series/weapons/${formData.slug}`))
+			goto(`/database/series/weapons/${formData.slug}`)
 		} catch (error) {
 			saveError = 'Failed to create weapon series. Please try again.'
 			console.error('Create error:', error)
@@ -89,7 +88,7 @@
 				variant="ghost"
 				size="small"
 				leftIcon="chevron-left"
-				href={resolve('/database/weapons?view=series')}>Back</Button
+				href="/database/weapons?view=series">Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}

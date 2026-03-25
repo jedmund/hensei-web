@@ -5,7 +5,6 @@
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { ContextMenu } from 'bits-ui'
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import PlaylistCard from '$lib/components/playlist/PlaylistCard.svelte'
 	import CreatePlaylistDialog from '$lib/components/playlist/CreatePlaylistDialog.svelte'
@@ -141,9 +140,7 @@
 										<ContextMenu.Item
 											class="context-menu-item"
 											onclick={() =>
-												goto(
-													resolve(localizeHref(`/${data.user.username}/playlists/${playlist.slug}`))
-												)}
+												goto(localizeHref(`/${data.user.username}/playlists/${playlist.slug}`))}
 										>
 											{m.context_view_playlist()}
 										</ContextMenu.Item>

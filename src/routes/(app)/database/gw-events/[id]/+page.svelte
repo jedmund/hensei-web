@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
@@ -35,12 +34,12 @@
 
 	// Navigate to edit
 	function handleEdit() {
-		goto(resolve(`/database/gw-events/${eventId}/edit`))
+		goto(`/database/gw-events/${eventId}/edit`)
 	}
 
 	// Navigate back
 	function handleBack() {
-		goto(resolve('/database/gw-events'))
+		goto('/database/gw-events')
 	}
 </script>
 

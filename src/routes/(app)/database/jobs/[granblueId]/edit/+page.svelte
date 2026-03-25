@@ -2,7 +2,6 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
-	import { resolve } from '$app/paths'
 	// Page metadata
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -115,7 +114,7 @@
 			saveSuccess = true
 
 			setTimeout(() => {
-				goto(resolve(`/database/jobs/${editData.granblueId}`))
+				goto(`/database/jobs/${editData.granblueId}`)
 			}, 500)
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
@@ -126,7 +125,7 @@
 	}
 
 	function handleCancel() {
-		goto(resolve(`/database/jobs/${job?.granblueId}`))
+		goto(`/database/jobs/${job?.granblueId}`)
 	}
 
 	// Page title

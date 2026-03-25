@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { useQueryClient } from '@tanstack/svelte-query'
@@ -60,7 +59,7 @@
 
 			await queryClient.invalidateQueries({ queryKey: bulletKeys.all })
 
-			goto(resolve(`/database/bullets/${bullet.granblueId || bullet.id}`))
+			goto(`/database/bullets/${bullet.granblueId || bullet.id}`)
 		} catch (error) {
 			saveError = 'Failed to create bullet. Please try again.'
 			console.error('Create error:', error)
@@ -70,7 +69,7 @@
 	}
 
 	function handleCancel() {
-		goto(resolve('/database/bullets'))
+		goto('/database/bullets')
 	}
 </script>
 

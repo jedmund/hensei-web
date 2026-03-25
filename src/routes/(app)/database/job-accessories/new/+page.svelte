@@ -2,7 +2,6 @@
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
-	import { resolve } from '$app/paths'
 	// Page metadata
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -72,7 +71,7 @@
 			await queryClient.invalidateQueries({ queryKey: jobAccessoryKeys.all })
 
 			// Navigate to the new accessory
-			goto(resolve(`/database/job-accessories/${accessory.granblueId}`))
+			goto(`/database/job-accessories/${accessory.granblueId}`)
 		} catch (error) {
 			saveError = 'Failed to create accessory. Please try again.'
 			console.error('Create error:', error)
@@ -82,7 +81,7 @@
 	}
 
 	function handleCancel() {
-		goto(resolve('/database/jobs?view=accessories'))
+		goto('/database/jobs?view=accessories')
 	}
 </script>
 

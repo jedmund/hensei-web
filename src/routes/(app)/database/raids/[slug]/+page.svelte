@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { raidAdapter } from '$lib/api/adapters/raid.adapter'
@@ -42,7 +41,7 @@
 		} else {
 			url.searchParams.set('tab', tab)
 		}
-		goto(resolve(url.toString()), { replaceState: true })
+		goto(url.toString(), { replaceState: true })
 	}
 
 	// Get raid slug from URL
@@ -64,13 +63,13 @@
 
 	// Navigate back
 	function handleBack() {
-		goto(resolve('/database/raids'))
+		goto('/database/raids')
 	}
 
 	// Navigate to group detail
 	function handleGroupClick() {
 		if (raid?.group?.id) {
-			goto(resolve(`/database/raid-groups/${raid.group.id}`))
+			goto(`/database/raid-groups/${raid.group.id}`)
 		}
 	}
 
@@ -139,13 +138,13 @@
 <div class="page">
 	<DatabasePageHeader title="Raid">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href={resolve('/database/raids')}
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/raids"
 				>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if canEdit && editUrl}
-				<Button variant="secondary" size="small" href={resolve(editUrl)}>Edit</Button>
+				<Button variant="secondary" size="small" href={editUrl}>Edit</Button>
 			{/if}
 		{/snippet}
 	</DatabasePageHeader>
