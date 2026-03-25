@@ -64,8 +64,8 @@
 	let genderFilters = $state<number[]>([])
 
 	// Selection state - characters use Set<string>, weapons/summons use Map<string, number> for quantities
-	let selectedIds = $state(new SvelteSet<string>())
-	let selectedQuantities = $state(new SvelteMap<string, number>())
+	let selectedIds = new SvelteSet<string>()
+	let selectedQuantities = new SvelteMap<string, number>()
 	let showOnlySelected = $state(false)
 
 	// Refs
@@ -368,150 +368,150 @@
 </script>
 
 <Dialog bind:open {onOpenChange} size="large">
-		<ModalHeader title={dialogTitle} />
-		<div class="modal-content">
-			<!-- Filters -->
-			<div class="filters-bar">
-				<CollectionFilters
-					{entityType}
-					bind:elementFilters
-					bind:rarityFilters
-					bind:seasonFilters
-					bind:seriesFilters
-					bind:raceFilters
-					bind:proficiencyFilters
-					bind:genderFilters
-					bind:searchQuery
-					onFiltersChange={handleFiltersChange}
-					showSort={false}
-					showViewToggle={true}
-					viewMode={currentViewMode}
-					onViewModeChange={handleViewModeChange}
-				/>
-			</div>
-
-			<!-- Results -->
-			<div class="results-area" bind:this={resultsAreaEl} onscroll={handleResultsScroll}>
-				{#if isLoading}
-					<div class="loading-state">
-						<Icon name="loader-2" size={32} />
-						<p>{m.collection_add_loading({ type: entityNames[entityType].plural })}</p>
-					</div>
-				{:else if displayedResults.length === 0}
-					<div class="empty-state">
-						{#if showOnlySelected}
-							<p>{m.collection_add_none_selected({ type: entityNames[entityType].plural })}</p>
-							<Button variant="ghost" size="small" onclick={toggleShowSelected}>
-								{m.collection_add_show_all({ type: entityNames[entityType].plural })}
-							</Button>
-						{:else if searchQuery || Object.values(searchFilters).some((v) => v)}
-							<p>{m.collection_add_no_results({ type: entityNames[entityType].plural })}</p>
-						{:else}
-							<p>{m.collection_add_search_prompt({ type: entityNames[entityType].plural })}</p>
-						{/if}
-					</div>
-				{:else if currentViewMode === 'grid'}
-					<div class="results-grid">
-						{#if entityType === 'character'}
-							{#each displayedResults as character (character.id)}
-								<SelectableCharacterCard
-									{character}
-									selected={selectedIds.has(character.id)}
-									onToggle={toggleCharacterSelection}
-									{userElement}
-								/>
-							{/each}
-						{:else if entityType === 'weapon'}
-							{#each displayedResults as weapon (weapon.id)}
-								<SelectableWeaponCard
-									{weapon}
-									quantity={selectedQuantities.get(weapon.id) ?? 0}
-									onQuantityChange={handleQuantityChange}
-									{userElement}
-								/>
-							{/each}
-						{:else}
-							{#each displayedResults as summon (summon.id)}
-								<SelectableSummonCard
-									{summon}
-									quantity={selectedQuantities.get(summon.id) ?? 0}
-									onQuantityChange={handleQuantityChange}
-									{userElement}
-								/>
-							{/each}
-						{/if}
-					</div>
-				{:else}
-					<div class="results-list">
-						{#if entityType === 'character'}
-							{#each displayedResults as character (character.id)}
-								<SelectableCharacterRow
-									{character}
-									selected={selectedIds.has(character.id)}
-									onToggle={toggleCharacterSelection}
-									{userElement}
-								/>
-							{/each}
-						{:else if entityType === 'weapon'}
-							{#each displayedResults as weapon (weapon.id)}
-								<SelectableWeaponRow
-									{weapon}
-									quantity={selectedQuantities.get(weapon.id) ?? 0}
-									onQuantityChange={handleQuantityChange}
-									{userElement}
-								/>
-							{/each}
-						{:else}
-							{#each displayedResults as summon (summon.id)}
-								<SelectableSummonRow
-									{summon}
-									quantity={selectedQuantities.get(summon.id) ?? 0}
-									onQuantityChange={handleQuantityChange}
-									{userElement}
-								/>
-							{/each}
-						{/if}
-					</div>
-				{/if}
-
-				{#if displayedResults.length > 0}
-					<div
-						class="load-more-sentinel"
-						bind:this={sentinelEl}
-						class:hidden={showOnlySelected || !searchResults.hasNextPage}
-					></div>
-
-					{#if searchResults.isFetchingNextPage}
-						<div class="loading-more">
-							<Icon name="loader-2" size={20} />
-							<span>{m.loading_more()}</span>
-						</div>
-					{/if}
-				{/if}
-			</div>
+	<ModalHeader title={dialogTitle} />
+	<div class="modal-content">
+		<!-- Filters -->
+		<div class="filters-bar">
+			<CollectionFilters
+				{entityType}
+				bind:elementFilters
+				bind:rarityFilters
+				bind:seasonFilters
+				bind:seriesFilters
+				bind:raceFilters
+				bind:proficiencyFilters
+				bind:genderFilters
+				bind:searchQuery
+				onFiltersChange={handleFiltersChange}
+				showSort={false}
+				showViewToggle={true}
+				viewMode={currentViewMode}
+				onViewModeChange={handleViewModeChange}
+			/>
 		</div>
-		<ModalFooter
-			onCancel={() => (open = false)}
-			showShadow={footerShadow}
-			primaryAction={{
-				label: currentMutation.isPending ? m.collection_adding() : m.collection_add_button(),
-				onclick: handleAdd,
-				disabled: selectedCount === 0 || currentMutation.isPending
-			}}
-		>
-			{#snippet left()}
-				{#if selectedCount > 0}
-					<button
-						type="button"
-						class="selected-link"
-						class:active={showOnlySelected}
-						onclick={toggleShowSelected}
-					>
-						{selectedText}
-					</button>
+
+		<!-- Results -->
+		<div class="results-area" bind:this={resultsAreaEl} onscroll={handleResultsScroll}>
+			{#if isLoading}
+				<div class="loading-state">
+					<Icon name="loader-2" size={32} />
+					<p>{m.collection_add_loading({ type: entityNames[entityType].plural })}</p>
+				</div>
+			{:else if displayedResults.length === 0}
+				<div class="empty-state">
+					{#if showOnlySelected}
+						<p>{m.collection_add_none_selected({ type: entityNames[entityType].plural })}</p>
+						<Button variant="ghost" size="small" onclick={toggleShowSelected}>
+							{m.collection_add_show_all({ type: entityNames[entityType].plural })}
+						</Button>
+					{:else if searchQuery || Object.values(searchFilters).some((v) => v)}
+						<p>{m.collection_add_no_results({ type: entityNames[entityType].plural })}</p>
+					{:else}
+						<p>{m.collection_add_search_prompt({ type: entityNames[entityType].plural })}</p>
+					{/if}
+				</div>
+			{:else if currentViewMode === 'grid'}
+				<div class="results-grid">
+					{#if entityType === 'character'}
+						{#each displayedResults as character (character.id)}
+							<SelectableCharacterCard
+								{character}
+								selected={selectedIds.has(character.id)}
+								onToggle={toggleCharacterSelection}
+								{userElement}
+							/>
+						{/each}
+					{:else if entityType === 'weapon'}
+						{#each displayedResults as weapon (weapon.id)}
+							<SelectableWeaponCard
+								{weapon}
+								quantity={selectedQuantities.get(weapon.id) ?? 0}
+								onQuantityChange={handleQuantityChange}
+								{userElement}
+							/>
+						{/each}
+					{:else}
+						{#each displayedResults as summon (summon.id)}
+							<SelectableSummonCard
+								{summon}
+								quantity={selectedQuantities.get(summon.id) ?? 0}
+								onQuantityChange={handleQuantityChange}
+								{userElement}
+							/>
+						{/each}
+					{/if}
+				</div>
+			{:else}
+				<div class="results-list">
+					{#if entityType === 'character'}
+						{#each displayedResults as character (character.id)}
+							<SelectableCharacterRow
+								{character}
+								selected={selectedIds.has(character.id)}
+								onToggle={toggleCharacterSelection}
+								{userElement}
+							/>
+						{/each}
+					{:else if entityType === 'weapon'}
+						{#each displayedResults as weapon (weapon.id)}
+							<SelectableWeaponRow
+								{weapon}
+								quantity={selectedQuantities.get(weapon.id) ?? 0}
+								onQuantityChange={handleQuantityChange}
+								{userElement}
+							/>
+						{/each}
+					{:else}
+						{#each displayedResults as summon (summon.id)}
+							<SelectableSummonRow
+								{summon}
+								quantity={selectedQuantities.get(summon.id) ?? 0}
+								onQuantityChange={handleQuantityChange}
+								{userElement}
+							/>
+						{/each}
+					{/if}
+				</div>
+			{/if}
+
+			{#if displayedResults.length > 0}
+				<div
+					class="load-more-sentinel"
+					bind:this={sentinelEl}
+					class:hidden={showOnlySelected || !searchResults.hasNextPage}
+				></div>
+
+				{#if searchResults.isFetchingNextPage}
+					<div class="loading-more">
+						<Icon name="loader-2" size={20} />
+						<span>{m.loading_more()}</span>
+					</div>
 				{/if}
-			{/snippet}
-		</ModalFooter>
+			{/if}
+		</div>
+	</div>
+	<ModalFooter
+		onCancel={() => (open = false)}
+		showShadow={footerShadow}
+		primaryAction={{
+			label: currentMutation.isPending ? m.collection_adding() : m.collection_add_button(),
+			onclick: handleAdd,
+			disabled: selectedCount === 0 || currentMutation.isPending
+		}}
+	>
+		{#snippet left()}
+			{#if selectedCount > 0}
+				<button
+					type="button"
+					class="selected-link"
+					class:active={showOnlySelected}
+					onclick={toggleShowSelected}
+				>
+					{selectedText}
+				</button>
+			{/if}
+		{/snippet}
+	</ModalFooter>
 </Dialog>
 
 <style lang="scss">

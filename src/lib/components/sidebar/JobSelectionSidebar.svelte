@@ -23,7 +23,7 @@
 	const jobsQuery = createQuery(() => jobQueries.list())
 
 	let searchQuery = $state('')
-	let selectedTiers = $state(new SvelteSet(['4', '5', 'ex2', 'o1']))
+	let selectedTiers = new SvelteSet(['4', '5', 'ex2', 'o1'])
 	const tiers = [
 		{ value: '1', label: m.job_tier_class_1(), shortLabel: 'I' },
 		{ value: '2', label: m.job_tier_class_2(), shortLabel: 'II' },

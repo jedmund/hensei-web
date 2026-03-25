@@ -23,7 +23,6 @@
 	import BefoulmentSelect from '$lib/components/sidebar/edit/BefoulmentSelect.svelte'
 	import BulletSelect from '$lib/components/sidebar/edit/BulletSelect.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
-	import { getElementKey } from '$lib/utils/element'
 	import { seriesHasWeaponKeys, seriesHasAwakening, getSeriesSlug } from '$lib/utils/weaponSeries'
 
 	export interface WeaponEditValues {
@@ -88,7 +87,7 @@
 	let awakeningLevel = $derived(currentValues.awakening?.level ?? 1)
 	let axSkills = $derived<AugmentSkill[]>(currentValues.axSkills ?? [])
 	let befoulment = $derived<Befoulment | null>(currentValues.befoulment ?? null)
-	let bulletSelections = $state(new SvelteMap<number, Bullet | undefined>())
+	let bulletSelections = new SvelteMap<number, Bullet | undefined>()
 
 	// Initialize bullet selections from current values
 	$effect(() => {
@@ -119,10 +118,6 @@
 	const isMainhand = $derived(position === -1)
 	const hasBullets = $derived(bulletSlots.length > 0 && isMainhand && weaponData?.proficiency === 9)
 	const availableAwakenings = $derived(weaponData?.awakenings ?? [])
-
-	// Element name for theming
-	const weaponElement = $derived(element || weaponData?.element)
-	const elementName = $derived(weaponElement ? getElementKey(weaponElement) : undefined)
 
 	function handleUncapUpdate(newLevel: number) {
 		uncapLevel = newLevel

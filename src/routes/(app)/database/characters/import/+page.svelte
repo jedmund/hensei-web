@@ -31,8 +31,6 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
 
-	import type { PageData } from './$types'
-
 	// Internal entity state including loading status
 	interface EntityState {
 		wikiPage: string
@@ -43,20 +41,18 @@
 		error?: string
 	}
 
-	let { data }: { data: PageData } = $props()
-
 	// Input phase
 	let wikiPagesInputs = $state<string[]>(['', '', ''])
 	let isFetching = $state(false)
 	let fetchError = $state<string | null>(null)
 
 	// Fetched entities
-	let entities = $state(new SvelteMap<string, EntityState>())
+	let entities = new SvelteMap<string, EntityState>()
 	let selectedWikiPage = $state<string | null>(null)
 
 	// Form data per entity (keyed by wikiPage) - using Record for proper reactivity
 	let formDataByPage = $state<Record<string, Record<string, unknown>>>({})
-	let savedEntities = $state(new SvelteSet<string>())
+	let savedEntities = new SvelteSet<string>()
 
 	// Store wiki raw data per entity for sending with create request
 	let wikiRawByPage = $state<Record<string, string>>({})
@@ -250,8 +246,6 @@
 		if (!selectedWikiPage) return
 		const formData = formDataByPage[selectedWikiPage]
 		if (!formData) return
-		const entity = entities.get(selectedWikiPage)
-
 		isSaving = true
 		saveError = null
 
@@ -397,7 +391,8 @@
 				</Button>
 			</div>
 			<div class="wiki-inputs">
-				{#each wikiPagesInputs as _, index (index)}
+				<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
+				{#each wikiPagesInputs as _input, index (index)}
 					<div class="input-row">
 						<Input
 							bind:value={wikiPagesInputs[index]}

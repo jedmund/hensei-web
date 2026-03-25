@@ -35,11 +35,11 @@
 	}: Props = $props()
 
 	// Track download status per image
-	let downloadingImages = $state(new SvelteSet<string>())
+	let downloadingImages = new SvelteSet<string>()
 	let downloadingAll = $state(false)
 
 	// Track images that failed and fell back (download should be disabled for these)
-	let failedImages = $state(new SvelteSet<string>())
+	let failedImages = new SvelteSet<string>()
 
 	// Cache-buster: increment to force image reload after downloads
 	let cacheBuster = $state(0)

@@ -40,7 +40,7 @@
 
 	// Mode overrides for pinned entity filters (granblueId → mode)
 	// Persists exclude toggles that would otherwise be lost when pinned filters re-derive
-	let modeOverrides = $state(new SvelteMap<string, 'include' | 'exclude'>())
+	let modeOverrides = new SvelteMap<string, 'include' | 'exclude'>()
 
 	// Build default element filter from defaultElement prop
 	function defaultElementFilter(): FilterItem[] {
