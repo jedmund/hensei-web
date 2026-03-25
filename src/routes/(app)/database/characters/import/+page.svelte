@@ -2,7 +2,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
+	import { resolvePath } from '$lib/utils/resolvePath'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { entityAdapter, type ParsedCharacterData } from '$lib/api/adapters/entity.adapter'
 	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'
@@ -319,7 +319,7 @@
 	}
 
 	function handleCancel() {
-		goto(resolve(localizeHref('/database/characters')))
+		goto(resolvePath(localizeHref('/database/characters')))
 	}
 
 	// Can save current entity
@@ -445,69 +445,62 @@
 					<p>Loading wiki data...</p>
 				</div>
 			{:else if selectedWikiPage && formDataByPage[selectedWikiPage]}
+				{@const formData = formDataByPage[selectedWikiPage]!}
 				<section class="details">
 					<CharacterMetadataSection
 						character={emptyCharacter}
 						editMode={true}
-						bind:editData={formDataByPage[selectedWikiPage]}
+						bind:editData={formData}
 					/>
 
 					<CharacterUncapSection
 						character={emptyCharacter}
 						editMode={true}
-						bind:editData={formDataByPage[selectedWikiPage]}
+						bind:editData={formData}
 					/>
 
 					<CharacterTaxonomySection
 						character={emptyCharacter}
 						editMode={true}
-						bind:editData={formDataByPage[selectedWikiPage]}
+						bind:editData={formData}
 					/>
 
 					<CharacterStatsSection
 						character={emptyCharacter}
 						editMode={true}
-						bind:editData={formDataByPage[selectedWikiPage]}
+						bind:editData={formData}
 					/>
 
 					<DetailsContainer title="Nicknames">
 						<DetailItem label="Nicknames (EN)">
-							<TagInput
-								bind:value={formDataByPage[selectedWikiPage].nicknamesEn}
-								placeholder="Add nickname..."
-								contained
-							/>
+							<TagInput bind:value={formData.nicknamesEn} placeholder="Add nickname..." contained />
 						</DetailItem>
 						<DetailItem label="Nicknames (JP)">
-							<TagInput
-								bind:value={formDataByPage[selectedWikiPage].nicknamesJp}
-								placeholder="ニックネーム..."
-								contained
-							/>
+							<TagInput bind:value={formData.nicknamesJp} placeholder="ニックネーム..." contained />
 						</DetailItem>
 					</DetailsContainer>
 
 					<DetailsContainer title="Dates">
 						<DetailItem
 							label="Release Date"
-							bind:value={formDataByPage[selectedWikiPage].releaseDate}
+							bind:value={formData.releaseDate}
 							editable={true}
 							type="text"
 							placeholder="YYYY-MM-DD"
 						/>
-						{#if formDataByPage[selectedWikiPage].flb}
+						{#if formData.flb}
 							<DetailItem
 								label="FLB Date"
-								bind:value={formDataByPage[selectedWikiPage].flbDate}
+								bind:value={formData.flbDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
 							/>
 						{/if}
-						{#if formDataByPage[selectedWikiPage].transcendence}
+						{#if formData.transcendence}
 							<DetailItem
 								label="Transcendence Date"
-								bind:value={formDataByPage[selectedWikiPage].transcendenceDate}
+								bind:value={formData.transcendenceDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
@@ -518,43 +511,43 @@
 					<DetailsContainer title="Links">
 						<DetailItem
 							label="Wiki (EN)"
-							bind:value={formDataByPage[selectedWikiPage].wikiEn}
+							bind:value={formData.wikiEn}
 							editable={true}
 							type="text"
 							placeholder="Page name (e.g., Narmaya)"
 							width="480px"
 							hasLinkButton={true}
-							linkUrl={buildWikiEnUrl(formDataByPage[selectedWikiPage].wikiEn)}
+							linkUrl={buildWikiEnUrl(formData.wikiEn)}
 						/>
 						<DetailItem
 							label="Wiki (JP)"
-							bind:value={formDataByPage[selectedWikiPage].wikiJa}
+							bind:value={formData.wikiJa}
 							editable={true}
 							type="text"
 							placeholder="Japanese page name"
 							width="480px"
 							hasLinkButton={true}
-							linkUrl={buildWikiJaUrl(formDataByPage[selectedWikiPage].wikiJa, 'character')}
+							linkUrl={buildWikiJaUrl(formData.wikiJa, 'character')}
 						/>
 						<DetailItem
 							label="Gamewith"
-							bind:value={formDataByPage[selectedWikiPage].gamewith}
+							bind:value={formData.gamewith}
 							editable={true}
 							type="text"
 							placeholder="Article ID (e.g., 519325)"
 							width="480px"
 							hasLinkButton={true}
-							linkUrl={buildGamewithUrl(formDataByPage[selectedWikiPage].gamewith)}
+							linkUrl={buildGamewithUrl(formData.gamewith)}
 						/>
 						<DetailItem
 							label="Kamigame"
-							bind:value={formDataByPage[selectedWikiPage].kamigame}
+							bind:value={formData.kamigame}
 							editable={true}
 							type="text"
 							placeholder="Slug (e.g., SSR闇フロレンス)"
 							width="480px"
 							hasLinkButton={true}
-							linkUrl={buildKamigameUrl(formDataByPage[selectedWikiPage].kamigame, 'character')}
+							linkUrl={buildKamigameUrl(formData.kamigame, 'character')}
 						/>
 					</DetailsContainer>
 

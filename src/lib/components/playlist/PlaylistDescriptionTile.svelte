@@ -3,7 +3,7 @@
 	import type { User } from '$lib/types/api/entities'
 	import Icon from '$lib/components/Icon.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { resolve } from '$app/paths'
+	import { resolvePath } from '$lib/utils/resolvePath'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { formatRelativeTime } from '$lib/utils/date'
 	import * as m from '$lib/paraglide/messages'
@@ -26,7 +26,7 @@
 	<div class="tile-header">
 		<div class="title-row">
 			{#if backHref}
-				<a class="back-link" href={resolve(localizeHref(backHref))}>
+				<a class="back-link" href={resolvePath(localizeHref(backHref))}>
 					<Icon name="arrow-left" size={16} />
 				</a>
 			{/if}
@@ -45,7 +45,7 @@
 
 	{#if user}
 		<div class="attribution">
-			<a href={resolve(localizeHref(`/${user.username}`))} class="creator-link">
+			<a href={resolvePath(localizeHref(`/${user.username}`))} class="creator-link">
 				<div class="avatar-wrapper {user.avatar?.element || ''}">
 					{#if user.avatar?.picture}
 						<img

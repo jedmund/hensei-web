@@ -5,7 +5,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
-	import { resolve } from '$app/paths'
+	import { resolvePath } from '$lib/utils/resolvePath'
 	interface Props {
 		children: Snippet
 	}
@@ -17,7 +17,7 @@
 
 <div class="authContainer" style:--auth-bg-url="url('{backgroundUrl}')">
 	<div class="authBackground"></div>
-	<a href={resolve(localizeHref('/'))} class="backLink">
+	<a href={resolvePath(localizeHref('/'))} class="backLink">
 		<Icon name="arrow-left" size={14} />
 		{m.auth_backToHome()}
 	</a>

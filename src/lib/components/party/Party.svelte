@@ -2,7 +2,7 @@
 	import { onMount, onDestroy } from 'svelte'
 	import { setPartyContext } from '$lib/types/party-context'
 	import { pushState } from '$app/navigation'
-	import { resolve } from '$app/paths'
+	import { resolvePath } from '$lib/utils/resolvePath'
 	import type { Party } from '$lib/types/api/party'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 
@@ -327,7 +327,7 @@
 		if (!isNew && routerReady) {
 			const basePath = `/teams/${party.shortcode}`
 			const newPath = `${basePath}/${tab}s`
-			pushState(resolve(newPath), {})
+			pushState(resolvePath(newPath), {})
 		}
 
 		const nextEmpty = findNextEmptySlot(party, tab)

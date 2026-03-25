@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
+	import { resolvePath } from '$lib/utils/resolvePath'
 	import { createQuery, createMutation, useQueryClient } from '@tanstack/svelte-query'
 	import { crewQueries, crewKeys } from '$lib/api/queries/crew.queries'
 	import { crewAdapter } from '$lib/api/adapters/crew.adapter'
@@ -62,7 +62,7 @@
 		if (hasCheckedOfficer) return
 		hasCheckedOfficer = true
 		if (!crewStore.isOfficer) {
-			goto(resolve(localizeHref('/crew')))
+			goto(resolvePath(localizeHref('/crew')))
 		}
 	})
 

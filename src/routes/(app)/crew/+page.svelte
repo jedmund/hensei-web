@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { resolve } from '$app/paths'
+	import { resolvePath } from '$lib/utils/resolvePath'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
@@ -155,14 +155,14 @@
 							<Button
 								variant="primary"
 								size="small"
-								onclick={() => goto(resolve(localizeHref('/auth/register')))}
+								onclick={() => goto(resolvePath(localizeHref('/auth/register')))}
 							>
 								{m.crew_sign_up()}
 							</Button>
 							<Button
 								variant="secondary"
 								size="small"
-								onclick={() => goto(resolve(localizeHref('/auth/login')))}
+								onclick={() => goto(resolvePath(localizeHref('/auth/login')))}
 							>
 								{m.crew_log_in()}
 							</Button>
@@ -186,7 +186,7 @@
 											variant="secondary"
 											size="small"
 											onclick={() =>
-												goto(resolve(localizeHref(`/crew/join?invitation=${invitation.id}`)))}
+												goto(resolvePath(localizeHref(`/crew/join?invitation=${invitation.id}`)))}
 										>
 											{m.crew_view()}
 										</Button>
@@ -248,7 +248,7 @@
 						{#each eventsQuery.data as event (event.id)}
 							<li
 								class="event-item"
-								onclick={() => goto(resolve(localizeHref(`/crew/events/${event.eventNumber}`)))}
+								onclick={() => goto(resolvePath(localizeHref(`/crew/events/${event.eventNumber}`)))}
 							>
 								<div class="event-info">
 									<span class="event-number">{event.eventNumber}</span>

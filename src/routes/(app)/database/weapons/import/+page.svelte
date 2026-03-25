@@ -446,54 +446,55 @@
 					<p>Loading wiki data...</p>
 				</div>
 			{:else if selectedWikiPage && formDataByPage[selectedWikiPage]}
+				{@const formData = formDataByPage[selectedWikiPage]!}
 				<section class="details">
 					<WeaponMetadataSection
 						weapon={emptyWeapon}
 						editMode={true}
-						bind:editData={formDataByPage[selectedWikiPage]}
+						bind:editData={formData}
 					/>
 
 					<WeaponUncapSection
 						weapon={emptyWeapon}
 						editMode={true}
-						bind:editData={formDataByPage[selectedWikiPage]}
+						bind:editData={formData}
 					/>
 
 					<WeaponTaxonomySection
 						weapon={emptyWeapon}
 						editMode={true}
-						bind:editData={formDataByPage[selectedWikiPage]}
+						bind:editData={formData}
 					/>
 
 					<WeaponStatsSection
 						weapon={emptyWeapon}
 						editMode={true}
-						bind:editData={formDataByPage[selectedWikiPage]}
+						bind:editData={formData}
 					/>
 
 					<WeaponGachaSection
 						weapon={emptyWeapon}
 						editMode={true}
-						bind:editData={formDataByPage[selectedWikiPage]}
+						bind:editData={formData}
 					/>
 
 					<WeaponForgeSection
 						weapon={emptyWeapon}
 						editMode={true}
-						bind:editData={formDataByPage[selectedWikiPage]}
+						bind:editData={formData}
 					/>
 
 					<DetailsContainer title="Nicknames">
 						<DetailItem label="Nicknames (EN)">
 							<TagInput
-								bind:value={formDataByPage[selectedWikiPage].nicknamesEn}
+								bind:value={formData.nicknamesEn}
 								placeholder="Add nickname..."
 								contained
 							/>
 						</DetailItem>
 						<DetailItem label="Nicknames (JP)">
 							<TagInput
-								bind:value={formDataByPage[selectedWikiPage].nicknamesJp}
+								bind:value={formData.nicknamesJp}
 								placeholder="ニックネーム..."
 								contained
 							/>
@@ -503,33 +504,33 @@
 					<DetailsContainer title="Dates">
 						<DetailItem
 							label="Release Date"
-							bind:value={formDataByPage[selectedWikiPage].releaseDate}
+							bind:value={formData.releaseDate}
 							editable={true}
 							type="text"
 							placeholder="YYYY-MM-DD"
 						/>
-						{#if formDataByPage[selectedWikiPage].flb}
+						{#if formData.flb}
 							<DetailItem
 								label="FLB Date"
-								bind:value={formDataByPage[selectedWikiPage].flbDate}
+								bind:value={formData.flbDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
 							/>
 						{/if}
-						{#if formDataByPage[selectedWikiPage].ulb}
+						{#if formData.ulb}
 							<DetailItem
 								label="ULB Date"
-								bind:value={formDataByPage[selectedWikiPage].ulbDate}
+								bind:value={formData.ulbDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
 							/>
 						{/if}
-						{#if formDataByPage[selectedWikiPage].transcendence}
+						{#if formData.transcendence}
 							<DetailItem
 								label="Transcendence Date"
-								bind:value={formDataByPage[selectedWikiPage].transcendenceDate}
+								bind:value={formData.transcendenceDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
@@ -540,46 +541,46 @@
 					<DetailsContainer title="Links">
 						<DetailItem
 							label="Wiki (EN)"
-							bind:value={formDataByPage[selectedWikiPage].wikiEn}
+							bind:value={formData.wikiEn}
 							editable={true}
 							type="text"
 							placeholder="Page name (e.g., Cosmic_Sword)"
 							width="480px"
 							hasLinkButton={true}
-							linkUrl={buildWikiEnUrl(formDataByPage[selectedWikiPage].wikiEn)}
+							linkUrl={buildWikiEnUrl(formData.wikiEn)}
 						/>
 						<DetailItem
 							label="Wiki (JP)"
-							bind:value={formDataByPage[selectedWikiPage].wikiJa}
+							bind:value={formData.wikiJa}
 							editable={true}
 							type="text"
 							placeholder="Japanese page name"
 							width="480px"
 							hasLinkButton={true}
-							linkUrl={buildWikiJaUrl(formDataByPage[selectedWikiPage].wikiJa, 'weapon')}
+							linkUrl={buildWikiJaUrl(formData.wikiJa, 'weapon')}
 						/>
 						<DetailItem
 							label="Gamewith"
-							bind:value={formDataByPage[selectedWikiPage].gamewith}
+							bind:value={formData.gamewith}
 							editable={true}
 							type="text"
 							placeholder="Article ID (e.g., 519325)"
 							width="480px"
 							hasLinkButton={true}
-							linkUrl={buildGamewithUrl(formDataByPage[selectedWikiPage].gamewith)}
+							linkUrl={buildGamewithUrl(formData.gamewith)}
 						/>
 						<DetailItem
 							label="Kamigame"
-							bind:value={formDataByPage[selectedWikiPage].kamigame}
+							bind:value={formData.kamigame}
 							editable={true}
 							type="text"
 							placeholder="Japanese name (e.g., 神刃エクス・アシャワン)"
 							width="480px"
 							hasLinkButton={true}
 							linkUrl={buildKamigameUrl(
-								formDataByPage[selectedWikiPage].kamigame,
+								formData.kamigame,
 								'weapon',
-								formDataByPage[selectedWikiPage].rarity
+								formData.rarity
 							)}
 						/>
 					</DetailsContainer>
