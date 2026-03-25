@@ -227,7 +227,7 @@ describe('BaseAdapter', () => {
 			expect(calledUrl).toContain('query=test')
 			expect(calledUrl).toContain('page=2')
 			// Arrays are serialized as comma-separated values
-			const parsedUrl = new URL(calledUrl)
+			const parsedUrl = new URL(calledUrl as string)
 			expect(parsedUrl.searchParams.get('filters')).toBe('1,2,3')
 		})
 

@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest'
 
-import { userQueries } from '../user.queries'
+import { userQueries, type UserPartiesPageResult } from '../user.queries'
 import { artifactQueries } from '../artifact.queries'
 import { collectionQueries } from '../collection.queries'
 import { crewQueries } from '../crew.queries'
-import { partyQueries } from '../party.queries'
+import { partyQueries, type PartyPageResult } from '../party.queries'
 import { raidQueries } from '../raid.queries'
-import { searchQueries } from '../search.queries'
+import { searchQueries, type SearchPageResult } from '../search.queries'
 
 // ============================================================================
 // Enabled Conditions
@@ -133,35 +133,23 @@ describe('getNextPageParam', () => {
 	it('returns next page when more pages available', () => {
 		const opts = partyQueries.list()
 		const getNext = opts.getNextPageParam!
-		const result = getNext(
-			{ results: [], page: 2, totalPages: 5 } as Record<string, unknown>,
-			[],
-			2,
-			[]
-		)
+		const result = getNext({ results: [], page: 2, totalPages: 5 } as PartyPageResult, [], 2, [])
 		expect(result).toBe(3)
 	})
 
 	it('returns undefined on last page', () => {
 		const opts = partyQueries.list()
 		const getNext = opts.getNextPageParam!
-		const result = getNext(
-			{ results: [], page: 5, totalPages: 5 } as Record<string, unknown>,
-			[],
-			5,
-			[]
-		)
+		const result = getNext({ results: [], page: 5, totalPages: 5 } as PartyPageResult, [], 5, [])
 		expect(result).toBeUndefined()
 	})
 
 	it('works for search queries', () => {
 		const opts = searchQueries.weapons()
 		const getNext = opts.getNextPageParam!
+		expect(getNext({ results: [], page: 1, totalPages: 3 } as SearchPageResult, [], 1, [])).toBe(2)
 		expect(
-			getNext({ results: [], page: 1, totalPages: 3 } as Record<string, unknown>, [], 1, [])
-		).toBe(2)
-		expect(
-			getNext({ results: [], page: 3, totalPages: 3 } as Record<string, unknown>, [], 3, [])
+			getNext({ results: [], page: 3, totalPages: 3 } as SearchPageResult, [], 3, [])
 		).toBeUndefined()
 	})
 
@@ -169,19 +157,31 @@ describe('getNextPageParam', () => {
 		const opts = userQueries.parties('alice')
 		const getNext = opts.getNextPageParam!
 		expect(
-			getNext({ results: [], page: 1, totalPages: 2 } as Record<string, unknown>, [], 1, [])
+			getNext(
+				{ results: [], page: 1, totalPages: 2, total: 0, perPage: 10 } as UserPartiesPageResult,
+				[],
+				1,
+				[]
+			)
 		).toBe(2)
 		expect(
-			getNext({ results: [], page: 2, totalPages: 2 } as Record<string, unknown>, [], 2, [])
+			getNext(
+				{ results: [], page: 2, totalPages: 2, total: 0, perPage: 10 } as UserPartiesPageResult,
+				[],
+				2,
+				[]
+			)
 		).toBeUndefined()
 	})
 
 	it('works for crew shared parties', () => {
 		const opts = crewQueries.sharedParties()
 		const getNext = opts.getNextPageParam!
-		expect(getNext({ page: 1, totalPages: 4 } as Record<string, unknown>, [], 1, [])).toBe(2)
+		expect(getNext({ parties: [], page: 1, totalPages: 4, total: 0, perPage: 10 }, [], 1, [])).toBe(
+			2
+		)
 		expect(
-			getNext({ page: 4, totalPages: 4 } as Record<string, unknown>, [], 4, [])
+			getNext({ parties: [], page: 4, totalPages: 4, total: 0, perPage: 10 }, [], 4, [])
 		).toBeUndefined()
 	})
 })

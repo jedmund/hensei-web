@@ -15,9 +15,9 @@ import type { UserCookie } from '$lib/types/UserCookie'
 // Track call order across all mocks
 let callOrder: string[]
 
-const mockUsersUpdate = vi.fn(async () => ({}))
+const mockUsersUpdate = vi.fn(async (_id: string, _data: Record<string, unknown>) => ({}))
 vi.mock('$lib/api/resources/users', () => ({
-	users: { update: (...args: unknown[]) => mockUsersUpdate(...args) }
+	users: { update: (...args: [string, Record<string, unknown>]) => mockUsersUpdate(...args) }
 }))
 
 const mockSetTheme = vi.fn()

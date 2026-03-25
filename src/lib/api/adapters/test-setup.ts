@@ -43,7 +43,7 @@ export function mockAPI(path: string, response: unknown, status = 200) {
 	if (!mockServer || !http || !HttpResponse) return
 	mockServer.use(
 		http.post(`*/api/v1${path}`, () => {
-			return HttpResponse.json(response, { status })
+			return HttpResponse!.json(response, { status })
 		})
 	)
 }

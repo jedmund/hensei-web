@@ -23,6 +23,7 @@ import {
 import { createTestQueryClient, seedPartyCache, getCachedParty } from './helpers'
 import { MOCK_PARTY, MOCK_SHORTCODE } from './fixtures'
 import type { QueryClient } from '@tanstack/svelte-query'
+import type { Party } from '$lib/types/api/party'
 
 // Mock adapter modules — we only test cache behavior, not API calls
 vi.mock('$lib/api/adapters/grid.adapter', () => ({

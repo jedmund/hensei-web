@@ -14,6 +14,11 @@ import {
 import { createTestQueryClient } from './helpers'
 import { gwKeys } from '$lib/api/queries/gw.queries'
 import type { QueryClient } from '@tanstack/svelte-query'
+import type {
+	CreateCrewScoreInput,
+	CreateIndividualScoreInput,
+	BatchIndividualScoresInput
+} from '$lib/types/api/gw'
 
 vi.mock('$lib/api/adapters/gw.adapter', () => ({
 	gwAdapter: {
@@ -108,7 +113,7 @@ describe('addCrewScoreOptions', () => {
 
 		opts.onSuccess(undefined, {
 			participationId: 'part-1',
-			input: {} as unknown as Record<string, unknown>
+			input: {} as unknown as CreateCrewScoreInput
 		})
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
@@ -143,7 +148,7 @@ describe('addIndividualScoreOptions', () => {
 
 		opts.onSuccess(undefined, {
 			participationId: 'part-1',
-			input: {} as unknown as Record<string, unknown>
+			input: {} as unknown as CreateIndividualScoreInput
 		})
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
@@ -158,7 +163,7 @@ describe('batchAddIndividualScoresOptions', () => {
 
 		opts.onSuccess(undefined, {
 			participationId: 'part-1',
-			input: {} as unknown as Record<string, unknown>
+			input: {} as unknown as BatchIndividualScoresInput
 		})
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)

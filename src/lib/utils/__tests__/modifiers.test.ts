@@ -11,7 +11,8 @@ import {
 	getAxSkillImage,
 	getAxSkillImages
 } from '../modifiers'
-import type { WeaponKey } from '$lib/types/api/entities'
+import type { WeaponKey, Awakening } from '$lib/types/api/entities'
+import type { AugmentSkill } from '$lib/types/api/weaponStatModifier'
 
 function makeKey(overrides: Partial<WeaponKey> = {}): WeaponKey {
 	return {
@@ -33,22 +34,22 @@ describe('getAwakeningImage', () => {
 	})
 
 	it('returns null when type has no slug', () => {
-		expect(getAwakeningImage({ type: {} as Record<string, unknown> })).toBeNull()
+		expect(getAwakeningImage({ type: {} as unknown as Awakening })).toBeNull()
 	})
 
 	it('returns null for character-balanced', () => {
 		expect(
-			getAwakeningImage({ type: { slug: 'character-balanced' } as Record<string, unknown> })
+			getAwakeningImage({ type: { slug: 'character-balanced' } as unknown as Awakening })
 		).toBeNull()
 	})
 
 	it('returns jpg for character awakenings', () => {
-		const url = getAwakeningImage({ type: { slug: 'character-attack' } as Record<string, unknown> })
+		const url = getAwakeningImage({ type: { slug: 'character-attack' } as unknown as Awakening })
 		expect(url).toBe('/images/awakening/character-attack.jpg')
 	})
 
 	it('returns png for weapon awakenings', () => {
-		const url = getAwakeningImage({ type: { slug: 'attack' } as Record<string, unknown> })
+		const url = getAwakeningImage({ type: { slug: 'attack' } as unknown as Awakening })
 		expect(url).toBe('/images/awakening/attack.png')
 	})
 })
@@ -137,7 +138,7 @@ describe('getAxSkillImages', () => {
 	it('returns url/alt pairs', () => {
 		const ax = [
 			{ modifier: { slug: 'might', nameEn: 'Might', nameJp: '攻刃' }, strength: 3 }
-		] as unknown as Record<string, unknown>[]
+		] as unknown as AugmentSkill[]
 		const result = getAxSkillImages(ax)
 		expect(result).toHaveLength(1)
 		expect(result[0]!.url).toContain('might')
@@ -148,7 +149,7 @@ describe('getAxSkillImages', () => {
 		const ax = [
 			{ modifier: { slug: 'might', nameEn: 'Might' }, strength: 3 },
 			{ modifier: { slug: '', nameEn: '' }, strength: 1 }
-		] as unknown as Record<string, unknown>[]
+		] as unknown as AugmentSkill[]
 		expect(getAxSkillImages(ax)).toHaveLength(1)
 	})
 })

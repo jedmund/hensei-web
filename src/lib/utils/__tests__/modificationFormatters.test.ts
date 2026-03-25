@@ -9,6 +9,7 @@ import {
 	getElementName
 } from '../modificationFormatters'
 import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
+import type { AugmentSkill } from '$lib/types/api/weaponStatModifier'
 
 function makeSeries(slug: string): WeaponSeriesRef {
 	return {
@@ -81,7 +82,7 @@ describe('formatAxSkill', () => {
 		const ax = {
 			modifier: { nameEn: 'Might', nameJp: '攻刃', slug: 'might', suffix: '%' },
 			strength: 3
-		} as Record<string, unknown>
+		} as unknown as AugmentSkill
 		expect(formatAxSkill(ax)).toBe('Might +3%')
 	})
 
@@ -89,7 +90,7 @@ describe('formatAxSkill', () => {
 		const ax = {
 			modifier: { nameEn: 'Might', nameJp: '攻刃', slug: 'might', suffix: '%' },
 			strength: 3
-		} as Record<string, unknown>
+		} as unknown as AugmentSkill
 		expect(formatAxSkill(ax, 'ja')).toBe('攻刃 +3%')
 	})
 
@@ -97,7 +98,7 @@ describe('formatAxSkill', () => {
 		const ax = {
 			modifier: { nameEn: 'Test', nameJp: 'テスト', slug: 'test' },
 			strength: 5
-		} as Record<string, unknown>
+		} as unknown as AugmentSkill
 		expect(formatAxSkill(ax)).toBe('Test +5')
 	})
 })

@@ -69,23 +69,28 @@ describe('POST /api/settings', () => {
 		locals = authenticatedLocals()
 	) {
 		const { POST } = await import('../../routes/(app)/api/settings/+server')
-		const response = await POST({
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const response = await (POST as any)({
 			cookies: cookies as unknown as import('@sveltejs/kit').Cookies,
 			request: makeRequest(body),
 			locals
-		} as unknown as import('@sveltejs/kit').RequestEvent)
+		})
 		return { response, cookies }
 	}
 
 	it('returns 401 when unauthenticated', async () => {
-		const { response } = await callEndpoint(baseUser, createMockCookies(), unauthenticatedLocals())
+		const { response } = await callEndpoint(
+			baseUser as unknown as Record<string, unknown>,
+			createMockCookies(),
+			unauthenticatedLocals()
+		)
 
 		expect(response.status).toBe(401)
 		expect(mockSetUserCookie).not.toHaveBeenCalled()
 	})
 
 	it('sets user cookie with provided data', async () => {
-		const { response } = await callEndpoint(baseUser)
+		const { response } = await callEndpoint(baseUser as unknown as Record<string, unknown>)
 
 		expect(response.status).toBe(200)
 		expect(mockSetUserCookie).toHaveBeenCalledWith(

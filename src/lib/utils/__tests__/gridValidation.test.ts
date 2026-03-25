@@ -42,7 +42,7 @@ describe('validateGridWeapon', () => {
 		const result = validateGridWeapon(raw)
 		expect(result).not.toBeNull()
 		expect(result!.weapon.granblueId).toBe('1040001')
-		expect((result as Record<string, unknown>).object).toBeUndefined()
+		expect((result as unknown as Record<string, unknown>).object).toBeUndefined()
 	})
 
 	it('prefers weapon over object when both present', () => {
@@ -89,7 +89,7 @@ describe('validateGridCharacter', () => {
 		const result = validateGridCharacter(raw)
 		expect(result).not.toBeNull()
 		expect(result!.character.granblueId).toBe('3040001')
-		expect((result as Record<string, unknown>).object).toBeUndefined()
+		expect((result as unknown as Record<string, unknown>).object).toBeUndefined()
 	})
 })
 
@@ -126,6 +126,6 @@ describe('validateGridSummon', () => {
 		const result = validateGridSummon(raw)
 		expect(result).not.toBeNull()
 		expect(result!.summon.granblueId).toBe('2040001')
-		expect((result as Record<string, unknown>).object).toBeUndefined()
+		expect((result as unknown as Record<string, unknown>).object).toBeUndefined()
 	})
 })
