@@ -101,7 +101,7 @@
 			<div class="date-picker-field" class:contained onpaste={handlePaste}>
 				<BitsDatePicker.Input>
 					{#snippet children({ segments })}
-						{#each segments as { part, value: segValue } (part)}
+						{#each segments as { part, value: segValue }, i (i)}
 							<BitsDatePicker.Segment {part} class="segment">
 								{segValue}
 							</BitsDatePicker.Segment>
@@ -172,7 +172,7 @@
 		<div class="date-picker-field" class:contained onpaste={handlePaste}>
 			<BitsDatePicker.Input>
 				{#snippet children({ segments })}
-					{#each segments as { part, value: segValue } (part)}
+					{#each segments as { part, value: segValue }, i (i)}
 						<BitsDatePicker.Segment {part} class="segment">
 							{segValue}
 						</BitsDatePicker.Segment>
