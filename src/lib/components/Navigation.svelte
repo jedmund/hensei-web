@@ -153,7 +153,12 @@
 					<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
 				</li>
 				<li>
-					<a href={crewHref} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
+					<a href={crewHref} class:selected={isNavSelected(crewHref)} class="crew-link">
+						{m.nav_crew()}
+						{#if totalNotificationCount > 0}
+							<span class="crew-notification-dot {userElement ?? ''}"></span>
+						{/if}
+					</a>
 				</li>
 				<li>
 					<a
@@ -368,6 +373,28 @@
 			display: flex;
 			gap: spacing.$unit;
 			align-items: center;
+		}
+	}
+
+	// Crew link with notification dot
+	.crew-link {
+		display: flex !important;
+		align-items: center;
+		gap: spacing.$unit-half;
+	}
+
+	.crew-notification-dot {
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--button-primary-bg);
+		animation: notification-pulse 2s ease-in-out infinite;
+		flex-shrink: 0;
+	}
+
+	@each $el in $elements {
+		.crew-notification-dot.#{$el} {
+			background: var(--#{$el}-button-bg);
 		}
 	}
 
