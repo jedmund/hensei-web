@@ -17,6 +17,7 @@
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
 	import CrewTabs from '$lib/components/crew/CrewTabs.svelte'
 	import CrewSettingsDialog from '$lib/components/crew/CrewSettingsDialog.svelte'
+	import CrewNotificationCards from '$lib/components/crew/CrewNotificationCards.svelte'
 	import { formatDateJST } from '$lib/utils/date'
 	import { formatScore, toCrewHistoryChartData } from '$lib/utils/gw'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
@@ -41,6 +42,12 @@
 	const invitationsQuery = createQuery(() => ({
 		...crewQueries.pendingInvitations(),
 		enabled: isAuthenticated
+	}))
+
+	// Query for pending phantom claims (only when authenticated and in a crew)
+	const phantomClaimsQuery = createQuery(() => ({
+		...crewQueries.pendingPhantomClaims(),
+		enabled: isAuthenticated && crewStore.isInCrew
 	}))
 
 	// Query for GW events (only when in crew)
@@ -171,27 +178,7 @@
 
 				{#if isAuthenticated && invitationsQuery.data && invitationsQuery.data.length > 0}
 					<div class="invitations-section">
-						<ul class="invitation-list">
-							{#each invitationsQuery.data as invitation (invitation.id)}
-								{#if invitation.crew && invitation.invitedBy}
-									<li class="invitation-item">
-										<div class="invitation-info">
-											<span class="crew-name">{invitation.crew.name}</span>
-											<span class="invited-by">
-												{m.crew_from({ username: invitation.invitedBy.username })}
-											</span>
-										</div>
-										<Button
-											variant="secondary"
-											size="small"
-											onclick={() => goto(localizeHref(`/crew/join?invitation=${invitation.id}`))}
-										>
-											{m.crew_view()}
-										</Button>
-									</li>
-								{/if}
-							{/each}
-						</ul>
+						<CrewNotificationCards invitations={invitationsQuery.data} />
 					</div>
 				{/if}
 			</div>
@@ -225,6 +212,12 @@
 				</CrewHeader>
 
 				<CrewTabs userElement={data.currentUser?.element} />
+
+				{#if phantomClaimsQuery.data && phantomClaimsQuery.data.length > 0}
+					<div class="notifications-section">
+						<CrewNotificationCards phantomClaims={phantomClaimsQuery.data} />
+					</div>
+				{/if}
 
 				<!-- GW Events Section -->
 				<div class="section-header">
@@ -395,38 +388,10 @@
 		gap: spacing.$unit;
 	}
 
-	.invitation-list {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	.invitation-item {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
+	.invitations-section,
+	.notifications-section {
 		padding: spacing.$unit-2x;
-		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-
-		&:last-child {
-			border-bottom: none;
-		}
-	}
-
-	.invitation-info {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-fourth;
-
-		.crew-name {
-			font-size: typography.$font-regular;
-			font-weight: typography.$medium;
-		}
-
-		.invited-by {
-			font-size: typography.$font-small;
-			color: var(--text-secondary);
-		}
+		border-top: 1px solid rgba(0, 0, 0, 0.06);
 	}
 
 	// Section header

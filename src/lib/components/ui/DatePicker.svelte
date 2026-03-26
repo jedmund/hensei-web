@@ -77,7 +77,7 @@
 	const maxDateValue = $derived(stringToDate(maxValue))
 
 	// Generate a placeholder date for the calendar to show when no value is selected
-	const placeholderDate = $derived(() => {
+	const placeholderDate = $derived.by(() => {
 		if (internalValue) return internalValue
 		const now = new Date()
 		return new CalendarDate(now.getFullYear(), now.getMonth() + 1, now.getDate())
@@ -96,12 +96,12 @@
 			{readonly}
 			minValue={minDateValue}
 			maxValue={maxDateValue}
-			placeholder={placeholderDate()}
+			placeholder={placeholderDate}
 		>
 			<div class="date-picker-field" class:contained onpaste={handlePaste}>
 				<BitsDatePicker.Input>
 					{#snippet children({ segments })}
-						{#each segments as { part, value: segValue } (part)}
+						{#each segments as { part, value: segValue }, i (i)}
 							<BitsDatePicker.Segment {part} class="segment">
 								{segValue}
 							</BitsDatePicker.Segment>
@@ -167,12 +167,12 @@
 		{readonly}
 		minValue={minDateValue}
 		maxValue={maxDateValue}
-		placeholder={placeholderDate()}
+		placeholder={placeholderDate}
 	>
 		<div class="date-picker-field" class:contained onpaste={handlePaste}>
 			<BitsDatePicker.Input>
 				{#snippet children({ segments })}
-					{#each segments as { part, value: segValue } (part)}
+					{#each segments as { part, value: segValue }, i (i)}
 						<BitsDatePicker.Segment {part} class="segment">
 							{segValue}
 						</BitsDatePicker.Segment>
