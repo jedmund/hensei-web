@@ -18,12 +18,14 @@
 		id: string
 		user?: { id: string; username: string }
 		retired: boolean
+		activeDuringEvent: boolean
 	}
 
 	interface PhantomPlayerMinimal {
 		id: string
 		name: string
 		retired: boolean
+		activeDuringEvent: boolean
 	}
 
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
@@ -104,7 +106,8 @@
 				if (hasScore) continue
 				options.push({
 					value: `member:${m.id}`,
-					label: m.user.username + (m.retired ? ' (Retired)' : '')
+					label: m.user.username + (m.retired ? ' (Retired)' : ''),
+					suffix: m.activeDuringEvent ? undefined : 'Not in crew'
 				})
 			}
 		}
@@ -116,7 +119,7 @@
 			options.push({
 				value: `phantom:${p.id}`,
 				label: p.name + (p.retired ? ' (Retired)' : ''),
-				suffix: 'Phantom'
+				suffix: p.activeDuringEvent ? 'Phantom' : 'Not in crew'
 			})
 		}
 

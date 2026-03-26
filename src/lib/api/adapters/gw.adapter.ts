@@ -126,8 +126,14 @@ export class GwAdapter extends BaseAdapter {
 			id: string
 			user?: { id: string; username: string }
 			retired: boolean
+			activeDuringEvent: boolean
 		}>
-		phantomPlayers: Array<{ id: string; name: string; retired: boolean }>
+		phantomPlayers: Array<{
+			id: string
+			name: string
+			retired: boolean
+			activeDuringEvent: boolean
+		}>
 	}> {
 		const response = await this.request<{
 			gwEvent: GwEvent | null
@@ -136,8 +142,14 @@ export class GwAdapter extends BaseAdapter {
 				id: string
 				user?: { id: string; username: string }
 				retired: boolean
+				activeDuringEvent: boolean
 			}>
-			phantomPlayers: Array<{ id: string; name: string; retired: boolean }>
+			phantomPlayers: Array<{
+				id: string
+				name: string
+				retired: boolean
+				activeDuringEvent: boolean
+			}>
 		}>(`/crew/gw_participations/by_event/${eventIdOrNumber}`, options)
 		return {
 			gwEvent: response.gwEvent,
