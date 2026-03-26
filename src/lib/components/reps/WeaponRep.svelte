@@ -26,6 +26,7 @@
 
 	function weaponFallbackUrl(w?: GridWeapon, isMain = false): string | undefined {
 		if (w?.weapon?.element !== 0) return undefined
+		if (w?.element) return undefined
 		const variant = isMain ? 'main' : 'grid'
 		const transformation = getWeaponTransformation(
 			w?.weapon?.uncap?.transcendence,
