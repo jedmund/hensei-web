@@ -1,7 +1,11 @@
 <script lang="ts">
 	import type { Party, GridWeapon } from '$lib/types/api/party'
 	import { getWeaponImage } from '$lib/features/database/detail/image'
-	import { getWeaponTransformation } from '$lib/utils/images'
+	import {
+		getWeaponTransformation,
+		getWeaponFallbackImage,
+		handleImageFallback
+	} from '$lib/utils/images'
 	interface Props {
 		party?: Party
 		weapons?: GridWeapon[]
@@ -19,6 +23,18 @@
 	const rows = $derived(
 		Array.from({ length: 3 }, (_, rowIndex) => grid.slice(rowIndex * 3, (rowIndex + 1) * 3))
 	)
+
+	function weaponFallbackUrl(w?: GridWeapon, isMain = false): string | undefined {
+		if (w?.weapon?.element !== 0) return undefined
+		if (w?.element) return undefined
+		const variant = isMain ? 'main' : 'grid'
+		const transformation = getWeaponTransformation(
+			w?.weapon?.uncap?.transcendence,
+			w?.uncapLevel,
+			w?.transcendenceStep
+		)
+		return getWeaponFallbackImage(w?.weapon?.granblueId, variant, transformation)
+	}
 
 	function weaponImageUrl(w?: GridWeapon, isMain = false): string {
 		const variant = isMain ? 'main' : 'grid'
@@ -47,6 +63,7 @@
 				src={weaponImageUrl(mainhand, true)}
 				loading="lazy"
 				decoding="async"
+				onerror={(e) => handleImageFallback(e, weaponFallbackUrl(mainhand, true))}
 			/>{/if}
 	</div>
 	<div class="weapons">
@@ -54,7 +71,13 @@
 			<ul class="weapon-row">
 				{#each row as w, colIndex (rowIndex * 3 + colIndex)}
 					<li class="weapon" class:empty={!w}>
-						{#if w}<img alt="Weapon" src={weaponImageUrl(w)} loading="lazy" decoding="async" />{/if}
+						{#if w}<img
+								alt="Weapon"
+								src={weaponImageUrl(w)}
+								loading="lazy"
+								decoding="async"
+								onerror={(e) => handleImageFallback(e, weaponFallbackUrl(w))}
+							/>{/if}
 					</li>
 				{/each}
 			</ul>

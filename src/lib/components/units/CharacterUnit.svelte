@@ -10,6 +10,7 @@
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import { getCharacterImageWithPose, getPlaceholderImage } from '$lib/utils/images'
+	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import {
 		openDetailsSidebar,
 		openCharacterEditSidebar
@@ -45,6 +46,7 @@
 	}: Props = $props()
 
 	const ctx = usePartyContext()
+	const simplePortraits = getSimplePortraits()
 
 	// Use $derived to ensure consistent computation between server and client
 	let imageUrl = $derived.by(() => {
@@ -60,7 +62,8 @@
 			item?.transcendenceStep ?? 0,
 			mainWeaponElement,
 			partyElement,
-			item.character.styleSwap
+			item.character.styleSwap,
+			simplePortraits.value
 		)
 	})
 

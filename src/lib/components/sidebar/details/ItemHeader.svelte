@@ -7,6 +7,7 @@
 		getCharacterPose,
 		getBasePath
 	} from '$lib/utils/images'
+	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import { getElementKey } from '$lib/utils/element'
@@ -30,6 +31,8 @@
 		showUncap = true
 	}: Props = $props()
 
+	const simplePortraits = getSimplePortraits()
+
 	// Get image URL based on type using detail/base variants
 	function getImageUrl(): string {
 		const id = itemData?.granblueId
@@ -38,7 +41,11 @@
 			const isStyle = (item as GridCharacter).character?.styleSwap
 			const pose = isStyle
 				? '01_style'
-				: getCharacterPose(gridUncapLevel ?? undefined, gridTranscendence ?? undefined)
+				: getCharacterPose(
+						gridUncapLevel ?? undefined,
+						gridTranscendence ?? undefined,
+						simplePortraits.value
+					)
 			return getCharacterDetailImage(id, pose)
 		} else if (type === 'weapon') {
 			return getWeaponBaseImage(id)

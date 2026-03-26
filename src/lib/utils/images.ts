@@ -184,10 +184,14 @@ export function getWeaponTransformation(
 /**
  * Calculates the character pose based on uncap level and transcendence
  */
-export function getCharacterPose(uncapLevel?: number, transcendenceStep?: number): string {
+export function getCharacterPose(
+	uncapLevel?: number,
+	transcendenceStep?: number,
+	simplePortraits?: boolean
+): string {
 	if (transcendenceStep && transcendenceStep > 0) return '04'
 	if (uncapLevel && uncapLevel >= 5) return '03'
-	if (uncapLevel && uncapLevel > 2) return '02'
+	if (uncapLevel && uncapLevel > 2) return simplePortraits ? '01' : '02'
 	return '01'
 }
 
@@ -384,7 +388,8 @@ export function getCharacterImageWithPose(
 	transcendenceStep?: number,
 	mainWeaponElement?: number | null,
 	partyElement?: number | null,
-	styleSwap?: boolean
+	styleSwap?: boolean,
+	simplePortraits?: boolean
 ): string {
 	if (!id) {
 		return getPlaceholderImage('character', variant)
@@ -395,7 +400,7 @@ export function getCharacterImageWithPose(
 		return getImageUrl('character', id, variant, { pose: STYLE_SWAP_POSE })
 	}
 
-	let pose = getCharacterPose(uncapLevel, transcendenceStep)
+	let pose = getCharacterPose(uncapLevel, transcendenceStep, simplePortraits)
 
 	// Special handling for Gran/Djeeta (3030182000)
 	if (String(id) === '3030182000') {

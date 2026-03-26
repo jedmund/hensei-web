@@ -16,6 +16,7 @@
 		email: string
 		emailVerified: boolean
 		bahamut: boolean
+		simplePortraits: boolean
 		role: number
 		element: ElementType
 		language: string
@@ -26,6 +27,7 @@
 		onUsernameChange: (value: string) => void
 		onEmailChange: (value: string) => void
 		onBahamutChange: (value: boolean) => void
+		onSimplePortraitsChange: (value: boolean) => void
 		onUsernameValidChange?: (valid: boolean) => void
 		onElementChange: (value: string) => void
 		onLanguageChange: (value: string) => void
@@ -40,6 +42,7 @@
 		email,
 		emailVerified,
 		bahamut,
+		simplePortraits,
 		role,
 		element,
 		language,
@@ -50,6 +53,7 @@
 		onUsernameChange,
 		onEmailChange,
 		onBahamutChange,
+		onSimplePortraitsChange,
 		onUsernameValidChange,
 		onElementChange,
 		onLanguageChange,
@@ -342,6 +346,17 @@
 					placeholder={m.settings_language_placeholder()}
 					contained
 					portal
+				/>
+			{/snippet}
+		</SettingsRow>
+
+		<SettingsRow title={m.settings_umikin_mode()} subtitle={m.settings_umikin_subtitle()}>
+			{#snippet control()}
+				<Switch
+					checked={simplePortraits}
+					name="umikin-mode"
+					{element}
+					onCheckedChange={onSimplePortraitsChange}
 				/>
 			{/snippet}
 		</SettingsRow>

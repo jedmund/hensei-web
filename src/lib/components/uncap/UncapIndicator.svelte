@@ -27,6 +27,7 @@
 		flb?: boolean
 		ulb?: boolean
 		index: number
+		editable?: boolean
 		tabindex?: number
 		size?: 'regular' | 'small'
 		onStarClick: (index: number, empty: boolean) => void
@@ -139,6 +140,7 @@
 				flb: options.flb,
 				ulb: options.ulb,
 				special: options.special,
+				editable,
 				tabindex: editable ? 0 : undefined,
 				size,
 				onStarClick: editable ? toggleStar : () => {}

@@ -12,4 +12,5 @@ export interface UserCookie {
 	collectionPrivacy?: number
 	importWeapons?: boolean
 	defaultImportVisibility?: number
+	simplePortraits?: boolean
 }

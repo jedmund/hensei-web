@@ -2,6 +2,7 @@
 	import type { CollectionCharacter } from '$lib/types/api/collection'
 	import { localizedName } from '$lib/utils/locale'
 	import { getCharacterImageWithPose } from '$lib/utils/images'
+	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
@@ -23,6 +24,8 @@
 		onTranscendenceChange
 	}: Props = $props()
 
+	const simplePortraits = getSimplePortraits()
+
 	const imageUrl = $derived(
 		getCharacterImageWithPose(
 			character.character?.granblueId,
@@ -31,7 +34,8 @@
 			character.transcendenceStep,
 			null,
 			null,
-			character.character?.styleSwap
+			character.character?.styleSwap,
+			simplePortraits.value
 		)
 	)
 

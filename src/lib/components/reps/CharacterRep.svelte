@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Party, GridWeapon, GridCharacter } from '$lib/types/api/party'
 	import { getCharacterImageWithPose } from '$lib/utils/images'
+	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	interface Props {
 		party?: Party
 		characters?: GridCharacter[]
@@ -8,6 +9,7 @@
 	}
 
 	let { party, characters: directCharacters, unlimited = false }: Props = $props()
+	const simplePortraits = getSimplePortraits()
 
 	// Use direct characters if provided, otherwise get from party
 	const characters = $derived(directCharacters || party?.characters || [])
@@ -46,7 +48,8 @@
 			c?.transcendenceStep ?? 0,
 			mainWeaponElement,
 			undefined, // partyElement not used here
-			c?.character?.styleSwap
+			c?.character?.styleSwap,
+			simplePortraits.value
 		)
 	}
 </script>

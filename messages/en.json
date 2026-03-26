@@ -1026,6 +1026,8 @@
 	"settings_password_mismatch": "Passwords do not match",
 	"settings_bahamut_mode": "Bahamut Mode",
 	"settings_bahamut_subtitle": "Enable admin features and tools",
+	"settings_umikin_mode": "Umikin Mode",
+	"settings_umikin_subtitle": "Only show base, FLB, and transcendence character art",
 
 	"settings_avatar": "Avatar",
 	"settings_avatar_subtitle": "Your profile picture",

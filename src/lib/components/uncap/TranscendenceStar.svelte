@@ -108,6 +108,7 @@
 			<div
 				{...props}
 				class="star TranscendenceStar"
+				class:readonly={!editable}
 				class:immutable
 				class:empty={currentStage === 0}
 				class:stage1={currentStage === 1}
@@ -200,11 +201,15 @@
 		position: relative;
 		cursor: pointer;
 
+		&.readonly {
+			cursor: default;
+		}
+
 		&.small {
 			--size: 12px;
 		}
 
-		&:hover {
+		&:not(.readonly):hover {
 			transform: scale(1.2);
 		}
 
@@ -320,10 +325,10 @@
 					background-image: url('$src/assets/icons/transcendence/interactive/interactive-base@3x.png');
 				}
 			}
+		}
 
-			&:hover {
-				transform: scale(1.2);
-			}
+		&:not(.readonly) .figure:hover {
+			transform: scale(1.2);
 		}
 
 		&.small .figure {
