@@ -182,16 +182,10 @@
 				</li>
 				<li>
 					<DropdownMenu.Root>
-						<DropdownMenu.Trigger
-							class="nav-more-trigger {totalNotificationCount > 0
-								? `has-notification ${userElement ?? ''}`
-								: ''}"
-						>
-							{#if totalNotificationCount > 0}
-								<Icon name="mail" size={18} />
-							{:else}
-								<Icon name="ellipsis" size={14} />
-							{/if}
+						<!-- Notification pulse disabled — crew dot handles this now -->
+						<!-- class="nav-more-trigger {totalNotificationCount > 0 ? `has-notification ${userElement ?? ''}` : ''}" -->
+						<DropdownMenu.Trigger class="nav-more-trigger">
+							<Icon name="ellipsis" size={14} />
 						</DropdownMenu.Trigger>
 
 						<DropdownMenu.Portal>
