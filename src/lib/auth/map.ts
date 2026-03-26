@@ -20,7 +20,8 @@ export function buildCookies(oauth: OAuthLoginResponse, info: UserInfoResponse) 
 		gender: info.gender ?? 0,
 		theme: info.theme ?? 'system',
 		granblueId: info.granblueId,
-		showCrewGamertag: info.showCrewGamertag
+		showCrewGamertag: info.showCrewGamertag,
+		simplePortraits: info.simplePortraits
 	}
 
 	return { account, user, accessTokenExpiresAt, refresh: oauth.refresh_token }

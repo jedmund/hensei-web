@@ -24,6 +24,7 @@ interface ApiUserResponse {
 	collectionPrivacy?: number // transformed from collection_privacy (0=everyone, 1=crew_only, 2=private)
 	importWeapons?: boolean // transformed from import_weapons
 	defaultImportVisibility?: number // transformed from default_import_visibility
+	simplePortraits?: boolean // transformed from simple_portraits
 	gamertag?: string
 	crewName?: string
 	email?: string // Only included in settings view
@@ -54,6 +55,7 @@ export interface UserInfo {
 	collectionPrivacy?: number
 	importWeapons?: boolean
 	defaultImportVisibility?: number
+	simplePortraits?: boolean
 	crewGamertag?: string
 	crewName?: string
 	avatar: {
@@ -107,6 +109,7 @@ function transformUserResponse(apiUser: ApiUserResponse): UserInfo {
 		collectionPrivacy: apiUser.collectionPrivacy,
 		importWeapons: apiUser.importWeapons,
 		defaultImportVisibility: apiUser.defaultImportVisibility,
+		simplePortraits: apiUser.simplePortraits,
 		// Rename gamertag to crewGamertag
 		crewGamertag: apiUser.gamertag,
 		crewName: apiUser.crewName,
