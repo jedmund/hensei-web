@@ -19,8 +19,8 @@ export const API = {
 	getEventWithParticipation: {
 		gw_event: { id: 'gw-1' },
 		crew_gw_participation: { id: 'part-1' },
-		members_during_event: [{ id: 'm1', retired: false }],
-		phantom_players: [{ id: 'p1', name: 'Ghost', retired: true }]
+		members_during_event: [{ id: 'm1', retired: false, active_during_event: true }],
+		phantom_players: [{ id: 'p1', name: 'Ghost', retired: true, active_during_event: true }]
 	},
 	getEventWithParticipationEmpty: {
 		gw_event: null,
@@ -52,8 +52,8 @@ export const EXPECTED = {
 	getEventWithParticipation: {
 		gwEvent: { id: 'gw-1' },
 		participation: { id: 'part-1' },
-		membersDuringEvent: [{ id: 'm1', retired: false }],
-		phantomPlayers: [{ id: 'p1', name: 'Ghost', retired: true }]
+		membersDuringEvent: [{ id: 'm1', retired: false, activeDuringEvent: true }],
+		phantomPlayers: [{ id: 'p1', name: 'Ghost', retired: true, activeDuringEvent: true }]
 	},
 	getEventWithParticipationEmpty: {
 		gwEvent: null,
