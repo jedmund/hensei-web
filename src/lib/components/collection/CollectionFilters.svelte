@@ -120,15 +120,19 @@
 		...showFilters
 	})
 
-	// Sort options
-	const sortOptions: { value: CollectionSortKey; label: string }[] = [
+	// Sort options (exclude proficiency for summons since they don't have weapon types)
+	const sortOptions = $derived([
 		{ value: 'name_asc', label: m.sort_name_asc() },
 		{ value: 'name_desc', label: m.sort_name_desc() },
 		{ value: 'element_asc', label: m.sort_element_asc() },
 		{ value: 'element_desc', label: m.sort_element_desc() },
-		{ value: 'proficiency_asc', label: m.sort_proficiency_asc() },
-		{ value: 'proficiency_desc', label: m.sort_proficiency_desc() }
-	]
+		...(entityType !== 'summon'
+			? [
+					{ value: 'proficiency_asc', label: m.sort_proficiency_asc() },
+					{ value: 'proficiency_desc', label: m.sort_proficiency_desc() }
+				]
+			: [])
+	] as { value: CollectionSortKey; label: string }[])
 
 	// Constants
 	const elements = getElementOptions().map((opt) => ({
