@@ -33,6 +33,13 @@
 	// Dialog open state derived from props
 	let open = $state(false)
 
+	// Extract YYYY-MM-DD from datetime strings (handles both ISO 8601 and space-separated formats)
+	function extractDatePart(dateStr: string | null | undefined): string {
+		if (!dateStr) return ''
+		const match = dateStr.match(/^(\d{4}-\d{2}-\d{2})/)
+		return match?.[1] ?? ''
+	}
+
 	// Edit form state
 	let editJoinDate = $state('')
 	let editRetired = $state(false)
@@ -46,17 +53,17 @@
 	// React to member/phantom prop changes
 	$effect(() => {
 		if (member) {
-			editJoinDate = member.joinedAt ? (member.joinedAt.split('T')[0] ?? '') : ''
+			editJoinDate = extractDatePart(member.joinedAt)
 			editRetired = member.retired
-			editRetiredAt = member.retiredAt ? (member.retiredAt.split('T')[0] ?? '') : ''
+			editRetiredAt = extractDatePart(member.retiredAt)
 			editGranblueId = ''
 			membershipHistory = []
 			open = true
 			fetchHistory(member)
 		} else if (phantom) {
-			editJoinDate = phantom.joinedAt ? (phantom.joinedAt.split('T')[0] ?? '') : ''
+			editJoinDate = extractDatePart(phantom.joinedAt)
 			editRetired = phantom.retired
-			editRetiredAt = phantom.retiredAt ? (phantom.retiredAt.split('T')[0] ?? '') : ''
+			editRetiredAt = extractDatePart(phantom.retiredAt)
 			editGranblueId = phantom.granblueId ?? ''
 			membershipHistory = []
 			open = true
@@ -82,8 +89,8 @@
 			if (history.length > 1) {
 				membershipHistory = history.map((h) => ({
 					id: h.id,
-					joinedAt: h.joinedAt ? (h.joinedAt.split('T')[0] ?? '') : '',
-					retiredAt: h.retiredAt ? (h.retiredAt.split('T')[0] ?? '') : '',
+					joinedAt: extractDatePart(h.joinedAt),
+					retiredAt: extractDatePart(h.retiredAt),
 					retired: h.retired
 				}))
 			}
