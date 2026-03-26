@@ -108,7 +108,7 @@
 			<div
 				{...props}
 				class="star TranscendenceStar"
-				class:readonly={!editable}
+				class:readonly={!interactive}
 				class:immutable
 				class:empty={currentStage === 0}
 				class:stage1={currentStage === 1}
