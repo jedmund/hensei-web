@@ -29,6 +29,7 @@ export interface UserInfoResponse {
 	theme: string | null
 	granblueId?: string
 	showCrewGamertag?: boolean
+	simplePortraits?: boolean
 }
 
 export async function passwordGrantLogin(
