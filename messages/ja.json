@@ -1023,6 +1023,8 @@
 	"settings_password_mismatch": "パスワードが一致しません",
 	"settings_bahamut_mode": "バハムートモード",
 	"settings_bahamut_subtitle": "管理者機能とツールを有効にする",
+	"settings_umikin_mode": "Umikinモード",
+	"settings_umikin_subtitle": "キャラクターのベース、最終上限解放、限界超越のイラストのみ表示",
 
 	"settings_avatar": "アバター",
 	"settings_avatar_subtitle": "プロフィール画像",
