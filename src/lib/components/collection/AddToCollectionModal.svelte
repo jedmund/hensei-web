@@ -209,8 +209,8 @@
 	})
 
 	function resetState() {
-		selectedIds = new SvelteSet()
-		selectedQuantities = new SvelteMap()
+		selectedIds.clear()
+		selectedQuantities.clear()
 		showOnlySelected = false
 		searchQuery = ''
 		elementFilters = []
@@ -224,24 +224,20 @@
 
 	// Character toggle (binary selection)
 	function toggleCharacterSelection(character: SearchResultItem) {
-		const newSet = new SvelteSet(selectedIds)
-		if (newSet.has(character.id)) {
-			newSet.delete(character.id)
+		if (selectedIds.has(character.id)) {
+			selectedIds.delete(character.id)
 		} else {
-			newSet.add(character.id)
+			selectedIds.add(character.id)
 		}
-		selectedIds = newSet
 	}
 
 	// Weapon/Summon quantity change
 	function handleQuantityChange(item: SearchResultItem, quantity: number) {
-		const newMap = new SvelteMap(selectedQuantities)
 		if (quantity <= 0) {
-			newMap.delete(item.id)
+			selectedQuantities.delete(item.id)
 		} else {
-			newMap.set(item.id, quantity)
+			selectedQuantities.set(item.id, quantity)
 		}
-		selectedQuantities = newMap
 	}
 
 	function handleFiltersChange(filters: CollectionFilterState) {
