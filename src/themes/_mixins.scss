@@ -1,4 +1,23 @@
-// use with @include
+// Responsive breakpoint mixins (width-only)
+// Usage: @include respond-to(phone) { ... }
+@mixin respond-to($breakpoint) {
+	@if $breakpoint == phone {
+		@media (max-width: 480px) {
+			@content;
+		}
+	} @else if $breakpoint == tablet {
+		@media (max-width: 768px) {
+			@content;
+		}
+	} @else if $breakpoint == desktop {
+		@media (max-width: 1280px) {
+			@content;
+		}
+	}
+}
+
+// Legacy breakpoint mixin — targets high-DPI devices only.
+// Prefer respond-to() for general responsive layout.
 @mixin breakpoint($breakpoint) {
 	$phone-width: 450px;
 	$phone-height: 1280px;
