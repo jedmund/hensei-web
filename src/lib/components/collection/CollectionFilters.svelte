@@ -579,6 +579,7 @@
 		padding: $unit-half $unit;
 		min-height: calc($unit * 3.5 + 2px);
 		width: 140px;
+		max-width: 100%;
 		@include smooth-transition($duration-quick, background-color, border-color);
 
 		&::placeholder {
