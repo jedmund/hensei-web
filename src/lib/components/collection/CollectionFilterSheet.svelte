@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import BottomSheet from '$lib/components/ui/BottomSheet.svelte'
+	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -43,7 +44,7 @@
 	}
 </script>
 
-<BottomSheet bind:open title={m.filter_more()}>
+<BottomSheet bind:open title={m.filters_title()}>
 	<div class="filter-sheet">
 		<div class="filter-group">
 			<span class="filter-label">{m.sort_label()}</span>
@@ -51,7 +52,7 @@
 				options={sortOptions}
 				value={sortBy}
 				onValueChange={handleSortChange}
-				size="small"
+				size="medium"
 				contained
 			/>
 		</div>
@@ -59,13 +60,25 @@
 		{#each filters as filter (filter.key)}
 			<div class="filter-group">
 				<span class="filter-label">{filter.placeholder}</span>
-				<MultiSelect
-					options={filter.options}
-					value={filter.value}
-					onValueChange={filter.onChange}
-					placeholder={filter.placeholder}
-					size="small"
-				/>
+				{#if filter.key === 'element'}
+					<ElementPicker
+						value={filter.value as number[]}
+						onValueChange={(v) => filter.onChange(v as number[])}
+						multiple
+						mode="dropdown"
+						size="medium"
+						contained
+					/>
+				{:else}
+					<MultiSelect
+						options={filter.options}
+						value={filter.value}
+						onValueChange={filter.onChange}
+						placeholder={filter.placeholder}
+						size="medium"
+						contained
+					/>
+				{/if}
 			</div>
 		{/each}
 

@@ -94,7 +94,7 @@
 	}
 
 	.sheet-title {
-		font-size: $font-large;
+		font-size: $font-regular;
 		font-weight: $bold;
 		margin: 0;
 	}
