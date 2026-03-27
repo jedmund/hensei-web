@@ -122,9 +122,8 @@
 	.sheet-body {
 		overflow-y: auto;
 		flex: 1;
-		padding: 0 $unit-2x $unit-2x;
-		// Safe area for phones with home indicator
-		padding-bottom: calc($unit-2x + env(safe-area-inset-bottom, 0px));
+		padding: 0 $unit-2x;
+		padding-bottom: calc($unit-3x + env(safe-area-inset-bottom, 0px));
 	}
 
 	@keyframes sheet-fade-in {
