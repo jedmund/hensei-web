@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Dialog } from 'bits-ui'
 	import type { Snippet } from 'svelte'
+	import Icon from '$lib/components/Icon.svelte'
 
 	interface Props {
 		open: boolean
@@ -28,7 +29,7 @@
 				<div class="sheet-header">
 					<h3 class="sheet-title">{title}</h3>
 					<Dialog.Close class="sheet-close">
-						<span aria-hidden="true">×</span>
+						<Icon name="close" size={14} />
 					</Dialog.Close>
 				</div>
 			{/if}
