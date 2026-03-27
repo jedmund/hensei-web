@@ -72,7 +72,7 @@
 		options={selectOptions}
 		value={activeEntityType}
 		onValueChange={(v) => v && onValueChange(v)}
-		size="small"
+		size="medium"
 		contained
 	/>
 </div>
