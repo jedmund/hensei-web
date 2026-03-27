@@ -489,6 +489,7 @@
 	<ModalFooter
 		onCancel={() => (open = false)}
 		showShadow={footerShadow}
+		{userElement}
 		primaryAction={{
 			label: currentMutation.isPending ? m.collection_adding() : m.collection_add_button(),
 			onclick: handleAdd,
