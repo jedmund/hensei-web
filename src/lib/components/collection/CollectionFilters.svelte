@@ -13,6 +13,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { DropdownMenu } from 'bits-ui'
 	import Icon from '$lib/components/Icon.svelte'
+	import CollectionFilterSheet from './CollectionFilterSheet.svelte'
 
 	type EntityType = 'character' | 'weapon' | 'summon'
 
@@ -419,6 +420,11 @@
 
 	const showMoreButton = $derived(moreFilters.length > 0)
 
+	// Mobile filter sheet
+	let filterSheetOpen = $state(false)
+
+	const activeFilterCount = $derived(activeFilters.reduce((sum, f) => sum + f.value.length, 0))
+
 	// Toggle function for submenu multi-select behavior
 	function toggleFilterValue(filter: FilterConfig, value: number | string) {
 		const currentValues = filter.value
@@ -456,66 +462,80 @@
 				<Button variant="ghost" size="small" iconOnly icon="search" onclick={expandSearch} />
 			{/if}
 		{/if}
-		{#each visibleFilters as filter (filter.key)}
-			<MultiSelect
-				options={filter.options}
-				value={filter.value}
-				onValueChange={filter.onChange}
-				placeholder={filter.placeholder}
-				size="small"
-			/>
-		{/each}
 
-		{#if showMoreButton}
-			<DropdownMenu.Root>
-				<DropdownMenu.Trigger class="more-trigger">
-					<span>{m.filter_more()}</span>
-					<Icon name="chevron-down-small" size={14} />
-				</DropdownMenu.Trigger>
+		<!-- Mobile: single filter button -->
+		<div class="mobile-filter-trigger">
+			<Button variant="ghost" size="small" onclick={() => (filterSheetOpen = true)}>
+				{m.filters_title()}
+				{#if activeFilterCount > 0}
+					<span class="mobile-filter-badge">{activeFilterCount}</span>
+				{/if}
+			</Button>
+		</div>
 
-				<DropdownMenu.Portal>
-					<DropdownMenu.Content
-						class="more-menu-content"
-						side="bottom"
-						align="start"
-						sideOffset={4}
-					>
-						{#each moreFilters as filter (filter.key)}
-							<DropdownMenu.Sub>
-								<DropdownMenu.SubTrigger class="more-menu-subtrigger">
-									<span class="submenu-label">{filter.placeholder}</span>
-									{#if filter.value.length > 0}
-										<span class="selection-badge">{filter.value.length}</span>
-									{/if}
-									<Icon name="chevron-right-small" size={14} class="submenu-chevron" />
-								</DropdownMenu.SubTrigger>
+		<!-- Desktop: inline filter pills -->
+		<div class="desktop-filters">
+			{#each visibleFilters as filter (filter.key)}
+				<MultiSelect
+					options={filter.options}
+					value={filter.value}
+					onValueChange={filter.onChange}
+					placeholder={filter.placeholder}
+					size="small"
+				/>
+			{/each}
 
-								<DropdownMenu.SubContent class="submenu-content">
-									{#each filter.options as option (option.value)}
-										{@const isSelected = filter.value.includes(option.value)}
-										<DropdownMenu.Item
-											class="submenu-item {isSelected ? 'selected' : ''}"
-											onSelect={(e) => {
-												e.preventDefault()
-												toggleFilterValue(filter, option.value)
-											}}
-										>
-											{#if option.color}
-												<span class="color-dot" style="background: {option.color}"></span>
-											{/if}
-											<span class="item-label" class:selected={isSelected}>{option.label}</span>
-											{#if isSelected}
-												<Icon name="check" size={14} class="check-icon" />
-											{/if}
-										</DropdownMenu.Item>
-									{/each}
-								</DropdownMenu.SubContent>
-							</DropdownMenu.Sub>
-						{/each}
-					</DropdownMenu.Content>
-				</DropdownMenu.Portal>
-			</DropdownMenu.Root>
-		{/if}
+			{#if showMoreButton}
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger class="more-trigger">
+						<span>{m.filter_more()}</span>
+						<Icon name="chevron-down-small" size={14} />
+					</DropdownMenu.Trigger>
+
+					<DropdownMenu.Portal>
+						<DropdownMenu.Content
+							class="more-menu-content"
+							side="bottom"
+							align="start"
+							sideOffset={4}
+						>
+							{#each moreFilters as filter (filter.key)}
+								<DropdownMenu.Sub>
+									<DropdownMenu.SubTrigger class="more-menu-subtrigger">
+										<span class="submenu-label">{filter.placeholder}</span>
+										{#if filter.value.length > 0}
+											<span class="selection-badge">{filter.value.length}</span>
+										{/if}
+										<Icon name="chevron-right-small" size={14} class="submenu-chevron" />
+									</DropdownMenu.SubTrigger>
+
+									<DropdownMenu.SubContent class="submenu-content">
+										{#each filter.options as option (option.value)}
+											{@const isSelected = filter.value.includes(option.value)}
+											<DropdownMenu.Item
+												class="submenu-item {isSelected ? 'selected' : ''}"
+												onSelect={(e) => {
+													e.preventDefault()
+													toggleFilterValue(filter, option.value)
+												}}
+											>
+												{#if option.color}
+													<span class="color-dot" style="background: {option.color}"></span>
+												{/if}
+												<span class="item-label" class:selected={isSelected}>{option.label}</span>
+												{#if isSelected}
+													<Icon name="check" size={14} class="check-icon" />
+												{/if}
+											</DropdownMenu.Item>
+										{/each}
+									</DropdownMenu.SubContent>
+								</DropdownMenu.Sub>
+							{/each}
+						</DropdownMenu.Content>
+					</DropdownMenu.Portal>
+				</DropdownMenu.Root>
+			{/if}
+		</div>
 
 		{#if hasActiveFilters}
 			<Button variant="element-ghost" size="small" {element} onclick={clearAll} class="clear-btn">
@@ -537,6 +557,13 @@
 		{/if}
 	</div>
 </div>
+
+<CollectionFilterSheet
+	bind:open={filterSheetOpen}
+	filters={activeFilters}
+	onClear={clearAll}
+	element={element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined}
+/>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
@@ -567,6 +594,47 @@
 		gap: $unit;
 	}
 
+	.desktop-filters {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: $unit;
+	}
+
+	.mobile-filter-trigger {
+		display: none;
+	}
+
+	.mobile-filter-badge {
+		background: var(--accent-color, #{$blue});
+		color: white;
+		font-size: 11px;
+		font-weight: $bold;
+		min-width: 18px;
+		height: 18px;
+		border-radius: $full-corner;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0 5px;
+		margin-left: $unit-half;
+	}
+
+	@media (max-width: 600px) {
+		.desktop-filters,
+		.right-controls {
+			display: none;
+		}
+
+		.mobile-filter-trigger {
+			display: block;
+		}
+
+		.search-input {
+			width: 100%;
+		}
+	}
+
 	.search-input {
 		all: unset;
 		box-sizing: border-box;
@@ -579,6 +647,7 @@
 		padding: $unit-half $unit;
 		min-height: calc($unit * 3.5 + 2px);
 		width: 140px;
+		max-width: 100%;
 		@include smooth-transition($duration-quick, background-color, border-color);
 
 		&::placeholder {

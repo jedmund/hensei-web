@@ -16,6 +16,7 @@
 		primaryAction?: PrimaryAction
 		left?: Snippet
 		showShadow?: boolean
+		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	}
 
 	let {
@@ -23,7 +24,8 @@
 		cancelDisabled = false,
 		primaryAction,
 		left,
-		showShadow = false
+		showShadow = false,
+		userElement
 	}: Props = $props()
 </script>
 
@@ -43,6 +45,8 @@
 				onclick={primaryAction.onclick}
 				disabled={primaryAction.disabled}
 				size="small"
+				element={primaryAction.destructive ? undefined : userElement}
+				elementStyle={!primaryAction.destructive && !!userElement}
 			>
 				{primaryAction.label}
 			</Button>
