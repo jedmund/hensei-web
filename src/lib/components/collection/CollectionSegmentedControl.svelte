@@ -73,6 +73,7 @@
 		value={activeEntityType}
 		onValueChange={(v) => v && onValueChange(v)}
 		size="small"
+		contained
 	/>
 </div>
 
