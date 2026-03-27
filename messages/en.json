@@ -1132,6 +1132,7 @@
 	"collection_filter_proficiency": "Proficiency",
 	"collection_filter_slot": "Slot {num}",
 
+	"sort_label": "Sort",
 	"sort_name_asc": "Name A → Z",
 	"sort_name_desc": "Name Z → A",
 	"sort_element_asc": "Element ↑",

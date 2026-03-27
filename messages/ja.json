@@ -1132,6 +1132,7 @@
 	"collection_filter_proficiency": "得意武器",
 	"collection_filter_slot": "{num}行",
 
+	"sort_label": "並び替え",
 	"sort_name_asc": "名前 A → Z",
 	"sort_name_desc": "名前 Z → A",
 	"sort_element_asc": "属性 ↑",
