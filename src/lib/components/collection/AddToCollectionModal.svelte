@@ -530,8 +530,8 @@
 	}
 
 	.results-grid {
-		display: flex;
-		flex-wrap: wrap;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
 		gap: $unit;
 		padding: $unit 0;
 	}
