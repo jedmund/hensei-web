@@ -465,16 +465,12 @@
 
 		<!-- Mobile: single filter button -->
 		<div class="mobile-filter-trigger">
-			<Button
-				variant="ghost"
-				size="small"
-				iconOnly
-				icon="filter"
-				onclick={() => (filterSheetOpen = true)}
-			/>
-			{#if activeFilterCount > 0}
-				<span class="mobile-filter-badge">{activeFilterCount}</span>
-			{/if}
+			<Button variant="ghost" size="small" onclick={() => (filterSheetOpen = true)}>
+				{m.filters_title()}
+				{#if activeFilterCount > 0}
+					<span class="mobile-filter-badge">{activeFilterCount}</span>
+				{/if}
+			</Button>
 		</div>
 
 		<!-- Desktop: inline filter pills -->
@@ -565,9 +561,6 @@
 <CollectionFilterSheet
 	bind:open={filterSheetOpen}
 	filters={activeFilters}
-	{sortOptions}
-	{sortBy}
-	onSortChange={handleSortChange}
 	onClear={clearAll}
 	element={element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined}
 />
@@ -610,25 +603,21 @@
 
 	.mobile-filter-trigger {
 		display: none;
-		position: relative;
 	}
 
 	.mobile-filter-badge {
-		position: absolute;
-		top: -4px;
-		right: -4px;
 		background: var(--accent-color, #{$blue});
 		color: white;
-		font-size: 10px;
+		font-size: 11px;
 		font-weight: $bold;
-		min-width: 16px;
-		height: 16px;
+		min-width: 18px;
+		height: 18px;
 		border-radius: $full-corner;
-		display: flex;
+		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		padding: 0 4px;
-		pointer-events: none;
+		padding: 0 5px;
+		margin-left: $unit-half;
 	}
 
 	@media (max-width: 600px) {

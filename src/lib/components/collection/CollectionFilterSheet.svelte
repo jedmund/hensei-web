@@ -3,9 +3,7 @@
 	import BottomSheet from '$lib/components/ui/BottomSheet.svelte'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
-	import Select from '$lib/components/ui/Select.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import type { CollectionSortKey } from '$lib/types/api/collection'
 
 	interface FilterConfig {
 		key: string
@@ -18,26 +16,11 @@
 	interface Props {
 		open: boolean
 		filters: FilterConfig[]
-		sortOptions: { value: string; label: string }[]
-		sortBy: CollectionSortKey
-		onSortChange: (value: CollectionSortKey) => void
 		onClear: () => void
 		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	}
 
-	let {
-		open = $bindable(false),
-		filters,
-		sortOptions,
-		sortBy,
-		onSortChange,
-		onClear,
-		element
-	}: Props = $props()
-
-	function handleSortChange(value: string | undefined) {
-		if (value) onSortChange(value as CollectionSortKey)
-	}
+	let { open = $bindable(false), filters, onClear, element }: Props = $props()
 
 	function handleDone() {
 		open = false
@@ -46,17 +29,6 @@
 
 <BottomSheet bind:open title={m.filters_title()}>
 	<div class="filter-sheet">
-		<div class="filter-group">
-			<span class="filter-label">{m.sort_label()}</span>
-			<Select
-				options={sortOptions}
-				value={sortBy}
-				onValueChange={handleSortChange}
-				size="medium"
-				contained
-			/>
-		</div>
-
 		{#each filters as filter (filter.key)}
 			<div class="filter-group">
 				<span class="filter-label">{filter.placeholder}</span>
