@@ -319,9 +319,13 @@
 
 	.summon-grid {
 		display: grid;
-		grid-template-columns: repeat(5, 144px);
-		justify-content: space-between;
+		grid-template-columns: repeat(auto-fill, minmax(144px, 1fr));
 		gap: $unit-4x $unit-2x;
+
+		@media (max-width: 600px) {
+			grid-template-columns: repeat(3, 1fr);
+			gap: $unit-2x $unit;
+		}
 	}
 
 	.summon-list {

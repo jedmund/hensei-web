@@ -986,6 +986,7 @@
 	"sidebar_party_title_placeholder": "編成タイトルを入力…",
 	"loading_more": "さらに読み込み中",
 	"filter_clear": "クリア",
+	"filters_title": "フィルター",
 
 	"settings_title": "設定",
 	"settings_loading": "設定を読み込み中",
@@ -1132,6 +1133,7 @@
 	"collection_filter_proficiency": "得意武器",
 	"collection_filter_slot": "{num}行",
 
+	"sort_label": "並び替え",
 	"sort_name_asc": "名前 A → Z",
 	"sort_name_desc": "名前 Z → A",
 	"sort_element_asc": "属性 ↑",

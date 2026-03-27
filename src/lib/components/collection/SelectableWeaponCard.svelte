@@ -76,13 +76,12 @@
 	.card {
 		display: flex;
 		flex-direction: column;
-		width: 140px;
+		width: 100%;
 		padding: 0;
 		border-radius: layout.$input-corner;
 		background: var(--card-bg);
 		cursor: pointer;
 		overflow: hidden;
-		flex-shrink: 0;
 		@include smooth-transition(0.15s, transform);
 
 		&:hover {

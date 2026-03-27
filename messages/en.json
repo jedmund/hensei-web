@@ -986,6 +986,7 @@
 	"sidebar_party_title_placeholder": "Enter party title...",
 	"loading_more": "Loading more...",
 	"filter_clear": "Clear",
+	"filters_title": "Filters",
 
 	"settings_title": "Settings",
 	"settings_loading": "Loading settings",
@@ -1132,6 +1133,7 @@
 	"collection_filter_proficiency": "Proficiency",
 	"collection_filter_slot": "Slot {num}",
 
+	"sort_label": "Sort",
 	"sort_name_asc": "Name A → Z",
 	"sort_name_desc": "Name Z → A",
 	"sort_element_asc": "Element ↑",

@@ -126,7 +126,7 @@
 </script>
 
 {#if dev}
-	<SvelteQueryDevtools />
+	<SvelteQueryDevtools buttonPosition="bottom-left" />
 {/if}
 <Tooltip.Provider>
 	<div class="app-container" class:sidebar-open={sidebar.isOpen}>
