@@ -498,14 +498,9 @@
 	>
 		{#snippet left()}
 			{#if selectedCount > 0}
-				<button
-					type="button"
-					class="selected-link"
-					class:active={showOnlySelected}
-					onclick={toggleShowSelected}
-				>
+				<Button variant="ghost" size="small" active={showOnlySelected} onclick={toggleShowSelected}>
 					{selectedText}
-				</button>
+				</Button>
 			{/if}
 		{/snippet}
 	</ModalFooter>
@@ -514,8 +509,6 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as layout;
-	@use '$src/themes/typography' as typography;
-	@use '$src/themes/effects' as effects;
 
 	.modal-content {
 		display: flex;
@@ -588,31 +581,6 @@
 
 		:global(svg) {
 			animation: spin 1s linear infinite;
-		}
-	}
-
-	.selected-link {
-		all: unset;
-		cursor: pointer;
-		color: var(--accent-blue);
-		font-size: typography.$font-small;
-		padding: $unit-half $unit;
-		border-radius: layout.$item-corner-small;
-		@include effects.smooth-transition(effects.$duration-quick, background-color, color);
-
-		&:hover {
-			background: var(--button-bg-hover);
-			text-decoration: underline;
-		}
-
-		&.active {
-			background: var(--accent-blue);
-			color: white;
-
-			&:hover {
-				background: var(--accent-blue-focus);
-				text-decoration: none;
-			}
 		}
 	}
 
