@@ -1717,5 +1717,14 @@
 	"context_view_teams_summon": "View teams with this summon",
 	"context_add_to_teams_view": "Add to teams view",
 	"context_view_in_database": "View in Database",
-	"sidebar_no_parties_entity": "No teams found with this item"
+	"sidebar_no_parties_entity": "No teams found with this item",
+	"substitution_role": "Role",
+	"substitution_note": "Substitution note",
+	"substitution_substitutes": "Substitutes",
+	"substitution_show": "Show substitutes",
+	"substitution_hide": "Hide substitutes",
+	"substitution_empty": "No substitutes added",
+	"substitution_add": "Add substitute",
+	"substitution_remove": "Remove substitute",
+	"substitution_reorder": "Reorder substitutes"
 }
