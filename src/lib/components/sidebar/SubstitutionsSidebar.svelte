@@ -1,5 +1,11 @@
 <script lang="ts">
-	import type { GridCharacter, GridWeapon, GridSummon, Role, Substitution } from '$lib/types/api/party'
+	import type {
+		GridCharacter,
+		GridWeapon,
+		GridSummon,
+		Role,
+		Substitution
+	} from '$lib/types/api/party'
 	import { localizedName } from '$lib/utils/locale'
 	import * as m from '$lib/paraglide/messages'
 
@@ -11,9 +17,7 @@
 
 	let role = $derived((item as GridWeapon).role as Role | undefined)
 	let note = $derived((item as GridWeapon).substitutionNote as string | undefined)
-	let substitutions = $derived(
-		((item as GridWeapon).substitutions ?? []) as Substitution[]
-	)
+	let substitutions = $derived(((item as GridWeapon).substitutions ?? []) as Substitution[])
 
 	function getSubstituteName(sub: Substitution): string {
 		if (sub.gridCharacter) return localizedName(sub.gridCharacter.character?.name) ?? '—'

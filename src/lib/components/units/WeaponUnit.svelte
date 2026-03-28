@@ -223,9 +223,7 @@
 		openSubstitutionsSidebar({ type: 'weapon', item })
 	}
 
-	const hasSubstitutions = $derived(
-		(item?.substitutions?.length ?? 0) > 0
-	)
+	const hasSubstitutions = $derived((item?.substitutions?.length ?? 0) > 0)
 </script>
 
 <div

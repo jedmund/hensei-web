@@ -154,9 +154,7 @@
 		openSubstitutionsSidebar({ type: 'character', item })
 	}
 
-	const hasSubstitutions = $derived(
-		(item?.substitutions?.length ?? 0) > 0
-	)
+	const hasSubstitutions = $derived((item?.substitutions?.length ?? 0) > 0)
 
 	// Check if character has a style swap variant available
 	let hasStyleVariant = $derived.by(() => {
