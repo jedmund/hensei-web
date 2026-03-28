@@ -3,6 +3,7 @@
 	import TranscendenceFragment from './TranscendenceFragment.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { Popover } from 'bits-ui'
+	import { untrack } from 'svelte'
 	import plusIcon from '$src/assets/icons/plus.svg?raw'
 	import minusIcon from '$src/assets/icons/minus.svg?raw'
 
@@ -10,7 +11,6 @@
 		className?: string
 		stage?: number
 		type?: 'character' | 'weapon' | 'summon'
-		editable?: boolean
 		interactive?: boolean
 		tabindex?: number
 		size?: 'regular' | 'small'
@@ -23,7 +23,6 @@
 		className,
 		stage = 0,
 		type = 'character',
-		editable = false,
 		interactive = false,
 		tabindex,
 		size = 'regular',
@@ -34,9 +33,9 @@
 
 	const NUM_FRAGMENTS = 5
 
-	let visibleStage = $state(stage)
-	let currentStage = $state(stage)
-	let prevStage = $state(stage)
+	let visibleStage = $state(untrack(() => stage))
+	let currentStage = $state(untrack(() => stage))
+	let prevStage = $state(untrack(() => stage))
 	let immutable = $state(false)
 	let isPopoverOpen = $state(false)
 
@@ -105,10 +104,11 @@
 <Popover.Root bind:open={isPopoverOpen}>
 	<Popover.Trigger disabled={!interactive}>
 		{#snippet child({ props })}
+			<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 			<div
 				{...props}
 				class="star TranscendenceStar"
-				class:readonly={!editable}
+				class:readonly={!interactive}
 				class:immutable
 				class:empty={currentStage === 0}
 				class:stage1={currentStage === 1}
@@ -118,15 +118,15 @@
 				class:stage5={currentStage === 5}
 				class:small={size === 'small'}
 				onmouseleave={interactive ? handleMouseLeave : undefined}
-				{tabindex}
-				role={editable ? 'button' : undefined}
-				aria-label={editable ? 'Transcendence star' : undefined}
+				tabindex={interactive ? (tabindex ?? 0) : undefined}
+				role={interactive ? 'button' : undefined}
+				aria-label={interactive ? 'Transcendence star' : undefined}
 			>
 				<i
 					class="figure {className || ''}"
 					class:interactive
 					class:base={className?.includes('base')}
-				/>
+				></i>
 			</div>
 		{/snippet}
 	</Popover.Trigger>

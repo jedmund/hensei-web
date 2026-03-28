@@ -28,7 +28,7 @@ function makeArtifact(overrides: Partial<GridArtifact> = {}): GridArtifact {
 		element: 1,
 		level: 5,
 		skills: [],
-		grade: { letter: null, score: null, breakdown: null, lines: null, recommendation: null },
+		score: null,
 		artifact: {
 			id: 'ref-1',
 			granblueId: 'g-1',

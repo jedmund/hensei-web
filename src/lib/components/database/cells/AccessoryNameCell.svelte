@@ -4,7 +4,7 @@
 
 	const { row }: Cell = $props()
 
-	const accessory = row as JobAccessory
+	const accessory = $derived(row as JobAccessory)
 
 	const displayName = $derived.by(() => {
 		const nameObj = accessory.name

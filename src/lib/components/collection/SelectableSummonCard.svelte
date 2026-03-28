@@ -51,7 +51,7 @@
 	aria-label="Select {name}, current quantity: {quantity}"
 >
 	<img src={imageUrl} alt={name} class="image" loading="lazy" />
-	<div class="counter-row" onclick={(e) => e.stopPropagation()}>
+	<div class="counter-row" role="presentation" onclick={(e) => e.stopPropagation()}>
 		<QuantityCounter value={quantity} onChange={handleQuantityChange} element={userElement} />
 	</div>
 </div>

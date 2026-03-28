@@ -44,7 +44,7 @@
 		/** Whether to show the sort dropdown */
 		showSort?: boolean
 		/** Element color theme for active toggle state */
-		element?: string
+		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 		/** Whether to show contained background styling (default: true) */
 		contained?: boolean
 		/** Whether to show the search input (default: true) */

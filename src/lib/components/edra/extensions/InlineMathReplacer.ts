@@ -1,19 +1,18 @@
-import { textInputRule } from '@tiptap/core'
+import { InputRule } from '@tiptap/core'
 import { InlineMath } from '@tiptap/extension-mathematics'
 
 export const InlineMathReplacer = InlineMath.extend({
 	name: 'inlineMathReplacer',
 	addInputRules() {
 		return [
-			textInputRule({
-				find: /\$\$([^$]+)\$\$/,
-				replace: ({ match, commands }) => {
+			new InputRule({
+				find: /\$\$([^$]+)\$\$$/,
+				handler: ({ state, range, match }) => {
 					const latex = match[1]
-					// Insert the inline math node with the LaTeX content
-					commands.insertInlineMath({
-						latex
-					})
-					return ''
+					if (!latex) return
+					const { tr } = state
+					tr.delete(range.from, range.to)
+					tr.insert(range.from, state.schema.nodes.inlineMath!.create({ latex }))
 				}
 			})
 		]

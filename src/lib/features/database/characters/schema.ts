@@ -32,9 +32,48 @@ export const CharacterEditSchema = z.object({
 
 export type CharacterEdit = z.infer<typeof CharacterEditSchema>
 
-export function toEditData(model: Record<string, unknown>): CharacterEdit {
+/** Loose shape accepted by toEditData – covers both camelCase and snake_case API responses. */
+interface CharacterModel {
+	name?: unknown
+	granblueId?: string
+	granblue_id?: string
+	rarity?: number
+	element?: number
+	race?: (number | null)[]
+	gender?: number
+	proficiency?: number[]
+	season?: number | null
+	series?: number[]
+	gachaAvailable?: boolean
+	gacha_available?: boolean
+	hp?: {
+		minHp?: number
+		min_hp?: number
+		maxHp?: number
+		max_hp?: number
+		maxHpFlb?: number
+		max_hp_flb?: number
+	}
+	atk?: {
+		minAtk?: number
+		min_atk?: number
+		maxAtk?: number
+		max_atk?: number
+		maxAtkFlb?: number
+		max_atk_flb?: number
+	}
+	uncap?: { flb?: boolean; transcendence?: boolean }
+	special?: boolean
+	styleSwap?: boolean
+	style_swap?: boolean
+	styleName?: { en?: string; ja?: string }
+	style_name_en?: string | null
+	style_name_jp?: string | null
+}
+
+export function toEditData(model: CharacterModel): CharacterEdit {
 	return {
-		name: model?.name ?? '',
+		name: (model?.name as CharacterEdit['name']) ?? '',
 		granblue_id: model?.granblueId ?? model?.granblue_id ?? '',
 		rarity: model?.rarity ?? 1,
 		element: model?.element ?? 0,

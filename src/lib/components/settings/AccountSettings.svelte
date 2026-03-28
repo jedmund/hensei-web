@@ -7,6 +7,7 @@
 	import SettingsRow from '../ui/SettingsRow.svelte'
 	import ElementPicker from '../ui/element-picker/ElementPicker.svelte'
 	import type { ElementType } from '../ui/SettingsNav.svelte'
+	import { untrack } from 'svelte'
 	import { getElementKey } from '$lib/utils/element'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 
@@ -83,11 +84,11 @@
 	}
 
 	// Local state initialized from props — mutable for form editing
-	let localUsername = $state(username)
-	let localEmail = $state(email)
+	let localUsername = $state(untrack(() => username))
+	let localEmail = $state(untrack(() => email))
 
 	// Capture original username for comparison (prop gets mutated by parent on each keystroke)
-	const originalUsername = username
+	const originalUsername = untrack(() => username)
 
 	// Username validation
 	const usernameRegex = /^[a-zA-Z0-9_-]+$/
@@ -218,9 +219,9 @@
 	]
 
 	// Password local state
-	let localCurrentPassword = $state(currentPassword)
-	let localNewPassword = $state(newPassword)
-	let localConfirmPassword = $state(confirmPassword)
+	let localCurrentPassword = $state(untrack(() => currentPassword))
+	let localNewPassword = $state(untrack(() => newPassword))
+	let localConfirmPassword = $state(untrack(() => confirmPassword))
 
 	function handleCurrentPasswordInput() {
 		onCurrentPasswordChange(localCurrentPassword)

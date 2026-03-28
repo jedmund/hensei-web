@@ -188,6 +188,14 @@ src/
 └── assets/              # Static assets
 ```
 
+### Navigation URLs: Do NOT use resolve() from $app/paths
+
+**Never wrap navigation URLs with `resolve()` from `$app/paths`.** This function is for static asset resolution only. Using it on navigation URLs (hrefs, goto, pushState) breaks SvelteKit's URL depth calculation for dynamic chunk imports, causing asset 404s like `/teams/_app/immutable/...` instead of `/_app/immutable/...`.
+
+- The `svelte/no-navigation-without-resolve` ESLint rule is **intentionally disabled** (no base path configured)
+- `paths.relative: false` is set in `svelte.config.js` as a safety net
+- Use `localizeHref()` for navigation URLs — do not add `resolve()` around it
+
 ### Key Architectural Patterns
 
 1. **Component Organization**: Components are organized by domain (units, reps, grids, etc.) with each having its own module structure.

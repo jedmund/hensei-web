@@ -43,28 +43,28 @@ describe('ArtifactAdapter', () => {
 		it('should map slot 1 to group_i', async () => {
 			await adapter.getSkillsForSlot(1)
 
-			const url = vi.mocked(global.fetch).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0]![0]
 			expect(url).toContain('group=group_i')
 		})
 
 		it('should map slot 2 to group_i', async () => {
 			await adapter.getSkillsForSlot(2)
 
-			const url = vi.mocked(global.fetch).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0]![0]
 			expect(url).toContain('group=group_i')
 		})
 
 		it('should map slot 3 to group_ii', async () => {
 			await adapter.getSkillsForSlot(3)
 
-			const url = vi.mocked(global.fetch).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0]![0]
 			expect(url).toContain('group=group_ii')
 		})
 
 		it('should map slot 4 to group_iii', async () => {
 			await adapter.getSkillsForSlot(4)
 
-			const url = vi.mocked(global.fetch).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0]![0]
 			expect(url).toContain('group=group_iii')
 		})
 

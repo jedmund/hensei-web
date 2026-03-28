@@ -34,9 +34,11 @@ export interface PaneConfig {
 	/** Optional image URL to display next to the title */
 	image?: string
 	/** Component to render in the pane */
-	component: Component<Record<string, unknown>>
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	component: Component<any>
 	/** Props to pass to the component */
-	props?: Record<string, unknown>
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	props?: Record<string, any>
 	/** Optional callback when back is clicked (for root pane) */
 	onback?: () => void
 	/** Optional save/action button configuration */
@@ -195,7 +197,8 @@ export class PaneStackStore {
 	/**
 	 * Update props for the current (top) pane
 	 */
-	updateCurrentProps(props: Record<string, unknown>) {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	updateCurrentProps(props: Record<string, any>) {
 		if (this.state.panes.length === 0) return
 
 		const currentIndex = this.state.panes.length - 1

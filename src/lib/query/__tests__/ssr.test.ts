@@ -21,9 +21,12 @@ describe('withInitialData', () => {
 		expect(result.initialData).toBeUndefined()
 	})
 
-	it('defaults updatedAt to 0', () => {
+	it('defaults updatedAt to Date.now()', () => {
+		const before = Date.now()
 		const result = withInitialData('data')
-		expect(result.initialDataUpdatedAt).toBe(0)
+		const after = Date.now()
+		expect(result.initialDataUpdatedAt).toBeGreaterThanOrEqual(before)
+		expect(result.initialDataUpdatedAt).toBeLessThanOrEqual(after)
 	})
 
 	it('uses provided updatedAt', () => {

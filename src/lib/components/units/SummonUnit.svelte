@@ -184,7 +184,15 @@
 							class:is-active={isActive}
 							class:is-selected={isSelected}
 							class:not-in-collection={notInCollection}
+							role="button"
+							tabindex="0"
 							onclick={() => viewDetails()}
+							onkeydown={(e) => {
+								if (e.key === 'Enter' || e.key === ' ') {
+									e.preventDefault()
+									viewDetails()
+								}
+							}}
 						>
 							{#if item?.orphaned}
 								<div class="orphaned-badge" title={m.tooltip_not_in_collection()}>
@@ -260,8 +268,17 @@
 				class:cell={!(position === -1 || position === 6)}
 				class:editable={ctx?.canEdit()}
 				class:is-selected={isSelected}
+				role="button"
+				tabindex="0"
 				onclick={() =>
 					ctx?.canEdit() && ctx?.openPicker && ctx.openPicker({ type: 'summon', position, item })}
+				onkeydown={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						e.preventDefault()
+						if (ctx?.canEdit() && ctx?.openPicker)
+							ctx.openPicker({ type: 'summon', position, item })
+					}
+				}}
 			>
 				<img
 					class="image placeholder"

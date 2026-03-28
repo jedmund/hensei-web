@@ -39,9 +39,15 @@
 	// Provide variant, size, grow, and element to child segments via context
 	// Use a getter for element so it stays reactive when the prop changes
 	setSegmentedControlContext({
-		variant,
-		size,
-		grow,
+		get variant() {
+			return variant
+		},
+		get size() {
+			return size
+		},
+		get grow() {
+			return grow
+		},
 		get element() {
 			return element
 		}

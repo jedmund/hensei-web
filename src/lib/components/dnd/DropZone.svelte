@@ -96,6 +96,8 @@
 	ondragenter={handleDragEnter}
 	ondragleave={handleDragLeave}
 	ondrop={handleDrop}
+	role="region"
+	aria-label="Drop zone"
 	class="drop-zone"
 	class:hovered={isHovered}
 	class:valid-drop={isValidDrop}

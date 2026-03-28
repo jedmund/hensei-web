@@ -242,7 +242,15 @@
 							class:is-active={isActive}
 							class:is-selected={isSelected}
 							class:not-in-collection={notInCollection}
+							role="button"
+							tabindex="0"
 							onclick={() => viewDetails()}
+							onkeydown={(e) => {
+								if (e.key === 'Enter' || e.key === ' ') {
+									e.preventDefault()
+									viewDetails()
+								}
+							}}
 						>
 							<div class="modifiers">
 								{#if item?.orphaned}
@@ -317,8 +325,17 @@
 				class:extra={position >= 9}
 				class:editable={ctx?.canEdit()}
 				class:is-selected={isSelected}
+				role="button"
+				tabindex="0"
 				onclick={() =>
 					ctx?.canEdit() && ctx?.openPicker && ctx.openPicker({ type: 'weapon', position, item })}
+				onkeydown={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						e.preventDefault()
+						if (ctx?.canEdit() && ctx?.openPicker)
+							ctx.openPicker({ type: 'weapon', position, item })
+					}
+				}}
 			>
 				<img
 					class="image placeholder"

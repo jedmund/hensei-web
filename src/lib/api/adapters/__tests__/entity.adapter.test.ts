@@ -134,7 +134,7 @@ describe('EntityAdapter', () => {
 			expect(global.fetch).toHaveBeenCalledWith(
 				'https://api.example.com/weapons/weapon-1',
 				expect.objectContaining({
-					method: 'GET'
+					credentials: 'include'
 				})
 			)
 		})
@@ -172,7 +172,7 @@ describe('EntityAdapter', () => {
 			expect(global.fetch).toHaveBeenCalledWith(
 				'https://api.example.com/characters/char-1',
 				expect.objectContaining({
-					method: 'GET'
+					credentials: 'include'
 				})
 			)
 		})
@@ -210,7 +210,7 @@ describe('EntityAdapter', () => {
 			expect(global.fetch).toHaveBeenCalledWith(
 				'https://api.example.com/summons/summon-1',
 				expect.objectContaining({
-					method: 'GET'
+					credentials: 'include'
 				})
 			)
 		})
@@ -236,20 +236,17 @@ describe('EntityAdapter', () => {
 	})
 
 	describe('caching', () => {
-		it('should cache entity requests', async () => {
+		it('should not cache at adapter level (TanStack Query handles caching)', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
 				json: async () => mockWeapon
 			})
 
-			// First call
+			await adapter.getWeapon('weapon-1')
 			await adapter.getWeapon('weapon-1')
 
-			// Second call (should use cache)
-			await adapter.getWeapon('weapon-1')
-
-			// Should only call fetch once due to caching
-			expect(global.fetch).toHaveBeenCalledTimes(1)
+			// Both calls hit fetch since adapter-level caching was removed
+			expect(global.fetch).toHaveBeenCalledTimes(2)
 		})
 
 		it('should clear weapon cache', async () => {

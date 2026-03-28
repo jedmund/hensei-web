@@ -13,6 +13,7 @@ declare module '*.svg' {
 // These are populated from .env files at build time
 declare module '$env/static/public' {
 	export const PUBLIC_SIERO_API_URL: string
+	export const PUBLIC_SIERO_IMG_URL: string
 }
 
 // wx-svelte-grid type declarations

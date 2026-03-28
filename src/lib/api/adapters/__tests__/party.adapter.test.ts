@@ -198,16 +198,16 @@ describe('PartyAdapter', () => {
 			expect(global.fetch).toHaveBeenCalledWith(
 				expect.stringContaining('/users/testuser/parties'),
 				expect.objectContaining({
-					method: 'GET'
+					credentials: 'include'
 				})
 			)
 
 			// Verify query parameters were included
-			const callUrl = vi.mocked(global.fetch).mock.calls[0][0]
+			const callUrl = vi.mocked(global.fetch).mock.calls[0]![0]
 			expect(callUrl).toContain('page=1')
 			expect(callUrl).toContain('per=20')
 			expect(callUrl).toContain('visibility=1')
-			expect(callUrl).toContain('raid_id=raid-1')
+			expect(callUrl).toContain('raid=raid-1')
 		})
 	})
 

@@ -90,7 +90,7 @@ describe('updatePartyJobSkillsOptions', () => {
 
 		await opts.mutationFn({ shortcode: MOCK_SHORTCODE, skills })
 
-		expect(partyAdapter.updateJobSkills).toHaveBeenCalledWith(MOCK_SHORTCODE, skills)
+		expect(partyAdapter.updateJobSkills).toHaveBeenCalledWith(MOCK_SHORTCODE, skills, undefined)
 	})
 })
 

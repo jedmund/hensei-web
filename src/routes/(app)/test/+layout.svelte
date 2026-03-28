@@ -1,9 +1,12 @@
-<script>
+<script lang="ts">
 	// Simple layout for test pages
+	import type { Snippet } from 'svelte'
+
+	let { children }: { children: Snippet } = $props()
 </script>
 
 <div class="test-layout">
-	<slot />
+	{@render children()}
 </div>
 
 <style>

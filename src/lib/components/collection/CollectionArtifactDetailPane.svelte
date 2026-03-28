@@ -7,7 +7,7 @@
 	 */
 	import * as m from '$lib/paraglide/messages'
 	import { localizedName } from '$lib/utils/locale'
-	import { onMount } from 'svelte'
+	import { onMount, untrack } from 'svelte'
 	import type { CollectionArtifact, ArtifactSkillInstance } from '$lib/types/api/artifact'
 	import { isQuirkArtifact, getSkillGroupForSlot } from '$lib/types/api/artifact'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -36,7 +36,7 @@
 	let { artifact: initialArtifact, userId, isOwner = false, onClose, paneId }: Props = $props()
 
 	// Local state that can be updated when returning from edit pane
-	let artifact = $state(initialArtifact)
+	let artifact = $state(untrack(() => initialArtifact))
 
 	// Update artifact when edit pane returns with new data
 	function handleArtifactUpdated(updatedArtifact: CollectionArtifact) {

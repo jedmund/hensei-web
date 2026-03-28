@@ -26,7 +26,7 @@
 	import SelectableSummonCard from './SelectableSummonCard.svelte'
 	import SelectableSummonRow from './SelectableSummonRow.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
-	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
+	import { viewMode } from '$lib/stores/viewMode.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -334,10 +334,6 @@
 	// View mode from store
 	const currentViewMode = $derived(viewMode.modalView)
 
-	function handleViewModeChange(mode: ViewMode) {
-		viewMode.setModalView(mode)
-	}
-
 	// Dialog title based on entity type
 	const dialogTitle = $derived(m.collection_add_title({ type: entityNames[entityType].plural }))
 
@@ -380,9 +376,6 @@
 				bind:searchQuery
 				onFiltersChange={handleFiltersChange}
 				showSort={false}
-				showViewToggle={true}
-				viewMode={currentViewMode}
-				onViewModeChange={handleViewModeChange}
 			/>
 		</div>
 

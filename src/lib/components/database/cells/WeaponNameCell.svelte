@@ -12,7 +12,7 @@
 	const { row }: Cell = $props()
 
 	// Cast row to Weapon type for type safety
-	const weapon = row as Weapon
+	const weapon = $derived(row as Weapon)
 
 	// Get display name
 	const displayName = $derived.by(() => {

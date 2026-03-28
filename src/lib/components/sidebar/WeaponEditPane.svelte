@@ -91,11 +91,10 @@
 
 	// Initialize bullet selections from current values
 	$effect(() => {
-		const newSelections = new SvelteMap<number, Bullet | undefined>()
+		bulletSelections.clear()
 		for (const entry of currentValues.bullets ?? []) {
-			newSelections.set(entry.position, entry.bullet)
+			bulletSelections.set(entry.position, entry.bullet)
 		}
-		bulletSelections = newSelections
 	})
 
 	// Derived conditions
@@ -284,13 +283,11 @@
 								bulletType={slotType}
 								value={bulletSelections.get(i)?.id}
 								onchange={(bullet) => {
-									const updated = new SvelteMap(bulletSelections)
 									if (bullet) {
-										updated.set(i, bullet)
+										bulletSelections.set(i, bullet)
 									} else {
-										updated.delete(i)
+										bulletSelections.delete(i)
 									}
-									bulletSelections = updated
 								}}
 							/>
 						</div>

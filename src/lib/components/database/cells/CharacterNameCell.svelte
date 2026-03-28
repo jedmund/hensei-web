@@ -6,7 +6,7 @@
 	const { row }: Cell = $props()
 
 	// Cast row to Character type for type safety
-	const character = row as Character
+	const character = $derived(row as Character)
 
 	// Get display name
 	const displayName = $derived.by(() => {

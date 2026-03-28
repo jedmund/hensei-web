@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import type { GridArtifactInput } from '$lib/types/api/artifact'
 import {
 	createCollectionArtifactOptions,
 	createCollectionArtifactsBatchOptions,
@@ -111,8 +112,9 @@ describe('createGridArtifactOptions', () => {
 		opts.onSuccess(undefined, {
 			partyId: 'party-1',
 			gridCharacterId: 'gc-1',
-			artifactId: 'a-1'
-		} as Record<string, unknown>)
+			artifactId: 'a-1',
+			element: 1
+		} as GridArtifactInput)
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['parties', 'party-1'])

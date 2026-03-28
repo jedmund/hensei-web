@@ -19,12 +19,23 @@
 	}
 </script>
 
-<button
+<div
 	class="skill-item"
 	class:current={variant === 'current'}
-	onclick={onClick}
-	{disabled}
+	class:disabled
+	onclick={disabled ? undefined : onClick}
+	onkeydown={disabled
+		? undefined
+		: (e) => {
+				if (e.key === 'Enter' || e.key === ' ') {
+					e.preventDefault()
+					onClick?.()
+				}
+			}}
+	role="button"
+	tabindex={disabled ? -1 : 0}
 	aria-label={localizedName(skill.name)}
+	aria-disabled={disabled}
 >
 	<img
 		src={getSkillIcon(skill)}
@@ -49,7 +60,7 @@
 			{m.action_remove()}
 		</button>
 	{/if}
-</button>
+</div>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
@@ -69,11 +80,11 @@
 		text-align: left;
 		width: 100%;
 
-		&:hover:not(:disabled) {
+		&:hover:not(.disabled) {
 			background: var(--button-contained-bg-hover);
 		}
 
-		&:disabled {
+		&.disabled {
 			opacity: 0.5;
 			cursor: not-allowed;
 		}
@@ -82,7 +93,7 @@
 		&.current {
 			background: var(--primary-10);
 
-			&:hover:not(:disabled) {
+			&:hover:not(.disabled) {
 				background: var(--primary-20);
 			}
 		}

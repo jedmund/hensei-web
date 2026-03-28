@@ -38,13 +38,20 @@
 	class:ulb
 	class:small={size === 'small'}
 	class:readonly={!editable}
-	{tabindex}
-	onclick={handleClick}
-	role="button"
-	aria-label="Uncap star"
-></li>
+>
+	<button type="button" class="star-button" {tabindex} onclick={handleClick} aria-label="Uncap star"
+	></button>
+</li>
 
 <style lang="scss">
+	.star-button {
+		all: unset;
+		display: block;
+		width: 100%;
+		height: 100%;
+		cursor: pointer;
+	}
+
 	.star {
 		--size: 18px;
 		background-repeat: no-repeat;

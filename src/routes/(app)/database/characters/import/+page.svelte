@@ -50,7 +50,8 @@
 	let selectedWikiPage = $state<string | null>(null)
 
 	// Form data per entity (keyed by wikiPage) - using Record for proper reactivity
-	let formDataByPage = $state<Record<string, Record<string, unknown>>>({})
+	type CharacterFormData = ReturnType<typeof createEmptyFormData>
+	let formDataByPage = $state<Record<string, CharacterFormData>>({})
 	let savedEntities = new SvelteSet<string>()
 
 	// Store wiki raw data per entity for sending with create request
@@ -83,7 +84,7 @@
 	// Auto-generate wiki URLs when Name (JP) or Rarity changes
 	$effect(() => {
 		if (!selectedWikiPage) return
-		const formData = formDataByPage[selectedWikiPage]
+		const formData = formDataByPage[selectedWikiPage!]
 		if (!formData) return
 
 		const nameJp = formData.nameJp
@@ -182,14 +183,13 @@
 		fetchError = null
 
 		// Initialize entities as loading
-		const newEntities = new SvelteMap<string, EntityState>()
+		entities.clear()
 		pages.forEach((page) => {
-			newEntities.set(page, {
+			entities.set(page, {
 				wikiPage: page,
 				status: 'loading'
 			})
 		})
-		entities = newEntities
 		selectedWikiPage = pages[0] ?? null
 
 		try {
@@ -207,9 +207,9 @@
 			const response = await entityAdapter.batchPreviewCharacters(finalPages, wikiData)
 
 			// Update entities with results
-			const updatedEntities = new SvelteMap<string, EntityState>()
+			entities.clear()
 			response.results.forEach((result) => {
-				updatedEntities.set(result.wikiPage, {
+				entities.set(result.wikiPage, {
 					wikiPage: result.wikiPage,
 					status: result.status,
 					granblueId: result.granblueId,
@@ -223,7 +223,6 @@
 					formDataByPage[result.wikiPage] = createEmptyFormData(result.wikiPage, result.parsedData)
 				}
 			})
-			entities = updatedEntities
 
 			// Trigger reactivity by reassigning
 			formDataByPage = { ...formDataByPage }
@@ -243,7 +242,7 @@
 	// Save current entity
 	async function saveCurrentEntity() {
 		if (!selectedWikiPage) return
-		const formData = formDataByPage[selectedWikiPage]
+		const formData = formDataByPage[selectedWikiPage!]
 		if (!formData) return
 		isSaving = true
 		saveError = null
@@ -324,7 +323,7 @@
 	// Can save current entity
 	const canSave = $derived.by(() => {
 		if (!selectedWikiPage) return false
-		const formData = formDataByPage[selectedWikiPage]
+		const formData = formDataByPage[selectedWikiPage!]
 		if (!formData) return false
 		return (
 			formData.name.trim() !== '' &&
@@ -443,43 +442,44 @@
 				<div class="entity-loading">
 					<p>Loading wiki data...</p>
 				</div>
-			{:else if selectedWikiPage && formDataByPage[selectedWikiPage]}
+			{:else if selectedWikiPage && formDataByPage[selectedWikiPage!]}
+				{@const formData = formDataByPage[selectedWikiPage!]!}
 				<section class="details">
 					<CharacterMetadataSection
 						character={emptyCharacter}
 						editMode={true}
-						bind:editData={formDataByPage[selectedWikiPage]}
+						editData={formDataByPage[selectedWikiPage!]}
 					/>
 
 					<CharacterUncapSection
 						character={emptyCharacter}
 						editMode={true}
-						bind:editData={formDataByPage[selectedWikiPage]}
+						editData={formDataByPage[selectedWikiPage!]}
 					/>
 
 					<CharacterTaxonomySection
 						character={emptyCharacter}
 						editMode={true}
-						bind:editData={formDataByPage[selectedWikiPage]}
+						editData={formDataByPage[selectedWikiPage!]}
 					/>
 
 					<CharacterStatsSection
 						character={emptyCharacter}
 						editMode={true}
-						bind:editData={formDataByPage[selectedWikiPage]}
+						editData={formDataByPage[selectedWikiPage!]}
 					/>
 
 					<DetailsContainer title="Nicknames">
 						<DetailItem label="Nicknames (EN)">
 							<TagInput
-								bind:value={formDataByPage[selectedWikiPage].nicknamesEn}
+								bind:value={formDataByPage[selectedWikiPage!]!.nicknamesEn}
 								placeholder="Add nickname..."
 								contained
 							/>
 						</DetailItem>
 						<DetailItem label="Nicknames (JP)">
 							<TagInput
-								bind:value={formDataByPage[selectedWikiPage].nicknamesJp}
+								bind:value={formDataByPage[selectedWikiPage!]!.nicknamesJp}
 								placeholder="ニックネーム..."
 								contained
 							/>
@@ -489,24 +489,24 @@
 					<DetailsContainer title="Dates">
 						<DetailItem
 							label="Release Date"
-							bind:value={formDataByPage[selectedWikiPage].releaseDate}
+							bind:value={formDataByPage[selectedWikiPage!]!.releaseDate}
 							editable={true}
 							type="text"
 							placeholder="YYYY-MM-DD"
 						/>
-						{#if formDataByPage[selectedWikiPage].flb}
+						{#if formData.flb}
 							<DetailItem
 								label="FLB Date"
-								bind:value={formDataByPage[selectedWikiPage].flbDate}
+								bind:value={formDataByPage[selectedWikiPage!]!.flbDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
 							/>
 						{/if}
-						{#if formDataByPage[selectedWikiPage].transcendence}
+						{#if formData.transcendence}
 							<DetailItem
 								label="Transcendence Date"
-								bind:value={formDataByPage[selectedWikiPage].transcendenceDate}
+								bind:value={formDataByPage[selectedWikiPage!]!.transcendenceDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"
@@ -517,43 +517,43 @@
 					<DetailsContainer title="Links">
 						<DetailItem
 							label="Wiki (EN)"
-							bind:value={formDataByPage[selectedWikiPage].wikiEn}
+							bind:value={formDataByPage[selectedWikiPage!]!.wikiEn}
 							editable={true}
 							type="text"
 							placeholder="Page name (e.g., Narmaya)"
 							width="480px"
 							hasLinkButton={true}
-							linkUrl={buildWikiEnUrl(formDataByPage[selectedWikiPage].wikiEn)}
+							linkUrl={buildWikiEnUrl(formData.wikiEn)}
 						/>
 						<DetailItem
 							label="Wiki (JP)"
-							bind:value={formDataByPage[selectedWikiPage].wikiJa}
+							bind:value={formDataByPage[selectedWikiPage!]!.wikiJa}
 							editable={true}
 							type="text"
 							placeholder="Japanese page name"
 							width="480px"
 							hasLinkButton={true}
-							linkUrl={buildWikiJaUrl(formDataByPage[selectedWikiPage].wikiJa, 'character')}
+							linkUrl={buildWikiJaUrl(formData.wikiJa, 'character')}
 						/>
 						<DetailItem
 							label="Gamewith"
-							bind:value={formDataByPage[selectedWikiPage].gamewith}
+							bind:value={formDataByPage[selectedWikiPage!]!.gamewith}
 							editable={true}
 							type="text"
 							placeholder="Article ID (e.g., 519325)"
 							width="480px"
 							hasLinkButton={true}
-							linkUrl={buildGamewithUrl(formDataByPage[selectedWikiPage].gamewith)}
+							linkUrl={buildGamewithUrl(formData.gamewith)}
 						/>
 						<DetailItem
 							label="Kamigame"
-							bind:value={formDataByPage[selectedWikiPage].kamigame}
+							bind:value={formDataByPage[selectedWikiPage!]!.kamigame}
 							editable={true}
 							type="text"
 							placeholder="Slug (e.g., SSR闇フロレンス)"
 							width="480px"
 							hasLinkButton={true}
-							linkUrl={buildKamigameUrl(formDataByPage[selectedWikiPage].kamigame, 'character')}
+							linkUrl={buildKamigameUrl(formData.kamigame, 'character')}
 						/>
 					</DetailsContainer>
 

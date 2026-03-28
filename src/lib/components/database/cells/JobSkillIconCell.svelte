@@ -6,7 +6,11 @@
 </script>
 
 <div class="image-cell">
-	<img src={getJobSkillIcon(row)} alt="" class="database-image" />
+	<img
+		src={getJobSkillIcon(row as { imageId?: string; slug?: string })}
+		alt=""
+		class="database-image"
+	/>
 </div>
 
 <style lang="scss">

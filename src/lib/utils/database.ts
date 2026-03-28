@@ -17,9 +17,10 @@ export function getSummonImageUrl(gbid?: string | number): string {
 
 export function getDatabaseUrl(
 	type: 'character' | 'weapon' | 'summon',
-	granblueId: string,
+	granblueId?: string,
 	styleSwap?: boolean
 ): string {
+	if (!granblueId) return `/database/${type}s`
 	const base = `/database/${type}s/${granblueId}`
 	return type === 'character' && styleSwap ? `${base}/style` : base
 }

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import type { Element } from '$lib/types/api/shared'
-
 	interface Props {
 		/** Number of notifications */
 		count?: number
@@ -9,7 +7,7 @@
 		/** Size variant */
 		size?: 'small' | 'medium'
 		/** Element for color styling */
-		element?: Element
+		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	}
 
 	let { count = 0, showCount = false, size = 'small', element }: Props = $props()

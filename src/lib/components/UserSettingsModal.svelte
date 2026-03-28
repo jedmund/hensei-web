@@ -18,6 +18,7 @@
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import { themeStore, type ThemePreference } from '$lib/stores/theme.svelte'
+	import { untrack } from 'svelte'
 	import { localizeHref, deLocalizeHref } from '$lib/paraglide/runtime'
 	import { updateSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 
@@ -38,7 +39,7 @@
 	let activeSection = $state<string>('profile')
 
 	// Form state - Account section (initialized empty, populated from API)
-	let formUsername = $state(username)
+	let formUsername = $state(untrack(() => username))
 	let formDisplayName = $state('')
 	let formEmail = $state('')
 	let emailVerified = $state(false)
@@ -371,10 +372,14 @@
 						{isInCrew}
 						{crewGamertag}
 						{element}
-						onCollectionPrivacyChange={(v) => (collectionPrivacy = v)}
+						onCollectionPrivacyChange={(v) => {
+							if (v !== undefined) collectionPrivacy = v
+						}}
 						onShowCrewGamertagChange={(v) => (showCrewGamertag = v)}
 						onImportWeaponsChange={(v) => (importWeapons = v)}
-						onDefaultImportVisibilityChange={(v) => (defaultImportVisibility = v)}
+						onDefaultImportVisibilityChange={(v) => {
+							if (v !== undefined) defaultImportVisibility = v
+						}}
 					/>
 				{/if}
 			</div>

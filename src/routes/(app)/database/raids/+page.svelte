@@ -319,7 +319,7 @@
 			header: 'Section',
 			width: 100,
 			sort: true,
-			template: (val: unknown) => getRaidSectionLabel(val)
+			template: (val: unknown) => getRaidSectionLabel(val as number)
 		},
 		{
 			id: 'player_count',

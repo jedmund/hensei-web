@@ -28,6 +28,7 @@ import type {
  * Parameters for listing artifacts with filtering
  */
 export interface ArtifactListParams {
+	[key: string]: string | number | undefined
 	rarity?: 'standard' | 'quirk'
 	proficiency?: number
 }
@@ -36,6 +37,7 @@ export interface ArtifactListParams {
  * Parameters for listing collection artifacts with pagination
  */
 export interface CollectionArtifactListParams {
+	[key: string]: string | number | number[] | undefined
 	page?: number
 	limit?: number
 	element?: number | number[]

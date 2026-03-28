@@ -15,9 +15,10 @@ import type { UserCookie } from '$lib/types/UserCookie'
 // Track call order across all mocks
 let callOrder: string[]
 
-const mockUsersUpdate = vi.fn(async () => ({}))
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- typed params document the mock's expected signature
+const mockUsersUpdate = vi.fn(async (_id: string, _data: Record<string, unknown>) => ({}))
 vi.mock('$lib/api/resources/users', () => ({
-	users: { update: (...args: unknown[]) => mockUsersUpdate(...args) }
+	users: { update: (...args: [string, Record<string, unknown>]) => mockUsersUpdate(...args) }
 }))
 
 const mockSetTheme = vi.fn()
@@ -105,7 +106,7 @@ describe('syncTheme', () => {
 			})
 		)
 
-		const body = JSON.parse(mockFetch.mock.calls[0]![1].body as string)
+		const body = JSON.parse(((mockFetch.mock.calls[0] as unknown[])[1] as { body: string }).body)
 		expect(body.theme).toBe('dark')
 		// Other fields should be preserved from the original cookie
 		expect(body.element).toBe('fire')
@@ -167,7 +168,7 @@ describe('syncLanguage', () => {
 
 		await syncLanguage('user-1', baseUser, 'ja')
 
-		const body = JSON.parse(mockFetch.mock.calls[0]![1].body as string)
+		const body = JSON.parse(((mockFetch.mock.calls[0] as unknown[])[1] as { body: string }).body)
 		expect(body.language).toBe('ja')
 		expect(body.theme).toBe('system')
 	})

@@ -58,8 +58,7 @@
 		return () => controller.abort()
 	})
 
-	function openDialog(e: MouseEvent) {
-		e.stopPropagation()
+	function openDialog() {
 		dialogOpen = true
 	}
 </script>

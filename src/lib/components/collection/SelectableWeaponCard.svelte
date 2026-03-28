@@ -63,7 +63,7 @@
 		loading="lazy"
 		onerror={(e) => handleImageFallback(e, weaponFallbackUrl)}
 	/>
-	<div class="counter-row" onclick={(e) => e.stopPropagation()}>
+	<div class="counter-row" role="presentation" onclick={(e) => e.stopPropagation()}>
 		<QuantityCounter value={quantity} onChange={handleQuantityChange} element={userElement} />
 	</div>
 </div>

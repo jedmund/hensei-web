@@ -22,8 +22,10 @@ export function serializeForClipboard(view: EditorView, slice: Slice) {
 	// Older version fallback
 	const proseMirrorView = getPmView()
 
-	if (proseMirrorView && typeof proseMirrorView?.__serializeForClipboard === 'function') {
-		return proseMirrorView.__serializeForClipboard(view, slice)
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const pmViewAny = proseMirrorView as any
+	if (pmViewAny && typeof pmViewAny?.__serializeForClipboard === 'function') {
+		return pmViewAny.__serializeForClipboard(view, slice)
 	}
 
 	throw new Error('No supported clipboard serialization method found.')

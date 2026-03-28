@@ -127,7 +127,7 @@ describe('getJobTierName', () => {
 	it('maps EX tiers', () => {
 		expect(getJobTierName('ex')).toBe('EX')
 		expect(getJobTierName('ex1')).toBe('EX')
-		expect(getJobTierName('ex2')).toBe('EXII')
+		expect(getJobTierName('ex2')).toBe('EX II')
 	})
 
 	it('maps Origin tier', () => {

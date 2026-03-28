@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { Grid, HeaderMenu } from 'wx-svelte-grid'
-	import type { IColumn } from 'wx-svelte-grid'
+	import type { IColumn, IRow } from 'wx-svelte-grid'
 	import { DatabaseProvider } from '$lib/providers/DatabaseProvider'
 	import CollectionFilters from '$lib/components/collection/CollectionFilters.svelte'
-	import { onMount, onDestroy, tick } from 'svelte'
+	import { onMount, onDestroy, tick, untrack } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { createQuery, queryOptions } from '@tanstack/svelte-query'
@@ -50,7 +50,7 @@
 	const supportsCollectionFilters = $derived(resource !== 'jobs')
 
 	// Create provider
-	const provider = new DatabaseProvider({ resource, pageSize: initialPageSize })
+	const provider = $derived(new DatabaseProvider({ resource, pageSize: initialPageSize }))
 
 	// Fetch weapon series list for URL slug mapping (only for weapons)
 	const weaponSeriesQuery = createQuery(() =>
@@ -65,15 +65,17 @@
 
 	// --- Composables ---
 
-	const filters = new DatabaseFilters(
-		resource,
-		entityType,
-		provider,
-		() => weaponSeriesQuery.data,
-		(pg) => loadData(pg)
+	const filters = $derived(
+		new DatabaseFilters(
+			resource,
+			entityType,
+			provider,
+			() => weaponSeriesQuery.data,
+			(pg) => loadData(pg)
+		)
 	)
 
-	const search = new DatabaseSearch(provider, (pg) => loadData(pg))
+	const search = $derived(new DatabaseSearch(provider, (pg) => loadData(pg)))
 
 	// Watch for search term changes
 	$effect(() => {
@@ -82,12 +84,12 @@
 
 	// --- Data loading ---
 
-	let data = $state<Record<string, unknown>[]>([])
+	let data = $state<IRow[]>([])
 	let loading = $state(true)
 	let currentPage = $state(1)
 	let totalPages = $state(1)
 	let total = $state(0)
-	let pageSize = $state(initialPageSize)
+	let pageSize = $state(untrack(() => initialPageSize))
 
 	// Sort state
 	let sortMarks = $state<Record<string, { order: 'asc' | 'desc' }>>({})
@@ -136,7 +138,7 @@
 	// --- Column visibility persistence ---
 
 	const isBrowser = typeof window !== 'undefined'
-	const COLUMNS_STORAGE_KEY = `database-columns-${resource}`
+	const COLUMNS_STORAGE_KEY = $derived(`database-columns-${resource}`)
 	let hasCustomColumns = $state(false)
 	let restoringColumns = false
 
@@ -205,7 +207,7 @@
 
 	// --- Expand mode ---
 
-	const EXPAND_STORAGE_KEY = `database-expanded-${resource}`
+	const EXPAND_STORAGE_KEY = $derived(`database-expanded-${resource}`)
 	let expanded = $state(false)
 
 	function toggleExpanded() {

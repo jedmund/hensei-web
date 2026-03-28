@@ -5,7 +5,7 @@
 
 	const { row }: Cell = $props()
 
-	const skill = row as JobSkill
+	const skill = $derived(row as JobSkill)
 </script>
 
 <SkillTypeBadge {skill} />
