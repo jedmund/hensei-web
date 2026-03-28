@@ -14,6 +14,7 @@
 		editable?: boolean
 		onUncapChange?: (level: number) => Promise<void>
 		onTranscendenceChange?: (stage: number) => Promise<void>
+		unowned?: boolean
 	}
 
 	let {
@@ -21,7 +22,8 @@
 		onClick,
 		editable = false,
 		onUncapChange,
-		onTranscendenceChange
+		onTranscendenceChange,
+		unowned = false
 	}: Props = $props()
 
 	const simplePortraits = getSimplePortraits()
@@ -42,9 +44,9 @@
 	const displayName = $derived(localizedName(character.character?.name))
 </script>
 
-<button type="button" class="character-card" onclick={onClick}>
+<button type="button" class="character-card" class:unowned onclick={onClick}>
 	<div class="card-image">
-		{#if character.perpetuity}
+		{#if !unowned && character.perpetuity}
 			<img
 				class="perpetuity-badge"
 				src={perpetuityFilled}
@@ -54,20 +56,24 @@
 		{/if}
 		<img class="character-image" src={imageUrl} alt={displayName} loading="lazy" />
 	</div>
-	<UncapIndicator
-		type="character"
-		uncapLevel={character.uncapLevel}
-		transcendenceStage={character.transcendenceStep}
-		special={character.character?.special}
-		flb={character.character?.uncap?.flb}
-		ulb={character.character?.uncap?.transcendence}
-		transcendence={character.character?.uncap?.transcendence}
-		{editable}
-		updateUncap={onUncapChange}
-		updateTranscendence={onTranscendenceChange}
-	/>
+	{#if !unowned}
+		<UncapIndicator
+			type="character"
+			uncapLevel={character.uncapLevel}
+			transcendenceStage={character.transcendenceStep}
+			special={character.character?.special}
+			flb={character.character?.uncap?.flb}
+			ulb={character.character?.uncap?.transcendence}
+			transcendence={character.character?.uncap?.transcendence}
+			{editable}
+			updateUncap={onUncapChange}
+			updateTranscendence={onTranscendenceChange}
+		/>
+	{/if}
 	<span class="character-name">{displayName}</span>
-	{#if character.character}
+	{#if unowned}
+		<span class="not-owned-label">{m.collection_not_owned()}</span>
+	{:else if character.character}
 		<CharacterTags character={character.character} />
 	{/if}
 </button>
@@ -88,6 +94,10 @@
 		border: none;
 		background: transparent;
 		cursor: pointer;
+
+		&.unowned {
+			opacity: 0.6;
+		}
 
 		&:focus-visible {
 			outline: 2px solid var(--accent-color, #3366ff);
@@ -123,6 +133,11 @@
 		width: 100%;
 		aspect-ratio: 144 / 85;
 		border-radius: inherit;
+	}
+
+	.not-owned-label {
+		font-size: typography.$font-tiny;
+		color: var(--text-tertiary);
 	}
 
 	.character-name {

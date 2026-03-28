@@ -9,15 +9,24 @@
 	import { getAwakeningImage } from '$lib/utils/modifiers'
 	import { localizedName } from '$lib/utils/locale'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import * as m from '$lib/paraglide/messages'
 	interface Props {
 		weapon: CollectionWeapon
 		onClick?: () => void
 		editable?: boolean
 		onUncapChange?: (level: number) => Promise<void>
 		onTranscendenceChange?: (stage: number) => Promise<void>
+		unowned?: boolean
 	}
 
-	let { weapon, onClick, editable = false, onUncapChange, onTranscendenceChange }: Props = $props()
+	let {
+		weapon,
+		onClick,
+		editable = false,
+		onUncapChange,
+		onTranscendenceChange,
+		unowned = false
+	}: Props = $props()
 
 	// Get transformation suffix for transcendence
 	const transformation = $derived(
@@ -54,9 +63,9 @@
 	const displayName = $derived(localizedName(weapon.weapon?.name))
 </script>
 
-<button type="button" class="weapon-card" onclick={onClick}>
+<button type="button" class="weapon-card" class:unowned onclick={onClick}>
 	<div class="card-image">
-		{#if awakeningImage}
+		{#if !unowned && awakeningImage}
 			<img
 				class="awakening"
 				src={awakeningImage}
@@ -71,18 +80,23 @@
 			onerror={(e) => handleImageFallback(e, weaponFallbackUrl)}
 		/>
 	</div>
-	<UncapIndicator
-		type="weapon"
-		uncapLevel={weapon.uncapLevel}
-		transcendenceStage={weapon.transcendenceStep}
-		flb={weapon.weapon?.uncap?.flb}
-		ulb={weapon.weapon?.uncap?.ulb}
-		transcendence={weapon.weapon?.uncap?.transcendence}
-		{editable}
-		updateUncap={onUncapChange}
-		updateTranscendence={onTranscendenceChange}
-	/>
+	{#if !unowned}
+		<UncapIndicator
+			type="weapon"
+			uncapLevel={weapon.uncapLevel}
+			transcendenceStage={weapon.transcendenceStep}
+			flb={weapon.weapon?.uncap?.flb}
+			ulb={weapon.weapon?.uncap?.ulb}
+			transcendence={weapon.weapon?.uncap?.transcendence}
+			{editable}
+			updateUncap={onUncapChange}
+			updateTranscendence={onTranscendenceChange}
+		/>
+	{/if}
 	<span class="weapon-name">{displayName}</span>
+	{#if unowned}
+		<span class="not-owned-label">{m.collection_not_owned()}</span>
+	{/if}
 </button>
 
 <style lang="scss">
@@ -100,6 +114,10 @@
 		border: none;
 		background: transparent;
 		cursor: pointer;
+
+		&.unowned {
+			opacity: 0.6;
+		}
 
 		&:focus-visible {
 			outline: 2px solid var(--accent-color, #3366ff);
@@ -136,6 +154,12 @@
 		height: 100%;
 		object-fit: contain;
 		border-radius: layout.$input-corner;
+	}
+
+	.not-owned-label {
+		font-size: typography.$font-tiny;
+		color: var(--text-tertiary);
+		text-align: center;
 	}
 
 	.weapon-name {
