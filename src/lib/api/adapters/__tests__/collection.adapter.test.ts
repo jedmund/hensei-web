@@ -56,7 +56,7 @@ describe('CollectionAdapter', () => {
 		it('should wrap raw characters into collection objects when unowned=true', async () => {
 			global.fetch = mockApiResponse(API.listCharactersUnowned)
 
-			const result = await adapter.listCharacters('user-1', { unowned: true })
+			const result = await adapter.listCharacters('user-1', { unowned: 'true' })
 
 			expect(result.results).toHaveLength(1)
 			expect(result.results[0]).toMatchObject({
@@ -78,7 +78,7 @@ describe('CollectionAdapter', () => {
 		it('should use entity id as collection object id when unowned=true', async () => {
 			global.fetch = mockApiResponse(API.listCharactersUnowned)
 
-			const result = await adapter.listCharacters('user-1', { unowned: true })
+			const result = await adapter.listCharacters('user-1', { unowned: 'true' })
 
 			expect(result.results[0]?.id).toBe('c1')
 		})
@@ -86,7 +86,7 @@ describe('CollectionAdapter', () => {
 		it('should preserve raw character in nested field when unowned=true', async () => {
 			global.fetch = mockApiResponse(API.listCharactersUnowned)
 
-			const result = await adapter.listCharacters('user-1', { unowned: true })
+			const result = await adapter.listCharacters('user-1', { unowned: 'true' })
 
 			expect(result.results[0]?.character).toEqual({ id: 'c1', nameEn: 'Katalina', element: 1 })
 		})
@@ -102,7 +102,7 @@ describe('CollectionAdapter', () => {
 		it('should pass unowned=true in the query string', async () => {
 			global.fetch = mockApiResponse(API.listCharactersUnowned)
 
-			await adapter.listCharacters('user-1', { unowned: true })
+			await adapter.listCharacters('user-1', { unowned: 'true' })
 
 			const calledUrl = vi.mocked(global.fetch).mock.calls[0]?.[0] as string
 			expect(calledUrl).toContain('unowned=true')
@@ -151,7 +151,7 @@ describe('CollectionAdapter', () => {
 		it('should wrap raw weapons into collection objects when unowned=true', async () => {
 			global.fetch = mockApiResponse(API.listWeaponsUnowned)
 
-			const result = await adapter.listWeapons('user-1', { unowned: true })
+			const result = await adapter.listWeapons('user-1', { unowned: 'true' })
 
 			expect(result.results).toHaveLength(1)
 			expect(result.results[0]).toMatchObject({
@@ -167,7 +167,7 @@ describe('CollectionAdapter', () => {
 		it('should use entity id as collection object id when unowned=true', async () => {
 			global.fetch = mockApiResponse(API.listWeaponsUnowned)
 
-			const result = await adapter.listWeapons('user-1', { unowned: true })
+			const result = await adapter.listWeapons('user-1', { unowned: 'true' })
 
 			expect(result.results[0]?.id).toBe('w1')
 		})
@@ -175,7 +175,7 @@ describe('CollectionAdapter', () => {
 		it('should preserve raw weapon in nested field when unowned=true', async () => {
 			global.fetch = mockApiResponse(API.listWeaponsUnowned)
 
-			const result = await adapter.listWeapons('user-1', { unowned: true })
+			const result = await adapter.listWeapons('user-1', { unowned: 'true' })
 
 			expect(result.results[0]?.weapon).toEqual({ id: 'w1', nameEn: 'Murgleis', element: 3 })
 		})
@@ -191,7 +191,7 @@ describe('CollectionAdapter', () => {
 		it('should pass unowned=true in the query string', async () => {
 			global.fetch = mockApiResponse(API.listWeaponsUnowned)
 
-			await adapter.listWeapons('user-1', { unowned: true })
+			await adapter.listWeapons('user-1', { unowned: 'true' })
 
 			const calledUrl = vi.mocked(global.fetch).mock.calls[0]?.[0] as string
 			expect(calledUrl).toContain('unowned=true')
@@ -270,7 +270,7 @@ describe('CollectionAdapter', () => {
 		it('should wrap raw summons into collection objects when unowned=true', async () => {
 			global.fetch = mockApiResponse(API.listSummonsUnowned)
 
-			const result = await adapter.listSummons('user-1', { unowned: true })
+			const result = await adapter.listSummons('user-1', { unowned: 'true' })
 
 			expect(result.results).toHaveLength(1)
 			expect(result.results[0]).toMatchObject({
@@ -285,7 +285,7 @@ describe('CollectionAdapter', () => {
 		it('should use entity id as collection object id when unowned=true', async () => {
 			global.fetch = mockApiResponse(API.listSummonsUnowned)
 
-			const result = await adapter.listSummons('user-1', { unowned: true })
+			const result = await adapter.listSummons('user-1', { unowned: 'true' })
 
 			expect(result.results[0]?.id).toBe('s1')
 		})
@@ -293,7 +293,7 @@ describe('CollectionAdapter', () => {
 		it('should preserve raw summon in nested field when unowned=true', async () => {
 			global.fetch = mockApiResponse(API.listSummonsUnowned)
 
-			const result = await adapter.listSummons('user-1', { unowned: true })
+			const result = await adapter.listSummons('user-1', { unowned: 'true' })
 
 			expect(result.results[0]?.summon).toEqual({ id: 's1', nameEn: 'Bahamut', element: 0 })
 		})
@@ -309,7 +309,7 @@ describe('CollectionAdapter', () => {
 		it('should pass unowned=true in the query string', async () => {
 			global.fetch = mockApiResponse(API.listSummonsUnowned)
 
-			await adapter.listSummons('user-1', { unowned: true })
+			await adapter.listSummons('user-1', { unowned: 'true' })
 
 			const calledUrl = vi.mocked(global.fetch).mock.calls[0]?.[0] as string
 			expect(calledUrl).toContain('unowned=true')
