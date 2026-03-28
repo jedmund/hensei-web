@@ -42,6 +42,7 @@
 	let rarityFilters = $state<number[]>(collectionFilters.summons.rarity)
 	let seriesFilters = $state<(number | string)[]>(collectionFilters.summons.series ?? [])
 	let searchQuery = $state('')
+	let unowned = $state(false)
 
 	// Sort state (initialized from localStorage)
 	let sortBy = $state<CollectionSortKey>(collectionFilters.summons.sort)
@@ -55,7 +56,8 @@
 		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
 		series: seriesFilters.length > 0 ? seriesFilters : undefined,
 		search: searchQuery.length > 0 ? searchQuery : undefined,
-		sort: sortBy
+		sort: sortBy,
+		unowned: unowned ? 'true' : undefined
 	})
 
 	// Query for summons collection
@@ -173,7 +175,9 @@
 			bind:seriesFilters
 			bind:searchQuery
 			bind:sortBy
+			bind:unowned
 			onFiltersChange={handleFiltersChange}
+			showUnowned={data.isOwner}
 			element={userElement}
 		/>
 	</div>
@@ -187,7 +191,11 @@
 			</div>
 		{:else if isEmpty}
 			<div class="empty-state">
-				{#if data.isOwner}
+				{#if unowned}
+					<Icon name="check-circle" size={48} />
+					<h3>{m.collection_empty_unowned()}</h3>
+					<p>{m.collection_empty_unowned_hint()}</p>
+				{:else if data.isOwner}
 					<Icon name="star" size={48} />
 					<h3>{m.collection_empty_summons()}</h3>
 					<p>{m.collection_empty_summons_hint()}</p>
@@ -199,79 +207,87 @@
 		{:else if currentViewMode === 'grid'}
 			<div class="summon-grid">
 				{#each allSummons as summon, i (i)}
-					<CollectionContextMenu
-						itemType="summon"
-						onView={() => openSummonDetails(summon)}
-						onEdit={() => openSummonEdit(summon)}
-						canEdit={data.isOwner}
-						{isTeamsPaneOpen}
-						onViewTeams={() => viewTeamsWithSummon(summon)}
-						onAddToTeamsView={() => addSummonToTeamsView(summon)}
-						{canAccessDb}
-						onViewInDatabase={() => viewSummonInDatabase(summon)}
-					>
-						<SelectableCollectionCard id={summon.id} onClick={() => openSummonDetails(summon)}>
-							<CollectionSummonCard
-								{summon}
-								editable={data.isOwner}
-								onUncapChange={async (level) => {
-									const input: Record<string, number> = { uncapLevel: level }
-									if (level < 6 && summon.transcendenceStep > 0) input.transcendenceStep = 0
-									const updated = await updateMutation.mutateAsync({ id: summon.id, input })
-									if (sidebar.paneStack.currentPane?.props?.summon?.id === summon.id) {
-										sidebar.paneStack.updateCurrentProps({ summon: updated })
-									}
-								}}
-								onTranscendenceChange={async (stage) => {
-									const input: Record<string, number> = { transcendenceStep: stage }
-									if (stage > 0) input.uncapLevel = 6
-									const updated = await updateMutation.mutateAsync({ id: summon.id, input })
-									if (sidebar.paneStack.currentPane?.props?.summon?.id === summon.id) {
-										sidebar.paneStack.updateCurrentProps({ summon: updated })
-									}
-								}}
-							/>
-						</SelectableCollectionCard>
-					</CollectionContextMenu>
+					{#if unowned}
+						<CollectionSummonCard {summon} unowned={true} />
+					{:else}
+						<CollectionContextMenu
+							itemType="summon"
+							onView={() => openSummonDetails(summon)}
+							onEdit={() => openSummonEdit(summon)}
+							canEdit={data.isOwner}
+							{isTeamsPaneOpen}
+							onViewTeams={() => viewTeamsWithSummon(summon)}
+							onAddToTeamsView={() => addSummonToTeamsView(summon)}
+							{canAccessDb}
+							onViewInDatabase={() => viewSummonInDatabase(summon)}
+						>
+							<SelectableCollectionCard id={summon.id} onClick={() => openSummonDetails(summon)}>
+								<CollectionSummonCard
+									{summon}
+									editable={data.isOwner}
+									onUncapChange={async (level) => {
+										const input: Record<string, number> = { uncapLevel: level }
+										if (level < 6 && summon.transcendenceStep > 0) input.transcendenceStep = 0
+										const updated = await updateMutation.mutateAsync({ id: summon.id, input })
+										if (sidebar.paneStack.currentPane?.props?.summon?.id === summon.id) {
+											sidebar.paneStack.updateCurrentProps({ summon: updated })
+										}
+									}}
+									onTranscendenceChange={async (stage) => {
+										const input: Record<string, number> = { transcendenceStep: stage }
+										if (stage > 0) input.uncapLevel = 6
+										const updated = await updateMutation.mutateAsync({ id: summon.id, input })
+										if (sidebar.paneStack.currentPane?.props?.summon?.id === summon.id) {
+											sidebar.paneStack.updateCurrentProps({ summon: updated })
+										}
+									}}
+								/>
+							</SelectableCollectionCard>
+						</CollectionContextMenu>
+					{/if}
 				{/each}
 			</div>
 		{:else}
 			<div class="summon-list">
 				{#each allSummons as summon, i (i)}
-					<CollectionContextMenu
-						itemType="summon"
-						onView={() => openSummonDetails(summon)}
-						onEdit={() => openSummonEdit(summon)}
-						canEdit={data.isOwner}
-						{isTeamsPaneOpen}
-						onViewTeams={() => viewTeamsWithSummon(summon)}
-						onAddToTeamsView={() => addSummonToTeamsView(summon)}
-						{canAccessDb}
-						onViewInDatabase={() => viewSummonInDatabase(summon)}
-					>
-						<SelectableCollectionRow id={summon.id} onClick={() => openSummonDetails(summon)}>
-							<CollectionSummonRow
-								{summon}
-								editable={data.isOwner}
-								onUncapChange={async (level) => {
-									const input: Record<string, number> = { uncapLevel: level }
-									if (level < 6 && summon.transcendenceStep > 0) input.transcendenceStep = 0
-									const updated = await updateMutation.mutateAsync({ id: summon.id, input })
-									if (sidebar.paneStack.currentPane?.props?.summon?.id === summon.id) {
-										sidebar.paneStack.updateCurrentProps({ summon: updated })
-									}
-								}}
-								onTranscendenceChange={async (stage) => {
-									const input: Record<string, number> = { transcendenceStep: stage }
-									if (stage > 0) input.uncapLevel = 6
-									const updated = await updateMutation.mutateAsync({ id: summon.id, input })
-									if (sidebar.paneStack.currentPane?.props?.summon?.id === summon.id) {
-										sidebar.paneStack.updateCurrentProps({ summon: updated })
-									}
-								}}
-							/>
-						</SelectableCollectionRow>
-					</CollectionContextMenu>
+					{#if unowned}
+						<CollectionSummonRow {summon} />
+					{:else}
+						<CollectionContextMenu
+							itemType="summon"
+							onView={() => openSummonDetails(summon)}
+							onEdit={() => openSummonEdit(summon)}
+							canEdit={data.isOwner}
+							{isTeamsPaneOpen}
+							onViewTeams={() => viewTeamsWithSummon(summon)}
+							onAddToTeamsView={() => addSummonToTeamsView(summon)}
+							{canAccessDb}
+							onViewInDatabase={() => viewSummonInDatabase(summon)}
+						>
+							<SelectableCollectionRow id={summon.id} onClick={() => openSummonDetails(summon)}>
+								<CollectionSummonRow
+									{summon}
+									editable={data.isOwner}
+									onUncapChange={async (level) => {
+										const input: Record<string, number> = { uncapLevel: level }
+										if (level < 6 && summon.transcendenceStep > 0) input.transcendenceStep = 0
+										const updated = await updateMutation.mutateAsync({ id: summon.id, input })
+										if (sidebar.paneStack.currentPane?.props?.summon?.id === summon.id) {
+											sidebar.paneStack.updateCurrentProps({ summon: updated })
+										}
+									}}
+									onTranscendenceChange={async (stage) => {
+										const input: Record<string, number> = { transcendenceStep: stage }
+										if (stage > 0) input.uncapLevel = 6
+										const updated = await updateMutation.mutateAsync({ id: summon.id, input })
+										if (sidebar.paneStack.currentPane?.props?.summon?.id === summon.id) {
+											sidebar.paneStack.updateCurrentProps({ summon: updated })
+										}
+									}}
+								/>
+							</SelectableCollectionRow>
+						</CollectionContextMenu>
+					{/if}
 				{/each}
 			</div>
 		{/if}

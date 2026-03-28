@@ -43,6 +43,7 @@
 	let proficiencyFilters = $state<number[]>(collectionFilters.weapons.proficiency)
 	let seriesFilters = $state<(number | string)[]>(collectionFilters.weapons.series)
 	let searchQuery = $state('')
+	let unowned = $state(false)
 
 	// Sort state (initialized from localStorage)
 	let sortBy = $state<CollectionSortKey>(collectionFilters.weapons.sort)
@@ -57,7 +58,8 @@
 		proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined,
 		series: seriesFilters.length > 0 ? seriesFilters : undefined,
 		search: searchQuery.length > 0 ? searchQuery : undefined,
-		sort: sortBy
+		sort: sortBy,
+		unowned: unowned ? 'true' : undefined
 	})
 
 	// Query for weapons collection
@@ -178,7 +180,9 @@
 			bind:seriesFilters
 			bind:searchQuery
 			bind:sortBy
+			bind:unowned
 			onFiltersChange={handleFiltersChange}
+			showUnowned={data.isOwner}
 			element={userElement}
 		/>
 	</div>
@@ -192,7 +196,11 @@
 			</div>
 		{:else if isEmpty}
 			<div class="empty-state">
-				{#if data.isOwner}
+				{#if unowned}
+					<Icon name="check-circle" size={48} />
+					<h3>{m.collection_empty_unowned()}</h3>
+					<p>{m.collection_empty_unowned_hint()}</p>
+				{:else if data.isOwner}
 					<Icon name="sword" size={48} />
 					<h3>{m.collection_empty_weapons()}</h3>
 					<p>{m.collection_empty_weapons_hint()}</p>
@@ -204,79 +212,87 @@
 		{:else if currentViewMode === 'grid'}
 			<div class="weapon-grid">
 				{#each allWeapons as weapon, i (i)}
-					<CollectionContextMenu
-						itemType="weapon"
-						onView={() => openWeaponDetails(weapon)}
-						onEdit={() => openWeaponEdit(weapon)}
-						canEdit={data.isOwner}
-						{isTeamsPaneOpen}
-						onViewTeams={() => viewTeamsWithWeapon(weapon)}
-						onAddToTeamsView={() => addWeaponToTeamsView(weapon)}
-						{canAccessDb}
-						onViewInDatabase={() => viewWeaponInDatabase(weapon)}
-					>
-						<SelectableCollectionCard id={weapon.id} onClick={() => openWeaponDetails(weapon)}>
-							<CollectionWeaponCard
-								{weapon}
-								editable={data.isOwner}
-								onUncapChange={async (level) => {
-									const input: Record<string, number> = { uncapLevel: level }
-									if (level < 6 && weapon.transcendenceStep > 0) input.transcendenceStep = 0
-									const updated = await updateMutation.mutateAsync({ id: weapon.id, input })
-									if (sidebar.paneStack.currentPane?.props?.weapon?.id === weapon.id) {
-										sidebar.paneStack.updateCurrentProps({ weapon: updated })
-									}
-								}}
-								onTranscendenceChange={async (stage) => {
-									const input: Record<string, number> = { transcendenceStep: stage }
-									if (stage > 0) input.uncapLevel = 6
-									const updated = await updateMutation.mutateAsync({ id: weapon.id, input })
-									if (sidebar.paneStack.currentPane?.props?.weapon?.id === weapon.id) {
-										sidebar.paneStack.updateCurrentProps({ weapon: updated })
-									}
-								}}
-							/>
-						</SelectableCollectionCard>
-					</CollectionContextMenu>
+					{#if unowned}
+						<CollectionWeaponCard {weapon} unowned={true} />
+					{:else}
+						<CollectionContextMenu
+							itemType="weapon"
+							onView={() => openWeaponDetails(weapon)}
+							onEdit={() => openWeaponEdit(weapon)}
+							canEdit={data.isOwner}
+							{isTeamsPaneOpen}
+							onViewTeams={() => viewTeamsWithWeapon(weapon)}
+							onAddToTeamsView={() => addWeaponToTeamsView(weapon)}
+							{canAccessDb}
+							onViewInDatabase={() => viewWeaponInDatabase(weapon)}
+						>
+							<SelectableCollectionCard id={weapon.id} onClick={() => openWeaponDetails(weapon)}>
+								<CollectionWeaponCard
+									{weapon}
+									editable={data.isOwner}
+									onUncapChange={async (level) => {
+										const input: Record<string, number> = { uncapLevel: level }
+										if (level < 6 && weapon.transcendenceStep > 0) input.transcendenceStep = 0
+										const updated = await updateMutation.mutateAsync({ id: weapon.id, input })
+										if (sidebar.paneStack.currentPane?.props?.weapon?.id === weapon.id) {
+											sidebar.paneStack.updateCurrentProps({ weapon: updated })
+										}
+									}}
+									onTranscendenceChange={async (stage) => {
+										const input: Record<string, number> = { transcendenceStep: stage }
+										if (stage > 0) input.uncapLevel = 6
+										const updated = await updateMutation.mutateAsync({ id: weapon.id, input })
+										if (sidebar.paneStack.currentPane?.props?.weapon?.id === weapon.id) {
+											sidebar.paneStack.updateCurrentProps({ weapon: updated })
+										}
+									}}
+								/>
+							</SelectableCollectionCard>
+						</CollectionContextMenu>
+					{/if}
 				{/each}
 			</div>
 		{:else}
 			<div class="weapon-list">
 				{#each allWeapons as weapon, i (i)}
-					<CollectionContextMenu
-						itemType="weapon"
-						onView={() => openWeaponDetails(weapon)}
-						onEdit={() => openWeaponEdit(weapon)}
-						canEdit={data.isOwner}
-						{isTeamsPaneOpen}
-						onViewTeams={() => viewTeamsWithWeapon(weapon)}
-						onAddToTeamsView={() => addWeaponToTeamsView(weapon)}
-						{canAccessDb}
-						onViewInDatabase={() => viewWeaponInDatabase(weapon)}
-					>
-						<SelectableCollectionRow id={weapon.id} onClick={() => openWeaponDetails(weapon)}>
-							<CollectionWeaponRow
-								{weapon}
-								editable={data.isOwner}
-								onUncapChange={async (level) => {
-									const input: Record<string, number> = { uncapLevel: level }
-									if (level < 6 && weapon.transcendenceStep > 0) input.transcendenceStep = 0
-									const updated = await updateMutation.mutateAsync({ id: weapon.id, input })
-									if (sidebar.paneStack.currentPane?.props?.weapon?.id === weapon.id) {
-										sidebar.paneStack.updateCurrentProps({ weapon: updated })
-									}
-								}}
-								onTranscendenceChange={async (stage) => {
-									const input: Record<string, number> = { transcendenceStep: stage }
-									if (stage > 0) input.uncapLevel = 6
-									const updated = await updateMutation.mutateAsync({ id: weapon.id, input })
-									if (sidebar.paneStack.currentPane?.props?.weapon?.id === weapon.id) {
-										sidebar.paneStack.updateCurrentProps({ weapon: updated })
-									}
-								}}
-							/>
-						</SelectableCollectionRow>
-					</CollectionContextMenu>
+					{#if unowned}
+						<CollectionWeaponRow {weapon} />
+					{:else}
+						<CollectionContextMenu
+							itemType="weapon"
+							onView={() => openWeaponDetails(weapon)}
+							onEdit={() => openWeaponEdit(weapon)}
+							canEdit={data.isOwner}
+							{isTeamsPaneOpen}
+							onViewTeams={() => viewTeamsWithWeapon(weapon)}
+							onAddToTeamsView={() => addWeaponToTeamsView(weapon)}
+							{canAccessDb}
+							onViewInDatabase={() => viewWeaponInDatabase(weapon)}
+						>
+							<SelectableCollectionRow id={weapon.id} onClick={() => openWeaponDetails(weapon)}>
+								<CollectionWeaponRow
+									{weapon}
+									editable={data.isOwner}
+									onUncapChange={async (level) => {
+										const input: Record<string, number> = { uncapLevel: level }
+										if (level < 6 && weapon.transcendenceStep > 0) input.transcendenceStep = 0
+										const updated = await updateMutation.mutateAsync({ id: weapon.id, input })
+										if (sidebar.paneStack.currentPane?.props?.weapon?.id === weapon.id) {
+											sidebar.paneStack.updateCurrentProps({ weapon: updated })
+										}
+									}}
+									onTranscendenceChange={async (stage) => {
+										const input: Record<string, number> = { transcendenceStep: stage }
+										if (stage > 0) input.uncapLevel = 6
+										const updated = await updateMutation.mutateAsync({ id: weapon.id, input })
+										if (sidebar.paneStack.currentPane?.props?.weapon?.id === weapon.id) {
+											sidebar.paneStack.updateCurrentProps({ weapon: updated })
+										}
+									}}
+								/>
+							</SelectableCollectionRow>
+						</CollectionContextMenu>
+					{/if}
 				{/each}
 			</div>
 		{/if}
