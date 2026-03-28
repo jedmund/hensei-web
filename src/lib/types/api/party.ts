@@ -33,6 +33,24 @@ export interface PartyCollectionSource {
 	collectionSourceUser?: User
 }
 
+// Role assigned to a grid slot
+export interface Role {
+	id: string
+	nameEn: string
+	nameJp?: string
+	slotType: string
+	sortOrder?: number
+}
+
+// Substitution linking a primary grid item to a substitute
+export interface Substitution {
+	id: string
+	position: number
+	gridCharacter?: GridCharacter
+	gridWeapon?: GridWeapon
+	gridSummon?: GridSummon
+}
+
 // Grid item types - these are the junction tables between Party and entities
 
 // GridWeapon from GridWeaponBlueprint
@@ -63,6 +81,12 @@ export interface GridWeapon {
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
 	party?: PartyCollectionSource
+	/** Assigned role for this grid slot */
+	role?: Role
+	/** Rich-text note explaining substitution context */
+	substitutionNote?: string
+	/** Ordered list of substitute items for this slot */
+	substitutions?: Substitution[]
 }
 
 // GridCharacter from GridCharacterBlueprint
@@ -89,6 +113,12 @@ export interface GridCharacter {
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
 	party?: PartyCollectionSource
+	/** Assigned role for this grid slot */
+	role?: Role
+	/** Rich-text note explaining substitution context */
+	substitutionNote?: string
+	/** Ordered list of substitute items for this slot */
+	substitutions?: Substitution[]
 }
 
 // GridSummon from GridSummonBlueprint
@@ -109,6 +139,12 @@ export interface GridSummon {
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
 	party?: PartyCollectionSource
+	/** Assigned role for this grid slot */
+	role?: Role
+	/** Rich-text note explaining substitution context */
+	substitutionNote?: string
+	/** Ordered list of substitute items for this slot */
+	substitutions?: Substitution[]
 }
 
 // JobSkillList for party job skills
