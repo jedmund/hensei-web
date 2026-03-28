@@ -4,11 +4,10 @@
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
-		type: 'character' | 'weapon' | 'summon'
 		item: GridCharacter | GridWeapon | GridSummon
 	}
 
-	let { type, item }: Props = $props()
+	let { item }: Props = $props()
 
 	let role = $derived((item as GridWeapon).role as Role | undefined)
 	let note = $derived((item as GridWeapon).substitutionNote as string | undefined)

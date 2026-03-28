@@ -1,4 +1,3 @@
-import { localizedName } from '$lib/utils/locale'
 import { sidebar } from '$lib/stores/sidebar.svelte'
 import SubstitutionsSidebar from '$lib/components/sidebar/SubstitutionsSidebar.svelte'
 import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
@@ -10,7 +9,7 @@ interface SubstitutionsSidebarOptions {
 }
 
 export function openSubstitutionsSidebar(options: SubstitutionsSidebarOptions) {
-	const { type, item } = options
+	const { item } = options
 
 	const paneId = `substitutions-${item.id}`
 
@@ -32,7 +31,6 @@ export function openSubstitutionsSidebar(options: SubstitutionsSidebarOptions) {
 		title: m.substitution_substitutes(),
 		component: SubstitutionsSidebar,
 		props: {
-			type,
 			item
 		},
 		onback: goBack
