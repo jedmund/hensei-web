@@ -942,6 +942,11 @@
 	"collection_empty_artifacts": "アーティファクトコレクションは空です",
 	"collection_empty_artifacts_hint": "追加するとここに表示されます",
 	"collection_empty_private": "このコレクションは空か非公開です",
+	"collection_filter_owned": "所持",
+	"collection_filter_missing": "未所持",
+	"collection_not_owned": "未所持",
+	"collection_empty_unowned": "全て所持しています！",
+	"collection_empty_unowned_hint": "フィルターに該当する未所持アイテムはありません",
 
 	"favorites_loading": "お気に入りを読み込み中",
 	"favorites_load_error": "お気に入りの読み込みに失敗しました: {error}",
