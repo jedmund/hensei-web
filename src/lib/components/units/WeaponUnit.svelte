@@ -19,6 +19,7 @@
 		openDetailsSidebar,
 		openWeaponEditSidebar
 	} from '$lib/features/details/openDetailsSidebar.svelte'
+	import { openSubstitutionsSidebar } from '$lib/features/details/openSubstitutionsSidebar.svelte'
 	import { canWeaponBeModified } from '$lib/utils/modificationDetector'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName } from '$lib/utils/element'
@@ -216,6 +217,15 @@
 		if (!item?.weapon) return
 		collectionTeamsPane.addEntityToTeamsView(item.weapon, 'weapon')
 	}
+
+	function showSubstitutions() {
+		if (!item) return
+		openSubstitutionsSidebar({ type: 'weapon', item })
+	}
+
+	const hasSubstitutions = $derived(
+		(item?.substitutions?.length ?? 0) > 0
+	)
 </script>
 
 <div
@@ -302,6 +312,8 @@
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
 					onViewTeams={viewTeamsWithWeapon}
 					onAddToTeamsView={isTeamsPaneOpen ? addWeaponToTeamsView : undefined}
+					onShowSubstitutions={hasSubstitutions ? showSubstitutions : undefined}
+					showSubstitutionsLabel={m.substitution_show()}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onDuplicate={ctx?.canEdit() ? duplicate : undefined}
 					duplicateDisabled={!canDuplicate}

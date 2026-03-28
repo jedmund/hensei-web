@@ -10,6 +10,7 @@
 	import { getSummonImage } from '$lib/features/database/detail/image'
 	import { getPlaceholderImage, getSummonTransformation } from '$lib/utils/images'
 	import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
+	import { openSubstitutionsSidebar } from '$lib/features/details/openSubstitutionsSidebar.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName } from '$lib/utils/element'
@@ -169,6 +170,15 @@
 		if (!item?.summon) return
 		collectionTeamsPane.addEntityToTeamsView(item.summon, 'summon')
 	}
+
+	function showSubstitutions() {
+		if (!item) return
+		openSubstitutionsSidebar({ type: 'summon', item })
+	}
+
+	const hasSubstitutions = $derived(
+		(item?.substitutions?.length ?? 0) > 0
+	)
 </script>
 
 <div
@@ -255,6 +265,8 @@
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
 					onViewTeams={viewTeamsWithSummon}
 					onAddToTeamsView={isTeamsPaneOpen ? addSummonToTeamsView : undefined}
+					onShowSubstitutions={hasSubstitutions ? showSubstitutions : undefined}
+					showSubstitutionsLabel={m.substitution_show()}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onDuplicate={ctx?.canEdit() ? duplicate : undefined}
 					duplicateDisabled={!canDuplicate}

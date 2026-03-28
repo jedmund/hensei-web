@@ -15,6 +15,7 @@
 		openDetailsSidebar,
 		openCharacterEditSidebar
 	} from '$lib/features/details/openDetailsSidebar.svelte'
+	import { openSubstitutionsSidebar } from '$lib/features/details/openSubstitutionsSidebar.svelte'
 	import { canCharacterBeModified } from '$lib/utils/modificationDetector'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName } from '$lib/utils/element'
@@ -147,6 +148,15 @@
 		if (!item?.character) return
 		collectionTeamsPane.addEntityToTeamsView(item.character, 'character')
 	}
+
+	function showSubstitutions() {
+		if (!item) return
+		openSubstitutionsSidebar({ type: 'character', item })
+	}
+
+	const hasSubstitutions = $derived(
+		(item?.substitutions?.length ?? 0) > 0
+	)
 
 	// Check if character has a style swap variant available
 	let hasStyleVariant = $derived.by(() => {
@@ -283,6 +293,8 @@
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
 					onViewTeams={viewTeamsWithCharacter}
 					onAddToTeamsView={isTeamsPaneOpen ? addCharacterToTeamsView : undefined}
+					onShowSubstitutions={hasSubstitutions ? showSubstitutions : undefined}
+					showSubstitutionsLabel={m.substitution_show()}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
