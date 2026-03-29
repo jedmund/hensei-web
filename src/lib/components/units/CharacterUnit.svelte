@@ -151,10 +151,18 @@
 
 	function showSubstitutions() {
 		if (!item) return
-		openSubstitutionsSidebar({ type: 'character', item })
+		const party = ctx.getParty()
+		openSubstitutionsSidebar({
+			type: 'character',
+			item,
+			editable: ctx?.canEdit() ?? false,
+			partyId: party.id,
+			partyShortcode: party.shortcode
+		})
 	}
 
 	const hasSubstitutions = $derived((item?.substitutions?.length ?? 0) > 0)
+	const showSubstitutionsMenuItem = $derived(hasSubstitutions || (ctx?.canEdit() ?? false))
 
 	// Check if character has a style swap variant available
 	let hasStyleVariant = $derived.by(() => {
@@ -291,8 +299,8 @@
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
 					onViewTeams={viewTeamsWithCharacter}
 					onAddToTeamsView={isTeamsPaneOpen ? addCharacterToTeamsView : undefined}
-					onShowSubstitutions={hasSubstitutions ? showSubstitutions : undefined}
-					showSubstitutionsLabel={m.substitution_show()}
+					onShowSubstitutions={showSubstitutionsMenuItem ? showSubstitutions : undefined}
+					showSubstitutionsLabel={ctx?.canEdit() ? m.substitution_edit() : m.substitution_show()}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}

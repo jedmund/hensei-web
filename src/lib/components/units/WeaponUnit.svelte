@@ -220,10 +220,18 @@
 
 	function showSubstitutions() {
 		if (!item) return
-		openSubstitutionsSidebar({ type: 'weapon', item })
+		const party = ctx.getParty()
+		openSubstitutionsSidebar({
+			type: 'weapon',
+			item,
+			editable: ctx?.canEdit() ?? false,
+			partyId: party.id,
+			partyShortcode: party.shortcode
+		})
 	}
 
 	const hasSubstitutions = $derived((item?.substitutions?.length ?? 0) > 0)
+	const showSubstitutionsMenuItem = $derived(hasSubstitutions || (ctx?.canEdit() ?? false))
 </script>
 
 <div
@@ -310,8 +318,8 @@
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
 					onViewTeams={viewTeamsWithWeapon}
 					onAddToTeamsView={isTeamsPaneOpen ? addWeaponToTeamsView : undefined}
-					onShowSubstitutions={hasSubstitutions ? showSubstitutions : undefined}
-					showSubstitutionsLabel={m.substitution_show()}
+					onShowSubstitutions={showSubstitutionsMenuItem ? showSubstitutions : undefined}
+					showSubstitutionsLabel={ctx?.canEdit() ? m.substitution_edit() : m.substitution_show()}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onDuplicate={ctx?.canEdit() ? duplicate : undefined}
 					duplicateDisabled={!canDuplicate}
