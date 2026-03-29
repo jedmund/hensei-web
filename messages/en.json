@@ -944,7 +944,6 @@
 	"collection_empty_private": "This collection is empty or private",
 	"collection_filter_owned": "Owned",
 	"collection_filter_missing": "Missing",
-	"collection_not_owned": "Not owned",
 	"collection_empty_unowned": "You have everything!",
 	"collection_empty_unowned_hint": "There are no missing items matching your filters",
 

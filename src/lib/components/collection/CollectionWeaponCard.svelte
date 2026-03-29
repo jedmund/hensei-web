@@ -9,7 +9,6 @@
 	import { getAwakeningImage } from '$lib/utils/modifiers'
 	import { localizedName } from '$lib/utils/locale'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
-	import * as m from '$lib/paraglide/messages'
 	interface Props {
 		weapon: CollectionWeapon
 		onClick?: () => void
@@ -94,9 +93,6 @@
 		/>
 	{/if}
 	<span class="weapon-name">{displayName}</span>
-	{#if unowned}
-		<span class="not-owned-label">{m.collection_not_owned()}</span>
-	{/if}
 </button>
 
 <style lang="scss">
@@ -154,12 +150,6 @@
 		height: 100%;
 		object-fit: contain;
 		border-radius: layout.$input-corner;
-	}
-
-	.not-owned-label {
-		font-size: typography.$font-tiny;
-		color: var(--text-tertiary);
-		text-align: center;
 	}
 
 	.weapon-name {

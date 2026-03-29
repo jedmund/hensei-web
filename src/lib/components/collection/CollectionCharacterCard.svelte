@@ -71,9 +71,7 @@
 		/>
 	{/if}
 	<span class="character-name">{displayName}</span>
-	{#if unowned}
-		<span class="not-owned-label">{m.collection_not_owned()}</span>
-	{:else if character.character}
+	{#if !unowned && character.character}
 		<CharacterTags character={character.character} />
 	{/if}
 </button>
@@ -133,11 +131,6 @@
 		width: 100%;
 		aspect-ratio: 144 / 85;
 		border-radius: inherit;
-	}
-
-	.not-owned-label {
-		font-size: typography.$font-tiny;
-		color: var(--text-tertiary);
 	}
 
 	.character-name {

@@ -944,7 +944,6 @@
 	"collection_empty_private": "このコレクションは空か非公開です",
 	"collection_filter_owned": "所持",
 	"collection_filter_missing": "未所持",
-	"collection_not_owned": "未所持",
 	"collection_empty_unowned": "全て所持しています！",
 	"collection_empty_unowned_hint": "フィルターに該当する未所持アイテムはありません",
 
