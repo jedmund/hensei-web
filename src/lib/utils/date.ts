@@ -50,21 +50,29 @@ export function formatDateLongJST(dateString: string): string {
 
 /**
  * Format a date as a relative time string using the browser's Intl.RelativeTimeFormat.
- * Automatically selects the best unit (seconds → minutes → hours → days → months → years).
+ * Automatically selects the best unit (seconds → minutes → hours → days).
+ * After `cutoffDays` (default 7), switches to an absolute date (e.g. "Mar 18, 2026").
  */
-export function formatRelativeTime(dateString: string, locale?: string): string {
+export function formatRelativeTime(
+	dateString: string,
+	locale?: string,
+	cutoffDays: number = 7
+): string {
 	const date = new Date(dateString)
 	const now = Date.now()
 	const diffMs = date.getTime() - now
 	const absDiffMs = Math.abs(diffMs)
 
+	// Beyond the cutoff, return an absolute date
+	if (absDiffMs >= cutoffDays * 86_400_000) {
+		return formatDate(dateString)
+	}
+
 	const units: [Intl.RelativeTimeFormatUnit, number][] = [
 		['second', 1000],
 		['minute', 60_000],
 		['hour', 3_600_000],
-		['day', 86_400_000],
-		['month', 2_592_000_000],
-		['year', 31_536_000_000]
+		['day', 86_400_000]
 	]
 
 	let unit: Intl.RelativeTimeFormatUnit = 'second'
