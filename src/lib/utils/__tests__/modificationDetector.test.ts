@@ -54,8 +54,6 @@ function makeGridWeapon(overrides: Partial<GridWeapon> = {}): GridWeapon {
 			maxSkillLevel: 15,
 			maxAwakeningLevel: 0,
 			series: null,
-			ax: false,
-			axType: 0,
 			hp: { minHp: 0, maxHp: 100, maxHpFlb: 120, maxHpUlb: 140 },
 			atk: { minAtk: 0, maxAtk: 1000, maxAtkFlb: 1200, maxAtkUlb: 1400 }
 		},

@@ -146,14 +146,6 @@
 			type="checkbox"
 			element={elementName}
 		/>
-		<DetailItem
-			label="AX Skills"
-			sublabel="Can have AX Skills"
-			bind:value={editData.ax}
-			editable={true}
-			type="checkbox"
-			element={elementName}
-		/>
 	{:else}
 		<DetailItem label="Element">
 			<ElementLabel element={weapon.element} size="medium" />
@@ -178,6 +170,5 @@
 			sublabel="Only one copy can be placed in a team"
 			value={weapon.limit ? 'Yes' : 'No'}
 		/>
-		<DetailItem label="AX Skills" sublabel="Can have AX Skills" value={weapon.ax ? 'Yes' : 'No'} />
 	{/if}
 </DetailsContainer>

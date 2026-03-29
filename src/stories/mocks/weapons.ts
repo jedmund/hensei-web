@@ -50,8 +50,6 @@ export const mockWeapon: Weapon = {
 	maxAwakeningLevel: 9,
 	series: mockOmegaSeries,
 	proficiency: 1, // Sword
-	ax: false,
-	axType: 0,
 	uncap: { flb: true, ulb: true, transcendence: true },
 	hp: { minHp: 100, maxHp: 200, maxHpFlb: 250, maxHpUlb: 300 },
 	atk: { minAtk: 2000, maxAtk: 3500, maxAtkFlb: 4000, maxAtkUlb: 4500 }
@@ -68,8 +66,6 @@ export const mockOpusWeapon: Weapon = {
 	maxAwakeningLevel: 9,
 	series: mockOpusSeries,
 	proficiency: 1,
-	ax: false,
-	axType: 0,
 	uncap: { flb: true, ulb: true, transcendence: true },
 	hp: { minHp: 200, maxHp: 400, maxHpFlb: 500, maxHpUlb: 600 },
 	atk: { minAtk: 3000, maxAtk: 5000, maxAtkFlb: 6000, maxAtkUlb: 7000 }
@@ -86,8 +82,6 @@ export const mockDraconicWeapon: Weapon = {
 	maxAwakeningLevel: 9,
 	series: mockDraconicSeries,
 	proficiency: 4, // Harp
-	ax: false,
-	axType: 0,
 	uncap: { flb: true, ulb: true, transcendence: false },
 	hp: { minHp: 150, maxHp: 300, maxHpFlb: 400, maxHpUlb: 500 },
 	atk: { minAtk: 2500, maxAtk: 4000, maxAtkFlb: 5000, maxAtkUlb: 5500 }

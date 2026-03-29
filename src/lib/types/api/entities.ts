@@ -25,8 +25,6 @@ export interface Weapon {
 	series?: WeaponSeriesRef | null
 	/** Variant override ID (via series.weaponSeriesVariantId from API) */
 	weaponSeriesVariantId?: string | null
-	ax?: boolean
-	axType?: number
 	limit?: number
 	extra?: boolean
 	hp?: {

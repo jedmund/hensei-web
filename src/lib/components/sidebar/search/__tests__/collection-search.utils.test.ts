@@ -44,8 +44,6 @@ function makeWeaponEntity(overrides: Partial<Weapon> = {}): Weapon {
 		maxSkillLevel: 10,
 		maxAwakeningLevel: null,
 		series: null,
-		ax: false,
-		axType: 0,
 		hp: { minHp: 0, maxHp: 0, maxHpFlb: 0, maxHpUlb: 0 },
 		atk: { minAtk: 0, maxAtk: 0, maxAtkFlb: 0, maxAtkUlb: 0 },
 		uncap: { flb: false, ulb: false, transcendence: false },

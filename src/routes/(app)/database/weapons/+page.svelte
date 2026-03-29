@@ -201,19 +201,6 @@
 			hidden: true
 		},
 		{
-			id: 'ax',
-			header: 'AX',
-			width: 60,
-			hidden: true,
-			cell: BooleanCell
-		},
-		{
-			id: 'axType',
-			header: 'AX Type',
-			width: 80,
-			hidden: true
-		},
-		{
 			id: 'gacha',
 			header: 'Gacha',
 			width: 70,

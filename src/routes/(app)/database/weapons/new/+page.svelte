@@ -82,7 +82,6 @@
 		extraPrerequisite: '' as number | '',
 		extra: false,
 		limit: false,
-		ax: false,
 
 		// Dates
 		releaseDate: '',
@@ -192,7 +191,6 @@
 				extra_prerequisite: editData.extraPrerequisite === '' ? null : editData.extraPrerequisite,
 				extra: editData.extra,
 				limit: editData.limit,
-				ax: editData.ax,
 
 				// Dates
 				release_date: editData.releaseDate || null,
