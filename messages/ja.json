@@ -1707,5 +1707,11 @@
 	"substitution_empty": "代替が追加されていません",
 	"substitution_add": "代替を追加",
 	"substitution_remove": "代替を削除",
-	"substitution_reorder": "代替を並び替え"
+	"substitution_reorder": "代替を並び替え",
+	"substitution_edit": "代替を編集",
+	"substitution_add_prompt": "代替を検索",
+	"substitution_move_up": "上に移動",
+	"substitution_move_down": "下に移動",
+	"substitution_note_placeholder": "代替についてメモを追加...",
+	"substitution_role_none": "役割なし"
 }

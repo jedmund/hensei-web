@@ -1726,5 +1726,11 @@
 	"substitution_empty": "No substitutes added",
 	"substitution_add": "Add substitute",
 	"substitution_remove": "Remove substitute",
-	"substitution_reorder": "Reorder substitutes"
+	"substitution_reorder": "Reorder substitutes",
+	"substitution_edit": "Edit substitutes",
+	"substitution_add_prompt": "Search for a substitute",
+	"substitution_move_up": "Move up",
+	"substitution_move_down": "Move down",
+	"substitution_note_placeholder": "Add a note about substitutions...",
+	"substitution_role_none": "No role"
 }
