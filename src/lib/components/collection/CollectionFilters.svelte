@@ -51,6 +51,10 @@
 		showSearch?: boolean
 		/** Search query for plaintext name search */
 		searchQuery?: string
+		/** Whether to show the owned/missing toggle */
+		showUnowned?: boolean
+		/** Whether unowned (missing) mode is active */
+		unowned?: boolean
 	}
 
 	export interface CollectionFilterState {
@@ -112,7 +116,9 @@
 		element,
 		contained = true,
 		showSearch = true,
-		searchQuery = $bindable('')
+		searchQuery = $bindable(''),
+		showUnowned = false,
+		unowned = $bindable(false)
 	}: Props = $props()
 
 	// Compute effective filter visibility (explicit showFilters overrides entityType defaults)
@@ -307,6 +313,7 @@
 		genderFilters = []
 		searchQuery = ''
 		searchExpanded = false
+		unowned = false
 		emitChange()
 	}
 
@@ -318,7 +325,8 @@
 			raceFilters.length > 0 ||
 			proficiencyFilters.length > 0 ||
 			genderFilters.length > 0 ||
-			searchQuery.length > 0
+			searchQuery.length > 0 ||
+			unowned
 	)
 
 	// Search expansion state
@@ -473,6 +481,28 @@
 			</Button>
 		</div>
 
+		<!-- Owned/Missing toggle -->
+		{#if showUnowned}
+			<div class="ownership-toggle">
+				<button
+					type="button"
+					class="toggle-pill"
+					class:active={!unowned}
+					onclick={() => (unowned = false)}
+				>
+					{m.collection_filter_owned()}
+				</button>
+				<button
+					type="button"
+					class="toggle-pill"
+					class:active={unowned}
+					onclick={() => (unowned = true)}
+				>
+					{m.collection_filter_missing()}
+				</button>
+			</div>
+		{/if}
+
 		<!-- Desktop: inline filter pills -->
 		<div class="desktop-filters">
 			{#each visibleFilters as filter (filter.key)}
@@ -592,6 +622,41 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: $unit;
+	}
+
+	.ownership-toggle {
+		display: flex;
+		background: var(--input-bg);
+		border-radius: $input-corner;
+		padding: 2px;
+		gap: 2px;
+	}
+
+	.toggle-pill {
+		all: unset;
+		box-sizing: border-box;
+		-webkit-font-smoothing: antialiased;
+		padding: $unit-half $unit;
+		font-size: $font-small;
+		font-family: var(--font-family);
+		border-radius: calc(#{$input-corner} - 2px);
+		cursor: pointer;
+		color: var(--text-secondary);
+		@include smooth-transition($duration-quick, background-color, color);
+
+		&:hover {
+			color: var(--text-primary);
+		}
+
+		&.active {
+			background: var(--accent-color, var(--accent-blue));
+			color: white;
+		}
+
+		&:focus-visible {
+			outline: 2px solid $blue;
+			outline-offset: 2px;
+		}
 	}
 
 	.desktop-filters {

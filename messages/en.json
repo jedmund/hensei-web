@@ -942,6 +942,10 @@
 	"collection_empty_artifacts": "Your artifact collection is empty",
 	"collection_empty_artifacts_hint": "Artifacts will appear here once added",
 	"collection_empty_private": "This collection is empty or private",
+	"collection_filter_owned": "Owned",
+	"collection_filter_missing": "Missing",
+	"collection_empty_unowned": "You have everything!",
+	"collection_empty_unowned_hint": "There are no missing items matching your filters",
 
 	"favorites_loading": "Loading favorites",
 	"favorites_load_error": "Failed to load favorites: {error}",

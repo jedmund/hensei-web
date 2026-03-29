@@ -183,6 +183,7 @@ export interface CollectionFilters {
 	sort?: CollectionSortKey
 	page?: number
 	limit?: number
+	unowned?: string
 }
 
 /**

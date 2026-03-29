@@ -53,6 +53,61 @@ describe('CollectionAdapter', () => {
 			expect(global.fetch).toHaveBeenCalledTimes(1)
 		})
 
+		it('should wrap raw characters into collection objects when unowned=true', async () => {
+			global.fetch = mockApiResponse(API.listCharactersUnowned)
+
+			const result = await adapter.listCharacters('user-1', { unowned: 'true' })
+
+			expect(result.results).toHaveLength(1)
+			expect(result.results[0]).toMatchObject({
+				id: 'c1',
+				uncapLevel: 0,
+				transcendenceStep: 0,
+				perpetuity: false,
+				ring1: null,
+				ring2: null,
+				ring3: null,
+				ring4: null,
+				earring: null,
+				awakening: null,
+				createdAt: '',
+				updatedAt: ''
+			})
+		})
+
+		it('should use entity id as collection object id when unowned=true', async () => {
+			global.fetch = mockApiResponse(API.listCharactersUnowned)
+
+			const result = await adapter.listCharacters('user-1', { unowned: 'true' })
+
+			expect(result.results[0]?.id).toBe('c1')
+		})
+
+		it('should preserve raw character in nested field when unowned=true', async () => {
+			global.fetch = mockApiResponse(API.listCharactersUnowned)
+
+			const result = await adapter.listCharacters('user-1', { unowned: 'true' })
+
+			expect(result.results[0]?.character).toEqual({ id: 'c1', nameEn: 'Katalina', element: 1 })
+		})
+
+		it('should not wrap items when unowned is not set', async () => {
+			global.fetch = mockApiResponse(API.listCharacters)
+
+			const result = await adapter.listCharacters('user-1', { unowned: undefined })
+
+			expect(result.results).toEqual([{ id: 'cc-1', character: { id: 'c1' } }])
+		})
+
+		it('should pass unowned=true in the query string', async () => {
+			global.fetch = mockApiResponse(API.listCharactersUnowned)
+
+			await adapter.listCharacters('user-1', { unowned: 'true' })
+
+			const calledUrl = vi.mocked(global.fetch).mock.calls[0]?.[0] as string
+			expect(calledUrl).toContain('unowned=true')
+		})
+
 		it('should fetch all pages for getCollectedCharacterIds', async () => {
 			let callCount = 0
 			global.fetch = vi.fn().mockImplementation(async () => {
@@ -91,6 +146,55 @@ describe('CollectionAdapter', () => {
 			const result = await adapter.listWeapons('user-1')
 
 			expect(result.results).toEqual(EXPECTED.listWeaponsAlt.results)
+		})
+
+		it('should wrap raw weapons into collection objects when unowned=true', async () => {
+			global.fetch = mockApiResponse(API.listWeaponsUnowned)
+
+			const result = await adapter.listWeapons('user-1', { unowned: 'true' })
+
+			expect(result.results).toHaveLength(1)
+			expect(result.results[0]).toMatchObject({
+				id: 'w1',
+				uncapLevel: 0,
+				transcendenceStep: 0,
+				awakening: null,
+				createdAt: '',
+				updatedAt: ''
+			})
+		})
+
+		it('should use entity id as collection object id when unowned=true', async () => {
+			global.fetch = mockApiResponse(API.listWeaponsUnowned)
+
+			const result = await adapter.listWeapons('user-1', { unowned: 'true' })
+
+			expect(result.results[0]?.id).toBe('w1')
+		})
+
+		it('should preserve raw weapon in nested field when unowned=true', async () => {
+			global.fetch = mockApiResponse(API.listWeaponsUnowned)
+
+			const result = await adapter.listWeapons('user-1', { unowned: 'true' })
+
+			expect(result.results[0]?.weapon).toEqual({ id: 'w1', nameEn: 'Murgleis', element: 3 })
+		})
+
+		it('should not wrap items when unowned is not set', async () => {
+			global.fetch = mockApiResponse(API.listWeapons)
+
+			const result = await adapter.listWeapons('user-1', { unowned: undefined })
+
+			expect(result.results).toEqual([{ id: 'cw-1' }])
+		})
+
+		it('should pass unowned=true in the query string', async () => {
+			global.fetch = mockApiResponse(API.listWeaponsUnowned)
+
+			await adapter.listWeapons('user-1', { unowned: 'true' })
+
+			const calledUrl = vi.mocked(global.fetch).mock.calls[0]?.[0] as string
+			expect(calledUrl).toContain('unowned=true')
 		})
 
 		it('should expand quantity in addWeapons', async () => {
@@ -161,6 +265,54 @@ describe('CollectionAdapter', () => {
 			const result = await adapter.listSummons('user-1')
 
 			expect(result.results).toEqual(EXPECTED.listSummonsAlt.results)
+		})
+
+		it('should wrap raw summons into collection objects when unowned=true', async () => {
+			global.fetch = mockApiResponse(API.listSummonsUnowned)
+
+			const result = await adapter.listSummons('user-1', { unowned: 'true' })
+
+			expect(result.results).toHaveLength(1)
+			expect(result.results[0]).toMatchObject({
+				id: 's1',
+				uncapLevel: 0,
+				transcendenceStep: 0,
+				createdAt: '',
+				updatedAt: ''
+			})
+		})
+
+		it('should use entity id as collection object id when unowned=true', async () => {
+			global.fetch = mockApiResponse(API.listSummonsUnowned)
+
+			const result = await adapter.listSummons('user-1', { unowned: 'true' })
+
+			expect(result.results[0]?.id).toBe('s1')
+		})
+
+		it('should preserve raw summon in nested field when unowned=true', async () => {
+			global.fetch = mockApiResponse(API.listSummonsUnowned)
+
+			const result = await adapter.listSummons('user-1', { unowned: 'true' })
+
+			expect(result.results[0]?.summon).toEqual({ id: 's1', nameEn: 'Bahamut', element: 0 })
+		})
+
+		it('should not wrap items when unowned is not set', async () => {
+			global.fetch = mockApiResponse(API.listSummons)
+
+			const result = await adapter.listSummons('user-1', { unowned: undefined })
+
+			expect(result.results).toEqual([{ id: 'cs-1' }])
+		})
+
+		it('should pass unowned=true in the query string', async () => {
+			global.fetch = mockApiResponse(API.listSummonsUnowned)
+
+			await adapter.listSummons('user-1', { unowned: 'true' })
+
+			const calledUrl = vi.mocked(global.fetch).mock.calls[0]?.[0] as string
+			expect(calledUrl).toContain('unowned=true')
 		})
 
 		it('should expand quantity in addSummons', async () => {
