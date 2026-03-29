@@ -6,10 +6,13 @@ import * as m from '$lib/paraglide/messages'
 interface SubstitutionsSidebarOptions {
 	type: 'weapon' | 'character' | 'summon'
 	item: GridCharacter | GridWeapon | GridSummon
+	editable?: boolean
+	partyId?: string
+	partyShortcode?: string
 }
 
 export function openSubstitutionsSidebar(options: SubstitutionsSidebarOptions) {
-	const { item } = options
+	const { type, item, editable = false, partyId, partyShortcode } = options
 
 	const paneId = `substitutions-${item.id}`
 
@@ -26,12 +29,18 @@ export function openSubstitutionsSidebar(options: SubstitutionsSidebarOptions) {
 		}
 	}
 
+	const title = editable ? m.substitution_edit() : m.substitution_substitutes()
+
 	const paneConfig = {
 		id: paneId,
-		title: m.substitution_substitutes(),
+		title,
 		component: SubstitutionsSidebar,
 		props: {
-			item
+			type,
+			item,
+			editable,
+			partyId,
+			partyShortcode
 		},
 		onback: goBack
 	}
