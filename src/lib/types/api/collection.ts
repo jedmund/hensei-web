@@ -172,6 +172,7 @@ export type CollectionSortKey =
  * Filters for listing collection items
  */
 export interface CollectionFilters {
+	[key: string]: string | number | number[] | (string | number)[] | undefined
 	element?: number[]
 	rarity?: number[]
 	race?: number[]
@@ -182,6 +183,7 @@ export interface CollectionFilters {
 	sort?: CollectionSortKey
 	page?: number
 	limit?: number
+	unowned?: string
 }
 
 /**

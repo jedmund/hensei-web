@@ -42,48 +42,39 @@
 	}
 </script>
 
-<li
-	class="player-item"
-	class:retired={player.isRetired}
-	onclick={handleRowClick}
-	onkeydown={(e) => e.key === 'Enter' && handleRowClick()}
-	role="button"
-	tabindex="0"
->
-	<div class="player-info">
-		<span class="player-rank">{rank}</span>
-		<span class="player-name"
-			>{player.name}{#if isTopFive}<span class="star">★</span>{/if}</span
-		>
-		{#if player.isRetired}
-			<span class="player-badge retired">{m.crew_score_retired()}</span>
+<li class="player-item" class:retired={player.isRetired}>
+	<button type="button" class="player-button" onclick={handleRowClick}>
+		<div class="player-info">
+			<span class="player-rank">{rank}</span>
+			<span class="player-name"
+				>{player.name}{#if isTopFive}<span class="star">★</span>{/if}</span
+			>
+			{#if player.isRetired}
+				<span class="player-badge retired">{m.crew_score_retired()}</span>
+			{/if}
+			{#if isExcused}
+				<span class="player-badge excused">{m.crew_score_excused()}</span>
+			{/if}
+		</div>
+		{#if player.type === 'phantom'}
+			<span class="player-type">{m.crew_phantom()}</span>
 		{/if}
-		{#if isExcused}
-			<span class="player-badge excused">{m.crew_score_excused()}</span>
-		{/if}
-	</div>
-	{#if player.type === 'phantom'}
-		<span class="player-type">{m.crew_phantom()}</span>
-	{/if}
-	<div class="player-actions">
 		<span class="player-score">{formatScore(player.totalScore)}</span>
-		{#if isOfficer && hasScores}
-			<!-- svelte-ignore a11y_click_events_have_key_events -->
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<div onclick={handleDropdownClick}>
-				<DropdownMenu>
-					{#snippet trigger({ props })}
-						<Button variant="ghost" size="small" iconOnly icon="ellipsis" {...props} />
-					{/snippet}
-					{#snippet menu()}
-						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onEditScore}>
-							{m.crew_gw_edit_score()}
-						</DropdownMenuBase.Item>
-					{/snippet}
-				</DropdownMenu>
-			</div>
-		{/if}
-	</div>
+	</button>
+	{#if isOfficer && hasScores}
+		<div class="player-dropdown" role="presentation" onclick={handleDropdownClick}>
+			<DropdownMenu>
+				{#snippet trigger({ props })}
+					<Button variant="ghost" size="small" iconOnly icon="ellipsis" {...props} />
+				{/snippet}
+				{#snippet menu()}
+					<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onEditScore}>
+						{m.crew_gw_edit_score()}
+					</DropdownMenuBase.Item>
+				{/snippet}
+			</DropdownMenu>
+		</div>
+	{/if}
 </li>
 
 <style lang="scss">
@@ -93,8 +84,19 @@
 
 	.player-item {
 		display: flex;
+		align-items: center;
+
+		&.retired {
+			opacity: 0.6;
+		}
+	}
+
+	.player-button {
+		all: unset;
+		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		flex: 1;
 		padding: spacing.$unit spacing.$unit-2x;
 		border-radius: layout.$item-corner;
 		transition: background-color 0.15s;
@@ -108,10 +110,10 @@
 			outline: 2px solid var(--focus-ring-color, #3b82f6);
 			outline-offset: 2px;
 		}
+	}
 
-		&.retired {
-			opacity: 0.6;
-		}
+	.player-dropdown {
+		flex-shrink: 0;
 	}
 
 	.player-info {

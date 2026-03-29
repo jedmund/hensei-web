@@ -84,9 +84,20 @@ export function getElementIcon(element?: number): string {
 	return `${getBasePath()}/labels/element/Label_Element_${capitalizedKey}.png`
 }
 
-export function getElementKey(element?: number): string {
+export type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+export type ElementKeyResult = ElementType | 'null'
+
+export function getElementKey(element?: number): ElementKeyResult {
 	if (element === undefined || element === null) return 'null'
-	return (ELEMENT_KEYS[element] ?? 'null').toLowerCase()
+	return (ELEMENT_KEYS[element] ?? 'null').toLowerCase() as ElementKeyResult
+}
+
+/** Like getElementKey but returns undefined instead of 'null' for invalid/missing elements */
+export function getElementTypeKey(element?: number): ElementType | undefined {
+	if (element === undefined || element === null || element === 0) return undefined
+	const key = (ELEMENT_KEYS[element] ?? '').toLowerCase()
+	if (key === 'null' || key === '') return undefined
+	return key as ElementType
 }
 
 /** Reverse lookup: string key (e.g. "fire") → numeric element ID */

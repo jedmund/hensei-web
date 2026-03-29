@@ -17,7 +17,7 @@ export const GROUPS: Group[] = [
 		name: 'format',
 		title: 'Format',
 		actions: [
-			...commands.headings,
+			...(commands.headings ?? []),
 			{
 				icon: Quote,
 				name: 'blockquote',
@@ -34,16 +34,16 @@ export const GROUPS: Group[] = [
 					editor.chain().focus().setCodeBlock().run()
 				}
 			},
-			...commands.lists
+			...(commands.lists ?? [])
 		]
 	},
 	{
 		name: 'insert',
 		title: 'Insert',
 		actions: [
-			...commands.media,
-			...commands.table,
-			...commands.math,
+			...(commands.media ?? []),
+			...(commands.table ?? []),
+			...(commands.math ?? []),
 			{
 				icon: Minus,
 				name: 'horizontalRule',

@@ -45,6 +45,7 @@
 	let proficiencyFilters = $state<number[]>(collectionFilters.characters.proficiency)
 	let genderFilters = $state<number[]>(collectionFilters.characters.gender)
 	let searchQuery = $state('')
+	let unowned = $state(false)
 
 	// Sort state (initialized from localStorage)
 	let sortBy = $state<CollectionSortKey>(collectionFilters.characters.sort)
@@ -61,7 +62,8 @@
 		proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined,
 		gender: genderFilters.length > 0 ? genderFilters : undefined,
 		search: searchQuery.length > 0 ? searchQuery : undefined,
-		sort: sortBy
+		sort: sortBy,
+		unowned: unowned ? 'true' : undefined
 	})
 
 	// Unified query for any user's collection (privacy enforced server-side)
@@ -187,6 +189,7 @@
 			bind:genderFilters
 			bind:searchQuery
 			bind:sortBy
+			bind:unowned
 			onFiltersChange={handleFiltersChange}
 			showFilters={{
 				element: true,
@@ -197,6 +200,7 @@
 				proficiency: true,
 				gender: true
 			}}
+			showUnowned={data.isOwner}
 			element={userElement}
 		/>
 	</div>
@@ -210,7 +214,11 @@
 			</div>
 		{:else if isEmpty}
 			<div class="empty-state">
-				{#if data.isOwner}
+				{#if unowned}
+					<Icon name="check-circle" size={48} />
+					<h3>{m.collection_empty_unowned()}</h3>
+					<p>{m.collection_empty_unowned_hint()}</p>
+				{:else if data.isOwner}
 					<Icon name="users" size={48} />
 					<h3>{m.collection_empty_characters()}</h3>
 					<p>{m.collection_empty_characters_hint()}</p>
@@ -222,85 +230,93 @@
 		{:else if currentViewMode === 'grid'}
 			<div class="character-grid">
 				{#each allCharacters as character, i (i)}
-					<CollectionContextMenu
-						itemType="character"
-						onView={() => openCharacterDetails(character)}
-						onEdit={() => openCharacterEdit(character)}
-						canEdit={data.isOwner}
-						{isTeamsPaneOpen}
-						onViewTeams={() => viewTeamsWithCharacter(character)}
-						onAddToTeamsView={() => addCharacterToTeamsView(character)}
-						{canAccessDb}
-						onViewInDatabase={() => viewCharacterInDatabase(character)}
-					>
-						<SelectableCollectionCard
-							id={character.id}
-							onClick={() => openCharacterDetails(character)}
+					{#if unowned}
+						<CollectionCharacterCard {character} unowned={true} />
+					{:else}
+						<CollectionContextMenu
+							itemType="character"
+							onView={() => openCharacterDetails(character)}
+							onEdit={() => openCharacterEdit(character)}
+							canEdit={data.isOwner}
+							{isTeamsPaneOpen}
+							onViewTeams={() => viewTeamsWithCharacter(character)}
+							onAddToTeamsView={() => addCharacterToTeamsView(character)}
+							{canAccessDb}
+							onViewInDatabase={() => viewCharacterInDatabase(character)}
 						>
-							<CollectionCharacterCard
-								{character}
-								editable={data.isOwner}
-								onUncapChange={async (level) => {
-									const input: Record<string, number> = { uncapLevel: level }
-									if (level < 6 && character.transcendenceStep > 0) input.transcendenceStep = 0
-									const updated = await updateMutation.mutateAsync({ id: character.id, input })
-									if (sidebar.paneStack.currentPane?.props?.character?.id === character.id) {
-										sidebar.paneStack.updateCurrentProps({ character: updated })
-									}
-								}}
-								onTranscendenceChange={async (stage) => {
-									const input: Record<string, number> = { transcendenceStep: stage }
-									if (stage > 0) input.uncapLevel = 6
-									const updated = await updateMutation.mutateAsync({ id: character.id, input })
-									if (sidebar.paneStack.currentPane?.props?.character?.id === character.id) {
-										sidebar.paneStack.updateCurrentProps({ character: updated })
-									}
-								}}
-							/>
-						</SelectableCollectionCard>
-					</CollectionContextMenu>
+							<SelectableCollectionCard
+								id={character.id}
+								onClick={() => openCharacterDetails(character)}
+							>
+								<CollectionCharacterCard
+									{character}
+									editable={data.isOwner}
+									onUncapChange={async (level) => {
+										const input: Record<string, number> = { uncapLevel: level }
+										if (level < 6 && character.transcendenceStep > 0) input.transcendenceStep = 0
+										const updated = await updateMutation.mutateAsync({ id: character.id, input })
+										if (sidebar.paneStack.currentPane?.props?.character?.id === character.id) {
+											sidebar.paneStack.updateCurrentProps({ character: updated })
+										}
+									}}
+									onTranscendenceChange={async (stage) => {
+										const input: Record<string, number> = { transcendenceStep: stage }
+										if (stage > 0) input.uncapLevel = 6
+										const updated = await updateMutation.mutateAsync({ id: character.id, input })
+										if (sidebar.paneStack.currentPane?.props?.character?.id === character.id) {
+											sidebar.paneStack.updateCurrentProps({ character: updated })
+										}
+									}}
+								/>
+							</SelectableCollectionCard>
+						</CollectionContextMenu>
+					{/if}
 				{/each}
 			</div>
 		{:else}
 			<div class="character-list">
 				{#each allCharacters as character, i (i)}
-					<CollectionContextMenu
-						itemType="character"
-						onView={() => openCharacterDetails(character)}
-						onEdit={() => openCharacterEdit(character)}
-						canEdit={data.isOwner}
-						{isTeamsPaneOpen}
-						onViewTeams={() => viewTeamsWithCharacter(character)}
-						onAddToTeamsView={() => addCharacterToTeamsView(character)}
-						{canAccessDb}
-						onViewInDatabase={() => viewCharacterInDatabase(character)}
-					>
-						<SelectableCollectionRow
-							id={character.id}
-							onClick={() => openCharacterDetails(character)}
+					{#if unowned}
+						<CollectionCharacterRow {character} />
+					{:else}
+						<CollectionContextMenu
+							itemType="character"
+							onView={() => openCharacterDetails(character)}
+							onEdit={() => openCharacterEdit(character)}
+							canEdit={data.isOwner}
+							{isTeamsPaneOpen}
+							onViewTeams={() => viewTeamsWithCharacter(character)}
+							onAddToTeamsView={() => addCharacterToTeamsView(character)}
+							{canAccessDb}
+							onViewInDatabase={() => viewCharacterInDatabase(character)}
 						>
-							<CollectionCharacterRow
-								{character}
-								editable={data.isOwner}
-								onUncapChange={async (level) => {
-									const input: Record<string, number> = { uncapLevel: level }
-									if (level < 6 && character.transcendenceStep > 0) input.transcendenceStep = 0
-									const updated = await updateMutation.mutateAsync({ id: character.id, input })
-									if (sidebar.paneStack.currentPane?.props?.character?.id === character.id) {
-										sidebar.paneStack.updateCurrentProps({ character: updated })
-									}
-								}}
-								onTranscendenceChange={async (stage) => {
-									const input: Record<string, number> = { transcendenceStep: stage }
-									if (stage > 0) input.uncapLevel = 6
-									const updated = await updateMutation.mutateAsync({ id: character.id, input })
-									if (sidebar.paneStack.currentPane?.props?.character?.id === character.id) {
-										sidebar.paneStack.updateCurrentProps({ character: updated })
-									}
-								}}
-							/>
-						</SelectableCollectionRow>
-					</CollectionContextMenu>
+							<SelectableCollectionRow
+								id={character.id}
+								onClick={() => openCharacterDetails(character)}
+							>
+								<CollectionCharacterRow
+									{character}
+									editable={data.isOwner}
+									onUncapChange={async (level) => {
+										const input: Record<string, number> = { uncapLevel: level }
+										if (level < 6 && character.transcendenceStep > 0) input.transcendenceStep = 0
+										const updated = await updateMutation.mutateAsync({ id: character.id, input })
+										if (sidebar.paneStack.currentPane?.props?.character?.id === character.id) {
+											sidebar.paneStack.updateCurrentProps({ character: updated })
+										}
+									}}
+									onTranscendenceChange={async (stage) => {
+										const input: Record<string, number> = { transcendenceStep: stage }
+										if (stage > 0) input.uncapLevel = 6
+										const updated = await updateMutation.mutateAsync({ id: character.id, input })
+										if (sidebar.paneStack.currentPane?.props?.character?.id === character.id) {
+											sidebar.paneStack.updateCurrentProps({ character: updated })
+										}
+									}}
+								/>
+							</SelectableCollectionRow>
+						</CollectionContextMenu>
+					{/if}
 				{/each}
 			</div>
 		{/if}
@@ -348,9 +364,13 @@
 
 	.character-grid {
 		display: grid;
-		grid-template-columns: repeat(5, 144px);
-		justify-content: space-between;
+		grid-template-columns: repeat(auto-fill, minmax(144px, 1fr));
 		gap: $unit-4x $unit-2x;
+
+		@media (max-width: 600px) {
+			grid-template-columns: repeat(3, 1fr);
+			gap: $unit-2x $unit;
+		}
 	}
 
 	.character-list {

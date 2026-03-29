@@ -162,7 +162,7 @@ const replace = (
 
 	if (!firstResult) return
 
-	const { from, to } = results[0]
+	const { from, to } = firstResult
 
 	if (dispatch) dispatch(state.tr.insertText(replaceTerm, from, to))
 }
@@ -175,13 +175,17 @@ const rebaseNextResult = (
 ): [number, Range[]] | null => {
 	const nextIndex = index + 1
 
-	if (!results[nextIndex]) return null
+	const nextResult = results[nextIndex]
+	if (!nextResult) return null
 
-	const { from: currentFrom, to: currentTo } = results[index]
+	const currentResult = results[index]
+	if (!currentResult) return null
+
+	const { from: currentFrom, to: currentTo } = currentResult
 
 	const offset = currentTo - currentFrom - replaceTerm.length + lastOffset
 
-	const { from, to } = results[nextIndex]
+	const { from, to } = nextResult
 
 	results[nextIndex] = {
 		to: to - offset,
@@ -203,7 +207,9 @@ const replaceAll = (
 	if (!resultsCopy.length) return
 
 	for (let i = 0; i < resultsCopy.length; i += 1) {
-		const { from, to } = resultsCopy[i]
+		const result = resultsCopy[i]
+		if (!result) continue
+		const { from, to } = result
 
 		tr.insertText(replaceTerm, from, to)
 
@@ -324,7 +330,8 @@ export const SearchAndReplace = Extension.create<SearchAndReplaceOptions, Search
 			replace:
 				() =>
 				({ editor, state, dispatch }) => {
-					const { replaceTerm, results } = editor.storage.searchAndReplace
+					const { replaceTerm, results } = editor.storage
+						.searchAndReplace as unknown as SearchAndReplaceStorage
 
 					replace(replaceTerm, results, { state, dispatch })
 
@@ -333,7 +340,8 @@ export const SearchAndReplace = Extension.create<SearchAndReplaceOptions, Search
 			replaceAll:
 				() =>
 				({ editor, tr, dispatch }) => {
-					const { replaceTerm, results } = editor.storage.searchAndReplace
+					const { replaceTerm, results } = editor.storage
+						.searchAndReplace as unknown as SearchAndReplaceStorage
 
 					replaceAll(replaceTerm, results, { tr, dispatch })
 
@@ -390,7 +398,8 @@ export const SearchAndReplace = Extension.create<SearchAndReplaceOptions, Search
 							resultIndex
 						)
 
-						editor.storage.searchAndReplace.results = results
+						;(editor.storage.searchAndReplace as unknown as SearchAndReplaceStorage).results =
+							results
 
 						return decorationsToReturn
 					}

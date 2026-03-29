@@ -423,9 +423,11 @@ describe('GridAdapter', () => {
 				expect.objectContaining({
 					method: 'POST',
 					body: JSON.stringify({
-						id: 'gs-1',
-						party_id: 'party-1',
-						quick_summon: false
+						summon: {
+							id: 'gs-1',
+							party_id: 'party-1',
+							quick_summon: false
+						}
 					})
 				})
 			)

@@ -43,6 +43,18 @@ export const API = {
 	collectedCharactersPage2: {
 		characters: [{ character: { id: 'c3' } }, { character: { id: 'c4' } }],
 		meta: apiMeta({ count: 4, total_pages: 2, per_page: 2, current_page: 2 })
+	},
+	listCharactersUnowned: {
+		characters: [{ id: 'c1', nameEn: 'Katalina', element: 1 }],
+		meta: apiMeta()
+	},
+	listWeaponsUnowned: {
+		weapons: [{ id: 'w1', nameEn: 'Murgleis', element: 3 }],
+		meta: apiMeta()
+	},
+	listSummonsUnowned: {
+		summons: [{ id: 's1', nameEn: 'Bahamut', element: 0 }],
+		meta: apiMeta()
 	}
 }
 

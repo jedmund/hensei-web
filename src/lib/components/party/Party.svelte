@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte'
+	import { onMount, onDestroy, untrack } from 'svelte'
 	import { setPartyContext } from '$lib/types/party-context'
 	import { pushState } from '$app/navigation'
-	import type { Party } from '$lib/types/api/party'
+	import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 
 	// Composables
@@ -130,6 +130,11 @@
 		() => party.id
 	)
 
+	// ensurePartyExists won't change at runtime — capture intentionally
+	const ensurePartyExistsFn = untrack(() =>
+		ensurePartyExists ? () => ensurePartyExists() : undefined
+	)
+
 	const actions = usePartyActions({
 		mutations,
 		getParty: () => party,
@@ -148,7 +153,7 @@
 		getParty: () => party,
 		canEdit: () => canEdit(),
 		getUserElement: () => userElement,
-		ensurePartyExists: ensurePartyExists ? () => ensurePartyExists() : undefined
+		ensurePartyExists: ensurePartyExistsFn
 	})
 
 	const partyDragDrop = usePartyDragDrop({
@@ -198,7 +203,7 @@
 				})
 			}
 		},
-		ensurePartyExists: ensurePartyExists ? () => ensurePartyExists() : undefined
+		ensurePartyExists: ensurePartyExistsFn
 	})
 
 	// --- Guidebook mutations ---
@@ -373,7 +378,6 @@
 	// --- Context setup ---
 	setPartyContext({
 		getParty: () => party,
-		updateParty: () => {},
 		canEdit: () => canEdit(),
 		getEditKey: () => editKey,
 		getSelectedSlot: () => selectedSlot,

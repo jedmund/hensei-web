@@ -30,7 +30,7 @@ describe('RaidAdapter', () => {
 				guidebooks: true
 			})
 
-			const url = vi.mocked(global.fetch).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0]![0]
 			expect(url).toContain('element=1')
 			expect(url).toContain('group_id=grp-1')
 			expect(url).toContain('difficulty=2')
@@ -44,7 +44,7 @@ describe('RaidAdapter', () => {
 
 			await adapter.getAll()
 
-			const url = vi.mocked(global.fetch).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0]![0]
 			expect(url).toBe('https://api.example.com/raids')
 		})
 
@@ -53,7 +53,7 @@ describe('RaidAdapter', () => {
 
 			await adapter.getAll({ element: 3, hl: true })
 
-			const url = vi.mocked(global.fetch).mock.calls[0][0]
+			const url = vi.mocked(global.fetch).mock.calls[0]![0]
 			expect(url).toContain('element=3')
 			expect(url).toContain('hl=true')
 			expect(url).not.toContain('group_id')
@@ -106,7 +106,8 @@ describe('RaidAdapter', () => {
 	describe('cache clearing', () => {
 		it('should clear both raid list and detail cache on update', async () => {
 			global.fetch = mockApiResponse({ id: 'raid-1', slug: 'proto-bahamut' })
-			const clearSpy = vi.spyOn(adapter as unknown as Record<string, unknown>, 'clearCache')
+			const clearSpy = // eslint-disable-next-line @typescript-eslint/no-explicit-any
+				vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.update('proto-bahamut', { name: { en: 'Updated' } } as Record<string, unknown>)
 
@@ -116,7 +117,8 @@ describe('RaidAdapter', () => {
 
 		it('should clear both raid list and detail cache on delete', async () => {
 			global.fetch = mockApiResponse({})
-			const clearSpy = vi.spyOn(adapter as unknown as Record<string, unknown>, 'clearCache')
+			const clearSpy = // eslint-disable-next-line @typescript-eslint/no-explicit-any
+				vi.spyOn(adapter as any, 'clearCache')
 
 			await adapter.delete('proto-bahamut')
 

@@ -66,7 +66,8 @@
 			template: (nameObj: unknown) => {
 				if (!nameObj) return '—'
 				if (typeof nameObj === 'string') return nameObj
-				return nameObj.en || nameObj.ja || '—'
+				const obj = nameObj as Record<string, string>
+				return obj.en || obj.ja || '—'
 			}
 		},
 		{
@@ -124,7 +125,7 @@
 			header: 'Rarity',
 			width: 80,
 			sort: true,
-			template: (rarity: unknown) => getRarityLabel(rarity)
+			template: (rarity: unknown) => getRarityLabel(rarity as number)
 		}
 	]
 
@@ -267,7 +268,8 @@
 			template: (nameObj: unknown) => {
 				if (!nameObj) return '—'
 				if (typeof nameObj === 'string') return nameObj
-				return nameObj.en || nameObj.ja || '—'
+				const obj = nameObj as Record<string, string>
+				return obj.en || obj.ja || '—'
 			}
 		},
 		{

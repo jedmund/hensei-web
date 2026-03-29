@@ -334,6 +334,7 @@
 		&.truncate {
 			display: -webkit-box;
 			-webkit-line-clamp: var(--max-lines, 3);
+			line-clamp: var(--max-lines, 3);
 			-webkit-box-orient: vertical;
 			overflow: hidden;
 			text-overflow: ellipsis;

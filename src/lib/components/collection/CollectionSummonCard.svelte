@@ -9,9 +9,17 @@
 		editable?: boolean
 		onUncapChange?: (level: number) => Promise<void>
 		onTranscendenceChange?: (stage: number) => Promise<void>
+		unowned?: boolean
 	}
 
-	let { summon, onClick, editable = false, onUncapChange, onTranscendenceChange }: Props = $props()
+	let {
+		summon,
+		onClick,
+		editable = false,
+		onUncapChange,
+		onTranscendenceChange,
+		unowned = false
+	}: Props = $props()
 
 	const transformation = $derived(
 		getSummonTransformation(summon.summon?.granblueId, summon.uncapLevel, summon.transcendenceStep)
@@ -22,21 +30,23 @@
 	const displayName = $derived(localizedName(summon.summon?.name))
 </script>
 
-<button type="button" class="summon-card" onclick={onClick}>
+<button type="button" class="summon-card" class:unowned onclick={onClick}>
 	<div class="card-image">
 		<img class="summon-image" src={imageUrl} alt={displayName} loading="lazy" />
 	</div>
-	<UncapIndicator
-		type="summon"
-		uncapLevel={summon.uncapLevel}
-		transcendenceStage={summon.transcendenceStep}
-		flb={summon.summon?.uncap?.flb}
-		ulb={summon.summon?.uncap?.ulb}
-		transcendence={summon.summon?.uncap?.transcendence}
-		{editable}
-		updateUncap={onUncapChange}
-		updateTranscendence={onTranscendenceChange}
-	/>
+	{#if !unowned}
+		<UncapIndicator
+			type="summon"
+			uncapLevel={summon.uncapLevel}
+			transcendenceStage={summon.transcendenceStep}
+			flb={summon.summon?.uncap?.flb}
+			ulb={summon.summon?.uncap?.ulb}
+			transcendence={summon.summon?.uncap?.transcendence}
+			{editable}
+			updateUncap={onUncapChange}
+			updateTranscendence={onTranscendenceChange}
+		/>
+	{/if}
 	<span class="summon-name">{displayName}</span>
 </button>
 
@@ -54,6 +64,10 @@
 		border: none;
 		background: transparent;
 		cursor: pointer;
+
+		&.unowned {
+			opacity: 0.6;
+		}
 
 		&:focus-visible {
 			outline: 2px solid var(--accent-color, #3366ff);
@@ -85,6 +99,7 @@
 	.summon-name {
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
+		line-clamp: 2;
 		-webkit-box-orient: vertical;
 		font-size: typography.$font-small;
 		line-height: 1.4;

@@ -21,9 +21,36 @@ export const SummonEditSchema = z.object({
 
 export type SummonEdit = z.infer<typeof SummonEditSchema>
 
-export function toEditData(model: Record<string, unknown>): SummonEdit {
+/** Loose shape accepted by toEditData – covers both camelCase and snake_case API responses. */
+interface SummonModel {
+	name?: unknown
+	granblueId?: string
+	granblue_id?: string
+	rarity?: number
+	element?: number
+	promotions?: number[]
+	hp?: {
+		minHp?: number
+		min_hp?: number
+		maxHp?: number
+		max_hp?: number
+		maxHpFlb?: number
+		max_hp_flb?: number
+	}
+	atk?: {
+		minAtk?: number
+		min_atk?: number
+		maxAtk?: number
+		max_atk?: number
+		maxAtkFlb?: number
+		max_atk_flb?: number
+	}
+	uncap?: { flb?: boolean; ulb?: boolean; transcendence?: boolean }
+}
+
+export function toEditData(model: SummonModel): SummonEdit {
 	return {
-		name: model?.name ?? '',
+		name: (model?.name as SummonEdit['name']) ?? '',
 		granblue_id: model?.granblueId ?? model?.granblue_id ?? '',
 		rarity: model?.rarity ?? 1,
 		element: model?.element ?? 0,

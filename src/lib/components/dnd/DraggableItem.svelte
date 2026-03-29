@@ -160,6 +160,8 @@
 	onpointerdown={handlePointerDown}
 	onpointermove={handlePointerMove}
 	onpointerup={handlePointerUp}
+	role={canDrag && item ? 'button' : undefined}
+	aria-label={canDrag && item ? 'Draggable item' : undefined}
 	class="draggable-item"
 	class:dragging={isDragging}
 	class:duplicating={isDuplicating}

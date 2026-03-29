@@ -26,7 +26,7 @@
 	import SelectableSummonCard from './SelectableSummonCard.svelte'
 	import SelectableSummonRow from './SelectableSummonRow.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
-	import { viewMode, type ViewMode } from '$lib/stores/viewMode.svelte'
+	import { viewMode } from '$lib/stores/viewMode.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -209,8 +209,8 @@
 	})
 
 	function resetState() {
-		selectedIds = new SvelteSet()
-		selectedQuantities = new SvelteMap()
+		selectedIds.clear()
+		selectedQuantities.clear()
 		showOnlySelected = false
 		searchQuery = ''
 		elementFilters = []
@@ -224,24 +224,20 @@
 
 	// Character toggle (binary selection)
 	function toggleCharacterSelection(character: SearchResultItem) {
-		const newSet = new SvelteSet(selectedIds)
-		if (newSet.has(character.id)) {
-			newSet.delete(character.id)
+		if (selectedIds.has(character.id)) {
+			selectedIds.delete(character.id)
 		} else {
-			newSet.add(character.id)
+			selectedIds.add(character.id)
 		}
-		selectedIds = newSet
 	}
 
 	// Weapon/Summon quantity change
 	function handleQuantityChange(item: SearchResultItem, quantity: number) {
-		const newMap = new SvelteMap(selectedQuantities)
 		if (quantity <= 0) {
-			newMap.delete(item.id)
+			selectedQuantities.delete(item.id)
 		} else {
-			newMap.set(item.id, quantity)
+			selectedQuantities.set(item.id, quantity)
 		}
-		selectedQuantities = newMap
 	}
 
 	function handleFiltersChange(filters: CollectionFilterState) {
@@ -338,10 +334,6 @@
 	// View mode from store
 	const currentViewMode = $derived(viewMode.modalView)
 
-	function handleViewModeChange(mode: ViewMode) {
-		viewMode.setModalView(mode)
-	}
-
 	// Dialog title based on entity type
 	const dialogTitle = $derived(m.collection_add_title({ type: entityNames[entityType].plural }))
 
@@ -384,9 +376,6 @@
 				bind:searchQuery
 				onFiltersChange={handleFiltersChange}
 				showSort={false}
-				showViewToggle={true}
-				viewMode={currentViewMode}
-				onViewModeChange={handleViewModeChange}
 			/>
 		</div>
 
@@ -493,6 +482,7 @@
 	<ModalFooter
 		onCancel={() => (open = false)}
 		showShadow={footerShadow}
+		{userElement}
 		primaryAction={{
 			label: currentMutation.isPending ? m.collection_adding() : m.collection_add_button(),
 			onclick: handleAdd,
@@ -501,14 +491,9 @@
 	>
 		{#snippet left()}
 			{#if selectedCount > 0}
-				<button
-					type="button"
-					class="selected-link"
-					class:active={showOnlySelected}
-					onclick={toggleShowSelected}
-				>
+				<Button variant="ghost" size="small" active={showOnlySelected} onclick={toggleShowSelected}>
 					{selectedText}
-				</button>
+				</Button>
 			{/if}
 		{/snippet}
 	</ModalFooter>
@@ -517,8 +502,6 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as layout;
-	@use '$src/themes/typography' as typography;
-	@use '$src/themes/effects' as effects;
 
 	.modal-content {
 		display: flex;
@@ -540,8 +523,8 @@
 	}
 
 	.results-grid {
-		display: flex;
-		flex-wrap: wrap;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
 		gap: $unit;
 		padding: $unit 0;
 	}
@@ -591,31 +574,6 @@
 
 		:global(svg) {
 			animation: spin 1s linear infinite;
-		}
-	}
-
-	.selected-link {
-		all: unset;
-		cursor: pointer;
-		color: var(--accent-blue);
-		font-size: typography.$font-small;
-		padding: $unit-half $unit;
-		border-radius: layout.$item-corner-small;
-		@include effects.smooth-transition(effects.$duration-quick, background-color, color);
-
-		&:hover {
-			background: var(--button-bg-hover);
-			text-decoration: underline;
-		}
-
-		&.active {
-			background: var(--accent-blue);
-			color: white;
-
-			&:hover {
-				background: var(--accent-blue-focus);
-				text-decoration: none;
-			}
 		}
 	}
 

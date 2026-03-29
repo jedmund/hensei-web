@@ -2,6 +2,7 @@
 	import type { CollectionCharacter } from '$lib/types/api/collection'
 	import { localizedName } from '$lib/utils/locale'
 	import { getCharacterImageWithPose } from '$lib/utils/images'
+	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
@@ -13,6 +14,7 @@
 		editable?: boolean
 		onUncapChange?: (level: number) => Promise<void>
 		onTranscendenceChange?: (stage: number) => Promise<void>
+		unowned?: boolean
 	}
 
 	let {
@@ -20,8 +22,11 @@
 		onClick,
 		editable = false,
 		onUncapChange,
-		onTranscendenceChange
+		onTranscendenceChange,
+		unowned = false
 	}: Props = $props()
+
+	const simplePortraits = getSimplePortraits()
 
 	const imageUrl = $derived(
 		getCharacterImageWithPose(
@@ -31,16 +36,17 @@
 			character.transcendenceStep,
 			null,
 			null,
-			character.character?.styleSwap
+			character.character?.styleSwap,
+			simplePortraits.value
 		)
 	)
 
 	const displayName = $derived(localizedName(character.character?.name))
 </script>
 
-<button type="button" class="character-card" onclick={onClick}>
+<button type="button" class="character-card" class:unowned onclick={onClick}>
 	<div class="card-image">
-		{#if character.perpetuity}
+		{#if !unowned && character.perpetuity}
 			<img
 				class="perpetuity-badge"
 				src={perpetuityFilled}
@@ -50,20 +56,22 @@
 		{/if}
 		<img class="character-image" src={imageUrl} alt={displayName} loading="lazy" />
 	</div>
-	<UncapIndicator
-		type="character"
-		uncapLevel={character.uncapLevel}
-		transcendenceStage={character.transcendenceStep}
-		special={character.character?.special}
-		flb={character.character?.uncap?.flb}
-		ulb={character.character?.uncap?.transcendence}
-		transcendence={character.character?.uncap?.transcendence}
-		{editable}
-		updateUncap={onUncapChange}
-		updateTranscendence={onTranscendenceChange}
-	/>
+	{#if !unowned}
+		<UncapIndicator
+			type="character"
+			uncapLevel={character.uncapLevel}
+			transcendenceStage={character.transcendenceStep}
+			special={character.character?.special}
+			flb={character.character?.uncap?.flb}
+			ulb={character.character?.uncap?.transcendence}
+			transcendence={character.character?.uncap?.transcendence}
+			{editable}
+			updateUncap={onUncapChange}
+			updateTranscendence={onTranscendenceChange}
+		/>
+	{/if}
 	<span class="character-name">{displayName}</span>
-	{#if character.character}
+	{#if !unowned && character.character}
 		<CharacterTags character={character.character} />
 	{/if}
 </button>
@@ -84,6 +92,10 @@
 		border: none;
 		background: transparent;
 		cursor: pointer;
+
+		&.unowned {
+			opacity: 0.6;
+		}
 
 		&:focus-visible {
 			outline: 2px solid var(--accent-color, #3366ff);
@@ -117,14 +129,14 @@
 
 	.character-image {
 		width: 100%;
-		height: 100%;
-		object-fit: cover;
+		aspect-ratio: 144 / 85;
 		border-radius: inherit;
 	}
 
 	.character-name {
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
+		line-clamp: 2;
 		-webkit-box-orient: vertical;
 		font-size: typography.$font-small;
 		line-height: 1.4;

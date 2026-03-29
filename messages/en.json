@@ -651,6 +651,9 @@
 	"crew_gamertag_hint": "Short tag displayed next to member usernames (optional)",
 	"crew_gamertag_taken": "This gamertag is already taken",
 	"crew_ingame": "In-game crew page",
+	"crew_ingame_id_label": "In-game Crew ID",
+	"crew_ingame_id_placeholder": "Crew ID from in-game profile",
+	"crew_ingame_id_hint": "Found on your crew's in-game profile page",
 	"crew_granblue_id_label": "Crew ID",
 	"crew_granblue_id_placeholder": "Crew ID from in-game profile",
 	"crew_description_label": "Description",
@@ -939,6 +942,10 @@
 	"collection_empty_artifacts": "Your artifact collection is empty",
 	"collection_empty_artifacts_hint": "Artifacts will appear here once added",
 	"collection_empty_private": "This collection is empty or private",
+	"collection_filter_owned": "Owned",
+	"collection_filter_missing": "Missing",
+	"collection_empty_unowned": "You have everything!",
+	"collection_empty_unowned_hint": "There are no missing items matching your filters",
 
 	"favorites_loading": "Loading favorites",
 	"favorites_load_error": "Failed to load favorites: {error}",
@@ -986,6 +993,7 @@
 	"sidebar_party_title_placeholder": "Enter party title...",
 	"loading_more": "Loading more...",
 	"filter_clear": "Clear",
+	"filters_title": "Filters",
 
 	"settings_title": "Settings",
 	"settings_loading": "Loading settings",
@@ -1023,6 +1031,8 @@
 	"settings_password_mismatch": "Passwords do not match",
 	"settings_bahamut_mode": "Bahamut Mode",
 	"settings_bahamut_subtitle": "Enable admin features and tools",
+	"settings_umikin_mode": "Umikin Mode",
+	"settings_umikin_subtitle": "Only show base, FLB, and transcendence character art",
 
 	"settings_avatar": "Avatar",
 	"settings_avatar_subtitle": "Your profile picture",
@@ -1130,6 +1140,7 @@
 	"collection_filter_proficiency": "Proficiency",
 	"collection_filter_slot": "Slot {num}",
 
+	"sort_label": "Sort",
 	"sort_name_asc": "Name A → Z",
 	"sort_name_desc": "Name Z → A",
 	"sort_element_asc": "Element ↑",

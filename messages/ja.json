@@ -651,6 +651,9 @@
 	"crew_gamertag_hint": "団員名の横に表示される短いタグ（任意）",
 	"crew_gamertag_taken": "このゲーマータグはすでに使用されています",
 	"crew_ingame": "ゲーム内の団ページ",
+	"crew_ingame_id_label": "ゲーム内団ID",
+	"crew_ingame_id_placeholder": "ゲーム内プロフィールの団ID",
+	"crew_ingame_id_hint": "騎空団のゲーム内プロフィールページに記載されています",
 	"crew_granblue_id_label": "団ID",
 	"crew_granblue_id_placeholder": "ゲーム内プロフィールの団ID",
 	"crew_description_label": "説明",
@@ -939,6 +942,10 @@
 	"collection_empty_artifacts": "アーティファクトコレクションは空です",
 	"collection_empty_artifacts_hint": "追加するとここに表示されます",
 	"collection_empty_private": "このコレクションは空か非公開です",
+	"collection_filter_owned": "所持",
+	"collection_filter_missing": "未所持",
+	"collection_empty_unowned": "全て所持しています！",
+	"collection_empty_unowned_hint": "フィルターに該当する未所持アイテムはありません",
 
 	"favorites_loading": "お気に入りを読み込み中",
 	"favorites_load_error": "お気に入りの読み込みに失敗しました: {error}",
@@ -986,6 +993,7 @@
 	"sidebar_party_title_placeholder": "編成タイトルを入力…",
 	"loading_more": "さらに読み込み中",
 	"filter_clear": "クリア",
+	"filters_title": "フィルター",
 
 	"settings_title": "設定",
 	"settings_loading": "設定を読み込み中",
@@ -1023,6 +1031,8 @@
 	"settings_password_mismatch": "パスワードが一致しません",
 	"settings_bahamut_mode": "バハムートモード",
 	"settings_bahamut_subtitle": "管理者機能とツールを有効にする",
+	"settings_umikin_mode": "Umikinモード",
+	"settings_umikin_subtitle": "キャラクターのベース、最終上限解放、限界超越のイラストのみ表示",
 
 	"settings_avatar": "アバター",
 	"settings_avatar_subtitle": "プロフィール画像",
@@ -1130,6 +1140,7 @@
 	"collection_filter_proficiency": "得意武器",
 	"collection_filter_slot": "{num}行",
 
+	"sort_label": "並び替え",
 	"sort_name_asc": "名前 A → Z",
 	"sort_name_desc": "名前 Z → A",
 	"sort_element_asc": "属性 ↑",

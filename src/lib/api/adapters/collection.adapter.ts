@@ -22,6 +22,7 @@ import type {
 	CollectionFilters,
 	CollectionCounts
 } from '$lib/types/api/collection'
+import type { Character, Weapon, Summon } from '$lib/types/api/entities'
 
 /**
  * Parameters for listing collection items with pagination
@@ -77,16 +78,33 @@ export class CollectionAdapter extends BaseAdapter {
 		userId: string,
 		params: CollectionListParams = {}
 	): Promise<PaginatedResponse<CollectionCharacter>> {
-		const response = await this.request<CollectionCharacterListResponse>(
-			`/users/${userId}/collection/characters`,
-			{
-				method: 'GET',
-				query: params
-			}
-		)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const response = await this.request<any>(`/users/${userId}/collection/characters`, {
+			method: 'GET',
+			query: params
+		})
+
+		const items = response.characters ?? []
+		const results: CollectionCharacter[] = params.unowned
+			? items.map((char: Character) => ({
+					id: char.id,
+					uncapLevel: 0,
+					transcendenceStep: 0,
+					perpetuity: false,
+					ring1: null,
+					ring2: null,
+					ring3: null,
+					ring4: null,
+					earring: null,
+					awakening: null,
+					character: char,
+					createdAt: '',
+					updatedAt: ''
+				}))
+			: items
 
 		return {
-			results: response.characters,
+			results,
 			page: response.meta.currentPage,
 			total: response.meta.count,
 			totalPages: response.meta.totalPages,
@@ -206,21 +224,29 @@ export class CollectionAdapter extends BaseAdapter {
 		userId: string,
 		params: CollectionListParams = {}
 	): Promise<PaginatedResponse<CollectionWeapon>> {
-		const response = await this.request<{
-			weapons?: CollectionWeapon[]
-			collectionWeapons?: CollectionWeapon[]
-			meta: { count: number; totalPages: number; perPage: number; currentPage: number }
-		}>(`/users/${userId}/collection/weapons`, {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const response = await this.request<any>(`/users/${userId}/collection/weapons`, {
 			method: 'GET',
 			query: params
 		})
 
 		// Handle both 'weapons' and 'collectionWeapons' response keys
-		// (backend currently returns 'collectionWeapons', should return 'weapons')
-		const weapons = response.weapons ?? response.collectionWeapons ?? []
+		const rawWeapons = response.weapons ?? response.collectionWeapons ?? []
+
+		const results: CollectionWeapon[] = params.unowned
+			? rawWeapons.map((wpn: Weapon) => ({
+					id: wpn.id,
+					uncapLevel: 0,
+					transcendenceStep: 0,
+					awakening: null,
+					weapon: wpn,
+					createdAt: '',
+					updatedAt: ''
+				}))
+			: rawWeapons
 
 		return {
-			results: weapons,
+			results,
 			page: response.meta.currentPage,
 			total: response.meta.count,
 			totalPages: response.meta.totalPages,
@@ -319,21 +345,28 @@ export class CollectionAdapter extends BaseAdapter {
 		userId: string,
 		params: CollectionListParams = {}
 	): Promise<PaginatedResponse<CollectionSummon>> {
-		const response = await this.request<{
-			summons?: CollectionSummon[]
-			collectionSummons?: CollectionSummon[]
-			meta: { count: number; totalPages: number; perPage: number; currentPage: number }
-		}>(`/users/${userId}/collection/summons`, {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const response = await this.request<any>(`/users/${userId}/collection/summons`, {
 			method: 'GET',
 			query: params
 		})
 
 		// Handle both 'summons' and 'collectionSummons' response keys
-		// (backend currently returns 'collectionSummons', should return 'summons')
-		const summons = response.summons ?? response.collectionSummons ?? []
+		const rawSummons = response.summons ?? response.collectionSummons ?? []
+
+		const results: CollectionSummon[] = params.unowned
+			? rawSummons.map((smn: Summon) => ({
+					id: smn.id,
+					uncapLevel: 0,
+					transcendenceStep: 0,
+					summon: smn,
+					createdAt: '',
+					updatedAt: ''
+				}))
+			: rawSummons
 
 		return {
-			results: summons,
+			results,
 			page: response.meta.currentPage,
 			total: response.meta.count,
 			totalPages: response.meta.totalPages,

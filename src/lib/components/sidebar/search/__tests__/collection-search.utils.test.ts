@@ -69,7 +69,9 @@ function makeSummonEntity(overrides: Partial<Summon> = {}): Summon {
 }
 
 function makeCollectionCharacter(
-	overrides: Partial<CollectionCharacter> & { character?: Partial<Character> } = {}
+	overrides: Omit<Partial<CollectionCharacter>, 'character'> & {
+		character?: Partial<Character>
+	} = {}
 ): CollectionCharacter {
 	const { character: charOverrides, ...rest } = overrides
 	return {
@@ -91,7 +93,7 @@ function makeCollectionCharacter(
 }
 
 function makeCollectionWeapon(
-	overrides: Partial<CollectionWeapon> & { weapon?: Partial<Weapon> } = {}
+	overrides: Omit<Partial<CollectionWeapon>, 'weapon'> & { weapon?: Partial<Weapon> } = {}
 ): CollectionWeapon {
 	const { weapon: wpnOverrides, ...rest } = overrides
 	return {
@@ -107,7 +109,7 @@ function makeCollectionWeapon(
 }
 
 function makeCollectionSummon(
-	overrides: Partial<CollectionSummon> & { summon?: Partial<Summon> } = {}
+	overrides: Omit<Partial<CollectionSummon>, 'summon'> & { summon?: Partial<Summon> } = {}
 ): CollectionSummon {
 	const { summon: smnOverrides, ...rest } = overrides
 	return {

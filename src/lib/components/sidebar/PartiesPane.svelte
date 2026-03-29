@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { SvelteMap } from 'svelte/reactivity'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
-	import { onDestroy } from 'svelte'
+	import { onDestroy, untrack } from 'svelte'
 	import { partyQueries } from '$lib/api/queries/party.queries'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
@@ -58,7 +58,7 @@
 	let userFilters = $state<FilterItem[]>(defaultElementFilter())
 
 	// Reset user filters when resetKey changes
-	let prevResetKey = $state(resetKey)
+	let prevResetKey = $state(untrack(() => resetKey))
 	$effect(() => {
 		if (resetKey !== prevResetKey) {
 			prevResetKey = resetKey

@@ -62,6 +62,7 @@
 			{/snippet}
 		</UnitMenuContainer>
 	{:else}
+		<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 		<div
 			class="frame"
 			class:editable={canEdit}

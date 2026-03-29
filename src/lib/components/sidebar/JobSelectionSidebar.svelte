@@ -36,13 +36,11 @@
 	]
 
 	function toggleTier(value: string) {
-		const newSet = new SvelteSet(selectedTiers)
-		if (newSet.has(value)) {
-			newSet.delete(value)
+		if (selectedTiers.has(value)) {
+			selectedTiers.delete(value)
 		} else {
-			newSet.add(value)
+			selectedTiers.add(value)
 		}
-		selectedTiers = newSet
 	}
 
 	const filteredJobs = $derived(

@@ -17,6 +17,7 @@
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
 	import CrewTabs from '$lib/components/crew/CrewTabs.svelte'
 	import CrewSettingsDialog from '$lib/components/crew/CrewSettingsDialog.svelte'
+	import CrewNotificationCards from '$lib/components/crew/CrewNotificationCards.svelte'
 	import { formatDateJST } from '$lib/utils/date'
 	import { formatScore, toCrewHistoryChartData } from '$lib/utils/gw'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
@@ -41,6 +42,12 @@
 	const invitationsQuery = createQuery(() => ({
 		...crewQueries.pendingInvitations(),
 		enabled: isAuthenticated
+	}))
+
+	// Query for pending phantom claims (only when authenticated and in a crew)
+	const phantomClaimsQuery = createQuery(() => ({
+		...crewQueries.pendingPhantomClaims(),
+		enabled: isAuthenticated && crewStore.isInCrew
 	}))
 
 	// Query for GW events (only when in crew)
@@ -171,27 +178,7 @@
 
 				{#if isAuthenticated && invitationsQuery.data && invitationsQuery.data.length > 0}
 					<div class="invitations-section">
-						<ul class="invitation-list">
-							{#each invitationsQuery.data as invitation (invitation.id)}
-								{#if invitation.crew && invitation.invitedBy}
-									<li class="invitation-item">
-										<div class="invitation-info">
-											<span class="crew-name">{invitation.crew.name}</span>
-											<span class="invited-by">
-												{m.crew_from({ username: invitation.invitedBy.username })}
-											</span>
-										</div>
-										<Button
-											variant="secondary"
-											size="small"
-											onclick={() => goto(localizeHref(`/crew/join?invitation=${invitation.id}`))}
-										>
-											{m.crew_view()}
-										</Button>
-									</li>
-								{/if}
-							{/each}
-						</ul>
+						<CrewNotificationCards invitations={invitationsQuery.data} />
 					</div>
 				{/if}
 			</div>
@@ -226,6 +213,12 @@
 
 				<CrewTabs userElement={data.currentUser?.element} />
 
+				{#if phantomClaimsQuery.data && phantomClaimsQuery.data.length > 0}
+					<div class="notifications-section">
+						<CrewNotificationCards phantomClaims={phantomClaimsQuery.data} />
+					</div>
+				{/if}
+
 				<!-- GW Events Section -->
 				<div class="section-header">
 					<span class="section-title">{m.crew_unite_and_fight()}</span>
@@ -244,25 +237,28 @@
 				{:else if eventsQuery.data && eventsQuery.data.length > 0}
 					<ul class="event-list">
 						{#each eventsQuery.data as event (event.id)}
-							<li
-								class="event-item"
-								onclick={() => goto(localizeHref(`/crew/events/${event.eventNumber}`))}
-							>
-								<div class="event-info">
-									<span class="event-number">{event.eventNumber}</span>
-									<ElementBadge element={event.element} />
-								</div>
-								<span class="event-dates">
-									{formatDateJST(event.startDate)} – {formatDateJST(event.endDate)}
-								</span>
-								<span class="event-score">
-									{#if event.crewTotalScore !== undefined}
-										{formatScore(event.crewTotalScore)}
-									{/if}
-								</span>
-								<span class="event-status status-{event.status ?? 'unknown'}"
-									>{formatEventStatus(event.status ?? 'unknown', event.startDate)}</span
+							<li class="event-item">
+								<button
+									type="button"
+									class="event-button"
+									onclick={() => goto(localizeHref(`/crew/events/${event.eventNumber}`))}
 								>
+									<div class="event-info">
+										<span class="event-number">{event.eventNumber}</span>
+										<ElementBadge element={event.element} />
+									</div>
+									<span class="event-dates">
+										{formatDateJST(event.startDate)} – {formatDateJST(event.endDate)}
+									</span>
+									<span class="event-score">
+										{#if event.crewTotalScore !== undefined}
+											{formatScore(event.crewTotalScore)}
+										{/if}
+									</span>
+									<span class="event-status status-{event.status ?? 'unknown'}"
+										>{formatEventStatus(event.status ?? 'unknown', event.startDate)}</span
+									>
+								</button>
 							</li>
 						{/each}
 					</ul>
@@ -392,42 +388,10 @@
 		gap: spacing.$unit;
 	}
 
-	.invitations-section {
-		// No border - flows naturally from content above
-	}
-
-	.invitation-list {
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	.invitation-item {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
+	.invitations-section,
+	.notifications-section {
 		padding: spacing.$unit-2x;
-		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-
-		&:last-child {
-			border-bottom: none;
-		}
-	}
-
-	.invitation-info {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-fourth;
-
-		.crew-name {
-			font-size: typography.$font-regular;
-			font-weight: typography.$medium;
-		}
-
-		.invited-by {
-			font-size: typography.$font-small;
-			color: var(--text-secondary);
-		}
+		border-top: 1px solid rgba(0, 0, 0, 0.06);
 	}
 
 	// Section header
@@ -459,6 +423,11 @@
 	}
 
 	.event-item {
+		list-style: none;
+	}
+
+	.event-button {
+		all: unset;
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit-2x;
@@ -466,9 +435,16 @@
 		border-radius: layout.$item-corner;
 		transition: background-color 0.15s;
 		cursor: pointer;
+		width: 100%;
+		box-sizing: border-box;
 
 		&:hover {
 			background: var(--list-cell-bg-hover, rgba(0, 0, 0, 0.03));
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--focus-ring-color, #3b82f6);
+			outline-offset: 2px;
 		}
 	}
 

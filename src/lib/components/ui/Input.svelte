@@ -3,7 +3,7 @@
 	import type { HTMLInputAttributes } from 'svelte/elements'
 	import Icon from '../Icon.svelte'
 
-	interface Props extends HTMLInputAttributes {
+	interface Props extends Omit<HTMLInputAttributes, 'size'> {
 		variant?: 'default' | 'contained' | 'duration' | 'number' | 'range'
 		contained?: boolean
 		size?: 'small' | 'medium' | 'large'
@@ -303,10 +303,6 @@
 				width: 100%;
 				font-family: inherit;
 				@include smooth-transition($duration-quick, border-color);
-
-				&:focus {
-					// @include focus-ring($blue);
-				}
 			}
 
 			.iconLeft,
@@ -444,10 +440,6 @@
 
 		&:hover:not(:disabled):not(.contained) {
 			background-color: var(--input-bg-hover);
-		}
-
-		&:focus {
-			// @include focus-ring($blue);
 		}
 
 		&:disabled {
@@ -606,10 +598,6 @@
 
 		&:hover:not(:disabled):not(.contained) {
 			background-color: var(--input-bg-hover);
-		}
-
-		&:focus {
-			// @include focus-ring($blue);
 		}
 
 		&:disabled {

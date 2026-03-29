@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onDestroy, onMount, type Snippet } from 'svelte'
+	import { onDestroy, onMount, untrack, type Snippet } from 'svelte'
 	import { NodeViewWrapper } from 'svelte-tiptap'
 	import type { NodeViewProps } from '@tiptap/core'
 
@@ -39,7 +39,7 @@
 	let resizingInitialMouseX = $state(0)
 	let resizingPosition = $state<'left' | 'right'>('left')
 
-	let caption: string | null = $state(node.attrs.title)
+	let caption: string | null = $state(untrack(() => node.attrs.title as string | null))
 	$effect(() => {
 		if (caption?.trim() === '') caption = null
 		updateAttributes({ title: caption })

@@ -111,7 +111,8 @@
 				if (!nameObj) return '—'
 				if (typeof nameObj === 'string') return nameObj
 				// Handle {en: "...", ja: "..."} structure
-				return nameObj.en || nameObj.ja || '—'
+				const obj = nameObj as Record<string, string>
+				return obj.en || obj.ja || '—'
 			}
 		},
 		{
@@ -119,7 +120,7 @@
 			header: 'Rarity',
 			width: 80,
 			sort: true,
-			template: (rarity: unknown) => getRarityLabel(rarity)
+			template: (rarity: unknown) => getRarityLabel(rarity as number)
 		},
 		{
 			id: 'element',

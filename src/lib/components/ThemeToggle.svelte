@@ -34,6 +34,7 @@
 	class="theme-row"
 	onpointerdown={(e) => e.stopPropagation()}
 	onclick={(e) => e.stopPropagation()}
+	onkeydown={(e) => e.stopPropagation()}
 >
 	<span class="theme-label">{m.nav_theme()}</span>
 	<SwitchPrimitive.Root checked={isDark} onCheckedChange={handleToggle} class="theme-switch">

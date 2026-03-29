@@ -39,6 +39,7 @@
 	<ul class="results" role="listbox" bind:this={listEl}>
 		{#if !inputValue.trim()}
 			{#each placeholderSuggestions as suggestion, i (suggestion.label)}
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<li
 					class="result-item"
 					class:selected={i === selectedIndex}
@@ -53,6 +54,7 @@
 			{/each}
 		{:else if displayResults.length > 0}
 			{#each displayResults as option, i (option.kind + '-' + option.value)}
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<li
 					class="result-item"
 					class:entity={option.kind === 'entity'}

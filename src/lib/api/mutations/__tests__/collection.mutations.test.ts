@@ -211,8 +211,8 @@ describe('addWeaponsToCollectionOptions', () => {
 })
 
 describe('updateCollectionWeaponOptions', () => {
-	it('resets weapons queries on success', () => {
-		const spy = vi.spyOn(queryClient, 'resetQueries')
+	it('invalidates weapons queries on success', () => {
+		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = updateCollectionWeaponOptions(queryClient)
 
 		opts.onSuccess()
@@ -223,8 +223,8 @@ describe('updateCollectionWeaponOptions', () => {
 })
 
 describe('removeWeaponFromCollectionOptions', () => {
-	it('resets weapons queries on success', () => {
-		const spy = vi.spyOn(queryClient, 'resetQueries')
+	it('invalidates weapons queries on success', () => {
+		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = removeWeaponFromCollectionOptions(queryClient)
 
 		opts.onSuccess()
@@ -235,8 +235,8 @@ describe('removeWeaponFromCollectionOptions', () => {
 })
 
 describe('bulkRemoveWeaponsFromCollectionOptions', () => {
-	it('resets weapons queries on success', () => {
-		const spy = vi.spyOn(queryClient, 'resetQueries')
+	it('invalidates weapons queries on success', () => {
+		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = bulkRemoveWeaponsFromCollectionOptions(queryClient)
 
 		opts.onSuccess()

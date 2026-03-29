@@ -77,9 +77,12 @@ describe('getElementIcon', () => {
 		expect(getElementIcon(2)).toBe('/images/labels/element/Label_Element_Fire.png')
 	})
 
-	it('returns empty for undefined or Null element', () => {
+	it('returns empty for undefined', () => {
 		expect(getElementIcon(undefined)).toBe('')
-		expect(getElementIcon(0)).toBe('')
+	})
+
+	it('returns Any label for Null element', () => {
+		expect(getElementIcon(0)).toBe('/images/labels/element/Label_Element_Any.png')
 	})
 })
 

@@ -11,6 +11,7 @@ import {
 } from '../gw'
 import { getElementKey, getElementColor } from '../element'
 import type { GwIndividualScore, GwCrewScore, GwEvent, EventScoreSummary } from '$lib/types/api/gw'
+import type { CrewMembership } from '$lib/types/api/crew'
 
 // ============================================================================
 // Formatting
@@ -109,7 +110,7 @@ function makeIndividualScore(
 		excused: false,
 		playerName,
 		playerType: 'member',
-		member: memberId ? ({ id: memberId } as unknown as Record<string, unknown>) : undefined
+		member: memberId ? ({ id: memberId } as unknown as CrewMembership) : undefined
 	}
 }
 

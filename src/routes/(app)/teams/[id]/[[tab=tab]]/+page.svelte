@@ -20,7 +20,7 @@
 	}
 
 	// Initialize from URL or default to Weapon
-	const initialTab = data.tab ? (tabMap[data.tab] ?? GridType.Weapon) : GridType.Weapon
+	const initialTab = $derived(data.tab ? (tabMap[data.tab] ?? GridType.Weapon) : GridType.Weapon)
 
 	/**
 	 * TanStack Query v6 SSR Integration Example

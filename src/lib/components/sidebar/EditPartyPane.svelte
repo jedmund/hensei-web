@@ -78,7 +78,7 @@
 	// Reading initialValues.xxx in $derived creates tracking dependencies on the proxy,
 	// which can be invalidated when setAction mutates the pane object.
 	// $state.snapshot() produces a plain non-reactive copy, breaking that chain.
-	const initial = $state.snapshot(initialValues) as PartyEditValues
+	const initial = untrack(() => $state.snapshot(initialValues)) as PartyEditValues
 
 	// Local state - initialized from snapshot
 	let name = $state(initial.name)
@@ -217,7 +217,8 @@
 							guidebooks: selectedRaid.group.guidebooks,
 							unlimited: selectedRaid.group.unlimited
 						}
-					: undefined
+					: undefined,
+				extra: selectedRaid.extra
 			}
 			raidId = selectedRaid.id
 		} else {

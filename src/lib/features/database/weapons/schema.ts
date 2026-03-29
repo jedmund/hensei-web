@@ -23,9 +23,37 @@ export const WeaponEditSchema = z.object({
 
 export type WeaponEdit = z.infer<typeof WeaponEditSchema>
 
-export function toEditData(model: Record<string, unknown>): WeaponEdit {
+/** Loose shape accepted by toEditData – covers both camelCase and snake_case API responses. */
+interface WeaponModel {
+	name?: unknown
+	granblueId?: string
+	granblue_id?: string
+	rarity?: number
+	element?: number
+	proficiency?: number | number[]
+	promotions?: number[]
+	hp?: {
+		minHp?: number
+		min_hp?: number
+		maxHp?: number
+		max_hp?: number
+		maxHpFlb?: number
+		max_hp_flb?: number
+	}
+	atk?: {
+		minAtk?: number
+		min_atk?: number
+		maxAtk?: number
+		max_atk?: number
+		maxAtkFlb?: number
+		max_atk_flb?: number
+	}
+	uncap?: { flb?: boolean; ulb?: boolean; transcendence?: boolean }
+}
+
+export function toEditData(model: WeaponModel): WeaponEdit {
 	return {
-		name: model?.name ?? '',
+		name: (model?.name as WeaponEdit['name']) ?? '',
 		granblue_id: model?.granblueId ?? model?.granblue_id ?? '',
 		rarity: model?.rarity ?? 1,
 		element: model?.element ?? 0,

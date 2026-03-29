@@ -9,7 +9,7 @@
 	 * The "My Collection" tab includes an edit mode using CharacterEditPane.
 	 */
 	import * as m from '$lib/paraglide/messages'
-	import { onMount } from 'svelte'
+	import { onMount, untrack } from 'svelte'
 	import type { CollectionCharacter, ExtendedMastery } from '$lib/types/api/collection'
 	import type { GridCharacter } from '$lib/types/api/party'
 	import {
@@ -37,7 +37,7 @@
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { localizedName } from '$lib/utils/locale'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
-	import { getElementKey } from '$lib/utils/element'
+	import { getElementTypeKey } from '$lib/utils/element'
 
 	interface Props {
 		character: CollectionCharacter
@@ -56,7 +56,7 @@
 	}: Props = $props()
 
 	// Local state for the character - updated when mutation succeeds or prop changes
-	let character = $state<CollectionCharacter>(initialCharacter)
+	let character = $state<CollectionCharacter>(untrack(() => initialCharacter))
 
 	// Sync from parent when prop changes (e.g. inline uncap edit on card/row)
 	$effect(() => {
@@ -104,7 +104,7 @@
 
 	// Element name for theming
 	const elementName = $derived(
-		characterData?.element ? getElementKey(characterData.element) : undefined
+		characterData?.element ? getElementTypeKey(characterData.element) : undefined
 	)
 
 	async function handleSave(updates: CharacterEditUpdates) {

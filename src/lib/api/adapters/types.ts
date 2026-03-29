@@ -26,15 +26,34 @@ export interface AdapterOptions {
 }
 
 /**
+ * Allowed value types for individual query parameters.
+ * undefined and null values are skipped when building the URL.
+ */
+export type QueryParamValue =
+	| string
+	| number
+	| boolean
+	| string[]
+	| number[]
+	| (string | number)[]
+	| undefined
+
+/**
+ * Query parameters record.
+ * buildURL/addQueryParams coerces values via String() and skips null/undefined.
+ */
+export type QueryParams = Record<string, QueryParamValue>
+
+/**
  * Options for individual HTTP requests
  * Extends the standard RequestInit interface with additional features
  */
 export interface RequestOptions extends Omit<RequestInit, 'body' | 'cache'> {
-	/** Query parameters to append to the URL */
-	params?: Record<string, string | number | boolean | string[] | number[]> | undefined
+	/** Query parameters to append to the URL. Values are coerced to strings; undefined/null values are skipped. */
+	params?: QueryParams | undefined
 
-	/** Alternative alias for query parameters */
-	query?: Record<string, string | number | boolean | string[] | number[]> | undefined
+	/** Alternative alias for query parameters. Values are coerced to strings; undefined/null values are skipped. */
+	query?: QueryParams | undefined
 
 	/** Request timeout in milliseconds. Overrides the adapter's default timeout */
 	timeout?: number | undefined

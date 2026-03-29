@@ -125,7 +125,7 @@ export const Audio = Node.create<AudioOptions>({
 								const reader = new FileReader()
 
 								reader.onload = (readerEvent) => {
-									const node = schema.nodes.audio.create({ src: readerEvent.target?.result })
+									const node = schema.nodes.audio!.create({ src: readerEvent.target?.result })
 
 									if (coordinates && typeof coordinates.pos === 'number') {
 										const transaction = tr.insert(coordinates?.pos, node)

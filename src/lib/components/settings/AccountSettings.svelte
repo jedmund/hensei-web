@@ -7,6 +7,7 @@
 	import SettingsRow from '../ui/SettingsRow.svelte'
 	import ElementPicker from '../ui/element-picker/ElementPicker.svelte'
 	import type { ElementType } from '../ui/SettingsNav.svelte'
+	import { untrack } from 'svelte'
 	import { getElementKey } from '$lib/utils/element'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 
@@ -15,6 +16,7 @@
 		email: string
 		emailVerified: boolean
 		bahamut: boolean
+		simplePortraits: boolean
 		role: number
 		element: ElementType
 		language: string
@@ -25,6 +27,7 @@
 		onUsernameChange: (value: string) => void
 		onEmailChange: (value: string) => void
 		onBahamutChange: (value: boolean) => void
+		onSimplePortraitsChange: (value: boolean) => void
 		onUsernameValidChange?: (valid: boolean) => void
 		onElementChange: (value: string) => void
 		onLanguageChange: (value: string) => void
@@ -39,6 +42,7 @@
 		email,
 		emailVerified,
 		bahamut,
+		simplePortraits,
 		role,
 		element,
 		language,
@@ -49,6 +53,7 @@
 		onUsernameChange,
 		onEmailChange,
 		onBahamutChange,
+		onSimplePortraitsChange,
 		onUsernameValidChange,
 		onElementChange,
 		onLanguageChange,
@@ -79,11 +84,11 @@
 	}
 
 	// Local state initialized from props — mutable for form editing
-	let localUsername = $state(username)
-	let localEmail = $state(email)
+	let localUsername = $state(untrack(() => username))
+	let localEmail = $state(untrack(() => email))
 
 	// Capture original username for comparison (prop gets mutated by parent on each keystroke)
-	const originalUsername = username
+	const originalUsername = untrack(() => username)
 
 	// Username validation
 	const usernameRegex = /^[a-zA-Z0-9_-]+$/
@@ -214,9 +219,9 @@
 	]
 
 	// Password local state
-	let localCurrentPassword = $state(currentPassword)
-	let localNewPassword = $state(newPassword)
-	let localConfirmPassword = $state(confirmPassword)
+	let localCurrentPassword = $state(untrack(() => currentPassword))
+	let localNewPassword = $state(untrack(() => newPassword))
+	let localConfirmPassword = $state(untrack(() => confirmPassword))
 
 	function handleCurrentPasswordInput() {
 		onCurrentPasswordChange(localCurrentPassword)
@@ -341,6 +346,17 @@
 					placeholder={m.settings_language_placeholder()}
 					contained
 					portal
+				/>
+			{/snippet}
+		</SettingsRow>
+
+		<SettingsRow title={m.settings_umikin_mode()} subtitle={m.settings_umikin_subtitle()}>
+			{#snippet control()}
+				<Switch
+					checked={simplePortraits}
+					name="umikin-mode"
+					{element}
+					onCheckedChange={onSimplePortraitsChange}
 				/>
 			{/snippet}
 		</SettingsRow>

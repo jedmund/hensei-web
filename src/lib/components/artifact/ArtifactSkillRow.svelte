@@ -121,7 +121,7 @@
 			<DisclosureRow label={modifierName} onclick={onSelectModifier} {disabled} />
 			<div class="skill-controls">
 				<div class="control-group">
-					<label class="control-label">{m.label_level()}</label>
+					<span class="control-label">{m.label_level()}</span>
 					<Select
 						value={skill.level}
 						options={levelOptions()}
@@ -131,7 +131,7 @@
 					/>
 				</div>
 				<div class="control-group">
-					<label class="control-label">{m.label_value()}</label>
+					<span class="control-label">{m.label_value()}</span>
 					<Select
 						value={skill.strength}
 						options={strengthOptions()}

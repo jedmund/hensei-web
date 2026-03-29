@@ -295,7 +295,7 @@
 		<DetailsSection title={m.section_base_properties()}>
 			<div class="picker-filters">
 				<div class="filter-group">
-					<label class="filter-label">{m.label_element()}</label>
+					<span class="filter-label">{m.label_element()}</span>
 					<ElementPicker
 						value={element}
 						onValueChange={handleElementChange}
@@ -306,7 +306,7 @@
 				</div>
 
 				<div class="filter-group">
-					<label class="filter-label">{m.label_proficiency()}</label>
+					<span class="filter-label">{m.label_proficiency()}</span>
 					<ProficiencyPicker
 						value={proficiency}
 						onValueChange={handleProficiencyChange}

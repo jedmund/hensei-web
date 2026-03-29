@@ -286,13 +286,13 @@
 		color: var(--text-primary);
 		cursor: pointer;
 		outline: none;
+	}
 
-		&:hover {
-			background: var(--menu-bg-item-hover);
-		}
+	:global(.style-item:hover) {
+		background: var(--menu-bg-item-hover);
+	}
 
-		&.active {
-			background: var(--menu-bg-item-active);
-		}
+	:global(.style-item.active) {
+		background: var(--menu-bg-item-active);
 	}
 </style>

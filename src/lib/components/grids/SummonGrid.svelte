@@ -186,26 +186,4 @@
 			}
 		}
 	}
-
-	.unit {
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: $unit;
-	}
-
-	.image {
-		width: 100%;
-		height: auto;
-		border: 1px solid $grey-75;
-		border-radius: layout.$input-corner;
-		display: block;
-	}
-
-	.name {
-		font-size: $font-small;
-		text-align: center;
-		color: var(--text-secondary);
-	}
 </style>

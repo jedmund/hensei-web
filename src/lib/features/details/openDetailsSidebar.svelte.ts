@@ -1,7 +1,8 @@
 import { localizedName } from '$lib/utils/locale'
-import { getElementKey } from '$lib/utils/element'
+import { getElementTypeKey } from '$lib/utils/element'
 import { sidebar } from '$lib/stores/sidebar.svelte'
 import { partyStore } from '$lib/stores/partyStore.svelte'
+import { type ElementType } from '$lib/stores/paneStack.svelte'
 import DetailsSidebar from '$lib/components/sidebar/DetailsSidebar.svelte'
 import EditWeaponPane from '$lib/components/sidebar/EditWeaponPane.svelte'
 import EditCharacterSidebar from '$lib/components/sidebar/EditCharacterSidebar.svelte'
@@ -18,7 +19,7 @@ interface DetailsSidebarOptions {
 function getItemElement(
 	type: 'weapon' | 'character' | 'summon',
 	item: GridCharacter | GridWeapon | GridSummon
-): string | undefined {
+): ElementType | undefined {
 	let elementId: number | undefined
 
 	if (type === 'character') {
@@ -31,7 +32,7 @@ function getItemElement(
 		elementId = (item as GridSummon).summon?.element
 	}
 
-	return elementId ? getElementKey(elementId) : undefined
+	return getElementTypeKey(elementId)
 }
 
 export function openDetailsSidebar(options: DetailsSidebarOptions) {

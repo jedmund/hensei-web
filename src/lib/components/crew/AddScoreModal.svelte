@@ -18,12 +18,14 @@
 		id: string
 		user?: { id: string; username: string }
 		retired: boolean
+		activeDuringEvent: boolean
 	}
 
 	interface PhantomPlayerMinimal {
 		id: string
 		name: string
 		retired: boolean
+		activeDuringEvent: boolean
 	}
 
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
@@ -92,20 +94,24 @@
 		return ids
 	})
 
-	// Player options for dropdown - members first, then phantoms
+	// Player options for dropdown - active-during-event first, then others
 	// Excludes players who already have scores for this event
 	const playerOptions = $derived.by(() => {
-		const options: Array<{ value: string; label: string; suffix?: string }> = []
+		const active: Array<{ value: string; label: string; suffix?: string }> = []
+		const outside: Array<{ value: string; label: string; suffix?: string }> = []
 
 		// Add members (skip those with scores)
 		for (const m of membersDuringEvent) {
 			if (m.user) {
 				const hasScore = playersWithScores.has(`member:${m.id}`)
 				if (hasScore) continue
-				options.push({
+				const option = {
 					value: `member:${m.id}`,
-					label: m.user.username + (m.retired ? ' (Retired)' : '')
-				})
+					label: m.user.username + (m.retired ? ' (Retired)' : ''),
+					suffix: m.activeDuringEvent ? undefined : 'Outside crew membership dates'
+				}
+				if (m.activeDuringEvent) active.push(option)
+				else outside.push(option)
 			}
 		}
 
@@ -113,14 +119,16 @@
 		for (const p of phantomPlayers) {
 			const hasScore = playersWithScores.has(`phantom:${p.id}`)
 			if (hasScore) continue
-			options.push({
+			const option = {
 				value: `phantom:${p.id}`,
 				label: p.name + (p.retired ? ' (Retired)' : ''),
-				suffix: 'Phantom'
-			})
+				suffix: p.activeDuringEvent ? 'Phantom' : 'Outside crew membership dates'
+			}
+			if (p.activeDuringEvent) active.push(option)
+			else outside.push(option)
 		}
 
-		return options
+		return [...active, ...outside]
 	})
 
 	// Calculate cumulative from round scores

@@ -8,12 +8,15 @@
 	import { Toaster } from 'svelte-sonner'
 	import { untrack, type Snippet } from 'svelte'
 	import { themeStore, type ThemePreference } from '$lib/stores/theme.svelte'
+	import { setSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import type { LayoutData } from './$types'
 
 	const { data, children } = $props<{
 		data: LayoutData & { [key: string]: unknown }
 		children: Snippet
 	}>()
+
+	setSimplePortraits(data.currentUser?.simplePortraits ?? false)
 
 	// Initialize theme from user cookie preference
 	$effect(() => {

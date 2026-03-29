@@ -46,6 +46,8 @@ export interface SearchPageResult {
 		series?: { id: string; slug: string; name: { en: string; ja: string } } | number[]
 		imageUrl?: string
 		searchableType: 'Weapon' | 'Character' | 'Summon'
+		/** Season variant (characters only) */
+		season?: number | null
 		uncap?: { flb?: boolean; ulb?: boolean; transcendence?: boolean }
 	}>
 	page: number

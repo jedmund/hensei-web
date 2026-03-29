@@ -51,7 +51,7 @@
 	aria-label="Select {name}, current quantity: {quantity}"
 >
 	<img src={imageUrl} alt={name} class="image" loading="lazy" />
-	<div class="counter-row" onclick={(e) => e.stopPropagation()}>
+	<div class="counter-row" role="presentation" onclick={(e) => e.stopPropagation()}>
 		<QuantityCounter value={quantity} onChange={handleQuantityChange} element={userElement} />
 	</div>
 </div>
@@ -64,13 +64,12 @@
 	.card {
 		display: flex;
 		flex-direction: column;
-		width: 140px;
+		width: 100%;
 		padding: 0;
 		border-radius: layout.$input-corner;
 		background: var(--card-bg);
 		cursor: pointer;
 		overflow: hidden;
-		flex-shrink: 0;
 		@include smooth-transition(0.15s, transform);
 
 		&:hover {

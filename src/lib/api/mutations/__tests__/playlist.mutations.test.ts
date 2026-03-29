@@ -57,11 +57,11 @@ const MOCK_PLAYLIST: Playlist = {
 // ============================================================================
 
 function seedPlaylistCache(queryClient: QueryClient, playlist: Playlist): void {
-	queryClient.setQueryData(playlistKeys.detail(playlist.id), playlist)
+	queryClient.setQueryData(playlistKeys.detail(playlist.slug), playlist)
 }
 
-function getCachedPlaylist(queryClient: QueryClient, id: string): Playlist | undefined {
-	return queryClient.getQueryData<Playlist>(playlistKeys.detail(id))
+function getCachedPlaylist(queryClient: QueryClient, slug: string): Playlist | undefined {
+	return queryClient.getQueryData<Playlist>(playlistKeys.detail(slug))
 }
 
 // ============================================================================
@@ -82,11 +82,16 @@ beforeEach(() => {
 describe('createPlaylistOptions', () => {
 	it('sets the new playlist in cache on success', () => {
 		const opts = createPlaylistOptions(queryClient)
-		const newPlaylist: Playlist = { ...MOCK_PLAYLIST, id: 'new-id', title: 'New Playlist' }
+		const newPlaylist: Playlist = {
+			...MOCK_PLAYLIST,
+			id: 'new-id',
+			slug: 'new-playlist',
+			title: 'New Playlist'
+		}
 
 		opts.onSuccess(newPlaylist)
 
-		expect(getCachedPlaylist(queryClient, 'new-id')).toEqual(newPlaylist)
+		expect(getCachedPlaylist(queryClient, 'new-playlist')).toEqual(newPlaylist)
 	})
 
 	it('invalidates playlist list queries on success', () => {
@@ -111,7 +116,7 @@ describe('updatePlaylistOptions', () => {
 
 		await opts.onMutate(params)
 
-		const cached = getCachedPlaylist(queryClient, MOCK_PLAYLIST_ID)
+		const cached = getCachedPlaylist(queryClient, 'test-playlist')
 		expect(cached?.title).toBe('Updated Title')
 	})
 
@@ -122,7 +127,7 @@ describe('updatePlaylistOptions', () => {
 		const context = await opts.onMutate(params)
 		opts.onError(new Error('fail'), params, context)
 
-		const cached = getCachedPlaylist(queryClient, MOCK_PLAYLIST_ID)
+		const cached = getCachedPlaylist(queryClient, 'test-playlist')
 		expect(cached?.title).toBe('Test Playlist')
 	})
 
@@ -132,7 +137,7 @@ describe('updatePlaylistOptions', () => {
 
 		opts.onSuccess(serverResponse, { id: MOCK_PLAYLIST_ID, slug: 'test-playlist' })
 
-		const cached = getCachedPlaylist(queryClient, MOCK_PLAYLIST_ID)
+		const cached = getCachedPlaylist(queryClient, 'test-playlist')
 		expect(cached?.title).toBe('Server Title')
 	})
 
@@ -143,7 +148,7 @@ describe('updatePlaylistOptions', () => {
 		opts.onSettled(undefined, undefined, { id: MOCK_PLAYLIST_ID, slug: 'test-playlist' })
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
-		expect(keys).toContainEqual(playlistKeys.detail(MOCK_PLAYLIST_ID))
+		expect(keys).toContainEqual(playlistKeys.details())
 		expect(keys).toContainEqual(playlistKeys.userLists())
 	})
 })
@@ -153,20 +158,21 @@ describe('updatePlaylistOptions', () => {
 // ============================================================================
 
 describe('deletePlaylistOptions', () => {
-	it('removes playlist from cache on success', () => {
-		const spy = vi.spyOn(queryClient, 'removeQueries')
+	it('invalidates detail queries on success', () => {
+		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = deletePlaylistOptions(queryClient)
 
-		opts.onSuccess(undefined, MOCK_PLAYLIST_ID)
+		opts.onSuccess()
 
-		expect(spy).toHaveBeenCalledWith({ queryKey: playlistKeys.detail(MOCK_PLAYLIST_ID) })
+		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
+		expect(keys).toContainEqual(playlistKeys.details())
 	})
 
 	it('invalidates list queries on success', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = deletePlaylistOptions(queryClient)
 
-		opts.onSuccess(undefined, MOCK_PLAYLIST_ID)
+		opts.onSuccess()
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(playlistKeys.userLists())
@@ -178,24 +184,15 @@ describe('deletePlaylistOptions', () => {
 // ============================================================================
 
 describe('addPartyToPlaylistOptions', () => {
-	it('updates playlist cache with server response on success', () => {
-		const opts = addPartyToPlaylistOptions(queryClient)
-		const updatedPlaylist: Playlist = { ...MOCK_PLAYLIST, partyCount: 3 }
-
-		opts.onSuccess(updatedPlaylist)
-
-		const cached = getCachedPlaylist(queryClient, MOCK_PLAYLIST_ID)
-		expect(cached?.partyCount).toBe(3)
-	})
-
-	it('invalidates user list queries on success', () => {
+	it('invalidates all playlist queries on success', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = addPartyToPlaylistOptions(queryClient)
 
-		opts.onSuccess(MOCK_PLAYLIST)
+		opts.onSuccess()
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
-		expect(keys).toContainEqual(playlistKeys.userLists())
+		expect(keys).toContainEqual(playlistKeys.all)
+		expect(keys).toContainEqual(playlistKeys.details())
 	})
 })
 
@@ -204,23 +201,14 @@ describe('addPartyToPlaylistOptions', () => {
 // ============================================================================
 
 describe('removePartyFromPlaylistOptions', () => {
-	it('invalidates the playlist detail query on success', () => {
+	it('invalidates all playlist queries on success', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = removePartyFromPlaylistOptions(queryClient)
 
-		opts.onSuccess(undefined, { playlistId: MOCK_PLAYLIST_ID, partyId: 'party-1' })
+		opts.onSuccess()
 
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
-		expect(keys).toContainEqual(playlistKeys.detail(MOCK_PLAYLIST_ID))
-	})
-
-	it('invalidates user list queries on success', () => {
-		const spy = vi.spyOn(queryClient, 'invalidateQueries')
-		const opts = removePartyFromPlaylistOptions(queryClient)
-
-		opts.onSuccess(undefined, { playlistId: MOCK_PLAYLIST_ID, partyId: 'party-1' })
-
-		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
-		expect(keys).toContainEqual(playlistKeys.userLists())
+		expect(keys).toContainEqual(playlistKeys.all)
+		expect(keys).toContainEqual(playlistKeys.details())
 	})
 })

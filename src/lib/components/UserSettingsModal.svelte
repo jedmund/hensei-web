@@ -18,7 +18,9 @@
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import { themeStore, type ThemePreference } from '$lib/stores/theme.svelte'
+	import { untrack } from 'svelte'
 	import { localizeHref, deLocalizeHref } from '$lib/paraglide/runtime'
+	import { updateSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 
 	interface Props {
 		open: boolean
@@ -37,7 +39,7 @@
 	let activeSection = $state<string>('profile')
 
 	// Form state - Account section (initialized empty, populated from API)
-	let formUsername = $state(username)
+	let formUsername = $state(untrack(() => username))
 	let formDisplayName = $state('')
 	let formEmail = $state('')
 	let emailVerified = $state(false)
@@ -61,6 +63,7 @@
 	let showCrewGamertag = $state(false)
 	let importWeapons = $state(true)
 	let defaultImportVisibility = $state(1)
+	let simplePortraits = $state(false)
 
 	// Track whether form has been initialized from API
 	let formInitialized = $state(false)
@@ -117,6 +120,7 @@
 			showCrewGamertag = data.showCrewGamertag ?? false
 			importWeapons = data.importWeapons ?? true
 			defaultImportVisibility = data.defaultImportVisibility ?? 1
+			simplePortraits = data.simplePortraits ?? false
 			// Store original values for comparison
 			originalLanguage = data.language ?? 'en'
 			originalTheme = data.theme ?? 'system'
@@ -192,7 +196,8 @@
 				showCrewGamertag,
 				collectionPrivacy,
 				importWeapons,
-				defaultImportVisibility
+				defaultImportVisibility,
+				simplePortraits
 			}
 
 			// Call API to update user settings
@@ -212,7 +217,8 @@
 				showCrewGamertag: response.showCrewGamertag,
 				collectionPrivacy: response.collectionPrivacy,
 				importWeapons: response.importWeapons,
-				defaultImportVisibility: response.defaultImportVisibility
+				defaultImportVisibility: response.defaultImportVisibility,
+				simplePortraits: response.simplePortraits
 			}
 
 			// Make a request to update the cookie server-side
@@ -242,7 +248,8 @@
 								collectionPrivacy,
 								showCrewGamertag,
 								importWeapons,
-								defaultImportVisibility
+								defaultImportVisibility,
+								simplePortraits
 							}
 						: oldData
 			)
@@ -251,6 +258,9 @@
 			if (originalTheme !== theme) {
 				themeStore.setTheme(theme as ThemePreference)
 			}
+
+			// Update simple portraits context reactively
+			updateSimplePortraits(response.simplePortraits ?? false)
 
 			// If language or bahamut mode changed, navigate to the re-localized URL
 			if (originalLanguage !== language || user.bahamut !== bahamut) {
@@ -333,6 +343,7 @@
 						email={formEmail}
 						{emailVerified}
 						{bahamut}
+						{simplePortraits}
 						{role}
 						{element}
 						{language}
@@ -343,6 +354,7 @@
 						onUsernameChange={(v) => (formUsername = v)}
 						onEmailChange={(v) => (formEmail = v)}
 						onBahamutChange={(v) => (bahamut = v)}
+						onSimplePortraitsChange={(v) => (simplePortraits = v)}
 						onUsernameValidChange={(v) => (usernameValid = v)}
 						onElementChange={(v) => (element = v as ElementType)}
 						onLanguageChange={(v) => (language = v)}
@@ -360,10 +372,14 @@
 						{isInCrew}
 						{crewGamertag}
 						{element}
-						onCollectionPrivacyChange={(v) => (collectionPrivacy = v)}
+						onCollectionPrivacyChange={(v) => {
+							if (v !== undefined) collectionPrivacy = v
+						}}
 						onShowCrewGamertagChange={(v) => (showCrewGamertag = v)}
 						onImportWeaponsChange={(v) => (importWeapons = v)}
-						onDefaultImportVisibilityChange={(v) => (defaultImportVisibility = v)}
+						onDefaultImportVisibilityChange={(v) => {
+							if (v !== undefined) defaultImportVisibility = v
+						}}
 					/>
 				{/if}
 			</div>

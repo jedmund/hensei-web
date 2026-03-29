@@ -260,7 +260,7 @@
 	<div class="filters-section">
 		<!-- Element filters -->
 		<div class="filter-group">
-			<label class="filter-label">{m.search_sidebar_element()}</label>
+			<span class="filter-label">{m.search_sidebar_element()}</span>
 			<div class="filter-buttons">
 				{#each elements as element (element)}
 					<button
@@ -278,7 +278,7 @@
 
 		<!-- Rarity filters -->
 		<div class="filter-group">
-			<label class="filter-label">{m.search_sidebar_rarity()}</label>
+			<span class="filter-label">{m.search_sidebar_rarity()}</span>
 			<div class="filter-buttons">
 				{#each rarities as rarity (rarity)}
 					<button
@@ -296,7 +296,7 @@
 		<!-- Proficiency filters (weapons only, hidden when required proficiencies set) -->
 		{#if type === 'weapon' && !requiredProficiencies}
 			<div class="filter-group">
-				<label class="filter-label">{m.search_sidebar_proficiency()}</label>
+				<span class="filter-label">{m.search_sidebar_proficiency()}</span>
 				<div class="filter-buttons proficiency-grid">
 					{#each proficiencies as prof (prof)}
 						<button

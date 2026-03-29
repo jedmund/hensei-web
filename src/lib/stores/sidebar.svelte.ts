@@ -62,8 +62,10 @@ class SidebarStore {
 	 */
 	openWithComponent(
 		title: string,
-		component: Component<Record<string, unknown>>,
-		props?: Record<string, unknown>,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		component: Component<any>,
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		props?: Record<string, any>,
 		options?: OpenWithComponentOptions | boolean
 	) {
 		// Cancel any pending clear from a previous close()

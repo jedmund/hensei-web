@@ -226,7 +226,7 @@
 			<div class="image-container" data-variant={variant}>
 				<img
 					src={imageUrl}
-					alt="Test image"
+					alt="Test preview"
 					onerror={(e) => {
 						e.currentTarget.classList.add('error')
 					}}

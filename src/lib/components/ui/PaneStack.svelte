@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { DropdownMenu } from 'bits-ui'
+	import { untrack } from 'svelte'
 	import {
 		type PaneConfig,
 		type PaneStackStore,
@@ -18,7 +19,7 @@
 	const { stack, onClose }: Props = $props()
 
 	// Set context so child components can access the pane stack
-	setPaneStackContext(stack)
+	untrack(() => setPaneStackContext(stack))
 
 	// Track scroll state per pane for header shadow
 	let paneScrolled: Record<string, boolean> = $state({})

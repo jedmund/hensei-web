@@ -27,6 +27,7 @@
 		flb?: boolean
 		ulb?: boolean
 		index: number
+		editable?: boolean
 		tabindex?: number
 		size?: 'regular' | 'small'
 		onStarClick: (index: number, empty: boolean) => void
@@ -37,7 +38,6 @@
 		className?: string
 		stage?: number
 		type?: 'character' | 'weapon' | 'summon'
-		editable?: boolean
 		interactive?: boolean
 		tabindex?: number
 		size?: 'regular' | 'small'
@@ -121,7 +121,6 @@
 				props: {
 					stage: transcendenceStage ?? 0,
 					type,
-					editable,
 					interactive: editable,
 					size,
 					onFragmentClick: editable ? handleTranscendenceUpdate : undefined
@@ -141,6 +140,7 @@
 				flb: options.flb,
 				ulb: options.ulb,
 				special: options.special,
+				editable,
 				tabindex: editable ? 0 : undefined,
 				size,
 				onStarClick: editable ? toggleStar : () => {}

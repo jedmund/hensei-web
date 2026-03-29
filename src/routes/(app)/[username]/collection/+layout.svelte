@@ -355,6 +355,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		flex-wrap: wrap;
 		gap: $unit-2x;
 		padding: $unit-2x;
 		min-height: 74px;
@@ -375,6 +376,7 @@
 	.selection-controls-left {
 		display: flex;
 		align-items: center;
+		flex-wrap: wrap;
 		gap: $unit-2x;
 	}
 

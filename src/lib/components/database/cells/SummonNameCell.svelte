@@ -12,7 +12,7 @@
 	const { row }: Cell = $props()
 
 	// Cast row to Summon type for type safety
-	const summon = row as Summon
+	const summon = $derived(row as Summon)
 
 	// Get display name
 	const displayName = $derived.by(() => {

@@ -189,12 +189,16 @@ export function transformResponse<T>(data: unknown): T {
  * - Converts camelCase to snake_case
  * - Renames entity names back to "object" for API
  */
-export function transformRequest<T>(data: T): unknown {
-	if (data === null || data === undefined) return data
-
+export function transformRequest(data: null): null
+export function transformRequest(data: undefined): undefined
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function transformRequest(data: unknown): Record<string, any>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function transformRequest(data: unknown): Record<string, any> | null | undefined {
 	// First rename entity fields back to "object"
 	const withObjectFields = renameEntityFields(data)
 
 	// Then convert camelCase to snake_case
-	return camelToSnake(withObjectFields)
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	return camelToSnake(withObjectFields) as Record<string, any> | null | undefined
 }

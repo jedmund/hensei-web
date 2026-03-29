@@ -19,7 +19,7 @@
 	{:else}
 		{#if !show}
 			{#each toolbarCommands as cmd (cmd)}
-				{@const commandGroup = commands[cmd]}
+				{@const commandGroup = commands[cmd] ?? []}
 				{#each commandGroup as command (command)}
 					<ToolBarIcon {editor} {command} />
 				{/each}
