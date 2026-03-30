@@ -17,6 +17,7 @@
 		emailVerified: boolean
 		bahamut: boolean
 		simplePortraits: boolean
+		defaultRepView: string
 		role: number
 		element: ElementType
 		language: string
@@ -28,6 +29,7 @@
 		onEmailChange: (value: string) => void
 		onBahamutChange: (value: boolean) => void
 		onSimplePortraitsChange: (value: boolean) => void
+		onDefaultRepViewChange: (value: string) => void
 		onUsernameValidChange?: (valid: boolean) => void
 		onElementChange: (value: string) => void
 		onLanguageChange: (value: string) => void
@@ -43,6 +45,7 @@
 		emailVerified,
 		bahamut,
 		simplePortraits,
+		defaultRepView,
 		role,
 		element,
 		language,
@@ -54,6 +57,7 @@
 		onEmailChange,
 		onBahamutChange,
 		onSimplePortraitsChange,
+		onDefaultRepViewChange,
 		onUsernameValidChange,
 		onElementChange,
 		onLanguageChange,
@@ -207,6 +211,11 @@
 		onThemeChange(value)
 	}
 
+	function handleRepViewSelect(value: string | undefined) {
+		if (value === undefined) return
+		onDefaultRepViewChange(value)
+	}
+
 	const languageOptions = [
 		{ value: 'en', label: 'English' },
 		{ value: 'ja', label: '日本語' }
@@ -216,6 +225,12 @@
 		{ value: 'system', label: m.settings_theme_system() },
 		{ value: 'light', label: m.settings_theme_light() },
 		{ value: 'dark', label: m.settings_theme_dark() }
+	]
+
+	const repViewOptions = [
+		{ value: 'characters', label: m.nav_characters() },
+		{ value: 'weapons', label: m.nav_weapons() },
+		{ value: 'summons', label: m.nav_summons() }
 	]
 
 	// Password local state
@@ -344,6 +359,24 @@
 					onValueChange={handleLanguageSelect}
 					options={languageOptions}
 					placeholder={m.settings_language_placeholder()}
+					contained
+					portal
+				/>
+			{/snippet}
+		</SettingsRow>
+
+		<!-- Display -->
+		<h3 class="section-header">{m.settings_section_display()}</h3>
+
+		<SettingsRow
+			title={m.settings_default_rep_view()}
+			subtitle={m.settings_default_rep_view_subtitle()}
+		>
+			{#snippet control()}
+				<Select
+					value={defaultRepView}
+					onValueChange={handleRepViewSelect}
+					options={repViewOptions}
 					contained
 					portal
 				/>
