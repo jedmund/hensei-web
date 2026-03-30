@@ -8,6 +8,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import { getBasePath } from '$lib/utils/images'
 	import type { UnifiedSearchResult } from '$lib/api/adapters/search.adapter'
+	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 
 	interface Props {
 		items: UnifiedSearchResult[]
@@ -123,7 +124,14 @@
 				<div class="item-image {item.searchableType.toLowerCase()}">
 					<img src={getEntityImageUrl(item)} alt={item.nameEn ?? ''} loading="lazy" />
 				</div>
-				<span class="item-name">{item.nameEn ?? item.nameJp ?? m.mention_unknown()}</span>
+				<div class="item-info">
+					<span class="item-name">{item.nameEn ?? item.nameJp ?? m.mention_unknown()}</span>
+					{#if item.searchableType === 'Character'}
+						<CharacterTags
+							character={{ element: item.element, season: item.season, series: item.series }}
+						/>
+					{/if}
+				</div>
 			</button>
 		{/each}
 	{:else}
@@ -187,12 +195,19 @@
 		}
 
 		&.character {
-			border-radius: 50%;
+			border-radius: $item-corner;
 		}
 	}
 
-	.item-name {
+	.item-info {
 		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: $unit-quarter;
+		min-width: 0;
+	}
+
+	.item-name {
 		font-size: $font-regular;
 		color: var(--text-primary);
 		white-space: nowrap;
