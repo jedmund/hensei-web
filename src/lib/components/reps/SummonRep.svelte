@@ -73,7 +73,7 @@
 		gap: $unit-half;
 
 		// Layout: main summon | 6 grid summons (3x2) | friend summon
-		grid-template-columns: 1fr #{rep.$summon-cols-proportion}fr 1fr;
+		grid-template-columns: minmax(0, auto) 1fr minmax(0, auto);
 		grid-template-rows: 1fr;
 
 		.summon,
