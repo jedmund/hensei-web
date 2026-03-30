@@ -5,6 +5,8 @@
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import EdraEditor from '$lib/components/edra/headless/editor.svelte'
+	import LinkDialog from '$lib/components/edra/LinkDialog.svelte'
+	import { linkDialogState } from '$lib/stores/linkDialog.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 
 	// Lucide icons
@@ -98,11 +100,8 @@
 	function toggleLink() {
 		if (editor?.isActive('link')) {
 			editor?.chain().focus().unsetLink().run()
-		} else {
-			const url = window.prompt(m.editor_prompt_url())
-			if (url) {
-				editor?.chain().focus().toggleLink({ href: url }).run()
-			}
+		} else if (editor) {
+			linkDialogState.show(editor)
 		}
 	}
 </script>
@@ -243,6 +242,8 @@
 		/>
 	</div>
 </div>
+
+<LinkDialog />
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
