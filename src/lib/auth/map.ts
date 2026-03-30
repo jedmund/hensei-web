@@ -21,7 +21,8 @@ export function buildCookies(oauth: OAuthLoginResponse, info: UserInfoResponse) 
 		theme: info.theme ?? 'system',
 		granblueId: info.granblueId,
 		showCrewGamertag: info.showCrewGamertag,
-		simplePortraits: info.simplePortraits
+		simplePortraits: info.simplePortraits,
+		defaultRepView: info.defaultRepView
 	}
 
 	return { account, user, accessTokenExpiresAt, refresh: oauth.refresh_token }

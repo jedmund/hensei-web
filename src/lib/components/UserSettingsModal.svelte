@@ -21,6 +21,7 @@
 	import { untrack } from 'svelte'
 	import { localizeHref, deLocalizeHref } from '$lib/paraglide/runtime'
 	import { updateSimplePortraits } from '$lib/stores/simplePortraits.svelte'
+	import { updateDefaultRepView } from '$lib/stores/defaultRepView.svelte'
 
 	interface Props {
 		open: boolean
@@ -64,6 +65,7 @@
 	let importWeapons = $state(true)
 	let defaultImportVisibility = $state(1)
 	let simplePortraits = $state(false)
+	let defaultRepView = $state('weapons')
 
 	// Track whether form has been initialized from API
 	let formInitialized = $state(false)
@@ -121,6 +123,7 @@
 			importWeapons = data.importWeapons ?? true
 			defaultImportVisibility = data.defaultImportVisibility ?? 1
 			simplePortraits = data.simplePortraits ?? false
+			defaultRepView = data.defaultRepView ?? 'weapons'
 			// Store original values for comparison
 			originalLanguage = data.language ?? 'en'
 			originalTheme = data.theme ?? 'system'
@@ -197,7 +200,8 @@
 				collectionPrivacy,
 				importWeapons,
 				defaultImportVisibility,
-				simplePortraits
+				simplePortraits,
+				defaultRepView
 			}
 
 			// Call API to update user settings
@@ -218,7 +222,8 @@
 				collectionPrivacy: response.collectionPrivacy,
 				importWeapons: response.importWeapons,
 				defaultImportVisibility: response.defaultImportVisibility,
-				simplePortraits: response.simplePortraits
+				simplePortraits: response.simplePortraits,
+				defaultRepView: response.defaultRepView
 			}
 
 			// Make a request to update the cookie server-side
@@ -249,7 +254,8 @@
 								showCrewGamertag,
 								importWeapons,
 								defaultImportVisibility,
-								simplePortraits
+								simplePortraits,
+								defaultRepView
 							}
 						: oldData
 			)
@@ -261,6 +267,9 @@
 
 			// Update simple portraits context reactively
 			updateSimplePortraits(response.simplePortraits ?? false)
+
+			// Update default rep view context reactively
+			updateDefaultRepView(response.defaultRepView ?? 'weapons')
 
 			// If language or bahamut mode changed, navigate to the re-localized URL
 			if (originalLanguage !== language || user.bahamut !== bahamut) {
@@ -344,6 +353,7 @@
 						{emailVerified}
 						{bahamut}
 						{simplePortraits}
+						{defaultRepView}
 						{role}
 						{element}
 						{language}
@@ -355,6 +365,7 @@
 						onEmailChange={(v) => (formEmail = v)}
 						onBahamutChange={(v) => (bahamut = v)}
 						onSimplePortraitsChange={(v) => (simplePortraits = v)}
+						onDefaultRepViewChange={(v) => (defaultRepView = v)}
 						onUsernameValidChange={(v) => (usernameValid = v)}
 						onElementChange={(v) => (element = v as ElementType)}
 						onLanguageChange={(v) => (language = v)}

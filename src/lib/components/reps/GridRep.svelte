@@ -9,6 +9,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
+	import { getDefaultRepView } from '$lib/stores/defaultRepView.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -29,7 +30,16 @@
 		indicator
 	}: Props = $props()
 
-	let currentView: 'weapons' | 'summons' | 'characters' = $state('weapons')
+	const defaultRepView = getDefaultRepView()
+	// eslint-disable-next-line svelte/prefer-writable-derived -- $derived.writable not available in Svelte 5
+	let currentView: 'weapons' | 'summons' | 'characters' = $state(
+		defaultRepView.value as 'weapons' | 'summons' | 'characters'
+	)
+
+	// Sync when the user changes their default in settings
+	$effect(() => {
+		currentView = defaultRepView.value as 'weapons' | 'summons' | 'characters'
+	})
 
 	let href = $derived(
 		hrefProp ??
@@ -58,7 +68,7 @@
 	class:dimmed
 	role={disabled ? undefined : 'link'}
 	tabindex={disabled ? undefined : 0}
-	onmouseleave={() => (currentView = 'weapons')}
+	onmouseleave={() => (currentView = defaultRepView.value as 'weapons' | 'summons' | 'characters')}
 >
 	<svelte:element
 		this={tag}

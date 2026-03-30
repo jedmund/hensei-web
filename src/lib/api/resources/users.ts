@@ -16,6 +16,7 @@ export interface UserUpdateParams {
 	importWeapons?: boolean | undefined
 	defaultImportVisibility?: number | undefined
 	simplePortraits?: boolean | undefined
+	defaultRepView?: string | undefined
 }
 
 export interface UserResponse {
@@ -38,6 +39,7 @@ export interface UserResponse {
 	importWeapons?: boolean
 	defaultImportVisibility?: number
 	simplePortraits?: boolean
+	defaultRepView?: string
 }
 
 export const users = {
@@ -62,6 +64,7 @@ export const users = {
 			import_weapons?: boolean | undefined
 			default_import_visibility?: number | undefined
 			simple_portraits?: boolean | undefined
+			default_rep_view?: string | undefined
 		} = {}
 
 		if (params.username !== undefined) updates.username = params.username
@@ -81,6 +84,7 @@ export const users = {
 		if (params.defaultImportVisibility !== undefined)
 			updates.default_import_visibility = params.defaultImportVisibility
 		if (params.simplePortraits !== undefined) updates.simple_portraits = params.simplePortraits
+		if (params.defaultRepView !== undefined) updates.default_rep_view = params.defaultRepView
 
 		const result = await userAdapter.updateProfile(updates)
 		return {
@@ -99,7 +103,8 @@ export const users = {
 			collectionPrivacy: result.collectionPrivacy,
 			importWeapons: result.importWeapons,
 			defaultImportVisibility: result.defaultImportVisibility,
-			simplePortraits: result.simplePortraits
+			simplePortraits: result.simplePortraits,
+			defaultRepView: result.defaultRepView
 		}
 	}
 }

@@ -30,6 +30,7 @@ export interface UserInfoResponse {
 	granblueId?: string
 	showCrewGamertag?: boolean
 	simplePortraits?: boolean
+	defaultRepView?: string
 }
 
 export async function passwordGrantLogin(

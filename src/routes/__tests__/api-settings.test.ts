@@ -39,7 +39,8 @@ const baseUser: UserCookie = {
 	element: 'fire',
 	language: 'en',
 	gender: 0,
-	theme: 'dark'
+	theme: 'dark',
+	defaultRepView: 'weapons'
 }
 
 function makeRequest(body: Record<string, unknown>) {

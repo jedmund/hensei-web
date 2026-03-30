@@ -20,7 +20,8 @@ const mockUserInfo: UserInfoResponse = {
 	gender: 1,
 	theme: 'dark',
 	granblueId: 'gbf-123',
-	showCrewGamertag: true
+	showCrewGamertag: true,
+	defaultRepView: 'characters'
 }
 
 describe('buildCookies', () => {
@@ -42,7 +43,8 @@ describe('buildCookies', () => {
 			gender: 1,
 			theme: 'dark',
 			granblueId: 'gbf-123',
-			showCrewGamertag: true
+			showCrewGamertag: true,
+			defaultRepView: 'characters'
 		})
 
 		expect(result.refresh).toBe('ref-1')
@@ -67,5 +69,6 @@ describe('buildCookies', () => {
 		expect(result.user.language).toBe('en')
 		expect(result.user.gender).toBe(0)
 		expect(result.user.theme).toBe('system')
+		expect(result.user.defaultRepView).toBeUndefined()
 	})
 })
