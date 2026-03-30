@@ -123,6 +123,12 @@ export abstract class BaseAdapter {
 				if (import.meta.env.DEV)
 					console.warn('[BaseAdapter] No auth token available in authStore for request:', path)
 			}
+
+			// Send X-Admin-Mode header when Bahamut Mode is enabled
+			// The user cookie is httpOnly: false, so it's readable from document.cookie
+			if (this.isBahamutMode()) {
+				authHeaders['X-Admin-Mode'] = 'true'
+			}
 		}
 
 		// Use custom fetch (e.g., SvelteKit's load fetch for SSR auth) or global fetch
@@ -499,6 +505,22 @@ export abstract class BaseAdapter {
 
 		// Use our error utility to create the appropriate error type
 		return createErrorFromStatus(response.status, message, details).toJSON()
+	}
+
+	/**
+	 * Checks whether Bahamut Mode is enabled by reading the user cookie.
+	 * The user cookie is httpOnly: false, so it's accessible via document.cookie.
+	 */
+	private isBahamutMode(): boolean {
+		try {
+			const match = document.cookie.split('; ').find((c) => c.startsWith('user='))
+			if (!match) return false
+			const decoded = decodeURIComponent(match.split('=').slice(1).join('='))
+			const parsed = JSON.parse(decoded)
+			return parsed.bahamut === true
+		} catch {
+			return false
+		}
 	}
 
 	/**
