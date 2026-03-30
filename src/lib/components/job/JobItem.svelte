@@ -41,7 +41,7 @@
 
 		{#if proficiencies.length > 0}
 			<div class="proficiencies">
-				{#each job.proficiency as prof (prof)}
+				{#each job.proficiency as prof, i (i)}
 					{#if prof > 0}
 						<ProficiencyLabel proficiency={prof} size="small" />
 					{/if}
