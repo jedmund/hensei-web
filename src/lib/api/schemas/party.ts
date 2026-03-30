@@ -14,10 +14,19 @@ const LocalizedNameSchema = z.union([
 const UserSchema = z.object({
 	id: z.string(),
 	username: z.string(),
+	display_name: z.string().nullish(),
 	role: z.number().optional(),
 	granblue_id: z.number().nullish(),
 	avatar_url: z.string().nullish(),
-	crew_name: z.string().nullish()
+	crew_name: z.string().nullish(),
+	gender: z.number().nullish(),
+	youtube: z.string().nullish(),
+	avatar: z
+		.object({
+			picture: z.string().nullish(),
+			element: z.string().nullish()
+		})
+		.nullish()
 })
 
 // Raid and RaidGroup schemas
