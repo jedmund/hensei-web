@@ -44,6 +44,7 @@
 	"action_save": "Save",
 	"action_saving": "Saving...",
 	"action_edit": "Edit",
+	"action_replace": "Replace",
 	"action_add": "Add",
 
 	"editor_heading_1": "Heading 1",
@@ -1326,6 +1327,7 @@
 
 	"party_no_description": "No description",
 	"party_write_description": "Write a description",
+	"description_read_more": "Read more",
 	"party_video": "Video",
 	"party_no_video": "No video",
 	"party_add_video": "Add a video",
@@ -1430,6 +1432,7 @@
 	"toast_failed_duplicate": "Failed to duplicate",
 	"toast_failed_update_party": "Failed to update party",
 	"toast_failed_update_favorite": "Failed to update favorite status",
+	"toast_item_equipped": "Equipped {name}",
 	"toast_added_favorite": "{name} was added to your favorites",
 	"toast_removed_favorite": "{name} was removed from your favorites",
 	"toast_view_favorites": "View favorites",
@@ -1548,6 +1551,8 @@
 	"editor_strikethrough": "Strikethrough",
 	"editor_link": "Link",
 	"editor_prompt_link_url": "Enter the URL of the link:",
+	"editor_link_dialog_title": "Insert Link",
+	"editor_link_insert": "Insert",
 	"editor_blockquote": "BlockQuote",
 	"editor_inline_code": "Inline Code",
 	"editor_superscript": "Superscript",

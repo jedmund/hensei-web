@@ -44,6 +44,7 @@
 	"action_save": "保存",
 	"action_saving": "保存中",
 	"action_edit": "編集",
+	"action_replace": "変更",
 	"action_add": "追加",
 
 	"editor_heading_1": "見出し1",
@@ -1326,6 +1327,7 @@
 
 	"party_no_description": "説明なし",
 	"party_write_description": "説明を書く",
+	"description_read_more": "続きを読む",
 	"party_video": "動画",
 	"party_no_video": "動画なし",
 	"party_add_video": "動画を追加",
@@ -1430,6 +1432,7 @@
 	"toast_failed_duplicate": "複製に失敗しました",
 	"toast_failed_update_party": "編成の更新に失敗しました",
 	"toast_failed_update_favorite": "お気に入りの更新に失敗しました",
+	"toast_item_equipped": "{name}をセットしました",
 	"toast_added_favorite": "「{name}」をお気に入りに追加しました",
 	"toast_removed_favorite": "「{name}」をお気に入りから削除しました",
 	"toast_view_favorites": "お気に入りを見る",
@@ -1548,6 +1551,8 @@
 	"editor_strikethrough": "取り消し線",
 	"editor_link": "リンク",
 	"editor_prompt_link_url": "リンクのURLを入力:",
+	"editor_link_dialog_title": "リンクを挿入",
+	"editor_link_insert": "挿入",
 	"editor_blockquote": "引用",
 	"editor_inline_code": "インラインコード",
 	"editor_superscript": "上付き",

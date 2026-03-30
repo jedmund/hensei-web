@@ -102,66 +102,82 @@
 				: null
 	)
 
-	// Measure content height to determine if fade gradient is needed
+	// Measure content to determine if "Read more" is needed (text overflows 3 lines)
 	let contentEl = $state<HTMLDivElement | undefined>(undefined)
-	let needsFade = $state(false)
+	let needsReadMore = $state(false)
 
 	$effect(() => {
 		if (contentEl) {
-			// Show fade if content is taller than ~2 lines
-			// Based on line-height 1.5 × font-size ~16px × 2 lines ≈ 48px
-			needsFade = contentEl.scrollHeight > 48
+			needsReadMore = contentEl.scrollHeight > contentEl.clientHeight
 		}
 	})
 
-	/** Extract plain text from first two non-empty paragraphs of TipTap JSON content */
-	function getPreviewParagraphs(content?: string): string[] {
-		if (!content) return []
+	/** Extract inline text from a TipTap node */
+	function getNodeText(node: JSONContent): string {
+		if (node.type === 'text') return node.text ?? ''
+		if (node.type === 'mention') {
+			const id = node.attrs?.id as
+				| { name?: { en?: string; ja?: string }; granblue_en?: string }
+				| undefined
+			const name = localizedName(id?.name)
+			return name !== '—' ? name : (id?.granblue_en ?? '')
+		}
+		return ''
+	}
+
+	/** Extract text from a block node */
+	function getBlockText(block: JSONContent): string {
+		return block.content?.map(getNodeText).join('') ?? ''
+	}
+
+	/** Extract first paragraph text and whether more content exists */
+	function getPreviewData(content?: string): { text: string; hasMore: boolean } {
+		if (!content) return { text: '', hasMore: false }
 
 		try {
 			const json = JSON.parse(content) as JSONContent
-			if (json.type !== 'doc' || !json.content?.length) return []
+			if (json.type !== 'doc' || !json.content?.length) return { text: '', hasMore: false }
 
-			// Extract text from an inline node (text or mention)
-			const getNodeText = (node: JSONContent): string => {
-				if (node.type === 'text') return node.text ?? ''
-				if (node.type === 'mention') {
-					const id = node.attrs?.id as
-						| { name?: { en?: string; ja?: string }; granblue_en?: string }
-						| undefined
-					const name = localizedName(id?.name)
-					return name !== '—' ? name : (id?.granblue_en ?? '')
-				}
-				return ''
-			}
-
-			// Extract text from a block
-			const getBlockText = (block: JSONContent): string =>
-				block.content?.map(getNodeText).join('') ?? ''
-
-			// Find first two non-empty paragraphs or headings
-			const paragraphs: string[] = []
-			for (const node of json.content) {
+			// Find the first non-empty paragraph or heading
+			let firstText = ''
+			let firstBlockIndex = -1
+			for (let i = 0; i < json.content.length; i++) {
+				const node = json.content[i]!
 				if (node.type !== 'paragraph' && node.type !== 'heading') continue
 				const text = getBlockText(node).trim()
 				if (text) {
-					paragraphs.push(text)
-					if (paragraphs.length >= 2) break
+					firstText = text
+					firstBlockIndex = i
+					break
 				}
 			}
 
-			return paragraphs
+			if (!firstText) return { text: '', hasMore: false }
+
+			// Check if there's more content after the first block
+			const hasMoreBlocks = json.content.slice(firstBlockIndex + 1).some((node) => {
+				if (node.type === 'paragraph' || node.type === 'heading') {
+					return getBlockText(node).trim().length > 0
+				}
+				// Lists, blockquotes, etc. count as more content
+				return node.type !== 'paragraph'
+			})
+
+			return { text: firstText, hasMore: hasMoreBlocks }
 		} catch {
-			// Plain text fallback - return first two non-empty lines
-			return content
+			// Plain text fallback
+			const lines = content
 				.split('\n')
 				.map((l) => l.trim())
 				.filter(Boolean)
-				.slice(0, 2)
+			return {
+				text: lines[0] ?? '',
+				hasMore: lines.length > 1
+			}
 		}
 	}
 
-	const previewParagraphs = $derived(getPreviewParagraphs(description))
+	const preview = $derived(getPreviewData(description))
 
 	// Battle settings tokens
 	interface Setting {
@@ -174,25 +190,25 @@
 	const settings: Setting[] = $derived([
 		{
 			key: 'chargeAttack',
-			label: `CA ${(chargeAttack ?? true) ? m.battle_on() : m.battle_off()}`,
+			label: `${m.battle_charge_attack()} ${(chargeAttack ?? true) ? m.battle_on() : m.battle_off()}`,
 			tooltip: m.battle_charge_attack(),
 			active: chargeAttack ?? true
 		},
 		{
 			key: 'fullAuto',
-			label: `FA ${fullAuto ? m.battle_on() : m.battle_off()}`,
+			label: `${m.battle_full_auto()} ${fullAuto ? m.battle_on() : m.battle_off()}`,
 			tooltip: m.battle_full_auto(),
 			active: fullAuto ?? false
 		},
 		{
 			key: 'autoSummon',
-			label: `AS ${autoSummon ? m.battle_on() : m.battle_off()}`,
+			label: `${m.battle_auto_summon()} ${autoSummon ? m.battle_on() : m.battle_off()}`,
 			tooltip: m.battle_auto_summon(),
 			active: autoSummon ?? false
 		},
 		{
 			key: 'autoGuard',
-			label: `AG ${autoGuard ? m.battle_on() : m.battle_off()}`,
+			label: `${m.battle_auto_guard()} ${autoGuard ? m.battle_on() : m.battle_off()}`,
 			tooltip: m.battle_auto_guard(),
 			active: autoGuard ?? false
 		}
@@ -208,7 +224,7 @@
 	const formattedClearTime = $derived(formatClearTime(clearTime))
 </script>
 
-<div class="description-tile" class:has-fade={needsFade}>
+<div class="description-tile">
 	<!-- Header: Title + Actions -->
 	<div class="tile-header-container">
 		<div class="tile-header">
@@ -432,15 +448,14 @@
 	<button
 		type="button"
 		class="description-content"
-		onclick={canEdit && !previewParagraphs.length && onEditDescription
-			? onEditDescription
-			: onOpenDescription}
+		onclick={canEdit && !preview.text && onEditDescription ? onEditDescription : onOpenDescription}
 	>
-		{#if previewParagraphs.length}
+		{#if preview.text}
 			<div class="preview-text" bind:this={contentEl}>
-				{#each previewParagraphs as paragraph, i (i)}
-					<p>{paragraph}</p>
-				{/each}
+				<p>
+					{preview.text}{#if preview.hasMore || needsReadMore}
+						<span class="read-more">{m.description_read_more()}</span>{/if}
+				</p>
 			</div>
 		{:else}
 			<span class="empty-state"
@@ -466,18 +481,6 @@
 		gap: $unit;
 		overflow: hidden;
 		position: relative;
-
-		&.has-fade::after {
-			content: '';
-			position: absolute;
-			bottom: 0;
-			left: 0;
-			right: 0;
-			height: 96px;
-			background: linear-gradient(to bottom, transparent, var(--card-bg));
-			pointer-events: none;
-			border-radius: 0 0 $card-corner $card-corner;
-		}
 	}
 
 	.tile-header-container {
@@ -628,14 +631,18 @@
 		color: var(--text-secondary);
 		overflow: hidden;
 		line-height: 1.5;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
 
 		p {
-			margin: 0 0 $unit-half 0;
-
-			&:last-child {
-				margin-bottom: 0;
-			}
+			margin: 0;
+			display: inline;
 		}
+	}
+
+	.read-more {
+		color: var(--text-tertiary);
 	}
 
 	.empty-state {
