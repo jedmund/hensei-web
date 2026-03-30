@@ -46,6 +46,9 @@
 		}
 	})
 
+	// Bahamut mode bar affects layout positioning
+	const isBahamut = $derived(data?.currentUser?.bahamut === true)
+
 	// Reference to the scrolling container
 	let mainContent: HTMLElement | undefined
 
@@ -130,7 +133,7 @@
 {/if}
 <Tooltip.Provider>
 	<div class="app-container" class:sidebar-open={sidebar.isOpen}>
-		<div class="main-pane">
+		<div class="main-pane" style:--bahamut-offset={isBahamut ? '16px' : '0px'}>
 			<div class="nav-blur-background" class:scrolled={isScrolled}></div>
 			<div class="main-navigation">
 				<Navigation
@@ -242,7 +245,9 @@
 				overflow-y: auto;
 				overflow-x: hidden;
 				position: relative;
-				padding-top: 81px; // Space for fixed navigation (matches $nav-height)
+				padding-top: calc(
+					81px + var(--bahamut-offset, 0px)
+				); // Space for fixed nav + optional bahamut bar
 				padding-bottom: 20vh; // Extra space at bottom for comfortable scrolling
 				z-index: $z-badge; // Ensure scrollbar is above blur background
 

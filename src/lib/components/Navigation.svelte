@@ -16,6 +16,7 @@
 	import InvitationsModal from './crew/InvitationsModal.svelte'
 	import DatabaseNavigation from './DatabaseNavigation.svelte'
 	import { authStore } from '$lib/stores/auth.store.svelte'
+	import { invalidateAll } from '$app/navigation'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import LanguageToggle from './LanguageToggle.svelte'
@@ -44,6 +45,9 @@
 	const userElement = $derived(
 		currentUser?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 	)
+
+	// Bahamut mode state
+	const isBahamut = $derived(currentUser?.bahamut === true)
 
 	// Localized links
 	const galleryHref = $derived(localizeHref('/teams/explore'))
@@ -123,6 +127,19 @@
 	const pendingPhantomClaimCount = $derived(pendingPhantomClaimsQuery.data?.length ?? 0)
 	const totalNotificationCount = $derived(pendingInvitationCount + pendingPhantomClaimCount)
 
+	// Turn off Bahamut Mode
+	async function handleBahamutOff() {
+		if (!currentUser) return
+		const updatedUser = { ...currentUser, bahamut: false }
+		await fetch('/api/settings', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(updatedUser)
+		})
+		await invalidateAll()
+		window.location.reload()
+	}
+
 	// Handle logout
 	async function handleLogout() {
 		try {
@@ -141,6 +158,12 @@
 		}
 	}
 </script>
+
+{#if isBahamut}
+	<button class="bahamut-bar" onclick={handleBahamutOff}>
+		{m.nav_bahamut_mode_on()}
+	</button>
+{/if}
 
 <nav aria-label="Global" class={elementClass}>
 	{#if isDatabaseRoute}
@@ -389,6 +412,27 @@
 	@each $el in $elements {
 		.crew-notification-dot.#{$el} {
 			background: var(--#{$el}-button-bg);
+		}
+	}
+
+	// Bahamut mode bar — full-width strip above the navigation
+	.bahamut-bar {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		padding: spacing.$unit;
+		background-color: #7c3aed;
+		color: white;
+		border: none;
+		cursor: pointer;
+		font-family: var(--font-family);
+		font-size: typography.$font-tiny;
+		font-weight: typography.$medium;
+		transition: background-color 0.2s ease;
+
+		&:hover {
+			background-color: #6d28d9;
 		}
 	}
 
