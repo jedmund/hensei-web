@@ -31,9 +31,15 @@
 	}: Props = $props()
 
 	const defaultRepView = getDefaultRepView()
-	let currentView: 'weapons' | 'summons' | 'characters' = $derived.writable(
+	// eslint-disable-next-line svelte/prefer-writable-derived -- $derived.writable not available in Svelte 5
+	let currentView: 'weapons' | 'summons' | 'characters' = $state(
 		defaultRepView.value as 'weapons' | 'summons' | 'characters'
 	)
+
+	// Sync when the user changes their default in settings
+	$effect(() => {
+		currentView = defaultRepView.value as 'weapons' | 'summons' | 'characters'
+	})
 
 	let href = $derived(
 		hrefProp ??
