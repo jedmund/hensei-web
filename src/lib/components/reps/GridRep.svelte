@@ -9,6 +9,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
+	import { getAvatarSrc } from '$lib/utils/avatar'
 	import { getDefaultRepView } from '$lib/stores/defaultRepView.svelte'
 	import * as m from '$lib/paraglide/messages'
 
@@ -83,6 +84,25 @@
 				{/if}
 				<h2 class:empty={!party.name}>{party.name || m.grid_untitled()}</h2>
 			</div>
+			{#if party.user}
+				<div class="user-row">
+					<span class="user-link">
+						{#if party.user.avatar?.picture}
+							<img
+								class="user-avatar"
+								src={getAvatarSrc(party.user.avatar.picture)}
+								alt=""
+								width="20"
+								height="20"
+								loading="lazy"
+							/>
+						{:else}
+							<div class="user-avatar-placeholder" aria-hidden="true"></div>
+						{/if}
+						<span class="user-name">{party.user.displayName ?? party.user.username}</span>
+					</span>
+				</div>
+			{/if}
 			<div class="details">
 				<div class="details-text">
 					{#if party.job}
@@ -266,6 +286,44 @@
 			&.empty {
 				color: var(--text-tertiary);
 			}
+		}
+
+		.user-row {
+			min-width: 0;
+		}
+
+		.user-link {
+			display: inline-flex;
+			align-items: center;
+			gap: spacing.$unit-half;
+			color: var(--text-secondary);
+			min-width: 0;
+			max-width: 100%;
+		}
+
+		.user-avatar {
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			object-fit: cover;
+			flex-shrink: 0;
+			background: var(--button-bg);
+		}
+
+		.user-avatar-placeholder {
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			background: var(--button-bg);
+			flex-shrink: 0;
+		}
+
+		.user-name {
+			font-size: typography.$font-small;
+			font-weight: typography.$medium;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 		}
 
 		.details {
