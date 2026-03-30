@@ -25,6 +25,7 @@ interface ApiUserResponse {
 	importWeapons?: boolean // transformed from import_weapons
 	defaultImportVisibility?: number // transformed from default_import_visibility
 	simplePortraits?: boolean // transformed from simple_portraits
+	defaultRepView?: string // transformed from default_rep_view
 	gamertag?: string
 	crewName?: string
 	email?: string // Only included in settings view
@@ -56,6 +57,7 @@ export interface UserInfo {
 	importWeapons?: boolean
 	defaultImportVisibility?: number
 	simplePortraits?: boolean
+	defaultRepView?: string
 	crewGamertag?: string
 	crewName?: string
 	avatar: {
@@ -110,6 +112,7 @@ function transformUserResponse(apiUser: ApiUserResponse): UserInfo {
 		importWeapons: apiUser.importWeapons,
 		defaultImportVisibility: apiUser.defaultImportVisibility,
 		simplePortraits: apiUser.simplePortraits,
+		defaultRepView: apiUser.defaultRepView,
 		// Rename gamertag to crewGamertag
 		crewGamertag: apiUser.gamertag,
 		crewName: apiUser.crewName,

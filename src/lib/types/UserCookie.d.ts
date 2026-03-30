@@ -13,4 +13,5 @@ export interface UserCookie {
 	importWeapons?: boolean
 	defaultImportVisibility?: number
 	simplePortraits?: boolean
+	defaultRepView?: string
 }
