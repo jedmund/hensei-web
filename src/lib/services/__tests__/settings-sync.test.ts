@@ -45,7 +45,8 @@ const baseUser: UserCookie = {
 	element: 'fire',
 	language: 'en',
 	gender: 0,
-	theme: 'system'
+	theme: 'system',
+	defaultRepView: 'weapons'
 }
 
 beforeEach(() => {
