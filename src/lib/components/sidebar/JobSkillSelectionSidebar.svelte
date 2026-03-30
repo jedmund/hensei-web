@@ -11,6 +11,9 @@
 	import SelectionSidebarLayout from './SelectionSidebarLayout.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { untrack } from 'svelte'
+	import { toast } from 'svelte-sonner'
+	import { localizedName } from '$lib/utils/locale'
+	import SelectionToast from '../ui/SelectionToast.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -146,6 +149,14 @@
 		}
 
 		onSelectSkill?.(skill, { searchQuery, skillCategory })
+
+		const skillName = localizedName(skill.name)
+		toast.custom(SelectionToast, {
+			componentProps: {
+				itemName: skillName,
+				message: m.toast_item_equipped({ name: skillName })
+			}
+		})
 	}
 
 	function handleRemoveSkill() {

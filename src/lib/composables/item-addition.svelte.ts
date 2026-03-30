@@ -4,6 +4,15 @@ import type { AddItemResult } from '$lib/types/api/search'
 import { GridType } from '$lib/types/enums'
 import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 import { isConflictResponse, createConflictData, type ConflictData } from '$lib/types/api/conflict'
+import { toast } from 'svelte-sonner'
+import { localizedName } from '$lib/utils/locale'
+import {
+	getCharacterImage,
+	getWeaponImage,
+	getSummonImage
+} from '$lib/features/database/detail/image'
+import SelectionToast from '$lib/components/ui/SelectionToast.svelte'
+import * as m from '$lib/paraglide/messages'
 
 interface ItemAdditionOptions {
 	mutations: PartyMutations
@@ -82,6 +91,23 @@ export function useItemAddition(opts: ItemAdditionOptions) {
 					return
 				}
 			}
+
+			// Show confirmation toast
+			const itemName = localizedName(item.name)
+			const imageUrl =
+				activeTab === GridType.Character
+					? getCharacterImage(item.granblueId, 'square')
+					: activeTab === GridType.Weapon
+						? getWeaponImage(item.granblueId, 'square')
+						: getSummonImage(item.granblueId, 'square')
+			toast.custom(SelectionToast, {
+				componentProps: {
+					itemName,
+					message: m.toast_item_equipped({ name: itemName }),
+					imageUrl,
+					imageClass: 'square'
+				}
+			})
 
 			// Find next empty slot for continuous adding
 			// Re-read party to get post-mutation state; fall back to marking
