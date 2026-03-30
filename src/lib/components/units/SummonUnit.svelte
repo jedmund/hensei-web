@@ -75,7 +75,9 @@
 		if (!item) return
 		openDetailsSidebar({
 			type: 'summon',
-			item
+			item,
+			isOwner: ctx?.canEdit() ?? false,
+			onReplace: ctx?.canEdit() ? replace : undefined
 		})
 	}
 

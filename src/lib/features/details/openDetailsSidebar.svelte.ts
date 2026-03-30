@@ -8,12 +8,15 @@ import EditWeaponPane from '$lib/components/sidebar/EditWeaponPane.svelte'
 import EditCharacterSidebar from '$lib/components/sidebar/EditCharacterSidebar.svelte'
 import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 import { canWeaponBeModified, canCharacterBeModified } from '$lib/utils/modificationDetector'
+import * as m from '$lib/paraglide/messages'
 
 interface DetailsSidebarOptions {
 	type: 'weapon' | 'character' | 'summon'
 	item: GridCharacter | GridWeapon | GridSummon
 	onSaveWeapon?: (id: string, updates: Partial<GridWeapon>) => Promise<void>
 	onSaveCharacter?: (id: string, updates: Partial<GridCharacter>) => Promise<void>
+	isOwner?: boolean
+	onReplace?: () => void
 }
 
 function getItemElement(
@@ -79,6 +82,14 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 	// Open the sidebar with the details component
 	const title =
 		itemName !== 'Details' ? itemName : `${type.charAt(0).toUpperCase() + type.slice(1)} Details`
+
+	// When the user is the owner, "Replace" is the primary action and "Edit" goes to overflow
+	const isOwner = options.isOwner ?? false
+	const onReplace = options.onReplace
+
+	const primaryAction = isOwner && onReplace ? onReplace : onsave
+	const primaryLabel = isOwner && onReplace ? m.action_replace() : 'Edit'
+
 	sidebar.openWithComponent(
 		title,
 		DetailsSidebar,
@@ -87,11 +98,16 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 			item
 		},
 		{
-			onsave,
-			saveLabel: 'Edit',
+			onsave: primaryAction,
+			saveLabel: primaryLabel,
 			element
 		}
 	)
+
+	// If owner with replace as primary, move Edit to overflow menu
+	if (isOwner && onReplace && onsave) {
+		sidebar.setOverflowMenu([{ label: m.action_edit(), handler: onsave }])
+	}
 }
 
 export function openWeaponEditSidebar(
