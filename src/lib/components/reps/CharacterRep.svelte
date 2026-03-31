@@ -50,7 +50,7 @@
 			c?.uncapLevel ?? 0,
 			c?.transcendenceStep ?? 0,
 			mainWeaponElement,
-			undefined, // partyElement not used here
+			party?.element,
 			c?.character?.styleSwap,
 			simplePortraits.value,
 			c?.character?.element,
