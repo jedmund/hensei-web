@@ -29,7 +29,7 @@
 		const id = c?.character?.granblueId
 		if (!id) return ''
 
-		// Get mainhand weapon element for Gran/Djeeta
+		// Get mainhand weapon element for null-element characters
 		let mainWeaponElement: number | undefined
 		if (party) {
 			const main: GridWeapon | undefined = (party.weapons || []).find(
@@ -49,7 +49,8 @@
 			mainWeaponElement,
 			undefined, // partyElement not used here
 			c?.character?.styleSwap,
-			simplePortraits.value
+			simplePortraits.value,
+			c?.character?.element
 		)
 	}
 </script>
