@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { page } from '$app/stores'
 
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -41,9 +42,12 @@
 		{ value: 4, label: 'Purple' }
 	]
 
+	// Read job query parameter from URL
+	const initialJobId = $page.url.searchParams.get('job') ?? ''
+
 	// Form data
 	let editData = $state({
-		jobGranblueId: '',
+		jobGranblueId: initialJobId,
 		nameEn: '',
 		nameJp: '',
 		skillType: 'main' as 'main' | 'sub' | 'emp' | 'base',
@@ -53,17 +57,19 @@
 		actionId: 0
 	})
 
-	// Build job options from query
+	// Build job options from query, deduplicating by granblueId
 	const jobOptions = $derived.by(() => {
 		const jobs = jobsQuery.data ?? []
+		const sorted = jobs.sort((a, b) => a.row - b.row || (a.order ?? 0) - (b.order ?? 0))
+		const unique = sorted.filter(
+			(j, i, arr) => arr.findIndex((x) => x.granblueId === j.granblueId) === i
+		)
 		return [
 			{ value: '', label: 'Select a job...' },
-			...jobs
-				.sort((a, b) => a.row - b.row || (a.order ?? 0) - (b.order ?? 0))
-				.map((j) => ({
-					value: j.granblueId,
-					label: localizedName(j.name)
-				}))
+			...unique.map((j) => ({
+				value: j.granblueId,
+				label: localizedName(j.name)
+			}))
 		]
 	})
 
