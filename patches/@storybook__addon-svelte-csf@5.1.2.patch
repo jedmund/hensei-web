@@ -1,0 +1,24 @@
+diff --git a/dist/runtime/LegacyTemplate.svelte b/dist/runtime/LegacyTemplate.svelte
+index 085b113935e2d4b4624383539117165fd5b33457..70af348a2dac76a31c4f13396bf6ba5585987138 100644
+--- a/dist/runtime/LegacyTemplate.svelte
++++ b/dist/runtime/LegacyTemplate.svelte
+@@ -9,17 +9,6 @@ Vite pre-transform hook does codemod where this component gets transformed into
+ @see {@link https://github.com/storybookjs/addon-svelte-csf/blob/main/MIGRATION.md#template-component-removed}
+ -->
+ <script lang="ts">
+-  import type { Slots, TemplateProps } from '../legacy-types.d.ts';
+-
+-  export let id: string = 'default';
+-  // silents the Svelte warning about 'id' being unused. It's only here for typing purposes.
+-  const silentWarningAboutId = id;
+-
+-  type $$Props = TemplateProps;
+-  type $$Slots = Slots;
+-
+-  let args!: $$Slots['default']['args'];
+-  let context!: $$Slots['default']['context'];
++  let { id = 'default' }: { id?: string } = $props();
++  void id;
+ </script>
+-
+-<slot {context} {args} />

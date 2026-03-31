@@ -134,6 +134,15 @@
 	</div>
 </Story>
 
+<!-- Element Ghost -->
+<Story name="Element Ghost" asChild>
+	<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
+		{#each elements as element (element)}
+			<Button variant="element-ghost" {element}>{element}</Button>
+		{/each}
+	</div>
+</Story>
+
 <!-- Contained -->
 <Story name="Contained" asChild>
 	<div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center;">
