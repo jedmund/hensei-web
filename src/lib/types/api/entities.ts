@@ -130,6 +130,8 @@ export interface Character {
 	kamigame?: string
 	nicknames?: { en?: string[]; ja?: string[] }
 	recruitedBy?: { id: string; granblueId: string; name: LocalizedName; promotionNames?: string[] }
+	// Gender variant fields
+	genderVariants?: boolean
 	// Style swap fields
 	styleSwap?: boolean
 	styleName?: LocalizedName | null

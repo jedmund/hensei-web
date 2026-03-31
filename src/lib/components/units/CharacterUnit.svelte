@@ -67,7 +67,7 @@
 			item.character.styleSwap,
 			simplePortraits.value,
 			item.character.element,
-			gender
+			item.character.genderVariants ? gender : undefined
 		)
 	})
 

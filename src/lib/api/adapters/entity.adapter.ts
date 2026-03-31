@@ -200,6 +200,8 @@ export interface Character {
 		promotions: number[]
 		promotionNames: string[]
 	}
+	// Gender variant fields
+	genderVariants?: boolean
 	// Style swap fields (from :full view)
 	styleSwap?: boolean
 	styleName?: { en?: string; ja?: string } | null
