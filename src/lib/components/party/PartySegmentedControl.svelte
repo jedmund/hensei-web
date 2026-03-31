@@ -47,7 +47,7 @@
 			labelIcon={jobIcon}
 			selected={value === GridType.Character}
 		>
-			<CharacterRep {characters} {unlimited} />
+			<CharacterRep {party} {characters} {unlimited} />
 		</RepSegment>
 
 		<RepSegment
