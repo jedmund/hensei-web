@@ -355,6 +355,8 @@
 			a {
 				color: var(--accent-blue);
 				text-decoration: none;
+				overflow-wrap: break-word;
+				word-break: break-word;
 
 				&:hover {
 					text-decoration: underline;
