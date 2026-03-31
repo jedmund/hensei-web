@@ -389,7 +389,8 @@ export function getCharacterImageWithPose(
 	mainWeaponElement?: number | null,
 	partyElement?: number | null,
 	styleSwap?: boolean,
-	simplePortraits?: boolean
+	simplePortraits?: boolean,
+	characterElement?: number | null
 ): string {
 	if (!id) {
 		return getPlaceholderImage('character', variant)
@@ -402,9 +403,11 @@ export function getCharacterImageWithPose(
 
 	let pose = getCharacterPose(uncapLevel, transcendenceStep, simplePortraits)
 
-	// Special handling for Gran/Djeeta (3030182000)
-	if (String(id) === '3030182000') {
-		const element = mainWeaponElement || partyElement || 1
+	// Null-element characters (element === 0) use element-suffixed images
+	// based on the mainhand weapon element or party element.
+	// Only apply when there's a party context (mainWeaponElement or partyElement).
+	if (characterElement === 0 && (mainWeaponElement || partyElement)) {
+		const element = mainWeaponElement || partyElement
 		pose = `${pose}_0${element}`
 	}
 
