@@ -148,7 +148,7 @@
 	}
 
 	function handleCancel() {
-		goto('/database/jobs?view=skills')
+		goto(initialJobId ? `/database/jobs/${initialJobId}?tab=skills` : '/database/jobs?view=skills')
 	}
 </script>
 
