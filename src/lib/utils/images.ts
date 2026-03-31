@@ -408,7 +408,7 @@ export function getCharacterImageWithPose(
 	// Only apply when there's a party context (mainWeaponElement or partyElement).
 	if (characterElement === 0 && (mainWeaponElement || partyElement)) {
 		const element = mainWeaponElement || partyElement
-		pose = `${pose}_0${element}`
+		pose = `${pose}_0${element}_0`
 	}
 
 	return getImageUrl('character', id, variant, { pose })

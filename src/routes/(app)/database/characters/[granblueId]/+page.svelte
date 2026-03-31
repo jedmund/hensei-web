@@ -161,7 +161,7 @@
 				for (const pose of poses) {
 					for (const variant of variants) {
 						images.push({
-							url: getCharacterImage(character.granblueId, variant, `${pose.id}_0${element}`),
+							url: getCharacterImage(character.granblueId, variant, `${pose.id}_0${element}_0`),
 							label: `${variant} (${pose.label} — ${elementLabel})`,
 							variant,
 							pose: `${pose.id}-element-${element}`,
