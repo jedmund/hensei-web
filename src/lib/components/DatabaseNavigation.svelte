@@ -160,6 +160,9 @@
 						<a href={localizeHref('/database/jobs/new')}>{m.nav_new_job()}</a>
 					</DropdownItem>
 					<DropdownItem>
+						<a href={localizeHref('/database/job-skills/new')}>{m.nav_new_job_skill()}</a>
+					</DropdownItem>
+					<DropdownItem>
 						<a href={localizeHref('/database/job-accessories/new')}>{m.nav_new_job_accessory()}</a>
 					</DropdownItem>
 				{:else}
