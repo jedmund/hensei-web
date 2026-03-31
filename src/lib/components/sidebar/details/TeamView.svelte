@@ -7,27 +7,87 @@
 	import WeaponKeysList from '../modifications/WeaponKeysList.svelte'
 	import ArtifactSummary from '../modifications/ArtifactSummary.svelte'
 	import { getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
+	import { seriesHasWeaponKeys, getSeriesSlug } from '$lib/utils/weaponSeries'
+	import WeaponKeySelect from '$lib/components/sidebar/edit/WeaponKeySelect.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
+	import ElementPickerSegmented from '$lib/components/ui/element-picker/ElementPickerSegmented.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
 	import { getBulletImage } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
+	import { useUpdateGridWeapon } from '$lib/api/mutations/grid.mutations'
+	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
 		item: GridCharacter | GridWeapon | GridSummon
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
-		itemData: any
 		gridUncapLevel: number | null
 		gridTranscendence: number | null
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic modification status
 		modificationStatus: any
+		isPartyOwner?: boolean
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	let { type, item, itemData, gridUncapLevel, gridTranscendence, modificationStatus }: Props =
-		$props()
+	let {
+		type,
+		item,
+		gridUncapLevel,
+		gridTranscendence,
+		modificationStatus,
+		isPartyOwner = false
+	}: Props = $props()
+
+	const updateWeaponMutation = useUpdateGridWeapon()
+	let showElementPicker = $state(false)
+	let showWeaponKeyEditor = $state(false)
+	let editKey1 = $state<string | undefined>(undefined)
+	let editKey2 = $state<string | undefined>(undefined)
+	let editKey3 = $state<string | undefined>(undefined)
+
+	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+	const userElement = $derived(partyStore.party?.user?.avatar?.element as ElementType | undefined)
+
+	function handleElementChange(value: number | number[]) {
+		const element = typeof value === 'number' ? value : value[0]
+		if (element === undefined) return
+
+		const weapon = item as GridWeapon
+		const shortcode = partyStore.party?.shortcode
+		if (!weapon.id || !shortcode) return
+
+		updateWeaponMutation.mutate({
+			id: weapon.id,
+			partyShortcode: shortcode,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial update only needs element field
+			updates: { element } as any
+		})
+		showElementPicker = false
+	}
+
+	// Weapon key editing
+	const seriesSlug = $derived(getSeriesSlug((item as GridWeapon).weapon?.series))
+	const keySlotCount = $derived((item as GridWeapon).weapon?.series?.numWeaponKeys ?? 0)
+
+	function handleWeaponKeySave() {
+		const weapon = item as GridWeapon
+		const shortcode = partyStore.party?.shortcode
+		if (!weapon.id || !shortcode) return
+
+		const updates: Record<string, unknown> = {}
+		if (editKey1 !== undefined) updates.weaponKey1Id = editKey1
+		if (editKey2 !== undefined) updates.weaponKey2Id = editKey2
+		if (editKey3 !== undefined) updates.weaponKey3Id = editKey3
+
+		updateWeaponMutation.mutate({
+			id: weapon.id,
+			partyShortcode: shortcode,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial update only needs key fields
+			updates: updates as any
+		})
+		showWeaponKeyEditor = false
+	}
 
 	// Get uncap capabilities from item data based on type
 	let uncapCaps = $derived.by(() => {
@@ -110,9 +170,97 @@
 			</DetailsSection>
 		{/if}
 
-		{#if modificationStatus.hasWeaponKeys}
-			<DetailsSection title={getWeaponKeyTitle(weapon.weapon?.series)}>
-				<WeaponKeysList weaponKeys={weapon.weaponKeys} weaponData={weapon.weapon} layout="list" />
+		{#if weapon.weapon?.element === 0}
+			<DetailsSection
+				title={m.details_element()}
+				empty={!weapon.element && !showElementPicker}
+				emptyMessage={m.details_element_not_set()}
+			>
+				{#snippet action()}
+					{#if isPartyOwner}
+						<Button
+							variant="element-ghost"
+							size="small"
+							element={userElement}
+							onclick={() => (showElementPicker = !showElementPicker)}
+						>
+							{showElementPicker ? m.action_done() : m.action_change()}
+						</Button>
+					{/if}
+				{/snippet}
+				{#if showElementPicker}
+					<ElementPickerSegmented
+						value={weapon.element || undefined}
+						onValueChange={handleElementChange}
+						contained
+						class="element-picker-full"
+					/>
+				{:else}
+					<DetailRow label={m.details_weapon_element()}>
+						<ElementLabel element={weapon.element} size="medium" />
+					</DetailRow>
+				{/if}
+			</DetailsSection>
+		{/if}
+
+		{#if seriesHasWeaponKeys(weapon.weapon?.series)}
+			<DetailsSection
+				title={getWeaponKeyTitle(weapon.weapon?.series)}
+				empty={!modificationStatus.hasWeaponKeys && !showWeaponKeyEditor}
+				emptyMessage={m.details_weapon_keys_not_set()}
+			>
+				{#snippet action()}
+					{#if isPartyOwner}
+						<Button
+							variant="element-ghost"
+							size="small"
+							element={userElement}
+							onclick={() => {
+								if (showWeaponKeyEditor) {
+									handleWeaponKeySave()
+								} else {
+									const weapon = item as GridWeapon
+									editKey1 = weapon.weaponKeys?.[0]?.id
+									editKey2 = weapon.weaponKeys?.[1]?.id
+									editKey3 = weapon.weaponKeys?.[2]?.id
+									showWeaponKeyEditor = true
+								}
+							}}
+						>
+							{showWeaponKeyEditor ? m.action_save() : m.action_change()}
+						</Button>
+					{/if}
+				{/snippet}
+				{#if showWeaponKeyEditor}
+					<div class="key-selects">
+						{#if keySlotCount >= 1}
+							<WeaponKeySelect
+								{seriesSlug}
+								slot={0}
+								bind:value={editKey1}
+								transcendenceStep={weapon.transcendenceStep ?? 0}
+							/>
+						{/if}
+						{#if keySlotCount >= 2}
+							<WeaponKeySelect
+								{seriesSlug}
+								slot={1}
+								bind:value={editKey2}
+								transcendenceStep={weapon.transcendenceStep ?? 0}
+							/>
+						{/if}
+						{#if keySlotCount >= 3}
+							<WeaponKeySelect
+								{seriesSlug}
+								slot={2}
+								bind:value={editKey3}
+								transcendenceStep={weapon.transcendenceStep ?? 0}
+							/>
+						{/if}
+					</div>
+				{:else}
+					<WeaponKeysList weaponKeys={weapon.weaponKeys} weaponData={weapon.weapon} layout="list" />
+				{/if}
 			</DetailsSection>
 		{/if}
 
@@ -139,14 +287,6 @@
 					label={m.details_exorcism_level()}
 					value={`${weapon.befoulment.exorcismLevel ?? 0}`}
 				/>
-			</DetailsSection>
-		{/if}
-
-		{#if modificationStatus.hasElement && weapon.element}
-			<DetailsSection title={m.details_element_override()}>
-				<DetailRow label={m.details_weapon_element()}>
-					<ElementLabel element={weapon.element} size="medium" />
-				</DetailRow>
 			</DetailsSection>
 		{/if}
 
@@ -185,6 +325,22 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-3x;
+	}
+
+	:global(.element-picker-full) {
+		width: 100%;
+		display: flex;
+
+		:global(.element-group) {
+			width: 100%;
+			justify-content: space-between;
+		}
+	}
+
+	.key-selects {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit;
 	}
 
 	.bullet-value {

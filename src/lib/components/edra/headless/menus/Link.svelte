@@ -2,7 +2,9 @@
 	import type { ShouldShowProps } from '../../types.js'
 	import BubbleMenu from '../../components/BubbleMenu.svelte'
 	import type { Editor } from '@tiptap/core'
+	import Button from '$lib/components/ui/Button.svelte'
 	import * as m from '$lib/paraglide/messages'
+	import ExternalLink from '@lucide/svelte/icons/external-link'
 	import Copy from '@lucide/svelte/icons/copy'
 	import Trash from '@lucide/svelte/icons/trash'
 
@@ -23,23 +25,30 @@
 		return props.editor.isActive('link')
 	}}
 >
-	<a href={link} target="_blank">
-		{link}
-	</a>
-	<button
-		title={m.editor_copy_link()}
-		class="edra-command-button"
+	<Button
+		variant="ghost"
+		size="small"
+		onclick={() => window.open(link, '_blank', 'noopener,noreferrer')}
+	>
+		{#snippet leftAccessory()}<ExternalLink size={14} />{/snippet}
+		{m.editor_visit_link()}
+	</Button>
+	<Button
+		variant="ghost"
+		size="small"
 		onclick={() => {
 			navigator.clipboard.writeText(link)
 		}}
 	>
-		<Copy class="edra-toolbar-icon" />
-	</button>
-	<button
-		class="edra-command-button"
-		title={m.editor_remove_link()}
+		{#snippet leftAccessory()}<Copy size={14} />{/snippet}
+		{m.editor_copy_link()}
+	</Button>
+	<Button
+		variant="ghost"
+		size="small"
 		onclick={() => editor.chain().focus().extendMarkRange('link').unsetLink().run()}
 	>
-		<Trash class="edra-toolbar-icon" />
-	</button>
+		{#snippet leftAccessory()}<Trash size={14} />{/snippet}
+		{m.editor_remove_link()}
+	</Button>
 </BubbleMenu>

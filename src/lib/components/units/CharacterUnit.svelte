@@ -104,7 +104,9 @@
 		openDetailsSidebar({
 			type: 'character',
 			item,
-			onSaveCharacter: getSaveCallback()
+			onSaveCharacter: getSaveCallback(),
+			isOwner: ctx?.canEdit() ?? false,
+			onReplace: ctx?.canEdit() ? replace : undefined
 		})
 	}
 

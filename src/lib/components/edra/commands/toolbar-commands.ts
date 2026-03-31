@@ -1,5 +1,6 @@
 import type { EdraToolBarCommands } from './types.js'
 import { isMac } from '../utils.js'
+import { linkDialogState } from '$lib/stores/linkDialog.svelte'
 import * as m from '$lib/paraglide/messages'
 import Undo from '@lucide/svelte/icons/undo-2'
 import Redo from '@lucide/svelte/icons/redo-2'
@@ -143,10 +144,9 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 				if (editor.isActive('link')) {
 					editor.chain().focus().unsetLink().run()
 				} else {
-					const url = window.prompt(m.editor_prompt_link_url())
-					if (url) {
-						editor.chain().focus().toggleLink({ href: url }).run()
-					}
+					const { from, to } = editor.state.selection
+					const selectedText = from !== to ? editor.state.doc.textBetween(from, to) : ''
+					linkDialogState.show(editor, '', selectedText)
 				}
 			},
 			isActive: (editor) => {

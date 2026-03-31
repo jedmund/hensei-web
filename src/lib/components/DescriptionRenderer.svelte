@@ -1,7 +1,20 @@
 <script lang="ts">
 	import type { JSONContent } from '@tiptap/core'
 	import { localizedName } from '$lib/utils/locale'
+	import { computePosition, flip, shift, offset } from '@floating-ui/dom'
+	import MentionTooltip from '$lib/components/ui/MentionTooltip.svelte'
 	import * as m from '$lib/paraglide/messages'
+
+	interface MentionEntity {
+		granblue_id: string
+		name: { en: string; ja: string }
+		type: string
+		element: { id: number; slug: string }
+		proficiency?: number | number[]
+		season?: number | null
+		series?: number[] | { id: string; slug: string; name: { en: string; ja: string } }[] | null
+		styleSwap?: boolean
+	}
 
 	interface Props {
 		content?: string
@@ -11,8 +24,19 @@
 
 	let { content, truncate = false, maxLines = 3 }: Props = $props()
 
-	// Convert TipTap JSON to HTML manually
-	function jsonToHtml(node: JSONContent): string {
+	// Tooltip state
+	let tooltipEntity: MentionEntity | null = $state(null)
+	let tooltipVisible = $state(false)
+	let tooltipEl: HTMLDivElement | null = $state(null)
+	let containerEl: HTMLDivElement | null = $state(null)
+
+	// Convert TipTap JSON to HTML, collecting mention entities as a side effect
+	// The collector map is passed in rather than mutating module-level state
+	function jsonToHtml(
+		node: JSONContent,
+		collector: Map<number, MentionEntity>,
+		counter: { value: number }
+	): string {
 		if (!node) return ''
 
 		// Handle text nodes
@@ -53,36 +77,46 @@
 		// Handle different node types
 		switch (node.type) {
 			case 'doc':
-				return (node.content || []).map(jsonToHtml).join('')
+				return (node.content || []).map((n) => jsonToHtml(n, collector, counter)).join('')
 
 			case 'paragraph': {
-				const content = (node.content || []).map(jsonToHtml).join('')
+				const content = (node.content || []).map((n) => jsonToHtml(n, collector, counter)).join('')
 				return `<p>${content || '<br>'}</p>`
 			}
 
 			case 'heading': {
 				const level = node.attrs?.level || 1
-				const headingContent = (node.content || []).map(jsonToHtml).join('')
+				const headingContent = (node.content || [])
+					.map((n) => jsonToHtml(n, collector, counter))
+					.join('')
 				return `<h${level}>${headingContent}</h${level}>`
 			}
 
 			case 'bulletList': {
-				const listItems = (node.content || []).map(jsonToHtml).join('')
+				const listItems = (node.content || [])
+					.map((n) => jsonToHtml(n, collector, counter))
+					.join('')
 				return `<ul>${listItems}</ul>`
 			}
 
 			case 'orderedList': {
-				const orderedItems = (node.content || []).map(jsonToHtml).join('')
+				const orderedItems = (node.content || [])
+					.map((n) => jsonToHtml(n, collector, counter))
+					.join('')
 				return `<ol>${orderedItems}</ol>`
 			}
 
 			case 'listItem': {
-				const itemContent = (node.content || []).map(jsonToHtml).join('')
+				const itemContent = (node.content || [])
+					.map((n) => jsonToHtml(n, collector, counter))
+					.join('')
 				return `<li>${itemContent}</li>`
 			}
 
 			case 'blockquote': {
-				const quoteContent = (node.content || []).map(jsonToHtml).join('')
+				const quoteContent = (node.content || [])
+					.map((n) => jsonToHtml(n, collector, counter))
+					.join('')
 				return `<blockquote>${quoteContent}</blockquote>`
 			}
 
@@ -140,31 +174,53 @@
 
 			case 'mention': {
 				// Handle game item mentions
-				const wikiName = node.attrs?.id?.name?.en || node.attrs?.id?.granblue_en || 'Unknown'
-				const mentionName = localizedName(node.attrs?.id?.name)
-				const displayName =
-					mentionName !== '—' ? mentionName : node.attrs?.id?.granblue_en || 'Unknown'
+				const attrs = node.attrs?.id
+				const wikiName = attrs?.name?.en || attrs?.granblue_en || 'Unknown'
+				const mentionName = localizedName(attrs?.name)
+				const displayName = mentionName !== '—' ? mentionName : attrs?.granblue_en || 'Unknown'
 				const wikiUrl = `https://gbf.wiki/${wikiName}`
-				return `<a href="${wikiUrl}" target="_blank" rel="noopener noreferrer" class="mention">${displayName}</a>`
+				const elementSlug = attrs?.element?.slug ?? ''
+				const entityType = attrs?.type ?? ''
+
+				// Store entity data for tooltip
+				const idx = counter.value++
+				collector.set(idx, {
+					granblue_id: attrs?.granblue_id ?? '',
+					name: attrs?.name ?? { en: wikiName, ja: wikiName },
+					type: entityType,
+					element: attrs?.element ?? { id: 0, slug: 'null' },
+					proficiency: attrs?.proficiency,
+					season: attrs?.season,
+					series: attrs?.series,
+					styleSwap: attrs?.styleSwap
+				})
+
+				return `<a href="${wikiUrl}" target="_blank" rel="noopener noreferrer" class="mention" data-element="${elementSlug}" data-entity-type="${entityType}" data-mention-index="${idx}">${displayName}</a>`
 			}
 
 			default:
 				// For unknown types, try to render content if it exists
 				if (node.content) {
-					return (node.content || []).map(jsonToHtml).join('')
+					return (node.content || []).map((n) => jsonToHtml(n, collector, counter)).join('')
 				}
 				return ''
 		}
 	}
 
 	// Parse content - handle both JSON and plain text
-	function parseContent(content?: string): string {
-		if (!content) return ''
+	function parseContent(content?: string): {
+		html: string
+		entities: Map<number, MentionEntity>
+	} {
+		if (!content) return { html: '', entities: new Map() }
+
+		const collector = new Map<number, MentionEntity>()
+		const counter = { value: 0 }
 
 		// Try to parse as JSON first
 		try {
 			const json = JSON.parse(content) as JSONContent
-			return jsonToHtml(json)
+			return { html: jsonToHtml(json, collector, counter), entities: collector }
 		} catch {
 			// If not JSON, treat as plain text
 			// Convert double newlines to paragraphs and single newlines to br tags
@@ -175,17 +231,76 @@
 					return `<p>${lines.join('<br />')}</p>`
 				})
 				.join('')
-			return formatted
+			return { html: formatted, entities: collector }
 		}
 	}
 
-	const parsedHTML = $derived(parseContent(content))
+	const parsed = $derived(parseContent(content))
+	const parsedHTML = $derived(parsed.html)
+	const mentionEntities = $derived(parsed.entities)
+
+	// Tooltip hover handlers
+	function handleMentionEnter(event: MouseEvent) {
+		const target = (event.target as HTMLElement).closest?.('.mention[data-mention-index]')
+		if (!target) return
+
+		const index = Number((target as HTMLElement).dataset.mentionIndex)
+		const entity = mentionEntities.get(index)
+		if (!entity) return
+
+		tooltipEntity = entity
+		tooltipVisible = true
+
+		// Position tooltip using Floating UI
+		requestAnimationFrame(() => {
+			if (!tooltipEl) return
+			computePosition(target as HTMLElement, tooltipEl, {
+				placement: 'top',
+				middleware: [offset(8), flip(), shift({ padding: 8 })]
+			}).then(({ x, y }) => {
+				if (tooltipEl) {
+					tooltipEl.style.left = `${x}px`
+					tooltipEl.style.top = `${y}px`
+				}
+			})
+		})
+	}
+
+	function handleMentionLeave(event: MouseEvent) {
+		const related = event.relatedTarget as HTMLElement | null
+		if (related?.closest?.('.mention-tooltip-wrapper')) return
+		tooltipVisible = false
+		tooltipEntity = null
+	}
+
+	function handleTooltipLeave(event: MouseEvent) {
+		const related = event.relatedTarget as HTMLElement | null
+		if (related?.closest?.('.mention[data-mention-index]')) return
+		tooltipVisible = false
+		tooltipEntity = null
+	}
 </script>
 
-<div class="description-content" class:truncate style={truncate ? `--max-lines: ${maxLines}` : ''}>
+<!-- svelte-ignore a11y_no_static_element_interactions -->
+<div
+	class="description-content"
+	class:truncate
+	style={truncate ? `--max-lines: ${maxLines}` : ''}
+	bind:this={containerEl}
+	onmouseenter={handleMentionEnter}
+	onmouseover={handleMentionEnter}
+	onmouseleave={handleMentionLeave}
+>
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html parsedHTML}
 </div>
+
+{#if tooltipEntity}
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div class="mention-tooltip-wrapper" bind:this={tooltipEl} onmouseleave={handleTooltipLeave}>
+		<MentionTooltip entity={tooltipEntity} visible={tooltipVisible} />
+	</div>
+{/if}
 
 <style lang="scss">
 	@use '$src/themes/typography' as *;
@@ -255,12 +370,49 @@
 			}
 
 			.mention {
-				color: var(--accent-blue);
-				font-weight: $medium;
+				padding: 2px $unit-half;
+				border-radius: $input-corner;
 				text-decoration: none;
+				font-weight: $medium;
+				background: var(--null-mention-bg);
+				color: var(--text-primary);
+				transition:
+					background 0.15s,
+					opacity 0.15s;
 
 				&:hover {
-					text-decoration: underline;
+					opacity: 0.8;
+					text-decoration: none;
+				}
+
+				&[data-element='wind'] {
+					background: var(--wind-mention-bg);
+					color: var(--wind-text);
+				}
+
+				&[data-element='fire'] {
+					background: var(--fire-mention-bg);
+					color: var(--fire-text);
+				}
+
+				&[data-element='water'] {
+					background: var(--water-mention-bg);
+					color: var(--water-text);
+				}
+
+				&[data-element='earth'] {
+					background: var(--earth-mention-bg);
+					color: var(--earth-text);
+				}
+
+				&[data-element='dark'] {
+					background: var(--dark-mention-bg);
+					color: var(--dark-text);
+				}
+
+				&[data-element='light'] {
+					background: var(--light-mention-bg);
+					color: var(--light-text);
 				}
 			}
 
@@ -349,5 +501,13 @@
 				}
 			}
 		}
+	}
+
+	.mention-tooltip-wrapper {
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 9999;
+		pointer-events: auto;
 	}
 </style>

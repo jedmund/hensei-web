@@ -3,7 +3,17 @@ import type { Party } from '$lib/types/api/party'
 import type { AddItemResult } from '$lib/types/api/search'
 import { GridType } from '$lib/types/enums'
 import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
+import { sidebar } from '$lib/stores/sidebar.svelte'
 import { isConflictResponse, createConflictData, type ConflictData } from '$lib/types/api/conflict'
+import { toast } from 'svelte-sonner'
+import { localizedName } from '$lib/utils/locale'
+import {
+	getCharacterImage,
+	getWeaponImage,
+	getSummonImage
+} from '$lib/features/database/detail/image'
+import SelectionToast from '$lib/components/ui/SelectionToast.svelte'
+import * as m from '$lib/paraglide/messages'
 
 interface ItemAdditionOptions {
 	mutations: PartyMutations
@@ -43,6 +53,8 @@ export function useItemAddition(opts: ItemAdditionOptions) {
 		try {
 			const targetSlot = opts.getSelectedSlot()
 			const activeTab = opts.getActiveTab()
+			const existingItem = findItemAtSlot(party, activeTab, targetSlot)
+			const isReplacing = existingItem != null
 			let result: unknown
 
 			if (activeTab === GridType.Weapon) {
@@ -83,14 +95,39 @@ export function useItemAddition(opts: ItemAdditionOptions) {
 				}
 			}
 
-			// Find next empty slot for continuous adding
-			// Re-read party to get post-mutation state; fall back to marking
-			// the just-filled slot as occupied on the pre-mutation snapshot
-			const currentParty = opts.getParty()
-			const nextEmptySlot = findNextEmptySlot(currentParty, activeTab, targetSlot)
-			if (nextEmptySlot !== SLOT_NOT_FOUND) {
-				opts.setSelectedSlot(nextEmptySlot)
-				opts.onSlotAdvance?.(nextEmptySlot)
+			// Show confirmation toast
+			const itemName = localizedName(item.name)
+			const imageUrl =
+				activeTab === GridType.Character
+					? getCharacterImage(item.granblueId, 'square')
+					: activeTab === GridType.Weapon
+						? getWeaponImage(item.granblueId, 'square')
+						: getSummonImage(item.granblueId, 'square')
+			const originalName = isReplacing ? localizedName(existingItem.name) : undefined
+			const message = isReplacing
+				? m.toast_item_replaced({ original: originalName!, name: itemName })
+				: m.toast_item_equipped({ name: itemName })
+			toast.custom(SelectionToast, {
+				componentProps: {
+					itemName,
+					message,
+					imageUrl,
+					imageClass: 'square',
+					boldNames: originalName ? [originalName] : undefined
+				}
+			})
+
+			if (isReplacing) {
+				// Close sidebar after replacement
+				sidebar.close()
+			} else {
+				// Find next empty slot for continuous adding
+				const currentParty = opts.getParty()
+				const nextEmptySlot = findNextEmptySlot(currentParty, activeTab, targetSlot)
+				if (nextEmptySlot !== SLOT_NOT_FOUND) {
+					opts.setSelectedSlot(nextEmptySlot)
+					opts.onSlotAdvance?.(nextEmptySlot)
+				}
 			}
 		} catch (err: unknown) {
 			error = err instanceof Error ? err.message : 'Failed to add item'
@@ -132,4 +169,23 @@ export function useItemAddition(opts: ItemAdditionOptions) {
 		resolveConflict,
 		cancelConflict
 	}
+}
+
+interface NamedItem {
+	name: { en?: string; ja?: string }
+}
+
+function findItemAtSlot(party: Party, gridType: GridType, position: number): NamedItem | undefined {
+	if (gridType === GridType.Weapon) {
+		const gw = party.weapons.find((w) => w.position === position || (position === -1 && w.mainhand))
+		return gw?.weapon
+	}
+	if (gridType === GridType.Summon) {
+		const gs = party.summons.find(
+			(s) => s.position === position || (position === -1 && s.main) || (position === 6 && s.friend)
+		)
+		return gs?.summon
+	}
+	const gc = party.characters.find((c) => c.position === position)
+	return gc?.character
 }

@@ -83,6 +83,9 @@
 	// Light - Dialogs
 	--dialog-bg: #{colors.$dialog--bg--light};
 
+	// Light - Typeahead
+	--typeahead-item-hover: #{colors.$grey-80};
+
 	// Light - Menus
 	--menu-bg: #{colors.$menu--bg--light};
 	--menu-separator: #{colors.$menu--separator--light};
@@ -365,6 +368,15 @@
 	--light-item-detail-bg: #{colors.$light-bg-20};
 	--dark-item-detail-bg: #{colors.$dark-bg-20};
 
+	// Element mention tag backgrounds (translucent)
+	--null-mention-bg: rgba(128, 128, 128, 0.2);
+	--wind-mention-bg: rgba(48, 195, 114, 0.2);
+	--fire-mention-bg: rgba(224, 85, 85, 0.2);
+	--water-mention-bg: rgba(66, 165, 245, 0.2);
+	--earth-mention-bg: rgba(198, 134, 66, 0.2);
+	--light-mention-bg: rgba(255, 193, 7, 0.2);
+	--dark-mention-bg: rgba(156, 39, 176, 0.2);
+
 	// Light - Element navigation selected text
 	--null-nav-selected-text: #{colors.$grey-40};
 	--wind-nav-selected-text: #{colors.$wind-text-20};
@@ -537,6 +549,9 @@ html[data-theme='dark'] {
 
 	// Dark - Dialogs
 	--dialog-bg: #{colors.$dialog--bg--dark};
+
+	// Dark - Typeahead
+	--typeahead-item-hover: #{colors.$grey-30};
 
 	// Dark - Menus
 	--menu-bg: #{colors.$menu--bg--dark};
@@ -819,6 +834,15 @@ html[data-theme='dark'] {
 	--earth-item-detail-bg: #{colors.$earth-bg-20};
 	--light-item-detail-bg: #{colors.$light-bg-20};
 	--dark-item-detail-bg: #{colors.$dark-bg-20};
+
+	// Element mention tag backgrounds (translucent, same as light theme)
+	--null-mention-bg: rgba(128, 128, 128, 0.2);
+	--wind-mention-bg: rgba(48, 195, 114, 0.2);
+	--fire-mention-bg: rgba(224, 85, 85, 0.2);
+	--water-mention-bg: rgba(66, 165, 245, 0.2);
+	--earth-mention-bg: rgba(198, 134, 66, 0.2);
+	--light-mention-bg: rgba(255, 193, 7, 0.2);
+	--dark-mention-bg: rgba(156, 39, 176, 0.2);
 
 	// Dark - Element navigation selected text (same as light theme)
 	--null-nav-selected-text: #{colors.$grey-40};

@@ -265,7 +265,14 @@
 			<SkillsSection {type} {itemData} />
 		</div>
 	{:else}
-		<TeamView {type} {item} {itemData} {gridUncapLevel} {gridTranscendence} {modificationStatus} />
+		<TeamView
+			{type}
+			{item}
+			{gridUncapLevel}
+			{gridTranscendence}
+			{modificationStatus}
+			{isPartyOwner}
+		/>
 	{/if}
 </div>
 

@@ -2,7 +2,8 @@
  * EntityMention Extension
  *
  * Extends Tiptap's Mention extension to handle game entity mentions
- * (characters, weapons, summons). Renders as clickable links to gbf.wiki.
+ * (characters, weapons, summons). Renders as a span in the editor;
+ * the read-only DescriptionRenderer handles linking to gbf.wiki.
  */
 import Mention from '@tiptap/extension-mention'
 import { mergeAttributes } from '@tiptap/core'
@@ -45,9 +46,6 @@ export const EntityMention = Mention.extend({
 	renderHTML({ node, HTMLAttributes }) {
 		const id = node.attrs.id
 
-		// English name for wiki URL (wiki is English-only)
-		const wikiName = id?.name?.en ?? id?.granblue_en ?? 'Unknown'
-
 		// Localized name for display text
 		const localized = localizedName(id?.name)
 		const displayName = localized !== '—' ? localized : (id?.granblue_en ?? 'Unknown')
@@ -59,13 +57,8 @@ export const EntityMention = Mention.extend({
 		const entityType = id?.type ?? id?.searchableType?.toLowerCase() ?? 'unknown'
 
 		return [
-			'a',
+			'span',
 			mergeAttributes(
-				{
-					href: `https://gbf.wiki/${encodeURIComponent(wikiName.replace(/ /g, '_'))}`,
-					target: '_blank',
-					rel: 'noopener noreferrer'
-				},
 				{ 'data-type': this.name },
 				{ 'data-element': elementSlug },
 				{ 'data-entity-type': entityType },

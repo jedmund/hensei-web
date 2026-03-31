@@ -101,7 +101,7 @@
 			border-radius: $item-corner-small;
 			@include rep.aspect(rep.$weapon-main-w, rep.$weapon-main-h);
 			overflow: hidden;
-			min-height: 115px;
+			min-width: 0;
 
 			&.empty {
 				background: var(--placeholder-bg);
@@ -135,6 +135,7 @@
 					background: var(--placeholder-bg);
 					border-radius: $item-corner-small;
 					overflow: hidden;
+					min-width: 0;
 					display: flex;
 					align-items: center;
 					justify-content: center;

@@ -10,13 +10,11 @@
 		description?: string
 		videoUrl?: string
 		canEdit?: boolean
-		partyId?: string
-		partyShortcode?: string
 		onSave?: (description: string) => Promise<void>
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	let { description, videoUrl, canEdit = false, partyId, partyShortcode, onSave }: Props = $props()
+	let { description: initialDescription, videoUrl, canEdit = false, onSave }: Props = $props()
+	let description = $state(initialDescription)
 
 	/** Extract YouTube video ID from various URL formats */
 	function extractVideoId(url?: string): string | null {
@@ -43,6 +41,7 @@
 					if (onSave) {
 						await onSave(content)
 					}
+					description = content
 					paneStack.pop()
 				}
 			},

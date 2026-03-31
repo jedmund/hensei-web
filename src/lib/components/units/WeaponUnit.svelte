@@ -140,7 +140,9 @@
 		openDetailsSidebar({
 			type: 'weapon',
 			item,
-			onSaveWeapon: getSaveCallback()
+			onSaveWeapon: getSaveCallback(),
+			isOwner: ctx?.canEdit() ?? false,
+			onReplace: ctx?.canEdit() ? replace : undefined
 		})
 	}
 
