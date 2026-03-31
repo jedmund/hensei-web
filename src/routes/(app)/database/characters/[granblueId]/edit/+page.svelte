@@ -104,6 +104,8 @@
 		flb: false,
 		transcendence: false,
 		special: false,
+		// Appearance
+		gender_variants: false,
 		// Style swap
 		styleSwap: false,
 		styleNameEn: '' as string,
@@ -166,6 +168,8 @@
 				flb: character.uncap?.flb || false,
 				transcendence: character.uncap?.transcendence || false,
 				special: character.special || false,
+				// Appearance
+				gender_variants: character.genderVariants || false,
 				// Style swap
 				styleSwap: character.styleSwap || false,
 				styleNameEn: character.styleName?.en || '',
@@ -233,6 +237,8 @@
 				flb: editData.flb,
 				transcendence: editData.transcendence,
 				special: editData.special,
+				// Appearance
+				gender_variants: editData.gender_variants,
 				// Style swap
 				style_swap: editData.styleSwap,
 				style_name_en: editData.styleNameEn || undefined,
