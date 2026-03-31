@@ -406,11 +406,14 @@ export function getCharacterImageWithPose(
 
 	// Null-element characters (element === 0) use element-suffixed images
 	// based on the mainhand weapon element or party element.
-	// Gender suffix: _0 = Gran, _1 = Djeeta
 	if (characterElement === 0 && (mainWeaponElement || partyElement)) {
 		const element = mainWeaponElement || partyElement
-		const genderSuffix = gender ?? 0
-		pose = `${pose}_0${element}_${genderSuffix}`
+		pose = `${pose}_0${element}`
+	}
+
+	// Gender suffix applies to any character: _0 = Gran, _1 = Djeeta
+	if (gender !== undefined && gender !== null) {
+		pose = `${pose}_${gender}`
 	}
 
 	return getImageUrl('character', id, variant, { pose })
