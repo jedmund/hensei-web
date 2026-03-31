@@ -993,17 +993,19 @@ export class EntityAdapter extends BaseAdapter {
 	 * @param transformation - Pose variant (01=Base, 02=MLB, 03=FLB, 04=Transcendence)
 	 * @param force - Force re-download even if image exists
 	 * @param element - Element variant for null-element characters (1-6)
+	 * @param gender - Gender variant for null-element characters (0=Gran, 1=Djeeta)
 	 */
 	async downloadCharacterImage(
 		characterId: string,
 		size: string,
 		transformation?: string,
 		force?: boolean,
-		element?: number
+		element?: number,
+		gender?: number
 	): Promise<{ success: boolean; error?: string }> {
 		return this.request(`/characters/${characterId}/download_image`, {
 			method: 'POST',
-			body: { size, transformation, force, element }
+			body: { size, transformation, force, element, gender }
 		})
 	}
 

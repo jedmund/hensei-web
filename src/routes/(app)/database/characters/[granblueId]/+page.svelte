@@ -155,18 +155,26 @@
 		}
 
 		if (character.element === 0) {
-			// Null-element characters: show all 6 element variants for each pose
+			// Null-element characters: show all 6 element variants for each pose,
+			// with both Gran (_0) and Djeeta (_1) gender variants
+			const genderLabels = ['Gran', 'Djeeta'] as const
 			for (const element of ELEMENT_DISPLAY_ORDER) {
 				const elementLabel = getElementLabel(element)
 				for (const pose of poses) {
-					for (const variant of variants) {
-						images.push({
-							url: getCharacterImage(character.granblueId, variant, `${pose.id}_0${element}_0`),
-							label: `${variant} (${pose.label} — ${elementLabel})`,
-							variant,
-							pose: `${pose.id}-element-${element}`,
-							poseLabel: `${pose.label} (${elementLabel})`
-						})
+					for (const [genderIdx, genderLabel] of genderLabels.entries()) {
+						for (const variant of variants) {
+							images.push({
+								url: getCharacterImage(
+									character.granblueId,
+									variant,
+									`${pose.id}_0${element}_${genderIdx}`
+								),
+								label: `${variant} (${pose.label} — ${elementLabel} — ${genderLabel})`,
+								variant,
+								pose: `${pose.id}-element-${element}-gender-${genderIdx}`,
+								poseLabel: `${pose.label} (${elementLabel} — ${genderLabel})`
+							})
+						}
 					}
 				}
 			}
@@ -201,20 +209,26 @@
 	})
 
 	/**
-	 * Parse a pose key that may contain element info.
-	 * e.g. "01-element-2" → { pose: "01", element: 2 }
-	 *      "02" → { pose: "02", element: undefined }
+	 * Parse a pose key that may contain element and gender info.
+	 * e.g. "01-element-2-gender-0" → { pose: "01", element: 2, gender: 0 }
+	 *      "01-element-2" → { pose: "01", element: 2, gender: undefined }
+	 *      "02" → { pose: "02", element: undefined, gender: undefined }
 	 */
 	function parsePoseKey(poseKey: string | undefined): {
 		pose: string | undefined
 		element: number | undefined
+		gender: number | undefined
 	} {
-		if (!poseKey) return { pose: undefined, element: undefined }
-		const match = poseKey.match(/^(\d+)-element-(\d+)$/)
+		if (!poseKey) return { pose: undefined, element: undefined, gender: undefined }
+		const match = poseKey.match(/^(\d+)-element-(\d+)(?:-gender-(\d+))?$/)
 		if (match) {
-			return { pose: match[1], element: parseInt(match[2]!, 10) }
+			return {
+				pose: match[1],
+				element: parseInt(match[2]!, 10),
+				gender: match[3] !== undefined ? parseInt(match[3], 10) : undefined
+			}
 		}
-		return { pose: poseKey, element: undefined }
+		return { pose: poseKey, element: undefined, gender: undefined }
 	}
 
 	// Image download handlers
@@ -224,16 +238,16 @@
 		force: boolean
 	) {
 		if (!character?.id) return
-		const { pose, element } = parsePoseKey(transformation)
-		await entityAdapter.downloadCharacterImage(character.id, size, pose, force, element)
+		const { pose, element, gender } = parsePoseKey(transformation)
+		await entityAdapter.downloadCharacterImage(character.id, size, pose, force, element, gender)
 	}
 
 	async function handleDownloadAllPose(poseKey: string, force: boolean) {
 		if (!character?.id) return
-		const { pose, element } = parsePoseKey(poseKey)
+		const { pose, element, gender } = parsePoseKey(poseKey)
 		// Download all sizes for this pose
 		for (const size of characterSizes) {
-			await entityAdapter.downloadCharacterImage(character.id, size, pose, force, element)
+			await entityAdapter.downloadCharacterImage(character.id, size, pose, force, element, gender)
 		}
 	}
 
@@ -254,11 +268,20 @@
 			await entityAdapter.downloadCharacterImage(character.id, size, pose, false)
 		}
 
-		// Also download element variants for null-element characters
+		// Also download element variants for null-element characters (both genders)
 		if (character.element === 0) {
 			for (const element of ELEMENT_DISPLAY_ORDER) {
 				for (const pose of poses) {
-					await entityAdapter.downloadCharacterImage(character.id, size, pose, false, element)
+					for (const gender of [0, 1]) {
+						await entityAdapter.downloadCharacterImage(
+							character.id,
+							size,
+							pose,
+							false,
+							element,
+							gender
+						)
+					}
 				}
 			}
 		}
