@@ -512,6 +512,11 @@
 	// Element ghost variant - transparent bg with element text color, light element bg on hover
 	:global([data-button-root].element-ghost) {
 		background-color: transparent;
+
+		&:hover:not(:disabled) {
+			background-color: var(--button-bg);
+			color: var(--button-text-hover);
+		}
 	}
 
 	:global([data-button-root].element-ghost.wind) {
