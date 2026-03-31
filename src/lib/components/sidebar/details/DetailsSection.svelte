@@ -4,17 +4,24 @@
 	interface Props {
 		title: string
 		children: Snippet
+		/** Optional action rendered at the right side of the section header */
+		action?: Snippet
 		/** Message to show when section has no content */
 		emptyMessage?: string
 		/** Whether the section is empty (shows emptyMessage instead of children) */
 		empty?: boolean
 	}
 
-	let { title, children, emptyMessage, empty = false }: Props = $props()
+	let { title, children, action, emptyMessage, empty = false }: Props = $props()
 </script>
 
 <div class="details-section">
-	<h3>{title}</h3>
+	<div class="header">
+		<h3>{title}</h3>
+		{#if action}
+			{@render action()}
+		{/if}
+	</div>
 	{#if empty && emptyMessage}
 		<p class="empty-message">{emptyMessage}</p>
 	{:else}
@@ -29,12 +36,19 @@
 	.details-section {
 		padding: 0 spacing.$unit;
 
+		.header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0 spacing.$unit;
+			margin-bottom: calc(spacing.$unit * 1.5);
+		}
+
 		h3 {
-			margin: 0 0 calc(spacing.$unit * 1.5) 0;
+			margin: 0;
 			font-size: typography.$font-name;
 			font-weight: typography.$medium;
 			color: var(--text-primary);
-			padding: 0 spacing.$unit;
 		}
 
 		.empty-message {

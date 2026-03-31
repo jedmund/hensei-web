@@ -342,7 +342,7 @@
 
 	// Sizes
 	:global([data-button-root].small) {
-		padding: $unit calc($unit * 1.5);
+		padding: $unit;
 		font-size: $font-small;
 		min-height: calc($unit * 3.5);
 	}

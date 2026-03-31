@@ -151,6 +151,7 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
 
 	.weapon-key-select {
 		width: 100%;
@@ -158,7 +159,7 @@
 		:global(.image) {
 			width: 32px !important;
 			height: 32px !important;
-			border-radius: 0;
+			border-radius: layout.$item-corner-small !important;
 			padding: 4px;
 		}
 	}
