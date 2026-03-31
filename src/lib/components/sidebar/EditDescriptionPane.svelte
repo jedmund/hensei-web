@@ -3,9 +3,11 @@
 	import { onMount, untrack } from 'svelte'
 	import type { Editor, Content } from '@tiptap/core'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
+	import { computePosition, flip, shift, offset } from '@floating-ui/dom'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import EdraEditor from '$lib/components/edra/headless/editor.svelte'
 	import LinkDialog from '$lib/components/edra/LinkDialog.svelte'
+	import MentionTooltip from '$lib/components/ui/MentionTooltip.svelte'
 	import { linkDialogState } from '$lib/stores/linkDialog.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 
@@ -103,6 +105,82 @@
 		} else if (editor) {
 			linkDialogState.show(editor)
 		}
+	}
+
+	// Mention tooltip state
+	interface MentionEntity {
+		granblue_id: string
+		name: { en: string; ja: string }
+		type: string
+		element: { id: number; slug: string }
+		proficiency?: number | number[]
+		season?: number | null
+		series?: number[] | { id: string; slug: string; name: { en: string; ja: string } }[] | null
+		styleSwap?: boolean
+	}
+
+	let tooltipEntity: MentionEntity | null = $state(null)
+	let tooltipVisible = $state(false)
+	let tooltipEl: HTMLDivElement | null = $state(null)
+
+	function handleMentionEnter(event: MouseEvent) {
+		if (!editor) return
+		const target = (event.target as HTMLElement).closest?.('span[data-type="mention"]')
+		if (!target) {
+			// Mouse is over the editor but not a mention — dismiss tooltip
+			if (tooltipVisible) {
+				tooltipVisible = false
+				tooltipEntity = null
+			}
+			return
+		}
+
+		// Resolve the ProseMirror position from the DOM element
+		const pos = editor.view.posAtDOM(target, 0)
+		const node = editor.state.doc.nodeAt(pos)
+		if (!node || node.type.name !== 'mention') return
+
+		const attrs = node.attrs.id
+		if (!attrs) return
+
+		tooltipEntity = {
+			granblue_id: attrs.granblue_id ?? '',
+			name: attrs.name ?? { en: 'Unknown', ja: 'Unknown' },
+			type: attrs.type ?? '',
+			element: attrs.element ?? { id: 0, slug: 'null' },
+			proficiency: attrs.proficiency,
+			season: attrs.season,
+			series: attrs.series,
+			styleSwap: attrs.styleSwap
+		}
+		tooltipVisible = true
+
+		requestAnimationFrame(() => {
+			if (!tooltipEl) return
+			computePosition(target as HTMLElement, tooltipEl, {
+				placement: 'top',
+				middleware: [offset(8), flip(), shift({ padding: 8 })]
+			}).then(({ x, y }) => {
+				if (tooltipEl) {
+					tooltipEl.style.left = `${x}px`
+					tooltipEl.style.top = `${y}px`
+				}
+			})
+		})
+	}
+
+	function handleMentionLeave(event: MouseEvent) {
+		const related = event.relatedTarget as HTMLElement | null
+		if (related?.closest?.('.mention-tooltip-wrapper')) return
+		tooltipVisible = false
+		tooltipEntity = null
+	}
+
+	function handleTooltipLeave(event: MouseEvent) {
+		const related = event.relatedTarget as HTMLElement | null
+		if (related?.closest?.('span[data-type="mention"]')) return
+		tooltipVisible = false
+		tooltipEntity = null
 	}
 </script>
 
@@ -231,7 +309,8 @@
 		</div>
 	</div>
 
-	<div class="editor-container">
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div class="editor-container" onmouseover={handleMentionEnter} onmouseleave={handleMentionLeave}>
 		<EdraEditor
 			bind:editor
 			content={initialContent}
@@ -242,6 +321,13 @@
 		/>
 	</div>
 </div>
+
+{#if tooltipEntity}
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div class="mention-tooltip-wrapper" bind:this={tooltipEl} onmouseleave={handleTooltipLeave}>
+		<MentionTooltip entity={tooltipEntity} visible={tooltipVisible} />
+	</div>
+{/if}
 
 <LinkDialog />
 
@@ -342,11 +428,18 @@
 	// Override Edra editor styles for our context
 	:global(.description-editor .ProseMirror) {
 		min-height: 200px;
+		font-size: $font-regular;
+		line-height: 1.6;
 		outline: none;
 
 		&:focus {
 			outline: none;
 		}
+	}
+
+	:global(.description-editor .ProseMirror a) {
+		color: var(--accent-blue);
+		text-decoration: none;
 	}
 
 	:global(.description-editor .ProseMirror p) {
@@ -363,5 +456,13 @@
 	:global(.description-editor .ProseMirror ol) {
 		margin: $unit 0;
 		padding-left: $unit-3x;
+	}
+
+	.mention-tooltip-wrapper {
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 9999;
+		pointer-events: auto;
 	}
 </style>
