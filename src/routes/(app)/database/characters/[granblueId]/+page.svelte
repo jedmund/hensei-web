@@ -253,6 +253,15 @@
 		for (const pose of poses) {
 			await entityAdapter.downloadCharacterImage(character.id, size, pose, false)
 		}
+
+		// Also download element variants for null-element characters
+		if (character.element === 0) {
+			for (const element of ELEMENT_DISPLAY_ORDER) {
+				for (const pose of poses) {
+					await entityAdapter.downloadCharacterImage(character.id, size, pose, false, element)
+				}
+			}
+		}
 	}
 
 	// Page title
