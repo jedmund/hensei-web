@@ -154,10 +154,11 @@
 			poses.push({ id: '04', label: 'Transcendence' })
 		}
 
+		const genderLabels = ['Gran', 'Djeeta'] as const
+
 		if (character.element === 0) {
 			// Null-element characters: show all 6 element variants for each pose,
 			// with both Gran (_0) and Djeeta (_1) gender variants
-			const genderLabels = ['Gran', 'Djeeta'] as const
 			for (const element of ELEMENT_DISPLAY_ORDER) {
 				const elementLabel = getElementLabel(element)
 				for (const pose of poses) {
@@ -179,6 +180,7 @@
 				}
 			}
 		} else {
+			// Non-null-element characters: base images + gender variants
 			for (const pose of poses) {
 				for (const variant of variants) {
 					images.push({
@@ -188,6 +190,21 @@
 						pose: pose.id,
 						poseLabel: pose.label
 					})
+				}
+			}
+
+			// Gender variants for non-null-element characters
+			for (const pose of poses) {
+				for (const [genderIdx, genderLabel] of genderLabels.entries()) {
+					for (const variant of variants) {
+						images.push({
+							url: getCharacterImage(character.granblueId, variant, `${pose.id}_${genderIdx}`),
+							label: `${variant} (${pose.label} — ${genderLabel})`,
+							variant,
+							pose: `${pose.id}-gender-${genderIdx}`,
+							poseLabel: `${pose.label} (${genderLabel})`
+						})
+					}
 				}
 			}
 
@@ -266,6 +283,20 @@
 
 		for (const pose of poses) {
 			await entityAdapter.downloadCharacterImage(character.id, size, pose, false)
+		}
+
+		// Download gender variants for all characters (both Gran and Djeeta)
+		for (const pose of poses) {
+			for (const gender of [0, 1]) {
+				await entityAdapter.downloadCharacterImage(
+					character.id,
+					size,
+					pose,
+					false,
+					undefined,
+					gender
+				)
+			}
 		}
 
 		// Also download element variants for null-element characters (both genders)
