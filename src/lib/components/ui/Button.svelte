@@ -11,6 +11,7 @@
 			| 'primary'
 			| 'secondary'
 			| 'ghost'
+			| 'element'
 			| 'element-ghost'
 			| 'text'
 			| 'destructive'
