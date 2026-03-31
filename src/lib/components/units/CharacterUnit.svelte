@@ -32,6 +32,7 @@
 		position: number
 		mainWeaponElement?: number | null | undefined
 		partyElement?: number | null | undefined
+		gender?: number
 		notInCollection?: boolean
 		inCollection?: boolean
 	}
@@ -41,6 +42,7 @@
 		position,
 		mainWeaponElement,
 		partyElement,
+		gender = 0,
 		notInCollection = false,
 		inCollection = false
 	}: Props = $props()
@@ -64,7 +66,8 @@
 			partyElement,
 			item.character.styleSwap,
 			simplePortraits.value,
-			item.character.element
+			item.character.element,
+			gender
 		)
 	})
 

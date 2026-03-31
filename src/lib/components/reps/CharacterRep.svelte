@@ -34,6 +34,9 @@
 		return main?.element ?? main?.weapon?.element
 	})
 
+	// Convert user gender (1=Male, 2=Female) to image gender suffix (0=Gran, 1=Djeeta)
+	const characterGender = $derived(party?.user?.gender === 2 ? 1 : 0)
+
 	function characterImageUrl(c: GridCharacter | undefined, position: number): string {
 		const id = c?.character?.granblueId
 		if (!id) return ''
@@ -50,7 +53,8 @@
 			undefined, // partyElement not used here
 			c?.character?.styleSwap,
 			simplePortraits.value,
-			c?.character?.element
+			c?.character?.element,
+			characterGender
 		)
 	}
 </script>

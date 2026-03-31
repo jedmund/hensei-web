@@ -371,8 +371,8 @@ describe('getCharacterImageWithPose', () => {
 		)
 	})
 
-	it('null-element characters (element === 0) get element-suffixed images', () => {
-		// Gran/Djeeta with mainWeaponElement
+	it('null-element characters (element === 0) get element-suffixed images with Gran gender by default', () => {
+		// Gran/Djeeta with mainWeaponElement, default gender (Gran=0)
 		const url = getCharacterImageWithPose('3030182000', 'main', 3, 0, 2, null, false, false, 0)
 		expect(url).toBe('/images/character-main/3030182000_02_02_0.jpg')
 
@@ -383,6 +383,22 @@ describe('getCharacterImageWithPose', () => {
 		// Young Cat with partyElement
 		const youngCat = getCharacterImageWithPose('3020072000', 'grid', 0, 0, null, 5, false, false, 0)
 		expect(youngCat).toBe('/images/character-grid/3020072000_01_05_0.jpg')
+	})
+
+	it('null-element characters use Djeeta gender variant when gender=1', () => {
+		const djeeta = getCharacterImageWithPose(
+			'3040643000',
+			'main',
+			3,
+			0,
+			3,
+			null,
+			false,
+			false,
+			0,
+			1
+		)
+		expect(djeeta).toBe('/images/character-main/3040643000_02_03_1.jpg')
 	})
 
 	it('null-element characters fall back to partyElement when no mainWeaponElement', () => {
