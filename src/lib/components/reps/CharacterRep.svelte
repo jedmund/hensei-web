@@ -25,18 +25,18 @@
 	const portraits = $derived(unlimited ? [] : grid.slice(0, 3))
 	const squares = $derived(unlimited ? [] : grid.slice(3, 5))
 
+	// Reactive mainhand weapon element for null-element characters
+	const mainWeaponElement = $derived.by(() => {
+		if (!party) return undefined
+		const main: GridWeapon | undefined = (party.weapons || []).find(
+			(w: GridWeapon) => w?.mainhand || w?.position === -1
+		)
+		return main?.element ?? main?.weapon?.element
+	})
+
 	function characterImageUrl(c: GridCharacter | undefined, position: number): string {
 		const id = c?.character?.granblueId
 		if (!id) return ''
-
-		// Get mainhand weapon element for Gran/Djeeta
-		let mainWeaponElement: number | undefined
-		if (party) {
-			const main: GridWeapon | undefined = (party.weapons || []).find(
-				(w: GridWeapon) => w?.mainhand || w?.position === -1
-			)
-			mainWeaponElement = main?.element ?? main?.weapon?.element
-		}
 
 		// Use 'square' variant for unlimited mode or positions 3-4 in standard mode
 		const variant = unlimited || position >= 3 ? 'square' : 'main'
@@ -49,7 +49,8 @@
 			mainWeaponElement,
 			undefined, // partyElement not used here
 			c?.character?.styleSwap,
-			simplePortraits.value
+			simplePortraits.value,
+			c?.character?.element
 		)
 	}
 </script>

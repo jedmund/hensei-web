@@ -27,7 +27,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
-	import { getElementLabel } from '$lib/utils/element'
+	import { getElementLabel, ELEMENT_DISPLAY_ORDER } from '$lib/utils/element'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,
@@ -154,33 +154,68 @@
 			poses.push({ id: '04', label: 'Transcendence' })
 		}
 
-		for (const pose of poses) {
-			for (const variant of variants) {
-				images.push({
-					url: getCharacterImage(character.granblueId, variant, pose.id),
-					label: `${variant} (${pose.label})`,
-					variant,
-					pose: pose.id,
-					poseLabel: pose.label
-				})
+		if (character.element === 0) {
+			// Null-element characters: show all 6 element variants for each pose
+			for (const element of ELEMENT_DISPLAY_ORDER) {
+				const elementLabel = getElementLabel(element)
+				for (const pose of poses) {
+					for (const variant of variants) {
+						images.push({
+							url: getCharacterImage(character.granblueId, variant, `${pose.id}_0${element}`),
+							label: `${variant} (${pose.label} — ${elementLabel})`,
+							variant,
+							pose: `${pose.id}-element-${element}`,
+							poseLabel: `${pose.label} (${elementLabel})`
+						})
+					}
+				}
 			}
-		}
+		} else {
+			for (const pose of poses) {
+				for (const variant of variants) {
+					images.push({
+						url: getCharacterImage(character.granblueId, variant, pose.id),
+						label: `${variant} (${pose.label})`,
+						variant,
+						pose: pose.id,
+						poseLabel: pose.label
+					})
+				}
+			}
 
-		// Include style swap images if this base character has style variants
-		if (character.styleSwaps?.length) {
-			for (const variant of variants) {
-				images.push({
-					url: getCharacterImage(character.granblueId, variant, '01_style'),
-					label: `${variant} (Style)`,
-					variant,
-					pose: '01_style',
-					poseLabel: 'Style'
-				})
+			// Include style swap images if this base character has style variants
+			if (character.styleSwaps?.length) {
+				for (const variant of variants) {
+					images.push({
+						url: getCharacterImage(character.granblueId, variant, '01_style'),
+						label: `${variant} (Style)`,
+						variant,
+						pose: '01_style',
+						poseLabel: 'Style'
+					})
+				}
 			}
 		}
 
 		return images
 	})
+
+	/**
+	 * Parse a pose key that may contain element info.
+	 * e.g. "01-element-2" → { pose: "01", element: 2 }
+	 *      "02" → { pose: "02", element: undefined }
+	 */
+	function parsePoseKey(poseKey: string | undefined): {
+		pose: string | undefined
+		element: number | undefined
+	} {
+		if (!poseKey) return { pose: undefined, element: undefined }
+		const match = poseKey.match(/^(\d+)-element-(\d+)$/)
+		if (match) {
+			return { pose: match[1], element: parseInt(match[2]!, 10) }
+		}
+		return { pose: poseKey, element: undefined }
+	}
 
 	// Image download handlers
 	async function handleDownloadImage(
@@ -189,14 +224,16 @@
 		force: boolean
 	) {
 		if (!character?.id) return
-		await entityAdapter.downloadCharacterImage(character.id, size, transformation, force)
+		const { pose, element } = parsePoseKey(transformation)
+		await entityAdapter.downloadCharacterImage(character.id, size, pose, force, element)
 	}
 
-	async function handleDownloadAllPose(pose: string, force: boolean) {
+	async function handleDownloadAllPose(poseKey: string, force: boolean) {
 		if (!character?.id) return
+		const { pose, element } = parsePoseKey(poseKey)
 		// Download all sizes for this pose
 		for (const size of characterSizes) {
-			await entityAdapter.downloadCharacterImage(character.id, size, pose, force)
+			await entityAdapter.downloadCharacterImage(character.id, size, pose, force, element)
 		}
 	}
 
@@ -215,6 +252,15 @@
 
 		for (const pose of poses) {
 			await entityAdapter.downloadCharacterImage(character.id, size, pose, false)
+		}
+
+		// Also download element variants for null-element characters
+		if (character.element === 0) {
+			for (const element of ELEMENT_DISPLAY_ORDER) {
+				for (const pose of poses) {
+					await entityAdapter.downloadCharacterImage(character.id, size, pose, false, element)
+				}
+			}
 		}
 	}
 
@@ -393,6 +439,7 @@
 					{canEdit}
 					onDownloadImage={canEdit ? handleDownloadImage : undefined}
 					onDownloadAllPose={canEdit ? handleDownloadAllPose : undefined}
+					onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
 				/>
 			{:else if currentTab === 'raw'}
 				<EntityRawDataTab

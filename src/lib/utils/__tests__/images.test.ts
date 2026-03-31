@@ -371,17 +371,53 @@ describe('getCharacterImageWithPose', () => {
 		)
 	})
 
-	it('handles Gran/Djeeta (3030182000) with element suffix', () => {
-		const url = getCharacterImageWithPose('3030182000', 'main', 3, 0, 2, null)
+	it('null-element characters (element === 0) get element-suffixed images', () => {
+		// Gran/Djeeta with mainWeaponElement
+		const url = getCharacterImageWithPose('3030182000', 'main', 3, 0, 2, null, false, false, 0)
 		expect(url).toBe('/images/character-main/3030182000_02_02.jpg')
+
+		// Lyria with mainWeaponElement
+		const lyria = getCharacterImageWithPose('3040643000', 'main', 3, 0, 3, null, false, false, 0)
+		expect(lyria).toBe('/images/character-main/3040643000_02_03.jpg')
+
+		// Young Cat with partyElement
+		const youngCat = getCharacterImageWithPose('3020072000', 'grid', 0, 0, null, 5, false, false, 0)
+		expect(youngCat).toBe('/images/character-grid/3020072000_01_05.jpg')
 	})
 
-	it('Gran/Djeeta falls back to partyElement then 1', () => {
-		const withParty = getCharacterImageWithPose('3030182000', 'main', 0, 0, null, 5)
+	it('null-element characters fall back to partyElement when no mainWeaponElement', () => {
+		const withParty = getCharacterImageWithPose(
+			'3030182000',
+			'main',
+			0,
+			0,
+			null,
+			5,
+			false,
+			false,
+			0
+		)
 		expect(withParty).toContain('_01_05')
+	})
 
-		const noElement = getCharacterImageWithPose('3030182000', 'main', 0, 0, null, null)
-		expect(noElement).toContain('_01_01')
+	it('null-element characters show base image when no party context', () => {
+		const noContext = getCharacterImageWithPose(
+			'3040643000',
+			'main',
+			0,
+			0,
+			null,
+			null,
+			false,
+			false,
+			0
+		)
+		expect(noContext).toBe('/images/character-main/3040643000_01.jpg')
+	})
+
+	it('non-null-element characters are not affected by element params', () => {
+		const normal = getCharacterImageWithPose('3040001000', 'main', 3, 0, 2, null, false, false, 2)
+		expect(normal).toBe('/images/character-main/3040001000_02.jpg')
 	})
 })
 

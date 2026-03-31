@@ -63,7 +63,8 @@
 			mainWeaponElement,
 			partyElement,
 			item.character.styleSwap,
-			simplePortraits.value
+			simplePortraits.value,
+			item.character.element
 		)
 	})
 
@@ -76,7 +77,9 @@
 	)
 
 	// Determine element class for focus ring
-	let elementClass = $derived(getElementClassName(item?.character?.element || partyElement))
+	let elementClass = $derived(
+		getElementClassName(item?.character?.element || mainWeaponElement || partyElement)
+	)
 
 	async function remove() {
 		if (!item?.id) return
