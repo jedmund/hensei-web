@@ -18,6 +18,7 @@
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
 	import CharacterTaxonomySection from '$lib/features/database/characters/sections/CharacterTaxonomySection.svelte'
 	import CharacterStatsSection from '$lib/features/database/characters/sections/CharacterStatsSection.svelte'
+	import CharacterAppearanceSection from '$lib/features/database/characters/sections/CharacterAppearanceSection.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
@@ -314,6 +315,7 @@
 			<section class="details">
 				<CharacterMetadataSection {character} {editMode} bind:editData />
 				<CharacterUncapSection {character} {editMode} bind:editData />
+				<CharacterAppearanceSection {character} {editMode} bind:editData />
 				<CharacterTaxonomySection {character} {editMode} bind:editData />
 				<CharacterStatsSection {character} {editMode} bind:editData />
 

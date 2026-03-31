@@ -22,6 +22,7 @@
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
 	import CharacterTaxonomySection from '$lib/features/database/characters/sections/CharacterTaxonomySection.svelte'
 	import CharacterStatsSection from '$lib/features/database/characters/sections/CharacterStatsSection.svelte'
+	import CharacterAppearanceSection from '$lib/features/database/characters/sections/CharacterAppearanceSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
@@ -390,6 +391,7 @@
 				<section class="details">
 					<CharacterMetadataSection {character} />
 					<CharacterUncapSection {character} />
+					<CharacterAppearanceSection {character} />
 					<CharacterTaxonomySection {character} />
 					<CharacterStatsSection {character} />
 
