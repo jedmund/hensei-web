@@ -100,6 +100,10 @@ export interface UnifiedSearchResult {
 	season?: number | null
 	/** Series (characters only) */
 	series?: UnifiedSearchSeriesRef[] | null
+	/** Proficiency - number for weapons, array for characters */
+	proficiency?: number | number[]
+	/** Whether this character is a style swap variant (characters only) */
+	styleSwap?: boolean
 }
 
 /**

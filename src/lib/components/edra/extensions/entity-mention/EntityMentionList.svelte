@@ -22,6 +22,10 @@
 		name: { en: string; ja: string }
 		type: string
 		element: { id: number; slug: string }
+		proficiency?: number | number[]
+		season?: number | null
+		series?: number[] | { id: string; slug: string; name: { en: string; ja: string } }[] | null
+		styleSwap?: boolean
 	}
 
 	let { items, command, query }: Props = $props()
@@ -72,7 +76,14 @@
 			element: {
 				id: item.element ?? 0,
 				slug: getElementSlug(item.element)
-			}
+			},
+			proficiency: item.proficiency,
+			season: item.season,
+			series: item.series as
+				| number[]
+				| { id: string; slug: string; name: { en: string; ja: string } }[]
+				| undefined,
+			styleSwap: item.styleSwap
 		})
 	}
 
@@ -113,12 +124,6 @@
 				type="button"
 				class="mention-item"
 				class:selected={index === selectedIndex}
-				class:element-wind={item.element === 1}
-				class:element-fire={item.element === 2}
-				class:element-water={item.element === 3}
-				class:element-earth={item.element === 4}
-				class:element-dark={item.element === 5}
-				class:element-light={item.element === 6}
 				onclick={() => selectItem(index)}
 			>
 				<div class="item-image {item.searchableType.toLowerCase()}">
@@ -147,11 +152,13 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
-	@use '$src/themes/colors' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
 
 	.entity-mention-list {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-half;
 		background: var(--dialog-bg);
 		border: 1px solid var(--border-color);
 		border-radius: $card-corner;
@@ -161,6 +168,7 @@
 		max-width: 300px;
 		max-height: 280px;
 		overflow-y: auto;
+		padding: $unit-half;
 	}
 
 	.mention-item {
@@ -168,8 +176,9 @@
 		align-items: center;
 		gap: $unit;
 		width: 100%;
-		padding: $unit $unit-2x;
+		padding: $unit;
 		border: none;
+		border-radius: $item-corner-small;
 		background: transparent;
 		cursor: pointer;
 		text-align: left;
@@ -177,13 +186,13 @@
 
 		&:hover,
 		&.selected {
-			background: var(--option-bg-hover);
+			background: var(--typeahead-item-hover);
 		}
 	}
 
 	.item-image {
-		width: 32px;
-		height: 32px;
+		width: $unit-6x;
+		height: $unit-6x;
 		border-radius: $item-corner-small;
 		overflow: hidden;
 		flex-shrink: 0;
@@ -192,10 +201,6 @@
 			width: 100%;
 			height: 100%;
 			object-fit: cover;
-		}
-
-		&.character {
-			border-radius: $item-corner;
 		}
 	}
 
@@ -213,36 +218,6 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-	}
-
-	// Element indicator on hover/selection
-	.mention-item {
-		border-left: 3px solid transparent;
-
-		&.element-wind.selected,
-		&.element-wind:hover {
-			border-left-color: $wind-bg-00;
-		}
-		&.element-fire.selected,
-		&.element-fire:hover {
-			border-left-color: $fire-bg-00;
-		}
-		&.element-water.selected,
-		&.element-water:hover {
-			border-left-color: $water-bg-00;
-		}
-		&.element-earth.selected,
-		&.element-earth:hover {
-			border-left-color: $earth-bg-00;
-		}
-		&.element-dark.selected,
-		&.element-dark:hover {
-			border-left-color: $dark-bg-00;
-		}
-		&.element-light.selected,
-		&.element-light:hover {
-			border-left-color: $light-bg-00;
-		}
 	}
 
 	.no-results {

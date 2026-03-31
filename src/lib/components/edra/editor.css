@@ -493,10 +493,17 @@ input[type='checkbox'] {
 	border: 1px solid darkred;
 }
 
-/* Entity Mention Styles - .tiptap prefix for specificity over .tiptap a */
-.tiptap a.entity-mention,
-.tiptap a.entity-mention:hover,
-.tiptap a.entity-mention:visited {
+/* Link styles */
+.tiptap a,
+.tiptap a:hover,
+.tiptap a:visited,
+.tiptap a:active {
+	color: var(--accent-blue);
+	text-decoration: none !important;
+}
+
+/* Entity Mention Styles */
+.tiptap span.entity-mention {
 	padding: 2px 6px;
 	border-radius: 4px;
 	text-decoration: none;
@@ -504,41 +511,41 @@ input[type='checkbox'] {
 	transition:
 		background 0.15s,
 		opacity 0.15s;
-	background: rgba(128, 128, 128, 0.2);
+	background: var(--null-mention-bg);
 	color: var(--text-primary);
 }
 
-.tiptap a.entity-mention:hover {
+.tiptap span.entity-mention:hover {
 	opacity: 0.8;
 }
 
 /* Element-specific mention colors */
-.tiptap a.entity-mention[data-element='wind'] {
-	background: rgba(48, 195, 114, 0.2);
-	color: #1dc688;
+.tiptap span.entity-mention[data-element='wind'] {
+	background: var(--wind-mention-bg);
+	color: var(--wind-text);
 }
 
-.tiptap a.entity-mention[data-element='fire'] {
-	background: rgba(224, 85, 85, 0.2);
-	color: #ec5c5c;
+.tiptap span.entity-mention[data-element='fire'] {
+	background: var(--fire-mention-bg);
+	color: var(--fire-text);
 }
 
-.tiptap a.entity-mention[data-element='water'] {
-	background: rgba(66, 165, 245, 0.2);
-	color: #42a5f5;
+.tiptap span.entity-mention[data-element='water'] {
+	background: var(--water-mention-bg);
+	color: var(--water-text);
 }
 
-.tiptap a.entity-mention[data-element='earth'] {
-	background: rgba(198, 134, 66, 0.2);
-	color: #c68642;
+.tiptap span.entity-mention[data-element='earth'] {
+	background: var(--earth-mention-bg);
+	color: var(--earth-text);
 }
 
-.tiptap a.entity-mention[data-element='dark'] {
-	background: rgba(156, 39, 176, 0.2);
-	color: #ba68c8;
+.tiptap span.entity-mention[data-element='dark'] {
+	background: var(--dark-mention-bg);
+	color: var(--dark-text);
 }
 
-.tiptap a.entity-mention[data-element='light'] {
-	background: rgba(255, 193, 7, 0.2);
-	color: #ffc107;
+.tiptap span.entity-mention[data-element='light'] {
+	background: var(--light-mention-bg);
+	color: var(--light-text);
 }
