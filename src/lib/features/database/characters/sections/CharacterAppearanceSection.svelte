@@ -28,10 +28,15 @@
 
 <DetailsContainer title="Appearance">
 	{#if !editMode}
-		<DetailItem label="Gender Variants" value={genderVariants ? 'Yes' : 'No'} />
+		<DetailItem
+			label="Gender Variants"
+			sublabel="Has separate Gran and Djeeta artwork"
+			value={genderVariants ? 'Yes' : 'No'}
+		/>
 	{:else}
 		<DetailItem
 			label="Gender Variants"
+			sublabel="Has separate Gran and Djeeta artwork"
 			bind:value={editData.gender_variants}
 			editable={true}
 			type="checkbox"
