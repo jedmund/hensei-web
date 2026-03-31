@@ -226,9 +226,10 @@
 	})
 
 	/**
-	 * Parse a pose key that may contain element and gender info.
+	 * Parse a pose key that may contain element and/or gender info.
 	 * e.g. "01-element-2-gender-0" → { pose: "01", element: 2, gender: 0 }
 	 *      "01-element-2" → { pose: "01", element: 2, gender: undefined }
+	 *      "01-gender-0" → { pose: "01", element: undefined, gender: 0 }
 	 *      "02" → { pose: "02", element: undefined, gender: undefined }
 	 */
 	function parsePoseKey(poseKey: string | undefined): {
@@ -237,14 +238,27 @@
 		gender: number | undefined
 	} {
 		if (!poseKey) return { pose: undefined, element: undefined, gender: undefined }
-		const match = poseKey.match(/^(\d+)-element-(\d+)(?:-gender-(\d+))?$/)
-		if (match) {
+
+		// Try element (with optional gender)
+		const elementMatch = poseKey.match(/^(\d+)-element-(\d+)(?:-gender-(\d+))?$/)
+		if (elementMatch) {
 			return {
-				pose: match[1],
-				element: parseInt(match[2]!, 10),
-				gender: match[3] !== undefined ? parseInt(match[3], 10) : undefined
+				pose: elementMatch[1],
+				element: parseInt(elementMatch[2]!, 10),
+				gender: elementMatch[3] !== undefined ? parseInt(elementMatch[3], 10) : undefined
 			}
 		}
+
+		// Try gender-only
+		const genderMatch = poseKey.match(/^(\d+)-gender-(\d+)$/)
+		if (genderMatch) {
+			return {
+				pose: genderMatch[1],
+				element: undefined,
+				gender: parseInt(genderMatch[2]!, 10)
+			}
+		}
+
 		return { pose: poseKey, element: undefined, gender: undefined }
 	}
 
