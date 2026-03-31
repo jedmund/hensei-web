@@ -7,13 +7,53 @@
 		imageUrl?: string
 		imageClass?: 'square' | 'circle'
 		icon?: string
+		/** Additional names to bold in the message (e.g. original item name in replacements) */
+		boldNames?: string[]
 	}
 
-	const { itemName, message, imageUrl, imageClass = 'square', icon = 'check' }: Props = $props()
+	const {
+		itemName,
+		message,
+		imageUrl,
+		imageClass = 'square',
+		icon = 'check',
+		boldNames = []
+	}: Props = $props()
 
-	const nameIndex = $derived(message.indexOf(itemName))
-	const beforeName = $derived(nameIndex >= 0 ? message.slice(0, nameIndex) : '')
-	const afterName = $derived(nameIndex >= 0 ? message.slice(nameIndex + itemName.length) : message)
+	// Build list of all names to bold: itemName + any extras
+	const allBoldNames = $derived([itemName, ...boldNames])
+
+	// Split message into segments, marking which are bold
+	const segments = $derived.by(() => {
+		const result: { text: string; bold: boolean }[] = []
+		let remaining = message
+
+		while (remaining.length > 0) {
+			let earliestIndex = -1
+			let earliestName = ''
+
+			for (const name of allBoldNames) {
+				const idx = remaining.indexOf(name)
+				if (idx >= 0 && (earliestIndex === -1 || idx < earliestIndex)) {
+					earliestIndex = idx
+					earliestName = name
+				}
+			}
+
+			if (earliestIndex === -1) {
+				result.push({ text: remaining, bold: false })
+				break
+			}
+
+			if (earliestIndex > 0) {
+				result.push({ text: remaining.slice(0, earliestIndex), bold: false })
+			}
+			result.push({ text: earliestName, bold: true })
+			remaining = remaining.slice(earliestIndex + earliestName.length)
+		}
+
+		return result
+	})
 </script>
 
 <div class="selection-toast">
@@ -26,8 +66,9 @@
 			</span>
 		{/if}
 		<p class="message">
-			{#if nameIndex >= 0}{beforeName}<span class="item-name">{itemName}</span
-				>{afterName}{:else}{message}{/if}
+			{#each segments as segment, i (i)}{#if segment.bold}<span class="item-name"
+						>{segment.text}</span
+					>{:else}{segment.text}{/if}{/each}
 		</p>
 	</div>
 </div>
@@ -41,7 +82,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
-		padding: calc($unit * 1.5) $unit-2x;
+		padding: $unit;
 		background: var(--toast-bg);
 		color: var(--toast-text);
 		border: 1px solid var(--toast-border);
