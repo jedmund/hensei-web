@@ -18,6 +18,7 @@
 	import PrivacySelector from '$lib/components/party/edit/PrivacySelector.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import { page } from '$app/stores'
 	import { usePaneStack } from '$lib/stores/paneStack.svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
@@ -55,13 +56,18 @@
 		paneId?: string
 		/** Current party values */
 		initialValues: PartyEditValues
-		/** Party element for switch theming */
+		/** Party element for switch theming (fallback, prefer reactive derivation) */
 		element?: ElementType
 		/** Callback when save is requested */
 		onSave?: (values: PartyEditValues) => void
 	}
 
-	let { paneId, initialValues, element, onSave }: Props = $props()
+	let { paneId, initialValues, element: elementProp, onSave }: Props = $props()
+
+	// Derive element reactively from the user cookie (updates after settings save via invalidateAll)
+	const element = $derived(
+		($page.data?.currentUser?.element as ElementType | undefined) ?? elementProp
+	)
 
 	// Get the pane stack for pushing EditRaidPane
 	const paneStack = usePaneStack()
@@ -149,14 +155,15 @@
 	// which would re-trigger this effect if paneId were tracked.
 	$effect(() => {
 		const changed = hasChanges
+		const el = element // Track element reactively so button color updates
 		untrack(() => {
 			if (paneId) {
-				sidebar.setActionForPane(paneId, changed ? save : undefined, m.action_save(), element)
+				sidebar.setActionForPane(paneId, changed ? save : undefined, m.action_save(), el)
 			} else {
 				if (changed) {
-					sidebar.setAction(save, m.action_save(), element)
+					sidebar.setAction(save, m.action_save(), el)
 				} else {
-					sidebar.setAction(undefined, m.action_save(), element)
+					sidebar.setAction(undefined, m.action_save(), el)
 				}
 			}
 		})

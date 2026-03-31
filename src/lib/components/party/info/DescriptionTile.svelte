@@ -453,7 +453,7 @@
 		{#if preview.text}
 			<div class="preview-text" bind:this={contentEl}>
 				<p>
-					{preview.text}&nbsp;{#if preview.hasMore || needsReadMore}
+					{preview.text}…&nbsp;{#if preview.hasMore || needsReadMore}
 						<span
 							class="read-more"
 							style:color={user?.avatar?.element ? `var(--${user.avatar.element}-bg)` : undefined}

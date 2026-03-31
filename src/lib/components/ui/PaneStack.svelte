@@ -108,7 +108,7 @@
 				{#snippet rightAccessory()}
 					{#if pane.action}
 						<Button
-							variant={pane.action.element ? 'element-ghost' : 'ghost'}
+							variant={pane.action.element ? 'element' : 'ghost'}
 							size="small"
 							element={pane.action.element}
 							onclick={pane.action.handler}

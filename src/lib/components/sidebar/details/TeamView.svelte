@@ -47,7 +47,23 @@
 	let editKey3 = $state<string | undefined>(undefined)
 
 	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
-	const userElement = $derived(partyStore.party?.user?.avatar?.element as ElementType | undefined)
+
+	const ELEMENT_SLUG_MAP: Record<number, ElementType> = {
+		1: 'wind',
+		2: 'fire',
+		3: 'water',
+		4: 'earth',
+		5: 'dark',
+		6: 'light'
+	}
+
+	// Use the weapon's effective element (grid override or base) for button color
+	const weaponElement = $derived.by(() => {
+		if (type !== 'weapon') return undefined
+		const weapon = item as GridWeapon
+		const el = weapon.element || weapon.weapon?.element
+		return el ? ELEMENT_SLUG_MAP[el] : undefined
+	})
 
 	function handleElementChange(value: number | number[]) {
 		const element = typeof value === 'number' ? value : value[0]
@@ -181,7 +197,7 @@
 						<Button
 							variant="element-ghost"
 							size="small"
-							element={userElement}
+							element={weaponElement}
 							onclick={() => (showElementPicker = !showElementPicker)}
 						>
 							{showElementPicker ? m.action_done() : m.action_change()}
@@ -214,7 +230,7 @@
 						<Button
 							variant="element-ghost"
 							size="small"
-							element={userElement}
+							element={weaponElement}
 							onclick={() => {
 								if (showWeaponKeyEditor) {
 									handleWeaponKeySave()

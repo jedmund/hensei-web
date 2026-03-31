@@ -341,6 +341,14 @@
 	--light-button-bg-hover: #{color.adjust(colors.$light-text-30, $lightness: 16%)};
 	--dark-button-bg-hover: #{color.adjust(colors.$dark-text-30, $lightness: 8%)};
 
+	// Light - Element ghost button text colors (vibrant, AA contrast on white)
+	--wind-ghost-text: #{colors.$wind-text-25};
+	--fire-ghost-text: #{colors.$fire-text-25};
+	--water-ghost-text: #{colors.$water-text-25};
+	--earth-ghost-text: #{colors.$earth-text-25};
+	--light-ghost-text: #{colors.$light-text-25};
+	--dark-ghost-text: #{colors.$dark-text-25};
+
 	// Light - Element navigation selected background
 	--null-nav-selected-bg: #{colors.$grey-85};
 	--wind-nav-selected-bg: #{colors.$wind-bg-20};
@@ -807,6 +815,14 @@ html[data-theme='dark'] {
 	--earth-button-bg-hover: #{color.adjust(colors.$earth-text-20, $lightness: 8%)};
 	--light-button-bg-hover: #{color.adjust(colors.$light-text-30, $lightness: 8%)};
 	--dark-button-bg-hover: #{color.adjust(colors.$dark-text-30, $lightness: 8%)};
+
+	// Dark - Element ghost button text colors (bright variants for dark backgrounds)
+	--wind-ghost-text: #{colors.$wind-text-30};
+	--fire-ghost-text: #{colors.$fire-text-30};
+	--water-ghost-text: #{colors.$water-text-30};
+	--earth-ghost-text: #{colors.$earth-text-30};
+	--light-ghost-text: #{colors.$light-text-30};
+	--dark-ghost-text: #{colors.$dark-text-30};
 
 	// Dark - Element navigation selected background (same as light theme)
 	--null-nav-selected-bg: #{colors.$grey-85};
