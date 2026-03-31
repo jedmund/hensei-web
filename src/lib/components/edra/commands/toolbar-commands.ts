@@ -144,7 +144,9 @@ const commands: Record<string, EdraToolBarCommands[]> = {
 				if (editor.isActive('link')) {
 					editor.chain().focus().unsetLink().run()
 				} else {
-					linkDialogState.show(editor)
+					const { from, to } = editor.state.selection
+					const selectedText = from !== to ? editor.state.doc.textBetween(from, to) : ''
+					linkDialogState.show(editor, '', selectedText)
 				}
 			},
 			isActive: (editor) => {
