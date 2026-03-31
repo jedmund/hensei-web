@@ -148,7 +148,7 @@
 	}
 
 	function handleCancel() {
-		goto('/database/job-skills')
+		goto('/database/jobs')
 	}
 </script>
 
