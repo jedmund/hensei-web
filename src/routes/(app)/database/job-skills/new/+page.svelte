@@ -83,7 +83,17 @@
 			.trim()
 	}
 
-	const slug = $derived(generateSlug(editData.nameEn))
+	let slug = $state('')
+	let prevAutoSlug = ''
+
+	// Auto-update slug from name unless the user has manually edited it
+	$effect(() => {
+		const autoSlug = generateSlug(editData.nameEn)
+		if (slug === prevAutoSlug || slug === '') {
+			slug = autoSlug
+		}
+		prevAutoSlug = autoSlug
+	})
 
 	// Auto-set order when job changes
 	$effect(() => {
@@ -185,7 +195,13 @@
 				type="text"
 				placeholder="日本語名"
 			/>
-			<DetailItem label="Slug" value={slug || '(auto-generated from name)'} editable={false} />
+			<DetailItem
+				label="Slug"
+				bind:value={slug}
+				editable={true}
+				type="text"
+				placeholder="(auto-generated from name)"
+			/>
 		</DetailsContainer>
 
 		<DetailsContainer title="Classification">
