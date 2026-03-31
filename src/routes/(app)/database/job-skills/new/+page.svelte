@@ -200,7 +200,7 @@
 				bind:value={slug}
 				editable={true}
 				type="text"
-				placeholder="(auto-generated from name)"
+				placeholder="skill-slug"
 			/>
 		</DetailsContainer>
 
