@@ -54,7 +54,7 @@
 			c?.character?.styleSwap,
 			simplePortraits.value,
 			c?.character?.element,
-			characterGender
+			c?.character?.genderVariants ? characterGender : undefined
 		)
 	}
 </script>

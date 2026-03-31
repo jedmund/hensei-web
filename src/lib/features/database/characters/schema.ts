@@ -26,6 +26,7 @@ export const CharacterEditSchema = z.object({
 	transcendence: z.boolean(),
 	special: z.boolean(),
 	style_swap: z.boolean(),
+	gender_variants: z.boolean(),
 	style_name_en: z.string().nullable(),
 	style_name_jp: z.string().nullable()
 })
@@ -66,6 +67,8 @@ interface CharacterModel {
 	special?: boolean
 	styleSwap?: boolean
 	style_swap?: boolean
+	genderVariants?: boolean
+	gender_variants?: boolean
 	styleName?: { en?: string; ja?: string }
 	style_name_en?: string | null
 	style_name_jp?: string | null
@@ -96,6 +99,7 @@ export function toEditData(model: CharacterModel): CharacterEdit {
 		transcendence: model?.uncap?.transcendence ?? false,
 		special: model?.special ?? false,
 		style_swap: model?.styleSwap ?? model?.style_swap ?? false,
+		gender_variants: model?.genderVariants ?? model?.gender_variants ?? false,
 		style_name_en: model?.styleName?.en ?? model?.style_name_en ?? null,
 		style_name_jp: model?.styleName?.ja ?? model?.style_name_jp ?? null
 	}
@@ -130,6 +134,7 @@ export function toPayload(edit: CharacterEdit) {
 		},
 		special: edit.special,
 		style_swap: edit.style_swap,
+		gender_variants: edit.gender_variants,
 		style_name_en: edit.style_name_en,
 		style_name_jp: edit.style_name_jp
 	}

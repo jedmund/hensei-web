@@ -27,6 +27,9 @@
 	const flb = $derived(uncap.flb ?? false)
 	const transcendence = $derived(uncap.transcendence ?? false)
 	const special = $derived(editMode ? editData.special : (character?.special ?? false))
+	const genderVariants = $derived(
+		editMode ? editData.gender_variants : (character?.genderVariants ?? false)
+	)
 	const uncapLevel = $derived(getCharacterMaxUncapLevel({ special, uncap }))
 	const transcendenceStage = $derived(transcendence ? 5 : 0)
 
@@ -82,6 +85,7 @@
 		<DetailItem label="FLB" value={flb ? 'Yes' : 'No'} />
 		<DetailItem label="Transcendence" value={transcendence ? 'Yes' : 'No'} />
 		<DetailItem label="Special" value={special ? 'Yes' : 'No'} />
+		<DetailItem label="Gender Variants" value={genderVariants ? 'Yes' : 'No'} />
 	{:else}
 		<DetailItem
 			label="FLB"
@@ -112,6 +116,13 @@
 				This is for Story SRs. Don't check this unless something really weird happens.
 			</p>
 		</div>
+		<DetailItem
+			label="Gender Variants"
+			bind:value={editData.gender_variants}
+			editable={true}
+			type="checkbox"
+			element={elementName}
+		/>
 	{/if}
 </DetailsContainer>
 

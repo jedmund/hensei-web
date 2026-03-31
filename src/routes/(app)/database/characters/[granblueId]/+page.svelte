@@ -157,30 +157,43 @@
 		const genderLabels = ['Gran', 'Djeeta'] as const
 
 		if (character.element === 0) {
-			// Null-element characters: show all 6 element variants for each pose,
-			// with both Gran (_0) and Djeeta (_1) gender variants
+			// Null-element characters: show all 6 element variants for each pose
 			for (const element of ELEMENT_DISPLAY_ORDER) {
 				const elementLabel = getElementLabel(element)
 				for (const pose of poses) {
-					for (const [genderIdx, genderLabel] of genderLabels.entries()) {
+					if (character.genderVariants) {
+						// With gender variants: show both Gran and Djeeta for each element
+						for (const [genderIdx, genderLabel] of genderLabels.entries()) {
+							for (const variant of variants) {
+								images.push({
+									url: getCharacterImage(
+										character.granblueId,
+										variant,
+										`${pose.id}_0${element}_${genderIdx}`
+									),
+									label: `${variant} (${pose.label} — ${elementLabel} — ${genderLabel})`,
+									variant,
+									pose: `${pose.id}-element-${element}-gender-${genderIdx}`,
+									poseLabel: `${pose.label} (${elementLabel} — ${genderLabel})`
+								})
+							}
+						}
+					} else {
+						// Without gender variants: element only
 						for (const variant of variants) {
 							images.push({
-								url: getCharacterImage(
-									character.granblueId,
-									variant,
-									`${pose.id}_0${element}_${genderIdx}`
-								),
-								label: `${variant} (${pose.label} — ${elementLabel} — ${genderLabel})`,
+								url: getCharacterImage(character.granblueId, variant, `${pose.id}_0${element}`),
+								label: `${variant} (${pose.label} — ${elementLabel})`,
 								variant,
-								pose: `${pose.id}-element-${element}-gender-${genderIdx}`,
-								poseLabel: `${pose.label} (${elementLabel} — ${genderLabel})`
+								pose: `${pose.id}-element-${element}`,
+								poseLabel: `${pose.label} (${elementLabel})`
 							})
 						}
 					}
 				}
 			}
 		} else {
-			// Non-null-element characters: base images + gender variants
+			// Non-null-element characters: base images
 			for (const pose of poses) {
 				for (const variant of variants) {
 					images.push({
@@ -193,17 +206,19 @@
 				}
 			}
 
-			// Gender variants for non-null-element characters
-			for (const pose of poses) {
-				for (const [genderIdx, genderLabel] of genderLabels.entries()) {
-					for (const variant of variants) {
-						images.push({
-							url: getCharacterImage(character.granblueId, variant, `${pose.id}_${genderIdx}`),
-							label: `${variant} (${pose.label} — ${genderLabel})`,
-							variant,
-							pose: `${pose.id}-gender-${genderIdx}`,
-							poseLabel: `${pose.label} (${genderLabel})`
-						})
+			// Gender variants only when character has them
+			if (character.genderVariants) {
+				for (const pose of poses) {
+					for (const [genderIdx, genderLabel] of genderLabels.entries()) {
+						for (const variant of variants) {
+							images.push({
+								url: getCharacterImage(character.granblueId, variant, `${pose.id}_${genderIdx}`),
+								label: `${variant} (${pose.label} — ${genderLabel})`,
+								variant,
+								pose: `${pose.id}-gender-${genderIdx}`,
+								poseLabel: `${pose.label} (${genderLabel})`
+							})
+						}
 					}
 				}
 			}
@@ -299,33 +314,39 @@
 			await entityAdapter.downloadCharacterImage(character.id, size, pose, false)
 		}
 
-		// Download gender variants for all characters (both Gran and Djeeta)
-		for (const pose of poses) {
-			for (const gender of [0, 1]) {
-				await entityAdapter.downloadCharacterImage(
-					character.id,
-					size,
-					pose,
-					false,
-					undefined,
-					gender
-				)
+		// Download gender variants only when character has them
+		if (character.genderVariants) {
+			for (const pose of poses) {
+				for (const gender of [0, 1]) {
+					await entityAdapter.downloadCharacterImage(
+						character.id,
+						size,
+						pose,
+						false,
+						undefined,
+						gender
+					)
+				}
 			}
 		}
 
-		// Also download element variants for null-element characters (both genders)
+		// Download element variants for null-element characters
 		if (character.element === 0) {
 			for (const element of ELEMENT_DISPLAY_ORDER) {
 				for (const pose of poses) {
-					for (const gender of [0, 1]) {
-						await entityAdapter.downloadCharacterImage(
-							character.id,
-							size,
-							pose,
-							false,
-							element,
-							gender
-						)
+					if (character.genderVariants) {
+						for (const gender of [0, 1]) {
+							await entityAdapter.downloadCharacterImage(
+								character.id,
+								size,
+								pose,
+								false,
+								element,
+								gender
+							)
+						}
+					} else {
+						await entityAdapter.downloadCharacterImage(character.id, size, pose, false, element)
 					}
 				}
 			}
