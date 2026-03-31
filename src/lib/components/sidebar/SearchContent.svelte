@@ -396,9 +396,11 @@
 	function handleItemClick(item: AddItemResult) {
 		if (canAddMore && !isInTeam(item)) {
 			onAddItems([item])
-			searchQuery = ''
-			if (debounceTimer) clearTimeout(debounceTimer)
-			debouncedSearchQuery = ''
+			if (type !== 'weapon') {
+				searchQuery = ''
+				if (debounceTimer) clearTimeout(debounceTimer)
+				debouncedSearchQuery = ''
+			}
 		}
 	}
 </script>
