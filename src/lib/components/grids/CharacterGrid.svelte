@@ -10,6 +10,7 @@
 		characters?: GridCharacter[] | undefined
 		mainWeaponElement?: number | null | undefined
 		partyElement?: number | null | undefined
+		gender?: number
 		container?: string | undefined
 		unlimited?: boolean
 		collectionCharacterItems?: Map<string, { uncapLevel: number; transcendenceStep: number }[]>
@@ -19,6 +20,7 @@
 		characters = [],
 		mainWeaponElement = undefined,
 		partyElement = undefined,
+		gender = 0,
 		container = 'main-characters',
 		unlimited = false,
 		collectionCharacterItems = undefined
@@ -101,6 +103,7 @@
 								position={i}
 								{mainWeaponElement}
 								{partyElement}
+								{gender}
 								notInCollection={collectionStatus != null &&
 									!!character?.character?.granblueId &&
 									!collectionStatus.get(i)}

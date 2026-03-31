@@ -245,6 +245,8 @@
 	const mainWeapon = $derived((party?.weapons ?? []).find((w) => w?.mainhand || w?.position === -1))
 	const mainWeaponElement = $derived(mainWeapon?.element ?? mainWeapon?.weapon?.element)
 	const partyElement = $derived(party?.element)
+	// Convert user gender (1=Male, 2=Female) to image gender suffix (0=Gran, 1=Djeeta)
+	const characterGender = $derived(party.user?.gender === 2 ? 1 : 0)
 
 	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	const userElement = $derived(party.user?.avatar?.element as ElementType | undefined)
@@ -580,6 +582,7 @@
 								characters={party.characters}
 								{mainWeaponElement}
 								{partyElement}
+								gender={characterGender}
 								unlimited={party?.raid?.group?.unlimited}
 								{collectionCharacterItems}
 							/>
