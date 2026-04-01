@@ -7,7 +7,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { BaseAdapter } from '../base.adapter'
-import type { AdapterOptions } from '../types'
+import type { AdapterOptions, ApiPaginationMeta } from '../types'
 
 /**
  * Test adapter implementation for testing BaseAdapter functionality
@@ -32,6 +32,15 @@ class TestAdapter extends BaseAdapter {
 
 	testClearCache(pattern?: string): void {
 		this.clearCache(pattern)
+	}
+
+	testToPaginatedResponse<T>(
+		results: T[],
+		meta: ApiPaginationMeta | undefined,
+		fallbackPage: number,
+		fallbackPerPage?: number
+	) {
+		return this.toPaginatedResponse(results, meta, fallbackPage, fallbackPerPage)
 	}
 }
 
@@ -452,6 +461,53 @@ describe('BaseAdapter', () => {
 				status: 500,
 				message: 'Internal Server Error'
 			})
+		})
+	})
+
+	describe('toPaginatedResponse', () => {
+		it('should extract pagination from meta', () => {
+			const items = [{ id: 1 }, { id: 2 }]
+			const meta = { count: 42, totalPages: 3, perPage: 15, currentPage: 2 }
+
+			const result = adapter.testToPaginatedResponse(items, meta, 1)
+
+			expect(result.results).toBe(items)
+			expect(result.page).toBe(2)
+			expect(result.total).toBe(42)
+			expect(result.totalPages).toBe(3)
+			expect(result.perPage).toBe(15)
+		})
+
+		it('should use fallbackPage when currentPage is missing', () => {
+			const meta = { count: 10, totalPages: 1, perPage: 20 }
+
+			const result = adapter.testToPaginatedResponse([], meta, 3)
+
+			expect(result.page).toBe(3)
+		})
+
+		it('should use sensible defaults when meta is undefined', () => {
+			const result = adapter.testToPaginatedResponse([], undefined, 1)
+
+			expect(result.results).toEqual([])
+			expect(result.page).toBe(1)
+			expect(result.total).toBe(0)
+			expect(result.totalPages).toBe(1)
+			expect(result.perPage).toBe(20)
+		})
+
+		it('should respect custom fallbackPerPage', () => {
+			const result = adapter.testToPaginatedResponse([], undefined, 1, 15)
+
+			expect(result.perPage).toBe(15)
+		})
+
+		it('should prefer meta.perPage over fallbackPerPage', () => {
+			const meta = { count: 5, totalPages: 1, perPage: 10 }
+
+			const result = adapter.testToPaginatedResponse([], meta, 1, 15)
+
+			expect(result.perPage).toBe(10)
 		})
 	})
 })
