@@ -123,8 +123,23 @@
 	let tooltipVisible = $state(false)
 	let tooltipEl: HTMLDivElement | null = $state(null)
 
+	// Suppress tooltips while selecting text
+	let isSelecting = $state(false)
+
+	function handleMouseDown() {
+		isSelecting = true
+		tooltipVisible = false
+		tooltipEntity = null
+	}
+
+	function handleMouseUp() {
+		setTimeout(() => {
+			isSelecting = false
+		}, 100)
+	}
+
 	function handleMentionEnter(event: MouseEvent) {
-		if (!editor) return
+		if (!editor || isSelecting) return
 		const target = (event.target as HTMLElement).closest?.('span[data-type="mention"]')
 		if (!target) {
 			// Mouse is over the editor but not a mention — dismiss tooltip
@@ -310,7 +325,13 @@
 	</div>
 
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="editor-container" onmouseover={handleMentionEnter} onmouseleave={handleMentionLeave}>
+	<div
+		class="editor-container"
+		onmousedown={handleMouseDown}
+		onmouseup={handleMouseUp}
+		onmouseover={handleMentionEnter}
+		onmouseleave={handleMentionLeave}
+	>
 		<EdraEditor
 			bind:editor
 			content={initialContent}
