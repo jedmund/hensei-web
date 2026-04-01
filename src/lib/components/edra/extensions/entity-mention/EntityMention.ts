@@ -43,6 +43,10 @@ function getElementSlug(element: unknown): string {
 export const EntityMention = Mention.extend({
 	name: 'mention',
 
+	parseHTML() {
+		return [{ tag: `span[data-type="${this.name}"]` }, { tag: `a[data-type="${this.name}"]` }]
+	},
+
 	addAttributes() {
 		return {
 			...this.parent?.(),

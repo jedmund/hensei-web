@@ -195,7 +195,8 @@
 					styleSwap: attrs?.styleSwap
 				})
 
-				return `<a href="${wikiUrl}" target="_blank" rel="noopener noreferrer" class="mention" data-element="${elementSlug}" data-entity-type="${entityType}" data-mention-index="${idx}">${displayName}</a>`
+				const entityJson = JSON.stringify(collector.get(idx)).replace(/"/g, '&quot;')
+				return `<a href="${wikiUrl}" target="_blank" rel="noopener noreferrer" class="mention" data-type="mention" data-id="${entityJson}" data-element="${elementSlug}" data-entity-type="${entityType}" data-mention-index="${idx}">${displayName}</a>`
 			}
 
 			default:
@@ -239,8 +240,25 @@
 	const parsedHTML = $derived(parsed.html)
 	const mentionEntities = $derived(parsed.entities)
 
+	// Suppress tooltips while selecting text
+	let isSelecting = $state(false)
+
+	function handleMouseDown() {
+		isSelecting = true
+		tooltipVisible = false
+		tooltipEntity = null
+	}
+
+	function handleMouseUp() {
+		// Small delay so tooltip doesn't flash immediately after selection ends
+		setTimeout(() => {
+			isSelecting = false
+		}, 100)
+	}
+
 	// Tooltip hover handlers
 	function handleMentionEnter(event: MouseEvent) {
+		if (isSelecting) return
 		const target = (event.target as HTMLElement).closest?.('.mention[data-mention-index]')
 		if (!target) return
 
@@ -287,6 +305,8 @@
 	class:truncate
 	style={truncate ? `--max-lines: ${maxLines}` : ''}
 	bind:this={containerEl}
+	onmousedown={handleMouseDown}
+	onmouseup={handleMouseUp}
 	onmouseenter={handleMentionEnter}
 	onmouseover={handleMentionEnter}
 	onmouseleave={handleMentionLeave}
