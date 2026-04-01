@@ -1,12 +1,14 @@
 <script lang="ts">
-	import { page } from '$app/state'
+	import type { PageData } from './$types'
 	import { Accordion } from 'bits-ui'
 	import LinkItem from '$lib/components/about/LinkItem.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { getImageBaseUrl } from '$lib/api/adapters/config'
-	import type { UserCookie } from '$lib/types/UserCookie'
+	import { getLocale } from '$lib/paraglide/runtime.js'
+
+	let { data }: { data: PageData } = $props()
 
 	const faqItems = [
 		{ value: 'how', title: () => m.ext_faq_how_title(), desc: () => m.ext_faq_desc() },
@@ -24,9 +26,17 @@
 		}
 	]
 
-	const currentUser = $derived(page.data?.currentUser as UserCookie | null)
+	const currentUser = $derived(data?.currentUser)
 	const userElement = $derived(
 		(currentUser?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light') ?? undefined
+	)
+	const release = $derived(data?.release ?? null)
+	const formattedDate = $derived(
+		release
+			? new Intl.DateTimeFormat(getLocale(), { dateStyle: 'long' }).format(
+					new Date(release.publishedAt)
+				)
+			: ''
 	)
 </script>
 
@@ -46,6 +56,11 @@
 				{m.ext_download()}
 			</Button>
 		</a>
+		{#if release}
+			<p class="version-info">
+				{m.ext_version({ version: release.version })} · {m.ext_published({ date: formattedDate })}
+			</p>
+		{/if}
 		<p class="fine-print">{m.ext_compatibility()}</p>
 	</div>
 
@@ -144,6 +159,12 @@
 		display: inline-block;
 		text-decoration: none;
 		width: fit-content;
+	}
+
+	.version-info {
+		font-size: $font-small;
+		color: var(--text-secondary);
+		margin: 0;
 	}
 
 	.fine-print {

@@ -327,6 +327,8 @@
 
 	"ext_description": "Use the Chrome extension to passively capture your in-game teams and collection and send it to granblue.team.",
 	"ext_download": "Download extension",
+	"ext_version": "Version {version}",
+	"ext_published": "Published {date}",
 	"ext_compatibility": "Compatible with desktop Chromium-based browsers like Google Chrome, Vivaldi, Microsoft Edge, and more.",
 	"ext_feature_collection_title": "Import your collection",
 	"ext_feature_collection_desc": "Capture your in-game characters, weapons, and summons to make sharing your collection and finding new teams easier.",

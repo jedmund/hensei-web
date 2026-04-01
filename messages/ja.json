@@ -327,6 +327,8 @@
 
 	"ext_description": "Chrome拡張機能を使って、ゲーム内の編成やコレクションを自動的にキャプチャしてgranblue.teamに送信できます。",
 	"ext_download": "拡張機能をダウンロード",
+	"ext_version": "バージョン {version}",
+	"ext_published": "{date} 公開",
 	"ext_compatibility": "Google Chrome、Vivaldi、Microsoft Edgeなど、デスクトップ版Chromiumベースのブラウザに対応しています。",
 	"ext_feature_collection_title": "コレクションをインポート",
 	"ext_feature_collection_desc": "ゲーム内のキャラクター、武器、召喚石をキャプチャして、コレクションの共有や新しい編成探しをもっと簡単に。",
