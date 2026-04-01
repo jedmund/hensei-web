@@ -43,6 +43,31 @@ function getElementSlug(element: unknown): string {
 export const EntityMention = Mention.extend({
 	name: 'mention',
 
+	addAttributes() {
+		return {
+			...this.parent?.(),
+			id: {
+				default: null,
+				parseHTML: (element: HTMLElement) => {
+					const raw = element.getAttribute('data-id')
+					if (!raw) return null
+					try {
+						return JSON.parse(raw)
+					} catch {
+						return raw
+					}
+				},
+				renderHTML: (attributes: Record<string, unknown>) => {
+					if (!attributes.id) return {}
+					return {
+						'data-id':
+							typeof attributes.id === 'object' ? JSON.stringify(attributes.id) : attributes.id
+					}
+				}
+			}
+		}
+	},
+
 	renderHTML({ node, HTMLAttributes }) {
 		const id = node.attrs.id
 
