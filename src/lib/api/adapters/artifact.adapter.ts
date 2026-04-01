@@ -11,7 +11,7 @@
  */
 
 import { BaseAdapter } from './base.adapter'
-import type { AdapterOptions, PaginatedResponse } from './types'
+import type { AdapterOptions, ApiPaginationMeta, PaginatedResponse } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type {
 	Artifact,
@@ -164,7 +164,7 @@ export class ArtifactAdapter extends BaseAdapter {
 		const response = await this.request<{
 			artifacts?: CollectionArtifact[]
 			collectionArtifacts?: CollectionArtifact[]
-			meta: { count: number; totalPages: number; perPage: number; currentPage: number }
+			meta: ApiPaginationMeta
 		}>(`/users/${userId}/collection/artifacts`, {
 			method: 'GET',
 			query: params
@@ -173,13 +173,7 @@ export class ArtifactAdapter extends BaseAdapter {
 		// Handle both response key formats
 		const artifacts = response.artifacts ?? response.collectionArtifacts ?? []
 
-		return {
-			results: artifacts,
-			page: response.meta.currentPage,
-			total: response.meta.count,
-			totalPages: response.meta.totalPages,
-			perPage: response.meta.perPage
-		}
+		return this.toPaginatedResponse(artifacts, response.meta, params.page || 1)
 	}
 
 	/**

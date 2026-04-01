@@ -9,7 +9,7 @@
  */
 
 import { BaseAdapter } from './base.adapter'
-import type { AdapterOptions, PaginatedResponse, RequestOptions } from './types'
+import type { AdapterOptions, ApiPaginationMeta, PaginatedResponse, RequestOptions } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { Party } from '$lib/types/api/party'
 import type { PartyShare } from '$lib/types/api/partyShare'
@@ -224,23 +224,13 @@ export class PartyAdapter extends BaseAdapter {
 
 		const response = await this.request<{
 			results: Party[]
-			meta?: {
-				count?: number
-				totalPages?: number
-				perPage?: number
-			}
+			meta?: ApiPaginationMeta
 		}>('/parties', {
 			query,
 			...options
 		})
 
-		return {
-			results: response.results,
-			page: params.page || 1,
-			total: response.meta?.count || 0,
-			totalPages: response.meta?.totalPages || 1,
-			perPage: response.meta?.perPage || 20
-		}
+		return this.toPaginatedResponse(response.results, response.meta, params.page || 1)
 	}
 
 	/**
@@ -248,9 +238,15 @@ export class PartyAdapter extends BaseAdapter {
 	 */
 	async listUserParties(params: ListUserPartiesParams): Promise<PaginatedResponse<Party>> {
 		const { username, filters, ...queryParams } = params
-		return this.request<PaginatedResponse<Party>>(`/users/${username}/parties`, {
+
+		const response = await this.request<{
+			results: Party[]
+			meta?: ApiPaginationMeta
+		}>(`/users/${username}/parties`, {
 			query: { ...queryParams, ...filters }
 		})
+
+		return this.toPaginatedResponse(response.results, response.meta, params.page || 1)
 	}
 
 	/**
@@ -273,22 +269,12 @@ export class PartyAdapter extends BaseAdapter {
 
 		const response = await this.request<{
 			results: Party[]
-			meta?: {
-				count?: number
-				totalPages?: number
-				perPage?: number
-			}
+			meta?: ApiPaginationMeta
 		}>('/parties', {
 			query
 		})
 
-		return {
-			results: response.results,
-			page: params.page || 1,
-			total: response.meta?.count || 0,
-			totalPages: response.meta?.totalPages || 1,
-			perPage: response.meta?.perPage || 20
-		}
+		return this.toPaginatedResponse(response.results, response.meta, params.page || 1)
 	}
 
 	/**

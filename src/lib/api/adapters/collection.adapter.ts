@@ -8,7 +8,7 @@
  */
 
 import { BaseAdapter } from './base.adapter'
-import type { AdapterOptions, PaginatedResponse } from './types'
+import type { AdapterOptions, ApiPaginationMeta, PaginatedResponse } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type {
 	CollectionCharacter,
@@ -103,13 +103,7 @@ export class CollectionAdapter extends BaseAdapter {
 				}))
 			: items
 
-		return {
-			results,
-			page: response.meta.currentPage,
-			total: response.meta.count,
-			totalPages: response.meta.totalPages,
-			perPage: response.meta.perPage
-		}
+		return this.toPaginatedResponse(results, response.meta as ApiPaginationMeta, params.page || 1)
 	}
 
 	/**
@@ -245,13 +239,7 @@ export class CollectionAdapter extends BaseAdapter {
 				}))
 			: rawWeapons
 
-		return {
-			results,
-			page: response.meta.currentPage,
-			total: response.meta.count,
-			totalPages: response.meta.totalPages,
-			perPage: response.meta.perPage
-		}
+		return this.toPaginatedResponse(results, response.meta as ApiPaginationMeta, params.page || 1)
 	}
 
 	/**
@@ -365,13 +353,7 @@ export class CollectionAdapter extends BaseAdapter {
 				}))
 			: rawSummons
 
-		return {
-			results,
-			page: response.meta.currentPage,
-			total: response.meta.count,
-			totalPages: response.meta.totalPages,
-			perPage: response.meta.perPage
-		}
+		return this.toPaginatedResponse(results, response.meta as ApiPaginationMeta, params.page || 1)
 	}
 
 	/**

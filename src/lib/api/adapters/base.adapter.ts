@@ -9,7 +9,14 @@
  */
 
 import { transformResponse, transformRequest } from '../schemas/transforms'
-import type { AdapterOptions, RequestOptions, AdapterError, QueryParams } from './types'
+import type {
+	AdapterOptions,
+	RequestOptions,
+	AdapterError,
+	QueryParams,
+	ApiPaginationMeta,
+	PaginatedResponse
+} from './types'
 import {
 	createErrorFromStatus,
 	normalizeError,
@@ -251,6 +258,25 @@ export abstract class BaseAdapter {
 		if (controller) {
 			controller.abort()
 			this.abortControllers.delete(requestId)
+		}
+	}
+
+	/**
+	 * Converts a raw API response with nested `meta` into a flat PaginatedResponse.
+	 * Centralizes the extraction pattern used by all paginated endpoints.
+	 */
+	protected toPaginatedResponse<T>(
+		results: T[],
+		meta: ApiPaginationMeta | undefined,
+		fallbackPage: number,
+		fallbackPerPage = 20
+	): PaginatedResponse<T> {
+		return {
+			results,
+			page: meta?.currentPage ?? fallbackPage,
+			total: meta?.count ?? 0,
+			totalPages: meta?.totalPages ?? 1,
+			perPage: meta?.perPage ?? fallbackPerPage
 		}
 	}
 

@@ -8,7 +8,7 @@
  */
 
 import { BaseAdapter } from './base.adapter'
-import type { AdapterOptions, PaginatedResponse, RequestOptions } from './types'
+import type { AdapterOptions, ApiPaginationMeta, PaginatedResponse, RequestOptions } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { Playlist } from '$lib/types/api/playlist'
 
@@ -38,18 +38,12 @@ export class PlaylistAdapter extends BaseAdapter {
 	async list(username: string, page?: number): Promise<PaginatedResponse<Playlist>> {
 		const response = await this.request<{
 			results: Playlist[]
-			meta?: { count?: number; totalPages?: number; perPage?: number }
+			meta?: ApiPaginationMeta
 		}>(`/users/${username}/playlists`, {
 			query: { page }
 		})
 
-		return {
-			results: response.results,
-			page: page || 1,
-			total: response.meta?.count || 0,
-			totalPages: response.meta?.totalPages || 1,
-			perPage: response.meta?.perPage || 15
-		}
+		return this.toPaginatedResponse(response.results, response.meta, page || 1, 15)
 	}
 
 	/**

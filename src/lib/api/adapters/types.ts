@@ -96,6 +96,18 @@ export interface AdapterError {
 }
 
 /**
+ * Standard pagination metadata shape returned by Rails API endpoints.
+ * BaseAdapter transforms snake_case keys (count, total_pages, per_page, current_page)
+ * to camelCase automatically.
+ */
+export interface ApiPaginationMeta {
+	count?: number
+	currentPage?: number
+	totalPages?: number
+	perPage?: number
+}
+
+/**
  * Generic paginated response structure
  * Used for endpoints that return paginated data
  */
