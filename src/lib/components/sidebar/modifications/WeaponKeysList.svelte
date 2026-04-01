@@ -38,7 +38,7 @@
 
 {#if weaponKeys && weaponKeys.length > 0}
 	<div class="weapon-keys-list {layout}">
-		{#each weaponKeys as key, index (key.id)}
+		{#each weaponKeys as key, index (index)}
 			{@const imageData = keyImages[index]}
 			<div class="weapon-key-item">
 				{#if imageData}
