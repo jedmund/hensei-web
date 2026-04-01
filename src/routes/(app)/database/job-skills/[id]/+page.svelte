@@ -58,8 +58,13 @@
 <div class="page">
 	<DatabasePageHeader title="Job Skill">
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/job-skills"
-				>Back</Button
+			<Button
+				variant="ghost"
+				size="small"
+				leftIcon="chevron-left"
+				href={skill?.job?.granblueId
+					? localizeHref(`/database/jobs/${skill.job.granblueId}?tab=skills`)
+					: localizeHref('/database/jobs?view=skills')}>Back</Button
 			>
 		{/snippet}
 		{#snippet rightAction()}
@@ -120,7 +125,7 @@
 		<NotFoundPlaceholder
 			title="Skill Not Found"
 			message="The job skill you're looking for could not be found."
-			backHref={localizeHref('/database/job-skills')}
+			backHref={localizeHref('/database/jobs?view=skills')}
 			backLabel="Back to Skills"
 		/>
 	{/if}
