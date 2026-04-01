@@ -5,7 +5,7 @@ interface GitHubRelease {
 	published_at: string
 }
 
-export const load: PageServerLoad = async ({ setHeaders }) => {
+export const load = (async ({ setHeaders }) => {
 	try {
 		const res = await fetch(
 			'https://api.github.com/repos/jedmund/hensei-extractor/releases/latest',
@@ -36,4 +36,4 @@ export const load: PageServerLoad = async ({ setHeaders }) => {
 	} catch {
 		return { release: null }
 	}
-}
+}) satisfies PageServerLoad
