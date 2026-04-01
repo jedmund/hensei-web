@@ -6,7 +6,13 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { getImageBaseUrl } from '$lib/api/adapters/config'
+	import { getLocale } from '$lib/paraglide/runtime.js'
 	import type { UserCookie } from '$lib/types/UserCookie'
+
+	interface Release {
+		version: string
+		publishedAt: string
+	}
 
 	const faqItems = [
 		{ value: 'how', title: () => m.ext_faq_how_title(), desc: () => m.ext_faq_desc() },
@@ -28,6 +34,14 @@
 	const userElement = $derived(
 		(currentUser?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light') ?? undefined
 	)
+	const release = $derived(page.data?.release as Release | null)
+	const formattedDate = $derived(
+		release
+			? new Intl.DateTimeFormat(getLocale(), { dateStyle: 'long' }).format(
+					new Date(release.publishedAt)
+				)
+			: ''
+	)
 </script>
 
 <PageMeta title={m.page_title_extension()} description={m.page_desc_extension()} />
@@ -46,6 +60,11 @@
 				{m.ext_download()}
 			</Button>
 		</a>
+		{#if release}
+			<p class="version-info">
+				{m.ext_version({ version: release.version })} · {m.ext_published({ date: formattedDate })}
+			</p>
+		{/if}
 		<p class="fine-print">{m.ext_compatibility()}</p>
 	</div>
 
@@ -144,6 +163,12 @@
 		display: inline-block;
 		text-decoration: none;
 		width: fit-content;
+	}
+
+	.version-info {
+		font-size: $font-small;
+		color: var(--text-secondary);
+		margin: 0;
 	}
 
 	.fine-print {
