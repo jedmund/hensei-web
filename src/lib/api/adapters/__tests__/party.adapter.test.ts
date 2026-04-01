@@ -173,17 +173,13 @@ describe('PartyAdapter', () => {
 	})
 
 	describe('user parties listing', () => {
-		it('should list user parties with filters', async () => {
-			const mockResponse = {
-				results: [mockParty],
-				total: 1,
-				page: 1,
-				totalPages: 1
-			}
-
+		it('should list user parties and extract pagination from meta', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => mockResponse
+				json: async () => ({
+					results: [mockParty],
+					meta: { count: 1, total_pages: 1, per_page: 20 }
+				})
 			})
 
 			const result = await adapter.listUserParties({
@@ -194,7 +190,12 @@ describe('PartyAdapter', () => {
 				filters: { raid: 'raid-1' }
 			})
 
-			expect(result).toEqual(mockResponse)
+			expect(result.results).toEqual([mockParty])
+			expect(result.page).toBe(1)
+			expect(result.total).toBe(1)
+			expect(result.totalPages).toBe(1)
+			expect(result.perPage).toBe(20)
+
 			expect(global.fetch).toHaveBeenCalledWith(
 				expect.stringContaining('/users/testuser/parties'),
 				expect.objectContaining({
@@ -208,6 +209,43 @@ describe('PartyAdapter', () => {
 			expect(callUrl).toContain('per=20')
 			expect(callUrl).toContain('visibility=1')
 			expect(callUrl).toContain('raid=raid-1')
+		})
+
+		it('should extract multi-page pagination correctly', async () => {
+			global.fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({
+					results: [mockParty],
+					meta: { count: 42, total_pages: 3, per_page: 15 }
+				})
+			})
+
+			const result = await adapter.listUserParties({
+				username: 'testuser',
+				page: 2
+			})
+
+			expect(result.page).toBe(2)
+			expect(result.total).toBe(42)
+			expect(result.totalPages).toBe(3)
+			expect(result.perPage).toBe(15)
+		})
+
+		it('should use sensible defaults when meta is missing', async () => {
+			global.fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({ results: [] })
+			})
+
+			const result = await adapter.listUserParties({
+				username: 'testuser'
+			})
+
+			expect(result.results).toEqual([])
+			expect(result.page).toBe(1)
+			expect(result.total).toBe(0)
+			expect(result.totalPages).toBe(1)
+			expect(result.perPage).toBe(20)
 		})
 	})
 
