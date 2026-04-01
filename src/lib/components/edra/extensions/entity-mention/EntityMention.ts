@@ -7,6 +7,7 @@
  */
 import Mention from '@tiptap/extension-mention'
 import { mergeAttributes } from '@tiptap/core'
+import { Plugin, PluginKey } from '@tiptap/pm/state'
 import { localizedName } from '$lib/utils/locale'
 
 /** Element ID to slug mapping */
@@ -43,8 +44,25 @@ function getElementSlug(element: unknown): string {
 export const EntityMention = Mention.extend({
 	name: 'mention',
 
-	parseHTML() {
-		return [{ tag: `span[data-type="${this.name}"]` }, { tag: `a[data-type="${this.name}"]` }]
+	addProseMirrorPlugins() {
+		const parentPlugins = this.parent?.() ?? []
+		return [
+			...parentPlugins,
+			new Plugin({
+				key: new PluginKey('mentionPasteTransform'),
+				props: {
+					transformPastedHTML(html: string) {
+						// Convert <a data-type="mention" ...> to <span data-type="mention" ...>
+						// so ProseMirror's DOMParser recognizes them as mention nodes
+						// instead of the Link mark consuming the <a> tag
+						return html.replace(
+							/<a\b([^>]*?\bdata-type="mention"[^>]*)>(.*?)<\/a>/gi,
+							'<span$1>$2</span>'
+						)
+					}
+				}
+			})
+		]
 	},
 
 	addAttributes() {
