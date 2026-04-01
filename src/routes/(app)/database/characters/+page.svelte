@@ -14,6 +14,8 @@
 	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
 	import LastUpdatedCell from '$lib/components/database/cells/LastUpdatedCell.svelte'
 	import BooleanCell from '$lib/components/database/cells/BooleanCell.svelte'
+	import CharacterSeasonCell from '$lib/components/database/cells/CharacterSeasonCell.svelte'
+	import CharacterSeriesCell from '$lib/components/database/cells/CharacterSeriesCell.svelte'
 	import DateCell from '$lib/components/database/cells/DateCell.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
@@ -21,7 +23,6 @@
 	// Utilities
 	import { getRarityLabel } from '$lib/utils/rarity'
 	import { getGenderLabel } from '$lib/utils/gender'
-	import { getSeasonName } from '$lib/types/enums'
 	import { localizedName } from '$lib/utils/locale'
 
 	type ViewMode = 'characters' | 'series'
@@ -144,7 +145,7 @@
 			header: 'Season',
 			width: 100,
 			hidden: true,
-			template: (val: number | null) => getSeasonName(val) ?? '—'
+			cell: CharacterSeasonCell
 		},
 		{
 			id: 'styleSwap',
@@ -152,6 +153,13 @@
 			width: 90,
 			hidden: true,
 			cell: BooleanCell
+		},
+		{
+			id: 'series',
+			header: 'Series',
+			width: 180,
+			hidden: true,
+			cell: CharacterSeriesCell
 		},
 		{
 			id: 'releaseDate',
