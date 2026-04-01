@@ -105,6 +105,17 @@ describe('getWeaponKeyImages', () => {
 		const result = getWeaponKeyImages(keys)
 		expect(result[0]!.url).toBe('/images/weapon-keys/strife.png')
 	})
+
+	it('returns all entries even with duplicate slugs', () => {
+		const keys = [
+			makeKey({ slug: 'pendulum-supremacy', slot: 1 }),
+			makeKey({ slug: 'pendulum-supremacy', slot: 2 })
+		]
+		const result = getWeaponKeyImages(keys)
+		expect(result).toHaveLength(2)
+		expect(result[0]!.url).toBe('/images/weapon-keys/pendulum-supremacy.png')
+		expect(result[1]!.url).toBe('/images/weapon-keys/pendulum-supremacy.png')
+	})
 })
 
 // ============================================================================
