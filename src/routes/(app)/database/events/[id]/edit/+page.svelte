@@ -10,6 +10,8 @@
 	import DatabaseFormHeader from '$lib/components/database/DatabaseFormHeader.svelte'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
+	import DatePicker from '$lib/components/ui/DatePicker.svelte'
+	import TimePicker from '$lib/components/ui/TimePicker.svelte'
 	import { getEventTypeOptions } from '$lib/utils/event'
 	import type { PageData } from './$types'
 
@@ -35,12 +37,25 @@
 	let editData = $state({
 		name: '',
 		eventType: '',
-		element: 0,
-		startTime: '',
-		endTime: ''
+		element: null as number | null,
+		startDate: null as string | null,
+		startTime: null as string | null,
+		endDate: null as string | null,
+		endTime: null as string | null
 	})
 
 	let initialized = $state(false)
+
+	function parseIsoDate(iso: string): string | null {
+		if (!iso) return null
+		return iso.substring(0, 10)
+	}
+
+	function parseIsoTime(iso: string): string | null {
+		if (!iso) return null
+		const d = new Date(iso)
+		return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+	}
 
 	$effect(() => {
 		if (eventQuery.data && !initialized) {
@@ -48,19 +63,27 @@
 			editData = {
 				name: event.name,
 				eventType: event.eventType,
-				element: event.element ?? 0,
-				startTime: event.startTime,
-				endTime: event.endTime
+				element: event.element ?? null,
+				startDate: parseIsoDate(event.startTime),
+				startTime: parseIsoTime(event.startTime),
+				endDate: parseIsoDate(event.endTime),
+				endTime: parseIsoTime(event.endTime)
 			}
 			initialized = true
 		}
 	})
 
+	function combineDatetime(date: string | null, time: string | null): string {
+		if (!date) return ''
+		if (!time) return `${date}T00:00:00`
+		return `${date}T${time}:00`
+	}
+
 	const canSave = $derived(
 		editData.name !== '' &&
 			editData.eventType !== '' &&
-			editData.startTime !== '' &&
-			editData.endTime !== ''
+			editData.startDate != null &&
+			editData.endDate != null
 	)
 
 	async function handleSave() {
@@ -73,9 +96,9 @@
 			await eventAdapter.updateEvent(eventId ?? '', {
 				name: editData.name,
 				event_type: editData.eventType,
-				start_time: editData.startTime,
-				end_time: editData.endTime,
-				element: editData.element === 0 ? null : editData.element
+				start_time: combineDatetime(editData.startDate, editData.startTime),
+				end_time: combineDatetime(editData.endDate, editData.endTime),
+				element: editData.element
 			})
 
 			await queryClient.invalidateQueries({ queryKey: ['events'] })
@@ -118,22 +141,27 @@
 				/>
 			</DetailItem>
 			<DetailItem label={m.events_element()} editable={true}>
-				<ElementPicker bind:value={editData.element} mode="dropdown" contained />
+				<ElementPicker
+					value={editData.element ?? undefined}
+					onValueChange={(v) => {
+						editData.element = typeof v === 'number' ? v : null
+					}}
+					mode="dropdown"
+					contained
+				/>
 			</DetailItem>
-			<DetailItem
-				label={m.events_start_time()}
-				bind:value={editData.startTime}
-				editable={true}
-				type="text"
-				placeholder="YYYY-MM-DD HH:MM"
-			/>
-			<DetailItem
-				label={m.events_end_time()}
-				bind:value={editData.endTime}
-				editable={true}
-				type="text"
-				placeholder="YYYY-MM-DD HH:MM"
-			/>
+			<DetailItem label={m.events_start_time()} editable={true}>
+				<div class="datetime-pair">
+					<DatePicker bind:value={editData.startDate} contained />
+					<TimePicker bind:value={editData.startTime} contained />
+				</div>
+			</DetailItem>
+			<DetailItem label={m.events_end_time()} editable={true}>
+				<div class="datetime-pair">
+					<DatePicker bind:value={editData.endDate} contained />
+					<TimePicker bind:value={editData.endTime} contained />
+				</div>
+			</DetailItem>
 		</DetailsContainer>
 	</section>
 </div>
@@ -142,6 +170,7 @@
 	@use '$src/themes/database' as database;
 	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/spacing' as spacing;
 
 	.page {
 		background: var(--card-bg);
@@ -156,5 +185,11 @@
 
 	.details {
 		@include database.details;
+	}
+
+	.datetime-pair {
+		display: flex;
+		gap: spacing.$unit;
+		align-items: center;
 	}
 </style>
