@@ -52,7 +52,7 @@
 <div class="page">
 	<div class="grid">
 		<div class="controls">
-			<input type="text" placeholder={m.events_title()} bind:value={searchTerm} />
+			<input type="text" placeholder={m.events_search_placeholder()} bind:value={searchTerm} />
 			<div class="controls-right">
 				<Button variant="primary" size="small" onclick={() => goto('/database/events/new')}>
 					{m.events_new()}
@@ -82,7 +82,7 @@
 					{#if filteredEvents.length === 0 && !eventsQuery.isLoading}
 						<tr>
 							<td colspan="6" class="empty-state">
-								{searchTerm ? m.events_no_events() : m.events_no_events()}
+								{searchTerm ? m.events_no_search_results() : m.events_no_events()}
 							</td>
 						</tr>
 					{:else}
