@@ -26,11 +26,12 @@ export function formatTimezone(tz: string): string {
 }
 
 /**
- * Format just the UTC offset from an IANA timezone string.
- * e.g. "America/New_York" → "UTC-5"
+ * Format a short timezone label for display.
+ * Returns the abbreviation (e.g. "PST", "EDT") when available,
+ * or falls back to the UTC offset (e.g. "GMT+9").
  */
 export function formatTimezoneShort(tz: string): string {
-	return getUtcOffset(tz)
+	return getAbbreviation(tz) ?? getUtcOffset(tz)
 }
 
 /**
@@ -94,6 +95,38 @@ export function getTimezoneCity(tz: string): string {
 	return city?.replace(/_/g, ' ') ?? tz
 }
 
+/**
+ * Get the hour difference between a timezone and the viewer's local timezone.
+ * Positive = ahead, negative = behind, 0 = same.
+ */
+export function getTimezoneHourDiff(tz: string): number {
+	const now = new Date()
+	const formatter = new Intl.DateTimeFormat('en-US', {
+		timeZone: tz,
+		year: 'numeric',
+		month: '2-digit',
+		day: '2-digit',
+		hour: '2-digit',
+		minute: '2-digit',
+		hour12: false
+	})
+	const parts = formatter.formatToParts(now)
+	const get = (type: Intl.DateTimeFormatPartTypes) =>
+		parseInt(parts.find((p) => p.type === type)?.value ?? '0', 10)
+
+	const remoteDate = new Date(get('year'), get('month') - 1, get('day'), get('hour'), get('minute'))
+	const localDate = new Date(
+		now.getFullYear(),
+		now.getMonth(),
+		now.getDate(),
+		now.getHours(),
+		now.getMinutes()
+	)
+
+	const diffMs = remoteDate.getTime() - localDate.getTime()
+	return Math.round(diffMs / (1000 * 60 * 60))
+}
+
 interface TimezoneOption {
 	value: string
 	label: string
@@ -111,24 +144,46 @@ function offsetToMinutes(offset: string): number {
 	return sign * (hours * 60 + minutes)
 }
 
+/** Get the raw UTC offset string at a specific date for grouping purposes. */
+function getOffsetAt(tz: string, date: Date): string {
+	try {
+		const formatter = new Intl.DateTimeFormat('en-US', {
+			timeZone: tz,
+			timeZoneName: 'shortOffset'
+		})
+		const parts = formatter.formatToParts(date)
+		return parts.find((p) => p.type === 'timeZoneName')?.value ?? ''
+	} catch {
+		return ''
+	}
+}
+
 /**
  * Build a deduplicated list of timezone options for select dropdowns.
- * Groups IANA identifiers by their generic timezone name + offset,
- * picks a representative value per group, and lists cities in the subtitle.
+ * Groups IANA identifiers by their offset behavior across the year
+ * (January + July offsets), so zones with different DST rules stay separate
+ * but zones at the same offset year-round are merged.
  */
 export function getTimezoneOptions(): TimezoneOption[] {
 	const allZones = Intl.supportedValuesOf('timeZone')
+
+	// Use Jan and Jul to capture DST differences
+	const jan = new Date(2025, 0, 15)
+	const jul = new Date(2025, 6, 15)
+
 	const groups = new Map<
 		string,
 		{ name: string; offset: string; zones: string[]; triggerLabel: string }
 	>()
 
 	for (const tz of allZones) {
-		const name = getTimezoneName(tz)
-		const offset = getUtcOffset(tz)
-		const key = `${name}|${offset}`
+		const janOffset = getOffsetAt(tz, jan)
+		const julOffset = getOffsetAt(tz, jul)
+		const key = `${janOffset}|${julOffset}`
 
 		if (!groups.has(key)) {
+			const name = getTimezoneName(tz)
+			const offset = getUtcOffset(tz)
 			groups.set(key, { name, offset, zones: [], triggerLabel: formatTimezoneTrigger(tz) })
 		}
 		groups.get(key)!.zones.push(tz)
@@ -139,9 +194,9 @@ export function getTimezoneOptions(): TimezoneOption[] {
 		// Pick the representative: prefer the shortest IANA path (most canonical)
 		const representative = group.zones.sort((a, b) => a.length - b.length)[0]!
 		const cities = group.zones.map(getTimezoneCity)
-		// Show up to 3 cities, then "..."
+		// Show up to 5 cities, then "..."
 		const cityList =
-			cities.length <= 3 ? cities.join(', ') : `${cities.slice(0, 3).join(', ')}, ...`
+			cities.length <= 5 ? cities.join(', ') : `${cities.slice(0, 5).join(', ')}, ...`
 
 		options.push({
 			value: representative,
@@ -167,10 +222,12 @@ function getNormalizeMap(): Map<string, string> {
 	normalizeMap = new Map()
 
 	const allZones = Intl.supportedValuesOf('timeZone')
+	const jan = new Date(2025, 0, 15)
+	const jul = new Date(2025, 6, 15)
 	const groups = new Map<string, string[]>()
 
 	for (const tz of allZones) {
-		const key = `${getTimezoneName(tz)}|${getUtcOffset(tz)}`
+		const key = `${getOffsetAt(tz, jan)}|${getOffsetAt(tz, jul)}`
 		if (!groups.has(key)) groups.set(key, [])
 		groups.get(key)!.push(tz)
 	}
