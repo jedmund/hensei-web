@@ -29,6 +29,17 @@ import { raidAdapter } from '$lib/api/adapters/raid.adapter'
  */
 export const raidQueries = {
 	/**
+	 * All raids (flat list)
+	 */
+	all: () =>
+		queryOptions({
+			queryKey: ['raids', 'all'] as const,
+			queryFn: () => raidAdapter.getAll(),
+			staleTime: 1000 * 60 * 60,
+			gcTime: 1000 * 60 * 60 * 24
+		}),
+
+	/**
 	 * All raid groups with their raids
 	 *
 	 * @returns Query options for fetching all raid groups
