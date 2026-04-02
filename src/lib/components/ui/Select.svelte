@@ -41,6 +41,8 @@
 		class?: string
 		/** Custom snippet for rendering suffix area - receives the option */
 		suffixSnippet?: Snippet<[Option]>
+		/** Extra width (in px) added to the dropdown content beyond the trigger width */
+		contentWidthOffset?: number
 	}
 
 	let {
@@ -57,7 +59,8 @@
 		required = false,
 		portal = false,
 		class: className = '',
-		suffixSnippet // eslint-disable-line @typescript-eslint/no-unused-vars
+		suffixSnippet, // eslint-disable-line @typescript-eslint/no-unused-vars
+		contentWidthOffset
 	}: Props = $props()
 
 	// Convert options to string values for Bits UI (which expects strings internally)
@@ -137,7 +140,12 @@
 
 			{#if portal}
 				<SelectPrimitive.Portal>
-					<SelectPrimitive.Content class="content">
+					<SelectPrimitive.Content
+						class="content"
+						style={contentWidthOffset
+							? `--content-width-offset: ${contentWidthOffset}px`
+							: undefined}
+					>
 						<SelectPrimitive.Viewport>
 							{#each options as option (option.value)}
 								<SelectPrimitive.Item
@@ -186,7 +194,10 @@
 					</SelectPrimitive.Content>
 				</SelectPrimitive.Portal>
 			{:else}
-				<SelectPrimitive.Content class="content">
+				<SelectPrimitive.Content
+					class="content"
+					style={contentWidthOffset ? `--content-width-offset: ${contentWidthOffset}px` : undefined}
+				>
 					<SelectPrimitive.Viewport>
 						{#each options as option (option.value)}
 							<SelectPrimitive.Item
@@ -261,7 +272,10 @@
 
 		{#if portal}
 			<SelectPrimitive.Portal>
-				<SelectPrimitive.Content class="content">
+				<SelectPrimitive.Content
+					class="content"
+					style={contentWidthOffset ? `--content-width-offset: ${contentWidthOffset}px` : undefined}
+				>
 					<SelectPrimitive.Viewport>
 						{#each options as option (option.value)}
 							<SelectPrimitive.Item
@@ -311,7 +325,10 @@
 				</SelectPrimitive.Content>
 			</SelectPrimitive.Portal>
 		{:else}
-			<SelectPrimitive.Content class="content">
+			<SelectPrimitive.Content
+				class="content"
+				style={contentWidthOffset ? `--content-width-offset: ${contentWidthOffset}px` : undefined}
+			>
 				<SelectPrimitive.Viewport>
 					{#each options as option (option.value)}
 						<SelectPrimitive.Item
@@ -496,9 +513,9 @@
 		border-radius: $card-corner;
 		border: 1px solid rgba(0, 0, 0, 0.1);
 		box-shadow: var(--shadow-lg);
-		padding: $unit-half;
-		min-width: var(--bits-select-anchor-width);
-		max-width: var(--bits-select-anchor-width);
+		padding: 0 $unit-half;
+		min-width: calc(var(--bits-select-anchor-width) + var(--content-width-offset, 0px));
+		max-width: calc(var(--bits-select-anchor-width) + var(--content-width-offset, 0px));
 		max-height: 40vh;
 		overflow: auto;
 		z-index: $z-modal + 2;
@@ -528,6 +545,14 @@
 		user-select: none;
 		@include smooth-transition($duration-quick, background-color);
 
+		&:first-child {
+			margin-top: $unit-half;
+		}
+
+		&:last-child {
+			margin-bottom: $unit-half;
+		}
+
 		&:hover {
 			background-color: var(--option-bg-hover);
 		}
@@ -544,6 +569,7 @@
 
 		.text-stack {
 			flex: 1;
+			min-width: 0;
 			display: flex;
 			flex-direction: column;
 			gap: 1px;
@@ -556,6 +582,9 @@
 				font-size: $font-small;
 				color: var(--text-tertiary);
 				line-height: 1.2;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
 			}
 		}
 

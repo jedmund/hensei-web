@@ -386,6 +386,7 @@
 					placeholder={m.settings_timezone_placeholder()}
 					contained
 					portal
+					contentWidthOffset={140}
 				/>
 			{/snippet}
 		</SettingsRow>
