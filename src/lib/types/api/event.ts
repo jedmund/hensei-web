@@ -13,6 +13,7 @@ export type EventType =
 export interface GameEvent {
 	id: string
 	name: string
+	slug: string
 	eventType: EventType
 	startTime: string
 	endTime: string
@@ -25,18 +26,18 @@ export interface GameEvent {
 
 export interface CreateEventInput {
 	name: string
+	slug?: string
 	event_type: string
 	start_time: string
 	end_time: string
 	element?: number | null
-	banner_image?: string | null
 }
 
 export interface UpdateEventInput {
 	name?: string
+	slug?: string
 	event_type?: string
 	start_time?: string
 	end_time?: string
 	element?: number | null
-	banner_image?: string | null
 }
