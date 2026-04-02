@@ -93,3 +93,102 @@ export function getTimezoneCity(tz: string): string {
 	const city = parts[parts.length - 1]
 	return city?.replace(/_/g, ' ') ?? tz
 }
+
+interface TimezoneOption {
+	value: string
+	label: string
+	triggerLabel: string
+	subtitle: string
+}
+
+/** Parse a shortOffset string like "GMT-7" or "GMT+5:30" into total minutes for sorting. */
+function offsetToMinutes(offset: string): number {
+	const match = offset.match(/^GMT([+-])(\d+)(?::(\d+))?$/)
+	if (!match) return 0
+	const sign = match[1] === '+' ? 1 : -1
+	const hours = parseInt(match[2]!, 10)
+	const minutes = parseInt(match[3] ?? '0', 10)
+	return sign * (hours * 60 + minutes)
+}
+
+/**
+ * Build a deduplicated list of timezone options for select dropdowns.
+ * Groups IANA identifiers by their generic timezone name + offset,
+ * picks a representative value per group, and lists cities in the subtitle.
+ */
+export function getTimezoneOptions(): TimezoneOption[] {
+	const allZones = Intl.supportedValuesOf('timeZone')
+	const groups = new Map<
+		string,
+		{ name: string; offset: string; zones: string[]; triggerLabel: string }
+	>()
+
+	for (const tz of allZones) {
+		const name = getTimezoneName(tz)
+		const offset = getUtcOffset(tz)
+		const key = `${name}|${offset}`
+
+		if (!groups.has(key)) {
+			groups.set(key, { name, offset, zones: [], triggerLabel: formatTimezoneTrigger(tz) })
+		}
+		groups.get(key)!.zones.push(tz)
+	}
+
+	const options: (TimezoneOption & { _sortKey: number })[] = []
+	for (const [, group] of groups) {
+		// Pick the representative: prefer the shortest IANA path (most canonical)
+		const representative = group.zones.sort((a, b) => a.length - b.length)[0]!
+		const cities = group.zones.map(getTimezoneCity)
+		// Show up to 3 cities, then "..."
+		const cityList =
+			cities.length <= 3 ? cities.join(', ') : `${cities.slice(0, 3).join(', ')}, ...`
+
+		options.push({
+			value: representative,
+			label: `${group.name} (${group.offset})`,
+			triggerLabel: group.triggerLabel,
+			subtitle: cityList,
+			_sortKey: offsetToMinutes(group.offset)
+		})
+	}
+
+	// Sort by UTC offset (west to east)
+	options.sort((a, b) => a._sortKey - b._sortKey)
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	return options.map(({ _sortKey, ...opt }) => opt)
+}
+
+let normalizeMap: Map<string, string> | undefined
+
+/** Build a map from every IANA zone to its representative (shortest in its group). */
+function getNormalizeMap(): Map<string, string> {
+	if (normalizeMap) return normalizeMap
+	normalizeMap = new Map()
+
+	const allZones = Intl.supportedValuesOf('timeZone')
+	const groups = new Map<string, string[]>()
+
+	for (const tz of allZones) {
+		const key = `${getTimezoneName(tz)}|${getUtcOffset(tz)}`
+		if (!groups.has(key)) groups.set(key, [])
+		groups.get(key)!.push(tz)
+	}
+
+	for (const [, zones] of groups) {
+		const representative = zones.sort((a, b) => a.length - b.length)[0]!
+		for (const tz of zones) {
+			normalizeMap.set(tz, representative)
+		}
+	}
+
+	return normalizeMap
+}
+
+/**
+ * Map any IANA timezone to the representative value used in getTimezoneOptions().
+ * Falls through to the original value if no mapping is found.
+ */
+export function normalizeTimezone(tz: string): string {
+	return getNormalizeMap().get(tz) ?? tz
+}

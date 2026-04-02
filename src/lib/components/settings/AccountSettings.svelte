@@ -9,12 +9,7 @@
 	import type { ElementType } from '../ui/SettingsNav.svelte'
 	import { untrack } from 'svelte'
 	import { getElementKey } from '$lib/utils/element'
-	import {
-		formatTimezoneTrigger,
-		getTimezoneName,
-		getTimezoneCity,
-		formatTimezoneShort
-	} from '$lib/utils/timezone'
+	import { getTimezoneOptions, normalizeTimezone } from '$lib/utils/timezone'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 
 	interface Props {
@@ -231,12 +226,7 @@
 		onDefaultRepViewChange(value)
 	}
 
-	const timezoneOptions = Intl.supportedValuesOf('timeZone').map((tz) => ({
-		value: tz,
-		label: `${getTimezoneName(tz)} (${formatTimezoneShort(tz)})`,
-		subtitle: getTimezoneCity(tz),
-		triggerLabel: formatTimezoneTrigger(tz)
-	}))
+	const timezoneOptions = getTimezoneOptions()
 
 	const languageOptions = [
 		{ value: 'en', label: 'English' },
@@ -390,7 +380,7 @@
 		<SettingsRow title={m.settings_timezone()} subtitle={m.settings_timezone_subtitle()}>
 			{#snippet control()}
 				<Select
-					value={timezone}
+					value={normalizeTimezone(timezone)}
 					onValueChange={handleTimezoneSelect}
 					options={timezoneOptions}
 					placeholder={m.settings_timezone_placeholder()}
