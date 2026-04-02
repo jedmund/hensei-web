@@ -236,9 +236,9 @@
 									handleWeaponKeySave()
 								} else {
 									const weapon = item as GridWeapon
-									editKey1 = weapon.weaponKeys?.[0]?.id
-									editKey2 = weapon.weaponKeys?.[1]?.id
-									editKey3 = weapon.weaponKeys?.[2]?.id
+									editKey1 = weapon.weaponKeys?.find((k) => k.slot === 0)?.id
+									editKey2 = weapon.weaponKeys?.find((k) => k.slot === 1)?.id
+									editKey3 = weapon.weaponKeys?.find((k) => k.slot === 2)?.id
 									showWeaponKeyEditor = true
 								}
 							}}
