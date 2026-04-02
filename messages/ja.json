@@ -496,6 +496,7 @@
 	"grid_untitled": "無名",
 	"grid_no_raid": "マルチなし",
 	"grid_extra": "Extra",
+	"grid_anonymous": "無名",
 
 	"search_tab_all": "すべて",
 	"search_tab_collection": "コレクション",
@@ -1364,7 +1365,7 @@
 	"party_remixed_with_collection": "{username}が{collectionUsername}のコレクションで{otherUsername}の編成をリミックス",
 	"party_remixed_anonymous": "{otherUsername}の編成からリミックス",
 	"party_remixed_anonymous_source": "リミックス",
-	"party_remixed_from_anonymous": "{username}が匿名の編成をリミックス",
+	"party_remixed_from_anonymous": "{username}が無名の編成をリミックス",
 
 	"time_just_now": "たった今",
 	"time_minute_ago": "1分前",
@@ -1598,12 +1599,12 @@
 	"crew_join_joining": "参加中",
 	"crew_join_accept": "参加する",
 
-	"migrate_banner_text": "アカウントに紐付けられていない匿名編成があります。",
+	"migrate_banner_text": "アカウントに紐付けられていない無名編成があります。",
 	"migrate_banner_action": "編成を移行",
 	"migrate_page_title": "編成の移行",
-	"migrate_page_description": "匿名で作成した編成をアカウントに移行できます。移行後はプロフィールに表示され、ログイン状態で編集できるようになります。",
-	"migrate_page_empty": "匿名編成が見つかりません",
-	"migrate_page_empty_description": "移行できる匿名編成がありません",
+	"migrate_page_description": "無名で作成した編成をアカウントに移行できます。移行後はプロフィールに表示され、ログイン状態で編集できるようになります。",
+	"migrate_page_empty": "無名編成が見つかりません",
+	"migrate_page_empty_description": "移行できる無名編成がありません",
 	"migrate_page_button": "すべての編成を移行",
 	"migrate_page_migrating": "移行中...",
 	"migrate_page_success": "編成の移行が完了しました",
