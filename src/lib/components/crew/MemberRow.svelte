@@ -6,6 +6,7 @@
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { formatDate } from '$lib/utils/date'
+	import { formatTimezoneShort } from '$lib/utils/timezone'
 	import type { CrewMembership } from '$lib/types/api/crew'
 	import * as m from '$lib/paraglide/messages'
 
@@ -65,6 +66,9 @@
 					<span class="joined-date"
 						>{m.crew_joined_date({ date: formatDate(member.joinedAt) })}</span
 					>
+				{/if}
+				{#if member.user?.timezone}
+					<span class="timezone">{formatTimezoneShort(member.user.timezone)}</span>
 				{/if}
 			</div>
 		</div>
@@ -196,7 +200,8 @@
 		}
 	}
 
-	.joined-date {
+	.joined-date,
+	.timezone {
 		font-size: typography.$font-small;
 		color: var(--text-tertiary);
 	}
