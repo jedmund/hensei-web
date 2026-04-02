@@ -46,9 +46,12 @@
 
 	// Check if data exists for each tile
 	const hasRaid = $derived(!!party.raid)
+	const hasVideo = $derived(!!party.videoUrl)
 
 	// Show tile if: has data OR (is owner's team and can prompt to fill)
 	const showRaid = $derived(hasRaid || canEdit)
+	const showVideo = $derived(hasVideo || canEdit)
+	const showRow2 = $derived(showVideo || showRaid)
 
 	function handleRaidClick() {
 		if (!party.raid) return
@@ -111,13 +114,17 @@
 	</div>
 
 	<!-- Row 2: Video + Raid -->
-	<div class="row row-2" class:single={!showRaid}>
-		<VideoTile videoUrl={party.videoUrl} {canEdit} onAdd={onOpenEdit} />
+	{#if showRow2}
+		<div class="row row-2" class:single={!showVideo || !showRaid}>
+			{#if showVideo}
+				<VideoTile videoUrl={party.videoUrl} {canEdit} onAdd={onOpenEdit} />
+			{/if}
 
-		{#if showRaid}
-			<RaidTile raid={party.raid} {canEdit} onclick={handleRaidClick} {onRaidSelect} />
-		{/if}
-	</div>
+			{#if showRaid}
+				<RaidTile raid={party.raid} {canEdit} onclick={handleRaidClick} {onRaidSelect} />
+			{/if}
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
