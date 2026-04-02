@@ -161,14 +161,14 @@
 		width: fit-content;
 	}
 
-	.version-info {
+	.card p.version-info {
 		font-size: $font-small;
 		color: var(--text-secondary);
 		margin: 0;
 	}
 
-	.fine-print {
-		font-size: $font-small !important;
+	.card p.fine-print {
+		font-size: $font-small;
 		color: var(--text-secondary);
 	}
 
