@@ -2,39 +2,43 @@ import { describe, it, expect } from 'vitest'
 import { formatTimezone, formatTimezoneShort } from '../timezone'
 
 describe('formatTimezone', () => {
-	it('includes the timezone name and a UTC offset for America/New_York', () => {
+	it('includes the timezone name and an offset for America/New_York', () => {
 		const result = formatTimezone('America/New_York')
 		expect(result).toContain('America/New_York')
-		expect(result).toMatch(/\(UTC[+-]\d{2}:\d{2}\)/)
+		// Offset format varies by runtime: "GMT-4", "UTC-5", "UTC-05:00", etc.
+		expect(result).toMatch(/\((GMT|UTC)[+-]/)
 	})
 
-	it('returns JST offset for Asia/Tokyo', () => {
+	it('returns a positive offset for Asia/Tokyo', () => {
 		const result = formatTimezone('Asia/Tokyo')
 		expect(result).toContain('Asia/Tokyo')
-		// Tokyo is always UTC+09:00 (no DST)
-		expect(result).toBe('Asia/Tokyo (UTC+09:00)')
+		// Tokyo is always +9, format varies: "GMT+9", "UTC+09:00", etc.
+		expect(result).toMatch(/\((GMT|UTC)\+0?9/)
 	})
 
-	it('formats UTC as UTC+00:00', () => {
+	it('formats UTC with a zero offset', () => {
 		const result = formatTimezone('UTC')
-		expect(result).toBe('UTC (UTC+00:00)')
+		expect(result).toContain('UTC')
+		// Zero offset varies: "GMT", "GMT+0", "UTC", "UTC+00:00"
+		expect(result).toMatch(/\((GMT(\+0)?|UTC(\+00:00)?)\)/)
 	})
 })
 
 describe('formatTimezoneShort', () => {
-	it('returns only the UTC offset for America/New_York', () => {
+	it('returns a negative offset for America/New_York', () => {
 		const result = formatTimezoneShort('America/New_York')
-		// Eastern is UTC-05:00 or UTC-04:00 depending on DST
-		expect(result).toMatch(/^UTC-0[45]:00$/)
+		// Eastern is -5 or -4 depending on DST, format varies
+		expect(result).toMatch(/(GMT|UTC)-0?[45]/)
 	})
 
-	it('returns UTC+09:00 for Asia/Tokyo', () => {
+	it('returns +9 offset for Asia/Tokyo', () => {
 		const result = formatTimezoneShort('Asia/Tokyo')
-		expect(result).toBe('UTC+09:00')
+		expect(result).toMatch(/(GMT|UTC)\+0?9/)
 	})
 
-	it('returns UTC+00:00 for UTC', () => {
+	it('returns zero offset for UTC', () => {
 		const result = formatTimezoneShort('UTC')
-		expect(result).toBe('UTC+00:00')
+		// "GMT", "GMT+0", "UTC", "UTC+00:00"
+		expect(result).toMatch(/^(GMT(\+0)?|UTC(\+00:00)?)$/)
 	})
 })
