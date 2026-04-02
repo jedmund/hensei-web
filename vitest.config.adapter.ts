@@ -21,10 +21,21 @@ export default defineConfig({
 		}
 	},
 	resolve: {
-		alias: {
-			$lib: resolve('./src/lib'),
-			$types: resolve('./src/lib/types'),
-			'$env/static/public': resolve('./src/lib/api/adapters/__tests__/env-mock.ts')
-		}
+		alias: [
+			{
+				find: '$lib/stores/auth.store.svelte',
+				replacement: resolve('./src/lib/api/adapters/__tests__/auth-store-mock.ts')
+			},
+			{
+				find: '$app/environment',
+				replacement: resolve('./src/lib/api/adapters/__tests__/app-environment-mock.ts')
+			},
+			{
+				find: '$env/static/public',
+				replacement: resolve('./src/lib/api/adapters/__tests__/env-mock.ts')
+			},
+			{ find: '$lib', replacement: resolve('./src/lib') },
+			{ find: '$types', replacement: resolve('./src/lib/types') }
+		]
 	}
 })
