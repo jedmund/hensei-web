@@ -25,15 +25,16 @@ describe('formatTimezone', () => {
 })
 
 describe('formatTimezoneShort', () => {
-	it('returns a negative offset for America/New_York', () => {
+	it('returns abbreviation or offset for America/New_York', () => {
 		const result = formatTimezoneShort('America/New_York')
-		// Eastern is -5 or -4 depending on DST, format varies
-		expect(result).toMatch(/(GMT|UTC)-0?[45]/)
+		// "EDT", "EST", or fallback offset like "GMT-4"
+		expect(result).toMatch(/^(E[DS]T|(GMT|UTC)-0?[45])$/)
 	})
 
-	it('returns +9 offset for Asia/Tokyo', () => {
+	it('returns abbreviation or offset for Asia/Tokyo', () => {
 		const result = formatTimezoneShort('Asia/Tokyo')
-		expect(result).toMatch(/(GMT|UTC)\+0?9/)
+		// "JST" or fallback offset like "GMT+9"
+		expect(result).toMatch(/^(JST|(GMT|UTC)\+0?9)$/)
 	})
 
 	it('returns zero offset for UTC', () => {
