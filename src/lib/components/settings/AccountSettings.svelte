@@ -9,7 +9,12 @@
 	import type { ElementType } from '../ui/SettingsNav.svelte'
 	import { untrack } from 'svelte'
 	import { getElementKey } from '$lib/utils/element'
-	import { formatTimezone, formatTimezoneTrigger } from '$lib/utils/timezone'
+	import {
+		formatTimezoneTrigger,
+		getTimezoneName,
+		getTimezoneCity,
+		formatTimezoneShort
+	} from '$lib/utils/timezone'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 
 	interface Props {
@@ -228,7 +233,8 @@
 
 	const timezoneOptions = Intl.supportedValuesOf('timeZone').map((tz) => ({
 		value: tz,
-		label: formatTimezone(tz),
+		label: `${getTimezoneName(tz)} (${formatTimezoneShort(tz)})`,
+		subtitle: getTimezoneCity(tz),
 		triggerLabel: formatTimezoneTrigger(tz)
 	}))
 

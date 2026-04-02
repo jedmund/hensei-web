@@ -19,6 +19,8 @@
 		indicatorColor?: string
 		/** Optional suffix text displayed in muted style */
 		suffix?: string
+		/** Secondary line displayed below the label */
+		subtitle?: string
 		/** Display label in muted/tertiary color */
 		muted?: boolean
 	}
@@ -161,7 +163,14 @@
 													: ''}
 											/>
 										{/if}
-										<span class="text" class:muted={option.muted}>{option.label}</span>
+										{#if option.subtitle}
+											<span class="text-stack">
+												<span class="text" class:muted={option.muted}>{option.label}</span>
+												<span class="subtitle">{option.subtitle}</span>
+											</span>
+										{:else}
+											<span class="text" class:muted={option.muted}>{option.label}</span>
+										{/if}
 										{#if option.suffix}
 											<span class="suffix">{option.suffix}</span>
 										{/if}
@@ -517,6 +526,23 @@
 
 		&[data-selected] {
 			font-weight: $medium;
+		}
+
+		.text-stack {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			gap: 1px;
+
+			.text {
+				flex: initial;
+			}
+
+			.subtitle {
+				font-size: $font-small;
+				color: var(--text-tertiary);
+				line-height: 1.2;
+			}
 		}
 
 		.text {

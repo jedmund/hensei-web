@@ -62,3 +62,34 @@ export function formatTimezoneTrigger(tz: string): string {
 	const abbr = getAbbreviation(tz)
 	return abbr ? `${abbr} (${offset})` : offset
 }
+
+/**
+ * Get a human-readable timezone name using Intl longGeneric format.
+ * e.g. "America/Los_Angeles" → "Pacific Time"
+ *      "Asia/Tokyo" → "Japan Standard Time"
+ */
+export function getTimezoneName(tz: string): string {
+	try {
+		const formatter = new Intl.DateTimeFormat('en-US', {
+			timeZone: tz,
+			timeZoneName: 'longGeneric'
+		})
+		const parts = formatter.formatToParts(new Date())
+		const name = parts.find((p) => p.type === 'timeZoneName')?.value
+		return name ?? tz
+	} catch {
+		return tz
+	}
+}
+
+/**
+ * Extract a human-readable city/region from an IANA timezone identifier.
+ * e.g. "America/Los_Angeles" → "Los Angeles"
+ *      "America/Argentina/Buenos_Aires" → "Buenos Aires"
+ *      "Asia/Tokyo" → "Tokyo"
+ */
+export function getTimezoneCity(tz: string): string {
+	const parts = tz.split('/')
+	const city = parts[parts.length - 1]
+	return city?.replace(/_/g, ' ') ?? tz
+}
