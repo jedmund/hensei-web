@@ -66,6 +66,7 @@
 	let defaultImportVisibility = $state(1)
 	let simplePortraits = $state(false)
 	let defaultRepView = $state('weapons')
+	let timezone = $state(Intl.DateTimeFormat().resolvedOptions().timeZone)
 
 	// Track whether form has been initialized from API
 	let formInitialized = $state(false)
@@ -124,6 +125,7 @@
 			defaultImportVisibility = data.defaultImportVisibility ?? 1
 			simplePortraits = data.simplePortraits ?? false
 			defaultRepView = data.defaultRepView ?? 'weapons'
+			timezone = data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
 			// Store original values for comparison
 			originalLanguage = data.language ?? 'en'
 			originalTheme = data.theme ?? 'system'
@@ -201,7 +203,8 @@
 				importWeapons,
 				defaultImportVisibility,
 				simplePortraits,
-				defaultRepView
+				defaultRepView,
+				timezone
 			}
 
 			// Call API to update user settings
@@ -255,7 +258,8 @@
 								importWeapons,
 								defaultImportVisibility,
 								simplePortraits,
-								defaultRepView
+								defaultRepView,
+								timezone
 							}
 						: oldData
 			)
@@ -358,6 +362,7 @@
 						{element}
 						{language}
 						{theme}
+						{timezone}
 						{currentPassword}
 						{newPassword}
 						{confirmPassword}
@@ -370,6 +375,7 @@
 						onElementChange={(v) => (element = v as ElementType)}
 						onLanguageChange={(v) => (language = v)}
 						onThemeChange={(v) => (theme = v)}
+						onTimezoneChange={(v) => (timezone = v)}
 						onCurrentPasswordChange={(v) => (currentPassword = v)}
 						onNewPasswordChange={(v) => (newPassword = v)}
 						onConfirmPasswordChange={(v) => (confirmPassword = v)}

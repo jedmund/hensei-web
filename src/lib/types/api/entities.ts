@@ -339,6 +339,7 @@ export interface User {
 	createdAt?: string
 	updatedAt?: string
 	youtube?: string
+	timezone?: string
 	avatar?: {
 		picture?: string
 		element?: string

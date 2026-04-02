@@ -9,6 +9,7 @@
 	import type { ElementType } from '../ui/SettingsNav.svelte'
 	import { untrack } from 'svelte'
 	import { getElementKey } from '$lib/utils/element'
+	import { getTimezoneOptions, normalizeTimezone } from '$lib/utils/timezone'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 
 	interface Props {
@@ -34,6 +35,8 @@
 		onElementChange: (value: string) => void
 		onLanguageChange: (value: string) => void
 		onThemeChange: (value: string) => void
+		timezone: string
+		onTimezoneChange: (value: string) => void
 		onCurrentPasswordChange: (value: string) => void
 		onNewPasswordChange: (value: string) => void
 		onConfirmPasswordChange: (value: string) => void
@@ -62,6 +65,8 @@
 		onElementChange,
 		onLanguageChange,
 		onThemeChange,
+		timezone,
+		onTimezoneChange,
 		onCurrentPasswordChange,
 		onNewPasswordChange,
 		onConfirmPasswordChange
@@ -211,10 +216,17 @@
 		onThemeChange(value)
 	}
 
+	function handleTimezoneSelect(value: string | undefined) {
+		if (value === undefined) return
+		onTimezoneChange(value)
+	}
+
 	function handleRepViewSelect(value: string | undefined) {
 		if (value === undefined) return
 		onDefaultRepViewChange(value)
 	}
+
+	const timezoneOptions = getTimezoneOptions()
 
 	const languageOptions = [
 		{ value: 'en', label: 'English' },
@@ -361,6 +373,20 @@
 					placeholder={m.settings_language_placeholder()}
 					contained
 					portal
+				/>
+			{/snippet}
+		</SettingsRow>
+
+		<SettingsRow title={m.settings_timezone()} subtitle={m.settings_timezone_subtitle()}>
+			{#snippet control()}
+				<Select
+					value={normalizeTimezone(timezone)}
+					onValueChange={handleTimezoneSelect}
+					options={timezoneOptions}
+					placeholder={m.settings_timezone_placeholder()}
+					contained
+					portal
+					contentWidthOffset={140}
 				/>
 			{/snippet}
 		</SettingsRow>

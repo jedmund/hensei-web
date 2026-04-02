@@ -7,6 +7,7 @@
 	import { gwQueries } from '$lib/api/queries/gw.queries'
 	import { formatScore, toPlayerHistoryChartData } from '$lib/utils/gw'
 	import { formatDateJST } from '$lib/utils/date'
+	import { formatTimezone } from '$lib/utils/timezone'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
 	import GwEventScoreRow from '$lib/components/crew/GwEventScoreRow.svelte'
 	import GwCrewHistoryChart from '$lib/components/charts/GwCrewHistoryChart.svelte'
@@ -18,6 +19,7 @@
 	const scoresQuery = createQuery(() => gwQueries.memberGwScoresByUsername(username))
 
 	const memberName = $derived(scoresQuery.data?.member?.user?.username ?? 'Member')
+	const memberTimezone = $derived(scoresQuery.data?.member?.user?.timezone)
 
 	// Count only events where player was in crew
 	const eventsInCrew = $derived(scoresQuery.data?.eventScores.filter((e) => e.inCrew).length ?? 0)
@@ -48,6 +50,12 @@
 			{@const data = scoresQuery.data}
 
 			<CrewHeader title={memberName} backHref="/crew/members" />
+
+			{#if memberTimezone}
+				<div class="timezone-row">
+					<span class="timezone">{formatTimezone(memberTimezone)}</span>
+				</div>
+			{/if}
 
 			<div class="stats-row">
 				<div class="stat">
@@ -129,6 +137,16 @@
 		gap: spacing.$unit-2x;
 		color: var(--text-secondary);
 		font-size: typography.$font-small;
+	}
+
+	.timezone-row {
+		padding: spacing.$unit spacing.$unit-2x;
+		border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
+	}
+
+	.timezone {
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
 	}
 
 	.stats-row {

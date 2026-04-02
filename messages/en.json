@@ -1073,6 +1073,30 @@
 	"settings_language": "Language",
 	"settings_language_subtitle": "Display language for the site",
 	"settings_language_placeholder": "Select language",
+	"settings_timezone": "Timezone",
+	"settings_timezone_subtitle": "Your local timezone, displayed on the Crew page",
+	"settings_timezone_placeholder": "Select timezone",
+	"timezone_same": "Same timezone",
+	"timezone_ahead": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} hour ahead",
+				"countPlural=other": "{count} hours ahead"
+			}
+		}
+	],
+	"timezone_behind": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} hour behind",
+				"countPlural=other": "{count} hours behind"
+			}
+		}
+	],
 	"settings_theme": "Theme",
 	"settings_theme_subtitle": "Light, dark, or system default",
 	"settings_theme_placeholder": "Select theme",

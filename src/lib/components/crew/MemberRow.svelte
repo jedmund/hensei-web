@@ -6,6 +6,8 @@
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { formatDate } from '$lib/utils/date'
+	import { formatTimezoneShort, getTimezoneHourDiff } from '$lib/utils/timezone'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import type { CrewMembership } from '$lib/types/api/crew'
 	import * as m from '$lib/paraglide/messages'
 
@@ -18,6 +20,13 @@
 	}
 
 	const { member, onEdit, onPromote, onDemote, onRemove }: Props = $props()
+
+	function getTimezoneTooltip(tz: string): string {
+		const diff = getTimezoneHourDiff(tz)
+		if (diff === 0) return m.timezone_same()
+		const count = Math.abs(diff)
+		return diff > 0 ? m.timezone_ahead({ count }) : m.timezone_behind({ count })
+	}
 
 	function getRoleLabel(role: string): string {
 		switch (role) {
@@ -63,7 +72,12 @@
 				{/if}
 				{#if member.joinedAt}
 					<span class="joined-date"
-						>{m.crew_joined_date({ date: formatDate(member.joinedAt) })}</span
+						>{m.crew_joined_date({
+							date: formatDate(member.joinedAt)
+						})}{#if member.user?.timezone}&nbsp;&middot;&nbsp;<Tooltip
+								content={getTimezoneTooltip(member.user.timezone)}
+								>{formatTimezoneShort(member.user.timezone)}</Tooltip
+							>{/if}</span
 					>
 				{/if}
 			</div>

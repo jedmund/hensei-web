@@ -7,6 +7,8 @@
 	interface Option {
 		value: T
 		label: string
+		/** Optional shorter label shown in the trigger instead of `label` */
+		triggerLabel?: string
 		disabled?: boolean
 		image?: string
 		/** CSS background color behind the image thumbnail */
@@ -17,6 +19,8 @@
 		indicatorColor?: string
 		/** Optional suffix text displayed in muted style */
 		suffix?: string
+		/** Secondary line displayed below the label */
+		subtitle?: string
 		/** Display label in muted/tertiary color */
 		muted?: boolean
 	}
@@ -37,6 +41,8 @@
 		class?: string
 		/** Custom snippet for rendering suffix area - receives the option */
 		suffixSnippet?: Snippet<[Option]>
+		/** Extra width (in px) added to the dropdown content beyond the trigger width */
+		contentWidthOffset?: number
 	}
 
 	let {
@@ -53,7 +59,8 @@
 		required = false,
 		portal = false,
 		class: className = '',
-		suffixSnippet // eslint-disable-line @typescript-eslint/no-unused-vars
+		suffixSnippet, // eslint-disable-line @typescript-eslint/no-unused-vars
+		contentWidthOffset
 	}: Props = $props()
 
 	// Convert options to string values for Bits UI (which expects strings internally)
@@ -125,13 +132,20 @@
 						style={selected.imageBackground ? `background-color: ${selected.imageBackground}` : ''}
 					/>
 				{/if}
-				<span class="text">{selected !== undefined ? selected.label : placeholder}</span>
+				<span class="text"
+					>{selected !== undefined ? (selected.triggerLabel ?? selected.label) : placeholder}</span
+				>
 				<Icon name="chevron-down-small" size={14} class="chevron" />
 			</SelectPrimitive.Trigger>
 
 			{#if portal}
 				<SelectPrimitive.Portal>
-					<SelectPrimitive.Content class="content">
+					<SelectPrimitive.Content
+						class="content"
+						style={contentWidthOffset
+							? `--content-width-offset: ${contentWidthOffset}px`
+							: undefined}
+					>
 						<SelectPrimitive.Viewport>
 							{#each options as option (option.value)}
 								<SelectPrimitive.Item
@@ -157,7 +171,14 @@
 													: ''}
 											/>
 										{/if}
-										<span class="text" class:muted={option.muted}>{option.label}</span>
+										{#if option.subtitle}
+											<span class="text-stack">
+												<span class="text" class:muted={option.muted}>{option.label}</span>
+												<span class="subtitle">{option.subtitle}</span>
+											</span>
+										{:else}
+											<span class="text" class:muted={option.muted}>{option.label}</span>
+										{/if}
 										{#if option.suffix}
 											<span class="suffix">{option.suffix}</span>
 										{/if}
@@ -173,7 +194,10 @@
 					</SelectPrimitive.Content>
 				</SelectPrimitive.Portal>
 			{:else}
-				<SelectPrimitive.Content class="content">
+				<SelectPrimitive.Content
+					class="content"
+					style={contentWidthOffset ? `--content-width-offset: ${contentWidthOffset}px` : undefined}
+				>
 					<SelectPrimitive.Viewport>
 						{#each options as option (option.value)}
 							<SelectPrimitive.Item
@@ -240,13 +264,18 @@
 					style={selected.imageBackground ? `background-color: ${selected.imageBackground}` : ''}
 				/>
 			{/if}
-			<span class="text">{selected !== undefined ? selected.label : placeholder}</span>
+			<span class="text"
+				>{selected !== undefined ? (selected.triggerLabel ?? selected.label) : placeholder}</span
+			>
 			<Icon name="chevron-down-small" size={14} class="chevron" />
 		</SelectPrimitive.Trigger>
 
 		{#if portal}
 			<SelectPrimitive.Portal>
-				<SelectPrimitive.Content class="content">
+				<SelectPrimitive.Content
+					class="content"
+					style={contentWidthOffset ? `--content-width-offset: ${contentWidthOffset}px` : undefined}
+				>
 					<SelectPrimitive.Viewport>
 						{#each options as option (option.value)}
 							<SelectPrimitive.Item
@@ -273,7 +302,14 @@
 												: ''}
 										/>
 									{/if}
-									<span class="text" class:muted={option.muted}>{option.label}</span>
+									{#if option.subtitle}
+										<span class="text-stack">
+											<span class="text" class:muted={option.muted}>{option.label}</span>
+											<span class="subtitle">{option.subtitle}</span>
+										</span>
+									{:else}
+										<span class="text" class:muted={option.muted}>{option.label}</span>
+									{/if}
 									{#if option.suffix}
 										<span class="suffix">{option.suffix}</span>
 									{/if}
@@ -289,7 +325,10 @@
 				</SelectPrimitive.Content>
 			</SelectPrimitive.Portal>
 		{:else}
-			<SelectPrimitive.Content class="content">
+			<SelectPrimitive.Content
+				class="content"
+				style={contentWidthOffset ? `--content-width-offset: ${contentWidthOffset}px` : undefined}
+			>
 				<SelectPrimitive.Viewport>
 					{#each options as option (option.value)}
 						<SelectPrimitive.Item
@@ -308,7 +347,14 @@
 								{:else if option.image}
 									<img src={option.image} alt={option.label} class="image" />
 								{/if}
-								<span class="text" class:muted={option.muted}>{option.label}</span>
+								{#if option.subtitle}
+									<span class="text-stack">
+										<span class="text" class:muted={option.muted}>{option.label}</span>
+										<span class="subtitle">{option.subtitle}</span>
+									</span>
+								{:else}
+									<span class="text" class:muted={option.muted}>{option.label}</span>
+								{/if}
 								{#if option.suffix}
 									<span class="suffix">{option.suffix}</span>
 								{/if}
@@ -467,9 +513,9 @@
 		border-radius: $card-corner;
 		border: 1px solid rgba(0, 0, 0, 0.1);
 		box-shadow: var(--shadow-lg);
-		padding: $unit-half;
-		min-width: var(--bits-select-anchor-width);
-		max-width: var(--bits-select-anchor-width);
+		padding: 0 $unit-half;
+		min-width: calc(var(--bits-select-anchor-width) + var(--content-width-offset, 0px));
+		max-width: calc(var(--bits-select-anchor-width) + var(--content-width-offset, 0px));
 		max-height: 40vh;
 		overflow: auto;
 		z-index: $z-modal + 2;
@@ -499,6 +545,14 @@
 		user-select: none;
 		@include smooth-transition($duration-quick, background-color);
 
+		&:first-child {
+			margin-top: $unit-half;
+		}
+
+		&:last-child {
+			margin-bottom: $unit-half;
+		}
+
 		&:hover {
 			background-color: var(--option-bg-hover);
 		}
@@ -511,6 +565,27 @@
 
 		&[data-selected] {
 			font-weight: $medium;
+		}
+
+		.text-stack {
+			flex: 1;
+			min-width: 0;
+			display: flex;
+			flex-direction: column;
+			gap: 1px;
+
+			.text {
+				flex: initial;
+			}
+
+			.subtitle {
+				font-size: $font-small;
+				color: var(--text-tertiary);
+				line-height: 1.2;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
 		}
 
 		.text {
