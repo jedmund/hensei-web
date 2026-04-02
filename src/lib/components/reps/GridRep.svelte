@@ -102,6 +102,20 @@
 						<span class="user-name">{party.user.displayName ?? party.user.username}</span>
 					</span>
 				</div>
+			{:else}
+				<div class="user-row">
+					<span class="user-link">
+						<img
+							class="user-avatar"
+							src={getAvatarSrc('npc')}
+							alt=""
+							width="20"
+							height="20"
+							loading="lazy"
+						/>
+						<span class="user-name">{m.grid_anonymous()}</span>
+					</span>
+				</div>
 			{/if}
 			<div class="details">
 				<div class="details-text">
