@@ -26,6 +26,7 @@ interface ApiUserResponse {
 	defaultImportVisibility?: number // transformed from default_import_visibility
 	simplePortraits?: boolean // transformed from simple_portraits
 	defaultRepView?: string // transformed from default_rep_view
+	timezone?: string
 	gamertag?: string
 	crewName?: string
 	email?: string // Only included in settings view
@@ -58,6 +59,7 @@ export interface UserInfo {
 	defaultImportVisibility?: number
 	simplePortraits?: boolean
 	defaultRepView?: string
+	timezone?: string
 	crewGamertag?: string
 	crewName?: string
 	avatar: {
@@ -113,6 +115,7 @@ function transformUserResponse(apiUser: ApiUserResponse): UserInfo {
 		defaultImportVisibility: apiUser.defaultImportVisibility,
 		simplePortraits: apiUser.simplePortraits,
 		defaultRepView: apiUser.defaultRepView,
+		timezone: apiUser.timezone,
 		// Rename gamertag to crewGamertag
 		crewGamertag: apiUser.gamertag,
 		crewName: apiUser.crewName,
