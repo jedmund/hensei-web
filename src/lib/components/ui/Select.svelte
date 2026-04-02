@@ -288,7 +288,14 @@
 												: ''}
 										/>
 									{/if}
-									<span class="text" class:muted={option.muted}>{option.label}</span>
+									{#if option.subtitle}
+										<span class="text-stack">
+											<span class="text" class:muted={option.muted}>{option.label}</span>
+											<span class="subtitle">{option.subtitle}</span>
+										</span>
+									{:else}
+										<span class="text" class:muted={option.muted}>{option.label}</span>
+									{/if}
 									{#if option.suffix}
 										<span class="suffix">{option.suffix}</span>
 									{/if}
@@ -323,7 +330,14 @@
 								{:else if option.image}
 									<img src={option.image} alt={option.label} class="image" />
 								{/if}
-								<span class="text" class:muted={option.muted}>{option.label}</span>
+								{#if option.subtitle}
+									<span class="text-stack">
+										<span class="text" class:muted={option.muted}>{option.label}</span>
+										<span class="subtitle">{option.subtitle}</span>
+									</span>
+								{:else}
+									<span class="text" class:muted={option.muted}>{option.label}</span>
+								{/if}
 								{#if option.suffix}
 									<span class="suffix">{option.suffix}</span>
 								{/if}
