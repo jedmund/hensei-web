@@ -7,6 +7,8 @@
 	interface Option {
 		value: T
 		label: string
+		/** Optional shorter label shown in the trigger instead of `label` */
+		triggerLabel?: string
 		disabled?: boolean
 		image?: string
 		/** CSS background color behind the image thumbnail */
@@ -125,7 +127,9 @@
 						style={selected.imageBackground ? `background-color: ${selected.imageBackground}` : ''}
 					/>
 				{/if}
-				<span class="text">{selected !== undefined ? selected.label : placeholder}</span>
+				<span class="text"
+					>{selected !== undefined ? (selected.triggerLabel ?? selected.label) : placeholder}</span
+				>
 				<Icon name="chevron-down-small" size={14} class="chevron" />
 			</SelectPrimitive.Trigger>
 
@@ -240,7 +244,9 @@
 					style={selected.imageBackground ? `background-color: ${selected.imageBackground}` : ''}
 				/>
 			{/if}
-			<span class="text">{selected !== undefined ? selected.label : placeholder}</span>
+			<span class="text"
+				>{selected !== undefined ? (selected.triggerLabel ?? selected.label) : placeholder}</span
+			>
 			<Icon name="chevron-down-small" size={14} class="chevron" />
 		</SelectPrimitive.Trigger>
 
