@@ -11,8 +11,13 @@
 	import GwEventScoreRow from '$lib/components/crew/GwEventScoreRow.svelte'
 	import GwCrewHistoryChart from '$lib/components/charts/GwCrewHistoryChart.svelte'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
+	import RaidElementsSection from '$lib/components/crew/RaidElementsSection.svelte'
+	import type { LayoutData } from '../../$types'
+
+	const { data }: { data: LayoutData } = $props()
 
 	const username = $derived($page.params.username ?? '')
+	const isOwnProfile = $derived(data.account?.username === username)
 
 	// Query for member's GW scores
 	const scoresQuery = createQuery(() => gwQueries.memberGwScoresByUsername(username))
@@ -95,6 +100,7 @@
 					{/each}
 				</ul>
 			{/if}
+			<RaidElementsSection {username} {isOwnProfile} />
 		{/if}
 	</div>
 </div>
