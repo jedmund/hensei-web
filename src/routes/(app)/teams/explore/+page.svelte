@@ -207,20 +207,33 @@
 				</Button>
 			{/if}
 			<Tooltip content={advancedFilterTooltip} disabled={advancedFilterCount === 0}>
-				<Button
-					variant="ghost"
-					size="small"
-					shape="pill"
-					onclick={() => (settingsOpen = true)}
-					aria-label={m.explore_settings_aria()}
-				>
-					{#snippet leftAccessory()}
-						<Icon name="gear" size={14} />
-					{/snippet}
-					{#if advancedFilterCount > 0}
+				{#if advancedFilterCount > 0}
+					<Button
+						variant="ghost"
+						size="small"
+						shape="pill"
+						onclick={() => (settingsOpen = true)}
+						aria-label={m.explore_settings_aria()}
+					>
+						{#snippet leftAccessory()}
+							<Icon name="gear" size={14} />
+						{/snippet}
 						{advancedFilterCount}
-					{/if}
-				</Button>
+					</Button>
+				{:else}
+					<Button
+						variant="ghost"
+						size="small"
+						shape="pill"
+						iconOnly
+						onclick={() => (settingsOpen = true)}
+						aria-label={m.explore_settings_aria()}
+					>
+						{#snippet leftAccessory()}
+							<Icon name="gear" size={14} />
+						{/snippet}
+					</Button>
+				{/if}
 			</Tooltip>
 		</div>
 	</div>
