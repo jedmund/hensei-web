@@ -199,6 +199,14 @@
 					size="small"
 					shape="pill"
 					active={collectionFilterActive}
+					element={currentUser?.element as
+						| 'wind'
+						| 'fire'
+						| 'water'
+						| 'earth'
+						| 'dark'
+						| 'light'
+						| undefined}
 					onclick={() => (collectionFilterActive = !collectionFilterActive)}
 					aria-label={m.explore_collection_aria()}
 					aria-pressed={collectionFilterActive}
