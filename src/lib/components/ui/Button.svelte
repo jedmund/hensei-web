@@ -270,7 +270,7 @@
 		color: var(--text-secondary);
 
 		&:hover:not(:disabled) {
-			background-color: var(--button-bg);
+			background-color: var(--ghost-hover-bg, var(--button-bg));
 			color: var(--text-primary);
 		}
 	}
