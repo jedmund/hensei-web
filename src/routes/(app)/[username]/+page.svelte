@@ -210,7 +210,7 @@
 								<ContextMenu.Trigger>
 									{#snippet child({ props })}
 										<div {...props}>
-											<GridRep {party} />
+											<GridRep {party} showUser={false} />
 										</div>
 									{/snippet}
 								</ContextMenu.Trigger>
@@ -233,7 +233,7 @@
 								</ContextMenu.Portal>
 							</ContextMenu.Root>
 						{:else}
-							<GridRep {party} />
+							<GridRep {party} showUser={false} />
 						{/if}
 					</li>
 				{/each}
