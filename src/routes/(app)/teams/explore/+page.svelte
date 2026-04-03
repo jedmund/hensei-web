@@ -15,6 +15,7 @@
 	import type { FilterSet } from '$lib/types/FilterSet'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import CollectionFilterButton from '$lib/components/explore/CollectionFilterButton.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -194,10 +195,7 @@
 		<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} />
 		<div class="filters-actions">
 			{#if isAuthenticated}
-				<Button
-					variant="ghost"
-					size="small"
-					shape="pill"
+				<CollectionFilterButton
 					active={collectionFilterActive}
 					element={currentUser?.element as
 						| 'wind'
@@ -212,7 +210,7 @@
 					aria-pressed={collectionFilterActive}
 				>
 					{m.explore_collection_only()}
-				</Button>
+				</CollectionFilterButton>
 			{/if}
 			<Tooltip content={advancedFilterTooltip} disabled={advancedFilterCount === 0}>
 				{#if advancedFilterCount > 0}

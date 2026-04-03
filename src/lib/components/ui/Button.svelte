@@ -391,31 +391,6 @@
 		color: var(--button-text-hover);
 	}
 
-	:global([data-button-root].active.wind) {
-		background: var(--wind-nav-selected-bg);
-		color: var(--wind-nav-selected-text);
-	}
-	:global([data-button-root].active.fire) {
-		background: var(--fire-nav-selected-bg);
-		color: var(--fire-nav-selected-text);
-	}
-	:global([data-button-root].active.water) {
-		background: var(--water-nav-selected-bg);
-		color: var(--water-nav-selected-text);
-	}
-	:global([data-button-root].active.earth) {
-		background: var(--earth-nav-selected-bg);
-		color: var(--earth-nav-selected-text);
-	}
-	:global([data-button-root].active.dark) {
-		background: var(--dark-nav-selected-bg);
-		color: var(--dark-nav-selected-text);
-	}
-	:global([data-button-root].active.light) {
-		background: var(--light-nav-selected-bg);
-		color: var(--light-nav-selected-text);
-	}
-
 	:global([data-button-root].full) {
 		width: 100%;
 	}
@@ -593,7 +568,7 @@
 	}
 
 	// Keep non-styled element classes for backward compatibility
-	:global([data-button-root].wind:not(.element-styled):not(.element-ghost)) {
+	:global([data-button-root].wind:not(.element-styled):not(.element-ghost):not(.ghost)) {
 		background: var(--wind-nav-selected-bg);
 		color: var(--wind-ghost-text);
 
