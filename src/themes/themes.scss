@@ -138,6 +138,7 @@
 	--button-bg-disabled: #{colors.$button--bg--light--disabled};
 	--button-contained-bg: #{colors.$button--contained--bg--light};
 	--button-contained-bg-hover: #{colors.$button--contained--bg--light--hover};
+	--ghost-hover-bg-on-page: #{colors.$button--bg--light--hover};
 
 	--button-text: #{colors.$button--text--light};
 	--button-text-hover: #{colors.$button--text--light--hover};
@@ -613,6 +614,7 @@ html[data-theme='dark'] {
 	--button-contained-bg-hover: #{colors.$button--contained--bg--dark--hover};
 	--button-bg-disabled: #{colors.$button--bg--dark--disabled};
 	--button-contained-bg: #{colors.$button--contained--bg--dark};
+	--ghost-hover-bg-on-page: #{colors.$grey-20};
 
 	--button-text: #{colors.$button--text--dark};
 	--button-text-hover: #{colors.$button--text--dark--hover};

@@ -125,7 +125,7 @@
 					subtitle={m.explore_settings_name_quality_desc()}
 				>
 					{#snippet control()}
-						<Switch bind:checked={nameQuality} size="small" />
+						<Switch bind:checked={nameQuality} size="small" {element} />
 					{/snippet}
 				</SettingsRow>
 				<SettingsRow
@@ -133,7 +133,7 @@
 					subtitle={m.explore_settings_user_quality_desc()}
 				>
 					{#snippet control()}
-						<Switch bind:checked={userQuality} size="small" />
+						<Switch bind:checked={userQuality} size="small" {element} />
 					{/snippet}
 				</SettingsRow>
 				<SettingsRow
@@ -141,7 +141,7 @@
 					subtitle={m.explore_settings_original_desc()}
 				>
 					{#snippet control()}
-						<Switch bind:checked={originalOnly} size="small" />
+						<Switch bind:checked={originalOnly} size="small" {element} />
 					{/snippet}
 				</SettingsRow>
 			</section>

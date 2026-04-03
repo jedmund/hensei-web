@@ -270,7 +270,7 @@
 		color: var(--text-secondary);
 
 		&:hover:not(:disabled) {
-			background-color: var(--button-bg);
+			background-color: var(--ghost-hover-bg, var(--button-bg));
 			color: var(--text-primary);
 		}
 	}
@@ -568,7 +568,7 @@
 	}
 
 	// Keep non-styled element classes for backward compatibility
-	:global([data-button-root].wind:not(.element-styled):not(.element-ghost)) {
+	:global([data-button-root].wind:not(.element-styled):not(.element-ghost):not(.ghost)) {
 		background: var(--wind-nav-selected-bg);
 		color: var(--wind-ghost-text);
 
