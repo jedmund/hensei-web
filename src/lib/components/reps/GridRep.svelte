@@ -19,6 +19,7 @@
 		loading?: boolean
 		disabled?: boolean
 		dimmed?: boolean
+		showUser?: boolean
 		indicator?: Snippet
 	}
 
@@ -28,6 +29,7 @@
 		loading = false,
 		disabled = false,
 		dimmed = false,
+		showUser = true,
 		indicator
 	}: Props = $props()
 
@@ -84,38 +86,40 @@
 				{/if}
 				<h2 class:empty={!party.name}>{party.name || m.grid_untitled()}</h2>
 			</div>
-			{#if party.user}
-				<div class="user-row">
-					<span class="user-link">
-						{#if party.user.avatar?.picture}
+			{#if showUser}
+				{#if party.user}
+					<div class="user-row">
+						<span class="user-link">
+							{#if party.user.avatar?.picture}
+								<img
+									class="user-avatar"
+									src={getAvatarSrc(party.user.avatar.picture)}
+									alt=""
+									width="20"
+									height="20"
+									loading="lazy"
+								/>
+							{:else}
+								<div class="user-avatar-placeholder" aria-hidden="true"></div>
+							{/if}
+							<span class="user-name">{party.user.displayName ?? party.user.username}</span>
+						</span>
+					</div>
+				{:else}
+					<div class="user-row">
+						<span class="user-link">
 							<img
 								class="user-avatar"
-								src={getAvatarSrc(party.user.avatar.picture)}
+								src={getAvatarSrc('npc')}
 								alt=""
 								width="20"
 								height="20"
 								loading="lazy"
 							/>
-						{:else}
-							<div class="user-avatar-placeholder" aria-hidden="true"></div>
-						{/if}
-						<span class="user-name">{party.user.displayName ?? party.user.username}</span>
-					</span>
-				</div>
-			{:else}
-				<div class="user-row">
-					<span class="user-link">
-						<img
-							class="user-avatar"
-							src={getAvatarSrc('npc')}
-							alt=""
-							width="20"
-							height="20"
-							loading="lazy"
-						/>
-						<span class="user-name">{m.grid_anonymous()}</span>
-					</span>
-				</div>
+							<span class="user-name">{m.grid_anonymous()}</span>
+						</span>
+					</div>
+				{/if}
 			{/if}
 			<div class="details">
 				<div class="details-text">
