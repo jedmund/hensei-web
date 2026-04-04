@@ -79,13 +79,21 @@
 
 	// Save scroll position before navigating away and close sidebar
 	beforeNavigate(({ from, to, cancel }) => {
+		// Skip close guard when the description editor is open — tab switches
+		// use pushState which triggers beforeNavigate, but the sidebar should
+		// stay open so the user can reference different parts of their team
+		const isDescriptionEditor = sidebar.paneStack.currentPane?.id === 'edit-description'
+
 		// If sidebar has unsaved changes, block navigation and show dialog
-		if (sidebar.isOpen && sidebar.paneStack.anyPaneHasUnsavedChanges) {
+		if (sidebar.isOpen && sidebar.paneStack.anyPaneHasUnsavedChanges && !isDescriptionEditor) {
 			cancel()
 			pendingNavUrl = to?.url.href ?? ''
 			showUnsavedConfirm = true
 			return
 		}
+
+		// Don't close sidebar when description editor is open (tab switch via pushState)
+		if (isDescriptionEditor) return
 
 		// Close sidebar when navigating
 		sidebar.close()
