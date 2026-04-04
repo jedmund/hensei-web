@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { DropdownMenu } from 'bits-ui'
 	import { untrack } from 'svelte'
+	import * as m from '$lib/paraglide/messages'
 	import {
 		type PaneConfig,
 		type PaneStackStore,
@@ -8,6 +9,7 @@
 	} from '$lib/stores/paneStack.svelte'
 	import SidebarHeader from './SidebarHeader.svelte'
 	import Button from './Button.svelte'
+	import ConfirmDialog from './ConfirmDialog.svelte'
 
 	interface Props {
 		/** The pane stack store to use */
@@ -21,20 +23,42 @@
 	// Set context so child components can access the pane stack
 	untrack(() => setPaneStackContext(stack))
 
+	// Unsaved changes confirmation
+	let showUnsavedDialog = $state(false)
+	let pendingAction: (() => void) | null = $state(null)
+
 	// Track scroll state per pane for header shadow
 	let paneScrolled: Record<string, boolean> = $state({})
 
 	function handleBack(pane: PaneConfig, index: number) {
-		if (index === 0 && pane.onback) {
-			// Root pane with custom back handler
-			pane.onback()
-		} else if (index === 0 && onClose) {
-			// Root pane, close sidebar
-			onClose()
-		} else {
-			// Non-root pane, pop from stack
-			stack.pop()
+		const action = () => {
+			if (index === 0 && pane.onback) {
+				pane.onback()
+			} else if (index === 0 && onClose) {
+				onClose()
+			} else {
+				stack.pop()
+			}
 		}
+
+		// Check if the current (topmost) pane has unsaved changes
+		const currentPane = stack.panes[stack.panes.length - 1]
+		if (currentPane?.hasUnsavedChanges?.()) {
+			pendingAction = action
+			showUnsavedDialog = true
+		} else {
+			action()
+		}
+	}
+
+	function handleConfirmClose() {
+		pendingAction?.()
+		pendingAction = null
+		showUnsavedDialog = false
+	}
+
+	function handleCancelClose() {
+		pendingAction = null
 	}
 
 	// Determine if a pane is the one being pushed (for entry animation)
@@ -166,6 +190,16 @@
 		</div>
 	{/each}
 </div>
+
+<ConfirmDialog
+	bind:open={showUnsavedDialog}
+	title={m.dialog_unsaved_changes_title()}
+	message={m.dialog_unsaved_changes_message()}
+	confirmLabel={m.dialog_unsaved_close()}
+	cancelLabel={m.dialog_unsaved_nevermind()}
+	onconfirm={handleConfirmClose}
+	oncancel={handleCancelClose}
+/>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;

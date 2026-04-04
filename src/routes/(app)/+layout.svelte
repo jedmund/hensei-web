@@ -6,12 +6,13 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { Tooltip } from 'bits-ui'
 	import { SvelteMap } from 'svelte/reactivity'
-	import { beforeNavigate, afterNavigate } from '$app/navigation'
+	import { beforeNavigate, afterNavigate, goto } from '$app/navigation'
 	import { browser, dev } from '$app/environment'
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
+	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import { hasEditKeys, getAllEditKeys } from '$lib/utils/editKeys'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import type { LayoutData } from './$types'
@@ -62,11 +63,23 @@
 		}
 	}
 
+	// Unsaved changes navigation guard
+	let showNavConfirm = $state(false)
+	let pendingNavUrl = $state('')
+
 	// Store scroll positions for each visited route
 	const scrollPositions = new SvelteMap<string, number>()
 
 	// Save scroll position before navigating away and close sidebar
-	beforeNavigate(({ from }) => {
+	beforeNavigate(({ from, to, cancel }) => {
+		// If sidebar has unsaved changes, block navigation and show dialog
+		if (sidebar.isOpen && sidebar.paneStack.anyPaneHasUnsavedChanges) {
+			cancel()
+			pendingNavUrl = to?.url.href ?? ''
+			showNavConfirm = true
+			return
+		}
+
 		// Close sidebar when navigating
 		sidebar.close()
 
@@ -164,6 +177,22 @@
 		<Sidebar open={sidebar.isOpen} stack={sidebar.paneStack} onClose={() => sidebar.close()} />
 	</div>
 </Tooltip.Provider>
+
+<ConfirmDialog
+	bind:open={showNavConfirm}
+	title={m.dialog_unsaved_changes_title()}
+	message={m.dialog_unsaved_changes_message()}
+	confirmLabel={m.dialog_unsaved_close()}
+	cancelLabel={m.dialog_unsaved_nevermind()}
+	onconfirm={() => {
+		showNavConfirm = false
+		sidebar.close()
+		if (pendingNavUrl) goto(pendingNavUrl)
+	}}
+	oncancel={() => {
+		pendingNavUrl = ''
+	}}
+/>
 
 <style lang="scss">
 	@use '$src/themes/effects' as *;
