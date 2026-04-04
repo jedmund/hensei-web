@@ -31,11 +31,18 @@
 	let { items, command, query }: Props = $props()
 
 	let selectedIndex = $state(0)
+	let listEl = $state<HTMLDivElement>()
 
 	// Reset selection when items change
 	$effect(() => {
 		void items
 		selectedIndex = 0
+	})
+
+	// Scroll selected item into view on arrow key navigation
+	$effect(() => {
+		const item = listEl?.children[selectedIndex] as HTMLElement | undefined
+		item?.scrollIntoView({ block: 'nearest' })
 	})
 
 	function getEntityImageUrl(item: UnifiedSearchResult): string {
@@ -117,7 +124,7 @@
 	}
 </script>
 
-<div class="entity-mention-list">
+<div class="entity-mention-list" bind:this={listEl}>
 	{#if items.length > 0}
 		{#each items as item, index (item.searchableId)}
 			<button
@@ -164,9 +171,9 @@
 		border-radius: $card-corner;
 		box-shadow: var(--shadow-lg);
 		overflow: hidden;
-		min-width: 200px;
-		max-width: 300px;
-		max-height: 280px;
+		min-width: 240px;
+		max-width: 360px;
+		max-height: 320px;
 		overflow-y: auto;
 		padding: $unit-half;
 	}
@@ -191,8 +198,8 @@
 	}
 
 	.item-image {
-		width: $unit-6x;
-		height: $unit-6x;
+		width: 36px;
+		height: 36px;
 		border-radius: $item-corner-small;
 		overflow: hidden;
 		flex-shrink: 0;
@@ -208,12 +215,12 @@
 		flex: 1;
 		display: flex;
 		flex-direction: column;
-		gap: $unit-quarter;
+		gap: $unit-half;
 		min-width: 0;
 	}
 
 	.item-name {
-		font-size: $font-regular;
+		font-size: $font-small;
 		color: var(--text-primary);
 		white-space: nowrap;
 		overflow: hidden;
