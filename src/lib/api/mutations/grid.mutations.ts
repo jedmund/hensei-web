@@ -57,8 +57,11 @@ function invalidateOnSettled(queryClient: QueryClient, partyShortcode: string) {
 
 export function createGridWeaponOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: CreateGridWeaponParams & { partyShortcode: string }) =>
-			gridAdapter.createWeapon(params, editKeyHeaders(params.partyShortcode)),
+		mutationFn: ({
+			partyShortcode,
+			...rest
+		}: CreateGridWeaponParams & { partyShortcode: string }) =>
+			gridAdapter.createWeapon(rest, editKeyHeaders(partyShortcode)),
 		onMutate: async ({
 			partyShortcode,
 			position,
@@ -280,8 +283,11 @@ export function duplicateGridWeaponOptions(queryClient: QueryClient) {
 
 export function createGridCharacterOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: CreateGridCharacterParams & { partyShortcode: string }) =>
-			gridAdapter.createCharacter(params, editKeyHeaders(params.partyShortcode)),
+		mutationFn: ({
+			partyShortcode,
+			...rest
+		}: CreateGridCharacterParams & { partyShortcode: string }) =>
+			gridAdapter.createCharacter(rest, editKeyHeaders(partyShortcode)),
 		onMutate: async ({
 			partyShortcode,
 			position
@@ -487,8 +493,11 @@ export function swapCharactersOptions(queryClient: QueryClient) {
 
 export function createGridSummonOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: CreateGridSummonParams & { partyShortcode: string }) =>
-			gridAdapter.createSummon(params, editKeyHeaders(params.partyShortcode)),
+		mutationFn: ({
+			partyShortcode,
+			...rest
+		}: CreateGridSummonParams & { partyShortcode: string }) =>
+			gridAdapter.createSummon(rest, editKeyHeaders(partyShortcode)),
 		onMutate: async ({
 			partyShortcode,
 			position,
