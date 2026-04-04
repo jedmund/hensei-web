@@ -47,6 +47,13 @@
 		}
 	})
 
+	// Warn on hard reload / tab close if sidebar has unsaved changes
+	function handleBeforeUnload(event: BeforeUnloadEvent) {
+		if (sidebar.isOpen && sidebar.paneStack.anyPaneHasUnsavedChanges) {
+			event.preventDefault()
+		}
+	}
+
 	// Bahamut mode bar affects layout positioning
 	const isBahamut = $derived(data?.currentUser?.bahamut === true)
 
@@ -148,6 +155,8 @@
 		}
 	}
 </script>
+
+<svelte:window onbeforeunload={handleBeforeUnload} />
 
 {#if dev}
 	<SvelteQueryDevtools buttonPosition="bottom-left" />
