@@ -34,7 +34,7 @@
 
 	function handleValueChange(newValue: string) {
 		value = newValue as GridType
-		sidebar.close()
+		sidebar.requestClose()
 		onTabChange?.(newValue as GridType)
 	}
 </script>

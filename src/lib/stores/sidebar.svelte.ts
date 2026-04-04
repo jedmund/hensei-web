@@ -21,6 +21,8 @@ interface OpenWithComponentOptions {
 interface SidebarState {
 	open: boolean
 	activeItemId: string | undefined
+	/** Set by requestClose() when unsaved changes need confirmation */
+	closeRequested: boolean
 }
 
 /**
@@ -33,7 +35,8 @@ interface SidebarState {
 class SidebarStore {
 	state = $state<SidebarState>({
 		open: false,
-		activeItemId: undefined
+		activeItemId: undefined,
+		closeRequested: false
 	})
 
 	/** The pane stack for sidebar navigation */
@@ -128,6 +131,26 @@ class SidebarStore {
 			this.paneStack.clear()
 			this.clearTimeoutId = null
 		}, 300)
+	}
+
+	/**
+	 * Request to close the sidebar, checking for unsaved changes first.
+	 * If unsaved changes exist, sets closeRequested flag for the UI to show a confirmation dialog.
+	 * If no unsaved changes, closes immediately.
+	 */
+	requestClose() {
+		if (this.paneStack.anyPaneHasUnsavedChanges) {
+			this.state.closeRequested = true
+		} else {
+			this.close()
+		}
+	}
+
+	/**
+	 * Dismiss a pending close request (user chose "Nevermind")
+	 */
+	dismissCloseRequest() {
+		this.state.closeRequested = false
 	}
 
 	/**
@@ -244,6 +267,10 @@ class SidebarStore {
 
 	get activeItemId() {
 		return this.state.activeItemId
+	}
+
+	get closeRequested() {
+		return this.state.closeRequested
 	}
 
 	// Backwards compatibility getters (delegate to pane stack)

@@ -63,9 +63,16 @@
 		}
 	}
 
-	// Unsaved changes navigation guard
-	let showNavConfirm = $state(false)
+	// Unsaved changes confirmation state
+	let showUnsavedConfirm = $state(false)
 	let pendingNavUrl = $state('')
+
+	// React to sidebar.requestClose() from external code (e.g. tab switches)
+	$effect(() => {
+		if (sidebar.closeRequested) {
+			showUnsavedConfirm = true
+		}
+	})
 
 	// Store scroll positions for each visited route
 	const scrollPositions = new SvelteMap<string, number>()
@@ -76,7 +83,7 @@
 		if (sidebar.isOpen && sidebar.paneStack.anyPaneHasUnsavedChanges) {
 			cancel()
 			pendingNavUrl = to?.url.href ?? ''
-			showNavConfirm = true
+			showUnsavedConfirm = true
 			return
 		}
 
@@ -179,17 +186,22 @@
 </Tooltip.Provider>
 
 <ConfirmDialog
-	bind:open={showNavConfirm}
+	bind:open={showUnsavedConfirm}
 	title={m.dialog_unsaved_changes_title()}
 	message={m.dialog_unsaved_changes_message()}
 	confirmLabel={m.dialog_unsaved_close()}
 	cancelLabel={m.dialog_unsaved_nevermind()}
 	onconfirm={() => {
-		showNavConfirm = false
+		showUnsavedConfirm = false
+		sidebar.dismissCloseRequest()
 		sidebar.close()
-		if (pendingNavUrl) goto(pendingNavUrl)
+		if (pendingNavUrl) {
+			goto(pendingNavUrl)
+			pendingNavUrl = ''
+		}
 	}}
 	oncancel={() => {
+		sidebar.dismissCloseRequest()
 		pendingNavUrl = ''
 	}}
 />
