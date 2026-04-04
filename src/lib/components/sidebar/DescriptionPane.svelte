@@ -45,7 +45,8 @@
 					paneStack.pop()
 				}
 			},
-			scrollable: false
+			scrollable: false,
+			persistOnTabSwitch: true
 		})
 	}
 

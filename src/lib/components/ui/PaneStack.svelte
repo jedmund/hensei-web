@@ -1,15 +1,14 @@
 <script lang="ts">
 	import { DropdownMenu } from 'bits-ui'
 	import { untrack } from 'svelte'
-	import * as m from '$lib/paraglide/messages'
 	import {
 		type PaneConfig,
 		type PaneStackStore,
 		setPaneStackContext
 	} from '$lib/stores/paneStack.svelte'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import SidebarHeader from './SidebarHeader.svelte'
 	import Button from './Button.svelte'
-	import ConfirmDialog from './ConfirmDialog.svelte'
 
 	interface Props {
 		/** The pane stack store to use */
@@ -22,10 +21,6 @@
 
 	// Set context so child components can access the pane stack
 	untrack(() => setPaneStackContext(stack))
-
-	// Unsaved changes confirmation
-	let showUnsavedDialog = $state(false)
-	let pendingAction: (() => void) | null = $state(null)
 
 	// Track scroll state per pane for header shadow
 	let paneScrolled: Record<string, boolean> = $state({})
@@ -44,21 +39,10 @@
 		// Check if the current (topmost) pane has unsaved changes
 		const currentPane = stack.panes[stack.panes.length - 1]
 		if (currentPane?.hasUnsavedChanges?.()) {
-			pendingAction = action
-			showUnsavedDialog = true
+			sidebar.requestConfirmation(action)
 		} else {
 			action()
 		}
-	}
-
-	function handleConfirmClose() {
-		pendingAction?.()
-		pendingAction = null
-		showUnsavedDialog = false
-	}
-
-	function handleCancelClose() {
-		pendingAction = null
 	}
 
 	// Determine if a pane is the one being pushed (for entry animation)
@@ -190,16 +174,6 @@
 		</div>
 	{/each}
 </div>
-
-<ConfirmDialog
-	bind:open={showUnsavedDialog}
-	title={m.dialog_unsaved_changes_title()}
-	message={m.dialog_unsaved_changes_message()}
-	confirmLabel={m.dialog_unsaved_close()}
-	cancelLabel={m.dialog_unsaved_nevermind()}
-	onconfirm={handleConfirmClose}
-	oncancel={handleCancelClose}
-/>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
