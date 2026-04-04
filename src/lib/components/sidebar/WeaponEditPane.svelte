@@ -126,6 +126,18 @@
 		transcendenceStep = newStage
 	}
 
+	// Check if any values have changed from the initial props
+	export function getHasChanges(): boolean {
+		if (uncapLevel !== currentValues.uncapLevel) return true
+		if (transcendenceStep !== currentValues.transcendenceStep) return true
+		if (canChangeElement && element !== (currentValues.element ?? weaponData?.element ?? 0))
+			return true
+		if (weaponKey1 !== currentValues.weaponKey1Id) return true
+		if (weaponKey2 !== currentValues.weaponKey2Id) return true
+		if (weaponKey3 !== currentValues.weaponKey3Id) return true
+		return false
+	}
+
 	// Export save function so parent can call it from header button
 	export function save() {
 		const updates: WeaponEditUpdates = {

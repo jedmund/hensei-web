@@ -10,6 +10,7 @@
 	import MentionTooltip from '$lib/components/ui/MentionTooltip.svelte'
 	import { linkDialogState } from '$lib/stores/linkDialog.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import { usePaneStack } from '$lib/stores/paneStack.svelte'
 
 	// Lucide icons
 	import Heading1 from '@lucide/svelte/icons/heading-1'
@@ -26,11 +27,12 @@
 	import ChevronDown from '@lucide/svelte/icons/chevron-down'
 
 	interface Props {
+		paneId?: string
 		description?: string
 		onSave: (content: string) => void
 	}
 
-	let { description, onSave }: Props = $props()
+	let { paneId, description, onSave }: Props = $props()
 
 	// Bind editor instance (same pattern as superhuman)
 	let editor = $state<Editor>()
@@ -50,6 +52,10 @@
 	}
 
 	const initialContent = untrack(() => parseDescription(description))
+	const initialDescription = untrack(() => description)
+
+	// Get the pane stack for registering unsaved changes
+	const paneStack = usePaneStack()
 
 	// Version counter to trigger reactivity when editor state changes
 	let editorVersion = $state(0)
@@ -69,6 +75,22 @@
 
 	onMount(() => {
 		sidebar.setAction(save, m.action_save())
+	})
+
+	// Register unsaved changes check on pane config
+	$effect(() => {
+		const id = paneId
+		untrack(() => {
+			if (id) {
+				paneStack.updatePaneById(id, {
+					hasUnsavedChanges: () => {
+						if (!editor) return false
+						const current = JSON.stringify(editor.getJSON())
+						return current !== (initialDescription ?? 'null')
+					}
+				})
+			}
+		})
 	})
 
 	$effect(() => {

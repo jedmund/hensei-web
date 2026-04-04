@@ -77,13 +77,16 @@
 			: undefined
 	)
 
-	// Register save action in the pane header
+	// Register save action and unsaved changes check in the pane header
 	$effect(() => {
 		// Read elementName to track it
 		const el = elementName
 		untrack(() => {
 			if (paneId) {
 				sidebar.setActionForPane(paneId, () => editPaneRef?.save(), m.action_save(), el)
+				sidebar.paneStack.updatePaneById(paneId, {
+					hasUnsavedChanges: () => editPaneRef?.getHasChanges() ?? false
+				})
 			}
 		})
 	})

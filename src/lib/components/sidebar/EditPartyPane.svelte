@@ -159,6 +159,9 @@
 		untrack(() => {
 			if (paneId) {
 				sidebar.setActionForPane(paneId, changed ? save : undefined, m.action_save(), el)
+				sidebar.paneStack.updatePaneById(paneId, {
+					hasUnsavedChanges: () => hasChanges
+				})
 			} else {
 				if (changed) {
 					sidebar.setAction(save, m.action_save(), el)
