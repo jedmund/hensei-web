@@ -64,36 +64,21 @@
 	}
 
 	// Unsaved changes confirmation state
-	let showUnsavedConfirm = $state(false)
+	let navDialogOpen = $state(false)
 	let pendingNavUrl = $state('')
-
-	// React to sidebar.requestClose() from external code (e.g. tab switches)
-	$effect(() => {
-		if (sidebar.closeRequested) {
-			showUnsavedConfirm = true
-		}
-	})
 
 	// Store scroll positions for each visited route
 	const scrollPositions = new SvelteMap<string, number>()
 
 	// Save scroll position before navigating away and close sidebar
 	beforeNavigate(({ from, to, cancel }) => {
-		// Skip close guard when the description editor is open — tab switches
-		// use pushState which triggers beforeNavigate, but the sidebar should
-		// stay open so the user can reference different parts of their team
-		const isDescriptionEditor = sidebar.paneStack.currentPane?.id === 'edit-description'
-
 		// If sidebar has unsaved changes, block navigation and show dialog
-		if (sidebar.isOpen && sidebar.paneStack.anyPaneHasUnsavedChanges && !isDescriptionEditor) {
+		if (sidebar.isOpen && sidebar.paneStack.anyPaneHasUnsavedChanges) {
 			cancel()
 			pendingNavUrl = to?.url.href ?? ''
-			showUnsavedConfirm = true
+			navDialogOpen = true
 			return
 		}
-
-		// Don't close sidebar when description editor is open (tab switch via pushState)
-		if (isDescriptionEditor) return
 
 		// Close sidebar when navigating
 		sidebar.close()
@@ -194,13 +179,13 @@
 </Tooltip.Provider>
 
 <ConfirmDialog
-	bind:open={showUnsavedConfirm}
+	open={navDialogOpen || sidebar.closeRequested}
 	title={m.dialog_unsaved_changes_title()}
 	message={m.dialog_unsaved_changes_message()}
 	confirmLabel={m.dialog_unsaved_close()}
 	cancelLabel={m.dialog_unsaved_nevermind()}
 	onconfirm={() => {
-		showUnsavedConfirm = false
+		navDialogOpen = false
 		sidebar.dismissCloseRequest()
 		sidebar.close()
 		if (pendingNavUrl) {
@@ -209,6 +194,7 @@
 		}
 	}}
 	oncancel={() => {
+		navDialogOpen = false
 		sidebar.dismissCloseRequest()
 		pendingNavUrl = ''
 	}}

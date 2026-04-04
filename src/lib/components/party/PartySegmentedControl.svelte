@@ -34,12 +34,7 @@
 
 	function handleValueChange(newValue: string) {
 		value = newValue as GridType
-		// Don't close the sidebar when the description editor is open —
-		// the user may want to reference different parts of their team while writing
-		const isDescriptionEditor = sidebar.paneStack.currentPane?.id === 'edit-description'
-		if (!isDescriptionEditor) {
-			sidebar.requestClose()
-		}
+		sidebar.requestClose()
 		onTabChange?.(newValue as GridType)
 	}
 </script>

@@ -126,6 +126,7 @@ class SidebarStore {
 	close() {
 		this.state.open = false
 		this.state.activeItemId = undefined
+		this.state.closeRequested = false
 		// Clear pane stack after animation completes
 		this.clearTimeoutId = setTimeout(() => {
 			this.paneStack.clear()
@@ -139,6 +140,8 @@ class SidebarStore {
 	 * If no unsaved changes, closes immediately.
 	 */
 	requestClose() {
+		if (this.paneStack.currentPane?.persistOnTabSwitch) return
+
 		if (this.paneStack.anyPaneHasUnsavedChanges) {
 			this.state.closeRequested = true
 		} else {

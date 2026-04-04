@@ -49,6 +49,8 @@ export interface PaneConfig {
 	scrollable?: boolean
 	/** Optional callback. Return true if the pane has unsaved changes that should trigger a confirmation before close. */
 	hasUnsavedChanges?: () => boolean
+	/** If true, this pane stays open when the user switches tabs */
+	persistOnTabSwitch?: boolean
 }
 
 interface PaneStackState {
