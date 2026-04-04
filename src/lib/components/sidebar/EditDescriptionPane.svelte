@@ -52,10 +52,12 @@
 	}
 
 	const initialContent = untrack(() => parseDescription(description))
-	const initialDescription = untrack(() => description)
 
 	// Get the pane stack for registering unsaved changes
 	const paneStack = usePaneStack()
+
+	// Baseline JSON captured after TipTap normalizes the content on load
+	let baselineJson = $state<string | null>(null)
 
 	// Version counter to trigger reactivity when editor state changes
 	let editorVersion = $state(0)
@@ -77,6 +79,16 @@
 		sidebar.setAction(save, m.action_save())
 	})
 
+	// Capture baseline JSON after TipTap normalizes content, then focus
+	$effect(() => {
+		if (editor) {
+			if (baselineJson === null) {
+				baselineJson = JSON.stringify(editor.getJSON())
+			}
+			editor.commands.focus('end')
+		}
+	})
+
 	// Register unsaved changes check on pane config
 	$effect(() => {
 		const id = paneId
@@ -84,19 +96,12 @@
 			if (id) {
 				paneStack.updatePaneById(id, {
 					hasUnsavedChanges: () => {
-						if (!editor) return false
-						const current = JSON.stringify(editor.getJSON())
-						return current !== (initialDescription ?? 'null')
+						if (!editor || baselineJson === null) return false
+						return JSON.stringify(editor.getJSON()) !== baselineJson
 					}
 				})
 			}
 		})
-	})
-
-	$effect(() => {
-		if (editor) {
-			editor.commands.focus('end')
-		}
 	})
 
 	function save() {
