@@ -235,6 +235,9 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		openPartyEditSidebar({
 			initialValues,
 			element: opts.getUserElement(),
+			onDescriptionSave: async (content) => {
+				await updatePartyDetails({ description: content })
+			},
 			onSave: async (values) => {
 				await updatePartyDetails({
 					name: values.name,

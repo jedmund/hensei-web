@@ -60,9 +60,11 @@
 		element?: ElementType
 		/** Callback when save is requested */
 		onSave?: (values: PartyEditValues) => void
+		/** Callback to save description independently (server-side) */
+		onDescriptionSave?: (content: string) => Promise<void>
 	}
 
-	let { paneId, initialValues, element: elementProp, onSave }: Props = $props()
+	let { paneId, initialValues, element: elementProp, onSave, onDescriptionSave }: Props = $props()
 
 	// Derive element reactively from the user cookie (updates after settings save via invalidateAll)
 	const element = $derived(
@@ -297,7 +299,10 @@
 			component: EditDescriptionPane,
 			props: {
 				description,
-				onSave: (content: string) => {
+				onSave: async (content: string) => {
+					if (onDescriptionSave) {
+						await onDescriptionSave(content)
+					}
 					description = content
 					paneStack.pop()
 				}
