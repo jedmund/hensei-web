@@ -58,6 +58,11 @@
 
 	"action_cancel": "キャンセル",
 
+	"dialog_unsaved_changes_title": "未保存の変更があります",
+	"dialog_unsaved_changes_message": "閉じてもよろしいですか？変更内容は失われます。",
+	"dialog_unsaved_close": "保存せずに閉じる",
+	"dialog_unsaved_nevermind": "やめる",
+
 	"search_sidebar_title": "{type}を検索",
 	"search_sidebar_element": "属性",
 	"search_sidebar_rarity": "レアリティ",

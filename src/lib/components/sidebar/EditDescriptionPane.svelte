@@ -10,6 +10,7 @@
 	import MentionTooltip from '$lib/components/ui/MentionTooltip.svelte'
 	import { linkDialogState } from '$lib/stores/linkDialog.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import { usePaneStack } from '$lib/stores/paneStack.svelte'
 
 	// Lucide icons
 	import Heading1 from '@lucide/svelte/icons/heading-1'
@@ -26,11 +27,12 @@
 	import ChevronDown from '@lucide/svelte/icons/chevron-down'
 
 	interface Props {
+		paneId?: string
 		description?: string
 		onSave: (content: string) => void
 	}
 
-	let { description, onSave }: Props = $props()
+	let { paneId, description, onSave }: Props = $props()
 
 	// Bind editor instance (same pattern as superhuman)
 	let editor = $state<Editor>()
@@ -50,6 +52,12 @@
 	}
 
 	const initialContent = untrack(() => parseDescription(description))
+
+	// Get the pane stack for registering unsaved changes
+	const paneStack = usePaneStack()
+
+	// Baseline JSON captured after TipTap normalizes the content on load
+	let baselineJson = $state<string | null>(null)
 
 	// Version counter to trigger reactivity when editor state changes
 	let editorVersion = $state(0)
@@ -71,10 +79,29 @@
 		sidebar.setAction(save, m.action_save())
 	})
 
+	// Capture baseline JSON after TipTap normalizes content, then focus
 	$effect(() => {
 		if (editor) {
+			if (baselineJson === null) {
+				baselineJson = JSON.stringify(editor.getJSON())
+			}
 			editor.commands.focus('end')
 		}
+	})
+
+	// Register unsaved changes check on pane config
+	$effect(() => {
+		const id = paneId
+		untrack(() => {
+			if (id) {
+				paneStack.updatePaneById(id, {
+					hasUnsavedChanges: () => {
+						if (!editor || baselineJson === null) return false
+						return JSON.stringify(editor.getJSON()) !== baselineJson
+					}
+				})
+			}
+		})
 	})
 
 	function save() {

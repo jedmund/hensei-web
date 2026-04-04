@@ -6,6 +6,7 @@
 		type PaneStackStore,
 		setPaneStackContext
 	} from '$lib/stores/paneStack.svelte'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import SidebarHeader from './SidebarHeader.svelte'
 	import Button from './Button.svelte'
 
@@ -25,15 +26,22 @@
 	let paneScrolled: Record<string, boolean> = $state({})
 
 	function handleBack(pane: PaneConfig, index: number) {
-		if (index === 0 && pane.onback) {
-			// Root pane with custom back handler
-			pane.onback()
-		} else if (index === 0 && onClose) {
-			// Root pane, close sidebar
-			onClose()
+		const action = () => {
+			if (index === 0 && pane.onback) {
+				pane.onback()
+			} else if (index === 0 && onClose) {
+				onClose()
+			} else {
+				stack.pop()
+			}
+		}
+
+		// Check if the current (topmost) pane has unsaved changes
+		const currentPane = stack.panes[stack.panes.length - 1]
+		if (currentPane?.hasUnsavedChanges?.()) {
+			sidebar.requestConfirmation(action)
 		} else {
-			// Non-root pane, pop from stack
-			stack.pop()
+			action()
 		}
 	}
 

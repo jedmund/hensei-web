@@ -5,7 +5,7 @@ import { partyStore } from '$lib/stores/partyStore.svelte'
 import { type ElementType } from '$lib/stores/paneStack.svelte'
 import DetailsSidebar from '$lib/components/sidebar/DetailsSidebar.svelte'
 import EditWeaponPane from '$lib/components/sidebar/EditWeaponPane.svelte'
-import EditCharacterSidebar from '$lib/components/sidebar/EditCharacterSidebar.svelte'
+import EditCharacterPane from '$lib/components/sidebar/EditCharacterPane.svelte'
 import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 import { canWeaponBeModified, canCharacterBeModified } from '$lib/utils/modificationDetector'
 import * as m from '$lib/paraglide/messages'
@@ -223,7 +223,7 @@ export function openCharacterEditSidebar(
 	const paneConfig = {
 		id: editPaneId,
 		title,
-		component: EditCharacterSidebar,
+		component: EditCharacterPane,
 		props: {
 			character,
 			onSave: handleSave,

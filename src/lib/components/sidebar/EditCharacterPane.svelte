@@ -1,6 +1,6 @@
 <script lang="ts">
 	/**
-	 * EditCharacterSidebar - Edit sidebar for party grid characters
+	 * EditCharacterPane - Edit pane for party grid characters
 	 *
 	 * Uses the shared CharacterEditPane for edit controls.
 	 * Handles GridCharacter-specific data transformation and mutations.
@@ -103,12 +103,15 @@
 			: undefined
 	)
 
-	// Register save action in the pane header
+	// Register save action and unsaved changes check in the pane header
 	$effect(() => {
 		const el = elementName
 		untrack(() => {
 			if (paneId) {
 				sidebar.setActionForPane(paneId, () => editPaneRef?.save(), m.action_save(), el)
+				sidebar.paneStack.updatePaneById(paneId, {
+					hasUnsavedChanges: () => editPaneRef?.getHasChanges() ?? false
+				})
 			}
 		})
 	})
@@ -120,7 +123,7 @@
 	}
 </script>
 
-<div class="character-edit-sidebar">
+<div class="character-edit-pane">
 	<ItemHeader
 		type="character"
 		item={character}
@@ -162,7 +165,7 @@
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/typography' as typography;
 
-	.character-edit-sidebar {
+	.character-edit-pane {
 		display: flex;
 		flex-direction: column;
 		height: 100%;

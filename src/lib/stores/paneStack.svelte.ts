@@ -47,6 +47,10 @@ export interface PaneConfig {
 	overflowMenu?: OverflowMenuItem[]
 	/** Whether this pane's content should scroll */
 	scrollable?: boolean
+	/** Optional callback. Return true if the pane has unsaved changes that should trigger a confirmation before close. */
+	hasUnsavedChanges?: () => boolean
+	/** If true, this pane stays open when the user switches tabs */
+	persistOnTabSwitch?: boolean
 }
 
 interface PaneStackState {
@@ -233,6 +237,10 @@ export class PaneStackStore {
 
 	get isEmpty() {
 		return this.state.panes.length === 0
+	}
+
+	get anyPaneHasUnsavedChanges(): boolean {
+		return this.state.panes.some((p) => p.hasUnsavedChanges?.() ?? false)
 	}
 
 	get canGoBack() {

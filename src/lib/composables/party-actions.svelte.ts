@@ -193,13 +193,18 @@ export function usePartyActions(opts: PartyActionsOptions) {
 
 	function editDescriptionPanel() {
 		const party = opts.getParty()
-		sidebar.openWithComponent(m.pane_edit_description(), EditDescriptionPane, {
-			description: party.description,
-			onSave: async (content: string) => {
-				await updatePartyDetails({ description: content })
-				sidebar.close()
-			}
-		})
+		sidebar.openWithComponent(
+			m.pane_edit_description(),
+			EditDescriptionPane,
+			{
+				description: party.description,
+				onSave: async (content: string) => {
+					await updatePartyDetails({ description: content })
+					sidebar.close()
+				}
+			},
+			{ persistOnTabSwitch: true }
+		)
 	}
 
 	function openSettingsPanel() {
@@ -230,6 +235,9 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		openPartyEditSidebar({
 			initialValues,
 			element: opts.getUserElement(),
+			onDescriptionSave: async (content) => {
+				await updatePartyDetails({ description: content })
+			},
 			onSave: async (values) => {
 				await updatePartyDetails({
 					name: values.name,

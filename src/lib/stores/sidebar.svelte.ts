@@ -16,11 +16,16 @@ interface OpenWithComponentOptions {
 	element?: ElementType
 	onback?: () => void
 	image?: string
+	persistOnTabSwitch?: boolean
 }
 
 interface SidebarState {
 	open: boolean
 	activeItemId: string | undefined
+	/** Whether an unsaved-changes confirmation dialog should be shown */
+	confirmationRequested: boolean
+	/** Action to run if the user confirms (e.g. close sidebar, navigate away) */
+	pendingAction: (() => void) | null
 }
 
 /**
@@ -33,7 +38,9 @@ interface SidebarState {
 class SidebarStore {
 	state = $state<SidebarState>({
 		open: false,
-		activeItemId: undefined
+		activeItemId: undefined,
+		confirmationRequested: false,
+		pendingAction: null
 	})
 
 	/** The pane stack for sidebar navigation */
@@ -84,6 +91,7 @@ class SidebarStore {
 			props,
 			onback: opts.onback,
 			scrollable: opts.scrollable ?? true,
+			persistOnTabSwitch: opts.persistOnTabSwitch,
 			action: opts.onsave
 				? {
 						label: opts.saveLabel ?? 'Done',
@@ -123,11 +131,54 @@ class SidebarStore {
 	close() {
 		this.state.open = false
 		this.state.activeItemId = undefined
+		this.dismissConfirmation()
 		// Clear pane stack after animation completes
 		this.clearTimeoutId = setTimeout(() => {
 			this.paneStack.clear()
 			this.clearTimeoutId = null
 		}, 300)
+	}
+
+	/**
+	 * Request to close the sidebar from a tab switch or similar action.
+	 * Respects `persistOnTabSwitch` on the current pane.
+	 * If unsaved changes exist, shows a confirmation dialog.
+	 */
+	requestClose() {
+		if (this.paneStack.currentPane?.persistOnTabSwitch) return
+
+		if (this.paneStack.anyPaneHasUnsavedChanges) {
+			this.requestConfirmation(() => this.close())
+		} else {
+			this.close()
+		}
+	}
+
+	/**
+	 * Show the unsaved-changes confirmation dialog with a pending action.
+	 * All unsaved-changes dialogs go through this single entry point.
+	 */
+	requestConfirmation(action: () => void) {
+		this.state.confirmationRequested = true
+		this.state.pendingAction = action
+	}
+
+	/**
+	 * User confirmed — run the pending action and dismiss the dialog.
+	 */
+	confirmPendingAction() {
+		const action = this.state.pendingAction
+		this.state.confirmationRequested = false
+		this.state.pendingAction = null
+		action?.()
+	}
+
+	/**
+	 * User cancelled — dismiss the dialog without running the action.
+	 */
+	dismissConfirmation() {
+		this.state.confirmationRequested = false
+		this.state.pendingAction = null
 	}
 
 	/**
@@ -244,6 +295,10 @@ class SidebarStore {
 
 	get activeItemId() {
 		return this.state.activeItemId
+	}
+
+	get confirmationRequested() {
+		return this.state.confirmationRequested
 	}
 
 	// Backwards compatibility getters (delegate to pane stack)

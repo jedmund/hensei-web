@@ -9,7 +9,7 @@
 	 * - Perpetuity ring toggle
 	 *
 	 * Used by both:
-	 * - Party grid character editing (EditCharacterSidebar)
+	 * - Party grid character editing (EditCharacterPane)
 	 * - Collection character editing (CollectionCharacterPane)
 	 *
 	 * The caller is responsible for handling the save action with their specific mutation.
@@ -97,6 +97,16 @@
 
 	function handleTranscendenceUpdate(newStage: number) {
 		transcendenceStep = newStage
+	}
+
+	// Check if any values have changed from the initial props
+	export function getHasChanges(): boolean {
+		if (uncapLevel !== currentValues.uncapLevel) return true
+		if (transcendenceStep !== currentValues.transcendenceStep) return true
+		if (perpetuity !== currentValues.perpetuity) return true
+		if (selectedAwakening?.id !== currentValues.awakening?.type?.id) return true
+		if (awakeningLevel !== (currentValues.awakening?.level ?? 1)) return true
+		return false
 	}
 
 	// Export save function so parent can call it from header button

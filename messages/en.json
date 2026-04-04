@@ -58,6 +58,11 @@
 
 	"action_cancel": "Cancel",
 
+	"dialog_unsaved_changes_title": "You have unsaved changes",
+	"dialog_unsaved_changes_message": "Are you sure you want to close? Any changes you've made will be lost.",
+	"dialog_unsaved_close": "Close without saving",
+	"dialog_unsaved_nevermind": "Nevermind",
+
 	"search_sidebar_title": "Search {type}s",
 	"search_sidebar_element": "Element",
 	"search_sidebar_rarity": "Rarity",
