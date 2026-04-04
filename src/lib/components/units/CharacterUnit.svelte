@@ -325,50 +325,52 @@
 			</div>
 		{/key}
 	{/if}
-	{#if item}
-		<UncapIndicator
-			type="character"
-			uncapLevel={item.uncapLevel}
-			transcendenceStage={item.transcendenceStep}
-			special={item.character?.special}
-			flb={item.character?.uncap?.flb}
-			ulb={item.character?.uncap?.transcendence}
-			transcendence={item.character?.uncap?.transcendence}
-			editable={ctx?.canEdit()}
-			updateUncap={async (level) => {
-				if (!item?.id || !ctx) return
-				try {
-					const editKey = ctx.getEditKey()
-					await ctx.services.gridService.updateCharacterUncap(
-						item.id,
-						level,
-						undefined,
-						editKey || undefined
-					)
-				} catch (err) {
-					console.error('Failed to update character uncap:', err)
-					toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
-				}
-			}}
-			updateTranscendence={async (stage) => {
-				if (!item?.id || !ctx) return
-				try {
-					const editKey = ctx.getEditKey()
-					// When setting transcendence > 0, also set uncap to max (6)
-					const maxUncap = stage > 0 ? 6 : undefined
-					await ctx.services.gridService.updateCharacterUncap(
-						item.id,
-						maxUncap,
-						stage,
-						editKey || undefined
-					)
-				} catch (err) {
-					console.error('Failed to update character transcendence:', err)
-					toast.error(extractErrorMessage(err, 'Failed to update transcendence'))
-				}
-			}}
-		/>
-	{/if}
+	{#key item?.id}
+		{#if item}
+			<UncapIndicator
+				type="character"
+				uncapLevel={item.uncapLevel}
+				transcendenceStage={item.transcendenceStep}
+				special={item.character?.special}
+				flb={item.character?.uncap?.flb}
+				ulb={item.character?.uncap?.transcendence}
+				transcendence={item.character?.uncap?.transcendence}
+				editable={ctx?.canEdit()}
+				updateUncap={async (level) => {
+					if (!item?.id || !ctx) return
+					try {
+						const editKey = ctx.getEditKey()
+						await ctx.services.gridService.updateCharacterUncap(
+							item.id,
+							level,
+							undefined,
+							editKey || undefined
+						)
+					} catch (err) {
+						console.error('Failed to update character uncap:', err)
+						toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
+					}
+				}}
+				updateTranscendence={async (stage) => {
+					if (!item?.id || !ctx) return
+					try {
+						const editKey = ctx.getEditKey()
+						// When setting transcendence > 0, also set uncap to max (6)
+						const maxUncap = stage > 0 ? 6 : undefined
+						await ctx.services.gridService.updateCharacterUncap(
+							item.id,
+							maxUncap,
+							stage,
+							editKey || undefined
+						)
+					} catch (err) {
+						console.error('Failed to update character transcendence:', err)
+						toast.error(extractErrorMessage(err, 'Failed to update transcendence'))
+					}
+				}}
+			/>
+		{/if}
+	{/key}
 	<div class="name" class:not-in-collection={notInCollection}>
 		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
 		{item ? localizedName(item?.character?.name) : ''}

@@ -8,13 +8,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import {
-	createGridMutation,
+	createGridWeaponOptions,
 	updateGridWeaponOptions,
 	deleteGridWeaponOptions,
 	updateWeaponUncapOptions,
+	createGridCharacterOptions,
 	updateGridCharacterOptions,
 	deleteGridCharacterOptions,
 	updateCharacterUncapOptions,
+	createGridSummonOptions,
 	updateGridSummonOptions,
 	deleteGridSummonOptions,
 	updateSummonUncapOptions,
@@ -58,8 +60,6 @@ vi.mock('$lib/utils/editKeys', () => ({
 	getEditKey: vi.fn()
 }))
 
-vi.mock('$lib/query/cacheHelpers', () => ({}))
-
 describe('grid mutations', () => {
 	let queryClient: QueryClient
 
@@ -70,59 +70,73 @@ describe('grid mutations', () => {
 	})
 
 	// ========================================================================
-	// createGridMutation wrapper
-	// ========================================================================
-
-	describe('createGridMutation', () => {
-		it('calls adapter without X-Edit-Key when no edit key exists', async () => {
-			const { getEditKey } = await import('$lib/utils/editKeys')
-			vi.mocked(getEditKey).mockReturnValue(null)
-
-			const mockAdapter = vi.fn().mockResolvedValue({ id: 'result' })
-			const wrapped = createGridMutation(mockAdapter)
-
-			await wrapped({ partyId: 'some-shortcode', weaponId: 'w1', position: 1 })
-
-			expect(mockAdapter).toHaveBeenCalledWith(
-				{ partyId: 'some-shortcode', weaponId: 'w1', position: 1 },
-				undefined
-			)
-		})
-
-		it('injects X-Edit-Key header when edit key exists', async () => {
-			const { getEditKey } = await import('$lib/utils/editKeys')
-			vi.mocked(getEditKey).mockReturnValue('secret-edit-key')
-
-			const mockAdapter = vi.fn().mockResolvedValue({ id: 'result' })
-			const wrapped = createGridMutation(mockAdapter)
-
-			await wrapped({ partyId: 'some-shortcode', weaponId: 'w1', position: 1 })
-
-			expect(mockAdapter).toHaveBeenCalledWith(
-				{ partyId: 'some-shortcode', weaponId: 'w1', position: 1 },
-				{ 'X-Edit-Key': 'secret-edit-key' }
-			)
-		})
-
-		it('skips edit key lookup for numeric partyId', async () => {
-			const { getEditKey } = await import('$lib/utils/editKeys')
-
-			const mockAdapter = vi.fn().mockResolvedValue({ id: 'result' })
-			const wrapped = createGridMutation(mockAdapter)
-
-			await wrapped({ partyId: 123, weaponId: 'w1', position: 1 })
-
-			expect(getEditKey).not.toHaveBeenCalled()
-			expect(mockAdapter).toHaveBeenCalledWith(
-				{ partyId: 123, weaponId: 'w1', position: 1 },
-				undefined
-			)
-		})
-	})
-
-	// ========================================================================
 	// Weapon Mutations
 	// ========================================================================
+
+	describe('createGridWeaponOptions', () => {
+		it('onMutate removes weapon at target position from cache', async () => {
+			const opts = createGridWeaponOptions(queryClient)
+
+			await opts.onMutate({
+				partyId: 'party-uuid',
+				partyShortcode: MOCK_SHORTCODE,
+				weaponId: 'w-new',
+				position: 1,
+				mainhand: false
+			})
+
+			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
+			expect(cached?.weapons).toHaveLength(1)
+			expect(cached?.weapons[0]!.id).toBe('gw-2')
+		})
+
+		it('onMutate removes mainhand weapon when mainhand flag is set', async () => {
+			const opts = createGridWeaponOptions(queryClient)
+
+			await opts.onMutate({
+				partyId: 'party-uuid',
+				partyShortcode: MOCK_SHORTCODE,
+				weaponId: 'w-new',
+				position: -1,
+				mainhand: true
+			})
+
+			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
+			expect(cached?.weapons).toHaveLength(1)
+			expect(cached?.weapons[0]!.id).toBe('gw-2')
+		})
+
+		it('onError rolls back to previous party', async () => {
+			const opts = createGridWeaponOptions(queryClient)
+
+			const context = await opts.onMutate({
+				partyId: 'party-uuid',
+				partyShortcode: MOCK_SHORTCODE,
+				weaponId: 'w-new',
+				position: 1
+			})
+
+			opts.onError(
+				new Error('fail'),
+				{ partyShortcode: MOCK_SHORTCODE } as Parameters<typeof opts.onError>[1],
+				context
+			)
+
+			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
+			expect(cached?.weapons).toHaveLength(2)
+		})
+
+		it('onSettled invalidates the party query', () => {
+			const opts = createGridWeaponOptions(queryClient)
+			const spy = vi.spyOn(queryClient, 'invalidateQueries')
+
+			opts.onSettled(null, null, { partyShortcode: MOCK_SHORTCODE } as Parameters<
+				typeof opts.onSettled
+			>[2])
+
+			expect(spy).toHaveBeenCalledWith({ queryKey: partyKeys.detail(MOCK_SHORTCODE) })
+		})
+	})
 
 	describe('updateGridWeaponOptions', () => {
 		it('onMutate optimistically updates the weapon in cache', async () => {
@@ -287,6 +301,57 @@ describe('grid mutations', () => {
 	// Character Mutations
 	// ========================================================================
 
+	describe('createGridCharacterOptions', () => {
+		it('onMutate removes character at target position from cache', async () => {
+			const opts = createGridCharacterOptions(queryClient)
+
+			await opts.onMutate({
+				partyId: 'party-uuid',
+				partyShortcode: MOCK_SHORTCODE,
+				characterId: 'c-new',
+				position: 1
+			})
+
+			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
+			expect(cached?.characters).toHaveLength(1)
+			expect(cached?.characters[0]!.id).toBe('gc-2')
+		})
+
+		it('onMutate does not remove characters when position has no match', async () => {
+			const opts = createGridCharacterOptions(queryClient)
+
+			await opts.onMutate({
+				partyId: 'party-uuid',
+				partyShortcode: MOCK_SHORTCODE,
+				characterId: 'c-new',
+				position: 99
+			})
+
+			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
+			expect(cached?.characters).toHaveLength(2)
+		})
+
+		it('onError rolls back to previous party', async () => {
+			const opts = createGridCharacterOptions(queryClient)
+
+			const context = await opts.onMutate({
+				partyId: 'party-uuid',
+				partyShortcode: MOCK_SHORTCODE,
+				characterId: 'c-new',
+				position: 1
+			})
+
+			opts.onError(
+				new Error('fail'),
+				{ partyShortcode: MOCK_SHORTCODE } as Parameters<typeof opts.onError>[1],
+				context
+			)
+
+			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
+			expect(cached?.characters).toHaveLength(2)
+		})
+	})
+
 	describe('updateGridCharacterOptions', () => {
 		it('onMutate optimistically updates the character in cache', async () => {
 			const opts = updateGridCharacterOptions(queryClient)
@@ -361,6 +426,43 @@ describe('grid mutations', () => {
 	// ========================================================================
 	// Summon Mutations
 	// ========================================================================
+
+	describe('createGridSummonOptions', () => {
+		it('onMutate removes summon at target position from cache', async () => {
+			const opts = createGridSummonOptions(queryClient)
+
+			await opts.onMutate({
+				partyId: 'party-uuid',
+				partyShortcode: MOCK_SHORTCODE,
+				summonId: 's-new',
+				position: 1
+			})
+
+			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
+			expect(cached?.summons).toHaveLength(1)
+			expect(cached?.summons[0]!.id).toBe('gs-2')
+		})
+
+		it('onError rolls back to previous party', async () => {
+			const opts = createGridSummonOptions(queryClient)
+
+			const context = await opts.onMutate({
+				partyId: 'party-uuid',
+				partyShortcode: MOCK_SHORTCODE,
+				summonId: 's-new',
+				position: 1
+			})
+
+			opts.onError(
+				new Error('fail'),
+				{ partyShortcode: MOCK_SHORTCODE } as Parameters<typeof opts.onError>[1],
+				context
+			)
+
+			const cached = getCachedParty(queryClient, MOCK_SHORTCODE)
+			expect(cached?.summons).toHaveLength(2)
+		})
+	})
 
 	describe('updateGridSummonOptions', () => {
 		it('onMutate optimistically updates the summon in cache', async () => {

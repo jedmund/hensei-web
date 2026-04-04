@@ -60,6 +60,7 @@ export function useItemAddition(opts: ItemAdditionOptions) {
 			if (activeTab === GridType.Weapon) {
 				result = await opts.mutations.grid.createWeapon.mutateAsync({
 					partyId: party.id,
+					partyShortcode: party.shortcode,
 					weaponId: item.granblueId,
 					position: targetSlot,
 					mainhand: targetSlot === -1,
@@ -74,6 +75,7 @@ export function useItemAddition(opts: ItemAdditionOptions) {
 			} else if (activeTab === GridType.Summon) {
 				await opts.mutations.grid.createSummon.mutateAsync({
 					partyId: party.id,
+					partyShortcode: party.shortcode,
 					summonId: item.granblueId,
 					position: targetSlot,
 					main: targetSlot === -1,
@@ -83,6 +85,7 @@ export function useItemAddition(opts: ItemAdditionOptions) {
 			} else if (activeTab === GridType.Character) {
 				result = await opts.mutations.grid.createCharacter.mutateAsync({
 					partyId: party.id,
+					partyShortcode: party.shortcode,
 					characterId: item.granblueId,
 					position: targetSlot,
 					collectionCharacterId: item.collectionId

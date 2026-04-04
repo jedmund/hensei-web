@@ -101,7 +101,7 @@ describe('useItemAddition', () => {
 			position: 3,
 			conflicts: [{ id: 'gw-existing' }],
 			incoming: { id: 'weapon-1' }
-		}
+		} as never
 
 		it('opens conflict dialog when weapon addition returns a conflict', async () => {
 			vi.mocked(mutations.grid.createWeapon.mutateAsync).mockResolvedValue(conflictResponse)
@@ -115,11 +115,12 @@ describe('useItemAddition', () => {
 
 		it('opens conflict dialog for character conflicts', async () => {
 			activeTab = GridType.Character
+
 			vi.mocked(mutations.grid.createCharacter.mutateAsync).mockResolvedValue({
 				position: 1,
 				conflicts: [{ id: 'gc-existing' }],
 				incoming: { id: 'char-1' }
-			})
+			} as never)
 
 			await addition.handleAddItems([MOCK_CHARACTER_ITEM])
 
@@ -161,11 +162,12 @@ describe('useItemAddition', () => {
 			activeTab = GridType.Summon
 			// Even if the API returned a conflict-shaped response, summon path
 			// doesn't check isConflictResponse — summons use replacement, not conflict
+
 			vi.mocked(mutations.grid.createSummon.mutateAsync).mockResolvedValue({
 				position: 1,
 				conflicts: [{ id: 'gs-existing' }],
 				incoming: { id: 'summon-1' }
-			})
+			} as never)
 
 			await addition.handleAddItems([MOCK_SUMMON_ITEM])
 
@@ -322,7 +324,7 @@ describe('useItemAddition', () => {
 		it('error clears on next successful operation', async () => {
 			vi.mocked(mutations.grid.createWeapon.mutateAsync)
 				.mockRejectedValueOnce(new Error('fail'))
-				.mockResolvedValueOnce(undefined)
+				.mockResolvedValueOnce(undefined as never)
 
 			await addition.handleAddItems([MOCK_WEAPON_ITEM])
 			expect(addition.error).toBe('fail')

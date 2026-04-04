@@ -23,36 +23,6 @@ import { partyKeys } from '$lib/api/queries/party.queries'
 import { collectionKeys } from '$lib/api/queries/collection.queries'
 import type { Party, GridWeapon, GridCharacter, GridSummon } from '$lib/types/api/party'
 import { getEditKey } from '$lib/utils/editKeys'
-import { invalidateParty } from '$lib/query/cacheHelpers'
-
-// ============================================================================
-// Mutation Factory
-// ============================================================================
-
-/**
- * Wraps a grid adapter method to automatically inject edit key headers for anonymous users.
- * When a party has an edit key stored in localStorage, it's automatically sent in the X-Edit-Key header.
- *
- * For anonymous users:
- * - Edit key is retrieved from localStorage using party shortcode
- * - X-Edit-Key header is automatically injected
- *
- * For authenticated users:
- * - No edit key in localStorage
- * - Falls back to Bearer token (existing behavior)
- *
- * @param adapterMethod - The grid adapter method to wrap
- * @returns Wrapped method that automatically handles edit key injection
- */
-export function createGridMutation<TParams extends { partyId: number | string }>(
-	adapterMethod: (params: TParams, headers?: Record<string, string>) => Promise<unknown>
-) {
-	return (params: TParams) => {
-		const editKey = typeof params.partyId === 'string' ? getEditKey(params.partyId) : null
-		const headers = editKey ? { 'X-Edit-Key': editKey } : undefined
-		return adapterMethod(params, headers)
-	}
-}
 
 // ============================================================================
 // Edit key helper
@@ -87,12 +57,45 @@ function invalidateOnSettled(queryClient: QueryClient, partyShortcode: string) {
 
 export function createGridWeaponOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: createGridMutation(
-			(params: CreateGridWeaponParams, headers?: Record<string, string>) =>
-				gridAdapter.createWeapon(params, headers)
-		),
-		onSuccess: (_data: unknown, params: CreateGridWeaponParams) => {
-			invalidateParty(queryClient, params.partyId)
+		mutationFn: ({
+			partyShortcode,
+			...rest
+		}: CreateGridWeaponParams & { partyShortcode: string }) =>
+			gridAdapter.createWeapon(rest, editKeyHeaders(partyShortcode)),
+		onMutate: async ({
+			partyShortcode,
+			position,
+			mainhand
+		}: CreateGridWeaponParams & { partyShortcode: string }) => {
+			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
+
+			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
+
+			if (previousParty?.weapons) {
+				const updatedWeapons = previousParty.weapons.filter((w) =>
+					mainhand ? !w.mainhand : w.position !== position
+				)
+				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
+					...previousParty,
+					weapons: updatedWeapons
+				})
+			}
+
+			return { previousParty }
+		},
+		onError: (
+			_err: unknown,
+			{ partyShortcode }: CreateGridWeaponParams & { partyShortcode: string },
+			context: { previousParty?: Party } | undefined
+		) => {
+			optimisticRollback(queryClient, partyShortcode, context)
+		},
+		onSettled: (
+			_data: unknown,
+			_err: unknown,
+			{ partyShortcode }: CreateGridWeaponParams & { partyShortcode: string }
+		) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
 	}
 }
@@ -280,12 +283,42 @@ export function duplicateGridWeaponOptions(queryClient: QueryClient) {
 
 export function createGridCharacterOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: createGridMutation(
-			(params: CreateGridCharacterParams, headers?: Record<string, string>) =>
-				gridAdapter.createCharacter(params, headers)
-		),
-		onSuccess: (_data: unknown, params: CreateGridCharacterParams) => {
-			invalidateParty(queryClient, params.partyId)
+		mutationFn: ({
+			partyShortcode,
+			...rest
+		}: CreateGridCharacterParams & { partyShortcode: string }) =>
+			gridAdapter.createCharacter(rest, editKeyHeaders(partyShortcode)),
+		onMutate: async ({
+			partyShortcode,
+			position
+		}: CreateGridCharacterParams & { partyShortcode: string }) => {
+			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
+
+			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
+
+			if (previousParty?.characters) {
+				const updatedCharacters = previousParty.characters.filter((c) => c.position !== position)
+				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
+					...previousParty,
+					characters: updatedCharacters
+				})
+			}
+
+			return { previousParty }
+		},
+		onError: (
+			_err: unknown,
+			{ partyShortcode }: CreateGridCharacterParams & { partyShortcode: string },
+			context: { previousParty?: Party } | undefined
+		) => {
+			optimisticRollback(queryClient, partyShortcode, context)
+		},
+		onSettled: (
+			_data: unknown,
+			_err: unknown,
+			{ partyShortcode }: CreateGridCharacterParams & { partyShortcode: string }
+		) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
 	}
 }
@@ -460,12 +493,46 @@ export function swapCharactersOptions(queryClient: QueryClient) {
 
 export function createGridSummonOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: createGridMutation(
-			(params: CreateGridSummonParams, headers?: Record<string, string>) =>
-				gridAdapter.createSummon(params, headers)
-		),
-		onSuccess: (_data: unknown, params: CreateGridSummonParams) => {
-			invalidateParty(queryClient, params.partyId)
+		mutationFn: ({
+			partyShortcode,
+			...rest
+		}: CreateGridSummonParams & { partyShortcode: string }) =>
+			gridAdapter.createSummon(rest, editKeyHeaders(partyShortcode)),
+		onMutate: async ({
+			partyShortcode,
+			position,
+			main,
+			friend
+		}: CreateGridSummonParams & { partyShortcode: string }) => {
+			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
+
+			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
+
+			if (previousParty?.summons) {
+				const updatedSummons = previousParty.summons.filter((s) =>
+					main ? !s.main : friend ? !s.friend : s.position !== position
+				)
+				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
+					...previousParty,
+					summons: updatedSummons
+				})
+			}
+
+			return { previousParty }
+		},
+		onError: (
+			_err: unknown,
+			{ partyShortcode }: CreateGridSummonParams & { partyShortcode: string },
+			context: { previousParty?: Party } | undefined
+		) => {
+			optimisticRollback(queryClient, partyShortcode, context)
+		},
+		onSettled: (
+			_data: unknown,
+			_err: unknown,
+			{ partyShortcode }: CreateGridSummonParams & { partyShortcode: string }
+		) => {
+			invalidateOnSettled(queryClient, partyShortcode)
 		}
 	}
 }
