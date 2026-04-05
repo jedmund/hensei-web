@@ -14,4 +14,5 @@ export interface UserCookie {
 	defaultImportVisibility?: number
 	simplePortraits?: boolean
 	defaultRepView?: string
+	profileVisibility?: number[]
 }

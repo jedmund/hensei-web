@@ -39,11 +39,14 @@
 		{ value: PartyVisibility.UNLISTED, label: m.visibility_unlisted() },
 		{ value: PartyVisibility.PRIVATE, label: m.visibility_private() }
 	]
-	let selectedVisibilities = $state<number[]>([
+	const allVisibilities = [
 		PartyVisibility.PUBLIC,
 		PartyVisibility.UNLISTED,
 		PartyVisibility.PRIVATE
-	])
+	]
+	let selectedVisibilities = $state<number[]>(
+		data.currentUser?.profileVisibility ?? allVisibilities
+	)
 
 	const visibilityDisplayText = $derived.by(() => {
 		if (selectedVisibilities.length === 3) return m.profile_visibility_all()
@@ -51,6 +54,24 @@
 			(v) => visibilityOptions.find((o) => o.value === v)?.label ?? ''
 		)
 		return labels.join(' and ')
+	})
+
+	// Persist visibility filter to UserCookie when owner changes it
+	let visibilityInitialized = false
+	$effect(() => {
+		const vis = selectedVisibilities
+		if (!visibilityInitialized) {
+			visibilityInitialized = true
+			return
+		}
+		if (!isOwner || !data.currentUser) return
+
+		const updatedCookie = { ...data.currentUser, profileVisibility: vis }
+		fetch('/api/settings', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(updatedCookie)
+		})
 	})
 
 	// Crew info for invite functionality

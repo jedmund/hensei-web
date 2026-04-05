@@ -40,7 +40,8 @@ const baseUser: UserCookie = {
 	language: 'en',
 	gender: 0,
 	theme: 'dark',
-	defaultRepView: 'weapons'
+	defaultRepView: 'weapons',
+	profileVisibility: [1, 2, 3]
 }
 
 function makeRequest(body: Record<string, unknown>) {
@@ -120,6 +121,14 @@ describe('POST /api/settings', () => {
 			expect.objectContaining({ username: 'newname', token: 'tok' }),
 			expect.anything()
 		)
+	})
+
+	it('preserves profileVisibility in user cookie', async () => {
+		const body = { ...baseUser, profileVisibility: [1] }
+		await callEndpoint(body as unknown as Record<string, unknown>)
+
+		const storedCookie = mockSetUserCookie.mock.calls[0]![1] as UserCookie
+		expect(storedCookie.profileVisibility).toEqual([1])
 	})
 
 	describe('PARAGLIDE_LOCALE sync', () => {
