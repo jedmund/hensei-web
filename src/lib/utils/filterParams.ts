@@ -148,7 +148,7 @@ export interface ParsedFilters {
 /**
  * Parse a comma-separated URL param into an array of values using a mapping
  */
-function parseParamArray<T>(
+export function parseParamArray<T>(
 	searchParams: URLSearchParams,
 	paramName: string,
 	mapping: Record<string, T>
@@ -223,7 +223,7 @@ export function parseFiltersFromUrl(
 /**
  * Convert an array of values to a comma-separated URL param string
  */
-function buildParamString<T extends string | number>(
+export function buildParamString<T extends string | number>(
 	values: T[],
 	mapping: Record<T, string>
 ): string | null {
