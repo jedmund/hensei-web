@@ -265,8 +265,9 @@
 
 	.header {
 		background: var(--card-bg);
-		border-radius: $card-corner;
-
+		border: 0.5px solid rgba(0, 0, 0, 0.18);
+		border-radius: $page-corner;
+		box-shadow: effects.$page-elevation;
 		overflow: hidden;
 	}
 
