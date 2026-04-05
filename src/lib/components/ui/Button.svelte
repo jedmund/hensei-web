@@ -573,8 +573,8 @@
 		color: var(--wind-ghost-text);
 
 		&:hover:not(:disabled) {
-			background: var(--wind-bg);
-			color: var(--wind-text-contrast);
+			background: var(--wind-button-hover-bg);
+			color: var(--wind-button-hover-text);
 		}
 	}
 
@@ -583,8 +583,8 @@
 		color: var(--fire-ghost-text);
 
 		&:hover:not(:disabled) {
-			background: var(--fire-bg);
-			color: var(--fire-text-contrast);
+			background: var(--fire-button-hover-bg);
+			color: var(--fire-button-hover-text);
 		}
 	}
 
@@ -593,8 +593,8 @@
 		color: var(--water-ghost-text);
 
 		&:hover:not(:disabled) {
-			background: var(--water-bg);
-			color: var(--water-text-contrast);
+			background: var(--water-button-hover-bg);
+			color: var(--water-button-hover-text);
 		}
 	}
 
@@ -603,8 +603,8 @@
 		color: var(--earth-ghost-text);
 
 		&:hover:not(:disabled) {
-			background: var(--earth-bg);
-			color: var(--earth-text-contrast);
+			background: var(--earth-button-hover-bg);
+			color: var(--earth-button-hover-text);
 		}
 	}
 
@@ -613,8 +613,8 @@
 		color: var(--dark-ghost-text);
 
 		&:hover:not(:disabled) {
-			background: var(--dark-bg);
-			color: var(--dark-text-contrast);
+			background: var(--dark-button-hover-bg);
+			color: var(--dark-button-hover-text);
 		}
 	}
 
@@ -623,8 +623,8 @@
 		color: var(--light-ghost-text);
 
 		&:hover:not(:disabled) {
-			background: var(--light-bg);
-			color: var(--light-text-contrast);
+			background: var(--light-button-hover-bg);
+			color: var(--light-button-hover-text);
 		}
 	}
 </style>

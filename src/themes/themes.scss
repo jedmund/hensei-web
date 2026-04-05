@@ -350,6 +350,20 @@
 	--light-ghost-text: #{colors.$light-text-25};
 	--dark-ghost-text: #{colors.$dark-text-25};
 
+	// Light - Element button hover
+	--wind-button-hover-bg: #{colors.$wind-bg-10};
+	--fire-button-hover-bg: #{colors.$fire-bg-10};
+	--water-button-hover-bg: #{colors.$water-bg-10};
+	--earth-button-hover-bg: #{colors.$earth-bg-10};
+	--light-button-hover-bg: #{colors.$light-bg-10};
+	--dark-button-hover-bg: #{colors.$dark-bg-10};
+	--wind-button-hover-text: #{colors.$wind-text-10};
+	--fire-button-hover-text: #{colors.$fire-text-10};
+	--water-button-hover-text: #{colors.$water-text-10};
+	--earth-button-hover-text: #{colors.$earth-text-10};
+	--light-button-hover-text: #{colors.$light-text-10};
+	--dark-button-hover-text: #{colors.$dark-text-10};
+
 	// Light - Element navigation selected background
 	--null-nav-selected-bg: #{colors.$grey-85};
 	--wind-nav-selected-bg: #{colors.$wind-bg-20};
@@ -819,21 +833,35 @@ html[data-theme='dark'] {
 	--dark-button-bg-hover: #{color.adjust(colors.$dark-text-30, $lightness: 8%)};
 
 	// Dark - Element ghost button text colors (bright variants for dark backgrounds)
-	--wind-ghost-text: #{colors.$wind-text-30};
-	--fire-ghost-text: #{colors.$fire-text-30};
-	--water-ghost-text: #{colors.$water-text-30};
-	--earth-ghost-text: #{colors.$earth-text-30};
-	--light-ghost-text: #{colors.$light-text-30};
-	--dark-ghost-text: #{colors.$dark-text-30};
+	--wind-ghost-text: #{colors.$wind-text-25};
+	--fire-ghost-text: #{colors.$fire-text-25};
+	--water-ghost-text: #{colors.$water-text-25};
+	--earth-ghost-text: #{colors.$earth-text-25};
+	--light-ghost-text: #{colors.$light-text-25};
+	--dark-ghost-text: #{colors.$dark-text-25};
 
-	// Dark - Element navigation selected background (same as light theme)
+	// Dark - Element button hover (one stage darker than default)
+	--wind-button-hover-bg: #{colors.$wind-bg-00};
+	--fire-button-hover-bg: #{colors.$fire-bg-00};
+	--water-button-hover-bg: #{colors.$water-bg-00};
+	--earth-button-hover-bg: #{colors.$earth-bg-00};
+	--light-button-hover-bg: #{colors.$light-bg-00};
+	--dark-button-hover-bg: #{colors.$dark-bg-00};
+	--wind-button-hover-text: #{colors.$wind-text-20};
+	--fire-button-hover-text: #{colors.$fire-text-20};
+	--water-button-hover-text: #{colors.$water-text-20};
+	--earth-button-hover-text: #{colors.$earth-text-20};
+	--light-button-hover-text: #{colors.$light-text-20};
+	--dark-button-hover-text: #{colors.$dark-text-20};
+
+	// Dark - Element navigation selected background
 	--null-nav-selected-bg: #{colors.$grey-85};
-	--wind-nav-selected-bg: #{colors.$wind-bg-20};
-	--fire-nav-selected-bg: #{colors.$fire-bg-20};
-	--water-nav-selected-bg: #{colors.$water-bg-20};
-	--earth-nav-selected-bg: #{colors.$earth-bg-20};
-	--light-nav-selected-bg: #{colors.$light-bg-20};
-	--dark-nav-selected-bg: #{colors.$dark-bg-20};
+	--wind-nav-selected-bg: #{colors.$wind-bg-15};
+	--fire-nav-selected-bg: #{colors.$fire-bg-15};
+	--water-nav-selected-bg: #{colors.$water-bg-15};
+	--earth-nav-selected-bg: #{colors.$earth-bg-15};
+	--light-nav-selected-bg: #{colors.$light-bg-15};
+	--dark-nav-selected-bg: #{colors.$dark-bg-15};
 
 	// Dark - Element navigation hover background (same as light theme)
 	--null-nav-hover-bg: #{colors.$grey-80};

@@ -95,7 +95,7 @@
 	.raid-image {
 		height: 60px;
 		width: auto;
-		border-radius: $item-corner;
+		border-radius: $item-corner-small;
 	}
 
 	.raid-details {
