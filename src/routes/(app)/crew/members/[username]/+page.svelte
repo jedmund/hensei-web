@@ -8,6 +8,7 @@
 	import { formatScore, toPlayerHistoryChartData } from '$lib/utils/gw'
 	import { formatDateJST } from '$lib/utils/date'
 	import { formatTimezone } from '$lib/utils/timezone'
+	import Button from '$lib/components/ui/Button.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
 	import GwEventScoreRow from '$lib/components/crew/GwEventScoreRow.svelte'
 	import GwCrewHistoryChart from '$lib/components/charts/GwCrewHistoryChart.svelte'
@@ -49,7 +50,13 @@
 		{:else if scoresQuery.data}
 			{@const data = scoresQuery.data}
 
-			<CrewHeader title={memberName} backHref="/crew/members" />
+			<CrewHeader title={memberName} backHref="/crew/members">
+				{#snippet actions()}
+					<Button variant="secondary" size="small" href={localizeHref(`/${username}`)}>
+						{m.crew_view_profile()}
+					</Button>
+				{/snippet}
+			</CrewHeader>
 
 			{#if memberTimezone}
 				<div class="timezone-row">
