@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types'
 	import type { Party } from '$lib/types/api/party'
-	import { onDestroy } from 'svelte'
+	import { onMount, onDestroy } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import { ContextMenu } from 'bits-ui'
 	import { goto } from '$app/navigation'
@@ -18,6 +18,7 @@
 	import { PartyVisibility } from '$lib/types/visibility'
 	import { page } from '$app/stores'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
+	import { serializeExploreFilters } from '$lib/utils/exploreFilterParams'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import Icon from '$lib/components/Icon.svelte'
@@ -78,38 +79,56 @@
 	const viewerCrewRole = $derived(crewStore.membership?.role ?? null)
 	const viewerCrewId = $derived(crewStore.crew?.id ?? null)
 
-	// Filter state
-	let filterItems = $state<FilterItem[]>([])
+	// Filter state — hydrate from SSR when URL had filters
+	let filterItems = $state<FilterItem[]>(data.initialFilterItems ?? [])
 
 	// Convert pill filters to API params
 	const filterParams = $derived(filterItemsToParams(filterItems))
+	const ssrFilterParams = filterItemsToParams(data.initialFilterItems ?? [])
 
-	const hasActiveFilters = $derived(filterItems.length > 0)
+	// Track whether we've initialized from the URL to avoid writing back during setup
+	let urlInitialized = $state(false)
+
+	onMount(() => {
+		urlInitialized = true
+	})
+
+	// Sync filter state → URL reactively
+	$effect(() => {
+		if (!urlInitialized) return
+		const params = serializeExploreFilters(filterItems)
+		const search = params.toString()
+		const newUrl = `${window.location.pathname}${search ? `?${search}` : ''}`
+		history.replaceState(history.state, '', newUrl)
+	})
 
 	let sentinelEl = $state<HTMLElement>()
 
-	const partiesQuery = createInfiniteQuery(() => ({
-		...partyQueries.userParties(data.user?.username ?? '', {
-			filters: filterParams
-		}),
-		enabled: !!data.user?.username,
-		initialData:
-			!hasActiveFilters && data.items
-				? {
-						pages: [
-							{
-								results: data.items,
-								page: data.page || 1,
-								totalPages: data.totalPages ?? 1,
-								total: data.total ?? data.items.length,
-								perPage: data.perPage || 20
-							}
-						],
-						pageParams: [1]
-					}
-				: undefined,
-		initialDataUpdatedAt: Date.now()
-	}))
+	const partiesQuery = createInfiniteQuery(() => {
+		const matchesSSR = JSON.stringify(filterParams) === JSON.stringify(ssrFilterParams)
+		return {
+			...partyQueries.userParties(data.user?.username ?? '', {
+				filters: filterParams
+			}),
+			enabled: !!data.user?.username,
+			initialData:
+				data.items && matchesSSR
+					? {
+							pages: [
+								{
+									results: data.items,
+									page: data.page || 1,
+									totalPages: data.totalPages ?? 1,
+									total: data.total ?? data.items.length,
+									perPage: data.perPage || 20
+								}
+							],
+							pageParams: [1]
+						}
+					: undefined,
+			initialDataUpdatedAt: matchesSSR ? Date.now() : undefined
+		}
+	})
 
 	// State-gated infinite scroll
 	const loader = useInfiniteLoader(

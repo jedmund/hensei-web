@@ -22,13 +22,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { page } from '$app/state'
-	import {
-		serializeExploreFilters,
-		deserializeExploreFilters,
-		resolveEntityFilters,
-		urlHasExploreFilters
-	} from '$lib/utils/exploreFilterParams'
+	import { serializeExploreFilters } from '$lib/utils/exploreFilterParams'
 	import { localizedName } from '$lib/utils/locale'
 
 	const { data } = $props() as { data: PageData }
@@ -39,11 +33,20 @@
 	const isAuthenticated = $derived(data.isAuthenticated)
 	const currentUser = $derived(data.currentUser)
 
-	// Filter state
-	let filterItems = $state<FilterItem[]>([])
+	// Filter state — hydrate from SSR when URL had filters
+	let filterItems = $state<FilterItem[]>(data.initialFilterItems ?? [])
 	let advancedFilters = $state<FilterSet>({ ...defaultFilterSet })
 	let settingsOpen = $state(false)
-	let collectionFilterActive = $state(false)
+	let collectionFilterActive = $state(data.initialCollectionFilter ?? false)
+
+	// Snapshot the SSR-equivalent filterParams at init time.
+	// advancedFilters is still defaultFilterSet (cookies not yet loaded),
+	// so this captures exactly the params that correspond to SSR data.
+	const ssrFilterParams: ExploreFilterParams = (() => {
+		const params = filterItemsToParams(data.initialFilterItems ?? [])
+		if (data.initialCollectionFilter) params.collectionFilter = true
+		return params
+	})()
 
 	// Collection counts query — only fetches when authenticated
 	const collectionCountsQuery = createQuery(() => ({
@@ -61,15 +64,11 @@
 		return counts.characters + counts.weapons + counts.summons > 0
 	})
 
-	// Check if URL had filter params at page load (for SSR suppression)
-	const urlHadFilters = $derived(urlHasExploreFilters(page.url.searchParams))
-
 	// Track whether we've initialized from the URL to avoid writing back during setup
 	let urlInitialized = $state(false)
 
-	// Read advanced filters from cookie + URL filters on mount
-	onMount(async () => {
-		// Cookie-based advanced filters
+	// Read advanced filters from cookie on mount
+	onMount(() => {
 		try {
 			const cookie = document.cookie.split('; ').find((c) => c.startsWith('filters='))
 			if (cookie) {
@@ -81,38 +80,18 @@
 			// Cookie parse failed, use defaults
 		}
 
-		// URL-based explore filters
-		const searchParams = page.url.searchParams
-		if (urlHasExploreFilters(searchParams)) {
-			const {
-				filters: staticFilters,
-				entityRefs,
-				collectionFilter
-			} = deserializeExploreFilters(searchParams, allRaids)
-
-			filterItems = staticFilters
-			collectionFilterActive = collectionFilter
-
-			// Resolve entity filters async, then batch-append
-			if (entityRefs.length > 0) {
-				const resolved = await resolveEntityFilters(entityRefs)
-				if (resolved.length > 0) {
-					filterItems = [...filterItems, ...resolved]
-				}
-			}
-		}
-
 		urlInitialized = true
 	})
 
-	// Patch raid filters once raid data becomes available
+	// Raid filters start as slug placeholders (URL loads before raid data).
+	// Once allRaids arrives, patch the slug → UUID + localized label.
+	// The isSlug guard ensures this only fires once (no reactive loop).
 	$effect(() => {
 		if (!urlInitialized || allRaids.length === 0) return
 
 		const raidFilter = filterItems.find((f) => f.kind === 'raid')
 		if (!raidFilter) return
 
-		// Check if the raid value is still a slug (not yet resolved to UUID)
 		const isSlug = !allRaids.some((r) => r.id === raidFilter.value)
 		if (!isSlug) return
 
@@ -127,8 +106,8 @@
 		})
 	})
 
-	// Sync filter state to URL
-	function syncFiltersToUrl() {
+	// Sync filter state → URL reactively on any filter/collection change
+	$effect(() => {
 		if (!urlInitialized) return
 		const params = serializeExploreFilters(filterItems, {
 			collectionFilter: collectionFilterActive,
@@ -137,7 +116,7 @@
 		const search = params.toString()
 		const newUrl = `${window.location.pathname}${search ? `?${search}` : ''}`
 		history.replaceState(history.state, '', newUrl)
-	}
+	})
 
 	// Derive combined filter params from pill filters + advanced settings
 	const filterParams = $derived.by((): ExploreFilterParams => {
@@ -159,19 +138,6 @@
 
 		return params
 	})
-
-	const hasActiveFilters = $derived(
-		filterItems.length > 0 ||
-			!!advancedFilters.name_quality ||
-			!!advancedFilters.user_quality ||
-			!!advancedFilters.original ||
-			(advancedFilters.characters_count !== undefined &&
-				advancedFilters.characters_count !== defaultFilterSet.characters_count) ||
-			(advancedFilters.weapons_count !== undefined &&
-				advancedFilters.weapons_count !== defaultFilterSet.weapons_count) ||
-			(advancedFilters.summons_count !== undefined &&
-				advancedFilters.summons_count !== defaultFilterSet.summons_count)
-	)
 
 	// Count of active advanced settings and tooltip summary
 	const advancedFilterCount = $derived.by(() => {
@@ -211,26 +177,29 @@
 		return parts.join(', ')
 	})
 
-	// Query with filters
-	const partiesQuery = createInfiniteQuery(() => ({
-		...partyQueries.list({ filters: filterParams }),
-		initialData:
-			!hasActiveFilters && !collectionFilterActive && !urlHadFilters && data.items
-				? {
-						pages: [
-							{
-								results: data.items,
-								page: data.page || 1,
-								totalPages: data.totalPages,
-								total: data.total,
-								perPage: data.perPage || 20
-							}
-						],
-						pageParams: [1]
-					}
-				: undefined,
-		initialDataUpdatedAt: Date.now()
-	}))
+	// Query with filters — only use SSR initialData when params still match
+	const partiesQuery = createInfiniteQuery(() => {
+		const matchesSSR = JSON.stringify(filterParams) === JSON.stringify(ssrFilterParams)
+		return {
+			...partyQueries.list({ filters: filterParams }),
+			initialData:
+				data.items && matchesSSR
+					? {
+							pages: [
+								{
+									results: data.items,
+									page: data.page || 1,
+									totalPages: data.totalPages,
+									total: data.total,
+									perPage: data.perPage || 20
+								}
+							],
+							pageParams: [1]
+						}
+					: undefined,
+			initialDataUpdatedAt: matchesSSR ? Date.now() : undefined
+		}
+	})
 
 	// Infinite scroll
 	const loader = useInfiniteLoader(
@@ -258,7 +227,6 @@
 
 	function handleFiltersChange(newFilters: FilterItem[]) {
 		filterItems = newFilters
-		syncFiltersToUrl()
 	}
 
 	function handleSettingsSave(filters: FilterSet) {
@@ -284,10 +252,7 @@
 						| 'dark'
 						| 'light'
 						| undefined}
-					onclick={() => {
-						collectionFilterActive = !collectionFilterActive
-						syncFiltersToUrl()
-					}}
+					onclick={() => (collectionFilterActive = !collectionFilterActive)}
 					aria-label={m.explore_collection_aria()}
 					aria-pressed={collectionFilterActive}
 				>
