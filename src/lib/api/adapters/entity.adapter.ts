@@ -10,6 +10,7 @@
 
 import { BaseAdapter } from './base.adapter'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
+import type { RequestOptions } from './types'
 import type {
 	WeaponSeriesRef,
 	WeaponSeries,
@@ -710,16 +711,19 @@ export class EntityAdapter extends BaseAdapter {
 	/**
 	 * Gets canonical weapon data by ID
 	 */
-	async getWeapon(id: string): Promise<Weapon> {
-		return this.request<Weapon>(`/weapons/${id}`)
+	async getWeapon(id: string, options?: RequestOptions): Promise<Weapon> {
+		return this.request<Weapon>(`/weapons/${id}`, options)
 	}
 
 	/**
 	 * Gets canonical character data by ID
 	 */
-	async getCharacter(id: string, options?: { styleSwap?: boolean }): Promise<Character> {
+	async getCharacter(
+		id: string,
+		options?: { styleSwap?: boolean } & RequestOptions
+	): Promise<Character> {
 		const params = options?.styleSwap ? '?style_swap=true' : ''
-		return this.request<Character>(`/characters/${id}${params}`)
+		return this.request<Character>(`/characters/${id}${params}`, options)
 	}
 
 	/**
@@ -732,8 +736,8 @@ export class EntityAdapter extends BaseAdapter {
 	/**
 	 * Gets canonical summon data by ID
 	 */
-	async getSummon(id: string): Promise<Summon> {
-		return this.request<Summon>(`/summons/${id}`)
+	async getSummon(id: string, options?: RequestOptions): Promise<Summon> {
+		return this.request<Summon>(`/summons/${id}`, options)
 	}
 
 	/**

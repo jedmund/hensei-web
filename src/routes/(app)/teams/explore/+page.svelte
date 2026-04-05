@@ -7,7 +7,9 @@
 	import ExploreFilters from '$lib/components/explore/ExploreFilters.svelte'
 	import ExploreSettingsModal from '$lib/components/explore/ExploreSettingsModal.svelte'
 	import { partyQueries } from '$lib/api/queries/party.queries'
+	import { raidQueries } from '$lib/api/queries/raid.queries'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
+	import type { RaidFull } from '$lib/types/api/raid'
 	import type { ExploreFilterParams } from '$lib/api/adapters/party.adapter'
 	import { filterItemsToParams } from '$lib/utils/filterConversion'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
@@ -20,6 +22,8 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
+	import { serializeExploreFilters } from '$lib/utils/exploreFilterParams'
+	import { localizedName } from '$lib/utils/locale'
 
 	const { data } = $props() as { data: PageData }
 
@@ -29,11 +33,20 @@
 	const isAuthenticated = $derived(data.isAuthenticated)
 	const currentUser = $derived(data.currentUser)
 
-	// Filter state
-	let filterItems = $state<FilterItem[]>([])
+	// Filter state — hydrate from SSR when URL had filters
+	let filterItems = $state<FilterItem[]>(data.initialFilterItems ?? [])
 	let advancedFilters = $state<FilterSet>({ ...defaultFilterSet })
 	let settingsOpen = $state(false)
-	let collectionFilterActive = $state(false)
+	let collectionFilterActive = $state(data.initialCollectionFilter ?? false)
+
+	// Snapshot the SSR-equivalent filterParams at init time.
+	// advancedFilters is still defaultFilterSet (cookies not yet loaded),
+	// so this captures exactly the params that correspond to SSR data.
+	const ssrFilterParams: ExploreFilterParams = (() => {
+		const params = filterItemsToParams(data.initialFilterItems ?? [])
+		if (data.initialCollectionFilter) params.collectionFilter = true
+		return params
+	})()
 
 	// Collection counts query — only fetches when authenticated
 	const collectionCountsQuery = createQuery(() => ({
@@ -41,11 +54,18 @@
 		enabled: !!data.account?.userId
 	}))
 
+	// Raid groups query — lifted from ExploreFilters for URL serialization access
+	const raidGroupsQuery = createQuery(() => raidQueries.groups())
+	const allRaids = $derived<RaidFull[]>(raidGroupsQuery.data?.flatMap((g) => g.raids) ?? [])
+
 	const hasCollection = $derived.by(() => {
 		const counts = collectionCountsQuery.data
 		if (!counts) return false
 		return counts.characters + counts.weapons + counts.summons > 0
 	})
+
+	// Track whether we've initialized from the URL to avoid writing back during setup
+	let urlInitialized = $state(false)
 
 	// Read advanced filters from cookie on mount
 	onMount(() => {
@@ -59,6 +79,43 @@
 		} catch {
 			// Cookie parse failed, use defaults
 		}
+
+		urlInitialized = true
+	})
+
+	// Raid filters start as slug placeholders (URL loads before raid data).
+	// Once allRaids arrives, patch the slug → UUID + localized label.
+	// The isSlug guard ensures this only fires once (no reactive loop).
+	$effect(() => {
+		if (!urlInitialized || allRaids.length === 0) return
+
+		const raidFilter = filterItems.find((f) => f.kind === 'raid')
+		if (!raidFilter) return
+
+		const isSlug = !allRaids.some((r) => r.id === raidFilter.value)
+		if (!isSlug) return
+
+		const raid = allRaids.find((r) => r.slug === raidFilter.value)
+		if (!raid) return
+
+		filterItems = filterItems.map((f) => {
+			if (f.kind === 'raid' && f.value === raidFilter.value) {
+				return { ...f, value: raid.id, label: localizedName(raid.name) ?? raid.slug }
+			}
+			return f
+		})
+	})
+
+	// Sync filter state → URL reactively on any filter/collection change
+	$effect(() => {
+		if (!urlInitialized) return
+		const params = serializeExploreFilters(filterItems, {
+			collectionFilter: collectionFilterActive,
+			raids: allRaids
+		})
+		const search = params.toString()
+		const newUrl = `${window.location.pathname}${search ? `?${search}` : ''}`
+		history.replaceState(history.state, '', newUrl)
 	})
 
 	// Derive combined filter params from pill filters + advanced settings
@@ -81,19 +138,6 @@
 
 		return params
 	})
-
-	const hasActiveFilters = $derived(
-		filterItems.length > 0 ||
-			!!advancedFilters.name_quality ||
-			!!advancedFilters.user_quality ||
-			!!advancedFilters.original ||
-			(advancedFilters.characters_count !== undefined &&
-				advancedFilters.characters_count !== defaultFilterSet.characters_count) ||
-			(advancedFilters.weapons_count !== undefined &&
-				advancedFilters.weapons_count !== defaultFilterSet.weapons_count) ||
-			(advancedFilters.summons_count !== undefined &&
-				advancedFilters.summons_count !== defaultFilterSet.summons_count)
-	)
 
 	// Count of active advanced settings and tooltip summary
 	const advancedFilterCount = $derived.by(() => {
@@ -133,26 +177,29 @@
 		return parts.join(', ')
 	})
 
-	// Query with filters
-	const partiesQuery = createInfiniteQuery(() => ({
-		...partyQueries.list({ filters: filterParams }),
-		initialData:
-			!hasActiveFilters && !collectionFilterActive && data.items
-				? {
-						pages: [
-							{
-								results: data.items,
-								page: data.page || 1,
-								totalPages: data.totalPages,
-								total: data.total,
-								perPage: data.perPage || 20
-							}
-						],
-						pageParams: [1]
-					}
-				: undefined,
-		initialDataUpdatedAt: Date.now()
-	}))
+	// Query with filters — only use SSR initialData when params still match
+	const partiesQuery = createInfiniteQuery(() => {
+		const matchesSSR = JSON.stringify(filterParams) === JSON.stringify(ssrFilterParams)
+		return {
+			...partyQueries.list({ filters: filterParams }),
+			initialData:
+				data.items && matchesSSR
+					? {
+							pages: [
+								{
+									results: data.items,
+									page: data.page || 1,
+									totalPages: data.totalPages,
+									total: data.total,
+									perPage: data.perPage || 20
+								}
+							],
+							pageParams: [1]
+						}
+					: undefined,
+			initialDataUpdatedAt: matchesSSR ? Date.now() : undefined
+		}
+	})
 
 	// Infinite scroll
 	const loader = useInfiniteLoader(
@@ -192,7 +239,7 @@
 
 <section class="explore">
 	<div class="filters-row">
-		<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} />
+		<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} {allRaids} />
 		<div class="filters-actions">
 			{#if isAuthenticated}
 				<CollectionFilterButton
