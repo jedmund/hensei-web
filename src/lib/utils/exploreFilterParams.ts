@@ -1,5 +1,7 @@
 import type { FilterItem } from '$lib/types/filter'
 import type { RaidFull } from '$lib/types/api/raid'
+import type { ExploreFilterParams } from '$lib/api/adapters/party.adapter'
+import type { RequestOptions } from '$lib/api/adapters/types'
 import { ELEMENT_TO_PARAM, PARAM_TO_ELEMENT } from '$lib/utils/filterParams'
 import { getElementOptions } from '$lib/utils/element'
 import {
@@ -8,6 +10,7 @@ import {
 	getBoostLabel,
 	getSideLabel
 } from '$lib/utils/exploreFilterOptions'
+import { filterItemsToParams } from '$lib/utils/filterConversion'
 import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 import { localizedName } from '$lib/utils/locale'
 
@@ -233,16 +236,18 @@ export function deserializeExploreFilters(
  * Resolve entity refs into full FilterItems by fetching from the API.
  * Silently drops entities that fail to resolve.
  */
-export async function resolveEntityFilters(refs: EntityRef[]): Promise<FilterItem[]> {
+export async function resolveEntityFilters(
+	refs: EntityRef[],
+	options?: RequestOptions
+): Promise<FilterItem[]> {
 	const results = await Promise.allSettled(
 		refs.map(async (ref): Promise<FilterItem> => {
-			const fetch =
+			const entity =
 				ref.type === 'character'
-					? entityAdapter.getCharacter(ref.granblueId)
+					? await entityAdapter.getCharacter(ref.granblueId, options)
 					: ref.type === 'weapon'
-						? entityAdapter.getWeapon(ref.granblueId)
-						: entityAdapter.getSummon(ref.granblueId)
-			const entity = await fetch
+						? await entityAdapter.getWeapon(ref.granblueId, options)
+						: await entityAdapter.getSummon(ref.granblueId, options)
 			const label = localizedName(entity.name) ?? ref.granblueId
 			return {
 				kind: 'entity',
@@ -259,4 +264,32 @@ export async function resolveEntityFilters(refs: EntityRef[]): Promise<FilterIte
 	return results
 		.filter((r): r is PromiseFulfilledResult<FilterItem> => r.status === 'fulfilled')
 		.map((r) => r.value)
+}
+
+/**
+ * Convert URL search params directly to ExploreFilterParams for SSR use.
+ * Chains deserializeExploreFilters → filterItemsToParams so load functions
+ * can fetch filtered data without client-side hydration.
+ *
+ * Entity filters are excluded (they need async API resolution).
+ */
+export async function urlParamsToExploreFilterParams(
+	params: URLSearchParams,
+	options?: RequestOptions
+): Promise<{
+	filterItems: FilterItem[]
+	apiParams: ExploreFilterParams
+	collectionFilter: boolean
+}> {
+	const { filters, entityRefs, collectionFilter } = deserializeExploreFilters(params)
+
+	// Resolve entity refs SSR-side when fetch is available
+	let entityFilters: FilterItem[] = []
+	if (entityRefs.length > 0 && options?.fetch) {
+		entityFilters = await resolveEntityFilters(entityRefs, options)
+	}
+
+	const allFilters = [...filters, ...entityFilters]
+	const apiParams = filterItemsToParams(allFilters)
+	return { filterItems: allFilters, apiParams, collectionFilter }
 }

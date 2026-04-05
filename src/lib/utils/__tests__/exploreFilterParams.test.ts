@@ -5,7 +5,8 @@ import {
 	serializeExploreFilters,
 	deserializeExploreFilters,
 	urlHasExploreFilters,
-	resolveEntityFilters
+	resolveEntityFilters,
+	urlParamsToExploreFilterParams
 } from '../exploreFilterParams'
 
 // Mock entity adapter for resolveEntityFilters tests
@@ -421,5 +422,72 @@ describe('resolveEntityFilters', () => {
 		])
 
 		expect(result).toHaveLength(0)
+	})
+
+	it('passes options through to adapter methods', async () => {
+		const { entityAdapter } = await import('$lib/api/adapters/entity.adapter')
+		const mockFetch = vi.fn()
+		vi.mocked(entityAdapter.getWeapon).mockResolvedValue({
+			id: 'wpn-uuid',
+			granblueId: '1040000000',
+			name: { en: 'AK-4A', ja: 'AK-4A' },
+			element: 3
+		} as Awaited<ReturnType<typeof entityAdapter.getWeapon>>)
+
+		await resolveEntityFilters([{ granblueId: '1040000000', type: 'weapon', mode: 'include' }], {
+			fetch: mockFetch as unknown as typeof globalThis.fetch
+		})
+
+		expect(entityAdapter.getWeapon).toHaveBeenCalledWith('1040000000', {
+			fetch: mockFetch
+		})
+	})
+})
+
+// ============================================================================
+// urlParamsToExploreFilterParams
+// ============================================================================
+
+describe('urlParamsToExploreFilterParams', () => {
+	it('returns static filters and API params', async () => {
+		const result = await urlParamsToExploreFilterParams(
+			new URLSearchParams('element=fire&recency=604800')
+		)
+		expect(result.filterItems).toHaveLength(2)
+		expect(result.apiParams.element).toBeDefined()
+		expect(result.collectionFilter).toBe(false)
+	})
+
+	it('returns collection filter state', async () => {
+		const result = await urlParamsToExploreFilterParams(new URLSearchParams('collection=1'))
+		expect(result.collectionFilter).toBe(true)
+	})
+
+	it('skips entity resolution when no fetch is provided', async () => {
+		const result = await urlParamsToExploreFilterParams(
+			new URLSearchParams('element=fire&inc=c:3040000000')
+		)
+		// Only the element filter should be present, not the entity
+		expect(result.filterItems).toHaveLength(1)
+		expect(result.filterItems[0]!.kind).toBe('element')
+	})
+
+	it('resolves entity filters when fetch is provided', async () => {
+		const { entityAdapter } = await import('$lib/api/adapters/entity.adapter')
+		vi.mocked(entityAdapter.getCharacter).mockResolvedValue({
+			id: 'char-uuid',
+			granblueId: '3040000000',
+			name: { en: 'Narmaya', ja: 'ナルメア' },
+			element: 5
+		} as Awaited<ReturnType<typeof entityAdapter.getCharacter>>)
+
+		const mockFetch = vi.fn()
+		const result = await urlParamsToExploreFilterParams(
+			new URLSearchParams('element=fire&inc=c:3040000000'),
+			{ fetch: mockFetch as unknown as typeof globalThis.fetch }
+		)
+
+		expect(result.filterItems).toHaveLength(2)
+		expect(result.filterItems.find((f) => f.kind === 'entity')).toBeDefined()
 	})
 })
