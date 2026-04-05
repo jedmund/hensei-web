@@ -236,14 +236,18 @@ export class PartyAdapter extends BaseAdapter {
 	/**
 	 * Lists parties for a specific user
 	 */
-	async listUserParties(params: ListUserPartiesParams): Promise<PaginatedResponse<Party>> {
+	async listUserParties(
+		params: ListUserPartiesParams,
+		options?: RequestOptions
+	): Promise<PaginatedResponse<Party>> {
 		const { username, filters, ...queryParams } = params
 
 		const response = await this.request<{
 			results: Party[]
 			meta?: ApiPaginationMeta
 		}>(`/users/${username}/parties`, {
-			query: { ...queryParams, ...filters }
+			query: { ...queryParams, ...filters },
+			...options
 		})
 
 		return this.toPaginatedResponse(response.results, response.meta, params.page || 1)
