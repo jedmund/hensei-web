@@ -2,7 +2,7 @@
 	import type { PageData } from './$types'
 	import type { Party } from '$lib/types/api/party'
 	import { onMount, onDestroy } from 'svelte'
-	import { createInfiniteQuery } from '@tanstack/svelte-query'
+	import { createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
 	import { ContextMenu } from 'bits-ui'
 	import { goto } from '$app/navigation'
 	import GridRep from '$lib/components/reps/GridRep.svelte'
@@ -13,12 +13,15 @@
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import { partyQueries } from '$lib/api/queries/party.queries'
+	import { raidQueries } from '$lib/api/queries/raid.queries'
+	import type { RaidFull } from '$lib/types/api/raid'
 	import { filterItemsToParams } from '$lib/utils/filterConversion'
 	import { useDeleteParty } from '$lib/api/mutations/party.mutations'
 	import { PartyVisibility } from '$lib/types/visibility'
 	import { page } from '$app/stores'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { serializeExploreFilters } from '$lib/utils/exploreFilterParams'
+	import { localizedName } from '$lib/utils/locale'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import Icon from '$lib/components/Icon.svelte'
@@ -79,6 +82,10 @@
 	const viewerCrewRole = $derived(crewStore.membership?.role ?? null)
 	const viewerCrewId = $derived(crewStore.crew?.id ?? null)
 
+	// Raid groups query — needed for raid filter dropdown and slug resolution
+	const raidGroupsQuery = createQuery(() => raidQueries.groups())
+	const allRaids = $derived<RaidFull[]>(raidGroupsQuery.data?.flatMap((g) => g.raids) ?? [])
+
 	// Filter state — hydrate from SSR when URL had filters
 	let filterItems = $state<FilterItem[]>(data.initialFilterItems ?? [])
 
@@ -93,10 +100,31 @@
 		urlInitialized = true
 	})
 
+	// Patch raid slug → UUID once raid data loads
+	$effect(() => {
+		if (!urlInitialized || allRaids.length === 0) return
+
+		const raidFilter = filterItems.find((f) => f.kind === 'raid')
+		if (!raidFilter) return
+
+		const isSlug = !allRaids.some((r) => r.id === raidFilter.value)
+		if (!isSlug) return
+
+		const raid = allRaids.find((r) => r.slug === raidFilter.value)
+		if (!raid) return
+
+		filterItems = filterItems.map((f) => {
+			if (f.kind === 'raid' && f.value === raidFilter.value) {
+				return { ...f, value: raid.id, label: localizedName(raid.name) ?? raid.slug }
+			}
+			return f
+		})
+	})
+
 	// Sync filter state → URL reactively
 	$effect(() => {
 		if (!urlInitialized) return
-		const params = serializeExploreFilters(filterItems)
+		const params = serializeExploreFilters(filterItems, { raids: allRaids })
 		const search = params.toString()
 		const newUrl = `${window.location.pathname}${search ? `?${search}` : ''}`
 		history.replaceState(history.state, '', newUrl)
@@ -212,7 +240,7 @@
 	{/if}
 
 	<div class="filters-row">
-		<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} />
+		<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} {allRaids} />
 		{#if showVisibilityFilter}
 			<MultiSelect
 				options={visibilityOptions}
