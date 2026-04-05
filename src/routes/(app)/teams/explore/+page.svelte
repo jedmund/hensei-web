@@ -7,7 +7,9 @@
 	import ExploreFilters from '$lib/components/explore/ExploreFilters.svelte'
 	import ExploreSettingsModal from '$lib/components/explore/ExploreSettingsModal.svelte'
 	import { partyQueries } from '$lib/api/queries/party.queries'
+	import { raidQueries } from '$lib/api/queries/raid.queries'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
+	import type { RaidFull } from '$lib/types/api/raid'
 	import type { ExploreFilterParams } from '$lib/api/adapters/party.adapter'
 	import { filterItemsToParams } from '$lib/utils/filterConversion'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
@@ -20,6 +22,14 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
+	import { page } from '$app/state'
+	import {
+		serializeExploreFilters,
+		deserializeExploreFilters,
+		resolveEntityFilters,
+		urlHasExploreFilters
+	} from '$lib/utils/exploreFilterParams'
+	import { localizedName } from '$lib/utils/locale'
 
 	const { data } = $props() as { data: PageData }
 
@@ -41,14 +51,25 @@
 		enabled: !!data.account?.userId
 	}))
 
+	// Raid groups query — lifted from ExploreFilters for URL serialization access
+	const raidGroupsQuery = createQuery(() => raidQueries.groups())
+	const allRaids = $derived<RaidFull[]>(raidGroupsQuery.data?.flatMap((g) => g.raids) ?? [])
+
 	const hasCollection = $derived.by(() => {
 		const counts = collectionCountsQuery.data
 		if (!counts) return false
 		return counts.characters + counts.weapons + counts.summons > 0
 	})
 
-	// Read advanced filters from cookie on mount
-	onMount(() => {
+	// Check if URL had filter params at page load (for SSR suppression)
+	const urlHadFilters = $derived(urlHasExploreFilters(page.url.searchParams))
+
+	// Track whether we've initialized from the URL to avoid writing back during setup
+	let urlInitialized = $state(false)
+
+	// Read advanced filters from cookie + URL filters on mount
+	onMount(async () => {
+		// Cookie-based advanced filters
 		try {
 			const cookie = document.cookie.split('; ').find((c) => c.startsWith('filters='))
 			if (cookie) {
@@ -59,7 +80,64 @@
 		} catch {
 			// Cookie parse failed, use defaults
 		}
+
+		// URL-based explore filters
+		const searchParams = page.url.searchParams
+		if (urlHasExploreFilters(searchParams)) {
+			const {
+				filters: staticFilters,
+				entityRefs,
+				collectionFilter
+			} = deserializeExploreFilters(searchParams, allRaids)
+
+			filterItems = staticFilters
+			collectionFilterActive = collectionFilter
+
+			// Resolve entity filters async, then batch-append
+			if (entityRefs.length > 0) {
+				const resolved = await resolveEntityFilters(entityRefs)
+				if (resolved.length > 0) {
+					filterItems = [...filterItems, ...resolved]
+				}
+			}
+		}
+
+		urlInitialized = true
 	})
+
+	// Patch raid filters once raid data becomes available
+	$effect(() => {
+		if (!urlInitialized || allRaids.length === 0) return
+
+		const raidFilter = filterItems.find((f) => f.kind === 'raid')
+		if (!raidFilter) return
+
+		// Check if the raid value is still a slug (not yet resolved to UUID)
+		const isSlug = !allRaids.some((r) => r.id === raidFilter.value)
+		if (!isSlug) return
+
+		const raid = allRaids.find((r) => r.slug === raidFilter.value)
+		if (!raid) return
+
+		filterItems = filterItems.map((f) => {
+			if (f.kind === 'raid' && f.value === raidFilter.value) {
+				return { ...f, value: raid.id, label: localizedName(raid.name) ?? raid.slug }
+			}
+			return f
+		})
+	})
+
+	// Sync filter state to URL
+	function syncFiltersToUrl() {
+		if (!urlInitialized) return
+		const params = serializeExploreFilters(filterItems, {
+			collectionFilter: collectionFilterActive,
+			raids: allRaids
+		})
+		const search = params.toString()
+		const newUrl = `${window.location.pathname}${search ? `?${search}` : ''}`
+		history.replaceState(history.state, '', newUrl)
+	}
 
 	// Derive combined filter params from pill filters + advanced settings
 	const filterParams = $derived.by((): ExploreFilterParams => {
@@ -137,7 +215,7 @@
 	const partiesQuery = createInfiniteQuery(() => ({
 		...partyQueries.list({ filters: filterParams }),
 		initialData:
-			!hasActiveFilters && !collectionFilterActive && data.items
+			!hasActiveFilters && !collectionFilterActive && !urlHadFilters && data.items
 				? {
 						pages: [
 							{
@@ -180,6 +258,7 @@
 
 	function handleFiltersChange(newFilters: FilterItem[]) {
 		filterItems = newFilters
+		syncFiltersToUrl()
 	}
 
 	function handleSettingsSave(filters: FilterSet) {
@@ -192,7 +271,7 @@
 
 <section class="explore">
 	<div class="filters-row">
-		<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} />
+		<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} {allRaids} />
 		<div class="filters-actions">
 			{#if isAuthenticated}
 				<CollectionFilterButton
@@ -205,7 +284,10 @@
 						| 'dark'
 						| 'light'
 						| undefined}
-					onclick={() => (collectionFilterActive = !collectionFilterActive)}
+					onclick={() => {
+						collectionFilterActive = !collectionFilterActive
+						syncFiltersToUrl()
+					}}
 					aria-label={m.explore_collection_aria()}
 					aria-pressed={collectionFilterActive}
 				>

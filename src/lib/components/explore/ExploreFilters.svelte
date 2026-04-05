@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { createQuery } from '@tanstack/svelte-query'
-	import { raidQueries } from '$lib/api/queries/raid.queries'
 	import { searchAdapter } from '$lib/api/adapters/search.adapter'
 	import type { UnifiedSearchResult } from '$lib/api/adapters/search.adapter'
 	import type { RaidFull } from '$lib/types/api/raid'
@@ -13,6 +11,12 @@
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'
 	import { getElementOptions } from '$lib/utils/element'
+	import {
+		getRecencyOptions,
+		getPartyOptions,
+		getBoostOptions,
+		getSideOptions
+	} from '$lib/utils/exploreFilterOptions'
 
 	interface Props {
 		filters: FilterItem[]
@@ -20,13 +24,15 @@
 		excludedKinds?: FilterItem['kind'][]
 		/** Use when placed on a card/white surface — gives the pill a visible background */
 		contained?: boolean
+		allRaids?: RaidFull[]
 	}
 
 	let {
 		filters = $bindable([]),
 		onFiltersChange,
 		excludedKinds = [],
-		contained = false
+		contained = false,
+		allRaids = []
 	}: Props = $props()
 
 	let inputValue = $state('')
@@ -39,43 +45,12 @@
 	let isComposing = $state(false)
 	let searchTimeout: ReturnType<typeof setTimeout> | null = null
 
-	// Fetch raid groups for raid search
-	const raidGroupsQuery = createQuery(() => raidQueries.groups())
-
-	// Flatten raids for searching
-	const allRaids = $derived<RaidFull[]>(raidGroupsQuery.data?.flatMap((g) => g.raids) ?? [])
-
 	// Static filter options
 	const elementOptions = $derived(getElementOptions())
-
-	const recencyOptions = $derived([
-		{ value: 86400, label: m.recency_day() },
-		{ value: 604800, label: m.recency_week() },
-		{ value: 2629746, label: m.recency_month() },
-		{ value: 7889238, label: m.recency_3months() },
-		{ value: 15778476, label: m.recency_6months() },
-		{ value: 31556952, label: m.recency_year() }
-	])
-
-	const partyOptions = $derived([
-		{ value: 'full_auto', label: m.filter_full_auto() },
-		{ value: 'solo', label: m.filter_solo() },
-		{ value: 'auto_guard', label: m.filter_auto_guard() },
-		{ value: 'charge_attack', label: m.filter_charge_attack() },
-		{ value: 'youtube', label: m.filter_youtube() }
-	])
-
-	const boostOptions = $derived([
-		{ value: 'omega', label: m.boost_omega(), aliases: ['magna'] },
-		{ value: 'primal', label: m.boost_primal() },
-		{ value: 'odious', label: m.boost_odious() },
-		{ value: 'unboosted', label: m.boost_unboosted() }
-	])
-
-	const sideOptions = $derived([
-		{ value: 'double', label: m.side_double() },
-		{ value: 'single', label: m.side_single() }
-	])
+	const recencyOptions = $derived(getRecencyOptions())
+	const partyOptions = $derived(getPartyOptions())
+	const boostOptions = $derived(getBoostOptions())
+	const sideOptions = $derived(getSideOptions())
 
 	const categoryLabels = $derived({
 		element: m.filter_cat_element(),
