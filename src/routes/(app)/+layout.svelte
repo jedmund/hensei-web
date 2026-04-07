@@ -175,16 +175,36 @@
 			<main class="main-content" bind:this={mainContent} onscroll={handleScroll}>
 				<svelte:boundary
 					onerror={(e) => {
-						if (import.meta.env.DEV) console.error('Page render error:', e)
+						console.error('Page render error:', e)
+						if (browser) {
+							try {
+								const payload = {
+									message: e instanceof Error ? e.message : String(e),
+									stack: e instanceof Error ? e.stack : undefined,
+									url: window.location.href
+								}
+								fetch('/api/client-error', {
+									method: 'POST',
+									headers: { 'Content-Type': 'application/json' },
+									body: JSON.stringify(payload)
+								}).catch(() => {})
+							} catch {
+								// Don't let error reporting cause more errors
+							}
+						}
 					}}
 				>
 					{@render children?.()}
 					<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
 					{#snippet failed(error, reset)}
 						<div class="page-error" role="alert">
-							<h2>{m.error_something_went_wrong()}</h2>
-							<p>{m.error_boundary_message()}</p>
-							<button onclick={reset}>{m.error_boundary_retry()}</button>
+							<div class="error-message">
+								<h2>{m.error_something_went_wrong()}</h2>
+								<p>{m.error_boundary_message()}</p>
+							</div>
+							<div class="page-error-actions">
+								<button class="retry-button" onclick={reset}>{m.error_boundary_retry()}</button>
+							</div>
 						</div>
 					{/snippet}
 				</svelte:boundary>
@@ -208,7 +228,8 @@
 <style lang="scss">
 	@use '$src/themes/effects' as *;
 	@use '$src/themes/layout' as *;
-	@use '$src/themes/spacing' as *;
+	@use '$src/themes/typography' as *;
+	@use '$src/themes/spacing' as spacing;
 
 	:root {
 		--sidebar-width: 420px;
@@ -377,6 +398,56 @@
 		}
 		to {
 			opacity: 1;
+		}
+	}
+
+	.page-error {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		min-height: 60vh;
+		padding: spacing.$unit-4x;
+		color: var(--text-primary);
+
+		.error-message {
+			text-align: center;
+
+			h2 {
+				font-size: $font-xlarge;
+				font-weight: $bold;
+				margin: 0;
+			}
+
+			p {
+				color: var(--text-secondary);
+				font-size: $font-body;
+				margin: spacing.$unit 0 0;
+			}
+		}
+
+		.page-error-actions {
+			margin-top: spacing.$unit-3x;
+		}
+
+		.retry-button {
+			all: unset;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			cursor: pointer;
+			padding: calc(spacing.$unit * 1.5) calc(spacing.$unit * 2.5);
+			border-radius: 6px;
+			font-size: $font-regular;
+			font-weight: $medium;
+			font-family: inherit;
+			background: var(--button-bg);
+			color: var(--button-text);
+
+			&:hover {
+				background: var(--button-bg-hover);
+				color: var(--button-text-hover);
+			}
 		}
 	}
 </style>

@@ -55,7 +55,11 @@ export function getAccountFromCookies(cookies: Cookies): AccountCookie | null {
 	const raw = cookies.get(ACCOUNT_COOKIE)
 	if (!raw) return null
 	try {
-		return JSON.parse(raw) as AccountCookie
+		const parsed = JSON.parse(raw) as Record<string, unknown>
+		if (typeof parsed.token !== 'string' || typeof parsed.userId !== 'string') return null
+		if (parsed.expires_at !== undefined && typeof parsed.expires_at !== 'string') return null
+		if (typeof parsed.role !== 'number') return null
+		return parsed as unknown as AccountCookie
 	} catch {
 		return null
 	}
@@ -65,7 +69,11 @@ export function getUserFromCookies(cookies: Cookies): UserCookie | null {
 	const raw = cookies.get(USER_COOKIE)
 	if (!raw) return null
 	try {
-		return JSON.parse(raw) as UserCookie
+		const parsed = JSON.parse(raw) as Record<string, unknown>
+		if (typeof parsed.language !== 'string') return null
+		if (parsed.element !== undefined && typeof parsed.element !== 'string') return null
+		if (parsed.theme !== undefined && typeof parsed.theme !== 'string') return null
+		return parsed as unknown as UserCookie
 	} catch {
 		return null
 	}
