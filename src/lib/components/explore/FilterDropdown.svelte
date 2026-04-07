@@ -120,6 +120,10 @@
 		box-shadow: $dialog-elevation;
 		z-index: $z-popover;
 		overflow: hidden;
+
+		@media (max-width: 768px) {
+			width: 100%;
+		}
 	}
 
 	.results {

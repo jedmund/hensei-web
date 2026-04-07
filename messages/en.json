@@ -464,6 +464,7 @@
 	"explore_end": "You've reached the end of all teams!",
 
 	"explore_filter_placeholder": "Start typing...",
+	"explore_filter_placeholder_mobile": "Filter teams...",
 	"explore_filter": "Filter",
 	"explore_filter_tagline": "to find the perfect team",
 	"explore_searching": "Searching...",
@@ -495,6 +496,7 @@
 	"explore_settings_original_desc": "Exclude remixes",
 	"explore_settings_apply": "Apply",
 	"explore_settings_reset": "Reset",
+	"explore_advanced_filters": "Advanced filters",
 
 	"modal_cancel": "Nevermind",
 
