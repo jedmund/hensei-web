@@ -29,14 +29,23 @@
 		position: number
 		notInCollection?: boolean
 		inCollection?: boolean
+		sizeOverride?: 'main' | 'grid' | undefined
 	}
 
-	let { item, position, notInCollection = false, inCollection = false }: Props = $props()
+	let {
+		item,
+		position,
+		notInCollection = false,
+		inCollection = false,
+		sizeOverride = undefined
+	}: Props = $props()
 
 	const ctx = usePartyContext()
 
 	// Use position (not data flags) to determine sizing — position is authoritative
-	let isMainSized = $derived(position === -1 || position === 6)
+	let isMainSized = $derived(
+		sizeOverride ? sizeOverride === 'main' : position === -1 || position === 6
+	)
 
 	let imageUrl = $derived.by(() => {
 		const variant = isMainSized ? 'main' : 'grid'
@@ -179,8 +188,8 @@
 					{#key item?.id ?? position}
 						<div
 							class="frame summon {elementClass}"
-							class:main={position === -1}
-							class:friend={position === 6}
+							class:main={isMainSized && position === -1}
+							class:friend={isMainSized && position === 6}
 							class:cell={!isMainSized}
 							class:editable={ctx?.canEdit()}
 							class:is-active={isActive}
@@ -265,9 +274,9 @@
 		{#key `empty-${position}`}
 			<div
 				class="frame summon"
-				class:main={position === -1}
-				class:friend={position === 6}
-				class:cell={!(position === -1 || position === 6)}
+				class:main={isMainSized && position === -1}
+				class:friend={isMainSized && position === 6}
+				class:cell={!isMainSized}
 				class:editable={ctx?.canEdit()}
 				class:is-selected={isSelected}
 				role="button"

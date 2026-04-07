@@ -15,6 +15,7 @@
 
 	import SummonUnit from '$lib/components/units/SummonUnit.svelte'
 	import ExtraSummons from '$lib/components/extra/ExtraSummonsGrid.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	const ctx = usePartyContext()
 	const dragContext = getDragDropContext()
@@ -134,11 +135,22 @@
 			</ul>
 		</section>
 
-		<div class="LabeledUnit">
+		<!-- Friend summon: in main grid on desktop, hidden on mobile -->
+		<div class="LabeledUnit friend-desktop">
 			<SummonUnit item={friend} position={6} />
 		</div>
 	</div>
-	<ExtraSummons {summons} offset={4} />
+
+	<!-- Bottom row: friend box (mobile only) + subaura box -->
+	<div class="bottom-row">
+		<div class="friend-mobile">
+			<h3>{m.summon_friend_label()}</h3>
+			<div class="friend-unit">
+				<SummonUnit item={friend} position={6} sizeOverride="grid" />
+			</div>
+		</div>
+		<ExtraSummons {summons} offset={4} />
+	</div>
 </div>
 
 <style lang="scss">
@@ -165,6 +177,10 @@
 			gap: $unit;
 		}
 
+		@media (max-width: 768px) {
+			grid-template-columns: 1fr 2fr;
+		}
+
 		.summons {
 			display: grid;
 			grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -185,5 +201,52 @@
 				list-style: none;
 			}
 		}
+	}
+
+	.friend-desktop {
+		@media (max-width: 768px) {
+			display: none;
+		}
+	}
+
+	.bottom-row {
+		display: contents;
+
+		@media (max-width: 768px) {
+			display: flex;
+			gap: $unit;
+			margin-top: $unit-2x;
+		}
+	}
+
+	.friend-mobile {
+		display: none;
+
+		@media (max-width: 768px) {
+			display: grid;
+			grid-template-columns: 2.32fr 2fr;
+			background: var(--button-contained-bg);
+			border-radius: layout.$input-corner;
+			padding: $unit-2x;
+			box-sizing: border-box;
+			flex: 1;
+
+			h3 {
+				color: var(--text-secondary);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				line-height: 1.2;
+				font-weight: $medium;
+				text-align: center;
+				margin: 0;
+			}
+		}
+	}
+
+	.friend-unit {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 </style>
