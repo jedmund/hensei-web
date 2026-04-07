@@ -178,7 +178,7 @@
 		}
 
 		@media (max-width: 768px) {
-			grid-template-columns: 1fr 2fr;
+			grid-template-columns: 1.2fr 2fr;
 		}
 
 		.summons {
@@ -223,8 +223,9 @@
 		display: none;
 
 		@media (max-width: 768px) {
-			display: grid;
-			grid-template-columns: 2.32fr 2fr;
+			display: flex;
+			flex-direction: column;
+			gap: $unit-2x;
 			background: var(--button-contained-bg);
 			border-radius: layout.$input-corner;
 			padding: $unit-2x;
@@ -233,9 +234,6 @@
 
 			h3 {
 				color: var(--text-secondary);
-				display: flex;
-				align-items: center;
-				justify-content: center;
 				line-height: 1.2;
 				font-weight: $medium;
 				text-align: center;

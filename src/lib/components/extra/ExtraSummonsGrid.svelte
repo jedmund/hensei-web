@@ -62,14 +62,16 @@
 			gap: $unit-2x;
 			padding: $unit-2x;
 			flex-direction: column;
+			align-items: center;
+			margin: 0;
+		}
 
-			#ExtraSummons {
-				max-width: 50vw;
-				margin: 0 auto;
-			}
+		@media (max-width: 768px) {
+			margin: 0;
 		}
 
 		h3 {
+			margin: 0;
 			color: var(--subaura-orange-text);
 			display: flex;
 			align-items: center;
@@ -83,11 +85,14 @@
 			display: grid;
 			gap: $unit-3x;
 			grid-template-columns: repeat(2, minmax(0, 1fr));
+			padding: 0;
+			margin: 0;
 
 			@include breakpoint(tablet) {
 				gap: $unit-2x;
 			}
 			@include breakpoint(phone) {
+				display: flex;
 				gap: $unit;
 			}
 
