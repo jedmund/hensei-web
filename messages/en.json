@@ -1314,6 +1314,8 @@
 
 	"error_boundary_message": "An error occurred while rendering this page.",
 	"error_boundary_retry": "Try again",
+	"error_boundary_clear_hint": "If this message persists, try clearing your site data.",
+	"error_boundary_clear_button": "Clear site data",
 
 	"crew_loading_generic": "Loading...",
 	"crew_loading_invitations": "Loading invitations...",
