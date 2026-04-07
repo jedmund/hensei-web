@@ -5,12 +5,14 @@
 	import { GridType } from '$lib/types/enums'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import RepSegment from '$lib/components/ui/segmented-control/RepSegment.svelte'
+	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import CharacterRep from '$lib/components/reps/CharacterRep.svelte'
 	import WeaponRep from '$lib/components/reps/WeaponRep.svelte'
 	import SummonRep from '$lib/components/reps/SummonRep.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
 	import * as m from '$lib/paraglide/messages'
+	import { MediaQuery } from 'svelte/reactivity'
 
 	interface Props {
 		selectedTab?: GridType
@@ -20,6 +22,8 @@
 	}
 
 	let { selectedTab = GridType.Character, onTabChange, party, class: className }: Props = $props()
+
+	const isMobile = new MediaQuery('(max-width: 768px)')
 
 	// Derived values to ensure reactivity propagates through snippet boundaries
 	// When party updates from TanStack Query cache, these will trigger re-renders
@@ -40,31 +44,49 @@
 </script>
 
 <nav class={className}>
-	<SegmentedControl bind:value onValueChange={handleValueChange} gap={true} grow={true}>
-		<RepSegment
-			value={GridType.Character}
-			label={m.party_segmented_control_characters()}
-			labelIcon={jobIcon}
-			selected={value === GridType.Character}
-		>
-			<CharacterRep {party} {characters} {unlimited} />
-		</RepSegment>
+	<SegmentedControl
+		bind:value
+		onValueChange={handleValueChange}
+		gap={true}
+		grow={true}
+		class={isMobile.current ? 'mobile-padded' : ''}
+	>
+		{#if isMobile.current}
+			<Segment value={GridType.Character}>
+				{m.party_segmented_control_characters()}
+			</Segment>
+			<Segment value={GridType.Weapon}>
+				{m.party_segmented_control_weapons()}
+			</Segment>
+			<Segment value={GridType.Summon}>
+				{m.party_segmented_control_summons()}
+			</Segment>
+		{:else}
+			<RepSegment
+				value={GridType.Character}
+				label={m.party_segmented_control_characters()}
+				labelIcon={jobIcon}
+				selected={value === GridType.Character}
+			>
+				<CharacterRep {party} {characters} {unlimited} />
+			</RepSegment>
 
-		<RepSegment
-			value={GridType.Weapon}
-			label={m.party_segmented_control_weapons()}
-			selected={value === GridType.Weapon}
-		>
-			<WeaponRep {weapons} />
-		</RepSegment>
+			<RepSegment
+				value={GridType.Weapon}
+				label={m.party_segmented_control_weapons()}
+				selected={value === GridType.Weapon}
+			>
+				<WeaponRep {weapons} />
+			</RepSegment>
 
-		<RepSegment
-			value={GridType.Summon}
-			label={m.party_segmented_control_summons()}
-			selected={value === GridType.Summon}
-		>
-			<SummonRep {summons} />
-		</RepSegment>
+			<RepSegment
+				value={GridType.Summon}
+				label={m.party_segmented_control_summons()}
+				selected={value === GridType.Summon}
+			>
+				<SummonRep {summons} />
+			</RepSegment>
+		{/if}
 	</SegmentedControl>
 </nav>
 
@@ -73,5 +95,9 @@
 
 	nav {
 		width: 100%;
+
+		:global(.mobile-padded) {
+			padding: $unit-half;
+		}
 	}
 </style>

@@ -174,6 +174,10 @@
 		color: var(--text-primary);
 		line-height: 1.3;
 		align-self: center;
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
 	}
 
 	.expand-icon {
