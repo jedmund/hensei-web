@@ -58,25 +58,6 @@
 	{:else}
 		<a class="browse-link" href={localizeHref('/teams/explore')}>{m.error_gallery()}</a>
 	{/if}
-
-	<p class="clear-hint">{m.error_boundary_clear_hint()}</p>
-	<button
-		class="clear-button"
-		onclick={() => {
-			try {
-				localStorage.clear()
-				document.cookie.split(';').forEach((c) => {
-					const name = c.trim().split('=')[0]
-					if (name) document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`
-				})
-			} catch {
-				// Best effort
-			}
-			window.location.reload()
-		}}
-	>
-		{m.error_boundary_clear_button()}
-	</button>
 </div>
 
 <style lang="scss">
@@ -166,34 +147,6 @@
 			box-shadow:
 				0 0 0 1px rgba(0, 0, 0, 0.1),
 				0 0 4px rgba(0, 0, 0, 0.12);
-		}
-	}
-
-	.clear-hint {
-		color: var(--text-tertiary);
-		font-size: typography.$font-small;
-		margin: spacing.$unit-3x 0 0;
-	}
-
-	.clear-button {
-		all: unset;
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		cursor: pointer;
-		padding: spacing.$unit calc(spacing.$unit * 2);
-		border-radius: 6px;
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-		font-family: inherit;
-		margin-top: spacing.$unit;
-		background: transparent;
-		color: var(--text-secondary);
-		border: 1px solid var(--button-bg);
-
-		&:hover {
-			background: var(--button-bg);
-			color: var(--text-primary);
 		}
 	}
 </style>
