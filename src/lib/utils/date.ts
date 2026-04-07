@@ -59,6 +59,9 @@ export function formatRelativeTime(
 	cutoffDays: number = 7
 ): string {
 	const date = new Date(dateString)
+	if (isNaN(date.getTime())) {
+		return dateString
+	}
 	const now = Date.now()
 	const diffMs = date.getTime() - now
 	const absDiffMs = Math.abs(diffMs)
