@@ -2,6 +2,8 @@
 	import type { Snippet } from 'svelte'
 	import * as m from '$lib/paraglide/messages'
 	import Navigation from '$lib/components/Navigation.svelte'
+	import MobileNavigation from '$lib/components/MobileNavigation.svelte'
+	import { MediaQuery } from 'svelte/reactivity'
 	import Sidebar from '$lib/components/ui/Sidebar.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { Tooltip } from 'bits-ui'
@@ -53,6 +55,9 @@
 			event.preventDefault()
 		}
 	}
+
+	// Mobile detection
+	const isMobile = new MediaQuery('(max-width: 768px)')
 
 	// Bahamut mode bar affects layout positioning
 	const isBahamut = $derived(data?.currentUser?.bahamut === true)
@@ -166,11 +171,19 @@
 		<div class="main-pane" style:--bahamut-offset={isBahamut ? '16px' : '0px'}>
 			<div class="nav-blur-background" class:scrolled={isScrolled}></div>
 			<div class="main-navigation">
-				<Navigation
-					isAuthenticated={data?.isAuthenticated}
-					account={data?.account}
-					currentUser={data?.currentUser}
-				/>
+				{#if isMobile.current}
+					<MobileNavigation
+						isAuthenticated={data?.isAuthenticated}
+						account={data?.account}
+						currentUser={data?.currentUser}
+					/>
+				{:else}
+					<Navigation
+						isAuthenticated={data?.isAuthenticated}
+						account={data?.account}
+						currentUser={data?.currentUser}
+					/>
+				{/if}
 			</div>
 			<main class="main-content" bind:this={mainContent} onscroll={handleScroll}>
 				<svelte:boundary
@@ -371,6 +384,7 @@
 		.app-container {
 			.main-pane {
 				.main-content {
+					padding-top: calc(60px + var(--bahamut-offset, 0px));
 					// Improve mobile scrolling performance
 					-webkit-overflow-scrolling: touch;
 				}

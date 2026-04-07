@@ -143,6 +143,17 @@
 		grid-template-columns: repeat(5, minmax(0, 1fr));
 		gap: $unit-3x;
 
+		@media (max-width: 768px) {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: $unit-3x $unit;
+
+			& > li {
+				width: calc((100% - $unit * 2) / 3);
+			}
+		}
+
 		&.unlimited {
 			// Use flexbox to center the partial second row
 			display: flex;
@@ -152,6 +163,14 @@
 			// 6 units must fit in space of 5
 			& > li {
 				width: 116px;
+			}
+
+			@media (max-width: 768px) {
+				gap: $unit-3x $unit;
+
+				& > li {
+					width: calc((100% - $unit * 2) / 3);
+				}
 			}
 		}
 

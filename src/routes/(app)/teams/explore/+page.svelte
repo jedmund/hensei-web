@@ -24,6 +24,9 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { serializeExploreFilters } from '$lib/utils/exploreFilterParams'
 	import { localizedName } from '$lib/utils/locale'
+	import { MediaQuery } from 'svelte/reactivity'
+
+	const isMobile = new MediaQuery('(max-width: 768px)')
 
 	const { data } = $props() as { data: PageData }
 
@@ -239,56 +242,74 @@
 
 <section class="explore">
 	<div class="filters-row">
-		<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} {allRaids} />
-		<div class="filters-actions">
-			{#if isAuthenticated}
-				<CollectionFilterButton
-					active={collectionFilterActive}
-					element={currentUser?.element as
-						| 'wind'
-						| 'fire'
-						| 'water'
-						| 'earth'
-						| 'dark'
-						| 'light'
-						| undefined}
-					onclick={() => (collectionFilterActive = !collectionFilterActive)}
-					aria-label={m.explore_collection_aria()}
-					aria-pressed={collectionFilterActive}
-				>
-					{m.explore_collection_only()}
-				</CollectionFilterButton>
-			{/if}
-			<Tooltip content={advancedFilterTooltip} disabled={advancedFilterCount === 0}>
-				{#if advancedFilterCount > 0}
-					<Button
-						variant="ghost"
-						size="small"
-						shape="pill"
-						onclick={() => (settingsOpen = true)}
-						aria-label={m.explore_settings_aria()}
+		<ExploreFilters
+			bind:filters={filterItems}
+			onFiltersChange={handleFiltersChange}
+			{allRaids}
+			bind:collectionFilterActive
+			onCollectionFilterChange={(active) => (collectionFilterActive = active)}
+			onAdvancedFiltersOpen={() => (settingsOpen = true)}
+			element={currentUser?.element as
+				| 'wind'
+				| 'fire'
+				| 'water'
+				| 'earth'
+				| 'dark'
+				| 'light'
+				| undefined}
+			{isAuthenticated}
+		/>
+		{#if !isMobile.current}
+			<div class="filters-actions">
+				{#if isAuthenticated}
+					<CollectionFilterButton
+						active={collectionFilterActive}
+						element={currentUser?.element as
+							| 'wind'
+							| 'fire'
+							| 'water'
+							| 'earth'
+							| 'dark'
+							| 'light'
+							| undefined}
+						onclick={() => (collectionFilterActive = !collectionFilterActive)}
+						aria-label={m.explore_collection_aria()}
+						aria-pressed={collectionFilterActive}
 					>
-						{#snippet leftAccessory()}
-							<Icon name="gear" size={14} />
-						{/snippet}
-						{advancedFilterCount}
-					</Button>
-				{:else}
-					<Button
-						variant="ghost"
-						size="small"
-						shape="pill"
-						iconOnly
-						onclick={() => (settingsOpen = true)}
-						aria-label={m.explore_settings_aria()}
-					>
-						{#snippet leftAccessory()}
-							<Icon name="gear" size={14} />
-						{/snippet}
-					</Button>
+						{m.explore_collection_only()}
+					</CollectionFilterButton>
 				{/if}
-			</Tooltip>
-		</div>
+				<Tooltip content={advancedFilterTooltip} disabled={advancedFilterCount === 0}>
+					{#if advancedFilterCount > 0}
+						<Button
+							variant="ghost"
+							size="small"
+							shape="pill"
+							onclick={() => (settingsOpen = true)}
+							aria-label={m.explore_settings_aria()}
+						>
+							{#snippet leftAccessory()}
+								<Icon name="gear" size={14} />
+							{/snippet}
+							{advancedFilterCount}
+						</Button>
+					{:else}
+						<Button
+							variant="ghost"
+							size="small"
+							shape="pill"
+							iconOnly
+							onclick={() => (settingsOpen = true)}
+							aria-label={m.explore_settings_aria()}
+						>
+							{#snippet leftAccessory()}
+								<Icon name="gear" size={14} />
+							{/snippet}
+						</Button>
+					{/if}
+				</Tooltip>
+			</div>
+		{/if}
 	</div>
 
 	<ExploreSettingsModal
@@ -368,6 +389,10 @@
 
 	.explore {
 		padding: $unit-2x 0;
+
+		@media (max-width: 768px) {
+			padding: 0 $unit $unit-2x;
+		}
 	}
 
 	.filters-row {
@@ -375,7 +400,7 @@
 		align-items: flex-start;
 		justify-content: space-between;
 		gap: $unit;
-		margin-bottom: $unit-2x;
+		margin-bottom: $unit;
 	}
 
 	.filters-actions {

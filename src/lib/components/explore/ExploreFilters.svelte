@@ -7,6 +7,10 @@
 	import ExploreFilterPill from './ExploreFilterPill.svelte'
 	import FilterDropdown from './FilterDropdown.svelte'
 	import Icon from '$lib/components/Icon.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import Input from '$lib/components/ui/Input.svelte'
+	import BottomSheet from '$lib/components/ui/BottomSheet.svelte'
+	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'
@@ -17,6 +21,9 @@
 		getBoostOptions,
 		getSideOptions
 	} from '$lib/utils/exploreFilterOptions'
+	import { MediaQuery } from 'svelte/reactivity'
+
+	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
 		filters: FilterItem[]
@@ -25,6 +32,15 @@
 		/** Use when placed on a card/white surface — gives the pill a visible background */
 		contained?: boolean
 		allRaids?: RaidFull[]
+		/** Mobile-only: collection filter state */
+		collectionFilterActive?: boolean
+		onCollectionFilterChange?: (active: boolean) => void
+		/** Mobile-only: open the advanced filters modal */
+		onAdvancedFiltersOpen?: () => void
+		/** User's element for theming */
+		element?: ElementName
+		/** Whether the user is authenticated (controls collection filter visibility) */
+		isAuthenticated?: boolean
 	}
 
 	let {
@@ -32,8 +48,15 @@
 		onFiltersChange,
 		excludedKinds = [],
 		contained = false,
-		allRaids = []
+		allRaids = [],
+		collectionFilterActive = $bindable(false),
+		onCollectionFilterChange,
+		onAdvancedFiltersOpen,
+		element,
+		isAuthenticated = false
 	}: Props = $props()
+
+	const isMobile = new MediaQuery('(max-width: 768px)')
 
 	let inputValue = $state('')
 	let dropdownOpen = $state(false)
@@ -388,6 +411,9 @@
 		}
 	}
 
+	// Mobile gear sheet state
+	let gearSheetOpen = $state(false)
+
 	function handleWindowClick(e: MouseEvent) {
 		const target = e.target as Node
 		if (!target.isConnected) return
@@ -399,64 +425,164 @@
 
 <svelte:window onclick={handleWindowClick} />
 
-<div class="explore-filters" class:contained bind:this={containerEl}>
-	<div class="filter-row">
-		{#if dropdownOpen}
-			<div class="filter-input-wrapper">
-				<input
-					bind:this={inputEl}
+<div
+	class="explore-filters"
+	class:contained
+	class:mobile={isMobile.current}
+	bind:this={containerEl}
+>
+	{#if isMobile.current}
+		<!-- Mobile layout: full-width input + gear button -->
+		<div class="mobile-filter-row">
+			<div class="mobile-input-wrapper">
+				<Input
+					leftIcon="search"
+					placeholder={m.explore_filter_placeholder_mobile()}
 					bind:value={inputValue}
-					type="text"
-					class="filter-input"
-					placeholder={m.explore_filter_placeholder()}
+					fullWidth
+					size="medium"
+					onfocus={openDropdown}
 					onkeydown={handleKeydown}
 					oncompositionstart={handleCompositionStart}
 					oncompositionend={handleCompositionEnd}
 				/>
 			</div>
-		{:else}
-			<button type="button" class="filter-trigger" onclick={openDropdown}>
-				<span>{m.explore_filter()}</span>
-				<Icon name="plus" size={9} />
-			</button>
+			<Button
+				icon="gear"
+				iconOnly
+				shape="circle"
+				variant="subtle"
+				onclick={() => (gearSheetOpen = true)}
+				aria-label={m.explore_settings_aria()}
+			/>
+		</div>
 
-			{#if filters.length === 0}
-				<span class="tagline">{m.explore_filter_tagline()}</span>
-			{/if}
+		{#if filters.length > 0}
+			<div class="mobile-pills-row">
+				{#each filters as filter, i (i)}
+					{@const pillElement =
+						filter.kind === 'entity'
+							? filter.element
+							: filter.kind === 'element'
+								? filter.value
+								: undefined}
+					<ExploreFilterPill
+						label={filter.label}
+						kind={filter.kind}
+						mode={filter.kind === 'entity' ? filter.mode : undefined}
+						element={pillElement}
+						pinned={filter.pinned}
+						onRemove={() => removeFilter(i)}
+						onToggleMode={() => toggleEntityMode(i)}
+					/>
+				{/each}
+			</div>
 		{/if}
 
-		{#each filters as filter, i (i)}
-			{@const pillElement =
-				filter.kind === 'entity'
-					? filter.element
-					: filter.kind === 'element'
-						? filter.value
-						: undefined}
-			<ExploreFilterPill
-				label={filter.label}
-				kind={filter.kind}
-				mode={filter.kind === 'entity' ? filter.mode : undefined}
-				element={pillElement}
-				pinned={filter.pinned}
-				onRemove={() => removeFilter(i)}
-				onToggleMode={() => toggleEntityMode(i)}
+		{#if dropdownOpen}
+			<FilterDropdown
+				{inputValue}
+				{isSearching}
+				{placeholderSuggestions}
+				{displayResults}
+				{selectedIndex}
+				onSelectedIndexChange={(i) => (selectedIndex = i)}
+				onSelectOption={selectOption}
+				onSuggestionClick={(s) => {
+					if (s.option) selectOption(s.option)
+				}}
 			/>
-		{/each}
-	</div>
+		{/if}
 
-	{#if dropdownOpen}
-		<FilterDropdown
-			{inputValue}
-			{isSearching}
-			{placeholderSuggestions}
-			{displayResults}
-			{selectedIndex}
-			onSelectedIndexChange={(i) => (selectedIndex = i)}
-			onSelectOption={selectOption}
-			onSuggestionClick={(s) => {
-				if (s.option) selectOption(s.option)
-			}}
-		/>
+		<BottomSheet bind:open={gearSheetOpen}>
+			<div class="gear-sheet">
+				{#if isAuthenticated}
+					<div class="gear-sheet-row">
+						<span class="gear-sheet-label">{m.explore_collection_only()}</span>
+						<Switch
+							checked={collectionFilterActive}
+							onCheckedChange={(checked) => {
+								collectionFilterActive = checked
+								onCollectionFilterChange?.(checked)
+							}}
+							size="small"
+							{element}
+						/>
+					</div>
+					<hr class="gear-sheet-separator" />
+				{/if}
+				<button
+					class="gear-sheet-row gear-sheet-button"
+					onclick={() => {
+						gearSheetOpen = false
+						onAdvancedFiltersOpen?.()
+					}}
+				>
+					<span class="gear-sheet-label">{m.explore_advanced_filters()}</span>
+					<Icon name="chevron-right" size={16} />
+				</button>
+			</div>
+		</BottomSheet>
+	{:else}
+		<!-- Desktop layout: existing filter trigger + inline pills -->
+		<div class="filter-row">
+			{#if dropdownOpen}
+				<div class="filter-input-wrapper">
+					<input
+						bind:this={inputEl}
+						bind:value={inputValue}
+						type="text"
+						class="filter-input"
+						placeholder={m.explore_filter_placeholder()}
+						onkeydown={handleKeydown}
+						oncompositionstart={handleCompositionStart}
+						oncompositionend={handleCompositionEnd}
+					/>
+				</div>
+			{:else}
+				<button type="button" class="filter-trigger" onclick={openDropdown}>
+					<span>{m.explore_filter()}</span>
+					<Icon name="plus" size={9} />
+				</button>
+
+				{#if filters.length === 0}
+					<span class="tagline">{m.explore_filter_tagline()}</span>
+				{/if}
+			{/if}
+
+			{#each filters as filter, i (i)}
+				{@const pillElement =
+					filter.kind === 'entity'
+						? filter.element
+						: filter.kind === 'element'
+							? filter.value
+							: undefined}
+				<ExploreFilterPill
+					label={filter.label}
+					kind={filter.kind}
+					mode={filter.kind === 'entity' ? filter.mode : undefined}
+					element={pillElement}
+					pinned={filter.pinned}
+					onRemove={() => removeFilter(i)}
+					onToggleMode={() => toggleEntityMode(i)}
+				/>
+			{/each}
+		</div>
+
+		{#if dropdownOpen}
+			<FilterDropdown
+				{inputValue}
+				{isSearching}
+				{placeholderSuggestions}
+				{displayResults}
+				{selectedIndex}
+				onSelectedIndexChange={(i) => (selectedIndex = i)}
+				onSelectOption={selectOption}
+				onSuggestionClick={(s) => {
+					if (s.option) selectOption(s.option)
+				}}
+			/>
+		{/if}
 	{/if}
 </div>
 
@@ -474,6 +600,10 @@
 
 	.explore-filters {
 		position: relative;
+
+		&.mobile {
+			width: 100%;
+		}
 
 		// Aura gradient colors — bright pastels for light, muted for dark
 		--aura-1: #f9c4d2;
@@ -648,5 +778,68 @@
 		&::placeholder {
 			color: var(--text-tertiary);
 		}
+	}
+
+	// Mobile layout styles
+	.mobile-filter-row {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+	}
+
+	.mobile-input-wrapper {
+		flex: 1;
+		min-width: 0;
+
+		:global(.fieldset .input) {
+			min-height: calc($unit * 5.5);
+		}
+	}
+
+	.mobile-pills-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: $unit-half;
+		margin-top: $unit;
+	}
+
+	// Gear sheet styles
+	.gear-sheet {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.gear-sheet-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: calc($unit * 1.5) $unit;
+	}
+
+	.gear-sheet-button {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-family: var(--font-family);
+		border-radius: $card-corner;
+		color: var(--text-primary);
+
+		&:hover {
+			background: var(--menu-bg-item-hover);
+		}
+	}
+
+	.gear-sheet-label {
+		font-size: $font-regular;
+		font-weight: $medium;
+		color: var(--text-primary);
+	}
+
+	.gear-sheet-separator {
+		border: none;
+		height: 2px;
+		background-color: var(--separator-bg);
+		border-radius: 1px;
+		margin: $unit-half 0;
 	}
 </style>

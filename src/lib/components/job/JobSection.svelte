@@ -193,10 +193,10 @@
 		width: 100%;
 		box-sizing: border-box;
 
-		@media (max-width: 800px) {
+		@media (max-width: 768px) {
 			flex-direction: column;
-			align-items: center;
-			gap: spacing.$unit-2x;
+			gap: spacing.$unit;
+			padding: spacing.$unit;
 		}
 	}
 
@@ -217,10 +217,9 @@
 		align-items: center;
 		justify-content: center;
 
-		@media (max-width: 800px) {
+		@media (max-width: 768px) {
 			width: 100%;
 			height: auto;
-			aspect-ratio: 16/9;
 		}
 
 		.job-portrait {

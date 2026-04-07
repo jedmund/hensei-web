@@ -464,6 +464,7 @@
 	"explore_end": "すべての編成を表示しました！",
 
 	"explore_filter_placeholder": "入力して検索...",
+	"explore_filter_placeholder_mobile": "チームを絞り込む...",
 	"explore_filter": "フィルター",
 	"explore_filter_tagline": "で最適な編成を見つけよう",
 	"explore_searching": "検索中...",
@@ -495,6 +496,7 @@
 	"explore_settings_original_desc": "リミックスを除外",
 	"explore_settings_apply": "フィルターを保存する",
 	"explore_settings_reset": "リセット",
+	"explore_advanced_filters": "詳細フィルター",
 
 	"modal_cancel": "キャンセル",
 
@@ -1263,6 +1265,7 @@
 
 	"artifact_equipped": "装備中",
 	"extra_summons_subaura": "サブ加護召喚石",
+	"summon_friend_label": "サポート",
 
 	"placeholder_select_proficiency": "得意武器を選択",
 	"placeholder_select_element": "属性を選択",
