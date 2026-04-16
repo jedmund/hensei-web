@@ -138,6 +138,22 @@ describe('initFromServer', () => {
 
 		expect(authStore.isAuthenticated).toBe(false)
 	})
+
+	// Regression: a refresh that wrote a malformed account cookie used to
+	// bubble up here as an empty-string expiresAt, which is falsy and silently
+	// cleared the session even though the server-side cookie still had a valid
+	// token. That mismatch produced the visible refresh-loop symptoms.
+	it('clears auth when expiresAt is an empty string', () => {
+		const user = { id: 'u1', username: 'grug' }
+		authStore.setAuth('tok', user, 3600)
+
+		authStore.initFromServer('tok', user, '')
+
+		expect(authStore.accessToken).toBeNull()
+		expect(authStore.user).toBeNull()
+		expect(authStore.expiresAt).toBeNull()
+		expect(authStore.isAuthenticated).toBe(false)
+	})
 })
 
 // ============================================================================

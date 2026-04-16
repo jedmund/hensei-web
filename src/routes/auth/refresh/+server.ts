@@ -59,7 +59,8 @@ export const POST: RequestHandler = async ({ cookies, fetch }) => {
 			userId: data.user.id,
 			username: data.user.username,
 			token: data.access_token,
-			role: data.user.role
+			role: data.user.role,
+			expires_at: accessTokenExpiresAt.toISOString()
 		},
 		{
 			secure,
@@ -67,7 +68,7 @@ export const POST: RequestHandler = async ({ cookies, fetch }) => {
 		}
 	)
 
-	setRefreshCookie(cookies, data.refresh_token, { secure })
+	setRefreshCookie(cookies, data.refresh_token, { secure, expires: accessTokenExpiresAt })
 
 	return json({
 		success: true,
