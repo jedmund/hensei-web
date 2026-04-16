@@ -1,8 +1,8 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import { json } from '@sveltejs/kit'
+import { clearAuthCookies } from '$lib/auth/cookies'
 
 export const POST: RequestHandler = async ({ cookies }) => {
-	cookies.delete('account', { path: '/' })
-	cookies.delete('user', { path: '/' })
+	clearAuthCookies(cookies)
 	return json({ success: true })
 }
