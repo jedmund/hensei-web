@@ -12,12 +12,14 @@
 		element: string
 		username: string
 		displayName: string
+		description: string
 		granblueId: string
 		wikiProfile: string
 		youtube: string
 		gender: number
 		onPictureChange: (value: string) => void
 		onDisplayNameChange: (value: string) => void
+		onDescriptionChange: (value: string) => void
 		onGranblueIdChange: (value: string) => void
 		onWikiProfileChange: (value: string) => void
 		onYoutubeChange: (value: string) => void
@@ -29,12 +31,14 @@
 		element,
 		username,
 		displayName,
+		description,
 		granblueId,
 		wikiProfile,
 		youtube,
 		gender,
 		onPictureChange,
 		onDisplayNameChange,
+		onDescriptionChange,
 		onGranblueIdChange,
 		onWikiProfileChange,
 		onYoutubeChange,
@@ -63,6 +67,7 @@
 	// Local state derived from props — overrides via bind:value are temporary
 	let localPicture = $derived(picture)
 	let localDisplayName = $derived(displayName)
+	let localDescription = $derived(description)
 	let localGranblueId = $derived(granblueId)
 	let localWikiProfile = $derived(wikiProfile)
 	let localYoutube = $derived(youtube)
@@ -74,6 +79,9 @@
 	})
 	$effect(() => {
 		if (localDisplayName !== displayName) onDisplayNameChange(localDisplayName)
+	})
+	$effect(() => {
+		if (localDescription !== description) onDescriptionChange(localDescription)
 	})
 	$effect(() => {
 		if (localGranblueId !== granblueId) onGranblueIdChange(localGranblueId)
@@ -109,6 +117,17 @@
 				<Input
 					bind:value={localDisplayName}
 					placeholder={displayName ? m.settings_display_name_placeholder() : username}
+					contained
+				/>
+			{/snippet}
+		</SettingsRow>
+
+		<SettingsRow title={m.settings_description()} subtitle={m.settings_description_subtitle()}>
+			{#snippet control()}
+				<Input
+					bind:value={localDescription}
+					placeholder={m.settings_description_placeholder()}
+					maxLength={140}
 					contained
 				/>
 			{/snippet}
