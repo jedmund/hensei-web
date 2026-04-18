@@ -3,6 +3,7 @@ import { sequence } from '@sveltejs/kit/hooks'
 import { paraglideMiddleware } from '$lib/paraglide/server'
 import { dev } from '$app/environment'
 import { getAccountFromCookies, getUserFromCookies } from '$lib/auth/cookies'
+import { performRefresh } from '$lib/auth/refresh'
 import { PUBLIC_SIERO_API_URL } from '$env/static/public'
 import { generateFontFaceCSS, getFontPreloadLinks } from '$lib/utils/fonts'
 
@@ -29,8 +30,27 @@ const handleBotFilter: Handle = async ({ event, resolve }) => {
 }
 
 export const handleSession: Handle = async ({ event, resolve }) => {
-	const account = getAccountFromCookies(event.cookies)
-	const user = getUserFromCookies(event.cookies)
+	let account = getAccountFromCookies(event.cookies)
+	let user = getUserFromCookies(event.cookies)
+
+	// Heal cookies from the pre-#835 refresh bug: the old /auth/refresh
+	// wrote an account cookie without expires_at, which made the client
+	// bail during hydration and enter a visible refresh loop. Users who
+	// hit that path before the fix shipped are still stuck. Detect the
+	// broken shape and exchange the refresh cookie for a fresh pair so
+	// they recover silently.
+	if (account?.token && !account.expires_at) {
+		const healed = await performRefresh(event.cookies, event.fetch)
+		if (healed.ok) {
+			account = getAccountFromCookies(event.cookies)
+		} else if (healed.reason === 'refresh_unauthorized') {
+			// performRefresh already cleared cookies; drop local state too.
+			account = null
+			user = null
+		}
+		// On refresh_failed (transient backend error), leave the broken
+		// cookie in place and try again on the next request.
+	}
 
 	event.locals.session = {
 		account,
