@@ -18,10 +18,14 @@ vi.mock('$lib/utils/fonts', () => ({
 
 const mockGetAccountFromCookies = vi.fn()
 const mockGetUserFromCookies = vi.fn()
+const mockGetRefreshFromCookies = vi.fn()
+const mockClearAuthCookies = vi.fn()
 
 vi.mock('$lib/auth/cookies', () => ({
 	getAccountFromCookies: (...args: unknown[]) => mockGetAccountFromCookies(...args),
-	getUserFromCookies: (...args: unknown[]) => mockGetUserFromCookies(...args)
+	getUserFromCookies: (...args: unknown[]) => mockGetUserFromCookies(...args),
+	getRefreshFromCookies: (...args: unknown[]) => mockGetRefreshFromCookies(...args),
+	clearAuthCookies: (...args: unknown[]) => mockClearAuthCookies(...args)
 }))
 
 const mockPerformRefresh = vi.fn()
@@ -78,6 +82,7 @@ const healedAccount: AccountCookie = {
 beforeEach(() => {
 	vi.clearAllMocks()
 	mockGetUserFromCookies.mockReturnValue(null)
+	mockGetRefreshFromCookies.mockReturnValue('valid-refresh-cookie')
 })
 
 describe('handleSession', () => {
@@ -164,6 +169,7 @@ describe('handleSession', () => {
 
 	it('does nothing special for an unauthenticated visitor', async () => {
 		mockGetAccountFromCookies.mockReturnValue(null)
+		mockGetRefreshFromCookies.mockReturnValue(null)
 
 		const event = createEvent()
 		const resolve = vi.fn().mockResolvedValue(new Response('ok'))
@@ -171,9 +177,48 @@ describe('handleSession', () => {
 		await handleSession({ event, resolve } as Parameters<typeof handleSession>[0])
 
 		expect(mockPerformRefresh).not.toHaveBeenCalled()
+		expect(mockClearAuthCookies).not.toHaveBeenCalled()
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		expect((event.locals as any).session.isAuthenticated).toBe(false)
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		expect((event.locals as any).auth).toBeNull()
+	})
+
+	it('clears stale account cookie when the refresh cookie is gone', async () => {
+		// Post-#835 shape: account cookie looks fine (has expires_at) but the
+		// browser has already purged the refresh cookie because it was pinned
+		// to the same expiry. Without this branch, SSR keeps rehydrating the
+		// client into a /auth/refresh → 401 → redirect → SSR loop.
+		mockGetAccountFromCookies.mockReturnValue(healthyAccount)
+		mockGetRefreshFromCookies.mockReturnValue(null)
+
+		const event = createEvent()
+		const resolve = vi.fn().mockResolvedValue(new Response('ok'))
+
+		await handleSession({ event, resolve } as Parameters<typeof handleSession>[0])
+
+		expect(mockClearAuthCookies).toHaveBeenCalledTimes(1)
+		expect(mockPerformRefresh).not.toHaveBeenCalled()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const session = (event.locals as any).session
+		expect(session.account).toBeNull()
+		expect(session.user).toBeNull()
+		expect(session.isAuthenticated).toBe(false)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		expect((event.locals as any).auth).toBeNull()
+	})
+
+	it('does not clear cookies when both account and refresh are present', async () => {
+		mockGetAccountFromCookies.mockReturnValue(healthyAccount)
+		mockGetRefreshFromCookies.mockReturnValue('refresh-token-still-alive')
+
+		const event = createEvent()
+		const resolve = vi.fn().mockResolvedValue(new Response('ok'))
+
+		await handleSession({ event, resolve } as Parameters<typeof handleSession>[0])
+
+		expect(mockClearAuthCookies).not.toHaveBeenCalled()
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		expect((event.locals as any).session.account).toBe(healthyAccount)
 	})
 })

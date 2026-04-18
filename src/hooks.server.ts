@@ -2,7 +2,12 @@ import type { Handle, HandleFetch } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 import { paraglideMiddleware } from '$lib/paraglide/server'
 import { dev } from '$app/environment'
-import { getAccountFromCookies, getUserFromCookies } from '$lib/auth/cookies'
+import {
+	clearAuthCookies,
+	getAccountFromCookies,
+	getRefreshFromCookies,
+	getUserFromCookies
+} from '$lib/auth/cookies'
 import { performRefresh } from '$lib/auth/refresh'
 import { PUBLIC_SIERO_API_URL } from '$env/static/public'
 import { generateFontFaceCSS, getFontPreloadLinks } from '$lib/utils/fonts'
@@ -50,6 +55,19 @@ export const handleSession: Handle = async ({ event, resolve }) => {
 		}
 		// On refresh_failed (transient backend error), leave the broken
 		// cookie in place and try again on the next request.
+	}
+
+	// Unjam users whose refresh cookie has been purged by the browser
+	// (e.g. because #835 tied its lifetime to the access token). They
+	// still have a valid-looking account cookie, so the client hydrates
+	// as authenticated, calls /auth/refresh, gets 401, redirects to
+	// /auth/login, and SSR rehydrates the stale cookie — a tight loop.
+	// Drop the cookies here so the user lands in a clean unauthenticated
+	// state and can log in once to recover.
+	if (account?.token && !getRefreshFromCookies(event.cookies)) {
+		clearAuthCookies(event.cookies)
+		account = null
+		user = null
 	}
 
 	event.locals.session = {
