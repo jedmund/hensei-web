@@ -70,7 +70,7 @@ describe('performRefresh', () => {
 		expect(mockSetAccountCookie).not.toHaveBeenCalled()
 	})
 
-	it('writes account + refresh cookies with matching expiry on success', async () => {
+	it('writes account cookie with access-token expiry and refresh cookie decoupled from it', async () => {
 		const fetchFn = vi.fn().mockResolvedValue({
 			ok: true,
 			status: 200,
@@ -97,11 +97,11 @@ describe('performRefresh', () => {
 		})
 		expect(accountOpts).toMatchObject({ secure: true, expires: expectedExpiry })
 
-		expect(mockSetRefreshCookie).toHaveBeenCalledWith(
-			expect.anything(),
-			'new-refresh',
-			expect.objectContaining({ secure: true, expires: expectedExpiry })
-		)
+		// The refresh cookie must NOT carry the access-token expiry, otherwise
+		// the browser drops it at the exact moment we need it to refresh.
+		const [, refreshToken, refreshOpts] = mockSetRefreshCookie.mock.calls[0]!
+		expect(refreshToken).toBe('new-refresh')
+		expect(refreshOpts).toEqual({ secure: true })
 	})
 
 	it('sends grant_type=refresh_token to the OAuth token endpoint', async () => {

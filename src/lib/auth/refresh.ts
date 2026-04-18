@@ -80,7 +80,7 @@ export async function performRefresh(
 		{ secure, expires: accessTokenExpiresAt }
 	)
 
-	setRefreshCookie(cookies, data.refresh_token, { secure, expires: accessTokenExpiresAt })
+	setRefreshCookie(cookies, data.refresh_token, { secure })
 
 	return { ok: true, data, accessTokenExpiresAt }
 }

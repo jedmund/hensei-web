@@ -37,17 +37,17 @@ export function setUserCookie(
 	})
 }
 
-export function setRefreshCookie(
-	cookies: Cookies,
-	data: string,
-	{ secure, expires }: { secure: boolean; expires?: Date }
-) {
+export function setRefreshCookie(cookies: Cookies, data: string, { secure }: { secure: boolean }) {
+	// Refresh cookie lifetime must outlive the access token so we can
+	// exchange it for a new pair once the access token expires. Tying
+	// its expiry to the access token (as we did in #835) left users
+	// with no refresh cookie at the 30-day boundary → refresh loop.
 	cookies.set(REFRESH_COOKIE, data, {
 		path: '/',
 		httpOnly: true,
 		sameSite: 'lax',
 		secure,
-		...(expires ? { expires } : {})
+		maxAge: SIXTY_DAYS
 	})
 }
 

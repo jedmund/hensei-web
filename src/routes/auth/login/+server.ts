@@ -37,7 +37,7 @@ export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
 
 		setAccountCookie(cookies, account, { secure, expires: accessTokenExpiresAt })
 		setUserCookie(cookies, user, { secure, expires: accessTokenExpiresAt })
-		setRefreshCookie(cookies, refresh, { secure, expires: accessTokenExpiresAt })
+		setRefreshCookie(cookies, refresh, { secure })
 
 		// Sync locale cookie so Paraglide renders the correct language
 		if (user.language && user.language !== 'en') {
