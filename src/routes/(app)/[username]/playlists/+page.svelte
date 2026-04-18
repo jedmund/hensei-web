@@ -76,6 +76,7 @@
 	<ProfileHeader
 		username={data.user.username}
 		displayName={data.user?.displayName}
+		description={data.user?.description}
 		userId={data.user?.id}
 		avatarPicture={data.user?.avatar?.picture}
 		element={data.user?.avatar?.element}

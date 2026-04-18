@@ -186,6 +186,7 @@
 	<ProfileHeader
 		username={username ?? ''}
 		displayName={data.user?.displayName}
+		description={data.user?.description}
 		avatarPicture={data.user?.avatar?.picture}
 		element={data.user?.avatar?.element}
 		granblueId={data.user?.granblueId}
@@ -195,7 +196,6 @@
 		crewGamertag={data.user?.crewGamertag}
 		crewName={data.user?.crewName}
 		userId={data.user?.id}
-		title={username ?? ''}
 		activeTab="collection"
 		isOwner={data.isOwner}
 		{viewerCrewRole}
