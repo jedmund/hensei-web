@@ -1,75 +1,18 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import { json } from '@sveltejs/kit'
-import { dev } from '$app/environment'
-import { PUBLIC_SIERO_API_URL } from '$env/static/public'
-import {
-	getRefreshFromCookies,
-	setAccountCookie,
-	setRefreshCookie,
-	clearAuthCookies
-} from '$lib/auth/cookies'
-
-const OAUTH_BASE = `${PUBLIC_SIERO_API_URL}/oauth`
-
-type OAuthRefreshResponse = {
-	access_token: string
-	token_type: 'Bearer'
-	expires_in: number
-	refresh_token: string
-	created_at: number
-	user: {
-		id: string
-		username: string
-		role: number
-	}
-}
+import { performRefresh } from '$lib/auth/refresh'
 
 export const POST: RequestHandler = async ({ cookies, fetch }) => {
-	const refresh = getRefreshFromCookies(cookies)
-	if (!refresh) {
-		return json({ error: 'no_refresh_token' }, { status: 401 })
-	}
+	const result = await performRefresh(cookies, fetch)
 
-	const res = await fetch(`${OAUTH_BASE}/token`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({
-			refresh_token: refresh,
-			grant_type: 'refresh_token'
-		})
-	})
-
-	if (res.status === 401) {
-		clearAuthCookies(cookies)
-		return json({ error: 'refresh_unauthorized' }, { status: 401 })
-	}
-
-	if (!res.ok) {
-		return json({ error: 'refresh_failed' }, { status: 502 })
-	}
-
-	const data = (await res.json()) as OAuthRefreshResponse
-	// Use secure cookies in production (dev flag handles this correctly behind proxies)
-	const secure = !dev
-	const accessTokenExpiresAt = new Date((data.created_at + data.expires_in) * 1000)
-
-	setAccountCookie(
-		cookies,
-		{
-			userId: data.user.id,
-			username: data.user.username,
-			token: data.access_token,
-			role: data.user.role,
-			expires_at: accessTokenExpiresAt.toISOString()
-		},
-		{
-			secure,
-			expires: accessTokenExpiresAt
+	if (!result.ok) {
+		if (result.reason === 'refresh_failed') {
+			return json({ error: 'refresh_failed' }, { status: 502 })
 		}
-	)
+		return json({ error: result.reason }, { status: 401 })
+	}
 
-	setRefreshCookie(cookies, data.refresh_token, { secure, expires: accessTokenExpiresAt })
-
+	const { data, accessTokenExpiresAt } = result
 	return json({
 		success: true,
 		username: data.user.username,
