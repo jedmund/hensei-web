@@ -93,7 +93,7 @@ describe('POST /auth/refresh', () => {
 		expect(opts).toMatchObject({ secure: true, expires: expectedExpiry })
 	})
 
-	it('writes refresh cookie with explicit expires (not a session cookie)', async () => {
+	it('writes refresh cookie without an expires tied to the access token', async () => {
 		const fetchFn = vi.fn().mockResolvedValue({
 			ok: true,
 			status: 200,
@@ -102,14 +102,12 @@ describe('POST /auth/refresh', () => {
 
 		await callRefresh(fetchFn as unknown as typeof fetch)
 
-		const expectedExpiry = new Date(
-			(validRefreshResponse.created_at + validRefreshResponse.expires_in) * 1000
-		)
-		expect(mockSetRefreshCookie).toHaveBeenCalledWith(
-			expect.anything(),
-			'new-refresh',
-			expect.objectContaining({ secure: true, expires: expectedExpiry })
-		)
+		// The refresh cookie's lifetime is managed inside setRefreshCookie via
+		// maxAge, not via expires tied to the access token — otherwise the
+		// browser drops the refresh cookie at the moment it's needed.
+		const [, refreshToken, opts] = mockSetRefreshCookie.mock.calls[0]!
+		expect(refreshToken).toBe('new-refresh')
+		expect(opts).toEqual({ secure: true })
 	})
 
 	it('returns 502 on upstream non-401 failure without clearing cookies', async () => {

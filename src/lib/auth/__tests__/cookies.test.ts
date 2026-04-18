@@ -117,25 +117,26 @@ describe('setRefreshCookie', () => {
 		)
 	})
 
-	it('includes expires when provided', () => {
-		const cookies = createMockCookies()
-		const expires = new Date('2025-06-01')
-
-		setRefreshCookie(cookies as unknown as import('@sveltejs/kit').Cookies, 'ref-tok', {
-			secure: true,
-			expires
-		})
-
-		expect(cookies.setCalls[0]!.opts.expires).toEqual(expires)
-	})
-
-	it('omits expires when not provided', () => {
+	it('uses a 60-day maxAge so the refresh cookie outlives the access token', () => {
 		const cookies = createMockCookies()
 
 		setRefreshCookie(cookies as unknown as import('@sveltejs/kit').Cookies, 'ref-tok', {
 			secure: true
 		})
 
+		expect(cookies.setCalls[0]!.opts.maxAge).toBe(60 * 60 * 24 * 60)
+	})
+
+	it('does not tie the refresh cookie lifetime to an access token expires Date', () => {
+		const cookies = createMockCookies()
+
+		setRefreshCookie(cookies as unknown as import('@sveltejs/kit').Cookies, 'ref-tok', {
+			secure: true
+		})
+
+		// Regression for the 30-day loop: if we re-introduce an expires tied to
+		// accessTokenExpiresAt, the refresh cookie gets dropped the moment the
+		// access token dies and the user can't refresh.
 		expect(cookies.setCalls[0]!.opts).not.toHaveProperty('expires')
 	})
 })
