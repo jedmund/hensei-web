@@ -913,7 +913,7 @@
 	"profile_tab_favorites": "Favorites",
 	"profile_tab_playlists": "Playlists",
 	"profile_tab_collection": "Collection",
-	"profile_create_team_collection": "Create team with {name}'s collection",
+	"profile_create_with_collection": "Create with collection",
 	"profile_visibility_all": "All teams",
 
 	"crew_roster_search": "Search characters, weapons, summons…",

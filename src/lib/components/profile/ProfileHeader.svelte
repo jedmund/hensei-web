@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation'
 	import { DropdownMenu } from 'bits-ui'
 	import Icon from '$lib/components/Icon.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import DropdownItem from '$lib/components/ui/dropdown/DropdownItem.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
@@ -24,6 +25,8 @@
 		isOwner?: boolean
 		/** User's selected element for theming */
 		element?: string
+		/** Short bio/description shown above the tabs */
+		description?: string
 		/** User's Granblue Fantasy ID for profile link */
 		granblueId?: string
 		/** User's gbf.wiki username */
@@ -55,6 +58,7 @@
 		activeTab,
 		isOwner = false,
 		element = 'null',
+		description,
 		granblueId,
 		wikiProfile,
 		youtube,
@@ -82,9 +86,13 @@
 		youtube ? `https://www.youtube.com/@${youtube.replace(/^@/, '')}` : null
 	)
 
+	const hasLinks = $derived(!!(gbfProfileUrl || wikiProfileUrl || youtubeUrl))
+	const hasBody = $derived(!!description || hasLinks)
+
 	const avatarSrc = $derived(getAvatarSrc(avatarPicture))
 	const avatarSrcSet = $derived(getAvatarSrcSet(avatarPicture))
 	const displayTitle = $derived(title || displayName || username)
+	const showUsernameTooltip = $derived(displayTitle !== username)
 
 	// Viewer is a crew officer
 	const isCrewOfficer = $derived(viewerCrewRole === 'captain' || viewerCrewRole === 'vice_captain')
@@ -109,8 +117,8 @@
 	// Can create team from collection if: not owner, logged in, collection is public, and user exists
 	const canCreateTeam = $derived(!isOwner && isAuthenticated && collectionPrivacy === 1 && userId)
 
-	// Show menu if there are any actions available
-	const showMenu = $derived(canInvite || showAlreadyInCrew || canCreateTeam)
+	// Show dropdown if there are any crew-related actions available
+	const showMenu = $derived(canInvite || showAlreadyInCrew)
 
 	// Typed element for SegmentedControl
 	const typedElement = $derived(
@@ -150,7 +158,13 @@
 			{/if}
 			<div class="name-section">
 				<div class="name-row">
-					<h1>{displayTitle}</h1>
+					{#if showUsernameTooltip}
+						<Tooltip content={`@${username}`}>
+							<h1>{displayTitle}</h1>
+						</Tooltip>
+					{:else}
+						<h1>{displayTitle}</h1>
+					{/if}
 					{#if showCrewGamertag && crewGamertag}
 						<Tooltip content={crewName ?? crewGamertag}>
 							<span class="gamertag-pill" data-element={element}>{crewGamertag}</span>
@@ -161,39 +175,16 @@
 		</div>
 
 		<div class="header-actions">
-			<!-- eslint-disable svelte/no-navigation-without-resolve -- external URLs -->
-			{#if gbfProfileUrl}
-				<Tooltip content={m.profile_ingame()}>
-					<a
-						href={gbfProfileUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="gbf-profile-link"
-					>
-						<Icon name="sword" size={24} />
-					</a>
-				</Tooltip>
+			{#if canCreateTeam}
+				<Button
+					variant="primary"
+					size="small"
+					element={typedElement}
+					href={localizeHref(`/teams/new?collectionSource=${username}`)}
+				>
+					{m.profile_create_with_collection()}
+				</Button>
 			{/if}
-			{#if wikiProfileUrl}
-				<Tooltip content={m.profile_wiki()}>
-					<a
-						href={wikiProfileUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="gbf-profile-link"
-					>
-						<Icon name="link" size={24} />
-					</a>
-				</Tooltip>
-			{/if}
-			{#if youtubeUrl}
-				<Tooltip content={m.profile_youtube()}>
-					<a href={youtubeUrl} target="_blank" rel="noopener noreferrer" class="gbf-profile-link">
-						<Icon name="youtube" size={24} />
-					</a>
-				</Tooltip>
-			{/if}
-			<!-- eslint-enable svelte/no-navigation-without-resolve -->
 
 			{#if showMenu}
 				<DropdownMenu.Root>
@@ -218,20 +209,44 @@
 									</button>
 								</DropdownItem>
 							{/if}
-							{#if canCreateTeam}
-								<DropdownItem>
-									<a href={localizeHref(`/teams/new?collectionSource=${username}`)}>
-										<Icon name="users" size={14} />
-										<span>{m.profile_create_team_collection({ name: username })}</span>
-									</a>
-								</DropdownItem>
-							{/if}
 						</DropdownMenu.Content>
 					</DropdownMenu.Portal>
 				</DropdownMenu.Root>
 			{/if}
 		</div>
 	</div>
+
+	{#if hasBody}
+		<div class="profile-body">
+			{#if description}
+				<p class="description">{description}</p>
+			{/if}
+			{#if hasLinks}
+				<!-- eslint-disable svelte/no-navigation-without-resolve -- external URLs -->
+				<div class="link-pills">
+					{#if gbfProfileUrl}
+						<a href={gbfProfileUrl} target="_blank" rel="noopener noreferrer" class="link-pill">
+							<Icon name="sword" size={14} />
+							<span>{m.profile_ingame()}</span>
+						</a>
+					{/if}
+					{#if wikiProfileUrl}
+						<a href={wikiProfileUrl} target="_blank" rel="noopener noreferrer" class="link-pill">
+							<Icon name="link" size={14} />
+							<span>{m.profile_wiki()}</span>
+						</a>
+					{/if}
+					{#if youtubeUrl}
+						<a href={youtubeUrl} target="_blank" rel="noopener noreferrer" class="link-pill">
+							<Icon name="youtube" size={14} />
+							<span>{m.profile_youtube()}</span>
+						</a>
+					{/if}
+				</div>
+				<!-- eslint-enable svelte/no-navigation-without-resolve -->
+			{/if}
+		</div>
+	{/if}
 
 	<nav class="tabs" aria-label="Profile sections">
 		<SegmentedControl
@@ -353,26 +368,43 @@
 		}
 	}
 
-	.gbf-profile-link {
+	.profile-body {
 		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 40px;
-		height: 40px;
-		border-radius: $card-corner;
+		flex-direction: column;
+		gap: $unit;
+		padding: 0 $unit-3x $unit-2x;
+	}
+
+	.description {
+		margin: 0;
+		font-size: $font-regular;
 		color: var(--text-secondary);
+		overflow-wrap: anywhere;
+	}
+
+	.link-pills {
+		display: flex;
+		flex-wrap: wrap;
+		gap: $unit-half;
+	}
+
+	.link-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: $unit-half;
+		padding: $unit-half $unit;
+		border-radius: $full-corner;
+		background: var(--button-contained-bg, $grey-90);
+		color: var(--text-secondary);
+		font-size: $font-small;
+		font-weight: $medium;
 		text-decoration: none;
-		cursor: pointer;
 		transition:
 			background-color 0.15s ease,
 			color 0.15s ease;
 
-		:global(svg) {
-			stroke-width: 2px;
-		}
-
 		&:hover {
-			background: var(--button-contained-bg-hover, $grey-90);
+			background: var(--button-contained-bg-hover, $grey-80);
 			color: var(--text-primary);
 		}
 
