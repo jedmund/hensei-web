@@ -3,6 +3,7 @@ import { userAdapter } from '../adapters/user.adapter'
 export interface UserUpdateParams {
 	username?: string | undefined
 	displayName?: string | undefined
+	description?: string | undefined
 	picture?: string | undefined
 	element?: string | undefined
 	gender?: number | undefined
@@ -24,6 +25,7 @@ export interface UserResponse {
 	id: string
 	username: string
 	displayName?: string
+	description?: string
 	avatar: {
 		picture: string
 		element: string
@@ -53,6 +55,7 @@ export const users = {
 		const updates: {
 			username?: string | undefined
 			display_name?: string | undefined
+			description?: string | undefined
 			picture?: string | undefined
 			element?: string | undefined
 			gender?: number | undefined
@@ -72,6 +75,7 @@ export const users = {
 
 		if (params.username !== undefined) updates.username = params.username
 		if (params.displayName !== undefined) updates.display_name = params.displayName
+		if (params.description !== undefined) updates.description = params.description
 		if (params.picture !== undefined) updates.picture = params.picture
 		if (params.element !== undefined) updates.element = params.element
 		if (params.gender !== undefined) updates.gender = params.gender
@@ -95,6 +99,7 @@ export const users = {
 			id: result.id,
 			username: result.username,
 			displayName: result.displayName ?? undefined,
+			description: result.description ?? undefined,
 			avatar: result.avatar,
 			gender: result.gender,
 			language: result.language,

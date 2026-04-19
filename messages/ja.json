@@ -913,7 +913,7 @@
 	"profile_tab_favorites": "お気に入り",
 	"profile_tab_playlists": "プレイリスト",
 	"profile_tab_collection": "コレクション",
-	"profile_create_team_collection": "{name}のコレクションでチームを作成",
+	"profile_create_with_collection": "このコレクションでチームを作成",
 	"profile_visibility_all": "すべての編成",
 
 	"crew_roster_search": "キャラ、武器、召喚石を検索",
@@ -1028,6 +1028,9 @@
 	"settings_display_name": "表示名",
 	"settings_display_name_subtitle": "プロフィールに表示される名前",
 	"settings_display_name_placeholder": "表示名を入力",
+	"settings_description": "自己紹介",
+	"settings_description_subtitle": "プロフィールに表示される短い紹介文（140文字まで）",
+	"settings_description_placeholder": "自己紹介を入力",
 	"settings_email": "メールアドレス",
 	"settings_email_placeholder": "メールアドレスを入力",
 	"settings_email_verified": "認証済み",

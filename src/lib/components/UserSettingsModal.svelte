@@ -52,6 +52,7 @@
 	// Form state - Profile section (initialized with defaults, populated from API)
 	let picture = $state('')
 	let element = $state<ElementType>('wind')
+	let description = $state('')
 	let granblueId = $state('')
 	let wikiProfile = $state('')
 	let youtube = $state('')
@@ -112,6 +113,7 @@
 			// Profile
 			picture = data.avatar?.picture ?? ''
 			element = (data.avatar?.element as ElementType) ?? 'wind'
+			description = data.description ?? ''
 			granblueId = data.granblueId ?? ''
 			wikiProfile = data.wikiProfile ?? ''
 			youtube = data.youtube ?? ''
@@ -190,6 +192,7 @@
 			const updateData: Parameters<typeof users.update>[1] = {
 				username: formUsername,
 				displayName: formDisplayName || undefined,
+				description: description || undefined,
 				picture,
 				element,
 				gender,
@@ -247,6 +250,7 @@
 						? {
 								...oldData,
 								avatar: { ...(oldData.avatar as Record<string, unknown>), picture, element },
+								description,
 								granblueId,
 								wikiProfile,
 								youtube,
@@ -339,12 +343,14 @@
 						{element}
 						{username}
 						displayName={formDisplayName}
+						{description}
 						{granblueId}
 						{wikiProfile}
 						{youtube}
 						{gender}
 						onPictureChange={(v) => (picture = v)}
 						onDisplayNameChange={(v) => (formDisplayName = v)}
+						onDescriptionChange={(v) => (description = v)}
 						onGranblueIdChange={(v) => (granblueId = v)}
 						onWikiProfileChange={(v) => (wikiProfile = v)}
 						onYoutubeChange={(v) => (youtube = v)}

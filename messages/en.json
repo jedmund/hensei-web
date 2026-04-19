@@ -913,7 +913,7 @@
 	"profile_tab_favorites": "Favorites",
 	"profile_tab_playlists": "Playlists",
 	"profile_tab_collection": "Collection",
-	"profile_create_team_collection": "Create team with {name}'s collection",
+	"profile_create_with_collection": "Create with collection",
 	"profile_visibility_all": "All teams",
 
 	"crew_roster_search": "Search characters, weapons, summons…",
@@ -1028,6 +1028,9 @@
 	"settings_display_name": "Display name",
 	"settings_display_name_subtitle": "The name that appears on your profile",
 	"settings_display_name_placeholder": "Enter display name",
+	"settings_description": "About you",
+	"settings_description_subtitle": "A short blurb that shows on your profile (up to 140 characters)",
+	"settings_description_placeholder": "Say something about yourself",
 	"settings_email": "Email",
 	"settings_email_placeholder": "Enter email",
 	"settings_email_verified": "Verified",

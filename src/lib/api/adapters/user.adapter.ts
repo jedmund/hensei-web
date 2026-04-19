@@ -12,6 +12,7 @@ interface ApiUserResponse {
 	id: string
 	username: string
 	displayName?: string | null // transformed from display_name
+	description?: string | null
 	language: string
 	private: boolean
 	gender: number
@@ -45,6 +46,7 @@ export interface UserInfo {
 	id: string
 	username: string
 	displayName?: string | null
+	description?: string
 	language: string
 	private: boolean
 	gender: number
@@ -99,6 +101,7 @@ function transformUserResponse(apiUser: ApiUserResponse): UserInfo {
 		id: apiUser.id,
 		username: apiUser.username,
 		displayName: apiUser.displayName ?? undefined,
+		description: apiUser.description ?? undefined,
 		language: apiUser.language,
 		private: apiUser.private,
 		gender: apiUser.gender,
