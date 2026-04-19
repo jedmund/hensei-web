@@ -18,6 +18,7 @@
 	import { useUpdateGridSummon } from '$lib/api/mutations/grid.mutations'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import SearchContent from '$lib/components/sidebar/SearchContent.svelte'
+	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import Select from '$lib/components/ui/Select.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -161,14 +162,18 @@
 				onAddItems: (items: AddItemResult[]) => {
 					const addItem = items[0]
 					if (!addItem) return
-					createSubstitution.mutate({
-						partyId: partyId!,
-						partyShortcode: partyShortcode!,
-						gridType: getGridType(type),
-						gridId: String(item.id),
-						itemId: addItem.id
-					})
-					sidebar.pop()
+					createSubstitution.mutate(
+						{
+							partyId: partyId!,
+							partyShortcode: partyShortcode!,
+							gridType: getGridType(type),
+							gridId: String(item.id),
+							itemId: addItem.id
+						},
+						{
+							onSuccess: () => sidebar.pop()
+						}
+					)
 				}
 			},
 			onback: () => sidebar.pop()
@@ -219,9 +224,7 @@
 </script>
 
 <div class="substitutions-sidebar">
-	<!-- Role section -->
-	<section class="section">
-		<h3 class="section-title">{m.substitution_role()}</h3>
+	<DetailsSection title={m.substitution_role()}>
 		{#if editable}
 			<Select
 				options={roleOptions}
@@ -238,14 +241,12 @@
 		{:else}
 			<p class="empty">{m.substitution_role_none()}</p>
 		{/if}
-	</section>
+	</DetailsSection>
 
-	<!-- Note section -->
-	<section class="section">
-		<h3 class="section-title">{m.substitution_note()}</h3>
+	<DetailsSection title={m.substitution_note()}>
 		{#if editable}
 			<textarea
-				class="note-input"
+				class="note-input contained"
 				bind:value={noteText}
 				onblur={handleNoteBlur}
 				placeholder={m.substitution_note_placeholder()}
@@ -256,11 +257,9 @@
 		{:else}
 			<p class="empty">{m.substitution_note_placeholder()}</p>
 		{/if}
-	</section>
+	</DetailsSection>
 
-	<!-- Substitutes list -->
-	<section class="section">
-		<h3 class="section-title">{m.substitution_substitutes()}</h3>
+	<DetailsSection title={m.substitution_substitutes()}>
 		{#if substitutions.length === 0}
 			<p class="empty">{m.substitution_empty()}</p>
 		{:else}
@@ -306,7 +305,7 @@
 				{m.substitution_add()}
 			</Button>
 		{/if}
-	</section>
+	</DetailsSection>
 </div>
 
 <style lang="scss">
@@ -318,21 +317,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-2x + spacing.$unit-half;
-	}
-
-	.section {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit;
-	}
-
-	.section-title {
-		font-size: 11px;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
-		color: var(--text-secondary);
-		margin: 0;
 	}
 
 	.role-name {
@@ -349,16 +333,18 @@
 	}
 
 	.note-input {
+		width: 100%;
 		font-family: inherit;
 		font-size: typography.$font-small;
 		line-height: 1.5;
 		padding: spacing.$unit;
-		border: 1px solid var(--border-primary);
+		border: 2px solid transparent;
 		border-radius: spacing.$unit;
-		background: var(--input-bg, transparent);
+		background: transparent;
 		color: var(--text-primary);
 		resize: vertical;
 		min-height: 60px;
+		box-sizing: border-box;
 
 		&::placeholder {
 			color: var(--text-tertiary);
@@ -367,6 +353,14 @@
 		&:focus {
 			outline: none;
 			border-color: var(--border-focus, var(--accent));
+		}
+
+		&.contained {
+			background-color: var(--input-bound-bg);
+
+			&:hover:not(:disabled) {
+				background-color: var(--input-bound-bg-hover);
+			}
 		}
 	}
 
