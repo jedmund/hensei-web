@@ -19,7 +19,10 @@
 	import SelectableCollectionRow from '$lib/components/collection/SelectableCollectionRow.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import { collectionFilters } from '$lib/stores/collectionFilters.svelte'
+	import {
+		collectionFilters,
+		COLLECTION_FILTER_DEFAULTS
+	} from '$lib/stores/collectionFilters.svelte'
 	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
 	import { viewMode } from '$lib/stores/viewMode.svelte'
 	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
@@ -37,15 +40,18 @@
 		data.user?.avatar?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 	)
 
-	// Filter state (initialized from localStorage)
-	let elementFilters = $state<number[]>(collectionFilters.summons.element)
-	let rarityFilters = $state<number[]>(collectionFilters.summons.rarity)
-	let seriesFilters = $state<(number | string)[]>(collectionFilters.summons.series ?? [])
+	// Filter state: owners load saved filters from localStorage; non-owners start from defaults
+	const initialFilters = data.isOwner
+		? collectionFilters.summons
+		: COLLECTION_FILTER_DEFAULTS.summons
+	let elementFilters = $state<number[]>(initialFilters.element)
+	let rarityFilters = $state<number[]>(initialFilters.rarity)
+	let seriesFilters = $state<(number | string)[]>(initialFilters.series ?? [])
 	let searchQuery = $state('')
 	let unowned = $state(false)
 
-	// Sort state (initialized from localStorage)
-	let sortBy = $state<CollectionSortKey>(collectionFilters.summons.sort)
+	// Sort state
+	let sortBy = $state<CollectionSortKey>(initialFilters.sort)
 
 	// Sentinel for infinite scroll
 	let sentinelEl = $state<HTMLElement>()
@@ -109,7 +115,7 @@
 		seriesFilters = filters.series
 	}
 
-	// Persist all filter and sort state to localStorage
+	// Persist filter and sort state — owners only (don't pollute viewer's saved state on others' pages)
 	$effect(() => {
 		const filters = {
 			element: elementFilters,
@@ -117,6 +123,7 @@
 			series: seriesFilters,
 			sort: sortBy
 		}
+		if (!data.isOwner) return
 		untrack(() => collectionFilters.setSummons(filters))
 	})
 
@@ -177,7 +184,7 @@
 			bind:sortBy
 			bind:unowned
 			onFiltersChange={handleFiltersChange}
-			showUnowned={data.isOwner}
+			showUnowned
 			element={userElement}
 		/>
 	</div>
