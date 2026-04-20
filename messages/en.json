@@ -961,6 +961,8 @@
 	"collection_filter_missing": "Missing",
 	"collection_empty_unowned": "You have everything!",
 	"collection_empty_unowned_hint": "There are no missing items matching your filters",
+	"collection_empty_unowned_other": "Nothing is missing",
+	"collection_empty_unowned_other_hint": "No missing items match the current filters",
 
 	"favorites_loading": "Loading favorites",
 	"favorites_load_error": "Failed to load favorites: {error}",

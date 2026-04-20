@@ -205,8 +205,14 @@
 			<div class="empty-state">
 				{#if unowned}
 					<Icon name="check-circle" size={48} />
-					<h3>{m.collection_empty_unowned()}</h3>
-					<p>{m.collection_empty_unowned_hint()}</p>
+					<h3>
+						{data.isOwner ? m.collection_empty_unowned() : m.collection_empty_unowned_other()}
+					</h3>
+					<p>
+						{data.isOwner
+							? m.collection_empty_unowned_hint()
+							: m.collection_empty_unowned_other_hint()}
+					</p>
 				{:else if data.isOwner}
 					<Icon name="sword" size={48} />
 					<h3>{m.collection_empty_weapons()}</h3>
