@@ -14,7 +14,10 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import { collectionFilters } from '$lib/stores/collectionFilters.svelte'
+	import {
+		collectionFilters,
+		COLLECTION_FILTER_DEFAULTS
+	} from '$lib/stores/collectionFilters.svelte'
 	import { viewMode } from '$lib/stores/viewMode.svelte'
 	import type { CollectionSortKey } from '$lib/types/api/collection'
 	import Select from '$lib/components/ui/Select.svelte'
@@ -33,19 +36,22 @@
 		data.user?.avatar?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 	)
 
-	// Filter state (initialized from localStorage)
-	let elementFilters = $state<number[]>(collectionFilters.artifacts.element)
-	let proficiencyFilters = $state<number[]>(collectionFilters.artifacts.proficiency)
-	let rarityFilter = $state<'all' | 'standard' | 'quirk'>(collectionFilters.artifacts.rarity)
+	// Filter state: owners load saved filters from localStorage; non-owners start from defaults
+	const initialFilters = data.isOwner
+		? collectionFilters.artifacts
+		: COLLECTION_FILTER_DEFAULTS.artifacts
+	let elementFilters = $state<number[]>(initialFilters.element)
+	let proficiencyFilters = $state<number[]>(initialFilters.proficiency)
+	let rarityFilter = $state<'all' | 'standard' | 'quirk'>(initialFilters.rarity)
 
-	// Skill filter state - array of modifier IDs per slot (initialized from localStorage)
-	let slot1Filters = $state<number[]>(collectionFilters.artifacts.slot1)
-	let slot2Filters = $state<number[]>(collectionFilters.artifacts.slot2)
-	let slot3Filters = $state<number[]>(collectionFilters.artifacts.slot3)
-	let slot4Filters = $state<number[]>(collectionFilters.artifacts.slot4)
+	// Skill filter state - array of modifier IDs per slot
+	let slot1Filters = $state<number[]>(initialFilters.slot1)
+	let slot2Filters = $state<number[]>(initialFilters.slot2)
+	let slot3Filters = $state<number[]>(initialFilters.slot3)
+	let slot4Filters = $state<number[]>(initialFilters.slot4)
 
 	// Sort state
-	let sortBy = $state<CollectionSortKey>(collectionFilters.artifacts.sort)
+	let sortBy = $state<CollectionSortKey>(initialFilters.sort)
 
 	const sortOptions: { value: CollectionSortKey; label: string }[] = [
 		{ value: 'score_desc', label: 'Score ↓' },
@@ -125,7 +131,7 @@
 		slot4Filters = []
 	}
 
-	// Persist all filter state to localStorage
+	// Persist filter state — owners only (don't pollute viewer's saved state on others' pages)
 	$effect(() => {
 		const filters = {
 			element: elementFilters,
@@ -137,6 +143,7 @@
 			slot4: slot4Filters,
 			sort: sortBy
 		}
+		if (!data.isOwner) return
 		untrack(() => collectionFilters.setArtifacts(filters))
 	})
 
