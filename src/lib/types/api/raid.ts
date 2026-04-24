@@ -19,6 +19,7 @@ export interface RaidFull {
 	element: number
 	playerCount: number
 	extra: boolean
+	trackable?: boolean
 	enemyId?: number
 	summonId?: number
 	questId?: number
@@ -56,6 +57,7 @@ export interface CreateRaidInput {
 	summon_id?: number
 	quest_id?: number
 	extra?: boolean
+	trackable?: boolean
 }
 
 export interface UpdateRaidInput {
@@ -70,6 +72,7 @@ export interface UpdateRaidInput {
 	summon_id?: number
 	quest_id?: number
 	extra?: boolean
+	trackable?: boolean
 }
 
 // Input types for creating/updating raid groups

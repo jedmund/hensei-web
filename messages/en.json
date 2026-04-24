@@ -1705,5 +1705,11 @@
 	"context_view_teams_summon": "View teams with this summon",
 	"context_add_to_teams_view": "Add to teams view",
 	"context_view_in_database": "View in Database",
-	"sidebar_no_parties_entity": "No teams found with this item"
+	"sidebar_no_parties_entity": "No teams found with this item",
+
+	"crew_raid_elements": "Raid Elements",
+	"crew_raid_elements_edit": "Edit",
+	"crew_raid_elements_save": "Save",
+	"crew_raid_elements_cancel": "Cancel",
+	"crew_raid_elements_empty": "No raid elements set"
 }

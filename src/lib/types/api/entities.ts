@@ -246,6 +246,7 @@ export interface Raid {
 	playerCount?: number
 	enemyId?: number
 	summonId?: number
+	trackable?: boolean
 	questId?: number
 	group?: RaidGroup
 }
