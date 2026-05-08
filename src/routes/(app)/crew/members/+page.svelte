@@ -13,6 +13,7 @@
 	import InvitationRow from '$lib/components/crew/InvitationRow.svelte'
 	import EditMemberDialog from '$lib/components/crew/EditMemberDialog.svelte'
 	import ConfirmMemberActionDialog from '$lib/components/crew/ConfirmMemberActionDialog.svelte'
+	import TransferCaptainDialog from '$lib/components/crew/TransferCaptainDialog.svelte'
 	import ScoutUserModal from '$lib/components/crew/ScoutUserModal.svelte'
 	import BulkPhantomModal from '$lib/components/crew/BulkPhantomModal.svelte'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
@@ -99,6 +100,13 @@
 	function handleConfirmClose() {
 		confirmMember = null
 		confirmAction = null
+	}
+
+	// Captain transfer dialog state
+	let captainTransferMember = $state<CrewMembership | null>(null)
+
+	function handleCaptainTransferClose() {
+		captainTransferMember = null
 	}
 
 	// Edit dialog state
@@ -281,6 +289,7 @@
 								onPromote={() => openConfirmDialog(member, 'promote')}
 								onDemote={() => openConfirmDialog(member, 'demote')}
 								onRemove={() => openConfirmDialog(member, 'remove')}
+								onMakeCaptain={() => (captainTransferMember = member)}
 							/>
 						{/each}
 					</ul>
@@ -319,6 +328,9 @@
 	action={confirmAction}
 	onClose={handleConfirmClose}
 />
+
+<!-- Transfer Captain Dialog -->
+<TransferCaptainDialog member={captainTransferMember} onClose={handleCaptainTransferClose} />
 
 <!-- Edit Member/Phantom Dialog -->
 <EditMemberDialog
