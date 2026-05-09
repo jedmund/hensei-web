@@ -241,18 +241,18 @@
 					</div>
 					<ul class="member-list">
 						{#each activeInvitations as invitation (invitation.id)}
-							<InvitationRow {invitation} />
+							<InvitationRow {invitation} crewId={crewStore.crew?.id ?? ''} />
 						{/each}
 					</ul>
 				{/if}
 
 				{#if expiredInvitations.length > 0}
 					<div class="section-divider">
-						<span>{m.crew_expired_invitations({ count: String(expiredInvitations.length) })}</span>
+						<span>{m.crew_expired()} <span class="count">{expiredInvitations.length}</span></span>
 					</div>
 					<ul class="member-list">
 						{#each expiredInvitations as invitation (invitation.id)}
-							<InvitationRow {invitation} />
+							<InvitationRow {invitation} crewId={crewStore.crew?.id ?? ''} />
 						{/each}
 					</ul>
 				{/if}
