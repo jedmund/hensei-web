@@ -10,6 +10,7 @@
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
+	import HtmlMessage from '$lib/components/ui/HtmlMessage.svelte'
 	import type { CrewMembership } from '$lib/types/api/crew'
 	import * as m from '$lib/paraglide/messages'
 
@@ -49,7 +50,9 @@
 				crewId: crewStore.crew.id,
 				userId: member.user.id
 			})
-			toast.success(m.crew_transfer_captain_success())
+			toast.success(HtmlMessage, {
+				componentProps: { html: m.crew_transfer_captain_success({ name: memberName, crewName }) }
+			})
 			typedName = ''
 			onClose()
 			goto(localizeHref('/crew'))

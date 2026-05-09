@@ -719,10 +719,10 @@
 	"crew_confirm_remove": "Are you sure you want to remove {name} from the crew?",
 	"crew_confirm_promote": "Promote {name} to Vice Captain?",
 	"crew_confirm_demote": "Demote {name} from Vice Captain to Member?",
-	"crew_make_captain": "Make Captain",
-	"crew_transfer_captain_body": "Are you sure you want to assign <b>{name}</b> as captain of <b>{crewName}</b>? This cannot be undone.",
+	"crew_make_captain": "Designate as Captain",
+	"crew_transfer_captain_body": "Are you sure you want to designate <b>{name}</b> as Captain of <b>{crewName}</b>? This cannot be undone.",
 	"crew_transfer_captain_hint": "Type the crew name to confirm.",
-	"crew_transfer_captain_success": "Captain role transferred.",
+	"crew_transfer_captain_success": "<b>{name}</b> is now the Captain of <b>{crewName}</b>",
 	"crew_transfer_captain_failed": "Failed to transfer captain role.",
 
 	"crew_edit_player": "Edit player",
