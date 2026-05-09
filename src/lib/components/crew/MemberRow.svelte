@@ -63,7 +63,7 @@
 	const canMakeCaptain = $derived(
 		crewStore.isCaptain &&
 			!member.retired &&
-			member.role !== 'captain' &&
+			member.role === 'vice_captain' &&
 			member.id !== crewStore.membership?.id
 	)
 </script>
@@ -115,20 +115,25 @@
 						{m.crew_view_profile()}
 					</DropdownMenuBase.Item>
 				{/if}
+
+				{#if (crewStore.isOfficer && onEdit) || canShowOfficerActions}
+					<DropdownMenuBase.Separator class="dropdown-menu-separator" />
+				{/if}
+
 				{#if crewStore.isOfficer && onEdit}
 					<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onEdit}>
-						{m.crew_edit()}
+						{m.crew_edit_member()}
 					</DropdownMenuBase.Item>
 				{/if}
 				{#if canShowOfficerActions}
-					{#if canPromote && onPromote}
-						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onPromote}>
-							{m.crew_promote()}
-						</DropdownMenuBase.Item>
-					{/if}
 					{#if canDemote && onDemote}
 						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onDemote}>
 							{m.crew_demote()}
+						</DropdownMenuBase.Item>
+					{/if}
+					{#if canPromote && onPromote}
+						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onPromote}>
+							{m.crew_promote()}
 						</DropdownMenuBase.Item>
 					{/if}
 					{#if canMakeCaptain && onMakeCaptain}
@@ -137,6 +142,7 @@
 						</DropdownMenuBase.Item>
 					{/if}
 					{#if onRemove}
+						<DropdownMenuBase.Separator class="dropdown-menu-separator" />
 						<DropdownMenuBase.Item class="dropdown-menu-item danger" onclick={onRemove}>
 							{m.crew_remove()}
 						</DropdownMenuBase.Item>
