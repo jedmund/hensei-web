@@ -695,6 +695,7 @@
 	"crew_scout": "スカウト",
 	"crew_add_phantoms": "幻団員を追加",
 	"crew_pending_invitations": "スカウト中（{count}件）",
+	"crew_expired_invitations": "期限切れのスカウト（{count}件）",
 	"crew_invited_by": "{username}がスカウト",
 	"crew_expired": "期限切れ",
 	"crew_expires": "有効期限：{date}",

@@ -141,10 +141,14 @@
 		return new Date(expiresAt) < new Date()
 	}
 
-	// Get pending (non-expired) invitations count
-	const pendingInvitationsCount = $derived(
-		invitationsQuery.data?.filter((inv) => !isInvitationExpired(inv.expiresAt)).length ?? 0
+	// Split invitations into active (still pending) and expired
+	const activeInvitations = $derived(
+		invitationsQuery.data?.filter((inv) => !isInvitationExpired(inv.expiresAt)) ?? []
 	)
+	const expiredInvitations = $derived(
+		invitationsQuery.data?.filter((inv) => isInvitationExpired(inv.expiresAt)) ?? []
+	)
+	const pendingInvitationsCount = $derived(activeInvitations.length)
 
 	// Get phantoms with pending claims (assigned but not confirmed)
 	// Use phantom query when viewing pending filter since it doesn't include phantoms
@@ -231,14 +235,23 @@
 					<p>{m.crew_loading()}</p>
 				</div>
 			{:else}
-				{#if invitationsQuery.data && invitationsQuery.data.length > 0}
+				{#if activeInvitations.length > 0}
 					<div class="section-divider">
-						<span
-							>{m.crew_pending_invitations({ count: String(invitationsQuery.data.length) })}</span
-						>
+						<span>{m.crew_pending_invitations({ count: String(activeInvitations.length) })}</span>
 					</div>
 					<ul class="member-list">
-						{#each invitationsQuery.data as invitation (invitation.id)}
+						{#each activeInvitations as invitation (invitation.id)}
+							<InvitationRow {invitation} />
+						{/each}
+					</ul>
+				{/if}
+
+				{#if expiredInvitations.length > 0}
+					<div class="section-divider">
+						<span>{m.crew_expired_invitations({ count: String(expiredInvitations.length) })}</span>
+					</div>
+					<ul class="member-list">
+						{#each expiredInvitations as invitation (invitation.id)}
 							<InvitationRow {invitation} />
 						{/each}
 					</ul>

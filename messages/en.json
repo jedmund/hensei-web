@@ -695,6 +695,7 @@
 	"crew_scout": "Scout",
 	"crew_add_phantoms": "Add phantoms…",
 	"crew_pending_invitations": "Pending Invitations ({count})",
+	"crew_expired_invitations": "Expired Invitations ({count})",
 	"crew_invited_by": "Invited by {username}",
 	"crew_expired": "Expired",
 	"crew_expires": "Expires {date}",
