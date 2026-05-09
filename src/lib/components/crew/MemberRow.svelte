@@ -126,11 +126,6 @@
 					</DropdownMenuBase.Item>
 				{/if}
 				{#if canShowOfficerActions}
-					{#if canDemote && onDemote}
-						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onDemote}>
-							{m.crew_demote()}
-						</DropdownMenuBase.Item>
-					{/if}
 					{#if canPromote && onPromote}
 						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onPromote}>
 							{m.crew_promote()}
@@ -139,6 +134,11 @@
 					{#if canMakeCaptain && onMakeCaptain}
 						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onMakeCaptain}>
 							{m.crew_make_captain()}
+						</DropdownMenuBase.Item>
+					{/if}
+					{#if canDemote && onDemote}
+						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onDemote}>
+							{m.crew_demote()}
 						</DropdownMenuBase.Item>
 					{/if}
 					{#if onRemove}
