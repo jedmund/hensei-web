@@ -40,6 +40,7 @@ export interface Role {
 	nameJp?: string
 	slotType: string
 	sortOrder?: number
+	iconKey?: string | null
 }
 
 // Substitution linking a primary grid item to a substitute
