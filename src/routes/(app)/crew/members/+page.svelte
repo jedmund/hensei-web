@@ -153,6 +153,20 @@
 			filter === 'pending' ? phantomsQuery.data?.phantoms : membersQuery.data?.phantoms
 		return phantoms?.filter((p) => p.claimedBy && !p.claimConfirmed) ?? []
 	})
+
+	// Split members/phantoms by retired status. Active members are sorted by role
+	// (captain → vice captain → member) so the "All" filter reads top-down by rank.
+	const roleOrder: Record<string, number> = { captain: 0, vice_captain: 1, member: 2 }
+	const activeMembers = $derived(
+		(membersQuery.data?.members ?? [])
+			.filter((mem) => !mem.retired)
+			.toSorted((a, b) => (roleOrder[a.role] ?? 99) - (roleOrder[b.role] ?? 99))
+	)
+	const retiredMembers = $derived((membersQuery.data?.members ?? []).filter((mem) => mem.retired))
+	const activePhantoms = $derived((membersQuery.data?.phantoms ?? []).filter((p) => !p.retired))
+	const retiredPhantoms = $derived((membersQuery.data?.phantoms ?? []).filter((p) => p.retired))
+	const activeCount = $derived(activeMembers.length + activePhantoms.length)
+	const retiredCount = $derived(retiredMembers.length + retiredPhantoms.length)
 </script>
 
 <svelte:head>
@@ -269,15 +283,68 @@
 				<div class="empty-state">
 					<p>{m.crew_no_filter_players({ filter })}</p>
 				</div>
+			{:else if filter === 'all'}
+				<!-- Active section: members sorted by role, then phantoms -->
+				{#if activeCount > 0}
+					<div class="section-divider">
+						<span>{m.crew_members_label()} <span class="count">{activeCount}</span></span>
+					</div>
+					<ul class="member-list">
+						{#each activeMembers as member (member.id)}
+							<MemberRow
+								{member}
+								onEdit={() => openEditMemberDialog(member)}
+								onPromote={() => openConfirmDialog(member, 'promote')}
+								onDemote={() => openConfirmDialog(member, 'demote')}
+								onRemove={() => openConfirmDialog(member, 'remove')}
+								onMakeCaptain={() => (captainTransferMember = member)}
+							/>
+						{/each}
+						{#each activePhantoms as phantom (phantom.id)}
+							<PhantomRow
+								{phantom}
+								crewId={crewStore.crew?.id ?? ''}
+								currentUserId={crewStore.membership?.user?.id}
+								onEdit={() => openEditPhantomDialog(phantom)}
+							/>
+						{/each}
+					</ul>
+				{/if}
+
+				<!-- Retired Players section (labeled): retired members, then retired phantoms -->
+				{#if retiredCount > 0}
+					<div class="section-divider">
+						<span>{m.crew_retired_players_label()} <span class="count">{retiredCount}</span></span>
+					</div>
+					<ul class="member-list">
+						{#each retiredMembers as member (member.id)}
+							<MemberRow
+								{member}
+								onEdit={() => openEditMemberDialog(member)}
+								onPromote={() => openConfirmDialog(member, 'promote')}
+								onDemote={() => openConfirmDialog(member, 'demote')}
+								onRemove={() => openConfirmDialog(member, 'remove')}
+								onMakeCaptain={() => (captainTransferMember = member)}
+							/>
+						{/each}
+						{#each retiredPhantoms as phantom (phantom.id)}
+							<PhantomRow
+								{phantom}
+								crewId={crewStore.crew?.id ?? ''}
+								currentUserId={crewStore.membership?.user?.id}
+								onEdit={() => openEditPhantomDialog(phantom)}
+							/>
+						{/each}
+					</ul>
+				{/if}
 			{:else}
-				<!-- Regular members -->
+				<!-- Active or retired filter: keep existing members + phantoms delineation -->
 				{#if hasMembers}
-					{#if (filter === 'active' || filter === 'retired') && hasPhantoms}
+					{#if hasPhantoms}
 						<div class="section-divider">
 							<span
-								>{m.crew_members_count({
-									count: String(membersQuery.data?.members.length ?? 0)
-								})}</span
+								>{m.crew_members_label()}
+								<span class="count">{membersQuery.data?.members.length ?? 0}</span></span
 							>
 						</div>
 					{/if}
@@ -295,17 +362,13 @@
 					</ul>
 				{/if}
 
-				<!-- Phantom players -->
 				{#if hasPhantoms}
-					{#if filter === 'all' || filter === 'active' || filter === 'retired'}
-						<div class="section-divider">
-							<span
-								>{m.crew_phantoms_count({
-									count: String(membersQuery.data?.phantoms.length ?? 0)
-								})}</span
-							>
-						</div>
-					{/if}
+					<div class="section-divider">
+						<span
+							>{m.crew_phantoms_label()}
+							<span class="count">{membersQuery.data?.phantoms.length ?? 0}</span></span
+						>
+					</div>
 					<ul class="member-list">
 						{#each membersQuery.data?.phantoms ?? [] as phantom (phantom.id)}
 							<PhantomRow
@@ -449,6 +512,12 @@
 			font-size: typography.$font-small;
 			font-weight: typography.$medium;
 			color: var(--text-secondary);
+		}
+
+		.count {
+			color: var(--text-tertiary);
+			font-weight: typography.$normal;
+			margin-left: spacing.$unit-half;
 		}
 	}
 </style>

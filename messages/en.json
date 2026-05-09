@@ -702,8 +702,9 @@
 	"crew_no_pending": "No pending items.",
 	"crew_load_members_failed": "Failed to load members",
 	"crew_no_filter_players": "No {filter} players found.",
-	"crew_members_count": "Members ({count})",
-	"crew_phantoms_count": "Phantom Players ({count})",
+	"crew_members_label": "Members",
+	"crew_phantoms_label": "Phantoms",
+	"crew_retired_players_label": "Retired Players",
 	"crew_unknown": "Unknown",
 	"crew_joined_date": "Joined {date}",
 

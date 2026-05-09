@@ -702,8 +702,9 @@
 	"crew_no_pending": "保留中の項目はありません。",
 	"crew_load_members_failed": "団員の読み込みに失敗しました",
 	"crew_no_filter_players": "{filter}のプレイヤーが見つかりません。",
-	"crew_members_count": "団員（{count}人）",
-	"crew_phantoms_count": "幻団員（{count}人）",
+	"crew_members_label": "団員",
+	"crew_phantoms_label": "幻団員",
+	"crew_retired_players_label": "退団済み",
 	"crew_unknown": "不明",
 	"crew_joined_date": "{date}に参加",
 
