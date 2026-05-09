@@ -111,7 +111,7 @@
 	}
 
 	.invited-by {
-		font-size: typography.$font-tiny;
+		font-size: typography.$font-small;
 		color: var(--text-tertiary);
 	}
 
@@ -121,7 +121,7 @@
 	}
 
 	.expires-text {
-		font-size: typography.$font-tiny;
+		font-size: typography.$font-small;
 		color: var(--text-tertiary);
 	}
 

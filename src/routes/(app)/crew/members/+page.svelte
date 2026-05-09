@@ -237,7 +237,9 @@
 			{:else}
 				{#if activeInvitations.length > 0}
 					<div class="section-divider">
-						<span>{m.crew_pending_invitations({ count: String(activeInvitations.length) })}</span>
+						<span
+							>{m.crew_pending_label()} <span class="count">{activeInvitations.length}</span></span
+						>
 					</div>
 					<ul class="member-list">
 						{#each activeInvitations as invitation (invitation.id)}
