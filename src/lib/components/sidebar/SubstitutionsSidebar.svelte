@@ -8,6 +8,7 @@
 	} from '$lib/types/api/party'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { roleQueries } from '$lib/api/queries/role.queries'
+	import { partyQueries } from '$lib/api/queries/party.queries'
 	import {
 		useCreateSubstitution,
 		useUpdateSubstitution,
@@ -44,14 +45,37 @@
 
 	let { type, item, editable = false, partyId, partyShortcode }: Props = $props()
 
-	// Derive data from item
-	let role = $derived((item as GridWeapon).role as Role | undefined)
-	let note = $derived((item as GridWeapon).substitutionNote as string | undefined)
+	// The pane stores `item` as a snapshot at open time, so prop reads alone go
+	// stale after a substitution mutation invalidates the party cache. Subscribe
+	// to the live party query and re-resolve the grid item by id on every read.
+	const partyQuery = createQuery(() => ({
+		...partyQueries.byShortcode(partyShortcode ?? ''),
+		enabled: !!partyShortcode
+	}))
+
+	const liveItem = $derived.by((): GridCharacter | GridWeapon | GridSummon | undefined => {
+		const party = partyQuery.data
+		if (!party || !item.id) return undefined
+		const list =
+			type === 'character' ? party.characters : type === 'summon' ? party.summons : party.weapons
+		return list?.find((g) => g.id === item.id) as
+			| GridCharacter
+			| GridWeapon
+			| GridSummon
+			| undefined
+	})
+
+	// Read from the live item when available, fall back to the prop snapshot.
+	const effectiveItem = $derived(liveItem ?? item)
+
+	// Derive data from the effective item
+	let role = $derived((effectiveItem as GridWeapon).role as Role | undefined)
+	let note = $derived((effectiveItem as GridWeapon).substitutionNote as string | undefined)
 	let substitutions = $derived(
 		// Spread before sort: Array.prototype.sort mutates in place, and a $derived
 		// expression must not mutate state — Svelte 5 throws state_unsafe_mutation
 		// and downstream reactivity breaks (added substitutes don't appear).
-		[...(((item as GridWeapon).substitutions ?? []) as Substitution[])].sort(
+		[...(((effectiveItem as GridWeapon).substitutions ?? []) as Substitution[])].sort(
 			(a, b) => a.position - b.position
 		)
 	)
