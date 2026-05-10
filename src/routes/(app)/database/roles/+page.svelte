@@ -117,7 +117,7 @@
 					ondrop={(e) => onDrop(e, index)}
 				>
 					<span class="handle" aria-hidden="true">
-						<Icon name="grip-vertical" size={16} />
+						<Icon name="grip-vertical" width={4} height={18} />
 					</span>
 
 					<a class="link" href={localizeHref(`/database/roles/${role.id}`)}>
