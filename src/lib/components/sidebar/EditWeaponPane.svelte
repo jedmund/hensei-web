@@ -30,7 +30,6 @@
 		onCancel?: () => void
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { paneId, weapon, partyId, partyShortcode, onSave, onCancel }: Props = $props()
 
 	let activeTab = $state<'stats' | 'role'>('stats')
@@ -84,17 +83,20 @@
 			: undefined
 	)
 
-	// Register save action and unsaved changes check in the pane header
+	// Register save action and unsaved changes check in the pane header.
+	// On the Role tab the stats pane is unmounted, so editPaneRef?.save() would
+	// be a no-op; role/note changes are persisted inline as the user edits, so
+	// the header Save button just dismisses the pane to match other edit panes.
 	$effect(() => {
-		// Read elementName to track it
 		const el = elementName
+		const tab = activeTab
 		untrack(() => {
-			if (paneId) {
-				sidebar.setActionForPane(paneId, () => editPaneRef?.save(), m.action_save(), el)
-				sidebar.paneStack.updatePaneById(paneId, {
-					hasUnsavedChanges: () => editPaneRef?.getHasChanges() ?? false
-				})
-			}
+			if (!paneId) return
+			const handler = tab === 'role' ? () => onCancel?.() : () => editPaneRef?.save()
+			sidebar.setActionForPane(paneId, handler, m.action_save(), el)
+			sidebar.paneStack.updatePaneById(paneId, {
+				hasUnsavedChanges: () => (tab === 'role' ? false : (editPaneRef?.getHasChanges() ?? false))
+			})
 		})
 	})
 
