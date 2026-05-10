@@ -1748,6 +1748,7 @@
 	"roles_placeholder_name_en": "例：Attacker",
 	"roles_placeholder_name_jp": "例：アタッカー",
 	"roles_icon_field": "役割アイコン",
+	"roles_icon_choose": "アイコンを選択",
 	"roles_icon_hint_edit": "PNG、最大128×128。",
 	"roles_icon_error_png": "アイコンはPNGファイルにしてください。",
 	"roles_icon_error_size": "アイコンファイルが大きすぎます（最大256KB）。",
