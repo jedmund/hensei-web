@@ -167,12 +167,6 @@
 			</DetailsSection>
 		{/if}
 
-		{#if modificationStatus.hasPerpetuity}
-			<DetailsSection title={m.details_status()}>
-				<DetailRow label={m.details_perpetuity_ring()} value={m.details_active()} />
-			</DetailsSection>
-		{/if}
-
 		{#if char.artifact}
 			<DetailsSection title={m.details_artifact()}>
 				<ArtifactSummary artifact={char.artifact} />
