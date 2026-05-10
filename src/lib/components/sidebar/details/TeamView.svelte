@@ -170,41 +170,57 @@
 			</DetailsSection>
 		{/if}
 
-		{#if modificationStatus.hasRings}
-			<DetailsSection title={m.details_over_mastery()}>
-				<MasteryDisplay
-					rings={char.overMastery}
-					characterElement={char.character?.element}
-					variant="detailed"
-					showIcons={true}
-				/>
-			</DetailsSection>
-		{:else if isPartyOwner}
-			<DetailsSection title={m.details_over_mastery()}>
-				<EmptySectionPlaceholder
-					sectionName={m.add_over_mastery()}
-					onclick={() => openCharacterEdit('stats')}
-				/>
-			</DetailsSection>
-		{/if}
+		{#snippet overMasteryContent()}
+			<MasteryDisplay
+				rings={char.overMastery}
+				characterElement={char.character?.element}
+				variant="detailed"
+				showIcons={true}
+			/>
+		{/snippet}
 
-		{#if modificationStatus.hasEarring}
-			<DetailsSection title={m.details_aetherial_mastery()}>
-				<MasteryDisplay
-					earring={char.aetherialMastery}
-					characterElement={char.character?.element}
-					variant="detailed"
-					showIcons={true}
-				/>
+		{#snippet aetherialMasteryContent()}
+			<MasteryDisplay
+				earring={char.aetherialMastery}
+				characterElement={char.character?.element}
+				variant="detailed"
+				showIcons={true}
+			/>
+		{/snippet}
+
+		<!-- Render filled mastery sections before empty placeholders. -->
+		{@const masterySections = [
+			{
+				key: 'over',
+				filled: !!modificationStatus.hasRings,
+				title: m.details_over_mastery(),
+				content: overMasteryContent,
+				addLabel: m.add_over_mastery()
+			},
+			{
+				key: 'aetherial',
+				filled: !!modificationStatus.hasEarring,
+				title: m.details_aetherial_mastery(),
+				content: aetherialMasteryContent,
+				addLabel: m.add_aetherial_mastery()
+			}
+		]}
+		{@const orderedMastery = [
+			...masterySections.filter((s) => s.filled),
+			...(isPartyOwner ? masterySections.filter((s) => !s.filled) : [])
+		]}
+		{#each orderedMastery as section (section.key)}
+			<DetailsSection title={section.title}>
+				{#if section.filled}
+					{@render section.content()}
+				{:else}
+					<EmptySectionPlaceholder
+						sectionName={section.addLabel}
+						onclick={() => openCharacterEdit('stats')}
+					/>
+				{/if}
 			</DetailsSection>
-		{:else if isPartyOwner}
-			<DetailsSection title={m.details_aetherial_mastery()}>
-				<EmptySectionPlaceholder
-					sectionName={m.add_aetherial_mastery()}
-					onclick={() => openCharacterEdit('stats')}
-				/>
-			</DetailsSection>
-		{/if}
+		{/each}
 
 		{#if char.artifact}
 			<DetailsSection title={m.details_artifact()}>

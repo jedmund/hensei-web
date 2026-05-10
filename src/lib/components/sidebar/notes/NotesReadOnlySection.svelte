@@ -51,6 +51,8 @@
 		})
 	}
 
+	const ownerCharacter = $derived(isPartyOwner && type === 'character')
+
 	const roles = $derived.by((): Role[] => {
 		if (type !== 'character') return []
 		const list = ((item as GridCharacter).roles ?? []) as Role[]
@@ -130,86 +132,110 @@
 	}
 </script>
 
-{#if hasAny || (isPartyOwner && type === 'character')}
-	<div class="notes-readonly-section">
-		{#if roles.length > 0}
-			<DetailsSection title={m.notes_roles_section_readonly()}>
-				<ul class="role-chips">
-					{#each roles as role (role.id)}
-						{@const iconUrl = getRoleIconUrl(role.iconKey)}
-						<li class="role-chip">
-							<span class="chip-icon">
-								{#if iconUrl}
-									<img src={iconUrl} alt="" />
-								{/if}
-							</span>
-							<span class="chip-label">{localizedName({ en: role.nameEn, ja: role.nameJp })}</span>
-						</li>
-					{/each}
-				</ul>
-			</DetailsSection>
-		{:else if isPartyOwner && type === 'character'}
-			<DetailsSection title={m.notes_roles_section_readonly()}>
-				<EmptySectionPlaceholder sectionName={m.add_roles()} onclick={openEditNotes} />
-			</DetailsSection>
-		{/if}
+{#snippet rolesContent()}
+	<ul class="role-chips">
+		{#each roles as role (role.id)}
+			{@const iconUrl = getRoleIconUrl(role.iconKey)}
+			<li class="role-chip">
+				<span class="chip-icon">
+					{#if iconUrl}
+						<img src={iconUrl} alt="" />
+					{/if}
+				</span>
+				<span class="chip-label">{localizedName({ en: role.nameEn, ja: role.nameJp })}</span>
+			</li>
+		{/each}
+	</ul>
+{/snippet}
 
-		{#if hasDescription}
-			<DetailsSection title={m.notes_description_section()}>
-				<DescriptionView value={description ?? null} />
-			</DetailsSection>
-		{:else if isPartyOwner && type === 'character'}
-			<DetailsSection title={m.notes_description_section()}>
-				<EmptySectionPlaceholder sectionName={m.add_description()} onclick={openEditNotes} />
-			</DetailsSection>
-		{/if}
+{#snippet descriptionContent()}
+	<DescriptionView value={description ?? null} />
+{/snippet}
 
-		{#if substitutions.length > 0}
-			<DetailsSection title={m.substitution_substitutes()}>
-				<ol class="substitution-list">
-					{#each substitutions as sub (sub.id)}
-						{@const character = sub.gridCharacter?.character}
-						{@const element = getSubstituteElement(sub)}
-						{@const proficiencies = getSubstituteProficiencies(sub)}
-						{@const fromCollection = isFromCollection(sub)}
-						<li class="substitution-item">
-							<div class="thumb-wrapper">
-								<img
-									src={getSubstituteImage(sub)}
-									alt=""
-									class="thumb"
-									loading="lazy"
-									onerror={(e) => handleImageFallback(e, getSubstituteFallbackImage(sub))}
-								/>
-								{#if fromCollection}
-									<CollectionBadge />
-								{/if}
-							</div>
-							<div class="info">
-								<span class="name">{getSubstituteName(sub)}</span>
-								{#if element !== undefined || proficiencies.length > 0}
-									<div class="labels">
-										{#if element !== undefined}
-											<ElementLabel {element} size="small" />
-										{/if}
-										{#each proficiencies as prof (prof)}
-											<ProficiencyLabel proficiency={prof} size="small" />
-										{/each}
-									</div>
-								{/if}
-							</div>
-							{#if character}
-								<CharacterTags {character} />
+{#snippet substitutesContent()}
+	<ol class="substitution-list">
+		{#each substitutions as sub (sub.id)}
+			{@const character = sub.gridCharacter?.character}
+			{@const element = getSubstituteElement(sub)}
+			{@const proficiencies = getSubstituteProficiencies(sub)}
+			{@const fromCollection = isFromCollection(sub)}
+			<li class="substitution-item">
+				<div class="thumb-wrapper">
+					<img
+						src={getSubstituteImage(sub)}
+						alt=""
+						class="thumb"
+						loading="lazy"
+						onerror={(e) => handleImageFallback(e, getSubstituteFallbackImage(sub))}
+					/>
+					{#if fromCollection}
+						<CollectionBadge />
+					{/if}
+				</div>
+				<div class="info">
+					<span class="name">{getSubstituteName(sub)}</span>
+					{#if element !== undefined || proficiencies.length > 0}
+						<div class="labels">
+							{#if element !== undefined}
+								<ElementLabel {element} size="small" />
 							{/if}
-						</li>
-					{/each}
-				</ol>
+							{#each proficiencies as prof (prof)}
+								<ProficiencyLabel proficiency={prof} size="small" />
+							{/each}
+						</div>
+					{/if}
+				</div>
+				{#if character}
+					<CharacterTags {character} />
+				{/if}
+			</li>
+		{/each}
+	</ol>
+{/snippet}
+
+<!--
+	Sections render filled-first, empty placeholders last; canonical order
+	(Roles → Description → Substitutes) is preserved within each group so the
+	layout stays predictable when the user fills one in.
+-->
+{#if hasAny || ownerCharacter}
+	{@const sections = [
+		{
+			key: 'roles',
+			filled: roles.length > 0,
+			title: m.notes_roles_section_readonly(),
+			content: rolesContent,
+			addLabel: m.add_roles()
+		},
+		{
+			key: 'description',
+			filled: hasDescription,
+			title: m.notes_description_section(),
+			content: descriptionContent,
+			addLabel: m.add_description()
+		},
+		{
+			key: 'substitutes',
+			filled: substitutions.length > 0,
+			title: m.substitution_substitutes(),
+			content: substitutesContent,
+			addLabel: m.add_substitutes()
+		}
+	]}
+	{@const orderedSections = [
+		...sections.filter((s) => s.filled),
+		...(ownerCharacter ? sections.filter((s) => !s.filled) : [])
+	]}
+	<div class="notes-readonly-section">
+		{#each orderedSections as section (section.key)}
+			<DetailsSection title={section.title}>
+				{#if section.filled}
+					{@render section.content()}
+				{:else}
+					<EmptySectionPlaceholder sectionName={section.addLabel} onclick={openEditNotes} />
+				{/if}
 			</DetailsSection>
-		{:else if isPartyOwner && type === 'character'}
-			<DetailsSection title={m.substitution_substitutes()}>
-				<EmptySectionPlaceholder sectionName={m.add_substitutes()} onclick={openEditNotes} />
-			</DetailsSection>
-		{/if}
+		{/each}
 	</div>
 {/if}
 
