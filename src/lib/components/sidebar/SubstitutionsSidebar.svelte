@@ -40,7 +40,10 @@
 	let role = $derived((item as GridWeapon).role as Role | undefined)
 	let note = $derived((item as GridWeapon).substitutionNote as string | undefined)
 	let substitutions = $derived(
-		(((item as GridWeapon).substitutions ?? []) as Substitution[]).sort(
+		// Spread before sort: Array.prototype.sort mutates in place, and a $derived
+		// expression must not mutate state — Svelte 5 throws state_unsafe_mutation
+		// and downstream reactivity breaks (added substitutes don't appear).
+		[...(((item as GridWeapon).substitutions ?? []) as Substitution[])].sort(
 			(a, b) => a.position - b.position
 		)
 	)
