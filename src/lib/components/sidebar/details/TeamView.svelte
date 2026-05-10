@@ -142,7 +142,7 @@
 </script>
 
 <div class="team-view">
-	<NotesReadOnlySection {type} {item} {isPartyOwner} />
+	<NotesReadOnlySection {type} {item} {isPartyOwner} mode="filled" />
 
 	<DetailsSection title={m.details_uncap_transcendence()}>
 		<DetailRow label={m.details_max_uncap_level()}>
@@ -170,57 +170,27 @@
 			</DetailsSection>
 		{/if}
 
-		{#snippet overMasteryContent()}
-			<MasteryDisplay
-				rings={char.overMastery}
-				characterElement={char.character?.element}
-				variant="detailed"
-				showIcons={true}
-			/>
-		{/snippet}
-
-		{#snippet aetherialMasteryContent()}
-			<MasteryDisplay
-				earring={char.aetherialMastery}
-				characterElement={char.character?.element}
-				variant="detailed"
-				showIcons={true}
-			/>
-		{/snippet}
-
-		<!-- Render filled mastery sections before empty placeholders. -->
-		{@const masterySections = [
-			{
-				key: 'over',
-				filled: !!modificationStatus.hasRings,
-				title: m.details_over_mastery(),
-				content: overMasteryContent,
-				addLabel: m.add_over_mastery()
-			},
-			{
-				key: 'aetherial',
-				filled: !!modificationStatus.hasEarring,
-				title: m.details_aetherial_mastery(),
-				content: aetherialMasteryContent,
-				addLabel: m.add_aetherial_mastery()
-			}
-		]}
-		{@const orderedMastery = [
-			...masterySections.filter((s) => s.filled),
-			...(isPartyOwner ? masterySections.filter((s) => !s.filled) : [])
-		]}
-		{#each orderedMastery as section (section.key)}
-			<DetailsSection title={section.title}>
-				{#if section.filled}
-					{@render section.content()}
-				{:else}
-					<EmptySectionPlaceholder
-						sectionName={section.addLabel}
-						onclick={() => openCharacterEdit('stats')}
-					/>
-				{/if}
+		{#if modificationStatus.hasRings}
+			<DetailsSection title={m.details_over_mastery()}>
+				<MasteryDisplay
+					rings={char.overMastery}
+					characterElement={char.character?.element}
+					variant="detailed"
+					showIcons={true}
+				/>
 			</DetailsSection>
-		{/each}
+		{/if}
+
+		{#if modificationStatus.hasEarring}
+			<DetailsSection title={m.details_aetherial_mastery()}>
+				<MasteryDisplay
+					earring={char.aetherialMastery}
+					characterElement={char.character?.element}
+					variant="detailed"
+					showIcons={true}
+				/>
+			</DetailsSection>
+		{/if}
 
 		{#if char.artifact}
 			<DetailsSection title={m.details_artifact()}>
@@ -381,6 +351,30 @@
 				{/if}
 			</DetailsSection>
 		{/if}
+	{/if}
+
+	{#if isPartyOwner && type === 'character'}
+		{@const char = item as GridCharacter}
+		<!-- Owner-only Add placeholders go at the very bottom so every filled
+		     section (notes + mastery + everything else) sorts above every
+		     skeleton placeholder, regardless of which section group it's in. -->
+		{#if !modificationStatus.hasRings}
+			<DetailsSection title={m.details_over_mastery()}>
+				<EmptySectionPlaceholder
+					sectionName={m.add_over_mastery()}
+					onclick={() => openCharacterEdit('stats')}
+				/>
+			</DetailsSection>
+		{/if}
+		{#if !modificationStatus.hasEarring}
+			<DetailsSection title={m.details_aetherial_mastery()}>
+				<EmptySectionPlaceholder
+					sectionName={m.add_aetherial_mastery()}
+					onclick={() => openCharacterEdit('stats')}
+				/>
+			</DetailsSection>
+		{/if}
+		<NotesReadOnlySection type="character" item={char} {isPartyOwner} mode="placeholders" />
 	{/if}
 </div>
 

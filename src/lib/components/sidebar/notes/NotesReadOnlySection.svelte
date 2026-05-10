@@ -38,9 +38,14 @@
 		type: 'character' | 'weapon' | 'summon'
 		item: GridCharacter | GridWeapon | GridSummon
 		isPartyOwner?: boolean
+		/** 'filled' renders only sections with data, 'placeholders' renders only
+		 * the owner-only Add placeholders for empty sections (character only).
+		 * Lets the parent (TeamView) interleave notes content with non-notes
+		 * sections so all filled sections sort above all placeholders. */
+		mode?: 'filled' | 'placeholders'
 	}
 
-	let { type, item, isPartyOwner = false }: Props = $props()
+	let { type, item, isPartyOwner = false, mode = 'filled' }: Props = $props()
 
 	function openEditNotes() {
 		if (type !== 'character') return
@@ -194,49 +199,69 @@
 {/snippet}
 
 <!--
-	Sections render filled-first, empty placeholders last; canonical order
-	(Roles → Description → Substitutes) is preserved within each group so the
-	layout stays predictable when the user fills one in.
+	Two modes: 'filled' renders only sections with data, 'placeholders' renders
+	only the owner-only Add placeholders for empty sections. TeamView uses both
+	separately so all filled sections (across notes + mastery + everything else)
+	sort above all placeholders in the pane.
 -->
-{#if hasAny || ownerCharacter}
+{#if mode === 'filled' && hasAny}
 	{@const sections = [
 		{
 			key: 'roles',
 			filled: roles.length > 0,
 			title: m.notes_roles_section_readonly(),
-			content: rolesContent,
+			content: rolesContent
+		},
+		{
+			key: 'description',
+			filled: hasDescription,
+			title: m.notes_description_section(),
+			content: descriptionContent
+		},
+		{
+			key: 'substitutes',
+			filled: substitutions.length > 0,
+			title: m.substitution_substitutes(),
+			content: substitutesContent
+		}
+	].filter((s) => s.filled)}
+	<div class="notes-readonly-section">
+		{#each sections as section (section.key)}
+			<DetailsSection title={section.title}>
+				{@render section.content()}
+			</DetailsSection>
+		{/each}
+	</div>
+{:else if mode === 'placeholders' && ownerCharacter}
+	{@const placeholders = [
+		{
+			key: 'roles',
+			filled: roles.length > 0,
+			title: m.notes_roles_section_readonly(),
 			addLabel: m.add_roles()
 		},
 		{
 			key: 'description',
 			filled: hasDescription,
 			title: m.notes_description_section(),
-			content: descriptionContent,
 			addLabel: m.add_description()
 		},
 		{
 			key: 'substitutes',
 			filled: substitutions.length > 0,
 			title: m.substitution_substitutes(),
-			content: substitutesContent,
 			addLabel: m.add_substitutes()
 		}
-	]}
-	{@const orderedSections = [
-		...sections.filter((s) => s.filled),
-		...(ownerCharacter ? sections.filter((s) => !s.filled) : [])
-	]}
-	<div class="notes-readonly-section">
-		{#each orderedSections as section (section.key)}
-			<DetailsSection title={section.title}>
-				{#if section.filled}
-					{@render section.content()}
-				{:else}
+	].filter((s) => !s.filled)}
+	{#if placeholders.length > 0}
+		<div class="notes-readonly-section">
+			{#each placeholders as section (section.key)}
+				<DetailsSection title={section.title}>
 					<EmptySectionPlaceholder sectionName={section.addLabel} onclick={openEditNotes} />
-				{/if}
-			</DetailsSection>
-		{/each}
-	</div>
+				</DetailsSection>
+			{/each}
+		</div>
+	{/if}
 {/if}
 
 <style lang="scss">
