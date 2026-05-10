@@ -371,60 +371,61 @@
 		{#if substitutions.length === 0}
 			<div class="substitution-empty">
 				<p class="empty">{m.substitution_empty()}</p>
-				<Button variant="secondary" size="small" leftIcon="plus" onclick={handleAddSubstitute}>
+				<Button variant="secondary" leftIcon="plus" onclick={handleAddSubstitute}>
 					{m.substitution_add()}
 				</Button>
 			</div>
 		{:else}
-			<ol class="substitution-list">
-				{#each substitutions as sub, index (sub.id)}
-					{@const character = sub.gridCharacter?.character}
-					<li
-						class="substitution-item"
-						class:drop-target={hoverIndex === index && dragIndex !== null && dragIndex !== index}
-						draggable="true"
-						ondragstart={(e) => onDragStart(e, index)}
-						ondragover={(e) => onDragOver(e, index)}
-						ondragleave={onDragLeave}
-						ondrop={(e) => onDrop(e, index)}
-					>
-						<img
-							src={getSubstituteImage(sub)}
-							alt=""
-							class="thumb"
-							loading="lazy"
-							onerror={(e) => handleImageFallback(e, getSubstituteFallbackImage(sub))}
-						/>
-						<div class="info">
-							<span class="name">{getSubstituteName(sub)}</span>
-							{#if character}
-								<div class="meta">
-									<CharacterTags {character} />
-								</div>
-							{/if}
-						</div>
-						<div class="actions">
-							<button
-								class="action-btn delete"
-								onclick={() => handleDelete(sub)}
-								title={m.substitution_remove()}
-							>
-								<Icon name="close" size={14} />
-							</button>
-						</div>
-					</li>
-				{/each}
-			</ol>
-			<Button
-				variant="ghost"
-				size="small"
-				fullWidth
-				leftIcon="plus"
-				onclick={handleAddSubstitute}
-				disabled={substitutions.length >= SUBSTITUTION_CAP}
-			>
-				{m.substitution_add()}
-			</Button>
+			<div class="substitution-stack">
+				<ol class="substitution-list">
+					{#each substitutions as sub, index (sub.id)}
+						{@const character = sub.gridCharacter?.character}
+						<li
+							class="substitution-item"
+							class:drop-target={hoverIndex === index && dragIndex !== null && dragIndex !== index}
+							draggable="true"
+							ondragstart={(e) => onDragStart(e, index)}
+							ondragover={(e) => onDragOver(e, index)}
+							ondragleave={onDragLeave}
+							ondrop={(e) => onDrop(e, index)}
+						>
+							<img
+								src={getSubstituteImage(sub)}
+								alt=""
+								class="thumb"
+								loading="lazy"
+								onerror={(e) => handleImageFallback(e, getSubstituteFallbackImage(sub))}
+							/>
+							<div class="info">
+								<span class="name">{getSubstituteName(sub)}</span>
+								{#if character}
+									<div class="meta">
+										<CharacterTags {character} />
+									</div>
+								{/if}
+							</div>
+							<div class="actions">
+								<button
+									class="action-btn delete"
+									onclick={() => handleDelete(sub)}
+									title={m.substitution_remove()}
+								>
+									<Icon name="close" size={14} />
+								</button>
+							</div>
+						</li>
+					{/each}
+				</ol>
+				<Button
+					variant="ghost"
+					fullWidth
+					leftIcon="plus"
+					onclick={handleAddSubstitute}
+					disabled={substitutions.length >= SUBSTITUTION_CAP}
+				>
+					{m.substitution_add()}
+				</Button>
+			</div>
 		{/if}
 	</DetailsSection>
 </div>
@@ -532,6 +533,12 @@
 		color: var(--text-tertiary);
 		margin: 0;
 		text-align: center;
+	}
+
+	.substitution-stack {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit;
 	}
 
 	.substitution-list {
