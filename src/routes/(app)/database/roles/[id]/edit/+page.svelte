@@ -39,9 +39,9 @@
 	const deleteMut = useDeleteRole()
 
 	const slotTypeOptions = [
-		{ value: 'Character', label: m.type_character() },
-		{ value: 'Weapon', label: m.type_weapon() },
-		{ value: 'Summon', label: m.type_summon() }
+		{ value: 'Character', label: m.roles_type_character() },
+		{ value: 'Weapon', label: m.roles_type_weapon() },
+		{ value: 'Summon', label: m.roles_type_summon() }
 	]
 
 	const ICON_MAX = 128

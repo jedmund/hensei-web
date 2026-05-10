@@ -94,9 +94,9 @@
 
 	<div class="filters">
 		<SegmentedControl bind:value={slotType} size="xsmall" variant="background">
-			<Segment value="Character">{m.type_character()}</Segment>
-			<Segment value="Weapon">{m.type_weapon()}</Segment>
-			<Segment value="Summon">{m.type_summon()}</Segment>
+			<Segment value="Character">{m.roles_type_character()}</Segment>
+			<Segment value="Weapon">{m.roles_type_weapon()}</Segment>
+			<Segment value="Summon">{m.roles_type_summon()}</Segment>
 		</SegmentedControl>
 	</div>
 

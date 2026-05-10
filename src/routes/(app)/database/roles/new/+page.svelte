@@ -30,9 +30,9 @@
 	let saveError = $state<string | null>(null)
 
 	const slotTypeOptions = [
-		{ value: 'Character', label: m.type_character() },
-		{ value: 'Weapon', label: m.type_weapon() },
-		{ value: 'Summon', label: m.type_summon() }
+		{ value: 'Character', label: m.roles_type_character() },
+		{ value: 'Weapon', label: m.roles_type_weapon() },
+		{ value: 'Summon', label: m.roles_type_summon() }
 	]
 
 	const canCreate = $derived(editData.nameEn.trim() !== '')
