@@ -141,14 +141,14 @@
 							</DropdownMenu.Trigger>
 							<DropdownMenu.Portal>
 								<DropdownMenu.Content
-									class="overflow-menu"
+									class="dropdown-menu"
 									side="bottom"
 									align="end"
 									sideOffset={4}
 								>
 									{#each pane.overflowMenu as item (item.label)}
 										<DropdownMenu.Item
-											class="overflow-menu-item {item.variant === 'danger' ? 'danger' : ''}"
+											class="dropdown-menu-item {item.variant === 'danger' ? 'danger' : ''}"
 											onSelect={item.handler}
 										>
 											{item.label}
@@ -314,37 +314,7 @@
 		}
 	}
 
-	// Overflow menu styles
-	:global(.overflow-menu) {
-		background: var(--menu-bg, white);
-		border: 1px solid var(--border-color, #ddd);
-		border-radius: $card-corner;
-		box-shadow: var(--shadow-md);
-		padding: $unit-half;
-		min-width: calc($unit * 20);
-		z-index: $z-modal;
-	}
-
-	:global(.overflow-menu-item) {
-		padding: $unit $unit-2x;
-		border-radius: $item-corner-small;
-		cursor: pointer;
-		font-size: typography.$font-body;
-		color: var(--text-primary);
-		outline: none;
-
-		&:hover,
-		&:focus {
-			background: var(--button-bg-hover, #f5f5f5);
-		}
-
-		&.danger {
-			color: var(--danger, #dc3545);
-
-			&:hover,
-			&:focus {
-				background: var(--danger-bg, #fff5f5);
-			}
-		}
-	}
+	// The overflow menu uses the shared .dropdown-menu / .dropdown-menu-item
+	// classes defined in $lib/components/ui/DropdownMenu.svelte so it matches
+	// every other dropdown in the app.
 </style>

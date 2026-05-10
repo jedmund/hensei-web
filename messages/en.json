@@ -113,6 +113,10 @@
 	"context_replace": "Replace {type}",
 	"context_remove": "Remove from team",
 	"context_remove_typed": "Remove {type}",
+	"remove_unit_confirm_title": "Remove {type}?",
+	"remove_unit_confirm_body": "Remove {name} from this team? This can't be undone.",
+	"remove_unit_confirm_body_unnamed": "Remove this {type} from this team? This can't be undone.",
+	"remove_unit_confirm_action": "Remove",
 	"context_duplicate": "Duplicate {type}",
 
 	"duplicate_collection_title": "Duplicate collection item?",

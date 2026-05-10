@@ -113,6 +113,10 @@
 	"context_replace": "{type}を交換",
 	"context_remove": "編成から外す",
 	"context_remove_typed": "{type}を外す",
+	"remove_unit_confirm_title": "{type}を外しますか？",
+	"remove_unit_confirm_body": "{name}をこの編成から外しますか？この操作は取り消せません。",
+	"remove_unit_confirm_body_unnamed": "この{type}を編成から外しますか？この操作は取り消せません。",
+	"remove_unit_confirm_action": "外す",
 	"context_duplicate": "{type}を複製する",
 
 	"duplicate_collection_title": "コレクションのアイテムを複製しますか？",

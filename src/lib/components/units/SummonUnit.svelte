@@ -6,6 +6,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
+	import RemoveUnitDialog from './RemoveUnitDialog.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getSummonImage } from '$lib/features/database/detail/image'
 	import { getPlaceholderImage, getSummonTransformation } from '$lib/utils/images'
@@ -71,7 +72,14 @@
 	// Determine element class for focus ring
 	let elementClass = $derived(getElementClassName(item?.summon?.element))
 
-	async function remove() {
+	let removeConfirmOpen = $state(false)
+
+	function remove() {
+		if (!item?.id) return
+		removeConfirmOpen = true
+	}
+
+	async function performRemove() {
 		if (!item?.id) return
 		try {
 			const party = ctx.getParty()
@@ -380,6 +388,13 @@
 	onCancel={() => {
 		duplicateCollectionDialogOpen = false
 	}}
+/>
+
+<RemoveUnitDialog
+	bind:open={removeConfirmOpen}
+	type="summon"
+	name={item?.summon ? localizedName(item.summon.name) : null}
+	onConfirm={performRemove}
 />
 
 <style lang="scss">
