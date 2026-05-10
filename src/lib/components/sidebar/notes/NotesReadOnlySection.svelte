@@ -18,7 +18,7 @@
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
-	import Icon from '$lib/components/Icon.svelte'
+	import CollectionBadge from '$lib/components/CollectionBadge.svelte'
 	import RoleIcon from '$lib/components/database/RoleIcon.svelte'
 	import DescriptionView from './DescriptionView.svelte'
 	import { localizedName } from '$lib/utils/locale'
@@ -150,13 +150,18 @@
 						{@const proficiencies = getSubstituteProficiencies(sub)}
 						{@const fromCollection = isFromCollection(sub)}
 						<li class="substitution-item">
-							<img
-								src={getSubstituteImage(sub)}
-								alt=""
-								class="thumb"
-								loading="lazy"
-								onerror={(e) => handleImageFallback(e, getSubstituteFallbackImage(sub))}
-							/>
+							<div class="thumb-wrapper">
+								<img
+									src={getSubstituteImage(sub)}
+									alt=""
+									class="thumb"
+									loading="lazy"
+									onerror={(e) => handleImageFallback(e, getSubstituteFallbackImage(sub))}
+								/>
+								{#if fromCollection}
+									<CollectionBadge />
+								{/if}
+							</div>
 							<div class="info">
 								<span class="name">{getSubstituteName(sub)}</span>
 								{#if element !== undefined || proficiencies.length > 0}
@@ -172,9 +177,6 @@
 							</div>
 							{#if character}
 								<CharacterTags {character} />
-							{/if}
-							{#if fromCollection}
-								<Icon name="bookmark" size={14} class="collection-indicator" />
 							{/if}
 						</li>
 					{/each}
@@ -235,14 +237,19 @@
 		border-radius: spacing.$unit;
 	}
 
+	.thumb-wrapper {
+		position: relative;
+		flex-shrink: 0;
+	}
+
 	.thumb {
+		display: block;
 		width: 48px;
 		height: 48px;
 		object-fit: cover;
 		border-radius: layout.$item-corner-small;
 		border: 1px solid var(--border-primary);
 		background: var(--placeholder-bg);
-		flex-shrink: 0;
 	}
 
 	.info {
@@ -267,10 +274,5 @@
 		align-items: center;
 		flex-wrap: wrap;
 		gap: spacing.$unit-half;
-	}
-
-	:global(.collection-indicator) {
-		color: var(--accent-blue);
-		flex-shrink: 0;
 	}
 </style>

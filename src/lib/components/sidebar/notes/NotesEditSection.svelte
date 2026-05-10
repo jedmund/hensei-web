@@ -34,6 +34,7 @@
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
+	import CollectionBadge from '$lib/components/CollectionBadge.svelte'
 	import DescriptionEditor from './DescriptionEditor.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import {
@@ -318,6 +319,14 @@
 		return []
 	}
 
+	function isFromCollection(sub: Substitution): boolean {
+		return !!(
+			sub.gridCharacter?.collectionCharacterId ||
+			sub.gridWeapon?.collectionWeaponId ||
+			sub.gridSummon?.collectionSummonId
+		)
+	}
+
 	function getSubstituteFallbackImage(sub: Substitution): string | undefined {
 		if (sub.gridWeapon?.weapon && sub.gridWeapon.weapon.element === 0) {
 			return getWeaponFallbackImage(sub.gridWeapon.weapon.granblueId, 'square')
@@ -400,6 +409,7 @@
 						{@const character = sub.gridCharacter?.character}
 						{@const element = getSubstituteElement(sub)}
 						{@const proficiencies = getSubstituteProficiencies(sub)}
+						{@const fromCollection = isFromCollection(sub)}
 						<li
 							class="substitution-item"
 							class:drop-target={hoverIndex === index && dragIndex !== null && dragIndex !== index}
@@ -409,13 +419,18 @@
 							ondragleave={onDragLeave}
 							ondrop={(e) => onDrop(e, index)}
 						>
-							<img
-								src={getSubstituteImage(sub)}
-								alt=""
-								class="thumb"
-								loading="lazy"
-								onerror={(e) => handleImageFallback(e, getSubstituteFallbackImage(sub))}
-							/>
+							<div class="thumb-wrapper">
+								<img
+									src={getSubstituteImage(sub)}
+									alt=""
+									class="thumb"
+									loading="lazy"
+									onerror={(e) => handleImageFallback(e, getSubstituteFallbackImage(sub))}
+								/>
+								{#if fromCollection}
+									<CollectionBadge />
+								{/if}
+							</div>
 							<div class="info">
 								<span class="name">{getSubstituteName(sub)}</span>
 								{#if element !== undefined || proficiencies.length > 0}
@@ -602,14 +617,19 @@
 		}
 	}
 
+	.thumb-wrapper {
+		position: relative;
+		flex-shrink: 0;
+	}
+
 	.thumb {
+		display: block;
 		width: 48px;
 		height: 48px;
 		object-fit: cover;
 		border-radius: layout.$item-corner-small;
 		border: 1px solid var(--border-primary);
 		background: var(--placeholder-bg);
-		flex-shrink: 0;
 	}
 
 	.info {
