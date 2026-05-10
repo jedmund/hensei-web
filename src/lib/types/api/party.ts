@@ -51,6 +51,13 @@ export interface Substitution {
 	gridSummon?: GridSummon
 }
 
+/**
+ * Rich-text substitution note. The backend stores this as a `jsonb` column
+ * holding a Tiptap document. The shape is intentionally loose — the editor
+ * owns the schema. Legacy null/undefined values mean "no note".
+ */
+export type SubstitutionNote = Record<string, unknown>
+
 // Grid item types - these are the junction tables between Party and entities
 
 // GridWeapon from GridWeaponBlueprint
@@ -83,8 +90,8 @@ export interface GridWeapon {
 	party?: PartyCollectionSource
 	/** Assigned role for this grid slot */
 	role?: Role
-	/** Rich-text note explaining substitution context */
-	substitutionNote?: string
+	/** Rich-text note explaining substitution context (Tiptap doc) */
+	substitutionNote?: SubstitutionNote
 	/** Ordered list of substitute items for this slot */
 	substitutions?: Substitution[]
 }
@@ -115,8 +122,8 @@ export interface GridCharacter {
 	party?: PartyCollectionSource
 	/** Assigned role for this grid slot */
 	role?: Role
-	/** Rich-text note explaining substitution context */
-	substitutionNote?: string
+	/** Rich-text note explaining substitution context (Tiptap doc) */
+	substitutionNote?: SubstitutionNote
 	/** Ordered list of substitute items for this slot */
 	substitutions?: Substitution[]
 }
@@ -141,8 +148,8 @@ export interface GridSummon {
 	party?: PartyCollectionSource
 	/** Assigned role for this grid slot */
 	role?: Role
-	/** Rich-text note explaining substitution context */
-	substitutionNote?: string
+	/** Rich-text note explaining substitution context (Tiptap doc) */
+	substitutionNote?: SubstitutionNote
 	/** Ordered list of substitute items for this slot */
 	substitutions?: Substitution[]
 }
