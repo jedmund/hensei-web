@@ -30,6 +30,9 @@
 		contained?: boolean
 		fullWidth?: boolean
 		class?: string
+		/** Bindable open state — useful when the parent wants to close the
+		 * dropdown imperatively (e.g. after the selection hits a cap). */
+		open?: boolean
 	}
 
 	let {
@@ -43,7 +46,8 @@
 		size = 'small',
 		contained = false,
 		fullWidth = false,
-		class: className = ''
+		class: className = '',
+		open = $bindable(false)
 	}: Props = $props()
 
 	// Convert options to string values for Bits UI, disabling the last selected item
@@ -102,6 +106,7 @@
 	type="multiple"
 	value={stringValue}
 	onValueChange={handleValueChange}
+	bind:open
 	{disabled}
 	items={stringOptions}
 >
@@ -199,8 +204,22 @@
 		}
 
 		&.disabled {
-			opacity: 0.5;
 			cursor: not-allowed;
+			background-color: var(--input-bg-disabled, var(--input-bg));
+			color: var(--text-tertiary);
+
+			.text {
+				color: var(--text-tertiary);
+			}
+
+			:global(.chevron) {
+				color: var(--text-tertiary);
+				opacity: 0.6;
+			}
+
+			.trigger-image-container {
+				opacity: 0.5;
+			}
 		}
 
 		&[data-placeholder='true'] .text {

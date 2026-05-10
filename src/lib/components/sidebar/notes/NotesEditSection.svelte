@@ -173,8 +173,13 @@
 		}
 	}
 
+	let rolesOpen = $state(false)
+
 	function handleRolesChange(next: string[]) {
 		dispatchUpdate({ roleIds: next })
+		// Close the picker as soon as we hit the cap — no further selections
+		// are possible, and the trigger will disable on the next render.
+		if (next.length >= ROLE_CAP) rolesOpen = false
 	}
 
 	function handleDescriptionSave(next: Description | null) {
@@ -339,6 +344,7 @@
 					options={roleOptions}
 					value={selectedRoleIds}
 					onValueChange={handleRolesChange}
+					bind:open={rolesOpen}
 					placeholder={m.notes_roles_placeholder()}
 					displayText={m.notes_roles_placeholder()}
 					disabled={selectedRoleIds.length >= ROLE_CAP}
