@@ -1750,7 +1750,6 @@
 	"roles_placeholder_name_en": "例：Attacker",
 	"roles_placeholder_name_jp": "例：アタッカー",
 	"roles_icon_field": "役割アイコン",
-	"roles_icon_hint_new": "役割を作成した後にアイコンをアップロードできます。",
 	"roles_icon_hint_edit": "PNG、最大128×128。",
 	"roles_icon_none": "アイコンなし",
 	"roles_icon_error_png": "アイコンはPNGファイルにしてください。",

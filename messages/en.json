@@ -1769,7 +1769,6 @@
 	"roles_placeholder_name_en": "e.g. Attacker",
 	"roles_placeholder_name_jp": "例：アタッカー",
 	"roles_icon_field": "Role icon",
-	"roles_icon_hint_new": "You can upload an icon after creating the role.",
 	"roles_icon_hint_edit": "PNG, up to 128×128.",
 	"roles_icon_none": "No icon",
 	"roles_icon_error_png": "Icon must be a PNG file.",

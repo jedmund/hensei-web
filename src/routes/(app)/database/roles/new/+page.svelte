@@ -9,22 +9,29 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 
-	import { useCreateRole } from '$lib/api/mutations/role.mutations'
+	import { useCreateRole, useUploadRoleIcon } from '$lib/api/mutations/role.mutations'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { extractErrorMessage } from '$lib/utils/errors'
 
 	const createMut = useCreateRole()
+	const uploadIconMut = useUploadRoleIcon()
 
 	const initialSlot = $page.url.searchParams.get('slot_type')
 	const slotType = (
 		initialSlot === 'Weapon' || initialSlot === 'Summon' ? initialSlot : 'Character'
 	) as 'Character' | 'Weapon' | 'Summon'
 
+	const ICON_MAX = 128
+	const ICON_BYTES_MAX = 256 * 1024
+
 	let editData = $state({
 		nameEn: '',
 		nameJp: '',
 		slotType
 	})
+	let iconFile = $state<File | null>(null)
+	let iconPreview = $state<string | null>(null)
+	let iconError = $state<string | null>(null)
 
 	let isSaving = $state(false)
 	let saveError = $state<string | null>(null)
@@ -37,6 +44,53 @@
 
 	const canCreate = $derived(editData.nameEn.trim() !== '')
 
+	async function readDataUrl(file: File): Promise<string> {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader()
+			reader.onload = () => resolve(reader.result as string)
+			reader.onerror = () => reject(reader.error)
+			reader.readAsDataURL(file)
+		})
+	}
+
+	async function checkDimensions(dataUrl: string): Promise<{ width: number; height: number }> {
+		return new Promise((resolve, reject) => {
+			const img = new Image()
+			img.onload = () => resolve({ width: img.width, height: img.height })
+			img.onerror = () => reject(new Error('Could not decode image'))
+			img.src = dataUrl
+		})
+	}
+
+	async function handleIconSelect(e: Event) {
+		iconError = null
+		const input = e.target as HTMLInputElement
+		const file = input.files?.[0]
+		if (!file) return
+
+		if (file.type !== 'image/png') {
+			iconError = m.roles_icon_error_png()
+			input.value = ''
+			return
+		}
+		if (file.size > ICON_BYTES_MAX) {
+			iconError = m.roles_icon_error_size()
+			input.value = ''
+			return
+		}
+
+		const dataUrl = await readDataUrl(file)
+		const { width, height } = await checkDimensions(dataUrl)
+		if (width > ICON_MAX || height > ICON_MAX) {
+			iconError = m.roles_icon_error_dimensions()
+			input.value = ''
+			return
+		}
+
+		iconFile = file
+		iconPreview = dataUrl
+	}
+
 	async function handleCreate() {
 		if (!canCreate) return
 		isSaving = true
@@ -47,7 +101,18 @@
 				nameJp: editData.nameJp.trim() || null,
 				slotType: editData.slotType
 			})
-			goto(localizeHref(`/database/roles/${role.id}/edit`))
+
+			if (iconFile) {
+				const dataUrl = await readDataUrl(iconFile)
+				const base64 = dataUrl.replace(/^data:[^;]+;base64,/, '')
+				await uploadIconMut.mutateAsync({
+					id: role.id,
+					image: base64,
+					filename: iconFile.name
+				})
+			}
+
+			goto(localizeHref(`/database/roles/${role.id}`))
 		} catch (err) {
 			saveError = extractErrorMessage(err, m.roles_save_failed())
 		} finally {
@@ -101,7 +166,30 @@
 			/>
 		</DetailsContainer>
 
-		<p class="hint">{m.roles_icon_hint_new()}</p>
+		<DetailsContainer title={m.roles_section_icon()}>
+			<div class="icon-upload">
+				<div class="icon-preview">
+					{#if iconPreview}
+						<img src={iconPreview} alt="" />
+					{:else}
+						<span class="placeholder">{m.roles_icon_none()}</span>
+					{/if}
+				</div>
+
+				<div class="icon-controls">
+					<input
+						type="file"
+						accept="image/png"
+						onchange={handleIconSelect}
+						aria-label={m.roles_icon_field()}
+					/>
+					<p class="hint">{m.roles_icon_hint_edit()}</p>
+					{#if iconError}
+						<p class="icon-error">{iconError}</p>
+					{/if}
+				</div>
+			</div>
+		</DetailsContainer>
 	</section>
 </div>
 
@@ -125,10 +213,51 @@
 		@include database.error-banner;
 	}
 
-	.hint {
-		padding: 0 spacing.$unit-2x spacing.$unit-2x;
-		margin: 0;
-		font-size: typography.$font-small;
-		color: var(--text-tertiary);
+	.icon-upload {
+		display: flex;
+		gap: spacing.$unit-2x;
+		align-items: flex-start;
+		padding: spacing.$unit-2x;
+	}
+
+	.icon-preview {
+		width: 96px;
+		height: 96px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: var(--surface-tertiary);
+		border-radius: layout.$item-corner;
+		overflow: hidden;
+		flex-shrink: 0;
+
+		img {
+			max-width: 100%;
+			max-height: 100%;
+			object-fit: contain;
+		}
+
+		.placeholder {
+			color: var(--text-tertiary);
+			font-size: typography.$font-small;
+		}
+	}
+
+	.icon-controls {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit;
+
+		.hint {
+			margin: 0;
+			font-size: typography.$font-small;
+			color: var(--text-tertiary);
+		}
+
+		.icon-error {
+			margin: 0;
+			font-size: typography.$font-small;
+			color: var(--error, #e53e3e);
+		}
 	}
 </style>
