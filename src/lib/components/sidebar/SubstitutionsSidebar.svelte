@@ -19,7 +19,6 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import SearchContent from '$lib/components/sidebar/SearchContent.svelte'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
-	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import {
@@ -322,9 +321,7 @@
 			<ol class="substitution-list">
 				{#each substitutions as sub, index (sub.id)}
 					{@const character = sub.gridCharacter?.character}
-					{@const weapon = sub.gridWeapon?.weapon}
 					<li class="substitution-item">
-						<span class="position">{index + 1}.</span>
 						<img
 							src={getSubstituteImage(sub)}
 							alt=""
@@ -334,18 +331,11 @@
 						/>
 						<div class="info">
 							<span class="name">{getSubstituteName(sub)}</span>
-							<div class="meta">
-								{#if character?.proficiency}
-									{#each character.proficiency as prof (prof)}
-										<ProficiencyLabel proficiency={prof} size="small" />
-									{/each}
-								{:else if weapon?.proficiency !== undefined}
-									<ProficiencyLabel proficiency={weapon.proficiency} size="small" />
-								{/if}
-								{#if character}
+							{#if character}
+								<div class="meta">
 									<CharacterTags {character} />
-								{/if}
-							</div>
+								</div>
+							{/if}
 						</div>
 						{#if editable}
 							<div class="actions">
@@ -370,7 +360,7 @@
 									onclick={() => handleDelete(sub)}
 									title={m.substitution_remove()}
 								>
-									<Icon name="x" size={14} />
+									<Icon name="close" size={14} />
 								</button>
 							</div>
 						{/if}
@@ -472,15 +462,9 @@
 		}
 	}
 
-	.position {
-		color: var(--text-secondary);
-		min-width: 20px;
-		font-size: typography.$font-small;
-	}
-
 	.thumb {
-		width: 40px;
-		height: 40px;
+		width: 64px;
+		height: 64px;
 		object-fit: cover;
 		border-radius: spacing.$unit-half;
 		background: var(--placeholder-bg);
