@@ -239,13 +239,15 @@
 
 	.thumb-wrapper {
 		position: relative;
+		width: 48px;
+		height: 48px;
 		flex-shrink: 0;
 	}
 
 	.thumb {
 		display: block;
-		width: 48px;
-		height: 48px;
+		width: 100%;
+		height: 100%;
 		object-fit: cover;
 		border-radius: layout.$item-corner-small;
 		border: 1px solid var(--border-primary);
