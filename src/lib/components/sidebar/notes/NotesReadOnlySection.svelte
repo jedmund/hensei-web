@@ -19,7 +19,7 @@
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import CollectionBadge from '$lib/components/CollectionBadge.svelte'
-	import RoleIcon from '$lib/components/database/RoleIcon.svelte'
+	import { getRoleIconUrl } from '$lib/utils/roles'
 	import DescriptionView from './DescriptionView.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import {
@@ -121,11 +121,16 @@
 	<div class="notes-readonly-section">
 		{#if roles.length > 0}
 			<DetailsSection title={m.notes_roles_section_readonly()}>
-				<ul class="role-list">
+				<ul class="role-chips">
 					{#each roles as role (role.id)}
+						{@const iconUrl = getRoleIconUrl(role.iconKey)}
 						<li class="role-chip">
-							<RoleIcon iconKey={role.iconKey} name={role.nameEn} size={32} />
-							<p class="role-name">{localizedName({ en: role.nameEn, ja: role.nameJp })}</p>
+							<span class="chip-icon">
+								{#if iconUrl}
+									<img src={iconUrl} alt="" />
+								{/if}
+							</span>
+							<span class="chip-label">{localizedName({ en: role.nameEn, ja: role.nameJp })}</span>
 						</li>
 					{/each}
 				</ul>
@@ -194,26 +199,46 @@
 		gap: spacing.$unit-2x + spacing.$unit-half;
 	}
 
-	.role-list {
+	.role-chips {
 		list-style: none;
-		padding: 0;
+		padding: 0 spacing.$unit;
 		margin: 0;
 		display: flex;
-		flex-direction: column;
+		flex-wrap: wrap;
+		gap: spacing.$unit-half;
 	}
 
 	.role-chip {
-		display: flex;
+		display: inline-flex;
 		align-items: center;
-		gap: spacing.$unit-2x;
-		padding: spacing.$unit;
-	}
-
-	.role-name {
-		font-size: typography.$font-regular;
-		font-weight: typography.$medium;
-		margin: 0;
+		gap: spacing.$unit-half;
+		padding: spacing.$unit-half spacing.$unit spacing.$unit-half spacing.$unit-half;
+		background: var(--input-bound-bg);
+		border-radius: 999px;
+		font-size: typography.$font-small;
 		color: var(--text-primary);
+
+		.chip-icon {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 24px;
+			height: 24px;
+			flex-shrink: 0;
+			background: var(--placeholder-bg);
+			border-radius: 50%;
+			overflow: hidden;
+
+			img {
+				width: 16px;
+				height: 16px;
+				object-fit: contain;
+			}
+		}
+
+		.chip-label {
+			line-height: 1;
+		}
 	}
 
 	.substitution-list {
