@@ -200,14 +200,13 @@
 		margin: 0;
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-half;
 	}
 
 	.role-chip {
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit-2x;
-		padding: calc(spacing.$unit * 1.5) spacing.$unit;
+		padding: spacing.$unit;
 	}
 
 	.role-name {
