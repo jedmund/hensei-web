@@ -1706,7 +1706,7 @@
 	"tab_notes": "メモ",
 	"notes_roles_section": "役割",
 	"notes_roles_section_readonly": "役割",
-	"notes_roles_placeholder": "最大3つ選択",
+	"notes_roles_placeholder": "役割を選択",
 	"notes_description_section": "説明",
 	"notes_description_placeholder": "このアイテムは編成で何をしますか？",
 	"notes_substitutes_section": "代替",

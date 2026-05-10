@@ -106,19 +106,22 @@
 	items={stringOptions}
 >
 	<SelectPrimitive.Trigger class={selectClasses} data-placeholder={value.length === 0}>
-		{#if firstSelectedOption?.imageBackground}
-			<span
-				class="trigger-image-container"
-				style="background-color: {firstSelectedOption.imageBackground}"
-			>
-				{#if firstSelectedOption.image}
-					<img src={firstSelectedOption.image} alt="" />
-				{/if}
-			</span>
-		{:else if firstSelectedOption?.image}
-			<img src={firstSelectedOption.image} alt="" class="trigger-image" />
-		{:else if firstSelectedOption?.color}
-			<span class="trigger-color-dot" style="background-color: {firstSelectedOption.color}"></span>
+		{#if !displayText}
+			{#if firstSelectedOption?.imageBackground}
+				<span
+					class="trigger-image-container"
+					style="background-color: {firstSelectedOption.imageBackground}"
+				>
+					{#if firstSelectedOption.image}
+						<img src={firstSelectedOption.image} alt="" />
+					{/if}
+				</span>
+			{:else if firstSelectedOption?.image}
+				<img src={firstSelectedOption.image} alt="" class="trigger-image" />
+			{:else if firstSelectedOption?.color}
+				<span class="trigger-color-dot" style="background-color: {firstSelectedOption.color}"
+				></span>
+			{/if}
 		{/if}
 		<span class="text">{displayText ?? selectedLabels ?? placeholder}</span>
 		<Icon name="chevron-down-small" size={14} class="chevron" />

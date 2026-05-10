@@ -340,6 +340,8 @@
 					value={selectedRoleIds}
 					onValueChange={handleRolesChange}
 					placeholder={m.notes_roles_placeholder()}
+					displayText={m.notes_roles_placeholder()}
+					disabled={selectedRoleIds.length >= ROLE_CAP}
 					size="medium"
 					contained
 					fullWidth
