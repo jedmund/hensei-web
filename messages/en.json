@@ -1248,6 +1248,10 @@
 	"race_harvin": "Harvin",
 	"race_primal": "Primal",
 	"race_other": "Other",
+	"race_geonoid": "Geonoid",
+	"race_levleath": "Levleath",
+	"race_grokkle": "Grokkle",
+	"race_wolvir": "Wolvir",
 
 	"gender_unknown": "Unknown",
 	"gender_male": "Male",
