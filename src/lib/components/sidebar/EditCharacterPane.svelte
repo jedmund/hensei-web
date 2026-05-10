@@ -26,13 +26,22 @@
 		character: GridCharacter
 		partyId?: string
 		partyShortcode?: string
+		initialTab?: 'stats' | 'notes'
 		onSave?: (updates: Partial<GridCharacter>) => void
 		onCancel?: () => void
 	}
 
-	let { paneId, character, partyId, partyShortcode, onSave, onCancel }: Props = $props()
+	let {
+		paneId,
+		character,
+		partyId,
+		partyShortcode,
+		initialTab = 'stats',
+		onSave,
+		onCancel
+	}: Props = $props()
 
-	let activeTab = $state<'stats' | 'notes'>('stats')
+	let activeTab = $state<'stats' | 'notes'>(initialTab)
 
 	let editPaneRef: ReturnType<typeof CharacterEditPane> | undefined = $state()
 

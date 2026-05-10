@@ -7,6 +7,8 @@
 	import WeaponKeysList from '../modifications/WeaponKeysList.svelte'
 	import ArtifactSummary from '../modifications/ArtifactSummary.svelte'
 	import NotesReadOnlySection from '../notes/NotesReadOnlySection.svelte'
+	import EmptySectionPlaceholder from './EmptySectionPlaceholder.svelte'
+	import { openCharacterEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
 	import { seriesHasWeaponKeys, getSeriesSlug } from '$lib/utils/weaponSeries'
 	import WeaponKeySelect from '$lib/components/sidebar/edit/WeaponKeySelect.svelte'
@@ -106,6 +108,17 @@
 		showWeaponKeyEditor = false
 	}
 
+	function openCharacterEdit(tab: 'stats' | 'notes') {
+		if (type !== 'character') return
+		const shortcode = partyStore.party?.shortcode
+		const partyId = partyStore.party?.id
+		openCharacterEditSidebar(item as GridCharacter, undefined, {
+			partyId,
+			partyShortcode: shortcode,
+			initialTab: tab
+		})
+	}
+
 	// Get uncap capabilities from item data based on type
 	let uncapCaps = $derived.by(() => {
 		if (type === 'character') {
@@ -129,7 +142,7 @@
 </script>
 
 <div class="team-view">
-	<NotesReadOnlySection {type} {item} />
+	<NotesReadOnlySection {type} {item} {isPartyOwner} />
 
 	<DetailsSection title={m.details_uncap_transcendence()}>
 		<DetailRow label={m.details_max_uncap_level()}>
@@ -157,14 +170,38 @@
 			</DetailsSection>
 		{/if}
 
-		{#if modificationStatus.hasRings || modificationStatus.hasEarring}
-			<DetailsSection title={m.details_mastery()}>
+		{#if modificationStatus.hasRings}
+			<DetailsSection title={m.details_over_mastery()}>
 				<MasteryDisplay
 					rings={char.overMastery}
+					characterElement={char.character?.element}
+					variant="detailed"
+					showIcons={true}
+				/>
+			</DetailsSection>
+		{:else if isPartyOwner}
+			<DetailsSection title={m.details_over_mastery()}>
+				<EmptySectionPlaceholder
+					sectionName={m.add_over_mastery()}
+					onclick={() => openCharacterEdit('stats')}
+				/>
+			</DetailsSection>
+		{/if}
+
+		{#if modificationStatus.hasEarring}
+			<DetailsSection title={m.details_aetherial_mastery()}>
+				<MasteryDisplay
 					earring={char.aetherialMastery}
 					characterElement={char.character?.element}
 					variant="detailed"
 					showIcons={true}
+				/>
+			</DetailsSection>
+		{:else if isPartyOwner}
+			<DetailsSection title={m.details_aetherial_mastery()}>
+				<EmptySectionPlaceholder
+					sectionName={m.add_aetherial_mastery()}
+					onclick={() => openCharacterEdit('stats')}
 				/>
 			</DetailsSection>
 		{/if}

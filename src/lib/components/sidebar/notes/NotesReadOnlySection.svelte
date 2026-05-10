@@ -15,11 +15,14 @@
 		Description
 	} from '$lib/types/api/party'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
+	import EmptySectionPlaceholder from '$lib/components/sidebar/details/EmptySectionPlaceholder.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import CollectionBadge from '$lib/components/CollectionBadge.svelte'
 	import { getRoleIconUrl } from '$lib/utils/roles'
+	import { openCharacterEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
+	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import DescriptionView from './DescriptionView.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import {
@@ -34,9 +37,19 @@
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
 		item: GridCharacter | GridWeapon | GridSummon
+		isPartyOwner?: boolean
 	}
 
-	let { type, item }: Props = $props()
+	let { type, item, isPartyOwner = false }: Props = $props()
+
+	function openEditNotes() {
+		if (type !== 'character') return
+		openCharacterEditSidebar(item as GridCharacter, undefined, {
+			partyId: partyStore.party?.id,
+			partyShortcode: partyStore.party?.shortcode,
+			initialTab: 'notes'
+		})
+	}
 
 	const roles = $derived.by((): Role[] => {
 		if (type !== 'character') return []
@@ -117,7 +130,7 @@
 	}
 </script>
 
-{#if hasAny}
+{#if hasAny || (isPartyOwner && type === 'character')}
 	<div class="notes-readonly-section">
 		{#if roles.length > 0}
 			<DetailsSection title={m.notes_roles_section_readonly()}>
@@ -135,11 +148,19 @@
 					{/each}
 				</ul>
 			</DetailsSection>
+		{:else if isPartyOwner && type === 'character'}
+			<DetailsSection title={m.notes_roles_section_readonly()}>
+				<EmptySectionPlaceholder sectionName={m.add_roles()} onclick={openEditNotes} />
+			</DetailsSection>
 		{/if}
 
 		{#if hasDescription}
 			<DetailsSection title={m.notes_description_section()}>
 				<DescriptionView value={description ?? null} />
+			</DetailsSection>
+		{:else if isPartyOwner && type === 'character'}
+			<DetailsSection title={m.notes_description_section()}>
+				<EmptySectionPlaceholder sectionName={m.add_description()} onclick={openEditNotes} />
 			</DetailsSection>
 		{/if}
 
@@ -183,6 +204,10 @@
 						</li>
 					{/each}
 				</ol>
+			</DetailsSection>
+		{:else if isPartyOwner && type === 'character'}
+			<DetailsSection title={m.substitution_substitutes()}>
+				<EmptySectionPlaceholder sectionName={m.add_substitutes()} onclick={openEditNotes} />
 			</DetailsSection>
 		{/if}
 	</div>

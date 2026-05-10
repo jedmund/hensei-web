@@ -213,7 +213,12 @@ export function openWeaponEditSidebar(
 export function openCharacterEditSidebar(
 	character: GridCharacter,
 	onSaveCharacter?: (id: string, updates: Partial<GridCharacter>) => Promise<void>,
-	context: { partyId?: string; partyShortcode?: string } = {}
+	context: {
+		partyId?: string
+		partyShortcode?: string
+		/** Tab to open the edit pane on; defaults to 'stats'. */
+		initialTab?: 'stats' | 'notes'
+	} = {}
 ) {
 	const characterName = getName(character.character)
 	const title = characterName !== 'Details' ? characterName : 'Edit Character'
@@ -264,6 +269,7 @@ export function openCharacterEditSidebar(
 			character,
 			partyId: context.partyId,
 			partyShortcode: context.partyShortcode,
+			initialTab: context.initialTab,
 			onSave: handleSave,
 			onCancel: goBack
 		},
