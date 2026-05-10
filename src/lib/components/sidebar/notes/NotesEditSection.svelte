@@ -118,6 +118,12 @@
 
 	let selectedRoleIds = $derived(roles.map((r) => r.id))
 
+	// Render chips above the picker using full Role records so we have name/icon
+	// even before the catalog query resolves (the grid item itself ships them).
+	const selectedRoles = $derived.by((): Role[] =>
+		[...roles].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+	)
+
 	const roleOptions = $derived.by(() => {
 		const all = (rolesQuery.data ?? []) as Role[]
 		const selected = new Set(selectedRoleIds)
@@ -132,6 +138,10 @@
 			disabled: selectedRoleIds.length >= ROLE_CAP && !selected.has(r.id)
 		}))
 	})
+
+	function removeRole(id: string) {
+		handleRolesChange(selectedRoleIds.filter((selectedId) => selectedId !== id))
+	}
 
 	const createSubstitution = useCreateSubstitution()
 	const updateSubstitution = useUpdateSubstitution()
@@ -299,15 +309,42 @@
 			{#snippet action()}
 				<span class="header-count">{selectedRoleIds.length} / {ROLE_CAP}</span>
 			{/snippet}
-			<MultiSelect
-				options={roleOptions}
-				value={selectedRoleIds}
-				onValueChange={handleRolesChange}
-				placeholder={m.notes_roles_placeholder()}
-				size="medium"
-				contained
-				fullWidth
-			/>
+			<div class="roles-field">
+				{#if selectedRoles.length > 0}
+					<ul class="role-chips">
+						{#each selectedRoles as role (role.id)}
+							{@const iconUrl = getRoleIconUrl(role.iconKey)}
+							<li class="role-chip">
+								<span class="chip-icon">
+									{#if iconUrl}
+										<img src={iconUrl} alt="" />
+									{/if}
+								</span>
+								<span class="chip-label"
+									>{localizedName({ en: role.nameEn, ja: role.nameJp }) ?? role.nameEn}</span
+								>
+								<button
+									type="button"
+									class="chip-remove"
+									onclick={() => removeRole(role.id)}
+									title={m.substitution_remove()}
+								>
+									<Icon name="close" size={12} />
+								</button>
+							</li>
+						{/each}
+					</ul>
+				{/if}
+				<MultiSelect
+					options={roleOptions}
+					value={selectedRoleIds}
+					onValueChange={handleRolesChange}
+					placeholder={m.notes_roles_placeholder()}
+					size="medium"
+					contained
+					fullWidth
+				/>
+			</div>
 		</DetailsSection>
 	{/if}
 
@@ -324,7 +361,12 @@
 			<span class="header-count">{substitutions.length} / {SUBSTITUTION_CAP}</span>
 		{/snippet}
 		{#if substitutions.length === 0}
-			<p class="empty">{m.substitution_empty()}</p>
+			<div class="substitution-empty">
+				<p class="empty">{m.substitution_empty()}</p>
+				<Button variant="secondary" size="small" leftIcon="plus" onclick={handleAddSubstitute}>
+					{m.substitution_add()}
+				</Button>
+			</div>
 		{:else}
 			<ol class="substitution-list">
 				{#each substitutions as sub, index (sub.id)}
@@ -365,18 +407,17 @@
 					</li>
 				{/each}
 			</ol>
+			<Button
+				variant="ghost"
+				size="small"
+				fullWidth
+				leftIcon="plus"
+				onclick={handleAddSubstitute}
+				disabled={substitutions.length >= SUBSTITUTION_CAP}
+			>
+				{m.substitution_add()}
+			</Button>
 		{/if}
-
-		<Button
-			variant="ghost"
-			size="small"
-			fullWidth
-			leftIcon="plus"
-			onclick={handleAddSubstitute}
-			disabled={substitutions.length >= SUBSTITUTION_CAP}
-		>
-			{m.substitution_add()}
-		</Button>
 	</DetailsSection>
 </div>
 
@@ -397,10 +438,92 @@
 		color: var(--text-secondary);
 	}
 
+	.roles-field {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit;
+	}
+
+	.role-chips {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: spacing.$unit-half;
+	}
+
+	.role-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: spacing.$unit-half;
+		padding: spacing.$unit-half spacing.$unit spacing.$unit-half spacing.$unit-half;
+		background: var(--input-bound-bg);
+		border-radius: 999px;
+		font-size: typography.$font-small;
+		color: var(--text-primary);
+
+		.chip-icon {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 24px;
+			height: 24px;
+			flex-shrink: 0;
+			background: var(--placeholder-bg);
+			border-radius: 50%;
+			overflow: hidden;
+
+			img {
+				width: 16px;
+				height: 16px;
+				object-fit: contain;
+			}
+		}
+
+		.chip-label {
+			line-height: 1;
+		}
+
+		.chip-remove {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 16px;
+			height: 16px;
+			padding: 0;
+			border: none;
+			background: transparent;
+			color: var(--text-tertiary);
+			cursor: pointer;
+			border-radius: 50%;
+			margin-left: spacing.$unit-half;
+			transition:
+				color 0.15s ease,
+				background 0.15s ease;
+
+			&:hover {
+				color: var(--text-primary);
+				background: var(--input-bound-bg-hover);
+			}
+		}
+	}
+
+	.substitution-empty {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: spacing.$unit;
+		min-height: 10rem;
+		padding: spacing.$unit-2x spacing.$unit;
+	}
+
 	.empty {
 		font-size: typography.$font-small;
 		color: var(--text-tertiary);
 		margin: 0;
+		text-align: center;
 	}
 
 	.substitution-list {

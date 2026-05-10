@@ -232,6 +232,7 @@
 			width: $unit-3x;
 			height: $unit-3x;
 			flex-shrink: 0;
+			margin-right: $unit-half;
 			border-radius: $item-corner;
 			overflow: hidden;
 
