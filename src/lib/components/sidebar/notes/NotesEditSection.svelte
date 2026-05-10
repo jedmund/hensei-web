@@ -16,6 +16,7 @@
 	} from '$lib/types/api/party'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { roleQueries } from '$lib/api/queries/role.queries'
+	import { getRoleIconUrl } from '$lib/utils/roles'
 	import { partyQueries } from '$lib/api/queries/party.queries'
 	import {
 		useCreateSubstitution,
@@ -123,6 +124,8 @@
 		return all.map((r) => ({
 			value: r.id,
 			label: localizedName({ en: r.nameEn, ja: r.nameJp }) ?? r.nameEn,
+			image: getRoleIconUrl(r.iconKey) ?? undefined,
+			imageBackground: 'var(--placeholder-bg)',
 			// Disable un-selected options once we hit the cap so the user can't
 			// add a fourth role; selected options stay enabled so they can be
 			// removed.
@@ -292,12 +295,16 @@
 
 <div class="notes-edit-section">
 	{#if type === 'character'}
-		<DetailsSection title={m.notes_roles_section({ count: selectedRoleIds.length, cap: ROLE_CAP })}>
+		<DetailsSection title={m.notes_roles_section()}>
+			{#snippet action()}
+				<span class="header-count">{selectedRoleIds.length} / {ROLE_CAP}</span>
+			{/snippet}
 			<MultiSelect
 				options={roleOptions}
 				value={selectedRoleIds}
 				onValueChange={handleRolesChange}
 				placeholder={m.notes_roles_placeholder()}
+				size="medium"
 				contained
 				fullWidth
 			/>
@@ -312,12 +319,10 @@
 		/>
 	</DetailsSection>
 
-	<DetailsSection
-		title={m.notes_substitutes_section({
-			count: substitutions.length,
-			cap: SUBSTITUTION_CAP
-		})}
-	>
+	<DetailsSection title={m.notes_substitutes_section()}>
+		{#snippet action()}
+			<span class="header-count">{substitutions.length} / {SUBSTITUTION_CAP}</span>
+		{/snippet}
 		{#if substitutions.length === 0}
 			<p class="empty">{m.substitution_empty()}</p>
 		{:else}
@@ -384,6 +389,12 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-2x + spacing.$unit-half;
+	}
+
+	.header-count {
+		font-size: typography.$font-small;
+		font-weight: typography.$normal;
+		color: var(--text-secondary);
 	}
 
 	.empty {

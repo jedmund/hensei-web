@@ -10,6 +10,10 @@
 		/** CSS color applied only to the check indicator, without rendering a color dot */
 		indicatorColor?: string
 		image?: string
+		/** CSS background painted behind the image. When set, the image is wrapped
+		 * in a placeholder container that always renders (even if `image` is empty),
+		 * matching the visual treatment of catalog icons elsewhere in the app. */
+		imageBackground?: string
 	}
 
 	interface Props {
@@ -102,7 +106,16 @@
 	items={stringOptions}
 >
 	<SelectPrimitive.Trigger class={selectClasses} data-placeholder={value.length === 0}>
-		{#if firstSelectedOption?.image}
+		{#if firstSelectedOption?.imageBackground}
+			<span
+				class="trigger-image-container"
+				style="background-color: {firstSelectedOption.imageBackground}"
+			>
+				{#if firstSelectedOption.image}
+					<img src={firstSelectedOption.image} alt="" />
+				{/if}
+			</span>
+		{:else if firstSelectedOption?.image}
 			<img src={firstSelectedOption.image} alt="" class="trigger-image" />
 		{:else if firstSelectedOption?.color}
 			<span class="trigger-color-dot" style="background-color: {firstSelectedOption.color}"></span>
@@ -126,11 +139,19 @@
 							: ''}
 				>
 					{#snippet children({ selected })}
-						{#if option.image}
+						{#if option.imageBackground}
+							<span class="item-image-container" style="background-color: {option.imageBackground}">
+								{#if option.image}
+									<img src={option.image} alt="" />
+								{/if}
+							</span>
+						{:else if option.image}
 							<img src={option.image} alt="" class="item-image" />
 						{/if}
-						<span class="label" class:has-color={!!option.color && !option.image} class:selected
-							>{option.label}</span
+						<span
+							class="label"
+							class:has-color={!!option.color && !option.image && !option.imageBackground}
+							class:selected>{option.label}</span
 						>
 						<span class="indicator">
 							<Icon name="check" size={12} class="check-icon {selected ? 'visible' : ''}" />
@@ -202,6 +223,23 @@
 			height: $unit-3x;
 			flex-shrink: 0;
 			object-fit: contain;
+		}
+
+		.trigger-image-container {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: $unit-3x;
+			height: $unit-3x;
+			flex-shrink: 0;
+			border-radius: $item-corner;
+			overflow: hidden;
+
+			img {
+				width: 100%;
+				height: 100%;
+				object-fit: contain;
+			}
 		}
 
 		.trigger-color-dot {
@@ -309,6 +347,23 @@
 			height: $unit-3x;
 			flex-shrink: 0;
 			object-fit: contain;
+		}
+
+		.item-image-container {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: $unit-3x;
+			height: $unit-3x;
+			flex-shrink: 0;
+			border-radius: $item-corner;
+			overflow: hidden;
+
+			img {
+				width: 100%;
+				height: 100%;
+				object-fit: contain;
+			}
 		}
 
 		:global(.check-icon) {
