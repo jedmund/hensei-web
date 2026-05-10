@@ -36,6 +36,9 @@
 
 	let isSaving = $state(false)
 	let saveError = $state<string | null>(null)
+	// Track the created role across retries so a failed icon upload doesn't
+	// orphan a previously-created role on retry.
+	let createdRole = $state<{ id: string } | null>(null)
 
 	const slotTypeOptions = [
 		{ value: 'Character', label: m.roles_type_character() },
@@ -97,23 +100,25 @@
 		isSaving = true
 		saveError = null
 		try {
-			const role = await createMut.mutateAsync({
-				nameEn: editData.nameEn.trim(),
-				nameJp: editData.nameJp.trim() || null,
-				slotType: editData.slotType
-			})
+			if (!createdRole) {
+				createdRole = await createMut.mutateAsync({
+					nameEn: editData.nameEn.trim(),
+					nameJp: editData.nameJp.trim() || null,
+					slotType: editData.slotType
+				})
+			}
 
 			if (iconFile) {
 				const dataUrl = await readDataUrl(iconFile)
 				const base64 = dataUrl.replace(/^data:[^;]+;base64,/, '')
 				await uploadIconMut.mutateAsync({
-					id: role.id,
+					id: createdRole.id,
 					image: base64,
 					filename: iconFile.name
 				})
 			}
 
-			goto(localizeHref(`/database/roles/${role.id}`))
+			goto(localizeHref(`/database/roles/${createdRole.id}`))
 		} catch (err) {
 			saveError = extractErrorMessage(err, m.roles_save_failed())
 		} finally {
@@ -122,7 +127,14 @@
 	}
 
 	function handleCancel() {
-		goto(localizeHref('/database/roles'))
+		// If the role was already created (e.g. icon upload failed mid-flow),
+		// take the user to that role rather than dropping them at the list with
+		// an unrelated state.
+		if (createdRole) {
+			goto(localizeHref(`/database/roles/${createdRole.id}`))
+		} else {
+			goto(localizeHref('/database/roles'))
+		}
 	}
 </script>
 
