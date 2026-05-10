@@ -53,7 +53,7 @@
 	{#if role}
 		<div class="content">
 			<header class="entity-header">
-				<RoleIcon iconKey={role.iconKey} name={role.nameEn} size={64} />
+				<RoleIcon iconKey={role.iconKey} name={role.nameEn} size={64} imageSize={48} />
 				<h2>{role.nameEn}</h2>
 			</header>
 

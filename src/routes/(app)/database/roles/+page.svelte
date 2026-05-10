@@ -121,7 +121,7 @@
 					</span>
 
 					<a class="link" href={localizeHref(`/database/roles/${role.id}`)}>
-						<RoleIcon iconKey={role.iconKey} name={role.nameEn} size={32} />
+						<RoleIcon iconKey={role.iconKey} name={role.nameEn} size={40} imageSize={32} />
 
 						<span class="names">
 							<span class="name-en">{role.nameEn}</span>
