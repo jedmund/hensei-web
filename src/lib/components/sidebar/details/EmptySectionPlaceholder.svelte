@@ -32,8 +32,9 @@
 		align-items: center;
 		justify-content: center;
 		min-height: 6rem;
+		margin: 0 spacing.$unit;
 		padding: spacing.$unit-2x;
-		background: var(--placeholder-bg);
+		border: 2px dashed var(--border-subtle);
 		border-radius: layout.$item-corner;
 	}
 </style>
