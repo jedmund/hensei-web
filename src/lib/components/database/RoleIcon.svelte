@@ -28,7 +28,7 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		background: var(--surface-tertiary);
+		background: var(--placeholder-bg);
 		border-radius: layout.$item-corner;
 		overflow: hidden;
 		flex-shrink: 0;
