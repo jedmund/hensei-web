@@ -40,7 +40,7 @@
 	@use '$src/themes/typography' as *;
 
 	.role-note-view {
-		font-size: $font-small;
+		font-size: $font-regular;
 		line-height: 1.5;
 		color: var(--text-primary);
 	}

@@ -16,6 +16,7 @@
 	} from '$lib/types/api/party'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import RoleIcon from '$lib/components/database/RoleIcon.svelte'
 	import RoleNoteView from './RoleNoteView.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import {
@@ -43,16 +44,6 @@
 			(a, b) => a.position - b.position
 		)
 	)
-
-	const itemDisplayName = $derived.by(() => {
-		const character = (item as GridCharacter).character
-		if (character) return localizedName(character.name) || ''
-		const weapon = (item as GridWeapon).weapon
-		if (weapon) return localizedName(weapon.name) || ''
-		const summon = (item as GridSummon).summon
-		if (summon) return localizedName(summon.name) || ''
-		return ''
-	})
 
 	const hasNote = $derived.by(() => {
 		if (note == null) return false
@@ -100,19 +91,21 @@
 
 {#if hasAny}
 	<div class="role-readonly-section">
-		{#if role}
-			<DetailsSection title={m.substitution_role()}>
-				<p class="role-name">{localizedName({ en: role.nameEn, ja: role.nameJp })}</p>
-			</DetailsSection>
-		{/if}
+		{#snippet noteDescription()}
+			<RoleNoteView value={note ?? null} />
+		{/snippet}
 
-		{#if hasNote}
+		{#if role || hasNote}
 			<DetailsSection
-				title={itemDisplayName
-					? m.role_describe_section({ name: itemDisplayName })
-					: m.role_describe_section_fallback()}
+				title={m.substitution_role()}
+				description={hasNote ? noteDescription : undefined}
 			>
-				<RoleNoteView value={note ?? null} />
+				{#if role}
+					<div class="role-row">
+						<RoleIcon iconKey={role.iconKey} name={role.nameEn} size={32} />
+						<p class="role-name">{localizedName({ en: role.nameEn, ja: role.nameJp })}</p>
+					</div>
+				{/if}
 			</DetailsSection>
 		{/if}
 
@@ -153,6 +146,13 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-2x + spacing.$unit-half;
+	}
+
+	.role-row {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit-2x;
+		padding: calc(spacing.$unit * 1.5) spacing.$unit;
 	}
 
 	.role-name {
