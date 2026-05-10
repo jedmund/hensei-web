@@ -21,7 +21,7 @@
 </script>
 
 <span class="collection-badge" style="background-color: {bgColor};" aria-hidden="true">
-	<Icon name="bookmark" size={16} />
+	<Icon name="bookmark" size={14} />
 </span>
 
 <style lang="scss">
@@ -29,14 +29,14 @@
 		position: absolute;
 		bottom: -4px;
 		right: -4px;
-		width: 24px;
-		height: 24px;
+		width: 28px;
+		height: 28px;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
 		border-radius: 50%;
 		// Box-sizing stays content-box so the inner colored circle is exactly
-		// 24×24 and the 4px stroke adds a 32×32 hit area against the avatar.
+		// 28×28 and the 4px stroke adds a 36×36 hit area against the avatar.
 		border: 4px solid var(--sidebar-bg);
 		color: white;
 		pointer-events: none;
