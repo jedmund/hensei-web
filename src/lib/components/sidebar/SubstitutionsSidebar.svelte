@@ -190,8 +190,12 @@
 		})
 	}
 
-	// Move substitute up/down
-	function handleMove(sub: Substitution, direction: 'up' | 'down') {
+	// Move substitute up/down. Run the two position updates sequentially so the
+	// query cache only invalidates once the swap has fully settled — running
+	// them in parallel races the cache and can also trip a server-side unique
+	// constraint on (grid_type, grid_id, position). A dedicated server-side
+	// swap endpoint would be the cleaner long-term fix.
+	async function handleMove(sub: Substitution, direction: 'up' | 'down') {
 		if (!partyId || !partyShortcode) return
 		const currentIndex = substitutions.findIndex((s) => s.id === sub.id)
 		const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
@@ -200,19 +204,22 @@
 		const target = substitutions[targetIndex]
 		if (!target) return
 
-		// Swap positions
-		updateSubstitution.mutate({
-			id: sub.id,
-			partyId: partyId!,
-			partyShortcode: partyShortcode!,
-			position: target.position
-		})
-		updateSubstitution.mutate({
-			id: target.id,
-			partyId: partyId!,
-			partyShortcode: partyShortcode!,
-			position: sub.position
-		})
+		try {
+			await updateSubstitution.mutateAsync({
+				id: sub.id,
+				partyId: partyId!,
+				partyShortcode: partyShortcode!,
+				position: target.position
+			})
+			await updateSubstitution.mutateAsync({
+				id: target.id,
+				partyId: partyId!,
+				partyShortcode: partyShortcode!,
+				position: sub.position
+			})
+		} catch (err) {
+			console.error('Failed to swap substitution positions:', err)
+		}
 	}
 
 	function getSubstituteName(sub: Substitution): string {
