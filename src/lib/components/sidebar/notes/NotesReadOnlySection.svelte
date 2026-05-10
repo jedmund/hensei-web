@@ -16,6 +16,8 @@
 	} from '$lib/types/api/party'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
+	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import RoleIcon from '$lib/components/database/RoleIcon.svelte'
 	import DescriptionView from './DescriptionView.svelte'
@@ -93,6 +95,22 @@
 		return undefined
 	}
 
+	function getSubstituteElement(sub: Substitution): number | undefined {
+		return (
+			sub.gridCharacter?.character?.element ??
+			sub.gridWeapon?.weapon?.element ??
+			sub.gridSummon?.summon?.element
+		)
+	}
+
+	function getSubstituteProficiencies(sub: Substitution): number[] {
+		const charProfs = sub.gridCharacter?.character?.proficiency
+		if (Array.isArray(charProfs)) return charProfs.filter((p): p is number => p !== undefined)
+		const weaponProf = sub.gridWeapon?.weapon?.proficiency
+		if (typeof weaponProf === 'number') return [weaponProf]
+		return []
+	}
+
 	function isFromCollection(sub: Substitution): boolean {
 		return !!(
 			sub.gridCharacter?.collectionCharacterId ||
@@ -128,6 +146,8 @@
 				<ol class="substitution-list">
 					{#each substitutions as sub (sub.id)}
 						{@const character = sub.gridCharacter?.character}
+						{@const element = getSubstituteElement(sub)}
+						{@const proficiencies = getSubstituteProficiencies(sub)}
 						{@const fromCollection = isFromCollection(sub)}
 						<li class="substitution-item">
 							<img
@@ -139,12 +159,20 @@
 							/>
 							<div class="info">
 								<span class="name">{getSubstituteName(sub)}</span>
-								{#if character}
-									<div class="meta">
-										<CharacterTags {character} />
+								{#if element !== undefined || proficiencies.length > 0}
+									<div class="labels">
+										{#if element !== undefined}
+											<ElementLabel {element} size="small" />
+										{/if}
+										{#each proficiencies as prof (prof)}
+											<ProficiencyLabel proficiency={prof} size="small" />
+										{/each}
 									</div>
 								{/if}
 							</div>
+							{#if character}
+								<CharacterTags {character} />
+							{/if}
 							{#if fromCollection}
 								<Icon name="bookmark" size={14} class="collection-indicator" />
 							{/if}
@@ -159,6 +187,7 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
 
 	.notes-readonly-section {
 		display: flex;
@@ -210,7 +239,8 @@
 		width: 48px;
 		height: 48px;
 		object-fit: cover;
-		border-radius: spacing.$unit-half;
+		border-radius: layout.$item-corner-small;
+		border: 1px solid var(--border-primary);
 		background: var(--placeholder-bg);
 		flex-shrink: 0;
 	}
@@ -229,12 +259,13 @@
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		color: var(--text-primary);
+		font-size: typography.$font-regular;
 	}
 
-	.meta {
+	.labels {
 		display: flex;
-		flex-wrap: wrap;
 		align-items: center;
+		flex-wrap: wrap;
 		gap: spacing.$unit-half;
 	}
 

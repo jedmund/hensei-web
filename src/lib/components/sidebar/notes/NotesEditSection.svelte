@@ -32,6 +32,8 @@
 	import SearchContent from '$lib/components/sidebar/SearchContent.svelte'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
+	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import DescriptionEditor from './DescriptionEditor.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import {
@@ -300,6 +302,22 @@
 		return getPlaceholder(type, 'square')
 	}
 
+	function getSubstituteElement(sub: Substitution): number | undefined {
+		return (
+			sub.gridCharacter?.character?.element ??
+			sub.gridWeapon?.weapon?.element ??
+			sub.gridSummon?.summon?.element
+		)
+	}
+
+	function getSubstituteProficiencies(sub: Substitution): number[] {
+		const charProfs = sub.gridCharacter?.character?.proficiency
+		if (Array.isArray(charProfs)) return charProfs.filter((p): p is number => p !== undefined)
+		const weaponProf = sub.gridWeapon?.weapon?.proficiency
+		if (typeof weaponProf === 'number') return [weaponProf]
+		return []
+	}
+
 	function getSubstituteFallbackImage(sub: Substitution): string | undefined {
 		if (sub.gridWeapon?.weapon && sub.gridWeapon.weapon.element === 0) {
 			return getWeaponFallbackImage(sub.gridWeapon.weapon.granblueId, 'square')
@@ -380,6 +398,8 @@
 				<ol class="substitution-list">
 					{#each substitutions as sub, index (sub.id)}
 						{@const character = sub.gridCharacter?.character}
+						{@const element = getSubstituteElement(sub)}
+						{@const proficiencies = getSubstituteProficiencies(sub)}
 						<li
 							class="substitution-item"
 							class:drop-target={hoverIndex === index && dragIndex !== null && dragIndex !== index}
@@ -398,21 +418,27 @@
 							/>
 							<div class="info">
 								<span class="name">{getSubstituteName(sub)}</span>
-								{#if character}
-									<div class="meta">
-										<CharacterTags {character} />
+								{#if element !== undefined || proficiencies.length > 0}
+									<div class="labels">
+										{#if element !== undefined}
+											<ElementLabel {element} size="small" />
+										{/if}
+										{#each proficiencies as prof (prof)}
+											<ProficiencyLabel proficiency={prof} size="small" />
+										{/each}
 									</div>
 								{/if}
 							</div>
-							<div class="actions">
-								<button
-									class="action-btn delete"
-									onclick={() => handleDelete(sub)}
-									title={m.substitution_remove()}
-								>
-									<Icon name="close" size={14} />
-								</button>
-							</div>
+							{#if character}
+								<CharacterTags {character} />
+							{/if}
+							<button
+								class="action-btn delete"
+								onclick={() => handleDelete(sub)}
+								title={m.substitution_remove()}
+							>
+								<Icon name="close" size={14} />
+							</button>
 						</li>
 					{/each}
 				</ol>
@@ -577,10 +603,11 @@
 	}
 
 	.thumb {
-		width: 64px;
-		height: 64px;
+		width: 48px;
+		height: 48px;
 		object-fit: cover;
-		border-radius: spacing.$unit-half;
+		border-radius: layout.$item-corner-small;
+		border: 1px solid var(--border-primary);
 		background: var(--placeholder-bg);
 		flex-shrink: 0;
 	}
@@ -599,20 +626,14 @@
 		text-overflow: ellipsis;
 		white-space: nowrap;
 		color: var(--text-primary);
+		font-size: typography.$font-regular;
 	}
 
-	.meta {
+	.labels {
 		display: flex;
+		align-items: center;
 		flex-wrap: wrap;
-		align-items: center;
 		gap: spacing.$unit-half;
-	}
-
-	.actions {
-		display: flex;
-		align-items: center;
-		gap: 2px;
-		flex-shrink: 0;
 	}
 
 	.action-btn {
