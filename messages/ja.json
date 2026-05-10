@@ -112,6 +112,7 @@
 	"context_view_in_database": "データベースで見る",
 	"context_replace": "{type}を交換",
 	"context_remove": "編成から外す",
+	"context_remove_typed": "{type}を外す",
 	"context_duplicate": "{type}を複製する",
 
 	"duplicate_collection_title": "コレクションのアイテムを複製しますか？",

@@ -2,7 +2,7 @@ import { localizedName } from '$lib/utils/locale'
 import { getElementTypeKey } from '$lib/utils/element'
 import { sidebar } from '$lib/stores/sidebar.svelte'
 import { partyStore } from '$lib/stores/partyStore.svelte'
-import { type ElementType } from '$lib/stores/paneStack.svelte'
+import { type ElementType, type OverflowMenuItem } from '$lib/stores/paneStack.svelte'
 import DetailsSidebar from '$lib/components/sidebar/DetailsSidebar.svelte'
 import EditWeaponPane from '$lib/components/sidebar/EditWeaponPane.svelte'
 import EditCharacterPane from '$lib/components/sidebar/EditCharacterPane.svelte'
@@ -17,7 +17,10 @@ interface DetailsSidebarOptions {
 	onSaveWeapon?: (id: string, updates: Partial<GridWeapon>) => Promise<void>
 	onSaveCharacter?: (id: string, updates: Partial<GridCharacter>) => Promise<void>
 	isOwner?: boolean
+	/** Owner-only: swap this slot's item for a different one (opens picker). */
 	onReplace?: () => void
+	/** Owner-only: remove the item from the slot. */
+	onRemove?: () => void
 	/** Forwarded to the edit pane so the Role tab can hit substitution + grid mutations */
 	partyId?: string
 	/** Forwarded to the edit pane so the Role tab can subscribe to the live party query */
@@ -94,12 +97,14 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 	const title =
 		itemName !== 'Details' ? itemName : `${type.charAt(0).toUpperCase() + type.slice(1)} Details`
 
-	// When the user is the owner, "Replace" is the primary action and "Edit" goes to overflow
+	// Owner: primary action is Edit (opens edit pane). The picker (was the
+	// "Replace" primary) and Remove drop into the overflow menu, both labelled
+	// per type ("Edit character", "Remove character"). Non-owners just get the
+	// view; the "Edit" primary stays for any editable items they have access to.
 	const isOwner = options.isOwner ?? false
 	const onReplace = options.onReplace
-
-	const primaryAction = isOwner && onReplace ? onReplace : onsave
-	const primaryLabel = isOwner && onReplace ? m.action_replace() : 'Edit'
+	const onRemove = options.onRemove
+	const typeLabel = getTypeLabel(type)
 
 	sidebar.openWithComponent(
 		title,
@@ -109,16 +114,32 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 			item
 		},
 		{
-			onsave: primaryAction,
-			saveLabel: primaryLabel,
+			onsave: onsave,
+			saveLabel: m.action_edit(),
 			element
 		}
 	)
 
-	// If owner with replace as primary, move Edit to overflow menu
-	if (isOwner && onReplace && onsave) {
-		sidebar.setOverflowMenu([{ label: m.action_edit(), handler: onsave }])
+	if (isOwner) {
+		const overflow: OverflowMenuItem[] = []
+		if (onReplace) {
+			overflow.push({ label: m.context_edit({ type: typeLabel }), handler: onReplace })
+		}
+		if (onRemove) {
+			overflow.push({
+				label: m.context_remove_typed({ type: typeLabel }),
+				handler: onRemove,
+				variant: 'danger'
+			})
+		}
+		if (overflow.length > 0) sidebar.setOverflowMenu(overflow)
 	}
+}
+
+function getTypeLabel(type: 'character' | 'weapon' | 'summon'): string {
+	if (type === 'character') return m.type_character()
+	if (type === 'weapon') return m.type_weapon()
+	return m.type_summon()
 }
 
 export function openWeaponEditSidebar(

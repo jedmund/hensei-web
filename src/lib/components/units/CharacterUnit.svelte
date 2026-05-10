@@ -114,6 +114,7 @@
 			onSaveCharacter: getSaveCallback(),
 			isOwner: ctx?.canEdit() ?? false,
 			onReplace: ctx?.canEdit() ? replace : undefined,
+			onRemove: ctx?.canEdit() ? remove : undefined,
 			partyId: party?.id,
 			partyShortcode: party?.shortcode
 		})

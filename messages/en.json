@@ -112,6 +112,7 @@
 	"context_view_in_database": "View in Database",
 	"context_replace": "Replace {type}",
 	"context_remove": "Remove from team",
+	"context_remove_typed": "Remove {type}",
 	"context_duplicate": "Duplicate {type}",
 
 	"duplicate_collection_title": "Duplicate collection item?",
