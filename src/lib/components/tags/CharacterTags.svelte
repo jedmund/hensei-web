@@ -10,6 +10,8 @@
 		series?: (number | CharacterSeriesRef)[] | null
 		seriesNames?: string[] | null
 		styleSwap?: boolean
+		styleName?: { en?: string | null; ja?: string | null } | null
+		styleSwaps?: Array<unknown> | null
 	}
 
 	interface Props {
@@ -63,8 +65,13 @@
 	// Check if character has season (seasonal variant), but hide if Yukata+Summer
 	const hasSeason = $derived(seasonText !== null && !isYukataWithSummer)
 
-	// Check if character is a style swap
-	const isStyleSwap = $derived(character.styleSwap === true)
+	// Show the Style tag only when the character actually participates in a
+	// style relationship: either a labeled variant (styleSwap with a name)
+	// or a base character that has alternate forms.
+	const isStyleSwap = $derived(
+		(character.styleSwap === true && !!(character.styleName?.en || character.styleName?.ja)) ||
+			(character.styleSwaps?.length ?? 0) > 0
+	)
 
 	// Whether any tags should be shown
 	const hasTags = $derived(hasSeason || displayableSeriesIndices.length > 0 || isStyleSwap)
