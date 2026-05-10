@@ -6,6 +6,7 @@
 	import * as m from '$lib/paraglide/messages'
 
 	import DatabaseFormHeader from '$lib/components/database/DatabaseFormHeader.svelte'
+	import RoleIcon from '$lib/components/database/RoleIcon.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 
@@ -168,13 +169,7 @@
 
 		<DetailsContainer title={m.roles_section_icon()}>
 			<div class="icon-upload">
-				<div class="icon-preview">
-					{#if iconPreview}
-						<img src={iconPreview} alt="" />
-					{:else}
-						<span class="placeholder">{m.roles_icon_none()}</span>
-					{/if}
-				</div>
+				<RoleIcon src={iconPreview ?? undefined} name={editData.nameEn} size={96} />
 
 				<div class="icon-controls">
 					<input
@@ -218,29 +213,6 @@
 		gap: spacing.$unit-2x;
 		align-items: flex-start;
 		padding: spacing.$unit-2x;
-	}
-
-	.icon-preview {
-		width: 96px;
-		height: 96px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: var(--surface-tertiary);
-		border-radius: layout.$item-corner;
-		overflow: hidden;
-		flex-shrink: 0;
-
-		img {
-			max-width: 100%;
-			max-height: 100%;
-			object-fit: contain;
-		}
-
-		.placeholder {
-			color: var(--text-tertiary);
-			font-size: typography.$font-small;
-		}
 	}
 
 	.icon-controls {

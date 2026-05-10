@@ -10,11 +10,10 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
-	import DetailEntityHeader from '$lib/components/database/DetailEntityHeader.svelte'
+	import RoleIcon from '$lib/components/database/RoleIcon.svelte'
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { getRoleIconUrl } from '$lib/utils/roles'
 
 	import type { PageData } from './$types'
 
@@ -27,7 +26,6 @@
 
 	const role = $derived(roleQuery.data)
 	const editUrl = $derived(role?.id ? localizeHref(`/database/roles/${role.id}/edit`) : undefined)
-	const iconUrl = $derived(getRoleIconUrl(role?.iconKey))
 	const pageTitle = $derived(m.page_title_db_entity({ name: role?.nameEn ?? 'Role' }))
 </script>
 
@@ -54,7 +52,10 @@
 
 	{#if role}
 		<div class="content">
-			<DetailEntityHeader imageUrl={iconUrl ?? ''} name={role.nameEn} />
+			<header class="entity-header">
+				<RoleIcon iconKey={role.iconKey} name={role.nameEn} size={64} />
+				<h2>{role.nameEn}</h2>
+			</header>
 
 			<section class="details">
 				<DetailsContainer title={m.roles_section_basics()}>
@@ -83,12 +84,27 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/layout' as layout;
+	@use '$src/themes/typography' as typography;
 	@use '$src/themes/database' as database;
 
 	.page {
 		background: var(--card-bg);
 		border-radius: layout.$page-corner;
 		box-shadow: var(--shadow-sm);
+	}
+
+	.entity-header {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit-2x;
+		padding: 0 spacing.$unit-2x spacing.$unit-2x;
+
+		h2 {
+			margin: 0;
+			font-size: typography.$font-xlarge;
+			font-weight: typography.$bold;
+			color: var(--text-primary);
+		}
 	}
 
 	.details {

@@ -6,6 +6,7 @@
 	import * as m from '$lib/paraglide/messages'
 
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
+	import RoleIcon from '$lib/components/database/RoleIcon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
@@ -14,7 +15,6 @@
 	import { roleQueries } from '$lib/api/queries/role.queries'
 	import { useReorderRoles } from '$lib/api/mutations/role.mutations'
 	import { withInitialData } from '$lib/query/ssr'
-	import { getRoleIconUrl } from '$lib/utils/roles'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
 	import type { Role } from '$lib/types/api/party'
@@ -121,15 +121,7 @@
 					</span>
 
 					<a class="link" href={localizeHref(`/database/roles/${role.id}`)}>
-						<span class="icon">
-							{#if role.iconKey}
-								<img src={getRoleIconUrl(role.iconKey)} alt="" />
-							{:else}
-								<span class="placeholder" aria-hidden="true">
-									<Icon name="image" size={16} />
-								</span>
-							{/if}
-						</span>
+						<RoleIcon iconKey={role.iconKey} name={role.nameEn} size={32} />
 
 						<span class="names">
 							<span class="name-en">{role.nameEn}</span>
@@ -214,32 +206,6 @@
 		min-width: 0;
 		text-decoration: none;
 		color: inherit;
-	}
-
-	.icon {
-		flex-shrink: 0;
-		width: 32px;
-		height: 32px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		img {
-			width: 100%;
-			height: 100%;
-			object-fit: contain;
-		}
-	}
-
-	.placeholder {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 32px;
-		height: 32px;
-		border-radius: layout.$item-corner;
-		background: var(--surface-tertiary);
-		color: var(--text-tertiary);
 	}
 
 	.names {

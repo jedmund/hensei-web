@@ -15,12 +15,16 @@
 	} from '$lib/api/mutations/role.mutations'
 
 	import Button from '$lib/components/ui/Button.svelte'
+	import Dialog from '$lib/components/ui/Dialog.svelte'
+	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
+	import ModalBody from '$lib/components/ui/ModalBody.svelte'
+	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import DatabaseFormHeader from '$lib/components/database/DatabaseFormHeader.svelte'
+	import RoleIcon from '$lib/components/database/RoleIcon.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { getRoleIconUrl } from '$lib/utils/roles'
 	import { extractErrorMessage } from '$lib/utils/errors'
 
 	import type { PageData } from './$types'
@@ -68,9 +72,6 @@
 			}
 		}
 	})
-
-	const existingIconUrl = $derived(getRoleIconUrl(role?.iconKey))
-	const previewUrl = $derived(iconPreview ?? existingIconUrl)
 
 	async function readDataUrl(file: File): Promise<string> {
 		return new Promise((resolve, reject) => {
@@ -223,13 +224,12 @@
 
 			<DetailsContainer title={m.roles_section_icon()}>
 				<div class="icon-upload">
-					<div class="icon-preview">
-						{#if previewUrl}
-							<img src={previewUrl} alt="" />
-						{:else}
-							<span class="placeholder">{m.roles_icon_none()}</span>
-						{/if}
-					</div>
+					<RoleIcon
+						iconKey={role.iconKey}
+						src={iconPreview ?? undefined}
+						name={role.nameEn}
+						size={96}
+					/>
 
 					<div class="icon-controls">
 						<input
@@ -246,48 +246,27 @@
 				</div>
 			</DetailsContainer>
 
-			<DetailsContainer title={m.roles_section_danger()}>
-				<div class="danger-row">
-					<span class="danger-label">{m.roles_delete_label()}</span>
-					<Button variant="destructive" size="small" onclick={() => (confirmDeleteOpen = true)}>
-						{m.roles_delete()}
-					</Button>
-				</div>
-			</DetailsContainer>
+			<div class="delete-row">
+				<Button variant="destructive" size="small" onclick={() => (confirmDeleteOpen = true)}>
+					{m.roles_delete()}
+				</Button>
+			</div>
 		</section>
 
-		{#if confirmDeleteOpen}
-			<div
-				class="confirm-overlay"
-				role="presentation"
-				onclick={() => (confirmDeleteOpen = false)}
-				onkeydown={(e) => {
-					if (e.key === 'Escape') confirmDeleteOpen = false
+		<Dialog bind:open={confirmDeleteOpen} size="small">
+			<ModalHeader title={m.roles_delete_confirm_title()} />
+			<ModalBody>
+				<p>{m.roles_delete_confirm_message({ name: role.nameEn })}</p>
+			</ModalBody>
+			<ModalFooter
+				onCancel={() => (confirmDeleteOpen = false)}
+				primaryAction={{
+					label: m.roles_delete(),
+					onclick: handleConfirmDelete,
+					destructive: true
 				}}
-				tabindex="-1"
-			>
-				<div
-					class="confirm-dialog"
-					role="dialog"
-					aria-modal="true"
-					aria-labelledby="confirm-delete-title"
-					onclick={(e) => e.stopPropagation()}
-					onkeydown={(e) => e.stopPropagation()}
-					tabindex="-1"
-				>
-					<h2 id="confirm-delete-title">{m.roles_delete_confirm_title()}</h2>
-					<p>{m.roles_delete_confirm_message({ name: role.nameEn })}</p>
-					<div class="confirm-actions">
-						<Button variant="secondary" size="small" onclick={() => (confirmDeleteOpen = false)}>
-							{m.action_cancel()}
-						</Button>
-						<Button variant="destructive" size="small" onclick={handleConfirmDelete}>
-							{m.roles_delete()}
-						</Button>
-					</div>
-				</div>
-			</div>
-		{/if}
+			/>
+		</Dialog>
 	{:else if roleQuery.isLoading}
 		<div class="loading">{m.roles_loading()}</div>
 	{:else}
@@ -299,7 +278,6 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/typography' as typography;
-	@use '$src/themes/effects' as effects;
 	@use '$src/themes/database' as database;
 
 	.page {
@@ -327,29 +305,6 @@
 		padding: spacing.$unit-2x;
 	}
 
-	.icon-preview {
-		width: 96px;
-		height: 96px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background: var(--surface-tertiary);
-		border-radius: layout.$item-corner;
-		overflow: hidden;
-		flex-shrink: 0;
-
-		img {
-			max-width: 100%;
-			max-height: 100%;
-			object-fit: contain;
-		}
-
-		.placeholder {
-			color: var(--text-tertiary);
-			font-size: typography.$font-small;
-		}
-	}
-
 	.icon-controls {
 		display: flex;
 		flex-direction: column;
@@ -368,56 +323,15 @@
 		}
 	}
 
-	.danger-row {
+	.delete-row {
 		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: spacing.$unit-2x;
-	}
-
-	.danger-label {
-		color: var(--text-primary);
-		font-size: typography.$font-regular;
+		justify-content: flex-end;
+		padding: 0 spacing.$unit-2x spacing.$unit-2x;
 	}
 
 	.loading {
 		text-align: center;
 		padding: spacing.$unit * 4;
 		color: var(--text-secondary);
-	}
-
-	.confirm-overlay {
-		position: fixed;
-		inset: 0;
-		background: rgba(0, 0, 0, 0.5);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		z-index: effects.$z-modal;
-	}
-
-	.confirm-dialog {
-		background: var(--card-bg);
-		padding: spacing.$unit-3x;
-		border-radius: layout.$card-corner;
-		max-width: 400px;
-		width: 90%;
-
-		h2 {
-			margin: 0 0 spacing.$unit;
-			font-size: typography.$font-medium;
-		}
-
-		p {
-			margin: 0 0 spacing.$unit-2x;
-			font-size: typography.$font-regular;
-			color: var(--text-secondary);
-		}
-
-		.confirm-actions {
-			display: flex;
-			justify-content: flex-end;
-			gap: spacing.$unit;
-		}
 	}
 </style>
