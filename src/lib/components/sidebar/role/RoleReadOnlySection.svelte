@@ -16,6 +16,7 @@
 	} from '$lib/types/api/party'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import Icon from '$lib/components/Icon.svelte'
 	import RoleIcon from '$lib/components/database/RoleIcon.svelte'
 	import RoleNoteView from './RoleNoteView.svelte'
 	import { localizedName } from '$lib/utils/locale'
@@ -87,6 +88,14 @@
 		}
 		return undefined
 	}
+
+	function isFromCollection(sub: Substitution): boolean {
+		return !!(
+			sub.gridCharacter?.collectionCharacterId ||
+			sub.gridWeapon?.collectionWeaponId ||
+			sub.gridSummon?.collectionSummonId
+		)
+	}
 </script>
 
 {#if hasAny}
@@ -114,6 +123,7 @@
 				<ol class="substitution-list">
 					{#each substitutions as sub (sub.id)}
 						{@const character = sub.gridCharacter?.character}
+						{@const fromCollection = isFromCollection(sub)}
 						<li class="substitution-item">
 							<img
 								src={getSubstituteImage(sub)}
@@ -130,6 +140,9 @@
 									</div>
 								{/if}
 							</div>
+							{#if fromCollection}
+								<Icon name="bookmark" size={14} class="collection-indicator" />
+							{/if}
 						</li>
 					{/each}
 				</ol>
@@ -180,8 +193,8 @@
 	}
 
 	.thumb {
-		width: 64px;
-		height: 64px;
+		width: 48px;
+		height: 48px;
 		object-fit: cover;
 		border-radius: spacing.$unit-half;
 		background: var(--placeholder-bg);
@@ -209,5 +222,10 @@
 		flex-wrap: wrap;
 		align-items: center;
 		gap: spacing.$unit-half;
+	}
+
+	:global(.collection-indicator) {
+		color: var(--accent-blue);
+		flex-shrink: 0;
 	}
 </style>
