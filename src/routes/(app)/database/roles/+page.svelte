@@ -10,7 +10,6 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
-	import Icon from '$lib/components/Icon.svelte'
 
 	import { roleQueries } from '$lib/api/queries/role.queries'
 	import { useReorderRoles } from '$lib/api/mutations/role.mutations'
@@ -116,10 +115,6 @@
 					ondragleave={onDragLeave}
 					ondrop={(e) => onDrop(e, index)}
 				>
-					<span class="handle" aria-hidden="true">
-						<Icon name="grip-vertical" width={4} height={18} />
-					</span>
-
 					<a class="link" href={localizeHref(`/database/roles/${role.id}`)}>
 						<RoleIcon iconKey={role.iconKey} name={role.nameEn} size={40} imageSize={32} />
 
@@ -175,6 +170,7 @@
 		padding: spacing.$unit spacing.$unit-2x;
 		background: var(--input-bound-bg);
 		border-radius: layout.$item-corner;
+		cursor: grab;
 		transition:
 			background 0.15s ease,
 			outline-color 0.15s ease;
@@ -184,20 +180,16 @@
 			background: var(--input-bound-bg-hover);
 		}
 
+		&:active {
+			cursor: grabbing;
+		}
+
 		&.drop-target {
 			outline-color: var(--accent-blue);
 		}
-	}
 
-	.handle {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		color: var(--text-tertiary);
-		cursor: grab;
-
-		&:active {
-			cursor: grabbing;
+		:global(button) {
+			cursor: pointer;
 		}
 	}
 
@@ -209,6 +201,7 @@
 		min-width: 0;
 		text-decoration: none;
 		color: inherit;
+		cursor: inherit;
 	}
 
 	.names {
