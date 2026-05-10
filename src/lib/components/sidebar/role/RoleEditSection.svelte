@@ -90,6 +90,17 @@
 		)
 	)
 
+	// Used to title the note section ("Describe <name>'s role").
+	const itemDisplayName = $derived.by(() => {
+		const character = (effectiveItem as GridCharacter).character
+		if (character) return localizedName(character.name) || ''
+		const weapon = (effectiveItem as GridWeapon).weapon
+		if (weapon) return localizedName(weapon.name) || ''
+		const summon = (effectiveItem as GridSummon).summon
+		if (summon) return localizedName(summon.name) || ''
+		return ''
+	})
+
 	const existingSubstituteItemIds = $derived(
 		substitutions
 			.map(
@@ -303,7 +314,11 @@
 		/>
 	</DetailsSection>
 
-	<DetailsSection title={m.substitution_note()}>
+	<DetailsSection
+		title={itemDisplayName
+			? m.role_describe_section({ name: itemDisplayName })
+			: m.role_describe_section_fallback()}
+	>
 		<RoleNoteEditor
 			value={note ?? null}
 			placeholder={m.role_note_placeholder()}

@@ -15,7 +15,6 @@
 		openDetailsSidebar,
 		openCharacterEditSidebar
 	} from '$lib/features/details/openDetailsSidebar.svelte'
-	import { openSubstitutionsSidebar } from '$lib/features/details/openSubstitutionsSidebar.svelte'
 	import { canCharacterBeModified } from '$lib/utils/modificationDetector'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName } from '$lib/utils/element'
@@ -108,18 +107,25 @@
 
 	function viewDetails() {
 		if (!item) return
+		const party = ctx.getParty()
 		openDetailsSidebar({
 			type: 'character',
 			item,
 			onSaveCharacter: getSaveCallback(),
 			isOwner: ctx?.canEdit() ?? false,
-			onReplace: ctx?.canEdit() ? replace : undefined
+			onReplace: ctx?.canEdit() ? replace : undefined,
+			partyId: party?.id,
+			partyShortcode: party?.shortcode
 		})
 	}
 
 	function editItem() {
 		if (!item) return
-		openCharacterEditSidebar(item, getSaveCallback())
+		const party = ctx.getParty()
+		openCharacterEditSidebar(item, getSaveCallback(), {
+			partyId: party?.id,
+			partyShortcode: party?.shortcode
+		})
 	}
 
 	function replace() {
@@ -148,21 +154,6 @@
 		if (!item?.character) return
 		collectionTeamsPane.addEntityToTeamsView(item.character, 'character')
 	}
-
-	function showSubstitutions() {
-		if (!item) return
-		const party = ctx.getParty()
-		openSubstitutionsSidebar({
-			type: 'character',
-			item,
-			editable: ctx?.canEdit() ?? false,
-			partyId: party.id,
-			partyShortcode: party.shortcode
-		})
-	}
-
-	const hasSubstitutions = $derived((item?.substitutions?.length ?? 0) > 0)
-	const showSubstitutionsMenuItem = $derived(hasSubstitutions || (ctx?.canEdit() ?? false))
 
 	// Check if character has a style swap variant available
 	let hasStyleVariant = $derived.by(() => {
@@ -299,8 +290,6 @@
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
 					onViewTeams={viewTeamsWithCharacter}
 					onAddToTeamsView={isTeamsPaneOpen ? addCharacterToTeamsView : undefined}
-					onShowSubstitutions={showSubstitutionsMenuItem ? showSubstitutions : undefined}
-					showSubstitutionsLabel={ctx?.canEdit() ? m.substitution_edit() : m.substitution_show()}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}

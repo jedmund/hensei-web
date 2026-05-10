@@ -1720,6 +1720,8 @@
 	"sidebar_no_parties_entity": "No teams found with this item",
 	"role_tab_stats": "Stats",
 	"role_tab_role": "Role",
+	"role_describe_section": "Describe {name}'s role",
+	"role_describe_section_fallback": "Describe this role",
 	"role_note_placeholder": "Notes about this role…",
 	"substitution_role": "Role",
 	"substitution_note": "Substitution note",

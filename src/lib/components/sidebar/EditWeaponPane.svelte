@@ -12,6 +12,9 @@
 		type WeaponEditValues,
 		type WeaponEditUpdates
 	} from './WeaponEditPane.svelte'
+	import RoleEditSection from './role/RoleEditSection.svelte'
+	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
+	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import { useSyncGridWeapon } from '$lib/api/mutations/grid.mutations'
 	import Icon from '$lib/components/Icon.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
@@ -21,12 +24,16 @@
 	interface Props {
 		paneId?: string
 		weapon: GridWeapon
+		partyId?: string
+		partyShortcode?: string
 		onSave?: (updates: Partial<GridWeapon>) => void
 		onCancel?: () => void
 	}
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	let { paneId, weapon, onSave, onCancel }: Props = $props()
+	let { paneId, weapon, partyId, partyShortcode, onSave, onCancel }: Props = $props()
+
+	let activeTab = $state<'stats' | 'role'>('stats')
 
 	let editPaneRef: ReturnType<typeof WeaponEditPane> | undefined = $state()
 
@@ -117,13 +124,24 @@
 		</div>
 	{/if}
 
-	<WeaponEditPane
-		bind:this={editPaneRef}
-		{weaponData}
-		{currentValues}
-		position={weapon.position}
-		onSave={handleSave}
-	/>
+	<div class="tabs">
+		<SegmentedControl bind:value={activeTab} variant="background" size="small" grow>
+			<Segment value="stats">{m.role_tab_stats()}</Segment>
+			<Segment value="role">{m.role_tab_role()}</Segment>
+		</SegmentedControl>
+	</div>
+
+	{#if activeTab === 'stats'}
+		<WeaponEditPane
+			bind:this={editPaneRef}
+			{weaponData}
+			{currentValues}
+			position={weapon.position}
+			onSave={handleSave}
+		/>
+	{:else}
+		<RoleEditSection type="weapon" item={weapon} {partyId} {partyShortcode} />
+	{/if}
 </div>
 
 <style lang="scss">
@@ -135,6 +153,10 @@
 		flex-direction: column;
 		height: 100%;
 		gap: spacing.$unit-4x;
+	}
+
+	.tabs {
+		padding: 0 spacing.$unit-2x;
 	}
 
 	.sync-banner {

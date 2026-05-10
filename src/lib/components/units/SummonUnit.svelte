@@ -9,8 +9,10 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getSummonImage } from '$lib/features/database/detail/image'
 	import { getPlaceholderImage, getSummonTransformation } from '$lib/utils/images'
-	import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
-	import { openSubstitutionsSidebar } from '$lib/features/details/openSubstitutionsSidebar.svelte'
+	import {
+		openDetailsSidebar,
+		openSummonEditSidebar
+	} from '$lib/features/details/openDetailsSidebar.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName } from '$lib/utils/element'
@@ -83,11 +85,23 @@
 
 	function viewDetails() {
 		if (!item) return
+		const party = ctx.getParty()
 		openDetailsSidebar({
 			type: 'summon',
 			item,
 			isOwner: ctx?.canEdit() ?? false,
-			onReplace: ctx?.canEdit() ? replace : undefined
+			onReplace: ctx?.canEdit() ? replace : undefined,
+			partyId: party?.id,
+			partyShortcode: party?.shortcode
+		})
+	}
+
+	function editItem() {
+		if (!item) return
+		const party = ctx.getParty()
+		openSummonEditSidebar(item, {
+			partyId: party?.id,
+			partyShortcode: party?.shortcode
 		})
 	}
 
@@ -170,21 +184,6 @@
 		if (!item?.summon) return
 		collectionTeamsPane.addEntityToTeamsView(item.summon, 'summon')
 	}
-
-	function showSubstitutions() {
-		if (!item) return
-		const party = ctx.getParty()
-		openSubstitutionsSidebar({
-			type: 'summon',
-			item,
-			editable: ctx?.canEdit() ?? false,
-			partyId: party.id,
-			partyShortcode: party.shortcode
-		})
-	}
-
-	const hasSubstitutions = $derived((item?.substitutions?.length ?? 0) > 0)
-	const showSubstitutionsMenuItem = $derived(hasSubstitutions || (ctx?.canEdit() ?? false))
 </script>
 
 <div
@@ -271,13 +270,13 @@
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
 					onViewTeams={viewTeamsWithSummon}
 					onAddToTeamsView={isTeamsPaneOpen ? addSummonToTeamsView : undefined}
-					onShowSubstitutions={showSubstitutionsMenuItem ? showSubstitutions : undefined}
-					showSubstitutionsLabel={ctx?.canEdit() ? m.substitution_edit() : m.substitution_show()}
+					onEdit={ctx?.canEdit() ? editItem : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onDuplicate={ctx?.canEdit() ? duplicate : undefined}
 					duplicateDisabled={!canDuplicate}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
+					editLabel={m.context_edit({ type: m.type_summon() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
 					viewTeamsLabel={m.context_view_teams_summon()}

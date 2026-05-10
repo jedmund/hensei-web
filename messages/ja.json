@@ -1701,6 +1701,8 @@
 	"sidebar_no_parties_entity": "このアイテムの編成が見つかりません",
 	"role_tab_stats": "ステータス",
 	"role_tab_role": "役割",
+	"role_describe_section": "{name}の役割を説明",
+	"role_describe_section_fallback": "この役割を説明",
 	"role_note_placeholder": "この役割についてのメモ…",
 	"substitution_role": "役割",
 	"substitution_note": "代替メモ",
