@@ -37,9 +37,11 @@
 {/if}
 
 <style lang="scss">
+	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
 
 	.description-view {
+		padding: 0 $unit;
 		font-size: $font-regular;
 		line-height: 1.5;
 		color: var(--text-primary);
