@@ -93,6 +93,9 @@ export interface GridWeapon {
 	description?: Description
 	/** Ordered list of substitute items for this slot */
 	substitutions?: Substitution[]
+	/** Stamped by the API when this grid item is rendered as a substitute —
+	 * true if current_user has the underlying weapon in their collection. */
+	owned?: boolean
 }
 
 // GridCharacter from GridCharacterBlueprint
@@ -125,6 +128,9 @@ export interface GridCharacter {
 	description?: Description
 	/** Ordered list of substitute items for this slot */
 	substitutions?: Substitution[]
+	/** Stamped by the API when this grid item is rendered as a substitute —
+	 * true if current_user has the underlying character in their collection. */
+	owned?: boolean
 }
 
 // GridSummon from GridSummonBlueprint
@@ -149,6 +155,9 @@ export interface GridSummon {
 	description?: Description
 	/** Ordered list of substitute items for this slot */
 	substitutions?: Substitution[]
+	/** Stamped by the API when this grid item is rendered as a substitute —
+	 * true if current_user has the underlying summon in their collection. */
+	owned?: boolean
 }
 
 // JobSkillList for party job skills

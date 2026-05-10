@@ -112,11 +112,8 @@
 	}
 
 	function isFromCollection(sub: Substitution): boolean {
-		return !!(
-			sub.gridCharacter?.collectionCharacterId ||
-			sub.gridWeapon?.collectionWeaponId ||
-			sub.gridSummon?.collectionSummonId
-		)
+		// `owned` is stamped by the API per current_user's collection.
+		return !!(sub.gridCharacter?.owned || sub.gridWeapon?.owned || sub.gridSummon?.owned)
 	}
 </script>
 

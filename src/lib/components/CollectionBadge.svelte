@@ -15,8 +15,12 @@
 	import Icon from './Icon.svelte'
 
 	const currentUser = $derived($page.data?.currentUser as UserCookie | null)
+	// Mix the user's element color with 85% opacity via relative-color syntax
+	// so the badge sits as a tinted disc against the avatar.
 	const bgColor = $derived(
-		currentUser?.element ? `var(--${currentUser.element}-button-bg)` : 'var(--text-tertiary)'
+		currentUser?.element
+			? `rgba(from var(--${currentUser.element}-button-bg) r g b / 85%)`
+			: 'rgba(from var(--text-tertiary) r g b / 85%)'
 	)
 </script>
 

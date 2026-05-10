@@ -320,11 +320,10 @@
 	}
 
 	function isFromCollection(sub: Substitution): boolean {
-		return !!(
-			sub.gridCharacter?.collectionCharacterId ||
-			sub.gridWeapon?.collectionWeaponId ||
-			sub.gridSummon?.collectionSummonId
-		)
+		// `owned` is stamped by the API per current_user's collection. The
+		// substitute_grid's own `collection_*_id` is never set on substitutes
+		// (they're created from raw catalog ids), so it's the wrong signal.
+		return !!(sub.gridCharacter?.owned || sub.gridWeapon?.owned || sub.gridSummon?.owned)
 	}
 
 	function getSubstituteFallbackImage(sub: Substitution): string | undefined {
