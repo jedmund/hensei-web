@@ -342,9 +342,6 @@
 						ondragleave={onDragLeave}
 						ondrop={(e) => onDrop(e, index)}
 					>
-						<span class="handle" aria-hidden="true">
-							<Icon name="grip-vertical" width={4} height={18} />
-						</span>
 						<img
 							src={getSubstituteImage(sub)}
 							alt=""
@@ -415,6 +412,7 @@
 		font-size: typography.$font-regular;
 		padding: spacing.$unit;
 		border-radius: spacing.$unit;
+		cursor: grab;
 		transition:
 			background 0.15s ease,
 			outline-color 0.15s ease;
@@ -424,21 +422,12 @@
 			background: var(--list-cell-bg-hover);
 		}
 
-		&.drop-target {
-			outline-color: var(--accent-blue);
-		}
-	}
-
-	.handle {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		color: var(--text-tertiary);
-		cursor: grab;
-		flex-shrink: 0;
-
 		&:active {
 			cursor: grabbing;
+		}
+
+		&.drop-target {
+			outline-color: var(--accent-blue);
 		}
 	}
 
