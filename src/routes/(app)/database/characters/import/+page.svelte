@@ -686,6 +686,7 @@
 			margin: 0;
 			padding: spacing.$unit;
 			background: var(--card-bg);
+			color: var(--text-primary);
 			border-radius: layout.$item-corner-small;
 			font-size: typography.$font-small;
 			white-space: pre-wrap;
