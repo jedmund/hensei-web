@@ -50,6 +50,10 @@
 		isSubauraSlot?: boolean
 		/** Whether the current slot is an extra weapon slot (filters to extra-eligible weapons only) */
 		isExtraSlot?: boolean
+		/** Entity IDs (character/weapon/summon UUIDs) that should appear disabled with the
+		 *  "already added" treatment — used by the substitutions flow to prevent adding
+		 *  an item that's already a substitute for the slot. */
+		excludedIds?: string[]
 	}
 
 	let {
@@ -64,8 +68,15 @@
 		initialCollectionSourceUsername,
 		isFriendSlot = false,
 		isSubauraSlot = false,
-		isExtraSlot = false
+		isExtraSlot = false,
+		excludedIds = []
 	}: Props = $props()
+
+	const excludedIdSet = $derived(new SvelteSet(excludedIds))
+
+	function isExcluded(item: AddItemResult): boolean {
+		return excludedIdSet.has(item.id)
+	}
 
 	// Reactively derive collection source from party store (stays in sync after mutations)
 	const collectionSourceUserId = $derived(partyStore.party?.collectionSourceUserId)
@@ -394,7 +405,7 @@
 	)
 
 	function handleItemClick(item: AddItemResult) {
-		if (canAddMore && !isInTeam(item)) {
+		if (canAddMore && !isInTeam(item) && !isExcluded(item)) {
 			onAddItems([item])
 			if (type !== 'weapon') {
 				searchQuery = ''
@@ -518,7 +529,7 @@
 		{:else if searchResults.length > 0}
 			<ul class="results-list">
 				{#each searchResults as item (item.collectionId || item.id)}
-					{@const inTeam = searchMode === 'collection' && isInTeam(item)}
+					{@const inTeam = (searchMode === 'collection' && isInTeam(item)) || isExcluded(item)}
 					<SearchResultItem
 						{item}
 						{type}

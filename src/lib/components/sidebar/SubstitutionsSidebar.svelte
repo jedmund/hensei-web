@@ -57,6 +57,20 @@
 		)
 	)
 
+	// Underlying entity ids of items already added as substitutes for this slot,
+	// so the search modal can disable them and prevent the duplicate post.
+	const existingSubstituteItemIds = $derived(
+		substitutions
+			.map(
+				(s) =>
+					s.gridCharacter?.character?.id ??
+					s.gridWeapon?.weapon?.id ??
+					s.gridSummon?.summon?.id ??
+					null
+			)
+			.filter((id): id is string => id !== null)
+	)
+
 	// Slot type mapping for roles query
 	function getSlotType(t: string): string {
 		if (t === 'character') return 'Character'
@@ -171,6 +185,7 @@
 			props: {
 				type,
 				canAddMore: true,
+				excludedIds: existingSubstituteItemIds,
 				onAddItems: (items: AddItemResult[]) => {
 					const addItem = items[0]
 					if (!addItem) return
