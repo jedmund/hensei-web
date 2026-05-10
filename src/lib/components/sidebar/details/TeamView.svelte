@@ -129,6 +129,8 @@
 </script>
 
 <div class="team-view">
+	<RoleReadOnlySection {type} {item} />
+
 	<DetailsSection title={m.details_uncap_transcendence()}>
 		<DetailRow label={m.details_max_uncap_level()}>
 			<UncapIndicator
@@ -327,8 +329,6 @@
 			</DetailsSection>
 		{/if}
 	{/if}
-
-	<RoleReadOnlySection {type} {item} />
 </div>
 
 <style lang="scss">
