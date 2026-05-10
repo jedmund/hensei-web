@@ -6,13 +6,15 @@
 		children: Snippet
 		/** Optional action rendered at the right side of the section header */
 		action?: Snippet
+		/** Optional description rendered below children inside the same section */
+		description?: Snippet
 		/** Message to show when section has no content */
 		emptyMessage?: string
 		/** Whether the section is empty (shows emptyMessage instead of children) */
 		empty?: boolean
 	}
 
-	let { title, children, action, emptyMessage, empty = false }: Props = $props()
+	let { title, children, action, description, emptyMessage, empty = false }: Props = $props()
 </script>
 
 <div class="details-section">
@@ -26,6 +28,11 @@
 		<p class="empty-message">{emptyMessage}</p>
 	{:else}
 		{@render children()}
+		{#if description}
+			<div class="description">
+				{@render description()}
+			</div>
+		{/if}
 	{/if}
 </div>
 
@@ -57,6 +64,10 @@
 			font-size: typography.$font-small;
 			padding: spacing.$unit-5x spacing.$unit;
 			margin: 0;
+		}
+
+		.description {
+			padding: 0 spacing.$unit;
 		}
 	}
 </style>
