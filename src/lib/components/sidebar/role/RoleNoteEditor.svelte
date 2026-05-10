@@ -260,7 +260,7 @@
 		padding: $unit;
 		background: var(--input-bound-bg);
 		border-radius: $unit;
-		font-size: $font-small;
+		font-size: $font-regular;
 		line-height: 1.5;
 
 		&:focus-within {
