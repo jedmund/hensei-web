@@ -453,7 +453,7 @@
 		align-items: center;
 		gap: spacing.$unit;
 		font-size: typography.$font-regular;
-		padding: spacing.$unit-half spacing.$unit;
+		padding: spacing.$unit;
 		border-radius: spacing.$unit;
 		transition: background 0.15s ease;
 
