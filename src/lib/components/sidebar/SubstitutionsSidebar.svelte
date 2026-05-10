@@ -19,7 +19,16 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import SearchContent from '$lib/components/sidebar/SearchContent.svelte'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
+	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
+	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import { localizedName } from '$lib/utils/locale'
+	import {
+		getCharacterImage,
+		getWeaponImage,
+		getSummonImage,
+		getPlaceholder
+	} from '$lib/features/database/detail/image'
+	import { getWeaponFallbackImage, handleImageFallback, STYLE_SWAP_POSE } from '$lib/utils/images'
 	import Select from '$lib/components/ui/Select.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
@@ -231,6 +240,28 @@
 		if (sub.gridSummon) return localizedName(sub.gridSummon.summon?.name) ?? '\u2014'
 		return '\u2014'
 	}
+
+	function getSubstituteImage(sub: Substitution): string {
+		if (sub.gridCharacter?.character) {
+			const c = sub.gridCharacter.character
+			return getCharacterImage(c.granblueId, 'square', c.styleSwap ? STYLE_SWAP_POSE : '01')
+		}
+		if (sub.gridWeapon?.weapon) {
+			const w = sub.gridWeapon.weapon
+			return getWeaponImage(w.granblueId, 'square', w.element === 0 ? 0 : undefined)
+		}
+		if (sub.gridSummon?.summon) {
+			return getSummonImage(sub.gridSummon.summon.granblueId, 'square')
+		}
+		return getPlaceholder(type, 'square')
+	}
+
+	function getSubstituteFallbackImage(sub: Substitution): string | undefined {
+		if (sub.gridWeapon?.weapon && sub.gridWeapon.weapon.element === 0) {
+			return getWeaponFallbackImage(sub.gridWeapon.weapon.granblueId, 'square')
+		}
+		return undefined
+	}
 </script>
 
 <div class="substitutions-sidebar">
@@ -275,9 +306,32 @@
 		{:else}
 			<ol class="substitution-list">
 				{#each substitutions as sub, index (sub.id)}
+					{@const character = sub.gridCharacter?.character}
+					{@const weapon = sub.gridWeapon?.weapon}
 					<li class="substitution-item">
 						<span class="position">{index + 1}.</span>
-						<span class="name">{getSubstituteName(sub)}</span>
+						<img
+							src={getSubstituteImage(sub)}
+							alt=""
+							class="thumb"
+							loading="lazy"
+							onerror={(e) => handleImageFallback(e, getSubstituteFallbackImage(sub))}
+						/>
+						<div class="info">
+							<span class="name">{getSubstituteName(sub)}</span>
+							<div class="meta">
+								{#if character?.proficiency}
+									{#each character.proficiency as prof (prof)}
+										<ProficiencyLabel proficiency={prof} size="small" />
+									{/each}
+								{:else if weapon?.proficiency !== undefined}
+									<ProficiencyLabel proficiency={weapon.proficiency} size="small" />
+								{/if}
+								{#if character}
+									<CharacterTags {character} />
+								{/if}
+							</div>
+						</div>
 						{#if editable}
 							<div class="actions">
 								<button
@@ -362,7 +416,7 @@
 
 		&:focus {
 			outline: none;
-			border-color: var(--border-focus, var(--accent));
+			border-color: var(--accent-blue);
 		}
 
 		&.contained {
@@ -399,7 +453,7 @@
 		transition: background 0.15s ease;
 
 		&:hover {
-			background: var(--hover-bg, rgba(0, 0, 0, 0.03));
+			background: var(--list-cell-bg-hover);
 		}
 	}
 
@@ -409,12 +463,36 @@
 		font-size: typography.$font-small;
 	}
 
-	.name {
+	.thumb {
+		width: 40px;
+		height: 40px;
+		object-fit: cover;
+		border-radius: spacing.$unit-half;
+		background: var(--placeholder-bg);
+		flex-shrink: 0;
+	}
+
+	.info {
 		flex: 1;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit-half;
+	}
+
+	.name {
 		min-width: 0;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+		color: var(--text-primary);
+	}
+
+	.meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: spacing.$unit-half;
 	}
 
 	.actions {
@@ -442,7 +520,7 @@
 
 		&:hover:not(:disabled) {
 			color: var(--text-primary);
-			background: var(--hover-bg, rgba(0, 0, 0, 0.06));
+			background: var(--input-bound-bg-hover);
 		}
 
 		&:disabled {
@@ -451,7 +529,7 @@
 		}
 
 		&.delete:hover:not(:disabled) {
-			color: var(--destructive, #e53e3e);
+			color: var(--red);
 		}
 	}
 </style>
