@@ -62,6 +62,13 @@
 	let isSaving = $state(false)
 	let saveError = $state<string | null>(null)
 	let saveSuccess = $state(false)
+	let saveTimeout: ReturnType<typeof setTimeout> | null = null
+
+	$effect(() => {
+		return () => {
+			if (saveTimeout !== null) clearTimeout(saveTimeout)
+		}
+	})
 
 	$effect(() => {
 		if (role) {
@@ -148,7 +155,8 @@
 			}
 
 			saveSuccess = true
-			setTimeout(() => goto(localizeHref(`/database/roles/${role.id}`)), 500)
+			if (saveTimeout !== null) clearTimeout(saveTimeout)
+			saveTimeout = setTimeout(() => goto(localizeHref(`/database/roles/${role.id}`)), 500)
 		} catch (err) {
 			saveError = extractErrorMessage(err, m.roles_save_failed())
 		} finally {
