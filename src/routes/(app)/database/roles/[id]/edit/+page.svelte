@@ -284,7 +284,9 @@
 		<Dialog bind:open={confirmDeleteOpen} size="small">
 			<ModalHeader title={m.roles_delete_confirm_title()} />
 			<ModalBody>
-				<p>{m.roles_delete_confirm_message({ name: role.nameEn })}</p>
+				<p>
+					{m.roles_delete_confirm_prefix()} <b>{role.nameEn}</b>{m.roles_delete_confirm_suffix()}
+				</p>
 			</ModalBody>
 			<ModalFooter
 				onCancel={() => (confirmDeleteOpen = false)}
@@ -379,7 +381,7 @@
 	.delete-row {
 		display: flex;
 		justify-content: flex-end;
-		padding: 0 spacing.$unit-2x spacing.$unit-2x;
+		padding: spacing.$unit-2x;
 	}
 
 	.loading {
