@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { page } from '$app/stores'
 
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -18,18 +17,12 @@
 	const createMut = useCreateRole()
 	const uploadIconMut = useUploadRoleIcon()
 
-	const initialSlot = $page.url.searchParams.get('slot_type')
-	const slotType = (
-		initialSlot === 'Weapon' || initialSlot === 'Summon' ? initialSlot : 'Character'
-	) as 'Character' | 'Weapon' | 'Summon'
-
 	const ICON_MAX = 128
 	const ICON_BYTES_MAX = 256 * 1024
 
 	let editData = $state({
 		nameEn: '',
-		nameJp: '',
-		slotType
+		nameJp: ''
 	})
 	let iconFile = $state<File | null>(null)
 	let iconPreview = $state<string | null>(null)
@@ -45,12 +38,6 @@
 	// Track the created role across retries so a failed icon upload doesn't
 	// orphan a previously-created role on retry.
 	let createdRole = $state<{ id: string } | null>(null)
-
-	const slotTypeOptions = [
-		{ value: 'Character', label: m.roles_type_character() },
-		{ value: 'Weapon', label: m.roles_type_weapon() },
-		{ value: 'Summon', label: m.roles_type_summon() }
-	]
 
 	const canCreate = $derived(editData.nameEn.trim() !== '')
 
@@ -109,8 +96,7 @@
 			if (!createdRole) {
 				createdRole = await createMut.mutateAsync({
 					nameEn: editData.nameEn.trim(),
-					nameJp: editData.nameJp.trim() || null,
-					slotType: editData.slotType
+					nameJp: editData.nameJp.trim() || null
 				})
 			}
 
@@ -124,7 +110,7 @@
 				})
 			}
 
-			goto(localizeHref(`/database/roles/${createdRole.id}`))
+			goto(localizeHref(`/database/character-roles/${createdRole.id}`))
 		} catch (err) {
 			saveError = extractErrorMessage(err, m.roles_save_failed())
 		} finally {
@@ -137,9 +123,9 @@
 		// take the user to that role rather than dropping them at the list with
 		// an unrelated state.
 		if (createdRole) {
-			goto(localizeHref(`/database/roles/${createdRole.id}`))
+			goto(localizeHref(`/database/character-roles/${createdRole.id}`))
 		} else {
-			goto(localizeHref('/database/roles'))
+			goto(localizeHref('/database/character-roles'))
 		}
 	}
 </script>
@@ -162,13 +148,6 @@
 
 	<section class="details">
 		<DetailsContainer title={m.roles_section_basics()}>
-			<DetailItem
-				label={m.roles_field_slot_type()}
-				bind:value={editData.slotType}
-				editable={true}
-				type="select"
-				options={slotTypeOptions}
-			/>
 			<DetailItem
 				label={m.roles_field_name_en()}
 				bind:value={editData.nameEn}

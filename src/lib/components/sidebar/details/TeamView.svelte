@@ -6,7 +6,7 @@
 	import MasteryDisplay from '../modifications/MasteryDisplay.svelte'
 	import WeaponKeysList from '../modifications/WeaponKeysList.svelte'
 	import ArtifactSummary from '../modifications/ArtifactSummary.svelte'
-	import RoleReadOnlySection from '../role/RoleReadOnlySection.svelte'
+	import NotesReadOnlySection from '../notes/NotesReadOnlySection.svelte'
 	import { getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
 	import { seriesHasWeaponKeys, getSeriesSlug } from '$lib/utils/weaponSeries'
 	import WeaponKeySelect from '$lib/components/sidebar/edit/WeaponKeySelect.svelte'
@@ -129,7 +129,7 @@
 </script>
 
 <div class="team-view">
-	<RoleReadOnlySection {type} {item} />
+	<NotesReadOnlySection {type} {item} />
 
 	<DetailsSection title={m.details_uncap_transcendence()}>
 		<DetailRow label={m.details_max_uncap_level()}>

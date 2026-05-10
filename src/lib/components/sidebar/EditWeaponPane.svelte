@@ -12,7 +12,7 @@
 		type WeaponEditValues,
 		type WeaponEditUpdates
 	} from './WeaponEditPane.svelte'
-	import RoleEditSection from './role/RoleEditSection.svelte'
+	import NotesEditSection from './notes/NotesEditSection.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import { useSyncGridWeapon } from '$lib/api/mutations/grid.mutations'
@@ -32,7 +32,7 @@
 
 	let { paneId, weapon, partyId, partyShortcode, onSave, onCancel }: Props = $props()
 
-	let activeTab = $state<'stats' | 'role'>('stats')
+	let activeTab = $state<'stats' | 'notes'>('stats')
 
 	let editPaneRef: ReturnType<typeof WeaponEditPane> | undefined = $state()
 
@@ -92,10 +92,10 @@
 		const tab = activeTab
 		untrack(() => {
 			if (!paneId) return
-			const handler = tab === 'role' ? () => onCancel?.() : () => editPaneRef?.save()
+			const handler = tab === 'notes' ? () => onCancel?.() : () => editPaneRef?.save()
 			sidebar.setActionForPane(paneId, handler, m.action_save(), el)
 			sidebar.paneStack.updatePaneById(paneId, {
-				hasUnsavedChanges: () => (tab === 'role' ? false : (editPaneRef?.getHasChanges() ?? false))
+				hasUnsavedChanges: () => (tab === 'notes' ? false : (editPaneRef?.getHasChanges() ?? false))
 			})
 		})
 	})
@@ -128,8 +128,8 @@
 
 	<div class="tabs">
 		<SegmentedControl bind:value={activeTab} variant="background" size="small" grow>
-			<Segment value="stats">{m.role_tab_stats()}</Segment>
-			<Segment value="role">{m.role_tab_role()}</Segment>
+			<Segment value="stats">{m.tab_stats()}</Segment>
+			<Segment value="notes">{m.tab_notes()}</Segment>
 		</SegmentedControl>
 	</div>
 
@@ -142,7 +142,7 @@
 			onSave={handleSave}
 		/>
 	{:else}
-		<RoleEditSection type="weapon" item={weapon} {partyId} {partyShortcode} />
+		<NotesEditSection type="weapon" item={weapon} {partyId} {partyShortcode} />
 	{/if}
 </div>
 

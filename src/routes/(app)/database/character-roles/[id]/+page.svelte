@@ -25,7 +25,9 @@
 	}))
 
 	const role = $derived(roleQuery.data)
-	const editUrl = $derived(role?.id ? localizeHref(`/database/roles/${role.id}/edit`) : undefined)
+	const editUrl = $derived(
+		role?.id ? localizeHref(`/database/character-roles/${role.id}/edit`) : undefined
+	)
 	const pageTitle = $derived(m.page_title_db_entity({ name: role?.nameEn ?? 'Role' }))
 </script>
 
@@ -38,7 +40,7 @@
 				variant="ghost"
 				size="small"
 				leftIcon="chevron-left"
-				href={localizeHref('/database/roles')}
+				href={localizeHref('/database/character-roles')}
 			>
 				{m.roles_back()}
 			</Button>
@@ -59,7 +61,6 @@
 
 			<section class="details">
 				<DetailsContainer title={m.roles_section_basics()}>
-					<DetailItem label={m.roles_field_slot_type()} value={role.slotType} />
 					<DetailItem label={m.roles_field_name_en()} value={role.nameEn} />
 					<DetailItem label={m.roles_field_name_jp()} value={role.nameJp ?? '—'} />
 					<DetailItem
@@ -75,7 +76,7 @@
 		<NotFoundPlaceholder
 			title={m.roles_not_found_title()}
 			message={m.roles_not_found_message()}
-			backHref={localizeHref('/database/roles')}
+			backHref={localizeHref('/database/character-roles')}
 			backLabel={m.roles_back()}
 		/>
 	{/if}

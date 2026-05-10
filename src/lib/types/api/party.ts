@@ -33,12 +33,12 @@ export interface PartyCollectionSource {
 	collectionSourceUser?: User
 }
 
-// Role assigned to a grid slot
+// Role catalog entry. Roles only apply to characters and a character can hold
+// up to 3.
 export interface Role {
 	id: string
 	nameEn: string
 	nameJp?: string
-	slotType: string
 	sortOrder?: number
 	iconKey?: string | null
 }
@@ -53,11 +53,11 @@ export interface Substitution {
 }
 
 /**
- * Rich-text substitution note. The backend stores this as a `jsonb` column
+ * Rich-text per-item description. The backend stores this as a `jsonb` column
  * holding a Tiptap document. The shape is intentionally loose — the editor
- * owns the schema. Legacy null/undefined values mean "no note".
+ * owns the schema. Null/undefined means "no description".
  */
-export type SubstitutionNote = Record<string, unknown>
+export type Description = Record<string, unknown>
 
 // Grid item types - these are the junction tables between Party and entities
 
@@ -89,10 +89,8 @@ export interface GridWeapon {
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
 	party?: PartyCollectionSource
-	/** Assigned role for this grid slot */
-	role?: Role
-	/** Rich-text note explaining substitution context (Tiptap doc) */
-	substitutionNote?: SubstitutionNote
+	/** Rich-text per-item description (Tiptap doc) */
+	description?: Description
 	/** Ordered list of substitute items for this slot */
 	substitutions?: Substitution[]
 }
@@ -121,10 +119,10 @@ export interface GridCharacter {
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
 	party?: PartyCollectionSource
-	/** Assigned role for this grid slot */
-	role?: Role
-	/** Rich-text note explaining substitution context (Tiptap doc) */
-	substitutionNote?: SubstitutionNote
+	/** Roles assigned to this character (max 3, sorted by Role.sortOrder) */
+	roles?: Role[]
+	/** Rich-text per-item description (Tiptap doc) */
+	description?: Description
 	/** Ordered list of substitute items for this slot */
 	substitutions?: Substitution[]
 }
@@ -147,10 +145,8 @@ export interface GridSummon {
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
 	party?: PartyCollectionSource
-	/** Assigned role for this grid slot */
-	role?: Role
-	/** Rich-text note explaining substitution context (Tiptap doc) */
-	substitutionNote?: SubstitutionNote
+	/** Rich-text per-item description (Tiptap doc) */
+	description?: Description
 	/** Ordered list of substitute items for this slot */
 	substitutions?: Substitution[]
 }

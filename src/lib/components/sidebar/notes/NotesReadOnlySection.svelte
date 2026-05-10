@@ -1,10 +1,10 @@
 <script lang="ts">
 	/**
-	 * Read-only Role section for the Team view of `DetailsSidebar`.
+	 * Read-only Notes section for the Team view of `DetailsSidebar`.
 	 *
-	 * Renders only the sub-blocks that have data: role name, rich-text note,
-	 * substitutes list. The whole section collapses to nothing if the slot has
-	 * no role data at all.
+	 * Renders only the sub-blocks that have data: (characters only) role chips,
+	 * rich-text description, substitutes list. Whole section collapses to
+	 * nothing if the slot has no data at all.
 	 */
 	import type {
 		GridCharacter,
@@ -12,13 +12,13 @@
 		GridSummon,
 		Role,
 		Substitution,
-		SubstitutionNote
+		Description
 	} from '$lib/types/api/party'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import RoleIcon from '$lib/components/database/RoleIcon.svelte'
-	import RoleNoteView from './RoleNoteView.svelte'
+	import DescriptionView from './DescriptionView.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import {
 		getCharacterImage,
@@ -36,19 +36,23 @@
 
 	let { type, item }: Props = $props()
 
-	const role = $derived((item as GridWeapon).role as Role | undefined)
-	const note = $derived(
-		(item as GridWeapon).substitutionNote as SubstitutionNote | null | undefined
-	)
+	const roles = $derived.by((): Role[] => {
+		if (type !== 'character') return []
+		const list = ((item as GridCharacter).roles ?? []) as Role[]
+		// Server already sorts by sort_order, but defend against snapshots that
+		// went through optimistic-update paths and might not be ordered.
+		return [...list].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+	})
+	const description = $derived((item as GridWeapon).description as Description | null | undefined)
 	const substitutions = $derived(
 		[...(((item as GridWeapon).substitutions ?? []) as Substitution[])].sort(
 			(a, b) => a.position - b.position
 		)
 	)
 
-	const hasNote = $derived.by(() => {
-		if (note == null) return false
-		const content = (note as { content?: unknown[] }).content
+	const hasDescription = $derived.by(() => {
+		if (description == null) return false
+		const content = (description as { content?: unknown[] }).content
 		if (!Array.isArray(content) || content.length === 0) return false
 		// Treat single empty paragraph as no content.
 		if (content.length === 1) {
@@ -58,7 +62,7 @@
 		return true
 	})
 
-	const hasAny = $derived(!!role || hasNote || substitutions.length > 0)
+	const hasAny = $derived(roles.length > 0 || hasDescription || substitutions.length > 0)
 
 	function getSubstituteName(sub: Substitution): string {
 		if (sub.gridCharacter) return localizedName(sub.gridCharacter.character?.name) ?? '—'
@@ -99,22 +103,23 @@
 </script>
 
 {#if hasAny}
-	<div class="role-readonly-section">
-		{#snippet noteDescription()}
-			<RoleNoteView value={note ?? null} />
-		{/snippet}
+	<div class="notes-readonly-section">
+		{#if roles.length > 0}
+			<DetailsSection title={m.notes_roles_section_readonly()}>
+				<ul class="role-list">
+					{#each roles as role (role.id)}
+						<li class="role-chip">
+							<RoleIcon iconKey={role.iconKey} name={role.nameEn} size={32} />
+							<p class="role-name">{localizedName({ en: role.nameEn, ja: role.nameJp })}</p>
+						</li>
+					{/each}
+				</ul>
+			</DetailsSection>
+		{/if}
 
-		{#if role || hasNote}
-			<DetailsSection
-				title={m.substitution_role()}
-				description={hasNote ? noteDescription : undefined}
-			>
-				{#if role}
-					<div class="role-row">
-						<RoleIcon iconKey={role.iconKey} name={role.nameEn} size={32} />
-						<p class="role-name">{localizedName({ en: role.nameEn, ja: role.nameJp })}</p>
-					</div>
-				{/if}
+		{#if hasDescription}
+			<DetailsSection title={m.notes_description_section()}>
+				<DescriptionView value={description ?? null} />
 			</DetailsSection>
 		{/if}
 
@@ -155,13 +160,22 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 
-	.role-readonly-section {
+	.notes-readonly-section {
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-2x + spacing.$unit-half;
 	}
 
-	.role-row {
+	.role-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit-half;
+	}
+
+	.role-chip {
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit-2x;

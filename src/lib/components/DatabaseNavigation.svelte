@@ -24,7 +24,7 @@
 	const databaseBulletsHref = $derived(localizeHref('/database/bullets'))
 	const databaseRaidsHref = $derived(localizeHref('/database/raids'))
 	const databaseRaidGroupsHref = $derived(localizeHref('/database/raid-groups'))
-	const databaseRolesHref = $derived(localizeHref('/database/roles'))
+	const databaseRolesHref = $derived(localizeHref('/database/character-roles'))
 
 	// Detect current database entity type
 	const currentDatabaseEntity = $derived.by(() => {

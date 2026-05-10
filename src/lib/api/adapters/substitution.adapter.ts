@@ -1,14 +1,14 @@
 /**
  * Substitution Adapter
  *
- * Handles substitution CRUD and role fetching operations.
+ * Handles substitution CRUD operations.
  *
  * @module adapters/substitution
  */
 
 import { BaseAdapter } from './base.adapter'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
-import type { Role, Substitution } from '$lib/types/api/party'
+import type { Substitution } from '$lib/types/api/party'
 
 export interface CreateSubstitutionParams {
 	partyId: string
@@ -24,13 +24,6 @@ export interface UpdateSubstitutionParams {
 }
 
 export class SubstitutionAdapter extends BaseAdapter {
-	async fetchRoles(slotType: string): Promise<Role[]> {
-		return this.request<Role[]>('/roles', {
-			method: 'GET',
-			params: { slot_type: slotType }
-		})
-	}
-
 	async createSubstitution(
 		params: CreateSubstitutionParams,
 		headers?: Record<string, string>

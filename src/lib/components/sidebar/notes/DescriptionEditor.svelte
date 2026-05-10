@@ -20,13 +20,13 @@
 	import List from '@lucide/svelte/icons/list'
 	import ListOrdered from '@lucide/svelte/icons/list-ordered'
 	import * as m from '$lib/paraglide/messages'
-	import type { SubstitutionNote } from '$lib/types/api/party'
+	import type { Description } from '$lib/types/api/party'
 	import { untrack } from 'svelte'
 
 	interface Props {
-		value?: SubstitutionNote | null
+		value?: Description | null
 		placeholder?: string
-		onSave: (next: SubstitutionNote | null) => void
+		onSave: (next: Description | null) => void
 	}
 
 	let { value, placeholder, onSave }: Props = $props()
@@ -35,7 +35,7 @@
 	let baselineJson = $state<string | null>(null)
 	let editorVersion = $state(0)
 
-	function toContent(raw: SubstitutionNote | null | undefined): Content | undefined {
+	function toContent(raw: Description | null | undefined): Content | undefined {
 		if (raw == null) return undefined
 		if (typeof raw === 'object' && (raw as { type?: string }).type === 'doc') return raw as Content
 		// Defensive fallback for legacy plain strings.
@@ -50,7 +50,7 @@
 
 	const initialContent = untrack(() => toContent(value))
 
-	function isEmptyDoc(doc: SubstitutionNote): boolean {
+	function isEmptyDoc(doc: Description): boolean {
 		const content = (doc as { content?: unknown[] }).content
 		if (!Array.isArray(content) || content.length === 0) return true
 		if (content.length === 1) {
@@ -68,7 +68,7 @@
 
 	function handleBlur() {
 		if (!editor) return
-		const json = editor.getJSON() as SubstitutionNote
+		const json = editor.getJSON() as Description
 		const serialized = JSON.stringify(json)
 		if (serialized === baselineJson) return
 		baselineJson = serialized
@@ -85,9 +85,9 @@
 	}
 </script>
 
-<div class="role-note-editor" onfocusout={handleBlur} role="presentation">
+<div class="description-editor" onfocusout={handleBlur} role="presentation">
 	<div class="toolbar-container">
-		<div class="role-note-toolbar" role="toolbar" aria-label="Formatting">
+		<div class="description-toolbar" role="toolbar" aria-label="Formatting">
 			<button
 				type="button"
 				class="toolbar-button"
@@ -189,7 +189,7 @@
 			editable={true}
 			onUpdate={bumpVersion}
 			onSelectionUpdate={bumpVersion}
-			class="role-note-tiptap"
+			class="description-tiptap"
 		/>
 	</div>
 </div>
@@ -199,7 +199,7 @@
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/typography' as *;
 
-	.role-note-editor {
+	.description-editor {
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
@@ -209,7 +209,7 @@
 		flex-shrink: 0;
 	}
 
-	.role-note-toolbar {
+	.description-toolbar {
 		display: flex;
 		align-items: center;
 		gap: $unit-half;
@@ -269,17 +269,17 @@
 		}
 	}
 
-	:global(.role-note-tiptap) {
+	:global(.description-tiptap) {
 		min-height: 100px;
 	}
 
-	:global(.role-note-tiptap .tiptap) {
+	:global(.description-tiptap .tiptap) {
 		min-height: 100px;
 		outline: none;
 		color: var(--text-primary);
 	}
 
-	:global(.role-note-tiptap .tiptap p) {
+	:global(.description-tiptap .tiptap p) {
 		margin: 0;
 	}
 </style>

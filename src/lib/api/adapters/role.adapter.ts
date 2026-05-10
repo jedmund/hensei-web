@@ -1,7 +1,8 @@
 /**
  * Role Adapter
  *
- * Editor-only CRUD for the Roles taxonomy plus icon upload and bulk reorder.
+ * Editor-only CRUD for the character role catalog plus icon upload and bulk
+ * reorder. The route surface lives at /api/v1/grid_character_roles.
  *
  * @module adapters/role
  */
@@ -13,7 +14,6 @@ import type { Role } from '$lib/types/api/party'
 export interface RolePayload {
 	nameEn: string
 	nameJp?: string | null
-	slotType: string
 	sortOrder?: number | null
 }
 
@@ -22,22 +22,21 @@ export interface ReorderEntry {
 	sortOrder: number
 }
 
+const BASE = '/grid_character_roles'
+
 export class RoleAdapter extends BaseAdapter {
-	async listRoles(slotType?: string): Promise<Role[]> {
-		return this.request<Role[]>('/roles', {
-			method: 'GET',
-			params: slotType ? { slot_type: slotType } : undefined
-		})
+	async listRoles(): Promise<Role[]> {
+		return this.request<Role[]>(BASE, { method: 'GET' })
 	}
 
 	async getRole(id: string): Promise<Role> {
-		return this.request<Role>(`/roles/${id}`)
+		return this.request<Role>(`${BASE}/${id}`)
 	}
 
 	async createRole(payload: RolePayload, headers?: Record<string, string>): Promise<Role> {
-		return this.request<Role>('/roles', {
+		return this.request<Role>(BASE, {
 			method: 'POST',
-			body: { role: payload },
+			body: { grid_character_role: payload },
 			headers
 		})
 	}
@@ -47,22 +46,22 @@ export class RoleAdapter extends BaseAdapter {
 		payload: Partial<RolePayload>,
 		headers?: Record<string, string>
 	): Promise<Role> {
-		return this.request<Role>(`/roles/${id}`, {
+		return this.request<Role>(`${BASE}/${id}`, {
 			method: 'PUT',
-			body: { role: payload },
+			body: { grid_character_role: payload },
 			headers
 		})
 	}
 
 	async deleteRole(id: string, headers?: Record<string, string>): Promise<void> {
-		return this.request<void>(`/roles/${id}`, {
+		return this.request<void>(`${BASE}/${id}`, {
 			method: 'DELETE',
 			headers
 		})
 	}
 
 	async reorderRoles(entries: ReorderEntry[], headers?: Record<string, string>): Promise<Role[]> {
-		return this.request<Role[]>('/roles/reorder', {
+		return this.request<Role[]>(`${BASE}/reorder`, {
 			method: 'POST',
 			body: { roles: entries },
 			headers
@@ -75,7 +74,7 @@ export class RoleAdapter extends BaseAdapter {
 		filename: string,
 		headers?: Record<string, string>
 	): Promise<Role> {
-		return this.request<Role>(`/roles/${id}/upload_icon`, {
+		return this.request<Role>(`${BASE}/${id}/upload_icon`, {
 			method: 'POST',
 			body: { image: base64Image, filename },
 			headers

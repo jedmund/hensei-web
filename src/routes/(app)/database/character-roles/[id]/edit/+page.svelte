@@ -42,19 +42,12 @@
 	const uploadIconMut = useUploadRoleIcon()
 	const deleteMut = useDeleteRole()
 
-	const slotTypeOptions = [
-		{ value: 'Character', label: m.roles_type_character() },
-		{ value: 'Weapon', label: m.roles_type_weapon() },
-		{ value: 'Summon', label: m.roles_type_summon() }
-	]
-
 	const ICON_MAX = 128
 	const ICON_BYTES_MAX = 256 * 1024 // 256 KB cap on the request body
 
 	let editData = $state({
 		nameEn: '',
-		nameJp: '',
-		slotType: 'Character' as 'Character' | 'Weapon' | 'Summon'
+		nameJp: ''
 	})
 	let iconFile = $state<File | null>(null)
 	let iconPreview = $state<string | null>(null)
@@ -79,8 +72,7 @@
 		if (role) {
 			editData = {
 				nameEn: role.nameEn ?? '',
-				nameJp: role.nameJp ?? '',
-				slotType: (role.slotType as 'Character' | 'Weapon' | 'Summon') ?? 'Character'
+				nameJp: role.nameJp ?? ''
 			}
 		}
 	})
@@ -142,8 +134,7 @@
 				id: role.id,
 				payload: {
 					nameEn: editData.nameEn.trim(),
-					nameJp: editData.nameJp.trim() || null,
-					slotType: editData.slotType
+					nameJp: editData.nameJp.trim() || null
 				}
 			})
 
@@ -161,7 +152,10 @@
 
 			saveSuccess = true
 			if (saveTimeout !== null) clearTimeout(saveTimeout)
-			saveTimeout = setTimeout(() => goto(localizeHref(`/database/roles/${role.id}`)), 500)
+			saveTimeout = setTimeout(
+				() => goto(localizeHref(`/database/character-roles/${role.id}`)),
+				500
+			)
 		} catch (err) {
 			saveError = extractErrorMessage(err, m.roles_save_failed())
 		} finally {
@@ -170,8 +164,8 @@
 	}
 
 	function handleCancel() {
-		if (role?.id) goto(localizeHref(`/database/roles/${role.id}`))
-		else goto(localizeHref('/database/roles'))
+		if (role?.id) goto(localizeHref(`/database/character-roles/${role.id}`))
+		else goto(localizeHref('/database/character-roles'))
 	}
 
 	let confirmDeleteOpen = $state(false)
@@ -180,7 +174,7 @@
 		if (!role) return
 		try {
 			await deleteMut.mutateAsync({ id: role.id })
-			goto(localizeHref('/database/roles'))
+			goto(localizeHref('/database/character-roles'))
 		} catch (err) {
 			saveError = extractErrorMessage(err, m.roles_delete_failed())
 		} finally {
@@ -212,13 +206,6 @@
 
 		<section class="details">
 			<DetailsContainer title={m.roles_section_basics()}>
-				<DetailItem
-					label={m.roles_field_slot_type()}
-					bind:value={editData.slotType}
-					editable={true}
-					type="select"
-					options={slotTypeOptions}
-				/>
 				<DetailItem
 					label={m.roles_field_name_en()}
 					bind:value={editData.nameEn}

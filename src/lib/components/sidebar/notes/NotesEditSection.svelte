@@ -1,11 +1,10 @@
 <script lang="ts">
 	/**
-	 * Editable Role section: role dropdown + rich-text note + substitutions list.
-	 *
-	 * Lifted from the legacy `SubstitutionsSidebar` so it can be embedded in the
-	 * Role tab of any per-slot edit pane (Character / Weapon / Summon). Reads
-	 * from the live party query so substitution mutations update inline; writes
-	 * via the existing role + substitution mutations.
+	 * Editable Notes section: (characters only) role multi-select, plus rich-text
+	 * description and substitutions list shared across all grid types. Embedded
+	 * in the Notes tab of any per-slot edit pane. Reads from the live party
+	 * query so substitution mutations update inline; writes via the existing
+	 * grid-item and substitution mutations.
 	 */
 	import type {
 		GridCharacter,
@@ -13,7 +12,7 @@
 		GridSummon,
 		Role,
 		Substitution,
-		SubstitutionNote
+		Description
 	} from '$lib/types/api/party'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { roleQueries } from '$lib/api/queries/role.queries'
@@ -32,7 +31,7 @@
 	import SearchContent from '$lib/components/sidebar/SearchContent.svelte'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
-	import RoleNoteEditor from './RoleNoteEditor.svelte'
+	import DescriptionEditor from './DescriptionEditor.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import {
 		getCharacterImage,
@@ -41,7 +40,7 @@
 		getPlaceholder
 	} from '$lib/features/database/detail/image'
 	import { getWeaponFallbackImage, handleImageFallback, STYLE_SWAP_POSE } from '$lib/utils/images'
-	import Select from '$lib/components/ui/Select.svelte'
+	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -56,9 +55,12 @@
 
 	let { type, item, partyId, partyShortcode }: Props = $props()
 
+	const ROLE_CAP = 3
+	const SUBSTITUTION_CAP = 10
+
 	// Subscribe to the live party query so this section reflects mutations to
-	// substitutions / role / note immediately rather than reading the stale
-	// snapshot the parent passed in.
+	// substitutions / roles / description immediately rather than reading the
+	// stale snapshot the parent passed in.
 	const partyQuery = createQuery(() => ({
 		...partyQueries.byShortcode(partyShortcode ?? ''),
 		enabled: !!partyShortcode
@@ -78,9 +80,9 @@
 
 	const effectiveItem = $derived(liveItem ?? item)
 
-	let role = $derived((effectiveItem as GridWeapon).role as Role | undefined)
-	let note = $derived(
-		(effectiveItem as GridWeapon).substitutionNote as SubstitutionNote | null | undefined
+	let roles = $derived(type === 'character' ? ((effectiveItem as GridCharacter).roles ?? []) : [])
+	let description = $derived(
+		(effectiveItem as GridWeapon).description as Description | null | undefined
 	)
 	let substitutions = $derived(
 		// Spread before sort: Array.prototype.sort mutates in place; mutating
@@ -89,17 +91,6 @@
 			(a, b) => a.position - b.position
 		)
 	)
-
-	// Used to title the note section ("Describe <name>'s role").
-	const itemDisplayName = $derived.by(() => {
-		const character = (effectiveItem as GridCharacter).character
-		if (character) return localizedName(character.name) || ''
-		const weapon = (effectiveItem as GridWeapon).weapon
-		if (weapon) return localizedName(weapon.name) || ''
-		const summon = (effectiveItem as GridSummon).summon
-		if (summon) return localizedName(summon.name) || ''
-		return ''
-	})
 
 	const existingSubstituteItemIds = $derived(
 		substitutions
@@ -113,35 +104,31 @@
 			.filter((id): id is string => id !== null)
 	)
 
-	function getSlotType(t: string): string {
-		if (t === 'character') return 'Character'
-		if (t === 'summon') return 'Summon'
-		return 'Weapon'
-	}
-
 	function getGridType(t: string): string {
 		if (t === 'character') return 'GridCharacter'
 		if (t === 'summon') return 'GridSummon'
 		return 'GridWeapon'
 	}
 
-	const rolesQuery = createQuery(() => roleQueries.bySlotType(getSlotType(type)))
+	const rolesQuery = createQuery(() => ({
+		...roleQueries.all(),
+		enabled: type === 'character'
+	}))
+
+	let selectedRoleIds = $derived(roles.map((r) => r.id))
 
 	const roleOptions = $derived.by(() => {
-		const roles = (rolesQuery.data ?? []) as Role[]
-		const options: { value: string; label: string }[] = [
-			{ value: '', label: m.substitution_role_none() }
-		]
-		for (const r of roles) {
-			options.push({
-				value: r.id,
-				label: localizedName({ en: r.nameEn, ja: r.nameJp }) ?? r.nameEn
-			})
-		}
-		return options
+		const all = (rolesQuery.data ?? []) as Role[]
+		const selected = new Set(selectedRoleIds)
+		return all.map((r) => ({
+			value: r.id,
+			label: localizedName({ en: r.nameEn, ja: r.nameJp }) ?? r.nameEn,
+			// Disable un-selected options once we hit the cap so the user can't
+			// add a fourth role; selected options stay enabled so they can be
+			// removed.
+			disabled: selectedRoleIds.length >= ROLE_CAP && !selected.has(r.id)
+		}))
 	})
-
-	let selectedRoleId = $derived(role?.id ?? '')
 
 	const createSubstitution = useCreateSubstitution()
 	const updateSubstitution = useUpdateSubstitution()
@@ -173,16 +160,17 @@
 		}
 	}
 
-	function handleRoleChange(value: string | undefined) {
-		dispatchUpdate({ roleId: value || null })
+	function handleRolesChange(next: string[]) {
+		dispatchUpdate({ roleIds: next })
 	}
 
-	function handleNoteSave(next: SubstitutionNote | null) {
-		dispatchUpdate({ substitutionNote: next })
+	function handleDescriptionSave(next: Description | null) {
+		dispatchUpdate({ description: next })
 	}
 
 	function handleAddSubstitute() {
 		if (!partyId || !partyShortcode || !item.id) return
+		if (substitutions.length >= SUBSTITUTION_CAP) return
 		const searchPaneId = `search-substitute-${item.id}`
 		if (sidebar.paneStack.panes.some((p) => p.id === searchPaneId)) return
 		sidebar.push({
@@ -302,31 +290,34 @@
 	}
 </script>
 
-<div class="role-edit-section">
-	<DetailsSection title={m.substitution_role()}>
-		<Select
-			options={roleOptions}
-			bind:value={selectedRoleId}
-			onValueChange={handleRoleChange}
-			placeholder={m.substitution_role_none()}
-			contained
-			fullWidth
+<div class="notes-edit-section">
+	{#if type === 'character'}
+		<DetailsSection title={m.notes_roles_section({ count: selectedRoleIds.length, cap: ROLE_CAP })}>
+			<MultiSelect
+				options={roleOptions}
+				value={selectedRoleIds}
+				onValueChange={handleRolesChange}
+				placeholder={m.notes_roles_placeholder()}
+				contained
+				fullWidth
+			/>
+		</DetailsSection>
+	{/if}
+
+	<DetailsSection title={m.notes_description_section()}>
+		<DescriptionEditor
+			value={description ?? null}
+			placeholder={m.notes_description_placeholder()}
+			onSave={handleDescriptionSave}
 		/>
 	</DetailsSection>
 
 	<DetailsSection
-		title={itemDisplayName
-			? m.role_describe_section({ name: itemDisplayName })
-			: m.role_describe_section_fallback()}
+		title={m.notes_substitutes_section({
+			count: substitutions.length,
+			cap: SUBSTITUTION_CAP
+		})}
 	>
-		<RoleNoteEditor
-			value={note ?? null}
-			placeholder={m.role_note_placeholder()}
-			onSave={handleNoteSave}
-		/>
-	</DetailsSection>
-
-	<DetailsSection title={m.substitution_substitutes()}>
 		{#if substitutions.length === 0}
 			<p class="empty">{m.substitution_empty()}</p>
 		{:else}
@@ -371,11 +362,16 @@
 			</ol>
 		{/if}
 
-		{#if substitutions.length < 10}
-			<Button variant="ghost" size="small" fullWidth leftIcon="plus" onclick={handleAddSubstitute}>
-				{m.substitution_add()}
-			</Button>
-		{/if}
+		<Button
+			variant="ghost"
+			size="small"
+			fullWidth
+			leftIcon="plus"
+			onclick={handleAddSubstitute}
+			disabled={substitutions.length >= SUBSTITUTION_CAP}
+		>
+			{m.substitution_add()}
+		</Button>
 	</DetailsSection>
 </div>
 
@@ -384,7 +380,7 @@
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
 
-	.role-edit-section {
+	.notes-edit-section {
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-2x + spacing.$unit-half;
