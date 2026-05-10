@@ -240,35 +240,57 @@
 		})
 	}
 
-	// Move substitute up/down. Run the two position updates sequentially so the
-	// query cache only invalidates once the swap has fully settled — running
-	// them in parallel races the cache and can also trip a server-side unique
-	// constraint on (grid_type, grid_id, position). A dedicated server-side
-	// swap endpoint would be the cleaner long-term fix.
-	async function handleMove(sub: Substitution, direction: 'up' | 'down') {
-		if (!partyId || !partyShortcode) return
-		const currentIndex = substitutions.findIndex((s) => s.id === sub.id)
-		const targetIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
-		if (targetIndex < 0 || targetIndex >= substitutions.length) return
+	// Drag-and-drop reorder. The substitutions table has no unique constraint
+	// on position, so we can sequentially write each item's new index without
+	// any temporary-position dance.
+	let dragIndex = $state<number | null>(null)
+	let hoverIndex = $state<number | null>(null)
 
-		const target = substitutions[targetIndex]
-		if (!target) return
+	function onDragStart(e: DragEvent, index: number) {
+		dragIndex = index
+		if (e.dataTransfer) {
+			e.dataTransfer.effectAllowed = 'move'
+			e.dataTransfer.setData('text/plain', String(index))
+		}
+	}
+
+	function onDragOver(e: DragEvent, index: number) {
+		e.preventDefault()
+		hoverIndex = index
+		if (e.dataTransfer) e.dataTransfer.dropEffect = 'move'
+	}
+
+	function onDragLeave() {
+		hoverIndex = null
+	}
+
+	async function onDrop(e: DragEvent, dropIndex: number) {
+		e.preventDefault()
+		const from = dragIndex
+		dragIndex = null
+		hoverIndex = null
+		if (from === null || from === dropIndex) return
+		if (!partyId || !partyShortcode) return
+
+		const next = [...substitutions]
+		const [moved] = next.splice(from, 1)
+		if (!moved) return
+		next.splice(dropIndex, 0, moved)
 
 		try {
-			await updateSubstitution.mutateAsync({
-				id: sub.id,
-				partyId: partyId!,
-				partyShortcode: partyShortcode!,
-				position: target.position
-			})
-			await updateSubstitution.mutateAsync({
-				id: target.id,
-				partyId: partyId!,
-				partyShortcode: partyShortcode!,
-				position: sub.position
-			})
+			for (let i = 0; i < next.length; i++) {
+				const target = next[i]
+				if (!target) continue
+				if (target.position === i) continue
+				await updateSubstitution.mutateAsync({
+					id: target.id,
+					partyId: partyId!,
+					partyShortcode: partyShortcode!,
+					position: i
+				})
+			}
 		} catch (err) {
-			console.error('Failed to swap substitution positions:', err)
+			console.error('Failed to reorder substitutions:', err)
 		}
 	}
 
@@ -345,7 +367,20 @@
 			<ol class="substitution-list">
 				{#each substitutions as sub, index (sub.id)}
 					{@const character = sub.gridCharacter?.character}
-					<li class="substitution-item">
+					<li
+						class="substitution-item"
+						class:drop-target={hoverIndex === index && dragIndex !== null && dragIndex !== index}
+						draggable={editable ? 'true' : 'false'}
+						ondragstart={(e) => onDragStart(e, index)}
+						ondragover={(e) => onDragOver(e, index)}
+						ondragleave={onDragLeave}
+						ondrop={(e) => onDrop(e, index)}
+					>
+						{#if editable}
+							<span class="handle" aria-hidden="true">
+								<Icon name="grip-vertical" width={4} height={18} />
+							</span>
+						{/if}
 						<img
 							src={getSubstituteImage(sub)}
 							alt=""
@@ -363,22 +398,6 @@
 						</div>
 						{#if editable}
 							<div class="actions">
-								<button
-									class="action-btn"
-									onclick={() => handleMove(sub, 'up')}
-									disabled={index === 0}
-									title={m.substitution_move_up()}
-								>
-									<Icon name="chevron-up" size={14} />
-								</button>
-								<button
-									class="action-btn"
-									onclick={() => handleMove(sub, 'down')}
-									disabled={index === substitutions.length - 1}
-									title={m.substitution_move_down()}
-								>
-									<Icon name="chevron-down" size={14} />
-								</button>
 								<button
 									class="action-btn delete"
 									onclick={() => handleDelete(sub)}
@@ -479,10 +498,30 @@
 		font-size: typography.$font-regular;
 		padding: spacing.$unit;
 		border-radius: spacing.$unit;
-		transition: background 0.15s ease;
+		transition:
+			background 0.15s ease,
+			outline-color 0.15s ease;
+		outline: 2px solid transparent;
 
 		&:hover {
 			background: var(--list-cell-bg-hover);
+		}
+
+		&.drop-target {
+			outline-color: var(--accent-blue);
+		}
+	}
+
+	.handle {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--text-tertiary);
+		cursor: grab;
+		flex-shrink: 0;
+
+		&:active {
+			cursor: grabbing;
 		}
 	}
 
