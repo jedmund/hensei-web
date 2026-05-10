@@ -88,6 +88,8 @@ export interface ExploreFilterParams {
 	collectionFilter?: boolean
 	boostMod?: string
 	boostSide?: string
+	/** Comma-separated list of difficulty tier slugs or ids */
+	difficulty?: string
 }
 
 /**

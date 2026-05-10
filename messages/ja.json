@@ -441,6 +441,13 @@
 	"filter_cat_party": "編成設定",
 	"filter_cat_boost": "ブースト",
 	"filter_cat_side": "方面",
+	"filter_cat_difficulty": "難易度",
+
+	"party_difficulty_label": "難易度",
+	"party_difficulty_tooltip": "{tier}難易度（スコア{score}）",
+	"party_difficulty_pending": "保留中",
+	"party_difficulty_score_label": "難易度スコア",
+	"party_difficulty_breakdown_label": "内訳",
 
 	"boost_omega": "マグナ",
 	"boost_primal": "神石",

@@ -11,6 +11,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { formatRelativeTime } from '$lib/utils/date'
 	import { PartyVisibility } from '$lib/types/visibility'
+	import type { PartyDifficulty } from '$lib/types/api/party'
 
 	type AvatarUser = {
 		username?: string
@@ -54,6 +55,8 @@
 		buttonCount?: number | null
 		chainCount?: number | null
 		summonCount?: number | null
+		// Computed difficulty assignment (null when not yet scoreable)
+		difficulty?: PartyDifficulty | null
 	}
 
 	let {
@@ -80,7 +83,8 @@
 		clearTime,
 		buttonCount,
 		chainCount,
-		summonCount
+		summonCount,
+		difficulty
 	}: Props = $props()
 
 	const showCollectionSwitcher = $derived(
@@ -409,6 +413,18 @@
 	<!-- Battle settings & performance -->
 	<div class="battle-section">
 		<div class="settings-tokens">
+			{#if difficulty?.tier}
+				<Tooltip
+					content={m.party_difficulty_tooltip({
+						tier: difficulty.tier.name,
+						score: difficulty.score.toFixed(0)
+					})}
+				>
+					<span class="token difficulty" style:background={difficulty.tier.color || undefined}>
+						{difficulty.tier.name}
+					</span>
+				</Tooltip>
+			{/if}
 			{#if solo}
 				<Tooltip content={m.battle_solo()}>
 					<span class="token solo on">{m.battle_solo()}</span>
@@ -690,6 +706,10 @@
 			background: var(--button-bg);
 			color: var(--text-secondary);
 			font-variant-numeric: tabular-nums;
+		}
+
+		&.difficulty {
+			color: #1a1a1a;
 		}
 
 		&.chargeAttack.on {

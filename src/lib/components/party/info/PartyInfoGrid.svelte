@@ -110,6 +110,7 @@
 			buttonCount={party.buttonCount}
 			chainCount={party.chainCount}
 			summonCount={party.summonCount}
+			difficulty={party.difficulty}
 		/>
 	</div>
 
