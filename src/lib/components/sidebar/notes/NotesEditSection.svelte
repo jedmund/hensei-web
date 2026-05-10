@@ -456,15 +456,17 @@
 						</li>
 					{/each}
 				</ol>
-				<Button
-					variant="ghost"
-					fullWidth
-					leftIcon="plus"
-					onclick={handleAddSubstitute}
-					disabled={substitutions.length >= SUBSTITUTION_CAP}
-				>
-					{m.substitution_add()}
-				</Button>
+				<div class="substitution-add">
+					<Button
+						variant="secondary"
+						fullWidth
+						leftIcon="plus"
+						onclick={handleAddSubstitute}
+						disabled={substitutions.length >= SUBSTITUTION_CAP}
+					>
+						{m.substitution_add()}
+					</Button>
+				</div>
 			</div>
 		{/if}
 	</DetailsSection>
@@ -579,6 +581,10 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit;
+	}
+
+	.substitution-add {
+		padding: 0 spacing.$unit;
 	}
 
 	.substitution-list {
