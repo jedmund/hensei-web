@@ -185,11 +185,14 @@
 		}
 
 		&.drop-target {
-			outline-color: var(--accent);
+			outline-color: var(--accent-blue);
 		}
 	}
 
 	.handle {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		color: var(--text-tertiary);
 		cursor: grab;
 
@@ -211,6 +214,7 @@
 	.names {
 		display: flex;
 		flex-direction: column;
+		gap: spacing.$unit-half;
 		min-width: 0;
 
 		.name-en {
