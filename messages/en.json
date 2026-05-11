@@ -449,6 +449,10 @@
 	"party_difficulty_score_label": "Difficulty score",
 	"party_difficulty_breakdown_label": "Breakdown",
 
+	"difficulty_component_all": "All",
+	"difficulty_component_job": "Job",
+	"difficulty_component_accessory": "Accessory",
+
 	"boost_omega": "Omega",
 	"boost_primal": "Primal",
 	"boost_odious": "Odious",

@@ -3,27 +3,36 @@ import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { RequestOptions } from './types'
 import type { DifficultyTier } from '$lib/types/api/party'
 
-export interface DifficultyRule {
+export interface PendingMeta {
+	pending?: boolean
+	pendingOperation?: 'create' | 'update' | 'destroy' | null
+	draftId?: string | null
+}
+
+export interface DifficultyRule extends PendingMeta {
 	id: string
 	name: string
 	description?: string | null
 	component: string
-	rule_type: string
+	ruleType: string
 	params: Record<string, unknown>
 	weight: number
 	active: boolean
-	created_at?: string
-	updated_at?: string
+	createdAt?: string
+	updatedAt?: string
 }
 
-export interface DifficultyComponent {
+export interface DifficultyComponent extends PendingMeta {
 	id: string
 	name: string
 	weight: number
 	enabled: boolean
-	min_count_to_score: number
-	created_at?: string
-	updated_at?: string
+	minCountToScore: number
+	/** Optional cap on the denominator used for raw_score. When null the
+	 * calculator falls back to summing every rule's max contribution. */
+	targetMax: number | null
+	createdAt?: string
+	updatedAt?: string
 }
 
 export interface DifficultyPreviewResult {
@@ -32,7 +41,50 @@ export interface DifficultyPreviewResult {
 	score: number | null
 	tier: DifficultyTier | null
 	breakdown: Record<string, unknown> | null
-	ruleset_version: number
+	rulesetVersion: number
+	withDrafts?: boolean
+}
+
+export type DraftOperation = 'create' | 'update' | 'destroy'
+export type DraftTargetType = 'Difficulty' | 'DifficultyRule' | 'DifficultyComponent'
+
+export interface DifficultyDraft {
+	id: string
+	targetType: DraftTargetType
+	targetId: string | null
+	operation: DraftOperation
+	attributes: Record<string, unknown>
+	createdAt?: string
+	updatedAt?: string
+}
+
+export interface DraftSection {
+	creates: Array<{ draftId: string; attributes: Record<string, unknown> }>
+	updates: Array<{
+		draftId: string
+		targetId: string
+		label: string
+		changes: Record<string, { old: unknown; new: unknown }>
+	}>
+	destroys: Array<{
+		draftId: string
+		targetId: string
+		label: string
+		snapshot: Record<string, unknown>
+	}>
+}
+
+export interface DifficultyDiff {
+	tiers: DraftSection
+	rules: DraftSection
+	components: DraftSection
+}
+
+export interface CommitResult {
+	rulesetVersionAfter: number
+	committedAt: string
+	note: string | null
+	changeLogId: string
 }
 
 export interface DifficultyRuleTypes {
@@ -44,19 +96,27 @@ export interface DifficultyRuleTypes {
  * Adapter for the party difficulty scoring system.
  *
  * Editor endpoints (rules, components, preview) require role >= 7.
+ *
+ * Editor mutations (the create/update/delete methods on tiers, rules,
+ * components) stage a draft on the server rather than persisting
+ * immediately. Drafts become live only when the editor commits via
+ * `commitDrafts()`. The `{ draft }` return value reflects the staged
+ * draft, not the saved entity.
  */
 export class DifficultyAdapter extends BaseAdapter {
 	// ==================== Tiers (public read) ====================
 
-	async listTiers(options?: RequestOptions): Promise<DifficultyTier[]> {
-		return this.request<DifficultyTier[]>('/difficulties', options)
+	async listTiers(options?: RequestOptions & { withDrafts?: boolean }): Promise<DifficultyTier[]> {
+		const query = options?.withDrafts ? { with_drafts: true } : undefined
+		return this.request<DifficultyTier[]>('/difficulties', { ...options, query })
 	}
 
+	/** Stages a new tier; pending until `commitDrafts()` is called. */
 	async createTier(
 		input: Partial<DifficultyTier>,
 		options?: RequestOptions
-	): Promise<DifficultyTier> {
-		const response = await this.request<DifficultyTier>('/difficulties', {
+	): Promise<{ draft: DifficultyDraft }> {
+		const response = await this.request<{ draft: DifficultyDraft }>('/difficulties', {
 			...options,
 			method: 'POST',
 			body: JSON.stringify({ difficulty: input })
@@ -65,12 +125,13 @@ export class DifficultyAdapter extends BaseAdapter {
 		return response
 	}
 
+	/** Stages an edit to an existing tier; pending until `commitDrafts()`. */
 	async updateTier(
 		id: string,
 		input: Partial<DifficultyTier>,
 		options?: RequestOptions
-	): Promise<DifficultyTier> {
-		const response = await this.request<DifficultyTier>(`/difficulties/${id}`, {
+	): Promise<{ draft: DifficultyDraft }> {
+		const response = await this.request<{ draft: DifficultyDraft }>(`/difficulties/${id}`, {
 			...options,
 			method: 'PUT',
 			body: JSON.stringify({ difficulty: input })
@@ -89,20 +150,27 @@ export class DifficultyAdapter extends BaseAdapter {
 
 	// ==================== Components (editor only) ====================
 
-	async listComponents(options?: RequestOptions): Promise<DifficultyComponent[]> {
-		return this.request<DifficultyComponent[]>('/difficulty_components', options)
+	async listComponents(
+		options?: RequestOptions & { withDrafts?: boolean }
+	): Promise<DifficultyComponent[]> {
+		const query = options?.withDrafts ? { with_drafts: true } : undefined
+		return this.request<DifficultyComponent[]>('/difficulty_components', { ...options, query })
 	}
 
+	/** Stages an edit to a component; pending until `commitDrafts()`. */
 	async updateComponent(
 		idOrName: string,
 		input: Partial<DifficultyComponent>,
 		options?: RequestOptions
-	): Promise<DifficultyComponent> {
-		const response = await this.request<DifficultyComponent>(`/difficulty_components/${idOrName}`, {
-			...options,
-			method: 'PUT',
-			body: JSON.stringify({ difficulty_component: input })
-		})
+	): Promise<{ draft: DifficultyDraft }> {
+		const response = await this.request<{ draft: DifficultyDraft }>(
+			`/difficulty_components/${idOrName}`,
+			{
+				...options,
+				method: 'PUT',
+				body: JSON.stringify({ difficulty_component: input })
+			}
+		)
 		this.clearCache('/difficulty_components')
 		return response
 	}
@@ -110,12 +178,13 @@ export class DifficultyAdapter extends BaseAdapter {
 	// ==================== Rules (editor only) ====================
 
 	async listRules(
-		filters?: { component?: string; active?: boolean },
+		filters?: { component?: string; active?: boolean; withDrafts?: boolean },
 		options?: RequestOptions
 	): Promise<DifficultyRule[]> {
 		const query: Record<string, string | boolean> = {}
 		if (filters?.component) query.component = filters.component
 		if (filters?.active !== undefined) query.active = filters.active
+		if (filters?.withDrafts) query.with_drafts = true
 		return this.request<DifficultyRule[]>('/difficulty_rules', {
 			...options,
 			query: Object.keys(query).length > 0 ? query : undefined
@@ -126,11 +195,12 @@ export class DifficultyAdapter extends BaseAdapter {
 		return this.request<DifficultyRuleTypes>('/difficulty_rules/types', options)
 	}
 
+	/** Stages a new rule; pending until `commitDrafts()`. */
 	async createRule(
 		input: Partial<DifficultyRule>,
 		options?: RequestOptions
-	): Promise<DifficultyRule> {
-		const response = await this.request<DifficultyRule>('/difficulty_rules', {
+	): Promise<{ draft: DifficultyDraft }> {
+		const response = await this.request<{ draft: DifficultyDraft }>('/difficulty_rules', {
 			...options,
 			method: 'POST',
 			body: JSON.stringify({ difficulty_rule: input })
@@ -139,12 +209,13 @@ export class DifficultyAdapter extends BaseAdapter {
 		return response
 	}
 
+	/** Stages an edit to an existing rule; pending until `commitDrafts()`. */
 	async updateRule(
 		id: string,
 		input: Partial<DifficultyRule>,
 		options?: RequestOptions
-	): Promise<DifficultyRule> {
-		const response = await this.request<DifficultyRule>(`/difficulty_rules/${id}`, {
+	): Promise<{ draft: DifficultyDraft }> {
+		const response = await this.request<{ draft: DifficultyDraft }>(`/difficulty_rules/${id}`, {
 			...options,
 			method: 'PUT',
 			body: JSON.stringify({ difficulty_rule: input })
@@ -168,6 +239,69 @@ export class DifficultyAdapter extends BaseAdapter {
 			...options,
 			method: 'POST',
 			body: JSON.stringify({ shortcode })
+		})
+	}
+
+	// ==================== Drafts (editor only) ====================
+
+	async listDrafts(options?: RequestOptions): Promise<{
+		drafts: DifficultyDraft[]
+		pendingCount: number
+	}> {
+		return this.request('/difficulty_drafts', options)
+	}
+
+	async getDiff(options?: RequestOptions): Promise<{ diff: DifficultyDiff; pendingCount: number }> {
+		return this.request('/difficulty_drafts/diff', options)
+	}
+
+	async stageDraft(
+		input: {
+			targetType: DraftTargetType
+			targetId: string | null
+			operation: DraftOperation
+			attributes: Record<string, unknown>
+		},
+		options?: RequestOptions
+	): Promise<DifficultyDraft> {
+		return this.request<DifficultyDraft>('/difficulty_drafts', {
+			...options,
+			method: 'POST',
+			body: JSON.stringify({ draft: input })
+		})
+	}
+
+	async deleteDraft(id: string, options?: RequestOptions): Promise<void> {
+		await this.request<void>(`/difficulty_drafts/${id}`, { ...options, method: 'DELETE' })
+	}
+
+	async discardDrafts(options?: RequestOptions): Promise<{ discarded: number }> {
+		return this.request('/difficulty_drafts/all', { ...options, method: 'DELETE' })
+	}
+
+	async commitDrafts(note: string, options?: RequestOptions): Promise<CommitResult> {
+		return this.request<CommitResult>('/difficulty_drafts/commit', {
+			...options,
+			method: 'POST',
+			body: JSON.stringify({ note })
+		})
+	}
+
+	/**
+	 * Uploads a tier icon to the draft's S3 staging area. The image survives
+	 * there until commit (which promotes it to the canonical key) or discard
+	 * (which removes it). Pass the bare base64 — no `data:image/png;base64,` prefix.
+	 */
+	async uploadDraftImage(
+		draftId: string,
+		base64Image: string,
+		filename?: string,
+		options?: RequestOptions
+	): Promise<DifficultyDraft> {
+		return this.request<DifficultyDraft>(`/difficulty_drafts/${draftId}/upload_image`, {
+			...options,
+			method: 'POST',
+			body: JSON.stringify({ image: base64Image, filename })
 		})
 	}
 }

@@ -132,18 +132,26 @@ export interface DifficultyTier {
 	slug: string
 	name: string
 	color?: string
-	sort_order: number
+	sortOrder: number
 	description?: string
-	min_score?: number
-	max_score?: number
+	minScore?: number
+	maxScore?: number
+	/** Optional uploaded tier icon. Stored as an S3-style key, e.g. `images/difficulties/<id>.png` */
+	imageKey?: string | null
+	/** Editor-only metadata when the row reflects an unsaved draft */
+	pending?: boolean
+	pendingOperation?: 'create' | 'update' | 'destroy' | null
+	draftId?: string | null
 }
 
-// Embedded difficulty payload on Party
+// Embedded difficulty payload on Party. score/breakdown are null when the
+// party isn't yet scoreable (matches DifficultyPreviewResult on the editor
+// side).
 export interface PartyDifficulty {
 	tier: DifficultyTier | null
-	score: number
-	breakdown: Record<string, unknown>
-	computed_at: string
+	score: number | null
+	breakdown: Record<string, unknown> | null
+	computedAt: string
 }
 
 // Party from PartyBlueprint
