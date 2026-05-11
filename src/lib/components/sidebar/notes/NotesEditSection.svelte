@@ -49,6 +49,8 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import type { AddItemResult } from '$lib/types/api/search'
+	import { toast } from 'svelte-sonner'
+	import { extractErrorMessage } from '$lib/utils/errors'
 
 	interface Props {
 		type: 'weapon' | 'character' | 'summon'
@@ -156,23 +158,38 @@
 	function dispatchUpdate(updates: Record<string, unknown>) {
 		if (!item.id || !partyShortcode) return
 		if (type === 'weapon') {
-			updateWeapon.mutate({
-				id: String(item.id),
-				partyShortcode,
-				updates: updates as Partial<GridWeapon>
-			})
+			updateWeapon.mutate(
+				{
+					id: String(item.id),
+					partyShortcode,
+					updates: updates as Partial<GridWeapon>
+				},
+				{
+					onError: (err) => toast.error(extractErrorMessage(err, m.toast_failed_update_weapon()))
+				}
+			)
 		} else if (type === 'character') {
-			updateCharacter.mutate({
-				id: String(item.id),
-				partyShortcode,
-				updates: updates as Partial<GridCharacter>
-			})
+			updateCharacter.mutate(
+				{
+					id: String(item.id),
+					partyShortcode,
+					updates: updates as Partial<GridCharacter>
+				},
+				{
+					onError: (err) => toast.error(extractErrorMessage(err, m.toast_failed_update_character()))
+				}
+			)
 		} else {
-			updateSummon.mutate({
-				id: String(item.id),
-				partyShortcode,
-				updates: updates as Partial<GridSummon>
-			})
+			updateSummon.mutate(
+				{
+					id: String(item.id),
+					partyShortcode,
+					updates: updates as Partial<GridSummon>
+				},
+				{
+					onError: (err) => toast.error(extractErrorMessage(err, m.toast_failed_update_summon()))
+				}
+			)
 		}
 	}
 
@@ -213,7 +230,11 @@
 							gridId: String(item.id),
 							itemId: addItem.id
 						},
-						{ onSuccess: () => sidebar.pop() }
+						{
+							onSuccess: () => sidebar.pop(),
+							onError: (err) =>
+								toast.error(extractErrorMessage(err, m.toast_failed_add_substitution()))
+						}
 					)
 				}
 			},
@@ -223,11 +244,17 @@
 
 	function handleDelete(sub: Substitution) {
 		if (!partyId || !partyShortcode) return
-		deleteSubstitution.mutate({
-			id: sub.id,
-			partyId: partyId!,
-			partyShortcode: partyShortcode!
-		})
+		deleteSubstitution.mutate(
+			{
+				id: sub.id,
+				partyId: partyId!,
+				partyShortcode: partyShortcode!
+			},
+			{
+				onError: (err) =>
+					toast.error(extractErrorMessage(err, m.toast_failed_delete_substitution()))
+			}
+		)
 	}
 
 	let dragIndex = $state<number | null>(null)
@@ -278,6 +305,7 @@
 			}
 		} catch (err) {
 			console.error('Failed to reorder substitutions:', err)
+			toast.error(extractErrorMessage(err, m.toast_failed_reorder_substitution()))
 		}
 	}
 
