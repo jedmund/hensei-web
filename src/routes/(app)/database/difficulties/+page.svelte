@@ -15,6 +15,7 @@
 	import RuleModal from '$lib/features/database/difficulties/RuleModal.svelte'
 	import ComponentsPanel from '$lib/features/database/difficulties/ComponentsPanel.svelte'
 	import PreviewPanel from '$lib/features/database/difficulties/PreviewPanel.svelte'
+	import { getDifficultyComponentOptions } from '$lib/features/database/difficulties/constants'
 
 	type Tab = 'tiers' | 'rules' | 'components' | 'preview'
 
@@ -57,14 +58,10 @@
 	const filteredRules = $derived(
 		ruleComponentFilter === 'all' ? rules : rules.filter((r) => r.component === ruleComponentFilter)
 	)
-	const componentFilters = [
-		{ value: 'all', label: 'All' },
-		{ value: 'weapon', label: 'Weapon' },
-		{ value: 'character', label: 'Character' },
-		{ value: 'summon', label: 'Summon' },
-		{ value: 'job', label: 'Job' },
-		{ value: 'accessory', label: 'Accessory' }
-	]
+	const componentFilters = $derived([
+		{ value: 'all', label: m.difficulty_component_all() },
+		...getDifficultyComponentOptions()
+	])
 </script>
 
 <PageMeta
