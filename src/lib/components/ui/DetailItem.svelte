@@ -158,6 +158,7 @@
 		padding: spacing.$unit 0;
 		font-size: typography.$font-regular;
 		min-height: calc(spacing.$unit * 5);
+		gap: spacing.$unit-2x;
 
 		&:not(.editable) {
 			padding: spacing.$unit;
@@ -171,8 +172,6 @@
 		.label-container {
 			display: flex;
 			flex-direction: column;
-			flex-shrink: 0;
-			margin-right: spacing.$unit-2x;
 			gap: spacing.$unit-fourth;
 		}
 
@@ -197,6 +196,7 @@
 			flex: 1;
 			display: flex;
 			flex-grow: 0;
+			flex-shrink: 0;
 			justify-content: flex-end;
 			align-items: center;
 			gap: spacing.$unit-half;

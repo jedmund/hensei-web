@@ -29,6 +29,7 @@
 		authUser?: AvatarUser | null
 		activeCollectionUser?: 'viewer' | 'source'
 		onSwitchCollectionUser?: (target: 'viewer' | 'source') => void
+		isEditor?: boolean
 	}
 
 	let {
@@ -41,7 +42,8 @@
 		menu,
 		authUser,
 		activeCollectionUser,
-		onSwitchCollectionUser
+		onSwitchCollectionUser,
+		isEditor = false
 	}: Props = $props()
 
 	// Check if data exists for each tile
@@ -110,6 +112,9 @@
 			buttonCount={party.buttonCount}
 			chainCount={party.chainCount}
 			summonCount={party.summonCount}
+			difficulty={party.difficulty}
+			shortcode={party.shortcode}
+			{isEditor}
 		/>
 	</div>
 
