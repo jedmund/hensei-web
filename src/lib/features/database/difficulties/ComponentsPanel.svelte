@@ -74,7 +74,7 @@
 			// Drop the draft so it re-seeds from the refreshed query data; otherwise
 			// subsequent edits would be applied on top of the pre-save snapshot.
 			delete drafts[comp.id]
-			await queryClient.invalidateQueries({ queryKey: ['difficulties'] })
+			await queryClient.invalidateQueries({ queryKey: ['difficulties', 'components'] })
 			toast.success(`${comp.name} change staged`)
 		} catch (err) {
 			toast.error(extractErrorMessage(err, `Failed to save ${comp.name}`))
