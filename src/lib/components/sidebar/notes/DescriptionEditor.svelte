@@ -50,16 +50,6 @@
 
 	const initialContent = untrack(() => toContent(value))
 
-	function isEmptyDoc(doc: Description): boolean {
-		const content = (doc as { content?: unknown[] }).content
-		if (!Array.isArray(content) || content.length === 0) return true
-		if (content.length === 1) {
-			const para = content[0] as { type?: string; content?: unknown[] }
-			if (para?.type === 'paragraph' && (!para.content || para.content.length === 0)) return true
-		}
-		return false
-	}
-
 	$effect(() => {
 		if (editor && baselineJson === null) {
 			baselineJson = JSON.stringify(editor.getJSON())
@@ -72,7 +62,7 @@
 		const serialized = JSON.stringify(json)
 		if (serialized === baselineJson) return
 		baselineJson = serialized
-		onSave(isEmptyDoc(json) ? null : json)
+		onSave(editor.isEmpty ? null : json)
 	}
 
 	function bumpVersion() {
