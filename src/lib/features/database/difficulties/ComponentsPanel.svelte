@@ -11,23 +11,25 @@
 
 	const componentsQuery = createQuery(() => difficultyQueries.components())
 
-	// Local edit state, keyed by component id; populated on demand the first
-	// time a component is rendered. Editors see live API values and can revert
-	// by reloading the page.
+	// Local edit state, keyed by component id; seeded from server values before
+	// every render. Editors see live API values and can revert by reloading.
 	let drafts = $state<
 		Record<string, { weight: number; enabled: boolean; min_count_to_score: number }>
 	>({})
 
-	function ensureDraft(comp: DifficultyComponent) {
-		if (!drafts[comp.id]) {
-			drafts[comp.id] = {
-				weight: comp.weight,
-				enabled: comp.enabled,
-				min_count_to_score: comp.min_count_to_score
+	// $effect.pre runs before DOM updates, so drafts are guaranteed populated
+	// before the {#each} block evaluates bind expressions.
+	$effect.pre(() => {
+		for (const c of componentsQuery.data ?? []) {
+			if (!drafts[c.id]) {
+				drafts[c.id] = {
+					weight: c.weight,
+					enabled: c.enabled,
+					min_count_to_score: c.min_count_to_score
+				}
 			}
 		}
-		return drafts[comp.id]
-	}
+	})
 
 	const updateMut = createMutation(() => ({
 		mutationFn: (input: { id: string; data: Partial<DifficultyComponent> }) =>
@@ -73,8 +75,7 @@
 {:else}
 	<div class="components-list">
 		{#each components as comp (comp.id)}
-			{@const draft = ensureDraft(comp)}
-			{#if draft}
+			{#if drafts[comp.id]}
 				<section class="component-card">
 					<header class="component-header">
 						<h4>{comp.name}</h4>
@@ -91,7 +92,7 @@
 						<DetailItem
 							label="Weight"
 							sublabel="Relative contribution to the composite score"
-							bind:value={draft.weight}
+							bind:value={drafts[comp.id]!.weight}
 							editable={true}
 							type="number"
 							min={0}
@@ -99,7 +100,7 @@
 						<DetailItem
 							label="Min items to score"
 							sublabel="Parties below this are not scored. Use 0 for job/accessory."
-							bind:value={draft.min_count_to_score}
+							bind:value={drafts[comp.id]!.min_count_to_score}
 							editable={true}
 							type="number"
 							min={0}
@@ -107,7 +108,7 @@
 						<DetailItem
 							label="Enabled"
 							sublabel="Disabled components are excluded from scoring"
-							bind:value={draft.enabled}
+							bind:value={drafts[comp.id]!.enabled}
 							editable={true}
 							type="checkbox"
 						/>
