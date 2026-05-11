@@ -87,6 +87,26 @@
 		}))
 	)
 
+	// When filters are restored from a URL (?difficulty=casual,mid), pills land
+	// with label === value because the tier list hasn't loaded yet. Once it
+	// settles, replace those placeholder labels with the resolved tier name.
+	$effect(() => {
+		const tiers = difficultyTiersQuery.data
+		if (!tiers || tiers.length === 0) return
+		let changed = false
+		const next = filters.map((f) => {
+			if (f.kind !== 'difficulty' || f.label !== f.value) return f
+			const tier = tiers.find((t) => t.slug === f.value)
+			if (!tier) return f
+			changed = true
+			return { ...f, label: tier.name, color: tier.color }
+		})
+		if (changed) {
+			filters = next
+			onFiltersChange(filters)
+		}
+	})
+
 	const categoryLabels = $derived({
 		element: m.filter_cat_element(),
 		recency: m.filter_cat_recency(),
