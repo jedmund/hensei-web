@@ -17,9 +17,8 @@
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import { useSyncGridWeapon } from '$lib/api/mutations/grid.mutations'
 	import Icon from '$lib/components/Icon.svelte'
-	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { getElementKey } from '$lib/utils/element'
-	import { untrack } from 'svelte'
+	import { useEditPaneHeader } from './useEditPaneHeader.svelte'
 
 	interface Props {
 		paneId?: string
@@ -83,21 +82,13 @@
 			: undefined
 	)
 
-	// Register save action and unsaved changes check in the pane header.
-	// On the Role tab the stats pane is unmounted, so editPaneRef?.save() would
-	// be a no-op; role/note changes are persisted inline as the user edits, so
-	// the header Save button just dismisses the pane to match other edit panes.
-	$effect(() => {
-		const el = elementName
-		const tab = activeTab
-		untrack(() => {
-			if (!paneId) return
-			const handler = tab === 'notes' ? () => onCancel?.() : () => editPaneRef?.save()
-			sidebar.setActionForPane(paneId, handler, m.action_save(), el)
-			sidebar.paneStack.updatePaneById(paneId, {
-				hasUnsavedChanges: () => (tab === 'notes' ? false : (editPaneRef?.getHasChanges() ?? false))
-			})
-		})
+	useEditPaneHeader({
+		paneId: () => paneId,
+		activeTab: () => activeTab,
+		elementName: () => elementName,
+		saveStats: () => editPaneRef?.save(),
+		hasChanges: () => editPaneRef?.getHasChanges() ?? false,
+		onCancel
 	})
 
 	function handleSave(updates: WeaponEditUpdates) {
