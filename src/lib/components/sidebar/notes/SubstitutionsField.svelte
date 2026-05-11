@@ -4,8 +4,8 @@
 	import { partyQueries } from '$lib/api/queries/party.queries'
 	import {
 		useCreateSubstitution,
-		useUpdateSubstitution,
-		useDeleteSubstitution
+		useDeleteSubstitution,
+		useReorderSubstitutions
 	} from '$lib/api/mutations/substitution.mutations'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import SearchContent from '$lib/components/sidebar/SearchContent.svelte'
@@ -35,8 +35,8 @@
 	)
 
 	const createSubstitution = useCreateSubstitution()
-	const updateSubstitution = useUpdateSubstitution()
 	const deleteSubstitution = useDeleteSubstitution()
+	const reorderSubstitutions = useReorderSubstitutions()
 
 	function handleAddSubstitute() {
 		if (!partyId || !partyShortcode || !gridItemId) return
@@ -124,22 +124,17 @@
 		next.splice(dropIndex, 0, moved)
 
 		try {
-			for (let i = 0; i < next.length; i++) {
-				const target = next[i]
-				if (!target) continue
-				if (target.position === i) continue
-				await updateSubstitution.mutateAsync({
-					id: target.id,
-					partyId: partyId!,
-					partyShortcode: partyShortcode!,
-					position: i
-				})
-			}
+			await reorderSubstitutions.mutateAsync({
+				partyId,
+				partyShortcode,
+				entries: next.map((sub, i) => ({ id: sub.id, position: i }))
+			})
 		} catch (err) {
 			console.error('Failed to reorder substitutions:', err)
 			toast.error(extractErrorMessage(err, m.toast_failed_reorder_substitution()))
-			// One or more position updates may have landed before the failure;
-			// refetch the party so the UI matches the persisted server state.
+			// The backend reorder is transactional, so on failure no positions
+			// have moved. Refetch anyway to keep the UI in sync if the source
+			// of the failure was a stale view.
 			queryClient.invalidateQueries({
 				queryKey: partyQueries.byShortcode(partyShortcode).queryKey
 			})

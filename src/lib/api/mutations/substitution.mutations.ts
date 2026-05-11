@@ -10,7 +10,8 @@
 import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svelte-query'
 import {
 	substitutionAdapter,
-	type CreateSubstitutionParams
+	type CreateSubstitutionParams,
+	type ReorderSubstitutionEntry
 } from '$lib/api/adapters/substitution.adapter'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import { getEditKey } from '$lib/utils/editKeys'
@@ -92,4 +93,31 @@ export function deleteSubstitutionOptions(queryClient: QueryClient) {
 export function useDeleteSubstitution() {
 	const queryClient = useQueryClient()
 	return createMutation(() => deleteSubstitutionOptions(queryClient))
+}
+
+// ============================================================================
+// Reorder Substitutions (batch)
+// ============================================================================
+
+export function reorderSubstitutionsOptions(queryClient: QueryClient) {
+	return {
+		mutationFn: (params: {
+			partyId: string
+			partyShortcode: string
+			entries: ReorderSubstitutionEntry[]
+		}) =>
+			substitutionAdapter.reorderSubstitutions(
+				params.partyId,
+				params.entries,
+				editKeyHeaders(params.partyShortcode)
+			),
+		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
+			invalidateOnSettled(queryClient, partyShortcode)
+		}
+	}
+}
+
+export function useReorderSubstitutions() {
+	const queryClient = useQueryClient()
+	return createMutation(() => reorderSubstitutionsOptions(queryClient))
 }

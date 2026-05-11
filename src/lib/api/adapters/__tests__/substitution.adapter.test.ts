@@ -65,6 +65,26 @@ describe('SubstitutionAdapter', () => {
 		expect(JSON.parse(init.body)).toEqual({ substitution: { party_id: 'p1' } })
 	})
 
+	it('reorderSubstitutions POSTs /substitutions/reorder with the batch', async () => {
+		global.fetch = mockApiResponse([])
+
+		await adapter.reorderSubstitutions('p1', [
+			{ id: 's1', position: 0 },
+			{ id: 's2', position: 1 }
+		])
+
+		const [url, init] = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0]!
+		expect(url).toBe('https://api.example.com/substitutions/reorder')
+		expect(init.method).toBe('POST')
+		expect(JSON.parse(init.body)).toEqual({
+			party_id: 'p1',
+			substitutions: [
+				{ id: 's1', position: 0 },
+				{ id: 's2', position: 1 }
+			]
+		})
+	})
+
 	it('forwards auth headers when provided', async () => {
 		global.fetch = mockApiResponse({ id: 's1' })
 

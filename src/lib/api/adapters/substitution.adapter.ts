@@ -23,6 +23,11 @@ export interface UpdateSubstitutionParams {
 	position: number
 }
 
+export interface ReorderSubstitutionEntry {
+	id: string
+	position: number
+}
+
 export class SubstitutionAdapter extends BaseAdapter {
 	async createSubstitution(
 		params: CreateSubstitutionParams,
@@ -71,6 +76,21 @@ export class SubstitutionAdapter extends BaseAdapter {
 				substitution: {
 					partyId
 				}
+			},
+			headers
+		})
+	}
+
+	async reorderSubstitutions(
+		partyId: string,
+		entries: ReorderSubstitutionEntry[],
+		headers?: Record<string, string>
+	): Promise<Substitution[]> {
+		return this.request<Substitution[]>('/substitutions/reorder', {
+			method: 'POST',
+			body: {
+				partyId,
+				substitutions: entries
 			},
 			headers
 		})

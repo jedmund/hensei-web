@@ -9,7 +9,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
 	createSubstitutionOptions,
 	updateSubstitutionOptions,
-	deleteSubstitutionOptions
+	deleteSubstitutionOptions,
+	reorderSubstitutionsOptions
 } from '../substitution.mutations'
 import { createTestQueryClient } from './helpers'
 import { partyKeys } from '$lib/api/queries/party.queries'
@@ -20,7 +21,8 @@ vi.mock('$lib/api/adapters/substitution.adapter', () => ({
 	substitutionAdapter: {
 		createSubstitution: vi.fn(),
 		updateSubstitution: vi.fn(),
-		deleteSubstitution: vi.fn()
+		deleteSubstitution: vi.fn(),
+		reorderSubstitutions: vi.fn()
 	}
 }))
 
@@ -129,6 +131,32 @@ describe('deleteSubstitutionOptions', () => {
 		expect(substitutionAdapter.deleteSubstitution).toHaveBeenCalledWith('s1', 'p1', {
 			'X-Edit-Key': 'EDIT-KEY'
 		})
+		expect(spy).toHaveBeenCalledWith({ queryKey: partyKeys.detail('with-key') })
+	})
+})
+
+describe('reorderSubstitutionsOptions', () => {
+	it('forwards the entries array and invalidates the party cache', async () => {
+		;(substitutionAdapter.reorderSubstitutions as ReturnType<typeof vi.fn>).mockResolvedValue([])
+		const spy = vi.spyOn(queryClient, 'invalidateQueries')
+
+		await runMutation(reorderSubstitutionsOptions(queryClient), {
+			partyId: 'p1',
+			partyShortcode: 'with-key',
+			entries: [
+				{ id: 's1', position: 0 },
+				{ id: 's2', position: 1 }
+			]
+		})
+
+		expect(substitutionAdapter.reorderSubstitutions).toHaveBeenCalledWith(
+			'p1',
+			[
+				{ id: 's1', position: 0 },
+				{ id: 's2', position: 1 }
+			],
+			{ 'X-Edit-Key': 'EDIT-KEY' }
+		)
 		expect(spy).toHaveBeenCalledWith({ queryKey: partyKeys.detail('with-key') })
 	})
 })
