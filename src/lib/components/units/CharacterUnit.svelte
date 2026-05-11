@@ -28,6 +28,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { useAsyncAction } from '$lib/utils/unitActions.svelte'
 	interface Props {
 		item?: GridCharacter | undefined
 		position: number
@@ -92,17 +93,12 @@
 		removeConfirmOpen = true
 	}
 
-	async function performRemove() {
+	const removeAction = useAsyncAction(async () => {
 		if (!item?.id) return
-		try {
-			const party = ctx.getParty()
-			const editKey = ctx.getEditKey()
-			await ctx.services.gridService.removeCharacter(party.id, item.id, editKey || undefined)
-		} catch (err) {
-			console.error('Error removing character:', err)
-			toast.error(extractErrorMessage(err, 'Failed to remove character'))
-		}
-	}
+		const party = ctx.getParty()
+		const editKey = ctx.getEditKey()
+		await ctx.services.gridService.removeCharacter(party.id, item.id, editKey || undefined)
+	}, 'Failed to remove character')
 
 	let canEditItem = $derived(canCharacterBeModified(item))
 
@@ -403,7 +399,7 @@
 	bind:open={removeConfirmOpen}
 	type="character"
 	name={item?.character ? localizedName(item.character.name) : null}
-	onConfirm={performRemove}
+	onConfirm={removeAction.run}
 />
 
 <style lang="scss">

@@ -25,6 +25,7 @@
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { useAsyncAction } from '$lib/utils/unitActions.svelte'
 	import quickSummonFilled from '$src/assets/icons/quick-summon/filled.svg'
 	import quickSummonEmpty from '$src/assets/icons/quick-summon/empty.svg'
 
@@ -79,17 +80,12 @@
 		removeConfirmOpen = true
 	}
 
-	async function performRemove() {
+	const removeAction = useAsyncAction(async () => {
 		if (!item?.id) return
-		try {
-			const party = ctx.getParty()
-			const editKey = ctx.getEditKey()
-			await ctx.services.gridService.removeSummon(party.id, item.id, editKey || undefined)
-		} catch (err) {
-			console.error('Error removing summon:', err)
-			toast.error(extractErrorMessage(err, 'Failed to remove summon'))
-		}
-	}
+		const party = ctx.getParty()
+		const editKey = ctx.getEditKey()
+		await ctx.services.gridService.removeSummon(party.id, item.id, editKey || undefined)
+	}, 'Failed to remove summon')
 
 	function viewDetails() {
 		if (!item) return
@@ -141,28 +137,27 @@
 
 	let duplicateCollectionDialogOpen = $state(false)
 
-	async function duplicate() {
+	function duplicate() {
 		if (!item?.id || firstEmptySlot === undefined) return
 		if (item.collectionSummonId) {
 			duplicateCollectionDialogOpen = true
 			return
 		}
-		await executeDuplicate()
+		void duplicateAction.run()
 	}
 
-	async function executeDuplicate() {
+	const duplicateAction = useAsyncAction(async () => {
 		if (!item?.id || firstEmptySlot === undefined) return
-		try {
-			await ctx.services.gridService.duplicateSummon(item.id, firstEmptySlot)
-			const nextSlot = findNextEmptySlot(ctx.getParty(), GridType.Summon, firstEmptySlot)
-			if (nextSlot !== SLOT_NOT_FOUND) {
-				ctx.setSelectedSlot?.(nextSlot)
-			}
-		} catch (err) {
-			console.error('Error duplicating summon:', err)
-			toast.error(extractErrorMessage(err, 'Failed to duplicate summon'))
+		await ctx.services.gridService.duplicateSummon(item.id, firstEmptySlot)
+		const nextSlot = findNextEmptySlot(ctx.getParty(), GridType.Summon, firstEmptySlot)
+		if (nextSlot !== SLOT_NOT_FOUND) {
+			ctx.setSelectedSlot?.(nextSlot)
 		}
-	}
+	}, 'Failed to duplicate summon')
+
+	// `executeDuplicate` is referenced by the DuplicateCollectionDialog's confirm
+	// callback when the user opts to keep their collection record.
+	const executeDuplicate = () => duplicateAction.run()
 
 	// Quick summon badge — visible on main and grid positions, not friend or subaura
 	let showQuickSummon = $derived(item && position !== undefined && position < 4)
@@ -282,7 +277,7 @@
 					onEdit={ctx?.canEdit() ? editItem : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onDuplicate={ctx?.canEdit() ? duplicate : undefined}
-					duplicateDisabled={!canDuplicate}
+					duplicateDisabled={!canDuplicate || duplicateAction.busy}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					editLabel={m.context_edit({ type: m.type_summon() })}
@@ -394,7 +389,7 @@
 	bind:open={removeConfirmOpen}
 	type="summon"
 	name={item?.summon ? localizedName(item.summon.name) : null}
-	onConfirm={performRemove}
+	onConfirm={removeAction.run}
 />
 
 <style lang="scss">

@@ -38,6 +38,7 @@
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { useAsyncAction } from '$lib/utils/unitActions.svelte'
 	interface Props {
 		item?: GridWeapon | undefined
 		position: number
@@ -122,17 +123,12 @@
 		removeConfirmOpen = true
 	}
 
-	async function performRemove() {
+	const removeAction = useAsyncAction(async () => {
 		if (!item?.id) return
-		try {
-			const party = ctx.getParty()
-			const editKey = ctx.getEditKey()
-			await ctx.services.gridService.removeWeapon(party.id, item.id, editKey || undefined)
-		} catch (err) {
-			console.error('Error removing weapon:', err)
-			toast.error(extractErrorMessage(err, 'Failed to remove weapon'))
-		}
-	}
+		const party = ctx.getParty()
+		const editKey = ctx.getEditKey()
+		await ctx.services.gridService.removeWeapon(party.id, item.id, editKey || undefined)
+	}, 'Failed to remove weapon')
 
 	let canEditItem = $derived(canWeaponBeModified(item))
 
@@ -194,28 +190,27 @@
 
 	let duplicateCollectionDialogOpen = $state(false)
 
-	async function duplicate() {
+	function duplicate() {
 		if (!item?.id || firstEmptySlot === undefined) return
 		if (item.collectionWeaponId) {
 			duplicateCollectionDialogOpen = true
 			return
 		}
-		await executeDuplicate()
+		void duplicateAction.run()
 	}
 
-	async function executeDuplicate() {
+	const duplicateAction = useAsyncAction(async () => {
 		if (!item?.id || firstEmptySlot === undefined) return
-		try {
-			await ctx.services.gridService.duplicateWeapon(item.id, firstEmptySlot)
-			const nextSlot = findNextEmptySlot(ctx.getParty(), GridType.Weapon, firstEmptySlot)
-			if (nextSlot !== SLOT_NOT_FOUND) {
-				ctx.setSelectedSlot?.(nextSlot)
-			}
-		} catch (err) {
-			console.error('Error duplicating weapon:', err)
-			toast.error(extractErrorMessage(err, 'Failed to duplicate weapon'))
+		await ctx.services.gridService.duplicateWeapon(item.id, firstEmptySlot)
+		const nextSlot = findNextEmptySlot(ctx.getParty(), GridType.Weapon, firstEmptySlot)
+		if (nextSlot !== SLOT_NOT_FOUND) {
+			ctx.setSelectedSlot?.(nextSlot)
 		}
-	}
+	}, 'Failed to duplicate weapon')
+
+	// `executeDuplicate` is referenced by the DuplicateCollectionDialog's confirm
+	// callback when the user opts to keep their collection record.
+	const executeDuplicate = () => duplicateAction.run()
 
 	// Check if user can view database (role >= 7)
 	let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
@@ -320,7 +315,7 @@
 					onAddToTeamsView={isTeamsPaneOpen ? addWeaponToTeamsView : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onDuplicate={ctx?.canEdit() ? duplicate : undefined}
-					duplicateDisabled={!canDuplicate}
+					duplicateDisabled={!canDuplicate || duplicateAction.busy}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					editLabel={m.context_edit({ type: m.type_weapon() })}
@@ -435,7 +430,7 @@
 	bind:open={removeConfirmOpen}
 	type="weapon"
 	name={item?.weapon ? localizedName(item.weapon.name) : null}
-	onConfirm={performRemove}
+	onConfirm={removeAction.run}
 />
 
 <style lang="scss">
