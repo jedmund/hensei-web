@@ -234,13 +234,14 @@
 	.breakdown {
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-2x;
+		margin: 0 -#{spacing.$unit-2x};
 
 		h4 {
 			margin: 0;
 			font-size: typography.$font-medium;
 			font-weight: typography.$bold;
 			color: var(--text-secondary);
+			padding: spacing.$unit spacing.$unit-2x;
 		}
 
 		ul {
@@ -249,7 +250,10 @@
 			margin: 0;
 			display: flex;
 			flex-direction: column;
-			gap: spacing.$unit-4x;
+
+			&.fired-list {
+				gap: spacing.$unit-half;
+			}
 		}
 	}
 
@@ -257,6 +261,13 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit;
+		padding: spacing.$unit-3x spacing.$unit-2x spacing.$unit-3x;
+		border-bottom: 1px solid var(--border-subtle);
+
+		&:last-child {
+			border-bottom: none;
+			padding-bottom: 0;
+		}
 
 		&.absent {
 			opacity: 0.6;
@@ -292,7 +303,7 @@
 		justify-content: space-between;
 		font-size: typography.$font-regular;
 		color: var(--text-secondary);
-		padding: spacing.$unit-half spacing.$unit;
+		padding: spacing.$unit spacing.$unit;
 		margin: 0 calc(-1 * #{spacing.$unit});
 		border-radius: layout.$item-corner;
 		transition: background-color 120ms ease;
