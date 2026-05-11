@@ -94,7 +94,9 @@
 	}: Props = $props()
 
 	const difficultyPreviewHref = $derived(
-		shortcode ? `/database/difficulties?tab=preview&shortcode=${shortcode}` : null
+		shortcode
+			? `/database/difficulties?tab=preview&shortcode=${encodeURIComponent(shortcode)}`
+			: null
 	)
 
 	const showCollectionSwitcher = $derived(
