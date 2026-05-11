@@ -1,14 +1,11 @@
 import type { PageServerLoad } from './$types'
 import { entityAdapter } from '$lib/api/adapters/entity.adapter'
-import { error, redirect } from '@sveltejs/kit'
+import { error } from '@sveltejs/kit'
+import { requireEditor } from '$lib/auth/requireEditor'
 
 export const load: PageServerLoad = async ({ params, parent }) => {
 	const parentData = await parent()
-
-	// Role check - must be editor level (>= 7) to edit
-	if (!parentData.role || parentData.role < 7) {
-		throw redirect(303, `/database/series/characters/${params.slug}`)
-	}
+	requireEditor(parentData, `/database/series/characters/${params.slug}`)
 
 	try {
 		const series = await entityAdapter.getCharacterSeries(params.slug)

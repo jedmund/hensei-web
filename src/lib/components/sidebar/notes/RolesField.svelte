@@ -2,7 +2,7 @@
 	import type { Role } from '$lib/types/api/party'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { roleQueries } from '$lib/api/queries/role.queries'
-	import { getRoleIconUrl } from '$lib/utils/roles'
+	import { buildEntityIconUrl } from '$lib/utils/entityIcon'
 	import { localizedName } from '$lib/utils/locale'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Icon from '$lib/components/Icon.svelte'
@@ -32,7 +32,7 @@
 		return all.map((r) => ({
 			value: r.id,
 			label: localizedName({ en: r.nameEn, ja: r.nameJp }) ?? r.nameEn,
-			image: getRoleIconUrl(r.iconKey) ?? undefined,
+			image: buildEntityIconUrl(r.iconKey) ?? undefined,
 			imageBackground: 'var(--placeholder-bg)',
 			// Disable un-selected options once we hit the cap so the user can't
 			// add a fourth role; selected options stay enabled so they can be
@@ -59,7 +59,7 @@
 	{#if selectedRoles.length > 0}
 		<ul class="role-chips">
 			{#each selectedRoles as role (role.id)}
-				{@const iconUrl = getRoleIconUrl(role.iconKey)}
+				{@const iconUrl = buildEntityIconUrl(role.iconKey)}
 				<li class="role-chip">
 					<span class="chip-icon">
 						{#if iconUrl}

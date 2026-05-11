@@ -6,11 +6,12 @@
 	import * as m from '$lib/paraglide/messages'
 
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
-	import RoleIcon from '$lib/components/database/RoleIcon.svelte'
+	import EntityIcon from '$lib/components/EntityIcon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 
 	import { roleQueries } from '$lib/api/queries/role.queries'
 	import { useReorderRoles } from '$lib/api/mutations/role.mutations'
+	import { useDragReorder } from '$lib/utils/dragReorder.svelte'
 	import { withInitialData } from '$lib/query/ssr'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
@@ -31,42 +32,12 @@
 		return [...list].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
 	})
 
-	let dragIndex = $state<number | null>(null)
-	let hoverIndex = $state<number | null>(null)
-
-	function onDragStart(e: DragEvent, index: number) {
-		dragIndex = index
-		if (e.dataTransfer) {
-			e.dataTransfer.effectAllowed = 'move'
-			e.dataTransfer.setData('text/plain', String(index))
+	const drag = useDragReorder<Role>({
+		items: () => sortedRoles,
+		onReorder: (next) => {
+			reorderMut.mutate(next.map((r, i) => ({ id: r.id, sortOrder: i + 1 })))
 		}
-	}
-
-	function onDragOver(e: DragEvent, index: number) {
-		e.preventDefault()
-		hoverIndex = index
-		if (e.dataTransfer) e.dataTransfer.dropEffect = 'move'
-	}
-
-	function onDragLeave() {
-		hoverIndex = null
-	}
-
-	function onDrop(e: DragEvent, dropIndex: number) {
-		e.preventDefault()
-		const from = dragIndex
-		dragIndex = null
-		hoverIndex = null
-		if (from === null || from === dropIndex) return
-
-		const next = [...sortedRoles]
-		const [moved] = next.splice(from, 1)
-		if (!moved) return
-		next.splice(dropIndex, 0, moved)
-
-		const entries = next.map((r, i) => ({ id: r.id, sortOrder: i + 1 }))
-		reorderMut.mutate(entries)
-	}
+	})
 </script>
 
 <PageMeta title={m.page_title_db_roles()} description={m.page_desc_home()} />
@@ -89,15 +60,15 @@
 			{#each sortedRoles as role, index (role.id)}
 				<li
 					class="role-row"
-					class:drop-target={hoverIndex === index && dragIndex !== null && dragIndex !== index}
+					class:drop-target={drag.isDropTarget(index)}
 					draggable="true"
-					ondragstart={(e) => onDragStart(e, index)}
-					ondragover={(e) => onDragOver(e, index)}
-					ondragleave={onDragLeave}
-					ondrop={(e) => onDrop(e, index)}
+					ondragstart={(e) => drag.onDragStart(e, index)}
+					ondragover={(e) => drag.onDragOver(e, index)}
+					ondragleave={drag.onDragLeave}
+					ondrop={(e) => drag.onDrop(e, index)}
 				>
 					<a class="link" href={localizeHref(`/database/character-roles/${role.id}`)}>
-						<RoleIcon iconKey={role.iconKey} name={role.nameEn} size={40} imageSize={32} />
+						<EntityIcon iconKey={role.iconKey} name={role.nameEn} size={40} imageSize={32} />
 
 						<span class="names">
 							<span class="name-en">{role.nameEn}</span>

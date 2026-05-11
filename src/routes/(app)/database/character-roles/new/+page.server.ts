@@ -1,10 +1,8 @@
 import type { PageServerLoad } from './$types'
-import { redirect } from '@sveltejs/kit'
+import { requireEditor } from '$lib/auth/requireEditor'
 
 export const load: PageServerLoad = async ({ parent }) => {
 	const parentData = await parent()
-	if (!parentData.role || parentData.role < 7) {
-		throw redirect(303, '/database/character-roles')
-	}
+	requireEditor(parentData, '/database/character-roles')
 	return { role: parentData.role }
 }

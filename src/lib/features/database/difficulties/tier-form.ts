@@ -1,8 +1,5 @@
 import type { DifficultyTier } from '$lib/types/api/party'
 
-export const TIER_ICON_MAX_DIMENSION = 128
-export const TIER_ICON_MAX_BYTES = 256 * 1024
-
 /**
  * Shape of the TierModal form state. Numeric scores are kept as plain
  * `number` rather than `string | number` so the modal owns input coercion.
@@ -78,32 +75,4 @@ export function buildTierPayload(
 	}
 
 	return payload
-}
-
-export type IconMetaError = 'wrong_type' | 'too_large'
-
-/**
- * Synchronous metadata validation for a candidate tier icon. Dimension
- * checks live in the component since they require an `Image` decode.
- */
-export function validateIconMeta(
-	file: File,
-	opts: { maxBytes?: number; allowedMimeTypes?: string[] } = {}
-): { ok: true } | { ok: false; error: IconMetaError } {
-	const maxBytes = opts.maxBytes ?? TIER_ICON_MAX_BYTES
-	const allowed = opts.allowedMimeTypes ?? ['image/png']
-
-	if (!allowed.includes(file.type)) return { ok: false, error: 'wrong_type' }
-	if (file.size > maxBytes) return { ok: false, error: 'too_large' }
-	return { ok: true }
-}
-
-/**
- * Returns true when the decoded image dimensions fall within the cap.
- */
-export function isWithinIconDimensions(
-	dim: { width: number; height: number },
-	maxDimension = TIER_ICON_MAX_DIMENSION
-): boolean {
-	return dim.width <= maxDimension && dim.height <= maxDimension
 }

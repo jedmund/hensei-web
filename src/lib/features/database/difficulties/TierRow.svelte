@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { DifficultyTier } from '$lib/types/api/party'
-	import TierIcon from '$lib/features/database/difficulties/TierIcon.svelte'
+	import EntityIcon from '$lib/components/EntityIcon.svelte'
 
 	interface Props {
 		tier: DifficultyTier
@@ -27,7 +27,7 @@
 
 {#snippet rowContent()}
 	<div class="left">
-		<TierIcon imageKey={tier.imageKey} color={tier.color} name={tier.name} size={28} />
+		<EntityIcon iconKey={tier.imageKey} name={tier.name} size={28} />
 		<span class="name-info">
 			<span class="name">{tier.name}</span>
 			<span class="slug">{tier.slug}</span>

@@ -9,8 +9,8 @@
 
 	import { useCreateRole, useUploadRoleIcon } from '$lib/api/mutations/role.mutations'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { extractErrorMessage } from '$lib/utils/errors'
 	import { dataUrlToBase64 } from '$lib/utils/iconUpload'
+	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 
 	const createMut = useCreateRole()
 	const uploadIconMut = useUploadRoleIcon()
@@ -23,7 +23,6 @@
 	let iconPreview = $state<string | null>(null)
 	let iconError = $state<string | null>(null)
 
-	let isSaving = $state(false)
 	let saveError = $state<string | null>(null)
 	// Track the created role across retries so a failed icon upload doesn't
 	// orphan a previously-created role on retry.
@@ -37,11 +36,10 @@
 		iconPreview = selection.dataUrl
 	}
 
-	async function handleCreate() {
-		if (!canCreate) return
-		isSaving = true
-		saveError = null
-		try {
+	const createAction = useAsyncAction(
+		async () => {
+			if (!canCreate) return
+			saveError = null
 			if (!createdRole) {
 				createdRole = await createMut.mutateAsync({
 					nameEn: editData.nameEn.trim(),
@@ -58,12 +56,13 @@
 			}
 
 			goto(localizeHref(`/database/character-roles/${createdRole.id}`))
-		} catch (err) {
-			saveError = extractErrorMessage(err, m.roles_save_failed())
-		} finally {
-			isSaving = false
-		}
-	}
+		},
+		m.roles_save_failed(),
+		{ onError: (_, message) => (saveError = message) }
+	)
+
+	const handleCreate = createAction.run
+	const isSaving = $derived(createAction.busy)
 
 	function handleCancel() {
 		// If the role was already created (e.g. icon upload failed mid-flow),

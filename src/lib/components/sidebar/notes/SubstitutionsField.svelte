@@ -15,6 +15,7 @@
 	import type { AddItemResult } from '$lib/types/api/search'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { useDragReorder } from '$lib/utils/dragReorder.svelte'
 	import { type GridItemType, getGridTypeName, getSubstituteItemId } from './substitutionHelpers'
 
 	interface Props {
@@ -89,57 +90,28 @@
 		)
 	}
 
-	let dragIndex = $state<number | null>(null)
-	let hoverIndex = $state<number | null>(null)
-
-	function onDragStart(e: DragEvent, index: number) {
-		dragIndex = index
-		if (e.dataTransfer) {
-			e.dataTransfer.effectAllowed = 'move'
-			e.dataTransfer.setData('text/plain', String(index))
+	const drag = useDragReorder<Substitution>({
+		items: () => substitutions,
+		onReorder: async (next) => {
+			if (!partyId || !partyShortcode) return
+			try {
+				await reorderSubstitutions.mutateAsync({
+					partyId,
+					partyShortcode,
+					entries: next.map((sub, i) => ({ id: sub.id, position: i }))
+				})
+			} catch (err) {
+				console.error('Failed to reorder substitutions:', err)
+				toast.error(extractErrorMessage(err, m.toast_failed_reorder_substitution()))
+				// The backend reorder is transactional, so on failure no positions
+				// have moved. Refetch anyway to keep the UI in sync if the source
+				// of the failure was a stale view.
+				queryClient.invalidateQueries({
+					queryKey: partyQueries.byShortcode(partyShortcode).queryKey
+				})
+			}
 		}
-	}
-
-	function onDragOver(e: DragEvent, index: number) {
-		e.preventDefault()
-		hoverIndex = index
-		if (e.dataTransfer) e.dataTransfer.dropEffect = 'move'
-	}
-
-	function onDragLeave() {
-		hoverIndex = null
-	}
-
-	async function onDrop(e: DragEvent, dropIndex: number) {
-		e.preventDefault()
-		const from = dragIndex
-		dragIndex = null
-		hoverIndex = null
-		if (from === null || from === dropIndex) return
-		if (!partyId || !partyShortcode) return
-
-		const next = [...substitutions]
-		const [moved] = next.splice(from, 1)
-		if (!moved) return
-		next.splice(dropIndex, 0, moved)
-
-		try {
-			await reorderSubstitutions.mutateAsync({
-				partyId,
-				partyShortcode,
-				entries: next.map((sub, i) => ({ id: sub.id, position: i }))
-			})
-		} catch (err) {
-			console.error('Failed to reorder substitutions:', err)
-			toast.error(extractErrorMessage(err, m.toast_failed_reorder_substitution()))
-			// The backend reorder is transactional, so on failure no positions
-			// have moved. Refetch anyway to keep the UI in sync if the source
-			// of the failure was a stale view.
-			queryClient.invalidateQueries({
-				queryKey: partyQueries.byShortcode(partyShortcode).queryKey
-			})
-		}
-	}
+	})
 </script>
 
 {#if substitutions.length === 0}
@@ -157,11 +129,11 @@
 					substitution={sub}
 					{type}
 					{index}
-					isDropTarget={hoverIndex === index && dragIndex !== null && dragIndex !== index}
-					{onDragStart}
-					{onDragOver}
-					{onDragLeave}
-					{onDrop}
+					isDropTarget={drag.isDropTarget(index)}
+					onDragStart={drag.onDragStart}
+					onDragOver={drag.onDragOver}
+					onDragLeave={drag.onDragLeave}
+					onDrop={drag.onDrop}
 					onDelete={handleDelete}
 				/>
 			{/each}
