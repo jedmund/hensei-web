@@ -144,11 +144,13 @@ export interface DifficultyTier {
 	draftId?: string | null
 }
 
-// Embedded difficulty payload on Party
+// Embedded difficulty payload on Party. score/breakdown are null when the
+// party isn't yet scoreable (matches DifficultyPreviewResult on the editor
+// side).
 export interface PartyDifficulty {
 	tier: DifficultyTier | null
-	score: number
-	breakdown: Record<string, unknown>
+	score: number | null
+	breakdown: Record<string, unknown> | null
 	computedAt: string
 }
 

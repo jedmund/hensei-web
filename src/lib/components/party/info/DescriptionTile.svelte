@@ -427,7 +427,7 @@
 				<Tooltip
 					content={m.party_difficulty_tooltip({
 						tier: difficulty.tier.name,
-						score: difficulty.score.toFixed(0)
+						score: difficulty.score?.toFixed(0) ?? '—'
 					})}
 				>
 					{#if isEditor && difficultyPreviewHref}
