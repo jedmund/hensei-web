@@ -57,6 +57,10 @@
 		summonCount?: number | null
 		// Computed difficulty assignment (null when not yet scoreable)
 		difficulty?: PartyDifficulty | null
+		/** Party shortcode, used to build the editor preview link */
+		shortcode?: string
+		/** When true, the difficulty tier chip becomes a link to the editor preview */
+		isEditor?: boolean
 	}
 
 	let {
@@ -84,8 +88,16 @@
 		buttonCount,
 		chainCount,
 		summonCount,
-		difficulty
+		difficulty,
+		shortcode,
+		isEditor = false
 	}: Props = $props()
+
+	const difficultyPreviewHref = $derived(
+		shortcode
+			? `/database/difficulties?tab=preview&shortcode=${encodeURIComponent(shortcode)}`
+			: null
+	)
 
 	const showCollectionSwitcher = $derived(
 		!!authUser?.username &&
@@ -417,12 +429,24 @@
 				<Tooltip
 					content={m.party_difficulty_tooltip({
 						tier: difficulty.tier.name,
-						score: difficulty.score.toFixed(0)
+						score: difficulty.score?.toFixed(0) ?? '—'
 					})}
 				>
-					<span class="token difficulty" style:background={difficulty.tier.color || undefined}>
-						{difficulty.tier.name}
-					</span>
+					{#if isEditor && difficultyPreviewHref}
+						<a
+							class="token difficulty editor-link"
+							style:background={difficulty.tier.color || undefined}
+							href={difficultyPreviewHref}
+							target="_blank"
+							rel="noopener"
+						>
+							{difficulty.tier.name}
+						</a>
+					{:else}
+						<span class="token difficulty" style:background={difficulty.tier.color || undefined}>
+							{difficulty.tier.name}
+						</span>
+					{/if}
 				</Tooltip>
 			{/if}
 			{#if solo}
@@ -710,6 +734,23 @@
 
 		&.difficulty {
 			color: #1a1a1a;
+		}
+
+		&.editor-link {
+			text-decoration: none;
+			cursor: pointer;
+			transition:
+				opacity 120ms ease,
+				transform 120ms ease;
+
+			&:hover {
+				opacity: 0.85;
+			}
+
+			&:focus-visible {
+				outline: 2px solid var(--focus-ring);
+				outline-offset: 2px;
+			}
 		}
 
 		&.chargeAttack.on {
