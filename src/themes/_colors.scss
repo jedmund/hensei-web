@@ -69,6 +69,8 @@ $accent--blue--light: #275dc5;
 $accent--blue--light--focus: #0c398d;
 $accent--blue--dark: #6195f4;
 $accent--blue--dark--focus: #275dc5;
+$accent--blue--120: #d6e3f8;
+$accent--blue--00: #061e4c;
 
 $accent--yellow--light: #c89d39;
 $accent--yellow--dark: #f9cc64;
@@ -244,10 +246,10 @@ $notice--yellow--button--text--light--disabled: $accent--yellow--00;
 $notice--yellow--button--text--dark--disabled: $accent--yellow--100;
 
 // Blue
-$notice--blue--bg--light: $accent--blue--light;
-$notice--blue--bg--dark: $accent--blue--dark;
+$notice--blue--bg--light: $accent--blue--120;
+$notice--blue--bg--dark: $accent--blue--00;
 
-$notice--blue--text--light: $accent--blue--light;
+$notice--blue--text--light: $accent--blue--light--focus;
 $notice--blue--text--dark: $accent--blue--dark;
 
 $notice--blue--button--bg--light: $accent--blue--light;
@@ -256,14 +258,14 @@ $notice--blue--button--bg--dark: $accent--blue--dark;
 $notice--blue--button--bg--light--hover: $accent--blue--light--focus;
 $notice--blue--button--bg--dark--hover: $accent--blue--dark--focus;
 
-$notice--blue--button--text--light: $accent--blue--light;
-$notice--blue--button--text--dark: $accent--blue--dark;
+$notice--blue--button--text--light: $accent--blue--120;
+$notice--blue--button--text--dark: $accent--blue--00;
 
-$notice--blue--button--text--light--hover: $accent--blue--light--focus;
-$notice--blue--button--text--dark--hover: $accent--blue--dark--focus;
+$notice--blue--button--text--light--hover: $accent--blue--120;
+$notice--blue--button--text--dark--hover: $accent--blue--00;
 
-$notice--blue--button--text--light--disabled: $accent--blue--light--focus;
-$notice--blue--button--text--dark--disabled: $accent--blue--dark--focus;
+$notice--blue--button--text--light--disabled: $accent--blue--120;
+$notice--blue--button--text--dark--disabled: $accent--blue--00;
 
 $notice--blue--button--bg--light--disabled: $accent--blue--light--focus;
 $notice--blue--button--bg--dark--disabled: $accent--blue--dark--focus;

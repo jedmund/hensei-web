@@ -225,7 +225,7 @@
 		try {
 			await deleteMut.mutateAsync(tier.id)
 			await queryClient.invalidateQueries({ queryKey: ['difficulties'] })
-			toast.success('Tier deleted')
+			toast.success('Tier deletion staged')
 			confirmDeleteOpen = false
 			open = false
 			onOpenChange?.(false)

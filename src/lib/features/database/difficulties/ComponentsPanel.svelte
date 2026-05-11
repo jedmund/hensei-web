@@ -72,7 +72,7 @@
 				}
 			})
 			await queryClient.invalidateQueries({ queryKey: ['difficulties'] })
-			toast.success(`Saved ${comp.name}`)
+			toast.success(`${comp.name} change staged`)
 		} catch (err) {
 			toast.error(extractErrorMessage(err, `Failed to save ${comp.name}`))
 		}

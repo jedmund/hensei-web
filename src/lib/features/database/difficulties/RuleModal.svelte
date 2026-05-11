@@ -125,7 +125,7 @@
 				await createMut.mutateAsync(payload)
 			}
 			await queryClient.invalidateQueries({ queryKey: ['difficulties'] })
-			toast.success(isEditing ? 'Rule updated' : 'Rule created')
+			toast.success(isEditing ? 'Rule change staged' : 'Rule creation staged')
 			open = false
 			onOpenChange?.(false)
 		} catch (err) {
@@ -140,7 +140,7 @@
 		try {
 			await deleteMut.mutateAsync(rule.id)
 			await queryClient.invalidateQueries({ queryKey: ['difficulties'] })
-			toast.success('Rule deleted')
+			toast.success('Rule deletion staged')
 			confirmDeleteOpen = false
 			open = false
 			onOpenChange?.(false)
