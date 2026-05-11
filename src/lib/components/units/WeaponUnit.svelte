@@ -38,7 +38,7 @@
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
-	import { useAsyncAction } from '$lib/utils/unitActions.svelte'
+	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 	interface Props {
 		item?: GridWeapon | undefined
 		position: number

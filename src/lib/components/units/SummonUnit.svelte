@@ -25,7 +25,7 @@
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
-	import { useAsyncAction } from '$lib/utils/unitActions.svelte'
+	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 	import quickSummonFilled from '$src/assets/icons/quick-summon/filled.svg'
 	import quickSummonEmpty from '$src/assets/icons/quick-summon/empty.svg'
 

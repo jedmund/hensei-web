@@ -23,8 +23,8 @@
 	import RoleFormFields from '$lib/components/database/RoleFormFields.svelte'
 
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { extractErrorMessage } from '$lib/utils/errors'
 	import { dataUrlToBase64 } from '$lib/utils/iconUpload'
+	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 
 	import type { PageData } from './$types'
 
@@ -49,7 +49,6 @@
 	let iconPreview = $state<string | null>(null)
 	let iconError = $state<string | null>(null)
 
-	let isSaving = $state(false)
 	let saveError = $state<string | null>(null)
 	let saveSuccess = $state(false)
 	let saveTimeout: ReturnType<typeof setTimeout> | null = null
@@ -75,12 +74,11 @@
 		iconPreview = selection.dataUrl
 	}
 
-	async function handleSave() {
-		if (!role) return
-		isSaving = true
-		saveError = null
-		saveSuccess = false
-		try {
+	const saveAction = useAsyncAction(
+		async () => {
+			if (!role) return
+			saveError = null
+			saveSuccess = false
 			await updateMut.mutateAsync({
 				id: role.id,
 				payload: {
@@ -105,12 +103,13 @@
 				() => goto(localizeHref(`/database/character-roles/${role.id}`)),
 				500
 			)
-		} catch (err) {
-			saveError = extractErrorMessage(err, m.roles_save_failed())
-		} finally {
-			isSaving = false
-		}
-	}
+		},
+		m.roles_save_failed(),
+		{ onError: (_, message) => (saveError = message) }
+	)
+
+	const handleSave = saveAction.run
+	const isSaving = $derived(saveAction.busy)
 
 	function handleCancel() {
 		if (role?.id) goto(localizeHref(`/database/character-roles/${role.id}`))
@@ -119,13 +118,23 @@
 
 	let confirmDeleteOpen = $state(false)
 
-	async function handleConfirmDelete() {
-		if (!role) return
-		try {
+	const deleteAction = useAsyncAction(
+		async () => {
+			if (!role) return
 			await deleteMut.mutateAsync({ id: role.id })
 			goto(localizeHref('/database/character-roles'))
-		} catch (err) {
-			saveError = extractErrorMessage(err, m.roles_delete_failed())
+		},
+		m.roles_delete_failed(),
+		{
+			onError: (_, message) => {
+				saveError = message
+			}
+		}
+	)
+
+	async function handleConfirmDelete() {
+		try {
+			await deleteAction.run()
 		} finally {
 			confirmDeleteOpen = false
 		}
