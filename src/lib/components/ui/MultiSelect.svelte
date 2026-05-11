@@ -10,6 +10,10 @@
 		/** CSS color applied only to the check indicator, without rendering a color dot */
 		indicatorColor?: string
 		image?: string
+		/** CSS background painted behind the image. When set, the image is wrapped
+		 * in a placeholder container that always renders (even if `image` is empty),
+		 * matching the visual treatment of catalog icons elsewhere in the app. */
+		imageBackground?: string
 	}
 
 	interface Props {
@@ -26,6 +30,9 @@
 		contained?: boolean
 		fullWidth?: boolean
 		class?: string
+		/** Bindable open state — useful when the parent wants to close the
+		 * dropdown imperatively (e.g. after the selection hits a cap). */
+		open?: boolean
 	}
 
 	let {
@@ -39,18 +46,28 @@
 		size = 'small',
 		contained = false,
 		fullWidth = false,
-		class: className = ''
+		class: className = '',
+		open = $bindable(false)
 	}: Props = $props()
 
-	// Convert options to string values for Bits UI, disabling the last selected item
+	// Convert options to string values for Bits UI. When `minSelected` is the
+	// active reason an option is disabled (the user is at the floor and the
+	// option is one of the currently-selected items they'd remove), expose a
+	// flag so the rendered item can surface a title explaining why.
 	const stringOptions = $derived(
-		options.map((opt) => ({
-			...opt,
-			value: String(opt.value),
-			disabled:
-				opt.disabled ||
-				(minSelected > 0 && value.length <= minSelected && value.includes(opt.value))
-		}))
+		options.map((opt) => {
+			const atFloor = minSelected > 0 && value.length <= minSelected && value.includes(opt.value)
+			return {
+				...opt,
+				value: String(opt.value),
+				disabled: opt.disabled || atFloor,
+				disabledReason: !opt.disabled && atFloor ? ('min' as const) : undefined
+			}
+		})
+	)
+
+	const minSelectedTitle = $derived(
+		minSelected > 0 ? `At least ${minSelected} must remain selected` : ''
 	)
 
 	// Convert value array to string array for Bits UI
@@ -98,14 +115,27 @@
 	type="multiple"
 	value={stringValue}
 	onValueChange={handleValueChange}
+	bind:open
 	{disabled}
 	items={stringOptions}
 >
 	<SelectPrimitive.Trigger class={selectClasses} data-placeholder={value.length === 0}>
-		{#if firstSelectedOption?.image}
-			<img src={firstSelectedOption.image} alt="" class="trigger-image" />
-		{:else if firstSelectedOption?.color}
-			<span class="trigger-color-dot" style="background-color: {firstSelectedOption.color}"></span>
+		{#if !displayText}
+			{#if firstSelectedOption?.imageBackground}
+				<span
+					class="trigger-image-container"
+					style="background-color: {firstSelectedOption.imageBackground}"
+				>
+					{#if firstSelectedOption.image}
+						<img src={firstSelectedOption.image} alt="" />
+					{/if}
+				</span>
+			{:else if firstSelectedOption?.image}
+				<img src={firstSelectedOption.image} alt="" class="trigger-image" />
+			{:else if firstSelectedOption?.color}
+				<span class="trigger-color-dot" style="background-color: {firstSelectedOption.color}"
+				></span>
+			{/if}
 		{/if}
 		<span class="text">{displayText ?? selectedLabels ?? placeholder}</span>
 		<Icon name="chevron-down-small" size={14} class="chevron" />
@@ -118,6 +148,7 @@
 					value={option.value}
 					label={option.label}
 					disabled={option.disabled}
+					title={option.disabledReason === 'min' ? minSelectedTitle : undefined}
 					class="multi-item"
 					style={option.indicatorColor
 						? `--option-color: ${option.indicatorColor}`
@@ -126,11 +157,19 @@
 							: ''}
 				>
 					{#snippet children({ selected })}
-						{#if option.image}
+						{#if option.imageBackground}
+							<span class="item-image-container" style="background-color: {option.imageBackground}">
+								{#if option.image}
+									<img src={option.image} alt="" />
+								{/if}
+							</span>
+						{:else if option.image}
 							<img src={option.image} alt="" class="item-image" />
 						{/if}
-						<span class="label" class:has-color={!!option.color && !option.image} class:selected
-							>{option.label}</span
+						<span
+							class="label"
+							class:has-color={!!option.color && !option.image && !option.imageBackground}
+							class:selected>{option.label}</span
 						>
 						<span class="indicator">
 							<Icon name="check" size={12} class="check-icon {selected ? 'visible' : ''}" />
@@ -175,8 +214,22 @@
 		}
 
 		&.disabled {
-			opacity: 0.5;
 			cursor: not-allowed;
+			background-color: var(--input-bg-disabled, var(--input-bg));
+			color: var(--text-tertiary);
+
+			.text {
+				color: var(--text-tertiary);
+			}
+
+			:global(.chevron) {
+				color: var(--text-tertiary);
+				opacity: 0.6;
+			}
+
+			.trigger-image-container {
+				opacity: 0.5;
+			}
 		}
 
 		&[data-placeholder='true'] .text {
@@ -202,6 +255,24 @@
 			height: $unit-3x;
 			flex-shrink: 0;
 			object-fit: contain;
+		}
+
+		.trigger-image-container {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: $unit-3x;
+			height: $unit-3x;
+			flex-shrink: 0;
+			margin-right: $unit-half;
+			border-radius: $item-corner;
+			overflow: hidden;
+
+			img {
+				width: 100%;
+				height: 100%;
+				object-fit: contain;
+			}
 		}
 
 		.trigger-color-dot {
@@ -309,6 +380,23 @@
 			height: $unit-3x;
 			flex-shrink: 0;
 			object-fit: contain;
+		}
+
+		.item-image-container {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: $unit-3x;
+			height: $unit-3x;
+			flex-shrink: 0;
+			border-radius: $item-corner;
+			overflow: hidden;
+
+			img {
+				width: 100%;
+				height: 100%;
+				object-fit: contain;
+			}
 		}
 
 		:global(.check-icon) {

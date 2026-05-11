@@ -207,6 +207,24 @@ export const collectionQueries = {
 			gcTime: 1000 * 60 * 30 // 30 minutes
 		}),
 
+	collectedWeaponIds: (userId: string, enabled: boolean = true) =>
+		queryOptions({
+			queryKey: ['collection', 'weapons', 'ids', userId] as const,
+			queryFn: () => collectionAdapter.getCollectedWeaponIds(userId),
+			enabled: !!userId && enabled,
+			staleTime: 1000 * 60 * 5,
+			gcTime: 1000 * 60 * 30
+		}),
+
+	collectedSummonIds: (userId: string, enabled: boolean = true) =>
+		queryOptions({
+			queryKey: ['collection', 'summons', 'ids', userId] as const,
+			queryFn: () => collectionAdapter.getCollectedSummonIds(userId),
+			enabled: !!userId && enabled,
+			staleTime: 1000 * 60 * 5,
+			gcTime: 1000 * 60 * 30
+		}),
+
 	/**
 	 * Single collection character by ID
 	 */

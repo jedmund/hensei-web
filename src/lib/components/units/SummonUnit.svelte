@@ -6,10 +6,14 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
+	import RemoveUnitDialog from './RemoveUnitDialog.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getSummonImage } from '$lib/features/database/detail/image'
 	import { getPlaceholderImage, getSummonTransformation } from '$lib/utils/images'
-	import { openDetailsSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
+	import {
+		openDetailsSidebar,
+		openSummonEditSidebar
+	} from '$lib/features/details/openDetailsSidebar.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName } from '$lib/utils/element'
@@ -21,6 +25,7 @@
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { useAsyncAction } from '$lib/utils/unitActions.svelte'
 	import quickSummonFilled from '$src/assets/icons/quick-summon/filled.svg'
 	import quickSummonEmpty from '$src/assets/icons/quick-summon/empty.svg'
 
@@ -68,25 +73,40 @@
 	// Determine element class for focus ring
 	let elementClass = $derived(getElementClassName(item?.summon?.element))
 
-	async function remove() {
+	let removeConfirmOpen = $state(false)
+
+	function remove() {
 		if (!item?.id) return
-		try {
-			const party = ctx.getParty()
-			const editKey = ctx.getEditKey()
-			await ctx.services.gridService.removeSummon(party.id, item.id, editKey || undefined)
-		} catch (err) {
-			console.error('Error removing summon:', err)
-			toast.error(extractErrorMessage(err, 'Failed to remove summon'))
-		}
+		removeConfirmOpen = true
 	}
+
+	const removeAction = useAsyncAction(async () => {
+		if (!item?.id) return
+		const party = ctx.getParty()
+		const editKey = ctx.getEditKey()
+		await ctx.services.gridService.removeSummon(party.id, item.id, editKey || undefined)
+	}, 'Failed to remove summon')
 
 	function viewDetails() {
 		if (!item) return
+		const party = ctx.getParty()
 		openDetailsSidebar({
 			type: 'summon',
 			item,
 			isOwner: ctx?.canEdit() ?? false,
-			onReplace: ctx?.canEdit() ? replace : undefined
+			onReplace: ctx?.canEdit() ? replace : undefined,
+			onRemove: ctx?.canEdit() ? remove : undefined,
+			partyId: party?.id,
+			partyShortcode: party?.shortcode
+		})
+	}
+
+	function editItem() {
+		if (!item) return
+		const party = ctx.getParty()
+		openSummonEditSidebar(item, {
+			partyId: party?.id,
+			partyShortcode: party?.shortcode
 		})
 	}
 
@@ -117,28 +137,27 @@
 
 	let duplicateCollectionDialogOpen = $state(false)
 
-	async function duplicate() {
+	function duplicate() {
 		if (!item?.id || firstEmptySlot === undefined) return
 		if (item.collectionSummonId) {
 			duplicateCollectionDialogOpen = true
 			return
 		}
-		await executeDuplicate()
+		void duplicateAction.run()
 	}
 
-	async function executeDuplicate() {
+	const duplicateAction = useAsyncAction(async () => {
 		if (!item?.id || firstEmptySlot === undefined) return
-		try {
-			await ctx.services.gridService.duplicateSummon(item.id, firstEmptySlot)
-			const nextSlot = findNextEmptySlot(ctx.getParty(), GridType.Summon, firstEmptySlot)
-			if (nextSlot !== SLOT_NOT_FOUND) {
-				ctx.setSelectedSlot?.(nextSlot)
-			}
-		} catch (err) {
-			console.error('Error duplicating summon:', err)
-			toast.error(extractErrorMessage(err, 'Failed to duplicate summon'))
+		await ctx.services.gridService.duplicateSummon(item.id, firstEmptySlot)
+		const nextSlot = findNextEmptySlot(ctx.getParty(), GridType.Summon, firstEmptySlot)
+		if (nextSlot !== SLOT_NOT_FOUND) {
+			ctx.setSelectedSlot?.(nextSlot)
 		}
-	}
+	}, 'Failed to duplicate summon')
+
+	// `executeDuplicate` is referenced by the DuplicateCollectionDialog's confirm
+	// callback when the user opts to keep their collection record.
+	const executeDuplicate = () => duplicateAction.run()
 
 	// Quick summon badge — visible on main and grid positions, not friend or subaura
 	let showQuickSummon = $derived(item && position !== undefined && position < 4)
@@ -255,11 +274,13 @@
 					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
 					onViewTeams={viewTeamsWithSummon}
 					onAddToTeamsView={isTeamsPaneOpen ? addSummonToTeamsView : undefined}
+					onEdit={ctx?.canEdit() ? editItem : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onDuplicate={ctx?.canEdit() ? duplicate : undefined}
-					duplicateDisabled={!canDuplicate}
+					duplicateDisabled={!canDuplicate || duplicateAction.busy}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
+					editLabel={m.context_edit({ type: m.type_summon() })}
 					viewDetailsLabel={m.context_view_details()}
 					viewInDatabaseLabel={m.context_view_in_database()}
 					viewTeamsLabel={m.context_view_teams_summon()}
@@ -362,6 +383,13 @@
 	onCancel={() => {
 		duplicateCollectionDialogOpen = false
 	}}
+/>
+
+<RemoveUnitDialog
+	bind:open={removeConfirmOpen}
+	type="summon"
+	name={item?.summon ? localizedName(item.summon.name) : null}
+	onConfirm={removeAction.run}
 />
 
 <style lang="scss">

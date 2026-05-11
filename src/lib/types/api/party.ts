@@ -33,6 +33,32 @@ export interface PartyCollectionSource {
 	collectionSourceUser?: User
 }
 
+// Role catalog entry. Roles only apply to characters and a character can hold
+// up to 3.
+export interface Role {
+	id: string
+	nameEn: string
+	nameJp?: string
+	sortOrder?: number
+	iconKey?: string | null
+}
+
+// Substitution linking a primary grid item to a substitute
+export interface Substitution {
+	id: string
+	position: number
+	gridCharacter?: GridCharacter
+	gridWeapon?: GridWeapon
+	gridSummon?: GridSummon
+}
+
+/**
+ * Rich-text per-item description. The backend stores this as a `jsonb` column
+ * holding a Tiptap document. The shape is intentionally loose — the editor
+ * owns the schema. Null/undefined means "no description".
+ */
+export type Description = Record<string, unknown>
+
 // Grid item types - these are the junction tables between Party and entities
 
 // GridWeapon from GridWeaponBlueprint
@@ -63,6 +89,13 @@ export interface GridWeapon {
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
 	party?: PartyCollectionSource
+	/** Rich-text per-item description (Tiptap doc) */
+	description?: Description
+	/** Ordered list of substitute items for this slot */
+	substitutions?: Substitution[]
+	/** Stamped by the API when this grid item is rendered as a substitute —
+	 * true if current_user has the underlying weapon in their collection. */
+	owned?: boolean
 }
 
 // GridCharacter from GridCharacterBlueprint
@@ -89,6 +122,15 @@ export interface GridCharacter {
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
 	party?: PartyCollectionSource
+	/** Roles assigned to this character (max 3, sorted by Role.sortOrder) */
+	roles?: Role[]
+	/** Rich-text per-item description (Tiptap doc) */
+	description?: Description
+	/** Ordered list of substitute items for this slot */
+	substitutions?: Substitution[]
+	/** Stamped by the API when this grid item is rendered as a substitute —
+	 * true if current_user has the underlying character in their collection. */
+	owned?: boolean
 }
 
 // GridSummon from GridSummonBlueprint
@@ -109,6 +151,13 @@ export interface GridSummon {
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
 	party?: PartyCollectionSource
+	/** Rich-text per-item description (Tiptap doc) */
+	description?: Description
+	/** Ordered list of substitute items for this slot */
+	substitutions?: Substitution[]
+	/** Stamped by the API when this grid item is rendered as a substitute —
+	 * true if current_user has the underlying summon in their collection. */
+	owned?: boolean
 }
 
 // JobSkillList for party job skills

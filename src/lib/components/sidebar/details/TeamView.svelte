@@ -6,6 +6,9 @@
 	import MasteryDisplay from '../modifications/MasteryDisplay.svelte'
 	import WeaponKeysList from '../modifications/WeaponKeysList.svelte'
 	import ArtifactSummary from '../modifications/ArtifactSummary.svelte'
+	import NotesReadOnlySection from '../notes/NotesReadOnlySection.svelte'
+	import EmptySectionPlaceholder from './EmptySectionPlaceholder.svelte'
+	import { openCharacterEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
 	import { seriesHasWeaponKeys, getSeriesSlug } from '$lib/utils/weaponSeries'
 	import WeaponKeySelect from '$lib/components/sidebar/edit/WeaponKeySelect.svelte'
@@ -105,6 +108,17 @@
 		showWeaponKeyEditor = false
 	}
 
+	function openCharacterEdit(tab: 'stats' | 'notes') {
+		if (type !== 'character') return
+		const shortcode = partyStore.party?.shortcode
+		const partyId = partyStore.party?.id
+		openCharacterEditSidebar(item as GridCharacter, undefined, {
+			partyId,
+			partyShortcode: shortcode,
+			initialTab: tab
+		})
+	}
+
 	// Get uncap capabilities from item data based on type
 	let uncapCaps = $derived.by(() => {
 		if (type === 'character') {
@@ -128,6 +142,8 @@
 </script>
 
 <div class="team-view">
+	<NotesReadOnlySection {type} {item} {isPartyOwner} mode="filled" />
+
 	<DetailsSection title={m.details_uncap_transcendence()}>
 		<DetailRow label={m.details_max_uncap_level()}>
 			<UncapIndicator
@@ -154,11 +170,10 @@
 			</DetailsSection>
 		{/if}
 
-		{#if modificationStatus.hasRings || modificationStatus.hasEarring}
-			<DetailsSection title={m.details_mastery()}>
+		{#if modificationStatus.hasRings}
+			<DetailsSection title={m.details_over_mastery()}>
 				<MasteryDisplay
 					rings={char.overMastery}
-					earring={char.aetherialMastery}
 					characterElement={char.character?.element}
 					variant="detailed"
 					showIcons={true}
@@ -166,9 +181,14 @@
 			</DetailsSection>
 		{/if}
 
-		{#if modificationStatus.hasPerpetuity}
-			<DetailsSection title={m.details_status()}>
-				<DetailRow label={m.details_perpetuity_ring()} value={m.details_active()} />
+		{#if modificationStatus.hasEarring}
+			<DetailsSection title={m.details_aetherial_mastery()}>
+				<MasteryDisplay
+					earring={char.aetherialMastery}
+					characterElement={char.character?.element}
+					variant="detailed"
+					showIcons={true}
+				/>
 			</DetailsSection>
 		{/if}
 
@@ -331,6 +351,30 @@
 				{/if}
 			</DetailsSection>
 		{/if}
+	{/if}
+
+	{#if isPartyOwner && type === 'character'}
+		{@const char = item as GridCharacter}
+		<!-- Owner-only Add placeholders go at the very bottom so every filled
+		     section (notes + mastery + everything else) sorts above every
+		     skeleton placeholder, regardless of which section group it's in. -->
+		{#if !modificationStatus.hasRings}
+			<DetailsSection title={m.details_over_mastery()}>
+				<EmptySectionPlaceholder
+					sectionName={m.add_over_mastery()}
+					onclick={() => openCharacterEdit('stats')}
+				/>
+			</DetailsSection>
+		{/if}
+		{#if !modificationStatus.hasEarring}
+			<DetailsSection title={m.details_aetherial_mastery()}>
+				<EmptySectionPlaceholder
+					sectionName={m.add_aetherial_mastery()}
+					onclick={() => openCharacterEdit('stats')}
+				/>
+			</DetailsSection>
+		{/if}
+		<NotesReadOnlySection type="character" item={char} {isPartyOwner} mode="placeholders" />
 	{/if}
 </div>
 
