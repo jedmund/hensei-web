@@ -10,7 +10,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
-	import RoleIcon from '$lib/components/database/RoleIcon.svelte'
+	import EntityIcon from '$lib/components/EntityIcon.svelte'
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -55,7 +55,7 @@
 	{#if role}
 		<div class="content">
 			<header class="entity-header">
-				<RoleIcon iconKey={role.iconKey} name={role.nameEn} size={64} imageSize={48} />
+				<EntityIcon iconKey={role.iconKey} name={role.nameEn} size={64} imageSize={48} />
 				<h2>{role.nameEn}</h2>
 			</header>
 

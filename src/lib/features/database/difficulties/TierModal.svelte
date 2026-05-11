@@ -10,15 +10,15 @@
 	import { difficultyAdapter } from '$lib/api/adapters/difficulty.adapter'
 	import type { DifficultyTier } from '$lib/types/api/party'
 	import { extractErrorMessage } from '$lib/utils/errors'
-	import TierIcon from '$lib/features/database/difficulties/TierIcon.svelte'
+	import IconUploadField from '$lib/components/IconUploadField.svelte'
+	import { buildTierPayload, validateTierForm } from '$lib/features/database/difficulties/tier-form'
 	import {
-		TIER_ICON_MAX_BYTES,
-		TIER_ICON_MAX_DIMENSION,
-		buildTierPayload,
-		isWithinIconDimensions,
-		validateIconMeta,
-		validateTierForm
-	} from '$lib/features/database/difficulties/tier-form'
+		ICON_MAX_BYTES,
+		ICON_MAX_DIMENSION,
+		dataUrlToBase64,
+		type IconValidationError
+	} from '$lib/utils/iconUpload'
+	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 
 	interface Props {
 		open?: boolean
@@ -42,7 +42,6 @@
 	let iconFile = $state<File | null>(null)
 	let iconPreview = $state<string | null>(null)
 	let iconError = $state<string | null>(null)
-	let iconInputRef: HTMLInputElement | undefined = $state(undefined)
 	let isUploadingIcon = $state(false)
 	// Tracks intent to clear an existing tier.imageKey without uploading a new one.
 	let removeIcon = $state(false)
@@ -59,9 +58,6 @@
 	const deleteMut = createMutation(() => ({
 		mutationFn: (id: string) => difficultyAdapter.deleteTier(id)
 	}))
-
-	const isSaving = $derived(createMut.isPending || updateMut.isPending)
-	const isDeleting = $derived(deleteMut.isPending)
 
 	$effect(() => {
 		if (open) {
@@ -89,54 +85,23 @@
 		}
 	})
 
-	function openIconPicker() {
-		iconInputRef?.click()
+	function iconErrorMessage(error: IconValidationError): string {
+		switch (error) {
+			case 'mime':
+				return 'Icon must be a PNG.'
+			case 'size':
+				return `Icon must be ${ICON_MAX_BYTES / 1024}KB or smaller.`
+			case 'dimensions':
+				return `Icon must be ${ICON_MAX_DIMENSION}x${ICON_MAX_DIMENSION} or smaller.`
+			case 'decode':
+				return 'Icon could not be read.'
+		}
 	}
 
-	async function readDataUrl(file: File): Promise<string> {
-		return new Promise((resolve, reject) => {
-			const reader = new FileReader()
-			reader.onload = () => resolve(reader.result as string)
-			reader.onerror = () => reject(reader.error)
-			reader.readAsDataURL(file)
-		})
-	}
-
-	async function checkDimensions(dataUrl: string): Promise<{ width: number; height: number }> {
-		return new Promise((resolve, reject) => {
-			const img = new Image()
-			img.onload = () => resolve({ width: img.width, height: img.height })
-			img.onerror = () => reject(new Error('Could not decode image'))
-			img.src = dataUrl
-		})
-	}
-
-	async function handleIconSelect(e: Event) {
+	function handleIconSelect(selection: { file: File; dataUrl: string }) {
 		iconError = null
-		const input = e.target as HTMLInputElement
-		const file = input.files?.[0]
-		if (!file) return
-
-		const meta = validateIconMeta(file)
-		if (!meta.ok) {
-			iconError =
-				meta.error === 'wrong_type'
-					? 'Icon must be a PNG.'
-					: `Icon must be ${TIER_ICON_MAX_BYTES / 1024}KB or smaller.`
-			input.value = ''
-			return
-		}
-
-		const dataUrl = await readDataUrl(file)
-		const dims = await checkDimensions(dataUrl)
-		if (!isWithinIconDimensions(dims)) {
-			iconError = `Icon must be ${TIER_ICON_MAX_DIMENSION}x${TIER_ICON_MAX_DIMENSION} or smaller.`
-			input.value = ''
-			return
-		}
-
-		iconFile = file
-		iconPreview = dataUrl
+		iconFile = selection.file
+		iconPreview = selection.dataUrl
 		removeIcon = false
 	}
 
@@ -144,7 +109,6 @@
 		iconFile = null
 		iconPreview = null
 		iconError = null
-		if (iconInputRef) iconInputRef.value = ''
 	}
 
 	function toggleRemoveIcon() {
@@ -167,68 +131,71 @@
 		return buildTierPayload(formInput, { removeIcon, hasIconFile: !!iconFile })
 	}
 
-	async function handleSave() {
+	const saveAction = useAsyncAction(async () => {
 		if (!canSave) {
 			toast.error('Name, slug, and a valid 0–100 range are required.')
 			return
 		}
 
+		const result =
+			isEditing && tier
+				? await updateMut.mutateAsync({ id: tier.id, data: buildPayload() })
+				: await createMut.mutateAsync(buildPayload())
+
+		// Image upload runs after the draft is already staged. If it fails we
+		// surface a partial-success toast and still close the modal so the
+		// staged tier shows up in the list.
 		let iconUploadError: unknown = null
-		try {
-			const result =
-				isEditing && tier
-					? await updateMut.mutateAsync({ id: tier.id, data: buildPayload() })
-					: await createMut.mutateAsync(buildPayload())
-
-			// Image upload runs after the draft is already staged. If it fails we
-			// surface a partial-success toast and still close the modal so the
-			// staged tier shows up in the list.
-			if (iconFile && result.draft?.id) {
-				isUploadingIcon = true
-				try {
-					const dataUrl = await readDataUrl(iconFile)
-					const base64 = dataUrl.replace(/^data:[^;]+;base64,/, '')
-					await difficultyAdapter.uploadDraftImage(result.draft.id, base64, iconFile.name)
-				} catch (err) {
-					iconUploadError = err
-				} finally {
-					isUploadingIcon = false
-				}
-			}
-
-			await queryClient.invalidateQueries({ queryKey: ['difficulties'] })
-			if (iconUploadError) {
-				toast.error(
-					extractErrorMessage(
-						iconUploadError,
-						'Tier change staged, but the icon upload failed — try Replace.'
-					)
+		if (iconFile && iconPreview && result.draft?.id) {
+			isUploadingIcon = true
+			try {
+				await difficultyAdapter.uploadDraftImage(
+					result.draft.id,
+					dataUrlToBase64(iconPreview),
+					iconFile.name
 				)
-			} else {
-				toast.success(isEditing ? 'Tier change staged' : 'Tier creation staged')
+			} catch (err) {
+				iconUploadError = err
+			} finally {
+				isUploadingIcon = false
 			}
-			open = false
-			onOpenChange?.(false)
-		} catch (err) {
-			toast.error(extractErrorMessage(err, 'Failed to save tier'))
 		}
-	}
+
+		await queryClient.invalidateQueries({ queryKey: ['difficulties'] })
+		if (iconUploadError) {
+			toast.error(
+				extractErrorMessage(
+					iconUploadError,
+					'Tier change staged, but the icon upload failed — try Replace.'
+				)
+			)
+		} else {
+			toast.success(isEditing ? 'Tier change staged' : 'Tier creation staged')
+		}
+		open = false
+		onOpenChange?.(false)
+	}, 'Failed to save tier')
+
+	const handleSave = saveAction.run
 
 	let confirmDeleteOpen = $state(false)
 
-	async function handleConfirmDelete() {
+	const deleteAction = useAsyncAction(async () => {
 		if (!tier) return
-		try {
-			await deleteMut.mutateAsync(tier.id)
-			await queryClient.invalidateQueries({ queryKey: ['difficulties'] })
-			toast.success('Tier deletion staged')
-			confirmDeleteOpen = false
-			open = false
-			onOpenChange?.(false)
-		} catch (err) {
-			toast.error(extractErrorMessage(err, 'Failed to delete tier'))
-		}
-	}
+		await deleteMut.mutateAsync(tier.id)
+		await queryClient.invalidateQueries({ queryKey: ['difficulties'] })
+		toast.success('Tier deletion staged')
+		confirmDeleteOpen = false
+		open = false
+		onOpenChange?.(false)
+	}, 'Failed to delete tier')
+
+	const handleConfirmDelete = deleteAction.run
+
+	// Source busy state from the wrapped actions so the indicator covers the
+	// whole pipeline (icon upload, cache invalidation), not just the mutation.
+	const isSaving = $derived(saveAction.busy)
+	const isDeleting = $derived(deleteAction.busy)
 </script>
 
 <Dialog bind:open {onOpenChange}>
@@ -262,16 +229,17 @@
 			sublabel="Optional. PNG, 128×128 or smaller, 256KB max. Shown next to the tier name."
 			editable={true}
 		>
-			<div class="icon-control">
-				<TierIcon
-					imageKey={removeIcon ? null : tier?.imageKey}
-					src={iconPreview}
-					{color}
-					{name}
-					size={40}
-				/>
-				<div class="icon-actions">
-					<Button variant="ghost" size="small" onclick={openIconPicker}>
+			<IconUploadField
+				iconKey={removeIcon ? null : tier?.imageKey}
+				{iconPreview}
+				{name}
+				size={40}
+				error={iconError}
+				onSelect={handleIconSelect}
+				onError={(err) => (iconError = iconErrorMessage(err))}
+			>
+				{#snippet actions({ open })}
+					<Button variant="ghost" size="small" onclick={open}>
 						{iconPreview || (tier?.imageKey && !removeIcon) ? 'Replace' : 'Upload'}
 					</Button>
 					{#if iconPreview}
@@ -281,18 +249,8 @@
 							{removeIcon ? 'Undo' : 'Remove'}
 						</Button>
 					{/if}
-				</div>
-				<input
-					bind:this={iconInputRef}
-					type="file"
-					accept="image/png"
-					onchange={handleIconSelect}
-					class="icon-input-hidden"
-				/>
-				{#if iconError}
-					<p class="icon-error">{iconError}</p>
-				{/if}
-			</div>
+				{/snippet}
+			</IconUploadField>
 		</DetailItem>
 		<DetailItem
 			label="Sort Order"
@@ -411,29 +369,6 @@
 		font-size: typography.$font-small;
 		color: var(--text-secondary);
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-	}
-
-	.icon-control {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit;
-		flex-wrap: wrap;
-	}
-
-	.icon-actions {
-		display: flex;
-		gap: spacing.$unit-half;
-	}
-
-	.icon-input-hidden {
-		display: none;
-	}
-
-	.icon-error {
-		flex-basis: 100%;
-		margin: 0;
-		color: var(--danger);
-		font-size: typography.$font-small;
 	}
 
 	.description-input {

@@ -20,7 +20,7 @@
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import CollectionBadge from '$lib/components/CollectionBadge.svelte'
-	import { getRoleIconUrl } from '$lib/utils/roles'
+	import { buildEntityIconUrl } from '$lib/utils/entityIcon'
 	import { openCharacterEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import DescriptionView from './DescriptionView.svelte'
@@ -140,7 +140,7 @@
 {#snippet rolesContent()}
 	<ul class="role-chips">
 		{#each roles as role (role.id)}
-			{@const iconUrl = getRoleIconUrl(role.iconKey)}
+			{@const iconUrl = buildEntityIconUrl(role.iconKey)}
 			<li class="role-chip">
 				<span class="chip-icon">
 					{#if iconUrl}

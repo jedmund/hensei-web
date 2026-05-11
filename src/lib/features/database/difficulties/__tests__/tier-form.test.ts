@@ -1,13 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import {
-	TIER_ICON_MAX_BYTES,
-	TIER_ICON_MAX_DIMENSION,
-	buildTierPayload,
-	isWithinIconDimensions,
-	validateIconMeta,
-	validateTierForm,
-	type TierFormInput
-} from '../tier-form'
+import { buildTierPayload, validateTierForm, type TierFormInput } from '../tier-form'
 
 const baseInput: TierFormInput = {
 	name: 'Endgame',
@@ -123,95 +115,5 @@ describe('buildTierPayload', () => {
 		expect(payload.minScore).toBe(0)
 		expect(payload.maxScore).toBe(100)
 		expect(payload.sortOrder).toBe(0)
-	})
-})
-
-describe('validateIconMeta', () => {
-	function fakeFile(opts: { type?: string; size?: number } = {}): File {
-		// Real File constructor requires bits; we only check .type and .size.
-		return {
-			type: opts.type ?? 'image/png',
-			size: opts.size ?? 1024
-		} as File
-	}
-
-	it('accepts a sub-cap PNG by default', () => {
-		expect(validateIconMeta(fakeFile()).ok).toBe(true)
-	})
-
-	it('rejects non-PNG MIME types by default', () => {
-		const res = validateIconMeta(fakeFile({ type: 'image/jpeg' }))
-		expect(res.ok).toBe(false)
-		if (!res.ok) expect(res.error).toBe('wrong_type')
-	})
-
-	it('rejects empty/missing MIME type', () => {
-		const res = validateIconMeta(fakeFile({ type: '' }))
-		expect(res.ok).toBe(false)
-		if (!res.ok) expect(res.error).toBe('wrong_type')
-	})
-
-	it('rejects files over the byte cap', () => {
-		const res = validateIconMeta(fakeFile({ size: TIER_ICON_MAX_BYTES + 1 }))
-		expect(res.ok).toBe(false)
-		if (!res.ok) expect(res.error).toBe('too_large')
-	})
-
-	it('accepts a file exactly at the byte cap', () => {
-		expect(validateIconMeta(fakeFile({ size: TIER_ICON_MAX_BYTES })).ok).toBe(true)
-	})
-
-	it('supports a custom maxBytes override', () => {
-		const res = validateIconMeta(fakeFile({ size: 600 }), { maxBytes: 500 })
-		expect(res.ok).toBe(false)
-		if (!res.ok) expect(res.error).toBe('too_large')
-	})
-
-	it('supports custom allowedMimeTypes', () => {
-		const png = validateIconMeta(fakeFile({ type: 'image/svg+xml' }), {
-			allowedMimeTypes: ['image/svg+xml', 'image/png']
-		})
-		expect(png.ok).toBe(true)
-	})
-
-	it('reports wrong_type before too_large when both fail (cheaper check first)', () => {
-		const res = validateIconMeta(fakeFile({ type: 'image/jpeg', size: TIER_ICON_MAX_BYTES * 10 }))
-		expect(res.ok).toBe(false)
-		if (!res.ok) expect(res.error).toBe('wrong_type')
-	})
-})
-
-describe('isWithinIconDimensions', () => {
-	it('accepts exactly the cap', () => {
-		expect(
-			isWithinIconDimensions({ width: TIER_ICON_MAX_DIMENSION, height: TIER_ICON_MAX_DIMENSION })
-		).toBe(true)
-	})
-
-	it('rejects when width exceeds cap (height OK)', () => {
-		expect(
-			isWithinIconDimensions({
-				width: TIER_ICON_MAX_DIMENSION + 1,
-				height: TIER_ICON_MAX_DIMENSION
-			})
-		).toBe(false)
-	})
-
-	it('rejects when height exceeds cap (width OK)', () => {
-		expect(
-			isWithinIconDimensions({
-				width: TIER_ICON_MAX_DIMENSION,
-				height: TIER_ICON_MAX_DIMENSION + 1
-			})
-		).toBe(false)
-	})
-
-	it('honours a custom maxDimension', () => {
-		expect(isWithinIconDimensions({ width: 64, height: 64 }, 32)).toBe(false)
-		expect(isWithinIconDimensions({ width: 32, height: 32 }, 32)).toBe(true)
-	})
-
-	it('accepts non-square images within the cap', () => {
-		expect(isWithinIconDimensions({ width: 128, height: 64 })).toBe(true)
 	})
 })
