@@ -85,6 +85,7 @@ $accent--yellow--70: #d1aa4f;
 $accent--yellow--80: #deb351;
 $accent--yellow--90: #e6bd5e;
 $accent--yellow--100: #f9cc64;
+$accent--yellow--120: #fcf0c2;
 
 $selected--item--bg--dark: #f9cc645d;
 $selected--item--bg--dark--hover: #fcc33f81;
@@ -216,23 +217,81 @@ $placeholder--bound--bg--light--hover: $grey-75;
 $placeholder--bound--bg--dark--hover: $grey-20;
 
 // Color Definitions: Notices
-$notice--bg--light: $accent--yellow--100;
-$notice--bg--dark: $accent--yellow--00;
 
-$notice--text--light: $accent--yellow--20;
-$notice--text--dark: $accent--yellow--100;
+// Yellow
+$notice--yellow--bg--light: $accent--yellow--120;
+$notice--yellow--bg--dark: $accent--yellow--00;
 
-$notice--button--bg--light: $accent--yellow--80;
-$notice--button--bg--dark: $accent--yellow--20;
+$notice--yellow--text--light: $accent--yellow--20;
+$notice--yellow--text--dark: $accent--yellow--100;
 
-$notice--button--bg--light--hover: $accent--yellow--70;
-$notice--button--bg--dark--hover: $accent--yellow--10;
+$notice--yellow--button--bg--light: $accent--yellow--80;
+$notice--yellow--button--bg--dark: $accent--yellow--20;
 
-$notice--button--text--light: $accent--yellow--10;
-$notice--button--text--dark: $accent--yellow--90;
+$notice--yellow--button--bg--light--hover: $accent--yellow--70;
+$notice--yellow--button--bg--dark--hover: $accent--yellow--10;
 
-$notice--button--text--light--hover: $accent--yellow--00;
-$notice--button--text--dark--hover: $accent--yellow--100;
+$notice--yellow--button--bg--light--disabled: $accent--yellow--80;
+$notice--yellow--button--bg--dark--disabled: $accent--yellow--20;
+
+$notice--yellow--button--text--light: $accent--yellow--10;
+$notice--yellow--button--text--dark: $accent--yellow--90;
+
+$notice--yellow--button--text--light--hover: $accent--yellow--00;
+$notice--yellow--button--text--dark--hover: $accent--yellow--100;
+
+$notice--yellow--button--text--light--disabled: $accent--yellow--00;
+$notice--yellow--button--text--dark--disabled: $accent--yellow--100;
+
+// Blue
+$notice--blue--bg--light: $accent--blue--light;
+$notice--blue--bg--dark: $accent--blue--dark;
+
+$notice--blue--text--light: $accent--blue--light;
+$notice--blue--text--dark: $accent--blue--dark;
+
+$notice--blue--button--bg--light: $accent--blue--light;
+$notice--blue--button--bg--dark: $accent--blue--dark;
+
+$notice--blue--button--bg--light--hover: $accent--blue--light--focus;
+$notice--blue--button--bg--dark--hover: $accent--blue--dark--focus;
+
+$notice--blue--button--text--light: $accent--blue--light;
+$notice--blue--button--text--dark: $accent--blue--dark;
+
+$notice--blue--button--text--light--hover: $accent--blue--light--focus;
+$notice--blue--button--text--dark--hover: $accent--blue--dark--focus;
+
+$notice--blue--button--text--light--disabled: $accent--blue--light--focus;
+$notice--blue--button--text--dark--disabled: $accent--blue--dark--focus;
+
+$notice--blue--button--bg--light--disabled: $accent--blue--light--focus;
+$notice--blue--button--bg--dark--disabled: $accent--blue--dark--focus;
+
+// Grey
+$notice--grey--bg--light: $grey-90;
+$notice--grey--bg--dark: $grey-10;
+
+$notice--grey--text--light: $grey-50;
+$notice--grey--text--dark: $grey-80;
+
+$notice--grey--button--bg--light: $grey-100;
+$notice--grey--button--bg--dark: $grey-20;
+
+$notice--grey--button--bg--light--hover: $grey-100;
+$notice--grey--button--bg--dark--hover: $grey-20;
+
+$notice--grey--button--text--light: $grey-50;
+$notice--grey--button--text--dark: $grey-80;
+
+$notice--grey--button--text--light--hover: $grey-50;
+$notice--grey--button--text--dark--hover: $grey-80;
+
+$notice--grey--button--text--light--disabled: $grey-50;
+$notice--grey--button--text--dark--disabled: $grey-80;
+
+$notice--grey--button--bg--light--disabled: $grey-100;
+$notice--grey--button--bg--dark--disabled: $grey-20;
 
 // Color Definitions: Button
 $button--bg--light: $grey-85;
