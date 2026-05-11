@@ -491,3 +491,86 @@ describe('urlParamsToExploreFilterParams', () => {
 		expect(result.filterItems.find((f) => f.kind === 'entity')).toBeDefined()
 	})
 })
+
+// ============================================================================
+// difficulty filter
+// ============================================================================
+
+describe('difficulty filter (multi-select)', () => {
+	it('serializes a single difficulty as ?difficulty=slug', () => {
+		const params = serializeExploreFilters([
+			{ kind: 'difficulty', value: 'casual', label: 'Casual' }
+		])
+		expect(params.get('difficulty')).toBe('casual')
+	})
+
+	it('serializes multiple difficulties as a comma-joined list', () => {
+		const params = serializeExploreFilters([
+			{ kind: 'difficulty', value: 'casual', label: 'Casual' },
+			{ kind: 'difficulty', value: 'mid', label: 'Mid' }
+		])
+		expect(params.get('difficulty')).toBe('casual,mid')
+	})
+
+	it('omits the difficulty param entirely when no difficulty filters are set', () => {
+		const params = serializeExploreFilters([{ kind: 'element', value: 2, label: 'Fire' }])
+		expect(params.has('difficulty')).toBe(false)
+	})
+
+	it('deserializes a single ?difficulty=slug into one pill', () => {
+		const { filters } = deserializeExploreFilters(new URLSearchParams('difficulty=casual'))
+		const diffs = filters.filter((f) => f.kind === 'difficulty')
+		expect(diffs).toHaveLength(1)
+		expect(diffs[0]).toMatchObject({ kind: 'difficulty', value: 'casual' })
+	})
+
+	it('deserializes a comma list into one pill per slug', () => {
+		const { filters } = deserializeExploreFilters(new URLSearchParams('difficulty=casual,mid'))
+		const diffs = filters.filter((f) => f.kind === 'difficulty')
+		expect(diffs.map((f) => f.value)).toEqual(['casual', 'mid'])
+	})
+
+	it('drops empty slugs from a trailing/duplicate comma', () => {
+		const { filters } = deserializeExploreFilters(new URLSearchParams('difficulty=casual,,mid,'))
+		const diffs = filters.filter((f) => f.kind === 'difficulty')
+		expect(diffs.map((f) => f.value)).toEqual(['casual', 'mid'])
+	})
+
+	it('seeds the pill label with the slug as a placeholder (hydrated client-side)', () => {
+		// The deserialize path runs before the tier list is loaded, so labels start
+		// as the slug. ExploreFilters.svelte patches them when the query resolves.
+		const { filters } = deserializeExploreFilters(new URLSearchParams('difficulty=casual'))
+		const diff = filters.find((f) => f.kind === 'difficulty')!
+		expect(diff.label).toBe(diff.value)
+	})
+
+	it('roundtrips a multi-difficulty filter through serialize→deserialize', () => {
+		const original: FilterItem[] = [
+			{ kind: 'difficulty', value: 'casual', label: 'Casual' },
+			{ kind: 'difficulty', value: 'mid', label: 'Mid' }
+		]
+		const params = serializeExploreFilters(original)
+		const { filters } = deserializeExploreFilters(params)
+		expect(filters.filter((f) => f.kind === 'difficulty').map((f) => f.value)).toEqual([
+			'casual',
+			'mid'
+		])
+	})
+
+	it('preserves difficulty alongside other filters in a complex roundtrip', () => {
+		const original: FilterItem[] = [
+			{ kind: 'element', value: 5, label: 'Dark' },
+			{ kind: 'difficulty', value: 'endgame', label: 'Endgame' },
+			{ kind: 'recency', value: 86400, label: 'Last day' }
+		]
+		const params = serializeExploreFilters(original)
+		const { filters } = deserializeExploreFilters(params)
+		expect(filters.find((f) => f.kind === 'difficulty')!.value).toBe('endgame')
+		expect(filters.find((f) => f.kind === 'element')!.value).toBe(5)
+		expect(filters.find((f) => f.kind === 'recency')!.value).toBe(86400)
+	})
+
+	it('urlHasExploreFilters detects difficulty even when no other filters are set', () => {
+		expect(urlHasExploreFilters(new URLSearchParams('difficulty=casual'))).toBe(true)
+	})
+})
