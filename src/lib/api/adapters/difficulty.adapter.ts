@@ -22,6 +22,9 @@ export interface DifficultyComponent {
 	weight: number
 	enabled: boolean
 	minCountToScore: number
+	/** Optional cap on the denominator used for raw_score. When null the
+	 * calculator falls back to summing every rule's max contribution. */
+	targetMax: number | null
 	createdAt?: string
 	updatedAt?: string
 }

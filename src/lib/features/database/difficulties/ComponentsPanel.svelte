@@ -11,11 +11,16 @@
 
 	const componentsQuery = createQuery(() => difficultyQueries.components())
 
+	type ComponentDraft = {
+		weight: number
+		enabled: boolean
+		minCountToScore: number
+		targetMax: number | null
+	}
+
 	// Local edit state, keyed by component id; seeded from server values before
 	// every render. Editors see live API values and can revert by reloading.
-	let drafts = $state<
-		Record<string, { weight: number; enabled: boolean; minCountToScore: number }>
-	>({})
+	let drafts = $state<Record<string, ComponentDraft>>({})
 
 	// $effect.pre runs before DOM updates, so drafts are guaranteed populated
 	// before the {#each} block evaluates bind expressions.
@@ -25,7 +30,8 @@
 				drafts[c.id] = {
 					weight: c.weight,
 					enabled: c.enabled,
-					minCountToScore: c.minCountToScore
+					minCountToScore: c.minCountToScore,
+					targetMax: c.targetMax
 				}
 			}
 		}
@@ -39,10 +45,13 @@
 	function isDirty(comp: DifficultyComponent): boolean {
 		const draft = drafts[comp.id]
 		if (!draft) return false
+		const draftTarget = draft.targetMax == null ? null : Number(draft.targetMax)
+		const compTarget = comp.targetMax == null ? null : Number(comp.targetMax)
 		return (
 			Number(draft.weight) !== Number(comp.weight) ||
 			Boolean(draft.enabled) !== Boolean(comp.enabled) ||
-			Number(draft.minCountToScore) !== Number(comp.minCountToScore)
+			Number(draft.minCountToScore) !== Number(comp.minCountToScore) ||
+			draftTarget !== compTarget
 		)
 	}
 
@@ -55,7 +64,11 @@
 				data: {
 					weight: Number(draft.weight),
 					enabled: draft.enabled,
-					minCountToScore: Number(draft.minCountToScore)
+					minCountToScore: Number(draft.minCountToScore),
+					targetMax:
+						draft.targetMax == null || draft.targetMax === ('' as unknown as number)
+							? null
+							: Number(draft.targetMax)
 				}
 			})
 			await queryClient.invalidateQueries({ queryKey: ['difficulties', 'components'] })
@@ -101,6 +114,14 @@
 							label="Min items to score"
 							sublabel="Parties below this are not scored. Use 0 for job/accessory."
 							bind:value={drafts[comp.id]!.minCountToScore}
+							editable={true}
+							type="number"
+							min={0}
+						/>
+						<DetailItem
+							label="Target max"
+							sublabel="Optional. Overrides the denominator for raw_score. Leave blank to use the sum of every rule's max contribution."
+							bind:value={drafts[comp.id]!.targetMax as number | null | undefined}
 							editable={true}
 							type="number"
 							min={0}
