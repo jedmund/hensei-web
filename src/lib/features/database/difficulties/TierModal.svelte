@@ -39,6 +39,8 @@
 	let iconError = $state<string | null>(null)
 	let iconInputRef: HTMLInputElement | undefined = $state(undefined)
 	let isUploadingIcon = $state(false)
+	// Tracks intent to clear an existing tier.imageKey without uploading a new one.
+	let removeIcon = $state(false)
 
 	const queryClient = useQueryClient()
 
@@ -61,6 +63,7 @@
 			iconFile = null
 			iconPreview = null
 			iconError = null
+			removeIcon = false
 			if (tier) {
 				name = tier.name ?? ''
 				slug = tier.slug ?? ''
@@ -130,6 +133,7 @@
 
 		iconFile = file
 		iconPreview = dataUrl
+		removeIcon = false
 	}
 
 	function clearIcon() {
@@ -139,8 +143,12 @@
 		if (iconInputRef) iconInputRef.value = ''
 	}
 
+	function toggleRemoveIcon() {
+		removeIcon = !removeIcon
+	}
+
 	function buildPayload(): Partial<DifficultyTier> {
-		return {
+		const payload: Partial<DifficultyTier> = {
 			name: name.trim(),
 			slug: slug.trim(),
 			color,
@@ -149,6 +157,10 @@
 			maxScore,
 			sortOrder
 		}
+		// Clearing an existing icon is expressed as imageKey: null; uploading a
+		// new icon goes through uploadDraftImage after the draft is staged.
+		if (removeIcon && !iconFile) payload.imageKey = null
+		return payload
 	}
 
 	const canSave = $derived(
@@ -240,13 +252,23 @@
 			editable={true}
 		>
 			<div class="icon-control">
-				<TierIcon imageKey={tier?.imageKey} src={iconPreview} {color} {name} size={40} />
+				<TierIcon
+					imageKey={removeIcon ? null : tier?.imageKey}
+					src={iconPreview}
+					{color}
+					{name}
+					size={40}
+				/>
 				<div class="icon-actions">
 					<Button variant="ghost" size="small" onclick={openIconPicker}>
-						{iconPreview || tier?.imageKey ? 'Replace' : 'Upload'}
+						{iconPreview || (tier?.imageKey && !removeIcon) ? 'Replace' : 'Upload'}
 					</Button>
 					{#if iconPreview}
 						<Button variant="ghost" size="small" onclick={clearIcon}>Cancel</Button>
+					{:else if tier?.imageKey}
+						<Button variant="ghost" size="small" onclick={toggleRemoveIcon}>
+							{removeIcon ? 'Undo' : 'Remove'}
+						</Button>
 					{/if}
 				</div>
 				<input
