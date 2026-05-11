@@ -75,7 +75,7 @@
 			// subsequent edits would be applied on top of the pre-save snapshot.
 			delete drafts[comp.id]
 			await queryClient.invalidateQueries({ queryKey: ['difficulties', 'components'] })
-			toast.success(`Saved ${comp.name}`)
+			toast.success(`${comp.name} change staged`)
 		} catch (err) {
 			toast.error(extractErrorMessage(err, `Failed to save ${comp.name}`))
 		}

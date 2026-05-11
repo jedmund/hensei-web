@@ -1,7 +1,17 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 
-	type Variant = 'blue' | 'yellow' | 'red' | 'wind' | 'fire' | 'water' | 'earth' | 'light' | 'dark'
+	type Variant =
+		| 'gray'
+		| 'blue'
+		| 'yellow'
+		| 'red'
+		| 'wind'
+		| 'fire'
+		| 'water'
+		| 'earth'
+		| 'light'
+		| 'dark'
 
 	interface Props {
 		variant?: Variant
@@ -9,7 +19,7 @@
 		children: Snippet
 	}
 
-	let { variant = 'blue', icon, children }: Props = $props()
+	let { variant = 'gray', icon, children }: Props = $props()
 
 	const elementVariants = ['wind', 'fire', 'water', 'earth', 'light', 'dark']
 	const isElement = $derived(elementVariants.includes(variant))
@@ -21,9 +31,9 @@
 			{@render icon()}
 		</span>
 	{/if}
-	<span class="notice-text">
+	<div class="notice-text">
 		{@render children()}
-	</span>
+	</div>
 </div>
 
 <style lang="scss">
@@ -40,25 +50,43 @@
 		font-size: $font-small;
 	}
 
+	.notice-text {
+		display: flex;
+		flex-direction: column;
+		gap: $unit;
+		font-size: $font-regular;
+		line-height: 1.5;
+		margin: 0;
+
+		:global(p) {
+			margin: 0;
+		}
+	}
+
 	.notice-icon {
 		display: flex;
 		flex-shrink: 0;
 	}
 
 	// Fixed color variants
+	.gray {
+		background: var(--notice-grey-bg);
+		color: var(--notice-grey-text);
+	}
+
 	.blue {
-		background: var(--blue-subtle);
-		color: var(--accent-blue);
+		background: var(--notice-blue-bg);
+		color: var(--notice-blue-text);
 	}
 
 	.yellow {
-		background: rgba(209, 137, 58, 0.15);
-		color: var(--accent-yellow);
+		background: var(--notice-yellow-bg);
+		color: var(--notice-yellow-text);
 	}
 
 	.red {
-		background: rgba(220, 53, 53, 0.15);
-		color: var(--red);
+		background: var(--notice-red-bg);
+		color: var(--notice-red-text);
 	}
 
 	// Element variants

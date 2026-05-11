@@ -1,12 +1,19 @@
 <script lang="ts">
-	import { createQuery } from '@tanstack/svelte-query'
+	import { onMount } from 'svelte'
+	import { goto } from '$app/navigation'
+	import { page } from '$app/stores'
+	import { createMutation, createQuery, useQueryClient } from '@tanstack/svelte-query'
+	import { toast } from 'svelte-sonner'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import * as m from '$lib/paraglide/messages'
+	import { difficultyAdapter } from '$lib/api/adapters/difficulty.adapter'
 	import { difficultyQueries } from '$lib/api/queries/difficulty.queries'
+	import { extractErrorMessage } from '$lib/utils/errors'
 	import type { DifficultyTier } from '$lib/types/api/party'
 	import type { DifficultyRule } from '$lib/api/adapters/difficulty.adapter'
 	import TierRow from '$lib/features/database/difficulties/TierRow.svelte'
@@ -15,23 +22,50 @@
 	import RuleModal from '$lib/features/database/difficulties/RuleModal.svelte'
 	import ComponentsPanel from '$lib/features/database/difficulties/ComponentsPanel.svelte'
 	import PreviewPanel from '$lib/features/database/difficulties/PreviewPanel.svelte'
+	import CommitDialog from '$lib/features/database/difficulties/CommitDialog.svelte'
+	import Notice from '$lib/components/ui/Notice.svelte'
 	import { getDifficultyComponentOptions } from '$lib/features/database/difficulties/constants'
 
 	type Tab = 'tiers' | 'rules' | 'components' | 'preview'
 
 	let activeTab = $state<Tab>('tiers')
+	let initialShortcode = $state<string | undefined>(undefined)
 
-	const tiersQuery = createQuery(() => difficultyQueries.tiers())
-	const rulesQuery = createQuery(() => difficultyQueries.rules())
+	const queryClient = useQueryClient()
+
+	const tiersQuery = createQuery(() => difficultyQueries.tiers({ withDrafts: true }))
+	const rulesQuery = createQuery(() => difficultyQueries.rules({ withDrafts: true }))
+	const diffQuery = createQuery(() => difficultyQueries.diff())
 
 	const tiers = $derived(tiersQuery.data ?? [])
 	const rules = $derived(rulesQuery.data ?? [])
+	const pendingCount = $derived(diffQuery.data?.pendingCount ?? 0)
+	const diff = $derived(diffQuery.data?.diff ?? null)
 
 	// Modal state
 	let tierModalOpen = $state(false)
 	let editingTier = $state<DifficultyTier | null>(null)
 	let ruleModalOpen = $state(false)
 	let editingRule = $state<DifficultyRule | null>(null)
+	let commitDialogOpen = $state(false)
+	let confirmDiscardOpen = $state(false)
+
+	const discardMut = createMutation(() => ({
+		mutationFn: () => difficultyAdapter.discardDrafts()
+	}))
+
+	async function handleConfirmDiscard() {
+		try {
+			const { discarded } = await discardMut.mutateAsync()
+			await queryClient.invalidateQueries({ queryKey: ['difficulties'] })
+			toast.success(
+				discarded === 1 ? 'Discarded 1 pending change' : `Discarded ${discarded} pending changes`
+			)
+			confirmDiscardOpen = false
+		} catch (err) {
+			toast.error(extractErrorMessage(err, 'Failed to discard drafts'))
+		}
+	}
 
 	function openNewTier() {
 		editingTier = null
@@ -62,6 +96,32 @@
 		{ value: 'all', label: m.difficulty_component_all() },
 		...getDifficultyComponentOptions()
 	])
+
+	const TABS: Tab[] = ['tiers', 'rules', 'components', 'preview']
+
+	onMount(() => {
+		const params = $page.url.searchParams
+		const tabParam = params.get('tab')
+		if (tabParam && (TABS as string[]).includes(tabParam)) {
+			activeTab = tabParam as Tab
+		}
+		const shortcode = params.get('shortcode')
+		if (shortcode) initialShortcode = shortcode
+	})
+
+	$effect(() => {
+		const next = new URL($page.url)
+		// Treat a missing param as the default tab so the effect doesn't loop on first mount.
+		const current = next.searchParams.get('tab') ?? 'tiers'
+		if (current === activeTab) return
+		if (activeTab === 'tiers') next.searchParams.delete('tab')
+		else next.searchParams.set('tab', activeTab)
+		goto(next.pathname + (next.search || ''), {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true
+		})
+	})
 </script>
 
 <PageMeta
@@ -73,6 +133,26 @@
 	<DatabasePageHeader title={m.party_difficulty_label()}>
 		{#snippet leftAction()}
 			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database">Back</Button>
+		{/snippet}
+		{#snippet rightAction()}
+			{#if pendingCount > 0}
+				<Button
+					variant="ghost"
+					size="small"
+					onclick={() => (confirmDiscardOpen = true)}
+					disabled={discardMut.isPending}
+				>
+					Discard
+				</Button>
+			{/if}
+			<Button
+				variant="primary"
+				size="small"
+				onclick={() => (commitDialogOpen = true)}
+				disabled={pendingCount === 0}
+			>
+				{pendingCount > 0 ? `Commit (${pendingCount})` : 'Commit'}
+			</Button>
 		{/snippet}
 	</DatabasePageHeader>
 
@@ -89,13 +169,12 @@
 		{#if activeTab === 'tiers'}
 			<section class="section">
 				<header class="section-header">
-					<div>
-						<h2>Tiers</h2>
-						<p class="section-hint">Score ranges that label each party.</p>
-					</div>
-					<Button variant="ghost" size="small" leftIcon="plus" onclick={openNewTier}>
-						New tier
-					</Button>
+					<Notice variant="gray">
+						<p>
+							Define score ranges called tiers that sort parties by how difficult they are to
+							create.
+						</p>
+					</Notice>
 				</header>
 				{#if tiersQuery.isLoading}
 					<p class="empty">Loading tiers…</p>
@@ -107,6 +186,14 @@
 						</Button>
 					</div>
 				{:else}
+					<div class="section-header-row">
+						<div class="section-count">
+							<span class="count">{tiers.length} tier{tiers.length === 1 ? '' : 's'}</span>
+						</div>
+						<Button variant="ghost" contained size="small" leftIcon="plus" onclick={openNewTier}>
+							New tier
+						</Button>
+					</div>
 					<div class="rows">
 						{#each tiers as tier (tier.id)}
 							<TierRow {tier} onclick={() => openEditTier(tier)} />
@@ -117,15 +204,12 @@
 		{:else if activeTab === 'rules'}
 			<section class="section">
 				<header class="section-header">
-					<div>
-						<h2>Rules</h2>
-						<p class="section-hint">
-							Each rule contributes its weight to its component when its condition fires.
+					<Notice variant="gray">
+						<p>
+							Define rules that contribute to the score of each component. Each rule contributes its
+							weight to its component when its condition fires.
 						</p>
-					</div>
-					<Button variant="ghost" size="small" leftIcon="plus" onclick={openNewRule}>
-						New rule
-					</Button>
+					</Notice>
 				</header>
 
 				<div class="filter-bar">
@@ -134,9 +218,6 @@
 							<Segment value={f.value}>{f.label}</Segment>
 						{/each}
 					</SegmentedControl>
-					<span class="filter-count">
-						{filteredRules.length} rule{filteredRules.length === 1 ? '' : 's'}
-					</span>
 				</div>
 
 				{#if rulesQuery.isLoading}
@@ -146,6 +227,14 @@
 						<p>No rules match this filter.</p>
 					</div>
 				{:else}
+					<div class="section-header-row">
+						<span class="filter-count">
+							{filteredRules.length} match{filteredRules.length === 1 ? '' : 'es'}
+						</span>
+						<Button variant="ghost" contained size="small" leftIcon="plus" onclick={openNewRule}>
+							New rule
+						</Button>
+					</div>
 					<div class="rows">
 						{#each filteredRules as rule (rule.id)}
 							<RuleRow {rule} onclick={() => openEditRule(rule)} />
@@ -156,25 +245,29 @@
 		{:else if activeTab === 'components'}
 			<section class="section">
 				<header class="section-header">
-					<div>
-						<h2>Components</h2>
-						<p class="section-hint">
-							Per-component weight, scoreability threshold, and on/off switch. Components are
-							seeded; you can tune their values but cannot create or destroy them.
+					<Notice variant="gray">
+						<p>
+							Define per-component weight, scoreability threshold, and on/off switch. Components are
+							used to score parties and are defined in the API.
 						</p>
-					</div>
+						<p>
+							Components are seeded; you can tune their values but cannot create or destroy them.
+						</p>
+					</Notice>
 				</header>
 				<ComponentsPanel />
 			</section>
 		{:else}
 			<section class="section">
 				<header class="section-header">
-					<div>
-						<h2>Preview</h2>
-						<p class="section-hint">Test the current ruleset against any party by shortcode.</p>
-					</div>
+					<Notice variant="gray">
+						<p>
+							Use this tool to test the current ruleset against any party by shortcode. Changes
+							won't persist until you Commit them using the button at the top.
+						</p>
+					</Notice>
 				</header>
-				<PreviewPanel />
+				<PreviewPanel {initialShortcode} />
 			</section>
 		{/if}
 	</div>
@@ -182,6 +275,18 @@
 
 <TierModal bind:open={tierModalOpen} tier={editingTier} />
 <RuleModal bind:open={ruleModalOpen} rule={editingRule} />
+<CommitDialog bind:open={commitDialogOpen} {diff} />
+
+<ConfirmDialog
+	bind:open={confirmDiscardOpen}
+	title="Discard pending changes?"
+	message={pendingCount === 1
+		? '1 pending change will be discarded. This cannot be undone.'
+		: `${pendingCount} pending changes will be discarded. This cannot be undone.`}
+	confirmLabel="Discard"
+	loading={discardMut.isPending}
+	onconfirm={handleConfirmDiscard}
+/>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
@@ -215,8 +320,7 @@
 
 	.section-header {
 		display: flex;
-		justify-content: space-between;
-		align-items: flex-start;
+		flex-direction: column;
 		gap: spacing.$unit;
 
 		h2 {
@@ -227,11 +331,33 @@
 		}
 	}
 
+	.section-header-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: spacing.$unit;
+
+		.section-count {
+			font-size: typography.$font-regular;
+			color: var(--text-secondary);
+		}
+	}
+
 	.section-hint {
-		margin: spacing.$unit-half 0 0 0;
-		color: var(--text-secondary);
-		font-size: typography.$font-small;
-		max-width: 60ch;
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit;
+		background: var(--notice-bg);
+		padding: spacing.$unit-2x;
+		border-radius: layout.$card-corner;
+		width: 100%;
+
+		p {
+			color: var(--notice-text);
+			font-size: typography.$font-regular;
+			line-height: 1.5;
+			margin: 0;
+		}
 	}
 
 	.filter-bar {

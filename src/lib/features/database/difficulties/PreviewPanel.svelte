@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import {
@@ -7,10 +8,20 @@
 	} from '$lib/api/adapters/difficulty.adapter'
 	import { extractErrorMessage } from '$lib/utils/errors'
 
-	let shortcode = $state('')
+	interface Props {
+		initialShortcode?: string
+	}
+
+	let { initialShortcode }: Props = $props()
+
+	let shortcode = $state(initialShortcode ?? '')
 	let result = $state<DifficultyPreviewResult | null>(null)
 	let error = $state<string | null>(null)
 	let loading = $state(false)
+
+	onMount(() => {
+		if (initialShortcode && initialShortcode.trim()) runPreview()
+	})
 
 	async function runPreview() {
 		const code = shortcode.trim()
@@ -69,10 +80,6 @@
 </script>
 
 <div class="preview-panel">
-	<p class="hint">
-		Score a real party against the current ruleset without persisting. Useful when tuning weights.
-	</p>
-
 	<div class="input-row">
 		<div class="input-wrapper">
 			<Input
@@ -84,7 +91,12 @@
 				onkeydown={handleKey}
 			/>
 		</div>
-		<Button variant="primary" onclick={runPreview} disabled={loading || !shortcode.trim()}>
+		<Button
+			variant="primary"
+			size="medium"
+			onclick={runPreview}
+			disabled={loading || !shortcode.trim()}
+		>
 			{loading ? 'Running…' : 'Run preview'}
 		</Button>
 	</div>
