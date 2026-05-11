@@ -11,25 +11,23 @@
 
 	const componentsQuery = createQuery(() => difficultyQueries.components())
 
-	// Local edit state, keyed by component id; populated lazily as the
-	// underlying records load. Editors see live API values and can revert by
-	// reloading the page.
+	// Local edit state, keyed by component id; populated on demand the first
+	// time a component is rendered. Editors see live API values and can revert
+	// by reloading the page.
 	let drafts = $state<
 		Record<string, { weight: number; enabled: boolean; min_count_to_score: number }>
 	>({})
 
-	$effect(() => {
-		const records = componentsQuery.data ?? []
-		const next: typeof drafts = {}
-		for (const c of records) {
-			next[c.id] = drafts[c.id] ?? {
-				weight: c.weight,
-				enabled: c.enabled,
-				min_count_to_score: c.min_count_to_score
+	function ensureDraft(comp: DifficultyComponent) {
+		if (!drafts[comp.id]) {
+			drafts[comp.id] = {
+				weight: comp.weight,
+				enabled: comp.enabled,
+				min_count_to_score: comp.min_count_to_score
 			}
 		}
-		drafts = next
-	})
+		return drafts[comp.id]
+	}
 
 	const updateMut = createMutation(() => ({
 		mutationFn: (input: { id: string; data: Partial<DifficultyComponent> }) =>
@@ -75,44 +73,47 @@
 {:else}
 	<div class="components-list">
 		{#each components as comp (comp.id)}
-			<section class="component-card">
-				<header class="component-header">
-					<h4>{comp.name}</h4>
-					<Button
-						variant="ghost"
-						size="small"
-						onclick={() => saveComponent(comp)}
-						disabled={!isDirty(comp) || updateMut.isPending}
-					>
-						{isDirty(comp) ? 'Save' : 'Saved'}
-					</Button>
-				</header>
-				<div class="component-fields">
-					<DetailItem
-						label="Weight"
-						sublabel="Relative contribution to the composite score"
-						bind:value={drafts[comp.id]!.weight}
-						editable={true}
-						type="number"
-						min={0}
-					/>
-					<DetailItem
-						label="Min items to score"
-						sublabel="Parties below this are not scored. Use 0 for job/accessory."
-						bind:value={drafts[comp.id]!.min_count_to_score}
-						editable={true}
-						type="number"
-						min={0}
-					/>
-					<DetailItem
-						label="Enabled"
-						sublabel="Disabled components are excluded from scoring"
-						bind:value={drafts[comp.id]!.enabled}
-						editable={true}
-						type="checkbox"
-					/>
-				</div>
-			</section>
+			{@const draft = ensureDraft(comp)}
+			{#if draft}
+				<section class="component-card">
+					<header class="component-header">
+						<h4>{comp.name}</h4>
+						<Button
+							variant="ghost"
+							size="small"
+							onclick={() => saveComponent(comp)}
+							disabled={!isDirty(comp) || updateMut.isPending}
+						>
+							{isDirty(comp) ? 'Save' : 'Saved'}
+						</Button>
+					</header>
+					<div class="component-fields">
+						<DetailItem
+							label="Weight"
+							sublabel="Relative contribution to the composite score"
+							bind:value={draft.weight}
+							editable={true}
+							type="number"
+							min={0}
+						/>
+						<DetailItem
+							label="Min items to score"
+							sublabel="Parties below this are not scored. Use 0 for job/accessory."
+							bind:value={draft.min_count_to_score}
+							editable={true}
+							type="number"
+							min={0}
+						/>
+						<DetailItem
+							label="Enabled"
+							sublabel="Disabled components are excluded from scoring"
+							bind:value={draft.enabled}
+							editable={true}
+							type="checkbox"
+						/>
+					</div>
+				</section>
+			{/if}
 		{/each}
 	</div>
 {/if}
