@@ -733,7 +733,8 @@
 		}
 
 		&.difficulty {
-			color: #1a1a1a;
+			background: var(--button-bg);
+			color: var(--text-secondary);
 		}
 
 		&.editor-link {
