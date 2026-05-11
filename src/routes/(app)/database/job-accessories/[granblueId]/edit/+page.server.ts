@@ -1,15 +1,11 @@
 import type { PageServerLoad } from './$types'
 import { jobAdapter } from '$lib/api/adapters/job.adapter'
-import { error, redirect } from '@sveltejs/kit'
+import { error } from '@sveltejs/kit'
+import { requireEditor } from '$lib/auth/requireEditor'
 
 export const load: PageServerLoad = async ({ params, parent }) => {
-	// Get parent data to access role
 	const parentData = await parent()
-
-	// Check if user has editor role
-	if (!parentData.role || parentData.role < 7) {
-		throw redirect(302, `/database/job-accessories/${params.granblueId}`)
-	}
+	requireEditor(parentData, `/database/job-accessories/${params.granblueId}`)
 
 	try {
 		const accessory = await jobAdapter.getAccessoryById(params.granblueId)
