@@ -93,7 +93,7 @@
 		</div>
 		<Button
 			variant="primary"
-			size="regular"
+			size="medium"
 			onclick={runPreview}
 			disabled={loading || !shortcode.trim()}
 		>
