@@ -1,4 +1,11 @@
 /**
+ * Keys that contain data maps where the keys themselves are data values
+ * (like wiki page names, rule-engine param keys), not property names that
+ * should be transformed.
+ */
+const DATA_MAP_KEYS = new Set(['wiki_data', 'wikiData', 'params'])
+
+/**
  * Transforms snake_case keys to camelCase
  */
 export function snakeToCamel<T>(obj: T): T {
@@ -12,19 +19,17 @@ export function snakeToCamel<T>(obj: T): T {
 		const result: Record<string, unknown> = {}
 		for (const [key, value] of Object.entries(obj)) {
 			const camelKey = key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
-			result[camelKey] = snakeToCamel(value)
+			if (DATA_MAP_KEYS.has(key) || DATA_MAP_KEYS.has(camelKey)) {
+				result[camelKey] = value
+			} else {
+				result[camelKey] = snakeToCamel(value)
+			}
 		}
 		return result as T
 	}
 
 	return obj
 }
-
-/**
- * Keys that contain data maps where the keys themselves are data values
- * (like wiki page names), not property names that should be transformed
- */
-const DATA_MAP_KEYS = new Set(['wiki_data', 'wikiData'])
 
 /**
  * Transforms camelCase keys to snake_case

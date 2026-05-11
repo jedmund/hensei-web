@@ -24,6 +24,7 @@
 	import PreviewPanel from '$lib/features/database/difficulties/PreviewPanel.svelte'
 	import CommitDialog from '$lib/features/database/difficulties/CommitDialog.svelte'
 	import Notice from '$lib/components/ui/Notice.svelte'
+	import { getDifficultyComponentOptions } from '$lib/features/database/difficulties/constants'
 
 	type Tab = 'tiers' | 'rules' | 'components' | 'preview'
 
@@ -91,14 +92,10 @@
 	const filteredRules = $derived(
 		ruleComponentFilter === 'all' ? rules : rules.filter((r) => r.component === ruleComponentFilter)
 	)
-	const componentFilters = [
-		{ value: 'all', label: 'All' },
-		{ value: 'weapon', label: 'Weapon' },
-		{ value: 'character', label: 'Character' },
-		{ value: 'summon', label: 'Summon' },
-		{ value: 'job', label: 'Job' },
-		{ value: 'accessory', label: 'Accessory' }
-	]
+	const componentFilters = $derived([
+		{ value: 'all', label: m.difficulty_component_all() },
+		...getDifficultyComponentOptions()
+	])
 
 	const TABS: Tab[] = ['tiers', 'rules', 'components', 'preview']
 
@@ -135,9 +132,7 @@
 <div class="page">
 	<DatabasePageHeader title={m.party_difficulty_label()}>
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/weapons">
-				Back
-			</Button>
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database">Back</Button>
 		{/snippet}
 		{#snippet rightAction()}
 			{#if pendingCount > 0}

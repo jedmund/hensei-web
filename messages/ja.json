@@ -449,6 +449,10 @@
 	"party_difficulty_score_label": "難易度スコア",
 	"party_difficulty_breakdown_label": "内訳",
 
+	"difficulty_component_all": "すべて",
+	"difficulty_component_job": "ジョブ",
+	"difficulty_component_accessory": "アクセサリ",
+
 	"boost_omega": "マグナ",
 	"boost_primal": "神石",
 	"boost_odious": "禁禍",

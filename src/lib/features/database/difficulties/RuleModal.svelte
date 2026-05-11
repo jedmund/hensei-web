@@ -10,6 +10,7 @@
 	import { difficultyAdapter, type DifficultyRule } from '$lib/api/adapters/difficulty.adapter'
 	import { difficultyQueries } from '$lib/api/queries/difficulty.queries'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { getDifficultyComponentOptions } from '$lib/features/database/difficulties/constants'
 
 	interface Props {
 		open?: boolean
@@ -27,13 +28,7 @@
 		(ruleTypesQuery.data?.types ?? []).map((t) => ({ value: t, label: t }))
 	)
 
-	const componentOptions = [
-		{ value: 'weapon', label: 'Weapon' },
-		{ value: 'character', label: 'Character' },
-		{ value: 'summon', label: 'Summon' },
-		{ value: 'job', label: 'Job' },
-		{ value: 'accessory', label: 'Accessory' }
-	]
+	const componentOptions = $derived(getDifficultyComponentOptions())
 
 	// Form state
 	let name = $state('')
