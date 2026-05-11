@@ -177,25 +177,40 @@
 			return
 		}
 
+		let iconUploadError: unknown = null
 		try {
 			const result =
 				isEditing && tier
 					? await updateMut.mutateAsync({ id: tier.id, data: buildPayload() })
 					: await createMut.mutateAsync(buildPayload())
 
+			// Image upload runs after the draft is already staged. If it fails we
+			// surface a partial-success toast and still close the modal so the
+			// staged tier shows up in the list.
 			if (iconFile && result.draft?.id) {
 				isUploadingIcon = true
 				try {
 					const dataUrl = await readDataUrl(iconFile)
 					const base64 = dataUrl.replace(/^data:[^;]+;base64,/, '')
 					await difficultyAdapter.uploadDraftImage(result.draft.id, base64, iconFile.name)
+				} catch (err) {
+					iconUploadError = err
 				} finally {
 					isUploadingIcon = false
 				}
 			}
 
 			await queryClient.invalidateQueries({ queryKey: ['difficulties'] })
-			toast.success(isEditing ? 'Tier updated' : 'Tier created')
+			if (iconUploadError) {
+				toast.error(
+					extractErrorMessage(
+						iconUploadError,
+						'Tier change staged, but the icon upload failed — try Replace.'
+					)
+				)
+			} else {
+				toast.success(isEditing ? 'Tier change staged' : 'Tier creation staged')
+			}
 			open = false
 			onOpenChange?.(false)
 		} catch (err) {
