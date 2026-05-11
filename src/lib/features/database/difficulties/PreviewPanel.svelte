@@ -201,8 +201,8 @@
 	}
 
 	.tier-swatch {
-		width: 28px;
-		height: 28px;
+		width: spacing.$unit-4x;
+		height: spacing.$unit-4x;
 		border-radius: 50%;
 		border: 1px solid var(--border-subtle);
 	}
@@ -234,11 +234,11 @@
 	.breakdown {
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit;
+		gap: spacing.$unit-2x;
 
 		h4 {
 			margin: 0;
-			font-size: typography.$font-regular;
+			font-size: typography.$font-medium;
 			font-weight: typography.$bold;
 			color: var(--text-secondary);
 		}
@@ -249,17 +249,14 @@
 			margin: 0;
 			display: flex;
 			flex-direction: column;
-			gap: spacing.$unit;
+			gap: spacing.$unit-4x;
 		}
 	}
 
 	.breakdown-row {
-		padding: spacing.$unit;
-		border: 1px solid var(--border-subtle);
-		border-radius: layout.$item-corner;
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-half;
+		gap: spacing.$unit;
 
 		&.absent {
 			opacity: 0.6;
@@ -276,31 +273,42 @@
 		text-transform: capitalize;
 		color: var(--text-primary);
 		font-weight: typography.$medium;
+		font-size: typography.$font-medium;
 	}
 
 	.breakdown-score {
 		font-variant-numeric: tabular-nums;
 		color: var(--text-secondary);
-		font-size: typography.$font-small;
+		font-size: typography.$font-regular;
 	}
 
 	.fired-list {
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-fourth !important;
-		margin-top: spacing.$unit-half !important;
 	}
 
 	.fired-row {
 		display: flex;
 		justify-content: space-between;
-		font-size: typography.$font-small;
+		font-size: typography.$font-regular;
 		color: var(--text-secondary);
-		padding: spacing.$unit-fourth 0;
+		padding: spacing.$unit-half spacing.$unit;
+		margin: 0 calc(-1 * #{spacing.$unit});
+		border-radius: layout.$item-corner;
+		transition: background-color 120ms ease;
+
+		&:hover {
+			background: var(--page-hover);
+			color: var(--text-primary);
+
+			.fired-weight {
+				color: var(--text-primary);
+			}
+		}
 
 		&.additional {
 			color: var(--text-tertiary);
-			padding-left: spacing.$unit;
+			padding-left: spacing.$unit-2x;
 		}
 	}
 
