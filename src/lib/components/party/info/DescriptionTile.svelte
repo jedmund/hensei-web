@@ -420,7 +420,7 @@
 						score: difficulty.score.toFixed(0)
 					})}
 				>
-					<span class="token difficulty" style:background={difficulty.tier.color || undefined}>
+					<span class="token difficulty">
 						{difficulty.tier.name}
 					</span>
 				</Tooltip>
@@ -709,7 +709,8 @@
 		}
 
 		&.difficulty {
-			color: #1a1a1a;
+			background: var(--button-bg);
+			color: var(--text-secondary);
 		}
 
 		&.chargeAttack.on {
