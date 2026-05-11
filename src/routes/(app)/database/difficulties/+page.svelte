@@ -75,9 +75,7 @@
 <div class="page">
 	<DatabasePageHeader title={m.party_difficulty_label()}>
 		{#snippet leftAction()}
-			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database/weapons">
-				Back
-			</Button>
+			<Button variant="ghost" size="small" leftIcon="chevron-left" href="/database">Back</Button>
 		{/snippet}
 	</DatabasePageHeader>
 
