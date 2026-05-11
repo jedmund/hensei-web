@@ -38,9 +38,9 @@
 			name: string
 			weight: number
 			present: boolean
-			raw_score: number | null
-			weighted_score: number | null
-			fired: Array<{ id: string; name: string; rule_type: string; weight: number }>
+			rawScore: number | null
+			weightedScore: number | null
+			fired: Array<{ id: string; name: string; ruleType: string; weight: number }>
 		}>
 	})
 </script>
@@ -86,7 +86,7 @@
 						<span class="result-score">{result.score?.toFixed(2) ?? '—'} / 100</span>
 					</div>
 				</div>
-				<span class="result-version">Ruleset v{result.ruleset_version}</span>
+				<span class="result-version">Ruleset v{result.rulesetVersion}</span>
 			</div>
 
 			{#if breakdownComponents.length > 0}
@@ -99,7 +99,7 @@
 									<span class="breakdown-name">{c.name}</span>
 									<span class="breakdown-score">
 										{#if c.present}
-											{((c.raw_score ?? 0) * 100).toFixed(0)}%
+											{((c.rawScore ?? 0) * 100).toFixed(0)}%
 										{:else}
 											No data
 										{/if}

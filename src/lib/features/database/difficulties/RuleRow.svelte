@@ -15,7 +15,7 @@
 	<button class="rule-row interactive" {onclick} class:inactive={!rule.active}>
 		<div class="primary">
 			<span class="name">{rule.name}</span>
-			<span class="rule-type">{rule.rule_type}</span>
+			<span class="rule-type">{rule.ruleType}</span>
 		</div>
 		<div class="meta">
 			<span class="component-pill" data-component={rule.component}>{rule.component}</span>
@@ -29,7 +29,7 @@
 	<div class="rule-row" class:inactive={!rule.active}>
 		<div class="primary">
 			<span class="name">{rule.name}</span>
-			<span class="rule-type">{rule.rule_type}</span>
+			<span class="rule-type">{rule.ruleType}</span>
 		</div>
 		<div class="meta">
 			<span class="component-pill" data-component={rule.component}>{rule.component}</span>

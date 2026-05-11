@@ -8,12 +8,12 @@ export interface DifficultyRule {
 	name: string
 	description?: string | null
 	component: string
-	rule_type: string
+	ruleType: string
 	params: Record<string, unknown>
 	weight: number
 	active: boolean
-	created_at?: string
-	updated_at?: string
+	createdAt?: string
+	updatedAt?: string
 }
 
 export interface DifficultyComponent {
@@ -21,9 +21,9 @@ export interface DifficultyComponent {
 	name: string
 	weight: number
 	enabled: boolean
-	min_count_to_score: number
-	created_at?: string
-	updated_at?: string
+	minCountToScore: number
+	createdAt?: string
+	updatedAt?: string
 }
 
 export interface DifficultyPreviewResult {
@@ -32,7 +32,7 @@ export interface DifficultyPreviewResult {
 	score: number | null
 	tier: DifficultyTier | null
 	breakdown: Record<string, unknown> | null
-	ruleset_version: number
+	rulesetVersion: number
 }
 
 export interface DifficultyRuleTypes {

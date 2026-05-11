@@ -66,7 +66,7 @@
 			if (rule) {
 				name = rule.name ?? ''
 				component = rule.component ?? 'weapon'
-				ruleType = rule.rule_type ?? ''
+				ruleType = rule.ruleType ?? ''
 				weight = rule.weight ?? 1
 				active = rule.active ?? true
 				paramsText = JSON.stringify(rule.params ?? {}, null, 2)
@@ -112,7 +112,7 @@
 		const payload: Partial<DifficultyRule> = {
 			name: name.trim(),
 			component,
-			rule_type: ruleType,
+			ruleType,
 			weight,
 			active,
 			params

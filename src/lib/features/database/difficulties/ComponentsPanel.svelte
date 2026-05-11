@@ -14,7 +14,7 @@
 	// Local edit state, keyed by component id; seeded from server values before
 	// every render. Editors see live API values and can revert by reloading.
 	let drafts = $state<
-		Record<string, { weight: number; enabled: boolean; min_count_to_score: number }>
+		Record<string, { weight: number; enabled: boolean; minCountToScore: number }>
 	>({})
 
 	// $effect.pre runs before DOM updates, so drafts are guaranteed populated
@@ -25,7 +25,7 @@
 				drafts[c.id] = {
 					weight: c.weight,
 					enabled: c.enabled,
-					min_count_to_score: c.min_count_to_score
+					minCountToScore: c.minCountToScore
 				}
 			}
 		}
@@ -42,7 +42,7 @@
 		return (
 			Number(draft.weight) !== Number(comp.weight) ||
 			Boolean(draft.enabled) !== Boolean(comp.enabled) ||
-			Number(draft.min_count_to_score) !== Number(comp.min_count_to_score)
+			Number(draft.minCountToScore) !== Number(comp.minCountToScore)
 		)
 	}
 
@@ -55,7 +55,7 @@
 				data: {
 					weight: Number(draft.weight),
 					enabled: draft.enabled,
-					min_count_to_score: Number(draft.min_count_to_score)
+					minCountToScore: Number(draft.minCountToScore)
 				}
 			})
 			await queryClient.invalidateQueries({ queryKey: ['difficulties', 'components'] })
@@ -100,7 +100,7 @@
 						<DetailItem
 							label="Min items to score"
 							sublabel="Parties below this are not scored. Use 0 for job/accessory."
-							bind:value={drafts[comp.id]!.min_count_to_score}
+							bind:value={drafts[comp.id]!.minCountToScore}
 							editable={true}
 							type="number"
 							min={0}

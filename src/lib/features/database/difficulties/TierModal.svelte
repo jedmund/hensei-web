@@ -54,9 +54,9 @@
 				slug = tier.slug ?? ''
 				color = tier.color ?? '#86C5A8'
 				description = tier.description ?? ''
-				minScore = tier.min_score ?? 0
-				maxScore = tier.max_score ?? 100
-				sortOrder = tier.sort_order ?? 0
+				minScore = tier.minScore ?? 0
+				maxScore = tier.maxScore ?? 100
+				sortOrder = tier.sortOrder ?? 0
 			} else {
 				name = ''
 				slug = ''
@@ -75,9 +75,9 @@
 			slug: slug.trim(),
 			color,
 			description: description.trim() || undefined,
-			min_score: minScore,
-			max_score: maxScore,
-			sort_order: sortOrder
+			minScore,
+			maxScore,
+			sortOrder
 		}
 	}
 

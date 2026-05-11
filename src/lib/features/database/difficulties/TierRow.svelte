@@ -8,7 +8,7 @@
 
 	let { tier, onclick }: Props = $props()
 
-	const scoreRange = $derived(`${tier.min_score ?? 0}–${tier.max_score ?? 100}`)
+	const scoreRange = $derived(`${tier.minScore ?? 0}–${tier.maxScore ?? 100}`)
 	const interactive = $derived(!!onclick)
 </script>
 

@@ -132,10 +132,10 @@ export interface DifficultyTier {
 	slug: string
 	name: string
 	color?: string
-	sort_order: number
+	sortOrder: number
 	description?: string
-	min_score?: number
-	max_score?: number
+	minScore?: number
+	maxScore?: number
 }
 
 // Embedded difficulty payload on Party
@@ -143,7 +143,7 @@ export interface PartyDifficulty {
 	tier: DifficultyTier | null
 	score: number
 	breakdown: Record<string, unknown>
-	computed_at: string
+	computedAt: string
 }
 
 // Party from PartyBlueprint
