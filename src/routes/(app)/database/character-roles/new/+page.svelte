@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import { page } from '$app/stores'
 
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -14,22 +13,31 @@
 	import { useCreateRole, useUploadRoleIcon } from '$lib/api/mutations/role.mutations'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import {
+		dataUrlToBase64,
+		validateIconFile,
+		type IconValidationError
+	} from '$lib/utils/iconUpload'
 
 	const createMut = useCreateRole()
 	const uploadIconMut = useUploadRoleIcon()
 
-	const initialSlot = $page.url.searchParams.get('slot_type')
-	const slotType = (
-		initialSlot === 'Weapon' || initialSlot === 'Summon' ? initialSlot : 'Character'
-	) as 'Character' | 'Weapon' | 'Summon'
-
-	const ICON_MAX = 128
-	const ICON_BYTES_MAX = 256 * 1024
+	function iconErrorMessage(error: IconValidationError): string {
+		switch (error) {
+			case 'mime':
+				return m.roles_icon_error_png()
+			case 'size':
+				return m.roles_icon_error_size()
+			case 'dimensions':
+				return m.roles_icon_error_dimensions()
+			case 'decode':
+				return m.roles_icon_error_png()
+		}
+	}
 
 	let editData = $state({
 		nameEn: '',
-		nameJp: '',
-		slotType
+		nameJp: ''
 	})
 	let iconFile = $state<File | null>(null)
 	let iconPreview = $state<string | null>(null)
@@ -46,31 +54,7 @@
 	// orphan a previously-created role on retry.
 	let createdRole = $state<{ id: string } | null>(null)
 
-	const slotTypeOptions = [
-		{ value: 'Character', label: m.roles_type_character() },
-		{ value: 'Weapon', label: m.roles_type_weapon() },
-		{ value: 'Summon', label: m.roles_type_summon() }
-	]
-
 	const canCreate = $derived(editData.nameEn.trim() !== '')
-
-	async function readDataUrl(file: File): Promise<string> {
-		return new Promise((resolve, reject) => {
-			const reader = new FileReader()
-			reader.onload = () => resolve(reader.result as string)
-			reader.onerror = () => reject(reader.error)
-			reader.readAsDataURL(file)
-		})
-	}
-
-	async function checkDimensions(dataUrl: string): Promise<{ width: number; height: number }> {
-		return new Promise((resolve, reject) => {
-			const img = new Image()
-			img.onload = () => resolve({ width: img.width, height: img.height })
-			img.onerror = () => reject(new Error('Could not decode image'))
-			img.src = dataUrl
-		})
-	}
 
 	async function handleIconSelect(e: Event) {
 		iconError = null
@@ -78,27 +62,15 @@
 		const file = input.files?.[0]
 		if (!file) return
 
-		if (file.type !== 'image/png') {
-			iconError = m.roles_icon_error_png()
-			input.value = ''
-			return
-		}
-		if (file.size > ICON_BYTES_MAX) {
-			iconError = m.roles_icon_error_size()
+		const result = await validateIconFile(file)
+		if (!result.ok) {
+			iconError = iconErrorMessage(result.error)
 			input.value = ''
 			return
 		}
 
-		const dataUrl = await readDataUrl(file)
-		const { width, height } = await checkDimensions(dataUrl)
-		if (width > ICON_MAX || height > ICON_MAX) {
-			iconError = m.roles_icon_error_dimensions()
-			input.value = ''
-			return
-		}
-
-		iconFile = file
-		iconPreview = dataUrl
+		iconFile = result.file
+		iconPreview = result.dataUrl
 	}
 
 	async function handleCreate() {
@@ -109,22 +81,19 @@
 			if (!createdRole) {
 				createdRole = await createMut.mutateAsync({
 					nameEn: editData.nameEn.trim(),
-					nameJp: editData.nameJp.trim() || null,
-					slotType: editData.slotType
+					nameJp: editData.nameJp.trim() || null
 				})
 			}
 
-			if (iconFile) {
-				const dataUrl = await readDataUrl(iconFile)
-				const base64 = dataUrl.replace(/^data:[^;]+;base64,/, '')
+			if (iconFile && iconPreview) {
 				await uploadIconMut.mutateAsync({
 					id: createdRole.id,
-					image: base64,
+					image: dataUrlToBase64(iconPreview),
 					filename: iconFile.name
 				})
 			}
 
-			goto(localizeHref(`/database/roles/${createdRole.id}`))
+			goto(localizeHref(`/database/character-roles/${createdRole.id}`))
 		} catch (err) {
 			saveError = extractErrorMessage(err, m.roles_save_failed())
 		} finally {
@@ -137,9 +106,9 @@
 		// take the user to that role rather than dropping them at the list with
 		// an unrelated state.
 		if (createdRole) {
-			goto(localizeHref(`/database/roles/${createdRole.id}`))
+			goto(localizeHref(`/database/character-roles/${createdRole.id}`))
 		} else {
-			goto(localizeHref('/database/roles'))
+			goto(localizeHref('/database/character-roles'))
 		}
 	}
 </script>
@@ -163,13 +132,6 @@
 	<section class="details">
 		<DetailsContainer title={m.roles_section_basics()}>
 			<DetailItem
-				label={m.roles_field_slot_type()}
-				bind:value={editData.slotType}
-				editable={true}
-				type="select"
-				options={slotTypeOptions}
-			/>
-			<DetailItem
 				label={m.roles_field_name_en()}
 				bind:value={editData.nameEn}
 				editable={true}
@@ -191,7 +153,7 @@
 					type="button"
 					class="icon-trigger"
 					onclick={openIconPicker}
-					aria-label={m.roles_icon_field()}
+					aria-label={m.roles_icon_upload()}
 				>
 					<RoleIcon
 						src={iconPreview ?? undefined}

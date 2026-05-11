@@ -41,6 +41,9 @@
 	@use '$src/themes/typography' as typography;
 
 	.details-section {
+		display: flex;
+		flex-direction: column;
+		gap: calc(spacing.$unit * 1.5);
 		padding: 0 spacing.$unit;
 
 		.header {
@@ -48,7 +51,6 @@
 			align-items: center;
 			justify-content: space-between;
 			padding: 0 spacing.$unit;
-			margin-bottom: calc(spacing.$unit * 1.5);
 		}
 
 		h3 {

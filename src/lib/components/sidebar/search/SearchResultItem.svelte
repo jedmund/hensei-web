@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Icon from '../../Icon.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { localizedName } from '$lib/utils/locale'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import CollectionBadge from '$lib/components/CollectionBadge.svelte'
 	import {
 		getCharacterImage,
 		getWeaponImage,
@@ -78,13 +78,18 @@
 				: m.search_add_item({ name: itemName })}
 		disabled={isDisabled}
 	>
-		<img
-			src={imageUrl}
-			alt={itemName}
-			class="result-image"
-			loading="lazy"
-			onerror={(e) => handleImageFallback(e, weaponFallbackUrl)}
-		/>
+		<div class="result-image-wrapper">
+			<img
+				src={imageUrl}
+				alt={itemName}
+				class="result-image"
+				loading="lazy"
+				onerror={(e) => handleImageFallback(e, weaponFallbackUrl)}
+			/>
+			{#if fromCollection && !inTeam}
+				<CollectionBadge />
+			{/if}
+		</div>
 		<div class="result-info">
 			<span class="result-name">{itemName}</span>
 			<div class="result-labels">
@@ -105,9 +110,6 @@
 		</div>
 		{#if type === 'character'}
 			<CharacterTags character={item} />
-		{/if}
-		{#if fromCollection && !inTeam}
-			<Icon name="bookmark" size={14} class="collection-indicator" />
 		{/if}
 	</button>
 </li>
@@ -166,13 +168,20 @@
 			}
 		}
 
-		.result-image {
+		.result-image-wrapper {
+			position: relative;
 			width: 48px;
 			height: 48px;
+			flex-shrink: 0;
+		}
+
+		.result-image {
+			display: block;
+			width: 100%;
+			height: 100%;
 			object-fit: cover;
 			border-radius: $item-corner-small;
 			border: 1px solid var(--border-primary);
-			flex-shrink: 0;
 		}
 
 		.result-info {
@@ -204,11 +213,6 @@
 			font-size: $font-tiny;
 			font-weight: $medium;
 			white-space: nowrap;
-		}
-
-		:global(.collection-indicator) {
-			color: var(--accent-blue);
-			flex-shrink: 0;
 		}
 	}
 </style>

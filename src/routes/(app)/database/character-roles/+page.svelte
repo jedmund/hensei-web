@@ -8,8 +8,6 @@
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import RoleIcon from '$lib/components/database/RoleIcon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
-	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 
 	import { roleQueries } from '$lib/api/queries/role.queries'
 	import { useReorderRoles } from '$lib/api/mutations/role.mutations'
@@ -28,14 +26,9 @@
 
 	const reorderMut = useReorderRoles()
 
-	type SlotType = 'Character' | 'Weapon' | 'Summon'
-	let slotType = $state<SlotType>('Character')
-
-	const filteredRoles = $derived.by(() => {
+	const sortedRoles = $derived.by(() => {
 		const list = (rolesQuery.data ?? []) as Role[]
-		return list
-			.filter((r) => r.slotType === slotType)
-			.sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+		return [...list].sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
 	})
 
 	let dragIndex = $state<number | null>(null)
@@ -66,17 +59,13 @@
 		hoverIndex = null
 		if (from === null || from === dropIndex) return
 
-		const next = [...filteredRoles]
+		const next = [...sortedRoles]
 		const [moved] = next.splice(from, 1)
 		if (!moved) return
 		next.splice(dropIndex, 0, moved)
 
 		const entries = next.map((r, i) => ({ id: r.id, sortOrder: i + 1 }))
 		reorderMut.mutate(entries)
-	}
-
-	function newRoleHref(): string {
-		return localizeHref(`/database/roles/new?slot_type=${slotType}`)
 	}
 </script>
 
@@ -85,27 +74,19 @@
 <div class="page">
 	<DatabasePageHeader title={m.nav_roles()}>
 		{#snippet rightAction()}
-			<Button variant="primary" size="small" href={newRoleHref()}>
+			<Button variant="primary" size="small" href={localizeHref('/database/character-roles/new')}>
 				{m.roles_new()}
 			</Button>
 		{/snippet}
 	</DatabasePageHeader>
 
-	<div class="filters">
-		<SegmentedControl bind:value={slotType} size="xsmall" variant="background">
-			<Segment value="Character">{m.roles_type_character()}</Segment>
-			<Segment value="Weapon">{m.roles_type_weapon()}</Segment>
-			<Segment value="Summon">{m.roles_type_summon()}</Segment>
-		</SegmentedControl>
-	</div>
-
 	{#if rolesQuery.isLoading}
 		<div class="loading">{m.roles_loading()}</div>
-	{:else if filteredRoles.length === 0}
+	{:else if sortedRoles.length === 0}
 		<div class="empty">{m.roles_empty()}</div>
 	{:else}
 		<ol class="role-list">
-			{#each filteredRoles as role, index (role.id)}
+			{#each sortedRoles as role, index (role.id)}
 				<li
 					class="role-row"
 					class:drop-target={hoverIndex === index && dragIndex !== null && dragIndex !== index}
@@ -115,7 +96,7 @@
 					ondragleave={onDragLeave}
 					ondrop={(e) => onDrop(e, index)}
 				>
-					<a class="link" href={localizeHref(`/database/roles/${role.id}`)}>
+					<a class="link" href={localizeHref(`/database/character-roles/${role.id}`)}>
 						<RoleIcon iconKey={role.iconKey} name={role.nameEn} size={40} imageSize={32} />
 
 						<span class="names">
@@ -129,7 +110,7 @@
 					<Button
 						variant="ghost"
 						size="small"
-						onclick={() => goto(localizeHref(`/database/roles/${role.id}/edit`))}
+						onclick={() => goto(localizeHref(`/database/character-roles/${role.id}/edit`))}
 					>
 						{m.roles_edit()}
 					</Button>
@@ -148,10 +129,6 @@
 		background: var(--card-bg);
 		border-radius: layout.$page-corner;
 		box-shadow: var(--shadow-sm);
-	}
-
-	.filters {
-		padding: 0 spacing.$unit-2x spacing.$unit-2x;
 	}
 
 	.role-list {

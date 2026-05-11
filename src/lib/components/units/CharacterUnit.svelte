@@ -6,6 +6,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
+	import RemoveUnitDialog from './RemoveUnitDialog.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
@@ -84,7 +85,14 @@
 		getElementClassName(item?.character?.element || mainWeaponElement || partyElement)
 	)
 
-	async function remove() {
+	let removeConfirmOpen = $state(false)
+
+	function remove() {
+		if (!item?.id) return
+		removeConfirmOpen = true
+	}
+
+	async function performRemove() {
 		if (!item?.id) return
 		try {
 			const party = ctx.getParty()
@@ -114,6 +122,7 @@
 			onSaveCharacter: getSaveCallback(),
 			isOwner: ctx?.canEdit() ?? false,
 			onReplace: ctx?.canEdit() ? replace : undefined,
+			onRemove: ctx?.canEdit() ? remove : undefined,
 			partyId: party?.id,
 			partyShortcode: party?.shortcode
 		})
@@ -389,6 +398,13 @@
 		<CharacterTags character={item.character} />
 	{/if}
 </div>
+
+<RemoveUnitDialog
+	bind:open={removeConfirmOpen}
+	type="character"
+	name={item?.character ? localizedName(item.character.name) : null}
+	onConfirm={performRemove}
+/>
 
 <style lang="scss">
 	@use '$src/themes/colors' as colors;

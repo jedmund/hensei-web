@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { JSONContent } from '@tiptap/core'
 	import { localizedName } from '$lib/utils/locale'
+	import { escapeHtml, safeHref } from '$lib/utils/safeHtml'
 	import { computePosition, flip, shift, offset } from '@floating-ui/dom'
 	import MentionTooltip from '$lib/components/ui/MentionTooltip.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -41,7 +42,7 @@
 
 		// Handle text nodes
 		if (node.type === 'text') {
-			let text = node.text || ''
+			let text = escapeHtml(node.text)
 
 			// Apply marks (formatting)
 			if (node.marks) {
@@ -63,7 +64,7 @@
 							text = `<mark>${text}</mark>`
 							break
 						case 'link':
-							text = `<a href="${mark.attrs?.href}" target="_blank" rel="noopener noreferrer">${text}</a>`
+							text = `<a href="${safeHref(mark.attrs?.href)}" target="_blank" rel="noopener noreferrer">${text}</a>`
 							break
 						case 'code':
 							text = `<code>${text}</code>`
@@ -121,7 +122,7 @@
 			}
 
 			case 'codeBlock': {
-				const codeContent = (node.content || []).map((n) => n.text || '').join('')
+				const codeContent = (node.content || []).map((n) => escapeHtml(n.text)).join('')
 				return `<pre><code>${codeContent}</code></pre>`
 			}
 
@@ -152,19 +153,20 @@
 
 				// If we couldn't extract an ID, fall back to link
 				if (!videoId) {
-					return `<p><a href="${videoUrl}" target="_blank" rel="noopener noreferrer">${m.description_view_video()}</a></p>`
+					return `<p><a href="${safeHref(videoUrl)}" target="_blank" rel="noopener noreferrer">${m.description_view_video()}</a></p>`
 				}
 
 				// For truncated view, show a link instead of embed
 				if (truncate) {
-					return `<p><a href="${videoUrl}" target="_blank" rel="noopener noreferrer">${m.description_view_video()}</a></p>`
+					return `<p><a href="${safeHref(videoUrl)}" target="_blank" rel="noopener noreferrer">${m.description_view_video()}</a></p>`
 				}
 
 				// Embed YouTube video with responsive iframe
+				const safeVideoId = encodeURIComponent(videoId)
 				return `<div class="video-wrapper">
 					<iframe
-						src="https://www.youtube.com/embed/${videoId}"
-						title="${m.tooltip_youtube_video()}"
+						src="https://www.youtube.com/embed/${safeVideoId}"
+						title="${escapeHtml(m.tooltip_youtube_video())}"
 						frameborder="0"
 						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 						allowfullscreen
@@ -178,7 +180,7 @@
 				const wikiName = attrs?.name?.en || attrs?.granblue_en || 'Unknown'
 				const mentionName = localizedName(attrs?.name)
 				const displayName = mentionName !== '—' ? mentionName : attrs?.granblue_en || 'Unknown'
-				const wikiUrl = `https://gbf.wiki/${wikiName}`
+				const wikiUrl = `https://gbf.wiki/${encodeURIComponent(wikiName)}`
 				const elementSlug = attrs?.element?.slug ?? ''
 				const entityType = attrs?.type ?? ''
 
@@ -195,8 +197,8 @@
 					styleSwap: attrs?.styleSwap
 				})
 
-				const entityJson = JSON.stringify(collector.get(idx)).replace(/"/g, '&quot;')
-				return `<a href="${wikiUrl}" target="_blank" rel="noopener noreferrer" class="mention" data-type="mention" data-id="${entityJson}" data-element="${elementSlug}" data-entity-type="${entityType}" data-mention-index="${idx}">${displayName}</a>`
+				const entityJson = escapeHtml(JSON.stringify(collector.get(idx)))
+				return `<a href="${safeHref(wikiUrl)}" target="_blank" rel="noopener noreferrer" class="mention" data-type="mention" data-id="${entityJson}" data-element="${escapeHtml(elementSlug)}" data-entity-type="${escapeHtml(entityType)}" data-mention-index="${idx}">${escapeHtml(displayName)}</a>`
 			}
 
 			default:
@@ -228,7 +230,7 @@
 			const paragraphs = content.split('\n\n')
 			const formatted = paragraphs
 				.map((p) => {
-					const lines = p.split('\n')
+					const lines = p.split('\n').map((line) => escapeHtml(line))
 					return `<p>${lines.join('<br />')}</p>`
 				})
 				.join('')

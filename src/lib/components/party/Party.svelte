@@ -33,10 +33,9 @@
 	import type { Guidebook } from '$lib/types/api/entities'
 	import PartySegmentedControl from '$lib/components/party/PartySegmentedControl.svelte'
 	import { GridType } from '$lib/types/enums'
-	import Icon from '$lib/components/Icon.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 	import PartyInfoGrid from '$lib/components/party/info/PartyInfoGrid.svelte'
 	import { DropdownMenu } from 'bits-ui'
-	import DropdownItem from '$lib/components/ui/dropdown/DropdownItem.svelte'
 	import JobSection from '$lib/components/job/JobSection.svelte'
 	import { Gender } from '$lib/utils/jobUtils'
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
@@ -452,66 +451,76 @@
 				{#snippet menu()}
 					{#if !isNew}
 						<DropdownMenu.Root>
-							<DropdownMenu.Trigger class="party-actions-trigger" aria-label="Open actions menu">
-								<Icon name="ellipsis" size={14} />
+							<DropdownMenu.Trigger>
+								{#snippet child({ props })}
+									<Button
+										{...props}
+										variant="ghost"
+										size="small"
+										iconOnly
+										icon="ellipsis"
+										aria-label="Open actions menu"
+									/>
+								{/snippet}
 							</DropdownMenu.Trigger>
 
 							<DropdownMenu.Portal>
-								<DropdownMenu.Content class="dropdown-content" sideOffset={6} align="end">
+								<DropdownMenu.Content class="dropdown-menu" sideOffset={6} align="end">
 									{#if canEdit() && hasCollectionLinks}
-										<DropdownItem>
-											<button
-												onclick={actions.syncFromCollection}
-												disabled={actions.loading || actions.isSyncingAll}
-											>
-												{actions.isSyncingAll ? m.party_syncing() : m.party_sync_collection()}
-											</button>
-										</DropdownItem>
-										<DropdownMenu.Separator class="dropdown-separator" />
+										<DropdownMenu.Item
+											class="dropdown-menu-item"
+											onSelect={actions.syncFromCollection}
+											disabled={actions.loading || actions.isSyncingAll}
+										>
+											{actions.isSyncingAll ? m.party_syncing() : m.party_sync_collection()}
+										</DropdownMenu.Item>
+										<DropdownMenu.Separator class="dropdown-menu-separator" />
 									{/if}
 
 									{#if authUserId}
-										<DropdownItem>
-											<button onclick={actions.toggleFavorite} disabled={actions.loading}>
-												{party.favorited ? m.party_remove_favorite() : m.party_add_favorite()}
-											</button>
-										</DropdownItem>
+										<DropdownMenu.Item
+											class="dropdown-menu-item"
+											onSelect={actions.toggleFavorite}
+											disabled={actions.loading}
+										>
+											{party.favorited ? m.party_remove_favorite() : m.party_add_favorite()}
+										</DropdownMenu.Item>
 									{/if}
 
 									{#if party.user?.id === authUserId && authUsername}
-										<DropdownItem>
-											<button
-												onclick={() => {
-													sidebar.openWithComponent(
-														m.playlist_add_to(),
-														PickPlaylistPane,
-														{ partyId: party.id, username: authUsername },
-														{ scrollable: false }
-													)
-												}}
-												disabled={actions.loading}
-											>
-												{m.playlist_add_to()}
-											</button>
-										</DropdownItem>
+										<DropdownMenu.Item
+											class="dropdown-menu-item"
+											onSelect={() => {
+												sidebar.openWithComponent(
+													m.playlist_add_to(),
+													PickPlaylistPane,
+													{ partyId: party.id, username: authUsername },
+													{ scrollable: false }
+												)
+											}}
+											disabled={actions.loading}
+										>
+											{m.playlist_add_to()}
+										</DropdownMenu.Item>
 									{/if}
 
-									<DropdownItem>
-										<button onclick={actions.remixParty} disabled={actions.loading}
-											>{m.party_remix()}</button
-										>
-									</DropdownItem>
+									<DropdownMenu.Item
+										class="dropdown-menu-item"
+										onSelect={actions.remixParty}
+										disabled={actions.loading}
+									>
+										{m.party_remix()}
+									</DropdownMenu.Item>
 
 									{#if party.user?.id === authUserId}
-										<DropdownMenu.Separator class="dropdown-separator" />
-										<DropdownItem>
-											<button
-												onclick={() => (actions.deleteDialogOpen = true)}
-												disabled={actions.loading}
-											>
-												{m.party_delete()}
-											</button>
-										</DropdownItem>
+										<DropdownMenu.Separator class="dropdown-menu-separator" />
+										<DropdownMenu.Item
+											class="dropdown-menu-item danger"
+											onSelect={() => (actions.deleteDialogOpen = true)}
+											disabled={actions.loading}
+										>
+											{m.party_delete()}
+										</DropdownMenu.Item>
 									{/if}
 								</DropdownMenu.Content>
 							</DropdownMenu.Portal>
@@ -652,37 +661,6 @@
 		gap: $unit-2x;
 		display: flex;
 		flex-direction: column;
-	}
-
-	:global(.party-actions-trigger) {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 30px;
-		height: 30px;
-		padding: $unit;
-		border-radius: $input-corner;
-		background-color: transparent;
-		color: var(--text-secondary);
-		border: none;
-		cursor: pointer;
-		transition:
-			background-color 0.2s ease,
-			color 0.2s ease;
-		outline: none;
-
-		&:hover {
-			background-color: var(--button-bg);
-			color: var(--text-primary);
-		}
-
-		&:focus-visible {
-			box-shadow: 0 0 0 2px var(--accent-blue-focus);
-		}
-
-		&:active {
-			background-color: var(--button-subtle-bg-active);
-		}
 	}
 
 	.error-message {
