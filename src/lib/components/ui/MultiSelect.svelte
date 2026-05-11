@@ -50,15 +50,24 @@
 		open = $bindable(false)
 	}: Props = $props()
 
-	// Convert options to string values for Bits UI, disabling the last selected item
+	// Convert options to string values for Bits UI. When `minSelected` is the
+	// active reason an option is disabled (the user is at the floor and the
+	// option is one of the currently-selected items they'd remove), expose a
+	// flag so the rendered item can surface a title explaining why.
 	const stringOptions = $derived(
-		options.map((opt) => ({
-			...opt,
-			value: String(opt.value),
-			disabled:
-				opt.disabled ||
-				(minSelected > 0 && value.length <= minSelected && value.includes(opt.value))
-		}))
+		options.map((opt) => {
+			const atFloor = minSelected > 0 && value.length <= minSelected && value.includes(opt.value)
+			return {
+				...opt,
+				value: String(opt.value),
+				disabled: opt.disabled || atFloor,
+				disabledReason: !opt.disabled && atFloor ? ('min' as const) : undefined
+			}
+		})
+	)
+
+	const minSelectedTitle = $derived(
+		minSelected > 0 ? `At least ${minSelected} must remain selected` : ''
 	)
 
 	// Convert value array to string array for Bits UI
@@ -139,6 +148,7 @@
 					value={option.value}
 					label={option.label}
 					disabled={option.disabled}
+					title={option.disabledReason === 'min' ? minSelectedTitle : undefined}
 					class="multi-item"
 					style={option.indicatorColor
 						? `--option-color: ${option.indicatorColor}`
