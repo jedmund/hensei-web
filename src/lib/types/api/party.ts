@@ -136,6 +136,8 @@ export interface DifficultyTier {
 	description?: string
 	minScore?: number
 	maxScore?: number
+	/** Optional uploaded tier icon. Stored as an S3-style key, e.g. `images/difficulties/<id>.png` */
+	imageKey?: string | null
 	/** Editor-only metadata when the row reflects an unsaved draft */
 	pending?: boolean
 	pendingOperation?: 'create' | 'update' | 'destroy' | null

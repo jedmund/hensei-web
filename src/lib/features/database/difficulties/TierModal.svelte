@@ -10,6 +10,10 @@
 	import { difficultyAdapter } from '$lib/api/adapters/difficulty.adapter'
 	import type { DifficultyTier } from '$lib/types/api/party'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import TierIcon from '$lib/features/database/difficulties/TierIcon.svelte'
+
+	const ICON_MAX_DIMENSION = 128
+	const ICON_MAX_BYTES = 256 * 1024
 
 	interface Props {
 		open?: boolean
@@ -30,6 +34,11 @@
 	let minScore = $state<number>(0)
 	let maxScore = $state<number>(100)
 	let sortOrder = $state<number>(0)
+	let iconFile = $state<File | null>(null)
+	let iconPreview = $state<string | null>(null)
+	let iconError = $state<string | null>(null)
+	let iconInputRef: HTMLInputElement | undefined = $state(undefined)
+	let isUploadingIcon = $state(false)
 
 	const queryClient = useQueryClient()
 
@@ -49,6 +58,9 @@
 
 	$effect(() => {
 		if (open) {
+			iconFile = null
+			iconPreview = null
+			iconError = null
 			if (tier) {
 				name = tier.name ?? ''
 				slug = tier.slug ?? ''
@@ -68,6 +80,64 @@
 			}
 		}
 	})
+
+	function openIconPicker() {
+		iconInputRef?.click()
+	}
+
+	async function readDataUrl(file: File): Promise<string> {
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader()
+			reader.onload = () => resolve(reader.result as string)
+			reader.onerror = () => reject(reader.error)
+			reader.readAsDataURL(file)
+		})
+	}
+
+	async function checkDimensions(dataUrl: string): Promise<{ width: number; height: number }> {
+		return new Promise((resolve, reject) => {
+			const img = new Image()
+			img.onload = () => resolve({ width: img.width, height: img.height })
+			img.onerror = () => reject(new Error('Could not decode image'))
+			img.src = dataUrl
+		})
+	}
+
+	async function handleIconSelect(e: Event) {
+		iconError = null
+		const input = e.target as HTMLInputElement
+		const file = input.files?.[0]
+		if (!file) return
+
+		if (file.type !== 'image/png') {
+			iconError = 'Icon must be a PNG.'
+			input.value = ''
+			return
+		}
+		if (file.size > ICON_MAX_BYTES) {
+			iconError = 'Icon must be 256KB or smaller.'
+			input.value = ''
+			return
+		}
+
+		const dataUrl = await readDataUrl(file)
+		const { width, height } = await checkDimensions(dataUrl)
+		if (width > ICON_MAX_DIMENSION || height > ICON_MAX_DIMENSION) {
+			iconError = `Icon must be ${ICON_MAX_DIMENSION}x${ICON_MAX_DIMENSION} or smaller.`
+			input.value = ''
+			return
+		}
+
+		iconFile = file
+		iconPreview = dataUrl
+	}
+
+	function clearIcon() {
+		iconFile = null
+		iconPreview = null
+		iconError = null
+		if (iconInputRef) iconInputRef.value = ''
+	}
 
 	function buildPayload(): Partial<DifficultyTier> {
 		return {
@@ -96,11 +166,22 @@
 		}
 
 		try {
-			if (isEditing && tier) {
-				await updateMut.mutateAsync({ id: tier.id, data: buildPayload() })
-			} else {
-				await createMut.mutateAsync(buildPayload())
+			const result =
+				isEditing && tier
+					? await updateMut.mutateAsync({ id: tier.id, data: buildPayload() })
+					: await createMut.mutateAsync(buildPayload())
+
+			if (iconFile && result.draft?.id) {
+				isUploadingIcon = true
+				try {
+					const dataUrl = await readDataUrl(iconFile)
+					const base64 = dataUrl.replace(/^data:[^;]+;base64,/, '')
+					await difficultyAdapter.uploadDraftImage(result.draft.id, base64, iconFile.name)
+				} finally {
+					isUploadingIcon = false
+				}
 			}
+
 			await queryClient.invalidateQueries({ queryKey: ['difficulties'] })
 			toast.success(isEditing ? 'Tier updated' : 'Tier created')
 			open = false
@@ -154,6 +235,33 @@
 			</div>
 		</DetailItem>
 		<DetailItem
+			label="Icon"
+			sublabel="Optional. PNG, 128×128 or smaller, 256KB max. Shown next to the tier name."
+			editable={true}
+		>
+			<div class="icon-control">
+				<TierIcon imageKey={tier?.imageKey} src={iconPreview} {color} {name} size={40} />
+				<div class="icon-actions">
+					<Button variant="ghost" size="small" onclick={openIconPicker}>
+						{iconPreview || tier?.imageKey ? 'Replace' : 'Upload'}
+					</Button>
+					{#if iconPreview}
+						<Button variant="ghost" size="small" onclick={clearIcon}>Cancel</Button>
+					{/if}
+				</div>
+				<input
+					bind:this={iconInputRef}
+					type="file"
+					accept="image/png"
+					onchange={handleIconSelect}
+					class="icon-input-hidden"
+				/>
+				{#if iconError}
+					<p class="icon-error">{iconError}</p>
+				{/if}
+			</div>
+		</DetailItem>
+		<DetailItem
 			label="Sort Order"
 			sublabel="Lower values appear first in lists"
 			bind:value={sortOrder}
@@ -190,9 +298,9 @@
 	<ModalFooter
 		onCancel={() => (open = false)}
 		primaryAction={{
-			label: isSaving ? 'Saving…' : isEditing ? 'Save' : 'Create',
+			label: isSaving || isUploadingIcon ? 'Saving…' : isEditing ? 'Save' : 'Create',
 			onclick: handleSave,
-			disabled: isSaving || isDeleting || !canSave
+			disabled: isSaving || isUploadingIcon || isDeleting || !canSave
 		}}
 	>
 		{#snippet left()}
@@ -270,6 +378,29 @@
 		font-size: typography.$font-small;
 		color: var(--text-secondary);
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	}
+
+	.icon-control {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+		flex-wrap: wrap;
+	}
+
+	.icon-actions {
+		display: flex;
+		gap: spacing.$unit-half;
+	}
+
+	.icon-input-hidden {
+		display: none;
+	}
+
+	.icon-error {
+		flex-basis: 100%;
+		margin: 0;
+		color: var(--danger);
+		font-size: typography.$font-small;
 	}
 
 	.description-input {

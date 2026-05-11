@@ -275,6 +275,24 @@ export class DifficultyAdapter extends BaseAdapter {
 			body: JSON.stringify({ note })
 		})
 	}
+
+	/**
+	 * Uploads a tier icon to the draft's S3 staging area. The image survives
+	 * there until commit (which promotes it to the canonical key) or discard
+	 * (which removes it). Pass the bare base64 — no `data:image/png;base64,` prefix.
+	 */
+	async uploadDraftImage(
+		draftId: string,
+		base64Image: string,
+		filename?: string,
+		options?: RequestOptions
+	): Promise<DifficultyDraft> {
+		return this.request<DifficultyDraft>(`/difficulty_drafts/${draftId}/upload_image`, {
+			...options,
+			method: 'POST',
+			body: JSON.stringify({ image: base64Image, filename })
+		})
+	}
 }
 
 export const difficultyAdapter = new DifficultyAdapter(DEFAULT_ADAPTER_CONFIG)
