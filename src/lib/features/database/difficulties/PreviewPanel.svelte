@@ -49,9 +49,17 @@
 			present: boolean
 			rawScore: number | null
 			weightedScore: number | null
+			contributionSum: number | null
+			maxWeight: number | null
+			targetMax: number | null
 			fired: FiredEntry[]
 		}>
 	})
+
+	function fmt(value: number | null | undefined, digits = 1): string {
+		if (value == null) return '—'
+		return value.toFixed(digits)
+	}
 
 	function labelFor(f: FiredEntry): string {
 		if (f.kind !== 'additional') return f.name
@@ -120,6 +128,14 @@
 										{/if}
 									</span>
 								</div>
+								{#if c.present && c.contributionSum != null && c.maxWeight != null}
+									<p class="breakdown-math">
+										{fmt(c.contributionSum)} / {fmt(c.maxWeight)}
+										{#if c.targetMax != null}
+											<span class="target-tag">target max</span>
+										{/if}
+									</p>
+								{/if}
 								{#if c.fired.length > 0}
 									<ul class="fired-list">
 										{#each c.fired as f (f.id)}
@@ -291,6 +307,26 @@
 		font-variant-numeric: tabular-nums;
 		color: var(--text-secondary);
 		font-size: typography.$font-regular;
+	}
+
+	.breakdown-math {
+		margin: 0;
+		font-size: typography.$font-small;
+		color: var(--text-tertiary);
+		font-variant-numeric: tabular-nums;
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+	}
+
+	.target-tag {
+		font-size: typography.$font-tiny;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		padding: spacing.$unit-fourth spacing.$unit-half;
+		background: var(--input-bg);
+		color: var(--text-secondary);
+		border-radius: layout.$item-corner-small;
 	}
 
 	.fired-list {
