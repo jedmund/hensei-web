@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { DifficultyTier } from '$lib/types/api/party'
+	import TierIcon from '$lib/features/database/difficulties/TierIcon.svelte'
 
 	interface Props {
 		tier: DifficultyTier
@@ -26,7 +27,7 @@
 
 {#snippet rowContent()}
 	<div class="left">
-		<span class="swatch" style:background={tier.color || 'var(--input-bg)'}></span>
+		<TierIcon imageKey={tier.imageKey} color={tier.color} name={tier.name} size={28} />
 		<span class="name-info">
 			<span class="name">{tier.name}</span>
 			<span class="slug">{tier.slug}</span>
@@ -70,14 +71,6 @@
 			display: flex;
 			align-items: center;
 			gap: spacing.$unit;
-		}
-
-		.swatch {
-			width: 18px;
-			height: 18px;
-			border-radius: 50%;
-			border: 1px solid var(--border-subtle);
-			flex-shrink: 0;
 		}
 
 		.name-info {
