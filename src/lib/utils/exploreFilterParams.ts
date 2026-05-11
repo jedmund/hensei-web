@@ -23,6 +23,7 @@ const EXPLORE_FILTER_KEYS = [
 	'party',
 	'boost',
 	'side',
+	'difficulty',
 	'inc',
 	'exc',
 	'collection'
@@ -102,6 +103,12 @@ export function serializeExploreFilters(
 	// Side — single string
 	const side = filters.find((f) => f.kind === 'side')
 	if (side) params.set('side', side.value as string)
+
+	// Difficulty — comma-separated slugs (multi-select)
+	const difficulties = filters
+		.filter((f): f is FilterItem & { kind: 'difficulty' } => f.kind === 'difficulty')
+		.map((f) => f.value)
+	if (difficulties.length > 0) params.set('difficulty', difficulties.join(','))
 
 	// Entity include/exclude — type:granblueId format
 	const entities = filters.filter((f): f is FilterItem & { kind: 'entity' } => f.kind === 'entity')
@@ -203,6 +210,17 @@ export function deserializeExploreFilters(
 	const sideParam = params.get('side')
 	if (sideParam) {
 		filters.push({ kind: 'side', value: sideParam.trim(), label: getSideLabel(sideParam.trim()) })
+	}
+
+	// Difficulty (multi-select; labels resolved later from the tier list)
+	const difficultyParam = params.get('difficulty')
+	if (difficultyParam) {
+		for (const slug of difficultyParam.split(',')) {
+			const value = slug.trim()
+			if (value) {
+				filters.push({ kind: 'difficulty', value, label: value })
+			}
+		}
 	}
 
 	// Entity refs (need async resolution)

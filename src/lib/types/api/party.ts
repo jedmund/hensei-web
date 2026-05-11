@@ -175,6 +175,34 @@ export interface GuidebookList {
 	3?: Guidebook
 }
 
+// Difficulty tier assigned to a party by the scoring engine
+export interface DifficultyTier {
+	id: string
+	slug: string
+	name: string
+	color?: string
+	sortOrder: number
+	description?: string
+	minScore?: number
+	maxScore?: number
+	/** Optional uploaded tier icon. Stored as an S3-style key, e.g. `images/difficulties/<id>.png` */
+	imageKey?: string | null
+	/** Editor-only metadata when the row reflects an unsaved draft */
+	pending?: boolean
+	pendingOperation?: 'create' | 'update' | 'destroy' | null
+	draftId?: string | null
+}
+
+// Embedded difficulty payload on Party. score/breakdown are null when the
+// party isn't yet scoreable (matches DifficultyPreviewResult on the editor
+// side).
+export interface PartyDifficulty {
+	tier: DifficultyTier | null
+	score: number | null
+	breakdown: Record<string, unknown> | null
+	computedAt: string
+}
+
 // Party from PartyBlueprint
 export interface Party {
 	id: string
@@ -200,6 +228,8 @@ export interface Party {
 	editKey?: string
 	/** Boost mod (omega, primal, odious, unboosted) and side (double, single, none) */
 	boost?: { mod: string | null; side: string | null }
+	/** Computed party difficulty assignment, null when the party is not yet scoreable */
+	difficulty?: PartyDifficulty | null
 	/** Whether the party contains any orphaned grid items */
 	hasOrphanedItems?: boolean
 	/** The user whose collection is linked to this party (null if no collection items) */
@@ -282,6 +312,7 @@ export interface PartyPreview {
 		id: string
 		username: string
 	}
+	difficulty?: PartyDifficulty | null
 	createdAt?: string
 	updatedAt?: string
 	lastUpdated?: string

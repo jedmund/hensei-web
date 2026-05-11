@@ -44,6 +44,12 @@ export function filterItemsToParams(filterItems: FilterItem[]): ExploreFilterPar
 	const side = filterItems.find((f) => f.kind === 'side')
 	if (side) params.boostSide = side.value as string
 
+	// Difficulty (multi-select; comma-separated slugs sent to API)
+	const difficulties = filterItems
+		.filter((f): f is FilterItem & { kind: 'difficulty' } => f.kind === 'difficulty')
+		.map((f) => f.value)
+	if (difficulties.length > 0) params.difficulty = difficulties.join(',')
+
 	// Entity includes/excludes — API expects comma-separated granblue_id values
 	const entities = filterItems.filter(
 		(f): f is FilterItem & { kind: 'entity' } => f.kind === 'entity'

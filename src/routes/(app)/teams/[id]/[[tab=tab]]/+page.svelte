@@ -76,6 +76,7 @@
 		authUserAvatar={data.currentUser
 			? { picture: data.currentUser.picture, element: data.currentUser.element }
 			: undefined}
+		isEditor={(data.account?.role ?? 0) >= 7}
 		{initialTab}
 	/>
 {:else}

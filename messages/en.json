@@ -449,6 +449,17 @@
 	"filter_cat_party": "Party",
 	"filter_cat_boost": "Boost",
 	"filter_cat_side": "Side",
+	"filter_cat_difficulty": "Difficulty",
+
+	"party_difficulty_label": "Difficulty",
+	"party_difficulty_tooltip": "{tier} difficulty (score {score})",
+	"party_difficulty_pending": "Pending",
+	"party_difficulty_score_label": "Difficulty score",
+	"party_difficulty_breakdown_label": "Breakdown",
+
+	"difficulty_component_all": "All",
+	"difficulty_component_job": "Job",
+	"difficulty_component_accessory": "Accessory",
 
 	"boost_omega": "Omega",
 	"boost_primal": "Primal",
@@ -1256,6 +1267,10 @@
 	"race_harvin": "Harvin",
 	"race_primal": "Primal",
 	"race_other": "Other",
+	"race_geonoid": "Geonoid",
+	"race_levleath": "Levleath",
+	"race_grokkle": "Grokkle",
+	"race_wolvir": "Wolvir",
 
 	"gender_unknown": "Unknown",
 	"gender_male": "Male",

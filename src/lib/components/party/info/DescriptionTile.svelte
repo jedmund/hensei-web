@@ -11,6 +11,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { formatRelativeTime } from '$lib/utils/date'
 	import { PartyVisibility } from '$lib/types/visibility'
+	import type { PartyDifficulty } from '$lib/types/api/party'
 
 	type AvatarUser = {
 		username?: string
@@ -54,6 +55,12 @@
 		buttonCount?: number | null
 		chainCount?: number | null
 		summonCount?: number | null
+		// Computed difficulty assignment (null when not yet scoreable)
+		difficulty?: PartyDifficulty | null
+		/** Party shortcode, used to build the editor preview link */
+		shortcode?: string
+		/** When true, the difficulty tier chip becomes a link to the editor preview */
+		isEditor?: boolean
 	}
 
 	let {
@@ -80,8 +87,17 @@
 		clearTime,
 		buttonCount,
 		chainCount,
-		summonCount
+		summonCount,
+		difficulty,
+		shortcode,
+		isEditor = false
 	}: Props = $props()
+
+	const difficultyPreviewHref = $derived(
+		shortcode
+			? `/database/difficulties?tab=preview&shortcode=${encodeURIComponent(shortcode)}`
+			: null
+	)
 
 	const showCollectionSwitcher = $derived(
 		!!authUser?.username &&
@@ -409,6 +425,30 @@
 	<!-- Battle settings & performance -->
 	<div class="battle-section">
 		<div class="settings-tokens">
+			{#if difficulty?.tier}
+				<Tooltip
+					content={m.party_difficulty_tooltip({
+						tier: difficulty.tier.name,
+						score: difficulty.score?.toFixed(0) ?? '—'
+					})}
+				>
+					{#if isEditor && difficultyPreviewHref}
+						<a
+							class="token difficulty editor-link"
+							style:background={difficulty.tier.color || undefined}
+							href={difficultyPreviewHref}
+							target="_blank"
+							rel="noopener"
+						>
+							{difficulty.tier.name}
+						</a>
+					{:else}
+						<span class="token difficulty" style:background={difficulty.tier.color || undefined}>
+							{difficulty.tier.name}
+						</span>
+					{/if}
+				</Tooltip>
+			{/if}
 			{#if solo}
 				<Tooltip content={m.battle_solo()}>
 					<span class="token solo on">{m.battle_solo()}</span>
@@ -690,6 +730,28 @@
 			background: var(--button-bg);
 			color: var(--text-secondary);
 			font-variant-numeric: tabular-nums;
+		}
+
+		&.difficulty {
+			background: var(--button-bg);
+			color: var(--text-secondary);
+		}
+
+		&.editor-link {
+			text-decoration: none;
+			cursor: pointer;
+			transition:
+				opacity 120ms ease,
+				transform 120ms ease;
+
+			&:hover {
+				opacity: 0.85;
+			}
+
+			&:focus-visible {
+				outline: 2px solid var(--focus-ring);
+				outline-offset: 2px;
+			}
 		}
 
 		&.chargeAttack.on {

@@ -17,6 +17,7 @@ interface MatchLocalParams {
 	partyOptions: { value: string; label: string }[]
 	boostOptions: OptionWithAliases[]
 	sideOptions: { value: string; label: string }[]
+	difficultyOptions?: { value: string; label: string; color?: string }[]
 	allRaids: RaidFull[]
 	categoryLabels: {
 		element: string
@@ -25,6 +26,7 @@ interface MatchLocalParams {
 		raid: string
 		boost: string
 		side: string
+		difficulty?: string
 	}
 }
 
@@ -38,6 +40,7 @@ export function matchLocal(params: MatchLocalParams): FilterOption[] {
 		partyOptions,
 		boostOptions,
 		sideOptions,
+		difficultyOptions,
 		allRaids,
 		categoryLabels
 	} = params
@@ -143,11 +146,38 @@ export function matchLocal(params: MatchLocalParams): FilterOption[] {
 		}
 	}
 
+	// Difficulty (multi-select)
+	if (!excludedKinds.includes('difficulty') && difficultyOptions && categoryLabels.difficulty) {
+		for (const tier of difficultyOptions) {
+			if (tier.label.toLowerCase().includes(q)) {
+				const alreadySelected = filters.some(
+					(f) => f.kind === 'difficulty' && f.value === tier.value
+				)
+				if (!alreadySelected) {
+					results.push({
+						kind: 'difficulty',
+						value: tier.value,
+						label: tier.label,
+						category: categoryLabels.difficulty
+					})
+				}
+			}
+		}
+	}
+
 	return results
 }
 
 export function rankResults(results: FilterOption[], query: string): FilterOption[] {
-	const filterKinds = new Set(['element', 'recency', 'party', 'boost', 'side', 'class'])
+	const filterKinds = new Set([
+		'element',
+		'recency',
+		'party',
+		'boost',
+		'side',
+		'class',
+		'difficulty'
+	])
 
 	return results.toSorted((a, b) => {
 		const aLabel = a.label.toLowerCase()

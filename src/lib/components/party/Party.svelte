@@ -57,6 +57,8 @@
 		isNew?: boolean
 		ensurePartyExists?: () => Promise<{ id: string; shortcode: string }>
 		initialCollectionSourceUsername?: string
+		/** When true, the difficulty tier chip becomes a link to the editor preview */
+		isEditor?: boolean
 	}
 
 	let {
@@ -68,7 +70,8 @@
 		initialTab,
 		isNew = false,
 		ensurePartyExists,
-		initialCollectionSourceUsername
+		initialCollectionSourceUsername,
+		isEditor = false
 	}: Props = $props()
 
 	// Default empty party
@@ -447,6 +450,7 @@
 				{authUser}
 				{activeCollectionUser}
 				onSwitchCollectionUser={handleSwitchCollectionUser}
+				{isEditor}
 			>
 				{#snippet menu()}
 					{#if !isNew}
