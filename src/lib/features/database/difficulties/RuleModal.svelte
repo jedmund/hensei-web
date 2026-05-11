@@ -291,13 +291,13 @@
 		}
 
 		&.error {
-			border-color: var(--accent-red, #d04040);
+			border-color: var(--danger);
 		}
 	}
 
 	.params-error {
 		margin: 0;
-		color: var(--accent-red, #d04040);
+		color: var(--danger);
 		font-size: typography.$font-small;
 	}
 </style>

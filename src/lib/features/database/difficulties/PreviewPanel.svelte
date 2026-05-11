@@ -31,6 +31,15 @@
 		if (e.key === 'Enter' && !loading && shortcode.trim()) runPreview()
 	}
 
+	type FiredEntry = {
+		id: string
+		name: string
+		ruleType: string
+		weight: number
+		matchCount: number
+		kind: 'base' | 'additional'
+	}
+
 	const breakdownComponents = $derived.by(() => {
 		if (!result?.breakdown) return []
 		const components = (result.breakdown as { components?: unknown[] }).components ?? []
@@ -40,9 +49,15 @@
 			present: boolean
 			rawScore: number | null
 			weightedScore: number | null
-			fired: Array<{ id: string; name: string; ruleType: string; weight: number }>
+			fired: FiredEntry[]
 		}>
 	})
+
+	function labelFor(f: FiredEntry): string {
+		if (f.kind !== 'additional') return f.name
+		const noun = f.matchCount === 1 ? 'match' : 'matches'
+		return `+${f.matchCount} additional ${noun}`
+	}
 </script>
 
 <div class="preview-panel">
@@ -108,8 +123,8 @@
 								{#if c.fired.length > 0}
 									<ul class="fired-list">
 										{#each c.fired as f (f.id)}
-											<li class="fired-row">
-												<span class="fired-name">{f.name}</span>
+											<li class="fired-row" class:additional={f.kind === 'additional'}>
+												<span class="fired-name">{labelFor(f)}</span>
 												<span class="fired-weight">+{f.weight}</span>
 											</li>
 										{/each}
@@ -155,8 +170,8 @@
 
 	.error-banner {
 		padding: spacing.$unit-2x;
-		background: var(--accent-red-bg, rgba(220, 64, 64, 0.1));
-		color: var(--accent-red, #d04040);
+		background: var(--danger-bg-subtle);
+		color: var(--danger);
 		border-radius: layout.$item-corner;
 		font-size: typography.$font-small;
 	}
@@ -282,6 +297,11 @@
 		font-size: typography.$font-small;
 		color: var(--text-secondary);
 		padding: spacing.$unit-fourth 0;
+
+		&.additional {
+			color: var(--text-tertiary);
+			padding-left: spacing.$unit;
+		}
 	}
 
 	.fired-weight {
