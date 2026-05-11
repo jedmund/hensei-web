@@ -1,10 +1,13 @@
 import type { PageServerLoad } from './$types'
 import { roleAdapter } from '$lib/api/adapters/role.adapter'
-import { error, isHttpError, isRedirect } from '@sveltejs/kit'
+import { error, isHttpError, isRedirect, redirect } from '@sveltejs/kit'
 
 export const load: PageServerLoad = async ({ params, parent }) => {
 	try {
 		const parentData = await parent()
+		if (!parentData.role || parentData.role < 7) {
+			throw redirect(303, `/database/character-roles/${params.id}`)
+		}
 		const role = await roleAdapter.getRole(params.id)
 		if (!role) throw error(404, 'Role not found')
 
