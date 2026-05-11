@@ -3,12 +3,12 @@
 	 * EditSummonPane - Edit pane for party grid summons.
 	 *
 	 * Summons don't currently expose a Stats tab (main / friend / quick_summon
-	 * are edited inline on the grid), so this pane only renders the Role tab
+	 * are edited inline on the grid), so this pane only renders the Notes
 	 * content for parity with EditCharacterPane and EditWeaponPane.
 	 */
 	import type { GridSummon } from '$lib/types/api/party'
 	import ItemHeader from './details/ItemHeader.svelte'
-	import RoleEditSection from './role/RoleEditSection.svelte'
+	import NotesEditSection from './notes/NotesEditSection.svelte'
 
 	interface Props {
 		paneId?: string
@@ -35,7 +35,7 @@
 	/>
 
 	<div class="body">
-		<RoleEditSection type="summon" item={summon} {partyId} {partyShortcode} />
+		<NotesEditSection type="summon" item={summon} {partyId} {partyShortcode} />
 	</div>
 </div>
 

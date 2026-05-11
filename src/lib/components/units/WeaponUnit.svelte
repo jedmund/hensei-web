@@ -6,6 +6,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
+	import RemoveUnitDialog from './RemoveUnitDialog.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getWeaponImage } from '$lib/features/database/detail/image'
@@ -114,7 +115,14 @@
 		)
 	)
 
-	async function remove() {
+	let removeConfirmOpen = $state(false)
+
+	function remove() {
+		if (!item?.id) return
+		removeConfirmOpen = true
+	}
+
+	async function performRemove() {
 		if (!item?.id) return
 		try {
 			const party = ctx.getParty()
@@ -144,6 +152,7 @@
 			onSaveWeapon: getSaveCallback(),
 			isOwner: ctx?.canEdit() ?? false,
 			onReplace: ctx?.canEdit() ? replace : undefined,
+			onRemove: ctx?.canEdit() ? remove : undefined,
 			partyId: party?.id,
 			partyShortcode: party?.shortcode
 		})
@@ -420,6 +429,13 @@
 	onCancel={() => {
 		duplicateCollectionDialogOpen = false
 	}}
+/>
+
+<RemoveUnitDialog
+	bind:open={removeConfirmOpen}
+	type="weapon"
+	name={item?.weapon ? localizedName(item.weapon.name) : null}
+	onConfirm={performRemove}
 />
 
 <style lang="scss">

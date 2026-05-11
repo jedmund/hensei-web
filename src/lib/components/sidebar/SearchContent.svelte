@@ -331,6 +331,21 @@
 		}
 	})
 
+	// On the 'all' tab, search results never carry collectionId, so cross-
+	// reference against the user's collection (by catalog id) to mark items
+	// they already own. Skipped on the 'collection' tab — items there
+	// already have collectionId set.
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- query option types differ per type, but the result shape is identical (string[])
+	const ownedIdsQuery = createQuery((): any => {
+		const userId = authUserId
+		const enabled = !!userId && searchMode === 'all'
+		if (type === 'character') return collectionQueries.collectedCharacterIds(userId ?? '', enabled)
+		if (type === 'weapon') return collectionQueries.collectedWeaponIds(userId ?? '', enabled)
+		return collectionQueries.collectedSummonIds(userId ?? '', enabled)
+	})
+
+	const ownedIdSet = $derived(new SvelteSet<string>((ownedIdsQuery.data as string[]) ?? []))
+
 	// --- Results processing ---
 
 	const rawResults = $derived(
@@ -530,11 +545,12 @@
 			<ul class="results-list">
 				{#each searchResults as item (item.collectionId || item.id)}
 					{@const inTeam = (searchMode === 'collection' && isInTeam(item)) || isExcluded(item)}
+					{@const fromCollection = !!item.collectionId || ownedIdSet.has(item.id)}
 					<SearchResultItem
 						{item}
 						{type}
 						disabled={!canAddMore}
-						fromCollection={!!item.collectionId}
+						{fromCollection}
 						{inTeam}
 						onclick={handleItemClick}
 					/>

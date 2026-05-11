@@ -10,6 +10,7 @@
 	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import { getElementKey } from '$lib/utils/element'
+	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
@@ -21,6 +22,8 @@
 	}
 
 	let { type, item, itemData, gridUncapLevel, gridTranscendence }: Props = $props()
+
+	const hasPerpetuity = $derived(type === 'character' && !!(item as GridCharacter).perpetuity)
 
 	const simplePortraits = getSimplePortraits()
 
@@ -87,6 +90,14 @@
 		style:--element-color="var(--{elementName}-bg)"
 	>
 		<img src={getImageUrl()} alt={displayName(itemData)} class="item-image {type}" />
+		{#if hasPerpetuity}
+			<img
+				src={perpetuityFilled}
+				alt="Perpetuity Ring"
+				class="perpetuity-overlay"
+				aria-label="Perpetuity Ring"
+			/>
+		{/if}
 	</div>
 </div>
 
@@ -188,6 +199,17 @@
 			.item-image.summon,
 			.item-image.character {
 				width: 100%;
+			}
+
+			.perpetuity-overlay {
+				position: absolute;
+				top: spacing.$unit;
+				right: spacing.$unit;
+				width: 28px;
+				height: 28px;
+				object-fit: contain;
+				z-index: 2;
+				pointer-events: none;
 			}
 		}
 	}

@@ -528,6 +528,7 @@
 		h3 {
 			font-size: typography.$font-large;
 			font-weight: typography.$bold;
+			color: var(--text-primary);
 			margin: 0 0 spacing.$unit 0;
 		}
 
