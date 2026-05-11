@@ -6,6 +6,7 @@
 	import MasteryDisplay from '../modifications/MasteryDisplay.svelte'
 	import WeaponKeysList from '../modifications/WeaponKeysList.svelte'
 	import ArtifactSummary from '../modifications/ArtifactSummary.svelte'
+	import RoleReadOnlySection from '../role/RoleReadOnlySection.svelte'
 	import { getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
 	import { seriesHasWeaponKeys, getSeriesSlug } from '$lib/utils/weaponSeries'
 	import WeaponKeySelect from '$lib/components/sidebar/edit/WeaponKeySelect.svelte'
@@ -332,6 +333,8 @@
 			</DetailsSection>
 		{/if}
 	{/if}
+
+	<RoleReadOnlySection {type} {item} />
 </div>
 
 <style lang="scss">

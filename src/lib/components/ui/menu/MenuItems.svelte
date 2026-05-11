@@ -7,7 +7,6 @@
 		onViewInDatabase?: (() => void) | undefined
 		onViewTeams?: (() => void) | undefined
 		onAddToTeamsView?: (() => void) | undefined
-		onShowSubstitutions?: (() => void) | undefined
 		onReplace?: (() => void) | undefined
 		onDuplicate?: (() => void) | undefined
 		onRemove?: (() => void | Promise<void>) | undefined
@@ -18,7 +17,6 @@
 		viewInDatabaseLabel?: string | undefined
 		viewTeamsLabel?: string | undefined
 		addToTeamsViewLabel?: string | undefined
-		showSubstitutionsLabel?: string | undefined
 		replaceLabel?: string | undefined
 		duplicateLabel?: string | undefined
 		duplicateDisabled?: boolean | undefined
@@ -33,11 +31,9 @@
 		onAddToTeamsView,
 		onReplace,
 		onDuplicate,
-		onShowSubstitutions,
 		onRemove,
 		canEdit = false,
 		variant = 'context',
-		showSubstitutionsLabel = 'Substitutes',
 		editLabel = 'Edit',
 		viewDetailsLabel = 'View details',
 		viewInDatabaseLabel = 'View in Database',
@@ -110,12 +106,6 @@
 {#if onAddToTeamsView}
 	<Item class={itemClass} onclick={onAddToTeamsView}>
 		{addToTeamsViewLabel}
-	</Item>
-{/if}
-
-{#if onShowSubstitutions}
-	<Item class={itemClass} onclick={onShowSubstitutions}>
-		{showSubstitutionsLabel}
 	</Item>
 {/if}
 

@@ -6,6 +6,7 @@ import { type ElementType } from '$lib/stores/paneStack.svelte'
 import DetailsSidebar from '$lib/components/sidebar/DetailsSidebar.svelte'
 import EditWeaponPane from '$lib/components/sidebar/EditWeaponPane.svelte'
 import EditCharacterPane from '$lib/components/sidebar/EditCharacterPane.svelte'
+import EditSummonPane from '$lib/components/sidebar/EditSummonPane.svelte'
 import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 import { canWeaponBeModified, canCharacterBeModified } from '$lib/utils/modificationDetector'
 import * as m from '$lib/paraglide/messages'
@@ -17,6 +18,10 @@ interface DetailsSidebarOptions {
 	onSaveCharacter?: (id: string, updates: Partial<GridCharacter>) => Promise<void>
 	isOwner?: boolean
 	onReplace?: () => void
+	/** Forwarded to the edit pane so the Role tab can hit substitution + grid mutations */
+	partyId?: string
+	/** Forwarded to the edit pane so the Role tab can subscribe to the live party query */
+	partyShortcode?: string
 }
 
 function getItemElement(
@@ -67,11 +72,17 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 				if (canEditWeapon) {
 					const freshWeapon = (partyStore.getItem('weapon', (item as GridWeapon).id!) ??
 						item) as GridWeapon
-					openWeaponEditSidebar(freshWeapon, options.onSaveWeapon)
+					openWeaponEditSidebar(freshWeapon, options.onSaveWeapon, {
+						partyId: options.partyId,
+						partyShortcode: options.partyShortcode
+					})
 				} else if (canEditCharacter) {
 					const freshChar = (partyStore.getItem('character', (item as GridCharacter).id!) ??
 						item) as GridCharacter
-					openCharacterEditSidebar(freshChar, options.onSaveCharacter)
+					openCharacterEditSidebar(freshChar, options.onSaveCharacter, {
+						partyId: options.partyId,
+						partyShortcode: options.partyShortcode
+					})
 				}
 			}
 		: undefined
@@ -112,7 +123,8 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 
 export function openWeaponEditSidebar(
 	weapon: GridWeapon,
-	onSaveWeapon?: (id: string, updates: Partial<GridWeapon>) => Promise<void>
+	onSaveWeapon?: (id: string, updates: Partial<GridWeapon>) => Promise<void>,
+	context: { partyId?: string; partyShortcode?: string } = {}
 ) {
 	const weaponName = getName(weapon.weapon)
 	const title = weaponName !== 'Details' ? weaponName : 'Edit Weapon'
@@ -161,6 +173,8 @@ export function openWeaponEditSidebar(
 		component: EditWeaponPane,
 		props: {
 			weapon,
+			partyId: context.partyId,
+			partyShortcode: context.partyShortcode,
 			onSave: handleSave,
 			onCancel: goBack
 		},
@@ -177,7 +191,8 @@ export function openWeaponEditSidebar(
 
 export function openCharacterEditSidebar(
 	character: GridCharacter,
-	onSaveCharacter?: (id: string, updates: Partial<GridCharacter>) => Promise<void>
+	onSaveCharacter?: (id: string, updates: Partial<GridCharacter>) => Promise<void>,
+	context: { partyId?: string; partyShortcode?: string } = {}
 ) {
 	const characterName = getName(character.character)
 	const title = characterName !== 'Details' ? characterName : 'Edit Character'
@@ -226,7 +241,49 @@ export function openCharacterEditSidebar(
 		component: EditCharacterPane,
 		props: {
 			character,
+			partyId: context.partyId,
+			partyShortcode: context.partyShortcode,
 			onSave: handleSave,
+			onCancel: goBack
+		},
+		onback: goBack
+	}
+
+	if (hasDetailsRoot) {
+		sidebar.push(paneConfig)
+	} else {
+		sidebar.paneStack.reset(paneConfig)
+		sidebar.state.open = true
+	}
+}
+
+export function openSummonEditSidebar(
+	summon: GridSummon,
+	context: { partyId?: string; partyShortcode?: string } = {}
+) {
+	const summonName = getName(summon.summon)
+	const title = summonName !== 'Details' ? summonName : 'Edit Summon'
+	const editPaneId = `edit-summon-${summon.id}`
+
+	if (sidebar.paneStack.panes.some((p) => p.id === editPaneId)) return
+
+	const hasDetailsRoot = sidebar.isOpen && sidebar.paneStack.depth > 0
+	const goBack = () => {
+		if (hasDetailsRoot) {
+			sidebar.pop()
+		} else {
+			sidebar.close()
+		}
+	}
+
+	const paneConfig = {
+		id: editPaneId,
+		title,
+		component: EditSummonPane,
+		props: {
+			summon,
+			partyId: context.partyId,
+			partyShortcode: context.partyShortcode,
 			onCancel: goBack
 		},
 		onback: goBack

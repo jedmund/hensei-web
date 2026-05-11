@@ -1,10 +1,19 @@
 <script lang="ts">
+	/**
+	 * Editable Role section: role dropdown + rich-text note + substitutions list.
+	 *
+	 * Lifted from the legacy `SubstitutionsSidebar` so it can be embedded in the
+	 * Role tab of any per-slot edit pane (Character / Weapon / Summon). Reads
+	 * from the live party query so substitution mutations update inline; writes
+	 * via the existing role + substitution mutations.
+	 */
 	import type {
 		GridCharacter,
 		GridWeapon,
 		GridSummon,
 		Role,
-		Substitution
+		Substitution,
+		SubstitutionNote
 	} from '$lib/types/api/party'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { roleQueries } from '$lib/api/queries/role.queries'
@@ -14,13 +23,16 @@
 		useUpdateSubstitution,
 		useDeleteSubstitution
 	} from '$lib/api/mutations/substitution.mutations'
-	import { useUpdateGridWeapon } from '$lib/api/mutations/grid.mutations'
-	import { useUpdateGridCharacter } from '$lib/api/mutations/grid.mutations'
-	import { useUpdateGridSummon } from '$lib/api/mutations/grid.mutations'
+	import {
+		useUpdateGridWeapon,
+		useUpdateGridCharacter,
+		useUpdateGridSummon
+	} from '$lib/api/mutations/grid.mutations'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import SearchContent from '$lib/components/sidebar/SearchContent.svelte'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import RoleNoteEditor from './RoleNoteEditor.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import {
 		getCharacterImage,
@@ -38,16 +50,15 @@
 	interface Props {
 		type: 'weapon' | 'character' | 'summon'
 		item: GridCharacter | GridWeapon | GridSummon
-		editable?: boolean
 		partyId?: string
 		partyShortcode?: string
 	}
 
-	let { type, item, editable = false, partyId, partyShortcode }: Props = $props()
+	let { type, item, partyId, partyShortcode }: Props = $props()
 
-	// The pane stores `item` as a snapshot at open time, so prop reads alone go
-	// stale after a substitution mutation invalidates the party cache. Subscribe
-	// to the live party query and re-resolve the grid item by id on every read.
+	// Subscribe to the live party query so this section reflects mutations to
+	// substitutions / role / note immediately rather than reading the stale
+	// snapshot the parent passed in.
 	const partyQuery = createQuery(() => ({
 		...partyQueries.byShortcode(partyShortcode ?? ''),
 		enabled: !!partyShortcode
@@ -65,23 +76,31 @@
 			| undefined
 	})
 
-	// Read from the live item when available, fall back to the prop snapshot.
 	const effectiveItem = $derived(liveItem ?? item)
 
-	// Derive data from the effective item
 	let role = $derived((effectiveItem as GridWeapon).role as Role | undefined)
-	let note = $derived((effectiveItem as GridWeapon).substitutionNote as string | undefined)
+	let note = $derived(
+		(effectiveItem as GridWeapon).substitutionNote as SubstitutionNote | null | undefined
+	)
 	let substitutions = $derived(
-		// Spread before sort: Array.prototype.sort mutates in place, and a $derived
-		// expression must not mutate state — Svelte 5 throws state_unsafe_mutation
-		// and downstream reactivity breaks (added substitutes don't appear).
+		// Spread before sort: Array.prototype.sort mutates in place; mutating
+		// inside a $derived trips Svelte 5's state_unsafe_mutation guard.
 		[...(((effectiveItem as GridWeapon).substitutions ?? []) as Substitution[])].sort(
 			(a, b) => a.position - b.position
 		)
 	)
 
-	// Underlying entity ids of items already added as substitutes for this slot,
-	// so the search modal can disable them and prevent the duplicate post.
+	// Used to title the note section ("Describe <name>'s role").
+	const itemDisplayName = $derived.by(() => {
+		const character = (effectiveItem as GridCharacter).character
+		if (character) return localizedName(character.name) || ''
+		const weapon = (effectiveItem as GridWeapon).weapon
+		if (weapon) return localizedName(weapon.name) || ''
+		const summon = (effectiveItem as GridSummon).summon
+		if (summon) return localizedName(summon.name) || ''
+		return ''
+	})
+
 	const existingSubstituteItemIds = $derived(
 		substitutions
 			.map(
@@ -94,25 +113,19 @@
 			.filter((id): id is string => id !== null)
 	)
 
-	// Slot type mapping for roles query
 	function getSlotType(t: string): string {
 		if (t === 'character') return 'Character'
 		if (t === 'summon') return 'Summon'
 		return 'Weapon'
 	}
 
-	// Grid type mapping for API
 	function getGridType(t: string): string {
 		if (t === 'character') return 'GridCharacter'
 		if (t === 'summon') return 'GridSummon'
 		return 'GridWeapon'
 	}
 
-	// Roles query
-	const rolesQuery = createQuery(() => ({
-		...roleQueries.bySlotType(getSlotType(type)),
-		enabled: editable
-	}))
+	const rolesQuery = createQuery(() => roleQueries.bySlotType(getSlotType(type)))
 
 	const roleOptions = $derived.by(() => {
 		const roles = (rolesQuery.data ?? []) as Role[]
@@ -128,11 +141,8 @@
 		return options
 	})
 
-	// Local state for editable fields (writable derived syncs from item)
 	let selectedRoleId = $derived(role?.id ?? '')
-	let noteText = $derived(note ?? '')
 
-	// Mutations
 	const createSubstitution = useCreateSubstitution()
 	const updateSubstitution = useUpdateSubstitution()
 	const deleteSubstitution = useDeleteSubstitution()
@@ -140,67 +150,41 @@
 	const updateCharacter = useUpdateGridCharacter()
 	const updateSummon = useUpdateGridSummon()
 
-	// Save role change
+	function dispatchUpdate(updates: Record<string, unknown>) {
+		if (!item.id || !partyShortcode) return
+		if (type === 'weapon') {
+			updateWeapon.mutate({
+				id: String(item.id),
+				partyShortcode,
+				updates: updates as Partial<GridWeapon>
+			})
+		} else if (type === 'character') {
+			updateCharacter.mutate({
+				id: String(item.id),
+				partyShortcode,
+				updates: updates as Partial<GridCharacter>
+			})
+		} else {
+			updateSummon.mutate({
+				id: String(item.id),
+				partyShortcode,
+				updates: updates as Partial<GridSummon>
+			})
+		}
+	}
+
 	function handleRoleChange(value: string | undefined) {
-		if (!item.id || !partyShortcode) return
-		const roleId = value || null
-		const updates = { roleId } as Record<string, unknown>
-
-		if (type === 'weapon') {
-			updateWeapon.mutate({
-				id: String(item.id),
-				partyShortcode,
-				updates: updates as Partial<GridWeapon>
-			})
-		} else if (type === 'character') {
-			updateCharacter.mutate({
-				id: String(item.id),
-				partyShortcode,
-				updates: updates as Partial<GridCharacter>
-			})
-		} else {
-			updateSummon.mutate({
-				id: String(item.id),
-				partyShortcode,
-				updates: updates as Partial<GridSummon>
-			})
-		}
+		dispatchUpdate({ roleId: value || null })
 	}
 
-	// Save note on blur
-	function handleNoteBlur() {
-		if (!item.id || !partyShortcode) return
-		if (noteText === (note ?? '')) return
-		const updates = { substitutionNote: noteText || null } as Record<string, unknown>
-
-		if (type === 'weapon') {
-			updateWeapon.mutate({
-				id: String(item.id),
-				partyShortcode,
-				updates: updates as Partial<GridWeapon>
-			})
-		} else if (type === 'character') {
-			updateCharacter.mutate({
-				id: String(item.id),
-				partyShortcode,
-				updates: updates as Partial<GridCharacter>
-			})
-		} else {
-			updateSummon.mutate({
-				id: String(item.id),
-				partyShortcode,
-				updates: updates as Partial<GridSummon>
-			})
-		}
+	function handleNoteSave(next: SubstitutionNote | null) {
+		dispatchUpdate({ substitutionNote: next })
 	}
 
-	// Add substitute via search
 	function handleAddSubstitute() {
 		if (!partyId || !partyShortcode || !item.id) return
-
 		const searchPaneId = `search-substitute-${item.id}`
 		if (sidebar.paneStack.panes.some((p) => p.id === searchPaneId)) return
-
 		sidebar.push({
 			id: searchPaneId,
 			title: m.substitution_add_prompt(),
@@ -220,9 +204,7 @@
 							gridId: String(item.id),
 							itemId: addItem.id
 						},
-						{
-							onSuccess: () => sidebar.pop()
-						}
+						{ onSuccess: () => sidebar.pop() }
 					)
 				}
 			},
@@ -230,7 +212,6 @@
 		})
 	}
 
-	// Delete substitute
 	function handleDelete(sub: Substitution) {
 		if (!partyId || !partyShortcode) return
 		deleteSubstitution.mutate({
@@ -240,9 +221,6 @@
 		})
 	}
 
-	// Drag-and-drop reorder. The substitutions table has no unique constraint
-	// on position, so we can sequentially write each item's new index without
-	// any temporary-position dance.
 	let dragIndex = $state<number | null>(null)
 	let hoverIndex = $state<number | null>(null)
 
@@ -295,10 +273,10 @@
 	}
 
 	function getSubstituteName(sub: Substitution): string {
-		if (sub.gridCharacter) return localizedName(sub.gridCharacter.character?.name) ?? '\u2014'
-		if (sub.gridWeapon) return localizedName(sub.gridWeapon.weapon?.name) ?? '\u2014'
-		if (sub.gridSummon) return localizedName(sub.gridSummon.summon?.name) ?? '\u2014'
-		return '\u2014'
+		if (sub.gridCharacter) return localizedName(sub.gridCharacter.character?.name) ?? '—'
+		if (sub.gridWeapon) return localizedName(sub.gridWeapon.weapon?.name) ?? '—'
+		if (sub.gridSummon) return localizedName(sub.gridSummon.summon?.name) ?? '—'
+		return '—'
 	}
 
 	function getSubstituteImage(sub: Substitution): string {
@@ -324,40 +302,28 @@
 	}
 </script>
 
-<div class="substitutions-sidebar">
+<div class="role-edit-section">
 	<DetailsSection title={m.substitution_role()}>
-		{#if editable}
-			<Select
-				options={roleOptions}
-				bind:value={selectedRoleId}
-				onValueChange={handleRoleChange}
-				placeholder={m.substitution_role_none()}
-				contained
-				fullWidth
-			/>
-		{:else if role}
-			<p class="role-name">
-				{localizedName({ en: role.nameEn, ja: role.nameJp })}
-			</p>
-		{:else}
-			<p class="empty">{m.substitution_role_none()}</p>
-		{/if}
+		<Select
+			options={roleOptions}
+			bind:value={selectedRoleId}
+			onValueChange={handleRoleChange}
+			placeholder={m.substitution_role_none()}
+			contained
+			fullWidth
+		/>
 	</DetailsSection>
 
-	<DetailsSection title={m.substitution_note()}>
-		{#if editable}
-			<textarea
-				class="note-input contained"
-				bind:value={noteText}
-				onblur={handleNoteBlur}
-				placeholder={m.substitution_note_placeholder()}
-				rows="3"
-			></textarea>
-		{:else if note}
-			<p class="note">{note}</p>
-		{:else}
-			<p class="empty">{m.substitution_note_placeholder()}</p>
-		{/if}
+	<DetailsSection
+		title={itemDisplayName
+			? m.role_describe_section({ name: itemDisplayName })
+			: m.role_describe_section_fallback()}
+	>
+		<RoleNoteEditor
+			value={note ?? null}
+			placeholder={m.role_note_placeholder()}
+			onSave={handleNoteSave}
+		/>
 	</DetailsSection>
 
 	<DetailsSection title={m.substitution_substitutes()}>
@@ -370,17 +336,15 @@
 					<li
 						class="substitution-item"
 						class:drop-target={hoverIndex === index && dragIndex !== null && dragIndex !== index}
-						draggable={editable ? 'true' : 'false'}
+						draggable="true"
 						ondragstart={(e) => onDragStart(e, index)}
 						ondragover={(e) => onDragOver(e, index)}
 						ondragleave={onDragLeave}
 						ondrop={(e) => onDrop(e, index)}
 					>
-						{#if editable}
-							<span class="handle" aria-hidden="true">
-								<Icon name="grip-vertical" width={4} height={18} />
-							</span>
-						{/if}
+						<span class="handle" aria-hidden="true">
+							<Icon name="grip-vertical" width={4} height={18} />
+						</span>
 						<img
 							src={getSubstituteImage(sub)}
 							alt=""
@@ -396,23 +360,21 @@
 								</div>
 							{/if}
 						</div>
-						{#if editable}
-							<div class="actions">
-								<button
-									class="action-btn delete"
-									onclick={() => handleDelete(sub)}
-									title={m.substitution_remove()}
-								>
-									<Icon name="close" size={14} />
-								</button>
-							</div>
-						{/if}
+						<div class="actions">
+							<button
+								class="action-btn delete"
+								onclick={() => handleDelete(sub)}
+								title={m.substitution_remove()}
+							>
+								<Icon name="close" size={14} />
+							</button>
+						</div>
 					</li>
 				{/each}
 			</ol>
 		{/if}
 
-		{#if editable && substitutions.length < 10}
+		{#if substitutions.length < 10}
 			<Button variant="ghost" size="small" fullWidth leftIcon="plus" onclick={handleAddSubstitute}>
 				{m.substitution_add()}
 			</Button>
@@ -423,57 +385,12 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
 
-	.substitutions-sidebar {
-		padding: spacing.$unit-2x;
+	.role-edit-section {
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-2x + spacing.$unit-half;
-	}
-
-	.role-name {
-		font-size: typography.$font-regular;
-		font-weight: typography.$medium;
-		margin: 0;
-	}
-
-	.note {
-		font-size: typography.$font-small;
-		line-height: 1.5;
-		margin: 0;
-		white-space: pre-wrap;
-	}
-
-	.note-input {
-		width: 100%;
-		font-family: inherit;
-		font-size: typography.$font-small;
-		line-height: 1.5;
-		padding: spacing.$unit;
-		border: 2px solid transparent;
-		border-radius: spacing.$unit;
-		background: transparent;
-		color: var(--text-primary);
-		resize: vertical;
-		min-height: 60px;
-		box-sizing: border-box;
-
-		&::placeholder {
-			color: var(--text-tertiary);
-		}
-
-		&:focus {
-			outline: none;
-			border-color: var(--accent-blue);
-		}
-
-		&.contained {
-			background-color: var(--input-bound-bg);
-
-			&:hover:not(:disabled) {
-				background-color: var(--input-bound-bg-hover);
-			}
-		}
 	}
 
 	.empty {
@@ -572,7 +489,7 @@
 		height: 24px;
 		padding: 0;
 		border: none;
-		border-radius: spacing.$unit-half;
+		border-radius: layout.$item-corner-small;
 		background: transparent;
 		color: var(--text-tertiary);
 		cursor: pointer;
@@ -583,11 +500,6 @@
 		&:hover:not(:disabled) {
 			color: var(--text-primary);
 			background: var(--input-bound-bg-hover);
-		}
-
-		&:disabled {
-			opacity: 0.3;
-			cursor: not-allowed;
 		}
 
 		&.delete:hover:not(:disabled) {
