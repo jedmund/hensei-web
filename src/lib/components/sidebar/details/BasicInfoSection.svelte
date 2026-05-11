@@ -42,7 +42,7 @@
 </script>
 
 <DetailsSection title={m.details_basic_info()}>
-	{#if type === 'character' && itemData?.styleName}
+	{#if type === 'character' && (itemData?.styleName?.en || itemData?.styleName?.ja)}
 		<DetailRow label={m.details_style()} value={localizedName(itemData.styleName)} />
 	{/if}
 	<DetailRow label={m.details_rarity()} value={getRarityLabel(itemData?.rarity)} />

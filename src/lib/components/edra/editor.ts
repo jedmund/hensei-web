@@ -49,7 +49,9 @@ export default (
 				link: {
 					openOnClick: false,
 					autolink: true,
-					linkOnPaste: true
+					linkOnPaste: true,
+					protocols: ['http', 'https', 'mailto'],
+					isAllowedUri: (url, ctx) => ctx.defaultValidate(url)
 				},
 				codeBlock: false
 			}),
