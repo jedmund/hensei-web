@@ -136,6 +136,10 @@ export interface DifficultyTier {
 	description?: string
 	minScore?: number
 	maxScore?: number
+	/** Editor-only metadata when the row reflects an unsaved draft */
+	pending?: boolean
+	pendingOperation?: 'create' | 'update' | 'destroy' | null
+	draftId?: string | null
 }
 
 // Embedded difficulty payload on Party

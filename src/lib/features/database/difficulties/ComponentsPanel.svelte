@@ -71,7 +71,7 @@
 							: Number(draft.targetMax)
 				}
 			})
-			await queryClient.invalidateQueries({ queryKey: ['difficulties', 'components'] })
+			await queryClient.invalidateQueries({ queryKey: ['difficulties'] })
 			toast.success(`Saved ${comp.name}`)
 		} catch (err) {
 			toast.error(extractErrorMessage(err, `Failed to save ${comp.name}`))

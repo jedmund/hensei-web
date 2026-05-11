@@ -9,32 +9,44 @@
 	let { rule, onclick }: Props = $props()
 
 	const interactive = $derived(!!onclick)
+	const pendingLabel = $derived.by(() => {
+		switch (rule.pendingOperation) {
+			case 'create':
+				return 'New'
+			case 'destroy':
+				return 'Will delete'
+			case 'update':
+				return 'Pending'
+			default:
+				return null
+		}
+	})
 </script>
+
+{#snippet body()}
+	<div class="primary">
+		<span class="name">{rule.name}</span>
+		<span class="rule-type">{rule.ruleType}</span>
+	</div>
+	<div class="meta">
+		<span class="component-pill" data-component={rule.component}>{rule.component}</span>
+		<span class="weight">×{rule.weight}</span>
+		{#if !rule.active}
+			<span class="status-pill">Inactive</span>
+		{/if}
+		{#if pendingLabel}
+			<span class="pending-pill" data-operation={rule.pendingOperation}>{pendingLabel}</span>
+		{/if}
+	</div>
+{/snippet}
 
 {#if interactive}
 	<button class="rule-row interactive" {onclick} class:inactive={!rule.active}>
-		<div class="primary">
-			<span class="name">{rule.name}</span>
-			<span class="rule-type">{rule.ruleType}</span>
-		</div>
-		<div class="meta">
-			<span class="component-pill" data-component={rule.component}>{rule.component}</span>
-			<span class="weight">×{rule.weight}</span>
-			{#if !rule.active}
-				<span class="status-pill">Inactive</span>
-			{/if}
-		</div>
+		{@render body()}
 	</button>
 {:else}
 	<div class="rule-row" class:inactive={!rule.active}>
-		<div class="primary">
-			<span class="name">{rule.name}</span>
-			<span class="rule-type">{rule.ruleType}</span>
-		</div>
-		<div class="meta">
-			<span class="component-pill" data-component={rule.component}>{rule.component}</span>
-			<span class="weight">×{rule.weight}</span>
-		</div>
+		{@render body()}
 	</div>
 {/if}
 
@@ -111,6 +123,26 @@
 			font-size: typography.$font-tiny;
 			text-transform: uppercase;
 			letter-spacing: 0.05em;
+		}
+
+		.pending-pill {
+			padding: spacing.$unit-fourth spacing.$unit;
+			border-radius: layout.$full-corner;
+			background: var(--accent-yellow, var(--input-bg));
+			color: var(--text-primary);
+			font-size: typography.$font-tiny;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+
+			&[data-operation='destroy'] {
+				background: var(--danger-bg-subtle);
+				color: var(--danger);
+			}
+
+			&[data-operation='create'] {
+				background: var(--accent-green, var(--input-bg));
+				color: var(--text-primary);
+			}
 		}
 
 		&.interactive {

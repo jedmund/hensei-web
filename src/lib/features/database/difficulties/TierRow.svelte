@@ -10,21 +10,41 @@
 
 	const scoreRange = $derived(`${tier.minScore ?? 0}–${tier.maxScore ?? 100}`)
 	const interactive = $derived(!!onclick)
+	const pendingLabel = $derived.by(() => {
+		switch (tier.pendingOperation) {
+			case 'create':
+				return 'New'
+			case 'destroy':
+				return 'Will delete'
+			case 'update':
+				return 'Pending'
+			default:
+				return null
+		}
+	})
 </script>
 
-{#if interactive}
-	<button class="tier-row interactive" {onclick}>
+{#snippet rowContent()}
+	<div class="left">
 		<span class="swatch" style:background={tier.color || 'var(--input-bg)'}></span>
-		<span class="name">{tier.name}</span>
-		<span class="slug">{tier.slug}</span>
-		<span class="range">{scoreRange}</span>
+		<span class="name-info">
+			<span class="name">{tier.name}</span>
+			<span class="slug">{tier.slug}</span>
+		</span>
+		{#if pendingLabel}
+			<span class="pending-pill" data-operation={tier.pendingOperation}>{pendingLabel}</span>
+		{/if}
+	</div>
+	<span class="range">{scoreRange}</span>
+{/snippet}
+
+{#if interactive}
+	<button class="tier-row interactive" class:pending={!!pendingLabel} {onclick}>
+		{@render rowContent()}
 	</button>
 {:else}
-	<div class="tier-row">
-		<span class="swatch" style:background={tier.color || 'var(--input-bg)'}></span>
-		<span class="name">{tier.name}</span>
-		<span class="slug">{tier.slug}</span>
-		<span class="range">{scoreRange}</span>
+	<div class="tier-row" class:pending={!!pendingLabel}>
+		{@render rowContent()}
 	</div>
 {/if}
 
@@ -34,8 +54,8 @@
 	@use '$src/themes/typography' as typography;
 
 	.tier-row {
-		display: grid;
-		grid-template-columns: auto 1fr auto auto;
+		display: flex;
+		justify-content: space-between;
 		align-items: center;
 		gap: spacing.$unit-2x;
 		padding: calc(spacing.$unit * 1.5) spacing.$unit;
@@ -46,6 +66,12 @@
 		font-family: inherit;
 		color: var(--text-primary);
 
+		.left {
+			display: flex;
+			align-items: center;
+			gap: spacing.$unit;
+		}
+
 		.swatch {
 			width: 18px;
 			height: 18px;
@@ -54,16 +80,22 @@
 			flex-shrink: 0;
 		}
 
-		.name {
-			font-size: typography.$font-regular;
-			color: var(--text-primary);
-			font-weight: typography.$medium;
-		}
+		.name-info {
+			display: flex;
+			flex-direction: column;
+			gap: spacing.$unit-fourth;
 
-		.slug {
-			font-size: typography.$font-small;
-			color: var(--text-tertiary);
-			font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+			.name {
+				font-size: typography.$font-regular;
+				color: var(--text-primary);
+				font-weight: typography.$medium;
+			}
+
+			.slug {
+				font-size: typography.$font-small;
+				color: var(--text-tertiary);
+				font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+			}
 		}
 
 		.range {
@@ -82,6 +114,26 @@
 
 			&:hover {
 				background: var(--page-hover);
+			}
+		}
+
+		.pending-pill {
+			padding: spacing.$unit-fourth spacing.$unit;
+			border-radius: layout.$full-corner;
+			background: var(--notice-yellow-bg);
+			color: var(--notice-yellow-text);
+			font-size: typography.$font-tiny;
+			text-transform: uppercase;
+			letter-spacing: 0.05em;
+
+			&[data-operation='destroy'] {
+				background: var(--danger-bg-subtle);
+				color: var(--danger);
+			}
+
+			&[data-operation='create'] {
+				background: var(--accent-green, var(--input-bg));
+				color: var(--text-primary);
 			}
 		}
 	}
