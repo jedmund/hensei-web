@@ -131,10 +131,10 @@
 						</DropdownItem>
 						<DropdownMenu.Separator class="dropdown-separator" />
 						<DropdownItem>
-							<a href={databaseRolesHref}>{m.nav_roles()}</a>
+							<a href={databaseGwEventsHref}>{m.nav_unite_and_fight()}</a>
 						</DropdownItem>
 						<DropdownItem>
-							<a href={databaseGwEventsHref}>{m.nav_unite_and_fight()}</a>
+							<a href={databaseRolesHref}>{m.nav_roles()}</a>
 						</DropdownItem>
 					</DropdownMenu.Content>
 				</DropdownMenu.Portal>

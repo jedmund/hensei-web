@@ -153,7 +153,7 @@
 					type="button"
 					class="icon-trigger"
 					onclick={openIconPicker}
-					aria-label={m.roles_icon_field()}
+					aria-label={m.roles_icon_upload()}
 				>
 					<RoleIcon
 						src={iconPreview ?? undefined}
