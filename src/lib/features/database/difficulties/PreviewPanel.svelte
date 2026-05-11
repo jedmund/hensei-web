@@ -55,6 +55,7 @@
 			<Input
 				bind:value={shortcode}
 				placeholder="Party shortcode (e.g. qRf1iR)"
+				variant="contained"
 				size="medium"
 				fullWidth
 				onkeydown={handleKey}
