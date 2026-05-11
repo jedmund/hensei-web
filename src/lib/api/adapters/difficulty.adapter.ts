@@ -96,6 +96,12 @@ export interface DifficultyRuleTypes {
  * Adapter for the party difficulty scoring system.
  *
  * Editor endpoints (rules, components, preview) require role >= 7.
+ *
+ * Editor mutations (the create/update/delete methods on tiers, rules,
+ * components) stage a draft on the server rather than persisting
+ * immediately. Drafts become live only when the editor commits via
+ * `commitDrafts()`. The `{ draft }` return value reflects the staged
+ * draft, not the saved entity.
  */
 export class DifficultyAdapter extends BaseAdapter {
 	// ==================== Tiers (public read) ====================
@@ -105,6 +111,7 @@ export class DifficultyAdapter extends BaseAdapter {
 		return this.request<DifficultyTier[]>('/difficulties', { ...options, query })
 	}
 
+	/** Stages a new tier; pending until `commitDrafts()` is called. */
 	async createTier(
 		input: Partial<DifficultyTier>,
 		options?: RequestOptions
@@ -118,6 +125,7 @@ export class DifficultyAdapter extends BaseAdapter {
 		return response
 	}
 
+	/** Stages an edit to an existing tier; pending until `commitDrafts()`. */
 	async updateTier(
 		id: string,
 		input: Partial<DifficultyTier>,
@@ -149,6 +157,7 @@ export class DifficultyAdapter extends BaseAdapter {
 		return this.request<DifficultyComponent[]>('/difficulty_components', { ...options, query })
 	}
 
+	/** Stages an edit to a component; pending until `commitDrafts()`. */
 	async updateComponent(
 		idOrName: string,
 		input: Partial<DifficultyComponent>,
@@ -186,6 +195,7 @@ export class DifficultyAdapter extends BaseAdapter {
 		return this.request<DifficultyRuleTypes>('/difficulty_rules/types', options)
 	}
 
+	/** Stages a new rule; pending until `commitDrafts()`. */
 	async createRule(
 		input: Partial<DifficultyRule>,
 		options?: RequestOptions
@@ -199,6 +209,7 @@ export class DifficultyAdapter extends BaseAdapter {
 		return response
 	}
 
+	/** Stages an edit to an existing rule; pending until `commitDrafts()`. */
 	async updateRule(
 		id: string,
 		input: Partial<DifficultyRule>,
