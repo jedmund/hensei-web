@@ -102,7 +102,7 @@
 				await createMut.mutateAsync(buildPayload())
 			}
 			await queryClient.invalidateQueries({ queryKey: ['difficulties'] })
-			toast.success(isEditing ? 'Tier updated' : 'Tier created')
+			toast.success(isEditing ? 'Tier change staged' : 'Tier creation staged')
 			open = false
 			onOpenChange?.(false)
 		} catch (err) {
@@ -117,7 +117,7 @@
 		try {
 			await deleteMut.mutateAsync(tier.id)
 			await queryClient.invalidateQueries({ queryKey: ['difficulties'] })
-			toast.success('Tier deleted')
+			toast.success('Tier deletion staged')
 			confirmDeleteOpen = false
 			open = false
 			onOpenChange?.(false)
