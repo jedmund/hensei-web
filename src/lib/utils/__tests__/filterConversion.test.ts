@@ -129,4 +129,22 @@ describe('filterItemsToParams', () => {
 		const unpinned: FilterItem[] = [{ kind: 'raid', value: 'akasha', label: 'Akasha' }]
 		expect(filterItemsToParams(pinned)).toEqual(filterItemsToParams(unpinned))
 	})
+
+	it('joins multiple difficulty filters into a single comma-separated `difficulty` param', () => {
+		const items: FilterItem[] = [
+			{ kind: 'difficulty', value: 'casual', label: 'Casual' },
+			{ kind: 'difficulty', value: 'mid', label: 'Mid' }
+		]
+		expect(filterItemsToParams(items).difficulty).toBe('casual,mid')
+	})
+
+	it('sends a single difficulty as-is (no trailing comma)', () => {
+		const items: FilterItem[] = [{ kind: 'difficulty', value: 'casual', label: 'Casual' }]
+		expect(filterItemsToParams(items).difficulty).toBe('casual')
+	})
+
+	it('omits the difficulty param when there are no difficulty filters', () => {
+		const items: FilterItem[] = [{ kind: 'element', value: 1, label: 'Wind' }]
+		expect(filterItemsToParams(items).difficulty).toBeUndefined()
+	})
 })

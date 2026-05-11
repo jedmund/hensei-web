@@ -11,9 +11,14 @@
 	import type { DifficultyTier } from '$lib/types/api/party'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import TierIcon from '$lib/features/database/difficulties/TierIcon.svelte'
-
-	const ICON_MAX_DIMENSION = 128
-	const ICON_MAX_BYTES = 256 * 1024
+	import {
+		TIER_ICON_MAX_BYTES,
+		TIER_ICON_MAX_DIMENSION,
+		buildTierPayload,
+		isWithinIconDimensions,
+		validateIconMeta,
+		validateTierForm
+	} from '$lib/features/database/difficulties/tier-form'
 
 	interface Props {
 		open?: boolean
@@ -112,21 +117,20 @@
 		const file = input.files?.[0]
 		if (!file) return
 
-		if (file.type !== 'image/png') {
-			iconError = 'Icon must be a PNG.'
-			input.value = ''
-			return
-		}
-		if (file.size > ICON_MAX_BYTES) {
-			iconError = 'Icon must be 256KB or smaller.'
+		const meta = validateIconMeta(file)
+		if (!meta.ok) {
+			iconError =
+				meta.error === 'wrong_type'
+					? 'Icon must be a PNG.'
+					: `Icon must be ${TIER_ICON_MAX_BYTES / 1024}KB or smaller.`
 			input.value = ''
 			return
 		}
 
 		const dataUrl = await readDataUrl(file)
-		const { width, height } = await checkDimensions(dataUrl)
-		if (width > ICON_MAX_DIMENSION || height > ICON_MAX_DIMENSION) {
-			iconError = `Icon must be ${ICON_MAX_DIMENSION}x${ICON_MAX_DIMENSION} or smaller.`
+		const dims = await checkDimensions(dataUrl)
+		if (!isWithinIconDimensions(dims)) {
+			iconError = `Icon must be ${TIER_ICON_MAX_DIMENSION}x${TIER_ICON_MAX_DIMENSION} or smaller.`
 			input.value = ''
 			return
 		}
@@ -147,29 +151,21 @@
 		removeIcon = !removeIcon
 	}
 
-	function buildPayload(): Partial<DifficultyTier> {
-		const payload: Partial<DifficultyTier> = {
-			name: name.trim(),
-			slug: slug.trim(),
-			color,
-			description: description.trim() || undefined,
-			minScore,
-			maxScore,
-			sortOrder
-		}
-		// Clearing an existing icon is expressed as imageKey: null; uploading a
-		// new icon goes through uploadDraftImage after the draft is staged.
-		if (removeIcon && !iconFile) payload.imageKey = null
-		return payload
-	}
+	const formInput = $derived({
+		name,
+		slug,
+		color,
+		description,
+		minScore,
+		maxScore,
+		sortOrder
+	})
 
-	const canSave = $derived(
-		name.trim().length > 0 &&
-			slug.trim().length > 0 &&
-			maxScore > minScore &&
-			minScore >= 0 &&
-			maxScore <= 100
-	)
+	const canSave = $derived(validateTierForm(formInput).ok)
+
+	function buildPayload(): Partial<DifficultyTier> {
+		return buildTierPayload(formInput, { removeIcon, hasIconFile: !!iconFile })
+	}
 
 	async function handleSave() {
 		if (!canSave) {

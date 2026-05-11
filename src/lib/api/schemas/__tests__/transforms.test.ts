@@ -50,6 +50,21 @@ describe('snakeToCamel', () => {
 	it('preserves already camelCase keys', () => {
 		expect(snakeToCamel({ firstName: 'A' })).toEqual({ firstName: 'A' })
 	})
+
+	it('preserves params keys as-is (rule-engine bag stays opaque on the response path)', () => {
+		const input = { difficulty_rule: { params: { min_count: 1, series_id: 9 } } }
+		const result = snakeToCamel(input) as unknown as {
+			difficultyRule: { params: Record<string, unknown> }
+		}
+		// Outer key gets camelCased; inner params keys must NOT.
+		expect(result.difficultyRule.params).toEqual({ min_count: 1, series_id: 9 })
+	})
+
+	it('preserves wiki_data values on the response path too', () => {
+		const input = { wiki_data: { 'Page/Name': { nested_key: 'v' } } }
+		const result = snakeToCamel(input) as Record<string, unknown>
+		expect(result.wikiData).toEqual({ 'Page/Name': { nested_key: 'v' } })
+	})
 })
 
 // ============================================================================
@@ -96,6 +111,19 @@ describe('camelToSnake', () => {
 		const input = { wiki_data: { 'Page/Name': { nested_key: 'v' } } }
 		const result = camelToSnake(input) as Record<string, unknown>
 		expect(result.wiki_data).toEqual({ 'Page/Name': { nested_key: 'v' } })
+	})
+
+	it('preserves params keys as-is (rule-engine bag)', () => {
+		const input = { params: { min_count: 1, series_id: 9, max_skill_level: 20 } }
+		const result = camelToSnake(input) as Record<string, unknown>
+		expect(result.params).toEqual({ min_count: 1, series_id: 9, max_skill_level: 20 })
+	})
+
+	it('does NOT camelCase nested params keys before snake-casing them back', () => {
+		// Sanity check: even if someone hands camelCase keys, params is opaque.
+		const input = { params: { minCount: 1 } }
+		const result = camelToSnake(input) as Record<string, unknown>
+		expect(result.params).toEqual({ minCount: 1 })
 	})
 })
 
