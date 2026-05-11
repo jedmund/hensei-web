@@ -13,12 +13,27 @@
 	import { useCreateRole, useUploadRoleIcon } from '$lib/api/mutations/role.mutations'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import {
+		dataUrlToBase64,
+		validateIconFile,
+		type IconValidationError
+	} from '$lib/utils/iconUpload'
 
 	const createMut = useCreateRole()
 	const uploadIconMut = useUploadRoleIcon()
 
-	const ICON_MAX = 128
-	const ICON_BYTES_MAX = 256 * 1024
+	function iconErrorMessage(error: IconValidationError): string {
+		switch (error) {
+			case 'mime':
+				return m.roles_icon_error_png()
+			case 'size':
+				return m.roles_icon_error_size()
+			case 'dimensions':
+				return m.roles_icon_error_dimensions()
+			case 'decode':
+				return m.roles_icon_error_png()
+		}
+	}
 
 	let editData = $state({
 		nameEn: '',
@@ -41,51 +56,21 @@
 
 	const canCreate = $derived(editData.nameEn.trim() !== '')
 
-	async function readDataUrl(file: File): Promise<string> {
-		return new Promise((resolve, reject) => {
-			const reader = new FileReader()
-			reader.onload = () => resolve(reader.result as string)
-			reader.onerror = () => reject(reader.error)
-			reader.readAsDataURL(file)
-		})
-	}
-
-	async function checkDimensions(dataUrl: string): Promise<{ width: number; height: number }> {
-		return new Promise((resolve, reject) => {
-			const img = new Image()
-			img.onload = () => resolve({ width: img.width, height: img.height })
-			img.onerror = () => reject(new Error('Could not decode image'))
-			img.src = dataUrl
-		})
-	}
-
 	async function handleIconSelect(e: Event) {
 		iconError = null
 		const input = e.target as HTMLInputElement
 		const file = input.files?.[0]
 		if (!file) return
 
-		if (file.type !== 'image/png') {
-			iconError = m.roles_icon_error_png()
-			input.value = ''
-			return
-		}
-		if (file.size > ICON_BYTES_MAX) {
-			iconError = m.roles_icon_error_size()
+		const result = await validateIconFile(file)
+		if (!result.ok) {
+			iconError = iconErrorMessage(result.error)
 			input.value = ''
 			return
 		}
 
-		const dataUrl = await readDataUrl(file)
-		const { width, height } = await checkDimensions(dataUrl)
-		if (width > ICON_MAX || height > ICON_MAX) {
-			iconError = m.roles_icon_error_dimensions()
-			input.value = ''
-			return
-		}
-
-		iconFile = file
-		iconPreview = dataUrl
+		iconFile = result.file
+		iconPreview = result.dataUrl
 	}
 
 	async function handleCreate() {
@@ -100,12 +85,10 @@
 				})
 			}
 
-			if (iconFile) {
-				const dataUrl = await readDataUrl(iconFile)
-				const base64 = dataUrl.replace(/^data:[^;]+;base64,/, '')
+			if (iconFile && iconPreview) {
 				await uploadIconMut.mutateAsync({
 					id: createdRole.id,
-					image: base64,
+					image: dataUrlToBase64(iconPreview),
 					filename: iconFile.name
 				})
 			}
