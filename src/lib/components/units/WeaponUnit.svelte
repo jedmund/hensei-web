@@ -303,7 +303,7 @@
 								onerror={(e) => handleImageFallback(e, fallbackUrl)}
 							/>
 							{#if inCollection}
-								<BookmarkOverlay />
+								<BookmarkOverlay element={item?.element || item?.weapon?.element} />
 							{/if}
 						</div>
 					{/key}
