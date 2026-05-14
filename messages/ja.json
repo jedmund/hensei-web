@@ -592,6 +592,12 @@
 	"details_ulb": "5凸",
 	"details_t5": "超越",
 
+	"details_links": "リンク",
+	"details_link_wiki_en": "英語wiki",
+	"details_link_wiki_ja": "gbf-wiki",
+	"details_link_gamewith": "GameWith",
+	"details_link_kamigame": "神ゲー攻略",
+
 	"details_skills": "アビリティ",
 	"details_auras": "加護",
 	"details_weapon_keys": "武器スキル",

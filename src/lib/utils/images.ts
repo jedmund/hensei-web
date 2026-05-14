@@ -578,6 +578,15 @@ export function getBulletImage(granblueId: string | number | null | undefined): 
 	return `${getBasePath()}/bullet-square/${granblueId}.jpg`
 }
 
+/**
+ * Get a profile/site-brand icon (e.g. gamewith.png, kamigame.png).
+ * Uses S3/CDN base in production and the local static/images path in dev,
+ * matching the rest of the image utilities. Pass the slug without extension.
+ */
+export function getProfileIcon(slug: string, ext: 'png' | 'svg' = 'png'): string {
+	return `${getBasePath()}/profile/${slug}.${ext}`
+}
+
 // ===== Game CDN Images =====
 // For new items not yet in our AWS CDN (used in batch import)
 
