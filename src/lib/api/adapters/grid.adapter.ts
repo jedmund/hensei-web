@@ -346,20 +346,20 @@ export class GridAdapter extends BaseAdapter {
 		params: Partial<GridCharacter>,
 		headers?: Record<string, string>
 	): Promise<GridCharacter> {
-		// Flatten nested awakening object into awakening_id/awakening_level
-		// since the Rails API expects flat params, not nested attributes
+		// The character controller permits `awakening: { id, level }` nested
+		// only — top-level awakening_id/awakening_level get stripped by strong
+		// params. Forward the nested shape directly. Null is sent as { id: null,
+		// level: null } so transform_character_params doesn't try to dereference
+		// a nil hash.
 		const { awakening, ...rest } = params as Partial<GridCharacter> & {
 			awakening?: { id: string; level: number } | null
 		}
 		const body: Record<string, unknown> = { ...rest }
 		if (awakening !== undefined) {
-			if (awakening === null) {
-				body.awakeningId = null
-				body.awakeningLevel = null
-			} else {
-				body.awakeningId = awakening.id
-				body.awakeningLevel = awakening.level
-			}
+			body.awakening =
+				awakening === null
+					? { id: null, level: null }
+					: { id: awakening.id, level: awakening.level }
 		}
 
 		const response = await this.request<{ gridCharacter: GridCharacter }>(
