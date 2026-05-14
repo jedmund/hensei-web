@@ -84,6 +84,9 @@
 
 		check(mainhand, -1)
 		subWeaponSlots.forEach((w, i) => check(w, i))
+		// Include the extra weapon positions (offset 9, 10, 11) so
+		// ExtraWeaponsGrid can surface in-collection status there too.
+		weapons.filter((w) => w.position >= 9 && w.position <= 11).forEach((w) => check(w, w.position))
 		return status
 	})
 </script>
@@ -156,7 +159,7 @@
 	{#if raidExtra || showGuidebooks}
 		<ExtraContainer>
 			{#if raidExtra}
-				<ExtraWeapons {weapons} offset={9} />
+				<ExtraWeapons {weapons} offset={9} {collectionStatus} />
 			{/if}
 			{#if showGuidebooks}
 				<Guidebooks

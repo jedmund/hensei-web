@@ -302,11 +302,11 @@
 								src={imageUrl}
 								onerror={(e) => handleImageFallback(e, fallbackUrl)}
 							/>
-							{#if inCollection}
-								<BookmarkOverlay element={item?.element || item?.weapon?.element} />
-							{/if}
 						</div>
 					{/key}
+					{#if inCollection}
+						<BookmarkOverlay element={item?.element || item?.weapon?.element} />
+					{/if}
 				</div>
 			{/snippet}
 
@@ -603,10 +603,11 @@
 
 	// Weapons render the awakening icon at the top-left of the frame, which
 	// collides with the bookmark overlay's default top-anchored position.
-	// Pull the bookmark up so it sits above the awakening icon. Awakening's
-	// own positioning is unchanged.
-	.frame.weapon :global(.bookmark-overlay) {
-		margin-top: calc(spacing.$unit-2x * -1);
+	// Pull the bookmark up and slightly out so it sits above the awakening
+	// icon. Awakening's own positioning is unchanged.
+	.focus-ring-wrapper :global(.bookmark-overlay) {
+		margin-top: -21px;
+		margin-left: -6px;
 	}
 
 	.name-text {
