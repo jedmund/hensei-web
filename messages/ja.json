@@ -633,6 +633,8 @@
 
 	"details_uncap_transcendence": "上限解放・超越",
 	"details_max_uncap_level": "上限解放",
+	"details_transcended_to": "超越",
+	"details_transcendence_level": "段階 {level}",
 	"details_awakening": "覚醒",
 	"details_mastery": "マスタリー",
 	"details_status": "ステータス",

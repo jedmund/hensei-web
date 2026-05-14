@@ -16,6 +16,9 @@
 		contained?: boolean | undefined
 		size?: 'regular' | 'small' | undefined
 		minUncapLevel?: number | undefined
+		/** Omit the transcendence star even when the item supports transcendence.
+		 * Used by callers that render the transcendence indicator separately. */
+		hideTranscendence?: boolean | undefined
 		updateUncap?: ((index: number) => void) | undefined
 		updateTranscendence?: ((index: number) => void) | undefined
 	}
@@ -64,6 +67,7 @@
 		contained = false,
 		size = 'regular',
 		minUncapLevel,
+		hideTranscendence = false,
 		updateUncap,
 		updateTranscendence
 	}: Props = $props()
@@ -76,10 +80,12 @@
 				return ulb ? 5 : flb ? 4 : 3
 			} else {
 				// Regular characters: 4 base + FLB + transcendence (ulb flag = transcendence for regular chars)
+				if (hideTranscendence && ulb) return 5
 				return ulb ? 6 : flb ? 5 : 4
 			}
 		} else {
 			// Weapons and summons: 3 base + FLB + ULB + transcendence
+			if (hideTranscendence && transcendence) return ulb ? 5 : flb ? 4 : 3
 			return transcendence ? 6 : ulb ? 5 : flb ? 4 : 3
 		}
 	}
