@@ -23,7 +23,7 @@
 	import { useUpdateGridWeapon } from '$lib/api/mutations/grid.mutations'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import SyncMenuButton from './SyncMenuButton.svelte'
-	import { hasField, hasRow, hasAnyField, type OutOfSyncFields } from '$lib/utils/outOfSync'
+	import { hasField, hasAnyField, type OutOfSyncFields } from '$lib/utils/outOfSync'
 	import * as m from '$lib/paraglide/messages'
 
 	type ElementColor = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
@@ -43,9 +43,11 @@
 		isSyncing?: boolean
 		isSyncingToCollection?: boolean
 		syncElement?: ElementColor | undefined
-		onSyncFromCollection?: () => void
-		/** Called with a localized scope label so the parent can open the push-confirm dialog. */
-		onSyncToCollection?: (scope: string) => void
+		/** Called with the camelCase field keys the section owns. */
+		onSyncFromCollection?: (fields: string[]) => void
+		/** Called with a localized scope label + field keys so the parent can
+		 * open the push-confirm dialog and target the right fields. */
+		onSyncToCollection?: (scope: string, fields: string[]) => void
 	}
 
 	let {
@@ -142,38 +144,52 @@
 		})
 	}
 
-	// Shared props for every inline SyncMenuButton; each call site only adds scope info.
-	const syncCommon = $derived({
+	// Shared base props for every inline SyncMenuButton. The per-section call
+	// site fills in the scope (label + field keys) so each button only syncs
+	// its own section.
+	const syncBase = $derived({
 		type,
 		element: syncElement,
 		canPull,
 		canPush,
 		isSyncing,
-		isSyncingToCollection,
-		onSyncFromCollection
+		isSyncingToCollection
 	})
 
-	function pushScope(label: string) {
-		return () => onSyncToCollection?.(label)
+	// Build the pull/push callbacks for a section scoped to the given fields.
+	function sectionCallbacks(label: string, fields: string[]) {
+		return {
+			onSyncFromCollection: () => onSyncFromCollection?.(fields),
+			onSyncToCollection: () => onSyncToCollection?.(label, fields)
+		}
 	}
 
-	const isOverMasteryRowOOS = (index: number) => hasRow(outOfSyncFields, 'overMastery', index)
-	const isWeaponKeyOOS = (slot: number) => hasField(outOfSyncFields, `weaponKey${slot + 1}`)
-	const isAxRowOOS = (index: number) => hasRow(outOfSyncFields, 'ax', index)
-	const isBulletRowOOS = (position: number) => hasRow(outOfSyncFields, 'bullets', position)
+	// Section-key constants. Used both to test "is this section drifting?" and
+	// to pass through to the per-section sync calls.
+	const UNCAP_KEYS = ['uncapLevel', 'transcendenceStep'] as const
+	const AWAKENING_KEYS = ['awakeningId', 'awakeningLevel'] as const
+	const OVER_MASTERY_KEYS = [
+		'overMastery.0',
+		'overMastery.1',
+		'overMastery.2',
+		'overMastery.3'
+	] as const
+	const AETHERIAL_MASTERY_KEYS = ['aetherialMastery'] as const
+	const ELEMENT_KEYS = ['element'] as const
+	const WEAPON_KEY_KEYS = ['weaponKey1', 'weaponKey2', 'weaponKey3', 'weaponKey4'] as const
+	const AX_KEYS = ['ax.0', 'ax.1'] as const
+	const BEFOULMENT_KEYS = ['befoulmentModifier', 'befoulmentStrength', 'exorcismLevel'] as const
 
-	// Section-level keys
-	const uncapSectionOOS = $derived(
-		hasAnyField(outOfSyncFields, ['uncapLevel', 'transcendenceStep'])
-	)
-	const awakeningSectionOOS = $derived(
-		hasAnyField(outOfSyncFields, ['awakeningId', 'awakeningLevel'])
-	)
+	const uncapSectionOOS = $derived(hasAnyField(outOfSyncFields, UNCAP_KEYS))
+	const awakeningSectionOOS = $derived(hasAnyField(outOfSyncFields, AWAKENING_KEYS))
+	const overMasterySectionOOS = $derived(hasAnyField(outOfSyncFields, OVER_MASTERY_KEYS))
 	const elementSectionOOS = $derived(hasField(outOfSyncFields, 'element'))
-	const befoulmentSectionOOS = $derived(
-		hasAnyField(outOfSyncFields, ['befoulmentModifier', 'befoulmentStrength', 'exorcismLevel'])
-	)
+	const befoulmentSectionOOS = $derived(hasAnyField(outOfSyncFields, BEFOULMENT_KEYS))
 	const aetherialMasterySectionOOS = $derived(hasField(outOfSyncFields, 'aetherialMastery'))
+	const weaponKeysSectionOOS = $derived(hasAnyField(outOfSyncFields, WEAPON_KEY_KEYS))
+	const axSectionOOS = $derived(hasAnyField(outOfSyncFields, AX_KEYS))
+	const bulletKeys = $derived((outOfSyncFields ?? []).filter((key) => key.startsWith('bullets.')))
+	const bulletsSectionOOS = $derived(bulletKeys.length > 0)
 
 	// Get uncap capabilities from item data based on type
 	let uncapCaps = $derived.by(() => {
@@ -204,8 +220,8 @@
 		{#snippet action()}
 			{#if uncapSectionOOS}
 				<SyncMenuButton
-					{...syncCommon}
-					onSyncToCollection={pushScope(m.details_uncap_transcendence())}
+					{...syncBase}
+					{...sectionCallbacks(m.details_uncap_transcendence(), [...UNCAP_KEYS])}
 				/>
 			{/if}
 		{/snippet}
@@ -239,7 +255,10 @@
 			<DetailsSection title={m.details_awakening()}>
 				{#snippet action()}
 					{#if awakeningSectionOOS}
-						<SyncMenuButton {...syncCommon} onSyncToCollection={pushScope(m.details_awakening())} />
+						<SyncMenuButton
+							{...syncBase}
+							{...sectionCallbacks(m.details_awakening(), [...AWAKENING_KEYS])}
+						/>
 					{/if}
 				{/snippet}
 				<AwakeningDisplay
@@ -253,10 +272,10 @@
 		{#if modificationStatus.hasRings}
 			<DetailsSection title={m.details_over_mastery()}>
 				{#snippet action()}
-					{#if hasAnyField( outOfSyncFields, ['overMastery.0', 'overMastery.1', 'overMastery.2', 'overMastery.3'] ) || isOverMasteryRowOOS(0)}
+					{#if overMasterySectionOOS}
 						<SyncMenuButton
-							{...syncCommon}
-							onSyncToCollection={pushScope(m.details_over_mastery())}
+							{...syncBase}
+							{...sectionCallbacks(m.details_over_mastery(), [...OVER_MASTERY_KEYS])}
 						/>
 					{/if}
 				{/snippet}
@@ -274,8 +293,8 @@
 				{#snippet action()}
 					{#if aetherialMasterySectionOOS}
 						<SyncMenuButton
-							{...syncCommon}
-							onSyncToCollection={pushScope(m.details_aetherial_mastery())}
+							{...syncBase}
+							{...sectionCallbacks(m.details_aetherial_mastery(), [...AETHERIAL_MASTERY_KEYS])}
 						/>
 					{/if}
 				{/snippet}
@@ -300,7 +319,10 @@
 			<DetailsSection title={m.details_awakening()}>
 				{#snippet action()}
 					{#if awakeningSectionOOS}
-						<SyncMenuButton {...syncCommon} onSyncToCollection={pushScope(m.details_awakening())} />
+						<SyncMenuButton
+							{...syncBase}
+							{...sectionCallbacks(m.details_awakening(), [...AWAKENING_KEYS])}
+						/>
 					{/if}
 				{/snippet}
 				<AwakeningDisplay awakening={weapon.awakening} size="medium" showLevel={true} />
@@ -316,7 +338,10 @@
 				{#snippet action()}
 					<div class="section-actions">
 						{#if elementSectionOOS}
-							<SyncMenuButton {...syncCommon} onSyncToCollection={pushScope(m.details_element())} />
+							<SyncMenuButton
+								{...syncBase}
+								{...sectionCallbacks(m.details_element(), [...ELEMENT_KEYS])}
+							/>
 						{/if}
 						{#if isPartyOwner}
 							<Button
@@ -346,8 +371,6 @@
 		{/if}
 
 		{#if seriesHasWeaponKeys(weapon.weapon?.series)}
-			{@const weaponKeysOOS =
-				isWeaponKeyOOS(0) || isWeaponKeyOOS(1) || isWeaponKeyOOS(2) || isWeaponKeyOOS(3)}
 			<DetailsSection
 				title={getWeaponKeyTitle(weapon.weapon?.series)}
 				empty={!modificationStatus.hasWeaponKeys && !showWeaponKeyEditor}
@@ -355,10 +378,12 @@
 			>
 				{#snippet action()}
 					<div class="section-actions">
-						{#if weaponKeysOOS}
+						{#if weaponKeysSectionOOS}
 							<SyncMenuButton
-								{...syncCommon}
-								onSyncToCollection={pushScope(getWeaponKeyTitle(weapon.weapon?.series))}
+								{...syncBase}
+								{...sectionCallbacks(getWeaponKeyTitle(weapon.weapon?.series), [
+									...WEAPON_KEY_KEYS
+								])}
 							/>
 						{/if}
 						{#if isPartyOwner}
@@ -417,11 +442,13 @@
 		{/if}
 
 		{#if modificationStatus.hasAxSkills && weapon.ax?.length}
-			{@const axOOS = isAxRowOOS(0) || isAxRowOOS(1)}
 			<DetailsSection title={m.details_ax_skills()}>
 				{#snippet action()}
-					{#if axOOS}
-						<SyncMenuButton {...syncCommon} onSyncToCollection={pushScope(m.details_ax_skills())} />
+					{#if axSectionOOS}
+						<SyncMenuButton
+							{...syncBase}
+							{...sectionCallbacks(m.details_ax_skills(), [...AX_KEYS])}
+						/>
 					{/if}
 				{/snippet}
 				{#each weapon.ax as axSkill, i (i)}
@@ -440,8 +467,8 @@
 				{#snippet action()}
 					{#if befoulmentSectionOOS}
 						<SyncMenuButton
-							{...syncCommon}
-							onSyncToCollection={pushScope(m.details_befoulment())}
+							{...syncBase}
+							{...sectionCallbacks(m.details_befoulment(), [...BEFOULMENT_KEYS])}
 						/>
 					{/if}
 				{/snippet}
@@ -457,11 +484,10 @@
 		{/if}
 
 		{#if modificationStatus.hasBullets && weapon.bullets?.length}
-			{@const bulletsOOS = weapon.bullets.some((b) => isBulletRowOOS(b.position))}
 			<DetailsSection title={m.details_bullets()}>
 				{#snippet action()}
-					{#if bulletsOOS}
-						<SyncMenuButton {...syncCommon} onSyncToCollection={pushScope(m.details_bullets())} />
+					{#if bulletsSectionOOS}
+						<SyncMenuButton {...syncBase} {...sectionCallbacks(m.details_bullets(), bulletKeys)} />
 					{/if}
 				{/snippet}
 				{#each weapon.bullets as loadout (loadout.position)}
