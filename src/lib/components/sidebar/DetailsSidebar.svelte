@@ -14,6 +14,7 @@
 	import { getElementKey } from '$lib/utils/element'
 	import { authStore } from '$lib/stores/auth.store.svelte'
 	import { getEditKey } from '$lib/utils/editKeys'
+	import { localizedName } from '$lib/utils/locale'
 	import {
 		useSyncGridCharacter,
 		useSyncGridWeapon,
@@ -192,6 +193,30 @@
 		return false
 	})
 
+	// Find the linked collection item so the push-confirm dialog can render
+	// before/after diffs. Looked up by the grid item's collection_*_id, which
+	// the backend stamps when an item is linked.
+	const linkedCollectionItem = $derived.by(() => {
+		const vc = partyStore.activeCollection
+		if (!vc) return undefined
+		if (type === 'character') {
+			const cid = (item as GridCharacter).collectionCharacterId
+			return cid ? vc.characters.find((c) => c.id === cid) : undefined
+		}
+		if (type === 'weapon') {
+			const wid = (item as GridWeapon).collectionWeaponId
+			return wid ? vc.weapons.find((w) => w.id === wid) : undefined
+		}
+		if (type === 'summon') {
+			const sid = (item as GridSummon).collectionSummonId
+			return sid ? vc.summons.find((s) => s.id === sid) : undefined
+		}
+		return undefined
+	})
+
+	// Localized item name for the dialog copy.
+	const itemName = $derived(itemData?.name ? localizedName(itemData.name) : undefined)
+
 	// Permission checks
 	const isPartyOwner = $derived.by(() => {
 		const party = partyStore.party
@@ -323,6 +348,10 @@
 		bind:open={syncToCollectionDialogOpen}
 		{type}
 		scope={pendingPushScope}
+		name={itemName}
+		fields={pendingPushFields ?? outOfSyncFields}
+		gridItem={item}
+		collectionItem={linkedCollectionItem}
 		onConfirm={confirmPush}
 	/>
 
