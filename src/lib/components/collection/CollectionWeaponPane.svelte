@@ -307,6 +307,7 @@
 			<div class="info-view">
 				<BasicInfoSection type="weapon" itemData={weaponData} />
 				<StatsSection
+					type="weapon"
 					itemData={weaponData}
 					gridUncapLevel={weapon.uncapLevel}
 					gridTranscendence={weapon.transcendenceStep}

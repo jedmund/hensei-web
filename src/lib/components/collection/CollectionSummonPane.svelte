@@ -220,6 +220,7 @@
 			<div class="info-view">
 				<BasicInfoSection type="summon" itemData={summonData} />
 				<StatsSection
+					type="summon"
 					itemData={summonData}
 					gridUncapLevel={summon.uncapLevel}
 					gridTranscendence={summon.transcendenceStep}
