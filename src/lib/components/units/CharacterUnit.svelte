@@ -532,18 +532,13 @@
 	}
 
 	.name {
-		font-size: typography.$font-small;
-		text-align: center;
-		color: var(--text-secondary);
-
-		:global(span) {
-			display: inline;
-			vertical-align: -4px;
-		}
-
+		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		justify-content: center;
 		gap: spacing.$unit-fourth;
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
 
 		:global(.artifact-indicator) {
 			color: var(--extra-purple-text);
