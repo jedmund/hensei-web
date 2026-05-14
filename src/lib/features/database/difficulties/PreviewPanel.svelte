@@ -114,8 +114,6 @@
 		{:else}
 			<div class="result-summary">
 				<div class="result-headline">
-					<span class="tier-swatch" style:background={result.tier?.color || 'var(--input-bg)'}
-					></span>
 					<div class="result-text">
 						<span class="result-tier">{result.tier?.name ?? 'Unassigned'}</span>
 						<span class="result-score">{result.score?.toFixed(2) ?? '—'} / 100</span>
@@ -226,13 +224,6 @@
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit;
-	}
-
-	.tier-swatch {
-		width: spacing.$unit-4x;
-		height: spacing.$unit-4x;
-		border-radius: 50%;
-		border: 1px solid var(--border-subtle);
 	}
 
 	.result-text {

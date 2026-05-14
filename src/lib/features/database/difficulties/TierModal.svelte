@@ -34,7 +34,6 @@
 	// Form state
 	let name = $state('')
 	let slug = $state('')
-	let color = $state('#86C5A8')
 	let description = $state('')
 	let minScore = $state<number>(0)
 	let maxScore = $state<number>(100)
@@ -68,7 +67,6 @@
 			if (tier) {
 				name = tier.name ?? ''
 				slug = tier.slug ?? ''
-				color = tier.color ?? '#86C5A8'
 				description = tier.description ?? ''
 				minScore = tier.minScore ?? 0
 				maxScore = tier.maxScore ?? 100
@@ -76,7 +74,6 @@
 			} else {
 				name = ''
 				slug = ''
-				color = '#86C5A8'
 				description = ''
 				minScore = 0
 				maxScore = 100
@@ -118,7 +115,6 @@
 	const formInput = $derived({
 		name,
 		slug,
-		color,
 		description,
 		minScore,
 		maxScore,
@@ -218,12 +214,6 @@
 			placeholder="endgame"
 			width="280px"
 		/>
-		<DetailItem label="Color" editable={true}>
-			<div class="color-control">
-				<input type="color" bind:value={color} aria-label="Tier color" class="color-input" />
-				<span class="color-value">{color}</span>
-			</div>
-		</DetailItem>
 		<DetailItem
 			label="Icon"
 			sublabel="Optional. PNG, 128×128 or smaller, 256KB max. Shown next to the tier name."
@@ -338,37 +328,6 @@
 		font-size: typography.$font-regular;
 		font-weight: typography.$bold;
 		color: var(--text-secondary);
-	}
-
-	.color-control {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit;
-	}
-
-	.color-input {
-		width: 42px;
-		height: 32px;
-		padding: 0;
-		border: 1px solid var(--border-subtle);
-		border-radius: layout.$item-corner-small;
-		background: transparent;
-		cursor: pointer;
-
-		&::-webkit-color-swatch-wrapper {
-			padding: 2px;
-		}
-
-		&::-webkit-color-swatch {
-			border-radius: 3px;
-			border: none;
-		}
-	}
-
-	.color-value {
-		font-size: typography.$font-small;
-		color: var(--text-secondary);
-		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 	}
 
 	.description-input {
