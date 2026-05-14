@@ -592,6 +592,11 @@
 	"details_ulb": "ULB",
 	"details_t5": "T5",
 
+	"details_link_wiki_en": "gbf.wiki",
+	"details_link_wiki_ja": "Wiki (JA)",
+	"details_link_gamewith": "GameWith",
+	"details_link_kamigame": "Kamigame",
+
 	"details_skills": "Skills",
 	"details_auras": "Auras",
 	"details_weapon_keys": "Weapon Keys",

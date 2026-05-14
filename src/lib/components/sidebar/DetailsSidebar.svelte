@@ -12,6 +12,7 @@
 	import BasicInfoSection from './details/BasicInfoSection.svelte'
 	import StatsSection from './details/StatsSection.svelte'
 	import SkillsSection from './details/SkillsSection.svelte'
+	import LinksSection from './details/LinksSection.svelte'
 	import TeamView from './details/TeamView.svelte'
 	import OutOfSyncBanner from './details/OutOfSyncBanner.svelte'
 	import SyncToCollectionDialog from './details/SyncToCollectionDialog.svelte'
@@ -382,6 +383,7 @@
 
 	{#if selectedView === 'canonical'}
 		<div class="canonical-view">
+			<LinksSection {type} {itemData} />
 			<BasicInfoSection {type} {itemData} />
 			<StatsSection {type} {itemData} {gridUncapLevel} {gridTranscendence} />
 			<SkillsSection {type} {itemData} />
