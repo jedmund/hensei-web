@@ -93,12 +93,12 @@
 				}
 			: null,
 		rings: [
-			character.ring1 ?? { modifier: 1, strength: 0 },
-			character.ring2 ?? { modifier: 2, strength: 0 },
-			character.ring3 ?? { modifier: 0, strength: 0 },
-			character.ring4 ?? { modifier: 0, strength: 0 }
+			character.overMastery?.[0] ?? { modifier: 1, strength: 0 },
+			character.overMastery?.[1] ?? { modifier: 2, strength: 0 },
+			character.overMastery?.[2] ?? { modifier: 0, strength: 0 },
+			character.overMastery?.[3] ?? { modifier: 0, strength: 0 }
 		],
-		earring: character.earring,
+		earring: character.aetherialMastery,
 		perpetuity: character.perpetuity
 	})
 
@@ -252,16 +252,18 @@
 	}
 
 	function getEarringLabel(): string {
-		if (!character.earring || character.earring.modifier === 0) return '—'
-		const stat = getElementalizedEarringStat(character.earring.modifier, characterData?.element)
+		const earring = character.aetherialMastery
+		if (!earring || earring.modifier === 0) return '—'
+		const stat = getElementalizedEarringStat(earring.modifier, characterData?.element)
 		return localizedName(stat?.name)
 	}
 
 	function getEarringValue(): string {
-		if (!character.earring || character.earring.modifier === 0) return ''
-		const stat = getElementalizedEarringStat(character.earring.modifier, characterData?.element)
-		if (!stat) return String(character.earring.strength)
-		return `${character.earring.strength}${stat.suffix}`
+		const earring = character.aetherialMastery
+		if (!earring || earring.modifier === 0) return ''
+		const stat = getElementalizedEarringStat(earring.modifier, characterData?.element)
+		if (!stat) return String(earring.strength)
+		return `${earring.strength}${stat.suffix}`
 	}
 
 	function getAwakeningType(): string {
@@ -279,15 +281,14 @@
 
 	// Check if any rings are equipped (modifier must be a positive number)
 	const hasRings = $derived(
-		(character.ring1?.modifier != null && character.ring1.modifier !== 0) ||
-			(character.ring2?.modifier != null && character.ring2.modifier !== 0) ||
-			(character.ring3?.modifier != null && character.ring3.modifier !== 0) ||
-			(character.ring4?.modifier != null && character.ring4.modifier !== 0)
+		(character.overMastery ?? []).some((ring) => ring?.modifier != null && ring.modifier !== 0)
 	)
 
 	// Check if earring is equipped (modifier must be a positive number)
 	const hasEarring = $derived(
-		character.earring && character.earring.modifier != null && character.earring.modifier !== 0
+		character.aetherialMastery != null &&
+			character.aetherialMastery.modifier != null &&
+			character.aetherialMastery.modifier !== 0
 	)
 
 	// Check if user can view database (role >= 7)
@@ -395,30 +396,11 @@
 					empty={!hasRings}
 					emptyMessage={m.collection_no_ring()}
 				>
-					{#if character.ring1?.modifier != null && character.ring1.modifier !== 0}
-						<DetailRow
-							label={getRingLabel(character.ring1)}
-							value={getRingValue(character.ring1)}
-						/>
-					{/if}
-					{#if character.ring2?.modifier != null && character.ring2.modifier !== 0}
-						<DetailRow
-							label={getRingLabel(character.ring2)}
-							value={getRingValue(character.ring2)}
-						/>
-					{/if}
-					{#if character.ring3?.modifier != null && character.ring3.modifier !== 0}
-						<DetailRow
-							label={getRingLabel(character.ring3)}
-							value={getRingValue(character.ring3)}
-						/>
-					{/if}
-					{#if character.ring4?.modifier != null && character.ring4.modifier !== 0}
-						<DetailRow
-							label={getRingLabel(character.ring4)}
-							value={getRingValue(character.ring4)}
-						/>
-					{/if}
+					{#each character.overMastery ?? [] as ring, i (i)}
+						{#if ring?.modifier != null && ring.modifier !== 0}
+							<DetailRow label={getRingLabel(ring)} value={getRingValue(ring)} />
+						{/if}
+					{/each}
 				</DetailsSection>
 
 				<DetailsSection
