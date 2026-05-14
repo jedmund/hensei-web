@@ -253,8 +253,17 @@
 	}
 
 	// Permission flags for the sync menu buttons.
+	//
+	// Pull (collection → grid) requires party-edit rights. Push (grid →
+	// collection) is also offered to the party owner, since the common case is
+	// "owner of the party is the owner of the linked collection". When that
+	// isn't true (someone editing their own party with a friend's collection
+	// linked) the push request still hits the backend, which rejects unless
+	// the requester is the actual collection_source_user. We accept that
+	// trade-off — surfacing the option is better than silently hiding it from
+	// the user who in practice owns both.
 	const canPull = $derived(isLinkedToCollection && isPartyOwner)
-	const canPush = $derived(isLinkedToCollection && isCollectionOwner)
+	const canPush = $derived(isLinkedToCollection && (isCollectionOwner || isPartyOwner))
 
 	// Captured fields for the pending push action. Set when an inline section
 	// button opens the dialog; cleared back to undefined for the banner's
