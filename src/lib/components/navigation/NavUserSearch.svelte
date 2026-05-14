@@ -127,7 +127,7 @@
 
 <div class="nav-user-search {elementClass}" bind:this={rootEl}>
 	<div class="search-input">
-		<Icon name="search" size={14} />
+		<Icon name="search" size={16} />
 		<input
 			bind:this={inputEl}
 			type="text"
@@ -210,9 +210,7 @@
 		flex: 1;
 		align-items: center;
 		gap: spacing.$unit-half;
-		padding: 0 spacing.$unit-half 0 spacing.$unit;
-		border-radius: layout.$full-corner;
-		background-color: var(--menu-bg-item-hover);
+		padding: 0 calc(spacing.$unit * 1.5);
 		color: var(--menu-text);
 
 		input {
@@ -223,9 +221,9 @@
 			outline: none;
 			color: inherit;
 			font-family: var(--font-family);
-			font-size: typography.$font-small;
+			font-size: typography.$font-tiny;
 			font-weight: typography.$medium;
-			padding: spacing.$unit-half 0;
+			padding: 0;
 
 			&::placeholder {
 				color: var(--menu-text);
@@ -248,7 +246,7 @@
 
 		&:hover {
 			opacity: 1;
-			background-color: var(--menu-bg);
+			background-color: var(--menu-bg-item-hover);
 		}
 	}
 

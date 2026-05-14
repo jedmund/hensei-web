@@ -237,7 +237,7 @@
 							aria-label={m.nav_search_users_aria()}
 							onclick={openSearch}
 						>
-							<Icon name="search" size={14} />
+							<Icon name="search" size={16} />
 						</button>
 					</li>
 					<li>
@@ -327,7 +327,7 @@
 							aria-label={m.nav_search_users_aria()}
 							onclick={openSearch}
 						>
-							<Icon name="search" size={14} />
+							<Icon name="search" size={16} />
 						</button>
 					</li>
 					<li>
