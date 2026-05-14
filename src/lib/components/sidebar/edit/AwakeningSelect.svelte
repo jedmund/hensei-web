@@ -3,7 +3,7 @@
 	import type { Awakening } from '$lib/types/api/entities'
 	import { NO_AWAKENING } from '$lib/types/api/entities'
 	import Select from '$lib/components/ui/Select.svelte'
-	import Input from '$lib/components/ui/Input.svelte'
+	import Slider from '$lib/components/ui/Slider.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import { getAwakeningImage } from '$lib/utils/modifiers'
 	import { localizedName } from '$lib/utils/locale'
@@ -35,9 +35,6 @@
 	// Local state derived from props — overrides are temporary until props change
 	let selectedId = $derived(value ? value.id || value.slug || NO_AWAKENING.id : NO_AWAKENING.id)
 	let localLevel = $derived(level)
-
-	// Error state for level input
-	let levelError = $state('')
 
 	// Helper to get a unique identifier for an awakening (use id if available, fallback to slug)
 	function getAwakeningKey(awk: Awakening): string {
@@ -89,33 +86,8 @@
 		}
 	}
 
-	// Handle level change with validation
-	function handleLevelChange(event: Event) {
-		const input = event.target as HTMLInputElement
-		const newLevel = parseInt(input.value, 10)
-
-		// Validate the level
-		if (isNaN(newLevel)) {
-			levelError = 'Please enter a valid number'
-			return
-		}
-
-		if (newLevel < 1) {
-			levelError = 'Level must be at least 1'
-			return
-		}
-
-		if (newLevel > maxLevel) {
-			levelError = `Level cannot exceed ${maxLevel}`
-			return
-		}
-
-		if (!Number.isInteger(newLevel)) {
-			levelError = 'Level must be a whole number'
-			return
-		}
-
-		levelError = ''
+	// Slider clamps within [1, maxLevel] already, so no extra validation needed.
+	function handleLevelChange(newLevel: number) {
 		localLevel = newLevel
 		onLevelChange?.(newLevel)
 	}
@@ -135,18 +107,16 @@
 	</div>
 
 	{#if !isNoAwakening}
-		<DetailRow label={m.label_level()} noPadding error={levelError || undefined}>
-			<Input
-				type="number"
-				min={1}
-				max={maxLevel}
-				step={1}
-				value={localLevel}
-				oninput={handleLevelChange}
-				contained
-				variant="number"
-				placeholder="1~{maxLevel}"
-			/>
+		<DetailRow label={m.label_level_n({ level: String(localLevel) })} noPadding>
+			<div class="level-slider">
+				<Slider
+					value={localLevel}
+					min={1}
+					max={maxLevel}
+					step={1}
+					onValueChange={handleLevelChange}
+				/>
+			</div>
 		</DetailRow>
 	{/if}
 </div>
@@ -162,5 +132,13 @@
 
 	.awakening-type {
 		flex: 1;
+	}
+
+	// Give the slider enough room to feel draggable rather than crammed into
+	// the DetailRow's right-aligned value cell.
+	.level-slider {
+		min-width: 160px;
+		display: flex;
+		align-items: center;
 	}
 </style>

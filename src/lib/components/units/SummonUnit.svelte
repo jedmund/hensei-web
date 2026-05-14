@@ -7,6 +7,8 @@
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
 	import RemoveUnitDialog from './RemoveUnitDialog.svelte'
+	import SubstituteCountBadge from './SubstituteCountBadge.svelte'
+	import BookmarkOverlay from './BookmarkOverlay.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getSummonImage } from '$lib/features/database/detail/image'
 	import { getPlaceholderImage, getSummonTransformation } from '$lib/utils/images'
@@ -197,7 +199,7 @@
 	class:orphaned={item?.orphaned}
 >
 	{#if item}
-		<UnitMenuContainer showGearButton={true}>
+		<UnitMenuContainer showGearButton={true} gearPosition="top-right">
 			{#snippet trigger()}
 				<div
 					class="focus-ring-wrapper {elementClass}"
@@ -238,6 +240,9 @@
 							/>
 						</div>
 					{/key}
+					{#if inCollection}
+						<BookmarkOverlay element={item?.summon?.element} />
+					{/if}
 					{#if showQuickSummon && ctx?.canEdit()}
 						<button
 							class="quick-summon"
@@ -369,8 +374,13 @@
 		/>
 	{/if}
 	<div class="name" class:not-in-collection={notInCollection}>
-		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
-		{item ? localizedName(item?.summon?.name) : ''}
+		<span class="name-text">{item ? localizedName(item?.summon?.name) : ''}</span>
+		{#if item}
+			<SubstituteCountBadge
+				count={item.substitutions?.length ?? 0}
+				element={item.summon?.element}
+			/>
+		{/if}
 	</div>
 </div>
 
@@ -520,14 +530,18 @@
 	}
 
 	.name {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: spacing.$unit-half;
 		font-size: typography.$font-small;
-		text-align: center;
 		color: var(--text-secondary);
+	}
 
-		:global(span) {
-			display: inline;
-			vertical-align: -4px;
-		}
+	.name-text {
+		min-width: 0;
+		text-align: center;
+		overflow-wrap: anywhere;
 	}
 
 	.orphaned-badge {

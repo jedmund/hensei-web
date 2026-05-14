@@ -8,7 +8,7 @@ import EditWeaponPane from '$lib/components/sidebar/EditWeaponPane.svelte'
 import EditCharacterPane from '$lib/components/sidebar/EditCharacterPane.svelte'
 import EditSummonPane from '$lib/components/sidebar/EditSummonPane.svelte'
 import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
-import { canWeaponBeModified, canCharacterBeModified } from '$lib/utils/modificationDetector'
+import { canCharacterBeModified } from '$lib/utils/modificationDetector'
 import * as m from '$lib/paraglide/messages'
 
 interface DetailsSidebarOptions {
@@ -62,8 +62,10 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 		itemName = getName(summon)
 	}
 
-	// Check if this item can be edited
-	const canEditWeapon = type === 'weapon' && canWeaponBeModified(item as GridWeapon)
+	// Owners can always edit notes (substitutes + description) on any weapon
+	// or character, regardless of whether the item has stat-modifiable fields.
+	// The edit pane itself decides whether to surface the Stats tab.
+	const canEditWeapon = type === 'weapon' && !!(item as GridWeapon).id
 	const canEditCharacter = type === 'character' && canCharacterBeModified(item as GridCharacter)
 	const canEdit = canEditWeapon || canEditCharacter
 
@@ -123,7 +125,10 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 	if (isOwner) {
 		const overflow: OverflowMenuItem[] = []
 		if (onReplace) {
-			overflow.push({ label: m.context_edit({ type: typeLabel }), handler: onReplace })
+			// The "replace" handler swaps the slot to a different item — label it
+			// honestly so it doesn't get confused with the primary Edit action
+			// (which opens the stat/notes edit pane).
+			overflow.push({ label: m.context_replace({ type: typeLabel }), handler: onReplace })
 		}
 		if (onRemove) {
 			overflow.push({

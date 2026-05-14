@@ -1370,6 +1370,7 @@
 	"label_exorcism_hint": "Higher exorcism reduces the negative effect",
 	"label_perpetuity_ring": "Perpetuity Ring",
 	"label_level": "Level",
+	"label_level_n": "Level {level}",
 	"label_value": "Value",
 
 	"toolbar_bold": "Bold",
