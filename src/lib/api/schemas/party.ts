@@ -230,6 +230,9 @@ const GridWeaponSchema = z.object({
 	out_of_sync_fields: z.array(z.string()).nullish(),
 	orphaned: z.boolean().nullish(),
 
+	// Notes sync (mirrors description + substitutions across duplicate weapons)
+	notes_synced: z.boolean().nullish(),
+
 	created_at: z.string().nullish(),
 	updated_at: z.string().nullish()
 })
@@ -254,6 +257,9 @@ const GridSummonSchema = z.object({
 	out_of_sync: z.boolean().nullish(),
 	out_of_sync_fields: z.array(z.string()).nullish(),
 	orphaned: z.boolean().nullish(),
+
+	// Notes sync (mirrors description + substitutions across duplicate summons)
+	notes_synced: z.boolean().nullish(),
 
 	created_at: z.string().nullish(),
 	updated_at: z.string().nullish()
