@@ -6,9 +6,11 @@
 	interface Props {
 		summons?: GridSummon[]
 		offset?: number
+		/** Per-position in-collection map plumbed through from SummonGrid. */
+		collectionStatus?: Map<number, boolean> | null
 	}
 
-	let { summons = [], offset = 4 }: Props = $props()
+	let { summons = [], offset = 4, collectionStatus = null }: Props = $props()
 
 	// Find summons by position (4 and 5 for subaura)
 	let subauraSlots = $derived(() => {
@@ -24,7 +26,16 @@
 	<ul class="grid" id="ExtraSummons">
 		{#each subauraSlots() as summon, i (i)}
 			<li>
-				<SummonUnit item={summon} position={offset + i} />
+				<SummonUnit
+					item={summon}
+					position={offset + i}
+					notInCollection={collectionStatus != null &&
+						!!summon?.summon?.granblueId &&
+						!collectionStatus.get(offset + i)}
+					inCollection={collectionStatus != null &&
+						!!summon?.summon?.granblueId &&
+						!!collectionStatus.get(offset + i)}
+				/>
 			</li>
 		{/each}
 	</ul>

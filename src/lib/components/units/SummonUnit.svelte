@@ -238,11 +238,11 @@
 								alt={localizedName(item?.summon?.name)}
 								src={imageUrl}
 							/>
-							{#if inCollection}
-								<BookmarkOverlay element={item?.summon?.element} />
-							{/if}
 						</div>
 					{/key}
+					{#if inCollection}
+						<BookmarkOverlay element={item?.summon?.element} />
+					{/if}
 					{#if showQuickSummon && ctx?.canEdit()}
 						<button
 							class="quick-summon"

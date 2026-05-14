@@ -284,13 +284,13 @@
 									src={imageUrl}
 								/>
 							{/if}
-							{#if inCollection}
-								<BookmarkOverlay
-									element={item?.character?.element ?? mainWeaponElement ?? partyElement}
-								/>
-							{/if}
 						</div>
 					{/key}
+					{#if inCollection}
+						<BookmarkOverlay
+							element={item?.character?.element ?? mainWeaponElement ?? partyElement}
+						/>
+					{/if}
 				</div>
 			{/snippet}
 

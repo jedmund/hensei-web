@@ -67,7 +67,10 @@
 
 		check(main, -1)
 		subSummonSlots.forEach((s, i) => check(s, i))
-		// Skip friend slot — friend summons aren't owned, so collection doesn't apply
+		// Skip friend slot — friend summons aren't owned, so collection doesn't apply.
+		// Include subaura positions (offset 4, 5) so ExtraSummonsGrid can
+		// surface in-collection status there too.
+		summons.filter((s) => s.position >= 4 && s.position <= 5).forEach((s) => check(s, s.position))
 		return status
 	})
 </script>
@@ -149,7 +152,7 @@
 				<SummonUnit item={friend} position={6} sizeOverride="grid" />
 			</div>
 		</div>
-		<ExtraSummons {summons} offset={4} />
+		<ExtraSummons {summons} offset={4} {collectionStatus} />
 	</div>
 </div>
 
