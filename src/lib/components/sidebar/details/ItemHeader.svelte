@@ -11,6 +11,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { getElementKey } from '$lib/utils/element'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
+	import CollectionPill from './CollectionPill.svelte'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
@@ -19,9 +20,19 @@
 		itemData: any
 		gridUncapLevel: number | null | undefined
 		gridTranscendence: number | null | undefined
+		/** When set, renders a Collection pill in the bottom-left of the image area. */
+		collectionPill?:
+			| {
+					count: number
+					gridCount?: number | undefined
+					isLimitItem?: boolean
+					sourceUsername?: string | undefined
+					isOutOfSync?: boolean
+			  }
+			| undefined
 	}
 
-	let { type, item, itemData, gridUncapLevel, gridTranscendence }: Props = $props()
+	let { type, item, itemData, gridUncapLevel, gridTranscendence, collectionPill }: Props = $props()
 
 	const hasPerpetuity = $derived(type === 'character' && !!(item as GridCharacter).perpetuity)
 
@@ -97,6 +108,19 @@
 				class="perpetuity-overlay"
 				aria-label="Perpetuity Ring"
 			/>
+		{/if}
+		{#if collectionPill}
+			<div class="collection-pill-slot">
+				<CollectionPill
+					{type}
+					element={itemData?.element}
+					count={collectionPill.count}
+					gridCount={collectionPill.gridCount}
+					isLimitItem={collectionPill.isLimitItem}
+					sourceUsername={collectionPill.sourceUsername}
+					isOutOfSync={collectionPill.isOutOfSync}
+				/>
+			</div>
 		{/if}
 	</div>
 </div>
@@ -210,6 +234,13 @@
 				object-fit: contain;
 				z-index: 2;
 				pointer-events: none;
+			}
+
+			.collection-pill-slot {
+				position: absolute;
+				bottom: spacing.$unit;
+				left: spacing.$unit;
+				z-index: 2;
 			}
 		}
 	}
