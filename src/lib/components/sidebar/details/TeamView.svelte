@@ -21,7 +21,11 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { useUpdateGridWeapon } from '$lib/api/mutations/grid.mutations'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
+	import SyncMenuButton from './SyncMenuButton.svelte'
+	import { hasField, hasRow, hasAnyField, type OutOfSyncFields } from '$lib/utils/outOfSync'
 	import * as m from '$lib/paraglide/messages'
+
+	type ElementColor = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
@@ -31,6 +35,16 @@
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic modification status
 		modificationStatus: any
 		isPartyOwner?: boolean
+		/** Camel-cased dotted-key list of out-of-sync fields from the backend. */
+		outOfSyncFields?: OutOfSyncFields
+		canPull?: boolean
+		canPush?: boolean
+		isSyncing?: boolean
+		isSyncingToCollection?: boolean
+		syncElement?: ElementColor | undefined
+		onSyncFromCollection?: () => void
+		/** Called with a localized scope label so the parent can open the push-confirm dialog. */
+		onSyncToCollection?: (scope: string) => void
 	}
 
 	let {
@@ -39,7 +53,15 @@
 		gridUncapLevel,
 		gridTranscendence,
 		modificationStatus,
-		isPartyOwner = false
+		isPartyOwner = false,
+		outOfSyncFields,
+		canPull = false,
+		canPush = false,
+		isSyncing = false,
+		isSyncingToCollection = false,
+		syncElement,
+		onSyncFromCollection,
+		onSyncToCollection
 	}: Props = $props()
 
 	const updateWeaponMutation = useUpdateGridWeapon()
@@ -119,6 +141,39 @@
 		})
 	}
 
+	// Shared props for every inline SyncMenuButton; each call site only adds scope info.
+	const syncCommon = $derived({
+		type,
+		element: syncElement,
+		canPull,
+		canPush,
+		isSyncing,
+		isSyncingToCollection,
+		onSyncFromCollection
+	})
+
+	function pushScope(label: string) {
+		return () => onSyncToCollection?.(label)
+	}
+
+	const isOverMasteryRowOOS = (index: number) => hasRow(outOfSyncFields, 'overMastery', index)
+	const isWeaponKeyOOS = (slot: number) => hasField(outOfSyncFields, `weaponKey${slot + 1}`)
+	const isAxRowOOS = (index: number) => hasRow(outOfSyncFields, 'ax', index)
+	const isBulletRowOOS = (position: number) => hasRow(outOfSyncFields, 'bullets', position)
+
+	// Section-level keys
+	const uncapSectionOOS = $derived(
+		hasAnyField(outOfSyncFields, ['uncapLevel', 'transcendenceStep'])
+	)
+	const awakeningSectionOOS = $derived(
+		hasAnyField(outOfSyncFields, ['awakeningId', 'awakeningLevel'])
+	)
+	const elementSectionOOS = $derived(hasField(outOfSyncFields, 'element'))
+	const befoulmentSectionOOS = $derived(
+		hasAnyField(outOfSyncFields, ['befoulmentModifier', 'befoulmentStrength', 'exorcismLevel'])
+	)
+	const aetherialMasterySectionOOS = $derived(hasField(outOfSyncFields, 'aetherialMastery'))
+
 	// Get uncap capabilities from item data based on type
 	let uncapCaps = $derived.by(() => {
 		if (type === 'character') {
@@ -145,6 +200,14 @@
 	<NotesReadOnlySection {type} {item} {isPartyOwner} mode="filled" />
 
 	<DetailsSection title={m.details_uncap_transcendence()}>
+		{#snippet action()}
+			{#if uncapSectionOOS}
+				<SyncMenuButton
+					{...syncCommon}
+					onSyncToCollection={pushScope(m.details_uncap_transcendence())}
+				/>
+			{/if}
+		{/snippet}
 		<DetailRow label={m.details_max_uncap_level()}>
 			<UncapIndicator
 				{type}
@@ -162,6 +225,11 @@
 
 		{#if modificationStatus.hasAwakening}
 			<DetailsSection title={m.details_awakening()}>
+				{#snippet action()}
+					{#if awakeningSectionOOS}
+						<SyncMenuButton {...syncCommon} onSyncToCollection={pushScope(m.details_awakening())} />
+					{/if}
+				{/snippet}
 				<AwakeningDisplay
 					{...char.awakening ? { awakening: char.awakening } : {}}
 					size="medium"
@@ -172,6 +240,14 @@
 
 		{#if modificationStatus.hasRings}
 			<DetailsSection title={m.details_over_mastery()}>
+				{#snippet action()}
+					{#if hasAnyField( outOfSyncFields, ['overMastery.0', 'overMastery.1', 'overMastery.2', 'overMastery.3'] ) || isOverMasteryRowOOS(0)}
+						<SyncMenuButton
+							{...syncCommon}
+							onSyncToCollection={pushScope(m.details_over_mastery())}
+						/>
+					{/if}
+				{/snippet}
 				<MasteryDisplay
 					rings={char.overMastery}
 					characterElement={char.character?.element}
@@ -183,6 +259,14 @@
 
 		{#if modificationStatus.hasEarring}
 			<DetailsSection title={m.details_aetherial_mastery()}>
+				{#snippet action()}
+					{#if aetherialMasterySectionOOS}
+						<SyncMenuButton
+							{...syncCommon}
+							onSyncToCollection={pushScope(m.details_aetherial_mastery())}
+						/>
+					{/if}
+				{/snippet}
 				<MasteryDisplay
 					earring={char.aetherialMastery}
 					characterElement={char.character?.element}
@@ -202,6 +286,11 @@
 
 		{#if modificationStatus.hasAwakening && weapon.awakening}
 			<DetailsSection title={m.details_awakening()}>
+				{#snippet action()}
+					{#if awakeningSectionOOS}
+						<SyncMenuButton {...syncCommon} onSyncToCollection={pushScope(m.details_awakening())} />
+					{/if}
+				{/snippet}
 				<AwakeningDisplay awakening={weapon.awakening} size="medium" showLevel={true} />
 			</DetailsSection>
 		{/if}
@@ -213,16 +302,21 @@
 				emptyMessage={m.details_element_not_set()}
 			>
 				{#snippet action()}
-					{#if isPartyOwner}
-						<Button
-							variant="element-ghost"
-							size="small"
-							element={weaponElement}
-							onclick={() => (showElementPicker = !showElementPicker)}
-						>
-							{showElementPicker ? m.action_done() : m.action_change()}
-						</Button>
-					{/if}
+					<div class="section-actions">
+						{#if elementSectionOOS}
+							<SyncMenuButton {...syncCommon} onSyncToCollection={pushScope(m.details_element())} />
+						{/if}
+						{#if isPartyOwner}
+							<Button
+								variant="element-ghost"
+								size="small"
+								element={weaponElement}
+								onclick={() => (showElementPicker = !showElementPicker)}
+							>
+								{showElementPicker ? m.action_done() : m.action_change()}
+							</Button>
+						{/if}
+					</div>
 				{/snippet}
 				{#if showElementPicker}
 					<ElementPickerSegmented
@@ -240,32 +334,42 @@
 		{/if}
 
 		{#if seriesHasWeaponKeys(weapon.weapon?.series)}
+			{@const weaponKeysOOS =
+				isWeaponKeyOOS(0) || isWeaponKeyOOS(1) || isWeaponKeyOOS(2) || isWeaponKeyOOS(3)}
 			<DetailsSection
 				title={getWeaponKeyTitle(weapon.weapon?.series)}
 				empty={!modificationStatus.hasWeaponKeys && !showWeaponKeyEditor}
 				emptyMessage={m.details_weapon_keys_not_set()}
 			>
 				{#snippet action()}
-					{#if isPartyOwner}
-						<Button
-							variant="element-ghost"
-							size="small"
-							element={weaponElement}
-							onclick={() => {
-								if (showWeaponKeyEditor) {
-									handleWeaponKeySave()
-								} else {
-									const weapon = item as GridWeapon
-									editKey1 = weapon.weaponKeys?.find((k) => k.slot === 0)?.id
-									editKey2 = weapon.weaponKeys?.find((k) => k.slot === 1)?.id
-									editKey3 = weapon.weaponKeys?.find((k) => k.slot === 2)?.id
-									showWeaponKeyEditor = true
-								}
-							}}
-						>
-							{showWeaponKeyEditor ? m.action_save() : m.action_change()}
-						</Button>
-					{/if}
+					<div class="section-actions">
+						{#if weaponKeysOOS}
+							<SyncMenuButton
+								{...syncCommon}
+								onSyncToCollection={pushScope(getWeaponKeyTitle(weapon.weapon?.series))}
+							/>
+						{/if}
+						{#if isPartyOwner}
+							<Button
+								variant="element-ghost"
+								size="small"
+								element={weaponElement}
+								onclick={() => {
+									if (showWeaponKeyEditor) {
+										handleWeaponKeySave()
+									} else {
+										const weapon = item as GridWeapon
+										editKey1 = weapon.weaponKeys?.find((k) => k.slot === 0)?.id
+										editKey2 = weapon.weaponKeys?.find((k) => k.slot === 1)?.id
+										editKey3 = weapon.weaponKeys?.find((k) => k.slot === 2)?.id
+										showWeaponKeyEditor = true
+									}
+								}}
+							>
+								{showWeaponKeyEditor ? m.action_save() : m.action_change()}
+							</Button>
+						{/if}
+					</div>
 				{/snippet}
 				{#if showWeaponKeyEditor}
 					<div class="key-selects">
@@ -301,7 +405,13 @@
 		{/if}
 
 		{#if modificationStatus.hasAxSkills && weapon.ax?.length}
+			{@const axOOS = isAxRowOOS(0) || isAxRowOOS(1)}
 			<DetailsSection title={m.details_ax_skills()}>
+				{#snippet action()}
+					{#if axOOS}
+						<SyncMenuButton {...syncCommon} onSyncToCollection={pushScope(m.details_ax_skills())} />
+					{/if}
+				{/snippet}
 				{#each weapon.ax as axSkill, i (i)}
 					{#if axSkill.modifier?.id}
 						<DetailRow
@@ -315,6 +425,14 @@
 
 		{#if modificationStatus.hasBefoulment && weapon.befoulment?.modifier}
 			<DetailsSection title={m.details_befoulment()}>
+				{#snippet action()}
+					{#if befoulmentSectionOOS}
+						<SyncMenuButton
+							{...syncCommon}
+							onSyncToCollection={pushScope(m.details_befoulment())}
+						/>
+					{/if}
+				{/snippet}
 				<DetailRow
 					label={weapon.befoulment.modifier.nameEn}
 					value={`${weapon.befoulment.strength}${weapon.befoulment.modifier.suffix ?? ''}`}
@@ -327,7 +445,13 @@
 		{/if}
 
 		{#if modificationStatus.hasBullets && weapon.bullets?.length}
+			{@const bulletsOOS = weapon.bullets.some((b) => isBulletRowOOS(b.position))}
 			<DetailsSection title={m.details_bullets()}>
+				{#snippet action()}
+					{#if bulletsOOS}
+						<SyncMenuButton {...syncCommon} onSyncToCollection={pushScope(m.details_bullets())} />
+					{/if}
+				{/snippet}
 				{#each weapon.bullets as loadout (loadout.position)}
 					<DetailRow label={BULLET_TYPES[loadout.bullet.bulletType] ?? 'Unknown'}>
 						<span class="bullet-value">
@@ -343,6 +467,8 @@
 
 		{#if modificationStatus.hasQuickSummon || modificationStatus.hasFriendSummon}
 			<DetailsSection title={m.details_summon_status()}>
+				<!-- summon's two grid-only toggles (quickSummon, friend) are not tracked
+				     by the collection model, so no sync button is rendered here. -->
 				{#if summon.quickSummon}
 					<DetailRow label={m.details_quick_summon()} value={m.details_enabled()} />
 				{/if}
@@ -401,6 +527,12 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit;
+	}
+
+	.section-actions {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit-half;
 	}
 
 	.bullet-value {
