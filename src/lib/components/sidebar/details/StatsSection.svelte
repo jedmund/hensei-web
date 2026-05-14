@@ -41,7 +41,7 @@
 	const ulbLevel = $derived(flbLevel + 1)
 
 	// Transcendence row shows full uncap + transcendence stage filled to 5.
-	const transcendenceLevel = $derived(type === 'character' && !special ? 6 : 6)
+	const transcendenceLevel = 6
 
 	// Stat value for the transcendence row. Characters store it on the stat
 	// block; weapons/summons store it at the top level.

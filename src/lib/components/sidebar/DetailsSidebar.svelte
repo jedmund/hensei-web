@@ -77,8 +77,9 @@
 
 	// Default-tab rules per type:
 	// - Weapon: Team only when there's substantive team-side content (notes,
-	//   subs, awakening, AX, befoulment, weapon keys, or bullets). Bare
-	//   affordances like an empty key slot or element picker aren't enough.
+	//   subs, awakening, AX, befoulment, weapon keys, bullets, or a picked
+	//   element override). Bare affordances like an empty key slot aren't
+	//   enough.
 	// - Summon: Team only when there are notes or substitutions. Uncap/quick/
 	//   friend flags alone aren't enough to push past the canonical Info view.
 	// - Character: Team whenever there are modifications or notes/subs.
@@ -89,7 +90,8 @@
 					modificationStatus.hasAxSkills ||
 					modificationStatus.hasBefoulment ||
 					modificationStatus.hasWeaponKeys ||
-					modificationStatus.hasBullets
+					modificationStatus.hasBullets ||
+					modificationStatus.hasElement
 			: type === 'summon'
 				? hasNotesOrSubstitutions(item)
 				: modificationStatus.hasModifications || hasNotesOrSubstitutions(item)
