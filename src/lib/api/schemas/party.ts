@@ -330,6 +330,10 @@ export const PartySchemaRaw = z.object({
 	user_id: z.string().nullish(),
 	user: UserSchema.nullish(),
 
+	// Collection source (drives whether grid items can sync to a user's collection)
+	collection_source_user_id: z.string().nullish(),
+	collection_source_user: UserSchema.nullish(),
+
 	// Job details
 	master_level: z.number().nullish(),
 	ultimate_mastery: z.number().nullish(),
