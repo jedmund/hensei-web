@@ -53,6 +53,10 @@
 		justify-content: center;
 		min-width: 16px;
 		height: 16px;
+		// Bumps the gap between name text and the badge from the row's default
+		// $unit-fourth up to $unit-half without changing spacing between other
+		// inline indicators (bookmark, artifact gem).
+		margin-left: $unit-fourth;
 		padding: 0 $unit-half;
 		border-radius: 999px;
 		font-size: $font-tiny;
