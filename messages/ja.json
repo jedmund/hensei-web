@@ -1352,6 +1352,7 @@
 	"label_exorcism_hint": "退魔レベルが高いほどマイナス効果が軽減されます",
 	"label_perpetuity_ring": "久遠の指輪",
 	"label_level": "レベル",
+	"label_level_n": "レベル {level}",
 	"label_value": "値",
 
 	"toolbar_bold": "太字",
