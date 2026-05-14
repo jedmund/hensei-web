@@ -594,7 +594,7 @@
 		flex-wrap: wrap;
 		align-items: center;
 		justify-content: center;
-		gap: spacing.$unit-fourth;
+		gap: spacing.$unit-half;
 		font-size: typography.$font-small;
 		color: var(--text-secondary);
 	}
