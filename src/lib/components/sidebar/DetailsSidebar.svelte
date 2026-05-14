@@ -1,6 +1,10 @@
 <script lang="ts">
 	import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
-	import { detectModifications, canWeaponBeModified } from '$lib/utils/modificationDetector'
+	import {
+		detectModifications,
+		canWeaponBeModified,
+		hasNotesOrSubstitutions
+	} from '$lib/utils/modificationDetector'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import DetailsSidebarSegmentedControl from './modifications/DetailsSidebarSegmentedControl.svelte'
@@ -57,11 +61,12 @@
 
 	let modificationStatus = $derived(detectModifications(type, item))
 
-	// For weapons, only show segmented control if the weapon can be modified
+	// Show segmented control whenever Team view has something to show: actual
+	// modifications, a modifiable weapon, or party-side notes/substitutions.
 	const showSegmentedControl = $derived(
-		type === 'weapon'
+		(type === 'weapon'
 			? canWeaponBeModified(item as GridWeapon)
-			: modificationStatus.hasModifications
+			: modificationStatus.hasModifications) || hasNotesOrSubstitutions(item)
 	)
 
 	// Track selected view - updated reactively based on modifiability
@@ -70,16 +75,34 @@
 	// Track the item ID to detect when switching to a different item
 	let currentItemId = $state<string | undefined>(undefined)
 
+	// Default-tab rules per type:
+	// - Weapon: Team only when there's substantive team-side content (notes,
+	//   subs, awakening, AX, befoulment, weapon keys, or bullets). Bare
+	//   affordances like an empty key slot or element picker aren't enough.
+	// - Summon: Team only when there are notes or substitutions. Uncap/quick/
+	//   friend flags alone aren't enough to push past the canonical Info view.
+	// - Character: Team whenever there are modifications or notes/subs.
+	const defaultToTeamView = $derived(
+		type === 'weapon'
+			? hasNotesOrSubstitutions(item) ||
+					modificationStatus.hasAwakening ||
+					modificationStatus.hasAxSkills ||
+					modificationStatus.hasBefoulment ||
+					modificationStatus.hasWeaponKeys ||
+					modificationStatus.hasBullets
+			: type === 'summon'
+				? hasNotesOrSubstitutions(item)
+				: modificationStatus.hasModifications || hasNotesOrSubstitutions(item)
+	)
+
 	// Update view when switching to a different item
 	$effect(() => {
 		const itemId = item && 'id' in item ? item.id : undefined
 		if (itemId !== currentItemId) {
 			currentItemId = itemId
-			if (!showSegmentedControl) {
-				// Force canonical view for non-modifiable items
+			if (!showSegmentedControl || !defaultToTeamView) {
 				selectedView = 'canonical'
 			} else {
-				// Default to user view for modifiable items
 				selectedView = 'user'
 			}
 		}
@@ -358,7 +381,7 @@
 	{#if selectedView === 'canonical'}
 		<div class="canonical-view">
 			<BasicInfoSection {type} {itemData} />
-			<StatsSection {itemData} {gridUncapLevel} {gridTranscendence} />
+			<StatsSection {type} {itemData} {gridUncapLevel} {gridTranscendence} />
 			<SkillsSection {type} {itemData} />
 		</div>
 	{:else}
