@@ -601,6 +601,14 @@
 		color: var(--text-secondary);
 	}
 
+	// Weapons render the awakening icon at the top-left of the frame, which
+	// collides with the bookmark overlay's default top-anchored position.
+	// Pull the bookmark up so it sits above the awakening icon. Awakening's
+	// own positioning is unchanged.
+	.frame.weapon :global(.bookmark-overlay) {
+		margin-top: calc(spacing.$unit-2x * -1);
+	}
+
 	.name-text {
 		min-width: 0;
 		text-align: center;
