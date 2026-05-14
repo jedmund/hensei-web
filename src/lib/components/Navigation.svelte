@@ -22,6 +22,7 @@
 	import LanguageToggle from './LanguageToggle.svelte'
 	import ThemeToggle from './ThemeToggle.svelte'
 	import NavUserSearch from './navigation/NavUserSearch.svelte'
+	import SlidingSelection from './ui/SlidingSelection.svelte'
 	import { fly } from 'svelte/transition'
 	import { cubicOut } from 'svelte/easing'
 
@@ -123,6 +124,9 @@
 		pillLockedWidth = null
 	}
 
+	// Host ref for the sliding selection indicator (tracks the .selected nav link)
+	let pillDefaultEl = $state<HTMLLIElement | undefined>()
+
 	// Invitations modal state
 	let invitationsModalOpen = $state(false)
 
@@ -206,7 +210,13 @@
 						<NavUserSearch {userElement} onClose={closeSearch} />
 					</li>
 				{:else}
-					<li class="pill-state pill-default" in:fly={STATE_IN} out:fly={STATE_OUT}>
+					<li
+						class="pill-state pill-default"
+						bind:this={pillDefaultEl}
+						in:fly={STATE_IN}
+						out:fly={STATE_OUT}
+					>
+						<SlidingSelection host={pillDefaultEl} trigger={$page.url.pathname} />
 						<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
 						<a href={crewHref} class:selected={isNavSelected(crewHref)} class="crew-link">
 							{m.nav_crew()}
@@ -306,7 +316,13 @@
 						<NavUserSearch onClose={closeSearch} />
 					</li>
 				{:else}
-					<li class="pill-state pill-default" in:fly={STATE_IN} out:fly={STATE_OUT}>
+					<li
+						class="pill-state pill-default"
+						bind:this={pillDefaultEl}
+						in:fly={STATE_IN}
+						out:fly={STATE_OUT}
+					>
+						<SlidingSelection host={pillDefaultEl} trigger={$page.url.pathname} />
 						<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
 						<a href={crewHref} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
 						<a href={collectionHref} class:selected={isNavSelected(collectionHref)}
@@ -637,7 +653,9 @@
 		}
 	}
 
-	// Element-specific SELECTED states for navigation links
+	// Element-specific SELECTED states for navigation links.
+	// In `.pill-default` the background is rendered by <SlidingSelection> via the
+	// `--sliding-selection-bg` CSS variable; other pills keep the static painted background.
 	@each $el in $elements {
 		nav.element-#{$el} {
 			ul a.selected {
@@ -647,10 +665,34 @@
 			}
 		}
 
+		nav.element-#{$el} .pill-default {
+			--sliding-selection-bg: var(--#{$el}-nav-selected-bg);
+
+			a.selected {
+				background-color: transparent;
+			}
+		}
+
 		:global(nav.element-#{$el} .database-nav a.selected) {
 			background-color: var(--#{$el}-nav-selected-bg);
 			color: var(--#{$el}-nav-selected-text);
 			font-weight: typography.$bold;
+		}
+	}
+
+	// `.pill-default` hosts the sliding indicator. It must establish a
+	// positioning context, and its selectable children must sit above the indicator.
+	.pill-default {
+		position: relative;
+
+		> a,
+		> button {
+			position: relative;
+			z-index: 1;
+		}
+
+		> a.selected {
+			background-color: transparent;
 		}
 	}
 
