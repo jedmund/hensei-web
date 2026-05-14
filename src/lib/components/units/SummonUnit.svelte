@@ -7,6 +7,7 @@
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
 	import RemoveUnitDialog from './RemoveUnitDialog.svelte'
+	import SubstituteCountBadge from './SubstituteCountBadge.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getSummonImage } from '$lib/features/database/detail/image'
 	import { getPlaceholderImage, getSummonTransformation } from '$lib/utils/images'
@@ -236,6 +237,7 @@
 								alt={localizedName(item?.summon?.name)}
 								src={imageUrl}
 							/>
+							<SubstituteCountBadge count={item?.substitutions?.length ?? 0} />
 						</div>
 					{/key}
 					{#if showQuickSummon && ctx?.canEdit()}
