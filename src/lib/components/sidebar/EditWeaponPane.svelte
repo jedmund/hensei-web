@@ -18,6 +18,7 @@
 	import { useSyncGridWeapon } from '$lib/api/mutations/grid.mutations'
 	import Icon from '$lib/components/Icon.svelte'
 	import { getElementKey } from '$lib/utils/element'
+	import { canWeaponBeModified } from '$lib/utils/modificationDetector'
 	import { useEditPaneHeader } from './useEditPaneHeader.svelte'
 
 	interface Props {
@@ -31,7 +32,13 @@
 
 	let { paneId, weapon, partyId, partyShortcode, onSave, onCancel }: Props = $props()
 
-	let activeTab = $state<'stats' | 'notes'>('stats')
+	// Weapons without any modifiable accessory (no awakening, befoulment,
+	// AX, weapon keys, bullet slots, or element override) skip the Stats
+	// tab entirely — the edit pane becomes notes-only so the owner can
+	// still configure substitutes and a description.
+	const canEditStats = $derived(canWeaponBeModified(weapon))
+
+	let activeTab = $state<'stats' | 'notes'>(canEditStats ? 'stats' : 'notes')
 
 	let editPaneRef: ReturnType<typeof WeaponEditPane> | undefined = $state()
 
@@ -117,14 +124,16 @@
 		</div>
 	{/if}
 
-	<div class="tabs">
-		<SegmentedControl bind:value={activeTab} variant="background" size="small" grow>
-			<Segment value="stats">{m.tab_stats()}</Segment>
-			<Segment value="notes">{m.tab_notes()}</Segment>
-		</SegmentedControl>
-	</div>
+	{#if canEditStats}
+		<div class="tabs">
+			<SegmentedControl bind:value={activeTab} variant="background" size="small" grow>
+				<Segment value="stats">{m.tab_stats()}</Segment>
+				<Segment value="notes">{m.tab_notes()}</Segment>
+			</SegmentedControl>
+		</div>
+	{/if}
 
-	{#if activeTab === 'stats'}
+	{#if canEditStats && activeTab === 'stats'}
 		<WeaponEditPane
 			bind:this={editPaneRef}
 			{weaponData}
