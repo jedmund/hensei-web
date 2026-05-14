@@ -46,6 +46,12 @@
 		type === 'character' ? ((gridItem as GridCharacter).character?.special ?? false) : false
 	)
 
+	// Hide the transcendence diff row entirely when the underlying entity
+	// can't transcend — there's no meaningful before/after to show.
+	const shouldRender = $derived(
+		fieldKey !== 'transcendenceStep' || uncapCaps.transcendence === true
+	)
+
 	function awakeningText(
 		item: GridCharacter | GridWeapon | CollectionCharacter | CollectionWeapon
 	) {
@@ -112,136 +118,136 @@
 	})
 </script>
 
-<div class="diff-row">
-	<span class="diff-label">{label}</span>
-	<div class="diff-values">
-		{#if fieldKey === 'uncapLevel'}
-			<UncapIndicator
-				{type}
-				uncapLevel={collectionItem.uncapLevel}
-				transcendenceStage={collectionItem.transcendenceStep}
-				flb={uncapCaps.flb}
-				ulb={uncapCaps.ulb}
-				transcendence={uncapCaps.transcendence}
-				{special}
-				hideTranscendence
-				size="small"
-			/>
-			<Icon name="arrow-right" size={14} class="diff-arrow" />
-			<UncapIndicator
-				{type}
-				uncapLevel={gridItem.uncapLevel}
-				transcendenceStage={gridItem.transcendenceStep}
-				flb={uncapCaps.flb}
-				ulb={uncapCaps.ulb}
-				transcendence={uncapCaps.transcendence}
-				{special}
-				hideTranscendence
-				size="small"
-			/>
-		{:else if fieldKey === 'transcendenceStep'}
-			<span class="trans-row">
-				<TranscendenceStar stage={collectionItem.transcendenceStep ?? 0} {type} size="small" />
-				<span class="trans-level"
-					>{m.details_transcendence_level({
-						level: String(collectionItem.transcendenceStep ?? 0)
-					})}</span
-				>
-			</span>
-			<Icon name="arrow-right" size={14} class="diff-arrow" />
-			<span class="trans-row">
-				<TranscendenceStar stage={gridItem.transcendenceStep ?? 0} {type} size="small" />
-				<span class="trans-level"
-					>{m.details_transcendence_level({
-						level: String(gridItem.transcendenceStep ?? 0)
-					})}</span
-				>
-			</span>
-		{:else if fieldKey === 'perpetuity'}
-			<span class="text-value">
-				{(collectionItem as CollectionCharacter).perpetuity
-					? m.sync_diff_enabled()
-					: m.sync_diff_disabled()}
-			</span>
-			<Icon name="arrow-right" size={14} class="diff-arrow" />
-			<span class="text-value">
-				{(gridItem as GridCharacter).perpetuity ? m.sync_diff_enabled() : m.sync_diff_disabled()}
-			</span>
-		{:else if fieldKey === 'awakeningId' || fieldKey === 'awakeningLevel'}
-			<span class="text-value">{awakeningText(collectionItem as CollectionCharacter)}</span>
-			<Icon name="arrow-right" size={14} class="diff-arrow" />
-			<span class="text-value">{awakeningText(gridItem as GridCharacter)}</span>
-		{:else if fieldKey.startsWith('overMastery.')}
-			{@const idx = Number(fieldKey.split('.')[1])}
-			<span class="text-value">
-				{ringText((collectionItem as CollectionCharacter).overMastery?.[idx])}
-			</span>
-			<Icon name="arrow-right" size={14} class="diff-arrow" />
-			<span class="text-value">
-				{ringText((gridItem as GridCharacter).overMastery?.[idx])}
-			</span>
-		{:else if fieldKey === 'aetherialMastery'}
-			<span class="text-value">
-				{ringText((collectionItem as CollectionCharacter).aetherialMastery)}
-			</span>
-			<Icon name="arrow-right" size={14} class="diff-arrow" />
-			<span class="text-value">
-				{ringText((gridItem as GridCharacter).aetherialMastery)}
-			</span>
-		{:else if fieldKey === 'element'}
-			<ElementLabel element={(collectionItem as CollectionWeapon).element} size="small" />
-			<Icon name="arrow-right" size={14} class="diff-arrow" />
-			<ElementLabel element={(gridItem as GridWeapon).element} size="small" />
-		{:else if fieldKey.startsWith('weaponKey')}
-			{@const slot = Number(fieldKey.slice('weaponKey'.length))}
-			<span class="text-value">{weaponKeyName(slot, collectionItem as CollectionWeapon)}</span>
-			<Icon name="arrow-right" size={14} class="diff-arrow" />
-			<span class="text-value">{weaponKeyName(slot, gridItem as GridWeapon)}</span>
-		{:else if fieldKey.startsWith('ax.')}
-			{@const idx = Number(fieldKey.split('.')[1])}
-			<span class="text-value">{axText(idx, collectionItem as CollectionWeapon)}</span>
-			<Icon name="arrow-right" size={14} class="diff-arrow" />
-			<span class="text-value">{axText(idx, gridItem as GridWeapon)}</span>
-		{:else if fieldKey === 'befoulmentModifier'}
-			<span class="text-value">
-				{statModifierName((collectionItem as CollectionWeapon).befoulment?.modifier)}
-			</span>
-			<Icon name="arrow-right" size={14} class="diff-arrow" />
-			<span class="text-value">
-				{statModifierName((gridItem as GridWeapon).befoulment?.modifier)}
-			</span>
-		{:else if fieldKey === 'befoulmentStrength'}
-			<span class="text-value">
-				{(collectionItem as CollectionWeapon).befoulment?.strength ?? m.sync_diff_empty()}
-			</span>
-			<Icon name="arrow-right" size={14} class="diff-arrow" />
-			<span class="text-value">
-				{(gridItem as GridWeapon).befoulment?.strength ?? m.sync_diff_empty()}
-			</span>
-		{:else if fieldKey === 'exorcismLevel'}
-			<span class="text-value">
-				{(collectionItem as CollectionWeapon).befoulment?.exorcismLevel ?? 0}
-			</span>
-			<Icon name="arrow-right" size={14} class="diff-arrow" />
-			<span class="text-value">
-				{(gridItem as GridWeapon).befoulment?.exorcismLevel ?? 0}
-			</span>
-		{:else if fieldKey.startsWith('bullets.')}
-			{@const pos = Number(fieldKey.split('.')[1])}
-			{@const fromBullet = bulletAtPosition(pos, collectionItem as CollectionWeapon)}
-			{@const toBullet = bulletAtPosition(pos, gridItem as GridWeapon)}
-			<span class="text-value">
-				{fromBullet ? localizedName(fromBullet.bullet.name) : m.sync_diff_empty()}
-			</span>
-			<Icon name="arrow-right" size={14} class="diff-arrow" />
-			<span class="text-value">
-				{toBullet ? localizedName(toBullet.bullet.name) : m.sync_diff_empty()}
-			</span>
-		{:else}
-			<span class="text-value">{m.sync_diff_empty()}</span>
-		{/if}
+{#if shouldRender}
+	<div class="diff-row">
+		<span class="diff-label">{label}</span>
+		<div class="diff-values">
+			{#if fieldKey === 'uncapLevel'}
+				<UncapIndicator
+					{type}
+					uncapLevel={collectionItem.uncapLevel}
+					transcendenceStage={collectionItem.transcendenceStep}
+					flb={uncapCaps.flb}
+					ulb={uncapCaps.ulb}
+					transcendence={uncapCaps.transcendence}
+					{special}
+					hideTranscendence
+				/>
+				<Icon name="arrow-right" size={14} class="diff-arrow" />
+				<UncapIndicator
+					{type}
+					uncapLevel={gridItem.uncapLevel}
+					transcendenceStage={gridItem.transcendenceStep}
+					flb={uncapCaps.flb}
+					ulb={uncapCaps.ulb}
+					transcendence={uncapCaps.transcendence}
+					{special}
+					hideTranscendence
+				/>
+			{:else if fieldKey === 'transcendenceStep'}
+				<span class="trans-row">
+					<TranscendenceStar stage={collectionItem.transcendenceStep ?? 0} {type} />
+					<span class="trans-level"
+						>{m.details_transcendence_level({
+							level: String(collectionItem.transcendenceStep ?? 0)
+						})}</span
+					>
+				</span>
+				<Icon name="arrow-right" size={14} class="diff-arrow" />
+				<span class="trans-row">
+					<TranscendenceStar stage={gridItem.transcendenceStep ?? 0} {type} />
+					<span class="trans-level"
+						>{m.details_transcendence_level({
+							level: String(gridItem.transcendenceStep ?? 0)
+						})}</span
+					>
+				</span>
+			{:else if fieldKey === 'perpetuity'}
+				<span class="text-value">
+					{(collectionItem as CollectionCharacter).perpetuity
+						? m.sync_diff_enabled()
+						: m.sync_diff_disabled()}
+				</span>
+				<Icon name="arrow-right" size={14} class="diff-arrow" />
+				<span class="text-value">
+					{(gridItem as GridCharacter).perpetuity ? m.sync_diff_enabled() : m.sync_diff_disabled()}
+				</span>
+			{:else if fieldKey === 'awakeningId' || fieldKey === 'awakeningLevel'}
+				<span class="text-value">{awakeningText(collectionItem as CollectionCharacter)}</span>
+				<Icon name="arrow-right" size={14} class="diff-arrow" />
+				<span class="text-value">{awakeningText(gridItem as GridCharacter)}</span>
+			{:else if fieldKey.startsWith('overMastery.')}
+				{@const idx = Number(fieldKey.split('.')[1])}
+				<span class="text-value">
+					{ringText((collectionItem as CollectionCharacter).overMastery?.[idx])}
+				</span>
+				<Icon name="arrow-right" size={14} class="diff-arrow" />
+				<span class="text-value">
+					{ringText((gridItem as GridCharacter).overMastery?.[idx])}
+				</span>
+			{:else if fieldKey === 'aetherialMastery'}
+				<span class="text-value">
+					{ringText((collectionItem as CollectionCharacter).aetherialMastery)}
+				</span>
+				<Icon name="arrow-right" size={14} class="diff-arrow" />
+				<span class="text-value">
+					{ringText((gridItem as GridCharacter).aetherialMastery)}
+				</span>
+			{:else if fieldKey === 'element'}
+				<ElementLabel element={(collectionItem as CollectionWeapon).element} size="small" />
+				<Icon name="arrow-right" size={14} class="diff-arrow" />
+				<ElementLabel element={(gridItem as GridWeapon).element} size="small" />
+			{:else if fieldKey.startsWith('weaponKey')}
+				{@const slot = Number(fieldKey.slice('weaponKey'.length))}
+				<span class="text-value">{weaponKeyName(slot, collectionItem as CollectionWeapon)}</span>
+				<Icon name="arrow-right" size={14} class="diff-arrow" />
+				<span class="text-value">{weaponKeyName(slot, gridItem as GridWeapon)}</span>
+			{:else if fieldKey.startsWith('ax.')}
+				{@const idx = Number(fieldKey.split('.')[1])}
+				<span class="text-value">{axText(idx, collectionItem as CollectionWeapon)}</span>
+				<Icon name="arrow-right" size={14} class="diff-arrow" />
+				<span class="text-value">{axText(idx, gridItem as GridWeapon)}</span>
+			{:else if fieldKey === 'befoulmentModifier'}
+				<span class="text-value">
+					{statModifierName((collectionItem as CollectionWeapon).befoulment?.modifier)}
+				</span>
+				<Icon name="arrow-right" size={14} class="diff-arrow" />
+				<span class="text-value">
+					{statModifierName((gridItem as GridWeapon).befoulment?.modifier)}
+				</span>
+			{:else if fieldKey === 'befoulmentStrength'}
+				<span class="text-value">
+					{(collectionItem as CollectionWeapon).befoulment?.strength ?? m.sync_diff_empty()}
+				</span>
+				<Icon name="arrow-right" size={14} class="diff-arrow" />
+				<span class="text-value">
+					{(gridItem as GridWeapon).befoulment?.strength ?? m.sync_diff_empty()}
+				</span>
+			{:else if fieldKey === 'exorcismLevel'}
+				<span class="text-value">
+					{(collectionItem as CollectionWeapon).befoulment?.exorcismLevel ?? 0}
+				</span>
+				<Icon name="arrow-right" size={14} class="diff-arrow" />
+				<span class="text-value">
+					{(gridItem as GridWeapon).befoulment?.exorcismLevel ?? 0}
+				</span>
+			{:else if fieldKey.startsWith('bullets.')}
+				{@const pos = Number(fieldKey.split('.')[1])}
+				{@const fromBullet = bulletAtPosition(pos, collectionItem as CollectionWeapon)}
+				{@const toBullet = bulletAtPosition(pos, gridItem as GridWeapon)}
+				<span class="text-value">
+					{fromBullet ? localizedName(fromBullet.bullet.name) : m.sync_diff_empty()}
+				</span>
+				<Icon name="arrow-right" size={14} class="diff-arrow" />
+				<span class="text-value">
+					{toBullet ? localizedName(toBullet.bullet.name) : m.sync_diff_empty()}
+				</span>
+			{:else}
+				<span class="text-value">{m.sync_diff_empty()}</span>
+			{/if}
+		</div>
 	</div>
-</div>
+{/if}
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;

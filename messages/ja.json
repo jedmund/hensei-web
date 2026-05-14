@@ -643,6 +643,8 @@
 	"sync_diff_enabled": "有効",
 	"sync_diff_disabled": "無効",
 	"sync_diff_empty": "—",
+	"sync_diff_column_collection": "コレクション",
+	"sync_diff_column_team": "編成",
 	"type_character": "キャラクター",
 	"type_weapon": "武器",
 	"type_summon": "召喚石",
