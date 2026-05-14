@@ -7,6 +7,7 @@
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
 	import RemoveUnitDialog from './RemoveUnitDialog.svelte'
+	import SubstituteCountBadge from './SubstituteCountBadge.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
@@ -282,6 +283,7 @@
 									src={imageUrl}
 								/>
 							{/if}
+							<SubstituteCountBadge count={item?.substitutions?.length ?? 0} />
 						</div>
 					{/key}
 				</div>

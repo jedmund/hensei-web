@@ -7,6 +7,7 @@
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
 	import RemoveUnitDialog from './RemoveUnitDialog.svelte'
+	import SubstituteCountBadge from './SubstituteCountBadge.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getWeaponImage } from '$lib/features/database/detail/image'
@@ -300,6 +301,7 @@
 								src={imageUrl}
 								onerror={(e) => handleImageFallback(e, fallbackUrl)}
 							/>
+							<SubstituteCountBadge count={item?.substitutions?.length ?? 0} />
 						</div>
 					{/key}
 				</div>
