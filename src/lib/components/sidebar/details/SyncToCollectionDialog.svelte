@@ -1,38 +1,75 @@
 <script lang="ts">
+	import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
+	import type {
+		CollectionCharacter,
+		CollectionWeapon,
+		CollectionSummon
+	} from '$lib/types/api/collection'
 	import Dialog from '../../ui/Dialog.svelte'
 	import ModalHeader from '../../ui/ModalHeader.svelte'
 	import ModalBody from '../../ui/ModalBody.svelte'
 	import ModalFooter from '../../ui/ModalFooter.svelte'
+	import SyncFieldDiff from './SyncFieldDiff.svelte'
 	import * as m from '$lib/paraglide/messages'
+
+	type GridItem = GridCharacter | GridWeapon | GridSummon
+	type CollectionItem = CollectionCharacter | CollectionWeapon | CollectionSummon
 
 	interface Props {
 		open: boolean
 		type: 'character' | 'weapon' | 'summon'
 		/** Localized phrase describing what's being saved (e.g. "Weapon Key 2",
-		 * "Uncap & Transcendence"). Falls back to "all settings" when omitted. */
+		 * "Uncap & Transcendence"). Falls back to the "settings" scope when omitted. */
 		scope?: string | undefined
+		/** Localized character/weapon/summon name used in the body copy. */
+		name?: string | undefined
+		/** Camel-cased dotted-key list of fields that will be pushed. */
+		fields?: string[] | undefined
+		/** Grid item providing the "after" (new) values. */
+		gridItem?: GridItem | undefined
+		/** Collection item providing the "before" (current) values. */
+		collectionItem?: CollectionItem | undefined
 		onConfirm: () => Promise<void>
 	}
 
-	let { open = $bindable(false), type, scope, onConfirm }: Props = $props()
-
-	const typeLabel = $derived(
-		type === 'character'
-			? m.type_character()
-			: type === 'weapon'
-				? m.type_weapon()
-				: m.type_summon()
-	)
+	let {
+		open = $bindable(false),
+		type,
+		scope,
+		name,
+		fields,
+		gridItem,
+		collectionItem,
+		onConfirm
+	}: Props = $props()
 
 	const scopeLabel = $derived(scope ?? m.sync_to_collection_scope_all())
+	const nameLabel = $derived(
+		name ??
+			(type === 'character'
+				? m.type_character()
+				: type === 'weapon'
+					? m.type_weapon()
+					: m.type_summon())
+	)
+
+	const diffFields = $derived(fields && fields.length > 0 ? fields : [])
+	const canShowDiff = $derived(diffFields.length > 0 && !!gridItem && !!collectionItem)
 </script>
 
 <Dialog bind:open>
 	<ModalHeader title={m.sync_to_collection_title()} />
 	<ModalBody>
 		<p class="sync-message">
-			{m.sync_to_collection_body({ type: typeLabel, scope: scopeLabel })}
+			{m.sync_to_collection_body({ name: nameLabel, section: scopeLabel })}
 		</p>
+		{#if canShowDiff && gridItem && collectionItem}
+			<div class="diff-list">
+				{#each diffFields as fieldKey (fieldKey)}
+					<SyncFieldDiff {fieldKey} {type} {gridItem} {collectionItem} />
+				{/each}
+			</div>
+		{/if}
 	</ModalBody>
 	<ModalFooter
 		onCancel={() => {
@@ -51,11 +88,20 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
+	@use '$src/themes/layout' as *;
 
 	.sync-message {
-		margin: 0;
+		margin: 0 0 $unit-2x;
 		font-size: $font-regular;
 		line-height: 1.4;
 		color: var(--text-primary);
+	}
+
+	.diff-list {
+		display: flex;
+		flex-direction: column;
+		padding: $unit-2x;
+		background: var(--button-contained-bg);
+		border-radius: $card-corner;
 	}
 </style>
