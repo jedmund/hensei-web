@@ -373,7 +373,10 @@
 		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
 		{item ? localizedName(item?.summon?.name) : ''}
 		{#if item}
-			<SubstituteCountBadge count={item.substitutions?.length ?? 0} />
+			<SubstituteCountBadge
+				count={item.substitutions?.length ?? 0}
+				element={item.summon?.element}
+			/>
 		{/if}
 	</div>
 </div>

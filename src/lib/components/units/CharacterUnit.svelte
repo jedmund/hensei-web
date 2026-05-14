@@ -391,7 +391,10 @@
 			<Icon name="gem" size={12} class="artifact-indicator" />
 		{/if}
 		{#if item}
-			<SubstituteCountBadge count={item.substitutions?.length ?? 0} />
+			<SubstituteCountBadge
+				count={item.substitutions?.length ?? 0}
+				element={item.character?.element ?? mainWeaponElement ?? partyElement}
+			/>
 		{/if}
 	</div>
 	{#if item?.character}

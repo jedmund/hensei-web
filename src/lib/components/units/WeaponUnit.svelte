@@ -414,7 +414,10 @@
 		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
 		{item ? localizedName(item?.weapon?.name) : ''}
 		{#if item}
-			<SubstituteCountBadge count={item.substitutions?.length ?? 0} />
+			<SubstituteCountBadge
+				count={item.substitutions?.length ?? 0}
+				element={item.element || item.weapon?.element}
+			/>
 		{/if}
 	</div>
 </div>
