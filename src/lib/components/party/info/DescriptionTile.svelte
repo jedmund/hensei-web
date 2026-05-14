@@ -435,7 +435,6 @@
 					{#if isEditor && difficultyPreviewHref}
 						<a
 							class="token difficulty editor-link"
-							style:background={difficulty.tier.color || undefined}
 							href={difficultyPreviewHref}
 							target="_blank"
 							rel="noopener"
@@ -443,7 +442,7 @@
 							{difficulty.tier.name}
 						</a>
 					{:else}
-						<span class="token difficulty" style:background={difficulty.tier.color || undefined}>
+						<span class="token difficulty">
 							{difficulty.tier.name}
 						</span>
 					{/if}
