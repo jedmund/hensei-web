@@ -210,7 +210,7 @@
 		flex: 1;
 		align-items: center;
 		gap: spacing.$unit-half;
-		padding: 0 calc(spacing.$unit * 1.5);
+		padding: spacing.$unit calc(spacing.$unit * 1.5);
 		color: var(--menu-text);
 
 		input {
@@ -219,15 +219,15 @@
 			background: transparent;
 			border: none;
 			outline: none;
-			color: inherit;
+			color: var(--menu-text);
 			font-family: var(--font-family);
-			font-size: typography.$font-tiny;
+			font-size: typography.$font-small;
 			font-weight: typography.$medium;
+			line-height: 1.15;
 			padding: 0;
 
 			&::placeholder {
-				color: var(--menu-text);
-				opacity: 0.6;
+				color: var(--text-tertiary);
 			}
 		}
 	}
@@ -239,14 +239,18 @@
 		background: transparent;
 		border: none;
 		border-radius: layout.$full-corner;
-		padding: spacing.$unit-half;
+		padding: 0;
 		cursor: pointer;
-		color: var(--menu-text);
-		opacity: 0.7;
+		color: var(--text-tertiary);
+		transition: color effects.$duration-quick ease;
 
 		&:hover {
-			opacity: 1;
-			background-color: var(--menu-bg-item-hover);
+			color: var(--menu-text);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--accent-blue-focus);
+			outline-offset: 2px;
 		}
 	}
 
@@ -257,18 +261,15 @@
 		left: 0;
 		right: 0;
 		min-width: 240px;
-		padding: spacing.$unit-half;
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: spacing.$unit-quarter;
 	}
 
 	.search-empty {
-		padding: spacing.$unit spacing.$unit-2x;
+		padding: spacing.$unit calc(spacing.$unit * 1.5);
 		font-size: typography.$font-small;
-		color: var(--menu-text);
-		opacity: 0.6;
-		text-align: center;
+		color: var(--text-tertiary);
 	}
 
 	.search-result {
@@ -276,17 +277,27 @@
 		align-items: center;
 		gap: spacing.$unit;
 		width: 100%;
-		padding: spacing.$unit-half spacing.$unit;
+		padding: spacing.$unit calc(spacing.$unit * 1.5);
 		background: transparent;
 		border: none;
-		border-radius: layout.$input-corner;
+		border-radius: layout.$bubble-menu-item-corner;
 		cursor: pointer;
 		text-align: left;
 		font-family: var(--font-family);
+		font-size: typography.$font-small;
+		font-weight: typography.$medium;
 		color: var(--menu-text);
+		transition: background-color effects.$duration-quick ease;
+		outline: none;
 
+		&:hover,
 		&.active {
 			background-color: var(--menu-bg-item-hover);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--accent-blue-focus);
+			outline-offset: -2px;
 		}
 	}
 
@@ -298,15 +309,15 @@
 	}
 
 	.result-avatar {
-		width: 24px;
-		height: 24px;
-		border-radius: 50%;
+		width: spacing.$unit-3x;
+		height: spacing.$unit-3x;
+		border-radius: layout.$full-corner;
 		object-fit: cover;
 		flex-shrink: 0;
 	}
 
 	.avatar-placeholder {
-		background-color: var(--menu-bg);
+		background-color: var(--placeholder-bg);
 		display: block;
 	}
 
@@ -320,6 +331,7 @@
 	.result-display-name {
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;
+		color: inherit;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
@@ -327,9 +339,15 @@
 
 	.result-username {
 		font-size: typography.$font-tiny;
-		opacity: 0.7;
+		font-weight: typography.$normal;
+		color: var(--text-tertiary);
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
+
+	.search-result.active .result-username {
+		color: inherit;
+		opacity: 0.85;
 	}
 </style>
