@@ -85,6 +85,9 @@ export interface GridWeapon {
 	collectionWeaponId?: string
 	/** Whether the grid item is out of sync with its collection source */
 	outOfSync?: boolean
+	/** Camel-cased dotted-key list of fields that drift from the linked collection item.
+	 * E.g. ['uncapLevel', 'weaponKey2', 'bullets.0']. Empty/undefined when in sync. */
+	outOfSyncFields?: string[]
 	/** Whether the linked collection item has been deleted (item is orphaned) */
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
@@ -118,6 +121,9 @@ export interface GridCharacter {
 	collectionCharacterId?: string
 	/** Whether the grid item is out of sync with its collection source */
 	outOfSync?: boolean
+	/** Camel-cased dotted-key list of fields that drift from the linked collection item.
+	 * E.g. ['uncapLevel', 'overMastery.1']. Empty/undefined when in sync. */
+	outOfSyncFields?: string[]
 	/** Whether the linked collection item has been deleted (item is orphaned) */
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
@@ -147,6 +153,9 @@ export interface GridSummon {
 	collectionSummonId?: string
 	/** Whether the grid item is out of sync with its collection source */
 	outOfSync?: boolean
+	/** Camel-cased dotted-key list of fields that drift from the linked collection item.
+	 * E.g. ['uncapLevel', 'transcendenceStep']. Empty/undefined when in sync. */
+	outOfSyncFields?: string[]
 	/** Whether the linked collection item has been deleted (item is orphaned) */
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
