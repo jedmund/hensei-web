@@ -563,7 +563,7 @@
 		position: absolute;
 		z-index: effects.$z-tooltip;
 		top: calc(spacing.$unit * -1);
-		right: spacing.$unit-3x;
+		right: 44px;
 		width: spacing.$unit-4x;
 		height: spacing.$unit-4x;
 		padding: 0;
