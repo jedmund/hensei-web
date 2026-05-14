@@ -153,6 +153,15 @@
 	--notice-grey-button-text-disabled: #{colors.$notice--grey--button--text--light--disabled};
 	--notice-grey-button-bg-disabled: #{colors.$notice--grey--button--bg--light--disabled};
 
+	// Light - Tags / chips
+	// Default = subtle / flat surface for non-interactive tags.
+	// Contained = emphasis variant used by clickable / linking tags; sits
+	// against the page rather than blending into it, with a stronger hover.
+	--tag-bg: #{colors.$grey-85};
+	--tag-bg-hover: #{colors.$grey-75};
+	--tag-contained-bg: #{colors.$grey-85};
+	--tag-contained-bg-hover: #{colors.$grey-70};
+
 	// Light - Buttons
 	--button-bg: #{colors.$button--bg--light};
 	--button-bg-hover: #{colors.$button--bg--light--hover};
@@ -663,6 +672,16 @@ html[data-theme='dark'] {
 	--notice-grey-button-text-hover: #{colors.$notice--grey--button--text--dark--hover};
 	--notice-grey-button-text-disabled: #{colors.$notice--grey--button--text--dark--disabled};
 	--notice-grey-button-bg-disabled: #{colors.$notice--grey--button--bg--dark--disabled};
+
+	// Dark - Tags / chips
+	// Default tag matches the sidebar/card surface for ambient labels.
+	// Contained variant is pure black, sitting clearly below the sidebar bg;
+	// hover steps to grey-15 — still darker than the surrounding panel so it
+	// doesn't disappear into it.
+	--tag-bg: #{colors.$grey-20};
+	--tag-bg-hover: #{colors.$grey-30};
+	--tag-contained-bg: #{colors.$grey-00};
+	--tag-contained-bg-hover: #{colors.$grey-10};
 
 	// Dark - Buttons
 	--button-bg: #{colors.$button--bg--dark};

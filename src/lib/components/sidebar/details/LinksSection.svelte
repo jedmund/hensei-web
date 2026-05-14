@@ -67,10 +67,10 @@
 </script>
 
 {#if links.length > 0}
-	<ul class="link-chips">
+	<ul class="link-tags">
 		{#each links as link (link.key)}
 			<li>
-				<a class="chip" href={link.href} target="_blank" rel="noopener noreferrer">
+				<a class="tag" href={link.href} target="_blank" rel="noopener noreferrer">
 					<span class="icon">
 						{#if link.iconSrc}
 							<img src={link.iconSrc} alt="" />
@@ -90,7 +90,7 @@
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
 
-	.link-chips {
+	.link-tags {
 		display: flex;
 		flex-wrap: wrap;
 		gap: spacing.$unit;
@@ -99,24 +99,21 @@
 		list-style: none;
 	}
 
-	.chip {
+	.tag {
 		display: inline-flex;
 		align-items: center;
 		gap: spacing.$unit-three-quarter;
 		padding: spacing.$unit-three-quarter calc(spacing.$unit * 1.5);
 		border-radius: layout.$full-corner;
-		background: var(--button-bg);
+		background: var(--tag-contained-bg);
 		color: var(--text-primary);
 		font-size: typography.$font-button;
 		font-weight: typography.$medium;
 		text-decoration: none;
-		transition:
-			background 0.15s,
-			transform 0.15s;
+		transition: background 0.15s;
 
 		&:hover {
-			background: var(--button-bg-hover, var(--button-bg));
-			transform: translateY(-1px);
+			background: var(--tag-contained-bg-hover);
 		}
 	}
 

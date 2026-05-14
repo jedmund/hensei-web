@@ -332,9 +332,17 @@ export function handleImageFallback(event: Event, fallbackUrl?: string): void {
 
 /**
  * Get weapon base image (PNG)
+ * @param transformation - Optional transformation suffix ('02' / '03' for transcendence stages)
  */
-export function getWeaponBaseImage(id: string | number | null | undefined): string {
-	return getImageUrl('weapon', id, 'base')
+export function getWeaponBaseImage(
+	id: string | number | null | undefined,
+	transformation?: string
+): string {
+	if (!id) return getPlaceholderImage('weapon', 'base')
+	if (!transformation) return getImageUrl('weapon', id, 'base')
+	const directory = getImageDirectory('weapon', 'base')
+	const extension = getFileExtension('weapon', 'base')
+	return `${getBasePath()}/${directory}/${id}_${transformation}${extension}`
 }
 
 /**
@@ -364,9 +372,17 @@ export function getSummonImage(
 
 /**
  * Get summon detail image (PNG)
+ * @param transformation - Optional transformation suffix ('02' FLB/ULB, '03'/'04' transcendence)
  */
-export function getSummonDetailImage(id: string | number | null | undefined): string {
-	return getImageUrl('summon', id, 'detail')
+export function getSummonDetailImage(
+	id: string | number | null | undefined,
+	transformation?: string
+): string {
+	if (!id) return getPlaceholderImage('summon', 'detail')
+	if (!transformation) return getImageUrl('summon', id, 'detail')
+	const directory = getImageDirectory('summon', 'detail')
+	const extension = getFileExtension('summon', 'detail')
+	return `${getBasePath()}/${directory}/${id}_${transformation}${extension}`
 }
 
 /**
