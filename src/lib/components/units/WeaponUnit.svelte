@@ -22,7 +22,6 @@
 		openDetailsSidebar,
 		openWeaponEditSidebar
 	} from '$lib/features/details/openDetailsSidebar.svelte'
-	import { canWeaponBeModified } from '$lib/utils/modificationDetector'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName } from '$lib/utils/element'
 	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
@@ -132,7 +131,9 @@
 		await ctx.services.gridService.removeWeapon(party.id, item.id, editKey || undefined)
 	}, 'Failed to remove weapon')
 
-	let canEditItem = $derived(canWeaponBeModified(item))
+	// Edit is always available for owners — non-modifiable weapons still get
+	// the notes-only pane so substitutes/description can be configured.
+	let canEditItem = $derived(!!item?.id)
 
 	function getSaveCallback() {
 		return async (id: string, updates: Partial<GridWeapon>) => {
