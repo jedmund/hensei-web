@@ -21,11 +21,11 @@ export interface CollectionCharacter {
 	uncapLevel: number
 	transcendenceStep: number
 	perpetuity: boolean
-	ring1: ExtendedMastery | null
-	ring2: ExtendedMastery | null
-	ring3: ExtendedMastery | null
-	ring4: ExtendedMastery | null
-	earring: ExtendedMastery | null
+	/** Positional ring loadout shared with GridCharacter — always length 4.
+	 * Index 0=ATK, 1=HP, 2/3=optional. Empty slots are null. */
+	overMastery: Array<ExtendedMastery | null>
+	/** Single earring slot, or null when empty. */
+	aetherialMastery: ExtendedMastery | null
 	awakening: {
 		type: Awakening
 		level: number
