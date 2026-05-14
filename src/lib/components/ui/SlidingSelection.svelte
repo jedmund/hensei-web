@@ -20,7 +20,7 @@
 		spring: springConfig
 	}: Props = $props()
 
-	const springOpts = { stiffness: 0.18, damping: 0.85, ...springConfig }
+	const springOpts = { stiffness: 0.18, damping: 0.5, ...springConfig }
 	const x = new Spring(0, springOpts)
 	const w = new Spring(0, springOpts)
 
