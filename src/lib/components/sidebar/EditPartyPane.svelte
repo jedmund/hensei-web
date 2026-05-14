@@ -359,7 +359,7 @@
 	<DetailsSection title={m.visibility_label()}>
 		<PrivacySelector bind:value={visibility} {element} showLabel={false} />
 		{#if isInCrew}
-			<DetailRow label={m.party_edit_share_crew()} noHover compact>
+			<DetailRow label={m.party_edit_share_crew()} compact>
 				<Switch bind:checked={sharedWithCrew} size="small" {element} />
 			</DetailRow>
 		{/if}
@@ -380,16 +380,16 @@
 	<hr class="divider" />
 
 	<DetailsSection title={m.section_performance()}>
-		<DetailRow label={m.party_edit_clear_time()} noHover compact>
+		<DetailRow label={m.party_edit_clear_time()} compact>
 			<ClearTimeInput bind:value={clearTime} contained />
 		</DetailRow>
-		<DetailRow label={m.party_edit_button_count()} noHover compact>
+		<DetailRow label={m.party_edit_button_count()} compact>
 			<MetricField bind:value={buttonCount} label="B" contained />
 		</DetailRow>
-		<DetailRow label={m.party_edit_chain_count()} noHover compact>
+		<DetailRow label={m.party_edit_chain_count()} compact>
 			<MetricField bind:value={chainCount} label="C" contained />
 		</DetailRow>
-		<DetailRow label={m.party_edit_summon_count()} noHover compact>
+		<DetailRow label={m.party_edit_summon_count()} compact>
 			<MetricField bind:value={summonCount} label="S" contained />
 		</DetailRow>
 	</DetailsSection>

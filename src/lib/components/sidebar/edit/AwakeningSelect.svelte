@@ -135,7 +135,7 @@
 	</div>
 
 	{#if !isNoAwakening}
-		<DetailRow label={m.label_level()} noHover noPadding error={levelError || undefined}>
+		<DetailRow label={m.label_level()} noPadding error={levelError || undefined}>
 			<Input
 				type="number"
 				min={1}
