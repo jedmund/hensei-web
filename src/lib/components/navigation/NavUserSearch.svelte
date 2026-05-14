@@ -210,7 +210,7 @@
 		flex: 1;
 		align-items: center;
 		gap: spacing.$unit-half;
-		padding: spacing.$unit calc(spacing.$unit * 1.5);
+		padding: calc(spacing.$unit * 1.5);
 		color: var(--menu-text);
 
 		input {
