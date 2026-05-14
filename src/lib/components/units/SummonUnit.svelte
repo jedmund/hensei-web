@@ -371,7 +371,7 @@
 	{/if}
 	<div class="name" class:not-in-collection={notInCollection}>
 		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
-		{item ? localizedName(item?.summon?.name) : ''}
+		<span class="name-text">{item ? localizedName(item?.summon?.name) : ''}</span>
 		{#if item}
 			<SubstituteCountBadge
 				count={item.substitutions?.length ?? 0}
@@ -528,12 +528,17 @@
 
 	.name {
 		display: flex;
-		flex-wrap: wrap;
 		align-items: center;
 		justify-content: center;
 		gap: spacing.$unit-half;
 		font-size: typography.$font-small;
 		color: var(--text-secondary);
+	}
+
+	.name-text {
+		min-width: 0;
+		text-align: center;
+		overflow-wrap: anywhere;
 	}
 
 	.orphaned-badge {

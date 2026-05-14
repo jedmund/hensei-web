@@ -386,7 +386,7 @@
 	{/key}
 	<div class="name" class:not-in-collection={notInCollection}>
 		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
-		{item ? localizedName(item?.character?.name) : ''}
+		<span class="name-text">{item ? localizedName(item?.character?.name) : ''}</span>
 		{#if item?.artifact}
 			<Icon name="gem" size={12} class="artifact-indicator" />
 		{/if}
@@ -533,7 +533,6 @@
 
 	.name {
 		display: flex;
-		flex-wrap: wrap;
 		align-items: center;
 		justify-content: center;
 		gap: spacing.$unit-half;
@@ -544,6 +543,15 @@
 			color: var(--extra-purple-text);
 			flex-shrink: 0;
 		}
+	}
+
+	.name-text {
+		// min-width: 0 lets the text item shrink under content size so long
+		// names wrap inside the span instead of forcing the bookmark/badge
+		// onto their own flex line.
+		min-width: 0;
+		text-align: center;
+		overflow-wrap: anywhere;
 	}
 
 	.perpetuity {
