@@ -113,8 +113,11 @@ export interface GridCharacter {
 		type?: Awakening
 		level?: number
 	}
-	aetherialMastery?: { modifier: number; strength: number }
-	overMastery?: Array<{ modifier: number; strength: number }>
+	/** Single earring slot, or null/undefined when empty. */
+	aetherialMastery?: { modifier: number; strength: number } | null
+	/** Positional ring loadout: always length 4. Index 0=ATK, 1=HP, 2/3=optional.
+	 * Empty slots are null. */
+	overMastery?: Array<{ modifier: number; strength: number } | null>
 	/** Equipped artifact (can be grid or collection artifact) */
 	artifact?: GridArtifact | CollectionArtifact
 	/** Reference to the source collection character if linked */
