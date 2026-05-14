@@ -81,19 +81,20 @@
 		</p>
 		{#if canShowDiff && gridItem && collectionItem}
 			<div class="diff-list">
-				<div class="diff-header">
-					<div class="diff-header-item">
-						{#if headerImage}
-							<img src={headerImage} alt={nameLabel} class="diff-header-image" />
-						{/if}
-						<span class="diff-header-name">{nameLabel}</span>
-					</div>
-					<div class="diff-header-columns">
-						<span class="diff-column-label">{m.sync_diff_column_collection()}</span>
-						<span class="diff-column-spacer" aria-hidden="true"></span>
-						<span class="diff-column-label">{m.sync_diff_column_team()}</span>
-					</div>
+				<!-- Header occupies the first row of the diff grid. The image+name
+				     cell sits in the label column; the two labels land in the
+				     collection-value and team-value columns so they align with
+				     the rows below. -->
+				<div class="diff-header-item">
+					{#if headerImage}
+						<img src={headerImage} alt={nameLabel} class="diff-header-image" />
+					{/if}
+					<span class="diff-header-name">{nameLabel}</span>
 				</div>
+				<span class="diff-column-label">{m.sync_diff_column_collection()}</span>
+				<span aria-hidden="true"></span>
+				<span class="diff-column-label">{m.sync_diff_column_team()}</span>
+
 				{#each diffFields as fieldKey (fieldKey)}
 					<SyncFieldDiff {fieldKey} {type} {gridItem} {collectionItem} />
 				{/each}
@@ -126,26 +127,25 @@
 		color: var(--text-primary);
 	}
 
+	// 4-column grid: [label / image+name] [collection value] [arrow] [team value].
+	// SyncFieldDiff and the header both use `display: contents` so their cells
+	// flow directly into this grid and column widths stay aligned across rows.
 	.diff-list {
-		display: flex;
-		flex-direction: column;
+		display: grid;
+		grid-template-columns: 1fr auto auto auto;
+		column-gap: $unit;
+		row-gap: $unit-half;
+		align-items: center;
 		padding: $unit-2x;
 		background: var(--button-contained-bg);
 		border-radius: $card-corner;
-	}
-
-	.diff-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: $unit-2x;
-		padding-bottom: $unit;
 	}
 
 	.diff-header-item {
 		display: flex;
 		align-items: center;
 		gap: $unit;
+		padding-bottom: $unit-half;
 	}
 
 	.diff-header-image {
@@ -162,18 +162,10 @@
 		color: var(--text-primary);
 	}
 
-	// Mirror the .diff-values flex row so the column headers sit above the
-	// matching value columns: [Collection] [arrow gap] [Team].
-	.diff-header-columns {
-		display: flex;
-		align-items: center;
-		gap: $unit;
+	.diff-column-label {
 		font-size: $font-small;
 		color: var(--text-secondary);
-	}
-
-	.diff-column-spacer {
-		display: inline-block;
-		width: 14px;
+		justify-self: start;
+		padding-bottom: $unit-half;
 	}
 </style>
