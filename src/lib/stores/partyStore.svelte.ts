@@ -55,6 +55,31 @@ class PartyStore {
 	}
 
 	/**
+	 * Returns every grid weapon in the party that shares the given canonical
+	 * granblue_id, optionally excluding a specific grid-item id (typically
+	 * "this one" when computing siblings). Used by the notes sync switch to
+	 * decide whether to show itself.
+	 */
+	getWeaponSiblings(granblueId: string | number, excludeId?: string): GridWeapon[] {
+		if (!this.party?.weapons) return []
+		const gid = String(granblueId)
+		return this.party.weapons.filter(
+			(w) => String(w.weapon?.granblueId) === gid && String(w.id) !== String(excludeId ?? '')
+		)
+	}
+
+	/**
+	 * Summon variant of getWeaponSiblings. See its docstring for behaviour.
+	 */
+	getSummonSiblings(granblueId: string | number, excludeId?: string): GridSummon[] {
+		if (!this.party?.summons) return []
+		const gid = String(granblueId)
+		return this.party.summons.filter(
+			(s) => String(s.summon?.granblueId) === gid && String(s.id) !== String(excludeId ?? '')
+		)
+	}
+
+	/**
 	 * Update a character in the party (optimistically updates local state and calls API)
 	 */
 	async updateCharacter(id: string, updates: Partial<GridCharacter>): Promise<GridCharacter> {
