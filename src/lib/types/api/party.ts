@@ -200,7 +200,6 @@ export interface DifficultyTier {
 	id: string
 	slug: string
 	name: string
-	color?: string
 	sortOrder: number
 	description?: string
 	minScore?: number

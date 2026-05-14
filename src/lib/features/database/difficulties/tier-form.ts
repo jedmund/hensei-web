@@ -7,7 +7,6 @@ import type { DifficultyTier } from '$lib/types/api/party'
 export interface TierFormInput {
 	name: string
 	slug: string
-	color: string
 	description: string
 	minScore: number
 	maxScore: number
@@ -63,7 +62,6 @@ export function buildTierPayload(
 	const payload: Partial<DifficultyTier> = {
 		name: input.name.trim(),
 		slug: input.slug.trim(),
-		color: input.color,
 		description: input.description.trim() || undefined,
 		minScore: input.minScore,
 		maxScore: input.maxScore,

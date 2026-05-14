@@ -82,8 +82,7 @@
 	const difficultyOptions = $derived(
 		(difficultyTiersQuery.data ?? []).map((tier) => ({
 			value: tier.slug,
-			label: tier.name,
-			color: tier.color
+			label: tier.name
 		}))
 	)
 
@@ -99,7 +98,7 @@
 			const tier = tiers.find((t) => t.slug === f.value)
 			if (!tier) return f
 			changed = true
-			return { ...f, label: tier.name, color: tier.color }
+			return { ...f, label: tier.name }
 		})
 		if (changed) {
 			filters = next
@@ -375,12 +374,10 @@
 		} else if (option.kind === 'class') {
 			newFilter = { kind: 'class', value: option.value as string, label: option.label }
 		} else if (option.kind === 'difficulty') {
-			const tier = difficultyOptions.find((t: { value: string }) => t.value === option.value)
 			newFilter = {
 				kind: 'difficulty',
 				value: option.value as string,
-				label: option.label,
-				color: tier?.color
+				label: option.label
 			}
 		} else {
 			newFilter = { kind: 'party', value: option.value as string, label: option.label }

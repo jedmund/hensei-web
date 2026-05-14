@@ -17,7 +17,7 @@ interface MatchLocalParams {
 	partyOptions: { value: string; label: string }[]
 	boostOptions: OptionWithAliases[]
 	sideOptions: { value: string; label: string }[]
-	difficultyOptions?: { value: string; label: string; color?: string }[]
+	difficultyOptions?: { value: string; label: string }[]
 	allRaids: RaidFull[]
 	categoryLabels: {
 		element: string

@@ -4,7 +4,6 @@ import { buildTierPayload, validateTierForm, type TierFormInput } from '../tier-
 const baseInput: TierFormInput = {
 	name: 'Endgame',
 	slug: 'endgame',
-	color: '#86C5A8',
 	description: '',
 	minScore: 80,
 	maxScore: 100,
@@ -83,11 +82,6 @@ describe('buildTierPayload', () => {
 	it('keeps a populated description (trimmed)', () => {
 		const payload = buildTierPayload({ ...baseInput, description: '  endgame parties  ' })
 		expect(payload.description).toBe('endgame parties')
-	})
-
-	it('forwards color verbatim (no normalization)', () => {
-		const payload = buildTierPayload({ ...baseInput, color: '#1A1A3A' })
-		expect(payload.color).toBe('#1A1A3A')
 	})
 
 	it('omits imageKey by default', () => {

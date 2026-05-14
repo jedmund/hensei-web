@@ -8,7 +8,7 @@ function call(overrides: {
 	query: string
 	filters?: FilterItem[]
 	excludedKinds?: FilterItem['kind'][]
-	difficultyOptions?: { value: string; label: string; color?: string }[]
+	difficultyOptions?: { value: string; label: string }[]
 	categoryDifficultyLabel?: string
 }): FilterOption[] {
 	return matchLocal({
@@ -36,9 +36,9 @@ function call(overrides: {
 
 describe('matchLocal — difficulty', () => {
 	const difficultyOptions = [
-		{ value: 'casual', label: 'Casual', color: '#86C5A8' },
-		{ value: 'mid', label: 'Mid', color: '#D4AF37' },
-		{ value: 'endgame', label: 'Endgame', color: '#1a1a3a' }
+		{ value: 'casual', label: 'Casual' },
+		{ value: 'mid', label: 'Mid' },
+		{ value: 'endgame', label: 'Endgame' }
 	]
 
 	it('matches a tier by case-insensitive label substring', () => {
@@ -104,13 +104,6 @@ describe('matchLocal — difficulty', () => {
 		const results = call({ query: 'casual', difficultyOptions, excludedKinds: ['difficulty'] })
 
 		expect(results.find((r) => r.kind === 'difficulty')).toBeUndefined()
-	})
-
-	it('does not stringify or transform the tier color into the option (color stays on the source list)', () => {
-		const results = call({ query: 'cas', difficultyOptions })
-		const opt = results.find((r) => r.kind === 'difficulty')!
-		// FilterOption doesn't carry the color; ExploreFilters reads it from difficultyOptions at selection time.
-		expect((opt as unknown as Record<string, unknown>).color).toBeUndefined()
 	})
 })
 
