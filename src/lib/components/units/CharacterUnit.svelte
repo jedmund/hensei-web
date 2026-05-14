@@ -285,7 +285,9 @@
 								/>
 							{/if}
 							{#if inCollection}
-								<BookmarkOverlay />
+								<BookmarkOverlay
+									element={item?.character?.element ?? mainWeaponElement ?? partyElement}
+								/>
 							{/if}
 						</div>
 					{/key}

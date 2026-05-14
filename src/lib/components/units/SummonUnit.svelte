@@ -239,7 +239,7 @@
 								src={imageUrl}
 							/>
 							{#if inCollection}
-								<BookmarkOverlay />
+								<BookmarkOverlay element={item?.summon?.element} />
 							{/if}
 						</div>
 					{/key}
