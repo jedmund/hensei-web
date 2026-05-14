@@ -87,8 +87,11 @@
 					class="dropdown-menu-item sync-menu-item"
 					onSelect={() => onSyncFromCollection?.()}
 				>
-					<span class="title">{m.details_collection_sync_pull()}</span>
-					<span class="subtitle">{pullSubtitle}</span>
+					<Icon name="arrow-down" size={16} class="sync-menu-icon" />
+					<span class="sync-menu-text">
+						<span class="title">{m.details_collection_sync_pull()}</span>
+						<span class="subtitle">{pullSubtitle}</span>
+					</span>
 				</DropdownMenuBase.Item>
 			{/if}
 			{#if canPush}
@@ -96,8 +99,11 @@
 					class="dropdown-menu-item sync-menu-item"
 					onSelect={() => onSyncToCollection?.()}
 				>
-					<span class="title">{m.details_collection_sync_push()}</span>
-					<span class="subtitle">{pushSubtitle}</span>
+					<Icon name="arrow-up" size={16} class="sync-menu-icon" />
+					<span class="sync-menu-text">
+						<span class="title">{m.details_collection_sync_push()}</span>
+						<span class="subtitle">{pushSubtitle}</span>
+					</span>
 				</DropdownMenuBase.Item>
 			{/if}
 		{/snippet}
@@ -109,9 +115,20 @@
 	@use '$src/themes/typography' as typography;
 
 	:global(.sync-menu-item) {
-		flex-direction: column !important;
-		align-items: flex-start !important;
-		gap: 2px !important;
+		flex-direction: row !important;
+		align-items: center !important;
+		gap: spacing.$unit !important;
+	}
+
+	:global(.sync-menu-icon) {
+		flex-shrink: 0;
+		color: var(--text-secondary);
+	}
+
+	:global(.sync-menu-item .sync-menu-text) {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
 	}
 
 	:global(.sync-menu-item .title) {
