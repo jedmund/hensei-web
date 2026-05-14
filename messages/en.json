@@ -643,6 +643,8 @@
 	"sync_diff_enabled": "Enabled",
 	"sync_diff_disabled": "Disabled",
 	"sync_diff_empty": "—",
+	"sync_diff_column_collection": "Collection",
+	"sync_diff_column_team": "Team",
 	"type_character": "character",
 	"type_weapon": "weapon",
 	"type_summon": "summon",

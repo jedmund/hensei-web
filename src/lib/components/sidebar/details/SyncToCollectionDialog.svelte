@@ -82,10 +82,17 @@
 		{#if canShowDiff && gridItem && collectionItem}
 			<div class="diff-list">
 				<div class="diff-header">
-					{#if headerImage}
-						<img src={headerImage} alt={nameLabel} class="diff-header-image" />
-					{/if}
-					<span class="diff-header-name">{nameLabel}</span>
+					<div class="diff-header-item">
+						{#if headerImage}
+							<img src={headerImage} alt={nameLabel} class="diff-header-image" />
+						{/if}
+						<span class="diff-header-name">{nameLabel}</span>
+					</div>
+					<div class="diff-header-columns">
+						<span class="diff-column-label">{m.sync_diff_column_collection()}</span>
+						<span class="diff-column-spacer" aria-hidden="true"></span>
+						<span class="diff-column-label">{m.sync_diff_column_team()}</span>
+					</div>
 				</div>
 				{#each diffFields as fieldKey (fieldKey)}
 					<SyncFieldDiff {fieldKey} {type} {gridItem} {collectionItem} />
@@ -129,9 +136,16 @@
 
 	.diff-header {
 		display: flex;
+		justify-content: space-between;
 		align-items: center;
-		gap: $unit-half;
+		gap: $unit-2x;
 		padding-bottom: $unit;
+	}
+
+	.diff-header-item {
+		display: flex;
+		align-items: center;
+		gap: $unit;
 	}
 
 	.diff-header-image {
@@ -146,5 +160,20 @@
 		font-size: $font-regular;
 		font-weight: $medium;
 		color: var(--text-primary);
+	}
+
+	// Mirror the .diff-values flex row so the column headers sit above the
+	// matching value columns: [Collection] [arrow gap] [Team].
+	.diff-header-columns {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+		font-size: $font-small;
+		color: var(--text-secondary);
+	}
+
+	.diff-column-spacer {
+		display: inline-block;
+		width: 14px;
 	}
 </style>
