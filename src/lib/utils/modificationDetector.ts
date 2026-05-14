@@ -45,7 +45,8 @@ export function detectModifications(
 		const char = item as GridCharacter
 
 		status.hasAwakening = !!char.awakening
-		status.hasRings = !!(char.overMastery && char.overMastery.length > 0)
+		// overMastery is positional now — count slots with a real (non-null) ring.
+		status.hasRings = !!char.overMastery?.some((ring) => ring != null)
 		status.hasEarring = !!char.aetherialMastery
 		status.hasPerpetuity = !!char.perpetuity
 		status.hasTranscendence = !!(char.transcendenceStep && char.transcendenceStep > 0)

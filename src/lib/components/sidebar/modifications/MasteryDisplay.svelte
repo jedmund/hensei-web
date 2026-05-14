@@ -15,6 +15,14 @@
 
 	let { rings, earring, characterElement, variant = 'compact', showIcons = true }: Props = $props()
 
+	// rings is positional (length 4 with nulls). Drop empty slots before
+	// rendering the list — we don't show placeholder rows.
+	const filledRings = $derived(
+		(rings ?? []).filter(
+			(ring): ring is { modifier: number; strength: number } => ring != null && ring.modifier > 0
+		)
+	)
+
 	// Get current locale
 	const locale = $derived(getLocale() as 'en' | 'ja')
 
@@ -35,10 +43,10 @@
 	}
 </script>
 
-{#if rings && rings.length > 0}
+{#if filledRings.length > 0}
 	<div class="mastery-display rings {variant}">
 		<ul class="mastery-list">
-			{#each rings as ring, i (i)}
+			{#each filledRings as ring, i (i)}
 				<li class="mastery-item">
 					{#if showIcons}
 						{@const iconUrl = getMasteryIcon('ring', ring.modifier)}
