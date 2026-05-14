@@ -145,7 +145,7 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
-		gap: spacing.$unit-4x;
+		gap: spacing.$unit;
 	}
 
 	.tabs {
