@@ -1771,6 +1771,8 @@
 	"notes_roles_placeholder": "役割を選択",
 	"notes_description_section": "メモ",
 	"notes_sync_label": "すべての{name}と同期",
+	"notes_sync_label_prefix": "すべての",
+	"notes_sync_label_suffix": "と同期",
 	"notes_description_placeholder": "このアイテムは編成で何をしますか？",
 	"notes_substitutes_section": "代替",
 	"substitution_substitutes": "代替",

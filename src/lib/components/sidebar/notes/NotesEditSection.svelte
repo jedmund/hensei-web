@@ -178,7 +178,9 @@
 
 	{#if showSyncSwitch}
 		<div class="sync-row">
-			<span class="sync-label">{m.notes_sync_label({ name: syncItemName })}</span>
+			<span class="sync-label"
+				>{m.notes_sync_label_prefix()}<b>{syncItemName}</b>{m.notes_sync_label_suffix()}</span
+			>
 			<Switch
 				checked={notesSynced}
 				element={syncElement}
@@ -218,7 +220,14 @@
 	.notes-edit-section {
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-2x + spacing.$unit-half;
+		gap: spacing.$unit-2x;
+
+		// Match the sync row's horizontal padding inside this scope so the
+		// description / substitutes section frames align with the switch.
+		:global(.details-section) {
+			padding-left: spacing.$unit-2x;
+			padding-right: spacing.$unit-2x;
+		}
 	}
 
 	.sync-row {
@@ -226,7 +235,7 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: spacing.$unit-2x;
-		padding: spacing.$unit-half spacing.$unit;
+		padding: spacing.$unit-half spacing.$unit-2x;
 	}
 
 	.sync-label {

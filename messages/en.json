@@ -1790,6 +1790,8 @@
 	"notes_roles_placeholder": "Select a role",
 	"notes_description_section": "Notes",
 	"notes_sync_label": "Sync to all {name}",
+	"notes_sync_label_prefix": "Sync to all ",
+	"notes_sync_label_suffix": "",
 	"notes_description_placeholder": "What does this item do in the team?",
 	"notes_substitutes_section": "Substitutes",
 	"substitution_substitutes": "Substitutes",
