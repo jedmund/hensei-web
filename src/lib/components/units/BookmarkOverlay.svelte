@@ -18,10 +18,14 @@
 		position: absolute;
 		top: spacing.$unit;
 		left: spacing.$unit;
+		// Explicit square sizing — the bookmark glyph is 12x16, so relying on
+		// padding alone gave a 28x32 capsule. Fixed width/height + flex
+		// centering keeps the badge a true 32x32 circle.
+		width: 32px;
+		height: 32px;
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		padding: spacing.$unit;
 		border-radius: 50%;
 		background: rgba(0, 0, 0, 0.8);
 		color: white;
