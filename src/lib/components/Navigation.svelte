@@ -21,6 +21,7 @@
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import LanguageToggle from './LanguageToggle.svelte'
 	import ThemeToggle from './ThemeToggle.svelte'
+	import NavUserSearch from './navigation/NavUserSearch.svelte'
 
 	// Props from layout data
 	const {
@@ -98,6 +99,23 @@
 	// Settings modal state
 	let settingsModalOpen = $state(false)
 
+	// User search state
+	let searchOpen = $state(false)
+	let authedPillEl = $state<HTMLUListElement | undefined>()
+	let publicPillEl = $state<HTMLUListElement | undefined>()
+	let pillLockedWidth = $state<number | null>(null)
+
+	function openSearch() {
+		const pill = isAuth ? authedPillEl : publicPillEl
+		if (pill) pillLockedWidth = pill.offsetWidth
+		searchOpen = true
+	}
+
+	function closeSearch() {
+		searchOpen = false
+		pillLockedWidth = null
+	}
+
 	// Invitations modal state
 	let invitationsModalOpen = $state(false)
 
@@ -171,129 +189,169 @@
 	{:else if isAuth}
 		<!-- Authenticated navigation -->
 		<div class="nav-links">
-			<ul role="list">
-				<li>
-					<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
-				</li>
-				<li>
-					<a href={crewHref} class:selected={isNavSelected(crewHref)} class="crew-link">
-						{m.nav_crew()}
-						{#if totalNotificationCount > 0}
-							<span class="crew-notification-dot {userElement ?? ''}"></span>
-						{/if}
-					</a>
-				</li>
-				<li>
-					<a
-						href={meHref}
-						class:selected={isProfileSelected}
-						aria-label={m.nav_account_aria()}
-						class="profile-link"
-					>
-						{#if avatarSrc}
-							<img
-								src={avatarSrc}
-								srcset={avatarSrcSet}
-								alt={username}
-								class="user-avatar"
-								width="24"
-								height="24"
-							/>
-						{/if}
-						<span>{username}</span>
-					</a>
-				</li>
-				<li>
-					<DropdownMenu.Root>
-						<!-- Notification pulse disabled — crew dot handles this now -->
-						<!-- class="nav-more-trigger {totalNotificationCount > 0 ? `has-notification ${userElement ?? ''}` : ''}" -->
-						<DropdownMenu.Trigger class="nav-more-trigger">
-							<Icon name="ellipsis" size={14} />
-						</DropdownMenu.Trigger>
+			<ul
+				role="list"
+				bind:this={authedPillEl}
+				style={pillLockedWidth ? `min-width:${pillLockedWidth}px` : ''}
+			>
+				{#if searchOpen}
+					<li class="nav-search">
+						<NavUserSearch {userElement} onClose={closeSearch} />
+					</li>
+				{:else}
+					<li>
+						<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
+					</li>
+					<li>
+						<a href={crewHref} class:selected={isNavSelected(crewHref)} class="crew-link">
+							{m.nav_crew()}
+							{#if totalNotificationCount > 0}
+								<span class="crew-notification-dot {userElement ?? ''}"></span>
+							{/if}
+						</a>
+					</li>
+					<li>
+						<a
+							href={meHref}
+							class:selected={isProfileSelected}
+							aria-label={m.nav_account_aria()}
+							class="profile-link"
+						>
+							{#if avatarSrc}
+								<img
+									src={avatarSrc}
+									srcset={avatarSrcSet}
+									alt={username}
+									class="user-avatar"
+									width="24"
+									height="24"
+								/>
+							{/if}
+							<span>{username}</span>
+						</a>
+					</li>
+					<li>
+						<button
+							type="button"
+							class="nav-search-trigger"
+							aria-label={m.nav_search_users_aria()}
+							onclick={openSearch}
+						>
+							<Icon name="search" size={14} />
+						</button>
+					</li>
+					<li>
+						<DropdownMenu.Root>
+							<!-- Notification pulse disabled — crew dot handles this now -->
+							<!-- class="nav-more-trigger {totalNotificationCount > 0 ? `has-notification ${userElement ?? ''}` : ''}" -->
+							<DropdownMenu.Trigger class="nav-more-trigger">
+								<Icon name="ellipsis" size={14} />
+							</DropdownMenu.Trigger>
 
-						<DropdownMenu.Portal>
-							<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
-								<DropdownItem>
-									<a href={aboutHref}>{m.nav_about()}</a>
-								</DropdownItem>
-								<DropdownItem>
-									<a href={extensionHref}>{m.nav_extension()}</a>
-								</DropdownItem>
-								{#if role !== null && role >= 7}
+							<DropdownMenu.Portal>
+								<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
 									<DropdownItem>
-										<a href={databaseHref}>{m.nav_database()}</a>
+										<a href={aboutHref}>{m.nav_about()}</a>
 									</DropdownItem>
-								{/if}
-								<DropdownMenu.Separator class="dropdown-separator" />
-								<DropdownItem>
-									<button
-										class="dropdown-button-with-badge"
-										onclick={() => (invitationsModalOpen = true)}
-									>
-										<span>{m.nav_notifications()}</span>
-										{#if totalNotificationCount > 0}
-											<NotificationBadge
-												count={totalNotificationCount}
-												showCount
-												element={userElement}
-											/>
-										{/if}
-									</button>
-								</DropdownItem>
-								<DropdownMenu.Separator class="dropdown-separator" />
-								<LanguageToggle />
-								<ThemeToggle />
-								<DropdownItem>
-									<button onclick={() => (settingsModalOpen = true)}>
-										{m.nav_settings()}
-									</button>
-								</DropdownItem>
-								<DropdownMenu.Separator class="dropdown-separator" />
-								<DropdownItem>
-									<button onclick={handleLogout}>{m.nav_logout()}</button>
-								</DropdownItem>
-							</DropdownMenu.Content>
-						</DropdownMenu.Portal>
-					</DropdownMenu.Root>
-				</li>
+									<DropdownItem>
+										<a href={extensionHref}>{m.nav_extension()}</a>
+									</DropdownItem>
+									{#if role !== null && role >= 7}
+										<DropdownItem>
+											<a href={databaseHref}>{m.nav_database()}</a>
+										</DropdownItem>
+									{/if}
+									<DropdownMenu.Separator class="dropdown-separator" />
+									<DropdownItem>
+										<button
+											class="dropdown-button-with-badge"
+											onclick={() => (invitationsModalOpen = true)}
+										>
+											<span>{m.nav_notifications()}</span>
+											{#if totalNotificationCount > 0}
+												<NotificationBadge
+													count={totalNotificationCount}
+													showCount
+													element={userElement}
+												/>
+											{/if}
+										</button>
+									</DropdownItem>
+									<DropdownMenu.Separator class="dropdown-separator" />
+									<LanguageToggle />
+									<ThemeToggle />
+									<DropdownItem>
+										<button onclick={() => (settingsModalOpen = true)}>
+											{m.nav_settings()}
+										</button>
+									</DropdownItem>
+									<DropdownMenu.Separator class="dropdown-separator" />
+									<DropdownItem>
+										<button onclick={handleLogout}>{m.nav_logout()}</button>
+									</DropdownItem>
+								</DropdownMenu.Content>
+							</DropdownMenu.Portal>
+						</DropdownMenu.Root>
+					</li>
+				{/if}
 			</ul>
 		</div>
 	{:else}
 		<!-- Unauthenticated navigation -->
 		<div class="nav-links">
-			<ul role="list">
-				<li>
-					<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
-				</li>
-				<li>
-					<a href={crewHref} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
-				</li>
-				<li>
-					<a href={collectionHref} class:selected={isNavSelected(collectionHref)}
-						>{m.nav_collection()}</a
-					>
-				</li>
-				<li>
-					<DropdownMenu.Root>
-						<DropdownMenu.Trigger class="nav-more-trigger">
-							<Icon name="ellipsis" size={14} />
-						</DropdownMenu.Trigger>
+			<ul
+				role="list"
+				bind:this={publicPillEl}
+				style={pillLockedWidth ? `min-width:${pillLockedWidth}px` : ''}
+			>
+				{#if searchOpen}
+					<li class="nav-search">
+						<NavUserSearch onClose={closeSearch} />
+					</li>
+				{:else}
+					<li>
+						<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
+					</li>
+					<li>
+						<a href={crewHref} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
+					</li>
+					<li>
+						<a href={collectionHref} class:selected={isNavSelected(collectionHref)}
+							>{m.nav_collection()}</a
+						>
+					</li>
+					<li>
+						<button
+							type="button"
+							class="nav-search-trigger"
+							aria-label={m.nav_search_users_aria()}
+							onclick={openSearch}
+						>
+							<Icon name="search" size={14} />
+						</button>
+					</li>
+					<li>
+						<DropdownMenu.Root>
+							<DropdownMenu.Trigger class="nav-more-trigger">
+								<Icon name="ellipsis" size={14} />
+							</DropdownMenu.Trigger>
 
-						<DropdownMenu.Portal>
-							<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
-								<DropdownItem>
-									<a href={aboutHref}>{m.nav_about()}</a>
-								</DropdownItem>
-								<DropdownItem>
-									<a href={extensionHref}>{m.nav_extension()}</a>
-								</DropdownItem>
-								<DropdownMenu.Separator class="dropdown-separator" />
-								<LanguageToggle />
-								<ThemeToggle />
-							</DropdownMenu.Content>
-						</DropdownMenu.Portal>
-					</DropdownMenu.Root>
-				</li>
+							<DropdownMenu.Portal>
+								<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
+									<DropdownItem>
+										<a href={aboutHref}>{m.nav_about()}</a>
+									</DropdownItem>
+									<DropdownItem>
+										<a href={extensionHref}>{m.nav_extension()}</a>
+									</DropdownItem>
+									<DropdownMenu.Separator class="dropdown-separator" />
+									<LanguageToggle />
+									<ThemeToggle />
+								</DropdownMenu.Content>
+							</DropdownMenu.Portal>
+						</DropdownMenu.Root>
+					</li>
+				{/if}
 			</ul>
 
 			<ul role="list">
@@ -501,6 +559,38 @@
 		&:focus-visible {
 			box-shadow: 0 0 0 2px var(--accent-blue-focus);
 		}
+	}
+
+	// Search trigger button — mirrors .nav-more-trigger
+	.nav-search-trigger {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		align-self: stretch;
+		padding: spacing.$unit calc(spacing.$unit * 1.5 + 1px);
+		border-radius: layout.$full-corner;
+		background-color: transparent;
+		color: var(--menu-text);
+		border: none;
+		cursor: pointer;
+		transition: background-color 0.2s ease;
+		outline: none;
+
+		&:hover {
+			background-color: var(--menu-bg-item-hover);
+		}
+
+		&:focus-visible {
+			box-shadow: 0 0 0 2px var(--accent-blue-focus);
+		}
+	}
+
+	// Search list-item: fills the pill so NavUserSearch can stretch
+	.nav-search {
+		flex: 1;
+		display: flex;
+		align-items: stretch;
+		min-width: 0;
 	}
 
 	// Notification pulse animation for the more trigger
