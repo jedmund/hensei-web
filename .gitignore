@@ -39,3 +39,5 @@ project.inlang/cache/
 # Documentation
 docs/
 .eslintcache
+
+.playwright-mcp/
