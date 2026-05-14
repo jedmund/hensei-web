@@ -97,6 +97,19 @@
 		flex-direction: column;
 		height: 100%;
 		color: var(--text-primary);
+
+		// Restore native list markers inside user-generated description content.
+		// The global reset in app.scss strips them for our own UI lists, but
+		// user-authored rich text should render real bullets and numbers.
+		:global(ul) {
+			list-style: disc;
+			padding-inline-start: $unit-3x;
+		}
+
+		:global(ol) {
+			list-style: decimal;
+			padding-inline-start: $unit-3x;
+		}
 	}
 
 	.video-embed {
