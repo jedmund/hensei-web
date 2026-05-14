@@ -215,33 +215,40 @@
 			syncSummonToCollectionMutation.isPending
 	)
 
-	// Handle sync from collection
-	async function handleSync() {
+	// Handle sync from collection. When `fields` is omitted or empty, the
+	// backend syncs every tracked column (full sync); otherwise it only copies
+	// the named camelCase fields (e.g. ['uncapLevel', 'overMastery.1']).
+	async function handleSync(fields?: string[]) {
 		const itemId = item && 'id' in item ? item.id : undefined
 		const partyShortcode = partyStore.party?.shortcode ?? ''
 		if (!itemId || !isLinkedToCollection || !partyShortcode) return
 
+		const params = { id: itemId, partyShortcode, fields }
+
 		if (type === 'character') {
-			await syncCharacterMutation.mutateAsync({ id: itemId, partyShortcode })
+			await syncCharacterMutation.mutateAsync(params)
 		} else if (type === 'weapon') {
-			await syncWeaponMutation.mutateAsync({ id: itemId, partyShortcode })
+			await syncWeaponMutation.mutateAsync(params)
 		} else if (type === 'summon') {
-			await syncSummonMutation.mutateAsync({ id: itemId, partyShortcode })
+			await syncSummonMutation.mutateAsync(params)
 		}
 	}
 
-	// Handle sync to collection (grid → collection)
-	async function handleSyncToCollection() {
+	// Handle sync to collection (grid → collection). `fields` semantics match
+	// `handleSync` above.
+	async function handleSyncToCollection(fields?: string[]) {
 		const itemId = item && 'id' in item ? item.id : undefined
 		const partyShortcode = partyStore.party?.shortcode ?? ''
 		if (!itemId || !isLinkedToCollection || !partyShortcode) return
 
+		const params = { id: itemId, partyShortcode, fields }
+
 		if (type === 'character') {
-			await syncCharacterToCollectionMutation.mutateAsync({ id: itemId, partyShortcode })
+			await syncCharacterToCollectionMutation.mutateAsync(params)
 		} else if (type === 'weapon') {
-			await syncWeaponToCollectionMutation.mutateAsync({ id: itemId, partyShortcode })
+			await syncWeaponToCollectionMutation.mutateAsync(params)
 		} else if (type === 'summon') {
-			await syncSummonToCollectionMutation.mutateAsync({ id: itemId, partyShortcode })
+			await syncSummonToCollectionMutation.mutateAsync(params)
 		}
 	}
 
@@ -249,13 +256,20 @@
 	const canPull = $derived(isLinkedToCollection && isPartyOwner)
 	const canPush = $derived(isLinkedToCollection && isCollectionOwner)
 
-	// Scope label for the push-confirmation dialog. Set when an inline button
-	// opens the dialog; cleared back to undefined for the banner's "Sync all".
+	// Captured fields for the pending push action. Set when an inline section
+	// button opens the dialog; cleared back to undefined for the banner's
+	// "Sync all" which intentionally pushes everything.
 	let pendingPushScope = $state<string | undefined>(undefined)
+	let pendingPushFields = $state<string[] | undefined>(undefined)
 
-	function openPushDialog(scope?: string) {
+	function openPushDialog(scope?: string, fields?: string[]) {
 		pendingPushScope = scope
+		pendingPushFields = fields
 		syncToCollectionDialogOpen = true
+	}
+
+	function confirmPush() {
+		return handleSyncToCollection(pendingPushFields)
 	}
 </script>
 
@@ -291,7 +305,7 @@
 			{canPush}
 			{isSyncing}
 			{isSyncingToCollection}
-			onSyncFromCollection={handleSync}
+			onSyncFromCollection={() => handleSync()}
 			onSyncToCollection={() => openPushDialog()}
 		/>
 	{/if}
@@ -300,7 +314,7 @@
 		bind:open={syncToCollectionDialogOpen}
 		{type}
 		scope={pendingPushScope}
-		onConfirm={handleSyncToCollection}
+		onConfirm={confirmPush}
 	/>
 
 	{#if selectedView === 'canonical'}
@@ -323,8 +337,8 @@
 			{isSyncing}
 			{isSyncingToCollection}
 			syncElement={buttonElement}
-			onSyncFromCollection={handleSync}
-			onSyncToCollection={(scope) => openPushDialog(scope)}
+			onSyncFromCollection={(fields) => handleSync(fields)}
+			onSyncToCollection={(scope, fields) => openPushDialog(scope, fields)}
 		/>
 	{/if}
 </div>

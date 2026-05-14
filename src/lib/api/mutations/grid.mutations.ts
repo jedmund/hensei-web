@@ -778,11 +778,13 @@ export function switchCharacterStyleOptions(queryClient: QueryClient) {
 // Sync Mutation Options
 // ============================================================================
 
+type SyncParams = { id: string; partyShortcode: string; fields?: string[] }
+
 export function syncGridCharacterOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.syncCharacter(params.id, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
+		mutationFn: (params: SyncParams) =>
+			gridAdapter.syncCharacter(params.id, editKeyHeaders(params.partyShortcode), params.fields),
+		onSuccess: (_data: unknown, { partyShortcode }: SyncParams) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
 	}
@@ -790,9 +792,9 @@ export function syncGridCharacterOptions(queryClient: QueryClient) {
 
 export function syncGridWeaponOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.syncWeapon(params.id, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
+		mutationFn: (params: SyncParams) =>
+			gridAdapter.syncWeapon(params.id, editKeyHeaders(params.partyShortcode), params.fields),
+		onSuccess: (_data: unknown, { partyShortcode }: SyncParams) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
 	}
@@ -800,9 +802,9 @@ export function syncGridWeaponOptions(queryClient: QueryClient) {
 
 export function syncGridSummonOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.syncSummon(params.id, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
+		mutationFn: (params: SyncParams) =>
+			gridAdapter.syncSummon(params.id, editKeyHeaders(params.partyShortcode), params.fields),
+		onSuccess: (_data: unknown, { partyShortcode }: SyncParams) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
 	}
@@ -814,9 +816,13 @@ export function syncGridSummonOptions(queryClient: QueryClient) {
 
 export function syncGridCharacterToCollectionOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.syncCharacterToCollection(params.id, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
+		mutationFn: (params: SyncParams) =>
+			gridAdapter.syncCharacterToCollection(
+				params.id,
+				editKeyHeaders(params.partyShortcode),
+				params.fields
+			),
+		onSuccess: (_data: unknown, { partyShortcode }: SyncParams) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characters() })
 		}
@@ -825,9 +831,13 @@ export function syncGridCharacterToCollectionOptions(queryClient: QueryClient) {
 
 export function syncGridWeaponToCollectionOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.syncWeaponToCollection(params.id, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
+		mutationFn: (params: SyncParams) =>
+			gridAdapter.syncWeaponToCollection(
+				params.id,
+				editKeyHeaders(params.partyShortcode),
+				params.fields
+			),
+		onSuccess: (_data: unknown, { partyShortcode }: SyncParams) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 			queryClient.invalidateQueries({ queryKey: collectionKeys.weapons() })
 		}
@@ -836,9 +846,13 @@ export function syncGridWeaponToCollectionOptions(queryClient: QueryClient) {
 
 export function syncGridSummonToCollectionOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.syncSummonToCollection(params.id, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
+		mutationFn: (params: SyncParams) =>
+			gridAdapter.syncSummonToCollection(
+				params.id,
+				editKeyHeaders(params.partyShortcode),
+				params.fields
+			),
+		onSuccess: (_data: unknown, { partyShortcode }: SyncParams) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 			queryClient.invalidateQueries({ queryKey: collectionKeys.summons() })
 		}
