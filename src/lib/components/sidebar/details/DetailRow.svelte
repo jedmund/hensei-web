@@ -2,9 +2,11 @@
 	import type { Snippet } from 'svelte'
 
 	interface Props {
-		label: string
+		label?: string
 		value?: string | number | null | undefined
 		children?: Snippet
+		/** Custom label content (e.g. an icon or indicator). Takes precedence over `label`. */
+		labelSlot?: Snippet
 		/** Remove padding for inline edit contexts */
 		noPadding?: boolean
 		/** Remove min-width from value (for compact controls like switches) */
@@ -17,6 +19,7 @@
 		label,
 		value,
 		children,
+		labelSlot,
 		noPadding = false,
 		compact = false,
 		error = undefined
@@ -25,7 +28,13 @@
 
 <div class="detail-row-wrapper">
 	<div class="detail-row" class:no-padding={noPadding} class:compact class:has-control={children}>
-		<span class="label">{label}</span>
+		<span class="label">
+			{#if labelSlot}
+				{@render labelSlot()}
+			{:else}
+				{label}
+			{/if}
+		</span>
 		<span class="value">
 			{#if children}
 				{@render children()}

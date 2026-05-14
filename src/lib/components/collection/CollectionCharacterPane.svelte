@@ -346,6 +346,7 @@
 			<div class="info-view">
 				<BasicInfoSection type="character" itemData={characterData} />
 				<StatsSection
+					type="character"
 					itemData={characterData}
 					gridUncapLevel={character.uncapLevel}
 					gridTranscendence={character.transcendenceStep}
