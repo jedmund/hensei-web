@@ -5,6 +5,8 @@
 		getWeaponBaseImage,
 		getSummonDetailImage,
 		getCharacterPose,
+		getSummonTransformation,
+		getWeaponTransformation,
 		getBasePath
 	} from '$lib/utils/images'
 	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
@@ -53,9 +55,19 @@
 					)
 			return getCharacterDetailImage(id, pose)
 		} else if (type === 'weapon') {
-			return getWeaponBaseImage(id)
+			const transformation = getWeaponTransformation(
+				!!itemData?.uncap?.transcendence,
+				gridUncapLevel ?? undefined,
+				gridTranscendence ?? undefined
+			)
+			return getWeaponBaseImage(id, transformation)
 		} else {
-			return getSummonDetailImage(id)
+			const transformation = getSummonTransformation(
+				id,
+				gridUncapLevel ?? undefined,
+				gridTranscendence ?? undefined
+			)
+			return getSummonDetailImage(id, transformation)
 		}
 	}
 
