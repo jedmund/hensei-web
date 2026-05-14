@@ -99,6 +99,10 @@ export interface GridWeapon {
 	/** Stamped by the API when this grid item is rendered as a substitute —
 	 * true if current_user has the underlying weapon in their collection. */
 	owned?: boolean
+	/** True when this weapon is part of a notes sync group — its description
+	 * and substitutions are mirrored to every party slot with the same
+	 * canonical weapon. Toggling it propagates to every sibling. */
+	notesSynced?: boolean
 }
 
 // GridCharacter from GridCharacterBlueprint
@@ -170,6 +174,10 @@ export interface GridSummon {
 	/** Stamped by the API when this grid item is rendered as a substitute —
 	 * true if current_user has the underlying summon in their collection. */
 	owned?: boolean
+	/** True when this summon is part of a notes sync group — its description
+	 * and substitutions are mirrored to every party slot with the same
+	 * canonical summon. Toggling it propagates to every sibling. */
+	notesSynced?: boolean
 }
 
 // JobSkillList for party job skills
