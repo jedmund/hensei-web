@@ -224,9 +224,17 @@
 
 		// Match the sync row's horizontal padding inside this scope so the
 		// description / substitutes section frames align with the switch.
+		// The DetailsSection's own .header carries an extra horizontal pad
+		// (so titles inset within a section) which doubles up here — drop
+		// it so the section title aligns with the switch label.
 		:global(.details-section) {
 			padding-left: spacing.$unit-2x;
 			padding-right: spacing.$unit-2x;
+		}
+
+		:global(.details-section .header) {
+			padding-left: 0;
+			padding-right: 0;
 		}
 	}
 
