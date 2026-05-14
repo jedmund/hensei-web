@@ -227,6 +227,7 @@ const GridWeaponSchema = z.object({
 	// Collection link fields
 	collection_weapon_id: z.string().nullish(),
 	out_of_sync: z.boolean().nullish(),
+	out_of_sync_fields: z.array(z.string()).nullish(),
 	orphaned: z.boolean().nullish(),
 
 	created_at: z.string().nullish(),
@@ -247,6 +248,12 @@ const GridSummonSchema = z.object({
 
 	// Nested summon data (populated by API)
 	summon: SummonSchema.nullish(),
+
+	// Collection link fields
+	collection_summon_id: z.string().nullish(),
+	out_of_sync: z.boolean().nullish(),
+	out_of_sync_fields: z.array(z.string()).nullish(),
+	orphaned: z.boolean().nullish(),
 
 	created_at: z.string().nullish(),
 	updated_at: z.string().nullish()
@@ -275,6 +282,12 @@ const GridCharacterSchema = z.object({
 
 	// Legacy field
 	over_mastery_level: z.number().nullish(),
+
+	// Collection link fields
+	collection_character_id: z.string().nullish(),
+	out_of_sync: z.boolean().nullish(),
+	out_of_sync_fields: z.array(z.string()).nullish(),
+	orphaned: z.boolean().nullish(),
 
 	created_at: z.string().nullish(),
 	updated_at: z.string().nullish()
