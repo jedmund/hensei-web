@@ -8,10 +8,13 @@
 	interface Props {
 		open: boolean
 		type: 'character' | 'weapon' | 'summon'
+		/** Localized phrase describing what's being saved (e.g. "Weapon Key 2",
+		 * "Uncap & Transcendence"). Falls back to "all settings" when omitted. */
+		scope?: string | undefined
 		onConfirm: () => Promise<void>
 	}
 
-	let { open = $bindable(false), type, onConfirm }: Props = $props()
+	let { open = $bindable(false), type, scope, onConfirm }: Props = $props()
 
 	const typeLabel = $derived(
 		type === 'character'
@@ -20,13 +23,15 @@
 				? m.type_weapon()
 				: m.type_summon()
 	)
+
+	const scopeLabel = $derived(scope ?? m.sync_to_collection_scope_all())
 </script>
 
 <Dialog bind:open>
 	<ModalHeader title={m.sync_to_collection_title()} />
 	<ModalBody>
 		<p class="sync-message">
-			{m.sync_to_collection_body({ type: typeLabel })}
+			{m.sync_to_collection_body({ type: typeLabel, scope: scopeLabel })}
 		</p>
 	</ModalBody>
 	<ModalFooter
