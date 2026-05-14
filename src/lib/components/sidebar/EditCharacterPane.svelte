@@ -99,11 +99,13 @@
 					level: character.awakening.level ?? 1
 				}
 			: null,
-		rings: character.overMastery ?? [
-			{ modifier: 1, strength: 0 },
-			{ modifier: 2, strength: 0 },
-			{ modifier: 0, strength: 0 },
-			{ modifier: 0, strength: 0 }
+		// overMastery is positional with nullable slots; the edit pane wants a
+		// non-null placeholder per slot so RingsSelect can render every row.
+		rings: [
+			character.overMastery?.[0] ?? { modifier: 1, strength: 0 },
+			character.overMastery?.[1] ?? { modifier: 2, strength: 0 },
+			character.overMastery?.[2] ?? { modifier: 0, strength: 0 },
+			character.overMastery?.[3] ?? { modifier: 0, strength: 0 }
 		],
 		earring: character.aetherialMastery ?? undefined,
 		perpetuity: character.perpetuity ?? false

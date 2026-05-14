@@ -85,6 +85,9 @@ export interface GridWeapon {
 	collectionWeaponId?: string
 	/** Whether the grid item is out of sync with its collection source */
 	outOfSync?: boolean
+	/** Camel-cased dotted-key list of fields that drift from the linked collection item.
+	 * E.g. ['uncapLevel', 'weaponKey2', 'bullets.0']. Empty/undefined when in sync. */
+	outOfSyncFields?: string[]
 	/** Whether the linked collection item has been deleted (item is orphaned) */
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
@@ -110,14 +113,20 @@ export interface GridCharacter {
 		type?: Awakening
 		level?: number
 	}
-	aetherialMastery?: { modifier: number; strength: number }
-	overMastery?: Array<{ modifier: number; strength: number }>
+	/** Single earring slot, or null/undefined when empty. */
+	aetherialMastery?: { modifier: number; strength: number } | null
+	/** Positional ring loadout: always length 4. Index 0=ATK, 1=HP, 2/3=optional.
+	 * Empty slots are null. */
+	overMastery?: Array<{ modifier: number; strength: number } | null>
 	/** Equipped artifact (can be grid or collection artifact) */
 	artifact?: GridArtifact | CollectionArtifact
 	/** Reference to the source collection character if linked */
 	collectionCharacterId?: string
 	/** Whether the grid item is out of sync with its collection source */
 	outOfSync?: boolean
+	/** Camel-cased dotted-key list of fields that drift from the linked collection item.
+	 * E.g. ['uncapLevel', 'overMastery.1']. Empty/undefined when in sync. */
+	outOfSyncFields?: string[]
 	/** Whether the linked collection item has been deleted (item is orphaned) */
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
@@ -147,6 +156,9 @@ export interface GridSummon {
 	collectionSummonId?: string
 	/** Whether the grid item is out of sync with its collection source */
 	outOfSync?: boolean
+	/** Camel-cased dotted-key list of fields that drift from the linked collection item.
+	 * E.g. ['uncapLevel', 'transcendenceStep']. Empty/undefined when in sync. */
+	outOfSyncFields?: string[]
 	/** Whether the linked collection item has been deleted (item is orphaned) */
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
