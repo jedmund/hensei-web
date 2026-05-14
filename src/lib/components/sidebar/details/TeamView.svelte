@@ -16,6 +16,7 @@
 	import ElementPickerSegmented from '$lib/components/ui/element-picker/ElementPickerSegmented.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import TranscendenceStar from '$lib/components/uncap/TranscendenceStar.svelte'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
 	import { getBulletImage } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
@@ -216,8 +217,19 @@
 				flb={uncapCaps?.flb}
 				ulb={uncapCaps?.ulb}
 				transcendence={uncapCaps?.transcendence}
+				hideTranscendence
 			/>
 		</DetailRow>
+		{#if uncapCaps?.transcendence}
+			<DetailRow label={m.details_transcended_to()}>
+				<span class="transcendence-row">
+					<TranscendenceStar stage={gridTranscendence ?? 0} {type} />
+					<span class="transcendence-level"
+						>{m.details_transcendence_level({ level: String(gridTranscendence ?? 0) })}</span
+					>
+				</span>
+			</DetailRow>
+		{/if}
 	</DetailsSection>
 
 	{#if type === 'character'}
@@ -506,6 +518,7 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/typography' as typography;
 
 	.team-view {
 		display: flex;
@@ -533,6 +546,18 @@
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit-half;
+	}
+
+	.transcendence-row {
+		display: inline-flex;
+		align-items: center;
+		gap: spacing.$unit;
+	}
+
+	.transcendence-level {
+		font-size: typography.$font-regular;
+		color: var(--text-primary);
+		font-weight: typography.$medium;
 	}
 
 	.bullet-value {

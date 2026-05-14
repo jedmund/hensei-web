@@ -633,6 +633,8 @@
 
 	"details_uncap_transcendence": "Uncap & Transcendence",
 	"details_max_uncap_level": "Uncapped to",
+	"details_transcended_to": "Transcended to",
+	"details_transcendence_level": "Level {level}",
 	"details_awakening": "Awakening",
 	"details_mastery": "Mastery",
 	"details_status": "Status",
