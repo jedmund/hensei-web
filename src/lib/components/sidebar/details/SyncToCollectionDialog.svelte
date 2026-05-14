@@ -10,6 +10,7 @@
 	import ModalBody from '../../ui/ModalBody.svelte'
 	import ModalFooter from '../../ui/ModalFooter.svelte'
 	import SyncFieldDiff from './SyncFieldDiff.svelte'
+	import { getCharacterImage, getWeaponImage, getSummonImage } from '$lib/utils/images'
 	import * as m from '$lib/paraglide/messages'
 
 	type GridItem = GridCharacter | GridWeapon | GridSummon
@@ -55,6 +56,21 @@
 
 	const diffFields = $derived(fields && fields.length > 0 ? fields : [])
 	const canShowDiff = $derived(diffFields.length > 0 && !!gridItem && !!collectionItem)
+
+	// Small thumbnail for the diff-list header.
+	const headerImage = $derived.by(() => {
+		if (!gridItem) return null
+		if (type === 'character') {
+			const c = (gridItem as GridCharacter).character
+			return c ? getCharacterImage(c.granblueId, 'square', c.styleSwap ? '01_style' : '01') : null
+		}
+		if (type === 'weapon') {
+			const w = (gridItem as GridWeapon).weapon
+			return w ? getWeaponImage(w.granblueId, 'square', w.element === 0 ? 0 : undefined) : null
+		}
+		const s = (gridItem as GridSummon).summon
+		return s ? getSummonImage(s.granblueId, 'square') : null
+	})
 </script>
 
 <Dialog bind:open>
@@ -65,6 +81,12 @@
 		</p>
 		{#if canShowDiff && gridItem && collectionItem}
 			<div class="diff-list">
+				<div class="diff-header">
+					{#if headerImage}
+						<img src={headerImage} alt={nameLabel} class="diff-header-image" />
+					{/if}
+					<span class="diff-header-name">{nameLabel}</span>
+				</div>
 				{#each diffFields as fieldKey (fieldKey)}
 					<SyncFieldDiff {fieldKey} {type} {gridItem} {collectionItem} />
 				{/each}
@@ -103,5 +125,26 @@
 		padding: $unit-2x;
 		background: var(--button-contained-bg);
 		border-radius: $card-corner;
+	}
+
+	.diff-header {
+		display: flex;
+		align-items: center;
+		gap: $unit-half;
+		padding-bottom: $unit;
+	}
+
+	.diff-header-image {
+		width: 32px;
+		height: 32px;
+		border-radius: $item-corner-small;
+		object-fit: cover;
+		flex-shrink: 0;
+	}
+
+	.diff-header-name {
+		font-size: $font-regular;
+		font-weight: $medium;
+		color: var(--text-primary);
 	}
 </style>
