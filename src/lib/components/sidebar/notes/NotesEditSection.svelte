@@ -24,9 +24,13 @@
 	import DescriptionEditor from './DescriptionEditor.svelte'
 	import RolesField from './RolesField.svelte'
 	import SubstitutionsField from './SubstitutionsField.svelte'
+	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { partyStore } from '$lib/stores/partyStore.svelte'
+	import { localizedName } from '$lib/utils/locale'
+	import { getElementKey } from '$lib/utils/element'
 	import type { GridItemType } from './substitutionHelpers'
 
 	interface Props {
@@ -112,6 +116,54 @@
 	function handleDescriptionSave(next: Description | null) {
 		dispatchUpdate({ description: next })
 	}
+
+	// Notes sync switch is only meaningful when another grid slot already holds
+	// the same canonical weapon/summon. Computed against the live party so the
+	// switch appears/disappears as duplicates come and go without a remount.
+	const siblings = $derived.by(() => {
+		if (type === 'weapon') {
+			const gid = (effectiveItem as GridWeapon).weapon?.granblueId
+			if (!gid) return []
+			return partyStore.getWeaponSiblings(gid, String(item.id ?? ''))
+		}
+		if (type === 'summon') {
+			const gid = (effectiveItem as GridSummon).summon?.granblueId
+			if (!gid) return []
+			return partyStore.getSummonSiblings(gid, String(item.id ?? ''))
+		}
+		return []
+	})
+
+	const showSyncSwitch = $derived((type === 'weapon' || type === 'summon') && siblings.length >= 1)
+
+	const notesSynced = $derived((effectiveItem as GridWeapon | GridSummon).notesSynced ?? false)
+
+	const syncItemName = $derived.by(() => {
+		if (type === 'weapon') return localizedName((effectiveItem as GridWeapon).weapon?.name)
+		if (type === 'summon') return localizedName((effectiveItem as GridSummon).summon?.name)
+		return ''
+	})
+
+	const syncElement = $derived.by(() => {
+		const allowed = ['wind', 'fire', 'water', 'earth', 'dark', 'light'] as const
+		let raw: number | undefined
+		if (type === 'weapon') {
+			const w = effectiveItem as GridWeapon
+			raw = w.element || w.weapon?.element
+		} else if (type === 'summon') {
+			raw = (effectiveItem as GridSummon).summon?.element
+		}
+		const key = raw ? getElementKey(raw) : 'null'
+		return (allowed as readonly string[]).includes(key)
+			? (key as (typeof allowed)[number])
+			: undefined
+	})
+
+	function handleSyncToggle(next: boolean) {
+		// Skip the no-op write the bind:checked $effect fires on mount.
+		if (next === notesSynced) return
+		dispatchUpdate({ notesSynced: next })
+	}
 </script>
 
 <div class="notes-edit-section">
@@ -122,6 +174,20 @@
 			{/snippet}
 			<RolesField {roles} cap={ROLE_CAP} onChange={handleRolesChange} />
 		</DetailsSection>
+	{/if}
+
+	{#if showSyncSwitch}
+		<div class="sync-row">
+			<span class="sync-label"
+				>{m.notes_sync_label_prefix()}<b>{syncItemName}</b>{m.notes_sync_label_suffix()}</span
+			>
+			<Switch
+				checked={notesSynced}
+				element={syncElement}
+				onCheckedChange={handleSyncToggle}
+				size="small"
+			/>
+		</div>
 	{/if}
 
 	<DetailsSection title={m.notes_description_section()}>
@@ -154,7 +220,35 @@
 	.notes-edit-section {
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-2x + spacing.$unit-half;
+		gap: spacing.$unit-2x;
+
+		// Match the sync row's horizontal padding inside this scope so the
+		// description / substitutes section frames align with the switch.
+		// The DetailsSection's own .header carries an extra horizontal pad
+		// (so titles inset within a section) which doubles up here — drop
+		// it so the section title aligns with the switch label.
+		:global(.details-section) {
+			padding-left: spacing.$unit-2x;
+			padding-right: spacing.$unit-2x;
+		}
+
+		:global(.details-section .header) {
+			padding-left: 0;
+			padding-right: 0;
+		}
+	}
+
+	.sync-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: spacing.$unit-2x;
+		padding: spacing.$unit-half spacing.$unit-2x;
+	}
+
+	.sync-label {
+		font-size: typography.$font-small;
+		color: var(--text-primary);
 	}
 
 	.header-count {

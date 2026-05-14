@@ -526,6 +526,7 @@
 			<DetailsSection title={m.details_over_mastery()}>
 				<EmptySectionPlaceholder
 					sectionName={m.add_over_mastery()}
+					description={m.empty_over_mastery_description()}
 					onclick={() => openCharacterEdit('stats')}
 				/>
 			</DetailsSection>
@@ -534,6 +535,7 @@
 			<DetailsSection title={m.details_aetherial_mastery()}>
 				<EmptySectionPlaceholder
 					sectionName={m.add_aetherial_mastery()}
+					description={m.empty_aetherial_mastery_description()}
 					onclick={() => openCharacterEdit('stats')}
 				/>
 			</DetailsSection>
