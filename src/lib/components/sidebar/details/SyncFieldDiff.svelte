@@ -244,6 +244,8 @@
 				</span>
 			{:else}
 				<span class="text-value">{m.sync_diff_empty()}</span>
+				<span aria-hidden="true"></span>
+				<span class="text-value">{m.sync_diff_empty()}</span>
 			{/if}
 		</div>
 	</div>
@@ -253,28 +255,21 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 
+	// Lay each cell directly into the parent .diff-list grid so column widths
+	// are shared across rows + header (Collection/Team labels line up with the
+	// values below them).
 	.diff-row {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		gap: spacing.$unit-2x;
-		padding: spacing.$unit 0;
-
-		& + & {
-			border-top: 1px solid var(--border-subtle);
-		}
+		display: contents;
 	}
 
 	.diff-label {
 		font-size: typography.$font-small;
 		color: var(--text-secondary);
-		flex-shrink: 0;
+		padding: spacing.$unit 0;
 	}
 
 	.diff-values {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit;
+		display: contents;
 		font-size: typography.$font-small;
 		color: var(--text-primary);
 	}
