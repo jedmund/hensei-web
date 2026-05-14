@@ -87,7 +87,9 @@
 					class="dropdown-menu-item sync-menu-item"
 					onSelect={() => onSyncFromCollection?.()}
 				>
-					<Icon name="arrow-down" size={16} class="sync-menu-icon" />
+					<div class="sync-menu-icon-container">
+						<Icon name="arrow-down" size={16} class="sync-menu-icon" />
+					</div>
 					<span class="sync-menu-text">
 						<span class="title">{m.details_collection_sync_pull()}</span>
 						<span class="subtitle">{pullSubtitle}</span>
@@ -99,7 +101,9 @@
 					class="dropdown-menu-item sync-menu-item"
 					onSelect={() => onSyncToCollection?.()}
 				>
-					<Icon name="arrow-up" size={16} class="sync-menu-icon" />
+					<div class="sync-menu-icon-container">
+						<Icon name="arrow-up" size={16} class="sync-menu-icon" />
+					</div>
 					<span class="sync-menu-text">
 						<span class="title">{m.details_collection_sync_push()}</span>
 						<span class="subtitle">{pushSubtitle}</span>
@@ -113,11 +117,21 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
 
 	:global(.sync-menu-item) {
 		flex-direction: row !important;
 		align-items: center !important;
 		gap: spacing.$unit !important;
+	}
+
+	:global(.sync-menu-icon-container) {
+		border-radius: layout.$item-corner;
+		display: flex;
+		align-items: flex-start;
+		justify-content: center;
+		padding: spacing.$unit;
+		background: var(--button-contained-bg);
 	}
 
 	:global(.sync-menu-icon) {
@@ -138,7 +152,7 @@
 	}
 
 	:global(.sync-menu-item .subtitle) {
-		font-size: typography.$font-tiny;
+		font-size: typography.$font-small;
 		color: var(--text-secondary);
 		white-space: normal;
 		max-width: 260px;
