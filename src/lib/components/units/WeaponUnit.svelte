@@ -8,6 +8,7 @@
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
 	import RemoveUnitDialog from './RemoveUnitDialog.svelte'
 	import SubstituteCountBadge from './SubstituteCountBadge.svelte'
+	import BookmarkOverlay from './BookmarkOverlay.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getWeaponImage } from '$lib/features/database/detail/image'
@@ -238,7 +239,7 @@
 	class:orphaned={item?.orphaned}
 >
 	{#if item}
-		<UnitMenuContainer showGearButton={true}>
+		<UnitMenuContainer showGearButton={true} gearPosition="top-right">
 			{#snippet trigger()}
 				<div
 					class="focus-ring-wrapper {elementClass}"
@@ -301,6 +302,9 @@
 								src={imageUrl}
 								onerror={(e) => handleImageFallback(e, fallbackUrl)}
 							/>
+							{#if inCollection}
+								<BookmarkOverlay />
+							{/if}
 						</div>
 					{/key}
 				</div>
@@ -411,7 +415,6 @@
 		/>
 	{/if}
 	<div class="name" class:not-in-collection={notInCollection}>
-		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
 		<span class="name-text">{item ? localizedName(item?.weapon?.name) : ''}</span>
 		{#if item}
 			<SubstituteCountBadge

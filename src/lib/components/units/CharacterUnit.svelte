@@ -8,6 +8,7 @@
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
 	import RemoveUnitDialog from './RemoveUnitDialog.svelte'
 	import SubstituteCountBadge from './SubstituteCountBadge.svelte'
+	import BookmarkOverlay from './BookmarkOverlay.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
@@ -209,7 +210,7 @@
 	class:orphaned={item?.orphaned}
 >
 	{#if item}
-		<UnitMenuContainer showGearButton={true}>
+		<UnitMenuContainer showGearButton={true} gearPosition="top-right">
 			{#snippet trigger()}
 				<div
 					class="focus-ring-wrapper {elementClass}"
@@ -282,6 +283,9 @@
 									alt={localizedName(item?.character?.name)}
 									src={imageUrl}
 								/>
+							{/if}
+							{#if inCollection}
+								<BookmarkOverlay />
 							{/if}
 						</div>
 					{/key}
@@ -385,7 +389,6 @@
 		{/if}
 	{/key}
 	<div class="name" class:not-in-collection={notInCollection}>
-		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
 		<span class="name-text">{item ? localizedName(item?.character?.name) : ''}</span>
 		{#if item?.artifact}
 			<Icon name="gem" size={12} class="artifact-indicator" />
