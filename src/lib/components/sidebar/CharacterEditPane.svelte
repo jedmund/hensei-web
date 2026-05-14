@@ -44,7 +44,7 @@
 			id: string
 			level: number
 		} | null
-		rings: ExtendedMastery[]
+		rings?: ExtendedMastery[]
 		earring?: ExtendedMastery | null
 		perpetuity?: boolean
 	}
@@ -109,13 +109,30 @@
 		return false
 	}
 
+	// Drop placeholder rings (modifier=0 or strength=0) from the payload. The
+	// edit pane seeds 4 ring entries for the form, but unselected slots stay
+	// at 0. Sending them as-is writes `{modifier:1, strength:0}` into ring1
+	// etc., which the backend reads as drift against the collection's null
+	// defaults and flags the section as out of sync. Returning only the real
+	// rings lets the backend pad ring3/ring4 with its empty default.
+	function normalizeRings(input: ExtendedMastery[]): ExtendedMastery[] {
+		return input.filter((r) => r.modifier > 0 && r.strength > 0)
+	}
+
 	// Export save function so parent can call it from header button
 	export function save() {
 		const updates: CharacterEditUpdates = {
 			uncapLevel,
 			transcendenceStep,
-			rings,
 			perpetuity: showPerpetuity ? perpetuity : undefined
+		}
+
+		// Only include rings in the payload when the user actually picked
+		// something. Backend's `if rings.present?` then skips the column update
+		// entirely instead of overwriting ring1-4 with placeholder zeros.
+		const realRings = normalizeRings(rings)
+		if (realRings.length > 0) {
+			updates.rings = realRings
 		}
 
 		// Format awakening for API

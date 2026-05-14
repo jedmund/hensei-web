@@ -133,9 +133,19 @@
 				}
 			}
 
-			// Handle rings (API expects ring1, ring2, ring3, ring4)
+			// Handle rings (API expects ring1, ring2, ring3, ring4). The pane
+			// only includes rings the user actually set, so pad the remainder
+			// with explicit null hashes so cleared slots get written back as
+			// empty instead of leaving stale values on the record.
 			if (updates.rings) {
-				updates.rings.forEach((ring, index) => {
+				const padded: Array<{ modifier: number | null; strength: number | null }> = [
+					...updates.rings,
+					...Array(Math.max(0, 4 - updates.rings.length)).fill({
+						modifier: null,
+						strength: null
+					})
+				]
+				padded.forEach((ring, index) => {
 					const key = `ring${index + 1}` as keyof typeof input
 					input[key] = ring
 				})
