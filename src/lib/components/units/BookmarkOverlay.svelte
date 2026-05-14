@@ -52,7 +52,9 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+		border: 2px solid rgba(0, 0, 0, 0.14);
 		border-radius: 50%;
+		backdrop-filter: blur(2px);
 		z-index: effects.$z-sticky;
 		pointer-events: none;
 
