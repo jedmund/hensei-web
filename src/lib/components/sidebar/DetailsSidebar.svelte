@@ -9,8 +9,9 @@
 	import StatsSection from './details/StatsSection.svelte'
 	import SkillsSection from './details/SkillsSection.svelte'
 	import TeamView from './details/TeamView.svelte'
-	import CollectionSection from './details/CollectionSection.svelte'
+	import OutOfSyncBanner from './details/OutOfSyncBanner.svelte'
 	import SyncToCollectionDialog from './details/SyncToCollectionDialog.svelte'
+	import { getElementKey } from '$lib/utils/element'
 	import { authStore } from '$lib/stores/auth.store.svelte'
 	import { getEditKey } from '$lib/utils/editKeys'
 	import {
@@ -166,10 +167,28 @@
 		return false
 	})
 
-	const isOutOfSync = $derived.by(() => {
-		if (type === 'character') return (item as GridCharacter).outOfSync ?? false
-		if (type === 'weapon') return (item as GridWeapon).outOfSync ?? false
-		if (type === 'summon') return (item as GridSummon).outOfSync ?? false
+	const outOfSyncFields = $derived.by((): string[] => {
+		if (type === 'character') return (item as GridCharacter).outOfSyncFields ?? []
+		if (type === 'weapon') return (item as GridWeapon).outOfSyncFields ?? []
+		if (type === 'summon') return (item as GridSummon).outOfSyncFields ?? []
+		return []
+	})
+
+	const isOutOfSync = $derived(isLinkedToCollection && outOfSyncFields.length > 0)
+
+	// Element key for ghost button styling (matches Button's element prop union)
+	const buttonElement = $derived.by(() => {
+		const key = getElementKey(itemData?.element)
+		const allowed = ['wind', 'fire', 'water', 'earth', 'dark', 'light'] as const
+		return (allowed as readonly string[]).includes(key)
+			? (key as (typeof allowed)[number])
+			: undefined
+	})
+
+	// Limit detection for the bool-style pill copy
+	const isLimitItem = $derived.by(() => {
+		if (type === 'weapon') return !!(item as GridWeapon).weapon?.limit
+		if (type === 'summon') return !!(item as GridSummon).summon?.limit
 		return false
 	})
 
@@ -225,36 +244,62 @@
 			await syncSummonToCollectionMutation.mutateAsync({ id: itemId, partyShortcode })
 		}
 	}
+
+	// Permission flags for the sync menu buttons.
+	const canPull = $derived(isLinkedToCollection && isPartyOwner)
+	const canPush = $derived(isLinkedToCollection && isCollectionOwner)
+
+	// Scope label for the push-confirmation dialog. Set when an inline button
+	// opens the dialog; cleared back to undefined for the banner's "Sync all".
+	let pendingPushScope = $state<string | undefined>(undefined)
+
+	function openPushDialog(scope?: string) {
+		pendingPushScope = scope
+		syncToCollectionDialogOpen = true
+	}
 </script>
 
 <div class="details-sidebar">
-	<ItemHeader {type} {item} {itemData} {gridUncapLevel} {gridTranscendence} />
+	<ItemHeader
+		{type}
+		{item}
+		{itemData}
+		{gridUncapLevel}
+		{gridTranscendence}
+		collectionPill={partyStore.activeCollection
+			? {
+					count: collectionCount,
+					gridCount,
+					isLimitItem,
+					sourceUsername:
+						partyStore.activeCollectionUser === 'source'
+							? partyStore.party?.collectionSourceUser?.username
+							: undefined,
+					isOutOfSync
+				}
+			: undefined}
+	/>
 
 	<DetailsSidebarSegmentedControl hasModifications={showSegmentedControl} bind:selectedView />
 
-	<CollectionSection
-		{type}
-		count={collectionCount}
-		{gridCount}
-		element={itemData?.element}
-		hasCollection={!!partyStore.activeCollection}
-		sourceUsername={partyStore.activeCollectionUser === 'source'
-			? partyStore.party?.collectionSourceUser?.username
-			: undefined}
-		isOutOfSync={isLinkedToCollection && isOutOfSync}
-		{isPartyOwner}
-		{isCollectionOwner}
-		{isSyncing}
-		{isSyncingToCollection}
-		onSync={handleSync}
-		onSyncToCollection={() => {
-			syncToCollectionDialogOpen = true
-		}}
-	/>
+	{#if isOutOfSync}
+		<OutOfSyncBanner
+			{type}
+			fieldCount={outOfSyncFields.length}
+			element={buttonElement}
+			{canPull}
+			{canPush}
+			{isSyncing}
+			{isSyncingToCollection}
+			onSyncFromCollection={handleSync}
+			onSyncToCollection={() => openPushDialog()}
+		/>
+	{/if}
 
 	<SyncToCollectionDialog
 		bind:open={syncToCollectionDialogOpen}
 		{type}
+		scope={pendingPushScope}
 		onConfirm={handleSyncToCollection}
 	/>
 
@@ -272,6 +317,14 @@
 			{gridTranscendence}
 			{modificationStatus}
 			{isPartyOwner}
+			{outOfSyncFields}
+			{canPull}
+			{canPush}
+			{isSyncing}
+			{isSyncingToCollection}
+			syncElement={buttonElement}
+			onSyncFromCollection={handleSync}
+			onSyncToCollection={(scope) => openPushDialog(scope)}
 		/>
 	{/if}
 </div>
