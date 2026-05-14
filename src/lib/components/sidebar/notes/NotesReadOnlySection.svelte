@@ -233,31 +233,44 @@
 		{/each}
 	</div>
 {:else if mode === 'placeholders' && ownerCharacter}
+	{@const itemLabel =
+		type === 'character'
+			? m.type_character()
+			: type === 'weapon'
+				? m.type_weapon()
+				: m.type_summon()}
 	{@const placeholders = [
 		{
 			key: 'roles',
 			filled: roles.length > 0,
 			title: m.notes_roles_section_readonly(),
-			addLabel: m.add_roles()
+			addLabel: m.add_roles(),
+			description: m.empty_roles_description()
 		},
 		{
 			key: 'description',
 			filled: hasDescription,
 			title: m.notes_description_section(),
-			addLabel: m.add_description()
+			addLabel: m.add_description(),
+			description: m.empty_notes_description({ item: itemLabel })
 		},
 		{
 			key: 'substitutes',
 			filled: substitutions.length > 0,
 			title: m.substitution_substitutes(),
-			addLabel: m.add_substitutes()
+			addLabel: m.add_substitutes(),
+			description: m.empty_substitutes_description({ item: itemLabel })
 		}
 	].filter((s) => !s.filled)}
 	{#if placeholders.length > 0}
 		<div class="notes-readonly-section">
 			{#each placeholders as section (section.key)}
 				<DetailsSection title={section.title}>
-					<EmptySectionPlaceholder sectionName={section.addLabel} onclick={openEditNotes} />
+					<EmptySectionPlaceholder
+						sectionName={section.addLabel}
+						description={section.description}
+						onclick={openEditNotes}
+					/>
 				</DetailsSection>
 			{/each}
 		</div>
