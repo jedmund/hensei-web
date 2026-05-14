@@ -283,7 +283,6 @@
 									src={imageUrl}
 								/>
 							{/if}
-							<SubstituteCountBadge count={item?.substitutions?.length ?? 0} />
 						</div>
 					{/key}
 				</div>
@@ -390,6 +389,9 @@
 		{item ? localizedName(item?.character?.name) : ''}
 		{#if item?.artifact}
 			<Icon name="gem" size={12} class="artifact-indicator" />
+		{/if}
+		{#if item}
+			<SubstituteCountBadge count={item.substitutions?.length ?? 0} />
 		{/if}
 	</div>
 	{#if item?.character}

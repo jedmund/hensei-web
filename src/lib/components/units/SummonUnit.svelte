@@ -237,7 +237,6 @@
 								alt={localizedName(item?.summon?.name)}
 								src={imageUrl}
 							/>
-							<SubstituteCountBadge count={item?.substitutions?.length ?? 0} />
 						</div>
 					{/key}
 					{#if showQuickSummon && ctx?.canEdit()}
@@ -373,6 +372,9 @@
 	<div class="name" class:not-in-collection={notInCollection}>
 		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
 		{item ? localizedName(item?.summon?.name) : ''}
+		{#if item}
+			<SubstituteCountBadge count={item.substitutions?.length ?? 0} />
+		{/if}
 	</div>
 </div>
 

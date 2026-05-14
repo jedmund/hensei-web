@@ -301,7 +301,6 @@
 								src={imageUrl}
 								onerror={(e) => handleImageFallback(e, fallbackUrl)}
 							/>
-							<SubstituteCountBadge count={item?.substitutions?.length ?? 0} />
 						</div>
 					{/key}
 				</div>
@@ -414,6 +413,9 @@
 	<div class="name" class:not-in-collection={notInCollection}>
 		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
 		{item ? localizedName(item?.weapon?.name) : ''}
+		{#if item}
+			<SubstituteCountBadge count={item.substitutions?.length ?? 0} />
+		{/if}
 	</div>
 </div>
 
