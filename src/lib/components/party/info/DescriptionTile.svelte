@@ -449,16 +449,12 @@
 				</Tooltip>
 			{/if}
 			{#if solo}
-				<Tooltip content={m.battle_solo()}>
-					<span class="token solo on">{m.battle_solo()}</span>
-				</Tooltip>
+				<span class="token solo on">{m.battle_solo()}</span>
 			{/if}
 			{#each settings as setting (setting.key)}
-				<Tooltip content={setting.tooltip}>
-					<span class="token {setting.key}" class:on={setting.active} class:off={!setting.active}>
-						{setting.label}
-					</span>
-				</Tooltip>
+				<span class="token {setting.key}" class:on={setting.active} class:off={!setting.active}>
+					{setting.label}
+				</span>
 			{/each}
 			{#if formattedClearTime}
 				<Tooltip content={m.party_edit_clear_time()}>
