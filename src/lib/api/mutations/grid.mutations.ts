@@ -125,9 +125,32 @@ export function updateGridWeaponOptions(queryClient: QueryClient) {
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
 
 			if (previousParty?.weapons) {
-				const updatedWeapons = previousParty.weapons.map((w) =>
-					w.id === id ? { ...w, ...updates } : w
-				)
+				// Optimistic notes-sync fan-out: when the edit touches a synced
+				// weapon's description or flips the flag, mirror those keys onto
+				// every sibling (same canonical weapon in the party) so the UI
+				// matches what the backend will produce.
+				const target = previousParty.weapons.find((w) => w.id === id)
+				const targetGranblueId = target?.weapon?.granblueId
+				const groupKeysSet = new Set(['description', 'notesSynced', 'substitutions'])
+				const groupPayload = Object.fromEntries(
+					Object.entries(updates).filter(([k]) => groupKeysSet.has(k))
+				) as Partial<GridWeapon>
+				const flagInPayload = 'notesSynced' in updates
+				const willBeSynced = flagInPayload
+					? (updates as { notesSynced?: boolean }).notesSynced === true
+					: !!target?.notesSynced
+				const shouldFanOut =
+					!!targetGranblueId &&
+					willBeSynced &&
+					(flagInPayload || Object.keys(groupPayload).length > 0)
+
+				const updatedWeapons = previousParty.weapons.map((w) => {
+					if (w.id === id) return { ...w, ...updates }
+					if (shouldFanOut && String(w.weapon?.granblueId) === String(targetGranblueId)) {
+						return { ...w, ...groupPayload }
+					}
+					return w
+				})
 				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
 					...previousParty,
 					weapons: updatedWeapons
@@ -562,9 +585,31 @@ export function updateGridSummonOptions(queryClient: QueryClient) {
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
 
 			if (previousParty?.summons) {
-				const updatedSummons = previousParty.summons.map((s) =>
-					s.id === id ? { ...s, ...updates } : s
-				)
+				// Optimistic notes-sync fan-out — see updateGridWeaponOptions for
+				// the rationale. Mirrors description/notesSynced/substitutions
+				// onto every sibling sharing this summon's granblue_id.
+				const target = previousParty.summons.find((s) => s.id === id)
+				const targetGranblueId = target?.summon?.granblueId
+				const groupKeysSet = new Set(['description', 'notesSynced', 'substitutions'])
+				const groupPayload = Object.fromEntries(
+					Object.entries(updates).filter(([k]) => groupKeysSet.has(k))
+				) as Partial<GridSummon>
+				const flagInPayload = 'notesSynced' in updates
+				const willBeSynced = flagInPayload
+					? (updates as { notesSynced?: boolean }).notesSynced === true
+					: !!target?.notesSynced
+				const shouldFanOut =
+					!!targetGranblueId &&
+					willBeSynced &&
+					(flagInPayload || Object.keys(groupPayload).length > 0)
+
+				const updatedSummons = previousParty.summons.map((s) => {
+					if (s.id === id) return { ...s, ...updates }
+					if (shouldFanOut && String(s.summon?.granblueId) === String(targetGranblueId)) {
+						return { ...s, ...groupPayload }
+					}
+					return s
+				})
 				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
 					...previousParty,
 					summons: updatedSummons
