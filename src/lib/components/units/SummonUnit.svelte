@@ -566,7 +566,7 @@
 		position: absolute;
 		z-index: effects.$z-tooltip;
 		top: -2%;
-		right: 22%;
+		right: 28%;
 		width: spacing.$unit-5x;
 		height: spacing.$unit-5x;
 		padding: 0;
@@ -584,7 +584,6 @@
 		}
 
 		&.main {
-			right: 28%;
 			width: spacing.$unit-6x;
 			height: spacing.$unit-6x;
 		}
