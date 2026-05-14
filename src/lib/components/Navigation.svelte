@@ -22,6 +22,13 @@
 	import LanguageToggle from './LanguageToggle.svelte'
 	import ThemeToggle from './ThemeToggle.svelte'
 	import NavUserSearch from './navigation/NavUserSearch.svelte'
+	import { fly } from 'svelte/transition'
+	import { cubicOut } from 'svelte/easing'
+
+	const STATE_IN = { x: -12, duration: 200, easing: cubicOut, delay: 60 }
+	const STATE_OUT = { x: -12, duration: 140, easing: cubicOut }
+	const SEARCH_IN = { x: 12, duration: 200, easing: cubicOut, delay: 60 }
+	const SEARCH_OUT = { x: 12, duration: 140, easing: cubicOut }
 
 	// Props from layout data
 	const {
@@ -195,22 +202,18 @@
 				style={pillLockedWidth ? `min-width:${pillLockedWidth}px` : ''}
 			>
 				{#if searchOpen}
-					<li class="nav-search">
+					<li class="nav-search pill-state" in:fly={SEARCH_IN} out:fly={SEARCH_OUT}>
 						<NavUserSearch {userElement} onClose={closeSearch} />
 					</li>
 				{:else}
-					<li>
+					<li class="pill-state pill-default" in:fly={STATE_IN} out:fly={STATE_OUT}>
 						<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
-					</li>
-					<li>
 						<a href={crewHref} class:selected={isNavSelected(crewHref)} class="crew-link">
 							{m.nav_crew()}
 							{#if totalNotificationCount > 0}
 								<span class="crew-notification-dot {userElement ?? ''}"></span>
 							{/if}
 						</a>
-					</li>
-					<li>
 						<a
 							href={meHref}
 							class:selected={isProfileSelected}
@@ -229,8 +232,6 @@
 							{/if}
 							<span>{username}</span>
 						</a>
-					</li>
-					<li>
 						<button
 							type="button"
 							class="nav-search-trigger"
@@ -239,11 +240,7 @@
 						>
 							<Icon name="search" size={16} />
 						</button>
-					</li>
-					<li>
 						<DropdownMenu.Root>
-							<!-- Notification pulse disabled — crew dot handles this now -->
-							<!-- class="nav-more-trigger {totalNotificationCount > 0 ? `has-notification ${userElement ?? ''}` : ''}" -->
 							<DropdownMenu.Trigger class="nav-more-trigger">
 								<Icon name="ellipsis" size={14} />
 							</DropdownMenu.Trigger>
@@ -305,22 +302,16 @@
 				style={pillLockedWidth ? `min-width:${pillLockedWidth}px` : ''}
 			>
 				{#if searchOpen}
-					<li class="nav-search">
+					<li class="nav-search pill-state" in:fly={SEARCH_IN} out:fly={SEARCH_OUT}>
 						<NavUserSearch onClose={closeSearch} />
 					</li>
 				{:else}
-					<li>
+					<li class="pill-state pill-default" in:fly={STATE_IN} out:fly={STATE_OUT}>
 						<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
-					</li>
-					<li>
 						<a href={crewHref} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
-					</li>
-					<li>
 						<a href={collectionHref} class:selected={isNavSelected(collectionHref)}
 							>{m.nav_collection()}</a
 						>
-					</li>
-					<li>
 						<button
 							type="button"
 							class="nav-search-trigger"
@@ -329,8 +320,6 @@
 						>
 							<Icon name="search" size={16} />
 						</button>
-					</li>
-					<li>
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger class="nav-more-trigger">
 								<Icon name="ellipsis" size={14} />
@@ -448,6 +437,27 @@
 			display: flex;
 			gap: spacing.$unit;
 			align-items: center;
+		}
+
+		// Stage the two pill states in a single grid cell so they can crossfade
+		// without pushing layout during the transition.
+		.nav-links > ul:has(> .pill-state) {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 0;
+
+			> .pill-state {
+				grid-row: 1;
+				grid-column: 1;
+				display: flex;
+				align-items: stretch;
+				gap: spacing.$unit-quarter;
+				min-width: 0;
+			}
+
+			> .pill-state.nav-search {
+				gap: 0;
+			}
 		}
 	}
 
