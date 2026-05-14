@@ -100,10 +100,10 @@
 	.collection-pill {
 		display: inline-flex;
 		align-items: center;
-		gap: spacing.$unit-half;
-		padding: spacing.$unit-half spacing.$unit;
+		gap: spacing.$unit-three-quarter;
+		padding: spacing.$unit-three-quarter calc(spacing.$unit * 1.5);
 		border-radius: 999px;
-		font-size: typography.$font-tiny;
+		font-size: typography.$font-button;
 		font-weight: 500;
 		line-height: 1;
 		backdrop-filter: blur(8px);
