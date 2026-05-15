@@ -51,6 +51,7 @@
 			sizeClasses[size],
 			ctx.element ? elementClasses[ctx.element] : '',
 			grow ? styles.grow : '',
+			ctx.slidingIndicator ? styles.slidingIndicator : '',
 			className || ''
 		]
 			.filter(Boolean)
