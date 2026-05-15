@@ -5,6 +5,7 @@
 	import { beforeNavigate } from '$app/navigation'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props()
 
@@ -23,6 +24,20 @@
 
 	const viewerCrewRole = $derived(crewStore.membership?.role ?? null)
 	const viewerCrewId = $derived(crewStore.crew?.id ?? null)
+
+	// Lock app-shell scroll while the drawer is open. The scrollable element
+	// in (app)/+layout.svelte is `.main-content`; targeting body/html doesn't
+	// help because the shell sets the viewport to overflow:hidden.
+	$effect(() => {
+		if (typeof document === 'undefined') return
+		const scroller = document.querySelector<HTMLElement>('.main-content')
+		if (!scroller) return
+		const previous = scroller.style.overflowY
+		if (expanded) scroller.style.overflowY = 'hidden'
+		return () => {
+			scroller.style.overflowY = previous
+		}
+	})
 </script>
 
 <section class="profile">
@@ -54,7 +69,7 @@
 			<button
 				type="button"
 				class="dim-backdrop"
-				aria-label="Collapse profile"
+				aria-label={m.profile_collapse()}
 				onclick={() => (expanded = false)}
 			></button>
 		{/if}

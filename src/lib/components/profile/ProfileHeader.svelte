@@ -142,17 +142,6 @@
 
 	// Invite modal state
 	let inviteModalOpen = $state(false)
-
-	$effect(() => {
-		if (typeof document === 'undefined') return
-		const scroller = document.querySelector<HTMLElement>('.main-content')
-		if (!scroller) return
-		const previous = scroller.style.overflowY
-		if (expanded) scroller.style.overflowY = 'hidden'
-		return () => {
-			scroller.style.overflowY = previous
-		}
-	})
 </script>
 
 <header class="header">
