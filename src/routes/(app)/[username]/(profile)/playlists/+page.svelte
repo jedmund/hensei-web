@@ -37,12 +37,12 @@
 
 	onDestroy(() => loader.destroy())
 
-	const items = $derived(() => {
+	const items = $derived.by(() => {
 		if (!playlistsQuery.data?.pages) return []
 		return playlistsQuery.data.pages.flatMap((page) => page.results ?? [])
 	})
 
-	const isEmpty = $derived(!playlistsQuery.isLoading && items().length === 0)
+	const isEmpty = $derived(!playlistsQuery.isLoading && items.length === 0)
 
 	// Delete playlist
 	const deletePlaylist = useDeletePlaylist()
@@ -97,7 +97,7 @@
 					</button>
 				</li>
 			{/if}
-			{#each items() as playlist (playlist.id)}
+			{#each items as playlist (playlist.id)}
 				<li>
 					{#if isOwner}
 						<ContextMenu.Root>
@@ -147,7 +147,7 @@
 			</div>
 		{/if}
 
-		{#if !playlistsQuery.hasNextPage && items().length > 0}
+		{#if !playlistsQuery.hasNextPage && items.length > 0}
 			<div class="end">
 				<p>{m.playlist_seen_all()}</p>
 			</div>

@@ -25,12 +25,12 @@
 	// Cleanup on destroy
 	onDestroy(() => loader.destroy())
 
-	const items = $derived(() => {
+	const items = $derived.by(() => {
 		if (!favoritesQuery.data?.pages) return []
 		return favoritesQuery.data.pages.flatMap((page) => page.items ?? [])
 	})
 
-	const isEmpty = $derived(!favoritesQuery.isLoading && items().length === 0)
+	const isEmpty = $derived(!favoritesQuery.isLoading && items.length === 0)
 </script>
 
 <svelte:head>
@@ -54,7 +54,7 @@
 	</div>
 {:else}
 	<div class="profile-grid">
-		<ExploreGrid items={items()} />
+		<ExploreGrid {items} />
 
 		<div
 			class="load-more-sentinel"
@@ -69,7 +69,7 @@
 			</div>
 		{/if}
 
-		{#if !favoritesQuery.hasNextPage && items().length > 0}
+		{#if !favoritesQuery.hasNextPage && items.length > 0}
 			<div class="end">
 				<p>{m.favorites_seen_all()}</p>
 			</div>
