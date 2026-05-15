@@ -23,6 +23,7 @@ interface ApiUserResponse {
 	wikiProfile?: string | null // transformed from wiki_profile
 	youtube?: string | null
 	collectionPrivacy?: number // transformed from collection_privacy (0=everyone, 1=crew_only, 2=private)
+	collectionAccessible?: boolean // transformed from collection_accessible (only present when ?check_collection=true)
 	importWeapons?: boolean // transformed from import_weapons
 	defaultImportVisibility?: number // transformed from default_import_visibility
 	simplePortraits?: boolean // transformed from simple_portraits
@@ -57,6 +58,7 @@ export interface UserInfo {
 	wikiProfile?: string
 	youtube?: string
 	collectionPrivacy?: number
+	collectionAccessible?: boolean
 	importWeapons?: boolean
 	defaultImportVisibility?: number
 	simplePortraits?: boolean
@@ -114,6 +116,7 @@ function transformUserResponse(apiUser: ApiUserResponse): UserInfo {
 		wikiProfile: apiUser.wikiProfile ?? undefined,
 		youtube: apiUser.youtube ?? undefined,
 		collectionPrivacy: apiUser.collectionPrivacy,
+		collectionAccessible: apiUser.collectionAccessible,
 		importWeapons: apiUser.importWeapons,
 		defaultImportVisibility: apiUser.defaultImportVisibility,
 		simplePortraits: apiUser.simplePortraits,
