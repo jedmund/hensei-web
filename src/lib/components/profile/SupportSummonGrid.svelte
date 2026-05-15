@@ -1,5 +1,7 @@
 <script lang="ts">
 	import SupportSummonSlot from '$lib/components/profile/SupportSummonSlot.svelte'
+	import { getElementImage, getElementLabel } from '$lib/utils/element'
+	import * as m from '$lib/paraglide/messages'
 	import {
 		SUPPORT_SUMMON_SECTION_LIMITS,
 		type SupportSummon,
@@ -16,13 +18,19 @@
 
 	let { summons = [], isOwner = false, onSelect }: Props = $props()
 
-	const ELEMENT_SECTIONS: readonly SupportSummonSection[] = [
-		'wind',
-		'fire',
-		'water',
-		'earth',
-		'dark',
-		'light'
+	// GBF in-game element ordering for visual columns:
+	// Fire → Water → Earth → Wind → Light → Dark
+	// (Internal element ids: 2=fire, 3=water, 4=earth, 1=wind, 6=light, 5=dark.)
+	const ELEMENT_COLUMNS: ReadonlyArray<{
+		section: SupportSummonSection
+		elementId: number
+	}> = [
+		{ section: 'fire', elementId: 2 },
+		{ section: 'water', elementId: 3 },
+		{ section: 'earth', elementId: 4 },
+		{ section: 'wind', elementId: 1 },
+		{ section: 'light', elementId: 6 },
+		{ section: 'dark', elementId: 5 }
 	] as const
 
 	const bySlot = $derived.by(() => {
@@ -39,17 +47,6 @@
 		summon?: SupportSummon
 	}
 
-	const elementCells = $derived.by<Cell[]>(() => {
-		const out: Cell[] = []
-		for (const section of ELEMENT_SECTIONS) {
-			const limit = SUPPORT_SUMMON_SECTION_LIMITS[section]
-			for (let position = 0; position < limit; position++) {
-				out.push({ section, position, summon: bySlot[`${section}:${position}`] })
-			}
-		}
-		return out
-	})
-
 	const miscCells = $derived.by<Cell[]>(() => {
 		const out: Cell[] = []
 		const limit = SUPPORT_SUMMON_SECTION_LIMITS.misc
@@ -61,18 +58,29 @@
 </script>
 
 <div class="support-summon-grid" role="grid" aria-label="Support summons">
-	<div class="element-grid">
-		{#each elementCells as cell (`${cell.section}:${cell.position}`)}
-			<SupportSummonSlot
-				section={cell.section}
-				position={cell.position}
-				summon={cell.summon}
-				{isOwner}
-				{onSelect}
-			/>
+	<div class="element-columns">
+		{#each ELEMENT_COLUMNS as { section, elementId } (section)}
+			<div class="column">
+				<div class="column-header">
+					<img class="header-icon" src={getElementImage(elementId)} alt="" aria-hidden="true" />
+					<span class="header-label">{getElementLabel(elementId)}</span>
+				</div>
+				{#each Array.from( { length: SUPPORT_SUMMON_SECTION_LIMITS[section] }, (_, position) => ({ section, position, summon: bySlot[`${section}:${position}`] }) ) as cell (`${cell.section}:${cell.position}`)}
+					<SupportSummonSlot
+						section={cell.section}
+						position={cell.position}
+						summon={cell.summon}
+						{isOwner}
+						{onSelect}
+					/>
+				{/each}
+			</div>
 		{/each}
 	</div>
-	<div class="misc-column" role="row">
+	<div class="misc-column">
+		<div class="column-header">
+			<span class="header-label">{m.support_summon_section_misc()}</span>
+		</div>
 		{#each miscCells as cell (`${cell.section}:${cell.position}`)}
 			<SupportSummonSlot
 				section={cell.section}
@@ -87,6 +95,7 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/typography' as *;
 
 	.support-summon-grid {
 		display: grid;
@@ -103,17 +112,39 @@
 		width: 100%;
 	}
 
-	.element-grid {
+	.element-columns {
 		display: grid;
 		grid-template-columns: repeat(6, minmax(0, 1fr));
-		grid-template-rows: repeat(3, auto);
-		grid-auto-flow: column;
 		gap: $unit;
 	}
 
+	.column,
 	.misc-column {
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
+		min-width: 0;
+	}
+
+	.column-header {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: $unit-half;
+		padding-bottom: $unit-half;
+	}
+
+	.header-icon {
+		width: $unit-3x;
+		height: $unit-3x;
+		display: block;
+	}
+
+	.header-label {
+		font-size: $font-small;
+		font-weight: $medium;
+		color: var(--text-secondary);
+		text-align: center;
 	}
 </style>

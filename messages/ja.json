@@ -989,6 +989,7 @@
 	"support_summon_picker_title": "サポート召喚石を選択",
 	"support_summon_picker_slot": "スロット {position}",
 	"support_summon_picker_section_misc": "その他",
+	"support_summon_section_misc": "その他",
 	"support_summon_picker_clear": "スロットをクリア",
 	"support_summon_picker_loading": "コレクションを読み込み中...",
 	"support_summon_picker_empty": "条件に合う召喚石がコレクションにありません",

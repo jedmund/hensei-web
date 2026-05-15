@@ -989,6 +989,7 @@
 	"support_summon_picker_title": "Pick a support summon",
 	"support_summon_picker_slot": "Slot {position}",
 	"support_summon_picker_section_misc": "Misc",
+	"support_summon_section_misc": "Misc",
 	"support_summon_picker_clear": "Clear slot",
 	"support_summon_picker_loading": "Loading your collection...",
 	"support_summon_picker_empty": "No matching summons in your collection",
