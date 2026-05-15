@@ -8,9 +8,7 @@
 	import { setContext } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { viewMode } from '$lib/stores/viewMode.svelte'
-	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import CollectionSegmentedControl from '$lib/components/collection/CollectionSegmentedControl.svelte'
 	import ViewModeToggle from '$lib/components/ui/ViewModeToggle.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -36,9 +34,6 @@
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props()
 
-	const viewerCrewRole = $derived(crewStore.membership?.role ?? null)
-	const viewerCrewId = $derived(crewStore.crew?.id ?? null)
-
 	// Query for collection counts
 	const countsQuery = createQuery(() => collectionQueries.counts(data.user?.id ?? ''))
 
@@ -56,7 +51,6 @@
 	let addModalOpen = $state(false)
 	let confirmDeleteOpen = $state(false)
 	let isDeleting = $state(false)
-	let profileExpanded = $state(false)
 
 	// Selection mode context
 	const selectionMode = createSelectionModeContext()
@@ -183,141 +177,117 @@
 	<title>{username}</title>
 </svelte:head>
 
-<section class="collection">
-	<ProfileHeader
-		username={username ?? ''}
-		displayName={data.user?.displayName}
-		description={data.user?.description}
-		avatarPicture={data.user?.avatar?.picture}
-		element={data.user?.avatar?.element}
-		granblueId={data.user?.granblueId}
-		wikiProfile={data.user?.wikiProfile}
-		youtube={data.user?.youtube}
-		showCrewGamertag={data.user?.showCrewGamertag}
-		crewGamertag={data.user?.crewGamertag}
-		crewName={data.user?.crewName}
-		userId={data.user?.id}
-		activeTab="collection"
-		isOwner={data.isOwner}
-		{viewerCrewRole}
-		{viewerCrewId}
-		collectionPrivacy={data.user?.collectionPrivacy}
-		isAuthenticated={$page.data?.isAuthenticated}
-		bind:expanded={profileExpanded}
-	/>
-
-	<div class="card-container profile-below" class:dimmed={profileExpanded}>
-		<!-- Entity type segmented control -->
-		<nav class="entity-nav" aria-label="Collection type">
-			{#if selectionMode.isActive}
-				<!-- Selection mode UI -->
-				<div class="selection-controls-left">
-					<span class="selection-count"
-						>{m.collection_selected_count({ count: selectionMode.selectedCount })}</span
+<div class="card-container">
+	<!-- Entity type segmented control -->
+	<nav class="entity-nav" aria-label="Collection type">
+		{#if selectionMode.isActive}
+			<!-- Selection mode UI -->
+			<div class="selection-controls-left">
+				<span class="selection-count"
+					>{m.collection_selected_count({ count: selectionMode.selectedCount })}</span
+				>
+				<div class="selection-buttons">
+					<Button
+						variant="element-ghost"
+						size="small"
+						element={userElement}
+						onclick={handleSelectAll}
 					>
-					<div class="selection-buttons">
+						{m.collection_select_all()}
+					</Button>
+					{#if selectionMode.selectedCount > 0}
 						<Button
 							variant="element-ghost"
 							size="small"
 							element={userElement}
-							onclick={handleSelectAll}
+							onclick={handleClearSelection}
 						>
-							{m.collection_select_all()}
+							{m.collection_clear_selection()}
 						</Button>
-						{#if selectionMode.selectedCount > 0}
-							<Button
-								variant="element-ghost"
-								size="small"
-								element={userElement}
-								onclick={handleClearSelection}
-							>
-								{m.collection_clear_selection()}
-							</Button>
-						{/if}
-					</div>
-				</div>
-				<div class="selection-controls-right">
-					<Button
-						variant="destructive"
-						size="small"
-						onclick={handleDeleteClick}
-						disabled={selectionMode.selectedCount === 0}
-					>
-						{m.collection_delete()}
-					</Button>
-					<Button variant="ghost" size="small" onclick={handleCancelSelection}>
-						{m.collection_cancel()}
-					</Button>
-				</div>
-			{:else}
-				<!-- Normal UI -->
-				<CollectionSegmentedControl
-					{activeEntityType}
-					onValueChange={handleTabChange}
-					element={userElement}
-					counts={countsQuery.data}
-				/>
-
-				<div class="nav-right">
-					<ViewModeToggle
-						value={viewMode.collectionView}
-						onValueChange={(mode) => viewMode.setCollectionView(mode)}
-						element={userElement}
-					/>
-					{#if data.isOwner}
-						<DropdownMenu>
-							{#snippet trigger({ props })}
-								<Button {...props} variant="ghost" size="small" iconOnly icon="ellipsis" />
-							{/snippet}
-							{#snippet menu()}
-								{#if supportsAddModal}
-									<button
-										type="button"
-										class="dropdown-menu-item"
-										onclick={() => (addModalOpen = true)}
-									>
-										{addButtonText}
-									</button>
-								{:else if isArtifacts}
-									<button type="button" class="dropdown-menu-item" onclick={handleAddArtifact}>
-										{m.collection_add_artifact()}
-									</button>
-								{/if}
-								<div class="dropdown-menu-separator"></div>
-								<button
-									type="button"
-									class="dropdown-menu-item danger"
-									onclick={handleEnterSelectionMode}
-								>
-									{m.collection_delete_type({
-										type: entityNameMap[activeEntityType] ?? activeEntityType
-									})}
-								</button>
-							{/snippet}
-						</DropdownMenu>
 					{/if}
 				</div>
-			{/if}
-		</nav>
+			</div>
+			<div class="selection-controls-right">
+				<Button
+					variant="destructive"
+					size="small"
+					onclick={handleDeleteClick}
+					disabled={selectionMode.selectedCount === 0}
+				>
+					{m.collection_delete()}
+				</Button>
+				<Button variant="ghost" size="small" onclick={handleCancelSelection}>
+					{m.collection_cancel()}
+				</Button>
+			</div>
+		{:else}
+			<!-- Normal UI -->
+			<CollectionSegmentedControl
+				{activeEntityType}
+				onValueChange={handleTabChange}
+				element={userElement}
+				counts={countsQuery.data}
+			/>
 
-		<div class="content">
-			<svelte:boundary
-				onerror={(e) => {
-					if (import.meta.env.DEV) console.error('Collection render error:', e)
-				}}
-			>
-				{@render children()}
-				<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
-				{#snippet failed(error, reset)}
-					<div class="collection-error" role="alert">
-						<p>{m.collection_load_error()}</p>
-						<button onclick={reset}>{m.retry()}</button>
-					</div>
-				{/snippet}
-			</svelte:boundary>
-		</div>
+			<div class="nav-right">
+				<ViewModeToggle
+					value={viewMode.collectionView}
+					onValueChange={(mode) => viewMode.setCollectionView(mode)}
+					element={userElement}
+				/>
+				{#if data.isOwner}
+					<DropdownMenu>
+						{#snippet trigger({ props })}
+							<Button {...props} variant="ghost" size="small" iconOnly icon="ellipsis" />
+						{/snippet}
+						{#snippet menu()}
+							{#if supportsAddModal}
+								<button
+									type="button"
+									class="dropdown-menu-item"
+									onclick={() => (addModalOpen = true)}
+								>
+									{addButtonText}
+								</button>
+							{:else if isArtifacts}
+								<button type="button" class="dropdown-menu-item" onclick={handleAddArtifact}>
+									{m.collection_add_artifact()}
+								</button>
+							{/if}
+							<div class="dropdown-menu-separator"></div>
+							<button
+								type="button"
+								class="dropdown-menu-item danger"
+								onclick={handleEnterSelectionMode}
+							>
+								{m.collection_delete_type({
+									type: entityNameMap[activeEntityType] ?? activeEntityType
+								})}
+							</button>
+						{/snippet}
+					</DropdownMenu>
+				{/if}
+			</div>
+		{/if}
+	</nav>
+
+	<div class="content">
+		<svelte:boundary
+			onerror={(e) => {
+				if (import.meta.env.DEV) console.error('Collection render error:', e)
+			}}
+		>
+			{@render children()}
+			<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
+			{#snippet failed(error, reset)}
+				<div class="collection-error" role="alert">
+					<p>{m.collection_load_error()}</p>
+					<button onclick={reset}>{m.retry()}</button>
+				</div>
+			{/snippet}
+		</svelte:boundary>
 	</div>
-</section>
+</div>
 
 {#if data.isOwner && modalEntityType}
 	<AddToCollectionModal
@@ -342,24 +312,9 @@
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/typography' as *;
 
-	.collection {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-2x;
-	}
-
 	.card-container {
 		background: var(--card-bg);
 		border-radius: $card-corner;
-	}
-
-	.profile-below {
-		transition: opacity 0.3s ease-in-out;
-
-		&.dimmed {
-			opacity: 0.3;
-			pointer-events: none;
-		}
 	}
 
 	.entity-nav {

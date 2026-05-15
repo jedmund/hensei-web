@@ -3,7 +3,6 @@
 	import { onDestroy } from 'svelte'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
-	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import { userQueries } from '$lib/api/queries/user.queries'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import Icon from '$lib/components/Icon.svelte'
@@ -13,7 +12,6 @@
 	const { data }: { data: PageData } = $props()
 
 	let sentinelEl = $state<HTMLElement>()
-	let profileExpanded = $state(false)
 
 	const favoritesQuery = createInfiniteQuery(() => userQueries.favorites())
 
@@ -39,89 +37,48 @@
 	<title>{m.page_title_favorites({ username: data.user.username })}</title>
 </svelte:head>
 
-<section class="profile">
-	<ProfileHeader
-		username={data.user.username}
-		displayName={data.user?.displayName}
-		description={data.user?.description}
-		userId={data.user?.id}
-		avatarPicture={data.user?.avatar?.picture}
-		element={data.user?.avatar?.element}
-		granblueId={data.user?.granblueId}
-		wikiProfile={data.user?.wikiProfile}
-		youtube={data.user?.youtube}
-		showCrewGamertag={data.user?.showCrewGamertag}
-		crewGamertag={data.user?.crewGamertag}
-		crewName={data.user?.crewName}
-		activeTab="favorites"
-		isOwner={true}
-		bind:expanded={profileExpanded}
-	/>
+{#if favoritesQuery.isLoading}
+	<div class="loading">
+		<Icon name="loader-2" size={32} />
+		<p>{m.favorites_loading()}</p>
+	</div>
+{:else if favoritesQuery.isError}
+	<div class="error">
+		<Icon name="alert-circle" size={32} />
+		<p>{m.favorites_load_error({ error: favoritesQuery.error?.message || '' })}</p>
+		<Button size="small" onclick={() => favoritesQuery.refetch()}>{m.retry()}</Button>
+	</div>
+{:else if isEmpty}
+	<div class="empty">
+		<p>{m.favorites_empty()}</p>
+	</div>
+{:else}
+	<div class="profile-grid">
+		<ExploreGrid items={items()} />
 
-	<div class="profile-below" class:dimmed={profileExpanded}>
-		{#if favoritesQuery.isLoading}
-			<div class="loading">
-				<Icon name="loader-2" size={32} />
-				<p>{m.favorites_loading()}</p>
+		<div
+			class="load-more-sentinel"
+			bind:this={sentinelEl}
+			class:hidden={!favoritesQuery.hasNextPage}
+		></div>
+
+		{#if favoritesQuery.isFetchingNextPage}
+			<div class="loading-more">
+				<Icon name="loader-2" size={20} />
+				<span>{m.loading_more()}</span>
 			</div>
-		{:else if favoritesQuery.isError}
-			<div class="error">
-				<Icon name="alert-circle" size={32} />
-				<p>{m.favorites_load_error({ error: favoritesQuery.error?.message || '' })}</p>
-				<Button size="small" onclick={() => favoritesQuery.refetch()}>{m.retry()}</Button>
-			</div>
-		{:else if isEmpty}
-			<div class="empty">
-				<p>{m.favorites_empty()}</p>
-			</div>
-		{:else}
-			<div class="profile-grid">
-				<ExploreGrid items={items()} />
+		{/if}
 
-				<div
-					class="load-more-sentinel"
-					bind:this={sentinelEl}
-					class:hidden={!favoritesQuery.hasNextPage}
-				></div>
-
-				{#if favoritesQuery.isFetchingNextPage}
-					<div class="loading-more">
-						<Icon name="loader-2" size={20} />
-						<span>{m.loading_more()}</span>
-					</div>
-				{/if}
-
-				{#if !favoritesQuery.hasNextPage && items().length > 0}
-					<div class="end">
-						<p>{m.favorites_seen_all()}</p>
-					</div>
-				{/if}
+		{#if !favoritesQuery.hasNextPage && items().length > 0}
+			<div class="end">
+				<p>{m.favorites_seen_all()}</p>
 			</div>
 		{/if}
 	</div>
-</section>
+{/if}
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
-	@use '$src/themes/colors' as *;
-
-	.profile {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-2x;
-	}
-
-	.profile-below {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-2x;
-		transition: opacity 0.3s ease-in-out;
-
-		&.dimmed {
-			opacity: 0.3;
-			pointer-events: none;
-		}
-	}
 
 	.empty,
 	.end,

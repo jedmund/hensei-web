@@ -1,4 +1,4 @@
-import type { PageLoad } from './$types'
+import type { LayoutLoad } from './$types'
 import type { FilterItem } from '$lib/types/filter'
 import { error } from '@sveltejs/kit'
 import { userAdapter } from '$lib/api/adapters/user.adapter'
@@ -9,12 +9,12 @@ import {
 	urlParamsToExploreFilterParams
 } from '$lib/utils/exploreFilterParams'
 
-export const load: PageLoad = async ({ params, url, depends, parent, fetch }) => {
+export const load: LayoutLoad = async ({ params, url, depends, parent, fetch }) => {
 	depends('app:profile')
 	const username = params.username
 	const pageParam = url.searchParams.get('page')
 	const page = pageParam ? Math.max(1, parseInt(pageParam, 10) || 1) : 1
-	const { account } = await parent()
+	const { account, isAuthenticated } = await parent()
 	const isOwner = account?.username === username
 
 	try {
@@ -37,6 +37,7 @@ export const load: PageLoad = async ({ params, url, depends, parent, fetch }) =>
 				totalPages: filteredResult.totalPages,
 				perPage: filteredResult.perPage,
 				isOwner,
+				isAuthenticated,
 				initialFilterItems: filterItems
 			}
 		}
@@ -55,6 +56,7 @@ export const load: PageLoad = async ({ params, url, depends, parent, fetch }) =>
 			totalPages,
 			perPage,
 			isOwner,
+			isAuthenticated,
 			initialFilterItems: [] as FilterItem[]
 		}
 	} catch (e: unknown) {
