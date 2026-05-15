@@ -982,6 +982,8 @@
 	"profile_tab_collection": "コレクション",
 	"profile_create_with_collection": "このコレクションでチームを作成",
 	"profile_visibility_all": "すべての編成",
+	"profile_expand": "プロフィールを展開",
+	"profile_collapse": "プロフィールを折りたたむ",
 
 	"crew_roster_search": "キャラ、武器、召喚石を検索",
 	"crew_roster_no_members": "団員が見つかりません",

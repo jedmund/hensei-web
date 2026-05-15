@@ -47,6 +47,8 @@
 		collectionPrivacy?: number
 		/** Whether the viewer is logged in */
 		isAuthenticated?: boolean
+		/** Whether the header is expanded (bindable) */
+		expanded?: boolean
 	}
 
 	let {
@@ -68,7 +70,8 @@
 		viewerCrewRole = null,
 		viewerCrewId = null,
 		collectionPrivacy,
-		isAuthenticated = false
+		isAuthenticated = false,
+		expanded = $bindable(false)
 	}: Props = $props()
 
 	// GBF profile URL - shown if user has filled in their Granblue ID
@@ -139,6 +142,17 @@
 
 	// Invite modal state
 	let inviteModalOpen = $state(false)
+
+	$effect(() => {
+		if (typeof document === 'undefined') return
+		const scroller = document.querySelector<HTMLElement>('.main-content')
+		if (!scroller) return
+		const previous = scroller.style.overflowY
+		if (expanded) scroller.style.overflowY = 'hidden'
+		return () => {
+			scroller.style.overflowY = previous
+		}
+	})
 </script>
 
 <header class="header">
@@ -265,6 +279,19 @@
 			{/if}
 		</SegmentedControl>
 	</nav>
+
+	<div class="expand-section">
+		<div class="expand-spacer" class:open={expanded}></div>
+		<button
+			type="button"
+			class="expand-toggle"
+			aria-expanded={expanded}
+			aria-label={expanded ? m.profile_collapse() : m.profile_expand()}
+			onclick={() => (expanded = !expanded)}
+		>
+			<Icon name={expanded ? 'chevron-up-small' : 'chevron-down-small'} size={16} />
+		</button>
+	</div>
 </header>
 
 {#if canInvite && userId && viewerCrewId}
@@ -415,7 +442,51 @@
 	}
 
 	.tabs {
+		padding: 0 $unit-2x $unit;
+	}
+
+	.expand-section {
+		display: flex;
+		flex-direction: column;
 		padding: 0 $unit-2x $unit-2x;
+	}
+
+	.expand-spacer {
+		width: 100%;
+		height: 0;
+		transition: height effects.$duration-slide ease-in-out;
+
+		&.open {
+			height: 50dvh;
+		}
+	}
+
+	.expand-toggle {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 24px;
+		padding: 0;
+		border-radius: $input-corner;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		color: var(--text-tertiary);
+		transition:
+			background-color effects.$duration-quick ease,
+			color effects.$duration-quick ease;
+
+		&:hover {
+			background: var(--button-contained-bg-hover, $grey-90);
+			color: var(--text-primary);
+			cursor: pointer;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--focus-ring);
+			outline-offset: 2px;
+		}
 	}
 
 	.header-actions {

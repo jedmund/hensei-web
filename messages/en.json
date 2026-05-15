@@ -982,6 +982,8 @@
 	"profile_tab_collection": "Collection",
 	"profile_create_with_collection": "Create with collection",
 	"profile_visibility_all": "All teams",
+	"profile_expand": "Expand profile",
+	"profile_collapse": "Collapse profile",
 
 	"crew_roster_search": "Search characters, weapons, summons…",
 	"crew_roster_no_members": "No crew members found",
