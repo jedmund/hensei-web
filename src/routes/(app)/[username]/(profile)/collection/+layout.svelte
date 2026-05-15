@@ -184,107 +184,107 @@
 	<title>{username}</title>
 </svelte:head>
 
-<div class="card-container">
-	<!-- Entity type segmented control -->
-	<nav class="entity-nav" aria-label="Collection type">
-		{#if selectionMode.isActive}
-			<!-- Selection mode UI -->
-			<div class="selection-controls-left">
-				<span class="selection-count"
-					>{m.collection_selected_count({ count: selectionMode.selectedCount })}</span
-				>
-				<div class="selection-buttons">
-					<Button
-						variant="element-ghost"
-						size="small"
-						element={userElement}
-						onclick={handleSelectAll}
+{#if collectionLocked}
+	<div class="collection-private" role="status">
+		<Icon name="lock" size={20} />
+		<p>{m.collection_private_message()}</p>
+	</div>
+{:else}
+	<div class="card-container">
+		<!-- Entity type segmented control -->
+		<nav class="entity-nav" aria-label="Collection type">
+			{#if selectionMode.isActive}
+				<!-- Selection mode UI -->
+				<div class="selection-controls-left">
+					<span class="selection-count"
+						>{m.collection_selected_count({ count: selectionMode.selectedCount })}</span
 					>
-						{m.collection_select_all()}
-					</Button>
-					{#if selectionMode.selectedCount > 0}
+					<div class="selection-buttons">
 						<Button
 							variant="element-ghost"
 							size="small"
 							element={userElement}
-							onclick={handleClearSelection}
+							onclick={handleSelectAll}
 						>
-							{m.collection_clear_selection()}
+							{m.collection_select_all()}
 						</Button>
-					{/if}
+						{#if selectionMode.selectedCount > 0}
+							<Button
+								variant="element-ghost"
+								size="small"
+								element={userElement}
+								onclick={handleClearSelection}
+							>
+								{m.collection_clear_selection()}
+							</Button>
+						{/if}
+					</div>
 				</div>
-			</div>
-			<div class="selection-controls-right">
-				<Button
-					variant="destructive"
-					size="small"
-					onclick={handleDeleteClick}
-					disabled={selectionMode.selectedCount === 0}
-				>
-					{m.collection_delete()}
-				</Button>
-				<Button variant="ghost" size="small" onclick={handleCancelSelection}>
-					{m.collection_cancel()}
-				</Button>
-			</div>
-		{:else}
-			<!-- Normal UI -->
-			<CollectionSegmentedControl
-				{activeEntityType}
-				onValueChange={handleTabChange}
-				element={userElement}
-				counts={countsQuery.data}
-			/>
-
-			<div class="nav-right">
-				<ViewModeToggle
-					value={viewMode.collectionView}
-					onValueChange={(mode) => viewMode.setCollectionView(mode)}
+				<div class="selection-controls-right">
+					<Button
+						variant="destructive"
+						size="small"
+						onclick={handleDeleteClick}
+						disabled={selectionMode.selectedCount === 0}
+					>
+						{m.collection_delete()}
+					</Button>
+					<Button variant="ghost" size="small" onclick={handleCancelSelection}>
+						{m.collection_cancel()}
+					</Button>
+				</div>
+			{:else}
+				<!-- Normal UI -->
+				<CollectionSegmentedControl
+					{activeEntityType}
+					onValueChange={handleTabChange}
 					element={userElement}
+					counts={countsQuery.data}
 				/>
-				{#if data.isOwner}
-					<DropdownMenu>
-						{#snippet trigger({ props })}
-							<Button {...props} variant="ghost" size="small" iconOnly icon="ellipsis" />
-						{/snippet}
-						{#snippet menu()}
-							{#if supportsAddModal}
+
+				<div class="nav-right">
+					<ViewModeToggle
+						value={viewMode.collectionView}
+						onValueChange={(mode) => viewMode.setCollectionView(mode)}
+						element={userElement}
+					/>
+					{#if data.isOwner}
+						<DropdownMenu>
+							{#snippet trigger({ props })}
+								<Button {...props} variant="ghost" size="small" iconOnly icon="ellipsis" />
+							{/snippet}
+							{#snippet menu()}
+								{#if supportsAddModal}
+									<button
+										type="button"
+										class="dropdown-menu-item"
+										onclick={() => (addModalOpen = true)}
+									>
+										{addButtonText}
+									</button>
+								{:else if isArtifacts}
+									<button type="button" class="dropdown-menu-item" onclick={handleAddArtifact}>
+										{m.collection_add_artifact()}
+									</button>
+								{/if}
+								<div class="dropdown-menu-separator"></div>
 								<button
 									type="button"
-									class="dropdown-menu-item"
-									onclick={() => (addModalOpen = true)}
+									class="dropdown-menu-item danger"
+									onclick={handleEnterSelectionMode}
 								>
-									{addButtonText}
+									{m.collection_delete_type({
+										type: entityNameMap[activeEntityType] ?? activeEntityType
+									})}
 								</button>
-							{:else if isArtifacts}
-								<button type="button" class="dropdown-menu-item" onclick={handleAddArtifact}>
-									{m.collection_add_artifact()}
-								</button>
-							{/if}
-							<div class="dropdown-menu-separator"></div>
-							<button
-								type="button"
-								class="dropdown-menu-item danger"
-								onclick={handleEnterSelectionMode}
-							>
-								{m.collection_delete_type({
-									type: entityNameMap[activeEntityType] ?? activeEntityType
-								})}
-							</button>
-						{/snippet}
-					</DropdownMenu>
-				{/if}
-			</div>
-		{/if}
-	</nav>
+							{/snippet}
+						</DropdownMenu>
+					{/if}
+				</div>
+			{/if}
+		</nav>
 
-	<div class="content">
-		{#if collectionLocked}
-			<div class="collection-private" role="status">
-				<Icon name="lock" size={20} />
-				<p>{m.collection_private_message()}</p>
-			</div>
-		{:else}
+		<div class="content">
 			<svelte:boundary
 				onerror={(e) => {
 					if (import.meta.env.DEV) console.error('Collection render error:', e)
@@ -299,9 +299,9 @@
 					</div>
 				{/snippet}
 			</svelte:boundary>
-		{/if}
+		</div>
 	</div>
-</div>
+{/if}
 
 {#if data.isOwner && modalEntityType}
 	<AddToCollectionModal
