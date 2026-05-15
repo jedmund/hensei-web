@@ -22,7 +22,9 @@
 
 	const springOpts = { stiffness: 0.18, damping: 0.5, ...springConfig }
 	const x = new Spring(0, springOpts)
+	const y = new Spring(0, springOpts)
 	const w = new Spring(0, springOpts)
+	const h = new Spring(0, springOpts)
 
 	let visible = $state(false)
 	let initialized = $state(false)
@@ -38,17 +40,23 @@
 			return
 		}
 		const nextX = selected.offsetLeft
+		const nextY = selected.offsetTop
 		const nextW = selected.offsetWidth
+		const nextH = selected.offsetHeight
 		if (!initialized) {
 			x.set(nextX, { instant: true })
+			y.set(nextY, { instant: true })
 			w.set(nextW, { instant: true })
+			h.set(nextH, { instant: true })
 			initialized = true
 			requestAnimationFrame(() => {
 				visible = true
 			})
 		} else {
 			x.set(nextX)
+			y.set(nextY)
 			w.set(nextW)
+			h.set(nextH)
 			visible = true
 		}
 	}
@@ -68,7 +76,7 @@
 
 	const style = $derived(
 		visible
-			? `transform: translateX(${x.current}px); width: ${w.current}px; opacity: 1;`
+			? `transform: translate(${x.current}px, ${y.current}px); width: ${w.current}px; height: ${h.current}px; opacity: 1;`
 			: 'opacity: 0;'
 	)
 </script>
@@ -82,9 +90,9 @@
 	.sliding-selection {
 		position: absolute;
 		top: 0;
-		bottom: 0;
 		left: 0;
 		width: 0;
+		height: 0;
 		border-radius: var(--sliding-selection-radius, #{layout.$full-corner});
 		background-color: var(
 			--sliding-selection-bg,
@@ -93,9 +101,9 @@
 		pointer-events: none;
 		z-index: 0;
 		opacity: 0;
-		transform: translateX(0);
-		will-change: transform, width;
-		// Spring drives transform + width; opacity stays on a brief CSS fade
+		transform: translate(0, 0);
+		will-change: transform, width, height;
+		// Spring drives transform + width + height; opacity stays on a brief CSS fade
 		// so the indicator can appear/disappear without measurement flicker.
 		transition: opacity effects.$duration-quick ease;
 	}
