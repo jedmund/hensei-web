@@ -122,7 +122,7 @@
 						host={rootEl}
 						trigger={value}
 						selector="[data-state='checked']"
-						spring={{ stiffness: 0.18, damping: 0.7 }}
+						spring={{ stiffness: 0.14, damping: 0.5 }}
 					/>
 				{/if}
 				{@render children?.()}
