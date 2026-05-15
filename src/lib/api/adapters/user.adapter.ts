@@ -156,12 +156,22 @@ export class UserAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Get user information
+	 * Get user information.
+	 *
+	 * Pass `checkCollection: true` to have the backend enforce the user's
+	 * collection privacy and return 403 when the current viewer (or anonymous)
+	 * can't see the collection — used by collection routes that need an
+	 * SSR-level privacy gate.
 	 */
-	async getInfo(username: string, options?: RequestOptions): Promise<UserInfo> {
+	async getInfo(
+		username: string,
+		options?: RequestOptions & { checkCollection?: boolean }
+	): Promise<UserInfo> {
+		const { checkCollection, query, ...rest } = options ?? {}
+		const mergedQuery = checkCollection ? { ...(query ?? {}), check_collection: true } : query
 		const result = await this.request<ApiUserResponse>(
 			`/users/info/${encodeURIComponent(username)}`,
-			options
+			{ ...rest, ...(mergedQuery ? { query: mergedQuery } : {}) }
 		)
 		return transformUserResponse(result)
 	}
