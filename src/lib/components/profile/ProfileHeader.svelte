@@ -10,7 +10,7 @@
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import InviteUserModal from '$lib/components/crew/InviteUserModal.svelte'
-	import SupportSummonGrid from '$lib/components/profile/SupportSummonGrid.svelte'
+	import SupportSummonModal from '$lib/components/profile/SupportSummonModal.svelte'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import type { CrewRole } from '$lib/types/api/crew'
 	import type { SupportSummon } from '$lib/types/api/supportSummon'
@@ -125,8 +125,10 @@
 	// Can create team from collection if: not owner, logged in, collection is public, and user exists
 	const canCreateTeam = $derived(!isOwner && isAuthenticated && collectionPrivacy === 1 && userId)
 
-	// Show dropdown if there are any crew-related actions available
-	const showMenu = $derived(canInvite || showAlreadyInCrew)
+	// Owners always see the menu (to access their support summons); others see
+	// it when there's a crew-related action available.
+	const showSupportSummons = $derived(isOwner)
+	const showMenu = $derived(showSupportSummons || canInvite || showAlreadyInCrew)
 
 	// Typed element for SegmentedControl
 	const typedElement = $derived(
@@ -147,6 +149,7 @@
 
 	// Invite modal state
 	let inviteModalOpen = $state(false)
+	let supportSummonsModalOpen = $state(false)
 </script>
 
 <header class="header">
@@ -202,6 +205,14 @@
 
 					<DropdownMenu.Portal>
 						<DropdownMenu.Content class="dropdown-content" sideOffset={5} align="end">
+							{#if showSupportSummons}
+								<DropdownItem>
+									<button onclick={() => (supportSummonsModalOpen = true)}>
+										<Icon name="sparkles" size={14} />
+										<span>{m.profile_support_summons()}</span>
+									</button>
+								</DropdownItem>
+							{/if}
 							{#if canInvite}
 								<DropdownItem>
 									<button onclick={() => (inviteModalOpen = true)}>
@@ -256,11 +267,7 @@
 		</div>
 	{/if}
 
-	<div class="expand-spacer" class:open={expanded}>
-		<div class="drawer-content">
-			<SupportSummonGrid summons={supportSummons} />
-		</div>
-	</div>
+	<div class="expand-spacer" class:open={expanded}></div>
 
 	<nav class="tabs" class:dimmed={expanded} aria-label="Profile sections">
 		<SegmentedControl
@@ -296,6 +303,16 @@
 
 {#if canInvite && userId && viewerCrewId}
 	<InviteUserModal bind:open={inviteModalOpen} {userId} {username} crewId={viewerCrewId} />
+{/if}
+
+{#if showSupportSummons}
+	<SupportSummonModal
+		bind:open={supportSummonsModalOpen}
+		summons={supportSummons}
+		{userId}
+		{username}
+		{isOwner}
+	/>
 {/if}
 
 <style lang="scss">
@@ -465,12 +482,6 @@
 		&.open {
 			height: 50dvh;
 		}
-	}
-
-	.drawer-content {
-		height: 100%;
-		padding: $unit-2x;
-		overflow-y: auto;
 	}
 
 	.expand-toggle {
