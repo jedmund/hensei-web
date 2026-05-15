@@ -3,18 +3,27 @@
 
 	interface Props {
 		title: string
-		description?: string
+		/** Plain-text subtitle. Use `description` snippet for richer content. */
+		descriptionText?: string
+		description?: Snippet | string
 		children?: Snippet
 	}
 
-	let { title, description, children }: Props = $props()
+	let { title, descriptionText, description, children }: Props = $props()
+
+	const descriptionString = $derived(
+		typeof description === 'string' ? description : (descriptionText ?? undefined)
+	)
+	const descriptionSnippet = $derived(typeof description === 'function' ? description : undefined)
 </script>
 
 <div class="modal-header">
 	<div class="header-text">
 		<h2 class="title">{title}</h2>
-		{#if description}
-			<p class="description">{description}</p>
+		{#if descriptionSnippet}
+			<div class="description">{@render descriptionSnippet()}</div>
+		{:else if descriptionString}
+			<p class="description">{descriptionString}</p>
 		{/if}
 	</div>
 	{#if children}

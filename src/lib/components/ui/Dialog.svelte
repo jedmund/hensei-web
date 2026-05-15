@@ -9,6 +9,9 @@
 		onOpenChange?: (open: boolean) => void
 		size?: DialogSize
 		hideClose?: boolean
+		/** Extra class appended to the dialog content — for caller-specific
+		 * tweaks like height caps. */
+		class?: string
 		children: Snippet
 	}
 
@@ -17,6 +20,7 @@
 		onOpenChange,
 		size = 'default',
 		hideClose = false,
+		class: className = '',
 		children
 	}: DialogProps = $props()
 
@@ -39,7 +43,7 @@
 <DialogBase.Root bind:open onOpenChange={handleOpenChange}>
 	<DialogBase.Portal>
 		<DialogBase.Overlay class="dialog-overlay" />
-		<DialogBase.Content class="dialog-content {sizeClass}">
+		<DialogBase.Content class="dialog-content {sizeClass} {className}">
 			{#if !hideClose}
 				<DialogBase.Close class="dialog-close">
 					<span aria-hidden="true">×</span>
@@ -85,11 +89,15 @@
 		padding: 0;
 		transition:
 			transform $duration-standard ease,
-			filter $duration-standard ease;
+			filter $duration-standard ease,
+			opacity $duration-standard ease;
 	}
 
+	// Only the outermost dialog should paint an overlay. Nested dialogs
+	// would otherwise stack their own dim layer on top of the parent's,
+	// re-darkening the page each level deeper.
 	:global(.dialog-overlay[data-nested]) {
-		background: rgba(0, 0, 0, 0.3);
+		display: none;
 	}
 
 	:global(.dialog-content[data-nested-open]) {
