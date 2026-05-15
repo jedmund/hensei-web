@@ -167,12 +167,14 @@ export type CollectionSortKey =
 	| 'proficiency_desc'
 	| 'score_desc'
 	| 'score_asc'
+	| 'uncap_asc'
+	| 'uncap_desc'
 
 /**
  * Filters for listing collection items
  */
 export interface CollectionFilters {
-	[key: string]: string | number | number[] | (string | number)[] | undefined
+	[key: string]: string | number | number[] | (string | number)[] | boolean | undefined
 	element?: number[]
 	rarity?: number[]
 	race?: number[]
@@ -184,6 +186,8 @@ export interface CollectionFilters {
 	page?: number
 	limit?: number
 	unowned?: string
+	/** Restrict to summons that can be set as support (friend) summons. */
+	supportEligible?: boolean
 }
 
 /**

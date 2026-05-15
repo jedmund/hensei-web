@@ -159,6 +159,9 @@ export interface Summon {
 	}
 	subaura?: boolean
 	limit?: boolean
+	/** Whether this summon can be set as a support (friend) summon. Defaults
+	 * to true server-side; only certain summons are explicitly excluded. */
+	supportEligible?: boolean
 	hp?: {
 		minHp: number
 		maxHp: number
