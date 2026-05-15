@@ -25,25 +25,30 @@
 	let isComposing = $state(false)
 	let hasSearched = $state(false)
 	let searchTimeout: ReturnType<typeof setTimeout> | null = null
+	let searchRequestId = 0
 
 	async function runSearch(query: string) {
+		const requestId = ++searchRequestId
 		if (query.length < 2) {
 			results = []
 			hasSearched = false
 			activeIndex = 0
+			isLoading = false
 			return
 		}
 		isLoading = true
 		try {
 			const users = await userAdapter.searchUsers(query)
+			if (requestId !== searchRequestId) return
 			results = users
 			activeIndex = 0
 			hasSearched = true
 		} catch {
+			if (requestId !== searchRequestId) return
 			results = []
 			hasSearched = true
 		} finally {
-			isLoading = false
+			if (requestId === searchRequestId) isLoading = false
 		}
 	}
 
@@ -141,7 +146,12 @@
 			oncompositionend={handleCompositionEnd}
 			onkeydown={handleKeydown}
 		/>
-		<button type="button" class="close-button" aria-label="Close search" onclick={onClose}>
+		<button
+			type="button"
+			class="close-button"
+			aria-label={m.nav_search_close_aria()}
+			onclick={onClose}
+		>
 			<Icon name="close" size={12} />
 		</button>
 	</div>
