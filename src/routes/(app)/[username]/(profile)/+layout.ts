@@ -14,89 +14,59 @@ export const load: LayoutLoad = async ({ params, url, depends, parent, fetch, ro
 	const { account, isAuthenticated } = await parent()
 	const isOwner = account?.username === username
 
-	const routeId = route.id ?? ''
-	const isCollection = routeId.startsWith('/(app)/[username]/(profile)/collection')
-	const isTeamsRoot = routeId === '/(app)/[username]/(profile)'
+	const isTeamsRoot = route.id === '/(app)/[username]/(profile)'
 
-	// Collection routes: light user fetch with checkCollection so the response
-	// includes `collectionAccessible`. The (profile) layout still loads cleanly
-	// regardless — the collection sub-route reads the flag and renders an
-	// inline "this collection is private" message when false, so the user
-	// can keep navigating other tabs from the header.
-	if (isCollection) {
-		try {
-			const user = await userAdapter.getInfo(username, { fetch, checkCollection: true })
-			return { user, isOwner, isAuthenticated }
-		} catch (e: unknown) {
-			const err = e as Record<string, unknown>
-			throw error(
-				(typeof err?.status === 'number' ? err.status : undefined) || 502,
-				(typeof err?.message === 'string' ? err.message : undefined) || 'Failed to load profile'
-			)
-		}
-	}
+	// Every profile route gets `collectionAccessible` on the user payload so
+	// the Collection tab can render its private/public state instantly without
+	// a second round trip. Teams root additionally fetches parties for SSR via
+	// `listUserParties` (run in parallel with the user fetch).
+	try {
+		if (isTeamsRoot) {
+			depends('app:profile')
+			const pageParam = url.searchParams.get('page')
+			const page = pageParam ? Math.max(1, parseInt(pageParam, 10) || 1) : 1
 
-	// Teams root needs user + parties (SSR seed) + optional filter handling.
-	if (isTeamsRoot) {
-		depends('app:profile')
-		const pageParam = url.searchParams.get('page')
-		const page = pageParam ? Math.max(1, parseInt(pageParam, 10) || 1) : 1
+			const filterParse = urlHasExploreFilters(url.searchParams)
+				? await urlParamsToExploreFilterParams(url.searchParams, { fetch })
+				: null
 
-		try {
-			if (urlHasExploreFilters(url.searchParams)) {
-				const { filterItems, apiParams } = await urlParamsToExploreFilterParams(url.searchParams, {
-					fetch
-				})
+			const [user, partiesResult] = await Promise.all([
+				userAdapter.getInfo(username, { fetch, checkCollection: true }),
+				partyAdapter.listUserParties(
+					{ username, page, ...(filterParse?.apiParams ? { filters: filterParse.apiParams } : {}) },
+					{ fetch }
+				)
+			])
 
-				const [profileResult, filteredResult] = await Promise.all([
-					userAdapter.getProfile(username, page, { fetch }),
-					partyAdapter.listUserParties({ username, page, filters: apiParams }, { fetch })
-				])
-
-				return {
-					user: profileResult.user,
-					items: filteredResult.results.map((p) => parseParty(p)),
-					page,
-					total: filteredResult.total,
-					totalPages: filteredResult.totalPages,
-					perPage: filteredResult.perPage,
-					isOwner,
-					isAuthenticated,
-					initialFilterItems: filterItems
-				}
-			}
-
-			const { user, items, total, totalPages, perPage } = await userAdapter.getProfile(
-				username,
-				page,
-				{ fetch }
-			)
 			return {
 				user,
-				items: items.map((p) => parseParty(p)),
+				items: partiesResult.results.map((p) => parseParty(p)),
 				page,
-				total,
-				totalPages,
-				perPage,
+				total: partiesResult.total,
+				totalPages: partiesResult.totalPages,
+				perPage: partiesResult.perPage,
 				isOwner,
 				isAuthenticated,
-				initialFilterItems: [] as FilterItem[]
+				initialFilterItems: filterParse?.filterItems ?? ([] as FilterItem[])
 			}
-		} catch (e: unknown) {
-			const err = e as Record<string, unknown>
-			throw error(
-				(typeof err?.status === 'number' ? err.status : undefined) || 502,
-				(typeof err?.message === 'string' ? err.message : undefined) || 'Failed to load profile'
-			)
 		}
-	}
 
-	// Favorites + playlists: light user fetch, no parties. `getInfo` without
-	// `checkCollection` skips the collection privacy gate so these tabs remain
-	// viewable for users whose collection is private.
-	try {
-		const user = await userAdapter.getInfo(username, { fetch })
-		return { user, isOwner, isAuthenticated }
+		// Favorites / playlists / collection: just the user (with prefetched
+		// `collectionAccessible`). Tab-specific data is loaded by each page;
+		// `items`/`total`/etc. are stubbed so the layout return shape stays
+		// uniform across routes (the teams page reads them, others ignore).
+		const user = await userAdapter.getInfo(username, { fetch, checkCollection: true })
+		return {
+			user,
+			items: [] as ReturnType<typeof parseParty>[],
+			page: 1,
+			total: 0,
+			totalPages: 1,
+			perPage: 20,
+			isOwner,
+			isAuthenticated,
+			initialFilterItems: [] as FilterItem[]
+		}
 	} catch (e: unknown) {
 		const err = e as Record<string, unknown>
 		throw error(
