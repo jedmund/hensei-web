@@ -18,11 +18,11 @@ export const load: LayoutLoad = async ({ params, url, depends, parent, fetch, ro
 	const isCollection = routeId.startsWith('/(app)/[username]/(profile)/collection')
 	const isTeamsRoot = routeId === '/(app)/[username]/(profile)'
 
-	// Collection routes use the lighter `getInfo` endpoint, which also enforces
-	// collection privacy (403 for non-owners viewing a private collection).
+	// Collection routes: light user fetch + SSR-level collection privacy check.
+	// Backend returns 403 when the viewer can't see this collection.
 	if (isCollection) {
 		try {
-			const user = await userAdapter.getInfo(username, { fetch })
+			const user = await userAdapter.getInfo(username, { fetch, checkCollection: true })
 			return { user, isOwner, isAuthenticated }
 		} catch (e: unknown) {
 			const err = e as Record<string, unknown>
@@ -92,12 +92,11 @@ export const load: LayoutLoad = async ({ params, url, depends, parent, fetch, ro
 		}
 	}
 
-	// Favorites + playlists: only the user is needed. `getInfo` would be lighter
-	// but it gates on collection privacy, so non-owners viewing a private-
-	// collection user's favorites/playlists would 403. `getProfile` is the only
-	// public endpoint, so we eat a small wasted parties payload here.
+	// Favorites + playlists: light user fetch, no parties. `getInfo` without
+	// `checkCollection` skips the collection privacy gate so these tabs remain
+	// viewable for users whose collection is private.
 	try {
-		const { user } = await userAdapter.getProfile(username, 1, { fetch })
+		const user = await userAdapter.getInfo(username, { fetch })
 		return { user, isOwner, isAuthenticated }
 	} catch (e: unknown) {
 		const err = e as Record<string, unknown>
