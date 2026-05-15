@@ -60,6 +60,7 @@
 		{viewerCrewId}
 		collectionPrivacy={data.user?.collectionPrivacy}
 		isAuthenticated={data.isAuthenticated}
+		supportSummons={data.supportSummons}
 		bind:expanded
 	/>
 

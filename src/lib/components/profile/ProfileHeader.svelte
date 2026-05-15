@@ -10,8 +10,10 @@
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import InviteUserModal from '$lib/components/crew/InviteUserModal.svelte'
+	import SupportSummonGrid from '$lib/components/profile/SupportSummonGrid.svelte'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import type { CrewRole } from '$lib/types/api/crew'
+	import type { SupportSummon } from '$lib/types/api/supportSummon'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import * as m from '$lib/paraglide/messages'
 
@@ -49,6 +51,8 @@
 		isAuthenticated?: boolean
 		/** Whether the header is expanded (bindable) */
 		expanded?: boolean
+		/** Support summon slots shown inside the expandable drawer. */
+		supportSummons?: SupportSummon[]
 	}
 
 	let {
@@ -71,7 +75,8 @@
 		viewerCrewId = null,
 		collectionPrivacy,
 		isAuthenticated = false,
-		expanded = $bindable(false)
+		expanded = $bindable(false),
+		supportSummons = []
 	}: Props = $props()
 
 	// GBF profile URL - shown if user has filled in their Granblue ID
@@ -251,7 +256,11 @@
 		</div>
 	{/if}
 
-	<div class="expand-spacer" class:open={expanded}></div>
+	<div class="expand-spacer" class:open={expanded}>
+		<div class="drawer-content">
+			<SupportSummonGrid summons={supportSummons} />
+		</div>
+	</div>
 
 	<nav class="tabs" class:dimmed={expanded} aria-label="Profile sections">
 		<SegmentedControl
@@ -450,11 +459,18 @@
 	.expand-spacer {
 		width: 100%;
 		height: 0;
+		overflow: hidden;
 		transition: height effects.$duration-slide ease-in-out;
 
 		&.open {
 			height: 50dvh;
 		}
+	}
+
+	.drawer-content {
+		height: 100%;
+		padding: $unit-2x;
+		overflow-y: auto;
 	}
 
 	.expand-toggle {
