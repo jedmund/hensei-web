@@ -18,21 +18,20 @@ export const load: LayoutLoad = async ({ params, url, depends, parent, fetch, ro
 	const isCollection = routeId.startsWith('/(app)/[username]/(profile)/collection')
 	const isTeamsRoot = routeId === '/(app)/[username]/(profile)'
 
-	// Collection routes: light user fetch + SSR-level collection privacy check.
-	// Backend returns 403 when the viewer can't see this collection.
+	// Collection routes: light user fetch with checkCollection so the response
+	// includes `collectionAccessible`. The (profile) layout still loads cleanly
+	// regardless — the collection sub-route reads the flag and renders an
+	// inline "this collection is private" message when false, so the user
+	// can keep navigating other tabs from the header.
 	if (isCollection) {
 		try {
 			const user = await userAdapter.getInfo(username, { fetch, checkCollection: true })
 			return { user, isOwner, isAuthenticated }
 		} catch (e: unknown) {
 			const err = e as Record<string, unknown>
-			const status = typeof err?.status === 'number' ? err.status : undefined
-			if (status === 403) {
-				throw error(403, 'This collection is private')
-			}
 			throw error(
-				status || 502,
-				typeof err?.message === 'string' ? err.message : 'Failed to load profile'
+				(typeof err?.status === 'number' ? err.status : undefined) || 502,
+				(typeof err?.message === 'string' ? err.message : undefined) || 'Failed to load profile'
 			)
 		}
 	}
