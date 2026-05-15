@@ -212,19 +212,21 @@
 	<MigrateBanner element={data.user?.avatar?.element} />
 {/if}
 
-<div class="filters-row">
-	<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} {allRaids} />
-	{#if showVisibilityFilter}
-		<MultiSelect
-			options={visibilityOptions}
-			bind:value={selectedVisibilities}
-			displayText={visibilityDisplayText}
-			placeholder={m.profile_visibility_all()}
-			size="small"
-			minSelected={1}
-		/>
-	{/if}
-</div>
+{#if items.length > 0 || filterItems.length > 0}
+	<div class="filters-row">
+		<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} {allRaids} />
+		{#if showVisibilityFilter}
+			<MultiSelect
+				options={visibilityOptions}
+				bind:value={selectedVisibilities}
+				displayText={visibilityDisplayText}
+				placeholder={m.profile_visibility_all()}
+				size="small"
+				minSelected={1}
+			/>
+		{/if}
+	</div>
+{/if}
 
 {#if partiesQuery.isLoading}
 	<div class="loading">
