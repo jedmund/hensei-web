@@ -8,10 +8,9 @@
 	import { setContext } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { viewMode } from '$lib/stores/viewMode.svelte'
-	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import CollectionSegmentedControl from '$lib/components/collection/CollectionSegmentedControl.svelte'
+	import EmptyState from '$lib/components/ui/EmptyState.svelte'
 	import ViewModeToggle from '$lib/components/ui/ViewModeToggle.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
@@ -36,9 +35,6 @@
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props()
 
-	const viewerCrewRole = $derived(crewStore.membership?.role ?? null)
-	const viewerCrewId = $derived(crewStore.crew?.id ?? null)
-
 	// Query for collection counts
 	const countsQuery = createQuery(() => collectionQueries.counts(data.user?.id ?? ''))
 
@@ -56,6 +52,11 @@
 	let addModalOpen = $state(false)
 	let confirmDeleteOpen = $state(false)
 	let isDeleting = $state(false)
+
+	// True when the backend told us this viewer can't see the collection. The
+	// (profile) layout fetches user info with check_collection=true; the
+	// response includes `collectionAccessible: false` for restricted viewers.
+	const collectionLocked = $derived(!data.isOwner && data.user?.collectionAccessible === false)
 
 	// Selection mode context
 	const selectionMode = createSelectionModeContext()
@@ -182,28 +183,9 @@
 	<title>{username}</title>
 </svelte:head>
 
-<section class="collection">
-	<ProfileHeader
-		username={username ?? ''}
-		displayName={data.user?.displayName}
-		description={data.user?.description}
-		avatarPicture={data.user?.avatar?.picture}
-		element={data.user?.avatar?.element}
-		granblueId={data.user?.granblueId}
-		wikiProfile={data.user?.wikiProfile}
-		youtube={data.user?.youtube}
-		showCrewGamertag={data.user?.showCrewGamertag}
-		crewGamertag={data.user?.crewGamertag}
-		crewName={data.user?.crewName}
-		userId={data.user?.id}
-		activeTab="collection"
-		isOwner={data.isOwner}
-		{viewerCrewRole}
-		{viewerCrewId}
-		collectionPrivacy={data.user?.collectionPrivacy}
-		isAuthenticated={$page.data?.isAuthenticated}
-	/>
-
+{#if collectionLocked}
+	<EmptyState icon="lock" message={m.collection_private_message()} />
+{:else}
 	<div class="card-container">
 		<!-- Entity type segmented control -->
 		<nav class="entity-nav" aria-label="Collection type">
@@ -315,7 +297,7 @@
 			</svelte:boundary>
 		</div>
 	</div>
-</section>
+{/if}
 
 {#if data.isOwner && modalEntityType}
 	<AddToCollectionModal
@@ -339,12 +321,6 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/typography' as *;
-
-	.collection {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-2x;
-	}
 
 	.card-container {
 		background: var(--card-bg);

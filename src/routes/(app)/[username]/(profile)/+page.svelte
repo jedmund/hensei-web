@@ -8,7 +8,6 @@
 	import GridRep from '$lib/components/reps/GridRep.svelte'
 	import type { FilterItem } from '$lib/types/filter'
 	import ExploreFilters from '$lib/components/explore/ExploreFilters.svelte'
-	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
 	import MigrateBanner from '$lib/components/profile/MigrateBanner.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
@@ -19,13 +18,13 @@
 	import { useDeleteParty } from '$lib/api/mutations/party.mutations'
 	import { PartyVisibility } from '$lib/types/visibility'
 	import { page } from '$app/stores'
-	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { serializeExploreFilters } from '$lib/utils/exploreFilterParams'
 	import { localizedName } from '$lib/utils/locale'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import EmptyState from '$lib/components/ui/EmptyState.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 
@@ -77,10 +76,6 @@
 			body: JSON.stringify(updatedCookie)
 		})
 	})
-
-	// Crew info for invite functionality
-	const viewerCrewRole = $derived(crewStore.membership?.role ?? null)
-	const viewerCrewId = $derived(crewStore.crew?.id ?? null)
 
 	// Raid groups query — needed for raid filter dropdown and slug resolution
 	const raidGroupsQuery = createQuery(() => raidQueries.groups())
@@ -214,32 +209,11 @@
 	description={m.page_desc_profile({ username: data.user?.username ?? '' })}
 />
 
-<section class="profile">
-	<ProfileHeader
-		username={data.user.username}
-		displayName={data.user?.displayName}
-		description={data.user?.description}
-		userId={data.user?.id}
-		avatarPicture={data.user?.avatar?.picture}
-		element={data.user?.avatar?.element}
-		granblueId={data.user?.granblueId}
-		wikiProfile={data.user?.wikiProfile}
-		youtube={data.user?.youtube}
-		showCrewGamertag={data.user?.showCrewGamertag}
-		crewGamertag={data.user?.crewGamertag}
-		crewName={data.user?.crewName}
-		activeTab="teams"
-		{isOwner}
-		{viewerCrewRole}
-		{viewerCrewId}
-		collectionPrivacy={data.user?.collectionPrivacy}
-		isAuthenticated={$page.data?.isAuthenticated}
-	/>
+{#if isOwner}
+	<MigrateBanner element={data.user?.avatar?.element} />
+{/if}
 
-	{#if isOwner}
-		<MigrateBanner element={data.user?.avatar?.element} />
-	{/if}
-
+{#if items.length > 0 || filterItems.length > 0}
 	<div class="filters-row">
 		<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} {allRaids} />
 		{#if showVisibilityFilter}
@@ -253,82 +227,80 @@
 			/>
 		{/if}
 	</div>
+{/if}
 
-	{#if partiesQuery.isLoading}
-		<div class="loading">
-			<Icon name="loader-2" size={32} />
-			<p>{m.profile_loading()}</p>
-		</div>
-	{:else if partiesQuery.isError}
-		<div class="error">
-			<Icon name="alert-circle" size={32} />
-			<p>{m.profile_load_error({ error: partiesQuery.error?.message || '' })}</p>
-			<Button size="small" onclick={() => partiesQuery.refetch()}>{m.retry()}</Button>
-		</div>
-	{:else if isEmpty}
-		<div class="empty">
-			<p>{m.profile_empty()}</p>
-		</div>
-	{:else}
-		<div class="profile-grid">
-			<ul class="grid" role="list">
-				{#each items as party (party.id)}
-					<li>
-						{#if isOwner}
-							<ContextMenu.Root>
-								<ContextMenu.Trigger>
-									{#snippet child({ props })}
-										<div {...props}>
-											<GridRep {party} showUser={false} />
-										</div>
-									{/snippet}
-								</ContextMenu.Trigger>
-								<ContextMenu.Portal>
-									<ContextMenu.Content class="context-menu">
-										<ContextMenu.Item
-											class="context-menu-item"
-											onclick={() => goto(localizeHref(`/teams/${party.shortcode}`))}
-										>
-											{m.context_view_team()}
-										</ContextMenu.Item>
-										<ContextMenu.Separator class="context-menu-separator" />
-										<ContextMenu.Item
-											class="context-menu-item danger"
-											onclick={() => confirmDeleteTeam(party)}
-										>
-											{m.context_delete_team()}
-										</ContextMenu.Item>
-									</ContextMenu.Content>
-								</ContextMenu.Portal>
-							</ContextMenu.Root>
-						{:else}
-							<GridRep {party} showUser={false} />
-						{/if}
-					</li>
-				{/each}
-			</ul>
+{#if partiesQuery.isLoading}
+	<div class="loading">
+		<Icon name="loader-2" size={32} />
+		<p>{m.profile_loading()}</p>
+	</div>
+{:else if partiesQuery.isError}
+	<div class="error">
+		<Icon name="alert-circle" size={32} />
+		<p>{m.profile_load_error({ error: partiesQuery.error?.message || '' })}</p>
+		<Button size="small" onclick={() => partiesQuery.refetch()}>{m.retry()}</Button>
+	</div>
+{:else if isEmpty}
+	<EmptyState message={m.profile_empty()} />
+{:else}
+	<div class="profile-grid">
+		<ul class="grid" role="list">
+			{#each items as party (party.id)}
+				<li>
+					{#if isOwner}
+						<ContextMenu.Root>
+							<ContextMenu.Trigger>
+								{#snippet child({ props })}
+									<div {...props}>
+										<GridRep {party} showUser={false} />
+									</div>
+								{/snippet}
+							</ContextMenu.Trigger>
+							<ContextMenu.Portal>
+								<ContextMenu.Content class="context-menu">
+									<ContextMenu.Item
+										class="context-menu-item"
+										onclick={() => goto(localizeHref(`/teams/${party.shortcode}`))}
+									>
+										{m.context_view_team()}
+									</ContextMenu.Item>
+									<ContextMenu.Separator class="context-menu-separator" />
+									<ContextMenu.Item
+										class="context-menu-item danger"
+										onclick={() => confirmDeleteTeam(party)}
+									>
+										{m.context_delete_team()}
+									</ContextMenu.Item>
+								</ContextMenu.Content>
+							</ContextMenu.Portal>
+						</ContextMenu.Root>
+					{:else}
+						<GridRep {party} showUser={false} />
+					{/if}
+				</li>
+			{/each}
+		</ul>
 
-			<div
-				class="load-more-sentinel"
-				bind:this={sentinelEl}
-				class:hidden={!partiesQuery.hasNextPage}
-			></div>
+		<div
+			class="load-more-sentinel"
+			bind:this={sentinelEl}
+			class:hidden={!partiesQuery.hasNextPage}
+		></div>
 
-			{#if partiesQuery.isFetchingNextPage}
-				<div class="loading-more">
-					<Icon name="loader-2" size={20} />
-					<span>{m.profile_loading_more()}</span>
-				</div>
-			{/if}
+		{#if partiesQuery.isFetchingNextPage}
+			<div class="loading-more">
+				<Icon name="loader-2" size={20} />
+				<span>{m.profile_loading_more()}</span>
+			</div>
+		{/if}
 
-			{#if !partiesQuery.hasNextPage && items.length > 0}
-				<div class="end">
-					<p>{m.profile_seen_all()}</p>
-				</div>
-			{/if}
-		</div>
-	{/if}
-</section>
+		{#if !partiesQuery.hasNextPage && items.length > 0}
+			<div class="end">
+				<p>{m.profile_seen_all()}</p>
+			</div>
+		{/if}
+	</div>
+{/if}
 
 <ConfirmDialog
 	bind:open={deleteDialogOpen}
@@ -343,12 +315,6 @@
 	@use '$src/themes/colors' as *;
 	@use '$src/themes/mixins' as *;
 	@use '$lib/components/ui/menu/menu-styles';
-
-	.profile {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-2x;
-	}
 
 	.filters-row {
 		display: flex;
@@ -377,7 +343,6 @@
 		}
 	}
 
-	.empty,
 	.end,
 	.error {
 		text-align: center;

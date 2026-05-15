@@ -982,6 +982,8 @@
 	"profile_tab_collection": "Collection",
 	"profile_create_with_collection": "Create with collection",
 	"profile_visibility_all": "All teams",
+	"profile_expand": "Expand profile",
+	"profile_collapse": "Collapse profile",
 
 	"crew_roster_search": "Search characters, weapons, summons…",
 	"crew_roster_no_members": "No crew members found",
@@ -1219,6 +1221,7 @@
 	"collection_delete_type": "Delete {type}...",
 	"collection_load_error": "Failed to load collection",
 	"collection_delete_error": "Failed to delete items",
+	"collection_private_message": "This collection is private",
 
 	"collection_bulk_delete_title": "Delete {count} {type}?",
 	"collection_bulk_delete_message": "Are you sure you want to remove {count} {type} from your collection? This action cannot be undone.",
@@ -1741,7 +1744,7 @@
 	"playlist_no_parties": "No teams in this playlist yet.",
 	"playlist_loading": "Loading playlists…",
 	"playlist_load_error": "Failed to load playlists: {error}",
-	"playlist_empty": "No playlists yet.",
+	"playlist_empty": "No playlists yet",
 	"playlist_seen_all": "You've seen all playlists.",
 	"playlist_add_to": "Add to playlist",
 	"playlist_add_to_desc": "Choose playlists for this team.",

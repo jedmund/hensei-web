@@ -23,6 +23,7 @@
 .segmentedControl {
 	display: inline-flex;
 	position: relative;
+	isolation: isolate;
 	gap: spacing.$unit-half;
 	user-select: none;
 	overflow: hidden;
@@ -56,5 +57,31 @@
 
 	&.raid {
 		width: 100%;
+	}
+
+	// Sliding-pill indicator mode: a single animated pill renders behind the
+	// selected segment instead of per-segment checked backgrounds.
+	&.slidingIndicator {
+		--sliding-selection-bg: var(--segmented-control-background-segment-bg-checked);
+		--sliding-selection-radius: #{layout.$full-corner};
+
+		&.fire {
+			--sliding-selection-bg: var(--fire-nav-selected-bg);
+		}
+		&.water {
+			--sliding-selection-bg: var(--water-nav-selected-bg);
+		}
+		&.earth {
+			--sliding-selection-bg: var(--earth-nav-selected-bg);
+		}
+		&.wind {
+			--sliding-selection-bg: var(--wind-nav-selected-bg);
+		}
+		&.light {
+			--sliding-selection-bg: var(--light-nav-selected-bg);
+		}
+		&.dark {
+			--sliding-selection-bg: var(--dark-nav-selected-bg);
+		}
 	}
 }
