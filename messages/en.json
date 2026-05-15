@@ -1221,6 +1221,7 @@
 	"collection_delete_type": "Delete {type}...",
 	"collection_load_error": "Failed to load collection",
 	"collection_delete_error": "Failed to delete items",
+	"collection_private_message": "This collection is private",
 
 	"collection_bulk_delete_title": "Delete {count} {type}?",
 	"collection_bulk_delete_message": "Are you sure you want to remove {count} {type} from your collection? This action cannot be undone.",

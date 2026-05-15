@@ -1203,6 +1203,7 @@
 	"collection_delete_type": "{type}を削除…",
 	"collection_load_error": "コレクションの読み込みに失敗しました",
 	"collection_delete_error": "削除に失敗しました",
+	"collection_private_message": "このコレクションは非公開です",
 
 	"collection_bulk_delete_title": "{count}件の{type}を削除しますか？",
 	"collection_bulk_delete_message": "{count}件の{type}をコレクションから削除しますか？この操作は取り消せません。",

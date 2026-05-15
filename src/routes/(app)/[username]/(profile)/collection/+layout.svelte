@@ -10,6 +10,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { viewMode } from '$lib/stores/viewMode.svelte'
 	import CollectionSegmentedControl from '$lib/components/collection/CollectionSegmentedControl.svelte'
+	import Icon from '$lib/components/Icon.svelte'
 	import ViewModeToggle from '$lib/components/ui/ViewModeToggle.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
@@ -51,6 +52,12 @@
 	let addModalOpen = $state(false)
 	let confirmDeleteOpen = $state(false)
 	let isDeleting = $state(false)
+
+	// True when the backend told us this viewer can't see the collection. The
+	// (profile) layout fetches user info with check_collection=true; the
+	// response includes `collectionAccessible: false` for restricted viewers.
+	// We keep the header + entity nav rendered and replace just the content.
+	const collectionLocked = $derived(!data.isOwner && data.user?.collectionAccessible === false)
 
 	// Selection mode context
 	const selectionMode = createSelectionModeContext()
@@ -272,20 +279,27 @@
 	</nav>
 
 	<div class="content">
-		<svelte:boundary
-			onerror={(e) => {
-				if (import.meta.env.DEV) console.error('Collection render error:', e)
-			}}
-		>
-			{@render children()}
-			<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
-			{#snippet failed(error, reset)}
-				<div class="collection-error" role="alert">
-					<p>{m.collection_load_error()}</p>
-					<button onclick={reset}>{m.retry()}</button>
-				</div>
-			{/snippet}
-		</svelte:boundary>
+		{#if collectionLocked}
+			<div class="collection-private" role="status">
+				<Icon name="lock" size={20} />
+				<p>{m.collection_private_message()}</p>
+			</div>
+		{:else}
+			<svelte:boundary
+				onerror={(e) => {
+					if (import.meta.env.DEV) console.error('Collection render error:', e)
+				}}
+			>
+				{@render children()}
+				<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
+				{#snippet failed(error, reset)}
+					<div class="collection-error" role="alert">
+						<p>{m.collection_load_error()}</p>
+						<button onclick={reset}>{m.retry()}</button>
+					</div>
+				{/snippet}
+			</svelte:boundary>
+		{/if}
 	</div>
 </div>
 
@@ -330,6 +344,22 @@
 	.content {
 		padding: 0 $unit-2x $unit-2x;
 		min-height: 400px;
+	}
+
+	.collection-private {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: $unit;
+		min-height: 320px;
+		color: var(--text-secondary);
+		text-align: center;
+
+		p {
+			margin: 0;
+			font-size: $font-regular;
+		}
 	}
 
 	.nav-right {
