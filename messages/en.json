@@ -1744,7 +1744,7 @@
 	"playlist_no_parties": "No teams in this playlist yet.",
 	"playlist_loading": "Loading playlists…",
 	"playlist_load_error": "Failed to load playlists: {error}",
-	"playlist_empty": "No playlists yet.",
+	"playlist_empty": "No playlists yet",
 	"playlist_seen_all": "You've seen all playlists.",
 	"playlist_add_to": "Add to playlist",
 	"playlist_add_to_desc": "Choose playlists for this team.",

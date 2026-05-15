@@ -10,7 +10,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { viewMode } from '$lib/stores/viewMode.svelte'
 	import CollectionSegmentedControl from '$lib/components/collection/CollectionSegmentedControl.svelte'
-	import Icon from '$lib/components/Icon.svelte'
+	import EmptyState from '$lib/components/ui/EmptyState.svelte'
 	import ViewModeToggle from '$lib/components/ui/ViewModeToggle.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
@@ -56,7 +56,6 @@
 	// True when the backend told us this viewer can't see the collection. The
 	// (profile) layout fetches user info with check_collection=true; the
 	// response includes `collectionAccessible: false` for restricted viewers.
-	// We keep the header + entity nav rendered and replace just the content.
 	const collectionLocked = $derived(!data.isOwner && data.user?.collectionAccessible === false)
 
 	// Selection mode context
@@ -185,10 +184,7 @@
 </svelte:head>
 
 {#if collectionLocked}
-	<div class="collection-private" role="status">
-		<Icon name="lock" size={20} />
-		<p>{m.collection_private_message()}</p>
-	</div>
+	<EmptyState icon="lock" message={m.collection_private_message()} />
 {:else}
 	<div class="card-container">
 		<!-- Entity type segmented control -->
@@ -344,22 +340,6 @@
 	.content {
 		padding: 0 $unit-2x $unit-2x;
 		min-height: 400px;
-	}
-
-	.collection-private {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: $unit;
-		min-height: 320px;
-		color: var(--text-secondary);
-		text-align: center;
-
-		p {
-			margin: 0;
-			font-size: $font-regular;
-		}
 	}
 
 	.nav-right {

@@ -24,6 +24,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import EmptyState from '$lib/components/ui/EmptyState.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 
@@ -240,9 +241,7 @@
 		<Button size="small" onclick={() => partiesQuery.refetch()}>{m.retry()}</Button>
 	</div>
 {:else if isEmpty}
-	<div class="empty">
-		<p>{m.profile_empty()}</p>
-	</div>
+	<EmptyState message={m.profile_empty()} />
 {:else}
 	<div class="profile-grid">
 		<ul class="grid" role="list">
@@ -344,7 +343,6 @@
 		}
 	}
 
-	.empty,
 	.end,
 	.error {
 		text-align: center;

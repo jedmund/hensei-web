@@ -14,6 +14,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import EmptyState from '$lib/components/ui/EmptyState.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 
@@ -78,14 +79,13 @@
 		<Button size="small" onclick={() => playlistsQuery.refetch()}>{m.retry()}</Button>
 	</div>
 {:else if isEmpty}
-	<div class="empty">
-		<p>{m.playlist_empty()}</p>
+	<EmptyState message={m.playlist_empty()}>
 		{#if isOwner}
 			<Button size="small" onclick={() => (createDialogOpen = true)}>
 				{m.playlist_create()}
 			</Button>
 		{/if}
-	</div>
+	</EmptyState>
 {:else}
 	<div class="playlist-grid">
 		<ul class="grid" role="list">
@@ -219,7 +219,6 @@
 		}
 	}
 
-	.empty,
 	.end,
 	.error {
 		display: flex;
