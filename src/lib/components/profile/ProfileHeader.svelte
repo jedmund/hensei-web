@@ -272,6 +272,7 @@
 			size="small"
 			element={typedElement}
 			grow
+			slidingIndicator
 		>
 			<Segment value="teams">{m.profile_tab_teams()}</Segment>
 			<Segment value="playlists">{m.profile_tab_playlists()}</Segment>
