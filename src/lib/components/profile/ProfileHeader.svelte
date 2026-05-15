@@ -253,7 +253,7 @@
 
 	<div class="expand-spacer" class:open={expanded}></div>
 
-	<nav class="tabs" aria-label="Profile sections">
+	<nav class="tabs" class:dimmed={expanded} aria-label="Profile sections">
 		<SegmentedControl
 			value={activeTab}
 			onValueChange={handleTabChange}
@@ -434,6 +434,11 @@
 
 	.tabs {
 		padding: 0 $unit-2x $unit;
+		transition: opacity effects.$duration-slide ease-in-out;
+
+		&.dimmed {
+			opacity: 0.4;
+		}
 	}
 
 	.expand-section {
