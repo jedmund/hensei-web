@@ -56,6 +56,7 @@
 	let addModalOpen = $state(false)
 	let confirmDeleteOpen = $state(false)
 	let isDeleting = $state(false)
+	let profileExpanded = $state(false)
 
 	// Selection mode context
 	const selectionMode = createSelectionModeContext()
@@ -202,9 +203,10 @@
 		{viewerCrewId}
 		collectionPrivacy={data.user?.collectionPrivacy}
 		isAuthenticated={$page.data?.isAuthenticated}
+		bind:expanded={profileExpanded}
 	/>
 
-	<div class="card-container">
+	<div class="card-container profile-below" class:dimmed={profileExpanded}>
 		<!-- Entity type segmented control -->
 		<nav class="entity-nav" aria-label="Collection type">
 			{#if selectionMode.isActive}
@@ -349,6 +351,15 @@
 	.card-container {
 		background: var(--card-bg);
 		border-radius: $card-corner;
+	}
+
+	.profile-below {
+		transition: opacity 0.3s ease-in-out;
+
+		&.dimmed {
+			opacity: 0.3;
+			pointer-events: none;
+		}
 	}
 
 	.entity-nav {

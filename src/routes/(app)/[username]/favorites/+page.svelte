@@ -13,6 +13,7 @@
 	const { data }: { data: PageData } = $props()
 
 	let sentinelEl = $state<HTMLElement>()
+	let profileExpanded = $state(false)
 
 	const favoritesQuery = createInfiniteQuery(() => userQueries.favorites())
 
@@ -54,47 +55,50 @@
 		crewName={data.user?.crewName}
 		activeTab="favorites"
 		isOwner={true}
+		bind:expanded={profileExpanded}
 	/>
 
-	{#if favoritesQuery.isLoading}
-		<div class="loading">
-			<Icon name="loader-2" size={32} />
-			<p>{m.favorites_loading()}</p>
-		</div>
-	{:else if favoritesQuery.isError}
-		<div class="error">
-			<Icon name="alert-circle" size={32} />
-			<p>{m.favorites_load_error({ error: favoritesQuery.error?.message || '' })}</p>
-			<Button size="small" onclick={() => favoritesQuery.refetch()}>{m.retry()}</Button>
-		</div>
-	{:else if isEmpty}
-		<div class="empty">
-			<p>{m.favorites_empty()}</p>
-		</div>
-	{:else}
-		<div class="profile-grid">
-			<ExploreGrid items={items()} />
+	<div class="profile-below" class:dimmed={profileExpanded}>
+		{#if favoritesQuery.isLoading}
+			<div class="loading">
+				<Icon name="loader-2" size={32} />
+				<p>{m.favorites_loading()}</p>
+			</div>
+		{:else if favoritesQuery.isError}
+			<div class="error">
+				<Icon name="alert-circle" size={32} />
+				<p>{m.favorites_load_error({ error: favoritesQuery.error?.message || '' })}</p>
+				<Button size="small" onclick={() => favoritesQuery.refetch()}>{m.retry()}</Button>
+			</div>
+		{:else if isEmpty}
+			<div class="empty">
+				<p>{m.favorites_empty()}</p>
+			</div>
+		{:else}
+			<div class="profile-grid">
+				<ExploreGrid items={items()} />
 
-			<div
-				class="load-more-sentinel"
-				bind:this={sentinelEl}
-				class:hidden={!favoritesQuery.hasNextPage}
-			></div>
+				<div
+					class="load-more-sentinel"
+					bind:this={sentinelEl}
+					class:hidden={!favoritesQuery.hasNextPage}
+				></div>
 
-			{#if favoritesQuery.isFetchingNextPage}
-				<div class="loading-more">
-					<Icon name="loader-2" size={20} />
-					<span>{m.loading_more()}</span>
-				</div>
-			{/if}
+				{#if favoritesQuery.isFetchingNextPage}
+					<div class="loading-more">
+						<Icon name="loader-2" size={20} />
+						<span>{m.loading_more()}</span>
+					</div>
+				{/if}
 
-			{#if !favoritesQuery.hasNextPage && items().length > 0}
-				<div class="end">
-					<p>{m.favorites_seen_all()}</p>
-				</div>
-			{/if}
-		</div>
-	{/if}
+				{#if !favoritesQuery.hasNextPage && items().length > 0}
+					<div class="end">
+						<p>{m.favorites_seen_all()}</p>
+					</div>
+				{/if}
+			</div>
+		{/if}
+	</div>
 </section>
 
 <style lang="scss">
@@ -105,6 +109,18 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-2x;
+	}
+
+	.profile-below {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
+		transition: opacity 0.3s ease-in-out;
+
+		&.dimmed {
+			opacity: 0.3;
+			pointer-events: none;
+		}
 	}
 
 	.empty,

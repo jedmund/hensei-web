@@ -28,6 +28,7 @@
 
 	let sentinelEl = $state<HTMLElement>()
 	let createDialogOpen = $state(false)
+	let profileExpanded = $state(false)
 
 	const playlistsQuery = createInfiniteQuery(() => ({
 		...playlistQueries.userPlaylists(data.user?.username ?? ''),
@@ -92,96 +93,99 @@
 		{viewerCrewId}
 		collectionPrivacy={data.user?.collectionPrivacy}
 		isAuthenticated={$page.data?.isAuthenticated}
+		bind:expanded={profileExpanded}
 	/>
 
-	{#if playlistsQuery.isLoading}
-		<div class="loading">
-			<Icon name="loader-2" size={32} />
-			<p>{m.playlist_loading()}</p>
-		</div>
-	{:else if playlistsQuery.isError}
-		<div class="error">
-			<Icon name="alert-circle" size={32} />
-			<p>{m.playlist_load_error({ error: playlistsQuery.error?.message || '' })}</p>
-			<Button size="small" onclick={() => playlistsQuery.refetch()}>{m.retry()}</Button>
-		</div>
-	{:else if isEmpty}
-		<div class="empty">
-			<p>{m.playlist_empty()}</p>
-			{#if isOwner}
-				<Button size="small" onclick={() => (createDialogOpen = true)}>
-					{m.playlist_create()}
-				</Button>
-			{/if}
-		</div>
-	{:else}
-		<div class="playlist-grid">
-			<ul class="grid" role="list">
+	<div class="profile-below" class:dimmed={profileExpanded}>
+		{#if playlistsQuery.isLoading}
+			<div class="loading">
+				<Icon name="loader-2" size={32} />
+				<p>{m.playlist_loading()}</p>
+			</div>
+		{:else if playlistsQuery.isError}
+			<div class="error">
+				<Icon name="alert-circle" size={32} />
+				<p>{m.playlist_load_error({ error: playlistsQuery.error?.message || '' })}</p>
+				<Button size="small" onclick={() => playlistsQuery.refetch()}>{m.retry()}</Button>
+			</div>
+		{:else if isEmpty}
+			<div class="empty">
+				<p>{m.playlist_empty()}</p>
 				{#if isOwner}
-					<li>
-						<button class="new-playlist-card" onclick={() => (createDialogOpen = true)}>
-							<Icon name="plus" size={20} />
-							<span>{m.playlist_create()}</span>
-						</button>
-					</li>
+					<Button size="small" onclick={() => (createDialogOpen = true)}>
+						{m.playlist_create()}
+					</Button>
 				{/if}
-				{#each items() as playlist (playlist.id)}
-					<li>
-						{#if isOwner}
-							<ContextMenu.Root>
-								<ContextMenu.Trigger>
-									{#snippet child({ props })}
-										<div {...props}>
-											<PlaylistCard {playlist} username={data.user.username} />
-										</div>
-									{/snippet}
-								</ContextMenu.Trigger>
-								<ContextMenu.Portal>
-									<ContextMenu.Content class="context-menu">
-										<ContextMenu.Item
-											class="context-menu-item"
-											onclick={() =>
-												goto(localizeHref(`/${data.user.username}/playlists/${playlist.slug}`))}
-										>
-											{m.context_view_playlist()}
-										</ContextMenu.Item>
-										<ContextMenu.Separator class="context-menu-separator" />
-										<ContextMenu.Item
-											class="context-menu-item danger"
-											onclick={() => confirmDeletePlaylist(playlist)}
-										>
-											{m.context_delete_playlist()}
-										</ContextMenu.Item>
-									</ContextMenu.Content>
-								</ContextMenu.Portal>
-							</ContextMenu.Root>
-						{:else}
-							<PlaylistCard {playlist} username={data.user.username} />
-						{/if}
-					</li>
-				{/each}
-			</ul>
+			</div>
+		{:else}
+			<div class="playlist-grid">
+				<ul class="grid" role="list">
+					{#if isOwner}
+						<li>
+							<button class="new-playlist-card" onclick={() => (createDialogOpen = true)}>
+								<Icon name="plus" size={20} />
+								<span>{m.playlist_create()}</span>
+							</button>
+						</li>
+					{/if}
+					{#each items() as playlist (playlist.id)}
+						<li>
+							{#if isOwner}
+								<ContextMenu.Root>
+									<ContextMenu.Trigger>
+										{#snippet child({ props })}
+											<div {...props}>
+												<PlaylistCard {playlist} username={data.user.username} />
+											</div>
+										{/snippet}
+									</ContextMenu.Trigger>
+									<ContextMenu.Portal>
+										<ContextMenu.Content class="context-menu">
+											<ContextMenu.Item
+												class="context-menu-item"
+												onclick={() =>
+													goto(localizeHref(`/${data.user.username}/playlists/${playlist.slug}`))}
+											>
+												{m.context_view_playlist()}
+											</ContextMenu.Item>
+											<ContextMenu.Separator class="context-menu-separator" />
+											<ContextMenu.Item
+												class="context-menu-item danger"
+												onclick={() => confirmDeletePlaylist(playlist)}
+											>
+												{m.context_delete_playlist()}
+											</ContextMenu.Item>
+										</ContextMenu.Content>
+									</ContextMenu.Portal>
+								</ContextMenu.Root>
+							{:else}
+								<PlaylistCard {playlist} username={data.user.username} />
+							{/if}
+						</li>
+					{/each}
+				</ul>
 
-			<div
-				class="load-more-sentinel"
-				bind:this={sentinelEl}
-				class:hidden={!playlistsQuery.hasNextPage}
-			></div>
+				<div
+					class="load-more-sentinel"
+					bind:this={sentinelEl}
+					class:hidden={!playlistsQuery.hasNextPage}
+				></div>
 
-			{#if playlistsQuery.isFetchingNextPage}
-				<div class="loading-more">
-					<Icon name="loader-2" size={20} />
-					<span>{m.loading_more()}</span>
-				</div>
-			{/if}
+				{#if playlistsQuery.isFetchingNextPage}
+					<div class="loading-more">
+						<Icon name="loader-2" size={20} />
+						<span>{m.loading_more()}</span>
+					</div>
+				{/if}
 
-			{#if !playlistsQuery.hasNextPage && items().length > 0}
-				<div class="end">
-					<p>{m.playlist_seen_all()}</p>
-				</div>
-			{/if}
-		</div>
-	{/if}
+				{#if !playlistsQuery.hasNextPage && items().length > 0}
+					<div class="end">
+						<p>{m.playlist_seen_all()}</p>
+					</div>
+				{/if}
+			</div>
+		{/if}
+	</div>
 </section>
 
 <CreatePlaylistDialog bind:open={createDialogOpen} />
@@ -206,6 +210,18 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-2x;
+	}
+
+	.profile-below {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
+		transition: opacity 0.3s ease-in-out;
+
+		&.dimmed {
+			opacity: 0.3;
+			pointer-events: none;
+		}
 	}
 
 	.new-playlist-card {

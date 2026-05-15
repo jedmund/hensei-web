@@ -32,6 +32,8 @@
 	const { data }: { data: PageData } = $props()
 	const isOwner = $derived(data.isOwner || false)
 
+	let profileExpanded = $state(false)
+
 	// Admin + bahamut mode check for visibility filter
 	const isAdmin = $derived($page.data?.account?.role === 9)
 	const isBahamut = $derived($page.data?.currentUser?.bahamut === true)
@@ -234,100 +236,103 @@
 		{viewerCrewId}
 		collectionPrivacy={data.user?.collectionPrivacy}
 		isAuthenticated={$page.data?.isAuthenticated}
+		bind:expanded={profileExpanded}
 	/>
 
-	{#if isOwner}
-		<MigrateBanner element={data.user?.avatar?.element} />
-	{/if}
+	<div class="profile-below" class:dimmed={profileExpanded}>
+		{#if isOwner}
+			<MigrateBanner element={data.user?.avatar?.element} />
+		{/if}
 
-	<div class="filters-row">
-		<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} {allRaids} />
-		{#if showVisibilityFilter}
-			<MultiSelect
-				options={visibilityOptions}
-				bind:value={selectedVisibilities}
-				displayText={visibilityDisplayText}
-				placeholder={m.profile_visibility_all()}
-				size="small"
-				minSelected={1}
-			/>
+		<div class="filters-row">
+			<ExploreFilters bind:filters={filterItems} onFiltersChange={handleFiltersChange} {allRaids} />
+			{#if showVisibilityFilter}
+				<MultiSelect
+					options={visibilityOptions}
+					bind:value={selectedVisibilities}
+					displayText={visibilityDisplayText}
+					placeholder={m.profile_visibility_all()}
+					size="small"
+					minSelected={1}
+				/>
+			{/if}
+		</div>
+
+		{#if partiesQuery.isLoading}
+			<div class="loading">
+				<Icon name="loader-2" size={32} />
+				<p>{m.profile_loading()}</p>
+			</div>
+		{:else if partiesQuery.isError}
+			<div class="error">
+				<Icon name="alert-circle" size={32} />
+				<p>{m.profile_load_error({ error: partiesQuery.error?.message || '' })}</p>
+				<Button size="small" onclick={() => partiesQuery.refetch()}>{m.retry()}</Button>
+			</div>
+		{:else if isEmpty}
+			<div class="empty">
+				<p>{m.profile_empty()}</p>
+			</div>
+		{:else}
+			<div class="profile-grid">
+				<ul class="grid" role="list">
+					{#each items as party (party.id)}
+						<li>
+							{#if isOwner}
+								<ContextMenu.Root>
+									<ContextMenu.Trigger>
+										{#snippet child({ props })}
+											<div {...props}>
+												<GridRep {party} showUser={false} />
+											</div>
+										{/snippet}
+									</ContextMenu.Trigger>
+									<ContextMenu.Portal>
+										<ContextMenu.Content class="context-menu">
+											<ContextMenu.Item
+												class="context-menu-item"
+												onclick={() => goto(localizeHref(`/teams/${party.shortcode}`))}
+											>
+												{m.context_view_team()}
+											</ContextMenu.Item>
+											<ContextMenu.Separator class="context-menu-separator" />
+											<ContextMenu.Item
+												class="context-menu-item danger"
+												onclick={() => confirmDeleteTeam(party)}
+											>
+												{m.context_delete_team()}
+											</ContextMenu.Item>
+										</ContextMenu.Content>
+									</ContextMenu.Portal>
+								</ContextMenu.Root>
+							{:else}
+								<GridRep {party} showUser={false} />
+							{/if}
+						</li>
+					{/each}
+				</ul>
+
+				<div
+					class="load-more-sentinel"
+					bind:this={sentinelEl}
+					class:hidden={!partiesQuery.hasNextPage}
+				></div>
+
+				{#if partiesQuery.isFetchingNextPage}
+					<div class="loading-more">
+						<Icon name="loader-2" size={20} />
+						<span>{m.profile_loading_more()}</span>
+					</div>
+				{/if}
+
+				{#if !partiesQuery.hasNextPage && items.length > 0}
+					<div class="end">
+						<p>{m.profile_seen_all()}</p>
+					</div>
+				{/if}
+			</div>
 		{/if}
 	</div>
-
-	{#if partiesQuery.isLoading}
-		<div class="loading">
-			<Icon name="loader-2" size={32} />
-			<p>{m.profile_loading()}</p>
-		</div>
-	{:else if partiesQuery.isError}
-		<div class="error">
-			<Icon name="alert-circle" size={32} />
-			<p>{m.profile_load_error({ error: partiesQuery.error?.message || '' })}</p>
-			<Button size="small" onclick={() => partiesQuery.refetch()}>{m.retry()}</Button>
-		</div>
-	{:else if isEmpty}
-		<div class="empty">
-			<p>{m.profile_empty()}</p>
-		</div>
-	{:else}
-		<div class="profile-grid">
-			<ul class="grid" role="list">
-				{#each items as party (party.id)}
-					<li>
-						{#if isOwner}
-							<ContextMenu.Root>
-								<ContextMenu.Trigger>
-									{#snippet child({ props })}
-										<div {...props}>
-											<GridRep {party} showUser={false} />
-										</div>
-									{/snippet}
-								</ContextMenu.Trigger>
-								<ContextMenu.Portal>
-									<ContextMenu.Content class="context-menu">
-										<ContextMenu.Item
-											class="context-menu-item"
-											onclick={() => goto(localizeHref(`/teams/${party.shortcode}`))}
-										>
-											{m.context_view_team()}
-										</ContextMenu.Item>
-										<ContextMenu.Separator class="context-menu-separator" />
-										<ContextMenu.Item
-											class="context-menu-item danger"
-											onclick={() => confirmDeleteTeam(party)}
-										>
-											{m.context_delete_team()}
-										</ContextMenu.Item>
-									</ContextMenu.Content>
-								</ContextMenu.Portal>
-							</ContextMenu.Root>
-						{:else}
-							<GridRep {party} showUser={false} />
-						{/if}
-					</li>
-				{/each}
-			</ul>
-
-			<div
-				class="load-more-sentinel"
-				bind:this={sentinelEl}
-				class:hidden={!partiesQuery.hasNextPage}
-			></div>
-
-			{#if partiesQuery.isFetchingNextPage}
-				<div class="loading-more">
-					<Icon name="loader-2" size={20} />
-					<span>{m.profile_loading_more()}</span>
-				</div>
-			{/if}
-
-			{#if !partiesQuery.hasNextPage && items.length > 0}
-				<div class="end">
-					<p>{m.profile_seen_all()}</p>
-				</div>
-			{/if}
-		</div>
-	{/if}
 </section>
 
 <ConfirmDialog
@@ -348,6 +353,18 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-2x;
+	}
+
+	.profile-below {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
+		transition: opacity 0.3s ease-in-out;
+
+		&.dimmed {
+			opacity: 0.3;
+			pointer-events: none;
+		}
 	}
 
 	.filters-row {
