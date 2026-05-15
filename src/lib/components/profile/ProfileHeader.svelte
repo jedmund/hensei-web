@@ -262,6 +262,8 @@
 		</div>
 	{/if}
 
+	<div class="expand-spacer" class:open={expanded}></div>
+
 	<nav class="tabs" aria-label="Profile sections">
 		<SegmentedControl
 			value={activeTab}
@@ -281,7 +283,6 @@
 	</nav>
 
 	<div class="expand-section">
-		<div class="expand-spacer" class:open={expanded}></div>
 		<button
 			type="button"
 			class="expand-toggle"
