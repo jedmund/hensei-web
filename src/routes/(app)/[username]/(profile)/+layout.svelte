@@ -50,6 +50,14 @@
 
 	<div class="profile-below" class:dimmed={expanded}>
 		{@render children()}
+		{#if expanded}
+			<button
+				type="button"
+				class="dim-backdrop"
+				aria-label="Collapse profile"
+				onclick={() => (expanded = false)}
+			></button>
+		{/if}
 	</div>
 </section>
 
@@ -63,6 +71,7 @@
 	}
 
 	.profile-below {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		gap: $unit-2x;
@@ -70,7 +79,16 @@
 
 		&.dimmed {
 			opacity: 0.3;
-			pointer-events: none;
 		}
+	}
+
+	.dim-backdrop {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		background: transparent;
+		border: none;
+		padding: 0;
+		cursor: pointer;
 	}
 </style>
