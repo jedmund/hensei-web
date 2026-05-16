@@ -383,11 +383,6 @@ export const PartySchemaRaw = z.object({
 	source_party: z.any().nullish(),
 	remixes: z.array(z.any()).nullish().default([]),
 
-	// Preview
-	preview_state: z.number().nullish().default(0),
-	preview_generated_at: z.string().nullish(),
-	preview_s3_key: z.string().nullish(),
-
 	// Timestamps
 	created_at: z.string().nullish(),
 	updated_at: z.string().nullish(),

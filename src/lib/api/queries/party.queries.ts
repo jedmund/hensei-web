@@ -222,21 +222,6 @@ export const partyQueries = {
 			enabled: !!raidId,
 			staleTime: 1000 * 60 * 3, // 3 minutes
 			gcTime: 1000 * 60 * 15 // 15 minutes
-		}),
-
-	/**
-	 * Party preview status query options
-	 *
-	 * @param shortcode - Party shortcode identifier
-	 * @returns Query options for fetching party preview status
-	 */
-	previewStatus: (shortcode: string) =>
-		queryOptions({
-			queryKey: ['party', shortcode, 'preview'] as const,
-			queryFn: () => partyAdapter.getPreviewStatus(shortcode),
-			enabled: !!shortcode,
-			staleTime: 1000 * 30, // 30 seconds - preview status changes
-			gcTime: 1000 * 60 * 5 // 5 minutes
 		})
 }
 
@@ -268,6 +253,5 @@ export const partyKeys = {
 	raidList: (raidId: string, filters?: RaidPartiesFilters) =>
 		[...partyKeys.raidLists(), raidId, filters] as const,
 	details: () => ['party'] as const,
-	detail: (shortcode: string) => [...partyKeys.details(), shortcode] as const,
-	preview: (shortcode: string) => [...partyKeys.detail(shortcode), 'preview'] as const
+	detail: (shortcode: string) => [...partyKeys.details(), shortcode] as const
 }
