@@ -10,8 +10,10 @@
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import InviteUserModal from '$lib/components/crew/InviteUserModal.svelte'
+	import SupportSummonModal from '$lib/components/profile/SupportSummonModal.svelte'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import type { CrewRole } from '$lib/types/api/crew'
+	import type { SupportSummon } from '$lib/types/api/supportSummon'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import * as m from '$lib/paraglide/messages'
 
@@ -49,6 +51,8 @@
 		isAuthenticated?: boolean
 		/** Whether the header is expanded (bindable) */
 		expanded?: boolean
+		/** Support summon slots shown inside the expandable drawer. */
+		supportSummons?: SupportSummon[]
 	}
 
 	let {
@@ -71,7 +75,8 @@
 		viewerCrewId = null,
 		collectionPrivacy,
 		isAuthenticated = false,
-		expanded = $bindable(false)
+		expanded = $bindable(false),
+		supportSummons = []
 	}: Props = $props()
 
 	// GBF profile URL - shown if user has filled in their Granblue ID
@@ -120,8 +125,10 @@
 	// Can create team from collection if: not owner, logged in, collection is public, and user exists
 	const canCreateTeam = $derived(!isOwner && isAuthenticated && collectionPrivacy === 1 && userId)
 
-	// Show dropdown if there are any crew-related actions available
-	const showMenu = $derived(canInvite || showAlreadyInCrew)
+	// Owners always see the menu (to access their support summons); others see
+	// it when there's a crew-related action available.
+	const showSupportSummons = $derived(isOwner)
+	const showMenu = $derived(showSupportSummons || canInvite || showAlreadyInCrew)
 
 	// Typed element for SegmentedControl
 	const typedElement = $derived(
@@ -142,6 +149,7 @@
 
 	// Invite modal state
 	let inviteModalOpen = $state(false)
+	let supportSummonsModalOpen = $state(false)
 </script>
 
 <header class="header">
@@ -197,6 +205,14 @@
 
 					<DropdownMenu.Portal>
 						<DropdownMenu.Content class="dropdown-content" sideOffset={5} align="end">
+							{#if showSupportSummons}
+								<DropdownItem>
+									<button onclick={() => (supportSummonsModalOpen = true)}>
+										<Icon name="sparkles" size={14} />
+										<span>{m.profile_support_summons()}</span>
+									</button>
+								</DropdownItem>
+							{/if}
 							{#if canInvite}
 								<DropdownItem>
 									<button onclick={() => (inviteModalOpen = true)}>
@@ -287,6 +303,16 @@
 
 {#if canInvite && userId && viewerCrewId}
 	<InviteUserModal bind:open={inviteModalOpen} {userId} {username} crewId={viewerCrewId} />
+{/if}
+
+{#if showSupportSummons}
+	<SupportSummonModal
+		bind:open={supportSummonsModalOpen}
+		summons={supportSummons}
+		{userId}
+		{username}
+		{isOwner}
+	/>
 {/if}
 
 <style lang="scss">
@@ -450,6 +476,7 @@
 	.expand-spacer {
 		width: 100%;
 		height: 0;
+		overflow: hidden;
 		transition: height effects.$duration-slide ease-in-out;
 
 		&.open {
