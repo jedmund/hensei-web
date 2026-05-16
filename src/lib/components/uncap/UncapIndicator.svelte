@@ -14,7 +14,7 @@
 		className?: string | undefined
 		editable?: boolean | undefined
 		contained?: boolean | undefined
-		size?: 'regular' | 'small' | undefined
+		size?: 'regular' | 'medium' | 'small' | undefined
 		minUncapLevel?: number | undefined
 		/** Omit the transcendence star even when the item supports transcendence.
 		 * Used by callers that render the transcendence indicator separately. */
@@ -32,7 +32,7 @@
 		index: number
 		editable?: boolean
 		tabindex?: number
-		size?: 'regular' | 'small'
+		size?: 'regular' | 'medium' | 'small'
 		onStarClick: (index: number, empty: boolean) => void
 	}
 
@@ -43,7 +43,7 @@
 		type?: 'character' | 'weapon' | 'summon'
 		interactive?: boolean
 		tabindex?: number
-		size?: 'regular' | 'small'
+		size?: 'regular' | 'medium' | 'small'
 		onStarClick?: () => void
 		onFragmentClick?: (newStage: number) => void
 		onFragmentHover?: (newStage: number) => void
