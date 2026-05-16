@@ -94,19 +94,32 @@ export async function teardown(): Promise<void> {
 	}
 }
 
+/**
+ * Intercept every outbound request:
+ * - drop anything not in the allowlist (SSRF defense),
+ * - attach the internal-secret header **only** to requests bound for our own
+ *   origin, never to allowlisted third-party CDNs.
+ */
 async function applyNetworkAllowlist(
 	context: BrowserContext,
-	allowlist: Set<string>
+	allowlist: Set<string>,
+	internalHostname: string,
+	internalSecret: string
 ): Promise<void> {
 	await context.route('**/*', (route) => {
 		const url = new URL(route.request().url())
-		if (allowlist.has(url.hostname)) {
-			route.continue().catch(() => {
+		if (!allowlist.has(url.hostname)) {
+			route.abort('blockedbyclient').catch(() => {})
+			return
+		}
+		if (url.hostname === internalHostname) {
+			const headers = { ...route.request().headers(), 'x-render-secret': internalSecret }
+			route.continue({ headers }).catch(() => {
 				/* navigation may have moved on already */
 			})
-		} else {
-			route.abort('blockedbyclient').catch(() => {})
+			return
 		}
+		route.continue().catch(() => {})
 	})
 }
 
@@ -145,17 +158,17 @@ export async function renderToPng(opts: RenderOptions): Promise<Buffer> {
 
 	const origin = env.PUBLIC_RENDER_ORIGIN ?? 'http://127.0.0.1:5174'
 	const url = `${origin.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`
+	const internalHostname = new URL(origin).hostname
 
 	const browser = await getBrowser()
 	const context = await browser.newContext({
 		viewport,
-		deviceScaleFactor: 2, // sharp PNGs on retina-class displays
-		extraHTTPHeaders: { 'X-Render-Secret': secret }
+		deviceScaleFactor: 2 // sharp PNGs on retina-class displays
 	})
 
 	let page: Page | null = null
 	try {
-		await applyNetworkAllowlist(context, buildAllowlist())
+		await applyNetworkAllowlist(context, buildAllowlist(), internalHostname, secret)
 		page = await context.newPage()
 		await page.goto(url, { waitUntil: 'networkidle', timeout: timeoutMs })
 		const locator = page.locator(selector).first()

@@ -64,6 +64,20 @@ describe('renderSigning', () => {
 		expect(extractRenderSignature(params)).toEqual({ version: null, signature: null })
 	})
 
+	it('does not collide when a value contains canonical separators (&, =, |)', () => {
+		// Without per-component encoding, `{a:'x&b=y'}` and `{a:'x', b:'y'}` would
+		// both flatten to `t|a=x&b=y|v=1` and share a signature. With
+		// encodeURIComponent on each key/value, the canonical strings differ.
+		const sigSingle = signRenderRequest('t', { a: 'x&b=y' }, 1)
+		const sigTwo = signRenderRequest('t', { a: 'x', b: 'y' }, 1)
+		expect(sigSingle).not.toBe(sigTwo)
+
+		// Pipe in a value would collide with the section separator if unencoded.
+		const sigPipe = signRenderRequest('t', { a: 'x|v=99' }, 1)
+		const sigForged = signRenderRequest('t', { a: 'x' }, 99)
+		expect(sigPipe).not.toBe(sigForged)
+	})
+
 	it('ignores undefined/empty params in canonicalization so optional fields are stable', () => {
 		const sigOmit = signRenderRequest('t', { a: '1' }, 'v')
 		const sigEmpty = signRenderRequest('t', { a: '1', b: '' }, 'v')

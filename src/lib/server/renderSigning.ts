@@ -27,18 +27,21 @@ function getSecret(): string {
 /**
  * Build the canonical string fed to HMAC. Params are sorted by key so the same
  * logical request always produces the same signature regardless of the order
- * the caller passes things in.
+ * the caller passes things in. Each key and value is `encodeURIComponent`'d
+ * before joining so that a value containing `&`, `=`, or `|` can't be re-parsed
+ * as a different params map (signature-collision defense).
  */
 function canonicalize(
 	template: string,
 	params: Record<string, string>,
 	version: string | number
 ): string {
+	const enc = encodeURIComponent
 	const kvPairs = Object.entries(params)
 		.filter(([, v]) => v !== undefined && v !== null && v !== '')
-		.map(([k, v]) => `${k}=${v}`)
+		.map(([k, v]) => `${enc(k)}=${enc(String(v))}`)
 		.sort()
-	return [template, kvPairs.join('&'), `v=${version}`].join('|')
+	return [enc(template), kvPairs.join('&'), `v=${enc(String(version))}`].join('|')
 }
 
 /**
