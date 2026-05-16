@@ -994,6 +994,8 @@
 	"support_summon_picker_loading": "Loading your collection...",
 	"support_summon_picker_empty": "No matching summons in your collection",
 	"support_summon_picker_search_placeholder": "Search summons",
+	"support_summon_mark_required": "Mark as required",
+	"support_summon_unmark_required": "Unmark as required",
 
 	"crew_roster_search": "Search characters, weapons, summons…",
 	"crew_roster_no_members": "No crew members found",

@@ -34,6 +34,7 @@ function applyOptimisticUpsert(
 				id: `optimistic:${section}:${position}`,
 				section,
 				position,
+				required: false,
 				collectionSummon
 			}
 		]
@@ -129,6 +130,46 @@ export function useUpdateSupportSummon() {
 			}
 		},
 		onSettled: (_data, _err, vars: UpdateSupportSummonVars) => {
+			queryClient.invalidateQueries({ queryKey: cacheKey(vars.username) })
+		}
+	}))
+}
+
+export interface ToggleSupportSummonRequiredVars {
+	id: string
+	username: string
+	required: boolean
+}
+
+function applyOptimisticRequired(
+	queryClient: QueryClient,
+	username: string,
+	id: string,
+	required: boolean
+) {
+	const previous = queryClient.getQueryData<SupportSummon[]>(cacheKey(username))
+	queryClient.setQueryData<SupportSummon[]>(cacheKey(username), (old) =>
+		(old ?? []).map((s) => (s.id === id ? { ...s, required } : s))
+	)
+	return previous
+}
+
+export function useToggleSupportSummonRequired() {
+	const queryClient = useQueryClient()
+	return createMutation(() => ({
+		mutationFn: (vars: ToggleSupportSummonRequiredVars) =>
+			supportSummonAdapter.update(vars.id, { required: vars.required }),
+		onMutate: async (vars: ToggleSupportSummonRequiredVars) => {
+			await queryClient.cancelQueries({ queryKey: cacheKey(vars.username) })
+			const previous = applyOptimisticRequired(queryClient, vars.username, vars.id, vars.required)
+			return { previous } satisfies MutationContext
+		},
+		onError: (_err, vars: ToggleSupportSummonRequiredVars, ctx) => {
+			if (ctx?.previous !== undefined) {
+				queryClient.setQueryData(cacheKey(vars.username), ctx.previous)
+			}
+		},
+		onSettled: (_data, _err, vars: ToggleSupportSummonRequiredVars) => {
 			queryClient.invalidateQueries({ queryKey: cacheKey(vars.username) })
 		}
 	}))

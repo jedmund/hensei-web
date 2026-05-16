@@ -10,7 +10,8 @@
 	import {
 		useCreateSupportSummon,
 		useUpdateSupportSummon,
-		useDeleteSupportSummon
+		useDeleteSupportSummon,
+		useToggleSupportSummonRequired
 	} from '$lib/api/mutations/supportSummon.mutations'
 	import { userQueries } from '$lib/api/queries/user.queries'
 	import type { CollectionSummon } from '$lib/types/api/collection'
@@ -30,6 +31,7 @@
 	const createMut = useCreateSupportSummon()
 	const updateMut = useUpdateSupportSummon()
 	const deleteMut = useDeleteSupportSummon()
+	const requiredMut = useToggleSupportSummonRequired()
 
 	// Subscribe to the support-summons cache so optimistic mutations propagate
 	// back to the grid. The SSR-supplied `summons` prop seeds initialData.
@@ -93,13 +95,23 @@
 		if (!username || !existing) return
 		deleteMut.mutate({ id: existing.id, username })
 	}
+
+	function handleToggleRequired(summon: SupportSummon) {
+		if (!username) return
+		requiredMut.mutate({ id: summon.id, username, required: !summon.required })
+	}
 </script>
 
 <Dialog bind:open size="medium">
 	<ModalHeader title={m.profile_support_summons()} />
 	<ModalBody>
 		<div class="grid-wrap">
-			<SupportSummonGrid summons={liveSummons} {isOwner} onSelect={handleSelect} />
+			<SupportSummonGrid
+				summons={liveSummons}
+				{isOwner}
+				onSelect={handleSelect}
+				onToggleRequired={handleToggleRequired}
+			/>
 		</div>
 	</ModalBody>
 	<div class="footer">

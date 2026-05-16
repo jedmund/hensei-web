@@ -25,6 +25,7 @@ export interface SupportSummon {
 	id: string
 	section: SupportSummonSection
 	position: number
+	required: boolean
 	collectionSummon: SupportSummonCollectionSummon
 	createdAt?: string
 	updatedAt?: string

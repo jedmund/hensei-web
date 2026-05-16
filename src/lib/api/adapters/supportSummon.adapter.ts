@@ -7,6 +7,14 @@ export interface SupportSummonWriteParams {
 	collectionSummonId: string
 	section: SupportSummonSection
 	position: number
+	required?: boolean
+}
+
+export interface SupportSummonUpdateParams {
+	collectionSummonId?: string
+	section?: SupportSummonSection
+	position?: number
+	required?: boolean
 }
 
 export class SupportSummonAdapter extends BaseAdapter {
@@ -20,7 +28,7 @@ export class SupportSummonAdapter extends BaseAdapter {
 
 	async update(
 		id: string,
-		params: Partial<SupportSummonWriteParams>,
+		params: SupportSummonUpdateParams,
 		options?: RequestOptions
 	): Promise<SupportSummon> {
 		return await this.request<SupportSummon>(`/support_summons/${encodeURIComponent(id)}`, {

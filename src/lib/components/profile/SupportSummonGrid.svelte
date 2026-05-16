@@ -14,9 +14,10 @@
 		summons?: SupportSummon[]
 		isOwner?: boolean
 		onSelect?: ((section: SupportSummonSection, position: number) => void) | undefined
+		onToggleRequired?: ((summon: SupportSummon) => void) | undefined
 	}
 
-	let { summons = [], isOwner = false, onSelect }: Props = $props()
+	let { summons = [], isOwner = false, onSelect, onToggleRequired }: Props = $props()
 
 	// GBF in-game element ordering for visual columns:
 	// Fire → Water → Earth → Wind → Light → Dark
@@ -47,13 +48,17 @@
 		summon?: SupportSummon
 	}
 
-	const miscCells = $derived.by<Cell[]>(() => {
-		const out: Cell[] = []
+	const miscPairs = $derived.by<Cell[][]>(() => {
+		const cells: Cell[] = []
 		const limit = SUPPORT_SUMMON_SECTION_LIMITS.misc
 		for (let position = 0; position < limit; position++) {
-			out.push({ section: 'misc', position, summon: bySlot[`misc:${position}`] })
+			cells.push({ section: 'misc', position, summon: bySlot[`misc:${position}`] })
 		}
-		return out
+		const pairs: Cell[][] = []
+		for (let i = 0; i < cells.length; i += 2) {
+			pairs.push(cells.slice(i, i + 2))
+		}
+		return pairs
 	})
 </script>
 
@@ -72,6 +77,7 @@
 						summon={cell.summon}
 						{isOwner}
 						{onSelect}
+						{onToggleRequired}
 					/>
 				{/each}
 			</div>
@@ -79,16 +85,22 @@
 	</div>
 	<div class="misc-column">
 		<div class="column-header">
+			<img class="header-icon" src={getElementImage(0)} alt="" aria-hidden="true" />
 			<span class="header-label">{m.support_summon_section_misc()}</span>
 		</div>
-		{#each miscCells as cell (`${cell.section}:${cell.position}`)}
-			<SupportSummonSlot
-				section={cell.section}
-				position={cell.position}
-				summon={cell.summon}
-				{isOwner}
-				{onSelect}
-			/>
+		{#each miscPairs as pair, pairIndex (pairIndex)}
+			<div class="misc-pair">
+				{#each pair as cell (`${cell.section}:${cell.position}`)}
+					<SupportSummonSlot
+						section={cell.section}
+						position={cell.position}
+						summon={cell.summon}
+						{isOwner}
+						{onSelect}
+						{onToggleRequired}
+					/>
+				{/each}
+			</div>
 		{/each}
 	</div>
 </div>
@@ -107,7 +119,7 @@
 		// it's slightly wider, sized so two stacked grid-variant misc images
 		// (aspect 184/138) + the inter-cell gap roughly equal the height of
 		// one main-variant element image (aspect 196/340).
-		grid-template-columns: minmax(0, 6fr) minmax(0, 1.05fr);
+		grid-template-columns: minmax(0, 6fr) minmax(0, 1.225fr);
 		gap: $unit;
 		width: 100%;
 	}
@@ -118,17 +130,34 @@
 		gap: $unit;
 	}
 
-	.column,
-	.misc-column {
+	.column {
 		display: flex;
 		flex-direction: column;
-		gap: $unit;
+		gap: $unit-2x;
+		min-width: 0;
+	}
+
+	.misc-column {
+		// Outer grid: header → pair → pair, with $unit-2x between sections so
+		// the gap after the header and the gap between pairs both match the
+		// element column's vertical rhythm.
+		display: grid;
+		grid-auto-rows: max-content;
+		row-gap: $unit-2x;
+		min-width: 0;
+	}
+
+	.misc-pair {
+		// Inner grid: two stacked misc slots with the tighter $unit gap.
+		display: grid;
+		grid-auto-rows: max-content;
+		row-gap: $unit;
 		min-width: 0;
 	}
 
 	.column-header {
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
 		align-items: center;
 		justify-content: center;
 		gap: $unit-half;
@@ -136,9 +165,12 @@
 	}
 
 	.header-icon {
-		width: $unit-3x;
-		height: $unit-3x;
+		// Match the label's text height ($font-small).
+		width: 1em;
+		height: 1em;
+		font-size: $font-small;
 		display: block;
+		flex-shrink: 0;
 	}
 
 	.header-label {
@@ -146,5 +178,6 @@
 		font-weight: $medium;
 		color: var(--text-secondary);
 		text-align: center;
+		line-height: 1;
 	}
 </style>
