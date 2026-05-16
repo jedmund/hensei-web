@@ -214,15 +214,6 @@ export function unfavoritePartyOptions(queryClient: QueryClient) {
 	}
 }
 
-export function regeneratePreviewOptions(queryClient: QueryClient) {
-	return {
-		mutationFn: (shortcode: string) => partyAdapter.regeneratePreview(shortcode),
-		onSuccess: (_data: unknown, shortcode: string) => {
-			queryClient.invalidateQueries({ queryKey: partyKeys.preview(shortcode) })
-		}
-	}
-}
-
 export function sharePartyWithCrewOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ partyId }: { partyId: string; shortcode: string }) =>
@@ -291,11 +282,6 @@ export function useFavoriteParty() {
 export function useUnfavoriteParty() {
 	const queryClient = useQueryClient()
 	return createMutation(() => unfavoritePartyOptions(queryClient))
-}
-
-export function useRegeneratePreview() {
-	const queryClient = useQueryClient()
-	return createMutation(() => regeneratePreviewOptions(queryClient))
 }
 
 export function useSharePartyWithCrew() {
