@@ -15,7 +15,7 @@ describe('renderRegistry', () => {
 			expect(typeof t.internalPath, `${id}.internalPath`).toBe('function')
 			expect(t.viewport.width, `${id}.viewport.width`).toBeGreaterThan(0)
 			expect(t.viewport.height, `${id}.viewport.height`).toBeGreaterThan(0)
-			expect(t.s3Prefix, `${id}.s3Prefix`).toMatch(/^[a-z][a-z0-9/_-]*$/)
+			expect(t.s3Prefix, `${id}.s3Prefix`).toMatch(/^[a-z][a-z0-9./_-]*$/)
 		}
 	})
 

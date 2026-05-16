@@ -10,9 +10,9 @@
  * Add new templates as new card components ship.
  */
 
-export type RenderTemplateId = '_health'
-// Future templates land here as part of step 3+. Adding a new id without
-// adding the matching entry to TEMPLATES is a type error.
+export type RenderTemplateId = '_health' | 'user.support-summons'
+// Adding a new id without adding the matching entry to TEMPLATES is a type
+// error.
 
 export interface RenderTemplate {
 	/**
@@ -50,6 +50,25 @@ export const TEMPLATES = {
 		viewport: { width: 320, height: 200 },
 		s3Prefix: 'previews/_health',
 		requiredParams: []
+	},
+	/**
+	 * Owner's support-summon share card. Consumed by both the download flow
+	 * (auth-gated, transient gbf_name/gbf_id/team_url in the query string)
+	 * and the og:image flow (no transient fields, version-stamped + cached).
+	 */
+	'user.support-summons': {
+		internalPath: (params: Record<string, string>): string => {
+			const base = `/_render/user/${encodeURIComponent(params.username ?? '')}/support-summons`
+			const qs = new URLSearchParams()
+			if (params.gbf_name) qs.set('gbf_name', params.gbf_name)
+			if (params.gbf_id) qs.set('gbf_id', params.gbf_id)
+			if (params.team_url) qs.set('team_url', params.team_url)
+			const tail = qs.toString()
+			return tail ? `${base}?${tail}` : base
+		},
+		viewport: { width: 1280, height: 720 },
+		s3Prefix: 'previews/user.support-summons',
+		requiredParams: ['username']
 	}
 } as const satisfies Record<RenderTemplateId, RenderTemplate>
 

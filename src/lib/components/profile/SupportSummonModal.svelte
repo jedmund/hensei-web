@@ -7,6 +7,7 @@
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import SupportSummonGrid from '$lib/components/profile/SupportSummonGrid.svelte'
 	import SupportSummonPickerModal from '$lib/components/profile/SupportSummonPickerModal.svelte'
+	import SupportSummonShareDialog from '$lib/components/profile/SupportSummonShareDialog.svelte'
 	import {
 		useCreateSupportSummon,
 		useUpdateSupportSummon,
@@ -47,6 +48,9 @@
 	let pickerOpen = $state(false)
 	let pickerSection = $state<SupportSummonSection>('wind')
 	let pickerPosition = $state(0)
+
+	// Share-as-image dialog state.
+	let shareOpen = $state(false)
 
 	const existing = $derived(
 		liveSummons.find((s) => s.section === pickerSection && s.position === pickerPosition)
@@ -116,6 +120,11 @@
 	</ModalBody>
 	<div class="footer">
 		<Button variant="ghost" size="small" onclick={close}>{m.modal_close()}</Button>
+		{#if isOwner && username}
+			<Button variant="primary" size="small" onclick={() => (shareOpen = true)}>
+				{m.support_summon_share_button()}
+			</Button>
+		{/if}
 	</div>
 
 	<!--
@@ -134,6 +143,10 @@
 			onPick={handlePick}
 			onClear={existing ? handleClear : undefined}
 		/>
+	{/if}
+
+	{#if isOwner && username}
+		<SupportSummonShareDialog bind:open={shareOpen} {username} />
 	{/if}
 </Dialog>
 
