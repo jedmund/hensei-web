@@ -1,15 +1,30 @@
 /**
  * Internal SSR route for the support-summons share card. Only reachable via
- * the Playwright service (the _render layout guard enforces this). Loads the
- * profile + summons + parses optional transient fields from the query string.
+ * the Playwright service (the _render layout guard enforces this).
+ *
+ * Two data paths:
+ *
+ * 1. **Prefetched** — the public download endpoint (which has the user's
+ *    session) pre-loads the profile + summons and stashes them under a
+ *    one-shot token. The renderer's HTTP request to this route is
+ *    unauthenticated, so for private profiles we MUST use the prefetched
+ *    data — otherwise the API 403s the summons list and we'd render an
+ *    empty grid for the owner's own download.
+ *
+ * 2. **Public fallback** — when there's no prefetch token (e.g. og:image
+ *    flow), fetch via the renderer's own `event.fetch` against the
+ *    `/users/info` + `/users/:username/support_summons` endpoints. Private
+ *    profiles get an empty summons list, which is the right behavior for
+ *    public previews.
  */
 
 import { error } from '@sveltejs/kit'
 import { userAdapter } from '$lib/api/adapters/user.adapter'
+import { consumePrefetch } from '$lib/server/renderPrefetch'
 import type { SupportSummon } from '$lib/types/api/supportSummon'
+import type { UserInfo } from '$lib/api/adapters/user.adapter'
 import type { PageServerLoad } from './$types'
 
-/** Caps that match the form-input maxlengths, applied as a defense in depth. */
 const MAX_GBF_NAME = 30
 const MAX_GBF_ID = 16
 const MAX_TEAM_URL = 200
@@ -21,15 +36,33 @@ function takeString(value: string | null, max: number): string | undefined {
 	return trimmed.slice(0, max)
 }
 
+interface Prefetched {
+	user: UserInfo
+	summons: SupportSummon[]
+}
+
 export const load: PageServerLoad = async ({ params, url, fetch }) => {
 	const username = params.username
-	const userPromise = userAdapter.getInfo(username, { fetch })
-	const summonsPromise: Promise<SupportSummon[]> = userAdapter
-		.getSupportSummons(username, { fetch })
-		.catch(() => [] as SupportSummon[])
+	const prefetched = consumePrefetch<Prefetched>(url.searchParams.get('prefetch'))
 
 	try {
-		const [user, summons] = await Promise.all([userPromise, summonsPromise])
+		let user: UserInfo
+		let summons: SupportSummon[]
+
+		if (prefetched && prefetched.user.username.toLowerCase() === username.toLowerCase()) {
+			// Trust the prefetch: it was assembled on the authenticated side and
+			// the username matches the route param.
+			user = prefetched.user
+			summons = prefetched.summons
+		} else {
+			const [fetchedUser, fetchedSummons] = await Promise.all([
+				userAdapter.getInfo(username, { fetch }),
+				userAdapter.getSupportSummons(username, { fetch }).catch(() => [] as SupportSummon[])
+			])
+			user = fetchedUser
+			summons = fetchedSummons
+		}
+
 		return {
 			user,
 			summons,

@@ -59,12 +59,13 @@ export const TEMPLATES = {
 	'user.support-summons': {
 		internalPath: (params: Record<string, string>): string => {
 			const base = `/_render/user/${encodeURIComponent(params.username ?? '')}/support-summons`
-			const qs = new URLSearchParams()
-			if (params.gbf_name) qs.set('gbf_name', params.gbf_name)
-			if (params.gbf_id) qs.set('gbf_id', params.gbf_id)
-			if (params.team_url) qs.set('team_url', params.team_url)
-			const tail = qs.toString()
-			return tail ? `${base}?${tail}` : base
+			const entries: Array<[string, string]> = []
+			if (params.prefetch) entries.push(['prefetch', params.prefetch])
+			if (params.gbf_name) entries.push(['gbf_name', params.gbf_name])
+			if (params.gbf_id) entries.push(['gbf_id', params.gbf_id])
+			if (params.team_url) entries.push(['team_url', params.team_url])
+			if (entries.length === 0) return base
+			return `${base}?${new URLSearchParams(entries).toString()}`
 		},
 		viewport: { width: 1280, height: 720 },
 		s3Prefix: 'previews/user.support-summons',

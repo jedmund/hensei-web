@@ -3,11 +3,21 @@
  *
  * Owner-only: session must match the URL username. No cache — the user might
  * change the transient fields between downloads, and the artifact is one-off.
+ *
+ * Because Playwright's navigation to the internal SSR route is unauthenticated
+ * (it only carries the X-Render-Secret header), the user's session can't ride
+ * along to the API. We pre-fetch the owner's user info + summons here, using
+ * the request's authenticated `fetch`, then hand them to the renderer via a
+ * one-shot in-process token. Without this, private support-summon profiles
+ * would render an empty grid for their own owner.
  */
 
 import { error } from '@sveltejs/kit'
+import { userAdapter } from '$lib/api/adapters/user.adapter'
 import { getTemplate } from '$lib/server/renderRegistry'
 import { renderToPng } from '$lib/server/renderService'
+import { storePrefetch } from '$lib/server/renderPrefetch'
+import type { SupportSummon } from '$lib/types/api/supportSummon'
 import type { RequestHandler } from './$types'
 
 const MAX_GBF_NAME = 30
@@ -36,7 +46,7 @@ function sanitizeUrl(value: string | null, max: number): string | undefined {
 	}
 }
 
-export const GET: RequestHandler = async ({ params, url, locals }) => {
+export const GET: RequestHandler = async ({ params, url, locals, fetch }) => {
 	const username = params.username
 	if (!username) throw error(400, 'Missing username')
 
@@ -47,10 +57,19 @@ export const GET: RequestHandler = async ({ params, url, locals }) => {
 		throw error(403, 'You can only download your own support summons')
 	}
 
+	// Pre-fetch on the authenticated side so private profiles work for their
+	// own owner. Use SvelteKit's session-aware `fetch`, then stash the result
+	// under a one-shot token the renderer can pick up.
+	const [user, summons] = await Promise.all([
+		userAdapter.getInfo(username, { fetch }),
+		userAdapter.getSupportSummons(username, { fetch }).catch(() => [] as SupportSummon[])
+	])
+	const prefetch = storePrefetch({ user, summons })
+
 	const template = getTemplate('user.support-summons')
 	if (!template) throw error(500, 'Render template missing')
 
-	const renderParams: Record<string, string> = { username }
+	const renderParams: Record<string, string> = { username, prefetch }
 	const gbfName = sanitize(url.searchParams.get('gbf_name'), MAX_GBF_NAME)
 	const gbfId = sanitize(url.searchParams.get('gbf_id'), MAX_GBF_ID)
 	const teamUrl = sanitizeUrl(url.searchParams.get('team_url'), MAX_TEAM_URL)
