@@ -29,7 +29,7 @@ function buildAllowlist(): Set<string> {
 
 	// Our own static assets and SSR routes are served from PUBLIC_ORIGIN. In
 	// dev this is the same host that's rendering, in prod it's granblue.team.
-	const publicOrigin = env.PUBLIC_RENDER_ORIGIN ?? 'http://127.0.0.1:5174'
+	const publicOrigin = env.PUBLIC_RENDER_ORIGIN ?? 'http://localhost:5174'
 	try {
 		allowed.add(new URL(publicOrigin).hostname)
 	} catch {
@@ -156,7 +156,7 @@ export async function renderToPng(opts: RenderOptions): Promise<Buffer> {
 		)
 	}
 
-	const origin = env.PUBLIC_RENDER_ORIGIN ?? 'http://127.0.0.1:5174'
+	const origin = env.PUBLIC_RENDER_ORIGIN ?? 'http://localhost:5174'
 	const url = `${origin.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`
 	const internalHostname = new URL(origin).hostname
 
