@@ -461,7 +461,10 @@
 	}
 
 	.tabs {
-		padding: 0 $unit-2x $unit;
+		// Bottom matches the horizontal inset now that the expand drawer
+		// below is hidden — without the chevron toggle catching the eye,
+		// the smaller $unit gap looked cramped against the page content.
+		padding: 0 $unit-2x $unit-2x;
 		transition: opacity effects.$duration-slide ease-in-out;
 
 		&.dimmed {
