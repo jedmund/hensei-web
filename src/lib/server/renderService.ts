@@ -29,7 +29,7 @@ function buildAllowlist(): Set<string> {
 
 	// Our own static assets and SSR routes are served from PUBLIC_ORIGIN. In
 	// dev this is the same host that's rendering, in prod it's granblue.team.
-	const publicOrigin = env.PUBLIC_RENDER_ORIGIN ?? 'http://127.0.0.1:5174'
+	const publicOrigin = env.PUBLIC_RENDER_ORIGIN ?? 'http://localhost:5174'
 	try {
 		allowed.add(new URL(publicOrigin).hostname)
 	} catch {
@@ -123,10 +123,12 @@ async function applyNetworkAllowlist(
 	})
 }
 
+export type RenderFormat = 'png' | 'jpeg'
+
 export interface RenderOptions {
 	/** Internal SSR path the renderer should screenshot, e.g. `/_render/...`. */
 	path: string
-	/** Output viewport. PNG dimensions match. */
+	/** Output viewport. Output image dimensions match. */
 	viewport: { width: number; height: number }
 	/**
 	 * CSS selector for the element to screenshot. Defaults to `main > *:first-child`
@@ -135,10 +137,14 @@ export interface RenderOptions {
 	selector?: string
 	/** Soft cap on a single render's wall time. Default 15s. */
 	timeoutMs?: number
+	/** Output format. Defaults to PNG. */
+	format?: RenderFormat
+	/** JPEG quality (1–100). Ignored when `format` is `png`. Default 88. */
+	jpegQuality?: number
 }
 
 /**
- * Render an internal SSR path to a PNG buffer.
+ * Render an internal SSR path to an image buffer (PNG or JPEG).
  *
  * Callers MUST pass an internal path (loopback / same-origin), never a URL
  * that comes from request input — the registry is the only sanctioned source.
@@ -146,8 +152,15 @@ export interface RenderOptions {
  * The function adds the `X-Render-Secret` header on its own so the locked-down
  * `_render` layout will accept the request.
  */
-export async function renderToPng(opts: RenderOptions): Promise<Buffer> {
-	const { path, viewport, selector = 'main > *:first-child', timeoutMs = 15_000 } = opts
+export async function renderToImage(opts: RenderOptions): Promise<Buffer> {
+	const {
+		path,
+		viewport,
+		selector = 'main > *:first-child',
+		timeoutMs = 15_000,
+		format = 'png',
+		jpegQuality = 88
+	} = opts
 
 	const secret = env.RENDER_INTERNAL_SECRET
 	if (!secret) {
@@ -156,14 +169,14 @@ export async function renderToPng(opts: RenderOptions): Promise<Buffer> {
 		)
 	}
 
-	const origin = env.PUBLIC_RENDER_ORIGIN ?? 'http://127.0.0.1:5174'
+	const origin = env.PUBLIC_RENDER_ORIGIN ?? 'http://localhost:5174'
 	const url = `${origin.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`
 	const internalHostname = new URL(origin).hostname
 
 	const browser = await getBrowser()
 	const context = await browser.newContext({
 		viewport,
-		deviceScaleFactor: 2 // sharp PNGs on retina-class displays
+		deviceScaleFactor: 2 // sharp output on retina-class displays
 	})
 
 	let page: Page | null = null
@@ -172,7 +185,10 @@ export async function renderToPng(opts: RenderOptions): Promise<Buffer> {
 		page = await context.newPage()
 		await page.goto(url, { waitUntil: 'networkidle', timeout: timeoutMs })
 		const locator = page.locator(selector).first()
-		const buffer = await locator.screenshot({ type: 'png', timeout: timeoutMs })
+		const buffer =
+			format === 'jpeg'
+				? await locator.screenshot({ type: 'jpeg', quality: jpegQuality, timeout: timeoutMs })
+				: await locator.screenshot({ type: 'png', timeout: timeoutMs })
 		return buffer
 	} finally {
 		await context.close().catch(() => {})

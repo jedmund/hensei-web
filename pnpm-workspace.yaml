@@ -1,0 +1,12 @@
+# pnpm settings live here as of pnpm v11; the `pnpm` field in package.json
+# is no longer read. This isn't a workspace in the multi-package sense —
+# the file just doubles as the settings home.
+
+# Native-build allowlist: pnpm refuses to run install scripts for packages
+# not on this list (https://pnpm.io/settings#onlybuiltdependencies).
+onlyBuiltDependencies:
+  - esbuild
+
+# Source-patched dependencies applied at install time.
+patchedDependencies:
+  '@storybook/addon-svelte-csf@5.1.2': patches/@storybook__addon-svelte-csf@5.1.2.patch
