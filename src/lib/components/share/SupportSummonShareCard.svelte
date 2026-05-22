@@ -113,4 +113,13 @@
 	.card-grid :global(.support-summon-grid) {
 		flex: 1;
 	}
+
+	// Misc column has 2 pairs (~498px tall) while the element columns total
+	// ~879px, so by default the misc column's content stacks at the top of
+	// its stretched cell and leaves dead space below. Pin the header to the
+	// top and the second pair to the bottom so the misc column shares the
+	// same vertical bounds as the element columns.
+	.card-grid :global(.misc-column) {
+		align-content: space-between;
+	}
 </style>
