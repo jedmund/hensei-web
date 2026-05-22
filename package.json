@@ -61,14 +61,6 @@
 		"vitest": "^3.2.3",
 		"vitest-browser-svelte": "^0.1.0"
 	},
-	"pnpm": {
-		"onlyBuiltDependencies": [
-			"esbuild"
-		],
-		"patchedDependencies": {
-			"@storybook/addon-svelte-csf@5.1.2": "patches/@storybook__addon-svelte-csf@5.1.2.patch"
-		}
-	},
 	"lint-staged": {
 		"*.{js,ts,svelte}": [
 			"prettier --write",
