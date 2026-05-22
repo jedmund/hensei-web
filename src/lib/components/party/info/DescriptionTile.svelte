@@ -514,7 +514,9 @@
 		background: var(--card-bg);
 		border: 0.5px solid var(--button-bg);
 		border-radius: $card-corner;
-		padding: $unit-2x $unit-2x $unit $unit-2x;
+		// Bottom matches the other three sides now that there's no affordance
+		// hanging off the bottom edge.
+		padding: $unit-2x;
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
