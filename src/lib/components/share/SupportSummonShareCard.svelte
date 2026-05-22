@@ -114,12 +114,10 @@
 		flex: 1;
 	}
 
-	// Misc column has 2 pairs (~498px tall) while the element columns total
-	// ~879px, so by default the misc column's content stacks at the top of
-	// its stretched cell and leaves dead space below. Pin the header to the
-	// top and the second pair to the bottom so the misc column shares the
-	// same vertical bounds as the element columns.
-	.card-grid :global(.misc-column) {
-		align-content: space-between;
+	// Bump the gap *inside* each misc pair so the two stacked wide-variant
+	// images breathe at the share card's larger render size. The 22px gap
+	// is the empirical value the misc rhythm wants here.
+	.card-grid :global(.misc-pair) {
+		row-gap: calc(#{$unit-2x} + #{$unit-three-quarter});
 	}
 </style>
