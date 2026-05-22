@@ -71,7 +71,7 @@
 	// gutter is filled with the sky backdrop painted by the parent route.
 	.share-card {
 		width: 1232px;
-		height: 672px;
+		height: 1152px;
 		padding: 32px;
 		box-sizing: border-box;
 		display: flex;
