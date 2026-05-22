@@ -461,7 +461,10 @@
 	}
 
 	.tabs {
-		padding: 0 $unit-2x $unit;
+		// Bottom matches the horizontal inset now that the expand drawer
+		// below is hidden — without the chevron toggle catching the eye,
+		// the smaller $unit gap looked cramped against the page content.
+		padding: 0 $unit-2x $unit-2x;
 		transition: opacity effects.$duration-slide ease-in-out;
 
 		&.dimmed {
@@ -469,13 +472,18 @@
 		}
 	}
 
+	// TODO: profile expand drawer is hidden until the feature is ready to
+	// ship. Switch `display: none` back to `display: flex` (and re-enable
+	// .expand-spacer) when re-enabling — all the state, handlers, and DOM
+	// stay intact behind this single rule.
 	.expand-section {
-		display: flex;
+		display: none;
 		flex-direction: column;
 		padding: 0 $unit-2x $unit-2x;
 	}
 
 	.expand-spacer {
+		display: none;
 		width: 100%;
 		height: 0;
 		overflow: hidden;
