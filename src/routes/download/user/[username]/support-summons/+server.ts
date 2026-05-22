@@ -4,6 +4,11 @@
  * Owner-only: session must match the URL username. No cache — the user might
  * change the transient fields between downloads, and the artifact is one-off.
  *
+ * Output format is JPEG (quality ~88) rather than lossless PNG: the card is
+ * dominated by photographic summon art (already JPEG from the CDN), and the
+ * primary use case is uploading to social media which re-encodes regardless.
+ * A 6MB lossless PNG drops to <1MB at JPEG q=88 with no perceptible loss.
+ *
  * Because Playwright's navigation to the internal SSR route is unauthenticated
  * (it only carries the X-Render-Secret header), the user's session can't ride
  * along to the API. We pre-fetch the owner's user info + summons here, using
@@ -15,7 +20,7 @@
 import { error } from '@sveltejs/kit'
 import { userAdapter } from '$lib/api/adapters/user.adapter'
 import { getTemplate } from '$lib/server/renderRegistry'
-import { renderToPng } from '$lib/server/renderService'
+import { renderToImage } from '$lib/server/renderService'
 import { storePrefetch } from '$lib/server/renderPrefetch'
 import type { SupportSummon } from '$lib/types/api/supportSummon'
 import type { RequestHandler } from './$types'
@@ -77,17 +82,19 @@ export const GET: RequestHandler = async ({ params, url, locals, fetch }) => {
 	if (gbfId) renderParams.gbf_id = gbfId
 	if (teamUrl) renderParams.team_url = teamUrl
 
-	const png = await renderToPng({
+	const jpeg = await renderToImage({
 		path: template.internalPath(renderParams),
-		viewport: template.viewport
+		viewport: template.viewport,
+		format: 'jpeg',
+		jpegQuality: 88
 	})
 
-	return new Response(new Uint8Array(png), {
+	return new Response(new Uint8Array(jpeg), {
 		status: 200,
 		headers: {
-			'Content-Type': 'image/png',
-			'Content-Length': String(png.length),
-			'Content-Disposition': `attachment; filename="${username}-support-summons.png"`,
+			'Content-Type': 'image/jpeg',
+			'Content-Length': String(jpeg.length),
+			'Content-Disposition': `attachment; filename="${username}-support-summons.jpg"`,
 			'Cache-Control': 'no-store'
 		}
 	})
