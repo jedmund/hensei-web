@@ -23,7 +23,7 @@
 <style>
 	.backdrop {
 		width: 1280px;
-		height: 1200px;
+		height: 1100px;
 		display: flex;
 		align-items: center;
 		justify-content: center;

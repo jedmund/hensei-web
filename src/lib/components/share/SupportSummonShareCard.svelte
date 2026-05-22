@@ -3,59 +3,46 @@
 	import type { SupportSummon } from '$lib/types/api/supportSummon'
 
 	interface Props {
-		/** Username the card is for. */
+		/** Username the card is for. Used as the title's final fallback. */
 		username: string
-		/** Owner's display name (falls back to username). */
+		/** Owner's display name. Used as the title fallback when gbfName is empty. */
 		displayName?: string | null
 		/** All slotted summons (any element + misc). */
 		summons: SupportSummon[]
-		/** Optional in-game Granblue Fantasy display name the user types in. */
+		/** Granblue Fantasy in-game name — the card's primary title. */
 		gbfName?: string | undefined
-		/** Optional Granblue Fantasy player ID. */
+		/** Granblue Fantasy player ID. */
 		gbfId?: string | undefined
-		/** Optional URL — typically the user's granblue.team profile. */
+		/** granblue.team profile URL. */
 		teamUrl?: string | undefined
 	}
 
 	let { username, displayName, summons, gbfName, gbfId, teamUrl }: Props = $props()
 
-	const heading = $derived(displayName ?? username)
-	const hasMeta = $derived(!!(gbfName || gbfId || teamUrl))
+	const title = $derived(gbfName?.trim() || displayName?.trim() || username)
+	const hasMeta = $derived(!!(gbfId || teamUrl))
 </script>
 
 <!--
-	1280×720 canvas with the Granblue sky backdrop and an inset rounded card.
-	Layout values are hardcoded to the output size — this component is *only*
-	rendered server-side by Playwright at exactly 1280×720, never embedded in
-	the live UI, so responsiveness isn't a concern.
+	Inset rounded card. Sized to its content so there's no trailing empty
+	space below the grid; the parent backdrop centers it. Playwright
+	screenshots `main > *:first-child` which is the backdrop, not this card.
 -->
 <div class="share-card" data-share-card>
 	<header class="card-header">
-		<div class="title-row">
-			<h1 class="title">{heading}</h1>
-			<span class="handle">@{username}</span>
-		</div>
+		<h1 class="title">{title}</h1>
 		{#if hasMeta}
-			<dl class="meta">
-				{#if gbfName}
-					<div class="meta-pair">
-						<dt>GBF Name</dt>
-						<dd>{gbfName}</dd>
-					</div>
-				{/if}
+			<div class="meta">
 				{#if gbfId}
-					<div class="meta-pair">
-						<dt>GBF ID</dt>
-						<dd>{gbfId}</dd>
-					</div>
+					<span class="meta-item">ID {gbfId}</span>
+				{/if}
+				{#if gbfId && teamUrl}
+					<span class="separator" aria-hidden="true">·</span>
 				{/if}
 				{#if teamUrl}
-					<div class="meta-pair">
-						<dt>Profile</dt>
-						<dd class="url">{teamUrl}</dd>
-					</div>
+					<span class="meta-item url">{teamUrl}</span>
 				{/if}
-			</dl>
+			</div>
 		{/if}
 	</header>
 
@@ -67,20 +54,18 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 
-	// The card itself is inset 24px from the screenshot edge; the surrounding
-	// gutter is filled with the sky backdrop painted by the parent route.
 	.share-card {
 		width: 1232px;
-		height: 1152px;
+		// No fixed height — the card sizes to its content so there's no
+		// hollow space below the grid. The parent backdrop is sized to fit
+		// (+ a 24px gutter on every side).
 		padding: 32px;
 		box-sizing: border-box;
 		display: flex;
 		flex-direction: column;
-		gap: 24px;
+		gap: 20px;
 		background: rgba(255, 255, 255, 0.92);
 		border-radius: 24px;
-		// Drop-shadow + subtle white border so the card reads as floating over
-		// the sky backdrop.
 		box-shadow:
 			0 24px 48px rgba(0, 0, 0, 0.18),
 			0 0 0 1px rgba(255, 255, 255, 0.45);
@@ -92,70 +77,39 @@
 	.card-header {
 		display: flex;
 		flex-direction: column;
-		gap: 12px;
-	}
-
-	.title-row {
-		display: flex;
-		align-items: baseline;
-		gap: 16px;
-		flex-wrap: wrap;
+		gap: 8px;
 	}
 
 	.title {
-		font-size: 36px;
+		font-size: 40px;
 		font-weight: 700;
 		line-height: 1.1;
 		margin: 0;
 	}
 
-	.handle {
-		font-size: 18px;
-		font-weight: 500;
-		color: rgba(0, 0, 0, 0.5);
-	}
-
 	.meta {
 		display: flex;
-		flex-wrap: wrap;
-		gap: 24px;
-		margin: 0;
-		padding: 0;
-	}
-
-	.meta-pair {
-		display: flex;
-		flex-direction: column;
-		gap: 2px;
-	}
-
-	.meta-pair dt {
-		font-size: 11px;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		color: rgba(0, 0, 0, 0.45);
-	}
-
-	.meta-pair dd {
+		align-items: center;
+		gap: 10px;
 		font-size: 16px;
 		font-weight: 500;
-		margin: 0;
+		color: rgba(0, 0, 0, 0.55);
 	}
 
-	.meta-pair dd.url {
+	.meta-item.url {
 		font-family:
 			ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-		font-size: 14px;
+		font-size: 15px;
+	}
+
+	.separator {
+		color: rgba(0, 0, 0, 0.3);
 	}
 
 	.card-grid {
-		flex: 1;
-		min-height: 0;
 		display: flex;
 	}
 
-	// SupportSummonGrid fills the available width.
 	.card-grid :global(.support-summon-grid) {
 		flex: 1;
 	}

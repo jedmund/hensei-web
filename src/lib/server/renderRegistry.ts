@@ -67,7 +67,7 @@ export const TEMPLATES = {
 			if (entries.length === 0) return base
 			return `${base}?${new URLSearchParams(entries).toString()}`
 		},
-		viewport: { width: 1280, height: 1200 },
+		viewport: { width: 1280, height: 1100 },
 		s3Prefix: 'previews/user.support-summons',
 		requiredParams: ['username']
 	}
