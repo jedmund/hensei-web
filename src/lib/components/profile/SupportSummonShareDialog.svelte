@@ -9,9 +9,13 @@
 	interface Props {
 		open: boolean
 		username: string
+		/** Pre-fills the Name field. Falls back to `username` when missing. */
+		displayName?: string | null
+		/** Pre-fills the GBF ID field when the owner has one on their profile. */
+		granblueId?: string | null
 	}
 
-	let { open = $bindable(false), username }: Props = $props()
+	let { open = $bindable(false), username, displayName = null, granblueId = null }: Props = $props()
 
 	let gbfName = $state('')
 	let gbfId = $state('')
@@ -19,8 +23,10 @@
 
 	$effect(() => {
 		if (open) {
-			// Auto-populate the URL field with the user's profile each time the
-			// dialog opens. They can clear it to leave it off, or replace it.
+			// Pre-fill from the owner's profile each time the dialog opens. Users
+			// can edit or clear any of these — they're transient and not persisted.
+			gbfName = displayName?.trim() || username
+			gbfId = granblueId?.trim() ?? ''
 			teamUrl = `https://granblue.team/${username}`
 		}
 	})

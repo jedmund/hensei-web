@@ -311,6 +311,8 @@
 		summons={supportSummons}
 		{userId}
 		{username}
+		{displayName}
+		{granblueId}
 		{isOwner}
 	/>
 {/if}

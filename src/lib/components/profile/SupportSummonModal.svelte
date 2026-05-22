@@ -24,10 +24,22 @@
 		/** Profile owner — required for the picker's collection query. */
 		userId?: string
 		username?: string
+		/** Owner's display name, used to prefill the share dialog's Name field. */
+		displayName?: string | null
+		/** Owner's in-game GBF ID, used to prefill the share dialog's ID field. */
+		granblueId?: string | null
 		isOwner?: boolean
 	}
 
-	let { open = $bindable(false), summons = [], userId, username, isOwner = false }: Props = $props()
+	let {
+		open = $bindable(false),
+		summons = [],
+		userId,
+		username,
+		displayName,
+		granblueId,
+		isOwner = false
+	}: Props = $props()
 
 	const createMut = useCreateSupportSummon()
 	const updateMut = useUpdateSupportSummon()
@@ -146,7 +158,7 @@
 	{/if}
 
 	{#if isOwner && username}
-		<SupportSummonShareDialog bind:open={shareOpen} {username} />
+		<SupportSummonShareDialog bind:open={shareOpen} {username} {displayName} {granblueId} />
 	{/if}
 </Dialog>
 
