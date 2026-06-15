@@ -477,6 +477,16 @@ export function getJobSkillIcon(
 }
 
 /**
+ * Get character ability icon URL from its game asset stem ("{id}_{N}", e.g.
+ * "625_4"). Returns null when the stem is absent (ougi/support and unmatched
+ * abilities have none) so callers can fall back to a type-color indicator.
+ */
+export function getCharacterSkillIcon(gameIcon: string | null | undefined): string | null {
+	if (!gameIcon) return null
+	return `${getBasePath()}/ability-icons/${gameIcon}.png`
+}
+
+/**
  * Get accessory image URL
  * @param variant - 'square' for thumbnails/icons, 'grid' for grid-sized display
  */
