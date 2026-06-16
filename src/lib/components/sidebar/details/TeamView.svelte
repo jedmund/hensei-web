@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 	import DetailsSection from './DetailsSection.svelte'
+	import FullAutoSkillsSection from './FullAutoSkillsSection.svelte'
 	import DetailRow from './DetailRow.svelte'
 	import AwakeningDisplay from '../modifications/AwakeningDisplay.svelte'
 	import MasteryDisplay from '../modifications/MasteryDisplay.svelte'
@@ -250,6 +251,8 @@
 
 	{#if type === 'character'}
 		{@const char = item as GridCharacter}
+
+		<FullAutoSkillsSection item={char} {isPartyOwner} />
 
 		{#if modificationStatus.hasAwakening}
 			<DetailsSection title={m.details_awakening()}>

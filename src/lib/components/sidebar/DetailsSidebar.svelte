@@ -17,6 +17,7 @@
 	import OutOfSyncBanner from './details/OutOfSyncBanner.svelte'
 	import SyncToCollectionDialog from './details/SyncToCollectionDialog.svelte'
 	import { getElementKey } from '$lib/utils/element'
+	import { getAbilitySlots } from '$lib/utils/fullAutoSkills'
 	import { authStore } from '$lib/stores/auth.store.svelte'
 	import { getEditKey } from '$lib/utils/editKeys'
 	import { localizedName } from '$lib/utils/locale'
@@ -62,12 +63,21 @@
 
 	let modificationStatus = $derived(detectModifications(type, item))
 
+	// A character's Full Auto section (ability-slot toggles) lives in the Team
+	// view, so the segmented control must be reachable whenever it will render.
+	const hasFullAutoSkills = $derived(
+		type === 'character' && getAbilitySlots((item as GridCharacter).character).length > 0
+	)
+
 	// Show segmented control whenever Team view has something to show: actual
-	// modifications, a modifiable weapon, or party-side notes/substitutions.
+	// modifications, a modifiable weapon, Full Auto toggles, or party-side
+	// notes/substitutions.
 	const showSegmentedControl = $derived(
 		(type === 'weapon'
 			? canWeaponBeModified(item as GridWeapon)
-			: modificationStatus.hasModifications) || hasNotesOrSubstitutions(item)
+			: modificationStatus.hasModifications) ||
+			hasFullAutoSkills ||
+			hasNotesOrSubstitutions(item)
 	)
 
 	// Track selected view - updated reactively based on modifiability
