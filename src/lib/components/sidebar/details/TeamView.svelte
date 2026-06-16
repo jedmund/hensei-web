@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 	import DetailsSection from './DetailsSection.svelte'
+	import FullAutoSkillsSection from './FullAutoSkillsSection.svelte'
 	import DetailRow from './DetailRow.svelte'
 	import AwakeningDisplay from '../modifications/AwakeningDisplay.svelte'
 	import MasteryDisplay from '../modifications/MasteryDisplay.svelte'
@@ -214,6 +215,10 @@
 </script>
 
 <div class="team-view">
+	{#if type === 'character'}
+		<FullAutoSkillsSection item={item as GridCharacter} {isPartyOwner} />
+	{/if}
+
 	<NotesReadOnlySection {type} {item} {isPartyOwner} mode="filled" />
 
 	<DetailsSection title={m.details_uncap_transcendence()}>

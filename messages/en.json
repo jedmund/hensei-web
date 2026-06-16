@@ -1888,5 +1888,6 @@
 	"character_skills_turns": "{n} turns",
 	"character_skills_seconds": "{n} sec",
 	"character_skills_level": "Lv {n}",
-	"character_skills_uncap_star": "★{n}"
+	"character_skills_uncap_star": "★{n}",
+	"details_full_auto_skills": "Full Auto Skills"
 }
