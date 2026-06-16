@@ -1870,5 +1870,5 @@
 	"character_skills_seconds": "{n}秒",
 	"character_skills_level": "Lv {n}",
 	"character_skills_uncap_star": "★{n}",
-	"details_full_auto_skills": "フルオート"
+	"details_full_auto_skills": "フルオートアビリティ"
 }
