@@ -1,5 +1,6 @@
 import type { Character, CharacterSkill, CharacterSkillVersion } from '$lib/types/api/entities'
 import { localizedName } from '$lib/utils/locale'
+import { getCharacterSkillIcon } from '$lib/utils/images'
 
 /** An ability slot surfaced in the Full Auto section. */
 export interface AbilitySlot {
@@ -7,6 +8,8 @@ export interface AbilitySlot {
 	slot: number
 	/** Localized base ability name. */
 	name: string
+	/** Ability icon URL, or null when the base version has no game icon. */
+	iconUrl: string | null
 	/** Whether the skill can be toggled (gets a Switch) in Full Auto. */
 	eligible: boolean
 }
@@ -42,6 +45,13 @@ export function getAbilitySlots(character: Character | undefined): AbilitySlot[]
 		.flatMap((skill) => {
 			const base = baseVersion(skill)
 			if (!base) return []
-			return [{ slot: skill.position, name: localizedName(base.name), eligible: isEligible(base) }]
+			return [
+				{
+					slot: skill.position,
+					name: localizedName(base.name),
+					iconUrl: getCharacterSkillIcon(base.gameIcon),
+					eligible: isEligible(base)
+				}
+			]
 		})
 }

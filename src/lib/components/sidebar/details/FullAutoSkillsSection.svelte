@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { GridCharacter } from '$lib/types/api/party'
 	import DetailsSection from './DetailsSection.svelte'
-	import DetailRow from './DetailRow.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import { getAbilitySlots } from '$lib/utils/fullAutoSkills'
 	import { useUpdateGridCharacter } from '$lib/api/mutations/grid.mutations'
@@ -45,8 +44,20 @@
 {#if slots.length > 0}
 	<DetailsSection title={m.details_full_auto_skills()}>
 		{#each slots as s (s.slot)}
-			{#if s.eligible}
-				<DetailRow label={s.name} compact>
+			<div class="fa-row" class:ineligible={!s.eligible}>
+				<div class="thumb-wrapper">
+					{#if s.iconUrl}
+						<img
+							class="thumb"
+							src={s.iconUrl}
+							alt=""
+							loading="lazy"
+							onerror={(e) => ((e.currentTarget as HTMLImageElement).style.visibility = 'hidden')}
+						/>
+					{/if}
+				</div>
+				<span class="name">{s.name}</span>
+				{#if s.eligible}
 					<Switch
 						size="small"
 						{element}
@@ -57,20 +68,53 @@
 							if (checked !== isOn(s.slot)) setSlot(s.slot, checked)
 						}}
 					/>
-				</DetailRow>
-			{:else}
-				<DetailRow compact>
-					{#snippet labelSlot()}
-						<span class="ineligible">{s.name}</span>
-					{/snippet}
-				</DetailRow>
-			{/if}
+				{/if}
+			</div>
 		{/each}
 	</DetailsSection>
 {/if}
 
 <style lang="scss">
-	.ineligible {
-		color: var(--text-secondary);
+	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/typography' as typography;
+	@use '$src/themes/layout' as layout;
+
+	.fa-row {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+		padding: spacing.$unit;
+		border-radius: spacing.$unit;
+		font-size: typography.$font-regular;
+
+		&.ineligible .name {
+			color: var(--text-secondary);
+		}
+	}
+
+	.name {
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		color: var(--text-primary);
+		font-size: typography.$font-regular;
+	}
+
+	.thumb-wrapper {
+		width: 48px;
+		height: 48px;
+		flex-shrink: 0;
+	}
+
+	.thumb {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		border-radius: layout.$item-corner-small;
+		border: 1px solid var(--border-primary);
+		background: var(--placeholder-bg);
 	}
 </style>

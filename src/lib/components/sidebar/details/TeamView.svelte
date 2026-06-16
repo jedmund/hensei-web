@@ -215,6 +215,10 @@
 </script>
 
 <div class="team-view">
+	{#if type === 'character'}
+		<FullAutoSkillsSection item={item as GridCharacter} {isPartyOwner} />
+	{/if}
+
 	<NotesReadOnlySection {type} {item} {isPartyOwner} mode="filled" />
 
 	<DetailsSection title={m.details_uncap_transcendence()}>
@@ -251,8 +255,6 @@
 
 	{#if type === 'character'}
 		{@const char = item as GridCharacter}
-
-		<FullAutoSkillsSection item={char} {isPartyOwner} />
 
 		{#if modificationStatus.hasAwakening}
 			<DetailsSection title={m.details_awakening()}>
