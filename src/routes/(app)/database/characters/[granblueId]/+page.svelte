@@ -18,6 +18,9 @@
 	import DetailScaffold, {
 		type DetailTab
 	} from '$lib/features/database/detail/DetailScaffold.svelte'
+	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
+	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import CharacterSkillsTab from '$lib/features/database/characters/tabs/CharacterSkillsTab.svelte'
 	import CharacterMetadataSection from '$lib/features/database/characters/sections/CharacterMetadataSection.svelte'
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
 	import CharacterTaxonomySection from '$lib/features/database/characters/sections/CharacterTaxonomySection.svelte'
@@ -50,9 +53,10 @@
 	let { data }: { data: PageData } = $props()
 
 	// Tab state from URL
-	const currentTab = $derived(($page.url.searchParams.get('tab') as DetailTab) || 'info')
+	type CharacterTab = 'info' | 'skills' | 'images' | 'raw'
+	const currentTab = $derived(($page.url.searchParams.get('tab') as CharacterTab) || 'info')
 
-	function handleTabChange(tab: DetailTab) {
+	function handleTabChange(tab: string) {
 		const url = new URL($page.url)
 		if (tab === 'info') {
 			url.searchParams.delete('tab')
@@ -381,12 +385,27 @@
 			type="character"
 			item={character}
 			image={getCharacterGridImage(character)}
-			{currentTab}
+			currentTab={currentTab as DetailTab}
 			onTabChange={handleTabChange}
+			showTabs={false}
 			onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
 			onDownloadSize={canEdit ? handleDownloadSize : undefined}
 			availableSizes={characterSizes}
 		>
+			<div class="tabs-bar">
+				<SegmentedControl
+					value={currentTab}
+					onValueChange={handleTabChange}
+					variant="background"
+					size="small"
+				>
+					<Segment value="info">Info</Segment>
+					<Segment value="skills">{m.character_skills_tab()}</Segment>
+					<Segment value="images">Images</Segment>
+					<Segment value="raw">Raw Data</Segment>
+				</SegmentedControl>
+			</div>
+
 			{#if currentTab === 'info'}
 				<section class="details">
 					<CharacterMetadataSection {character} />
@@ -524,6 +543,8 @@
 						</DetailsContainer>
 					{/if}
 				</section>
+			{:else if currentTab === 'skills'}
+				<CharacterSkillsTab {character} />
 			{:else if currentTab === 'images'}
 				<EntityImagesTab
 					images={characterImages}
@@ -579,6 +600,11 @@
 
 	.details {
 		@include database.details;
+	}
+
+	.tabs-bar {
+		padding: spacing.$unit-2x;
+		border-bottom: 1px solid var(--separator-bg);
 	}
 
 	.related-units {

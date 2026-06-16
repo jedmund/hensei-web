@@ -30,7 +30,7 @@ import type {
 	CreateSummonSeriesPayload,
 	UpdateSummonSeriesPayload
 } from '$lib/types/api/summonSeries'
-import type { Awakening, Bullet } from '$lib/types/api/entities'
+import type { Awakening, Bullet, CharacterSkill, CharacterSkillLink } from '$lib/types/api/entities'
 import type {
 	WeaponSeriesVariant,
 	CreateWeaponSeriesVariantPayload,
@@ -220,6 +220,9 @@ export interface Character {
 	wiki?: { en?: string; ja?: string }
 	gamewith?: string
 	kamigame?: string
+	// Parsed skill graph (from :full view)
+	skills?: CharacterSkill[]
+	skillLinks?: CharacterSkillLink[]
 }
 
 /**

@@ -142,6 +142,92 @@ export interface Character {
 		name: LocalizedName
 		styleName: LocalizedName | null
 	}>
+	/** Parsed skill graph (from :full view) — slots, each with one or more versions */
+	skills?: CharacterSkill[]
+	/** Edges between skill versions (transform/option/form), referencing version ids */
+	skillLinks?: CharacterSkillLink[]
+}
+
+// ===== Character skills (from CharacterBlueprint :full view) =====
+
+/** How one skill version relates to another. */
+export type CharacterSkillRelation = 'transforms_to' | 'option_of' | 'form_counterpart'
+
+/** A status (buff/debuff/field effect) referenced by a skill effect. */
+export interface SkillEffectStatus {
+	id: string
+	name: LocalizedName
+	family?: string | null
+	category?: string | null
+	icon?: string | null
+}
+
+/** A single normalized effect within a skill version. */
+export interface CharacterSkillEffect {
+	id: string
+	ordinal: number
+	effectType: string
+	target?: string | null
+	amount?: string | null
+	amountMax?: string | null
+	durationValue?: number | null
+	durationUnit?: string | null
+	accuracy?: string | null
+	stackingFrame?: string | null
+	damagePct?: number | null
+	hitCount?: number | null
+	damageCap?: number | null
+	damageElement?: string | null
+	healPct?: number | null
+	healCap?: number | null
+	status?: SkillEffectStatus | null
+}
+
+/**
+ * One incarnation of a skill slot. Two axes of variation share this shape:
+ * progression (variantRole base/enhanced/uncap_upgrade/transcendence_upgrade)
+ * and battle-state (transform_alt/option/form_alt/conditional).
+ */
+export interface CharacterSkillVersion {
+	id: string
+	name: LocalizedName
+	description: LocalizedName
+	icon?: string | null
+	/** Game asset stem "{id}_{N}" for the icon at /ability-icons/{gameIcon}.png */
+	gameIcon?: string | null
+	typeColor?: 'damage' | 'heal' | 'buff' | 'debuff' | 'field' | string | null
+	cooldown?: number | null
+	initialCooldown?: number | null
+	durationValue?: number | null
+	durationUnit?: string | null
+	variantRole: string
+	ordinal: number
+	unlockLevel?: number | null
+	enhanceLevels?: number[]
+	minUncap?: number | null
+	transcendenceStage?: number | null
+	triggerType?: string | null
+	triggerValue?: string | null
+	cantRecast?: boolean
+	oneTimeUse?: boolean
+	autoActivate?: boolean
+	mimicable?: boolean
+	targetsAll?: boolean
+	skillEffects?: CharacterSkillEffect[]
+}
+
+/** A skill slot (one ability/ougi/support position) holding its versions. */
+export interface CharacterSkill {
+	kind: 'ability' | 'ougi' | 'support' | string
+	position: number
+	versions: CharacterSkillVersion[]
+}
+
+/** A directed edge between two skill versions, by version id. */
+export interface CharacterSkillLink {
+	from: string
+	to: string
+	relation: CharacterSkillRelation
 }
 
 // Summon entity from SummonBlueprint
