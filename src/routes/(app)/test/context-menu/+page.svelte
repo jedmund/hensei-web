@@ -32,7 +32,7 @@
 			<UnitMenuContainer showGearButton={true}>
 				{#snippet trigger()}
 					<img
-						src="/images/placeholders/placeholder-weapon-grid.png"
+						src="/images/app/placeholders/placeholder-weapon-grid.png"
 						alt="Test weapon"
 						class="test-image"
 					/>

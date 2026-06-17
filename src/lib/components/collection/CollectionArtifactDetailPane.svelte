@@ -48,7 +48,7 @@
 
 	// Wide image for header
 	const wideImageUrl = $derived(getArtifactImage(artifact.artifact?.granblueId, 'wide'))
-	const reliefBackgroundUrl = `${getBasePath()}/relief.png`
+	const reliefBackgroundUrl = `${getBasePath()}/app/marketing/relief.png`
 
 	// Artifact properties
 	const isQuirk = $derived(isQuirkArtifact(artifact.artifact))

@@ -57,12 +57,12 @@ describe('elementSlug', () => {
 describe('squareImageUrl', () => {
 	it('builds the character portrait with the _01 suffix', () => {
 		expect(squareImageUrl('character', '3040001000')).toBe(
-			`${base}/character-square/3040001000_01.jpg`
+			`${base}/characters/square/3040001000_01.jpg`
 		)
 	})
 	it('builds weapon and summon square URLs', () => {
-		expect(squareImageUrl('weapon', '1040001000')).toBe(`${base}/weapon-square/1040001000.jpg`)
-		expect(squareImageUrl('summon', '2040001000')).toBe(`${base}/summon-square/2040001000.jpg`)
+		expect(squareImageUrl('weapon', '1040001000')).toBe(`${base}/weapons/square/1040001000.jpg`)
+		expect(squareImageUrl('summon', '2040001000')).toBe(`${base}/summons/square/2040001000.jpg`)
 	})
 	it('returns null for skills', () => {
 		expect(squareImageUrl('skill', 'skill-1')).toBeNull()
@@ -83,11 +83,11 @@ describe('typeColorSwatch', () => {
 
 describe('mentionImageUrl', () => {
 	it('returns the square portrait for entities', () => {
-		expect(mentionImageUrl(characterToken())).toBe(`${base}/character-square/3040001000_01.jpg`)
+		expect(mentionImageUrl(characterToken())).toBe(`${base}/characters/square/3040001000_01.jpg`)
 	})
 	it('returns the ability icon for a usable skill with a game icon', () => {
 		expect(mentionImageUrl(skillToken({ slotKind: 'ability' }))).toBe(
-			`${base}/ability-icons/625_4.png`
+			`${base}/icons/abilities/625_4.png`
 		)
 	})
 	it('returns null for an ability skill without a game icon', () => {
@@ -95,12 +95,12 @@ describe('mentionImageUrl', () => {
 	})
 	it('returns the static charge-attack icon for ougi, ignoring gameIcon', () => {
 		expect(mentionImageUrl(skillToken({ slotKind: 'ougi', gameIcon: null }))).toBe(
-			`${base}/ability-icons/charge-attack.png`
+			`${base}/icons/abilities/charge-attack.png`
 		)
 	})
 	it('returns the static support icon for support skills', () => {
 		expect(mentionImageUrl(skillToken({ slotKind: 'support', gameIcon: null }))).toBe(
-			`${base}/ability-icons/support-skill.png`
+			`${base}/icons/abilities/support-skill.png`
 		)
 	})
 })

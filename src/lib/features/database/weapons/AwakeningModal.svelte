@@ -76,7 +76,7 @@
 	const existingImageUrl = $derived.by(() => {
 		if (!awakening?.slug) return null
 		const ext = awakening.slug.startsWith('character-') ? 'jpg' : 'png'
-		return `${getBasePath()}/awakening/${awakening.slug}.${ext}`
+		return `${getBasePath()}/icons/awakening/${awakening.slug}.${ext}`
 	})
 
 	function handleImageSelect(e: Event) {

@@ -26,7 +26,7 @@ describe('entityResultToSuggestion', () => {
 		expect(suggestion.token.granblue_id).toBe('3040001000')
 		expect(suggestion.token.element).toEqual({ id: 2, slug: 'fire' })
 		expect(suggestion.token.proficiency).toEqual([1, 2])
-		expect(suggestion.imageUrl).toBe(`${base}/character-square/3040001000_01.jpg`)
+		expect(suggestion.imageUrl).toBe(`${base}/characters/square/3040001000_01.jpg`)
 		expect(suggestion.primaryLabel).toBe('Percival')
 		expect(suggestion.elementSlug).toBe('fire')
 	})
@@ -42,7 +42,7 @@ describe('entityResultToSuggestion', () => {
 		}
 		const suggestion = entityResultToSuggestion(result)
 		expect(suggestion.token.type).toBe('weapon')
-		expect(suggestion.imageUrl).toBe(`${base}/weapon-square/1040001000.jpg`)
+		expect(suggestion.imageUrl).toBe(`${base}/weapons/square/1040001000.jpg`)
 	})
 })
 
@@ -76,7 +76,7 @@ describe('skillToSuggestion', () => {
 			initialCooldown: 3,
 			character
 		})
-		expect(suggestion.imageUrl).toBe(`${base}/ability-icons/625_4.png`)
+		expect(suggestion.imageUrl).toBe(`${base}/icons/abilities/625_4.png`)
 		expect(suggestion.swatchColor).toBeNull()
 		expect(suggestion.primaryLabel).toBe('Lord of Flames')
 	})
@@ -97,7 +97,7 @@ describe('skillToSuggestion', () => {
 			{ kind: 'ougi', position: 1 },
 			character
 		)
-		expect(suggestion.imageUrl).toMatch(/ability-icons\/charge-attack\.png$/)
+		expect(suggestion.imageUrl).toMatch(/icons\/abilities\/charge-attack\.png$/)
 		expect(suggestion.swatchColor).toBeNull()
 	})
 })

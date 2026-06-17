@@ -38,8 +38,8 @@ export function elementSlug(element: unknown): string {
 /** Square portrait URL for an entity mention; null for skills (they use an icon instead). */
 export function squareImageUrl(type: string, granblueId: string): string | null {
 	const base = getBasePath()
-	if (type === 'character') return `${base}/character-square/${granblueId}_01.jpg`
-	if (type === 'weapon' || type === 'summon') return `${base}/${type}-square/${granblueId}.jpg`
+	if (type === 'character') return `${base}/characters/square/${granblueId}_01.jpg`
+	if (type === 'weapon' || type === 'summon') return `${base}/${type}s/square/${granblueId}.jpg`
 	return null
 }
 

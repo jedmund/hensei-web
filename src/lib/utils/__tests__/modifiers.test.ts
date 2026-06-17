@@ -45,12 +45,12 @@ describe('getAwakeningImage', () => {
 
 	it('returns jpg for character awakenings', () => {
 		const url = getAwakeningImage({ type: { slug: 'character-attack' } as unknown as Awakening })
-		expect(url).toBe('/images/awakening/character-attack.jpg')
+		expect(url).toBe('/images/icons/awakening/character-attack.jpg')
 	})
 
 	it('returns png for weapon awakenings', () => {
 		const url = getAwakeningImage({ type: { slug: 'attack' } as unknown as Awakening })
-		expect(url).toBe('/images/awakening/attack.png')
+		expect(url).toBe('/images/icons/awakening/attack.png')
 	})
 })
 
@@ -132,7 +132,7 @@ describe('getAxSkillImage', () => {
 	})
 
 	it('returns ax image path', () => {
-		expect(getAxSkillImage({ slug: 'might' })).toBe('/images/ax/might.png')
+		expect(getAxSkillImage({ slug: 'might' })).toBe('/images/icons/ax-skills/might.png')
 	})
 })
 

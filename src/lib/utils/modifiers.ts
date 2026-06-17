@@ -22,7 +22,7 @@ export function getAwakeningImage(awakening?: { type?: Awakening; level?: number
 	const isCharacterAwakening = slug.startsWith('character-')
 	const extension = isCharacterAwakening ? 'jpg' : 'png'
 
-	return `${getBasePath()}/awakening/${slug}.${extension}`
+	return `${getBasePath()}/icons/awakening/${slug}.${extension}`
 }
 
 /**
@@ -74,7 +74,7 @@ export function getWeaponKeyImages(
  */
 export function getAxSkillImage(axSkill?: { slug?: string }): string | null {
 	if (!axSkill?.slug) return null
-	return `${getBasePath()}/ax/${axSkill.slug}.png`
+	return `${getBasePath()}/icons/ax-skills/${axSkill.slug}.png`
 }
 
 /**
@@ -86,7 +86,7 @@ export function getAxSkillImages(ax?: AugmentSkill[]): Array<{ url: string; alt:
 	return ax
 		.filter((skill) => skill.modifier?.slug)
 		.map((skill) => ({
-			url: `${getBasePath()}/ax/${skill.modifier.slug}.png`,
+			url: `${getBasePath()}/icons/ax-skills/${skill.modifier.slug}.png`,
 			alt: skill.modifier.nameEn || skill.modifier.slug || 'AX Skill'
 		}))
 }
@@ -101,7 +101,7 @@ export function getBefoulmentImages(
 
 	return [
 		{
-			url: `${getBasePath()}/ax/${befoulment.modifier.slug}.png`,
+			url: `${getBasePath()}/icons/ax-skills/${befoulment.modifier.slug}.png`,
 			alt: befoulment.modifier.nameEn || befoulment.modifier.slug || 'Befoulment'
 		}
 	]
