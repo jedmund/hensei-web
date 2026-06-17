@@ -33,6 +33,10 @@ export interface MentionToken {
 		slotKind?: string
 		/** 1-based slot position; players refer to active skills by it ("Octavia 2"). */
 		slotPosition?: number
+		/** Turns between uses; null for passives/supports. */
+		cooldown?: number | null
+		/** Turns until the skill is first usable (initial cooldown); 0/null when usable immediately. */
+		initialCooldown?: number | null
 		/** The party character the skill belongs to (for attribution + tooltip). */
 		character?: { granblue_id: string; name: LocalizedName }
 	}

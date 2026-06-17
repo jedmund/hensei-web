@@ -78,6 +78,19 @@ export function skillMentionSubheader(token: MentionToken): string {
 	return characterName
 }
 
+/**
+ * Splits a skill description into legible lines. Game descriptions separate effects
+ * with newlines (and occasional stray `<br>` literals); this normalizes both into a
+ * trimmed, blank-free list so the tooltip can render each as its own paragraph.
+ */
+export function skillDescriptionLines(text: string): string[] {
+	return text
+		.replace(/<br\s*\/?\s*>/gi, '\n')
+		.split('\n')
+		.map((line) => line.trim())
+		.filter((line) => line.length > 0)
+}
+
 /** The shared `data-*` chip attributes for both the editor node and the read-only renderer. */
 export function mentionChipAttrs(token: MentionToken): Record<string, string> {
 	const attrs: Record<string, string> = {

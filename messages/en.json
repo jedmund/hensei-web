@@ -1489,6 +1489,8 @@
 	"mention_unknown": "Unknown",
 	"mention_search_hint": "Type at least 2 characters to search",
 	"mention_no_results": "No results found",
+	"mention_skill_cooldown": "Cooldown {n}T",
+	"mention_skill_available_in": "Available in {n}T",
 
 	"modifier_unknown": "Unknown +{strength}",
 

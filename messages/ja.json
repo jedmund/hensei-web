@@ -1471,6 +1471,8 @@
 	"mention_unknown": "不明",
 	"mention_search_hint": "2文字以上入力して検索",
 	"mention_no_results": "結果が見つかりません",
+	"mention_skill_cooldown": "使用間隔{n}T",
+	"mention_skill_available_in": "使用可能まで{n}T",
 
 	"modifier_unknown": "不明 +{strength}",
 

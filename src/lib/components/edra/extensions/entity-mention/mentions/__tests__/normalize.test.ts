@@ -55,6 +55,8 @@ function version(overrides: Partial<CharacterSkillVersion> = {}): CharacterSkill
 		ordinal: 1,
 		typeColor: 'damage',
 		gameIcon: '625_4',
+		cooldown: 8,
+		initialCooldown: 3,
 		...overrides
 	}
 }
@@ -70,6 +72,8 @@ describe('skillToSuggestion', () => {
 			slotKind: 'ability',
 			slotPosition: 2,
 			typeColor: 'damage',
+			cooldown: 8,
+			initialCooldown: 3,
 			character
 		})
 		expect(suggestion.imageUrl).toBe(`${base}/ability-icons/625_4.png`)
