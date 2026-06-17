@@ -6,6 +6,7 @@
 	import {
 		descriptorFor,
 		mentionImageUrl,
+		skillDescriptionLines,
 		skillMentionSubheader,
 		typeColorSwatch
 	} from '$lib/components/edra/extensions/entity-mention/mentions/index.js'
@@ -30,7 +31,9 @@
 	})
 
 	const skillDescription = $derived(entity.skill ? localizedName(entity.skill.description) : '')
-	const hasDescription = $derived(!!skillDescription && skillDescription !== '—')
+	const descriptionLines = $derived(
+		skillDescription && skillDescription !== '—' ? skillDescriptionLines(skillDescription) : []
+	)
 	const hasProficiencies = $derived(proficiencies.length > 0)
 </script>
 
@@ -56,8 +59,12 @@
 					{/if}
 				</div>
 			</div>
-			{#if hasDescription}
-				<p class="skill-description">{skillDescription}</p>
+			{#if descriptionLines.length > 0}
+				<div class="skill-description">
+					{#each descriptionLines as line, i (i)}
+						<p>{line}</p>
+					{/each}
+				</div>
 			{/if}
 			{#if entity.skill?.cooldown != null}
 				<div class="skill-stat">{m.mention_skill_cooldown({ n: entity.skill.cooldown })}</div>
@@ -186,11 +193,17 @@
 	}
 
 	.skill-description {
-		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: $unit-half;
 		font-size: $font-small;
 		line-height: 1.4;
-		white-space: normal;
 		opacity: 0.9;
+
+		p {
+			margin: 0;
+			white-space: normal;
+		}
 	}
 
 	.skill-stat {

@@ -7,7 +7,8 @@ import {
 	mentionImageUrl,
 	mentionHref,
 	mentionChipAttrs,
-	skillMentionSubheader
+	skillMentionSubheader,
+	skillDescriptionLines
 } from '../helpers'
 import type { MentionToken } from '../types'
 
@@ -150,5 +151,29 @@ describe('skillMentionSubheader', () => {
 
 	it('returns an empty string for non-skill tokens', () => {
 		expect(skillMentionSubheader(characterToken())).toBe('')
+	})
+})
+
+describe('skillDescriptionLines', () => {
+	it('splits a multi-effect description on newlines', () => {
+		expect(skillDescriptionLines('Deal damage.\nGain a buff.')).toEqual([
+			'Deal damage.',
+			'Gain a buff.'
+		])
+	})
+
+	it('normalizes stray <br> literals (including the malformed "<br/ >")', () => {
+		expect(skillDescriptionLines('At end of turn:<br/ >Consume charge.')).toEqual([
+			'At end of turn:',
+			'Consume charge.'
+		])
+	})
+
+	it('trims lines and drops blank ones', () => {
+		expect(skillDescriptionLines('  One \n\n  Two  \n')).toEqual(['One', 'Two'])
+	})
+
+	it('returns an empty array for an empty description', () => {
+		expect(skillDescriptionLines('')).toEqual([])
 	})
 })

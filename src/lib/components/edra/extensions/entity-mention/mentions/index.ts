@@ -6,7 +6,8 @@ export {
 	mentionImageUrl,
 	mentionHref,
 	mentionChipAttrs,
-	skillMentionSubheader
+	skillMentionSubheader,
+	skillDescriptionLines
 } from './helpers'
 export { mentionDescriptors, descriptorFor } from './registry'
 export type { MentionDescriptor, MentionSecondary } from './registry'
