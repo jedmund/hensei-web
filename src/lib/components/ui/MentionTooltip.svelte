@@ -5,6 +5,7 @@
 	import {
 		descriptorFor,
 		mentionImageUrl,
+		skillMentionSubheader,
 		typeColorSwatch
 	} from '$lib/components/edra/extensions/entity-mention/mentions/index.js'
 	import type { MentionToken } from '$lib/components/edra/extensions/entity-mention/mentions/index.js'
@@ -52,7 +53,7 @@
 				/>
 			{:else if secondary === 'skill-meta'}
 				{#if entity.skill?.character}
-					<span class="skill-owner">{localizedName(entity.skill.character.name)}</span>
+					<span class="skill-owner">{skillMentionSubheader(entity)}</span>
 				{/if}
 				{#if skillDescription && skillDescription !== '—'}
 					<p class="skill-description">{skillDescription}</p>

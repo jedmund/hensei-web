@@ -6,7 +6,8 @@ import {
 	typeColorSwatch,
 	mentionImageUrl,
 	mentionHref,
-	mentionChipAttrs
+	mentionChipAttrs,
+	skillMentionSubheader
 } from '../helpers'
 import type { MentionToken } from '../types'
 
@@ -126,5 +127,28 @@ describe('mentionChipAttrs', () => {
 	})
 	it('omits data-skill-color when a skill has no type color', () => {
 		expect(mentionChipAttrs(skillToken({ typeColor: null }))).not.toHaveProperty('data-skill-color')
+	})
+})
+
+describe('skillMentionSubheader', () => {
+	const character = { granblue_id: '3040001000', name: { en: 'Octavia', ja: 'オクタヴィア' } }
+
+	it('appends the slot number for active (ability) skills', () => {
+		expect(
+			skillMentionSubheader(skillToken({ slotKind: 'ability', slotPosition: 2, character }))
+		).toBe('Octavia 2')
+	})
+
+	it('shows just the character name for CAs and support skills', () => {
+		expect(
+			skillMentionSubheader(skillToken({ slotKind: 'ougi', slotPosition: 1, character }))
+		).toBe('Octavia')
+		expect(
+			skillMentionSubheader(skillToken({ slotKind: 'support', slotPosition: 1, character }))
+		).toBe('Octavia')
+	})
+
+	it('returns an empty string for non-skill tokens', () => {
+		expect(skillMentionSubheader(characterToken())).toBe('')
 	})
 })

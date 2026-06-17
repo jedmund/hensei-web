@@ -1,4 +1,5 @@
 import { getBasePath, getCharacterSkillIcon } from '$lib/utils/images'
+import { localizedName } from '$lib/utils/locale'
 import type { MentionToken } from './types'
 
 /** Element ID → slug. The single copy (previously duplicated in EntityMention + EntityMentionList). */
@@ -60,6 +61,21 @@ export function mentionHref(token: MentionToken): string | null {
 	const wikiName = token.name?.en
 	if (!wikiName) return null
 	return `https://gbf.wiki/${encodeURIComponent(wikiName)}`
+}
+
+/**
+ * Attribution subheader for a skill mention: the owning character's name, plus the
+ * slot number for active skills (e.g. "Octavia 2"), which is how players refer to them.
+ * Returns '' for non-skill tokens or skills without an attributed character.
+ */
+export function skillMentionSubheader(token: MentionToken): string {
+	const skill = token.skill
+	if (!skill?.character) return ''
+	const characterName = localizedName(skill.character.name)
+	if (skill.slotKind === 'ability' && skill.slotPosition) {
+		return `${characterName} ${skill.slotPosition}`
+	}
+	return characterName
 }
 
 /** The shared `data-*` chip attributes for both the editor node and the read-only renderer. */

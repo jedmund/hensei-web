@@ -1,5 +1,5 @@
 import type { UnifiedSearchResult } from '$lib/api/adapters/search.adapter'
-import type { CharacterSkillVersion, LocalizedName } from '$lib/types/api/entities'
+import type { CharacterSkill, CharacterSkillVersion, LocalizedName } from '$lib/types/api/entities'
 import { elementSlug, mentionImageUrl, typeColorSwatch } from './helpers'
 import type { MentionSuggestion, MentionToken } from './types'
 
@@ -28,7 +28,7 @@ export function entityResultToSuggestion(result: UnifiedSearchResult): MentionSu
 /** Maps a character skill version (one slot) into a dropdown suggestion, attributed to its character. */
 export function skillToSuggestion(
 	version: CharacterSkillVersion,
-	slotKind: string,
+	slot: Pick<CharacterSkill, 'kind' | 'position'>,
 	character: { granblue_id: string; name: LocalizedName }
 ): MentionSuggestion {
 	const token: MentionToken = {
@@ -39,7 +39,8 @@ export function skillToSuggestion(
 			description: { en: version.description?.en ?? '', ja: version.description?.ja ?? '' },
 			gameIcon: version.gameIcon,
 			typeColor: version.typeColor,
-			slotKind,
+			slotKind: slot.kind,
+			slotPosition: slot.position,
 			character
 		}
 	}

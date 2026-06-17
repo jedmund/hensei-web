@@ -5,7 +5,8 @@ export {
 	typeColorSwatch,
 	mentionImageUrl,
 	mentionHref,
-	mentionChipAttrs
+	mentionChipAttrs,
+	skillMentionSubheader
 } from './helpers'
 export { mentionDescriptors, descriptorFor } from './registry'
 export type { MentionDescriptor, MentionSecondary } from './registry'

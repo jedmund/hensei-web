@@ -7,9 +7,8 @@
 	 * this component only paints; per-type presentation lives in the mentions module.
 	 */
 	import * as m from '$lib/paraglide/messages'
-	import { localizedName } from '$lib/utils/locale'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
-	import { descriptorFor } from './mentions/index.js'
+	import { descriptorFor, skillMentionSubheader } from './mentions/index.js'
 	import type { MentionSuggestion, MentionToken } from './mentions/index.js'
 
 	interface Props {
@@ -101,7 +100,7 @@
 							}}
 						/>
 					{:else if secondary === 'skill-meta' && token.skill?.character}
-						<span class="item-meta">{localizedName(token.skill.character.name)}</span>
+						<span class="item-meta">{skillMentionSubheader(token)}</span>
 					{/if}
 				</div>
 			</button>

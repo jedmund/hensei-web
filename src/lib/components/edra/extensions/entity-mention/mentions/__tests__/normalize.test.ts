@@ -62,12 +62,13 @@ function version(overrides: Partial<CharacterSkillVersion> = {}): CharacterSkill
 describe('skillToSuggestion', () => {
 	const character = { granblue_id: '3040001000', name: { en: 'Percival', ja: 'パーシヴァル' } }
 
-	it('builds a skill token attributed to its character', () => {
-		const suggestion = skillToSuggestion(version(), 'ability', character)
+	it('builds a skill token attributed to its character + slot', () => {
+		const suggestion = skillToSuggestion(version(), { kind: 'ability', position: 2 }, character)
 		expect(suggestion.key).toBe('skill:3040001000:Lord of Flames')
 		expect(suggestion.token.type).toBe('skill')
 		expect(suggestion.token.skill).toMatchObject({
 			slotKind: 'ability',
+			slotPosition: 2,
 			typeColor: 'damage',
 			character
 		})
@@ -77,7 +78,11 @@ describe('skillToSuggestion', () => {
 	})
 
 	it('falls back to a type-color swatch when the version has no game icon', () => {
-		const suggestion = skillToSuggestion(version({ gameIcon: null }), 'ougi', character)
+		const suggestion = skillToSuggestion(
+			version({ gameIcon: null }),
+			{ kind: 'ougi', position: 1 },
+			character
+		)
 		expect(suggestion.imageUrl).toBeNull()
 		expect(suggestion.swatchColor).toBe('#d64545')
 	})

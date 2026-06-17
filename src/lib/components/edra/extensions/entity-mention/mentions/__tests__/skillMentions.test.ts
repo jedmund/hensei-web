@@ -49,17 +49,27 @@ describe('buildPartySkillMentions', () => {
 		expect(names).toEqual(['Base Skill', 'First'])
 	})
 
-	it('includes all slot kinds (ability, ougi, support)', () => {
+	it('orders slots active → CA → support, then by position, regardless of input order', () => {
 		const character = gridChar('1', 'Percival', [
-			slot('ability', 1, [version('Ability')]),
+			slot('support', 1, [version('Support')]),
 			slot('ougi', 1, [version('Ougi')]),
-			slot('support', 1, [version('Support')])
+			slot('ability', 2, [version('Ability 2')]),
+			slot('ability', 1, [version('Ability 1')])
 		])
 		expect(buildPartySkillMentions([character]).map((s) => s.token.name.en)).toEqual([
-			'Ability',
+			'Ability 1',
+			'Ability 2',
 			'Ougi',
 			'Support'
 		])
+	})
+
+	it('records the slot kind and position on each skill token', () => {
+		const character = gridChar('1', 'Percival', [slot('ability', 3, [version('Third')])])
+		const suggestions = buildPartySkillMentions([character])
+		expect(suggestions).toHaveLength(1)
+		expect(suggestions[0]?.token.skill?.slotKind).toBe('ability')
+		expect(suggestions[0]?.token.skill?.slotPosition).toBe(3)
 	})
 
 	it('dedupes same-named skills within one character', () => {
@@ -115,14 +125,14 @@ describe('matchSkills', () => {
 		expect(matchSkills(suggestions, '   ')).toEqual([])
 	})
 
-	it('caps the number of results', () => {
+	it('returns every match (no per-skill cap) so all of a character’s skills stay visible', () => {
 		const many = buildPartySkillMentions([
 			gridChar(
 				'1',
 				'Percival',
-				Array.from({ length: 10 }, (_, i) => slot('ability', i, [version(`Flame Skill ${i}`)]))
+				Array.from({ length: 10 }, (_, i) => slot('ability', i + 1, [version(`Flame Skill ${i}`)]))
 			)
 		])
-		expect(matchSkills(many, 'flame').length).toBe(5)
+		expect(matchSkills(many, 'flame').length).toBe(10)
 	})
 })

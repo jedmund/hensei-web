@@ -15,8 +15,9 @@ import type { MentionSuggestion, MentionToken } from './mentions/index.js'
 
 /** Require at least this many characters before any provider runs. */
 const MIN_QUERY_LENGTH = 2
-/** Cap on the merged result set across all providers. */
-const TOTAL_RESULT_CAP = 8
+/** Cap on the merged result set across all providers (a character + all its skills
+ * is already ~8 rows, so this is generous; the dropdown scrolls past it). */
+const TOTAL_RESULT_CAP = 25
 
 /** A suggestion source. Sync providers resolve immediately; async ones are awaited together. */
 type SuggestionProvider =
@@ -60,6 +61,44 @@ function dedupe(suggestions: MentionSuggestion[]): MentionSuggestion[] {
 }
 
 /**
+ * Orders the merged list so each character is immediately followed by its own skills
+ * (active → CA → support, already sorted upstream). Typing "@Octavia" therefore shows
+ * Octavia, then her skills. Skills whose character isn't among the entity hits (e.g. a
+ * direct skill-name match) trail at the end, grouped by character.
+ */
+function mergeGroupedByCharacter(
+	entities: MentionSuggestion[],
+	skills: MentionSuggestion[]
+): MentionSuggestion[] {
+	const skillsByCharacter = new Map<string, MentionSuggestion[]>()
+	for (const skill of skills) {
+		const characterId = skill.token.skill?.character?.granblue_id ?? ''
+		const group = skillsByCharacter.get(characterId)
+		if (group) group.push(skill)
+		else skillsByCharacter.set(characterId, [skill])
+	}
+
+	const ordered: MentionSuggestion[] = []
+	const placedCharacters = new Set<string>()
+	for (const entity of entities) {
+		ordered.push(entity)
+		if (entity.token.type !== 'character') continue
+		const characterSkills = skillsByCharacter.get(entity.token.granblue_id)
+		if (characterSkills) {
+			ordered.push(...characterSkills)
+			placedCharacters.add(entity.token.granblue_id)
+		}
+	}
+
+	for (const [characterId, characterSkills] of skillsByCharacter) {
+		if (placedCharacters.has(characterId)) continue
+		ordered.push(...characterSkills)
+	}
+
+	return dedupe(ordered)
+}
+
+/**
  * Creates the suggestion configuration for entity mentions.
  *
  * Providers default to the global entity search + party skill provider; both are
@@ -75,7 +114,6 @@ export function createEntityMentionSuggestion(
 		items: async ({ query }): Promise<MentionSuggestion[]> => {
 			if (query.length < MIN_QUERY_LENGTH) return []
 
-			// Skills (sync) come first so a character's own skills sit above global hits.
 			const sync = providers
 				.filter((provider) => provider.mode === 'sync')
 				.flatMap((provider) => provider.fn(query))
@@ -85,7 +123,10 @@ export function createEntityMentionSuggestion(
 					.map((provider) => provider.fn(query))
 			)
 
-			return dedupe([...sync, ...async.flat()]).slice(0, TOTAL_RESULT_CAP)
+			// Entities lead, each character trailed by its skills; skill-only matches follow.
+			const entities = async.flat()
+			const skills = sync
+			return mergeGroupedByCharacter(entities, skills).slice(0, TOTAL_RESULT_CAP)
 		},
 
 		render: () => {

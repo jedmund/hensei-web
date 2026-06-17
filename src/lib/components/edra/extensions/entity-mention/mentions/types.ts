@@ -31,6 +31,8 @@ export interface MentionToken {
 		typeColor?: string | null
 		/** The slot kind this skill came from: 'ability' | 'ougi' | 'support'. */
 		slotKind?: string
+		/** 1-based slot position; players refer to active skills by it ("Octavia 2"). */
+		slotPosition?: number
 		/** The party character the skill belongs to (for attribution + tooltip). */
 		character?: { granblue_id: string; name: LocalizedName }
 	}
