@@ -107,9 +107,18 @@
 							{@const primary = primaryVersion(slot)}
 							{#if primary}
 								<div class="slot">
-									<SkillVersionCard version={primary} badges={progressionBadges(slot)} />
+									<SkillVersionCard
+										version={primary}
+										kind={slot.kind}
+										badges={progressionBadges(slot)}
+									/>
 									{#each subVariants(slot) as sub (sub.version.id)}
-										<SkillVersionCard version={sub.version} relationLabel={sub.label} linked />
+										<SkillVersionCard
+											version={sub.version}
+											kind={slot.kind}
+											relationLabel={sub.label}
+											linked
+										/>
 									{/each}
 								</div>
 							{/if}

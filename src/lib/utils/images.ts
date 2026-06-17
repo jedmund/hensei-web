@@ -477,11 +477,28 @@ export function getJobSkillIcon(
 }
 
 /**
- * Get character ability icon URL from its game asset stem ("{id}_{N}", e.g.
- * "625_4"). Returns null when the stem is absent (ougi/support and unmatched
- * abilities have none) so callers can fall back to a type-color indicator.
+ * Charge attacks (ougi) and support skills have no custom art, so they share a
+ * static icon under /ability-icons keyed by slot kind.
  */
-export function getCharacterSkillIcon(gameIcon: string | null | undefined): string | null {
+const STATIC_SKILL_ICONS: Record<string, string> = {
+	ougi: 'charge-attack',
+	support: 'support-skill'
+}
+
+/**
+ * Get a character skill icon URL.
+ *
+ * Charge attacks and support skills use their shared static icon (they have no
+ * per-skill art). Usable abilities use their game asset stem ("{id}_{N}", e.g.
+ * "625_4"); when that stem is absent the function returns null so callers can fall
+ * back to a type-color indicator.
+ */
+export function getCharacterSkillIcon(
+	gameIcon: string | null | undefined,
+	kind?: string | null
+): string | null {
+	const staticIcon = kind ? STATIC_SKILL_ICONS[kind] : undefined
+	if (staticIcon) return `${getBasePath()}/ability-icons/${staticIcon}.png`
 	if (!gameIcon) return null
 	return `${getBasePath()}/ability-icons/${gameIcon}.png`
 }

@@ -85,11 +85,23 @@ describe('mentionImageUrl', () => {
 	it('returns the square portrait for entities', () => {
 		expect(mentionImageUrl(characterToken())).toBe(`${base}/character-square/3040001000_01.jpg`)
 	})
-	it('returns the ability icon for a skill with a game icon', () => {
-		expect(mentionImageUrl(skillToken())).toBe(`${base}/ability-icons/625_4.png`)
+	it('returns the ability icon for a usable skill with a game icon', () => {
+		expect(mentionImageUrl(skillToken({ slotKind: 'ability' }))).toBe(
+			`${base}/ability-icons/625_4.png`
+		)
 	})
-	it('returns null for a skill without a game icon', () => {
-		expect(mentionImageUrl(skillToken({ gameIcon: null }))).toBeNull()
+	it('returns null for an ability skill without a game icon', () => {
+		expect(mentionImageUrl(skillToken({ slotKind: 'ability', gameIcon: null }))).toBeNull()
+	})
+	it('returns the static charge-attack icon for ougi, ignoring gameIcon', () => {
+		expect(mentionImageUrl(skillToken({ slotKind: 'ougi', gameIcon: null }))).toBe(
+			`${base}/ability-icons/charge-attack.png`
+		)
+	})
+	it('returns the static support icon for support skills', () => {
+		expect(mentionImageUrl(skillToken({ slotKind: 'support', gameIcon: null }))).toBe(
+			`${base}/ability-icons/support-skill.png`
+		)
 	})
 })
 
