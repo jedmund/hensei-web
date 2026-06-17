@@ -27,6 +27,7 @@ MAP=(
 	"artifact-square:artifacts/square" "artifact-wide:artifacts/wide"
 	"bullet-square:bullets/square"
 	"ability-icons:icons/abilities" "job-skills:icons/job-skills"
+	"weapon-skill-icons:icons/weapon-skills"
 	"elements:icons/elements" "proficiencies:icons/proficiencies" "rarity:icons/rarity"
 	"awakening:icons/awakening" "mastery:icons/mastery" "ax:icons/ax-skills"
 	"fonts:app/fonts" "placeholders:app/placeholders" "external:app/external" "media:app/media"
