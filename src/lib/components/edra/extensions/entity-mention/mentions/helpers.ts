@@ -51,7 +51,9 @@ export function typeColorSwatch(typeColor: string | null | undefined): string | 
 
 /** Thumbnail for a mention token: skill icon for skills, square portrait otherwise. */
 export function mentionImageUrl(token: MentionToken): string | null {
-	if (token.type === 'skill') return getCharacterSkillIcon(token.skill?.gameIcon)
+	if (token.type === 'skill') {
+		return getCharacterSkillIcon(token.skill?.gameIcon, token.skill?.slotKind)
+	}
 	return squareImageUrl(token.type, token.granblue_id)
 }
 

@@ -6,6 +6,8 @@
 
 	interface Props {
 		version: CharacterSkillVersion
+		/** Slot kind ('ability' | 'ougi' | 'support'); drives the static CA/support icon. */
+		kind?: string
 		/** Connector label shown above linked sub-cards (e.g. "Transforms into"). */
 		relationLabel?: string
 		/** Progression/role badge labels rendered next to the name. */
@@ -14,9 +16,9 @@
 		linked?: boolean
 	}
 
-	let { version, relationLabel, badges = [], linked = false }: Props = $props()
+	let { version, kind, relationLabel, badges = [], linked = false }: Props = $props()
 
-	const iconUrl = $derived(getCharacterSkillIcon(version.gameIcon))
+	const iconUrl = $derived(getCharacterSkillIcon(version.gameIcon, kind))
 	let imgFailed = $state(false)
 	const showImg = $derived(!!iconUrl && !imgFailed)
 	const typeColor = $derived(version.typeColor ?? 'none')

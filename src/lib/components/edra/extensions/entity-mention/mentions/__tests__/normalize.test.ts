@@ -81,13 +81,23 @@ describe('skillToSuggestion', () => {
 		expect(suggestion.primaryLabel).toBe('Lord of Flames')
 	})
 
-	it('falls back to a type-color swatch when the version has no game icon', () => {
+	it('falls back to a type-color swatch when an ability has no game icon', () => {
+		const suggestion = skillToSuggestion(
+			version({ gameIcon: null }),
+			{ kind: 'ability', position: 1 },
+			character
+		)
+		expect(suggestion.imageUrl).toBeNull()
+		expect(suggestion.swatchColor).toBe('#d64545')
+	})
+
+	it('uses the static charge-attack icon for ougi (no swatch)', () => {
 		const suggestion = skillToSuggestion(
 			version({ gameIcon: null }),
 			{ kind: 'ougi', position: 1 },
 			character
 		)
-		expect(suggestion.imageUrl).toBeNull()
-		expect(suggestion.swatchColor).toBe('#d64545')
+		expect(suggestion.imageUrl).toMatch(/ability-icons\/charge-attack\.png$/)
+		expect(suggestion.swatchColor).toBeNull()
 	})
 })
