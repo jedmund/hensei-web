@@ -4,18 +4,9 @@
 	import { escapeHtml, safeHref } from '$lib/utils/safeHtml'
 	import { computePosition, flip, shift, offset } from '@floating-ui/dom'
 	import MentionTooltip from '$lib/components/ui/MentionTooltip.svelte'
+	import { mentionChipAttrs, mentionHref } from './edra/extensions/entity-mention/mentions/index.js'
+	import type { MentionToken } from './edra/extensions/entity-mention/mentions/index.js'
 	import * as m from '$lib/paraglide/messages'
-
-	interface MentionEntity {
-		granblue_id: string
-		name: { en: string; ja: string }
-		type: string
-		element: { id: number; slug: string }
-		proficiency?: number | number[]
-		season?: number | null
-		series?: number[] | { id: string; slug: string; name: { en: string; ja: string } }[] | null
-		styleSwap?: boolean
-	}
 
 	interface Props {
 		content?: string
@@ -26,7 +17,7 @@
 	let { content, truncate = false, maxLines = 3 }: Props = $props()
 
 	// Tooltip state
-	let tooltipEntity: MentionEntity | null = $state(null)
+	let tooltipEntity: MentionToken | null = $state(null)
 	let tooltipVisible = $state(false)
 	let tooltipEl: HTMLDivElement | null = $state(null)
 	let containerEl: HTMLDivElement | null = $state(null)
@@ -35,7 +26,7 @@
 	// The collector map is passed in rather than mutating module-level state
 	function jsonToHtml(
 		node: JSONContent,
-		collector: Map<number, MentionEntity>,
+		collector: Map<number, MentionToken>,
 		counter: { value: number }
 	): string {
 		if (!node) return ''
@@ -175,30 +166,40 @@
 			}
 
 			case 'mention': {
-				// Handle game item mentions
+				// Handle game item / skill mentions
 				const attrs = node.attrs?.id
-				const wikiName = attrs?.name?.en || attrs?.granblue_en || 'Unknown'
-				const mentionName = localizedName(attrs?.name)
-				const displayName = mentionName !== '—' ? mentionName : attrs?.granblue_en || 'Unknown'
-				const wikiUrl = `https://gbf.wiki/${encodeURIComponent(wikiName)}`
-				const elementSlug = attrs?.element?.slug ?? ''
-				const entityType = attrs?.type ?? ''
-
-				// Store entity data for tooltip
-				const idx = counter.value++
-				collector.set(idx, {
+				const token: MentionToken = {
+					type: attrs?.type ?? attrs?.searchableType?.toLowerCase() ?? 'unknown',
 					granblue_id: attrs?.granblue_id ?? '',
-					name: attrs?.name ?? { en: wikiName, ja: wikiName },
-					type: entityType,
-					element: attrs?.element ?? { id: 0, slug: 'null' },
+					name: attrs?.name ?? { en: 'Unknown', ja: 'Unknown' },
+					element: attrs?.element,
 					proficiency: attrs?.proficiency,
 					season: attrs?.season,
 					series: attrs?.series,
-					styleSwap: attrs?.styleSwap
-				})
+					styleSwap: attrs?.styleSwap,
+					skill: attrs?.skill
+				}
+				const mentionName = localizedName(token.name)
+				const displayName = mentionName !== '—' ? mentionName : (attrs?.granblue_en ?? 'Unknown')
 
-				const entityJson = escapeHtml(JSON.stringify(collector.get(idx)))
-				return `<a href="${safeHref(wikiUrl)}" target="_blank" rel="noopener noreferrer" class="mention" data-type="mention" data-id="${entityJson}" data-element="${escapeHtml(elementSlug)}" data-entity-type="${escapeHtml(entityType)}" data-mention-index="${idx}">${escapeHtml(displayName)}</a>`
+				// Store the token for the hover tooltip.
+				const idx = counter.value++
+				collector.set(idx, token)
+
+				// Shared chip attributes (data-type/element/entity-type/skill-color) come
+				// from the single helper so the chip matches the editor node exactly.
+				const chipAttrs = Object.entries(mentionChipAttrs(token))
+					.map(([key, value]) => `${key}="${escapeHtml(value)}"`)
+					.join(' ')
+				const entityJson = escapeHtml(JSON.stringify(token))
+				const shared = `class="mention" ${chipAttrs} data-id="${entityJson}" data-mention-index="${idx}"`
+
+				// Skills have no wiki page, so they render as a non-linking span.
+				const href = mentionHref(token)
+				if (href) {
+					return `<a href="${safeHref(href)}" target="_blank" rel="noopener noreferrer" ${shared}>${escapeHtml(displayName)}</a>`
+				}
+				return `<span ${shared}>${escapeHtml(displayName)}</span>`
 			}
 
 			default:
@@ -213,11 +214,11 @@
 	// Parse content - handle both JSON and plain text
 	function parseContent(content?: string): {
 		html: string
-		entities: Map<number, MentionEntity>
+		entities: Map<number, MentionToken>
 	} {
 		if (!content) return { html: '', entities: new Map() }
 
-		const collector = new Map<number, MentionEntity>()
+		const collector = new Map<number, MentionToken>()
 		const counter = { value: 0 }
 
 		// Try to parse as JSON first
@@ -437,6 +438,32 @@
 				&[data-element='light'] {
 					background: var(--light-mention-bg);
 					color: var(--light-text);
+				}
+
+				// Skill mentions tint by skill type color rather than element.
+				&[data-skill-color='damage'] {
+					background: color-mix(in srgb, #d64545 18%, transparent);
+					color: #d64545;
+				}
+
+				&[data-skill-color='heal'] {
+					background: color-mix(in srgb, #3fa34d 18%, transparent);
+					color: #3fa34d;
+				}
+
+				&[data-skill-color='buff'] {
+					background: color-mix(in srgb, #e0a93b 18%, transparent);
+					color: #b9831f;
+				}
+
+				&[data-skill-color='debuff'] {
+					background: color-mix(in srgb, #4a6fd6 18%, transparent);
+					color: #4a6fd6;
+				}
+
+				&[data-skill-color='field'] {
+					background: color-mix(in srgb, #8b5cf6 18%, transparent);
+					color: #8b5cf6;
 				}
 			}
 
