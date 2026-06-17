@@ -41,6 +41,8 @@ export function skillToSuggestion(
 			typeColor: version.typeColor,
 			slotKind: slot.kind,
 			slotPosition: slot.position,
+			cooldown: version.cooldown,
+			initialCooldown: version.initialCooldown,
 			character
 		}
 	}
