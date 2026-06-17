@@ -31,7 +31,7 @@ export enum Gender {
 
 /**
  * Generate job portrait URL for protagonist slot (CharacterRep/CharacterUnit)
- * These are smaller portrait images stored in /static/images/job-portraits/
+ * These are smaller portrait images stored in /static/images/jobs/portrait/
  */
 export function getJobPortraitUrl(job: Job | undefined, gender: Gender = Gender.Gran): string {
 	if (!job) {
@@ -42,7 +42,7 @@ export function getJobPortraitUrl(job: Job | undefined, gender: Gender = Gender.
 	const slug = job.name.en.toLowerCase().replace(/\s+/g, '-')
 	const genderSuffix = gender === Gender.Djeeta ? 'b' : 'a'
 
-	return `${getBasePath()}/job-portraits/${slug}_${genderSuffix}.png`
+	return `${getBasePath()}/jobs/portrait/${slug}_${genderSuffix}.png`
 }
 
 /**
@@ -56,7 +56,7 @@ export function getJobFullImageUrl(job: Job | undefined, gender: Gender = Gender
 
 	const genderSuffix = gender === Gender.Djeeta ? 'b' : 'a'
 
-	return `${getBasePath()}/job-zoom/${job.granblueId}_${genderSuffix}.png`
+	return `${getBasePath()}/jobs/zoom/${job.granblueId}_${genderSuffix}.png`
 }
 
 /**
@@ -68,12 +68,12 @@ export function getJobIconUrl(granblueId: string | undefined): string {
 		return getGenericPlaceholder()
 	}
 
-	return `${getBasePath()}/job-icons/${granblueId}.png`
+	return `${getBasePath()}/jobs/icon/${granblueId}.png`
 }
 
 /**
  * Generate job wide banner image URL for JobItem component
- * These are wider banner-style images stored in /static/images/job-wide/
+ * These are wider banner-style images stored in /static/images/jobs/wide/
  */
 export function getJobWideImageUrl(job: Job | undefined, gender: Gender = Gender.Gran): string {
 	if (!job) {
@@ -81,7 +81,7 @@ export function getJobWideImageUrl(job: Job | undefined, gender: Gender = Gender
 	}
 
 	const genderSuffix = gender === Gender.Djeeta ? 'b' : 'a'
-	return `${getBasePath()}/job-wide/${job.granblueId}_${genderSuffix}.jpg`
+	return `${getBasePath()}/jobs/wide/${job.granblueId}_${genderSuffix}.jpg`
 }
 
 /**

@@ -101,7 +101,7 @@
 
 	const elementName = $derived(getElementKey(itemData?.element))
 
-	const reliefBackgroundUrl = `${getBasePath()}/relief.png`
+	const reliefBackgroundUrl = `${getBasePath()}/app/marketing/relief.png`
 </script>
 
 <div class="item-header-container">

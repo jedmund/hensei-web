@@ -193,7 +193,7 @@ export interface CharacterSkillVersion {
 	name: LocalizedName
 	description: LocalizedName
 	icon?: string | null
-	/** Game asset stem "{id}_{N}" for the icon at /ability-icons/{gameIcon}.png */
+	/** Game asset stem "{id}_{N}" for the icon at /icons/abilities/{gameIcon}.png */
 	gameIcon?: string | null
 	typeColor?: 'damage' | 'heal' | 'buff' | 'debuff' | 'field' | string | null
 	cooldown?: number | null

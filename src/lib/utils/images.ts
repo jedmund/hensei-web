@@ -14,11 +14,36 @@ export type ResourceType = 'character' | 'weapon' | 'summon'
 export type ImageVariant = 'main' | 'tall' | 'grid' | 'square' | 'detail' | 'base' | 'wide'
 
 /**
- * Maps resource type and variant to the correct directory name
+ * Single source of truth for non-entity bucket prefixes. Entity art (character/
+ * weapon/summon) is built by {@link getImageDirectory}. See the migration runbook
+ * at hensei-api/docs/follow-ups/image-bucket-reorg.md — these MUST match the bucket.
+ * Game-CDN URLs and `previews/`/`profile/`/`guidebooks/`/`labels/`/`weapon-keys/`
+ * are intentionally not listed (unchanged / external).
+ */
+export const BUCKET = {
+	placeholders: 'app/placeholders',
+	marketing: 'app/marketing',
+	external: 'app/external',
+	abilities: 'icons/abilities',
+	jobSkills: 'icons/job-skills',
+	elements: 'icons/elements',
+	proficiencies: 'icons/proficiencies',
+	rarity: 'icons/rarity',
+	awakening: 'icons/awakening',
+	mastery: 'icons/mastery',
+	axSkills: 'icons/ax-skills',
+	accessories: 'accessories',
+	artifacts: 'artifacts',
+	bullets: 'bullets',
+	raids: 'raids'
+} as const
+
+/**
+ * Maps resource type and variant to the correct directory name.
+ * Entity art is grouped per entity: characters/weapons/summons + variant subdir.
  */
 function getImageDirectory(type: ResourceType, variant: ImageVariant): string {
-	// All directories follow the pattern: {type}-{variant}
-	return `${type}-${variant}`
+	return `${type}s/${variant}`
 }
 
 /**
@@ -48,7 +73,7 @@ export function getBasePath(): string {
  * Uses AWS S3/CDN in production, local path in development
  */
 export function getPlaceholderImage(type: ResourceType, variant: ImageVariant): string {
-	return `${getBasePath()}/placeholders/placeholder-${type}-${variant}.png`
+	return `${getBasePath()}/${BUCKET.placeholders}/placeholder-${type}-${variant}.png`
 }
 
 /**
@@ -56,7 +81,7 @@ export function getPlaceholderImage(type: ResourceType, variant: ImageVariant): 
  * Used as fallback for misc image types that don't have specific placeholders
  */
 export function getGenericPlaceholder(): string {
-	return `${getBasePath()}/placeholders/placeholder-weapon-grid.png`
+	return `${getBasePath()}/${BUCKET.placeholders}/placeholder-weapon-grid.png`
 }
 
 /**
@@ -462,23 +487,23 @@ export function getWeaponGridImage(
 export function getJobSkillIcon(
 	skill: { imageId?: string; slug?: string } | string | undefined
 ): string {
-	if (!skill) return '/images/job-skills/default.png'
+	if (!skill) return `${getBasePath()}/${BUCKET.jobSkills}/default.png`
 
 	// Handle string input (backward compatibility)
 	if (typeof skill === 'string') {
-		return `${getBasePath()}/job-skills/${skill}.png`
+		return `${getBasePath()}/${BUCKET.jobSkills}/${skill}.png`
 	}
 
 	// Use slug for the image path
 	if (skill.slug) {
-		return `${getBasePath()}/job-skills/${skill.slug}.png`
+		return `${getBasePath()}/${BUCKET.jobSkills}/${skill.slug}.png`
 	}
-	return '/images/job-skills/default.png'
+	return `${getBasePath()}/${BUCKET.jobSkills}/default.png`
 }
 
 /**
  * Charge attacks (ougi) and support skills have no custom art, so they share a
- * static icon under /ability-icons keyed by slot kind.
+ * static icon under icons/abilities keyed by slot kind.
  */
 const STATIC_SKILL_ICONS: Record<string, string> = {
 	ougi: 'charge-attack',
@@ -498,9 +523,9 @@ export function getCharacterSkillIcon(
 	kind?: string | null
 ): string | null {
 	const staticIcon = kind ? STATIC_SKILL_ICONS[kind] : undefined
-	if (staticIcon) return `${getBasePath()}/ability-icons/${staticIcon}.png`
+	if (staticIcon) return `${getBasePath()}/${BUCKET.abilities}/${staticIcon}.png`
 	if (!gameIcon) return null
-	return `${getBasePath()}/ability-icons/${gameIcon}.png`
+	return `${getBasePath()}/${BUCKET.abilities}/${gameIcon}.png`
 }
 
 /**
@@ -512,7 +537,7 @@ export function getAccessoryImage(
 	variant: 'square' | 'grid' = 'square'
 ): string {
 	if (!granblueId) return getGenericPlaceholder()
-	return `${getBasePath()}/accessory-${variant}/${granblueId}.jpg`
+	return `${getBasePath()}/${BUCKET.accessories}/${variant}/${granblueId}.jpg`
 }
 
 // ===== Modification Images =====
@@ -525,7 +550,7 @@ export function getAwakeningImage(
 	extension: 'png' | 'jpg' = 'jpg'
 ): string {
 	if (!slug) return ''
-	return `${getBasePath()}/awakening/${slug}.${extension}`
+	return `${getBasePath()}/${BUCKET.awakening}/${slug}.${extension}`
 }
 
 /**
@@ -540,7 +565,7 @@ export function getWeaponKeyImage(slug: string): string {
  */
 export function getAxSkillImage(slug: string | undefined): string {
 	if (!slug) return ''
-	return `${getBasePath()}/ax/${slug}.png`
+	return `${getBasePath()}/${BUCKET.axSkills}/${slug}.png`
 }
 
 /**
@@ -548,7 +573,7 @@ export function getAxSkillImage(slug: string | undefined): string {
  */
 export function getMasteryImage(slug: string | undefined): string {
 	if (!slug) return ''
-	return `${getBasePath()}/mastery/${slug}.png`
+	return `${getBasePath()}/${BUCKET.mastery}/${slug}.png`
 }
 
 // ===== Label Images =====
@@ -591,7 +616,7 @@ export function getGenderLabelImage(genderLabel: string): string {
  */
 export function getElementIcon(element: number): string {
 	const name = getElementKey(element)
-	return `${getBasePath()}/elements/element-${name}.png`
+	return `${getBasePath()}/${BUCKET.elements}/element-${name}.png`
 }
 
 // ===== Artifact Images =====
@@ -607,8 +632,7 @@ export function getArtifactImage(
 	variant: ArtifactImageVariant = 'square'
 ): string {
 	if (!granblueId) return getGenericPlaceholder()
-	const directory = `artifact-${variant}`
-	return `${getBasePath()}/${directory}/${granblueId}.jpg`
+	return `${getBasePath()}/${BUCKET.artifacts}/${variant}/${granblueId}.jpg`
 }
 
 // ===== Bullet Images =====
@@ -618,7 +642,7 @@ export function getArtifactImage(
  */
 export function getBulletImage(granblueId: string | number | null | undefined): string {
 	if (!granblueId) return getGenericPlaceholder()
-	return `${getBasePath()}/bullet-square/${granblueId}.jpg`
+	return `${getBasePath()}/${BUCKET.bullets}/square/${granblueId}.jpg`
 }
 
 /**
@@ -698,8 +722,7 @@ export function getRaidImage(
 	variant: RaidImageVariant = 'thumbnail'
 ): string {
 	if (!slug) return getGenericPlaceholder()
-	const directory = `raid-${variant}`
-	return `${getBasePath()}/${directory}/${slug}.png?v=${BUILD_TIMESTAMP}`
+	return `${getBasePath()}/${BUCKET.raids}/${variant}/${slug}.png?v=${BUILD_TIMESTAMP}`
 }
 
 /**
