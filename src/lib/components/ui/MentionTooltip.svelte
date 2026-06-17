@@ -1,34 +1,25 @@
 <script lang="ts">
-	import { getBasePath } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
-
-	interface MentionEntity {
-		granblue_id: string
-		name: { en: string; ja: string }
-		type: string
-		element: { id: number; [key: string]: unknown }
-		proficiency?: number | number[]
-		season?: number | null
-		series?: number[] | { id: string; slug: string; name: { en: string; ja: string } }[] | null
-		styleSwap?: boolean
-	}
+	import {
+		descriptorFor,
+		mentionImageUrl,
+		skillMentionSubheader,
+		typeColorSwatch
+	} from '$lib/components/edra/extensions/entity-mention/mentions/index.js'
+	import type { MentionToken } from '$lib/components/edra/extensions/entity-mention/mentions/index.js'
 
 	interface Props {
-		entity: MentionEntity
+		entity: MentionToken
 		visible: boolean
 	}
 
 	let { entity, visible }: Props = $props()
 
-	const imageUrl = $derived.by(() => {
-		const base = getBasePath()
-		if (entity.type === 'character') {
-			return `${base}/character-square/${entity.granblue_id}_01.jpg`
-		}
-		return `${base}/${entity.type}-square/${entity.granblue_id}.jpg`
-	})
+	const imageUrl = $derived(mentionImageUrl(entity))
+	const swatchColor = $derived(typeColorSwatch(entity.skill?.typeColor))
+	const secondary = $derived(descriptorFor(entity.type).secondary)
 
 	const proficiencies = $derived.by(() => {
 		if (entity.proficiency === undefined || entity.proficiency === null) return []
@@ -36,24 +27,37 @@
 		return entity.proficiency > 0 ? [entity.proficiency] : []
 	})
 
-	const isCharacter = $derived(entity.type === 'character')
+	const skillDescription = $derived(entity.skill ? localizedName(entity.skill.description) : '')
 	const hasProficiencies = $derived(proficiencies.length > 0)
 </script>
 
 {#if visible}
-	<div class="mention-tooltip">
-		<img class="entity-image" src={imageUrl} alt="" loading="lazy" />
+	<div class="mention-tooltip" class:is-skill={secondary === 'skill-meta'}>
+		<div class="entity-image {entity.type}">
+			{#if imageUrl}
+				<img src={imageUrl} alt="" loading="lazy" />
+			{:else}
+				<span class="entity-swatch" style:background={swatchColor ?? 'var(--border-color)'}></span>
+			{/if}
+		</div>
 		<div class="entity-info">
 			<span class="entity-name">{localizedName(entity.name)}</span>
-			{#if isCharacter}
+			{#if secondary === 'character-tags'}
 				<CharacterTags
 					character={{
-						element: entity.element.id,
+						element: entity.element?.id,
 						season: entity.season,
 						series: entity.series,
 						styleSwap: entity.styleSwap
 					}}
 				/>
+			{:else if secondary === 'skill-meta'}
+				{#if entity.skill?.character}
+					<span class="skill-owner">{skillMentionSubheader(entity)}</span>
+				{/if}
+				{#if skillDescription && skillDescription !== '—'}
+					<p class="skill-description">{skillDescription}</p>
+				{/if}
 			{/if}
 			{#if hasProficiencies}
 				<div class="proficiencies">
@@ -83,14 +87,35 @@
 		border-radius: $item-corner;
 		z-index: effects.$z-notification;
 		box-shadow: var(--shadow-md);
+
+		&.is-skill {
+			max-width: 280px;
+		}
 	}
 
 	.entity-image {
 		width: 60px;
 		height: 60px;
 		border-radius: $item-corner-small;
-		object-fit: cover;
+		overflow: hidden;
 		flex-shrink: 0;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		// Skill icons are transparent PNGs; show them whole.
+		&.skill img {
+			object-fit: contain;
+		}
+	}
+
+	.entity-swatch {
+		display: block;
+		width: 100%;
+		height: 100%;
 	}
 
 	.entity-info {
@@ -104,6 +129,20 @@
 		font-size: $font-regular;
 		font-weight: $medium;
 		white-space: nowrap;
+	}
+
+	.skill-owner {
+		font-size: $font-small;
+		color: var(--tooltip-text, white);
+		opacity: 0.7;
+	}
+
+	.skill-description {
+		margin: 0;
+		font-size: $font-small;
+		line-height: 1.4;
+		white-space: normal;
+		opacity: 0.9;
 	}
 
 	.proficiencies {

@@ -2,30 +2,19 @@
 	/**
 	 * EntityMentionList - Dropdown for entity mention suggestions
 	 *
-	 * Shows search results for characters, weapons, and summons when typing @
-	 * Supports keyboard navigation and displays entity images with element colors.
+	 * Shows characters, weapons, summons (global search) and the active party's
+	 * character skills when typing `@`. Rows are precomputed MentionSuggestions, so
+	 * this component only paints; per-type presentation lives in the mentions module.
 	 */
 	import * as m from '$lib/paraglide/messages'
-	import { getBasePath } from '$lib/utils/images'
-	import type { UnifiedSearchResult } from '$lib/api/adapters/search.adapter'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import { descriptorFor, skillMentionSubheader } from './mentions/index.js'
+	import type { MentionSuggestion, MentionToken } from './mentions/index.js'
 
 	interface Props {
-		items: UnifiedSearchResult[]
-		command: (item: EntityMentionData) => void
+		items: MentionSuggestion[]
+		command: (token: MentionToken) => void
 		query: string
-	}
-
-	/** Data structure passed to the mention command */
-	export interface EntityMentionData {
-		granblue_id: string
-		name: { en: string; ja: string }
-		type: string
-		element: { id: number; slug: string }
-		proficiency?: number | number[]
-		season?: number | null
-		series?: number[] | { id: string; slug: string; name: { en: string; ja: string } }[] | null
-		styleSwap?: boolean
 	}
 
 	let { items, command, query }: Props = $props()
@@ -45,53 +34,10 @@
 		item?.scrollIntoView({ block: 'nearest' })
 	})
 
-	function getEntityImageUrl(item: UnifiedSearchResult): string {
-		const base = getBasePath()
-		const type = item.searchableType.toLowerCase()
-		const id = item.granblueId
-
-		if (type === 'character') {
-			return `${base}/character-square/${id}_01.jpg`
-		}
-		return `${base}/${type}-square/${id}.jpg`
-	}
-
-	function getElementSlug(element?: number): string {
-		const slugs: Record<number, string> = {
-			0: 'null',
-			1: 'wind',
-			2: 'fire',
-			3: 'water',
-			4: 'earth',
-			5: 'dark',
-			6: 'light'
-		}
-		return slugs[element ?? 0] ?? 'null'
-	}
-
 	function selectItem(index: number) {
 		const item = items[index]
 		if (!item) return
-
-		command({
-			granblue_id: item.granblueId,
-			name: {
-				en: item.nameEn ?? m.mention_unknown(),
-				ja: item.nameJp ?? m.mention_unknown()
-			},
-			type: item.searchableType.toLowerCase(),
-			element: {
-				id: item.element ?? 0,
-				slug: getElementSlug(item.element)
-			},
-			proficiency: item.proficiency,
-			season: item.season,
-			series: item.series as
-				| number[]
-				| { id: string; slug: string; name: { en: string; ja: string } }[]
-				| undefined,
-			styleSwap: item.styleSwap
-		})
+		command(item.token)
 	}
 
 	function upHandler() {
@@ -126,22 +72,35 @@
 
 <div class="entity-mention-list" bind:this={listEl}>
 	{#if items.length > 0}
-		{#each items as item, index (item.searchableId)}
+		{#each items as item, index (item.key)}
+			{@const token = item.token}
+			{@const secondary = descriptorFor(token.type).secondary}
 			<button
 				type="button"
 				class="mention-item"
 				class:selected={index === selectedIndex}
 				onclick={() => selectItem(index)}
 			>
-				<div class="item-image {item.searchableType.toLowerCase()}">
-					<img src={getEntityImageUrl(item)} alt={item.nameEn ?? ''} loading="lazy" />
+				<div class="item-image {token.type}">
+					{#if item.imageUrl}
+						<img src={item.imageUrl} alt={item.primaryLabel} loading="lazy" />
+					{:else}
+						<span class="item-swatch" style:background={item.swatchColor ?? 'var(--border-color)'}
+						></span>
+					{/if}
 				</div>
 				<div class="item-info">
-					<span class="item-name">{item.nameEn ?? item.nameJp ?? m.mention_unknown()}</span>
-					{#if item.searchableType === 'Character'}
+					<span class="item-name">{item.primaryLabel || m.mention_unknown()}</span>
+					{#if secondary === 'character-tags'}
 						<CharacterTags
-							character={{ element: item.element, season: item.season, series: item.series }}
+							character={{
+								element: token.element?.id,
+								season: token.season,
+								series: token.series
+							}}
 						/>
+					{:else if secondary === 'skill-meta' && token.skill?.character}
+						<span class="item-meta">{skillMentionSubheader(token)}</span>
 					{/if}
 				</div>
 			</button>
@@ -209,6 +168,17 @@
 			height: 100%;
 			object-fit: cover;
 		}
+
+		// Skill icons are transparent PNGs; don't crop them.
+		&.skill img {
+			object-fit: contain;
+		}
+	}
+
+	.item-swatch {
+		display: block;
+		width: 100%;
+		height: 100%;
 	}
 
 	.item-info {
@@ -222,6 +192,14 @@
 	.item-name {
 		font-size: $font-small;
 		color: var(--text-primary);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.item-meta {
+		font-size: $font-tiny;
+		color: var(--text-secondary);
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
