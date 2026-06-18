@@ -72,6 +72,41 @@ export interface Weapon {
 	elementVariantIds?: Record<string, string> | null
 	// Bullet slots for gun-proficiency weapons (array of bullet type integers)
 	bulletSlots?: number[]
+	/** Passive weapon skills, one entry per slot, each holding its evolving version tiers. */
+	weaponSkills?: WeaponSkill[]
+}
+
+/** One uncap/transcendence tier of a weapon skill slot. */
+export interface WeaponSkillVersion {
+	name: LocalizedName
+	description: LocalizedName
+	/** Resolved CDN icon stem (internal element numbering), e.g. "skill_atk_4_4". */
+	iconStem?: string | null
+	ordinal: number
+	/** Weapon level at which this version unlocks (null for the base version). */
+	unlockLevel?: number | null
+	/** Minimum uncap stars: 3 = base/MLB, 4 = FLB, 5 = ULB. */
+	minUncap?: number | null
+	/** Transcendence stage 0–5 (0 = not transcended). */
+	transcendenceStage?: number | null
+	skillModifier?: string | null
+	skillSeries?: string | null
+	skillSize?: string | null
+	mainHandOnly?: boolean
+	mcOnly?: boolean
+	scalesWithSkillLevel?: boolean
+	skill?: {
+		id: string
+		name: LocalizedName
+		description: LocalizedName
+		skillType?: string
+	} | null
+}
+
+/** A weapon skill slot (one position) holding its evolving version tiers. */
+export interface WeaponSkill {
+	position: number
+	versions: WeaponSkillVersion[]
 }
 
 // Character entity from CharacterBlueprint

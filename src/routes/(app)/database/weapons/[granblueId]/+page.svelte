@@ -25,6 +25,7 @@
 	import WeaponGachaSection from '$lib/features/database/weapons/sections/WeaponGachaSection.svelte'
 	import WeaponAwakeningSection from '$lib/features/database/weapons/sections/WeaponAwakeningSection.svelte'
 	import WeaponForgeSection from '$lib/features/database/weapons/sections/WeaponForgeSection.svelte'
+	import WeaponSkillsTab from '$lib/features/database/weapons/tabs/WeaponSkillsTab.svelte'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
@@ -313,6 +314,7 @@
 			onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
 			onDownloadSize={canEdit ? handleDownloadSize : undefined}
 			availableSizes={weaponSizes}
+			showSkills={(weapon.weaponSkills?.length ?? 0) > 0}
 		>
 			{#if currentTab === 'info'}
 				<section class="details">
@@ -441,25 +443,9 @@
 							{/if}
 						</DetailItem>
 					</DetailsContainer>
-
-					<div class="weapon-skills">
-						<h3>Skills</h3>
-						<div class="skills-grid">
-							{#if weapon.weapon_skills && weapon.weapon_skills.length > 0}
-								{#each weapon.weapon_skills as skill, i (i)}
-									<div class="skill-item">
-										<h4 class="skill-name">{skill.name || 'Unknown Skill'}</h4>
-										<p class="skill-description">
-											{skill.description || 'No description available'}
-										</p>
-									</div>
-								{/each}
-							{:else}
-								<p class="no-skills">No skills available</p>
-							{/if}
-						</div>
-					</div>
 				</section>
+			{:else if currentTab === 'skills'}
+				<WeaponSkillsTab {weapon} />
 			{:else if currentTab === 'images'}
 				<EntityImagesTab
 					images={weaponImages}
@@ -515,61 +501,6 @@
 
 	.details {
 		@include database.details;
-	}
-
-	.weapon-skills {
-		padding: spacing.$unit-2x;
-		border-bottom: 1px solid var(--table-border);
-
-		&:last-child {
-			border-bottom: none;
-		}
-
-		h3 {
-			font-size: typography.$font-large;
-			font-weight: typography.$bold;
-			color: var(--text-primary);
-			margin: 0 0 spacing.$unit 0;
-		}
-
-		.skills-grid {
-			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-			gap: spacing.$unit;
-
-			.skill-item {
-				padding: spacing.$unit;
-				background: var(--table-header-bg);
-				border-radius: layout.$item-corner-small;
-
-				.skill-name {
-					font-size: typography.$font-medium;
-					font-weight: typography.$medium;
-					margin: 0 0 spacing.$unit * 0.5 0;
-					color: var(--text-primary);
-				}
-
-				.skill-description {
-					font-size: typography.$font-small;
-					color: var(--text-secondary);
-					margin: 0;
-					line-height: 1.4;
-				}
-			}
-
-			.no-skills {
-				grid-column: 1 / -1;
-				text-align: center;
-				color: var(--text-secondary);
-				font-style: italic;
-			}
-		}
-	}
-
-	@media (max-width: 768px) {
-		.weapon-skills .skills-grid {
-			grid-template-columns: 1fr;
-		}
 	}
 
 	.nickname-tags {

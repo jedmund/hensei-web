@@ -1,6 +1,7 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { localizedName } from '$lib/utils/locale'
+	import WeaponSkillList from '$lib/components/weapon/WeaponSkillList.svelte'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
@@ -18,19 +19,10 @@
 	}
 </script>
 
-{#if type === 'weapon' && itemData?.weaponSkills && itemData.weaponSkills.length > 0}
+{#if type === 'weapon' && itemData?.weaponSkills?.length}
 	<div class="details-section">
 		<h3>{m.details_skills()}</h3>
-		<div class="skills-list">
-			{#each itemData.weaponSkills as skill (skill.id)}
-				<div class="skill-item">
-					<h4>{displayName(skill) || m.details_unknown_skill()}</h4>
-					{#if skill.description}
-						<p>{skill.description}</p>
-					{/if}
-				</div>
-			{/each}
-		</div>
+		<WeaponSkillList skills={itemData.weaponSkills} compact />
 	</div>
 {/if}
 
@@ -105,14 +97,12 @@
 		}
 	}
 
-	.skills-list,
 	.auras-list {
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-2x;
 	}
 
-	.skill-item,
 	.aura-item {
 		padding: spacing.$unit;
 		background: var(--page-hover);

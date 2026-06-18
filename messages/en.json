@@ -1891,5 +1891,15 @@
 	"character_skills_seconds": "{n} sec",
 	"character_skills_level": "Lv {n}",
 	"character_skills_uncap_star": "★{n}",
+	"weapon_skills_title": "Skills",
+	"weapon_skills_empty": "No skills found for this weapon",
+	"weapon_skills_slot": "Skill {n}",
+	"weapon_skills_tier_base": "Base",
+	"weapon_skills_tier_flb": "FLB",
+	"weapon_skills_tier_ulb": "ULB",
+	"weapon_skills_tier_transcendence": "T{n}",
+	"weapon_skills_level": "Lv {n}",
+	"weapon_skills_main_hand": "Main hand",
+	"weapon_skills_mc_only": "MC only",
 	"details_full_auto_skills": "Full Auto Skills"
 }
