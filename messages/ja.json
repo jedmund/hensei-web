@@ -1872,5 +1872,15 @@
 	"character_skills_seconds": "{n}秒",
 	"character_skills_level": "Lv {n}",
 	"character_skills_uncap_star": "★{n}",
+	"weapon_skills_title": "スキル",
+	"weapon_skills_empty": "この武器のスキルはありません",
+	"weapon_skills_slot": "スキル{n}",
+	"weapon_skills_tier_base": "通常",
+	"weapon_skills_tier_flb": "FLB",
+	"weapon_skills_tier_ulb": "ULB",
+	"weapon_skills_tier_transcendence": "T{n}",
+	"weapon_skills_level": "Lv {n}",
+	"weapon_skills_main_hand": "メイン装備時",
+	"weapon_skills_mc_only": "主人公のみ",
 	"details_full_auto_skills": "フルオートアビリティ"
 }

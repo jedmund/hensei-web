@@ -30,6 +30,7 @@ export const BUCKET = {
 	proficiencies: 'icons/proficiencies',
 	rarity: 'icons/rarity',
 	awakening: 'icons/awakening',
+	weaponSkills: 'icons/weapon-skills',
 	mastery: 'icons/mastery',
 	axSkills: 'icons/ax-skills',
 	accessories: 'accessories',
@@ -551,6 +552,20 @@ export function getAwakeningImage(
 ): string {
 	if (!slug) return ''
 	return `${getBasePath()}/${BUCKET.awakening}/${slug}.${extension}`
+}
+
+/**
+ * Get a weapon skill icon URL for the given locale. The stem (e.g.
+ * "skill_atk_4_4") is the resolved, internal-element-numbered name the API
+ * exposes as `iconStem`; EN and JA variants live in language subdirectories.
+ */
+export function getWeaponSkillIcon(
+	stem: string | null | undefined,
+	locale: string = 'en'
+): string | null {
+	if (!stem) return null
+	const lang = locale === 'ja' ? 'ja' : 'en'
+	return `${getBasePath()}/${BUCKET.weaponSkills}/${lang}/${stem}.png`
 }
 
 /**

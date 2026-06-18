@@ -6,7 +6,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import type { Snippet } from 'svelte'
 
-	export type DetailTab = 'info' | 'images' | 'raw'
+	export type DetailTab = 'info' | 'skills' | 'images' | 'raw'
 
 	interface Props {
 		type: 'character' | 'summon' | 'weapon' | 'job' | 'raid' | 'accessory'
@@ -26,6 +26,8 @@
 		currentTab?: DetailTab
 		onTabChange?: (tab: DetailTab) => void
 		showTabs?: boolean
+		/** Show a Skills tab (between Info and Images) — currently weapons only. */
+		showSkills?: boolean
 		// Image download handlers
 		onDownloadAllImages?: (force: boolean) => Promise<void>
 		onDownloadSize?: (size: string) => Promise<void>
@@ -48,6 +50,7 @@
 		currentTab = 'info',
 		onTabChange,
 		showTabs = true,
+		showSkills = false,
 		onDownloadAllImages,
 		onDownloadSize,
 		availableSizes = [],
@@ -112,6 +115,9 @@
 				size="small"
 			>
 				<Segment value="info">Info</Segment>
+				{#if showSkills}
+					<Segment value="skills">Skills</Segment>
+				{/if}
 				<Segment value="images">Images</Segment>
 				<Segment value="raw">Raw Data</Segment>
 			</SegmentedControl>
