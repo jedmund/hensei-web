@@ -6,8 +6,9 @@
 	import { withInitialData } from '$lib/query/ssr'
 	import { GridType } from '$lib/types/enums'
 	import PageMeta from '$lib/components/PageMeta.svelte'
+	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 	import { getElementEmoji } from '$lib/utils/element'
-	import { getLocale } from '$lib/paraglide/runtime'
+	import { getLocale, localizeHref } from '$lib/paraglide/runtime'
 	import * as m from '$lib/paraglide/messages'
 
 	let { data }: { data: PageData } = $props()
@@ -75,11 +76,14 @@
 		authUserAvatar={data.currentUser
 			? { picture: data.currentUser.picture, element: data.currentUser.element }
 			: undefined}
+		isEditor={(data.account?.role ?? 0) >= 7}
 		{initialTab}
 	/>
 {:else}
-	<div>
-		<h1>{m.party_not_found()}</h1>
-		<p>{m.party_no_data()}</p>
-	</div>
+	<NotFoundPlaceholder
+		title={m.party_not_found()}
+		message={m.party_no_data()}
+		backHref={localizeHref('/teams/explore')}
+		backLabel={m.nav_back_to_site()}
+	/>
 {/if}

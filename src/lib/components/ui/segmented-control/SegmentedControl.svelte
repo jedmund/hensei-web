@@ -6,6 +6,7 @@
 	import styles from './segmented-control.module.scss'
 	import type { HTMLAttributes } from 'svelte/elements'
 	import { setSegmentedControlContext } from './context'
+	import SlidingSelection from '$lib/components/ui/SlidingSelection.svelte'
 
 	export type SegmentedControlVariant = 'default' | 'blended' | 'background'
 	export type SegmentedControlSize = 'default' | 'small' | 'xsmall'
@@ -18,6 +19,12 @@
 		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | null
 		grow?: boolean
 		gap?: boolean
+		/**
+		 * Render an animated sliding pill behind the selected segment instead of
+		 * per-segment background styling. The pill spring-animates between
+		 * segments as the value changes.
+		 */
+		slidingIndicator?: boolean
 		class?: string
 		wrapperClass?: string
 		children?: Snippet
@@ -31,12 +38,15 @@
 		element = null,
 		grow = false,
 		gap = false,
+		slidingIndicator = false,
 		class: className,
 		wrapperClass,
 		children
 	}: Props = $props()
 
-	// Provide variant, size, grow, and element to child segments via context
+	let rootEl = $state<HTMLElement>()
+
+	// Provide variant, size, grow, element, and slidingIndicator to child segments via context
 	// Use a getter for element so it stays reactive when the prop changes
 	setSegmentedControlContext({
 		get variant() {
@@ -50,6 +60,9 @@
 		},
 		get element() {
 			return element
+		},
+		get slidingIndicator() {
+			return slidingIndicator
 		}
 	})
 
@@ -72,12 +85,23 @@
 		background: styles.background
 	}
 
+	const elementClasses: Record<string, string | undefined> = {
+		wind: styles.wind,
+		fire: styles.fire,
+		water: styles.water,
+		earth: styles.earth,
+		dark: styles.dark,
+		light: styles.light
+	}
+
 	const classList = $derived(
 		[
 			styles.segmentedControl,
 			variantClasses[variant],
 			grow ? styles.grow : '',
 			gap ? styles.gap : '',
+			slidingIndicator ? styles.slidingIndicator : '',
+			slidingIndicator && element ? elementClasses[element] : '',
 			className || ''
 		]
 			.filter(Boolean)
@@ -90,7 +114,19 @@
 </script>
 
 <div class={wrapperClassList}>
-	<RadioGroupPrimitive.Root bind:value class={classList}>
-		{@render children?.()}
+	<RadioGroupPrimitive.Root bind:value>
+		{#snippet child({ props })}
+			<div {...props} bind:this={rootEl} class={classList}>
+				{#if slidingIndicator}
+					<SlidingSelection
+						host={rootEl}
+						trigger={value}
+						selector="[data-state='checked']"
+						spring={{ stiffness: 0.14, damping: 0.5 }}
+					/>
+				{/if}
+				{@render children?.()}
+			</div>
+		{/snippet}
 	</RadioGroupPrimitive.Root>
 </div>

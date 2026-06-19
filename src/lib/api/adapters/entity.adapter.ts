@@ -30,7 +30,13 @@ import type {
 	CreateSummonSeriesPayload,
 	UpdateSummonSeriesPayload
 } from '$lib/types/api/summonSeries'
-import type { Awakening, Bullet } from '$lib/types/api/entities'
+import type {
+	Awakening,
+	Bullet,
+	CharacterSkill,
+	CharacterSkillLink,
+	WeaponSkill
+} from '$lib/types/api/entities'
 import type {
 	WeaponSeriesVariant,
 	CreateWeaponSeriesVariantPayload,
@@ -95,10 +101,7 @@ export interface Weapon {
 	axType?: number
 	bulletSlots?: number[]
 	skillLevelCap?: number
-	weapon_skills?: Array<{
-		name?: string
-		description?: string
-	}>
+	weaponSkills?: WeaponSkill[]
 	awakenings?: Array<{
 		id: string
 		name: Record<string, string>
@@ -220,6 +223,9 @@ export interface Character {
 	wiki?: { en?: string; ja?: string }
 	gamewith?: string
 	kamigame?: string
+	// Parsed skill graph (from :full view)
+	skills?: CharacterSkill[]
+	skillLinks?: CharacterSkillLink[]
 }
 
 /**

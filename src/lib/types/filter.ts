@@ -18,6 +18,7 @@ export type FilterItem =
 	| { kind: 'party'; value: string; label: string; pinned?: boolean }
 	| { kind: 'boost'; value: string; label: string; pinned?: boolean }
 	| { kind: 'side'; value: string; label: string; pinned?: boolean }
+	| { kind: 'difficulty'; value: string; label: string; pinned?: boolean }
 
 export interface FilterOption {
 	kind: FilterItem['kind']

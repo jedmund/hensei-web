@@ -94,6 +94,34 @@ describe('UserAdapter', () => {
 				expect.any(Object)
 			)
 		})
+
+		it('appends check_collection=true when checkCollection is set', async () => {
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: async () => mockUserInfo
+			})
+
+			await adapter.getInfo('testuser', { checkCollection: true })
+
+			expect(mockFetch).toHaveBeenCalledWith(
+				expect.stringContaining('check_collection=true'),
+				expect.any(Object)
+			)
+		})
+
+		it('omits check_collection when not set', async () => {
+			mockFetch.mockResolvedValueOnce({
+				ok: true,
+				json: async () => mockUserInfo
+			})
+
+			await adapter.getInfo('testuser')
+
+			expect(mockFetch).toHaveBeenCalledWith(
+				expect.not.stringContaining('check_collection'),
+				expect.any(Object)
+			)
+		})
 	})
 
 	describe('getProfile', () => {

@@ -88,6 +88,8 @@ export interface ExploreFilterParams {
 	collectionFilter?: boolean
 	boostMod?: string
 	boostSide?: string
+	/** Comma-separated list of difficulty tier slugs or ids */
+	difficulty?: string
 }
 
 /**
@@ -451,40 +453,6 @@ export class PartyAdapter extends BaseAdapter {
 			headers
 		})
 		return response.party
-	}
-
-	/**
-	 * Gets party preview image
-	 */
-	async getPreview(shortcode: string): Promise<Blob> {
-		return this.request<Blob>(`/parties/${shortcode}/preview`, {
-			method: 'GET',
-			headers: {
-				Accept: 'image/png'
-			}
-		})
-	}
-
-	/**
-	 * Gets party preview status
-	 */
-	async getPreviewStatus(shortcode: string): Promise<{
-		state: string
-		generatedAt?: string
-		readyForPreview: boolean
-	}> {
-		return this.request(`/parties/${shortcode}/preview_status`, {
-			method: 'GET'
-		})
-	}
-
-	/**
-	 * Regenerates party preview
-	 */
-	async regeneratePreview(shortcode: string): Promise<{ status: string }> {
-		return this.request(`/parties/${shortcode}/regenerate_preview`, {
-			method: 'POST'
-		})
 	}
 
 	/**

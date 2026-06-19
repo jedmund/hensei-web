@@ -1,6 +1,7 @@
 import { BaseAdapter } from './base.adapter'
 import type { Party } from '$lib/types/api/party'
-import type { RequestOptions } from './types'
+import type { SupportSummon } from '$lib/types/api/supportSummon'
+import type { QueryParams, RequestOptions } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 
 /**
@@ -23,6 +24,8 @@ interface ApiUserResponse {
 	wikiProfile?: string | null // transformed from wiki_profile
 	youtube?: string | null
 	collectionPrivacy?: number // transformed from collection_privacy (0=everyone, 1=crew_only, 2=private)
+	collectionAccessible?: boolean // transformed from collection_accessible (only present when ?check_collection=true)
+	supportSummonsAccessible?: boolean // transformed from support_summons_accessible (only present when ?check_support_summons=true)
 	importWeapons?: boolean // transformed from import_weapons
 	defaultImportVisibility?: number // transformed from default_import_visibility
 	simplePortraits?: boolean // transformed from simple_portraits
@@ -57,6 +60,8 @@ export interface UserInfo {
 	wikiProfile?: string
 	youtube?: string
 	collectionPrivacy?: number
+	collectionAccessible?: boolean
+	supportSummonsAccessible?: boolean
 	importWeapons?: boolean
 	defaultImportVisibility?: number
 	simplePortraits?: boolean
@@ -114,6 +119,8 @@ function transformUserResponse(apiUser: ApiUserResponse): UserInfo {
 		wikiProfile: apiUser.wikiProfile ?? undefined,
 		youtube: apiUser.youtube ?? undefined,
 		collectionPrivacy: apiUser.collectionPrivacy,
+		collectionAccessible: apiUser.collectionAccessible,
+		supportSummonsAccessible: apiUser.supportSummonsAccessible,
 		importWeapons: apiUser.importWeapons,
 		defaultImportVisibility: apiUser.defaultImportVisibility,
 		simplePortraits: apiUser.simplePortraits,
@@ -156,14 +163,40 @@ export class UserAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Get user information
+	 * Get user information.
+	 *
+	 * Pass `checkCollection: true` to have the backend include
+	 * `collection_accessible` so the caller can decide whether to render the
+	 * private state. `checkSupportSummons: true` does the same for support
+	 * summons via the `support_summons_accessible` field.
 	 */
-	async getInfo(username: string, options?: RequestOptions): Promise<UserInfo> {
+	async getInfo(
+		username: string,
+		options?: RequestOptions & { checkCollection?: boolean; checkSupportSummons?: boolean }
+	): Promise<UserInfo> {
+		const { checkCollection, checkSupportSummons, query, ...rest } = options ?? {}
+		const mergedQuery: QueryParams = { ...(query ?? {}) }
+		if (checkCollection) mergedQuery.check_collection = true
+		if (checkSupportSummons) mergedQuery.check_support_summons = true
+		const hasQuery = Object.keys(mergedQuery).length > 0
 		const result = await this.request<ApiUserResponse>(
 			`/users/info/${encodeURIComponent(username)}`,
-			options
+			{ ...rest, ...(hasQuery ? { query: mergedQuery } : {}) }
 		)
 		return transformUserResponse(result)
+	}
+
+	/**
+	 * List a user's support summons. Returns up to 22 slots (3 per element
+	 * section + 4 misc). 403s when the user has their support summons set to
+	 * private and the viewer isn't the owner.
+	 */
+	async getSupportSummons(username: string, options?: RequestOptions): Promise<SupportSummon[]> {
+		const response = await this.request<{ supportSummons: SupportSummon[] }>(
+			`/users/${encodeURIComponent(username)}/support_summons`,
+			options
+		)
+		return response.supportSummons ?? []
 	}
 
 	/**

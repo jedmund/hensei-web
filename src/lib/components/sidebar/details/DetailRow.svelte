@@ -2,11 +2,11 @@
 	import type { Snippet } from 'svelte'
 
 	interface Props {
-		label: string
+		label?: string
 		value?: string | number | null | undefined
 		children?: Snippet
-		/** Disable hover state for editable rows */
-		noHover?: boolean
+		/** Custom label content (e.g. an icon or indicator). Takes precedence over `label`. */
+		labelSlot?: Snippet
 		/** Remove padding for inline edit contexts */
 		noPadding?: boolean
 		/** Remove min-width from value (for compact controls like switches) */
@@ -19,7 +19,7 @@
 		label,
 		value,
 		children,
-		noHover = false,
+		labelSlot,
 		noPadding = false,
 		compact = false,
 		error = undefined
@@ -27,14 +27,14 @@
 </script>
 
 <div class="detail-row-wrapper">
-	<div
-		class="detail-row"
-		class:no-hover={noHover}
-		class:no-padding={noPadding}
-		class:compact
-		class:has-control={children}
-	>
-		<span class="label">{label}</span>
+	<div class="detail-row" class:no-padding={noPadding} class:compact class:has-control={children}>
+		<span class="label">
+			{#if labelSlot}
+				{@render labelSlot()}
+			{:else}
+				{label}
+			{/if}
+		</span>
 		<span class="value">
 			{#if children}
 				{@render children()}
@@ -49,7 +49,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 
@@ -70,11 +69,6 @@
 		align-items: center;
 		gap: spacing.$unit-2x;
 		padding: calc(spacing.$unit * 1.5) spacing.$unit;
-
-		&:not(.no-hover):hover {
-			background: var(--page-hover);
-			border-radius: layout.$item-corner;
-		}
 
 		&.no-padding {
 			padding: 0;

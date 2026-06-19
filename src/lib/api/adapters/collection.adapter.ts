@@ -306,6 +306,24 @@ export class CollectionAdapter extends BaseAdapter {
 	}
 
 	/**
+	 * Gets the IDs of all weapons in a user's collection
+	 */
+	async getCollectedWeaponIds(userId: string): Promise<string[]> {
+		const allIds: string[] = []
+		let page = 1
+		let hasMore = true
+
+		while (hasMore) {
+			const response = await this.listWeapons(userId, { page, limit: 100 })
+			allIds.push(...response.results.map((w) => w.weapon.id))
+			hasMore = page < response.totalPages
+			page++
+		}
+
+		return allIds
+	}
+
+	/**
 	 * Removes multiple weapons from the collection in a single batch request
 	 */
 	async removeWeaponsBatch(ids: string[]): Promise<{ deleted: number }> {
@@ -417,6 +435,24 @@ export class CollectionAdapter extends BaseAdapter {
 		return this.request<void>(`/collection/summons/${id}`, {
 			method: 'DELETE'
 		})
+	}
+
+	/**
+	 * Gets the IDs of all summons in a user's collection
+	 */
+	async getCollectedSummonIds(userId: string): Promise<string[]> {
+		const allIds: string[] = []
+		let page = 1
+		let hasMore = true
+
+		while (hasMore) {
+			const response = await this.listSummons(userId, { page, limit: 100 })
+			allIds.push(...response.results.map((s) => s.summon.id))
+			hasMore = page < response.totalPages
+			page++
+		}
+
+		return allIds
 	}
 
 	/**

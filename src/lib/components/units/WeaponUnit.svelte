@@ -6,6 +6,9 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
+	import RemoveUnitDialog from './RemoveUnitDialog.svelte'
+	import SubstituteCountBadge from './SubstituteCountBadge.svelte'
+	import BookmarkOverlay from './BookmarkOverlay.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getWeaponImage } from '$lib/features/database/detail/image'
@@ -19,7 +22,6 @@
 		openDetailsSidebar,
 		openWeaponEditSidebar
 	} from '$lib/features/details/openDetailsSidebar.svelte'
-	import { canWeaponBeModified } from '$lib/utils/modificationDetector'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName } from '$lib/utils/element'
 	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
@@ -37,6 +39,7 @@
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 	interface Props {
 		item?: GridWeapon | undefined
 		position: number
@@ -114,19 +117,23 @@
 		)
 	)
 
-	async function remove() {
+	let removeConfirmOpen = $state(false)
+
+	function remove() {
 		if (!item?.id) return
-		try {
-			const party = ctx.getParty()
-			const editKey = ctx.getEditKey()
-			await ctx.services.gridService.removeWeapon(party.id, item.id, editKey || undefined)
-		} catch (err) {
-			console.error('Error removing weapon:', err)
-			toast.error(extractErrorMessage(err, 'Failed to remove weapon'))
-		}
+		removeConfirmOpen = true
 	}
 
-	let canEditItem = $derived(canWeaponBeModified(item))
+	const removeAction = useAsyncAction(async () => {
+		if (!item?.id) return
+		const party = ctx.getParty()
+		const editKey = ctx.getEditKey()
+		await ctx.services.gridService.removeWeapon(party.id, item.id, editKey || undefined)
+	}, 'Failed to remove weapon')
+
+	// Edit is always available for owners — non-modifiable weapons still get
+	// the notes-only pane so substitutes/description can be configured.
+	let canEditItem = $derived(!!item?.id)
 
 	function getSaveCallback() {
 		return async (id: string, updates: Partial<GridWeapon>) => {
@@ -137,18 +144,26 @@
 
 	function viewDetails() {
 		if (!item) return
+		const party = ctx.getParty()
 		openDetailsSidebar({
 			type: 'weapon',
 			item,
 			onSaveWeapon: getSaveCallback(),
 			isOwner: ctx?.canEdit() ?? false,
-			onReplace: ctx?.canEdit() ? replace : undefined
+			onReplace: ctx?.canEdit() ? replace : undefined,
+			onRemove: ctx?.canEdit() ? remove : undefined,
+			partyId: party?.id,
+			partyShortcode: party?.shortcode
 		})
 	}
 
 	function editItem() {
 		if (!item) return
-		openWeaponEditSidebar(item, getSaveCallback())
+		const party = ctx.getParty()
+		openWeaponEditSidebar(item, getSaveCallback(), {
+			partyId: party?.id,
+			partyShortcode: party?.shortcode
+		})
 	}
 
 	function replace() {
@@ -178,28 +193,27 @@
 
 	let duplicateCollectionDialogOpen = $state(false)
 
-	async function duplicate() {
+	function duplicate() {
 		if (!item?.id || firstEmptySlot === undefined) return
 		if (item.collectionWeaponId) {
 			duplicateCollectionDialogOpen = true
 			return
 		}
-		await executeDuplicate()
+		void duplicateAction.run()
 	}
 
-	async function executeDuplicate() {
+	const duplicateAction = useAsyncAction(async () => {
 		if (!item?.id || firstEmptySlot === undefined) return
-		try {
-			await ctx.services.gridService.duplicateWeapon(item.id, firstEmptySlot)
-			const nextSlot = findNextEmptySlot(ctx.getParty(), GridType.Weapon, firstEmptySlot)
-			if (nextSlot !== SLOT_NOT_FOUND) {
-				ctx.setSelectedSlot?.(nextSlot)
-			}
-		} catch (err) {
-			console.error('Error duplicating weapon:', err)
-			toast.error(extractErrorMessage(err, 'Failed to duplicate weapon'))
+		await ctx.services.gridService.duplicateWeapon(item.id, firstEmptySlot)
+		const nextSlot = findNextEmptySlot(ctx.getParty(), GridType.Weapon, firstEmptySlot)
+		if (nextSlot !== SLOT_NOT_FOUND) {
+			ctx.setSelectedSlot?.(nextSlot)
 		}
-	}
+	}, 'Failed to duplicate weapon')
+
+	// `executeDuplicate` is referenced by the DuplicateCollectionDialog's confirm
+	// callback when the user opts to keep their collection record.
+	const executeDuplicate = () => duplicateAction.run()
 
 	// Check if user can view database (role >= 7)
 	let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
@@ -226,7 +240,7 @@
 	class:orphaned={item?.orphaned}
 >
 	{#if item}
-		<UnitMenuContainer showGearButton={true}>
+		<UnitMenuContainer showGearButton={true} gearPosition="top-right">
 			{#snippet trigger()}
 				<div
 					class="focus-ring-wrapper {elementClass}"
@@ -291,6 +305,9 @@
 							/>
 						</div>
 					{/key}
+					{#if inCollection}
+						<BookmarkOverlay element={item?.element || item?.weapon?.element} />
+					{/if}
 				</div>
 			{/snippet}
 
@@ -304,7 +321,7 @@
 					onAddToTeamsView={isTeamsPaneOpen ? addWeaponToTeamsView : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onDuplicate={ctx?.canEdit() ? duplicate : undefined}
-					duplicateDisabled={!canDuplicate}
+					duplicateDisabled={!canDuplicate || duplicateAction.busy}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					editLabel={m.context_edit({ type: m.type_weapon() })}
@@ -399,8 +416,13 @@
 		/>
 	{/if}
 	<div class="name" class:not-in-collection={notInCollection}>
-		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
-		{item ? localizedName(item?.weapon?.name) : ''}
+		<span class="name-text">{item ? localizedName(item?.weapon?.name) : ''}</span>
+		{#if item}
+			<SubstituteCountBadge
+				count={item.substitutions?.length ?? 0}
+				element={item.element || item.weapon?.element}
+			/>
+		{/if}
 	</div>
 </div>
 
@@ -413,6 +435,13 @@
 	onCancel={() => {
 		duplicateCollectionDialogOpen = false
 	}}
+/>
+
+<RemoveUnitDialog
+	bind:open={removeConfirmOpen}
+	type="weapon"
+	name={item?.weapon ? localizedName(item.weapon.name) : null}
+	onConfirm={removeAction.run}
 />
 
 <style lang="scss">
@@ -565,14 +594,27 @@
 	}
 
 	.name {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: spacing.$unit-half;
 		font-size: typography.$font-small;
-		text-align: center;
 		color: var(--text-secondary);
+	}
 
-		:global(span) {
-			display: inline;
-			vertical-align: -4px;
-		}
+	// Weapons render the awakening icon at the top-left of the frame, which
+	// collides with the bookmark overlay's default top-anchored position.
+	// Pull the bookmark up and slightly out so it sits above the awakening
+	// icon. Awakening's own positioning is unchanged.
+	.focus-ring-wrapper :global(.bookmark-overlay) {
+		margin-top: -21px;
+		margin-left: -6px;
+	}
+
+	.name-text {
+		min-width: 0;
+		text-align: center;
+		overflow-wrap: anywhere;
 	}
 
 	.modifiers {

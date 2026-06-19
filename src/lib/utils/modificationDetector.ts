@@ -1,4 +1,10 @@
-import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
+import type {
+	GridCharacter,
+	GridWeapon,
+	GridSummon,
+	Description,
+	Substitution
+} from '$lib/types/api/party'
 import { seriesHasWeaponKeys } from '$lib/utils/weaponSeries'
 
 export interface ModificationStatus {
@@ -45,7 +51,8 @@ export function detectModifications(
 		const char = item as GridCharacter
 
 		status.hasAwakening = !!char.awakening
-		status.hasRings = !!(char.overMastery && char.overMastery.length > 0)
+		// overMastery is positional now — count slots with a real (non-null) ring.
+		status.hasRings = !!char.overMastery?.some((ring) => ring != null)
 		status.hasEarring = !!char.aetherialMastery
 		status.hasPerpetuity = !!char.perpetuity
 		status.hasTranscendence = !!(char.transcendenceStep && char.transcendenceStep > 0)
@@ -154,4 +161,32 @@ export function canCharacterBeModified(gridCharacter: GridCharacter | undefined)
 	const canHavePerpetuity = gridCharacter.position > 0
 
 	return hasAwakening || canHaveRings || canHaveEarring || canHavePerpetuity
+}
+
+// Mirrors the empty-description check in NotesReadOnlySection so a structurally
+// empty TipTap doc (no content, or a single empty paragraph) doesn't count.
+function descriptionHasContent(description: Description | null | undefined): boolean {
+	if (description == null) return false
+	const content = (description as { content?: unknown[] }).content
+	if (!Array.isArray(content) || content.length === 0) return false
+	if (content.length === 1) {
+		const para = content[0] as { type?: string; content?: unknown[] }
+		if (para?.type === 'paragraph' && (!para.content || para.content.length === 0)) return false
+	}
+	return true
+}
+
+/**
+ * True if the grid item has party-side notes (a non-empty description) or one
+ * or more substitutions. These are independent of whether the item itself can
+ * be modified, so they're a separate reason to surface the Team view.
+ */
+export function hasNotesOrSubstitutions(
+	item: GridCharacter | GridWeapon | GridSummon | undefined
+): boolean {
+	if (!item) return false
+	const description = (item as { description?: Description | null }).description
+	if (descriptionHasContent(description)) return true
+	const substitutions = (item as { substitutions?: Substitution[] }).substitutions
+	return Array.isArray(substitutions) && substitutions.length > 0
 }

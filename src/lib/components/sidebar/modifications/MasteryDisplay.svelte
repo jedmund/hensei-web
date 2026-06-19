@@ -4,7 +4,6 @@
 	import { getRingStat, getElementalizedEarringStat } from '$lib/utils/masteryUtils'
 	import { getMasteryImage } from '$lib/utils/images'
 	import { getLocale } from '$lib/paraglide/runtime.js'
-	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		rings?: GridCharacter['overMastery']
@@ -15,6 +14,14 @@
 	}
 
 	let { rings, earring, characterElement, variant = 'compact', showIcons = true }: Props = $props()
+
+	// rings is positional (length 4 with nulls). Drop empty slots before
+	// rendering the list — we don't show placeholder rows.
+	const filledRings = $derived(
+		(rings ?? []).filter(
+			(ring): ring is { modifier: number; strength: number } => ring != null && ring.modifier > 0
+		)
+	)
 
 	// Get current locale
 	const locale = $derived(getLocale() as 'en' | 'ja')
@@ -36,13 +43,10 @@
 	}
 </script>
 
-{#if rings && rings.length > 0}
+{#if filledRings.length > 0}
 	<div class="mastery-display rings {variant}">
-		{#if variant === 'detailed'}
-			<h4 class="mastery-title">{m.details_over_mastery()}</h4>
-		{/if}
 		<ul class="mastery-list">
-			{#each rings as ring, i (i)}
+			{#each filledRings as ring, i (i)}
 				<li class="mastery-item">
 					{#if showIcons}
 						{@const iconUrl = getMasteryIcon('ring', ring.modifier)}
@@ -75,9 +79,6 @@
 
 {#if earring}
 	<div class="mastery-display earring {variant}">
-		{#if variant === 'detailed'}
-			<h4 class="mastery-title">{m.details_aetherial_mastery()}</h4>
-		{/if}
 		<ul class="mastery-list">
 			<li class="mastery-item enhanced">
 				{#if showIcons}
@@ -130,15 +131,6 @@
 		&.compact {
 			margin-bottom: spacing.$unit;
 		}
-	}
-
-	.mastery-title {
-		margin: 0 0 spacing.$unit 0;
-		font-size: typography.$font-regular;
-		font-weight: typography.$medium;
-		color: var(--text-secondary);
-		text-transform: uppercase;
-		letter-spacing: 0.5px;
 	}
 
 	.mastery-list {

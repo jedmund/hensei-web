@@ -60,15 +60,15 @@
 	<p>{m.about_data_explanation()}</p>
 	<ul class="data-sources">
 		<li>
-			<img src="{getBasePath()}/external/gbf-wiki-en.png" alt="" width="16" height="16" />
+			<img src="{getBasePath()}/app/external/gbf-wiki-en.png" alt="" width="16" height="16" />
 			<a href="https://gbf.wiki" target="_blank" rel="noreferrer">gbf.wiki</a>
 		</li>
 		<li>
-			<img src="{getBasePath()}/external/gbf-wiki-jp.png" alt="" width="16" height="16" />
+			<img src="{getBasePath()}/app/external/gbf-wiki-jp.png" alt="" width="16" height="16" />
 			<a href="https://gbf-wiki.com/" target="_blank" rel="noreferrer">gbf-wiki</a>
 		</li>
 		<li>
-			<img src="{getBasePath()}/external/kamigame.png" alt="" width="16" height="16" />
+			<img src="{getBasePath()}/app/external/kamigame.png" alt="" width="16" height="16" />
 			<a
 				href="https://kamigame.jp/%E3%82%B0%E3%83%A9%E3%83%96%E3%83%AB/index.html"
 				target="_blank"
@@ -76,7 +76,7 @@
 			>
 		</li>
 		<li>
-			<img src="{getBasePath()}/external/gamewith.png" alt="" width="16" height="16" />
+			<img src="{getBasePath()}/app/external/gamewith.png" alt="" width="16" height="16" />
 			<a href="https://xn--bck3aza1a2if6kra4ee0hf.gamewith.jp/" target="_blank" rel="noreferrer"
 				>Gamewith</a
 			>

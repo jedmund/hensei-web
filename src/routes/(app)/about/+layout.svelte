@@ -28,7 +28,10 @@
 	{#if activeTab === 'about'}
 		<div class="about-card">
 			<div class="about-hero">
-				<img src="https://siero-img.s3-us-west-2.amazonaws.com/about-hero.jpg" alt="" />
+				<img
+					src="https://siero-img.s3-us-west-2.amazonaws.com/app/marketing/about-hero.jpg"
+					alt=""
+				/>
 			</div>
 			<nav class="about-nav">
 				<SegmentedControl
@@ -59,7 +62,10 @@
 	{:else}
 		<div class="about-card">
 			<div class="about-hero">
-				<img src="https://siero-img.s3-us-west-2.amazonaws.com/about-hero.jpg" alt="" />
+				<img
+					src="https://siero-img.s3-us-west-2.amazonaws.com/app/marketing/about-hero.jpg"
+					alt=""
+				/>
 			</div>
 			<nav class="about-nav">
 				<SegmentedControl

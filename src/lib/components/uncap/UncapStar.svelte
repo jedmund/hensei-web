@@ -7,7 +7,7 @@
 		index: number
 		editable?: boolean
 		tabindex?: number
-		size?: 'regular' | 'small'
+		size?: 'regular' | 'medium' | 'small'
 		onStarClick: (index: number, empty: boolean) => void
 	}
 
@@ -37,6 +37,7 @@
 	class:flb
 	class:ulb
 	class:small={size === 'small'}
+	class:medium={size === 'medium'}
 	class:readonly={!editable}
 >
 	<button type="button" class="star-button" {tabindex} onclick={handleClick} aria-label="Uncap star"
@@ -67,6 +68,10 @@
 
 		&.small {
 			--size: 12px;
+		}
+
+		&.medium {
+			--size: 15px;
 		}
 
 		&:not(.readonly):hover {

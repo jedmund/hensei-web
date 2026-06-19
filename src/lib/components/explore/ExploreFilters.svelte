@@ -3,6 +3,8 @@
 	import type { UnifiedSearchResult } from '$lib/api/adapters/search.adapter'
 	import type { RaidFull } from '$lib/types/api/raid'
 	import type { FilterItem, FilterOption, PlaceholderSuggestion } from '$lib/types/filter'
+	import { createQuery } from '@tanstack/svelte-query'
+	import { difficultyQueries } from '$lib/api/queries/difficulty.queries'
 	import { matchLocal, rankResults } from '$lib/utils/filterMatching'
 	import ExploreFilterPill from './ExploreFilterPill.svelte'
 	import FilterDropdown from './FilterDropdown.svelte'
@@ -75,13 +77,43 @@
 	const boostOptions = $derived(getBoostOptions())
 	const sideOptions = $derived(getSideOptions())
 
+	// Difficulty tiers fetched from API; refreshed on staleness
+	const difficultyTiersQuery = createQuery(() => difficultyQueries.tiers())
+	const difficultyOptions = $derived(
+		(difficultyTiersQuery.data ?? []).map((tier) => ({
+			value: tier.slug,
+			label: tier.name
+		}))
+	)
+
+	// When filters are restored from a URL (?difficulty=casual,mid), pills land
+	// with label === value because the tier list hasn't loaded yet. Once it
+	// settles, replace those placeholder labels with the resolved tier name.
+	$effect(() => {
+		const tiers = difficultyTiersQuery.data
+		if (!tiers || tiers.length === 0) return
+		let changed = false
+		const next = filters.map((f) => {
+			if (f.kind !== 'difficulty' || f.label !== f.value) return f
+			const tier = tiers.find((t) => t.slug === f.value)
+			if (!tier) return f
+			changed = true
+			return { ...f, label: tier.name }
+		})
+		if (changed) {
+			filters = next
+			onFiltersChange(filters)
+		}
+	})
+
 	const categoryLabels = $derived({
 		element: m.filter_cat_element(),
 		recency: m.filter_cat_recency(),
 		party: m.filter_cat_party(),
 		raid: m.filter_cat_raid(),
 		boost: m.filter_cat_boost(),
-		side: m.filter_cat_side()
+		side: m.filter_cat_side(),
+		difficulty: m.filter_cat_difficulty()
 	})
 
 	// Suggestion pools per category
@@ -247,6 +279,7 @@
 			partyOptions,
 			boostOptions,
 			sideOptions,
+			difficultyOptions,
 			allRaids,
 			categoryLabels
 		})
@@ -340,6 +373,12 @@
 			newFilter = { kind: 'raid', value: option.value as string, label: option.label }
 		} else if (option.kind === 'class') {
 			newFilter = { kind: 'class', value: option.value as string, label: option.label }
+		} else if (option.kind === 'difficulty') {
+			newFilter = {
+				kind: 'difficulty',
+				value: option.value as string,
+				label: option.label
+			}
 		} else {
 			newFilter = { kind: 'party', value: option.value as string, label: option.label }
 		}

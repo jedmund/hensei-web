@@ -31,7 +31,8 @@ src/lib/paraglide
 storybook-static
 
 # Assets
-static/
+static/*
+!static/share-bg/
 
 # Inlang cache
 project.inlang/cache/
@@ -39,3 +40,5 @@ project.inlang/cache/
 # Documentation
 docs/
 .eslintcache
+
+.playwright-mcp/

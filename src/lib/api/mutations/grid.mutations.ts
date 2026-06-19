@@ -125,9 +125,32 @@ export function updateGridWeaponOptions(queryClient: QueryClient) {
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
 
 			if (previousParty?.weapons) {
-				const updatedWeapons = previousParty.weapons.map((w) =>
-					w.id === id ? { ...w, ...updates } : w
-				)
+				// Optimistic notes-sync fan-out: when the edit touches a synced
+				// weapon's description or flips the flag, mirror those keys onto
+				// every sibling (same canonical weapon in the party) so the UI
+				// matches what the backend will produce.
+				const target = previousParty.weapons.find((w) => w.id === id)
+				const targetGranblueId = target?.weapon?.granblueId
+				const groupKeysSet = new Set(['description', 'notesSynced', 'substitutions'])
+				const groupPayload = Object.fromEntries(
+					Object.entries(updates).filter(([k]) => groupKeysSet.has(k))
+				) as Partial<GridWeapon>
+				const flagInPayload = 'notesSynced' in updates
+				const willBeSynced = flagInPayload
+					? (updates as { notesSynced?: boolean }).notesSynced === true
+					: !!target?.notesSynced
+				const shouldFanOut =
+					!!targetGranblueId &&
+					willBeSynced &&
+					(flagInPayload || Object.keys(groupPayload).length > 0)
+
+				const updatedWeapons = previousParty.weapons.map((w) => {
+					if (w.id === id) return { ...w, ...updates }
+					if (shouldFanOut && String(w.weapon?.granblueId) === String(targetGranblueId)) {
+						return { ...w, ...groupPayload }
+					}
+					return w
+				})
 				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
 					...previousParty,
 					weapons: updatedWeapons
@@ -562,9 +585,31 @@ export function updateGridSummonOptions(queryClient: QueryClient) {
 			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
 
 			if (previousParty?.summons) {
-				const updatedSummons = previousParty.summons.map((s) =>
-					s.id === id ? { ...s, ...updates } : s
-				)
+				// Optimistic notes-sync fan-out — see updateGridWeaponOptions for
+				// the rationale. Mirrors description/notesSynced/substitutions
+				// onto every sibling sharing this summon's granblue_id.
+				const target = previousParty.summons.find((s) => s.id === id)
+				const targetGranblueId = target?.summon?.granblueId
+				const groupKeysSet = new Set(['description', 'notesSynced', 'substitutions'])
+				const groupPayload = Object.fromEntries(
+					Object.entries(updates).filter(([k]) => groupKeysSet.has(k))
+				) as Partial<GridSummon>
+				const flagInPayload = 'notesSynced' in updates
+				const willBeSynced = flagInPayload
+					? (updates as { notesSynced?: boolean }).notesSynced === true
+					: !!target?.notesSynced
+				const shouldFanOut =
+					!!targetGranblueId &&
+					willBeSynced &&
+					(flagInPayload || Object.keys(groupPayload).length > 0)
+
+				const updatedSummons = previousParty.summons.map((s) => {
+					if (s.id === id) return { ...s, ...updates }
+					if (shouldFanOut && String(s.summon?.granblueId) === String(targetGranblueId)) {
+						return { ...s, ...groupPayload }
+					}
+					return s
+				})
 				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
 					...previousParty,
 					summons: updatedSummons
@@ -778,11 +823,13 @@ export function switchCharacterStyleOptions(queryClient: QueryClient) {
 // Sync Mutation Options
 // ============================================================================
 
+type SyncParams = { id: string; partyShortcode: string; fields?: string[] }
+
 export function syncGridCharacterOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.syncCharacter(params.id, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
+		mutationFn: (params: SyncParams) =>
+			gridAdapter.syncCharacter(params.id, editKeyHeaders(params.partyShortcode), params.fields),
+		onSuccess: (_data: unknown, { partyShortcode }: SyncParams) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
 	}
@@ -790,9 +837,9 @@ export function syncGridCharacterOptions(queryClient: QueryClient) {
 
 export function syncGridWeaponOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.syncWeapon(params.id, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
+		mutationFn: (params: SyncParams) =>
+			gridAdapter.syncWeapon(params.id, editKeyHeaders(params.partyShortcode), params.fields),
+		onSuccess: (_data: unknown, { partyShortcode }: SyncParams) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
 	}
@@ -800,9 +847,9 @@ export function syncGridWeaponOptions(queryClient: QueryClient) {
 
 export function syncGridSummonOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.syncSummon(params.id, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
+		mutationFn: (params: SyncParams) =>
+			gridAdapter.syncSummon(params.id, editKeyHeaders(params.partyShortcode), params.fields),
+		onSuccess: (_data: unknown, { partyShortcode }: SyncParams) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 		}
 	}
@@ -814,9 +861,13 @@ export function syncGridSummonOptions(queryClient: QueryClient) {
 
 export function syncGridCharacterToCollectionOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.syncCharacterToCollection(params.id, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
+		mutationFn: (params: SyncParams) =>
+			gridAdapter.syncCharacterToCollection(
+				params.id,
+				editKeyHeaders(params.partyShortcode),
+				params.fields
+			),
+		onSuccess: (_data: unknown, { partyShortcode }: SyncParams) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 			queryClient.invalidateQueries({ queryKey: collectionKeys.characters() })
 		}
@@ -825,9 +876,13 @@ export function syncGridCharacterToCollectionOptions(queryClient: QueryClient) {
 
 export function syncGridWeaponToCollectionOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.syncWeaponToCollection(params.id, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
+		mutationFn: (params: SyncParams) =>
+			gridAdapter.syncWeaponToCollection(
+				params.id,
+				editKeyHeaders(params.partyShortcode),
+				params.fields
+			),
+		onSuccess: (_data: unknown, { partyShortcode }: SyncParams) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 			queryClient.invalidateQueries({ queryKey: collectionKeys.weapons() })
 		}
@@ -836,9 +891,13 @@ export function syncGridWeaponToCollectionOptions(queryClient: QueryClient) {
 
 export function syncGridSummonToCollectionOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.syncSummonToCollection(params.id, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
+		mutationFn: (params: SyncParams) =>
+			gridAdapter.syncSummonToCollection(
+				params.id,
+				editKeyHeaders(params.partyShortcode),
+				params.fields
+			),
+		onSuccess: (_data: unknown, { partyShortcode }: SyncParams) => {
 			invalidateOnSettled(queryClient, partyShortcode)
 			queryClient.invalidateQueries({ queryKey: collectionKeys.summons() })
 		}

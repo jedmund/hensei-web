@@ -70,20 +70,20 @@ describe('getBasePath', () => {
 describe('getPlaceholderImage', () => {
 	it('returns placeholder path for each type/variant combo', () => {
 		expect(getPlaceholderImage('character', 'grid')).toBe(
-			'/images/placeholders/placeholder-character-grid.png'
+			'/images/app/placeholders/placeholder-character-grid.png'
 		)
 		expect(getPlaceholderImage('weapon', 'main')).toBe(
-			'/images/placeholders/placeholder-weapon-main.png'
+			'/images/app/placeholders/placeholder-weapon-main.png'
 		)
 		expect(getPlaceholderImage('summon', 'square')).toBe(
-			'/images/placeholders/placeholder-summon-square.png'
+			'/images/app/placeholders/placeholder-summon-square.png'
 		)
 	})
 })
 
 describe('getGenericPlaceholder', () => {
 	it('returns weapon-grid placeholder', () => {
-		expect(getGenericPlaceholder()).toBe('/images/placeholders/placeholder-weapon-grid.png')
+		expect(getGenericPlaceholder()).toBe('/images/app/placeholders/placeholder-weapon-grid.png')
 	})
 })
 
@@ -210,43 +210,43 @@ describe('getWeaponTransformation', () => {
 describe('getImageUrl', () => {
 	it('returns placeholder when id is null/undefined', () => {
 		expect(getImageUrl('character', null, 'grid')).toBe(
-			'/images/placeholders/placeholder-character-grid.png'
+			'/images/app/placeholders/placeholder-character-grid.png'
 		)
 		expect(getImageUrl('weapon', undefined, 'main')).toBe(
-			'/images/placeholders/placeholder-weapon-main.png'
+			'/images/app/placeholders/placeholder-weapon-main.png'
 		)
 	})
 
 	it('returns character URL with pose', () => {
 		expect(getImageUrl('character', '3040001', 'main', { pose: '02' })).toBe(
-			'/images/character-main/3040001_02.jpg'
+			'/images/characters/main/3040001_02.jpg'
 		)
 	})
 
 	it('defaults character pose to 01', () => {
 		expect(getImageUrl('character', '3040001', 'grid')).toBe(
-			'/images/character-grid/3040001_01.jpg'
+			'/images/characters/grid/3040001_01.jpg'
 		)
 	})
 
 	it('returns weapon URL without element', () => {
-		expect(getImageUrl('weapon', '1040001', 'main')).toBe('/images/weapon-main/1040001.jpg')
+		expect(getImageUrl('weapon', '1040001', 'main')).toBe('/images/weapons/main/1040001.jpg')
 	})
 
 	it('returns weapon grid URL with element suffix', () => {
 		expect(getImageUrl('weapon', '1040001', 'grid', { element: 3 })).toBe(
-			'/images/weapon-grid/1040001_3.jpg'
+			'/images/weapons/grid/1040001_3.jpg'
 		)
 	})
 
 	it('weapon grid element 0 is valid', () => {
 		expect(getImageUrl('weapon', '1040001', 'grid', { element: 0 })).toBe(
-			'/images/weapon-grid/1040001_0.jpg'
+			'/images/weapons/grid/1040001_0.jpg'
 		)
 	})
 
 	it('returns summon URL', () => {
-		expect(getImageUrl('summon', '2040001', 'main')).toBe('/images/summon-main/2040001.jpg')
+		expect(getImageUrl('summon', '2040001', 'main')).toBe('/images/summons/main/2040001.jpg')
 	})
 
 	describe('file extensions', () => {
@@ -276,11 +276,13 @@ describe('getImageUrl', () => {
 
 describe('getCharacterImage', () => {
 	it('defaults to main variant', () => {
-		expect(getCharacterImage('3040001')).toBe('/images/character-main/3040001_01.jpg')
+		expect(getCharacterImage('3040001')).toBe('/images/characters/main/3040001_01.jpg')
 	})
 
 	it('accepts pose override', () => {
-		expect(getCharacterImage('3040001', 'grid', '03')).toBe('/images/character-grid/3040001_03.jpg')
+		expect(getCharacterImage('3040001', 'grid', '03')).toBe(
+			'/images/characters/grid/3040001_03.jpg'
+		)
 	})
 
 	it('returns placeholder for null', () => {
@@ -290,13 +292,15 @@ describe('getCharacterImage', () => {
 
 describe('getCharacterDetailImage', () => {
 	it('returns detail PNG', () => {
-		expect(getCharacterDetailImage('3040001', '02')).toBe('/images/character-detail/3040001_02.png')
+		expect(getCharacterDetailImage('3040001', '02')).toBe(
+			'/images/characters/detail/3040001_02.png'
+		)
 	})
 })
 
 describe('getWeaponImage', () => {
 	it('defaults to main variant', () => {
-		expect(getWeaponImage('1040001')).toBe('/images/weapon-main/1040001.jpg')
+		expect(getWeaponImage('1040001')).toBe('/images/weapons/main/1040001.jpg')
 	})
 
 	it('returns placeholder for null', () => {
@@ -304,33 +308,33 @@ describe('getWeaponImage', () => {
 	})
 
 	it('adds element suffix for grid variant', () => {
-		expect(getWeaponImage('1040001', 'grid', 2)).toBe('/images/weapon-grid/1040001_2.jpg')
+		expect(getWeaponImage('1040001', 'grid', 2)).toBe('/images/weapons/grid/1040001_2.jpg')
 	})
 
 	it('element 0 produces _0 suffix', () => {
-		expect(getWeaponImage('1040001', 'grid', 0)).toBe('/images/weapon-grid/1040001_0.jpg')
+		expect(getWeaponImage('1040001', 'grid', 0)).toBe('/images/weapons/grid/1040001_0.jpg')
 	})
 
 	it('adds transformation suffix', () => {
 		expect(getWeaponImage('1040001', 'main', undefined, '02')).toBe(
-			'/images/weapon-main/1040001_02.jpg'
+			'/images/weapons/main/1040001_02.jpg'
 		)
 	})
 })
 
 describe('getWeaponBaseImage', () => {
 	it('returns base PNG', () => {
-		expect(getWeaponBaseImage('1040001')).toBe('/images/weapon-base/1040001.png')
+		expect(getWeaponBaseImage('1040001')).toBe('/images/weapons/base/1040001.png')
 	})
 })
 
 describe('getSummonImage', () => {
 	it('defaults to main', () => {
-		expect(getSummonImage('2040001')).toBe('/images/summon-main/2040001.jpg')
+		expect(getSummonImage('2040001')).toBe('/images/summons/main/2040001.jpg')
 	})
 
 	it('adds transformation suffix', () => {
-		expect(getSummonImage('2040001', 'main', '02')).toBe('/images/summon-main/2040001_02.jpg')
+		expect(getSummonImage('2040001', 'main', '02')).toBe('/images/summons/main/2040001_02.jpg')
 	})
 
 	it('returns placeholder for null', () => {
@@ -340,13 +344,13 @@ describe('getSummonImage', () => {
 
 describe('getSummonDetailImage', () => {
 	it('returns detail PNG', () => {
-		expect(getSummonDetailImage('2040001')).toBe('/images/summon-detail/2040001.png')
+		expect(getSummonDetailImage('2040001')).toBe('/images/summons/detail/2040001.png')
 	})
 })
 
 describe('getSummonWideImage', () => {
 	it('returns wide JPG', () => {
-		expect(getSummonWideImage('2040001')).toBe('/images/summon-wide/2040001.jpg')
+		expect(getSummonWideImage('2040001')).toBe('/images/summons/wide/2040001.jpg')
 	})
 })
 
@@ -361,27 +365,27 @@ describe('getCharacterImageWithPose', () => {
 
 	it('calculates pose from uncap/transcendence', () => {
 		expect(getCharacterImageWithPose('3040001', 'main', 3)).toBe(
-			'/images/character-main/3040001_02.jpg'
+			'/images/characters/main/3040001_02.jpg'
 		)
 		expect(getCharacterImageWithPose('3040001', 'main', 5)).toBe(
-			'/images/character-main/3040001_03.jpg'
+			'/images/characters/main/3040001_03.jpg'
 		)
 		expect(getCharacterImageWithPose('3040001', 'main', 5, 1)).toBe(
-			'/images/character-main/3040001_04.jpg'
+			'/images/characters/main/3040001_04.jpg'
 		)
 	})
 
 	it('null-element characters get element-suffixed images without gender by default', () => {
 		const url = getCharacterImageWithPose('3030182000', 'main', 3, 0, 2, null, false, false, 0)
-		expect(url).toBe('/images/character-main/3030182000_02_02.jpg')
+		expect(url).toBe('/images/characters/main/3030182000_02_02.jpg')
 
 		const lyria = getCharacterImageWithPose('3040643000', 'main', 3, 0, 3, null, false, false, 0)
-		expect(lyria).toBe('/images/character-main/3040643000_02_03.jpg')
+		expect(lyria).toBe('/images/characters/main/3040643000_02_03.jpg')
 	})
 
 	it('null-element characters get element + gender suffix when gender is provided', () => {
 		const gran = getCharacterImageWithPose('3040643000', 'main', 3, 0, 3, null, false, false, 0, 0)
-		expect(gran).toBe('/images/character-main/3040643000_02_03_0.jpg')
+		expect(gran).toBe('/images/characters/main/3040643000_02_03_0.jpg')
 
 		const djeeta = getCharacterImageWithPose(
 			'3040643000',
@@ -395,7 +399,7 @@ describe('getCharacterImageWithPose', () => {
 			0,
 			1
 		)
-		expect(djeeta).toBe('/images/character-main/3040643000_02_03_1.jpg')
+		expect(djeeta).toBe('/images/characters/main/3040643000_02_03_1.jpg')
 	})
 
 	it('gender suffix works for non-null-element characters too', () => {
@@ -411,7 +415,7 @@ describe('getCharacterImageWithPose', () => {
 			2,
 			0
 		)
-		expect(gran).toBe('/images/character-main/3040001000_02_0.jpg')
+		expect(gran).toBe('/images/characters/main/3040001000_02_0.jpg')
 
 		const djeeta = getCharacterImageWithPose(
 			'3040001000',
@@ -425,7 +429,7 @@ describe('getCharacterImageWithPose', () => {
 			2,
 			1
 		)
-		expect(djeeta).toBe('/images/character-main/3040001000_02_1.jpg')
+		expect(djeeta).toBe('/images/characters/main/3040001000_02_1.jpg')
 	})
 
 	it('null-element characters fall back to partyElement when no mainWeaponElement', () => {
@@ -455,26 +459,26 @@ describe('getCharacterImageWithPose', () => {
 			false,
 			0
 		)
-		expect(noContext).toBe('/images/character-main/3040643000_01.jpg')
+		expect(noContext).toBe('/images/characters/main/3040643000_01.jpg')
 	})
 
 	it('non-null-element characters without gender are not affected by element params', () => {
 		const normal = getCharacterImageWithPose('3040001000', 'main', 3, 0, 2, null, false, false, 2)
-		expect(normal).toBe('/images/character-main/3040001000_02.jpg')
+		expect(normal).toBe('/images/characters/main/3040001000_02.jpg')
 	})
 })
 
 describe('getWeaponGridImage', () => {
 	it('returns grid URL without element for normal weapons', () => {
-		expect(getWeaponGridImage('1040001')).toBe('/images/weapon-grid/1040001.jpg')
+		expect(getWeaponGridImage('1040001')).toBe('/images/weapons/grid/1040001.jpg')
 	})
 
 	it('handles element-changeable weapons (element === 0) with instance element', () => {
-		expect(getWeaponGridImage('1040001', 0, 3)).toBe('/images/weapon-grid/1040001_3.jpg')
+		expect(getWeaponGridImage('1040001', 0, 3)).toBe('/images/weapons/grid/1040001_3.jpg')
 	})
 
 	it('element-changeable without instanceElement defaults to 0', () => {
-		expect(getWeaponGridImage('1040001', 0)).toBe('/images/weapon-grid/1040001_0.jpg')
+		expect(getWeaponGridImage('1040001', 0)).toBe('/images/weapons/grid/1040001_0.jpg')
 	})
 
 	it('returns placeholder for null id', () => {
@@ -488,27 +492,27 @@ describe('getWeaponGridImage', () => {
 
 describe('getJobSkillIcon', () => {
 	it('returns default for undefined', () => {
-		expect(getJobSkillIcon(undefined)).toBe('/images/job-skills/default.png')
+		expect(getJobSkillIcon(undefined)).toBe('/images/icons/job-skills/default.png')
 	})
 
 	it('handles string input', () => {
-		expect(getJobSkillIcon('rage-iv')).toBe('/images/job-skills/rage-iv.png')
+		expect(getJobSkillIcon('rage-iv')).toBe('/images/icons/job-skills/rage-iv.png')
 	})
 
 	it('uses slug from object', () => {
 		expect(getJobSkillIcon({ slug: 'miserable-mist' })).toBe(
-			'/images/job-skills/miserable-mist.png'
+			'/images/icons/job-skills/miserable-mist.png'
 		)
 	})
 
 	it('returns default when object has no slug', () => {
-		expect(getJobSkillIcon({})).toBe('/images/job-skills/default.png')
+		expect(getJobSkillIcon({})).toBe('/images/icons/job-skills/default.png')
 	})
 })
 
 describe('getAccessoryImage', () => {
 	it('returns accessory URL', () => {
-		expect(getAccessoryImage('399001')).toBe('/images/accessory-square/399001.jpg')
+		expect(getAccessoryImage('399001')).toBe('/images/accessories/square/399001.jpg')
 	})
 
 	it('returns generic placeholder for undefined', () => {
@@ -522,11 +526,11 @@ describe('getAccessoryImage', () => {
 
 describe('getAwakeningImage', () => {
 	it('returns awakening URL with default jpg', () => {
-		expect(getAwakeningImage('attack')).toBe('/images/awakening/attack.jpg')
+		expect(getAwakeningImage('attack')).toBe('/images/icons/awakening/attack.jpg')
 	})
 
 	it('supports png extension', () => {
-		expect(getAwakeningImage('attack', 'png')).toBe('/images/awakening/attack.png')
+		expect(getAwakeningImage('attack', 'png')).toBe('/images/icons/awakening/attack.png')
 	})
 
 	it('returns empty string for undefined', () => {
@@ -544,7 +548,7 @@ describe('getWeaponKeyImage', () => {
 
 describe('getAxSkillImage', () => {
 	it('returns ax URL', () => {
-		expect(getAxSkillImage('might')).toBe('/images/ax/might.png')
+		expect(getAxSkillImage('might')).toBe('/images/icons/ax-skills/might.png')
 	})
 
 	it('returns empty string for undefined', () => {
@@ -554,7 +558,7 @@ describe('getAxSkillImage', () => {
 
 describe('getMasteryImage', () => {
 	it('returns mastery URL', () => {
-		expect(getMasteryImage('atk')).toBe('/images/mastery/atk.png')
+		expect(getMasteryImage('atk')).toBe('/images/icons/mastery/atk.png')
 	})
 
 	it('returns empty string for undefined', () => {
@@ -605,16 +609,16 @@ describe('getGenderLabelImage', () => {
 
 describe('getElementIcon', () => {
 	it('maps element IDs to names', () => {
-		expect(getElementIcon(1)).toBe('/images/elements/element-wind.png')
-		expect(getElementIcon(2)).toBe('/images/elements/element-fire.png')
-		expect(getElementIcon(3)).toBe('/images/elements/element-water.png')
-		expect(getElementIcon(4)).toBe('/images/elements/element-earth.png')
-		expect(getElementIcon(5)).toBe('/images/elements/element-dark.png')
-		expect(getElementIcon(6)).toBe('/images/elements/element-light.png')
+		expect(getElementIcon(1)).toBe('/images/icons/elements/element-wind.png')
+		expect(getElementIcon(2)).toBe('/images/icons/elements/element-fire.png')
+		expect(getElementIcon(3)).toBe('/images/icons/elements/element-water.png')
+		expect(getElementIcon(4)).toBe('/images/icons/elements/element-earth.png')
+		expect(getElementIcon(5)).toBe('/images/icons/elements/element-dark.png')
+		expect(getElementIcon(6)).toBe('/images/icons/elements/element-light.png')
 	})
 
 	it('returns null element for unknown element', () => {
-		expect(getElementIcon(99)).toBe('/images/elements/element-null.png')
+		expect(getElementIcon(99)).toBe('/images/icons/elements/element-null.png')
 	})
 })
 
@@ -624,11 +628,11 @@ describe('getElementIcon', () => {
 
 describe('getArtifactImage', () => {
 	it('returns square by default', () => {
-		expect(getArtifactImage('500001')).toBe('/images/artifact-square/500001.jpg')
+		expect(getArtifactImage('500001')).toBe('/images/artifacts/square/500001.jpg')
 	})
 
 	it('returns wide variant', () => {
-		expect(getArtifactImage('500001', 'wide')).toBe('/images/artifact-wide/500001.jpg')
+		expect(getArtifactImage('500001', 'wide')).toBe('/images/artifacts/wide/500001.jpg')
 	})
 
 	it('returns generic placeholder for null', () => {
@@ -694,14 +698,14 @@ describe('getGuidebookImage', () => {
 
 describe('getRaidImage', () => {
 	it('returns stored raid image by variant', () => {
-		expect(getRaidImage('proto-bahamut', 'icon')).toContain('/images/raid-icon/proto-bahamut.png')
+		expect(getRaidImage('proto-bahamut', 'icon')).toContain('/images/raids/icon/proto-bahamut.png')
 		expect(getRaidImage('proto-bahamut', 'thumbnail')).toContain(
-			'/images/raid-thumbnail/proto-bahamut.png'
+			'/images/raids/thumbnail/proto-bahamut.png'
 		)
 	})
 
 	it('defaults to thumbnail', () => {
-		expect(getRaidImage('proto-bahamut')).toContain('/images/raid-thumbnail/proto-bahamut.png')
+		expect(getRaidImage('proto-bahamut')).toContain('/images/raids/thumbnail/proto-bahamut.png')
 	})
 
 	it('includes cache-busting query parameter', () => {
@@ -758,12 +762,12 @@ describe('with remote base URL', () => {
 
 describe('getWeaponFallbackImage', () => {
 	it('returns URL without element suffix', () => {
-		expect(getWeaponFallbackImage('1040001', 'grid')).toBe('/images/weapon-grid/1040001.jpg')
+		expect(getWeaponFallbackImage('1040001', 'grid')).toBe('/images/weapons/grid/1040001.jpg')
 	})
 
 	it('returns URL with transformation suffix', () => {
 		expect(getWeaponFallbackImage('1040001', 'main', '02')).toBe(
-			'/images/weapon-main/1040001_02.jpg'
+			'/images/weapons/main/1040001_02.jpg'
 		)
 	})
 
@@ -776,29 +780,29 @@ describe('getWeaponFallbackImage', () => {
 	})
 
 	it('uses correct extension for base variant', () => {
-		expect(getWeaponFallbackImage('1040001', 'base')).toBe('/images/weapon-base/1040001.png')
+		expect(getWeaponFallbackImage('1040001', 'base')).toBe('/images/weapons/base/1040001.png')
 	})
 })
 
 describe('handleImageFallback', () => {
 	it('swaps src to fallback URL', () => {
-		const img = { src: 'https://cdn.example.com/weapon-grid/1040001_0.jpg' } as HTMLImageElement
+		const img = { src: 'https://cdn.example.com/weapons/grid/1040001_0.jpg' } as HTMLImageElement
 		const event = { currentTarget: img } as unknown as Event
-		handleImageFallback(event, 'https://cdn.example.com/weapon-grid/1040001.jpg')
-		expect(img.src).toBe('https://cdn.example.com/weapon-grid/1040001.jpg')
+		handleImageFallback(event, 'https://cdn.example.com/weapons/grid/1040001.jpg')
+		expect(img.src).toBe('https://cdn.example.com/weapons/grid/1040001.jpg')
 	})
 
 	it('does not swap when fallback matches current src', () => {
-		const img = { src: 'https://cdn.example.com/weapon-grid/1040001.jpg' } as HTMLImageElement
+		const img = { src: 'https://cdn.example.com/weapons/grid/1040001.jpg' } as HTMLImageElement
 		const event = { currentTarget: img } as unknown as Event
-		handleImageFallback(event, 'https://cdn.example.com/weapon-grid/1040001.jpg')
-		expect(img.src).toBe('https://cdn.example.com/weapon-grid/1040001.jpg')
+		handleImageFallback(event, 'https://cdn.example.com/weapons/grid/1040001.jpg')
+		expect(img.src).toBe('https://cdn.example.com/weapons/grid/1040001.jpg')
 	})
 
 	it('does nothing when no fallback provided', () => {
-		const img = { src: 'https://cdn.example.com/weapon-grid/1040001_0.jpg' } as HTMLImageElement
+		const img = { src: 'https://cdn.example.com/weapons/grid/1040001_0.jpg' } as HTMLImageElement
 		const event = { currentTarget: img } as unknown as Event
 		handleImageFallback(event, undefined)
-		expect(img.src).toBe('https://cdn.example.com/weapon-grid/1040001_0.jpg')
+		expect(img.src).toBe('https://cdn.example.com/weapons/grid/1040001_0.jpg')
 	})
 })

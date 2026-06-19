@@ -11,7 +11,7 @@
 
 	let { children }: Props = $props()
 
-	const backgroundUrl = `${getBasePath()}/port-breeze.jpg`
+	const backgroundUrl = `${getBasePath()}/app/marketing/port-breeze.jpg`
 </script>
 
 <div class="authContainer" style:--auth-bg-url="url('{backgroundUrl}')">

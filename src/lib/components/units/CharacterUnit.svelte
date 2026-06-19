@@ -6,6 +6,9 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
+	import RemoveUnitDialog from './RemoveUnitDialog.svelte'
+	import SubstituteCountBadge from './SubstituteCountBadge.svelte'
+	import BookmarkOverlay from './BookmarkOverlay.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
@@ -27,6 +30,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 	interface Props {
 		item?: GridCharacter | undefined
 		position: number
@@ -84,17 +88,19 @@
 		getElementClassName(item?.character?.element || mainWeaponElement || partyElement)
 	)
 
-	async function remove() {
+	let removeConfirmOpen = $state(false)
+
+	function remove() {
 		if (!item?.id) return
-		try {
-			const party = ctx.getParty()
-			const editKey = ctx.getEditKey()
-			await ctx.services.gridService.removeCharacter(party.id, item.id, editKey || undefined)
-		} catch (err) {
-			console.error('Error removing character:', err)
-			toast.error(extractErrorMessage(err, 'Failed to remove character'))
-		}
+		removeConfirmOpen = true
 	}
+
+	const removeAction = useAsyncAction(async () => {
+		if (!item?.id) return
+		const party = ctx.getParty()
+		const editKey = ctx.getEditKey()
+		await ctx.services.gridService.removeCharacter(party.id, item.id, editKey || undefined)
+	}, 'Failed to remove character')
 
 	let canEditItem = $derived(canCharacterBeModified(item))
 
@@ -107,18 +113,26 @@
 
 	function viewDetails() {
 		if (!item) return
+		const party = ctx.getParty()
 		openDetailsSidebar({
 			type: 'character',
 			item,
 			onSaveCharacter: getSaveCallback(),
 			isOwner: ctx?.canEdit() ?? false,
-			onReplace: ctx?.canEdit() ? replace : undefined
+			onReplace: ctx?.canEdit() ? replace : undefined,
+			onRemove: ctx?.canEdit() ? remove : undefined,
+			partyId: party?.id,
+			partyShortcode: party?.shortcode
 		})
 	}
 
 	function editItem() {
 		if (!item) return
-		openCharacterEditSidebar(item, getSaveCallback())
+		const party = ctx.getParty()
+		openCharacterEditSidebar(item, getSaveCallback(), {
+			partyId: party?.id,
+			partyShortcode: party?.shortcode
+		})
 	}
 
 	function replace() {
@@ -196,7 +210,7 @@
 	class:orphaned={item?.orphaned}
 >
 	{#if item}
-		<UnitMenuContainer showGearButton={true}>
+		<UnitMenuContainer showGearButton={true} gearPosition="top-right">
 			{#snippet trigger()}
 				<div
 					class="focus-ring-wrapper {elementClass}"
@@ -272,6 +286,11 @@
 							{/if}
 						</div>
 					{/key}
+					{#if inCollection}
+						<BookmarkOverlay
+							element={item?.character?.element ?? mainWeaponElement ?? partyElement}
+						/>
+					{/if}
 				</div>
 			{/snippet}
 
@@ -372,16 +391,28 @@
 		{/if}
 	{/key}
 	<div class="name" class:not-in-collection={notInCollection}>
-		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
-		{item ? localizedName(item?.character?.name) : ''}
+		<span class="name-text">{item ? localizedName(item?.character?.name) : ''}</span>
 		{#if item?.artifact}
 			<Icon name="gem" size={12} class="artifact-indicator" />
+		{/if}
+		{#if item}
+			<SubstituteCountBadge
+				count={item.substitutions?.length ?? 0}
+				element={item.character?.element ?? mainWeaponElement ?? partyElement}
+			/>
 		{/if}
 	</div>
 	{#if item?.character}
 		<CharacterTags character={item.character} />
 	{/if}
 </div>
+
+<RemoveUnitDialog
+	bind:open={removeConfirmOpen}
+	type="character"
+	name={item?.character ? localizedName(item.character.name) : null}
+	onConfirm={removeAction.run}
+/>
 
 <style lang="scss">
 	@use '$src/themes/colors' as colors;
@@ -506,18 +537,12 @@
 	}
 
 	.name {
-		font-size: typography.$font-small;
-		text-align: center;
-		color: var(--text-secondary);
-
-		:global(span) {
-			display: inline;
-			vertical-align: -4px;
-		}
-
+		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: spacing.$unit-fourth;
+		gap: spacing.$unit-half;
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
 
 		:global(.artifact-indicator) {
 			color: var(--extra-purple-text);
@@ -525,11 +550,20 @@
 		}
 	}
 
+	.name-text {
+		// min-width: 0 lets the text item shrink under content size so long
+		// names wrap inside the span instead of forcing the bookmark/badge
+		// onto their own flex line.
+		min-width: 0;
+		text-align: center;
+		overflow-wrap: anywhere;
+	}
+
 	.perpetuity {
 		position: absolute;
 		z-index: effects.$z-tooltip;
 		top: calc(spacing.$unit * -1);
-		right: spacing.$unit-3x;
+		right: 44px;
 		width: spacing.$unit-4x;
 		height: spacing.$unit-4x;
 		padding: 0;

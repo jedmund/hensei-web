@@ -13,7 +13,7 @@
 		type?: 'character' | 'weapon' | 'summon'
 		interactive?: boolean
 		tabindex?: number
-		size?: 'regular' | 'small'
+		size?: 'regular' | 'medium' | 'small'
 		onStarClick?: () => void
 		onFragmentClick?: (newStage: number) => void
 		onFragmentHover?: (newStage: number) => void
@@ -117,6 +117,7 @@
 				class:stage4={currentStage === 4}
 				class:stage5={currentStage === 5}
 				class:small={size === 'small'}
+				class:medium={size === 'medium'}
 				onmouseleave={interactive ? handleMouseLeave : undefined}
 				tabindex={interactive ? (tabindex ?? 0) : undefined}
 				role={interactive ? 'button' : undefined}
@@ -207,6 +208,10 @@
 
 		&.small {
 			--size: 12px;
+		}
+
+		&.medium {
+			--size: 15px;
 		}
 
 		&:not(.readonly):hover {
@@ -333,6 +338,10 @@
 
 		&.small .figure {
 			--size: 12px;
+		}
+
+		&.medium .figure {
+			--size: 15px;
 		}
 	}
 

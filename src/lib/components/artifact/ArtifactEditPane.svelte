@@ -290,7 +290,7 @@
 
 <div class="artifact-edit-pane">
 	<DetailsSection title={m.details_basic_info()}>
-		<DetailRow label={m.label_nickname()} noHover>
+		<DetailRow label={m.label_nickname()}>
 			{#if disabled}
 				<span>{nickname || '—'}</span>
 			{:else}
@@ -305,7 +305,7 @@
 			{/if}
 		</DetailRow>
 		{#if canChangeProficiency}
-			<DetailRow label={m.label_proficiency()} noHover>
+			<DetailRow label={m.label_proficiency()}>
 				{#if disabled}
 					<ProficiencyLabel {proficiency} size="medium" />
 				{:else}
@@ -321,12 +321,12 @@
 				{/if}
 			</DetailRow>
 		{:else}
-			<DetailRow label={m.label_proficiency()} noHover>
+			<DetailRow label={m.label_proficiency()}>
 				<ProficiencyLabel proficiency={artifactData.proficiency ?? undefined} size="medium" />
 			</DetailRow>
 		{/if}
 
-		<DetailRow label={m.label_element()} noHover>
+		<DetailRow label={m.label_element()}>
 			{#if disabled}
 				{@const elementOption = elementOptions.find((o) => o.value === element)}
 				<span class="element-display">
@@ -345,7 +345,7 @@
 			{/if}
 		</DetailRow>
 
-		<DetailRow label={m.label_level()} noHover>
+		<DetailRow label={m.label_level()}>
 			{#if disabled || isQuirk}
 				<span>{level}</span>
 			{:else}

@@ -48,7 +48,7 @@
 	const slotCount = $derived(getJobSkillSlotCount(job))
 	const jobIconUrl = $derived(job ? getJobIconUrl(job.granblueId) : '')
 	const jobImageUrl = $derived(job ? getJobFullImageUrl(job, gender) : '')
-	const jobBackgroundUrl = `${getBasePath()}/background_a.jpg`
+	const jobBackgroundUrl = `${getBasePath()}/app/marketing/background_a.jpg`
 
 	function handleSelectSkill(slot: number) {
 		if (onSelectSkill) {

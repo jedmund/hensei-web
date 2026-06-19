@@ -346,20 +346,20 @@ export class GridAdapter extends BaseAdapter {
 		params: Partial<GridCharacter>,
 		headers?: Record<string, string>
 	): Promise<GridCharacter> {
-		// Flatten nested awakening object into awakening_id/awakening_level
-		// since the Rails API expects flat params, not nested attributes
+		// The character controller permits `awakening: { id, level }` nested
+		// only — top-level awakening_id/awakening_level get stripped by strong
+		// params. Forward the nested shape directly. Null is sent as { id: null,
+		// level: null } so transform_character_params doesn't try to dereference
+		// a nil hash.
 		const { awakening, ...rest } = params as Partial<GridCharacter> & {
 			awakening?: { id: string; level: number } | null
 		}
 		const body: Record<string, unknown> = { ...rest }
 		if (awakening !== undefined) {
-			if (awakening === null) {
-				body.awakeningId = null
-				body.awakeningLevel = null
-			} else {
-				body.awakeningId = awakening.id
-				body.awakeningLevel = awakening.level
-			}
+			body.awakening =
+				awakening === null
+					? { id: null, level: null }
+					: { id: awakening.id, level: awakening.level }
 		}
 
 		const response = await this.request<{ gridCharacter: GridCharacter }>(
@@ -641,13 +641,20 @@ export class GridAdapter extends BaseAdapter {
 	// Sync operations
 
 	/**
-	 * Syncs a grid character from its linked collection source
+	 * Syncs a grid character from its linked collection source. When `fields` is
+	 * provided, only those camelCase fields (e.g. ['uncapLevel', 'overMastery.1'])
+	 * are copied; omitting it syncs every tracked field.
 	 */
-	async syncCharacter(id: string, headers?: Record<string, string>): Promise<GridCharacter> {
+	async syncCharacter(
+		id: string,
+		headers?: Record<string, string>,
+		fields?: string[]
+	): Promise<GridCharacter> {
 		const response = await this.request<{ gridCharacter: GridCharacter }>(
 			`/grid_characters/${id}/sync`,
 			{
 				method: 'POST',
+				body: fields && fields.length > 0 ? { fields } : undefined,
 				headers
 			}
 		)
@@ -655,22 +662,34 @@ export class GridAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Syncs a grid weapon from its linked collection source
+	 * Syncs a grid weapon from its linked collection source. See `syncCharacter`
+	 * for the `fields` parameter semantics.
 	 */
-	async syncWeapon(id: string, headers?: Record<string, string>): Promise<GridWeapon> {
+	async syncWeapon(
+		id: string,
+		headers?: Record<string, string>,
+		fields?: string[]
+	): Promise<GridWeapon> {
 		const response = await this.request<{ gridWeapon: GridWeapon }>(`/grid_weapons/${id}/sync`, {
 			method: 'POST',
+			body: fields && fields.length > 0 ? { fields } : undefined,
 			headers
 		})
 		return response.gridWeapon
 	}
 
 	/**
-	 * Syncs a grid summon from its linked collection source
+	 * Syncs a grid summon from its linked collection source. See `syncCharacter`
+	 * for the `fields` parameter semantics.
 	 */
-	async syncSummon(id: string, headers?: Record<string, string>): Promise<GridSummon> {
+	async syncSummon(
+		id: string,
+		headers?: Record<string, string>,
+		fields?: string[]
+	): Promise<GridSummon> {
 		const response = await this.request<{ gridSummon: GridSummon }>(`/grid_summons/${id}/sync`, {
 			method: 'POST',
+			body: fields && fields.length > 0 ? { fields } : undefined,
 			headers
 		})
 		return response.gridSummon
@@ -679,16 +698,19 @@ export class GridAdapter extends BaseAdapter {
 	// Sync to collection operations
 
 	/**
-	 * Syncs a grid character's data to its linked collection entry
+	 * Syncs a grid character's data to its linked collection entry. See
+	 * `syncCharacter` for the `fields` parameter semantics.
 	 */
 	async syncCharacterToCollection(
 		id: string,
-		headers?: Record<string, string>
+		headers?: Record<string, string>,
+		fields?: string[]
 	): Promise<GridCharacter> {
 		const response = await this.request<{ gridCharacter: GridCharacter }>(
 			`/grid_characters/${id}/sync_to_collection`,
 			{
 				method: 'POST',
+				body: fields && fields.length > 0 ? { fields } : undefined,
 				headers
 			}
 		)
@@ -696,13 +718,19 @@ export class GridAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Syncs a grid weapon's data to its linked collection entry
+	 * Syncs a grid weapon's data to its linked collection entry. See
+	 * `syncCharacter` for the `fields` parameter semantics.
 	 */
-	async syncWeaponToCollection(id: string, headers?: Record<string, string>): Promise<GridWeapon> {
+	async syncWeaponToCollection(
+		id: string,
+		headers?: Record<string, string>,
+		fields?: string[]
+	): Promise<GridWeapon> {
 		const response = await this.request<{ gridWeapon: GridWeapon }>(
 			`/grid_weapons/${id}/sync_to_collection`,
 			{
 				method: 'POST',
+				body: fields && fields.length > 0 ? { fields } : undefined,
 				headers
 			}
 		)
@@ -710,13 +738,19 @@ export class GridAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Syncs a grid summon's data to its linked collection entry
+	 * Syncs a grid summon's data to its linked collection entry. See
+	 * `syncCharacter` for the `fields` parameter semantics.
 	 */
-	async syncSummonToCollection(id: string, headers?: Record<string, string>): Promise<GridSummon> {
+	async syncSummonToCollection(
+		id: string,
+		headers?: Record<string, string>,
+		fields?: string[]
+	): Promise<GridSummon> {
 		const response = await this.request<{ gridSummon: GridSummon }>(
 			`/grid_summons/${id}/sync_to_collection`,
 			{
 				method: 'POST',
+				body: fields && fields.length > 0 ? { fields } : undefined,
 				headers
 			}
 		)

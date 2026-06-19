@@ -89,7 +89,7 @@
 
 	function getAwakeningImageUrl(slug: string): string {
 		const ext = slug.startsWith('character-') ? 'jpg' : 'png'
-		return `${getBasePath()}/awakening/${slug}.${ext}`
+		return `${getBasePath()}/icons/awakening/${slug}.${ext}`
 	}
 
 	// Column configuration for weapons
