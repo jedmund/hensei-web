@@ -12,6 +12,7 @@
 	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import { getElementKey } from '$lib/utils/element'
+	import { seriesHasTranscendenceArt } from '$lib/utils/weaponSeries'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 	import CollectionPill from './CollectionPill.svelte'
 
@@ -56,7 +57,7 @@
 			return getCharacterDetailImage(id, pose)
 		} else if (type === 'weapon') {
 			const transformation = getWeaponTransformation(
-				!!itemData?.uncap?.transcendence,
+				seriesHasTranscendenceArt(itemData?.series),
 				gridUncapLevel ?? undefined,
 				gridTranscendence ?? undefined
 			)

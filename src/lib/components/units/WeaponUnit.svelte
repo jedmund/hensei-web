@@ -18,6 +18,7 @@
 		getWeaponFallbackImage,
 		handleImageFallback
 	} from '$lib/utils/images'
+	import { seriesHasTranscendenceArt } from '$lib/utils/weaponSeries'
 	import {
 		openDetailsSidebar,
 		openWeaponEditSidebar
@@ -60,7 +61,7 @@
 		// Mainhand images don't have a null-element variant, so default to fire (2).
 		const element = item?.weapon?.element === 0 ? (item?.element ?? (isMain ? 2 : 0)) : undefined
 		const transformation = getWeaponTransformation(
-			item?.weapon?.uncap?.transcendence,
+			seriesHasTranscendenceArt(item?.weapon?.series),
 			item?.uncapLevel,
 			item?.transcendenceStep
 		)
@@ -82,7 +83,7 @@
 		const isMain = position === -1 || item?.mainhand
 		const variant = isMain ? 'main' : 'grid'
 		const transformation = getWeaponTransformation(
-			item?.weapon?.uncap?.transcendence,
+			seriesHasTranscendenceArt(item?.weapon?.series),
 			item?.uncapLevel,
 			item?.transcendenceStep
 		)
