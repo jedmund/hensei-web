@@ -18,6 +18,29 @@ import { localizedName } from '$lib/utils/locale'
 export const OPUS_DRACONIC_SLUGS = ['dark-opus', 'draconic', 'draconic-providence']
 
 /**
+ * Slugs for series that ship distinct artwork per transcendence stage
+ * ({id}_02 at stage 1, {id}_03 at stage 5).
+ *
+ * Most transcendable weapons (e.g. Illustrious) reuse their base art at every
+ * stage, so they must NOT be included here — requesting a stage-suffixed image
+ * for them 404s. Only Dark Opus weapons currently have stage-specific art.
+ */
+export const WEAPON_TRANSCENDENCE_ART_SLUGS = ['dark-opus']
+
+/**
+ * Check whether a weapon series has distinct artwork at its transcendence stages.
+ *
+ * @param series - The series to check (WeaponSeriesRef or null)
+ * @returns True if the series ships stage-specific transcendence art
+ */
+export function seriesHasTranscendenceArt(series: WeaponSeriesRef | null | undefined): boolean {
+	if (!isWeaponSeriesRef(series)) {
+		return false
+	}
+	return WEAPON_TRANSCENDENCE_ART_SLUGS.includes(series.slug)
+}
+
+/**
  * Check if a series belongs to the Opus/Draconic conflict group.
  *
  * @param series - The series to check (WeaponSeriesRef or null)

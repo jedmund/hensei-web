@@ -39,6 +39,7 @@
 		getWeaponFallbackImage
 	} from '$lib/utils/images'
 	import { getElementLabel, ELEMENT_DISPLAY_ORDER } from '$lib/utils/element'
+	import { seriesHasTranscendenceArt } from '$lib/utils/weaponSeries'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,
@@ -171,7 +172,9 @@
 				}
 			}
 		} else {
-			const transformations = getWeaponTransformationStages(weapon.uncap)
+			const transformations = getWeaponTransformationStages(
+				seriesHasTranscendenceArt(weapon.series)
+			)
 
 			for (const transformation of transformations) {
 				for (const variant of variants) {
