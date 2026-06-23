@@ -429,7 +429,7 @@
 					{#snippet content()}
 						<div class="fa-skill-tip">
 							<span class="fa-skill-tip-name">{s.name}</span>
-							<span class="fa-skill-tip-status">
+							<span class="fa-skill-tip-status" class:enabled={on}>
 								<Icon name="full-auto" size={14} />
 								{on ? m.full_auto_skill_enabled() : m.full_auto_skill_disabled()}
 							</span>
@@ -673,6 +673,12 @@
 		align-items: center;
 		gap: spacing.$unit-half;
 		color: var(--text-secondary);
+	}
+
+	// Enabled abilities use the yellow Full Auto color for the icon (currentColor)
+	// and label.
+	:global(.fa-skill-tip-status.enabled) {
+		color: var(--full-auto-label-text);
 	}
 
 	.perpetuity {
