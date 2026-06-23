@@ -73,7 +73,7 @@
 			onclick={handleClick}
 			type="button"
 		>
-			{@render SlotBody({ locked: false })}
+			{@render SlotBody()}
 		</button>
 		{#if isFilled}
 			{@render FaSwitch({ disabled: false })}
@@ -99,12 +99,21 @@
 			class:unavailable={isUnavailable}
 			style:--category-color={categoryColor}
 		>
-			{@render SlotBody({ locked })}
+			{@render SlotBody()}
 		</div>
 		{#if isFilled}
 			<!-- A locked main skill can't be swapped, but its Full Auto use is still
 			toggleable; gate the switch on edit permission, not the slot lock. -->
 			{@render FaSwitch({ disabled: !editable })}
+		{/if}
+		{#if locked}
+			<!-- Sits in the trailing column so it lines up with the remove (X)
+			buttons on the editable slots below. -->
+			<Tooltip content="Main skill (locked)">
+				<span class="lock-indicator">
+					<Icon name="lock" size={16} class="lock-icon" />
+				</span>
+			</Tooltip>
 		{/if}
 	</div>
 {/if}
@@ -123,9 +132,9 @@
 	</Tooltip>
 {/snippet}
 
-{#snippet SlotBody({ locked }: { locked: boolean })}
+{#snippet SlotBody()}
 	{#if isFilled}
-		{@render SkillContent({ skill: skill!, skillIconUrl, locked })}
+		{@render SkillContent({ skill: skill!, skillIconUrl })}
 	{:else if !isUnavailable}
 		{@render EmptyState({ slot })}
 	{:else}
@@ -133,15 +142,7 @@
 	{/if}
 {/snippet}
 
-{#snippet SkillContent({
-	skill,
-	skillIconUrl,
-	locked
-}: {
-	skill: JobSkill
-	skillIconUrl: string
-	locked: boolean
-})}
+{#snippet SkillContent({ skill, skillIconUrl }: { skill: JobSkill; skillIconUrl: string })}
 	<div class="skill-content">
 		{#if skillIconUrl}
 			<img src={skillIconUrl} alt={localizedName(skill.name)} class="skill-icon" loading="lazy" />
@@ -149,11 +150,6 @@
 		<div class="skill-info">
 			<span class="skill-name">{localizedName(skill.name)}</span>
 		</div>
-		{#if locked}
-			<Tooltip content="Main skill (locked)">
-				<Icon name="lock" size={16} class="lock-icon" />
-			</Tooltip>
-		{/if}
 	</div>
 {/snippet}
 
@@ -333,6 +329,17 @@
 		color: var(--text-tertiary);
 		height: 60px;
 		font-size: 18px;
+	}
+
+	// Matches the medium icon-only remove button footprint so the lock lines up
+	// with the remove (X) buttons in the editable slots.
+	.lock-indicator {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		width: calc($unit * 5.5);
+		height: calc($unit * 5.5);
 	}
 
 	:global(.lock-icon.icon) {
