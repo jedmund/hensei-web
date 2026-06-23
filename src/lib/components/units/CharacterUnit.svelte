@@ -430,7 +430,7 @@
 						<div class="fa-skill-tip">
 							<span class="fa-skill-tip-name">{s.name}</span>
 							<span class="fa-skill-tip-status" class:enabled={on}>
-								<Icon name="full-auto" size={14} />
+								<Icon name="full-auto" size={16} />
 								{on ? m.full_auto_skill_enabled() : m.full_auto_skill_disabled()}
 							</span>
 						</div>
@@ -675,10 +675,11 @@
 		color: var(--text-secondary);
 	}
 
-	// Enabled abilities use the yellow Full Auto color for the icon (currentColor)
-	// and label.
+	// Enabled abilities use the bright Full Auto yellow for the icon (currentColor)
+	// and label. --full-auto-bg is the brand yellow and stays bright on the dark
+	// tooltip background regardless of the app theme.
 	:global(.fa-skill-tip-status.enabled) {
-		color: var(--full-auto-label-text);
+		color: var(--full-auto-bg);
 	}
 
 	.perpetuity {
