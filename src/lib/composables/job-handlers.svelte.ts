@@ -150,6 +150,38 @@ export function useJobHandlers(opts: JobHandlerOptions) {
 		}
 	}
 
+	// Toggles whether the MC ability in `slot` (0..3) is used in Full Auto.
+	// Persisted on the party itself (party.fullAutoSkills), mirroring the
+	// per-ability character toggles. Absent slot defaults to ON.
+	async function handleToggleJobSkillFa(slot: number, on: boolean) {
+		if (!opts.canEdit()) return
+
+		loading = true
+		error = null
+
+		try {
+			const shortcode = await getShortcode()
+			if (!shortcode) return
+
+			const party = opts.getParty()
+			if (!party.id) return
+
+			const next = { ...(party.fullAutoSkills ?? {}), [String(slot)]: on }
+
+			await opts.mutations.party.update.mutateAsync({
+				id: party.id,
+				shortcode,
+				fullAutoSkills: next
+			})
+		} catch (e) {
+			error = extractErrorMessage(e, m.toast_failed_update_skill())
+			console.error('Failed to update Full Auto skill:', e)
+			toast.error(extractErrorMessage(e, m.toast_failed_update_skill()))
+		} finally {
+			loading = false
+		}
+	}
+
 	async function handleSelectAccessory() {
 		if (!opts.canEdit()) return
 
@@ -202,6 +234,7 @@ export function useJobHandlers(opts: JobHandlerOptions) {
 		handleSelectJob,
 		handleSelectJobSkill,
 		handleRemoveJobSkill,
+		handleToggleJobSkillFa,
 		handleSelectAccessory,
 		get loading() {
 			return loading

@@ -21,6 +21,8 @@
 	interface Props {
 		job?: Job | undefined
 		jobSkills?: JobSkillList | undefined
+		/** Per-slot MC Full Auto toggles ("0".."3" → boolean). Absent = ON. */
+		fullAutoSkills?: Record<string, boolean> | undefined
 		accessory?: JobAccessory | undefined
 		canEdit?: boolean | undefined
 		gender?: Gender | undefined
@@ -28,19 +30,22 @@
 		onSelectJob?: (() => void) | undefined
 		onSelectSkill?: ((slot: number) => void) | undefined
 		onRemoveSkill?: ((slot: number) => void) | undefined
+		onToggleSkillFa?: ((slot: number, on: boolean) => void) | undefined
 		onSelectAccessory?: (() => void) | undefined
 	}
 
 	let {
 		job,
 		jobSkills = {},
+		fullAutoSkills = {},
 		accessory,
 		canEdit = false,
 		gender = Gender.Gran,
-		element, // eslint-disable-line @typescript-eslint/no-unused-vars
+		element,
 		onSelectJob,
 		onSelectSkill,
 		onRemoveSkill,
+		onToggleSkillFa,
 		onSelectAccessory
 	}: Props = $props()
 
@@ -60,6 +65,17 @@
 		if (onRemoveSkill) {
 			onRemoveSkill(slot)
 		}
+	}
+
+	function handleToggleFa(slot: number, on: boolean) {
+		if (onToggleSkillFa) {
+			onToggleSkillFa(slot, on)
+		}
+	}
+
+	// Absent or true => used in Full Auto; only an explicit false is OFF.
+	function isSkillFaOn(slot: number): boolean {
+		return fullAutoSkills[String(slot)] !== false
 	}
 </script>
 
@@ -155,11 +171,14 @@
 						<JobSkillSlot
 							skill={jobSkills[slot as keyof JobSkillList]}
 							{slot}
+							{element}
 							locked={isSkillSlotLocked(slot, job, jobSkills)}
 							editable={canEdit}
 							available={true}
+							faOn={isSkillFaOn(slot)}
 							onclick={() => handleSelectSkill(slot)}
 							onRemove={() => handleRemoveSkill(slot)}
+							onToggleFa={(on) => handleToggleFa(slot, on)}
 						/>
 					{/if}
 				{/each}
@@ -203,9 +222,9 @@
 	.job-image-container {
 		position: relative;
 		flex-shrink: 0;
-		width: 447px;
+		width: 360px;
 		max-width: 100%;
-		height: 252px;
+		height: 206px;
 		aspect-ratio: 7/4;
 		background-size: 500px 281px;
 		background-position: center;
@@ -229,7 +248,7 @@
 			object-fit: contain;
 			z-index: effects.$z-badge;
 			filter: drop-shadow(4px 4px 8px rgba(0, 0, 0, 0.48));
-			transform: translateY(74px);
+			transform: translateY(60px);
 		}
 
 		.overlay {
