@@ -265,6 +265,9 @@ export interface Party {
 	summons: GridSummon[]
 	job?: Job
 	jobSkills?: JobSkillList
+	/** Per-slot Full Auto toggles for the MC's abilities ("0".."3" → used in FA).
+	 * Absent slot defaults to ON. */
+	fullAutoSkills?: Record<string, boolean>
 	accessory?: JobAccessory
 	raid?: Raid
 	guidebooks?: GuidebookList

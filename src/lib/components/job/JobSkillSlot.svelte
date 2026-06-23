@@ -4,32 +4,47 @@
 	import { getSkillCategoryColor } from '$lib/utils/jobUtils'
 	import { getJobSkillIcon } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
+	import { getElementTypeKey } from '$lib/utils/element'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Switch from '$lib/components/ui/switch/Switch.svelte'
 
 	interface Props {
 		skill?: JobSkill
 		slot: number
+		element?: number | undefined
 		locked?: boolean
 		editable?: boolean
 		available?: boolean
+		/** Whether this skill is used in Full Auto. Absent slot defaults to ON. */
+		faOn?: boolean
 		onclick?: () => void
 		onRemove?: () => void
+		onToggleFa?: (on: boolean) => void
 	}
 
 	let {
 		skill,
 		slot,
+		element,
 		locked = false,
 		editable = false,
 		available = true,
+		faOn = true,
 		onclick,
-		onRemove
+		onRemove,
+		onToggleFa
 	}: Props = $props()
 
 	const categoryColor = $derived(skill ? getSkillCategoryColor(skill) : '')
 	const skillIconUrl = $derived(skill ? getJobSkillIcon(skill) : '')
+	const elementKey = $derived(getElementTypeKey(element))
+
+	function handleToggleFa(checked: boolean) {
+		// Guard against the Switch's mount-time callback firing a no-op write.
+		if (checked !== faOn) onToggleFa?.(checked)
+	}
 
 	const isEditable = $derived(editable && !locked && available)
 	const isUnavailable = $derived(!available)
@@ -60,6 +75,9 @@
 		>
 			{@render SlotBody({ locked: false })}
 		</button>
+		{#if isFilled}
+			{@render FaSwitch({ disabled: false })}
+		{/if}
 		{#if allowsRemove}
 			<Button
 				variant="ghost"
@@ -73,16 +91,37 @@
 		{/if}
 	</div>
 {:else}
-	<div
-		class="skill-slot"
-		class:empty={!isFilled}
-		class:locked
-		class:unavailable={isUnavailable}
-		style:--category-color={categoryColor}
-	>
-		{@render SlotBody({ locked })}
+	<div class="slot-row">
+		<div
+			class="skill-slot"
+			class:empty={!isFilled}
+			class:locked
+			class:unavailable={isUnavailable}
+			style:--category-color={categoryColor}
+		>
+			{@render SlotBody({ locked })}
+		</div>
+		{#if isFilled}
+			<!-- A locked main skill can't be swapped, but its Full Auto use is still
+			toggleable; gate the switch on edit permission, not the slot lock. -->
+			{@render FaSwitch({ disabled: !editable })}
+		{/if}
 	</div>
 {/if}
+
+{#snippet FaSwitch({ disabled }: { disabled: boolean })}
+	<Tooltip content={m.full_auto_skill_toggle()}>
+		<span class="fa-switch">
+			<Switch
+				size="small"
+				element={elementKey}
+				checked={faOn}
+				{disabled}
+				onCheckedChange={handleToggleFa}
+			/>
+		</span>
+	</Tooltip>
+{/snippet}
 
 {#snippet SlotBody({ locked }: { locked: boolean })}
 	{#if isFilled}
@@ -150,12 +189,20 @@
 		gap: $unit-half;
 	}
 
+	.fa-switch {
+		display: inline-flex;
+		flex-shrink: 0;
+		margin-left: $unit-half;
+	}
+
 	.skill-slot {
 		position: relative;
 		border: none;
 		border-radius: $card-corner;
 		background: var(--button-bound-bg);
 		transition: all 0.2s ease;
+		flex: 1;
+		min-width: 0;
 		width: 100%;
 		text-align: left;
 		font: inherit;

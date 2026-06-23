@@ -582,6 +582,7 @@
 							<JobSection
 								job={party.job}
 								jobSkills={party.jobSkills}
+								fullAutoSkills={party.fullAutoSkills}
 								accessory={party.accessory}
 								canEdit={canEdit()}
 								gender={party.user?.gender ?? Gender.Gran}
@@ -589,6 +590,7 @@
 								onSelectJob={jobHandlers.handleSelectJob}
 								onSelectSkill={jobHandlers.handleSelectJobSkill}
 								onRemoveSkill={jobHandlers.handleRemoveJobSkill}
+								onToggleSkillFa={jobHandlers.handleToggleJobSkillFa}
 								onSelectAccessory={jobHandlers.handleSelectAccessory}
 							/>
 							<CharacterGrid
