@@ -40,7 +40,8 @@ function rei(): Character {
 describe('getAbilitySlots', () => {
 	it('returns ability slots in order, excluding ougi/support', () => {
 		const slots = getAbilitySlots(rei())
-		expect(slots.map((s) => s.slot)).toEqual([1, 2, 3, 4])
+		// 0-based keys (API positions 1..4 shifted to "0".."3")
+		expect(slots.map((s) => s.slot)).toEqual([0, 1, 2, 3])
 		expect(slots.map((s) => s.name)).toEqual([
 			'Alaya-Vijnana',
 			'Moksha',
