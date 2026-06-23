@@ -650,8 +650,8 @@
 	}
 
 	.fa-skill-icon {
-		width: 24px;
-		height: 24px;
+		width: 32px;
+		height: 32px;
 		object-fit: cover;
 		border-radius: layout.$item-corner-small;
 		border: 1px solid var(--border-primary);
