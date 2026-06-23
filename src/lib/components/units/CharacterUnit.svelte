@@ -12,6 +12,8 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
+	import RichTooltip from '$lib/components/ui/RichTooltip.svelte'
+	import { getAbilitySlots } from '$lib/utils/fullAutoSkills'
 	import { getCharacterImageWithPose, getPlaceholderImage } from '$lib/utils/images'
 	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import {
@@ -181,6 +183,19 @@
 			console.error('Error switching style:', err)
 			toast.error(extractErrorMessage(err, 'Failed to switch style'))
 		}
+	}
+
+	// Full Auto skill display: only meaningful when the party is in Full Auto.
+	// Shows every ability as an icon; an eligible ability that is toggled off is
+	// dimmed, while ineligible abilities (heal/field/target-ally) never dim and
+	// always read as Disabled since they can't be used in Full Auto.
+	let partyFullAuto = $derived(ctx?.getParty?.()?.fullAuto ?? false)
+	let abilitySlots = $derived(item?.character ? getAbilitySlots(item.character) : [])
+	let faSkills = $derived(item?.fullAutoSkills ?? {})
+
+	// Absent or true => ON; only an explicit false is OFF.
+	function isFaSlotOn(slot: number): boolean {
+		return faSkills[String(slot)] !== false
 	}
 
 	async function togglePerpetuity(e: Event) {
@@ -405,7 +420,49 @@
 	{#if item?.character}
 		<CharacterTags character={item.character} />
 	{/if}
+	{#if item?.character && partyFullAuto && abilitySlots.length > 0}
+		<div class="fa-skills">
+			{#each abilitySlots as s (s.slot)}
+				{@const on = s.eligible && isFaSlotOn(s.slot)}
+				{@const dimmed = s.eligible && !isFaSlotOn(s.slot)}
+				<RichTooltip>
+					{#snippet content()}
+						<div class="fa-skill-tip">
+							<span class="fa-skill-tip-name">{s.name}</span>
+							<span class="fa-skill-tip-status">
+								<Icon name="full-auto" size={14} />
+								{on ? m.full_auto_skill_enabled() : m.full_auto_skill_disabled()}
+							</span>
+						</div>
+					{/snippet}
+					{#if ctx?.canEdit()}
+						<button class="fa-skill" class:dimmed onclick={() => viewDetails()} aria-label={s.name}>
+							{@render FaSkillIcon(s.iconUrl, s.name)}
+						</button>
+					{:else}
+						<span class="fa-skill" class:dimmed>
+							{@render FaSkillIcon(s.iconUrl, s.name)}
+						</span>
+					{/if}
+				</RichTooltip>
+			{/each}
+		</div>
+	{/if}
 </div>
+
+{#snippet FaSkillIcon(iconUrl: string | null, name: string)}
+	{#if iconUrl}
+		<img
+			class="fa-skill-icon"
+			src={iconUrl}
+			alt={name}
+			loading="lazy"
+			onerror={(e) => ((e.currentTarget as HTMLImageElement).style.visibility = 'hidden')}
+		/>
+	{:else}
+		<span class="fa-skill-icon placeholder"></span>
+	{/if}
+{/snippet}
 
 <RemoveUnitDialog
 	bind:open={removeConfirmOpen}
@@ -557,6 +614,65 @@
 		min-width: 0;
 		text-align: center;
 		overflow-wrap: anywhere;
+	}
+
+	.fa-skills {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: spacing.$unit-half;
+	}
+
+	.fa-skill {
+		display: inline-flex;
+		padding: 0;
+		border: none;
+		background: transparent;
+		line-height: 0;
+		transition: opacity 0.15s ease;
+
+		&.dimmed {
+			opacity: 0.35;
+		}
+	}
+
+	button.fa-skill {
+		cursor: pointer;
+
+		&:hover {
+			opacity: 0.85;
+
+			&.dimmed {
+				opacity: 0.55;
+			}
+		}
+	}
+
+	.fa-skill-icon {
+		width: 24px;
+		height: 24px;
+		object-fit: cover;
+		border-radius: layout.$item-corner-small;
+		border: 1px solid var(--border-primary);
+		background: var(--placeholder-bg);
+
+		&.placeholder {
+			display: inline-block;
+		}
+	}
+
+	:global(.fa-skill-tip) {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit-quarter;
+	}
+
+	:global(.fa-skill-tip-status) {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit-half;
+		color: var(--text-secondary);
 	}
 
 	.perpetuity {
