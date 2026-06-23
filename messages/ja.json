@@ -1884,6 +1884,6 @@
 	"weapon_skills_mc_only": "主人公のみ",
 	"details_full_auto_skills": "フルオートアビリティ",
 	"full_auto_skill_toggle": "フルオートで使用",
-	"full_auto_skill_enabled": "有効",
-	"full_auto_skill_disabled": "無効"
+	"full_auto_skill_enabled": "オン",
+	"full_auto_skill_disabled": "オフ"
 }
