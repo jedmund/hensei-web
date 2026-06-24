@@ -1,4 +1,5 @@
 import { paraglideVitePlugin } from '@inlang/paraglide-js'
+import { sentrySvelteKit } from '@sentry/sveltekit'
 import { sveltekit } from '@sveltejs/kit/vite'
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
@@ -27,6 +28,23 @@ export default defineConfig({
 	},
 	assetsInclude: ['**/*.svg'],
 	plugins: [
+		// Must come before sveltekit(). Uploads source maps when SENTRY_AUTH_TOKEN
+		// (+ org/project) are set at build time; skips the upload otherwise, so
+		// local/dev builds work without any Sentry credentials. Skipped under
+		// Vitest: its auto-instrumentation wraps server `load` functions, which
+		// breaks unit tests that invoke `load` directly with mock events.
+		...(process.env.VITEST
+			? []
+			: [
+					sentrySvelteKit({
+						sourceMapsUploadOptions: {
+							org: process.env.SENTRY_ORG,
+							project: process.env.SENTRY_PROJECT,
+							authToken: process.env.SENTRY_AUTH_TOKEN,
+							telemetry: false
+						}
+					})
+				]),
 		sveltekit(),
 		paraglideVitePlugin({
 			project: './project.inlang',
