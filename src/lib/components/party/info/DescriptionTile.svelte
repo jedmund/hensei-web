@@ -43,6 +43,7 @@
 		onOpenDescription: () => void
 		onEditDescription?: () => void
 		onOpenEdit?: () => void
+		onOpenCalculator?: () => void
 		menu?: Snippet
 		// Battle settings
 		fullAuto?: boolean
@@ -78,6 +79,7 @@
 		onOpenDescription,
 		onEditDescription,
 		onOpenEdit,
+		onOpenCalculator,
 		menu,
 		fullAuto,
 		solo,
@@ -256,6 +258,17 @@
 				{/if}
 				{#if canEdit}
 					<Button variant="secondary" size="small" onclick={onOpenEdit}>{m.action_edit()}</Button>
+				{/if}
+				{#if onOpenCalculator}
+					<!-- Placeholder icon until a proper calculator glyph lands -->
+					<Button
+						variant="ghost"
+						size="small"
+						iconOnly
+						icon="list"
+						aria-label={m.calculator_open()}
+						onclick={onOpenCalculator}
+					/>
 				{/if}
 				{#if menu}
 					{@render menu()}

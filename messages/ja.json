@@ -1,9 +1,7 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 	"hello_world": "Hello, {name} from ja!",
-
 	"retry": "リトライ",
-
 	"nav_gallery": "ギャラリー",
 	"nav_collection": "コレクション",
 	"nav_login": "ログイン",
@@ -46,28 +44,22 @@
 	"nav_new_multiple": "複数{entity}",
 	"nav_new_weapon_series": "武器シリーズ",
 	"nav_new_character_series": "キャラシリーズ",
-
 	"action_save": "保存",
 	"action_saving": "保存中",
 	"action_edit": "編集",
 	"action_replace": "変更",
 	"action_add": "追加",
-
 	"editor_heading_1": "見出し1",
 	"editor_heading_2": "見出し2",
 	"editor_heading_3": "見出し3",
 	"editor_paragraph": "本文",
-
 	"type_job": "ジョブ",
 	"type_raid": "クエスト",
-
 	"action_cancel": "キャンセル",
-
 	"dialog_unsaved_changes_title": "未保存の変更があります",
 	"dialog_unsaved_changes_message": "閉じてもよろしいですか？変更内容は失われます。",
 	"dialog_unsaved_close": "保存せずに閉じる",
 	"dialog_unsaved_nevermind": "やめる",
-
 	"search_sidebar_title": "{type}を検索",
 	"search_sidebar_element": "属性",
 	"search_sidebar_rarity": "レアリティ",
@@ -79,38 +71,28 @@
 	"search_sidebar_previous": "前へ",
 	"search_sidebar_page": "{current}/{total}ページ",
 	"search_sidebar_next": "次へ",
-
 	"sidebar_weapon_out_of_sync": "コレクションとシンクされていません",
 	"sidebar_weapon_syncing": "シンク中",
 	"sidebar_weapon_sync": "シンク",
-
 	"description_view_video": "📹 動画を見る",
-
 	"element_no_element": "属性なし",
-
 	"favorites_seen_all": "すべてのお気に入りを表示しました",
-
 	"error_something_went_wrong": "エラーが発生しました",
 	"error_404_title": "正しい空域にいますか？",
 	"error_random_team_label": "ランダムな編成をどうぞ。",
 	"error_or_browse_gallery": "または",
 	"error_gallery": "ギャラリーで編成を探す",
-
 	"party_segmented_control_characters": "キャラ",
 	"party_segmented_control_weapons": "武器",
 	"party_segmented_control_summons": "召喚石",
-
 	"job_selection_title": "ジョブ選択",
 	"job_selection_search_placeholder": "ジョブを検索...",
 	"job_choose": "ジョブを選択",
 	"job_change": "ジョブを変更する",
-
 	"skill_selection_title": "アビリティ選択",
 	"skill_selection_search_placeholder": "アビリティを検索...",
-
 	"extra_weapons": "追加武器",
 	"guidebooks": "教本",
-
 	"context_edit": "{type}を編集",
 	"context_view_details": "詳細を見る",
 	"context_view_in_database": "データベースで見る",
@@ -122,18 +104,15 @@
 	"remove_unit_confirm_body_unnamed": "この{type}を編成から外しますか？この操作は取り消せません。",
 	"remove_unit_confirm_action": "外す",
 	"context_duplicate": "{type}を複製する",
-
 	"duplicate_collection_title": "コレクションのアイテムを複製しますか？",
 	"duplicate_collection_body": "複製はコレクションとリンクされません。コレクションでの変更は複製に反映されません。",
 	"duplicate_collection_confirm": "それでも複製する",
-
 	"conflict_title": "コンフリクト検出",
 	"conflict_character_message": "同じ名前のキャラクターがパーティに編成されています。以下のキャラクターを入れ替えますか？",
 	"conflict_weapon_series": "{series}シリーズの武器は１本しか装備できません。以下の武器を入れ替えますか？",
 	"conflict_weapon_opus_draconic": "終末の神器シリーズとドラコニックシリーズから１本しか装備できません。以下の武器を入れ替えますか？",
 	"conflict_confirm": "入れ替える",
 	"conflict_cancel": "キャンセル",
-
 	"series_seraphic": "セラフィック",
 	"series_grand": "リミテッド",
 	"series_opus": "終末の神器",
@@ -165,14 +144,13 @@
 	"series_illustrious": "イラストリアス",
 	"series_world": "ワールド",
 	"series_draconic_providence": "ドラコニック・プロヴィデンス",
-
 	"artifact_title": "アーティファクト",
 	"artifact_collection_title": "アーティファクトコレクション",
 	"artifact_element": "属性",
 	"artifact_level": "レベル",
 	"artifact_proficiency": "得意武器",
 	"artifact_standard": "普通",
-	"artifact_quirk": "個性",
+	"artifact_quirk": "クセ",
 	"artifact_skills": "スキル",
 	"artifact_skill_slot": "スキル {slot}",
 	"artifact_score": "スコア",
@@ -184,7 +162,7 @@
 	"artifact_scrap": "廃棄",
 	"artifact_keep": "保持",
 	"artifact_reroll": "リロール",
-	"artifact_equip": "装備",
+	"artifact_equip": "アーティファクトを装備",
 	"artifact_change": "変更",
 	"artifact_remove": "外す",
 	"artifact_select_modifier": "モディファイア選択",
@@ -193,9 +171,7 @@
 	"artifact_match_element": "属性を一致させる",
 	"artifact_value": "値",
 	"artifact_skill_level": "スキルレベル",
-
 	"auth_backToHome": "ホームに戻る",
-
 	"auth_login_title": "ログイン",
 	"auth_login_email": "メールアドレス",
 	"auth_login_password": "パスワード",
@@ -206,7 +182,6 @@
 	"auth_login_forgotPassword": "パスワードをお忘れですか？",
 	"auth_login_errors_fieldsRequired": "メールアドレスとパスワードを入力してください",
 	"auth_login_errors_failed": "ログインに失敗しました",
-
 	"auth_forgotPassword_title": "パスワードをリセット",
 	"auth_forgotPassword_email": "メールアドレス",
 	"auth_forgotPassword_submit": "リセットリンクを送信",
@@ -214,7 +189,6 @@
 	"auth_forgotPassword_success": "このメールアドレスにアカウントがある場合は、パスワードリセットのリンクを送信しました。",
 	"auth_forgotPassword_backToLogin": "ログインに戻る",
 	"auth_forgotPassword_errors_emailRequired": "メールアドレスを入力してください",
-
 	"auth_resetPassword_title": "新しいパスワードを設定",
 	"auth_resetPassword_password": "新しいパスワード",
 	"auth_resetPassword_confirmPassword": "パスワードを確認",
@@ -228,12 +202,10 @@
 	"auth_resetPassword_errors_passwordMin": "パスワードは8文字以上にしてください",
 	"auth_resetPassword_errors_passwordMismatch": "パスワードが一致しません",
 	"auth_resetPassword_errors_failed": "パスワードのリセットに失敗しました",
-
 	"auth_verifyEmail_title": "メール認証",
 	"auth_verifyEmail_success": "メールアドレスが認証されました。",
 	"auth_verifyEmail_invalidToken": "この認証リンクは無効または期限切れです。",
 	"auth_verifyEmail_signIn": "ログイン",
-
 	"auth_register_title": "アカウント作成",
 	"auth_register_username": "ユーザー名",
 	"auth_register_usernameNote": "後から変更できます",
@@ -254,7 +226,6 @@
 	"auth_register_errors_passwordMismatch": "パスワードが一致しません",
 	"auth_register_errors_fieldsRequired": "すべての項目を入力してください",
 	"auth_register_errors_failed": "アカウントの作成に失敗しました",
-
 	"page_title_home": "granblue.team",
 	"page_title_about": "サイトについて / granblue.team",
 	"page_title_teams": "編成を探す / granblue.team",
@@ -279,19 +250,16 @@
 	"page_title_db_new": "新規{type} / データベース / granblue.team",
 	"page_title_db_edit": "{name}を編集 / データベース / granblue.team",
 	"page_title_db_import": "{type}インポート / データベース / granblue.team",
-
 	"page_desc_home": "グラブルの編成を作成、保存、共有しましょう",
 	"page_desc_about": "granblue.teamについて",
 	"page_desc_teams": "グラブルで使える編成を見つけて保存しましょう",
 	"page_desc_collection": "キャラ、武器、召喚石のコレクションを管理",
 	"page_desc_profile": "{username}の編成をgranblue.teamで見る",
 	"page_desc_party": "{raidName}の{username}の編成をgranblue.teamで見る",
-
 	"raid_section_farming": "周回",
 	"raid_section_raid": "マルチ",
 	"raid_section_event": "イベント",
 	"raid_section_solo": "ソロ",
-
 	"about_tab_about": "サイトについて",
 	"about_tab_updates": "更新履歴",
 	"about_tab_roadmap": "ロードマップ",
@@ -312,7 +280,6 @@
 	"about_roadmap_item_rotations_desc": "ターンごとやトリガーに応じた行動の流れを設定",
 	"about_roadmap_item_guides_title": "ガイド",
 	"about_roadmap_item_guides_desc": "granblue.teamのデータを使って、攻略ガイドを書いて共有",
-
 	"about_subtitle_before_cygames": "Granblue.teamは、",
 	"about_subtitle_after_cygames": "のソーシャルRPG「グランブルーファンタジー」の編成を保存・共有できるサイトです。",
 	"about_explanation_0": "編成はアイテムを追加だけで作成。URLをコピペすればどこでも共有でき、アカウント不要です。",
@@ -334,14 +301,12 @@
 	"about_license_explanation": "派生のプロジェクトを作成したら、このプロジェクトをちゃんとリンクし・派生のプロジェクトもオープンソースで同じライセンスで提供されたら、自由にソースコードをダウンロード・改変・再配布を許可されています。",
 	"about_copyright_title": "著作権",
 	"about_copyright_explanation": "このサイトはファン制作です。グランブルーファンタジーおよびすべてのキャラクター・武器・召喚石・アイテム・イラストなどは、株式会社Cygamesの完全所有物です。",
-
 	"page_title_updates": "更新履歴 / granblue.team",
 	"page_title_roadmap": "ロードマップ / granblue.team",
 	"page_desc_updates": "granblue.teamのコンテンツと機能の更新",
 	"page_desc_roadmap": "granblue.teamの今後の予定",
 	"page_title_extension": "Chrome拡張機能 / granblue.team",
 	"page_desc_extension": "granblue.teamのChrome拡張機能をダウンロードしてゲームデータを同期する",
-
 	"ext_description": "Chrome拡張機能を使って、ゲーム内の編成やコレクションを自動的にキャプチャしてgranblue.teamに送信できます。",
 	"ext_download": "拡張機能をダウンロード",
 	"ext_version": "バージョン {version}",
@@ -351,7 +316,6 @@
 	"ext_feature_collection_desc": "ゲーム内のキャラクター、武器、召喚石をキャプチャして、コレクションの共有や新しい編成探しをもっと簡単に。",
 	"ext_feature_parties_title": "編成をインポート",
 	"ext_feature_parties_desc": "編成をインポートして、ワンクリックで調整したり共有したりできます。",
-
 	"ext_faq_title": "これは何？",
 	"ext_faq_how_title": "どのように動作しますか？",
 	"ext_faq_desc": "この拡張機能はバックグラウンドで動作し、プレイ中にブラウザが受信するネットワークデータを受動的に読み取ります。これにより、キャラクター、武器、召喚石、編成などのデータを抽出してgranblue.teamアカウントに送信します。",
@@ -363,7 +327,6 @@
 	"ext_faq_install_desc": "<ol><li>上のボタンから拡張機能をダウンロードしたら、.zipファイルを解凍してください。</li><li>ブラウザで<code>chrome://extensions</code>を開き、右上の<strong>デベロッパーモード</strong>を有効にしてください。</li><li>左上の<strong>パッケージ化されていない拡張機能を読み込む</strong>をクリックし、ステップ1で解凍したフォルダを選択してください。</li><li>ブラウザの拡張機能トレイからアイコンをクリックして開き、granblue.teamアカウントでログインしてください。</li></ol>",
 	"ext_faq_debug_workaround_title": "「'granblue.team' がこのブラウザのデバッグを開始しました。」というメッセージが表示されます。何をすればいいですか？",
 	"ext_faq_debug_workaround_desc": "このメッセージは正常で、拡張機能が動作していることを意味するだけです。安全に無視できます。このメッセージを消したい場合は、以下の手順に従ってください：<br><br><strong>Windows:</strong><ol><li>ブラウザのショートカットを右クリックして<strong>プロパティ</strong>を選択</li><li><strong>ターゲット</strong>フィールドの末尾に <code> --silent-debugger-extension-api</code> を追加</li><li><strong>適用</strong>と<strong>OK</strong>をクリック</li><li>このショートカットを使ってブラウザを起動</li></ol><br><strong>macOS:</strong><ol><li>Automatorを開く（Spotlightで検索）</li><li>新規アプリケーションを作成</li><li><strong>シェルスクリプトを実行</strong>アクションを追加</li><li>スクリプトを以下のように設定：<code>/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --silent-debugger-extension-api</code>（使用しているブラウザのパスに置き換えてください）</li><li>アプリケーションとして保存（例：「Chrome Silent」）</li><li>元のブラウザの代わりにこの新しいアプリを使ってブラウザを起動</li></ol><br><strong>Linux:</strong><ol><li>ブラウザの起動コマンドに <code>--silent-debugger-extension-api</code> フラグを追加</li></ol>",
-
 	"updates_no_updates": "この年のアップデートはありません",
 	"updates_label_characters": "新キャラクター",
 	"updates_label_weapons": "新武器",
@@ -382,7 +345,6 @@
 	"updates_event_flash": "グランデフェス",
 	"updates_event_content": "アップデート",
 	"updates_event_uncap": "上限解放",
-
 	"party_raid_label": "クエスト",
 	"party_raid_unknown": "不明なクエスト",
 	"party_raid_empty": "クエスト未選択",
@@ -401,27 +363,22 @@
 	"party_not_found": "編成が見つかりません",
 	"party_no_data": "このコードに対応する編成データがありません。",
 	"party_untitled": "無題の編成",
-
 	"profile_loading": "編成を読み込み中...",
 	"profile_load_error": "編成の読み込みに失敗しました: {error}",
 	"profile_empty": "編成が見つかりません",
 	"profile_loading_more": "さらに読み込み中...",
 	"profile_seen_all": "すべての編成を表示しました！",
-
 	"explore_empty": "編成が見つかりません。",
-
 	"tag_style": "スタイル",
 	"season_valentine": "バレンタイン",
 	"season_formal": "ドレスアップ",
 	"season_summer": "水着",
 	"season_halloween": "ハロウィン",
 	"season_holiday": "クリスマス",
-
 	"type_character": "キャラクター",
 	"type_weapon": "武器",
 	"type_summon": "召喚石",
 	"type_guidebook": "教本",
-
 	"element_any": "全属性",
 	"element_null": "無",
 	"element_wind": "風",
@@ -430,20 +387,17 @@
 	"element_earth": "土",
 	"element_dark": "闇",
 	"element_light": "光",
-
 	"recency_day": "24時間以内",
 	"recency_week": "1週間以内",
 	"recency_month": "1ヶ月以内",
 	"recency_3months": "3ヶ月以内",
 	"recency_6months": "6ヶ月以内",
 	"recency_year": "1年以内",
-
 	"filter_full_auto": "フルオート",
 	"filter_solo": "ソロ",
 	"filter_auto_guard": "オートガード",
 	"filter_charge_attack": "奥義",
 	"filter_youtube": "Youtube有",
-
 	"filter_cat_element": "属性",
 	"filter_cat_raid": "クエスト",
 	"filter_cat_recency": "期間",
@@ -454,24 +408,20 @@
 	"filter_cat_boost": "ブースト",
 	"filter_cat_side": "方面",
 	"filter_cat_difficulty": "難易度",
-
 	"party_difficulty_label": "難易度",
 	"party_difficulty_tooltip": "{tier}難易度（スコア{score}）",
 	"party_difficulty_pending": "保留中",
 	"party_difficulty_score_label": "難易度スコア",
 	"party_difficulty_breakdown_label": "内訳",
-
 	"difficulty_component_all": "すべて",
 	"difficulty_component_job": "ジョブ",
 	"difficulty_component_accessory": "アクセサリ",
-
 	"boost_omega": "マグナ",
 	"boost_primal": "神石",
 	"boost_odious": "禁禍",
 	"boost_unboosted": "ブーストなし",
 	"side_double": "両面",
 	"side_single": "片面",
-
 	"explore_collection_only": "コレクションのみ",
 	"explore_collection_aria": "コレクションで絞り込む",
 	"explore_settings": "設定",
@@ -485,20 +435,17 @@
 	"explore_no_teams": "編成が見つかりません",
 	"explore_loading_more": "さらに読み込み中...",
 	"explore_end": "すべての編成を表示しました！",
-
 	"explore_filter_placeholder": "入力して検索...",
 	"explore_filter_placeholder_mobile": "チームを絞り込む...",
 	"explore_filter": "フィルター",
 	"explore_filter_tagline": "で最適な編成を見つけよう",
 	"explore_searching": "検索中...",
 	"explore_no_results": "結果が見つかりません",
-
 	"explore_pill_include": "クリックで含める",
 	"explore_pill_exclude": "クリックで除外する",
 	"explore_pill_switch_include": "含めるに切り替え",
 	"explore_pill_switch_exclude": "除外に切り替え",
 	"explore_pill_remove": "フィルターを削除",
-
 	"explore_settings_title": "フィルター設定",
 	"explore_settings_grid_counts": "グリッド数",
 	"explore_settings_min_characters": "最小キャラ数",
@@ -520,14 +467,11 @@
 	"explore_settings_apply": "フィルターを保存する",
 	"explore_settings_reset": "リセット",
 	"explore_advanced_filters": "詳細フィルター",
-
 	"modal_cancel": "キャンセル",
-
 	"grid_untitled": "無名",
 	"grid_no_raid": "マルチなし",
 	"grid_extra": "Extra",
 	"grid_anonymous": "無名",
-
 	"search_tab_all": "すべて",
 	"search_tab_collection": "コレクション",
 	"search_placeholder": "アイテム名で検索",
@@ -541,7 +485,6 @@
 	"search_collection_empty": "コレクションは空です",
 	"search_no_results": "検索結果が見つかりません",
 	"search_start_typing": "入力して検索",
-
 	"search_filter_rarity": "レアリティ",
 	"search_filter_element": "属性",
 	"search_filter_proficiency": "得意武器",
@@ -551,18 +494,14 @@
 	"search_filter_series": "シリーズ",
 	"search_filter_clear": "リセット",
 	"search_filter_all_series": "すべてのシリーズ",
-
 	"search_already_in_team": "編成に追加済み",
 	"search_grid_full": "編成が満杯です",
 	"search_add_item": "{name}を追加",
 	"search_added_pill": "追加済み",
-
 	"unlink_collection_title": "コレクションのリンクを解除しますか？",
 	"unlink_collection_body": "この編成のすべてのコレクションリンクが解除されます。アイテム自体は残ります。",
 	"unlink_collection_confirm": "解除する",
-
 	"search_select_member": "メンバーを選択",
-
 	"proficiency_none": "なし",
 	"proficiency_sabre": "剣",
 	"proficiency_dagger": "短剣",
@@ -574,10 +513,8 @@
 	"proficiency_harp": "楽器",
 	"proficiency_gun": "銃",
 	"proficiency_katana": "刀",
-
 	"details_tab_team": "この編成",
 	"details_tab_info": "情報",
-
 	"details_basic_info": "基本情報",
 	"details_style": "スタイル",
 	"details_rarity": "レアリティ",
@@ -587,7 +524,6 @@
 	"details_proficiencies": "得意武器",
 	"details_proficiency": "得意武器",
 	"details_max_uncap": "最大上限解放",
-
 	"details_hp": "HP",
 	"details_atk": "攻撃力",
 	"details_base": "Min",
@@ -595,12 +531,10 @@
 	"details_flb": "4凸",
 	"details_ulb": "5凸",
 	"details_t5": "超越",
-
 	"details_link_wiki_en": "英語wiki",
 	"details_link_wiki_ja": "gbf-wiki",
 	"details_link_gamewith": "GameWith",
 	"details_link_kamigame": "神ゲー攻略",
-
 	"details_skills": "アビリティ",
 	"details_auras": "加護",
 	"details_weapon_keys": "武器スキル",
@@ -610,7 +544,6 @@
 	"details_unknown_aura": "不明な加護",
 	"details_special_character": "特殊キャラクター",
 	"details_weapon_key_fallback": "武器スキル",
-
 	"details_collection_in_your": "あなたのコレクションに登録済み",
 	"details_collection_in_other": "{owner}さんのコレクションに登録済み",
 	"details_collection_not_in_your": "あなたのコレクションに未登録",
@@ -654,10 +587,6 @@
 	"sync_diff_empty": "—",
 	"sync_diff_column_collection": "コレクション",
 	"sync_diff_column_team": "編成",
-	"type_character": "キャラクター",
-	"type_weapon": "武器",
-	"type_summon": "召喚石",
-
 	"details_uncap_transcendence": "上限解放・超越",
 	"details_max_uncap_level": "上限解放",
 	"details_transcended_to": "超越",
@@ -681,25 +610,20 @@
 	"details_enabled": "有効",
 	"details_friend_summon": "フレンド石",
 	"details_yes": "設定中",
-
 	"details_over_mastery": "EXリミットボーナス",
 	"details_aetherial_mastery": "エーテリアルプラス",
-
 	"details_artifact_level": "Lv.{level}",
 	"details_artifact_type": "タイプ",
 	"details_artifact_quirk": "個性",
 	"details_artifact_score": "スコア",
-
 	"details_weapon_key_pendulums": "ペンデュラム・チェイン",
 	"details_weapon_key_telumas": "テルマ",
 	"details_weapon_key_ultima": "ガフスキー",
 	"details_weapon_key_emblems": "エンブレム",
-
 	"crew_tab_events": "イベント",
 	"crew_tab_members": "団員",
 	"crew_tab_teams": "編成",
 	"crew_tab_roster": "装備一覧",
-
 	"crew_loading": "読み込み中",
 	"crew_intro": "騎空団を作って他のプレイヤーと編成を組み、古戦場の貢献度を記録し、戦略を共有しましょう。",
 	"crew_sign_up": "新規登録",
@@ -711,7 +635,6 @@
 	"crew_starting_soon": "まもなく開始",
 	"crew_starts_in_1_day": "あと1日",
 	"crew_starts_in_days": "あと{days}日",
-
 	"crew_name_label": "騎空団名",
 	"crew_name_placeholder": "騎空団名を入力",
 	"crew_name_placeholder_short": "騎空団名を入力",
@@ -737,16 +660,13 @@
 	"crew_cancel": "キャンセル",
 	"crew_settings_title": "騎空団設定",
 	"crew_create_subtitle": "新しい騎空団を作成し、プレイヤーをスカウトしましょう。",
-
 	"crew_error_name_required": "騎空団名は必須です",
 	"crew_error_name_max": "騎空団名は100文字以内にしてください",
 	"crew_error_gamertag_max": "ゲーマータグは10文字以内にしてください",
 	"crew_error_description_max": "説明は500文字以内にしてください",
-
 	"crew_role_captain": "団長",
 	"crew_role_vice_captain": "副団長",
 	"crew_role_member": "団員",
-
 	"crew_scout": "スカウト",
 	"crew_add_phantoms": "幻団員を追加",
 	"crew_pending_label": "スカウト中",
@@ -767,7 +687,6 @@
 	"crew_retired_players_label": "退団済み",
 	"crew_unknown": "不明",
 	"crew_joined_date": "{date}に参加",
-
 	"crew_view_crew_profile": "団プロフィールを見る",
 	"crew_view_profile": "プロフィールを見る",
 	"crew_edit": "編集",
@@ -786,7 +705,6 @@
 	"crew_transfer_captain_hint": "確認のため騎空団の名前を入力してください。",
 	"crew_transfer_captain_success": "団長を移譲しました。",
 	"crew_transfer_captain_failed": "団長の移譲に失敗しました。",
-
 	"crew_edit_player": "団員を編集",
 	"crew_granblue_id": "グラブルID",
 	"crew_membership_loading": "在籍履歴を読み込み中",
@@ -803,7 +721,6 @@
 	"crew_join_date_hint": "過去の古戦場の貢献度追加時に活動期間を判定するために使用されます。",
 	"crew_retired_hint": "このプレイヤーは騎空団に在籍していません",
 	"crew_retired_date_hint": "退団した団員の活動期間を判定するために使用されます。",
-
 	"crew_phantom": "幻団員",
 	"crew_phantom_unclaimed": "未割当",
 	"crew_phantom_pending": "保留中：{username}",
@@ -814,16 +731,13 @@
 	"crew_phantom_accept": "承認",
 	"crew_confirm_delete_phantom": "幻団員{name}を削除しますか？この操作は元に戻せません。",
 	"crew_delete_phantom_title": "幻団員を削除",
-
 	"crew_filter_all": "全員",
 	"crew_filter_active": "現役",
 	"crew_filter_pending": "保留中",
 	"crew_filter_retired": "退団済み",
-
 	"crew_save_button": "保存",
 	"crew_view": "表示",
 	"crew_from": "{username}から",
-
 	"crew_danger_zone": "危険な操作",
 	"crew_transfer_captain": "団長を移譲",
 	"crew_transfer_desc": "騎空団の所有権を他のメンバーに移譲します。",
@@ -835,7 +749,6 @@
 	"crew_transfer_dialog_title": "団長を移譲",
 	"crew_transfer_dialog_desc": "新しい団長を選択してください。あなたは団員になります。",
 	"crew_transfer_no_members": "移譲先の団員がいません。他に団員が必要です。",
-
 	"crew_bulk_phantom_title": "幻団員を追加",
 	"crew_bulk_phantom_desc": "アカウントのない団員の貢献度を記録するための幻団員です",
 	"crew_bulk_name": "名前",
@@ -847,7 +760,6 @@
 	"crew_bulk_error": "幻団員の作成に失敗しました。入力内容を確認してください。",
 	"crew_bulk_creating": "作成中",
 	"crew_bulk_create_count": "幻団員を{count}人作成",
-
 	"crew_scout_title": "プレイヤーをスカウト",
 	"crew_scout_desc": "騎空団にスカウトするプレイヤーを検索",
 	"crew_scout_success": "{username}をスカウトしました！",
@@ -865,7 +777,6 @@
 	"crew_invite_confirm": "{username}を騎空団にスカウトしますか？",
 	"crew_invite_hint": "スカウトされたプレイヤーは承諾か辞退を選べます。",
 	"crew_invite_sending": "送信中",
-
 	"crew_notifications_title": "通知",
 	"crew_notifications_phantom_section": "幻団員の割り当て",
 	"crew_notifications_phantom_desc": "承認すると幻団員の古戦場貢献度と参加日を引き継ぎます",
@@ -878,7 +789,6 @@
 	"crew_notifications_crew_section": "騎空団の招待",
 	"crew_notifications_phantom_assigned": "割り当て幻団員: {name}",
 	"crew_notifications_joining": "参加中",
-
 	"crew_assign_phantom_title": "幻団員を割り当て",
 	"crew_assign_phantom_desc": "「{name}」を団員に割り当て",
 	"crew_assign_phantom_desc_generic": "団員を選択",
@@ -887,25 +797,22 @@
 	"crew_assign_no_members": "割り当て可能な団員がいません。",
 	"crew_assign_assigning": "割り当て中",
 	"crew_assign_confirm": "割り当て",
-
 	"crew_confirm_claim_title": "幻団員の引き継ぎ",
 	"crew_confirm_claim_success": "幻団員の貢献度と参加日を引き継ぎました。",
 	"crew_confirm_claim_body": "{name}を引き継ぎますか？",
 	"crew_confirm_claim_hint": "古戦場の貢献度や参加日を引き継ぎます。この操作は元に戻せません。",
 	"crew_confirm_claim_confirming": "確認中",
 	"crew_confirm_claim_button": "引き継ぐ",
-
 	"crew_join_title": "騎空団に参加",
 	"crew_join_subtitle": "スカウトを承認して騎空団に参加しましょう。",
 	"crew_join_loading": "スカウトを読み込み中",
 	"crew_join_failed": "スカウトの読み込みに失敗しました",
-	"crew_join_no_invitations": "保留中のスカウトはありません。",
-	"crew_join_hint": "団長か副団長にスカウトを依頼してください。",
+	"crew_join_no_invitations": "保留中のスカウトはありません",
+	"crew_join_hint": "団長か副団長にスカウトを依頼してください",
 	"crew_join_go_back": "戻る",
-	"crew_join_invited_by": "スカウト者",
-	"crew_join_expired": "このスカウトは期限切れです。",
-	"crew_join_expires": "有効期限：",
-
+	"crew_join_invited_by": "{username}からのスカウト",
+	"crew_join_expired": "このスカウトは期限切れです",
+	"crew_join_expires": "期限: {date}",
 	"crew_gw_number": "古戦場 第{number}回",
 	"crew_event_not_found": "イベントが見つかりません",
 	"crew_back_to_crew": "騎空団に戻る",
@@ -931,10 +838,8 @@
 	"crew_gw_event_history": "イベント履歴",
 	"crew_gw_no_score": "貢献度なし",
 	"crew_gw_not_in_crew": "未参加",
-
 	"crew_score_retired": "退団済み",
 	"crew_score_excused": "免除",
-
 	"crew_add_score_title": "貢献度を追加",
 	"crew_score_select_player": "団員を選択",
 	"crew_score_player": "団員",
@@ -953,7 +858,6 @@
 	"crew_score_delete_all": "すべての貢献度を削除",
 	"crew_score_confirm_delete": "この貢献度を削除しますか？",
 	"crew_score_confirm_delete_all": "この団員のすべての貢献度を削除しますか？",
-
 	"crew_edit_crew_score": "貢献度を編集",
 	"crew_add_crew_score": "貢献度を追加",
 	"crew_crew_score": "騎空団貢献度",
@@ -967,12 +871,10 @@
 	"crew_crew_score_delete": "この騎空団の貢献度を削除しますか？",
 	"crew_crew_score_saving": "保存中",
 	"crew_crew_score_delete_button": "貢献度を削除",
-
 	"crew_score_total": "合計",
 	"crew_score_saving": "保存中",
 	"crew_score_delete_failed": "貢献度の削除に失敗しました",
 	"crew_score_delete_all_failed": "貢献度の削除に失敗しました",
-
 	"profile_ingame": "ゲーム内プロフィール",
 	"profile_wiki": "Wikiページ",
 	"profile_youtube": "YouTubeチャンネル",
@@ -1006,23 +908,18 @@
 	"support_summon_share_team_url_label": "プロフィールURL",
 	"support_summon_share_team_url_placeholder": "https://granblue.team/{username}",
 	"support_summon_share_download": "PNGをダウンロード",
-
 	"crew_roster_search": "キャラ、武器、召喚石を検索",
 	"crew_roster_no_members": "団員が見つかりません",
 	"crew_roster_remove": "{name}を外す",
-
 	"crew_error_prefix": "エラー：{error}",
 	"crew_form_error": "フォームエラー",
-
 	"page_title_crew_roster": "装備一覧 / granblue.team",
 	"page_title_crew_teams": "編成 / granblue.team",
 	"page_title_crew_settings": "騎空団設定 / granblue.team",
-
 	"crew_roster_loading": "読み込み中",
 	"crew_roster_remove_aria": "{name}を外す",
 	"crew_roster_empty_items": "キャラ・武器・召喚石を検索して団員の所持状況を確認",
 	"crew_roster_saving": "保存中…",
-
 	"crew_teams_not_in_crew": "騎空団に所属していません",
 	"crew_teams_loading": "共有編成を読み込み中",
 	"crew_teams_load_error": "編成の読み込みに失敗しました：{error}",
@@ -1031,13 +928,10 @@
 	"crew_teams_empty_hint": "団員は編成設定から騎空団に共有できます",
 	"crew_teams_loading_more": "さらに読み込み中",
 	"crew_teams_end": "すべての共有編成を表示しました",
-
 	"crew_update_failed": "騎空団の更新に失敗しました",
-
 	"collection_intro": "キャラ・武器・召喚石を管理して、編成の計画や進捗の共有に役立てましょう。",
 	"collection_sign_up": "新規登録",
 	"collection_log_in": "ログイン",
-
 	"collection_loading": "コレクションを読み込み中",
 	"collection_empty_characters": "コレクションは空です",
 	"collection_empty_characters_hint": "上の「コレクションに追加」ボタンから始めましょう",
@@ -1054,26 +948,21 @@
 	"collection_empty_unowned_hint": "フィルターに該当する未所持アイテムはありません",
 	"collection_empty_unowned_other": "未所持のアイテムはありません",
 	"collection_empty_unowned_other_hint": "フィルターに該当する未所持アイテムはありません",
-
 	"favorites_loading": "お気に入りを読み込み中",
 	"favorites_load_error": "お気に入りの読み込みに失敗しました: {error}",
 	"favorites_empty": "お気に入りの編成はまだありません",
 	"page_title_favorites": "{username}のお気に入り / granblue.team",
-
 	"notifications_loading": "通知を読み込み中",
 	"notifications_empty": "通知はありません",
 	"notifications_empty_hint": "騎空団のスカウトや幻団員の割り当てがここに表示されます",
-
 	"artifact_skills_loading": "スキルを読み込み中",
 	"artifact_skills_error": "スキルの読み込みに失敗しました",
 	"artifact_skills_empty": "利用可能なスキルはありません",
-
 	"page_title_guides": "ガイド",
 	"guides_heading": "ガイド",
 	"guides_description": "グランブルーファンタジーのガイドとリソース",
 	"coming_soon": "近日公開",
 	"guides_coming_soon": "ガイドは近日公開予定です。",
-
 	"sidebar_loading_jobs": "ジョブを読み込み中",
 	"sidebar_jobs_error": "ジョブの読み込みに失敗しました",
 	"sidebar_no_jobs": "ジョブが見つかりません",
@@ -1102,7 +991,6 @@
 	"loading_more": "さらに読み込み中",
 	"filter_clear": "クリア",
 	"filters_title": "フィルター",
-
 	"settings_title": "設定",
 	"settings_loading": "設定を読み込み中",
 	"settings_saving": "保存中",
@@ -1115,7 +1003,6 @@
 	"settings_nav_password": "パスワード",
 	"settings_nav_profile": "プロフィール",
 	"settings_nav_privacy": "プライバシー",
-
 	"settings_username": "ユーザー名",
 	"settings_username_placeholder": "ユーザー名を入力",
 	"settings_display_name": "表示名",
@@ -1144,7 +1031,6 @@
 	"settings_bahamut_subtitle": "管理者機能とツールを有効にする",
 	"settings_umikin_mode": "Umikinモード",
 	"settings_umikin_subtitle": "キャラクターのベース、最終上限解放、限界超越のイラストのみ表示",
-
 	"settings_avatar": "アバター",
 	"settings_avatar_subtitle": "プロフィール画像",
 	"settings_avatar_placeholder": "アバターを選択",
@@ -1194,7 +1080,6 @@
 	"settings_theme_system": "システム",
 	"settings_theme_light": "ライト",
 	"settings_theme_dark": "ダーク",
-
 	"settings_show_crew_tag": "プロフィールに騎空団タグを表示",
 	"settings_show_crew_tag_subtitle": "名前の横に「{gamertag}」を表示する",
 	"settings_collection_visibility": "コレクションの公開範囲",
@@ -1210,7 +1095,6 @@
 	"settings_import_weapons_subtitle": "インポートした編成のアイテムを自動的にコレクションに追加します",
 	"settings_default_import_visibility": "インポート時のデフォルト公開設定",
 	"settings_default_import_visibility_subtitle": "拡張機能からインポートした編成の公開設定",
-
 	"collection_tab_characters": "キャラクター",
 	"collection_tab_weapons": "武器",
 	"collection_tab_summons": "召喚石",
@@ -1226,12 +1110,10 @@
 	"collection_load_error": "コレクションの読み込みに失敗しました",
 	"collection_delete_error": "削除に失敗しました",
 	"collection_private_message": "このコレクションは非公開です",
-
 	"collection_bulk_delete_title": "{count}件の{type}を削除しますか？",
 	"collection_bulk_delete_message": "{count}件の{type}をコレクションから削除しますか？この操作は取り消せません。",
 	"collection_bulk_deleting": "削除中",
 	"collection_bulk_delete_confirm": "削除する",
-
 	"collection_add_title": "{type}をコレクションに追加",
 	"collection_add_search": "{type}を名前で検索…",
 	"collection_add_loading": "{type}を読み込み中",
@@ -1244,7 +1126,6 @@
 	"collection_adding": "追加中",
 	"collection_add_button": "コレクションに追加",
 	"collection_add_error": "追加に失敗しました",
-
 	"collection_entity_characters": "キャラクター",
 	"collection_entity_weapons": "武器",
 	"collection_entity_summons": "召喚石",
@@ -1253,14 +1134,12 @@
 	"collection_entity_weapon": "武器",
 	"collection_entity_summon": "召喚石",
 	"collection_entity_artifact": "アーティファクト",
-
 	"collection_filter_all": "すべて",
 	"collection_filter_standard": "普通",
 	"collection_filter_quirk": "個性",
 	"collection_filter_element": "属性",
 	"collection_filter_proficiency": "得意武器",
 	"collection_filter_slot": "{num}行",
-
 	"sort_label": "並び替え",
 	"sort_name_asc": "名前 A → Z",
 	"sort_name_desc": "名前 Z → A",
@@ -1268,7 +1147,6 @@
 	"sort_element_desc": "属性 ↓",
 	"sort_proficiency_asc": "得意武器 ↑",
 	"sort_proficiency_desc": "得意武器 ↓",
-
 	"filter_element": "属性",
 	"filter_rarity": "レアリティ",
 	"filter_season": "季節",
@@ -1281,7 +1159,6 @@
 	"filter_battle": "バトル",
 	"battle_setting_on": "{setting} オン",
 	"battle_setting_off": "{setting} オフ",
-
 	"job_tier_class_1": "クラスI",
 	"job_tier_class_2": "クラスII",
 	"job_tier_class_3": "クラスIII",
@@ -1290,19 +1167,15 @@
 	"job_tier_ex": "EX",
 	"job_tier_ex2": "EXII",
 	"job_tier_origin_1": "オリジンI",
-
 	"skill_category_main": "Main",
 	"skill_category_sub": "Freeアビリティ",
 	"skill_category_emp": "リミット",
 	"skill_category_base": "Base",
 	"skill_category_unknown": "不明",
-
 	"action_remove": "削除",
-
 	"accessory_type_shield": "盾",
 	"accessory_type_manatura": "マナベリ",
 	"accessory_type_unknown": "不明",
-
 	"race_unknown": "不明",
 	"race_human": "ヒューマン",
 	"race_erune": "エルーン",
@@ -1314,20 +1187,16 @@
 	"race_levleath": "レヴリス",
 	"race_grokkle": "グラックル",
 	"race_wolvir": "ヴォルヴィル",
-
 	"gender_unknown": "不明",
 	"gender_male": "男性",
 	"gender_female": "女性",
 	"gender_other": "その他",
-
 	"font_size_tiny": "極小",
 	"font_size_smaller": "小さめ",
 	"font_size_small": "小",
 	"font_size_default": "標準",
 	"font_size_large": "大",
 	"font_size_extra_large": "特大",
-
-	"series_grand": "リミテッド",
 	"series_zodiac": "十二神将",
 	"series_promo": "プロモ",
 	"series_collab": "コラボ",
@@ -1342,32 +1211,25 @@
 	"series_formal": "ドレスアップ",
 	"series_holiday": "クリスマス",
 	"series_event": "イベント",
-
 	"party_details": "詳細",
 	"party_raid": "クエスト",
 	"party_select_raid": "クエストを選択",
 	"party_description": "説明",
-
 	"skill_slot_current": "現在のアビリティ",
 	"skill_slot_select_job_first": "先にジョブを選択してください",
 	"skill_slot_locked": "この枠は変更できません",
 	"skill_slot_already_equipped": "このアビリティは別の枠に装備済みです",
 	"skill_slot_select": "アビリティを選択",
 	"skill_slot_empty": "未選択",
-
 	"job_no_job": "ジョブなし",
-
 	"collection_pane_info": "情報",
 	"collection_pane_my_collection": "マイコレクション",
 	"collection_viewer_viewing_as": "表示中",
 	"collection_viewer_you": "あなた",
-
 	"delete_team_confirm": "この編成を完全に削除しますか？",
-
 	"artifact_equipped": "装備中",
 	"extra_summons_subaura": "サブ加護召喚石",
 	"summon_friend_label": "サポート",
-
 	"placeholder_select_proficiency": "得意武器を選択",
 	"placeholder_select_element": "属性を選択",
 	"placeholder_select_artifact": "アーティファクトを選択",
@@ -1380,7 +1242,6 @@
 	"placeholder_select_proficiencies": "得意武器を選択",
 	"placeholder_select_rarities": "レアリティを選択",
 	"placeholder_select_elements": "属性を選択",
-
 	"label_befoulment_type": "魔蝕タイプ",
 	"label_exorcism_level": "退魔レベル",
 	"label_exorcism_hint": "退魔レベルが高いほどマイナス効果が軽減されます",
@@ -1388,7 +1249,6 @@
 	"label_level": "レベル",
 	"label_level_n": "レベル {level}",
 	"label_value": "値",
-
 	"toolbar_bold": "太字",
 	"toolbar_italic": "斜体",
 	"toolbar_underline": "下線",
@@ -1398,10 +1258,8 @@
 	"toolbar_ordered_list": "番号付きリスト",
 	"code_copied": "コピー済み",
 	"code_copy": "コピー",
-
 	"error_boundary_message": "このページの表示中にエラーが発生しました",
 	"error_boundary_retry": "もう一度試す",
-
 	"crew_loading_generic": "読み込み中",
 	"crew_loading_invitations": "スカウトを読み込み中",
 	"page_title_crew_create": "騎空団を作成 / granblue.team",
@@ -1410,7 +1268,6 @@
 	"gw_chart_score_label": "貢献度: {score}",
 	"gw_chart_zoom": "ズーム",
 	"gw_chart_reset": "リセット",
-
 	"error_internal_server": "サーバー内部エラー",
 	"error_bad_gateway": "ゲートウェイエラー",
 	"error_service_unavailable": "サービス利用不可",
@@ -1421,7 +1278,6 @@
 	"error_network": "サーバーに接続できません。インターネット接続を確認してください",
 	"error_timeout": "リクエストがタイムアウトしました。もう一度お試しください",
 	"error_cancelled": "リクエストがキャンセルされました",
-
 	"gw_event_not_found": "イベントが見つかりません",
 	"gw_tab_individual": "個人",
 	"gw_tab_crew": "騎空団",
@@ -1446,37 +1302,28 @@
 	"gw_no_score": "貢献度なし",
 	"gw_not_in_crew": "未所属",
 	"gw_failed_load": "貢献度の読み込みに失敗しました",
-
 	"party_no_description": "説明なし",
 	"party_write_description": "説明を書く",
 	"description_read_more": "続きを読む",
 	"party_video": "動画",
 	"party_no_video": "動画なし",
 	"party_add_video": "動画を追加",
-
-	"artifact_equip": "アーティファクトを装備",
 	"artifact_none_equipped": "アーティファクト未装備",
 	"action_change": "変更する",
 	"action_done": "完了",
 	"option_none": "なし",
 	"ax_no_skill": "スキルなし",
 	"raid_no_raids_found": "クエストが見つかりません",
-
 	"action_deleting": "削除中",
 	"action_confirm_delete": "削除する",
-
 	"editor_title_placeholder": "タイトルを入力",
 	"editor_body_placeholder": "/を入力するか、ここに書き始める",
-
 	"mention_unknown": "不明",
 	"mention_search_hint": "2文字以上入力して検索",
 	"mention_no_results": "結果が見つかりません",
 	"mention_skill_cooldown": "使用間隔{n}T",
 	"mention_skill_available_in": "使用可能まで{n}T",
-
 	"modifier_unknown": "不明 +{strength}",
-
-	"party_untitled": "無題の編成",
 	"party_using_own_collection": "{username}のコレクションで作成",
 	"party_using_others_collection": "{username}が{otherUsername}のコレクションで作成",
 	"party_remixed": "{username}が{otherUsername}の編成をリミックス",
@@ -1484,7 +1331,6 @@
 	"party_remixed_anonymous": "{otherUsername}の編成からリミックス",
 	"party_remixed_anonymous_source": "リミックス",
 	"party_remixed_from_anonymous": "{username}が無名の編成をリミックス",
-
 	"time_just_now": "たった今",
 	"time_minute_ago": "1分前",
 	"time_minutes_ago": "{count}分前",
@@ -1494,7 +1340,6 @@
 	"time_days_ago": "{count}日前",
 	"time_one_week_ago": "1週間前",
 	"time_last_updated": "最終更新 {time}",
-
 	"section_general": "一般",
 	"section_uncap_level": "上限解放",
 	"section_sharing": "共有",
@@ -1503,7 +1348,6 @@
 	"section_base_properties": "基本属性",
 	"section_configuration": "設定",
 	"section_equippable_characters": "装備可能キャラクター",
-
 	"party_edit_title_label": "タイトル",
 	"party_edit_video_label": "動画",
 	"party_edit_clear_time": "討伐タイム",
@@ -1523,7 +1367,6 @@
 	"visibility_playlist_note": "プレイリスト内のチームにはそれぞれの公開設定が適用されます。",
 	"pane_select_raid": "クエスト選択",
 	"pane_edit_description": "説明を編集",
-
 	"battle_label": "バトル",
 	"battle_on": "オン",
 	"battle_off": "オフ",
@@ -1532,7 +1375,6 @@
 	"battle_solo": "ソロ",
 	"battle_auto_summon": "オート召喚",
 	"battle_auto_guard": "オートガード",
-
 	"collection_remove_confirm_character": "このキャラクターをコレクションから削除しますか？",
 	"collection_remove_confirm_weapon": "この武器をコレクションから削除しますか？",
 	"collection_remove_confirm_summon": "この召喚石をコレクションから削除しますか？",
@@ -1543,7 +1385,6 @@
 	"collection_no_earring": "耳飾り未装備",
 	"collection_no_matching_characters": "コレクションに該当キャラクターがいません",
 	"pane_edit_artifact": "アーティファクトを編集",
-
 	"toast_failed_remove_character": "キャラクターの削除に失敗しました",
 	"toast_failed_remove_weapon": "武器の削除に失敗しました",
 	"toast_failed_remove_summon": "召喚石の削除に失敗しました",
@@ -1580,13 +1421,11 @@
 	"toast_unsaved_move": "未保存の編成ではアイテムを移動できません",
 	"toast_unsaved_duplicate": "未保存の編成ではアイテムを複製できません",
 	"toast_drag_failed": "ドラッグ操作に失敗しました",
-
 	"skill_filter_all": "すべてのアビリティ",
 	"skill_filter_damaging": "ダメージアビリティ",
 	"skill_filter_buffing": "強化アビリティ",
 	"skill_filter_debuffing": "弱体アビリティ",
 	"skill_filter_healing": "回復アビリティ",
-
 	"befoulment_none": "魔蝕なし",
 	"befoulment_level": "レベル{level}",
 	"befoulment_strength": "効果量",
@@ -1596,7 +1435,6 @@
 	"transcendence_stage": "段階{step}",
 	"search_linked_user": "リンクユーザー",
 	"skill_clear_search": "検索をクリア",
-
 	"editor_text_color": "文字色",
 	"editor_highlight_color": "ハイライト色",
 	"editor_color_default": "デフォルト",
@@ -1642,23 +1480,17 @@
 	"editor_prompt_video_url": "動画のURLを入力してください",
 	"editor_prompt_audio_url": "音声のURLを入力してください",
 	"editor_prompt_iframe_url": "iframeのURLを入力してください",
-
 	"label_element": "属性",
 	"label_proficiency": "得意武器",
 	"label_nickname": "ニックネーム",
 	"label_type": "タイプ",
 	"label_uncap_level": "上限解放段階",
 	"label_equipped": "装備済み",
-
-	"placeholder_select_proficiency": "得意武器を選択",
 	"placeholder_search_by_name": "名前で検索",
 	"placeholder_search": "検索",
-
 	"artifact_select_skill": "スキル{slot}を選択",
 	"artifact_skill_label": "スキル{slot}",
 	"artifact_tap_to_select": "タップして選択",
-	"artifact_quirk": "クセ",
-
 	"tooltip_youtube_video": "YouTube動画",
 	"tooltip_expand_video": "動画を拡大",
 	"tooltip_toggle_sort": "並び順を切替",
@@ -1666,12 +1498,9 @@
 	"tooltip_add_perpetuity_ring": "久遠の指輪を付ける",
 	"tooltip_remove_perpetuity_ring": "久遠の指輪を外す",
 	"tooltip_not_in_collection": "コレクションから削除済み",
-
 	"toast_copied": "コピーしました",
 	"toast_copy_failed": "コピーに失敗しました",
-
 	"button_clear": "クリア",
-
 	"editor_undo": "元に戻す",
 	"editor_redo": "やり直す",
 	"editor_heading_4": "見出し4",
@@ -1703,23 +1532,14 @@
 	"editor_prompt_calculation": "新しい数式を入力:",
 	"editor_prompt_url": "URLを入力:",
 	"editor_image_too_large": "画像が大きすぎます。ファイルサイズ: {filesize} MB",
-
-	"crew_join_title": "騎空団に参加",
 	"crew_join_description": "スカウトを受けて騎空団に参加する",
 	"crew_join_failed_load": "スカウトの読み込みに失敗しました",
-	"crew_join_no_invitations": "保留中のスカウトはありません",
-	"crew_join_hint": "団長か副団長にスカウトを依頼してください",
-	"crew_join_go_back": "戻る",
-	"crew_join_invited_by": "{username}からのスカウト",
 	"crew_join_phantom_assigned": "幻団員: {name}",
 	"crew_join_member_count": "{count}人",
-	"crew_join_expired": "このスカウトは期限切れです",
-	"crew_join_expires": "期限: {date}",
 	"crew_join_declining": "辞退中",
 	"crew_join_decline": "辞退する",
 	"crew_join_joining": "参加中",
 	"crew_join_accept": "参加する",
-
 	"migrate_banner_text": "アカウントに紐付けられていない無名編成があります。",
 	"migrate_banner_action": "編成を移行",
 	"migrate_page_title": "編成の移行",
@@ -1730,7 +1550,6 @@
 	"migrate_page_migrating": "移行中...",
 	"migrate_page_success": "編成の移行が完了しました",
 	"page_title_playlists": "{username}のプレイリスト",
-	"profile_tab_playlists": "プレイリスト",
 	"page_desc_playlists": "{username}のプレイリスト",
 	"page_desc_playlist": "{title} — プレイリスト",
 	"playlist_create": "新規作成",
@@ -1767,7 +1586,6 @@
 	"playlist_page_title": "{title} / {username}のプレイリスト / granblue.team",
 	"toast_added_to_playlist": "「{name}」プレイリストに追加しました",
 	"toast_view_playlist": "プレイリストを見る",
-
 	"context_view_team": "編成を見る",
 	"context_delete_team": "編成を削除",
 	"context_view_playlist": "プレイリストを見る",
@@ -1776,7 +1594,6 @@
 	"confirm_delete_team_message": "この編成を削除しますか？この操作は元に戻せません。",
 	"confirm_delete_playlist_title": "プレイリストを削除",
 	"confirm_delete_playlist_message": "このプレイリストを削除しますか？この操作は元に戻せません。",
-
 	"context_view_character": "キャラクターを見る",
 	"context_view_weapon": "武器を見る",
 	"context_view_summon": "召喚石を見る",
@@ -1787,7 +1604,6 @@
 	"context_view_teams_weapon": "この武器の編成を見る",
 	"context_view_teams_summon": "この召喚石の編成を見る",
 	"context_add_to_teams_view": "編成ビューに追加",
-	"context_view_in_database": "データベースで見る",
 	"sidebar_no_parties_entity": "このアイテムの編成が見つかりません",
 	"tab_stats": "ステータス",
 	"tab_notes": "メモ",
@@ -1882,5 +1698,13 @@
 	"weapon_skills_level": "Lv {n}",
 	"weapon_skills_main_hand": "メイン装備時",
 	"weapon_skills_mc_only": "主人公のみ",
-	"details_full_auto_skills": "フルオートアビリティ"
+	"details_full_auto_skills": "フルオートアビリティ",
+	"pane_skill_boosts": "武器スキル効果",
+	"calculator_open": "スキル計算機を開く",
+	"calculator_enhancements": "武器スキル効果加護",
+	"calculator_empty": "表示できる武器スキル効果がありません。",
+	"calculator_error": "スキル効果を読み込めませんでした。",
+	"calculator_enh_optimus": "オプティマス",
+	"calculator_enh_omega": "マグナ",
+	"calculator_enh_taboo": "オディウス"
 }

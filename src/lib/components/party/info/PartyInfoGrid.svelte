@@ -6,7 +6,9 @@
 	import RaidTile from './RaidTile.svelte'
 	import VideoTile from './VideoTile.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import * as m from '$lib/paraglide/messages'
 	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
+	import CalculatorPane from '$lib/components/sidebar/CalculatorPane.svelte'
 	import { getRaidImage } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
 
@@ -55,6 +57,16 @@
 	const showVideo = $derived(hasVideo || canEdit)
 	const showRow2 = $derived(showVideo || showRaid)
 
+	function handleOpenCalculator() {
+		if (!party.shortcode) return
+		sidebar.openWithComponent(
+			m.pane_skill_boosts(),
+			CalculatorPane,
+			{ shortcode: party.shortcode },
+			{ scrollable: true }
+		)
+	}
+
 	function handleRaidClick() {
 		if (!party.raid) return
 
@@ -102,6 +114,7 @@
 			{onOpenDescription}
 			{onEditDescription}
 			{onOpenEdit}
+			onOpenCalculator={handleOpenCalculator}
 			{menu}
 			fullAuto={party.fullAuto}
 			solo={party.solo}

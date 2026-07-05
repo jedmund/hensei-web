@@ -14,6 +14,7 @@ import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { Party } from '$lib/types/api/party'
 import type { PartyShare } from '$lib/types/api/partyShare'
 import type { PartyVisibility } from '$lib/types/visibility'
+import type { SkillBoosts } from '$lib/types/api/skillBoosts'
 
 /**
  * Parameters for creating a new party
@@ -170,6 +171,13 @@ export class PartyAdapter extends BaseAdapter {
 	async getByShortcode(shortcode: string, options?: RequestOptions): Promise<Party> {
 		const response = await this.request<{ party: Party }>(`/parties/${shortcode}`, options)
 		return response.party
+	}
+
+	/**
+	 * Gets the computed Weapon Skill Boosts panel for a party
+	 */
+	async getSkillBoosts(shortcode: string, options?: RequestOptions): Promise<SkillBoosts> {
+		return this.request<SkillBoosts>(`/parties/${shortcode}/skill_boosts`, options)
 	}
 
 	/**
