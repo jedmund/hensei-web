@@ -260,15 +260,16 @@
 					<Button variant="secondary" size="small" onclick={onOpenEdit}>{m.action_edit()}</Button>
 				{/if}
 				{#if onOpenCalculator}
-					<!-- Placeholder icon until a proper calculator glyph lands -->
-					<Button
-						variant="ghost"
-						size="small"
-						iconOnly
-						icon="list"
-						aria-label={m.calculator_open()}
-						onclick={onOpenCalculator}
-					/>
+					<Tooltip content={m.calculator_open()}>
+						<Button
+							variant="ghost"
+							size="small"
+							iconOnly
+							icon="calculator"
+							aria-label={m.calculator_open()}
+							onclick={onOpenCalculator}
+						/>
+					</Tooltip>
 				{/if}
 				{#if menu}
 					{@render menu()}

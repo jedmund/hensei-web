@@ -107,7 +107,9 @@
 	{:else if error}
 		<div class="state">{m.calculator_error()}</div>
 	{:else if boosts}
-		<Notice variant="yellow">{m.calculator_alpha_notice()}</Notice>
+		<div class="notice">
+			<Notice variant="yellow">{m.calculator_alpha_notice()}</Notice>
+		</div>
 
 		<DetailsSection title={m.calculator_conditions()}>
 			<div class="conditions">
@@ -249,6 +251,10 @@
 		flex-direction: column;
 		gap: $unit-3x;
 		padding: $unit-2x 0;
+	}
+
+	.notice {
+		padding: 0 $unit-2x;
 	}
 
 	.state {
