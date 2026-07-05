@@ -1729,5 +1729,7 @@
 	"calculator_conditions": "Conditions",
 	"calculator_hp": "HP",
 	"calculator_turn": "Turn",
-	"calculator_foe_element": "Foe Element"
+	"calculator_foe_element": "Foe Element",
+	"calculator_hp_value": "HP: {percent}%",
+	"calculator_turn_value": "Turn {turn}"
 }

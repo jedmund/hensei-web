@@ -1710,5 +1710,7 @@
 	"calculator_conditions": "計算条件",
 	"calculator_hp": "HP",
 	"calculator_turn": "ターン",
-	"calculator_foe_element": "敵の属性"
+	"calculator_foe_element": "敵の属性",
+	"calculator_hp_value": "HP: {percent}%",
+	"calculator_turn_value": "{turn}ターン目"
 }

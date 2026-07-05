@@ -7,7 +7,8 @@
 	import DetailsSection from './details/DetailsSection.svelte'
 	import SkillLabel from '$lib/components/SkillLabel.svelte'
 	import Slider from '$lib/components/ui/Slider.svelte'
-	import Select from '$lib/components/ui/Select.svelte'
+	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
+	import DetailRow from './details/DetailRow.svelte'
 	import { skillHighlight } from '$lib/stores/skillHighlight.svelte'
 	import { getWeaponSkillIcon } from '$lib/utils/images'
 	import { getLocale } from '$lib/paraglide/runtime.js'
@@ -25,18 +26,26 @@
 
 	// Battle-state conditions (the game's "Calculator Conditions"). The foe element
 	// initializes from the server's advantaged-foe default on first load.
-	let hpPercent = $state(100)
+	// HP runs 1%, then 5% steps (1, 5, 10, … 100): slider stop 0 → 1%, stop n → n×5.
+	let hpStop = $state(20)
 	let turn = $state(1)
 	let foeElement = $state<string | undefined>(undefined)
 
-	const FOE_ELEMENTS = [
-		{ value: 'fire', label: m.element_fire() },
-		{ value: 'water', label: m.element_water() },
-		{ value: 'earth', label: m.element_earth() },
-		{ value: 'wind', label: m.element_wind() },
-		{ value: 'light', label: m.element_light() },
-		{ value: 'dark', label: m.element_dark() }
-	]
+	const hpPercent = $derived(hpStop === 0 ? 1 : hpStop * 5)
+
+	// API element words ↔ app element ids (1 wind … 6 light)
+	const ELEMENT_WORDS: Record<number, string> = {
+		1: 'wind',
+		2: 'fire',
+		3: 'water',
+		4: 'earth',
+		5: 'dark',
+		6: 'light'
+	}
+	const foeElementId = $derived(
+		Number(Object.keys(ELEMENT_WORDS).find((id) => ELEMENT_WORDS[Number(id)] === foeElement)) ||
+			undefined
+	)
 
 	let requestId = 0
 	async function refetch() {
@@ -92,25 +101,22 @@
 	{:else if boosts}
 		<DetailsSection title={m.calculator_conditions()}>
 			<div class="conditions">
-				<div class="condition">
-					<span class="condition-label">{m.calculator_hp()}</span>
-					<div class="condition-control">
+				<DetailRow label={m.calculator_hp_value({ percent: String(hpPercent) })} noPadding>
+					<div class="condition-slider">
 						<Slider
-							value={hpPercent}
+							value={hpStop}
 							min={0}
-							max={100}
+							max={20}
 							step={1}
 							onValueChange={(v) => {
-								hpPercent = v
+								hpStop = v
 								refetch()
 							}}
 						/>
-						<span class="condition-value">{hpPercent}%</span>
 					</div>
-				</div>
-				<div class="condition">
-					<span class="condition-label">{m.calculator_turn()}</span>
-					<div class="condition-control">
+				</DetailRow>
+				<DetailRow label={m.calculator_turn_value({ turn: String(turn) })} noPadding>
+					<div class="condition-slider">
 						<Slider
 							value={turn}
 							min={1}
@@ -121,24 +127,20 @@
 								refetch()
 							}}
 						/>
-						<span class="condition-value">{turn}</span>
 					</div>
-				</div>
-				<div class="condition">
-					<span class="condition-label">{m.calculator_foe_element()}</span>
-					<div class="condition-control">
-						<Select
-							options={FOE_ELEMENTS}
-							value={foeElement}
-							size="small"
-							fullWidth
-							onValueChange={(v) => {
-								foeElement = v
+				</DetailRow>
+				<DetailRow label={m.calculator_foe_element()} noPadding>
+					<ElementPicker
+						value={foeElementId}
+						size="small"
+						onValueChange={(v) => {
+							if (typeof v === 'number') {
+								foeElement = ELEMENT_WORDS[v]
 								refetch()
-							}}
-						/>
-					</div>
-				</div>
+							}
+						}}
+					/>
+				</DetailRow>
 			</div>
 		</DetailsSection>
 
@@ -238,39 +240,12 @@
 	.conditions {
 		display: flex;
 		flex-direction: column;
-		gap: $unit-2x;
-		padding: 0 $unit;
 	}
 
-	.condition {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-half;
-	}
-
-	.condition-label {
-		font-size: $font-small;
-		font-weight: $medium;
-		color: var(--text-secondary);
-	}
-
-	.condition-control {
+	.condition-slider {
+		min-width: 160px;
 		display: flex;
 		align-items: center;
-		gap: $unit-2x;
-	}
-
-	.condition-control :global(.slider) {
-		flex: 1;
-	}
-
-	.condition-value {
-		font-size: $font-small;
-		font-weight: $medium;
-		color: var(--text-primary);
-		font-variant-numeric: tabular-nums;
-		min-width: $unit-5x;
-		text-align: right;
 	}
 
 	.rows {
