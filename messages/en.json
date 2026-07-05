@@ -1068,13 +1068,8 @@
 	"timezone_same": "Same timezone",
 	"timezone_ahead": [
 		{
-			"declarations": [
-				"input count",
-				"local countPlural = count: plural"
-			],
-			"selectors": [
-				"countPlural"
-			],
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
 			"match": {
 				"countPlural=one": "{count} hour ahead",
 				"countPlural=other": "{count} hours ahead"
@@ -1083,13 +1078,8 @@
 	],
 	"timezone_behind": [
 		{
-			"declarations": [
-				"input count",
-				"local countPlural = count: plural"
-			],
-			"selectors": [
-				"countPlural"
-			],
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
 			"match": {
 				"countPlural=one": "{count} hour behind",
 				"countPlural=other": "{count} hours behind"
