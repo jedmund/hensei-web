@@ -35,6 +35,7 @@ import type {
 	Bullet,
 	CharacterSkill,
 	CharacterSkillLink,
+	SummonAura,
 	WeaponSkill
 } from '$lib/types/api/entities'
 import type {
@@ -63,6 +64,8 @@ export interface Weapon {
 	promotions?: number[]
 	/** Human-readable promotion names */
 	promotionNames?: string[]
+	/** Structured per-tier auras parsed from the wiki (the calculator's source) */
+	summonAuras?: SummonAura[]
 	minHp?: number
 	maxHp?: number
 	minAttack?: number
@@ -273,6 +276,8 @@ export interface Summon {
 	promotions?: number[]
 	/** Human-readable promotion names */
 	promotionNames?: string[]
+	/** Structured per-tier auras parsed from the wiki (the calculator's source) */
+	summonAuras?: SummonAura[]
 	minHp?: number
 	maxHp?: number
 	minAttack?: number
@@ -1377,6 +1382,33 @@ export class EntityAdapter extends BaseAdapter {
 	 */
 	async fetchSummonWiki(id: string): Promise<EntityRawData> {
 		return this.request<EntityRawData>(`/summons/${id}/fetch_wiki`, {
+			method: 'POST'
+		})
+	}
+
+	// ============================================
+	// Re-parse Methods (editor-only)
+	// ============================================
+
+	/**
+	 * Re-parses an entity's stored wikitext into structured rows (weapon
+	 * skills / summon auras / character skills). Pass refetch to pull fresh
+	 * wikitext from the wiki first. Requires editor role (>= 7).
+	 */
+	async reparseWeapon(id: string, refetch = false): Promise<Weapon> {
+		return this.request<Weapon>(`/weapons/${id}/reparse${refetch ? '?refetch=true' : ''}`, {
+			method: 'POST'
+		})
+	}
+
+	async reparseSummon(id: string, refetch = false): Promise<Summon> {
+		return this.request<Summon>(`/summons/${id}/reparse${refetch ? '?refetch=true' : ''}`, {
+			method: 'POST'
+		})
+	}
+
+	async reparseCharacter(id: string, refetch = false): Promise<Character> {
+		return this.request<Character>(`/characters/${id}/reparse${refetch ? '?refetch=true' : ''}`, {
 			method: 'POST'
 		})
 	}

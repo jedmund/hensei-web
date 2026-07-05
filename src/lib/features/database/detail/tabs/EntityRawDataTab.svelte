@@ -11,6 +11,8 @@
 		isLoading?: boolean
 		canEdit?: boolean
 		onFetchWiki?: () => Promise<EntityRawData>
+		/** Re-parses stored wikitext into structured rows (skills/auras); receives fetch-first */
+		onReparse?: (refetch: boolean) => Promise<unknown>
 	}
 
 	let {
@@ -19,15 +21,36 @@
 		gameRawJp,
 		isLoading = false,
 		canEdit = false,
-		onFetchWiki
+		onFetchWiki,
+		onReparse
 	}: Props = $props()
 
 	let selectedLang = $state('en')
 	let isFetching = $state(false)
 	let fetchError = $state<string | null>(null)
+	let isReparsing = $state(false)
+	let reparseFetchFirst = $state(false)
+	let reparseMessage = $state<string | null>(null)
 
 	const currentGameRaw = $derived(selectedLang === 'en' ? gameRawEn : gameRawJp)
 	const formattedGameRaw = $derived(currentGameRaw ? JSON.stringify(currentGameRaw, null, 2) : null)
+
+	async function handleReparse() {
+		if (!onReparse) return
+
+		isReparsing = true
+		fetchError = null
+		reparseMessage = null
+
+		try {
+			await onReparse(reparseFetchFirst)
+			reparseMessage = 'Re-parsed successfully.'
+		} catch (err: unknown) {
+			fetchError = err instanceof Error ? err.message : 'Failed to re-parse'
+		} finally {
+			isReparsing = false
+		}
+	}
 
 	async function handleFetchWiki() {
 		if (!onFetchWiki) return
@@ -52,14 +75,40 @@
 		<section class="raw-section">
 			<div class="section-header">
 				<h3>Wiki Raw</h3>
-				{#if canEdit && onFetchWiki}
-					<Button variant="secondary" size="small" onclick={handleFetchWiki} disabled={isFetching}>
-						{isFetching ? 'Fetching...' : 'Fetch Wiki'}
-					</Button>
+				{#if canEdit}
+					<div class="section-actions">
+						{#if onReparse}
+							<label class="reparse-option">
+								<input type="checkbox" bind:checked={reparseFetchFirst} />
+								Fetch fresh wikitext first
+							</label>
+							<Button
+								variant="secondary"
+								size="small"
+								onclick={handleReparse}
+								disabled={isReparsing || isFetching}
+							>
+								{isReparsing ? 'Re-parsing...' : 'Re-parse'}
+							</Button>
+						{/if}
+						{#if onFetchWiki}
+							<Button
+								variant="secondary"
+								size="small"
+								onclick={handleFetchWiki}
+								disabled={isFetching || isReparsing}
+							>
+								{isFetching ? 'Fetching...' : 'Fetch Wiki'}
+							</Button>
+						{/if}
+					</div>
 				{/if}
 			</div>
 			{#if fetchError}
 				<p class="error">{fetchError}</p>
+			{/if}
+			{#if reparseMessage}
+				<p class="success">{reparseMessage}</p>
 			{/if}
 			{#if wikiRaw}
 				<pre class="raw-content">{wikiRaw}</pre>
@@ -147,5 +196,26 @@
 		color: var(--danger);
 		font-size: typography.$font-small;
 		margin: 0 0 spacing.$unit 0;
+	}
+
+	.success {
+		color: var(--text-secondary);
+		font-size: typography.$font-small;
+		margin: 0 0 spacing.$unit 0;
+	}
+
+	.section-actions {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+	}
+
+	.reparse-option {
+		display: inline-flex;
+		align-items: center;
+		gap: spacing.$unit-half;
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
+		cursor: pointer;
 	}
 </style>

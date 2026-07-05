@@ -25,6 +25,7 @@
 	import SummonStatsSection from '$lib/features/database/summons/sections/SummonStatsSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
+	import SummonAurasTab from '$lib/features/database/summons/tabs/SummonAurasTab.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getSummonImage, getSummonTransformationStages } from '$lib/utils/images'
@@ -193,6 +194,8 @@
 			image={getSummonGridImage(summon)}
 			{currentTab}
 			onTabChange={handleTabChange}
+			showSkills={(summon.summonAuras?.length ?? 0) > 0}
+			skillsLabel="Auras"
 			onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
 			onDownloadSize={canEdit ? handleDownloadSize : undefined}
 			availableSizes={summonSizes}
@@ -346,6 +349,8 @@
 						{/if}
 					</div>
 				</section>
+			{:else if currentTab === 'skills'}
+				<SummonAurasTab auras={summon.summonAuras ?? []} />
 			{:else if currentTab === 'images'}
 				<EntityImagesTab
 					images={summonImages}
@@ -360,6 +365,13 @@
 					gameRawJp={rawDataQuery.data?.gameRawJp}
 					isLoading={rawDataQuery.isLoading}
 					{canEdit}
+					onReparse={canEdit && summon?.id
+						? async (refetch) => {
+								await entityAdapter.reparseSummon(summon.id, refetch)
+								summonQuery.refetch()
+								rawDataQuery.refetch()
+							}
+						: undefined}
 					onFetchWiki={canEdit && summon?.id && summon?.wiki?.en
 						? async () => {
 								// Fetch wiki data client-side (bypasses CloudFlare)
