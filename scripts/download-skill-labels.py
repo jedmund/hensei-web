@@ -43,6 +43,7 @@ MANUAL_FILENAMES = {
     "skill-dmg": "04_icon_skill_dmg.png",
     "stamina": "01_icon_stamina_01.png",
     "enmity": "01_icon_enmity_01.png",
+    "plain-amp": "04_icon_plain_amplify.png",  # not in the wiki gadget at all
     # Exalto: element and frame concatenate without a separator
     **{f"{el}-{frame}": f"01_icon_{el}{frame}.png"
        for el in ("fire", "water", "earth", "wind", "light", "dark")
