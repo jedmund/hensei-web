@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte'
 	import { partyAdapter } from '$lib/api/adapters/party.adapter'
 	import type { SkillBoosts } from '$lib/types/api/skillBoosts'
+	import DetailsSection from './details/DetailsSection.svelte'
 
 	interface Props {
 		shortcode: string
@@ -42,8 +43,7 @@
 		<div class="state">{m.calculator_error()}</div>
 	{:else if boosts}
 		{#if enhancementRows.length > 0}
-			<section class="section">
-				<h3 class="section-title">{m.calculator_enhancements()}</h3>
+			<DetailsSection title={m.calculator_enhancements()}>
 				<ul class="rows">
 					{#each enhancementRows as row (row.key)}
 						<li class="row">
@@ -52,37 +52,37 @@
 						</li>
 					{/each}
 				</ul>
-			</section>
+			</DetailsSection>
 		{/if}
 
-		{#if boosts.lines.length > 0}
-			<section class="section">
-				<h3 class="section-title">{m.pane_skill_boosts()}</h3>
-				<ul class="rows">
-					{#each boosts.lines as line (`${line.key}-${line.series ?? ''}`)}
-						<li class="row">
-							<span class="name">{line.label}</span>
-							<span class="value" class:capped={line.capped}>{line.display}</span>
-						</li>
-					{/each}
-				</ul>
-			</section>
-		{:else}
-			<div class="state">{m.calculator_empty()}</div>
-		{/if}
+		<DetailsSection
+			title={m.pane_skill_boosts()}
+			empty={boosts.lines.length === 0}
+			emptyMessage={m.calculator_empty()}
+		>
+			<ul class="rows">
+				{#each boosts.lines as line (`${line.key}-${line.series ?? ''}`)}
+					<li class="row">
+						<span class="name">{line.label}</span>
+						<span class="value" class:capped={line.capped}>{line.display}</span>
+					</li>
+				{/each}
+			</ul>
+		</DetailsSection>
 	{/if}
 </div>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as *;
+	@use '$src/themes/effects' as *;
 	@use '$src/themes/typography' as *;
 
 	.calculator-pane {
 		display: flex;
 		flex-direction: column;
-		gap: $unit-2x;
-		padding: $unit-2x;
+		gap: $unit-3x;
+		padding: $unit-2x 0;
 	}
 
 	.state {
@@ -90,21 +90,6 @@
 		font-size: $font-regular;
 		padding: $unit-2x 0;
 		text-align: center;
-	}
-
-	.section {
-		display: flex;
-		flex-direction: column;
-		gap: $unit;
-	}
-
-	.section-title {
-		font-size: $font-small;
-		font-weight: $medium;
-		color: var(--text-tertiary);
-		text-transform: uppercase;
-		letter-spacing: 0.04em;
-		margin: 0;
 	}
 
 	.rows {
@@ -120,11 +105,12 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: $unit;
-		padding: $unit $unit-half;
-		border-bottom: 0.5px solid var(--button-bg);
+		padding: $unit;
+		border-radius: $item-corner;
+		@include smooth-transition($duration-quick, background-color);
 
-		&:last-child {
-			border-bottom: none;
+		&:hover {
+			background: var(--button-bg);
 		}
 	}
 
