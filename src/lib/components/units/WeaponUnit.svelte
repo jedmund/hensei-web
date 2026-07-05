@@ -24,6 +24,7 @@
 	} from '$lib/features/details/openDetailsSidebar.svelte'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName } from '$lib/utils/element'
+	import { skillHighlight } from '$lib/stores/skillHighlight.svelte'
 	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
 	import {
 		getAwakeningImage,
@@ -230,6 +231,7 @@
 		if (!item?.weapon) return
 		collectionTeamsPane.addEntityToTeamsView(item.weapon, 'weapon')
 	}
+	const skillDimmed = $derived(skillHighlight.active && !skillHighlight.contributes(item?.id))
 </script>
 
 <div
@@ -238,6 +240,7 @@
 	class:extra={position >= 9}
 	class:is-active={isActive}
 	class:orphaned={item?.orphaned}
+	class:skill-dimmed={skillDimmed}
 >
 	{#if item}
 		<UnitMenuContainer showGearButton={true} gearPosition="top-right">
@@ -455,6 +458,11 @@
 
 	.unit {
 		position: relative;
+		transition: opacity 150ms ease;
+
+		&.skill-dimmed {
+			opacity: 0.3;
+		}
 		width: 100%;
 		display: flex;
 		flex-direction: column;

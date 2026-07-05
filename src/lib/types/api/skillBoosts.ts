@@ -20,6 +20,8 @@ export interface SkillBoostLine {
 	display: string
 	/** True when the value sits at its in-game display cap */
 	capped: boolean
+	/** Grid weapon ids contributing to this line (for grid highlighting) */
+	sources: string[]
 }
 
 export interface SkillBoosts {

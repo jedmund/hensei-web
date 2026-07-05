@@ -1,10 +1,12 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { onMount } from 'svelte'
+	import { onDestroy } from 'svelte'
 	import { partyAdapter } from '$lib/api/adapters/party.adapter'
 	import type { SkillBoosts } from '$lib/types/api/skillBoosts'
 	import DetailsSection from './details/DetailsSection.svelte'
 	import SkillLabel from '$lib/components/SkillLabel.svelte'
+	import { skillHighlight } from '$lib/stores/skillHighlight.svelte'
 
 	interface Props {
 		shortcode: string
@@ -25,6 +27,9 @@
 			loading = false
 		}
 	})
+
+	// Never leave a stale highlight behind when the pane closes
+	onDestroy(() => skillHighlight.clear())
 
 	const enhancementRows = $derived(
 		boosts
@@ -63,7 +68,11 @@
 		>
 			<ul class="rows">
 				{#each boosts.lines as line (`${line.key}-${line.series ?? ''}`)}
-					<li class="row">
+					<li
+						class="row"
+						onmouseenter={() => skillHighlight.set(line.sources)}
+						onmouseleave={() => skillHighlight.clear()}
+					>
 						<SkillLabel slug={line.labelSlug} label={line.label} />
 						<span class="value" class:capped={line.capped}>{line.display}</span>
 					</li>
