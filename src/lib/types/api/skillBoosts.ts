@@ -22,6 +22,23 @@ export interface SkillBoostLine {
 	capped: boolean
 	/** Grid weapon ids contributing to this line (for grid highlighting) */
 	sources: string[]
+	/** Per-skill entries explaining the line's math */
+	breakdown: SkillBoostEntry[]
+}
+
+export interface SkillBoostEntry {
+	/** Producing skill/key/awakening name */
+	name: { en: string | null; ja: string | null }
+	/** Weapon-skill icon stem (getWeaponSkillIcon), or null when no icon exists */
+	icon: string | null
+	/** Contribution value per copy (post-amplification) */
+	value: number
+	/** Pre-amplification value when the enhancement multiplied this entry */
+	base: number | null
+	/** Enhancement multiplier applied to base (e.g. 5.6) */
+	multiplier: number | null
+	/** Number of identical copies contributing this value each */
+	count: number
 }
 
 export interface SkillBoosts {
