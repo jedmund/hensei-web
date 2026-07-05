@@ -1706,5 +1706,9 @@
 	"calculator_error": "スキル効果を読み込めませんでした。",
 	"calculator_enh_optimus": "オプティマス",
 	"calculator_enh_omega": "マグナ",
-	"calculator_enh_taboo": "オディウス"
+	"calculator_enh_taboo": "オディウス",
+	"calculator_conditions": "計算条件",
+	"calculator_hp": "HP",
+	"calculator_turn": "ターン",
+	"calculator_foe_element": "敵の属性"
 }

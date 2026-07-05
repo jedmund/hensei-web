@@ -6,6 +6,8 @@
 	import type { SkillBoosts } from '$lib/types/api/skillBoosts'
 	import DetailsSection from './details/DetailsSection.svelte'
 	import SkillLabel from '$lib/components/SkillLabel.svelte'
+	import Slider from '$lib/components/ui/Slider.svelte'
+	import Select from '$lib/components/ui/Select.svelte'
 	import { skillHighlight } from '$lib/stores/skillHighlight.svelte'
 	import { getWeaponSkillIcon } from '$lib/utils/images'
 	import { getLocale } from '$lib/paraglide/runtime.js'
@@ -21,15 +23,42 @@
 	let error = $state(false)
 	let loading = $state(true)
 
-	onMount(async () => {
+	// Battle-state conditions (the game's "Calculator Conditions"). The foe element
+	// initializes from the server's advantaged-foe default on first load.
+	let hpPercent = $state(100)
+	let turn = $state(1)
+	let foeElement = $state<string | undefined>(undefined)
+
+	const FOE_ELEMENTS = [
+		{ value: 'fire', label: m.element_fire() },
+		{ value: 'water', label: m.element_water() },
+		{ value: 'earth', label: m.element_earth() },
+		{ value: 'wind', label: m.element_wind() },
+		{ value: 'light', label: m.element_light() },
+		{ value: 'dark', label: m.element_dark() }
+	]
+
+	let requestId = 0
+	async function refetch() {
+		const id = ++requestId
 		try {
-			boosts = await partyAdapter.getSkillBoosts(shortcode)
+			const result = await partyAdapter.getSkillBoosts(shortcode, {
+				hpPercent,
+				turn,
+				...(foeElement ? { foeElement } : {})
+			})
+			if (id !== requestId) return // a newer request superseded this one
+			boosts = result
+			foeElement = result.state.foeElement
+			error = false
 		} catch {
-			error = true
+			if (id === requestId) error = true
 		} finally {
-			loading = false
+			if (id === requestId) loading = false
 		}
-	})
+	}
+
+	onMount(refetch)
 
 	// Never leave a stale highlight behind when the pane closes
 	onDestroy(() => skillHighlight.clear())
@@ -61,6 +90,58 @@
 	{:else if error}
 		<div class="state">{m.calculator_error()}</div>
 	{:else if boosts}
+		<DetailsSection title={m.calculator_conditions()}>
+			<div class="conditions">
+				<div class="condition">
+					<span class="condition-label">{m.calculator_hp()}</span>
+					<div class="condition-control">
+						<Slider
+							value={hpPercent}
+							min={0}
+							max={100}
+							step={1}
+							onValueChange={(v) => {
+								hpPercent = v
+								refetch()
+							}}
+						/>
+						<span class="condition-value">{hpPercent}%</span>
+					</div>
+				</div>
+				<div class="condition">
+					<span class="condition-label">{m.calculator_turn()}</span>
+					<div class="condition-control">
+						<Slider
+							value={turn}
+							min={1}
+							max={20}
+							step={1}
+							onValueChange={(v) => {
+								turn = v
+								refetch()
+							}}
+						/>
+						<span class="condition-value">{turn}</span>
+					</div>
+				</div>
+				<div class="condition">
+					<span class="condition-label">{m.calculator_foe_element()}</span>
+					<div class="condition-control">
+						<Select
+							options={FOE_ELEMENTS}
+							value={foeElement}
+							size="small"
+							fullWidth
+							onValueChange={(v) => {
+								foeElement = v
+								refetch()
+							}}
+						/>
+					</div>
+				</div>
+			</div>
+		</DetailsSection>
+
 		{#if enhancementRows.length > 0}
 			<DetailsSection title={m.calculator_enhancements()}>
 				<ul class="rows">
@@ -152,6 +233,44 @@
 		font-size: $font-regular;
 		padding: $unit-2x 0;
 		text-align: center;
+	}
+
+	.conditions {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
+		padding: 0 $unit;
+	}
+
+	.condition {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-half;
+	}
+
+	.condition-label {
+		font-size: $font-small;
+		font-weight: $medium;
+		color: var(--text-secondary);
+	}
+
+	.condition-control {
+		display: flex;
+		align-items: center;
+		gap: $unit-2x;
+	}
+
+	.condition-control :global(.slider) {
+		flex: 1;
+	}
+
+	.condition-value {
+		font-size: $font-small;
+		font-weight: $medium;
+		color: var(--text-primary);
+		font-variant-numeric: tabular-nums;
+		min-width: $unit-5x;
+		text-align: right;
 	}
 
 	.rows {

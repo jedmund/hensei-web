@@ -1725,5 +1725,9 @@
 	"calculator_error": "Couldn't load skill boosts.",
 	"calculator_enh_optimus": "Optimus",
 	"calculator_enh_omega": "Omega",
-	"calculator_enh_taboo": "Odious"
+	"calculator_enh_taboo": "Odious",
+	"calculator_conditions": "Conditions",
+	"calculator_hp": "HP",
+	"calculator_turn": "Turn",
+	"calculator_foe_element": "Foe Element"
 }
