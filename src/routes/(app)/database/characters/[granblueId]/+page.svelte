@@ -560,6 +560,13 @@
 					gameRawJp={rawDataQuery.data?.gameRawJp}
 					isLoading={rawDataQuery.isLoading}
 					{canEdit}
+					onReparse={canEdit && character?.id
+						? async (refetch) => {
+								await entityAdapter.reparseCharacter(character.id, refetch)
+								characterQuery.refetch()
+								rawDataQuery.refetch()
+							}
+						: undefined}
 					onFetchWiki={canEdit && character?.id && character?.wiki?.en
 						? async () => {
 								// Fetch wiki data client-side (bypasses CloudFlare)

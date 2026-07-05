@@ -35,8 +35,15 @@ import type {
 	Bullet,
 	CharacterSkill,
 	CharacterSkillLink,
+	SummonAura,
 	WeaponSkill
 } from '$lib/types/api/entities'
+import type {
+	DeleteImpact,
+	PanelValidation,
+	WeaponSkillFamily,
+	WeaponSkillFamilySummary
+} from '$lib/types/api/weaponSkillFamily'
 import type {
 	WeaponSeriesVariant,
 	CreateWeaponSeriesVariantPayload,
@@ -63,6 +70,8 @@ export interface Weapon {
 	promotions?: number[]
 	/** Human-readable promotion names */
 	promotionNames?: string[]
+	/** Structured per-tier auras parsed from the wiki (the calculator's source) */
+	summonAuras?: SummonAura[]
 	minHp?: number
 	maxHp?: number
 	minAttack?: number
@@ -273,6 +282,8 @@ export interface Summon {
 	promotions?: number[]
 	/** Human-readable promotion names */
 	promotionNames?: string[]
+	/** Structured per-tier auras parsed from the wiki (the calculator's source) */
+	summonAuras?: SummonAura[]
 	minHp?: number
 	maxHp?: number
 	minAttack?: number
@@ -1379,6 +1390,138 @@ export class EntityAdapter extends BaseAdapter {
 		return this.request<EntityRawData>(`/summons/${id}/fetch_wiki`, {
 			method: 'POST'
 		})
+	}
+
+	// ============================================
+	// Re-parse Methods (editor-only)
+	// ============================================
+
+	/**
+	 * Re-parses an entity's stored wikitext into structured rows (weapon
+	 * skills / summon auras / character skills). Pass refetch to pull fresh
+	 * wikitext from the wiki first. Requires editor role (>= 7).
+	 */
+	async reparseWeapon(id: string, refetch = false): Promise<Weapon> {
+		return this.request<Weapon>(`/weapons/${id}/reparse${refetch ? '?refetch=true' : ''}`, {
+			method: 'POST'
+		})
+	}
+
+	async reparseSummon(id: string, refetch = false): Promise<Summon> {
+		return this.request<Summon>(`/summons/${id}/reparse${refetch ? '?refetch=true' : ''}`, {
+			method: 'POST'
+		})
+	}
+
+	async reparseCharacter(id: string, refetch = false): Promise<Character> {
+		return this.request<Character>(`/characters/${id}/reparse${refetch ? '?refetch=true' : ''}`, {
+			method: 'POST'
+		})
+	}
+
+	// ============================================
+	// Weapon Skill Family Methods (admin editor)
+	// ============================================
+
+	async getWeaponSkillFamilies(filters?: {
+		q?: string
+		series?: string
+		size?: string
+		boostType?: string
+	}): Promise<WeaponSkillFamilySummary[]> {
+		const query = new URLSearchParams()
+		if (filters?.q) query.set('q', filters.q)
+		if (filters?.series) query.set('series', filters.series)
+		if (filters?.size) query.set('size', filters.size)
+		if (filters?.boostType) query.set('boost_type', filters.boostType)
+		const qs = query.size > 0 ? `?${query.toString()}` : ''
+		const response = await this.request<{ weaponSkillFamilies: WeaponSkillFamilySummary[] }>(
+			`/weapon_skill_families${qs}`
+		)
+		return response.weaponSkillFamilies
+	}
+
+	async getWeaponSkillFamily(modifier: string): Promise<WeaponSkillFamily> {
+		const response = await this.request<{ weaponSkillFamily: WeaponSkillFamily }>(
+			`/weapon_skill_families/${encodeURIComponent(modifier)}`
+		)
+		return response.weaponSkillFamily
+	}
+
+	async createWeaponSkillDatum(payload: Record<string, unknown>): Promise<unknown> {
+		return this.request('/weapon_skill_data', {
+			method: 'POST',
+			body: { weapon_skill_datum: payload }
+		})
+	}
+
+	async updateWeaponSkillDatum(id: string, payload: Record<string, unknown>): Promise<unknown> {
+		return this.request(`/weapon_skill_data/${id}`, {
+			method: 'PATCH',
+			body: { weapon_skill_datum: payload }
+		})
+	}
+
+	async deleteWeaponSkillDatum(id: string, force = false): Promise<DeleteImpact> {
+		return this.request<DeleteImpact>(`/weapon_skill_data/${id}${force ? '?force=true' : ''}`, {
+			method: 'DELETE'
+		})
+	}
+
+	async createWeaponSkillEffect(payload: Record<string, unknown>): Promise<unknown> {
+		return this.request('/weapon_skill_effects', {
+			method: 'POST',
+			body: { weapon_skill_effect: payload }
+		})
+	}
+
+	async updateWeaponSkillEffect(id: string, payload: Record<string, unknown>): Promise<unknown> {
+		return this.request(`/weapon_skill_effects/${id}`, {
+			method: 'PATCH',
+			body: { weapon_skill_effect: payload }
+		})
+	}
+
+	async deleteWeaponSkillEffect(id: string, force = false): Promise<DeleteImpact> {
+		return this.request<DeleteImpact>(`/weapon_skill_effects/${id}${force ? '?force=true' : ''}`, {
+			method: 'DELETE'
+		})
+	}
+
+	async updateWeaponSkillVersion(id: string, payload: Record<string, unknown>): Promise<unknown> {
+		return this.request(`/weapon_skill_versions/${id}`, {
+			method: 'PATCH',
+			body: { weapon_skill_version: payload }
+		})
+	}
+
+	async updateSkillLabels(
+		id: string,
+		payload: {
+			name_en?: string
+			name_jp?: string
+			description_en?: string
+			description_jp?: string
+		}
+	): Promise<{ sharedByCount: number }> {
+		return this.request<{ sharedByCount: number }>(`/skills/${id}`, {
+			method: 'PATCH',
+			body: { skill: payload }
+		})
+	}
+
+	async updateWeaponKey(
+		id: string,
+		payload: { name_en?: string; name_jp?: string }
+	): Promise<unknown> {
+		return this.request(`/weapon_keys/${id}`, {
+			method: 'PATCH',
+			body: { weapon_key: payload }
+		})
+	}
+
+	async validatePanels(): Promise<PanelValidation> {
+		return this.request<PanelValidation>('/calculator/validate_panels', { method: 'POST' })
 	}
 
 	// ============================================

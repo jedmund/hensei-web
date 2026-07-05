@@ -266,6 +266,19 @@ export interface CharacterSkillLink {
 }
 
 // Summon entity from SummonBlueprint
+/** One parsed summon aura row (main or sub) at a given uncap/transcendence tier */
+export interface SummonAura {
+	id: string
+	slot: 'main' | 'sub' | string
+	target: string
+	element?: string | null
+	value?: number | null
+	uncapLevel: number
+	transcendenceStage: number
+	condition?: string | null
+	description: { en?: string | null; ja?: string | null }
+}
+
 export interface Summon {
 	id: string
 	granblueId: string
@@ -279,6 +292,8 @@ export interface Summon {
 		transcendence: boolean
 	}
 	subaura?: boolean
+	/** Structured per-tier auras parsed from the wiki (the calculator's source) */
+	summonAuras?: SummonAura[]
 	limit?: boolean
 	/** Whether this summon can be set as a support (friend) summon. Defaults
 	 * to true server-side; only certain summons are explicitly excluded. */
