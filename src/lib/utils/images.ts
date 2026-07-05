@@ -174,14 +174,18 @@ export function getSummonTransformation(
 
 /**
  * Returns the list of available transformation stages for a weapon.
- * Uses the uncap flags (transcendence) to determine which stages exist.
+ *
+ * Stage-specific art only exists for series that ship it (see
+ * {@link seriesHasTranscendenceArt}); pass that result as `hasTranscendenceArt`.
+ * Weapons that transcend but reuse their base art (e.g. Illustrious) expose only
+ * the Base stage so we never request a non-existent {id}_02/{id}_03 image.
  */
-export function getWeaponTransformationStages(uncap?: {
-	transcendence?: boolean
-}): TransformationStage[] {
+export function getWeaponTransformationStages(
+	hasTranscendenceArt?: boolean
+): TransformationStage[] {
 	const stages: TransformationStage[] = [{ id: '01', label: 'Base', suffix: undefined }]
 
-	if (uncap?.transcendence) {
+	if (hasTranscendenceArt) {
 		stages.push(
 			{ id: '02', label: 'Transcendence (1)', suffix: '02' },
 			{ id: '03', label: 'Transcendence (5)', suffix: '03' }
@@ -194,14 +198,18 @@ export function getWeaponTransformationStages(uncap?: {
 /**
  * Calculates the weapon transformation suffix based on transcendence step.
  * Returns undefined for base art, '02' for transcendence 1-4, '03' for transcendence 5.
- * Only applies to weapons that have transcendence and are at uncap level 6.
+ *
+ * Only weapons whose series ships stage-specific art swap images — pass
+ * {@link seriesHasTranscendenceArt} as `hasTranscendenceArt`. Weapons that
+ * transcend but reuse their base art (e.g. Illustrious) always return undefined
+ * so their grid keeps the base image.
  */
 export function getWeaponTransformation(
-	hasTranscendence?: boolean,
+	hasTranscendenceArt?: boolean,
 	uncapLevel?: number,
 	transcendenceStep?: number
 ): string | undefined {
-	if (!hasTranscendence || uncapLevel !== 6) return undefined
+	if (!hasTranscendenceArt || uncapLevel !== 6) return undefined
 	if (transcendenceStep === 5) return '03'
 	if (transcendenceStep && transcendenceStep >= 1) return '02'
 	return undefined

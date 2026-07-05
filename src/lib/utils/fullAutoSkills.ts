@@ -4,7 +4,8 @@ import { getCharacterSkillIcon } from '$lib/utils/images'
 
 /** An ability slot surfaced in the Full Auto section. */
 export interface AbilitySlot {
-	/** 1-based slot number, used as the fullAutoSkills key. */
+	/** 0-based slot number, used as the fullAutoSkills key (matches the API's
+	 * "0".."3" convention, shared with the MC abilities). */
 	slot: number
 	/** Localized base ability name. */
 	name: string
@@ -47,7 +48,9 @@ export function getAbilitySlots(character: Character | undefined): AbilitySlot[]
 			if (!base) return []
 			return [
 				{
-					slot: skill.position,
+					// API ability positions are 1-based (1..4); shift to the 0-based
+					// "0".."3" key convention shared with the MC abilities.
+					slot: skill.position - 1,
 					name: localizedName(base.name),
 					iconUrl: getCharacterSkillIcon(base.gameIcon),
 					eligible: isEligible(base)

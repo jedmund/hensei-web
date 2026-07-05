@@ -43,6 +43,8 @@ export interface UpdatePartyParams extends CreatePartyParams {
 	autoGuard?: boolean
 	autoSummon?: boolean
 	chargeAttack?: boolean
+	/** Per-slot Full Auto toggles for the MC's abilities ("0".."3" → boolean). */
+	fullAutoSkills?: Record<string, boolean>
 	// Performance metrics (null to clear)
 	clearTime?: number | null
 	buttonCount?: number | null
