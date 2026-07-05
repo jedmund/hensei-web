@@ -8,7 +8,6 @@
 	import SkillLabel from '$lib/components/SkillLabel.svelte'
 	import Slider from '$lib/components/ui/Slider.svelte'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
-	import DetailRow from './details/DetailRow.svelte'
 	import { skillHighlight } from '$lib/stores/skillHighlight.svelte'
 	import { getWeaponSkillIcon } from '$lib/utils/images'
 	import { getLocale } from '$lib/paraglide/runtime.js'
@@ -16,9 +15,11 @@
 
 	interface Props {
 		shortcode: string
+		/** Party element id (1 wind … 6 light) for elemental slider theming */
+		element?: number
 	}
 
-	let { shortcode }: Props = $props()
+	let { shortcode, element }: Props = $props()
 
 	let boosts = $state<SkillBoosts | null>(null)
 	let error = $state(false)
@@ -45,6 +46,11 @@
 	const foeElementId = $derived(
 		Number(Object.keys(ELEMENT_WORDS).find((id) => ELEMENT_WORDS[Number(id)] === foeElement)) ||
 			undefined
+	)
+
+	type SliderElement = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+	const partyElement = $derived(
+		element ? (ELEMENT_WORDS[element] as SliderElement | undefined) : undefined
 	)
 
 	let requestId = 0
@@ -101,35 +107,43 @@
 	{:else if boosts}
 		<DetailsSection title={m.calculator_conditions()}>
 			<div class="conditions">
-				<DetailRow label={m.calculator_hp_value({ percent: String(hpPercent) })} noPadding>
-					<div class="condition-slider">
-						<Slider
-							value={hpStop}
-							min={0}
-							max={20}
-							step={1}
-							onValueChange={(v) => {
-								hpStop = v
-								refetch()
-							}}
-						/>
+				<div class="filter-group">
+					<div class="filter-header">
+						<span class="filter-label">{m.calculator_hp_value({ percent: String(hpPercent) })}</span
+						>
 					</div>
-				</DetailRow>
-				<DetailRow label={m.calculator_turn_value({ turn: String(turn) })} noPadding>
-					<div class="condition-slider">
-						<Slider
-							value={turn}
-							min={1}
-							max={20}
-							step={1}
-							onValueChange={(v) => {
-								turn = v
-								refetch()
-							}}
-						/>
+					<Slider
+						value={hpStop}
+						min={0}
+						max={20}
+						step={1}
+						element={partyElement}
+						onValueChange={(v) => {
+							hpStop = v
+							refetch()
+						}}
+					/>
+				</div>
+				<div class="filter-group">
+					<div class="filter-header">
+						<span class="filter-label">{m.calculator_turn_value({ turn: String(turn) })}</span>
 					</div>
-				</DetailRow>
-				<DetailRow label={m.calculator_foe_element()} noPadding>
+					<Slider
+						value={turn}
+						min={1}
+						max={20}
+						step={1}
+						element={partyElement}
+						onValueChange={(v) => {
+							turn = v
+							refetch()
+						}}
+					/>
+				</div>
+				<div class="filter-group">
+					<div class="filter-header">
+						<span class="filter-label">{m.calculator_foe_element()}</span>
+					</div>
 					<ElementPicker
 						value={foeElementId}
 						size="small"
@@ -140,7 +154,7 @@
 							}
 						}}
 					/>
-				</DetailRow>
+				</div>
 			</div>
 		</DetailsSection>
 
@@ -240,12 +254,28 @@
 	.conditions {
 		display: flex;
 		flex-direction: column;
+		gap: $unit-2x;
+		padding: 0 $unit;
 	}
 
-	.condition-slider {
-		min-width: 160px;
+	.filter-group {
 		display: flex;
+		flex-direction: column;
+		gap: $unit;
+	}
+
+	.filter-header {
+		display: flex;
+		justify-content: space-between;
 		align-items: center;
+		padding: 0 $unit-half;
+	}
+
+	.filter-label {
+		display: block;
+		font-size: $font-small;
+		font-weight: $bold;
+		color: var(--text-secondary);
 	}
 
 	.rows {

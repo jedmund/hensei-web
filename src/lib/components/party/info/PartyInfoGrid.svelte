@@ -62,7 +62,7 @@
 		sidebar.openWithComponent(
 			m.pane_skill_boosts(),
 			CalculatorPane,
-			{ shortcode: party.shortcode },
+			{ shortcode: party.shortcode, element: party.element },
 			{ scrollable: true }
 		)
 	}
