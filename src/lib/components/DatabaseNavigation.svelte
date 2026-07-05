@@ -21,6 +21,7 @@
 	const databaseJobsHref = $derived(localizeHref('/database/jobs'))
 	const databaseGwEventsHref = $derived(localizeHref('/database/gw-events'))
 	const databaseArtifactSkillsHref = $derived(localizeHref('/database/artifact-skills'))
+	const databaseWeaponSkillsHref = $derived(localizeHref('/database/weapon-skills'))
 	const databaseBulletsHref = $derived(localizeHref('/database/bullets'))
 	const databaseRaidsHref = $derived(localizeHref('/database/raids'))
 	const databaseRaidGroupsHref = $derived(localizeHref('/database/raid-groups'))
@@ -126,6 +127,9 @@
 						<DropdownMenu.Separator class="dropdown-separator" />
 						<DropdownItem>
 							<a href={databaseArtifactSkillsHref}>{m.nav_artifact_skills()}</a>
+						</DropdownItem>
+						<DropdownItem>
+							<a href={databaseWeaponSkillsHref}>{m.nav_weapon_skills()}</a>
 						</DropdownItem>
 						<DropdownItem>
 							<a href={databaseBulletsHref}>{m.nav_bullets()}</a>
