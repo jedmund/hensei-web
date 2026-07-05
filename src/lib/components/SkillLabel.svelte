@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getLocale } from '$lib/paraglide/runtime.js'
+	import { getSkillLabelImage } from '$lib/utils/images'
 
 	interface Props {
 		/** In-game label texture slug (e.g. "omega-might"); null renders the text label */
@@ -10,28 +11,29 @@
 
 	let { slug, label }: Props = $props()
 
-	// Build-time manifest of available label textures, per locale. Japanese variants
-	// drop into src/assets/skill-labels/ja/ with the same filenames and take over
-	// automatically for the ja locale; missing files fall back to en, then to text.
-	const textures = import.meta.glob('/src/assets/skill-labels/*/*.png', {
-		eager: true,
-		query: '?url',
-		import: 'default'
-	}) as Record<string, string>
+	// Badges live on S3 with the rest of our images (icons/skill-labels/{en,ja}/).
+	// Load order: locale variant → en variant → plain text, stepping down on 404.
+	type Stage = 'locale' | 'en' | 'text'
+	let stage = $state<Stage>('locale')
+
+	// Reset the fallback chain whenever the slug (or locale) changes.
+	$effect(() => {
+		void slug
+		stage = getLocale() === 'en' ? 'en' : 'locale'
+	})
 
 	const src = $derived.by(() => {
-		if (!slug) return null
-		const locale = getLocale()
-		return (
-			textures[`/src/assets/skill-labels/${locale}/${slug}.png`] ??
-			textures[`/src/assets/skill-labels/en/${slug}.png`] ??
-			null
-		)
+		if (!slug || stage === 'text') return null
+		return getSkillLabelImage(slug, stage === 'locale' ? getLocale() : 'en')
 	})
+
+	function handleError() {
+		stage = stage === 'locale' ? 'en' : 'text'
+	}
 </script>
 
 {#if src}
-	<img class="skill-label" {src} alt={label} loading="lazy" />
+	<img class="skill-label" {src} alt={label} loading="lazy" onerror={handleError} />
 {:else}
 	<span class="skill-label-text">{label}</span>
 {/if}
