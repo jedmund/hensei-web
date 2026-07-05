@@ -31,7 +31,7 @@
 </script>
 
 {#if src}
-	<img class="skill-label" {src} alt={label} height="26" loading="lazy" />
+	<img class="skill-label" {src} alt={label} loading="lazy" />
 {:else}
 	<span class="skill-label-text">{label}</span>
 {/if}
@@ -41,7 +41,7 @@
 
 	.skill-label {
 		display: block;
-		height: 26px;
+		height: $font-xlarge; // badge stands in for the row's text, so track the type scale
 		width: auto;
 	}
 

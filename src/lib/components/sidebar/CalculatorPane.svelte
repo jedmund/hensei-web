@@ -213,8 +213,8 @@
 	}
 
 	.entry-icon {
-		width: 20px;
-		height: 20px;
+		width: $unit-3x;
+		height: $unit-3x;
 		flex-shrink: 0;
 	}
 
