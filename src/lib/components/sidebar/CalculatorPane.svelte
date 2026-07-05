@@ -34,8 +34,9 @@
 
 	const hpPercent = $derived(hpStop === 0 ? 1 : hpStop * 5)
 
-	// API element words ↔ app element ids (1 wind … 6 light)
+	// API element words ↔ app element ids (0 null, 1 wind … 6 light)
 	const ELEMENT_WORDS: Record<number, string> = {
+		0: 'null',
 		1: 'wind',
 		2: 'fire',
 		3: 'water',
@@ -43,10 +44,10 @@
 		5: 'dark',
 		6: 'light'
 	}
-	const foeElementId = $derived(
-		Number(Object.keys(ELEMENT_WORDS).find((id) => ELEMENT_WORDS[Number(id)] === foeElement)) ||
-			undefined
-	)
+	const foeElementId = $derived.by(() => {
+		const entry = Object.entries(ELEMENT_WORDS).find(([, word]) => word === foeElement)
+		return entry ? Number(entry[0]) : undefined
+	})
 
 	type SliderElement = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	const partyElement = $derived(
@@ -146,6 +147,8 @@
 					</div>
 					<ElementPicker
 						value={foeElementId}
+						contained
+						includeAny
 						size="small"
 						onValueChange={(v) => {
 							if (typeof v === 'number') {
