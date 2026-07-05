@@ -4,6 +4,7 @@
 	import { partyAdapter } from '$lib/api/adapters/party.adapter'
 	import type { SkillBoosts } from '$lib/types/api/skillBoosts'
 	import DetailsSection from './details/DetailsSection.svelte'
+	import SkillLabel from '$lib/components/SkillLabel.svelte'
 
 	interface Props {
 		shortcode: string
@@ -63,7 +64,7 @@
 			<ul class="rows">
 				{#each boosts.lines as line (`${line.key}-${line.series ?? ''}`)}
 					<li class="row">
-						<span class="name">{line.label}</span>
+						<SkillLabel slug={line.labelSlug} label={line.label} />
 						<span class="value" class:capped={line.capped}>{line.display}</span>
 					</li>
 				{/each}

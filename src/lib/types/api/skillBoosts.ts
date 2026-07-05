@@ -10,6 +10,10 @@ export interface SkillBoostLine {
 	series: string | null
 	/** Panel label (e.g. "Ω Might", "Skill DMG Cap") */
 	label: string
+	/** In-game label texture slug (e.g. "omega-might"), or null when no badge exists */
+	labelSlug: string | null
+	/** Game panel group: attack | hp | defense | special | overskill | ax | other */
+	group: string
 	/** Numeric value (percent, or flat count for supplements) */
 	value: number
 	/** Preformatted display string (e.g. "756.8%", "+100,000") */
