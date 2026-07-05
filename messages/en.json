@@ -1731,5 +1731,6 @@
 	"calculator_turn": "Turn",
 	"calculator_foe_element": "Foe Element",
 	"calculator_hp_value": "HP: {percent}%",
-	"calculator_turn_value": "Turn {turn}"
+	"calculator_turn_value": "Turn {turn}",
+	"calculator_alpha_notice": "This feature is in alpha and may display incorrect data. If you find incorrect calculations, please report in Discord."
 }

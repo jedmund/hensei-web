@@ -1712,5 +1712,6 @@
 	"calculator_turn": "ターン",
 	"calculator_foe_element": "敵の属性",
 	"calculator_hp_value": "HP: {percent}%",
-	"calculator_turn_value": "{turn}ターン目"
+	"calculator_turn_value": "{turn}ターン目",
+	"calculator_alpha_notice": "この機能はアルファ版のため、正しくないデータが表示される場合があります。計算の誤りを見つけた場合は、Discordでご報告ください。"
 }

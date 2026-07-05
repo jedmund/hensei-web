@@ -6,6 +6,7 @@
 	import type { SkillBoosts } from '$lib/types/api/skillBoosts'
 	import DetailsSection from './details/DetailsSection.svelte'
 	import SkillLabel from '$lib/components/SkillLabel.svelte'
+	import Notice from '$lib/components/ui/Notice.svelte'
 	import Slider from '$lib/components/ui/Slider.svelte'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import { skillHighlight } from '$lib/stores/skillHighlight.svelte'
@@ -106,6 +107,8 @@
 	{:else if error}
 		<div class="state">{m.calculator_error()}</div>
 	{:else if boosts}
+		<Notice variant="yellow">{m.calculator_alpha_notice()}</Notice>
+
 		<DetailsSection title={m.calculator_conditions()}>
 			<div class="conditions">
 				<div class="filter-group">
