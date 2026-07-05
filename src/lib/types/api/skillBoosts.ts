@@ -41,6 +41,15 @@ export interface SkillBoostEntry {
 	count: number
 }
 
+export interface SkillBoostState {
+	/** Party HP percent the panel is evaluated at (0-100) */
+	hpPercent: number
+	/** Battle turn (1+) */
+	turn: number
+	/** Foe element ("fire" | "water" | ... ), server-defaulted to the advantaged foe */
+	foeElement?: string
+}
+
 export interface SkillBoosts {
 	/** Per-frame weapon skill enhancement totals (percent) */
 	enhancements: {
@@ -49,4 +58,6 @@ export interface SkillBoosts {
 		taboo: number
 	}
 	lines: SkillBoostLine[]
+	/** The battle state the panel was computed at (clamped/defaulted server-side) */
+	state: SkillBoostState
 }

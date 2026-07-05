@@ -174,10 +174,20 @@ export class PartyAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Gets the computed Weapon Skill Boosts panel for a party
+	 * Gets the computed Weapon Skill Boosts panel for a party, optionally at a
+	 * specific battle state (the game's "Calculator Conditions").
 	 */
-	async getSkillBoosts(shortcode: string, options?: RequestOptions): Promise<SkillBoosts> {
-		return this.request<SkillBoosts>(`/parties/${shortcode}/skill_boosts`, options)
+	async getSkillBoosts(
+		shortcode: string,
+		state?: { hpPercent?: number; turn?: number; foeElement?: string },
+		options?: RequestOptions
+	): Promise<SkillBoosts> {
+		const query = new URLSearchParams()
+		if (state?.hpPercent != null) query.set('hp_percent', String(state.hpPercent))
+		if (state?.turn != null) query.set('turn', String(state.turn))
+		if (state?.foeElement) query.set('foe_element', state.foeElement)
+		const qs = query.size > 0 ? `?${query.toString()}` : ''
+		return this.request<SkillBoosts>(`/parties/${shortcode}/skill_boosts${qs}`, options)
 	}
 
 	/**
