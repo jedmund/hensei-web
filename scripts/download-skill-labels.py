@@ -44,11 +44,15 @@ MANUAL_FILENAMES = {
     "stamina": "01_icon_stamina_01.png",
     "enmity": "01_icon_enmity_01.png",
     "plain-amp": "04_icon_plain_amplify.png",  # not in the wiki gadget at all
+    "sp-ca-cap": "04_icon_ca_dmg_cap_ded.png",
+    "na-supp": "04_icon_normal_dmg_supp.png",
+    # World ("genesis") destruction bonus damage — also absent from the gadget
+    "bonus-des-dmg": "01_icon_genesis_concurrent_attack.png",
+    "bonus-des-dmg-ca": "01_icon_genesis_special_skill_concurrent_attack.png",
     # Exalto: element and frame concatenate without a separator
     **{f"{el}-{frame}": f"01_icon_{el}{frame}.png"
        for el in ("fire", "water", "earth", "wind", "light", "dark")
        for frame in ("optimus", "omega")},
-    # Still unknown (wiki files Bonus_9.png / Book_bonus_label_l_*.png): na-supp, sp-ca-cap
 }
 
 
