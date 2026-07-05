@@ -14,6 +14,7 @@ import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { Party } from '$lib/types/api/party'
 import type { PartyShare } from '$lib/types/api/partyShare'
 import type { PartyVisibility } from '$lib/types/visibility'
+import type { SkillBoosts } from '$lib/types/api/skillBoosts'
 
 /**
  * Parameters for creating a new party
@@ -172,6 +173,23 @@ export class PartyAdapter extends BaseAdapter {
 	async getByShortcode(shortcode: string, options?: RequestOptions): Promise<Party> {
 		const response = await this.request<{ party: Party }>(`/parties/${shortcode}`, options)
 		return response.party
+	}
+
+	/**
+	 * Gets the computed Weapon Skill Boosts panel for a party, optionally at a
+	 * specific battle state (the game's "Calculator Conditions").
+	 */
+	async getSkillBoosts(
+		shortcode: string,
+		state?: { hpPercent?: number; turn?: number; foeElement?: string },
+		options?: RequestOptions
+	): Promise<SkillBoosts> {
+		const query = new URLSearchParams()
+		if (state?.hpPercent != null) query.set('hp_percent', String(state.hpPercent))
+		if (state?.turn != null) query.set('turn', String(state.turn))
+		if (state?.foeElement) query.set('foe_element', state.foeElement)
+		const qs = query.size > 0 ? `?${query.toString()}` : ''
+		return this.request<SkillBoosts>(`/parties/${shortcode}/skill_boosts${qs}`, options)
 	}
 
 	/**

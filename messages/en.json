@@ -1,9 +1,7 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 	"hello_world": "Hello, {name} from en!",
-
 	"retry": "Retry",
-
 	"nav_gallery": "Gallery",
 	"nav_collection": "Collection",
 	"nav_login": "Log in",
@@ -46,28 +44,22 @@
 	"nav_new_multiple": "Multiple {entity}s",
 	"nav_new_weapon_series": "Weapon series",
 	"nav_new_character_series": "Character series",
-
 	"action_save": "Save",
 	"action_saving": "Saving...",
 	"action_edit": "Edit",
 	"action_replace": "Replace",
 	"action_add": "Add",
-
 	"editor_heading_1": "Heading 1",
 	"editor_heading_2": "Heading 2",
 	"editor_heading_3": "Heading 3",
 	"editor_paragraph": "Paragraph",
-
 	"type_job": "job",
 	"type_raid": "raid",
-
 	"action_cancel": "Cancel",
-
 	"dialog_unsaved_changes_title": "You have unsaved changes",
 	"dialog_unsaved_changes_message": "Are you sure you want to close? Any changes you've made will be lost.",
 	"dialog_unsaved_close": "Close without saving",
 	"dialog_unsaved_nevermind": "Nevermind",
-
 	"search_sidebar_title": "Search {type}s",
 	"search_sidebar_element": "Element",
 	"search_sidebar_rarity": "Rarity",
@@ -79,38 +71,28 @@
 	"search_sidebar_previous": "Previous",
 	"search_sidebar_page": "Page {current} of {total}",
 	"search_sidebar_next": "Next",
-
 	"sidebar_weapon_out_of_sync": "Out of sync with collection",
 	"sidebar_weapon_syncing": "Syncing...",
 	"sidebar_weapon_sync": "Sync",
-
 	"description_view_video": "📹 View Video",
-
 	"element_no_element": "No element",
-
 	"favorites_seen_all": "You've seen all favorites!",
-
 	"error_something_went_wrong": "Something went wrong",
 	"error_404_title": "Are you in the right skydom?",
 	"error_random_team_label": "Here's a random team.",
 	"error_or_browse_gallery": "Or browse teams in the ",
 	"error_gallery": "Gallery",
-
 	"party_segmented_control_characters": "Characters",
 	"party_segmented_control_weapons": "Weapons",
 	"party_segmented_control_summons": "Summons",
-
 	"job_selection_title": "Select Job",
 	"job_selection_search_placeholder": "Search jobs...",
 	"job_choose": "Choose a job",
 	"job_change": "Change job",
-
 	"skill_selection_title": "Select Skill",
 	"skill_selection_search_placeholder": "Search skills...",
-
 	"extra_weapons": "Additional Weapons",
 	"guidebooks": "Guidebooks",
-
 	"context_edit": "Edit {type}",
 	"context_view_details": "View details",
 	"context_view_in_database": "View in Database",
@@ -122,18 +104,15 @@
 	"remove_unit_confirm_body_unnamed": "Remove this {type} from this team? This can't be undone.",
 	"remove_unit_confirm_action": "Remove",
 	"context_duplicate": "Duplicate {type}",
-
 	"duplicate_collection_title": "Duplicate collection item?",
 	"duplicate_collection_body": "The duplicate will not be linked to your collection. Changes to the original in your collection won't sync to the copy.",
 	"duplicate_collection_confirm": "Duplicate anyway",
-
 	"conflict_title": "Conflict Detected",
 	"conflict_character_message": "Only one version of a character can be included in each party. Do you want to replace them?",
 	"conflict_weapon_series": "Only one weapon from the {series} Series can be included in each party. Do you want to replace it?",
 	"conflict_weapon_opus_draconic": "Only one Dark Opus or Draconic Weapon can be included in each party. Do you want to replace it?",
 	"conflict_confirm": "Replace",
 	"conflict_cancel": "Cancel",
-
 	"series_seraphic": "Seraphic",
 	"series_grand": "Grand",
 	"series_opus": "Dark Opus",
@@ -165,7 +144,6 @@
 	"series_illustrious": "Illustrious",
 	"series_world": "World",
 	"series_draconic_providence": "Draconic Providence",
-
 	"artifact_title": "Artifact",
 	"artifact_collection_title": "Artifact Collection",
 	"artifact_element": "Element",
@@ -184,7 +162,7 @@
 	"artifact_scrap": "Scrap",
 	"artifact_keep": "Keep",
 	"artifact_reroll": "Reroll",
-	"artifact_equip": "Equip",
+	"artifact_equip": "Equip Artifact",
 	"artifact_change": "Change",
 	"artifact_remove": "Remove",
 	"artifact_select_modifier": "Select Modifier",
@@ -193,9 +171,7 @@
 	"artifact_match_element": "Match element",
 	"artifact_value": "Value",
 	"artifact_skill_level": "Skill Level",
-
 	"auth_backToHome": "Back to home",
-
 	"auth_login_title": "Sign in",
 	"auth_login_email": "Email address",
 	"auth_login_password": "Password",
@@ -206,7 +182,6 @@
 	"auth_login_forgotPassword": "Forgot password?",
 	"auth_login_errors_fieldsRequired": "Email and password are required",
 	"auth_login_errors_failed": "Login failed",
-
 	"auth_forgotPassword_title": "Reset password",
 	"auth_forgotPassword_email": "Email address",
 	"auth_forgotPassword_submit": "Send reset link",
@@ -214,7 +189,6 @@
 	"auth_forgotPassword_success": "If an account with that email exists, we've sent a password reset link.",
 	"auth_forgotPassword_backToLogin": "Back to sign in",
 	"auth_forgotPassword_errors_emailRequired": "Email is required",
-
 	"auth_resetPassword_title": "Set new password",
 	"auth_resetPassword_password": "New password",
 	"auth_resetPassword_confirmPassword": "Confirm new password",
@@ -228,12 +202,10 @@
 	"auth_resetPassword_errors_passwordMin": "Password must be at least 8 characters",
 	"auth_resetPassword_errors_passwordMismatch": "Passwords don't match",
 	"auth_resetPassword_errors_failed": "Password reset failed",
-
 	"auth_verifyEmail_title": "Verify email",
 	"auth_verifyEmail_success": "Your email has been verified.",
 	"auth_verifyEmail_invalidToken": "This verification link is invalid or has expired.",
 	"auth_verifyEmail_signIn": "Sign in",
-
 	"auth_register_title": "Sign up",
 	"auth_register_username": "Username",
 	"auth_register_usernameNote": "You can change this later",
@@ -254,7 +226,6 @@
 	"auth_register_errors_passwordMismatch": "Passwords don't match",
 	"auth_register_errors_fieldsRequired": "All fields are required",
 	"auth_register_errors_failed": "Registration failed",
-
 	"page_title_home": "granblue.team",
 	"page_title_about": "About / granblue.team",
 	"page_title_teams": "Discover teams / granblue.team",
@@ -279,19 +250,16 @@
 	"page_title_db_new": "New {type} / Database / granblue.team",
 	"page_title_db_edit": "Edit {name} / Database / granblue.team",
 	"page_title_db_import": "Import {type} / Database / granblue.team",
-
 	"page_desc_home": "Create, save, and share Granblue Fantasy party compositions",
 	"page_desc_about": "More about granblue.team",
 	"page_desc_teams": "Save and discover teams to use in Granblue Fantasy",
 	"page_desc_collection": "Manage your character, weapon, and summon collection",
 	"page_desc_profile": "Browse {username}'s teams on granblue.team",
 	"page_desc_party": "Browse this team for {raidName} by {username} on granblue.team",
-
 	"raid_section_farming": "Farming",
 	"raid_section_raid": "Raid",
 	"raid_section_event": "Event",
 	"raid_section_solo": "Solo",
-
 	"about_tab_about": "About",
 	"about_tab_updates": "Updates",
 	"about_tab_roadmap": "Roadmap",
@@ -312,7 +280,6 @@
 	"about_roadmap_item_rotations_desc": "Define set rotations for specific parties on a turn or trigger basis",
 	"about_roadmap_item_guides_title": "Guides",
 	"about_roadmap_item_guides_desc": "Users can write guides on special topics in the game, utilizing all the data in granblue.team",
-
 	"about_subtitle_before_cygames": "Granblue.team helps you save and share teams for Granblue Fantasy, a mobile game from ",
 	"about_subtitle_after_cygames": ".",
 	"about_explanation_0": "Creating a team is as simple as adding an item, and you can share by copy-and-pasting the URL wherever you like, no account needed.",
@@ -334,14 +301,12 @@
 	"about_license_explanation": "Plainly, that means you can download the source, modify it, and redistribute it as long as you attribute this project, use the same license, and keep your derivative work open source as well.",
 	"about_copyright_title": "Copyright",
 	"about_copyright_explanation": "This app is a fan work. Granblue Fantasy and all characters, weapons, summons, items and artwork are wholly owned by Cygames, Inc.",
-
 	"page_title_updates": "Updates / granblue.team",
 	"page_title_roadmap": "Roadmap / granblue.team",
 	"page_desc_updates": "Content and feature updates for granblue.team",
 	"page_desc_roadmap": "Upcoming features for granblue.team",
 	"page_title_extension": "Chrome Extension / granblue.team",
 	"page_desc_extension": "Download the granblue.team Chrome extension to sync your game data",
-
 	"ext_description": "Use the Chrome extension to passively capture your in-game teams and collection and send it to granblue.team.",
 	"ext_download": "Download extension",
 	"ext_version": "Version {version}",
@@ -351,7 +316,6 @@
 	"ext_feature_collection_desc": "Capture your in-game characters, weapons, and summons to make sharing your collection and finding new teams easier.",
 	"ext_feature_parties_title": "Import your teams",
 	"ext_feature_parties_desc": "Import your teams and easily workshop them or share with others with a click.",
-
 	"ext_faq_title": "What's this?",
 	"ext_faq_how_title": "How does it work?",
 	"ext_faq_desc": "This extension runs in the background and passively reads network data that your browser already receives while you play. This lets us extract your characters, weapons, summons, teams, and other data to send to your granblue.team account.",
@@ -363,7 +327,6 @@
 	"ext_faq_install_desc": "<ol><li>After you've downloaded the extension above, extract the .zip file to somewhere convenient.</li><li>Open <code>chrome://extensions</code> in your browser and enable <strong>Developer mode</strong> in the top-right corner.</li><li>In the top-left corner, click <strong>Load unpacked</strong>, then select the folder you extracted earlier.</li><li>Open the extension by clicking the icon in your browser's extension tray and log in to your granblue.team account.</li></ol>",
 	"ext_faq_debug_workaround_title": "I see a message saying \"'granblue.team' started debugging the browser.\" What should I do?",
 	"ext_faq_debug_workaround_desc": "This message is normal and just means the extension is working. You can safely ignore it. If you want to get rid of the message, follow these steps:<br><br><strong>Windows:</strong><ol><li>Right-click your browser shortcut and select <strong>Properties</strong></li><li>Add <code> --silent-debugger-extension-api</code> to the end of the <strong>Target</strong> field</li><li>Click <strong>Apply</strong> and <strong>OK</strong></li><li>Launch your browser using that shortcut</li></ol><br><strong>macOS:</strong><ol><li>Open Automator (search for it in Spotlight)</li><li>Create a new Application</li><li>Add a <strong>Run Shell Script</strong> action</li><li>Set the script to: <code>/Applications/Google\\ Chrome.app/Contents/MacOS/Google\\ Chrome --silent-debugger-extension-api</code> (replace with your browser's path if using a different browser)</li><li>Save the application (e.g., as \"Chrome Silent\")</li><li>Use this new app to launch your browser instead of the original</li></ol><br><strong>Linux:</strong><ol><li>Add the <code>--silent-debugger-extension-api</code> flag to your browser launch command</li></ol>",
-
 	"updates_no_updates": "No updates available for this year",
 	"updates_label_characters": "New characters",
 	"updates_label_weapons": "New weapons",
@@ -382,7 +345,6 @@
 	"updates_event_flash": "Flash Gala",
 	"updates_event_content": "Content Update",
 	"updates_event_uncap": "Uncap",
-
 	"party_raid_label": "Raid",
 	"party_raid_unknown": "Unknown Raid",
 	"party_raid_empty": "No raid selected",
@@ -401,27 +363,22 @@
 	"party_not_found": "Party not found",
 	"party_no_data": "No party data available for this code.",
 	"party_untitled": "Untitled team",
-
 	"profile_loading": "Loading teams...",
 	"profile_load_error": "Failed to load teams: {error}",
 	"profile_empty": "No teams found",
 	"profile_loading_more": "Loading more...",
 	"profile_seen_all": "You've seen all teams!",
-
 	"explore_empty": "No teams found.",
-
 	"tag_style": "Style",
 	"season_valentine": "Valentine",
 	"season_formal": "Formal",
 	"season_summer": "Summer",
 	"season_halloween": "Halloween",
 	"season_holiday": "Holiday",
-
 	"type_character": "character",
 	"type_weapon": "weapon",
 	"type_summon": "summon",
 	"type_guidebook": "guidebook",
-
 	"element_any": "Any",
 	"element_null": "Null",
 	"element_wind": "Wind",
@@ -430,20 +387,17 @@
 	"element_earth": "Earth",
 	"element_dark": "Dark",
 	"element_light": "Light",
-
 	"recency_day": "Last day",
 	"recency_week": "Last week",
 	"recency_month": "Last month",
 	"recency_3months": "Last 3 months",
 	"recency_6months": "Last 6 months",
 	"recency_year": "Last year",
-
 	"filter_full_auto": "Full Auto",
 	"filter_solo": "Solo",
 	"filter_auto_guard": "Auto Guard",
 	"filter_charge_attack": "Charge Attack",
 	"filter_youtube": "Youtube",
-
 	"filter_cat_element": "Element",
 	"filter_cat_raid": "Raid",
 	"filter_cat_recency": "Recency",
@@ -454,24 +408,20 @@
 	"filter_cat_boost": "Boost",
 	"filter_cat_side": "Side",
 	"filter_cat_difficulty": "Difficulty",
-
 	"party_difficulty_label": "Difficulty",
 	"party_difficulty_tooltip": "{tier} difficulty (score {score})",
 	"party_difficulty_pending": "Pending",
 	"party_difficulty_score_label": "Difficulty score",
 	"party_difficulty_breakdown_label": "Breakdown",
-
 	"difficulty_component_all": "All",
 	"difficulty_component_job": "Job",
 	"difficulty_component_accessory": "Accessory",
-
 	"boost_omega": "Omega",
 	"boost_primal": "Primal",
 	"boost_odious": "Odious",
 	"boost_unboosted": "Unboosted",
 	"side_double": "Double",
 	"side_single": "Single",
-
 	"explore_collection_only": "Collection only",
 	"explore_collection_aria": "Filter by my collection",
 	"explore_settings": "Settings",
@@ -485,20 +435,17 @@
 	"explore_no_teams": "No teams found",
 	"explore_loading_more": "Loading more...",
 	"explore_end": "You've reached the end of all teams!",
-
 	"explore_filter_placeholder": "Start typing...",
 	"explore_filter_placeholder_mobile": "Filter teams...",
 	"explore_filter": "Filter",
 	"explore_filter_tagline": "to find the perfect team",
 	"explore_searching": "Searching...",
 	"explore_no_results": "No results found",
-
 	"explore_pill_include": "Click to include",
 	"explore_pill_exclude": "Click to exclude",
 	"explore_pill_switch_include": "Switch to include",
 	"explore_pill_switch_exclude": "Switch to exclude",
 	"explore_pill_remove": "Remove filter",
-
 	"explore_settings_title": "Filter Settings",
 	"explore_settings_grid_counts": "Grid Counts",
 	"explore_settings_min_characters": "Min Characters",
@@ -520,14 +467,11 @@
 	"explore_settings_apply": "Apply",
 	"explore_settings_reset": "Reset",
 	"explore_advanced_filters": "Advanced filters",
-
 	"modal_cancel": "Nevermind",
-
 	"grid_untitled": "Untitled team",
 	"grid_no_raid": "No raid",
 	"grid_extra": "Extra",
 	"grid_anonymous": "Anonymous",
-
 	"search_tab_all": "All Items",
 	"search_tab_collection": "Collection",
 	"search_placeholder": "Search by name...",
@@ -541,7 +485,6 @@
 	"search_collection_empty": "Your collection is empty",
 	"search_no_results": "No results found",
 	"search_start_typing": "Start typing to search",
-
 	"search_filter_rarity": "Rarity",
 	"search_filter_element": "Element",
 	"search_filter_proficiency": "Proficiency",
@@ -551,18 +494,14 @@
 	"search_filter_series": "Series",
 	"search_filter_clear": "Clear",
 	"search_filter_all_series": "All series",
-
 	"search_already_in_team": "Already in team",
 	"search_grid_full": "Grid full - cannot add",
 	"search_add_item": "Add {name}",
 	"search_added_pill": "Added to team",
-
 	"unlink_collection_title": "Clear collection source?",
 	"unlink_collection_body": "All collection links will be removed from items in this party. The items themselves will remain.",
 	"unlink_collection_confirm": "Clear",
-
 	"search_select_member": "Select member",
-
 	"proficiency_none": "None",
 	"proficiency_sabre": "Sabre",
 	"proficiency_dagger": "Dagger",
@@ -574,10 +513,8 @@
 	"proficiency_harp": "Harp",
 	"proficiency_gun": "Gun",
 	"proficiency_katana": "Katana",
-
 	"details_tab_team": "This team",
 	"details_tab_info": "Info",
-
 	"details_basic_info": "Basic Information",
 	"details_style": "Style",
 	"details_rarity": "Rarity",
@@ -587,7 +524,6 @@
 	"details_proficiencies": "Proficiencies",
 	"details_proficiency": "Proficiency",
 	"details_max_uncap": "Max Uncap",
-
 	"details_hp": "HP",
 	"details_atk": "ATK",
 	"details_base": "Base",
@@ -595,12 +531,10 @@
 	"details_flb": "FLB",
 	"details_ulb": "ULB",
 	"details_t5": "T5",
-
 	"details_link_wiki_en": "gbf.wiki",
 	"details_link_wiki_ja": "Wiki (JA)",
 	"details_link_gamewith": "GameWith",
 	"details_link_kamigame": "Kamigame",
-
 	"details_skills": "Skills",
 	"details_auras": "Auras",
 	"details_weapon_keys": "Weapon Keys",
@@ -610,7 +544,6 @@
 	"details_unknown_aura": "Unknown Aura",
 	"details_special_character": "Special Character",
 	"details_weapon_key_fallback": "Weapon Key",
-
 	"details_collection_in_your": "In your Collection",
 	"details_collection_in_other": "In {owner}'s Collection",
 	"details_collection_not_in_your": "Not in your Collection",
@@ -654,10 +587,6 @@
 	"sync_diff_empty": "—",
 	"sync_diff_column_collection": "Collection",
 	"sync_diff_column_team": "Team",
-	"type_character": "character",
-	"type_weapon": "weapon",
-	"type_summon": "summon",
-
 	"details_uncap_transcendence": "Uncap & Transcendence",
 	"details_max_uncap_level": "Uncapped to",
 	"details_transcended_to": "Transcended to",
@@ -681,25 +610,20 @@
 	"details_enabled": "Enabled",
 	"details_friend_summon": "Friend Summon",
 	"details_yes": "Yes",
-
 	"details_over_mastery": "Over Mastery",
 	"details_aetherial_mastery": "Aetherial Mastery",
-
 	"details_artifact_level": "Lv.{level}",
 	"details_artifact_type": "Type",
 	"details_artifact_quirk": "Quirk",
 	"details_artifact_score": "Score",
-
 	"details_weapon_key_pendulums": "Pendulums & Chains",
 	"details_weapon_key_telumas": "Telumas",
 	"details_weapon_key_ultima": "Ultima Keys",
 	"details_weapon_key_emblems": "Emblems",
-
 	"crew_tab_events": "Events",
 	"crew_tab_members": "Members",
 	"crew_tab_teams": "Teams",
 	"crew_tab_roster": "Roster",
-
 	"crew_loading": "Loading…",
 	"crew_intro": "Crews let you team up with other players, track Guild War scores, and share strategies.",
 	"crew_sign_up": "Sign up",
@@ -711,7 +635,6 @@
 	"crew_starting_soon": "Starting soon",
 	"crew_starts_in_1_day": "in 1 day",
 	"crew_starts_in_days": "in {days} days",
-
 	"crew_name_label": "Crew Name",
 	"crew_name_placeholder": "Enter your crew name",
 	"crew_name_placeholder_short": "Enter crew name",
@@ -737,16 +660,13 @@
 	"crew_cancel": "Cancel",
 	"crew_settings_title": "Crew Settings",
 	"crew_create_subtitle": "Start a new crew and invite players to join.",
-
 	"crew_error_name_required": "Crew name is required",
 	"crew_error_name_max": "Crew name must be 100 characters or less",
 	"crew_error_gamertag_max": "Gamertag must be 10 characters or less",
 	"crew_error_description_max": "Description must be 500 characters or less",
-
 	"crew_role_captain": "Captain",
 	"crew_role_vice_captain": "Vice Captain",
 	"crew_role_member": "Member",
-
 	"crew_scout": "Scout",
 	"crew_add_phantoms": "Add phantoms…",
 	"crew_pending_label": "Pending",
@@ -767,7 +687,6 @@
 	"crew_retired_players_label": "Retired Players",
 	"crew_unknown": "Unknown",
 	"crew_joined_date": "Joined {date}",
-
 	"crew_view_crew_profile": "View crew profile",
 	"crew_view_profile": "View profile",
 	"crew_edit": "Edit",
@@ -786,7 +705,6 @@
 	"crew_transfer_captain_hint": "Type the crew name to confirm.",
 	"crew_transfer_captain_success": "<b>{name}</b> is now the Captain of <b>{crewName}</b>",
 	"crew_transfer_captain_failed": "Failed to transfer captain role.",
-
 	"crew_edit_player": "Edit player",
 	"crew_granblue_id": "Granblue ID",
 	"crew_membership_loading": "Loading membership history...",
@@ -803,7 +721,6 @@
 	"crew_join_date_hint": "This date is used to determine which events a member was active for when adding historical GW scores.",
 	"crew_retired_hint": "This player is no longer a part of the crew",
 	"crew_retired_date_hint": "This date is used to determine which events a retired player was active for.",
-
 	"crew_phantom": "Phantom",
 	"crew_phantom_unclaimed": "Unclaimed",
 	"crew_phantom_pending": "Pending: {username}",
@@ -814,16 +731,13 @@
 	"crew_phantom_accept": "Accept",
 	"crew_confirm_delete_phantom": "Are you sure you want to delete {name}? This action cannot be undone.",
 	"crew_delete_phantom_title": "Delete Phantom Player",
-
 	"crew_filter_all": "All",
 	"crew_filter_active": "Active",
 	"crew_filter_pending": "Pending",
 	"crew_filter_retired": "Retired",
-
 	"crew_save_button": "Save",
 	"crew_view": "View",
 	"crew_from": "from {username}",
-
 	"crew_danger_zone": "Danger Zone",
 	"crew_transfer_captain": "Transfer Captain",
 	"crew_transfer_desc": "Transfer ownership of the crew to another member.",
@@ -835,7 +749,6 @@
 	"crew_transfer_dialog_title": "Transfer Captain",
 	"crew_transfer_dialog_desc": "Select a member to become the new captain. You will become a regular member.",
 	"crew_transfer_no_members": "No eligible members to transfer to. The crew needs at least one other member.",
-
 	"crew_bulk_phantom_title": "Add Phantom Players",
 	"crew_bulk_phantom_desc": "Phantom players allow you to track the scores of members without accounts",
 	"crew_bulk_name": "Name",
@@ -847,7 +760,6 @@
 	"crew_bulk_error": "Failed to create phantom players. Please check the inputs and try again.",
 	"crew_bulk_creating": "Creating…",
 	"crew_bulk_create_count": "Create {count} Phantoms",
-
 	"crew_scout_title": "Scout Player",
 	"crew_scout_desc": "Search for a user to invite to your crew",
 	"crew_scout_success": "Invitation sent to {username}!",
@@ -865,7 +777,6 @@
 	"crew_invite_confirm": "Are you sure you want to invite {username} to join your crew?",
 	"crew_invite_hint": "They will receive the invitation and can choose to accept or decline.",
 	"crew_invite_sending": "Sending…",
-
 	"crew_notifications_title": "Notifications",
 	"crew_notifications_phantom_section": "Phantom Assignments",
 	"crew_notifications_phantom_desc": "Accept to inherit the phantom's GW scores and join date",
@@ -878,7 +789,6 @@
 	"crew_notifications_crew_section": "Crew invites",
 	"crew_notifications_phantom_assigned": "Phantom assigned: {name}",
 	"crew_notifications_joining": "Joining…",
-
 	"crew_assign_phantom_title": "Assign Phantom",
 	"crew_assign_phantom_desc": "Assign \"{name}\" to a crew member",
 	"crew_assign_phantom_desc_generic": "Select a crew member",
@@ -887,14 +797,12 @@
 	"crew_assign_no_members": "No crew members available to assign.",
 	"crew_assign_assigning": "Assigning…",
 	"crew_assign_confirm": "Assign",
-
 	"crew_confirm_claim_title": "Confirm Phantom Claim",
 	"crew_confirm_claim_success": "Claim confirmed! You have inherited the phantom's scores and join date.",
 	"crew_confirm_claim_body": "Are you sure you want to claim {name}?",
 	"crew_confirm_claim_hint": "You will inherit this phantom's GW scores and join date. This action cannot be undone.",
 	"crew_confirm_claim_confirming": "Confirming…",
 	"crew_confirm_claim_button": "Confirm Claim",
-
 	"crew_join_title": "Join a Crew",
 	"crew_join_subtitle": "Accept an invitation to join a crew.",
 	"crew_join_loading": "Loading invitations…",
@@ -902,10 +810,9 @@
 	"crew_join_no_invitations": "You don't have any pending invitations.",
 	"crew_join_hint": "Ask a crew captain or vice captain to send you an invitation.",
 	"crew_join_go_back": "Go Back",
-	"crew_join_invited_by": "Invited by",
+	"crew_join_invited_by": "Invited by {username}",
 	"crew_join_expired": "This invitation has expired.",
-	"crew_join_expires": "Expires:",
-
+	"crew_join_expires": "Expires: {date}",
 	"crew_gw_number": "GW #{number}",
 	"crew_event_not_found": "Event not found",
 	"crew_back_to_crew": "Back to Crew",
@@ -931,10 +838,8 @@
 	"crew_gw_event_history": "Event History",
 	"crew_gw_no_score": "No score",
 	"crew_gw_not_in_crew": "Not in crew",
-
 	"crew_score_retired": "Retired",
 	"crew_score_excused": "Excused",
-
 	"crew_add_score_title": "Add Score",
 	"crew_score_select_player": "Select player",
 	"crew_score_player": "Player",
@@ -953,7 +858,6 @@
 	"crew_score_delete_all": "Delete all scores",
 	"crew_score_confirm_delete": "Are you sure you want to delete this score?",
 	"crew_score_confirm_delete_all": "Are you sure you want to delete all scores for this player?",
-
 	"crew_edit_crew_score": "Edit score",
 	"crew_add_crew_score": "Add score",
 	"crew_crew_score": "Crew Score",
@@ -967,12 +871,10 @@
 	"crew_crew_score_delete": "Are you sure you want to delete this crew score?",
 	"crew_crew_score_saving": "Saving…",
 	"crew_crew_score_delete_button": "Delete score",
-
 	"crew_score_total": "Total",
 	"crew_score_saving": "Saving…",
 	"crew_score_delete_failed": "Failed to delete score",
 	"crew_score_delete_all_failed": "Failed to delete scores",
-
 	"profile_ingame": "In-game profile",
 	"profile_wiki": "Wiki profile",
 	"profile_youtube": "YouTube channel",
@@ -1006,23 +908,18 @@
 	"support_summon_share_team_url_label": "Profile URL",
 	"support_summon_share_team_url_placeholder": "https://granblue.team/{username}",
 	"support_summon_share_download": "Download PNG",
-
 	"crew_roster_search": "Search characters, weapons, summons…",
 	"crew_roster_no_members": "No crew members found",
 	"crew_roster_remove": "Remove {name}",
-
 	"crew_error_prefix": "Error: {error}",
 	"crew_form_error": "form error",
-
 	"page_title_crew_roster": "Crew Roster / granblue.team",
 	"page_title_crew_teams": "Crew Teams / granblue.team",
 	"page_title_crew_settings": "Crew Settings / granblue.team",
-
 	"crew_roster_loading": "Loading...",
 	"crew_roster_remove_aria": "Remove {name}",
 	"crew_roster_empty_items": "Search and add characters, weapons, or summons to check crew ownership",
 	"crew_roster_saving": "Saving…",
-
 	"crew_teams_not_in_crew": "You're not in a crew",
 	"crew_teams_loading": "Loading shared teams...",
 	"crew_teams_load_error": "Failed to load teams: {error}",
@@ -1031,13 +928,10 @@
 	"crew_teams_empty_hint": "Crew members can share their teams from the team settings",
 	"crew_teams_loading_more": "Loading more...",
 	"crew_teams_end": "You've seen all shared teams",
-
 	"crew_update_failed": "Failed to update crew",
-
 	"collection_intro": "Track your characters, weapons, and summons to help plan your teams and share your progress.",
 	"collection_sign_up": "Sign up",
 	"collection_log_in": "Log in",
-
 	"collection_loading": "Loading collection",
 	"collection_empty_characters": "Your collection is empty",
 	"collection_empty_characters_hint": "Use the \"Add to Collection\" button above to get started",
@@ -1054,26 +948,21 @@
 	"collection_empty_unowned_hint": "There are no missing items matching your filters",
 	"collection_empty_unowned_other": "Nothing is missing",
 	"collection_empty_unowned_other_hint": "No missing items match the current filters",
-
 	"favorites_loading": "Loading favorites",
 	"favorites_load_error": "Failed to load favorites: {error}",
 	"favorites_empty": "No favorite teams yet",
 	"page_title_favorites": "{username}'s Favorites / granblue.team",
-
 	"notifications_loading": "Loading notifications",
 	"notifications_empty": "No pending notifications",
 	"notifications_empty_hint": "You'll see crew invitations and phantom assignments here.",
-
 	"artifact_skills_loading": "Loading skills",
 	"artifact_skills_error": "Failed to load skills",
 	"artifact_skills_empty": "No skills available",
-
 	"page_title_guides": "Guides",
 	"guides_heading": "Guides",
 	"guides_description": "Guides and resources for Granblue Fantasy players.",
 	"coming_soon": "Coming soon",
 	"guides_coming_soon": "Guides are coming soon.",
-
 	"sidebar_loading_jobs": "Loading jobs",
 	"sidebar_jobs_error": "Failed to load jobs",
 	"sidebar_no_jobs": "No jobs found",
@@ -1102,7 +991,6 @@
 	"loading_more": "Loading more...",
 	"filter_clear": "Clear",
 	"filters_title": "Filters",
-
 	"settings_title": "Settings",
 	"settings_loading": "Loading settings",
 	"settings_saving": "Saving...",
@@ -1115,7 +1003,6 @@
 	"settings_nav_password": "Password",
 	"settings_nav_profile": "Profile",
 	"settings_nav_privacy": "Privacy",
-
 	"settings_username": "Username",
 	"settings_username_placeholder": "Enter username",
 	"settings_display_name": "Display name",
@@ -1144,7 +1031,6 @@
 	"settings_bahamut_subtitle": "Enable admin features and tools",
 	"settings_umikin_mode": "Umikin Mode",
 	"settings_umikin_subtitle": "Only show base, FLB, and transcendence character art",
-
 	"settings_avatar": "Avatar",
 	"settings_avatar_subtitle": "Your profile picture",
 	"settings_avatar_placeholder": "Select an avatar",
@@ -1212,7 +1098,6 @@
 	"settings_theme_system": "System",
 	"settings_theme_light": "Light",
 	"settings_theme_dark": "Dark",
-
 	"settings_show_crew_tag": "Show crew tag on profile",
 	"settings_show_crew_tag_subtitle": "Display \"{gamertag}\" next to your name",
 	"settings_collection_visibility": "Collection visibility",
@@ -1228,7 +1113,6 @@
 	"settings_import_weapons_subtitle": "Automatically add items from imported parties to your collection",
 	"settings_default_import_visibility": "Default import visibility",
 	"settings_default_import_visibility_subtitle": "Privacy setting for parties imported from the extension",
-
 	"collection_tab_characters": "Characters",
 	"collection_tab_weapons": "Weapons",
 	"collection_tab_summons": "Summons",
@@ -1244,12 +1128,10 @@
 	"collection_load_error": "Failed to load collection",
 	"collection_delete_error": "Failed to delete items",
 	"collection_private_message": "This collection is private",
-
 	"collection_bulk_delete_title": "Delete {count} {type}?",
 	"collection_bulk_delete_message": "Are you sure you want to remove {count} {type} from your collection? This action cannot be undone.",
 	"collection_bulk_deleting": "Deleting...",
 	"collection_bulk_delete_confirm": "Yes, delete",
-
 	"collection_add_title": "Add {type} to Collection",
 	"collection_add_search": "Search {type} by name...",
 	"collection_add_loading": "Loading {type}...",
@@ -1262,7 +1144,6 @@
 	"collection_adding": "Adding...",
 	"collection_add_button": "Add to Collection",
 	"collection_add_error": "Failed to add to collection",
-
 	"collection_entity_characters": "characters",
 	"collection_entity_weapons": "weapons",
 	"collection_entity_summons": "summons",
@@ -1271,14 +1152,12 @@
 	"collection_entity_weapon": "weapon",
 	"collection_entity_summon": "summon",
 	"collection_entity_artifact": "artifact",
-
 	"collection_filter_all": "All",
 	"collection_filter_standard": "Standard",
 	"collection_filter_quirk": "Quirk",
 	"collection_filter_element": "Element",
 	"collection_filter_proficiency": "Proficiency",
 	"collection_filter_slot": "Slot {num}",
-
 	"sort_label": "Sort",
 	"sort_name_asc": "Name A → Z",
 	"sort_name_desc": "Name Z → A",
@@ -1286,7 +1165,6 @@
 	"sort_element_desc": "Element ↓",
 	"sort_proficiency_asc": "Proficiency ↑",
 	"sort_proficiency_desc": "Proficiency ↓",
-
 	"filter_element": "Element",
 	"filter_rarity": "Rarity",
 	"filter_season": "Season",
@@ -1299,7 +1177,6 @@
 	"filter_battle": "Battle",
 	"battle_setting_on": "{setting} On",
 	"battle_setting_off": "{setting} Off",
-
 	"job_tier_class_1": "Class I",
 	"job_tier_class_2": "Class II",
 	"job_tier_class_3": "Class III",
@@ -1308,19 +1185,15 @@
 	"job_tier_ex": "EX",
 	"job_tier_ex2": "EX II",
 	"job_tier_origin_1": "Origin I",
-
 	"skill_category_main": "Main",
 	"skill_category_sub": "Subskill",
 	"skill_category_emp": "EMP",
 	"skill_category_base": "Base",
 	"skill_category_unknown": "Unknown",
-
 	"action_remove": "Remove",
-
 	"accessory_type_shield": "Shield",
 	"accessory_type_manatura": "Manatura",
 	"accessory_type_unknown": "Unknown",
-
 	"race_unknown": "Unknown",
 	"race_human": "Human",
 	"race_erune": "Erune",
@@ -1332,20 +1205,16 @@
 	"race_levleath": "Levleath",
 	"race_grokkle": "Grokkle",
 	"race_wolvir": "Wolvir",
-
 	"gender_unknown": "Unknown",
 	"gender_male": "Male",
 	"gender_female": "Female",
 	"gender_other": "Other",
-
 	"font_size_tiny": "Tiny",
 	"font_size_smaller": "Smaller",
 	"font_size_small": "Small",
 	"font_size_default": "Default",
 	"font_size_large": "Large",
 	"font_size_extra_large": "Extra Large",
-
-	"series_grand": "Grand",
 	"series_zodiac": "Zodiac",
 	"series_promo": "Promo",
 	"series_collab": "Collab",
@@ -1360,32 +1229,25 @@
 	"series_formal": "Formal",
 	"series_holiday": "Holiday",
 	"series_event": "Event",
-
 	"party_details": "Details",
 	"party_raid": "Raid",
 	"party_select_raid": "Select raid...",
 	"party_description": "Description",
-
 	"skill_slot_current": "Current Skill",
 	"skill_slot_select_job_first": "Select a job first",
 	"skill_slot_locked": "This slot cannot be changed",
 	"skill_slot_already_equipped": "This skill is already equipped in another slot",
 	"skill_slot_select": "Select a skill",
 	"skill_slot_empty": "No skill selected",
-
 	"job_no_job": "No Job",
-
 	"collection_pane_info": "Info",
 	"collection_pane_my_collection": "My Collection",
 	"collection_viewer_viewing_as": "Viewing as",
 	"collection_viewer_you": "You",
-
 	"delete_team_confirm": "Are you sure you want to permanently delete this team?",
-
 	"artifact_equipped": "Equipped",
 	"extra_summons_subaura": "Subaura Summons",
 	"summon_friend_label": "Friend",
-
 	"placeholder_select_proficiency": "Select proficiency",
 	"placeholder_select_element": "Select element",
 	"placeholder_select_artifact": "Select artifact...",
@@ -1398,7 +1260,6 @@
 	"placeholder_select_proficiencies": "Select proficiencies...",
 	"placeholder_select_rarities": "Select rarities...",
 	"placeholder_select_elements": "Select elements...",
-
 	"label_befoulment_type": "Befoulment Type",
 	"label_exorcism_level": "Exorcism Level",
 	"label_exorcism_hint": "Higher exorcism reduces the negative effect",
@@ -1406,7 +1267,6 @@
 	"label_level": "Level",
 	"label_level_n": "Level {level}",
 	"label_value": "Value",
-
 	"toolbar_bold": "Bold",
 	"toolbar_italic": "Italic",
 	"toolbar_underline": "Underline",
@@ -1416,10 +1276,8 @@
 	"toolbar_ordered_list": "Ordered List",
 	"code_copied": "Copied!",
 	"code_copy": "Copy",
-
 	"error_boundary_message": "An error occurred while rendering this page.",
 	"error_boundary_retry": "Try again",
-
 	"crew_loading_generic": "Loading...",
 	"crew_loading_invitations": "Loading invitations...",
 	"page_title_crew_create": "Create Crew / granblue.team",
@@ -1428,7 +1286,6 @@
 	"gw_chart_score_label": "Score: {score}",
 	"gw_chart_zoom": "Zoom",
 	"gw_chart_reset": "Reset",
-
 	"error_internal_server": "Internal server error",
 	"error_bad_gateway": "Bad gateway",
 	"error_service_unavailable": "Service unavailable",
@@ -1439,7 +1296,6 @@
 	"error_network": "Unable to connect to the server. Please check your internet connection.",
 	"error_timeout": "The request took too long. Please try again.",
 	"error_cancelled": "The request was cancelled.",
-
 	"gw_event_not_found": "Event not found",
 	"gw_tab_individual": "Individual",
 	"gw_tab_crew": "Crew",
@@ -1464,37 +1320,28 @@
 	"gw_no_score": "No score",
 	"gw_not_in_crew": "Not in crew",
 	"gw_failed_load": "Failed to load scores",
-
 	"party_no_description": "No description",
 	"party_write_description": "Write a description",
 	"description_read_more": "Read more",
 	"party_video": "Video",
 	"party_no_video": "No video",
 	"party_add_video": "Add a video",
-
-	"artifact_equip": "Equip Artifact",
 	"artifact_none_equipped": "No artifact equipped",
 	"action_change": "Change",
 	"action_done": "Done",
 	"option_none": "None",
 	"ax_no_skill": "No skill",
 	"raid_no_raids_found": "No raids found",
-
 	"action_deleting": "Deleting...",
 	"action_confirm_delete": "Yes, delete",
-
 	"editor_title_placeholder": "What's the title?",
 	"editor_body_placeholder": "Press / or write something ...",
-
 	"mention_unknown": "Unknown",
 	"mention_search_hint": "Type at least 2 characters to search",
 	"mention_no_results": "No results found",
 	"mention_skill_cooldown": "Cooldown {n}T",
 	"mention_skill_available_in": "Available in {n}T",
-
 	"modifier_unknown": "Unknown +{strength}",
-
-	"party_untitled": "Untitled team",
 	"party_using_own_collection": "{username} using their collection",
 	"party_using_others_collection": "{username} using {otherUsername}'s collection",
 	"party_remixed": "{username} remixed {otherUsername}'s team",
@@ -1502,7 +1349,6 @@
 	"party_remixed_anonymous": "Remixed from {otherUsername}'s team",
 	"party_remixed_anonymous_source": "Remix",
 	"party_remixed_from_anonymous": "{username} remixed an anonymous team",
-
 	"time_just_now": "Just now",
 	"time_minute_ago": "1 minute ago",
 	"time_minutes_ago": "{count} minutes ago",
@@ -1512,7 +1358,6 @@
 	"time_days_ago": "{count} days ago",
 	"time_one_week_ago": "1 week ago",
 	"time_last_updated": "Last updated {time}",
-
 	"section_general": "General",
 	"section_uncap_level": "Uncap Level",
 	"section_sharing": "Sharing",
@@ -1521,7 +1366,6 @@
 	"section_base_properties": "Base Properties",
 	"section_configuration": "Configuration",
 	"section_equippable_characters": "Equippable Characters",
-
 	"party_edit_title_label": "Title",
 	"party_edit_video_label": "Video",
 	"party_edit_clear_time": "Clear Time",
@@ -1541,7 +1385,6 @@
 	"visibility_playlist_note": "Teams inside this playlist have their own privacy settings",
 	"pane_select_raid": "Select Raid",
 	"pane_edit_description": "Edit Description",
-
 	"battle_label": "Battle",
 	"battle_on": "On",
 	"battle_off": "Off",
@@ -1550,7 +1393,6 @@
 	"battle_solo": "Solo",
 	"battle_auto_summon": "Auto Summon",
 	"battle_auto_guard": "Auto Guard",
-
 	"collection_remove_confirm_character": "Are you sure you want to remove this character from your collection?",
 	"collection_remove_confirm_weapon": "Are you sure you want to remove this weapon from your collection?",
 	"collection_remove_confirm_summon": "Are you sure you want to remove this summon from your collection?",
@@ -1561,7 +1403,6 @@
 	"collection_no_earring": "No earring equipped",
 	"collection_no_matching_characters": "No matching characters in collection",
 	"pane_edit_artifact": "Edit Artifact",
-
 	"toast_failed_remove_character": "Failed to remove character",
 	"toast_failed_remove_weapon": "Failed to remove weapon",
 	"toast_failed_remove_summon": "Failed to remove summon",
@@ -1598,13 +1439,11 @@
 	"toast_unsaved_move": "Cannot move items in unsaved party",
 	"toast_unsaved_duplicate": "Cannot duplicate items in unsaved party",
 	"toast_drag_failed": "Drag operation failed",
-
 	"skill_filter_all": "All Skills",
 	"skill_filter_damaging": "Damaging",
 	"skill_filter_buffing": "Buffing",
 	"skill_filter_debuffing": "Debuffing",
 	"skill_filter_healing": "Healing",
-
 	"befoulment_none": "No befoulment",
 	"befoulment_level": "Level {level}",
 	"befoulment_strength": "Strength",
@@ -1614,7 +1453,6 @@
 	"transcendence_stage": "Stage {step}",
 	"search_linked_user": "Linked user",
 	"skill_clear_search": "Clear search",
-
 	"editor_text_color": "Text Color",
 	"editor_highlight_color": "Highlight Color",
 	"editor_color_default": "Default",
@@ -1660,23 +1498,17 @@
 	"editor_prompt_video_url": "Please enter the video URL",
 	"editor_prompt_audio_url": "Please enter the audio URL",
 	"editor_prompt_iframe_url": "Please enter the IFrame URL",
-
 	"label_element": "Element",
 	"label_proficiency": "Proficiency",
 	"label_nickname": "Nickname",
 	"label_type": "Type",
 	"label_uncap_level": "Uncap Level",
 	"label_equipped": "Equipped",
-
-	"placeholder_select_proficiency": "Select proficiency",
 	"placeholder_search_by_name": "Search by name...",
 	"placeholder_search": "Search...",
-
 	"artifact_select_skill": "Select Skill {slot}",
 	"artifact_skill_label": "Skill {slot}",
 	"artifact_tap_to_select": "Tap to select",
-	"artifact_quirk": "Quirk",
-
 	"tooltip_youtube_video": "YouTube video",
 	"tooltip_expand_video": "Expand video",
 	"tooltip_toggle_sort": "Toggle sort order",
@@ -1684,12 +1516,9 @@
 	"tooltip_add_perpetuity_ring": "Add Perpetuity Ring",
 	"tooltip_remove_perpetuity_ring": "Remove Perpetuity Ring",
 	"tooltip_not_in_collection": "This item is no longer in your collection",
-
 	"toast_copied": "Copied to clipboard",
 	"toast_copy_failed": "Failed to copy",
-
 	"button_clear": "Clear",
-
 	"editor_undo": "Undo",
 	"editor_redo": "Redo",
 	"editor_heading_4": "Heading 4",
@@ -1721,23 +1550,14 @@
 	"editor_prompt_calculation": "Enter new calculation:",
 	"editor_prompt_url": "Enter the URL:",
 	"editor_image_too_large": "Image too large! File size: {filesize} MB",
-
-	"crew_join_title": "Join a Crew",
 	"crew_join_description": "Accept an invitation to join a crew.",
 	"crew_join_failed_load": "Failed to load invitations",
-	"crew_join_no_invitations": "You don't have any pending invitations.",
-	"crew_join_hint": "Ask a crew captain or vice captain to send you an invitation.",
-	"crew_join_go_back": "Go Back",
-	"crew_join_invited_by": "Invited by {username}",
 	"crew_join_phantom_assigned": "Phantom assigned: {name}",
 	"crew_join_member_count": "{count} members",
-	"crew_join_expired": "This invitation has expired.",
-	"crew_join_expires": "Expires: {date}",
 	"crew_join_declining": "Declining...",
 	"crew_join_decline": "Decline",
 	"crew_join_joining": "Joining...",
 	"crew_join_accept": "Accept",
-
 	"migrate_banner_text": "You have anonymous teams that can be linked to your account",
 	"migrate_banner_action": "Migrate teams",
 	"migrate_page_title": "Migrate Teams",
@@ -1748,7 +1568,6 @@
 	"migrate_page_migrating": "Migrating...",
 	"migrate_page_success": "Teams migrated successfully",
 	"page_title_playlists": "{username}'s playlists",
-	"profile_tab_playlists": "Playlists",
 	"page_desc_playlists": "{username}'s playlists",
 	"page_desc_playlist": "{title} — playlist",
 	"playlist_create": "New playlist",
@@ -1786,7 +1605,6 @@
 	"playlist_page_title": "{title} / A playlist by {username} / granblue.team",
 	"toast_added_to_playlist": "Added to your {name} playlist",
 	"toast_view_playlist": "View playlist",
-
 	"context_view_team": "View team",
 	"context_delete_team": "Delete team",
 	"context_view_playlist": "View playlist",
@@ -1795,7 +1613,6 @@
 	"confirm_delete_team_message": "Are you sure you want to delete this team? This action cannot be undone.",
 	"confirm_delete_playlist_title": "Delete playlist",
 	"confirm_delete_playlist_message": "Are you sure you want to delete this playlist? This action cannot be undone.",
-
 	"context_view_character": "View character",
 	"context_view_weapon": "View weapon",
 	"context_view_summon": "View summon",
@@ -1806,7 +1623,6 @@
 	"context_view_teams_weapon": "View teams with this weapon",
 	"context_view_teams_summon": "View teams with this summon",
 	"context_add_to_teams_view": "Add to teams view",
-	"context_view_in_database": "View in Database",
 	"sidebar_no_parties_entity": "No teams found with this item",
 	"tab_stats": "Stats",
 	"tab_notes": "Notes",
@@ -1904,5 +1720,20 @@
 	"details_full_auto_skills": "Full Auto Skills",
 	"full_auto_skill_toggle": "Use in Full Auto",
 	"full_auto_skill_enabled": "Enabled",
-	"full_auto_skill_disabled": "Disabled"
+	"full_auto_skill_disabled": "Disabled",
+	"pane_skill_boosts": "Weapon Skill Boosts",
+	"calculator_open": "Open skill calculator",
+	"calculator_enhancements": "Weapon Skill Enhancements",
+	"calculator_empty": "No weapon skill boosts to show.",
+	"calculator_error": "Couldn't load skill boosts.",
+	"calculator_enh_optimus": "Optimus",
+	"calculator_enh_omega": "Omega",
+	"calculator_enh_taboo": "Odious",
+	"calculator_conditions": "Conditions",
+	"calculator_hp": "HP",
+	"calculator_turn": "Turn",
+	"calculator_foe_element": "Foe Element",
+	"calculator_hp_value": "HP: {percent}%",
+	"calculator_turn_value": "Turn {turn}",
+	"calculator_alpha_notice": "This feature is in alpha and may display incorrect data. If you find incorrect calculations, please report in Discord."
 }

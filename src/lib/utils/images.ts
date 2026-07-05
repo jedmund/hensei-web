@@ -31,6 +31,7 @@ export const BUCKET = {
 	rarity: 'icons/rarity',
 	awakening: 'icons/awakening',
 	weaponSkills: 'icons/weapon-skills',
+	skillLabels: 'icons/skill-labels',
 	mastery: 'icons/mastery',
 	axSkills: 'icons/ax-skills',
 	accessories: 'accessories',
@@ -567,6 +568,19 @@ export function getAwakeningImage(
  * "skill_atk_4_4") is the resolved, internal-element-numbered name the API
  * exposes as `iconStem`; EN and JA variants live in language subdirectories.
  */
+/**
+ * Get an in-game weapon-skill label badge URL (the "Weapon Skill Boosts"
+ * panel tags), served from S3 with the rest of our images.
+ */
+export function getSkillLabelImage(
+	slug: string | null | undefined,
+	locale: string = 'en'
+): string | null {
+	if (!slug) return null
+	const lang = locale === 'ja' ? 'ja' : 'en'
+	return `${getBasePath()}/${BUCKET.skillLabels}/${lang}/${slug}.png`
+}
+
 export function getWeaponSkillIcon(
 	stem: string | null | undefined,
 	locale: string = 'en'
