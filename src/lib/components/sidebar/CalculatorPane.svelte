@@ -150,6 +150,7 @@
 						contained
 						includeAny
 						size="small"
+						class="foe-picker"
 						onValueChange={(v) => {
 							if (typeof v === 'number') {
 								foeElement = ELEMENT_WORDS[v]
@@ -279,6 +280,11 @@
 		font-size: $font-small;
 		font-weight: $bold;
 		color: var(--text-secondary);
+	}
+
+	// The sliders stretch with the column; the picker keeps its natural width.
+	.filter-group :global(.foe-picker) {
+		align-self: flex-start;
 	}
 
 	.rows {
