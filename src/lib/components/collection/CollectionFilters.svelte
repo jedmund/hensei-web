@@ -138,7 +138,9 @@
 					{ value: 'proficiency_asc', label: m.sort_proficiency_asc() },
 					{ value: 'proficiency_desc', label: m.sort_proficiency_desc() }
 				]
-			: [])
+			: []),
+		{ value: 'release_date_asc', label: m.sort_release_date_oldest() },
+		{ value: 'release_date_desc', label: m.sort_release_date_newest() }
 	] as { value: CollectionSortKey; label: string }[])
 
 	// Constants

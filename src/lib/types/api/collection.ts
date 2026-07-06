@@ -169,6 +169,9 @@ export type CollectionSortKey =
 	| 'score_asc'
 	| 'uncap_asc'
 	| 'uncap_desc'
+	// "Release Date" in the UI; ordered by the generated latest_date column.
+	| 'release_date_desc'
+	| 'release_date_asc'
 
 /**
  * Filters for listing collection items

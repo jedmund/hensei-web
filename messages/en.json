@@ -1165,6 +1165,8 @@
 	"sort_element_desc": "Element ↓",
 	"sort_proficiency_asc": "Proficiency ↑",
 	"sort_proficiency_desc": "Proficiency ↓",
+	"sort_release_date_newest": "Release Date ↓",
+	"sort_release_date_oldest": "Release Date ↑",
 	"filter_element": "Element",
 	"filter_rarity": "Rarity",
 	"filter_season": "Season",
