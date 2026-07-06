@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Input from '$lib/components/ui/Input.svelte'
+	import Select from '$lib/components/ui/Select.svelte'
+	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
+	import { titleCase } from '$lib/utils/textCase'
+	import { getWeaponImage } from '$lib/utils/images'
 	import type { FamilyVersion, WeaponSkillFamily } from '$lib/types/api/weaponSkillFamily'
 
 	interface Props {
@@ -10,6 +15,19 @@
 	}
 
 	let { family, canEdit, onMutated }: Props = $props()
+
+	// Options mirror the WeaponSkillVersion enums; "—" clears the value.
+	const SERIES_OPTIONS = [
+		{ value: '', label: '—' },
+		...['normal', 'omega', 'ex', 'odious'].map((s) => ({ value: s, label: titleCase(s) }))
+	]
+	const SIZE_OPTIONS = [
+		{ value: '', label: '—' },
+		...['small', 'medium', 'big', 'big_ii', 'massive', 'unworldly', 'ancestral'].map((s) => ({
+			value: s,
+			label: titleCase(s)
+		}))
+	]
 
 	let savingId = $state<string | null>(null)
 	let error = $state<string | null>(null)
@@ -27,17 +45,28 @@
 		>
 	>({})
 
-	function buffer(version: FamilyVersion) {
-		if (!edits[version.id]) {
-			edits[version.id] = {
-				skillSeries: version.skillSeries ?? '',
-				skillSize: version.skillSize ?? '',
-				mainHandOnly: version.mainHandOnly ?? false,
-				nameEn: version.name?.en ?? '',
-				nameJp: version.name?.ja ?? ''
+	function createBuffer(version: FamilyVersion) {
+		return {
+			skillSeries: version.skillSeries ?? '',
+			skillSize: version.skillSize ?? '',
+			mainHandOnly: version.mainHandOnly ?? false,
+			nameEn: version.name?.en ?? '',
+			nameJp: version.name?.ja ?? ''
+		}
+	}
+
+	// Populate buffers in an effect, not the `{@const buffer(version)}` template call below —
+	// mutating $state during template/derived evaluation throws state_unsafe_mutation.
+	$effect(() => {
+		for (const version of family.versions) {
+			if (!(version.id in edits)) {
+				edits[version.id] = createBuffer(version)
 			}
 		}
-		return edits[version.id]!
+	})
+
+	function buffer(version: FamilyVersion) {
+		return edits[version.id] ?? createBuffer(version)
 	}
 
 	async function saveVersion(version: FamilyVersion) {
@@ -116,8 +145,17 @@
 						<tr>
 							<td>
 								{#if version.weapon}
-									<a href={`/database/weapons/${version.weapon.granblueId}`}>
-										{version.weapon.nameEn}
+									<a href={`/database/weapons/${version.weapon.granblueId}`} class="weapon-link">
+										<img
+											src={getWeaponImage(
+												version.weapon.granblueId,
+												'square',
+												version.weapon.element === 0 ? 0 : undefined
+											)}
+											alt=""
+											class="weapon-image"
+										/>
+										<span class="weapon-name">{version.weapon.nameEn}</span>
 									</a>
 								{:else}
 									—
@@ -125,8 +163,8 @@
 							</td>
 							<td class="labels">
 								{#if canEdit}
-									<input type="text" bind:value={buf.nameEn} placeholder="Name (en)" />
-									<input type="text" bind:value={buf.nameJp} placeholder="Name (ja)" class="jp" />
+									<Input bind:value={buf.nameEn} contained placeholder="Name (en)" />
+									<Input bind:value={buf.nameJp} contained placeholder="Name (ja)" class="jp" />
 								{:else}
 									<span>{version.name?.en ?? '—'}</span>
 									{#if version.name?.ja}<span class="jp">{version.name.ja}</span>{/if}
@@ -135,33 +173,23 @@
 							<td><span class="tier">{tierLabel(version)}</span></td>
 							<td>
 								{#if canEdit}
-									<select bind:value={buf.skillSeries}>
-										<option value="">—</option>
-										{#each ['normal', 'omega', 'ex', 'odious'] as s (s)}
-											<option value={s}>{s}</option>
-										{/each}
-									</select>
+									<Select options={SERIES_OPTIONS} bind:value={buf.skillSeries} contained portal />
 								{:else}
-									{version.skillSeries ?? '—'}
+									{version.skillSeries ? titleCase(version.skillSeries) : '—'}
 								{/if}
 							</td>
 							<td>
 								{#if canEdit}
-									<select bind:value={buf.skillSize}>
-										<option value="">—</option>
-										{#each ['small', 'medium', 'big', 'big2', 'massive', 'ancestral'] as s (s)}
-											<option value={s}>{s}</option>
-										{/each}
-									</select>
+									<Select options={SIZE_OPTIONS} bind:value={buf.skillSize} contained portal />
 								{:else}
-									{version.skillSize ?? '—'}
+									{version.skillSize ? titleCase(version.skillSize) : '—'}
 								{/if}
 							</td>
 							<td>
 								{#if canEdit}
-									<input type="checkbox" bind:checked={buf.mainHandOnly} />
+									<Checkbox bind:checked={buf.mainHandOnly} contained />
 								{:else}
-									{version.mainHandOnly ? 'yes' : '—'}
+									{version.mainHandOnly ? 'Yes' : '—'}
 								{/if}
 							</td>
 							{#if canEdit}
@@ -209,8 +237,10 @@
 
 	.empty {
 		color: var(--text-tertiary);
+		font-size: typography.$font-regular;
 		text-align: center;
 		padding: spacing.$unit-4x 0;
+		margin: 0;
 	}
 
 	.table-wrapper {
@@ -237,33 +267,46 @@
 			vertical-align: middle;
 		}
 
-		a {
-			color: var(--link-color, var(--blue));
-			text-decoration: none;
-
-			&:hover {
-				text-decoration: underline;
-			}
+		// Give the enum dropdowns enough room for their longest label.
+		:global(.select) {
+			min-width: 120px;
 		}
+	}
 
-		input[type='text'],
-		select {
-			padding: 2px spacing.$unit-half;
-			background: var(--input-bound-bg);
-			border: none;
-			border-radius: layout.$item-corner-small;
-			font-size: typography.$font-small;
-			color: var(--text-primary);
+	.weapon-link {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+		color: var(--text-primary);
+		text-decoration: none;
+		min-width: 0;
+
+		&:hover .weapon-name {
+			text-decoration: underline;
 		}
+	}
+
+	.weapon-image {
+		width: 48px;
+		height: 48px;
+		object-fit: contain;
+		border-radius: layout.$item-corner-small;
+		flex-shrink: 0;
+	}
+
+	.weapon-name {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.labels {
 		display: flex;
 		flex-direction: column;
-		gap: 2px;
+		gap: spacing.$unit-half;
 
-		input {
-			min-width: 180px;
+		:global(.input) {
+			min-width: 200px;
 		}
 
 		.jp {

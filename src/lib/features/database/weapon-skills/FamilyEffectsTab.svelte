@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Input from '$lib/components/ui/Input.svelte'
+	import { getBoostTypeLabel } from '$lib/utils/boostType'
+	import { titleCase } from '$lib/utils/textCase'
 	import type {
 		DeleteImpact,
 		WeaponSkillEffectRow,
@@ -36,19 +39,30 @@
 		Record<string, { value: string; totalCap: string; perCopyCap: string; condition: string }>
 	>({})
 
-	function buffer(effect: WeaponSkillEffectRow) {
-		if (!edits[effect.id]) {
-			edits[effect.id] = {
-				value: effect.value?.toString() ?? '',
-				totalCap: effect.totalCap?.toString() ?? '',
-				perCopyCap: effect.perCopyCap?.toString() ?? '',
-				condition:
-					effect.condition && Object.keys(effect.condition).length > 0
-						? JSON.stringify(effect.condition)
-						: ''
+	function createBuffer(effect: WeaponSkillEffectRow) {
+		return {
+			value: effect.value?.toString() ?? '',
+			totalCap: effect.totalCap?.toString() ?? '',
+			perCopyCap: effect.perCopyCap?.toString() ?? '',
+			condition:
+				effect.condition && Object.keys(effect.condition).length > 0
+					? JSON.stringify(effect.condition)
+					: ''
+		}
+	}
+
+	// Populate buffers in an effect, not the `{@const buffer(effect)}` template call below —
+	// mutating $state during template/derived evaluation throws state_unsafe_mutation.
+	$effect(() => {
+		for (const effect of family.effects) {
+			if (!(effect.id in edits)) {
+				edits[effect.id] = createBuffer(effect)
 			}
 		}
-		return edits[effect.id]!
+	})
+
+	function buffer(effect: WeaponSkillEffectRow) {
+		return edits[effect.id] ?? createBuffer(effect)
 	}
 
 	async function saveEffect(effect: WeaponSkillEffectRow) {
@@ -112,17 +126,24 @@
 							{@const buf = buffer(effect)}
 							<div class="card" class:edited={!!effect.manuallyEditedAt}>
 								<div class="card-header">
-									<span class="boost">{effect.boostType}</span>
-									<span class="kind">{effect.scalingKind}</span>
+									<span class="boost">{getBoostTypeLabel(effect.boostType)}</span>
+									<span class="kind">{titleCase(effect.scalingKind)}</span>
 									{#if effect.keySlug}<span class="key-slug">{effect.keySlug}</span>{/if}
-									{#if effect.series}<span class="series">{effect.series}</span>{/if}
+									{#if effect.series}<span class="series">{titleCase(effect.series)}</span>{/if}
 									{#if effect.manuallyEditedAt}<span class="edited-badge">edited</span>{/if}
 								</div>
 								<div class="fields">
 									<label>
 										Value
 										{#if canEdit}
-											<input type="number" step="any" bind:value={buf.value} placeholder="—" />
+											<Input
+												type="number"
+												variant="number"
+												contained
+												alignRight
+												bind:value={buf.value}
+												placeholder="—"
+											/>
 										{:else}
 											<span>{effect.value ?? '—'}</span>
 										{/if}
@@ -131,7 +152,14 @@
 									<label>
 										Total cap
 										{#if canEdit}
-											<input type="number" step="any" bind:value={buf.totalCap} placeholder="—" />
+											<Input
+												type="number"
+												variant="number"
+												contained
+												alignRight
+												bind:value={buf.totalCap}
+												placeholder="—"
+											/>
 										{:else}
 											<span>{effect.totalCap ?? '—'}</span>
 										{/if}
@@ -139,7 +167,14 @@
 									<label>
 										Per-copy cap
 										{#if canEdit}
-											<input type="number" step="any" bind:value={buf.perCopyCap} placeholder="—" />
+											<Input
+												type="number"
+												variant="number"
+												contained
+												alignRight
+												bind:value={buf.perCopyCap}
+												placeholder="—"
+											/>
 										{:else}
 											<span>{effect.perCopyCap ?? '—'}</span>
 										{/if}
@@ -150,8 +185,9 @@
 									<label class="condition">
 										Condition
 										{#if canEdit}
-											<input
+											<Input
 												type="text"
+												contained
 												bind:value={buf.condition}
 												placeholder={'{"type": "arcarum", "eq": true}'}
 											/>
@@ -206,8 +242,10 @@
 
 	.empty {
 		color: var(--text-tertiary);
+		font-size: typography.$font-regular;
 		text-align: center;
 		padding: spacing.$unit-4x 0;
+		margin: 0;
 	}
 
 	.effect-group {
@@ -281,24 +319,19 @@
 			font-size: typography.$font-small;
 			color: var(--text-secondary);
 
-			input {
-				padding: 2px spacing.$unit-half;
-				background: var(--input-bound-bg);
-				border: none;
-				border-radius: layout.$item-corner-small;
-				font-size: typography.$font-small;
-				color: var(--text-primary);
-				width: 90px;
+			:global(.input.number) {
+				width: 96px;
 			}
 
-			&.condition input {
-				flex: 1;
-				width: auto;
-				font-family: monospace;
-				font-size: typography.$font-tiny;
+			&.condition {
+				align-items: stretch;
+
+				:global(.input) {
+					flex: 1;
+				}
 			}
 
-			span {
+			> span {
 				color: var(--text-primary);
 			}
 

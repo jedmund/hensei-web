@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Input from '$lib/components/ui/Input.svelte'
+	import Select from '$lib/components/ui/Select.svelte'
+	import { getBoostTypeLabel } from '$lib/utils/boostType'
+	import { titleCase } from '$lib/utils/textCase'
 	import type {
 		DeleteImpact,
 		WeaponSkillDatumRow,
@@ -18,21 +22,37 @@
 
 	const SL_FIELDS = ['sl1', 'sl10', 'sl15', 'sl20', 'sl25'] as const
 
+	const FORMULA_OPTIONS = ['flat', 'enmity', 'stamina', 'progression', 'garrison'].map((ft) => ({
+		value: ft,
+		label: titleCase(ft)
+	}))
+
 	let savingId = $state<string | null>(null)
 	let error = $state<string | null>(null)
 	// Per-row edit buffers keyed by row id
 	let edits = $state<Record<string, Record<string, string>>>({})
 
-	function buffer(row: WeaponSkillDatumRow): Record<string, string> {
-		if (!edits[row.id]) {
-			edits[row.id] = Object.fromEntries([
-				...SL_FIELDS.map((f) => [f, row[f]?.toString() ?? '']),
-				['coefficient', row.coefficient?.toString() ?? ''],
-				['maxValue', row.maxValue?.toString() ?? ''],
-				['formulaType', row.formulaType ?? 'flat']
-			])
+	function createBuffer(row: WeaponSkillDatumRow): Record<string, string> {
+		return Object.fromEntries([
+			...SL_FIELDS.map((f) => [f, row[f]?.toString() ?? '']),
+			['coefficient', row.coefficient?.toString() ?? ''],
+			['maxValue', row.maxValue?.toString() ?? ''],
+			['formulaType', row.formulaType ?? 'flat']
+		])
+	}
+
+	// Populate buffers in an effect, not the `{@const buffer(row)}` template call below —
+	// mutating $state during template/derived evaluation throws state_unsafe_mutation.
+	$effect(() => {
+		for (const row of family.data) {
+			if (!(row.id in edits)) {
+				edits[row.id] = createBuffer(row)
+			}
 		}
-		return edits[row.id]!
+	})
+
+	function buffer(row: WeaponSkillDatumRow): Record<string, string> {
+		return edits[row.id] ?? createBuffer(row)
 	}
 
 	async function saveRow(row: WeaponSkillDatumRow) {
@@ -105,27 +125,30 @@
 							class:edited={!!row.manuallyEditedAt}
 						>
 							<td>
-								{row.boostType}
+								{getBoostTypeLabel(row.boostType)}
 								{#if row.weaponSkillVersionId}<span class="badge">version</span>{/if}
 								{#if row.manuallyEditedAt}<span class="badge edited-badge">edited</span>{/if}
 							</td>
-							<td>{row.series ?? 'any'}</td>
-							<td>{row.size ?? '—'}</td>
+							<td>{row.series ? titleCase(row.series) : 'Any'}</td>
+							<td>{row.size ? titleCase(row.size) : '—'}</td>
 							<td>
 								{#if canEdit}
-									<select bind:value={buf.formulaType}>
-										{#each ['flat', 'enmity', 'stamina', 'progression', 'garrison'] as ft (ft)}
-											<option value={ft}>{ft}</option>
-										{/each}
-									</select>
+									<Select options={FORMULA_OPTIONS} bind:value={buf.formulaType} contained portal />
 								{:else}
-									{row.formulaType ?? '—'}
+									{row.formulaType ? titleCase(row.formulaType) : '—'}
 								{/if}
 							</td>
 							{#each SL_FIELDS as f (f)}
 								<td class="num">
 									{#if canEdit}
-										<input type="number" step="any" bind:value={buf[f]} placeholder="—" />
+										<Input
+											type="number"
+											variant="number"
+											contained
+											alignRight
+											bind:value={buf[f]}
+											placeholder="—"
+										/>
 									{:else}
 										{row[f] ?? '—'}
 									{/if}
@@ -133,14 +156,28 @@
 							{/each}
 							<td class="num">
 								{#if canEdit}
-									<input type="number" step="any" bind:value={buf.coefficient} placeholder="—" />
+									<Input
+										type="number"
+										variant="number"
+										contained
+										alignRight
+										bind:value={buf.coefficient}
+										placeholder="—"
+									/>
 								{:else}
 									{row.coefficient ?? '—'}
 								{/if}
 							</td>
 							<td class="num">
 								{#if canEdit}
-									<input type="number" step="any" bind:value={buf.maxValue} placeholder="—" />
+									<Input
+										type="number"
+										variant="number"
+										contained
+										alignRight
+										bind:value={buf.maxValue}
+										placeholder="—"
+									/>
 								{:else}
 									{row.maxValue ?? '—'}
 								{/if}
@@ -189,6 +226,7 @@
 		font-size: typography.$font-regular;
 		text-align: center;
 		padding: spacing.$unit-4x 0;
+		margin: 0;
 	}
 
 	.table-wrapper {
@@ -219,20 +257,15 @@
 		.num {
 			text-align: right;
 
-			input {
-				width: 64px;
-				text-align: right;
+			// Keep the numeric editors compact in the dense grid (component default is wider).
+			:global(.input.number) {
+				width: 88px;
 			}
 		}
 
-		input,
-		select {
-			padding: 2px spacing.$unit-half;
-			background: var(--input-bound-bg);
-			border: none;
-			border-radius: layout.$item-corner-small;
-			font-size: typography.$font-small;
-			color: var(--text-primary);
+		// Formula dropdown: enough room for the longest label ("Progression").
+		:global(.select) {
+			min-width: 140px;
 		}
 
 		.actions {
