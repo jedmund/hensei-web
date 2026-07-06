@@ -6,6 +6,7 @@
 export interface WeaponSkillFamilySummary {
 	modifier: string
 	displayName: { en?: string | null; ja?: string | null } | null
+	iconStems: string[]
 	boostTypes: string[]
 	series: string[]
 	sizes: string[]
@@ -76,7 +77,15 @@ export interface FamilyVersion {
 	mainHandOnly?: boolean
 	mcOnly?: boolean
 	scalesWithSkillLevel?: boolean
-	weapon?: { granblueId: string; nameEn: string; element?: number } | null
+	weapon?: {
+		granblueId: string
+		nameEn: string
+		element?: number
+		rarity?: number
+		proficiency?: number
+		weaponSeriesId?: string | null
+		latestDate?: string | null
+	} | null
 }
 
 export interface FamilyKey {
@@ -90,7 +99,7 @@ export interface FamilyKey {
 export interface WeaponSkillFamily {
 	modifier: string
 	displayName: { en?: string | null; ja?: string | null }
-	iconStem?: string | null
+	iconStems: string[]
 	data: WeaponSkillDatumRow[]
 	effects: WeaponSkillEffectRow[]
 	versions: FamilyVersion[]

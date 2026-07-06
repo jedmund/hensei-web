@@ -5,6 +5,7 @@
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
+	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
@@ -23,7 +24,10 @@
 	import { getRarityLabel } from '$lib/utils/rarity'
 	import { getBasePath } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
+	import { getBoostTypeLabel } from '$lib/utils/boostType'
 	import type { Awakening } from '$lib/types/api/entities'
+	import type { WeaponSkillFamilySummary } from '$lib/types/api/weaponSkillFamily'
+	import WeaponSkillIcon from '$lib/components/database/WeaponSkillIcon.svelte'
 
 	const extraPrerequisiteLabels: Record<number, string> = {
 		3: 'MLB',
@@ -32,12 +36,18 @@
 		6: 'Transcendence'
 	}
 
-	type ViewMode = 'weapons' | 'series' | 'awakenings'
+	type ViewMode = 'weapons' | 'series' | 'awakenings' | 'skills'
 
 	// View mode state - read initial value from URL
 	const initialView = $page.url.searchParams.get('view') as ViewMode | null
 	let viewMode = $state<ViewMode>(
-		initialView === 'series' ? 'series' : initialView === 'awakenings' ? 'awakenings' : 'weapons'
+		initialView === 'series'
+			? 'series'
+			: initialView === 'awakenings'
+				? 'awakenings'
+				: initialView === 'skills'
+					? 'skills'
+					: 'weapons'
 	)
 
 	// Sync viewMode changes to URL
@@ -90,6 +100,48 @@
 	function getAwakeningImageUrl(slug: string): string {
 		const ext = slug.startsWith('character-') ? 'jpg' : 'png'
 		return `${getBasePath()}/icons/awakening/${slug}.${ext}`
+	}
+
+	// Query for weapon skill families (client-side filtered — not paginated like the main grid)
+	const weaponSkillFamiliesQuery = createQuery(() => ({
+		queryKey: ['weaponSkillFamilies'],
+		queryFn: () => entityAdapter.getWeaponSkillFamilies(),
+		enabled: viewMode === 'skills'
+	}))
+
+	let skillsSearchTerm = $state('')
+	let skillsSeriesFilter = $state('')
+	let skillsSizeFilter = $state('')
+	let skillsBoostTypeFilter = $state('')
+
+	const allSkillFamilies = $derived(weaponSkillFamiliesQuery.data ?? [])
+
+	const skillsBoostTypeOptions = $derived(
+		[...new Set(allSkillFamilies.flatMap((f) => f.boostTypes))].sort()
+	)
+
+	const filteredSkillFamilies = $derived.by(() => {
+		let families = allSkillFamilies
+		if (skillsSearchTerm.trim()) {
+			const term = skillsSearchTerm.toLowerCase()
+			families = families.filter(
+				(f) =>
+					f.modifier.toLowerCase().includes(term) ||
+					f.displayName?.en?.toLowerCase().includes(term) ||
+					f.displayName?.ja?.toLowerCase().includes(term)
+			)
+		}
+		if (skillsSeriesFilter) families = families.filter((f) => f.series.includes(skillsSeriesFilter))
+		if (skillsSizeFilter) families = families.filter((f) => f.sizes.includes(skillsSizeFilter))
+		if (skillsBoostTypeFilter)
+			families = families.filter((f) => f.boostTypes.includes(skillsBoostTypeFilter))
+		return families
+	})
+
+	const editedSkillFamiliesCount = $derived(allSkillFamilies.filter((f) => f.manuallyEdited).length)
+
+	function handleSkillFamilyClick(family: WeaponSkillFamilySummary) {
+		goto(`/database/weapon-skills/${encodeURIComponent(family.modifier)}`)
 	}
 
 	// Column configuration for weapons
@@ -305,6 +357,7 @@
 					<Segment value="weapons">Weapons</Segment>
 					<Segment value="series">Series</Segment>
 					<Segment value="awakenings">Awakenings</Segment>
+					<Segment value="skills">Skills</Segment>
 				</SegmentedControl>
 			{/snippet}
 		</DatabaseGridWithProvider>
@@ -315,6 +368,7 @@
 					<Segment value="weapons">Weapons</Segment>
 					<Segment value="series">Series</Segment>
 					<Segment value="awakenings">Awakenings</Segment>
+					<Segment value="skills">Skills</Segment>
 				</SegmentedControl>
 			</div>
 
@@ -368,7 +422,7 @@
 				<div class="empty-state">No weapon series found</div>
 			{/if}
 		</div>
-	{:else}
+	{:else if viewMode === 'awakenings'}
 		<!-- Awakenings view -->
 		<div class="grid-container">
 			<div class="controls">
@@ -376,6 +430,7 @@
 					<Segment value="weapons">Weapons</Segment>
 					<Segment value="series">Series</Segment>
 					<Segment value="awakenings">Awakenings</Segment>
+					<Segment value="skills">Skills</Segment>
 				</SegmentedControl>
 				<div class="controls-right">
 					<Button variant="primary" size="small" onclick={handleAddAwakening}>Add</Button>
@@ -433,6 +488,108 @@
 		</div>
 
 		<AwakeningModal bind:open={awakeningModalOpen} awakening={editingAwakening} />
+	{:else}
+		<!-- Weapon Skills view -->
+		<div class="grid-container">
+			<div class="controls">
+				<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
+					<Segment value="weapons">Weapons</Segment>
+					<Segment value="series">Series</Segment>
+					<Segment value="awakenings">Awakenings</Segment>
+					<Segment value="skills">Skills</Segment>
+				</SegmentedControl>
+				<div class="controls-right">
+					<input
+						type="text"
+						placeholder="Search skill families..."
+						bind:value={skillsSearchTerm}
+						class="skills-search"
+					/>
+					<select bind:value={skillsSeriesFilter} class="filter-select">
+						<option value="">All series</option>
+						<option value="normal">Normal</option>
+						<option value="omega">Omega</option>
+						<option value="ex">EX</option>
+						<option value="odious">Odious</option>
+					</select>
+					<select bind:value={skillsSizeFilter} class="filter-select">
+						<option value="">All sizes</option>
+						{#each ['small', 'medium', 'big', 'big2', 'massive', 'ancestral'] as size (size)}
+							<option value={size}>{size}</option>
+						{/each}
+					</select>
+					<select bind:value={skillsBoostTypeFilter} class="filter-select">
+						<option value="">All boost types</option>
+						{#each skillsBoostTypeOptions as bt (bt)}
+							<option value={bt}>{getBoostTypeLabel(bt)}</option>
+						{/each}
+					</select>
+				</div>
+			</div>
+
+			{#if editedSkillFamiliesCount > 0}
+				<div class="export-reminder">
+					{editedSkillFamiliesCount}
+					{editedSkillFamiliesCount === 1 ? 'family carries' : 'families carry'} manual edits — run
+					<code>rake granblue:export_weapon_skill_data</code> /
+					<code>granblue:export_weapon_skill_effects</code> to snapshot them.
+				</div>
+			{/if}
+
+			{#if weaponSkillFamiliesQuery.isPending}
+				<div class="loading-state">Loading skill families...</div>
+			{:else if weaponSkillFamiliesQuery.error}
+				<div class="error-state">Failed to load skill families</div>
+			{:else if filteredSkillFamilies.length > 0}
+				<div class="grid-wrapper">
+					<table class="series-table">
+						<thead>
+							<tr>
+								<th class="col-image">Icon</th>
+								<th class="col-name">Family</th>
+								<th>Boost Types</th>
+								<th>Series</th>
+								<th>Sizes</th>
+								<th class="col-num">Weapons</th>
+								<th class="col-num">Versions</th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each filteredSkillFamilies as family (family.modifier)}
+								<tr onclick={() => handleSkillFamilyClick(family)} class="clickable">
+									<td class="col-image">
+										{#if family.iconStems.length > 0}
+											<WeaponSkillIcon iconStems={family.iconStems} size={48} />
+										{:else}
+											<span class="no-image">—</span>
+										{/if}
+									</td>
+									<td class="col-name">
+										<div class="family-name-cell">
+											<span class="series-name">{family.displayName?.en ?? family.modifier}</span>
+											<span class="family-modifier">{family.modifier}</span>
+										</div>
+									</td>
+									<td>{family.boostTypes.map(getBoostTypeLabel).join(', ') || '—'}</td>
+									<td>{family.series.join(', ') || '—'}</td>
+									<td>{family.sizes.join(', ') || '—'}</td>
+									<td class="col-num">{family.counts.weapons}</td>
+									<td class="col-num">{family.counts.versions}</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+
+				<div class="grid-footer">
+					<div class="pagination-info">
+						Showing {filteredSkillFamilies.length} of {allSkillFamilies.length} skill families
+					</div>
+				</div>
+			{:else}
+				<div class="empty-state">No skill families found</div>
+			{/if}
+		</div>
 	{/if}
 </div>
 
@@ -463,7 +620,50 @@
 	}
 
 	.controls-right {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
 		margin-left: auto;
+	}
+
+	.skills-search {
+		padding: spacing.$unit spacing.$unit-2x;
+		border: 1px solid var(--border-subtle);
+		border-radius: layout.$card-corner;
+		background: var(--input-bg, var(--card-bg));
+		color: var(--text-primary);
+		font-size: typography.$font-small;
+		outline: none;
+		width: 200px;
+
+		&:focus {
+			border-color: var(--accent-color);
+		}
+
+		&::placeholder {
+			color: var(--text-tertiary);
+		}
+	}
+
+	.filter-select {
+		padding: spacing.$unit spacing.$unit-2x;
+		border: 1px solid var(--border-subtle);
+		border-radius: layout.$card-corner;
+		background: var(--input-bg, var(--card-bg));
+		color: var(--text-primary);
+		font-size: typography.$font-small;
+	}
+
+	.export-reminder {
+		padding: spacing.$unit spacing.$unit-2x;
+		background: var(--notice-yellow-bg, rgba(224, 138, 0, 0.1));
+		color: var(--text-secondary);
+		font-size: typography.$font-small;
+		border-bottom: 1px solid var(--border-subtle);
+
+		code {
+			font-size: typography.$font-tiny;
+		}
 	}
 
 	.loading-state,
@@ -542,6 +742,11 @@
 		.col-type {
 			width: 100px;
 		}
+
+		.col-num {
+			text-align: right;
+			font-variant-numeric: tabular-nums;
+		}
 	}
 
 	.awakening-icon {
@@ -556,6 +761,18 @@
 
 	.series-name {
 		font-weight: typography.$normal;
+	}
+
+	.family-name-cell {
+		display: flex;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.family-modifier {
+		font-family: monospace;
+		font-size: typography.$font-tiny;
+		color: var(--text-tertiary);
 	}
 
 	.no-flags {
