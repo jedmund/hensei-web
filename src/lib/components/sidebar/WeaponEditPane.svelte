@@ -59,6 +59,7 @@
 		axStrength2?: number
 		befoulmentModifierId?: string
 		befoulmentStrength?: number
+		befoulmentPermeation?: number | null
 		exorcismLevel?: number
 		bullets?: BulletLoadout[]
 	}
@@ -186,6 +187,7 @@
 			if (befoulment?.modifier?.id) {
 				updates.befoulmentModifierId = befoulment.modifier.id
 				updates.befoulmentStrength = befoulment.strength
+				updates.befoulmentPermeation = befoulment.permeation ?? 1
 				updates.exorcismLevel = befoulment.exorcismLevel
 			}
 		}

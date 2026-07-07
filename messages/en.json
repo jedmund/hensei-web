@@ -1736,5 +1736,8 @@
 	"calculator_hp_value": "HP: {percent}%",
 	"calculator_turn_value": "Turn {turn}",
 	"calculator_alpha_notice": "This feature is in alpha and may display incorrect data. If you find incorrect calculations, please report in Discord.",
-	"nav_weapon_skills": "Weapon Skills"
+	"nav_weapon_skills": "Weapon Skills",
+	"details_permeation": "Permeation",
+	"befoulment_permeation": "Permeation",
+	"befoulment_permeation_hint": "Implied base roll: {min} to {max}"
 }

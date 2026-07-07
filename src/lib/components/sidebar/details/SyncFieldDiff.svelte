@@ -97,6 +97,7 @@
 		if (fieldKey === 'element') return m.sync_diff_element()
 		if (fieldKey === 'befoulmentModifier') return m.sync_diff_befoulment_modifier()
 		if (fieldKey === 'befoulmentStrength') return m.sync_diff_befoulment_strength()
+		if (fieldKey === 'befoulmentPermeation') return m.details_permeation()
 		if (fieldKey === 'exorcismLevel') return m.sync_diff_exorcism_level()
 		if (fieldKey.startsWith('overMastery.')) {
 			const i = Number(fieldKey.split('.')[1])
@@ -222,6 +223,14 @@
 				<Icon name="arrow-right" size={14} class="diff-arrow" />
 				<span class="text-value">
 					{(gridItem as GridWeapon).befoulment?.strength ?? m.sync_diff_empty()}
+				</span>
+			{:else if fieldKey === 'befoulmentPermeation'}
+				<span class="text-value">
+					{(collectionItem as CollectionWeapon).befoulment?.permeation ?? m.sync_diff_empty()}
+				</span>
+				<Icon name="arrow-right" size={14} class="diff-arrow" />
+				<span class="text-value">
+					{(gridItem as GridWeapon).befoulment?.permeation ?? m.sync_diff_empty()}
 				</span>
 			{:else if fieldKey === 'exorcismLevel'}
 				<span class="text-value">
