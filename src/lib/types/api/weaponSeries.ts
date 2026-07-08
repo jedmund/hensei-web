@@ -24,7 +24,7 @@ export interface WeaponSeriesRef {
 	/** Type of augment this series supports: "ax", "befoulment", or "no_augment" */
 	augmentType: AugmentType
 	/** AX slot rules: 'standard' = primary + secondary/extended slots; 'utility' = one EXP/Rupie slot */
-	axType?: 'standard' | 'utility' | null
+	axType?: 'standard' | 'xeno' | 'primal' | 'utility' | null
 	extra: boolean
 	elementChangeable: boolean
 	/** Number of weapon key slots this series supports (null if no keys) */

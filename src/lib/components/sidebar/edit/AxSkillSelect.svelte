@@ -15,8 +15,8 @@
 		currentSkills?: AugmentSkill[]
 		/** Language for display */
 		locale?: 'en' | 'ja'
-		/** The weapon's AX slot rules: 'standard' (primary + secondary/extended) or 'utility' (one EXP/Rupie slot) */
-		axType?: 'standard' | 'utility'
+		/** The weapon's AX slot rules per gbf.wiki/AX_Skills */
+		axType?: 'standard' | 'xeno' | 'primal' | 'utility'
 	}
 
 	let {
@@ -54,7 +54,13 @@
 	const primaryOptions = $derived.by(() => {
 		const items: Array<{ value: string; label: string }> = [{ value: '', label: m.ax_no_skill() }]
 
-		const wanted = axType === 'utility' ? ['utility'] : ['primary']
+		// primal weapons roll standard primaries AND EXP/Rupie; utility rolls only the latter
+		const wanted =
+			axType === 'utility'
+				? ['utility']
+				: axType === 'primal'
+					? ['primary', 'utility']
+					: ['primary']
 		for (const skill of (axQuery.data ?? []).filter((s) => wanted.includes(groupOf(s)))) {
 			items.push({
 				value: skill.id,
@@ -65,13 +71,19 @@
 		return items
 	})
 
-	// Build secondary skill options
+	// Build secondary skill options: the pool is keyed by (AX type, chosen primary)
+	// per gbf.wiki/AX_Skills — a Magna weapon's ATK primary offers Skill DMG Cap,
+	// a Xeno's offers Supplemental Skill DMG. Falls back to the flat group split
+	// until the API exposes axSecondaries.
 	const secondaryOptions = $derived.by(() => {
 		const items: Array<{ value: string; label: string }> = [{ value: '', label: m.ax_no_skill() }]
 
-		for (const skill of (axQuery.data ?? []).filter((s) =>
-			['secondary', 'extended'].includes(groupOf(s))
-		)) {
+		const poolKey = axType === 'xeno' ? 'xeno' : 'standard'
+		const pool = selectedPrimary?.axSecondaries?.[poolKey]
+		const candidates = (axQuery.data ?? []).filter((s) =>
+			pool ? pool.includes(s.slug) : ['secondary', 'extended'].includes(groupOf(s))
+		)
+		for (const skill of candidates) {
 			items.push({
 				value: skill.id,
 				label: locale === 'ja' ? skill.nameJp : skill.nameEn
