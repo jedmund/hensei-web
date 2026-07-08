@@ -252,7 +252,7 @@
 		{#if hasAxSkills}
 			<DetailsSection title={m.details_ax_skills()}>
 				<div class="section-content">
-					<AxSkillSelect bind:currentSkills={axSkills} />
+					<AxSkillSelect bind:currentSkills={axSkills} axType={series?.axType ?? 'standard'} />
 				</div>
 			</DetailsSection>
 		{/if}

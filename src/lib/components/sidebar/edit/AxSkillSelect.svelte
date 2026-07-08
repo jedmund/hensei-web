@@ -6,16 +6,31 @@
 	import Select from '$lib/components/ui/Select.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 
+	// Fallback when the API hasn't populated axGroup yet
 	const PRIMARY_AX_SLUGS = ['ax_atk', 'ax_def', 'ax_hp', 'ax_ca_dmg', 'ax_multiattack']
+	const UTILITY_AX_SLUGS = ['ax_exp', 'ax_rupie']
 
 	interface Props {
 		/** Current AX skills on the weapon (bindable) */
 		currentSkills?: AugmentSkill[]
 		/** Language for display */
 		locale?: 'en' | 'ja'
+		/** The weapon's AX slot rules: 'standard' (primary + secondary/extended) or 'utility' (one EXP/Rupie slot) */
+		axType?: 'standard' | 'utility'
 	}
 
-	let { currentSkills = $bindable<AugmentSkill[]>([]), locale = 'en' }: Props = $props()
+	let {
+		currentSkills = $bindable<AugmentSkill[]>([]),
+		locale = 'en',
+		axType = 'standard'
+	}: Props = $props()
+
+	function groupOf(skill: WeaponStatModifier): string {
+		if (skill.axGroup) return skill.axGroup
+		if (PRIMARY_AX_SLUGS.includes(skill.slug)) return 'primary'
+		if (UTILITY_AX_SLUGS.includes(skill.slug)) return 'utility'
+		return 'secondary'
+	}
 
 	const axQuery = createQuery(() => entityQueries.axSkills())
 
@@ -32,13 +47,15 @@
 		selectedSecondaryId ? (axQuery.data ?? []).find((m) => m.id === selectedSecondaryId) : undefined
 	)
 
-	const showSecondary = $derived(!!selectedPrimary)
+	// Utility weapons (Ancient series) carry a single EXP/Rupie slot
+	const showSecondary = $derived(axType !== 'utility' && !!selectedPrimary)
 
 	// Build primary skill options
 	const primaryOptions = $derived.by(() => {
 		const items: Array<{ value: string; label: string }> = [{ value: '', label: m.ax_no_skill() }]
 
-		for (const skill of (axQuery.data ?? []).filter((s) => PRIMARY_AX_SLUGS.includes(s.slug))) {
+		const wanted = axType === 'utility' ? ['utility'] : ['primary']
+		for (const skill of (axQuery.data ?? []).filter((s) => wanted.includes(groupOf(s)))) {
 			items.push({
 				value: skill.id,
 				label: locale === 'ja' ? skill.nameJp : skill.nameEn
@@ -52,7 +69,9 @@
 	const secondaryOptions = $derived.by(() => {
 		const items: Array<{ value: string; label: string }> = [{ value: '', label: m.ax_no_skill() }]
 
-		for (const skill of (axQuery.data ?? []).filter((s) => !PRIMARY_AX_SLUGS.includes(s.slug))) {
+		for (const skill of (axQuery.data ?? []).filter((s) =>
+			['secondary', 'extended'].includes(groupOf(s))
+		)) {
 			items.push({
 				value: skill.id,
 				label: locale === 'ja' ? skill.nameJp : skill.nameEn

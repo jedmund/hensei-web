@@ -23,6 +23,8 @@ export interface WeaponSeriesRef {
 	hasAwakening: boolean
 	/** Type of augment this series supports: "ax", "befoulment", or "no_augment" */
 	augmentType: AugmentType
+	/** AX slot rules: 'standard' = primary + secondary/extended slots; 'utility' = one EXP/Rupie slot */
+	axType?: 'standard' | 'utility' | null
 	extra: boolean
 	elementChangeable: boolean
 	/** Number of weapon key slots this series supports (null if no keys) */
