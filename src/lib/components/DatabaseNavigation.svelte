@@ -22,6 +22,7 @@
 	const databaseGwEventsHref = $derived(localizeHref('/database/gw-events'))
 	const databaseArtifactSkillsHref = $derived(localizeHref('/database/artifact-skills'))
 	const databaseWeaponSkillsHref = $derived(localizeHref('/database/weapon-skills'))
+	const databaseWeaponCountGroupsHref = $derived(localizeHref('/database/weapons/count-groups'))
 	const databaseBulletsHref = $derived(localizeHref('/database/bullets'))
 	const databaseRaidsHref = $derived(localizeHref('/database/raids'))
 	const databaseRaidGroupsHref = $derived(localizeHref('/database/raid-groups'))
@@ -130,6 +131,9 @@
 						</DropdownItem>
 						<DropdownItem>
 							<a href={databaseWeaponSkillsHref}>{m.nav_weapon_skills()}</a>
+						</DropdownItem>
+						<DropdownItem>
+							<a href={databaseWeaponCountGroupsHref}>Count Groups</a>
 						</DropdownItem>
 						<DropdownItem>
 							<a href={databaseBulletsHref}>{m.nav_bullets()}</a>
