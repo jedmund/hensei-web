@@ -34,6 +34,13 @@ export interface WeaponStatModifier {
 	polarity: 1 | -1
 	/** Display suffix for values (e.g., "%") */
 	suffix: string | null
+	/** AX pool this skill rolls from: primary | secondary | extended | utility (null for befoulments) */
+	axGroup?: 'primary' | 'secondary' | 'extended' | 'utility' | null
+	/** Secondary-roll value range (differs from the primary base range) */
+	secondaryMin?: number | null
+	secondaryMax?: number | null
+	/** On primaries: the 4-option secondary pools keyed by AX type (standard/xeno) */
+	axSecondaries?: Record<string, string[]>
 	/** Minimum valid strength value */
 	baseMin: number
 	/** Maximum valid strength value */

@@ -172,6 +172,50 @@ describe('PartyAdapter', () => {
 		})
 	})
 
+	describe('skill boosts', () => {
+		it('serializes the complete calculator state and camel-cases the response', async () => {
+			global.fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({
+					enhancements: { optimus: 0, omega: 0, taboo: 0 },
+					lines: [],
+					state: {
+						hp_percent: 50,
+						ally_max_hp: 25_425,
+						turn: 3,
+						foe_element: 'water',
+						arcarum: false
+					}
+				})
+			})
+
+			const result = await adapter.getSkillBoosts('ABC123', {
+				hpPercent: 50,
+				allyMaxHp: 25_425,
+				turn: 3,
+				foeElement: 'water',
+				arcarum: false
+			})
+
+			const requestUrl = new URL(String(vi.mocked(global.fetch).mock.calls[0]?.[0]))
+			expect(requestUrl.pathname).toBe('/parties/ABC123/skill_boosts')
+			expect(Object.fromEntries(requestUrl.searchParams)).toEqual({
+				hp_percent: '50',
+				ally_max_hp: '25425',
+				turn: '3',
+				foe_element: 'water',
+				arcarum: 'false'
+			})
+			expect(result.state).toEqual({
+				hpPercent: 50,
+				allyMaxHp: 25_425,
+				turn: 3,
+				foeElement: 'water',
+				arcarum: false
+			})
+		})
+	})
+
 	describe('user parties listing', () => {
 		it('should list user parties and extract pagination from meta', async () => {
 			global.fetch = vi.fn().mockResolvedValue({

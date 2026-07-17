@@ -41,13 +41,30 @@ export interface SkillBoostEntry {
 	count: number
 }
 
+export interface SkillBoostRequestState {
+	/** Party HP percent to evaluate (0-100) */
+	hpPercent?: number
+	/** Displayed party Max HP used by Vitality-style effects */
+	allyMaxHp?: number
+	/** Battle turn (1+) */
+	turn?: number
+	/** Foe element ("fire" | "water" | ... ) */
+	foeElement?: string
+	/** Whether Arcarum/Replicard-only effects are active */
+	arcarum?: boolean
+}
+
 export interface SkillBoostState {
 	/** Party HP percent the panel is evaluated at (0-100) */
 	hpPercent: number
+	/** Displayed party Max HP, omitted until the user supplies it */
+	allyMaxHp?: number
 	/** Battle turn (1+) */
 	turn: number
 	/** Foe element ("fire" | "water" | ... ), server-defaulted to the advantaged foe */
 	foeElement?: string
+	/** Whether Arcarum/Replicard-only effects are active */
+	arcarum: boolean
 }
 
 export interface SkillBoosts {
