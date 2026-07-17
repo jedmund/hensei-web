@@ -1708,6 +1708,7 @@
 	"calculator_open": "スキル計算機を開く",
 	"calculator_enhancements": "武器スキル効果加護",
 	"calculator_empty": "表示できる武器スキル効果がありません。",
+	"calculator_loading": "武器スキル効果を読み込み中",
 	"calculator_error": "スキル効果を読み込めませんでした。",
 	"calculator_enh_optimus": "オプティマス",
 	"calculator_enh_omega": "マグナ",
