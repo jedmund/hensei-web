@@ -27,43 +27,22 @@ export function getAwakeningImage(awakening?: { type?: Awakening; level?: number
 
 /**
  * Get the image URL for a weapon key
- * Gauph keys (ultima slot 0) require a proficiency suffix for the correct image variant
  */
-export function getWeaponKeyImage(key: WeaponKey, weaponProficiency?: number): string {
+export function getWeaponKeyImage(key: WeaponKey): string {
 	if (!key.slug) return ''
-
-	let filename = key.slug
-
-	// Gauph keys have proficiency-specific image variants
-	const hasVariant = [
-		'gauph-courage',
-		'gauph-strength',
-		'gauph-strife',
-		'gauph-vitality',
-		'gauph-will',
-		'gauph-zeal'
-	]
-
-	if (hasVariant.includes(key.slug)) {
-		filename += `-${weaponProficiency}`
-	}
-
-	return `${getBasePath()}/weapon-keys/${filename}.png`
+	return `${getBasePath()}/weapon-keys/${key.slug}.png`
 }
 
 /**
  * Get all weapon key images for a weapon
  */
-export function getWeaponKeyImages(
-	keys?: WeaponKey[],
-	weaponProficiency?: number
-): Array<{ url: string; alt: string }> {
+export function getWeaponKeyImages(keys?: WeaponKey[]): Array<{ url: string; alt: string }> {
 	if (!keys || keys.length === 0) return []
 
 	return keys
 		.filter((key) => key.slug)
 		.map((key) => ({
-			url: getWeaponKeyImage(key, weaponProficiency),
+			url: getWeaponKeyImage(key),
 			alt: key.name ? localizedName(key.name) : key.slug || 'Weapon Key'
 		}))
 }

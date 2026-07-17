@@ -63,13 +63,14 @@ describe('getWeaponKeyImage', () => {
 		expect(getWeaponKeyImage(makeKey({ slug: '' }))).toBe('')
 	})
 
-	it('returns key image using slug directly', () => {
-		expect(getWeaponKeyImage(makeKey())).toBe('/images/weapon-keys/alpha.png')
+	it('returns the new weapon-key path using the slug directly', () => {
+		const key = makeKey({ slug: 'anklet-ascendance' })
+		expect(getWeaponKeyImage(key)).toBe('/images/weapon-keys/anklet-ascendance.png')
 	})
 
-	it('does not add any suffixes', () => {
-		const key = makeKey({ slug: 'pendulum-strength', slot: 1, granblueId: 15008 })
-		expect(getWeaponKeyImage(key)).toBe('/images/weapon-keys/pendulum-strength.png')
+	it('does not add a proficiency suffix to Gauph keys', () => {
+		const key = makeKey({ slug: 'gauph-strength', slot: 0 })
+		expect(getWeaponKeyImage(key)).toBe('/images/weapon-keys/gauph-strength.png')
 	})
 })
 

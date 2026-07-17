@@ -95,7 +95,7 @@
 	let awakeningImage = $derived(getAwakeningImage(item?.awakening))
 
 	// Get weapon key images using utility
-	let weaponKeyImages = $derived(getWeaponKeyImages(item?.weaponKeys, item?.weapon?.proficiency))
+	let weaponKeyImages = $derived(getWeaponKeyImages(item?.weaponKeys))
 
 	// Get AX skill images using utility
 	let axSkillImages = $derived(getAxSkillImages(item?.ax))
