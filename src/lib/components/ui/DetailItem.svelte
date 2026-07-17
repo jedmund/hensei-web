@@ -159,6 +159,7 @@
 		font-size: typography.$font-regular;
 		min-height: calc(spacing.$unit * 5);
 		gap: spacing.$unit-2x;
+		border-radius: layout.$item-corner;
 
 		&:not(.editable) {
 			padding: spacing.$unit;

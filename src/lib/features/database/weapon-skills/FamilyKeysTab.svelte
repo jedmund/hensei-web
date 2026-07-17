@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Input from '$lib/components/ui/Input.svelte'
+	import { getBoostTypeLabel } from '$lib/utils/boostType'
+	import { titleCase } from '$lib/utils/textCase'
 	import type { FamilyKey, WeaponSkillFamily } from '$lib/types/api/weaponSkillFamily'
 
 	interface Props {
@@ -22,12 +25,23 @@
 		}
 	}
 
-	function buffer(key: FamilyKey) {
-		if (!edits[key.id]) {
-			const name = keyName(key)
-			edits[key.id] = { nameEn: name.en, nameJp: name.ja }
+	function createBuffer(key: FamilyKey) {
+		const name = keyName(key)
+		return { nameEn: name.en, nameJp: name.ja }
+	}
+
+	// Populate buffers in an effect, not the `{@const buffer(key)}` template call below —
+	// mutating $state during template/derived evaluation throws state_unsafe_mutation.
+	$effect(() => {
+		for (const key of family.keys) {
+			if (!(key.id in edits)) {
+				edits[key.id] = createBuffer(key)
+			}
 		}
-		return edits[key.id]!
+	})
+
+	function buffer(key: FamilyKey) {
+		return edits[key.id] ?? createBuffer(key)
 	}
 
 	function effectsForKey(slug: string) {
@@ -68,8 +82,8 @@
 					</div>
 					<div class="fields">
 						{#if canEdit}
-							<input type="text" bind:value={buf.nameEn} placeholder="Name (en)" />
-							<input type="text" bind:value={buf.nameJp} placeholder="Name (ja)" />
+							<Input bind:value={buf.nameEn} contained placeholder="Name (en)" />
+							<Input bind:value={buf.nameJp} contained placeholder="Name (ja)" />
 						{:else}
 							<span>{keyName(key).en || '—'}</span>
 							<span class="jp">{keyName(key).ja || ''}</span>
@@ -79,7 +93,7 @@
 						<ul class="key-effects">
 							{#each effectsForKey(key.slug) as effect (effect.id)}
 								<li>
-									{effect.boostType} · {effect.scalingKind}
+									{getBoostTypeLabel(effect.boostType)} · {titleCase(effect.scalingKind)}
 									{#if effect.value != null}
 										· {effect.value}{effect.valueUnit === 'percent' ? '%' : ''}
 									{/if}
@@ -124,8 +138,10 @@
 
 	.empty {
 		color: var(--text-tertiary);
+		font-size: typography.$font-regular;
 		text-align: center;
 		padding: spacing.$unit-4x 0;
+		margin: 0;
 	}
 
 	.cards {
@@ -154,15 +170,6 @@
 		flex-direction: column;
 		gap: spacing.$unit-half;
 		font-size: typography.$font-small;
-
-		input {
-			padding: 2px spacing.$unit-half;
-			background: var(--input-bound-bg);
-			border: none;
-			border-radius: layout.$item-corner-small;
-			font-size: typography.$font-small;
-			color: var(--text-primary);
-		}
 
 		.jp {
 			color: var(--text-tertiary);
