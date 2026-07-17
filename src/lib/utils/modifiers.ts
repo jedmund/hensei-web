@@ -4,7 +4,7 @@
 
 import type { Awakening, WeaponKey } from '$lib/types/api/entities'
 import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'
-import { getBasePath } from '$lib/utils/images'
+import { BUCKET, getBasePath } from '$lib/utils/images'
 import { localizedName } from '$lib/utils/locale'
 
 /**
@@ -27,28 +27,23 @@ export function getAwakeningImage(awakening?: { type?: Awakening; level?: number
 
 /**
  * Get the image URL for a weapon key
- * Gauph keys (ultima slot 0) require a proficiency suffix for the correct image variant
+ * Gauph keys (ultima slot 0) use proficiency-specific variants when available.
  */
 export function getWeaponKeyImage(key: WeaponKey, weaponProficiency?: number): string {
 	if (!key.slug) return ''
 
-	let filename = key.slug
-
-	// Gauph keys have proficiency-specific image variants
-	const hasVariant = [
+	const hasProficiencyVariant = [
 		'gauph-courage',
 		'gauph-strength',
 		'gauph-strife',
 		'gauph-vitality',
 		'gauph-will',
 		'gauph-zeal'
-	]
+	].includes(key.slug)
+	const filename =
+		hasProficiencyVariant && weaponProficiency ? `${key.slug}-${weaponProficiency}` : key.slug
 
-	if (hasVariant.includes(key.slug)) {
-		filename += `-${weaponProficiency}`
-	}
-
-	return `${getBasePath()}/weapon-keys/${filename}.png`
+	return `${getBasePath()}/${BUCKET.weaponKeys}/${filename}.png`
 }
 
 /**
