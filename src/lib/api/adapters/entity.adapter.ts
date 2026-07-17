@@ -143,18 +143,6 @@ export interface Weapon {
 	kamigame?: string
 }
 
-export interface WeaponCountGroup {
-	id: string
-	slug: string
-	nameEn: string
-	nameJp?: string | null
-	notes?: string | null
-	weaponCount: number
-	weaponGranblueIds: string[]
-	createdAt?: string
-	updatedAt?: string
-}
-
 /**
  * Canonical character data from the game
  */
@@ -1496,39 +1484,6 @@ export class EntityAdapter extends BaseAdapter {
 
 	async deleteWeaponSkillEffect(id: string, force = false): Promise<DeleteImpact> {
 		return this.request<DeleteImpact>(`/weapon_skill_effects/${id}${force ? '?force=true' : ''}`, {
-			method: 'DELETE'
-		})
-	}
-
-	async getWeaponCountGroups(filters?: { q?: string }): Promise<WeaponCountGroup[]> {
-		const query = new URLSearchParams()
-		if (filters?.q) query.set('q', filters.q)
-		const qs = query.size > 0 ? `?${query.toString()}` : ''
-		const response = await this.request<{ weaponCountGroups: WeaponCountGroup[] }>(
-			`/weapon_count_groups${qs}`
-		)
-		return response.weaponCountGroups
-	}
-
-	async createWeaponCountGroup(payload: Record<string, unknown>): Promise<WeaponCountGroup> {
-		return this.request<WeaponCountGroup>('/weapon_count_groups', {
-			method: 'POST',
-			body: { weapon_count_group: payload }
-		})
-	}
-
-	async updateWeaponCountGroup(
-		id: string,
-		payload: Record<string, unknown>
-	): Promise<WeaponCountGroup> {
-		return this.request<WeaponCountGroup>(`/weapon_count_groups/${id}`, {
-			method: 'PATCH',
-			body: { weapon_count_group: payload }
-		})
-	}
-
-	async deleteWeaponCountGroup(id: string): Promise<void> {
-		await this.request<void>(`/weapon_count_groups/${id}`, {
 			method: 'DELETE'
 		})
 	}
