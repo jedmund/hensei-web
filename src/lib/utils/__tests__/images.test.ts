@@ -540,9 +540,9 @@ describe('getAwakeningImage', () => {
 
 describe('getWeaponKeyImage', () => {
 	it('returns key image using slug directly', () => {
-		expect(getWeaponKeyImage('alpha')).toBe('/images/weapon-keys/alpha.png')
-		expect(getWeaponKeyImage('pendulum')).toBe('/images/weapon-keys/pendulum.png')
-		expect(getWeaponKeyImage('elemental-teluma')).toBe('/images/weapon-keys/elemental-teluma.png')
+		expect(getWeaponKeyImage('alpha')).toBe('/images/weapons/keys/alpha.png')
+		expect(getWeaponKeyImage('pendulum')).toBe('/images/weapons/keys/pendulum.png')
+		expect(getWeaponKeyImage('elemental-teluma')).toBe('/images/weapons/keys/elemental-teluma.png')
 	})
 })
 

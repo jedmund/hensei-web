@@ -20,7 +20,7 @@ MAP=(
 	"character-main:characters/main" "character-grid:characters/grid"
 	"character-square:characters/square" "character-detail:characters/detail"
 	"weapon-main:weapons/main" "weapon-grid:weapons/grid" "weapon-square:weapons/square"
-	"weapon-base:weapons/base"
+	"weapon-base:weapons/base" "weapon-keys:weapons/keys"
 	"summon-main:summons/main" "summon-grid:summons/grid" "summon-square:summons/square"
 	"summon-detail:summons/detail" "summon-tall:summons/tall" "summon-wide:summons/wide"
 	"accessory-square:accessories/square" "accessory-grid:accessories/grid"

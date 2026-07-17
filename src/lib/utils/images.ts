@@ -17,8 +17,8 @@ export type ImageVariant = 'main' | 'tall' | 'grid' | 'square' | 'detail' | 'bas
  * Single source of truth for non-entity bucket prefixes. Entity art (character/
  * weapon/summon) is built by {@link getImageDirectory}. See the migration runbook
  * at hensei-api/docs/follow-ups/image-bucket-reorg.md — these MUST match the bucket.
- * Game-CDN URLs and `previews/`/`profile/`/`guidebooks/`/`labels/`/`weapon-keys/`
- * are intentionally not listed (unchanged / external).
+ * Game-CDN URLs and `previews/`/`profile/`/`guidebooks/`/`labels/` are
+ * intentionally not listed (unchanged / external).
  */
 export const BUCKET = {
 	placeholders: 'app/placeholders',
@@ -31,6 +31,7 @@ export const BUCKET = {
 	rarity: 'icons/rarity',
 	awakening: 'icons/awakening',
 	weaponSkills: 'icons/weapon-skills',
+	weaponKeys: 'weapons/keys',
 	skillLabels: 'icons/skill-labels',
 	mastery: 'icons/mastery',
 	axSkills: 'icons/ax-skills',
@@ -594,7 +595,7 @@ export function getWeaponSkillIcon(
  * Get weapon key image URL
  */
 export function getWeaponKeyImage(slug: string): string {
-	return `${getBasePath()}/weapon-keys/${slug}.png`
+	return `${getBasePath()}/${BUCKET.weaponKeys}/${slug}.png`
 }
 
 /**
