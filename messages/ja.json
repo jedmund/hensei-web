@@ -1716,6 +1716,8 @@
 	"calculator_foe_element": "敵の属性",
 	"calculator_hp_value": "HP: {percent}%",
 	"calculator_turn_value": "{turn}ターン目",
+	"calculator_max_hp": "最大HP",
+	"calculator_arcarum": "アーカルム",
 	"calculator_alpha_notice": "この機能はアルファ版のため、正しくないデータが表示される場合があります。計算の誤りを見つけた場合は、Discordでご報告ください。",
 	"nav_weapon_skills": "武器スキル",
 	"details_permeation": "深度",
