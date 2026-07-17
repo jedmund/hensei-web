@@ -8,6 +8,8 @@
 	import SkillLabel from '$lib/components/SkillLabel.svelte'
 	import Notice from '$lib/components/ui/Notice.svelte'
 	import Slider from '$lib/components/ui/Slider.svelte'
+	import Input from '$lib/components/ui/Input.svelte'
+	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import { skillHighlight } from '$lib/stores/skillHighlight.svelte'
 	import { getWeaponSkillIcon } from '$lib/utils/images'
@@ -30,8 +32,10 @@
 	// initializes from the server's advantaged-foe default on first load.
 	// HP runs 1%, then 5% steps (1, 5, 10, … 100): slider stop 0 → 1%, stop n → n×5.
 	let hpStop = $state(20)
+	let allyMaxHp = $state<number | undefined>(undefined)
 	let turn = $state(1)
 	let foeElement = $state<string | undefined>(undefined)
+	let arcarum = $state(false)
 
 	const hpPercent = $derived(hpStop === 0 ? 1 : hpStop * 5)
 
@@ -61,18 +65,29 @@
 		try {
 			const result = await partyAdapter.getSkillBoosts(shortcode, {
 				hpPercent,
+				...(allyMaxHp != null ? { allyMaxHp } : {}),
 				turn,
-				...(foeElement ? { foeElement } : {})
+				...(foeElement ? { foeElement } : {}),
+				arcarum
 			})
 			if (id !== requestId) return // a newer request superseded this one
 			boosts = result
+			allyMaxHp = result.state.allyMaxHp
 			foeElement = result.state.foeElement
+			arcarum = result.state.arcarum
 			error = false
 		} catch {
 			if (id === requestId) error = true
 		} finally {
 			if (id === requestId) loading = false
 		}
+	}
+
+	function handleMaxHpChange() {
+		if (allyMaxHp != null) {
+			allyMaxHp = Number.isFinite(allyMaxHp) ? Math.min(999_999, Math.max(0, allyMaxHp)) : undefined
+		}
+		refetch()
 	}
 
 	onMount(refetch)
@@ -132,6 +147,21 @@
 				</div>
 				<div class="filter-group">
 					<div class="filter-header">
+						<span class="filter-label">{m.calculator_max_hp()}</span>
+					</div>
+					<Input
+						bind:value={allyMaxHp}
+						type="number"
+						min={0}
+						max={999999}
+						step={1}
+						contained
+						fullWidth
+						onchange={handleMaxHpChange}
+					/>
+				</div>
+				<div class="filter-group">
+					<div class="filter-header">
 						<span class="filter-label">{m.calculator_turn_value({ turn: String(turn) })}</span>
 					</div>
 					<Slider
@@ -163,6 +193,21 @@
 							}
 						}}
 					/>
+				</div>
+				<div class="filter-group">
+					<div class="filter-header">
+						<span class="filter-label">{m.calculator_arcarum()}</span>
+						<Switch
+							checked={arcarum}
+							size="small"
+							element={partyElement}
+							onCheckedChange={(value) => {
+								if (value === arcarum) return
+								arcarum = value
+								refetch()
+							}}
+						/>
+					</div>
 				</div>
 			</div>
 		</DetailsSection>

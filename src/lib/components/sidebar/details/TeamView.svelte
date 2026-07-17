@@ -179,7 +179,12 @@
 	const ELEMENT_KEYS = ['element'] as const
 	const WEAPON_KEY_KEYS = ['weaponKey1', 'weaponKey2', 'weaponKey3', 'weaponKey4'] as const
 	const AX_KEYS = ['ax.0', 'ax.1'] as const
-	const BEFOULMENT_KEYS = ['befoulmentModifier', 'befoulmentStrength', 'exorcismLevel'] as const
+	const BEFOULMENT_KEYS = [
+		'befoulmentModifier',
+		'befoulmentStrength',
+		'befoulmentPermeation',
+		'exorcismLevel'
+	] as const
 
 	const uncapSectionOOS = $derived(hasAnyField(outOfSyncFields, UNCAP_KEYS))
 	const awakeningSectionOOS = $derived(hasAnyField(outOfSyncFields, AWAKENING_KEYS))
@@ -481,9 +486,15 @@
 					label={weapon.befoulment.modifier.nameEn}
 					value={`${weapon.befoulment.strength}${weapon.befoulment.modifier.suffix ?? ''}`}
 				/>
+				{#if weapon.befoulment.permeation != null}
+					<DetailRow
+						label={m.details_permeation()}
+						value={`${weapon.befoulment.permeation}${weapon.befoulment.modifier.suffix ?? ''}`}
+					/>
+				{/if}
 				<DetailRow
 					label={m.details_exorcism_level()}
-					value={`${weapon.befoulment.exorcismLevel ?? 0}`}
+					value={`${Math.max(weapon.befoulment.exorcismLevel ?? 1, 1)}`}
 				/>
 			</DetailsSection>
 		{/if}

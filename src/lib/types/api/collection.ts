@@ -136,6 +136,7 @@ export interface CollectionWeaponInput {
 	// Befoulment (for Odiant weapons)
 	befoulmentModifierId?: string
 	befoulmentStrength?: number
+	befoulmentPermeation?: number | null
 	exorcismLevel?: number
 }
 

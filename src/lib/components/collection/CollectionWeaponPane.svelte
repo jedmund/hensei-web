@@ -154,6 +154,7 @@
 			if (updates.befoulmentModifierId !== undefined) {
 				input.befoulmentModifierId = updates.befoulmentModifierId
 				input.befoulmentStrength = updates.befoulmentStrength
+				input.befoulmentPermeation = updates.befoulmentPermeation
 				input.exorcismLevel = updates.exorcismLevel
 			}
 
