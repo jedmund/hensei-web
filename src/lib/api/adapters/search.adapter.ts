@@ -55,8 +55,8 @@ export interface SearchResult {
 	rarity?: number
 	/** Proficiency - number for weapons, array for characters */
 	proficiency?: number | number[]
-	/** Series - object for weapons (WeaponSeriesRef), number array for characters */
-	series?: { id: string; slug: string; name: { en: string; ja: string } } | number[]
+	/** Series - object for weapons, or reference/legacy-number array for characters */
+	series?: UnifiedSearchSeriesRef | (number | UnifiedSearchSeriesRef)[]
 	/** URL for entity image */
 	imageUrl?: string
 	/** Type of entity (lowercase for compatibility) */

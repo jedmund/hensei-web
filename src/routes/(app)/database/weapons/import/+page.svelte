@@ -150,7 +150,10 @@
 			kamigame: parsedData?.kamigame ?? '',
 			nicknamesEn: [] as string[],
 			nicknamesJp: [] as string[],
-			recruits: parsedData?.recruits ?? null,
+			// The wiki provides a name, not a Granblue ID. Keep it as search text
+			// until the editor explicitly selects the correct character version.
+			recruits: null as string | null,
+			recruitQuery: parsedData?.recruits ?? '',
 			// Forge chain
 			forgedFrom: null as string | null,
 			forgeOrder: null as number | null,

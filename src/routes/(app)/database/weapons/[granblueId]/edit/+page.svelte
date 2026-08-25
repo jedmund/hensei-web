@@ -109,6 +109,7 @@
 		nicknamesEn: [] as string[],
 		nicknamesJp: [] as string[],
 		recruits: '',
+		recruitQuery: '',
 		// Forge chain fields
 		forgedFrom: '' as string | null,
 		forgeOrder: null as number | null,
@@ -169,6 +170,7 @@
 					typeof weapon.recruits === 'string'
 						? weapon.recruits
 						: (weapon.recruits?.granblueId ?? ''),
+				recruitQuery: '',
 				// Forge chain fields
 				forgedFrom: weapon.forgedFrom?.granblueId || null,
 				forgeOrder: weapon.forgeOrder ?? null,

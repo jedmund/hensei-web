@@ -2,23 +2,31 @@
 
 <script lang="ts">
 	import { Combobox } from 'bits-ui'
+	import { tick } from 'svelte'
 	import Icon from '../Icon.svelte'
+	import Button from './Button.svelte'
+	import SearchOptionItem from '$lib/components/search/SearchOptionItem.svelte'
 	import { searchAdapter, type SearchResult } from '$lib/api/adapters/search.adapter'
-	import { getCharacterImage } from '$lib/utils/images'
 	import { localizedName, appLocale } from '$lib/utils/locale'
+	import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'
 
 	interface CharacterOption {
 		id: string
 		label: string
 		granblueId: string
-		element?: number
+		element?: number | null
+		season?: number | null
+		series?: (number | CharacterSeriesRef)[] | null
+		styleSwap?: boolean
 	}
 
 	interface Props {
 		/** Selected character granblue ID (e.g. "3040581000") */
 		value?: string | null
 		/** Initial character data for display (when loading existing value) */
-		initialCharacter?: { id: string; name: string; granblueId: string } | null
+		initialCharacter?: CharacterOption | null
+		/** Search input value. Can be prefilled and bound independently from the selected value. */
+		query?: string
 		/** Callback when value changes */
 		onValueChange?: (granblueId: string | null) => void
 		/** Placeholder text */
@@ -38,6 +46,7 @@
 	let {
 		value = $bindable(null),
 		initialCharacter = null,
+		query = $bindable(''),
 		onValueChange,
 		placeholder = 'Search characters...',
 		disabled = false,
@@ -51,7 +60,8 @@
 	let isLoading = $state(false)
 	let searchTimeout: ReturnType<typeof setTimeout> | null = null
 	let comboboxOpen = $state(false)
-	let inputValue = $state('')
+	let initializedQuery = $state('')
+	let inputElement = $state<HTMLInputElement | null>(null)
 
 	// The selected granblueId used as the combobox value
 	let selectedGranblueId = $state<string>(value ?? '')
@@ -64,16 +74,24 @@
 		selectedGranblueId = value ?? ''
 
 		if (!value) {
-			inputValue = ''
 			displayedCharacter = null
 		} else if (initialCharacter && initialCharacter.granblueId === value) {
-			inputValue = initialCharacter.name
-			displayedCharacter = {
-				id: initialCharacter.id,
-				label: initialCharacter.name,
-				granblueId: initialCharacter.granblueId
-			}
+			query = initialCharacter.label
+			displayedCharacter = initialCharacter
+		} else if (displayedCharacter?.granblueId !== value) {
+			displayedCharacter = null
 		}
+	})
+
+	// A prefilled query (used by Batch Import) should behave like typed search text,
+	// but must not become a selected value until the editor chooses a result.
+	$effect(() => {
+		const nextQuery = query.trim()
+		if (value || !nextQuery || nextQuery === initializedQuery) return
+
+		initializedQuery = nextQuery
+		if (searchTimeout) clearTimeout(searchTimeout)
+		searchTimeout = setTimeout(() => searchCharacters(nextQuery), 300)
 	})
 
 	const comboboxItems = $derived(
@@ -104,7 +122,10 @@
 				id: result.id,
 				label: localizedName(result.name) !== '—' ? localizedName(result.name) : result.granblueId,
 				granblueId: result.granblueId,
-				element: result.element
+				element: result.element,
+				season: result.season,
+				series: Array.isArray(result.series) ? result.series : null,
+				styleSwap: result.styleSwap
 			}))
 			if (searchResults.length > 0) {
 				comboboxOpen = true
@@ -120,7 +141,8 @@
 	}
 
 	function handleInputChange(val: string) {
-		inputValue = val
+		query = val
+		initializedQuery = val.trim()
 		if (searchTimeout) clearTimeout(searchTimeout)
 		searchTimeout = setTimeout(() => searchCharacters(val), 300)
 
@@ -128,6 +150,7 @@
 			selectedGranblueId = ''
 			displayedCharacter = null
 			value = null
+			comboboxOpen = false
 			onValueChange?.(null)
 		}
 	}
@@ -138,7 +161,7 @@
 			const match = searchResults.find((c) => c.granblueId === granblueId)
 			if (match) {
 				displayedCharacter = match
-				inputValue = match.label
+				query = match.label
 				value = granblueId
 				onValueChange?.(granblueId)
 			}
@@ -150,66 +173,102 @@
 		comboboxOpen = false
 	}
 
-	function handleClear() {
+	async function handleClear() {
 		selectedGranblueId = ''
-		inputValue = ''
+		query = ''
+		initializedQuery = ''
 		displayedCharacter = null
 		searchResults = []
 		value = null
 		onValueChange?.(null)
+		await tick()
+		inputElement?.focus()
 	}
 </script>
 
 <div class={wrapperClasses}>
-	<Combobox.Root
-		type="single"
-		bind:value={selectedGranblueId}
-		onValueChange={handleValueChange}
-		bind:open={comboboxOpen}
-		{inputValue}
-		items={comboboxItems}
-		{disabled}
-	>
-		<div class="combobox-input-wrapper">
-			<Combobox.Input
-				class="combobox-input"
-				{placeholder}
-				oninput={(e) => handleInputChange(e.currentTarget.value)}
-				{disabled}
+	{#if displayedCharacter && value}
+		<div class="selected-character">
+			<SearchOptionItem
+				label={displayedCharacter.label}
+				granblueId={displayedCharacter.granblueId}
+				type="Character"
+				element={displayedCharacter.element ?? undefined}
+				season={displayedCharacter.season}
+				series={displayedCharacter.series}
+				styleSwap={displayedCharacter.styleSwap}
+				showType={false}
+				imageSize={40}
 			/>
-			{#if isLoading}
-				<span class="input-loading">
-					<Icon name="loader-2" size={14} />
-				</span>
-			{:else if clearable && displayedCharacter}
-				<button type="button" class="clear-button" onclick={handleClear}>
-					<Icon name="close" size={12} />
-				</button>
+			{#if clearable}
+				<Button
+					variant="ghost"
+					size="small"
+					iconOnly
+					icon="close"
+					onclick={handleClear}
+					aria-label="Remove {displayedCharacter.label}"
+					{disabled}
+				/>
 			{/if}
 		</div>
+	{:else}
+		<Combobox.Root
+			type="single"
+			bind:value={selectedGranblueId}
+			onValueChange={handleValueChange}
+			bind:open={comboboxOpen}
+			inputValue={query}
+			items={comboboxItems}
+			{disabled}
+		>
+			<div class="combobox-input-wrapper">
+				<Combobox.Input
+					bind:ref={inputElement}
+					class="combobox-input"
+					{placeholder}
+					oninput={(e) => handleInputChange(e.currentTarget.value)}
+					{disabled}
+				/>
+				{#if isLoading}
+					<span class="input-loading">
+						<Icon name="loader-2" size={14} />
+					</span>
+				{/if}
+			</div>
 
-		<Combobox.Content class="combobox-content">
-			<Combobox.Viewport>
-				{#each searchResults as character (character.granblueId)}
-					<Combobox.Item value={character.granblueId} label={character.label} class="combobox-item">
-						{#snippet children({ selected })}
-							<img
-								src={getCharacterImage(character.granblueId, 'square', '01')}
-								alt=""
-								class="item-image"
-							/>
-							<span class="item-label">{character.label}</span>
-							{#if selected}
-								<span class="item-check">
-									<Icon name="check" size={14} />
-								</span>
-							{/if}
-						{/snippet}
-					</Combobox.Item>
-				{/each}
-			</Combobox.Viewport>
-		</Combobox.Content>
-	</Combobox.Root>
+			<Combobox.Content class="combobox-content">
+				<Combobox.Viewport>
+					{#each searchResults as character (character.granblueId)}
+						<Combobox.Item
+							value={character.granblueId}
+							label={character.label}
+							class="combobox-item"
+						>
+							{#snippet children({ selected })}
+								<SearchOptionItem
+									label={character.label}
+									granblueId={character.granblueId}
+									type="Character"
+									element={character.element ?? undefined}
+									season={character.season}
+									series={character.series}
+									styleSwap={character.styleSwap}
+									showType={false}
+									imageSize={40}
+								/>
+								{#if selected}
+									<span class="item-check">
+										<Icon name="check" size={14} />
+									</span>
+								{/if}
+							{/snippet}
+						</Combobox.Item>
+					{/each}
+				</Combobox.Viewport>
+			</Combobox.Content>
+		</Combobox.Root>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -232,6 +291,24 @@
 
 	.combobox-input-wrapper {
 		position: relative;
+	}
+
+	.selected-character {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+		min-height: calc($unit * 6);
+		padding: $unit;
+		border-radius: $input-corner;
+		background-color: var(--input-bg);
+
+		:global(.option-item) {
+			min-width: 0;
+		}
+	}
+
+	.character-typeahead.contained .selected-character {
+		background-color: var(--select-contained-bg);
 	}
 
 	:global(.character-typeahead .combobox-input) {
@@ -293,34 +370,6 @@
 		}
 	}
 
-	.clear-button {
-		position: absolute;
-		right: $unit;
-		top: 50%;
-		transform: translateY(-50%);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 20px;
-		height: 20px;
-		padding: 0;
-		border: none;
-		background: transparent;
-		color: var(--text-secondary);
-		cursor: pointer;
-		border-radius: $unit-half;
-		@include smooth-transition($duration-quick, background-color, color);
-
-		&:hover {
-			background: var(--surface-tertiary);
-			color: var(--text-primary);
-		}
-
-		:global(svg) {
-			fill: currentColor;
-		}
-	}
-
 	// Dropdown
 	:global(.character-typeahead .combobox-content) {
 		background: var(--dialog-bg);
@@ -355,20 +404,6 @@
 		&[data-selected] {
 			font-weight: $medium;
 		}
-	}
-
-	.item-image {
-		width: 24px;
-		height: 24px;
-		border-radius: $item-corner-small;
-		flex-shrink: 0;
-	}
-
-	.item-label {
-		flex: 1;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
 	}
 
 	.item-check {

@@ -5,6 +5,7 @@
 	import CharacterTypeahead from '$lib/components/ui/CharacterTypeahead.svelte'
 	import { PROMOTION_NAMES, getPromotionNames } from '$lib/types/enums'
 	import AssociatedEntityLink from '$lib/components/database/AssociatedEntityLink.svelte'
+	import { localizedName } from '$lib/utils/locale'
 
 	interface Props {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
@@ -43,11 +44,19 @@
 		<DetailItem label="Recruits" sublabel="Character recruited by this weapon" editable={true}>
 			<CharacterTypeahead
 				bind:value={editData.recruits}
+				bind:query={editData.recruitQuery}
 				initialCharacter={weapon.recruits
 					? {
 							id: weapon.recruits.id,
-							name: weapon.recruits.name?.en || weapon.recruits.granblueId,
-							granblueId: weapon.recruits.granblueId
+							label:
+								localizedName(weapon.recruits.name) !== '—'
+									? localizedName(weapon.recruits.name)
+									: weapon.recruits.granblueId,
+							granblueId: weapon.recruits.granblueId,
+							element: weapon.recruits.element,
+							season: weapon.recruits.season,
+							series: weapon.recruits.series,
+							styleSwap: weapon.recruits.styleSwap
 						}
 					: null}
 				placeholder="Search for character..."
