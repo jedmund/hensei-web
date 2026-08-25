@@ -10,6 +10,7 @@
 		flb?: boolean | undefined
 		ulb?: boolean | undefined
 		transcendence?: boolean | undefined
+		maxTranscendenceStage?: number | undefined
 		special?: boolean | undefined
 		className?: string | undefined
 		editable?: boolean | undefined
@@ -44,6 +45,7 @@
 		interactive?: boolean
 		tabindex?: number
 		size?: 'regular' | 'medium' | 'small'
+		maxStage?: number
 		onStarClick?: () => void
 		onFragmentClick?: (newStage: number) => void
 		onFragmentHover?: (newStage: number) => void
@@ -59,8 +61,9 @@
 		uncapLevel = 0,
 		transcendenceStage = 0,
 		flb = false,
-		ulb = false,
-		transcendence = false,
+		ulb,
+		transcendence,
+		maxTranscendenceStage,
 		special = false,
 		className,
 		editable = false,
@@ -72,21 +75,36 @@
 		updateTranscendence
 	}: Props = $props()
 
+	// Rolling-deploy fallback for the old character API, where special-character
+	// ULB was encoded as transcendence and neither new field was present.
+	const legacySpecialUlb = $derived(
+		type === 'character' && special && ulb === undefined && transcendence === true
+	)
+	const effectiveUlb = $derived(ulb ?? legacySpecialUlb)
+	const effectiveTranscendence = $derived(legacySpecialUlb ? false : (transcendence ?? false))
+	const effectiveMaxTranscendenceStage = $derived(
+		type === 'character'
+			? effectiveTranscendence
+				? (maxTranscendenceStage ?? 5)
+				: 0
+			: (maxTranscendenceStage ?? 5)
+	)
+
 	// Calculate the total number of stars to display
 	const getNumStars = () => {
 		if (type === 'character') {
 			if (special) {
 				// Special characters: 3 base + FLB + ULB
-				return ulb ? 5 : flb ? 4 : 3
+				return effectiveUlb ? 5 : flb ? 4 : 3
 			} else {
-				// Regular characters: 4 base + FLB + transcendence (ulb flag = transcendence for regular chars)
-				if (hideTranscendence && ulb) return 5
-				return ulb ? 6 : flb ? 5 : 4
+				// Regular characters: 4 base + FLB + transcendence
+				if (hideTranscendence && effectiveTranscendence) return flb ? 5 : 4
+				return effectiveTranscendence ? 6 : flb ? 5 : 4
 			}
 		} else {
 			// Weapons and summons: 3 base + FLB + ULB + transcendence
-			if (hideTranscendence && transcendence) return ulb ? 5 : flb ? 4 : 3
-			return transcendence ? 6 : ulb ? 5 : flb ? 4 : 3
+			if (hideTranscendence && effectiveTranscendence) return effectiveUlb ? 5 : flb ? 4 : 3
+			return effectiveTranscendence ? 6 : effectiveUlb ? 5 : flb ? 4 : 3
 		}
 	}
 
@@ -126,6 +144,7 @@
 				type: 'transcendence',
 				props: {
 					stage: transcendenceStage ?? 0,
+					maxStage: effectiveMaxTranscendenceStage,
 					type,
 					interactive: editable,
 					size,
@@ -158,11 +177,11 @@
 	function renderStar(index: number): StarRender | null {
 		// Handle transcendence star (always at position 5)
 		if (index === 5) {
-			if (type === 'character' && !special && transcendence) {
+			if (type === 'character' && !special && effectiveTranscendence) {
 				// Regular character with transcendence (note: uses transcendence flag, not ulb)
 				return createStarProps('transcendence')
 			}
-			if ((type === 'weapon' || type === 'summon') && transcendence) {
+			if ((type === 'weapon' || type === 'summon') && effectiveTranscendence) {
 				// Weapon/summon with transcendence
 				return createStarProps('transcendence')
 			}
@@ -171,15 +190,15 @@
 
 		// Handle ULB star
 		if (index === 4) {
-			if (type === 'character' && special && ulb) {
+			if (type === 'character' && special && effectiveUlb) {
 				// Special character ULB at position 4
 				return createStarProps('uncap', { index, ulb: true })
 			}
-			if (type === 'weapon' && ulb) {
+			if (type === 'weapon' && effectiveUlb) {
 				// Weapon ULB at position 4 (blue, not purple)
 				return createStarProps('uncap', { index, flb: true })
 			}
-			if (type === 'summon' && ulb) {
+			if (type === 'summon' && effectiveUlb) {
 				// Summon ULB at position 4 (blue, not purple)
 				return createStarProps('uncap', { index, flb: true })
 			}

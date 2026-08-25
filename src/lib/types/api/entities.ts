@@ -120,7 +120,9 @@ export interface Character {
 	maxAwakeningLevel?: number
 	uncap?: {
 		flb: boolean
+		ulb?: boolean
 		transcendence: boolean
+		maxTranscendenceStage?: number
 	}
 	special?: boolean
 	recruits?: string | null
@@ -134,12 +136,14 @@ export interface Character {
 		minHp?: number
 		maxHp?: number
 		maxHpFlb?: number
+		maxHpUlb?: number
 		maxHpTranscendence?: number
 	}
 	atk?: {
 		minAtk?: number
 		maxAtk?: number
 		maxAtkFlb?: number
+		maxAtkUlb?: number
 		maxAtkTranscendence?: number
 	}
 	// Other stats
@@ -159,6 +163,7 @@ export interface Character {
 	seriesNames?: string[]
 	releaseDate?: string
 	flbDate?: string
+	ulbDate?: string
 	transcendenceDate?: string
 	wiki?: { en?: string; ja?: string }
 	gamewith?: string

@@ -3,6 +3,7 @@
 	import DetailRow from './DetailRow.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
+	import { normalizeCharacterUncap } from '$lib/utils/uncap'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -16,31 +17,28 @@
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	let { type, itemData, gridUncapLevel, gridTranscendence }: Props = $props()
 
-	// Indicator capability flags. For characters the data model overloads
-	// `uncap.transcendence`: regular characters use it for transcendence (purple
-	// star + fragments), while special characters use it to mean ULB (a second
-	// blue star, no transcendence indicator).
 	const special = $derived(type === 'character' && !!itemData?.special)
 	const flb = $derived(!!itemData?.uncap?.flb)
-	const hasTranscendence = $derived(!!itemData?.uncap?.transcendence)
-	const hasUlb = $derived(
+	const normalizedCharacterUncap = $derived(
 		type === 'character'
-			? special
-				? hasTranscendence // special chars: ULB lives on the transcendence flag
-				: false // regular chars don't have a ULB tier
-			: !!itemData?.uncap?.ulb
+			? normalizeCharacterUncap({ special, uncap: itemData?.uncap ?? { flb: false } })
+			: null
 	)
-	// UncapIndicator's `ulb` prop doubles as "transcendence capability" for
-	// regular characters. Mirror what CharacterUncapSection.svelte does.
-	const ulbProp = $derived(type === 'character' ? (special ? hasUlb : hasTranscendence) : hasUlb)
+	const hasTranscendence = $derived(
+		normalizedCharacterUncap?.transcendence ?? !!itemData?.uncap?.transcendence
+	)
+	const hasUlb = $derived(normalizedCharacterUncap?.ulb ?? !!itemData?.uncap?.ulb)
+	const ulbProp = $derived(hasUlb)
 	const transcendenceProp = $derived(special ? false : hasTranscendence)
+	const maxTranscendenceStage = $derived(
+		type === 'character' ? (normalizedCharacterUncap?.maxTranscendenceStage ?? 0) : 5
+	)
 
 	// MLB level differs between special (3*) and regular characters (4*).
 	const mlbLevel = $derived(type === 'character' && !special ? 4 : 3)
 	const flbLevel = $derived(mlbLevel + 1)
 	const ulbLevel = $derived(flbLevel + 1)
 
-	// Transcendence row shows full uncap + transcendence stage filled to 5.
 	const transcendenceLevel = 6
 
 	// Stat value for the transcendence row. Characters store it on the stat
@@ -50,6 +48,16 @@
 	)
 	const atkTranscendenceValue = $derived(
 		type === 'character' ? itemData?.atk?.maxAtkTranscendence : itemData?.transcendenceAtk
+	)
+	const hpUlbValue = $derived(
+		type === 'character' && normalizedCharacterUncap?.legacySpecialUlb
+			? itemData?.hp?.maxHpTranscendence
+			: itemData?.hp?.maxHpUlb
+	)
+	const atkUlbValue = $derived(
+		type === 'character' && normalizedCharacterUncap?.legacySpecialUlb
+			? itemData?.atk?.maxAtkTranscendence
+			: itemData?.atk?.maxAtkUlb
 	)
 
 	const showFlbRow = $derived(flb && (type === 'character' ? !!itemData?.hp?.maxHpFlb : true))
@@ -68,6 +76,7 @@
 			{flb}
 			ulb={ulbProp}
 			transcendence={transcendenceProp}
+			{maxTranscendenceStage}
 			{special}
 		/>
 	</Tooltip>
@@ -86,14 +95,20 @@
 				{#snippet labelSlot()}{@render indicator(m.details_flb(), flbLevel)}{/snippet}
 			</DetailRow>
 		{/if}
-		{#if showUlbRow && itemData.hp.maxHpUlb}
-			<DetailRow value={itemData.hp.maxHpUlb}>
+		{#if showUlbRow && hpUlbValue}
+			<DetailRow value={hpUlbValue}>
 				{#snippet labelSlot()}{@render indicator(m.details_ulb(), ulbLevel)}{/snippet}
 			</DetailRow>
 		{/if}
 		{#if showTranscendenceRow && hpTranscendenceValue}
 			<DetailRow value={hpTranscendenceValue}>
-				{#snippet labelSlot()}{@render indicator(m.details_t5(), transcendenceLevel, 5)}{/snippet}
+				{#snippet labelSlot()}
+					{@render indicator(
+						m.details_transcendence_level({ level: String(maxTranscendenceStage) }),
+						transcendenceLevel,
+						maxTranscendenceStage
+					)}
+				{/snippet}
 			</DetailRow>
 		{/if}
 	</DetailsSection>
@@ -112,14 +127,20 @@
 				{#snippet labelSlot()}{@render indicator(m.details_flb(), flbLevel)}{/snippet}
 			</DetailRow>
 		{/if}
-		{#if showUlbRow && itemData.atk.maxAtkUlb}
-			<DetailRow value={itemData.atk.maxAtkUlb}>
+		{#if showUlbRow && atkUlbValue}
+			<DetailRow value={atkUlbValue}>
 				{#snippet labelSlot()}{@render indicator(m.details_ulb(), ulbLevel)}{/snippet}
 			</DetailRow>
 		{/if}
 		{#if showTranscendenceRow && atkTranscendenceValue}
 			<DetailRow value={atkTranscendenceValue}>
-				{#snippet labelSlot()}{@render indicator(m.details_t5(), transcendenceLevel, 5)}{/snippet}
+				{#snippet labelSlot()}
+					{@render indicator(
+						m.details_transcendence_level({ level: String(maxTranscendenceStage) }),
+						transcendenceLevel,
+						maxTranscendenceStage
+					)}
+				{/snippet}
 			</DetailRow>
 		{/if}
 	</DetailsSection>

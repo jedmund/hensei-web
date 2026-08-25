@@ -1,6 +1,7 @@
 <script lang="ts">
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
+	import { normalizeCharacterUncap } from '$lib/utils/uncap'
 
 	interface Props {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
@@ -12,9 +13,26 @@
 
 	let { character, editMode = false, editData = $bindable() }: Props = $props()
 
+	const normalizedUncap = $derived(
+		!editMode
+			? normalizeCharacterUncap({
+					special: !!character?.special,
+					uncap: character?.uncap ?? { flb: false }
+				})
+			: null
+	)
 	const flb = $derived(editMode ? Boolean(editData.flb) : Boolean(character?.uncap?.flb))
+	const ulb = $derived(editMode ? Boolean(editData.ulb) : (normalizedUncap?.ulb ?? false))
 	const transcendence = $derived(
-		editMode ? Boolean(editData.transcendence) : Boolean(character?.uncap?.transcendence)
+		editMode ? Boolean(editData.transcendence) : (normalizedUncap?.transcendence ?? false)
+	)
+	const maxHpUlb = $derived(
+		character?.hp?.maxHpUlb ??
+			(normalizedUncap?.legacySpecialUlb ? character?.hp?.maxHpTranscendence : undefined)
+	)
+	const maxAtkUlb = $derived(
+		character?.atk?.maxAtkUlb ??
+			(normalizedUncap?.legacySpecialUlb ? character?.atk?.maxAtkTranscendence : undefined)
 	)
 </script>
 
@@ -52,6 +70,15 @@
 				placeholder="0"
 			/>
 		{/if}
+		{#if ulb}
+			<DetailItem
+				label="Max HP (ULB)"
+				bind:value={editData.maxHpUlb}
+				editable={true}
+				type="number"
+				placeholder="0"
+			/>
+		{/if}
 	{:else}
 		<DetailItem label="Base HP" value={character.hp?.minHp} />
 		<DetailItem label="Max HP" value={character.hp?.maxHp} />
@@ -61,6 +88,7 @@
 		{#if transcendence}
 			<DetailItem label="Max HP (Transcendence)" value={character.hp?.maxHpTranscendence} />
 		{/if}
+		{#if ulb}<DetailItem label="Max HP (ULB)" value={maxHpUlb} />{/if}
 	{/if}
 </DetailsContainer>
 
@@ -98,6 +126,15 @@
 				placeholder="0"
 			/>
 		{/if}
+		{#if ulb}
+			<DetailItem
+				label="Max Attack (ULB)"
+				bind:value={editData.maxAtkUlb}
+				editable={true}
+				type="number"
+				placeholder="0"
+			/>
+		{/if}
 	{:else}
 		<DetailItem label="Base Attack" value={character.atk?.minAtk} />
 		<DetailItem label="Max Attack" value={character.atk?.maxAtk} />
@@ -107,6 +144,7 @@
 		{#if transcendence}
 			<DetailItem label="Max Attack (Transcendence)" value={character.atk?.maxAtkTranscendence} />
 		{/if}
+		{#if ulb}<DetailItem label="Max Attack (ULB)" value={maxAtkUlb} />{/if}
 	{/if}
 </DetailsContainer>
 

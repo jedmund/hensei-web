@@ -5,6 +5,7 @@
 	import DetailsSection from './DetailsSection.svelte'
 	import DetailRow from './DetailRow.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import { normalizeCharacterUncap } from '$lib/utils/uncap'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import { localizedName } from '$lib/utils/locale'
@@ -20,17 +21,20 @@
 
 	// Calculate max uncap level (all stars filled)
 	const maxUncapLevel = $derived.by(() => {
-		const flb = itemData?.uncap?.flb ?? false
-		const ulb = itemData?.uncap?.ulb ?? false
-		const transcendence = itemData?.uncap?.transcendence ?? false
-		const special = type === 'character' && (itemData?.rarity ?? 3) < 3
+		const special = type === 'character' && !!itemData?.special
+		const normalized =
+			type === 'character'
+				? normalizeCharacterUncap({ special, uncap: itemData?.uncap ?? { flb: false } })
+				: null
+		const flb = normalized?.flb ?? itemData?.uncap?.flb ?? false
+		const ulb = normalized?.ulb ?? itemData?.uncap?.ulb ?? false
+		const transcendence = normalized?.transcendence ?? itemData?.uncap?.transcendence ?? false
 
 		if (type === 'character') {
 			if (special) {
 				return ulb ? 5 : flb ? 4 : 3
 			} else {
-				// Regular characters: transcendence star is separate
-				return flb ? 5 : 4
+				return transcendence ? 6 : flb ? 5 : 4
 			}
 		} else {
 			// Weapons and summons
@@ -38,7 +42,12 @@
 		}
 	})
 
-	const special = $derived(type === 'character' && (itemData?.rarity ?? 3) < 3)
+	const special = $derived(type === 'character' && !!itemData?.special)
+	const normalizedCharacterUncap = $derived(
+		type === 'character'
+			? normalizeCharacterUncap({ special, uncap: itemData?.uncap ?? { flb: false } })
+			: null
+	)
 </script>
 
 <DetailsSection title={m.details_basic_info()}>
@@ -80,10 +89,16 @@
 		<UncapIndicator
 			{type}
 			uncapLevel={maxUncapLevel}
-			transcendenceStage={itemData?.uncap?.transcendence ? 5 : 0}
+			transcendenceStage={(normalizedCharacterUncap?.transcendence ??
+			itemData?.uncap?.transcendence)
+				? (normalizedCharacterUncap?.maxTranscendenceStage ?? 5)
+				: 0}
 			flb={itemData?.uncap?.flb ?? false}
-			ulb={itemData?.uncap?.ulb ?? false}
-			transcendence={itemData?.uncap?.transcendence ?? false}
+			ulb={normalizedCharacterUncap?.ulb ?? itemData?.uncap?.ulb ?? false}
+			transcendence={normalizedCharacterUncap?.transcendence ??
+				itemData?.uncap?.transcendence ??
+				false}
+			maxTranscendenceStage={normalizedCharacterUncap?.maxTranscendenceStage ?? 5}
 			{special}
 		/>
 	</DetailRow>

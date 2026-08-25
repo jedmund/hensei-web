@@ -10,9 +10,9 @@ describe('characters/schema', () => {
 		race: [2, null],
 		gender: 2,
 		proficiency: [1, 5],
-		hp: { min_hp: 200, max_hp: 1500, max_hp_flb: 1600 },
-		atk: { min_atk: 800, max_atk: 7200, max_atk_flb: 7400 },
-		uncap: { flb: true, transcendence: false },
+		hp: { min_hp: 200, max_hp: 1500, max_hp_flb: 1600, max_hp_ulb: 1700 },
+		atk: { min_atk: 800, max_atk: 7200, max_atk_flb: 7400, max_atk_ulb: 7600 },
+		uncap: { flb: true, ulb: false, transcendence: false, max_transcendence_stage: 0 },
 		special: false
 	}
 
@@ -22,6 +22,8 @@ describe('characters/schema', () => {
 		expect(edit.race1).toBe(2)
 		expect(edit.race2).toBeNull()
 		expect(edit.flb).toBe(true)
+		expect(edit.max_hp_ulb).toBe(1700)
+		expect(edit.max_transcendence_stage).toBe(0)
 	})
 
 	it('toPayload maps edit state to API payload', () => {
@@ -29,6 +31,8 @@ describe('characters/schema', () => {
 		const payload = toPayload(edit)
 		expect(payload.race).toEqual([2])
 		expect(payload.uncap.flb).toBe(true)
+		expect(payload.uncap.ulb).toBe(false)
+		expect(payload.uncap.max_transcendence_stage).toBe(0)
 	})
 
 	it('CharacterEditSchema validates a correct edit state', () => {
@@ -41,5 +45,26 @@ describe('characters/schema', () => {
 		const bad = { ...toEditData(model), granblue_id: '' }
 		const res = CharacterEditSchema.safeParse(bad)
 		expect(res.success).toBe(false)
+	})
+
+	it('requires an explicit released stage for transcendence', () => {
+		const edit = { ...toEditData(model), transcendence: true, max_transcendence_stage: 0 }
+		expect(CharacterEditSchema.safeParse(edit).success).toBe(false)
+	})
+
+	it('accepts ULB for a special FLB character', () => {
+		const edit = { ...toEditData(model), special: true, flb: true, ulb: true }
+		expect(CharacterEditSchema.safeParse(edit).success).toBe(true)
+	})
+
+	it('keeps story-character ULB separate from transcendence', () => {
+		const edit = {
+			...toEditData(model),
+			special: true,
+			flb: true,
+			transcendence: true,
+			max_transcendence_stage: 1
+		}
+		expect(CharacterEditSchema.safeParse(edit).success).toBe(false)
 	})
 })

@@ -120,6 +120,11 @@ describe('getCharacterPose', () => {
 	it('transcendence 0 does not trigger 04', () => {
 		expect(getCharacterPose(5, 0)).toBe('03')
 	})
+
+	it('uses separate FLB and ULB poses for special characters', () => {
+		expect(getCharacterPose(4, 0, false, true)).toBe('03')
+		expect(getCharacterPose(5, 0, false, true)).toBe('04')
+	})
 })
 
 // ============================================================================

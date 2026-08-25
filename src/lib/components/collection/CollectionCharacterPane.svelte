@@ -373,8 +373,9 @@
 							transcendenceStage={character.transcendenceStep}
 							special={characterData?.special}
 							flb={characterData?.uncap?.flb}
-							ulb={characterData?.uncap?.transcendence}
+							ulb={characterData?.uncap?.ulb}
 							transcendence={characterData?.uncap?.transcendence}
+							maxTranscendenceStage={characterData?.uncap?.maxTranscendenceStage}
 						/>
 					</DetailRow>
 					<DetailRow

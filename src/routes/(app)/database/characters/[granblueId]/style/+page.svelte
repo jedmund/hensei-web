@@ -240,6 +240,9 @@
 						{#if character.uncap?.transcendence}
 							<DetailItem label="Transcendence Date" value={character.transcendenceDate || '—'} />
 						{/if}
+						{#if character.uncap?.ulb}
+							<DetailItem label="ULB Date" value={character.ulbDate || '—'} />
+						{/if}
 					</DetailsContainer>
 
 					<DetailsContainer title="Links">

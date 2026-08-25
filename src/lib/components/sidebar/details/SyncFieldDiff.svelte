@@ -11,6 +11,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { localizedName } from '$lib/utils/locale'
+	import { normalizeCharacterUncap } from '$lib/utils/uncap'
 
 	type GridItem = GridCharacter | GridWeapon | GridSummon
 	type CollectionItem = CollectionCharacter | CollectionWeapon | CollectionSummon
@@ -27,19 +28,28 @@
 	// Resolve uncap capabilities so the indicator renders the right number of stars.
 	const uncapCaps = $derived.by(() => {
 		if (type === 'character') {
-			const uncap = (gridItem as GridCharacter).character?.uncap
-			return {
-				flb: uncap?.flb,
-				ulb: uncap?.transcendence,
-				transcendence: uncap?.transcendence ?? false
-			}
+			const character = (gridItem as GridCharacter).character
+			return normalizeCharacterUncap({
+				special: !!character?.special,
+				uncap: character?.uncap ?? { flb: false }
+			})
 		}
 		if (type === 'weapon') {
 			const uncap = (gridItem as GridWeapon).weapon?.uncap
-			return { flb: uncap?.flb, ulb: uncap?.ulb, transcendence: uncap?.transcendence ?? false }
+			return {
+				flb: uncap?.flb,
+				ulb: uncap?.ulb,
+				transcendence: uncap?.transcendence ?? false,
+				maxTranscendenceStage: 5
+			}
 		}
 		const uncap = (gridItem as GridSummon).summon?.uncap
-		return { flb: uncap?.flb, ulb: uncap?.ulb, transcendence: uncap?.transcendence ?? false }
+		return {
+			flb: uncap?.flb,
+			ulb: uncap?.ulb,
+			transcendence: uncap?.transcendence ?? false,
+			maxTranscendenceStage: 5
+		}
 	})
 
 	const special = $derived(
@@ -131,6 +141,7 @@
 					flb={uncapCaps.flb}
 					ulb={uncapCaps.ulb}
 					transcendence={uncapCaps.transcendence}
+					maxTranscendenceStage={uncapCaps.maxTranscendenceStage}
 					{special}
 					hideTranscendence
 				/>
@@ -142,12 +153,17 @@
 					flb={uncapCaps.flb}
 					ulb={uncapCaps.ulb}
 					transcendence={uncapCaps.transcendence}
+					maxTranscendenceStage={uncapCaps.maxTranscendenceStage}
 					{special}
 					hideTranscendence
 				/>
 			{:else if fieldKey === 'transcendenceStep'}
 				<span class="trans-row">
-					<TranscendenceStar stage={collectionItem.transcendenceStep ?? 0} {type} />
+					<TranscendenceStar
+						stage={collectionItem.transcendenceStep ?? 0}
+						{type}
+						maxStage={uncapCaps.maxTranscendenceStage}
+					/>
 					<span class="trans-level"
 						>{m.details_transcendence_level({
 							level: String(collectionItem.transcendenceStep ?? 0)
@@ -156,7 +172,11 @@
 				</span>
 				<Icon name="arrow-right" size={14} class="diff-arrow" />
 				<span class="trans-row">
-					<TranscendenceStar stage={gridItem.transcendenceStep ?? 0} {type} />
+					<TranscendenceStar
+						stage={gridItem.transcendenceStep ?? 0}
+						{type}
+						maxStage={uncapCaps.maxTranscendenceStage}
+					/>
 					<span class="trans-level"
 						>{m.details_transcendence_level({
 							level: String(gridItem.transcendenceStep ?? 0)

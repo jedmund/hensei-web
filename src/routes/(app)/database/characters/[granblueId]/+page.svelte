@@ -45,6 +45,7 @@
 	import { getListUrl } from '$lib/utils/listNavigation'
 	import { localizedName } from '$lib/utils/locale'
 	import { localizeHref } from '$lib/paraglide/runtime'
+	import { normalizeCharacterUncap } from '$lib/utils/uncap'
 
 	// Types
 	import type { PageData } from './$types'
@@ -74,6 +75,14 @@
 
 	// Get character from query
 	const character = $derived(characterQuery.data)
+	const characterUncap = $derived(
+		character
+			? normalizeCharacterUncap({
+					special: !!character.special,
+					uncap: character.uncap ?? { flb: false }
+				})
+			: null
+	)
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
 
@@ -145,7 +154,8 @@
 			return images
 		}
 
-		// Only include poses that are available - _01 = Base, _02 = MLB (3*), _03 = FLB (5*), _04 = Transcendence
+		// Only include poses that are available - _04 is ULB for story characters and
+		// transcendence for regular characters.
 		const poses: { id: string; label: string }[] = [
 			{ id: '01', label: 'Base' },
 			{ id: '02', label: 'MLB' }
@@ -155,8 +165,8 @@
 			poses.push({ id: '03', label: 'FLB' })
 		}
 
-		if (character.uncap?.transcendence) {
-			poses.push({ id: '04', label: 'Transcendence' })
+		if (characterUncap?.ulb || characterUncap?.transcendence) {
+			poses.push({ id: '04', label: characterUncap.ulb ? 'ULB' : 'Transcendence' })
 		}
 
 		const genderLabels = ['Gran', 'Djeeta'] as const
@@ -312,7 +322,7 @@
 		// Download this size for all available poses
 		const poses = ['01', '02']
 		if (character.uncap?.flb) poses.push('03')
-		if (character.uncap?.transcendence) poses.push('04')
+		if (characterUncap?.ulb || characterUncap?.transcendence) poses.push('04')
 		if (character.styleSwap) poses.push('style')
 
 		for (const pose of poses) {
@@ -444,8 +454,16 @@
 						{#if character.uncap?.flb}
 							<DetailItem label="FLB Date" value={character.flbDate || '—'} />
 						{/if}
-						{#if character.uncap?.transcendence}
+						{#if characterUncap?.transcendence}
 							<DetailItem label="Transcendence Date" value={character.transcendenceDate || '—'} />
+						{/if}
+						{#if characterUncap?.ulb}
+							<DetailItem
+								label="ULB Date"
+								value={character.ulbDate ||
+									(characterUncap.legacySpecialUlb ? character.transcendenceDate : '') ||
+									'—'}
+							/>
 						{/if}
 					</DetailsContainer>
 

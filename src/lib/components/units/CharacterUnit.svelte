@@ -73,7 +73,8 @@
 			item.character.styleSwap,
 			simplePortraits.value,
 			item.character.element,
-			item.character.genderVariants ? gender : undefined
+			item.character.genderVariants ? gender : undefined,
+			item.character.special
 		)
 	})
 
@@ -367,8 +368,9 @@
 				transcendenceStage={item.transcendenceStep}
 				special={item.character?.special}
 				flb={item.character?.uncap?.flb}
-				ulb={item.character?.uncap?.transcendence}
+				ulb={item.character?.uncap?.ulb}
 				transcendence={item.character?.uncap?.transcendence}
+				maxTranscendenceStage={item.character?.uncap?.maxTranscendenceStage}
 				editable={ctx?.canEdit()}
 				updateUncap={async (level) => {
 					if (!item?.id || !ctx) return
