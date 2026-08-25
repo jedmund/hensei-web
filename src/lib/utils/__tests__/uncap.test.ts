@@ -3,6 +3,7 @@ import {
 	getMaxUncapLevel,
 	getCharacterMaxUncapLevel,
 	normalizeCharacterUncap,
+	normalizeCharacterProgression,
 	getSummonMaxUncapLevel,
 	getDefaultMaxUncapLevel
 } from '../uncap'
@@ -88,6 +89,30 @@ describe('normalizeCharacterUncap', () => {
 		expect(
 			normalizeCharacterUncap({ special: false, uncap: { flb: true, transcendence: true } })
 		).toMatchObject({ transcendence: true, maxTranscendenceStage: 5 })
+	})
+})
+
+describe('normalizeCharacterProgression', () => {
+	it('moves legacy story ULB stats and dates into the ULB edit fields', () => {
+		expect(
+			normalizeCharacterProgression({
+				special: true,
+				uncap: { flb: true, transcendence: true },
+				hp: { maxHpTranscendence: 1900 },
+				atk: { maxAtkTranscendence: 10_000 },
+				transcendenceDate: '2019-08-22'
+			})
+		).toMatchObject({
+			ulb: true,
+			transcendence: false,
+			maxTranscendenceStage: 0,
+			maxHpUlb: 1900,
+			maxHpTranscendence: 0,
+			maxAtkUlb: 10_000,
+			maxAtkTranscendence: 0,
+			ulbDate: '2019-08-22',
+			transcendenceDate: ''
+		})
 	})
 })
 

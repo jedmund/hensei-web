@@ -27,6 +27,22 @@ export interface NormalizedCharacterUncap {
 	legacySpecialUlb: boolean
 }
 
+export interface CharacterProgressionData extends CharacterUncapData {
+	hp?: { maxHpUlb?: number; maxHpTranscendence?: number }
+	atk?: { maxAtkUlb?: number; maxAtkTranscendence?: number }
+	ulbDate?: string
+	transcendenceDate?: string
+}
+
+export interface NormalizedCharacterProgression extends NormalizedCharacterUncap {
+	maxHpUlb: number
+	maxHpTranscendence: number
+	maxAtkUlb: number
+	maxAtkTranscendence: number
+	ulbDate: string
+	transcendenceDate: string
+}
+
 /**
  * Normalizes character uncap capabilities across the old and new API shapes.
  * The legacy fallback can be removed once every deployed API returns `ulb` and
@@ -43,6 +59,30 @@ export function normalizeCharacterUncap(character: CharacterUncapData): Normaliz
 		transcendence,
 		maxTranscendenceStage: transcendence ? (uncap.maxTranscendenceStage ?? 5) : 0,
 		legacySpecialUlb
+	}
+}
+
+/** Moves legacy story-ULB stats and dates out of transcendence fields for editing. */
+export function normalizeCharacterProgression(
+	character: CharacterProgressionData
+): NormalizedCharacterProgression {
+	const normalized = normalizeCharacterUncap(character)
+	const legacy = normalized.legacySpecialUlb
+
+	return {
+		...normalized,
+		maxHpUlb: legacy
+			? (character.hp?.maxHpUlb ?? character.hp?.maxHpTranscendence ?? 0)
+			: (character.hp?.maxHpUlb ?? 0),
+		maxHpTranscendence: legacy ? 0 : (character.hp?.maxHpTranscendence ?? 0),
+		maxAtkUlb: legacy
+			? (character.atk?.maxAtkUlb ?? character.atk?.maxAtkTranscendence ?? 0)
+			: (character.atk?.maxAtkUlb ?? 0),
+		maxAtkTranscendence: legacy ? 0 : (character.atk?.maxAtkTranscendence ?? 0),
+		ulbDate: legacy
+			? (character.ulbDate ?? character.transcendenceDate ?? '')
+			: (character.ulbDate ?? ''),
+		transcendenceDate: legacy ? '' : (character.transcendenceDate ?? '')
 	}
 }
 

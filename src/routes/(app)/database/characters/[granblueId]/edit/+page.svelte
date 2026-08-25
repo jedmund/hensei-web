@@ -24,6 +24,7 @@
 	import TagInput from '$lib/components/ui/TagInput.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
 	import { getElementLabel } from '$lib/utils/element'
+	import { normalizeCharacterProgression } from '$lib/utils/uncap'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,
@@ -140,6 +141,16 @@
 	// Populate edit data when character loads
 	$effect(() => {
 		if (character) {
+			const special = character.special || false
+			const progression = normalizeCharacterProgression({
+				special,
+				uncap: character.uncap ?? { flb: false },
+				hp: character.hp,
+				atk: character.atk,
+				ulbDate: character.ulbDate,
+				transcendenceDate: character.transcendenceDate
+			})
+
 			editData = {
 				name: character.name?.en || '',
 				nameJp: character.name?.ja || '',
@@ -158,25 +169,25 @@
 				minHp: character.hp?.minHp || 0,
 				maxHp: character.hp?.maxHp || 0,
 				maxHpFlb: character.hp?.maxHpFlb || 0,
-				maxHpUlb: character.hp?.maxHpUlb || 0,
-				maxHpTranscendence: character.hp?.maxHpTranscendence || 0,
+				maxHpUlb: progression.maxHpUlb,
+				maxHpTranscendence: progression.maxHpTranscendence,
 				// Attack stats
 				minAtk: character.atk?.minAtk || 0,
 				maxAtk: character.atk?.maxAtk || 0,
 				maxAtkFlb: character.atk?.maxAtkFlb || 0,
-				maxAtkUlb: character.atk?.maxAtkUlb || 0,
-				maxAtkTranscendence: character.atk?.maxAtkTranscendence || 0,
+				maxAtkUlb: progression.maxAtkUlb,
+				maxAtkTranscendence: progression.maxAtkTranscendence,
 				// Other stats
 				baseDa: character.baseDa || 0,
 				baseTa: character.baseTa || 0,
 				ougiRatio: character.ougiRatio?.ougiRatio || 0,
 				ougiRatioFlb: character.ougiRatio?.ougiRatioFlb || 0,
 				// Uncap flags
-				flb: character.uncap?.flb || false,
-				ulb: character.uncap?.ulb || false,
-				transcendence: character.uncap?.transcendence || false,
-				maxTranscendenceStage: character.uncap?.maxTranscendenceStage || 0,
-				special: character.special || false,
+				flb: progression.flb,
+				ulb: progression.ulb,
+				transcendence: progression.transcendence,
+				maxTranscendenceStage: progression.maxTranscendenceStage,
+				special,
 				// Appearance
 				gender_variants: character.genderVariants || false,
 				// Style swap
@@ -186,8 +197,8 @@
 				// Dates
 				releaseDate: character.releaseDate || '',
 				flbDate: character.flbDate || '',
-				ulbDate: character.ulbDate || '',
-				transcendenceDate: character.transcendenceDate || '',
+				ulbDate: progression.ulbDate,
+				transcendenceDate: progression.transcendenceDate,
 				// Nicknames
 				nicknamesEn: character.nicknames?.en || [],
 				nicknamesJp: character.nicknames?.ja || [],
