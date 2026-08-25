@@ -89,11 +89,13 @@
 		minHp: 0,
 		maxHp: 0,
 		maxHpFlb: 0,
+		maxHpUlb: 0,
 		maxHpTranscendence: 0,
 		// Attack stats
 		minAtk: 0,
 		maxAtk: 0,
 		maxAtkFlb: 0,
+		maxAtkUlb: 0,
 		maxAtkTranscendence: 0,
 		// Other stats
 		baseDa: 0,
@@ -102,7 +104,9 @@
 		ougiRatioFlb: 0,
 		// Uncap flags
 		flb: false,
+		ulb: false,
 		transcendence: false,
+		maxTranscendenceStage: 0,
 		special: false,
 		// Appearance
 		gender_variants: false,
@@ -113,6 +117,7 @@
 		// Dates
 		releaseDate: '',
 		flbDate: '',
+		ulbDate: '',
 		transcendenceDate: '',
 		// Nicknames
 		nicknamesEn: [] as string[],
@@ -153,11 +158,13 @@
 				minHp: character.hp?.minHp || 0,
 				maxHp: character.hp?.maxHp || 0,
 				maxHpFlb: character.hp?.maxHpFlb || 0,
+				maxHpUlb: character.hp?.maxHpUlb || 0,
 				maxHpTranscendence: character.hp?.maxHpTranscendence || 0,
 				// Attack stats
 				minAtk: character.atk?.minAtk || 0,
 				maxAtk: character.atk?.maxAtk || 0,
 				maxAtkFlb: character.atk?.maxAtkFlb || 0,
+				maxAtkUlb: character.atk?.maxAtkUlb || 0,
 				maxAtkTranscendence: character.atk?.maxAtkTranscendence || 0,
 				// Other stats
 				baseDa: character.baseDa || 0,
@@ -166,7 +173,9 @@
 				ougiRatioFlb: character.ougiRatio?.ougiRatioFlb || 0,
 				// Uncap flags
 				flb: character.uncap?.flb || false,
+				ulb: character.uncap?.ulb || false,
 				transcendence: character.uncap?.transcendence || false,
+				maxTranscendenceStage: character.uncap?.maxTranscendenceStage || 0,
 				special: character.special || false,
 				// Appearance
 				gender_variants: character.genderVariants || false,
@@ -177,6 +186,7 @@
 				// Dates
 				releaseDate: character.releaseDate || '',
 				flbDate: character.flbDate || '',
+				ulbDate: character.ulbDate || '',
 				transcendenceDate: character.transcendenceDate || '',
 				// Nicknames
 				nicknamesEn: character.nicknames?.en || [],
@@ -191,7 +201,7 @@
 	})
 
 	async function saveChanges() {
-		if (!character?.id) return
+		if (!character?.id || (editData.transcendence && editData.maxTranscendenceStage < 1)) return
 
 		isSaving = true
 		saveError = null
@@ -222,11 +232,13 @@
 				min_hp: editData.minHp,
 				max_hp: editData.maxHp,
 				max_hp_flb: editData.maxHpFlb,
+				max_hp_ulb: editData.maxHpUlb,
 				max_hp_transcendence: editData.maxHpTranscendence,
 				// Attack stats
 				min_atk: editData.minAtk,
 				max_atk: editData.maxAtk,
 				max_atk_flb: editData.maxAtkFlb,
+				max_atk_ulb: editData.maxAtkUlb,
 				max_atk_transcendence: editData.maxAtkTranscendence,
 				// Other stats
 				base_da: editData.baseDa,
@@ -235,7 +247,9 @@
 				ougi_ratio_flb: editData.ougiRatioFlb,
 				// Uncap flags
 				flb: editData.flb,
+				ulb: editData.ulb,
 				transcendence: editData.transcendence,
+				max_transcendence_stage: editData.transcendence ? editData.maxTranscendenceStage : 0,
 				special: editData.special,
 				// Appearance
 				gender_variants: editData.gender_variants,
@@ -246,6 +260,7 @@
 				// Dates
 				release_date: editData.releaseDate || undefined,
 				flb_date: editData.flbDate || undefined,
+				ulb_date: editData.ulbDate || undefined,
 				transcendence_date: editData.transcendenceDate || undefined,
 				// Nicknames
 				nicknames_en: editData.nicknamesEn,
@@ -304,7 +319,7 @@
 				element={elementName}
 				size="small"
 				onclick={saveChanges}
-				disabled={isSaving}
+				disabled={isSaving || (editData.transcendence && editData.maxTranscendenceStage < 1)}
 			>
 				{isSaving ? 'Saving...' : 'Save'}
 			</Button>
@@ -357,6 +372,14 @@
 						<DetailItem
 							label="Transcendence Date"
 							bind:value={editData.transcendenceDate}
+							editable={true}
+							type="date"
+						/>
+					{/if}
+					{#if editData.ulb}
+						<DetailItem
+							label="ULB Date"
+							bind:value={editData.ulbDate}
 							editable={true}
 							type="date"
 						/>

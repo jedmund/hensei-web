@@ -131,20 +131,25 @@
 			minHp: parsedData?.minHp ?? 0,
 			maxHp: parsedData?.maxHp ?? 0,
 			maxHpFlb: parsedData?.maxHpFlb ?? 0,
+			maxHpUlb: 0,
 			maxHpTranscendence: 0,
 			minAtk: parsedData?.minAtk ?? 0,
 			maxAtk: parsedData?.maxAtk ?? 0,
 			maxAtkFlb: parsedData?.maxAtkFlb ?? 0,
+			maxAtkUlb: 0,
 			maxAtkTranscendence: 0,
 			baseDa: 0,
 			baseTa: 0,
 			ougiRatio: 0,
 			ougiRatioFlb: 0,
 			flb: parsedData?.flb ?? false,
+			ulb: parsedData?.ulb ?? false,
 			transcendence: false,
+			maxTranscendenceStage: 0,
 			special: false,
 			releaseDate: parsedData?.releaseDate ?? '',
 			flbDate: parsedData?.flbDate ?? '',
+			ulbDate: parsedData?.ulbDate ?? '',
 			transcendenceDate: '',
 			wikiEn: wikiPage ? wikiPage.replace(/ /g, '_') : '',
 			wikiJa: '',
@@ -243,7 +248,7 @@
 	async function saveCurrentEntity() {
 		if (!selectedWikiPage) return
 		const formData = formDataByPage[selectedWikiPage!]
-		if (!formData) return
+		if (!formData || (formData.transcendence && formData.maxTranscendenceStage < 1)) return
 		isSaving = true
 		saveError = null
 
@@ -271,20 +276,25 @@
 				min_hp: formData.minHp,
 				max_hp: formData.maxHp,
 				max_hp_flb: formData.maxHpFlb,
+				max_hp_ulb: formData.maxHpUlb,
 				max_hp_transcendence: formData.maxHpTranscendence,
 				min_atk: formData.minAtk,
 				max_atk: formData.maxAtk,
 				max_atk_flb: formData.maxAtkFlb,
+				max_atk_ulb: formData.maxAtkUlb,
 				max_atk_transcendence: formData.maxAtkTranscendence,
 				base_da: formData.baseDa,
 				base_ta: formData.baseTa,
 				ougi_ratio: formData.ougiRatio,
 				ougi_ratio_flb: formData.ougiRatioFlb,
 				flb: formData.flb,
+				ulb: formData.ulb,
 				transcendence: formData.transcendence,
+				max_transcendence_stage: formData.transcendence ? formData.maxTranscendenceStage : 0,
 				special: formData.special,
 				release_date: formData.releaseDate || null,
 				flb_date: formData.flbDate || null,
+				ulb_date: formData.ulbDate || null,
 				transcendence_date: formData.transcendenceDate || null,
 				wiki_en: formData.wikiEn,
 				wiki_ja: formData.wikiJa,
@@ -328,6 +338,7 @@
 		return (
 			formData.name.trim() !== '' &&
 			formData.granblueId.trim() !== '' &&
+			(!formData.transcendence || formData.maxTranscendenceStage >= 1) &&
 			!savedEntities.has(selectedWikiPage)
 		)
 	})
@@ -507,6 +518,15 @@
 							<DetailItem
 								label="Transcendence Date"
 								bind:value={formDataByPage[selectedWikiPage!]!.transcendenceDate}
+								editable={true}
+								type="text"
+								placeholder="YYYY-MM-DD"
+							/>
+						{/if}
+						{#if formData.ulb}
+							<DetailItem
+								label="ULB Date"
+								bind:value={formDataByPage[selectedWikiPage!]!.ulbDate}
 								editable={true}
 								type="text"
 								placeholder="YYYY-MM-DD"

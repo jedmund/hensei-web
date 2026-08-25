@@ -93,23 +93,28 @@
 		minHp: 0,
 		maxHp: 0,
 		maxHpFlb: 0,
+		maxHpUlb: 0,
 		maxHpTranscendence: 0,
 		minAtk: 0,
 		maxAtk: 0,
 		maxAtkFlb: 0,
+		maxAtkUlb: 0,
 		maxAtkTranscendence: 0,
 		baseDa: 0,
 		baseTa: 0,
 		ougiRatio: 0,
 		ougiRatioFlb: 0,
 		flb: false,
+		ulb: false,
 		transcendence: false,
+		maxTranscendenceStage: 0,
 		special: false,
 		styleSwap: false,
 		styleNameEn: '' as string,
 		styleNameJp: '' as string,
 		releaseDate: '',
 		flbDate: '',
+		ulbDate: '',
 		transcendenceDate: '',
 		nicknamesEn: [] as string[],
 		nicknamesJp: [] as string[],
@@ -156,23 +161,28 @@
 				minHp: character.hp?.minHp || 0,
 				maxHp: character.hp?.maxHp || 0,
 				maxHpFlb: character.hp?.maxHpFlb || 0,
+				maxHpUlb: character.hp?.maxHpUlb || 0,
 				maxHpTranscendence: character.hp?.maxHpTranscendence || 0,
 				minAtk: character.atk?.minAtk || 0,
 				maxAtk: character.atk?.maxAtk || 0,
 				maxAtkFlb: character.atk?.maxAtkFlb || 0,
+				maxAtkUlb: character.atk?.maxAtkUlb || 0,
 				maxAtkTranscendence: character.atk?.maxAtkTranscendence || 0,
 				baseDa: character.baseDa || 0,
 				baseTa: character.baseTa || 0,
 				ougiRatio: character.ougiRatio?.ougiRatio || 0,
 				ougiRatioFlb: character.ougiRatio?.ougiRatioFlb || 0,
 				flb: character.uncap?.flb || false,
+				ulb: character.uncap?.ulb || false,
 				transcendence: character.uncap?.transcendence || false,
+				maxTranscendenceStage: character.uncap?.maxTranscendenceStage || 0,
 				special: character.special || false,
 				styleSwap: character.styleSwap || false,
 				styleNameEn: character.styleName?.en || '',
 				styleNameJp: character.styleName?.ja || '',
 				releaseDate: character.releaseDate || '',
 				flbDate: character.flbDate || '',
+				ulbDate: character.ulbDate || '',
 				transcendenceDate: character.transcendenceDate || '',
 				nicknamesEn: character.nicknames?.en || [],
 				nicknamesJp: character.nicknames?.ja || [],
@@ -185,7 +195,7 @@
 	})
 
 	async function saveChanges() {
-		if (!character?.id) return
+		if (!character?.id || (editData.transcendence && editData.maxTranscendenceStage < 1)) return
 
 		isSaving = true
 		saveError = null
@@ -214,23 +224,28 @@
 				min_hp: editData.minHp,
 				max_hp: editData.maxHp,
 				max_hp_flb: editData.maxHpFlb,
+				max_hp_ulb: editData.maxHpUlb,
 				max_hp_transcendence: editData.maxHpTranscendence,
 				min_atk: editData.minAtk,
 				max_atk: editData.maxAtk,
 				max_atk_flb: editData.maxAtkFlb,
+				max_atk_ulb: editData.maxAtkUlb,
 				max_atk_transcendence: editData.maxAtkTranscendence,
 				base_da: editData.baseDa,
 				base_ta: editData.baseTa,
 				ougi_ratio: editData.ougiRatio,
 				ougi_ratio_flb: editData.ougiRatioFlb,
 				flb: editData.flb,
+				ulb: editData.ulb,
 				transcendence: editData.transcendence,
+				max_transcendence_stage: editData.transcendence ? editData.maxTranscendenceStage : 0,
 				special: editData.special,
 				style_swap: editData.styleSwap,
 				style_name_en: editData.styleNameEn || undefined,
 				style_name_jp: editData.styleNameJp || undefined,
 				release_date: editData.releaseDate || undefined,
 				flb_date: editData.flbDate || undefined,
+				ulb_date: editData.ulbDate || undefined,
 				transcendence_date: editData.transcendenceDate || undefined,
 				nicknames_en: editData.nicknamesEn,
 				nicknames_jp: editData.nicknamesJp,
@@ -285,7 +300,7 @@
 				element={elementName}
 				size="small"
 				onclick={saveChanges}
-				disabled={isSaving}
+				disabled={isSaving || (editData.transcendence && editData.maxTranscendenceStage < 1)}
 			>
 				{isSaving ? 'Saving...' : 'Save'}
 			</Button>
@@ -337,6 +352,14 @@
 						<DetailItem
 							label="Transcendence Date"
 							bind:value={editData.transcendenceDate}
+							editable={true}
+							type="date"
+						/>
+					{/if}
+					{#if editData.ulb}
+						<DetailItem
+							label="ULB Date"
+							bind:value={editData.ulbDate}
 							editable={true}
 							type="date"
 						/>

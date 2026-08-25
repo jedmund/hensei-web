@@ -46,9 +46,9 @@
 		race: [],
 		gender: 0,
 		proficiency: [0, 0],
-		hp: { minHp: 0, maxHp: 0, maxHpFlb: 0 },
-		atk: { minAtk: 0, maxAtk: 0, maxAtkFlb: 0 },
-		uncap: { flb: false, transcendence: false },
+		hp: { minHp: 0, maxHp: 0, maxHpFlb: 0, maxHpUlb: 0, maxHpTranscendence: 0 },
+		atk: { minAtk: 0, maxAtk: 0, maxAtkFlb: 0, maxAtkUlb: 0, maxAtkTranscendence: 0 },
+		uncap: { flb: false, ulb: false, transcendence: false, maxTranscendenceStage: 0 },
 		special: false
 	}
 
@@ -76,10 +76,12 @@
 		minHp: 0,
 		maxHp: 0,
 		maxHpFlb: 0,
+		maxHpUlb: 0,
 		maxHpTranscendence: 0,
 		minAtk: 0,
 		maxAtk: 0,
 		maxAtkFlb: 0,
+		maxAtkUlb: 0,
 		maxAtkTranscendence: 0,
 		baseDa: 0,
 		baseTa: 0,
@@ -88,7 +90,9 @@
 
 		// Uncap
 		flb: false,
+		ulb: false,
 		transcendence: false,
+		maxTranscendenceStage: 0,
 		special: false,
 
 		// Style swap
@@ -99,6 +103,7 @@
 		// Dates
 		releaseDate: '',
 		flbDate: '',
+		ulbDate: '',
 		transcendenceDate: '',
 
 		// Links
@@ -119,7 +124,8 @@
 		granblueIdValid &&
 			!granblueIdExistsInDb &&
 			editData.name.trim() !== '' &&
-			editData.granblueId.trim() !== ''
+			editData.granblueId.trim() !== '' &&
+			(!editData.transcendence || editData.maxTranscendenceStage >= 1)
 	)
 
 	async function validateGranblueId(value: string): Promise<{ valid: boolean; message: string }> {
@@ -188,10 +194,12 @@
 				min_hp: editData.minHp,
 				max_hp: editData.maxHp,
 				max_hp_flb: editData.maxHpFlb,
+				max_hp_ulb: editData.maxHpUlb,
 				max_hp_transcendence: editData.maxHpTranscendence,
 				min_atk: editData.minAtk,
 				max_atk: editData.maxAtk,
 				max_atk_flb: editData.maxAtkFlb,
+				max_atk_ulb: editData.maxAtkUlb,
 				max_atk_transcendence: editData.maxAtkTranscendence,
 				base_da: editData.baseDa,
 				base_ta: editData.baseTa,
@@ -200,7 +208,9 @@
 
 				// Uncap
 				flb: editData.flb,
+				ulb: editData.ulb,
 				transcendence: editData.transcendence,
+				max_transcendence_stage: editData.transcendence ? editData.maxTranscendenceStage : 0,
 				special: editData.special,
 
 				// Style swap
@@ -211,6 +221,7 @@
 				// Dates
 				release_date: editData.releaseDate || null,
 				flb_date: editData.flbDate || null,
+				ulb_date: editData.ulbDate || null,
 				transcendence_date: editData.transcendenceDate || null,
 
 				// Links
@@ -342,6 +353,15 @@
 				<DetailItem
 					label="Transcendence Date"
 					bind:value={editData.transcendenceDate}
+					editable={true}
+					type="text"
+					placeholder="YYYY-MM-DD"
+				/>
+			{/if}
+			{#if editData.ulb}
+				<DetailItem
+					label="ULB Date"
+					bind:value={editData.ulbDate}
 					editable={true}
 					type="text"
 					placeholder="YYYY-MM-DD"

@@ -106,6 +106,15 @@
 			getter: (row: any) => row.uncap?.flb
 		},
 		{
+			id: 'ulb',
+			header: 'ULB',
+			width: 70,
+			hidden: true,
+			cell: BooleanCell,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			getter: (row: any) => row.uncap?.ulb
+		},
+		{
 			id: 'transcendence',
 			header: 'Transcendence',
 			width: 70,
@@ -113,6 +122,14 @@
 			cell: BooleanCell,
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) => row.uncap?.transcendence
+		},
+		{
+			id: 'maxTranscendenceStage',
+			header: 'Max Trans. Stage',
+			width: 120,
+			hidden: true,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			getter: (row: any) => row.uncap?.maxTranscendenceStage ?? 0
 		},
 		{
 			id: 'maxLevel',
@@ -171,6 +188,13 @@
 		{
 			id: 'flbDate',
 			header: 'FLB Date',
+			width: 110,
+			hidden: true,
+			cell: DateCell
+		},
+		{
+			id: 'ulbDate',
+			header: 'ULB Date',
 			width: 110,
 			hidden: true,
 			cell: DateCell
