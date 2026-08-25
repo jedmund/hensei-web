@@ -15,6 +15,7 @@
 	import { getWeaponSkillIcon } from '$lib/utils/images'
 	import { getLocale } from '$lib/paraglide/runtime.js'
 	import { localizedName } from '$lib/utils/locale'
+	import Icon from '$lib/components/Icon.svelte'
 
 	interface Props {
 		shortcode: string
@@ -118,7 +119,9 @@
 
 <div class="calculator-pane">
 	{#if loading}
-		<div class="state">…</div>
+		<div class="loading-state" role="status" aria-label={m.calculator_loading()}>
+			<Icon name="loader-2" size={24} />
+		</div>
 	{:else if error}
 		<div class="state">{m.calculator_error()}</div>
 	{:else if boosts}
@@ -294,8 +297,21 @@
 	.calculator-pane {
 		display: flex;
 		flex-direction: column;
+		flex: 1;
 		gap: $unit-3x;
 		padding: $unit-2x 0;
+	}
+
+	.loading-state {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex: 1;
+		color: var(--text-tertiary);
+
+		:global(svg) {
+			animation: spin 1s linear infinite;
+		}
 	}
 
 	.notice {
@@ -454,6 +470,12 @@
 
 		&.capped {
 			color: var(--orange-text, #e08a00);
+		}
+	}
+
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
 		}
 	}
 </style>
