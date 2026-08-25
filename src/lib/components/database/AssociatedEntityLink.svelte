@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
@@ -9,9 +10,10 @@
 	interface Props {
 		type: EntityType
 		entity: { granblueId: string; name: { en: string; ja: string } }
+		children?: Snippet
 	}
 
-	let { type, entity }: Props = $props()
+	let { type, entity, children }: Props = $props()
 
 	const href = $derived(localizeHref(`/database/${type}s/${entity.granblueId}`))
 
@@ -29,7 +31,12 @@
 
 <a {href} class="entity-link">
 	<img src={getImageUrl()} alt="" class="entity-image" class:square={type !== 'job'} />
-	{localizedName(entity.name)}
+	<div class="entity-info">
+		<span class="entity-name">{localizedName(entity.name)}</span>
+		{#if children}
+			{@render children()}
+		{/if}
+	</div>
 </a>
 
 <style lang="scss">
@@ -62,5 +69,19 @@
 			height: 32px;
 			border-radius: layout.$item-corner;
 		}
+	}
+
+	.entity-info {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: spacing.$unit-quarter;
+		min-width: 0;
+	}
+
+	.entity-name {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 </style>
