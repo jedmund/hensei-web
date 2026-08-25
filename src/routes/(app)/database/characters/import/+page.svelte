@@ -13,6 +13,7 @@
 		buildKamigameUrl
 	} from '$lib/utils/external-links'
 	import { getRarityPrefix } from '$lib/utils/rarity'
+	import { normalizeCharacterImportUncap } from '$lib/features/database/characters/import-uncap'
 	import { SvelteMap, SvelteSet } from 'svelte/reactivity'
 
 	// Components
@@ -114,6 +115,17 @@
 
 	// Initialize empty form data for an entity
 	function createEmptyFormData(wikiPage: string, parsedData?: ParsedCharacterData) {
+		const importedUncap = normalizeCharacterImportUncap({
+			rarity: parsedData?.rarity,
+			special: parsedData?.special,
+			flb: parsedData?.flb,
+			ulb: parsedData?.ulb,
+			transcendence: parsedData?.transcendence,
+			maxTranscendenceStage: parsedData?.maxTranscendenceStage,
+			ulbDate: parsedData?.ulbDate,
+			transcendenceDate: parsedData?.transcendenceDate
+		})
+
 		return {
 			name: parsedData?.nameEn ?? '',
 			nameJp: parsedData?.nameJp ?? '',
@@ -142,15 +154,15 @@
 			baseTa: 0,
 			ougiRatio: 0,
 			ougiRatioFlb: 0,
-			flb: parsedData?.flb ?? false,
-			ulb: parsedData?.ulb ?? false,
-			transcendence: false,
-			maxTranscendenceStage: 0,
-			special: false,
+			flb: importedUncap.flb,
+			ulb: importedUncap.ulb,
+			transcendence: importedUncap.transcendence,
+			maxTranscendenceStage: importedUncap.maxTranscendenceStage,
+			special: importedUncap.special,
 			releaseDate: parsedData?.releaseDate ?? '',
 			flbDate: parsedData?.flbDate ?? '',
-			ulbDate: parsedData?.ulbDate ?? '',
-			transcendenceDate: '',
+			ulbDate: importedUncap.ulbDate ?? '',
+			transcendenceDate: importedUncap.transcendenceDate ?? '',
 			wikiEn: wikiPage ? wikiPage.replace(/ /g, '_') : '',
 			wikiJa: '',
 			gamewith: parsedData?.gamewith ?? '',

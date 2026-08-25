@@ -633,6 +633,7 @@ export interface ParsedCharacterData {
 	ulb?: boolean
 	transcendence?: boolean
 	maxTranscendenceStage?: number
+	special?: boolean
 	/** Series array (e.g., [2] for Grand, [3] for Zodiac) */
 	series?: number[]
 	releaseDate?: string
