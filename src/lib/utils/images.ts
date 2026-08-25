@@ -223,9 +223,12 @@ export function getWeaponTransformation(
 export function getCharacterPose(
 	uncapLevel?: number,
 	transcendenceStep?: number,
-	simplePortraits?: boolean
+	simplePortraits?: boolean,
+	special?: boolean
 ): string {
 	if (transcendenceStep && transcendenceStep > 0) return '04'
+	if (special && uncapLevel && uncapLevel >= 5) return '04'
+	if (special && uncapLevel && uncapLevel >= 4) return '03'
 	if (uncapLevel && uncapLevel >= 5) return '03'
 	if (uncapLevel && uncapLevel > 2) return simplePortraits ? '01' : '02'
 	return '01'
@@ -443,7 +446,8 @@ export function getCharacterImageWithPose(
 	styleSwap?: boolean,
 	simplePortraits?: boolean,
 	characterElement?: number | null,
-	gender?: number
+	gender?: number,
+	special?: boolean
 ): string {
 	if (!id) {
 		return getPlaceholderImage('character', variant)
@@ -454,7 +458,7 @@ export function getCharacterImageWithPose(
 		return getImageUrl('character', id, variant, { pose: STYLE_SWAP_POSE })
 	}
 
-	let pose = getCharacterPose(uncapLevel, transcendenceStep, simplePortraits)
+	let pose = getCharacterPose(uncapLevel, transcendenceStep, simplePortraits, special)
 
 	// Null-element characters (element === 0) use element-suffixed images
 	// based on the mainhand weapon element or party element.

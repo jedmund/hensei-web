@@ -1,35 +1,66 @@
 import { z } from 'zod'
+import { normalizeCharacterUncap } from '$lib/utils/uncap'
 
 // Edit-state schema used on the client and for form validation server-side
-export const CharacterEditSchema = z.object({
-	name: z
-		.union([z.string(), z.object({ en: z.string().optional(), ja: z.string().optional() })])
-		.optional(),
-	granblue_id: z.string().min(1),
-	rarity: z.number().int().min(1),
-	element: z.number().int().min(0),
-	race1: z.number().int().nullable().optional(),
-	race2: z.number().int().nullable().optional(),
-	gender: z.number().int().min(0),
-	proficiency1: z.number().int().min(0),
-	proficiency2: z.number().int().min(0),
-	season: z.number().int().min(1).nullable(),
-	series: z.array(z.number().int().min(1)),
-	gacha_available: z.boolean(),
-	min_hp: z.number().int().min(0),
-	max_hp: z.number().int().min(0),
-	max_hp_flb: z.number().int().min(0),
-	min_atk: z.number().int().min(0),
-	max_atk: z.number().int().min(0),
-	max_atk_flb: z.number().int().min(0),
-	flb: z.boolean(),
-	transcendence: z.boolean(),
-	special: z.boolean(),
-	style_swap: z.boolean(),
-	gender_variants: z.boolean(),
-	style_name_en: z.string().nullable(),
-	style_name_jp: z.string().nullable()
-})
+export const CharacterEditSchema = z
+	.object({
+		name: z
+			.union([z.string(), z.object({ en: z.string().optional(), ja: z.string().optional() })])
+			.optional(),
+		granblue_id: z.string().min(1),
+		rarity: z.number().int().min(1),
+		element: z.number().int().min(0),
+		race1: z.number().int().nullable().optional(),
+		race2: z.number().int().nullable().optional(),
+		gender: z.number().int().min(0),
+		proficiency1: z.number().int().min(0),
+		proficiency2: z.number().int().min(0),
+		season: z.number().int().min(1).nullable(),
+		series: z.array(z.number().int().min(1)),
+		gacha_available: z.boolean(),
+		min_hp: z.number().int().min(0),
+		max_hp: z.number().int().min(0),
+		max_hp_flb: z.number().int().min(0),
+		max_hp_ulb: z.number().int().min(0),
+		max_hp_transcendence: z.number().int().min(0),
+		min_atk: z.number().int().min(0),
+		max_atk: z.number().int().min(0),
+		max_atk_flb: z.number().int().min(0),
+		max_atk_ulb: z.number().int().min(0),
+		max_atk_transcendence: z.number().int().min(0),
+		flb: z.boolean(),
+		ulb: z.boolean(),
+		transcendence: z.boolean(),
+		max_transcendence_stage: z.number().int().min(0).max(5),
+		special: z.boolean(),
+		style_swap: z.boolean(),
+		gender_variants: z.boolean(),
+		style_name_en: z.string().nullable(),
+		style_name_jp: z.string().nullable()
+	})
+	.superRefine((data, ctx) => {
+		if (data.transcendence && data.max_transcendence_stage === 0) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['max_transcendence_stage'],
+				message: 'Select the highest released transcendence stage'
+			})
+		}
+		if (data.special && data.transcendence) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['transcendence'],
+				message: 'Special characters use ULB'
+			})
+		}
+		if (data.ulb && (!data.special || !data.flb)) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['ulb'],
+				message: 'ULB requires a special character with FLB'
+			})
+		}
+	})
 
 export type CharacterEdit = z.infer<typeof CharacterEditSchema>
 
@@ -54,6 +85,10 @@ interface CharacterModel {
 		max_hp?: number
 		maxHpFlb?: number
 		max_hp_flb?: number
+		maxHpUlb?: number
+		max_hp_ulb?: number
+		maxHpTranscendence?: number
+		max_hp_transcendence?: number
 	}
 	atk?: {
 		minAtk?: number
@@ -62,8 +97,18 @@ interface CharacterModel {
 		max_atk?: number
 		maxAtkFlb?: number
 		max_atk_flb?: number
+		maxAtkUlb?: number
+		max_atk_ulb?: number
+		maxAtkTranscendence?: number
+		max_atk_transcendence?: number
 	}
-	uncap?: { flb?: boolean; transcendence?: boolean }
+	uncap?: {
+		flb?: boolean
+		ulb?: boolean
+		transcendence?: boolean
+		maxTranscendenceStage?: number
+		max_transcendence_stage?: number
+	}
 	special?: boolean
 	styleSwap?: boolean
 	style_swap?: boolean
@@ -75,6 +120,18 @@ interface CharacterModel {
 }
 
 export function toEditData(model: CharacterModel): CharacterEdit {
+	const special = model?.special ?? false
+	const uncap = normalizeCharacterUncap({
+		special,
+		uncap: {
+			flb: model?.uncap?.flb ?? false,
+			ulb: model?.uncap?.ulb,
+			transcendence: model?.uncap?.transcendence,
+			maxTranscendenceStage:
+				model?.uncap?.maxTranscendenceStage ?? model?.uncap?.max_transcendence_stage
+		}
+	})
+
 	return {
 		name: (model?.name as CharacterEdit['name']) ?? '',
 		granblue_id: model?.granblueId ?? model?.granblue_id ?? '',
@@ -92,12 +149,19 @@ export function toEditData(model: CharacterModel): CharacterEdit {
 		min_hp: model?.hp?.minHp ?? model?.hp?.min_hp ?? 0,
 		max_hp: model?.hp?.maxHp ?? model?.hp?.max_hp ?? 0,
 		max_hp_flb: model?.hp?.maxHpFlb ?? model?.hp?.max_hp_flb ?? 0,
+		max_hp_ulb: model?.hp?.maxHpUlb ?? model?.hp?.max_hp_ulb ?? 0,
+		max_hp_transcendence: model?.hp?.maxHpTranscendence ?? model?.hp?.max_hp_transcendence ?? 0,
 		min_atk: model?.atk?.minAtk ?? model?.atk?.min_atk ?? 0,
 		max_atk: model?.atk?.maxAtk ?? model?.atk?.max_atk ?? 0,
 		max_atk_flb: model?.atk?.maxAtkFlb ?? model?.atk?.max_atk_flb ?? 0,
-		flb: model?.uncap?.flb ?? false,
-		transcendence: model?.uncap?.transcendence ?? false,
-		special: model?.special ?? false,
+		max_atk_ulb: model?.atk?.maxAtkUlb ?? model?.atk?.max_atk_ulb ?? 0,
+		max_atk_transcendence:
+			model?.atk?.maxAtkTranscendence ?? model?.atk?.max_atk_transcendence ?? 0,
+		flb: uncap.flb,
+		ulb: uncap.ulb,
+		transcendence: uncap.transcendence,
+		max_transcendence_stage: uncap.maxTranscendenceStage,
+		special,
 		style_swap: model?.styleSwap ?? model?.style_swap ?? false,
 		gender_variants: model?.genderVariants ?? model?.gender_variants ?? false,
 		style_name_en: model?.styleName?.en ?? model?.style_name_en ?? null,
@@ -121,16 +185,22 @@ export function toPayload(edit: CharacterEdit) {
 		hp: {
 			min_hp: edit.min_hp,
 			max_hp: edit.max_hp,
-			max_hp_flb: edit.max_hp_flb
+			max_hp_flb: edit.max_hp_flb,
+			max_hp_ulb: edit.max_hp_ulb,
+			max_hp_transcendence: edit.max_hp_transcendence
 		},
 		atk: {
 			min_atk: edit.min_atk,
 			max_atk: edit.max_atk,
-			max_atk_flb: edit.max_atk_flb
+			max_atk_flb: edit.max_atk_flb,
+			max_atk_ulb: edit.max_atk_ulb,
+			max_atk_transcendence: edit.max_atk_transcendence
 		},
 		uncap: {
 			flb: edit.flb,
-			transcendence: edit.transcendence
+			ulb: edit.ulb,
+			transcendence: edit.transcendence,
+			max_transcendence_stage: edit.transcendence ? edit.max_transcendence_stage : 0
 		},
 		special: edit.special,
 		style_swap: edit.style_swap,

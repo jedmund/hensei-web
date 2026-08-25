@@ -48,7 +48,13 @@ export interface SearchPageResult {
 		searchableType: 'Weapon' | 'Character' | 'Summon'
 		/** Season variant (characters only) */
 		season?: number | null
-		uncap?: { flb?: boolean; ulb?: boolean; transcendence?: boolean }
+		special?: boolean
+		uncap?: {
+			flb?: boolean
+			ulb?: boolean
+			transcendence?: boolean
+			maxTranscendenceStage?: number
+		}
 	}>
 	page: number
 	totalPages: number

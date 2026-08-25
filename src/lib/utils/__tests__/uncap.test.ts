@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
 	getMaxUncapLevel,
 	getCharacterMaxUncapLevel,
+	normalizeCharacterUncap,
 	getSummonMaxUncapLevel,
 	getDefaultMaxUncapLevel
 } from '../uncap'
@@ -45,13 +46,48 @@ describe('getMaxUncapLevel', () => {
 // ============================================================================
 
 describe('getCharacterMaxUncapLevel', () => {
-	it('delegates to getMaxUncapLevel', () => {
+	it('uses ULB for special characters and transcendence for regular characters', () => {
 		expect(
-			getCharacterMaxUncapLevel({ special: true, uncap: { flb: true, transcendence: false } })
-		).toBe(4)
+			getCharacterMaxUncapLevel({
+				special: true,
+				uncap: { flb: true, ulb: true, transcendence: false }
+			})
+		).toBe(5)
 		expect(
 			getCharacterMaxUncapLevel({ special: false, uncap: { flb: true, transcendence: true } })
 		).toBe(6)
+	})
+
+	it('does not treat special-character transcendence as ULB', () => {
+		expect(
+			getCharacterMaxUncapLevel({
+				special: true,
+				uncap: { flb: true, ulb: false, transcendence: true }
+			})
+		).toBe(4)
+	})
+
+	it('does not treat regular-character ULB as transcendence', () => {
+		expect(getCharacterMaxUncapLevel({ special: false, uncap: { flb: true, ulb: true } })).toBe(5)
+	})
+})
+
+describe('normalizeCharacterUncap', () => {
+	it('reads legacy special-character transcendence as ULB only when ulb is absent', () => {
+		expect(
+			normalizeCharacterUncap({ special: true, uncap: { flb: true, transcendence: true } })
+		).toMatchObject({
+			ulb: true,
+			transcendence: false,
+			maxTranscendenceStage: 0,
+			legacySpecialUlb: true
+		})
+	})
+
+	it('defaults legacy regular transcendence to stage 5', () => {
+		expect(
+			normalizeCharacterUncap({ special: false, uncap: { flb: true, transcendence: true } })
+		).toMatchObject({ transcendence: true, maxTranscendenceStage: 5 })
 	})
 })
 
