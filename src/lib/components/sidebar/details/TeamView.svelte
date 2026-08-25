@@ -25,6 +25,7 @@
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import SyncMenuButton from './SyncMenuButton.svelte'
 	import { hasField, hasAnyField, type OutOfSyncFields } from '$lib/utils/outOfSync'
+	import { normalizeCharacterUncap } from '$lib/utils/uncap'
 	import * as m from '$lib/paraglide/messages'
 
 	type ElementColor = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
@@ -201,20 +202,28 @@
 	let uncapCaps = $derived.by(() => {
 		if (type === 'character') {
 			const char = item as GridCharacter
-			const uncap = char.character?.uncap
-			return {
-				flb: uncap?.flb,
-				ulb: uncap?.transcendence,
-				transcendence: uncap?.transcendence ?? false
-			}
+			return normalizeCharacterUncap({
+				special: !!char.character?.special,
+				uncap: char.character?.uncap ?? { flb: false }
+			})
 		} else if (type === 'weapon') {
 			const weapon = item as GridWeapon
 			const uncap = weapon.weapon?.uncap
-			return { flb: uncap?.flb, ulb: uncap?.ulb, transcendence: uncap?.transcendence }
+			return {
+				flb: uncap?.flb,
+				ulb: uncap?.ulb,
+				transcendence: uncap?.transcendence,
+				maxTranscendenceStage: 5
+			}
 		} else {
 			const summon = item as GridSummon
 			const uncap = summon.summon?.uncap
-			return { flb: uncap?.flb, ulb: uncap?.ulb, transcendence: uncap?.transcendence }
+			return {
+				flb: uncap?.flb,
+				ulb: uncap?.ulb,
+				transcendence: uncap?.transcendence,
+				maxTranscendenceStage: 5
+			}
 		}
 	})
 </script>
@@ -243,13 +252,18 @@
 				flb={uncapCaps?.flb}
 				ulb={uncapCaps?.ulb}
 				transcendence={uncapCaps?.transcendence}
+				maxTranscendenceStage={uncapCaps?.maxTranscendenceStage}
 				hideTranscendence
 			/>
 		</DetailRow>
 		{#if uncapCaps?.transcendence}
 			<DetailRow label={m.details_transcended_to()}>
 				<span class="transcendence-row">
-					<TranscendenceStar stage={gridTranscendence ?? 0} {type} />
+					<TranscendenceStar
+						stage={gridTranscendence ?? 0}
+						{type}
+						maxStage={uncapCaps.maxTranscendenceStage}
+					/>
 					<span class="transcendence-level"
 						>{m.details_transcendence_level({ level: String(gridTranscendence ?? 0) })}</span
 					>

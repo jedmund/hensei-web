@@ -37,7 +37,10 @@
 			null,
 			null,
 			character.character?.styleSwap,
-			simplePortraits.value
+			simplePortraits.value,
+			character.character?.element,
+			undefined,
+			character.character?.special
 		)
 	)
 
@@ -63,8 +66,9 @@
 			transcendenceStage={character.transcendenceStep}
 			special={character.character?.special}
 			flb={character.character?.uncap?.flb}
-			ulb={character.character?.uncap?.transcendence}
+			ulb={character.character?.uncap?.ulb}
 			transcendence={character.character?.uncap?.transcendence}
+			maxTranscendenceStage={character.character?.uncap?.maxTranscendenceStage}
 			{editable}
 			updateUncap={onUncapChange}
 			updateTranscendence={onTranscendenceChange}

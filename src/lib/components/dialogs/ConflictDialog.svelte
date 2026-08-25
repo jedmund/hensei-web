@@ -152,7 +152,11 @@
 			gridChar.transcendenceStep,
 			null,
 			null,
-			gridChar.character.styleSwap
+			gridChar.character.styleSwap,
+			undefined,
+			gridChar.character.element,
+			undefined,
+			gridChar.character.special
 		)
 	}
 
@@ -167,7 +171,11 @@
 			0,
 			null,
 			null,
-			character.styleSwap
+			character.styleSwap,
+			undefined,
+			character.element,
+			undefined,
+			character.special
 		)
 	}
 

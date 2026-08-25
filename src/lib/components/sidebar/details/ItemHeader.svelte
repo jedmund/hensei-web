@@ -52,7 +52,8 @@
 				: getCharacterPose(
 						gridUncapLevel ?? undefined,
 						gridTranscendence ?? undefined,
-						simplePortraits.value
+						simplePortraits.value,
+						!!itemData?.special
 					)
 			return getCharacterDetailImage(id, pose)
 		} else if (type === 'weapon') {

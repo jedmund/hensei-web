@@ -38,7 +38,12 @@
 
 	// Get character image with pose
 	function getImage(character: (typeof characters)[number]): string {
-		const pose = getCharacterPose(character.uncapLevel, character.transcendenceStep)
+		const pose = getCharacterPose(
+			character.uncapLevel,
+			character.transcendenceStep,
+			false,
+			character.character.special
+		)
 		return getCharacterImage(character.character.granblueId, 'square', pose)
 	}
 </script>
