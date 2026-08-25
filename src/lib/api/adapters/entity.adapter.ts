@@ -127,6 +127,10 @@ export interface Weapon {
 			en?: string
 			ja?: string
 		}
+		element?: number | null
+		season?: number | null
+		series?: (number | CharacterSeriesRef)[] | null
+		styleSwap?: boolean
 	}
 	// Forge chain fields (from :grid and :full views)
 	forgeOrder?: number | null

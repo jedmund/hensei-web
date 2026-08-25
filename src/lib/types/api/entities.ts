@@ -58,7 +58,17 @@ export interface Weapon {
 	gamewith?: string
 	kamigame?: string
 	nicknames?: { en?: string[]; ja?: string[] }
-	recruits?: string | { id: string; granblueId: string; name: LocalizedName }
+	recruits?:
+		| string
+		| {
+				id: string
+				granblueId: string
+				name: LocalizedName
+				element?: number | null
+				season?: number | null
+				series?: (number | CharacterSeriesRef)[] | null
+				styleSwap?: boolean
+		  }
 	// Forge chain fields (forgedFrom available in :grid and :full views)
 	forgeOrder?: number | null
 	forgedFrom?: { id: string; granblueId: string; name: LocalizedName } | null

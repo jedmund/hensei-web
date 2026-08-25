@@ -7,7 +7,7 @@
 		handleImageFallback
 	} from '$lib/utils/images'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
-	import type { UnifiedSearchSeriesRef } from '$lib/api/adapters/search.adapter'
+	import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'
 
 	type ItemType = 'Character' | 'Weapon' | 'Summon'
 
@@ -23,7 +23,9 @@
 		/** Season (for character tags) */
 		season?: number | null
 		/** Series (for character tags) */
-		series?: UnifiedSearchSeriesRef[] | null
+		series?: (number | CharacterSeriesRef)[] | null
+		/** Whether this is a character style-swap variant */
+		styleSwap?: boolean
 		/** Whether to show the type label */
 		showType?: boolean
 		/** Image size in pixels */
@@ -37,6 +39,7 @@
 		element,
 		season,
 		series,
+		styleSwap,
 		showType = true,
 		imageSize = 48
 	}: Props = $props()
@@ -68,7 +71,7 @@
 	<div class="option-info">
 		<span class="option-label">{label}</span>
 		{#if type === 'Character'}
-			<CharacterTags character={{ element, season, series }} />
+			<CharacterTags character={{ element, season, series, styleSwap }} />
 		{/if}
 	</div>
 	{#if showType}
