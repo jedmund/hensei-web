@@ -5,6 +5,7 @@
 	import CharacterTypeahead from '$lib/components/ui/CharacterTypeahead.svelte'
 	import { PROMOTION_NAMES, getPromotionNames } from '$lib/types/enums'
 	import AssociatedEntityLink from '$lib/components/database/AssociatedEntityLink.svelte'
+	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import { localizedName } from '$lib/utils/locale'
 
 	interface Props {
@@ -71,7 +72,9 @@
 		/>
 		<DetailItem label="Recruits" sublabel="Character recruited by this weapon">
 			{#if weapon.recruits}
-				<AssociatedEntityLink type="character" entity={weapon.recruits} />
+				<AssociatedEntityLink type="character" entity={weapon.recruits}>
+					<CharacterTags character={weapon.recruits} />
+				</AssociatedEntityLink>
 			{:else}
 				<span class="empty-value">—</span>
 			{/if}
