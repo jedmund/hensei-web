@@ -5,6 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev --port 5174",
+		"dev:mobile": "vite dev --port 5174 --host",
 		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "husky || true; svelte-kit sync || echo ''",
