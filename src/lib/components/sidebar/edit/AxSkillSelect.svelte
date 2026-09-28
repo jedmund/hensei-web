@@ -16,7 +16,7 @@
 		/** Language for display */
 		locale?: 'en' | 'ja'
 		/** The weapon's AX slot rules per gbf.wiki/AX_Skills */
-		axType?: 'standard' | 'xeno' | 'primal' | 'utility'
+		axType?: 'standard' | 'xeno' | 'primal'
 	}
 
 	let {
@@ -47,20 +47,15 @@
 		selectedSecondaryId ? (axQuery.data ?? []).find((m) => m.id === selectedSecondaryId) : undefined
 	)
 
-	// Utility weapons (Ancient series) carry a single EXP/Rupie slot
-	const showSecondary = $derived(axType !== 'utility' && !!selectedPrimary)
+	// EXP/Rupie primaries have no secondary skill (gbf.wiki/AX_Skills)
+	const showSecondary = $derived(!!selectedPrimary && groupOf(selectedPrimary) !== 'utility')
 
 	// Build primary skill options
 	const primaryOptions = $derived.by(() => {
 		const items: Array<{ value: string; label: string }> = [{ value: '', label: m.ax_no_skill() }]
 
-		// primal weapons roll standard primaries AND EXP/Rupie; utility rolls only the latter
-		const wanted =
-			axType === 'utility'
-				? ['utility']
-				: axType === 'primal'
-					? ['primary', 'utility']
-					: ['primary']
+		// Primal-series weapons roll standard primaries AND EXP/Rupie
+		const wanted = axType === 'primal' ? ['primary', 'utility'] : ['primary']
 		for (const skill of (axQuery.data ?? []).filter((s) => wanted.includes(groupOf(s)))) {
 			items.push({
 				value: skill.id,
@@ -104,7 +99,8 @@
 			currentSkills = []
 			return
 		}
-		const existing = currentSkills[1]
+		// EXP/Rupie can't have a secondary, so drop any existing one
+		const existing = groupOf(modifier) === 'utility' ? undefined : currentSkills[1]
 		currentSkills = [
 			{ modifier, strength: currentSkills[0]?.strength ?? 0 },
 			...(existing ? [existing] : [])

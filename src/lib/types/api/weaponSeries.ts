@@ -23,8 +23,11 @@ export interface WeaponSeriesRef {
 	hasAwakening: boolean
 	/** Type of augment this series supports: "ax", "befoulment", or "no_augment" */
 	augmentType: AugmentType
-	/** AX slot rules: 'standard' = primary + secondary/extended slots; 'utility' = one EXP/Rupie slot */
-	axType?: 'standard' | 'xeno' | 'primal' | 'utility' | null
+	/**
+	 * AX slot rules per gbf.wiki/AX_Skills: 'standard' and 'xeno' use different
+	 * secondary pools; 'primal' also allows EXP/Rupie primaries (no secondary)
+	 */
+	axType?: 'standard' | 'xeno' | 'primal' | null
 	extra: boolean
 	elementChangeable: boolean
 	/** Number of weapon key slots this series supports (null if no keys) */
