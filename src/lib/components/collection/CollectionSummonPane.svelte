@@ -106,7 +106,7 @@
 			updateActionVisibility()
 		} catch (error) {
 			console.error('Failed to update collection summon:', error)
-			toast.error(extractErrorMessage(error, 'Failed to update summon'))
+			toast.error(extractErrorMessage(error, m.toast_failed_update_summon()))
 		}
 	}
 
