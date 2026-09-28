@@ -147,7 +147,7 @@
 	{#if hasStyleVariant}
 		<button class="style-switch-banner" onclick={handleSwitchStyle} disabled={styleSwitching}>
 			<Icon name="swap" size={16} />
-			<span>{styleSwitching ? 'Switching...' : 'Switch Style'}</span>
+			<span>{styleSwitching ? m.details_switching_style() : m.details_switch_style()}</span>
 		</button>
 	{/if}
 
@@ -158,7 +158,7 @@
 				<span>{m.details_collection_out_of_sync()}</span>
 			</div>
 			<button class="sync-button" onclick={handleSync} disabled={isSyncing}>
-				{isSyncing ? 'Syncing...' : 'Sync'}
+				{isSyncing ? m.details_collection_syncing() : m.details_collection_sync()}
 			</button>
 		</div>
 	{/if}
