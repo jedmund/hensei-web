@@ -158,7 +158,7 @@
 				<span>{m.details_collection_out_of_sync()}</span>
 			</div>
 			<button class="sync-button" onclick={handleSync} disabled={isSyncing}>
-				{isSyncing ? 'Syncing...' : 'Sync'}
+				{isSyncing ? m.details_collection_syncing() : m.details_collection_sync()}
 			</button>
 		</div>
 	{/if}

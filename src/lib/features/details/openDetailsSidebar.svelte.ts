@@ -50,7 +50,7 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 	const { type, item } = options
 
 	// Get the item name for the title
-	let itemName = 'Details'
+	let itemName = ''
 	if (type === 'character' && (item as GridCharacter).character) {
 		const char = (item as GridCharacter).character
 		itemName = getName(char)
@@ -96,8 +96,7 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 	const element = getItemElement(type, item)
 
 	// Open the sidebar with the details component
-	const title =
-		itemName !== 'Details' ? itemName : `${type.charAt(0).toUpperCase() + type.slice(1)} Details`
+	const title = itemName || `${type.charAt(0).toUpperCase() + type.slice(1)} Details`
 
 	// Owner: primary action is Edit (opens edit pane). The picker (was the
 	// "Replace" primary) and Remove drop into the overflow menu, both labelled
@@ -153,7 +152,7 @@ export function openWeaponEditSidebar(
 	context: { partyId?: string; partyShortcode?: string } = {}
 ) {
 	const weaponName = getName(weapon.weapon)
-	const title = weaponName !== 'Details' ? weaponName : 'Edit Weapon'
+	const title = weaponName || m.context_edit_weapon()
 	const editPaneId = `edit-weapon-${weapon.id}`
 
 	// If this edit pane is already in the stack, don't push a duplicate
@@ -226,7 +225,7 @@ export function openCharacterEditSidebar(
 	} = {}
 ) {
 	const characterName = getName(character.character)
-	const title = characterName !== 'Details' ? characterName : 'Edit Character'
+	const title = characterName || m.context_edit_character()
 	const editPaneId = `edit-character-${character.id}`
 
 	// If this edit pane is already in the stack, don't push a duplicate
@@ -294,7 +293,7 @@ export function openSummonEditSidebar(
 	context: { partyId?: string; partyShortcode?: string } = {}
 ) {
 	const summonName = getName(summon.summon)
-	const title = summonName !== 'Details' ? summonName : 'Edit Summon'
+	const title = summonName || m.context_edit_summon()
 	const editPaneId = `edit-summon-${summon.id}`
 
 	if (sidebar.paneStack.panes.some((p) => p.id === editPaneId)) return
@@ -329,14 +328,15 @@ export function openSummonEditSidebar(
 	}
 }
 
+/** Localized item name, or '' when it can't be resolved. */
 function getName(obj: unknown): string {
-	if (!obj) return 'Details'
+	if (!obj) return ''
 	const name =
 		(typeof obj === 'object' && obj !== null && 'name' in obj
 			? (obj as Record<string, unknown>).name
 			: obj) ?? obj
 	const resolved = localizedName(name)
-	return resolved === '—' ? 'Details' : resolved
+	return resolved === '—' ? '' : resolved
 }
 
 export function closeDetailsSidebar() {
