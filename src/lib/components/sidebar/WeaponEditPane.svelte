@@ -121,6 +121,8 @@
 
 	function handleUncapUpdate(newLevel: number) {
 		uncapLevel = newLevel
+		// Transcendence requires uncap level 5; the API rejects a leftover stage.
+		if (newLevel < 5) transcendenceStep = 0
 	}
 
 	function handleTranscendenceUpdate(newStage: number) {
