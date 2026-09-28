@@ -5,6 +5,7 @@
 	import type { AugmentSkill, WeaponStatModifier } from '$lib/types/api/weaponStatModifier'
 	import Select from '$lib/components/ui/Select.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
+	import { initialAxStrength, primaryAxRange } from '$lib/utils/axStrength'
 
 	// Fallback when the API hasn't populated axGroup yet
 	const PRIMARY_AX_SLUGS = ['ax_atk', 'ax_def', 'ax_hp', 'ax_ca_dmg', 'ax_multiattack']
@@ -102,7 +103,10 @@
 		// EXP/Rupie can't have a secondary, so drop any existing one
 		const existing = groupOf(modifier) === 'utility' ? undefined : currentSkills[1]
 		currentSkills = [
-			{ modifier, strength: currentSkills[0]?.strength ?? 0 },
+			{
+				modifier,
+				strength: initialAxStrength(currentSkills[0]?.strength, primaryAxRange(modifier))
+			},
 			...(existing ? [existing] : [])
 		]
 	}
@@ -128,7 +132,13 @@
 			return
 		}
 		if (first) {
-			currentSkills = [first, { modifier, strength: currentSkills[1]?.strength ?? 0 }]
+			currentSkills = [
+				first,
+				{
+					modifier,
+					strength: initialAxStrength(currentSkills[1]?.strength, primaryAxRange(modifier))
+				}
+			]
 		}
 	}
 
