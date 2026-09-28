@@ -2,6 +2,8 @@ import { localizedName } from '$lib/utils/locale'
 import { getElementTypeKey } from '$lib/utils/element'
 import { sidebar } from '$lib/stores/sidebar.svelte'
 import { partyStore } from '$lib/stores/partyStore.svelte'
+import { toast } from 'svelte-sonner'
+import { extractErrorMessage } from '$lib/utils/errors'
 import { type ElementType, type OverflowMenuItem } from '$lib/stores/paneStack.svelte'
 import DetailsSidebar from '$lib/components/sidebar/DetailsSidebar.svelte'
 import EditWeaponPane from '$lib/components/sidebar/EditWeaponPane.svelte'
@@ -182,14 +184,20 @@ export function openWeaponEditSidebar(
 
 		try {
 			if (onSaveWeapon) {
+				// gridService shows its own error toast before rethrowing.
 				await onSaveWeapon(String(weapon.id), updates)
 			} else {
-				await partyStore.updateWeapon(String(weapon.id), updates)
+				try {
+					await partyStore.updateWeapon(String(weapon.id), updates)
+				} catch (error) {
+					toast.error(extractErrorMessage(error, m.toast_failed_update_weapon()))
+					throw error
+				}
 			}
 			goBack()
 		} catch (error) {
+			// Keep the pane open so the user's edits aren't discarded.
 			console.error('Failed to save weapon:', error)
-			goBack()
 		}
 	}
 
@@ -255,14 +263,20 @@ export function openCharacterEditSidebar(
 
 		try {
 			if (onSaveCharacter) {
+				// gridService shows its own error toast before rethrowing.
 				await onSaveCharacter(String(character.id), updates)
 			} else {
-				await partyStore.updateCharacter(String(character.id), updates)
+				try {
+					await partyStore.updateCharacter(String(character.id), updates)
+				} catch (error) {
+					toast.error(extractErrorMessage(error, m.toast_failed_update_character()))
+					throw error
+				}
 			}
 			goBack()
 		} catch (error) {
+			// Keep the pane open so the user's edits aren't discarded.
 			console.error('Failed to save character:', error)
-			goBack()
 		}
 	}
 
