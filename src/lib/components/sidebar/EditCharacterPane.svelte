@@ -147,7 +147,7 @@
 	{#if hasStyleVariant}
 		<button class="style-switch-banner" onclick={handleSwitchStyle} disabled={styleSwitching}>
 			<Icon name="swap" size={16} />
-			<span>{styleSwitching ? 'Switching...' : 'Switch Style'}</span>
+			<span>{styleSwitching ? m.details_switching_style() : m.details_switch_style()}</span>
 		</button>
 	{/if}
 

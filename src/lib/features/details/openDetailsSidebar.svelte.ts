@@ -96,7 +96,12 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 	const element = getItemElement(type, item)
 
 	// Open the sidebar with the details component
-	const title = itemName || `${type.charAt(0).toUpperCase() + type.slice(1)} Details`
+	const fallbackTitle = {
+		weapon: m.details_title_weapon,
+		character: m.details_title_character,
+		summon: m.details_title_summon
+	}[type]
+	const title = itemName || fallbackTitle()
 
 	// Owner: primary action is Edit (opens edit pane). The picker (was the
 	// "Replace" primary) and Remove drop into the overflow menu, both labelled
