@@ -16,3 +16,15 @@ export function initialAxStrength(
 export function primaryAxRange(modifier: WeaponStatModifier): { min: number; max: number } {
 	return { min: modifier.baseMin, max: modifier.baseMax }
 }
+
+/**
+ * Valid strength range for an AX skill rolled as the secondary. Secondaries have
+ * their own (usually narrower) range, e.g. HP is 1-11 as a primary but 1-3 as a
+ * secondary; the API validates against it.
+ */
+export function secondaryAxRange(modifier: WeaponStatModifier): { min: number; max: number } {
+	return {
+		min: modifier.secondaryMin ?? modifier.baseMin,
+		max: modifier.secondaryMax ?? modifier.baseMax
+	}
+}
