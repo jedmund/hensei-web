@@ -5,6 +5,7 @@
 	import type { AugmentSkill, WeaponStatModifier } from '$lib/types/api/weaponStatModifier'
 	import Select from '$lib/components/ui/Select.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
+	import { initialAxStrength, primaryAxRange, secondaryAxRange } from '$lib/utils/axStrength'
 
 	// Fallback when the API hasn't populated axGroup yet
 	const PRIMARY_AX_SLUGS = ['ax_atk', 'ax_def', 'ax_hp', 'ax_ca_dmg', 'ax_multiattack']
@@ -102,7 +103,10 @@
 		// EXP/Rupie can't have a secondary, so drop any existing one
 		const existing = groupOf(modifier) === 'utility' ? undefined : currentSkills[1]
 		currentSkills = [
-			{ modifier, strength: currentSkills[0]?.strength ?? 0 },
+			{
+				modifier,
+				strength: initialAxStrength(currentSkills[0]?.strength, primaryAxRange(modifier))
+			},
 			...(existing ? [existing] : [])
 		]
 	}
@@ -128,14 +132,20 @@
 			return
 		}
 		if (first) {
-			currentSkills = [first, { modifier, strength: currentSkills[1]?.strength ?? 0 }]
+			currentSkills = [
+				first,
+				{
+					modifier,
+					strength: initialAxStrength(currentSkills[1]?.strength, secondaryAxRange(modifier))
+				}
+			]
 		}
 	}
 
 	function handleSecondaryStrengthChange(event: Event) {
 		const input = event.target as HTMLInputElement
 		const val = parseFloat(input.value) || 0
-		const max = selectedSecondary?.baseMax ?? 999
+		const max = selectedSecondary ? secondaryAxRange(selectedSecondary).max : 999
 		const clamped = Math.min(val, max)
 		if (val > max) input.value = String(clamped)
 		const first = currentSkills[0]
@@ -213,14 +223,16 @@
 							<div class="skill-value-input">
 								<Input
 									type="number"
-									min={selectedSecondary.baseMin}
-									max={selectedSecondary.baseMax}
+									min={secondaryAxRange(selectedSecondary).min}
+									max={secondaryAxRange(selectedSecondary).max}
 									step={0.5}
 									value={secondaryStrength || ''}
 									oninput={handleSecondaryStrengthChange}
 									contained
 									variant="number"
-									placeholder="{selectedSecondary.baseMin}~{selectedSecondary.baseMax}"
+									placeholder="{secondaryAxRange(selectedSecondary).min}~{secondaryAxRange(
+										selectedSecondary
+									).max}"
 								/>
 							</div>
 							<span class="suffix">{getSuffix(selectedSecondary) ?? ''}</span>

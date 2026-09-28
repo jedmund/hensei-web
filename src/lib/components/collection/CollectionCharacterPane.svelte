@@ -173,7 +173,7 @@
 			updateActionVisibility()
 		} catch (error) {
 			console.error('Failed to update collection character:', error)
-			toast.error(extractErrorMessage(error, 'Failed to update character'))
+			toast.error(extractErrorMessage(error, m.toast_failed_update_character()))
 		}
 	}
 

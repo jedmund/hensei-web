@@ -184,8 +184,9 @@ export class GridAdapter extends BaseAdapter {
 		const body: Record<string, unknown> = { ...rest }
 		if (awakening !== undefined) {
 			if (awakening === null) {
+				// awakening_level is NOT NULL (default 1); the level is meaningless without an awakening
 				body.awakeningId = null
-				body.awakeningLevel = null
+				body.awakeningLevel = 1
 			} else {
 				body.awakeningId = awakening.id
 				body.awakeningLevel = awakening.level

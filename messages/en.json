@@ -1416,6 +1416,7 @@
 	"toast_failed_update_character": "Failed to update character",
 	"toast_failed_update_weapon": "Failed to update weapon",
 	"toast_failed_update_summon": "Failed to update summon",
+	"toast_failed_save_artifact": "Failed to save artifact",
 	"toast_failed_add_substitution": "Failed to add substitute",
 	"toast_failed_delete_substitution": "Failed to remove substitute",
 	"toast_failed_reorder_substitution": "Failed to reorder substitutes",
