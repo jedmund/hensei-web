@@ -12,6 +12,7 @@
 
 import type { Browser, BrowserContext, Page } from 'playwright'
 import { env } from '$env/dynamic/private'
+import { env as publicEnv } from '$env/dynamic/public'
 
 /** How long the warm browser sits idle before we tear it down. */
 const IDLE_TEARDOWN_MS = 10 * 60 * 1000
@@ -29,7 +30,7 @@ function buildAllowlist(): Set<string> {
 
 	// Our own static assets and SSR routes are served from PUBLIC_ORIGIN. In
 	// dev this is the same host that's rendering, in prod it's granblue.team.
-	const publicOrigin = env.PUBLIC_RENDER_ORIGIN ?? 'http://localhost:5174'
+	const publicOrigin = publicEnv.PUBLIC_RENDER_ORIGIN ?? 'http://localhost:5174'
 	try {
 		allowed.add(new URL(publicOrigin).hostname)
 	} catch {
@@ -37,7 +38,7 @@ function buildAllowlist(): Set<string> {
 	}
 
 	// Allow the configured image CDN (PUBLIC_SIERO_IMG_URL) if set.
-	const imgUrl = env.PUBLIC_SIERO_IMG_URL
+	const imgUrl = publicEnv.PUBLIC_SIERO_IMG_URL
 	if (imgUrl) {
 		try {
 			allowed.add(new URL(imgUrl).hostname)
@@ -169,7 +170,7 @@ export async function renderToImage(opts: RenderOptions): Promise<Buffer> {
 		)
 	}
 
-	const origin = env.PUBLIC_RENDER_ORIGIN ?? 'http://localhost:5174'
+	const origin = publicEnv.PUBLIC_RENDER_ORIGIN ?? 'http://localhost:5174'
 	const url = `${origin.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`
 	const internalHostname = new URL(origin).hostname
 
