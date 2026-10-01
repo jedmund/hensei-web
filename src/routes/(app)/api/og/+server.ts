@@ -1,6 +1,9 @@
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
+import { BlockedUrlError, fetchPublicUrl } from '$lib/server/ssrfGuard'
 
+// Link previews for the description editor. Open to anonymous editors too;
+// fetchPublicUrl blocks internal destinations and hooks rate-limit per IP.
 export const GET: RequestHandler = async ({ url }) => {
 	const target = url.searchParams.get('url')
 	if (!target) {
@@ -22,7 +25,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		const controller = new AbortController()
 		const timeout = setTimeout(() => controller.abort(), 5000)
 
-		const res = await fetch(target, {
+		const res = await fetchPublicUrl(target, {
 			signal: controller.signal,
 			headers: { 'User-Agent': 'bot' }
 		})
@@ -54,7 +57,10 @@ export const GET: RequestHandler = async ({ url }) => {
 		const image = extractMeta(html, 'og:image')
 
 		return json({ title: title ?? null, image: image ?? null })
-	} catch {
+	} catch (err) {
+		if (err instanceof BlockedUrlError) {
+			return json({ error: 'URL not allowed' }, { status: 400 })
+		}
 		return json({ error: 'Fetch failed' }, { status: 502 })
 	}
 }

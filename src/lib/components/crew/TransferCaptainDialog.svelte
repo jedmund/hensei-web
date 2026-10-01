@@ -5,6 +5,7 @@
 	import { useTransferCaptain } from '$lib/api/mutations/crew.mutations'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { escapeHtml } from '$lib/utils/safeHtml'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
@@ -32,6 +33,8 @@
 
 	const memberName = $derived(member?.user?.displayName || member?.user?.username || '')
 	const crewName = $derived(crewStore.crew?.name ?? '')
+	// Names are user-supplied and these messages render as HTML.
+	const htmlNames = $derived({ name: escapeHtml(memberName), crewName: escapeHtml(crewName) })
 	const canConfirm = $derived(
 		!!crewName && typedName.trim() === crewName.trim() && !transferCaptainMutation.isPending
 	)
@@ -51,7 +54,7 @@
 				userId: member.user.id
 			})
 			toast.success(HtmlMessage, {
-				componentProps: { html: m.crew_transfer_captain_success({ name: memberName, crewName }) }
+				componentProps: { html: m.crew_transfer_captain_success(htmlNames) }
 			})
 			typedName = ''
 			onClose()
@@ -68,7 +71,7 @@
 	<ModalBody>
 		<p class="message">
 			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-			{@html m.crew_transfer_captain_body({ name: memberName, crewName })}
+			{@html m.crew_transfer_captain_body(htmlNames)}
 		</p>
 		<p class="hint">{m.crew_transfer_captain_hint()}</p>
 		<Input
