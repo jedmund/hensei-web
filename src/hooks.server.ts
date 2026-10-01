@@ -14,6 +14,7 @@ import {
 import { performRefresh } from '$lib/auth/refresh'
 import { PUBLIC_SIERO_API_URL } from '$env/static/public'
 import { generateFontFaceCSS, getFontPreloadLinks } from '$lib/utils/fonts'
+import { handleRateLimit } from '$lib/server/rateLimit'
 
 // Only initialize when a DSN is configured (keeps dev/test silent).
 if (publicEnv.PUBLIC_SENTRY_DSN) {
@@ -144,6 +145,7 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 export const handle: Handle = sequence(
 	sentryHandle(),
 	handleBotFilter,
+	handleRateLimit,
 	handleSession,
 	handleParaglide
 )
