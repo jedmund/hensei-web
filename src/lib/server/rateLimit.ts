@@ -1,4 +1,6 @@
 import type { Handle } from '@sveltejs/kit'
+import { isIP } from 'node:net'
+import { isPrivateAddress } from '$lib/server/ssrfGuard'
 
 /**
  * Per-client-IP rate limits for server routes that call out on a visitor's
@@ -41,17 +43,37 @@ export function createRateLimiter({
 	}
 }
 
+/** Strips brackets and ports from a forwarded address ("[::1]:80", "1.2.3.4:5678"). */
+function normalizeAddress(raw: string): string {
+	const value = raw.trim()
+	const bracketed = value.match(/^\[([^\]]+)\](?::\d+)?$/)
+	if (bracketed?.[1]) return bracketed[1]
+	const v4WithPort = value.match(/^(\d+\.\d+\.\d+\.\d+):\d+$/)
+	return v4WithPort?.[1] ?? value
+}
+
+function publicAddress(raw: string | null | undefined): string | null {
+	if (!raw) return null
+	const ip = normalizeAddress(raw)
+	return isIP(ip) && !isPrivateAddress(ip) ? ip : null
+}
+
 /**
- * The visitor's IP as recorded by Railway's edge proxy: the rightmost
- * X-Forwarded-For entry (clients can prepend values but not append). Returns
- * null for requests that didn't come through the edge, such as SvelteKit's
- * internal fetches from form actions.
+ * The visitor's IP as seen by Railway's edge, or null for requests that didn't
+ * come through it (such as SvelteKit's internal fetches from form actions).
+ *
+ * Like Rails' remote_ip: walk X-Forwarded-For from the right and take the
+ * first public address. Proxies append after the client's entry, so internal
+ * hops (private/CGNAT addresses) are skipped and values a client prepends are
+ * never reached. Falls back to X-Real-IP when X-Forwarded-For has none.
  */
 export function edgeClientIp(request: Request): string | null {
-	const forwarded = request.headers.get('x-forwarded-for')
-	if (!forwarded) return null
-	const last = forwarded.split(',').pop()?.trim()
-	return last || null
+	const hops = (request.headers.get('x-forwarded-for') ?? '').split(',')
+	for (let i = hops.length - 1; i >= 0; i--) {
+		const ip = publicAddress(hops[i])
+		if (ip) return ip
+	}
+	return publicAddress(request.headers.get('x-real-ip'))
 }
 
 interface Rule {
