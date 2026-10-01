@@ -1,9 +1,10 @@
 import type { Actions, PageServerLoad } from './$types'
 import { fail, redirect } from '@sveltejs/kit'
+import { safeRedirectPath } from '$lib/utils/safeRedirect'
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	if (locals.session.isAuthenticated) {
-		redirect(302, url.searchParams.get('next') ?? '/me')
+		redirect(302, safeRedirectPath(url.searchParams.get('next')))
 	}
 	return {}
 }
@@ -40,7 +41,7 @@ export const actions: Actions = {
 		})
 
 		if (res.ok) {
-			redirect(303, url.searchParams.get('next') ?? '/me')
+			redirect(303, safeRedirectPath(url.searchParams.get('next')))
 		}
 
 		const j = await res.json().catch(() => ({}))
