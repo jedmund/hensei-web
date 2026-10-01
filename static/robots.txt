@@ -1,3 +1,27 @@
-# allow crawling everything by default
+# Search engines may index granblue.team. Collecting content to train or
+# fine-tune AI models is not permitted.
+
 User-agent: *
-Disallow:
+Content-Signal: search=yes, ai-train=no
+Allow: /
+Disallow: /api/
+Disallow: /_render/
+
+# Crawlers that collect content for AI training. Google-Extended and
+# Applebot-Extended only control AI training; Googlebot and Applebot still
+# index the site for search.
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: anthropic-ai
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
+User-agent: Bytespider
+User-agent: meta-externalagent
+User-agent: FacebookBot
+User-agent: Amazonbot
+User-agent: cohere-training-data-crawler
+User-agent: Diffbot
+User-agent: Omgilibot
+User-agent: ImagesiftBot
+Disallow: /
