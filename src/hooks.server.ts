@@ -2,6 +2,7 @@ import type { Handle, HandleFetch } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
 import { handleErrorWithSentry, init, sentryHandle } from '@sentry/sveltekit'
 import { env as publicEnv } from '$env/dynamic/public'
+import { env as privateEnv } from '$env/dynamic/private'
 import { paraglideMiddleware } from '$lib/paraglide/server'
 import { isExpectedError, SENTRY_IGNORE_ERRORS, SENTRY_TRACES_SAMPLE_RATE } from '$lib/sentry'
 import { dev } from '$app/environment'
@@ -14,7 +15,8 @@ import {
 import { performRefresh } from '$lib/auth/refresh'
 import { PUBLIC_SIERO_API_URL } from '$env/static/public'
 import { generateFontFaceCSS, getFontPreloadLinks } from '$lib/utils/fonts'
-import { handleRateLimit } from '$lib/server/rateLimit'
+import { clientIp, handleRateLimit } from '$lib/server/rateLimit'
+import { withApiHeaders } from '$lib/server/apiHeaders'
 
 // Only initialize when a DSN is configured (keeps dev/test silent).
 if (publicEnv.PUBLIC_SENTRY_DSN) {
@@ -159,15 +161,11 @@ const apiOrigin = new URL(PUBLIC_SIERO_API_URL || 'http://localhost:3000/api/v1'
 export const handleFetch: HandleFetch = async ({ event, request, fetch }) => {
 	const url = new URL(request.url)
 	if (url.origin === apiOrigin) {
-		const token = event.locals.session?.account?.token
-		if (token) {
-			request = new Request(request, {
-				headers: new Headers({
-					...Object.fromEntries(request.headers),
-					authorization: `Bearer ${token}`
-				})
-			})
-		}
+		request = withApiHeaders(request, {
+			token: event.locals.session?.account?.token,
+			internalSecret: privateEnv.API_INTERNAL_SECRET,
+			visitorIp: clientIp(event.request)
+		})
 	}
 
 	return fetch(request)
