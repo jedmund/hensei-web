@@ -1,5 +1,8 @@
-import { describe, expect, it } from 'vitest'
-import { createRateLimiter, edgeClientIp, rateLimitResponse } from '../rateLimit'
+import { describe, expect, it, vi } from 'vitest'
+
+vi.mock('$env/dynamic/private', () => ({ env: {} }))
+
+import { clientIp, createRateLimiter, edgeClientIp, rateLimitResponse } from '../rateLimit'
 
 function request(method: string, forwardedFor?: string) {
 	const headers = new Headers()
@@ -89,5 +92,36 @@ describe('rateLimitResponse', () => {
 			expect(rateLimitResponse(request('POST', '203.0.113.9'), '/teams', r)).toBeNull()
 			expect(rateLimitResponse(request('POST'), '/auth/login', r)).toBeNull()
 		}
+	})
+})
+
+describe('clientIp', () => {
+	function req(headers: Record<string, string>) {
+		return new Request('http://localhost/', { headers })
+	}
+
+	it('prefers CF-Connecting-IP over rotating edge addresses', () => {
+		const r = req({ 'cf-connecting-ip': '203.0.113.9', 'x-forwarded-for': '84.17.44.227' })
+		expect(clientIp(r, {})).toBe('203.0.113.9')
+	})
+
+	it('falls back to the forwarded address without CF-Connecting-IP', () => {
+		expect(clientIp(req({ 'x-forwarded-for': '84.17.44.227' }), {})).toBe('84.17.44.227')
+		expect(clientIp(req({}), {})).toBeNull()
+	})
+
+	it('ignores private CF-Connecting-IP values', () => {
+		const r = req({ 'cf-connecting-ip': '10.0.0.5', 'x-forwarded-for': '84.17.44.227' })
+		expect(clientIp(r, {})).toBe('84.17.44.227')
+	})
+
+	it('requires a matching X-Origin-Auth when an origin secret is configured', () => {
+		const secrets = { current: 'current', previous: 'previous' }
+		const base = { 'cf-connecting-ip': '203.0.113.9', 'x-forwarded-for': '84.17.44.227' }
+
+		expect(clientIp(req(base), secrets)).toBe('84.17.44.227')
+		expect(clientIp(req({ ...base, 'x-origin-auth': 'wrong' }), secrets)).toBe('84.17.44.227')
+		expect(clientIp(req({ ...base, 'x-origin-auth': 'current' }), secrets)).toBe('203.0.113.9')
+		expect(clientIp(req({ ...base, 'x-origin-auth': 'previous' }), secrets)).toBe('203.0.113.9')
 	})
 })
