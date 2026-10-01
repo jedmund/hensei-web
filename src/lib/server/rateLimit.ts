@@ -1,5 +1,7 @@
 import type { Handle } from '@sveltejs/kit'
+import { timingSafeEqual } from 'node:crypto'
 import { isIP } from 'node:net'
+import { env } from '$env/dynamic/private'
 import { isPrivateAddress } from '$lib/server/ssrfGuard'
 
 /**
@@ -7,7 +9,8 @@ import { isPrivateAddress } from '$lib/server/ssrfGuard'
  * behalf (auth forms proxied to the API, link previews).
  *
  * The API sees these requests from this server's IP, so per-visitor limits
- * have to live here. Counters are in memory, per instance.
+ * have to live here (hooks.server.ts also forwards the visitor's IP to the API
+ * for its own limits). Counters are in memory, per instance.
  */
 
 export interface RateLimiter {
@@ -76,6 +79,62 @@ export function edgeClientIp(request: Request): string | null {
 	return publicAddress(request.headers.get('x-real-ip'))
 }
 
+export interface OriginSecrets {
+	current?: string | undefined
+	previous?: string | undefined
+}
+
+function configuredOriginSecrets(): OriginSecrets {
+	return {
+		current: env.CLOUDFLARE_ORIGIN_SECRET,
+		previous: env.CLOUDFLARE_ORIGIN_SECRET_PREVIOUS
+	}
+}
+
+function secureEquals(a: string, b: string): boolean {
+	const left = Buffer.from(a)
+	const right = Buffer.from(b)
+	return left.length === right.length && timingSafeEqual(left, right)
+}
+
+const WARN_INTERVAL_MS = 60_000
+let lastMismatchWarning = 0
+
+/**
+ * Whether a request is trusted as having come through Cloudflare. Always true
+ * when no origin secret is configured; otherwise X-Origin-Auth (added by a
+ * Cloudflare Transform Rule) must match the current or previous secret.
+ */
+function fromCloudflare(request: Request, secrets: OriginSecrets): boolean {
+	const expected = [secrets.current, secrets.previous].filter((s): s is string => !!s)
+	if (expected.length === 0) return true
+
+	const provided = request.headers.get('x-origin-auth')
+	if (provided && expected.some((secret) => secureEquals(provided, secret))) return true
+
+	const now = Date.now()
+	if (now - lastMismatchWarning > WARN_INTERVAL_MS) {
+		lastMismatchWarning = now
+		console.warn('[client_ip] origin secret mismatch; falling back to forwarded address')
+	}
+	return false
+}
+
+/**
+ * The visitor's real IP. Behind Cloudflare and Railway's edge, only Cloudflare's
+ * CF-Connecting-IP carries it (X-Forwarded-For ends in rotating edge proxy
+ * addresses), so prefer that when the request is trusted as coming from
+ * Cloudflare, then fall back to edgeClientIp. Null for internal requests.
+ */
+export function clientIp(
+	request: Request,
+	secrets: OriginSecrets = configuredOriginSecrets()
+): string | null {
+	const cloudflareIp = publicAddress(request.headers.get('cf-connecting-ip'))
+	if (cloudflareIp && fromCloudflare(request, secrets)) return cloudflareIp
+	return edgeClientIp(request)
+}
+
 interface Rule {
 	name: string
 	methods: string[]
@@ -123,7 +182,7 @@ export function rateLimitResponse(
 	const rule = rules.find((r) => r.methods.includes(request.method) && r.path.test(pathname))
 	if (!rule) return null
 
-	const ip = edgeClientIp(request)
+	const ip = clientIp(request)
 	if (!ip) return null
 
 	if (rule.limiter.hit(`${rule.name}:${ip}`)) return null
