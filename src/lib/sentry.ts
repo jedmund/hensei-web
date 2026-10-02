@@ -5,7 +5,9 @@
 // enabled. The SDK is only initialized when PUBLIC_SENTRY_DSN is set (see the
 // client/server hooks), so dev/test stay silent without any extra gating.
 
-export const SENTRY_TRACES_SAMPLE_RATE = 0.1
+// 1% keeps tracing inside Sentry's free quota. The API follows this decision
+// for requests the web app traces (see its traces_sampler).
+export const SENTRY_TRACES_SAMPLE_RATE = 0.01
 
 // Expected / noisy errors that should never be reported as bugs. Matched
 // against the error message; works on both client and server.
