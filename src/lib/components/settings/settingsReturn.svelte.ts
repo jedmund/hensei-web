@@ -24,11 +24,17 @@ export function useSettingsReturn(
 
 		untrack(() => {
 			openSettings(result)
-			try {
-				replaceState(stripSettingsReturn(page.url), page.state)
-			} catch {
-				// Router not ready yet; the params stay in the URL, which is harmless.
-			}
+			const clean = stripSettingsReturn(page.url)
+			const state = page.state
+			// On first load this effect can run while the router is still
+			// hydrating, when replaceState throws; wait for it to finish.
+			setTimeout(() => {
+				try {
+					replaceState(clean, state)
+				} catch {
+					// Still not ready: the params stay in the URL, which is harmless.
+				}
+			}, 0)
 		})
 	})
 }
