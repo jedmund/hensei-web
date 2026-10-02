@@ -1774,7 +1774,6 @@
 	"settings_connected_not_connected": "Not connected",
 	"settings_connected_hidden_email": "Hidden email (Apple)",
 	"settings_connected_linked": "{provider} is now connected.",
-	"settings_connected_load_error": "Couldn't load your connected accounts.",
 	"settings_connected_errors_identity_taken": "That {provider} account is already connected to another Hensei account.",
 	"settings_connected_errors_provider_already_linked": "You already have a {provider} account connected. Disconnect it first to connect a different one.",
 	"settings_connected_errors_cancelled": "Connecting {provider} was cancelled.",

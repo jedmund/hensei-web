@@ -118,14 +118,10 @@
 {#if rows.length > 0}
 	<h3 class="section-header">{m.settings_connected_accounts()}</h3>
 
-	{#if identitiesQuery.isError}
-		<p class="message error">{m.settings_connected_load_error()}</p>
-	{/if}
-
 	{#each rows as row (row.provider)}
 		<SettingsRow title={SOCIAL_PROVIDER_LABELS[row.provider]} subtitle={subtitle(row.identity)}>
 			{#snippet icon()}
-				<ProviderLogo provider={row.provider} size={20} />
+				<ProviderLogo provider={row.provider} size={20} brandColor />
 			{/snippet}
 			{#snippet control()}
 				{#if row.identity}
@@ -163,17 +159,5 @@
 		font-weight: typography.$medium;
 		color: var(--text-secondary);
 		margin: spacing.$unit-2x 0 0;
-	}
-
-	.message {
-		font-size: typography.$font-small;
-		margin: 0;
-		padding: spacing.$unit spacing.$unit-2x;
-		border-radius: spacing.$unit;
-
-		&.error {
-			color: var(--danger, #d64545);
-			background: var(--danger-bg);
-		}
 	}
 </style>

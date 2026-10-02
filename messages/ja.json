@@ -1755,7 +1755,6 @@
 	"settings_connected_not_connected": "未連携",
 	"settings_connected_hidden_email": "非公開のメールアドレス（Apple）",
 	"settings_connected_linked": "{provider}と連携しました。",
-	"settings_connected_load_error": "連携アカウントを読み込めませんでした。",
 	"settings_connected_errors_identity_taken": "この{provider}アカウントは、すでに別のHenseiアカウントと連携しています。",
 	"settings_connected_errors_provider_already_linked": "すでに{provider}アカウントと連携しています。別のアカウントと連携するには、先に連携を解除してください。",
 	"settings_connected_errors_cancelled": "{provider}との連携がキャンセルされました。",
