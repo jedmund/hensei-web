@@ -1004,6 +1004,7 @@
 	"settings_username_confirm_title": "ユーザー名を変更しますか？",
 	"settings_username_confirm_message": "ユーザー名を変更すると、すべてのチームへのリンクが無効になります。また、以前のユーザー名を他の人が使用できるようになります。",
 	"settings_username_confirm_action": "ユーザー名を変更",
+	"settings_nav_appearance": "外観",
 	"settings_nav_account": "アカウント",
 	"settings_nav_password": "パスワード",
 	"settings_nav_profile": "プロフィール",

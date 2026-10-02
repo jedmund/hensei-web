@@ -9,6 +9,7 @@
 	import type { ElementType } from './ui/SettingsNav.svelte'
 	import AccountSettings from './settings/AccountSettings.svelte'
 	import ProfileSettings from './settings/ProfileSettings.svelte'
+	import AppearanceSettings from './settings/AppearanceSettings.svelte'
 	import PrivacySettings from './settings/PrivacySettings.svelte'
 	import ConfirmDialog from './ui/ConfirmDialog.svelte'
 	import { users } from '$lib/api/resources/users'
@@ -339,7 +340,7 @@
 	}
 </script>
 
-<Dialog bind:open {...onOpenChange ? { onOpenChange } : {}} size="small" hideClose>
+<Dialog bind:open {...onOpenChange ? { onOpenChange } : {}} size="medium" hideClose>
 	<ModalHeader title={m.settings_title()}>
 		<span class="header-username">@{username}</span>
 	</ModalHeader>
@@ -355,6 +356,7 @@
 					grow
 				>
 					<Segment value="profile">{m.settings_nav_profile()}</Segment>
+					<Segment value="appearance">{m.settings_nav_appearance()}</Segment>
 					<Segment value="account">{m.settings_nav_account()}</Segment>
 					<Segment value="privacy">{m.settings_nav_privacy()}</Segment>
 				</SegmentedControl>
@@ -388,32 +390,36 @@
 						onYoutubeChange={(v) => (youtube = v)}
 						onGenderChange={(v) => (gender = v)}
 					/>
+				{:else if activeSection === 'appearance'}
+					<AppearanceSettings
+						{element}
+						{theme}
+						{language}
+						{timezone}
+						{defaultRepView}
+						{simplePortraits}
+						onElementChange={(v) => (element = v as ElementType)}
+						onThemeChange={(v) => (theme = v)}
+						onLanguageChange={(v) => (language = v)}
+						onTimezoneChange={(v) => (timezone = v)}
+						onDefaultRepViewChange={(v) => (defaultRepView = v)}
+						onSimplePortraitsChange={(v) => (simplePortraits = v)}
+					/>
 				{:else if activeSection === 'account'}
 					<AccountSettings
 						username={formUsername}
 						email={formEmail}
 						{emailVerified}
 						{bahamut}
-						{simplePortraits}
-						{defaultRepView}
 						{role}
 						{element}
-						{language}
-						{theme}
-						{timezone}
 						{currentPassword}
 						{newPassword}
 						{confirmPassword}
 						onUsernameChange={(v) => (formUsername = v)}
 						onEmailChange={(v) => (formEmail = v)}
 						onBahamutChange={(v) => (bahamut = v)}
-						onSimplePortraitsChange={(v) => (simplePortraits = v)}
-						onDefaultRepViewChange={(v) => (defaultRepView = v)}
 						onUsernameValidChange={(v) => (usernameValid = v)}
-						onElementChange={(v) => (element = v as ElementType)}
-						onLanguageChange={(v) => (language = v)}
-						onThemeChange={(v) => (theme = v)}
-						onTimezoneChange={(v) => (timezone = v)}
 						onCurrentPasswordChange={(v) => (currentPassword = v)}
 						onNewPasswordChange={(v) => (newPassword = v)}
 						onConfirmPasswordChange={(v) => (confirmPassword = v)}
