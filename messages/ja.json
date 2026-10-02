@@ -1742,5 +1742,8 @@
 	"auth_social_errors_failed": "ログインできませんでした。もう一度お試しください。",
 	"auth_social_errors_cancelled": "ログインがキャンセルされました。",
 	"auth_social_errors_rate_limited": "試行回数が多すぎます。しばらくしてからもう一度お試しください。",
-	"auth_social_errors_expired": "ログインの有効期限が切れました。最初からやり直してください。"
+	"auth_social_errors_expired": "ログインの有効期限が切れました。最初からやり直してください。",
+	"auth_social_continueWith": "{provider}で続ける",
+	"auth_social_divider": "または",
+	"auth_social_link_prompt": "このメールアドレスのアカウントはすでに登録されています。{provider}と連携するには、パスワードでログインしてください。"
 }

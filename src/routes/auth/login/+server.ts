@@ -4,6 +4,10 @@ import { dev } from '$app/environment'
 import { z } from 'zod'
 import { passwordGrantLogin } from '$lib/auth/oauth'
 import { establishSession } from '$lib/auth/session'
+import { env } from '$env/dynamic/private'
+import { withApiHeaders } from '$lib/server/apiHeaders'
+import { clientIp } from '$lib/server/rateLimit'
+import { linkPendingIdentity } from '$lib/server/socialAuth/pendingLink'
 
 const LoginSchema = z.object({
 	email: z.string().email(),
@@ -25,9 +29,22 @@ export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
 		// Use secure cookies in production (dev flag handles this correctly behind proxies)
 		const { info, accessTokenExpiresAt } = await establishSession(cookies, oauth, { secure: !dev })
 
+		// Finish a pending "log in with your password to link {Provider}". The
+		// call goes out with the token just issued, not the request's session.
+		const apiFetch: typeof fetch = (input, init) =>
+			globalThis.fetch(
+				withApiHeaders(new Request(input, init), {
+					token: oauth.access_token,
+					internalSecret: env.API_INTERNAL_SECRET,
+					visitorIp: clientIp(request)
+				})
+			)
+		const link = await linkPendingIdentity(cookies, apiFetch, oauth.access_token)
+
 		// Return access token for client-side storage
 		return json({
 			success: true,
+			...(link ?? {}),
 			user: { username: info.username, avatar: info.avatar },
 			access_token: oauth.access_token,
 			expires_in: oauth.expires_in,
