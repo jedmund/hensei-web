@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { SocialProvider } from '$lib/auth/socialProviders'
 	import { SOCIAL_PROVIDER_LABELS } from '$lib/auth/socialProviders'
+	import Button from '$lib/components/ui/Button.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
@@ -22,12 +23,15 @@
 
 {#if providers.length > 0}
 	<div class="social">
-		<div class="divider"><span>{m.auth_social_divider()}</span></div>
 		<div class="buttons">
 			{#each providers as provider (provider)}
-				<a
-					class="provider {provider}"
+				<Button
 					href={hrefFor(provider)}
+					variant="secondary"
+					contained
+					class="provider"
+					aria-label={m.auth_social_continueWith({ provider: SOCIAL_PROVIDER_LABELS[provider] })}
+					title={m.auth_social_continueWith({ provider: SOCIAL_PROVIDER_LABELS[provider] })}
 					data-sveltekit-reload
 					data-sveltekit-preload-data="off"
 				>
@@ -70,12 +74,10 @@
 							</svg>
 						{/if}
 					</span>
-					<span class="label">
-						{m.auth_social_continueWith({ provider: SOCIAL_PROVIDER_LABELS[provider] })}
-					</span>
-				</a>
+				</Button>
 			{/each}
 		</div>
+		<div class="divider"><span>{m.auth_social_divider()}</span></div>
 	</div>
 {/if}
 
@@ -87,7 +89,23 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-2x;
-		margin-top: $unit-3x;
+		margin-bottom: $unit-3x;
+	}
+
+	.buttons {
+		display: flex;
+		gap: $unit;
+
+		// One equal-width button per provider, in a row.
+		:global(.provider) {
+			flex: 1;
+		}
+	}
+
+	.logo {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.divider {
@@ -103,88 +121,6 @@
 			flex: 1;
 			height: 1px;
 			background: var(--separator-bg, rgba(128, 128, 128, 0.3));
-		}
-	}
-
-	.buttons {
-		display: flex;
-		flex-direction: column;
-		gap: $unit;
-	}
-
-	// Each provider's own button rules: Discord blurple with the white Clyde
-	// mark; Google's light/dark neutral button with the full-colour "G";
-	// Apple's black (light theme) or white (dark theme) button.
-	.provider {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 10px;
-		min-height: 44px;
-		padding: 0 $unit-2x;
-		border-radius: $unit;
-		border: 1px solid transparent;
-		font-size: $font-regular;
-		font-weight: $medium;
-		text-decoration: none;
-		transition:
-			background-color 0.15s ease,
-			box-shadow 0.15s ease;
-
-		&:focus-visible {
-			outline: 2px solid var(--accent-blue-focus, #4285f4);
-			outline-offset: 2px;
-		}
-	}
-
-	.logo {
-		display: inline-flex;
-		flex-shrink: 0;
-	}
-
-	.discord {
-		background: #5865f2;
-		color: #ffffff;
-
-		&:hover {
-			background: #4752c4;
-		}
-	}
-
-	.google {
-		background: #ffffff;
-		border-color: #747775;
-		color: #1f1f1f;
-		font-family: 'Roboto', system-ui, sans-serif;
-
-		&:hover {
-			box-shadow: 0 1px 3px rgba(60, 64, 67, 0.3);
-		}
-	}
-
-	.apple {
-		background: #000000;
-		color: #ffffff;
-
-		&:hover {
-			background: #1a1a1a;
-		}
-	}
-
-	:global(html[data-theme='dark']) {
-		.google {
-			background: #131314;
-			border-color: #8e918f;
-			color: #e3e3e3;
-		}
-
-		.apple {
-			background: #ffffff;
-			color: #000000;
-
-			&:hover {
-				background: #f2f2f2;
-			}
 		}
 	}
 </style>

@@ -242,6 +242,8 @@
 <PageMeta title={m.page_title_register()} description={m.page_desc_home()} />
 
 <AuthCard title={m.auth_register_title()}>
+	<SocialLoginButtons providers={data.socialProviders} next={data.next} />
+
 	<form
 		method="post"
 		use:enhance={() => {
@@ -322,8 +324,6 @@
 			{isSubmitting ? m.auth_register_submitting() : m.auth_register_submit()}
 		</Button>
 	</form>
-
-	<SocialLoginButtons providers={data.socialProviders} next={data.next} />
 
 	{#snippet footer()}
 		<p>

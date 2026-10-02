@@ -60,6 +60,10 @@
 		<p class="notice">{m.auth_social_link_prompt({ provider: data.linkProvider })}</p>
 	{/if}
 
+	{#if !data.linkProvider}
+		<SocialLoginButtons providers={data.socialProviders} next={data.next} />
+	{/if}
+
 	<form
 		method="post"
 		use:enhance={() => {
@@ -101,10 +105,6 @@
 			{isSubmitting ? m.auth_login_submitting() : m.auth_login_submit()}
 		</Button>
 	</form>
-
-	{#if !data.linkProvider}
-		<SocialLoginButtons providers={data.socialProviders} next={data.next} />
-	{/if}
 
 	{#snippet footer()}
 		<p>
