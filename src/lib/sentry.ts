@@ -22,7 +22,13 @@ export const SENTRY_IGNORE_ERRORS: (string | RegExp)[] = [
 	'The operation was aborted.',
 	// Injected by browser extensions / third-party scripts, not our bundle
 	"Can't find variable: require",
-	'require is not defined'
+	'require is not defined',
+	// A tab still running the previous deploy requests chunks that no longer
+	// exist. The client reloads on vite:preloadError (hooks.client.ts).
+	'Importing a module script failed.',
+	'error loading dynamically imported module',
+	'Failed to fetch dynamically imported module',
+	'Unable to preload CSS'
 ]
 
 // Drops errors that are normal app flow rather than bugs, used by each hook's
@@ -34,12 +40,17 @@ export const SENTRY_IGNORE_ERRORS: (string | RegExp)[] = [
 export function isExpectedError(err: unknown): boolean {
 	if (err == null || typeof err !== 'object') return false
 
-	const e = err as { status?: unknown; name?: unknown; message?: unknown }
+	const e = err as { status?: unknown; name?: unknown; message?: unknown; body?: unknown }
 	const status = typeof e.status === 'number' ? e.status : undefined
 	const name = typeof e.name === 'string' ? e.name : ''
 	const message = typeof e.message === 'string' ? e.message : ''
+	// Loads rethrow API failures as SvelteKit HttpErrors, which keep the
+	// original message in body.message (a cancelled request becomes a 502).
+	const body = e.body as { message?: unknown } | undefined
+	const bodyMessage = typeof body?.message === 'string' ? body.message : ''
 
 	if (status === 0 || name === 'AbortError' || /cancell?ed|abort/i.test(message)) return true
+	if (/cancell?ed|abort/i.test(bodyMessage)) return true
 	if (status !== undefined && status >= 400 && status < 500) return true
 
 	return false
@@ -52,3 +63,20 @@ export const SENTRY_DENY_URLS: RegExp[] = [
 	/^moz-extension:\/\//,
 	/extensions\//i
 ]
+
+interface StackFrameLike {
+	filename?: string
+	abs_path?: string
+}
+
+interface EventLike {
+	exception?: { values?: Array<{ stacktrace?: { frames?: StackFrameLike[] } }> }
+}
+
+// Errors thrown only from code pasted into the devtools console or evaluated
+// by an extension: every frame is `<anonymous>`, so none of it is our bundle.
+export function isInjectedScriptError(event: EventLike): boolean {
+	const frames = (event.exception?.values ?? []).flatMap((v) => v.stacktrace?.frames ?? [])
+	if (frames.length === 0) return false
+	return frames.every((f) => (f.filename ?? f.abs_path) === '<anonymous>')
+}
