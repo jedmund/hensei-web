@@ -54,9 +54,9 @@ export const GET: RequestHandler = async ({ url }) => {
 		reader.cancel()
 
 		const title = extractMeta(html, 'og:title') ?? extractTitle(html)
-		const image = extractMeta(html, 'og:image')
+		const image = proxiedImageUrl(extractMeta(html, 'og:image'), res.url || target)
 
-		return json({ title: title ?? null, image: image ?? null })
+		return json({ title: title ?? null, image })
 	} catch (err) {
 		if (err instanceof BlockedUrlError) {
 			return json({ error: 'URL not allowed' }, { status: 400 })
@@ -74,6 +74,21 @@ function extractMeta(html: string, property: string): string | undefined {
 	)
 	const match = html.match(regex)
 	return match?.[1] ?? match?.[2]
+}
+
+// Resolves a (possibly relative) og:image against the page it came from and
+// points it at our image proxy, so the browser never loads it from the other
+// site directly (keeps the CSP's img-src short).
+function proxiedImageUrl(image: string | undefined, pageUrl: string): string | null {
+	if (!image) return null
+	let resolved: URL
+	try {
+		resolved = new URL(image, pageUrl)
+	} catch {
+		return null
+	}
+	if (resolved.protocol !== 'http:' && resolved.protocol !== 'https:') return null
+	return `/api/og/image?url=${encodeURIComponent(resolved.href)}`
 }
 
 function extractTitle(html: string): string | undefined {
