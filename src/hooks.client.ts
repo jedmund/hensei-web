@@ -1,5 +1,6 @@
 import { env } from '$env/dynamic/public'
 import { handleErrorWithSentry, init } from '@sentry/sveltekit'
+import { z } from 'zod'
 import {
 	isExpectedError,
 	isInjectedScriptError,
@@ -7,6 +8,10 @@ import {
 	SENTRY_IGNORE_ERRORS,
 	SENTRY_TRACES_SAMPLE_RATE
 } from '$lib/sentry'
+
+// Zod's JIT probes for `new Function`, which the Content-Security-Policy
+// blocks (and reports) since it allows no eval. Validate without it.
+z.config({ jitless: true })
 
 // Only initialize when a DSN is configured. With no DSN (dev/test, or before
 // it's set in an environment) the SDK never starts, so there's nothing to
