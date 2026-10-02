@@ -30,11 +30,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-      # Blocks on critical advisories in production dependencies. Existing
-      # high/moderate findings are being worked down through Dependabot; tighten
-      # this to --audit-level high once they're cleared.
-      - name: Audit production dependencies
-        run: pnpm audit --prod --audit-level critical
+      # Blocks on high and critical advisories in all dependencies. Not --prod:
+      # SvelteKit bundles devDependencies (svelte, kit, echarts) into the app,
+      # so a production-only audit would miss code that ships to users.
+      - name: Audit dependencies
+        run: pnpm audit --audit-level high
 
   test:
     runs-on: ubuntu-latest
