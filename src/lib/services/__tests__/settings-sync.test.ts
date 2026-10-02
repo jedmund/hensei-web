@@ -35,7 +35,8 @@ vi.mock('$app/navigation', () => ({
 vi.mock('$lib/paraglide/runtime', () => ({
 	deLocalizeHref: (href: string) => href.replace(/^\/ja/, '') || '/',
 	localizeHref: (href: string, opts?: { locale?: string }) =>
-		opts?.locale === 'ja' ? `/ja${href}` : href
+		opts?.locale === 'ja' ? `/ja${href}` : href,
+	toLocale: (value: string) => (value === 'en' || value === 'ja' ? value : undefined)
 }))
 
 const mockFetch = vi.fn(async () => new Response(JSON.stringify({ success: true })))

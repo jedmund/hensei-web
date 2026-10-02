@@ -19,7 +19,7 @@
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import { themeStore, type ThemePreference } from '$lib/stores/theme.svelte'
 	import { untrack } from 'svelte'
-	import { localizeHref, deLocalizeHref } from '$lib/paraglide/runtime'
+	import { localizeHref, deLocalizeHref, toLocale } from '$lib/paraglide/runtime'
 	import { updateSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import { updateDefaultRepView } from '$lib/stores/defaultRepView.svelte'
 
@@ -285,7 +285,7 @@
 				const basePath = deLocalizeHref(
 					window.location.pathname + window.location.search + window.location.hash
 				)
-				window.location.href = localizeHref(basePath, { locale: language })
+				window.location.href = localizeHref(basePath, { locale: toLocale(language) })
 			} else {
 				// For other changes (element, picture, gender, theme), invalidate to refresh layout data
 				await invalidateAll()

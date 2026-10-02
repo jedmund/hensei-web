@@ -30,7 +30,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: pnpm
       # Blocks on critical advisories in production dependencies. Existing
       # high/moderate findings are being worked down through Dependabot; tighten
       # this to --audit-level high once they're cleared.
