@@ -4,11 +4,14 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
+	import SocialLoginButtons from '$lib/components/auth/SocialLoginButtons.svelte'
+	import type { SocialProvider } from '$lib/auth/socialProviders'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import * as m from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {
+		data: { socialProviders: SocialProvider[]; next: string | null }
 		form: {
 			error?: string
 			details?: { fieldErrors?: Record<string, string[]> }
@@ -17,7 +20,7 @@
 		} | null
 	}
 
-	let { form }: Props = $props()
+	let { data, form }: Props = $props()
 
 	let username = $derived(form?.username ?? '')
 	let email = $derived(form?.email ?? '')
@@ -239,6 +242,8 @@
 <PageMeta title={m.page_title_register()} description={m.page_desc_home()} />
 
 <AuthCard title={m.auth_register_title()}>
+	<SocialLoginButtons providers={data.socialProviders} next={data.next} />
+
 	<form
 		method="post"
 		use:enhance={() => {

@@ -4,14 +4,36 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
+	import SocialLoginButtons from '$lib/components/auth/SocialLoginButtons.svelte'
+	import type { SocialProvider } from '$lib/auth/socialProviders'
+	import type { SocialErrorCode } from '$lib/auth/socialResult'
 	import * as m from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {
+		data: {
+			socialProviders: SocialProvider[]
+			linkProvider: string | null
+			socialError: SocialErrorCode | null
+			next: string | null
+		}
 		form: { error?: string; email?: string } | null
 	}
 
-	let { form }: Props = $props()
+	let { data, form }: Props = $props()
+
+	const socialErrorMessages: Record<SocialErrorCode, () => string> = {
+		failed: m.auth_social_errors_failed,
+		cancelled: m.auth_social_errors_cancelled,
+		rate_limited: m.auth_social_errors_rate_limited,
+		expired: m.auth_social_errors_expired,
+		identity_taken: m.auth_social_errors_failed,
+		provider_already_linked: m.auth_social_errors_failed
+	}
+
+	const socialErrorMessage = $derived(
+		!form && data.socialError ? socialErrorMessages[data.socialError]() : undefined
+	)
 
 	let email = $derived(form?.email ?? '')
 	let password = $state('')
@@ -34,6 +56,14 @@
 <PageMeta title={m.page_title_login()} description={m.page_desc_home()} />
 
 <AuthCard title={m.auth_login_title()}>
+	{#if data.linkProvider}
+		<p class="notice">{m.auth_social_link_prompt({ provider: data.linkProvider })}</p>
+	{/if}
+
+	{#if !data.linkProvider}
+		<SocialLoginButtons providers={data.socialProviders} next={data.next} />
+	{/if}
+
 	<form
 		method="post"
 		use:enhance={() => {
@@ -67,8 +97,8 @@
 			contained
 		/>
 
-		{#if errorMessage}
-			<p class="error">{errorMessage}</p>
+		{#if errorMessage ?? socialErrorMessage}
+			<p class="error">{errorMessage ?? socialErrorMessage}</p>
 		{/if}
 
 		<Button type="submit" variant="primary" fullWidth disabled={isSubmitting}>
@@ -96,6 +126,16 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-2x;
+	}
+
+	.notice {
+		color: var(--text-primary);
+		font-size: $font-small;
+		text-align: center;
+		margin: 0 0 $unit-2x;
+		padding: $unit $unit-2x;
+		background: var(--button-bg, rgba(128, 128, 128, 0.12));
+		border-radius: $unit;
 	}
 
 	.error {

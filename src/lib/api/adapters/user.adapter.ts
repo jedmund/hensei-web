@@ -3,6 +3,7 @@ import type { Party } from '$lib/types/api/party'
 import type { SupportSummon } from '$lib/types/api/supportSummon'
 import type { QueryParams, RequestOptions } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
+import type { SocialProvider } from '$lib/auth/socialProviders'
 
 /**
  * API response for user data (already camelCased by BaseAdapter.transformResponse)
@@ -35,6 +36,8 @@ interface ApiUserResponse {
 	crewName?: string
 	email?: string // Only included in settings view
 	emailVerified?: boolean // Only included in settings view
+	hasPassword?: boolean // Only included in settings view
+	passwordPromptDismissed?: boolean // Only included in settings view
 	avatar: {
 		picture: string
 		element: string
@@ -82,6 +85,17 @@ export interface UserSettings extends UserInfo {
 	email: string
 	emailVerified: boolean
 	hasStoredEditKeys?: boolean
+	/** False for accounts created with a provider that haven't set a password. */
+	hasPassword: boolean
+	passwordPromptDismissed: boolean
+}
+
+/** A provider linked to the current user (`GET /users/me/identities`). */
+export interface UserIdentity {
+	provider: SocialProvider
+	email: string | null
+	isPrivateEmail: boolean
+	createdAt: string
 }
 
 export interface UserProfile extends UserInfo {
@@ -143,7 +157,10 @@ function transformSettingsResponse(
 		...transformUserResponse(apiUser),
 		email: apiUser.email ?? '',
 		emailVerified: apiUser.emailVerified ?? false,
-		hasStoredEditKeys: apiUser.hasStoredEditKeys ?? false
+		hasStoredEditKeys: apiUser.hasStoredEditKeys ?? false,
+		// Default to "has a password" so the banner never shows on missing data
+		hasPassword: apiUser.hasPassword ?? true,
+		passwordPromptDismissed: apiUser.passwordPromptDismissed ?? false
 	}
 }
 
@@ -353,6 +370,44 @@ export class UserAdapter extends BaseAdapter {
 	async getCurrentUser(): Promise<UserSettings> {
 		const result = await this.request<ApiUserResponse>('/users/me')
 		return transformSettingsResponse(result)
+	}
+
+	/**
+	 * List the providers linked to the current user
+	 */
+	async getIdentities(): Promise<UserIdentity[]> {
+		return this.request<UserIdentity[]>('/users/me/identities')
+	}
+
+	/**
+	 * Unlink a provider. The API refuses (422 last_login_method) when it's
+	 * the account's only way to log in.
+	 */
+	async unlinkIdentity(provider: SocialProvider): Promise<void> {
+		await this.request<void>(`/users/me/identities/${encodeURIComponent(provider)}`, {
+			method: 'DELETE'
+		})
+	}
+
+	/**
+	 * Hide the "set a password" banner for good
+	 */
+	async dismissPasswordPrompt(): Promise<void> {
+		await this.request<unknown>('/users/me', {
+			method: 'PUT',
+			body: { user: { passwordPromptDismissed: true } }
+		})
+		this.clearCache('/users/me')
+	}
+
+	/**
+	 * Send the password reset email, which also sets a first password
+	 */
+	async requestPasswordReset(email: string): Promise<void> {
+		await this.request<unknown>('/password_resets', {
+			method: 'POST',
+			body: { email }
+		})
 	}
 
 	/**

@@ -168,6 +168,25 @@ export const RATE_LIMIT_RULES: Rule[] = [
 		limiter: createRateLimiter({ limit: 5, windowMs: MINUTE })
 	},
 	{
+		name: 'social-start',
+		methods: ['GET'],
+		path: route('/auth/(?:discord|google|apple)'),
+		limiter: createRateLimiter({ limit: 20, windowMs: MINUTE })
+	},
+	{
+		// Apple's callback is a POST followed by a GET, so it counts twice.
+		name: 'social-callback',
+		methods: ['GET', 'POST'],
+		path: route('/auth/(?:discord|google|apple)/callback'),
+		limiter: createRateLimiter({ limit: 20, windowMs: MINUTE })
+	},
+	{
+		name: 'social-signup',
+		methods: ['POST'],
+		path: route('/auth/choose-username'),
+		limiter: createRateLimiter({ limit: 5, windowMs: MINUTE })
+	},
+	{
 		name: 'link-preview',
 		methods: ['GET'],
 		path: route('/api/og'),

@@ -1,12 +1,16 @@
 import type { Actions, PageServerLoad } from './$types'
 import { fail, redirect } from '@sveltejs/kit'
 import { safeRedirectPath } from '$lib/utils/safeRedirect'
+import { enabledProviders, isProviderAvailable } from '$lib/server/socialAuth/clients'
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	if (locals.session.isAuthenticated) {
 		redirect(302, safeRedirectPath(url.searchParams.get('next')))
 	}
-	return {}
+	return {
+		socialProviders: enabledProviders().filter(isProviderAvailable),
+		next: url.searchParams.get('next')
+	}
 }
 
 export const actions: Actions = {
