@@ -4,9 +4,7 @@ import { dev } from '$app/environment'
 import { z } from 'zod'
 import { getApiBaseUrl } from '$lib/api/adapters/config'
 import { passwordGrantLogin } from '$lib/auth/oauth'
-import { userAdapter } from '$lib/api/adapters/user.adapter'
-import { buildCookies } from '$lib/auth/map'
-import { setAccountCookie, setUserCookie, setRefreshCookie } from '$lib/auth/cookies'
+import { establishSession } from '$lib/auth/session'
 
 const SignupSchema = z
 	.object({
@@ -82,34 +80,8 @@ export const POST: RequestHandler = async ({ request, cookies, fetch }) => {
 			grant_type: 'password'
 		})
 
-		// 3. Get additional user info
-		const info = await userAdapter.getInfo(oauth.user.username, {
-			headers: {
-				Authorization: `Bearer ${oauth.access_token}`
-			}
-		})
-
-		// 4. Build and set cookies
-		const { account, user, accessTokenExpiresAt, refresh } = buildCookies(oauth, info)
-
 		// Use secure cookies in production (dev flag handles this correctly behind proxies)
-		const secure = !dev
-		setAccountCookie(cookies, account, { secure, expires: accessTokenExpiresAt })
-		setUserCookie(cookies, user, { secure, expires: accessTokenExpiresAt })
-		setRefreshCookie(cookies, refresh, { secure })
-
-		// Sync locale cookie so Paraglide renders the correct language
-		if (user.language && user.language !== 'en') {
-			cookies.set('PARAGLIDE_LOCALE', user.language, {
-				path: '/',
-				httpOnly: false,
-				sameSite: 'lax',
-				secure,
-				maxAge: 34560000
-			})
-		} else {
-			cookies.delete('PARAGLIDE_LOCALE', { path: '/' })
-		}
+		const { info, accessTokenExpiresAt } = await establishSession(cookies, oauth, { secure: !dev })
 
 		// 5. Return success with user data
 		return json({
