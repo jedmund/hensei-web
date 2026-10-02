@@ -2,14 +2,10 @@
 	import * as m from '$lib/paraglide/messages'
 	import Input from '../ui/Input.svelte'
 	import Button from '../ui/Button.svelte'
-	import Select from '../ui/Select.svelte'
 	import Switch from '../ui/switch/Switch.svelte'
 	import SettingsRow from '../ui/SettingsRow.svelte'
-	import ElementPicker from '../ui/element-picker/ElementPicker.svelte'
 	import type { ElementType } from '../ui/SettingsNav.svelte'
 	import { untrack } from 'svelte'
-	import { getElementKey } from '$lib/utils/element'
-	import { getTimezoneOptions, normalizeTimezone } from '$lib/utils/timezone'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import ConnectedAccounts from './ConnectedAccounts.svelte'
 	import PasswordBanner from './PasswordBanner.svelte'
@@ -20,26 +16,16 @@
 		email: string
 		emailVerified: boolean
 		bahamut: boolean
-		simplePortraits: boolean
-		defaultRepView: string
 		role: number
+		/** Tints the admin switches. */
 		element: ElementType
-		language: string
-		theme: string
 		currentPassword: string
 		newPassword: string
 		confirmPassword: string
 		onUsernameChange: (value: string) => void
 		onEmailChange: (value: string) => void
 		onBahamutChange: (value: boolean) => void
-		onSimplePortraitsChange: (value: boolean) => void
-		onDefaultRepViewChange: (value: string) => void
 		onUsernameValidChange?: (valid: boolean) => void
-		onElementChange: (value: string) => void
-		onLanguageChange: (value: string) => void
-		onThemeChange: (value: string) => void
-		timezone: string
-		onTimezoneChange: (value: string) => void
 		onCurrentPasswordChange: (value: string) => void
 		onNewPasswordChange: (value: string) => void
 		onConfirmPasswordChange: (value: string) => void
@@ -56,26 +42,15 @@
 		email,
 		emailVerified,
 		bahamut,
-		simplePortraits,
-		defaultRepView,
 		role,
 		element,
-		language,
-		theme,
 		currentPassword,
 		newPassword,
 		confirmPassword,
 		onUsernameChange,
 		onEmailChange,
 		onBahamutChange,
-		onSimplePortraitsChange,
-		onDefaultRepViewChange,
 		onUsernameValidChange,
-		onElementChange,
-		onLanguageChange,
-		onThemeChange,
-		timezone,
-		onTimezoneChange,
 		onCurrentPasswordChange,
 		onNewPasswordChange,
 		onConfirmPasswordChange,
@@ -204,62 +179,6 @@
 	// Check if user is admin
 	const isAdmin = $derived(role === 9)
 
-	// Element key ↔ numeric ID conversion
-	const ELEMENT_KEY_TO_ID: Record<string, number> = {
-		wind: 1,
-		fire: 2,
-		water: 3,
-		earth: 4,
-		dark: 5,
-		light: 6
-	}
-	const elementId = $derived(ELEMENT_KEY_TO_ID[element] ?? 1)
-
-	// Language/Theme local state (writable derived syncs from props)
-	let localLanguage = $derived(language)
-	let localTheme = $derived(theme)
-
-	function handleLanguageSelect(value: string | undefined) {
-		if (value === undefined) return
-		localLanguage = value
-		onLanguageChange(value)
-	}
-
-	function handleThemeSelect(value: string | undefined) {
-		if (value === undefined) return
-		localTheme = value
-		onThemeChange(value)
-	}
-
-	function handleTimezoneSelect(value: string | undefined) {
-		if (value === undefined) return
-		onTimezoneChange(value)
-	}
-
-	function handleRepViewSelect(value: string | undefined) {
-		if (value === undefined) return
-		onDefaultRepViewChange(value)
-	}
-
-	const timezoneOptions = getTimezoneOptions()
-
-	const languageOptions = [
-		{ value: 'en', label: 'English' },
-		{ value: 'ja', label: '日本語' }
-	]
-
-	const themeOptions = [
-		{ value: 'system', label: m.settings_theme_system() },
-		{ value: 'light', label: m.settings_theme_light() },
-		{ value: 'dark', label: m.settings_theme_dark() }
-	]
-
-	const repViewOptions = [
-		{ value: 'characters', label: m.nav_characters() },
-		{ value: 'weapons', label: m.nav_weapons() },
-		{ value: 'summons', label: m.nav_summons() }
-	]
-
 	// Password local state
 	let localCurrentPassword = $state(untrack(() => currentPassword))
 	let localNewPassword = $state(untrack(() => newPassword))
@@ -352,92 +271,6 @@
 				</Button>
 			</div>
 		{/if}
-
-		<!-- Appearance -->
-		<h3 class="section-header">{m.settings_section_appearance()}</h3>
-
-		<SettingsRow title={m.settings_element()} subtitle={m.settings_element_subtitle()}>
-			{#snippet control()}
-				<ElementPicker
-					value={elementId}
-					onValueChange={(v) => {
-						const key = getElementKey(v as number)
-						onElementChange(key)
-					}}
-					mode="dropdown"
-					contained
-				/>
-			{/snippet}
-		</SettingsRow>
-
-		<SettingsRow title={m.settings_theme()} subtitle={m.settings_theme_subtitle()}>
-			{#snippet control()}
-				<Select
-					value={localTheme}
-					onValueChange={handleThemeSelect}
-					options={themeOptions}
-					placeholder={m.settings_theme_placeholder()}
-					contained
-					portal
-				/>
-			{/snippet}
-		</SettingsRow>
-
-		<SettingsRow title={m.settings_language()} subtitle={m.settings_language_subtitle()}>
-			{#snippet control()}
-				<Select
-					value={localLanguage}
-					onValueChange={handleLanguageSelect}
-					options={languageOptions}
-					placeholder={m.settings_language_placeholder()}
-					contained
-					portal
-				/>
-			{/snippet}
-		</SettingsRow>
-
-		<SettingsRow title={m.settings_timezone()} subtitle={m.settings_timezone_subtitle()}>
-			{#snippet control()}
-				<Select
-					value={normalizeTimezone(timezone)}
-					onValueChange={handleTimezoneSelect}
-					options={timezoneOptions}
-					placeholder={m.settings_timezone_placeholder()}
-					contained
-					portal
-					contentWidthOffset={140}
-				/>
-			{/snippet}
-		</SettingsRow>
-
-		<!-- Display -->
-		<h3 class="section-header">{m.settings_section_display()}</h3>
-
-		<SettingsRow
-			title={m.settings_default_rep_view()}
-			subtitle={m.settings_default_rep_view_subtitle()}
-		>
-			{#snippet control()}
-				<Select
-					value={defaultRepView}
-					onValueChange={handleRepViewSelect}
-					options={repViewOptions}
-					contained
-					portal
-				/>
-			{/snippet}
-		</SettingsRow>
-
-		<SettingsRow title={m.settings_umikin_mode()} subtitle={m.settings_umikin_subtitle()}>
-			{#snippet control()}
-				<Switch
-					checked={simplePortraits}
-					name="umikin-mode"
-					{element}
-					onCheckedChange={onSimplePortraitsChange}
-				/>
-			{/snippet}
-		</SettingsRow>
 
 		<!-- Security -->
 		<h3 class="section-header">{m.settings_section_security()}</h3>

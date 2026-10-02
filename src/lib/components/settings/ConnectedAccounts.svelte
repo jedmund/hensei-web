@@ -7,6 +7,8 @@
 	import SettingsRow from '../ui/SettingsRow.svelte'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import { page } from '$app/state'
+	import { toast } from 'svelte-sonner'
+	import ProviderLogo from '../auth/ProviderLogo.svelte'
 	import {
 		parseSocialProviders,
 		SOCIAL_PROVIDERS,
@@ -44,35 +46,36 @@
 	)
 
 	let unlinking = $state<SocialProvider | null>(null)
-	let message = $state<{ text: string; tone: 'success' | 'error' } | null>(null)
+
+	// A link that just came back from the provider is reported as a toast.
+	// Each result object is reported once.
+	let reported: SettingsReturn | null = null
 
 	$effect(() => {
-		if (!result?.provider) return
+		if (!result?.provider || result === reported) return
+		reported = result
 		const provider = SOCIAL_PROVIDER_LABELS[result.provider]
 		if (result.linked) {
-			message = { text: m.settings_connected_linked({ provider }), tone: 'success' }
+			toast.success(m.settings_connected_linked({ provider }))
 			return
 		}
 		switch (result.error) {
 			case 'identity_taken':
-				message = { text: m.settings_connected_errors_identity_taken({ provider }), tone: 'error' }
+				toast.error(m.settings_connected_errors_identity_taken({ provider }))
 				break
 			case 'provider_already_linked':
-				message = {
-					text: m.settings_connected_errors_provider_already_linked({ provider }),
-					tone: 'error'
-				}
+				toast.error(m.settings_connected_errors_provider_already_linked({ provider }))
 				break
 			case 'cancelled':
-				message = { text: m.settings_connected_errors_cancelled({ provider }), tone: 'error' }
+				toast.error(m.settings_connected_errors_cancelled({ provider }))
 				break
 			case 'rate_limited':
-				message = { text: m.auth_social_errors_rate_limited(), tone: 'error' }
+				toast.error(m.auth_social_errors_rate_limited())
 				break
 			case null:
 				break
 			default:
-				message = { text: m.settings_connected_errors_failed({ provider }), tone: 'error' }
+				toast.error(m.settings_connected_errors_failed({ provider }))
 		}
 	})
 
@@ -85,7 +88,6 @@
 	async function unlink(provider: SocialProvider) {
 		const label = SOCIAL_PROVIDER_LABELS[provider]
 		unlinking = provider
-		message = null
 		try {
 			await userAdapter.unlinkIdentity(provider)
 		} catch (e) {
@@ -94,13 +96,11 @@
 			const code = err?.details?.error
 			// 404 means it was already unlinked elsewhere; just refresh.
 			if (err?.status !== 404) {
-				message = {
-					text:
-						code === 'last_login_method'
-							? m.settings_connected_errors_last_login_method({ provider: label })
-							: m.settings_connected_errors_unlink_failed({ provider: label }),
-					tone: 'error'
-				}
+				toast.error(
+					code === 'last_login_method'
+						? m.settings_connected_errors_last_login_method({ provider: label })
+						: m.settings_connected_errors_unlink_failed({ provider: label })
+				)
 			}
 		} finally {
 			unlinking = null
@@ -117,18 +117,12 @@
 
 {#if rows.length > 0}
 	<h3 class="section-header">{m.settings_connected_accounts()}</h3>
-	<p class="description">{m.settings_connected_accounts_description()}</p>
-
-	{#if message}
-		<p class="message {message.tone}" role="status">{message.text}</p>
-	{/if}
-
-	{#if identitiesQuery.isError}
-		<p class="message error">{m.settings_connected_load_error()}</p>
-	{/if}
 
 	{#each rows as row (row.provider)}
 		<SettingsRow title={SOCIAL_PROVIDER_LABELS[row.provider]} subtitle={subtitle(row.identity)}>
+			{#snippet icon()}
+				<ProviderLogo provider={row.provider} size={20} brandColor />
+			{/snippet}
 			{#snippet control()}
 				{#if row.identity}
 					<Button
@@ -165,28 +159,5 @@
 		font-weight: typography.$medium;
 		color: var(--text-secondary);
 		margin: spacing.$unit-2x 0 0;
-	}
-
-	.description {
-		font-size: typography.$font-small;
-		color: var(--text-tertiary);
-		margin: 0;
-	}
-
-	.message {
-		font-size: typography.$font-small;
-		margin: 0;
-		padding: spacing.$unit spacing.$unit-2x;
-		border-radius: spacing.$unit;
-
-		&.success {
-			color: var(--text-primary);
-			background: var(--button-bg, rgba(128, 128, 128, 0.12));
-		}
-
-		&.error {
-			color: var(--danger, #d64545);
-			background: var(--danger-bg);
-		}
 	}
 </style>
