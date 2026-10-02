@@ -1,8 +1,7 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
-	import { Chart } from 'svelte-echarts'
+	import Chart from './Chart.svelte'
 	import {
-		init,
 		CHART_FONT_FAMILY,
 		CHART_SPLIT_LINE,
 		CHART_AXIS_LINE,
@@ -160,7 +159,7 @@
 
 <div class="chart-wrapper">
 	<div class="chart-container" style:height="{height}px">
-		<Chart {init} {options} />
+		<Chart {options} />
 	</div>
 	<p class="chart-hint">{m.gw_chart_hint()}</p>
 </div>

@@ -5,7 +5,8 @@
  * This keeps the bundle size reasonable while providing full chart functionality.
  */
 
-import { init, use } from 'echarts/core'
+import { init, use, type EChartsType } from 'echarts/core'
+import type { EChartsOption } from 'echarts'
 import { LineChart } from 'echarts/charts'
 import {
 	GridComponent,
@@ -45,3 +46,5 @@ export const CHART_AXIS_LINE = {
 export const CHART_LABEL_COLOR = '#999'
 
 export { init }
+export type ChartOptions = EChartsOption
+export type ChartInstance = EChartsType
