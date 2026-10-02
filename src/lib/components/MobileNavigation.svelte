@@ -12,6 +12,8 @@
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import UserSettingsModal from './UserSettingsModal.svelte'
+	import { useSettingsReturn } from './settings/settingsReturn.svelte'
+	import type { SettingsReturn } from '$lib/auth/socialResult'
 	import InvitationsModal from './crew/InvitationsModal.svelte'
 	import { authStore } from '$lib/stores/auth.store.svelte'
 	import { invalidateAll, beforeNavigate } from '$app/navigation'
@@ -102,6 +104,25 @@
 
 	// Modal state
 	let settingsModalOpen = $state(false)
+	let settingsSection = $state<string | undefined>(undefined)
+	let socialResult = $state<SettingsReturn | null>(null)
+
+	useSettingsReturn(
+		() => isAuth,
+		(result) => {
+			socialResult = result
+			settingsSection = 'account'
+			settingsModalOpen = true
+		}
+	)
+
+	function handleSettingsOpenChange(open: boolean) {
+		settingsModalOpen = open
+		if (!open) {
+			socialResult = null
+			settingsSection = undefined
+		}
+	}
 	let invitationsModalOpen = $state(false)
 
 	// Queries
@@ -293,11 +314,13 @@
 {#if isAuth && account && currentUser}
 	<UserSettingsModal
 		bind:open={settingsModalOpen}
-		onOpenChange={(open) => (settingsModalOpen = open)}
+		onOpenChange={handleSettingsOpenChange}
 		{username}
 		userId={account.userId}
 		user={currentUser}
 		role={role ?? 0}
+		initialSection={settingsSection}
+		{socialResult}
 	/>
 {/if}
 

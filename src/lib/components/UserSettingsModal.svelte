@@ -22,6 +22,7 @@
 	import { localizeHref, deLocalizeHref, toLocale } from '$lib/paraglide/runtime'
 	import { updateSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import { updateDefaultRepView } from '$lib/stores/defaultRepView.svelte'
+	import type { SettingsReturn } from '$lib/auth/socialResult'
 
 	interface Props {
 		open: boolean
@@ -30,9 +31,22 @@
 		userId: string
 		user: UserCookie
 		role: number
+		/** Section to jump to when the modal opens (otherwise the last one shown). */
+		initialSection?: string | undefined
+		/** Result of linking a provider, shown in the Account section. */
+		socialResult?: SettingsReturn | null
 	}
 
-	let { open = $bindable(false), onOpenChange, username, userId, user, role }: Props = $props()
+	let {
+		open = $bindable(false),
+		onOpenChange,
+		username,
+		userId,
+		user,
+		role,
+		initialSection,
+		socialResult = null
+	}: Props = $props()
 
 	const queryClient = useQueryClient()
 
@@ -44,6 +58,8 @@
 	let formDisplayName = $state('')
 	let formEmail = $state('')
 	let emailVerified = $state(false)
+	let hasPassword = $state(true)
+	let passwordPromptDismissed = $state(false)
 	let currentPassword = $state('')
 	let newPassword = $state('')
 	let confirmPassword = $state('')
@@ -110,6 +126,8 @@
 			formDisplayName = data.displayName ?? ''
 			formEmail = data.email ?? ''
 			emailVerified = data.emailVerified ?? false
+			hasPassword = data.hasPassword ?? true
+			passwordPromptDismissed = data.passwordPromptDismissed ?? false
 			// Profile
 			picture = data.avatar?.picture ?? ''
 			element = (data.avatar?.element as ElementType) ?? 'wind'
@@ -141,6 +159,20 @@
 			formInitialized = false
 		}
 	})
+
+	// Jump to the requested section when the modal is opened with one
+	$effect(() => {
+		if (open && initialSection) activeSection = initialSection
+	})
+
+	function handlePasswordPromptDismissed() {
+		passwordPromptDismissed = true
+		queryClient.setQueryData(
+			['currentUser', 'settings'],
+			(oldData: Record<string, unknown> | undefined) =>
+				oldData ? { ...oldData, passwordPromptDismissed: true } : oldData
+		)
+	}
 
 	// Handle section change from segmented control
 	function handleSectionChange(value: string) {
@@ -385,6 +417,10 @@
 						onCurrentPasswordChange={(v) => (currentPassword = v)}
 						onNewPasswordChange={(v) => (newPassword = v)}
 						onConfirmPasswordChange={(v) => (confirmPassword = v)}
+						{hasPassword}
+						{passwordPromptDismissed}
+						onPasswordPromptDismissed={handlePasswordPromptDismissed}
+						{socialResult}
 					/>
 				{:else if activeSection === 'privacy'}
 					<PrivacySettings

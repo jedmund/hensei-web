@@ -11,6 +11,9 @@
 	import { getElementKey } from '$lib/utils/element'
 	import { getTimezoneOptions, normalizeTimezone } from '$lib/utils/timezone'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
+	import ConnectedAccounts from './ConnectedAccounts.svelte'
+	import PasswordBanner from './PasswordBanner.svelte'
+	import type { SettingsReturn } from '$lib/auth/socialResult'
 
 	interface Props {
 		username: string
@@ -40,6 +43,12 @@
 		onCurrentPasswordChange: (value: string) => void
 		onNewPasswordChange: (value: string) => void
 		onConfirmPasswordChange: (value: string) => void
+		/** Shows the "set a password" banner when false (and not dismissed). */
+		hasPassword?: boolean
+		passwordPromptDismissed?: boolean
+		onPasswordPromptDismissed?: () => void
+		/** Result of linking a provider, when settings were reopened after it. */
+		socialResult?: SettingsReturn | null
 	}
 
 	let {
@@ -69,8 +78,14 @@
 		onTimezoneChange,
 		onCurrentPasswordChange,
 		onNewPasswordChange,
-		onConfirmPasswordChange
+		onConfirmPasswordChange,
+		hasPassword = true,
+		passwordPromptDismissed = false,
+		onPasswordPromptDismissed,
+		socialResult = null
 	}: Props = $props()
+
+	const showPasswordBanner = $derived(!hasPassword && !passwordPromptDismissed)
 
 	// Editing state for read-only fields
 	let editingUsername = $state(false)
@@ -270,6 +285,10 @@
 
 <div class="section">
 	<div class="form-fields">
+		{#if showPasswordBanner}
+			<PasswordBanner {email} onDismissed={() => onPasswordPromptDismissed?.()} />
+		{/if}
+
 		<!-- Username -->
 		{#if editingUsername}
 			<Input
@@ -464,6 +483,8 @@
 				/>
 			{/snippet}
 		</SettingsRow>
+
+		<ConnectedAccounts result={socialResult} />
 
 		<!-- Admin (admin only) -->
 		{#if isAdmin}
