@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { Chart } from 'svelte-echarts'
+	import Chart from './Chart.svelte'
 	import {
-		init,
 		CHART_FONT_FAMILY,
 		CHART_SPLIT_LINE,
 		CHART_AXIS_LINE,
@@ -110,7 +109,7 @@
 </script>
 
 <div class="chart-container" style:height="{height}px">
-	<Chart {init} {options} />
+	<Chart {options} />
 </div>
 
 <style lang="scss">
