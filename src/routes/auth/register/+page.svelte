@@ -22,6 +22,10 @@
 
 	let { data, form }: Props = $props()
 
+	// Keep ?next= when switching between signing in and signing up.
+	const withNext = (path: string) =>
+		data.next ? `${path}?next=${encodeURIComponent(data.next)}` : path
+
 	let username = $derived(form?.username ?? '')
 	let email = $derived(form?.email ?? '')
 	let password = $state('')
@@ -328,7 +332,7 @@
 	{#snippet footer()}
 		<p>
 			{m.auth_register_hasAccount()}
-			<a href={localizeHref('/auth/login')}>{m.auth_register_login()}</a>
+			<a href={withNext(localizeHref('/auth/login'))}>{m.auth_register_login()}</a>
 		</p>
 	{/snippet}
 </AuthCard>

@@ -7,11 +7,16 @@ import { establishSession } from '$lib/auth/session'
 import { signUpWithTicket } from '$lib/server/socialAuth/api'
 import { LOGIN_PATH } from '$lib/server/socialAuth/callback'
 import { clearSignupTicket, getSignupTicket } from '$lib/server/socialAuth/cookies'
+import { safeRedirectPath } from '$lib/utils/safeRedirect'
 
 const USERNAME = /^[a-zA-Z0-9_-]{3,26}$/
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-const expired = () => withParams(LOGIN_PATH, { [SOCIAL_ERROR_PARAM]: 'expired' })
+const expired = (next?: string | null) =>
+	withParams(LOGIN_PATH, {
+		[SOCIAL_ERROR_PARAM]: 'expired',
+		...(next ? { next: safeRedirectPath(next) } : {})
+	})
 
 /**
  * The username step for a new account created with a provider. The signup
@@ -64,10 +69,10 @@ export const actions: Actions = {
 					redirect(303, withParams(LOGIN_PATH, { [SOCIAL_ERROR_PARAM]: 'failed' }))
 				}
 				clearSignupTicket(cookies)
-				return redirect(303, '/me')
+				return redirect(303, safeRedirectPath(ticket.next))
 			case 'invalid_ticket':
 				clearSignupTicket(cookies)
-				return redirect(303, expired())
+				return redirect(303, expired(ticket.next))
 			case 'validation':
 				return fail(422, {
 					error: 'validation' as const,
