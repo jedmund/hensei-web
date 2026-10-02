@@ -352,6 +352,66 @@ describe('handleSocialCallback: link mode', () => {
 	})
 })
 
+describe('handleSocialCallback: next in login mode', () => {
+	const NEXT = '/auth/extension?redirect_uri=https%3A%2F%2Fabc.chromiumapp.org%2F&state=s'
+
+	it('carries next to the username step through the signup ticket', async () => {
+		const t = setup({
+			cookies: flowCookies('discord', { next: NEXT }),
+			apiResponse: jsonResponse(200, {
+				status: 'signup_required',
+				ticket: 'signup-ticket',
+				suggested_username: 'djeeta',
+				email_required: false
+			})
+		})
+		expect(await t.run()).toBe('/auth/choose-username')
+		expect(JSON.parse(t.jar.lastSet('social_signup')?.value ?? '')).toMatchObject({ next: NEXT })
+	})
+
+	it('keeps an off-site next out of the signup ticket', async () => {
+		const t = setup({
+			cookies: flowCookies('discord', { next: '//evil.example/x' }),
+			apiResponse: jsonResponse(200, { status: 'signup_required', ticket: 'signup-ticket' })
+		})
+		await t.run()
+		expect(JSON.parse(t.jar.lastSet('social_signup')?.value ?? '')).toMatchObject({ next: '/me' })
+	})
+
+	it('keeps next on the login page for a password login that links the provider', async () => {
+		const t = setup({
+			provider: 'google',
+			cookies: flowCookies('google', { next: NEXT }),
+			apiResponse: jsonResponse(200, {
+				status: 'link_required',
+				ticket: 'link-ticket',
+				provider: 'google'
+			})
+		})
+		const location = new URL(await t.run(), 'https://granblue.team')
+		expect(location.pathname).toBe('/auth/login')
+		expect(location.searchParams.get('next')).toBe(NEXT)
+	})
+
+	it('keeps next on the login page after a cancelled or failed sign-in', async () => {
+		const cancelled = setup({
+			cookies: flowCookies('discord', { next: NEXT }),
+			params: { code: null, error: 'access_denied' }
+		})
+		const location = new URL(await cancelled.run(), 'https://granblue.team')
+		expect(location.searchParams.get('social_error')).toBe('cancelled')
+		expect(location.searchParams.get('next')).toBe(NEXT)
+
+		const failed = setup({
+			cookies: flowCookies('discord', { next: NEXT }),
+			apiResponse: jsonResponse(500)
+		})
+		const failedLocation = new URL(await failed.run(), 'https://granblue.team')
+		expect(failedLocation.searchParams.get('social_error')).toBe('failed')
+		expect(failedLocation.searchParams.get('next')).toBe(NEXT)
+	})
+})
+
 describe('appleName', () => {
 	it('joins first and last name', () => {
 		expect(appleName('{"name":{"firstName":" Djeeta ","lastName":"Grancypher"}}')).toBe(

@@ -85,7 +85,13 @@ export function appleName(userJson: string | null): string | null {
 	}
 }
 
-const loginError = (code: SocialErrorCode) => withParams(LOGIN_PATH, { [SOCIAL_ERROR_PARAM]: code })
+/** The login page, keeping `next` so another attempt still lands where it should. */
+function loginPage(next: string | null, params: Record<string, string> = {}): string {
+	return withParams(LOGIN_PATH, next ? { ...params, next: safeRedirectPath(next) } : params)
+}
+
+const loginError = (code: SocialErrorCode, next: string | null = null) =>
+	loginPage(next, { [SOCIAL_ERROR_PARAM]: code })
 
 function settingsReturn(
 	next: string | null,
@@ -127,7 +133,9 @@ export async function handleSocialCallback(
 	}
 
 	const fail = (code: SocialErrorCode) =>
-		flow.mode === 'link' ? settingsReturn(flow.next, provider, { error: code }) : loginError(code)
+		flow.mode === 'link'
+			? settingsReturn(flow.next, provider, { error: code })
+			: loginError(code, flow.next)
 
 	if (params.error) return fail('cancelled')
 	if (!params.code) return fail('failed')
@@ -175,7 +183,7 @@ export async function handleSocialCallback(
 		result = await signInWithProvider(ctx.fetch, provider, { assertion, nonce: flow.nonce, name })
 	} catch (e) {
 		logFailure('sign-in', provider, e)
-		return loginError('failed')
+		return loginError('failed', flow.next)
 	}
 
 	switch (result.kind) {
@@ -184,7 +192,7 @@ export async function handleSocialCallback(
 				await deps.establishSession(cookies, result.tokens, { secure })
 			} catch (e) {
 				logFailure('session setup', provider, e)
-				return loginError('failed')
+				return loginError('failed', flow.next)
 			}
 			clearSignupTicket(cookies)
 			clearLinkTicket(cookies)
@@ -197,7 +205,8 @@ export async function handleSocialCallback(
 					ticket: result.ticket,
 					provider,
 					suggestedUsername: result.suggestedUsername,
-					emailRequired: result.emailRequired
+					emailRequired: result.emailRequired,
+					...(flow.next ? { next: safeRedirectPath(flow.next, DEFAULT_NEXT) } : {})
 				},
 				{ secure }
 			)
@@ -205,8 +214,8 @@ export async function handleSocialCallback(
 		case 'link_required':
 			clearSignupTicket(cookies)
 			setLinkTicketCookie(cookies, { ticket: result.ticket, provider: result.provider }, { secure })
-			return LOGIN_PATH
+			return loginPage(flow.next)
 		case 'failed':
-			return loginError(result.reason === 'rate_limited' ? 'rate_limited' : 'failed')
+			return loginError(result.reason === 'rate_limited' ? 'rate_limited' : 'failed', flow.next)
 	}
 }

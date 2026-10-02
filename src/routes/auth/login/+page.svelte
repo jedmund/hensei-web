@@ -22,6 +22,10 @@
 
 	let { data, form }: Props = $props()
 
+	// Keep ?next= when switching between signing in and signing up.
+	const withNext = (path: string) =>
+		data.next ? `${path}?next=${encodeURIComponent(data.next)}` : path
+
 	const socialErrorMessages: Record<SocialErrorCode, () => string> = {
 		failed: m.auth_social_errors_failed,
 		cancelled: m.auth_social_errors_cancelled,
@@ -109,7 +113,7 @@
 	{#snippet footer()}
 		<p>
 			{m.auth_login_noAccount()}
-			<a href={localizeHref('/auth/register')}>{m.auth_login_register()}</a>
+			<a href={withNext(localizeHref('/auth/register'))}>{m.auth_login_register()}</a>
 		</p>
 		<p>
 			<a href={localizeHref('/auth/forgot-password')}>{m.auth_login_forgotPassword()}</a>

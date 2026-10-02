@@ -160,4 +160,12 @@ describe('RATE_LIMIT_RULES paths', () => {
 		expect(ruleFor('GET', '/auth/github')).toBeUndefined()
 		expect(ruleFor('GET', '/auth/login')).toBeUndefined()
 	})
+
+	it('limits the extension login page and its code requests', () => {
+		expect(ruleFor('GET', '/auth/extension')).toBe('extension-auth')
+		expect(ruleFor('GET', '/ja/auth/extension')).toBe('extension-auth')
+		expect(ruleFor('POST', '/auth/extension/code')).toBe('extension-auth-code')
+		expect(ruleFor('POST', '/ja/auth/extension/code')).toBe('extension-auth-code')
+		expect(ruleFor('GET', '/auth/extension/code')).toBeUndefined()
+	})
 })

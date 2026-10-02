@@ -142,6 +142,8 @@ export interface SignupTicket {
 	provider: SocialProvider
 	suggestedUsername: string
 	emailRequired: boolean
+	/** Where to land once the account exists (an unchecked `next`; check it before use). */
+	next?: string | null
 }
 
 export interface LinkTicket {
@@ -186,7 +188,8 @@ export function getSignupTicket(cookies: Cookies): SignupTicket | null {
 		ticket: data.ticket,
 		provider: data.provider,
 		suggestedUsername: typeof data.suggestedUsername === 'string' ? data.suggestedUsername : '',
-		emailRequired: data.emailRequired === true
+		emailRequired: data.emailRequired === true,
+		next: typeof data.next === 'string' ? data.next : null
 	}
 }
 

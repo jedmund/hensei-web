@@ -187,6 +187,19 @@ export const RATE_LIMIT_RULES: Rule[] = [
 		limiter: createRateLimiter({ limit: 5, windowMs: MINUTE })
 	},
 	{
+		name: 'extension-auth',
+		methods: ['GET'],
+		path: route('/auth/extension'),
+		limiter: createRateLimiter({ limit: 20, windowMs: MINUTE })
+	},
+	{
+		// Each code request is a call to the API on the user's behalf.
+		name: 'extension-auth-code',
+		methods: ['POST'],
+		path: route('/auth/extension/code'),
+		limiter: createRateLimiter({ limit: 10, windowMs: MINUTE })
+	},
+	{
 		name: 'link-preview',
 		methods: ['GET'],
 		path: route('/api/og'),
