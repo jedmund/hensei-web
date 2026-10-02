@@ -76,7 +76,7 @@
 		"@aws-sdk/s3-request-presigner": "^3.1048.0",
 		"@floating-ui/dom": "^1.7.4",
 		"@internationalized/date": "^3.10.0",
-		"@lucide/svelte": "^0.562.0",
+		"@lucide/svelte": "^1.48.0",
 		"@sentry/sveltekit": "^10.75.3",
 		"@tanstack/svelte-query": "^6.0.9",
 		"@tiptap/core": "^3.31.4",
