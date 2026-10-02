@@ -1747,7 +1747,6 @@
 	"auth_social_divider": "または",
 	"auth_social_link_prompt": "このメールアドレスのアカウントはすでに登録されています。{provider}と連携するには、パスワードでログインしてください。",
 	"settings_connected_accounts": "連携アカウント",
-	"settings_connected_accounts_description": "メールアドレスのほかに、これらのアカウントでもHenseiにログインできます。",
 	"settings_connected_link": "連携する",
 	"settings_connected_unlink": "連携を解除",
 	"settings_connected_unlinking": "解除中...",

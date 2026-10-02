@@ -1766,7 +1766,6 @@
 	"auth_social_divider": "or",
 	"auth_social_link_prompt": "An account with this email already exists. Log in with your password to link {provider}.",
 	"settings_connected_accounts": "Connected accounts",
-	"settings_connected_accounts_description": "Log in to Hensei with these accounts as well as your email address.",
 	"settings_connected_link": "Connect",
 	"settings_connected_unlink": "Disconnect",
 	"settings_connected_unlinking": "Disconnecting...",
