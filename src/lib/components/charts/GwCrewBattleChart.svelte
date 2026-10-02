@@ -8,6 +8,7 @@
 		CHART_LABEL_COLOR
 	} from './echarts-setup'
 	import { formatScore, formatScoreCompact } from '$lib/utils/gw'
+	import { escapeHtml } from '$lib/utils/safeHtml'
 	import type { GwChartDataPoint } from '$lib/types/api/gw'
 
 	interface Props {
@@ -26,7 +27,7 @@
 				if (!p[0]) return ''
 				const crew = p.find((item) => item.seriesName === 'Our Crew')
 				const opp = p.find((item) => item.seriesName === 'Opponent')
-				return `${p[0].name}<br/>Our Crew: ${formatScore(crew?.value ?? 0)}<br/>Opponent: ${formatScore(opp?.value ?? 0)}`
+				return `${escapeHtml(p[0].name)}<br/>Our Crew: ${formatScore(crew?.value ?? 0)}<br/>Opponent: ${formatScore(opp?.value ?? 0)}`
 			}
 		},
 		legend: {

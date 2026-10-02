@@ -15,6 +15,7 @@
 		CHART_LABEL_COLOR
 	} from './echarts-setup'
 	import { formatScore, formatScoreCompact, type PlayerRoundScore } from '$lib/utils/gw'
+	import { escapeHtml } from '$lib/utils/safeHtml'
 
 	interface Props {
 		data: PlayerRoundScore[]
@@ -39,7 +40,7 @@
 				const p = params as Array<{ name: string; value: number }>
 				const point = p[0]
 				if (!point) return ''
-				return `${point.name}<br/>Score: ${formatScore(point.value)}`
+				return `${escapeHtml(point.name)}<br/>Score: ${formatScore(point.value)}`
 			}
 		},
 		grid: {
