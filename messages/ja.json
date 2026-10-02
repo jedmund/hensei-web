@@ -1731,5 +1731,16 @@
 	"nav_weapon_skills": "武器スキル",
 	"details_permeation": "深度",
 	"befoulment_permeation": "深度",
-	"befoulment_permeation_hint": "推定初期値: {min}〜{max}"
+	"befoulment_permeation_hint": "推定初期値: {min}〜{max}",
+	"auth_social_username_title": "ユーザー名の設定",
+	"auth_social_username_intro": "{provider}アカウントで登録します。Henseiのプロフィールに表示するユーザー名を決めてください。",
+	"auth_social_username_emailNote": "{provider}から確認済みのメールアドレスを取得できませんでした。アカウントの復旧に使うメールアドレスを入力してください。確認用のリンクをお送りします。",
+	"auth_social_username_submit": "アカウントを作成",
+	"auth_social_username_submitting": "作成中...",
+	"auth_social_username_errors_validation": "ユーザー名とメールアドレスを確認してください。",
+	"auth_social_username_errors_failed": "アカウントを作成できませんでした。もう一度お試しください。",
+	"auth_social_errors_failed": "ログインできませんでした。もう一度お試しください。",
+	"auth_social_errors_cancelled": "ログインがキャンセルされました。",
+	"auth_social_errors_rate_limited": "試行回数が多すぎます。しばらくしてからもう一度お試しください。",
+	"auth_social_errors_expired": "ログインの有効期限が切れました。最初からやり直してください。"
 }
