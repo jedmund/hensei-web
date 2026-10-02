@@ -9,6 +9,7 @@
 		CHART_LABEL_COLOR
 	} from './echarts-setup'
 	import { formatScore, formatScoreCompact, type HistoryDataPoint } from '$lib/utils/gw'
+	import { escapeHtml } from '$lib/utils/safeHtml'
 
 	interface Props {
 		data: HistoryDataPoint[]
@@ -62,9 +63,9 @@
 				if (!point) return ''
 				const dataPoint = data[point.dataIndex]
 				if (dataPoint?.isGap) {
-					return `${point.name}<br/><span style="color: var(--text-tertiary)">${m.gw_chart_not_in_crew()}</span><br/>${dataPoint?.date ?? ''}`
+					return `${escapeHtml(point.name)}<br/><span style="color: var(--text-tertiary)">${m.gw_chart_not_in_crew()}</span><br/>${escapeHtml(dataPoint?.date)}`
 				}
-				return `${point.name}<br/>${m.gw_chart_score_label({ score: formatScore(point.value ?? 0) })}<br/>${dataPoint?.date ?? ''}`
+				return `${escapeHtml(point.name)}<br/>${m.gw_chart_score_label({ score: formatScore(point.value ?? 0) })}<br/>${escapeHtml(dataPoint?.date)}`
 			}
 		},
 		toolbox: {

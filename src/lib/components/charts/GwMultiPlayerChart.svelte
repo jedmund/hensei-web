@@ -7,7 +7,8 @@
 		CHART_AXIS_LINE,
 		CHART_LABEL_COLOR
 	} from './echarts-setup'
-	import { formatScore, formatScoreCompact, type PlayerRoundScore } from '$lib/utils/gw'
+	import { formatScoreCompact, type PlayerRoundScore } from '$lib/utils/gw'
+	import { multiPlayerTooltip, type MultiPlayerTooltipItem } from './tooltips'
 
 	interface Props {
 		playerScores: Map<string, { name: string; scores: PlayerRoundScore[] }>
@@ -65,20 +66,7 @@
 		textStyle: { fontFamily: CHART_FONT_FAMILY, color: CHART_LABEL_COLOR },
 		tooltip: {
 			trigger: 'axis' as const,
-			formatter: (params: unknown) => {
-				const p = params as Array<{
-					marker: string
-					seriesName: string
-					value: number
-					name: string
-				}>
-				if (!p[0]) return ''
-				const sorted = [...p].sort((a, b) => b.value - a.value).slice(0, 10)
-				const lines = sorted.map(
-					(item) => `${item.marker} ${item.seriesName}: ${formatScore(item.value)}`
-				)
-				return `${p[0].name}<br/>${lines.join('<br/>')}`
-			}
+			formatter: (params: unknown) => multiPlayerTooltip(params as MultiPlayerTooltipItem[])
 		},
 		legend: {
 			type: 'scroll' as const,
