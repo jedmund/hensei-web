@@ -18,6 +18,7 @@ import { generateFontFaceCSS, getFontPreloadLinks } from '$lib/utils/fonts'
 import { clientIp, handleRateLimit } from '$lib/server/rateLimit'
 import { withApiHeaders } from '$lib/server/apiHeaders'
 import { handleSecurityHeaders } from '$lib/server/securityHeaders'
+import { handleCsrf } from '$lib/server/csrf'
 
 // Only initialize when a DSN is configured (keeps dev/test silent).
 if (publicEnv.PUBLIC_SENTRY_DSN) {
@@ -147,9 +148,11 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 // and sets up per-request isolation for the SSR scope. Its inline fetch-proxy
 // script is only needed before SvelteKit 2.16 and would need a CSP nonce.
 // Security headers come next so bot 404s and rate-limit 429s get them too.
+// handleCsrf replaces SvelteKit's built-in origin check (see csrf.ts).
 export const handle: Handle = sequence(
 	sentryHandle({ injectFetchProxyScript: false }),
 	handleSecurityHeaders,
+	handleCsrf,
 	handleBotFilter,
 	handleRateLimit,
 	handleSession,

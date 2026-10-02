@@ -28,6 +28,12 @@ const config = {
 	kit: {
 		adapter: adapter(),
 		csp,
+		// The origin check runs in hooks.server.ts (src/lib/server/csrf.ts)
+		// instead, so it can exempt Apple's cross-site form_post callback.
+		// '*' only switches off the built-in copy of that check.
+		csrf: {
+			trustedOrigins: ['*']
+		},
 		paths: {
 			relative: false
 		},
