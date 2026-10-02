@@ -146,4 +146,18 @@ describe('RATE_LIMIT_RULES paths', () => {
 		expect(ruleFor('POST', '/api/csp-report')).toBe('csp-report')
 		expect(ruleFor('GET', '/api/csp-report')).toBeUndefined()
 	})
+
+	it('limits social login starts, callbacks and the username step', () => {
+		for (const provider of ['discord', 'google', 'apple']) {
+			expect(ruleFor('GET', `/auth/${provider}`)).toBe('social-start')
+			expect(ruleFor('GET', `/ja/auth/${provider}`)).toBe('social-start')
+			expect(ruleFor('GET', `/auth/${provider}/callback`)).toBe('social-callback')
+			expect(ruleFor('GET', `/ja/auth/${provider}/callback`)).toBe('social-callback')
+		}
+		expect(ruleFor('POST', '/auth/apple/callback')).toBe('social-callback')
+		expect(ruleFor('POST', '/auth/choose-username')).toBe('social-signup')
+		expect(ruleFor('GET', '/auth/choose-username')).toBeUndefined()
+		expect(ruleFor('GET', '/auth/github')).toBeUndefined()
+		expect(ruleFor('GET', '/auth/login')).toBeUndefined()
+	})
 })
