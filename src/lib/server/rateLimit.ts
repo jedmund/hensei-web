@@ -6,7 +6,8 @@ import { isPrivateAddress } from '$lib/server/ssrfGuard'
 
 /**
  * Per-client-IP rate limits for server routes that call out on a visitor's
- * behalf (auth forms proxied to the API, link previews).
+ * behalf (auth forms proxied to the API, link previews and their images), plus
+ * the anonymous CSP violation report endpoint.
  *
  * The API sees these requests from this server's IP, so per-visitor limits
  * have to live here (hooks.server.ts also forwards the visitor's IP to the API
@@ -170,6 +171,18 @@ export const RATE_LIMIT_RULES: Rule[] = [
 		name: 'link-preview',
 		methods: ['GET'],
 		path: route('/api/og'),
+		limiter: createRateLimiter({ limit: 30, windowMs: MINUTE })
+	},
+	{
+		name: 'link-preview-image',
+		methods: ['GET'],
+		path: route('/api/og/image'),
+		limiter: createRateLimiter({ limit: 60, windowMs: MINUTE })
+	},
+	{
+		name: 'csp-report',
+		methods: ['POST'],
+		path: route('/api/csp-report'),
 		limiter: createRateLimiter({ limit: 30, windowMs: MINUTE })
 	}
 ]

@@ -2,7 +2,13 @@ import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('$env/dynamic/private', () => ({ env: {} }))
 
-import { clientIp, createRateLimiter, edgeClientIp, rateLimitResponse } from '../rateLimit'
+import {
+	clientIp,
+	createRateLimiter,
+	edgeClientIp,
+	RATE_LIMIT_RULES,
+	rateLimitResponse
+} from '../rateLimit'
 
 function request(method: string, forwardedFor?: string) {
 	const headers = new Headers()
@@ -123,5 +129,21 @@ describe('clientIp', () => {
 		expect(clientIp(req({ ...base, 'x-origin-auth': 'wrong' }), secrets)).toBe('84.17.44.227')
 		expect(clientIp(req({ ...base, 'x-origin-auth': 'current' }), secrets)).toBe('203.0.113.9')
 		expect(clientIp(req({ ...base, 'x-origin-auth': 'previous' }), secrets)).toBe('203.0.113.9')
+	})
+})
+
+describe('RATE_LIMIT_RULES paths', () => {
+	const ruleFor = (method: string, path: string) =>
+		RATE_LIMIT_RULES.find((r) => r.methods.includes(method) && r.path.test(path))?.name
+
+	it('limits link-preview images separately from link previews', () => {
+		expect(ruleFor('GET', '/api/og')).toBe('link-preview')
+		expect(ruleFor('GET', '/api/og/image')).toBe('link-preview-image')
+		expect(ruleFor('GET', '/ja/api/og/image')).toBe('link-preview-image')
+	})
+
+	it('limits CSP violation reports', () => {
+		expect(ruleFor('POST', '/api/csp-report')).toBe('csp-report')
+		expect(ruleFor('GET', '/api/csp-report')).toBeUndefined()
 	})
 })
