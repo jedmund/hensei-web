@@ -100,6 +100,7 @@
 		"@tiptap/pm": "^3.31.4",
 		"@tiptap/starter-kit": "^3.31.4",
 		"@tiptap/suggestion": "^3.31.4",
+		"arctic": "3.7.0",
 		"bits-ui": "^2.16.3",
 		"fluid-dnd": "^2.6.2",
 		"katex": "^0.16.27",
