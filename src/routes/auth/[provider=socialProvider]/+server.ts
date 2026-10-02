@@ -16,7 +16,7 @@ import { LOGIN_PATH } from '$lib/server/socialAuth/callback'
  * Chrome also checks the redirect that follows a form submission, so a form
  * that redirects to the provider would be blocked.
  */
-export const GET: RequestHandler = ({ params, url, cookies, locals }) => {
+export const GET: RequestHandler = async ({ params, url, cookies, locals }) => {
 	const provider = params.provider
 	if (!isSocialProvider(provider) || !isProviderAvailable(provider)) error(404, 'Not found')
 
@@ -30,7 +30,7 @@ export const GET: RequestHandler = ({ params, url, cookies, locals }) => {
 		redirect(302, safeRedirectPath(rawNext))
 	}
 
-	const auth = createAuthorization(provider, url.origin)
+	const auth = await createAuthorization(provider, url.origin)
 	setFlowCookies(
 		cookies,
 		provider,

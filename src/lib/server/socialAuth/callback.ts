@@ -51,7 +51,8 @@ export interface CallbackDeps {
 		provider: SocialProvider,
 		origin: string,
 		code: string,
-		codeVerifier: string | null
+		codeVerifier: string | null,
+		nonce: string | null
 	) => Promise<string>
 	establishSession: (
 		cookies: Cookies,
@@ -133,7 +134,13 @@ export async function handleSocialCallback(
 
 	let assertion: string
 	try {
-		assertion = await deps.exchangeCode(provider, ctx.origin, params.code, flow.codeVerifier)
+		assertion = await deps.exchangeCode(
+			provider,
+			ctx.origin,
+			params.code,
+			flow.codeVerifier,
+			flow.nonce
+		)
 	} catch (e) {
 		logFailure('code exchange', provider, e)
 		return fail('failed')

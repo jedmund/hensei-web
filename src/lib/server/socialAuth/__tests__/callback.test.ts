@@ -144,7 +144,8 @@ describe('handleSocialCallback: sign-in outcomes', () => {
 			'discord',
 			'https://granblue.team',
 			'auth-code',
-			'verifier-abc'
+			'verifier-abc',
+			null
 		)
 		const call = apiCall(t.fetchFn)
 		expect(call.url).toBe('http://api.test/api/v1/auth/discord')
@@ -161,7 +162,20 @@ describe('handleSocialCallback: sign-in outcomes', () => {
 
 		const apple = setup({ provider: 'apple' })
 		await apple.run()
-		expect(apple.exchange).toHaveBeenCalledWith('apple', 'https://granblue.team', 'auth-code', null)
+		expect(google.exchange).toHaveBeenCalledWith(
+			'google',
+			'https://granblue.team',
+			'auth-code',
+			'verifier-abc',
+			'nonce-xyz'
+		)
+		expect(apple.exchange).toHaveBeenCalledWith(
+			'apple',
+			'https://granblue.team',
+			'auth-code',
+			null,
+			'nonce-xyz'
+		)
 		expect(apiCall(apple.fetchFn)).toMatchObject({
 			url: 'http://api.test/api/v1/auth/apple',
 			body: { assertion: 'provider-assertion', nonce: 'nonce-xyz' }
