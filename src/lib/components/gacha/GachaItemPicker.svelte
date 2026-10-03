@@ -38,6 +38,7 @@
 	const id = $props.id()
 	let open = $state(false)
 	let query = $state('')
+	let input = $state<HTMLInputElement | null>(null)
 
 	const name = (item: CatalogueItem) => gachaItemName(item, getLocale())
 	const selected = $derived(items.find((item) => item.identity === value))
@@ -101,10 +102,13 @@
 		onValueChange?.(identity)
 		if (clearOnSelect) {
 			// Combobox writes the picked label into the input after this
-			// handler runs, so clear it on the next tick
+			// handler runs, so clear it on the next tick. The input itself is
+			// cleared too: when nothing was typed, inputValue is already empty,
+			// so setting it again doesn't reach the field.
 			await tick()
 			value = ''
 			inputValue = ''
+			if (input) input.value = ''
 		}
 	}
 </script>
@@ -123,6 +127,7 @@
 		allowDeselect={false}
 	>
 		<Combobox.Input
+			bind:ref={input}
 			{id}
 			class="picker-input"
 			{placeholder}
