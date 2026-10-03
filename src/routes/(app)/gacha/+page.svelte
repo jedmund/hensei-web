@@ -2,7 +2,6 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
-	import Notice from '$lib/components/ui/Notice.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
@@ -267,6 +266,8 @@
 		operation = value as Operation
 		targetError = ''
 		result = null
+		// Each tab has its own settings to fill in
+		collapsed = false
 	}
 </script>
 
@@ -395,6 +396,10 @@
 			</div>
 		{/if}
 
+		{#if failure}
+			<p class="failure" role="alert">{failure}</p>
+		{/if}
+
 		<div class="actions">
 			{#if collapsed && rateups.length > 0}
 				<ul class="collapsed-rateups" aria-label={m.gacha_rates()}>
@@ -413,10 +418,6 @@
 			</Button>
 		</div>
 	</form>
-
-	{#if failure}
-		<Notice variant="red">{failure}</Notice>
-	{/if}
 
 	{#if result}
 		<GachaResults
@@ -488,6 +489,12 @@
 				grid-column: auto;
 			}
 		}
+	}
+
+	.failure {
+		margin: 0;
+		color: $error;
+		font-size: $font-small;
 	}
 
 	.actions {
