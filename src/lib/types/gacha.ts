@@ -43,3 +43,15 @@ export interface GachaResult {
 		exchange_rate: { provider: string; date: string; jpy_per_usd: string; stale: boolean } | null
 	}
 }
+
+/**
+ * Everything the internal share-image route needs to draw a result. The public
+ * image endpoint runs the simulation, stores this with storePrefetch, and the
+ * _render/gacha/result route reads it back with consumePrefetch.
+ */
+export interface GachaRenderData {
+	result: GachaResult
+	operation: 'draw' | 'until' | 'odds'
+	currency: 'usd' | 'jpy' | 'crystals'
+	art: 'weapon' | 'character'
+}

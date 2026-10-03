@@ -13,19 +13,30 @@
 	import usFlag from '$src/assets/flags/us.png'
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
+	import { untrack } from 'svelte'
+	import { toast } from 'svelte-sonner'
+	import { page } from '$app/state'
+	import { replaceState } from '$app/navigation'
+	import { readShare, writeShare, type GachaShare } from '$lib/utils/gachaShare'
 	import { gachaItemImage, gachaItemName, gachaItemThumbnail } from '$lib/utils/gacha'
 	import type { CatalogueItem, GachaResult } from '$lib/types/gacha'
 
 	type Operation = 'draw' | 'until' | 'odds'
 	type Currency = 'usd' | 'jpy' | 'crystals'
 
-	let operation = $state<Operation>('draw')
-	let mode = $state('premium')
-	let season = $state('')
-	let purchase = $state<'ten' | 'singles'>('ten')
-	let draws = $state('300')
-	let copies = $state('1')
-	let comparison = $state<'at_least' | 'exactly'>('at_least')
+	// Settings start from the URL so shared links open as they were sent. The
+	// target and rate-ups wait for the catalogue, which resolves their ids.
+	const shared = readShare(page.url.searchParams)
+	let pendingShare: GachaShare | null = shared
+	let restored = $state(false)
+
+	let operation = $state<Operation>(shared.operation)
+	let mode = $state(shared.mode)
+	let season = $state(shared.season)
+	let purchase = $state<'ten' | 'singles'>(shared.purchase)
+	let draws = $state(shared.draws)
+	let copies = $state(shared.copies)
+	let comparison = $state<'at_least' | 'exactly'>(shared.comparison)
 	let target = $state('')
 	let rateups = $state<{ identity: string; percent: string }[]>([])
 	let items = $state<CatalogueItem[]>([])
@@ -37,6 +48,9 @@
 	let currency = $state<Currency>(getLocale() === 'ja' ? 'jpy' : 'usd')
 	let art = $state<'weapon' | 'character'>('weapon')
 	let runController: AbortController | undefined
+	// The settings a result was produced with; the link carries its seed only
+	// while the settings still match
+	let resultShare = $state('')
 
 	// Base SSR rates, matching the API's simulation: 6% for the galas, 3% otherwise
 	const ssrRates: Record<string, number> = {
@@ -158,8 +172,17 @@
 				const data = await readJson(response)
 				items = data.items
 				result = null
-				target = ''
-				rateups = []
+				const share = pendingShare
+				pendingShare = null
+				target = share ? identityFor(share.target) : ''
+				rateups = share
+					? share.rateups.flatMap(({ id, percent }) => {
+							const identity = identityFor(id, 3)
+							return identity ? [{ identity, percent }] : []
+						})
+					: []
+				restored = true
+				if (share?.seed) untrack(() => void run(false, share.seed))
 			})
 			.catch((error) => {
 				if (!controller.signal.aborted) failure = String(error.message)
@@ -171,7 +194,7 @@
 	})
 	$effect(() => () => runController?.abort())
 
-	async function run(replay = false) {
+	async function run(replay = false, seed = '') {
 		if (busy) return
 		if (!replay && operation !== 'draw' && !target) {
 			targetError = m.gacha_target_required()
@@ -199,7 +222,8 @@
 						copies: Number(copies),
 						comparison,
 						target,
-						rateups
+						rateups,
+						...(seed ? { seed } : {})
 					}
 		try {
 			let response = await fetch(`/api/gacha/${operation === 'draw' ? 'simulations' : operation}`, {
@@ -225,10 +249,70 @@
 				if (!data.draws) throw new Error(m.gacha_error())
 			}
 			result = data
+			resultShare = currentShare()
 		} catch (error) {
 			if (!signal.aborted) failure = error instanceof Error ? error.message : m.gacha_error()
 		} finally {
 			busy = false
+		}
+	}
+
+	function identityFor(granblueId: string, rarity?: number) {
+		if (!granblueId) return ''
+		return (
+			items.find(
+				(item) =>
+					item.granblue_id === granblueId && (rarity === undefined || item.rarity === rarity)
+			)?.identity ?? ''
+		)
+	}
+	function granblueIdFor(identity: string) {
+		return items.find((item) => item.identity === identity)?.granblue_id ?? ''
+	}
+	function currentShare(seed = '') {
+		return writeShare({
+			operation,
+			mode,
+			season: classic ? '' : season,
+			purchase,
+			draws: String(draws),
+			copies: String(copies),
+			comparison,
+			target: granblueIdFor(target),
+			rateups: rateups.flatMap((rate) => {
+				const id = granblueIdFor(rate.identity)
+				return id ? [{ id, percent: String(rate.percent) }] : []
+			}),
+			seed
+		})
+	}
+
+	// Keep the address bar in step with the settings, adding the seed while
+	// the shown result still matches them
+	$effect(() => {
+		if (!restored) return
+		const settings = currentShare()
+		const query = result && resultShare === settings ? currentShare(result.seed) : settings
+		untrack(() => {
+			if (page.url.search === (query ? `?${query}` : '')) return
+			const href = `${page.url.pathname}${query ? `?${query}` : ''}`
+			// Right after hydration the router may not accept history updates yet
+			setTimeout(() => {
+				try {
+					replaceState(href, page.state)
+				} catch {
+					// The URL catches up on the next change
+				}
+			}, 0)
+		})
+	})
+
+	async function copyLink() {
+		try {
+			await navigator.clipboard.writeText(window.location.href)
+			toast.success(m.toast_copied())
+		} catch {
+			toast.error(m.toast_copy_failed())
 		}
 	}
 
@@ -475,6 +559,9 @@
 					{m.gacha_replay_seed()}
 					<CopyableText value={result.seed} />
 				</span>
+				<Button variant="ghost" size="small" onclick={copyLink}>
+					{m.gacha_copy_link()}
+				</Button>
 				<Button variant="ghost" size="small" disabled={busy} onclick={() => void run(true)}>
 					{m.gacha_replay()}
 				</Button>
