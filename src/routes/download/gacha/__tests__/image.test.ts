@@ -117,7 +117,7 @@ describe('GET /download/gacha', () => {
 		const first = apiFetch()
 		await get('seed=abc', first.fetch)
 		const second = apiFetch()
-		const res = await get('seed=abc&art=weapon', second.fetch)
+		const res = await get('seed=abc&art=character', second.fetch)
 
 		expect(res.status).toBe(200)
 		expect(second.fetch).not.toHaveBeenCalled()

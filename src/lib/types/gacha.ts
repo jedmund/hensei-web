@@ -56,8 +56,6 @@ export interface GachaRenderData {
 	operation: 'draw' | 'until' | 'odds'
 	currency: 'usd' | 'jpy' | 'crystals'
 	art: 'weapon' | 'character'
-	/** Umikin Mode: base character art instead of uncapped art */
-	simplePortraits?: boolean
 	/** The Until/Odds target, for showing its art */
 	target?: CatalogueItem
 }

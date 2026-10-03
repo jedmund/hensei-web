@@ -16,7 +16,6 @@
 	import { page } from '$app/state'
 	import { replaceState } from '$app/navigation'
 	import { readShare, seasonalPool, writeShare, type GachaShare } from '$lib/utils/gachaShare'
-	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import {
 		gachaGranblueIdFor,
 		gachaIdentityFor,
@@ -26,7 +25,6 @@
 	import type { CatalogueItem, GachaResult } from '$lib/types/gacha'
 
 	let { data } = $props()
-	const simplePortraits = getSimplePortraits()
 
 	type Operation = 'draw' | 'until' | 'odds'
 	type Currency = 'usd' | 'jpy' | 'crystals'
@@ -57,7 +55,7 @@
 	let failure = $state('')
 	let targetError = $state('')
 	let currency = $state<Currency>(getLocale() === 'ja' ? 'jpy' : 'usd')
-	let art = $state<'weapon' | 'character'>('weapon')
+	let art = $state<'weapon' | 'character'>('character')
 	let runController: AbortController | undefined
 	// The settings a result was produced with; the link carries its seed only
 	// while the settings still match
@@ -423,7 +421,6 @@
 		<GachaResults
 			{result}
 			target={items.find((item) => item.identity === result?.target)}
-			simplePortraits={simplePortraits.value}
 			{operation}
 			bind:currency
 			bind:art

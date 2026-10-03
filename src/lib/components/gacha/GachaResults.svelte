@@ -8,6 +8,7 @@
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Icon from '$lib/components/Icon.svelte'
+	import RichTooltip from '$lib/components/ui/RichTooltip.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import jpFlag from '$src/assets/flags/jp.png'
 	import usFlag from '$src/assets/flags/us.png'
@@ -18,7 +19,7 @@
 	import { toast } from 'svelte-sonner'
 	import { copyResultImage, gachaImageUrl } from '$lib/utils/gachaImage'
 	import {
-		gachaItemDetailFallbackImage,
+		gachaItemAlternateImage,
 		gachaItemDetailImage,
 		gachaItemFallbackImage,
 		gachaItemImage,
@@ -37,8 +38,6 @@
 		art?: Art
 		/** The Until target, shown large above the result */
 		target?: CatalogueItem
-		/** Umikin Mode: base character art instead of uncapped art */
-		simplePortraits?: boolean
 		/** Static layout for the share image: no controls, capped art */
 		share?: boolean
 		/** Pool and season, shown at the top left of the share image */
@@ -55,11 +54,10 @@
 		result,
 		operation,
 		currency = $bindable('usd'),
-		art = $bindable('weapon'),
+		art = $bindable('character'),
 		share = false,
 		label,
 		target,
-		simplePortraits = false,
 		link
 	}: Props = $props()
 
@@ -198,8 +196,7 @@
 		const url = gachaImageUrl(link, {
 			art,
 			currency,
-			lang: getLocale() === 'ja' ? 'ja' : 'en',
-			simplePortraits
+			lang: getLocale() === 'ja' ? 'ja' : 'en'
 		})
 		copyResultImage(url)
 			.then((outcome) =>
@@ -214,6 +211,14 @@
 		<span class="stat-label">{label}</span>
 		<span class="stat-value">{value}</span>
 	</div>
+{/snippet}
+
+{#snippet drawnImage(item: CatalogueItem)}
+	<img
+		src={gachaItemImage(item, art)}
+		alt={name(item)}
+		onerror={(event) => useFallback(event, item)}
+	/>
 {/snippet}
 
 {#snippet currencyMark()}
@@ -252,19 +257,15 @@
 							: undefined}
 					>
 						<img
-							src={gachaItemDetailImage(target, simplePortraits)}
+							src={gachaItemDetailImage(target)}
 							class:whole={gachaItemKind(target) === 'weapon'}
 							alt=""
 							onerror={(event) => {
-								// Base (_01) detail art first, then the grid art
+								// The grid art, once, when the detail art is missing
 								const img = event.currentTarget as HTMLImageElement
-								const steps = [gachaItemDetailFallbackImage(target), gachaItemImage(target)]
-								const step = Number(img.dataset.fallback ?? 0)
-								const next = steps.slice(step).find(Boolean)
-								if (next) {
-									img.dataset.fallback = String(steps.indexOf(next) + 1)
-									img.src = next
-								}
+								if (img.dataset.fallback) return
+								img.dataset.fallback = 'true'
+								img.src = gachaItemImage(target)
 							}}
 						/>
 						<div class="target-text">
@@ -309,8 +310,8 @@
 				size="xsmall"
 				variant="background"
 			>
-				<Segment value="weapon">{m.collection_tab_weapons()}</Segment>
 				<Segment value="character">{m.collection_tab_characters()}</Segment>
+				<Segment value="weapon">{m.collection_tab_weapons()}</Segment>
 			</SegmentedControl>
 		{/if}
 	</div>
@@ -323,12 +324,19 @@
 			bind:clientHeight={artHeight}
 		>
 			{#each drawnSsrs as item, index (index)}
-				<li title={name(item)}>
-					<img
-						src={gachaItemImage(item, art, simplePortraits)}
-						alt={name(item)}
-						onerror={(event) => useFallback(event, item)}
-					/>
+				{@const alternate = share ? undefined : gachaItemAlternateImage(item, art)}
+				<li title={alternate ? undefined : name(item)}>
+					{#if alternate}
+						<!-- The character for a weapon, or the weapon for a character -->
+						<RichTooltip class="drawn-trigger">
+							{#snippet content()}
+								<img class="alternate" src={alternate} alt="" />
+							{/snippet}
+							{@render drawnImage(item)}
+						</RichTooltip>
+					{:else}
+						{@render drawnImage(item)}
+					{/if}
 					{#if Number(item.count) > 1}
 						<span class="count">×{amount(item.count ?? '0')}</span>
 					{/if}
@@ -472,6 +480,20 @@
 			border-radius: $item-corner-small;
 			background: var(--placeholder-bg);
 		}
+
+		:global(.drawn-trigger) {
+			display: block;
+			height: 100%;
+		}
+	}
+
+	// Inside the tooltip, which is portalled out of the card
+	.alternate {
+		display: block;
+		width: 140px;
+		aspect-ratio: 280 / 160;
+		object-fit: cover;
+		border-radius: $item-corner-small;
 	}
 
 	.count {
