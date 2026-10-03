@@ -8,12 +8,14 @@
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import GachaItemPicker from '$lib/components/gacha/GachaItemPicker.svelte'
+	import Icon from '$lib/components/Icon.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { gachaItemImage, gachaItemName, gachaItemThumbnail } from '$lib/utils/gacha'
 	import type { CatalogueItem, GachaResult } from '$lib/types/gacha'
 
 	type Operation = 'draw' | 'until' | 'odds'
+	type Currency = 'usd' | 'jpy' | 'crystals'
 
 	let operation = $state<Operation>('draw')
 	let mode = $state('premium')
@@ -29,6 +31,8 @@
 	let busy = $state(false)
 	let loading = $state(true)
 	let failure = $state('')
+	let currency = $state<Currency>(getLocale() === 'ja' ? 'jpy' : 'usd')
+	let art = $state<'weapon' | 'character'>('weapon')
 	let runController: AbortController | undefined
 
 	const modeOptions = $derived([
@@ -61,11 +65,29 @@
 	const rateCandidates = $derived(
 		ssrs.filter((item) => !rateups.some((rate) => rate.identity === item.identity))
 	)
-	const drawnSsrs = $derived(
-		(result?.items ?? [])
-			.filter((item) => item.rarity === 3)
-			.sort((a, b) => Number(b.count ?? 0) - Number(a.count ?? 0))
+	// SSRs in the order they were drawn; runs too large for the API to report
+	// an order fall back to one tile per item with its count
+	const drawnSsrs = $derived.by(() => {
+		const ssrs = (result?.items ?? []).filter((item) => item.rarity === 3)
+		if (!result?.ssr_order) {
+			return ssrs.sort((a, b) => Number(b.count ?? 0) - Number(a.count ?? 0))
+		}
+		const byIdentity = new Map(ssrs.map((item) => [item.identity, item]))
+		return result.ssr_order.flatMap((identity) => {
+			const item = byIdentity.get(identity)
+			return item ? [{ ...item, count: '1' }] : []
+		})
+	})
+	const hasCharacterArt = $derived(drawnSsrs.some((item) => item.recruits?.granblue_id))
+	const currencies = $derived<Currency[]>(
+		result?.cost.usd ? ['usd', 'jpy', 'crystals'] : ['jpy', 'crystals']
 	)
+	const shownCurrency = $derived(currencies.includes(currency) ? currency : 'jpy')
+	const currencyIcons: Record<Currency, string> = {
+		usd: 'currency-usd',
+		jpy: 'currency-jpy',
+		crystals: 'crystal'
+	}
 
 	const name = (item: CatalogueItem) => gachaItemName(item, getLocale())
 	const itemFor = (identity: string) => items.find((item) => item.identity === identity)
@@ -80,6 +102,16 @@
 			style: 'percent',
 			maximumSignificantDigits: 4
 		}).format(value)
+	}
+	function cost(value: GachaResult['cost'], unit: Currency) {
+		if (unit === 'crystals') return `${amount(value.crystals)} ${m.gacha_crystals()}`
+		return new Intl.NumberFormat(getLocale(), {
+			style: 'currency',
+			currency: unit === 'usd' ? 'USD' : 'JPY'
+		}).format(Number(unit === 'usd' ? value.usd : value.jpy))
+	}
+	function nextCurrency() {
+		currency = currencies[(currencies.indexOf(shownCurrency) + 1) % currencies.length] ?? 'jpy'
 	}
 	function decimal(value: number) {
 		return new Intl.NumberFormat(getLocale(), { maximumFractionDigits: 2 }).format(value)
@@ -332,40 +364,53 @@
 
 	{#if result}
 		<section class="card results" aria-live="polite">
-			<div class="stats">
-				{#if operation === 'draw' && result.totals}
-					<div class="stat">
-						<span class="stat-label">SSR</span>
-						<span class="stat-value">{amount(result.totals.SSR)}</span>
-					</div>
-					<div class="stat">
-						<span class="stat-label">SR</span>
-						<span class="stat-value">{amount(result.totals.SR)}</span>
-					</div>
-					<div class="stat">
-						<span class="stat-label">R</span>
-						<span class="stat-value">{amount(result.totals.R)}</span>
-					</div>
-				{:else if operation === 'until'}
-					<div class="stat hero">
-						<span class="stat-label">{m.gacha_sampled()}</span>
-						<span class="stat-value">{amount(result.draws)}</span>
-					</div>
-					<div class="stat">
-						<span class="stat-label">{m.gacha_copies()}</span>
-						<span class="stat-value">{amount(result.copies ?? '0')}</span>
-					</div>
-				{:else if result.probability !== undefined}
-					<div class="stat hero">
-						<span class="stat-label">{m.gacha_probability()}</span>
-						<span class="stat-value">{percent(result.probability)}</span>
-					</div>
-					{#if result.expected_copies !== undefined}
+			<div class="results-head">
+				<div class="stats">
+					{#if operation === 'draw' && result.totals}
 						<div class="stat">
-							<span class="stat-label">{m.gacha_expected()}</span>
-							<span class="stat-value">{decimal(result.expected_copies)}</span>
+							<span class="stat-label">SSR</span>
+							<span class="stat-value">{amount(result.totals.SSR)}</span>
 						</div>
+						<div class="stat">
+							<span class="stat-label">SR</span>
+							<span class="stat-value">{amount(result.totals.SR)}</span>
+						</div>
+						<div class="stat">
+							<span class="stat-label">R</span>
+							<span class="stat-value">{amount(result.totals.R)}</span>
+						</div>
+					{:else if operation === 'until'}
+						<div class="stat hero">
+							<span class="stat-label">{m.gacha_sampled()}</span>
+							<span class="stat-value">{amount(result.draws)}</span>
+						</div>
+						<div class="stat">
+							<span class="stat-label">{m.gacha_copies()}</span>
+							<span class="stat-value">{amount(result.copies ?? '0')}</span>
+						</div>
+					{:else if result.probability !== undefined}
+						<div class="stat hero">
+							<span class="stat-label">{m.gacha_probability()}</span>
+							<span class="stat-value">{percent(result.probability)}</span>
+						</div>
+						{#if result.expected_copies !== undefined}
+							<div class="stat">
+								<span class="stat-label">{m.gacha_expected()}</span>
+								<span class="stat-value">{decimal(result.expected_copies)}</span>
+							</div>
+						{/if}
 					{/if}
+				</div>
+				{#if operation === 'draw' && hasCharacterArt}
+					<SegmentedControl
+						value={art}
+						onValueChange={(value) => (art = value as typeof art)}
+						size="xsmall"
+						variant="background"
+					>
+						<Segment value="weapon">{m.collection_tab_weapons()}</Segment>
+						<Segment value="character">{m.collection_tab_characters()}</Segment>
+					</SegmentedControl>
 				{/if}
 			</div>
 
@@ -385,9 +430,9 @@
 
 			{#if drawnSsrs.length > 0}
 				<ul class="drawn">
-					{#each drawnSsrs as item (item.identity)}
+					{#each drawnSsrs as item, index (index)}
 						<li title={name(item)}>
-							<img src={gachaItemImage(item)} alt={name(item)} />
+							<img src={gachaItemImage(item, art)} alt={name(item)} />
 							{#if Number(item.count) > 1}
 								<span class="count">×{amount(item.count ?? '0')}</span>
 							{/if}
@@ -397,11 +442,12 @@
 			{/if}
 
 			<footer class="meta">
-				<span class="cost">
-					{amount(result.cost.crystals)}
-					{m.gacha_crystals()} · ¥{amount(result.cost.jpy)}
-					{#if result.cost.usd}· ${amount(result.cost.usd)}{/if}
-				</span>
+				<div class="cost">
+					<button type="button" onclick={nextCurrency}>
+						<Icon name={currencyIcons[shownCurrency]} size={16} />
+						{cost(result.cost, shownCurrency)}
+					</button>
+				</div>
 				<span class="seed">
 					{m.gacha_replay_seed()}
 					<CopyableText value={result.seed} />
@@ -416,6 +462,7 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/colors' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/effects' as *;
@@ -445,6 +492,14 @@
 			font-size: $font-xlarge;
 			font-weight: $bold;
 		}
+	}
+
+	.results-head {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: $unit-2x;
 	}
 
 	.card {
@@ -599,6 +654,27 @@
 
 	.cost {
 		flex: 1;
+
+		button {
+			all: unset;
+			display: inline-flex;
+			align-items: center;
+			gap: $unit-half;
+			margin-left: -$unit;
+			padding: $unit-half $unit;
+			border-radius: $item-corner-small;
+			cursor: pointer;
+			@include smooth-transition($duration-quick, background-color, color);
+
+			&:hover {
+				background-color: var(--option-bg-hover);
+				color: var(--text-primary);
+			}
+
+			&:focus-visible {
+				outline: 2px solid $blue;
+			}
+		}
 	}
 
 	.seed {

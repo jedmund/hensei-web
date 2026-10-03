@@ -19,8 +19,14 @@ export function gachaItemName(item: CatalogueItem, locale: string): string {
 	return (locale === 'ja' ? names.ja : names.en) || names.en || item.name.en
 }
 
-/** Wide grid art, used for draw results and rate-up rows */
-export function gachaItemImage(item: CatalogueItem): string {
+/** Wide grid art, used for draw results */
+export function gachaItemImage(
+	item: CatalogueItem,
+	art: 'weapon' | 'character' = 'weapon'
+): string {
+	if (art === 'character' && item.recruits?.granblue_id) {
+		return getCharacterImage(item.recruits.granblue_id, 'grid', '01')
+	}
 	return item.drawable_type === 'Summon'
 		? getSummonImage(item.granblue_id, 'grid')
 		: getWeaponGridImage(item.granblue_id, item.element)
