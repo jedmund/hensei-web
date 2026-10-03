@@ -62,9 +62,9 @@ export const GET: RequestHandler = async ({ url, request, fetch }) => {
 	const limiter = signature === 'signed' ? signedLimiter : unsignedLimiter
 	if (ip && !limiter.hit(`gacha-image:${signature}:${ip}`)) return tooManyRequests()
 
-	let result
+	let simulation
 	try {
-		result = await runShare(fetch, imageRequest.share)
+		simulation = await runShare(fetch, imageRequest.share)
 	} catch (err) {
 		if (err instanceof SimulationError) {
 			if (err.status === 429) return tooManyRequests(err.retryAfter)
@@ -77,10 +77,12 @@ export const GET: RequestHandler = async ({ url, request, fetch }) => {
 	if (!template) throw error(500, 'Render template missing')
 
 	const data: GachaRenderData = {
-		result,
+		result: simulation.result,
 		operation: imageRequest.share.operation,
 		currency: imageRequest.currency,
-		art: imageRequest.art
+		art: imageRequest.art,
+		simplePortraits: imageRequest.simplePortraits,
+		...(simulation.target ? { target: simulation.target } : {})
 	}
 	const prefetch = storePrefetch(data)
 

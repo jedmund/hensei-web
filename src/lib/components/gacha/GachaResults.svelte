@@ -6,11 +6,20 @@
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Icon from '$lib/components/Icon.svelte'
+	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import jpFlag from '$src/assets/flags/jp.png'
 	import usFlag from '$src/assets/flags/us.png'
 	import * as m from '$lib/paraglide/messages'
+	import { getElementKey } from '$lib/utils/element'
 	import { getLocale } from '$lib/paraglide/runtime'
-	import { gachaItemFallbackImage, gachaItemImage, gachaItemName } from '$lib/utils/gacha'
+	import {
+		gachaItemDetailFallbackImage,
+		gachaItemDetailImage,
+		gachaItemFallbackImage,
+		gachaItemImage,
+		gachaItemKind,
+		gachaItemName
+	} from '$lib/utils/gacha'
 	import type { CatalogueItem, GachaRenderData, GachaResult } from '$lib/types/gacha'
 
 	type Currency = GachaRenderData['currency']
@@ -22,6 +31,10 @@
 		currency?: Currency
 		art?: Art
 		busy?: boolean
+		/** The Until target, shown large above the result */
+		target?: CatalogueItem
+		/** Umikin Mode: base character art instead of uncapped art */
+		simplePortraits?: boolean
 		/** Static layout for the share image: no controls, capped art */
 		share?: boolean
 		/** Pool and season, shown at the top left of the share image */
@@ -39,6 +52,8 @@
 		busy = false,
 		share = false,
 		label,
+		target,
+		simplePortraits = false,
 		onReplay,
 		onCopyLink,
 		onCopyImage
@@ -69,7 +84,7 @@
 	// One fallback attempt per image, so a missing fallback can't loop
 	function useFallback(event: Event, item: CatalogueItem) {
 		const img = event.currentTarget as HTMLImageElement
-		const fallback = gachaItemFallbackImage(item)
+		const fallback = gachaItemFallbackImage(item, art)
 		if (fallback && !img.dataset.fallback) {
 			img.dataset.fallback = 'true'
 			img.src = fallback
@@ -144,7 +159,12 @@
 	{cost(result.cost, shownCurrency)}
 {/snippet}
 
-<section class="card results" class:share aria-live={share ? undefined : 'polite'}>
+<section
+	class="card results"
+	class:share
+	class:until={operation === 'until'}
+	aria-live={share ? undefined : 'polite'}
+>
 	{#if share && label}
 		<div class="share-label">{label}</div>
 	{/if}
@@ -158,6 +178,40 @@
 					{/each}
 				</div>
 			{:else if operation === 'until'}
+				{#if target}
+					<div
+						class="target"
+						style:--tint={target.element > 0
+							? `color-mix(in srgb, var(--${getElementKey(target.element)}-bg) 25%, var(--page-bg))`
+							: undefined}
+					>
+						<img
+							src={gachaItemDetailImage(target, simplePortraits)}
+							class:whole={gachaItemKind(target) === 'weapon'}
+							alt=""
+							onerror={(event) => {
+								// Base (_01) detail art first, then the grid art
+								const img = event.currentTarget as HTMLImageElement
+								const steps = [gachaItemDetailFallbackImage(target), gachaItemImage(target)]
+								const step = Number(img.dataset.fallback ?? 0)
+								const next = steps.slice(step).find(Boolean)
+								if (next) {
+									img.dataset.fallback = String(steps.indexOf(next) + 1)
+									img.src = next
+								}
+							}}
+						/>
+						<div class="target-text">
+							<span class="stat-label">{m.gacha_target()}</span>
+							<span class="target-title">
+								<span class="target-name">{name(target)}</span>
+								{#if target.element > 0}
+									<ElementLabel element={target.element} size="medium" />
+								{/if}
+							</span>
+						</div>
+					</div>
+				{/if}
 				<div class="tiles" style:--columns="2">
 					{@render tile(m.gacha_sampled(), amount(result.draws))}
 					{@render tile(m.gacha_copies(), amount(result.copies ?? '0'))}
@@ -205,7 +259,7 @@
 			{#each drawnSsrs as item, index (index)}
 				<li title={name(item)}>
 					<img
-						src={gachaItemImage(item, art)}
+						src={gachaItemImage(item, art, simplePortraits)}
 						alt={name(item)}
 						onerror={(event) => useFallback(event, item)}
 					/>
@@ -364,8 +418,6 @@
 		align-items: center;
 		flex-wrap: wrap;
 		gap: $unit-2x;
-		padding-top: $unit-2x;
-		border-top: 1px solid var(--separator-bg);
 		color: var(--text-secondary);
 		font-size: $font-small;
 	}
@@ -429,6 +481,112 @@
 
 		.meta {
 			margin-top: auto;
+		}
+	}
+
+	.target {
+		position: relative;
+		display: flex;
+		align-items: flex-end;
+		height: 228px;
+		padding: $unit-2x;
+		border-radius: $card-corner;
+		// Tinted with the target's element; plain page background otherwise
+		background: var(--tint, var(--page-bg));
+		overflow: hidden;
+
+		// The art covers the banner; weapon art (nearly square) stays whole
+		img {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center 20%;
+
+			&.whole {
+				left: auto;
+				width: 50%;
+				object-fit: contain;
+				object-position: right center;
+			}
+		}
+
+		// Fade from the left so the name stays readable over the art
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(
+				90deg,
+				var(--tint, var(--page-bg)) 0%,
+				color-mix(in srgb, var(--tint, var(--page-bg)) 60%, transparent) 30%,
+				transparent 55%
+			);
+		}
+
+		@media (max-width: 450px) {
+			flex-direction: column;
+			align-items: stretch;
+			height: auto;
+			padding: 0;
+
+			img {
+				position: static;
+				width: 100%;
+				max-width: 100%;
+				height: 160px;
+				object-fit: cover;
+				object-position: center top;
+
+				// Weapon art is nearly square; keep it whole
+				&.whole {
+					object-fit: contain;
+					object-position: center;
+				}
+			}
+
+			&::after {
+				content: none;
+			}
+
+			.target-text {
+				padding: $unit-2x;
+			}
+		}
+	}
+
+	.target-text {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		flex-direction: column;
+		gap: $unit-half;
+	}
+
+	.target-title {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: $unit;
+	}
+
+	.target-name {
+		font-size: $font-xxlarge;
+		font-weight: $bold;
+	}
+
+	// Until has no art grid, so in the share image the target fills the card
+	.share.until {
+		.results-head,
+		.stats,
+		.target {
+			flex: 1;
+			min-height: 0;
+		}
+
+		.target {
+			height: auto;
 		}
 	}
 

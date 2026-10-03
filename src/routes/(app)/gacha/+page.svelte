@@ -16,10 +16,12 @@
 	import { replaceState } from '$app/navigation'
 	import { readShare, writeShare, type GachaShare } from '$lib/utils/gachaShare'
 	import { copyResultImage, gachaImageUrl } from '$lib/utils/gachaImage'
+	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import { gachaItemName, gachaItemThumbnail } from '$lib/utils/gacha'
 	import type { CatalogueItem, GachaResult } from '$lib/types/gacha'
 
 	let { data } = $props()
+	const simplePortraits = getSimplePortraits()
 
 	type Operation = 'draw' | 'until' | 'odds'
 	type Currency = 'usd' | 'jpy' | 'crystals'
@@ -237,23 +239,31 @@
 	}
 
 	// Keep the address bar in step with the settings, adding the seed while
-	// the shown result still matches them
+	// the shown result still matches them. Updates are applied on a timer
+	// against the real address bar, so one queued before the result arrives
+	// can't win over the newer one.
+	let wantedQuery = ''
+	let syncScheduled = false
+	function syncUrl() {
+		syncScheduled = false
+		const search = wantedQuery ? `?${wantedQuery}` : ''
+		if (window.location.search === search) return
+		try {
+			replaceState(`${window.location.pathname}${search}`, page.state)
+		} catch {
+			// Right after hydration the router may not accept history updates yet
+			syncScheduled = true
+			setTimeout(syncUrl, 50)
+		}
+	}
 	$effect(() => {
 		if (!restored) return
 		const settings = currentShare()
-		const query = result && resultShare === settings ? currentShare(result.seed) : settings
-		untrack(() => {
-			if (page.url.search === (query ? `?${query}` : '')) return
-			const href = `${page.url.pathname}${query ? `?${query}` : ''}`
-			// Right after hydration the router may not accept history updates yet
-			setTimeout(() => {
-				try {
-					replaceState(href, page.state)
-				} catch {
-					// The URL catches up on the next change
-				}
-			}, 0)
-		})
+		wantedQuery = result && resultShare === settings ? currentShare(result.seed) : settings
+		if (!syncScheduled) {
+			syncScheduled = true
+			setTimeout(syncUrl, 0)
+		}
 	})
 
 	// Built from the settings the result came from, so later edits to the form
@@ -265,7 +275,8 @@
 			gachaImageUrl(query, {
 				art,
 				currency,
-				lang: getLocale() === 'ja' ? 'ja' : 'en'
+				lang: getLocale() === 'ja' ? 'ja' : 'en',
+				simplePortraits: simplePortraits.value
 			})
 		)
 			.then((outcome) =>
@@ -451,6 +462,8 @@
 	{#if result}
 		<GachaResults
 			{result}
+			target={items.find((item) => item.identity === result?.target)}
+			simplePortraits={simplePortraits.value}
 			{operation}
 			{busy}
 			bind:currency

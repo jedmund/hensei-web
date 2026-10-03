@@ -1,6 +1,9 @@
 import {
+	getCharacterDetailImage,
 	getCharacterImage,
+	getSummonDetailImage,
 	getSummonImage,
+	getWeaponBaseImage,
 	getWeaponGridImage,
 	getWeaponImage
 } from '$lib/utils/images'
@@ -19,22 +22,57 @@ export function gachaItemName(item: CatalogueItem, locale: string): string {
 	return (locale === 'ja' ? names.ja : names.en) || names.en || item.name.en
 }
 
+// Characters show their uncapped (_02) art, or their base (_01) art in
+// Umikin Mode; _01 is also the fallback when an _02 image is missing
+const characterPose = (simplePortraits: boolean) => (simplePortraits ? '01' : '02')
+
 /** Wide grid art, used for draw results */
 export function gachaItemImage(
 	item: CatalogueItem,
-	art: 'weapon' | 'character' = 'weapon'
+	art: 'weapon' | 'character' = 'weapon',
+	simplePortraits = false
 ): string {
 	if (art === 'character' && item.recruits?.granblue_id) {
-		return getCharacterImage(item.recruits.granblue_id, 'grid', '01')
+		return getCharacterImage(item.recruits.granblue_id, 'grid', characterPose(simplePortraits))
 	}
 	return item.drawable_type === 'Summon'
 		? getSummonImage(item.granblue_id, 'wide')
 		: getWeaponGridImage(item.granblue_id, item.element)
 }
 
-/** Fallback art when an item's result image is missing: summons' grid art */
-export function gachaItemFallbackImage(item: CatalogueItem): string | undefined {
-	return item.drawable_type === 'Summon' ? getSummonImage(item.granblue_id, 'grid') : undefined
+/**
+ * Large art for a featured item: the character's or summon's detail art, or
+ * the weapon's base art for weapons without a character
+ */
+export function gachaItemDetailImage(item: CatalogueItem, simplePortraits = false): string {
+	const kind = gachaItemKind(item)
+	if (kind === 'summon') return getSummonDetailImage(item.granblue_id)
+	if (kind === 'character' && item.recruits?.granblue_id) {
+		return getCharacterDetailImage(item.recruits.granblue_id, characterPose(simplePortraits))
+	}
+	return getWeaponBaseImage(item.granblue_id)
+}
+
+/** Base (_01) detail art, the fallback for a character missing its _02 art */
+export function gachaItemDetailFallbackImage(item: CatalogueItem): string | undefined {
+	return gachaItemKind(item) === 'character' && item.recruits?.granblue_id
+		? getCharacterDetailImage(item.recruits.granblue_id, '01')
+		: undefined
+}
+
+/**
+ * Fallback art when an item's result image is missing: summons' grid art, or
+ * a character's base (_01) art
+ */
+export function gachaItemFallbackImage(
+	item: CatalogueItem,
+	art: 'weapon' | 'character' = 'weapon'
+): string | undefined {
+	if (item.drawable_type === 'Summon') return getSummonImage(item.granblue_id, 'grid')
+	if (art === 'character' && item.recruits?.granblue_id) {
+		return getCharacterImage(item.recruits.granblue_id, 'grid', '01')
+	}
+	return undefined
 }
 
 /** Square thumbnail, used in the picker */

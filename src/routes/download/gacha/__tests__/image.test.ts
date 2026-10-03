@@ -106,7 +106,11 @@ describe('GET /download/gacha', () => {
 		expect(renders[0]?.path).toMatch(/^\/ja\/_render\/gacha\/result\?prefetch=/)
 
 		const token = new URL(`http://x${renders[0]?.path}`).searchParams.get('prefetch')
-		expect(consumePrefetch(token)).toMatchObject({ operation: 'odds', currency: 'jpy' })
+		expect(consumePrefetch(token)).toMatchObject({
+			operation: 'odds',
+			currency: 'jpy',
+			target: { identity: 'Weapon:octavia' }
+		})
 	})
 
 	it('serves repeat requests from the cache without re-running', async () => {
@@ -171,7 +175,7 @@ describe('GET /download/gacha', () => {
 						})
 			}
 		})
-		const result = await gacha.runShare(
+		const { result } = await gacha.runShare(
 			fetch as never,
 			gacha.parseImageRequest(new URLSearchParams('seed=abc&draws=20000'))!.share,
 			async () => {}
