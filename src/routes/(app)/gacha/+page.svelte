@@ -228,20 +228,6 @@
 <PageMeta title={m.gacha_title()} description={m.gacha_notice()} />
 
 <div class="gacha-page">
-	<header class="page-header">
-		<h1>{m.gacha_title()}</h1>
-		<SegmentedControl
-			value={operation}
-			onValueChange={selectOperation}
-			size="small"
-			variant="background"
-		>
-			<Segment value="draw" disabled={busy}>{m.gacha_draw()}</Segment>
-			<Segment value="until" disabled={busy}>{m.gacha_until()}</Segment>
-			<Segment value="odds" disabled={busy}>{m.gacha_odds()}</Segment>
-		</SegmentedControl>
-	</header>
-
 	<form
 		class="card"
 		onsubmit={(event) => {
@@ -249,6 +235,19 @@
 			void run()
 		}}
 	>
+		<div>
+			<SegmentedControl
+				value={operation}
+				onValueChange={selectOperation}
+				size="small"
+				variant="background"
+				grow
+			>
+				<Segment value="draw" disabled={busy}>{m.gacha_draw()}</Segment>
+				<Segment value="until" disabled={busy}>{m.gacha_until()}</Segment>
+				<Segment value="odds" disabled={busy}>{m.gacha_odds()}</Segment>
+			</SegmentedControl>
+		</div>
 		<div class="fields">
 			<Select contained label={m.gacha_mode()} options={modeOptions} bind:value={mode} fullWidth />
 			{#if !classic}
@@ -484,22 +483,8 @@
 		flex-direction: column;
 		gap: $unit-2x;
 
-		h1,
 		h2 {
 			margin: 0;
-		}
-	}
-
-	.page-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		flex-wrap: wrap;
-		gap: $unit-2x;
-
-		h1 {
-			font-size: $font-xlarge;
-			font-weight: $bold;
 		}
 	}
 
