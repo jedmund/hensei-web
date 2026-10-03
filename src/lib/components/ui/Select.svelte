@@ -542,6 +542,7 @@
 		display: flex;
 		gap: $unit;
 		padding: $unit $unit-2x $unit $unit;
+		position: relative;
 		user-select: none;
 		@include smooth-transition($duration-quick, background-color);
 
@@ -596,9 +597,16 @@
 			}
 		}
 
+		// Suffixes keep room for the check so they stay aligned across items
 		.suffix {
 			color: var(--text-tertiary);
 			font-size: $font-small;
+			padding-right: calc(14px + #{$unit});
+		}
+
+		.suffix + :global(.indicator) {
+			position: absolute;
+			right: $unit-2x;
 		}
 
 		.image {

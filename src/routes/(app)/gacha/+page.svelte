@@ -37,14 +37,30 @@
 	let art = $state<'weapon' | 'character'>('weapon')
 	let runController: AbortController | undefined
 
-	const modeOptions = $derived([
-		{ value: 'premium', label: m.gacha_premium() },
-		{ value: 'legend', label: m.gacha_legend() },
-		{ value: 'flash', label: m.gacha_flash() },
-		{ value: 'classic', label: m.gacha_classic() },
-		{ value: 'classic_ii', label: m.gacha_classic_ii() },
-		{ value: 'classic_iii', label: m.gacha_classic_iii() }
-	])
+	// Base SSR rates, matching the API's simulation: 6% for the galas, 3% otherwise
+	const ssrRates: Record<string, number> = {
+		premium: 0.03,
+		legend: 0.06,
+		flash: 0.06,
+		classic: 0.03,
+		classic_ii: 0.03,
+		classic_iii: 0.03
+	}
+	const modeOptions = $derived(
+		[
+			{ value: 'premium', label: m.gacha_premium() },
+			{ value: 'legend', label: m.gacha_legend() },
+			{ value: 'flash', label: m.gacha_flash() },
+			{ value: 'classic', label: m.gacha_classic() },
+			{ value: 'classic_ii', label: m.gacha_classic_ii() },
+			{ value: 'classic_iii', label: m.gacha_classic_iii() }
+		].map((option) => ({
+			...option,
+			suffix: new Intl.NumberFormat(getLocale(), { style: 'percent' }).format(
+				ssrRates[option.value] ?? 0.03
+			)
+		}))
+	)
 	const seasonOptions = $derived([
 		{ value: '', label: m.gacha_none() },
 		{ value: 'valentines', label: m.gacha_valentines() },
@@ -249,7 +265,14 @@
 			</SegmentedControl>
 		</div>
 		<div class="fields">
-			<Select contained label={m.gacha_mode()} options={modeOptions} bind:value={mode} fullWidth />
+			<Select
+				contained
+				label={m.gacha_mode()}
+				options={modeOptions}
+				bind:value={mode}
+				contentWidthOffset={40}
+				fullWidth
+			/>
 			{#if !classic}
 				<Select
 					contained
