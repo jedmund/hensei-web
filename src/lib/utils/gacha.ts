@@ -28,8 +28,13 @@ export function gachaItemImage(
 		return getCharacterImage(item.recruits.granblue_id, 'grid', '01')
 	}
 	return item.drawable_type === 'Summon'
-		? getSummonImage(item.granblue_id, 'grid')
+		? getSummonImage(item.granblue_id, 'wide')
 		: getWeaponGridImage(item.granblue_id, item.element)
+}
+
+/** Fallback art when an item's result image is missing: summons' grid art */
+export function gachaItemFallbackImage(item: CatalogueItem): string | undefined {
+	return item.drawable_type === 'Summon' ? getSummonImage(item.granblue_id, 'grid') : undefined
 }
 
 /** Square thumbnail, used in the picker */

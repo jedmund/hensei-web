@@ -49,6 +49,40 @@ function buildAllowlist(): Set<string> {
 	return allowed
 }
 
+/**
+ * At most this many renders run at once; later ones wait in a short queue.
+ * Public endpoints can be hit by anyone, so a burst must not open an unbounded
+ * number of browser contexts.
+ */
+const MAX_CONCURRENT_RENDERS = 2
+const MAX_QUEUED_RENDERS = 16
+
+/** Thrown when the render queue is full; callers should answer 503. */
+export class RenderBusyError extends Error {
+	constructor() {
+		super('Render queue is full')
+		this.name = 'RenderBusyError'
+	}
+}
+
+let activeRenders = 0
+const renderQueue: Array<() => void> = []
+
+async function acquireRenderSlot(): Promise<void> {
+	if (activeRenders < MAX_CONCURRENT_RENDERS) {
+		activeRenders += 1
+		return
+	}
+	if (renderQueue.length >= MAX_QUEUED_RENDERS) throw new RenderBusyError()
+	await new Promise<void>((resolve) => renderQueue.push(resolve))
+	activeRenders += 1
+}
+
+function releaseRenderSlot(): void {
+	activeRenders -= 1
+	renderQueue.shift()?.()
+}
+
 let browserPromise: Promise<Browser> | null = null
 let idleTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -174,11 +208,18 @@ export async function renderToImage(opts: RenderOptions): Promise<Buffer> {
 	const url = `${origin.replace(/\/$/, '')}${path.startsWith('/') ? path : `/${path}`}`
 	const internalHostname = new URL(origin).hostname
 
-	const browser = await getBrowser()
-	const context = await browser.newContext({
-		viewport,
-		deviceScaleFactor: 2 // sharp output on retina-class displays
-	})
+	await acquireRenderSlot()
+	let context: BrowserContext
+	try {
+		const browser = await getBrowser()
+		context = await browser.newContext({
+			viewport,
+			deviceScaleFactor: 2 // sharp output on retina-class displays
+		})
+	} catch (err) {
+		releaseRenderSlot()
+		throw err
+	}
 
 	let page: Page | null = null
 	try {
@@ -194,5 +235,6 @@ export async function renderToImage(opts: RenderOptions): Promise<Buffer> {
 	} finally {
 		await context.close().catch(() => {})
 		resetIdleTimer()
+		releaseRenderSlot()
 	}
 }

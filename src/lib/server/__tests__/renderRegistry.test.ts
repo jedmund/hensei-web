@@ -27,4 +27,12 @@ describe('renderRegistry', () => {
 	it('internalPath for _health is the smoke-test route', () => {
 		expect(TEMPLATES._health.internalPath({})).toBe('/_render/_health')
 	})
+
+	it('internalPath for gacha.result carries the prefetch token and locale', () => {
+		const t = TEMPLATES['gacha.result']
+		expect(t.internalPath({ prefetch: 'abc' })).toBe('/_render/gacha/result?prefetch=abc')
+		expect(t.internalPath({ prefetch: 'abc', locale: 'ja' })).toBe(
+			'/ja/_render/gacha/result?prefetch=abc'
+		)
+	})
 })
