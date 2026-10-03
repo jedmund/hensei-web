@@ -9,6 +9,7 @@
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import RichTooltip from '$lib/components/ui/RichTooltip.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import jpFlag from '$src/assets/flags/jp.png'
@@ -330,7 +331,8 @@
 		>
 			{#each drawnSsrs as item, index (index)}
 				{@const alternate = share ? undefined : gachaItemAlternateImage(item, art)}
-				<li title={alternate ? undefined : name(item)}>
+				{@const summon = !share && gachaItemKind(item) === 'summon'}
+				<li title={alternate || summon ? undefined : name(item)}>
 					{#if alternate}
 						<!-- The character for a weapon, or the weapon for a character -->
 						<RichTooltip class="drawn-trigger">
@@ -353,6 +355,10 @@
 							{/snippet}
 							{@render drawnImage(item)}
 						</RichTooltip>
+					{:else if summon}
+						<Tooltip class="drawn-trigger" content={name(item)}>
+							{@render drawnImage(item)}
+						</Tooltip>
 					{:else}
 						{@render drawnImage(item)}
 					{/if}
