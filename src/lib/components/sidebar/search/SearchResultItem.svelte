@@ -74,7 +74,7 @@
 </script>
 
 {#snippet content()}
-	<div class="result-image-wrapper">
+	<div class="result-image-wrapper" class:tall={weaponName}>
 		<img
 			src={imageUrl}
 			alt={itemName}
@@ -210,6 +210,12 @@
 			width: 48px;
 			height: 48px;
 			flex-shrink: 0;
+
+			// Rows with a weapon line have three lines of text
+			&.tall {
+				width: 56px;
+				height: 56px;
+			}
 		}
 
 		.result-image {
