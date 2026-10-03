@@ -15,8 +15,11 @@
 	import { page } from '$app/state'
 	import { replaceState } from '$app/navigation'
 	import { readShare, writeShare, type GachaShare } from '$lib/utils/gachaShare'
+	import { copyResultImage, gachaImageUrl } from '$lib/utils/gachaImage'
 	import { gachaItemName, gachaItemThumbnail } from '$lib/utils/gacha'
 	import type { CatalogueItem, GachaResult } from '$lib/types/gacha'
+
+	let { data } = $props()
 
 	type Operation = 'draw' | 'until' | 'odds'
 	type Currency = 'usd' | 'jpy' | 'crystals'
@@ -253,6 +256,24 @@
 		})
 	})
 
+	// Built from the settings the result came from, so later edits to the form
+	// can't pair the seed with different settings
+	function copyImage() {
+		if (!result) return
+		const query = `${resultShare ? `${resultShare}&` : ''}seed=${encodeURIComponent(result.seed)}`
+		copyResultImage(
+			gachaImageUrl(query, {
+				art,
+				currency,
+				lang: getLocale() === 'ja' ? 'ja' : 'en'
+			})
+		)
+			.then((outcome) =>
+				toast.success(outcome === 'copied' ? m.toast_copied() : m.gacha_image_saved())
+			)
+			.catch(() => toast.error(m.toast_copy_failed()))
+	}
+
 	async function copyLink() {
 		try {
 			await navigator.clipboard.writeText(window.location.href)
@@ -277,7 +298,13 @@
 	}
 </script>
 
-<PageMeta title={m.gacha_title()} description={m.gacha_notice()} />
+<PageMeta
+	title={m.gacha_title()}
+	description={m.gacha_notice()}
+	image={data.ogImage ?? undefined}
+	imageWidth={1200}
+	imageHeight={630}
+/>
 
 <div class="gacha-page">
 	<form
@@ -429,6 +456,7 @@
 			bind:currency
 			bind:art
 			onCopyLink={copyLink}
+			onCopyImage={copyImage}
 			onReplay={() => void run(true)}
 		/>
 	{/if}
