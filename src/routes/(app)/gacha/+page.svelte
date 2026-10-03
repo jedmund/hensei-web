@@ -265,23 +265,17 @@
 			</SegmentedControl>
 		</div>
 		<div class="fields">
+			<Select contained label={m.gacha_mode()} options={modeOptions} bind:value={mode} fullWidth />
+			<!-- Classic pools have no seasons; the choice is kept for other pools -->
 			<Select
 				contained
-				label={m.gacha_mode()}
-				options={modeOptions}
-				bind:value={mode}
-				contentWidthOffset={40}
+				label={m.gacha_season()}
+				options={seasonOptions}
+				value={classic ? '' : season}
+				onValueChange={(value) => (season = value ?? '')}
+				disabled={classic}
 				fullWidth
 			/>
-			{#if !classic}
-				<Select
-					contained
-					label={m.gacha_season()}
-					options={seasonOptions}
-					bind:value={season}
-					fullWidth
-				/>
-			{/if}
 			<Select
 				contained
 				label={m.gacha_purchase()}
