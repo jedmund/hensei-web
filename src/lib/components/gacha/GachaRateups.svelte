@@ -42,6 +42,15 @@
 
 <section class="rateups">
 	<h2>{m.gacha_rates()}</h2>
+	<!-- Above the list, so it stays put as rate-ups are added -->
+	<GachaItemPicker
+		contained
+		placeholder={m.gacha_search_items()}
+		items={candidates}
+		clearOnSelect
+		onValueChange={add}
+		{disabled}
+	/>
 	{#each rateups as rate (rate.identity)}
 		{@const item = itemFor(rate.identity)}
 		<div class="rateup">
@@ -72,14 +81,6 @@
 			/>
 		</div>
 	{/each}
-	<GachaItemPicker
-		contained
-		placeholder={m.gacha_search_items()}
-		items={candidates}
-		clearOnSelect
-		onValueChange={add}
-		{disabled}
-	/>
 </section>
 
 <style lang="scss">
