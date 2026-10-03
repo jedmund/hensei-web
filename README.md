@@ -36,3 +36,24 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+
+## Gacha simulator
+
+`/gacha` is public and calls the shared Hensei API through `/api/gacha/*` server
+routes. Configure `PUBLIC_SIERO_API_URL` as the API origin (no version suffix), as
+with the existing adapters. The existing server fetch hook supplies verified
+client-IP headers. Deploy the API's gacha routes before this client, and run Redis
+and Sidekiq for simulations over 10,000 draws.
+
+Draw, Until and Odds share pool, season, purchase mode and custom SSR percentage
+controls. Until prominently shows one sampled waiting time; Odds uses analytical
+probabilities and attainment thresholds. Seeds replay the saved result's
+configuration. Custom rates live only in page state, are cleared when the pool
+changes, and never write authenticated saved settings. All six pools and five
+seasons (including Formal) are available; Classic excludes seasons.
+
+Rates are percentages, so 0.3 means 0.3%. Large counts and money remain strings.
+The page labels hypothetical catalogue assumptions, excludes spark exchange, and
+shows dated Frankfurter/ECB reference estimates when available. USD estimates
+exclude payment-provider conversion charges. Shared authenticated saves remain
+separate work under the verified Discord-to-Hensei identity contract.
