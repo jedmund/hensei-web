@@ -36,7 +36,7 @@ export const TEMPLATE_ID = 'gacha.result'
 export const RENDER_VERSION = 1
 // Bump when the share image's design changes, so cached images re-render
 // without changing signatures on links that are already shared
-const DESIGN_VERSION = 3
+const DESIGN_VERSION = 4
 
 const ARTS = ['weapon', 'character'] as const
 const CURRENCIES = ['usd', 'jpy', 'crystals'] as const
