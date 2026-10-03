@@ -1,13 +1,16 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
+	import LegalConsent from './LegalConsent.svelte'
 
 	interface Props {
 		title: string
 		children: Snippet
 		footer?: Snippet
+		/** Shows the Terms/Privacy acceptance line, for pages that can create an account. */
+		legalConsent?: boolean
 	}
 
-	let { title, children, footer }: Props = $props()
+	let { title, children, footer, legalConsent = false }: Props = $props()
 </script>
 
 <div class="authCard">
@@ -19,6 +22,9 @@
 		<div class="footer">
 			{@render footer()}
 		</div>
+	{/if}
+	{#if legalConsent}
+		<LegalConsent />
 	{/if}
 </div>
 

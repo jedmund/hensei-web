@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import type { Snippet } from 'svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -10,6 +11,11 @@
 		confirmLabel?: string
 		cancelLabel?: string
 		loading?: boolean
+		/** Destructive by default; use primary when confirming undoes something. */
+		confirmVariant?: 'destructive' | 'primary'
+		confirmDisabled?: boolean
+		/** Extra content (e.g. a password field) between the message and the buttons. */
+		children?: Snippet
 		onconfirm: () => void
 		oncancel?: () => void
 	}
@@ -21,6 +27,9 @@
 		confirmLabel = m.action_confirm_delete(),
 		cancelLabel = m.action_cancel(),
 		loading = false,
+		confirmVariant = 'destructive',
+		confirmDisabled = false,
+		children,
 		onconfirm,
 		oncancel
 	}: Props = $props()
@@ -39,11 +48,18 @@
 	<div class="confirm-dialog">
 		<h3 class="title">{title}</h3>
 		<p class="message">{message}</p>
+		{@render children?.()}
 		<div class="actions">
 			<Button variant="ghost" size="small" onclick={handleCancel} disabled={loading}>
 				{cancelLabel}
 			</Button>
-			<Button variant="destructive" size="small" onclick={handleConfirm} {loading}>
+			<Button
+				variant={confirmVariant}
+				size="small"
+				onclick={handleConfirm}
+				{loading}
+				disabled={confirmDisabled || loading}
+			>
 				{confirmLabel}
 			</Button>
 		</div>

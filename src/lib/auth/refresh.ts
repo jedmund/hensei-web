@@ -20,6 +20,7 @@ export type OAuthRefreshResponse = {
 		id: string
 		username: string
 		role: number
+		deletion_scheduled_at?: string | null
 	}
 }
 
@@ -75,7 +76,8 @@ export async function performRefresh(
 			username: data.user.username,
 			token: data.access_token,
 			role: data.user.role,
-			expires_at: accessTokenExpiresAt.toISOString()
+			expires_at: accessTokenExpiresAt.toISOString(),
+			deletionScheduledAt: data.user.deletion_scheduled_at ?? null
 		},
 		{ secure, expires: accessTokenExpiresAt }
 	)
