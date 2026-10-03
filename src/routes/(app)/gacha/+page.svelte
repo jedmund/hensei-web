@@ -10,7 +10,9 @@
 	import GachaResults from '$lib/components/gacha/GachaResults.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
-	import { untrack } from 'svelte'
+	import { onMount, untrack } from 'svelte'
+	import { slide } from 'svelte/transition'
+	import { MediaQuery } from 'svelte/reactivity'
 	import { toast } from 'svelte-sonner'
 	import { page } from '$app/state'
 	import { replaceState } from '$app/navigation'
@@ -133,7 +135,7 @@
 						})
 					: []
 				restored = true
-				if (share?.seed) untrack(() => void run(false, share.seed))
+				if (share?.seed) untrack(() => void run(share.seed))
 			})
 			.catch((error) => {
 				if (!controller.signal.aborted) failure = String(error.message)
@@ -145,37 +147,34 @@
 	})
 	$effect(() => () => runController?.abort())
 
-	async function run(replay = false, seed = '') {
+	// The settings card collapses to the mode switcher and Draw button; on
+	// mobile it collapses on its own when a draw starts
+	const isMobile = new MediaQuery('(max-width: 768px)')
+	let collapsed = $state(false)
+
+	async function run(seed = '') {
 		if (busy) return
-		if (!replay && operation !== 'draw' && !target) {
+		if (operation !== 'draw' && !target) {
 			targetError = m.gacha_target_required()
+			collapsed = false
 			return
 		}
+		if (isMobile.current) collapsed = true
 		busy = true
 		failure = ''
 		runController = new AbortController()
 		const signal = runController.signal
-		const payload =
-			replay && result
-				? {
-						...result.configuration,
-						draws: result.draws,
-						seed: result.seed,
-						target: result.target,
-						copies: Number(result.requested_copies ?? 1),
-						comparison: result.comparison
-					}
-				: {
-						mode,
-						season: classic ? null : season || null,
-						purchase,
-						draws,
-						copies: Number(copies),
-						comparison,
-						target,
-						rateups,
-						...(seed ? { seed } : {})
-					}
+		const payload = {
+			mode,
+			season: classic ? null : season || null,
+			purchase,
+			draws,
+			copies: Number(copies),
+			comparison,
+			target,
+			rateups,
+			...(seed ? { seed } : {})
+		}
 		try {
 			let response = await fetch(`/api/gacha/${operation === 'draw' ? 'simulations' : operation}`, {
 				method: 'POST',
@@ -285,6 +284,51 @@
 			.catch(() => toast.error(m.toast_copy_failed()))
 	}
 
+	// The system share sheet, where the browser has one (iOS, Android, Safari,
+	// Edge); the button is hidden elsewhere and Copy link covers it
+	// Only on touch-first devices (phones and tablets), where the share sheet
+	// is what people expect; desktops use Copy
+	let canShare = $state(false)
+	onMount(() => {
+		canShare =
+			typeof navigator.share === 'function' && window.matchMedia('(pointer: coarse)').matches
+	})
+
+	function shareText(shown: GachaResult) {
+		const count = (value: string | undefined) => Number(value ?? 0).toLocaleString(getLocale())
+		const targetItem = items.find((item) => item.identity === shown.target)
+		const targetName = targetItem ? name(targetItem) : ''
+		if (operation === 'until' && targetName) {
+			return m.gacha_share_until({ name: targetName, draws: count(shown.draws) })
+		}
+		if (operation === 'odds' && targetName && shown.probability !== undefined) {
+			const chance = new Intl.NumberFormat(getLocale(), {
+				style: 'percent',
+				maximumSignificantDigits: 3
+			}).format(shown.probability)
+			return m.gacha_share_odds({ percent: chance, name: targetName, draws: count(shown.draws) })
+		}
+		return m.gacha_share_draw({ ssr: count(shown.totals?.SSR), draws: count(shown.draws) })
+	}
+
+	// Shares the link to the shown result: the settings it came from plus its
+	// seed, whatever the form says now
+	async function shareResult() {
+		if (!result) return
+		const query = `${resultShare ? `${resultShare}&` : ''}seed=${encodeURIComponent(result.seed)}`
+		try {
+			await navigator.share({
+				title: m.page_title_gacha(),
+				text: shareText(result),
+				url: `${window.location.origin}${window.location.pathname}?${query}`
+			})
+		} catch (error) {
+			// Closing the share sheet isn't an error
+			if (error instanceof DOMException && error.name === 'AbortError') return
+			toast.error(m.gacha_error())
+		}
+	}
+
 	async function copyLink() {
 		try {
 			await navigator.clipboard.writeText(window.location.href)
@@ -325,132 +369,170 @@
 			void run()
 		}}
 	>
-		<div>
-			<SegmentedControl
-				value={operation}
-				onValueChange={selectOperation}
+		<div class="card-head">
+			<div class="operation">
+				<SegmentedControl
+					value={operation}
+					onValueChange={selectOperation}
+					size="small"
+					variant="background"
+					grow
+				>
+					<Segment value="draw" disabled={busy}>{m.gacha_draw()}</Segment>
+					<Segment value="until" disabled={busy}>
+						{isMobile.current ? m.gacha_until_short() : m.gacha_until()}
+					</Segment>
+					<Segment value="odds" disabled={busy}>{m.gacha_odds()}</Segment>
+				</SegmentedControl>
+			</div>
+			<Button
+				variant="ghost"
 				size="small"
-				variant="background"
-				grow
-			>
-				<Segment value="draw" disabled={busy}>{m.gacha_draw()}</Segment>
-				<Segment value="until" disabled={busy}>{m.gacha_until()}</Segment>
-				<Segment value="odds" disabled={busy}>{m.gacha_odds()}</Segment>
-			</SegmentedControl>
-		</div>
-		<div class="fields">
-			<Select contained label={m.gacha_mode()} options={modeOptions} bind:value={mode} fullWidth />
-			<!-- Classic pools have no seasons; the choice is kept for other pools -->
-			<Select
-				contained
-				label={m.gacha_season()}
-				options={seasonOptions}
-				value={classic ? '' : season}
-				onValueChange={(value) => (season = value ?? '')}
-				disabled={classic}
-				fullWidth
+				iconOnly
+				icon={collapsed ? 'chevron-down' : 'chevron-up'}
+				aria-label={collapsed ? m.gacha_show_settings() : m.gacha_hide_settings()}
+				aria-expanded={!collapsed}
+				aria-controls="gacha-settings"
+				type="button"
+				onclick={() => (collapsed = !collapsed)}
 			/>
-			<Select
-				contained
-				label={m.gacha_purchase()}
-				options={purchaseOptions}
-				bind:value={purchase}
-				fullWidth
-			/>
-			{#if operation !== 'until'}
-				<Input
-					contained
-					label={m.gacha_draws()}
-					type="number"
-					min={purchase === 'ten' ? 10 : 1}
-					step={purchase === 'ten' ? 10 : 1}
-					bind:value={draws}
-					required
-					fullWidth
-				/>
-			{/if}
 		</div>
-
-		{#if operation !== 'draw'}
-			<div class="fields">
-				<div class="wide">
-					<GachaItemPicker
-						contained
-						label={m.gacha_target()}
-						placeholder={m.gacha_target_placeholder()}
-						{items}
-						bind:value={target}
-						onValueChange={() => (targetError = '')}
-						error={targetError}
-						disabled={loading}
-					/>
-				</div>
-				<Input
-					contained
-					label={m.gacha_copies()}
-					type="number"
-					min="1"
-					max="1000"
-					bind:value={copies}
-					required
-					fullWidth
-				/>
-				{#if operation === 'odds'}
+		{#if !collapsed}
+			<div class="settings" id="gacha-settings" transition:slide={{ duration: 150 }}>
+				<div class="fields">
 					<Select
 						contained
-						label={m.gacha_comparison()}
-						options={comparisonOptions}
-						bind:value={comparison}
+						label={m.gacha_mode()}
+						options={modeOptions}
+						bind:value={mode}
 						fullWidth
 					/>
+					<!-- Classic pools have no seasons; the choice is kept for other pools -->
+					<Select
+						contained
+						label={m.gacha_season()}
+						options={seasonOptions}
+						value={classic ? '' : season}
+						onValueChange={(value) => (season = value ?? '')}
+						disabled={classic}
+						fullWidth
+					/>
+					<Select
+						contained
+						label={m.gacha_purchase()}
+						options={purchaseOptions}
+						bind:value={purchase}
+						fullWidth
+					/>
+					{#if operation !== 'until'}
+						<Input
+							contained
+							label={m.gacha_draws()}
+							type="number"
+							min={purchase === 'ten' ? 10 : 1}
+							step={purchase === 'ten' ? 10 : 1}
+							bind:value={draws}
+							required
+							fullWidth
+						/>
+					{/if}
+				</div>
+
+				{#if operation !== 'draw'}
+					<div class="fields">
+						<div class="wide">
+							<GachaItemPicker
+								contained
+								label={m.gacha_target()}
+								placeholder={m.gacha_target_placeholder()}
+								{items}
+								bind:value={target}
+								onValueChange={() => (targetError = '')}
+								error={targetError}
+								disabled={loading}
+							/>
+						</div>
+						<Input
+							contained
+							label={m.gacha_copies()}
+							type="number"
+							min="1"
+							max="1000"
+							bind:value={copies}
+							required
+							fullWidth
+						/>
+						{#if operation === 'odds'}
+							<Select
+								contained
+								label={m.gacha_comparison()}
+								options={comparisonOptions}
+								bind:value={comparison}
+								fullWidth
+							/>
+						{/if}
+					</div>
 				{/if}
+
+				<section class="rateups">
+					<h2>{m.gacha_rates()}</h2>
+					{#each rateups as rate (rate.identity)}
+						{@const item = itemFor(rate.identity)}
+						<div class="rateup">
+							{#if item}
+								<img src={gachaItemThumbnail(item)} alt="" />
+								<span class="rateup-name">{name(item)}</span>
+							{/if}
+							<div class="rateup-percent">
+								<Input
+									contained
+									type="text"
+									inputmode="decimal"
+									aria-label={m.gacha_rate()}
+									bind:value={rate.percent}
+									size="small"
+									alignRight
+								/>
+								<span>%</span>
+							</div>
+							<Button
+								variant="ghost"
+								size="small"
+								iconOnly
+								icon="close"
+								aria-label={m.gacha_remove()}
+								type="button"
+								onclick={() => removeRate(rate.identity)}
+							/>
+						</div>
+					{/each}
+					<GachaItemPicker
+						contained
+						placeholder={m.gacha_add()}
+						items={rateCandidates}
+						clearOnSelect
+						onValueChange={addRate}
+						disabled={loading}
+					/>
+				</section>
 			</div>
 		{/if}
 
-		<section class="rateups">
-			<h2>{m.gacha_rates()}</h2>
-			{#each rateups as rate (rate.identity)}
-				{@const item = itemFor(rate.identity)}
-				<div class="rateup">
-					{#if item}
-						<img src={gachaItemThumbnail(item)} alt="" />
-						<span class="rateup-name">{name(item)}</span>
-					{/if}
-					<div class="rateup-percent">
-						<Input
-							contained
-							type="text"
-							inputmode="decimal"
-							aria-label={m.gacha_rate()}
-							bind:value={rate.percent}
-							size="small"
-							alignRight
-						/>
-						<span>%</span>
-					</div>
-					<Button
-						variant="ghost"
-						size="small"
-						iconOnly
-						icon="close"
-						aria-label={m.gacha_remove()}
-						onclick={() => removeRate(rate.identity)}
-					/>
-				</div>
-			{/each}
-			<GachaItemPicker
-				contained
-				placeholder={m.gacha_add()}
-				items={rateCandidates}
-				clearOnSelect
-				onValueChange={addRate}
-				disabled={loading}
-			/>
-		</section>
-
 		<div class="actions">
+			{#if collapsed && rateups.length > 0}
+				<ul class="collapsed-rateups" aria-label={m.gacha_rates()}>
+					{#each rateups as rate (rate.identity)}
+						{@const item = itemFor(rate.identity)}
+						{#if item}
+							<li title="{name(item)} {rate.percent}%">
+								<img src={gachaItemThumbnail(item)} alt={name(item)} />
+							</li>
+						{/if}
+					{/each}
+				</ul>
+			{/if}
 			<Button variant="primary" type="submit" disabled={loading || busy}>
-				{busy ? m.gacha_running() : m.gacha_run()}
+				{m.gacha_run()}
 			</Button>
 		</div>
 	</form>
@@ -465,12 +547,11 @@
 			target={items.find((item) => item.identity === result?.target)}
 			simplePortraits={simplePortraits.value}
 			{operation}
-			{busy}
 			bind:currency
 			bind:art
+			onShare={canShare ? shareResult : undefined}
 			onCopyLink={copyLink}
 			onCopyImage={copyImage}
-			onReplay={() => void run(true)}
 		/>
 	{/if}
 </div>
@@ -502,6 +583,23 @@
 		border-radius: $page-corner;
 		box-shadow: $page-elevation;
 		padding: $unit-3x;
+		display: flex;
+		flex-direction: column;
+		gap: $unit-3x;
+	}
+
+	.card-head {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+	}
+
+	.operation {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.settings {
 		display: flex;
 		flex-direction: column;
 		gap: $unit-3x;
@@ -543,6 +641,11 @@
 			object-fit: cover;
 			border-radius: $item-corner-small;
 			background: var(--placeholder-bg);
+
+			// 25% larger on desktop
+			@media (min-width: 769px) {
+				width: 40px;
+			}
 		}
 	}
 
@@ -564,6 +667,35 @@
 
 	.actions {
 		display: flex;
-		justify-content: flex-end;
+		align-items: center;
+		gap: $unit;
+
+		:global([data-button-root]) {
+			margin-left: auto;
+		}
+	}
+
+	.collapsed-rateups {
+		display: flex;
+		flex-wrap: wrap;
+		gap: $unit-half;
+		min-width: 0;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		img {
+			display: block;
+			width: $unit-5x;
+			height: $unit-5x;
+			border-radius: $item-corner-small;
+			object-fit: cover;
+
+			// 25% larger on desktop
+			@media (min-width: 769px) {
+				width: 50px;
+				height: 50px;
+			}
+		}
 	}
 </style>
