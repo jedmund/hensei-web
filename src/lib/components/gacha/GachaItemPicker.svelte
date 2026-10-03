@@ -67,7 +67,12 @@
 				heading: headings[kind],
 				items: matches
 					.filter((item) => gachaItemKind(item) === kind)
-					.sort((a, b) => b.rarity - a.rarity || name(a).localeCompare(name(b)))
+					// Newest releases first; undated items last, then by name
+					.sort(
+						(a, b) =>
+							(b.release_date ?? '').localeCompare(a.release_date ?? '') ||
+							name(a).localeCompare(name(b))
+					)
 					.slice(0, 30)
 			}))
 			.filter((group) => group.items.length > 0)

@@ -445,7 +445,7 @@
 								contained
 								label={m.gacha_target()}
 								placeholder={m.gacha_target_placeholder()}
-								{items}
+								items={ssrs}
 								bind:value={target}
 								onValueChange={() => (targetError = '')}
 								error={targetError}
