@@ -1838,6 +1838,7 @@
 	"gacha_remove": "削除",
 	"gacha_run": "実行",
 	"gacha_running": "計算中…",
+	"gacha_copy_link": "リンクをコピー",
 	"gacha_replay": "再実行",
 	"gacha_sampled": "必要回数",
 	"gacha_ssr_rate": "SSR率",
