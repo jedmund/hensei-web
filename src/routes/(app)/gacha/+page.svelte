@@ -249,6 +249,13 @@
 
 <PageMeta title={m.gacha_title()} description={m.gacha_notice()} />
 
+{#snippet tile(label: string, value: string)}
+	<div class="tile">
+		<span class="stat-label">{label}</span>
+		<span class="stat-value">{value}</span>
+	</div>
+{/snippet}
+
 <div class="gacha-page">
 	<form
 		class="card"
@@ -397,35 +404,32 @@
 				<div class="stats">
 					{#if operation === 'draw' && result.totals}
 						<div class="tiles">
-							<div class="tile">
-								<span class="stat-label">{m.gacha_ssr_rate()}</span>
-								<span class="stat-value">{rate(result.totals.SSR, result.draws)}</span>
-							</div>
+							{@render tile(m.gacha_ssr_rate(), rate(result.totals.SSR, result.draws))}
 							{#each ['SSR', 'SR', 'R'] as const as rarity (rarity)}
-								<div class="tile">
-									<span class="stat-label">{rarity}</span>
-									<span class="stat-value">{amount(result.totals[rarity])}</span>
-								</div>
+								{@render tile(rarity, amount(result.totals[rarity]))}
 							{/each}
 						</div>
 					{:else if operation === 'until'}
-						<div class="stat hero">
-							<span class="stat-label">{m.gacha_sampled()}</span>
-							<span class="stat-value">{amount(result.draws)}</span>
-						</div>
-						<div class="stat">
-							<span class="stat-label">{m.gacha_copies()}</span>
-							<span class="stat-value">{amount(result.copies ?? '0')}</span>
+						<div class="tiles" style:--columns="2">
+							{@render tile(m.gacha_sampled(), amount(result.draws))}
+							{@render tile(m.gacha_copies(), amount(result.copies ?? '0'))}
 						</div>
 					{:else if result.probability !== undefined}
-						<div class="stat hero">
-							<span class="stat-label">{m.gacha_probability()}</span>
-							<span class="stat-value">{percent(result.probability)}</span>
+						<div class="tiles" style:--columns="2">
+							{@render tile(m.gacha_probability(), percent(result.probability))}
+							{#if result.expected_copies !== undefined}
+								{@render tile(m.gacha_expected(), decimal(result.expected_copies))}
+							{/if}
 						</div>
-						{#if result.expected_copies !== undefined}
-							<div class="stat">
-								<span class="stat-label">{m.gacha_expected()}</span>
-								<span class="stat-value">{decimal(result.expected_copies)}</span>
+						{#if result.thresholds}
+							<div class="tiles" style:--columns="3">
+								{#each ['50', '90', '95'] as level (level)}
+									{@const threshold = result.thresholds[level]}
+									{@render tile(
+										m.gacha_chance({ percent: level }),
+										threshold ? amount(threshold) : m.gacha_beyond()
+									)}
+								{/each}
 							</div>
 						{/if}
 					{/if}
@@ -442,20 +446,6 @@
 					</SegmentedControl>
 				{/if}
 			</div>
-
-			{#if result.thresholds}
-				<div class="stats">
-					{#each ['50', '90', '95'] as level (level)}
-						{@const threshold = result.thresholds[level]}
-						<div class="stat">
-							<span class="stat-label">{m.gacha_chance({ percent: level })}</span>
-							<span class="stat-value small"
-								>{threshold ? amount(threshold) : m.gacha_beyond()}</span
-							>
-						</div>
-					{/each}
-				</div>
-			{/if}
 
 			{#if drawnSsrs.length > 0}
 				<ul class="drawn">
@@ -515,7 +505,7 @@
 
 	.tiles {
 		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
+		grid-template-columns: repeat(var(--columns, 4), minmax(0, 1fr));
 		gap: $unit;
 		width: 100%;
 
@@ -618,14 +608,8 @@
 
 	.stats {
 		display: flex;
-		flex-wrap: wrap;
-		gap: $unit-4x;
-	}
-
-	.stat {
-		display: flex;
 		flex-direction: column;
-		gap: $unit-half;
+		gap: $unit;
 	}
 
 	.stat-label {
@@ -638,15 +622,6 @@
 		font-size: $font-xxlarge;
 		font-weight: $bold;
 		font-variant-numeric: tabular-nums;
-
-		&.small {
-			font-size: $font-large;
-		}
-	}
-
-	.stat.hero .stat-value {
-		font-size: calc($unit * 6);
-		line-height: 1;
 	}
 
 	.drawn {

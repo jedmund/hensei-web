@@ -104,6 +104,7 @@
 		bind:open
 		{inputValue}
 		{disabled}
+		allowDeselect={false}
 	>
 		<Combobox.Input
 			{id}
