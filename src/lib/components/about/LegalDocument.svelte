@@ -74,9 +74,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-3x;
-		max-width: 720px;
-		margin: 0 auto;
-		width: 100%;
 
 		:global(p),
 		:global(li) {
