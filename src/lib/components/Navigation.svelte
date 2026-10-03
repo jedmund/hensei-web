@@ -72,6 +72,7 @@
 		isAuth ? localizeHref(`/${username}/collection`) : localizeHref('/collection')
 	)
 	const aboutHref = $derived(localizeHref('/about'))
+	const gachaHref = $derived(localizeHref('/gacha'))
 	const extensionHref = $derived(localizeHref('/extension'))
 
 	// Get the element class for styling
@@ -282,6 +283,9 @@
 										<a href={aboutHref}>{m.nav_about()}</a>
 									</DropdownItem>
 									<DropdownItem>
+										<a href={gachaHref}>{m.nav_gacha()}</a>
+									</DropdownItem>
+									<DropdownItem>
 										<a href={extensionHref}>{m.nav_extension()}</a>
 									</DropdownItem>
 									{#if role !== null && role >= 7}
@@ -366,6 +370,9 @@
 								<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
 									<DropdownItem>
 										<a href={aboutHref}>{m.nav_about()}</a>
+									</DropdownItem>
+									<DropdownItem>
+										<a href={gachaHref}>{m.nav_gacha()}</a>
 									</DropdownItem>
 									<DropdownItem>
 										<a href={extensionHref}>{m.nav_extension()}</a>

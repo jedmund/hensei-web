@@ -57,6 +57,7 @@
 		isAuth ? localizeHref(`/${username}/collection`) : localizeHref('/collection')
 	)
 	const aboutHref = $derived(localizeHref('/about'))
+	const gachaHref = $derived(localizeHref('/gacha'))
 	const extensionHref = $derived(localizeHref('/extension'))
 
 	const elementClass = $derived(userElement ? `element-${userElement}` : '')
@@ -87,6 +88,7 @@
 		if (isNavSelected(collectionHref)) return m.nav_collection()
 		if (isProfileSelected) return username
 		if (isNavSelected(aboutHref)) return m.nav_about()
+		if (isNavSelected(gachaHref)) return m.nav_gacha()
 		if (isNavSelected(extensionHref)) return m.nav_extension()
 		if (isNavSelected(databaseHref)) return m.nav_database()
 		if (isNavSelected(loginHref)) return m.nav_login()
@@ -237,6 +239,7 @@
 			<hr class="sheet-separator" />
 			<ul class="sheet-nav-group" role="list">
 				<li><a href={aboutHref}>{m.nav_about()}</a></li>
+				<li><a href={gachaHref}>{m.nav_gacha()}</a></li>
 				<li><a href={extensionHref}>{m.nav_extension()}</a></li>
 				{#if role !== null && role >= 7}
 					<li><a href={databaseHref}>{m.nav_database()}</a></li>
@@ -295,6 +298,7 @@
 			<hr class="sheet-separator" />
 			<ul class="sheet-nav-group" role="list">
 				<li><a href={aboutHref}>{m.nav_about()}</a></li>
+				<li><a href={gachaHref}>{m.nav_gacha()}</a></li>
 				<li><a href={extensionHref}>{m.nav_extension()}</a></li>
 			</ul>
 			<hr class="sheet-separator" />

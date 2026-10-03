@@ -417,7 +417,8 @@
 		align-items: center;
 		background-color: var(--input-bg);
 		border-radius: $input-corner;
-		border: 1px solid transparent;
+		// Matches Input: 2px reserved for the focus border
+		border: 2px solid transparent;
 		color: var(--text-primary);
 		cursor: pointer;
 		display: inline-flex;
@@ -448,7 +449,7 @@
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
-			color: var(--text-secondary);
+			color: var(--text-primary);
 		}
 
 		.image {
@@ -495,10 +496,10 @@
 
 	// Variant: contained
 	:global([data-select-trigger].select.contained) {
-		background-color: var(--select-contained-bg);
+		background-color: var(--input-bound-bg);
 
 		&:hover:not(.disabled) {
-			background-color: var(--select-contained-bg-hover);
+			background-color: var(--input-bound-bg-hover);
 		}
 	}
 

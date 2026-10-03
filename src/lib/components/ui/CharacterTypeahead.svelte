@@ -308,7 +308,7 @@
 	}
 
 	.character-typeahead.contained .selected-character {
-		background-color: var(--select-contained-bg);
+		background-color: var(--input-bound-bg);
 	}
 
 	:global(.character-typeahead .combobox-input) {
@@ -317,7 +317,8 @@
 		-webkit-font-smoothing: antialiased;
 		background-color: var(--input-bg);
 		border-radius: $input-corner;
-		border: 1px solid transparent;
+		// Matches Input: 2px reserved for the focus border
+		border: 2px solid transparent;
 		color: var(--text-primary);
 		display: block;
 		font-family: var(--font-family);
@@ -348,10 +349,10 @@
 
 	// Contained variant
 	.character-typeahead.contained :global(.combobox-input) {
-		background-color: var(--select-contained-bg);
+		background-color: var(--input-bound-bg);
 
 		&:hover {
-			background-color: var(--select-contained-bg-hover);
+			background-color: var(--input-bound-bg-hover);
 		}
 	}
 

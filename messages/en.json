@@ -8,6 +8,7 @@
 	"nav_register": "Register",
 	"nav_settings": "Settings",
 	"nav_about": "About",
+	"nav_gacha": "Gacha",
 	"nav_extension": "Extension",
 	"nav_theme": "Theme",
 	"nav_logout": "Log out",
@@ -1840,6 +1841,7 @@
 	"gacha_draw": "Draw",
 	"gacha_until": "Until obtained",
 	"gacha_until_short": "Until",
+	"gacha_search_items": "Search for a character, weapon, or summon",
 	"gacha_odds": "Odds",
 	"gacha_mode": "Pool",
 	"gacha_season": "Season",
@@ -1854,7 +1856,6 @@
 	"gacha_exactly": "Exactly",
 	"gacha_at_least": "At least",
 	"gacha_rates": "Rate-ups",
-	"gacha_add": "Add",
 	"gacha_remove": "Remove",
 	"gacha_show_settings": "Show settings",
 	"gacha_hide_settings": "Hide settings",
@@ -1892,6 +1893,5 @@
 	"gacha_replay_seed": "Seed",
 	"gacha_rate": "Rate (%)",
 	"gacha_chance": "{percent}% chance",
-	"gacha_target_required": "Choose a target",
-	"gacha_target_placeholder": "Search…"
+	"gacha_target_required": "Choose a target"
 }

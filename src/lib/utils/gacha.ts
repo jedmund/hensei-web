@@ -16,6 +16,28 @@ export function gachaItemKind(item: CatalogueItem): GachaItemKind {
 	return item.recruits || item.category === 'characterWeapon' ? 'character' : 'weapon'
 }
 
+/**
+ * Catalogue identity for a granblue_id, optionally of one rarity; empty when
+ * the item isn't in the catalogue. Links use granblue_ids to stay short.
+ */
+export function gachaIdentityFor(
+	items: CatalogueItem[],
+	granblueId: string,
+	rarity?: number
+): string {
+	if (!granblueId) return ''
+	return (
+		items.find(
+			(item) => item.granblue_id === granblueId && (rarity === undefined || item.rarity === rarity)
+		)?.identity ?? ''
+	)
+}
+
+/** granblue_id for a catalogue identity; empty when it isn't in the catalogue */
+export function gachaGranblueIdFor(items: CatalogueItem[], identity: string): string {
+	return items.find((item) => item.identity === identity)?.granblue_id ?? ''
+}
+
 /** Name shown for an item: the recruited character for character weapons */
 export function gachaItemName(item: CatalogueItem, locale: string): string {
 	const names = gachaItemKind(item) === 'character' && item.recruits ? item.recruits : item.name

@@ -10,6 +10,8 @@ export interface CatalogueItem {
 	category?: 'characterWeapon' | 'weapon' | 'summon'
 	recruits?: { granblue_id?: string; en: string; ja: string } | null
 	count?: string
+	/** ISO date the item was released, when known */
+	release_date?: string | null
 }
 export interface GachaConfiguration {
 	mode: string

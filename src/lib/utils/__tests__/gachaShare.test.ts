@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { readShare, writeShare, SHARE_DEFAULTS, type GachaShare } from '../gachaShare'
+import { readShare, seasonalPool, writeShare, SHARE_DEFAULTS, type GachaShare } from '../gachaShare'
 
 const read = (query: string) => readShare(new URLSearchParams(query))
 
@@ -74,5 +74,19 @@ describe('gacha share links', () => {
 			comparison: 'exactly'
 		})
 		expect(query).toBe('draws=1000')
+	})
+
+	it('picks the pool running on the day, in Japan time', () => {
+		const jst = (day: string) => new Date(`2026-10-${day}T12:00:00+09:00`)
+		expect(seasonalPool(jst('01'))).toBe('legend')
+		expect(seasonalPool(jst('04'))).toBe('legend')
+		expect(seasonalPool(jst('05'))).toBe('premium')
+		expect(seasonalPool(jst('15'))).toBe('flash')
+		expect(seasonalPool(jst('20'))).toBe('flash')
+		expect(seasonalPool(jst('21'))).toBe('premium')
+		expect(seasonalPool(jst('28'))).toBe('legend')
+		expect(seasonalPool(jst('31'))).toBe('legend')
+		// 23:30 UTC on the 27th is already the 28th in Japan
+		expect(seasonalPool(new Date('2026-10-27T23:30:00Z'))).toBe('legend')
 	})
 })

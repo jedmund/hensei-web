@@ -45,7 +45,12 @@ const MAX_RATEUPS = 50
 const GRANBLUE_ID = /^\d{10}$/
 const PERCENT = /^\d{1,3}(\.\d{1,6})?$/
 
-function oneOf<T extends string>(value: string | null, allowed: readonly T[], fallback: T): T {
+/** The value when it's one of the allowed ones, otherwise the fallback */
+export function oneOf<T extends string>(
+	value: string | null,
+	allowed: readonly T[],
+	fallback: T
+): T {
 	return value !== null && (allowed as readonly string[]).includes(value) ? (value as T) : fallback
 }
 
@@ -59,6 +64,20 @@ function count(value: string | null, max: number, fallback: string): string {
 function seed(value: string | null): string {
 	// eslint-disable-next-line no-control-regex
 	return (value ?? '').replace(/[\x00-\x1f\x7f]/g, '').slice(0, 128)
+}
+
+/**
+ * The pool that's most likely running on a given day, by the day of the month
+ * in Japan time: Legend Festival at the turn of the month (28th to 4th), Flash
+ * Gala mid-month (15th to 20th), Premium otherwise.
+ */
+export function seasonalPool(date: Date = new Date()): string {
+	const day = Number(
+		new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Tokyo', day: 'numeric' }).format(date)
+	)
+	if (day >= 28 || day <= 4) return 'legend'
+	if (day >= 15 && day <= 20) return 'flash'
+	return 'premium'
 }
 
 export function readShare(params: URLSearchParams): GachaShare {
