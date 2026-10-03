@@ -9,6 +9,8 @@
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import GachaItemPicker from '$lib/components/gacha/GachaItemPicker.svelte'
 	import Icon from '$lib/components/Icon.svelte'
+	import jpFlag from '$src/assets/flags/jp.png'
+	import usFlag from '$src/assets/flags/us.png'
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { gachaItemImage, gachaItemName, gachaItemThumbnail } from '$lib/utils/gacha'
@@ -83,11 +85,7 @@
 		result?.cost.usd ? ['usd', 'jpy', 'crystals'] : ['jpy', 'crystals']
 	)
 	const shownCurrency = $derived(currencies.includes(currency) ? currency : 'jpy')
-	const currencyIcons: Record<Currency, string> = {
-		usd: 'currency-usd',
-		jpy: 'currency-jpy',
-		crystals: 'crystal'
-	}
+	const flags: Partial<Record<Currency, string>> = { usd: usFlag, jpy: jpFlag }
 
 	const name = (item: CatalogueItem) => gachaItemName(item, getLocale())
 	const itemFor = (identity: string) => items.find((item) => item.identity === identity)
@@ -444,7 +442,11 @@
 			<footer class="meta">
 				<div class="cost">
 					<button type="button" onclick={nextCurrency}>
-						<Icon name={currencyIcons[shownCurrency]} size={16} />
+						{#if flags[shownCurrency]}
+							<img class="flag" src={flags[shownCurrency]} alt="" />
+						{:else}
+							<Icon name="crystal" size={16} />
+						{/if}
 						{cost(result.cost, shownCurrency)}
 					</button>
 				</div>
@@ -674,6 +676,11 @@
 			&:focus-visible {
 				outline: 2px solid $blue;
 			}
+		}
+
+		.flag {
+			width: 16px;
+			height: 16px;
 		}
 	}
 
