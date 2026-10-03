@@ -16,7 +16,7 @@
 	import { toast } from 'svelte-sonner'
 	import { page } from '$app/state'
 	import { replaceState } from '$app/navigation'
-	import { readShare, writeShare, type GachaShare } from '$lib/utils/gachaShare'
+	import { readShare, seasonalPool, writeShare, type GachaShare } from '$lib/utils/gachaShare'
 	import { copyResultImage, gachaImageUrl } from '$lib/utils/gachaImage'
 	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import { gachaItemName, gachaItemThumbnail } from '$lib/utils/gacha'
@@ -30,7 +30,11 @@
 
 	// Settings start from the URL so shared links open as they were sent. The
 	// target and rate-ups wait for the catalogue, which resolves their ids.
-	const shared = readShare(page.url.searchParams)
+	// A fresh visit opens on the pool that's likely running today; links with
+	// settings keep theirs, since they leave Premium out of the query
+	const shared = page.url.search
+		? readShare(page.url.searchParams)
+		: { ...readShare(page.url.searchParams), mode: seasonalPool() }
 	let pendingShare: GachaShare | null = shared
 	let restored = $state(false)
 

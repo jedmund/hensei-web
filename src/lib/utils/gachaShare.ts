@@ -61,6 +61,20 @@ function seed(value: string | null): string {
 	return (value ?? '').replace(/[\x00-\x1f\x7f]/g, '').slice(0, 128)
 }
 
+/**
+ * The pool that's most likely running on a given day, by the day of the month
+ * in Japan time: Legend Festival at the turn of the month (28th to 4th), Flash
+ * Gala mid-month (15th to 20th), Premium otherwise.
+ */
+export function seasonalPool(date: Date = new Date()): string {
+	const day = Number(
+		new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Tokyo', day: 'numeric' }).format(date)
+	)
+	if (day >= 28 || day <= 4) return 'legend'
+	if (day >= 15 && day <= 20) return 'flash'
+	return 'premium'
+}
+
 export function readShare(params: URLSearchParams): GachaShare {
 	const operation = oneOf(params.get('op'), ['draw', 'until', 'odds'], SHARE_DEFAULTS.operation)
 	const mode = oneOf(params.get('pool'), GACHA_MODES, SHARE_DEFAULTS.mode)
