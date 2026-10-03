@@ -1,22 +1,28 @@
 <script lang="ts">
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import CopyableText from '$lib/components/ui/CopyableText.svelte'
+	import Input from '$lib/components/ui/Input.svelte'
+	import Notice from '$lib/components/ui/Notice.svelte'
+	import Select from '$lib/components/ui/Select.svelte'
+	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
+	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import GachaItemPicker from '$lib/components/gacha/GachaItemPicker.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
+	import { gachaItemImage, gachaItemName, gachaItemThumbnail } from '$lib/utils/gacha'
 	import type { CatalogueItem, GachaResult } from '$lib/types/gacha'
 
-	let operation = $state<'draw' | 'until' | 'odds'>('draw')
+	type Operation = 'draw' | 'until' | 'odds'
+
+	let operation = $state<Operation>('draw')
 	let mode = $state('premium')
 	let season = $state('')
 	let purchase = $state<'ten' | 'singles'>('ten')
 	let draws = $state('300')
-	let copies = $state(1)
-	let comparison = $state('at_least')
+	let copies = $state('1')
+	let comparison = $state<'at_least' | 'exactly'>('at_least')
 	let target = $state('')
-	let seed = $state('')
-	let search = $state('')
-	let rateTarget = $state('')
-	let ratePercent = $state('0.3')
 	let rateups = $state<{ identity: string; percent: string }[]>([])
 	let items = $state<CatalogueItem[]>([])
 	let result = $state<GachaResult | null>(null)
@@ -24,36 +30,69 @@
 	let loading = $state(true)
 	let failure = $state('')
 	let runController: AbortController | undefined
-	const modes = $derived({
-		premium: m.gacha_premium(),
-		legend: m.gacha_legend(),
-		flash: m.gacha_flash(),
-		classic: m.gacha_classic(),
-		classic_ii: m.gacha_classic_ii(),
-		classic_iii: m.gacha_classic_iii()
-	})
-	const seasons = $derived({
-		valentines: m.gacha_valentines(),
-		summer: m.gacha_summer(),
-		halloween: m.gacha_halloween(),
-		holiday: m.gacha_holiday(),
-		formal: m.gacha_formal()
-	})
+
+	const modeOptions = $derived([
+		{ value: 'premium', label: m.gacha_premium() },
+		{ value: 'legend', label: m.gacha_legend() },
+		{ value: 'flash', label: m.gacha_flash() },
+		{ value: 'classic', label: m.gacha_classic() },
+		{ value: 'classic_ii', label: m.gacha_classic_ii() },
+		{ value: 'classic_iii', label: m.gacha_classic_iii() }
+	])
+	const seasonOptions = $derived([
+		{ value: '', label: m.gacha_none() },
+		{ value: 'valentines', label: m.gacha_valentines() },
+		{ value: 'summer', label: m.gacha_summer() },
+		{ value: 'halloween', label: m.gacha_halloween() },
+		{ value: 'holiday', label: m.gacha_holiday() },
+		{ value: 'formal', label: m.gacha_formal() }
+	])
+	const purchaseOptions = $derived([
+		{ value: 'ten' as const, label: m.gacha_ten() },
+		{ value: 'singles' as const, label: m.gacha_singles() }
+	])
+	const comparisonOptions = $derived([
+		{ value: 'at_least' as const, label: m.gacha_at_least() },
+		{ value: 'exactly' as const, label: m.gacha_exactly() }
+	])
+
 	const classic = $derived(mode.startsWith('classic'))
-	const filtered = $derived(
-		items.filter((item) =>
-			`${item.name.en} ${item.name.ja} ${item.granblue_id} ${item.recruits?.en ?? ''}`
-				.toLowerCase()
-				.includes(search.toLowerCase())
-		)
+	const ssrs = $derived(items.filter((item) => item.rarity === 3))
+	const rateCandidates = $derived(
+		ssrs.filter((item) => !rateups.some((rate) => rate.identity === item.identity))
 	)
+	const drawnSsrs = $derived(
+		(result?.items ?? [])
+			.filter((item) => item.rarity === 3)
+			.sort((a, b) => Number(b.count ?? 0) - Number(a.count ?? 0))
+	)
+
+	const name = (item: CatalogueItem) => gachaItemName(item, getLocale())
+	const itemFor = (identity: string) => items.find((item) => item.identity === identity)
+
 	function amount(value: string) {
 		const [integer = '0', fraction = ''] = value.split('.')
 		const decimals = fraction.replace(/0+$/, '')
 		return `${BigInt(integer).toLocaleString(getLocale())}${decimals ? `.${decimals}` : ''}`
 	}
-	const name = (item: CatalogueItem) =>
-		(getLocale() === 'ja' ? item.name.ja : item.name.en) || item.name.en
+	function percent(value: number) {
+		return new Intl.NumberFormat(getLocale(), {
+			style: 'percent',
+			maximumSignificantDigits: 4
+		}).format(value)
+	}
+	function decimal(value: number) {
+		return new Intl.NumberFormat(getLocale(), { maximumFractionDigits: 2 }).format(value)
+	}
+
+	/** Parse a proxy response, turning non-JSON or failed responses into readable errors */
+	async function readJson(response: Response) {
+		const isJson = response.headers.get('Content-Type')?.includes('application/json')
+		const data = isJson ? await response.json().catch(() => null) : null
+		if (!data || response.status >= 500) throw new Error(m.gacha_error())
+		if (!response.ok) throw new Error(data.error || data.message || m.gacha_error())
+		return data
+	}
 
 	$effect(() => {
 		const query = `mode=${encodeURIComponent(mode)}${!classic && season ? `&season=${encodeURIComponent(season)}` : ''}`
@@ -62,9 +101,9 @@
 		failure = ''
 		fetch(`/api/gacha/catalogue?${query}`, { signal: controller.signal })
 			.then(async (response) => {
-				const data = await response.json()
-				if (!response.ok) throw new Error(data.error)
+				const data = await readJson(response)
 				items = data.items
+				result = null
 				target = ''
 				rateups = []
 			})
@@ -99,11 +138,10 @@
 						season: classic ? null : season || null,
 						purchase,
 						draws,
-						copies,
+						copies: Number(copies),
 						comparison,
 						target,
-						rateups,
-						...(seed ? { seed } : {})
+						rateups
 					}
 		try {
 			let response = await fetch(`/api/gacha/${operation === 'draw' ? 'simulations' : operation}`, {
@@ -112,16 +150,15 @@
 				body: JSON.stringify(payload),
 				signal
 			})
-			let data = await response.json()
-			if (!response.ok) throw new Error(data.error)
+			let data = await readJson(response)
 			if (data.token) {
 				const token = data.token
 				const deadline = Date.now() + 10 * 60_000
 				while (Date.now() < deadline) {
 					await new Promise((resolve) => setTimeout(resolve, 1500))
 					response = await fetch(`/api/gacha/jobs/${token}`, { signal })
-					data = await response.json()
-					if (!response.ok || data.status === 'failed') throw new Error(data.error)
+					data = await readJson(response)
+					if (data.status === 'failed') throw new Error(data.error || m.gacha_error())
 					if (data.status === 'complete') {
 						data = data.result
 						break
@@ -136,253 +173,437 @@
 			busy = false
 		}
 	}
-	function addRate() {
-		if (!rateTarget || rateups.some((rate) => rate.identity === rateTarget)) return
-		rateups = [...rateups, { identity: rateTarget, percent: ratePercent }]
+
+	function selectOperation(value: string) {
+		operation = value as Operation
+		result = null
+	}
+	function addRate(identity: string) {
+		if (identity && !rateups.some((rate) => rate.identity === identity)) {
+			rateups = [...rateups, { identity, percent: '0.3' }]
+		}
+	}
+	function removeRate(identity: string) {
+		rateups = rateups.filter((rate) => rate.identity !== identity)
 	}
 </script>
 
 <PageMeta title={m.gacha_title()} description={m.gacha_notice()} />
-<section class="gacha">
-	<h1>{m.gacha_title()}</h1>
-	<p>{m.gacha_notice()}</p>
-	<nav aria-label={m.gacha_title()}>
-		{#each ['draw', 'until', 'odds'] as tab (tab)}
-			<Button
-				active={operation === tab}
-				disabled={busy}
-				onclick={() => {
-					operation = tab as typeof operation
-					result = null
-				}}
-			>
-				{tab === 'draw' ? m.gacha_draw() : tab === 'until' ? m.gacha_until() : m.gacha_odds()}
-			</Button>
-		{/each}
-	</nav>
+
+<div class="gacha-page">
+	<header class="page-header">
+		<h1>{m.gacha_title()}</h1>
+		<SegmentedControl
+			value={operation}
+			onValueChange={selectOperation}
+			size="small"
+			variant="background"
+		>
+			<Segment value="draw" disabled={busy}>{m.gacha_draw()}</Segment>
+			<Segment value="until" disabled={busy}>{m.gacha_until()}</Segment>
+			<Segment value="odds" disabled={busy}>{m.gacha_odds()}</Segment>
+		</SegmentedControl>
+	</header>
+
 	<form
+		class="card"
 		onsubmit={(event) => {
 			event.preventDefault()
 			void run()
 		}}
 	>
-		<fieldset disabled={busy}>
-			<div class="controls">
-				<label
-					>{m.gacha_mode()}<select aria-label={m.gacha_mode()} bind:value={mode}
-						>{#each Object.entries(modes) as [value, label] (value)}<option {value}>{label}</option
-							>{/each}</select
-					></label
-				>
-				<label
-					>{m.gacha_season()}<select
-						aria-label={m.gacha_season()}
-						bind:value={season}
-						disabled={classic}
-						><option value="">{m.gacha_none()}</option
-						>{#each Object.entries(seasons) as [value, label] (value)}<option {value}
-								>{label}</option
-							>{/each}</select
-					></label
-				>
-				<label
-					>{m.gacha_purchase()}<select aria-label={m.gacha_purchase()} bind:value={purchase}
-						><option value="ten">{m.gacha_ten()}</option><option value="singles"
-							>{m.gacha_singles()}</option
-						></select
-					></label
-				>
-				{#if operation !== 'until'}<label
-						>{m.gacha_draws()}<input
-							type="text"
-							inputmode="numeric"
-							pattern="[0-9]+"
-							bind:value={draws}
-							required
-						/></label
-					>{/if}
-				<label>{m.gacha_seed()}<input bind:value={seed} maxlength="128" /></label>
-			</div>
-			<label>{m.gacha_search()}<input type="search" bind:value={search} /></label>
-			{#if operation !== 'draw'}
-				<div class="controls">
-					<label
-						>{m.gacha_target()}<select aria-label={m.gacha_target()} bind:value={target} required
-							><option value="">—</option>{#each filtered as item (item.identity)}<option
-									value={item.identity}
-									>{name(item)} ({item.drawable_type}, {item.granblue_id})</option
-								>{/each}</select
-						></label
-					>
-					<label
-						>{m.gacha_copies()}<input
-							type="number"
-							min="1"
-							max="1000"
-							bind:value={copies}
-							required
-						/></label
-					>
-					{#if operation === 'odds'}<label
-							>{m.gacha_comparison()}<select
-								aria-label={m.gacha_comparison()}
-								bind:value={comparison}
-								><option value="at_least">{m.gacha_at_least()}</option><option value="exactly"
-									>{m.gacha_exactly()}</option
-								></select
-							></label
-						>{/if}
-				</div>
+		<div class="fields">
+			<Select contained label={m.gacha_mode()} options={modeOptions} bind:value={mode} fullWidth />
+			{#if !classic}
+				<Select
+					contained
+					label={m.gacha_season()}
+					options={seasonOptions}
+					bind:value={season}
+					fullWidth
+				/>
 			{/if}
-			<h2>{m.gacha_rates()}</h2>
-			<p>{m.gacha_rate_help()}</p>
-			<div class="controls">
-				<label
-					>{m.gacha_target()}<select aria-label={m.gacha_target()} bind:value={rateTarget}
-						><option value="">—</option
-						>{#each filtered.filter((item) => item.rarity === 3) as item (item.identity)}<option
-								value={item.identity}>{name(item)} ({item.drawable_type})</option
-							>{/each}</select
-					></label
-				>
-				<label>%<input type="text" inputmode="decimal" bind:value={ratePercent} /></label>
-				<Button onclick={addRate} disabled={!rateTarget}>{m.gacha_add()}</Button>
+			<Select
+				contained
+				label={m.gacha_purchase()}
+				options={purchaseOptions}
+				bind:value={purchase}
+				fullWidth
+			/>
+			{#if operation !== 'until'}
+				<Input
+					contained
+					label={m.gacha_draws()}
+					type="number"
+					min={purchase === 'ten' ? 10 : 1}
+					step={purchase === 'ten' ? 10 : 1}
+					bind:value={draws}
+					required
+					fullWidth
+				/>
+			{/if}
+		</div>
+
+		{#if operation !== 'draw'}
+			<div class="fields">
+				<div class="wide">
+					<GachaItemPicker
+						contained
+						label={m.gacha_target()}
+						placeholder={m.gacha_target_placeholder()}
+						{items}
+						bind:value={target}
+						disabled={loading}
+					/>
+				</div>
+				<Input
+					contained
+					label={m.gacha_copies()}
+					type="number"
+					min="1"
+					max="1000"
+					bind:value={copies}
+					required
+					fullWidth
+				/>
+				{#if operation === 'odds'}
+					<Select
+						contained
+						label={m.gacha_comparison()}
+						options={comparisonOptions}
+						bind:value={comparison}
+						fullWidth
+					/>
+				{/if}
 			</div>
-			{#each rateups as rate, index (rate.identity)}
-				<div class="rate">
-					<span>{items.find((item) => item.identity === rate.identity)?.name.en}</span>
-					<input aria-label={m.gacha_rates()} bind:value={rate.percent} />
+		{/if}
+
+		<section class="rateups">
+			<h2>{m.gacha_rates()}</h2>
+			{#each rateups as rate (rate.identity)}
+				{@const item = itemFor(rate.identity)}
+				<div class="rateup">
+					{#if item}
+						<img src={gachaItemThumbnail(item)} alt="" />
+						<span class="rateup-name">{name(item)}</span>
+					{/if}
+					<div class="rateup-percent">
+						<Input
+							contained
+							type="text"
+							inputmode="decimal"
+							aria-label={m.gacha_rate()}
+							bind:value={rate.percent}
+							size="small"
+							alignRight
+						/>
+						<span>%</span>
+					</div>
 					<Button
-						onclick={() => {
-							rateups = rateups.filter((_, i) => i !== index)
-						}}>{m.gacha_remove()}</Button
-					>
+						variant="ghost"
+						size="small"
+						iconOnly
+						icon="close"
+						aria-label={m.gacha_remove()}
+						onclick={() => removeRate(rate.identity)}
+					/>
 				</div>
 			{/each}
-			<button class="run" type="submit" disabled={loading || busy}
-				>{busy ? m.gacha_running() : m.gacha_run()}</button
-			>
-		</fieldset>
+			<GachaItemPicker
+				contained
+				placeholder={m.gacha_add()}
+				items={rateCandidates}
+				clearOnSelect
+				onValueChange={addRate}
+				disabled={loading}
+			/>
+		</section>
+
+		<div class="actions">
+			<Button variant="primary" type="submit" disabled={loading || busy}>
+				{busy ? m.gacha_running() : m.gacha_run()}
+			</Button>
+		</div>
 	</form>
-	{#if failure}<p role="alert">{failure}</p>{/if}
+
+	{#if failure}
+		<Notice variant="red">{failure}</Notice>
+	{/if}
+
 	{#if result}
-		<section aria-live="polite">
-			<h2>{m.gacha_results()}</h2>
-			{#if operation !== 'until'}<p>{m.gacha_draws()}: {amount(result.draws)}</p>{/if}
-			{#if operation === 'until'}<p>{m.gacha_sampled()}</p>
-				<strong class="sample">{amount(result.draws)}</strong>
-				<p>{m.gacha_count()}: {amount(result.copies ?? '0')}</p>{/if}
-			{#if result.probability !== undefined}
-				<p>
-					{m.gacha_probability()}: <strong>{(result.probability * 100).toPrecision(8)}%</strong>
-				</p>
-				<p>{m.gacha_expected()}: {result.expected_copies}</p>
-				<p>
-					{m.gacha_thresholds()}: {['50', '90', '95']
-						.map((key) => result?.thresholds?.[key] ?? m.gacha_beyond())
-						.join(' / ')}
-				</p>
+		<section class="card results" aria-live="polite">
+			<div class="stats">
+				{#if operation === 'draw' && result.totals}
+					<div class="stat">
+						<span class="stat-label">SSR</span>
+						<span class="stat-value">{amount(result.totals.SSR)}</span>
+					</div>
+					<div class="stat">
+						<span class="stat-label">SR</span>
+						<span class="stat-value">{amount(result.totals.SR)}</span>
+					</div>
+					<div class="stat">
+						<span class="stat-label">R</span>
+						<span class="stat-value">{amount(result.totals.R)}</span>
+					</div>
+				{:else if operation === 'until'}
+					<div class="stat hero">
+						<span class="stat-label">{m.gacha_sampled()}</span>
+						<span class="stat-value">{amount(result.draws)}</span>
+					</div>
+					<div class="stat">
+						<span class="stat-label">{m.gacha_copies()}</span>
+						<span class="stat-value">{amount(result.copies ?? '0')}</span>
+					</div>
+				{:else if result.probability !== undefined}
+					<div class="stat hero">
+						<span class="stat-label">{m.gacha_probability()}</span>
+						<span class="stat-value">{percent(result.probability)}</span>
+					</div>
+					{#if result.expected_copies !== undefined}
+						<div class="stat">
+							<span class="stat-label">{m.gacha_expected()}</span>
+							<span class="stat-value">{decimal(result.expected_copies)}</span>
+						</div>
+					{/if}
+				{/if}
+			</div>
+
+			{#if result.thresholds}
+				<div class="stats">
+					{#each ['50', '90', '95'] as level (level)}
+						{@const threshold = result.thresholds[level]}
+						<div class="stat">
+							<span class="stat-label">{m.gacha_chance({ percent: level })}</span>
+							<span class="stat-value small"
+								>{threshold ? amount(threshold) : m.gacha_beyond()}</span
+							>
+						</div>
+					{/each}
+				</div>
 			{/if}
-			<h3>{m.gacha_cost()}</h3>
-			<p>
-				{amount(result.cost.crystals)}
-				{m.gacha_crystals()} · ¥{amount(result.cost.jpy)} · {result.cost.usd
-					? `$${amount(result.cost.usd)} USD`
-					: m.gacha_no_usd()}
-			</p>
-			{#if result.cost.exchange_rate}<p>
-					{result.cost.exchange_rate.provider} · {result.cost.exchange_rate.date} · 1 USD = {result
-						.cost.exchange_rate.jpy_per_usd} JPY {result.cost.exchange_rate.stale
-						? m.gacha_stale()
-						: ''}
-				</p>{/if}
-			<p>{m.gacha_cost_note()}</p>
-			<p>{m.gacha_replay_seed()}: {result.seed}</p>
-			<Button
-				disabled={busy}
-				onclick={() => {
-					void run(true)
-				}}>{m.gacha_replay()}</Button
-			>
-			{#if result.ordered}
-				<details>
-					<summary>{m.gacha_draw_order()}</summary>
-					<ol>
-						{#each result.ordered as item, index (index)}<li>{name(item)}</li>{/each}
-					</ol>
-				</details>
+
+			{#if drawnSsrs.length > 0}
+				<ul class="drawn">
+					{#each drawnSsrs as item (item.identity)}
+						<li title={name(item)}>
+							<img src={gachaItemImage(item)} alt={name(item)} />
+							{#if Number(item.count) > 1}
+								<span class="count">×{amount(item.count ?? '0')}</span>
+							{/if}
+						</li>
+					{/each}
+				</ul>
 			{/if}
-			{#if result.items}<table>
-					<thead><tr><th>{m.gacha_target()}</th><th>{m.gacha_count()}</th></tr></thead><tbody
-						>{#each result.items as item (item.identity)}<tr
-								><td>{name(item)}</td><td>{amount(item.count ?? '0')}</td></tr
-							>{/each}</tbody
-					>
-				</table>{/if}
+
+			<footer class="meta">
+				<span class="cost">
+					{amount(result.cost.crystals)}
+					{m.gacha_crystals()} · ¥{amount(result.cost.jpy)}
+					{#if result.cost.usd}· ${amount(result.cost.usd)}{/if}
+				</span>
+				<span class="seed">
+					{m.gacha_replay_seed()}
+					<CopyableText value={result.seed} />
+				</span>
+				<Button variant="ghost" size="small" disabled={busy} onclick={() => void run(true)}>
+					{m.gacha_replay()}
+				</Button>
+			</footer>
 		</section>
 	{/if}
-</section>
+</div>
 
 <style lang="scss">
-	.gacha {
-		max-width: 960px;
+	@use '$src/themes/spacing' as *;
+	@use '$src/themes/typography' as *;
+	@use '$src/themes/layout' as *;
+	@use '$src/themes/effects' as *;
+	@use '$src/themes/mixins' as *;
+
+	.gacha-page {
+		max-width: var(--main-max-width);
 		margin: 0 auto;
-		padding: 2rem;
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
+
+		h1,
+		h2 {
+			margin: 0;
+		}
 	}
-	nav,
-	.controls,
-	.rate {
+
+	.page-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: $unit-2x;
+
+		h1 {
+			font-size: $font-xlarge;
+			font-weight: $bold;
+		}
+	}
+
+	.card {
+		background: var(--card-bg);
+		color: var(--text-primary);
+		border: $card-border;
+		border-radius: $page-corner;
+		box-shadow: $page-elevation;
+		padding: $unit-3x;
+		display: flex;
+		flex-direction: column;
+		gap: $unit-3x;
+	}
+
+	.fields {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+		gap: $unit-2x;
+
+		.wide {
+			grid-column: span 2;
+
+			@media (max-width: 450px) {
+				grid-column: auto;
+			}
+		}
+	}
+
+	.rateups {
+		display: flex;
+		flex-direction: column;
+		gap: $unit;
+
+		h2 {
+			font-size: $font-small;
+			font-weight: $medium;
+		}
+	}
+
+	.rateup {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+
+		img {
+			width: 32px;
+			aspect-ratio: 1;
+			object-fit: cover;
+			border-radius: $item-corner-small;
+			background: var(--placeholder-bg);
+		}
+	}
+
+	.rateup-name {
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.rateup-percent {
+		display: flex;
+		align-items: center;
+		gap: $unit-half;
+		width: 96px;
+		color: var(--text-secondary);
+	}
+
+	.actions {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.stats {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 1rem;
-		align-items: end;
-		margin: 1rem 0;
+		gap: $unit-4x;
 	}
-	fieldset {
-		border: 0;
-		padding: 0;
-	}
-	label {
+
+	.stat {
 		display: flex;
-		flex: 1;
 		flex-direction: column;
-		gap: 0.5rem;
-		min-width: 160px;
+		gap: $unit-half;
 	}
-	input,
-	select {
-		font: inherit;
-		padding: 0.65rem;
-		border: 1px solid #8888;
-		border-radius: 0.4rem;
-		background: transparent;
-		color: inherit;
-		max-width: 100%;
+
+	.stat-label {
+		color: var(--text-secondary);
+		font-size: $font-small;
+		font-weight: $medium;
 	}
-	select {
-		width: 100%;
+
+	.stat-value {
+		font-size: $font-xxlarge;
+		font-weight: $bold;
+		font-variant-numeric: tabular-nums;
+
+		&.small {
+			font-size: $font-large;
+		}
 	}
-	.run {
-		font: inherit;
-		cursor: pointer;
-		padding: 0.8rem 1.5rem;
-		margin: 1rem 0;
-		border-radius: 0.5rem;
+
+	.stat.hero .stat-value {
+		font-size: calc($unit * 6);
+		line-height: 1;
 	}
-	.sample {
-		font-size: clamp(2rem, 7vw, 4rem);
+
+	.drawn {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+		gap: $unit;
+
+		li {
+			position: relative;
+		}
+
+		img {
+			display: block;
+			width: 100%;
+			aspect-ratio: 280 / 160;
+			object-fit: cover;
+			border-radius: $item-corner-small;
+			background: var(--placeholder-bg);
+		}
 	}
-	table {
-		width: 100%;
-		text-align: left;
-		margin-top: 1.5rem;
+
+	.count {
+		position: absolute;
+		right: $unit-half;
+		bottom: $unit-half;
+		padding: 0 $unit-half;
+		border-radius: $item-corner-small;
+		background: rgba(0, 0, 0, 0.7);
+		color: white;
+		font-size: $font-tiny;
+		font-weight: $bold;
 	}
-	td,
-	th {
-		padding: 0.5rem;
-		border-bottom: 1px solid #8884;
+
+	.meta {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: $unit-2x;
+		padding-top: $unit-2x;
+		border-top: 1px solid var(--separator-bg);
+		color: var(--text-secondary);
+		font-size: $font-small;
 	}
-	[role='alert'] {
-		color: #db5757;
+
+	.cost {
+		flex: 1;
+	}
+
+	.seed {
+		display: flex;
+		align-items: center;
+		gap: $unit;
 	}
 </style>

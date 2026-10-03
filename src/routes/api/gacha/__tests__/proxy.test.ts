@@ -34,4 +34,11 @@ describe('gacha API proxy', () => {
 			POST(event('catalogue', 'POST') as unknown as Parameters<typeof POST>[0])
 		).rejects.toMatchObject({ status: 404 })
 	})
+	it('answers with JSON when the API is unreachable', async () => {
+		const input = event('catalogue')
+		input.fetch.mockRejectedValueOnce(new TypeError('fetch failed'))
+		const response = await GET(input as unknown as Parameters<typeof GET>[0])
+		expect(response.status).toBe(502)
+		expect(await response.json()).toEqual({ error: 'Gacha service unavailable' })
+	})
 })

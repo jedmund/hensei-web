@@ -7,7 +7,8 @@ export interface CatalogueItem {
 	rarity: number
 	element: number
 	promotions: number[]
-	recruits?: { en: string; ja: string } | null
+	category?: 'characterWeapon' | 'weapon' | 'summon'
+	recruits?: { granblue_id?: string; en: string; ja: string } | null
 	count?: string
 }
 export interface GachaConfiguration {

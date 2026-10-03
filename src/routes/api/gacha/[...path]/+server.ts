@@ -9,12 +9,20 @@ const proxy: RequestHandler = async ({ params, request, url, fetch }) => {
 			? path === 'catalogue' || /^jobs\/[a-f0-9]{48}$/.test(path)
 			: ['simulations', 'until', 'odds'].includes(path)
 	if (!allowed) error(404)
-	const response = await fetch(`${getApiBaseUrl()}/gacha/${path}${url.search}`, {
-		method: request.method,
-		headers: { 'Content-Type': 'application/json' },
-		body: request.method === 'POST' ? await request.text() : undefined,
-		signal: AbortSignal.timeout(60_000)
-	})
+	let response: Response
+	try {
+		response = await fetch(`${getApiBaseUrl()}/gacha/${path}${url.search}`, {
+			method: request.method,
+			headers: { 'Content-Type': 'application/json' },
+			body: request.method === 'POST' ? await request.text() : undefined,
+			signal: AbortSignal.timeout(60_000)
+		})
+	} catch {
+		return Response.json(
+			{ error: 'Gacha service unavailable' },
+			{ status: 502, headers: { 'Cache-Control': 'no-store' } }
+		)
+	}
 	return new Response(response.body, {
 		status: response.status,
 		headers: {
