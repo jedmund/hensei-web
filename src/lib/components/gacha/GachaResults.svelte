@@ -10,7 +10,7 @@
 	import usFlag from '$src/assets/flags/us.png'
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
-	import { gachaItemImage, gachaItemName } from '$lib/utils/gacha'
+	import { gachaItemFallbackImage, gachaItemImage, gachaItemName } from '$lib/utils/gacha'
 	import type { CatalogueItem, GachaRenderData, GachaResult } from '$lib/types/gacha'
 
 	type Currency = GachaRenderData['currency']
@@ -24,6 +24,8 @@
 		busy?: boolean
 		/** Static layout for the share image: no controls, capped art */
 		share?: boolean
+		/** Pool and season, shown at the top right of the share image */
+		label?: string
 		onReplay?: () => void
 		onCopyLink?: () => void
 		onCopyImage?: () => void
@@ -36,13 +38,20 @@
 		art = $bindable('weapon'),
 		busy = false,
 		share = false,
+		label,
 		onReplay,
 		onCopyLink,
 		onCopyImage
 	}: Props = $props()
 
-	// Three rows of ten in the 1200x630 share image
-	const SHARE_ART_LIMIT = 30
+	// The share image shows every SSR, choosing the column count that gives
+	// the largest tiles that still fit; at least five columns so a few pulls
+	// don't turn into a few huge tiles
+	const SHARE_MIN_COLUMNS = 5
+	const ART_GAP = 8
+	const ART_RATIO = 160 / 280
+	let artWidth = $state(0)
+	let artHeight = $state(0)
 
 	// SSRs in the order they were drawn; runs too large for the API to report
 	// an order fall back to one tile per item with its count
@@ -57,12 +66,26 @@
 			return item ? [{ ...item, count: '1' }] : []
 		})
 	})
-	const shownSsrs = $derived(
-		share && drawnSsrs.length > SHARE_ART_LIMIT
-			? drawnSsrs.slice(0, SHARE_ART_LIMIT - 1)
-			: drawnSsrs
-	)
-	const hiddenSsrs = $derived(drawnSsrs.length - shownSsrs.length)
+	// One fallback attempt per image, so a missing fallback can't loop
+	function useFallback(event: Event, item: CatalogueItem) {
+		const img = event.currentTarget as HTMLImageElement
+		const fallback = gachaItemFallbackImage(item)
+		if (fallback && !img.dataset.fallback) {
+			img.dataset.fallback = 'true'
+			img.src = fallback
+		}
+	}
+
+	const shareColumns = $derived.by(() => {
+		const count = drawnSsrs.length
+		if (!artWidth || !artHeight || count === 0) return SHARE_MIN_COLUMNS
+		for (let columns = SHARE_MIN_COLUMNS; columns < count; columns++) {
+			const tileHeight = ((artWidth - (columns - 1) * ART_GAP) / columns) * ART_RATIO
+			const rows = Math.ceil(count / columns)
+			if (rows * tileHeight + (rows - 1) * ART_GAP <= artHeight) return columns
+		}
+		return Math.max(count, SHARE_MIN_COLUMNS)
+	})
 	const hasCharacterArt = $derived(drawnSsrs.some((item) => item.recruits?.granblue_id))
 	const currencies = $derived<Currency[]>(
 		result.cost.usd ? ['usd', 'jpy', 'crystals'] : ['jpy', 'crystals']
@@ -122,6 +145,9 @@
 {/snippet}
 
 <section class="card results" class:share aria-live={share ? undefined : 'polite'}>
+	{#if share && label}
+		<div class="share-label">{label}</div>
+	{/if}
 	<div class="results-head">
 		<div class="stats">
 			{#if operation === 'draw' && result.totals}
@@ -169,19 +195,25 @@
 		{/if}
 	</div>
 
-	{#if shownSsrs.length > 0}
-		<ul class="drawn">
-			{#each shownSsrs as item, index (index)}
+	{#if drawnSsrs.length > 0}
+		<ul
+			class="drawn"
+			style:--share-columns={share ? shareColumns : undefined}
+			bind:clientWidth={artWidth}
+			bind:clientHeight={artHeight}
+		>
+			{#each drawnSsrs as item, index (index)}
 				<li title={name(item)}>
-					<img src={gachaItemImage(item, art)} alt={name(item)} />
+					<img
+						src={gachaItemImage(item, art)}
+						alt={name(item)}
+						onerror={(event) => useFallback(event, item)}
+					/>
 					{#if Number(item.count) > 1}
 						<span class="count">×{amount(item.count ?? '0')}</span>
 					{/if}
 				</li>
 			{/each}
-			{#if hiddenSsrs > 0}
-				<li class="more">{m.gacha_more({ count: amount(String(hiddenSsrs)) })}</li>
-			{/if}
 		</ul>
 	{/if}
 
@@ -190,6 +222,7 @@
 			<div class="cost">
 				<span class="cost-text">{@render currencyMark()}</span>
 			</div>
+			<span class="wordmark">granblue.team</span>
 		{:else}
 			<div class="cost">
 				<button type="button" onclick={nextCurrency}>
@@ -296,29 +329,21 @@
 		grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
 		gap: $unit;
 
+		// Fixed tile shape, so a missing image can't change the row height
 		li {
 			position: relative;
+			aspect-ratio: 280 / 160;
+			overflow: hidden;
+			border-radius: $item-corner-small;
 		}
 
 		img {
 			display: block;
 			width: 100%;
-			aspect-ratio: 280 / 160;
+			height: 100%;
 			object-fit: cover;
 			border-radius: $item-corner-small;
 			background: var(--placeholder-bg);
-		}
-
-		.more {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			aspect-ratio: 280 / 160;
-			border-radius: $item-corner-small;
-			background: var(--page-bg);
-			color: var(--text-secondary);
-			font-size: $font-small;
-			font-weight: $medium;
 		}
 	}
 
@@ -390,9 +415,33 @@
 	// Share image: ten tiles per row so three rows fit the 1200x630 frame
 	.share {
 		box-shadow: none;
+		flex: 1;
+		min-height: 0;
 
 		.drawn {
-			grid-template-columns: repeat(10, minmax(0, 1fr));
+			flex: 1;
+			min-height: 0;
+			overflow: hidden;
+			align-content: start;
+			gap: 8px;
+			grid-template-columns: repeat(var(--share-columns), minmax(0, 1fr));
 		}
+
+		.meta {
+			margin-top: auto;
+		}
+	}
+
+	.share-label {
+		align-self: flex-end;
+		margin-bottom: -$unit;
+		color: var(--text-secondary);
+		font-size: $font-regular;
+		font-weight: $medium;
+	}
+
+	.wordmark {
+		color: var(--text-tertiary);
+		font-weight: $medium;
 	}
 </style>

@@ -1,14 +1,14 @@
 <script lang="ts">
 	import GachaResults from '$lib/components/gacha/GachaResults.svelte'
 	import * as m from '$lib/paraglide/messages'
-	import { getLocale } from '$lib/paraglide/runtime'
 
 	let { data } = $props()
 
+	// Full pool names; the simulator's select uses shorter ones
 	const pools: Record<string, () => string> = {
-		premium: m.gacha_premium,
-		legend: m.gacha_legend,
-		flash: m.gacha_flash,
+		premium: m.gacha_pool_premium,
+		legend: m.gacha_pool_legend,
+		flash: m.gacha_pool_flash,
 		classic: m.gacha_classic,
 		classic_ii: m.gacha_classic_ii,
 		classic_iii: m.gacha_classic_iii
@@ -20,18 +20,10 @@
 		holiday: m.gacha_holiday,
 		formal: m.gacha_formal
 	}
-	const operations = { draw: m.gacha_draw, until: m.gacha_until, odds: m.gacha_odds }
 
 	const config = $derived(data.result.configuration)
-	const subtitle = $derived(
-		[
-			operations[data.operation](),
-			pools[config.mode]?.() ?? config.mode,
-			config.season ? seasons[config.season]?.() : undefined,
-			data.operation === 'until'
-				? undefined
-				: `${BigInt(data.result.draws).toLocaleString(getLocale())} ${m.gacha_draws()}`
-		]
+	const label = $derived(
+		[pools[config.mode]?.() ?? config.mode, config.season ? seasons[config.season]?.() : undefined]
 			.filter(Boolean)
 			.join(' · ')
 	)
@@ -39,23 +31,18 @@
 
 <!-- The renderer screenshots this frame (main > *:first-child) at 1200x630 -->
 <div class="frame">
-	<header>
-		<span class="title">{m.gacha_title()}</span>
-		<span class="subtitle">{subtitle}</span>
-		<span class="wordmark">granblue.team</span>
-	</header>
 	<GachaResults
 		result={data.result}
 		operation={data.operation}
 		currency={data.currency}
 		art={data.art}
+		{label}
 		share
 	/>
 </div>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
-	@use '$src/themes/typography' as *;
 
 	.frame {
 		box-sizing: border-box;
@@ -64,34 +51,9 @@
 		overflow: hidden;
 		display: flex;
 		flex-direction: column;
-		justify-content: center;
-		gap: $unit-2x;
-		padding: $unit-4x;
+		padding: $unit-3x;
 		background: var(--page-bg);
 		color: var(--text-primary);
 		font-family: var(--font-family);
-	}
-
-	header {
-		display: flex;
-		align-items: baseline;
-		gap: $unit-2x;
-	}
-
-	.title {
-		font-size: $font-xlarge;
-		font-weight: $bold;
-	}
-
-	.subtitle {
-		flex: 1;
-		color: var(--text-secondary);
-		font-size: $font-regular;
-	}
-
-	.wordmark {
-		color: var(--text-tertiary);
-		font-size: $font-regular;
-		font-weight: $medium;
 	}
 </style>
