@@ -33,6 +33,9 @@ import type { CatalogueItem, GachaRenderData, GachaResult } from '$lib/types/gac
 export const TEMPLATE_ID = 'gacha.result'
 /** Bump to invalidate every cached share image (e.g. after a card redesign). */
 export const RENDER_VERSION = 1
+// Bump when the share image's design changes, so cached images re-render
+// without changing signatures on links that are already shared
+const DESIGN_VERSION = 2
 
 const ARTS = ['weapon', 'character'] as const
 const CURRENCIES = ['usd', 'jpy', 'crystals'] as const
@@ -44,6 +47,8 @@ export interface ImageRequest {
 	share: GachaShare
 	art: GachaRenderData['art']
 	currency: GachaRenderData['currency']
+	/** Umikin Mode: base character art instead of uncapped art */
+	simplePortraits: boolean
 	locale: ImageLocale
 	/** Query string every equivalent request reduces to; signed and hashed */
 	canonical: string
@@ -67,14 +72,18 @@ export function parseImageRequest(params: URLSearchParams): ImageRequest | null 
 	const locale = oneOf(params.get('lang'), LOCALES, 'en')
 	const art = oneOf(params.get('art'), ARTS, 'weapon')
 	const currency = oneOf(params.get('currency'), CURRENCIES, locale === 'ja' ? 'jpy' : 'usd')
+	const simplePortraits = params.get('portraits') === 'umikin'
 
 	const query = new URLSearchParams(writeShare(share))
 	query.set('art', art)
 	query.set('currency', currency)
 	query.set('lang', locale)
+	if (simplePortraits) query.set('portraits', 'umikin')
 	const canonical = query.toString()
-	const cacheKey = createHash('sha256').update(canonical).digest('hex')
-	return { share, art, currency, locale, canonical, cacheKey }
+	const cacheKey = createHash('sha256')
+		.update(`${canonical}|design=${DESIGN_VERSION}`)
+		.digest('hex')
+	return { share, art, currency, simplePortraits, locale, canonical, cacheKey }
 }
 
 /**
@@ -228,7 +237,7 @@ export async function runShare(
 	fetch: typeof globalThis.fetch,
 	share: GachaShare,
 	sleep: (ms: number) => Promise<void> = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-): Promise<GachaResult> {
+): Promise<{ result: GachaResult; target?: CatalogueItem }> {
 	const season = share.mode.startsWith('classic') ? '' : share.season
 	const catalogueQuery = new URLSearchParams({ mode: share.mode })
 	if (season) catalogueQuery.set('season', season)
@@ -276,5 +285,6 @@ export async function runShare(
 		}
 	}
 	if (!data || !data.draws) throw new SimulationError(502, 'Gacha service unavailable')
-	return data as unknown as GachaResult
+	const targetItem = items.find((item) => item.identity === target)
+	return { result: data as unknown as GachaResult, ...(targetItem ? { target: targetItem } : {}) }
 }

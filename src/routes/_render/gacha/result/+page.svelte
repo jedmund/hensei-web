@@ -37,6 +37,8 @@
 		currency={data.currency}
 		art={data.art}
 		{label}
+		target={data.target}
+		simplePortraits={data.simplePortraits ?? false}
 		share
 	/>
 </div>

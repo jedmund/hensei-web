@@ -7,6 +7,8 @@ export interface GachaImageOptions {
 	art: 'weapon' | 'character'
 	currency: 'usd' | 'jpy' | 'crystals'
 	lang: 'en' | 'ja'
+	/** Umikin Mode: base character art instead of uncapped art */
+	simplePortraits?: boolean
 }
 
 /** Image URL for a result link's query string (settings plus seed). */
@@ -15,6 +17,7 @@ export function gachaImageUrl(query: string, opts: GachaImageOptions): string {
 	params.set('art', opts.art)
 	params.set('currency', opts.currency)
 	params.set('lang', opts.lang)
+	if (opts.simplePortraits) params.set('portraits', 'umikin')
 	return `/download/gacha?${params.toString()}`
 }
 
