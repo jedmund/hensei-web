@@ -126,6 +126,8 @@
 			{id}
 			class="picker-input"
 			{placeholder}
+			autocomplete="off"
+			spellcheck={false}
 			aria-invalid={error ? true : undefined}
 			aria-describedby={error ? `${id}-error` : undefined}
 			oninput={(e) => handleInput(e.currentTarget.value)}
