@@ -9,6 +9,7 @@
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import RichTooltip from '$lib/components/ui/RichTooltip.svelte'
+	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import jpFlag from '$src/assets/flags/jp.png'
 	import usFlag from '$src/assets/flags/us.png'
@@ -336,7 +337,18 @@
 							{#snippet content()}
 								<figure class="alternate">
 									<img src={alternate} alt="" />
-									<figcaption>{alternateName(item)}</figcaption>
+									<figcaption>
+										{alternateName(item)}
+										{#if art === 'weapon' && item.recruits}
+											<CharacterTags
+												character={{
+													element: item.element,
+													season: item.recruits.season ?? null,
+													series: item.recruits.series ?? []
+												}}
+											/>
+										{/if}
+									</figcaption>
 								</figure>
 							{/snippet}
 							{@render drawnImage(item)}
@@ -512,6 +524,10 @@
 		}
 
 		figcaption {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: $unit-half;
 			text-align: center;
 		}
 	}
