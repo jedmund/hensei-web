@@ -1817,7 +1817,6 @@
 	"account_deletion_subtitle": "Your account is deleted 30 days after you ask. You can cancel any time before then by logging in.",
 	"account_deletion_action": "Delete account…",
 	"account_deletion_confirm_title": "Delete your account?",
-	"account_deletion_confirm_message": "Your account, teams, collection and settings will be permanently deleted in 30 days. You'll be logged out everywhere, and we'll email you a confirmation. To keep your account, log in before then and cancel. Enter your password to confirm.",
 	"account_deletion_confirm_action": "Delete my account",
 	"account_deletion_password_placeholder": "Password",
 	"account_deletion_invalid_password": "That password isn't right.",
@@ -1832,5 +1831,8 @@
 	"account_deletion_cancel_confirm": "Keep my account",
 	"account_deletion_cancel_dismiss": "Not now",
 	"account_deletion_cancelled": "Your account is no longer scheduled for deletion.",
-	"account_deletion_cancel_error": "Couldn't cancel the deletion. Please try again."
+	"account_deletion_cancel_error": "Couldn't cancel the deletion. Please try again.",
+	"account_deletion_confirm_warning": "Your account, teams, collection, and settings will be permanently deleted in 30 days.",
+	"account_deletion_confirm_keep": "To keep your account, log in within 30 days and cancel the deletion.",
+	"account_deletion_password_label": "Enter your password to confirm:"
 }

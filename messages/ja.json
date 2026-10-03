@@ -1798,7 +1798,6 @@
 	"account_deletion_subtitle": "申請から30日後にアカウントが削除されます。それまではログインすればいつでも取り消せます。",
 	"account_deletion_action": "アカウントを削除…",
 	"account_deletion_confirm_title": "アカウントを削除しますか？",
-	"account_deletion_confirm_message": "30日後に、アカウント・編成・コレクション・設定が完全に削除されます。すべての端末でログアウトされ、確認メールが届きます。アカウントを残したい場合は、それまでにログインして取り消してください。確認のためパスワードを入力してください。",
 	"account_deletion_confirm_action": "アカウントを削除する",
 	"account_deletion_password_placeholder": "パスワード",
 	"account_deletion_invalid_password": "パスワードが正しくありません。",
@@ -1813,5 +1812,8 @@
 	"account_deletion_cancel_confirm": "アカウントを残す",
 	"account_deletion_cancel_dismiss": "あとで",
 	"account_deletion_cancelled": "アカウントの削除を取り消しました。",
-	"account_deletion_cancel_error": "削除を取り消せませんでした。もう一度お試しください。"
+	"account_deletion_cancel_error": "削除を取り消せませんでした。もう一度お試しください。",
+	"account_deletion_confirm_warning": "アカウント・編成・コレクション・設定は30日後に完全に削除されます。",
+	"account_deletion_confirm_keep": "アカウントを残したい場合は、30日以内にログインして削除を取り消してください。",
+	"account_deletion_password_label": "確認のためパスワードを入力してください："
 }

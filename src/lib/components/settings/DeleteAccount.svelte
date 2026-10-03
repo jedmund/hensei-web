@@ -95,14 +95,21 @@
 	<ConfirmDialog
 		bind:open
 		title={m.account_deletion_confirm_title()}
-		message={m.account_deletion_confirm_message()}
 		confirmLabel={m.account_deletion_confirm_action()}
 		loading={submitting}
 		confirmDisabled={password === ''}
 		onconfirm={requestDeletion}
 	>
+		<div class="message">
+			<p>
+				<strong>{m.account_deletion_confirm_warning()}</strong>
+				{m.account_deletion_confirm_keep()}
+			</p>
+		</div>
 		<Input
+			id="delete-account-password"
 			type="password"
+			label={m.account_deletion_password_label()}
 			placeholder={m.account_deletion_password_placeholder()}
 			autocomplete="current-password"
 			contained
@@ -141,6 +148,17 @@
 		font-weight: typography.$medium;
 		color: var(--text-secondary);
 		margin: spacing.$unit-2x 0 0;
+	}
+
+	.message p {
+		margin: 0;
+		font-size: typography.$font-body;
+		line-height: 1.5;
+		color: var(--text-secondary);
+
+		strong {
+			color: var(--text-primary);
+		}
 	}
 
 	.status {

@@ -7,7 +7,8 @@
 	interface Props {
 		open: boolean
 		title: string
-		message: string
+		/** Plain-text message; leave it out to supply richer content as children. */
+		message?: string
 		confirmLabel?: string
 		cancelLabel?: string
 		loading?: boolean
@@ -47,7 +48,9 @@
 <Dialog bind:open hideClose>
 	<div class="confirm-dialog">
 		<h3 class="title">{title}</h3>
-		<p class="message">{message}</p>
+		{#if message}
+			<p class="message">{message}</p>
+		{/if}
 		{@render children?.()}
 		<div class="actions">
 			<Button variant="ghost" size="small" onclick={handleCancel} disabled={loading}>
