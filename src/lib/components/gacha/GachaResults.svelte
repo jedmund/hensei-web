@@ -105,6 +105,17 @@
 		}
 		return Math.max(count, SHARE_MIN_COLUMNS)
 	})
+	// Rate-ups the result was drawn with, and how many of the drawn SSRs
+	// were one of them
+	const rateups = $derived(
+		new Set((result.configuration?.rateups ?? []).map((rate) => rate.identity))
+	)
+	const rateupHits = $derived(
+		drawnSsrs.reduce(
+			(total, item) => (rateups.has(item.identity) ? total + Number(item.count ?? 1) : total),
+			0
+		)
+	)
 	const hasCharacterArt = $derived(drawnSsrs.some((item) => item.recruits?.granblue_id))
 	const currencies = $derived<Currency[]>(
 		result.cost.usd ? ['usd', 'jpy', 'crystals'] : ['jpy', 'crystals']
@@ -248,11 +259,12 @@
 	<div class="results-head">
 		<div class="stats">
 			{#if operation === 'draw' && result.totals}
-				<div class="tiles">
+				<div class="tiles" style:--columns={rateups.size > 0 ? 3 : 2}>
 					{@render tile(m.gacha_ssr_rate(), rate(result.totals.SSR, result.draws))}
-					{#each ['SSR', 'SR', 'R'] as const as rarity (rarity)}
-						{@render tile(rarity, amount(result.totals[rarity]))}
-					{/each}
+					{@render tile('SSR', amount(result.totals.SSR))}
+					{#if rateups.size > 0}
+						{@render tile(m.gacha_rateups_hit(), amount(String(rateupHits)))}
+					{/if}
 				</div>
 			{:else if operation === 'until'}
 				{#if target}
@@ -332,7 +344,10 @@
 			{#each drawnSsrs as item, index (index)}
 				{@const alternate = share ? undefined : gachaItemAlternateImage(item, art)}
 				{@const summon = !share && gachaItemKind(item) === 'summon'}
-				<li title={alternate || summon ? undefined : name(item)}>
+				<li
+					title={alternate || summon ? undefined : name(item)}
+					class:rateup={rateups.has(item.identity)}
+				>
 					{#if alternate}
 						<!-- The character for a weapon, or the weapon for a character -->
 						<RichTooltip class="drawn-trigger">
@@ -434,13 +449,9 @@
 
 	.tiles {
 		display: grid;
-		grid-template-columns: repeat(var(--columns, 4), minmax(0, 1fr));
+		grid-template-columns: repeat(var(--columns, 3), minmax(0, 1fr));
 		gap: $unit;
 		width: 100%;
-
-		@media (max-width: 450px) {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
-		}
 	}
 
 	.tile {
@@ -479,6 +490,11 @@
 		font-size: $font-xxlarge;
 		font-weight: $bold;
 		font-variant-numeric: tabular-nums;
+
+		// Three tiles share a row on phones
+		@media (max-width: 450px) {
+			font-size: $font-large;
+		}
 	}
 
 	.drawn {
@@ -495,6 +511,16 @@
 			aspect-ratio: 280 / 160;
 			overflow: hidden;
 			border-radius: $item-corner-small;
+
+			// Rate-ups glow, so they stand out among the other SSRs
+			&.rateup {
+				box-shadow: 0 0 $unit-half 1px color-mix(in srgb, var(--accent-yellow) 60%, transparent);
+				animation: rateup-pulse 2.4s ease-in-out infinite;
+
+				@media (prefers-reduced-motion: reduce) {
+					animation: none;
+				}
+			}
 		}
 
 		img {
@@ -510,6 +536,17 @@
 			display: block;
 			height: 100%;
 		}
+	}
+
+	@keyframes rateup-pulse {
+		50% {
+			box-shadow: 0 0 $unit 1px color-mix(in srgb, var(--accent-yellow) 80%, transparent);
+		}
+	}
+
+	// The share image is a still; keep the glow steady
+	.share .drawn li.rateup {
+		animation: none;
 	}
 
 	// Inside the tooltip, which is portalled out of the card
