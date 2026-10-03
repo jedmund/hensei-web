@@ -36,7 +36,7 @@ export const TEMPLATE_ID = 'gacha.result'
 export const RENDER_VERSION = 1
 // Bump when the share image's design changes, so cached images re-render
 // without changing signatures on links that are already shared
-const DESIGN_VERSION = 2
+const DESIGN_VERSION = 3
 
 const ARTS = ['weapon', 'character'] as const
 const CURRENCIES = ['usd', 'jpy', 'crystals'] as const
@@ -48,8 +48,6 @@ export interface ImageRequest {
 	share: GachaShare
 	art: GachaRenderData['art']
 	currency: GachaRenderData['currency']
-	/** Umikin Mode: base character art instead of uncapped art */
-	simplePortraits: boolean
 	locale: ImageLocale
 	/** Query string every equivalent request reduces to; signed and hashed */
 	canonical: string
@@ -67,20 +65,18 @@ export function parseImageRequest(params: URLSearchParams): ImageRequest | null 
 	if (share.operation !== 'draw' && !share.target) return null
 
 	const locale = oneOf(params.get('lang'), LOCALES, 'en')
-	const art = oneOf(params.get('art'), ARTS, 'weapon')
+	const art = oneOf(params.get('art'), ARTS, 'character')
 	const currency = oneOf(params.get('currency'), CURRENCIES, locale === 'ja' ? 'jpy' : 'usd')
-	const simplePortraits = params.get('portraits') === 'umikin'
 
 	const query = new URLSearchParams(writeShare(share))
 	query.set('art', art)
 	query.set('currency', currency)
 	query.set('lang', locale)
-	if (simplePortraits) query.set('portraits', 'umikin')
 	const canonical = query.toString()
 	const cacheKey = createHash('sha256')
 		.update(`${canonical}|design=${DESIGN_VERSION}`)
 		.digest('hex')
-	return { share, art, currency, simplePortraits, locale, canonical, cacheKey }
+	return { share, art, currency, locale, canonical, cacheKey }
 }
 
 /**

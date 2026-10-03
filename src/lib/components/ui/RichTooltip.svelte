@@ -9,6 +9,8 @@
 		disableCloseOnTriggerClick?: boolean
 		disabled?: boolean
 		disableHoverableContent?: boolean
+		/** Class for the trigger wrapper, e.g. to make it fill its parent */
+		class?: string
 	}
 
 	const {
@@ -17,14 +19,15 @@
 		delayDuration = 200,
 		disableCloseOnTriggerClick = false,
 		disabled = false,
-		disableHoverableContent = false
+		disableHoverableContent = false,
+		class: className
 	}: Props = $props()
 </script>
 
 <TooltipBase.Root {delayDuration} {disableCloseOnTriggerClick} {disabled} {disableHoverableContent}>
 	<TooltipBase.Trigger>
 		{#snippet child({ props })}
-			<span {...props}>
+			<span class={className} {...props}>
 				{@render children()}
 			</span>
 		{/snippet}

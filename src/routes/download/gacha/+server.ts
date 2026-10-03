@@ -81,7 +81,6 @@ export const GET: RequestHandler = async ({ url, request, fetch }) => {
 		operation: imageRequest.share.operation,
 		currency: imageRequest.currency,
 		art: imageRequest.art,
-		simplePortraits: imageRequest.simplePortraits,
 		...(simulation.target ? { target: simulation.target } : {})
 	}
 	const prefetch = storePrefetch(data)

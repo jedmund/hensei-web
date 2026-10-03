@@ -10,6 +10,7 @@ import {
 import type { CatalogueItem } from '$lib/types/gacha'
 
 export type GachaItemKind = 'character' | 'weapon' | 'summon'
+export type GachaArt = 'character' | 'weapon'
 
 export function gachaItemKind(item: CatalogueItem): GachaItemKind {
 	if (item.drawable_type === 'Summon') return 'summon'
@@ -44,18 +45,10 @@ export function gachaItemName(item: CatalogueItem, locale: string): string {
 	return (locale === 'ja' ? names.ja : names.en) || names.en || item.name.en
 }
 
-// Characters show their uncapped (_02) art, or their base (_01) art in
-// Umikin Mode; _01 is also the fallback when an _02 image is missing
-const characterPose = (simplePortraits: boolean) => (simplePortraits ? '01' : '02')
-
-/** Wide grid art, used for draw results */
-export function gachaItemImage(
-	item: CatalogueItem,
-	art: 'weapon' | 'character' = 'weapon',
-	simplePortraits = false
-): string {
+/** Wide grid art, used for draw results; characters use their base (_01) art */
+export function gachaItemImage(item: CatalogueItem, art: GachaArt = 'character'): string {
 	if (art === 'character' && item.recruits?.granblue_id) {
-		return getCharacterImage(item.recruits.granblue_id, 'grid', characterPose(simplePortraits))
+		return getCharacterImage(item.recruits.granblue_id, 'grid', '01')
 	}
 	return item.drawable_type === 'Summon'
 		? getSummonImage(item.granblue_id, 'wide')
@@ -63,38 +56,32 @@ export function gachaItemImage(
 }
 
 /**
- * Large art for a featured item: the character's or summon's detail art, or
- * the weapon's base art for weapons without a character
+ * The other art for a character weapon: the weapon when showing characters,
+ * the character when showing weapons. Shown on hover, and used when the
+ * shown art is missing. Undefined for items that don't recruit anyone.
  */
-export function gachaItemDetailImage(item: CatalogueItem, simplePortraits = false): string {
-	const kind = gachaItemKind(item)
-	if (kind === 'summon') return getSummonDetailImage(item.granblue_id)
-	if (kind === 'character' && item.recruits?.granblue_id) {
-		return getCharacterDetailImage(item.recruits.granblue_id, characterPose(simplePortraits))
-	}
-	return getWeaponBaseImage(item.granblue_id)
+export function gachaItemAlternateImage(item: CatalogueItem, art: GachaArt): string | undefined {
+	if (!item.recruits?.granblue_id) return undefined
+	return gachaItemImage(item, art === 'character' ? 'weapon' : 'character')
 }
 
-/** Base (_01) detail art, the fallback for a character missing its _02 art */
-export function gachaItemDetailFallbackImage(item: CatalogueItem): string | undefined {
-	return gachaItemKind(item) === 'character' && item.recruits?.granblue_id
-		? getCharacterDetailImage(item.recruits.granblue_id, '01')
-		: undefined
+/** Fallback when an item's result image is missing */
+export function gachaItemFallbackImage(item: CatalogueItem, art: GachaArt): string | undefined {
+	if (item.drawable_type === 'Summon') return getSummonImage(item.granblue_id, 'grid')
+	return gachaItemAlternateImage(item, art)
 }
 
 /**
- * Fallback art when an item's result image is missing: summons' grid art, or
- * a character's base (_01) art
+ * Large art for a featured item: the character's base (_01) or summon's
+ * detail art, or the weapon's base art for weapons without a character
  */
-export function gachaItemFallbackImage(
-	item: CatalogueItem,
-	art: 'weapon' | 'character' = 'weapon'
-): string | undefined {
-	if (item.drawable_type === 'Summon') return getSummonImage(item.granblue_id, 'grid')
-	if (art === 'character' && item.recruits?.granblue_id) {
-		return getCharacterImage(item.recruits.granblue_id, 'grid', '01')
+export function gachaItemDetailImage(item: CatalogueItem): string {
+	const kind = gachaItemKind(item)
+	if (kind === 'summon') return getSummonDetailImage(item.granblue_id)
+	if (kind === 'character' && item.recruits?.granblue_id) {
+		return getCharacterDetailImage(item.recruits.granblue_id, '01')
 	}
-	return undefined
+	return getWeaponBaseImage(item.granblue_id)
 }
 
 /** Square thumbnail, used in the picker */

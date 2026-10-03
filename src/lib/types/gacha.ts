@@ -1,3 +1,5 @@
+import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'
+
 export interface CatalogueItem {
 	identity: string
 	drawable_type: 'Weapon' | 'Summon'
@@ -8,7 +10,14 @@ export interface CatalogueItem {
 	element: number
 	promotions: number[]
 	category?: 'characterWeapon' | 'weapon' | 'summon'
-	recruits?: { granblue_id?: string; en: string; ja: string } | null
+	recruits?: {
+		granblue_id?: string
+		en: string
+		ja: string
+		/** For the character's tags */
+		season?: number | null
+		series?: (number | CharacterSeriesRef)[]
+	} | null
 	count?: string
 	/** ISO date the item was released, when known */
 	release_date?: string | null
@@ -56,8 +65,6 @@ export interface GachaRenderData {
 	operation: 'draw' | 'until' | 'odds'
 	currency: 'usd' | 'jpy' | 'crystals'
 	art: 'weapon' | 'character'
-	/** Umikin Mode: base character art instead of uncapped art */
-	simplePortraits?: boolean
 	/** The Until/Odds target, for showing its art */
 	target?: CatalogueItem
 }
