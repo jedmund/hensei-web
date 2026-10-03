@@ -145,6 +145,7 @@
 									item={searchResult(item)}
 									type={gachaItemKind(item)}
 									weaponName={gachaItemKind(item) === 'character' ? weaponName(item) : undefined}
+									large
 									interactive={false}
 								/>
 							</Combobox.Item>

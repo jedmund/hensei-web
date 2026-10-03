@@ -22,6 +22,8 @@
 		inTeam?: boolean
 		/** For characters: the name of the weapon that recruits them, shown under the name */
 		weaponName?: string
+		/** Use a larger image, for lists with room for it */
+		large?: boolean
 		/**
 		 * Render as its own button (default). Turn off when a parent element,
 		 * like a combobox option, handles selection, hover and focus.
@@ -37,6 +39,7 @@
 		fromCollection = false,
 		inTeam = false,
 		weaponName,
+		large = false,
 		interactive = true,
 		onclick
 	}: Props = $props()
@@ -74,7 +77,7 @@
 </script>
 
 {#snippet content()}
-	<div class="result-image-wrapper" class:tall={weaponName}>
+	<div class="result-image-wrapper" class:large>
 		<img
 			src={imageUrl}
 			alt={itemName}
@@ -211,8 +214,7 @@
 			height: 48px;
 			flex-shrink: 0;
 
-			// Rows with a weapon line have three lines of text
-			&.tall {
+			&.large {
 				width: 60px;
 				height: 60px;
 			}
