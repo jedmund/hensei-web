@@ -1858,6 +1858,8 @@
 	"gacha_run": "Run",
 	"gacha_running": "Running…",
 	"gacha_copy_link": "Copy link",
+	"gacha_copy_image": "Copy image",
+	"gacha_more": "+{count} more",
 	"gacha_replay": "Replay",
 	"gacha_sampled": "Draws needed",
 	"gacha_ssr_rate": "SSR rate",
