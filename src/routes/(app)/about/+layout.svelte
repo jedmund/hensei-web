@@ -14,6 +14,10 @@
 		{ value: 'roadmap', path: '/about/roadmap' }
 	] as const
 
+	// The privacy policy and terms live under /about but aren't tabs.
+	const legalPaths = ['/about/privacy', '/about/terms']
+	const isLegalPage = $derived(legalPaths.some((path) => page.url.pathname.startsWith(path)))
+
 	const activeTab = $derived(
 		tabs.findLast((tab) => page.url.pathname.startsWith(tab.path))?.value ?? 'about'
 	)
@@ -25,7 +29,13 @@
 </script>
 
 <div class="about-layout">
-	{#if activeTab === 'about'}
+	{#if isLegalPage}
+		<div class="about-card">
+			<div class="about-content legal">
+				{@render children?.()}
+			</div>
+		</div>
+	{:else if activeTab === 'about'}
 		<div class="about-card">
 			<div class="about-hero">
 				<img
@@ -181,5 +191,9 @@
 	.about-content {
 		padding: $unit $unit-3x $unit-3x;
 		color: var(--text-primary);
+
+		&.legal {
+			padding-top: $unit-3x;
+		}
 	}
 </style>

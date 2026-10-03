@@ -12,6 +12,7 @@ export interface OAuthLoginResponse {
 		id: string
 		username: string
 		role: number
+		deletion_scheduled_at?: string | null
 	}
 }
 

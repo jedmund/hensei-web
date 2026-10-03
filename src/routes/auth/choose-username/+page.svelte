@@ -116,7 +116,7 @@
 
 <PageMeta title={m.auth_social_username_title()} description={m.page_desc_home()} />
 
-<AuthCard title={m.auth_social_username_title()}>
+<AuthCard title={m.auth_social_username_title()} legalConsent>
 	<form
 		method="post"
 		use:enhance={() => {

@@ -33,7 +33,8 @@ describe('buildCookies', () => {
 			username: 'grug',
 			token: 'tok-1',
 			role: 0,
-			expires_at: new Date((1700000000 + 3600) * 1000).toISOString()
+			expires_at: new Date((1700000000 + 3600) * 1000).toISOString(),
+			deletionScheduledAt: null
 		})
 
 		expect(result.user).toEqual({
@@ -70,5 +71,16 @@ describe('buildCookies', () => {
 		expect(result.user.gender).toBe(0)
 		expect(result.user.theme).toBe('system')
 		expect(result.user.defaultRepView).toBeUndefined()
+	})
+
+	it('carries a scheduled account deletion into the account cookie', () => {
+		const scheduled: OAuthLoginResponse = {
+			...mockOAuth,
+			user: { ...mockOAuth.user, deletion_scheduled_at: '2026-11-01T00:00:00Z' }
+		}
+
+		const result = buildCookies(scheduled, mockUserInfo)
+
+		expect(result.account.deletionScheduledAt).toBe('2026-11-01T00:00:00Z')
 	})
 })

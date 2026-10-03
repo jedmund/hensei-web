@@ -9,6 +9,7 @@
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import ConnectedAccounts from './ConnectedAccounts.svelte'
 	import PasswordBanner from './PasswordBanner.svelte'
+	import DeleteAccount from './DeleteAccount.svelte'
 	import type { SettingsReturn } from '$lib/auth/socialResult'
 
 	interface Props {
@@ -318,6 +319,8 @@
 		</SettingsRow>
 
 		<ConnectedAccounts result={socialResult} />
+
+		<DeleteAccount {hasPassword} {email} />
 
 		<!-- Admin (admin only) -->
 		{#if isAdmin}

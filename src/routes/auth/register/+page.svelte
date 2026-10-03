@@ -245,7 +245,7 @@
 
 <PageMeta title={m.page_title_register()} description={m.page_desc_home()} />
 
-<AuthCard title={m.auth_register_title()}>
+<AuthCard title={m.auth_register_title()} legalConsent>
 	<SocialLoginButtons providers={data.socialProviders} next={data.next} />
 
 	<form

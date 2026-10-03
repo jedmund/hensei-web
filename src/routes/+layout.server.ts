@@ -5,7 +5,8 @@ export const load: LayoutServerLoad = async ({ locals, cookies }) => {
 		? {
 				userId: locals.session.account.userId,
 				username: locals.session.account.username,
-				role: locals.session.account.role
+				role: locals.session.account.role,
+				deletionScheduledAt: locals.session.account.deletionScheduledAt ?? null
 			}
 		: null
 

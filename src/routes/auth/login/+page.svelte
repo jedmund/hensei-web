@@ -59,7 +59,7 @@
 
 <PageMeta title={m.page_title_login()} description={m.page_desc_home()} />
 
-<AuthCard title={m.auth_login_title()}>
+<AuthCard title={m.auth_login_title()} legalConsent>
 	{#if data.linkProvider}
 		<p class="notice">{m.auth_social_link_prompt({ provider: data.linkProvider })}</p>
 	{/if}

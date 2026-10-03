@@ -3,6 +3,7 @@
 	import LinkItem from '$lib/components/about/LinkItem.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { getBasePath } from '$lib/utils/images'
+	import { localizeHref } from '$lib/paraglide/runtime.js'
 </script>
 
 <PageMeta title={m.page_title_about()} description={m.page_desc_about()} />
@@ -85,6 +86,15 @@
 </div>
 
 <div class="about-card">
+	<h2>{m.about_legal_title()}</h2>
+	<p>{m.about_legal_explanation()}</p>
+	<ul class="legal-links">
+		<li><a href={localizeHref('/about/privacy')}>{m.legal_privacy_title()}</a></li>
+		<li><a href={localizeHref('/about/terms')}>{m.legal_terms_title()}</a></li>
+	</ul>
+</div>
+
+<div class="about-card">
 	<h2>{m.about_license_title()}</h2>
 	<p>{m.about_license_text()}</p>
 	<p>{m.about_license_explanation()}</p>
@@ -127,6 +137,15 @@
 			&:hover {
 				text-decoration: underline;
 			}
+		}
+
+		.legal-links {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+			display: flex;
+			gap: $unit-2x;
+			font-size: $font-medium;
 		}
 
 		.data-sources {
