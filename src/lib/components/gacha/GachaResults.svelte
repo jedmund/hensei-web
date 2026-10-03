@@ -111,6 +111,10 @@
 	const flags: Partial<Record<Currency, string>> = { usd: usFlag, jpy: jpFlag }
 
 	const name = (item: CatalogueItem) => gachaItemName(item, getLocale())
+	// Name for the art in the hover tooltip: the weapon's own name when the
+	// tooltip shows the weapon, the character's when it shows the character
+	const alternateName = (item: CatalogueItem) =>
+		art === 'character' ? (getLocale() === 'ja' && item.name.ja) || item.name.en : name(item)
 
 	function amount(value: string) {
 		const [integer = '0', fraction = ''] = value.split('.')
@@ -330,7 +334,10 @@
 						<!-- The character for a weapon, or the weapon for a character -->
 						<RichTooltip class="drawn-trigger">
 							{#snippet content()}
-								<img class="alternate" src={alternate} alt="" />
+								<figure class="alternate">
+									<img src={alternate} alt="" />
+									<figcaption>{alternateName(item)}</figcaption>
+								</figure>
 							{/snippet}
 							{@render drawnImage(item)}
 						</RichTooltip>
@@ -489,11 +496,24 @@
 
 	// Inside the tooltip, which is portalled out of the card
 	.alternate {
-		display: block;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: $unit-half;
 		width: 140px;
-		aspect-ratio: 280 / 160;
-		object-fit: cover;
-		border-radius: $item-corner-small;
+		margin: 0;
+
+		img {
+			display: block;
+			width: 100%;
+			aspect-ratio: 280 / 160;
+			object-fit: cover;
+			border-radius: $item-corner-small;
+		}
+
+		figcaption {
+			text-align: center;
+		}
 	}
 
 	.count {
