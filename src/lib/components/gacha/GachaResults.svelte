@@ -515,6 +515,11 @@
 			// Rate-ups glow, so they stand out among the other SSRs
 			&.rateup {
 				box-shadow: 0 0 $unit-half 1px color-mix(in srgb, var(--accent-yellow) 60%, transparent);
+				animation: rateup-pulse 2.4s ease-in-out infinite;
+
+				@media (prefers-reduced-motion: reduce) {
+					animation: none;
+				}
 			}
 		}
 
@@ -531,6 +536,17 @@
 			display: block;
 			height: 100%;
 		}
+	}
+
+	@keyframes rateup-pulse {
+		50% {
+			box-shadow: 0 0 $unit 1px color-mix(in srgb, var(--accent-yellow) 80%, transparent);
+		}
+	}
+
+	// The share image is a still; keep the glow steady
+	.share .drawn li.rateup {
+		animation: none;
 	}
 
 	// Inside the tooltip, which is portalled out of the card
