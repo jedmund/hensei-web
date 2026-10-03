@@ -10,3 +10,10 @@ onlyBuiltDependencies:
 # Source-patched dependencies applied at install time.
 patchedDependencies:
   '@storybook/addon-svelte-csf@5.1.2': patches/@storybook__addon-svelte-csf@5.1.2.patch
+
+# Optional dependencies to skip. @parcel/watcher is only used by the sass
+# CLI's --watch mode; Vite compiles SCSS through sass's JS API and never
+# loads it. Skipping it drops micromatch and braces (GHSA-vfj7-8cjw-p6xm,
+# no patched release) from the install.
+ignoredOptionalDependencies:
+  - '@parcel/watcher'
