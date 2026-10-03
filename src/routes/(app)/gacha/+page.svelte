@@ -526,7 +526,7 @@
 	.results-head {
 		display: flex;
 		flex-direction: column-reverse;
-		align-items: flex-end;
+		align-items: flex-start;
 		gap: $unit-2x;
 
 		.stats {
