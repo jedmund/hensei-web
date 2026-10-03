@@ -25,6 +25,7 @@ export interface GachaResult {
 	engine_version: string
 	label: string
 	ordered?: CatalogueItem[] | null
+	ssr_order?: string[] | null
 	items?: CatalogueItem[]
 	totals?: { R: string; SR: string; SSR: string }
 	copies?: string

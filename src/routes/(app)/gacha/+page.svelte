@@ -8,12 +8,16 @@
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import GachaItemPicker from '$lib/components/gacha/GachaItemPicker.svelte'
+	import Icon from '$lib/components/Icon.svelte'
+	import jpFlag from '$src/assets/flags/jp.png'
+	import usFlag from '$src/assets/flags/us.png'
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { gachaItemImage, gachaItemName, gachaItemThumbnail } from '$lib/utils/gacha'
 	import type { CatalogueItem, GachaResult } from '$lib/types/gacha'
 
 	type Operation = 'draw' | 'until' | 'odds'
+	type Currency = 'usd' | 'jpy' | 'crystals'
 
 	let operation = $state<Operation>('draw')
 	let mode = $state('premium')
@@ -29,16 +33,35 @@
 	let busy = $state(false)
 	let loading = $state(true)
 	let failure = $state('')
+	let targetError = $state('')
+	let currency = $state<Currency>(getLocale() === 'ja' ? 'jpy' : 'usd')
+	let art = $state<'weapon' | 'character'>('weapon')
 	let runController: AbortController | undefined
 
-	const modeOptions = $derived([
-		{ value: 'premium', label: m.gacha_premium() },
-		{ value: 'legend', label: m.gacha_legend() },
-		{ value: 'flash', label: m.gacha_flash() },
-		{ value: 'classic', label: m.gacha_classic() },
-		{ value: 'classic_ii', label: m.gacha_classic_ii() },
-		{ value: 'classic_iii', label: m.gacha_classic_iii() }
-	])
+	// Base SSR rates, matching the API's simulation: 6% for the galas, 3% otherwise
+	const ssrRates: Record<string, number> = {
+		premium: 0.03,
+		legend: 0.06,
+		flash: 0.06,
+		classic: 0.03,
+		classic_ii: 0.03,
+		classic_iii: 0.03
+	}
+	const modeOptions = $derived(
+		[
+			{ value: 'premium', label: m.gacha_premium() },
+			{ value: 'legend', label: m.gacha_legend() },
+			{ value: 'flash', label: m.gacha_flash() },
+			{ value: 'classic', label: m.gacha_classic() },
+			{ value: 'classic_ii', label: m.gacha_classic_ii() },
+			{ value: 'classic_iii', label: m.gacha_classic_iii() }
+		].map((option) => ({
+			...option,
+			suffix: new Intl.NumberFormat(getLocale(), { style: 'percent' }).format(
+				ssrRates[option.value] ?? 0.03
+			)
+		}))
+	)
 	const seasonOptions = $derived([
 		{ value: '', label: m.gacha_none() },
 		{ value: 'valentines', label: m.gacha_valentines() },
@@ -61,11 +84,25 @@
 	const rateCandidates = $derived(
 		ssrs.filter((item) => !rateups.some((rate) => rate.identity === item.identity))
 	)
-	const drawnSsrs = $derived(
-		(result?.items ?? [])
-			.filter((item) => item.rarity === 3)
-			.sort((a, b) => Number(b.count ?? 0) - Number(a.count ?? 0))
+	// SSRs in the order they were drawn; runs too large for the API to report
+	// an order fall back to one tile per item with its count
+	const drawnSsrs = $derived.by(() => {
+		const ssrs = (result?.items ?? []).filter((item) => item.rarity === 3)
+		if (!result?.ssr_order) {
+			return ssrs.sort((a, b) => Number(b.count ?? 0) - Number(a.count ?? 0))
+		}
+		const byIdentity = new Map(ssrs.map((item) => [item.identity, item]))
+		return result.ssr_order.flatMap((identity) => {
+			const item = byIdentity.get(identity)
+			return item ? [{ ...item, count: '1' }] : []
+		})
+	})
+	const hasCharacterArt = $derived(drawnSsrs.some((item) => item.recruits?.granblue_id))
+	const currencies = $derived<Currency[]>(
+		result?.cost.usd ? ['usd', 'jpy', 'crystals'] : ['jpy', 'crystals']
 	)
+	const shownCurrency = $derived(currencies.includes(currency) ? currency : 'jpy')
+	const flags: Partial<Record<Currency, string>> = { usd: usFlag, jpy: jpFlag }
 
 	const name = (item: CatalogueItem) => gachaItemName(item, getLocale())
 	const itemFor = (identity: string) => items.find((item) => item.identity === identity)
@@ -80,6 +117,23 @@
 			style: 'percent',
 			maximumSignificantDigits: 4
 		}).format(value)
+	}
+	function rate(part: string, whole: string) {
+		return new Intl.NumberFormat(getLocale(), {
+			style: 'percent',
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2
+		}).format(Number(part) / Number(whole))
+	}
+	function cost(value: GachaResult['cost'], unit: Currency) {
+		if (unit === 'crystals') return `${amount(value.crystals)} ${m.gacha_crystals()}`
+		return new Intl.NumberFormat(getLocale(), {
+			style: 'currency',
+			currency: unit === 'usd' ? 'USD' : 'JPY'
+		}).format(Number(unit === 'usd' ? value.usd : value.jpy))
+	}
+	function nextCurrency() {
+		currency = currencies[(currencies.indexOf(shownCurrency) + 1) % currencies.length] ?? 'jpy'
 	}
 	function decimal(value: number) {
 		return new Intl.NumberFormat(getLocale(), { maximumFractionDigits: 2 }).format(value)
@@ -119,6 +173,10 @@
 
 	async function run(replay = false) {
 		if (busy) return
+		if (!replay && operation !== 'draw' && !target) {
+			targetError = m.gacha_target_required()
+			return
+		}
 		busy = true
 		failure = ''
 		runController = new AbortController()
@@ -176,6 +234,7 @@
 
 	function selectOperation(value: string) {
 		operation = value as Operation
+		targetError = ''
 		result = null
 	}
 	function addRate(identity: string) {
@@ -190,21 +249,14 @@
 
 <PageMeta title={m.gacha_title()} description={m.gacha_notice()} />
 
-<div class="gacha-page">
-	<header class="page-header">
-		<h1>{m.gacha_title()}</h1>
-		<SegmentedControl
-			value={operation}
-			onValueChange={selectOperation}
-			size="small"
-			variant="background"
-		>
-			<Segment value="draw" disabled={busy}>{m.gacha_draw()}</Segment>
-			<Segment value="until" disabled={busy}>{m.gacha_until()}</Segment>
-			<Segment value="odds" disabled={busy}>{m.gacha_odds()}</Segment>
-		</SegmentedControl>
-	</header>
+{#snippet tile(label: string, value: string)}
+	<div class="tile">
+		<span class="stat-label">{label}</span>
+		<span class="stat-value">{value}</span>
+	</div>
+{/snippet}
 
+<div class="gacha-page">
 	<form
 		class="card"
 		onsubmit={(event) => {
@@ -212,17 +264,31 @@
 			void run()
 		}}
 	>
+		<div>
+			<SegmentedControl
+				value={operation}
+				onValueChange={selectOperation}
+				size="small"
+				variant="background"
+				grow
+			>
+				<Segment value="draw" disabled={busy}>{m.gacha_draw()}</Segment>
+				<Segment value="until" disabled={busy}>{m.gacha_until()}</Segment>
+				<Segment value="odds" disabled={busy}>{m.gacha_odds()}</Segment>
+			</SegmentedControl>
+		</div>
 		<div class="fields">
 			<Select contained label={m.gacha_mode()} options={modeOptions} bind:value={mode} fullWidth />
-			{#if !classic}
-				<Select
-					contained
-					label={m.gacha_season()}
-					options={seasonOptions}
-					bind:value={season}
-					fullWidth
-				/>
-			{/if}
+			<!-- Classic pools have no seasons; the choice is kept for other pools -->
+			<Select
+				contained
+				label={m.gacha_season()}
+				options={seasonOptions}
+				value={classic ? '' : season}
+				onValueChange={(value) => (season = value ?? '')}
+				disabled={classic}
+				fullWidth
+			/>
 			<Select
 				contained
 				label={m.gacha_purchase()}
@@ -253,6 +319,8 @@
 						placeholder={m.gacha_target_placeholder()}
 						{items}
 						bind:value={target}
+						onValueChange={() => (targetError = '')}
+						error={targetError}
 						disabled={loading}
 					/>
 				</div>
@@ -332,62 +400,58 @@
 
 	{#if result}
 		<section class="card results" aria-live="polite">
-			<div class="stats">
-				{#if operation === 'draw' && result.totals}
-					<div class="stat">
-						<span class="stat-label">SSR</span>
-						<span class="stat-value">{amount(result.totals.SSR)}</span>
-					</div>
-					<div class="stat">
-						<span class="stat-label">SR</span>
-						<span class="stat-value">{amount(result.totals.SR)}</span>
-					</div>
-					<div class="stat">
-						<span class="stat-label">R</span>
-						<span class="stat-value">{amount(result.totals.R)}</span>
-					</div>
-				{:else if operation === 'until'}
-					<div class="stat hero">
-						<span class="stat-label">{m.gacha_sampled()}</span>
-						<span class="stat-value">{amount(result.draws)}</span>
-					</div>
-					<div class="stat">
-						<span class="stat-label">{m.gacha_copies()}</span>
-						<span class="stat-value">{amount(result.copies ?? '0')}</span>
-					</div>
-				{:else if result.probability !== undefined}
-					<div class="stat hero">
-						<span class="stat-label">{m.gacha_probability()}</span>
-						<span class="stat-value">{percent(result.probability)}</span>
-					</div>
-					{#if result.expected_copies !== undefined}
-						<div class="stat">
-							<span class="stat-label">{m.gacha_expected()}</span>
-							<span class="stat-value">{decimal(result.expected_copies)}</span>
+			<div class="results-head">
+				<div class="stats">
+					{#if operation === 'draw' && result.totals}
+						<div class="tiles">
+							{@render tile(m.gacha_ssr_rate(), rate(result.totals.SSR, result.draws))}
+							{#each ['SSR', 'SR', 'R'] as const as rarity (rarity)}
+								{@render tile(rarity, amount(result.totals[rarity]))}
+							{/each}
 						</div>
+					{:else if operation === 'until'}
+						<div class="tiles" style:--columns="2">
+							{@render tile(m.gacha_sampled(), amount(result.draws))}
+							{@render tile(m.gacha_copies(), amount(result.copies ?? '0'))}
+						</div>
+					{:else if result.probability !== undefined}
+						<div class="tiles" style:--columns="2">
+							{@render tile(m.gacha_probability(), percent(result.probability))}
+							{#if result.expected_copies !== undefined}
+								{@render tile(m.gacha_expected(), decimal(result.expected_copies))}
+							{/if}
+						</div>
+						{#if result.thresholds}
+							<div class="tiles" style:--columns="3">
+								{#each ['50', '90', '95'] as level (level)}
+									{@const threshold = result.thresholds[level]}
+									{@render tile(
+										m.gacha_chance({ percent: level }),
+										threshold ? amount(threshold) : m.gacha_beyond()
+									)}
+								{/each}
+							</div>
+						{/if}
 					{/if}
+				</div>
+				{#if operation === 'draw' && hasCharacterArt}
+					<SegmentedControl
+						value={art}
+						onValueChange={(value) => (art = value as typeof art)}
+						size="xsmall"
+						variant="background"
+					>
+						<Segment value="weapon">{m.collection_tab_weapons()}</Segment>
+						<Segment value="character">{m.collection_tab_characters()}</Segment>
+					</SegmentedControl>
 				{/if}
 			</div>
 
-			{#if result.thresholds}
-				<div class="stats">
-					{#each ['50', '90', '95'] as level (level)}
-						{@const threshold = result.thresholds[level]}
-						<div class="stat">
-							<span class="stat-label">{m.gacha_chance({ percent: level })}</span>
-							<span class="stat-value small"
-								>{threshold ? amount(threshold) : m.gacha_beyond()}</span
-							>
-						</div>
-					{/each}
-				</div>
-			{/if}
-
 			{#if drawnSsrs.length > 0}
 				<ul class="drawn">
-					{#each drawnSsrs as item (item.identity)}
+					{#each drawnSsrs as item, index (index)}
 						<li title={name(item)}>
-							<img src={gachaItemImage(item)} alt={name(item)} />
+							<img src={gachaItemImage(item, art)} alt={name(item)} />
 							{#if Number(item.count) > 1}
 								<span class="count">×{amount(item.count ?? '0')}</span>
 							{/if}
@@ -397,11 +461,16 @@
 			{/if}
 
 			<footer class="meta">
-				<span class="cost">
-					{amount(result.cost.crystals)}
-					{m.gacha_crystals()} · ¥{amount(result.cost.jpy)}
-					{#if result.cost.usd}· ${amount(result.cost.usd)}{/if}
-				</span>
+				<div class="cost">
+					<button type="button" onclick={nextCurrency}>
+						{#if flags[shownCurrency]}
+							<img class="flag" src={flags[shownCurrency]} alt="" />
+						{:else}
+							<Icon name="crystal" size={16} />
+						{/if}
+						{cost(result.cost, shownCurrency)}
+					</button>
+				</div>
 				<span class="seed">
 					{m.gacha_replay_seed()}
 					<CopyableText value={result.seed} />
@@ -416,6 +485,7 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/colors' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/effects' as *;
@@ -428,22 +498,39 @@
 		flex-direction: column;
 		gap: $unit-2x;
 
-		h1,
 		h2 {
 			margin: 0;
 		}
 	}
 
-	.page-header {
+	.tiles {
+		display: grid;
+		grid-template-columns: repeat(var(--columns, 4), minmax(0, 1fr));
+		gap: $unit;
+		width: 100%;
+
+		@media (max-width: 450px) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	.tile {
 		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		flex-wrap: wrap;
+		flex-direction: column;
+		gap: $unit-half;
+		padding: $unit-2x;
+		border-radius: $card-corner;
+		background: var(--page-bg);
+	}
+
+	.results-head {
+		display: flex;
+		flex-direction: column-reverse;
+		align-items: flex-start;
 		gap: $unit-2x;
 
-		h1 {
-			font-size: $font-xlarge;
-			font-weight: $bold;
+		.stats {
+			width: 100%;
 		}
 	}
 
@@ -521,14 +608,8 @@
 
 	.stats {
 		display: flex;
-		flex-wrap: wrap;
-		gap: $unit-4x;
-	}
-
-	.stat {
-		display: flex;
 		flex-direction: column;
-		gap: $unit-half;
+		gap: $unit;
 	}
 
 	.stat-label {
@@ -541,15 +622,6 @@
 		font-size: $font-xxlarge;
 		font-weight: $bold;
 		font-variant-numeric: tabular-nums;
-
-		&.small {
-			font-size: $font-large;
-		}
-	}
-
-	.stat.hero .stat-value {
-		font-size: calc($unit * 6);
-		line-height: 1;
 	}
 
 	.drawn {
@@ -599,6 +671,32 @@
 
 	.cost {
 		flex: 1;
+
+		button {
+			all: unset;
+			display: inline-flex;
+			align-items: center;
+			gap: $unit-half;
+			margin-left: -$unit;
+			padding: $unit-half $unit;
+			border-radius: $item-corner-small;
+			cursor: pointer;
+			@include smooth-transition($duration-quick, background-color, color);
+
+			&:hover {
+				background-color: var(--option-bg-hover);
+				color: var(--text-primary);
+			}
+
+			&:focus-visible {
+				outline: 2px solid $blue;
+			}
+		}
+
+		.flag {
+			width: 16px;
+			height: 16px;
+		}
 	}
 
 	.seed {
