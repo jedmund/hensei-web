@@ -106,8 +106,9 @@
 			<p>
 				Please be kind to others when using the site. This means no harassment, spam, illegal or
 				hateful content. Don't attack the site, and don't scrape it for data. The source code is
-				open-source and licensed under AGPLv3 for you to use and remix. If you would like to use
-				data for something, please get in touch and we can discuss your needs.
+				open-source and licensed under AGPLv3 for you to use and remix for non-commercial purposes.
+				If you would like to use data for something, please get in touch and we can discuss your
+				needs.
 			</p>
 		{/snippet}
 		<p>You agree not to:</p>
@@ -134,9 +135,10 @@
 			<li>use the Service in violation of any applicable law.</li>
 		</ul>
 		<p>
-			The Service's source code is available under the GNU Affero General Public License v3. These
-			Terms govern your use of the hosted Service; your use of the source code is governed by that
-			license.
+			The Service's source code is available under the GNU Affero General Public License v3, subject
+			to a non-commercial use condition, as set out in the LICENSE file in each source repository.
+			These Terms govern your use of the hosted Service; your use of the source code is governed by
+			that license.
 		</p>
 	</LegalSection>
 
