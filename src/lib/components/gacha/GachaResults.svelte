@@ -24,7 +24,7 @@
 		busy?: boolean
 		/** Static layout for the share image: no controls, capped art */
 		share?: boolean
-		/** Pool and season, shown at the top right of the share image */
+		/** Pool and season, shown at the top left of the share image */
 		label?: string
 		onReplay?: () => void
 		onCopyLink?: () => void
@@ -433,7 +433,7 @@
 	}
 
 	.share-label {
-		align-self: flex-end;
+		align-self: flex-start;
 		margin-bottom: -$unit;
 		color: var(--text-secondary);
 		font-size: $font-regular;
