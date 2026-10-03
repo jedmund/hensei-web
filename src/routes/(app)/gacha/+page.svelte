@@ -151,8 +151,8 @@
 	})
 	$effect(() => () => runController?.abort())
 
-	// The settings card collapses to the mode switcher and Draw button; on
-	// mobile it collapses on its own when a draw starts
+	// The settings card collapses to the mode switcher and Draw button, and
+	// collapses on its own when a draw starts
 	const isMobile = new MediaQuery('(max-width: 768px)')
 	let collapsed = $state(false)
 
@@ -163,7 +163,7 @@
 			collapsed = false
 			return
 		}
-		if (isMobile.current) collapsed = true
+		collapsed = true
 		busy = true
 		failure = ''
 		runController = new AbortController()
