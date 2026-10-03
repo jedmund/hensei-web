@@ -21,6 +21,7 @@
 		placeholder?: string
 		disabled?: boolean
 		contained?: boolean
+		error?: string
 		/** Clear the field after each pick instead of keeping the selection */
 		clearOnSelect?: boolean
 		onValueChange?: (identity: string) => void
@@ -33,6 +34,7 @@
 		placeholder = '',
 		disabled = false,
 		contained = false,
+		error,
 		clearOnSelect = false,
 		onValueChange
 	}: Props = $props()
@@ -107,6 +109,8 @@
 			{id}
 			class="picker-input"
 			{placeholder}
+			aria-invalid={error ? true : undefined}
+			aria-describedby={error ? `${id}-error` : undefined}
 			oninput={(e) => handleInput(e.currentTarget.value)}
 			onfocus={() => (open = true)}
 			onclick={() => (open = true)}
@@ -141,6 +145,9 @@
 			</Combobox.Viewport>
 		</Combobox.Content>
 	</Combobox.Root>
+	{#if error}
+		<span class="error" id="{id}-error">{error}</span>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -161,6 +168,13 @@
 			opacity: 0.5;
 			pointer-events: none;
 		}
+	}
+
+	// Matches the Input component's error text
+	.error {
+		color: $error;
+		font-size: $font-small;
+		padding: $unit-half $unit-2x;
 	}
 
 	.label {

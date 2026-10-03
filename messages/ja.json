@@ -1861,5 +1861,6 @@
 	"gacha_replay_seed": "シード",
 	"gacha_rate": "確率（%）",
 	"gacha_chance": "確率{percent}%",
+	"gacha_target_required": "対象を選択してください",
 	"gacha_target_placeholder": "検索…"
 }

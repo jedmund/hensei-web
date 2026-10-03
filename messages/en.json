@@ -1880,5 +1880,6 @@
 	"gacha_replay_seed": "Seed",
 	"gacha_rate": "Rate (%)",
 	"gacha_chance": "{percent}% chance",
+	"gacha_target_required": "Choose a target",
 	"gacha_target_placeholder": "Search…"
 }

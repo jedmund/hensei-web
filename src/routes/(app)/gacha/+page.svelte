@@ -33,6 +33,7 @@
 	let busy = $state(false)
 	let loading = $state(true)
 	let failure = $state('')
+	let targetError = $state('')
 	let currency = $state<Currency>(getLocale() === 'ja' ? 'jpy' : 'usd')
 	let art = $state<'weapon' | 'character'>('weapon')
 	let runController: AbortController | undefined
@@ -172,6 +173,10 @@
 
 	async function run(replay = false) {
 		if (busy) return
+		if (!replay && operation !== 'draw' && !target) {
+			targetError = m.gacha_target_required()
+			return
+		}
 		busy = true
 		failure = ''
 		runController = new AbortController()
@@ -229,6 +234,7 @@
 
 	function selectOperation(value: string) {
 		operation = value as Operation
+		targetError = ''
 		result = null
 	}
 	function addRate(identity: string) {
@@ -306,6 +312,8 @@
 						placeholder={m.gacha_target_placeholder()}
 						{items}
 						bind:value={target}
+						onValueChange={() => (targetError = '')}
+						error={targetError}
 						disabled={loading}
 					/>
 				</div>
