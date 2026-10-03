@@ -20,6 +20,13 @@
 		disabled?: boolean
 		fromCollection?: boolean
 		inTeam?: boolean
+		/** For characters: the name of the weapon that recruits them, shown under the name */
+		weaponName?: string
+		/**
+		 * Render as its own button (default). Turn off when a parent element,
+		 * like a combobox option, handles selection, hover and focus.
+		 */
+		interactive?: boolean
 		onclick?: (item: AddItemResult) => void
 	}
 
@@ -29,6 +36,8 @@
 		disabled = false,
 		fromCollection = false,
 		inTeam = false,
+		weaponName,
+		interactive = true,
 		onclick
 	}: Props = $props()
 
@@ -64,55 +73,70 @@
 	const isDisabled = $derived(disabled || inTeam)
 </script>
 
-<li class="result-item">
-	<button
-		class="result-button"
-		class:disabled={isDisabled}
-		class:from-collection={fromCollection}
-		class:in-team={inTeam}
-		onclick={() => onclick?.(item)}
-		aria-label={inTeam
-			? m.search_already_in_team()
-			: isDisabled
-				? m.search_grid_full()
-				: m.search_add_item({ name: itemName })}
-		disabled={isDisabled}
-	>
-		<div class="result-image-wrapper">
-			<img
-				src={imageUrl}
-				alt={itemName}
-				class="result-image"
-				loading="lazy"
-				onerror={(e) => handleImageFallback(e, weaponFallbackUrl)}
-			/>
-			{#if fromCollection && !inTeam}
-				<CollectionBadge />
+{#snippet content()}
+	<div class="result-image-wrapper">
+		<img
+			src={imageUrl}
+			alt={itemName}
+			class="result-image"
+			loading="lazy"
+			onerror={(e) => handleImageFallback(e, weaponFallbackUrl)}
+		/>
+		{#if fromCollection && !inTeam}
+			<CollectionBadge />
+		{/if}
+	</div>
+	<div class="result-info">
+		<span class="result-name">{itemName}</span>
+		{#if weaponName}
+			<span class="result-weapon">{weaponName}</span>
+		{/if}
+		<div class="result-labels">
+			{#if item.element !== undefined}
+				<ElementLabel element={item.element} size="small" />
+			{/if}
+			{#if inTeam}
+				<span class="in-team-pill">{m.search_added_pill()}</span>
+			{/if}
+			{#if Array.isArray(item.proficiency)}
+				{#each item.proficiency as prof (prof)}
+					<ProficiencyLabel proficiency={prof} size="small" />
+				{/each}
+			{:else if item.proficiency !== undefined}
+				<ProficiencyLabel proficiency={item.proficiency} size="small" />
 			{/if}
 		</div>
-		<div class="result-info">
-			<span class="result-name">{itemName}</span>
-			<div class="result-labels">
-				{#if item.element !== undefined}
-					<ElementLabel element={item.element} size="small" />
-				{/if}
-				{#if inTeam}
-					<span class="in-team-pill">{m.search_added_pill()}</span>
-				{/if}
-				{#if Array.isArray(item.proficiency)}
-					{#each item.proficiency as prof (prof)}
-						<ProficiencyLabel proficiency={prof} size="small" />
-					{/each}
-				{:else if item.proficiency !== undefined}
-					<ProficiencyLabel proficiency={item.proficiency} size="small" />
-				{/if}
-			</div>
+	</div>
+	{#if type === 'character'}
+		<CharacterTags character={item} />
+	{/if}
+{/snippet}
+
+{#if interactive}
+	<li class="result-item">
+		<button
+			class="result-button"
+			class:disabled={isDisabled}
+			class:from-collection={fromCollection}
+			class:in-team={inTeam}
+			onclick={() => onclick?.(item)}
+			aria-label={inTeam
+				? m.search_already_in_team()
+				: isDisabled
+					? m.search_grid_full()
+					: m.search_add_item({ name: itemName })}
+			disabled={isDisabled}
+		>
+			{@render content()}
+		</button>
+	</li>
+{:else}
+	<div class="result-item">
+		<div class="result-button static">
+			{@render content()}
 		</div>
-		{#if type === 'character'}
-			<CharacterTags character={item} />
-		{/if}
-	</button>
-</li>
+	</div>
+{/if}
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
@@ -148,6 +172,19 @@
 
 				&:hover {
 					background: transparent;
+				}
+			}
+
+			// Selection, hover and focus come from the parent element
+			&.static {
+				cursor: inherit;
+
+				&:hover {
+					background: transparent;
+				}
+
+				&:active {
+					transform: none;
 				}
 			}
 
@@ -195,6 +232,11 @@
 		.result-name {
 			font-size: $font-regular;
 			color: var(--text-primary);
+		}
+
+		.result-weapon {
+			font-size: $font-small;
+			color: var(--text-secondary);
 		}
 
 		.result-labels {

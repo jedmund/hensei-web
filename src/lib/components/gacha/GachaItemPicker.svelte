@@ -3,15 +3,11 @@
 <script lang="ts">
 	import { tick } from 'svelte'
 	import { Combobox } from 'bits-ui'
-	import Icon from '$lib/components/Icon.svelte'
+	import SearchResultItem from '$lib/components/sidebar/search/SearchResultItem.svelte'
+	import type { AddItemResult } from '$lib/types/api/search'
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
-	import {
-		gachaItemKind,
-		gachaItemName,
-		gachaItemThumbnail,
-		type GachaItemKind
-	} from '$lib/utils/gacha'
+	import { gachaItemKind, gachaItemName, type GachaItemKind } from '$lib/utils/gacha'
 	import type { CatalogueItem } from '$lib/types/gacha'
 
 	interface Props {
@@ -47,15 +43,38 @@
 	const selected = $derived(items.find((item) => item.identity === value))
 	let inputValue = $derived(selected ? name(selected) : '')
 
+	// Character weapons show as their character, with the weapon underneath
+	function searchResult(item: CatalogueItem): AddItemResult {
+		const character = gachaItemKind(item) === 'character' ? item.recruits : undefined
+		return {
+			id: item.drawable_id,
+			granblueId: character?.granblue_id ?? item.granblue_id,
+			name: character ? { en: character.en, ja: character.ja } : item.name,
+			element: item.element,
+			rarity: item.rarity
+		}
+	}
+	const weaponName = (item: CatalogueItem) => (getLocale() === 'ja' && item.name.ja) || item.name.en
+
+	// Newest releases first; undated items last, then by name
+	const newestFirst = (a: CatalogueItem, b: CatalogueItem) =>
+		(b.release_date ?? '').localeCompare(a.release_date ?? '') || name(a).localeCompare(name(b))
+	const LATEST_COUNT = 10
+
+	// With nothing typed: the latest releases as one mixed list. Typing
+	// searches every item, grouped by type.
 	const groups = $derived.by(() => {
 		const q = query.trim().toLowerCase()
-		const matches = q
-			? items.filter((item) =>
-					[item.name.en, item.name.ja, item.granblue_id, item.recruits?.en, item.recruits?.ja].some(
-						(text) => text?.toLowerCase().includes(q)
-					)
-				)
-			: items
+		if (!q) {
+			return [
+				{ kind: 'latest', heading: '', items: [...items].sort(newestFirst).slice(0, LATEST_COUNT) }
+			]
+		}
+		const matches = items.filter((item) =>
+			[item.name.en, item.name.ja, item.granblue_id, item.recruits?.en, item.recruits?.ja].some(
+				(text) => text?.toLowerCase().includes(q)
+			)
+		)
 		const headings: Record<GachaItemKind, string> = {
 			character: m.collection_tab_characters(),
 			weapon: m.collection_tab_weapons(),
@@ -65,15 +84,7 @@
 			.map((kind) => ({
 				kind,
 				heading: headings[kind],
-				items: matches
-					.filter((item) => gachaItemKind(item) === kind)
-					// Newest releases first; undated items last, then by name
-					.sort(
-						(a, b) =>
-							(b.release_date ?? '').localeCompare(a.release_date ?? '') ||
-							name(a).localeCompare(name(b))
-					)
-					.slice(0, 30)
+				items: matches.filter((item) => gachaItemKind(item) === kind).sort(newestFirst)
 			}))
 			.filter((group) => group.items.length > 0)
 	})
@@ -125,25 +136,17 @@
 			<Combobox.Viewport>
 				{#each groups as group (group.kind)}
 					<Combobox.Group class="picker-group">
-						<Combobox.GroupHeading class="picker-heading">{group.heading}</Combobox.GroupHeading>
+						{#if group.heading}
+							<Combobox.GroupHeading class="picker-heading">{group.heading}</Combobox.GroupHeading>
+						{/if}
 						{#each group.items as item (item.identity)}
 							<Combobox.Item value={item.identity} label={name(item)} class="picker-item">
-								{#snippet children({ selected })}
-									<img src={gachaItemThumbnail(item)} alt="" class="item-image" />
-									<span class="item-label">
-										{name(item)}
-										{#if group.kind === 'character'}
-											<span class="item-detail"
-												>{(getLocale() === 'ja' && item.name.ja) || item.name.en}</span
-											>
-										{/if}
-									</span>
-									{#if selected}
-										<span class="item-check">
-											<Icon name="check" size={14} />
-										</span>
-									{/if}
-								{/snippet}
+								<SearchResultItem
+									item={searchResult(item)}
+									type={gachaItemKind(item)}
+									weaponName={gachaItemKind(item) === 'character' ? weaponName(item) : undefined}
+									interactive={false}
+								/>
 							</Combobox.Item>
 						{/each}
 					</Combobox.Group>
@@ -242,25 +245,17 @@
 		animation: fadeIn $duration-opacity-fade ease-out;
 	}
 
+	// The row itself is SearchResultItem; the option supplies the highlight
 	:global(.picker-item) {
-		align-items: center;
-		border-radius: $item-corner-small;
-		color: var(--text-primary);
+		border-radius: $input-corner;
 		cursor: pointer;
-		display: flex;
-		gap: $unit;
-		padding: $unit $unit-2x;
 		user-select: none;
 		@include smooth-transition($duration-quick, background-color);
 	}
 
 	:global(.picker-item:hover),
 	:global(.picker-item[data-highlighted]) {
-		background-color: var(--option-bg-hover);
-	}
-
-	:global(.picker-item[data-selected]) {
-		font-weight: $medium;
+		background-color: var(--list-cell-bg-hover);
 	}
 
 	:global(.picker-heading) {
@@ -268,31 +263,5 @@
 		font-size: $font-tiny;
 		font-weight: $medium;
 		padding: $unit $unit-2x $unit-half;
-	}
-
-	.item-detail {
-		color: var(--text-tertiary);
-		font-size: $font-small;
-		margin-left: $unit-half;
-	}
-
-	.item-image {
-		width: 32px;
-		height: 32px;
-		border-radius: $item-corner-small;
-		flex-shrink: 0;
-		object-fit: cover;
-	}
-
-	.item-label {
-		flex: 1;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	.item-check {
-		margin-left: auto;
-		color: var(--accent-color);
 	}
 </style>

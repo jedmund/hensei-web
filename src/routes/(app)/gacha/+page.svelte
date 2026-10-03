@@ -448,7 +448,7 @@
 							<GachaItemPicker
 								contained
 								label={m.gacha_target()}
-								placeholder={m.gacha_target_placeholder()}
+								placeholder={m.gacha_search_items()}
 								items={ssrs}
 								bind:value={target}
 								onValueChange={() => (targetError = '')}
@@ -512,7 +512,7 @@
 					{/each}
 					<GachaItemPicker
 						contained
-						placeholder={m.gacha_add()}
+						placeholder={m.gacha_search_items()}
 						items={rateCandidates}
 						clearOnSelect
 						onValueChange={addRate}
