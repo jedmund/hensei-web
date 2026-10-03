@@ -7,19 +7,23 @@
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import GachaItemPicker from '$lib/components/gacha/GachaItemPicker.svelte'
+	import GachaRateups, { type Rateup } from '$lib/components/gacha/GachaRateups.svelte'
 	import GachaResults from '$lib/components/gacha/GachaResults.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
-	import { onMount, untrack } from 'svelte'
+	import { untrack } from 'svelte'
 	import { slide } from 'svelte/transition'
 	import { MediaQuery } from 'svelte/reactivity'
-	import { toast } from 'svelte-sonner'
 	import { page } from '$app/state'
 	import { replaceState } from '$app/navigation'
 	import { readShare, seasonalPool, writeShare, type GachaShare } from '$lib/utils/gachaShare'
-	import { copyResultImage, gachaImageUrl } from '$lib/utils/gachaImage'
 	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
-	import { gachaItemName, gachaItemThumbnail } from '$lib/utils/gacha'
+	import {
+		gachaGranblueIdFor,
+		gachaIdentityFor,
+		gachaItemName,
+		gachaItemThumbnail
+	} from '$lib/utils/gacha'
 	import type { CatalogueItem, GachaResult } from '$lib/types/gacha'
 
 	let { data } = $props()
@@ -46,7 +50,7 @@
 	let copies = $state(shared.copies)
 	let comparison = $state<'at_least' | 'exactly'>(shared.comparison)
 	let target = $state('')
-	let rateups = $state<{ identity: string; percent: string }[]>([])
+	let rateups = $state<Rateup[]>([])
 	let items = $state<CatalogueItem[]>([])
 	let result = $state<GachaResult | null>(null)
 	let busy = $state(false)
@@ -59,6 +63,11 @@
 	// The settings a result was produced with; the link carries its seed only
 	// while the settings still match
 	let resultShare = $state('')
+	// Link to the shown result: the settings it came from plus its seed,
+	// whatever the form says now
+	const resultLink = $derived(
+		result ? [resultShare, `seed=${encodeURIComponent(result.seed)}`].filter(Boolean).join('&') : ''
+	)
 
 	// Base SSR rates, matching the API's simulation: 6% for the galas, 3% otherwise
 	const ssrRates: Record<string, number> = {
@@ -103,9 +112,6 @@
 
 	const classic = $derived(mode.startsWith('classic'))
 	const ssrs = $derived(items.filter((item) => item.rarity === 3))
-	const rateCandidates = $derived(
-		ssrs.filter((item) => !rateups.some((rate) => rate.identity === item.identity))
-	)
 
 	const name = (item: CatalogueItem) => gachaItemName(item, getLocale())
 	const itemFor = (identity: string) => items.find((item) => item.identity === identity)
@@ -131,10 +137,10 @@
 				result = null
 				const share = pendingShare
 				pendingShare = null
-				target = share ? identityFor(share.target) : ''
+				target = share ? gachaIdentityFor(items, share.target) : ''
 				rateups = share
 					? share.rateups.flatMap(({ id, percent }) => {
-							const identity = identityFor(id, 3)
+							const identity = gachaIdentityFor(items, id, 3)
 							return identity ? [{ identity, percent }] : []
 						})
 					: []
@@ -211,18 +217,6 @@
 		}
 	}
 
-	function identityFor(granblueId: string, rarity?: number) {
-		if (!granblueId) return ''
-		return (
-			items.find(
-				(item) =>
-					item.granblue_id === granblueId && (rarity === undefined || item.rarity === rarity)
-			)?.identity ?? ''
-		)
-	}
-	function granblueIdFor(identity: string) {
-		return items.find((item) => item.identity === identity)?.granblue_id ?? ''
-	}
 	function currentShare(seed = '') {
 		return writeShare({
 			operation,
@@ -232,9 +226,9 @@
 			draws: String(draws),
 			copies: String(copies),
 			comparison,
-			target: granblueIdFor(target),
+			target: gachaGranblueIdFor(items, target),
 			rateups: rateups.flatMap((rate) => {
-				const id = granblueIdFor(rate.identity)
+				const id = gachaGranblueIdFor(items, rate.identity)
 				return id ? [{ id, percent: String(rate.percent) }] : []
 			}),
 			seed
@@ -269,91 +263,10 @@
 		}
 	})
 
-	// Built from the settings the result came from, so later edits to the form
-	// can't pair the seed with different settings
-	function copyImage() {
-		if (!result) return
-		const query = `${resultShare ? `${resultShare}&` : ''}seed=${encodeURIComponent(result.seed)}`
-		copyResultImage(
-			gachaImageUrl(query, {
-				art,
-				currency,
-				lang: getLocale() === 'ja' ? 'ja' : 'en',
-				simplePortraits: simplePortraits.value
-			})
-		)
-			.then((outcome) =>
-				toast.success(outcome === 'copied' ? m.toast_copied() : m.gacha_image_saved())
-			)
-			.catch(() => toast.error(m.toast_copy_failed()))
-	}
-
-	// The system share sheet, where the browser has one (iOS, Android, Safari,
-	// Edge); the button is hidden elsewhere and Copy link covers it
-	// Only on touch-first devices (phones and tablets), where the share sheet
-	// is what people expect; desktops use Copy
-	let canShare = $state(false)
-	onMount(() => {
-		canShare =
-			typeof navigator.share === 'function' && window.matchMedia('(pointer: coarse)').matches
-	})
-
-	function shareText(shown: GachaResult) {
-		const count = (value: string | undefined) => Number(value ?? 0).toLocaleString(getLocale())
-		const targetItem = items.find((item) => item.identity === shown.target)
-		const targetName = targetItem ? name(targetItem) : ''
-		if (operation === 'until' && targetName) {
-			return m.gacha_share_until({ name: targetName, draws: count(shown.draws) })
-		}
-		if (operation === 'odds' && targetName && shown.probability !== undefined) {
-			const chance = new Intl.NumberFormat(getLocale(), {
-				style: 'percent',
-				maximumSignificantDigits: 3
-			}).format(shown.probability)
-			return m.gacha_share_odds({ percent: chance, name: targetName, draws: count(shown.draws) })
-		}
-		return m.gacha_share_draw({ ssr: count(shown.totals?.SSR), draws: count(shown.draws) })
-	}
-
-	// Shares the link to the shown result: the settings it came from plus its
-	// seed, whatever the form says now
-	async function shareResult() {
-		if (!result) return
-		const query = `${resultShare ? `${resultShare}&` : ''}seed=${encodeURIComponent(result.seed)}`
-		try {
-			await navigator.share({
-				title: m.page_title_gacha(),
-				text: shareText(result),
-				url: `${window.location.origin}${window.location.pathname}?${query}`
-			})
-		} catch (error) {
-			// Closing the share sheet isn't an error
-			if (error instanceof DOMException && error.name === 'AbortError') return
-			toast.error(m.gacha_error())
-		}
-	}
-
-	async function copyLink() {
-		try {
-			await navigator.clipboard.writeText(window.location.href)
-			toast.success(m.toast_copied())
-		} catch {
-			toast.error(m.toast_copy_failed())
-		}
-	}
-
 	function selectOperation(value: string) {
 		operation = value as Operation
 		targetError = ''
 		result = null
-	}
-	function addRate(identity: string) {
-		if (identity && !rateups.some((rate) => rate.identity === identity)) {
-			rateups = [...rateups, { identity, percent: '0.3' }]
-		}
-	}
-	function removeRate(identity: string) {
-		rateups = rateups.filter((rate) => rate.identity !== identity)
 	}
 </script>
 
@@ -478,47 +391,7 @@
 					</div>
 				{/if}
 
-				<section class="rateups">
-					<h2>{m.gacha_rates()}</h2>
-					{#each rateups as rate (rate.identity)}
-						{@const item = itemFor(rate.identity)}
-						<div class="rateup">
-							{#if item}
-								<img src={gachaItemThumbnail(item)} alt="" />
-								<span class="rateup-name">{name(item)}</span>
-							{/if}
-							<div class="rateup-percent">
-								<Input
-									contained
-									type="text"
-									inputmode="decimal"
-									aria-label={m.gacha_rate()}
-									bind:value={rate.percent}
-									size="small"
-									alignRight
-								/>
-								<span>%</span>
-							</div>
-							<Button
-								variant="ghost"
-								size="small"
-								iconOnly
-								icon="close"
-								aria-label={m.gacha_remove()}
-								type="button"
-								onclick={() => removeRate(rate.identity)}
-							/>
-						</div>
-					{/each}
-					<GachaItemPicker
-						contained
-						placeholder={m.gacha_search_items()}
-						items={rateCandidates}
-						clearOnSelect
-						onValueChange={addRate}
-						disabled={loading}
-					/>
-				</section>
+				<GachaRateups {ssrs} bind:rateups disabled={loading} />
 			</div>
 		{/if}
 
@@ -553,9 +426,7 @@
 			{operation}
 			bind:currency
 			bind:art
-			onShare={canShare ? shareResult : undefined}
-			onCopyLink={copyLink}
-			onCopyImage={copyImage}
+			link={resultLink}
 		/>
 	{/if}
 </div>
@@ -574,10 +445,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-2x;
-
-		h2 {
-			margin: 0;
-		}
 	}
 
 	.card {
@@ -621,52 +488,6 @@
 				grid-column: auto;
 			}
 		}
-	}
-
-	.rateups {
-		display: flex;
-		flex-direction: column;
-		gap: $unit;
-
-		h2 {
-			font-size: $font-small;
-			font-weight: $medium;
-		}
-	}
-
-	.rateup {
-		display: flex;
-		align-items: center;
-		gap: $unit;
-
-		img {
-			width: 32px;
-			aspect-ratio: 1;
-			object-fit: cover;
-			border-radius: $item-corner-small;
-			background: var(--placeholder-bg);
-
-			// 25% larger on desktop
-			@media (min-width: 769px) {
-				width: 40px;
-			}
-		}
-	}
-
-	.rateup-name {
-		flex: 1;
-		min-width: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	.rateup-percent {
-		display: flex;
-		align-items: center;
-		gap: $unit-half;
-		width: 96px;
-		color: var(--text-secondary);
 	}
 
 	.actions {

@@ -14,6 +14,9 @@
 	import * as m from '$lib/paraglide/messages'
 	import { getElementKey } from '$lib/utils/element'
 	import { getLocale } from '$lib/paraglide/runtime'
+	import { onMount } from 'svelte'
+	import { toast } from 'svelte-sonner'
+	import { copyResultImage, gachaImageUrl } from '$lib/utils/gachaImage'
 	import {
 		gachaItemDetailFallbackImage,
 		gachaItemDetailImage,
@@ -40,9 +43,12 @@
 		share?: boolean
 		/** Pool and season, shown at the top left of the share image */
 		label?: string
-		onShare?: () => void
-		onCopyLink?: () => void
-		onCopyImage?: () => void
+		/**
+		 * Query string of the settings the result came from, plus its seed.
+		 * Turns on Share and Copy; links and images are built from it rather
+		 * than the form, so later edits can't pair the seed with other settings.
+		 */
+		link?: string
 	}
 
 	let {
@@ -54,9 +60,7 @@
 		label,
 		target,
 		simplePortraits = false,
-		onShare,
-		onCopyLink,
-		onCopyImage
+		link
 	}: Props = $props()
 
 	// The share image shows every SSR, choosing the column count that gives
@@ -140,6 +144,68 @@
 	}
 	function decimal(value: number) {
 		return new Intl.NumberFormat(getLocale(), { maximumFractionDigits: 2 }).format(value)
+	}
+
+	// The system share sheet, only on touch-first devices (phones and tablets)
+	// where it's what people expect; desktops use Copy
+	let canShare = $state(false)
+	onMount(() => {
+		canShare =
+			typeof navigator.share === 'function' && window.matchMedia('(pointer: coarse)').matches
+	})
+
+	function shareText() {
+		const draws = amount(result.draws)
+		const targetName = target ? name(target) : ''
+		if (operation === 'until' && targetName) {
+			return m.gacha_share_until({ name: targetName, draws })
+		}
+		if (operation === 'odds' && targetName && result.probability !== undefined) {
+			const chance = new Intl.NumberFormat(getLocale(), {
+				style: 'percent',
+				maximumSignificantDigits: 3
+			}).format(result.probability)
+			return m.gacha_share_odds({ percent: chance, name: targetName, draws })
+		}
+		return m.gacha_share_draw({ ssr: amount(result.totals?.SSR ?? '0'), draws })
+	}
+
+	async function shareResult() {
+		try {
+			await navigator.share({
+				title: m.page_title_gacha(),
+				text: shareText(),
+				url: `${window.location.origin}${window.location.pathname}?${link}`
+			})
+		} catch (error) {
+			// Closing the share sheet isn't an error
+			if (error instanceof DOMException && error.name === 'AbortError') return
+			toast.error(m.gacha_error())
+		}
+	}
+
+	async function copyLink() {
+		try {
+			await navigator.clipboard.writeText(window.location.href)
+			toast.success(m.toast_copied())
+		} catch {
+			toast.error(m.toast_copy_failed())
+		}
+	}
+
+	function copyImage() {
+		if (!link) return
+		const url = gachaImageUrl(link, {
+			art,
+			currency,
+			lang: getLocale() === 'ja' ? 'ja' : 'en',
+			simplePortraits
+		})
+		copyResultImage(url)
+			.then((outcome) =>
+				toast.success(outcome === 'copied' ? m.toast_copied() : m.gacha_image_saved())
+			)
+			.catch(() => toast.error(m.toast_copy_failed()))
 	}
 </script>
 
@@ -287,12 +353,12 @@
 				{m.gacha_replay_seed()}
 				<CopyableText value={result.seed} />
 			</span>
-			{#if onShare}
-				<Button variant="ghost" size="small" onclick={onShare}>
+			{#if link && canShare}
+				<Button variant="ghost" size="small" onclick={shareResult}>
 					{m.gacha_share()}
 				</Button>
 			{/if}
-			{#if onCopyLink || onCopyImage}
+			{#if link}
 				<DropdownMenu>
 					{#snippet trigger({ props })}
 						<Button {...props} variant="ghost" size="small" rightIcon="chevron-down-small">
@@ -300,16 +366,12 @@
 						</Button>
 					{/snippet}
 					{#snippet menu()}
-						{#if onCopyLink}
-							<DropdownMenuBase.Item class="dropdown-menu-item" onSelect={onCopyLink}>
-								{m.gacha_copy_link()}
-							</DropdownMenuBase.Item>
-						{/if}
-						{#if onCopyImage}
-							<DropdownMenuBase.Item class="dropdown-menu-item" onSelect={onCopyImage}>
-								{m.gacha_copy_image()}
-							</DropdownMenuBase.Item>
-						{/if}
+						<DropdownMenuBase.Item class="dropdown-menu-item" onSelect={copyLink}>
+							{m.gacha_copy_link()}
+						</DropdownMenuBase.Item>
+						<DropdownMenuBase.Item class="dropdown-menu-item" onSelect={copyImage}>
+							{m.gacha_copy_image()}
+						</DropdownMenuBase.Item>
 					{/snippet}
 				</DropdownMenu>
 			{/if}

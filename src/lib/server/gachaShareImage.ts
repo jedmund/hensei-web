@@ -27,7 +27,8 @@ import {
 	extractRenderSignature,
 	verifyRenderRequest
 } from '$lib/server/renderSigning'
-import { readShare, writeShare, type GachaShare } from '$lib/utils/gachaShare'
+import { gachaIdentityFor } from '$lib/utils/gacha'
+import { oneOf, readShare, writeShare, type GachaShare } from '$lib/utils/gachaShare'
 import type { CatalogueItem, GachaRenderData, GachaResult } from '$lib/types/gacha'
 
 export const TEMPLATE_ID = 'gacha.result'
@@ -54,10 +55,6 @@ export interface ImageRequest {
 	canonical: string
 	/** sha256 of `canonical`; names the cache entry */
 	cacheKey: string
-}
-
-function oneOf<T extends string>(value: string | null, allowed: readonly T[], fallback: T): T {
-	return value !== null && (allowed as readonly string[]).includes(value) ? (value as T) : fallback
 }
 
 /**
@@ -244,12 +241,7 @@ export async function runShare(
 	const catalogue = await apiJson(fetch, `catalogue?${catalogueQuery.toString()}`)
 	const items = (catalogue.items ?? []) as CatalogueItem[]
 
-	const identityFor = (id: string, rarity?: number) =>
-		items.find(
-			(item) => item.granblue_id === id && (rarity === undefined || item.rarity === rarity)
-		)?.identity ?? ''
-
-	const target = share.target ? identityFor(share.target) : ''
+	const target = gachaIdentityFor(items, share.target)
 	if (share.operation !== 'draw' && !target) {
 		throw new SimulationError(400, 'Target is not in this pool')
 	}
@@ -263,7 +255,7 @@ export async function runShare(
 		comparison: share.comparison,
 		target,
 		rateups: share.rateups.flatMap(({ id, percent }) => {
-			const identity = identityFor(id, 3)
+			const identity = gachaIdentityFor(items, id, 3)
 			return identity ? [{ identity, percent }] : []
 		}),
 		seed: share.seed

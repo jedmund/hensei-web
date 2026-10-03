@@ -45,7 +45,12 @@ const MAX_RATEUPS = 50
 const GRANBLUE_ID = /^\d{10}$/
 const PERCENT = /^\d{1,3}(\.\d{1,6})?$/
 
-function oneOf<T extends string>(value: string | null, allowed: readonly T[], fallback: T): T {
+/** The value when it's one of the allowed ones, otherwise the fallback */
+export function oneOf<T extends string>(
+	value: string | null,
+	allowed: readonly T[],
+	fallback: T
+): T {
 	return value !== null && (allowed as readonly string[]).includes(value) ? (value as T) : fallback
 }
 
