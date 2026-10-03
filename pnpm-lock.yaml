@@ -147,8 +147,8 @@ importers:
         specifier: ^4.1.3
         version: 4.1.3(storybook@10.6.1(@types/react@19.1.12)(prettier@3.6.2)(react@19.1.1))
       '@eslint/compat':
-        specifier: ^1.4.1
-        version: 1.4.1(eslint@9.39.5(jiti@2.7.0))
+        specifier: ^2.1.1
+        version: 2.1.1(eslint@9.39.5(jiti@2.7.0))
       '@eslint/js':
         specifier: ^9.39.5
         version: 9.39.5
@@ -287,6 +287,7 @@ packages:
   '@aws-sdk/core@3.974.11':
     resolution: {integrity: sha512-QpnINq5FZH6EOaDEkmHdT7eUunbvD27pDNQypaWjFyYz7Zl1q3UCMQErBZxpmfGfI7MvI2TlK8KTkgNpv8b1ug==}
     engines: {node: '>=20.0.0'}
+    deprecated: Deprecated due to an error deserialization bug in JSON 1.0 protocol services, see https://github.com/aws/aws-sdk-js-v3/pull/8031. Newer version available.
 
   '@aws-sdk/crc64-nvme@3.972.8':
     resolution: {integrity: sha512-fVfUCL/Xh2zINYMPZvj+iBn6XWouQf0DAnjaWCI9MkmqXzL2Iy5FoQB8O7syFe6gN6AH1ecDDU58T51Ou0kFkA==}
@@ -733,11 +734,11 @@ packages:
     resolution: {integrity: sha512-EriSTlt5OC9/7SXkRSCAhfSxxoSUgBm33OH+IkwbdpgoqsSsUg7y3uh+IICI/Qg4BBWr3U2i39RpmycbxMq4ew==}
     engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
 
-  '@eslint/compat@1.4.1':
-    resolution: {integrity: sha512-cfO82V9zxxGBxcQDr1lfaYB7wykTa0b00mGa36FrJl7iTFd0Z2cHfEYuxcBRP/iNijCsWsEkA+jzT8hGYmv33w==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+  '@eslint/compat@2.1.1':
+    resolution: {integrity: sha512-rMcy8GSrwNzcISX/BlTDY/GLB4eCopEuy9woIls3To+15OLxykZrxxq+WUcylCPCQ6F4MujjBM1DX5V1aqI3Vw==}
+    engines: {node: ^20.19.0 || ^22.13.0 || >=24}
     peerDependencies:
-      eslint: ^8.40 || 9
+      eslint: ^8.40 || 9 || 10
     peerDependenciesMeta:
       eslint:
         optional: true
@@ -753,6 +754,10 @@ packages:
   '@eslint/core@0.17.0':
     resolution: {integrity: sha512-yL/sLrpmtDaFEiUj1osRP4TI2MDz1AddJL+jZ7KSqvBuliN4xqYY54IfdN8qD8Toa6g1iloph1fxQNkjOxrrpQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@eslint/core@1.2.1':
+    resolution: {integrity: sha512-MwcE1P+AZ4C6DWlpin/OmOA54mmIZ/+xZuJiQd4SyB29oAJjN30UW9wkKNptW2ctp4cEsvhlLY/CsQ1uoHDloQ==}
+    engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
   '@eslint/eslintrc@3.3.7':
     resolution: {integrity: sha512-F42g89Qd5oAWtp0k0nnSrjziAKza7w8SVT4mStc18LZMaRb4J1HQAHLCalEtDCxrTuksx7NU9qsmeLwpOfPqWw==}
@@ -4024,12 +4029,14 @@ packages:
 
   wx-core-locales@2.2.0:
     resolution: {integrity: sha512-bDquS5k6v784vOsjDnkpbrqL4Yh3CQGf3Rt3gM6mAFDUI97/Iy2r7fzQ3It7Hb3dxI9Vtym4Bwsg3X3ATAz8KA==}
+    deprecated: Moved to the @svar-ui namespace. Use @svar-ui/core-locales instead. https://www.npmjs.com/package/@svar-ui/core-locales
 
   wx-grid-data-provider@2.2.0:
     resolution: {integrity: sha512-Qan2+yKS34uhtj5/TL8lNOA4hr6Xl1hCFbVXEspdbpy4ZcqnTOOrCddg8+XXksB8vn1+6ucwfbLTv80oIefhCw==}
 
   wx-grid-locales@2.2.0:
     resolution: {integrity: sha512-YVU9vR1uwPd4IiJ12GfQIDfIa9aqq1vR3cI43BI9A8a26nmoTluGXvIuOFoP3ZSg/yzW+JAe1QtTb7ejW5C6pg==}
+    deprecated: Moved to the @svar-ui namespace. Use @svar-ui/grid-locales instead. https://www.npmjs.com/package/@svar-ui/grid-locales
 
   wx-grid-store@2.2.0:
     resolution: {integrity: sha512-H0AKzODSyEE4emA76MSpcMzPNIJlsgf3CUzaXPMuqQuaehqCNINSzmI7/5z7nHvbBJBsK8scSIi6cctj5Pyavg==}
@@ -4039,24 +4046,31 @@ packages:
 
   wx-lib-dom@0.8.0:
     resolution: {integrity: sha512-1jQFsoX8EiA/7D6IT8k8I52PlPFs850etY+k7jqww9CM5L3JEELprKuy422sUfXjnnpMoaVvUrmndWZVOldsAA==}
+    deprecated: Moved to the @svar-ui namespace. Use @svar-ui/lib-dom instead. https://www.npmjs.com/package/@svar-ui/lib-dom
 
   wx-lib-dom@0.9.1:
     resolution: {integrity: sha512-uh0ikmNRSgF1ksCY4mu/Nuqo/zrTOKP75Ok+YeA+Jp6i5QCzD5EabWtgAGIBq54cikAbjSGOdNPa6qYLc9s0qA==}
+    deprecated: Moved to the @svar-ui namespace. Use @svar-ui/lib-dom instead. https://www.npmjs.com/package/@svar-ui/lib-dom
 
   wx-lib-state@1.9.3:
     resolution: {integrity: sha512-iZVeprL3ljzTWToaN+QW9LJjWZoDyplLbkt8iryeDQaNirYFaL2ZUCp0Utjm0rSP6OfLSmaw+QYldYhmqDpyGw==}
+    deprecated: Moved to the @svar-ui namespace. Use @svar-ui/lib-state instead. https://www.npmjs.com/package/@svar-ui/lib-state
 
   wx-lib-svelte@0.5.1:
     resolution: {integrity: sha512-zYfkAv5r0zQ3KFyCPPusC8EkMXUC3I0L1QsK+An0rNlRkY/iocPTOcaouyycg48BdmsBK8fSL0vK0B4oZuujrQ==}
+    deprecated: Moved to the @svar-ui namespace. Use @svar-ui/lib-svelte instead. https://www.npmjs.com/package/@svar-ui/lib-svelte
 
   wx-svelte-core@2.2.0:
     resolution: {integrity: sha512-txE3Me/gfb899V3QJbH+Rt+e7rgvruzLCIKvZoDXT/c78TUWqMRHFZUpIkjlH9toozVvdL0UnyQ8BqVMRQqBVg==}
+    deprecated: Moved to the @svar-ui namespace. Use @svar-ui/svelte-core instead. https://www.npmjs.com/package/@svar-ui/svelte-core
 
   wx-svelte-grid@2.2.0:
     resolution: {integrity: sha512-9OKwyANflqpBujsqm1geU5pgm72QnY7bMkReUAt6Q+2laL5Ccx/ZHxpo2ez14IkZh0jXoW4JCVjoaDiA32FYXg==}
+    deprecated: Moved to the @svar-ui namespace. Use @svar-ui/svelte-grid instead. https://www.npmjs.com/package/@svar-ui/svelte-grid
 
   wx-svelte-menu@2.2.0:
     resolution: {integrity: sha512-uEuza5t+wc4YKqTUh6DS/ZdZBHmNcJrBLu18NuRZJMWGb+zHjBKeQNG7/eIA/zMP1yhn5Lnb6hoK6TEddaC/Wg==}
+    deprecated: Moved to the @svar-ui namespace. Use @svar-ui/svelte-menu instead. https://www.npmjs.com/package/@svar-ui/svelte-menu
 
   xml-naming@0.1.0:
     resolution: {integrity: sha512-k8KO9hrMyNk6tUWqUfkTEZbezRRpONVOzUTnc97VnCvyj6Tf9lyUR9EDAIeiVLv56jsMcoXEwjW8Kv5yPY52lw==}
@@ -4688,9 +4702,9 @@ snapshots:
 
   '@eslint-community/regexpp@4.12.2': {}
 
-  '@eslint/compat@1.4.1(eslint@9.39.5(jiti@2.7.0))':
+  '@eslint/compat@2.1.1(eslint@9.39.5(jiti@2.7.0))':
     dependencies:
-      '@eslint/core': 0.17.0
+      '@eslint/core': 1.2.1
     optionalDependencies:
       eslint: 9.39.5(jiti@2.7.0)
 
@@ -4707,6 +4721,10 @@ snapshots:
       '@eslint/core': 0.17.0
 
   '@eslint/core@0.17.0':
+    dependencies:
+      '@types/json-schema': 7.0.15
+
+  '@eslint/core@1.2.1':
     dependencies:
       '@types/json-schema': 7.0.15
 
