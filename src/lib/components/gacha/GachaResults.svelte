@@ -514,7 +514,7 @@
 
 			// Rate-ups glow, so they stand out among the other SSRs
 			&.rateup {
-				box-shadow: 0 0 $unit $unit-half var(--accent-yellow);
+				box-shadow: 0 0 $unit-half 1px color-mix(in srgb, var(--accent-yellow) 60%, transparent);
 			}
 		}
 
