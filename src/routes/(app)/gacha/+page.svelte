@@ -525,23 +525,12 @@
 
 	.results-head {
 		display: flex;
-		align-items: flex-start;
-		justify-content: space-between;
-		flex-wrap: wrap;
+		flex-direction: column-reverse;
+		align-items: flex-end;
 		gap: $unit-2x;
 
 		.stats {
-			flex: 1;
-			min-width: 0;
-		}
-
-		@media (max-width: 450px) {
-			flex-direction: column-reverse;
-			align-items: flex-end;
-
-			.stats {
-				width: 100%;
-			}
+			width: 100%;
 		}
 	}
 
