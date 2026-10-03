@@ -1859,6 +1859,7 @@
 	"gacha_running": "Running…",
 	"gacha_replay": "Replay",
 	"gacha_sampled": "Draws needed",
+	"gacha_ssr_rate": "SSR rate",
 	"gacha_probability": "Probability",
 	"gacha_expected": "Expected copies",
 	"gacha_cost": "Cost",

@@ -1840,6 +1840,7 @@
 	"gacha_running": "計算中…",
 	"gacha_replay": "再実行",
 	"gacha_sampled": "必要回数",
+	"gacha_ssr_rate": "SSR率",
 	"gacha_probability": "確率",
 	"gacha_expected": "期待個数",
 	"gacha_cost": "費用",

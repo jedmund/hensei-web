@@ -101,6 +101,13 @@
 			maximumSignificantDigits: 4
 		}).format(value)
 	}
+	function rate(part: string, whole: string) {
+		return new Intl.NumberFormat(getLocale(), {
+			style: 'percent',
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2
+		}).format(Number(part) / Number(whole))
+	}
 	function cost(value: GachaResult['cost'], unit: Currency) {
 		if (unit === 'crystals') return `${amount(value.crystals)} ${m.gacha_crystals()}`
 		return new Intl.NumberFormat(getLocale(), {
@@ -365,17 +372,17 @@
 			<div class="results-head">
 				<div class="stats">
 					{#if operation === 'draw' && result.totals}
-						<div class="stat">
-							<span class="stat-label">SSR</span>
-							<span class="stat-value">{amount(result.totals.SSR)}</span>
-						</div>
-						<div class="stat">
-							<span class="stat-label">SR</span>
-							<span class="stat-value">{amount(result.totals.SR)}</span>
-						</div>
-						<div class="stat">
-							<span class="stat-label">R</span>
-							<span class="stat-value">{amount(result.totals.R)}</span>
+						<div class="tiles">
+							<div class="tile">
+								<span class="stat-label">{m.gacha_ssr_rate()}</span>
+								<span class="stat-value">{rate(result.totals.SSR, result.draws)}</span>
+							</div>
+							{#each ['SSR', 'SR', 'R'] as const as rarity (rarity)}
+								<div class="tile">
+									<span class="stat-label">{rarity}</span>
+									<span class="stat-value">{amount(result.totals[rarity])}</span>
+								</div>
+							{/each}
 						</div>
 					{:else if operation === 'until'}
 						<div class="stat hero">
@@ -496,12 +503,46 @@
 		}
 	}
 
+	.tiles {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: $unit;
+		width: 100%;
+
+		@media (max-width: 450px) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	.tile {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-half;
+		padding: $unit-2x;
+		border-radius: $card-corner;
+		background: var(--page-bg);
+	}
+
 	.results-head {
 		display: flex;
 		align-items: flex-start;
 		justify-content: space-between;
 		flex-wrap: wrap;
 		gap: $unit-2x;
+
+		.stats {
+			flex: 1;
+			min-width: 0;
+		}
+
+		@media (max-width: 450px) {
+			flex-direction: column-reverse;
+			align-items: flex-end;
+
+			.stats {
+				width: 100%;
+			}
+		}
 	}
 
 	.card {
