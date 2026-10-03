@@ -2,6 +2,8 @@
 
 <script lang="ts">
 	import Button from '$lib/components/ui/Button.svelte'
+	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
+	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import CopyableText from '$lib/components/ui/CopyableText.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
@@ -30,7 +32,6 @@
 		operation: GachaRenderData['operation']
 		currency?: Currency
 		art?: Art
-		busy?: boolean
 		/** The Until target, shown large above the result */
 		target?: CatalogueItem
 		/** Umikin Mode: base character art instead of uncapped art */
@@ -39,7 +40,7 @@
 		share?: boolean
 		/** Pool and season, shown at the top left of the share image */
 		label?: string
-		onReplay?: () => void
+		onShare?: () => void
 		onCopyLink?: () => void
 		onCopyImage?: () => void
 	}
@@ -49,12 +50,11 @@
 		operation,
 		currency = $bindable('usd'),
 		art = $bindable('weapon'),
-		busy = false,
 		share = false,
 		label,
 		target,
 		simplePortraits = false,
-		onReplay,
+		onShare,
 		onCopyLink,
 		onCopyImage
 	}: Props = $props()
@@ -287,20 +287,31 @@
 				{m.gacha_replay_seed()}
 				<CopyableText value={result.seed} />
 			</span>
-			{#if onCopyLink}
-				<Button variant="ghost" size="small" onclick={onCopyLink}>
-					{m.gacha_copy_link()}
+			{#if onShare}
+				<Button variant="ghost" size="small" onclick={onShare}>
+					{m.gacha_share()}
 				</Button>
 			{/if}
-			{#if onCopyImage}
-				<Button variant="ghost" size="small" onclick={onCopyImage}>
-					{m.gacha_copy_image()}
-				</Button>
-			{/if}
-			{#if onReplay}
-				<Button variant="ghost" size="small" disabled={busy} onclick={onReplay}>
-					{m.gacha_replay()}
-				</Button>
+			{#if onCopyLink || onCopyImage}
+				<DropdownMenu>
+					{#snippet trigger({ props })}
+						<Button {...props} variant="ghost" size="small" rightIcon="chevron-down-small">
+							{m.gacha_copy()}
+						</Button>
+					{/snippet}
+					{#snippet menu()}
+						{#if onCopyLink}
+							<DropdownMenuBase.Item class="dropdown-menu-item" onSelect={onCopyLink}>
+								{m.gacha_copy_link()}
+							</DropdownMenuBase.Item>
+						{/if}
+						{#if onCopyImage}
+							<DropdownMenuBase.Item class="dropdown-menu-item" onSelect={onCopyImage}>
+								{m.gacha_copy_image()}
+							</DropdownMenuBase.Item>
+						{/if}
+					{/snippet}
+				</DropdownMenu>
 			{/if}
 		{/if}
 	</footer>
