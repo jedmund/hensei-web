@@ -10,7 +10,7 @@
  * Add new templates as new card components ship.
  */
 
-export type RenderTemplateId = '_health' | 'user.support-summons'
+export type RenderTemplateId = '_health' | 'user.support-summons' | 'gacha.result'
 // Adding a new id without adding the matching entry to TEMPLATES is a type
 // error.
 
@@ -70,6 +70,22 @@ export const TEMPLATES = {
 		viewport: { width: 1280, height: 1100 },
 		s3Prefix: 'previews/user.support-summons',
 		requiredParams: ['username']
+	},
+	/**
+	 * Gacha simulator result card, shared as a link preview and copied as an
+	 * image. The public /download/gacha endpoint runs the simulation and hands
+	 * the result over with a prefetch token. Japanese renders go through the
+	 * /ja prefix so the card's labels follow the requested locale.
+	 */
+	'gacha.result': {
+		internalPath: (params: Record<string, string>): string => {
+			const prefix = params.locale === 'ja' ? '/ja' : ''
+			const query = new URLSearchParams({ prefetch: params.prefetch ?? '' })
+			return `${prefix}/_render/gacha/result?${query.toString()}`
+		},
+		viewport: { width: 1200, height: 630 },
+		s3Prefix: 'previews/gacha.result',
+		requiredParams: ['prefetch']
 	}
 } as const satisfies Record<RenderTemplateId, RenderTemplate>
 

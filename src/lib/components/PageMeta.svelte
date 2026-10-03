@@ -3,11 +3,22 @@
 		title: string
 		description: string
 		image?: string
+		/** Pixel size of `image`, so link previews can lay out the large card */
+		imageWidth?: number
+		imageHeight?: number
 		url?: string
 		type?: 'website' | 'article'
 	}
 
-	let { title, description, image, url, type = 'website' }: Props = $props()
+	let {
+		title,
+		description,
+		image,
+		imageWidth,
+		imageHeight,
+		url,
+		type = 'website'
+	}: Props = $props()
 </script>
 
 <svelte:head>
@@ -24,6 +35,10 @@
 	{/if}
 	{#if image}
 		<meta property="og:image" content={image} />
+		{#if imageWidth && imageHeight}
+			<meta property="og:image:width" content={String(imageWidth)} />
+			<meta property="og:image:height" content={String(imageHeight)} />
+		{/if}
 	{/if}
 
 	<!-- Twitter Card -->
