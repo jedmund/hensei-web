@@ -213,8 +213,8 @@
 
 			// Rows with a weapon line have three lines of text
 			&.tall {
-				width: 56px;
-				height: 56px;
+				width: 60px;
+				height: 60px;
 			}
 		}
 
