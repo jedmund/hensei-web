@@ -253,13 +253,6 @@
 			hidden: true
 		},
 		{
-			id: 'gacha',
-			header: 'Gacha',
-			width: 70,
-			hidden: true,
-			cell: BooleanCell
-		},
-		{
 			id: 'extra',
 			header: 'Extra',
 			width: 70,
