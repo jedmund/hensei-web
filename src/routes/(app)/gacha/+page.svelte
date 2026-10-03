@@ -299,8 +299,8 @@
 </script>
 
 <PageMeta
-	title={m.gacha_title()}
-	description={m.gacha_notice()}
+	title={m.page_title_gacha()}
+	description={m.page_desc_gacha()}
 	image={data.ogImage ?? undefined}
 	imageWidth={1200}
 	imageHeight={630}
