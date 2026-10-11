@@ -111,13 +111,7 @@
 					variant="primary"
 					size="medium"
 					element={elementName as
-						| 'fire'
-						| 'water'
-						| 'earth'
-						| 'wind'
-						| 'light'
-						| 'dark'
-						| undefined}
+						'fire' | 'water' | 'earth' | 'wind' | 'light' | 'dark' | undefined}
 					onclick={onSave}
 					disabled={isSaving}
 				>

@@ -2,16 +2,7 @@
 	import type { Snippet } from 'svelte'
 
 	type Variant =
-		| 'gray'
-		| 'blue'
-		| 'yellow'
-		| 'red'
-		| 'wind'
-		| 'fire'
-		| 'water'
-		| 'earth'
-		| 'light'
-		| 'dark'
+		'gray' | 'blue' | 'yellow' | 'red' | 'wind' | 'fire' | 'water' | 'earth' | 'light' | 'dark'
 
 	interface Props {
 		variant?: Variant

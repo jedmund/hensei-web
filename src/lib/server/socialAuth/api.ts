@@ -33,8 +33,7 @@ export type LinkErrorCode =
 	| 'failed'
 
 export type LinkResult =
-	| { kind: 'linked'; provider: SocialProvider }
-	| { kind: 'error'; code: LinkErrorCode }
+	{ kind: 'linked'; provider: SocialProvider } | { kind: 'error'; code: LinkErrorCode }
 
 export type SocialSignupResult =
 	| { kind: 'tokens'; tokens: OAuthLoginResponse }

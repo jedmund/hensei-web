@@ -30,13 +30,7 @@ export interface AdapterOptions {
  * undefined and null values are skipped when building the URL.
  */
 export type QueryParamValue =
-	| string
-	| number
-	| boolean
-	| string[]
-	| number[]
-	| (string | number)[]
-	| undefined
+	string | number | boolean | string[] | number[] | (string | number)[] | undefined
 
 /**
  * Query parameters record.

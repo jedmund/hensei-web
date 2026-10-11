@@ -193,8 +193,8 @@
 		{/snippet}
 		<p>
 			If you believe content on the Service infringes your copyright, send a notice to
-			<a href="mailto:{CONTACT}">{CONTACT}</a> that identifies the copyrighted work, the location of
-			the infringing material on the Service, your contact information, a statement that you have a good-faith
+			<a href="mailto:{CONTACT}">{CONTACT}</a> that identifies the copyrighted work, the location of the
+			infringing material on the Service, your contact information, a statement that you have a good-faith
 			belief the use is not authorized, and a statement, under penalty of perjury, that the information
 			in your notice is accurate and that you are the owner or authorized to act on the owner's behalf.
 			We will remove infringing material and terminate repeat infringers where appropriate.

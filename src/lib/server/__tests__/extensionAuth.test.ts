@@ -8,9 +8,8 @@ vi.mock('$env/dynamic/public', () => ({ env: {} }))
 vi.mock('$app/environment', () => ({ dev: false }))
 vi.mock('$lib/api/adapters/config', () => ({ getApiBaseUrl: () => 'http://api.test/api/v1' }))
 
-const { configuredExtensionIds, isAllowedRedirectUri, parseExtensionAuthRequest } = await import(
-	'../extensionAuth'
-)
+const { configuredExtensionIds, isAllowedRedirectUri, parseExtensionAuthRequest } =
+	await import('../extensionAuth')
 const pageRoute = await import('../../../routes/auth/extension/+page.server')
 const codeRoute = await import('../../../routes/auth/extension/code/+server')
 
