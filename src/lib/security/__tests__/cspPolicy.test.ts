@@ -1,5 +1,13 @@
+import { createHash } from 'node:crypto'
+import { compile } from 'svelte/compiler'
 import { describe, expect, it } from 'vitest'
-import { buildCspDirectives, cspConfig, CSP_REPORT_PATH, parseCspMode } from '../cspPolicy.js'
+import {
+	buildCspDirectives,
+	cspConfig,
+	CSP_REPORT_PATH,
+	parseCspMode,
+	SVELTE_EVENT_REPLAY_HANDLER
+} from '../cspPolicy.js'
 
 const env = {
 	apiUrl: 'https://api.granblue.team/v1',
@@ -28,7 +36,32 @@ describe('buildCspDirectives', () => {
 			if (name !== 'style-src') expect(sources).not.toContain('unsafe-inline')
 			expect(sources).not.toContain('unsafe-eval')
 		}
-		expect(directives['script-src']).toEqual(['self'])
+		expect(directives['script-src']).toEqual(['self', 'unsafe-hashes', expect.any(String)])
+	})
+
+	it("allows only Svelte's event-replay handler as an inline attribute", () => {
+		// What Svelte's server renderer emits for an <img> with an error handler.
+		// If a Svelte upgrade changes it, update SVELTE_EVENT_REPLAY_HANDLER and
+		// the hash in cspPolicy.js.
+		const { js } = compile('<img src="a.png" alt="" onerror={() => {}} />', {
+			generate: 'server'
+		})
+		expect(js.code).toContain(`onerror="${SVELTE_EVENT_REPLAY_HANDLER}"`)
+
+		const hash = createHash('sha256').update(SVELTE_EVENT_REPLAY_HANDLER).digest('base64')
+		expect(directives['script-src']).toContain(`sha256-${hash}`)
+	})
+
+	it('allows media from the image bucket', () => {
+		expect(directives['media-src']).toEqual([
+			'self',
+			'https://siero-img.s3-us-west-2.amazonaws.com'
+		])
+	})
+
+	it('lets video embeds come only from the privacy-enhanced YouTube host', () => {
+		expect(directives['frame-src']).toEqual(['https://www.youtube-nocookie.com'])
+		expect(JSON.stringify(directives)).not.toContain('https://www.youtube.com')
 	})
 
 	it('blocks framing, plugins and base or form hijacking', () => {

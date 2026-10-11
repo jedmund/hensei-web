@@ -92,6 +92,18 @@ describe('summarizeViolation', () => {
 		expect(summarizeViolation(violation!)).toBe('[csp] extension directive=script-src')
 	})
 
+	it('marks extension sources reported as a bare scheme name', () => {
+		const [violation] = parseCspReports({
+			'csp-report': {
+				'effective-directive': 'script-src',
+				'blocked-uri': 'wasm-eval',
+				'document-uri': 'https://granblue.team/teams/abc',
+				'source-file': 'chrome-extension'
+			}
+		})
+		expect(summarizeViolation(violation!)).toBe('[csp] extension directive=script-src')
+	})
+
 	it('ignores empty reports', () => {
 		expect(summarizeViolation({ directive: '', blocked: '', page: '', source: '' })).toBeNull()
 	})

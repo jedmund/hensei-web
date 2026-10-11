@@ -142,7 +142,7 @@ function jsonToHtml(
 			const safeVideoId = encodeURIComponent(videoId)
 			return `<div class="video-wrapper">
 					<iframe
-						src="https://www.youtube.com/embed/${safeVideoId}"
+						src="https://www.youtube-nocookie.com/embed/${safeVideoId}"
 						title="${escapeHtml(m.tooltip_youtube_video())}"
 						frameborder="0"
 						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

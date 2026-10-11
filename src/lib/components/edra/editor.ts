@@ -123,7 +123,9 @@ export default (
 			Markdown,
 			Youtube.configure({
 				inline: false,
-				modestBranding: true
+				modestBranding: true,
+				// The CSP's frame-src only allows the privacy-enhanced host.
+				nocookie: true
 			}),
 			EntityMention.configure({
 				HTMLAttributes: {

@@ -8,6 +8,7 @@
 	import PrivacySelector from '$lib/components/party/edit/PrivacySelector.svelte'
 	import type { PartyVisibility } from '$lib/types/visibility'
 	import * as m from '$lib/paraglide/messages'
+	import { fetchYoutubeTitle } from '$lib/utils/youtube'
 
 	interface Props {
 		open: boolean
@@ -43,14 +44,9 @@
 		}
 
 		const controller = new AbortController()
-		fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`, {
-			signal: controller.signal
+		fetchYoutubeTitle(id, controller.signal).then((title) => {
+			if (title) videoTitle = title
 		})
-			.then((res) => (res.ok ? res.json() : null))
-			.then((data) => {
-				if (data?.title) videoTitle = data.title
-			})
-			.catch(() => {})
 
 		return () => controller.abort()
 	})
