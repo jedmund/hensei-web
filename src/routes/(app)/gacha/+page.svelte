@@ -487,7 +487,8 @@
 		/>
 	{/if}
 
-	{#if result}
+	<!-- Held back while the animation plays, so they don't give it away -->
+	{#if result && !animation}
 		<GachaResults
 			{result}
 			target={items.find((item) => item.identity === result?.target)}

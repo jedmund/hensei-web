@@ -1865,7 +1865,6 @@
 	"gacha_animation": "Draw animation",
 	"gacha_animation_next": "Next",
 	"gacha_skip": "Skip",
-	"gacha_reveal_progress": "{current} of {total}",
 	"gacha_share": "Share",
 	"gacha_share_draw": "{ssr} SSRs in {draws} draws",
 	"gacha_share_until": "{name} took {draws} draws",

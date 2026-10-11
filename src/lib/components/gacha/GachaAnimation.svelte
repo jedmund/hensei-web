@@ -1,32 +1,51 @@
-<!-- GachaAnimation - Draw animation played before a 10-draw's results -->
+<!-- GachaAnimation - The game's draw animation, played before a 10-draw's results -->
 
 <script lang="ts">
 	import Button from '$lib/components/ui/Button.svelte'
-	import { Dialog as DialogBase } from 'bits-ui'
+	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
-	import { onMount } from 'svelte'
-	import { fade } from 'svelte/transition'
+	import { untrack } from 'svelte'
 	import { gachaItemCardFallbackImage, gachaItemCardImage } from '$lib/utils/gacha'
-	import { FIRST_PHASE, nextPhase, phaseDuration, type Phase } from '$lib/gacha-animation/sequence'
-	import type { Presentation, Rarity } from '$lib/gacha-animation/presentation'
+	import {
+		blankImage,
+		loadGameRuntime,
+		loadImage,
+		toImgMid,
+		type GameRuntime
+	} from '$lib/gacha-animation/runtime'
+	import { scene1Params, scene2Params, type SceneParams } from '$lib/gacha-animation/scene'
+	import type { Presentation } from '$lib/gacha-animation/presentation'
 	import type { CatalogueItem } from '$lib/types/gacha'
 
 	interface Props {
 		/** The drawn items, in draw order */
 		items: CatalogueItem[]
 		presentation: Presentation
-		/** Called when the animation ends or is skipped */
+		/** Called when the animation ends, is skipped or can't load */
 		onDone: () => void
 	}
 
 	let { items, presentation, onDone }: Props = $props()
 
-	let phase = $state<Phase>(FIRST_PHASE)
+	const FPS = 30
+	const SCENE1 = 'gacha_new_2025_scene1'
+	const SCENE2 = 'gacha_new_2025_scene2'
+	/**
+	 * How long the animation waits for a tap before tapping by itself, in
+	 * seconds. The game waits for every tap; here the opening's taps come
+	 * quickly and each revealed item holds for a beat.
+	 */
+	const AUTO_TAP_AFTER: Record<string, number> = { [SCENE1]: 0.6, [SCENE2]: 1 }
+	/** Scene 1's "tap to skip ahead" layers, which auto-tap leaves alone */
+	const OPTIONAL_LAYERS: Record<string, string[]> = { [SCENE1]: ['bg2', 'bg3'] }
+	/** Sub-clips whose labels show whether the scene is mid-animation */
+	const CLIPS = ['scene1_1', 'scene1_2', 'scene1_3', 'scene2', 'scene3', 'scene4']
+
+	let canvas = $state<HTMLCanvasElement>()
+	let loaded = $state(false)
 	let finished = false
 
-	const RARITY: Record<number, Rarity> = { 1: 'R', 2: 'SR', 3: 'SSR' }
-	const revealed = $derived(phase.kind === 'reveal' ? items[phase.index] : undefined)
 	const itemName = (item: CatalogueItem) => (getLocale() === 'ja' && item.name.ja) || item.name.en
 
 	function finish() {
@@ -34,308 +53,200 @@
 		finished = true
 		onDone()
 	}
-	function advance() {
-		phase = nextPhase(phase, items.length)
+
+	/* eslint-disable @typescript-eslint/no-explicit-any -- the game's untyped display objects */
+	let runtime: GameRuntime | undefined
+	let stage: any
+	let root: any
+	let sceneName = ''
+	let idleFrames = 0
+
+	function mount(name: string, params: SceneParams) {
+		if (root) stage.removeChild(root)
+		// The scenes also read the draw count as a global
+		Object.assign(window, { cjs_gacha_num: items.length })
+		root = new runtime!.lib[name]()
+		Object.assign(root, params)
+		stage.addChild(root)
+		sceneName = name
+		idleFrames = 0
 	}
 
-	// Each phase moves on by itself; a tap moves on early
-	$effect(() => {
-		const duration = phaseDuration(phase)
-		if (duration === null) {
-			finish()
-			return
+	// The scenes wait on clicks on full-screen layers, some transparent, which
+	// the runtime's pixel hit test misses; send the click straight to the
+	// topmost layer that's listening
+	function listeners(auto: boolean): any[] {
+		const found: any[] = []
+		const optional = auto ? (OPTIONAL_LAYERS[sceneName] ?? []) : []
+		const walk = (node: any, depth: number) => {
+			if (!node || depth > 6 || node.visible === false || node._off) return
+			const name: string =
+				node.name || Object.keys(node.parent ?? {}).find((key) => node.parent[key] === node) || ''
+			if (node.parent === root && optional.includes(name)) return
+			if (node.hasEventListener?.('click') && !/skip/i.test(name)) found.push(node)
+			for (const child of node.children ?? []) walk(child, depth + 1)
 		}
-		const timer = setTimeout(advance, duration)
-		return () => clearTimeout(timer)
+		walk(root, 0)
+		return found
+	}
+
+	function tap(auto = false) {
+		if (!root || finished) return
+		const target = listeners(auto).at(-1)
+		// The runtime doesn't export createjs.Event; a type string works
+		target?.dispatchEvent('click')
+	}
+
+	/** Whether any of the scene's clips is mid-animation */
+	function busy(): boolean {
+		return CLIPS.some((key) => {
+			const clip = root?.[key]
+			if (!clip?.timeline) return false
+			const label = clip.getCurrentLabel ? clip.getCurrentLabel() : clip.currentLabel
+			// Scene 2's "open" and "skip" listen for a tap that cuts the item's
+			// intro short, but move on by themselves
+			return /_(play|set)$|^(open|skip)$/.test(label ?? '')
+		})
+	}
+
+	function onTick() {
+		if (!root || finished) return
+		if (!busy() && listeners(true).length > 0) idleFrames++
+		else idleFrames = 0
+		if (idleFrames > FPS * (AUTO_TAP_AFTER[sceneName] ?? 1)) {
+			idleFrames = 0
+			tap(true)
+		}
+	}
+
+	function onPlayEnd(event: Event) {
+		if (sceneName === SCENE1) {
+			const skipped = Boolean((event as CustomEvent).detail)
+			mount(SCENE2, scene2Params(items, presentation, items.map(itemName), skipped))
+		} else {
+			finish()
+		}
+	}
+	/* eslint-enable @typescript-eslint/no-explicit-any */
+
+	/** Card art for each draw slot, falling back to the item's other art */
+	async function loadCards(): Promise<CanvasImageSource[]> {
+		return Promise.all(
+			items.map((item) =>
+				loadImage(gachaItemCardImage(item))
+					.catch(() => loadImage(gachaItemCardFallbackImage(item)))
+					.then(toImgMid)
+					.catch(() => blankImage())
+			)
+		)
+	}
+
+	// The canvas renders inside the dialog's portal, after this component
+	// mounts, so start once it's there
+	$effect(() => {
+		const target = canvas
+		if (!target) return
+		return untrack(() => start(target))
 	})
 
-	// Load the card art while the opening plays
-	onMount(() => {
-		for (const item of items) new Image().src = gachaItemCardImage(item)
-	})
+	function start(target: HTMLCanvasElement) {
+		let ticker: { removeEventListener: (type: string, fn: unknown) => void } | undefined
+		target.addEventListener('playEnd', onPlayEnd)
 
-	// One fallback attempt, so a missing fallback can't loop
-	function useFallback(event: Event, item: CatalogueItem) {
-		const img = event.currentTarget as HTMLImageElement
-		if (img.dataset.fallback) return
-		img.dataset.fallback = 'true'
-		img.src = gachaItemCardFallbackImage(item)
+		Promise.all([loadGameRuntime(getLocale()), loadCards()])
+			.then(([game, cards]) => {
+				if (finished) return
+				runtime = game
+				const { createjs, images } = game
+				const blank = blankImage()
+				for (let i = 1; i <= 10; i++) {
+					const n = String(i).padStart(2, '0')
+					images[`wepon_dummy${n}`] = cards[i - 1] ?? blank
+					// New-character portraits and pickup art aren't used yet
+					images[`npc_dummy${n}`] = blank
+					images[`txt_popup_dummy${n}`] = blank
+					for (let c = 1; c <= 3; c++) images[`charaup_dummy0${c}_${i}`] = blank
+				}
+
+				stage = new createjs.Stage(target)
+				// Taps go straight to the layers (see listeners), so the runtime's
+				// own pointer handling, which reads canvas pixels, stays off
+				stage.enableDOMEvents?.(false)
+				createjs.MotionGuidePlugin?.install()
+				createjs.Ticker.setFPS(FPS)
+				createjs.Ticker.setPaused(false)
+				createjs.Ticker.addEventListener('tick', stage)
+				createjs.Ticker.addEventListener('tick', onTick)
+				ticker = createjs.Ticker
+				mount(SCENE1, scene1Params(items, presentation))
+				loaded = true
+			})
+			.catch((err) => {
+				console.error('Gacha animation failed to load', err)
+				finish()
+			})
+
+		return () => {
+			target.removeEventListener('playEnd', onPlayEnd)
+			ticker?.removeEventListener('tick', stage)
+			ticker?.removeEventListener('tick', onTick)
+			stage?.removeAllChildren()
+			root = undefined
+		}
 	}
 </script>
 
-<!-- The dialog handles the portal, focus trap, scroll lock and Escape (skip) -->
-<DialogBase.Root open onOpenChange={(open) => !open && finish()}>
-	<DialogBase.Portal>
-		<DialogBase.Overlay class="gacha-animation-backdrop" />
-		<DialogBase.Content class="gacha-animation" aria-label={m.gacha_animation()}>
-			<button type="button" class="stage" aria-label={m.gacha_animation_next()} onclick={advance}>
-				{#if phase.kind === 'opening'}
-					<div class="scene" out:fade={{ duration: 150 }}>
-						<div class="crystal {presentation.crystal}"></div>
-					</div>
-				{:else if phase.kind === 'stones'}
-					<div class="scene" out:fade={{ duration: 150 }}>
-						<ul class="stones">
-							{#each presentation.stones as stone, index (index)}
-								<li class="stone" style:--delay="{index * 80}ms">
-									<span class="gem {stone.startsAs.toLowerCase()}"></span>
-									{#if stone.startsAs !== stone.rarity}
-										<span class="gem classup {stone.rarity.toLowerCase()}"></span>
-									{/if}
-								</li>
-							{/each}
-						</ul>
-					</div>
-				{:else if revealed}
-					{@const rarity = RARITY[revealed.rarity] ?? 'R'}
-					{#key phase.kind === 'reveal' && phase.index}
-						<div class="scene reveal {rarity.toLowerCase()}" in:fade={{ duration: 150 }}>
-							<img
-								class="card"
-								src={gachaItemCardImage(revealed)}
-								alt=""
-								onerror={(event) => useFallback(event, revealed)}
-							/>
-							<div class="caption" aria-live="polite">
-								<span class="rarity">{rarity}</span>
-								<span class="name">{itemName(revealed)}</span>
-								<span class="progress">
-									{m.gacha_reveal_progress({
-										current: (phase.kind === 'reveal' ? phase.index : 0) + 1,
-										total: items.length
-									})}
-								</span>
-							</div>
-						</div>
-					{/key}
-				{/if}
-			</button>
-			<div class="skip">
-				<Button variant="secondary" size="small" type="button" onclick={finish}>
-					{m.gacha_skip()}
-				</Button>
-			</div>
-		</DialogBase.Content>
-	</DialogBase.Portal>
-</DialogBase.Root>
+<Dialog open hideClose class="gacha-animation-dialog" onOpenChange={(open) => !open && finish()}>
+	<button
+		type="button"
+		class="stage"
+		class:loaded
+		aria-label={m.gacha_animation_next()}
+		onclick={() => tap()}
+	>
+		<canvas bind:this={canvas} width="640" height="920" aria-label={m.gacha_animation()}></canvas>
+	</button>
+	<div class="actions">
+		<Button variant="secondary" size="small" type="button" onclick={finish}>
+			{m.gacha_skip()}
+		</Button>
+	</div>
+</Dialog>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
-	@use '$src/themes/typography' as *;
-	@use '$src/themes/layout' as *;
-	@use '$src/themes/effects' as effects;
 
-	// The stage is always dark, like the game's, in either theme
-	:global(.gacha-animation-backdrop) {
-		position: fixed;
-		inset: 0;
-		z-index: effects.$z-modal;
-		background: rgb(0 0 0 / 0.9);
-	}
-
-	:global(.gacha-animation) {
-		position: fixed;
-		inset: 0;
-		z-index: effects.$z-modal + 1;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-
-		&:focus {
-			outline: none;
-		}
+	// The canvas keeps the game's 640×920 frame, sized to fit the screen with
+	// room for the actions row
+	:global(.dialog-content.gacha-animation-dialog) {
+		width: min(460px, 90vw, calc((90vh - #{$unit-8x}) * 640 / 920));
 	}
 
 	.stage {
-		position: relative;
-		width: min(100vw, calc(100dvh * 640 / 920));
+		display: block;
+		width: 100%;
 		aspect-ratio: 640 / 920;
-		max-height: 100dvh;
 		padding: 0;
 		border: 0;
-		overflow: hidden;
 		cursor: pointer;
-		color: #fff;
-		background: radial-gradient(
-			ellipse at 50% 40%,
-			#f6e7c1 0%,
-			#b99a5b 35%,
-			#3b3020 75%,
-			#15110b 100%
-		);
+		background: #000;
 
-		@media (min-width: 769px) {
-			border-radius: $page-corner;
+		canvas {
+			display: block;
+			width: 100%;
+			height: 100%;
+			opacity: 0;
+			transition: opacity 200ms ease;
+		}
+
+		&.loaded canvas {
+			opacity: 1;
 		}
 	}
 
-	.scene {
-		position: absolute;
-		inset: 0;
+	.actions {
 		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	// Opening: the crystal floats in, glowing in its tell colour
-	.crystal {
-		--glow: #9ec9ff;
-		width: 28%;
-		aspect-ratio: 1 / 2.4;
-		clip-path: polygon(50% 0, 100% 42%, 50% 100%, 0 42%);
-		filter: drop-shadow(0 0 $unit-3x var(--glow));
-		animation:
-			crystal-in 700ms ease-out both,
-			crystal-float 2.4s ease-in-out 700ms infinite;
-
-		&.blue {
-			background: linear-gradient(160deg, #d6ecff, #4a8fe0 45%, #1d4fa8);
-		}
-
-		&.violet {
-			--glow: #c7a6ff;
-			background: linear-gradient(160deg, #e6dcff, #5e7fe6 40%, #8a4fd6 75%, #c86fd0);
-		}
-
-		&.gold {
-			--glow: #ffd27a;
-			background: linear-gradient(160deg, #fff3c4, #f2b33d 40%, #e07a2a 70%, #3d74d8);
-		}
-
-		&.rainbow {
-			--glow: #fff;
-			background: linear-gradient(
-				160deg,
-				#ff8fb1,
-				#ffd27a 20%,
-				#9be7a0 40%,
-				#7cc7ff 60%,
-				#b38cff 80%,
-				#ff8fb1
-			);
-		}
-	}
-
-	@keyframes crystal-in {
-		from {
-			opacity: 0;
-			transform: translateY($unit-4x) scale(0.6);
-		}
-	}
-
-	@keyframes crystal-float {
-		50% {
-			transform: translateY(-$unit);
-		}
-	}
-
-	// Stones: one per item, landing in turn; class-ups change colour late
-	.stones {
-		display: grid;
-		grid-template-columns: repeat(5, 1fr);
-		gap: $unit-3x $unit-2x;
-		width: 80%;
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-
-	.stone {
-		position: relative;
-		aspect-ratio: 1 / 1.8;
-		animation: stone-in 400ms ease-out var(--delay) both;
-	}
-
-	.gem {
-		position: absolute;
-		inset: 0;
-		clip-path: polygon(50% 0, 100% 42%, 50% 100%, 0 42%);
-
-		&.r {
-			background: linear-gradient(160deg, #d6ecff, #4a8fe0 50%, #1d4fa8);
-		}
-
-		&.sr {
-			background: linear-gradient(160deg, #fff3c4, #e2b23a 50%, #8a5a12);
-		}
-
-		&.ssr {
-			background: linear-gradient(160deg, #ff8fb1, #ffd27a 30%, #9be7a0 55%, #7cc7ff 75%, #b38cff);
-		}
-
-		&.classup {
-			animation: classup 300ms ease-in calc(var(--delay) + 1200ms) both;
-		}
-	}
-
-	@keyframes stone-in {
-		from {
-			opacity: 0;
-			transform: translateY(-$unit-6x) scale(0.5);
-		}
-	}
-
-	@keyframes classup {
-		from {
-			opacity: 0;
-			transform: scale(1.4);
-		}
-	}
-
-	// Reveal: the item's card art, with its rarity and name
-	.reveal {
-		flex-direction: column;
-		gap: $unit-2x;
-		padding: $unit-4x;
-
-		&.ssr .card {
-			filter: drop-shadow(0 0 $unit-3x #ffe28a);
-		}
-
-		&.sr .card {
-			filter: drop-shadow(0 0 $unit-2x #fff3c4);
-		}
-	}
-
-	.card {
-		max-width: 90%;
-		max-height: 62%;
-		object-fit: contain;
-		animation: card-in 300ms ease-out both;
-	}
-
-	@keyframes card-in {
-		from {
-			transform: scale(0.85);
-		}
-	}
-
-	.caption {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: $unit-half;
-		text-shadow: 0 1px 4px rgb(0 0 0 / 0.6);
-	}
-
-	.rarity {
-		font-size: $font-xlarge;
-		font-weight: $bold;
-	}
-
-	.name {
-		font-size: $font-medium;
-		font-weight: $medium;
-	}
-
-	.progress {
-		font-size: $font-small;
-		opacity: 0.8;
-	}
-
-	.skip {
-		position: absolute;
-		top: $unit-2x;
-		right: $unit-2x;
+		justify-content: flex-end;
+		padding: $unit $unit-2x;
 	}
 </style>

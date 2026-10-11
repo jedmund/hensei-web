@@ -1,9 +1,9 @@
 /**
  * How a draw is presented in the animation: which crystal opens it, which
- * stones fake out by starting at a lower rarity, and whether the transition
- * bursts. In the game the server picks these per draw; here they follow from
- * the result, with the random choices seeded by the result's seed so a
- * shared link replays the same show.
+ * opening pattern plays, which stones fake out by starting at a lower rarity,
+ * and whether the transition bursts. In the game the server picks these per
+ * draw (`rendering_id`); here they follow from the result, with the random
+ * choices seeded by the result's seed so the same result plays the same show.
  */
 
 import type { CatalogueItem } from '$lib/types/gacha'
@@ -18,11 +18,22 @@ export interface Stone {
 	startsAs: Rarity
 }
 
+/**
+ * The game's opening pattern (`main_pattern`, `sub_pattern`, `add_pattern`).
+ * Main 1–5 open on a rainbow crystal, 6 gold, 7 blue-violet and 8 blue.
+ */
+export interface Pattern {
+	main: number
+	sub: number
+	add: number
+}
+
 export interface Presentation {
 	crystal: Crystal
+	pattern: Pattern
 	/** A blue crystal can't happen in a 10-draw (one SR is guaranteed), so it's a fake-out */
 	fakeOut: boolean
-	/** The prismatic burst between the opening and the stones */
+	/** Gold's prismatic burst between the opening and the stones */
 	burst: boolean
 	stones: Stone[]
 	/** Indices of items that play the "joined your party" scene */
@@ -33,8 +44,14 @@ export interface Presentation {
 export const FAKE_OUT_CHANCE = 0.1
 /** Chance that each SR or SSR stone starts one rarity lower */
 export const CLASS_UP_CHANCE = 0.15
-/** Chance of the prismatic burst when the draw has an SSR */
+/** Chance that a gold opening plays the prismatic burst transition */
 export const BURST_CHANCE = 0.1
+
+/**
+ * Rainbow openings without a server-named intro (main 1 and add 1 have one)
+ * or a new-character tie-in (add 4)
+ */
+const RAINBOW_PATTERNS: Pattern[] = [2, 3, 4, 5].map((main) => ({ main, sub: 0, add: 0 }))
 
 const RARITY: Record<number, Rarity> = { 1: 'R', 2: 'SR', 3: 'SSR' }
 const LOWER: Record<Rarity, Rarity> = { R: 'R', SR: 'R', SSR: 'SR' }
@@ -84,11 +101,27 @@ export function choosePresentation(
 		startsAs: rarity !== 'R' && random() < CLASS_UP_CHANCE ? LOWER[rarity] : rarity
 	}))
 
+	const burst = crystal === 'gold' && random() < BURST_CHANCE
 	return {
 		crystal,
+		pattern: patternFor(crystal, burst, random),
 		fakeOut,
-		burst: ssrCount > 0 && random() < BURST_CHANCE,
+		burst,
 		stones,
 		newCharacters: newIndices
+	}
+}
+
+function patternFor(crystal: Crystal, burst: boolean, random: () => number): Pattern {
+	switch (crystal) {
+		case 'rainbow':
+			return RAINBOW_PATTERNS[Math.floor(random() * RAINBOW_PATTERNS.length)] as Pattern
+		case 'gold':
+			// Sub-pattern 1 is gold's prismatic burst transition
+			return { main: 6, sub: burst ? 1 : 0, add: 0 }
+		case 'violet':
+			return { main: 7, sub: 0, add: 0 }
+		case 'blue':
+			return { main: 8, sub: random() < 0.5 ? 1 : 0, add: 0 }
 	}
 }

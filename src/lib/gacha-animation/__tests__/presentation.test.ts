@@ -57,7 +57,21 @@ describe('choosePresentation', () => {
 		for (const seed of seeds(200)) {
 			const result = choosePresentation(draw(2), seed)
 			expect(result.crystal).toBe('violet')
+			expect(result.pattern).toEqual({ main: 7, sub: 0, add: 0 })
 			expect(result.burst).toBe(false)
+		}
+	})
+
+	it("plays a game pattern that matches the crystal's colour", () => {
+		const mains = { rainbow: [2, 3, 4, 5], gold: [6], violet: [7], blue: [8] }
+		for (const seed of seeds(500)) {
+			for (const items of [draw(3, 3), draw(3, 2), draw(2)]) {
+				const { crystal, pattern, burst } = choosePresentation(items, seed)
+				expect(mains[crystal]).toContain(pattern.main)
+				expect(pattern.add).toBe(0)
+				if (crystal === 'gold') expect(pattern.sub).toBe(burst ? 1 : 0)
+				if (crystal !== 'gold') expect(burst).toBe(false)
+			}
 		}
 	})
 
