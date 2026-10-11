@@ -42,16 +42,31 @@
 	/** Sub-clips whose labels show whether the scene is mid-animation */
 	const CLIPS = ['scene1_1', 'scene1_2', 'scene1_3', 'scene2', 'scene3', 'scene4']
 
+	/**
+	 * The outro's length: a 170 ms white flash, then the dialog fades and
+	 * shrinks over 280 ms (see the styles), plus a little room so it's gone
+	 * before it's removed
+	 */
+	const OUTRO_MS = 520
+
 	let canvas = $state<HTMLCanvasElement>()
 	let loaded = $state(false)
+	let closing = $state(false)
 	let finished = false
 
 	const itemName = (item: CatalogueItem) => (getLocale() === 'ja' && item.name.ja) || item.name.en
 
+	// Every way out (the end, Skip, Escape, a click outside) plays the outro
+	// before the results show
 	function finish() {
 		if (finished) return
 		finished = true
-		onDone()
+		closing = true
+		setTimeout(onDone, OUTRO_MS)
+	}
+	function finishInstead(event: Event) {
+		event.preventDefault()
+		finish()
 	}
 
 	/* eslint-disable @typescript-eslint/no-explicit-any -- the game's untyped display objects */
@@ -196,18 +211,26 @@
 	}
 </script>
 
-<Dialog open hideClose class="gacha-animation-dialog" onOpenChange={(open) => !open && finish()}>
+<Dialog
+	open
+	hideClose
+	class="gacha-animation-dialog {closing ? 'closing' : ''}"
+	overlayClass={closing ? 'gacha-animation-closing' : ''}
+	onEscapeKeydown={finishInstead}
+	onInteractOutside={finishInstead}
+>
 	<button
 		type="button"
 		class="stage"
 		class:loaded
+		disabled={closing}
 		aria-label={m.gacha_animation_next()}
 		onclick={() => tap()}
 	>
 		<canvas bind:this={canvas} width="640" height="920" aria-label={m.gacha_animation()}></canvas>
 	</button>
 	<div class="actions">
-		<Button variant="secondary" size="small" type="button" onclick={finish}>
+		<Button variant="secondary" size="small" type="button" disabled={closing} onclick={finish}>
 			{m.gacha_skip()}
 		</Button>
 	</div>
@@ -222,7 +245,36 @@
 		width: min(460px, 90vw, calc((90vh - #{$unit-8x}) * 640 / 920));
 	}
 
+	// Outro: the stage flashes white, then the dialog fades and shrinks away
+	// while the backdrop lifts
+	:global(.dialog-content.gacha-animation-dialog.closing) {
+		pointer-events: none;
+		animation: gacha-outro 280ms ease-in 170ms both;
+	}
+
+	:global(.dialog-overlay.gacha-animation-closing) {
+		animation: gacha-backdrop-out 300ms ease-in 150ms both;
+	}
+
+	:global(.dialog-content.gacha-animation-dialog.closing) .stage::after {
+		opacity: 1;
+	}
+
+	@keyframes gacha-outro {
+		to {
+			opacity: 0;
+			transform: translate(-50%, -50%) scale(0.94);
+		}
+	}
+
+	@keyframes gacha-backdrop-out {
+		to {
+			opacity: 0;
+		}
+	}
+
 	.stage {
+		position: relative;
 		display: block;
 		width: 100%;
 		aspect-ratio: 640 / 920;
@@ -241,6 +293,21 @@
 
 		&.loaded canvas {
 			opacity: 1;
+		}
+
+		// The white flash, faded in by the outro
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: #fff;
+			opacity: 0;
+			transition: opacity 170ms ease-out;
+			pointer-events: none;
+		}
+
+		&:disabled {
+			cursor: default;
 		}
 	}
 
