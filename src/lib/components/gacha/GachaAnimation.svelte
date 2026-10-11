@@ -39,6 +39,11 @@
 	const AUTO_TAP_AFTER: Record<string, number> = { [SCENE1]: 0.6, [SCENE2]: 1 }
 	/** Scene 1's "tap to skip ahead" layers, which auto-tap leaves alone */
 	const OPTIONAL_LAYERS: Record<string, string[]> = { [SCENE1]: ['bg2', 'bg3'] }
+	/**
+	 * The scenes' SKIP button hit area on the 640×920 frame: every skip layer
+	 * is a 147×39 box centred at (318.5, 867.5)
+	 */
+	const SKIP_AREA = { left: 245, top: 848, right: 392, bottom: 887 }
 	/** Sub-clips whose labels show whether the scene is mid-animation */
 	const CLIPS = ['scene1_1', 'scene1_2', 'scene1_3', 'scene2', 'scene3', 'scene4']
 
@@ -89,8 +94,9 @@
 
 	// The scenes wait on clicks on full-screen layers, some transparent, which
 	// the runtime's pixel hit test misses; send the click straight to the
-	// topmost layer that's listening
-	function listeners(auto: boolean): any[] {
+	// topmost layer that's listening. The SKIP button's layers are separate,
+	// and only take clicks on the button.
+	function listeners(auto: boolean, skip = false): any[] {
 		const found: any[] = []
 		const optional = auto ? (OPTIONAL_LAYERS[sceneName] ?? []) : []
 		const walk = (node: any, depth: number) => {
@@ -98,25 +104,39 @@
 			const name: string =
 				node.name || Object.keys(node.parent ?? {}).find((key) => node.parent[key] === node) || ''
 			if (node.parent === root && optional.includes(name)) return
-			if (node.hasEventListener?.('click') && !/skip/i.test(name)) found.push(node)
+			if (node.hasEventListener?.('click') && /skip/i.test(name) === skip) found.push(node)
 			for (const child of node.children ?? []) walk(child, depth + 1)
 		}
 		walk(root, 0)
 		return found
 	}
 
-	function tap(auto = false) {
+	/** Whether a click landed on the scene's SKIP button */
+	function onSkipButton(event: MouseEvent): boolean {
+		// Keyboard presses have no position
+		if (!canvas || event.detail === 0) return false
+		const rect = canvas.getBoundingClientRect()
+		const x = ((event.clientX - rect.left) / rect.width) * canvas.width
+		const y = ((event.clientY - rect.top) / rect.height) * canvas.height
+		const { left, top, right, bottom } = SKIP_AREA
+		return x >= left && x <= right && y >= top && y <= bottom
+	}
+
+	function tap(auto = false, skip = false) {
 		if (!root || finished) return
-		const target = listeners(auto).at(-1)
+		// A click on SKIP while it isn't listening counts as an ordinary tap
+		const target = (skip && listeners(false, true).at(-1)) || listeners(auto).at(-1)
 		// The runtime doesn't export createjs.Event; a type string works
 		target?.dispatchEvent('click')
 	}
 
-	/** Whether any of the scene's clips is mid-animation */
+	/** Whether any of the scene's shown clips is mid-animation */
 	function busy(): boolean {
 		return CLIPS.some((key) => {
 			const clip = root?.[key]
-			if (!clip?.timeline) return false
+			// A hidden clip keeps the label it stopped on, e.g. scene 2's "skip"
+			// after SKIP jumps to the item list
+			if (!clip?.timeline || clip._off || clip.visible === false) return false
 			const label = clip.getCurrentLabel ? clip.getCurrentLabel() : clip.currentLabel
 			// Scene 2's "open" and "skip" listen for a tap that cuts the item's
 			// intro short, but move on by themselves
@@ -225,7 +245,7 @@
 		class:loaded
 		disabled={closing}
 		aria-label={m.gacha_animation_next()}
-		onclick={() => tap()}
+		onclick={(event) => tap(false, onSkipButton(event))}
 	>
 		<canvas bind:this={canvas} width="640" height="920" aria-label={m.gacha_animation()}></canvas>
 	</button>
