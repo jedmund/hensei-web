@@ -22,12 +22,19 @@ const GAME_IMAGE_HOSTS = [
 ]
 // YouTube thumbnails for team and playlist videos.
 const YOUTUBE_THUMBNAIL_HOST = 'https://img.youtube.com'
-// The video dialog embeds the privacy-enhanced player.
+// Video embeds (dialog and descriptions) use the privacy-enhanced player.
 const YOUTUBE_EMBED_HOST = 'https://www.youtube-nocookie.com'
 // Icon stylesheet and font for the admin data grid.
 const SVAR_HOST = 'https://cdn.svar.dev'
 // Wiki lookups on the admin database pages (src/lib/api/wiki.ts).
 const WIKI_HOST = 'https://gbf.wiki'
+
+// Svelte's server renderer adds `onload`/`onerror="this.__e=event"` to elements
+// with those handlers, so events that fire before hydration can be replayed.
+// 'unsafe-hashes' lets exactly this attribute run, and no other inline handler.
+// Pinned by a test against the compiler's output.
+export const SVELTE_EVENT_REPLAY_HANDLER = 'this.__e=event'
+const SVELTE_EVENT_REPLAY_HASH = 'sha256-7dQwUgLau1NFCCGjfn9FsYptB6ZtWxJin6VohGIu20I='
 
 /**
  * The origin of a URL, or null when it's missing or invalid.
@@ -68,8 +75,9 @@ export function buildCspDirectives({ apiUrl, imgUrl, sentryDsn }) {
 	return {
 		'default-src': ['self'],
 		// SvelteKit adds a per-request nonce for its own inline scripts and the
-		// theme script in app.html.
-		'script-src': ['self'],
+		// theme script in app.html. The hash is set here rather than in
+		// script-src-attr, which older Safari ignores.
+		'script-src': ['self', 'unsafe-hashes', SVELTE_EVENT_REPLAY_HASH],
 		// Inline styles are allowed on purpose: Svelte style bindings and
 		// transitions, echarts and Tiptap all set them. SvelteKit adds no style
 		// nonce while 'unsafe-inline' is present (a nonce would disable it).
@@ -85,6 +93,9 @@ export function buildCspDirectives({ apiUrl, imgUrl, sentryDsn }) {
 		// data: for the small KaTeX fonts Vite inlines into the stylesheet. Inline
 		// fonts can't send data anywhere.
 		'font-src': compact(['self', 'data:', images, SVAR_HOST]),
+		// The /extension page's video comes from the image bucket.
+		'media-src': compact(['self', images]),
+		// YouTube titles go through /api/youtube/oembed, so YouTube isn't listed.
 		'connect-src': compact(['self', api, sentry, WIKI_HOST]),
 		'frame-src': [YOUTUBE_EMBED_HOST],
 		'frame-ancestors': ['none'],
