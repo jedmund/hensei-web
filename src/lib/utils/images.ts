@@ -11,7 +11,8 @@ import { getElementKey } from '$lib/utils/element'
 const BUILD_TIMESTAMP = __BUILD_TIMESTAMP__
 
 export type ResourceType = 'character' | 'weapon' | 'summon'
-export type ImageVariant = 'main' | 'tall' | 'grid' | 'square' | 'detail' | 'base' | 'wide'
+export type ImageVariant =
+	'main' | 'tall' | 'grid' | 'square' | 'detail' | 'base' | 'wide' | 'gacha'
 
 /**
  * Single source of truth for non-entity bucket prefixes. Entity art (character/
@@ -53,10 +54,11 @@ function getImageDirectory(type: ResourceType, variant: ImageVariant): string {
  * Determines the file extension for a given resource type and variant
  */
 function getFileExtension(type: ResourceType, variant: ImageVariant): string {
-	// PNG variants: character-detail, weapon-base, summon-detail
+	// PNG variants: character-detail, weapon-base, summon-detail, weapon/summon-gacha
 	if (type === 'character' && variant === 'detail') return '.png'
 	if (type === 'weapon' && variant === 'base') return '.png'
 	if (type === 'summon' && variant === 'detail') return '.png'
+	if (variant === 'gacha' && (type === 'weapon' || type === 'summon')) return '.png'
 
 	// All other variants use JPG
 	return '.jpg'
@@ -385,6 +387,23 @@ export function getWeaponBaseImage(
 }
 
 /**
+ * Get weapon gacha card art (transparent PNG shown when the weapon is drawn).
+ * Not every weapon has it; most R weapons don't.
+ * @param transformation - Optional variant suffix ('02' / '03' for transcendence stages,
+ *   or an element number for element variants)
+ */
+export function getWeaponGachaImage(
+	id: string | number | null | undefined,
+	transformation?: string
+): string {
+	if (!id) return getPlaceholderImage('weapon', 'gacha')
+	if (!transformation) return getImageUrl('weapon', id, 'gacha')
+	const directory = getImageDirectory('weapon', 'gacha')
+	const extension = getFileExtension('weapon', 'gacha')
+	return `${getBasePath()}/${directory}/${id}_${transformation}${extension}`
+}
+
+/**
  * Get summon image URL
  * @param transformation - Optional transformation suffix ('02' for ULB, '03' for transcendence)
  */
@@ -421,6 +440,22 @@ export function getSummonDetailImage(
 	if (!transformation) return getImageUrl('summon', id, 'detail')
 	const directory = getImageDirectory('summon', 'detail')
 	const extension = getFileExtension('summon', 'detail')
+	return `${getBasePath()}/${directory}/${id}_${transformation}${extension}`
+}
+
+/**
+ * Get summon gacha card art (transparent PNG shown when the summon is drawn).
+ * Not every summon has it; most R summons don't.
+ * @param transformation - Optional transformation suffix ('02' where alternate art exists)
+ */
+export function getSummonGachaImage(
+	id: string | number | null | undefined,
+	transformation?: string
+): string {
+	if (!id) return getPlaceholderImage('summon', 'gacha')
+	if (!transformation) return getImageUrl('summon', id, 'gacha')
+	const directory = getImageDirectory('summon', 'gacha')
+	const extension = getFileExtension('summon', 'gacha')
 	return `${getBasePath()}/${directory}/${id}_${transformation}${extension}`
 }
 

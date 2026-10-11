@@ -45,9 +45,9 @@
 		if (resourceType === 'character') {
 			return [...base, 'detail']
 		} else if (resourceType === 'weapon') {
-			return [...base, 'base']
+			return [...base, 'base', 'gacha']
 		} else {
-			return [...base, 'detail', 'wide']
+			return [...base, 'detail', 'wide', 'gacha']
 		}
 	})
 

@@ -15,8 +15,10 @@ import {
 	getCharacterDetailImage,
 	getWeaponImage,
 	getWeaponBaseImage,
+	getWeaponGachaImage,
 	getSummonImage,
 	getSummonDetailImage,
+	getSummonGachaImage,
 	getSummonWideImage,
 	getCharacterImageWithPose,
 	getWeaponGridImage,
@@ -267,6 +269,11 @@ describe('getImageUrl', () => {
 			expect(getImageUrl('summon', '2040001', 'detail')).toMatch(/\.png$/)
 		})
 
+		it('uses .png for weapon-gacha and summon-gacha', () => {
+			expect(getImageUrl('weapon', '1040001', 'gacha')).toBe('/images/weapons/gacha/1040001.png')
+			expect(getImageUrl('summon', '2040001', 'gacha')).toBe('/images/summons/gacha/2040001.png')
+		})
+
 		it('uses .jpg for everything else', () => {
 			expect(getImageUrl('character', '3040001', 'grid')).toMatch(/\.jpg$/)
 			expect(getImageUrl('weapon', '1040001', 'main')).toMatch(/\.jpg$/)
@@ -333,6 +340,21 @@ describe('getWeaponBaseImage', () => {
 	})
 })
 
+describe('getWeaponGachaImage', () => {
+	it('returns gacha PNG', () => {
+		expect(getWeaponGachaImage('1040515700')).toBe('/images/weapons/gacha/1040515700.png')
+	})
+
+	it('adds a variant suffix', () => {
+		expect(getWeaponGachaImage('1040515700', '02')).toBe('/images/weapons/gacha/1040515700_02.png')
+		expect(getWeaponGachaImage('1040003700', '3')).toBe('/images/weapons/gacha/1040003700_3.png')
+	})
+
+	it('returns placeholder for null', () => {
+		expect(getWeaponGachaImage(null)).toContain('placeholder')
+	})
+})
+
 describe('getSummonImage', () => {
 	it('defaults to main', () => {
 		expect(getSummonImage('2040001')).toBe('/images/summons/main/2040001.jpg')
@@ -350,6 +372,20 @@ describe('getSummonImage', () => {
 describe('getSummonDetailImage', () => {
 	it('returns detail PNG', () => {
 		expect(getSummonDetailImage('2040001')).toBe('/images/summons/detail/2040001.png')
+	})
+})
+
+describe('getSummonGachaImage', () => {
+	it('returns gacha PNG', () => {
+		expect(getSummonGachaImage('2040003000')).toBe('/images/summons/gacha/2040003000.png')
+	})
+
+	it('adds a transformation suffix', () => {
+		expect(getSummonGachaImage('2040003000', '02')).toBe('/images/summons/gacha/2040003000_02.png')
+	})
+
+	it('returns placeholder for null', () => {
+		expect(getSummonGachaImage(undefined)).toContain('placeholder')
 	})
 })
 
