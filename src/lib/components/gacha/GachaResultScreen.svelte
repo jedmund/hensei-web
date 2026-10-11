@@ -32,15 +32,18 @@
 		items.length === 1 ? m.gacha_result_title_one() : m.gacha_result_title({ count: items.length })
 	)
 
-	// One line per kind of moon, as the game's Information panel lists them
-	const moonLines = $derived.by(() => {
+	// The game's Information panel: where the loot went, one line per kind of
+	// moon, and the sparks the draw earned (one per draw)
+	const informationLines = $derived.by(() => {
 		const count = (moon: Moon) => moons.filter((value) => value === moon).length
 		const line = (n: number, one: () => string, many: (p: { count: number }) => string) =>
 			n === 0 ? [] : [n === 1 ? one() : many({ count: n })]
 		return [
+			m.gacha_result_crate(),
 			...line(count(1), m.gacha_result_bronze_moon, m.gacha_result_bronze_moons),
 			...line(count(2), m.gacha_result_silver_moon, m.gacha_result_silver_moons),
-			...line(count(3), m.gacha_result_gold_moon, m.gacha_result_gold_moons)
+			...line(count(3), m.gacha_result_gold_moon, m.gacha_result_gold_moons),
+			...line(items.length, m.gacha_result_spark, m.gacha_result_sparks)
 		]
 	})
 
@@ -92,16 +95,14 @@
 				<button type="button" class="again" onclick={onDrawAgain}>{m.gacha_draw_again()}</button>
 			{/if}
 		</div>
-		{#if moonLines.length > 0}
-			<div class="information">
-				<h3>{m.gacha_result_information()}</h3>
-				<ul>
-					{#each moonLines as line (line)}
-						<li>{line}</li>
-					{/each}
-				</ul>
-			</div>
-		{/if}
+		<div class="information">
+			<h3>{m.gacha_result_information()}</h3>
+			<ul>
+				{#each informationLines as line (line)}
+					<li>{line}</li>
+				{/each}
+			</ul>
+		</div>
 	</div>
 </div>
 
@@ -185,10 +186,13 @@
 
 	.again {
 		box-sizing: border-box;
-		display: inline-block;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		width: 162px;
 		height: 42px;
-		padding: 13px 0 0;
+		// Centred on the bar, which sits a little below the sprite's middle
+		padding: 3px 0 0;
 		border: 0;
 		background: var(--button) no-repeat 0 -1035px;
 		background-size: 230px 3466px;
