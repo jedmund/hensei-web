@@ -157,24 +157,24 @@
 	})
 	$effect(() => () => runController?.abort())
 
-	// Draw animation: when the switch is on, Draw is locked to a single
-	// 10-part draw and plays the animation before the results. Remembered per
-	// viewer; a shared link with other settings keeps its settings and turns
-	// the switch off for that visit.
+	// Draw animation: when the switch is on, Draw is locked to one purchase (a
+	// 10-draw or a single draw) and plays the animation before the results.
+	// Remembered per viewer; a shared link with other settings keeps its
+	// settings and turns the switch off for that visit.
 	const ANIMATION_KEY = 'gacha:playAnimation'
 	const reducedMotion = new MediaQuery('(prefers-reduced-motion: reduce)')
 	let playAnimation = $state(false)
 	let animation = $state<{ items: CatalogueItem[]; presentation: Presentation } | null>(null)
 	const drawsLocked = $derived(playAnimation && operation === 'draw')
 
-	function lockToTenPart() {
-		purchase = 'ten'
-		draws = '10'
-	}
+	const onePurchase = (unit: 'ten' | 'singles') => (unit === 'ten' ? '10' : '1')
+	// Draws follows Purchase while locked
+	$effect(() => {
+		if (drawsLocked) draws = onePurchase(purchase)
+	})
 	function setPlayAnimation(value: boolean) {
 		if (value === playAnimation) return
 		playAnimation = value
-		if (value) lockToTenPart()
 		try {
 			localStorage.setItem(ANIMATION_KEY, value ? '1' : '0')
 		} catch {
@@ -188,10 +188,8 @@
 		} catch {
 			remembered = false
 		}
-		const keepsSettings =
-			!page.url.search || (shared.purchase === 'ten' && String(shared.draws) === '10')
+		const keepsSettings = !page.url.search || String(shared.draws) === onePurchase(shared.purchase)
 		playAnimation = remembered && keepsSettings
-		if (playAnimation) lockToTenPart()
 	})
 
 	// The settings card collapses to the mode switcher and Draw button, and
@@ -385,7 +383,6 @@
 						label={m.gacha_purchase()}
 						options={purchaseOptions}
 						bind:value={purchase}
-						disabled={drawsLocked}
 						fullWidth
 					/>
 					{#if operation !== 'until'}
