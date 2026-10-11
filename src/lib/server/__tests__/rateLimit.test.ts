@@ -142,6 +142,10 @@ describe('RATE_LIMIT_RULES paths', () => {
 		expect(ruleFor('GET', '/ja/api/og/image')).toBe('link-preview-image')
 	})
 
+	it('limits YouTube title lookups', () => {
+		expect(ruleFor('GET', '/api/youtube/oembed')).toBe('youtube-oembed')
+	})
+
 	it('limits CSP violation reports', () => {
 		expect(ruleFor('POST', '/api/csp-report')).toBe('csp-report')
 		expect(ruleFor('GET', '/api/csp-report')).toBeUndefined()

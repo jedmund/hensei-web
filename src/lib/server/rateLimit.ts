@@ -212,6 +212,12 @@ export const RATE_LIMIT_RULES: Rule[] = [
 		limiter: createRateLimiter({ limit: 60, windowMs: MINUTE })
 	},
 	{
+		name: 'youtube-oembed',
+		methods: ['GET'],
+		path: route('/api/youtube/oembed'),
+		limiter: createRateLimiter({ limit: 60, windowMs: MINUTE })
+	},
+	{
 		name: 'csp-report',
 		methods: ['POST'],
 		path: route('/api/csp-report'),
