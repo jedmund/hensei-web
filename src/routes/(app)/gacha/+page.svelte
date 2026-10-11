@@ -9,6 +9,7 @@
 	import GachaRateups, { type Rateup } from '$lib/components/gacha/GachaRateups.svelte'
 	import GachaResults from '$lib/components/gacha/GachaResults.svelte'
 	import GachaAnimation from '$lib/components/gacha/GachaAnimation.svelte'
+	import GachaLog from '$lib/components/gacha/GachaLog.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import { choosePresentation, type Presentation } from '$lib/gacha-animation/presentation'
 	import * as m from '$lib/paraglide/messages'
@@ -25,6 +26,7 @@
 		gachaItemName,
 		gachaItemThumbnail
 	} from '$lib/utils/gacha'
+	import { addEntry, readLog, trimResult, writeLog, type GachaLogEntry } from '$lib/utils/gachaLog'
 	import type { CatalogueItem, GachaResult } from '$lib/types/gacha'
 
 	let { data } = $props()
@@ -192,6 +194,25 @@
 		playAnimation = remembered && keepsSettings
 	})
 
+	// Draw log: every Draw and Until result started here, newest first, saved
+	// in this browser
+	let log = $state<GachaLogEntry[]>([])
+	function saveLog(entries: GachaLogEntry[]) {
+		try {
+			log = writeLog(localStorage, entries)
+		} catch {
+			// No storage at all; keep the log for this visit
+			log = entries
+		}
+	}
+	onMount(() => {
+		try {
+			log = readLog(localStorage)
+		} catch {
+			log = []
+		}
+	})
+
 	// The settings card collapses to the mode switcher and Draw button, and
 	// collapses on its own when a draw starts
 	const isMobile = new MediaQuery('(max-width: 768px)')
@@ -245,6 +266,19 @@
 			}
 			result = data
 			resultShare = currentShare()
+			// Draws started here go in the log; shared links replaying a result don't
+			if (!seed && operation !== 'odds') {
+				saveLog(
+					addEntry(log, {
+						id: data.seed,
+						at: Date.now(),
+						operation,
+						link: [resultShare, `seed=${encodeURIComponent(data.seed)}`].filter(Boolean).join('&'),
+						result: trimResult(data),
+						target: items.find((item) => item.identity === data.target)
+					})
+				)
+			}
 			// Only for draws started here, not shared links replaying a result
 			if (!seed && operation === 'draw' && playAnimation && !reducedMotion.current) {
 				const drawn: CatalogueItem[] = data.ordered ?? []
@@ -494,6 +528,10 @@
 			bind:art
 			link={resultLink}
 		/>
+	{/if}
+
+	{#if log.length > 0 && !animation}
+		<GachaLog entries={log} bind:currency bind:art onClear={() => saveLog([])} />
 	{/if}
 </div>
 
