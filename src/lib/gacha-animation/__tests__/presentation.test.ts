@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { choosePresentation, CLASS_UP_CHANCE, FAKE_OUT_CHANCE, seededRandom } from '../presentation'
+import {
+	choosePresentation,
+	CLASS_UP_CHANCE,
+	FAKE_OUT_CHANCE,
+	NEW_ITEM_HINT_CHANCE,
+	seededRandom
+} from '../presentation'
 import type { CatalogueItem } from '$lib/types/gacha'
 
 const item = (identity: string, rarity: number): CatalogueItem =>
@@ -36,12 +42,31 @@ describe('choosePresentation', () => {
 		expect(choosePresentation(items, 'x')).toEqual(choosePresentation(items, 'x'))
 	})
 
-	it('opens on rainbow for several SSRs or a new character', () => {
+	it('opens on rainbow only for several SSRs', () => {
 		expect(choosePresentation(draw(3, 3, 2), 'x').crystal).toBe('rainbow')
-		const items = draw(2, 2)
-		const withNew = choosePresentation(items, 'x', { newCharacters: new Set(['Weapon:1']) })
-		expect(withNew.crystal).toBe('rainbow')
-		expect(withNew.newCharacters).toEqual([1])
+		const withNew = choosePresentation(draw(3, 2), 'x', {
+			newCharacters: new Set(['Weapon:0'])
+		})
+		expect(withNew.crystal).not.toBe('rainbow')
+		expect(withNew.newCharacters).toEqual([0])
+	})
+
+	it('plays Rainbow 2 for several SSRs, with add variants by new character', () => {
+		const plain = seeds(2000).map((seed) => choosePresentation(draw(3, 3), seed).pattern)
+		expect(new Set(plain.map((p) => `${p.main}/${p.sub}/${p.add}`))).toEqual(
+			new Set(['2/0/0', '2/0/3'])
+		)
+		const rate = plain.filter((p) => p.add === 3).length / plain.length
+		expect(rate).toBeGreaterThan(NEW_ITEM_HINT_CHANCE * 0.7)
+		expect(rate).toBeLessThan(NEW_ITEM_HINT_CHANCE * 1.3)
+
+		const newCharacters = new Set(['Weapon:1'])
+		const withNew = seeds(500).map(
+			(seed) => choosePresentation(draw(3, 3), seed, { newCharacters }).pattern
+		)
+		expect(new Set(withNew.map((p) => `${p.main}/${p.sub}/${p.add}`))).toEqual(
+			new Set(['2/0/0', '2/0/1', '2/0/4'])
+		)
 	})
 
 	it('opens on gold for one SSR, sometimes faking out with blue', () => {
@@ -63,12 +88,12 @@ describe('choosePresentation', () => {
 	})
 
 	it("plays a game pattern that matches the crystal's colour", () => {
-		const mains = { rainbow: [2, 3, 4, 5], gold: [6], violet: [7], blue: [8] }
+		const mains = { rainbow: [2], gold: [6], violet: [7], blue: [8] }
 		for (const seed of seeds(500)) {
 			for (const items of [draw(3, 3), draw(3, 2), draw(2)]) {
 				const { crystal, pattern, burst } = choosePresentation(items, seed)
 				expect(mains[crystal]).toContain(pattern.main)
-				expect(pattern.add).toBe(0)
+				if (crystal !== 'rainbow') expect(pattern.add).toBe(0)
 				if (crystal === 'gold') expect(pattern.sub).toBe(burst ? 1 : 0)
 				if (crystal !== 'gold') expect(burst).toBe(false)
 			}
