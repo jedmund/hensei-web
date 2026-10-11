@@ -12,14 +12,7 @@ const BUILD_TIMESTAMP = __BUILD_TIMESTAMP__
 
 export type ResourceType = 'character' | 'weapon' | 'summon'
 export type ImageVariant =
-	| 'main'
-	| 'tall'
-	| 'grid'
-	| 'square'
-	| 'detail'
-	| 'base'
-	| 'wide'
-	| 'gacha'
+	'main' | 'tall' | 'grid' | 'square' | 'detail' | 'base' | 'wide' | 'gacha'
 
 /**
  * Single source of truth for non-entity bucket prefixes. Entity art (character/
