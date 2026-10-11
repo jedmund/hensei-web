@@ -5,6 +5,7 @@ vi.mock('$lib/api/adapters/config', () => ({ getApiBaseUrl: () => 'http://api.te
 
 const { handleSocialCallback, appleName } = await import('../callback')
 type CallbackContext = Parameters<typeof handleSocialCallback>[0]
+type CallbackDeps = Parameters<typeof handleSocialCallback>[1]
 
 const TOKEN_BODY = {
 	access_token: 'new-access',
@@ -68,7 +69,11 @@ function setup({
 		fetchFn,
 		exchange,
 		establishSession,
-		run: () => handleSocialCallback(ctx, { exchangeCode: exchange, establishSession })
+		run: () =>
+			handleSocialCallback(ctx, {
+				exchangeCode: exchange as unknown as CallbackDeps['exchangeCode'],
+				establishSession
+			})
 	}
 }
 

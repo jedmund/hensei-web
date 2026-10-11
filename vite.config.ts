@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { paraglideVitePlugin } from '@inlang/paraglide-js'
 import { sentrySvelteKit } from '@sentry/sveltekit'
 import { sveltekit } from '@sveltejs/kit/vite'
