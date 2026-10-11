@@ -61,7 +61,7 @@ describe('UserAdapter', () => {
 
 	beforeEach(() => {
 		mockFetch = vi.fn()
-		global.fetch = mockFetch
+		global.fetch = mockFetch as unknown as typeof fetch
 		adapter = new UserAdapter()
 	})
 

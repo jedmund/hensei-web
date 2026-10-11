@@ -21,8 +21,5 @@ ignoredOptionalDependencies:
 # Patched versions of transitive dependencies flagged by `pnpm audit`. Drop
 # each once its parent requires a fixed release.
 overrides:
-  # vitest@3 pins tinypool@1 (GHSA-5gmw-xhrv-c9v3, GHSA-85c8-ppgw-ccpr). Goes
-  # away with the Vitest 4 upgrade, which no longer uses tinypool.
-  tinypool: ^2.1.2
   # Via postcss (GHSA-68fv-2mgg-jv7q).
   source-map-js: ^1.2.2
