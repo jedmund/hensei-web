@@ -59,10 +59,7 @@
 		const list =
 			type === 'character' ? party.characters : type === 'summon' ? party.summons : party.weapons
 		return list?.find((g) => g.id === item.id) as
-			| GridCharacter
-			| GridWeapon
-			| GridSummon
-			| undefined
+			GridCharacter | GridWeapon | GridSummon | undefined
 	})
 
 	const effectiveItem = $derived(liveItem ?? item)

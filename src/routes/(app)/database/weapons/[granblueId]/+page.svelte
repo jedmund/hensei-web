@@ -84,13 +84,7 @@
 	// Element for button styling
 	const elementName = $derived(
 		getElementLabel(weapon?.element)?.toLowerCase() as
-			| 'wind'
-			| 'fire'
-			| 'water'
-			| 'earth'
-			| 'dark'
-			| 'light'
-			| undefined
+			'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 	)
 
 	// Edit URL for navigation

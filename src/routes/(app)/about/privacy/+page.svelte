@@ -145,8 +145,8 @@
 			</li>
 			<li>
 				<strong>Local storage:</strong> if you build teams without an account, the "edit keys" that let
-				you keep editing them are stored in your browser. They are sent to us only if you later sign
-				in and choose to attach those teams to your account.
+				you keep editing them are stored in your browser. They are sent to us only if you later sign in
+				and choose to attach those teams to your account.
 			</li>
 		</ul>
 		<p>
@@ -245,8 +245,8 @@
 		<p>
 			You can clear your saved rate-ups with <code>/rateup reset</code> and zero your spark with
 			<code>/spark reset</code>. To have your Siero records deleted entirely, email
-			<a href="mailto:{CONTACT}">{CONTACT}</a> with your Discord username. Discord's own handling of
-			your data is governed by Discord's privacy policy.
+			<a href="mailto:{CONTACT}">{CONTACT}</a> with your Discord username. Discord's own handling of your
+			data is governed by Discord's privacy policy.
 		</p>
 	</LegalSection>
 
@@ -310,8 +310,8 @@
 		<ul>
 			<li><strong>Contract:</strong> to provide the account and features you asked for.</li>
 			<li>
-				<strong>Legitimate interests:</strong> to secure the Service, prevent abuse, fix errors, and
-				support crew features, balanced against your rights.
+				<strong>Legitimate interests:</strong> to secure the Service, prevent abuse, fix errors, and support
+				crew features, balanced against your rights.
 			</li>
 			<li>
 				<strong>Consent:</strong> where you choose to sign in with a third-party provider or embed third-party
@@ -365,8 +365,8 @@
 		{/snippet}
 		<ul>
 			<li>
-				<strong>Public by default:</strong> your username, display name, bio, avatar, profile links,
-				Granblue Fantasy player ID and timezone (if you've added them), and teams set to Public.
+				<strong>Public by default:</strong> your username, display name, bio, avatar, profile links, Granblue
+				Fantasy player ID and timezone (if you've added them), and teams set to Public.
 			</li>
 			<li>
 				<strong>Under your control:</strong> each team can be Public, Unlisted (visible to anyone with

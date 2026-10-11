@@ -169,8 +169,7 @@
 
 	const seriesOptions = $derived.by(() => {
 		const data = seriesQuery.data as
-			| Array<{ id: string; name: { en?: string; ja?: string } }>
-			| undefined
+			Array<{ id: string; name: { en?: string; ja?: string } }> | undefined
 		if (!data) return []
 		return data.map((s) => ({
 			value: s.id,

@@ -5,8 +5,7 @@ import { linkIdentity } from './api'
 import { clearLinkTicket, getLinkTicket } from './cookies'
 
 export type PendingLinkResult =
-	| { linked: SocialProvider }
-	| { provider: SocialProvider; error: SocialErrorCode }
+	{ linked: SocialProvider } | { provider: SocialProvider; error: SocialErrorCode }
 
 /**
  * After a successful password login, links the provider that was waiting on

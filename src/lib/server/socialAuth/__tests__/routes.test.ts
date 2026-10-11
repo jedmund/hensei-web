@@ -22,9 +22,8 @@ vi.mock('$lib/api/adapters/config', () => ({ getApiBaseUrl: () => 'http://api.te
 vi.mock('$lib/auth/session', () => ({ establishSession: vi.fn() }))
 
 const startRoute = await import('../../../../routes/auth/[provider=socialProvider]/+server')
-const callbackRoute = await import(
-	'../../../../routes/auth/[provider=socialProvider]/callback/+server'
-)
+const callbackRoute =
+	await import('../../../../routes/auth/[provider=socialProvider]/callback/+server')
 const { applePrivateKeyBytes, isProviderAvailable } = await import('../clients')
 
 interface Thrown {
