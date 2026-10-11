@@ -172,7 +172,16 @@
 		items: CatalogueItem[]
 		presentation: Presentation
 		moons: Moon[]
+		newCharacters: ReadonlySet<string>
 	} | null>(null)
+	// Draw Again closes the dialog and draws again; the last result stays
+	// hidden in between
+	let drawingAgain = $state(false)
+	function drawAgain() {
+		animation = null
+		drawingAgain = true
+		run().finally(() => (drawingAgain = false))
+	}
 	const drawsLocked = $derived(playAnimation && operation === 'draw')
 
 	const onePurchase = (unit: 'ten' | 'singles') => (unit === 'ten' ? '10' : '1')
@@ -309,7 +318,8 @@
 					animation = {
 						items: drawn,
 						presentation: choosePresentation(drawn, data.seed, { newCharacters }),
-						moons
+						moons,
+						newCharacters
 					}
 				}
 			}
@@ -542,12 +552,14 @@
 			items={animation.items}
 			presentation={animation.presentation}
 			moons={animation.moons}
+			newCharacters={animation.newCharacters}
 			onDone={() => (animation = null)}
+			onDrawAgain={drawAgain}
 		/>
 	{/if}
 
 	<!-- Held back while the animation plays, so they don't give it away -->
-	{#if result && !animation}
+	{#if result && !animation && !drawingAgain}
 		<GachaResults
 			{result}
 			target={items.find((item) => item.identity === result?.target)}
@@ -558,7 +570,7 @@
 		/>
 	{/if}
 
-	{#if log.length > 0 && !animation}
+	{#if log.length > 0 && !animation && !drawingAgain}
 		<GachaLog entries={log} bind:currency bind:art onClear={() => saveLog([])} />
 	{/if}
 </div>

@@ -58,6 +58,14 @@ export function gachaItemImage(item: CatalogueItem, art: GachaArt = 'character')
 }
 
 /**
+ * The game's framed thumbnail of the drawn item itself, as its results screen
+ * shows it: the weapon (never its character) or the summon
+ */
+export function gachaItemResultImage(item: CatalogueItem): string {
+	return gachaItemImage(item, 'weapon')
+}
+
+/**
  * The other art for a character weapon: the weapon when showing characters,
  * the character when showing weapons. Shown on hover, and used when the
  * shown art is missing. Undefined for items that don't recruit anyone.
