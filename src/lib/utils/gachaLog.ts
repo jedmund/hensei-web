@@ -17,6 +17,8 @@ export interface GachaLogEntry {
 	result: GachaResult
 	/** The Until target */
 	target?: CatalogueItem
+	/** Repeat SSR characters drawn, counted when the draw ran */
+	goldMoons?: number
 }
 
 export const LOG_KEY = 'gacha:log'

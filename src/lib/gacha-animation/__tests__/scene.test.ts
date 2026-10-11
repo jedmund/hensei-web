@@ -43,11 +43,12 @@ describe('scene1Params', () => {
 
 describe('scene2Params', () => {
 	it('describes each item: type, attribute and name', () => {
-		const params = scene2Params(items, presentation, ['A', 'B', 'C'], true)
+		const params = scene2Params(items, presentation, ['A', 'B', 'C'], [0, 3, 1], true)
 		expect(params).toMatchObject({
 			gacha_type_array: [1, 2, 1],
 			gacha_attribute_array: [1, 4, 5],
 			gacha_text1: ['A', 'B', 'C'],
+			gacha_moon_array: [0, 3, 1],
 			gacha_scene1_skip_flg: true,
 			cjs_gacha_demo_num: 0,
 			gacha_pickup_demo_array: [0, 0, 0]

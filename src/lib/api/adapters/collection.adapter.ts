@@ -191,19 +191,31 @@ export class CollectionAdapter extends BaseAdapter {
 	 * Useful for filtering out already-owned characters in the add modal
 	 */
 	async getCollectedCharacterIds(userId: string): Promise<string[]> {
+		return (await this.listAllCharacters(userId)).map((c) => c.character.id)
+	}
+
+	/**
+	 * Gets the granblue ids of all characters in a user's collection, for
+	 * matching against game data (the gacha simulator's moons)
+	 */
+	async getCollectedCharacterGranblueIds(userId: string): Promise<string[]> {
+		return (await this.listAllCharacters(userId)).map((c) => c.character.granblueId)
+	}
+
+	private async listAllCharacters(userId: string): Promise<CollectionCharacter[]> {
 		// Fetch all pages to get complete list
-		const allIds: string[] = []
+		const all: CollectionCharacter[] = []
 		let page = 1
 		let hasMore = true
 
 		while (hasMore) {
 			const response = await this.listCharacters(userId, { page, limit: 100 })
-			allIds.push(...response.results.map((c) => c.character.id))
+			all.push(...response.results)
 			hasMore = page < response.totalPages
 			page++
 		}
 
-		return allIds
+		return all
 	}
 
 	// ============================================

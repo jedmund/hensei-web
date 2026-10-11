@@ -15,6 +15,7 @@
 		type GameRuntime
 	} from '$lib/gacha-animation/runtime'
 	import { scene1Params, scene2Params, type SceneParams } from '$lib/gacha-animation/scene'
+	import type { Moon } from '$lib/gacha-animation/moons'
 	import type { Presentation } from '$lib/gacha-animation/presentation'
 	import type { CatalogueItem } from '$lib/types/gacha'
 
@@ -22,11 +23,13 @@
 		/** The drawn items, in draw order */
 		items: CatalogueItem[]
 		presentation: Presentation
+		/** The moon each item gives, in draw order */
+		moons: Moon[]
 		/** Called when the animation ends, is skipped or can't load */
 		onDone: () => void
 	}
 
-	let { items, presentation, onDone }: Props = $props()
+	let { items, presentation, moons, onDone }: Props = $props()
 
 	const FPS = 30
 	const SCENE1 = 'gacha_new_2025_scene1'
@@ -157,7 +160,7 @@
 	function onPlayEnd(event: Event) {
 		if (sceneName === SCENE1) {
 			const skipped = Boolean((event as CustomEvent).detail)
-			mount(SCENE2, scene2Params(items, presentation, items.map(itemName), skipped))
+			mount(SCENE2, scene2Params(items, presentation, items.map(itemName), moons, skipped))
 		} else {
 			finish()
 		}

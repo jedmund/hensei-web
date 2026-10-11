@@ -117,7 +117,13 @@ export function choosePresentation(
 	const burst = crystal === 'gold' && random() < BURST_CHANCE
 	return {
 		crystal,
-		pattern: patternFor(crystal, burst, newIndices.length > 0, random),
+		// The new-character openings are for new SSR characters
+		pattern: patternFor(
+			crystal,
+			burst,
+			newIndices.some((index) => rarities[index] === 'SSR'),
+			random
+		),
 		fakeOut,
 		burst,
 		stones,

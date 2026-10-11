@@ -12,6 +12,8 @@
 	import GachaLog from '$lib/components/gacha/GachaLog.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import { choosePresentation, type Presentation } from '$lib/gacha-animation/presentation'
+	import { drawMoons, goldMoonCount, type Moon } from '$lib/gacha-animation/moons'
+	import { collectionAdapter } from '$lib/api/adapters/collection.adapter'
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { onMount, untrack } from 'svelte'
@@ -166,7 +168,11 @@
 	const ANIMATION_KEY = 'gacha:playAnimation'
 	const reducedMotion = new MediaQuery('(prefers-reduced-motion: reduce)')
 	let playAnimation = $state(false)
-	let animation = $state<{ items: CatalogueItem[]; presentation: Presentation } | null>(null)
+	let animation = $state<{
+		items: CatalogueItem[]
+		presentation: Presentation
+		moons: Moon[]
+	} | null>(null)
 	const drawsLocked = $derived(playAnimation && operation === 'draw')
 
 	const onePurchase = (unit: 'ten' | 'singles') => (unit === 'ten' ? '10' : '1')
@@ -192,6 +198,21 @@
 		}
 		const keepsSettings = !page.url.search || String(shared.draws) === onePurchase(shared.purchase)
 		playAnimation = remembered && keepsSettings
+	})
+
+	// The signed-in viewer's characters (granblue ids), for moons and new
+	// characters. Signed out, or until it loads, only repeats within a draw
+	// give moons.
+	let owned = $state.raw<ReadonlySet<string> | undefined>()
+	onMount(() => {
+		const userId = page.data.account?.userId
+		if (!userId) return
+		collectionAdapter
+			.getCollectedCharacterGranblueIds(userId)
+			.then((ids) => (owned = new Set(ids)))
+			.catch(() => {
+				// Draws still work, just without the collection
+			})
 	})
 
 	// Draw log: every Draw and Until result started here, newest first, saved
@@ -275,7 +296,8 @@
 						operation,
 						link: [resultShare, `seed=${encodeURIComponent(data.seed)}`].filter(Boolean).join('&'),
 						result: trimResult(data),
-						target: items.find((item) => item.identity === data.target)
+						target: items.find((item) => item.identity === data.target),
+						goldMoons: goldMoonCount(data.items ?? [], owned)
 					})
 				)
 			}
@@ -283,7 +305,12 @@
 			if (!seed && operation === 'draw' && playAnimation && !reducedMotion.current) {
 				const drawn: CatalogueItem[] = data.ordered ?? []
 				if (drawn.length > 0) {
-					animation = { items: drawn, presentation: choosePresentation(drawn, data.seed) }
+					const { moons, newCharacters } = drawMoons(drawn, owned)
+					animation = {
+						items: drawn,
+						presentation: choosePresentation(drawn, data.seed, { newCharacters }),
+						moons
+					}
 				}
 			}
 		} catch (error) {
@@ -514,6 +541,7 @@
 		<GachaAnimation
 			items={animation.items}
 			presentation={animation.presentation}
+			moons={animation.moons}
 			onDone={() => (animation = null)}
 		/>
 	{/if}

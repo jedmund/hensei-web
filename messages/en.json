@@ -1871,6 +1871,8 @@
 	"gacha_log_clear_title": "Clear the draw log?",
 	"gacha_log_clear_message": "This removes every draw saved in this browser.",
 	"gacha_log_draws": "{draws} draws",
+	"gacha_gold_moon": "1 gold moon",
+	"gacha_gold_moons": "{count} gold moons",
 	"gacha_share": "Share",
 	"gacha_share_draw": "{ssr} SSRs in {draws} draws",
 	"gacha_share_until": "{name} took {draws} draws",
