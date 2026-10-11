@@ -2,8 +2,10 @@ import {
 	getCharacterDetailImage,
 	getCharacterImage,
 	getSummonDetailImage,
+	getSummonGachaImage,
 	getSummonImage,
 	getWeaponBaseImage,
+	getWeaponGachaImage,
 	getWeaponGridImage,
 	getWeaponImage
 } from '$lib/utils/images'
@@ -82,6 +84,24 @@ export function gachaItemDetailImage(item: CatalogueItem): string {
 		return getCharacterDetailImage(item.recruits.granblue_id, '01')
 	}
 	return getWeaponBaseImage(item.granblue_id)
+}
+
+/**
+ * Gacha card art shown when an item is drawn: the weapon's or summon's own
+ * art, never the recruited character's. Missing for some low-rarity items;
+ * use {@link gachaItemCardFallbackImage} when it fails to load.
+ */
+export function gachaItemCardImage(item: CatalogueItem): string {
+	return item.drawable_type === 'Summon'
+		? getSummonGachaImage(item.granblue_id)
+		: getWeaponGachaImage(item.granblue_id)
+}
+
+/** Fallback when an item's gacha card art is missing: weapon base or summon detail art */
+export function gachaItemCardFallbackImage(item: CatalogueItem): string {
+	return item.drawable_type === 'Summon'
+		? getSummonDetailImage(item.granblue_id)
+		: getWeaponBaseImage(item.granblue_id)
 }
 
 /** Square thumbnail, used in the picker */
