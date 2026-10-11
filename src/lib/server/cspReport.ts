@@ -73,8 +73,10 @@ function pagePath(raw: string): string {
 	}
 }
 
+// Some browsers report an extension's source as the bare scheme name
+// ("chrome-extension", no colon).
 function isExtension(raw: string): boolean {
-	return EXTENSION_SCHEMES.some((scheme) => raw.startsWith(scheme))
+	return EXTENSION_SCHEMES.some((scheme) => raw.startsWith(scheme) || raw === scheme.slice(0, -1))
 }
 
 /**
