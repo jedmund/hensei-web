@@ -2,6 +2,10 @@ import { describe, it, expect } from 'vitest'
 import { findNextEmptySlot, SLOT_NOT_FOUND } from '../gridHelpers'
 import { GridType } from '$lib/types/enums'
 import type { Party, GridWeapon, GridSummon, GridCharacter } from '$lib/types/api/party'
+import { transformResponse } from '$lib/api/schemas/transforms'
+import { getExpedition } from '$lib/components/solomonis/grid/seal'
+import buildJson from '$lib/components/solomonis/grid/__fixtures__/party-build.json'
+import runJson from '$lib/components/solomonis/grid/__fixtures__/party-run.json'
 
 function makeParty(overrides: Partial<Party> = {}): Party {
 	return {
@@ -113,5 +117,47 @@ describe('findNextEmptySlot — characters', () => {
 		}
 		const party = makeParty({ characters })
 		expect(findNextEmptySlot(party, GridType.Character)).toBe(SLOT_NOT_FOUND)
+	})
+})
+
+describe('findNextEmptySlot — Evoking Solomonis', () => {
+	const load = (json: unknown) => transformResponse<{ party: Party }>(json).party
+	const hangedMan = {
+		blessing: {
+			id: 'hm',
+			slug: 'hanged_man',
+			arcanaNumber: 12,
+			name: { en: 'The Hanged Man', ja: null }
+		},
+		levelId: 'hml',
+		level: 1,
+		cost: 100
+	}
+	const withHangedMan = (party: Party): Party => {
+		const expedition = getExpedition(party)!
+		return { ...party, solomonis: { ...expedition, blessings: [hangedMan] } }
+	}
+
+	it('stops at the route Evoker on a build', () => {
+		const party = load(buildJson)
+		expect(findNextEmptySlot(party, GridType.Character)).toBe(SLOT_NOT_FOUND)
+	})
+
+	it('allows one more character on a build with The Hanged Man', () => {
+		const party = withHangedMan(load(buildJson))
+		expect(findNextEmptySlot(party, GridType.Character)).toBe(1)
+	})
+
+	it('allows the usual five slots on a run', () => {
+		const party = load(runJson)
+		const characters = party.characters.filter((c) => c.position !== 3)
+		expect(findNextEmptySlot({ ...party, characters }, GridType.Character)).toBe(3)
+	})
+
+	it('never offers the support summon slot', () => {
+		const party = load(buildJson)
+		expect(findNextEmptySlot(party, GridType.Summon)).toBe(SLOT_NOT_FOUND)
+		const summons = party.summons.filter((s) => s.position !== 2)
+		expect(findNextEmptySlot({ ...party, summons }, GridType.Summon)).toBe(2)
 	})
 })

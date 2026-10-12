@@ -5,6 +5,7 @@
 
 import type { Party } from '$lib/types/api/party'
 import { GridType } from '$lib/types/enums'
+import { characterSlotLimit, getExpedition } from '$lib/components/solomonis/grid/seal'
 
 /** Sentinel value indicating no empty slot was found */
 export const SLOT_NOT_FOUND = -999
@@ -38,8 +39,23 @@ const GRID_CONFIGS: Record<GridType, SlotRange> = {
  * }
  * ```
  */
-export function findNextEmptySlot(party: Party, gridType: GridType, skipSlot?: number): number {
+/**
+ * Evoking Solomonis parties have no support summon and a smaller character
+ * limit (route Evoker only on a build, +1 with The Hanged Man).
+ */
+function slotRangeFor(party: Party, gridType: GridType): SlotRange {
 	const config = GRID_CONFIGS[gridType]
+	const expedition = getExpedition(party)
+	if (!expedition) return config
+	if (gridType === GridType.Summon) return { ...config, trailingSlots: [] }
+	if (gridType === GridType.Character) {
+		return { ...config, end: Math.min(config.end, characterSlotLimit(expedition) - 1) }
+	}
+	return config
+}
+
+export function findNextEmptySlot(party: Party, gridType: GridType, skipSlot?: number): number {
+	const config = slotRangeFor(party, gridType)
 	const collection = getCollectionForType(party, gridType)
 
 	// Check special slots first (e.g., mainhand, main summon)
