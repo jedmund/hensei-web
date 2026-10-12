@@ -81,12 +81,29 @@ function loadScript(src: string): Promise<void> {
 	})
 }
 
+/**
+ * Query parameter that gives CORS loads of bucket images their own cache
+ * entry. S3 only sends CORS headers (and `Vary: Origin`) to requests with an
+ * Origin, so a copy cached from a plain <img> elsewhere fails a CORS load.
+ */
+const CORS_CACHE_KEY = 'webgl'
+
+/**
+ * Loads an image the scenes can draw. They draw into WebGL, which refuses
+ * cross-origin images loaded without CORS, and item art comes from the image
+ * bucket in production.
+ */
 export function loadImage(src: string): Promise<HTMLImageElement> {
 	return new Promise((resolve, reject) => {
 		const img = new Image()
 		img.onload = () => resolve(img)
 		img.onerror = () => reject(new Error(`Couldn't load ${src}`))
-		img.src = src
+		const url = new URL(src, location.href)
+		if (url.origin !== location.origin) {
+			img.crossOrigin = 'anonymous'
+			url.searchParams.set(CORS_CACHE_KEY, '1')
+		}
+		img.src = url.href
 	})
 }
 
