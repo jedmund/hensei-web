@@ -244,7 +244,9 @@
 			z-index: -1;
 			border-style: solid;
 			border-width: 20px 0;
-			border-image: var(--panel) 30 0 fill stretch round;
+			// The game tiles the frame's middle (round); its panel is short, but
+			// ours fills the frame, so the middle stretches instead of repeating
+			border-image: var(--panel) 30 0 fill stretch;
 		}
 
 		h3 {
