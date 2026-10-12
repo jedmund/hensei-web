@@ -210,19 +210,11 @@ export const DEFAULT_GUIDE_EFFECT_FILTERS: GuideEffectFilters = {
 }
 
 /**
- * The wiki metadata from board decision D14, read through a local type so this
- * compiles whether or not `GuideEffect` has the fields yet. Either list can be
- * null when the wiki had no match.
+ * An effect's wiki tags (type and effect tags together), without duplicates.
+ * Either list is null when the wiki had no match.
  */
-type TaggedGuideEffect = GuideEffect & {
-	typeTags?: string[] | null
-	effectTags?: string[] | null
-}
-
-/** An effect's wiki tags (type and effect tags together), without duplicates. */
 export function guideEffectTags(effect: GuideEffect): string[] {
-	const tagged = effect as TaggedGuideEffect
-	return [...new Set([...(tagged.typeTags ?? []), ...(tagged.effectTags ?? [])])]
+	return [...new Set([...(effect.typeTags ?? []), ...(effect.effectTags ?? [])])]
 }
 
 /** Every tag used in the catalogue, sorted, for the tag filter's options. */
