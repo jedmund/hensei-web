@@ -648,11 +648,9 @@
 											{m.gacha_banner_remaining({ time: bannerCountdown })}
 										</span>
 									</Tooltip>
-								{/if}
-							{/snippet}
-							{#snippet note()}
-								{#if banner && !bannerLive}
-									<p class="banner-note">{m.gacha_banner_stale()}</p>
+								{:else if banner}
+									<!-- Until the new banner's rates arrive, the last banner's stand in -->
+									<span class="banner-countdown">{m.gacha_banner_expired()}</span>
 								{/if}
 							{/snippet}
 						</GachaRateups>
@@ -784,12 +782,6 @@
 				grid-column: auto;
 			}
 		}
-	}
-
-	.banner-note {
-		margin: 0;
-		color: var(--text-secondary);
-		font-size: $font-small;
 	}
 
 	.banner-countdown {

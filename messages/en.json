@@ -1907,7 +1907,7 @@
 	"gacha_banner_remaining": "{time} remaining",
 	"gacha_banner_duration": "{days}d {hours}h {minutes}m",
 	"gacha_banner_ends": "Ends {date} JST",
-	"gacha_banner_stale": "The new banner's rates haven't arrived yet, so these are the last banner's.",
+	"gacha_banner_expired": "Expired banner",
 	"gacha_premium": "Premium",
 	"gacha_legend": "Legend",
 	"gacha_flash": "Flash",

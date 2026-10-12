@@ -24,18 +24,9 @@
 		readonly?: boolean
 		/** At the end of the heading's line, e.g. the time a banner has left */
 		aside?: Snippet
-		/** Below the heading, e.g. where the rates come from */
-		note?: Snippet
 	}
 
-	let {
-		ssrs,
-		rateups = $bindable(),
-		disabled = false,
-		readonly = false,
-		aside,
-		note
-	}: Props = $props()
+	let { ssrs, rateups = $bindable(), disabled = false, readonly = false, aside }: Props = $props()
 
 	const candidates = $derived(
 		ssrs.filter((item) => !rateups.some((rate) => rate.identity === item.identity))
@@ -59,7 +50,6 @@
 		<h2>{m.gacha_rates()}</h2>
 		{@render aside?.()}
 	</div>
-	{@render note?.()}
 	{#if !readonly}
 		<!-- Above the list, so it stays put as rate-ups are added -->
 		<GachaItemPicker
