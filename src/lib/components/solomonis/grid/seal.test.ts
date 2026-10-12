@@ -4,6 +4,9 @@ import type { SolomonisExpedition } from '$lib/types/api/solomonis'
 import { transformResponse } from '$lib/api/schemas/transforms'
 import buildJson from './__fixtures__/party-build.json'
 import runJson from './__fixtures__/party-run.json'
+import realBuildJson from './__fixtures__/real/party-build.json'
+import realRunJson from './__fixtures__/real/party-run.json'
+import realPriorityJson from './__fixtures__/real/put-unseal-priority-200.json'
 import {
 	applyPriorities,
 	canMarkBroughtByBlessing,
@@ -261,5 +264,35 @@ describe('circledNumber', () => {
 		expect(circledNumber(1)).toBe('①')
 		expect(circledNumber(20)).toBe('⑳')
 		expect(circledNumber(21)).toBe('21')
+	})
+})
+
+describe('real API responses (api-endpoints)', () => {
+	it('reads seal states and priorities from an unsorted build grid', () => {
+		const party = load(realBuildJson)
+		const expedition = getExpedition(party)!
+		expect(expedition.kind).toBe('build')
+		const at = (p: number) => party.weapons.find((w) => w.position === p)
+		expect(slotSeal(expedition, 'weapon', 2, at(2)).state).toBe('start')
+		expect(slotSeal(expedition, 'weapon', 5, at(5)).priority).toBe(1)
+
+		const { ranked, unranked } = priorityLists(party)
+		expect(ranked.map((e) => `${e.type}${e.position}`)).toEqual(['weapon5', 'summon0'])
+		expect(unranked.map((e) => `${e.type}${e.position}`)).toEqual(['weapon6'])
+	})
+
+	it('keeps a recorded run state', () => {
+		const party = load(realRunJson)
+		const expedition = getExpedition(party)!
+		const weapon = party.weapons.find((w) => w.position === 5)
+		expect(slotSeal(expedition, 'weapon', 5, weapon)).toMatchObject({
+			state: 'unsealed',
+			editable: true
+		})
+	})
+
+	it('applies the priority write response as a whole party', () => {
+		const party = load(realPriorityJson)
+		expect(priorityLists(party).ranked).toHaveLength(2)
 	})
 })
