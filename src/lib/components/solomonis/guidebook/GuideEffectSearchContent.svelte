@@ -9,6 +9,7 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
+	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
@@ -16,6 +17,7 @@
 	import {
 		RARITY_ORDER,
 		canAddEffect,
+		collectGuideEffectTags,
 		filterGuideEffects,
 		formatGuideEffectName,
 		heldCount,
@@ -37,6 +39,7 @@
 	let rarity = $state<string>('all')
 	let target = $state<GuideEffectTargetFilter>('all')
 	let stackableOnly = $state(false)
+	let tags = $state<string[]>([])
 	let resultsScrolled = $state(false)
 
 	const TARGETS: GuideEffectTargetFilter[] = ['all', 'everyone', 'race', 'proficiency', 'character']
@@ -48,8 +51,15 @@
 		query: searchQuery,
 		rarity: rarity === 'all' ? 'all' : (rarity as GuideEffectFilters['rarity']),
 		target,
-		stackableOnly
+		stackableOnly,
+		tags
 	})
+
+	// Wiki tags (board decision D14). Shown in English in both locales, as the
+	// wiki has them; hidden until the catalogue carries any.
+	const tagOptions = $derived(
+		collectGuideEffectTags(catalogueQuery.data ?? []).map((tag) => ({ value: tag, label: tag }))
+	)
 
 	const results = $derived(filterGuideEffects(catalogueQuery.data ?? [], filters))
 	const held = $derived(entries())
@@ -93,6 +103,23 @@
 				<Switch bind:checked={stackableOnly} size="small" />
 			</label>
 		</div>
+
+		{#if tagOptions.length > 0}
+			<div class="tags">
+				<span class="filter-label">{m.solomonis_web_guidebook_filter_tags()}</span>
+				<MultiSelect
+					options={tagOptions}
+					value={tags}
+					onValueChange={(v) => {
+						tags = v
+					}}
+					placeholder={m.solomonis_web_guidebook_filter_tags_any()}
+					size="small"
+					contained
+					fullWidth
+				/>
+			</div>
+		{/if}
 	</div>
 
 	<div
@@ -190,7 +217,8 @@
 		gap: $unit-2x;
 	}
 
-	.target {
+	.target,
+	.tags {
 		display: flex;
 		flex: 1;
 		flex-direction: column;

@@ -5,12 +5,14 @@ import {
 	MISSING_VALUE,
 	addEffect,
 	canAddEffect,
+	collectGuideEffectTags,
 	filterGuideEffects,
 	formatGuideEffectName,
 	groupByRarity,
 	guideEffectIconCategory,
 	guideEffectIconSrc,
 	guideEffectRawName,
+	guideEffectTags,
 	hasAcquiredOrder,
 	hasValuePlaceholder,
 	heldCount,
@@ -225,5 +227,42 @@ describe('icons', () => {
 
 	it('has no icon URLs yet', () => {
 		expect(catalogue.every((e) => guideEffectIconSrc(e) === null)).toBe(true)
+	})
+})
+
+describe('tags (D14)', () => {
+	// The board fixtures predate D14, so tag a few effects by hand
+	const tagged: GuideEffect[] = catalogue.map((e) => {
+		if (e.granblueId === 1) return { ...e, typeTags: ['Offense'], effectTags: ['ATK', 'Offense'] }
+		if (e.granblueId === 2) return { ...e, typeTags: null, effectTags: ['Multiattack'] }
+		return e
+	}) as GuideEffect[]
+
+	it('merges type and effect tags without duplicates, tolerating null and missing', () => {
+		expect(guideEffectTags(tagged.find((e) => e.granblueId === 1)!)).toEqual(['Offense', 'ATK'])
+		expect(guideEffectTags(tagged.find((e) => e.granblueId === 2)!)).toEqual(['Multiattack'])
+		expect(guideEffectTags(effect(3))).toEqual([])
+	})
+
+	it('collects the catalogue tags, sorted', () => {
+		expect(collectGuideEffectTags(tagged)).toEqual(['ATK', 'Multiattack', 'Offense'])
+		expect(collectGuideEffectTags(catalogue)).toEqual([])
+	})
+
+	it('matches effects with any selected tag', () => {
+		const f = DEFAULT_GUIDE_EFFECT_FILTERS
+		const ids = (tags: string[]) =>
+			filterGuideEffects(tagged, { ...f, tags }).map((e) => e.granblueId)
+		expect(ids(['ATK'])).toEqual([1])
+		expect(ids(['ATK', 'Multiattack'])).toEqual([1, 2])
+		expect(ids([])).toHaveLength(101)
+	})
+
+	it('finds tags through the text search', () => {
+		const result = filterGuideEffects(tagged, {
+			...DEFAULT_GUIDE_EFFECT_FILTERS,
+			query: 'multiattack'
+		})
+		expect(result.map((e) => e.granblueId)).toContain(2)
 	})
 })

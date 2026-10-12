@@ -1969,6 +1969,8 @@
 	"solomonis_web_guidebook_note": "Note",
 	"solomonis_web_guidebook_save_failed": "Couldn't save the guidebook",
 	"solomonis_web_guidebook_catalogue_failed": "Couldn't load guidebook effects",
+	"solomonis_web_guidebook_filter_tags": "Tags",
+	"solomonis_web_guidebook_filter_tags_any": "Any tag",
 	"solomonis_web_party_title": "Evoking Solomonis",
 	"solomonis_web_party_edit": "Edit Solomonis settings",
 	"solomonis_web_party_kind": "Type",

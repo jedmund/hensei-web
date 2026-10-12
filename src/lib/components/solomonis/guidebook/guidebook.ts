@@ -197,13 +197,37 @@ export interface GuideEffectFilters {
 	rarity: 'all' | GuideEffectRarity
 	target: GuideEffectTargetFilter
 	stackableOnly: boolean
+	/** Wiki tags; an effect matches if it has any of them. Empty means no tag filter. */
+	tags: string[]
 }
 
 export const DEFAULT_GUIDE_EFFECT_FILTERS: GuideEffectFilters = {
 	query: '',
 	rarity: 'all',
 	target: 'all',
-	stackableOnly: false
+	stackableOnly: false,
+	tags: []
+}
+
+/**
+ * The wiki metadata from board decision D14, read through a local type so this
+ * compiles whether or not `GuideEffect` has the fields yet. Either list can be
+ * null when the wiki had no match.
+ */
+type TaggedGuideEffect = GuideEffect & {
+	typeTags?: string[] | null
+	effectTags?: string[] | null
+}
+
+/** An effect's wiki tags (type and effect tags together), without duplicates. */
+export function guideEffectTags(effect: GuideEffect): string[] {
+	const tagged = effect as TaggedGuideEffect
+	return [...new Set([...(tagged.typeTags ?? []), ...(tagged.effectTags ?? [])])]
+}
+
+/** Every tag used in the catalogue, sorted, for the tag filter's options. */
+export function collectGuideEffectTags(catalogue: GuideEffect[]): string[] {
+	return [...new Set(catalogue.flatMap(guideEffectTags))].sort((a, b) => a.localeCompare(b))
 }
 
 /** Matching effects, ordered by rarity (game order) then game ID. */
@@ -224,8 +248,13 @@ export function filterGuideEffects(
 				effect.targetType !== filters.target
 			)
 				return false
+			const tags = guideEffectTags(effect)
+			if (filters.tags.length > 0 && !filters.tags.some((t) => tags.includes(t))) return false
 			if (terms.length === 0) return true
-			const haystack = [effect.name.en, effect.name.ja].filter(Boolean).join(' ').toLowerCase()
+			const haystack = [effect.name.en, effect.name.ja, ...tags]
+				.filter(Boolean)
+				.join(' ')
+				.toLowerCase()
 			return terms.every((t) => haystack.includes(t))
 		})
 		.sort(
