@@ -3,14 +3,16 @@ import {
 	choosePresentation,
 	CLASS_UP_CHANCE,
 	FAKE_OUT_CHANCE,
-	NEW_SUMMON_RAINBOW_CHANCE,
+	NEW_ITEM_RAINBOW_CHANCE,
+	SHRINE_SINCE,
 	SINGLE_SSR_RAINBOW_CHANCE,
 	seededRandom
 } from '../presentation'
 import type { CatalogueItem } from '$lib/types/gacha'
 
-const item = (identity: string, rarity: number): CatalogueItem =>
+const item = (identity: string, rarity: number, release_date = '2020-01-01'): CatalogueItem =>
 	({
+		release_date,
 		identity,
 		drawable_type: 'Weapon',
 		drawable_id: identity,
@@ -63,53 +65,52 @@ describe('choosePresentation', () => {
 		expect(rate).toBeLessThan(SINGLE_SSR_RAINBOW_CHANCE * 1.3)
 	})
 
-	it('opens a single new SSR summon on Rainbow 3, or the usual single-SSR openings', () => {
-		const items = draw(3, 2)
-		const newSummons = new Set(['Weapon:0'])
-		const results = seeds(2000).map((seed) => choosePresentation(items, seed, { newSummons }))
-		const mains = results.map((r) => r.pattern.main)
-		expect(new Set(mains)).toEqual(new Set([3, 5, 6, 8]))
-		const rate = mains.filter((main) => main === 3).length / mains.length
-		expect(rate).toBeGreaterThan(NEW_SUMMON_RAINBOW_CHANCE * 0.85)
-		expect(rate).toBeLessThan(NEW_SUMMON_RAINBOW_CHANCE * 1.15)
+	const key = (p: { main: number; sub: number; add: number }) => `${p.main}/${p.sub}/${p.add}`
+	const patterns = (items: CatalogueItem[], options: Parameters<typeof choosePresentation>[2]) =>
+		seeds(2000).map((seed) => key(choosePresentation(items, seed, options).pattern))
+	const share = (keys: string[], wanted: string) =>
+		keys.filter((k) => k === wanted).length / keys.length
 
-		// Only a new SSR counts
-		for (const seed of seeds(200)) {
-			const notSsr = choosePresentation(items, seed, { newSummons: new Set(['Weapon:1']) })
-			expect(notSsr.pattern.main).not.toBe(3)
-		}
+	it.each([
+		['a new summon', 3, '2/0/3', { newSummons: new Set(['Weapon:0']) }, '2020-01-01'],
+		['a new older character', 4, '2/0/4', { newCharacters: new Set(['Weapon:0']) }, '2020-01-01'],
+		['a new shrine character', 1, '2/0/1', { newCharacters: new Set(['Weapon:0']) }, SHRINE_SINCE]
+	] as const)('plays the opening for %s', (_, single, several, options, released) => {
+		const one = [item('Weapon:0', 3, released), ...draw(2).slice(1)]
+		const singles = patterns(one, options)
+		expect(new Set(singles)).toEqual(
+			new Set([`${single}/0/0`, '5/0/0', '6/0/0', '6/1/0', '8/0/0', '8/1/0'])
+		)
+		expect(share(singles, `${single}/0/0`)).toBeGreaterThan(NEW_ITEM_RAINBOW_CHANCE * 0.85)
+		expect(share(singles, `${single}/0/0`)).toBeLessThan(NEW_ITEM_RAINBOW_CHANCE * 1.15)
+
+		const two = [one[0] as CatalogueItem, ...draw(1, 3).slice(1)]
+		const multis = patterns(two, options)
+		expect(new Set(multis)).toEqual(new Set([several, '2/0/0']))
+		expect(share(multis, several)).toBeGreaterThan(NEW_ITEM_RAINBOW_CHANCE * 0.85)
+		expect(share(multis, several)).toBeLessThan(NEW_ITEM_RAINBOW_CHANCE * 1.15)
 	})
 
-	it('plays Rainbow 2 for several SSRs, with add variants by new character or summon', () => {
-		const plain = seeds(500).map((seed) => choosePresentation(draw(3, 3), seed).pattern)
-		expect(new Set(plain.map((p) => `${p.main}/${p.sub}/${p.add}`))).toEqual(new Set(['2/0/0']))
+	it('only counts new SSRs, and gives new characters the first chance', () => {
+		const notSsr = patterns(draw(3, 2), {
+			newSummons: new Set(['Weapon:1']),
+			newCharacters: new Set(['Weapon:2'])
+		})
+		expect(notSsr.some((k) => ['3/0/0', '4/0/0', '1/0/0'].includes(k))).toBe(false)
 
-		const newSummons = new Set(['Weapon:1'])
-		const withSummon = seeds(2000).map(
-			(seed) => choosePresentation(draw(3, 3), seed, { newSummons }).pattern
-		)
-		expect(new Set(withSummon.map((p) => `${p.main}/${p.sub}/${p.add}`))).toEqual(
-			new Set(['2/0/0', '2/0/3'])
-		)
-		const rate = withSummon.filter((p) => p.add === 3).length / withSummon.length
-		expect(rate).toBeGreaterThan(NEW_SUMMON_RAINBOW_CHANCE * 0.85)
-		expect(rate).toBeLessThan(NEW_SUMMON_RAINBOW_CHANCE * 1.15)
+		const both = patterns(draw(3, 3), {
+			newCharacters: new Set(['Weapon:0']),
+			newSummons: new Set(['Weapon:1'])
+		})
+		expect(share(both, '2/0/4')).toBeGreaterThan(NEW_ITEM_RAINBOW_CHANCE * 0.85)
+		// The summon's opening only gets a chance when the character's doesn't play
+		const summonShare = (1 - NEW_ITEM_RAINBOW_CHANCE) * NEW_ITEM_RAINBOW_CHANCE
+		expect(share(both, '2/0/3')).toBeGreaterThan(summonShare * 0.8)
+		expect(share(both, '2/0/3')).toBeLessThan(summonShare * 1.2)
+	})
 
-		// New characters take priority
-		const both = seeds(500).map(
-			(seed) =>
-				choosePresentation(draw(3, 3), seed, { newSummons, newCharacters: new Set(['Weapon:0']) })
-					.pattern
-		)
-		expect(both.some((p) => p.add === 3)).toBe(false)
-
-		const newCharacters = new Set(['Weapon:1'])
-		const withNew = seeds(500).map(
-			(seed) => choosePresentation(draw(3, 3), seed, { newCharacters }).pattern
-		)
-		expect(new Set(withNew.map((p) => `${p.main}/${p.sub}/${p.add}`))).toEqual(
-			new Set(['2/0/0', '2/0/1', '2/0/4'])
-		)
+	it('plays plain Rainbow 2 for several SSRs with nothing new', () => {
+		expect(new Set(patterns(draw(3, 3), {}))).toEqual(new Set(['2/0/0']))
 	})
 
 	it('opens on gold for one SSR, sometimes faking out with blue', () => {
