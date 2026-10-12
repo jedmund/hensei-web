@@ -10,6 +10,7 @@
 	import GachaResults from '$lib/components/gacha/GachaResults.svelte'
 	import GachaAnimation from '$lib/components/gacha/GachaAnimation.svelte'
 	import GachaLog from '$lib/components/gacha/GachaLog.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import { choosePresentation, type Presentation } from '$lib/gacha-animation/presentation'
 	import { drawMoons, goldMoonCount, type Moon } from '$lib/gacha-animation/moons'
@@ -147,9 +148,21 @@
 	const fixedRates = $derived(mode === CURRENT_BANNER)
 	const bannerRateups = $derived(banner?.rateups ?? [])
 	const shownRateups = $derived(fixedRates ? bannerRateups : rateups)
+	// The time left on the current banner, ticking each second while it's shown
+	let now = $state(Date.now())
+	$effect(() => {
+		if (!fixedRates || !banner) return
+		now = Date.now()
+		const timer = setInterval(() => (now = Date.now()), 1000)
+		return () => clearInterval(timer)
+	})
+	const bannerLeft = $derived(banner ? new Date(banner.ends_at).getTime() - now : 0)
+	const bannerLive = $derived(!!banner?.live && bannerLeft > 0)
+	// The banner's last minute, in the game's own time
 	const bannerEnds = $derived(
 		banner
 			? new Intl.DateTimeFormat(getLocale(), {
+					timeZone: 'Asia/Tokyo',
 					month: 'short',
 					day: 'numeric',
 					hour: 'numeric',
@@ -157,6 +170,11 @@
 				}).format(new Date(new Date(banner.ends_at).getTime() - 60_000))
 			: ''
 	)
+	const bannerCountdown = $derived.by(() => {
+		const seconds = Math.max(0, Math.floor(bannerLeft / 1000))
+		const pad = (value: number) => String(value).padStart(2, '0')
+		return `${pad(Math.floor(seconds / 3600))}:${pad(Math.floor(seconds / 60) % 60)}:${pad(seconds % 60)}`
+	})
 	const ssrs = $derived(items.filter((item) => item.rarity === 3))
 
 	const name = (item: CatalogueItem) => gachaItemName(item, getLocale())
@@ -599,13 +617,18 @@
 
 				{#if fixedRates}
 					<GachaRateups {ssrs} rateups={bannerRateups} readonly>
+						{#snippet aside()}
+							{#if bannerLive}
+								<Tooltip content={m.gacha_banner_ends({ date: bannerEnds })}>
+									<span class="banner-countdown">
+										{m.gacha_banner_remaining({ time: bannerCountdown })}
+									</span>
+								</Tooltip>
+							{/if}
+						{/snippet}
 						{#snippet note()}
-							{#if banner}
-								<p class="banner-note">
-									{banner.live
-										? m.gacha_banner_source({ date: bannerEnds })
-										: m.gacha_banner_stale()}
-								</p>
+							{#if banner && !bannerLive}
+								<p class="banner-note">{m.gacha_banner_stale()}</p>
 							{/if}
 						{/snippet}
 					</GachaRateups>
@@ -742,6 +765,12 @@
 		margin: 0;
 		color: var(--text-secondary);
 		font-size: $font-small;
+	}
+
+	.banner-countdown {
+		color: var(--text-secondary);
+		font-size: $font-small;
+		font-variant-numeric: tabular-nums;
 	}
 
 	.failure {

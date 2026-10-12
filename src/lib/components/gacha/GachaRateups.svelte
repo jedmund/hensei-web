@@ -22,11 +22,20 @@
 		disabled?: boolean
 		/** Shows the rates without editing, for a banner's own rate-ups */
 		readonly?: boolean
+		/** At the end of the heading's line, e.g. the time a banner has left */
+		aside?: Snippet
 		/** Below the heading, e.g. where the rates come from */
 		note?: Snippet
 	}
 
-	let { ssrs, rateups = $bindable(), disabled = false, readonly = false, note }: Props = $props()
+	let {
+		ssrs,
+		rateups = $bindable(),
+		disabled = false,
+		readonly = false,
+		aside,
+		note
+	}: Props = $props()
 
 	const candidates = $derived(
 		ssrs.filter((item) => !rateups.some((rate) => rate.identity === item.identity))
@@ -46,7 +55,10 @@
 </script>
 
 <section class="rateups">
-	<h2>{m.gacha_rates()}</h2>
+	<div class="heading">
+		<h2>{m.gacha_rates()}</h2>
+		{@render aside?.()}
+	</div>
 	{@render note?.()}
 	{#if !readonly}
 		<!-- Above the list, so it stays put as rate-ups are added -->
@@ -104,6 +116,13 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
+
+		.heading {
+			display: flex;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: $unit;
+		}
 
 		h2 {
 			margin: 0;
