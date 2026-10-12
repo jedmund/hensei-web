@@ -193,9 +193,13 @@
 			: ''
 	)
 	const bannerCountdown = $derived.by(() => {
-		const seconds = Math.max(0, Math.floor(bannerLeft / 1000))
+		const minutes = Math.max(0, Math.floor(bannerLeft / 60_000))
 		const pad = (value: number) => String(value).padStart(2, '0')
-		return `${pad(Math.floor(seconds / 3600))}:${pad(Math.floor(seconds / 60) % 60)}:${pad(seconds % 60)}`
+		return m.gacha_banner_duration({
+			days: String(Math.floor(minutes / 1440)),
+			hours: pad(Math.floor(minutes / 60) % 24),
+			minutes: pad(minutes % 60)
+		})
 	})
 	const ssrs = $derived(items.filter((item) => item.rarity === 3))
 
@@ -644,11 +648,9 @@
 											{m.gacha_banner_remaining({ time: bannerCountdown })}
 										</span>
 									</Tooltip>
-								{/if}
-							{/snippet}
-							{#snippet note()}
-								{#if banner && !bannerLive}
-									<p class="banner-note">{m.gacha_banner_stale()}</p>
+								{:else if banner}
+									<!-- Until the new banner's rates arrive, the last banner's stand in -->
+									<span class="banner-countdown">{m.gacha_banner_expired()}</span>
 								{/if}
 							{/snippet}
 						</GachaRateups>
@@ -780,12 +782,6 @@
 				grid-column: auto;
 			}
 		}
-	}
-
-	.banner-note {
-		margin: 0;
-		color: var(--text-secondary);
-		font-size: $font-small;
 	}
 
 	.banner-countdown {
