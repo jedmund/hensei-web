@@ -1,0 +1,876 @@
+{
+	"party": {
+		"id": "fd118d88-3867-4335-8075-b30a0496a8de",
+		"local_id": null,
+		"description": null,
+		"shortcode": "b8vF8x",
+		"visibility": 1,
+		"name": "Nier build",
+		"element": 5,
+		"extra": false,
+		"charge_attack": true,
+		"button_count": null,
+		"turn_count": null,
+		"chain_count": null,
+		"summon_count": null,
+		"clear_time": 0,
+		"full_auto": false,
+		"auto_guard": false,
+		"auto_summon": false,
+		"solo": false,
+		"video_url": null,
+		"collection_source_user_id": null,
+		"created_at": "2026-10-12T23:06:26.887Z",
+		"updated_at": "2026-10-12T23:06:26.887Z",
+		"last_updated": "2026-10-12T23:06:27.194Z",
+		"master_level": null,
+		"ultimate_mastery": null,
+		"user": {
+			"id": "88680c36-50c5-4a14-bb09-03336331d0c0",
+			"username": "fixture_user",
+			"display_name": null,
+			"description": null,
+			"language": "ja",
+			"private": true,
+			"gender": 0,
+			"theme": "dark",
+			"role": 2,
+			"granblue_id": 5580,
+			"show_gamertag": true,
+			"wiki_profile": null,
+			"youtube": null,
+			"simple_portraits": false,
+			"default_rep_view": "weapons",
+			"timezone": null,
+			"support_summons_public": true,
+			"collection_privacy": 1,
+			"avatar": {
+				"picture": "gran",
+				"element": "wind"
+			}
+		},
+		"job": null,
+		"raid": {
+			"id": "c9540e26-4797-419b-b7da-03c0b883c547",
+			"name": {
+				"en": "Allotropic Microcosm",
+				"ja": null
+			},
+			"slug": "allotropic-microcosm",
+			"level": null,
+			"element": 0,
+			"player_count": 1,
+			"enemy_id": null,
+			"summon_id": null,
+			"quest_id": null,
+			"extra": false,
+			"group": {
+				"id": "c5d925f3-7044-4f33-8ccb-f903e8efe485",
+				"name": {
+					"en": "Evoking Solomonis",
+					"ja": "テストレイドグループ1"
+				},
+				"difficulty": 0,
+				"order": 1,
+				"section": 3,
+				"extra": false,
+				"guidebooks": false,
+				"hl": true,
+				"unlimited": false
+			}
+		},
+		"boost": {
+			"mod": null,
+			"side": null
+		},
+		"difficulty": null,
+		"characters": [
+			{
+				"id": "b3f3bcf8-26ae-467a-ba01-2bab888c16be",
+				"position": 0,
+				"uncap_level": 3,
+				"perpetuity": false,
+				"orphaned": false,
+				"brought_by_blessing": false,
+				"transcendence_step": 0,
+				"collection_character_id": null,
+				"awakening": {
+					"type": {
+						"id": "b1847c82-ece0-4d7a-8af1-c7868d90f34a",
+						"name": {
+							"en": "Balanced",
+							"ja": "バランス"
+						},
+						"slug": "character-balanced",
+						"object_type": "Character",
+						"order": 0
+					},
+					"level": 1
+				},
+				"over_mastery": [null, null, null, null],
+				"aetherial_mastery": null,
+				"character": {
+					"id": "e9612f04-f746-4279-a047-45d19f1e781f",
+					"name": {
+						"en": "Nier",
+						"ja": "ニーア"
+					},
+					"granblue_id": "3040169000",
+					"character_id": [3108],
+					"rarity": 4,
+					"element": 5,
+					"gender": 0,
+					"special": false,
+					"season": null,
+					"style_swap": false,
+					"gender_variants": false,
+					"style_name": {
+						"en": null,
+						"ja": null
+					},
+					"base_character": null,
+					"season_name": null,
+					"series": [],
+					"series_names": [],
+					"uncap": {
+						"flb": true,
+						"ulb": false,
+						"transcendence": true,
+						"max_transcendence_stage": 5
+					},
+					"race": [1],
+					"proficiency": [1],
+					"hp": {
+						"min_hp": null,
+						"max_hp": 1500,
+						"max_hp_flb": 1800,
+						"max_hp_ulb": null,
+						"max_hp_transcendence": null
+					},
+					"atk": {
+						"min_atk": null,
+						"max_atk": 8000,
+						"max_atk_flb": 9600,
+						"max_atk_ulb": null,
+						"max_atk_transcendence": null
+					},
+					"base_da": null,
+					"base_ta": null,
+					"ougi_ratio": {
+						"ougi_ratio": null,
+						"ougi_ratio_flb": null
+					},
+					"release_date": "2025-10-12",
+					"flb_date": null,
+					"ulb_date": null,
+					"transcendence_date": null,
+					"awakenings": [
+						{
+							"id": "b1847c82-ece0-4d7a-8af1-c7868d90f34a",
+							"name": {
+								"en": "Balanced",
+								"ja": "バランス"
+							},
+							"slug": "character-balanced",
+							"object_type": "Character",
+							"order": 0
+						},
+						{
+							"id": "6e233877-8cda-4c8f-a091-3db6f68749e2",
+							"name": {
+								"en": "Attack",
+								"ja": "攻撃"
+							},
+							"slug": "character-atk",
+							"object_type": "Character",
+							"order": 1
+						},
+						{
+							"id": "c95441de-f949-4a62-b02b-101aa2e0a638",
+							"name": {
+								"en": "Defense",
+								"ja": "防御"
+							},
+							"slug": "character-def",
+							"object_type": "Character",
+							"order": 2
+						},
+						{
+							"id": "e36b0573-79c3-4dd2-9524-c95def4bbb1a",
+							"name": {
+								"en": "Multiattack",
+								"ja": "連続攻撃"
+							},
+							"slug": "character-multi",
+							"object_type": "Character",
+							"order": 3
+						}
+					],
+					"nicknames": {
+						"en": [],
+						"ja": []
+					},
+					"wiki": {
+						"en": "",
+						"ja": ""
+					},
+					"gamewith": "",
+					"kamigame": "",
+					"style_swaps": [],
+					"skills": [],
+					"skill_links": []
+				}
+			}
+		],
+		"weapons": [
+			{
+				"id": "cfd7a756-925b-40ff-9bd3-8c6ff35c444d",
+				"mainhand": true,
+				"position": -1,
+				"uncap_level": 3,
+				"transcendence_step": 0,
+				"element": null,
+				"exorcism_level": 0,
+				"orphaned": false,
+				"notes_synced": false,
+				"seal_state": "start",
+				"unseal_priority": null,
+				"collection_weapon_id": null,
+				"weapon": {
+					"id": "0e837460-c987-46f3-8eaf-afaefd730561",
+					"name": {
+						"en": "Test Weapon 1",
+						"ja": "テスト武器"
+					},
+					"granblue_id": "1040000001",
+					"element": 1,
+					"proficiency": 1,
+					"max_level": 150,
+					"max_skill_level": 15,
+					"max_awakening_level": null,
+					"max_exorcism_level": null,
+					"limit": false,
+					"rarity": 4,
+					"promotions": [],
+					"forge_order": null,
+					"extra": false,
+					"element_variant_ids": null,
+					"series": null,
+					"promotion_names": [],
+					"uncap": {
+						"flb": true,
+						"ulb": false,
+						"transcendence": false,
+						"extra_prerequisite": null
+					},
+					"hp": {
+						"min_hp": null,
+						"max_hp": 300,
+						"max_hp_flb": 360,
+						"max_hp_ulb": null
+					},
+					"atk": {
+						"min_atk": null,
+						"max_atk": 2400,
+						"max_atk_flb": 2900,
+						"max_atk_ulb": null
+					},
+					"release_date": "2025-10-12",
+					"flb_date": "2026-04-12",
+					"ulb_date": null,
+					"transcendence_date": null,
+					"forged_from": null,
+					"recruits": null,
+					"awakenings": [],
+					"weapon_skills": [],
+					"nicknames": {
+						"en": [],
+						"ja": []
+					},
+					"wiki": {
+						"en": "",
+						"ja": ""
+					},
+					"gamewith": "",
+					"kamigame": "",
+					"forge_chain": null
+				}
+			},
+			{
+				"id": "0e991586-f1f7-4462-8752-5b764a7eb9c0",
+				"mainhand": false,
+				"position": 0,
+				"uncap_level": 3,
+				"transcendence_step": 0,
+				"element": null,
+				"exorcism_level": 0,
+				"orphaned": false,
+				"notes_synced": false,
+				"seal_state": "start",
+				"unseal_priority": null,
+				"collection_weapon_id": null,
+				"weapon": {
+					"id": "f6eac4e2-f279-4202-be17-c1265ec6e180",
+					"name": {
+						"en": "Test Weapon 2",
+						"ja": "テスト武器"
+					},
+					"granblue_id": "1040000002",
+					"element": 1,
+					"proficiency": 1,
+					"max_level": 150,
+					"max_skill_level": 15,
+					"max_awakening_level": null,
+					"max_exorcism_level": null,
+					"limit": false,
+					"rarity": 4,
+					"promotions": [],
+					"forge_order": null,
+					"extra": false,
+					"element_variant_ids": null,
+					"series": null,
+					"promotion_names": [],
+					"uncap": {
+						"flb": true,
+						"ulb": false,
+						"transcendence": false,
+						"extra_prerequisite": null
+					},
+					"hp": {
+						"min_hp": null,
+						"max_hp": 300,
+						"max_hp_flb": 360,
+						"max_hp_ulb": null
+					},
+					"atk": {
+						"min_atk": null,
+						"max_atk": 2400,
+						"max_atk_flb": 2900,
+						"max_atk_ulb": null
+					},
+					"release_date": "2025-10-12",
+					"flb_date": "2026-04-12",
+					"ulb_date": null,
+					"transcendence_date": null,
+					"forged_from": null,
+					"recruits": null,
+					"awakenings": [],
+					"weapon_skills": [],
+					"nicknames": {
+						"en": [],
+						"ja": []
+					},
+					"wiki": {
+						"en": "",
+						"ja": ""
+					},
+					"gamewith": "",
+					"kamigame": "",
+					"forge_chain": null
+				}
+			},
+			{
+				"id": "21a2c4e5-d39b-42b6-9e1c-07a0fcf4f994",
+				"mainhand": false,
+				"position": 1,
+				"uncap_level": 3,
+				"transcendence_step": 0,
+				"element": null,
+				"exorcism_level": 0,
+				"orphaned": false,
+				"notes_synced": false,
+				"seal_state": "start",
+				"unseal_priority": null,
+				"collection_weapon_id": null,
+				"weapon": {
+					"id": "c3e1b615-dc26-4f8c-89b8-1fb8bc8d61ad",
+					"name": {
+						"en": "Test Weapon 3",
+						"ja": "テスト武器"
+					},
+					"granblue_id": "1040000003",
+					"element": 1,
+					"proficiency": 1,
+					"max_level": 150,
+					"max_skill_level": 15,
+					"max_awakening_level": null,
+					"max_exorcism_level": null,
+					"limit": false,
+					"rarity": 4,
+					"promotions": [],
+					"forge_order": null,
+					"extra": false,
+					"element_variant_ids": null,
+					"series": null,
+					"promotion_names": [],
+					"uncap": {
+						"flb": true,
+						"ulb": false,
+						"transcendence": false,
+						"extra_prerequisite": null
+					},
+					"hp": {
+						"min_hp": null,
+						"max_hp": 300,
+						"max_hp_flb": 360,
+						"max_hp_ulb": null
+					},
+					"atk": {
+						"min_atk": null,
+						"max_atk": 2400,
+						"max_atk_flb": 2900,
+						"max_atk_ulb": null
+					},
+					"release_date": "2025-10-12",
+					"flb_date": "2026-04-12",
+					"ulb_date": null,
+					"transcendence_date": null,
+					"forged_from": null,
+					"recruits": null,
+					"awakenings": [],
+					"weapon_skills": [],
+					"nicknames": {
+						"en": [],
+						"ja": []
+					},
+					"wiki": {
+						"en": "",
+						"ja": ""
+					},
+					"gamewith": "",
+					"kamigame": "",
+					"forge_chain": null
+				}
+			},
+			{
+				"id": "f73e7307-0110-47dd-9b7a-dbbac73cac50",
+				"mainhand": false,
+				"position": 6,
+				"uncap_level": 3,
+				"transcendence_step": 0,
+				"element": null,
+				"exorcism_level": 0,
+				"orphaned": false,
+				"notes_synced": false,
+				"seal_state": "sealed",
+				"unseal_priority": null,
+				"collection_weapon_id": null,
+				"weapon": {
+					"id": "ea3530fe-e2e7-495e-ac10-abf2c8bae654",
+					"name": {
+						"en": "Test Weapon 6",
+						"ja": "テスト武器"
+					},
+					"granblue_id": "1040000006",
+					"element": 1,
+					"proficiency": 1,
+					"max_level": 150,
+					"max_skill_level": 15,
+					"max_awakening_level": null,
+					"max_exorcism_level": null,
+					"limit": false,
+					"rarity": 4,
+					"promotions": [],
+					"forge_order": null,
+					"extra": false,
+					"element_variant_ids": null,
+					"series": null,
+					"promotion_names": [],
+					"uncap": {
+						"flb": true,
+						"ulb": false,
+						"transcendence": false,
+						"extra_prerequisite": null
+					},
+					"hp": {
+						"min_hp": null,
+						"max_hp": 300,
+						"max_hp_flb": 360,
+						"max_hp_ulb": null
+					},
+					"atk": {
+						"min_atk": null,
+						"max_atk": 2400,
+						"max_atk_flb": 2900,
+						"max_atk_ulb": null
+					},
+					"release_date": "2025-10-12",
+					"flb_date": "2026-04-12",
+					"ulb_date": null,
+					"transcendence_date": null,
+					"forged_from": null,
+					"recruits": null,
+					"awakenings": [],
+					"weapon_skills": [],
+					"nicknames": {
+						"en": [],
+						"ja": []
+					},
+					"wiki": {
+						"en": "",
+						"ja": ""
+					},
+					"gamewith": "",
+					"kamigame": "",
+					"forge_chain": null
+				}
+			},
+			{
+				"id": "8ab8dc58-e3f7-452a-90fa-67b88c7ba6a9",
+				"mainhand": false,
+				"position": 2,
+				"uncap_level": 3,
+				"transcendence_step": 0,
+				"element": null,
+				"exorcism_level": 0,
+				"orphaned": false,
+				"notes_synced": false,
+				"seal_state": "start",
+				"unseal_priority": null,
+				"collection_weapon_id": null,
+				"weapon": {
+					"id": "119182c0-b824-4094-a27d-c8137b6baabf",
+					"name": {
+						"en": "Test Weapon 4",
+						"ja": "テスト武器"
+					},
+					"granblue_id": "1040000004",
+					"element": 1,
+					"proficiency": 1,
+					"max_level": 150,
+					"max_skill_level": 15,
+					"max_awakening_level": null,
+					"max_exorcism_level": null,
+					"limit": false,
+					"rarity": 4,
+					"promotions": [],
+					"forge_order": null,
+					"extra": false,
+					"element_variant_ids": null,
+					"series": null,
+					"promotion_names": [],
+					"uncap": {
+						"flb": true,
+						"ulb": false,
+						"transcendence": false,
+						"extra_prerequisite": null
+					},
+					"hp": {
+						"min_hp": null,
+						"max_hp": 300,
+						"max_hp_flb": 360,
+						"max_hp_ulb": null
+					},
+					"atk": {
+						"min_atk": null,
+						"max_atk": 2400,
+						"max_atk_flb": 2900,
+						"max_atk_ulb": null
+					},
+					"release_date": "2025-10-12",
+					"flb_date": "2026-04-12",
+					"ulb_date": null,
+					"transcendence_date": null,
+					"forged_from": null,
+					"recruits": null,
+					"awakenings": [],
+					"weapon_skills": [],
+					"nicknames": {
+						"en": [],
+						"ja": []
+					},
+					"wiki": {
+						"en": "",
+						"ja": ""
+					},
+					"gamewith": "",
+					"kamigame": "",
+					"forge_chain": null
+				}
+			},
+			{
+				"id": "9e085274-a7d9-4a7f-82ea-05ada472b247",
+				"mainhand": false,
+				"position": 5,
+				"uncap_level": 3,
+				"transcendence_step": 0,
+				"element": null,
+				"exorcism_level": 0,
+				"orphaned": false,
+				"notes_synced": false,
+				"seal_state": "sealed",
+				"unseal_priority": 1,
+				"collection_weapon_id": null,
+				"weapon": {
+					"id": "f4121d56-cbeb-4652-a2ed-e96414975cf5",
+					"name": {
+						"en": "Test Weapon 5",
+						"ja": "テスト武器"
+					},
+					"granblue_id": "1040000005",
+					"element": 1,
+					"proficiency": 1,
+					"max_level": 150,
+					"max_skill_level": 15,
+					"max_awakening_level": null,
+					"max_exorcism_level": null,
+					"limit": false,
+					"rarity": 4,
+					"promotions": [],
+					"forge_order": null,
+					"extra": false,
+					"element_variant_ids": null,
+					"series": null,
+					"promotion_names": [],
+					"uncap": {
+						"flb": true,
+						"ulb": false,
+						"transcendence": false,
+						"extra_prerequisite": null
+					},
+					"hp": {
+						"min_hp": null,
+						"max_hp": 300,
+						"max_hp_flb": 360,
+						"max_hp_ulb": null
+					},
+					"atk": {
+						"min_atk": null,
+						"max_atk": 2400,
+						"max_atk_flb": 2900,
+						"max_atk_ulb": null
+					},
+					"release_date": "2025-10-12",
+					"flb_date": "2026-04-12",
+					"ulb_date": null,
+					"transcendence_date": null,
+					"forged_from": null,
+					"recruits": null,
+					"awakenings": [],
+					"weapon_skills": [],
+					"nicknames": {
+						"en": [],
+						"ja": []
+					},
+					"wiki": {
+						"en": "",
+						"ja": ""
+					},
+					"gamewith": "",
+					"kamigame": "",
+					"forge_chain": null
+				}
+			}
+		],
+		"summons": [
+			{
+				"id": "c46c0e6c-2a91-4b7a-9807-6750bafd3559",
+				"main": true,
+				"friend": false,
+				"position": -1,
+				"quick_summon": false,
+				"uncap_level": 3,
+				"transcendence_step": 0,
+				"orphaned": false,
+				"notes_synced": false,
+				"seal_state": "start",
+				"unseal_priority": null,
+				"collection_summon_id": null,
+				"summon": {
+					"id": "32a9b99b-0466-4fb1-a8e2-dd42d65f31a7",
+					"name": {
+						"en": "Test Summon 1",
+						"ja": "テスト召喚石"
+					},
+					"granblue_id": "2040000001",
+					"element": 1,
+					"rarity": 4,
+					"max_level": 100,
+					"subaura": false,
+					"limit": false,
+					"support_eligible": true,
+					"promotions": [],
+					"promotion_names": [],
+					"series": null,
+					"uncap": {
+						"flb": true,
+						"ulb": false,
+						"transcendence": false
+					},
+					"hp": {
+						"min_hp": null,
+						"max_hp": 500,
+						"max_hp_flb": 600,
+						"max_hp_ulb": null,
+						"max_hp_xlb": null
+					},
+					"atk": {
+						"min_atk": null,
+						"max_atk": 2000,
+						"max_atk_flb": 2400,
+						"max_atk_ulb": null,
+						"max_atk_xlb": null
+					},
+					"release_date": "2025-10-12",
+					"flb_date": "2026-04-12",
+					"ulb_date": null,
+					"transcendence_date": null,
+					"nicknames": {
+						"en": [],
+						"ja": []
+					},
+					"wiki": {
+						"en": "",
+						"ja": ""
+					},
+					"gamewith": "",
+					"kamigame": "",
+					"summon_auras": []
+				}
+			},
+			{
+				"id": "05c6a067-d734-4332-9a96-324e732e767a",
+				"main": false,
+				"friend": false,
+				"position": 0,
+				"quick_summon": false,
+				"uncap_level": 3,
+				"transcendence_step": 0,
+				"orphaned": false,
+				"notes_synced": false,
+				"seal_state": "sealed",
+				"unseal_priority": 2,
+				"collection_summon_id": null,
+				"summon": {
+					"id": "faa8142c-bb72-439d-b097-0a77510a0e4a",
+					"name": {
+						"en": "Test Summon 2",
+						"ja": "テスト召喚石"
+					},
+					"granblue_id": "2040000002",
+					"element": 1,
+					"rarity": 4,
+					"max_level": 100,
+					"subaura": false,
+					"limit": false,
+					"support_eligible": true,
+					"promotions": [],
+					"promotion_names": [],
+					"series": null,
+					"uncap": {
+						"flb": true,
+						"ulb": false,
+						"transcendence": false
+					},
+					"hp": {
+						"min_hp": null,
+						"max_hp": 500,
+						"max_hp_flb": 600,
+						"max_hp_ulb": null,
+						"max_hp_xlb": null
+					},
+					"atk": {
+						"min_atk": null,
+						"max_atk": 2000,
+						"max_atk_flb": 2400,
+						"max_atk_ulb": null,
+						"max_atk_xlb": null
+					},
+					"release_date": "2025-10-12",
+					"flb_date": "2026-04-12",
+					"ulb_date": null,
+					"transcendence_date": null,
+					"nicknames": {
+						"en": [],
+						"ja": []
+					},
+					"wiki": {
+						"en": "",
+						"ja": ""
+					},
+					"gamewith": "",
+					"kamigame": "",
+					"summon_auras": []
+				}
+			}
+		],
+		"remixes": [],
+		"job_skills": {
+			"0": null,
+			"1": null,
+			"2": null,
+			"3": null
+		},
+		"full_auto_skills": {},
+		"guidebooks": {
+			"1": null,
+			"2": null,
+			"3": null
+		},
+		"favorited": false,
+		"has_orphaned_items": false,
+		"solomonis": {
+			"kind": "build",
+			"pledge_level": 0,
+			"outcome": null,
+			"bosses_defeated": null,
+			"midboss": null,
+			"expedition_level": null,
+			"game_report_id": null,
+			"ended_at": null,
+			"stats": {},
+			"route_evoker": {
+				"id": "e9612f04-f746-4279-a047-45d19f1e781f",
+				"granblue_id": "3040169000",
+				"element": 5,
+				"name": {
+					"en": "Nier",
+					"ja": "ニーア"
+				}
+			},
+			"zone": {
+				"id": "c9540e26-4797-419b-b7da-03c0b883c547",
+				"slug": "allotropic-microcosm",
+				"name": {
+					"en": "Allotropic Microcosm",
+					"ja": null
+				}
+			},
+			"build_party": null,
+			"blessing_cost_limit": 100,
+			"blessing_cost_total": 70,
+			"blessings": [
+				{
+					"blessing": {
+						"id": "c72351b1-aa32-4ea5-9e0c-785d1931d0e1",
+						"slug": "justice",
+						"arcana_number": 11,
+						"name": {
+							"en": "Justice",
+							"ja": null
+						}
+					},
+					"level_id": "b97cbddd-cc99-415f-890c-32e10f1f50cb",
+					"level": 3,
+					"cost": 50
+				},
+				{
+					"blessing": {
+						"id": "aa685b00-b15a-4f41-9de2-11f0154602e9",
+						"slug": "death",
+						"arcana_number": 13,
+						"name": {
+							"en": "Death",
+							"ja": null
+						}
+					},
+					"level_id": "d4b06bae-0a10-4638-847a-4c1ea01fbacf",
+					"level": 9,
+					"cost": 20
+				}
+			],
+			"guidebook": []
+		},
+		"shares": []
+	}
+}
