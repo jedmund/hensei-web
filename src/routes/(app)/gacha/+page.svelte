@@ -37,6 +37,7 @@
 	} from '$lib/utils/gacha'
 	import { addEntry, readLog, trimResult, writeLog, type GachaLogEntry } from '$lib/utils/gachaLog'
 	import type { CatalogueItem, GachaBanner, GachaResult } from '$lib/types/gacha'
+	import { Promotion } from '$lib/types/enums'
 
 	let { data } = $props()
 
@@ -126,6 +127,14 @@
 			{ value: 'classic_iii', label: m.gacha_classic_iii() }
 		].map((option) => ({ ...option, suffix: percent(ssrRates[option.value] ?? 0.03) }))
 	])
+	// Each season's draw, as the catalogue's promotion numbers
+	const SEASON_PROMOTIONS: [string, Promotion][] = [
+		['valentines', Promotion.Valentine],
+		['summer', Promotion.Summer],
+		['halloween', Promotion.Halloween],
+		['holiday', Promotion.Holiday],
+		['formal', Promotion.Formal]
+	]
 	const seasonOptions = $derived([
 		{ value: '', label: m.gacha_none() },
 		{ value: 'valentines', label: m.gacha_valentines() },
@@ -147,6 +156,19 @@
 	// The current banner's rates come from the game: no seasons or custom rate-ups
 	const fixedRates = $derived(mode === CURRENT_BANNER)
 	const bannerRateups = $derived(banner?.rateups ?? [])
+	// The current banner's season, shown in the locked season field: the one
+	// whose limited items (in that season's draws but not Premium) it has most of
+	const bannerSeason = $derived.by(() => {
+		if (!fixedRates) return ''
+		const counts: Record<string, number> = {}
+		for (const item of items) {
+			if (item.promotions.includes(Promotion.Premium)) continue
+			for (const [value, promotion] of SEASON_PROMOTIONS) {
+				if (item.promotions.includes(promotion)) counts[value] = (counts[value] ?? 0) + 1
+			}
+		}
+		return Object.entries(counts).sort((a, b) => b[1] - a[1])[0]?.[0] ?? ''
+	})
 	const shownRateups = $derived(fixedRates ? bannerRateups : rateups)
 	// The time left on the current banner, ticking each second while it's shown
 	let now = $state(Date.now())
@@ -547,12 +569,12 @@
 						bind:value={mode}
 						fullWidth
 					/>
-					<!-- Classic pools and the current banner have no seasons; the choice is kept for other pools -->
+					<!-- Classic pools have no seasons, and the current banner shows its own; the choice is kept for other pools -->
 					<Select
 						contained
 						label={m.gacha_season()}
 						options={seasonOptions}
-						value={classic || fixedRates ? '' : season}
+						value={classic ? '' : fixedRates ? bannerSeason : season}
 						onValueChange={(value) => (season = value ?? '')}
 						disabled={classic || fixedRates}
 						fullWidth
