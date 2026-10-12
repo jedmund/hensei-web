@@ -318,7 +318,7 @@
 		color: var(--text-secondary);
 		white-space: nowrap;
 		// Fits "No SSRs" and counts into the hundreds, so the thumbnails line up
-		min-width: $unit * 8;
+		min-width: $unit * 7;
 		text-align: right;
 
 		&.none {
