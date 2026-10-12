@@ -47,6 +47,7 @@
 	import Notice from '$lib/components/ui/Notice.svelte'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import SolomonisPanel from '$lib/components/solomonis/party/SolomonisPanel.svelte'
+	import SolomonisGuidebook from '$lib/components/solomonis/guidebook/SolomonisGuidebook.svelte'
 	import { openEditSolomonisPane } from '$lib/components/solomonis/party/openSolomonisPanes'
 	import {
 		isSolomonisParty,
@@ -595,7 +596,7 @@
 
 			{#if isSolomonis}
 				<SolomonisPanel {party} canEdit={canEdit()} />
-				<!-- web-guidebook: the run guidebook (SolomonisGuidebook) mounts here at merge. -->
+				<SolomonisGuidebook {party} canEdit={canEdit()} />
 			{/if}
 
 			<PartySegmentedControl
