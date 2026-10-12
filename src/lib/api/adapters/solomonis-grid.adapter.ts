@@ -5,21 +5,22 @@
  * updates (`gridAdapter.updateWeapon` / `updateSummon` / `updateCharacter`).
  * The unseal priority list is written as a whole here.
  */
-import type { SolomonisExpedition, UnsealPriorityItem } from '$lib/types/api/solomonis'
+import type { Party } from '$lib/types/api/party'
+import type { UnsealPriorityItem } from '$lib/types/api/solomonis'
 import { BaseAdapter } from './base.adapter'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 
 export class SolomonisGridAdapter extends BaseAdapter {
 	/**
 	 * Replaces a build's unseal priority list, in order. The API renumbers
-	 * from 1 and returns the party's `solomonis` object.
+	 * from 1 and returns the full party (decisions.md D11).
 	 */
 	async updateUnsealPriority(
 		partyId: string,
 		items: UnsealPriorityItem[],
 		headers?: Record<string, string>
-	): Promise<SolomonisExpedition> {
-		const response = await this.request<{ solomonis: SolomonisExpedition }>(
+	): Promise<Party> {
+		const response = await this.request<{ party: Party }>(
 			`/parties/${encodeURIComponent(partyId)}/unseal_priority`,
 			{
 				method: 'PUT',
@@ -27,7 +28,7 @@ export class SolomonisGridAdapter extends BaseAdapter {
 				...(headers ? { headers } : {})
 			}
 		)
-		return response.solomonis
+		return response.party
 	}
 }
 

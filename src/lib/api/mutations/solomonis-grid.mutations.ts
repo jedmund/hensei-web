@@ -9,7 +9,7 @@ import { solomonisGridAdapter } from '$lib/api/adapters/solomonis-grid.adapter'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import { applyPriorities } from '$lib/components/solomonis/grid/seal'
 import type { Party } from '$lib/types/api/party'
-import type { SolomonisExpedition, UnsealPriorityItem } from '$lib/types/api/solomonis'
+import type { UnsealPriorityItem } from '$lib/types/api/solomonis'
 import { getEditKey } from '$lib/utils/editKeys'
 
 export interface UpdateUnsealPriorityVars {
@@ -40,10 +40,9 @@ export function updateUnsealPriorityOptions(queryClient: QueryClient) {
 			}
 			return { previousParty } satisfies MutationContext
 		},
-		onSuccess: (solomonis: SolomonisExpedition, { partyShortcode }: UpdateUnsealPriorityVars) => {
-			queryClient.setQueryData<Party>(partyKeys.detail(partyShortcode), (party) =>
-				party ? { ...party, solomonis } : party
-			)
+		onSuccess: (party: Party, { partyShortcode }: UpdateUnsealPriorityVars) => {
+			// The API returns the full party (D11); take it whole.
+			queryClient.setQueryData(partyKeys.detail(partyShortcode), party)
 		},
 		onError: (
 			_err: unknown,

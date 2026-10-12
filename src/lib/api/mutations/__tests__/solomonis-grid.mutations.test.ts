@@ -5,7 +5,6 @@ import { createTestQueryClient } from './helpers'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import { transformResponse } from '$lib/api/schemas/transforms'
 import type { Party } from '$lib/types/api/party'
-import type { SolomonisExpedition } from '$lib/types/api/solomonis'
 import buildJson from '$lib/components/solomonis/grid/__fixtures__/party-build.json'
 
 vi.mock('$lib/api/adapters/solomonis-grid.adapter', () => ({
@@ -52,17 +51,15 @@ describe('updateUnsealPriorityOptions', () => {
 		expect(queryClient.getQueryData<Party>(key)).toEqual(party)
 	})
 
-	it('stores the returned solomonis object and invalidates the party', () => {
+	it('stores the returned party and invalidates it', () => {
 		const spy = vi.spyOn(queryClient, 'invalidateQueries')
 		const opts = updateUnsealPriorityOptions(queryClient)
-		const solomonis = { ...(party.solomonis as SolomonisExpedition), pledgeLevel: 3 }
+		const returned = { ...party, name: 'Renamed' }
 
-		opts.onSuccess(solomonis, vars([]))
+		opts.onSuccess(returned, vars([]))
 		opts.onSettled(undefined, null, vars([]))
 
-		expect(
-			(queryClient.getQueryData<Party>(key)!.solomonis as SolomonisExpedition).pledgeLevel
-		).toBe(3)
+		expect(queryClient.getQueryData<Party>(key)!.name).toBe('Renamed')
 		expect(spy.mock.calls[0]![0]!.queryKey).toEqual(key)
 	})
 })

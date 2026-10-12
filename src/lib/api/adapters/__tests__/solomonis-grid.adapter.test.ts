@@ -17,8 +17,8 @@ describe('SolomonisGridAdapter', () => {
 		vi.clearAllTimers()
 	})
 
-	it('updateUnsealPriority PUTs the ordered list and returns the solomonis object', async () => {
-		global.fetch = mockApiResponse({ solomonis: buildJson.party.solomonis })
+	it('updateUnsealPriority PUTs the ordered list and returns the full party', async () => {
+		global.fetch = mockApiResponse(buildJson)
 
 		const result = await adapter.updateUnsealPriority(
 			'p1',
@@ -39,8 +39,7 @@ describe('SolomonisGridAdapter', () => {
 			]
 		})
 		expect(init.headers).toMatchObject({ 'X-Edit-Key': 'key' })
-		expect(result.kind).toBe('build')
-		expect(result.blessingCostLimit).toBe(100)
-		expect(result.routeEvoker.granblueId).toBe('3040169000')
+		expect(result.shortcode).toBe('bld001')
+		expect(result.weapons.find((w) => w.position === 4)?.unsealPriority).toBe(1)
 	})
 })
