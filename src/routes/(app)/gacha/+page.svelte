@@ -359,8 +359,8 @@
 		}
 	})
 
-	// The settings card collapses to the mode switcher and Draw button, and
-	// collapses on its own when a draw starts
+	// The settings card's rate-ups fold away to a row of thumbnails, on their
+	// own when a draw starts
 	const isMobile = new MediaQuery('(max-width: 768px)')
 	let collapsed = $state(false)
 
@@ -368,7 +368,6 @@
 		if (busy) return
 		if (operation !== 'draw' && !target) {
 			targetError = m.gacha_target_required()
-			collapsed = false
 			return
 		}
 		collapsed = true
@@ -510,8 +509,6 @@
 		operation = value as Operation
 		targetError = ''
 		result = null
-		// Each tab has its own settings to fill in
-		collapsed = false
 	}
 </script>
 
@@ -552,113 +549,115 @@
 				size="small"
 				iconOnly
 				icon={collapsed ? 'chevron-down' : 'chevron-up'}
-				aria-label={collapsed ? m.gacha_show_settings() : m.gacha_hide_settings()}
+				aria-label={collapsed ? m.gacha_show_rateups() : m.gacha_hide_rateups()}
 				aria-expanded={!collapsed}
-				aria-controls="gacha-settings"
+				aria-controls="gacha-rateups"
 				type="button"
 				onclick={() => (collapsed = !collapsed)}
 			/>
 		</div>
-		{#if !collapsed}
-			<div class="settings" id="gacha-settings" transition:slide={{ duration: 150 }}>
+		<div class="settings">
+			<div class="fields">
+				<Select
+					contained
+					label={m.gacha_mode()}
+					options={modeOptions}
+					bind:value={mode}
+					fullWidth
+				/>
+				<!-- Classic pools have no seasons, and the current banner shows its own; the choice is kept for other pools -->
+				<Select
+					contained
+					label={m.gacha_season()}
+					options={seasonOptions}
+					value={classic ? '' : fixedRates ? bannerSeason : season}
+					onValueChange={(value) => (season = value ?? '')}
+					disabled={classic || fixedRates}
+					fullWidth
+				/>
+				<Select
+					contained
+					label={m.gacha_purchase()}
+					options={purchaseOptions}
+					bind:value={purchase}
+					fullWidth
+				/>
+				{#if operation !== 'until'}
+					<Input
+						contained
+						label={m.gacha_draws()}
+						type="number"
+						min={purchase === 'ten' ? 10 : 1}
+						step={purchase === 'ten' ? 10 : 1}
+						bind:value={draws}
+						disabled={drawsLocked}
+						required
+						fullWidth
+					/>
+				{/if}
+			</div>
+
+			{#if operation !== 'draw'}
 				<div class="fields">
-					<Select
-						contained
-						label={m.gacha_mode()}
-						options={modeOptions}
-						bind:value={mode}
-						fullWidth
-					/>
-					<!-- Classic pools have no seasons, and the current banner shows its own; the choice is kept for other pools -->
-					<Select
-						contained
-						label={m.gacha_season()}
-						options={seasonOptions}
-						value={classic ? '' : fixedRates ? bannerSeason : season}
-						onValueChange={(value) => (season = value ?? '')}
-						disabled={classic || fixedRates}
-						fullWidth
-					/>
-					<Select
-						contained
-						label={m.gacha_purchase()}
-						options={purchaseOptions}
-						bind:value={purchase}
-						fullWidth
-					/>
-					{#if operation !== 'until'}
-						<Input
+					<div class="wide">
+						<GachaItemPicker
 							contained
-							label={m.gacha_draws()}
-							type="number"
-							min={purchase === 'ten' ? 10 : 1}
-							step={purchase === 'ten' ? 10 : 1}
-							bind:value={draws}
-							disabled={drawsLocked}
-							required
+							label={m.gacha_target()}
+							placeholder={m.gacha_search_items()}
+							items={ssrs}
+							bind:value={target}
+							onValueChange={() => (targetError = '')}
+							error={targetError}
+							disabled={loading}
+						/>
+					</div>
+					<Input
+						contained
+						label={m.gacha_copies()}
+						type="number"
+						min="1"
+						max="1000"
+						bind:value={copies}
+						required
+						fullWidth
+					/>
+					{#if operation === 'odds'}
+						<Select
+							contained
+							label={m.gacha_comparison()}
+							options={comparisonOptions}
+							bind:value={comparison}
 							fullWidth
 						/>
 					{/if}
 				</div>
+			{/if}
 
-				{#if operation !== 'draw'}
-					<div class="fields">
-						<div class="wide">
-							<GachaItemPicker
-								contained
-								label={m.gacha_target()}
-								placeholder={m.gacha_search_items()}
-								items={ssrs}
-								bind:value={target}
-								onValueChange={() => (targetError = '')}
-								error={targetError}
-								disabled={loading}
-							/>
-						</div>
-						<Input
-							contained
-							label={m.gacha_copies()}
-							type="number"
-							min="1"
-							max="1000"
-							bind:value={copies}
-							required
-							fullWidth
-						/>
-						{#if operation === 'odds'}
-							<Select
-								contained
-								label={m.gacha_comparison()}
-								options={comparisonOptions}
-								bind:value={comparison}
-								fullWidth
-							/>
-						{/if}
-					</div>
-				{/if}
-
-				{#if fixedRates}
-					<GachaRateups {ssrs} rateups={bannerRateups} readonly>
-						{#snippet aside()}
-							{#if bannerLive}
-								<Tooltip content={m.gacha_banner_ends({ date: bannerEnds })}>
-									<span class="banner-countdown">
-										{m.gacha_banner_remaining({ time: bannerCountdown })}
-									</span>
-								</Tooltip>
-							{/if}
-						{/snippet}
-						{#snippet note()}
-							{#if banner && !bannerLive}
-								<p class="banner-note">{m.gacha_banner_stale()}</p>
-							{/if}
-						{/snippet}
-					</GachaRateups>
-				{:else}
-					<GachaRateups {ssrs} bind:rateups disabled={loading} />
-				{/if}
-			</div>
-		{/if}
+			{#if !collapsed}
+				<div id="gacha-rateups" transition:slide={{ duration: 150 }}>
+					{#if fixedRates}
+						<GachaRateups {ssrs} rateups={bannerRateups} readonly>
+							{#snippet aside()}
+								{#if bannerLive}
+									<Tooltip content={m.gacha_banner_ends({ date: bannerEnds })}>
+										<span class="banner-countdown">
+											{m.gacha_banner_remaining({ time: bannerCountdown })}
+										</span>
+									</Tooltip>
+								{/if}
+							{/snippet}
+							{#snippet note()}
+								{#if banner && !bannerLive}
+									<p class="banner-note">{m.gacha_banner_stale()}</p>
+								{/if}
+							{/snippet}
+						</GachaRateups>
+					{:else}
+						<GachaRateups {ssrs} bind:rateups disabled={loading} />
+					{/if}
+				</div>
+			{/if}
+		</div>
 
 		{#if failure}
 			<p class="failure" role="alert">{failure}</p>
