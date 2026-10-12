@@ -8,6 +8,7 @@
 	import type { GridCharacter } from '$lib/types/api/party'
 	import { usePartyContext } from '$lib/types/party-context'
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -38,17 +39,23 @@
 </script>
 
 {#if editable}
-	<label class="brought-by-blessing">
-		<Checkbox
-			checked={!!character.broughtByBlessing}
-			onCheckedChange={handleChange}
-			disabled={saving}
-			size="small"
-		/>
-		<span>{m.solomonis_web_grid_brought_by_blessing()}</span>
-	</label>
+	<Tooltip content={m.solomonis_web_grid_brought_by_blessing()}>
+		<label class="brought-by-blessing">
+			<Checkbox
+				checked={!!character.broughtByBlessing}
+				onCheckedChange={handleChange}
+				disabled={saving}
+				size="small"
+			/>
+			<span>{m.solomonis_web_grid_brought_by_blessing_short()}</span>
+		</label>
+	</Tooltip>
 {:else if character.broughtByBlessing}
-	<span class="brought-by-blessing static">{m.solomonis_web_grid_brought_by_blessing()}</span>
+	<Tooltip content={m.solomonis_web_grid_brought_by_blessing()}>
+		<span class="brought-by-blessing static">
+			{m.solomonis_web_grid_brought_by_blessing_short()}
+		</span>
+	</Tooltip>
 {/if}
 
 <style lang="scss">
@@ -63,7 +70,7 @@
 		margin-top: spacing.$unit-half;
 		font-size: typography.$font-tiny;
 		color: var(--text-secondary);
-		text-align: center;
+		white-space: nowrap;
 		cursor: pointer;
 
 		&.static {

@@ -32,9 +32,14 @@
 	import ExtraContainer from '$lib/components/extra/ExtraContainer.svelte'
 	import ExtraWeapons from '$lib/components/extra/ExtraWeaponsGrid.svelte'
 	import Guidebooks from '$lib/components/extra/GuidebooksGrid.svelte'
+	import UnsealPriorityButton from '$lib/components/solomonis/grid/UnsealPriorityButton.svelte'
+	import { getExpedition } from '$lib/components/solomonis/grid/seal'
 
 	const ctx = usePartyContext()
 	const dragContext = getDragDropContext()
+
+	// Evoking Solomonis builds rank their sealed slots in a pane
+	let isSolomonisBuild = $derived(getExpedition(ctx?.getParty())?.kind === 'build')
 
 	let mainhand = $derived(
 		weapons.find((w) => (w as unknown as Record<string, unknown>).mainhand || w.position === -1)
@@ -156,6 +161,9 @@
 			{/each}
 		</ul>
 	</div>
+	{#if isSolomonisBuild && (ctx?.canEdit() ?? false)}
+		<UnsealPriorityButton canEdit={ctx?.canEdit() ?? false} />
+	{/if}
 	{#if raidExtra || showGuidebooks}
 		<ExtraContainer>
 			{#if raidExtra}

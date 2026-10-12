@@ -1926,5 +1926,6 @@
 	"solomonis_web_grid_priority_save_failed": "解放優先度を保存できませんでした",
 	"solomonis_web_grid_weapon_slot": "武器スロット {position}",
 	"solomonis_web_grid_summon_slot": "召喚石スロット {position}",
-	"solomonis_web_grid_brought_by_blessing": "ハングドマンで同行"
+	"solomonis_web_grid_brought_by_blessing": "ハングドマンで同行",
+	"solomonis_web_grid_brought_by_blessing_short": "ハングドマン"
 }

@@ -1945,5 +1945,6 @@
 	"solomonis_web_grid_priority_save_failed": "Couldn't save the unseal priority",
 	"solomonis_web_grid_weapon_slot": "Weapon slot {position}",
 	"solomonis_web_grid_summon_slot": "Summon slot {position}",
-	"solomonis_web_grid_brought_by_blessing": "Brought by The Hanged Man"
+	"solomonis_web_grid_brought_by_blessing": "Brought by The Hanged Man",
+	"solomonis_web_grid_brought_by_blessing_short": "Hanged Man"
 }
