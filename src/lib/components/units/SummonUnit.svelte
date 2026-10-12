@@ -30,6 +30,13 @@
 	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 	import quickSummonFilled from '$src/assets/icons/quick-summon/filled.svg'
 	import quickSummonEmpty from '$src/assets/icons/quick-summon/empty.svg'
+	import SealOverlay from '$lib/components/solomonis/grid/SealOverlay.svelte'
+	import SealStateControl from '$lib/components/solomonis/grid/SealStateControl.svelte'
+	import {
+		FRIEND_SUMMON_POSITION,
+		getExpedition,
+		slotSeal
+	} from '$lib/components/solomonis/grid/seal'
 
 	interface Props {
 		item?: GridSummon | undefined
@@ -48,6 +55,13 @@
 	}: Props = $props()
 
 	const ctx = usePartyContext()
+
+	// Evoking Solomonis: seal state (no support summon in the mode)
+	let seal = $derived.by(() => {
+		const expedition = getExpedition(ctx?.getParty())
+		if (!expedition || position === FRIEND_SUMMON_POSITION) return null
+		return slotSeal(expedition, 'summon', position, item)
+	})
 
 	// Use position (not data flags) to determine sizing — position is authoritative
 	let isMainSized = $derived(
@@ -238,6 +252,9 @@
 								alt={localizedName(item?.summon?.name)}
 								src={imageUrl}
 							/>
+							{#if seal}
+								<SealOverlay {seal} filled={true} />
+							{/if}
 						</div>
 					{/key}
 					{#if inCollection}
@@ -322,6 +339,9 @@
 					alt=""
 					src={getPlaceholderImage('summon', position === -1 || position === 6 ? 'main' : 'grid')}
 				/>
+				{#if seal}
+					<SealOverlay {seal} filled={false} />
+				{/if}
 				{#if ctx?.canEdit()}
 					<span class="icon">
 						<Icon name="plus" size={24} />
@@ -382,6 +402,9 @@
 			/>
 		{/if}
 	</div>
+	{#if item && seal?.editable && ctx?.canEdit()}
+		<SealStateControl type="summon" {item} sealState={seal.state} />
+	{/if}
 </div>
 
 <DuplicateCollectionDialog

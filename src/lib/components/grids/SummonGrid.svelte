@@ -16,9 +16,15 @@
 	import SummonUnit from '$lib/components/units/SummonUnit.svelte'
 	import ExtraSummons from '$lib/components/extra/ExtraSummonsGrid.svelte'
 	import * as m from '$lib/paraglide/messages'
+	import UnsealPriorityButton from '$lib/components/solomonis/grid/UnsealPriorityButton.svelte'
+	import { getExpedition } from '$lib/components/solomonis/grid/seal'
 
 	const ctx = usePartyContext()
 	const dragContext = getDragDropContext()
+
+	// Evoking Solomonis has no support summon; builds rank their sealed slots
+	let expedition = $derived(getExpedition(ctx?.getParty()))
+	let isSolomonis = $derived(!!expedition)
 
 	let main = $derived(summons.find((s) => s.position === -1) ?? summons.find((s) => s.main))
 	let friend = $derived(summons.find((s) => s.position === 6) ?? summons.find((s) => s.friend))
@@ -76,7 +82,7 @@
 </script>
 
 <div class="wrapper">
-	<div class="grid">
+	<div class="grid" class:solomonis={isSolomonis}>
 		<div class="LabeledUnit">
 			<SummonUnit
 				item={main}
@@ -139,21 +145,28 @@
 		</section>
 
 		<!-- Friend summon: in main grid on desktop, hidden on mobile -->
-		<div class="LabeledUnit friend-desktop">
-			<SummonUnit item={friend} position={6} />
-		</div>
+		{#if !isSolomonis}
+			<div class="LabeledUnit friend-desktop">
+				<SummonUnit item={friend} position={6} />
+			</div>
+		{/if}
 	</div>
 
 	<!-- Bottom row: friend box (mobile only) + subaura box -->
 	<div class="bottom-row">
-		<div class="friend-mobile">
-			<h3>{m.summon_friend_label()}</h3>
-			<div class="friend-unit">
-				<SummonUnit item={friend} position={6} sizeOverride="grid" />
+		{#if !isSolomonis}
+			<div class="friend-mobile">
+				<h3>{m.summon_friend_label()}</h3>
+				<div class="friend-unit">
+					<SummonUnit item={friend} position={6} sizeOverride="grid" />
+				</div>
 			</div>
-		</div>
+		{/if}
 		<ExtraSummons {summons} offset={4} {collectionStatus} />
 	</div>
+	{#if expedition?.kind === 'build' && (ctx?.canEdit() ?? false)}
+		<UnsealPriorityButton canEdit={ctx?.canEdit() ?? false} />
+	{/if}
 </div>
 
 <style lang="scss">
@@ -182,6 +195,11 @@
 
 		@media (max-width: 768px) {
 			grid-template-columns: 1.2fr 2fr;
+		}
+
+		// No support summon column on Solomonis parties
+		&.solomonis {
+			grid-template-columns: 1.17fr 2fr;
 		}
 
 		.summons {

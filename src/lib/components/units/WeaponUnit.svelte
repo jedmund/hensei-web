@@ -42,6 +42,9 @@
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
+	import SealOverlay from '$lib/components/solomonis/grid/SealOverlay.svelte'
+	import SealStateControl from '$lib/components/solomonis/grid/SealStateControl.svelte'
+	import { getExpedition, slotSeal } from '$lib/components/solomonis/grid/seal'
 	interface Props {
 		item?: GridWeapon | undefined
 		position: number
@@ -52,6 +55,13 @@
 	let { item, position, notInCollection = false, inCollection = false }: Props = $props()
 
 	const ctx = usePartyContext()
+
+	// Evoking Solomonis: seal state for the main grid (not extra slots)
+	let seal = $derived.by(() => {
+		const expedition = getExpedition(ctx?.getParty())
+		if (!expedition || position >= 9) return null
+		return slotSeal(expedition, 'weapon', position, item)
+	})
 
 	// Use $derived to ensure consistent computation between server and client
 	let imageUrl = $derived.by(() => {
@@ -307,6 +317,9 @@
 								src={imageUrl}
 								onerror={(e) => handleImageFallback(e, fallbackUrl)}
 							/>
+							{#if seal}
+								<SealOverlay {seal} filled={true} />
+							{/if}
 						</div>
 					{/key}
 					{#if inCollection}
@@ -365,6 +378,9 @@
 					alt=""
 					src={getPlaceholderImage('weapon', position === -1 ? 'main' : 'grid')}
 				/>
+				{#if seal}
+					<SealOverlay {seal} filled={false} />
+				{/if}
 				{#if ctx?.canEdit()}
 					<span class="icon">
 						<Icon name="plus" size={24} />
@@ -428,6 +444,9 @@
 			/>
 		{/if}
 	</div>
+	{#if item && seal?.editable && ctx?.canEdit()}
+		<SealStateControl type="weapon" {item} sealState={seal.state} />
+	{/if}
 </div>
 
 <DuplicateCollectionDialog
