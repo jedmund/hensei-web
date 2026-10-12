@@ -303,7 +303,21 @@
 		}
 	}
 
-	.more,
+	// The count of SSRs past the thumbnails, in a tile the size of one
+	.more {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: $unit-5x;
+		height: $unit-5x;
+		border-radius: $item-corner-small;
+		background: var(--placeholder-bg);
+		color: var(--text-secondary);
+		font-size: $font-small;
+		font-weight: $bold;
+		white-space: nowrap;
+	}
+
 	.stats {
 		font-size: $font-small;
 		color: var(--text-secondary);
