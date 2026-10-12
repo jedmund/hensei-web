@@ -23,9 +23,25 @@ export interface GachaShare {
 	/** granblue_id and percentage of each rate-up */
 	rateups: { id: string; percent: string }[]
 	seed: string
+	/**
+	 * The game banner a current-banner result was drawn from. Only results
+	 * carry it, so they replay after the banner changes; settings links follow
+	 * the live banner.
+	 */
+	banner: string
 }
 
-export const GACHA_MODES = ['premium', 'legend', 'flash', 'classic', 'classic_ii', 'classic_iii']
+/** The game's current banner, drawn with the rates it publishes */
+export const CURRENT_BANNER = 'current'
+export const GACHA_MODES = [
+	CURRENT_BANNER,
+	'premium',
+	'legend',
+	'flash',
+	'classic',
+	'classic_ii',
+	'classic_iii'
+]
 export const GACHA_SEASONS = ['valentines', 'summer', 'halloween', 'holiday', 'formal']
 
 export const SHARE_DEFAULTS: GachaShare = {
@@ -38,12 +54,14 @@ export const SHARE_DEFAULTS: GachaShare = {
 	comparison: 'at_least',
 	target: '',
 	rateups: [],
-	seed: ''
+	seed: '',
+	banner: ''
 }
 
 const MAX_RATEUPS = 50
 const GRANBLUE_ID = /^\d{10}$/
 const PERCENT = /^\d{1,3}(\.\d{1,6})?$/
+const BANNER_ID = /^\d{1,12}$/
 
 /** The value when it's one of the allowed ones, otherwise the fallback */
 export function oneOf<T extends string>(
@@ -83,8 +101,13 @@ export function seasonalPool(date: Date = new Date()): string {
 export function readShare(params: URLSearchParams): GachaShare {
 	const operation = oneOf(params.get('op'), ['draw', 'until', 'odds'], SHARE_DEFAULTS.operation)
 	const mode = oneOf(params.get('pool'), GACHA_MODES, SHARE_DEFAULTS.mode)
-	const season = mode.startsWith('classic') ? '' : oneOf(params.get('season'), GACHA_SEASONS, '')
+	const season =
+		mode.startsWith('classic') || mode === CURRENT_BANNER
+			? ''
+			: oneOf(params.get('season'), GACHA_SEASONS, '')
 	const target = params.get('target') ?? ''
+	const seedValue = seed(params.get('seed'))
+	const banner = params.get('banner') ?? ''
 
 	const rateups: GachaShare['rateups'] = []
 	for (const entry of params.getAll('rateup').slice(0, MAX_RATEUPS)) {
@@ -103,8 +126,9 @@ export function readShare(params: URLSearchParams): GachaShare {
 		copies: count(params.get('copies'), 1000, SHARE_DEFAULTS.copies),
 		comparison: oneOf(params.get('cmp'), ['at_least', 'exactly'], SHARE_DEFAULTS.comparison),
 		target: GRANBLUE_ID.test(target) ? target : '',
-		rateups,
-		seed: seed(params.get('seed'))
+		rateups: mode === CURRENT_BANNER ? [] : rateups,
+		seed: seedValue,
+		banner: mode === CURRENT_BANNER && seedValue && BANNER_ID.test(banner) ? banner : ''
 	}
 }
 
@@ -127,5 +151,7 @@ export function writeShare(share: GachaShare): string {
 	}
 	for (const rate of share.rateups) params.append('rateup', `${rate.id}:${rate.percent}`)
 	if (share.seed) params.set('seed', share.seed)
+	if (share.seed && share.mode === CURRENT_BANNER && share.banner)
+		params.set('banner', share.banner)
 	return params.toString()
 }

@@ -18,9 +18,26 @@ describe('gacha share links', () => {
 				{ id: '1040119000', percent: '0.5' },
 				{ id: '2040094000', percent: '1' }
 			],
-			seed: 'abc123'
+			seed: 'abc123',
+			banner: ''
 		}
 		expect(read(writeShare(share))).toEqual(share)
+	})
+
+	it('pins a current-banner result to its banner, but not the settings', () => {
+		const result = read('pool=current&seed=abc&banner=211960')
+		expect(result).toMatchObject({ mode: 'current', seed: 'abc', banner: '211960' })
+		expect(read(writeShare(result))).toEqual(result)
+		expect(writeShare({ ...result, seed: '' })).toBe('pool=current')
+		expect(read('pool=current&banner=211960').banner).toBe('')
+		expect(read('pool=legend&seed=abc&banner=211960').banner).toBe('')
+		expect(read('pool=current&seed=abc&banner=../1').banner).toBe('')
+	})
+
+	it('drops seasons and custom rate-ups for the current banner', () => {
+		const share = read('pool=current&season=summer&rateup=1040119000:0.5')
+		expect(share.season).toBe('')
+		expect(share.rateups).toEqual([])
 	})
 
 	it('leaves defaults out of the query string', () => {

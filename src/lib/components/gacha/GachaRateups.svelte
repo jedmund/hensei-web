@@ -1,4 +1,4 @@
-<!-- GachaRateups - Rate-up list for the gacha simulator: SSRs with a custom rate -->
+<!-- GachaRateups - Rate-up list for the gacha simulator: SSRs with a custom rate, or a banner's own -->
 
 <script lang="ts">
 	import Button from '$lib/components/ui/Button.svelte'
@@ -8,6 +8,7 @@
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { gachaItemName, gachaItemThumbnail } from '$lib/utils/gacha'
 	import type { CatalogueItem } from '$lib/types/gacha'
+	import type { Snippet } from 'svelte'
 
 	export interface Rateup {
 		identity: string
@@ -19,9 +20,13 @@
 		ssrs: CatalogueItem[]
 		rateups: Rateup[]
 		disabled?: boolean
+		/** Shows the rates without editing, for a banner's own rate-ups */
+		readonly?: boolean
+		/** Below the heading, e.g. where the rates come from */
+		note?: Snippet
 	}
 
-	let { ssrs, rateups = $bindable(), disabled = false }: Props = $props()
+	let { ssrs, rateups = $bindable(), disabled = false, readonly = false, note }: Props = $props()
 
 	const candidates = $derived(
 		ssrs.filter((item) => !rateups.some((rate) => rate.identity === item.identity))
@@ -42,15 +47,18 @@
 
 <section class="rateups">
 	<h2>{m.gacha_rates()}</h2>
-	<!-- Above the list, so it stays put as rate-ups are added -->
-	<GachaItemPicker
-		contained
-		placeholder={m.gacha_search_items()}
-		items={candidates}
-		clearOnSelect
-		onValueChange={add}
-		{disabled}
-	/>
+	{@render note?.()}
+	{#if !readonly}
+		<!-- Above the list, so it stays put as rate-ups are added -->
+		<GachaItemPicker
+			contained
+			placeholder={m.gacha_search_items()}
+			items={candidates}
+			clearOnSelect
+			onValueChange={add}
+			{disabled}
+		/>
+	{/if}
 	{#each rateups as rate (rate.identity)}
 		{@const item = itemFor(rate.identity)}
 		<div class="rateup">
@@ -58,27 +66,31 @@
 				<img src={gachaItemThumbnail(item)} alt="" />
 				<span class="rateup-name">{name(item)}</span>
 			{/if}
-			<div class="rateup-percent">
-				<Input
-					contained
-					type="text"
-					inputmode="decimal"
-					aria-label={m.gacha_rate()}
-					bind:value={rate.percent}
+			{#if readonly}
+				<span class="rateup-percent fixed">{rate.percent}%</span>
+			{:else}
+				<div class="rateup-percent">
+					<Input
+						contained
+						type="text"
+						inputmode="decimal"
+						aria-label={m.gacha_rate()}
+						bind:value={rate.percent}
+						size="small"
+						alignRight
+					/>
+					<span>%</span>
+				</div>
+				<Button
+					variant="ghost"
 					size="small"
-					alignRight
+					iconOnly
+					icon="close"
+					aria-label={m.gacha_remove()}
+					type="button"
+					onclick={() => remove(rate.identity)}
 				/>
-				<span>%</span>
-			</div>
-			<Button
-				variant="ghost"
-				size="small"
-				iconOnly
-				icon="close"
-				aria-label={m.gacha_remove()}
-				type="button"
-				onclick={() => remove(rate.identity)}
-			/>
+			{/if}
 		</div>
 	{/each}
 </section>
@@ -133,5 +145,11 @@
 		gap: $unit-half;
 		width: 96px;
 		color: var(--text-secondary);
+
+		&.fixed {
+			justify-content: flex-end;
+			width: auto;
+			font-variant-numeric: tabular-nums;
+		}
 	}
 </style>

@@ -21,7 +21,13 @@
 	import { MediaQuery } from 'svelte/reactivity'
 	import { page } from '$app/state'
 	import { replaceState } from '$app/navigation'
-	import { readShare, seasonalPool, writeShare, type GachaShare } from '$lib/utils/gachaShare'
+	import {
+		CURRENT_BANNER,
+		readShare,
+		seasonalPool,
+		writeShare,
+		type GachaShare
+	} from '$lib/utils/gachaShare'
 	import {
 		gachaGranblueIdFor,
 		gachaIdentityFor,
@@ -29,7 +35,7 @@
 		gachaItemThumbnail
 	} from '$lib/utils/gacha'
 	import { addEntry, readLog, trimResult, writeLog, type GachaLogEntry } from '$lib/utils/gachaLog'
-	import type { CatalogueItem, GachaResult } from '$lib/types/gacha'
+	import type { CatalogueItem, GachaBanner, GachaResult } from '$lib/types/gacha'
 
 	let { data } = $props()
 
@@ -38,11 +44,12 @@
 
 	// Settings start from the URL so shared links open as they were sent. The
 	// target and rate-ups wait for the catalogue, which resolves their ids.
-	// A fresh visit opens on the pool that's likely running today; links with
-	// settings keep theirs, since they leave Premium out of the query
+	// A fresh visit opens on the game's current banner (or, until the API has
+	// one, the pool that's likely running today); links with settings keep
+	// theirs, since they leave Premium out of the query
 	const shared = page.url.search
 		? readShare(page.url.searchParams)
-		: { ...readShare(page.url.searchParams), mode: seasonalPool() }
+		: { ...readShare(page.url.searchParams), mode: CURRENT_BANNER }
 	let pendingShare: GachaShare | null = shared
 	let restored = $state(false)
 
@@ -56,6 +63,12 @@
 	let target = $state('')
 	let rateups = $state<Rateup[]>([])
 	let items = $state<CatalogueItem[]>([])
+	// The current banner's details, with its rate-ups, and whether the API
+	// has a banner at all
+	let banner = $state<GachaBanner | null>(null)
+	let bannerAvailable = $state(false)
+	// A shared current-banner result's banner, until it has been replayed
+	let pinnedBanner = shared.banner
 	let result = $state<GachaResult | null>(null)
 	let busy = $state(false)
 	let loading = $state(true)
@@ -69,9 +82,18 @@
 	let resultShare = $state('')
 	// Link to the shown result: the settings it came from plus its seed,
 	// whatever the form says now
-	const resultLink = $derived(
-		result ? [resultShare, `seed=${encodeURIComponent(result.seed)}`].filter(Boolean).join('&') : ''
-	)
+	const resultLink = $derived(result ? linkFor(resultShare, result) : '')
+	/** A result's link: its settings, its seed and, for the current banner, the banner it came from */
+	function linkFor(settings: string, data: GachaResult) {
+		const { mode: pool, banner: pin } = data.configuration ?? {}
+		return [
+			settings,
+			`seed=${encodeURIComponent(data.seed)}`,
+			pool === CURRENT_BANNER && pin ? `banner=${encodeURIComponent(pin)}` : ''
+		]
+			.filter(Boolean)
+			.join('&')
+	}
 
 	// Base SSR rates, matching the API's simulation: 6% for the galas, 3% otherwise
 	const ssrRates: Record<string, number> = {
@@ -82,21 +104,27 @@
 		classic_ii: 0.03,
 		classic_iii: 0.03
 	}
-	const modeOptions = $derived(
-		[
+	const percent = (value: number) =>
+		new Intl.NumberFormat(getLocale(), { style: 'percent', maximumFractionDigits: 2 }).format(value)
+	const modeOptions = $derived([
+		...(bannerAvailable || mode === CURRENT_BANNER
+			? [
+					{
+						value: CURRENT_BANNER,
+						label: m.gacha_current(),
+						...(banner ? { suffix: percent(Number(banner.ssr_rate)) } : {})
+					}
+				]
+			: []),
+		...[
 			{ value: 'premium', label: m.gacha_premium() },
 			{ value: 'legend', label: m.gacha_legend() },
 			{ value: 'flash', label: m.gacha_flash() },
 			{ value: 'classic', label: m.gacha_classic() },
 			{ value: 'classic_ii', label: m.gacha_classic_ii() },
 			{ value: 'classic_iii', label: m.gacha_classic_iii() }
-		].map((option) => ({
-			...option,
-			suffix: new Intl.NumberFormat(getLocale(), { style: 'percent' }).format(
-				ssrRates[option.value] ?? 0.03
-			)
-		}))
-	)
+		].map((option) => ({ ...option, suffix: percent(ssrRates[option.value] ?? 0.03) }))
+	])
 	const seasonOptions = $derived([
 		{ value: '', label: m.gacha_none() },
 		{ value: 'valentines', label: m.gacha_valentines() },
@@ -115,6 +143,20 @@
 	])
 
 	const classic = $derived(mode.startsWith('classic'))
+	// The current banner's rates come from the game: no seasons or custom rate-ups
+	const fixedRates = $derived(mode === CURRENT_BANNER)
+	const bannerRateups = $derived(banner?.rateups ?? [])
+	const shownRateups = $derived(fixedRates ? bannerRateups : rateups)
+	const bannerEnds = $derived(
+		banner
+			? new Intl.DateTimeFormat(getLocale(), {
+					month: 'short',
+					day: 'numeric',
+					hour: 'numeric',
+					minute: '2-digit'
+				}).format(new Date(new Date(banner.ends_at).getTime() - 60_000))
+			: ''
+	)
 	const ssrs = $derived(items.filter((item) => item.rarity === 3))
 
 	const name = (item: CatalogueItem) => gachaItemName(item, getLocale())
@@ -130,14 +172,34 @@
 	}
 
 	$effect(() => {
-		const query = `mode=${encodeURIComponent(mode)}${!classic && season ? `&season=${encodeURIComponent(season)}` : ''}`
+		const settings: Record<string, string> = { mode }
+		if (!classic && !fixedRates && season) settings.season = season
 		const controller = new AbortController()
+		const load = (pinned: string): Promise<Response> => {
+			const query = new URLSearchParams(pinned ? { ...settings, banner: pinned } : settings)
+			return fetch(`/api/gacha/catalogue?${query}`, { signal: controller.signal }).then(
+				(response) => {
+					// A shared banner we no longer have: the result can't replay,
+					// so the page opens on the live banner
+					if (response.status !== 422 || !pinned) return response
+					pinnedBanner = ''
+					return load('')
+				}
+			)
+		}
 		loading = true
 		failure = ''
-		fetch(`/api/gacha/catalogue?${query}`, { signal: controller.signal })
+		load(fixedRates ? untrack(() => pinnedBanner) : '')
 			.then(async (response) => {
+				// No banner yet: the pool that's likely running today instead
+				if (response.status === 422 && fixedRates) {
+					mode = seasonalPool()
+					return
+				}
 				const data = await readJson(response)
 				items = data.items
+				banner = data.banner ?? null
+				bannerAvailable = data.modes?.includes(CURRENT_BANNER) ?? false
 				result = null
 				const share = pendingShare
 				pendingShare = null
@@ -150,6 +212,8 @@
 					: []
 				restored = true
 				if (share?.seed) untrack(() => void run(share.seed))
+				// Only the shared result replays its banner; later draws use the live one
+				pinnedBanner = ''
 			})
 			.catch((error) => {
 				if (!controller.signal.aborted) failure = String(error.message)
@@ -274,14 +338,15 @@
 		const signal = runController.signal
 		const payload = {
 			mode,
-			season: classic ? null : season || null,
+			season: classic || fixedRates ? null : season || null,
 			purchase,
 			draws,
 			copies: Number(copies),
 			comparison,
 			target,
-			rateups,
-			...(seed ? { seed } : {})
+			rateups: fixedRates ? [] : rateups,
+			...(seed ? { seed } : {}),
+			...(seed && fixedRates && pinnedBanner ? { banner: pinnedBanner } : {})
 		}
 		try {
 			let response = await fetch(`/api/gacha/${operation === 'draw' ? 'simulations' : operation}`, {
@@ -315,7 +380,7 @@
 						id: data.seed,
 						at: Date.now(),
 						operation,
-						link: [resultShare, `seed=${encodeURIComponent(data.seed)}`].filter(Boolean).join('&'),
+						link: linkFor(resultShare, data),
 						result: trimResult(data),
 						target: items.find((item) => item.identity === data.target),
 						goldMoons: goldMoonCount(data.items ?? [], owned)
@@ -352,21 +417,24 @@
 		}
 	}
 
-	function currentShare(seed = '') {
+	function currentShare() {
 		return writeShare({
 			operation,
 			mode,
-			season: classic ? '' : season,
+			season: classic || fixedRates ? '' : season,
 			purchase,
 			draws: String(draws),
 			copies: String(copies),
 			comparison,
 			target: gachaGranblueIdFor(items, target),
-			rateups: rateups.flatMap((rate) => {
-				const id = gachaGranblueIdFor(items, rate.identity)
-				return id ? [{ id, percent: String(rate.percent) }] : []
-			}),
-			seed
+			rateups: fixedRates
+				? []
+				: rateups.flatMap((rate) => {
+						const id = gachaGranblueIdFor(items, rate.identity)
+						return id ? [{ id, percent: String(rate.percent) }] : []
+					}),
+			seed: '',
+			banner: ''
 		})
 	}
 
@@ -391,7 +459,7 @@
 	$effect(() => {
 		if (!restored) return
 		const settings = currentShare()
-		wantedQuery = result && resultShare === settings ? currentShare(result.seed) : settings
+		wantedQuery = result && resultShare === settings ? linkFor(settings, result) : settings
 		if (!syncScheduled) {
 			syncScheduled = true
 			setTimeout(syncUrl, 0)
@@ -461,14 +529,14 @@
 						bind:value={mode}
 						fullWidth
 					/>
-					<!-- Classic pools have no seasons; the choice is kept for other pools -->
+					<!-- Classic pools and the current banner have no seasons; the choice is kept for other pools -->
 					<Select
 						contained
 						label={m.gacha_season()}
 						options={seasonOptions}
-						value={classic ? '' : season}
+						value={classic || fixedRates ? '' : season}
 						onValueChange={(value) => (season = value ?? '')}
-						disabled={classic}
+						disabled={classic || fixedRates}
 						fullWidth
 					/>
 					<Select
@@ -529,7 +597,21 @@
 					</div>
 				{/if}
 
-				<GachaRateups {ssrs} bind:rateups disabled={loading} />
+				{#if fixedRates}
+					<GachaRateups {ssrs} rateups={bannerRateups} readonly>
+						{#snippet note()}
+							{#if banner}
+								<p class="banner-note">
+									{banner.live
+										? m.gacha_banner_source({ date: bannerEnds })
+										: m.gacha_banner_stale()}
+								</p>
+							{/if}
+						{/snippet}
+					</GachaRateups>
+				{:else}
+					<GachaRateups {ssrs} bind:rateups disabled={loading} />
+				{/if}
 			</div>
 		{/if}
 
@@ -538,9 +620,9 @@
 		{/if}
 
 		<div class="actions">
-			{#if collapsed && rateups.length > 0}
+			{#if collapsed && shownRateups.length > 0}
 				<ul class="collapsed-rateups" aria-label={m.gacha_rates()}>
-					{#each rateups as rate (rate.identity)}
+					{#each shownRateups as rate (rate.identity)}
 						{@const item = itemFor(rate.identity)}
 						{#if item}
 							<li title="{name(item)} {rate.percent}%">
@@ -654,6 +736,12 @@
 				grid-column: auto;
 			}
 		}
+	}
+
+	.banner-note {
+		margin: 0;
+		color: var(--text-secondary);
+		font-size: $font-small;
 	}
 
 	.failure {
