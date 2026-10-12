@@ -6,9 +6,11 @@
 		party?: Party
 		summons?: GridSummon[]
 		extendedView?: boolean
+		/** Evoking Solomonis parties have no support summon. */
+		hideFriend?: boolean
 	}
 
-	let { party, summons: directSummons, extendedView = false }: Props = $props()
+	let { party, summons: directSummons, extendedView = false, hideFriend = false }: Props = $props()
 
 	// Use direct summons if provided, otherwise get from party
 	const summons = $derived(directSummons || party?.summons || [])
@@ -34,7 +36,7 @@
 	}
 </script>
 
-<div class="rep" class:extended={extendedView}>
+<div class="rep" class:extended={extendedView} class:no-friend={hideFriend}>
 	<div class="mainSummon" class:empty={!main}>
 		{#if main}
 			<img alt="Main Summon" src={summonImageUrl(main, true)} loading="lazy" decoding="async" />
@@ -53,13 +55,20 @@
 			</li>
 		{/each}
 	</ul>
-	<div class="friendSummon" class:empty={!friend}>
-		{#if friend}
-			<img alt="Friend Summon" src={summonImageUrl(friend, true)} loading="lazy" decoding="async" />
-		{:else}
-			<img alt="" src={summonImageUrl(undefined, true)} />
-		{/if}
-	</div>
+	{#if !hideFriend}
+		<div class="friendSummon" class:empty={!friend}>
+			{#if friend}
+				<img
+					alt="Friend Summon"
+					src={summonImageUrl(friend, true)}
+					loading="lazy"
+					decoding="async"
+				/>
+			{:else}
+				<img alt="" src={summonImageUrl(undefined, true)} />
+			{/if}
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -75,6 +84,10 @@
 		// Layout: main summon | 6 grid summons (3x2) | friend summon
 		grid-template-columns: auto 1fr auto;
 		grid-template-rows: 1fr;
+
+		&.no-friend {
+			grid-template-columns: auto 1fr;
+		}
 
 		.summon,
 		.mainSummon,

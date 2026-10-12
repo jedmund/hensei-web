@@ -13,6 +13,7 @@
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
 	import * as m from '$lib/paraglide/messages'
 	import { MediaQuery } from 'svelte/reactivity'
+	import { characterSlotCount, getExpedition } from '$lib/components/solomonis/grid/seal'
 
 	interface Props {
 		selectedTab?: GridType
@@ -31,6 +32,11 @@
 	const summons = $derived(party.summons)
 	const characters = $derived(party.characters)
 	const unlimited = $derived(party.raid?.group?.unlimited ?? false)
+	// Evoking Solomonis: character limit and no support summon in the previews
+	const expedition = $derived(getExpedition(party))
+	const characterSlotLimit = $derived(
+		expedition ? characterSlotCount(expedition, characters) : undefined
+	)
 	const jobIcon = $derived(party.job ? getJobIconUrl(party.job.granblueId) : undefined)
 
 	// Handle value changes
@@ -68,7 +74,7 @@
 				labelIcon={jobIcon}
 				selected={value === GridType.Character}
 			>
-				<CharacterRep {party} {characters} {unlimited} />
+				<CharacterRep {party} {characters} {unlimited} slotLimit={characterSlotLimit} />
 			</RepSegment>
 
 			<RepSegment
@@ -84,7 +90,7 @@
 				label={m.party_segmented_control_summons()}
 				selected={value === GridType.Summon}
 			>
-				<SummonRep {summons} />
+				<SummonRep {summons} hideFriend={!!expedition} />
 			</RepSegment>
 		{/if}
 	</SegmentedControl>
