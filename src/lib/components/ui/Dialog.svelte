@@ -12,6 +12,12 @@
 		/** Extra class appended to the dialog content — for caller-specific
 		 * tweaks like height caps. */
 		class?: string
+		/** Extra class for the overlay, e.g. to animate it out */
+		overlayClass?: string
+		/** Handle Escape yourself; call preventDefault() to keep the dialog open */
+		onEscapeKeydown?: (event: KeyboardEvent) => void
+		/** Handle clicks outside yourself; call preventDefault() to keep it open */
+		onInteractOutside?: (event: PointerEvent) => void
 		children: Snippet
 	}
 
@@ -21,6 +27,9 @@
 		size = 'default',
 		hideClose = false,
 		class: className = '',
+		overlayClass = '',
+		onEscapeKeydown,
+		onInteractOutside,
 		children
 	}: DialogProps = $props()
 
@@ -42,8 +51,12 @@
 
 <DialogBase.Root bind:open onOpenChange={handleOpenChange}>
 	<DialogBase.Portal>
-		<DialogBase.Overlay class="dialog-overlay" />
-		<DialogBase.Content class="dialog-content {sizeClass} {className}">
+		<DialogBase.Overlay class="dialog-overlay {overlayClass}" />
+		<DialogBase.Content
+			class="dialog-content {sizeClass} {className}"
+			{onEscapeKeydown}
+			{onInteractOutside}
+		>
 			{#if !hideClose}
 				<DialogBase.Close class="dialog-close">
 					<span aria-hidden="true">×</span>

@@ -8,9 +8,12 @@
 	import GachaItemPicker from '$lib/components/gacha/GachaItemPicker.svelte'
 	import GachaRateups, { type Rateup } from '$lib/components/gacha/GachaRateups.svelte'
 	import GachaResults from '$lib/components/gacha/GachaResults.svelte'
+	import GachaAnimation from '$lib/components/gacha/GachaAnimation.svelte'
+	import Switch from '$lib/components/ui/switch/Switch.svelte'
+	import { choosePresentation, type Presentation } from '$lib/gacha-animation/presentation'
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
-	import { untrack } from 'svelte'
+	import { onMount, untrack } from 'svelte'
 	import { slide } from 'svelte/transition'
 	import { MediaQuery } from 'svelte/reactivity'
 	import { page } from '$app/state'
@@ -154,6 +157,41 @@
 	})
 	$effect(() => () => runController?.abort())
 
+	// Draw animation: when the switch is on, Draw is locked to one purchase (a
+	// 10-draw or a single draw) and plays the animation before the results.
+	// Remembered per viewer; a shared link with other settings keeps its
+	// settings and turns the switch off for that visit.
+	const ANIMATION_KEY = 'gacha:playAnimation'
+	const reducedMotion = new MediaQuery('(prefers-reduced-motion: reduce)')
+	let playAnimation = $state(false)
+	let animation = $state<{ items: CatalogueItem[]; presentation: Presentation } | null>(null)
+	const drawsLocked = $derived(playAnimation && operation === 'draw')
+
+	const onePurchase = (unit: 'ten' | 'singles') => (unit === 'ten' ? '10' : '1')
+	// Draws follows Purchase while locked
+	$effect(() => {
+		if (drawsLocked) draws = onePurchase(purchase)
+	})
+	function setPlayAnimation(value: boolean) {
+		if (value === playAnimation) return
+		playAnimation = value
+		try {
+			localStorage.setItem(ANIMATION_KEY, value ? '1' : '0')
+		} catch {
+			// Storage can be unavailable (private mode); the switch still works
+		}
+	}
+	onMount(() => {
+		let remembered = false
+		try {
+			remembered = localStorage.getItem(ANIMATION_KEY) === '1'
+		} catch {
+			remembered = false
+		}
+		const keepsSettings = !page.url.search || String(shared.draws) === onePurchase(shared.purchase)
+		playAnimation = remembered && keepsSettings
+	})
+
 	// The settings card collapses to the mode switcher and Draw button, and
 	// collapses on its own when a draw starts
 	const isMobile = new MediaQuery('(max-width: 768px)')
@@ -207,6 +245,13 @@
 			}
 			result = data
 			resultShare = currentShare()
+			// Only for draws started here, not shared links replaying a result
+			if (!seed && operation === 'draw' && playAnimation && !reducedMotion.current) {
+				const drawn: CatalogueItem[] = data.ordered ?? []
+				if (drawn.length > 0) {
+					animation = { items: drawn, presentation: choosePresentation(drawn, data.seed) }
+				}
+			}
 		} catch (error) {
 			if (!signal.aborted) failure = error instanceof Error ? error.message : m.gacha_error()
 		} finally {
@@ -348,6 +393,7 @@
 							min={purchase === 'ten' ? 10 : 1}
 							step={purchase === 'ten' ? 10 : 1}
 							bind:value={draws}
+							disabled={drawsLocked}
 							required
 							fullWidth
 						/>
@@ -411,13 +457,35 @@
 					{/each}
 				</ul>
 			{/if}
-			<Button variant="primary" type="submit" disabled={loading || busy}>
-				{m.gacha_run()}
-			</Button>
+			<div class="run">
+				{#if operation === 'draw'}
+					<label class="animation-toggle">
+						<Switch
+							checked={playAnimation}
+							size="small"
+							disabled={busy}
+							onCheckedChange={setPlayAnimation}
+						/>
+						<span>{m.gacha_play_animation()}</span>
+					</label>
+				{/if}
+				<Button variant="primary" type="submit" disabled={loading || busy}>
+					{m.gacha_run()}
+				</Button>
+			</div>
 		</div>
 	</form>
 
-	{#if result}
+	{#if animation}
+		<GachaAnimation
+			items={animation.items}
+			presentation={animation.presentation}
+			onDone={() => (animation = null)}
+		/>
+	{/if}
+
+	<!-- Held back while the animation plays, so they don't give it away -->
+	{#if result && !animation}
 		<GachaResults
 			{result}
 			target={items.find((item) => item.identity === result?.target)}
@@ -498,10 +566,22 @@
 		display: flex;
 		align-items: center;
 		gap: $unit;
+	}
 
-		:global([data-button-root]) {
-			margin-left: auto;
-		}
+	.run {
+		display: flex;
+		align-items: center;
+		gap: $unit-2x;
+		margin-left: auto;
+	}
+
+	.animation-toggle {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+		font-size: $font-small;
+		color: var(--text-secondary);
+		cursor: pointer;
 	}
 
 	.collapsed-rateups {
