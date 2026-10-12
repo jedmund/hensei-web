@@ -11,8 +11,11 @@ import {
 	isFullExpedition,
 	isSolomonisParty,
 	releasedBlessings,
-	solomonisErrorMessage
+	solomonisErrorMessage,
+	solomonisRaidTransition
 } from '$lib/components/solomonis/party/solomonisParty'
+import { transformResponse } from '$lib/api/schemas/transforms'
+import type { Party } from '$lib/types/api/party'
 import routeEvokers from './fixtures/solomonis/real/route-evokers.json'
 import blessings from './fixtures/solomonis/real/blessings.json'
 import partyRun from './fixtures/solomonis/real/party-run.json'
@@ -84,10 +87,11 @@ describe('Solomonis adapter with real API responses', () => {
 		expect(formatJst(party.solomonis.ended_at)).toBe('2026-10-11 16:38')
 	})
 
-	it('recognises a Solomonis party from its expedition', () => {
-		// The real party view's raid group has no content_mode yet (asked on the board).
-		const party = partyRun.body.party
-		expect(isSolomonisParty({ raid: undefined, solomonis: party.solomonis as never })).toBe(true)
+	it('recognises a Solomonis zone from its raid group content mode', () => {
+		const party = transformResponse<{ party: Party }>(partyRun.body).party
+		expect(party.raid?.group?.contentMode).toBe('solomonis')
+		expect(isSolomonisParty({ raid: party.raid, solomonis: null })).toBe(true)
+		expect(solomonisRaidTransition(false, party.raid)).toBe('enter')
 	})
 
 	it('words the D12 error without the solomonis. key prefix', async () => {
