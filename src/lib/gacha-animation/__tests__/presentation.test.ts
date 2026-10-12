@@ -3,7 +3,6 @@ import {
 	choosePresentation,
 	CLASS_UP_CHANCE,
 	FAKE_OUT_CHANCE,
-	NEW_ITEM_HINT_CHANCE,
 	NEW_SUMMON_RAINBOW_CHANCE,
 	SINGLE_SSR_RAINBOW_CHANCE,
 	seededRandom
@@ -81,14 +80,28 @@ describe('choosePresentation', () => {
 		}
 	})
 
-	it('plays Rainbow 2 for several SSRs, with add variants by new character', () => {
-		const plain = seeds(2000).map((seed) => choosePresentation(draw(3, 3), seed).pattern)
-		expect(new Set(plain.map((p) => `${p.main}/${p.sub}/${p.add}`))).toEqual(
+	it('plays Rainbow 2 for several SSRs, with add variants by new character or summon', () => {
+		const plain = seeds(500).map((seed) => choosePresentation(draw(3, 3), seed).pattern)
+		expect(new Set(plain.map((p) => `${p.main}/${p.sub}/${p.add}`))).toEqual(new Set(['2/0/0']))
+
+		const newSummons = new Set(['Weapon:1'])
+		const withSummon = seeds(2000).map(
+			(seed) => choosePresentation(draw(3, 3), seed, { newSummons }).pattern
+		)
+		expect(new Set(withSummon.map((p) => `${p.main}/${p.sub}/${p.add}`))).toEqual(
 			new Set(['2/0/0', '2/0/3'])
 		)
-		const rate = plain.filter((p) => p.add === 3).length / plain.length
-		expect(rate).toBeGreaterThan(NEW_ITEM_HINT_CHANCE * 0.7)
-		expect(rate).toBeLessThan(NEW_ITEM_HINT_CHANCE * 1.3)
+		const rate = withSummon.filter((p) => p.add === 3).length / withSummon.length
+		expect(rate).toBeGreaterThan(NEW_SUMMON_RAINBOW_CHANCE * 0.85)
+		expect(rate).toBeLessThan(NEW_SUMMON_RAINBOW_CHANCE * 1.15)
+
+		// New characters take priority
+		const both = seeds(500).map(
+			(seed) =>
+				choosePresentation(draw(3, 3), seed, { newSummons, newCharacters: new Set(['Weapon:0']) })
+					.pattern
+		)
+		expect(both.some((p) => p.add === 3)).toBe(false)
 
 		const newCharacters = new Set(['Weapon:1'])
 		const withNew = seeds(500).map(

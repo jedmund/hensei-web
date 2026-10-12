@@ -48,21 +48,15 @@ export const CLASS_UP_CHANCE = 0.15
 export const BURST_CHANCE = 0.1
 
 /**
- * Chance that a multi-SSR draw without a new character plays add 3, the
- * variant that hints at a new item without promising one. The game's rate
- * isn't known.
- */
-export const NEW_ITEM_HINT_CHANCE = 0.25
-
-/**
  * Chance that a single-SSR draw opens on Rainbow 5, the single-SSR rainbow,
  * instead of gold. The game's rate isn't known.
  */
 export const SINGLE_SSR_RAINBOW_CHANCE = 0.1
 /**
- * Chance that a single-SSR draw whose SSR is a new summon opens on Rainbow 3,
- * the new-summon rainbow. It isn't guaranteed: a new summon has played Rainbow
- * 5 in the game. The game's rate isn't known.
+ * Chance that a draw with a new SSR summon (and no new SSR character) plays a
+ * new-summon opening: Rainbow 3 for a single SSR, Rainbow 2 + add 3 for
+ * several. It isn't guaranteed: a new summon has played Rainbow 5 in the game.
+ * The game's rate isn't known.
  */
 export const NEW_SUMMON_RAINBOW_CHANCE = 0.5
 
@@ -71,7 +65,7 @@ export const NEW_SUMMON_RAINBOW_CHANCE = 0.5
  * observed in play):
  * - add 0: several SSRs, with or without a new character
  * - add 1: several SSRs and at least one new character (blue-sky shrine)
- * - add 3: several SSRs, maybe a new weapon or summon
+ * - add 3: several SSRs and a new summon
  * - add 4: several SSRs and a new character
  *
  * Rainbow 3 is a new SSR summon, and Rainbow 5 any single SSR. Rainbow 1 and
@@ -158,6 +152,7 @@ export function choosePresentation(
 				crystal,
 				burst,
 				newIndices.some((index) => rarities[index] === 'SSR'),
+				newSummon,
 				random
 			),
 		fakeOut,
@@ -171,6 +166,7 @@ function patternFor(
 	crystal: Crystal,
 	burst: boolean,
 	newCharacter: boolean,
+	newSummon: boolean,
 	random: () => number
 ): Pattern {
 	switch (crystal) {
@@ -179,7 +175,9 @@ function patternFor(
 				const index = Math.floor(random() * MULTI_SSR_NEW_CHARACTER.length)
 				return MULTI_SSR_NEW_CHARACTER[index] as Pattern
 			}
-			return random() < NEW_ITEM_HINT_CHANCE ? { ...MULTI_SSR, add: 3 } : MULTI_SSR
+			return newSummon && random() < NEW_SUMMON_RAINBOW_CHANCE
+				? { ...MULTI_SSR, add: 3 }
+				: MULTI_SSR
 		case 'gold':
 			// Sub-pattern 1 is gold's prismatic burst transition
 			return { main: 6, sub: burst ? 1 : 0, add: 0 }
