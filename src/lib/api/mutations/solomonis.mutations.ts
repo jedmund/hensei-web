@@ -1,6 +1,6 @@
 /**
  * Evoking Solomonis party mutations: expedition fields and the blessing
- * loadout. Both write the server's answer straight into the party cache.
+ * loadout. Both write the returned party straight into the party cache.
  *
  * @module api/mutations/solomonis
  */
@@ -9,12 +9,23 @@ import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svel
 import { solomonisAdapter } from '$lib/api/adapters/solomonis.adapter'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import type { Party } from '$lib/types/api/party'
-import type { SolomonisExpedition, SolomonisExpeditionInput } from '$lib/types/api/solomonis'
+import type { SolomonisExpeditionInput } from '$lib/types/api/solomonis'
 import { getEditKey } from '$lib/utils/editKeys'
 
 function editKeyHeaders(shortcode: string): Record<string, string> | undefined {
 	const editKey = getEditKey(shortcode)
 	return editKey ? { 'X-Edit-Key': editKey } : undefined
+}
+
+/**
+ * Every Solomonis write returns the full party (D11): the route Evoker moves
+ * the raid and element, and Justice changes the starting slots. Keep fields
+ * the write may not return (e.g. favorited).
+ */
+function mergeParty(queryClient: QueryClient, shortcode: string, data: Party) {
+	queryClient.setQueryData(partyKeys.detail(shortcode), (old: Party | undefined) =>
+		old ? { ...old, ...data } : data
+	)
 }
 
 export interface UpdateExpeditionParams {
@@ -38,11 +49,7 @@ export function updateExpeditionOptions(queryClient: QueryClient) {
 				editKeyHeaders(params.shortcode)
 			),
 		onSuccess: (data: Party, params: UpdateExpeditionParams) => {
-			// The route Evoker can move the party's raid and element, so take the
-			// whole server response, keeping fields the update may not return.
-			queryClient.setQueryData(partyKeys.detail(params.shortcode), (old: Party | undefined) =>
-				old ? { ...old, ...data } : data
-			)
+			mergeParty(queryClient, params.shortcode, data)
 		},
 		onSettled: (_data: unknown, _err: unknown, params: UpdateExpeditionParams) => {
 			queryClient.invalidateQueries({ queryKey: partyKeys.detail(params.shortcode) })
@@ -59,13 +66,10 @@ export function updateBlessingsOptions(queryClient: QueryClient) {
 				params.blessingLevelIds,
 				editKeyHeaders(params.shortcode)
 			),
-		onSuccess: (solomonis: SolomonisExpedition, params: UpdateBlessingsParams) => {
-			queryClient.setQueryData(partyKeys.detail(params.shortcode), (old: Party | undefined) =>
-				old ? { ...old, solomonis } : old
-			)
+		onSuccess: (data: Party, params: UpdateBlessingsParams) => {
+			mergeParty(queryClient, params.shortcode, data)
 		},
 		onSettled: (_data: unknown, _err: unknown, params: UpdateBlessingsParams) => {
-			// Justice changes which weapon slots start unsealed, so refetch the grids too.
 			queryClient.invalidateQueries({ queryKey: partyKeys.detail(params.shortcode) })
 		}
 	}
