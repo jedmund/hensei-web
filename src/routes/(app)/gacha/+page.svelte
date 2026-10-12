@@ -712,6 +712,7 @@
 	{#if result && !animation && !drawingAgain}
 		<GachaResults
 			{result}
+			heading={m.gacha_latest_result()}
 			target={items.find((item) => item.identity === result?.target)}
 			{operation}
 			bind:currency

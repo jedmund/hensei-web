@@ -1867,6 +1867,7 @@
 	"gacha_animation": "Draw animation",
 	"gacha_animation_next": "Next",
 	"gacha_skip": "Skip",
+	"gacha_latest_result": "Latest result",
 	"gacha_result_title": "You got these {count} things",
 	"gacha_result_title_one": "You got 1 thing",
 	"gacha_result_information": "Information",

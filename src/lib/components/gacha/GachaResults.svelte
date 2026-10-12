@@ -44,6 +44,8 @@
 		share?: boolean
 		/** Pool and season, shown at the top left of the share image */
 		label?: string
+		/** Title on the card's first line, beside the art switch */
+		heading?: string
 		/**
 		 * Query string of the settings the result came from, plus its seed.
 		 * Turns on Share and Copy; links and images are built from it rather
@@ -59,6 +61,7 @@
 		art = $bindable('character'),
 		share = false,
 		label,
+		heading,
 		target,
 		link
 	}: Props = $props()
@@ -117,6 +120,7 @@
 		)
 	)
 	const hasCharacterArt = $derived(drawnSsrs.some((item) => item.recruits?.granblue_id))
+	const showArtSwitch = $derived(!share && operation === 'draw' && hasCharacterArt)
 	const currencies = $derived<Currency[]>(
 		result.cost.usd ? ['usd', 'jpy', 'crystals'] : ['jpy', 'crystals']
 	)
@@ -256,6 +260,24 @@
 	{#if share && label}
 		<div class="share-label">{label}</div>
 	{/if}
+	{#if heading || showArtSwitch}
+		<div class="results-title">
+			{#if heading}
+				<h2>{heading}</h2>
+			{/if}
+			{#if showArtSwitch}
+				<SegmentedControl
+					value={art}
+					onValueChange={(value) => (art = value as Art)}
+					size="xsmall"
+					variant="background"
+				>
+					<Segment value="character">{m.collection_tab_characters()}</Segment>
+					<Segment value="weapon">{m.collection_tab_weapons()}</Segment>
+				</SegmentedControl>
+			{/if}
+		</div>
+	{/if}
 	<div class="results-head">
 		<div class="stats">
 			{#if operation === 'draw' && result.totals}
@@ -321,17 +343,6 @@
 				{/if}
 			{/if}
 		</div>
-		{#if !share && operation === 'draw' && hasCharacterArt}
-			<SegmentedControl
-				value={art}
-				onValueChange={(value) => (art = value as Art)}
-				size="xsmall"
-				variant="background"
-			>
-				<Segment value="character">{m.collection_tab_characters()}</Segment>
-				<Segment value="weapon">{m.collection_tab_weapons()}</Segment>
-			</SegmentedControl>
-		{/if}
 	</div>
 
 	{#if drawnSsrs.length > 0}
@@ -463,15 +474,23 @@
 		background: var(--page-bg);
 	}
 
-	.results-head {
+	// The heading on the left and the art switch on the right; without a
+	// heading, the switch stays on the left
+	.results-title {
 		display: flex;
-		flex-direction: column-reverse;
-		align-items: flex-start;
+		align-items: center;
+		justify-content: space-between;
 		gap: $unit-2x;
 
-		.stats {
-			width: 100%;
+		h2 {
+			margin: 0;
+			font-size: $font-regular;
+			font-weight: $medium;
 		}
+	}
+
+	.results-head .stats {
+		width: 100%;
 	}
 
 	.stats {

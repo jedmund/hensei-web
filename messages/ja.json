@@ -1848,6 +1848,7 @@
 	"gacha_animation": "ガチャ演出",
 	"gacha_animation_next": "次へ",
 	"gacha_skip": "スキップ",
+	"gacha_latest_result": "最新の結果",
 	"gacha_result_title": "以下{count}点をGET！",
 	"gacha_result_title_one": "以下1点をGET！",
 	"gacha_result_information": "Information",
