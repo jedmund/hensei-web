@@ -803,12 +803,16 @@
 
 	.actions {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		gap: $unit;
 	}
 
+	// Keeps its size; the rate-up thumbnails wrap to make room, and on a narrow
+	// screen it moves below them
 	.run {
 		display: flex;
+		flex-shrink: 0;
 		align-items: center;
 		gap: $unit-2x;
 		margin-left: auto;
@@ -820,11 +824,14 @@
 		gap: $unit;
 		font-size: $font-small;
 		color: var(--text-secondary);
+		white-space: nowrap;
 		cursor: pointer;
 	}
 
 	.collapsed-rateups {
 		display: flex;
+		// At least three thumbnails wide
+		flex: 1 1 calc($unit-5x * 3 + $unit-half * 2);
 		flex-wrap: wrap;
 		gap: $unit-half;
 		min-width: 0;
