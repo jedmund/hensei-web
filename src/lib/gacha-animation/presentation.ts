@@ -55,15 +55,31 @@ export const BURST_CHANCE = 0.1
 export const NEW_ITEM_HINT_CHANCE = 0.25
 
 /**
+ * Chance that a single-SSR draw opens on Rainbow 5, the single-SSR rainbow,
+ * instead of gold. The game's rate isn't known.
+ */
+export const SINGLE_SSR_RAINBOW_CHANCE = 0.1
+/**
+ * Chance that a single-SSR draw whose SSR is a new summon opens on Rainbow 3,
+ * the new-summon rainbow. It isn't guaranteed: a new summon has played Rainbow
+ * 5 in the game. The game's rate isn't known.
+ */
+export const NEW_SUMMON_RAINBOW_CHANCE = 0.5
+
+/**
  * Rainbow 2 is the multi-SSR opening. Its add variants (from the game, as
  * observed in play):
  * - add 0: several SSRs, with or without a new character
  * - add 1: several SSRs and at least one new character (blue-sky shrine)
  * - add 3: several SSRs, maybe a new weapon or summon
  * - add 4: several SSRs and a new character
- * Rainbow 1 and 3–5 aren't mapped yet.
+ *
+ * Rainbow 3 is a new SSR summon, and Rainbow 5 any single SSR. Rainbow 1 and
+ * 4 aren't mapped yet.
  */
 const MULTI_SSR = { main: 2, sub: 0, add: 0 }
+const NEW_SUMMON = { main: 3, sub: 0, add: 0 }
+const SINGLE_SSR = { main: 5, sub: 0, add: 0 }
 const MULTI_SSR_NEW_CHARACTER: Pattern[] = [0, 1, 4].map((add) => ({ ...MULTI_SSR, add }))
 
 const RARITY: Record<number, Rarity> = { 1: 'R', 2: 'SR', 3: 'SSR' }
@@ -89,7 +105,14 @@ export function seededRandom(seed: string): () => number {
 export function choosePresentation(
 	items: CatalogueItem[],
 	seed: string,
-	{ newCharacters = new Set<string>() }: { newCharacters?: Set<string> } = {}
+	{
+		newCharacters = new Set<string>(),
+		newSummons = new Set<string>()
+	}: {
+		newCharacters?: ReadonlySet<string>
+		/** Identities of drawn summons the viewer doesn't have yet */
+		newSummons?: ReadonlySet<string>
+	} = {}
 ): Presentation {
 	const random = seededRandom(seed)
 	const rarities = items.map((item) => RARITY[item.rarity] ?? 'R')
@@ -98,15 +121,26 @@ export function choosePresentation(
 		newCharacters.has(item.identity) ? [index] : []
 	)
 
+	const newSummon = items.some(
+		(item, index) => rarities[index] === 'SSR' && newSummons.has(item.identity)
+	)
+
 	// Rainbow for several SSRs, gold for a single SSR (sometimes faking out
-	// with blue), blue-violet otherwise
+	// with blue, or opening on Rainbow 3 or 5), blue-violet otherwise
 	let crystal: Crystal = 'violet'
 	let fakeOut = false
+	let singleRainbow: Pattern | undefined
 	if (ssrCount >= 2) {
 		crystal = 'rainbow'
 	} else if (ssrCount === 1) {
-		fakeOut = random() < FAKE_OUT_CHANCE
-		crystal = fakeOut ? 'blue' : 'gold'
+		if (newSummon && random() < NEW_SUMMON_RAINBOW_CHANCE) singleRainbow = NEW_SUMMON
+		else if (random() < SINGLE_SSR_RAINBOW_CHANCE) singleRainbow = SINGLE_SSR
+		if (singleRainbow) {
+			crystal = 'rainbow'
+		} else {
+			fakeOut = random() < FAKE_OUT_CHANCE
+			crystal = fakeOut ? 'blue' : 'gold'
+		}
 	}
 
 	const stones = rarities.map((rarity) => ({
@@ -118,12 +152,14 @@ export function choosePresentation(
 	return {
 		crystal,
 		// The new-character openings are for new SSR characters
-		pattern: patternFor(
-			crystal,
-			burst,
-			newIndices.some((index) => rarities[index] === 'SSR'),
-			random
-		),
+		pattern:
+			singleRainbow ??
+			patternFor(
+				crystal,
+				burst,
+				newIndices.some((index) => rarities[index] === 'SSR'),
+				random
+			),
 		fakeOut,
 		burst,
 		stones,

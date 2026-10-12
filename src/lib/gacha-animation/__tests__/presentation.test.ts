@@ -4,6 +4,8 @@ import {
 	CLASS_UP_CHANCE,
 	FAKE_OUT_CHANCE,
 	NEW_ITEM_HINT_CHANCE,
+	NEW_SUMMON_RAINBOW_CHANCE,
+	SINGLE_SSR_RAINBOW_CHANCE,
 	seededRandom
 } from '../presentation'
 import type { CatalogueItem } from '$lib/types/gacha'
@@ -42,13 +44,41 @@ describe('choosePresentation', () => {
 		expect(choosePresentation(items, 'x')).toEqual(choosePresentation(items, 'x'))
 	})
 
-	it('opens on rainbow only for several SSRs', () => {
-		expect(choosePresentation(draw(3, 3, 2), 'x').crystal).toBe('rainbow')
+	it('opens on rainbow for several SSRs, and never without an SSR', () => {
+		for (const seed of seeds(200)) {
+			expect(choosePresentation(draw(3, 3, 2), seed).crystal).toBe('rainbow')
+			expect(choosePresentation(draw(2), seed).crystal).not.toBe('rainbow')
+		}
 		const withNew = choosePresentation(draw(3, 2), 'x', {
 			newCharacters: new Set(['Weapon:0'])
 		})
-		expect(withNew.crystal).not.toBe('rainbow')
 		expect(withNew.newCharacters).toEqual([0])
+	})
+
+	it('sometimes opens a single SSR on Rainbow 5', () => {
+		const results = seeds(4000).map((seed) => choosePresentation(draw(3, 2), seed))
+		const rainbows = results.filter((r) => r.crystal === 'rainbow')
+		expect(rainbows.every((r) => r.pattern.main === 5)).toBe(true)
+		const rate = rainbows.length / results.length
+		expect(rate).toBeGreaterThan(SINGLE_SSR_RAINBOW_CHANCE * 0.7)
+		expect(rate).toBeLessThan(SINGLE_SSR_RAINBOW_CHANCE * 1.3)
+	})
+
+	it('opens a single new SSR summon on Rainbow 3, or the usual single-SSR openings', () => {
+		const items = draw(3, 2)
+		const newSummons = new Set(['Weapon:0'])
+		const results = seeds(2000).map((seed) => choosePresentation(items, seed, { newSummons }))
+		const mains = results.map((r) => r.pattern.main)
+		expect(new Set(mains)).toEqual(new Set([3, 5, 6, 8]))
+		const rate = mains.filter((main) => main === 3).length / mains.length
+		expect(rate).toBeGreaterThan(NEW_SUMMON_RAINBOW_CHANCE * 0.85)
+		expect(rate).toBeLessThan(NEW_SUMMON_RAINBOW_CHANCE * 1.15)
+
+		// Only a new SSR counts
+		for (const seed of seeds(200)) {
+			const notSsr = choosePresentation(items, seed, { newSummons: new Set(['Weapon:1']) })
+			expect(notSsr.pattern.main).not.toBe(3)
+		}
 	})
 
 	it('plays Rainbow 2 for several SSRs, with add variants by new character', () => {
@@ -70,7 +100,9 @@ describe('choosePresentation', () => {
 	})
 
 	it('opens on gold for one SSR, sometimes faking out with blue', () => {
-		const results = seeds(2000).map((seed) => choosePresentation(draw(3, 2), seed))
+		const results = seeds(2000)
+			.map((seed) => choosePresentation(draw(3, 2), seed))
+			.filter((r) => r.crystal !== 'rainbow')
 		expect(new Set(results.map((r) => r.crystal))).toEqual(new Set(['gold', 'blue']))
 		expect(results.every((r) => r.fakeOut === (r.crystal === 'blue'))).toBe(true)
 		const rate = results.filter((r) => r.fakeOut).length / results.length
@@ -88,7 +120,7 @@ describe('choosePresentation', () => {
 	})
 
 	it("plays a game pattern that matches the crystal's colour", () => {
-		const mains = { rainbow: [2], gold: [6], violet: [7], blue: [8] }
+		const mains = { rainbow: [2, 5], gold: [6], violet: [7], blue: [8] }
 		for (const seed of seeds(500)) {
 			for (const items of [draw(3, 3), draw(3, 2), draw(2)]) {
 				const { crystal, pattern, burst } = choosePresentation(items, seed)

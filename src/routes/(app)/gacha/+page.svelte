@@ -213,6 +213,8 @@
 	// characters. Signed out, or until it loads, only repeats within a draw
 	// give moons.
 	let owned = $state.raw<ReadonlySet<string> | undefined>()
+	// The viewer's summons (summon ids), for the new-summon opening
+	let ownedSummons = $state.raw<ReadonlySet<string> | undefined>()
 	onMount(() => {
 		const userId = page.data.account?.userId
 		if (!userId) return
@@ -221,6 +223,12 @@
 			.then((ids) => (owned = new Set(ids)))
 			.catch(() => {
 				// Draws still work, just without the collection
+			})
+		collectionAdapter
+			.getCollectedSummonIds(userId)
+			.then((ids) => (ownedSummons = new Set(ids)))
+			.catch(() => {
+				// Draws still work, just without the new-summon opening
 			})
 	})
 
@@ -315,9 +323,19 @@
 				const drawn: CatalogueItem[] = data.ordered ?? []
 				if (drawn.length > 0) {
 					const { moons, newCharacters } = drawMoons(drawn, owned)
+					const newSummons = new Set(
+						ownedSummons
+							? drawn
+									.filter(
+										(item) =>
+											item.drawable_type === 'Summon' && !ownedSummons?.has(item.drawable_id)
+									)
+									.map((item) => item.identity)
+							: []
+					)
 					animation = {
 						items: drawn,
-						presentation: choosePresentation(drawn, data.seed, { newCharacters }),
+						presentation: choosePresentation(drawn, data.seed, { newCharacters, newSummons }),
 						moons,
 						newCharacters
 					}
