@@ -1905,6 +1905,7 @@
 	"gacha_error": "The simulation could not be completed.",
 	"gacha_current": "Current banner",
 	"gacha_banner_remaining": "{time} remaining",
+	"gacha_banner_duration": "{days}d {hours}h {minutes}m",
 	"gacha_banner_ends": "Ends {date} JST",
 	"gacha_banner_stale": "The new banner's rates haven't arrived yet, so these are the last banner's.",
 	"gacha_premium": "Premium",
