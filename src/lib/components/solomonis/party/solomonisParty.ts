@@ -205,3 +205,29 @@ export function routeEvokerMissingFromGrid(
 	const routeId = party.solomonis.routeEvoker.id
 	return !(party.characters ?? []).some((c) => c.character?.id === routeId)
 }
+
+// ---------------------------------------------------------------------------
+// Raid changes
+// ---------------------------------------------------------------------------
+
+/**
+ * What picking `raid` means for a party (D12):
+ * - `enter`: a Solomonis zone for a party outside the mode. The route Evoker
+ *   decides the zone, so the web app opens the route picker instead.
+ * - `leave`: a non-Solomonis raid (or none) for a Solomonis party. The API
+ *   deletes its Solomonis data, so the web app confirms first.
+ * - `none`: an ordinary raid change.
+ * Moving between Solomonis zones is `none`: the API rejects a zone that
+ * doesn't match the route Evoker.
+ */
+export type SolomonisRaidTransition = 'enter' | 'leave' | 'none'
+
+export function solomonisRaidTransition(
+	partyIsSolomonis: boolean,
+	raid: { group?: { contentMode?: string | null } | undefined } | null | undefined
+): SolomonisRaidTransition {
+	const toSolomonis = raid?.group?.contentMode === 'solomonis'
+	if (toSolomonis && !partyIsSolomonis) return 'enter'
+	if (!toSolomonis && partyIsSolomonis) return 'leave'
+	return 'none'
+}

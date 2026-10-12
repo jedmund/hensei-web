@@ -48,7 +48,11 @@
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import SolomonisPanel from '$lib/components/solomonis/party/SolomonisPanel.svelte'
 	import { openEditSolomonisPane } from '$lib/components/solomonis/party/openSolomonisPanes'
-	import { isSolomonisParty } from '$lib/components/solomonis/party/solomonisParty'
+	import {
+		isSolomonisParty,
+		solomonisRaidTransition,
+		type SolomonisRaidTransition
+	} from '$lib/components/solomonis/party/solomonisParty'
 	import { useUpdateSolomonisExpedition } from '$lib/api/mutations/solomonis.mutations'
 	import type { RaidFull } from '$lib/types/api/raid'
 	import * as m from '$lib/paraglide/messages'
@@ -153,6 +157,13 @@
 		getHasCollectionLinks: () => hasCollectionLinks,
 		onDetailsUpdated: () => {
 			if (isNew && party.id === 'new') hasEditedInfo = true
+		},
+		handleRaidChange: (raid) => {
+			// The settings pane closes right after saving; open our pane after it.
+			const transition = solomonisRaidTransition(isSolomonis, raid)
+			if (transition === 'none') return false
+			setTimeout(() => startSolomonisRaidTransition(transition, raid?.id ?? null))
+			return true
 		}
 	})
 
@@ -218,28 +229,33 @@
 	const isSolomonis = $derived(isSolomonisParty(party))
 	const updateSolomonisExpedition = useUpdateSolomonisExpedition()
 	let leaveSolomonisOpen = $state(false)
-	let pendingLeaveSolomonisRaid = $state<RaidFull | null>(null)
+	let pendingLeaveSolomonisRaidId = $state<string | null>(null)
+
+	/** Raid tile and settings pane: entering or leaving Solomonis goes through us (D12). */
+	function startSolomonisRaidTransition(
+		transition: SolomonisRaidTransition,
+		raidId: string | null
+	) {
+		if (transition === 'enter') {
+			openEditSolomonisPane(party, updateSolomonisExpedition, ensurePartyExistsFn)
+		} else if (transition === 'leave') {
+			pendingLeaveSolomonisRaidId = raidId
+			leaveSolomonisOpen = true
+		}
+	}
 
 	async function handleRaidSelect(raid: RaidFull | null) {
-		const toSolomonis = raid?.group?.contentMode === 'solomonis'
-		if (toSolomonis && !isSolomonis && party.id !== 'new') {
-			// The route Evoker decides the zone, so pick it instead of the raid.
-			openEditSolomonisPane(party, updateSolomonisExpedition)
-			return
-		}
-		if (isSolomonis && !toSolomonis) {
-			// Leaving the mode deletes the party's Solomonis data; confirm first.
-			pendingLeaveSolomonisRaid = raid
-			leaveSolomonisOpen = true
+		const transition = solomonisRaidTransition(isSolomonis, raid)
+		if (transition !== 'none') {
+			startSolomonisRaidTransition(transition, raid?.id ?? null)
 			return
 		}
 		await actions.updatePartyDetails({ raidId: raid?.id ?? null })
 	}
 
 	async function confirmLeaveSolomonis() {
-		const raid = pendingLeaveSolomonisRaid
 		leaveSolomonisOpen = false
-		await actions.updatePartyDetails({ raidId: raid?.id ?? null })
+		await actions.updatePartyDetails({ raidId: pendingLeaveSolomonisRaidId })
 	}
 
 	// --- Guidebook mutations ---

@@ -14,6 +14,9 @@ import { createMockMutations, createTestParty } from './helpers'
 import { MOCK_PARTY } from '$lib/api/mutations/__tests__/fixtures'
 import type { PartyMutations } from '../party-mutations.svelte'
 import type { Party } from '$lib/types/api/party'
+import type { Raid } from '$lib/types/api/entities'
+import { openPartyEditSidebar } from '$lib/features/party/openPartyEditSidebar.svelte'
+import type { PartyEditValues } from '$lib/features/party/openPartyEditSidebar.svelte'
 
 vi.mock('svelte-sonner', () => ({
 	toast: { error: vi.fn(), success: vi.fn() }
@@ -229,6 +232,51 @@ describe('usePartyActions', () => {
 				id: party.id,
 				shortcode: party.shortcode
 			})
+		})
+	})
+
+	// ========================================================================
+	// Settings pane raid changes (Evoking Solomonis, D12)
+	// ========================================================================
+
+	describe('settings pane raid change hook', () => {
+		const NEW_RAID = { id: 'raid-new', slug: 'zone' } as Raid
+
+		function saveSettings(raid: Raid | null) {
+			actions.openSettingsPanel()
+			const { initialValues, onSave } = vi.mocked(openPartyEditSidebar).mock.calls[0]![0]
+			const values: PartyEditValues = { ...initialValues, raid, raidId: raid?.id ?? null }
+			return onSave!(values)
+		}
+
+		it('leaves the raid out of the update when the hook takes it over', async () => {
+			const handleRaidChange = vi.fn().mockReturnValue(true)
+			actions = createActions({ handleRaidChange })
+
+			await saveSettings(NEW_RAID)
+
+			expect(handleRaidChange).toHaveBeenCalledWith(NEW_RAID)
+			const params = vi.mocked(mutations.party.update.mutateAsync).mock.calls[0]![0]
+			expect(params).not.toHaveProperty('raidId')
+			expect(params).toHaveProperty('name')
+		})
+
+		it('sends the raid when the hook declines it', async () => {
+			actions = createActions({ handleRaidChange: vi.fn().mockReturnValue(false) })
+
+			await saveSettings(NEW_RAID)
+
+			const params = vi.mocked(mutations.party.update.mutateAsync).mock.calls[0]![0]
+			expect(params.raidId).toBe('raid-new')
+		})
+
+		it("doesn't call the hook when the raid didn't change", async () => {
+			const handleRaidChange = vi.fn().mockReturnValue(true)
+			actions = createActions({ handleRaidChange })
+
+			await saveSettings(party.raid ?? null)
+
+			expect(handleRaidChange).not.toHaveBeenCalled()
 		})
 	})
 })

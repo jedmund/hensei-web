@@ -17,18 +17,36 @@ import EditSolomonisPane from './EditSolomonisPane.svelte'
 import EditBlessingsPane from './EditBlessingsPane.svelte'
 import { isFullExpedition } from './solomonisParty'
 
+/** The party a write goes to: its id and shortcode. */
+export interface PartyTarget {
+	id: string
+	shortcode: string
+}
+
+/**
+ * Opens the expedition pane. On a party that isn't saved yet (`/teams/new`),
+ * pass `ensurePartyExists`: the party is created first, then the expedition
+ * is written to it.
+ */
 export function openEditSolomonisPane(
 	party: Party,
-	mutation: ReturnType<typeof useUpdateSolomonisExpedition>
+	mutation: ReturnType<typeof useUpdateSolomonisExpedition>,
+	ensurePartyExists?: () => Promise<PartyTarget>
 ) {
 	sidebar.openWithComponent(m.solomonis_web_party_title(), EditSolomonisPane, {
 		party,
-		onSave: (solomonis: SolomonisExpeditionInput) => {
-			mutation
-				.mutateAsync({ partyId: party.id, shortcode: party.shortcode, solomonis })
-				.catch((err: unknown) =>
-					toast.error(extractErrorMessage(err, m.solomonis_web_party_save_failed()))
-				)
+		onSave: async (solomonis: SolomonisExpeditionInput) => {
+			try {
+				const target: PartyTarget =
+					party.id === 'new' && ensurePartyExists ? await ensurePartyExists() : party
+				await mutation.mutateAsync({
+					partyId: target.id,
+					shortcode: target.shortcode,
+					solomonis
+				})
+			} catch (err: unknown) {
+				toast.error(extractErrorMessage(err, m.solomonis_web_party_save_failed()))
+			}
 		}
 	})
 }
