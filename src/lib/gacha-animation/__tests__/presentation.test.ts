@@ -124,12 +124,26 @@ describe('choosePresentation', () => {
 		expect(rate).toBeLessThan(FAKE_OUT_CHANCE * 1.3)
 	})
 
-	it('opens on blue-violet without an SSR, with no burst', () => {
-		for (const seed of seeds(200)) {
+	it('opens a 10-part without an SSR on gold, never blue or blue-violet', () => {
+		for (const seed of seeds(500)) {
 			const result = choosePresentation(draw(2), seed)
-			expect(result.crystal).toBe('violet')
-			expect(result.pattern).toEqual({ main: 7, sub: 0, add: 0 })
-			expect(result.burst).toBe(false)
+			expect(result.crystal).toBe('gold')
+			expect(result.fakeOut).toBe(false)
+		}
+		for (const seed of seeds(500)) {
+			expect(choosePresentation(draw(3, 2), seed).crystal).not.toBe('violet')
+		}
+	})
+
+	it('opens a single SR on blue-violet and a single R on blue, with no fake-out', () => {
+		for (const seed of seeds(200)) {
+			const sr = choosePresentation([item('Weapon:0', 2)], seed)
+			expect(sr.pattern).toEqual({ main: 7, sub: 0, add: 0 })
+			const r = choosePresentation([item('Weapon:0', 1)], seed)
+			expect(r.pattern).toEqual({ main: 8, sub: 0, add: 0 })
+			expect(r.fakeOut).toBe(false)
+			const ssr = choosePresentation([item('Weapon:0', 3)], seed)
+			expect(['gold', 'rainbow']).toContain(ssr.crystal)
 		}
 	})
 
@@ -142,19 +156,21 @@ describe('choosePresentation', () => {
 				if (crystal !== 'rainbow') expect(pattern.add).toBe(0)
 				if (crystal === 'gold') expect(pattern.sub).toBe(burst ? 1 : 0)
 				if (crystal !== 'gold') expect(burst).toBe(false)
+				expect(crystal).not.toBe('violet')
 			}
 		}
 	})
 
-	it('classes up only SR and SSR stones, one rarity lower', () => {
+	it('hides only SSR stones, as SR stones', () => {
 		const results = seeds(2000).map((seed) => choosePresentation(draw(3, 2), seed))
-		for (const { stones } of results) {
+		for (const { stones, fakeOut } of results) {
 			expect(stones).toHaveLength(10)
 			expect(stones[0]?.startsAs).toMatch(/^(SSR|SR)$/)
-			expect(stones[1]?.startsAs).toMatch(/^(SR|R)$/)
-			expect(stones.slice(2).every((s) => s.rarity === 'R' && s.startsAs === 'R')).toBe(true)
+			if (fakeOut) expect(stones[0]?.startsAs).toBe('SR')
+			expect(stones.slice(1).every((s) => s.startsAs === s.rarity)).toBe(true)
 		}
-		const rate = results.filter((r) => r.stones[1]?.startsAs === 'R').length / results.length
+		const shown = results.filter((r) => !r.fakeOut)
+		const rate = shown.filter((r) => r.stones[0]?.startsAs === 'SR').length / shown.length
 		expect(rate).toBeGreaterThan(CLASS_UP_CHANCE * 0.7)
 		expect(rate).toBeLessThan(CLASS_UP_CHANCE * 1.3)
 	})
