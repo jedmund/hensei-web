@@ -48,7 +48,7 @@ describe('solomonisExpedition', () => {
 
 describe('replaceGuidebookOptions', () => {
 	it('sends the whole list with the edit key', async () => {
-		vi.mocked(solomonisGuidebookAdapter.replaceGuidebook).mockResolvedValue(EXPECTED.runSolomonis)
+		vi.mocked(solomonisGuidebookAdapter.replaceGuidebook).mockResolvedValue(RUN_PARTY)
 		const opts = replaceGuidebookOptions(queryClient)
 
 		await opts.mutationFn({ partyId: RUN_PARTY.id, shortcode: MOCK_SHORTCODE, entries: guidebook })
@@ -73,13 +73,18 @@ describe('replaceGuidebookOptions', () => {
 		expect(cached?.blessings).toEqual(EXPECTED.runSolomonis.blessings)
 	})
 
-	it('replaces the cached solomonis object with the response', async () => {
+	it('replaces the cached party with the response', async () => {
 		const opts = replaceGuidebookOptions(queryClient)
-		const response = { ...EXPECTED.runSolomonis, guidebook: guidebook.slice(0, 2) }
+		const response: Party = {
+			...RUN_PARTY,
+			name: 'Saved',
+			solomonis: { ...EXPECTED.runSolomonis, guidebook: guidebook.slice(0, 2) }
+		}
 
 		opts.onSuccess(response, { partyId: RUN_PARTY.id, shortcode: MOCK_SHORTCODE, entries: [] })
 
 		expect(cachedGuidebook()).toEqual(guidebook.slice(0, 2))
+		expect(getCachedParty(queryClient, MOCK_SHORTCODE)?.name).toBe('Saved')
 	})
 
 	it('rolls back on error', async () => {

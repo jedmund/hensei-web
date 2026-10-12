@@ -1926,7 +1926,16 @@
 	"gacha_chance": "{percent}% chance",
 	"gacha_target_required": "Choose a target",
 	"solomonis_web_guidebook_title": "Guidebook",
-	"solomonis_web_guidebook_effect_count": "{count} effects",
+	"solomonis_web_guidebook_effect_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} effect",
+				"countPlural=other": "{count} effects"
+			}
+		}
+	],
 	"solomonis_web_guidebook_add": "Add effect",
 	"solomonis_web_guidebook_empty": "No guidebook effects recorded",
 	"solomonis_web_guidebook_order_rarity": "By rarity",

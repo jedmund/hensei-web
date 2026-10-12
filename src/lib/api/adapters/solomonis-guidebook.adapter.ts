@@ -6,18 +6,15 @@
  *
  * - `GET /solomonis/guide_effects`: the static catalogue.
  * - `PUT /parties/:id/guide_effects`: replaces a run's whole guidebook and
- *   returns the party's full `solomonis` object.
+ *   returns the full party, `{ party }` (board decision D11).
  *
  * @module adapters/solomonis-guidebook
  */
 
 import { BaseAdapter } from './base.adapter'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
-import type {
-	GuideEffect,
-	GuidebookEntryInput,
-	SolomonisExpedition
-} from '$lib/types/api/solomonis'
+import type { Party } from '$lib/types/api/party'
+import type { GuideEffect, GuidebookEntryInput } from '$lib/types/api/solomonis'
 
 export class SolomonisGuidebookAdapter extends BaseAdapter {
 	/** All known guide effects. Static and cacheable. */
@@ -34,18 +31,13 @@ export class SolomonisGuidebookAdapter extends BaseAdapter {
 		partyId: string,
 		entries: GuidebookEntryInput[],
 		headers?: Record<string, string>
-	): Promise<SolomonisExpedition> {
-		const response = await this.request<SolomonisExpedition | { solomonis: SolomonisExpedition }>(
-			`/parties/${partyId}/guide_effects`,
-			{
-				method: 'PUT',
-				body: { guideEffects: entries },
-				headers
-			}
-		)
-		// The contract says writes return the `solomonis` object; accept it bare
-		// or wrapped in `{ solomonis }` until the endpoint exists.
-		return 'solomonis' in response ? response.solomonis : response
+	): Promise<Party> {
+		const response = await this.request<{ party: Party }>(`/parties/${partyId}/guide_effects`, {
+			method: 'PUT',
+			body: { guideEffects: entries },
+			headers
+		})
+		return response.party
 	}
 }
 

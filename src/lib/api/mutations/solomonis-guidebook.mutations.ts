@@ -3,7 +3,7 @@
  *
  * Every guidebook edit replaces the run's whole list
  * (`PUT /parties/:id/guide_effects`). The list is written to the cached party
- * straight away, then replaced with the `solomonis` object the API returns.
+ * straight away, then replaced with the full party the API returns.
  *
  * @module api/mutations/solomonis-guidebook
  */
@@ -64,12 +64,8 @@ export function replaceGuidebookOptions(queryClient: QueryClient) {
 			}
 			return { previousParty }
 		},
-		onSuccess: (solomonis: SolomonisExpedition, params: ReplaceGuidebookParams) => {
-			const key = partyKeys.detail(params.shortcode)
-			const party = queryClient.getQueryData<Party>(key)
-			if (party && solomonis) {
-				queryClient.setQueryData(key, withSolomonis(party, solomonis))
-			}
+		onSuccess: (party: Party, params: ReplaceGuidebookParams) => {
+			if (party) queryClient.setQueryData(partyKeys.detail(params.shortcode), party)
 		},
 		onError: (
 			_err: unknown,

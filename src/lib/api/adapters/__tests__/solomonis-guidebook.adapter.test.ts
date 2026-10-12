@@ -38,7 +38,7 @@ describe('SolomonisGuidebookAdapter', () => {
 	})
 
 	it('replaceGuidebook PUTs the whole list in snake_case with the edit key', async () => {
-		global.fetch = mockApiResponse(API.runSolomonis)
+		global.fetch = mockApiResponse({ party: { id: 'party-1', solomonis: API.runSolomonis } })
 
 		const result = await adapter.replaceGuidebook(
 			'party-1',
@@ -71,16 +71,9 @@ describe('SolomonisGuidebookAdapter', () => {
 				}
 			]
 		})
-		expect(result.guidebook).toHaveLength(EXPECTED.runSolomonis.guidebook.length)
-		expect(result.guidebook[1]?.displayValue).toBe('100%')
-	})
-
-	it('replaceGuidebook accepts a response wrapped in { solomonis }', async () => {
-		global.fetch = mockApiResponse({ solomonis: API.runSolomonis })
-
-		const result = await adapter.replaceGuidebook('party-1', [])
-
-		expect(result.kind).toBe('run')
-		expect(result.guidebook).toHaveLength(EXPECTED.runSolomonis.guidebook.length)
+		const solomonis = result.solomonis as typeof EXPECTED.runSolomonis
+		expect(result.id).toBe('party-1')
+		expect(solomonis.guidebook).toHaveLength(EXPECTED.runSolomonis.guidebook.length)
+		expect(solomonis.guidebook[1]?.displayValue).toBe('100%')
 	})
 })
