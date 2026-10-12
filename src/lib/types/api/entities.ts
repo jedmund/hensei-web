@@ -415,7 +415,12 @@ export interface RaidGroup {
 	extra: boolean
 	guidebooks: boolean
 	unlimited: boolean
+	/** Special content mode; `solomonis` shows the Evoking Solomonis panel. */
+	contentMode?: RaidGroupContentMode | null
 }
+
+/** Values of `raid_groups.content_mode`. */
+export type RaidGroupContentMode = 'solomonis'
 
 // Awakening entity
 export interface Awakening {

@@ -45,6 +45,12 @@
 	import PickPlaylistPane from '$lib/components/sidebar/PickPlaylistPane.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import Notice from '$lib/components/ui/Notice.svelte'
+	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
+	import SolomonisPanel from '$lib/components/solomonis/party/SolomonisPanel.svelte'
+	import { openEditSolomonisPane } from '$lib/components/solomonis/party/openSolomonisPanes'
+	import { isSolomonisParty } from '$lib/components/solomonis/party/solomonisParty'
+	import { useUpdateSolomonisExpedition } from '$lib/api/mutations/solomonis.mutations'
+	import type { RaidFull } from '$lib/types/api/raid'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -207,6 +213,34 @@
 		},
 		ensurePartyExists: ensurePartyExistsFn
 	})
+
+	// --- Evoking Solomonis ---
+	const isSolomonis = $derived(isSolomonisParty(party))
+	const updateSolomonisExpedition = useUpdateSolomonisExpedition()
+	let leaveSolomonisOpen = $state(false)
+	let pendingLeaveSolomonisRaid = $state<RaidFull | null>(null)
+
+	async function handleRaidSelect(raid: RaidFull | null) {
+		const toSolomonis = raid?.group?.contentMode === 'solomonis'
+		if (toSolomonis && !isSolomonis && party.id !== 'new') {
+			// The route Evoker decides the zone, so pick it instead of the raid.
+			openEditSolomonisPane(party, updateSolomonisExpedition)
+			return
+		}
+		if (isSolomonis && !toSolomonis) {
+			// Leaving the mode deletes the party's Solomonis data; confirm first.
+			pendingLeaveSolomonisRaid = raid
+			leaveSolomonisOpen = true
+			return
+		}
+		await actions.updatePartyDetails({ raidId: raid?.id ?? null })
+	}
+
+	async function confirmLeaveSolomonis() {
+		const raid = pendingLeaveSolomonisRaid
+		leaveSolomonisOpen = false
+		await actions.updatePartyDetails({ raidId: raid?.id ?? null })
+	}
 
 	// --- Guidebook mutations ---
 	const updateGuidebook = useUpdatePartyGuidebook()
@@ -444,9 +478,7 @@
 				onOpenDescription={actions.openDescriptionPanel}
 				onEditDescription={actions.editDescriptionPanel}
 				onOpenEdit={actions.openSettingsPanel}
-				onRaidSelect={async (raid) => {
-					await actions.updatePartyDetails({ raidId: raid?.id ?? null })
-				}}
+				onRaidSelect={handleRaidSelect}
 				{authUser}
 				{activeCollectionUser}
 				onSwitchCollectionUser={handleSwitchCollectionUser}
@@ -545,6 +577,11 @@
 				</Notice>
 			{/if}
 
+			{#if isSolomonis}
+				<SolomonisPanel {party} canEdit={canEdit()} />
+				<!-- web-guidebook: the run guidebook (SolomonisGuidebook) mounts here at merge. -->
+			{/if}
+
 			<PartySegmentedControl
 				selectedTab={activeTab}
 				onTabChange={handleTabChange}
@@ -568,7 +605,7 @@
 						<WeaponGrid
 							weapons={party.weapons}
 							raidExtra={party.raid?.extra}
-							showGuidebooks={party.raid?.group?.guidebooks}
+							showGuidebooks={party.raid?.group?.guidebooks && !isSolomonis}
 							guidebooks={party.guidebooks}
 							canEdit={canEdit()}
 							onClickGuidebookSlot={handleClickGuidebookSlot}
@@ -623,6 +660,15 @@
 	deleting={actions.deleting}
 	onDelete={actions.deleteParty}
 	onCancel={() => (actions.deleteDialogOpen = false)}
+/>
+
+<!-- Leaving Evoking Solomonis deletes its data -->
+<ConfirmDialog
+	bind:open={leaveSolomonisOpen}
+	title={m.solomonis_web_party_leave_title()}
+	message={m.solomonis_web_party_leave_message()}
+	confirmLabel={m.solomonis_web_party_leave_confirm()}
+	onconfirm={confirmLeaveSolomonis}
 />
 
 <!-- Conflict Resolution Dialog -->
