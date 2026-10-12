@@ -29,6 +29,14 @@
 	})
 
 	const elementLabel = $derived(raid ? getElementLabel(raid.element) : null)
+	// Solomonis zones have no level or element, so show only the parts a raid has.
+	const raidMeta = $derived(
+		raid
+			? [raid.level ? `Lv. ${raid.level}` : null, raid.element ? elementLabel : null]
+					.filter(Boolean)
+					.join(' · ')
+			: ''
+	)
 
 	function openEditRaidPane() {
 		sidebar.openWithComponent(
@@ -57,7 +65,9 @@
 			<img src={getRaidImage(raid.slug)} alt="" class="raid-image" />
 			<div class="raid-details">
 				<span class="raid-name">{raidName()}</span>
-				<span class="raid-meta">Lv. {raid.level} · {elementLabel}</span>
+				{#if raidMeta}
+					<span class="raid-meta">{raidMeta}</span>
+				{/if}
 			</div>
 		</button>
 	{:else}
