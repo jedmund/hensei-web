@@ -128,19 +128,11 @@
 		width: 320px;
 	}
 
-	// Takes the frame's spare height, its rows centred: about the background's
-	// own 368px for a 10-draw
+	// As tall as its rows, 299px for a 10-draw, as in the game
 	.result {
-		display: flex;
-		flex: 1;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		// Runs 10px under the Information panel, as in the game
-		margin-bottom: -10px;
-		padding: 35px 0 25px;
-		background: var(--background) no-repeat center top;
-		background-size: cover;
+		padding: 35px 0 15px;
+		background: var(--background) no-repeat;
+		background-size: 320px auto;
 		text-align: center;
 	}
 
@@ -204,9 +196,9 @@
 		justify-content: center;
 		width: 162px;
 		height: 42px;
-		// The bar is the sprite's top 31px (a shadow fills the rest); centre
-		// the text on it
-		padding: 0 0 8px;
+		// The bar is the sprite's top 31px (a shadow fills the rest); the text
+		// sits on its middle, as the game's line box puts it
+		padding: 0 0 6px;
 		border: 0;
 		background: var(--button) no-repeat 0 -1035px;
 		background-size: 230px 3466px;
@@ -233,13 +225,15 @@
 		}
 	}
 
+	// Fills the rest of the animation's frame, so the dialog keeps its size
 	.information {
 		position: relative;
 		z-index: 1;
+		flex: 1;
 		box-sizing: border-box;
 		width: 320px;
 		min-height: 40px;
-		margin: 0;
+		margin: -10px 0 0;
 		padding: 10px 10px 15px;
 		text-align: left;
 
