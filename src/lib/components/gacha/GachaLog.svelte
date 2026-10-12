@@ -144,7 +144,7 @@
 									{/if}
 								</span>
 							{/if}
-							<span class="stats">
+							<span class="stats" class:none={!(Number(entry.result.totals?.SSR ?? 0) > 0)}>
 								{Number(entry.result.totals?.SSR ?? 0) > 0
 									? `${count(entry.result.totals?.SSR ?? '0')} SSR`
 									: m.gacha_no_ssrs()}
@@ -317,6 +317,10 @@
 		font-size: $font-small;
 		color: var(--text-secondary);
 		white-space: nowrap;
+
+		&.none {
+			color: var(--text-tertiary);
+		}
 	}
 
 	.chevron {
