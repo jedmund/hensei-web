@@ -1941,6 +1941,8 @@
 	"solomonis_web_guidebook_note": "メモ",
 	"solomonis_web_guidebook_save_failed": "ガイドブックを保存できませんでした",
 	"solomonis_web_guidebook_catalogue_failed": "ガイドブック効果を読み込めませんでした",
+	"solomonis_web_guidebook_filter_tags": "タグ",
+	"solomonis_web_guidebook_filter_tags_any": "すべてのタグ",
 	"solomonis_web_party_title": "Evoking Solomonis",
 	"solomonis_web_party_edit": "Solomonis設定を編集",
 	"solomonis_web_party_kind": "種類",
