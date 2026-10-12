@@ -4,7 +4,7 @@
 		"cost_limit": 100,
 		"blessings": [
 			{
-				"id": "c72351b1-aa32-4ea5-9e0c-785d1931d0e1",
+				"id": "5408a292-fb4e-4450-aa63-34f8b860cbb1",
 				"slug": "justice",
 				"arcana_number": 11,
 				"name": {
@@ -14,7 +14,7 @@
 				"released": true,
 				"levels": [
 					{
-						"id": "d75cebaa-a92a-4efa-89a1-0b6e2175528b",
+						"id": "eca8eeae-0f75-4ed5-b432-f001f3fe8311",
 						"level": 1,
 						"cost": 70,
 						"scintillas": 6000,
@@ -24,7 +24,7 @@
 						}
 					},
 					{
-						"id": "0f118487-14ac-4b32-85fd-7266e922da0d",
+						"id": "7709314a-6c25-4e73-802d-5a3ce7573d19",
 						"level": 2,
 						"cost": 60,
 						"scintillas": 49000,
@@ -34,7 +34,7 @@
 						}
 					},
 					{
-						"id": "b97cbddd-cc99-415f-890c-32e10f1f50cb",
+						"id": "749bea05-11c7-4451-a7f3-93a3f7e2aa78",
 						"level": 3,
 						"cost": 50,
 						"scintillas": 135100,
@@ -46,7 +46,7 @@
 				]
 			},
 			{
-				"id": "aa685b00-b15a-4f41-9de2-11f0154602e9",
+				"id": "0cc79e73-dcff-4688-a402-e006e4c1ba00",
 				"slug": "death",
 				"arcana_number": 13,
 				"name": {
@@ -56,7 +56,7 @@
 				"released": true,
 				"levels": [
 					{
-						"id": "d4b06bae-0a10-4638-847a-4c1ea01fbacf",
+						"id": "47a22a9f-358c-459c-b02d-c809868e6d56",
 						"level": 9,
 						"cost": 20,
 						"scintillas": 90000,
@@ -68,7 +68,7 @@
 				]
 			},
 			{
-				"id": "9a75267b-cf20-450e-8fa2-1c578483c354",
+				"id": "7cb11c55-b449-4bce-8a73-9e1bff6aadf3",
 				"slug": "tower",
 				"arcana_number": 16,
 				"name": {

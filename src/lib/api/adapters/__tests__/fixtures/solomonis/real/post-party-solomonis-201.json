@@ -2,10 +2,10 @@
 	"status": 201,
 	"body": {
 		"party": {
-			"id": "fd118d88-3867-4335-8075-b30a0496a8de",
+			"id": "b56a4c8d-85c2-4a23-b955-6f949fd1e02b",
 			"local_id": null,
 			"description": null,
-			"shortcode": "b8vF8x",
+			"shortcode": "dOUH8t",
 			"visibility": 1,
 			"name": "Nier build",
 			"element": 5,
@@ -22,22 +22,22 @@
 			"solo": false,
 			"video_url": null,
 			"collection_source_user_id": null,
-			"created_at": "2026-10-12T23:06:26.887Z",
-			"updated_at": "2026-10-12T23:06:26.887Z",
-			"last_updated": "2026-10-12T23:06:26.880Z",
+			"created_at": "2026-10-12T23:10:36.959Z",
+			"updated_at": "2026-10-12T23:10:36.959Z",
+			"last_updated": "2026-10-12T23:10:36.950Z",
 			"master_level": null,
 			"ultimate_mastery": null,
 			"user": {
-				"id": "88680c36-50c5-4a14-bb09-03336331d0c0",
+				"id": "9b02458f-3bfb-40aa-8230-967792cc416a",
 				"username": "fixture_user",
 				"display_name": null,
 				"description": null,
-				"language": "ja",
-				"private": true,
+				"language": "en",
+				"private": false,
 				"gender": 0,
 				"theme": "dark",
 				"role": 2,
-				"granblue_id": 5580,
+				"granblue_id": 5789,
 				"show_gamertag": true,
 				"wiki_profile": null,
 				"youtube": null,
@@ -48,12 +48,12 @@
 				"collection_privacy": 1,
 				"avatar": {
 					"picture": "gran",
-					"element": "wind"
+					"element": "fire"
 				}
 			},
 			"job": null,
 			"raid": {
-				"id": "c9540e26-4797-419b-b7da-03c0b883c547",
+				"id": "463a5fc8-753a-4f57-9460-28e6fa1ea67a",
 				"name": {
 					"en": "Allotropic Microcosm",
 					"ja": null
@@ -67,7 +67,7 @@
 				"quest_id": null,
 				"extra": false,
 				"group": {
-					"id": "c5d925f3-7044-4f33-8ccb-f903e8efe485",
+					"id": "134747f1-2f83-4e66-a463-f318df72a2b9",
 					"name": {
 						"en": "Evoking Solomonis",
 						"ja": "テストレイドグループ1"
@@ -78,7 +78,8 @@
 					"extra": false,
 					"guidebooks": false,
 					"hl": true,
-					"unlimited": false
+					"unlimited": false,
+					"content_mode": "solomonis"
 				}
 			},
 			"boost": {
@@ -115,7 +116,7 @@
 				"ended_at": null,
 				"stats": {},
 				"route_evoker": {
-					"id": "e9612f04-f746-4279-a047-45d19f1e781f",
+					"id": "33cbd7fb-e3f3-4889-ae5c-a57127429d65",
 					"granblue_id": "3040169000",
 					"element": 5,
 					"name": {
@@ -124,7 +125,7 @@
 					}
 				},
 				"zone": {
-					"id": "c9540e26-4797-419b-b7da-03c0b883c547",
+					"id": "463a5fc8-753a-4f57-9460-28e6fa1ea67a",
 					"slug": "allotropic-microcosm",
 					"name": {
 						"en": "Allotropic Microcosm",
