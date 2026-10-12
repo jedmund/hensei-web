@@ -174,13 +174,17 @@
 		moons: Moon[]
 		newCharacters: ReadonlySet<string>
 	} | null>(null)
-	// Draw Again closes the dialog and draws again; the last result stays
-	// hidden in between
+	// Draw Again draws again in the same dialog; the last result stays hidden
+	// in between. If the draw doesn't bring a new animation (it failed), the
+	// dialog closes.
 	let drawingAgain = $state(false)
 	function drawAgain() {
-		animation = null
+		const shown = animation
 		drawingAgain = true
-		run().finally(() => (drawingAgain = false))
+		run().finally(() => {
+			drawingAgain = false
+			if (animation === shown) animation = null
+		})
 	}
 	const drawsLocked = $derived(playAnimation && operation === 'draw')
 

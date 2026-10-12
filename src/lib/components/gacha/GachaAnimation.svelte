@@ -30,7 +30,10 @@
 		newCharacters: ReadonlySet<string>
 		/** Called once the dialog has closed, or when the animation can't load */
 		onDone: () => void
-		/** Called in place of onDone when the viewer chooses Draw Again */
+		/**
+		 * Called when the viewer chooses Draw Again. The dialog stays open, and
+		 * plays the next draw when new items come in.
+		 */
 		onDrawAgain?: (() => void) | undefined
 	}
 
@@ -66,8 +69,11 @@
 
 	let canvas = $state<HTMLCanvasElement>()
 	let loaded = $state(false)
-	/** The animation plays, then the game's results screen holds until dismissed */
-	let phase = $state<'playing' | 'results'>('playing')
+	/**
+	 * The animation plays, then the game's results screen holds until
+	 * dismissed. After Draw Again, the stage waits for the next draw.
+	 */
+	let phase = $state<'playing' | 'results' | 'waiting'>('playing')
 	let flashing = $state(false)
 	let closing = $state(false)
 	let finished = false
@@ -96,6 +102,26 @@
 		event.preventDefault()
 		finish()
 	}
+
+	// Draw Again flashes white and holds on a black stage until the next draw
+	// comes in, then plays it in the same dialog
+	function drawAgain() {
+		if (!onDrawAgain || phase !== 'results' || flashing || finished) return
+		flashing = true
+		setTimeout(() => {
+			phase = 'waiting'
+			flashing = false
+			onDrawAgain?.()
+		}, FLASH_MS)
+	}
+	$effect(() => {
+		void items
+		untrack(() => {
+			if (phase !== 'waiting') return
+			loaded = false
+			phase = 'playing'
+		})
+	})
 
 	/* eslint-disable @typescript-eslint/no-explicit-any -- the game's untyped display objects */
 	let runtime: GameRuntime | undefined
@@ -271,7 +297,8 @@
 	onEscapeKeydown={finishInstead}
 	onInteractOutside={finishInstead}
 >
-	<!-- The animation's canvas is removed with the results screen, which stops it -->
+	<!-- The animation's canvas is removed with the results screen, which stops it;
+		a new canvas plays the next draw -->
 	<div class="stage" class:flashing>
 		{#if phase === 'playing'}
 			<button
@@ -285,22 +312,17 @@
 				<canvas bind:this={canvas} width="640" height="920" aria-label={m.gacha_animation()}
 				></canvas>
 			</button>
-		{:else}
-			<GachaResultScreen
-				{items}
-				{moons}
-				{newCharacters}
-				onDrawAgain={onDrawAgain && (() => finish(onDrawAgain))}
-			/>
+		{:else if phase === 'results'}
+			<GachaResultScreen {items} {moons} {newCharacters} onDrawAgain={onDrawAgain && drawAgain} />
 		{/if}
 	</div>
 	<div class="actions">
-		{#if phase === 'playing'}
+		{#if phase !== 'results'}
 			<Button
 				variant="secondary"
 				size="small"
 				type="button"
-				disabled={closing || flashing}
+				disabled={closing || flashing || phase === 'waiting'}
 				onclick={showResults}
 			>
 				{m.gacha_skip()}
