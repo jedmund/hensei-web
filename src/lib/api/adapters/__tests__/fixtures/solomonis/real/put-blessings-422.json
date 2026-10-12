@@ -1,0 +1,8 @@
+{
+	"status": 422,
+	"body": {
+		"errors": {
+			"blessings": ["can hold one level of each blessing", "cost 120, over the limit of 100"]
+		}
+	}
+}
