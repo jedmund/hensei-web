@@ -1,0 +1,562 @@
+{
+	"party": {
+		"id": "da892237-a7fd-52db-89b9-cafc3c2aa365",
+		"shortcode": "run001",
+		"name": "Nier run",
+		"element": 5,
+		"raid": {
+			"id": "bf7cd555-ac37-569c-91f4-f9836d04f695",
+			"name": {
+				"en": "Allotropic Microcosm",
+				"ja": null
+			},
+			"slug": "allotropic-microcosm"
+		},
+		"turn_count": 109,
+		"solomonis": {
+			"kind": "run",
+			"route_evoker": {
+				"id": "c816c582-b04a-5173-982b-fa833919f4e6",
+				"granblue_id": "3040169000",
+				"name": {
+					"en": "Nier",
+					"ja": "ニーア"
+				},
+				"element": 5
+			},
+			"zone": {
+				"id": "bf7cd555-ac37-569c-91f4-f9836d04f695",
+				"slug": "allotropic-microcosm",
+				"name": {
+					"en": "Allotropic Microcosm",
+					"ja": null
+				}
+			},
+			"pledge_level": 0,
+			"outcome": "cleared",
+			"bosses_defeated": 2,
+			"midboss": null,
+			"expedition_level": null,
+			"build_party": {
+				"shortcode": "bld001",
+				"name": "Nier starter"
+			},
+			"game_report_id": 381099,
+			"ended_at": "2026-10-11T16:38:00+09:00",
+			"stats": {
+				"battle": 14,
+				"strong": 0,
+				"terrifying": 0,
+				"ruler": 0,
+				"boss": 2,
+				"event": 20,
+				"healing": 6,
+				"chest": 5,
+				"teleporter": 0,
+				"special": 1,
+				"shop_purchases": 18,
+				"points_earned": 2924
+			},
+			"blessing_cost_limit": 100,
+			"blessing_cost_total": 50,
+			"blessings": [
+				{
+					"blessing": {
+						"id": "43e4bc59-4585-512a-b9eb-ae83eb6109b8",
+						"slug": "justice",
+						"arcana_number": 11,
+						"name": {
+							"en": "Justice",
+							"ja": null
+						}
+					},
+					"level_id": "4bffc53c-442a-5299-b049-2988981e8ff3",
+					"level": 3,
+					"cost": 50
+				}
+			],
+			"guidebook": [
+				{
+					"effect": {
+						"id": "cf974def-1cef-58e7-b5b7-87789707ec7d",
+						"granblue_id": 74,
+						"rarity": "unique",
+						"stackable": false,
+						"name": {
+							"en": "2-turn reduction to skill cooldowns (Can't be stacked)",
+							"ja": null
+						},
+						"icon_category": 3,
+						"icon_type": 401,
+						"target_type": null,
+						"target_values": [],
+						"character_id": null
+					},
+					"count": 1,
+					"display_value": null,
+					"acquired_order": null,
+					"inherited": false,
+					"note": null
+				},
+				{
+					"effect": {
+						"id": "a5a8b730-d334-5d1d-a5ba-4d593c16ffa9",
+						"granblue_id": 85,
+						"rarity": "unique",
+						"stackable": true,
+						"name": {
+							"en": "Amplify all allies' DMG based on total HP lost after this guidebook effect was obtained ({value} / Max: 100%)",
+							"ja": null
+						},
+						"icon_category": 1,
+						"icon_type": 310,
+						"target_type": null,
+						"target_values": [],
+						"character_id": null
+					},
+					"count": 1,
+					"display_value": "100%",
+					"acquired_order": null,
+					"inherited": false,
+					"note": null
+				},
+				{
+					"effect": {
+						"id": "b33d0683-e719-5ce5-9a4d-ce4f4aec1800",
+						"granblue_id": 88,
+						"rarity": "unique",
+						"stackable": true,
+						"name": {
+							"en": "Bonus Elemental DMG effect to sabre-, dagger-, spear-, axe-, or staff-specialty allies (50%) / Bonus Superior Elemental DMG effect (50%)",
+							"ja": null
+						},
+						"icon_category": 1,
+						"icon_type": 401,
+						"target_type": "proficiency",
+						"target_values": [1, 2, 4, 3, 6],
+						"character_id": null
+					},
+					"count": 1,
+					"display_value": null,
+					"acquired_order": null,
+					"inherited": false,
+					"note": null
+				},
+				{
+					"effect": {
+						"id": "4716501c-91d8-5e1d-ab7b-68a4d75f6263",
+						"granblue_id": 37,
+						"rarity": "rare",
+						"stackable": true,
+						"name": {
+							"en": "Bonus Elemental DMG effect to Harvin and Wolvir allies (30%)",
+							"ja": null
+						},
+						"icon_category": 1,
+						"icon_type": 6,
+						"target_type": "race",
+						"target_values": [4, 10],
+						"character_id": null
+					},
+					"count": 2,
+					"display_value": null,
+					"acquired_order": null,
+					"inherited": false,
+					"note": null
+				},
+				{
+					"effect": {
+						"id": "72e1c7fa-8d6d-55b8-b91c-ce2bb929969f",
+						"granblue_id": 57,
+						"rarity": "rare",
+						"stackable": true,
+						"name": {
+							"en": "Upon obtaining a guidebook effect from a treasure chest space: Gain 1 additional guidebook effect (Remaining uses: {value}/2)",
+							"ja": null
+						},
+						"icon_category": 3,
+						"icon_type": 401,
+						"target_type": null,
+						"target_values": [],
+						"character_id": null
+					},
+					"count": 1,
+					"display_value": "0",
+					"acquired_order": null,
+					"inherited": false,
+					"note": null
+				},
+				{
+					"effect": {
+						"id": "1ad72dfe-2fe5-52dc-8a11-60ac1d16e87c",
+						"granblue_id": 7,
+						"rarity": "normal",
+						"stackable": true,
+						"name": {
+							"en": "DMG cap +10%",
+							"ja": null
+						},
+						"icon_category": 1,
+						"icon_type": 308,
+						"target_type": null,
+						"target_values": [],
+						"character_id": null
+					},
+					"count": 6,
+					"display_value": null,
+					"acquired_order": null,
+					"inherited": false,
+					"note": null
+				},
+				{
+					"effect": {
+						"id": "731d52f8-4f99-5835-8184-763a749439e6",
+						"granblue_id": 4,
+						"rarity": "normal",
+						"stackable": true,
+						"name": {
+							"en": "C.A. DMG +20% / C.A. DMG cap +10%",
+							"ja": null
+						},
+						"icon_category": 1,
+						"icon_type": 305,
+						"target_type": null,
+						"target_values": [],
+						"character_id": null
+					},
+					"count": 5,
+					"display_value": null,
+					"acquired_order": null,
+					"inherited": false,
+					"note": null
+				}
+			]
+		},
+		"weapons": [
+			{
+				"id": "213b4e15-8090-5f92-b65a-0a4d58231c95",
+				"position": -1,
+				"mainhand": true,
+				"seal_state": "start",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "ce1a436b-6c31-59fd-996e-77e50ce60f02",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon -1",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "b8a887ae-8922-5efd-99bd-9f6402ec37a0",
+				"position": 0,
+				"mainhand": false,
+				"seal_state": "start",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "e5a668a1-83e3-52fb-b1f9-8eab32184b95",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 0",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "d495b003-415b-5630-a4b4-ada8e8fb28e6",
+				"position": 1,
+				"mainhand": false,
+				"seal_state": "start",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "12afdad9-6218-5090-ae33-833fa12f0026",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 1",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "0f5b0db0-d1d7-52d9-8d75-c59c92b2cc2e",
+				"position": 2,
+				"mainhand": false,
+				"seal_state": "start",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "111a3323-f786-5f7b-bef3-c419d729f5c4",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 2",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "8702c7bf-9e79-520c-8b06-da98270d756b",
+				"position": 3,
+				"mainhand": false,
+				"seal_state": "unsealed",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "c32cb652-3385-52b2-bbdc-ec7f226d35ca",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 3",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "64d0e869-aab6-5d96-a47a-63fe92b57f05",
+				"position": 4,
+				"mainhand": false,
+				"seal_state": "unsealed",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "75b773ef-89f1-5616-a947-0916e91e3e1a",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 4",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "7caf82de-934a-57b8-97aa-39ce7806df6a",
+				"position": 5,
+				"mainhand": false,
+				"seal_state": "sealed",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "dccbf339-31ed-5808-9e6e-9ec7b339b2e7",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 5",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "492dc5d2-08ca-507c-b1be-d10eec27f424",
+				"position": 6,
+				"mainhand": false,
+				"seal_state": "unsealed",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "c8b4712a-a851-5a1b-a08f-3ce45658ccbb",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 6",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "df0a812b-f7ea-5944-8f08-f45af570a0a7",
+				"position": 7,
+				"mainhand": false,
+				"seal_state": "sealed",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "4db6d4eb-33db-51c5-bb7b-d3a07f293063",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 7",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "aac746f5-9f99-523f-bfbc-03a32678de26",
+				"position": 8,
+				"mainhand": false,
+				"seal_state": "sealed",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "1d0be7d5-53a7-5197-a3b6-d3fe16f0b94e",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 8",
+						"ja": null
+					}
+				}
+			}
+		],
+		"summons": [
+			{
+				"id": "68df92e0-d2be-57bd-b992-c3ecabbc05cd",
+				"position": -1,
+				"main": true,
+				"seal_state": "start",
+				"unseal_priority": null,
+				"summon": {
+					"id": "a3d8ccae-f13c-5c2b-a22c-400278ce0cf3",
+					"granblue_id": "2040000000",
+					"name": {
+						"en": "Summon -1",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "7e6e73e3-4614-59c7-abed-a51b177c0bdc",
+				"position": 0,
+				"main": false,
+				"seal_state": "unsealed",
+				"unseal_priority": null,
+				"summon": {
+					"id": "9b5af47d-7648-5638-851e-679764540568",
+					"granblue_id": "2040000000",
+					"name": {
+						"en": "Summon 0",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "71ee1533-e87d-5776-a19d-7578f7cd8954",
+				"position": 1,
+				"main": false,
+				"seal_state": "unsealed",
+				"unseal_priority": null,
+				"summon": {
+					"id": "ad7e291d-d88c-5d55-847f-669929b97c01",
+					"granblue_id": "2040000000",
+					"name": {
+						"en": "Summon 1",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "52fa654a-5492-58b2-b02c-be5fdd4b3a50",
+				"position": 2,
+				"main": false,
+				"seal_state": "sealed",
+				"unseal_priority": null,
+				"summon": {
+					"id": "60db17f7-b22d-5abf-8376-51dc6e8bdad2",
+					"granblue_id": "2040000000",
+					"name": {
+						"en": "Summon 2",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "4ceb7c43-633f-5126-ac5a-fd760a230fb6",
+				"position": 3,
+				"main": false,
+				"seal_state": "sealed",
+				"unseal_priority": null,
+				"summon": {
+					"id": "dfaefcdc-16f0-5c96-ad35-27ed13997a4d",
+					"granblue_id": "2040000000",
+					"name": {
+						"en": "Summon 3",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "cc332f9f-11e3-5bba-ab99-abe85fdc9570",
+				"position": 4,
+				"main": false,
+				"seal_state": "sealed",
+				"unseal_priority": null,
+				"summon": {
+					"id": "3a20a3be-efdd-55ca-93dd-8090cc0d47b0",
+					"granblue_id": "2040000000",
+					"name": {
+						"en": "Summon 4",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "74ad52cb-7a60-5225-9ef1-c02452737a23",
+				"position": 5,
+				"main": false,
+				"seal_state": "sealed",
+				"unseal_priority": null,
+				"summon": {
+					"id": "ed6fa39f-0acc-5d75-9832-9c96bc30a7f0",
+					"granblue_id": "2040000000",
+					"name": {
+						"en": "Summon 5",
+						"ja": null
+					}
+				}
+			}
+		],
+		"characters": [
+			{
+				"id": "2d701fbe-237f-5715-aba3-6bf38c3a3b6a",
+				"position": 0,
+				"brought_by_blessing": false,
+				"character": {
+					"id": "c816c582-b04a-5173-982b-fa833919f4e6",
+					"granblue_id": "3040169000",
+					"name": {
+						"en": "Nier",
+						"ja": "ニーア"
+					}
+				}
+			},
+			{
+				"id": "a26f19db-1993-5e35-9d51-1531f28d2249",
+				"position": 1,
+				"brought_by_blessing": false,
+				"character": {
+					"id": "cf29ebe0-c525-589c-a6e6-a1b081d0db12",
+					"granblue_id": "3040265000",
+					"name": {
+						"en": "Rei",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "c3655edb-8b5f-553e-b77e-03d073d5f078",
+				"position": 2,
+				"brought_by_blessing": false,
+				"character": {
+					"id": "f3e644ff-be84-5640-88b6-59591240388d",
+					"granblue_id": "3040554000",
+					"name": {
+						"en": "Satyr",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "47b8ffc2-0f38-5029-8b5b-4daa89449fc2",
+				"position": 3,
+				"brought_by_blessing": false,
+				"character": {
+					"id": "7eb6c10b-e238-51e5-85a7-344726e1504a",
+					"granblue_id": "3040639000",
+					"name": {
+						"en": "Wamdus",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "513c232c-1d1f-53bd-8d75-7bc55a74589c",
+				"position": 4,
+				"brought_by_blessing": false,
+				"character": {
+					"id": "e3fa107a-0fef-510b-89c1-66ca1bf76142",
+					"granblue_id": "3040610000",
+					"name": {
+						"en": "Catura",
+						"ja": null
+					}
+				}
+			}
+		]
+	}
+}
