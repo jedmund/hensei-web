@@ -4,7 +4,7 @@
  * Re-exports base types from entities.ts and adds input types for CRUD operations.
  */
 
-import type { LocalizedName } from './entities'
+import type { LocalizedName, RaidGroupContentMode } from './entities'
 
 // Re-export from entities
 export type { Raid, RaidGroup } from './entities'
@@ -36,6 +36,7 @@ export interface RaidGroupFlat {
 	extra: boolean
 	guidebooks: boolean
 	unlimited: boolean
+	contentMode?: RaidGroupContentMode | null
 }
 
 // Full RaidGroup (from :full view, includes raids)

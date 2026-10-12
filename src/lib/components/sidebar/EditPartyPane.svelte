@@ -227,7 +227,8 @@
 							hl: selectedRaid.group.hl,
 							extra: selectedRaid.group.extra,
 							guidebooks: selectedRaid.group.guidebooks,
-							unlimited: selectedRaid.group.unlimited
+							unlimited: selectedRaid.group.unlimited,
+							contentMode: selectedRaid.group.contentMode ?? null
 						}
 					: undefined,
 				extra: selectedRaid.extra
