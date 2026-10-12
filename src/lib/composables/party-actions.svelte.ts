@@ -24,6 +24,12 @@ interface PartyActionsOptions {
 	getUserElement: () => ElementType | undefined
 	getHasCollectionLinks: () => boolean
 	onDetailsUpdated?: () => void
+	/**
+	 * Called when the settings pane picks a different raid. Return true to
+	 * take over the raid change (e.g. Evoking Solomonis opens its route
+	 * picker or a confirm); the other settings are still saved.
+	 */
+	handleRaidChange?: (raid: PartyEditValues['raid']) => boolean
 }
 
 export function usePartyActions(opts: PartyActionsOptions) {
@@ -239,6 +245,9 @@ export function usePartyActions(opts: PartyActionsOptions) {
 				await updatePartyDetails({ description: content })
 			},
 			onSave: async (values) => {
+				const raidHandled =
+					values.raidId !== initialValues.raidId && (opts.handleRaidChange?.(values.raid) ?? false)
+
 				await updatePartyDetails({
 					name: values.name,
 					description: values.description ?? undefined,
@@ -253,7 +262,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 					chainCount: values.chainCount,
 					summonCount: values.summonCount,
 					videoUrl: values.videoUrl,
-					raidId: values.raidId
+					...(raidHandled ? {} : { raidId: values.raidId })
 				})
 
 				// Handle crew share toggle

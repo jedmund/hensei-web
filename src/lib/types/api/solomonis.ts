@@ -14,6 +14,7 @@ export type SolomonisMidboss = 'banes_gate' | 'infernobringer' | 'beast_of_anath
 export type SealState = 'start' | 'unsealed' | 'sealed'
 export type GuideEffectRarity = 'normal' | 'rare' | 'unique' | 'cursed'
 export type GuideEffectTargetType = 'race' | 'proficiency' | 'character'
+export type GuideEffectAvailability = 'global' | 'event' | 'character'
 
 export interface SolomonisZone {
 	id: string
@@ -68,6 +69,11 @@ export interface GuideEffect {
 	/** In Hensei's numbering (race, proficiency) or character ID. */
 	targetValues: number[]
 	characterId: string | null
+	/** From the wiki (D14); null when the wiki had no match. */
+	availability: GuideEffectAvailability | null
+	/** Wiki filter tags (D14); null when the wiki had no match. */
+	typeTags: string[] | null
+	effectTags: string[] | null
 }
 
 export interface GuidebookEntry {

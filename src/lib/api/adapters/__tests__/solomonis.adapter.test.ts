@@ -137,28 +137,24 @@ describe('SolomonisAdapter', () => {
 	})
 
 	describe('updateBlessings', () => {
-		it('PUTs blessing_level_ids and returns the solomonis object', async () => {
-			global.fetch = mockApiResponse({ solomonis: partyBuildFixture.party.solomonis })
+		it('PUTs blessing_level_ids and returns the full party (D11)', async () => {
+			global.fetch = mockApiResponse(partyBuildFixture)
 
-			const result = await adapter.updateBlessings('party-uuid', ['level-a', 'level-b'])
+			const party = await adapter.updateBlessings('party-uuid', ['level-a', 'level-b'], {
+				'X-Edit-Key': 'secret'
+			})
 
 			const { url, init } = lastCall()
 			expect(url).toBe(`${BASE}/parties/party-uuid/blessings`)
 			expect(init.method).toBe('PUT')
+			expect((init.headers as Record<string, string>)['X-Edit-Key']).toBe('secret')
 			expect(JSON.parse(init.body as string)).toEqual({
 				blessing_level_ids: ['level-a', 'level-b']
 			})
-			expect(result.kind).toBe('build')
-			expect(result.blessingCostTotal).toBe(70)
-			expect(result.blessings.map((b) => b.blessing.slug)).toEqual(['justice', 'death'])
-		})
-
-		it('also accepts an unwrapped solomonis object', async () => {
-			global.fetch = mockApiResponse(partyBuildFixture.party.solomonis)
-
-			const result = await adapter.updateBlessings('party-uuid', [])
-
-			expect(result.blessingCostLimit).toBe(100)
+			expect(party.shortcode).toBe('bld001')
+			const solomonis = party.solomonis as unknown as Record<string, unknown>
+			expect(solomonis).toMatchObject({ kind: 'build', blessingCostTotal: 70 })
+			expect(party.weapons[0]).toMatchObject({ sealState: 'start' })
 		})
 	})
 })

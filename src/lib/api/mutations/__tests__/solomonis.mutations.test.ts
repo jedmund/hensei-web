@@ -38,15 +38,19 @@ describe('updateExpeditionOptions', () => {
 })
 
 describe('updateBlessingsOptions', () => {
-	it("replaces the cached party's solomonis object", () => {
+	it('merges the returned party, so seal states and solomonis both update', () => {
 		const opts = updateBlessingsOptions(queryClient)
 		const solomonis = {
 			...(BUILD_PARTY.solomonis as SolomonisExpedition),
 			blessings: [],
 			blessingCostTotal: 0
 		}
+		const weapons = BUILD_PARTY.weapons.map((w) =>
+			w.position === 2 ? { ...w, sealState: 'sealed' as const } : w
+		)
+		const server: Party = { ...BUILD_PARTY, solomonis, weapons }
 
-		opts.onSuccess(solomonis, {
+		opts.onSuccess(server, {
 			partyId: BUILD_PARTY.id,
 			shortcode: BUILD_PARTY.shortcode,
 			blessingLevelIds: []
@@ -54,16 +58,17 @@ describe('updateBlessingsOptions', () => {
 
 		const cached = getCachedParty(queryClient, BUILD_PARTY.shortcode)
 		expect(cached?.solomonis).toEqual(solomonis)
-		expect(cached?.weapons).toEqual(BUILD_PARTY.weapons)
+		expect(cached?.weapons).toEqual(weapons)
+		expect(cached?.favorited).toBe(true)
 	})
 
-	it('leaves an uncached party alone', () => {
+	it('caches the party when nothing was cached yet', () => {
 		const opts = updateBlessingsOptions(queryClient)
-		opts.onSuccess(RUN_PARTY.solomonis as SolomonisExpedition, {
+		opts.onSuccess(RUN_PARTY, {
 			partyId: RUN_PARTY.id,
 			shortcode: RUN_PARTY.shortcode,
 			blessingLevelIds: []
 		})
-		expect(getCachedParty(queryClient, RUN_PARTY.shortcode)).toBeUndefined()
+		expect(getCachedParty(queryClient, RUN_PARTY.shortcode)?.id).toBe(RUN_PARTY.id)
 	})
 })

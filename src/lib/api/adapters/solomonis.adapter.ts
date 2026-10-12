@@ -19,7 +19,6 @@ import type { Party } from '$lib/types/api/party'
 import type {
 	ArcarumBlessing,
 	RouteEvoker,
-	SolomonisExpedition,
 	SolomonisExpeditionInput
 } from '$lib/types/api/solomonis'
 
@@ -83,22 +82,19 @@ export class SolomonisAdapter extends BaseAdapter {
 	/**
 	 * Replaces the party's blessing loadout. One level per blessing; the API
 	 * rejects unreleased blessings and totals over the cost limit with a 422.
-	 * Returns the party's full `solomonis` object.
+	 * Returns the full party (D11): Justice can change the starting slots.
 	 */
 	async updateBlessings(
 		partyId: string,
 		blessingLevelIds: string[],
 		headers?: Record<string, string>
-	): Promise<SolomonisExpedition> {
-		const response = await this.request<{ solomonis: SolomonisExpedition } | SolomonisExpedition>(
-			`/parties/${partyId}/blessings`,
-			{
-				method: 'PUT',
-				body: { blessingLevelIds },
-				headers
-			}
-		)
-		return 'solomonis' in response ? response.solomonis : response
+	): Promise<Party> {
+		const response = await this.request<{ party: Party }>(`/parties/${partyId}/blessings`, {
+			method: 'PUT',
+			body: { blessingLevelIds },
+			headers
+		})
+		return response.party
 	}
 }
 
