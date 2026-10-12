@@ -1,8 +1,9 @@
-<!-- GachaAnimation - The game's draw animation, played before a 10-draw's results -->
+<!-- GachaAnimation - The game's draw animation and results screen, played before a draw's results -->
 
 <script lang="ts">
 	import Button from '$lib/components/ui/Button.svelte'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
+	import GachaResultScreen from '$lib/components/gacha/GachaResultScreen.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { untrack } from 'svelte'
@@ -15,6 +16,7 @@
 		type GameRuntime
 	} from '$lib/gacha-animation/runtime'
 	import { scene1Params, scene2Params, type SceneParams } from '$lib/gacha-animation/scene'
+	import type { Moon } from '$lib/gacha-animation/moons'
 	import type { Presentation } from '$lib/gacha-animation/presentation'
 	import type { CatalogueItem } from '$lib/types/gacha'
 
@@ -22,11 +24,17 @@
 		/** The drawn items, in draw order */
 		items: CatalogueItem[]
 		presentation: Presentation
-		/** Called when the animation ends, is skipped or can't load */
+		/** The moon each item gives, in draw order */
+		moons: Moon[]
+		/** Identities of items whose character is new to the viewer */
+		newCharacters: ReadonlySet<string>
+		/** Called once the dialog has closed, or when the animation can't load */
 		onDone: () => void
+		/** Called in place of onDone when the viewer chooses Draw Again */
+		onDrawAgain?: (() => void) | undefined
 	}
 
-	let { items, presentation, onDone }: Props = $props()
+	let { items, presentation, moons, newCharacters, onDone, onDrawAgain }: Props = $props()
 
 	const FPS = 30
 	const SCENE1 = 'gacha_new_2025_scene1'
@@ -47,6 +55,8 @@
 	/** Sub-clips whose labels show whether the scene is mid-animation */
 	const CLIPS = ['scene1_1', 'scene1_2', 'scene1_3', 'scene2', 'scene3', 'scene4']
 
+	/** The white flash between the animation and the results screen */
+	const FLASH_MS = 170
 	/**
 	 * The outro's length: a 170 ms white flash, then the dialog fades and
 	 * shrinks over 280 ms (see the styles), plus a little room so it's gone
@@ -56,18 +66,31 @@
 
 	let canvas = $state<HTMLCanvasElement>()
 	let loaded = $state(false)
+	/** The animation plays, then the game's results screen holds until dismissed */
+	let phase = $state<'playing' | 'results'>('playing')
+	let flashing = $state(false)
 	let closing = $state(false)
 	let finished = false
 
 	const itemName = (item: CatalogueItem) => (getLocale() === 'ja' && item.name.ja) || item.name.en
 
-	// Every way out (the end, Skip, Escape, a click outside) plays the outro
-	// before the results show
-	function finish() {
+	// The end of the animation and Skip flash white into the results screen
+	function showResults() {
+		if (phase !== 'playing' || flashing || finished) return
+		flashing = true
+		setTimeout(() => {
+			phase = 'results'
+			flashing = false
+		}, FLASH_MS)
+	}
+
+	// Every way out (Close, Draw Again, Escape, a click outside) plays the
+	// outro before the dialog goes
+	function finish(then: () => void = onDone) {
 		if (finished) return
 		finished = true
 		closing = true
-		setTimeout(onDone, OUTRO_MS)
+		setTimeout(then, OUTRO_MS)
 	}
 	function finishInstead(event: Event) {
 		event.preventDefault()
@@ -157,9 +180,9 @@
 	function onPlayEnd(event: Event) {
 		if (sceneName === SCENE1) {
 			const skipped = Boolean((event as CustomEvent).detail)
-			mount(SCENE2, scene2Params(items, presentation, items.map(itemName), skipped))
+			mount(SCENE2, scene2Params(items, presentation, items.map(itemName), moons, skipped))
 		} else {
-			finish()
+			showResults()
 		}
 	}
 	/* eslint-enable @typescript-eslint/no-explicit-any */
@@ -227,6 +250,15 @@
 			ticker?.removeEventListener('tick', onTick)
 			stage?.removeAllChildren()
 			root = undefined
+			// The runtime draws with WebGL; free the context, or after a dozen or
+			// so draws the browser starts dropping the oldest
+			for (const type of ['webgl2', 'webgl', 'experimental-webgl']) {
+				const context = target.getContext(type) as WebGLRenderingContext | null
+				if (context) {
+					context.getExtension('WEBGL_lose_context')?.loseContext()
+					break
+				}
+			}
 		}
 	}
 </script>
@@ -239,20 +271,51 @@
 	onEscapeKeydown={finishInstead}
 	onInteractOutside={finishInstead}
 >
-	<button
-		type="button"
-		class="stage"
-		class:loaded
-		disabled={closing}
-		aria-label={m.gacha_animation_next()}
-		onclick={(event) => tap(false, onSkipButton(event))}
-	>
-		<canvas bind:this={canvas} width="640" height="920" aria-label={m.gacha_animation()}></canvas>
-	</button>
+	<!-- The animation's canvas is removed with the results screen, which stops it -->
+	<div class="stage" class:flashing>
+		{#if phase === 'playing'}
+			<button
+				type="button"
+				class="canvas"
+				class:loaded
+				disabled={closing || flashing}
+				aria-label={m.gacha_animation_next()}
+				onclick={(event) => tap(false, onSkipButton(event))}
+			>
+				<canvas bind:this={canvas} width="640" height="920" aria-label={m.gacha_animation()}
+				></canvas>
+			</button>
+		{:else}
+			<GachaResultScreen
+				{items}
+				{moons}
+				{newCharacters}
+				onDrawAgain={onDrawAgain && (() => finish(onDrawAgain))}
+			/>
+		{/if}
+	</div>
 	<div class="actions">
-		<Button variant="secondary" size="small" type="button" disabled={closing} onclick={finish}>
-			{m.gacha_skip()}
-		</Button>
+		{#if phase === 'playing'}
+			<Button
+				variant="secondary"
+				size="small"
+				type="button"
+				disabled={closing || flashing}
+				onclick={showResults}
+			>
+				{m.gacha_skip()}
+			</Button>
+		{:else}
+			<Button
+				variant="secondary"
+				size="small"
+				type="button"
+				disabled={closing}
+				onclick={() => finish()}
+			>
+				{m.modal_close()}
+			</Button>
+		{/if}
 	</div>
 </Dialog>
 
@@ -276,7 +339,8 @@
 		animation: gacha-backdrop-out 300ms ease-in 150ms both;
 	}
 
-	:global(.dialog-content.gacha-animation-dialog.closing) .stage::after {
+	:global(.dialog-content.gacha-animation-dialog.closing) .stage::after,
+	.stage.flashing::after {
 		opacity: 1;
 	}
 
@@ -295,13 +359,31 @@
 
 	.stage {
 		position: relative;
-		display: block;
 		width: 100%;
 		aspect-ratio: 640 / 920;
+		overflow: hidden;
+		background: #000;
+
+		// The white flash, faded in into the results screen and by the outro
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: #fff;
+			opacity: 0;
+			transition: opacity 170ms ease-out;
+			pointer-events: none;
+		}
+	}
+
+	.canvas {
+		display: block;
+		width: 100%;
+		height: 100%;
 		padding: 0;
 		border: 0;
+		background: none;
 		cursor: pointer;
-		background: #000;
 
 		canvas {
 			display: block;
@@ -313,17 +395,6 @@
 
 		&.loaded canvas {
 			opacity: 1;
-		}
-
-		// The white flash, faded in by the outro
-		&::after {
-			content: '';
-			position: absolute;
-			inset: 0;
-			background: #fff;
-			opacity: 0;
-			transition: opacity 170ms ease-out;
-			pointer-events: none;
 		}
 
 		&:disabled {

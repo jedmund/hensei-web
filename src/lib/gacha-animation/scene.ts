@@ -5,6 +5,7 @@
  * game's own (see the animation harness's driver).
  */
 
+import type { Moon } from './moons'
 import type { Presentation, Rarity } from './presentation'
 import type { CatalogueItem } from '$lib/types/gacha'
 
@@ -41,12 +42,14 @@ export function scene1Params(items: CatalogueItem[], presentation: Presentation)
 
 /**
  * @param names - each item's name in the page's language
+ * @param moons - the moon each item gives, shown on its card
  * @param skippedScene1 - whether scene 1 ended on its skip button
  */
 export function scene2Params(
 	items: CatalogueItem[],
 	presentation: Presentation,
 	names: string[],
+	moons: Moon[],
 	skippedScene1: boolean
 ): SceneParams {
 	return {
@@ -61,7 +64,7 @@ export function scene2Params(
 		gacha_voice_wait_time_array: items.map(() => 0),
 		gacha_type_array: items.map((item) => (item.drawable_type === 'Summon' ? 2 : 1)),
 		gacha_attribute_array: items.map((item) => ATTRIBUTE[item.element] ?? 0),
-		gacha_moon_array: items.map(() => 0),
+		gacha_moon_array: items.map((_, index) => moons[index] ?? 0),
 		limited_gene_attribute: items.map(() => 0),
 		gacha_text1: names,
 		gacha_scene1_skip_flg: skippedScene1

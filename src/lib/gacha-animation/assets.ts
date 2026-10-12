@@ -1,6 +1,6 @@
 /**
  * The game's draw animation files: the CreateJS runtime, the two scene
- * timelines and their spritesheets. They live in the image bucket under
+ * timelines and their spritesheets, and the results screen's images. They live in the image bucket under
  * `app/gacha-animation/` (never in this repo) and are served from our own
  * origin by `routes/gacha-animation/[file]`, so `script-src 'self'` covers
  * the scripts.
@@ -37,10 +37,24 @@ export const ANIMATION_IMAGES: Record<string, string> = {
 	gacha_new_2025_scene2_gacya_window: 'gacha_new_2025_scene2_gacya_window.jpg'
 }
 
+/**
+ * The results screen's images. The sprite sheets and panel are drawn at 1.5×
+ * the screen's 320px layout.
+ */
+export const RESULT_IMAGES = {
+	background: 'gacha_result_bg.jpg',
+	panel: 'gacha_result_panel.png',
+	parts: 'gacha_result_parts.png',
+	button: 'gacha_result_button.png',
+	line: 'gacha_result_line.png',
+	lineDetail: 'gacha_result_line_detail.png'
+} as const
+
 /** Every file the route will serve; anything else is a 404 */
 export const ANIMATION_FILES: ReadonlySet<string> = new Set([
 	...ANIMATION_SCRIPTS,
-	...Object.values(ANIMATION_IMAGES)
+	...Object.values(ANIMATION_IMAGES),
+	...Object.values(RESULT_IMAGES)
 ])
 
 export const animationFileUrl = (file: string) => `${ANIMATION_ROUTE}/${file}`

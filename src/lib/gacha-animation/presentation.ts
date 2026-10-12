@@ -48,23 +48,37 @@ export const CLASS_UP_CHANCE = 0.15
 export const BURST_CHANCE = 0.1
 
 /**
- * Chance that a multi-SSR draw without a new character plays add 3, the
- * variant that hints at a new item without promising one. The game's rate
- * isn't known.
+ * Chance that a single-SSR draw opens on Rainbow 5, the single-SSR rainbow,
+ * instead of gold. The game's rate isn't known.
  */
-export const NEW_ITEM_HINT_CHANCE = 0.25
+export const SINGLE_SSR_RAINBOW_CHANCE = 0.1
+/**
+ * Chance that a draw with a new SSR character or summon plays the opening for
+ * it. It isn't guaranteed: a new summon has played Rainbow 5 in the game. The
+ * game's rate isn't known.
+ */
+export const NEW_ITEM_RAINBOW_CHANCE = 0.5
+/** New characters released from this date play the blue-sky shrine openings */
+export const SHRINE_SINCE = '2026-03-10'
 
 /**
- * Rainbow 2 is the multi-SSR opening. Its add variants (from the game, as
- * observed in play):
- * - add 0: several SSRs, with or without a new character
- * - add 1: several SSRs and at least one new character (blue-sky shrine)
- * - add 3: several SSRs, maybe a new weapon or summon
- * - add 4: several SSRs and a new character
- * Rainbow 1 and 3–5 aren't mapped yet.
+ * The rainbow openings (`main/add`), from the game, as observed in play. A
+ * single SSR plays its own opening; several play Rainbow 2 with an add
+ * variant:
+ *
+ * | Draw                                      | One SSR    | Several            |
+ * | ----------------------------------------- | ---------- | ------------------ |
+ * | New character released from 10 March 2026 | 1 (shrine) | 2 + add 1 (shrine) |
+ * | New character released before then        | 4          | 2 + add 4          |
+ * | New summon                                | 3          | 2 + add 3          |
+ * | Any                                       | 5          | 2                  |
  */
-const MULTI_SSR = { main: 2, sub: 0, add: 0 }
-const MULTI_SSR_NEW_CHARACTER: Pattern[] = [0, 1, 4].map((add) => ({ ...MULTI_SSR, add }))
+const RAINBOW = {
+	shrine: { single: 1, add: 1 },
+	newCharacter: { single: 4, add: 4 },
+	newSummon: { single: 3, add: 3 },
+	any: { single: 5, add: 0 }
+}
 
 const RARITY: Record<number, Rarity> = { 1: 'R', 2: 'SR', 3: 'SSR' }
 const LOWER: Record<Rarity, Rarity> = { R: 'R', SR: 'R', SSR: 'SR' }
@@ -89,7 +103,14 @@ export function seededRandom(seed: string): () => number {
 export function choosePresentation(
 	items: CatalogueItem[],
 	seed: string,
-	{ newCharacters = new Set<string>() }: { newCharacters?: Set<string> } = {}
+	{
+		newCharacters = new Set<string>(),
+		newSummons = new Set<string>()
+	}: {
+		newCharacters?: ReadonlySet<string>
+		/** Identities of drawn summons the viewer doesn't have yet */
+		newSummons?: ReadonlySet<string>
+	} = {}
 ): Presentation {
 	const random = seededRandom(seed)
 	const rarities = items.map((item) => RARITY[item.rarity] ?? 'R')
@@ -98,15 +119,36 @@ export function choosePresentation(
 		newCharacters.has(item.identity) ? [index] : []
 	)
 
-	// Rainbow for several SSRs, gold for a single SSR (sometimes faking out
-	// with blue), blue-violet otherwise
+	const newSsrCharacters = newIndices.filter((index) => rarities[index] === 'SSR')
+	const newSummon = items.some(
+		(item, index) => rarities[index] === 'SSR' && newSummons.has(item.identity)
+	)
+
+	// The rainbow opening this draw would play, if it plays one
+	let rainbow: keyof typeof RAINBOW = 'any'
+	if (newSsrCharacters.length > 0 && random() < NEW_ITEM_RAINBOW_CHANCE) {
+		const shrine = newSsrCharacters.some(
+			(index) => (items[index]?.release_date ?? '') >= SHRINE_SINCE
+		)
+		rainbow = shrine ? 'shrine' : 'newCharacter'
+	} else if (newSummon && random() < NEW_ITEM_RAINBOW_CHANCE) {
+		rainbow = 'newSummon'
+	}
+
+	// Rainbow for several SSRs; for a single SSR, its rainbow opening when it
+	// has one, else sometimes Rainbow 5, else gold (sometimes faking out with
+	// blue); blue-violet otherwise
 	let crystal: Crystal = 'violet'
 	let fakeOut = false
 	if (ssrCount >= 2) {
 		crystal = 'rainbow'
 	} else if (ssrCount === 1) {
-		fakeOut = random() < FAKE_OUT_CHANCE
-		crystal = fakeOut ? 'blue' : 'gold'
+		if (rainbow !== 'any' || random() < SINGLE_SSR_RAINBOW_CHANCE) {
+			crystal = 'rainbow'
+		} else {
+			fakeOut = random() < FAKE_OUT_CHANCE
+			crystal = fakeOut ? 'blue' : 'gold'
+		}
 	}
 
 	const stones = rarities.map((rarity) => ({
@@ -117,7 +159,12 @@ export function choosePresentation(
 	const burst = crystal === 'gold' && random() < BURST_CHANCE
 	return {
 		crystal,
-		pattern: patternFor(crystal, burst, newIndices.length > 0, random),
+		pattern:
+			crystal === 'rainbow'
+				? ssrCount >= 2
+					? { main: 2, sub: 0, add: RAINBOW[rainbow].add }
+					: { main: RAINBOW[rainbow].single, sub: 0, add: 0 }
+				: patternFor(crystal, burst, random),
 		fakeOut,
 		burst,
 		stones,
@@ -126,18 +173,11 @@ export function choosePresentation(
 }
 
 function patternFor(
-	crystal: Crystal,
+	crystal: Exclude<Crystal, 'rainbow'>,
 	burst: boolean,
-	newCharacter: boolean,
 	random: () => number
 ): Pattern {
 	switch (crystal) {
-		case 'rainbow':
-			if (newCharacter) {
-				const index = Math.floor(random() * MULTI_SSR_NEW_CHARACTER.length)
-				return MULTI_SSR_NEW_CHARACTER[index] as Pattern
-			}
-			return random() < NEW_ITEM_HINT_CHANCE ? { ...MULTI_SSR, add: 3 } : MULTI_SSR
 		case 'gold':
 			// Sub-pattern 1 is gold's prismatic burst transition
 			return { main: 6, sub: burst ? 1 : 0, add: 0 }
