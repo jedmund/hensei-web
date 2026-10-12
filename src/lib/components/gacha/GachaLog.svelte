@@ -145,14 +145,9 @@
 								</span>
 							{/if}
 							<span class="stats">
-								<span>{count(entry.result.totals?.SSR ?? '0')} SSR</span>
-								{#if entry.goldMoons}
-									<span class="gold-moons">
-										{entry.goldMoons === 1
-											? m.gacha_gold_moon()
-											: m.gacha_gold_moons({ count: count(String(entry.goldMoons)) })}
-									</span>
-								{/if}
+								{Number(entry.result.totals?.SSR ?? 0) > 0
+									? `${count(entry.result.totals?.SSR ?? '0')} SSR`
+									: m.gacha_no_ssrs()}
 							</span>
 							<span class="chevron" class:open>
 								<Icon name="chevron-down" size={16} />
@@ -322,19 +317,6 @@
 		font-size: $font-small;
 		color: var(--text-secondary);
 		white-space: nowrap;
-	}
-
-	// SSRs, then gold moons below when there are any
-	.stats {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-end;
-		gap: $unit-half;
-	}
-
-	.gold-moons {
-		color: var(--text-primary);
-		font-weight: $medium;
 	}
 
 	.chevron {
