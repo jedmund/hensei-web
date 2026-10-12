@@ -35,6 +35,7 @@
 	let confirmingClear = $state(false)
 
 	const pools: Record<string, () => string> = {
+		current: m.gacha_current,
 		premium: m.gacha_premium,
 		legend: m.gacha_legend,
 		flash: m.gacha_flash,

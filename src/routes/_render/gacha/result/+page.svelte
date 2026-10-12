@@ -6,6 +6,7 @@
 
 	// Full pool names; the simulator's select uses shorter ones
 	const pools: Record<string, () => string> = {
+		current: m.gacha_current,
 		premium: m.gacha_pool_premium,
 		legend: m.gacha_pool_legend,
 		flash: m.gacha_pool_flash,

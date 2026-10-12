@@ -27,6 +27,22 @@ export interface GachaConfiguration {
 	season?: string | null
 	purchase?: 'singles' | 'ten'
 	rateups?: { identity: string; percent: number | string }[]
+	/** The game banner a current-banner result was drawn from */
+	banner?: string | null
+}
+/** A game banner whose published rates the current-banner mode draws with */
+export interface GachaBanner {
+	game_id: string
+	name: string | null
+	starts_at: string
+	ends_at: string
+	fetched_at: string
+	/** False once it has ended and the next banner's rates haven't arrived */
+	live: boolean
+	/** The SSR rate as a fraction, e.g. "0.03" */
+	ssr_rate: string
+	/** In the catalogue only: the banner's rate-ups, with their displayed percentages */
+	rateups?: { identity: string; percent: string }[]
 }
 export interface GachaResult {
 	draws: string
@@ -35,6 +51,7 @@ export interface GachaResult {
 	catalogue_fingerprint: string
 	engine_version: string
 	label: string
+	banner?: GachaBanner
 	ordered?: CatalogueItem[] | null
 	ssr_order?: string[] | null
 	items?: CatalogueItem[]

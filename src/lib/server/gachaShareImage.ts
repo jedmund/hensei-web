@@ -234,6 +234,7 @@ export async function runShare(
 	const season = share.mode.startsWith('classic') ? '' : share.season
 	const catalogueQuery = new URLSearchParams({ mode: share.mode })
 	if (season) catalogueQuery.set('season', season)
+	if (share.banner) catalogueQuery.set('banner', share.banner)
 	const catalogue = await apiJson(fetch, `catalogue?${catalogueQuery.toString()}`)
 	const items = (catalogue.items ?? []) as CatalogueItem[]
 
@@ -254,7 +255,8 @@ export async function runShare(
 			const identity = gachaIdentityFor(items, id, 3)
 			return identity ? [{ identity, percent }] : []
 		}),
-		seed: share.seed
+		seed: share.seed,
+		...(share.banner ? { banner: share.banner } : {})
 	}
 	const endpoint = share.operation === 'draw' ? 'simulations' : share.operation
 	let data = await apiJson(fetch, endpoint, { method: 'POST', body: JSON.stringify(payload) })
