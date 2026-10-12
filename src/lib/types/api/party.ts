@@ -19,6 +19,7 @@ import type { GridArtifact, CollectionArtifact } from './artifact'
 import type { AugmentSkill, Befoulment } from './weaponStatModifier'
 import type { CollectionCharacter, CollectionWeapon, CollectionSummon } from './collection'
 import type { PartyShare } from './partyShare'
+import type { SealState, SolomonisExpedition, SolomonisSummary } from './solomonis'
 
 /** Embedded collection data for a single user, scoped to the party's items */
 export interface PartyCollection {
@@ -65,6 +66,9 @@ export type Description = Record<string, unknown>
 export interface GridWeapon {
 	id: string
 	position: number
+	/** Evoking Solomonis only; null elsewhere. */
+	sealState?: SealState | null
+	unsealPriority?: number | null
 	mainhand?: boolean
 	uncapLevel?: number
 	transcendenceStep?: number
@@ -109,6 +113,8 @@ export interface GridWeapon {
 export interface GridCharacter {
 	id: string
 	position: number
+	/** Evoking Solomonis runs: the ally brought by The Hanged Man. */
+	broughtByBlessing?: boolean
 	uncapLevel?: number
 	perpetuity?: boolean
 	transcendenceStep?: number
@@ -153,6 +159,9 @@ export interface GridCharacter {
 export interface GridSummon {
 	id: string
 	position: number
+	/** Evoking Solomonis only; null elsewhere. */
+	sealState?: SealState | null
+	unsealPriority?: number | null
 	main?: boolean
 	friend?: boolean
 	quickSummon?: boolean
@@ -229,6 +238,8 @@ export interface PartyDifficulty {
 export interface Party {
 	id: string
 	shortcode: string
+	/** Full view: SolomonisExpedition. List views: SolomonisSummary. Null outside the mode. */
+	solomonis?: SolomonisExpedition | SolomonisSummary | null
 	name?: string
 	description?: string
 	fullAuto?: boolean
