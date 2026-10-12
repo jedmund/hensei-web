@@ -3,6 +3,7 @@
  * Kept out of the components so they can be unit tested in node.
  */
 
+import { extractErrorMessage } from '$lib/utils/errors'
 import type { Party } from '$lib/types/api/party'
 import type {
 	ArcarumBlessing,
@@ -230,4 +231,34 @@ export function solomonisRaidTransition(
 	if (toSolomonis && !partyIsSolomonis) return 'enter'
 	if (!toSolomonis && partyIsSolomonis) return 'leave'
 	return 'none'
+}
+
+// ---------------------------------------------------------------------------
+// Errors
+// ---------------------------------------------------------------------------
+
+/**
+ * Like `extractErrorMessage`, but the API keys expedition errors
+ * `solomonis.<field>` (e.g. `solomonis.route_evoker_id`), which would read as
+ * "Solomonis.Route Evoker Id …". Drop the prefix first.
+ */
+export function solomonisErrorMessage(error: unknown, fallback: string): string {
+	return extractErrorMessage(stripSolomonisErrorKeys(error), fallback)
+}
+
+function stripSolomonisErrorKeys(value: unknown): unknown {
+	if (!value || typeof value !== 'object' || Array.isArray(value)) return value
+	const result: Record<string, unknown> = {}
+	for (const [key, inner] of Object.entries(value)) {
+		if (key === 'errors' && inner && typeof inner === 'object' && !Array.isArray(inner)) {
+			result.errors = Object.fromEntries(
+				Object.entries(inner).map(([k, v]) => [k.replace(/^solomonis\./, ''), v])
+			)
+		} else if (key === 'details') {
+			result.details = stripSolomonisErrorKeys(inner)
+		} else {
+			result[key] = inner
+		}
+	}
+	return result
 }

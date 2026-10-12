@@ -1,0 +1,41 @@
+{
+	"status": 200,
+	"body": {
+		"route_evokers": [
+			{
+				"id": "d3dddbef-c045-4f31-bfe2-4ef58ba2854d",
+				"granblue_id": "3040164000",
+				"element": 4,
+				"name": {
+					"en": "Caim",
+					"ja": "カイム"
+				},
+				"zone": {
+					"id": "c9540e26-4797-419b-b7da-03c0b883c547",
+					"slug": "allotropic-microcosm",
+					"name": {
+						"en": "Allotropic Microcosm",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "e9612f04-f746-4279-a047-45d19f1e781f",
+				"granblue_id": "3040169000",
+				"element": 5,
+				"name": {
+					"en": "Nier",
+					"ja": "ニーア"
+				},
+				"zone": {
+					"id": "c9540e26-4797-419b-b7da-03c0b883c547",
+					"slug": "allotropic-microcosm",
+					"name": {
+						"en": "Allotropic Microcosm",
+						"ja": null
+					}
+				}
+			}
+		]
+	}
+}

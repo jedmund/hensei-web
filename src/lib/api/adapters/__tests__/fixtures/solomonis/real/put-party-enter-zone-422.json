@@ -1,0 +1,8 @@
+{
+	"status": 422,
+	"body": {
+		"errors": {
+			"solomonis.route_evoker_id": ["is required to enter an Evoking Solomonis zone"]
+		}
+	}
+}

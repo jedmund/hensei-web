@@ -6,7 +6,6 @@
 import { toast } from 'svelte-sonner'
 import * as m from '$lib/paraglide/messages'
 import { sidebar } from '$lib/stores/sidebar.svelte'
-import { extractErrorMessage } from '$lib/utils/errors'
 import type { Party } from '$lib/types/api/party'
 import type { SolomonisExpeditionInput } from '$lib/types/api/solomonis'
 import type {
@@ -15,7 +14,7 @@ import type {
 } from '$lib/api/mutations/solomonis.mutations'
 import EditSolomonisPane from './EditSolomonisPane.svelte'
 import EditBlessingsPane from './EditBlessingsPane.svelte'
-import { isFullExpedition } from './solomonisParty'
+import { isFullExpedition, solomonisErrorMessage } from './solomonisParty'
 
 /** The party a write goes to: its id and shortcode. */
 export interface PartyTarget {
@@ -45,7 +44,7 @@ export function openEditSolomonisPane(
 					solomonis
 				})
 			} catch (err: unknown) {
-				toast.error(extractErrorMessage(err, m.solomonis_web_party_save_failed()))
+				toast.error(solomonisErrorMessage(err, m.solomonis_web_party_save_failed()))
 			}
 		}
 	})
@@ -61,7 +60,7 @@ export function openEditBlessingsPane(
 			mutation
 				.mutateAsync({ partyId: party.id, shortcode: party.shortcode, blessingLevelIds })
 				.catch((err: unknown) =>
-					toast.error(extractErrorMessage(err, m.solomonis_web_party_blessings_save_failed()))
+					toast.error(solomonisErrorMessage(err, m.solomonis_web_party_blessings_save_failed()))
 				)
 		}
 	})
