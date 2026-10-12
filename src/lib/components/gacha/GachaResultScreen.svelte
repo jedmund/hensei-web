@@ -17,16 +17,17 @@
 		/** Identities of items whose character is new to the viewer */
 		newCharacters: ReadonlySet<string>
 		onDrawAgain?: (() => void) | undefined
-		/** The screen's height once scaled, in px */
-		height?: number
 	}
 
-	let { items, moons, newCharacters, onDrawAgain, height = $bindable(0) }: Props = $props()
+	let { items, moons, newCharacters, onDrawAgain }: Props = $props()
 
 	/** The game lays the screen out 320px wide; it's scaled to fit */
 	const LAYOUT_WIDTH = 320
 
+	// The screen fills the animation's frame, so the dialog keeps its size
 	let width = $state(LAYOUT_WIDTH)
+	let height = $state(0)
+	const zoom = $derived(width / LAYOUT_WIDTH)
 
 	const title = $derived(
 		items.length === 1 ? m.gacha_result_title_one() : m.gacha_result_title({ count: items.length })
@@ -72,7 +73,7 @@
 	style:--button={image(RESULT_IMAGES.button)}
 	style:--line-detail={image(RESULT_IMAGES.lineDetail)}
 >
-	<div class="layout" style:zoom={width / LAYOUT_WIDTH}>
+	<div class="layout" style:zoom style:height={height > 0 ? `${height / zoom}px` : undefined}>
 		<div class="result">
 			<h2 class="title">{title}</h2>
 			<!-- Rows of 3, 4 and 3, as in the game -->
@@ -110,6 +111,8 @@
 	// Sizes and sprite positions are the game's own, in its 320px layout. Its
 	// sprite sheets are drawn at 1.5×, so each is shown at two-thirds size.
 	.screen {
+		position: absolute;
+		inset: 0;
 		overflow: hidden;
 		background: #000;
 		color: #f2eee2;
@@ -120,14 +123,24 @@
 	}
 
 	.layout {
+		display: flex;
+		flex-direction: column;
 		width: 320px;
 	}
 
-	// As tall as its rows: 299px for a 10-draw
+	// Takes the frame's spare height, its rows centred: about the background's
+	// own 368px for a 10-draw
 	.result {
-		padding: 35px 0 15px;
-		background: var(--background) no-repeat;
-		background-size: 320px auto;
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		// Runs 10px under the Information panel, as in the game
+		margin-bottom: -10px;
+		padding: 35px 0 25px;
+		background: var(--background) no-repeat center top;
+		background-size: cover;
 		text-align: center;
 	}
 
@@ -191,8 +204,9 @@
 		justify-content: center;
 		width: 162px;
 		height: 42px;
-		// Centred on the bar, which sits a little below the sprite's middle
-		padding: 3px 0 0;
+		// The bar is the sprite's top 31px (a shadow fills the rest); centre
+		// the text on it
+		padding: 0 0 8px;
 		border: 0;
 		background: var(--button) no-repeat 0 -1035px;
 		background-size: 230px 3466px;
@@ -225,7 +239,7 @@
 		box-sizing: border-box;
 		width: 320px;
 		min-height: 40px;
-		margin: -10px 0 0;
+		margin: 0;
 		padding: 10px 10px 15px;
 		text-align: left;
 

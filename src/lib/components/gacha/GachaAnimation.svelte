@@ -69,12 +69,6 @@
 	/** The animation plays, then the game's results screen holds until dismissed */
 	let phase = $state<'playing' | 'results'>('playing')
 	let flashing = $state(false)
-	/** The stage eases from the animation's frame to the results screen's height */
-	let stageWidth = $state(0)
-	let resultHeight = $state(0)
-	const stageHeight = $derived(
-		phase === 'results' && resultHeight > 0 ? resultHeight : (stageWidth * 920) / 640
-	)
 	let closing = $state(false)
 	let finished = false
 
@@ -278,12 +272,7 @@
 	onInteractOutside={finishInstead}
 >
 	<!-- The animation's canvas is removed with the results screen, which stops it -->
-	<div
-		class="stage"
-		class:flashing
-		bind:clientWidth={stageWidth}
-		style:height={stageWidth > 0 ? `${stageHeight}px` : undefined}
-	>
+	<div class="stage" class:flashing>
 		{#if phase === 'playing'}
 			<button
 				type="button"
@@ -301,7 +290,6 @@
 				{items}
 				{moons}
 				{newCharacters}
-				bind:height={resultHeight}
 				onDrawAgain={onDrawAgain && (() => finish(onDrawAgain))}
 			/>
 		{/if}
@@ -375,7 +363,6 @@
 		aspect-ratio: 640 / 920;
 		overflow: hidden;
 		background: #000;
-		transition: height 250ms ease;
 
 		// The white flash, faded in into the results screen and by the outro
 		&::after {
