@@ -31,7 +31,7 @@ export interface Pattern {
 export interface Presentation {
 	crystal: Crystal
 	pattern: Pattern
-	/** A blue crystal can't happen in a 10-draw (one SR is guaranteed), so it's a fake-out */
+	/** A 10-part opening on blue is a fake-out: it always hides an SSR */
 	fakeOut: boolean
 	/** Gold's prismatic burst between the opening and the stones */
 	burst: boolean
@@ -40,9 +40,15 @@ export interface Presentation {
 	newCharacters: number[]
 }
 
-/** Chance that a single-SSR draw opens on the blue fake-out instead of gold */
+/**
+ * Chance that a 10-part draw with one SSR opens on the blue fake-out instead
+ * of gold. The fake-out always hides its SSR.
+ */
 export const FAKE_OUT_CHANCE = 0.1
-/** Chance that each SR or SSR stone starts one rarity lower */
+/**
+ * Chance that each SSR stone is hidden: it shows as an SR stone, then classes
+ * up. Only SSRs hide; other stones show their rarity.
+ */
 export const CLASS_UP_CHANCE = 0.15
 /** Chance that a gold opening plays the prismatic burst transition */
 export const BURST_CHANCE = 0.1
@@ -135,10 +141,12 @@ export function choosePresentation(
 		rainbow = 'newSummon'
 	}
 
-	// Rainbow for several SSRs; for a single SSR, its rainbow opening when it
-	// has one, else sometimes Rainbow 5, else gold (sometimes faking out with
-	// blue); blue-violet otherwise
-	let crystal: Crystal = 'violet'
+	// Rainbow for several SSRs. For one SSR, its rainbow opening when it has
+	// one, else sometimes Rainbow 5, else gold; a 10-part sometimes fakes out
+	// with blue instead. Without an SSR, a 10-part opens on gold (it always
+	// has an SR); a single draw opens on blue-violet for an SR, blue for an R.
+	const single = items.length === 1
+	let crystal: Crystal
 	let fakeOut = false
 	if (ssrCount >= 2) {
 		crystal = 'rainbow'
@@ -146,14 +154,19 @@ export function choosePresentation(
 		if (rainbow !== 'any' || random() < SINGLE_SSR_RAINBOW_CHANCE) {
 			crystal = 'rainbow'
 		} else {
-			fakeOut = random() < FAKE_OUT_CHANCE
+			fakeOut = !single && random() < FAKE_OUT_CHANCE
 			crystal = fakeOut ? 'blue' : 'gold'
 		}
+	} else if (!single) {
+		crystal = 'gold'
+	} else {
+		crystal = rarities[0] === 'SR' ? 'violet' : 'blue'
 	}
 
+	// Only SSR stones hide, and the fake-out always hides its SSR
 	const stones = rarities.map((rarity) => ({
 		rarity,
-		startsAs: rarity !== 'R' && random() < CLASS_UP_CHANCE ? LOWER[rarity] : rarity
+		startsAs: rarity === 'SSR' && (fakeOut || random() < CLASS_UP_CHANCE) ? LOWER[rarity] : rarity
 	}))
 
 	const burst = crystal === 'gold' && random() < BURST_CHANCE
@@ -164,7 +177,7 @@ export function choosePresentation(
 				? ssrCount >= 2
 					? { main: 2, sub: 0, add: RAINBOW[rainbow].add }
 					: { main: RAINBOW[rainbow].single, sub: 0, add: 0 }
-				: patternFor(crystal, burst, random),
+				: patternFor(crystal, burst, fakeOut, random),
 		fakeOut,
 		burst,
 		stones,
@@ -175,6 +188,7 @@ export function choosePresentation(
 function patternFor(
 	crystal: Exclude<Crystal, 'rainbow'>,
 	burst: boolean,
+	fakeOut: boolean,
 	random: () => number
 ): Pattern {
 	switch (crystal) {
@@ -184,6 +198,7 @@ function patternFor(
 		case 'violet':
 			return { main: 7, sub: 0, add: 0 }
 		case 'blue':
-			return { main: 8, sub: random() < 0.5 ? 1 : 0, add: 0 }
+			// A single R plays the plain blue opening, as in the game
+			return { main: 8, sub: fakeOut && random() < 0.5 ? 1 : 0, add: 0 }
 	}
 }
