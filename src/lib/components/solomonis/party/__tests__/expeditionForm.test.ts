@@ -1,36 +1,22 @@
 import { describe, it, expect } from 'vitest'
 import { buildExpeditionInput, type ExpeditionFormValues } from '../expeditionForm'
 
-const BUILD: ExpeditionFormValues = {
-	kind: 'build',
+const SAVED: ExpeditionFormValues = {
 	routeEvokerId: 'nier',
 	pledgeLevel: 0,
-	outcome: null,
-	bossesDefeated: null,
-	midboss: null,
-	expeditionLevel: null,
-	endedAt: null
-}
-
-const RUN: ExpeditionFormValues = {
-	...BUILD,
-	kind: 'run',
-	outcome: 'cleared',
-	bossesDefeated: 2,
-	expeditionLevel: 42,
-	endedAt: '2026-10-11T16:38:00+09:00'
+	outcome: null
 }
 
 describe('buildExpeditionInput', () => {
 	it('sends nothing when nothing changed', () => {
-		expect(buildExpeditionInput(BUILD, BUILD)).toEqual({})
-		expect(buildExpeditionInput(RUN, RUN)).toEqual({})
+		expect(buildExpeditionInput(SAVED, SAVED)).toEqual({})
+		const cleared = { ...SAVED, outcome: 'cleared' as const }
+		expect(buildExpeditionInput(cleared, cleared)).toEqual({})
 	})
 
-	it('sends kind, route and pledge for a party without an expedition', () => {
-		const initial = { ...BUILD, routeEvokerId: null }
-		expect(buildExpeditionInput({ ...BUILD, pledgeLevel: 3 }, initial)).toEqual({
-			kind: 'build',
+	it('sends route and pledge for a party without an expedition', () => {
+		const initial = { ...SAVED, routeEvokerId: null }
+		expect(buildExpeditionInput({ ...SAVED, pledgeLevel: 3 }, initial)).toEqual({
 			routeEvokerId: 'nier',
 			pledgeLevel: 3
 		})
@@ -38,24 +24,13 @@ describe('buildExpeditionInput', () => {
 
 	it('sends only changed fields', () => {
 		expect(
-			buildExpeditionInput({ ...RUN, routeEvokerId: 'fraux', midboss: 'infernobringer' }, RUN)
-		).toEqual({ routeEvokerId: 'fraux', midboss: 'infernobringer' })
+			buildExpeditionInput({ ...SAVED, routeEvokerId: 'fraux', outcome: 'miasma_2' }, SAVED)
+		).toEqual({ routeEvokerId: 'fraux', outcome: 'miasma_2' })
 	})
 
-	it('clears run fields when a run becomes a build', () => {
-		expect(buildExpeditionInput({ ...RUN, kind: 'build' }, RUN)).toEqual({
-			kind: 'build',
-			outcome: null,
-			bossesDefeated: null,
-			expeditionLevel: null,
-			endedAt: null
-		})
-	})
-
-	it('sends run fields when a build becomes a run', () => {
-		expect(buildExpeditionInput({ ...BUILD, kind: 'run', outcome: 'failed' }, BUILD)).toEqual({
-			kind: 'run',
-			outcome: 'failed'
+	it('sends a null outcome when it is unset', () => {
+		expect(buildExpeditionInput(SAVED, { ...SAVED, outcome: 'miasma_1' })).toEqual({
+			outcome: null
 		})
 	})
 })

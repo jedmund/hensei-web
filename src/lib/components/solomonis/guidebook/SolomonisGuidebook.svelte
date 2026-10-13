@@ -25,7 +25,7 @@
 	import { openGuideEffectSearchSidebar, openGuidebookEntrySidebar } from './openGuidebookSidebar'
 
 	interface Props {
-		/** The full party view. Renders nothing unless it's a Solomonis run. */
+		/** The full party view. Renders nothing outside Solomonis. */
 		party: Party
 		canEdit?: boolean
 	}
@@ -33,7 +33,6 @@
 	let { party, canEdit = false }: Props = $props()
 
 	const expedition = $derived(solomonisExpedition(party))
-	const isRun = $derived(expedition?.kind === 'run')
 
 	// Edits made while a save is in flight build on each other, not on the
 	// (possibly older) list in the party prop.
@@ -85,7 +84,7 @@
 	}
 </script>
 
-{#if expedition && isRun}
+{#if expedition}
 	<section class="solomonis-guidebook">
 		<header class="header">
 			<div class="title">

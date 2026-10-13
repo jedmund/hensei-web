@@ -51,7 +51,7 @@
 		raidId: string | null
 	}
 
-	/** The Evoking Solomonis row: "Run details" or "Build details" */
+	/** The Evoking Solomonis row under Raid */
 	export interface SolomonisDetailsLink {
 		label: string
 		/** e.g. "Nier · Pledge 3" */

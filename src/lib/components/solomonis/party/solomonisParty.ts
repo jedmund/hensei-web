@@ -19,7 +19,6 @@ import type {
 /** The loadout limit when the catalogue hasn't loaded yet. The API's value wins. */
 export const DEFAULT_BLESSING_COST_LIMIT = 100
 export const MAX_PLEDGE_LEVEL = 5
-export const MAX_BOSSES_DEFEATED = 2
 
 /** True when `solomonis` is the full-view expedition rather than a list summary. */
 export function isFullExpedition(
@@ -58,24 +57,6 @@ export function formatJst(iso: string | null | undefined): string | null {
 		`${jst.getUTCFullYear()}-${pad(jst.getUTCMonth() + 1)}-${pad(jst.getUTCDate())} ` +
 		`${pad(jst.getUTCHours())}:${pad(jst.getUTCMinutes())}`
 	)
-}
-
-/** The JST calendar date (YYYY-MM-DD) of an ISO timestamp, for the date picker. */
-export function jstDate(iso: string | null | undefined): string | null {
-	return formatJst(iso)?.slice(0, 10) ?? null
-}
-
-/**
- * Turns a picked JST date back into a timestamp. Keeps the original time of
- * day when the date didn't change, so editing other fields doesn't move it.
- */
-export function endedAtFromJstDate(
-	date: string | null,
-	original: string | null | undefined
-): string | null {
-	if (!date) return null
-	if (original && jstDate(original) === date) return original
-	return `${date}T00:00:00+09:00`
 }
 
 export const SPACE_STAT_KEYS = [

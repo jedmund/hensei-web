@@ -14,7 +14,6 @@
 		},
 		"turn_count": null,
 		"solomonis": {
-			"kind": "build",
 			"route_evoker": {
 				"id": "c816c582-b04a-5173-982b-fa833919f4e6",
 				"granblue_id": "3040169000",
@@ -34,10 +33,6 @@
 			},
 			"pledge_level": 0,
 			"outcome": null,
-			"bosses_defeated": null,
-			"midboss": null,
-			"expedition_level": null,
-			"build_party": null,
 			"game_report_id": null,
 			"ended_at": null,
 			"stats": {},

@@ -78,7 +78,7 @@ describe('Solomonis adapter with real API responses', () => {
 	it('takes the full party from a create with party[solomonis]', async () => {
 		global.fetch = mockApiResponse(postParty201.body)
 		const party = await adapter.createParty({}, { routeEvokerId: 'evoker' })
-		expect(isFullExpedition(party.solomonis) && party.solomonis.kind).toBe('build')
+		expect(isFullExpedition(party.solomonis) && party.solomonis.routeEvoker.id).toBeTruthy()
 	})
 
 	it('shows a UTC ended_at in JST', () => {

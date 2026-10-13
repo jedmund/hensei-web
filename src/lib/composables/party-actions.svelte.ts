@@ -248,10 +248,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 			element: opts.getUserElement(),
 			solomonisDetails: expedition
 				? {
-						label:
-							expedition.kind === 'run'
-								? m.solomonis_web_party_run_details()
-								: m.solomonis_web_party_build_details(),
+						label: m.solomonis_web_party_title(),
 						// The zone already shows in the Raid row above
 						summary: [
 							solomonisName(expedition.routeEvoker.name, locale),

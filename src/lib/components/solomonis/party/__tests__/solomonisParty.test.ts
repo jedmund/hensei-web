@@ -1,13 +1,11 @@
 import { describe, it, expect } from 'vitest'
 import {
 	defaultRouteEvokerId,
-	endedAtFromJstDate,
 	evokersInGrid,
 	formatJst,
 	hasStats,
 	isFullExpedition,
 	isSolomonisParty,
-	jstDate,
 	releasedBlessings,
 	routeEvokerMissingFromGrid,
 	sameSelection,
@@ -34,7 +32,7 @@ const catalogue = BLESSINGS.blessings
 describe('isFullExpedition / isSolomonisParty', () => {
 	it('tells the full view from the list summary', () => {
 		expect(isFullExpedition(RUN_PARTY.solomonis)).toBe(true)
-		expect(isFullExpedition({ kind: 'run', routeEvokerId: NIER_ID, pledgeLevel: 0 })).toBe(false)
+		expect(isFullExpedition({ routeEvokerId: NIER_ID, pledgeLevel: 0 })).toBe(false)
 		expect(isFullExpedition(null)).toBe(false)
 	})
 
@@ -87,14 +85,6 @@ describe('JST dates', () => {
 		expect(formatJst(null)).toBeNull()
 		expect(formatJst('nope')).toBeNull()
 	})
-
-	it('round-trips the date picker, keeping the time when the day is unchanged', () => {
-		const original = '2026-10-11T16:38:00+09:00'
-		expect(jstDate(original)).toBe('2026-10-11')
-		expect(endedAtFromJstDate('2026-10-11', original)).toBe(original)
-		expect(endedAtFromJstDate('2026-10-12', original)).toBe('2026-10-12T00:00:00+09:00')
-		expect(endedAtFromJstDate(null, original)).toBeNull()
-	})
 })
 
 describe('stats', () => {
@@ -117,7 +107,7 @@ describe('stats', () => {
 		expect(totalSpaces(run!.stats)).toBe(48)
 	})
 
-	it('treats an empty build stats object as no stats', () => {
+	it('treats an empty stats object (no report) as no stats', () => {
 		const build = isFullExpedition(BUILD_PARTY.solomonis) ? BUILD_PARTY.solomonis : null
 		expect(hasStats(build!.stats)).toBe(false)
 		expect(hasStats(run!.stats)).toBe(true)

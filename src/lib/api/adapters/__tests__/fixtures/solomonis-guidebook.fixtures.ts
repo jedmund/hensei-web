@@ -1528,7 +1528,6 @@ export const API = {
 		]
 	},
 	runSolomonis: {
-		kind: 'run',
 		route_evoker: {
 			id: 'c816c582-b04a-5173-982b-fa833919f4e6',
 			granblue_id: '3040169000',
@@ -1548,13 +1547,6 @@ export const API = {
 		},
 		pledge_level: 0,
 		outcome: 'cleared',
-		bosses_defeated: 2,
-		midboss: null,
-		expedition_level: null,
-		build_party: {
-			shortcode: 'bld001',
-			name: 'Nier starter'
-		},
 		game_report_id: 381099,
 		ended_at: '2026-10-11T16:38:00+09:00',
 		stats: {

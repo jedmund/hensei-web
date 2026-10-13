@@ -1,19 +1,18 @@
 <script lang="ts">
 	/**
-	 * SolomonisDetailsPane - the Evoking Solomonis sidebar pane: kind, route
-	 * Evoker, zone, pledge, blessings, and for runs the report fields, stats and
-	 * guidebook. Opened from the raid tile and the team settings pane; editing
-	 * pushes EditSolomonisPane / EditBlessingsPane on top of it.
+	 * SolomonisDetailsPane - the Evoking Solomonis sidebar pane: route Evoker,
+	 * zone, pledge, outcome and blessings, plus whatever an imported report
+	 * brought (end time, turns, spaces visited, guidebook). Opened from the
+	 * raid tile and the team settings pane; Edit pushes EditSolomonisPane on
+	 * top of it.
 	 */
 	import { onMount } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { solomonisQueries } from '$lib/api/queries/solomonis.queries'
 	import * as m from '$lib/paraglide/messages'
-	import { localizeHref } from '$lib/paraglide/runtime'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 	import BlessingRow from './BlessingRow.svelte'
 	import LevelSegments from '$lib/components/ui/LevelSegments.svelte'
 	import SolomonisGuidebook from '$lib/components/solomonis/guidebook/SolomonisGuidebook.svelte'
@@ -24,10 +23,9 @@
 		useUpdateSolomonisExpedition
 	} from '$lib/api/mutations/solomonis.mutations'
 	import type { Party } from '$lib/types/api/party'
-	import type { SolomonisMidboss } from '$lib/types/api/solomonis'
-	import { openEditBlessingsPane, openEditSolomonisPane } from './openSolomonisPanes'
+	import type { SolomonisOutcome } from '$lib/types/api/solomonis'
+	import { openEditSolomonisPane } from './openSolomonisPanes'
 	import {
-		MAX_BOSSES_DEFEATED,
 		formatJst,
 		hasStats,
 		isFullExpedition,
@@ -48,8 +46,10 @@
 
 	const party = $derived(getParty())
 
-	const updateExpedition = useUpdateSolomonisExpedition()
-	const updateBlessings = useUpdatePartyBlessings()
+	const mutations = {
+		expedition: useUpdateSolomonisExpedition(),
+		blessings: useUpdatePartyBlessings()
+	}
 
 	// The party's blessings carry level and cost; the effect text comes from
 	// the catalogue (shared with the blessing picker's query).
@@ -70,7 +70,6 @@
 
 	const locale = appLocale()
 	const expedition = $derived(isFullExpedition(party.solomonis) ? party.solomonis : null)
-	const isRun = $derived(expedition?.kind === 'run')
 	const missingFromGrid = $derived(routeEvokerMissingFromGrid(party))
 	const canWrite = $derived(canEdit && party.id !== 'new')
 
@@ -87,19 +86,16 @@
 		special: m.solomonis_web_party_space_special
 	}
 
-	const MIDBOSS_LABELS: Record<SolomonisMidboss, () => string> = {
-		banes_gate: m.solomonis_web_party_midboss_banes_gate,
-		infernobringer: m.solomonis_web_party_midboss_infernobringer,
-		beast_of_anathema: m.solomonis_web_party_midboss_beast_of_anathema
+	const OUTCOME_LABELS: Record<SolomonisOutcome, () => string> = {
+		miasma_1: m.solomonis_web_party_outcome_miasma_1,
+		miasma_2: m.solomonis_web_party_outcome_miasma_2,
+		cleared: m.solomonis_web_party_outcome_cleared
 	}
 
-	// "Run · Allotropic Microcosm · Pledge 3", as on the raid tile
+	// "Allotropic Microcosm · Pledge 3", as on the raid tile
 	const headerMeta = $derived(
 		expedition
 			? [
-					expedition.kind === 'run'
-						? m.solomonis_web_party_kind_run()
-						: m.solomonis_web_party_kind_build(),
 					solomonisName(expedition.zone.name, locale),
 					expedition.pledgeLevel > 0
 						? m.solomonis_web_party_pledge_short({ level: expedition.pledgeLevel })
@@ -111,7 +107,7 @@
 	)
 
 	function openEditPane() {
-		openEditSolomonisPane(party, updateExpedition)
+		openEditSolomonisPane(party, mutations)
 	}
 
 	onMount(() => {
@@ -119,10 +115,6 @@
 		if (paneId) sidebar.setActionForPane(paneId, openEditPane, m.action_edit())
 		else sidebar.setAction(openEditPane, m.action_edit())
 	})
-
-	function openBlessingsPane() {
-		openEditBlessingsPane(party, updateBlessings)
-	}
 
 	function orDash(value: string | number | null | undefined): string {
 		return value === null || value === undefined ? '—' : String(value)
@@ -152,6 +144,24 @@
 			</p>
 		{/if}
 
+		<div class="rows expedition-rows">
+			<DetailRow
+				label={m.solomonis_web_party_outcome()}
+				value={expedition.outcome
+					? OUTCOME_LABELS[expedition.outcome]()
+					: m.solomonis_web_party_not_set()}
+			/>
+			{#if expedition.endedAt}
+				<DetailRow
+					label={m.solomonis_web_party_ended_at()}
+					value={formatJst(expedition.endedAt) ?? '—'}
+				/>
+			{/if}
+			{#if party.turnCount != null}
+				<DetailRow label={m.solomonis_web_party_turns()} value={party.turnCount} />
+			{/if}
+		</div>
+
 		<hr class="divider" />
 
 		<DetailsSection
@@ -160,18 +170,6 @@
 			empty={expedition.blessings.length === 0}
 			emptyMessage={m.solomonis_web_party_blessings_none()}
 		>
-			{#snippet action()}
-				{#if canWrite}
-					<Button
-						variant="ghost"
-						size="small"
-						onclick={openBlessingsPane}
-						aria-label={m.solomonis_web_party_blessings_edit()}
-					>
-						{m.action_edit()}
-					</Button>
-				{/if}
-			{/snippet}
 			<ul class="blessing-list">
 				{#each [...expedition.blessings].sort((a, b) => a.blessing.arcanaNumber - b.blessing.arcanaNumber) as b (b.blessing.id)}
 					{@const description = blessingDescription(b.blessing.id, b.levelId)}
@@ -203,73 +201,27 @@
 			</ul>
 		</DetailsSection>
 
-		{#if isRun}
+		{#if hasStats(expedition.stats)}
 			<hr class="divider" />
 
-			<DetailsSection title={m.solomonis_web_party_section_run()}>
+			<DetailsSection title={m.solomonis_web_party_spaces()}>
 				<div class="rows">
+					{#each spaceStats(expedition.stats) as stat (stat.key)}
+						<DetailRow label={SPACE_LABELS[stat.key]()} value={stat.count} />
+					{/each}
 					<DetailRow
-						label={m.solomonis_web_party_outcome()}
-						value={expedition.outcome === 'cleared'
-							? m.solomonis_web_party_outcome_cleared()
-							: expedition.outcome === 'failed'
-								? m.solomonis_web_party_outcome_failed()
-								: '—'}
+						label={m.solomonis_web_party_shop_purchases()}
+						value={orDash(expedition.stats.shopPurchases)}
 					/>
 					<DetailRow
-						label={m.solomonis_web_party_bosses_defeated()}
-						value={expedition.bossesDefeated === null
-							? '—'
-							: m.solomonis_web_party_bosses_value({
-									count: expedition.bossesDefeated,
-									max: MAX_BOSSES_DEFEATED
-								})}
+						label={m.solomonis_web_party_points_earned()}
+						value={orDash(expedition.stats.pointsEarned)}
 					/>
-					<DetailRow
-						label={m.solomonis_web_party_midboss()}
-						value={expedition.midboss ? MIDBOSS_LABELS[expedition.midboss]() : '—'}
-					/>
-					<DetailRow
-						label={m.solomonis_web_party_expedition_level()}
-						value={orDash(expedition.expeditionLevel)}
-					/>
-					<DetailRow
-						label={m.solomonis_web_party_ended_at()}
-						value={formatJst(expedition.endedAt) ?? '—'}
-					/>
-					<DetailRow label={m.solomonis_web_party_turns()} value={orDash(party.turnCount)} />
-					<DetailRow label={m.solomonis_web_party_build_party()}>
-						{#if expedition.buildParty}
-							<a href={localizeHref(`/teams/${expedition.buildParty.shortcode}`)}>
-								{expedition.buildParty.name || m.party_untitled()}
-							</a>
-						{:else}
-							—
-						{/if}
-					</DetailRow>
 				</div>
 			</DetailsSection>
+		{/if}
 
-			{#if hasStats(expedition.stats)}
-				<hr class="divider" />
-
-				<DetailsSection title={m.solomonis_web_party_spaces()}>
-					<div class="rows">
-						{#each spaceStats(expedition.stats) as stat (stat.key)}
-							<DetailRow label={SPACE_LABELS[stat.key]()} value={stat.count} />
-						{/each}
-						<DetailRow
-							label={m.solomonis_web_party_shop_purchases()}
-							value={orDash(expedition.stats.shopPurchases)}
-						/>
-						<DetailRow
-							label={m.solomonis_web_party_points_earned()}
-							value={orDash(expedition.stats.pointsEarned)}
-						/>
-					</div>
-				</DetailsSection>
-			{/if}
-
+		{#if expedition.guidebook.length > 0}
 			<hr class="divider" />
 
 			<div class="guidebook">
@@ -338,6 +290,11 @@
 	.rows {
 		display: flex;
 		flex-direction: column;
+	}
+
+	// Lined up with the DetailsSection rows below
+	.expedition-rows {
+		padding: 0 $unit;
 	}
 
 	.blessing-list {

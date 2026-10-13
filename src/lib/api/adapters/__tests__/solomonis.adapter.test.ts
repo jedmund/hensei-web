@@ -73,12 +73,10 @@ describe('SolomonisAdapter', () => {
 			const solomonis = party.solomonis as unknown as Record<string, unknown>
 
 			expect(solomonis).toMatchObject({
-				kind: 'run',
 				routeEvoker: { granblueId: '3040169000' },
-				bossesDefeated: 2,
+				outcome: 'cleared',
 				gameReportId: 381099,
 				endedAt: '2026-10-11T16:38:00+09:00',
-				buildParty: { shortcode: 'bld001', name: 'Nier starter' },
 				blessingCostLimit: 100,
 				blessingCostTotal: 50,
 				stats: { shopPurchases: 18, pointsEarned: 2924, battle: 14 }
@@ -94,7 +92,7 @@ describe('SolomonisAdapter', () => {
 
 			await adapter.createParty(
 				{ name: 'Nier build' },
-				{ kind: 'build', routeEvokerId: 'evoker-1', pledgeLevel: 2 }
+				{ routeEvokerId: 'evoker-1', pledgeLevel: 2 }
 			)
 
 			const { url, init } = lastCall()
@@ -103,7 +101,7 @@ describe('SolomonisAdapter', () => {
 			expect(JSON.parse(init.body as string)).toEqual({
 				party: {
 					name: 'Nier build',
-					solomonis: { kind: 'build', route_evoker_id: 'evoker-1', pledge_level: 2 }
+					solomonis: { route_evoker_id: 'evoker-1', pledge_level: 2 }
 				}
 			})
 		})
@@ -115,7 +113,7 @@ describe('SolomonisAdapter', () => {
 
 			await adapter.updateExpedition(
 				'party-uuid',
-				{ outcome: 'failed', bossesDefeated: 1, endedAt: null, buildPartyId: 'build-uuid' },
+				{ outcome: 'miasma_2', pledgeLevel: 3 },
 				{ 'X-Edit-Key': 'secret' }
 			)
 
@@ -126,10 +124,8 @@ describe('SolomonisAdapter', () => {
 			expect(JSON.parse(init.body as string)).toEqual({
 				party: {
 					solomonis: {
-						outcome: 'failed',
-						bosses_defeated: 1,
-						ended_at: null,
-						build_party_id: 'build-uuid'
+						outcome: 'miasma_2',
+						pledge_level: 3
 					}
 				}
 			})
@@ -153,7 +149,7 @@ describe('SolomonisAdapter', () => {
 			})
 			expect(party.shortcode).toBe('bld001')
 			const solomonis = party.solomonis as unknown as Record<string, unknown>
-			expect(solomonis).toMatchObject({ kind: 'build', blessingCostTotal: 70 })
+			expect(solomonis).toMatchObject({ outcome: null, blessingCostTotal: 70 })
 			expect(party.weapons[0]).toMatchObject({ sealState: 'start' })
 		})
 	})

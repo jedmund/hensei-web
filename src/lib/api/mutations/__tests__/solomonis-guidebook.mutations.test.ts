@@ -39,7 +39,7 @@ describe('solomonisExpedition', () => {
 		expect(
 			solomonisExpedition({
 				...MOCK_PARTY,
-				solomonis: { kind: 'run', routeEvokerId: 'x', pledgeLevel: 0 }
+				solomonis: { routeEvokerId: 'x', pledgeLevel: 0 }
 			})
 		).toBeNull()
 		expect(solomonisExpedition(MOCK_PARTY)).toBeNull()
@@ -69,7 +69,7 @@ describe('replaceGuidebookOptions', () => {
 
 		expect(cachedGuidebook()).toEqual(entries)
 		const cached = solomonisExpedition(getCachedParty(queryClient, MOCK_SHORTCODE))
-		expect(cached?.kind).toBe('run')
+		expect(cached?.routeEvoker).toEqual(EXPECTED.runSolomonis.routeEvoker)
 		expect(cached?.blessings).toEqual(EXPECTED.runSolomonis.blessings)
 	})
 

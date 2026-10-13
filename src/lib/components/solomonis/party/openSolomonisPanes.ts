@@ -14,9 +14,8 @@ import type {
 	useUpdateSolomonisExpedition
 } from '$lib/api/mutations/solomonis.mutations'
 import EditSolomonisPane from './EditSolomonisPane.svelte'
-import EditBlessingsPane from './EditBlessingsPane.svelte'
 import SolomonisDetailsPane from './SolomonisDetailsPane.svelte'
-import { isFullExpedition, solomonisErrorMessage } from './solomonisParty'
+import { solomonisErrorMessage } from './solomonisParty'
 
 /**
  * Shows a Solomonis pane: on top of the open sidebar (so Back returns to,
@@ -43,7 +42,7 @@ export function finishSolomonisPane() {
 }
 
 /**
- * Opens the Evoking Solomonis details pane: the expedition, blessings, run
+ * Opens the Evoking Solomonis details pane: the expedition, blessings, report
  * details and guidebook. `getParty` keeps it in step with the party page.
  */
 export function openSolomonisDetailsPane(getParty: () => Party, canEdit: boolean) {
@@ -56,46 +55,57 @@ export interface PartyTarget {
 	shortcode: string
 }
 
+/** What the edit pane's Save hands back: null for a part that didn't change. */
+export interface SolomonisPaneChanges {
+	expedition: SolomonisExpeditionInput | null
+	blessingLevelIds: string[] | null
+}
+
+/** The two writes behind the edit pane's Save. */
+export interface SolomonisMutations {
+	expedition: ReturnType<typeof useUpdateSolomonisExpedition>
+	blessings: ReturnType<typeof useUpdatePartyBlessings>
+}
+
 /**
- * Opens the expedition pane. On a party that isn't saved yet (`/teams/new`),
- * pass `ensurePartyExists`: the party is created first, then the expedition
- * is written to it.
+ * Opens the Evoking Solomonis edit pane (D25). Saving writes the expedition,
+ * then the blessings, since blessings need the expedition to exist. On a
+ * party that isn't saved yet (`/teams/new`), pass `ensurePartyExists`: the
+ * party is created first.
  */
 export function openEditSolomonisPane(
 	party: Party,
-	mutation: ReturnType<typeof useUpdateSolomonisExpedition>,
+	mutations: SolomonisMutations,
 	ensurePartyExists?: () => Promise<PartyTarget>
 ) {
 	showSolomonisPane(m.solomonis_web_party_title(), EditSolomonisPane, {
 		party,
-		onSave: async (solomonis: SolomonisExpeditionInput) => {
+		onSave: async ({ expedition, blessingLevelIds }: SolomonisPaneChanges) => {
+			let target: PartyTarget
 			try {
-				const target: PartyTarget =
-					party.id === 'new' && ensurePartyExists ? await ensurePartyExists() : party
-				await mutation.mutateAsync({
-					partyId: target.id,
-					shortcode: target.shortcode,
-					solomonis
-				})
+				target = party.id === 'new' && ensurePartyExists ? await ensurePartyExists() : party
+				if (expedition) {
+					await mutations.expedition.mutateAsync({
+						partyId: target.id,
+						shortcode: target.shortcode,
+						solomonis: expedition
+					})
+				}
 			} catch (err: unknown) {
 				toast.error(solomonisErrorMessage(err, m.solomonis_web_party_save_failed()))
+				return
 			}
-		}
-	})
-}
 
-export function openEditBlessingsPane(
-	party: Party,
-	mutation: ReturnType<typeof useUpdatePartyBlessings>
-) {
-	showSolomonisPane(m.solomonis_web_party_blessings_title(), EditBlessingsPane, {
-		blessings: isFullExpedition(party.solomonis) ? party.solomonis.blessings : [],
-		onSave: (blessingLevelIds: string[]) => {
-			mutation
-				.mutateAsync({ partyId: party.id, shortcode: party.shortcode, blessingLevelIds })
-				.catch((err: unknown) =>
-					toast.error(solomonisErrorMessage(err, m.solomonis_web_party_blessings_save_failed()))
-				)
+			if (!blessingLevelIds) return
+			try {
+				await mutations.blessings.mutateAsync({
+					partyId: target.id,
+					shortcode: target.shortcode,
+					blessingLevelIds
+				})
+			} catch (err: unknown) {
+				toast.error(solomonisErrorMessage(err, m.solomonis_web_party_blessings_save_failed()))
+			}
 		}
 	})
 }

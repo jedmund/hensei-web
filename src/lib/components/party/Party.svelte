@@ -52,7 +52,10 @@
 		solomonisRaidTransition,
 		type SolomonisRaidTransition
 	} from '$lib/components/solomonis/party/solomonisParty'
-	import { useUpdateSolomonisExpedition } from '$lib/api/mutations/solomonis.mutations'
+	import {
+		useUpdatePartyBlessings,
+		useUpdateSolomonisExpedition
+	} from '$lib/api/mutations/solomonis.mutations'
 	import type { RaidFull } from '$lib/types/api/raid'
 	import * as m from '$lib/paraglide/messages'
 
@@ -226,7 +229,10 @@
 
 	// --- Evoking Solomonis ---
 	const isSolomonis = $derived(isSolomonisParty(party))
-	const updateSolomonisExpedition = useUpdateSolomonisExpedition()
+	const solomonisMutations = {
+		expedition: useUpdateSolomonisExpedition(),
+		blessings: useUpdatePartyBlessings()
+	}
 	let leaveSolomonisOpen = $state(false)
 	let pendingLeaveSolomonisRaidId = $state<string | null>(null)
 
@@ -236,7 +242,7 @@
 		raidId: string | null
 	) {
 		if (transition === 'enter') {
-			openEditSolomonisPane(party, updateSolomonisExpedition, ensurePartyExistsFn)
+			openEditSolomonisPane(party, solomonisMutations, ensurePartyExistsFn)
 		} else if (transition === 'leave') {
 			pendingLeaveSolomonisRaidId = raidId
 			leaveSolomonisOpen = true

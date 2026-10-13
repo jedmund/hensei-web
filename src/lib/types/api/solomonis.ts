@@ -8,9 +8,8 @@ export interface PartialLocalizedName {
 	ja: string | null
 }
 
-export type SolomonisKind = 'build' | 'run'
-export type SolomonisOutcome = 'cleared' | 'failed'
-export type SolomonisMidboss = 'banes_gate' | 'infernobringer' | 'beast_of_anathema'
+/** How far an expedition got: the miasma closes twice, before and after the midboss (D19). */
+export type SolomonisOutcome = 'miasma_1' | 'miasma_2' | 'cleared'
 export type SealState = 'start' | 'unsealed' | 'sealed'
 export type GuideEffectRarity = 'normal' | 'rare' | 'unique' | 'cursed'
 export type GuideEffectTargetType = 'race' | 'proficiency' | 'character'
@@ -100,17 +99,15 @@ export interface SolomonisStats {
 	pointsEarned?: number
 }
 
-/** `party.solomonis` in the full party view. Run-only fields are null on builds. */
+/**
+ * `party.solomonis` in the full party view. Outcome is null until set; the
+ * end time, stats and report id come only from an imported report (D20).
+ */
 export interface SolomonisExpedition {
-	kind: SolomonisKind
 	routeEvoker: Omit<RouteEvoker, 'zone'>
 	zone: SolomonisZone
 	pledgeLevel: number
 	outcome: SolomonisOutcome | null
-	bossesDefeated: number | null
-	midboss: SolomonisMidboss | null
-	expeditionLevel: number | null
-	buildParty: { shortcode: string; name: string | null } | null
 	gameReportId: number | null
 	/** ISO 8601, JST. */
 	endedAt: string | null
@@ -123,7 +120,6 @@ export interface SolomonisExpedition {
 
 /** `party.solomonis` in list views. */
 export interface SolomonisSummary {
-	kind: SolomonisKind
 	routeEvokerId: string
 	pledgeLevel: number
 }
@@ -140,16 +136,11 @@ export interface SolomonisGridCharacterFields {
 
 // Write payloads
 
+/** `party[solomonis]`: the only expedition fields the web app writes (D20). */
 export interface SolomonisExpeditionInput {
-	kind?: SolomonisKind
 	routeEvokerId?: string
 	pledgeLevel?: number
 	outcome?: SolomonisOutcome | null
-	bossesDefeated?: number | null
-	midboss?: SolomonisMidboss | null
-	expeditionLevel?: number | null
-	buildPartyId?: string | null
-	endedAt?: string | null
 }
 
 export interface GuidebookEntryInput {

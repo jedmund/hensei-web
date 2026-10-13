@@ -1,43 +1,44 @@
 <script lang="ts">
 	/**
-	 * EditSolomonisPane - sidebar pane for a Solomonis party's expedition fields:
-	 * kind, route Evoker, pledge level, and for runs the outcome, bosses
-	 * defeated, midboss, Expedition Lvl and end date.
+	 * EditSolomonisPane - the one edit pane for a Solomonis party (D25): an
+	 * unnamed section with the route Evoker, Transmigrant Pledge and outcome,
+	 * and a Blessings section with a level stepper per released blessing
+	 * (0 = not equipped) under the loadout's cost gauge. Any level can be
+	 * picked; while the total is over the limit the gauge turns red and saving
+	 * is blocked.
 	 *
 	 * The party's element and zone follow the route Evoker on the API side, so
-	 * there's no element or zone control here.
+	 * there's no element or zone control here. One Save hands both changes to
+	 * the opener, which writes the expedition first, then the blessings.
 	 */
 	import { untrack } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import * as m from '$lib/paraglide/messages'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
-	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
-	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import Stepper from '$lib/components/ui/Stepper.svelte'
-	import Input from '$lib/components/ui/Input.svelte'
-	import DatePicker from '$lib/components/ui/DatePicker.svelte'
+	import BlessingRow from './BlessingRow.svelte'
+	import BlessingCostGauge from './BlessingCostGauge.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import { finishSolomonisPane } from './openSolomonisPanes'
+	import { finishSolomonisPane, type SolomonisPaneChanges } from './openSolomonisPanes'
 	import { solomonisQueries } from '$lib/api/queries/solomonis.queries'
 	import { getCharacterImage } from '$lib/utils/images'
 	import { appLocale } from '$lib/utils/locale'
 	import type { Party } from '$lib/types/api/party'
-	import type {
-		SolomonisExpeditionInput,
-		SolomonisKind,
-		SolomonisMidboss,
-		SolomonisOutcome
-	} from '$lib/types/api/solomonis'
+	import type { ArcarumBlessing, SolomonisOutcome } from '$lib/types/api/solomonis'
 	import {
-		MAX_BOSSES_DEFEATED,
+		DEFAULT_BLESSING_COST_LIMIT,
 		MAX_PLEDGE_LEVEL,
 		defaultRouteEvokerId,
-		endedAtFromJstDate,
 		isFullExpedition,
-		jstDate,
-		solomonisName
+		releasedBlessings,
+		sameSelection,
+		selectionCost,
+		selectionFromParty,
+		selectionToLevelIds,
+		solomonisName,
+		type BlessingSelection
 	} from './solomonisParty'
 	import { buildExpeditionInput, type ExpeditionFormValues } from './expeditionForm'
 
@@ -45,35 +46,28 @@
 		/** Pane ID injected by PaneStack */
 		paneId?: string
 		party: Party
-		onSave: (input: SolomonisExpeditionInput) => void
+		onSave: (changes: SolomonisPaneChanges) => void
 	}
 
 	let { paneId, party, onSave }: Props = $props()
 
 	const routeEvokersQuery = createQuery(() => solomonisQueries.routeEvokers())
+	const catalogueQuery = createQuery(() => solomonisQueries.blessings())
 
 	const initialParty = untrack(() => $state.snapshot(party)) as Party
 	const expedition = isFullExpedition(initialParty.solomonis) ? initialParty.solomonis : null
 
 	const initial: ExpeditionFormValues = {
-		kind: expedition?.kind ?? 'build',
 		routeEvokerId: expedition?.routeEvoker.id ?? null,
 		pledgeLevel: expedition?.pledgeLevel ?? 0,
-		outcome: expedition?.outcome ?? null,
-		bossesDefeated: expedition?.bossesDefeated ?? null,
-		midboss: expedition?.midboss ?? null,
-		expeditionLevel: expedition?.expeditionLevel ?? null,
-		endedAt: expedition?.endedAt ?? null
+		outcome: expedition?.outcome ?? null
 	}
+	const initialSelection = selectionFromParty(expedition?.blessings ?? [])
 
-	let kind = $state<SolomonisKind>(initial.kind)
 	let routeEvokerId = $state<string | null>(initial.routeEvokerId)
 	let pledgeLevel = $state(initial.pledgeLevel)
 	let outcome = $state<SolomonisOutcome | null>(initial.outcome)
-	let bossesDefeated = $state<number | null>(initial.bossesDefeated)
-	let midboss = $state<SolomonisMidboss | null>(initial.midboss)
-	let expeditionLevelText = $state(initial.expeditionLevel?.toString() ?? '')
-	let endedDate = $state<string | null>(jstDate(initial.endedAt))
+	let selection = $state<BlessingSelection>({ ...initialSelection })
 
 	// Preselect the only eligible Evoker in the grid once the catalogue loads.
 	$effect(() => {
@@ -91,60 +85,57 @@
 		(routeEvokersQuery.data ?? []).map((e) => ({
 			value: e.id,
 			label: solomonisName(e.name, locale),
-			subtitle: solomonisName(e.zone.name, locale),
+			// Grouped under their zone's heading in the menu
+			group: solomonisName(e.zone.name, locale),
 			image: getCharacterImage(e.granblueId, 'square')
 		}))
 	)
 
 	const outcomeOptions = [
 		{ value: NONE, label: m.solomonis_web_party_not_set() },
-		{ value: 'cleared', label: m.solomonis_web_party_outcome_cleared() },
-		{ value: 'failed', label: m.solomonis_web_party_outcome_failed() }
+		{ value: 'miasma_1', label: m.solomonis_web_party_outcome_miasma_1() },
+		{ value: 'miasma_2', label: m.solomonis_web_party_outcome_miasma_2() },
+		{ value: 'cleared', label: m.solomonis_web_party_outcome_cleared() }
 	]
 
-	const bossOptions = [
-		{ value: NONE, label: m.solomonis_web_party_not_set() },
-		...Array.from({ length: MAX_BOSSES_DEFEATED + 1 }, (_, count) => ({
-			value: String(count),
-			label: m.solomonis_web_party_bosses_value({ count, max: MAX_BOSSES_DEFEATED })
-		}))
-	]
+	const input = $derived(buildExpeditionInput({ routeEvokerId, pledgeLevel, outcome }, initial))
+	const expeditionChanged = $derived(Object.keys(input).length > 0)
 
-	const midbossOptions = [
-		{ value: NONE, label: m.solomonis_web_party_not_set() },
-		{ value: 'banes_gate', label: m.solomonis_web_party_midboss_banes_gate() },
-		{ value: 'infernobringer', label: m.solomonis_web_party_midboss_infernobringer() },
-		{ value: 'beast_of_anathema', label: m.solomonis_web_party_midboss_beast_of_anathema() }
-	]
+	const catalogue = $derived(catalogueQuery.data?.blessings ?? [])
+	const costLimit = $derived(catalogueQuery.data?.costLimit ?? DEFAULT_BLESSING_COST_LIMIT)
+	const available = $derived(releasedBlessings(catalogue))
+	const total = $derived(selectionCost(catalogue, selection))
+	const overLimit = $derived(total > costLimit)
+	const blessingsChanged = $derived(!sameSelection(selection, initialSelection))
 
-	const values = $derived<ExpeditionFormValues>({
-		kind,
-		routeEvokerId,
-		pledgeLevel,
-		outcome,
-		bossesDefeated,
-		midboss,
-		expeditionLevel: parseLevel(expeditionLevelText),
-		endedAt: endedAtFromJstDate(endedDate, initial.endedAt)
-	})
+	const changed = $derived(expeditionChanged || blessingsChanged)
+	const canSave = $derived(
+		!!routeEvokerId && changed && (!blessingsChanged || (!!catalogueQuery.data && !overLimit))
+	)
 
-	const input = $derived(buildExpeditionInput(values, initial))
-	const canSave = $derived(!!routeEvokerId && Object.keys(input).length > 0)
-
-	function handleOutcomeChange(v: string | undefined) {
-		outcome = !v || v === NONE ? null : (v as SolomonisOutcome)
-		// The API requires a cleared run to have defeated both bosses.
-		if (outcome === 'cleared' && bossesDefeated !== null) bossesDefeated = MAX_BOSSES_DEFEATED
+	/** The selected level of a blessing, if it's equipped. */
+	function selectedLevel(blessing: ArcarumBlessing) {
+		return blessing.levels.find((l) => l.id === selection[blessing.id])
 	}
 
-	function parseLevel(text: string): number | null {
-		const n = parseInt(text, 10)
-		return Number.isNaN(n) || n < 0 ? null : n
+	function maxLevel(blessing: ArcarumBlessing): number {
+		return Math.max(0, ...blessing.levels.map((l) => l.level))
+	}
+
+	function setLevel(blessing: ArcarumBlessing, level: number) {
+		const next = { ...selection }
+		const target = blessing.levels.find((l) => l.level === level)
+		if (target) next[blessing.id] = target.id
+		else delete next[blessing.id]
+		selection = next
 	}
 
 	function save() {
 		if (!canSave) return
-		onSave(input)
+		onSave({
+			expedition: expeditionChanged ? input : null,
+			blessingLevelIds: blessingsChanged ? selectionToLevelIds(catalogue, selection) : null
+		})
 		finishSolomonisPane()
 	}
 
@@ -153,7 +144,7 @@
 		untrack(() => {
 			if (paneId) {
 				sidebar.setActionForPane(paneId, enabled ? save : undefined, m.action_save())
-				sidebar.paneStack.updatePaneById(paneId, { hasUnsavedChanges: () => canSave })
+				sidebar.paneStack.updatePaneById(paneId, { hasUnsavedChanges: () => changed })
 			} else {
 				sidebar.setAction(enabled ? save : undefined, m.action_save())
 			}
@@ -164,18 +155,6 @@
 <div class="solomonis-pane">
 	<!-- No heading: the pane title already names the mode -->
 	<div class="expedition">
-		<div class="kind-control">
-			<SegmentedControl
-				value={kind}
-				onValueChange={(v) => (kind = v as SolomonisKind)}
-				variant="background"
-				size="small"
-				grow
-			>
-				<Segment value="build">{m.solomonis_web_party_kind_build()}</Segment>
-				<Segment value="run">{m.solomonis_web_party_kind_run()}</Segment>
-			</SegmentedControl>
-		</div>
 		<DetailRow label={m.solomonis_web_party_route_evoker()} compact>
 			<Select
 				options={evokerOptions}
@@ -194,51 +173,61 @@
 				value={pledgeLevel}
 				max={MAX_PLEDGE_LEVEL}
 				onChange={(value) => (pledgeLevel = value)}
+				size="medium"
 				label={m.solomonis_web_party_pledge()}
 				decreaseLabel={m.solomonis_web_party_pledge_down()}
 				increaseLabel={m.solomonis_web_party_pledge_up()}
 			/>
 		</DetailRow>
+		<DetailRow label={m.solomonis_web_party_outcome()} compact>
+			<Select
+				options={outcomeOptions}
+				value={outcome ?? NONE}
+				onValueChange={(v) => (outcome = !v || v === NONE ? null : (v as SolomonisOutcome))}
+				size="medium"
+				contained
+			/>
+		</DetailRow>
 	</div>
 
-	{#if kind === 'run'}
-		<hr class="divider" />
-		<DetailsSection title={m.solomonis_web_party_section_run()}>
-			<DetailRow label={m.solomonis_web_party_outcome()} compact>
-				<Select
-					options={outcomeOptions}
-					value={outcome ?? NONE}
-					onValueChange={handleOutcomeChange}
-					size="small"
-					contained
-				/>
-			</DetailRow>
-			<DetailRow label={m.solomonis_web_party_bosses_defeated()} compact>
-				<Select
-					options={bossOptions}
-					value={bossesDefeated === null ? NONE : String(bossesDefeated)}
-					onValueChange={(v) => (bossesDefeated = !v || v === NONE ? null : Number(v))}
-					size="small"
-					contained
-				/>
-			</DetailRow>
-			<DetailRow label={m.solomonis_web_party_midboss()} compact>
-				<Select
-					options={midbossOptions}
-					value={midboss ?? NONE}
-					onValueChange={(v) => (midboss = !v || v === NONE ? null : (v as SolomonisMidboss))}
-					size="small"
-					contained
-				/>
-			</DetailRow>
-			<DetailRow label={m.solomonis_web_party_expedition_level()} compact>
-				<Input type="number" min="0" bind:value={expeditionLevelText} placeholder="—" contained />
-			</DetailRow>
-			<DetailRow label={m.solomonis_web_party_ended_at()} compact>
-				<DatePicker bind:value={endedDate} {locale} contained />
-			</DetailRow>
-		</DetailsSection>
-	{/if}
+	<hr class="divider" />
+
+	<DetailsSection title={m.solomonis_web_party_blessings_title()}>
+		<div class="blessings">
+			<BlessingCostGauge {total} limit={costLimit} />
+
+			<ul class="blessing-list">
+				{#each available as blessing (blessing.id)}
+					{@const level = selectedLevel(blessing)}
+					{@const described = level ?? blessing.levels.find((l) => l.level === 1)}
+					{@const name = solomonisName(blessing.name, locale)}
+					<li>
+						<BlessingRow
+							slug={blessing.slug}
+							{name}
+							subtitle={level
+								? m.solomonis_web_party_blessing_cost({ cost: level.cost })
+								: m.solomonis_web_party_blessing_not_equipped()}
+							description={described ? solomonisName(described.description, locale) : null}
+							descriptionMuted={!level}
+						>
+							{#snippet trailing()}
+								<Stepper
+									value={level?.level ?? 0}
+									max={maxLevel(blessing)}
+									onChange={(value) => setLevel(blessing, value)}
+									size="medium"
+									label={name}
+									decreaseLabel={m.solomonis_web_party_blessing_level_down({ name })}
+									increaseLabel={m.solomonis_web_party_blessing_level_up({ name })}
+								/>
+							{/snippet}
+						</BlessingRow>
+					</li>
+				{/each}
+			</ul>
+		</div>
+	</DetailsSection>
 </div>
 
 <style lang="scss">
@@ -260,10 +249,6 @@
 		padding: $unit-2x $unit 0;
 	}
 
-	.kind-control {
-		padding: 0 $unit-2x;
-	}
-
 	.hint {
 		margin: 0;
 		padding: 0 $unit-2x;
@@ -275,5 +260,22 @@
 		border: none;
 		border-top: 1px solid var(--border-subtle);
 		margin: 0;
+	}
+
+	// Lined up with the section heading, like the details pane's blessing list
+	.blessings {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
+		padding: 0 $unit;
+	}
+
+	.blessing-list {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-3x;
+		margin: 0;
+		padding: 0;
+		list-style: none;
 	}
 </style>

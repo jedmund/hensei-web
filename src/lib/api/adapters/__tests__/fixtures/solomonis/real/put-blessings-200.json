@@ -813,12 +813,8 @@
 			"favorited": false,
 			"has_orphaned_items": false,
 			"solomonis": {
-				"kind": "build",
 				"pledge_level": 0,
 				"outcome": null,
-				"bosses_defeated": null,
-				"midboss": null,
-				"expedition_level": null,
 				"game_report_id": null,
 				"ended_at": null,
 				"stats": {},
@@ -839,7 +835,6 @@
 						"ja": null
 					}
 				},
-				"build_party": null,
 				"blessing_cost_limit": 100,
 				"blessing_cost_total": 70,
 				"blessings": [

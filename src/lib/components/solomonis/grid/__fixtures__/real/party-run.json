@@ -533,12 +533,8 @@
 		"favorited": false,
 		"has_orphaned_items": false,
 		"solomonis": {
-			"kind": "run",
 			"pledge_level": 0,
 			"outcome": "cleared",
-			"bosses_defeated": 2,
-			"midboss": "banes_gate",
-			"expedition_level": 42,
 			"game_report_id": null,
 			"ended_at": "2026-10-11T07:38:00.000Z",
 			"stats": {},
@@ -558,10 +554,6 @@
 					"en": "Allotropic Microcosm",
 					"ja": null
 				}
-			},
-			"build_party": {
-				"shortcode": "b8vF8x",
-				"name": "Nier build"
 			},
 			"blessing_cost_limit": 100,
 			"blessing_cost_total": 0,
