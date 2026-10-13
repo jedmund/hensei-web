@@ -93,6 +93,8 @@ export interface ExploreFilterParams {
 	boostSide?: string
 	/** Comma-separated list of difficulty tier slugs or ids */
 	difficulty?: string
+	/** Evoking Solomonis route Evoker (character granblue_id); needs a zone `raid` */
+	routeEvoker?: string
 }
 
 /**

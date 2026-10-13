@@ -12,6 +12,7 @@
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import { finishSolomonisPane } from './openSolomonisPanes'
 	import { solomonisQueries } from '$lib/api/queries/solomonis.queries'
 	import { appLocale } from '$lib/utils/locale'
 	import type { PartyBlessing } from '$lib/types/api/solomonis'
@@ -79,7 +80,7 @@
 	function save() {
 		if (!canSave) return
 		onSave(selectionToLevelIds(catalogue, selection))
-		sidebar.close()
+		finishSolomonisPane()
 	}
 
 	$effect(() => {

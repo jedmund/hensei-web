@@ -1,14 +1,18 @@
 <script lang="ts">
 	/**
-	 * SolomonisPanel - the Evoking Solomonis section of the party page: kind,
-	 * route Evoker, zone, pledge, blessings, and for runs the report fields and
-	 * stats. Editing opens EditSolomonisPane / EditBlessingsPane in the sidebar.
+	 * SolomonisDetailsPane - the Evoking Solomonis sidebar pane: kind, route
+	 * Evoker, zone, pledge, blessings, and for runs the report fields, stats and
+	 * guidebook. Opened from the raid tile and the team settings pane; editing
+	 * pushes EditSolomonisPane / EditBlessingsPane on top of it.
 	 */
+	import { onMount } from 'svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import InfoTile from '$lib/components/party/info/InfoTile.svelte'
+	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import SolomonisGuidebook from '$lib/components/solomonis/guidebook/SolomonisGuidebook.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
 	import { appLocale } from '$lib/utils/locale'
 	import {
@@ -30,11 +34,15 @@
 	} from './solomonisParty'
 
 	interface Props {
-		party: Party
+		/** Reads the party page's party, so the pane follows its updates. */
+		getParty: () => Party
 		canEdit: boolean
+		paneId?: string
 	}
 
-	let { party, canEdit }: Props = $props()
+	let { getParty, canEdit, paneId }: Props = $props()
+
+	const party = $derived(getParty())
 
 	const updateExpedition = useUpdateSolomonisExpedition()
 	const updateBlessings = useUpdatePartyBlessings()
@@ -68,6 +76,12 @@
 		openEditSolomonisPane(party, updateExpedition)
 	}
 
+	onMount(() => {
+		if (!canWrite) return
+		if (paneId) sidebar.setActionForPane(paneId, openEditPane, m.action_edit())
+		else sidebar.setAction(openEditPane, m.action_edit())
+	})
+
 	function openBlessingsPane() {
 		openEditBlessingsPane(party, updateBlessings)
 	}
@@ -77,15 +91,9 @@
 	}
 </script>
 
-<InfoTile label={m.solomonis_web_party_title()} class="solomonis-panel">
-	{#snippet headerAction()}
-		{#if canWrite}
-			<Button variant="ghost" size="small" onclick={openEditPane}>{m.action_edit()}</Button>
-		{/if}
-	{/snippet}
-
+<div class="solomonis-details">
 	{#if !expedition}
-		<span class="empty-state">{canWrite ? m.solomonis_web_party_no_expedition() : '—'}</span>
+		<p class="empty-state">{canWrite ? m.solomonis_web_party_no_expedition() : '—'}</p>
 	{:else}
 		<div class="evoker">
 			<img
@@ -111,49 +119,53 @@
 			</p>
 		{/if}
 
-		<div class="rows">
-			<DetailRow
-				label={m.solomonis_web_party_pledge()}
-				value={expedition.pledgeLevel === 0
-					? m.solomonis_web_party_pledge_none()
-					: m.solomonis_web_party_level({ level: expedition.pledgeLevel })}
-			/>
-		</div>
-
-		<section class="group">
-			<div class="group-header">
-				<h4>{m.solomonis_web_party_blessings()}</h4>
-				<span class="cost">
-					{m.solomonis_web_party_blessing_cost_total({
-						total: expedition.blessingCostTotal,
-						limit: expedition.blessingCostLimit
-					})}
-				</span>
-				{#if canWrite}
-					<Button variant="ghost" size="small" onclick={openBlessingsPane}>
-						{m.solomonis_web_party_blessings_edit()}
-					</Button>
-				{/if}
+		<DetailsSection title={m.solomonis_web_party_title()}>
+			<div class="rows">
+				<DetailRow
+					label={m.solomonis_web_party_pledge()}
+					value={expedition.pledgeLevel === 0
+						? m.solomonis_web_party_pledge_none()
+						: m.solomonis_web_party_level({ level: expedition.pledgeLevel })}
+				/>
 			</div>
-			{#if expedition.blessings.length === 0}
-				<span class="empty-state">{m.solomonis_web_party_blessings_none()}</span>
-			{:else}
-				<div class="rows">
-					{#each [...expedition.blessings].sort((a, b) => a.blessing.arcanaNumber - b.blessing.arcanaNumber) as b (b.blessing.id)}
-						<DetailRow
-							label={solomonisName(b.blessing.name, locale)}
-							value={`${m.solomonis_web_party_level({ level: b.level })} · ${m.solomonis_web_party_blessing_cost({ cost: b.cost })}`}
-						/>
-					{/each}
+		</DetailsSection>
+
+		<hr class="divider" />
+
+		<DetailsSection
+			title={m.solomonis_web_party_blessings()}
+			empty={expedition.blessings.length === 0}
+			emptyMessage={m.solomonis_web_party_blessings_none()}
+		>
+			{#snippet action()}
+				<div class="section-action">
+					<span class="cost">
+						{m.solomonis_web_party_blessing_cost_total({
+							total: expedition.blessingCostTotal,
+							limit: expedition.blessingCostLimit
+						})}
+					</span>
+					{#if canWrite}
+						<Button variant="ghost" size="small" onclick={openBlessingsPane}>
+							{m.action_edit()}
+						</Button>
+					{/if}
 				</div>
-			{/if}
-		</section>
+			{/snippet}
+			<div class="rows">
+				{#each [...expedition.blessings].sort((a, b) => a.blessing.arcanaNumber - b.blessing.arcanaNumber) as b (b.blessing.id)}
+					<DetailRow
+						label={solomonisName(b.blessing.name, locale)}
+						value={`${m.solomonis_web_party_level({ level: b.level })} · ${m.solomonis_web_party_blessing_cost({ cost: b.cost })}`}
+					/>
+				{/each}
+			</div>
+		</DetailsSection>
 
 		{#if isRun}
-			<section class="group">
-				<div class="group-header">
-					<h4>{m.solomonis_web_party_section_run()}</h4>
-				</div>
+			<hr class="divider" />
+
+			<DetailsSection title={m.solomonis_web_party_section_run()}>
 				<div class="rows">
 					<DetailRow
 						label={m.solomonis_web_party_outcome()}
@@ -195,12 +207,13 @@
 						{/if}
 					</DetailRow>
 				</div>
+			</DetailsSection>
 
-				{#if hasStats(expedition.stats)}
-					<div class="group-header">
-						<h4>{m.solomonis_web_party_spaces()}</h4>
-					</div>
-					<div class="rows stats">
+			{#if hasStats(expedition.stats)}
+				<hr class="divider" />
+
+				<DetailsSection title={m.solomonis_web_party_spaces()}>
+					<div class="rows">
 						{#each spaceStats(expedition.stats) as stat (stat.key)}
 							<DetailRow label={SPACE_LABELS[stat.key]()} value={stat.count} />
 						{/each}
@@ -213,18 +226,33 @@
 							value={orDash(expedition.stats.pointsEarned)}
 						/>
 					</div>
-				{/if}
-			</section>
+				</DetailsSection>
+			{/if}
+
+			<hr class="divider" />
+
+			<div class="guidebook">
+				<SolomonisGuidebook {party} canEdit={canWrite} />
+			</div>
 		{/if}
 	{/if}
-</InfoTile>
+</div>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
 
+	.solomonis-details {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
+		padding: $unit-2x 0;
+	}
+
 	.empty-state {
+		margin: 0;
+		padding: 0 $unit-2x;
 		font-size: $font-regular;
 		color: var(--text-tertiary);
 	}
@@ -233,7 +261,7 @@
 		display: flex;
 		align-items: center;
 		gap: $unit;
-		padding: $unit 0;
+		padding: 0 $unit-2x;
 	}
 
 	.evoker-image {
@@ -249,7 +277,7 @@
 	}
 
 	.evoker-name {
-		font-size: $font-small;
+		font-size: $font-regular;
 		font-weight: $bold;
 		color: var(--text-primary);
 	}
@@ -261,29 +289,15 @@
 
 	.notice {
 		margin: 0;
+		padding: 0 $unit-2x;
 		font-size: $font-small;
 		color: var(--text-secondary);
 	}
 
-	.group {
-		display: flex;
-		flex-direction: column;
-		margin-top: $unit;
-	}
-
-	.group-header {
+	.section-action {
 		display: flex;
 		align-items: center;
 		gap: $unit;
-		min-height: 30px;
-
-		h4 {
-			margin: 0;
-			flex: 1;
-			font-size: $font-small;
-			font-weight: $medium;
-			color: var(--text-secondary);
-		}
 	}
 
 	.cost {
@@ -297,13 +311,13 @@
 		flex-direction: column;
 	}
 
-	.stats {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		column-gap: $unit-2x;
+	.divider {
+		margin: 0;
+		border: none;
+		border-top: 1px solid var(--border-subtle);
+	}
 
-		@media (max-width: 768px) {
-			grid-template-columns: 1fr;
-		}
+	.guidebook {
+		padding: 0 $unit-2x;
 	}
 </style>

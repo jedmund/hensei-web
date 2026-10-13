@@ -18,6 +18,7 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import DatePicker from '$lib/components/ui/DatePicker.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import { finishSolomonisPane } from './openSolomonisPanes'
 	import { solomonisQueries } from '$lib/api/queries/solomonis.queries'
 	import { getCharacterImage } from '$lib/utils/images'
 	import { appLocale } from '$lib/utils/locale'
@@ -149,7 +150,7 @@
 	function save() {
 		if (!canSave) return
 		onSave(input)
-		sidebar.close()
+		finishSolomonisPane()
 	}
 
 	$effect(() => {

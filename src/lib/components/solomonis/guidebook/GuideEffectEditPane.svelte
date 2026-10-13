@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { untrack } from 'svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import { finishSolomonisPane } from '../party/openSolomonisPanes'
 	import { appLocale } from '$lib/utils/locale'
 	import * as m from '$lib/paraglide/messages'
 	import type { GuidebookEntry } from '$lib/types/api/solomonis'
@@ -60,7 +61,7 @@
 
 	function save() {
 		if (!hasChanges) {
-			sidebar.close()
+			finishSolomonisPane()
 			return
 		}
 		onSave({
@@ -70,12 +71,12 @@
 			inherited,
 			note
 		})
-		sidebar.close()
+		finishSolomonisPane()
 	}
 
 	function remove() {
 		onRemove()
-		sidebar.close()
+		finishSolomonisPane()
 	}
 
 	// Header save action, unsaved-changes guard and the remove menu item

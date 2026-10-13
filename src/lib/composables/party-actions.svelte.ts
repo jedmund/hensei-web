@@ -12,6 +12,8 @@ import { toast } from 'svelte-sonner'
 import { extractErrorMessage } from '$lib/utils/errors'
 import FavoriteToast from '$lib/components/ui/FavoriteToast.svelte'
 import * as m from '$lib/paraglide/messages'
+import { isFullExpedition, solomonisName } from '$lib/components/solomonis/party/solomonisParty'
+import { appLocale } from '$lib/utils/locale'
 
 type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -238,9 +240,23 @@ export function usePartyActions(opts: PartyActionsOptions) {
 			raidId: party.raid?.id ?? null
 		}
 
+		const expedition = isFullExpedition(party.solomonis) ? party.solomonis : null
+		const locale = appLocale()
+
 		openPartyEditSidebar({
 			initialValues,
 			element: opts.getUserElement(),
+			solomonisDetails: expedition
+				? {
+						label:
+							expedition.kind === 'run'
+								? m.solomonis_web_party_run_details()
+								: m.solomonis_web_party_build_details(),
+						summary: `${solomonisName(expedition.routeEvoker.name, locale)} · ${solomonisName(expedition.zone.name, locale)}`,
+						getParty: opts.getParty,
+						canEdit: true
+					}
+				: undefined,
 			onDescriptionSave: async (content) => {
 				await updatePartyDetails({ description: content })
 			},

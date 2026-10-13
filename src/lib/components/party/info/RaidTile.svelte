@@ -2,13 +2,15 @@
 	import InfoTile from './InfoTile.svelte'
 	import type { Raid } from '$lib/types/api/entities'
 	import type { RaidFull } from '$lib/types/api/raid'
-	import { getRaidImage } from '$lib/utils/images'
+	import { getCharacterImage, getRaidImage } from '$lib/utils/images'
 	import { getElementLabel } from '$lib/utils/element'
-	import { localizedName } from '$lib/utils/locale'
+	import { appLocale, localizedName } from '$lib/utils/locale'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import EditRaidPane from '$lib/components/sidebar/EditRaidPane.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import * as m from '$lib/paraglide/messages'
+	import type { SolomonisExpedition } from '$lib/types/api/solomonis'
+	import { solomonisName } from '$lib/components/solomonis/party/solomonisParty'
 
 	interface Props {
 		raid?: Raid
@@ -16,9 +18,34 @@
 		onclick?: () => void
 		/** Callback when a raid is selected via EditRaidPane */
 		onRaidSelect?: (raid: RaidFull | null) => void
+		/** An Evoking Solomonis party's expedition: the tile shows its route Evoker */
+		expedition?: SolomonisExpedition | null
+		/** Opens the Evoking Solomonis details pane */
+		onViewDetails?: () => void
 	}
 
-	let { raid, canEdit = false, onclick, onRaidSelect }: Props = $props()
+	let {
+		raid,
+		canEdit = false,
+		onclick,
+		onRaidSelect,
+		expedition = null,
+		onViewDetails
+	}: Props = $props()
+
+	const locale = appLocale()
+	const solomonisMeta = $derived(
+		expedition
+			? [
+					solomonisName(expedition.zone.name, locale),
+					expedition.pledgeLevel > 0
+						? m.solomonis_web_party_pledge_short({ level: expedition.pledgeLevel })
+						: null
+				]
+					.filter(Boolean)
+					.join(' · ')
+			: ''
+	)
 
 	const isEmpty = $derived(!raid)
 	const showAdd = $derived(canEdit && isEmpty)
@@ -45,8 +72,9 @@
 			{
 				currentRaid: raid,
 				onSelect: (selected: RaidFull | null) => {
-					onRaidSelect?.(selected)
+					// Close first: picking a Solomonis zone opens the expedition pane
 					sidebar.close()
+					onRaidSelect?.(selected)
 				}
 			},
 			{ scrollable: true }
@@ -56,11 +84,32 @@
 
 <InfoTile label={m.party_raid_label()} class="raid-tile" {showAdd} onAdd={openEditRaidPane}>
 	{#snippet headerAction()}
-		{#if canEdit && raid}
-			<Button variant="ghost" size="small" onclick={openEditRaidPane}>{m.action_edit()}</Button>
+		{#if (expedition && onViewDetails) || (canEdit && raid)}
+			<div class="header-actions">
+				{#if expedition && onViewDetails}
+					<Button variant="ghost" size="small" onclick={onViewDetails}>
+						{m.context_view_details()}
+					</Button>
+				{/if}
+				{#if canEdit && raid}
+					<Button variant="ghost" size="small" onclick={openEditRaidPane}>{m.action_edit()}</Button>
+				{/if}
+			</div>
 		{/if}
 	{/snippet}
-	{#if raid}
+	{#if raid && expedition}
+		<button type="button" class="raid-info" {onclick}>
+			<img
+				src={getCharacterImage(expedition.routeEvoker.granblueId, 'square')}
+				alt=""
+				class="evoker-image"
+			/>
+			<div class="raid-details">
+				<span class="raid-name">{solomonisName(expedition.routeEvoker.name, locale)}</span>
+				<span class="raid-meta">{solomonisMeta}</span>
+			</div>
+		</button>
+	{:else if raid}
 		<button type="button" class="raid-info" {onclick}>
 			<img src={getRaidImage(raid.slug)} alt="" class="raid-image" />
 			<div class="raid-details">
@@ -106,6 +155,18 @@
 		height: 60px;
 		width: auto;
 		border-radius: $item-corner-small;
+	}
+
+	.evoker-image {
+		width: 60px;
+		height: 60px;
+		border-radius: $item-corner-small;
+	}
+
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: $unit-half;
 	}
 
 	.raid-details {

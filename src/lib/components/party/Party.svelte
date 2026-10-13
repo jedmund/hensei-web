@@ -46,8 +46,6 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import Notice from '$lib/components/ui/Notice.svelte'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
-	import SolomonisPanel from '$lib/components/solomonis/party/SolomonisPanel.svelte'
-	import SolomonisGuidebook from '$lib/components/solomonis/guidebook/SolomonisGuidebook.svelte'
 	import { openEditSolomonisPane } from '$lib/components/solomonis/party/openSolomonisPanes'
 	import {
 		isSolomonisParty,
@@ -592,11 +590,6 @@
 				<Notice variant="yellow">
 					{m.party_orphan_warning()}
 				</Notice>
-			{/if}
-
-			{#if isSolomonis}
-				<SolomonisPanel {party} canEdit={canEdit()} />
-				<SolomonisGuidebook {party} canEdit={canEdit()} />
 			{/if}
 
 			<PartySegmentedControl

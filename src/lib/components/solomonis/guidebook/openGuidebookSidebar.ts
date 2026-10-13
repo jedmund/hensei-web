@@ -4,7 +4,7 @@
  * owns it.
  */
 
-import { sidebar } from '$lib/stores/sidebar.svelte'
+import { showSolomonisPane } from '../party/openSolomonisPanes'
 import * as m from '$lib/paraglide/messages'
 import type { GuideEffect, GuidebookEntry } from '$lib/types/api/solomonis'
 import GuideEffectSearchContent from './GuideEffectSearchContent.svelte'
@@ -19,7 +19,7 @@ interface GuideEffectSearchOptions {
 }
 
 export function openGuideEffectSearchSidebar({ entries, onSelect }: GuideEffectSearchOptions) {
-	sidebar.openWithComponent(m.solomonis_web_guidebook_search_title(), GuideEffectSearchContent, {
+	showSolomonisPane(m.solomonis_web_guidebook_search_title(), GuideEffectSearchContent, {
 		entries,
 		onSelect
 	})
@@ -32,7 +32,7 @@ interface GuidebookEntryEditOptions {
 }
 
 export function openGuidebookEntrySidebar({ entry, onSave, onRemove }: GuidebookEntryEditOptions) {
-	sidebar.openWithComponent(m.solomonis_web_guidebook_edit_title(), GuideEffectEditPane, {
+	showSolomonisPane(m.solomonis_web_guidebook_edit_title(), GuideEffectEditPane, {
 		entry,
 		onSave,
 		onRemove

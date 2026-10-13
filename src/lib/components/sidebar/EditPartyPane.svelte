@@ -15,6 +15,7 @@
 	import MetricField from '$lib/components/party/edit/MetricField.svelte'
 	import EditRaidPane from '$lib/components/sidebar/EditRaidPane.svelte'
 	import EditDescriptionPane from '$lib/components/sidebar/EditDescriptionPane.svelte'
+	import SolomonisDetailsPane from '$lib/components/solomonis/party/SolomonisDetailsPane.svelte'
 	import PrivacySelector from '$lib/components/party/edit/PrivacySelector.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
@@ -25,6 +26,7 @@
 	import { untrack } from 'svelte'
 	import { getElementKey } from '$lib/utils/element'
 	import type { Raid } from '$lib/types/api/entities'
+	import type { Party } from '$lib/types/api/party'
 	import type { RaidFull } from '$lib/types/api/raid'
 	import type { PartyVisibility } from '$lib/types/visibility'
 	import Icon from '$lib/components/Icon.svelte'
@@ -49,6 +51,15 @@
 		raidId: string | null
 	}
 
+	/** The Evoking Solomonis row: "Run details" or "Build details" */
+	export interface SolomonisDetailsLink {
+		label: string
+		/** e.g. "Nier · Allotropic Microcosm" */
+		summary: string
+		getParty: () => Party
+		canEdit: boolean
+	}
+
 	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
@@ -62,9 +73,18 @@
 		onSave?: (values: PartyEditValues) => void
 		/** Callback to save description independently (server-side) */
 		onDescriptionSave?: (content: string) => Promise<void>
+		/** Evoking Solomonis parties: a row under Raid that opens the details pane */
+		solomonisDetails?: SolomonisDetailsLink
 	}
 
-	let { paneId, initialValues, element: elementProp, onSave, onDescriptionSave }: Props = $props()
+	let {
+		paneId,
+		initialValues,
+		element: elementProp,
+		onSave,
+		onDescriptionSave,
+		solomonisDetails
+	}: Props = $props()
 
 	// Derive element reactively from the user cookie (updates after settings save via invalidateAll)
 	const element = $derived(
@@ -292,6 +312,20 @@
 
 	const descriptionPreview = $derived(getDescriptionPreview(description))
 
+	// Only while the raid is still the Solomonis zone the party was opened with
+	const showSolomonisDetails = $derived(!!solomonisDetails && raidId === initial.raidId)
+
+	function openSolomonisDetailsPane() {
+		if (!solomonisDetails) return
+		paneStack.push({
+			id: 'solomonis-details',
+			title: m.solomonis_web_party_title(),
+			component: SolomonisDetailsPane,
+			props: { getParty: solomonisDetails.getParty, canEdit: solomonisDetails.canEdit },
+			scrollable: true
+		})
+	}
+
 	function openDescriptionPane() {
 		paneStack.push({
 			id: 'edit-description',
@@ -340,6 +374,15 @@
 					<Icon name="chevron-right" size={16} class="chevron-icon" />
 				</button>
 			</div>
+			{#if showSolomonisDetails && solomonisDetails}
+				<div class="description-field">
+					<span class="description-label">{solomonisDetails.label}</span>
+					<button type="button" class="description-button" onclick={openSolomonisDetailsPane}>
+						<span class="description-preview">{solomonisDetails.summary}</span>
+						<Icon name="chevron-right" size={16} class="description-chevron" />
+					</button>
+				</div>
+			{/if}
 			<div class="description-field">
 				<span class="description-label">{m.party_description()}</span>
 				<button type="button" class="description-button" onclick={openDescriptionPane}>

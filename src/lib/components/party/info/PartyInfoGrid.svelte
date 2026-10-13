@@ -9,8 +9,11 @@
 	import * as m from '$lib/paraglide/messages'
 	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
 	import CalculatorPane from '$lib/components/sidebar/CalculatorPane.svelte'
-	import { getRaidImage } from '$lib/utils/images'
-	import { localizedName } from '$lib/utils/locale'
+	import { getCharacterImage, getRaidImage } from '$lib/utils/images'
+	import { appLocale, localizedName } from '$lib/utils/locale'
+	import type { FilterItem } from '$lib/types/filter'
+	import { isFullExpedition, solomonisName } from '$lib/components/solomonis/party/solomonisParty'
+	import { openSolomonisDetailsPane } from '$lib/components/solomonis/party/openSolomonisPanes'
 
 	type AvatarUser = {
 		username?: string
@@ -67,10 +70,29 @@
 		)
 	}
 
+	// Evoking Solomonis: the tile shows the route Evoker and opens the details pane
+	const expedition = $derived(isFullExpedition(party.solomonis) ? party.solomonis : null)
+	const locale = appLocale()
+
+	function handleViewSolomonisDetails() {
+		openSolomonisDetailsPane(() => party, canEdit)
+	}
+
 	function handleRaidClick() {
 		if (!party.raid) return
 
 		const raidName = localizedName(party.raid.name)
+		// Solomonis zones have no element; their teams differ by route Evoker
+		// instead, and some elements have two Evokers.
+		const evokerFilter: FilterItem[] | undefined = expedition
+			? [
+					{
+						kind: 'evoker' as const,
+						value: expedition.routeEvoker.granblueId,
+						label: solomonisName(expedition.routeEvoker.name, locale)
+					}
+				]
+			: undefined
 
 		sidebar.openWithComponent(
 			raidName,
@@ -85,12 +107,17 @@
 					}
 				],
 				defaultElement: party.element,
+				defaultFilters: evokerFilter,
 				excludedKinds: ['raid'] as const,
-				resetKey: party.raid.id
+				resetKey: expedition
+					? `${party.raid.id}:${expedition.routeEvoker.granblueId}`
+					: party.raid.id
 			},
 			{
 				scrollable: true,
-				image: getRaidImage(party.raid.slug)
+				image: expedition
+					? getCharacterImage(expedition.routeEvoker.granblueId, 'square')
+					: getRaidImage(party.raid.slug)
 			}
 		)
 	}
@@ -139,7 +166,14 @@
 			{/if}
 
 			{#if showRaid}
-				<RaidTile raid={party.raid} {canEdit} onclick={handleRaidClick} {onRaidSelect} />
+				<RaidTile
+					raid={party.raid}
+					{canEdit}
+					onclick={handleRaidClick}
+					{onRaidSelect}
+					{expedition}
+					onViewDetails={expedition ? handleViewSolomonisDetails : undefined}
+				/>
 			{/if}
 		</div>
 	{/if}

@@ -18,6 +18,8 @@
 		pinnedFilters: FilterItem[]
 		/** Default element for initial filter state */
 		defaultElement?: number
+		/** Removable filters to start with, in place of the default element */
+		defaultFilters?: FilterItem[]
 		/** Filter kinds to exclude from the filter dropdown */
 		excludedKinds?: FilterItem['kind'][]
 		/** Empty state message override */
@@ -32,6 +34,7 @@
 	let {
 		pinnedFilters,
 		defaultElement,
+		defaultFilters,
 		excludedKinds,
 		emptyMessage,
 		useCollectionTeamsStore = false,
@@ -44,6 +47,7 @@
 
 	// Build default element filter from defaultElement prop
 	function defaultElementFilter(): FilterItem[] {
+		if (defaultFilters) return defaultFilters
 		if (!defaultElement) return []
 		return [
 			{
