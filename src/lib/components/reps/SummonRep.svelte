@@ -85,8 +85,12 @@
 		grid-template-columns: auto 1fr auto;
 		grid-template-rows: 1fr;
 
+		// Without the support summon, narrow the rep by that column's share
+		// so the other summons keep the size they have in other previews
 		&.no-friend {
 			grid-template-columns: auto 1fr;
+			width: 72%;
+			margin: 0 auto;
 		}
 
 		.summon,

@@ -197,9 +197,19 @@
 			grid-template-columns: 1.2fr 2fr;
 		}
 
-		// No support summon column on Solomonis parties
+		// No support summon column on Solomonis parties. Narrow the grid by
+		// that column's share (1.17 of 4.34) so the other units keep their size.
 		&.solomonis {
 			grid-template-columns: 1.17fr 2fr;
+			width: 73%;
+			max-width: calc(#{$grid-width} * 0.73);
+
+			// Phones already hide the support column
+			@media (max-width: 768px) {
+				grid-template-columns: 1.2fr 2fr;
+				width: auto;
+				max-width: $grid-width;
+			}
 		}
 
 		.summons {
