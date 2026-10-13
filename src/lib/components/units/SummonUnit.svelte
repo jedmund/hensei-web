@@ -31,7 +31,8 @@
 	import quickSummonFilled from '$src/assets/icons/quick-summon/filled.svg'
 	import quickSummonEmpty from '$src/assets/icons/quick-summon/empty.svg'
 	import SealOverlay from '$lib/components/solomonis/grid/SealOverlay.svelte'
-	import SealStateControl from '$lib/components/solomonis/grid/SealStateControl.svelte'
+	import SealMenuItems from '$lib/components/solomonis/grid/SealMenuItems.svelte'
+	import { nextSealState, writeSealState } from '$lib/components/solomonis/grid/sealActions'
 	import {
 		FRIEND_SUMMON_POSITION,
 		getExpedition,
@@ -62,6 +63,14 @@
 		if (!expedition || position === FRIEND_SUMMON_POSITION) return null
 		return slotSeal(expedition, 'summon', position, item)
 	})
+
+	// Editors mark a non-starting item sealed or unsealed from the lock or the menu
+	let canToggleSeal = $derived(!!item && !!seal?.editable && !!ctx?.canEdit())
+
+	function toggleSeal() {
+		if (!item || !seal || !ctx) return
+		void writeSealState(ctx, 'summon', item, nextSealState(seal.state))
+	}
 
 	// Use position (not data flags) to determine sizing — position is authoritative
 	let isMainSized = $derived(
@@ -253,7 +262,11 @@
 								src={imageUrl}
 							/>
 							{#if seal}
-								<SealOverlay {seal} filled={true} />
+								<SealOverlay
+									{seal}
+									filled={true}
+									onToggle={canToggleSeal ? toggleSeal : undefined}
+								/>
 							{/if}
 						</div>
 					{/key}
@@ -310,7 +323,13 @@
 					replaceLabel={m.context_replace({ type: m.type_summon() })}
 					duplicateLabel={m.context_duplicate({ type: m.type_summon() })}
 					removeLabel={m.context_remove()}
+					editExtras={canToggleSeal ? sealMenuItems : undefined}
 				/>
+				{#snippet sealMenuItems()}
+					{#if item && seal}
+						<SealMenuItems {variant} type="summon" {item} {seal} />
+					{/if}
+				{/snippet}
 			{/snippet}
 		</UnitMenuContainer>
 	{:else}
@@ -402,9 +421,6 @@
 			/>
 		{/if}
 	</div>
-	{#if item && seal?.editable && ctx?.canEdit()}
-		<SealStateControl type="summon" {item} sealState={seal.state} />
-	{/if}
 </div>
 
 <DuplicateCollectionDialog

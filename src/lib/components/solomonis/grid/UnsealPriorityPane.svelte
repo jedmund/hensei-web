@@ -27,11 +27,13 @@
 	import * as m from '$lib/paraglide/messages'
 	import {
 		entryKey,
+		PRIORITY_TYPES,
 		priorityLists,
-		rankAt,
+		setPriority,
 		toPriorityPayload,
-		unrank,
-		type PriorityEntry
+		type PriorityEntry,
+		type PriorityLists,
+		type SealItemType
 	} from './seal'
 
 	interface Props {
@@ -41,71 +43,101 @@
 
 	let { paneId, canEdit = false }: Props = $props()
 
-	const RANKED = 'unseal-ranked'
-	const UNRANKED = 'unseal-unranked'
-	// DropZone rejects drops between different types, but weapons and summons
-	// share one list, so every row uses the same dnd type.
-	const DND_TYPE = 'weapon'
+	// Each type has its own ranked and unranked lists, as drop containers
+	// named `<type>:ranked` and `<type>:unranked`. The dnd type is the item
+	// type, so DropZone keeps weapons and summons apart.
+	type ListName = 'ranked' | 'unranked'
+	const container = (type: SealItemType, list: ListName) => `${type}:${list}`
+	function parseContainer(name: string): { type: SealItemType; list: ListName } | null {
+		const [type, list] = name.split(':')
+		if ((type !== 'weapon' && type !== 'summon') || (list !== 'ranked' && list !== 'unranked'))
+			return null
+		return { type, list }
+	}
 
 	const initial = untrack(() =>
-		partyStore.party ? priorityLists(partyStore.party) : { ranked: [], unranked: [] }
+		partyStore.party
+			? priorityLists(partyStore.party)
+			: { weapon: { ranked: [], unranked: [] }, summon: { ranked: [], unranked: [] } }
 	)
-	let ranked = $state<PriorityEntry[]>(initial.ranked)
-	let unranked = $state<PriorityEntry[]>(initial.unranked)
-	let savedKeys = $state(initial.ranked.map(entryKey).join(','))
+	let lists = $state<PriorityLists>(initial)
+	const payloadKey = (value: PriorityLists) =>
+		toPriorityPayload(value)
+			.map((item) => `${item.type}:${item.id}`)
+			.join(',')
+	let savedKey = $state(payloadKey(initial))
 
-	const hasChanges = $derived(ranked.map(entryKey).join(',') !== savedKeys)
-	const isEmpty = $derived(ranked.length === 0 && unranked.length === 0)
+	const hasChanges = $derived(payloadKey(lists) !== savedKey)
+	const isEmpty = $derived(
+		PRIORITY_TYPES.every((type) => lists[type].ranked.length + lists[type].unranked.length === 0)
+	)
 
 	const mutation = useUpdateUnsealPriority()
 
-	function keyAt(container: string, index: number): string | undefined {
-		const list = container === RANKED ? ranked : container === UNRANKED ? unranked : []
-		const entry = list[index]
+	function keyAt(name: string, index: number): string | undefined {
+		const target = parseContainer(name)
+		const entry = target ? lists[target.type][target.list][index] : undefined
 		return entry ? entryKey(entry) : undefined
 	}
 
 	function move(from: DragSource, to: DropTarget) {
+		const source = parseContainer(from.container)
+		const target = parseContainer(to.container)
+		if (!source || !target || source.type !== target.type) return
 		const key = keyAt(from.container, from.position)
 		if (!key) return
-		const next =
-			to.container === RANKED
-				? rankAt(ranked, unranked, key, to.position)
-				: unrank(ranked, unranked, key)
-		ranked = next.ranked
-		unranked = next.unranked
+		lists = setPriority(lists, target.type, key, target.list === 'ranked' ? to.position + 1 : null)
 	}
 
 	const dragContext = createDragDropContext({
 		onDrop: (from, to) => move(from, to),
 		onSwap: (from, to) => move(from, to),
-		onValidate: (from, to) => canEdit && !(from.container === UNRANKED && to.container === UNRANKED)
+		onValidate: (from, to) => {
+			const source = parseContainer(from.container)
+			const target = parseContainer(to.container)
+			return (
+				canEdit &&
+				!!source &&
+				!!target &&
+				source.type === target.type &&
+				!(source.list === 'unranked' && target.list === 'unranked')
+			)
+		}
 	})
 	setDragDropContext(dragContext)
 
 	function add(entry: PriorityEntry) {
-		const next = rankAt(ranked, unranked, entryKey(entry), ranked.length)
-		ranked = next.ranked
-		unranked = next.unranked
+		lists = setPriority(lists, entry.type, entryKey(entry), lists[entry.type].ranked.length + 1)
 	}
 
 	function remove(entry: PriorityEntry) {
-		const next = unrank(ranked, unranked, entryKey(entry))
-		ranked = next.ranked
-		unranked = next.unranked
+		lists = setPriority(lists, entry.type, entryKey(entry), null)
+	}
+
+	const TYPE_LABELS: Record<SealItemType, () => string> = {
+		weapon: m.solomonis_web_grid_priority_weapons,
+		summon: m.solomonis_web_grid_priority_summons
+	}
+	const RANKED_EMPTY: Record<SealItemType, () => string> = {
+		weapon: m.solomonis_web_grid_priority_ranked_empty_weapons,
+		summon: m.solomonis_web_grid_priority_ranked_empty_summons
+	}
+	const UNRANKED_EMPTY: Record<SealItemType, () => string> = {
+		weapon: m.solomonis_web_grid_priority_unranked_empty_weapons,
+		summon: m.solomonis_web_grid_priority_unranked_empty_summons
 	}
 
 	async function save() {
 		const party = partyStore.party
 		if (!party || !hasChanges || mutation.isPending) return
-		const items = toPriorityPayload(ranked)
+		const items = toPriorityPayload(lists)
 		try {
 			await mutation.mutateAsync({
 				partyId: party.id,
 				partyShortcode: party.shortcode,
 				items
 			})
-			savedKeys = ranked.map(entryKey).join(',')
+			savedKey = payloadKey(lists)
 			toast.success(m.solomonis_web_grid_priority_saved())
 			sidebar.close()
 		} catch (err) {
@@ -127,14 +159,21 @@
 	})
 </script>
 
-{#snippet row(entry: PriorityEntry, container: string, index: number)}
-	<DropZone {container} position={index} type={DND_TYPE} item={entry.item} canDrop={canEdit}>
-		<DraggableItem item={entry.item} {container} position={index} type={DND_TYPE} canDrag={canEdit}>
+{#snippet row(entry: PriorityEntry, list: ListName, index: number)}
+	{@const name = container(entry.type, list)}
+	<DropZone container={name} position={index} type={entry.type} item={entry.item} canDrop={canEdit}>
+		<DraggableItem
+			item={entry.item}
+			container={name}
+			position={index}
+			type={entry.type}
+			canDrag={canEdit}
+		>
 			<UnsealPriorityRow
 				{entry}
-				rank={container === RANKED ? index + 1 : null}
-				onAdd={canEdit && container !== RANKED ? () => add(entry) : undefined}
-				onRemove={canEdit && container === RANKED ? () => remove(entry) : undefined}
+				rank={list === 'ranked' ? index + 1 : null}
+				onAdd={canEdit && list === 'unranked' ? () => add(entry) : undefined}
+				onRemove={canEdit && list === 'ranked' ? () => remove(entry) : undefined}
 			/>
 		</DraggableItem>
 	</DropZone>
@@ -144,36 +183,57 @@
 	{#if isEmpty}
 		<p class="empty">{m.solomonis_web_grid_priority_none()}</p>
 	{:else}
-		<section aria-labelledby="unseal-ranked-heading">
-			<h3 id="unseal-ranked-heading">{m.solomonis_web_grid_priority_ranked()}</h3>
-			<ol class="list">
-				{#each ranked as entry, i (entryKey(entry))}
-					<li>{@render row(entry, RANKED, i)}</li>
-				{/each}
-				{#if canEdit}
-					<li>
-						<DropZone container={RANKED} position={ranked.length} type={DND_TYPE} canDrop={canEdit}>
-							<p class="drop-hint">{m.solomonis_web_grid_priority_ranked_empty()}</p>
-						</DropZone>
-					</li>
-				{/if}
-			</ol>
-		</section>
+		{#each PRIORITY_TYPES as type (type)}
+			{@const { ranked, unranked } = lists[type]}
+			{#if ranked.length + unranked.length > 0}
+				<section class="type-section" aria-labelledby="unseal-{type}-heading">
+					<h3 id="unseal-{type}-heading">{TYPE_LABELS[type]()}</h3>
 
-		<section aria-labelledby="unseal-unranked-heading">
-			<h3 id="unseal-unranked-heading">{m.solomonis_web_grid_priority_unranked()}</h3>
-			{#if unranked.length === 0}
-				<DropZone container={UNRANKED} position={0} type={DND_TYPE} canDrop={canEdit}>
-					<p class="drop-hint">{m.solomonis_web_grid_priority_unranked_empty()}</p>
-				</DropZone>
-			{:else}
-				<ul class="list">
-					{#each unranked as entry, i (entryKey(entry))}
-						<li>{@render row(entry, UNRANKED, i)}</li>
-					{/each}
-				</ul>
+					<div class="list-group">
+						<h4>{m.solomonis_web_grid_priority_ranked()}</h4>
+						<ol class="list">
+							{#each ranked as entry, i (entryKey(entry))}
+								<li>{@render row(entry, 'ranked', i)}</li>
+							{/each}
+							{#if canEdit}
+								<li>
+									<DropZone
+										container={container(type, 'ranked')}
+										position={ranked.length}
+										{type}
+										canDrop={canEdit}
+									>
+										<p class="drop-hint">{RANKED_EMPTY[type]()}</p>
+									</DropZone>
+								</li>
+							{/if}
+						</ol>
+					</div>
+
+					{#if unranked.length > 0 || canEdit}
+						<div class="list-group">
+							<h4>{m.solomonis_web_grid_priority_unranked()}</h4>
+							{#if unranked.length === 0}
+								<DropZone
+									container={container(type, 'unranked')}
+									position={0}
+									{type}
+									canDrop={canEdit}
+								>
+									<p class="drop-hint">{UNRANKED_EMPTY[type]()}</p>
+								</DropZone>
+							{:else}
+								<ul class="list">
+									{#each unranked as entry, i (entryKey(entry))}
+										<li>{@render row(entry, 'unranked', i)}</li>
+									{/each}
+								</ul>
+							{/if}
+						</div>
+					{/if}
+				</section>
 			{/if}
-		</section>
+		{/each}
 	{/if}
 </div>
 
@@ -189,13 +249,26 @@
 		padding: spacing.$unit-2x;
 	}
 
-	section {
+	.type-section {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit-2x;
+	}
+
+	.list-group {
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit;
 	}
 
 	h3 {
+		margin: 0;
+		font-size: typography.$font-regular;
+		font-weight: typography.$bold;
+		color: var(--text-primary);
+	}
+
+	h4 {
 		margin: 0;
 		font-size: typography.$font-small;
 		font-weight: typography.$medium;

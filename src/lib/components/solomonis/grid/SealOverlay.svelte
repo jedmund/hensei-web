@@ -4,6 +4,9 @@
 	 * a "Start" chip on fixed starting slots, a veil and lock on sealed items,
 	 * a "?" on slots whose state isn't recorded, and the unseal priority of
 	 * sealed slots as a centred badge. Rendered inside the unit's frame.
+	 *
+	 * For editors the lock is a button that marks the item sealed or
+	 * unsealed (unsealed items show an open lock).
 	 */
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
@@ -14,15 +17,47 @@
 		seal: SlotSeal
 		/** Whether the slot holds an item; empty slots only show the Start chip. */
 		filled: boolean
+		/** Marks the item sealed or unsealed; the lock is static without it. */
+		onToggle?: (() => void) | undefined
 	}
 
-	let { seal, filled }: Props = $props()
+	let { seal, filled, onToggle }: Props = $props()
+
+	const toggleLabel = $derived(
+		seal.state === 'sealed'
+			? m.solomonis_web_grid_mark_unsealed()
+			: m.solomonis_web_grid_mark_sealed()
+	)
+
+	// The frame opens the item on click; the lock shouldn't
+	function toggle(event: Event) {
+		event.preventDefault()
+		event.stopPropagation()
+		onToggle?.()
+	}
 </script>
 
 <div class="seal-overlay" class:dimmed={seal.dimmed} data-seal-state={seal.state ?? 'unknown'}>
 	{#if seal.starting}
 		<Tooltip content={m.solomonis_web_grid_start_tooltip()}>
 			<span class="chip start">{m.solomonis_web_grid_start()}</span>
+		</Tooltip>
+	{:else if filled && onToggle}
+		<Tooltip content={toggleLabel}>
+			<button
+				type="button"
+				class="chip icon-chip toggle"
+				class:unknown={seal.state === null}
+				aria-label={toggleLabel}
+				onclick={toggle}
+				onkeydown={(e) => e.stopPropagation()}
+			>
+				{#if seal.state === null}
+					?
+				{:else}
+					<Icon name={seal.state === 'sealed' ? 'lock' : 'lock-open'} size={12} />
+				{/if}
+			</button>
 		</Tooltip>
 	{:else if filled && seal.state === 'sealed'}
 		<span class="chip icon-chip" aria-label={m.solomonis_web_grid_sealed()}>
@@ -83,6 +118,21 @@
 		box-shadow: var(--shadow-sm);
 		pointer-events: auto;
 		box-sizing: border-box;
+	}
+
+	.toggle {
+		border: none;
+		font-family: inherit;
+		cursor: pointer;
+
+		&:hover {
+			background: var(--button-contained-bg-hover, var(--button-contained-bg));
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--focus-ring);
+			outline-offset: 1px;
+		}
 	}
 
 	.priority {

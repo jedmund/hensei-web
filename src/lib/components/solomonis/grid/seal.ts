@@ -1,6 +1,7 @@
 /**
  * Evoking Solomonis grid rules: which slots start unsealed, how a slot is
- * displayed, character limits, and the party's unseal priority list.
+ * displayed, character limits, and the party's unseal priority lists (one
+ * for weapons, one for summons).
  *
  * See docs/prds/evoking-solomonis-prd.md ("Seal state", "Unseal priority",
  * "Characters"). Everything here is pure so it can be tested without a DOM.
@@ -65,7 +66,7 @@ export interface SlotSeal {
 	dimmed: boolean
 	/** The user can pick unsealed/sealed. */
 	editable: boolean
-	/** Rank in the unseal priority list (sealed slots only). */
+	/** Rank among its type in the unseal priority (sealed slots only). */
 	priority: number | null
 }
 
@@ -141,29 +142,38 @@ export interface PriorityEntry {
 	item: GridWeapon | GridSummon
 }
 
-/** Stable key for an entry, since weapon and summon IDs share one list. */
+/** Stable key for an entry, since weapon and summon IDs can repeat. */
 export function entryKey(entry: Pick<PriorityEntry, 'type' | 'id'>): string {
 	return `${entry.type}:${entry.id}`
 }
 
-/** Weapons first, then summons, each by position. */
 function byPosition(a: PriorityEntry, b: PriorityEntry): number {
-	return a.type === b.type ? a.position - b.position : a.type === 'weapon' ? -1 : 1
+	return a.position - b.position
 }
 
-/**
- * The party's sealed weapons and summons, split into the ranked list (by
- * priority) and the rest (weapons first, then summons, by position).
- */
-export function priorityLists(party: Party): {
+export interface PriorityList {
+	/** Ranked entries, first to unseal first */
 	ranked: PriorityEntry[]
+	/** Sealed entries without a rank, by position */
 	unranked: PriorityEntry[]
-} {
-	const expedition = getExpedition(party)
-	if (!expedition) return { ranked: [], unranked: [] }
+}
 
-	const sealed: { entry: PriorityEntry; priority: number | null }[] = []
+/** Weapons and summons are ranked separately, each from 1. */
+export type PriorityLists = Record<SealItemType, PriorityList>
+
+export const PRIORITY_TYPES: readonly SealItemType[] = ['weapon', 'summon']
+
+/** The party's sealed weapons and summons, each split into ranked and unranked. */
+export function priorityLists(party: Party): PriorityLists {
+	const lists: PriorityLists = {
+		weapon: { ranked: [], unranked: [] },
+		summon: { ranked: [], unranked: [] }
+	}
+	const expedition = getExpedition(party)
+	if (!expedition) return lists
+
 	const collect = (type: SealItemType, items: (GridWeapon | GridSummon)[] | undefined) => {
+		const sealed: { entry: PriorityEntry; priority: number | null }[] = []
 		for (const item of items ?? []) {
 			if (type === 'summon' && item.position === FRIEND_SUMMON_POSITION) continue
 			const seal = slotSeal(expedition, type, item.position, item)
@@ -173,69 +183,80 @@ export function priorityLists(party: Party): {
 				priority: seal.priority
 			})
 		}
+		lists[type] = {
+			ranked: sealed
+				.filter((e) => e.priority != null)
+				.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0))
+				.map((e) => e.entry),
+			unranked: sealed
+				.filter((e) => e.priority == null)
+				.map((e) => e.entry)
+				.sort(byPosition)
+		}
 	}
 	collect('weapon', party.weapons)
 	collect('summon', party.summons)
-
-	const ranked = sealed
-		.filter((e) => e.priority != null)
-		.sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0))
-		.map((e) => e.entry)
-	const unranked = sealed
-		.filter((e) => e.priority == null)
-		.map((e) => e.entry)
-		.sort(byPosition)
-	return { ranked, unranked }
+	return lists
 }
 
 /**
  * Moves `key` into the ranked list at `index` (clamped). Works for entries
- * coming from either list, and for reordering within the ranked list.
+ * coming from either list, and for reordering within the ranked list. Both
+ * lists are of one type.
  */
-export function rankAt(
-	ranked: PriorityEntry[],
-	unranked: PriorityEntry[],
-	key: string,
-	index: number
-): { ranked: PriorityEntry[]; unranked: PriorityEntry[] } {
-	const entry = ranked.find((e) => entryKey(e) === key) ?? unranked.find((e) => entryKey(e) === key)
-	if (!entry) return { ranked, unranked }
+export function rankAt(list: PriorityList, key: string, index: number): PriorityList {
+	const entry =
+		list.ranked.find((e) => entryKey(e) === key) ?? list.unranked.find((e) => entryKey(e) === key)
+	if (!entry) return list
 
-	const nextRanked = ranked.filter((e) => entryKey(e) !== key)
-	const target = Math.max(0, Math.min(index, nextRanked.length))
-	nextRanked.splice(target, 0, entry)
-	return { ranked: nextRanked, unranked: unranked.filter((e) => entryKey(e) !== key) }
+	const ranked = list.ranked.filter((e) => entryKey(e) !== key)
+	const target = Math.max(0, Math.min(index, ranked.length))
+	ranked.splice(target, 0, entry)
+	return { ranked, unranked: list.unranked.filter((e) => entryKey(e) !== key) }
 }
 
 /** Takes `key` out of the ranked list and puts it back among the unranked. */
-export function unrank(
-	ranked: PriorityEntry[],
-	unranked: PriorityEntry[],
-	key: string
-): { ranked: PriorityEntry[]; unranked: PriorityEntry[] } {
-	const entry = ranked.find((e) => entryKey(e) === key)
-	if (!entry) return { ranked, unranked }
-	const nextUnranked = [...unranked, entry].sort(byPosition)
-	return { ranked: ranked.filter((e) => entryKey(e) !== key), unranked: nextUnranked }
+export function unrank(list: PriorityList, key: string): PriorityList {
+	const entry = list.ranked.find((e) => entryKey(e) === key)
+	if (!entry) return list
+	return {
+		ranked: list.ranked.filter((e) => entryKey(e) !== key),
+		unranked: [...list.unranked, entry].sort(byPosition)
+	}
 }
 
-export function toPriorityPayload(ranked: PriorityEntry[]): UnsealPriorityItem[] {
-	return ranked.map(({ type, id }) => ({ type, id }))
+/**
+ * Gives one entry a 1-based rank within its type, or takes its rank away
+ * (null). The other type's list is untouched.
+ */
+export function setPriority(
+	lists: PriorityLists,
+	type: SealItemType,
+	key: string,
+	rank: number | null
+): PriorityLists {
+	const list = lists[type]
+	return {
+		...lists,
+		[type]: rank === null ? unrank(list, key) : rankAt(list, key, rank - 1)
+	}
 }
 
-/** Applies a saved ranked list to the party's grid items (1-based, others null). */
+/** The PUT payload: each type's ranked entries in order, weapons first. */
+export function toPriorityPayload(lists: PriorityLists): UnsealPriorityItem[] {
+	return PRIORITY_TYPES.flatMap((type) => lists[type].ranked.map(({ id }) => ({ type, id })))
+}
+
+/** Applies a saved list to the party's grid items: each type from 1, others null. */
 export function applyPriorities(party: Party, items: UnsealPriorityItem[]): Party {
-	const rank = new Map(items.map((item, i) => [`${item.type}:${item.id}`, i + 1]))
+	const ranks = (type: SealItemType) =>
+		new Map(items.filter((item) => item.type === type).map((item, i) => [item.id, i + 1]))
+	const weaponRanks = ranks('weapon')
+	const summonRanks = ranks('summon')
 	return {
 		...party,
-		weapons: party.weapons.map((w) => ({
-			...w,
-			unsealPriority: rank.get(`weapon:${w.id}`) ?? null
-		})),
-		summons: party.summons.map((s) => ({
-			...s,
-			unsealPriority: rank.get(`summon:${s.id}`) ?? null
-		}))
+		weapons: party.weapons.map((w) => ({ ...w, unsealPriority: weaponRanks.get(w.id) ?? null })),
+		summons: party.summons.map((s) => ({ ...s, unsealPriority: summonRanks.get(s.id) ?? null }))
 	}
 }
 

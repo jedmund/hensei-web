@@ -43,7 +43,8 @@
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 	import SealOverlay from '$lib/components/solomonis/grid/SealOverlay.svelte'
-	import SealStateControl from '$lib/components/solomonis/grid/SealStateControl.svelte'
+	import SealMenuItems from '$lib/components/solomonis/grid/SealMenuItems.svelte'
+	import { nextSealState, writeSealState } from '$lib/components/solomonis/grid/sealActions'
 	import { getExpedition, slotSeal } from '$lib/components/solomonis/grid/seal'
 	interface Props {
 		item?: GridWeapon | undefined
@@ -62,6 +63,14 @@
 		if (!expedition || position >= 9) return null
 		return slotSeal(expedition, 'weapon', position, item)
 	})
+
+	// Editors mark a non-starting item sealed or unsealed from the lock or the menu
+	let canToggleSeal = $derived(!!item && !!seal?.editable && !!ctx?.canEdit())
+
+	function toggleSeal() {
+		if (!item || !seal || !ctx) return
+		void writeSealState(ctx, 'weapon', item, nextSealState(seal.state))
+	}
 
 	// Use $derived to ensure consistent computation between server and client
 	let imageUrl = $derived.by(() => {
@@ -318,7 +327,11 @@
 								onerror={(e) => handleImageFallback(e, fallbackUrl)}
 							/>
 							{#if seal}
-								<SealOverlay {seal} filled={true} />
+								<SealOverlay
+									{seal}
+									filled={true}
+									onToggle={canToggleSeal ? toggleSeal : undefined}
+								/>
 							{/if}
 						</div>
 					{/key}
@@ -349,7 +362,13 @@
 					replaceLabel={m.context_replace({ type: m.type_weapon() })}
 					duplicateLabel={m.context_duplicate({ type: m.type_weapon() })}
 					removeLabel={m.context_remove()}
+					editExtras={canToggleSeal ? sealMenuItems : undefined}
 				/>
+				{#snippet sealMenuItems()}
+					{#if item && seal}
+						<SealMenuItems {variant} type="weapon" {item} {seal} />
+					{/if}
+				{/snippet}
 			{/snippet}
 		</UnitMenuContainer>
 	{:else}
@@ -444,9 +463,6 @@
 			/>
 		{/if}
 	</div>
-	{#if item && seal?.editable && ctx?.canEdit()}
-		<SealStateControl type="weapon" {item} sealState={seal.state} />
-	{/if}
 </div>
 
 <DuplicateCollectionDialog

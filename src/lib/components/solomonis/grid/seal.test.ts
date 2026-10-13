@@ -18,6 +18,7 @@ import {
 	priorityLists,
 	rankAt,
 	SOLOMONIS_CHARACTER_LIMIT,
+	setPriority,
 	slotSeal,
 	toPriorityPayload,
 	unrank
@@ -182,19 +183,16 @@ describe('character limits', () => {
 	})
 })
 
-describe('unseal priority list', () => {
-	it('splits sealed items into ranked and unranked', () => {
-		const { ranked, unranked } = priorityLists(deck())
-		expect(ranked.map((e) => `${e.type}${e.position}`)).toEqual([
-			'weapon4',
-			'weapon7',
-			'weapon3',
-			'summon0'
-		])
-		expect(unranked.map((e) => `${e.type}${e.position}`)).toEqual([
-			'weapon5',
-			'weapon6',
-			'weapon8',
+describe('unseal priority lists', () => {
+	const at = (entries: { type: string; position: number }[]) =>
+		entries.map((e) => `${e.type}${e.position}`)
+
+	it('splits each type into ranked and unranked', () => {
+		const lists = priorityLists(deck())
+		expect(at(lists.weapon.ranked)).toEqual(['weapon4', 'weapon7', 'weapon3'])
+		expect(at(lists.weapon.unranked)).toEqual(['weapon5', 'weapon6', 'weapon8'])
+		expect(at(lists.summon.ranked)).toEqual(['summon0'])
+		expect(at(lists.summon.unranked)).toEqual([
 			'summon1',
 			'summon2',
 			'summon3',
@@ -204,46 +202,53 @@ describe('unseal priority list', () => {
 	})
 
 	it('lists only sealed items on a partly unsealed party', () => {
-		const { ranked, unranked } = priorityLists(report())
-		expect(ranked).toEqual([])
-		expect(unranked.every((e) => e.item.sealState === 'sealed')).toBe(true)
-		expect(unranked.length).toBeGreaterThan(0)
+		const lists = priorityLists(report())
+		const all = [...lists.weapon.unranked, ...lists.summon.unranked]
+		expect([...lists.weapon.ranked, ...lists.summon.ranked]).toEqual([])
+		expect(all.every((e) => e.item.sealState === 'sealed')).toBe(true)
+		expect(all.length).toBeGreaterThan(0)
 	})
 
-	it('ranks, reorders and unranks', () => {
-		let lists = priorityLists(deck())
-		const summon1 = entryKey(lists.unranked.find((e) => e.type === 'summon' && e.position === 1)!)
-		lists = rankAt(lists.ranked, lists.unranked, summon1, 0)
-		expect(lists.ranked[0]?.position).toBe(1)
-		expect(lists.unranked.some((e) => entryKey(e) === summon1)).toBe(false)
-
-		// Move the last ranked item to the middle
-		const last = entryKey(lists.ranked[lists.ranked.length - 1]!)
-		lists = rankAt(lists.ranked, lists.unranked, last, 2)
-		expect(entryKey(lists.ranked[2]!)).toBe(last)
+	it('ranks, reorders and unranks within one type', () => {
+		let list = priorityLists(deck()).summon
+		const summon1 = entryKey(list.unranked.find((e) => e.position === 1)!)
+		list = rankAt(list, summon1, 0)
+		expect(at(list.ranked)).toEqual(['summon1', 'summon0'])
+		expect(list.unranked.some((e) => entryKey(e) === summon1)).toBe(false)
 
 		// Past the end appends
-		const weapon5 = entryKey(lists.unranked[0]!)
-		lists = rankAt(lists.ranked, lists.unranked, weapon5, 99)
-		expect(entryKey(lists.ranked[lists.ranked.length - 1]!)).toBe(weapon5)
+		const summon5 = entryKey(list.unranked[list.unranked.length - 1]!)
+		list = rankAt(list, summon5, 99)
+		expect(entryKey(list.ranked[list.ranked.length - 1]!)).toBe(summon5)
 
-		lists = unrank(lists.ranked, lists.unranked, summon1)
-		expect(lists.ranked.some((e) => entryKey(e) === summon1)).toBe(false)
-		expect(lists.unranked.map((e) => `${e.type}${e.position}`)).toContain('summon1')
+		list = unrank(list, summon1)
+		expect(at(list.ranked)).toEqual(['summon0', 'summon5'])
+		expect(at(list.unranked)).toContain('summon1')
 	})
 
-	it('builds the PUT payload and applies it to the grid', () => {
+	it("sets one entry's rank without touching the other type", () => {
+		const lists = priorityLists(deck())
+		const weapon5 = entryKey(lists.weapon.unranked[0]!)
+		const next = setPriority(lists, 'weapon', weapon5, 1)
+		expect(at(next.weapon.ranked)).toEqual(['weapon5', 'weapon4', 'weapon7', 'weapon3'])
+		expect(next.summon).toBe(lists.summon)
+
+		const cleared = setPriority(next, 'weapon', weapon5, null)
+		expect(at(cleared.weapon.ranked)).toEqual(['weapon4', 'weapon7', 'weapon3'])
+	})
+
+	it('builds the PUT payload and numbers each type from 1', () => {
 		const party = deck()
-		const { ranked } = priorityLists(party)
-		const payload = toPriorityPayload(ranked.slice(0, 2))
-		expect(payload).toEqual([
-			{ type: 'weapon', id: ranked[0]!.id },
-			{ type: 'weapon', id: ranked[1]!.id }
-		])
+		const lists = priorityLists(party)
+		const payload = toPriorityPayload(lists)
+		expect(payload.map((item) => item.type)).toEqual(['weapon', 'weapon', 'weapon', 'summon'])
+
 		const next = applyPriorities(party, payload)
-		expect(next.weapons.find((w) => w.id === ranked[0]!.id)?.unsealPriority).toBe(1)
-		expect(next.weapons.find((w) => w.id === ranked[2]!.id)?.unsealPriority).toBeNull()
-		expect(next.summons.every((s) => s.unsealPriority == null)).toBe(true)
+		const weapon = (id: string) => next.weapons.find((w) => w.id === id)?.unsealPriority
+		expect(weapon(lists.weapon.ranked[0]!.id)).toBe(1)
+		expect(weapon(lists.weapon.ranked[2]!.id)).toBe(3)
+		expect(next.summons.find((s) => s.id === lists.summon.ranked[0]!.id)?.unsealPriority).toBe(1)
+		expect(weapon(lists.weapon.unranked[0]!.id)).toBeNull()
 	})
 })
 
@@ -263,9 +268,10 @@ describe('real API responses (api-endpoints)', () => {
 		expect(slotSeal(expedition, 'weapon', 2, at(2)).state).toBe('start')
 		expect(slotSeal(expedition, 'weapon', 5, at(5)).priority).toBe(1)
 
-		const { ranked, unranked } = priorityLists(party)
-		expect(ranked.map((e) => `${e.type}${e.position}`)).toEqual(['weapon5', 'summon0'])
-		expect(unranked.map((e) => `${e.type}${e.position}`)).toEqual(['weapon6'])
+		const lists = priorityLists(party)
+		expect(lists.weapon.ranked.map((e) => e.position)).toEqual([5])
+		expect(lists.summon.ranked.map((e) => e.position)).toEqual([0])
+		expect(lists.weapon.unranked.map((e) => e.position)).toEqual([6])
 	})
 
 	it('keeps a recorded seal state', () => {
@@ -280,6 +286,7 @@ describe('real API responses (api-endpoints)', () => {
 
 	it('applies the priority write response as a whole party', () => {
 		const party = load(realPriorityJson)
-		expect(priorityLists(party).ranked).toHaveLength(2)
+		const lists = priorityLists(party)
+		expect(lists.weapon.ranked.length + lists.summon.ranked.length).toBe(2)
 	})
 })
