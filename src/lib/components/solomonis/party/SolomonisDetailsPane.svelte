@@ -26,7 +26,6 @@
 	import type { SolomonisOutcome } from '$lib/types/api/solomonis'
 	import { openEditSolomonisPane } from './openSolomonisPanes'
 	import {
-		formatJst,
 		hasStats,
 		isFullExpedition,
 		routeEvokerMissingFromGrid,
@@ -145,18 +144,13 @@
 		{/if}
 
 		<div class="rows expedition-rows">
-			<DetailRow
-				label={m.solomonis_web_party_outcome()}
-				value={expedition.outcome
-					? OUTCOME_LABELS[expedition.outcome]()
-					: m.solomonis_web_party_not_set()}
-			/>
-			{#if expedition.endedAt}
-				<DetailRow
-					label={m.solomonis_web_party_ended_at()}
-					value={formatJst(expedition.endedAt) ?? '—'}
-				/>
-			{/if}
+			<DetailRow label={m.solomonis_web_party_outcome()}>
+				<span class="outcome {expedition.outcome ?? 'not-set'}">
+					{expedition.outcome
+						? OUTCOME_LABELS[expedition.outcome]()
+						: m.solomonis_web_party_not_set()}
+				</span>
+			</DetailRow>
 			{#if party.turnCount != null}
 				<DetailRow label={m.solomonis_web_party_turns()} value={party.turnCount} />
 			{/if}
@@ -295,6 +289,24 @@
 	// Lined up with the DetailsSection rows below
 	.expedition-rows {
 		padding: 0 $unit;
+	}
+
+	// Cleared in green, the miasma stages in Arcarum purple, Not set muted
+	.outcome {
+		font-weight: $medium;
+
+		&.cleared {
+			color: var(--wind-text);
+		}
+
+		&.miasma_1,
+		&.miasma_2 {
+			color: var(--extra-purple-primary);
+		}
+
+		&.not-set {
+			color: var(--text-secondary);
+		}
 	}
 
 	.blessing-list {
