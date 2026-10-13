@@ -67,7 +67,7 @@
 		padding: $unit-fourth;
 		// The buttons' corner plus the padding, so the curves stay concentric
 		border-radius: calc(#{$input-corner} + #{$unit-fourth});
-		background: var(--input-bg);
+		background: var(--input-bound-bg);
 	}
 
 	.value {

@@ -58,14 +58,14 @@
 		flex: 1;
 		// Slightly rounded between segments; the bar's pill shape rounds the ends
 		border-radius: $unit-fourth;
-		background: var(--input-bg);
+		background: var(--extra-purple-bg);
 
-		// Darker toward the bottom
+		// Arcarum purple, darker toward the bottom
 		&.filled {
 			background: linear-gradient(
 				to bottom,
-				var(--accent-blue),
-				color-mix(in srgb, var(--accent-blue) 75%, black)
+				var(--extra-purple-primary),
+				color-mix(in srgb, var(--extra-purple-primary) 80%, black)
 			);
 		}
 	}
