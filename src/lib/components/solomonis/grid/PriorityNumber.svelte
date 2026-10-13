@@ -45,6 +45,10 @@
 			// Over item art: a drawn circle with a deeper shadow for contrast
 			background: var(--extra-purple-bg);
 			box-shadow: var(--shadow-md);
+
+			:global(html[data-theme='dark']) & {
+				color: white;
+			}
 		}
 	}
 </style>
