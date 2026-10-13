@@ -19,17 +19,13 @@
 	} from '$lib/composables/drag-drop.svelte'
 	import DraggableItem from '$lib/components/dnd/DraggableItem.svelte'
 	import DropZone from '$lib/components/dnd/DropZone.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
+	import UnsealPriorityRow from './UnsealPriorityRow.svelte'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { useUpdateUnsealPriority } from '$lib/api/mutations/solomonis-grid.mutations'
-	import { getSummonImage, getWeaponImage } from '$lib/utils/images'
-	import { localizedName } from '$lib/utils/locale'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import * as m from '$lib/paraglide/messages'
-	import type { GridSummon, GridWeapon } from '$lib/types/api/party'
 	import {
-		circledNumber,
 		entryKey,
 		priorityLists,
 		rankAt,
@@ -129,63 +125,17 @@
 			})
 		})
 	})
-
-	function imageFor(entry: PriorityEntry): string {
-		return entry.type === 'weapon'
-			? getWeaponImage((entry.item as GridWeapon).weapon?.granblueId, 'grid')
-			: getSummonImage((entry.item as GridSummon).summon?.granblueId, 'grid')
-	}
-
-	function nameFor(entry: PriorityEntry): string {
-		return entry.type === 'weapon'
-			? localizedName((entry.item as GridWeapon).weapon?.name)
-			: localizedName((entry.item as GridSummon).summon?.name)
-	}
-
-	function slotLabel(entry: PriorityEntry): string {
-		const position = String(entry.position + 1)
-		return entry.type === 'weapon'
-			? m.solomonis_web_grid_weapon_slot({ position })
-			: m.solomonis_web_grid_summon_slot({ position })
-	}
 </script>
 
 {#snippet row(entry: PriorityEntry, container: string, index: number)}
 	<DropZone {container} position={index} type={DND_TYPE} item={entry.item} canDrop={canEdit}>
 		<DraggableItem item={entry.item} {container} position={index} type={DND_TYPE} canDrag={canEdit}>
-			<div class="row" data-testid="unseal-priority-row">
-				<span class="rank" aria-hidden={container !== RANKED}>
-					{container === RANKED ? circledNumber(index + 1) : ''}
-				</span>
-				<img class="thumb" class:summon={entry.type === 'summon'} src={imageFor(entry)} alt="" />
-				<span class="text">
-					<span class="name">{nameFor(entry)}</span>
-					<span class="slot">{slotLabel(entry)}</span>
-				</span>
-				{#if canEdit}
-					{#if container === RANKED}
-						<Button
-							variant="ghost"
-							size="small"
-							iconOnly
-							icon="close"
-							title={m.solomonis_web_grid_priority_remove()}
-							aria-label={m.solomonis_web_grid_priority_remove()}
-							onclick={() => remove(entry)}
-						/>
-					{:else}
-						<Button
-							variant="ghost"
-							size="small"
-							iconOnly
-							icon="plus"
-							title={m.solomonis_web_grid_priority_add()}
-							aria-label={m.solomonis_web_grid_priority_add()}
-							onclick={() => add(entry)}
-						/>
-					{/if}
-				{/if}
-			</div>
+			<UnsealPriorityRow
+				{entry}
+				rank={container === RANKED ? index + 1 : null}
+				onAdd={canEdit && container !== RANKED ? () => add(entry) : undefined}
+				onRemove={canEdit && container === RANKED ? () => remove(entry) : undefined}
+			/>
 		</DraggableItem>
 	</DropZone>
 {/snippet}
@@ -259,53 +209,6 @@
 		margin: 0;
 		padding: 0;
 		list-style: none;
-	}
-
-	.row {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit;
-		padding: spacing.$unit-half spacing.$unit;
-		border-radius: layout.$item-corner;
-		background: var(--button-contained-bg);
-	}
-
-	.rank {
-		flex: 0 0 24px;
-		text-align: center;
-		font-size: 1.8rem;
-		font-weight: typography.$bold;
-		color: var(--text-primary);
-	}
-
-	.thumb {
-		flex: 0 0 auto;
-		width: 64px;
-		height: auto;
-		border-radius: layout.$item-corner-small;
-
-		&.summon {
-			width: 56px;
-		}
-	}
-
-	.text {
-		display: flex;
-		flex-direction: column;
-		flex: 1;
-		min-width: 0;
-		text-align: left;
-	}
-
-	.name {
-		font-size: typography.$font-small;
-		color: var(--text-primary);
-		overflow-wrap: anywhere;
-	}
-
-	.slot {
-		font-size: typography.$font-tiny;
-		color: var(--text-tertiary);
 	}
 
 	.drop-hint,
