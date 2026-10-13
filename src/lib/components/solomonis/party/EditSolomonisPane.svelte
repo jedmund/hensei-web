@@ -14,19 +14,17 @@
 	import { untrack } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import * as m from '$lib/paraglide/messages'
-	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import Stepper from '$lib/components/ui/Stepper.svelte'
-	import BlessingRow from './BlessingRow.svelte'
-	import BlessingCostGauge from './BlessingCostGauge.svelte'
+	import BlessingEditSection from './BlessingEditSection.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { finishSolomonisPane, type SolomonisPaneChanges } from './openSolomonisPanes'
 	import { solomonisQueries } from '$lib/api/queries/solomonis.queries'
 	import { getCharacterImage } from '$lib/utils/images'
 	import { appLocale } from '$lib/utils/locale'
 	import type { Party } from '$lib/types/api/party'
-	import type { ArcarumBlessing, SolomonisOutcome } from '$lib/types/api/solomonis'
+	import type { SolomonisOutcome } from '$lib/types/api/solomonis'
 	import {
 		DEFAULT_BLESSING_COST_LIMIT,
 		MAX_PLEDGE_LEVEL,
@@ -113,23 +111,6 @@
 		!!routeEvokerId && changed && (!blessingsChanged || (!!catalogueQuery.data && !overLimit))
 	)
 
-	/** The selected level of a blessing, if it's equipped. */
-	function selectedLevel(blessing: ArcarumBlessing) {
-		return blessing.levels.find((l) => l.id === selection[blessing.id])
-	}
-
-	function maxLevel(blessing: ArcarumBlessing): number {
-		return Math.max(0, ...blessing.levels.map((l) => l.level))
-	}
-
-	function setLevel(blessing: ArcarumBlessing, level: number) {
-		const next = { ...selection }
-		const target = blessing.levels.find((l) => l.level === level)
-		if (target) next[blessing.id] = target.id
-		else delete next[blessing.id]
-		selection = next
-	}
-
 	function save() {
 		if (!canSave) return
 		onSave({
@@ -192,42 +173,7 @@
 
 	<hr class="divider" />
 
-	<DetailsSection title={m.solomonis_web_party_blessings_title()}>
-		<div class="blessings">
-			<BlessingCostGauge {total} limit={costLimit} />
-
-			<ul class="blessing-list">
-				{#each available as blessing (blessing.id)}
-					{@const level = selectedLevel(blessing)}
-					{@const described = level ?? blessing.levels.find((l) => l.level === 1)}
-					{@const name = solomonisName(blessing.name, locale)}
-					<li>
-						<BlessingRow
-							slug={blessing.slug}
-							{name}
-							subtitle={level
-								? m.solomonis_web_party_blessing_cost({ cost: level.cost })
-								: m.solomonis_web_party_blessing_not_equipped()}
-							description={described ? solomonisName(described.description, locale) : null}
-							descriptionMuted={!level}
-						>
-							{#snippet trailing()}
-								<Stepper
-									value={level?.level ?? 0}
-									max={maxLevel(blessing)}
-									onChange={(value) => setLevel(blessing, value)}
-									size="medium"
-									label={name}
-									decreaseLabel={m.solomonis_web_party_blessing_level_down({ name })}
-									increaseLabel={m.solomonis_web_party_blessing_level_up({ name })}
-								/>
-							{/snippet}
-						</BlessingRow>
-					</li>
-				{/each}
-			</ul>
-		</div>
-	</DetailsSection>
+	<BlessingEditSection blessings={available} bind:selection {total} limit={costLimit} />
 </div>
 
 <style lang="scss">
@@ -260,22 +206,5 @@
 		border: none;
 		border-top: 1px solid var(--border-subtle);
 		margin: 0;
-	}
-
-	// Lined up with the section heading, like the details pane's blessing list
-	.blessings {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-2x;
-		padding: 0 $unit;
-	}
-
-	.blessing-list {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-3x;
-		margin: 0;
-		padding: 0;
-		list-style: none;
 	}
 </style>
