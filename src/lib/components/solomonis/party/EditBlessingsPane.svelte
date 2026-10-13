@@ -1,22 +1,21 @@
 <script lang="ts">
 	/**
-	 * EditBlessingsPane - pick the party's Arcarum Blessings: one level per
-	 * released blessing, with the loadout's total cost against the catalogue's
-	 * cost limit. Levels that would push the total over the limit are disabled,
-	 * and saving is blocked while it's over.
+	 * EditBlessingsPane - pick the party's Arcarum Blessings: a level stepper
+	 * per released blessing (0 = not equipped), with the loadout's total cost
+	 * as a gauge against the catalogue's limit. A step that would push the
+	 * total over the limit is disabled, and saving is blocked while it's over.
 	 */
 	import { untrack } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import * as m from '$lib/paraglide/messages'
-	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
-	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import BlessingName from './BlessingName.svelte'
-	import Select from '$lib/components/ui/Select.svelte'
+	import BlessingCostGauge from './BlessingCostGauge.svelte'
+	import Stepper from '$lib/components/ui/Stepper.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { finishSolomonisPane } from './openSolomonisPanes'
 	import { solomonisQueries } from '$lib/api/queries/solomonis.queries'
 	import { appLocale } from '$lib/utils/locale'
-	import type { PartyBlessing } from '$lib/types/api/solomonis'
+	import type { ArcarumBlessing, PartyBlessing } from '$lib/types/api/solomonis'
 	import {
 		DEFAULT_BLESSING_COST_LIMIT,
 		levelFits,
@@ -46,7 +45,6 @@
 	let selection = $state<BlessingSelection>({ ...initialSelection })
 
 	const locale = appLocale()
-	const NONE = '__none__'
 
 	const catalogue = $derived(catalogueQuery.data?.blessings ?? [])
 	const costLimit = $derived(catalogueQuery.data?.costLimit ?? DEFAULT_BLESSING_COST_LIMIT)
@@ -56,25 +54,26 @@
 	const changed = $derived(!sameSelection(selection, initialSelection))
 	const canSave = $derived(!!catalogueQuery.data && changed && !overLimit)
 
-	function optionsFor(blessingId: string) {
-		const blessing = catalogue.find((b) => b.id === blessingId)
-		if (!blessing) return []
-		return [
-			{ value: NONE, label: m.solomonis_web_party_blessing_not_equipped() },
-			...blessing.levels.map((level) => ({
-				value: level.id,
-				label: m.solomonis_web_party_level({ level: level.level }),
-				suffix: m.solomonis_web_party_blessing_cost({ cost: level.cost }),
-				subtitle: solomonisName(level.description, locale),
-				disabled: !levelFits(catalogue, selection, blessingId, level.id, costLimit)
-			}))
-		]
+	/** The selected level of a blessing, if it's equipped. */
+	function selectedLevel(blessing: ArcarumBlessing) {
+		return blessing.levels.find((l) => l.id === selection[blessing.id])
 	}
 
-	function select(blessingId: string, levelId: string | undefined) {
+	function maxLevel(blessing: ArcarumBlessing): number {
+		return Math.max(0, ...blessing.levels.map((l) => l.level))
+	}
+
+	/** Whether stepping up one level keeps the loadout within the limit. */
+	function canRaise(blessing: ArcarumBlessing): boolean {
+		const next = blessing.levels.find((l) => l.level === (selectedLevel(blessing)?.level ?? 0) + 1)
+		return !!next && levelFits(catalogue, selection, blessing.id, next.id, costLimit)
+	}
+
+	function setLevel(blessing: ArcarumBlessing, level: number) {
 		const next = { ...selection }
-		if (!levelId || levelId === NONE) delete next[blessingId]
-		else next[blessingId] = levelId
+		const target = blessing.levels.find((l) => l.level === level)
+		if (target) next[blessing.id] = target.id
+		else delete next[blessing.id]
 		selection = next
 	}
 
@@ -98,32 +97,45 @@
 </script>
 
 <div class="blessings-pane">
-	<DetailsSection title={m.solomonis_web_party_blessings()}>
-		{#snippet action()}
-			<span class="total" class:over={overLimit}>
-				{m.solomonis_web_party_blessing_cost_total({ total, limit: costLimit })}
-			</span>
-		{/snippet}
+	<BlessingCostGauge {total} limit={costLimit} />
+
+	<ul class="blessings">
 		{#each available as blessing (blessing.id)}
-			<DetailRow compact>
-				{#snippet labelSlot()}
-					<BlessingName slug={blessing.slug} name={solomonisName(blessing.name, locale)} />
-				{/snippet}
-				<Select
-					options={optionsFor(blessing.id)}
-					value={selection[blessing.id] ?? NONE}
-					onValueChange={(v) => select(blessing.id, v)}
-					size="small"
-					contained
-				/>
-			</DetailRow>
+			{@const level = selectedLevel(blessing)}
+			{@const name = solomonisName(blessing.name, locale)}
+			<li class="blessing">
+				<div class="row">
+					<BlessingName
+						slug={blessing.slug}
+						{name}
+						size="large"
+						subtitle={level
+							? m.solomonis_web_party_blessing_cost({ cost: level.cost })
+							: m.solomonis_web_party_blessing_not_equipped()}
+					/>
+					<Stepper
+						value={level?.level ?? 0}
+						max={maxLevel(blessing)}
+						canIncrement={canRaise(blessing)}
+						onChange={(value) => setLevel(blessing, value)}
+						format={(value) => (value === 0 ? '–' : String(value))}
+						label={name}
+						decreaseLabel={m.solomonis_web_party_blessing_level_down({ name })}
+						increaseLabel={m.solomonis_web_party_blessing_level_up({ name })}
+					/>
+				</div>
+				{#if level}
+					<p class="effect">{solomonisName(level.description, locale)}</p>
+				{/if}
+			</li>
 		{/each}
-		{#if overLimit}
-			<p class="error" role="alert">
-				{m.solomonis_web_party_blessing_over_limit({ limit: costLimit })}
-			</p>
-		{/if}
-	</DetailsSection>
+	</ul>
+
+	{#if overLimit}
+		<p class="error" role="alert">
+			{m.solomonis_web_party_blessing_over_limit({ limit: costLimit })}
+		</p>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -134,23 +146,40 @@
 	.blessings-pane {
 		display: flex;
 		flex-direction: column;
-		gap: $unit-3x;
-		padding-bottom: $unit-2x;
+		gap: $unit-2x;
+		padding: 0 $unit-2x $unit-2x;
 	}
 
-	.total {
+	.blessings {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.blessing {
+		display: flex;
+		flex-direction: column;
+		gap: $unit;
+	}
+
+	.row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: $unit;
+	}
+
+	.effect {
+		margin: 0;
 		font-size: $font-small;
 		color: var(--text-secondary);
-		font-variant-numeric: tabular-nums;
-
-		&.over {
-			color: $error;
-		}
 	}
 
 	.error {
 		margin: 0;
-		padding: 0 $unit-2x;
 		font-size: $font-small;
 		color: $error;
 	}

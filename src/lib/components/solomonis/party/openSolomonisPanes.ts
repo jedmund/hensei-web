@@ -88,7 +88,7 @@ export function openEditBlessingsPane(
 	party: Party,
 	mutation: ReturnType<typeof useUpdatePartyBlessings>
 ) {
-	showSolomonisPane(m.solomonis_web_party_blessings(), EditBlessingsPane, {
+	showSolomonisPane(m.solomonis_web_party_blessings_title(), EditBlessingsPane, {
 		blessings: isFullExpedition(party.solomonis) ? party.solomonis.blessings : [],
 		onSave: (blessingLevelIds: string[]) => {
 			mutation
