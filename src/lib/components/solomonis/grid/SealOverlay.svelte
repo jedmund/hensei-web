@@ -2,8 +2,8 @@
 	/**
 	 * Seal state drawn over a weapon or summon image on a Solomonis party:
 	 * a "Start" chip on fixed starting slots, a veil and lock on sealed items,
-	 * a "?" on runs whose state isn't recorded, and the build's unseal
-	 * priority as a centred badge. Rendered inside the unit's frame.
+	 * a "?" on slots whose state isn't recorded, and the unseal priority of
+	 * sealed slots as a centred badge. Rendered inside the unit's frame.
 	 */
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'

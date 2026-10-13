@@ -1,7 +1,7 @@
 <script lang="ts">
 	/**
 	 * Opens the unseal priority pane. Shown under the weapon and summon grids
-	 * of a Solomonis build the viewer can edit.
+	 * of a Solomonis party the viewer can edit.
 	 */
 	import Button from '$lib/components/ui/Button.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'

@@ -5,7 +5,7 @@
 
 import type { Party } from '$lib/types/api/party'
 import { GridType } from '$lib/types/enums'
-import { characterSlotLimit, getExpedition } from '$lib/components/solomonis/grid/seal'
+import { SOLOMONIS_CHARACTER_LIMIT, getExpedition } from '$lib/components/solomonis/grid/seal'
 
 /** Sentinel value indicating no empty slot was found */
 export const SLOT_NOT_FOUND = -999
@@ -40,8 +40,8 @@ const GRID_CONFIGS: Record<GridType, SlotRange> = {
  * ```
  */
 /**
- * Evoking Solomonis parties have no support summon and a smaller character
- * limit (route Evoker only on a build, +1 with The Hanged Man).
+ * Evoking Solomonis parties have no support summon and hold at most the
+ * route Evoker plus 4 recruits.
  */
 function slotRangeFor(party: Party, gridType: GridType): SlotRange {
 	const config = GRID_CONFIGS[gridType]
@@ -49,7 +49,7 @@ function slotRangeFor(party: Party, gridType: GridType): SlotRange {
 	if (!expedition) return config
 	if (gridType === GridType.Summon) return { ...config, trailingSlots: [] }
 	if (gridType === GridType.Character) {
-		return { ...config, end: Math.min(config.end, characterSlotLimit(expedition) - 1) }
+		return { ...config, end: Math.min(config.end, SOLOMONIS_CHARACTER_LIMIT - 1) }
 	}
 	return config
 }

@@ -34,9 +34,7 @@
 	const unlimited = $derived(party.raid?.group?.unlimited ?? false)
 	// Evoking Solomonis: character limit and no support summon in the previews
 	const expedition = $derived(getExpedition(party))
-	const characterSlotLimit = $derived(
-		expedition ? characterSlotCount(expedition, characters) : undefined
-	)
+	const characterSlotLimit = $derived(expedition ? characterSlotCount(characters) : undefined)
 	const jobIcon = $derived(party.job ? getJobIconUrl(party.job.granblueId) : undefined)
 
 	// Handle value changes

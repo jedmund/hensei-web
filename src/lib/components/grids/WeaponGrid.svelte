@@ -38,8 +38,8 @@
 	const ctx = usePartyContext()
 	const dragContext = getDragDropContext()
 
-	// Evoking Solomonis builds rank their sealed slots in a pane
-	let isSolomonisBuild = $derived(getExpedition(ctx?.getParty())?.kind === 'build')
+	// Evoking Solomonis parties rank their sealed slots in a pane
+	let isSolomonis = $derived(!!getExpedition(ctx?.getParty()))
 
 	let mainhand = $derived(
 		weapons.find((w) => (w as unknown as Record<string, unknown>).mainhand || w.position === -1)
@@ -161,7 +161,7 @@
 			{/each}
 		</ul>
 	</div>
-	{#if isSolomonisBuild && (ctx?.canEdit() ?? false)}
+	{#if isSolomonis && (ctx?.canEdit() ?? false)}
 		<UnsealPriorityButton canEdit={ctx?.canEdit() ?? false} />
 	{/if}
 	{#if raidExtra || showGuidebooks}

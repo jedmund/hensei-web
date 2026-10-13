@@ -22,7 +22,7 @@
 	const ctx = usePartyContext()
 	const dragContext = getDragDropContext()
 
-	// Evoking Solomonis has no support summon; builds rank their sealed slots
+	// Evoking Solomonis has no support summon and ranks its sealed slots
 	let expedition = $derived(getExpedition(ctx?.getParty()))
 	let isSolomonis = $derived(!!expedition)
 
@@ -164,7 +164,7 @@
 		{/if}
 		<ExtraSummons {summons} offset={4} {collectionStatus} />
 	</div>
-	{#if expedition?.kind === 'build' && (ctx?.canEdit() ?? false)}
+	{#if isSolomonis && (ctx?.canEdit() ?? false)}
 		<UnsealPriorityButton canEdit={ctx?.canEdit() ?? false} />
 	{/if}
 </div>

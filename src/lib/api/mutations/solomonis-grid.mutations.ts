@@ -2,7 +2,7 @@
  * Evoking Solomonis grid mutations (web-grid lane).
  *
  * Seal state and `brought_by_blessing` use the existing grid item mutations;
- * this file covers the build's unseal priority list.
+ * this file covers the party's unseal priority list.
  */
 import { createMutation, useQueryClient, type QueryClient } from '@tanstack/svelte-query'
 import { solomonisGridAdapter } from '$lib/api/adapters/solomonis-grid.adapter'

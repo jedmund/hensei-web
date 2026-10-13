@@ -1,7 +1,7 @@
 <script lang="ts">
 	/**
-	 * Unsealed/sealed control under a run's weapon or summon. An imported run
-	 * starts with no state (unknown), shown as no selection. Writes go through
+	 * Unsealed/sealed control under a Solomonis party's weapon or summon. A
+	 * slot with no recorded state (unknown) shows no selection. Writes go through
 	 * the existing grid item update endpoints.
 	 */
 	import type { GridSummon, GridWeapon } from '$lib/types/api/party'

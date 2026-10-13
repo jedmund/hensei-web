@@ -1,6 +1,6 @@
 /**
  * Evoking Solomonis grid rules: which slots start unsealed, how a slot is
- * displayed, character limits, and the build's unseal priority list.
+ * displayed, character limits, and the party's unseal priority list.
  *
  * See docs/prds/evoking-solomonis-prd.md ("Seal state", "Unseal priority",
  * "Characters"). Everything here is pure so it can be tested without a DOM.
@@ -22,8 +22,11 @@ export const HANGED_MAN = 'hanged_man'
 /** Positions of the support summon, which Solomonis parties don't have. */
 export const FRIEND_SUMMON_POSITION = 6
 
-/** Characters a run can hold: the route Evoker plus up to 4 allies. */
-export const RUN_CHARACTER_LIMIT = 5
+/**
+ * Characters a Solomonis party can hold: the route Evoker plus up to 4
+ * recruits. The Hanged Man's ally takes one of the 4.
+ */
+export const SOLOMONIS_CHARACTER_LIMIT = 5
 
 /**
  * `party.solomonis` is the full expedition on the party page and a summary in
@@ -54,25 +57,25 @@ export function isStartingSlot(type: SealItemType, position: number, hasJustice:
 }
 
 export interface SlotSeal {
-	/** What to show. `null` means unknown (imported runs). */
+	/** What to show. `null` means unknown (not recorded yet). */
 	state: SealState | null
 	/** Fixed starting slot: marked, never has a control. */
 	starting: boolean
 	/** Render the item dimmed. */
 	dimmed: boolean
-	/** Runs: the user can pick unsealed/sealed. */
+	/** The user can pick unsealed/sealed. */
 	editable: boolean
-	/** Builds: rank in the unseal priority list. */
+	/** Rank in the unseal priority list (sealed slots only). */
 	priority: number | null
 }
 
 /**
  * How a weapon or summon slot is shown on a Solomonis party.
  *
- * Builds are derived entirely from position and blessings, so a blessing
- * change shows up before the API recomputes the grid. Runs keep what the
- * user (or import) recorded; a `start` left on a slot that is no longer a
- * starting one reads as unknown.
+ * Starting slots follow from position and blessings, so a blessing change
+ * shows up before the API recomputes the grid. Every other slot keeps what
+ * the user (or an import) recorded; a `start` left on a slot that is no
+ * longer a starting one reads as unknown. Only sealed slots carry a priority.
  */
 export function slotSeal(
 	expedition: SolomonisExpedition,
@@ -86,16 +89,6 @@ export function slotSeal(
 		return { state: 'start', starting, dimmed: false, editable: false, priority: null }
 	}
 
-	if (expedition.kind === 'build') {
-		return {
-			state: 'sealed',
-			starting,
-			dimmed: !!item,
-			editable: false,
-			priority: item?.unsealPriority ?? null
-		}
-	}
-
 	const recorded = item?.sealState ?? null
 	const state = recorded === 'start' ? null : recorded
 	return {
@@ -103,26 +96,17 @@ export function slotSeal(
 		starting,
 		dimmed: !!item && state === 'sealed',
 		editable: !!item,
-		priority: null
+		priority: state === 'sealed' ? (item?.unsealPriority ?? null) : null
 	}
-}
-
-/** Character slots shown on a Solomonis party. */
-export function characterSlotLimit(expedition: SolomonisExpedition): number {
-	if (expedition.kind === 'run') return RUN_CHARACTER_LIMIT
-	return hasBlessing(expedition, HANGED_MAN) ? 2 : 1
 }
 
 /**
  * Number of character slots to render: the limit, or more when the party
  * already holds characters past it, so nothing is hidden.
  */
-export function characterSlotCount(
-	expedition: SolomonisExpedition,
-	characters: Pick<GridCharacter, 'position'>[]
-): number {
+export function characterSlotCount(characters: Pick<GridCharacter, 'position'>[]): number {
 	const highest = characters.reduce((max, c) => Math.max(max, c.position), -1)
-	return Math.max(characterSlotLimit(expedition), highest + 1)
+	return Math.max(SOLOMONIS_CHARACTER_LIMIT, highest + 1)
 }
 
 export function isRouteEvoker(
@@ -133,7 +117,7 @@ export function isRouteEvoker(
 }
 
 /**
- * Runs with The Hanged Man can mark one ally (not the route Evoker) as
+ * With The Hanged Man, one ally (not the route Evoker) can be marked as
  * brought by the blessing. Returns whether `character` may toggle it.
  */
 export function canMarkBroughtByBlessing(
@@ -141,7 +125,7 @@ export function canMarkBroughtByBlessing(
 	characters: GridCharacter[],
 	character: GridCharacter | undefined
 ): boolean {
-	if (!character || expedition.kind !== 'run') return false
+	if (!character) return false
 	if (!hasBlessing(expedition, HANGED_MAN)) return false
 	if (isRouteEvoker(expedition, character)) return false
 	if (character.broughtByBlessing) return true
@@ -168,7 +152,7 @@ function byPosition(a: PriorityEntry, b: PriorityEntry): number {
 }
 
 /**
- * The build's sealed weapons and summons, split into the ranked list (by
+ * The party's sealed weapons and summons, split into the ranked list (by
  * priority) and the rest (weapons first, then summons, by position).
  */
 export function priorityLists(party: Party): {
@@ -176,7 +160,7 @@ export function priorityLists(party: Party): {
 	unranked: PriorityEntry[]
 } {
 	const expedition = getExpedition(party)
-	if (!expedition || expedition.kind !== 'build') return { ranked: [], unranked: [] }
+	if (!expedition) return { ranked: [], unranked: [] }
 
 	const sealed: { entry: PriorityEntry; priority: number | null }[] = []
 	const collect = (type: SealItemType, items: (GridWeapon | GridSummon)[] | undefined) => {

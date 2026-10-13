@@ -3,7 +3,6 @@ import { findNextEmptySlot, SLOT_NOT_FOUND } from '../gridHelpers'
 import { GridType } from '$lib/types/enums'
 import type { Party, GridWeapon, GridSummon, GridCharacter } from '$lib/types/api/party'
 import { transformResponse } from '$lib/api/schemas/transforms'
-import { getExpedition } from '$lib/components/solomonis/grid/seal'
 import buildJson from '$lib/components/solomonis/grid/__fixtures__/party-build.json'
 import runJson from '$lib/components/solomonis/grid/__fixtures__/party-run.json'
 
@@ -122,34 +121,15 @@ describe('findNextEmptySlot — characters', () => {
 
 describe('findNextEmptySlot — Evoking Solomonis', () => {
 	const load = (json: unknown) => transformResponse<{ party: Party }>(json).party
-	const hangedMan = {
-		blessing: {
-			id: 'hm',
-			slug: 'hanged_man',
-			arcanaNumber: 12,
-			name: { en: 'The Hanged Man', ja: null }
-		},
-		levelId: 'hml',
-		level: 1,
-		cost: 100
-	}
-	const withHangedMan = (party: Party): Party => {
-		const expedition = getExpedition(party)!
-		return { ...party, solomonis: { ...expedition, blessings: [hangedMan] } }
-	}
-
-	it('stops at the route Evoker on a build', () => {
+	it('offers the slots after the route Evoker', () => {
 		const party = load(buildJson)
-		expect(findNextEmptySlot(party, GridType.Character)).toBe(SLOT_NOT_FOUND)
-	})
-
-	it('allows one more character on a build with The Hanged Man', () => {
-		const party = withHangedMan(load(buildJson))
 		expect(findNextEmptySlot(party, GridType.Character)).toBe(1)
 	})
 
-	it('allows the usual five slots on a run', () => {
+	it('allows the route Evoker and four recruits', () => {
 		const party = load(runJson)
+		expect(party.characters).toHaveLength(5)
+		expect(findNextEmptySlot(party, GridType.Character)).toBe(SLOT_NOT_FOUND)
 		const characters = party.characters.filter((c) => c.position !== 3)
 		expect(findNextEmptySlot({ ...party, characters }, GridType.Character)).toBe(3)
 	})

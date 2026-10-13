@@ -1,6 +1,6 @@
 <script lang="ts">
 	/**
-	 * Unseal priority pane for Solomonis builds. Lists the build's sealed
+	 * Unseal priority pane for Solomonis parties. Lists the party's sealed
 	 * weapons and summons; users drag them into a ranked list and reorder it,
 	 * and anything left out stays unranked below. Saving writes the whole list
 	 * in one request.

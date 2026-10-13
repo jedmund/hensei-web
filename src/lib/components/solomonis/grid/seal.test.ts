@@ -11,13 +11,13 @@ import {
 	applyPriorities,
 	canMarkBroughtByBlessing,
 	characterSlotCount,
-	characterSlotLimit,
 	circledNumber,
 	entryKey,
 	getExpedition,
 	isStartingSlot,
 	priorityLists,
 	rankAt,
+	SOLOMONIS_CHARACTER_LIMIT,
 	slotSeal,
 	toPriorityPayload,
 	unrank
@@ -43,15 +43,17 @@ function withBlessings(party: Party, slugs: string[]): Party {
 	}
 }
 
-const build = () => load(buildJson)
-const run = () => load(runJson)
+// Two sample parties: one shaped like a party deck import (non-starting slots
+// sealed, some ranked), one like a finished expedition (partly unsealed).
+const deck = () => load(buildJson)
+const report = () => load(runJson)
 
 describe('getExpedition', () => {
 	it('reads the full view and ignores list summaries', () => {
-		expect(getExpedition(build())?.kind).toBe('build')
-		const summary = { ...build(), solomonis: { kind: 'build', routeEvokerId: 'x', pledgeLevel: 0 } }
+		expect(getExpedition(deck())?.routeEvoker).toBeTruthy()
+		const summary = { ...deck(), solomonis: { routeEvokerId: 'x', pledgeLevel: 0 } }
 		expect(getExpedition(summary as Party)).toBeNull()
-		expect(getExpedition({ ...build(), solomonis: null })).toBeNull()
+		expect(getExpedition({ ...deck(), solomonis: null })).toBeNull()
 	})
 })
 
@@ -78,47 +80,35 @@ describe('isStartingSlot', () => {
 	})
 })
 
-describe('slotSeal on builds', () => {
-	it('derives states and shows priorities, with no controls', () => {
-		const party = build()
+describe('slotSeal', () => {
+	it('shows sealed slots dimmed, with their priority and a control', () => {
+		const party = deck()
 		const expedition = getExpedition(party)!
 		const at = (p: number) => party.weapons.find((w) => w.position === p)
 		expect(slotSeal(expedition, 'weapon', 2, at(2))).toMatchObject({
 			state: 'start',
-			starting: true
+			starting: true,
+			editable: false
 		})
 		expect(slotSeal(expedition, 'weapon', 4, at(4))).toEqual({
 			state: 'sealed',
 			starting: false,
 			dimmed: true,
-			editable: false,
+			editable: true,
 			priority: 1
 		})
 		expect(slotSeal(expedition, 'weapon', 5, at(5)).priority).toBeNull()
 	})
 
-	it('reseals position 2 when Justice is removed, before the API recomputes', () => {
-		const party = withBlessings(build(), ['death'])
-		const expedition = getExpedition(party)!
-		const item = party.weapons.find((w) => w.position === 2)
-		expect(slotSeal(expedition, 'weapon', 2, item).state).toBe('sealed')
-	})
-
-	it('does not dim empty slots', () => {
-		const expedition = getExpedition(build())!
-		expect(slotSeal(expedition, 'weapon', 7, undefined).dimmed).toBe(false)
-	})
-})
-
-describe('slotSeal on runs', () => {
 	it('keeps recorded states and offers a control outside starting slots', () => {
-		const party = run()
+		const party = report()
 		const expedition = getExpedition(party)!
 		const at = (p: number) => party.weapons.find((w) => w.position === p)
 		expect(slotSeal(expedition, 'weapon', 3, at(3))).toMatchObject({
 			state: 'unsealed',
 			dimmed: false,
-			editable: true
+			editable: true,
+			priority: null
 		})
 		expect(slotSeal(expedition, 'weapon', 5, at(5))).toMatchObject({
 			state: 'sealed',
@@ -132,39 +122,46 @@ describe('slotSeal on runs', () => {
 		expect(slotSeal(expedition, 'summon', -1, party.summons[0]).editable).toBe(false)
 	})
 
-	it('shows unknown (null) states from imports without dimming', () => {
-		const expedition = getExpedition(run())!
+	it('ignores a priority left on a slot that is not sealed', () => {
+		const expedition = getExpedition(report())!
+		expect(
+			slotSeal(expedition, 'weapon', 3, { sealState: 'unsealed', unsealPriority: 2 }).priority
+		).toBeNull()
+	})
+
+	it('shows unknown (null) states without dimming', () => {
+		const expedition = getExpedition(report())!
 		expect(
 			slotSeal(expedition, 'summon', 2, { sealState: null, unsealPriority: null })
 		).toMatchObject({ state: null, dimmed: false, editable: true })
 	})
 
-	it('treats a stale start outside the starting slots as unknown', () => {
-		const expedition = getExpedition(withBlessings(run(), []))!
-		expect(
-			slotSeal(expedition, 'weapon', 2, { sealState: 'start', unsealPriority: null }).state
-		).toBeNull()
+	it('treats a stale start as unknown once Justice is removed, before the API recomputes', () => {
+		const party = withBlessings(deck(), ['death'])
+		const expedition = getExpedition(party)!
+		const item = party.weapons.find((w) => w.position === 2)
+		expect(item?.sealState).toBe('start')
+		expect(slotSeal(expedition, 'weapon', 2, item).state).toBeNull()
+	})
+
+	it('does not dim empty slots', () => {
+		const expedition = getExpedition(deck())!
+		expect(slotSeal(expedition, 'weapon', 7, undefined).dimmed).toBe(false)
 	})
 })
 
 describe('character limits', () => {
-	it('allows only the route Evoker on a build, plus one with The Hanged Man', () => {
-		expect(characterSlotLimit(getExpedition(build())!)).toBe(1)
-		expect(characterSlotLimit(getExpedition(withBlessings(build(), ['hanged_man']))!)).toBe(2)
-	})
-
-	it('allows the route Evoker and four allies on a run', () => {
-		expect(characterSlotLimit(getExpedition(withBlessings(run(), ['hanged_man']))!)).toBe(5)
+	it('allows the route Evoker and four recruits', () => {
+		expect(SOLOMONIS_CHARACTER_LIMIT).toBe(5)
+		expect(characterSlotCount([{ position: 0 }])).toBe(5)
 	})
 
 	it('renders extra slots rather than hiding characters past the limit', () => {
-		const expedition = getExpedition(build())!
-		expect(characterSlotCount(expedition, [{ position: 0 }])).toBe(1)
-		expect(characterSlotCount(expedition, [{ position: 0 }, { position: 2 }])).toBe(3)
+		expect(characterSlotCount([{ position: 0 }, { position: 6 }])).toBe(7)
 	})
 
 	it('lets one non-Evoker ally be marked as brought by The Hanged Man', () => {
-		const party = withBlessings(run(), ['hanged_man'])
+		const party = withBlessings(report(), ['hanged_man'])
 		const expedition = getExpedition(party) as SolomonisExpedition
 		const [evoker, ally1, ally2] = party.characters
 		expect(canMarkBroughtByBlessing(expedition, party.characters, evoker)).toBe(false)
@@ -177,29 +174,17 @@ describe('character limits', () => {
 		expect(canMarkBroughtByBlessing(expedition, marked, ally2)).toBe(false)
 	})
 
-	it('needs The Hanged Man and a run', () => {
-		const runParty = run()
+	it('needs The Hanged Man', () => {
+		const party = report()
 		expect(
-			canMarkBroughtByBlessing(
-				getExpedition(runParty)!,
-				runParty.characters,
-				runParty.characters[1]
-			)
-		).toBe(false)
-		const buildParty = withBlessings(build(), ['hanged_man'])
-		expect(
-			canMarkBroughtByBlessing(
-				getExpedition(buildParty)!,
-				buildParty.characters,
-				buildParty.characters[0]
-			)
+			canMarkBroughtByBlessing(getExpedition(party)!, party.characters, party.characters[1])
 		).toBe(false)
 	})
 })
 
 describe('unseal priority list', () => {
 	it('splits sealed items into ranked and unranked', () => {
-		const { ranked, unranked } = priorityLists(build())
+		const { ranked, unranked } = priorityLists(deck())
 		expect(ranked.map((e) => `${e.type}${e.position}`)).toEqual([
 			'weapon4',
 			'weapon7',
@@ -218,12 +203,15 @@ describe('unseal priority list', () => {
 		])
 	})
 
-	it('is empty on runs', () => {
-		expect(priorityLists(run())).toEqual({ ranked: [], unranked: [] })
+	it('lists only sealed items on a partly unsealed party', () => {
+		const { ranked, unranked } = priorityLists(report())
+		expect(ranked).toEqual([])
+		expect(unranked.every((e) => e.item.sealState === 'sealed')).toBe(true)
+		expect(unranked.length).toBeGreaterThan(0)
 	})
 
 	it('ranks, reorders and unranks', () => {
-		let lists = priorityLists(build())
+		let lists = priorityLists(deck())
 		const summon1 = entryKey(lists.unranked.find((e) => e.type === 'summon' && e.position === 1)!)
 		lists = rankAt(lists.ranked, lists.unranked, summon1, 0)
 		expect(lists.ranked[0]?.position).toBe(1)
@@ -245,7 +233,7 @@ describe('unseal priority list', () => {
 	})
 
 	it('builds the PUT payload and applies it to the grid', () => {
-		const party = build()
+		const party = deck()
 		const { ranked } = priorityLists(party)
 		const payload = toPriorityPayload(ranked.slice(0, 2))
 		expect(payload).toEqual([
@@ -268,10 +256,9 @@ describe('circledNumber', () => {
 })
 
 describe('real API responses (api-endpoints)', () => {
-	it('reads seal states and priorities from an unsorted build grid', () => {
+	it('reads seal states and priorities from an unsorted grid', () => {
 		const party = load(realBuildJson)
 		const expedition = getExpedition(party)!
-		expect(expedition.kind).toBe('build')
 		const at = (p: number) => party.weapons.find((w) => w.position === p)
 		expect(slotSeal(expedition, 'weapon', 2, at(2)).state).toBe('start')
 		expect(slotSeal(expedition, 'weapon', 5, at(5)).priority).toBe(1)
@@ -281,7 +268,7 @@ describe('real API responses (api-endpoints)', () => {
 		expect(unranked.map((e) => `${e.type}${e.position}`)).toEqual(['weapon6'])
 	})
 
-	it('keeps a recorded run state', () => {
+	it('keeps a recorded seal state', () => {
 		const party = load(realRunJson)
 		const expedition = getExpedition(party)!
 		const weapon = party.weapons.find((w) => w.position === 5)

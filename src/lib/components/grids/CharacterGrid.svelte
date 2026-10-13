@@ -37,14 +37,12 @@
 	const ctx = usePartyContext()
 	const dragContext = getDragDropContext()
 
-	// Evoking Solomonis limits characters: builds hold the route Evoker (+1
-	// with The Hanged Man), runs the route Evoker and up to 4 allies.
+	// Evoking Solomonis limits characters to the route Evoker and up to 4
+	// recruits.
 	const expedition = $derived(getExpedition(ctx?.getParty()))
 
 	// Dynamic slot count based on unlimited flag
-	const slotCount = $derived(
-		expedition ? characterSlotCount(expedition, characters) : unlimited ? 8 : 5
-	)
+	const slotCount = $derived(expedition ? characterSlotCount(characters) : unlimited ? 8 : 5)
 
 	// Create array with proper empty slots
 	let characterSlots = $derived.by(() => {
@@ -92,7 +90,7 @@
 </script>
 
 {#snippet solomonisAlly(character: GridCharacter | undefined)}
-	{#if expedition?.kind === 'run' && character}
+	{#if expedition && character}
 		<BroughtByBlessing
 			{character}
 			allowed={canMarkBroughtByBlessing(expedition, characters, character)}
@@ -101,7 +99,7 @@
 {/snippet}
 
 <div class="wrapper">
-	<ul class="characters" class:unlimited class:limited={slotCount < 5} aria-label="Character Grid">
+	<ul class="characters" class:unlimited aria-label="Character Grid">
 		{#each characterSlots as character, i (i)}
 			<li aria-label={`Character slot ${i}`} class:Empty={!character}>
 				{#if dragContext}
@@ -193,22 +191,6 @@
 
 				& > li {
 					width: calc((100% - $unit * 2) / 3);
-				}
-			}
-		}
-
-		// Solomonis builds hold 1–2 characters: keep the usual slot width, centred
-		&.limited {
-			display: flex;
-			justify-content: center;
-
-			& > li {
-				width: calc((100% - #{$unit-3x} * 4) / 5);
-			}
-
-			@media (max-width: 768px) {
-				& > li {
-					width: calc((100% - #{$unit} * 2) / 3);
 				}
 			}
 		}

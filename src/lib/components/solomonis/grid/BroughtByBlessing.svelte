@@ -1,6 +1,6 @@
 <script lang="ts">
 	/**
-	 * Marks the ally brought by The Hanged Man on a Solomonis run. Editors get
+	 * Marks the ally brought by The Hanged Man on a Solomonis party. Editors get
 	 * a checkbox (at most one ally can hold it); viewers see a label on the
 	 * marked ally. Writes `brought_by_blessing` through the existing grid
 	 * character update.

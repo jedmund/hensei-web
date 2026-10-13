@@ -12,7 +12,7 @@ import { DEFAULT_ADAPTER_CONFIG } from './config'
 
 export class SolomonisGridAdapter extends BaseAdapter {
 	/**
-	 * Replaces a build's unseal priority list, in order. The API renumbers
+	 * Replaces a party's unseal priority list, in order. The API renumbers
 	 * from 1 and returns the full party (decisions.md D11).
 	 */
 	async updateUnsealPriority(
