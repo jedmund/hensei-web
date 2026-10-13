@@ -37,6 +37,7 @@ export const BUCKET = {
 	mastery: 'icons/mastery',
 	axSkills: 'icons/ax-skills',
 	guideEffects: 'icons/guide-effects',
+	blessings: 'blessings',
 	accessories: 'accessories',
 	artifacts: 'artifacts',
 	bullets: 'bullets',
@@ -636,6 +637,16 @@ export function getWeaponSkillIcon(
  */
 export function getGuideEffectIcon(iconType: number): string {
 	return `${getBasePath()}/${BUCKET.guideEffects}/${iconType}.png`
+}
+
+export type BlessingImageVariant = 'icon' | 'card' | 'card-list'
+
+/**
+ * Get an Arcarum Blessing image by the blessing's slug: the round icon for
+ * lists, or the tarot card at full (`card`) or picker (`card-list`) size
+ */
+export function getBlessingImage(slug: string, variant: BlessingImageVariant = 'icon'): string {
+	return `${getBasePath()}/${BUCKET.blessings}/${variant}/${slug}.png`
 }
 
 /**

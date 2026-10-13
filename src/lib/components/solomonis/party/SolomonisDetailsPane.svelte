@@ -12,6 +12,7 @@
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import BlessingName from './BlessingName.svelte'
 	import SolomonisGuidebook from '$lib/components/solomonis/guidebook/SolomonisGuidebook.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
 	import { appLocale } from '$lib/utils/locale'
@@ -153,9 +154,12 @@
 			<div class="rows">
 				{#each [...expedition.blessings].sort((a, b) => a.blessing.arcanaNumber - b.blessing.arcanaNumber) as b (b.blessing.id)}
 					<DetailRow
-						label={solomonisName(b.blessing.name, locale)}
 						value={`${m.solomonis_web_party_level({ level: b.level })} · ${m.solomonis_web_party_blessing_cost({ cost: b.cost })}`}
-					/>
+					>
+						{#snippet labelSlot()}
+							<BlessingName slug={b.blessing.slug} name={solomonisName(b.blessing.name, locale)} />
+						{/snippet}
+					</DetailRow>
 				{/each}
 				<DetailRow
 					label={m.solomonis_web_party_blessing_cost_label()}

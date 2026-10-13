@@ -10,6 +10,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
+	import BlessingName from './BlessingName.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { finishSolomonisPane } from './openSolomonisPanes'
@@ -104,7 +105,10 @@
 			</span>
 		{/snippet}
 		{#each available as blessing (blessing.id)}
-			<DetailRow label={solomonisName(blessing.name, locale)} compact>
+			<DetailRow compact>
+				{#snippet labelSlot()}
+					<BlessingName slug={blessing.slug} name={solomonisName(blessing.name, locale)} />
+				{/snippet}
 				<Select
 					options={optionsFor(blessing.id)}
 					value={selection[blessing.id] ?? NONE}
