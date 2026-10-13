@@ -20,7 +20,9 @@
 		useUpdateSolomonisExpedition
 	} from '$lib/api/mutations/solomonis.mutations'
 	import type { Party } from '$lib/types/api/party'
-	import { openEditSolomonisPane } from './openSolomonisPanes'
+	import UnsealPriorityPane from '$lib/components/solomonis/grid/UnsealPriorityPane.svelte'
+	import { PRIORITY_TYPES, priorityLists } from '$lib/components/solomonis/grid/seal'
+	import { openEditSolomonisPane, showSolomonisPane } from './openSolomonisPanes'
 	import { hasStats, isFullExpedition, routeEvokerMissingFromGrid } from './solomonisParty'
 
 	interface Props {
@@ -43,6 +45,19 @@
 	const missingFromGrid = $derived(routeEvokerMissingFromGrid(party))
 	const canWrite = $derived(canEdit && party.id !== 'new')
 
+	// Unseal priority link: only when there's something sealed to rank
+	const priority = $derived(priorityLists(party))
+	const hasSealed = $derived(
+		PRIORITY_TYPES.some((type) => priority[type].ranked.length + priority[type].unranked.length > 0)
+	)
+	const anyRanked = $derived(PRIORITY_TYPES.some((type) => priority[type].ranked.length > 0))
+
+	function openPriorityPane() {
+		showSolomonisPane(m.solomonis_web_grid_priority_title(), UnsealPriorityPane, {
+			canEdit: canWrite
+		})
+	}
+
 	function openEditPane() {
 		openEditSolomonisPane(party, mutations)
 	}
@@ -60,7 +75,12 @@
 	{:else}
 		<EvokerHeader {expedition} {missingFromGrid} />
 
-		<ExpeditionSection outcome={expedition.outcome} turnCount={party.turnCount} />
+		<ExpeditionSection
+			outcome={expedition.outcome}
+			turnCount={party.turnCount}
+			onOpenPriority={hasSealed ? openPriorityPane : undefined}
+			priorityValue={anyRanked ? undefined : m.solomonis_web_grid_priority_unranked()}
+		/>
 
 		<hr class="divider" />
 

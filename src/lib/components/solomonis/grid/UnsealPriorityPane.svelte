@@ -105,7 +105,9 @@
 			})
 			savedKey = payloadKey(lists)
 			toast.success(m.solomonis_web_grid_priority_saved())
-			sidebar.close()
+			// Back to the details pane when opened from it
+			if (sidebar.paneStack.depth > 1) sidebar.pop()
+			else sidebar.close()
 		} catch (err) {
 			toast.error(extractErrorMessage(err, m.solomonis_web_grid_priority_save_failed()))
 		}

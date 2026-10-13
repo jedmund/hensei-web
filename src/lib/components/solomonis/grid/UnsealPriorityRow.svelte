@@ -1,13 +1,12 @@
 <script lang="ts">
 	/**
 	 * UnsealPriorityRow - a sealed weapon or summon in the unseal priority
-	 * pane: its place in the order, image, name and slot, with a drag handle
+	 * pane: its place in the order, image and name, with a drag handle
 	 * for editors.
 	 */
 	import Icon from '$lib/components/Icon.svelte'
 	import { getSummonImage, getWeaponImage } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
-	import * as m from '$lib/paraglide/messages'
 	import type { GridSummon, GridWeapon } from '$lib/types/api/party'
 	import { circledNumber, type PriorityEntry } from './seal'
 
@@ -32,22 +31,12 @@
 			? localizedName((entry.item as GridWeapon).weapon?.name)
 			: localizedName((entry.item as GridSummon).summon?.name)
 	)
-
-	const slot = $derived.by(() => {
-		const position = String(entry.position + 1)
-		return entry.type === 'weapon'
-			? m.solomonis_web_grid_weapon_slot({ position })
-			: m.solomonis_web_grid_summon_slot({ position })
-	})
 </script>
 
 <div class="unseal-priority-row" data-testid="unseal-priority-row">
 	<span class="rank">{circledNumber(rank)}</span>
 	<img class="thumb" src={image} alt="" />
-	<span class="text">
-		<span class="name">{name}</span>
-		<span class="slot">{slot}</span>
-	</span>
+	<span class="name">{name}</span>
 	{#if canEdit}
 		<Icon name="menu" size={14} class="handle" />
 	{/if}
@@ -85,25 +74,15 @@
 	.unseal-priority-row :global(.handle) {
 		flex: 0 0 auto;
 		margin-right: spacing.$unit-half;
-		color: var(--text-secondary);
-	}
-
-	.text {
-		display: flex;
-		flex-direction: column;
-		flex: 1;
-		min-width: 0;
-		text-align: left;
+		color: var(--text-tertiary);
 	}
 
 	.name {
+		flex: 1;
+		min-width: 0;
+		text-align: left;
 		font-size: typography.$font-small;
 		color: var(--text-primary);
 		overflow-wrap: anywhere;
-	}
-
-	.slot {
-		font-size: typography.$font-tiny;
-		color: var(--text-tertiary);
 	}
 </style>
