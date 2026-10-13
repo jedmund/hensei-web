@@ -2000,7 +2000,6 @@
 	"solomonis_web_party_blessing_cost_total": "Cost {total} / {limit}",
 	"solomonis_web_party_blessing_cost": "Cost {cost}",
 	"solomonis_web_party_blessing_not_equipped": "Not equipped",
-	"solomonis_web_party_blessing_over_limit": "The total cost is over the limit of {limit}.",
 	"solomonis_web_party_blessings_save_failed": "Couldn't save blessings",
 	"solomonis_web_party_save_failed": "Couldn't save Solomonis settings",
 	"solomonis_web_party_section_run": "Run",

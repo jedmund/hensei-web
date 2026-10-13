@@ -3,8 +3,7 @@
 	 * EditBlessingsPane - pick the party's Arcarum Blessings: a level stepper
 	 * per released blessing (0 = not equipped), with the loadout's total cost
 	 * as a gauge against the catalogue's limit. Any level can be picked; while
-	 * the total is over the limit the gauge and an error say so and saving is
-	 * blocked. Each blessing shows what it does at its level, or at level 1
+	 * the total is over the limit the gauge turns red and saving is blocked. Each blessing shows what it does at its level, or at level 1
 	 * when it isn't equipped.
 	 */
 	import { untrack } from 'svelte'
@@ -126,18 +125,11 @@
 			</li>
 		{/each}
 	</ul>
-
-	{#if overLimit}
-		<p class="error" role="alert">
-			{m.solomonis_web_party_blessing_over_limit({ limit: costLimit })}
-		</p>
-	{/if}
 </div>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
-	@use '$src/themes/colors' as *;
 
 	.blessings-pane {
 		display: flex;
@@ -177,11 +169,5 @@
 		&.preview {
 			color: var(--text-tertiary);
 		}
-	}
-
-	.error {
-		margin: 0;
-		font-size: $font-small;
-		color: $error;
 	}
 </style>

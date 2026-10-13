@@ -1972,7 +1972,6 @@
 	"solomonis_web_party_blessing_cost_total": "コスト {total} / {limit}",
 	"solomonis_web_party_blessing_cost": "コスト{cost}",
 	"solomonis_web_party_blessing_not_equipped": "装備しない",
-	"solomonis_web_party_blessing_over_limit": "コストの合計が上限の{limit}を超えています。",
 	"solomonis_web_party_blessings_save_failed": "加護を保存できませんでした",
 	"solomonis_web_party_save_failed": "Solomonis設定を保存できませんでした",
 	"solomonis_web_party_section_run": "遠征記録",
