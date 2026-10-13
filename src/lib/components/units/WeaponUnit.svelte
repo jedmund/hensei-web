@@ -57,10 +57,10 @@
 
 	const ctx = usePartyContext()
 
-	// Evoking Solomonis: seal state for the main grid (not extra slots)
+	// Evoking Solomonis: seal state, including the Extra slots
 	let seal = $derived.by(() => {
 		const expedition = getExpedition(ctx?.getParty())
-		if (!expedition || position >= 9) return null
+		if (!expedition) return null
 		return slotSeal(expedition, 'weapon', position, item)
 	})
 

@@ -161,9 +161,6 @@
 			{/each}
 		</ul>
 	</div>
-	{#if isSolomonis && (ctx?.canEdit() ?? false)}
-		<UnsealPriorityButton canEdit={ctx?.canEdit() ?? false} />
-	{/if}
 	{#if raidExtra || showGuidebooks}
 		<ExtraContainer>
 			{#if raidExtra}
@@ -178,6 +175,9 @@
 				/>
 			{/if}
 		</ExtraContainer>
+	{/if}
+	{#if isSolomonis && (ctx?.canEdit() ?? false)}
+		<UnsealPriorityButton canEdit={ctx?.canEdit() ?? false} />
 	{/if}
 </div>
 
