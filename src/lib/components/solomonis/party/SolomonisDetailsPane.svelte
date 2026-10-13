@@ -188,6 +188,7 @@
 										level={b.level}
 										{max}
 										label={m.solomonis_web_party_level_of({ level: b.level, max })}
+										valueText={m.solomonis_web_party_level({ level: b.level })}
 									/>
 								{:else}
 									<span class="blessing-level"
