@@ -3,7 +3,7 @@
 	 * Stepper - [−] value [+] control for stepping a small integer.
 	 *
 	 * `canIncrement` lets a caller block a step for reasons beyond `max`
-	 * (e.g. a cost limit). `format` renders the value, such as "–" for zero.
+	 * (e.g. a cost limit). The value is muted at `min`, the base level.
 	 */
 	import Button from './Button.svelte'
 
@@ -43,7 +43,7 @@
 		aria-label={decreaseLabel}
 		onclick={() => onChange(value - 1)}
 	/>
-	<span class="value" aria-live="polite">{format(value)}</span>
+	<span class="value" class:base={value <= min} aria-live="polite">{format(value)}</span>
 	<Button
 		variant="ghost"
 		size="small"
@@ -65,7 +65,8 @@
 		align-items: center;
 		gap: $unit-half;
 		padding: $unit-fourth;
-		border-radius: $item-corner-small;
+		// The buttons' corner plus the padding, so the curves stay concentric
+		border-radius: calc(#{$input-corner} + #{$unit-fourth});
 		background: var(--input-bg);
 	}
 
@@ -76,5 +77,9 @@
 		font-weight: $medium;
 		color: var(--text-primary);
 		font-variant-numeric: tabular-nums;
+
+		&.base {
+			color: var(--text-secondary);
+		}
 	}
 </style>

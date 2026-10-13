@@ -118,7 +118,6 @@
 						max={maxLevel(blessing)}
 						canIncrement={canRaise(blessing)}
 						onChange={(value) => setLevel(blessing, value)}
-						format={(value) => (value === 0 ? '–' : String(value))}
 						label={name}
 						decreaseLabel={m.solomonis_web_party_blessing_level_down({ name })}
 						increaseLabel={m.solomonis_web_party_blessing_level_up({ name })}
