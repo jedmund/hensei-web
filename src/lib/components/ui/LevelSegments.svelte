@@ -34,7 +34,7 @@
 	.segments {
 		display: flex;
 		gap: $unit-fourth;
-		width: $unit-10x;
+		width: $unit-12x;
 		height: $unit;
 		flex-shrink: 0;
 		border-radius: $full-corner;
@@ -45,8 +45,13 @@
 		flex: 1;
 		background: var(--input-bg);
 
+		// Darker toward the bottom
 		&.filled {
-			background: var(--accent-blue);
+			background: linear-gradient(
+				to bottom,
+				var(--accent-blue),
+				color-mix(in srgb, var(--accent-blue) 75%, black)
+			);
 		}
 	}
 </style>
