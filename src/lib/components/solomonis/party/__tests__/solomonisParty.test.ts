@@ -8,7 +8,6 @@ import {
 	isFullExpedition,
 	isSolomonisParty,
 	jstDate,
-	levelFits,
 	releasedBlessings,
 	routeEvokerMissingFromGrid,
 	sameSelection,
@@ -31,7 +30,6 @@ import {
 } from './fixtures'
 
 const catalogue = BLESSINGS.blessings
-const LIMIT = BLESSINGS.costLimit
 
 describe('isFullExpedition / isSolomonisParty', () => {
 	it('tells the full view from the list summary', () => {
@@ -129,7 +127,6 @@ describe('stats', () => {
 
 describe('blessing selection', () => {
 	const justice = blessingBySlug('justice')
-	const hangedMan = blessingBySlug('hanged_man')
 	const death = blessingBySlug('death')
 
 	it('reads the party loadout and costs it from the catalogue', () => {
@@ -151,24 +148,6 @@ describe('blessing selection', () => {
 			'temperance',
 			'devil'
 		])
-	})
-
-	it('blocks levels that push the total over the limit', () => {
-		// Justice Lv3 (50) + Death Lv9 (20) = 70; Hanged Man needs 60–100.
-		const selection = { [justice.id]: justice.levels[2]!.id, [death.id]: death.levels[8]!.id }
-		const hmLv5 = hangedMan.levels[4]! // cost 60
-		expect(levelFits(catalogue, selection, hangedMan.id, hmLv5.id, LIMIT)).toBe(false)
-		// Justice Lv3 alone (50) + Hanged Man Lv5 (60) = 110 is still over.
-		const justiceOnly = { [justice.id]: justice.levels[2]!.id }
-		expect(levelFits(catalogue, justiceOnly, hangedMan.id, hmLv5.id, LIMIT)).toBe(false)
-		// Hanged Man alone at Lv1 (100) fits exactly.
-		expect(levelFits(catalogue, {}, hangedMan.id, hangedMan.levels[0]!.id, LIMIT)).toBe(true)
-	})
-
-	it("replaces a blessing's own level instead of adding to it", () => {
-		const selection = { [justice.id]: justice.levels[0]!.id } // 70
-		// Switching Justice to Lv3 (50) is judged without the old 70.
-		expect(levelFits(catalogue, selection, justice.id, justice.levels[2]!.id, LIMIT)).toBe(true)
 	})
 
 	it('sends level ids in arcana order and drops unknown or unreleased picks', () => {

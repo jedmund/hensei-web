@@ -2,8 +2,10 @@
 	/**
 	 * EditBlessingsPane - pick the party's Arcarum Blessings: a level stepper
 	 * per released blessing (0 = not equipped), with the loadout's total cost
-	 * as a gauge against the catalogue's limit. A step that would push the
-	 * total over the limit is disabled, and saving is blocked while it's over.
+	 * as a gauge against the catalogue's limit. Any level can be picked; while
+	 * the total is over the limit the gauge and an error say so and saving is
+	 * blocked. Each blessing shows what it does at its level, or at level 1
+	 * when it isn't equipped.
 	 */
 	import { untrack } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -18,7 +20,6 @@
 	import type { ArcarumBlessing, PartyBlessing } from '$lib/types/api/solomonis'
 	import {
 		DEFAULT_BLESSING_COST_LIMIT,
-		levelFits,
 		releasedBlessings,
 		sameSelection,
 		selectionCost,
@@ -63,12 +64,6 @@
 		return Math.max(0, ...blessing.levels.map((l) => l.level))
 	}
 
-	/** Whether stepping up one level keeps the loadout within the limit. */
-	function canRaise(blessing: ArcarumBlessing): boolean {
-		const next = blessing.levels.find((l) => l.level === (selectedLevel(blessing)?.level ?? 0) + 1)
-		return !!next && levelFits(catalogue, selection, blessing.id, next.id, costLimit)
-	}
-
 	function setLevel(blessing: ArcarumBlessing, level: number) {
 		const next = { ...selection }
 		const target = blessing.levels.find((l) => l.level === level)
@@ -102,6 +97,7 @@
 	<ul class="blessings">
 		{#each available as blessing (blessing.id)}
 			{@const level = selectedLevel(blessing)}
+			{@const described = level ?? blessing.levels.find((l) => l.level === 1)}
 			{@const name = solomonisName(blessing.name, locale)}
 			<li class="blessing">
 				<div class="row">
@@ -116,15 +112,16 @@
 					<Stepper
 						value={level?.level ?? 0}
 						max={maxLevel(blessing)}
-						canIncrement={canRaise(blessing)}
 						onChange={(value) => setLevel(blessing, value)}
 						label={name}
 						decreaseLabel={m.solomonis_web_party_blessing_level_down({ name })}
 						increaseLabel={m.solomonis_web_party_blessing_level_up({ name })}
 					/>
 				</div>
-				{#if level}
-					<p class="effect">{solomonisName(level.description, locale)}</p>
+				{#if described}
+					<p class="effect" class:preview={!level}>
+						{solomonisName(described.description, locale)}
+					</p>
 				{/if}
 			</li>
 		{/each}
@@ -175,6 +172,11 @@
 		margin: 0;
 		font-size: $font-small;
 		color: var(--text-secondary);
+
+		// Level 1's effect, for a blessing that isn't equipped
+		&.preview {
+			color: var(--text-tertiary);
+		}
 	}
 
 	.error {

@@ -135,22 +135,6 @@ export function selectionCost(catalogue: ArcarumBlessing[], selection: BlessingS
 	)
 }
 
-/**
- * Whether picking `levelId` for `blessingId` keeps the loadout within the
- * limit, counting every other blessing at its current level.
- */
-export function levelFits(
-	catalogue: ArcarumBlessing[],
-	selection: BlessingSelection,
-	blessingId: string,
-	levelId: string,
-	costLimit: number
-): boolean {
-	const others = Object.fromEntries(Object.entries(selection).filter(([id]) => id !== blessingId))
-	const cost = findLevel(catalogue, blessingId, levelId)?.cost ?? 0
-	return selectionCost(catalogue, others) + cost <= costLimit
-}
-
 /** Released blessings in arcana order: the only ones a party can equip. */
 export function releasedBlessings(catalogue: ArcarumBlessing[]): ArcarumBlessing[] {
 	return catalogue.filter((b) => b.released).sort((a, b) => a.arcanaNumber - b.arcanaNumber)
