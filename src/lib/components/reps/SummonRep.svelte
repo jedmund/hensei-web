@@ -37,6 +37,9 @@
 </script>
 
 <div class="rep" class:extended={extendedView} class:no-friend={hideFriend}>
+	{#if hideFriend}
+		<div class="spacer" aria-hidden="true"></div>
+	{/if}
 	<div class="mainSummon" class:empty={!main}>
 		{#if main}
 			<img alt="Main Summon" src={summonImageUrl(main, true)} loading="lazy" decoding="async" />
@@ -55,7 +58,9 @@
 			</li>
 		{/each}
 	</ul>
-	{#if !hideFriend}
+	{#if hideFriend}
+		<div class="spacer" aria-hidden="true"></div>
+	{:else}
 		<div class="friendSummon" class:empty={!friend}>
 			{#if friend}
 				<img
@@ -85,12 +90,18 @@
 		grid-template-columns: auto 1fr auto;
 		grid-template-rows: 1fr;
 
-		// Without the support summon, narrow the rep by that column's share
-		// so the other summons keep the size they have in other previews
+		// Without the support summon: fixed columns in the proportions of a
+		// normal preview (main 71 : summons 97 : support 71), with half the
+		// support column on each side so the rest stays the same size and
+		// centred. The main summon's height then follows its width; sizing
+		// it from the row's height loops when the slots are empty.
 		&.no-friend {
-			grid-template-columns: auto 1fr;
-			width: 72%;
-			margin: 0 auto;
+			grid-template-columns: 1fr 2fr 2.74fr 1fr;
+
+			.mainSummon {
+				width: 100%;
+				height: auto;
+			}
 		}
 
 		.summon,
