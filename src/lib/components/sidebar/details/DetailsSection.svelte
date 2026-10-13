@@ -3,6 +3,8 @@
 
 	interface Props {
 		title: string
+		/** Extra text after the title in the secondary colour, e.g. a count or total */
+		titleSuffix?: string
 		children: Snippet
 		/** Optional action rendered at the right side of the section header */
 		action?: Snippet
@@ -14,12 +16,25 @@
 		empty?: boolean
 	}
 
-	let { title, children, action, description, emptyMessage, empty = false }: Props = $props()
+	let {
+		title,
+		titleSuffix,
+		children,
+		action,
+		description,
+		emptyMessage,
+		empty = false
+	}: Props = $props()
 </script>
 
 <div class="details-section">
 	<div class="header">
-		<h3>{title}</h3>
+		<h3>
+			{title}
+			{#if titleSuffix}
+				<span class="title-suffix">{titleSuffix}</span>
+			{/if}
+		</h3>
 		{#if action}
 			{@render action()}
 		{/if}
@@ -58,6 +73,10 @@
 			font-size: typography.$font-name;
 			font-weight: typography.$medium;
 			color: var(--text-primary);
+		}
+
+		.title-suffix {
+			color: var(--text-secondary);
 		}
 
 		.empty-message {

@@ -1989,7 +1989,6 @@
 	"solomonis_web_party_blessing_cost_gauge": "Cost",
 	"solomonis_web_party_blessing_level_down": "Lower {name}'s level",
 	"solomonis_web_party_blessing_level_up": "Raise {name}'s level",
-	"solomonis_web_party_blessing_cost_label": "Total cost",
 	"solomonis_web_party_pledge_short": "Pledge {level}",
 	"solomonis_web_party_run_details": "Run details",
 	"solomonis_web_party_build_details": "Build details",

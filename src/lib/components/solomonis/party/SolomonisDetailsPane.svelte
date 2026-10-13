@@ -156,6 +156,7 @@
 
 		<DetailsSection
 			title={m.solomonis_web_party_blessings_title()}
+			titleSuffix={`(${expedition.blessingCostTotal} / ${expedition.blessingCostLimit})`}
 			empty={expedition.blessings.length === 0}
 			emptyMessage={m.solomonis_web_party_blessings_none()}
 		>
@@ -200,12 +201,6 @@
 					</li>
 				{/each}
 			</ul>
-			<div class="rows">
-				<DetailRow
-					label={m.solomonis_web_party_blessing_cost_label()}
-					value={`${expedition.blessingCostTotal} / ${expedition.blessingCostLimit}`}
-				/>
-			</div>
 		</DetailsSection>
 
 		{#if isRun}
