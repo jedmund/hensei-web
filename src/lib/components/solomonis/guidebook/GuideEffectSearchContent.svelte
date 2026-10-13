@@ -1,30 +1,26 @@
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query'
 	import { solomonisGuidebookQueries } from '$lib/api/queries/solomonis-guidebook.queries'
-	import { appLocale } from '$lib/utils/locale'
 	import * as m from '$lib/paraglide/messages'
 	import type { GuideEffect, GuidebookEntry } from '$lib/types/api/solomonis'
 
 	import Icon from '$lib/components/Icon.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import Select from '$lib/components/ui/Select.svelte'
-	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
-	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
-	import GuideEffectIcon from './GuideEffectIcon.svelte'
+	import GuideEffectFilters from './GuideEffectFilters.svelte'
+	import GuideEffectSearchRow from './GuideEffectSearchRow.svelte'
 	import {
 		RARITY_ORDER,
 		canAddEffect,
 		collectGuideEffectTags,
 		filterGuideEffects,
-		formatGuideEffectName,
 		heldCount,
-		type GuideEffectFilters,
+		type GuideEffectFilters as Filters,
 		type GuideEffectTargetFilter
 	} from './guidebook'
-	import { rarityLabel, targetLabel } from './labels'
+	import { rarityLabel } from './labels'
 
 	interface Props {
 		/** The run's current guidebook, read on every render. */
@@ -42,14 +38,11 @@
 	let tags = $state<string[]>([])
 	let resultsScrolled = $state(false)
 
-	const TARGETS: GuideEffectTargetFilter[] = ['all', 'everyone', 'race', 'proficiency', 'character']
-	const targetOptions = TARGETS.map((value) => ({ value, label: targetLabel(value) }))
-
 	const catalogueQuery = createQuery(() => solomonisGuidebookQueries.guideEffects())
 
-	const filters = $derived<GuideEffectFilters>({
+	const filters = $derived<Filters>({
 		query: searchQuery,
-		rarity: rarity === 'all' ? 'all' : (rarity as GuideEffectFilters['rarity']),
+		rarity: rarity === 'all' ? 'all' : (rarity as Filters['rarity']),
 		target,
 		stackableOnly,
 		tags
@@ -84,42 +77,7 @@
 			{/each}
 		</SegmentedControl>
 
-		<div class="filter-row">
-			<div class="target">
-				<span class="filter-label">{m.solomonis_web_guidebook_filter_target()}</span>
-				<Select
-					options={targetOptions}
-					value={target}
-					onValueChange={(v) => {
-						target = v ?? 'all'
-					}}
-					size="small"
-					contained
-					fullWidth
-				/>
-			</div>
-			<label class="stackable">
-				<span class="filter-label">{m.solomonis_web_guidebook_filter_stackable()}</span>
-				<Switch bind:checked={stackableOnly} size="small" />
-			</label>
-		</div>
-
-		{#if tagOptions.length > 0}
-			<div class="tags">
-				<span class="filter-label">{m.solomonis_web_guidebook_filter_tags()}</span>
-				<MultiSelect
-					options={tagOptions}
-					value={tags}
-					onValueChange={(v) => {
-						tags = v
-					}}
-					placeholder={m.solomonis_web_guidebook_filter_tags_any()}
-					size="small"
-					contained
-					fullWidth
-				/>
-			</div>
-		{/if}
+		<GuideEffectFilters bind:target bind:stackableOnly bind:tags {tagOptions} />
 	</div>
 
 	<div
@@ -142,33 +100,13 @@
 		{:else if results.length > 0}
 			<ul class="results-list">
 				{#each results as effect (effect.id)}
-					{@const count = heldCount(held, effect.id)}
 					<li>
-						<button
-							type="button"
-							class="result-button"
-							disabled={!canAddEffect(held, effect)}
-							onclick={() => onSelect(effect)}
-						>
-							<GuideEffectIcon {effect} size="small" />
-							<span class="result-info">
-								<span class="result-name">
-									{formatGuideEffectName(effect, null, appLocale())}
-								</span>
-								<span class="result-meta">
-									{rarityLabel(effect.rarity)} ·
-									{effect.stackable
-										? m.solomonis_web_guidebook_stackable()
-										: m.solomonis_web_guidebook_not_stackable()}
-									{#if count > 0}
-										· <span class="held">{m.solomonis_web_guidebook_held({ count })}</span>
-									{/if}
-								</span>
-							</span>
-							{#if canAddEffect(held, effect)}
-								<Icon name="plus" size={16} class="add-icon" />
-							{/if}
-						</button>
+						<GuideEffectSearchRow
+							{effect}
+							held={heldCount(held, effect.id)}
+							canAdd={canAddEffect(held, effect)}
+							onSelect={() => onSelect(effect)}
+						/>
 					</li>
 				{/each}
 			</ul>
@@ -211,33 +149,6 @@
 		}
 	}
 
-	.filter-row {
-		display: flex;
-		align-items: flex-end;
-		gap: $unit-2x;
-	}
-
-	.target,
-	.tags {
-		display: flex;
-		flex: 1;
-		flex-direction: column;
-		gap: $unit-half;
-		min-width: 0;
-	}
-
-	.stackable {
-		display: flex;
-		align-items: center;
-		gap: $unit;
-		padding-bottom: $unit-half;
-	}
-
-	.filter-label {
-		font-size: $font-tiny;
-		color: var(--text-secondary);
-	}
-
 	.results-section {
 		flex: 1;
 		overflow-y: auto;
@@ -251,64 +162,6 @@
 		list-style: none;
 		padding: 0;
 		margin: 0;
-	}
-
-	.result-button {
-		width: 100%;
-		display: flex;
-		align-items: center;
-		gap: $unit;
-		padding: $unit;
-		border: none;
-		border-radius: $input-corner;
-		background: transparent;
-		color: var(--text-primary);
-		font: inherit;
-		cursor: pointer;
-		transition: background-color 0.15s ease-out;
-		text-align: left;
-
-		&:hover:not(:disabled) {
-			background: var(--list-cell-bg-hover);
-		}
-
-		&:active:not(:disabled) {
-			transform: scale(0.99);
-		}
-
-		&:disabled {
-			cursor: default;
-			opacity: 0.6;
-		}
-
-		:global(.add-icon) {
-			flex-shrink: 0;
-			color: var(--text-tertiary);
-		}
-	}
-
-	.result-info {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		gap: $unit-half;
-		min-width: 0;
-	}
-
-	.result-name {
-		font-size: $font-small;
-		line-height: 1.4;
-		overflow-wrap: anywhere;
-	}
-
-	.result-meta {
-		font-size: $font-tiny;
-		color: var(--text-secondary);
-	}
-
-	.held {
-		font-weight: $bold;
-		color: var(--accent-blue);
 	}
 
 	.loading {
