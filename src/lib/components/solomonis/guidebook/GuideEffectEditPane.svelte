@@ -111,7 +111,7 @@
 		{#if entry.effect.stackable}
 			<SettingsRow title={m.solomonis_web_guidebook_count()}>
 				{#snippet control()}
-					<Input type="number" min={1} step={1} bind:value={count} contained variant="number" />
+					<Input type="number" min={1} step={1} bind:value={count} contained alignRight fullWidth />
 				{/snippet}
 			</SettingsRow>
 		{/if}
@@ -122,7 +122,7 @@
 				subtitle={m.solomonis_web_guidebook_display_value_subtitle()}
 			>
 				{#snippet control()}
-					<Input type="text" bind:value={displayValue} maxlength={20} contained />
+					<Input type="text" bind:value={displayValue} maxlength={20} contained fullWidth />
 				{/snippet}
 			</SettingsRow>
 		{/if}
@@ -138,7 +138,8 @@
 					step={1}
 					bind:value={acquiredOrder}
 					contained
-					variant="number"
+					alignRight
+					fullWidth
 				/>
 			{/snippet}
 		</SettingsRow>
@@ -152,14 +153,11 @@
 			{/snippet}
 		</SettingsRow>
 
-		<Input
-			label={m.solomonis_web_guidebook_note()}
-			type="text"
-			bind:value={note}
-			maxLength={200}
-			contained
-			fullWidth
-		/>
+		<SettingsRow title={m.solomonis_web_guidebook_note()}>
+			{#snippet control()}
+				<Input type="text" bind:value={note} maxLength={200} contained fullWidth />
+			{/snippet}
+		</SettingsRow>
 	</div>
 </div>
 
