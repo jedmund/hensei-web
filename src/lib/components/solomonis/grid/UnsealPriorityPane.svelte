@@ -1,9 +1,9 @@
 <script lang="ts">
 	/**
 	 * Unseal priority pane for Solomonis parties. Lists the party's sealed
-	 * weapons and summons; users drag them into a ranked list and reorder it,
-	 * and anything left out stays unranked below. Saving writes the whole list
-	 * in one request.
+	 * weapons and summons, one list per type: ranked items first, then the
+	 * rest in grid order. Reordering a list ranks every item in it in the new
+	 * order. Saving writes both lists in one request.
 	 *
 	 * Rendered in the sidebar, outside the party's component tree, so it reads
 	 * the party from partyStore and provides its own drag-and-drop context for
@@ -29,9 +29,7 @@
 		entryKey,
 		PRIORITY_TYPES,
 		priorityLists,
-		setPriority,
 		toPriorityPayload,
-		type PriorityEntry,
 		type PriorityLists,
 		type SealItemType
 	} from './seal'
@@ -43,16 +41,10 @@
 
 	let { paneId, canEdit = false }: Props = $props()
 
-	// Each type has its own ranked and unranked lists, as drop containers
-	// named `<type>:ranked` and `<type>:unranked`. The dnd type is the item
-	// type, so DropZone keeps weapons and summons apart.
-	type ListName = 'ranked' | 'unranked'
-	const container = (type: SealItemType, list: ListName) => `${type}:${list}`
-	function parseContainer(name: string): { type: SealItemType; list: ListName } | null {
-		const [type, list] = name.split(':')
-		if ((type !== 'weapon' && type !== 'summon') || (list !== 'ranked' && list !== 'unranked'))
-			return null
-		return { type, list }
+	// Each type is one drop container named after the type, which is also the
+	// dnd type, so DropZone keeps weapons and summons apart.
+	function parseContainer(name: string): SealItemType | null {
+		return name === 'weapon' || name === 'summon' ? name : null
 	}
 
 	const initial = untrack(() =>
@@ -74,59 +66,33 @@
 
 	const mutation = useUpdateUnsealPriority()
 
-	function keyAt(name: string, index: number): string | undefined {
-		const target = parseContainer(name)
-		const entry = target ? lists[target.type][target.list][index] : undefined
-		return entry ? entryKey(entry) : undefined
-	}
+	/** Ranked items first, then the unranked ones in grid order. */
+	const ordered = (type: SealItemType) => [...lists[type].ranked, ...lists[type].unranked]
 
 	function move(from: DragSource, to: DropTarget) {
-		const source = parseContainer(from.container)
-		const target = parseContainer(to.container)
-		if (!source || !target || source.type !== target.type) return
-		const key = keyAt(from.container, from.position)
-		if (!key) return
-		lists = setPriority(lists, target.type, key, target.list === 'ranked' ? to.position + 1 : null)
+		const type = parseContainer(from.container)
+		if (!type || type !== parseContainer(to.container)) return
+		const order = ordered(type)
+		const [entry] = order.splice(from.position, 1)
+		if (!entry) return
+		order.splice(to.position, 0, entry)
+		lists = { ...lists, [type]: { ranked: order, unranked: [] } }
 	}
 
 	const dragContext = createDragDropContext({
 		onDrop: (from, to) => move(from, to),
 		onSwap: (from, to) => move(from, to),
 		onValidate: (from, to) => {
-			const source = parseContainer(from.container)
-			const target = parseContainer(to.container)
-			return (
-				canEdit &&
-				!!source &&
-				!!target &&
-				source.type === target.type &&
-				!(source.list === 'unranked' && target.list === 'unranked')
-			)
+			const type = parseContainer(from.container)
+			return canEdit && !!type && type === parseContainer(to.container)
 		}
 	})
 	setDragDropContext(dragContext)
-
-	function add(entry: PriorityEntry) {
-		lists = setPriority(lists, entry.type, entryKey(entry), lists[entry.type].ranked.length + 1)
-	}
-
-	function remove(entry: PriorityEntry) {
-		lists = setPriority(lists, entry.type, entryKey(entry), null)
-	}
 
 	const TYPE_LABELS: Record<SealItemType, () => string> = {
 		weapon: m.solomonis_web_grid_priority_weapons,
 		summon: m.solomonis_web_grid_priority_summons
 	}
-	const RANKED_EMPTY: Record<SealItemType, () => string> = {
-		weapon: m.solomonis_web_grid_priority_ranked_empty_weapons,
-		summon: m.solomonis_web_grid_priority_ranked_empty_summons
-	}
-	const UNRANKED_EMPTY: Record<SealItemType, () => string> = {
-		weapon: m.solomonis_web_grid_priority_unranked_empty_weapons,
-		summon: m.solomonis_web_grid_priority_unranked_empty_summons
-	}
-
 	async function save() {
 		const party = partyStore.party
 		if (!party || !hasChanges || mutation.isPending) return
@@ -159,78 +125,37 @@
 	})
 </script>
 
-{#snippet row(entry: PriorityEntry, list: ListName, index: number)}
-	{@const name = container(entry.type, list)}
-	<DropZone container={name} position={index} type={entry.type} item={entry.item} canDrop={canEdit}>
-		<DraggableItem
-			item={entry.item}
-			container={name}
-			position={index}
-			type={entry.type}
-			canDrag={canEdit}
-		>
-			<UnsealPriorityRow
-				{entry}
-				rank={list === 'ranked' ? index + 1 : null}
-				onAdd={canEdit && list === 'unranked' ? () => add(entry) : undefined}
-				onRemove={canEdit && list === 'ranked' ? () => remove(entry) : undefined}
-			/>
-		</DraggableItem>
-	</DropZone>
-{/snippet}
-
 <div class="unseal-priority-pane">
 	{#if isEmpty}
 		<p class="empty">{m.solomonis_web_grid_priority_none()}</p>
 	{:else}
 		{#each PRIORITY_TYPES as type (type)}
-			{@const { ranked, unranked } = lists[type]}
-			{#if ranked.length + unranked.length > 0}
+			{@const entries = ordered(type)}
+			{#if entries.length > 0}
 				<section class="type-section" aria-labelledby="unseal-{type}-heading">
-					<h3 id="unseal-{type}-heading">{TYPE_LABELS[type]()}</h3>
-
-					<div class="list-group">
-						<h4>{m.solomonis_web_grid_priority_ranked()}</h4>
-						<ol class="list">
-							{#each ranked as entry, i (entryKey(entry))}
-								<li>{@render row(entry, 'ranked', i)}</li>
-							{/each}
-							{#if canEdit}
-								<li>
-									<DropZone
-										container={container(type, 'ranked')}
-										position={ranked.length}
+					<header>
+						<h3 id="unseal-{type}-heading">{TYPE_LABELS[type]()}</h3>
+						{#if lists[type].ranked.length === 0}
+							<span class="status">{m.solomonis_web_grid_priority_unranked()}</span>
+						{/if}
+					</header>
+					<ol class="list">
+						{#each entries as entry, i (entryKey(entry))}
+							<li>
+								<DropZone container={type} position={i} {type} item={entry.item} canDrop={canEdit}>
+									<DraggableItem
+										item={entry.item}
+										container={type}
+										position={i}
 										{type}
-										canDrop={canEdit}
+										canDrag={canEdit}
 									>
-										<p class="drop-hint">{RANKED_EMPTY[type]()}</p>
-									</DropZone>
-								</li>
-							{/if}
-						</ol>
-					</div>
-
-					{#if unranked.length > 0 || canEdit}
-						<div class="list-group">
-							<h4>{m.solomonis_web_grid_priority_unranked()}</h4>
-							{#if unranked.length === 0}
-								<DropZone
-									container={container(type, 'unranked')}
-									position={0}
-									{type}
-									canDrop={canEdit}
-								>
-									<p class="drop-hint">{UNRANKED_EMPTY[type]()}</p>
+										<UnsealPriorityRow {entry} rank={i + 1} {canEdit} />
+									</DraggableItem>
 								</DropZone>
-							{:else}
-								<ul class="list">
-									{#each unranked as entry, i (entryKey(entry))}
-										<li>{@render row(entry, 'unranked', i)}</li>
-									{/each}
-								</ul>
-							{/if}
-						</div>
-					{/if}
+							</li>
+						{/each}
+					</ol>
 				</section>
 			{/if}
 		{/each}
@@ -240,7 +165,6 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
-	@use '$src/themes/layout' as layout;
 
 	.unseal-priority-pane {
 		display: flex;
@@ -252,12 +176,13 @@
 	.type-section {
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-2x;
+		gap: spacing.$unit;
 	}
 
-	.list-group {
+	header {
 		display: flex;
-		flex-direction: column;
+		align-items: baseline;
+		justify-content: space-between;
 		gap: spacing.$unit;
 	}
 
@@ -268,10 +193,8 @@
 		color: var(--text-primary);
 	}
 
-	h4 {
-		margin: 0;
+	.status {
 		font-size: typography.$font-small;
-		font-weight: typography.$medium;
 		color: var(--text-secondary);
 	}
 
@@ -284,18 +207,11 @@
 		list-style: none;
 	}
 
-	.drop-hint,
 	.empty {
 		margin: 0;
 		padding: spacing.$unit-2x;
-		border: 1px dashed var(--border-subtle);
-		border-radius: layout.$item-corner;
 		font-size: typography.$font-small;
 		color: var(--text-tertiary);
 		text-align: center;
-	}
-
-	.empty {
-		border: none;
 	}
 </style>

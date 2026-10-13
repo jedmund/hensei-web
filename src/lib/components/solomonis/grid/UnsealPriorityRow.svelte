@@ -1,10 +1,10 @@
 <script lang="ts">
 	/**
 	 * UnsealPriorityRow - a sealed weapon or summon in the unseal priority
-	 * pane: its rank (when ranked), image, name and slot, with a button that
-	 * adds it to the ranking or takes it out.
+	 * pane: its place in the order, image, name and slot, with a drag handle
+	 * for editors.
 	 */
-	import Button from '$lib/components/ui/Button.svelte'
+	import Icon from '$lib/components/Icon.svelte'
 	import { getSummonImage, getWeaponImage } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
 	import * as m from '$lib/paraglide/messages'
@@ -13,20 +13,18 @@
 
 	interface Props {
 		entry: PriorityEntry
-		/** 1-based rank; null for an unranked entry */
-		rank: number | null
-		/** Adds an unranked entry to the ranking; no button without it */
-		onAdd?: (() => void) | undefined
-		/** Takes a ranked entry out of the ranking; no button without it */
-		onRemove?: (() => void) | undefined
+		/** 1-based place in the list */
+		rank: number
+		/** Shows the drag handle */
+		canEdit?: boolean
 	}
 
-	let { entry, rank, onAdd, onRemove }: Props = $props()
+	let { entry, rank, canEdit = false }: Props = $props()
 
 	const image = $derived(
 		entry.type === 'weapon'
 			? getWeaponImage((entry.item as GridWeapon).weapon?.granblueId, 'grid')
-			: getSummonImage((entry.item as GridSummon).summon?.granblueId, 'grid')
+			: getSummonImage((entry.item as GridSummon).summon?.granblueId, 'wide')
 	)
 
 	const name = $derived(
@@ -44,34 +42,14 @@
 </script>
 
 <div class="unseal-priority-row" data-testid="unseal-priority-row">
-	<span class="rank" aria-hidden={rank === null}>
-		{rank !== null ? circledNumber(rank) : ''}
-	</span>
-	<img class="thumb" class:summon={entry.type === 'summon'} src={image} alt="" />
+	<span class="rank">{circledNumber(rank)}</span>
+	<img class="thumb" src={image} alt="" />
 	<span class="text">
 		<span class="name">{name}</span>
 		<span class="slot">{slot}</span>
 	</span>
-	{#if onRemove}
-		<Button
-			variant="ghost"
-			size="small"
-			iconOnly
-			icon="close"
-			title={m.solomonis_web_grid_priority_remove()}
-			aria-label={m.solomonis_web_grid_priority_remove()}
-			onclick={onRemove}
-		/>
-	{:else if onAdd}
-		<Button
-			variant="ghost"
-			size="small"
-			iconOnly
-			icon="plus"
-			title={m.solomonis_web_grid_priority_add()}
-			aria-label={m.solomonis_web_grid_priority_add()}
-			onclick={onAdd}
-		/>
+	{#if canEdit}
+		<Icon name="menu" size={14} class="handle" />
 	{/if}
 </div>
 
@@ -94,7 +72,7 @@
 		text-align: center;
 		font-size: 1.8rem;
 		font-weight: typography.$bold;
-		color: var(--text-primary);
+		color: var(--text-secondary);
 	}
 
 	.thumb {
@@ -102,10 +80,12 @@
 		width: 64px;
 		height: auto;
 		border-radius: layout.$item-corner-small;
+	}
 
-		&.summon {
-			width: 56px;
-		}
+	.unseal-priority-row :global(.handle) {
+		flex: 0 0 auto;
+		margin-right: spacing.$unit-half;
+		color: var(--text-secondary);
 	}
 
 	.text {
