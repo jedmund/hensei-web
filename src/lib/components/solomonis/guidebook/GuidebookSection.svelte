@@ -1,4 +1,8 @@
 <script lang="ts">
+	/**
+	 * GuidebookSection - an expedition's guidebook: its effects by rarity
+	 * (GuidebookGroup) or in pickup order, with adding and editing for owners.
+	 */
 	import { toast } from 'svelte-sonner'
 	import {
 		solomonisExpedition,
@@ -12,8 +16,8 @@
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import { Accordion } from 'bits-ui'
-	import Icon from '$lib/components/Icon.svelte'
-	import GuideEffectItem from './GuideEffectItem.svelte'
+	import GuidebookGroup from './GuidebookGroup.svelte'
+	import GuidebookRow from './GuidebookRow.svelte'
 	import {
 		addEffect,
 		RARITY_ORDER,
@@ -24,7 +28,6 @@
 		updateEntry,
 		type GuidebookEntryPatch
 	} from './guidebook'
-	import { rarityLabel } from './labels'
 	import { openGuideEffectSearchSidebar, openGuidebookEntrySidebar } from './openGuidebookSidebar'
 
 	interface Props {
@@ -121,7 +124,7 @@
 			<ul class="effects">
 				{#each pickupOrdered as entry (entry.effect.id)}
 					<li>
-						<GuideEffectItem
+						<GuidebookRow
 							{entry}
 							order={entry.acquiredOrder}
 							onclick={canEdit ? () => handleEdit(entry) : undefined}
@@ -132,27 +135,7 @@
 		{:else}
 			<Accordion.Root type="multiple" bind:value={openGroups} class="groups">
 				{#each groups as group (group.rarity)}
-					<Accordion.Item value={group.rarity} class="group {group.rarity}">
-						<Accordion.Header level={4} class="group-header">
-							<Accordion.Trigger class="group-trigger">
-								<span class="group-title">{rarityLabel(group.rarity)}</span>
-								<span class="group-count">{group.entries.length}</span>
-								<Icon name="chevron-down-small" size={14} class="group-chevron" />
-							</Accordion.Trigger>
-						</Accordion.Header>
-						<Accordion.Content class="group-content">
-							<ul class="effects">
-								{#each group.entries as entry (entry.effect.id)}
-									<li>
-										<GuideEffectItem
-											{entry}
-											onclick={canEdit ? () => handleEdit(entry) : undefined}
-										/>
-									</li>
-								{/each}
-							</ul>
-						</Accordion.Content>
-					</Accordion.Item>
+					<GuidebookGroup {group} onEdit={canEdit ? handleEdit : undefined} />
 				{/each}
 			</Accordion.Root>
 		{/if}
@@ -162,8 +145,6 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
-	@use '$src/themes/layout' as *;
-	@use '$src/themes/effects' as *;
 
 	.solomonis-guidebook {
 		display: flex;
@@ -214,67 +195,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-half;
-	}
-
-	:global(.group-header) {
-		margin: 0;
-	}
-
-	// Full-width header; a rounded grey rect on hover
-	:global(.group-trigger) {
-		display: flex;
-		align-items: center;
-		gap: $unit;
-		padding: $unit;
-		margin: 0 (-$unit);
-		width: calc(100% + #{$unit-2x});
-		border: none;
-		border-radius: $item-corner;
-		background: none;
-		color: inherit;
-		font: inherit;
-		text-align: left;
-		cursor: pointer;
-		@include smooth-transition($duration-quick, background-color);
-
-		&:hover {
-			background: var(--list-cell-bg-hover);
-		}
-
-		&:focus-visible {
-			outline: 2px solid var(--focus-ring);
-			outline-offset: 1px;
-		}
-	}
-
-	.group-title {
-		font-size: $font-small;
-		font-weight: $bold;
-		color: var(--text-secondary);
-	}
-
-	.group-count {
-		flex: 1;
-		font-size: $font-small;
-		color: var(--text-tertiary);
-		font-variant-numeric: tabular-nums;
-	}
-
-	:global(.group-trigger[data-state='closed'] .group-chevron) {
-		transform: rotate(-90deg);
-	}
-
-	:global(.group-chevron) {
-		color: var(--icon-secondary);
-		@include smooth-transition($duration-quick, transform);
-	}
-
-	:global(.group.cursed) .group-title {
-		color: var(--danger);
-	}
-
-	:global(.group-content) {
-		padding-top: $unit-half;
 	}
 
 	.effects {

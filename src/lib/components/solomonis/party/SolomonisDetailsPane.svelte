@@ -7,16 +7,14 @@
 	 * top of it.
 	 */
 	import { onMount } from 'svelte'
-	import { createQuery } from '@tanstack/svelte-query'
-	import { solomonisQueries } from '$lib/api/queries/solomonis.queries'
 	import * as m from '$lib/paraglide/messages'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
-	import BlessingRow from './BlessingRow.svelte'
-	import LevelSegments from '$lib/components/ui/LevelSegments.svelte'
-	import SolomonisGuidebook from '$lib/components/solomonis/guidebook/SolomonisGuidebook.svelte'
-	import { getSolomonisSpaceIcon, getCharacterImage } from '$lib/utils/images'
+	import GuidebookSection from '$lib/components/solomonis/guidebook/GuidebookSection.svelte'
+	import BlessingSection from './BlessingSection.svelte'
+	import TraversalSection from './TraversalSection.svelte'
+	import EconomySection from './EconomySection.svelte'
+	import { getCharacterImage } from '$lib/utils/images'
 	import { appLocale } from '$lib/utils/locale'
 	import {
 		useUpdatePartyBlessings,
@@ -29,9 +27,7 @@
 		hasStats,
 		isFullExpedition,
 		routeEvokerMissingFromGrid,
-		solomonisName,
-		spaceStats,
-		type SpaceStatKey
+		solomonisName
 	} from './solomonisParty'
 
 	interface Props {
@@ -50,40 +46,10 @@
 		blessings: useUpdatePartyBlessings()
 	}
 
-	// The party's blessings carry level and cost; the effect text comes from
-	// the catalogue (shared with the blessing picker's query).
-	const blessingCatalogue = createQuery(() => solomonisQueries.blessings())
-
-	function catalogueBlessing(blessingId: string) {
-		return blessingCatalogue.data?.blessings.find((bl) => bl.id === blessingId)
-	}
-
-	function blessingDescription(blessingId: string, levelId: string) {
-		return catalogueBlessing(blessingId)?.levels.find((l) => l.id === levelId)?.description
-	}
-
-	function blessingMaxLevel(blessingId: string): number | null {
-		const levels = catalogueBlessing(blessingId)?.levels ?? []
-		return levels.length > 0 ? Math.max(...levels.map((l) => l.level)) : null
-	}
-
 	const locale = appLocale()
 	const expedition = $derived(isFullExpedition(party.solomonis) ? party.solomonis : null)
 	const missingFromGrid = $derived(routeEvokerMissingFromGrid(party))
 	const canWrite = $derived(canEdit && party.id !== 'new')
-
-	const SPACE_LABELS: Record<SpaceStatKey, () => string> = {
-		battle: m.solomonis_web_party_space_battle,
-		strong: m.solomonis_web_party_space_strong,
-		terrifying: m.solomonis_web_party_space_terrifying,
-		ruler: m.solomonis_web_party_space_ruler,
-		boss: m.solomonis_web_party_space_boss,
-		event: m.solomonis_web_party_space_event,
-		healing: m.solomonis_web_party_space_healing,
-		chest: m.solomonis_web_party_space_chest,
-		teleporter: m.solomonis_web_party_space_teleporter,
-		special: m.solomonis_web_party_space_special
-	}
 
 	const OUTCOME_LABELS: Record<SolomonisOutcome, () => string> = {
 		miasma_1: m.solomonis_web_party_outcome_miasma_1,
@@ -114,10 +80,6 @@
 		if (paneId) sidebar.setActionForPane(paneId, openEditPane, m.action_edit())
 		else sidebar.setAction(openEditPane, m.action_edit())
 	})
-
-	function orDash(value: string | number | null | undefined): string {
-		return value === null || value === undefined ? '—' : String(value)
-	}
 </script>
 
 <div class="solomonis-details">
@@ -158,80 +120,23 @@
 
 		<hr class="divider" />
 
-		<DetailsSection
-			title={m.solomonis_web_party_blessings_title()}
-			titleSuffix={`(${expedition.blessingCostTotal} / ${expedition.blessingCostLimit})`}
-			empty={expedition.blessings.length === 0}
-			emptyMessage={m.solomonis_web_party_blessings_none()}
-		>
-			<ul class="blessing-list">
-				{#each [...expedition.blessings].sort((a, b) => a.blessing.arcanaNumber - b.blessing.arcanaNumber) as b (b.blessing.id)}
-					{@const description = blessingDescription(b.blessing.id, b.levelId)}
-					<li>
-						<BlessingRow
-							slug={b.blessing.slug}
-							name={solomonisName(b.blessing.name, locale)}
-							subtitle={m.solomonis_web_party_blessing_cost({ cost: b.cost })}
-							description={description ? solomonisName(description, locale) : null}
-						>
-							{#snippet trailing()}
-								{@const max = blessingMaxLevel(b.blessing.id)}
-								{#if max}
-									<LevelSegments
-										level={b.level}
-										{max}
-										label={m.solomonis_web_party_level_of({ level: b.level, max })}
-										valueText={m.solomonis_web_party_level({ level: b.level })}
-									/>
-								{:else}
-									<span class="blessing-level"
-										>{m.solomonis_web_party_level({ level: b.level })}</span
-									>
-								{/if}
-							{/snippet}
-						</BlessingRow>
-					</li>
-				{/each}
-			</ul>
-		</DetailsSection>
+		<BlessingSection {expedition} />
 
 		{#if hasStats(expedition.stats)}
 			<hr class="divider" />
 
-			<DetailsSection title={m.solomonis_web_party_spaces()}>
-				<!-- Two columns like the game: combat spaces, then the rest -->
-				<ul class="space-grid">
-					{#each spaceStats(expedition.stats) as stat (stat.key)}
-						<li class="space">
-							<img src={getSolomonisSpaceIcon(stat.key)} alt="" class="space-icon" />
-							<span class="space-label">{SPACE_LABELS[stat.key]()}</span>
-							<span class="space-count">{stat.count}</span>
-						</li>
-					{/each}
-				</ul>
-			</DetailsSection>
+			<TraversalSection stats={expedition.stats} />
 
 			<hr class="divider" />
 
-			<DetailsSection title={m.solomonis_web_party_economy()}>
-				<div class="rows">
-					<DetailRow
-						label={m.solomonis_web_party_points_earned()}
-						value={orDash(expedition.stats.pointsEarned)}
-					/>
-					<DetailRow
-						label={m.solomonis_web_party_shop_purchases()}
-						value={orDash(expedition.stats.shopPurchases)}
-					/>
-				</div>
-			</DetailsSection>
+			<EconomySection stats={expedition.stats} />
 		{/if}
 
 		{#if expedition.guidebook.length > 0}
 			<hr class="divider" />
 
 			<div class="guidebook">
-				<SolomonisGuidebook {party} canEdit={canWrite} />
+				<GuidebookSection {party} canEdit={canWrite} />
 			</div>
 		{/if}
 	{/if}
@@ -319,62 +224,6 @@
 		&.not-set {
 			color: var(--text-secondary);
 		}
-	}
-
-	// Spaces visited: two columns of five, separated by space alone
-	.space-grid {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		grid-template-rows: repeat(5, auto);
-		grid-auto-flow: column;
-		column-gap: $unit-3x;
-		row-gap: $unit-half;
-		margin: 0;
-		padding: 0 $unit;
-		list-style: none;
-	}
-
-	.space {
-		display: flex;
-		align-items: center;
-		gap: $unit;
-		min-height: $unit-4x;
-	}
-
-	.space-icon {
-		width: $unit-3x;
-		height: $unit-3x;
-		object-fit: contain;
-		flex-shrink: 0;
-	}
-
-	.space-label {
-		flex: 1;
-		min-width: 0;
-		font-size: $font-regular;
-		color: var(--text-secondary);
-	}
-
-	.space-count {
-		font-size: $font-regular;
-		font-weight: $medium;
-		color: var(--text-primary);
-		font-variant-numeric: tabular-nums;
-	}
-
-	.blessing-list {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-3x;
-		margin: 0;
-		padding: 0 $unit;
-		list-style: none;
-	}
-
-	.blessing-level {
-		font-size: $font-regular;
-		font-weight: $medium;
-		color: var(--text-primary);
 	}
 
 	.divider {
