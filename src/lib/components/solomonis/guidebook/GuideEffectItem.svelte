@@ -63,15 +63,16 @@
 		width: 100%;
 		min-height: $unit-6x;
 		padding: $unit;
-		border: 1px solid var(--border-subtle);
-		border-radius: $input-corner;
-		background: var(--card-bg);
+		border: none;
+		border-radius: $card-corner;
+		// A light wash instead of a border; cursed effects are tinted red
+		background: var(--input-bound-bg);
 		color: var(--text-primary);
 		text-align: left;
 		font: inherit;
 
 		&.cursed {
-			border-color: var(--danger);
+			background: color-mix(in srgb, var(--danger) 12%, var(--input-bound-bg));
 		}
 
 		&.editable {
@@ -79,7 +80,11 @@
 			transition: background-color 0.15s ease-out;
 
 			&:hover {
-				background: var(--list-cell-bg-hover);
+				background: var(--input-bound-bg-hover);
+			}
+
+			&.cursed:hover {
+				background: color-mix(in srgb, var(--danger) 18%, var(--input-bound-bg-hover));
 			}
 
 			&:focus-visible {
