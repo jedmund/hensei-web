@@ -11,14 +11,21 @@
 	let { effect, size = 'medium' }: Props = $props()
 
 	const src = $derived(guideEffectIconSrc(effect))
+	// Icons for effects added by imports may not be mirrored yet
+	let failedSrc = $state<string | null>(null)
 	const category = $derived(guideEffectIconCategory(effect))
 	const label = $derived(iconCategoryLabel(category))
 </script>
 
-{#if src}
-	<img class="guide-effect-icon {size}" {src} alt={label} loading="lazy" />
+{#if src && src !== failedSrc}
+	<img
+		class="guide-effect-icon {size}"
+		{src}
+		alt={label}
+		loading="lazy"
+		onerror={() => (failedSrc = src)}
+	/>
 {:else}
-	<!-- Placeholder until the game's icon URL pattern is known (see guideEffectIconSrc). -->
 	<span class="guide-effect-icon placeholder {size} {category}" role="img" aria-label={label}
 	></span>
 {/if}

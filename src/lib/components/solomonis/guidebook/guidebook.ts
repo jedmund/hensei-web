@@ -12,6 +12,7 @@ import type {
 	GuidebookEntryInput,
 	PartialLocalizedName
 } from '$lib/types/api/solomonis'
+import { getGuideEffectIcon } from '$lib/utils/images'
 
 export type GuidebookLocale = 'en' | 'ja'
 
@@ -275,13 +276,10 @@ export function guideEffectIconCategory(effect: GuideEffect): GuideEffectIconCat
 }
 
 /**
- * The effect's icon image, or null to show the category placeholder.
- *
- * The game's image URL pattern for `iconCategory` / `iconType` isn't known
- * yet, so this always returns null. When it is, build the URL here and every
- * guidebook view picks it up.
+ * The effect's icon image, or null to show the category placeholder. The
+ * game keys icons by `iconType` alone (`book_effect_<iconType>.png`); ours
+ * are mirrored to the image bucket under the same number.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function guideEffectIconSrc(effect: GuideEffect): string | null {
-	return null
+	return effect.iconType > 0 ? getGuideEffectIcon(effect.iconType) : null
 }

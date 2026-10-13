@@ -225,8 +225,15 @@ describe('icons', () => {
 		expect(guideEffectIconCategory({ ...effect(1), iconCategory: 9 })).toBe('special')
 	})
 
-	it('has no icon URLs yet', () => {
-		expect(catalogue.every((e) => guideEffectIconSrc(e) === null)).toBe(true)
+	it('builds the icon URL from icon_type', () => {
+		const effect = catalogue[0]!
+		expect(guideEffectIconSrc({ ...effect, iconType: 401 })).toMatch(
+			/\/icons\/guide-effects\/401\.png$/
+		)
+	})
+
+	it('has no icon without an icon_type', () => {
+		expect(guideEffectIconSrc({ ...catalogue[0]!, iconType: 0 })).toBeNull()
 	})
 })
 

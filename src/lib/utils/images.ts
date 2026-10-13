@@ -36,6 +36,7 @@ export const BUCKET = {
 	skillLabels: 'icons/skill-labels',
 	mastery: 'icons/mastery',
 	axSkills: 'icons/ax-skills',
+	guideEffects: 'icons/guide-effects',
 	accessories: 'accessories',
 	artifacts: 'artifacts',
 	bullets: 'bullets',
@@ -628,6 +629,13 @@ export function getWeaponSkillIcon(
 	if (!stem) return null
 	const lang = locale === 'ja' ? 'ja' : 'en'
 	return `${getBasePath()}/${BUCKET.weaponSkills}/${lang}/${stem}.png`
+}
+
+/**
+ * Get an Evoking Solomonis guidebook effect icon, keyed by the game's icon_type
+ */
+export function getGuideEffectIcon(iconType: number): string {
+	return `${getBasePath()}/${BUCKET.guideEffects}/${iconType}.png`
 }
 
 /**
