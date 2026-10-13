@@ -38,6 +38,7 @@ export const BUCKET = {
 	axSkills: 'icons/ax-skills',
 	guideEffects: 'icons/guide-effects',
 	blessings: 'blessings',
+	solomonisSpaces: 'icons/solomonis-spaces',
 	accessories: 'accessories',
 	artifacts: 'artifacts',
 	bullets: 'bullets',
@@ -647,6 +648,13 @@ export type BlessingImageVariant = 'icon' | 'card' | 'card-list'
  */
 export function getBlessingImage(slug: string, variant: BlessingImageVariant = 'icon'): string {
 	return `${getBasePath()}/${BUCKET.blessings}/${variant}/${slug}.png`
+}
+
+/**
+ * Get an Evoking Solomonis space icon (battle, boss, chest…), by stat key
+ */
+export function getSolomonisSpaceIcon(key: string): string {
+	return `${getBasePath()}/${BUCKET.solomonisSpaces}/${key}.png`
 }
 
 /**

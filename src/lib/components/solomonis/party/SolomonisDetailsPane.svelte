@@ -16,7 +16,7 @@
 	import BlessingRow from './BlessingRow.svelte'
 	import LevelSegments from '$lib/components/ui/LevelSegments.svelte'
 	import SolomonisGuidebook from '$lib/components/solomonis/guidebook/SolomonisGuidebook.svelte'
-	import { getCharacterImage } from '$lib/utils/images'
+	import { getSolomonisSpaceIcon, getCharacterImage } from '$lib/utils/images'
 	import { appLocale } from '$lib/utils/locale'
 	import {
 		useUpdatePartyBlessings,
@@ -199,17 +199,29 @@
 			<hr class="divider" />
 
 			<DetailsSection title={m.solomonis_web_party_spaces()}>
-				<div class="rows">
+				<!-- Two columns like the game: combat spaces, then the rest -->
+				<ul class="space-grid">
 					{#each spaceStats(expedition.stats) as stat (stat.key)}
-						<DetailRow label={SPACE_LABELS[stat.key]()} value={stat.count} />
+						<li class="space">
+							<img src={getSolomonisSpaceIcon(stat.key)} alt="" class="space-icon" />
+							<span class="space-label">{SPACE_LABELS[stat.key]()}</span>
+							<span class="space-count">{stat.count}</span>
+						</li>
 					{/each}
-					<DetailRow
-						label={m.solomonis_web_party_shop_purchases()}
-						value={orDash(expedition.stats.shopPurchases)}
-					/>
+				</ul>
+			</DetailsSection>
+
+			<hr class="divider" />
+
+			<DetailsSection title={m.solomonis_web_party_economy()}>
+				<div class="rows">
 					<DetailRow
 						label={m.solomonis_web_party_points_earned()}
 						value={orDash(expedition.stats.pointsEarned)}
+					/>
+					<DetailRow
+						label={m.solomonis_web_party_shop_purchases()}
+						value={orDash(expedition.stats.shopPurchases)}
 					/>
 				</div>
 			</DetailsSection>
@@ -307,6 +319,47 @@
 		&.not-set {
 			color: var(--text-secondary);
 		}
+	}
+
+	// Spaces visited: two columns of five, separated by space alone
+	.space-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-template-rows: repeat(5, auto);
+		grid-auto-flow: column;
+		column-gap: $unit-3x;
+		row-gap: $unit-half;
+		margin: 0;
+		padding: 0 $unit;
+		list-style: none;
+	}
+
+	.space {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+		min-height: $unit-4x;
+	}
+
+	.space-icon {
+		width: $unit-3x;
+		height: $unit-3x;
+		object-fit: contain;
+		flex-shrink: 0;
+	}
+
+	.space-label {
+		flex: 1;
+		min-width: 0;
+		font-size: $font-regular;
+		color: var(--text-secondary);
+	}
+
+	.space-count {
+		font-size: $font-regular;
+		font-weight: $medium;
+		color: var(--text-primary);
+		font-variant-numeric: tabular-nums;
 	}
 
 	.blessing-list {
