@@ -259,10 +259,3 @@ export function applyPriorities(party: Party, items: UnsealPriorityItem[]): Part
 		summons: party.summons.map((s) => ({ ...s, unsealPriority: summonRanks.get(s.id) ?? null }))
 	}
 }
-
-const CIRCLED = '①②③④⑤⑥⑦⑧⑨⑩⑪⑫⑬⑭⑮⑯⑰⑱⑲⑳'
-
-/** ①②③… for the badge; plain digits past 20. */
-export function circledNumber(n: number): string {
-	return n >= 1 && n <= CIRCLED.length ? (CIRCLED[n - 1] ?? String(n)) : String(n)
-}

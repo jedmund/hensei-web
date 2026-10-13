@@ -11,7 +11,6 @@ import {
 	applyPriorities,
 	canMarkBroughtByBlessing,
 	characterSlotCount,
-	circledNumber,
 	entryKey,
 	getExpedition,
 	isStartingSlot,
@@ -249,14 +248,6 @@ describe('unseal priority lists', () => {
 		expect(weapon(lists.weapon.ranked[2]!.id)).toBe(3)
 		expect(next.summons.find((s) => s.id === lists.summon.ranked[0]!.id)?.unsealPriority).toBe(1)
 		expect(weapon(lists.weapon.unranked[0]!.id)).toBeNull()
-	})
-})
-
-describe('circledNumber', () => {
-	it('uses circled digits up to 20', () => {
-		expect(circledNumber(1)).toBe('①')
-		expect(circledNumber(20)).toBe('⑳')
-		expect(circledNumber(21)).toBe('21')
 	})
 })
 

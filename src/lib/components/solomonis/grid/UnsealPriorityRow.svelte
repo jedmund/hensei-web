@@ -8,7 +8,8 @@
 	import { getSummonImage, getWeaponImage } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
 	import type { GridSummon, GridWeapon } from '$lib/types/api/party'
-	import { circledNumber, type PriorityEntry } from './seal'
+	import PriorityNumber from './PriorityNumber.svelte'
+	import type { PriorityEntry } from './seal'
 
 	interface Props {
 		entry: PriorityEntry
@@ -34,7 +35,7 @@
 </script>
 
 <div class="unseal-priority-row" data-testid="unseal-priority-row">
-	<span class="rank">{circledNumber(rank)}</span>
+	<PriorityNumber value={rank} />
 	<img class="thumb" src={image} alt="" />
 	<span class="name">{name}</span>
 	{#if canEdit}
@@ -54,14 +55,6 @@
 		padding: spacing.$unit-half spacing.$unit;
 		border-radius: layout.$item-corner;
 		background: var(--button-contained-bg);
-	}
-
-	.rank {
-		flex: 0 0 24px;
-		text-align: center;
-		font-size: 1.8rem;
-		font-weight: typography.$bold;
-		color: var(--text-secondary);
 	}
 
 	.thumb {

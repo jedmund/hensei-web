@@ -11,7 +11,8 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import * as m from '$lib/paraglide/messages'
-	import { circledNumber, type SlotSeal } from './seal'
+	import PriorityNumber from './PriorityNumber.svelte'
+	import type { SlotSeal } from './seal'
 
 	interface Props {
 		seal: SlotSeal
@@ -70,11 +71,12 @@
 	{/if}
 
 	{#if filled && seal.priority != null}
-		<span
-			class="priority"
-			aria-label={m.solomonis_web_grid_priority_badge({ rank: String(seal.priority) })}
-		>
-			{circledNumber(seal.priority)}
+		<span class="priority">
+			<PriorityNumber
+				value={seal.priority}
+				size="large"
+				aria-label={m.solomonis_web_grid_priority_badge({ rank: String(seal.priority) })}
+			/>
 		</span>
 	{/if}
 </div>
@@ -141,16 +143,5 @@
 		left: 50%;
 		transform: translate(-50%, -50%);
 		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 36px;
-		height: 36px;
-		border-radius: 50%;
-		background: var(--button-contained-bg, rgba(0, 0, 0, 0.6));
-		color: var(--text-primary);
-		font-size: 2.4rem;
-		font-weight: typography.$bold;
-		line-height: 1;
-		box-shadow: var(--shadow-sm);
 	}
 </style>
