@@ -15,6 +15,7 @@
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
+	import Stepper from '$lib/components/ui/Stepper.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import DatePicker from '$lib/components/ui/DatePicker.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
@@ -95,12 +96,6 @@
 		}))
 	)
 
-	const pledgeOptions = Array.from({ length: MAX_PLEDGE_LEVEL + 1 }, (_, level) => ({
-		value: level,
-		label:
-			level === 0 ? m.solomonis_web_party_pledge_none() : m.solomonis_web_party_level({ level })
-	}))
-
 	const outcomeOptions = [
 		{ value: NONE, label: m.solomonis_web_party_not_set() },
 		{ value: 'cleared', label: m.solomonis_web_party_outcome_cleared() },
@@ -167,7 +162,8 @@
 </script>
 
 <div class="solomonis-pane">
-	<DetailsSection title={m.solomonis_web_party_title()}>
+	<!-- No heading: the pane title already names the mode -->
+	<div class="expedition">
 		<div class="kind-control">
 			<SegmentedControl
 				value={kind}
@@ -186,7 +182,7 @@
 				value={routeEvokerId ?? undefined}
 				onValueChange={(v) => (routeEvokerId = v ?? null)}
 				placeholder={m.solomonis_web_party_select_evoker()}
-				size="small"
+				size="medium"
 				contained
 			/>
 		</DetailRow>
@@ -194,15 +190,16 @@
 			<p class="hint">{m.solomonis_web_party_route_required()}</p>
 		{/if}
 		<DetailRow label={m.solomonis_web_party_pledge()} compact>
-			<Select
-				options={pledgeOptions}
+			<Stepper
 				value={pledgeLevel}
-				onValueChange={(v) => (pledgeLevel = v ?? 0)}
-				size="small"
-				contained
+				max={MAX_PLEDGE_LEVEL}
+				onChange={(value) => (pledgeLevel = value)}
+				label={m.solomonis_web_party_pledge()}
+				decreaseLabel={m.solomonis_web_party_pledge_down()}
+				increaseLabel={m.solomonis_web_party_pledge_up()}
 			/>
 		</DetailRow>
-	</DetailsSection>
+	</div>
 
 	{#if kind === 'run'}
 		<hr class="divider" />
@@ -253,6 +250,14 @@
 		flex-direction: column;
 		gap: $unit-3x;
 		padding-bottom: $unit-2x;
+	}
+
+	// Same spacing as a DetailsSection, without its heading
+	.expedition {
+		display: flex;
+		flex-direction: column;
+		gap: calc($unit * 1.5);
+		padding: $unit-2x $unit 0;
 	}
 
 	.kind-control {
