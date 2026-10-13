@@ -15,6 +15,7 @@
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import BlessingRow from './BlessingRow.svelte'
+	import LevelSegments from '$lib/components/ui/LevelSegments.svelte'
 	import SolomonisGuidebook from '$lib/components/solomonis/guidebook/SolomonisGuidebook.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
 	import { appLocale } from '$lib/utils/locale'
@@ -54,10 +55,17 @@
 	// the catalogue (shared with the blessing picker's query).
 	const blessingCatalogue = createQuery(() => solomonisQueries.blessings())
 
+	function catalogueBlessing(blessingId: string) {
+		return blessingCatalogue.data?.blessings.find((bl) => bl.id === blessingId)
+	}
+
 	function blessingDescription(blessingId: string, levelId: string) {
-		return blessingCatalogue.data?.blessings
-			.find((bl) => bl.id === blessingId)
-			?.levels.find((l) => l.id === levelId)?.description
+		return catalogueBlessing(blessingId)?.levels.find((l) => l.id === levelId)?.description
+	}
+
+	function blessingMaxLevel(blessingId: string): number | null {
+		const levels = catalogueBlessing(blessingId)?.levels ?? []
+		return levels.length > 0 ? Math.max(...levels.map((l) => l.level)) : null
 	}
 
 	const locale = appLocale()
@@ -174,8 +182,18 @@
 							description={description ? solomonisName(description, locale) : null}
 						>
 							{#snippet trailing()}
-								<span class="blessing-level">{m.solomonis_web_party_level({ level: b.level })}</span
-								>
+								{@const max = blessingMaxLevel(b.blessing.id)}
+								{#if max}
+									<LevelSegments
+										level={b.level}
+										{max}
+										label={m.solomonis_web_party_level_of({ level: b.level, max })}
+									/>
+								{:else}
+									<span class="blessing-level"
+										>{m.solomonis_web_party_level({ level: b.level })}</span
+									>
+								{/if}
 							{/snippet}
 						</BlessingRow>
 					</li>
