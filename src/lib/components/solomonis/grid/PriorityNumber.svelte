@@ -41,7 +41,9 @@
 			width: 32px;
 			height: 32px;
 			font-size: typography.$font-regular;
-			box-shadow: var(--shadow-sm);
+			// Over item art: darker text and a deeper shadow for contrast
+			color: var(--extra-purple-text-dark);
+			box-shadow: var(--shadow-md);
 		}
 	}
 </style>
