@@ -6,11 +6,9 @@
 		party?: Party
 		summons?: GridSummon[]
 		extendedView?: boolean
-		/** Evoking Solomonis parties have no support summon. */
-		hideFriend?: boolean
 	}
 
-	let { party, summons: directSummons, extendedView = false, hideFriend = false }: Props = $props()
+	let { party, summons: directSummons, extendedView = false }: Props = $props()
 
 	// Use direct summons if provided, otherwise get from party
 	const summons = $derived(directSummons || party?.summons || [])
@@ -36,10 +34,7 @@
 	}
 </script>
 
-<div class="rep" class:extended={extendedView} class:no-friend={hideFriend}>
-	{#if hideFriend}
-		<div class="spacer" aria-hidden="true"></div>
-	{/if}
+<div class="rep" class:extended={extendedView}>
 	<div class="mainSummon" class:empty={!main}>
 		{#if main}
 			<img alt="Main Summon" src={summonImageUrl(main, true)} loading="lazy" decoding="async" />
@@ -58,22 +53,13 @@
 			</li>
 		{/each}
 	</ul>
-	{#if hideFriend}
-		<div class="spacer" aria-hidden="true"></div>
-	{:else}
-		<div class="friendSummon" class:empty={!friend}>
-			{#if friend}
-				<img
-					alt="Friend Summon"
-					src={summonImageUrl(friend, true)}
-					loading="lazy"
-					decoding="async"
-				/>
-			{:else}
-				<img alt="" src={summonImageUrl(undefined, true)} />
-			{/if}
-		</div>
-	{/if}
+	<div class="friendSummon" class:empty={!friend}>
+		{#if friend}
+			<img alt="Friend Summon" src={summonImageUrl(friend, true)} loading="lazy" decoding="async" />
+		{:else}
+			<img alt="" src={summonImageUrl(undefined, true)} />
+		{/if}
+	</div>
 </div>
 
 <style lang="scss">
@@ -86,23 +72,12 @@
 		display: grid;
 		gap: $unit-half;
 
-		// Layout: main summon | 6 grid summons (3x2) | friend summon
-		grid-template-columns: auto 1fr auto;
+		// Layout: main summon | 6 grid summons (3x2) | friend summon.
+		// Fixed proportions, with the main and friend summons' height
+		// following their width: sizing them from the row's height loops
+		// when the slots are empty, and the main summon grows over the grid.
+		grid-template-columns: 2fr 2.74fr 2fr;
 		grid-template-rows: 1fr;
-
-		// Without the support summon: fixed columns in the proportions of a
-		// normal preview (main 71 : summons 97 : support 71), with half the
-		// support column on each side so the rest stays the same size and
-		// centred. The main summon's height then follows its width; sizing
-		// it from the row's height loops when the slots are empty.
-		&.no-friend {
-			grid-template-columns: 1fr 2fr 2.74fr 1fr;
-
-			.mainSummon {
-				width: 100%;
-				height: auto;
-			}
-		}
 
 		.summon,
 		.mainSummon,
@@ -126,7 +101,7 @@
 		.mainSummon,
 		.friendSummon {
 			@include rep.aspect(rep.$summon-main-w, rep.$summon-main-h);
-			height: calc(100% - 6px);
+			width: 100%;
 			align-self: center;
 		}
 

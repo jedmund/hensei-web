@@ -90,7 +90,7 @@
 				label={m.party_segmented_control_summons()}
 				selected={value === GridType.Summon}
 			>
-				<SummonRep {summons} hideFriend={!!expedition} />
+				<SummonRep {summons} />
 			</RepSegment>
 		{/if}
 	</SegmentedControl>
