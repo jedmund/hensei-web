@@ -73,32 +73,27 @@
 	{#if !expedition}
 		<p class="empty-state">{canWrite ? m.solomonis_web_party_no_expedition() : '—'}</p>
 	{:else}
-		<EvokerHeader {expedition} {missingFromGrid} />
+		<!-- The Evoker and the outcome read as one block -->
+		<div class="overview">
+			<EvokerHeader {expedition} {missingFromGrid} />
 
-		<ExpeditionSection
-			outcome={expedition.outcome}
-			turnCount={party.turnCount}
-			onOpenPriority={hasSealed ? openPriorityPane : undefined}
-			priorityValue={anyRanked ? undefined : m.solomonis_web_grid_priority_unranked()}
-		/>
-
-		<hr class="divider" />
+			<ExpeditionSection
+				outcome={expedition.outcome}
+				turnCount={party.turnCount}
+				onOpenPriority={hasSealed ? openPriorityPane : undefined}
+				priorityValue={anyRanked ? undefined : m.solomonis_web_grid_priority_unranked()}
+			/>
+		</div>
 
 		<BlessingSection {expedition} />
 
 		{#if hasStats(expedition.stats)}
-			<hr class="divider" />
-
 			<TraversalSection stats={expedition.stats} />
-
-			<hr class="divider" />
 
 			<EconomySection stats={expedition.stats} />
 		{/if}
 
 		{#if expedition.guidebook.length > 0}
-			<hr class="divider" />
-
 			<div class="guidebook">
 				<GuidebookSection {party} canEdit={canWrite} />
 			</div>
@@ -113,8 +108,14 @@
 	.solomonis-details {
 		display: flex;
 		flex-direction: column;
-		gap: $unit-2x;
+		gap: $unit-4x;
 		padding: $unit-2x 0;
+	}
+
+	.overview {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
 	}
 
 	.empty-state {
@@ -122,12 +123,6 @@
 		padding: 0 $unit-2x;
 		font-size: $font-regular;
 		color: var(--text-tertiary);
-	}
-
-	.divider {
-		margin: 0;
-		border: none;
-		border-top: 1px solid var(--border-subtle);
 	}
 
 	.guidebook {

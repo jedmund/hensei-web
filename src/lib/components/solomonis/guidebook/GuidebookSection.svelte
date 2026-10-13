@@ -111,7 +111,13 @@
 					</SegmentedControl>
 				{/if}
 				{#if canEdit}
-					<Button size="small" leftIcon="plus" onclick={handleAdd}>
+					<Button
+						variant="ghost"
+						size="small"
+						leftIcon="plus"
+						class="arcarum-ghost"
+						onclick={handleAdd}
+					>
 						{m.solomonis_web_guidebook_add()}
 					</Button>
 				{/if}
@@ -204,5 +210,15 @@
 		margin: 0;
 		padding: 0;
 		list-style: none;
+	}
+
+	// Ghost button in Arcarum purple
+	.actions :global([data-button-root].arcarum-ghost) {
+		color: var(--extra-purple-primary);
+
+		&:hover:not(:disabled) {
+			background-color: var(--extra-purple-bg);
+			color: var(--extra-purple-text);
+		}
 	}
 </style>
