@@ -1994,7 +1994,6 @@
 	"solomonis_web_party_run_details": "Run details",
 	"solomonis_web_party_build_details": "Build details",
 	"solomonis_web_party_level": "Lvl {level}",
-	"solomonis_web_party_blessings": "Arcarum Blessings",
 	"solomonis_web_party_blessings_none": "No blessings",
 	"solomonis_web_party_blessings_edit": "Edit blessings",
 	"solomonis_web_party_blessing_cost_total": "Cost {total} / {limit}",

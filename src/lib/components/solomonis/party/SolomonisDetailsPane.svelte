@@ -6,13 +6,15 @@
 	 * pushes EditSolomonisPane / EditBlessingsPane on top of it.
 	 */
 	import { onMount } from 'svelte'
+	import { createQuery } from '@tanstack/svelte-query'
+	import { solomonisQueries } from '$lib/api/queries/solomonis.queries'
 	import * as m from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import BlessingName from './BlessingName.svelte'
+	import BlessingRow from './BlessingRow.svelte'
 	import SolomonisGuidebook from '$lib/components/solomonis/guidebook/SolomonisGuidebook.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
 	import { appLocale } from '$lib/utils/locale'
@@ -47,6 +49,16 @@
 
 	const updateExpedition = useUpdateSolomonisExpedition()
 	const updateBlessings = useUpdatePartyBlessings()
+
+	// The party's blessings carry level and cost; the effect text comes from
+	// the catalogue (shared with the blessing picker's query).
+	const blessingCatalogue = createQuery(() => solomonisQueries.blessings())
+
+	function blessingDescription(blessingId: string, levelId: string) {
+		return blessingCatalogue.data?.blessings
+			.find((bl) => bl.id === blessingId)
+			?.levels.find((l) => l.id === levelId)?.description
+	}
 
 	const locale = appLocale()
 	const expedition = $derived(isFullExpedition(party.solomonis) ? party.solomonis : null)
@@ -135,7 +147,7 @@
 		<hr class="divider" />
 
 		<DetailsSection
-			title={m.solomonis_web_party_blessings()}
+			title={m.solomonis_web_party_blessings_title()}
 			empty={expedition.blessings.length === 0}
 			emptyMessage={m.solomonis_web_party_blessings_none()}
 		>
@@ -151,16 +163,25 @@
 					</Button>
 				{/if}
 			{/snippet}
-			<div class="rows">
+			<ul class="blessing-list">
 				{#each [...expedition.blessings].sort((a, b) => a.blessing.arcanaNumber - b.blessing.arcanaNumber) as b (b.blessing.id)}
-					<DetailRow
-						value={`${m.solomonis_web_party_level({ level: b.level })} · ${m.solomonis_web_party_blessing_cost({ cost: b.cost })}`}
-					>
-						{#snippet labelSlot()}
-							<BlessingName slug={b.blessing.slug} name={solomonisName(b.blessing.name, locale)} />
-						{/snippet}
-					</DetailRow>
+					{@const description = blessingDescription(b.blessing.id, b.levelId)}
+					<li>
+						<BlessingRow
+							slug={b.blessing.slug}
+							name={solomonisName(b.blessing.name, locale)}
+							subtitle={m.solomonis_web_party_blessing_cost({ cost: b.cost })}
+							description={description ? solomonisName(description, locale) : null}
+						>
+							{#snippet trailing()}
+								<span class="blessing-level">{m.solomonis_web_party_level({ level: b.level })}</span
+								>
+							{/snippet}
+						</BlessingRow>
+					</li>
 				{/each}
+			</ul>
+			<div class="rows">
 				<DetailRow
 					label={m.solomonis_web_party_blessing_cost_label()}
 					value={`${expedition.blessingCostTotal} / ${expedition.blessingCostLimit}`}
@@ -303,6 +324,21 @@
 	.rows {
 		display: flex;
 		flex-direction: column;
+	}
+
+	.blessing-list {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
+		margin: 0;
+		padding: 0 $unit;
+		list-style: none;
+	}
+
+	.blessing-level {
+		font-size: $font-regular;
+		font-weight: $medium;
+		color: var(--text-primary);
 	}
 
 	.divider {

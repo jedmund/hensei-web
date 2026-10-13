@@ -9,7 +9,7 @@
 	import { untrack } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import * as m from '$lib/paraglide/messages'
-	import BlessingName from './BlessingName.svelte'
+	import BlessingRow from './BlessingRow.svelte'
 	import BlessingCostGauge from './BlessingCostGauge.svelte'
 	import Stepper from '$lib/components/ui/Stepper.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
@@ -98,30 +98,27 @@
 			{@const level = selectedLevel(blessing)}
 			{@const described = level ?? blessing.levels.find((l) => l.level === 1)}
 			{@const name = solomonisName(blessing.name, locale)}
-			<li class="blessing">
-				<div class="row">
-					<BlessingName
-						slug={blessing.slug}
-						{name}
-						size="large"
-						subtitle={level
-							? m.solomonis_web_party_blessing_cost({ cost: level.cost })
-							: m.solomonis_web_party_blessing_not_equipped()}
-					/>
-					<Stepper
-						value={level?.level ?? 0}
-						max={maxLevel(blessing)}
-						onChange={(value) => setLevel(blessing, value)}
-						label={name}
-						decreaseLabel={m.solomonis_web_party_blessing_level_down({ name })}
-						increaseLabel={m.solomonis_web_party_blessing_level_up({ name })}
-					/>
-				</div>
-				{#if described}
-					<p class="effect" class:preview={!level}>
-						{solomonisName(described.description, locale)}
-					</p>
-				{/if}
+			<li>
+				<BlessingRow
+					slug={blessing.slug}
+					{name}
+					subtitle={level
+						? m.solomonis_web_party_blessing_cost({ cost: level.cost })
+						: m.solomonis_web_party_blessing_not_equipped()}
+					description={described ? solomonisName(described.description, locale) : null}
+					descriptionMuted={!level}
+				>
+					{#snippet trailing()}
+						<Stepper
+							value={level?.level ?? 0}
+							max={maxLevel(blessing)}
+							onChange={(value) => setLevel(blessing, value)}
+							label={name}
+							decreaseLabel={m.solomonis_web_party_blessing_level_down({ name })}
+							increaseLabel={m.solomonis_web_party_blessing_level_up({ name })}
+						/>
+					{/snippet}
+				</BlessingRow>
 			</li>
 		{/each}
 	</ul>
@@ -129,7 +126,6 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
-	@use '$src/themes/typography' as *;
 
 	.blessings-pane {
 		display: flex;
@@ -145,29 +141,5 @@
 		margin: 0;
 		padding: 0;
 		list-style: none;
-	}
-
-	.blessing {
-		display: flex;
-		flex-direction: column;
-		gap: $unit;
-	}
-
-	.row {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: $unit;
-	}
-
-	.effect {
-		margin: 0;
-		font-size: $font-small;
-		color: var(--text-secondary);
-
-		// Level 1's effect, for a blessing that isn't equipped
-		&.preview {
-			color: var(--text-tertiary);
-		}
 	}
 </style>
