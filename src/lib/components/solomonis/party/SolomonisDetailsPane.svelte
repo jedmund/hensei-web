@@ -348,7 +348,7 @@
 	.blessing-list {
 		display: flex;
 		flex-direction: column;
-		gap: $unit-2x;
+		gap: $unit-3x;
 		margin: 0;
 		padding: 0 $unit;
 		list-style: none;
