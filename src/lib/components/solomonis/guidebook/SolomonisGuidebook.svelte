@@ -213,7 +213,7 @@
 	:global(.groups) {
 		display: flex;
 		flex-direction: column;
-		gap: $unit;
+		gap: $unit-half;
 	}
 
 	:global(.group-header) {
@@ -225,7 +225,7 @@
 		display: flex;
 		align-items: center;
 		gap: $unit;
-		padding: $unit-half $unit;
+		padding: $unit;
 		margin: 0 (-$unit);
 		width: calc(100% + #{$unit-2x});
 		border: none;
