@@ -5,8 +5,8 @@
 	 */
 	import * as m from '$lib/paraglide/messages'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
-	import { getSolomonisSpaceIcon } from '$lib/utils/images'
 	import type { SolomonisStats } from '$lib/types/api/solomonis'
+	import TraversalRow from './TraversalRow.svelte'
 	import { spaceStats, type SpaceStatKey } from './solomonisParty'
 
 	interface Props {
@@ -33,10 +33,8 @@
 	<!-- Two columns like the game: combat spaces, then the rest -->
 	<ul class="space-grid">
 		{#each spaceStats(stats) as stat (stat.key)}
-			<li class="space">
-				<img src={getSolomonisSpaceIcon(stat.key)} alt="" class="space-icon" />
-				<span class="space-label">{SPACE_LABELS[stat.key]()}</span>
-				<span class="space-count">{stat.count}</span>
+			<li>
+				<TraversalRow space={stat.key} label={SPACE_LABELS[stat.key]()} count={stat.count} />
 			</li>
 		{/each}
 	</ul>
@@ -44,7 +42,6 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
-	@use '$src/themes/typography' as *;
 
 	// Two columns of five, separated by space alone
 	.space-grid {
@@ -57,33 +54,5 @@
 		margin: 0;
 		padding: 0 $unit;
 		list-style: none;
-	}
-
-	.space {
-		display: flex;
-		align-items: center;
-		gap: $unit;
-		min-height: $unit-4x;
-	}
-
-	.space-icon {
-		width: $unit-3x;
-		height: $unit-3x;
-		object-fit: contain;
-		flex-shrink: 0;
-	}
-
-	.space-label {
-		flex: 1;
-		min-width: 0;
-		font-size: $font-regular;
-		color: var(--text-secondary);
-	}
-
-	.space-count {
-		font-size: $font-regular;
-		font-weight: $medium;
-		color: var(--text-primary);
-		font-variant-numeric: tabular-nums;
 	}
 </style>
