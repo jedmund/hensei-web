@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { SvelteMap } from 'svelte/reactivity'
-	import { createInfiniteQuery } from '@tanstack/svelte-query'
+	import { createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
 	import { onDestroy, untrack } from 'svelte'
 	import { partyQueries } from '$lib/api/queries/party.queries'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
@@ -12,6 +12,9 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { getElementLabel } from '$lib/utils/element'
+	import { solomonisQueries } from '$lib/api/queries/solomonis.queries'
+	import { solomonisName } from '$lib/components/solomonis/party/solomonisParty'
+	import { appLocale } from '$lib/utils/locale'
 
 	interface Props {
 		/** Primary pinned filter(s) — always present, not user-removable */
@@ -20,6 +23,8 @@
 		defaultElement?: number
 		/** Removable filters to start with, in place of the default element */
 		defaultFilters?: FilterItem[]
+		/** An Evoking Solomonis zone: its route Evokers become filter options */
+		solomonisZoneId?: string
 		/** Filter kinds to exclude from the filter dropdown */
 		excludedKinds?: FilterItem['kind'][]
 		/** Empty state message override */
@@ -35,11 +40,24 @@
 		pinnedFilters,
 		defaultElement,
 		defaultFilters,
+		solomonisZoneId,
 		excludedKinds,
 		emptyMessage,
 		useCollectionTeamsStore = false,
 		resetKey
 	}: Props = $props()
+
+	// Evoking Solomonis: the zone's route Evokers, offered as filter options
+	const locale = appLocale()
+	const routeEvokersQuery = createQuery(() => ({
+		...solomonisQueries.routeEvokers(),
+		enabled: !!solomonisZoneId
+	}))
+	const evokerOptions = $derived(
+		(routeEvokersQuery.data ?? [])
+			.filter((e) => e.zone.id === solomonisZoneId)
+			.map((e) => ({ value: e.granblueId, label: solomonisName(e.name, locale) }))
+	)
 
 	// Mode overrides for pinned entity filters (granblueId → mode)
 	// Persists exclude toggles that would otherwise be lost when pinned filters re-derive
@@ -176,6 +194,7 @@
 			filters={allFilters}
 			onFiltersChange={handleFiltersChange}
 			{excludedKinds}
+			{evokerOptions}
 			contained
 		/>
 	</div>

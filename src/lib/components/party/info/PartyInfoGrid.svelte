@@ -9,7 +9,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
 	import CalculatorPane from '$lib/components/sidebar/CalculatorPane.svelte'
-	import { getCharacterImage, getRaidImage } from '$lib/utils/images'
+	import { getRaidImage } from '$lib/utils/images'
 	import { appLocale, localizedName } from '$lib/utils/locale'
 	import type { FilterItem } from '$lib/types/filter'
 	import { isFullExpedition, solomonisName } from '$lib/components/solomonis/party/solomonisParty'
@@ -94,6 +94,7 @@
 				]
 			: undefined
 
+		// Titled by zone: the Evoker is a filter chip the user can switch
 		sidebar.openWithComponent(
 			raidName,
 			PartiesPane,
@@ -108,16 +109,16 @@
 				],
 				defaultElement: party.element,
 				defaultFilters: evokerFilter,
-				excludedKinds: ['raid'] as const,
+				solomonisZoneId: expedition ? party.raid.id : undefined,
+				// A zone's element follows its Evoker, so filter by Evoker instead
+				excludedKinds: expedition ? (['raid', 'element'] as const) : (['raid'] as const),
 				resetKey: expedition
 					? `${party.raid.id}:${expedition.routeEvoker.granblueId}`
 					: party.raid.id
 			},
 			{
 				scrollable: true,
-				image: expedition
-					? getCharacterImage(expedition.routeEvoker.granblueId, 'square')
-					: getRaidImage(party.raid.slug)
+				image: getRaidImage(party.raid.slug)
 			}
 		)
 	}

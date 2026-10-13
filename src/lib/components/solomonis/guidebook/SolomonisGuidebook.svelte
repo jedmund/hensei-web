@@ -165,10 +165,11 @@
 		align-items: baseline;
 		gap: $unit;
 
+		// Matches DetailsSection headings in the details pane
 		h3 {
 			margin: 0;
-			font-size: $font-regular;
-			font-weight: $bold;
+			font-size: $font-name;
+			font-weight: $medium;
 			color: var(--text-primary);
 		}
 	}

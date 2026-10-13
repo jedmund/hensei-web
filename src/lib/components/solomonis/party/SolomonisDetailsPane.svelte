@@ -72,6 +72,23 @@
 		beast_of_anathema: m.solomonis_web_party_midboss_beast_of_anathema
 	}
 
+	// "Run · Allotropic Microcosm · Pledge 3", as on the raid tile
+	const headerMeta = $derived(
+		expedition
+			? [
+					expedition.kind === 'run'
+						? m.solomonis_web_party_kind_run()
+						: m.solomonis_web_party_kind_build(),
+					solomonisName(expedition.zone.name, locale),
+					expedition.pledgeLevel > 0
+						? m.solomonis_web_party_pledge_short({ level: expedition.pledgeLevel })
+						: null
+				]
+					.filter(Boolean)
+					.join(' · ')
+			: ''
+	)
+
 	function openEditPane() {
 		openEditSolomonisPane(party, updateExpedition)
 	}
@@ -103,12 +120,7 @@
 			/>
 			<div class="evoker-details">
 				<span class="evoker-name">{solomonisName(expedition.routeEvoker.name, locale)}</span>
-				<span class="evoker-meta">
-					{expedition.kind === 'run'
-						? m.solomonis_web_party_kind_run()
-						: m.solomonis_web_party_kind_build()}
-					· {solomonisName(expedition.zone.name, locale)}
-				</span>
+				<span class="evoker-meta">{headerMeta}</span>
 			</div>
 		</div>
 		{#if missingFromGrid}
@@ -119,17 +131,6 @@
 			</p>
 		{/if}
 
-		<DetailsSection title={m.solomonis_web_party_title()}>
-			<div class="rows">
-				<DetailRow
-					label={m.solomonis_web_party_pledge()}
-					value={expedition.pledgeLevel === 0
-						? m.solomonis_web_party_pledge_none()
-						: m.solomonis_web_party_level({ level: expedition.pledgeLevel })}
-				/>
-			</div>
-		</DetailsSection>
-
 		<hr class="divider" />
 
 		<DetailsSection
@@ -138,19 +139,16 @@
 			emptyMessage={m.solomonis_web_party_blessings_none()}
 		>
 			{#snippet action()}
-				<div class="section-action">
-					<span class="cost">
-						{m.solomonis_web_party_blessing_cost_total({
-							total: expedition.blessingCostTotal,
-							limit: expedition.blessingCostLimit
-						})}
-					</span>
-					{#if canWrite}
-						<Button variant="ghost" size="small" onclick={openBlessingsPane}>
-							{m.action_edit()}
-						</Button>
-					{/if}
-				</div>
+				{#if canWrite}
+					<Button
+						variant="ghost"
+						size="small"
+						onclick={openBlessingsPane}
+						aria-label={m.solomonis_web_party_blessings_edit()}
+					>
+						{m.action_edit()}
+					</Button>
+				{/if}
 			{/snippet}
 			<div class="rows">
 				{#each [...expedition.blessings].sort((a, b) => a.blessing.arcanaNumber - b.blessing.arcanaNumber) as b (b.blessing.id)}
@@ -159,6 +157,10 @@
 						value={`${m.solomonis_web_party_level({ level: b.level })} · ${m.solomonis_web_party_blessing_cost({ cost: b.cost })}`}
 					/>
 				{/each}
+				<DetailRow
+					label={m.solomonis_web_party_blessing_cost_label()}
+					value={`${expedition.blessingCostTotal} / ${expedition.blessingCostLimit}`}
+				/>
 			</div>
 		</DetailsSection>
 
@@ -292,18 +294,6 @@
 		padding: 0 $unit-2x;
 		font-size: $font-small;
 		color: var(--text-secondary);
-	}
-
-	.section-action {
-		display: flex;
-		align-items: center;
-		gap: $unit;
-	}
-
-	.cost {
-		font-size: $font-small;
-		color: var(--text-secondary);
-		font-variant-numeric: tabular-nums;
 	}
 
 	.rows {

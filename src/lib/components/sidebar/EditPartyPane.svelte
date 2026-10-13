@@ -54,7 +54,7 @@
 	/** The Evoking Solomonis row: "Run details" or "Build details" */
 	export interface SolomonisDetailsLink {
 		label: string
-		/** e.g. "Nier · Allotropic Microcosm" */
+		/** e.g. "Nier · Pledge 3" */
 		summary: string
 		getParty: () => Party
 		canEdit: boolean
@@ -319,7 +319,7 @@
 		if (!solomonisDetails) return
 		paneStack.push({
 			id: 'solomonis-details',
-			title: m.solomonis_web_party_title(),
+			title: solomonisDetails.label,
 			component: SolomonisDetailsPane,
 			props: { getParty: solomonisDetails.getParty, canEdit: solomonisDetails.canEdit },
 			scrollable: true
@@ -375,11 +375,11 @@
 				</button>
 			</div>
 			{#if showSolomonisDetails && solomonisDetails}
-				<div class="description-field">
-					<span class="description-label">{solomonisDetails.label}</span>
-					<button type="button" class="description-button" onclick={openSolomonisDetailsPane}>
-						<span class="description-preview">{solomonisDetails.summary}</span>
-						<Icon name="chevron-right" size={16} class="description-chevron" />
+				<div class="raid-field">
+					<span class="raid-label">{solomonisDetails.label}</span>
+					<button type="button" class="raid-select-button" onclick={openSolomonisDetailsPane}>
+						<span class="raid-name">{solomonisDetails.summary}</span>
+						<Icon name="chevron-right" size={16} class="chevron-icon" />
 					</button>
 				</div>
 			{/if}

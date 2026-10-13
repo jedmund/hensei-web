@@ -252,7 +252,15 @@ export function usePartyActions(opts: PartyActionsOptions) {
 							expedition.kind === 'run'
 								? m.solomonis_web_party_run_details()
 								: m.solomonis_web_party_build_details(),
-						summary: `${solomonisName(expedition.routeEvoker.name, locale)} · ${solomonisName(expedition.zone.name, locale)}`,
+						// The zone already shows in the Raid row above
+						summary: [
+							solomonisName(expedition.routeEvoker.name, locale),
+							expedition.pledgeLevel > 0
+								? m.solomonis_web_party_pledge_short({ level: expedition.pledgeLevel })
+								: null
+						]
+							.filter(Boolean)
+							.join(' · '),
 						getParty: opts.getParty,
 						canEdit: true
 					}

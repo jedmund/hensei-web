@@ -149,6 +149,11 @@
 		&:hover {
 			background: var(--button-bg);
 		}
+
+		&:focus-visible {
+			outline: 2px solid var(--focus-ring);
+			outline-offset: 2px;
+		}
 	}
 
 	.raid-image {
