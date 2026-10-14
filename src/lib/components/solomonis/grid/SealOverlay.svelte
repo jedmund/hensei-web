@@ -3,7 +3,8 @@
 	 * Seal state drawn over a weapon or summon image on a Solomonis party:
 	 * a "Start" chip on fixed starting slots, a veil and lock on sealed items,
 	 * a "?" on slots whose state isn't recorded, and the unseal priority of
-	 * sealed slots as a centred badge. Rendered inside the unit's frame.
+	 * sealed slots as a centred badge. Rendered inside the unit's frame, and
+	 * left out while the viewer has hidden the overlays (SealControls).
 	 *
 	 * For editors the lock is a button that marks the item sealed or
 	 * unsealed (unsealed items show an open lock).
@@ -13,6 +14,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import PriorityNumber from './PriorityNumber.svelte'
 	import type { SlotSeal } from './seal'
+	import { sealOverlays } from './sealOverlays.svelte'
 
 	interface Props {
 		seal: SlotSeal
@@ -38,48 +40,50 @@
 	}
 </script>
 
-<div class="seal-overlay" class:dimmed={seal.dimmed} data-seal-state={seal.state ?? 'unknown'}>
-	{#if seal.starting}
-		<Tooltip content={m.solomonis_web_grid_start_tooltip()}>
-			<span class="chip start">{m.solomonis_web_grid_start()}</span>
-		</Tooltip>
-	{:else if filled && onToggle}
-		<Tooltip content={toggleLabel}>
-			<button
-				type="button"
-				class="chip icon-chip toggle"
-				class:unknown={seal.state === null}
-				aria-label={toggleLabel}
-				onclick={toggle}
-				onkeydown={(e) => e.stopPropagation()}
-			>
-				{#if seal.state === null}
-					?
-				{:else}
-					<Icon name={seal.state === 'sealed' ? 'lock' : 'lock-open'} size={12} />
-				{/if}
-			</button>
-		</Tooltip>
-	{:else if filled && seal.state === 'sealed'}
-		<span class="chip icon-chip" aria-label={m.solomonis_web_grid_sealed()}>
-			<Icon name="lock" size={12} />
-		</span>
-	{:else if filled && seal.state === null}
-		<Tooltip content={m.solomonis_web_grid_unknown_tooltip()}>
-			<span class="chip unknown" aria-label={m.solomonis_web_grid_unknown()}>?</span>
-		</Tooltip>
-	{/if}
+{#if !sealOverlays.hidden}
+	<div class="seal-overlay" class:dimmed={seal.dimmed} data-seal-state={seal.state ?? 'unknown'}>
+		{#if seal.starting}
+			<Tooltip content={m.solomonis_web_grid_start_tooltip()}>
+				<span class="chip start">{m.solomonis_web_grid_start()}</span>
+			</Tooltip>
+		{:else if filled && onToggle}
+			<Tooltip content={toggleLabel}>
+				<button
+					type="button"
+					class="chip icon-chip toggle"
+					class:unknown={seal.state === null}
+					aria-label={toggleLabel}
+					onclick={toggle}
+					onkeydown={(e) => e.stopPropagation()}
+				>
+					{#if seal.state === null}
+						?
+					{:else}
+						<Icon name={seal.state === 'sealed' ? 'lock' : 'lock-open'} size={12} />
+					{/if}
+				</button>
+			</Tooltip>
+		{:else if filled && seal.state === 'sealed'}
+			<span class="chip icon-chip" aria-label={m.solomonis_web_grid_sealed()}>
+				<Icon name="lock" size={12} />
+			</span>
+		{:else if filled && seal.state === null}
+			<Tooltip content={m.solomonis_web_grid_unknown_tooltip()}>
+				<span class="chip unknown" aria-label={m.solomonis_web_grid_unknown()}>?</span>
+			</Tooltip>
+		{/if}
 
-	{#if filled && seal.priority != null}
-		<span class="priority">
-			<PriorityNumber
-				value={seal.priority}
-				size="large"
-				aria-label={m.solomonis_web_grid_priority_badge({ rank: String(seal.priority) })}
-			/>
-		</span>
-	{/if}
-</div>
+		{#if filled && seal.priority != null}
+			<span class="priority">
+				<PriorityNumber
+					value={seal.priority}
+					size="large"
+					aria-label={m.solomonis_web_grid_priority_badge({ rank: String(seal.priority) })}
+				/>
+			</span>
+		{/if}
+	</div>
+{/if}
 
 <style lang="scss">
 	@use '$src/themes/effects' as effects;

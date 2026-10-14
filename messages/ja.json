@@ -1995,6 +1995,7 @@
 	"solomonis_web_grid_unknown_tooltip": "未記録",
 	"solomonis_web_grid_priority_badge": "解放優先度 {rank}",
 	"solomonis_web_grid_priority_title": "解放優先度",
+	"solomonis_web_grid_unsealed_state": "解放状態",
 	"solomonis_web_grid_priority_unranked": "未設定",
 	"solomonis_web_grid_mark_sealed": "封印状態にする",
 	"solomonis_web_grid_mark_unsealed": "解放状態にする",

@@ -32,7 +32,7 @@
 	import ExtraContainer from '$lib/components/extra/ExtraContainer.svelte'
 	import ExtraWeapons from '$lib/components/extra/ExtraWeaponsGrid.svelte'
 	import Guidebooks from '$lib/components/extra/GuidebooksGrid.svelte'
-	import UnsealPriorityButton from '$lib/components/solomonis/grid/UnsealPriorityButton.svelte'
+	import SealControls from '$lib/components/solomonis/grid/SealControls.svelte'
 	import { getExpedition } from '$lib/components/solomonis/grid/seal'
 
 	const ctx = usePartyContext()
@@ -176,8 +176,8 @@
 			{/if}
 		</ExtraContainer>
 	{/if}
-	{#if isSolomonis && (ctx?.canEdit() ?? false)}
-		<UnsealPriorityButton canEdit={ctx?.canEdit() ?? false} />
+	{#if isSolomonis}
+		<SealControls canEdit={ctx?.canEdit() ?? false} />
 	{/if}
 </div>
 

@@ -16,7 +16,7 @@
 	import SummonUnit from '$lib/components/units/SummonUnit.svelte'
 	import ExtraSummons from '$lib/components/extra/ExtraSummonsGrid.svelte'
 	import * as m from '$lib/paraglide/messages'
-	import UnsealPriorityButton from '$lib/components/solomonis/grid/UnsealPriorityButton.svelte'
+	import SealControls from '$lib/components/solomonis/grid/SealControls.svelte'
 	import { getExpedition } from '$lib/components/solomonis/grid/seal'
 
 	const ctx = usePartyContext()
@@ -164,8 +164,8 @@
 		{/if}
 		<ExtraSummons {summons} offset={4} {collectionStatus} />
 	</div>
-	{#if isSolomonis && (ctx?.canEdit() ?? false)}
-		<UnsealPriorityButton canEdit={ctx?.canEdit() ?? false} />
+	{#if isSolomonis}
+		<SealControls canEdit={ctx?.canEdit() ?? false} />
 	{/if}
 </div>
 

@@ -2023,6 +2023,7 @@
 	"solomonis_web_grid_unknown_tooltip": "Not recorded yet",
 	"solomonis_web_grid_priority_badge": "Unseal priority {rank}",
 	"solomonis_web_grid_priority_title": "Unseal priority",
+	"solomonis_web_grid_unsealed_state": "Unsealed state",
 	"solomonis_web_grid_priority_unranked": "Not ranked",
 	"solomonis_web_grid_mark_sealed": "Mark as sealed",
 	"solomonis_web_grid_mark_unsealed": "Mark as unsealed",
