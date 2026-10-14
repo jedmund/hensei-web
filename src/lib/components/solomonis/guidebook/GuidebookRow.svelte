@@ -62,7 +62,7 @@
 		gap: $unit;
 		width: 100%;
 		min-height: $unit-6x;
-		padding: $unit;
+		padding: $unit $unit-2x $unit $unit;
 		border: none;
 		border-radius: $card-corner;
 		// A light wash instead of a border; cursed effects are tinted red
