@@ -168,6 +168,7 @@
 		<SettingsRow
 			title={m.solomonis_web_guidebook_inherited()}
 			subtitle={m.solomonis_web_guidebook_inherited_subtitle()}
+			compact
 		>
 			{#snippet control()}
 				<Switch bind:checked={inherited} name="inherited" />
