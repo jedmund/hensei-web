@@ -26,7 +26,7 @@ beforeEach(() => {
 })
 
 describe('updateUnsealPriorityOptions', () => {
-	it('renumbers the cached grid optimistically and clears unlisted items', async () => {
+	it('numbers each type from 1 in the cached grid and clears unlisted items', async () => {
 		const weapon = party.weapons.find((w) => w.position === 5)!
 		const summon = party.summons.find((s) => s.position === 0)!
 		const opts = updateUnsealPriorityOptions(queryClient)
@@ -40,7 +40,7 @@ describe('updateUnsealPriorityOptions', () => {
 
 		const cached = queryClient.getQueryData<Party>(key)!
 		expect(cached.summons.find((s) => s.id === summon.id)?.unsealPriority).toBe(1)
-		expect(cached.weapons.find((w) => w.id === weapon.id)?.unsealPriority).toBe(2)
+		expect(cached.weapons.find((w) => w.id === weapon.id)?.unsealPriority).toBe(1)
 		expect(cached.weapons.find((w) => w.position === 4)?.unsealPriority).toBeNull()
 	})
 
