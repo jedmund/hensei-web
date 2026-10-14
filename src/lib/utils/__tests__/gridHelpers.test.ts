@@ -87,6 +87,18 @@ describe('findNextEmptySlot — summons', () => {
 		const party = makeParty({ summons })
 		expect(findNextEmptySlot(party, GridType.Summon)).toBe(SLOT_NOT_FOUND)
 	})
+
+	it('never offers the support summon slot for content without one', () => {
+		// e.g. Replicard Sandbox: Arcarum, no Solomonis expedition
+		const summons = [{ id: 's-main', position: -1, main: true }] as unknown as GridSummon[]
+		for (let i = 0; i <= 5; i++) {
+			summons.push({ id: `s-${i}`, position: i } as unknown as GridSummon)
+		}
+		const raid = { id: 'r-1', group: { id: 'g-1', supportSummon: false } } as Party['raid']
+		const party = makeParty({ summons, raid })
+		expect(findNextEmptySlot(party, GridType.Summon)).toBe(SLOT_NOT_FOUND)
+		expect(findNextEmptySlot(makeParty({ summons }), GridType.Summon)).toBe(6)
+	})
 })
 
 // ============================================================================

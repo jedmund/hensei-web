@@ -40,15 +40,19 @@ const GRID_CONFIGS: Record<GridType, SlotRange> = {
  * ```
  */
 /**
- * Evoking Solomonis parties have no support summon and hold at most the
- * route Evoker plus 4 recruits.
+ * Arcarum content takes no support summon: Evoking Solomonis, and any raid
+ * group flagged `supportSummon: false` (SummonGrid disables that slot by the
+ * same rule). Solomonis parties also hold at most the route Evoker plus 4
+ * recruits.
  */
 function slotRangeFor(party: Party, gridType: GridType): SlotRange {
 	const config = GRID_CONFIGS[gridType]
 	const expedition = getExpedition(party)
-	if (!expedition) return config
-	if (gridType === GridType.Summon) return { ...config, trailingSlots: [] }
-	if (gridType === GridType.Character) {
+	if (gridType === GridType.Summon) {
+		const noSupportSummon = !!expedition || party.raid?.group?.supportSummon === false
+		return noSupportSummon ? { ...config, trailingSlots: [] } : config
+	}
+	if (expedition && gridType === GridType.Character) {
 		return { ...config, end: Math.min(config.end, SOLOMONIS_CHARACTER_LIMIT - 1) }
 	}
 	return config
