@@ -11,6 +11,7 @@
 	import { createQuery } from '@tanstack/svelte-query'
 	import { raidQueries } from '$lib/api/queries/raid.queries'
 	import { RaidSection } from '$lib/utils/raidSection'
+	import { sortRaidGroups } from '$lib/utils/raidGroupSort'
 	import RaidSectionTabs from '$lib/components/raid/RaidSectionTabs.svelte'
 	import RaidGroupList from '$lib/components/raid/RaidGroupList.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -38,22 +39,13 @@
 		if (!groupsQuery.data) return []
 
 		// Filter by section
-		let groups = groupsQuery.data.filter((group) => {
+		const groups = groupsQuery.data.filter((group) => {
 			const groupSection =
 				typeof group.section === 'string' ? parseInt(group.section, 10) : group.section
 			return groupSection === selectedSection
 		})
 
-		// Sort by difficulty, then display order. Solo content mostly has no
-		// difficulty, so it follows the display order (newest content highest)
-		const bySolo = selectedSection === RaidSection.Solo
-		groups = [...groups].sort((a, b) => {
-			const diff = bySolo ? 0 : a.difficulty - b.difficulty
-			const result = diff !== 0 ? diff : a.order - b.order
-			return sortAscending ? result : -result
-		})
-
-		return groups
+		return sortRaidGroups(groups, selectedSection, sortAscending)
 	})
 
 	function handleRaidSelect(raid: RaidFull) {
