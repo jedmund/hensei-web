@@ -23,7 +23,12 @@
 	import UnsealPriorityPane from '$lib/components/solomonis/grid/UnsealPriorityPane.svelte'
 	import { PRIORITY_TYPES, priorityLists } from '$lib/components/solomonis/grid/seal'
 	import { openEditSolomonisPane, showSolomonisPane } from './openSolomonisPanes'
-	import { hasStats, isFullExpedition, routeEvokerMissingFromGrid } from './solomonisParty'
+	import {
+		hasStats,
+		isFullExpedition,
+		routeEvokerMissingFromGrid,
+		showGuidebookSection
+	} from './solomonisParty'
 
 	interface Props {
 		/** Reads the party page's party, so the pane follows its updates. */
@@ -93,7 +98,7 @@
 			<EconomySection stats={expedition.stats} />
 		{/if}
 
-		{#if expedition.guidebook.length > 0}
+		{#if showGuidebookSection(expedition, canWrite)}
 			<div class="guidebook">
 				<GuidebookSection {party} canEdit={canWrite} />
 			</div>

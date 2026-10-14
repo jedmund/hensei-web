@@ -12,6 +12,7 @@ import {
 	selectionCost,
 	selectionFromParty,
 	selectionToLevelIds,
+	showGuidebookSection,
 	solomonisName,
 	spaceStats,
 	totalSpaces
@@ -194,5 +195,25 @@ describe('route Evoker', () => {
 	it('flags a route Evoker missing from the grid', () => {
 		expect(routeEvokerMissingFromGrid(BUILD_PARTY)).toBe(false)
 		expect(routeEvokerMissingFromGrid({ ...BUILD_PARTY, characters: [] })).toBe(true)
+	})
+})
+
+describe('showGuidebookSection', () => {
+	const expedition = RUN_PARTY.solomonis
+	if (!isFullExpedition(expedition)) throw new Error('RUN_PARTY needs the full view')
+	const empty = { ...expedition, guidebook: [] }
+
+	it('shows an empty guidebook to editors, so they can add effects', () => {
+		expect(showGuidebookSection(empty, true)).toBe(true)
+	})
+
+	it('hides an empty guidebook from viewers', () => {
+		expect(showGuidebookSection(empty, false)).toBe(false)
+	})
+
+	it('shows a filled guidebook to everyone', () => {
+		expect(expedition.guidebook.length).toBeGreaterThan(0)
+		expect(showGuidebookSection(expedition, true)).toBe(true)
+		expect(showGuidebookSection(expedition, false)).toBe(true)
 	})
 })

@@ -90,6 +90,15 @@ export function hasStats(stats: SolomonisStats | null | undefined): boolean {
 	return !!stats && Object.values(stats).some((v) => typeof v === 'number')
 }
 
+/**
+ * The details pane's guidebook section: always for editors, so an empty
+ * guidebook still offers Add (and removing the last effect doesn't unmount
+ * the section mid-save); for viewers only when there's something to show.
+ */
+export function showGuidebookSection(expedition: SolomonisExpedition, canWrite: boolean): boolean {
+	return canWrite || expedition.guidebook.length > 0
+}
+
 // ---------------------------------------------------------------------------
 // Blessings
 // ---------------------------------------------------------------------------
