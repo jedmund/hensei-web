@@ -22,10 +22,15 @@
 	const ctx = usePartyContext()
 	const dragContext = getDragDropContext()
 
-	// Evoking Solomonis has no support summon (its slot shows disabled) and
-	// ranks its sealed slots
+	// Evoking Solomonis ranks its sealed slots
 	let expedition = $derived(getExpedition(ctx?.getParty()))
 	let isSolomonis = $derived(!!expedition)
+
+	// Arcarum content (Solomonis included) takes no support summon. The slot
+	// shows disabled and empty, even on an older party that saved one
+	let noSupportSummon = $derived(
+		isSolomonis || ctx?.getParty()?.raid?.group?.supportSummon === false
+	)
 
 	let main = $derived(summons.find((s) => s.position === -1) ?? summons.find((s) => s.main))
 	let friend = $derived(summons.find((s) => s.position === 6) ?? summons.find((s) => s.friend))
@@ -147,7 +152,12 @@
 
 		<!-- Friend summon: in main grid on desktop, hidden on mobile -->
 		<div class="LabeledUnit friend-desktop">
-			<SummonUnit item={friend} position={6} disabled={isSolomonis} />
+			<SummonUnit
+				item={noSupportSummon ? undefined : friend}
+				position={6}
+				disabled={noSupportSummon}
+				disabledTooltip={m.summon_support_unavailable_arcarum()}
+			/>
 		</div>
 	</div>
 
@@ -156,7 +166,13 @@
 		<div class="friend-mobile">
 			<h3>{m.summon_friend_label()}</h3>
 			<div class="friend-unit">
-				<SummonUnit item={friend} position={6} sizeOverride="grid" disabled={isSolomonis} />
+				<SummonUnit
+					item={noSupportSummon ? undefined : friend}
+					position={6}
+					sizeOverride="grid"
+					disabled={noSupportSummon}
+					disabledTooltip={m.summon_support_unavailable_arcarum()}
+				/>
 			</div>
 		</div>
 		<ExtraSummons {summons} offset={4} {collectionStatus} />

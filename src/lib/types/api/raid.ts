@@ -36,6 +36,8 @@ export interface RaidGroupFlat {
 	extra: boolean
 	guidebooks: boolean
 	unlimited: boolean
+	/** False for single-player content (Arcarum) that takes no support summon */
+	supportSummon?: boolean
 	contentMode?: RaidGroupContentMode | null
 }
 
@@ -84,6 +86,7 @@ export interface CreateRaidGroupInput {
 	extra: boolean
 	guidebooks: boolean
 	unlimited: boolean
+	support_summon?: boolean
 }
 
 export interface UpdateRaidGroupInput {
@@ -96,6 +99,7 @@ export interface UpdateRaidGroupInput {
 	extra?: boolean
 	guidebooks?: boolean
 	unlimited?: boolean
+	support_summon?: boolean
 }
 
 // Filter types for raid queries

@@ -415,6 +415,8 @@ export interface RaidGroup {
 	extra: boolean
 	guidebooks: boolean
 	unlimited: boolean
+	/** False for single-player content (Arcarum) that takes no support summon */
+	supportSummon?: boolean
 	/** Special content mode; `solomonis` shows the Evoking Solomonis panel. */
 	contentMode?: RaidGroupContentMode | null
 }

@@ -1260,6 +1260,7 @@
 	"artifact_equipped": "Equipped",
 	"extra_summons_subaura": "Subaura Summons",
 	"summon_friend_label": "Friend",
+	"summon_support_unavailable_arcarum": "Support Summons aren't supported in Arcarum",
 	"placeholder_select_proficiency": "Select proficiency",
 	"placeholder_select_element": "Select element",
 	"placeholder_select_artifact": "Select artifact...",

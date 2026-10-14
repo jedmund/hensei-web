@@ -31,6 +31,7 @@
 	import quickSummonFilled from '$src/assets/icons/quick-summon/filled.svg'
 	import quickSummonEmpty from '$src/assets/icons/quick-summon/empty.svg'
 	import SealOverlay from '$lib/components/solomonis/grid/SealOverlay.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import SealMenuItems from '$lib/components/solomonis/grid/SealMenuItems.svelte'
 	import { nextSealState, writeSealState } from '$lib/components/solomonis/grid/sealActions'
 	import {
@@ -45,8 +46,10 @@
 		notInCollection?: boolean
 		inCollection?: boolean
 		sizeOverride?: 'main' | 'grid' | undefined
-		/** Shows the slot greyed out and closed to edits (the support summon in Evoking Solomonis) */
+		/** Shows the slot greyed out and closed to edits (the support summon in Arcarum) */
 		disabled?: boolean
+		/** Explains a disabled slot on hover */
+		disabledTooltip?: string | undefined
 	}
 
 	let {
@@ -55,7 +58,8 @@
 		notInCollection = false,
 		inCollection = false,
 		sizeOverride = undefined,
-		disabled = false
+		disabled = false,
+		disabledTooltip = undefined
 	}: Props = $props()
 
 	const ctx = usePartyContext()
@@ -340,6 +344,15 @@
 		</UnitMenuContainer>
 	{:else}
 		{#key `empty-${position}`}
+			{#if disabled && disabledTooltip}
+				<Tooltip content={disabledTooltip} class="disabled-trigger">
+					{@render emptyFrame()}
+				</Tooltip>
+			{:else}
+				{@render emptyFrame()}
+			{/if}
+		{/key}
+		{#snippet emptyFrame()}
 			<div
 				class="frame summon"
 				class:main={isMainSized && position === -1}
@@ -374,7 +387,7 @@
 					</span>
 				{/if}
 			</div>
-		{/key}
+		{/snippet}
 	{/if}
 	{#if item}
 		<UncapIndicator
@@ -696,4 +709,10 @@
 	}
 
 	@include unit.unit-shared-styles;
+
+	// The tooltip's trigger wraps the disabled slot; keep it the slot's width
+	:global(.disabled-trigger) {
+		display: block;
+		width: 100%;
+	}
 </style>

@@ -248,6 +248,7 @@
 							extra: selectedRaid.group.extra,
 							guidebooks: selectedRaid.group.guidebooks,
 							unlimited: selectedRaid.group.unlimited,
+							supportSummon: selectedRaid.group.supportSummon ?? true,
 							contentMode: selectedRaid.group.contentMode ?? null
 						}
 					: undefined,
