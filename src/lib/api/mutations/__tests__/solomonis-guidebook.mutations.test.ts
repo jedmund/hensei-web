@@ -6,6 +6,7 @@ import { createTestQueryClient, seedPartyCache, getCachedParty } from './helpers
 import { MOCK_PARTY, MOCK_SHORTCODE } from './fixtures'
 import { EXPECTED } from '$lib/api/adapters/__tests__/fixtures/solomonis-guidebook.fixtures'
 import { addEffect, removeEntry } from '$lib/components/solomonis/guidebook/guidebook'
+import { partyKeys } from '$lib/api/queries/party.queries'
 import type { Party } from '$lib/types/api/party'
 
 vi.mock('$lib/api/adapters/solomonis-guidebook.adapter', () => ({
@@ -110,5 +111,108 @@ describe('replaceGuidebookOptions', () => {
 		await opts.onMutate({ partyId: MOCK_PARTY.id, shortcode: MOCK_SHORTCODE, entries: guidebook })
 
 		expect(getCachedParty(queryClient, MOCK_SHORTCODE)?.solomonis).toBeUndefined()
+	})
+})
+
+describe('replaceGuidebookOptions, saves in a row', () => {
+	function deferred<T>() {
+		let resolve!: (value: T) => void
+		let reject!: (err: unknown) => void
+		const promise = new Promise<T>((res, rej) => {
+			resolve = res
+			reject = rej
+		})
+		return { promise, resolve, reject }
+	}
+
+	/** Runs a save through the mutation cache, as `mutateAsync` does. */
+	function run(entries: typeof guidebook) {
+		const mutation = queryClient
+			.getMutationCache()
+			.build(queryClient, replaceGuidebookOptions(queryClient, RUN_PARTY.id))
+		return mutation
+			.execute({ partyId: RUN_PARTY.id, shortcode: MOCK_SHORTCODE, entries })
+			.catch(() => undefined)
+	}
+
+	const flush = () => new Promise((resolve) => setTimeout(resolve, 0))
+	const listA = guidebook.slice(0, 1)
+	const listB = guidebook.slice(0, 2)
+	const responseFor = (list: typeof guidebook): Party => ({
+		...RUN_PARTY,
+		solomonis: { ...EXPECTED.runSolomonis, guidebook: list }
+	})
+
+	it('is scoped to the party', () => {
+		expect(replaceGuidebookOptions(queryClient, RUN_PARTY.id).scope).toEqual({
+			id: `solomonis-guidebook-${RUN_PARTY.id}`
+		})
+	})
+
+	it('sends the next list only after the previous save settles', async () => {
+		const first = deferred<Party>()
+		const second = deferred<Party>()
+		vi.mocked(solomonisGuidebookAdapter.replaceGuidebook)
+			.mockReturnValueOnce(first.promise)
+			.mockReturnValueOnce(second.promise)
+
+		const a = run(listA)
+		const b = run(listB)
+		await flush()
+		expect(solomonisGuidebookAdapter.replaceGuidebook).toHaveBeenCalledTimes(1)
+		expect(cachedGuidebook()).toEqual(listB)
+
+		// The earlier response doesn't replace the newer, queued list
+		first.resolve(responseFor(listA))
+		await flush()
+		expect(solomonisGuidebookAdapter.replaceGuidebook).toHaveBeenCalledTimes(2)
+		expect(cachedGuidebook()).toEqual(listB)
+
+		second.resolve(responseFor(listB))
+		await Promise.all([a, b])
+		expect(cachedGuidebook()).toEqual(listB)
+	})
+
+	it("keeps a later save's list when an earlier save fails", async () => {
+		const first = deferred<Party>()
+		const second = deferred<Party>()
+		vi.mocked(solomonisGuidebookAdapter.replaceGuidebook)
+			.mockReturnValueOnce(first.promise)
+			.mockReturnValueOnce(second.promise)
+
+		const a = run(listA)
+		const b = run(listB)
+		await flush()
+
+		first.reject(new Error('fail'))
+		await flush()
+		expect(cachedGuidebook()).toEqual(listB)
+
+		second.resolve(responseFor(listB))
+		await Promise.all([a, b])
+		expect(cachedGuidebook()).toEqual(listB)
+	})
+
+	it('rolls back and refetches when the last save fails', async () => {
+		const spy = vi.spyOn(queryClient, 'invalidateQueries')
+		const first = deferred<Party>()
+		const second = deferred<Party>()
+		vi.mocked(solomonisGuidebookAdapter.replaceGuidebook)
+			.mockReturnValueOnce(first.promise)
+			.mockReturnValueOnce(second.promise)
+
+		const a = run(listA)
+		const b = run(listB)
+		await flush()
+
+		first.reject(new Error('fail'))
+		await flush()
+		second.reject(new Error('fail'))
+		await Promise.all([a, b])
+
+		// Back to the list before the last save; the refetch settles the rest
+		expect(cachedGuidebook()).toEqual(listA)
+		expect(spy).toHaveBeenCalledTimes(1)
+		expect(spy.mock.calls[0]![0]!.queryKey).toEqual(partyKeys.detail(MOCK_SHORTCODE))
 	})
 })

@@ -55,24 +55,27 @@
 	const showPickupOrder = $derived(canShowPickupOrder && orderMode === 'pickup')
 	const pickupOrdered = $derived(sortByAcquiredOrder(entries))
 
-	const replaceGuidebook = useReplaceGuidebook()
+	const replaceGuidebook = useReplaceGuidebook(() => party.id)
 
-	function save(next: GuidebookEntry[]) {
+	// Saves run one at a time (the mutation is scoped to the party). mutateAsync,
+	// not mutate's callbacks: those only fire for the latest call, so earlier
+	// saves would never count down or report their errors.
+	async function save(next: GuidebookEntry[]) {
 		if (next === entries) return
 		pendingEntries = next
 		inFlight += 1
-		replaceGuidebook.mutate(
-			{ partyId: party.id, shortcode: party.shortcode, entries: next },
-			{
-				onError: (err) => {
-					toast.error(extractErrorMessage(err, m.solomonis_web_guidebook_save_failed()))
-				},
-				onSettled: () => {
-					inFlight -= 1
-					if (inFlight === 0) pendingEntries = null
-				}
-			}
-		)
+		try {
+			await replaceGuidebook.mutateAsync({
+				partyId: party.id,
+				shortcode: party.shortcode,
+				entries: next
+			})
+		} catch (err) {
+			toast.error(extractErrorMessage(err, m.solomonis_web_guidebook_save_failed()))
+		} finally {
+			inFlight -= 1
+			if (inFlight === 0) pendingEntries = null
+		}
 	}
 
 	function handleAdd() {

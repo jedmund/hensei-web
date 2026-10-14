@@ -38,7 +38,7 @@
 
 	const mutations = {
 		expedition: useUpdateSolomonisExpedition(),
-		blessings: useUpdatePartyBlessings()
+		blessings: useUpdatePartyBlessings(() => party.id)
 	}
 
 	const expedition = $derived(isFullExpedition(party.solomonis) ? party.solomonis : null)

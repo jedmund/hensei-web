@@ -11,6 +11,7 @@ import { partyKeys } from '$lib/api/queries/party.queries'
 import type { Party } from '$lib/types/api/party'
 import type { SolomonisExpeditionInput } from '$lib/types/api/solomonis'
 import { getEditKey } from '$lib/utils/editKeys'
+import { hasQueuedSave, serialSaveKey, serialSaveScope } from './serialSaves'
 
 function editKeyHeaders(shortcode: string): Record<string, string> | undefined {
 	const editKey = getEditKey(shortcode)
@@ -58,18 +59,29 @@ export function updateExpeditionOptions(queryClient: QueryClient) {
 	}
 }
 
-export function updateBlessingsOptions(queryClient: QueryClient) {
+export function updateBlessingsOptions(queryClient: QueryClient, partyId?: string) {
 	return {
+		mutationKey: serialSaveKey('blessings'),
+		// Each save sends the whole loadout: run one party's saves in order.
+		scope: serialSaveScope('blessings', partyId),
 		mutationFn: (params: UpdateBlessingsParams) =>
 			solomonisAdapter.updateBlessings(
 				params.partyId,
 				params.blessingLevelIds,
 				editKeyHeaders(params.shortcode)
 			),
+		onMutate: async (params: UpdateBlessingsParams) => {
+			await queryClient.cancelQueries({ queryKey: partyKeys.detail(params.shortcode) })
+		},
 		onSuccess: (data: Party, params: UpdateBlessingsParams) => {
+			// A newer loadout is queued; its response follows.
+			if (hasQueuedSave(queryClient, 'blessings', params.partyId)) return
 			mergeParty(queryClient, params.shortcode, data)
 		},
 		onSettled: (_data: unknown, _err: unknown, params: UpdateBlessingsParams) => {
+			// Only after the last queued save, so a refetch can't land on top
+			// of a newer save's response with an older loadout.
+			if (hasQueuedSave(queryClient, 'blessings', params.partyId)) return
 			queryClient.invalidateQueries({ queryKey: partyKeys.detail(params.shortcode) })
 		}
 	}
@@ -80,7 +92,8 @@ export function useUpdateSolomonisExpedition() {
 	return createMutation(() => updateExpeditionOptions(queryClient))
 }
 
-export function useUpdatePartyBlessings() {
+/** `partyId` reads the edited party's id; it scopes the saves to that party. */
+export function useUpdatePartyBlessings(partyId: () => string | undefined) {
 	const queryClient = useQueryClient()
-	return createMutation(() => updateBlessingsOptions(queryClient))
+	return createMutation(() => updateBlessingsOptions(queryClient, partyId()))
 }

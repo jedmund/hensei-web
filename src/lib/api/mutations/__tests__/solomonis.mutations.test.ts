@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { updateBlessingsOptions, updateExpeditionOptions } from '../solomonis.mutations'
+import { solomonisAdapter } from '$lib/api/adapters/solomonis.adapter'
 import { createTestQueryClient, seedPartyCache, getCachedParty } from './helpers'
 import type { QueryClient } from '@tanstack/svelte-query'
 import type { Party } from '$lib/types/api/party'
@@ -70,5 +71,36 @@ describe('updateBlessingsOptions', () => {
 			blessingLevelIds: []
 		})
 		expect(getCachedParty(queryClient, RUN_PARTY.shortcode)?.id).toBe(RUN_PARTY.id)
+	})
+})
+
+describe('updateBlessingsOptions, saves in a row', () => {
+	it('is scoped to the party', () => {
+		expect(updateBlessingsOptions(queryClient, BUILD_PARTY.id).scope).toEqual({
+			id: `solomonis-blessings-${BUILD_PARTY.id}`
+		})
+	})
+
+	it('sends the next loadout after the previous one settles; the last response wins', async () => {
+		let resolveFirst!: (value: Party) => void
+		vi.mocked(solomonisAdapter.updateBlessings)
+			.mockReturnValueOnce(new Promise<Party>((resolve) => (resolveFirst = resolve)))
+			.mockResolvedValueOnce({ ...BUILD_PARTY, name: 'Second' })
+		const run = (blessingLevelIds: string[]) =>
+			queryClient
+				.getMutationCache()
+				.build(queryClient, updateBlessingsOptions(queryClient, BUILD_PARTY.id))
+				.execute({ partyId: BUILD_PARTY.id, shortcode: BUILD_PARTY.shortcode, blessingLevelIds })
+
+		const first = run(['a'])
+		const second = run(['a', 'b'])
+		await new Promise((resolve) => setTimeout(resolve, 0))
+		expect(solomonisAdapter.updateBlessings).toHaveBeenCalledTimes(1)
+
+		resolveFirst({ ...BUILD_PARTY, name: 'First' })
+		await Promise.all([first, second])
+
+		expect(solomonisAdapter.updateBlessings).toHaveBeenCalledTimes(2)
+		expect(getCachedParty(queryClient, BUILD_PARTY.shortcode)?.name).toBe('Second')
 	})
 })

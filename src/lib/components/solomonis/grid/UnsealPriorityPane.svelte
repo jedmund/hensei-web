@@ -64,7 +64,7 @@
 		PRIORITY_TYPES.every((type) => lists[type].ranked.length + lists[type].unranked.length === 0)
 	)
 
-	const mutation = useUpdateUnsealPriority()
+	const mutation = useUpdateUnsealPriority(() => partyStore.party?.id)
 
 	/** Ranked items first, then the unranked ones in grid order. */
 	const ordered = (type: SealItemType) => [...lists[type].ranked, ...lists[type].unranked]

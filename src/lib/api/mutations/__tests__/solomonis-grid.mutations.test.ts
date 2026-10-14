@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import type { QueryClient } from '@tanstack/svelte-query'
 import { updateUnsealPriorityOptions } from '../solomonis-grid.mutations'
+import { solomonisGridAdapter } from '$lib/api/adapters/solomonis-grid.adapter'
 import { createTestQueryClient } from './helpers'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import { transformResponse } from '$lib/api/schemas/transforms'
@@ -61,5 +62,37 @@ describe('updateUnsealPriorityOptions', () => {
 
 		expect(queryClient.getQueryData<Party>(key)!.name).toBe('Renamed')
 		expect(spy.mock.calls[0]![0]!.queryKey).toEqual(key)
+	})
+})
+
+describe('updateUnsealPriorityOptions, saves in a row', () => {
+	it('is scoped to the party', () => {
+		expect(updateUnsealPriorityOptions(queryClient, party.id).scope).toEqual({
+			id: `solomonis-unseal-priority-${party.id}`
+		})
+	})
+
+	it('leaves the cache to a queued save and refetches after the last', async () => {
+		const spy = vi.spyOn(queryClient, 'invalidateQueries')
+		let resolveFirst!: (value: Party) => void
+		vi.mocked(solomonisGridAdapter.updateUnsealPriority)
+			.mockReturnValueOnce(new Promise<Party>((resolve) => (resolveFirst = resolve)))
+			.mockResolvedValueOnce({ ...party, name: 'Second' })
+		const run = () =>
+			queryClient
+				.getMutationCache()
+				.build(queryClient, updateUnsealPriorityOptions(queryClient, party.id))
+				.execute(vars([]))
+
+		const first = run()
+		const second = run()
+		await new Promise((resolve) => setTimeout(resolve, 0))
+		expect(solomonisGridAdapter.updateUnsealPriority).toHaveBeenCalledTimes(1)
+
+		resolveFirst({ ...party, name: 'First' })
+		await Promise.all([first, second])
+
+		expect(queryClient.getQueryData<Party>(key)!.name).toBe('Second')
+		expect(spy).toHaveBeenCalledTimes(1)
 	})
 })

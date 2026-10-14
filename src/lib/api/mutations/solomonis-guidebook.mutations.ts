@@ -3,7 +3,8 @@
  *
  * Every guidebook edit replaces the run's whole list
  * (`PUT /parties/:id/guide_effects`). The list is written to the cached party
- * straight away, then replaced with the full party the API returns.
+ * straight away, then replaced with the full party the API returns. Saves for
+ * one party run one at a time (see `serialSaves`).
  *
  * @module api/mutations/solomonis-guidebook
  */
@@ -15,6 +16,7 @@ import { toGuidebookInput } from '$lib/components/solomonis/guidebook/guidebook'
 import type { Party } from '$lib/types/api/party'
 import type { GuidebookEntry, SolomonisExpedition } from '$lib/types/api/solomonis'
 import { getEditKey } from '$lib/utils/editKeys'
+import { hasQueuedSave, serialSaveKey, serialSaveScope } from './serialSaves'
 
 function editKeyHeaders(shortcode: string): Record<string, string> | undefined {
 	const editKey = getEditKey(shortcode)
@@ -42,14 +44,18 @@ interface ReplaceGuidebookContext {
 	previousParty?: Party
 }
 
-export function replaceGuidebookOptions(queryClient: QueryClient) {
+export function replaceGuidebookOptions(queryClient: QueryClient, partyId?: string) {
 	return {
+		mutationKey: serialSaveKey('guidebook'),
+		scope: serialSaveScope('guidebook', partyId),
 		mutationFn: (params: ReplaceGuidebookParams) =>
 			solomonisGuidebookAdapter.replaceGuidebook(
 				params.partyId,
 				toGuidebookInput(params.entries),
 				editKeyHeaders(params.shortcode)
 			),
+		// Runs as soon as the save is queued, so the snapshot may hold the
+		// optimistic list of a save still ahead of it.
 		onMutate: async (params: ReplaceGuidebookParams): Promise<ReplaceGuidebookContext> => {
 			const key = partyKeys.detail(params.shortcode)
 			await queryClient.cancelQueries({ queryKey: key })
@@ -65,6 +71,8 @@ export function replaceGuidebookOptions(queryClient: QueryClient) {
 			return { previousParty }
 		},
 		onSuccess: (party: Party, params: ReplaceGuidebookParams) => {
+			// A newer list is queued: keep its optimistic write, its response follows.
+			if (hasQueuedSave(queryClient, 'guidebook', params.partyId)) return
 			if (party) queryClient.setQueryData(partyKeys.detail(params.shortcode), party)
 		},
 		onError: (
@@ -72,14 +80,18 @@ export function replaceGuidebookOptions(queryClient: QueryClient) {
 			params: ReplaceGuidebookParams,
 			context: ReplaceGuidebookContext | undefined
 		) => {
-			if (context?.previousParty) {
-				queryClient.setQueryData(partyKeys.detail(params.shortcode), context.previousParty)
-			}
+			// The queued save carries a newer list and settles the cache itself.
+			if (hasQueuedSave(queryClient, 'guidebook', params.partyId)) return
+			const key = partyKeys.detail(params.shortcode)
+			if (context?.previousParty) queryClient.setQueryData(key, context.previousParty)
+			// The snapshot may be an earlier save's unconfirmed list: refetch.
+			queryClient.invalidateQueries({ queryKey: key })
 		}
 	}
 }
 
-export function useReplaceGuidebook() {
+/** `partyId` reads the edited party's id; it scopes the saves to that party. */
+export function useReplaceGuidebook(partyId: () => string | undefined) {
 	const queryClient = useQueryClient()
-	return createMutation(() => replaceGuidebookOptions(queryClient))
+	return createMutation(() => replaceGuidebookOptions(queryClient, partyId()))
 }

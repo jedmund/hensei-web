@@ -32,7 +32,7 @@
 	let { variant, type, item, seal }: Props = $props()
 
 	const ctx = usePartyContext()
-	const mutation = useUpdateUnsealPriority()
+	const mutation = useUpdateUnsealPriority(() => ctx.getParty().id)
 
 	const Item = $derived(variant === 'context' ? ContextMenu.Item : DropdownMenu.Item)
 	const Sub = $derived(variant === 'context' ? ContextMenu.Sub : DropdownMenu.Sub)
@@ -59,13 +59,12 @@
 		if (rank === seal.priority) return
 		const party = ctx.getParty()
 		const items = toPriorityPayload(setPriority(priorityLists(party), type, key, rank))
-		mutation.mutate(
-			{ partyId: party.id, partyShortcode: party.shortcode, items },
-			{
-				onError: (err) =>
-					toast.error(extractErrorMessage(err, m.solomonis_web_grid_priority_save_failed()))
-			}
-		)
+		// mutateAsync: mutate's callbacks only fire for the latest call
+		mutation
+			.mutateAsync({ partyId: party.id, partyShortcode: party.shortcode, items })
+			.catch((err) =>
+				toast.error(extractErrorMessage(err, m.solomonis_web_grid_priority_save_failed()))
+			)
 	}
 </script>
 

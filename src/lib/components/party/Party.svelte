@@ -231,7 +231,7 @@
 	const isSolomonis = $derived(isSolomonisParty(party))
 	const solomonisMutations = {
 		expedition: useUpdateSolomonisExpedition(),
-		blessings: useUpdatePartyBlessings()
+		blessings: useUpdatePartyBlessings(() => party.id)
 	}
 	let leaveSolomonisOpen = $state(false)
 	let pendingLeaveSolomonisRaidId = $state<string | null>(null)
