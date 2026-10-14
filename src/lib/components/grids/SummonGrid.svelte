@@ -22,7 +22,8 @@
 	const ctx = usePartyContext()
 	const dragContext = getDragDropContext()
 
-	// Evoking Solomonis has no support summon and ranks its sealed slots
+	// Evoking Solomonis has no support summon (its slot shows disabled) and
+	// ranks its sealed slots
 	let expedition = $derived(getExpedition(ctx?.getParty()))
 	let isSolomonis = $derived(!!expedition)
 
@@ -82,7 +83,7 @@
 </script>
 
 <div class="wrapper">
-	<div class="grid" class:solomonis={isSolomonis}>
+	<div class="grid">
 		<div class="LabeledUnit">
 			<SummonUnit
 				item={main}
@@ -145,23 +146,19 @@
 		</section>
 
 		<!-- Friend summon: in main grid on desktop, hidden on mobile -->
-		{#if !isSolomonis}
-			<div class="LabeledUnit friend-desktop">
-				<SummonUnit item={friend} position={6} />
-			</div>
-		{/if}
+		<div class="LabeledUnit friend-desktop">
+			<SummonUnit item={friend} position={6} disabled={isSolomonis} />
+		</div>
 	</div>
 
 	<!-- Bottom row: friend box (mobile only) + subaura box -->
 	<div class="bottom-row">
-		{#if !isSolomonis}
-			<div class="friend-mobile">
-				<h3>{m.summon_friend_label()}</h3>
-				<div class="friend-unit">
-					<SummonUnit item={friend} position={6} sizeOverride="grid" />
-				</div>
+		<div class="friend-mobile">
+			<h3>{m.summon_friend_label()}</h3>
+			<div class="friend-unit">
+				<SummonUnit item={friend} position={6} sizeOverride="grid" disabled={isSolomonis} />
 			</div>
-		{/if}
+		</div>
 		<ExtraSummons {summons} offset={4} {collectionStatus} />
 	</div>
 	{#if isSolomonis}
@@ -195,21 +192,6 @@
 
 		@media (max-width: 768px) {
 			grid-template-columns: 1.2fr 2fr;
-		}
-
-		// No support summon column on Solomonis parties. Narrow the grid by
-		// that column's share (1.17 of 4.34) so the other units keep their size.
-		&.solomonis {
-			grid-template-columns: 1.17fr 2fr;
-			width: 73%;
-			max-width: calc(#{$grid-width} * 0.73);
-
-			// Phones already hide the support column
-			@media (max-width: 768px) {
-				grid-template-columns: 1.2fr 2fr;
-				width: auto;
-				max-width: $grid-width;
-			}
 		}
 
 		.summons {

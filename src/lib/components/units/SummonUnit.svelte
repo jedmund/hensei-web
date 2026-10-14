@@ -45,6 +45,8 @@
 		notInCollection?: boolean
 		inCollection?: boolean
 		sizeOverride?: 'main' | 'grid' | undefined
+		/** Shows the slot greyed out and closed to edits (the support summon in Evoking Solomonis) */
+		disabled?: boolean
 	}
 
 	let {
@@ -52,7 +54,8 @@
 		position,
 		notInCollection = false,
 		inCollection = false,
-		sizeOverride = undefined
+		sizeOverride = undefined,
+		disabled = false
 	}: Props = $props()
 
 	const ctx = usePartyContext()
@@ -71,6 +74,9 @@
 		if (!item || !seal || !ctx) return
 		void writeSealState(ctx, 'summon', item, nextSealState(seal.state))
 	}
+
+	// A disabled slot can't be picked or edited
+	let canEditSlot = $derived(!disabled && !!ctx?.canEdit())
 
 	// Use position (not data flags) to determine sizing — position is authoritative
 	let isMainSized = $derived(
@@ -339,17 +345,18 @@
 				class:main={isMainSized && position === -1}
 				class:friend={isMainSized && position === 6}
 				class:cell={!isMainSized}
-				class:editable={ctx?.canEdit()}
+				class:editable={canEditSlot}
+				class:disabled
 				class:is-selected={isSelected}
 				role="button"
-				tabindex="0"
+				tabindex={disabled ? -1 : 0}
+				aria-disabled={disabled}
 				onclick={() =>
-					ctx?.canEdit() && ctx?.openPicker && ctx.openPicker({ type: 'summon', position, item })}
+					canEditSlot && ctx?.openPicker && ctx.openPicker({ type: 'summon', position, item })}
 				onkeydown={(e) => {
 					if (e.key === 'Enter' || e.key === ' ') {
 						e.preventDefault()
-						if (ctx?.canEdit() && ctx?.openPicker)
-							ctx.openPicker({ type: 'summon', position, item })
+						if (canEditSlot && ctx?.openPicker) ctx.openPicker({ type: 'summon', position, item })
 					}
 				}}
 			>
@@ -361,7 +368,7 @@
 				{#if seal}
 					<SealOverlay {seal} filled={false} />
 				{/if}
-				{#if ctx?.canEdit()}
+				{#if canEditSlot}
 					<span class="icon">
 						<Icon name="plus" size={24} />
 					</span>
@@ -497,6 +504,11 @@
 		&.editable:hover {
 			opacity: 0.95;
 			box-shadow: var(--shadow-sm);
+		}
+
+		&.disabled {
+			opacity: 0.4;
+			cursor: default;
 		}
 
 		// Slot selection - subtle dark pulsing glow (works for both empty and filled)
