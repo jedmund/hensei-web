@@ -44,10 +44,13 @@
 			return groupSection === selectedSection
 		})
 
-		// Sort by difficulty
+		// Sort by difficulty, then display order. Solo content mostly has no
+		// difficulty, so it follows the display order (newest content highest)
+		const bySolo = selectedSection === RaidSection.Solo
 		groups = [...groups].sort((a, b) => {
-			const diff = a.difficulty - b.difficulty
-			return sortAscending ? diff : -diff
+			const diff = bySolo ? 0 : a.difficulty - b.difficulty
+			const result = diff !== 0 ? diff : a.order - b.order
+			return sortAscending ? result : -result
 		})
 
 		return groups
