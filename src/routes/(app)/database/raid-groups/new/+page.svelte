@@ -31,7 +31,8 @@
 		hl: false,
 		extra: false,
 		guidebooks: false,
-		unlimited: false
+		unlimited: false,
+		supportSummon: true
 	})
 
 	// Validation
@@ -54,7 +55,8 @@
 				hl: editData.hl,
 				extra: editData.extra,
 				guidebooks: editData.guidebooks,
-				unlimited: editData.unlimited
+				unlimited: editData.unlimited,
+				support_summon: editData.supportSummon
 			})
 
 			// Invalidate queries
@@ -132,6 +134,12 @@
 			<DetailItem
 				label="Unlimited"
 				bind:value={editData.unlimited}
+				editable={true}
+				type="checkbox"
+			/>
+			<DetailItem
+				label="Support summon"
+				bind:value={editData.supportSummon}
 				editable={true}
 				type="checkbox"
 			/>

@@ -50,6 +50,10 @@ export function filterItemsToParams(filterItems: FilterItem[]): ExploreFilterPar
 		.map((f) => f.value)
 	if (difficulties.length > 0) params.difficulty = difficulties.join(',')
 
+	// Evoking Solomonis route Evoker (single)
+	const evoker = filterItems.find((f) => f.kind === 'evoker')
+	if (evoker) params.routeEvoker = evoker.value as string
+
 	// Entity includes/excludes — API expects comma-separated granblue_id values
 	const entities = filterItems.filter(
 		(f): f is FilterItem & { kind: 'entity' } => f.kind === 'entity'

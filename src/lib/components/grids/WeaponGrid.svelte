@@ -32,9 +32,14 @@
 	import ExtraContainer from '$lib/components/extra/ExtraContainer.svelte'
 	import ExtraWeapons from '$lib/components/extra/ExtraWeaponsGrid.svelte'
 	import Guidebooks from '$lib/components/extra/GuidebooksGrid.svelte'
+	import SealControls from '$lib/components/solomonis/grid/SealControls.svelte'
+	import { getExpedition } from '$lib/components/solomonis/grid/seal'
 
 	const ctx = usePartyContext()
 	const dragContext = getDragDropContext()
+
+	// Evoking Solomonis parties rank their sealed slots in a pane
+	let isSolomonis = $derived(!!getExpedition(ctx?.getParty()))
 
 	let mainhand = $derived(
 		weapons.find((w) => (w as unknown as Record<string, unknown>).mainhand || w.position === -1)
@@ -170,6 +175,9 @@
 				/>
 			{/if}
 		</ExtraContainer>
+	{/if}
+	{#if isSolomonis}
+		<SealControls canEdit={ctx?.canEdit() ?? false} />
 	{/if}
 </div>
 

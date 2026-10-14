@@ -5,6 +5,7 @@
 
 import type { Party } from '$lib/types/api/party'
 import { GridType } from '$lib/types/enums'
+import { SOLOMONIS_CHARACTER_LIMIT, getExpedition } from '$lib/components/solomonis/grid/seal'
 
 /** Sentinel value indicating no empty slot was found */
 export const SLOT_NOT_FOUND = -999
@@ -38,8 +39,27 @@ const GRID_CONFIGS: Record<GridType, SlotRange> = {
  * }
  * ```
  */
-export function findNextEmptySlot(party: Party, gridType: GridType, skipSlot?: number): number {
+/**
+ * Arcarum content takes no support summon: Evoking Solomonis, and any raid
+ * group flagged `supportSummon: false` (SummonGrid disables that slot by the
+ * same rule). Solomonis parties also hold at most the route Evoker plus 4
+ * recruits.
+ */
+function slotRangeFor(party: Party, gridType: GridType): SlotRange {
 	const config = GRID_CONFIGS[gridType]
+	const expedition = getExpedition(party)
+	if (gridType === GridType.Summon) {
+		const noSupportSummon = !!expedition || party.raid?.group?.supportSummon === false
+		return noSupportSummon ? { ...config, trailingSlots: [] } : config
+	}
+	if (expedition && gridType === GridType.Character) {
+		return { ...config, end: Math.min(config.end, SOLOMONIS_CHARACTER_LIMIT - 1) }
+	}
+	return config
+}
+
+export function findNextEmptySlot(party: Party, gridType: GridType, skipSlot?: number): number {
+	const config = slotRangeFor(party, gridType)
 	const collection = getCollectionForType(party, gridType)
 
 	// Check special slots first (e.g., mainhand, main summon)

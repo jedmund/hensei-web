@@ -12,6 +12,8 @@ import { toast } from 'svelte-sonner'
 import { extractErrorMessage } from '$lib/utils/errors'
 import FavoriteToast from '$lib/components/ui/FavoriteToast.svelte'
 import * as m from '$lib/paraglide/messages'
+import { isFullExpedition, solomonisName } from '$lib/components/solomonis/party/solomonisParty'
+import { appLocale } from '$lib/utils/locale'
 
 type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -24,6 +26,12 @@ interface PartyActionsOptions {
 	getUserElement: () => ElementType | undefined
 	getHasCollectionLinks: () => boolean
 	onDetailsUpdated?: () => void
+	/**
+	 * Called when the settings pane picks a different raid. Return true to
+	 * take over the raid change (e.g. Evoking Solomonis opens its route
+	 * picker or a confirm); the other settings are still saved.
+	 */
+	handleRaidChange?: (raid: PartyEditValues['raid']) => boolean
 }
 
 export function usePartyActions(opts: PartyActionsOptions) {
@@ -232,13 +240,35 @@ export function usePartyActions(opts: PartyActionsOptions) {
 			raidId: party.raid?.id ?? null
 		}
 
+		const expedition = isFullExpedition(party.solomonis) ? party.solomonis : null
+		const locale = appLocale()
+
 		openPartyEditSidebar({
 			initialValues,
 			element: opts.getUserElement(),
+			solomonisDetails: expedition
+				? {
+						label: m.solomonis_web_party_title(),
+						// The zone already shows in the Raid row above
+						summary: [
+							solomonisName(expedition.routeEvoker.name, locale),
+							expedition.pledgeLevel > 0
+								? m.solomonis_web_party_pledge_short({ level: expedition.pledgeLevel })
+								: null
+						]
+							.filter(Boolean)
+							.join(' · '),
+						getParty: opts.getParty,
+						canEdit: true
+					}
+				: undefined,
 			onDescriptionSave: async (content) => {
 				await updatePartyDetails({ description: content })
 			},
 			onSave: async (values) => {
+				const raidHandled =
+					values.raidId !== initialValues.raidId && (opts.handleRaidChange?.(values.raid) ?? false)
+
 				await updatePartyDetails({
 					name: values.name,
 					description: values.description ?? undefined,
@@ -253,7 +283,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 					chainCount: values.chainCount,
 					summonCount: values.summonCount,
 					videoUrl: values.videoUrl,
-					raidId: values.raidId
+					...(raidHandled ? {} : { raidId: values.raidId })
 				})
 
 				// Handle crew share toggle

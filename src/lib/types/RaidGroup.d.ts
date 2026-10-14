@@ -13,4 +13,5 @@ export interface RaidGroup {
 	guidebooks: boolean
 	hl: boolean
 	unlimited: boolean
+	supportSummon?: boolean
 }

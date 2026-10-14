@@ -30,6 +30,15 @@
 	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 	import quickSummonFilled from '$src/assets/icons/quick-summon/filled.svg'
 	import quickSummonEmpty from '$src/assets/icons/quick-summon/empty.svg'
+	import SealOverlay from '$lib/components/solomonis/grid/SealOverlay.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
+	import SealMenuItems from '$lib/components/solomonis/grid/SealMenuItems.svelte'
+	import { nextSealState, writeSealState } from '$lib/components/solomonis/grid/sealActions'
+	import {
+		FRIEND_SUMMON_POSITION,
+		getExpedition,
+		slotSeal
+	} from '$lib/components/solomonis/grid/seal'
 
 	interface Props {
 		item?: GridSummon | undefined
@@ -37,6 +46,10 @@
 		notInCollection?: boolean
 		inCollection?: boolean
 		sizeOverride?: 'main' | 'grid' | undefined
+		/** Shows the slot greyed out and closed to edits (the support summon in Arcarum) */
+		disabled?: boolean
+		/** Explains a disabled slot on hover */
+		disabledTooltip?: string | undefined
 	}
 
 	let {
@@ -44,10 +57,30 @@
 		position,
 		notInCollection = false,
 		inCollection = false,
-		sizeOverride = undefined
+		sizeOverride = undefined,
+		disabled = false,
+		disabledTooltip = undefined
 	}: Props = $props()
 
 	const ctx = usePartyContext()
+
+	// Evoking Solomonis: seal state (no support summon in the mode)
+	let seal = $derived.by(() => {
+		const expedition = getExpedition(ctx?.getParty())
+		if (!expedition || position === FRIEND_SUMMON_POSITION) return null
+		return slotSeal(expedition, 'summon', position, item)
+	})
+
+	// Editors mark a non-starting item sealed or unsealed from the lock or the menu
+	let canToggleSeal = $derived(!!item && !!seal?.editable && !!ctx?.canEdit())
+
+	function toggleSeal() {
+		if (!item || !seal || !ctx) return
+		void writeSealState(ctx, 'summon', item, nextSealState(seal.state))
+	}
+
+	// A disabled slot can't be picked or edited
+	let canEditSlot = $derived(!disabled && !!ctx?.canEdit())
 
 	// Use position (not data flags) to determine sizing — position is authoritative
 	let isMainSized = $derived(
@@ -238,6 +271,13 @@
 								alt={localizedName(item?.summon?.name)}
 								src={imageUrl}
 							/>
+							{#if seal}
+								<SealOverlay
+									{seal}
+									filled={true}
+									onToggle={canToggleSeal ? toggleSeal : undefined}
+								/>
+							{/if}
 						</div>
 					{/key}
 					{#if inCollection}
@@ -293,27 +333,43 @@
 					replaceLabel={m.context_replace({ type: m.type_summon() })}
 					duplicateLabel={m.context_duplicate({ type: m.type_summon() })}
 					removeLabel={m.context_remove()}
+					editExtras={canToggleSeal ? sealMenuItems : undefined}
 				/>
+				{#snippet sealMenuItems()}
+					{#if item && seal}
+						<SealMenuItems {variant} type="summon" {item} {seal} />
+					{/if}
+				{/snippet}
 			{/snippet}
 		</UnitMenuContainer>
 	{:else}
 		{#key `empty-${position}`}
+			{#if disabled && disabledTooltip}
+				<Tooltip content={disabledTooltip} class="disabled-trigger">
+					{@render emptyFrame()}
+				</Tooltip>
+			{:else}
+				{@render emptyFrame()}
+			{/if}
+		{/key}
+		{#snippet emptyFrame()}
 			<div
 				class="frame summon"
 				class:main={isMainSized && position === -1}
 				class:friend={isMainSized && position === 6}
 				class:cell={!isMainSized}
-				class:editable={ctx?.canEdit()}
+				class:editable={canEditSlot}
+				class:disabled
 				class:is-selected={isSelected}
 				role="button"
-				tabindex="0"
+				tabindex={disabled ? -1 : 0}
+				aria-disabled={disabled}
 				onclick={() =>
-					ctx?.canEdit() && ctx?.openPicker && ctx.openPicker({ type: 'summon', position, item })}
+					canEditSlot && ctx?.openPicker && ctx.openPicker({ type: 'summon', position, item })}
 				onkeydown={(e) => {
 					if (e.key === 'Enter' || e.key === ' ') {
 						e.preventDefault()
-						if (ctx?.canEdit() && ctx?.openPicker)
-							ctx.openPicker({ type: 'summon', position, item })
+						if (canEditSlot && ctx?.openPicker) ctx.openPicker({ type: 'summon', position, item })
 					}
 				}}
 			>
@@ -322,13 +378,16 @@
 					alt=""
 					src={getPlaceholderImage('summon', position === -1 || position === 6 ? 'main' : 'grid')}
 				/>
-				{#if ctx?.canEdit()}
+				{#if seal}
+					<SealOverlay {seal} filled={false} />
+				{/if}
+				{#if canEditSlot}
 					<span class="icon">
 						<Icon name="plus" size={24} />
 					</span>
 				{/if}
 			</div>
-		{/key}
+		{/snippet}
 	{/if}
 	{#if item}
 		<UncapIndicator
@@ -458,6 +517,11 @@
 		&.editable:hover {
 			opacity: 0.95;
 			box-shadow: var(--shadow-sm);
+		}
+
+		&.disabled {
+			opacity: 0.4;
+			cursor: default;
 		}
 
 		// Slot selection - subtle dark pulsing glow (works for both empty and filled)
@@ -645,4 +709,10 @@
 	}
 
 	@include unit.unit-shared-styles;
+
+	// The tooltip's trigger wraps the disabled slot; keep it the slot's width
+	:global(.disabled-trigger) {
+		display: block;
+		width: 100%;
+	}
 </style>

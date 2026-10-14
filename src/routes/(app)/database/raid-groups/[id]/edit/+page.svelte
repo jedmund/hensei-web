@@ -45,7 +45,8 @@
 		hl: false,
 		extra: false,
 		guidebooks: false,
-		unlimited: false
+		unlimited: false,
+		supportSummon: true
 	})
 
 	// Sync edit data when group changes
@@ -60,7 +61,8 @@
 				hl: group.hl ?? false,
 				extra: group.extra ?? false,
 				guidebooks: group.guidebooks ?? false,
-				unlimited: group.unlimited ?? false
+				unlimited: group.unlimited ?? false,
+				supportSummon: group.supportSummon ?? true
 			}
 		}
 	})
@@ -85,7 +87,8 @@
 				hl: editData.hl,
 				extra: editData.extra,
 				guidebooks: editData.guidebooks,
-				unlimited: editData.unlimited
+				unlimited: editData.unlimited,
+				support_summon: editData.supportSummon
 			})
 
 			// Invalidate queries
@@ -168,6 +171,12 @@
 				<DetailItem
 					label="Unlimited"
 					bind:value={editData.unlimited}
+					editable={true}
+					type="checkbox"
+				/>
+				<DetailItem
+					label="Support summon"
+					bind:value={editData.supportSummon}
 					editable={true}
 					type="checkbox"
 				/>

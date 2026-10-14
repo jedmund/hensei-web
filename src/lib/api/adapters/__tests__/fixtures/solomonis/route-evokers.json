@@ -1,0 +1,89 @@
+{
+	"route_evokers": [
+		{
+			"id": "40fc6669-e44e-5827-ba3f-2ac368e9048d",
+			"granblue_id": "3040160000",
+			"name": {
+				"en": "Maria Theresa",
+				"ja": "マリア・テレサ"
+			},
+			"element": 3,
+			"zone": {
+				"id": "bf7cd555-ac37-569c-91f4-f9836d04f695",
+				"slug": "allotropic-microcosm",
+				"name": {
+					"en": "Allotropic Microcosm",
+					"ja": null
+				}
+			}
+		},
+		{
+			"id": "100f6369-4135-5429-a7af-4d9680e64c55",
+			"granblue_id": "3040164000",
+			"name": {
+				"en": "Caim",
+				"ja": "カイム"
+			},
+			"element": 4,
+			"zone": {
+				"id": "bf7cd555-ac37-569c-91f4-f9836d04f695",
+				"slug": "allotropic-microcosm",
+				"name": {
+					"en": "Allotropic Microcosm",
+					"ja": null
+				}
+			}
+		},
+		{
+			"id": "c816c582-b04a-5173-982b-fa833919f4e6",
+			"granblue_id": "3040169000",
+			"name": {
+				"en": "Nier",
+				"ja": "ニーア"
+			},
+			"element": 5,
+			"zone": {
+				"id": "bf7cd555-ac37-569c-91f4-f9836d04f695",
+				"slug": "allotropic-microcosm",
+				"name": {
+					"en": "Allotropic Microcosm",
+					"ja": null
+				}
+			}
+		},
+		{
+			"id": "bfb08d77-c346-50e7-9b2d-5da2cc89d72a",
+			"granblue_id": "3040163000",
+			"name": {
+				"en": "Estarriola",
+				"ja": "エスタリオラ"
+			},
+			"element": 1,
+			"zone": {
+				"id": "bf7cd555-ac37-569c-91f4-f9836d04f695",
+				"slug": "allotropic-microcosm",
+				"name": {
+					"en": "Allotropic Microcosm",
+					"ja": null
+				}
+			}
+		},
+		{
+			"id": "128fb62e-dcb6-50fc-a541-bc1ee5188b9e",
+			"granblue_id": "3040161000",
+			"name": {
+				"en": "Fraux",
+				"ja": "フラウ"
+			},
+			"element": 2,
+			"zone": {
+				"id": "bf7cd555-ac37-569c-91f4-f9836d04f695",
+				"slug": "allotropic-microcosm",
+				"name": {
+					"en": "Allotropic Microcosm",
+					"ja": null
+				}
+			}
+		}
+	]
+}

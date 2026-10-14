@@ -98,6 +98,8 @@ export function buildFilterQuery(filters: ExploreFilterParams): Partial<ExploreF
 	if (filters.boostMod) query.boostMod = filters.boostMod
 	if (filters.boostSide) query.boostSide = filters.boostSide
 
+	if (filters.routeEvoker) query.routeEvoker = filters.routeEvoker
+
 	return query as Partial<ExploreFilterParams>
 }
 

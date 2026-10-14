@@ -43,6 +43,8 @@
 		element?: ElementName
 		/** Whether the user is authenticated (controls collection filter visibility) */
 		isAuthenticated?: boolean
+		/** Evoking Solomonis route Evokers to offer as filters (granblue_id + name) */
+		evokerOptions?: { value: string; label: string }[]
 	}
 
 	let {
@@ -51,6 +53,7 @@
 		excludedKinds = [],
 		contained = false,
 		allRaids = [],
+		evokerOptions = [],
 		collectionFilterActive = $bindable(false),
 		onCollectionFilterChange,
 		onAdvancedFiltersOpen,
@@ -113,8 +116,21 @@
 		raid: m.filter_cat_raid(),
 		boost: m.filter_cat_boost(),
 		side: m.filter_cat_side(),
-		difficulty: m.filter_cat_difficulty()
+		difficulty: m.filter_cat_difficulty(),
+		evoker: m.filter_cat_evoker()
 	})
+
+	// Evoking Solomonis route Evokers not already filtered by
+	const evokerSuggestions = $derived<FilterOption[]>(
+		evokerOptions
+			.filter((e) => !filters.some((f) => f.kind === 'evoker' && f.value === e.value))
+			.map((e) => ({
+				kind: 'evoker',
+				value: e.value,
+				label: e.label,
+				category: categoryLabels.evoker
+			}))
+	)
 
 	// Suggestion pools per category
 	const elementSuggestions = $derived<FilterOption[]>(
@@ -137,6 +153,10 @@
 
 	async function refreshSuggestions() {
 		const picks: PlaceholderSuggestion[] = []
+
+		for (const evoker of evokerSuggestions) {
+			picks.push({ label: evoker.label, category: categoryLabels.evoker, option: evoker })
+		}
 
 		if (!excludedKinds.includes('element')) {
 			const el = pickRandom(elementSuggestions)
@@ -307,7 +327,10 @@
 				}
 			})
 
-		return rankResults([...local, ...apiResults], inputValue.trim().toLowerCase())
+		const query = inputValue.trim().toLowerCase()
+		const evokers = evokerSuggestions.filter((e) => e.label.toLowerCase().includes(query))
+
+		return rankResults([...evokers, ...local, ...apiResults], query)
 	})
 
 	// Reset selected index when results change
@@ -342,7 +365,7 @@
 	}
 
 	// Single-select kinds replace existing filter of the same kind
-	const singleSelectKinds = new Set(['recency', 'boost', 'side'])
+	const singleSelectKinds = new Set(['recency', 'boost', 'side', 'evoker'])
 
 	function selectOption(option: FilterOption) {
 		if (isAlreadySelected(option)) return

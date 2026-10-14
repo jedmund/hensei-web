@@ -1,0 +1,140 @@
+{
+	"status": 201,
+	"body": {
+		"party": {
+			"id": "b56a4c8d-85c2-4a23-b955-6f949fd1e02b",
+			"local_id": null,
+			"description": null,
+			"shortcode": "dOUH8t",
+			"visibility": 1,
+			"name": "Nier build",
+			"element": 5,
+			"extra": false,
+			"charge_attack": true,
+			"button_count": null,
+			"turn_count": null,
+			"chain_count": null,
+			"summon_count": null,
+			"clear_time": 0,
+			"full_auto": false,
+			"auto_guard": false,
+			"auto_summon": false,
+			"solo": false,
+			"video_url": null,
+			"collection_source_user_id": null,
+			"created_at": "2026-10-12T23:10:36.959Z",
+			"updated_at": "2026-10-12T23:10:36.959Z",
+			"last_updated": "2026-10-12T23:10:36.950Z",
+			"master_level": null,
+			"ultimate_mastery": null,
+			"user": {
+				"id": "9b02458f-3bfb-40aa-8230-967792cc416a",
+				"username": "fixture_user",
+				"display_name": null,
+				"description": null,
+				"language": "en",
+				"private": false,
+				"gender": 0,
+				"theme": "dark",
+				"role": 2,
+				"granblue_id": 5789,
+				"show_gamertag": true,
+				"wiki_profile": null,
+				"youtube": null,
+				"simple_portraits": false,
+				"default_rep_view": "weapons",
+				"timezone": null,
+				"support_summons_public": true,
+				"collection_privacy": 1,
+				"avatar": {
+					"picture": "gran",
+					"element": "fire"
+				}
+			},
+			"job": null,
+			"raid": {
+				"id": "463a5fc8-753a-4f57-9460-28e6fa1ea67a",
+				"name": {
+					"en": "Allotropic Microcosm",
+					"ja": null
+				},
+				"slug": "allotropic-microcosm",
+				"level": null,
+				"element": 0,
+				"player_count": 1,
+				"enemy_id": null,
+				"summon_id": null,
+				"quest_id": null,
+				"extra": false,
+				"group": {
+					"id": "134747f1-2f83-4e66-a463-f318df72a2b9",
+					"name": {
+						"en": "Evoking Solomonis",
+						"ja": "テストレイドグループ1"
+					},
+					"difficulty": 0,
+					"order": 1,
+					"section": 3,
+					"extra": false,
+					"guidebooks": false,
+					"hl": true,
+					"unlimited": false,
+					"content_mode": "solomonis"
+				}
+			},
+			"boost": {
+				"mod": null,
+				"side": null
+			},
+			"difficulty": null,
+			"characters": [],
+			"weapons": [],
+			"summons": [],
+			"remixes": [],
+			"job_skills": {
+				"0": null,
+				"1": null,
+				"2": null,
+				"3": null
+			},
+			"full_auto_skills": {},
+			"guidebooks": {
+				"1": null,
+				"2": null,
+				"3": null
+			},
+			"favorited": false,
+			"has_orphaned_items": false,
+			"solomonis": {
+				"pledge_level": 0,
+				"outcome": null,
+				"game_report_id": null,
+				"ended_at": null,
+				"stats": {},
+				"route_evoker": {
+					"id": "33cbd7fb-e3f3-4889-ae5c-a57127429d65",
+					"granblue_id": "3040169000",
+					"element": 5,
+					"name": {
+						"en": "Nier",
+						"ja": "ニーア"
+					}
+				},
+				"zone": {
+					"id": "463a5fc8-753a-4f57-9460-28e6fa1ea67a",
+					"slug": "allotropic-microcosm",
+					"name": {
+						"en": "Allotropic Microcosm",
+						"ja": null
+					}
+				},
+				"blessing_cost_limit": 100,
+				"blessing_cost_total": 0,
+				"blessings": [],
+				"guidebook": []
+			},
+			"shares": [],
+			"edit_key": null
+		}
+	}
+}

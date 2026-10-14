@@ -1,0 +1,450 @@
+{
+	"cost_limit": 100,
+	"blessings": [
+		{
+			"id": "43e4bc59-4585-512a-b9eb-ae83eb6109b8",
+			"slug": "justice",
+			"arcana_number": 11,
+			"name": {
+				"en": "Justice",
+				"ja": null
+			},
+			"released": true,
+			"levels": [
+				{
+					"id": "f174b047-e38c-51cc-accc-6d16b235a466",
+					"level": 1,
+					"description": {
+						"en": "Unseal 1 weapon",
+						"ja": null
+					},
+					"cost": 70,
+					"scintillas": 6000
+				},
+				{
+					"id": "3a90872c-9e08-5330-98c9-7c9f944d0760",
+					"level": 2,
+					"description": {
+						"en": "Unseal 1 weapon",
+						"ja": null
+					},
+					"cost": 60,
+					"scintillas": 49000
+				},
+				{
+					"id": "4bffc53c-442a-5299-b049-2988981e8ff3",
+					"level": 3,
+					"description": {
+						"en": "Unseal 1 weapon",
+						"ja": null
+					},
+					"cost": 50,
+					"scintillas": 135100
+				}
+			]
+		},
+		{
+			"id": "8252887d-9a65-5858-ae9f-1456f63e43bb",
+			"slug": "hanged_man",
+			"arcana_number": 12,
+			"name": {
+				"en": "The Hanged Man",
+				"ja": null
+			},
+			"released": true,
+			"levels": [
+				{
+					"id": "5fb89eb7-29dd-5d9b-9654-fb6a9092feb7",
+					"level": 1,
+					"description": {
+						"en": "Bring 1 character of your choice",
+						"ja": null
+					},
+					"cost": 100,
+					"scintillas": 9000
+				},
+				{
+					"id": "a888cc79-91db-5163-893a-cf1188cb3d38",
+					"level": 2,
+					"description": {
+						"en": "Bring 1 character of your choice",
+						"ja": null
+					},
+					"cost": 90,
+					"scintillas": 23000
+				},
+				{
+					"id": "a30e8f4b-b223-5419-84fc-242718650d04",
+					"level": 3,
+					"description": {
+						"en": "Bring 1 character of your choice",
+						"ja": null
+					},
+					"cost": 80,
+					"scintillas": 44000
+				},
+				{
+					"id": "1365190a-5560-5e51-951f-ddd8bb5f0db1",
+					"level": 4,
+					"description": {
+						"en": "Bring 1 character of your choice",
+						"ja": null
+					},
+					"cost": 70,
+					"scintillas": 65000
+				},
+				{
+					"id": "8796faaf-ac1f-5536-875a-6609326a74d5",
+					"level": 5,
+					"description": {
+						"en": "Bring 1 character of your choice",
+						"ja": null
+					},
+					"cost": 60,
+					"scintillas": 86000
+				}
+			]
+		},
+		{
+			"id": "ff71c426-957b-51eb-825b-fa9a82d2d83a",
+			"slug": "death",
+			"arcana_number": 13,
+			"name": {
+				"en": "Death",
+				"ja": null
+			},
+			"released": true,
+			"levels": [
+				{
+					"id": "823c5373-5093-5eee-9bce-d712b3db0c18",
+					"level": 1,
+					"description": {
+						"en": "Set foes' HP to 1 when entering a battle space (1 time)",
+						"ja": null
+					},
+					"cost": 50,
+					"scintillas": 1000
+				},
+				{
+					"id": "bf8f5f0d-8c3b-5d0c-9832-942690ee02e9",
+					"level": 2,
+					"description": {
+						"en": "Set foes' HP to 1 when entering a battle space (1 time)",
+						"ja": null
+					},
+					"cost": 45,
+					"scintillas": 2500
+				},
+				{
+					"id": "278a726d-c1a9-5df1-ac6c-211522ebbe0d",
+					"level": 3,
+					"description": {
+						"en": "Set foes' HP to 1 when entering a battle space (1 time)",
+						"ja": null
+					},
+					"cost": 40,
+					"scintillas": 4000
+				},
+				{
+					"id": "77205e7e-545b-5e23-b299-fbaf0315843b",
+					"level": 4,
+					"description": {
+						"en": "Set foes' HP to 1 when entering a battle space (2 times)",
+						"ja": null
+					},
+					"cost": 40,
+					"scintillas": 10000
+				},
+				{
+					"id": "89b65c06-3fcf-503e-be0c-3f6adfe4b0e9",
+					"level": 5,
+					"description": {
+						"en": "Set foes' HP to 1 when entering a battle space (2 times)",
+						"ja": null
+					},
+					"cost": 35,
+					"scintillas": 16000
+				},
+				{
+					"id": "68b9142b-29a9-548e-b9d5-e88466d181b8",
+					"level": 6,
+					"description": {
+						"en": "Set foes' HP to 1 when entering a battle space (2 times)",
+						"ja": null
+					},
+					"cost": 30,
+					"scintillas": 22000
+				},
+				{
+					"id": "3abb3ed4-88a5-5b16-9d6a-0ff01f187be2",
+					"level": 7,
+					"description": {
+						"en": "Set foes' HP to 1 when entering a battle space (3 times)",
+						"ja": null
+					},
+					"cost": 30,
+					"scintillas": 36000
+				},
+				{
+					"id": "d3a93361-eb4f-5da8-a1c4-ad06dc6d4e62",
+					"level": 8,
+					"description": {
+						"en": "Set foes' HP to 1 when entering a battle space (3 times)",
+						"ja": null
+					},
+					"cost": 25,
+					"scintillas": 50000
+				},
+				{
+					"id": "1b401969-49ac-534d-9382-f22af724dd88",
+					"level": 9,
+					"description": {
+						"en": "Set foes' HP to 1 when entering a battle space (3 times)",
+						"ja": null
+					},
+					"cost": 20,
+					"scintillas": 64000
+				}
+			]
+		},
+		{
+			"id": "d0bb8a23-8eed-58fd-8269-45b1df1d51b0",
+			"slug": "temperance",
+			"arcana_number": 14,
+			"name": {
+				"en": "Temperance",
+				"ja": null
+			},
+			"released": true,
+			"levels": [
+				{
+					"id": "df1dec62-9626-59e9-a5a6-ecda32d5424c",
+					"level": 1,
+					"description": {
+						"en": "Healing spaces cut all allies' skill and summon cooldowns by 2 turns",
+						"ja": null
+					},
+					"cost": 50,
+					"scintillas": 1000
+				},
+				{
+					"id": "8a2b7af7-a7be-5285-952b-e355f64ee582",
+					"level": 2,
+					"description": {
+						"en": "Healing spaces cut all allies' skill and summon cooldowns by 2 turns",
+						"ja": null
+					},
+					"cost": 45,
+					"scintillas": 2500
+				},
+				{
+					"id": "ff623edf-dc1d-5447-a273-54245db64c52",
+					"level": 3,
+					"description": {
+						"en": "Healing spaces cut all allies' skill and summon cooldowns by 2 turns",
+						"ja": null
+					},
+					"cost": 40,
+					"scintillas": 4000
+				},
+				{
+					"id": "00dc6263-87fd-5ac1-9f16-b3e3613c0039",
+					"level": 4,
+					"description": {
+						"en": "Healing spaces cut all allies' skill and summon cooldowns by 3 turns",
+						"ja": null
+					},
+					"cost": 40,
+					"scintillas": 10000
+				},
+				{
+					"id": "19103736-0414-53b3-a8d5-379c9d4a334f",
+					"level": 5,
+					"description": {
+						"en": "Healing spaces cut all allies' skill and summon cooldowns by 3 turns",
+						"ja": null
+					},
+					"cost": 35,
+					"scintillas": 16000
+				},
+				{
+					"id": "7fb81923-3283-51bc-b8a1-167ca6f98f63",
+					"level": 6,
+					"description": {
+						"en": "Healing spaces cut all allies' skill and summon cooldowns by 3 turns",
+						"ja": null
+					},
+					"cost": 30,
+					"scintillas": 22000
+				},
+				{
+					"id": "5f5d7052-3d82-5183-8efc-51948f11d5bc",
+					"level": 7,
+					"description": {
+						"en": "Healing spaces cut all allies' skill and summon cooldowns by 4 turns",
+						"ja": null
+					},
+					"cost": 30,
+					"scintillas": 36000
+				},
+				{
+					"id": "22ffc486-7b46-54b8-af29-f76594c1f81f",
+					"level": 8,
+					"description": {
+						"en": "Healing spaces cut all allies' skill and summon cooldowns by 4 turns",
+						"ja": null
+					},
+					"cost": 25,
+					"scintillas": 50000
+				},
+				{
+					"id": "af8ac8d6-9c7c-59dd-bed5-cbbc4ffc8c6f",
+					"level": 9,
+					"description": {
+						"en": "Healing spaces cut all allies' skill and summon cooldowns by 4 turns",
+						"ja": null
+					},
+					"cost": 20,
+					"scintillas": 64000
+				}
+			]
+		},
+		{
+			"id": "597431b2-b5b2-5eed-8a59-8ca27be0251a",
+			"slug": "devil",
+			"arcana_number": 15,
+			"name": {
+				"en": "The Devil",
+				"ja": null
+			},
+			"released": true,
+			"levels": [
+				{
+					"id": "692d89bb-258f-51d0-8d2d-11f6559665ea",
+					"level": 1,
+					"description": {
+						"en": "Start with 100 Sephira coins",
+						"ja": null
+					},
+					"cost": 70,
+					"scintillas": 1500
+				},
+				{
+					"id": "9b034036-b198-5d05-83dd-6f6bac565362",
+					"level": 2,
+					"description": {
+						"en": "Start with 100 Sephira coins",
+						"ja": null
+					},
+					"cost": 65,
+					"scintillas": 4000
+				},
+				{
+					"id": "8240ac75-04b1-5cab-9430-a74805aae10d",
+					"level": 3,
+					"description": {
+						"en": "Start with 100 Sephira coins",
+						"ja": null
+					},
+					"cost": 60,
+					"scintillas": 10000
+				},
+				{
+					"id": "36035f89-11f7-5a34-8a5f-a9cc700b9da3",
+					"level": 4,
+					"description": {
+						"en": "Start with 150 Sephira coins",
+						"ja": null
+					},
+					"cost": 60,
+					"scintillas": 24000
+				},
+				{
+					"id": "a28f6b66-1d91-5baf-8587-5a697470ff15",
+					"level": 5,
+					"description": {
+						"en": "Start with 150 Sephira coins",
+						"ja": null
+					},
+					"cost": 55,
+					"scintillas": 38000
+				},
+				{
+					"id": "824cf2d6-68e8-5489-94f2-a712ef109667",
+					"level": 6,
+					"description": {
+						"en": "Start with 150 Sephira coins",
+						"ja": null
+					},
+					"cost": 50,
+					"scintillas": 59000
+				},
+				{
+					"id": "fc30fe6c-90b3-53ab-9306-d894eb39643a",
+					"level": 7,
+					"description": {
+						"en": "Start with 200 Sephira coins",
+						"ja": null
+					},
+					"cost": 50,
+					"scintillas": 97000
+				}
+			]
+		},
+		{
+			"id": "84313641-2a0e-5cab-a6bb-7282e1cfbd30",
+			"slug": "tower",
+			"arcana_number": 16,
+			"name": {
+				"en": "The Tower",
+				"ja": null
+			},
+			"released": false,
+			"levels": []
+		},
+		{
+			"id": "a7913d59-d9dc-5d5d-a842-548bb013b6ca",
+			"slug": "star",
+			"arcana_number": 17,
+			"name": {
+				"en": "The Star",
+				"ja": null
+			},
+			"released": false,
+			"levels": []
+		},
+		{
+			"id": "61d36832-9526-50e1-84d4-9f6567ae8d69",
+			"slug": "moon",
+			"arcana_number": 18,
+			"name": {
+				"en": "The Moon",
+				"ja": null
+			},
+			"released": false,
+			"levels": []
+		},
+		{
+			"id": "2eb824b6-8186-59ed-9a4b-d93209ea1b74",
+			"slug": "sun",
+			"arcana_number": 19,
+			"name": {
+				"en": "The Sun",
+				"ja": null
+			},
+			"released": false,
+			"levels": []
+		},
+		{
+			"id": "07b6a92b-b57a-5679-95e4-fca599758bdc",
+			"slug": "judgement",
+			"arcana_number": 20,
+			"name": {
+				"en": "Judgement",
+				"ja": null
+			},
+			"released": false,
+			"levels": []
+		}
+	]
+}

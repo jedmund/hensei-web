@@ -7,9 +7,11 @@
 		/** Optional leading icon, shown to the left of the title and subtitle. */
 		icon?: Snippet
 		control: Snippet
+		/** Size the control to its content (e.g. a switch) instead of the fixed column, so the text gets the rest. */
+		compact?: boolean
 	}
 
-	let { title, subtitle, icon, control }: Props = $props()
+	let { title, subtitle, icon, control, compact = false }: Props = $props()
 </script>
 
 <div class="settings-row">
@@ -26,7 +28,7 @@
 			{/if}
 		</div>
 	</div>
-	<div class="control">
+	<div class="control" class:compact>
 		{@render control()}
 	</div>
 </div>
@@ -84,6 +86,10 @@
 			:global([data-select-trigger]),
 			:global(.fieldset) {
 				width: 100%;
+			}
+
+			&.compact {
+				width: auto;
 			}
 		}
 	}

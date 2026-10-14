@@ -45,6 +45,18 @@
 	import PickPlaylistPane from '$lib/components/sidebar/PickPlaylistPane.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import Notice from '$lib/components/ui/Notice.svelte'
+	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
+	import { openEditSolomonisPane } from '$lib/components/solomonis/party/openSolomonisPanes'
+	import {
+		isSolomonisParty,
+		solomonisRaidTransition,
+		type SolomonisRaidTransition
+	} from '$lib/components/solomonis/party/solomonisParty'
+	import {
+		useUpdatePartyBlessings,
+		useUpdateSolomonisExpedition
+	} from '$lib/api/mutations/solomonis.mutations'
+	import type { RaidFull } from '$lib/types/api/raid'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -147,6 +159,13 @@
 		getHasCollectionLinks: () => hasCollectionLinks,
 		onDetailsUpdated: () => {
 			if (isNew && party.id === 'new') hasEditedInfo = true
+		},
+		handleRaidChange: (raid) => {
+			// The settings pane closes right after saving; open our pane after it.
+			const transition = solomonisRaidTransition(isSolomonis, raid)
+			if (transition === 'none') return false
+			setTimeout(() => startSolomonisRaidTransition(transition, raid?.id ?? null))
+			return true
 		}
 	})
 
@@ -207,6 +226,42 @@
 		},
 		ensurePartyExists: ensurePartyExistsFn
 	})
+
+	// --- Evoking Solomonis ---
+	const isSolomonis = $derived(isSolomonisParty(party))
+	const solomonisMutations = {
+		expedition: useUpdateSolomonisExpedition(),
+		blessings: useUpdatePartyBlessings(() => party.id)
+	}
+	let leaveSolomonisOpen = $state(false)
+	let pendingLeaveSolomonisRaidId = $state<string | null>(null)
+
+	/** Raid tile and settings pane: entering or leaving Solomonis goes through us (D12). */
+	function startSolomonisRaidTransition(
+		transition: SolomonisRaidTransition,
+		raidId: string | null
+	) {
+		if (transition === 'enter') {
+			openEditSolomonisPane(party, solomonisMutations, ensurePartyExistsFn)
+		} else if (transition === 'leave') {
+			pendingLeaveSolomonisRaidId = raidId
+			leaveSolomonisOpen = true
+		}
+	}
+
+	async function handleRaidSelect(raid: RaidFull | null) {
+		const transition = solomonisRaidTransition(isSolomonis, raid)
+		if (transition !== 'none') {
+			startSolomonisRaidTransition(transition, raid?.id ?? null)
+			return
+		}
+		await actions.updatePartyDetails({ raidId: raid?.id ?? null })
+	}
+
+	async function confirmLeaveSolomonis() {
+		leaveSolomonisOpen = false
+		await actions.updatePartyDetails({ raidId: pendingLeaveSolomonisRaidId })
+	}
 
 	// --- Guidebook mutations ---
 	const updateGuidebook = useUpdatePartyGuidebook()
@@ -444,9 +499,7 @@
 				onOpenDescription={actions.openDescriptionPanel}
 				onEditDescription={actions.editDescriptionPanel}
 				onOpenEdit={actions.openSettingsPanel}
-				onRaidSelect={async (raid) => {
-					await actions.updatePartyDetails({ raidId: raid?.id ?? null })
-				}}
+				onRaidSelect={handleRaidSelect}
 				{authUser}
 				{activeCollectionUser}
 				onSwitchCollectionUser={handleSwitchCollectionUser}
@@ -568,7 +621,7 @@
 						<WeaponGrid
 							weapons={party.weapons}
 							raidExtra={party.raid?.extra}
-							showGuidebooks={party.raid?.group?.guidebooks}
+							showGuidebooks={party.raid?.group?.guidebooks && !isSolomonis}
 							guidebooks={party.guidebooks}
 							canEdit={canEdit()}
 							onClickGuidebookSlot={handleClickGuidebookSlot}
@@ -623,6 +676,15 @@
 	deleting={actions.deleting}
 	onDelete={actions.deleteParty}
 	onCancel={() => (actions.deleteDialogOpen = false)}
+/>
+
+<!-- Leaving Evoking Solomonis deletes its data -->
+<ConfirmDialog
+	bind:open={leaveSolomonisOpen}
+	title={m.solomonis_web_party_leave_title()}
+	message={m.solomonis_web_party_leave_message()}
+	confirmLabel={m.solomonis_web_party_leave_confirm()}
+	onconfirm={confirmLeaveSolomonis}
 />
 
 <!-- Conflict Resolution Dialog -->

@@ -147,4 +147,12 @@ describe('filterItemsToParams', () => {
 		const items: FilterItem[] = [{ kind: 'element', value: 1, label: 'Wind' }]
 		expect(filterItemsToParams(items).difficulty).toBeUndefined()
 	})
+
+	it('sends a Solomonis route Evoker as routeEvoker alongside the zone', () => {
+		const items: FilterItem[] = [
+			{ kind: 'raid', value: 'zone-id', label: 'Allotropic Microcosm', pinned: true },
+			{ kind: 'evoker', value: '3040169000', label: 'Nier' }
+		]
+		expect(filterItemsToParams(items)).toMatchObject({ raid: 'zone-id', routeEvoker: '3040169000' })
+	})
 })

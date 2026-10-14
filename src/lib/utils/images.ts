@@ -36,6 +36,9 @@ export const BUCKET = {
 	skillLabels: 'icons/skill-labels',
 	mastery: 'icons/mastery',
 	axSkills: 'icons/ax-skills',
+	guideEffects: 'icons/guide-effects',
+	blessings: 'blessings',
+	solomonisSpaces: 'icons/solomonis-spaces',
 	accessories: 'accessories',
 	artifacts: 'artifacts',
 	bullets: 'bullets',
@@ -628,6 +631,30 @@ export function getWeaponSkillIcon(
 	if (!stem) return null
 	const lang = locale === 'ja' ? 'ja' : 'en'
 	return `${getBasePath()}/${BUCKET.weaponSkills}/${lang}/${stem}.png`
+}
+
+/**
+ * Get an Evoking Solomonis guidebook effect icon, keyed by the game's icon_type
+ */
+export function getGuideEffectIcon(iconType: number): string {
+	return `${getBasePath()}/${BUCKET.guideEffects}/${iconType}.png`
+}
+
+export type BlessingImageVariant = 'icon' | 'card' | 'card-list'
+
+/**
+ * Get an Arcarum Blessing image by the blessing's slug: the round icon for
+ * lists, or the tarot card at full (`card`) or picker (`card-list`) size
+ */
+export function getBlessingImage(slug: string, variant: BlessingImageVariant = 'icon'): string {
+	return `${getBasePath()}/${BUCKET.blessings}/${variant}/${slug}.png`
+}
+
+/**
+ * Get an Evoking Solomonis space icon (battle, boss, chest…), by stat key
+ */
+export function getSolomonisSpaceIcon(key: string): string {
+	return `${getBasePath()}/${BUCKET.solomonisSpaces}/${key}.png`
 }
 
 /**
