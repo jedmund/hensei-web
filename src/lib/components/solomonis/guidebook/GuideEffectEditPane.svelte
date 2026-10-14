@@ -111,7 +111,17 @@
 		{#if entry.effect.stackable}
 			<SettingsRow title={m.solomonis_web_guidebook_count()}>
 				{#snippet control()}
-					<Input type="number" min={1} step={1} bind:value={count} contained alignRight fullWidth />
+					<div class="number-control">
+						<Input
+							type="number"
+							min={1}
+							step={1}
+							bind:value={count}
+							contained
+							alignRight
+							fullWidth
+						/>
+					</div>
 				{/snippet}
 			</SettingsRow>
 		{/if}
@@ -122,7 +132,16 @@
 				subtitle={m.solomonis_web_guidebook_display_value_subtitle()}
 			>
 				{#snippet control()}
-					<Input type="text" bind:value={displayValue} maxlength={20} contained fullWidth />
+					<div class="number-control">
+						<Input
+							type="text"
+							bind:value={displayValue}
+							maxlength={20}
+							contained
+							alignRight
+							fullWidth
+						/>
+					</div>
 				{/snippet}
 			</SettingsRow>
 		{/if}
@@ -132,15 +151,17 @@
 			subtitle={m.solomonis_web_guidebook_acquired_order_subtitle()}
 		>
 			{#snippet control()}
-				<Input
-					type="number"
-					min={1}
-					step={1}
-					bind:value={acquiredOrder}
-					contained
-					alignRight
-					fullWidth
-				/>
+				<div class="number-control">
+					<Input
+						type="number"
+						min={1}
+						step={1}
+						bind:value={acquiredOrder}
+						contained
+						alignRight
+						fullWidth
+					/>
+				</div>
 			{/snippet}
 		</SettingsRow>
 
@@ -153,17 +174,18 @@
 			{/snippet}
 		</SettingsRow>
 
-		<SettingsRow title={m.solomonis_web_guidebook_note()}>
-			{#snippet control()}
-				<Input type="text" bind:value={note} maxLength={200} contained fullWidth />
-			{/snippet}
-		</SettingsRow>
+		<div class="note">
+			<label class="note-label" for="guide-effect-note">{m.solomonis_web_guidebook_note()}</label>
+			<textarea id="guide-effect-note" class="textarea" bind:value={note} maxlength={200} rows="3"
+			></textarea>
+		</div>
 	</div>
 </div>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
+	@use '$src/themes/layout' as *;
 
 	.guide-effect-edit {
 		display: flex;
@@ -201,5 +223,38 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-2x;
+	}
+
+	// Numbers stay short; the settings row pins them to the right edge
+	.number-control {
+		width: $unit-10x;
+	}
+
+	.note {
+		display: flex;
+		flex-direction: column;
+		gap: $unit;
+	}
+
+	.note-label {
+		font-size: $font-regular;
+		color: var(--text-primary);
+	}
+
+	.textarea {
+		width: 100%;
+		padding: $unit calc($unit * 1.5);
+		border: none;
+		border-radius: $input-corner;
+		font-size: $font-regular;
+		font-family: inherit;
+		background: var(--input-bound-bg);
+		color: var(--text-primary);
+		resize: vertical;
+		box-sizing: border-box;
+
+		&:hover {
+			background: var(--input-bound-bg-hover);
+		}
 	}
 </style>
