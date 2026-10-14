@@ -6,11 +6,14 @@
  */
 
 import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svelte-query'
+import { toast } from 'svelte-sonner'
 import { solomonisAdapter } from '$lib/api/adapters/solomonis.adapter'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import type { Party } from '$lib/types/api/party'
 import type { SolomonisExpeditionInput } from '$lib/types/api/solomonis'
 import { getEditKey } from '$lib/utils/editKeys'
+import { solomonisErrorMessage } from '$lib/components/solomonis/party/solomonisParty'
+import * as m from '$lib/paraglide/messages'
 import { hasQueuedSave, serialSaveKey, serialSaveScope } from './serialSaves'
 
 function editKeyHeaders(shortcode: string): Record<string, string> | undefined {
@@ -77,6 +80,10 @@ export function updateBlessingsOptions(queryClient: QueryClient, partyId?: strin
 			// A newer loadout is queued; its response follows.
 			if (hasQueuedSave(queryClient, 'blessings', params.partyId)) return
 			mergeParty(queryClient, params.shortcode, data)
+		},
+		// Toasts here, so the error shows even when the pane that saved is gone.
+		onError: (err: unknown) => {
+			toast.error(solomonisErrorMessage(err, m.solomonis_web_party_blessings_save_failed()))
 		},
 		onSettled: (_data: unknown, _err: unknown, params: UpdateBlessingsParams) => {
 			// Only after the last queued save, so a refetch can't land on top

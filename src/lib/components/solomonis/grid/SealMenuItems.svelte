@@ -5,11 +5,9 @@
 	 * "Set priority" submenu with its rank among that type.
 	 */
 	import { ContextMenu, DropdownMenu } from 'bits-ui'
-	import { toast } from 'svelte-sonner'
 	import Icon from '$lib/components/Icon.svelte'
 	import { usePartyContext } from '$lib/types/party-context'
 	import { useUpdateUnsealPriority } from '$lib/api/mutations/solomonis-grid.mutations'
-	import { extractErrorMessage } from '$lib/utils/errors'
 	import * as m from '$lib/paraglide/messages'
 	import type { GridSummon, GridWeapon } from '$lib/types/api/party'
 	import {
@@ -59,12 +57,10 @@
 		if (rank === seal.priority) return
 		const party = ctx.getParty()
 		const items = toPriorityPayload(setPriority(priorityLists(party), type, key, rank))
-		// mutateAsync: mutate's callbacks only fire for the latest call
+		// The mutation toasts its own errors
 		mutation
 			.mutateAsync({ partyId: party.id, partyShortcode: party.shortcode, items })
-			.catch((err) =>
-				toast.error(extractErrorMessage(err, m.solomonis_web_grid_priority_save_failed()))
-			)
+			.catch(() => undefined)
 	}
 </script>
 

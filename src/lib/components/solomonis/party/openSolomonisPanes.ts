@@ -103,8 +103,8 @@ export function openEditSolomonisPane(
 					shortcode: target.shortcode,
 					blessingLevelIds
 				})
-			} catch (err: unknown) {
-				toast.error(solomonisErrorMessage(err, m.solomonis_web_party_blessings_save_failed()))
+			} catch {
+				// The blessings mutation toasts its own errors
 			}
 		}
 	})

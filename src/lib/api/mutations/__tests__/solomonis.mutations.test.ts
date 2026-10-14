@@ -5,7 +5,11 @@ import { createTestQueryClient, seedPartyCache, getCachedParty } from './helpers
 import type { QueryClient } from '@tanstack/svelte-query'
 import type { Party } from '$lib/types/api/party'
 import type { SolomonisExpedition } from '$lib/types/api/solomonis'
+import { toast } from 'svelte-sonner'
+import * as m from '$lib/paraglide/messages'
 import { BUILD_PARTY, RUN_PARTY } from '$lib/components/solomonis/party/__tests__/fixtures'
+
+vi.mock('svelte-sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }))
 
 vi.mock('$lib/api/adapters/solomonis.adapter', () => ({
 	solomonisAdapter: {
@@ -17,6 +21,7 @@ vi.mock('$lib/api/adapters/solomonis.adapter', () => ({
 let queryClient: QueryClient
 
 beforeEach(() => {
+	vi.clearAllMocks()
 	queryClient = createTestQueryClient()
 	seedPartyCache(queryClient, { ...BUILD_PARTY, favorited: true })
 })
@@ -102,5 +107,18 @@ describe('updateBlessingsOptions, saves in a row', () => {
 
 		expect(solomonisAdapter.updateBlessings).toHaveBeenCalledTimes(2)
 		expect(getCachedParty(queryClient, BUILD_PARTY.shortcode)?.name).toBe('Second')
+	})
+
+	it('toasts a failed save once, with no component mounted', async () => {
+		vi.mocked(solomonisAdapter.updateBlessings).mockRejectedValueOnce({})
+
+		await queryClient
+			.getMutationCache()
+			.build(queryClient, updateBlessingsOptions(queryClient, BUILD_PARTY.id))
+			.execute({ partyId: BUILD_PARTY.id, shortcode: BUILD_PARTY.shortcode, blessingLevelIds: [] })
+			.catch(() => undefined)
+
+		expect(toast.error).toHaveBeenCalledTimes(1)
+		expect(toast.error).toHaveBeenCalledWith(m.solomonis_web_party_blessings_save_failed())
 	})
 })

@@ -23,7 +23,6 @@
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { useUpdateUnsealPriority } from '$lib/api/mutations/solomonis-grid.mutations'
-	import { extractErrorMessage } from '$lib/utils/errors'
 	import * as m from '$lib/paraglide/messages'
 	import {
 		entryKey,
@@ -108,8 +107,8 @@
 			// Back to the details pane when opened from it
 			if (sidebar.paneStack.depth > 1) sidebar.pop()
 			else sidebar.close()
-		} catch (err) {
-			toast.error(extractErrorMessage(err, m.solomonis_web_grid_priority_save_failed()))
+		} catch {
+			// The mutation toasts its own errors; stay on the pane to retry
 		}
 	}
 

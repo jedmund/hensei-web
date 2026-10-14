@@ -3,12 +3,10 @@
 	 * GuidebookSection - an expedition's guidebook: its effects by rarity
 	 * (GuidebookGroup) or in pickup order, with adding and editing for owners.
 	 */
-	import { toast } from 'svelte-sonner'
 	import {
 		solomonisExpedition,
 		useReplaceGuidebook
 	} from '$lib/api/mutations/solomonis-guidebook.mutations'
-	import { extractErrorMessage } from '$lib/utils/errors'
 	import * as m from '$lib/paraglide/messages'
 	import type { Party } from '$lib/types/api/party'
 	import type { GuideEffect, GuidebookEntry } from '$lib/types/api/solomonis'
@@ -59,7 +57,7 @@
 
 	// Saves run one at a time (the mutation is scoped to the party). mutateAsync,
 	// not mutate's callbacks: those only fire for the latest call, so earlier
-	// saves would never count down or report their errors.
+	// saves would never count down. The mutation toasts its own errors.
 	async function save(next: GuidebookEntry[]) {
 		if (next === entries) return
 		pendingEntries = next
@@ -70,8 +68,8 @@
 				shortcode: party.shortcode,
 				entries: next
 			})
-		} catch (err) {
-			toast.error(extractErrorMessage(err, m.solomonis_web_guidebook_save_failed()))
+		} catch {
+			// Toasted and rolled back by the mutation
 		} finally {
 			inFlight -= 1
 			if (inFlight === 0) pendingEntries = null

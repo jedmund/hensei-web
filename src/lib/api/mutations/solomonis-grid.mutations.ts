@@ -2,15 +2,19 @@
  * Evoking Solomonis grid mutations (web-grid lane).
  *
  * Seal state and `brought_by_blessing` use the existing grid item mutations;
- * this file covers the party's unseal priority list.
+ * this file covers the party's unseal priority list. A failed save toasts
+ * from here, so the error shows even when the menu or pane that made it is gone.
  */
 import { createMutation, useQueryClient, type QueryClient } from '@tanstack/svelte-query'
+import { toast } from 'svelte-sonner'
 import { solomonisGridAdapter } from '$lib/api/adapters/solomonis-grid.adapter'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import { applyPriorities } from '$lib/components/solomonis/grid/seal'
 import type { Party } from '$lib/types/api/party'
 import type { UnsealPriorityItem } from '$lib/types/api/solomonis'
 import { getEditKey } from '$lib/utils/editKeys'
+import { extractErrorMessage } from '$lib/utils/errors'
+import * as m from '$lib/paraglide/messages'
 import { hasQueuedSave, serialSaveKey, serialSaveScope } from './serialSaves'
 
 export interface UpdateUnsealPriorityVars {
@@ -51,10 +55,11 @@ export function updateUnsealPriorityOptions(queryClient: QueryClient, partyId?: 
 			queryClient.setQueryData(partyKeys.detail(partyShortcode), party)
 		},
 		onError: (
-			_err: unknown,
+			err: unknown,
 			{ partyId, partyShortcode }: UpdateUnsealPriorityVars,
 			context: MutationContext | undefined
 		) => {
+			toast.error(extractErrorMessage(err, m.solomonis_web_grid_priority_save_failed()))
 			// The queued save carries a newer list and settles the cache itself.
 			if (hasQueuedSave(queryClient, 'unseal-priority', partyId)) return
 			if (context?.previousParty) {

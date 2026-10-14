@@ -6,7 +6,11 @@ import { createTestQueryClient } from './helpers'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import { transformResponse } from '$lib/api/schemas/transforms'
 import type { Party } from '$lib/types/api/party'
+import { toast } from 'svelte-sonner'
+import * as m from '$lib/paraglide/messages'
 import buildJson from '$lib/components/solomonis/grid/__fixtures__/party-build.json'
+
+vi.mock('svelte-sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }))
 
 vi.mock('$lib/api/adapters/solomonis-grid.adapter', () => ({
 	solomonisGridAdapter: { updateUnsealPriority: vi.fn() }
@@ -22,6 +26,7 @@ const vars = (items: { type: 'weapon' | 'summon'; id: string }[]) => ({
 })
 
 beforeEach(() => {
+	vi.clearAllMocks()
 	queryClient = createTestQueryClient()
 	queryClient.setQueryData(key, party)
 })
@@ -94,5 +99,18 @@ describe('updateUnsealPriorityOptions, saves in a row', () => {
 
 		expect(queryClient.getQueryData<Party>(key)!.name).toBe('Second')
 		expect(spy).toHaveBeenCalledTimes(1)
+	})
+
+	it('toasts a failed save once, with no component mounted', async () => {
+		vi.mocked(solomonisGridAdapter.updateUnsealPriority).mockRejectedValueOnce({})
+
+		await queryClient
+			.getMutationCache()
+			.build(queryClient, updateUnsealPriorityOptions(queryClient, party.id))
+			.execute(vars([]))
+			.catch(() => undefined)
+
+		expect(toast.error).toHaveBeenCalledTimes(1)
+		expect(toast.error).toHaveBeenCalledWith(m.solomonis_web_grid_priority_save_failed())
 	})
 })

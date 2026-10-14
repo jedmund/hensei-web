@@ -4,18 +4,22 @@
  * Every guidebook edit replaces the run's whole list
  * (`PUT /parties/:id/guide_effects`). The list is written to the cached party
  * straight away, then replaced with the full party the API returns. Saves for
- * one party run one at a time (see `serialSaves`).
+ * one party run one at a time (see `serialSaves`). A failed save toasts from
+ * here, so the error shows even when the section that made the edit is gone.
  *
  * @module api/mutations/solomonis-guidebook
  */
 
 import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svelte-query'
+import { toast } from 'svelte-sonner'
 import { solomonisGuidebookAdapter } from '$lib/api/adapters/solomonis-guidebook.adapter'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import { toGuidebookInput } from '$lib/components/solomonis/guidebook/guidebook'
 import type { Party } from '$lib/types/api/party'
 import type { GuidebookEntry, SolomonisExpedition } from '$lib/types/api/solomonis'
 import { getEditKey } from '$lib/utils/editKeys'
+import { extractErrorMessage } from '$lib/utils/errors'
+import * as m from '$lib/paraglide/messages'
 import { hasQueuedSave, serialSaveKey, serialSaveScope } from './serialSaves'
 
 function editKeyHeaders(shortcode: string): Record<string, string> | undefined {
@@ -76,10 +80,11 @@ export function replaceGuidebookOptions(queryClient: QueryClient, partyId?: stri
 			if (party) queryClient.setQueryData(partyKeys.detail(params.shortcode), party)
 		},
 		onError: (
-			_err: unknown,
+			err: unknown,
 			params: ReplaceGuidebookParams,
 			context: ReplaceGuidebookContext | undefined
 		) => {
+			toast.error(extractErrorMessage(err, m.solomonis_web_guidebook_save_failed()))
 			// The queued save carries a newer list and settles the cache itself.
 			if (hasQueuedSave(queryClient, 'guidebook', params.partyId)) return
 			const key = partyKeys.detail(params.shortcode)

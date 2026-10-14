@@ -8,12 +8,16 @@ import { EXPECTED } from '$lib/api/adapters/__tests__/fixtures/solomonis-guidebo
 import { addEffect, removeEntry } from '$lib/components/solomonis/guidebook/guidebook'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import type { Party } from '$lib/types/api/party'
+import { toast } from 'svelte-sonner'
+import * as m from '$lib/paraglide/messages'
 
 vi.mock('$lib/api/adapters/solomonis-guidebook.adapter', () => ({
 	solomonisGuidebookAdapter: {
 		replaceGuidebook: vi.fn()
 	}
 }))
+
+vi.mock('svelte-sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }))
 
 vi.mock('$lib/utils/editKeys', () => ({
 	getEditKey: vi.fn(() => 'edit-key')
@@ -191,6 +195,19 @@ describe('replaceGuidebookOptions, saves in a row', () => {
 		second.resolve(responseFor(listB))
 		await Promise.all([a, b])
 		expect(cachedGuidebook()).toEqual(listB)
+		// The earlier failure still reports, once
+		expect(toast.error).toHaveBeenCalledTimes(1)
+	})
+
+	it('toasts a failed save once, with no component mounted', async () => {
+		vi.mocked(solomonisGuidebookAdapter.replaceGuidebook).mockRejectedValueOnce({})
+
+		// Removing the last effect: the only caller is the mutation cache
+		await run([])
+
+		expect(toast.error).toHaveBeenCalledTimes(1)
+		expect(toast.error).toHaveBeenCalledWith(m.solomonis_web_guidebook_save_failed())
+		expect(cachedGuidebook()).toEqual(guidebook)
 	})
 
 	it('rolls back and refetches when the last save fails', async () => {
