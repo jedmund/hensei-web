@@ -3426,6 +3426,14 @@
 		}
 	},
 	"manatura": {
+		"8": {
+			"en": "Ouroboros Mino",
+			"ja": "ウロボロス･ミニステル"
+		},
+		"9": {
+			"en": "Europa Mino",
+			"ja": "エウロペ・ミニステル"
+		},
 		"10": {
 			"en": "Wilnas Mino",
 			"ja": "ウィルナス・ミニステル"
@@ -3461,14 +3469,6 @@
 		"18": {
 			"en": "Clockwork Octavia No. 3.5",
 			"ja": "絡繰オクタヴィアちゃん3.5号"
-		},
-		"8": {
-			"en": "Ouroboros Mino",
-			"ja": "ウロボロス･ミニステル"
-		},
-		"9": {
-			"en": "Europa Mino",
-			"ja": "エウロペ・ミニステル"
 		}
 	},
 	"shields": {

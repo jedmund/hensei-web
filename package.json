@@ -12,6 +12,7 @@
 		"check": "paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "paraglide-js compile --project ./project.inlang --outdir ./src/lib/paraglide && svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
+		"updates:sync": "node scripts/sync-updates.mjs",
 		"lint": "prettier --check . && eslint --cache --concurrency auto .",
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run",
