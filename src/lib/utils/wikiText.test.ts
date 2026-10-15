@@ -51,4 +51,26 @@ describe('wikiToHtml', () => {
 			'<strong>When main weapon (MC only):</strong><br>All Earth allies gain Veil.'
 		)
 	})
+
+	it("shows a template's text rather than its name", () => {
+		expect(wikiToHtml('Take {{tt|5% damage|Based on max HP.}} every turn')).toBe(
+			'Take 5% damage every turn'
+		)
+		expect(wikiToHtml('{{ClassSkill|Limit Burst}} and {{classSkill|skill=Aether Blast III}}')).toBe(
+			'Limit Burst and Aether Blast III'
+		)
+		expect(wikiToHtml('{{tt|[[Weapon_Skills|Medium boost]]|Normal}} to ATK')).toBe(
+			'Medium boost to ATK'
+		)
+	})
+
+	it('resolves nested templates and template parameters', () => {
+		expect(wikiToHtml('{{{s2_desc|{{ClassSkill|Reprise}} gains {{status|DEF Down|t=1T}}.}}}')).toBe(
+			'Reprise gains DEF Down.'
+		)
+		expect(wikiToHtml("Big boost to {{WeaponElement|{{{element|}}}}} allies' ATK")).toBe(
+			'Big boost to same-element allies&#39; ATK'
+		)
+		expect(wikiToHtml('{{WeaponElement|fire}} allies')).toBe('Fire allies')
+	})
 })

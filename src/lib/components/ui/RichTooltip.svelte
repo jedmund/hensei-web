@@ -31,8 +31,8 @@
 				{@render children()}
 			</span>
 		{/snippet}
-	</TooltipBase.Trigger>
-	<TooltipBase.Portal>
+		<!-- No whitespace before the portal: it would render as a space next to inline triggers. -->
+	</TooltipBase.Trigger><TooltipBase.Portal>
 		<TooltipBase.Content class="rich-tooltip-content" sideOffset={8}>
 			{@render content()}
 		</TooltipBase.Content>
