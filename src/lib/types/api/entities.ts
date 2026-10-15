@@ -86,10 +86,23 @@ export interface Weapon {
 	weaponSkills?: WeaponSkill[]
 }
 
+/**
+ * A run of skill-description text from the API, with the wiki markup already resolved.
+ * Line breaks are "\n" in `text`.
+ */
+export interface DescriptionSegment {
+	text: string
+	strong?: boolean
+	/** Hover text (plain, may contain "\n") */
+	tooltip?: string
+}
+
 /** One uncap/transcendence tier of a weapon skill slot. */
 export interface WeaponSkillVersion {
 	name: LocalizedName
+	/** Raw gbf.wiki text; prefer descriptionSegments for display */
 	description: LocalizedName
+	descriptionSegments?: { en?: DescriptionSegment[]; ja?: DescriptionSegment[] } | null
 	/** Resolved CDN icon stem (internal element numbering), e.g. "skill_atk_4_4". */
 	iconStem?: string | null
 	ordinal: number

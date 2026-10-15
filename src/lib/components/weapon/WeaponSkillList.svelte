@@ -2,7 +2,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import { localizedName, appLocale } from '$lib/utils/locale'
 	import { getWeaponSkillIcon } from '$lib/utils/images'
-	import { wikiToHtml } from '$lib/utils/wikiText'
+	import SkillDescription from '$lib/components/weapon/SkillDescription.svelte'
 	import type { WeaponSkill, WeaponSkillVersion } from '$lib/types/api/entities'
 
 	interface Props {
@@ -83,12 +83,18 @@
 							<div class="meta">{meta}</div>
 						{/if}
 						{#if descriptionEn}
-							<!-- eslint-disable-next-line svelte/no-at-html-tags -- wikiToHtml emits only whitelisted tags -->
-							<p class="description">{@html wikiToHtml(descriptionEn)}</p>
+							<SkillDescription
+								class="description"
+								segments={version.descriptionSegments?.en}
+								raw={descriptionEn}
+							/>
 						{/if}
 						{#if !compact && descriptionJa}
-							<!-- eslint-disable-next-line svelte/no-at-html-tags -- wikiToHtml emits only whitelisted tags -->
-							<p class="description description-jp">{@html wikiToHtml(descriptionJa)}</p>
+							<SkillDescription
+								class="description description-jp"
+								segments={version.descriptionSegments?.ja}
+								raw={descriptionJa}
+							/>
 						{/if}
 					</div>
 				</div>
@@ -188,23 +194,14 @@
 		color: var(--text-secondary);
 	}
 
-	.description {
+	.info :global(.description) {
 		margin: 0;
 		font-size: typography.$font-small;
 		line-height: 1.5;
 		color: var(--text-primary);
-		white-space: pre-line;
-
-		:global(strong) {
-			font-weight: typography.$bold;
-		}
-
-		:global(em) {
-			font-style: italic;
-		}
 	}
 
-	.description-jp {
+	.info :global(.description-jp) {
 		color: var(--text-secondary);
 	}
 
