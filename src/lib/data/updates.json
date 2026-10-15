@@ -1,7 +1,2165 @@
 [
 	{
+		"year": 2026,
+		"entries": [
+			{
+				"version": "2026-10U7",
+				"date": "2026/10/14",
+				"event": "content",
+				"classes": ["170501"],
+				"site": {
+					"new": [
+						"Added support for **Evoking Solomonis**, with the mode's own grid, sealed weapons and summons, and expedition details including **Arcarum Blessings** and the guidebook"
+					],
+					"improved": [
+						"The support summon slot is now disabled for **Arcarum** modes that don't allow one"
+					],
+					"fixed": ["Fixed the order of the Solo section in the raid picker"]
+				},
+				"extension": {
+					"new": [
+						"Added **Evoking Solomonis** import for Evoker parties and expedition reports, with the expedition, party and guidebooks shown before importing"
+					],
+					"improved": [
+						"Captured entries now show a checkmark once they've been imported",
+						"Party rows now show the party's element",
+						"Redesigned the character stats view, with a button that opens Character Bonuses in the game"
+					],
+					"fixed": ["Fixed perpetuity bonuses showing for characters without a **Perpetuity Ring**"]
+				}
+			},
+			{
+				"version": "2026-10U6",
+				"date": "2026/10/13",
+				"event": "content",
+				"site": {
+					"fixed": [
+						"Fixed a bug where importing a team could mark the wrong summon as the main or quick summon"
+					]
+				}
+			},
+			{
+				"version": "2026-10U5",
+				"date": "2026/10/12",
+				"event": "content",
+				"site": {
+					"improved": [
+						"The gacha simulator now opens on the game's current banner, using its published rates",
+						"The gacha simulator can now play the game's draw animation, and keeps a log of your draws"
+					]
+				}
+			},
+			{
+				"version": "2026-10U4",
+				"date": "2026/10/06",
+				"event": "uncap",
+				"transcended": {
+					"characters": ["3040161000", "3040163000", "3040169000"]
+				}
+			},
+			{
+				"version": "2026-10U3",
+				"date": "2026/10/05",
+				"event": "content",
+				"extension": {
+					"new": [
+						"You now log in through granblue.team, so accounts created with Discord, Google or Apple can use the extension"
+					],
+					"improved": [
+						"The extension now opens in your browser's language unless you've picked one",
+						"**Lyria** and **Young Cat** now show art for the party's element",
+						"Raid names are now translated in the party screen",
+						"Error messages now explain failed crew creation, crew sharing, playlist creation and raid list loading",
+						"Befoulment tooltips now show the skill's value",
+						"Messages are now announced by screen readers and stay up longer when they're long, and icon buttons have labels"
+					],
+					"fixed": [
+						"Fixed team names with symbols such as > showing escaped text",
+						"Fixed weapon key icons in collection views",
+						"Fixed items not being selected when reopening a collection, and a hand-picked raid being replaced by the suggested one",
+						"Fixed creating a playlist during a party import"
+					]
+				}
+			},
+			{
+				"version": "2026-10U2",
+				"date": "2026/10/03",
+				"event": "content",
+				"site": {
+					"new": [
+						"Added a gacha simulator for every pool, including **Classic III**, with custom rate-ups, draws-until-target, odds, and shareable results",
+						"Added a Privacy Policy and Terms of Service, linked from the About page",
+						"You can now delete your account from Settings, with 30 days to cancel"
+					]
+				}
+			},
+			{
+				"version": "2026-10U1",
+				"date": "2026/10/02",
+				"event": "content",
+				"site": {
+					"new": [
+						"You can now sign up and log in with Discord, Google or Apple, and connect them to your account in Settings"
+					],
+					"improved": [
+						"Appearance and display settings have moved to their own Appearance tab in Settings",
+						"Security improvements"
+					]
+				}
+			},
+			{
+				"version": "2026-09L",
+				"date": "2026/09/30",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040679000", "3040678000"],
+					"weapons": ["1040221700", "1040320500"]
+				}
+			},
+			{
+				"version": "2026-09U5",
+				"date": "2026/09/29",
+				"event": "content",
+				"site": {
+					"fixed": ["Fixed sharing your support summons as an image"]
+				},
+				"extension": {
+					"new": [
+						"Added support summon import from your profile, under Collection → Support Summons"
+					],
+					"improved": [
+						"Import errors now say what went wrong, such as an expired login or a connection problem, and party imports show any warnings",
+						"You now stay logged in instead of imports failing after a month",
+						"The party view now shows placeholders for empty summon slots and the support summon's highest evolution art",
+						"Weapon skill and key icons no longer cover the selection checkbox in collection views",
+						"Translated the remaining English text, and Japanese now uses 同期 for sync"
+					],
+					"fixed": [
+						"Fixed images not loading anywhere in the extension",
+						"Fixed updated items in your collection not being saved on import or sync"
+					]
+				}
+			},
+			{
+				"version": "2026-09U4",
+				"date": "2026/09/28",
+				"event": "content",
+				"new": {
+					"weapons": ["1040519100"]
+				},
+				"site": {
+					"improved": [
+						"Importing a team from the extension no longer fails completely when one weapon or summon has an invalid value",
+						"If a character or weapon fails to save, the edit pane now stays open with your changes and shows an error",
+						"The weapon editor no longer accepts AX, awakening and transcendence values that can't be saved",
+						"AX skills now follow the weapon's series, and **Primal** weapons with EXP or Rupie Gain no longer offer a secondary skill",
+						"The Sync and style shift buttons are now translated into Japanese"
+					],
+					"fixed": [
+						"Fixed a bug where some secondary AX skills were imported with the wrong strength",
+						"Fixed a bug where ring and earring changes would not save on characters in duplicated or remixed teams",
+						"Fixed a bug where characters used in a team could not be removed from your collection",
+						"Fixed character search failing when filtering by series"
+					]
+				}
+			},
+			{
+				"version": "2026-09U3",
+				"date": "2026/09/18",
+				"event": "content",
+				"new": {
+					"weapons": ["1040029800", "1040123100"]
+				},
+				"raids": ["belmervolk-hard"]
+			},
+			{
+				"version": "2026-09F",
+				"date": "2026/09/16",
+				"event": "flash",
+				"new": {
+					"characters": ["3040677000", "3040676000"],
+					"weapons": ["1040919000", "1040818700"]
+				}
+			},
+			{
+				"version": "2026-09U2",
+				"date": "2026/09/15",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040244000"]
+				}
+			},
+			{
+				"version": "2026-09U1",
+				"date": "2026/09/07",
+				"event": "uncap",
+				"uncapped": {
+					"weapons": ["1040424300", "1040618400"]
+				}
+			},
+			{
+				"version": "2026-08L",
+				"date": "2026/08/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040674000", "3040675000"],
+					"weapons": ["1040320400", "1040029700"],
+					"summons": ["2040462000"]
+				}
+			},
+			{
+				"version": "2026-08U2",
+				"date": "2026/08/29",
+				"event": "content",
+				"new": {
+					"weapons": ["1040426500"]
+				}
+			},
+			{
+				"version": "2026-08U1",
+				"date": "2026/08/25",
+				"event": "content",
+				"manatura": ["17", "18"],
+				"site": {
+					"improved": [
+						"Characters can now only be set to the transcendence stages released for them, and story characters' extra uncap is now shown separately from transcendence",
+						"The Weapon Skill Boosts calculator now covers more weapon skills, including **Dark Opus** pendulums and chains, **Ultima** and **Draconic** keys, and the **Rose Crystal** series"
+					]
+				}
+			},
+			{
+				"version": "2026-08F",
+				"date": "2026/08/16",
+				"event": "flash",
+				"new": {
+					"characters": ["3040673000", "3040672000"],
+					"weapons": ["1040622200", "1040622100"],
+					"summons": ["2040461000"]
+				}
+			},
+			{
+				"version": "2026-07L",
+				"date": "2026/07/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040671000", "3040670000"],
+					"weapons": ["1040715500", "1040622000"]
+				}
+			},
+			{
+				"version": "2026-07U11",
+				"date": "2026/07/29",
+				"event": "content",
+				"new": {
+					"weapons": ["1040621900"]
+				}
+			},
+			{
+				"version": "2026-07U10",
+				"date": "2026/07/28",
+				"event": "content",
+				"new": {
+					"weapons": ["1040221600", "1040818600"]
+				},
+				"raids": ["nihuyvintae-hard"]
+			},
+			{
+				"version": "2026-07U9",
+				"date": "2026/07/27",
+				"event": "content",
+				"new": {
+					"characters": ["3040667000"]
+				}
+			},
+			{
+				"version": "2026-07U8",
+				"date": "2026/07/24",
+				"event": "content",
+				"extension": {
+					"new": ["Added support for the Mobage version of the game"]
+				}
+			},
+			{
+				"version": "2026-07C",
+				"date": "2026/07/22",
+				"event": "collab",
+				"new": {
+					"characters": ["3040669000", "3040668000", "3040666000"],
+					"weapons": ["1040918900", "1040221500", "1040918800", "1040918700"],
+					"summons": ["2040459000", "2040460000"]
+				}
+			},
+			{
+				"version": "2026-07U7",
+				"date": "2026/07/21",
+				"event": "content",
+				"transcended": {
+					"characters": ["3040160000", "3040164000"]
+				},
+				"raids": ["allotropic-microcosm"]
+			},
+			{
+				"version": "2026-07U6",
+				"date": "2026/07/17",
+				"event": "content",
+				"site": {
+					"improved": [
+						"The Weapon Skill Boosts calculator now has Max HP and **Arcarum** settings, and several values and caps were corrected",
+						"The befoulment editor now takes the value shown in the game after Exorcision, and Permeation can now be set"
+					],
+					"fixed": ["Fixed weapon key images not loading"]
+				}
+			},
+			{
+				"version": "2026-07F",
+				"date": "2026/07/16",
+				"event": "flash",
+				"new": {
+					"characters": ["3040665000", "3040664000"],
+					"weapons": ["1040320300", "1040221400"]
+				}
+			},
+			{
+				"version": "2026-07U5",
+				"date": "2026/07/14",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040159000"]
+				}
+			},
+			{
+				"version": "2026-07U4",
+				"date": "2026/07/09",
+				"event": "content",
+				"new": {
+					"summons": ["2040458000"]
+				}
+			},
+			{
+				"version": "2026-07U3",
+				"date": "2026/07/05",
+				"event": "content",
+				"site": {
+					"new": [
+						"Added the Weapon Skill Boosts calculator (alpha), which recreates the game's Estimated Damage panel for a team and shows which weapons and skills make up each value"
+					]
+				}
+			},
+			{
+				"version": "2026-07U2",
+				"date": "2026/07/04",
+				"event": "content",
+				"site": {
+					"fixed": [
+						"Fixed a bug where users could not set the awakening on some **Grand**, **Ennead** and **Class Champion** weapons"
+					]
+				}
+			},
+			{
+				"version": "2026-07U1",
+				"date": "2026/07/02",
+				"event": "content",
+				"classes": ["130501"]
+			},
+			{
+				"version": "2026-06L",
+				"date": "2026/06/30",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040662000", "3040663000"],
+					"weapons": ["1040818500", "1040715400"]
+				}
+			},
+			{
+				"version": "2026-06U5",
+				"date": "2026/06/28",
+				"event": "content",
+				"new": {
+					"weapons": ["1040918600"]
+				}
+			},
+			{
+				"version": "2026-06U4",
+				"date": "2026/06/24",
+				"event": "content",
+				"site": {
+					"new": [
+						"Your class's abilities can now be set to on or off for Full Auto, and teams show which abilities each character uses on Full Auto"
+					],
+					"improved": ["Teams with only the main character now appear in the Gallery"],
+					"fixed": [
+						"Fixed broken images for transcended **Illustrious** weapons",
+						"Fixed broken images for **Lyria** and the main character on Gallery and profile team cards",
+						"Fixed errors when searching for class skills in Japanese",
+						"Fixed an error when viewing missing characters filtered by series"
+					]
+				}
+			},
+			{
+				"version": "2026-06U3",
+				"date": "2026/06/19",
+				"event": "content",
+				"site": {
+					"new": [
+						"Added substitutes: mark other characters, weapons, and summons that can be used in place of an item on your team",
+						"Characters, weapons, and summons on a team can now have their own notes, with formatting and mentions; notes on a weapon or summon can be synced to every copy on the team",
+						"Teams now show a difficulty tier, and the Gallery can be filtered by difficulty",
+						"Each character's abilities can now be set to on or off for Full Auto",
+						"Character skills can now be mentioned in team descriptions and notes, with a tooltip showing what the skill does",
+						"Added support summons: set up your support summons from your profile and download them as a shareable image",
+						"Added user search to the navigation"
+					],
+					"improved": [
+						"Redesigned how the details sidebar shows differences from your collection, with each changed field marked and synced individually",
+						"Item details now link to the item's page on gbf.wiki, gbf-wiki, GameWith, and Kamigame",
+						"Items on a team now show how many substitutes they have",
+						"Stats in the details sidebar now use uncap stars instead of labels",
+						"The details sidebar image now matches the item's uncap level",
+						"Bulleted and numbered lists now display correctly in descriptions",
+						"Security improvements"
+					]
+				}
+			},
+			{
+				"version": "2026-06F",
+				"date": "2026/06/16",
+				"event": "flash",
+				"new": {
+					"characters": ["3040661000", "3040660000"],
+					"weapons": ["1040426400", "1040123000"]
+				}
+			},
+			{
+				"version": "2026-06U2",
+				"date": "2026/06/15",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040356000"]
+				},
+				"transcended": {
+					"weapons": [
+						"1040217300",
+						"1040913400",
+						"1040515200",
+						"1040913500",
+						"1040022900",
+						"1040814400",
+						"1040217400",
+						"1040711700",
+						"1040115700",
+						"1040616300",
+						"1040315100",
+						"1040420000"
+					]
+				}
+			},
+			{
+				"version": "2026-06U1",
+				"date": "2026/06/06",
+				"event": "uncap",
+				"uncapped": {
+					"weapons": ["1040118000", "1040714400"]
+				}
+			},
+			{
+				"version": "2026-05L",
+				"date": "2026/05/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040658000", "3040659000"],
+					"weapons": ["1040621800", "1040426300"],
+					"summons": ["2040457000"]
+				}
+			},
+			{
+				"version": "2026-05U4",
+				"date": "2026/05/29",
+				"event": "content",
+				"new": {
+					"weapons": ["1040320200"]
+				}
+			},
+			{
+				"version": "2026-05U3",
+				"date": "2026/05/22",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040174000"]
+				}
+			},
+			{
+				"version": "2026-05U2",
+				"date": "2026/05/20",
+				"event": "content",
+				"new": {
+					"characters": ["3040655000"]
+				}
+			},
+			{
+				"version": "2026-05C",
+				"date": "2026/05/15",
+				"event": "collab",
+				"new": {
+					"characters": ["3040656000", "3040657000", "3040654000"],
+					"weapons": ["1040621700", "1040029600", "1040621600", "1040918500"],
+					"summons": ["2040455000", "2040456000"]
+				}
+			},
+			{
+				"version": "2026-05U1",
+				"date": "2026/05/10",
+				"event": "content",
+				"site": {
+					"new": [
+						"Crew captains can now hand the captaincy to another member from the members page"
+					],
+					"improved": ["Added new races: **Geonoid**, **Levleath**, **Grokkle**, and **Wolvir**"],
+					"fixed": ["Fixed captains being unable to re-invite someone whose invitation had expired"]
+				}
+			},
+			{
+				"version": "2026-04L",
+				"date": "2026/04/30",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040652000", "3040653000"],
+					"weapons": ["1040320100", "1040221300"]
+				}
+			},
+			{
+				"version": "2026-04U6",
+				"date": "2026/04/28",
+				"event": "content",
+				"new": {
+					"weapons": ["1040221200"]
+				},
+				"uncapped": {
+					"characters": ["3040085000"]
+				}
+			},
+			{
+				"version": "2026-04U5",
+				"date": "2026/04/23",
+				"event": "content",
+				"new": {
+					"weapons": [
+						"1040221100",
+						"1040519000",
+						"1040621500",
+						"1040029500",
+						"1040320000",
+						"1040426200"
+					],
+					"summons": ["2040453000", "2040454000"],
+					"characters": ["3040651000"]
+				},
+				"raids": ["papahlukruva", "zamalvoch"],
+				"extension": {
+					"new": [
+						"Collection views now show which items you own have changed in the game, and hovering one shows exactly what changed"
+					],
+					"fixed": [
+						"Fixed the selected raid not being saved when importing a party",
+						"Fixed images for **Ultima**, **Atma**, **Class Champion** and **Superlative** weapons",
+						"Fixed importing from the Database tab"
+					]
+				}
+			},
+			{
+				"version": "2026-04U4",
+				"date": "2026/04/20",
+				"event": "content",
+				"site": {
+					"new": [
+						"Profiles can now have a short description, with profile links shown beneath it",
+						"Profiles now have a button to start a new team with that user's collection, when their collection is visible to you",
+						"Anyone who can view a collection can now see which items it's missing"
+					],
+					"improved": ["You can now favorite your own teams"],
+					"fixed": ["Fixed being logged out or stuck in a loop about 30 days after logging in"]
+				}
+			},
+			{
+				"version": "2026-04F",
+				"date": "2026/04/15",
+				"event": "flash",
+				"new": {
+					"characters": ["3040650000", "3040649000"],
+					"weapons": ["1040715300", "1040818400"]
+				}
+			},
+			{
+				"version": "2026-04U3",
+				"date": "2026/04/14",
+				"event": "content",
+				"extension": {
+					"new": [
+						"Added a Crew tab for importing your crew's **Unite and Fight** scores, and for creating your crew on granblue.team",
+						"Redesigned the extension to match granblue.team",
+						"Collection views now split items into sections for items to import, items already in your collection and Level 1 items"
+					],
+					"improved": [
+						"Added rarity filters for characters, and moved sync deletions into a toggle in the filter bar",
+						"Empty tabs now have buttons that open the right page in the game",
+						"Added tips that explain each screen, which can be turned off from the profile menu"
+					],
+					"fixed": [
+						"Fixed the \"data captured\" message appearing on pages where nothing was captured"
+					]
+				}
+			},
+			{
+				"version": "2026-04U2",
+				"date": "2026/04/07",
+				"event": "content",
+				"site": {
+					"new": [
+						"Added a mobile layout: new navigation, and mobile-friendly Gallery, team, and summon pages",
+						"Gallery filters are now saved in the page address, so filtered views can be shared and survive a refresh",
+						"Added a time zone setting; crew members' time zones are shown on the crew page",
+						"Edit panes now ask before closing if you have unsaved changes"
+					],
+					"improved": [
+						"The extension page now shows the latest extension version",
+						"Teams without an owner now show as Anonymous",
+						"Crew member pages now link to the member's profile"
+					],
+					"fixed": [
+						"Fixed duplicate weapon keys after importing a team or editing a key",
+						"Fixed profiles stopping after two pages of teams",
+						"Fixed mentions showing as \"Unknown\" after being copied between descriptions",
+						"Fixed a replaced character sometimes keeping the previous character's transcendence"
+					]
+				}
+			},
+			{
+				"version": "2026-04U1",
+				"date": "2026/04/01",
+				"event": "content",
+				"extension": {
+					"new": ["Party imports can now set the party's visibility and share it with your crew"],
+					"improved": [
+						"Creating a playlist during a party import now opens its own screen, and searching for a playlist that doesn't exist offers to create it",
+						"Copy and save now export every captured item, not only the selected ones",
+						"The update notice now appears as a card at the bottom of the window"
+					],
+					"fixed": ["Fixed several artifact proficiencies being swapped"]
+				}
+			},
+			{
+				"version": "2026-03L",
+				"date": "2026/03/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040648000", "3040647000"],
+					"weapons": ["1040122900", "1040426100"]
+				},
+				"site": {
+					"new": [
+						"Your collection can now show the characters, weapons, and summons you don't own yet",
+						"Added Umikin Mode, a setting that only shows base, FLB, and transcendence character art",
+						"Team cards in the Gallery now show who made the team",
+						"Added a setting to choose whether team cards show characters, weapons, or summons by default",
+						"Crew invitations and claim requests can now be answered from the Crew page, and the Crew link shows a dot when something is waiting"
+					],
+					"improved": [
+						"Links in descriptions are now added through an in-app dialog, and mentions show character tags",
+						"Description previews on team pages now spell out Full Auto and Charge Attack and can be expanded with \"Read more\"",
+						"Adding an item to a team now shows a confirmation, and the search field clears so you can search again",
+						"Character search results now show proficiency",
+						"Collection sorting by name now follows your language, and summon collections no longer offer a proficiency sort"
+					],
+					"fixed": [
+						"Fixed members who joined after a **Unite and Fight** event not appearing when entering scores for that event",
+						"Fixed forged **Arcarum** summons failing to import into your collection",
+						"Fixed images for characters with element or **Gran/Djeeta** variants",
+						"Fixed an error when signing up with an invalid username or email"
+					]
+				}
+			},
+			{
+				"version": "2026-03U10",
+				"date": "2026/03/29",
+				"event": "content",
+				"new": {
+					"weapons": ["1040818300"]
+				}
+			},
+			{
+				"version": "2026-03U9",
+				"date": "2026/03/26",
+				"event": "content",
+				"extension": {
+					"new": [
+						"Added support for the Steam version of the game",
+						"The extension can now be popped out into its own window",
+						"Redesigned the collection views, with a select-all checkbox, a clearer filter menu, stash names and AX skill names in tooltips"
+					],
+					"improved": [
+						"Items already in your collection are no longer selected by default",
+						"The extension now shows your display name and picks up profile changes made on granblue.team",
+						"Character art now follows the simple portraits setting on granblue.team",
+						"Login emails are no longer case-sensitive, and error messages are translated"
+					],
+					"fixed": ["Fixed **Forged Arcarum** summon images"]
+				}
+			},
+			{
+				"version": "2026-03U8",
+				"date": "2026/03/24",
+				"event": "content",
+				"site": {
+					"new": [
+						"You can now set a display name, which is shown on your profile in place of your username",
+						"When a team's items differ from your collection, you can now sync the team to your collection or your collection to the team",
+						"Uncap levels can now be changed directly from collection cards and rows",
+						"The crew roster now saves its item lists, with a separate list for each element",
+						"Redesigned the settings dialog"
+					],
+					"improved": [
+						"Added race and gender filters for characters",
+						"Character search results now show tags such as style, season, and series",
+						"Profile links (Granblue ID, gbf.wiki, YouTube) no longer have separate visibility toggles; they show whenever they're filled in",
+						"New characters, weapons, and summons added to a team now start at their highest transcendence",
+						"The extension page now has a demo video and instructions for hiding the browser's debugging notice"
+					],
+					"fixed": [
+						"Fixed the transcendence popover, and the first uncap star not responding to clicks",
+						"Fixed weapon keys, awakenings, quick summons, and perpetuity rings being lost when importing",
+						"Fixed searching your collection while building a team only searching the first page of items",
+						"Fixed filters in the add to collection dialog",
+						"Fixed logging in being case-sensitive for email addresses",
+						"Fixed username changes not saving, and theme and language settings not staying in sync"
+					]
+				}
+			},
+			{
+				"version": "2026-03U7",
+				"date": "2026/03/23",
+				"event": "content",
+				"extension": {
+					"new": [
+						"Added a Japanese translation, with a language switch that also sets the language on granblue.team",
+						"Party imports can now be named and added to playlists, including new playlists created from the extension",
+						"The party view now shows job skills, sub summons, the support summon, weapon keys, awakenings, the quick summon and bullets",
+						"Added a menu to copy captured data or save it as a JSON file"
+					],
+					"improved": [
+						"The extension now works with the game set to Japanese, and reads ring and earring modifiers correctly",
+						"The party view was rearranged to match granblue.team, with art that matches each item's uncap level and character style",
+						"Added a button to refresh the raid list, and new raids now show up within a day",
+						"Character stats imports now include the uncap level and transcendence",
+						"Error messages from granblue.team are now shown in a readable form",
+						"The extension now tells you when a newer version is available"
+					],
+					"fixed": [
+						"Fixed raid auto-suggestion for standard and **Versusia** parties",
+						"Fixed weapons with element variants, such as **Class Champion** weapons, disappearing from collection views",
+						"Fixed artifact proficiencies being mixed up during sync",
+						"Fixed the extension icon in the Vivaldi sidebar"
+					]
+				}
+			},
+			{
+				"version": "2026-03U6",
+				"date": "2026/03/20",
+				"event": "content",
+				"site": {
+					"new": [
+						"Added bullets: equip bullets on gun weapons, see them in the weapon's details, and import them with your team from the extension",
+						"Crews can now link to their in-game crew page, and the crew settings check whether a gamertag is already taken",
+						"Added a YouTube channel link to profiles",
+						"Right-clicking an item in your collection now offers shortcuts to view it, edit it, or see the teams that use it"
+					],
+					"improved": [
+						"Added a series filter to the character collection",
+						"After picking a class skill, the skill picker now moves to the next empty slot",
+						"Gallery and profile team cards now show the class icon",
+						"Unlisted and private teams are now labeled on the team page, and your profile can be filtered by privacy",
+						"Importing from the extension now respects style-swapped characters and keeps the team name"
+					],
+					"fixed": [
+						"Fixed teams created without an account being unable to set a raid or edit details",
+						"Fixed private and unlisted teams not appearing on your profile until the page was refreshed",
+						"Fixed several weapon import issues, including element-changeable weapons not importing",
+						"Fixed email verification links"
+					]
+				}
+			},
+			{
+				"version": "2026-03U5",
+				"date": "2026/03/17",
+				"event": "content",
+				"site": {
+					"new": [
+						"Added playlists: group your teams into a playlist with a title, description, video, and privacy setting, and add teams to it from the team page or the playlist itself",
+						"Teams can now be marked as Solo, and the Gallery can be filtered to show solo teams",
+						"Added import settings: choose the default privacy for teams imported from the extension, and whether importing a team also adds its items to your collection",
+						"Added a pane for choosing your class's accessory (Shield or Manatura)",
+						"Your profile's Teams tab now has the same filters as the Gallery"
+					],
+					"improved": [
+						"Teams now show when they were last updated",
+						"Added a gbf.wiki profile link to profiles",
+						"Adding or removing a favorite now shows a confirmation with a link to your favorites",
+						"Extra weapon slots now only show weapons that can be equipped there, and won't let you uncap those weapons below the required level",
+						"Characters can now be set to awakening level 10",
+						"Weapon keys now show their images in the key dropdown, and hovering a weapon key on a team shows its name",
+						"Old /p/ team links now redirect to the team's new address"
+					],
+					"fixed": [
+						"Fixed awakenings not saving on weapons and characters",
+						"Fixed the quick summon badge not showing on summons",
+						"Fixed duplicate or missing results when scrolling through search results"
+					]
+				}
+			},
+			{
+				"version": "2026-03F",
+				"date": "2026/03/16",
+				"event": "flash",
+				"new": {
+					"characters": ["3040646000", "3040644000", "3040645000"],
+					"weapons": ["1040518900", "1040918400", "1040426000"]
+				}
+			},
+			{
+				"version": "2026-03U4",
+				"date": "2026/03/15",
+				"event": "content",
+				"uncapped": {
+					"weapons": ["1040516300", "1040619700"]
+				},
+				"site": {
+					"new": [
+						"granblue.team has been rebuilt from scratch with a new design. Teams, profiles, and the search sidebar all work differently, and everything is available in English and Japanese",
+						"Added collections. You can keep track of the characters, weapons, summons, and artifacts you own, including uncaps, transcendence, weapon keys, AX skills, and awakenings, and search and filter them from your profile",
+						"Added a browser extension for desktop Chromium browsers that imports your in-game collection and teams. See the Extension page for download and setup instructions",
+						"When adding items to a team, you can now search your collection instead of every item. Items added from your collection keep their uncap, transcendence, and modifications, and can be synced when your collection changes",
+						"Teams now show which items you own at the uncap and transcendence level the team uses",
+						"Added artifacts. You can add artifacts to your collection, equip them to characters in your teams, and see the in-game artifact scores",
+						"Added crews. You can create or join a crew, scout players, add phantom players for members who don't use the site, and check members' collections from the crew roster",
+						"Crews can now track **Unite and Fight** scores for each member and phantom player, with charts of scores across events",
+						"You can now share teams with your crew, in addition to setting a team to public, unlisted, or private",
+						"You can now build teams from a crewmate's collection, or from any user's public collection from their profile",
+						"Added a new filter bar to the Gallery. You can filter teams by element, raid, date, characters, weapons, and summons to include or exclude, battle settings, boost type (**Omega**, **Primal**, **Odious**, or unboosted) and double or single boost, or show only teams you can build from your collection",
+						"Redesigned team pages. Raid, battle settings, clear time, button and chain counts, and video now show as tiles above the grid, and the Characters, Weapons, and Summons tabs each have their own link",
+						"You can now duplicate weapons and summons in a grid from the context menu, or by holding Alt while dragging to an empty slot",
+						"If you made teams without an account, you can now move them to your account after logging in"
+					],
+					"improved": [
+						"Added password reset and email verification for accounts",
+						"Theme and language toggles are now in the navigation menu, and your choice is saved to your account when logged in",
+						"Summons and transcended weapons like **Dark Opus** now show their transformed art based on uncap and transcendence level",
+						"Raid pages now list teams for that raid and can be filtered like the Gallery, and the raid picker now has a Farming tab",
+						"Teams for **Versusia** now have the extra character slots, and imported teams are assigned a raid automatically when they use extra slots",
+						"Weapons with befoulments can now have them set when editing"
+					]
+				},
+				"extension": {
+					"new": [
+						"Released the granblue.team extension, which reads your parties and items from the game as you browse and imports them to granblue.team",
+						"Added party import, with a raid picker that suggests a raid based on the party's layout",
+						"Added collection import for characters, weapons, summons and artifacts, including weapon and summon stashes",
+						"Added character stats import for over mastery rings, earrings, perpetuity rings and awakenings",
+						"Added full sync, which can also remove items from your collection that are no longer in the game"
+					],
+					"improved": [
+						"Items already in your collection are dimmed, with a tooltip explaining why",
+						"Items that might duplicate ones already on granblue.team can be reviewed one at a time before importing",
+						"The extension switches to the matching tab when new data is captured",
+						"Re-importing artifacts now updates the ones already in your collection"
+					]
+				}
+			},
+			{
+				"version": "2026-03U3",
+				"date": "2026/03/11",
+				"event": "content",
+				"new": {
+					"styles": ["3040101000"]
+				}
+			},
+			{
+				"version": "2026-03U2",
+				"date": "2026/03/10",
+				"event": "content",
+				"uncapped": {
+					"weapons": [
+						"1040122600",
+						"1040817200",
+						"1040219300",
+						"1040518600",
+						"1040425000",
+						"1040817100",
+						"1040425400",
+						"1040918000",
+						"1040422600",
+						"1040619100",
+						"1040319200",
+						"1040917900"
+					]
+				},
+				"classes": ["190501"]
+			},
+			{
+				"version": "2026-03U1",
+				"date": "2026/03/04",
+				"event": "content",
+				"new": {
+					"characters": ["3040643000"]
+				}
+			},
+			{
+				"version": "2026-02L",
+				"date": "2026/02/28",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040642000", "3040641000"],
+					"weapons": ["1040221000", "1040029400"]
+				}
+			},
+			{
+				"version": "2026-02U3",
+				"date": "2026/02/26",
+				"event": "content",
+				"new": {
+					"weapons": ["1040425900"]
+				}
+			},
+			{
+				"version": "2026-02U2",
+				"date": "2026/02/24",
+				"event": "content",
+				"new": {
+					"weapons": [
+						"1040715200",
+						"1040818200",
+						"1040918300",
+						"1040122800",
+						"1040220900",
+						"1040319900"
+					],
+					"summons": ["2040451000", "2040452000"]
+				},
+				"raids": ["macutanmacar", "narophirmidas"]
+			},
+			{
+				"version": "2026-02U1",
+				"date": "2026/02/17",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040024000"]
+				}
+			},
+			{
+				"version": "2026-02F",
+				"date": "2026/02/14",
+				"event": "flash",
+				"new": {
+					"characters": ["3040640000", "3040639000"],
+					"weapons": ["1040319800", "1040818100"]
+				}
+			},
+			{
+				"version": "2026-01L",
+				"date": "2026/01/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040637000", "3040638000"],
+					"weapons": ["1040122700", "1040029300"]
+				}
+			},
+			{
+				"version": "2026-01U3",
+				"date": "2026/01/29",
+				"event": "content",
+				"new": {
+					"weapons": ["1040715100"]
+				}
+			},
+			{
+				"version": "2026-01U2",
+				"date": "2026/01/20",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040441000"]
+				}
+			},
+			{
+				"version": "2026-01F",
+				"date": "2026/01/16",
+				"event": "flash",
+				"new": {
+					"characters": ["3040635000", "3040636000"],
+					"weapons": ["1040425700", "1040425800"]
+				}
+			},
+			{
+				"version": "2026-01U1",
+				"date": "2026/01/07",
+				"event": "content",
+				"new": {
+					"summons": ["2040449000", "2040450000"]
+				}
+			}
+		]
+	},
+	{
+		"year": 2025,
+		"entries": [
+			{
+				"version": "2025-12L",
+				"date": "2025/12/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040633000", "3040632000"],
+					"weapons": ["1040715000", "1040029200"],
+					"summons": ["2040448000"]
+				}
+			},
+			{
+				"version": "2025-12U5",
+				"date": "2025/12/29",
+				"event": "content",
+				"new": {
+					"weapons": ["1040029100"]
+				}
+			},
+			{
+				"version": "2025-12F2",
+				"date": "2025/12/28",
+				"event": "flash",
+				"new": {
+					"characters": ["3040630000", "3040634000"],
+					"weapons": ["1040425600", "1040818000"]
+				}
+			},
+			{
+				"version": "2025-12U4",
+				"date": "2025/12/27",
+				"event": "content",
+				"new": {
+					"weapons": [
+						"1040220800",
+						"1040518800",
+						"1040621400",
+						"1040029000",
+						"1040425500",
+						"1040714900"
+					],
+					"summons": ["2040446000", "2040447000"],
+					"characters": ["3040631000"]
+				},
+				"raids": ["belmervolk", "nihuyvintae"]
+			},
+			{
+				"version": "2025-12U3",
+				"date": "2025/12/22",
+				"event": "uncap",
+				"uncapped": {
+					"weapons": ["1040119900", "1040218500"]
+				}
+			},
+			{
+				"version": "2025-12F",
+				"date": "2025/12/15",
+				"event": "flash",
+				"new": {
+					"characters": ["3040629000", "3040628000"],
+					"weapons": ["1040122600", "1040220700"]
+				}
+			},
+			{
+				"version": "2025-12U2",
+				"date": "2025/12/11",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040171000"]
+				}
+			},
+			{
+				"version": "2025-12U1",
+				"date": "2025/12/07",
+				"event": "uncap",
+				"uncapped": {
+					"weapons": ["1040515100", "1040814000"]
+				}
+			},
+			{
+				"version": "2025-11L",
+				"date": "2025/11/30",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040627000", "3040626000"],
+					"weapons": ["1040319700", "1040621300"]
+				}
+			},
+			{
+				"version": "2025-11U5",
+				"date": "2025/11/28",
+				"event": "content",
+				"new": {
+					"weapons": ["1040122500"]
+				}
+			},
+			{
+				"version": "2025-11U4",
+				"date": "2025/11/21",
+				"event": "uncap",
+				"uncapped": {
+					"weapons": [
+						"1040517100",
+						"1040120100",
+						"1040219400",
+						"1040319100",
+						"1040916900",
+						"1040025400",
+						"1040816300",
+						"1040423300",
+						"1040713600",
+						"1040618600"
+					]
+				}
+			},
+			{
+				"version": "2025-11U3",
+				"date": "2025/11/14",
+				"event": "uncap",
+				"uncapped": {
+					"weapons": ["1040026900", "1040712400"]
+				}
+			},
+			{
+				"version": "2025-11U2",
+				"date": "2025/11/13",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040115000", "3040204000"]
+				}
+			},
+			{
+				"version": "2025-11U1",
+				"date": "2025/11/10",
+				"event": "content",
+				"new": {
+					"characters": ["3040623000"]
+				},
+				"shields": ["4022"]
+			},
+			{
+				"version": "2025-11C",
+				"date": "2025/11/05",
+				"event": "collab",
+				"new": {
+					"characters": ["3040624000", "3040625000", "3040622000"],
+					"weapons": ["1040122400", "1040220500", "1040518700", "1040220600"],
+					"summons": ["2040444000", "2040445000"]
+				}
+			},
+			{
+				"version": "2025-10L",
+				"date": "2025/10/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040621000", "3040620000"],
+					"weapons": ["1040319600", "1040714800"],
+					"summons": ["2040443000"]
+				}
+			},
+			{
+				"version": "2025-10U2",
+				"date": "2025/10/29",
+				"event": "content",
+				"new": {
+					"weapons": ["1040220400"]
+				}
+			},
+			{
+				"version": "2025-10U1",
+				"date": "2025/10/22",
+				"event": "content",
+				"new": {
+					"weapons": [
+						"1040028900",
+						"1040122300",
+						"1040220300",
+						"1040621200",
+						"1040714700",
+						"1040817900"
+					]
+				},
+				"raids": ["versusia"]
+			},
+			{
+				"version": "2025-10F",
+				"date": "2025/10/16",
+				"event": "flash",
+				"new": {
+					"characters": ["3040619000", "3040618000", "3040617000"],
+					"weapons": ["1040518600", "1040425400", "1040621100"]
+				}
+			},
+			{
+				"version": "2025-09L",
+				"date": "2025/09/30",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040615000", "3040616000"],
+					"weapons": ["1040425300", "1040122200"],
+					"summons": ["2040442000"]
+				}
+			},
+			{
+				"version": "2025-09U5",
+				"date": "2025/09/28",
+				"event": "content",
+				"new": {
+					"weapons": ["1040028700"]
+				}
+			},
+			{
+				"version": "2025-09U4",
+				"date": "2025/09/25",
+				"event": "content",
+				"uncapped": {
+					"characters": ["3040066000"]
+				},
+				"manatura": ["15", "16"],
+				"shields": ["4020", "4021"]
+			},
+			{
+				"version": "2025-09U3",
+				"date": "2025/09/21",
+				"event": "uncap",
+				"uncapped": {
+					"summons": ["2040378000", "2040379000"]
+				}
+			},
+			{
+				"version": "2025-09F",
+				"date": "2025/09/19",
+				"event": "flash",
+				"new": {
+					"characters": ["3040614000", "3040613000"],
+					"weapons": ["1040122100", "1040918200"]
+				}
+			},
+			{
+				"version": "2025-09U2",
+				"date": "2025/09/18",
+				"event": "content",
+				"classes": ["100501"]
+			},
+			{
+				"version": "2025-09U1",
+				"date": "2025/09/17",
+				"event": "content",
+				"shields": ["4019"]
+			},
+			{
+				"version": "2025-08L",
+				"date": "2025/08/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040612000", "3040611000"],
+					"weapons": ["1040028600", "1040918100"],
+					"summons": ["2040441000"]
+				},
+				"site": {
+					"fixed": ["Fixed the site crashing intermittently"]
+				}
+			},
+			{
+				"version": "2025-08U4",
+				"date": "2025/08/29",
+				"event": "content",
+				"new": {
+					"weapons": ["1040425200"]
+				}
+			},
+			{
+				"version": "2025-08U3",
+				"date": "2025/08/21",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040070000"]
+				}
+			},
+			{
+				"version": "2025-08F",
+				"date": "2025/08/15",
+				"event": "flash",
+				"new": {
+					"characters": ["3040609000", "3040610000"],
+					"weapons": ["1040918000", "1040714600", "1040518200"]
+				}
+			},
+			{
+				"version": "2025-08U2",
+				"date": "2025/08/12",
+				"event": "content",
+				"new": {
+					"summons": ["2040440000"],
+					"characters": ["3040606000"]
+				}
+			},
+			{
+				"version": "2025-08U1",
+				"date": "2025/08/09",
+				"event": "uncap",
+				"uncapped": {
+					"summons": ["2040430000"]
+				}
+			},
+			{
+				"version": "2025-08C",
+				"date": "2025/08/07",
+				"event": "collab",
+				"new": {
+					"characters": ["3040607000", "3040608000", "3040605000"],
+					"weapons": ["1040621000", "1040425100", "1040620900", "1040319500"],
+					"summons": ["2040439000"]
+				}
+			},
+			{
+				"version": "2025-07L",
+				"date": "2025/07/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040603000", "3040604000"],
+					"weapons": ["1040425000", "1040620800"],
+					"summons": ["2040438000"]
+				}
+			},
+			{
+				"version": "2025-07U3",
+				"date": "2025/07/29",
+				"event": "content",
+				"new": {
+					"weapons": ["1040220200"]
+				}
+			},
+			{
+				"version": "2025-07U2",
+				"date": "2025/07/22",
+				"event": "content",
+				"new": {
+					"weapons": ["1040517400", "1040620200", "1040817300"]
+				},
+				"uncapped": {
+					"characters": ["3040119000"]
+				},
+				"raids": ["virtuosic-mastery-trial"]
+			},
+			{
+				"version": "2025-07F",
+				"date": "2025/07/15",
+				"event": "flash",
+				"new": {
+					"characters": ["3040601000", "3040602000"],
+					"weapons": ["1040817200", "1040122000"],
+					"summons": ["2040437000"]
+				}
+			},
+			{
+				"version": "2025-07U1",
+				"date": "2025/07/07",
+				"event": "uncap",
+				"uncapped": {
+					"summons": ["2040376000", "2040377000"]
+				}
+			},
+			{
+				"version": "2025-06L",
+				"date": "2025/06/30",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040599000", "3040600000"],
+					"weapons": ["1040518100", "1040620100"]
+				}
+			},
+			{
+				"version": "2025-06U3",
+				"date": "2025/06/28",
+				"event": "content",
+				"new": {
+					"weapons": ["1040714500"]
+				}
+			},
+			{
+				"version": "2025-06F",
+				"date": "2025/06/16",
+				"event": "flash",
+				"new": {
+					"characters": ["3040597000", "3040598000"],
+					"weapons": ["1040620000", "1040220100"],
+					"summons": ["2040436000"]
+				}
+			},
+			{
+				"version": "2025-06U2",
+				"date": "2025/06/12",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040075000"]
+				}
+			},
+			{
+				"version": "2025-06U1",
+				"date": "2025/06/06",
+				"event": "content",
+				"new": {
+					"weapons": ["1040714400"]
+				}
+			},
+			{
+				"version": "2025-05L",
+				"date": "2025/05/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040595000", "3040596000"],
+					"weapons": ["1040028500", "1040714300"]
+				}
+			},
+			{
+				"version": "2025-05U2",
+				"date": "2025/05/29",
+				"event": "content",
+				"new": {
+					"weapons": ["1040220000"]
+				},
+				"classes": ["180401"]
+			},
+			{
+				"version": "2025-05U1",
+				"date": "2025/05/26",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040042000"]
+				}
+			},
+			{
+				"version": "2025-05F",
+				"date": "2025/05/15",
+				"event": "flash",
+				"new": {
+					"characters": ["3040593000", "3040594000"],
+					"weapons": ["1040714200", "1040319400"]
+				}
+			},
+			{
+				"version": "2025-04L",
+				"date": "2025/04/30",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040591000", "3040592000"],
+					"weapons": ["1040028400", "1040219900"]
+				}
+			},
+			{
+				"version": "2025-04U3",
+				"date": "2025/04/28",
+				"event": "content",
+				"new": {
+					"weapons": ["1040319300"]
+				}
+			},
+			{
+				"version": "2025-04U2",
+				"date": "2025/04/21",
+				"event": "content",
+				"new": {
+					"weapons": ["1040714100"],
+					"characters": ["3040587000"]
+				}
+			},
+			{
+				"version": "2025-04F",
+				"date": "2025/04/15",
+				"event": "flash",
+				"new": {
+					"characters": ["3040589000", "3040590000"],
+					"weapons": ["1040121900", "1040219800"],
+					"summons": ["2040435000"]
+				}
+			},
+			{
+				"version": "2025-04U1",
+				"date": "2025/04/14",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040379000"]
+				}
+			},
+			{
+				"version": "2025-03L",
+				"date": "2025/03/30",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040585000", "3040586000"],
+					"weapons": ["1040714000", "1040917900"]
+				}
+			},
+			{
+				"version": "2025-03U7",
+				"date": "2025/03/29",
+				"event": "content",
+				"new": {
+					"weapons": ["1040517300"]
+				},
+				"uncapped": {
+					"characters": ["3040087000"]
+				}
+			},
+			{
+				"version": "2025-03U6",
+				"date": "2025/03/25",
+				"event": "content",
+				"new": {
+					"weapons": ["1040121300", "1040424400", "1040917300"]
+				},
+				"manatura": ["14"],
+				"raids": ["esoteric-mastery-trial"]
+			},
+			{
+				"version": "2025-03U5",
+				"date": "2025/03/22",
+				"event": "content",
+				"new": {
+					"weapons": ["1040424300"]
+				}
+			},
+			{
+				"version": "2025-03F",
+				"date": "2025/03/17",
+				"event": "flash",
+				"new": {
+					"characters": ["3040583000", "3040584000", "3040582000"],
+					"weapons": ["1040817100", "1040517200", "1040917200"]
+				}
+			},
+			{
+				"version": "2025-03U4",
+				"date": "2025/03/14",
+				"event": "uncap",
+				"uncapped": {
+					"weapons": ["1040022600", "1040216800"]
+				}
+			},
+			{
+				"version": "2025-03U3",
+				"date": "2025/03/11",
+				"event": "content",
+				"new": {
+					"characters": ["3040588000"]
+				}
+			},
+			{
+				"version": "2025-03U2",
+				"date": "2025/03/10",
+				"event": "content",
+				"uncapped": {
+					"weapons": [
+						"1040618900",
+						"1040713700",
+						"1040423400",
+						"1040916600",
+						"1040119100",
+						"1040518000",
+						"1040617200",
+						"1040916400",
+						"1040119600",
+						"1040816900",
+						"1040026000",
+						"1040816800"
+					],
+					"summons": [
+						"2040361000",
+						"2040363000",
+						"2040366000",
+						"2040368000",
+						"2040381000",
+						"2040385000"
+					]
+				},
+				"classes": ["170401"]
+			},
+			{
+				"version": "2025-03U1",
+				"date": "2025/03/04",
+				"event": "content",
+				"new": {
+					"styles": ["3040377000"]
+				}
+			},
+			{
+				"version": "2025-02L",
+				"date": "2025/02/28",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040580000", "3040581000"],
+					"weapons": ["1040917100", "1040424200"]
+				}
+			},
+			{
+				"version": "2025-02U5",
+				"date": "2025/02/26",
+				"event": "content",
+				"new": {
+					"weapons": ["1040424100"]
+				}
+			},
+			{
+				"version": "2025-02U4",
+				"date": "2025/02/25",
+				"event": "content",
+				"site": {
+					"fixed": [
+						"Fixed a bug where characters could not be saved",
+						"Fixed a bug where changing a team's class did not save",
+						"Fixed several issues with over mastery, awakening and ring values on characters"
+					]
+				}
+			},
+			{
+				"version": "2025-02U3",
+				"date": "2025/02/20",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040103000"]
+				}
+			},
+			{
+				"version": "2025-02F",
+				"date": "2025/02/14",
+				"event": "flash",
+				"new": {
+					"characters": ["3040579000", "3040578000"],
+					"weapons": ["1040219700", "1040319200"]
+				}
+			},
+			{
+				"version": "2025-02U2",
+				"date": "2025/02/10",
+				"event": "content",
+				"new": {
+					"characters": ["3040575000"]
+				},
+				"manatura": ["13"]
+			},
+			{
+				"version": "2025-02U1",
+				"date": "2025/02/04",
+				"event": "content",
+				"new": {
+					"weapons": ["1040424000", "1040028300"],
+					"summons": ["2040434000"],
+					"characters": ["3040574000"]
+				}
+			},
+			{
+				"version": "2025-01C",
+				"date": "2025/01/31",
+				"event": "collab",
+				"new": {
+					"characters": ["3040577000", "3040576000"],
+					"weapons": ["1040028200", "1040121200"]
+				}
+			},
+			{
+				"version": "2025-01U6",
+				"date": "2025/01/29",
+				"event": "content",
+				"new": {
+					"weapons": ["1040619900"]
+				}
+			},
+			{
+				"version": "2025-01U5",
+				"date": "2025/01/22",
+				"event": "content",
+				"new": {
+					"weapons": ["1040517100"]
+				}
+			},
+			{
+				"version": "2025-01U4",
+				"date": "2025/01/20",
+				"event": "content",
+				"site": {
+					"new": ["Links to teams now show a preview image of the team when shared"]
+				}
+			},
+			{
+				"version": "2025-01F",
+				"date": "2025/01/17",
+				"event": "flash",
+				"new": {
+					"characters": ["3040572000", "3040573000"],
+					"weapons": ["1040619800", "1040713900"]
+				}
+			},
+			{
+				"version": "2025-01U3",
+				"date": "2025/01/14",
+				"event": "content",
+				"new": {
+					"weapons": ["1040619700"]
+				}
+			},
+			{
+				"version": "2025-01U2",
+				"date": "2025/01/10",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040377000"]
+				}
+			},
+			{
+				"version": "2025-01U1",
+				"date": "2025/01/07",
+				"event": "content",
+				"new": {
+					"weapons": ["1040619600"],
+					"characters": ["3040571000"]
+				}
+			}
+		]
+	},
+	{
 		"year": 2024,
 		"entries": [
+			{
+				"version": "2024-12L",
+				"date": "2024/12/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040568000", "3040570000", "3040569000"],
+					"weapons": ["1040619500", "1040423900", "1040028100", "1040219600"],
+					"summons": ["2040433000"]
+				}
+			},
+			{
+				"version": "2024-12U2",
+				"date": "2024/12/29",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040254000"]
+				}
+			},
+			{
+				"version": "2024-12F2",
+				"date": "2024/12/28",
+				"event": "flash",
+				"new": {
+					"characters": ["3040566000", "3040567000"],
+					"weapons": ["1040713800", "1040917000"]
+				}
+			},
+			{
+				"version": "2024-12U1",
+				"date": "2024/12/22",
+				"event": "uncap",
+				"uncapped": {
+					"weapons": ["1040115400", "1040711500"]
+				}
+			},
+			{
+				"version": "2024-12F",
+				"date": "2024/12/16",
+				"event": "flash",
+				"new": {
+					"characters": ["3040565000", "3040564000"],
+					"weapons": ["1040121100", "1040423800"]
+				}
+			},
+			{
+				"version": "2024-11L",
+				"date": "2024/11/30",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040562000", "3040563000"],
+					"weapons": ["1040817000", "1040121000"]
+				}
+			},
+			{
+				"version": "2024-11U3",
+				"date": "2024/11/28",
+				"event": "content",
+				"new": {
+					"weapons": ["1040619400"]
+				}
+			},
+			{
+				"version": "2024-11U2",
+				"date": "2024/11/20",
+				"event": "content",
+				"new": {
+					"summons": ["2040431000", "2040432000"],
+					"characters": ["3040559000"]
+				},
+				"uncapped": {
+					"characters": ["3040558000"]
+				}
+			},
+			{
+				"version": "2024-11C",
+				"date": "2024/11/15",
+				"event": "collab",
+				"new": {
+					"characters": ["3040560000", "3040561000", "3040558000"],
+					"weapons": ["1040027800", "1040619300", "1040027700"]
+				}
+			},
+			{
+				"version": "2024-11U1",
+				"date": "2024/11/07",
+				"event": "content",
+				"new": {
+					"weapons": ["1040319100", "1040916900"]
+				}
+			},
+			{
+				"version": "2024-10L",
+				"date": "2024/10/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040556000", "3040557000"],
+					"weapons": ["1040423700", "1040027600"]
+				}
+			},
+			{
+				"version": "2024-10U4",
+				"date": "2024/10/29",
+				"event": "content",
+				"new": {
+					"weapons": ["1040120900", "1040027000", "1040120300", "1040318500"]
+				}
+			},
+			{
+				"version": "2024-10U3",
+				"date": "2024/10/24",
+				"event": "content",
+				"raids": ["martial-mastery-trial"]
+			},
+			{
+				"version": "2024-10U2",
+				"date": "2024/10/23",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040058000"]
+				}
+			},
+			{
+				"version": "2024-10F",
+				"date": "2024/10/15",
+				"event": "flash",
+				"new": {
+					"characters": ["3040555000", "3040553000", "3040554000", "3040526000"],
+					"weapons": ["1040518000", "1040816900", "1040120200"]
+				},
+				"uncapped": {
+					"weapons": ["1040020500"]
+				}
+			},
+			{
+				"version": "2024-10U1",
+				"date": "2024/10/07",
+				"event": "content",
+				"new": {
+					"weapons": ["1040026900"]
+				}
+			},
+			{
+				"version": "2024-09L",
+				"date": "2024/09/30",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040551000", "3040552000"],
+					"weapons": ["1040318400", "1040816800"]
+				}
+			},
+			{
+				"version": "2024-09U5",
+				"date": "2024/09/28",
+				"event": "content",
+				"new": {
+					"weapons": ["1040026800"]
+				}
+			},
+			{
+				"version": "2024-09U4",
+				"date": "2024/09/24",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040093000"]
+				}
+			},
+			{
+				"version": "2024-09U3",
+				"date": "2024/09/21",
+				"event": "uncap",
+				"uncapped": {
+					"weapons": ["1040314700", "1040419600"]
+				}
+			},
+			{
+				"version": "2024-09F",
+				"date": "2024/09/17",
+				"event": "flash",
+				"new": {
+					"characters": ["3040549000", "3040550000"],
+					"weapons": ["1040026700", "1040219500"]
+				},
+				"uncapped": {
+					"summons": ["2040065000"]
+				},
+				"manatura": ["9", "10", "11", "12"],
+				"shields": ["4014", "4015", "4016", "4017", "4018"]
+			},
+			{
+				"version": "2024-09U2",
+				"date": "2024/09/07",
+				"event": "content",
+				"new": {
+					"weapons": ["1040120100", "1040219400"]
+				}
+			},
+			{
+				"version": "2024-09U1",
+				"date": "2024/09/03",
+				"event": "content",
+				"classes": ["160401"]
+			},
+			{
+				"version": "2024-08L",
+				"date": "2024/08/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040547000", "3040548000"],
+					"weapons": ["1040916800", "1040026600"]
+				}
+			},
+			{
+				"version": "2024-08U5",
+				"date": "2024/08/29",
+				"event": "content",
+				"new": {
+					"weapons": ["1040619200"]
+				}
+			},
+			{
+				"version": "2024-08U4",
+				"date": "2024/08/27",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040158000"]
+				}
+			},
+			{
+				"version": "2024-08F",
+				"date": "2024/08/16",
+				"event": "flash",
+				"new": {
+					"characters": ["3040545000", "3040546000", "3040544000"],
+					"weapons": ["1040120000", "1040219300", "1040816600"]
+				}
+			},
+			{
+				"version": "2024-08U3",
+				"date": "2024/08/15",
+				"event": "content",
+				"new": {
+					"characters": ["3040527000"]
+				},
+				"uncapped": {
+					"weapons": ["1040113000"]
+				}
+			},
+			{
+				"version": "2024-08U2",
+				"date": "2024/08/09",
+				"event": "content",
+				"new": {
+					"summons": ["2040430000"]
+				}
+			},
+			{
+				"version": "2024-08U1",
+				"date": "2024/08/07",
+				"event": "content",
+				"new": {
+					"weapons": ["1040119900"]
+				}
+			},
+			{
+				"version": "2024-07L",
+				"date": "2024/07/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040541000", "3040542000", "3040543000"],
+					"weapons": ["1040713700", "1040619100", "1040423600"],
+					"summons": ["2040429000"]
+				}
+			},
+			{
+				"version": "2024-07U3",
+				"date": "2024/07/29",
+				"event": "content",
+				"new": {
+					"weapons": ["1040423500"]
+				}
+			},
+			{
+				"version": "2024-07U2",
+				"date": "2024/07/22",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040046000"]
+				}
+			},
+			{
+				"version": "2024-07F",
+				"date": "2024/07/16",
+				"event": "flash",
+				"new": {
+					"characters": ["3040539000", "3040540000"],
+					"weapons": ["1040318200", "1040318300"],
+					"summons": ["2040428000"]
+				}
+			},
+			{
+				"version": "2024-07U1",
+				"date": "2024/07/07",
+				"event": "uncap",
+				"uncapped": {
+					"weapons": ["1040314600", "1040515000"]
+				}
+			},
+			{
+				"version": "2024-06L",
+				"date": "2024/06/30",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040537000", "3040538000"],
+					"weapons": ["1040423400", "1040517000"]
+				}
+			},
+			{
+				"version": "2024-06U5",
+				"date": "2024/06/28",
+				"event": "content",
+				"new": {
+					"weapons": ["1040119800"]
+				}
+			},
+			{
+				"version": "2024-06U4",
+				"date": "2024/06/21",
+				"event": "content",
+				"new": {
+					"weapons": ["1040423300", "1040713600"]
+				}
+			},
+			{
+				"version": "2024-06U3",
+				"date": "2024/06/18",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040108000"]
+				}
+			},
+			{
+				"version": "2024-06F",
+				"date": "2024/06/15",
+				"event": "flash",
+				"new": {
+					"characters": ["3040535000", "3040536000"],
+					"weapons": ["1040916600", "1040916700"]
+				}
+			},
+			{
+				"version": "2024-06U2",
+				"date": "2024/06/06",
+				"event": "content",
+				"new": {
+					"characters": ["3040528000"]
+				},
+				"uncapped": {
+					"weapons": ["1040513500"]
+				}
+			},
+			{
+				"version": "2024-06U1",
+				"date": "2024/06/03",
+				"event": "content",
+				"new": {
+					"weapons": [
+						"1040119700",
+						"1040318100",
+						"1040916500",
+						"1040026300",
+						"1040619000",
+						"1040816500"
+					]
+				},
+				"transcended": {
+					"summons": ["2040027000", "2040028000"]
+				},
+				"raids": ["leviathan-mare-omega", "yggdrasil-arbos-omega"]
+			},
+			{
+				"version": "2024-05L",
+				"date": "2024/05/31",
+				"event": "legfest",
+				"new": {
+					"characters": ["3040533000", "3040534000"],
+					"weapons": ["1040618900", "1040916400"]
+				}
+			},
+			{
+				"version": "2024-05U5",
+				"date": "2024/05/29",
+				"event": "content",
+				"new": {
+					"weapons": ["1040026200", "1040317500"]
+				},
+				"classes": ["470301"]
+			},
+			{
+				"version": "2024-05U4",
+				"date": "2024/05/22",
+				"event": "content",
+				"new": {
+					"weapons": ["1040423200"]
+				}
+			},
+			{
+				"version": "2024-05U3",
+				"date": "2024/05/20",
+				"event": "uncap",
+				"uncapped": {
+					"characters": ["3040047000"]
+				}
+			},
+			{
+				"version": "2024-05F",
+				"date": "2024/05/15",
+				"event": "flash",
+				"new": {
+					"characters": ["3040532000", "3040531000"],
+					"weapons": ["1040713500", "1040119600"]
+				}
+			},
+			{
+				"version": "2024-05U2",
+				"date": "2024/05/07",
+				"event": "uncap",
+				"uncapped": {
+					"weapons": ["1040615700", "1040711400"]
+				}
+			},
 			{
 				"version": "2024-05U1",
 				"date": "2024/05/02",
@@ -20,11 +2178,15 @@
 					"summons": ["2040034000", "2040046000"]
 				},
 				"notes": [
-					"Added new raids: Colossus Ira Omega (Impossible) and Celeste Ater Omega (Impossible)",
-					"Pendulum of Extremity, Pendulum of Sagacity, and Pendulum of Supremacy added (I kept forgetting about these)",
-					"Only Dark Opus Weapons at Transcendence Lv3 or higher can equip the new Pendulums",
-					"Fixed a bug where users could not set the awakening level on some Grand weapons"
-				]
+					"Added new raids: **Colossus Ira Omega (Impossible)** and **Celeste Ater Omega (Impossible)**",
+					"**Pendulum of Extremity**, **Pendulum of Sagacity**, and **Pendulum of Supremacy** added (I kept forgetting about these)",
+					"Only **Dark Opus Weapons** at Transcendence Lv3 or higher can equip the new Pendulums"
+				],
+				"site": {
+					"fixed": [
+						"Fixed a bug where users could not set the awakening level on some **Grand** weapons"
+					]
+				}
 			},
 			{
 				"version": "2024-04L",
@@ -91,10 +2253,14 @@
 					"summons": ["2040020000", "2040047000"]
 				},
 				"notes": [
-					"Added new raids: Tiamat Aura Omega (Impossible) and Luminiera Credo Omega (Impossible)",
-					"When searching for characters, weapons, and summons, results will now show the item can be transcended",
-					"When searching for summons, results will now show whether the summon has a subaura"
-				]
+					"Added new raids: **Tiamat Aura Omega (Impossible)** and **Luminiera Credo Omega (Impossible)**"
+				],
+				"site": {
+					"improved": [
+						"When searching for characters, weapons, and summons, results will now show the item can be transcended",
+						"When searching for summons, results will now show whether the summon has a subaura"
+					]
+				}
 			},
 			{
 				"version": "2024-03F",
@@ -121,16 +2287,6 @@
 				"version": "2024-03U",
 				"date": "2024/03/10",
 				"event": "content",
-				"transcended": {
-					"summons": [
-						"2040094000",
-						"2040100000",
-						"2040098000",
-						"2040084000",
-						"2040090000",
-						"2040080000"
-					]
-				},
 				"uncapped": {
 					"weapons": [
 						"1040516200",
@@ -145,6 +2301,16 @@
 						"1040806000",
 						"1040515900",
 						"1040616800"
+					]
+				},
+				"transcended": {
+					"summons": [
+						"2040094000",
+						"2040100000",
+						"2040098000",
+						"2040084000",
+						"2040090000",
+						"2040080000"
 					]
 				},
 				"awakened": [
@@ -172,12 +2338,14 @@
 				"new": {
 					"weapons": ["1040618400"]
 				},
+				"classes": ["150401"],
 				"raids": ["dark-rapture-zero"],
-				"notes": [
-					"Added new class: Onmyoji",
-					"Fixed a bug that prevented filtering job skills by category",
-					"Fixed a bug that prevented infinite scrolling in search results"
-				]
+				"site": {
+					"fixed": [
+						"Fixed a bug that prevented filtering job skills by category",
+						"Fixed a bug that prevented infinite scrolling in search results"
+					]
+				}
 			},
 			{
 				"version": "2024-02F",
@@ -205,9 +2373,13 @@
 					"weapons": ["1040025700", "1040422500", "1040317100", "1030406600"]
 				},
 				"notes": [
-					"Added Ultimate Mastery skills for classes: Cavalier, Relic Buster, Yamato, and Masquerade",
-					"Fixed a bug where Telumas could be set on the third slot of Draconic Providence weapons"
-				]
+					"Added Ultimate Mastery skills for classes: **Cavalier**, **Relic Buster**, **Yamato**, and **Masquerade**"
+				],
+				"site": {
+					"fixed": [
+						"Fixed a bug where **Telumas** could be set on the third slot of **Draconic Providence** weapons"
+					]
+				}
 			},
 			{
 				"version": "2024-01U3",
@@ -265,10 +2437,12 @@
 				"uncapped": {
 					"characters": ["3040167000", "3040166000"]
 				},
-				"notes": [
-					"Fixed a bug that prevented logged out users from creating teams if they started from the Character or Summon tabs",
-					"Fixed a bug that prevented filtering the Teams, Saved, and Profile pages without selecting a filter twice"
-				]
+				"site": {
+					"fixed": [
+						"Fixed a bug that prevented logged out users from creating teams if they started from the Character or Summon tabs",
+						"Fixed a bug that prevented filtering the Teams, Saved, and Profile pages without selecting a filter twice"
+					]
+				}
 			}
 		]
 	},
@@ -302,10 +2476,15 @@
 				"uncapped": {
 					"weapons": ["1040815100", "1040815200", "1040815300", "1040815400", "1040815000"]
 				},
+				"raids": ["the-world-hl"],
 				"notes": [
-					"Sorry for the longer spaces between updates—life has been a bit busy. Work has gotten a lot busier, I have more social obligations, and am working on another app. I haven't abandoned granblue.team though. Thanks for your patience!",
-					"Finally fixed the logic that determines when a conflict occurs between Dark Opus Weapons, Draconic Weapons and Draconic Providence Weapons"
-				]
+					"Sorry for the longer spaces between updates—life has been a bit busy. Work has gotten a lot busier, I have more social obligations, and am working on another app. I haven't abandoned granblue.team though. Thanks for your patience!"
+				],
+				"site": {
+					"fixed": [
+						"Finally fixed the logic that determines when a conflict occurs between **Dark Opus Weapons**, **Draconic Weapons** and **Draconic Providence Weapons**"
+					]
+				}
 			},
 			{
 				"version": "2023-12F",
@@ -380,7 +2559,7 @@
 					]
 				},
 				"notes": [
-					"Added Ultimate Mastery skills for classes: Bandit Tycoon, Nighthound, Monk, and Rising Force"
+					"Added Ultimate Mastery skills for classes: **Bandit Tycoon**, **Nighthound**, **Monk**, and **Rising Force**"
 				]
 			},
 			{
@@ -407,9 +2586,12 @@
 						"1040915600"
 					]
 				},
-				"notes": [
-					"Draconic Weapons Providence are not properly implemented yet and cannot be placed into teams with Dark Opus Weapons"
-				]
+				"raids": ["hexachromatic-hierarch"],
+				"site": {
+					"improved": [
+						"**Draconic Weapons Providence** are not properly implemented yet and cannot be placed into teams with **Dark Opus Weapons**"
+					]
+				}
 			},
 			{
 				"version": "2023-10F",
@@ -449,7 +2631,7 @@
 					"characters": ["3040064000"]
 				},
 				"notes": [
-					"Added Ultimate Mastery skills for classes: Warlock, Chrysaor, Lumberjack, Robin Hood, and Doctor"
+					"Added Ultimate Mastery skills for classes: **Warlock**, **Chrysaor**, **Lumberjack**, **Robin Hood**, and **Doctor**"
 				]
 			},
 			{
@@ -458,8 +2640,13 @@
 				"event": "content",
 				"new": {
 					"weapons": ["1040117000", "1040516300"]
-				},
-				"notes": ["Added new Manatura \"Ouroboros Mino\""]
+				}
+			},
+			{
+				"version": "2023-09U2",
+				"date": "2023/09/06",
+				"event": "content",
+				"manatura": ["8"]
 			},
 			{
 				"version": "2023-08L",
@@ -490,7 +2677,7 @@
 				"uncapped": {
 					"characters": ["3040161000", "3040165000"]
 				},
-				"notes": ["Added new class \"Street King\""]
+				"classes": ["140401"]
 			},
 			{
 				"version": "2023-08U2",
@@ -595,7 +2782,7 @@
 					"characters": ["3040073000"]
 				},
 				"notes": [
-					"Added Ultimate Mastery skills for classes: Sage, Chaos Ruler, Elysian, Glorybringer, Runeslayer"
+					"Added Ultimate Mastery skills for classes: **Sage**, **Chaos Ruler**, **Elysian**, **Glorybringer**, **Runeslayer**"
 				]
 			},
 			{
@@ -643,7 +2830,7 @@
 				"uncapped": {
 					"characters": ["3040164000", "3040160000"]
 				},
-				"notes": ["Added new weapon series, World Series"]
+				"notes": ["Added new weapon series, **World Series**"]
 			},
 			{
 				"version": "2023-03U",
@@ -677,7 +2864,7 @@
 						"2040056000"
 					]
 				},
-				"notes": ["Added Siete HL (raid)", "Chaser name corrected (was 'Chase')"]
+				"notes": ["Added **Siete HL** (raid)", "Chaser name corrected (was 'Chase')"]
 			},
 			{
 				"version": "2023-03F",
@@ -688,14 +2875,23 @@
 					"weapons": ["1040914600", "1040116800", "1040515900", "1040712300"]
 				},
 				"notes": [
-					"Added new class \"Yamato\"",
-					"Added Ultimate Mastery skills for classes: Berserker, Apsaras, Nekomancer, Kengo",
-					"Added raids for Dread Barrage",
-					"Renamed \"Guild Wars\" in raid list to \"Unite and Fight\"",
-					"Fixed sorting of raids for Dread Barrage and Unite and Fight",
-					"Fixed character hovercard showing up behind class image",
-					"Fixed an issue where users couldn't edit remixed teams"
-				]
+					"Added Ultimate Mastery skills for classes: **Berserker**, **Apsaras**, **Nekomancer**, **Kengo**",
+					"Added raids for **Dread Barrage**",
+					"Renamed \"**Guild Wars**\" in raid list to \"**Unite and Fight**\""
+				],
+				"site": {
+					"fixed": [
+						"Fixed sorting of raids for **Dread Barrage** and **Unite and Fight**",
+						"Fixed character hovercard showing up behind class image",
+						"Fixed an issue where users couldn't edit remixed teams"
+					]
+				}
+			},
+			{
+				"version": "2023-03U3",
+				"date": "2023/03/10",
+				"event": "content",
+				"classes": ["460301"]
 			},
 			{
 				"version": "2023-02L",
@@ -737,7 +2933,7 @@
 					"characters": ["3040252000"],
 					"weapons": ["1040617100", "1040016100"]
 				},
-				"notes": ["Added official names for Proven Weapons and Revans Weapons"]
+				"notes": ["Added official names for **Proven Weapons** and **Revans Weapons**"]
 			},
 			{
 				"version": "2023-02-U1",
@@ -757,6 +2953,12 @@
 					"characters": ["3040445000", "3040446000"],
 					"weapons": ["1040116700", "1040421400", "1040316000", "1030208000"]
 				}
+			},
+			{
+				"version": "2023-01U2",
+				"date": "2023/01/25",
+				"event": "content",
+				"classes": ["130401"]
 			},
 			{
 				"version": "2023-01F",
@@ -798,6 +3000,24 @@
 					"characters": ["3040438000", "3040439000"],
 					"weapons": ["1040024200", "1040116500"]
 				}
+			},
+			{
+				"version": "2022-08U1",
+				"date": "2022/08/24",
+				"event": "content",
+				"classes": ["120401"]
+			},
+			{
+				"version": "2022-03U2",
+				"date": "2022/03/24",
+				"event": "content",
+				"classes": ["110401"]
+			},
+			{
+				"version": "2022-03U1",
+				"date": "2022/03/10",
+				"event": "content",
+				"classes": ["100401"]
 			}
 		]
 	}
