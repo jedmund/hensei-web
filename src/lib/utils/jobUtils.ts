@@ -75,7 +75,10 @@ export function getJobIconUrl(granblueId: string | undefined): string {
  * Generate job wide banner image URL for JobItem component
  * These are wider banner-style images stored in /static/images/jobs/wide/
  */
-export function getJobWideImageUrl(job: Job | undefined, gender: Gender = Gender.Gran): string {
+export function getJobWideImageUrl(
+	job: Pick<Job, 'granblueId'> | undefined,
+	gender: Gender = Gender.Gran
+): string {
 	if (!job) {
 		return getGenericPlaceholder()
 	}

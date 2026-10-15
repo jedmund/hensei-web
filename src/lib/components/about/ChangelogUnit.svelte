@@ -3,34 +3,64 @@
 		getCharacterImage,
 		getWeaponImage,
 		getSummonImage,
-		getRaidImage
+		getRaidImage,
+		getAccessoryImage,
+		STYLE_SWAP_POSE
 	} from '$lib/utils/images'
+	import { getJobWideImageUrl } from '$lib/utils/jobUtils'
 
 	interface Props {
 		id: string
-		type: 'character' | 'weapon' | 'summon' | 'raid'
+		type: 'character' | 'weapon' | 'summon' | 'class' | 'accessory' | 'raid'
 		image?: '01' | '02' | '03' | '04'
+		/** Show a character's style-shift art */
+		style?: boolean
 		name?: string
 	}
 
-	let { id, type, image = '01', name = '' }: Props = $props()
+	let { id, type, image = '01', style = false, name = '' }: Props = $props()
 
-	const imageUrl = $derived.by(() => {
+	// Some items have no art for the requested stage (e.g. Illustrious weapons
+	// keep their base art when transcended), so fall back to the base image.
+	// If that fails too, show a blank placeholder until the art is uploaded.
+	let failedUrl = $state<string>()
+	let missing = $state(false)
+
+	function urlFor(variant: '01' | '02' | '03' | '04'): string {
 		switch (type) {
 			case 'character':
-				return getCharacterImage(id, 'grid', image)
+				return getCharacterImage(id, 'grid', style ? STYLE_SWAP_POSE : variant)
 			case 'weapon':
-				return getWeaponImage(id, 'grid', undefined, image !== '01' ? image : undefined)
+				return getWeaponImage(id, 'grid', undefined, variant !== '01' ? variant : undefined)
 			case 'summon':
-				return getSummonImage(id, 'grid', image !== '01' ? image : undefined)
+				// 'wide' matches the weapon grid's aspect ratio
+				return getSummonImage(id, 'wide', variant !== '01' ? variant : undefined)
+			case 'class':
+				return getJobWideImageUrl({ granblueId: id })
+			case 'accessory':
+				return getAccessoryImage(id, 'grid')
 			case 'raid':
 				return getRaidImage(id, 'thumbnail')
 		}
+	}
+
+	const imageUrl = $derived.by(() => {
+		const url = urlFor(image)
+		return url === failedUrl ? urlFor('01') : url
 	})
+
+	function handleError() {
+		if (image !== '01' && !failedUrl) failedUrl = urlFor(image)
+		else missing = true
+	}
 </script>
 
 <div class="unit">
-	<img alt={name} src={imageUrl} />
+	{#if missing}
+		<div class="placeholder" class:raid={type === 'raid'} role="img" aria-label={name}></div>
+	{:else}
+		<img alt={name} src={imageUrl} onerror={handleError} />
+	{/if}
 	{#if name}
 		<h4>{name}</h4>
 	{/if}
@@ -49,6 +79,18 @@
 		img {
 			border-radius: $input-corner;
 			width: 100%;
+		}
+
+		// Matches the grid art (280×160) and raid thumbnails (180×126)
+		.placeholder {
+			aspect-ratio: 280 / 160;
+			background: var(--placeholder-bg);
+			border-radius: $input-corner;
+			width: 100%;
+
+			&.raid {
+				aspect-ratio: 180 / 126;
+			}
 		}
 
 		h4 {
