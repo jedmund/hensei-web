@@ -3,6 +3,7 @@
 	import { localizedName, appLocale } from '$lib/utils/locale'
 	import { getWeaponSkillIcon } from '$lib/utils/images'
 	import SkillDescription from '$lib/components/weapon/SkillDescription.svelte'
+	import { resolvedClassification } from '$lib/utils/weaponSkillClassification'
 	import type { WeaponSkill, WeaponSkillVersion } from '$lib/types/api/entities'
 
 	interface Props {
@@ -31,10 +32,10 @@
 	}
 
 	// modifier · series · size — only present for standard grid-scaling skills.
+	// Shows the resolved classification (curated override, else derived).
 	function scalingMeta(version: WeaponSkillVersion): string {
-		return [version.skillModifier, version.skillSeries, version.skillSize]
-			.filter(Boolean)
-			.join(' · ')
+		const { modifier, series, size } = resolvedClassification(version)
+		return [modifier, series, size].filter(Boolean).join(' · ')
 	}
 
 	// Hide an icon that 404s rather than showing a broken-image glyph.
