@@ -16,18 +16,24 @@
 
 	let { family, canEdit, onMutated }: Props = $props()
 
-	// Options mirror the WeaponSkillVersion enums; "—" clears the value.
-	const SERIES_OPTIONS = [
-		{ value: '', label: '—' },
-		...['normal', 'omega', 'ex', 'odious'].map((s) => ({ value: s, label: titleCase(s) }))
-	]
-	const SIZE_OPTIONS = [
-		{ value: '', label: '—' },
-		...['small', 'medium', 'big', 'big_ii', 'massive', 'unworldly', 'ancestral'].map((s) => ({
-			value: s,
-			label: titleCase(s)
-		}))
-	]
+	// Series and size are edited as overrides: the derived skill_series/skill_size
+	// come from the wiki parse and a reparse rewrites them. Options mirror the
+	// WeaponSkillVersion enums; the first option clears the override, falling back
+	// to the derived value it names.
+	const SERIES_VALUES = ['normal', 'omega', 'ex', 'odious']
+	const SIZE_VALUES = ['small', 'medium', 'big', 'big_ii', 'massive', 'unworldly', 'ancestral']
+
+	function overrideOptions(values: string[], derived: string | null | undefined) {
+		return [
+			{ value: '', label: derived ? `Auto (${titleCase(derived)})` : 'Auto (—)' },
+			...values.map((v) => ({ value: v, label: titleCase(v) }))
+		]
+	}
+
+	function resolved(override: string | null | undefined, derived: string | null | undefined) {
+		const value = override || derived
+		return value ? titleCase(value) : '—'
+	}
 
 	let savingId = $state<string | null>(null)
 	let error = $state<string | null>(null)
@@ -36,8 +42,8 @@
 		Record<
 			string,
 			{
-				skillSeries: string
-				skillSize: string
+				seriesOverride: string
+				sizeOverride: string
 				mainHandOnly: boolean
 				nameEn: string
 				nameJp: string
@@ -47,8 +53,8 @@
 
 	function createBuffer(version: FamilyVersion) {
 		return {
-			skillSeries: version.skillSeries ?? '',
-			skillSize: version.skillSize ?? '',
+			seriesOverride: version.seriesOverride ?? '',
+			sizeOverride: version.sizeOverride ?? '',
 			mainHandOnly: version.mainHandOnly ?? false,
 			nameEn: version.name?.en ?? '',
 			nameJp: version.name?.ja ?? ''
@@ -77,8 +83,8 @@
 		notice = null
 		try {
 			await entityAdapter.updateWeaponSkillVersion(version.id, {
-				skill_series: buf.skillSeries || null,
-				skill_size: buf.skillSize || null,
+				series_override: buf.seriesOverride || null,
+				size_override: buf.sizeOverride || null,
 				main_hand_only: buf.mainHandOnly
 			})
 			// Labels live on the shared skill row — only touch when actually changed.
@@ -173,16 +179,26 @@
 							<td><span class="tier">{tierLabel(version)}</span></td>
 							<td>
 								{#if canEdit}
-									<Select options={SERIES_OPTIONS} bind:value={buf.skillSeries} contained portal />
+									<Select
+										options={overrideOptions(SERIES_VALUES, version.skillSeries)}
+										bind:value={buf.seriesOverride}
+										contained
+										portal
+									/>
 								{:else}
-									{version.skillSeries ? titleCase(version.skillSeries) : '—'}
+									{resolved(version.seriesOverride, version.skillSeries)}
 								{/if}
 							</td>
 							<td>
 								{#if canEdit}
-									<Select options={SIZE_OPTIONS} bind:value={buf.skillSize} contained portal />
+									<Select
+										options={overrideOptions(SIZE_VALUES, version.skillSize)}
+										bind:value={buf.sizeOverride}
+										contained
+										portal
+									/>
 								{:else}
-									{version.skillSize ? titleCase(version.skillSize) : '—'}
+									{resolved(version.sizeOverride, version.skillSize)}
 								{/if}
 							</td>
 							<td>

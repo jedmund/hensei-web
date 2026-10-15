@@ -72,8 +72,14 @@ export interface FamilyVersion {
 	minUncap?: number | null
 	transcendenceStage?: number | null
 	skillModifier?: string | null
+	/** Derived by the wiki parse; a reparse rewrites these. */
 	skillSeries?: string | null
 	skillSize?: string | null
+	/** Curated classification; survives a reparse and wins over the derived value. */
+	modifierOverride?: string | null
+	seriesOverride?: string | null
+	sizeOverride?: string | null
+	overridesEditedAt?: string | null
 	mainHandOnly?: boolean
 	mcOnly?: boolean
 	scalesWithSkillLevel?: boolean
