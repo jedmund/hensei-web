@@ -16,6 +16,8 @@
 	import { getLocale } from '$lib/paraglide/runtime.js'
 	import { localizedName } from '$lib/utils/locale'
 	import Icon from '$lib/components/Icon.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
+	import type { SkillBoostLine } from '$lib/types/api/skillBoosts'
 
 	interface Props {
 		shortcode: string
@@ -106,6 +108,11 @@
 		return `${rounded}%`
 	}
 
+	// Skills the game counts in Estimated DMG without a panel line come back in a
+	// "hidden" group; they're listed apart, below the panel's own lines.
+	const panelLines = $derived(boosts ? boosts.lines.filter((line) => line.group !== 'hidden') : [])
+	const hiddenLines = $derived(boosts ? boosts.lines.filter((line) => line.group === 'hidden') : [])
+
 	const enhancementRows = $derived(
 		boosts
 			? [
@@ -116,6 +123,60 @@
 			: []
 	)
 </script>
+
+{#snippet lineRow(line: SkillBoostLine, hidden: boolean)}
+	{@const lineKey = `${line.key}-${line.series ?? ''}-${hidden ? 'hidden' : ''}`}
+	<li
+		class="row-group"
+		onmouseenter={() => skillHighlight.set(line.sources)}
+		onmouseleave={() => skillHighlight.clear()}
+	>
+		<button
+			type="button"
+			class="row"
+			class:expanded={expanded === lineKey}
+			onclick={() => (expanded = expanded === lineKey ? null : lineKey)}
+			aria-expanded={expanded === lineKey}
+		>
+			<SkillLabel slug={line.labelSlug} label={line.label} />
+			{#if hidden}
+				<Tooltip content={m.calculator_hidden_stat_tooltip()}>
+					<span class="value hidden">{line.display}</span>
+				</Tooltip>
+			{:else}
+				<span class="value" class:capped={line.capped}>{line.display}</span>
+			{/if}
+		</button>
+		{#if expanded === lineKey && line.breakdown.length > 0}
+			<ul class="breakdown">
+				{#each line.breakdown as entry, i (i)}
+					<li class="entry">
+						<span class="entry-name">
+							{#if entry.icon}
+								{@const iconUrl = getWeaponSkillIcon(entry.icon, getLocale())}
+								{#if iconUrl}
+									<img class="entry-icon" src={iconUrl} alt="" loading="lazy" />
+								{/if}
+							{/if}
+							<span class="entry-label"
+								>{localizedName({ en: entry.name.en ?? '', ja: entry.name.ja ?? '' })}</span
+							>
+							{#if entry.count > 1}
+								<span class="entry-count">×{entry.count}</span>
+							{/if}
+						</span>
+						<span class="entry-value">
+							{#if entry.base != null && entry.multiplier != null}
+								<span class="entry-math">{formatValue(entry.base)} × {entry.multiplier}</span>
+							{/if}
+							{formatValue(entry.value)}
+						</span>
+					</li>
+				{/each}
+			</ul>
+		{/if}
+	</li>
+{/snippet}
 
 <div class="calculator-pane">
 	{#if loading}
@@ -230,61 +291,25 @@
 
 		<DetailsSection
 			title={m.pane_skill_boosts()}
-			empty={boosts.lines.length === 0}
+			empty={panelLines.length === 0}
 			emptyMessage={m.calculator_empty()}
 		>
 			<ul class="rows">
-				{#each boosts.lines as line (`${line.key}-${line.series ?? ''}`)}
-					{@const lineKey = `${line.key}-${line.series ?? ''}`}
-					<li
-						class="row-group"
-						onmouseenter={() => skillHighlight.set(line.sources)}
-						onmouseleave={() => skillHighlight.clear()}
-					>
-						<button
-							type="button"
-							class="row"
-							class:expanded={expanded === lineKey}
-							onclick={() => (expanded = expanded === lineKey ? null : lineKey)}
-							aria-expanded={expanded === lineKey}
-						>
-							<SkillLabel slug={line.labelSlug} label={line.label} />
-							<span class="value" class:capped={line.capped}>{line.display}</span>
-						</button>
-						{#if expanded === lineKey && line.breakdown.length > 0}
-							<ul class="breakdown">
-								{#each line.breakdown as entry, i (i)}
-									<li class="entry">
-										<span class="entry-name">
-											{#if entry.icon}
-												{@const iconUrl = getWeaponSkillIcon(entry.icon, getLocale())}
-												{#if iconUrl}
-													<img class="entry-icon" src={iconUrl} alt="" loading="lazy" />
-												{/if}
-											{/if}
-											<span class="entry-label"
-												>{localizedName({ en: entry.name.en ?? '', ja: entry.name.ja ?? '' })}</span
-											>
-											{#if entry.count > 1}
-												<span class="entry-count">×{entry.count}</span>
-											{/if}
-										</span>
-										<span class="entry-value">
-											{#if entry.base != null && entry.multiplier != null}
-												<span class="entry-math"
-													>{formatValue(entry.base)} × {entry.multiplier}</span
-												>
-											{/if}
-											{formatValue(entry.value)}
-										</span>
-									</li>
-								{/each}
-							</ul>
-						{/if}
-					</li>
+				{#each panelLines as line (`${line.key}-${line.series ?? ''}`)}
+					{@render lineRow(line, false)}
 				{/each}
 			</ul>
 		</DetailsSection>
+
+		{#if hiddenLines.length > 0}
+			<DetailsSection title={m.calculator_hidden_stats()}>
+				<ul class="rows">
+					{#each hiddenLines as line (`${line.key}-${line.series ?? ''}`)}
+						{@render lineRow(line, true)}
+					{/each}
+				</ul>
+			</DetailsSection>
+		{/if}
 	{/if}
 </div>
 
@@ -470,6 +495,12 @@
 
 		&.capped {
 			color: var(--orange-text, #e08a00);
+		}
+
+		&.hidden {
+			color: var(--text-secondary);
+			text-decoration: underline dotted;
+			text-underline-offset: 3px;
 		}
 	}
 

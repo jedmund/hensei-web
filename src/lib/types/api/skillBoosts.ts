@@ -12,7 +12,7 @@ export interface SkillBoostLine {
 	label: string
 	/** In-game label texture slug (e.g. "omega-might"), or null when no badge exists */
 	labelSlug: string | null
-	/** Game panel group: attack | hp | defense | special | overskill | ax | other */
+	/** Game panel group: attack | hp | defense | special | overskill | ax | other, or hidden for a skill the game counts in Estimated DMG without a panel line */
 	group: string
 	/** Numeric value (percent, or flat count for supplements) */
 	value: number
