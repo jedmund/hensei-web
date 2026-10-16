@@ -6,7 +6,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime.js'
 
 	// Bump this whenever the policy changes in a way users should know about.
-	const EFFECTIVE_DATE = '2026-10-02'
+	const EFFECTIVE_DATE = '2026-10-15'
 	const CONTACT = 'privacy@granblue.team'
 </script>
 
@@ -192,12 +192,19 @@
 				<strong>cookies</strong>: used only to set the language cookie on granblue.team when you
 				change the Extension's language, so the Site matches it.
 			</li>
+			<li>
+				<strong>identity</strong>: signs you in to granblue.team. It opens our sign-in page, and
+				after you log in the Site gives the Extension a sign-in token. The Extension never sees your
+				password.
+			</li>
 		</ul>
 		<p>
 			Captured data stays on your device until you choose to send it. When you click an import or
 			upload button, the Extension sends the selected data to the granblue.team API under your
-			account. Removing the Extension from your browser deletes everything it has stored on your
-			device.
+			account. If you import Guild War scores or a crew roster, that data includes other crew
+			members' in-game names and player IDs (see
+			<a href="#other-players">Information about other players</a>). Removing the Extension from
+			your browser deletes everything it has stored on your device.
 		</p>
 		<p>
 			The Extension's use of data complies with the Chrome Web Store User Data Policy, including its
