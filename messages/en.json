@@ -1746,6 +1746,7 @@
 	"weapon_skills_level": "Lv {n}",
 	"weapon_skills_main_hand": "Main hand",
 	"weapon_skills_mc_only": "MC only",
+	"weapon_skills_skill_level": "Skill Level",
 	"details_full_auto_skills": "Full Auto Skills",
 	"full_auto_skill_toggle": "Use in Full Auto",
 	"full_auto_skill_enabled": "Enabled",
