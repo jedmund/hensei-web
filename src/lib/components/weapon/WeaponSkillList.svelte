@@ -37,6 +37,12 @@
 			.join(' · ')
 	}
 
+	// Whether the skill has a skill level in game (a per-skill property: Fediel's Spine's
+	// Eclipse's Stamina has one, its Black Covenant doesn't). An unknown flag counts as leveling.
+	function hasSkillLevel(version: WeaponSkillVersion): boolean {
+		return version.scalesWithSkillLevel !== false
+	}
+
 	// Hide an icon that 404s rather than showing a broken-image glyph.
 	function hideBrokenIcon(event: Event) {
 		;(event.currentTarget as HTMLImageElement).style.display = 'none'
@@ -77,6 +83,9 @@
 							{/if}
 							{#if version.mcOnly}
 								<span class="badge flag">{m.weapon_skills_mc_only()}</span>
+							{/if}
+							{#if hasSkillLevel(version)}
+								<span class="badge flag">{m.weapon_skills_skill_level()}</span>
 							{/if}
 						</div>
 						{#if meta}
