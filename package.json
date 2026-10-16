@@ -50,7 +50,7 @@
 		"husky": "^9.1.7",
 		"lint-staged": "^16.4.0",
 		"prettier": "^3.9.9",
-		"prettier-plugin-svelte": "^3.5.2",
+		"prettier-plugin-svelte": "^4.1.1",
 		"remark-gfm": "^4.0.1",
 		"sass": "^1.105.1",
 		"storybook": "^10.6.1",
