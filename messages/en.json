@@ -1768,6 +1768,8 @@
 	"calculator_turn_value": "Turn {turn}",
 	"calculator_max_hp": "Max HP",
 	"calculator_arcarum": "Arcarum",
+	"calculator_hidden_stats": "Hidden stats",
+	"calculator_hidden_stat_tooltip": "This value isn't shown in the in-game calculator, but is reflected in Estimated DMG",
 	"calculator_alpha_notice": "This feature is in alpha and may display incorrect data. If you find incorrect calculations, please report in Discord.",
 	"nav_weapon_skills": "Weapon Skills",
 	"details_permeation": "Permeation",
