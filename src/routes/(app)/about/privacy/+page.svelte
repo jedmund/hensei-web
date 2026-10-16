@@ -6,7 +6,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime.js'
 
 	// Bump this whenever the policy changes in a way users should know about.
-	const EFFECTIVE_DATE = '2026-10-15'
+	const EFFECTIVE_DATE = '2026-10-02'
 	const CONTACT = 'privacy@granblue.team'
 </script>
 
