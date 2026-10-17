@@ -146,20 +146,26 @@ export abstract class BaseAdapter {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars -- destructure adapter-specific fields out of options
 		const { params, query, fetch: _fetch, timeout, retries, body, ...fetchInit } = options
 
+		// Multipart bodies (file uploads) go out as-is. The browser sets the
+		// multipart Content-Type with its boundary, so we must not set one.
+		const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData
+
 		// Prepare request options
 		const fetchOptions: RequestInit = {
 			...fetchInit, // Allow overriding defaults (only standard RequestInit properties)
 			credentials: 'include', // Still include cookies for CORS and refresh token
 			signal: controller.signal,
 			headers: {
-				'Content-Type': 'application/json',
+				...(isFormData ? {} : { 'Content-Type': 'application/json' }),
 				...authHeaders,
 				...(options.headers || {})
 			}
 		}
 
 		// Transform request body from camelCase to snake_case if present
-		if (options.body) {
+		if (isFormData) {
+			fetchOptions.body = options.body as FormData
+		} else if (options.body) {
 			if (typeof options.body === 'object') {
 				// Body is an object, transform and stringify
 				const transformed = this.transformRequest(options.body)

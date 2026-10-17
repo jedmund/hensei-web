@@ -1,0 +1,33 @@
+/**
+ * Sticker Query Options Factory
+ *
+ * @module api/queries/sticker
+ */
+
+import { queryOptions } from '@tanstack/svelte-query'
+import { stickerAdapter } from '$lib/api/adapters/sticker.adapter'
+
+export const stickerKeys = {
+	all: ['stickers'] as const,
+	active: () => [...stickerKeys.all, 'active'] as const,
+	catalogue: () => [...stickerKeys.all, 'catalogue'] as const
+}
+
+export const stickerQueries = {
+	/** Active stickers for the picker and labels. Mounted by every team card, so cache long. */
+	active: () =>
+		queryOptions({
+			queryKey: stickerKeys.active(),
+			queryFn: () => stickerAdapter.listStickers(),
+			staleTime: 1000 * 60 * 30,
+			gcTime: 1000 * 60 * 60
+		}),
+
+	/** The whole catalogue, inactive stickers included (editors) */
+	catalogue: () =>
+		queryOptions({
+			queryKey: stickerKeys.catalogue(),
+			queryFn: () => stickerAdapter.listStickers({ includeInactive: true }),
+			staleTime: 1000 * 60
+		})
+}

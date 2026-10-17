@@ -5,6 +5,8 @@
 	import type { FilterItem, FilterOption, PlaceholderSuggestion } from '$lib/types/filter'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { difficultyQueries } from '$lib/api/queries/difficulty.queries'
+	import { stickerQueries } from '$lib/api/queries/sticker.queries'
+	import { pickerStickers } from '$lib/utils/stickers'
 	import { matchLocal, rankResults } from '$lib/utils/filterMatching'
 	import ExploreFilterPill from './ExploreFilterPill.svelte'
 	import FilterDropdown from './FilterDropdown.svelte'
@@ -21,7 +23,8 @@
 		getRecencyOptions,
 		getPartyOptions,
 		getBoostOptions,
-		getSideOptions
+		getSideOptions,
+		getSortOptions
 	} from '$lib/utils/exploreFilterOptions'
 	import { MediaQuery } from 'svelte/reactivity'
 
@@ -79,6 +82,35 @@
 	const partyOptions = $derived(getPartyOptions())
 	const boostOptions = $derived(getBoostOptions())
 	const sideOptions = $derived(getSideOptions())
+	const sortOptions = $derived(getSortOptions())
+
+	// Sticker labels: the active catalogue, by slug + meaning
+	const stickersQuery = createQuery(() => stickerQueries.active())
+	const labelOptions = $derived(
+		pickerStickers(stickersQuery.data).map((sticker) => ({
+			value: sticker.slug,
+			label: localizedName(sticker.meaning)
+		}))
+	)
+
+	// A label restored from the URL (?label=fast) lands with label === value;
+	// swap in the sticker's meaning once the catalogue loads.
+	$effect(() => {
+		const stickers = stickersQuery.data
+		if (!stickers || stickers.length === 0) return
+		let changed = false
+		const next = filters.map((f) => {
+			if (f.kind !== 'label' || f.label !== f.value) return f
+			const sticker = stickers.find((s) => s.slug === f.value)
+			if (!sticker) return f
+			changed = true
+			return { ...f, label: localizedName(sticker.meaning) }
+		})
+		if (changed) {
+			filters = next
+			onFiltersChange(filters)
+		}
+	})
 
 	// Difficulty tiers fetched from API; refreshed on staleness
 	const difficultyTiersQuery = createQuery(() => difficultyQueries.tiers())
@@ -117,7 +149,9 @@
 		boost: m.filter_cat_boost(),
 		side: m.filter_cat_side(),
 		difficulty: m.filter_cat_difficulty(),
-		evoker: m.filter_cat_evoker()
+		evoker: m.filter_cat_evoker(),
+		label: m.explore_filter_label(),
+		sort: m.filter_cat_sort()
 	})
 
 	// Evoking Solomonis route Evokers not already filtered by
@@ -176,6 +210,32 @@
 					category: categoryLabels.raid
 				}
 				picks.push({ label: opt.label, category: categoryLabels.raid, option: opt })
+			}
+		}
+
+		if (!excludedKinds.includes('sort') && !filters.some((f) => f.kind === 'sort')) {
+			const sort = sortOptions[0]
+			if (sort) {
+				const opt: FilterOption = {
+					kind: 'sort',
+					value: sort.value,
+					label: sort.label,
+					category: categoryLabels.sort
+				}
+				picks.push({ label: opt.label, category: opt.category, option: opt })
+			}
+		}
+
+		if (!excludedKinds.includes('label') && !filters.some((f) => f.kind === 'label')) {
+			const sticker = pickRandom(labelOptions)
+			if (sticker) {
+				const opt: FilterOption = {
+					kind: 'label',
+					value: sticker.value,
+					label: sticker.label,
+					category: categoryLabels.label
+				}
+				picks.push({ label: opt.label, category: opt.category, option: opt })
 			}
 		}
 
@@ -300,6 +360,8 @@
 			boostOptions,
 			sideOptions,
 			difficultyOptions,
+			labelOptions,
+			sortOptions,
 			allRaids,
 			categoryLabels
 		})
@@ -365,7 +427,7 @@
 	}
 
 	// Single-select kinds replace existing filter of the same kind
-	const singleSelectKinds = new Set(['recency', 'boost', 'side', 'evoker'])
+	const singleSelectKinds = new Set(['recency', 'boost', 'side', 'evoker', 'label', 'sort'])
 
 	function selectOption(option: FilterOption) {
 		if (isAlreadySelected(option)) return

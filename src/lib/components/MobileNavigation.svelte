@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { EXPLORE_PATH, GALLERY_PATH, isBrowsePath } from '$lib/utils/browseRoutes'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { m } from '$lib/paraglide/messages'
 	import { page } from '$app/stores'
@@ -46,7 +47,8 @@
 	const isBahamut = $derived(currentUser?.bahamut === true)
 
 	// Localized links
-	const galleryHref = $derived(localizeHref('/teams/explore'))
+	const galleryHref = $derived(localizeHref(GALLERY_PATH))
+	const exploreHref = $derived(localizeHref(EXPLORE_PATH))
 	const meHref = $derived(localizeHref('/me'))
 	const loginHref = $derived(localizeHref('/auth/login'))
 	const registerHref = $derived(localizeHref('/auth/register'))
@@ -69,7 +71,7 @@
 	// Route detection
 	function isNavSelected(href: string): boolean {
 		const path = $page.url.pathname
-		if (href === galleryHref) return path === href
+		if (href === galleryHref) return isBrowsePath(path, galleryHref, exploreHref)
 		return path === href || path.startsWith(href + '/')
 	}
 

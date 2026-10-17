@@ -52,3 +52,11 @@ export function getBoostLabel(value: string): string {
 export function getSideLabel(value: string): string {
 	return getSideOptions().find((o) => o.value === value)?.label ?? value
 }
+
+export function getSortOptions(): { value: string; label: string }[] {
+	return [{ value: 'participation', label: m.explore_sort_recommended() }]
+}
+
+export function getSortLabel(value: string): string {
+	return getSortOptions().find((o) => o.value === value)?.label ?? value
+}

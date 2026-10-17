@@ -95,6 +95,10 @@ export interface ExploreFilterParams {
 	difficulty?: string
 	/** Evoking Solomonis route Evoker (character granblue_id); needs a zone `raid` */
 	routeEvoker?: string
+	/** Sticker slug: only teams with this label */
+	label?: string
+	/** 'participation' sorts by community stickers (Recommended) */
+	sort?: string
 }
 
 /**

@@ -18,6 +18,9 @@ interface MatchLocalParams {
 	boostOptions: OptionWithAliases[]
 	sideOptions: { value: string; label: string }[]
 	difficultyOptions?: { value: string; label: string }[]
+	/** Active stickers as label filters: slug + meaning */
+	labelOptions?: { value: string; label: string }[]
+	sortOptions?: { value: string; label: string }[]
 	allRaids: RaidFull[]
 	categoryLabels: {
 		element: string
@@ -27,6 +30,8 @@ interface MatchLocalParams {
 		boost: string
 		side: string
 		difficulty?: string
+		label?: string
+		sort?: string
 	}
 }
 
@@ -41,6 +46,8 @@ export function matchLocal(params: MatchLocalParams): FilterOption[] {
 		boostOptions,
 		sideOptions,
 		difficultyOptions,
+		labelOptions,
+		sortOptions,
 		allRaids,
 		categoryLabels
 	} = params
@@ -165,6 +172,44 @@ export function matchLocal(params: MatchLocalParams): FilterOption[] {
 		}
 	}
 
+	// Sticker label (single-select)
+	if (
+		!excludedKinds.includes('label') &&
+		labelOptions &&
+		categoryLabels.label &&
+		!filters.some((f) => f.kind === 'label')
+	) {
+		for (const option of labelOptions) {
+			if (option.label.toLowerCase().includes(q)) {
+				results.push({
+					kind: 'label',
+					value: option.value,
+					label: option.label,
+					category: categoryLabels.label
+				})
+			}
+		}
+	}
+
+	// Sort (single-select)
+	if (
+		!excludedKinds.includes('sort') &&
+		sortOptions &&
+		categoryLabels.sort &&
+		!filters.some((f) => f.kind === 'sort')
+	) {
+		for (const option of sortOptions) {
+			if (option.label.toLowerCase().includes(q)) {
+				results.push({
+					kind: 'sort',
+					value: option.value,
+					label: option.label,
+					category: categoryLabels.sort
+				})
+			}
+		}
+	}
+
 	return results
 }
 
@@ -176,7 +221,9 @@ export function rankResults(results: FilterOption[], query: string): FilterOptio
 		'boost',
 		'side',
 		'class',
-		'difficulty'
+		'difficulty',
+		'label',
+		'sort'
 	])
 
 	return results.toSorted((a, b) => {

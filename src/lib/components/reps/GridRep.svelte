@@ -6,11 +6,14 @@
 	import CharacterRep from '$lib/components/reps/CharacterRep.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
+	import StickerLabels from '$lib/components/stickers/StickerLabels.svelte'
+	import StickerPicker from '$lib/components/stickers/StickerPicker.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
 	import { getAvatarSrc } from '$lib/utils/avatar'
 	import { getDefaultRepView } from '$lib/stores/defaultRepView.svelte'
+	import { formatRelativeTime } from '$lib/utils/date'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -21,6 +24,12 @@
 		dimmed?: boolean
 		showUser?: boolean
 		indicator?: Snippet
+		/** Show the sticker picker (hidden automatically on the viewer's own team) */
+		showStickers?: boolean
+		/** Show the raid name; when false, show when the team was last updated */
+		showRaid?: boolean
+		/** Rendered below the grid preview, e.g. a staff-pick note */
+		footer?: Snippet
 	}
 
 	let {
@@ -30,8 +39,15 @@
 		disabled = false,
 		dimmed = false,
 		showUser = true,
-		indicator
+		indicator,
+		showStickers = true,
+		showRaid = true,
+		footer
 	}: Props = $props()
+
+	const updatedAt = $derived(party.lastUpdated ?? party.updatedAt)
+
+	const showPicker = $derived(showStickers && !disabled)
 
 	const defaultRepView = getDefaultRepView()
 	// eslint-disable-next-line svelte/prefer-writable-derived -- $derived.writable not available in Svelte 5
@@ -80,7 +96,7 @@
 		data-sveltekit-preload-data={disabled ? undefined : 'hover'}
 	>
 		<div class="info">
-			<div class="name-row">
+			<div class="name-row" class:with-picker={showPicker}>
 				{#if indicator}
 					{@render indicator()}
 				{/if}
@@ -133,9 +149,13 @@
 							/>
 						</Tooltip>
 					{/if}
-					<span class={`raid ${!party.raid ? 'empty' : ''}`}
-						>{party.raid ? displayName(party.raid) : m.grid_no_raid()}</span
-					>
+					{#if showRaid}
+						<span class={`raid ${!party.raid ? 'empty' : ''}`}
+							>{party.raid ? displayName(party.raid) : m.grid_no_raid()}</span
+						>
+					{:else if updatedAt}
+						<span class="raid">{formatRelativeTime(updatedAt)}</span>
+					{/if}
 				</div>
 
 				<div class="pills">
@@ -160,6 +180,7 @@
 							</span>
 						</Tooltip>
 					{/if}
+					<StickerLabels labels={party.labels} mySticker={party.mySticker} size={20} />
 				</div>
 			</div>
 		</div>
@@ -174,6 +195,9 @@
 				<div class="weaponGrid"><WeaponRep {party} /></div>
 			{/if}
 		</div>
+		{#if footer}
+			<div class="footer">{@render footer()}</div>
+		{/if}
 		<ul class="indicators">
 			<li
 				class:active={currentView === 'characters'}
@@ -192,6 +216,12 @@
 			</li>
 		</ul>
 	</svelte:element>
+	{#if showPicker}
+		<!-- Outside the card link: a menu trigger can't live inside an anchor -->
+		<div class="sticker-picker-slot">
+			<StickerPicker {party} />
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -260,6 +290,20 @@
 		}
 	}
 
+	.footer {
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
+		line-height: 1.4;
+		border-top: 1px solid var(--border-subtle);
+		padding-top: spacing.$unit;
+	}
+
+	.sticker-picker-slot {
+		position: absolute;
+		top: spacing.$unit;
+		right: spacing.$unit;
+	}
+
 	.gridContainer {
 		/* Reserve a constant visual height for all reps; keeps card height stable */
 		aspect-ratio: calc(#{rep.$rep-body-ratio} / 1);
@@ -288,6 +332,10 @@
 			align-items: center;
 			gap: spacing.$unit-half;
 			min-width: 0;
+
+			&.with-picker {
+				padding-right: spacing.$unit-4x;
+			}
 		}
 
 		h2 {
@@ -382,6 +430,9 @@
 
 		.pills {
 			flex-shrink: 0;
+			display: inline-flex;
+			align-items: center;
+			gap: spacing.$unit-fourth;
 
 			.pill {
 				display: inline-flex;
