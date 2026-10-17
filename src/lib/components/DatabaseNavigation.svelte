@@ -14,7 +14,7 @@
 	let { userElement }: Props = $props()
 
 	// Localized links
-	const galleryHref = $derived(localizeHref('/teams/explore'))
+	const galleryHref = $derived(localizeHref('/'))
 	const databaseCharactersHref = $derived(localizeHref('/database/characters'))
 	const databaseWeaponsHref = $derived(localizeHref('/database/weapons'))
 	const databaseSummonsHref = $derived(localizeHref('/database/summons'))

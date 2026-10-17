@@ -44,19 +44,19 @@
 		<div class="random-team">
 			<p class="random-label" class:ja={isJa}>
 				{m.error_random_team_label()}<br />{m.error_or_browse_gallery()}
-				<a href={localizeHref('/teams/explore')} style:color={linkColor}>{m.error_gallery()}</a>
+				<a href={localizeHref('/')} style:color={linkColor}>{m.error_gallery()}</a>
 			</p>
 			<div class="random-team-card">
-				<GridRep party={randomParty} />
+				<GridRep party={randomParty} showStickers={false} />
 			</div>
 		</div>
 	{:else if is404}
 		<p class="browse-link">
 			{m.error_or_browse_gallery()}
-			<a href={localizeHref('/teams/explore')} style:color={linkColor}>{m.error_gallery()}</a>
+			<a href={localizeHref('/')} style:color={linkColor}>{m.error_gallery()}</a>
 		</p>
 	{:else}
-		<a class="browse-link" href={localizeHref('/teams/explore')}>{m.error_gallery()}</a>
+		<a class="browse-link" href={localizeHref('/')}>{m.error_gallery()}</a>
 	{/if}
 </div>
 

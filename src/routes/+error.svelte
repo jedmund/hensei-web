@@ -12,7 +12,7 @@
 
 	<p class="browse-link">
 		{m.error_or_browse_gallery()}
-		<a href={localizeHref('/teams/explore')}>{m.error_gallery()}</a>
+		<a href={localizeHref('/')}>{m.error_gallery()}</a>
 	</p>
 </div>
 
