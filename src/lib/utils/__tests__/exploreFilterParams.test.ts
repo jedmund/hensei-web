@@ -574,3 +574,31 @@ describe('difficulty filter (multi-select)', () => {
 		expect(urlHasExploreFilters(new URLSearchParams('difficulty=casual'))).toBe(true)
 	})
 })
+
+describe('sticker label and sort params', () => {
+	it('round-trips label and sort', () => {
+		const filters: FilterItem[] = [
+			{ kind: 'label', value: 'full-auto', label: 'Full-auto friendly' },
+			{ kind: 'sort', value: 'participation', label: 'Recommended' }
+		]
+		const params = serializeExploreFilters(filters)
+		expect(params.get('label')).toBe('full-auto')
+		expect(params.get('sort')).toBe('participation')
+
+		const { filters: parsed } = deserializeExploreFilters(params)
+		expect(parsed.find((f) => f.kind === 'label')?.value).toBe('full-auto')
+		expect(parsed.find((f) => f.kind === 'sort')?.value).toBe('participation')
+	})
+
+	it('ignores unknown sort values', () => {
+		const { filters } = deserializeExploreFilters(new URLSearchParams('sort=evil'))
+		expect(filters.find((f) => f.kind === 'sort')).toBeUndefined()
+	})
+
+	it('counts label and sort as explore filters and maps them to API params', async () => {
+		const params = new URLSearchParams('label=fast&sort=participation')
+		expect(urlHasExploreFilters(params)).toBe(true)
+		const { apiParams } = await urlParamsToExploreFilterParams(params)
+		expect(apiParams).toMatchObject({ label: 'fast', sort: 'participation' })
+	})
+})
