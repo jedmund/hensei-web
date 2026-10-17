@@ -6,6 +6,7 @@
 	import AvatarPair from '$lib/components/ui/AvatarPair.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import CollectionViewerSwitcher from './CollectionViewerSwitcher.svelte'
+	import StickerLabels from '$lib/components/stickers/StickerLabels.svelte'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'
@@ -45,6 +46,12 @@
 		onOpenEdit?: () => void
 		onOpenCalculator?: () => void
 		menu?: Snippet
+		/** The sticker picker, rendered with the header actions */
+		stickerPicker?: Snippet
+		/** Sticker slugs the team is known for */
+		labels?: string[] | undefined
+		/** The viewer's own sticker, highlighted among the labels */
+		mySticker?: string | null | undefined
 		// Battle settings
 		fullAuto?: boolean
 		solo?: boolean
@@ -81,6 +88,9 @@
 		onOpenEdit,
 		onOpenCalculator,
 		menu,
+		stickerPicker,
+		labels,
+		mySticker,
 		fullAuto,
 		solo,
 		autoGuard,
@@ -270,6 +280,9 @@
 						/>
 					</Tooltip>
 				{/if}
+				{#if stickerPicker}
+					{@render stickerPicker()}
+				{/if}
 				{#if menu}
 					{@render menu()}
 				{/if}
@@ -438,6 +451,7 @@
 	<!-- Battle settings & performance -->
 	<div class="battle-section">
 		<div class="settings-tokens">
+			<StickerLabels {labels} {mySticker} size={24} />
 			{#if difficulty?.tier}
 				<Tooltip
 					content={m.party_difficulty_tooltip({

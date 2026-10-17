@@ -31,6 +31,7 @@
 		onOpenEdit?: () => void
 		onRaidSelect?: (raid: RaidFull | null) => void
 		menu?: Snippet
+		stickerPicker?: Snippet
 		authUser?: AvatarUser | null
 		activeCollectionUser?: 'viewer' | 'source'
 		onSwitchCollectionUser?: (target: 'viewer' | 'source') => void
@@ -45,6 +46,7 @@
 		onOpenEdit,
 		onRaidSelect,
 		menu,
+		stickerPicker,
 		authUser,
 		activeCollectionUser,
 		onSwitchCollectionUser,
@@ -144,6 +146,9 @@
 			{onOpenEdit}
 			onOpenCalculator={handleOpenCalculator}
 			{menu}
+			{stickerPicker}
+			labels={party.labels}
+			mySticker={party.mySticker}
 			fullAuto={party.fullAuto}
 			solo={party.solo}
 			autoGuard={party.autoGuard}

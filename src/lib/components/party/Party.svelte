@@ -35,6 +35,7 @@
 	import { GridType } from '$lib/types/enums'
 	import Button from '$lib/components/ui/Button.svelte'
 	import PartyInfoGrid from '$lib/components/party/info/PartyInfoGrid.svelte'
+	import StickerPicker from '$lib/components/stickers/StickerPicker.svelte'
 	import { DropdownMenu } from 'bits-ui'
 	import JobSection from '$lib/components/job/JobSection.svelte'
 	import { Gender } from '$lib/utils/jobUtils'
@@ -505,6 +506,11 @@
 				onSwitchCollectionUser={handleSwitchCollectionUser}
 				{isEditor}
 			>
+				{#snippet stickerPicker()}
+					{#if !isNew}
+						<StickerPicker {party} />
+					{/if}
+				{/snippet}
 				{#snippet menu()}
 					{#if !isNew}
 						<DropdownMenu.Root>

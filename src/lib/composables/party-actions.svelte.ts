@@ -246,6 +246,8 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		openPartyEditSidebar({
 			initialValues,
 			element: opts.getUserElement(),
+			// Only present in the owner's response
+			stickerBreakdown: party.stickerBreakdown,
 			solomonisDetails: expedition
 				? {
 						label: m.solomonis_web_party_title(),
