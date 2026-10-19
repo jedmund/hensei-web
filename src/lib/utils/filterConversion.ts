@@ -54,6 +54,10 @@ export function filterItemsToParams(filterItems: FilterItem[]): ExploreFilterPar
 	const evoker = filterItems.find((f) => f.kind === 'evoker')
 	if (evoker) params.routeEvoker = evoker.value as string
 
+	// Sticker label (single)
+	const label = filterItems.find((f) => f.kind === 'label')
+	if (label) params.label = label.value as string
+
 	// Entity includes/excludes — API expects comma-separated granblue_id values
 	const entities = filterItems.filter(
 		(f): f is FilterItem & { kind: 'entity' } => f.kind === 'entity'

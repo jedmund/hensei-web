@@ -35,6 +35,9 @@
 	import { GridType } from '$lib/types/enums'
 	import Button from '$lib/components/ui/Button.svelte'
 	import PartyInfoGrid from '$lib/components/party/info/PartyInfoGrid.svelte'
+	import StickerPicker from '$lib/components/stickers/StickerPicker.svelte'
+	import { setStickerStage } from '$lib/components/stickers/stickerStage.svelte'
+	import { canShowStickerPicker } from '$lib/utils/stickers'
 	import { DropdownMenu } from 'bits-ui'
 	import JobSection from '$lib/components/job/JobSection.svelte'
 	import { Gender } from '$lib/utils/jobUtils'
@@ -435,6 +438,8 @@
 	})
 
 	// --- Context setup ---
+	// Shared by the sticker picker and the sticker area
+	setStickerStage(() => party)
 	setPartyContext({
 		getParty: () => party,
 		canEdit: () => canEdit(),
@@ -486,9 +491,17 @@
 	})
 
 	setDragDropContext(dragContext)
+
+	// Hidden on your own team and on teams that can't receive stickers, so the
+	// sticker row doesn't show an empty picker slot
+	const canGiveSticker = $derived(!isNew && canShowStickerPicker(party, authUserId))
 </script>
 
 <svelte:window onpopstate={handlePopState} />
+
+{#snippet stickerPicker()}
+	<StickerPicker {party} />
+{/snippet}
 
 <div class="page-wrap">
 	<div class="track">
@@ -504,9 +517,19 @@
 				{activeCollectionUser}
 				onSwitchCollectionUser={handleSwitchCollectionUser}
 				{isEditor}
+				stickerPicker={canGiveSticker ? stickerPicker : undefined}
+				{canGiveSticker}
 			>
 				{#snippet menu()}
 					{#if !isNew}
+						<Button
+							variant="secondary"
+							size="small"
+							onclick={actions.remixParty}
+							disabled={actions.loading}
+						>
+							{m.party_remix()}
+						</Button>
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger>
 								{#snippet child({ props })}
@@ -560,14 +583,6 @@
 											{m.playlist_add_to()}
 										</DropdownMenu.Item>
 									{/if}
-
-									<DropdownMenu.Item
-										class="dropdown-menu-item"
-										onSelect={actions.remixParty}
-										disabled={actions.loading}
-									>
-										{m.party_remix()}
-									</DropdownMenu.Item>
 
 									{#if party.user?.id === authUserId}
 										<DropdownMenu.Separator class="dropdown-menu-separator" />

@@ -6,6 +6,7 @@
 	import CharacterRep from '$lib/components/reps/CharacterRep.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
+	import StickerLabels from '$lib/components/stickers/StickerLabels.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
@@ -160,6 +161,7 @@
 							</span>
 						</Tooltip>
 					{/if}
+					<StickerLabels labels={party.labels} mySticker={party.mySticker} size={28} />
 				</div>
 			</div>
 		</div>
@@ -382,6 +384,9 @@
 
 		.pills {
 			flex-shrink: 0;
+			display: inline-flex;
+			align-items: center;
+			gap: spacing.$unit-fourth;
 
 			.pill {
 				display: inline-flex;

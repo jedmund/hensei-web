@@ -1,4 +1,5 @@
 import type { LayoutServerLoad } from './$types'
+import { STICKERS_FOLDED_COOKIE } from '$lib/stores/stickersFolded.svelte'
 
 export const load: LayoutServerLoad = async ({ locals, cookies }) => {
 	const account = locals.session.account
@@ -16,11 +17,15 @@ export const load: LayoutServerLoad = async ({ locals, cookies }) => {
 	// For unauthenticated users, read the standalone theme cookie as fallback
 	const themePreference = currentUser?.theme ?? cookies.get('theme') ?? null
 
+	// Sticker areas folded away on every team (see stores/stickersFolded)
+	const stickersFolded = cookies.get(STICKERS_FOLDED_COOKIE) === '1'
+
 	return {
 		isAuthenticated,
 		account,
 		currentUser,
 		themePreference,
+		stickersFolded,
 		auth: locals.auth
 	}
 }

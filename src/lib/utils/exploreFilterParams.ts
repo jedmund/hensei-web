@@ -24,6 +24,7 @@ const EXPLORE_FILTER_KEYS = [
 	'boost',
 	'side',
 	'difficulty',
+	'label',
 	'inc',
 	'exc',
 	'collection'
@@ -109,6 +110,10 @@ export function serializeExploreFilters(
 		.filter((f): f is FilterItem & { kind: 'difficulty' } => f.kind === 'difficulty')
 		.map((f) => f.value)
 	if (difficulties.length > 0) params.set('difficulty', difficulties.join(','))
+
+	// Sticker label — slug
+	const label = filters.find((f) => f.kind === 'label')
+	if (label) params.set('label', label.value as string)
 
 	// Entity include/exclude — type:granblueId format
 	const entities = filters.filter((f): f is FilterItem & { kind: 'entity' } => f.kind === 'entity')
@@ -221,6 +226,12 @@ export function deserializeExploreFilters(
 				filters.push({ kind: 'difficulty', value, label: value })
 			}
 		}
+	}
+
+	// Sticker label (meaning resolved later from the sticker catalogue)
+	const labelParam = params.get('label')?.trim()
+	if (labelParam) {
+		filters.push({ kind: 'label', value: labelParam, label: labelParam })
 	}
 
 	// Entity refs (need async resolution)

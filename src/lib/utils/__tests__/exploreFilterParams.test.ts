@@ -574,3 +574,23 @@ describe('difficulty filter (multi-select)', () => {
 		expect(urlHasExploreFilters(new URLSearchParams('difficulty=casual'))).toBe(true)
 	})
 })
+
+describe('sticker label params', () => {
+	it('round-trips a label', () => {
+		const filters: FilterItem[] = [
+			{ kind: 'label', value: 'full-auto', label: 'Full-auto friendly' }
+		]
+		const params = serializeExploreFilters(filters)
+		expect(params.get('label')).toBe('full-auto')
+
+		const { filters: parsed } = deserializeExploreFilters(params)
+		expect(parsed.find((f) => f.kind === 'label')?.value).toBe('full-auto')
+	})
+
+	it('counts a label as an explore filter and maps it to the API param', async () => {
+		const params = new URLSearchParams('label=fast')
+		expect(urlHasExploreFilters(params)).toBe(true)
+		const { apiParams } = await urlParamsToExploreFilterParams(params)
+		expect(apiParams).toMatchObject({ label: 'fast' })
+	})
+})

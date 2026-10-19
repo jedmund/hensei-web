@@ -100,6 +100,8 @@ export function buildFilterQuery(filters: ExploreFilterParams): Partial<ExploreF
 
 	if (filters.routeEvoker) query.routeEvoker = filters.routeEvoker
 
+	if (filters.label) query.label = filters.label
+
 	return query as Partial<ExploreFilterParams>
 }
 

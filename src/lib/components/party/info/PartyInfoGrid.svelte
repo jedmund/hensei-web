@@ -24,6 +24,10 @@
 		onOpenEdit?: () => void
 		onRaidSelect?: (raid: RaidFull | null) => void
 		menu?: Snippet
+		/** The "Add sticker" button and its picker */
+		stickerPicker?: Snippet | undefined
+		/** The viewer can give this team a sticker */
+		canGiveSticker?: boolean
 		authUser?: AvatarUser | null
 		activeCollectionUser?: 'viewer' | 'source'
 		onSwitchCollectionUser?: (target: 'viewer' | 'source') => void
@@ -38,6 +42,8 @@
 		onOpenEdit,
 		onRaidSelect,
 		menu,
+		stickerPicker,
+		canGiveSticker = false,
 		authUser,
 		activeCollectionUser,
 		onSwitchCollectionUser,
@@ -131,6 +137,8 @@
 			{onOpenEdit}
 			onOpenCalculator={handleOpenCalculator}
 			{menu}
+			{stickerPicker}
+			{canGiveSticker}
 			{isEditor}
 		/>
 	</div>

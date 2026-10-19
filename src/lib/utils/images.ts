@@ -42,7 +42,8 @@ export const BUCKET = {
 	accessories: 'accessories',
 	artifacts: 'artifacts',
 	bullets: 'bullets',
-	raids: 'raids'
+	raids: 'raids',
+	stickers: 'icons/stickers'
 } as const
 
 /**
@@ -82,6 +83,17 @@ export function getBasePath(): string {
  */
 export function getPlaceholderImage(type: ResourceType, variant: ImageVariant): string {
 	return `${getBasePath()}/${BUCKET.placeholders}/placeholder-${type}-${variant}.png`
+}
+
+/**
+ * Resolves a host-relative image path from the API (e.g. a sticker's
+ * `image_url`, `icons/stickers/cleared.png?v=…`) against the image host.
+ * Absolute URLs and root paths pass through unchanged.
+ */
+export function getHostedImageUrl(path: string | null | undefined): string | null {
+	if (!path) return null
+	if (/^(https?:)?\/\//.test(path) || path.startsWith('/') || path.startsWith('blob:')) return path
+	return `${getBasePath()}/${path}`
 }
 
 /**

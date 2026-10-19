@@ -41,7 +41,8 @@ import {
 	getRaidImage,
 	getRaidCdnImage,
 	getWeaponFallbackImage,
-	handleImageFallback
+	handleImageFallback,
+	getHostedImageUrl
 } from '../images'
 
 const mockedGetImageBaseUrl = vi.mocked(getImageBaseUrl)
@@ -845,5 +846,30 @@ describe('handleImageFallback', () => {
 		const event = { currentTarget: img } as unknown as Event
 		handleImageFallback(event, undefined)
 		expect(img.src).toBe('https://cdn.example.com/weapons/grid/1040001_0.jpg')
+	})
+})
+
+describe('getHostedImageUrl', () => {
+	it('prefixes host-relative API paths with the image host', () => {
+		mockedGetImageBaseUrl.mockReturnValue('https://cdn.example.com')
+		expect(getHostedImageUrl('icons/stickers/cleared.png?v=1')).toBe(
+			'https://cdn.example.com/icons/stickers/cleared.png?v=1'
+		)
+	})
+
+	it('falls back to the local images path without a host', () => {
+		mockedGetImageBaseUrl.mockReturnValue('')
+		expect(getHostedImageUrl('events/abc.webp?v=2')).toBe('/images/events/abc.webp?v=2')
+	})
+
+	it('passes absolute URLs, root paths and blobs through', () => {
+		expect(getHostedImageUrl('https://x.test/a.png')).toBe('https://x.test/a.png')
+		expect(getHostedImageUrl('/images/a.png')).toBe('/images/a.png')
+		expect(getHostedImageUrl('blob:abc')).toBe('blob:abc')
+	})
+
+	it('returns null for missing paths', () => {
+		expect(getHostedImageUrl(null)).toBeNull()
+		expect(getHostedImageUrl(undefined)).toBeNull()
 	})
 })

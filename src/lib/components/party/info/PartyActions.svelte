@@ -22,6 +22,8 @@
 		onOpenEdit?: (() => void) | undefined
 		onOpenCalculator?: (() => void) | undefined
 		menu?: Snippet | undefined
+		/** The "Add sticker" button and its picker */
+		stickerPicker?: Snippet | undefined
 	}
 
 	let {
@@ -32,7 +34,8 @@
 		canEdit = false,
 		onOpenEdit,
 		onOpenCalculator,
-		menu
+		menu,
+		stickerPicker
 	}: Props = $props()
 
 	const showCollectionSwitcher = $derived(
@@ -55,16 +58,12 @@
 		<Button variant="secondary" size="small" onclick={onOpenEdit}>{m.action_edit()}</Button>
 	{/if}
 	{#if onOpenCalculator}
-		<Tooltip content={m.calculator_open()}>
-			<Button
-				variant="ghost"
-				size="small"
-				iconOnly
-				icon="calculator"
-				aria-label={m.calculator_open()}
-				onclick={onOpenCalculator}
-			/>
-		</Tooltip>
+		<Button variant="secondary" size="small" onclick={onOpenCalculator}>
+			{m.calculator_open_short()}
+		</Button>
+	{/if}
+	{#if stickerPicker}
+		{@render stickerPicker()}
 	{/if}
 	{#if menu}
 		{@render menu()}

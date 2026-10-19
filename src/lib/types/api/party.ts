@@ -20,6 +20,7 @@ import type { AugmentSkill, Befoulment } from './weaponStatModifier'
 import type { CollectionCharacter, CollectionWeapon, CollectionSummon } from './collection'
 import type { PartyShare } from './partyShare'
 import type { SealState, SolomonisExpedition, SolomonisSummary } from './solomonis'
+import type { StickerBreakdownEntry } from './sticker'
 
 /** Embedded collection data for a single user, scoped to the party's items */
 export interface PartyCollection {
@@ -263,6 +264,16 @@ export interface Party {
 	boost?: { mod: string | null; side: string | null }
 	/** Computed party difficulty assignment, null when the party is not yet scoreable */
 	difficulty?: PartyDifficulty | null
+	/** Sticker slugs the team is known for (at most 2, most given first, no counts) */
+	labels?: string[]
+	/** The current user's sticker on this team, if any */
+	mySticker?: string | null
+	/** Detail view: every sticker received, in picker order, no counts */
+	receivedStickers?: string[]
+	/** Every sticker given, one per giver (full view) */
+	placedStickers?: PlacedSticker[]
+	/** Private per-sticker counts, only present for the owner */
+	stickerBreakdown?: StickerBreakdownEntry[]
 	/** Whether the party contains any orphaned grid items */
 	hasOrphanedItems?: boolean
 	/** The user whose collection is linked to this party (null if no collection items) */
@@ -352,4 +363,22 @@ export interface PartyPreview {
 	createdAt?: string
 	updatedAt?: string
 	lastUpdated?: string
+}
+
+/**
+ * Where a sticker sits in the sticker area: x as a fraction of the area's
+ * horizontal range, y in px from its top, and the lean it was placed with
+ */
+export interface StickerPlacement {
+	x: number
+	y: number
+	rotation: number | null
+}
+
+/** One given sticker; givers stay anonymous, `mine` marks the viewer's */
+export interface PlacedSticker {
+	id: string
+	sticker: string
+	mine: boolean
+	placement: StickerPlacement | null
 }
