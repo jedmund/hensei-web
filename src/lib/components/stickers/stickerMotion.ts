@@ -2,6 +2,7 @@
  * How stickers arrive in and leave the sticker area. Each honours the
  * viewer's reduced-motion setting by not moving at all.
  */
+import { tick } from 'svelte'
 import { cubicIn } from 'svelte/easing'
 import type { TransitionConfig } from 'svelte/transition'
 import { prefersReducedMotion } from '$lib/utils/motion'
@@ -56,3 +57,62 @@ export const liftAway: (node: Element) => TransitionConfig = () => ({
 	easing: cubicIn,
 	css: (t, u) => `opacity: ${t}; translate: 0 ${-u * 10}px`
 })
+
+/**
+ * Which entrance each sticker in the area plays as it mounts: the first
+ * stickers after load (and after unfolding) fade in and slap down in turn,
+ * and a dropped one lands from where it was let go.
+ */
+export class StickerEntrances {
+	// Bookkeeping only; nothing renders from these
+	#landing = new Map<string, StickerDrop>()
+	#elements = new Map<string, HTMLElement>()
+	// Stickers mounting while this is set arrive as a batch
+	#revealing = true
+
+	/** The first batch is on screen; later stickers don't reveal */
+	settle() {
+		void tick().then(() => (this.#revealing = false))
+	}
+
+	/** The next stickers to mount (unfolding) reveal as a batch */
+	revealNextBatch() {
+		this.#revealing = true
+		this.settle()
+	}
+
+	/**
+	 * `key` was dropped: it lands from `drop` now if it's on screen, or when
+	 * it mounts. Returns how to cancel that if the drop is taken back.
+	 */
+	drop(key: string, drop: StickerDrop): () => void {
+		this.#landing.set(key, drop)
+		void tick().then(() => {
+			const el = this.#elements.get(key)
+			if (el) this.#land(key, el)
+		})
+		return () => this.#landing.delete(key)
+	}
+
+	/** An action for each sticker: plays its entrance as it mounts */
+	track = (
+		el: HTMLElement,
+		{ key, order, rotation }: { key: string; order: number; rotation: number | null }
+	) => {
+		this.#elements.set(key, el)
+		if (this.#revealing && !this.#landing.has(key)) revealSticker(el, order, rotation)
+		this.#land(key, el)
+		return {
+			destroy: () => {
+				if (this.#elements.get(key) === el) this.#elements.delete(key)
+			}
+		}
+	}
+
+	#land(key: string, el: HTMLElement) {
+		const drop = this.#landing.get(key)
+		if (!drop) return
+		this.#landing.delete(key)
+		landSticker(el, drop)
+	}
+}
