@@ -15,7 +15,7 @@
 		useDeleteSticker,
 		useUpdateSticker,
 		useUploadStickerImage
-	} from '$lib/api/mutations/sticker.mutations'
+	} from '$lib/api/mutations/sticker-catalogue.mutations'
 	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 

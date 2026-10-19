@@ -1,9 +1,9 @@
 /**
  * Sticker Mutation Configurations
  *
- * Giving and removing a sticker (optimistic: the picker and the highlighted
- * sticker update before the request returns), plus the editor catalogue
- * operations.
+ * Giving and removing the viewer's sticker on a team. Optimistic: every
+ * cached copy of the team updates before the request returns. The editor
+ * catalogue operations are in sticker-catalogue.mutations.
  *
  * Each mutation exports an options factory (for tests) and a hook.
  *
@@ -14,15 +14,14 @@ import type { StickerPlacement } from '$lib/types/api/party'
 import {
 	useQueryClient,
 	createMutation,
+	hashKey,
 	type QueryClient,
 	type QueryKey
 } from '@tanstack/svelte-query'
 import { stickerAdapter } from '$lib/api/adapters/sticker.adapter'
-import { stickerKeys } from '$lib/api/queries/sticker.queries'
 import { partyKeys } from '$lib/api/queries/party.queries'
 import { userKeys } from '$lib/api/queries/user.queries'
 import type { Party } from '$lib/types/api/party'
-import type { StickerPayload } from '$lib/types/api/sticker'
 import { withMySticker } from '$lib/utils/stickers'
 
 // ============================================================================
@@ -30,7 +29,17 @@ import { withMySticker } from '$lib/utils/stickers'
 // ============================================================================
 
 /** Query trees that can hold a party with `mySticker` */
-const PARTY_CACHE_ROOTS: QueryKey[] = [partyKeys.all, userKeys.favorites()]
+const partyCacheRoots: QueryKey[] = [partyKeys.all, userKeys.favorites()]
+
+/**
+ * Adds a query tree that can hold parties (a feed, say), so giving or taking
+ * back a sticker updates the copies there too. Call it once, where the
+ * queries are defined.
+ */
+export function registerStickerCacheRoot(queryKey: QueryKey) {
+	if (partyCacheRoots.some((root) => hashKey(root) === hashKey(queryKey))) return
+	partyCacheRoots.push(queryKey)
+}
 
 type Snapshot = Array<[QueryKey, unknown]>
 
@@ -41,9 +50,8 @@ function isParty(value: Record<string, unknown>, partyId: string): boolean {
 /**
  * Sets `mySticker` on every copy of a party inside cached data, whatever the
  * shape: list results, infinite pages, or parties nested deeper in a
- * payload. Returns the same reference when
- * nothing changed. Labels are left alone; they depend on a server-side
- * threshold.
+ * payload. Returns the same reference when nothing changed. Labels are left
+ * alone; they depend on a server-side threshold.
  */
 export function patchPartyCollection(data: unknown, partyId: string, slug: string | null): unknown {
 	if (!data || typeof data !== 'object') return data
@@ -83,13 +91,13 @@ async function applyOptimisticSticker(
 
 	const snapshot: Snapshot = [
 		...queryClient.getQueriesData({ queryKey: detailKey }),
-		...PARTY_CACHE_ROOTS.flatMap((queryKey) => queryClient.getQueriesData({ queryKey }))
+		...partyCacheRoots.flatMap((queryKey) => queryClient.getQueriesData({ queryKey }))
 	]
 
 	queryClient.setQueryData<Party>(detailKey, (old) =>
 		old ? withMySticker(old, params.id, slug) : old
 	)
-	for (const queryKey of PARTY_CACHE_ROOTS) {
+	for (const queryKey of partyCacheRoots) {
 		queryClient.setQueriesData({ queryKey }, (old: unknown) =>
 			patchPartyCollection(old, params.id, slug)
 		)
@@ -155,74 +163,4 @@ export function removeStickerOptions(queryClient: QueryClient) {
 export function useRemoveSticker() {
 	const queryClient = useQueryClient()
 	return createMutation(() => removeStickerOptions(queryClient))
-}
-
-// ============================================================================
-// Editor catalogue
-// ============================================================================
-
-function invalidateCatalogue(queryClient: QueryClient) {
-	queryClient.invalidateQueries({ queryKey: stickerKeys.all })
-}
-
-export function createStickerOptions(queryClient: QueryClient) {
-	return {
-		mutationFn: (payload: StickerPayload) => stickerAdapter.createSticker(payload),
-		onSuccess: () => invalidateCatalogue(queryClient)
-	}
-}
-
-export function useCreateSticker() {
-	const queryClient = useQueryClient()
-	return createMutation(() => createStickerOptions(queryClient))
-}
-
-export function updateStickerOptions(queryClient: QueryClient) {
-	return {
-		mutationFn: ({ id, payload }: { id: string; payload: Partial<StickerPayload> }) =>
-			stickerAdapter.updateSticker(id, payload),
-		onSuccess: () => invalidateCatalogue(queryClient)
-	}
-}
-
-export function useUpdateSticker() {
-	const queryClient = useQueryClient()
-	return createMutation(() => updateStickerOptions(queryClient))
-}
-
-export function deleteStickerOptions(queryClient: QueryClient) {
-	return {
-		mutationFn: ({ id }: { id: string }) => stickerAdapter.deleteSticker(id),
-		onSuccess: () => invalidateCatalogue(queryClient)
-	}
-}
-
-export function useDeleteSticker() {
-	const queryClient = useQueryClient()
-	return createMutation(() => deleteStickerOptions(queryClient))
-}
-
-export function reorderStickersOptions(queryClient: QueryClient) {
-	return {
-		mutationFn: (ids: string[]) => stickerAdapter.reorderStickers(ids),
-		onSuccess: () => invalidateCatalogue(queryClient)
-	}
-}
-
-export function useReorderStickers() {
-	const queryClient = useQueryClient()
-	return createMutation(() => reorderStickersOptions(queryClient))
-}
-
-export function uploadStickerImageOptions(queryClient: QueryClient) {
-	return {
-		mutationFn: ({ id, file }: { id: string; file: File }) =>
-			stickerAdapter.uploadImage(id, file, file.name),
-		onSuccess: () => invalidateCatalogue(queryClient)
-	}
-}
-
-export function useUploadStickerImage() {
-	const queryClient = useQueryClient()
-	return createMutation(() => uploadStickerImageOptions(queryClient))
 }

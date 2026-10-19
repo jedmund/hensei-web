@@ -12,7 +12,10 @@
 	import StickerImage from '$lib/components/stickers/StickerImage.svelte'
 
 	import { stickerQueries } from '$lib/api/queries/sticker.queries'
-	import { useReorderStickers, useUpdateSticker } from '$lib/api/mutations/sticker.mutations'
+	import {
+		useReorderStickers,
+		useUpdateSticker
+	} from '$lib/api/mutations/sticker-catalogue.mutations'
 	import { useDragReorder } from '$lib/utils/dragReorder.svelte'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { withInitialData } from '$lib/query/ssr'

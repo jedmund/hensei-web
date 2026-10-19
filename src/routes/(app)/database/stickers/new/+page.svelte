@@ -6,7 +6,10 @@
 
 	import DatabaseFormHeader from '$lib/components/database/DatabaseFormHeader.svelte'
 	import StickerFormFields from '$lib/components/database/StickerFormFields.svelte'
-	import { useCreateSticker, useUploadStickerImage } from '$lib/api/mutations/sticker.mutations'
+	import {
+		useCreateSticker,
+		useUploadStickerImage
+	} from '$lib/api/mutations/sticker-catalogue.mutations'
 	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 

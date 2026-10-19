@@ -1,6 +1,6 @@
 /**
  * Sticker mutation tests: optimistic `mySticker` updates across the party
- * detail and list caches, rollback on failure, and catalogue invalidation.
+ * detail and list caches (and registered ones), and rollback on failure.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -8,20 +8,18 @@ import { MutationObserver, type QueryClient } from '@tanstack/svelte-query'
 import {
 	giveStickerOptions,
 	removeStickerOptions,
-	reorderStickersOptions,
-	patchPartyCollection
+	patchPartyCollection,
+	registerStickerCacheRoot
 } from '../sticker.mutations'
 import { createTestQueryClient, seedPartyCache, getCachedParty } from './helpers'
 import { MOCK_PARTY, MOCK_SHORTCODE } from './fixtures'
 import { partyKeys } from '$lib/api/queries/party.queries'
-import { stickerKeys } from '$lib/api/queries/sticker.queries'
 import type { Party } from '$lib/types/api/party'
 
 vi.mock('$lib/api/adapters/sticker.adapter', () => ({
 	stickerAdapter: {
 		giveSticker: vi.fn(),
-		removeSticker: vi.fn(),
-		reorderStickers: vi.fn()
+		removeSticker: vi.fn()
 	}
 }))
 
@@ -125,18 +123,6 @@ describe('removeStickerOptions', () => {
 	})
 })
 
-describe('reorderStickersOptions', () => {
-	it('invalidates the sticker catalogue', async () => {
-		;(stickerAdapter.reorderStickers as ReturnType<typeof vi.fn>).mockResolvedValue([])
-		const spy = vi.spyOn(queryClient, 'invalidateQueries')
-
-		await run(reorderStickersOptions(queryClient), ['a', 'b'])
-
-		expect(stickerAdapter.reorderStickers).toHaveBeenCalledWith(['a', 'b'])
-		expect(spy).toHaveBeenCalledWith({ queryKey: stickerKeys.all })
-	})
-})
-
 describe('patchPartyCollection', () => {
 	const party = { id: 'p1', shortcode: 'abc', mySticker: null } as unknown as Party
 	const patched = { id: 'p1', shortcode: 'abc', mySticker: 'fast' }
@@ -152,7 +138,7 @@ describe('patchPartyCollection', () => {
 		expect(patchPartyCollection(undefined, 'p1', 'fast')).toBeUndefined()
 	})
 
-	it('reaches parties nested in the home payload', () => {
+	it('reaches parties nested deep in a payload', () => {
 		const home = {
 			current: [{ event: { id: 'ev' }, raids: [{ raid: { id: 'r' }, parties: [party] }] }],
 			upcoming: [],
@@ -168,5 +154,24 @@ describe('patchPartyCollection', () => {
 	it('returns the same reference when the party is not there', () => {
 		const data = { results: [{ id: 'other', shortcode: 'x' }] }
 		expect(patchPartyCollection(data, 'p1', 'fast')).toBe(data)
+	})
+})
+
+describe('registerStickerCacheRoot', () => {
+	it('updates parties in a registered query tree too', async () => {
+		const feedKey = ['feed']
+		registerStickerCacheRoot(feedKey)
+		registerStickerCacheRoot(['feed'])
+		queryClient.setQueryData(feedKey, { sections: [{ parties: [MOCK_PARTY] }] })
+		;(stickerAdapter.giveSticker as ReturnType<typeof vi.fn>).mockResolvedValue({ sticker: 'fast' })
+
+		await run(giveStickerOptions(queryClient), {
+			id: MOCK_PARTY.id,
+			shortcode: MOCK_SHORTCODE,
+			slug: 'fast'
+		})
+
+		const feed = queryClient.getQueryData<{ sections: Array<{ parties: Party[] }> }>(feedKey)
+		expect(feed?.sections[0]?.parties[0]?.mySticker).toBe('fast')
 	})
 })
