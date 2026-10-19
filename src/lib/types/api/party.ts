@@ -268,8 +268,6 @@ export interface Party {
 	labels?: string[]
 	/** The current user's sticker on this team, if any */
 	mySticker?: string | null
-	/** Detail view: every sticker received, in picker order, no counts */
-	receivedStickers?: string[]
 	/** Every sticker given, one per giver (full view) */
 	placedStickers?: PlacedSticker[]
 	/** Private per-sticker counts, only present for the owner */
