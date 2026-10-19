@@ -34,6 +34,7 @@
 	import StickerRemoveButton from './StickerRemoveButton.svelte'
 	import StickerAddMarker from './StickerAddMarker.svelte'
 	import StickerDropZone from './StickerDropZone.svelte'
+	import StickerDragGhost from './StickerDragGhost.svelte'
 	import StickerFoldToggle from './StickerFoldToggle.svelte'
 	import { OWN_KEY, StickerAreaState } from './stickerAreaState.svelte'
 	import { PLACED_STICKER_ATTR, StickerAddCursor } from './stickerAddCursor.svelte'
@@ -228,6 +229,11 @@
 	{#if area.shown.length > 0}
 		<StickerFoldToggle {folded} onclick={toggleFolded} />
 	{/if}
+{/if}
+
+<!-- Following the pointer while a sticker is dragged out of the picker -->
+{#if canGive}
+	<StickerDragGhost />
 {/if}
 
 <style lang="scss">
