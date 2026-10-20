@@ -2054,7 +2054,6 @@
 	"db_image_error_type": "このファイル形式には対応していません。",
 	"db_image_error_size": "画像が大きすぎます。",
 	"db_stickers_type": "スタンプ",
-	"db_stickers_intro": "ドラッグで並び替えできます。無効にしたスタンプは選択肢から外れますが、集計には残ります。",
 	"db_stickers_new": "新しいスタンプ",
 	"db_stickers_edit": "編集",
 	"db_stickers_edit_title": "スタンプを編集",

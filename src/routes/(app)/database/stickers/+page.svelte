@@ -61,13 +61,11 @@
 <div class="page">
 	<DatabasePageHeader title={m.nav_stickers()}>
 		{#snippet rightAction()}
-			<Button variant="primary" size="small" href={localizeHref('/database/stickers/new')}>
+			<Button variant="ghost" size="small" href={localizeHref('/database/stickers/new')}>
 				{m.db_stickers_new()}
 			</Button>
 		{/snippet}
 	</DatabasePageHeader>
-
-	<p class="intro">{m.db_stickers_intro()}</p>
 
 	{#if stickersQuery.isLoading}
 		<div class="loading">{m.db_stickers_loading()}</div>
@@ -124,13 +122,6 @@
 		box-shadow: var(--shadow-sm);
 	}
 
-	.intro {
-		margin: 0;
-		padding: 0 spacing.$unit-2x spacing.$unit-2x;
-		font-size: typography.$font-small;
-		color: var(--text-secondary);
-	}
-
 	.sticker-list {
 		list-style: none;
 		padding: 0 spacing.$unit-2x spacing.$unit-2x;
@@ -145,13 +136,12 @@
 		align-items: center;
 		gap: spacing.$unit-2x;
 		padding: spacing.$unit spacing.$unit-2x;
-		background: var(--input-bound-bg);
 		border-radius: layout.$item-corner;
 		cursor: grab;
 		outline: 2px solid transparent;
 
 		&:hover {
-			background: var(--input-bound-bg-hover);
+			background: var(--input-bound-bg);
 		}
 
 		&.inactive {

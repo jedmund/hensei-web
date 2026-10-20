@@ -2082,7 +2082,6 @@
 	"db_image_error_type": "That file type isn't supported.",
 	"db_image_error_size": "The image is too large.",
 	"db_stickers_type": "Sticker",
-	"db_stickers_intro": "Drag to reorder the picker. Inactive stickers leave the picker but keep counting.",
 	"db_stickers_new": "New sticker",
 	"db_stickers_edit": "Edit",
 	"db_stickers_edit_title": "Edit sticker",
