@@ -2,6 +2,7 @@
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 	"hello_world": "Hello, {name} from en!",
 	"retry": "Retry",
+	"nav_home": "Home",
 	"nav_gallery": "Gallery",
 	"nav_collection": "Collection",
 	"nav_login": "Log in",
@@ -2328,6 +2329,8 @@
 	"page_title_db_events": "Events / Database / granblue.team",
 	"page_title_db_stickers": "Stickers / Database / granblue.team",
 	"explore_filter_label": "Sticker",
+	"explore_sort_recommended": "Recommended",
+	"filter_cat_sort": "Sort",
 	"sticker_labels_aria": "Stickers this team is known for",
 	"sticker_add": "Add a sticker",
 	"sticker_picker_title": "Give this team a sticker",
@@ -2347,6 +2350,59 @@
 	"sticker_breakdown_empty": "No stickers yet",
 	"sticker_breakdown_private": "Only you can see these counts. Who gave each sticker isn't shown.",
 	"sticker_retired": "Retired sticker",
+	"home_events": "Events",
+	"home_events_aria": "Events",
+	"home_rising": "Rising",
+	"home_staff_picks": "Staff picks",
+	"home_starts_in": "Starts in {duration}",
+	"home_ends_in": "Ends in {duration}",
+	"home_duration_days": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} day",
+				"countPlural=other": "{count} days"
+			}
+		}
+	],
+	"home_duration_hours": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} hour",
+				"countPlural=other": "{count} hours"
+			}
+		}
+	],
+	"home_duration_minutes": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} minute",
+				"countPlural=other": "{count} minutes"
+			}
+		}
+	],
+	"home_element_advantage": "{element} advantage",
+	"home_new_items": "New items",
+	"home_item_change_release": "New",
+	"home_item_change_flb": "Final uncap",
+	"home_item_change_ulb": "Ultimate uncap",
+	"home_item_change_transcendence": "Transcendence",
+	"home_see_all_item": "See all teams with {item}",
+	"home_no_item_teams": "No teams with {item} yet",
+	"home_from_last_time": "teams from last time",
+	"home_no_raids": "There are no raids for this event",
+	"home_no_teams_event": "No teams for this event yet",
+	"home_no_previous": "No teams from last time yet",
+	"home_see_all": "See all",
+	"home_see_all_raid": "See all {raid} teams",
+	"home_raid_select_aria": "Raid",
+	"home_empty": "No featured teams yet",
+	"home_browse_all": "Browse all teams",
 	"event_status_draft": "Draft",
 	"event_status_approved": "Approved",
 	"event_status_hidden": "Hidden",
@@ -2556,5 +2612,6 @@
 	"event_kind_farming": "Farming",
 	"event_kind_alchemy": "Alchemy",
 	"event_kind_other": "Other",
-	"db_events_element_required": "Required for Unite and Fight and Dread Barrage"
+	"db_events_element_required": "Required for Unite and Fight and Dread Barrage",
+	"page_desc_home_events": "Teams for the events running in Granblue Fantasy right now"
 }

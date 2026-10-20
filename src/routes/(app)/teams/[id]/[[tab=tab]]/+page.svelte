@@ -83,7 +83,7 @@
 	<NotFoundPlaceholder
 		title={m.party_not_found()}
 		message={m.party_no_data()}
-		backHref={localizeHref('/teams/explore')}
+		backHref={localizeHref('/')}
 		backLabel={m.nav_back_to_site()}
 	/>
 {/if}
