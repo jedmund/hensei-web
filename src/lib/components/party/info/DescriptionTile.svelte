@@ -1,13 +1,11 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import type { Snippet } from 'svelte'
-	import Button from '$lib/components/ui/Button.svelte'
-	import Tooltip from '$lib/components/ui/Tooltip.svelte'
-	import CollectionViewerSwitcher from './CollectionViewerSwitcher.svelte'
+	import DescriptionPreview from './DescriptionPreview.svelte'
+	import PartyActions from './PartyActions.svelte'
 	import PartyByline from './PartyByline.svelte'
 	import PartySettings from './PartySettings.svelte'
 	import type { AvatarUser } from '$lib/utils/avatar'
-	import { descriptionPreview } from '$lib/utils/descriptionPreview'
 	import type { PartyDifficulty } from '$lib/types/api/party'
 	import type { PartyVisibility } from '$lib/types/visibility'
 
@@ -84,24 +82,6 @@
 		shortcode,
 		isEditor = false
 	}: Props = $props()
-
-	const showCollectionSwitcher = $derived(
-		!!authUser?.username &&
-			!!collectionSourceUser?.username &&
-			authUser.username !== collectionSourceUser.username
-	)
-
-	// Measure content to determine if "Read more" is needed (text overflows 3 lines)
-	let contentEl = $state<HTMLDivElement | undefined>(undefined)
-	let needsReadMore = $state(false)
-
-	$effect(() => {
-		if (contentEl) {
-			needsReadMore = contentEl.scrollHeight > contentEl.clientHeight
-		}
-	})
-
-	const preview = $derived(descriptionPreview(description))
 </script>
 
 <div class="description-tile">
@@ -109,34 +89,16 @@
 	<div class="tile-header-container">
 		<div class="tile-header">
 			<h1 class="party-name" class:empty={!name}>{name || m.party_untitled()}</h1>
-			<div class="actions">
-				{#if showCollectionSwitcher && authUser && collectionSourceUser}
-					<CollectionViewerSwitcher
-						{authUser}
-						{collectionSourceUser}
-						{activeCollectionUser}
-						onSwitchCollectionUser={(v) => onSwitchCollectionUser?.(v)}
-					/>
-				{/if}
-				{#if canEdit}
-					<Button variant="secondary" size="small" onclick={onOpenEdit}>{m.action_edit()}</Button>
-				{/if}
-				{#if onOpenCalculator}
-					<Tooltip content={m.calculator_open()}>
-						<Button
-							variant="ghost"
-							size="small"
-							iconOnly
-							icon="calculator"
-							aria-label={m.calculator_open()}
-							onclick={onOpenCalculator}
-						/>
-					</Tooltip>
-				{/if}
-				{#if menu}
-					{@render menu()}
-				{/if}
-			</div>
+			<PartyActions
+				{authUser}
+				{collectionSourceUser}
+				{activeCollectionUser}
+				{onSwitchCollectionUser}
+				{canEdit}
+				{onOpenEdit}
+				{onOpenCalculator}
+				{menu}
+			/>
 		</div>
 
 		<PartyByline {user} {sourceParty} {collectionSourceUser} {visibility} {updatedAt} />
@@ -157,29 +119,13 @@
 		{isEditor}
 	/>
 
-	<!-- Description content (clickable) -->
-	<button
-		type="button"
-		class="description-content"
-		onclick={canEdit && !preview.text && onEditDescription ? onEditDescription : onOpenDescription}
-	>
-		{#if preview.text}
-			<div class="preview-text" bind:this={contentEl}>
-				<p>
-					{preview.text}{#if preview.hasMore || needsReadMore}…&nbsp;<span
-							class="read-more"
-							style:color={user?.avatar?.element
-								? `var(--${user.avatar.element}-ghost-text)`
-								: undefined}>{m.description_read_more()}</span
-						>{/if}
-				</p>
-			</div>
-		{:else}
-			<span class="empty-state"
-				>{canEdit ? m.party_write_description() : m.party_no_description()}</span
-			>
-		{/if}
-	</button>
+	<DescriptionPreview
+		{description}
+		{canEdit}
+		element={user?.avatar?.element}
+		onOpen={onOpenDescription}
+		onEdit={onEditDescription}
+	/>
 </div>
 
 <style lang="scss">
@@ -227,62 +173,5 @@
 		&.empty {
 			color: var(--text-tertiary);
 		}
-	}
-
-	.actions {
-		display: flex;
-		align-items: center;
-		gap: $unit-half;
-		flex-shrink: 0;
-	}
-
-	.description-content {
-		padding: $unit;
-		margin: 0 (-$unit);
-		background: transparent;
-		border: none;
-		border-radius: $item-corner;
-		justify-content: flex-start;
-		align-items: flex-start;
-		display: flex;
-		cursor: pointer;
-		text-align: left;
-		color: inherit;
-		font: inherit;
-		min-width: 0;
-		width: calc(100% + #{$unit * 2});
-		flex: 1;
-		overflow: hidden;
-		@include smooth-transition($duration-quick, background-color);
-
-		&:hover {
-			background: var(--button-bg);
-		}
-	}
-
-	.preview-text {
-		font-size: $font-regular;
-		color: var(--text-secondary);
-		overflow: hidden;
-		line-height: 1.5;
-		display: -webkit-box;
-		-webkit-line-clamp: 3;
-		-webkit-box-orient: vertical;
-
-		p {
-			margin: 0;
-			display: inline;
-		}
-	}
-
-	.read-more {
-		color: var(--text-tertiary);
-		font-weight: $medium;
-	}
-
-	.empty-state {
-		flex: 1;
-		font-size: $font-regular;
-		color: var(--text-tertiary);
 	}
 </style>
