@@ -2177,5 +2177,15 @@
 	"character_refresh_status_failed": "失敗",
 	"character_refresh_summary_changes": "変更されたスキル: {count}",
 	"character_refresh_summary_none": "変更なし",
-	"character_refresh_summary_text_only": "Wikiテキストのみ"
+	"character_refresh_summary_text_only": "Wikiテキストのみ",
+	"character_refresh_field_type_color": "アビリティの種類",
+	"character_refresh_field_variant_role": "バリエーション",
+	"character_refresh_field_ordinal": "バージョンの順番",
+	"character_refresh_field_cant_recast": "再使用不可",
+	"character_refresh_field_one_time_use": "バトル中1回のみ",
+	"character_refresh_field_auto_activate": "自動発動",
+	"character_refresh_field_mimicable": "コピー可否",
+	"character_refresh_field_targets_all": "全体対象",
+	"character_refresh_field_game_action_id": "ゲーム内アクションID",
+	"character_refresh_field_duplicates": "重複行"
 }

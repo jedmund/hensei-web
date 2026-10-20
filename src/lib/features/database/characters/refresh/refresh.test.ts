@@ -6,6 +6,7 @@ import {
 } from '$lib/api/adapters/characterRefresh.adapter'
 import { API } from '$lib/api/adapters/__tests__/fixtures/characterRefresh.fixtures'
 import {
+	FIELD_LABELS,
 	characterPath,
 	countRows,
 	defaultSelection,
@@ -87,10 +88,47 @@ describe('fieldLabels', () => {
 		])
 	})
 
+	it('labels every column the Writer can diff', () => {
+		// CharacterSkillVersion columns minus bookkeeping (Writer.version_columns), plus diff extras
+		const columns = [
+			'name_en',
+			'name_jp',
+			'description_en',
+			'description_jp',
+			'icon',
+			'game_icon',
+			'type_color',
+			'cooldown',
+			'initial_cooldown',
+			'duration_value',
+			'duration_unit',
+			'variant_role',
+			'ordinal',
+			'unlock_level',
+			'enhance_levels',
+			'min_uncap',
+			'transcendence_stage',
+			'trigger_type',
+			'trigger_value',
+			'cant_recast',
+			'one_time_use',
+			'auto_activate',
+			'mimicable',
+			'targets_all',
+			'game_action_id',
+			'effects',
+			'links',
+			'slot_game_action_id',
+			'duplicates'
+		]
+		expect(columns.filter((column) => !Object.hasOwn(FIELD_LABELS, column))).toEqual([])
+		expect(fieldLabels(['mimicable'])).toEqual(['can be copied'])
+	})
+
 	it('merges paired columns and humanizes unknown ones', () => {
-		expect(fieldLabels(['duration_value', 'duration_unit', 'cant_recast'])).toEqual([
+		expect(fieldLabels(['duration_value', 'duration_unit', 'brand_new_column'])).toEqual([
 			'duration',
-			'cant recast'
+			'brand new column'
 		])
 	})
 })

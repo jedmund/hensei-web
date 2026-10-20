@@ -96,45 +96,46 @@ function humanize(column: string): string {
 	return column.replace(/_/g, ' ')
 }
 
-/** A changed column (or `effects` / `links`) in plain words. */
+/**
+ * A changed column in plain words. Covers every column the build's Writer
+ * diffs (Writer.version_columns) plus `effects`, `links` and the two the API
+ * hides today (`slot_game_action_id`, `duplicates`).
+ */
+export const FIELD_LABELS: Record<string, () => string> = {
+	name_en: m.character_refresh_field_name,
+	name_jp: m.character_refresh_field_name_jp,
+	description_en: m.character_refresh_field_description,
+	description_jp: m.character_refresh_field_description_jp,
+	cooldown: m.character_refresh_field_cooldown,
+	initial_cooldown: m.character_refresh_field_initial_cooldown,
+	duration_value: m.character_refresh_field_duration,
+	duration_unit: m.character_refresh_field_duration,
+	icon: m.character_refresh_field_icon,
+	game_icon: m.character_refresh_field_icon,
+	effects: m.character_refresh_field_effects,
+	links: m.character_refresh_field_links,
+	unlock_level: m.character_refresh_field_unlock_level,
+	enhance_levels: m.character_refresh_field_enhance_levels,
+	min_uncap: m.character_refresh_field_min_uncap,
+	transcendence_stage: m.character_refresh_field_transcendence_stage,
+	trigger_type: m.character_refresh_field_trigger,
+	trigger_value: m.character_refresh_field_trigger,
+	type_color: m.character_refresh_field_type_color,
+	variant_role: m.character_refresh_field_variant_role,
+	ordinal: m.character_refresh_field_ordinal,
+	cant_recast: m.character_refresh_field_cant_recast,
+	one_time_use: m.character_refresh_field_one_time_use,
+	auto_activate: m.character_refresh_field_auto_activate,
+	mimicable: m.character_refresh_field_mimicable,
+	targets_all: m.character_refresh_field_targets_all,
+	game_action_id: m.character_refresh_field_game_action_id,
+	slot_game_action_id: m.character_refresh_field_game_action_id,
+	duplicates: m.character_refresh_field_duplicates
+}
+
 export function fieldLabel(field: string): string {
-	switch (field) {
-		case 'name_en':
-			return m.character_refresh_field_name()
-		case 'name_jp':
-			return m.character_refresh_field_name_jp()
-		case 'description_en':
-			return m.character_refresh_field_description()
-		case 'description_jp':
-			return m.character_refresh_field_description_jp()
-		case 'cooldown':
-			return m.character_refresh_field_cooldown()
-		case 'initial_cooldown':
-			return m.character_refresh_field_initial_cooldown()
-		case 'duration_value':
-		case 'duration_unit':
-			return m.character_refresh_field_duration()
-		case 'icon':
-		case 'game_icon':
-			return m.character_refresh_field_icon()
-		case 'effects':
-			return m.character_refresh_field_effects()
-		case 'links':
-			return m.character_refresh_field_links()
-		case 'unlock_level':
-			return m.character_refresh_field_unlock_level()
-		case 'enhance_levels':
-			return m.character_refresh_field_enhance_levels()
-		case 'min_uncap':
-			return m.character_refresh_field_min_uncap()
-		case 'transcendence_stage':
-			return m.character_refresh_field_transcendence_stage()
-		case 'trigger_type':
-		case 'trigger_value':
-			return m.character_refresh_field_trigger()
-		default:
-			return humanize(field)
-	}
+	// A column added after this list: readable, never snake_case
+	return Object.hasOwn(FIELD_LABELS, field) ? FIELD_LABELS[field]!() : humanize(field)
 }
 
 /** The changed fields in plain words, without repeats (duration_value + duration_unit → "duration"). */
