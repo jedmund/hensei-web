@@ -21,7 +21,10 @@ export interface Weapon {
 	maxSkillLevel?: number
 	maxAwakeningLevel?: number | null
 	maxExorcismLevel?: number | null
-	/** Weapon series - object with slug/name/flags */
+	/**
+	 * Weapon series - object with slug/name/flags. Party list views send only
+	 * WeaponSeriesSummary (id/slug); use slug-only helpers there.
+	 */
 	series?: WeaponSeriesRef | null
 	/** Variant override ID (via series.weaponSeriesVariantId from API) */
 	weaponSeriesVariantId?: string | null

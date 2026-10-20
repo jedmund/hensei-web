@@ -97,6 +97,11 @@ describe('seriesHasTranscendenceArt', () => {
 		expect(WEAPON_TRANSCENDENCE_ART_SLUGS).toEqual(['dark-opus'])
 	})
 
+	it('accepts the trimmed series from party list views', () => {
+		expect(seriesHasTranscendenceArt({ id: '1', slug: 'dark-opus' })).toBe(true)
+		expect(seriesHasTranscendenceArt({ id: '2', slug: 'illustrious' })).toBe(false)
+	})
+
 	it('returns false for null/undefined', () => {
 		expect(seriesHasTranscendenceArt(null)).toBe(false)
 		expect(seriesHasTranscendenceArt(undefined)).toBe(false)
