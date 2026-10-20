@@ -2,15 +2,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import Icon from '$lib/components/Icon.svelte'
 	import { DropdownMenu, Tooltip } from 'bits-ui'
-	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
-
-	type AvatarUser = {
-		username?: string
-		avatar?: {
-			picture?: string | null
-			element?: string | null
-		} | null
-	}
+	import { getAvatarSrc, getAvatarSrcSet, type AvatarUser } from '$lib/utils/avatar'
 
 	interface Props {
 		authUser: AvatarUser

@@ -2,23 +2,13 @@
 	import * as m from '$lib/paraglide/messages'
 	import type { Snippet } from 'svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import AvatarPair from '$lib/components/ui/AvatarPair.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import CollectionViewerSwitcher from './CollectionViewerSwitcher.svelte'
-	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
-	import { localizeHref } from '$lib/paraglide/runtime'
+	import PartyByline from './PartyByline.svelte'
+	import type { AvatarUser } from '$lib/utils/avatar'
 	import { descriptionPreview } from '$lib/utils/descriptionPreview'
-	import { formatRelativeTime } from '$lib/utils/date'
-	import { PartyVisibility } from '$lib/types/visibility'
 	import type { PartyDifficulty } from '$lib/types/api/party'
-
-	type AvatarUser = {
-		username?: string
-		avatar?: {
-			picture?: string | null
-			element?: string | null
-		} | null
-	}
+	import type { PartyVisibility } from '$lib/types/visibility'
 
 	interface Props {
 		name?: string
@@ -37,7 +27,7 @@
 		/** Callback when collection viewer is switched */
 		onSwitchCollectionUser?: (target: 'viewer' | 'source') => void
 		updatedAt?: string
-		visibility?: import('$lib/types/visibility').PartyVisibility
+		visibility?: PartyVisibility
 		canEdit?: boolean
 		onOpenDescription: () => void
 		onEditDescription?: () => void
@@ -104,19 +94,6 @@
 		!!authUser?.username &&
 			!!collectionSourceUser?.username &&
 			authUser.username !== collectionSourceUser.username
-	)
-
-	const avatarSrc = $derived(getAvatarSrc(user?.avatar?.picture))
-	const avatarSrcSet = $derived(getAvatarSrcSet(user?.avatar?.picture))
-	const relativeTime = $derived(
-		updatedAt ? m.time_last_updated({ time: formatRelativeTime(updatedAt) }) : null
-	)
-	const visibilityLabel = $derived(
-		visibility === PartyVisibility.UNLISTED
-			? m.visibility_unlisted()
-			: visibility === PartyVisibility.PRIVATE
-				? m.visibility_private()
-				: null
 	)
 
 	// Measure content to determine if "Read more" is needed (text overflows 3 lines)
@@ -211,163 +188,7 @@
 			</div>
 		</div>
 
-		<!-- Creator info -->
-		{#if user && sourceParty?.user?.username && collectionSourceUser?.username}
-			<div class="creator-pair-line">
-				<AvatarPair back={sourceParty.user} front={user} size={24} />
-				<span class="creator-pair-text">
-					{m.party_remixed_with_collection({
-						username: user.username ?? '',
-						otherUsername: sourceParty.user.username ?? '',
-						collectionUsername: collectionSourceUser.username ?? ''
-					})}
-				</span>
-				{#if visibilityLabel}
-					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
-				{/if}
-				{#if relativeTime}
-					<span class="updated-time">&nbsp;&middot;&nbsp;{relativeTime}</span>
-				{/if}
-			</div>
-		{:else if user && sourceParty?.user?.username}
-			<div class="creator-pair-line">
-				<AvatarPair back={sourceParty.user} front={user} size={24} />
-				<span class="creator-pair-text">
-					{m.party_remixed({
-						username: user.username ?? '',
-						otherUsername: sourceParty.user.username ?? ''
-					})}
-				</span>
-				{#if visibilityLabel}
-					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
-				{/if}
-				{#if relativeTime}
-					<span class="updated-time">&nbsp;&middot;&nbsp;{relativeTime}</span>
-				{/if}
-			</div>
-		{:else if !user && sourceParty?.user?.username}
-			<div class="creator-line">
-				<span class="anonymous-remix">
-					{m.party_remixed_anonymous({ otherUsername: sourceParty.user.username ?? '' })}
-				</span>
-				{#if visibilityLabel}
-					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
-				{/if}
-				{#if relativeTime}
-					<span class="updated-time">&nbsp;&middot;&nbsp;{relativeTime}</span>
-				{/if}
-			</div>
-		{:else if user && sourceParty && !sourceParty.user?.username}
-			<div class="creator-line">
-				<a href={localizeHref(`/${user.username}`)} class="creator-link">
-					<div class="avatar-wrapper {user.avatar?.element || ''}">
-						{#if user.avatar?.picture}
-							<img
-								class="avatar"
-								alt={`Avatar of ${user.username}`}
-								src={getAvatarSrc(user.avatar.picture)}
-								srcset={getAvatarSrcSet(user.avatar.picture)}
-								width="24"
-								height="24"
-							/>
-						{:else}
-							<div class="avatar-placeholder" aria-hidden="true"></div>
-						{/if}
-					</div>
-					<span class="username"
-						>{m.party_remixed_from_anonymous({ username: user.username ?? '' })}</span
-					>
-				</a>
-				{#if visibilityLabel}
-					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
-				{/if}
-				{#if relativeTime}
-					<span class="updated-time">&nbsp;&middot;&nbsp;{relativeTime}</span>
-				{/if}
-			</div>
-		{:else if !user && sourceParty}
-			<div class="creator-line">
-				<span class="anonymous-remix">
-					{m.party_remixed_anonymous_source()}
-				</span>
-				{#if visibilityLabel}
-					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
-				{/if}
-				{#if relativeTime}
-					<span class="updated-time">&nbsp;&middot;&nbsp;{relativeTime}</span>
-				{/if}
-			</div>
-		{:else if user && collectionSourceUser?.username && user.username === collectionSourceUser.username}
-			<div class="creator-line">
-				<a href={localizeHref(`/${user.username}`)} class="creator-link">
-					<div class="avatar-wrapper {user.avatar?.element || ''}">
-						{#if user.avatar?.picture}
-							<img
-								class="avatar"
-								alt={`Avatar of ${user.username}`}
-								src={getAvatarSrc(user.avatar.picture)}
-								srcset={getAvatarSrcSet(user.avatar.picture)}
-								width="24"
-								height="24"
-							/>
-						{:else}
-							<div class="avatar-placeholder" aria-hidden="true"></div>
-						{/if}
-					</div>
-					<span class="username"
-						>{m.party_using_own_collection({ username: user.username ?? '' })}</span
-					>
-				</a>
-				{#if visibilityLabel}
-					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
-				{/if}
-				{#if relativeTime}
-					<span class="updated-time">&nbsp;&middot;&nbsp;{relativeTime}</span>
-				{/if}
-			</div>
-		{:else if user && collectionSourceUser?.username}
-			<div class="creator-pair-line">
-				<AvatarPair back={user} front={collectionSourceUser} size={24} />
-				<span class="creator-pair-text">
-					{m.party_using_others_collection({
-						username: user.username ?? '',
-						otherUsername: collectionSourceUser.username ?? ''
-					})}
-				</span>
-				{#if visibilityLabel}
-					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
-				{/if}
-				{#if relativeTime}
-					<span class="updated-time">&nbsp;&middot;&nbsp;{relativeTime}</span>
-				{/if}
-			</div>
-		{:else if user}
-			<div class="creator-line">
-				<a href={localizeHref(`/${user.username}`)} class="creator-link">
-					<div class="avatar-wrapper {user.avatar?.element || ''}">
-						{#if user.avatar?.picture}
-							<img
-								class="avatar"
-								alt={`Avatar of ${user.username}`}
-								src={avatarSrc}
-								srcset={avatarSrcSet}
-								width="24"
-								height="24"
-							/>
-						{:else}
-							<div class="avatar-placeholder" aria-hidden="true"></div>
-						{/if}
-					</div>
-					<span class="username">{user.username}</span>
-				</a>
-				{#if visibilityLabel}
-					<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
-				{/if}
-				{#if relativeTime}
-					<span class="updated-time">&nbsp;&middot;&nbsp;{relativeTime}</span>
-				{/if}
-			</div>
-		{/if}
+		<PartyByline {user} {sourceParty} {collectionSourceUser} {visibility} {updatedAt} />
 	</div>
 
 	<!-- Battle settings & performance -->
@@ -504,89 +325,6 @@
 		align-items: center;
 		gap: $unit-half;
 		flex-shrink: 0;
-	}
-
-	.creator-line {
-		display: inline-flex;
-		align-items: center;
-		gap: 0;
-	}
-
-	.creator-link {
-		display: inline-flex;
-		align-items: center;
-		gap: $unit-half;
-		text-decoration: none;
-		color: var(--text-secondary);
-		width: fit-content;
-
-		&:hover {
-			color: var(--text-primary);
-
-			.username {
-				text-decoration: underline;
-			}
-		}
-	}
-
-	.avatar-wrapper {
-		width: 24px;
-		height: 24px;
-		border-radius: 50%;
-		overflow: hidden;
-		background: var(--button-bg);
-		flex-shrink: 0;
-	}
-
-	.avatar {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	.avatar-placeholder {
-		width: 100%;
-		height: 100%;
-		background: var(--button-bg);
-	}
-
-	.username {
-		font-size: $font-small;
-		font-weight: $medium;
-	}
-
-	.updated-time,
-	.visibility-label {
-		font-size: $font-small;
-		color: var(--text-tertiary);
-	}
-
-	.creator-pair-line {
-		display: inline-flex;
-		align-items: center;
-		gap: $unit-half;
-	}
-
-	.anonymous-remix {
-		font-size: $font-small;
-		font-weight: $medium;
-		color: var(--text-secondary);
-	}
-
-	.creator-pair-text {
-		font-size: $font-small;
-		font-weight: $medium;
-		color: var(--text-secondary);
-
-		a {
-			color: inherit;
-			text-decoration: none;
-
-			&:hover {
-				text-decoration: underline;
-				color: var(--text-primary);
-			}
-		}
 	}
 
 	.description-content {

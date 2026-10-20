@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { AvatarUser } from '$lib/utils/avatar'
 	import type { Snippet } from 'svelte'
 	import type { Party } from '$lib/types/api/party'
 	import type { RaidFull } from '$lib/types/api/raid'
@@ -14,14 +15,6 @@
 	import type { FilterItem } from '$lib/types/filter'
 	import { isFullExpedition, solomonisName } from '$lib/components/solomonis/party/solomonisParty'
 	import { openSolomonisDetailsPane } from '$lib/components/solomonis/party/openSolomonisPanes'
-
-	type AvatarUser = {
-		username?: string
-		avatar?: {
-			picture?: string | null
-			element?: string | null
-		} | null
-	}
 
 	interface Props {
 		party: Party
