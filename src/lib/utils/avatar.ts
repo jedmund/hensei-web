@@ -1,5 +1,14 @@
 import { getImageBaseUrl } from '$lib/api/adapters/config'
 
+/** A user as avatars show them: a name and an avatar picture and element */
+export interface AvatarUser {
+	username?: string
+	avatar?: {
+		picture?: string | null
+		element?: string | null
+	} | null
+}
+
 /**
  * Ensures a filename has a .png extension
  */

@@ -31,6 +31,7 @@
 	import type { PartyVisibility } from '$lib/types/visibility'
 	import Icon from '$lib/components/Icon.svelte'
 	import { localizedName } from '$lib/utils/locale'
+	import { descriptionPreview } from '$lib/utils/descriptionPreview'
 
 	export interface PartyEditValues {
 		name: string
@@ -262,56 +263,7 @@
 		paneStack.pop()
 	}
 
-	interface JSONContent {
-		type?: string
-		text?: string
-		content?: JSONContent[]
-		attrs?: Record<string, unknown>
-	}
-
-	/** Extract first non-empty paragraph from TipTap JSON content */
-	function getDescriptionPreview(desc: string | null): string | null {
-		if (!desc) return null
-		try {
-			const parsed = JSON.parse(desc) as JSONContent
-			if (parsed.type !== 'doc' || !parsed.content?.length) return null
-
-			// Extract text from an inline node (text or mention)
-			const getNodeText = (node: JSONContent): string => {
-				if (node.type === 'text') return node.text ?? ''
-				if (node.type === 'mention') {
-					const id = node.attrs?.id as
-						{ name?: { en?: string; ja?: string }; granblue_en?: string } | undefined
-					const name = localizedName(id?.name)
-					return name !== '—' ? name : (id?.granblue_en ?? '')
-				}
-				return ''
-			}
-
-			// Extract text from a block
-			const getBlockText = (block: JSONContent): string =>
-				block.content?.map(getNodeText).join('') ?? ''
-
-			// Find first non-empty paragraph or heading
-			for (const node of parsed.content) {
-				if (node.type !== 'paragraph' && node.type !== 'heading') continue
-				const text = getBlockText(node).trim()
-				if (text) return text
-			}
-
-			return null
-		} catch {
-			// Legacy plain text - return first non-empty line
-			return (
-				desc
-					.split('\n')
-					.map((l) => l.trim())
-					.find(Boolean) ?? null
-			)
-		}
-	}
-
-	const descriptionPreview = $derived(getDescriptionPreview(description))
+	const descriptionPreviewText = $derived(descriptionPreview(description).text || null)
 
 	// Only while the raid is still the Solomonis zone the party was opened with
 	const showSolomonisDetails = $derived(!!solomonisDetails && raidId === initial.raidId)
@@ -387,8 +339,8 @@
 			<div class="description-field">
 				<span class="description-label">{m.party_description()}</span>
 				<button type="button" class="description-button" onclick={openDescriptionPane}>
-					{#if descriptionPreview}
-						<span class="description-preview">{descriptionPreview}</span>
+					{#if descriptionPreviewText}
+						<span class="description-preview">{descriptionPreviewText}</span>
 					{:else}
 						<span class="description-placeholder">{m.sidebar_add_description()}</span>
 					{/if}

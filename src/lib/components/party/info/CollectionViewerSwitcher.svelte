@@ -1,33 +1,31 @@
 <script lang="ts">
+	/**
+	 * Whose collection a party's items are shown against, when it uses someone
+	 * else's: the signed-in user's ("You") or the collection owner's.
+	 */
 	import * as m from '$lib/paraglide/messages'
 	import Icon from '$lib/components/Icon.svelte'
+	import UserAvatar from '$lib/components/ui/UserAvatar.svelte'
 	import { DropdownMenu, Tooltip } from 'bits-ui'
-	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
+	import type { AvatarUser } from '$lib/utils/avatar'
 
-	type AvatarUser = {
-		username?: string
-		avatar?: {
-			picture?: string | null
-			element?: string | null
-		} | null
-	}
+	type Viewer = 'viewer' | 'source'
 
 	interface Props {
 		authUser: AvatarUser
 		collectionSourceUser: AvatarUser
-		activeCollectionUser: 'viewer' | 'source'
-		onSwitchCollectionUser: (target: 'viewer' | 'source') => void
+		activeCollectionUser: Viewer
+		onSwitchCollectionUser: (target: Viewer) => void
 	}
 
 	let { authUser, collectionSourceUser, activeCollectionUser, onSwitchCollectionUser }: Props =
 		$props()
 
-	const activeUser = $derived(activeCollectionUser === 'source' ? collectionSourceUser : authUser)
-	const activeAvatarSrc = $derived(getAvatarSrc(activeUser?.avatar?.picture))
-	const activeAvatarSrcSet = $derived(getAvatarSrcSet(activeUser?.avatar?.picture))
-
-	const authElement = $derived(authUser?.avatar?.element || '')
-	const sourceElement = $derived(collectionSourceUser?.avatar?.element || '')
+	const options = $derived([
+		{ value: 'viewer' as const, user: authUser, label: m.collection_viewer_you() },
+		{ value: 'source' as const, user: collectionSourceUser, label: collectionSourceUser.username }
+	])
+	const active = $derived(options.find((option) => option.value === activeCollectionUser)!)
 </script>
 
 <Tooltip.Root delayDuration={200} disableHoverableContent>
@@ -40,25 +38,8 @@
 					{...props}
 				>
 					<div class="switcher-user">
-						<div class="switcher-avatar {activeUser?.avatar?.element || ''}">
-							{#if activeUser?.avatar?.picture}
-								<img
-									class="avatar"
-									alt={`Avatar of ${activeUser?.username}`}
-									src={activeAvatarSrc}
-									srcset={activeAvatarSrcSet}
-									width="20"
-									height="20"
-								/>
-							{:else}
-								<div class="avatar-placeholder" aria-hidden="true"></div>
-							{/if}
-						</div>
-						<span class="switcher-name"
-							>{activeCollectionUser === 'viewer'
-								? m.collection_viewer_you()
-								: activeUser?.username}</span
-						>
+						<UserAvatar user={active.user} size={20} />
+						<span class="switcher-name">{active.label}</span>
 					</div>
 					<Icon name="chevron-down" size={10} />
 				</DropdownMenu.Trigger>
@@ -68,48 +49,20 @@
 						<div class="dropdown-label">{m.collection_viewer_viewing_as()}</div>
 						<DropdownMenu.RadioGroup
 							value={activeCollectionUser}
-							onValueChange={(v) => onSwitchCollectionUser(v as 'viewer' | 'source')}
+							onValueChange={(v) => onSwitchCollectionUser(v as Viewer)}
 						>
-							<DropdownMenu.RadioItem value="viewer" class="dropdown-radio-item {authElement}">
-								<div class="switcher-avatar {authElement}">
-									{#if authUser?.avatar?.picture}
-										<img
-											class="avatar"
-											alt={`Avatar of ${authUser?.username}`}
-											src={getAvatarSrc(authUser?.avatar?.picture)}
-											srcset={getAvatarSrcSet(authUser?.avatar?.picture)}
-											width="20"
-											height="20"
-										/>
-									{:else}
-										<div class="avatar-placeholder" aria-hidden="true"></div>
+							{#each options as option (option.value)}
+								<DropdownMenu.RadioItem
+									value={option.value}
+									class="dropdown-radio-item {option.user.avatar?.element || ''}"
+								>
+									<UserAvatar user={option.user} size={20} />
+									<span>{option.label}</span>
+									{#if activeCollectionUser === option.value}
+										<span class="radio-indicator"><Icon name="check" size={14} /></span>
 									{/if}
-								</div>
-								<span>{m.collection_viewer_you()}</span>
-								{#if activeCollectionUser === 'viewer'}
-									<span class="radio-indicator"><Icon name="check" size={14} /></span>
-								{/if}
-							</DropdownMenu.RadioItem>
-							<DropdownMenu.RadioItem value="source" class="dropdown-radio-item {sourceElement}">
-								<div class="switcher-avatar {sourceElement}">
-									{#if collectionSourceUser?.avatar?.picture}
-										<img
-											class="avatar"
-											alt={`Avatar of ${collectionSourceUser?.username}`}
-											src={getAvatarSrc(collectionSourceUser?.avatar?.picture)}
-											srcset={getAvatarSrcSet(collectionSourceUser?.avatar?.picture)}
-											width="20"
-											height="20"
-										/>
-									{:else}
-										<div class="avatar-placeholder" aria-hidden="true"></div>
-									{/if}
-								</div>
-								<span>{collectionSourceUser?.username}</span>
-								{#if activeCollectionUser === 'source'}
-									<span class="radio-indicator"><Icon name="check" size={14} /></span>
-								{/if}
-							</DropdownMenu.RadioItem>
+								</DropdownMenu.RadioItem>
+							{/each}
 						</DropdownMenu.RadioGroup>
 					</DropdownMenu.Content>
 				</DropdownMenu.Portal>
@@ -142,6 +95,12 @@
 		@include smooth-transition($duration-quick, background-color, color);
 	}
 
+	// Empty avatars a shade darker than the button behind them
+	:global(.collection-switcher-trigger),
+	:global(.dropdown-radio-item) {
+		--avatar-placeholder-bg: var(--button-bg-hover);
+	}
+
 	:global(.collection-switcher-trigger:hover) {
 		background: var(--button-bg);
 		color: var(--button-text-hover);
@@ -157,32 +116,11 @@
 		gap: $unit-half;
 	}
 
-	.switcher-avatar {
-		width: 20px;
-		height: 20px;
-		border-radius: 50%;
-		overflow: hidden;
-		background: var(--button-bg);
-		flex-shrink: 0;
-	}
-
 	.switcher-name {
 		max-width: 80px;
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-	}
-
-	.avatar {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	.avatar-placeholder {
-		width: 100%;
-		height: 100%;
-		background: var(--button-bg-hover);
 	}
 
 	:global(.collection-dropdown-content) {
@@ -225,23 +163,11 @@
 		font-weight: $bold;
 	}
 
-	:global(.dropdown-radio-item[data-state='checked'].fire) {
-		color: var(--fire-bg);
-	}
-	:global(.dropdown-radio-item[data-state='checked'].water) {
-		color: var(--water-bg);
-	}
-	:global(.dropdown-radio-item[data-state='checked'].earth) {
-		color: var(--earth-bg);
-	}
-	:global(.dropdown-radio-item[data-state='checked'].wind) {
-		color: var(--wind-bg);
-	}
-	:global(.dropdown-radio-item[data-state='checked'].light) {
-		color: var(--light-bg);
-	}
-	:global(.dropdown-radio-item[data-state='checked'].dark) {
-		color: var(--dark-bg);
+	// The checked option in its user's element color
+	@each $element in fire, water, earth, wind, light, dark {
+		:global(.dropdown-radio-item[data-state='checked'].#{$element}) {
+			color: var(--#{$element}-bg);
+		}
 	}
 
 	.radio-indicator {

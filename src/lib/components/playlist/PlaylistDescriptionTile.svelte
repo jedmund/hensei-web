@@ -2,8 +2,8 @@
 	import type { Snippet } from 'svelte'
 	import type { User } from '$lib/types/api/entities'
 	import Icon from '$lib/components/Icon.svelte'
+	import UserLink from '$lib/components/ui/UserLink.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { formatRelativeTime } from '$lib/utils/date'
 	import * as m from '$lib/paraglide/messages'
 
@@ -44,23 +44,7 @@
 
 	{#if user}
 		<div class="attribution">
-			<a href={localizeHref(`/${user.username}`)} class="creator-link">
-				<div class="avatar-wrapper {user.avatar?.element || ''}">
-					{#if user.avatar?.picture}
-						<img
-							class="avatar"
-							alt={`Avatar of ${user.username}`}
-							src={getAvatarSrc(user.avatar.picture)}
-							srcset={getAvatarSrcSet(user.avatar.picture)}
-							width="24"
-							height="24"
-						/>
-					{:else}
-						<div class="avatar-placeholder" aria-hidden="true"></div>
-					{/if}
-				</div>
-				<span class="username">{user.username}</span>
-			</a>
+			<UserLink {user} />
 			{#if relativeTime}
 				<span class="separator">&middot;</span>
 				<span class="updated">{m.playlist_updated({ time: relativeTime })}</span>
@@ -147,48 +131,6 @@
 		display: flex;
 		align-items: center;
 		gap: $unit-half;
-	}
-
-	.creator-link {
-		display: inline-flex;
-		align-items: center;
-		gap: $unit-half;
-		text-decoration: none;
-		color: var(--text-secondary);
-
-		&:hover {
-			color: var(--text-primary);
-
-			.username {
-				text-decoration: underline;
-			}
-		}
-	}
-
-	.avatar-wrapper {
-		width: 24px;
-		height: 24px;
-		border-radius: 50%;
-		overflow: hidden;
-		background: var(--button-bg);
-		flex-shrink: 0;
-	}
-
-	.avatar {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	.avatar-placeholder {
-		width: 100%;
-		height: 100%;
-		background: var(--button-bg);
-	}
-
-	.username {
-		font-size: $font-small;
-		font-weight: $medium;
 	}
 
 	.separator {

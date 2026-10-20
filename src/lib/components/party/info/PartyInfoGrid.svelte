@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { AvatarUser } from '$lib/utils/avatar'
 	import type { Snippet } from 'svelte'
 	import type { Party } from '$lib/types/api/party'
 	import type { RaidFull } from '$lib/types/api/raid'
@@ -14,14 +15,6 @@
 	import type { FilterItem } from '$lib/types/filter'
 	import { isFullExpedition, solomonisName } from '$lib/components/solomonis/party/solomonisParty'
 	import { openSolomonisDetailsPane } from '$lib/components/solomonis/party/openSolomonisPanes'
-
-	type AvatarUser = {
-		username?: string
-		avatar?: {
-			picture?: string | null
-			element?: string | null
-		} | null
-	}
 
 	interface Props {
 		party: Party
@@ -128,13 +121,7 @@
 	<!-- Row 1: Description -->
 	<div class="row row-1">
 		<DescriptionTile
-			name={party.name}
-			description={party.description}
-			updatedAt={party.lastUpdated ?? party.updatedAt}
-			visibility={party.visibility}
-			user={party.user}
-			collectionSourceUser={party.collectionSourceUser}
-			sourceParty={party.sourceParty}
+			{party}
 			{authUser}
 			{activeCollectionUser}
 			{onSwitchCollectionUser}
@@ -144,17 +131,6 @@
 			{onOpenEdit}
 			onOpenCalculator={handleOpenCalculator}
 			{menu}
-			fullAuto={party.fullAuto}
-			solo={party.solo}
-			autoGuard={party.autoGuard}
-			autoSummon={party.autoSummon}
-			chargeAttack={party.chargeAttack}
-			clearTime={party.clearTime}
-			buttonCount={party.buttonCount}
-			chainCount={party.chainCount}
-			summonCount={party.summonCount}
-			difficulty={party.difficulty}
-			shortcode={party.shortcode}
 			{isEditor}
 		/>
 	</div>
