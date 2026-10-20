@@ -84,7 +84,6 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as *;
-	@use '$src/themes/effects' as *;
 	@use '$src/themes/typography' as *;
 
 	.description-tile {
