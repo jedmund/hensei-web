@@ -62,6 +62,8 @@
 	} from '$lib/api/mutations/solomonis.mutations'
 	import type { RaidFull } from '$lib/types/api/raid'
 	import * as m from '$lib/paraglide/messages'
+	import { goto } from '$app/navigation'
+	import { localizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {
 		party?: Party
@@ -500,7 +502,10 @@
 	// The overflow menu only shows when it has something in it: the same
 	// conditions as its items (signed-out viewers usually get none)
 	const hasMenuActions = $derived(
-		(canEdit() && hasCollectionLinks) || !!authUserId || party.user?.id === authUserId
+		(canEdit() && hasCollectionLinks) ||
+			!!authUserId ||
+			party.user?.id === authUserId ||
+			!!party.sourceParty?.shortcode
 	)
 </script>
 
@@ -571,6 +576,15 @@
 											{actions.isSyncingAll ? m.party_syncing() : m.party_sync_collection()}
 										</DropdownMenu.Item>
 										<DropdownMenu.Separator class="dropdown-menu-separator" />
+									{/if}
+
+									{#if party.sourceParty?.shortcode}
+										<DropdownMenu.Item
+											class="dropdown-menu-item"
+											onSelect={() => goto(localizeHref(`/teams/${party.sourceParty?.shortcode}`))}
+										>
+											{m.party_view_original()}
+										</DropdownMenu.Item>
 									{/if}
 
 									{#if authUserId}

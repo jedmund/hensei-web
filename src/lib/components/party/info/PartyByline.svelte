@@ -5,10 +5,11 @@
 	 */
 	import * as m from '$lib/paraglide/messages'
 	import AvatarPair from '$lib/components/ui/AvatarPair.svelte'
-	import UserLink from '$lib/components/ui/UserLink.svelte'
+	import UserAvatar from '$lib/components/ui/UserAvatar.svelte'
+	import { localizeHref } from '$lib/paraglide/runtime'
 	import { formatRelativeTime } from '$lib/utils/date'
 	import { PartyVisibility } from '$lib/types/visibility'
-	import { partyByline, type BylineParty } from './partyByline'
+	import { partyByline, type BylineParty, type BylineSegment } from './partyByline'
 
 	interface Props extends BylineParty {
 		visibility?: PartyVisibility | undefined
@@ -39,20 +40,39 @@
 	{/if}
 {/snippet}
 
+{#snippet text(segments: BylineSegment[])}
+	<span class="byline-text">
+		{#each segments as segment, i (i)}
+			{#if segment.href}
+				<a href={localizeHref(segment.href)}>{segment.text}</a>
+			{:else}
+				{segment.text}
+			{/if}
+		{/each}
+	</span>
+{/snippet}
+
 {#if byline?.kind === 'pair'}
-	<div class="creator-pair-line">
+	<div class="creator-line">
 		<AvatarPair back={byline.back} front={byline.front} size={24} />
-		<span class="creator-pair-text">{byline.text}</span>
+		{@render text(byline.segments)}
 		{@render meta()}
 	</div>
 {:else if byline?.kind === 'link'}
 	<div class="creator-line">
-		<UserLink user={byline.user} label={byline.text} />
+		<a
+			href={localizeHref(`/${byline.user.username}`)}
+			class="avatar-link"
+			aria-label={byline.user.username}
+		>
+			<UserAvatar user={byline.user} />
+		</a>
+		{@render text(byline.segments)}
 		{@render meta()}
 	</div>
 {:else if byline?.kind === 'plain'}
 	<div class="creator-line">
-		<span class="anonymous-remix">{byline.text}</span>
+		{@render text(byline.segments)}
 		{@render meta()}
 	</div>
 {/if}
@@ -64,7 +84,11 @@
 	.creator-line {
 		display: inline-flex;
 		align-items: center;
-		gap: 0;
+		gap: $unit-half;
+	}
+
+	.avatar-link {
+		display: inline-flex;
 	}
 
 	.updated-time,
@@ -73,16 +97,20 @@
 		color: var(--text-tertiary);
 	}
 
-	.creator-pair-line {
-		display: inline-flex;
-		align-items: center;
-		gap: $unit-half;
-	}
-
-	.anonymous-remix,
-	.creator-pair-text {
+	.byline-text {
 		font-size: $font-small;
-		font-weight: $medium;
+		font-weight: $normal;
 		color: var(--text-secondary);
+
+		a {
+			font-weight: $medium;
+			color: inherit;
+			text-decoration: none;
+
+			&:hover {
+				color: var(--text-primary);
+				text-decoration: underline;
+			}
+		}
 	}
 </style>
