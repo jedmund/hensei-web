@@ -115,5 +115,10 @@
 		border-radius: $full-corner;
 		background: var(--card-bg);
 		box-shadow: var(--shadow-sm);
+
+		// Round hovers, to match the pill
+		:global([data-button-root]) {
+			border-radius: $full-corner;
+		}
 	}
 </style>
