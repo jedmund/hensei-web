@@ -304,7 +304,6 @@
 				margin-block: -6px;
 				margin-inline-start: auto;
 				scale: 0.75;
-				transform-origin: right center;
 				transition: scale 0.15s ease;
 
 				@media (prefers-reduced-motion: reduce) {
