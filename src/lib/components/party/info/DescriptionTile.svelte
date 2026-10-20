@@ -5,6 +5,8 @@
 	import PartyActions from './PartyActions.svelte'
 	import PartyByline from './PartyByline.svelte'
 	import PartySettings from './PartySettings.svelte'
+	import StickerArea from '$lib/components/stickers/StickerArea.svelte'
+	import { getElementTypeKey } from '$lib/utils/element'
 	import type { AvatarUser } from '$lib/utils/avatar'
 	import type { Party } from '$lib/types/api/party'
 
@@ -26,7 +28,14 @@
 		onEditDescription?: () => void
 		onOpenEdit?: () => void
 		onOpenCalculator?: () => void
+		/** The overflow menu, last in the header */
 		menu?: Snippet
+		/** The Remix button, before the calculator */
+		remix?: Snippet | undefined
+		/** The "Add sticker" button and its picker */
+		stickerPicker?: Snippet | undefined
+		/** The viewer can give this team a sticker */
+		canGiveSticker?: boolean
 	}
 
 	let {
@@ -40,11 +49,14 @@
 		onEditDescription,
 		onOpenEdit,
 		onOpenCalculator,
-		menu
+		menu,
+		remix,
+		stickerPicker,
+		canGiveSticker = false
 	}: Props = $props()
 </script>
 
-<div class="description-tile">
+<div class="description-tile" data-sticker-bounds>
 	<!-- Header: Title + Actions -->
 	<div class="tile-header-container">
 		<div class="tile-header">
@@ -58,6 +70,9 @@
 				{onOpenEdit}
 				{onOpenCalculator}
 				{menu}
+				{remix}
+				{stickerPicker}
+				element={getElementTypeKey(party.element)}
 			/>
 		</div>
 
@@ -79,6 +94,13 @@
 		onOpen={onOpenDescription}
 		onEdit={onEditDescription}
 	/>
+
+	<!-- Stickers the team has received, then the picker -->
+	{#if (party.placedStickers?.length ?? 0) > 0 || party.mySticker || canGiveSticker}
+		<div class="stickers">
+			<StickerArea {party} canGive={canGiveSticker} />
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -94,7 +116,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
-		overflow: hidden;
+		// Visible so placed stickers can hang past the card's edges
+		overflow: visible;
 		position: relative;
 	}
 
@@ -124,6 +147,20 @@
 
 		&.empty {
 			color: var(--text-tertiary);
+		}
+	}
+
+	.stickers {
+		// The tile's top padding again below the sticker area
+		padding-bottom: $unit;
+		transition:
+			margin 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+			padding 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+		// An empty area (no stickers yet) takes no space until a drag opens it
+		&:has(:global(.area.collapsed)) {
+			margin-top: -$unit;
+			padding-bottom: 0;
 		}
 	}
 </style>

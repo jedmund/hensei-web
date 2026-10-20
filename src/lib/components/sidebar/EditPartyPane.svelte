@@ -32,6 +32,8 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import { descriptionPreview } from '$lib/utils/descriptionPreview'
+	import StickerBreakdownSection from '$lib/components/stickers/StickerBreakdownSection.svelte'
+	import type { StickerBreakdownEntry } from '$lib/types/api/sticker'
 
 	export interface PartyEditValues {
 		name: string
@@ -76,6 +78,8 @@
 		onDescriptionSave?: (content: string) => Promise<void>
 		/** Evoking Solomonis parties: a row under Raid that opens the details pane */
 		solomonisDetails?: SolomonisDetailsLink
+		/** The owner's private sticker counts; absent for anyone but the owner */
+		stickerBreakdown?: StickerBreakdownEntry[] | undefined
 	}
 
 	let {
@@ -84,7 +88,8 @@
 		element: elementProp,
 		onSave,
 		onDescriptionSave,
-		solomonisDetails
+		solomonisDetails,
+		stickerBreakdown
 	}: Props = $props()
 
 	// Derive element reactively from the user cookie (updates after settings save via invalidateAll)
@@ -389,6 +394,11 @@
 			<MetricField bind:value={summonCount} label="S" contained />
 		</DetailRow>
 	</DetailsSection>
+
+	{#if stickerBreakdown}
+		<hr class="divider" />
+		<StickerBreakdownSection breakdown={stickerBreakdown} />
+	{/if}
 </div>
 
 <style lang="scss">

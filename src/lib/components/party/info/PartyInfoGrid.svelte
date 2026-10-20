@@ -23,7 +23,14 @@
 		onEditDescription?: () => void
 		onOpenEdit?: () => void
 		onRaidSelect?: (raid: RaidFull | null) => void
+		/** The overflow menu, last in the header */
 		menu?: Snippet
+		/** The Remix button, before the calculator */
+		remix?: Snippet | undefined
+		/** The "Add sticker" button and its picker */
+		stickerPicker?: Snippet | undefined
+		/** The viewer can give this team a sticker */
+		canGiveSticker?: boolean
 		authUser?: AvatarUser | null
 		activeCollectionUser?: 'viewer' | 'source'
 		onSwitchCollectionUser?: (target: 'viewer' | 'source') => void
@@ -38,6 +45,9 @@
 		onOpenEdit,
 		onRaidSelect,
 		menu,
+		remix,
+		stickerPicker,
+		canGiveSticker = false,
 		authUser,
 		activeCollectionUser,
 		onSwitchCollectionUser,
@@ -131,6 +141,9 @@
 			{onOpenEdit}
 			onOpenCalculator={handleOpenCalculator}
 			{menu}
+			{remix}
+			{stickerPicker}
+			{canGiveSticker}
 			{isEditor}
 		/>
 	</div>

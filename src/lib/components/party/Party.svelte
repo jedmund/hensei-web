@@ -34,7 +34,11 @@
 	import PartySegmentedControl from '$lib/components/party/PartySegmentedControl.svelte'
 	import { GridType } from '$lib/types/enums'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import PartyInfoGrid from '$lib/components/party/info/PartyInfoGrid.svelte'
+	import StickerPicker from '$lib/components/stickers/StickerPicker.svelte'
+	import { setStickerStage } from '$lib/components/stickers/stickerStage.svelte'
+	import { canShowStickerPicker } from '$lib/utils/stickers'
 	import { DropdownMenu } from 'bits-ui'
 	import JobSection from '$lib/components/job/JobSection.svelte'
 	import { Gender } from '$lib/utils/jobUtils'
@@ -435,6 +439,8 @@
 	})
 
 	// --- Context setup ---
+	// Shared by the sticker picker and the sticker area
+	setStickerStage(() => party)
 	setPartyContext({
 		getParty: () => party,
 		canEdit: () => canEdit(),
@@ -486,9 +492,23 @@
 	})
 
 	setDragDropContext(dragContext)
+
+	// Hidden on your own team and on teams that can't receive stickers, so the
+	// sticker row doesn't show an empty picker slot
+	const canGiveSticker = $derived(!isNew && canShowStickerPicker(party, authUserId))
+
+	// The overflow menu only shows when it has something in it: the same
+	// conditions as its items (signed-out viewers usually get none)
+	const hasMenuActions = $derived(
+		(canEdit() && hasCollectionLinks) || !!authUserId || party.user?.id === authUserId
+	)
 </script>
 
 <svelte:window onpopstate={handlePopState} />
+
+{#snippet stickerPicker()}
+	<StickerPicker {party} />
+{/snippet}
 
 <div class="page-wrap">
 	<div class="track">
@@ -504,20 +524,39 @@
 				{activeCollectionUser}
 				onSwitchCollectionUser={handleSwitchCollectionUser}
 				{isEditor}
+				stickerPicker={canGiveSticker ? stickerPicker : undefined}
+				{canGiveSticker}
 			>
-				{#snippet menu()}
+				{#snippet remix()}
 					{#if !isNew}
+						<Tooltip content={m.party_remix()}>
+							<Button
+								variant="ghost"
+								size="small"
+								iconOnly
+								icon="remix"
+								aria-label={m.party_remix()}
+								onclick={actions.remixParty}
+								disabled={actions.loading}
+							/>
+						</Tooltip>
+					{/if}
+				{/snippet}
+				{#snippet menu()}
+					{#if !isNew && hasMenuActions}
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger>
 								{#snippet child({ props })}
-									<Button
-										{...props}
-										variant="ghost"
-										size="small"
-										iconOnly
-										icon="ellipsis"
-										aria-label="Open actions menu"
-									/>
+									<Tooltip content={m.party_see_more()}>
+										<Button
+											{...props}
+											variant="ghost"
+											size="small"
+											iconOnly
+											icon="ellipsis"
+											aria-label={m.party_see_more()}
+										/>
+									</Tooltip>
 								{/snippet}
 							</DropdownMenu.Trigger>
 
@@ -560,14 +599,6 @@
 											{m.playlist_add_to()}
 										</DropdownMenu.Item>
 									{/if}
-
-									<DropdownMenu.Item
-										class="dropdown-menu-item"
-										onSelect={actions.remixParty}
-										disabled={actions.loading}
-									>
-										{m.party_remix()}
-									</DropdownMenu.Item>
 
 									{#if party.user?.id === authUserId}
 										<DropdownMenu.Separator class="dropdown-menu-separator" />

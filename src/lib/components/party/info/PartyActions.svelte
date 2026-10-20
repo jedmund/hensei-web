@@ -21,7 +21,14 @@
 		canEdit?: boolean
 		onOpenEdit?: (() => void) | undefined
 		onOpenCalculator?: (() => void) | undefined
+		/** The overflow menu, last */
 		menu?: Snippet | undefined
+		/** The Remix button, before the calculator */
+		remix?: Snippet | undefined
+		/** The "Add sticker" button and its picker */
+		stickerPicker?: Snippet | undefined
+		/** The team's element, which colors the buttons' hover */
+		element?: string | null | undefined
 	}
 
 	let {
@@ -32,7 +39,10 @@
 		canEdit = false,
 		onOpenEdit,
 		onOpenCalculator,
-		menu
+		menu,
+		remix,
+		stickerPicker,
+		element
 	}: Props = $props()
 
 	const showCollectionSwitcher = $derived(
@@ -51,33 +61,77 @@
 			onSwitchCollectionUser={(v) => onSwitchCollectionUser?.(v)}
 		/>
 	{/if}
-	{#if canEdit}
-		<Button variant="secondary" size="small" onclick={onOpenEdit}>{m.action_edit()}</Button>
-	{/if}
-	{#if onOpenCalculator}
-		<Tooltip content={m.calculator_open()}>
-			<Button
-				variant="ghost"
-				size="small"
-				iconOnly
-				icon="calculator"
-				aria-label={m.calculator_open()}
-				onclick={onOpenCalculator}
-			/>
-		</Tooltip>
-	{/if}
-	{#if menu}
-		{@render menu()}
-	{/if}
+	<!-- The team's actions, grouped on a raised pill -->
+	<div
+		class="action-pill"
+		style:--pill-hover-bg={element ? `var(--${element}-nav-selected-bg)` : undefined}
+		style:--pill-hover-text={element ? `var(--${element}-nav-selected-text)` : undefined}
+	>
+		{#if canEdit}
+			<Tooltip content={m.party_edit_team()}>
+				<Button
+					variant="ghost"
+					size="small"
+					iconOnly
+					icon="edit"
+					aria-label={m.party_edit_team()}
+					onclick={onOpenEdit}
+				/>
+			</Tooltip>
+		{/if}
+		{#if stickerPicker}
+			{@render stickerPicker()}
+		{/if}
+		{#if remix}
+			{@render remix()}
+		{/if}
+		{#if onOpenCalculator}
+			<Tooltip content={m.calculator_open_short()}>
+				<Button
+					variant="ghost"
+					size="small"
+					iconOnly
+					icon="calculator"
+					aria-label={m.calculator_open_short()}
+					onclick={onOpenCalculator}
+				/>
+			</Tooltip>
+		{/if}
+		{#if menu}
+			{@render menu()}
+		{/if}
+	</div>
 </div>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/layout' as *;
 
 	.actions {
 		display: flex;
 		align-items: center;
 		gap: $unit-half;
 		flex-shrink: 0;
+	}
+
+	.action-pill {
+		display: flex;
+		align-items: center;
+		gap: $unit-fourth;
+		padding: $unit-fourth;
+		border-radius: $full-corner;
+		background: var(--card-bg);
+		box-shadow: var(--shadow-sm);
+
+		// Round hovers, to match the pill, in the team's element (as the
+		// element-ghost button does); teams without one keep the usual hover
+		:global([data-button-root]) {
+			border-radius: $full-corner;
+		}
+
+		:global([data-button-root]:hover:not(:disabled)) {
+			background-color: var(--pill-hover-bg, var(--button-bg));
+			color: var(--pill-hover-text, var(--button-text-hover));
+		}
 	}
 </style>

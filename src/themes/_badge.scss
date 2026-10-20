@@ -1,0 +1,14 @@
+// A small round badge holding an icon, over the corner of something (the
+// (x) on your sticker, the (+) where a sticker can go)
+@mixin round-badge($size) {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: $size;
+	height: $size;
+	padding: 0;
+	border: none;
+	border-radius: 50%;
+	color: #fff;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+}
