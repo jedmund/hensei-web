@@ -13,7 +13,7 @@ import {
 export const load: LayoutLoad = async ({ params, url, depends, parent, fetch, route }) => {
 	const username = params.username
 	const { account, isAuthenticated } = await parent()
-	const isOwner = account?.username === username
+	const isOwner = account?.username?.toLowerCase() === username.toLowerCase()
 
 	const isTeamsRoot = route.id === '/(app)/[username]/(profile)'
 
