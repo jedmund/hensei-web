@@ -64,8 +64,8 @@
 		{ onError: (_, message) => (saveError = message) }
 	)
 
-	// A sticker someone has given can't be deleted; the API's 422 message
-	// lands in the error banner. Deactivating is the way to retire it.
+	// Delete is disabled once someone has given the sticker; if someone gives
+	// it while this page is open, the API's 422 message lands in the banner
 	const deleteAction = useAsyncAction(
 		async () => {
 			await deleteMut.mutateAsync({ id: sticker.id })
@@ -109,8 +109,13 @@
 		/>
 
 		<div class="delete-row">
-			<p class="hint">{m.db_stickers_delete_hint()}</p>
-			<Button variant="destructive" size="small" onclick={() => (confirmDeleteOpen = true)}>
+			<p class="hint">{sticker.deletable ? '' : m.db_stickers_delete_hint()}</p>
+			<Button
+				variant="destructive"
+				size="small"
+				disabled={!sticker.deletable}
+				onclick={() => (confirmDeleteOpen = true)}
+			>
 				{m.db_stickers_delete()}
 			</Button>
 		</div>

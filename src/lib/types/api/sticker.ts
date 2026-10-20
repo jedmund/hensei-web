@@ -14,6 +14,8 @@ export interface Sticker {
 	imageUrlJa: string | null
 	position: number
 	active: boolean
+	/** Editors only: nobody has given it yet, so it can be deleted */
+	deletable?: boolean
 }
 
 /** Which of a sticker's images: the English one, or the Japanese one */

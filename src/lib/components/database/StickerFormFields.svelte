@@ -68,21 +68,14 @@
 
 <DetailsContainer title={m.db_stickers_section_image()}>
 	<div class="image-section">
+		<p class="hint">{m.db_stickers_image_hint()}</p>
 		<div class="image">
 			<h3>{m.db_stickers_image_en()}</h3>
-			<ImageFileField
-				currentUrl={imageUrl}
-				hint={m.db_stickers_image_hint()}
-				onSelect={(file) => onSelectImage(file, 'en')}
-			/>
+			<ImageFileField currentUrl={imageUrl} onSelect={(file) => onSelectImage(file, 'en')} />
 		</div>
 		<div class="image">
 			<h3>{m.db_stickers_image_ja()}</h3>
-			<ImageFileField
-				currentUrl={imageUrlJa}
-				hint={m.db_stickers_image_ja_hint()}
-				onSelect={(file) => onSelectImage(file, 'ja')}
-			/>
+			<ImageFileField currentUrl={imageUrlJa} onSelect={(file) => onSelectImage(file, 'ja')} />
 		</div>
 	</div>
 </DetailsContainer>
@@ -96,6 +89,14 @@
 		grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 		gap: spacing.$unit-2x;
 		padding: spacing.$unit-2x;
+	}
+
+	// The format rules, once for both images
+	.hint {
+		grid-column: 1 / -1;
+		margin: 0;
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
 	}
 
 	.image h3 {

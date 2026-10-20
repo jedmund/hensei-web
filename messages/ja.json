@@ -2071,12 +2071,11 @@
 	"db_stickers_image_hint": "PNGまたはWebP、512×512px・512KBまで。",
 	"db_stickers_image_en": "英語",
 	"db_stickers_image_ja": "日本語",
-	"db_stickers_image_ja_hint": "任意。日本語で利用している人に表示されます。未設定の場合は英語の画像が表示されます。",
 	"db_stickers_save_failed": "スタンプを保存できませんでした。",
 	"db_stickers_reorder_failed": "並び順を保存できませんでした。",
 	"db_stickers_delete": "スタンプを削除",
 	"db_stickers_delete_failed": "スタンプを削除できませんでした。",
-	"db_stickers_delete_hint": "送られたことのあるスタンプは削除できません。代わりに無効にしてください。",
+	"db_stickers_delete_hint": "送られたことのあるスタンプは削除できません。",
 	"db_stickers_delete_confirm_title": "スタンプを削除しますか？",
 	"db_stickers_delete_confirm": "スタンプ「{slug}」を削除しますか？この操作は取り消せません。"
 }
