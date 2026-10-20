@@ -29,8 +29,8 @@ importers:
         specifier: ^3.12.4
         version: 3.12.4
       '@lucide/svelte':
-        specifier: ^0.562.0
-        version: 0.562.0(svelte@5.57.2(@typescript-eslint/types@8.71.2))
+        specifier: ^1.59.0
+        version: 1.59.0(svelte@5.57.2(@typescript-eslint/types@8.71.2))
       '@sentry/sveltekit':
         specifier: ^10.75.3
         version: 10.75.3(@opentelemetry/core@2.11.0(@opentelemetry/api@1.9.1))(@sveltejs/kit@2.70.3(@opentelemetry/api@1.9.1)(@sveltejs/vite-plugin-svelte@6.2.4(svelte@5.57.2(@typescript-eslint/types@8.71.2))(vite@7.3.6(@types/node@22.18.1)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)))(svelte@5.57.2(@typescript-eslint/types@8.71.2))(typescript@5.9.2)(vite@7.3.6(@types/node@22.18.1)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1)))(rollup@4.63.6)(svelte@5.57.2(@typescript-eslint/types@8.71.2))(vite@7.3.6(@types/node@22.18.1)(jiti@2.7.0)(sass@1.105.1)(yaml@2.9.1))
@@ -818,8 +818,8 @@ packages:
   '@lix-js/sdk@0.19.0':
     resolution: {integrity: sha512-ks7hKZdJGH0APlSLWtFYCXDO3yIoleoPqzLgkZYtMbaiWRN2Ih772tNGGBZFLKbutq6DuNRwcjNkG94KqWRbBA==}
 
-  '@lucide/svelte@0.562.0':
-    resolution: {integrity: sha512-wDMULwtTFN2Sc/TFBm6gfuVCNb4Y5P9LDrwxNnUbV52+IEU7NXZmvxwXoz+vrrpad6Xupq+Hw5eUlqIHEGhouw==}
+  '@lucide/svelte@1.59.0':
+    resolution: {integrity: sha512-ga9IrEsFJBkt/34VnRFcQ2HLs8eOpOovXZ62XzwfC7f0zBfo4y116FBIDroZkD0gInYYY2hSSAcsQEm/Vm+AoA==}
     peerDependencies:
       svelte: ^5
 
@@ -4794,7 +4794,7 @@ snapshots:
       binaryen: 130.0.0
       fflate: 0.8.3
 
-  '@lucide/svelte@0.562.0(svelte@5.57.2(@typescript-eslint/types@8.71.2))':
+  '@lucide/svelte@1.59.0(svelte@5.57.2(@typescript-eslint/types@8.71.2))':
     dependencies:
       svelte: 5.57.2(@typescript-eslint/types@8.71.2)
 
