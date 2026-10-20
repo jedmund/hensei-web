@@ -58,7 +58,14 @@
 	.sticker-labels {
 		display: inline-flex;
 		align-items: center;
+		// A long team name truncates before the stickers do
+		flex-shrink: 0;
 		// Wider for large stickers, so tilted ones don't touch
 		gap: max(spacing.$unit-half, calc(var(--labels-size) / 6));
+	}
+
+	// No line box around each sticker, so the row is only as tall as they are
+	[role='listitem'] {
+		display: flex;
 	}
 </style>
