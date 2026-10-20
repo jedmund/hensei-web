@@ -541,14 +541,16 @@
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger>
 								{#snippet child({ props })}
-									<Button
-										{...props}
-										variant="ghost"
-										size="small"
-										iconOnly
-										icon="ellipsis"
-										aria-label="Open actions menu"
-									/>
+									<Tooltip content={m.party_see_more()}>
+										<Button
+											{...props}
+											variant="ghost"
+											size="small"
+											iconOnly
+											icon="ellipsis"
+											aria-label={m.party_see_more()}
+										/>
+									</Tooltip>
 								{/snippet}
 							</DropdownMenu.Trigger>
 

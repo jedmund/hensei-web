@@ -374,6 +374,7 @@
 	"party_remove_favorite": "お気に入りから削除",
 	"party_remix": "このチームをリミックス",
 	"party_edit_team": "このチームを編集",
+	"party_see_more": "もっと見る",
 	"party_delete": "削除",
 	"party_orphan_warning": "この編成の一部のアイテムはコレクションから削除されており、データが古い可能性があります。",
 	"party_unsaved_notice": "キャラ・武器・召喚石・ジョブを追加するまで、この編成は保存されません。",
