@@ -43,7 +43,8 @@ export const BUCKET = {
 	artifacts: 'artifacts',
 	bullets: 'bullets',
 	raids: 'raids',
-	stickers: 'icons/stickers'
+	stickers: 'icons/stickers',
+	events: 'events'
 } as const
 
 /**
@@ -86,7 +87,7 @@ export function getPlaceholderImage(type: ResourceType, variant: ImageVariant): 
 }
 
 /**
- * Resolves a host-relative image path from the API (e.g. a sticker's
+ * Resolves a host-relative image path from the API (e.g. sticker and event
  * `image_url`, `icons/stickers/cleared.png?v=…`) against the image host.
  * Absolute URLs and root paths pass through unchanged.
  */
