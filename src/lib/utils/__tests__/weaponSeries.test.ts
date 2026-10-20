@@ -193,3 +193,22 @@ describe('seriesIsExtra', () => {
 		expect(seriesIsExtra(null)).toBe(false)
 	})
 })
+
+// ============================================================================
+// List-view series summary (id/slug only)
+// ============================================================================
+
+describe('with a list-view series summary', () => {
+	const opus = { id: 's-1', slug: 'dark-opus' }
+
+	it('slug-based helpers read the slug', () => {
+		expect(isOpusDraconicSeries(opus)).toBe(true)
+		expect(getSeriesSlug(opus)).toBe('dark-opus')
+	})
+
+	it('flag-based helpers treat it as missing', () => {
+		expect(isWeaponSeriesRef(opus)).toBe(false)
+		expect(seriesHasWeaponKeys(opus)).toBe(false)
+		expect(getSeriesDisplayName(opus)).toBe('Unknown')
+	})
+})

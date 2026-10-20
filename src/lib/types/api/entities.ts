@@ -1,7 +1,7 @@
 // Core entity types based on Rails blueprints
 // These are the base types for game objects
 
-import type { WeaponSeriesRef } from './weaponSeries'
+import type { WeaponSeriesRef, WeaponSeriesSummary } from './weaponSeries'
 import type { CharacterSeriesRef } from './characterSeries'
 
 export interface LocalizedName {
@@ -21,11 +21,8 @@ export interface Weapon {
 	maxSkillLevel?: number
 	maxAwakeningLevel?: number | null
 	maxExorcismLevel?: number | null
-	/**
-	 * Weapon series - object with slug/name/flags. Party list views send only
-	 * WeaponSeriesSummary (id/slug); use slug-only helpers there.
-	 */
-	series?: WeaponSeriesRef | null
+	/** Full views: WeaponSeriesRef (slug/name/flags). Party list views: WeaponSeriesSummary. */
+	series?: WeaponSeriesRef | WeaponSeriesSummary | null
 	/** Variant override ID (via series.weaponSeriesVariantId from API) */
 	weaponSeriesVariantId?: string | null
 	limit?: boolean

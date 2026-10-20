@@ -6,6 +6,7 @@ import type {
 	Substitution
 } from '$lib/types/api/party'
 import { seriesHasWeaponKeys } from '$lib/utils/weaponSeries'
+import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
 
 export interface ModificationStatus {
 	hasModifications: boolean
@@ -127,7 +128,7 @@ export function canWeaponBeModified(gridWeapon: GridWeapon | undefined): boolean
 	const hasWeaponKeys = seriesHasWeaponKeys(weapon.series)
 
 	// AX skills or Befoulment - check augmentType from series
-	const augmentType = weapon.series?.augmentType ?? 'no_augment'
+	const augmentType = isWeaponSeriesRef(weapon.series) ? weapon.series.augmentType : 'no_augment'
 	const hasAugments = augmentType !== 'no_augment'
 
 	// Awakening (maxAwakeningLevel > 0 means it can have awakening)
