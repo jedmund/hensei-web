@@ -8,14 +8,10 @@
 
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import StickerImage from '$lib/components/stickers/StickerImage.svelte'
 
 	import { stickerQueries } from '$lib/api/queries/sticker.queries'
-	import {
-		useReorderStickers,
-		useUpdateSticker
-	} from '$lib/api/mutations/sticker-catalogue.mutations'
+	import { useReorderStickers } from '$lib/api/mutations/sticker-catalogue.mutations'
 	import { useDragReorder } from '$lib/utils/dragReorder.svelte'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { withInitialData } from '$lib/query/ssr'
@@ -32,7 +28,6 @@
 	}))
 
 	const reorderMut = useReorderStickers()
-	const updateMut = useUpdateSticker()
 
 	const sorted = $derived([...(stickersQuery.data ?? [])].sort((a, b) => a.position - b.position))
 
@@ -45,15 +40,6 @@
 			)
 		}
 	})
-
-	function setActive(sticker: Sticker, active: boolean) {
-		// Switch also calls onCheckedChange on mount; only save real changes
-		if (active === sticker.active) return
-		updateMut.mutate(
-			{ id: sticker.id, payload: { active } },
-			{ onError: (err) => toast.error(extractErrorMessage(err, m.db_stickers_save_failed())) }
-		)
-	}
 </script>
 
 <PageMeta title={m.page_title_db_stickers()} description={m.page_desc_home()} />
@@ -90,14 +76,9 @@
 						<span class="meaning-jp">{sticker.meaning.ja}</span>
 						<span class="slug">{sticker.slug}</span>
 					</span>
-					<label class="active-toggle">
-						<span>{sticker.active ? m.db_stickers_active() : m.db_stickers_inactive()}</span>
-						<Switch
-							checked={sticker.active}
-							size="small"
-							onCheckedChange={(checked) => setActive(sticker, checked)}
-						/>
-					</label>
+					{#if !sticker.active}
+						<span class="inactive-label">{m.db_stickers_inactive()}</span>
+					{/if}
 					<Button
 						variant="ghost"
 						size="small"
@@ -181,10 +162,7 @@
 		}
 	}
 
-	.active-toggle {
-		display: inline-flex;
-		align-items: center;
-		gap: spacing.$unit;
+	.inactive-label {
 		font-size: typography.$font-small;
 		color: var(--text-secondary);
 	}

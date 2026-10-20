@@ -12,6 +12,7 @@
 	import DatabaseFormHeader from '$lib/components/database/DatabaseFormHeader.svelte'
 	import StickerFormFields from '$lib/components/database/StickerFormFields.svelte'
 	import {
+		uploadImages,
 		useDeleteSticker,
 		useUpdateSticker,
 		useUploadStickerImage
@@ -19,6 +20,7 @@
 	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
+	import type { StickerImageLanguage } from '$lib/types/api/sticker'
 	import type { PageData } from './$types'
 
 	let { data }: { data: PageData } = $props()
@@ -37,7 +39,8 @@
 		active: sticker.active
 	})
 
-	let imageFile = $state<File | null>(null)
+	// Chosen images, uploaded on save
+	let imageFiles = $state<Partial<Record<StickerImageLanguage, File>>>({})
 	let saveError = $state<string | null>(null)
 	let confirmDeleteOpen = $state(false)
 
@@ -54,7 +57,7 @@
 					active: values.active
 				}
 			})
-			if (imageFile) await uploadMut.mutateAsync({ id: sticker.id, file: imageFile })
+			await uploadImages(uploadMut, sticker.id, imageFiles)
 			goto(localizeHref('/database/stickers'))
 		},
 		m.db_stickers_save_failed(),
@@ -100,8 +103,9 @@
 		<StickerFormFields
 			bind:values
 			imageUrl={sticker.imageUrl}
+			imageUrlJa={sticker.imageUrlJa}
 			slugLocked
-			onSelectImage={(file) => (imageFile = file)}
+			onSelectImage={(file, language) => (imageFiles[language] = file)}
 		/>
 
 		<div class="delete-row">

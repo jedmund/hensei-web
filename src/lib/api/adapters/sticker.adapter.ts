@@ -12,7 +12,7 @@ import type { StickerPlacement } from '$lib/types/api/party'
 import { BaseAdapter } from './base.adapter'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { RequestOptions } from './types'
-import type { Sticker, StickerPayload } from '$lib/types/api/sticker'
+import type { Sticker, StickerImageLanguage, StickerPayload } from '$lib/types/api/sticker'
 
 const BASE = '/stickers'
 
@@ -58,10 +58,17 @@ export class StickerAdapter extends BaseAdapter {
 	}
 
 	/** Uploads a PNG or WebP as the multipart field `image` */
-	async uploadImage(id: string, file: Blob, filename?: string): Promise<Sticker> {
+	/** Uploads the English image, or with `language: 'ja'` the Japanese one */
+	async uploadImage(
+		id: string,
+		file: Blob,
+		filename?: string,
+		language: StickerImageLanguage = 'en'
+	): Promise<Sticker> {
 		const form = new FormData()
 		if (filename) form.append('image', file, filename)
 		else form.append('image', file)
+		form.append('language', language)
 		return this.request<Sticker>(`${BASE}/${id}/upload_image`, {
 			method: 'POST',
 			body: form

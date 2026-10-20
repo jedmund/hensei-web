@@ -33,6 +33,15 @@ export function findSticker(
 	return catalogue.find((s) => s.slug === slug)
 }
 
+/** The sticker's image for a language: the Japanese one when there is one */
+export function stickerImageUrl(
+	sticker: Pick<Sticker, 'imageUrl' | 'imageUrlJa'> | undefined,
+	locale: string
+): string | null {
+	if (!sticker) return null
+	return (locale === 'ja' && sticker.imageUrlJa) || sticker.imageUrl
+}
+
 /** Active stickers in picker order */
 export function pickerStickers(catalogue: Sticker[] | undefined): Sticker[] {
 	return (catalogue ?? []).filter((s) => s.active).toSorted((a, b) => a.position - b.position)

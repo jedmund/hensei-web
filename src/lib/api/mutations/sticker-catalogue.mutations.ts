@@ -12,7 +12,7 @@
 import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svelte-query'
 import { stickerAdapter } from '$lib/api/adapters/sticker.adapter'
 import { stickerKeys } from '$lib/api/queries/sticker.queries'
-import type { StickerPayload } from '$lib/types/api/sticker'
+import type { StickerImageLanguage, StickerPayload } from '$lib/types/api/sticker'
 
 function invalidateCatalogue(queryClient: QueryClient) {
 	queryClient.invalidateQueries({ queryKey: stickerKeys.all })
@@ -69,8 +69,15 @@ export function useReorderStickers() {
 
 export function uploadStickerImageOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: ({ id, file }: { id: string; file: File }) =>
-			stickerAdapter.uploadImage(id, file, file.name),
+		mutationFn: ({
+			id,
+			file,
+			language = 'en'
+		}: {
+			id: string
+			file: File
+			language?: StickerImageLanguage
+		}) => stickerAdapter.uploadImage(id, file, file.name, language),
 		onSuccess: () => invalidateCatalogue(queryClient)
 	}
 }
@@ -78,4 +85,24 @@ export function uploadStickerImageOptions(queryClient: QueryClient) {
 export function useUploadStickerImage() {
 	const queryClient = useQueryClient()
 	return createMutation(() => uploadStickerImageOptions(queryClient))
+}
+
+type UploadStickerImage = {
+	mutateAsync: (variables: {
+		id: string
+		file: File
+		language: StickerImageLanguage
+	}) => Promise<unknown>
+}
+
+/** Uploads whichever of a sticker's images were chosen, English first */
+export async function uploadImages(
+	upload: UploadStickerImage,
+	id: string,
+	files: Partial<Record<StickerImageLanguage, File>>
+) {
+	for (const language of ['en', 'ja'] as const) {
+		const file = files[language]
+		if (file) await upload.mutateAsync({ id, file, language })
+	}
 }

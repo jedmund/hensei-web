@@ -7,9 +7,11 @@
 	import DatabaseFormHeader from '$lib/components/database/DatabaseFormHeader.svelte'
 	import StickerFormFields from '$lib/components/database/StickerFormFields.svelte'
 	import {
+		uploadImages,
 		useCreateSticker,
 		useUploadStickerImage
 	} from '$lib/api/mutations/sticker-catalogue.mutations'
+	import type { StickerImageLanguage } from '$lib/types/api/sticker'
 	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
@@ -17,7 +19,8 @@
 	const uploadMut = useUploadStickerImage()
 
 	let values = $state({ slug: '', meaningEn: '', meaningJp: '', active: true })
-	let imageFile = $state<File | null>(null)
+	// Chosen images, uploaded once the sticker is created
+	let imageFiles = $state<Partial<Record<StickerImageLanguage, File>>>({})
 	let saveError = $state<string | null>(null)
 
 	const SLUG = /^[a-z0-9][a-z0-9_-]*$/
@@ -37,7 +40,7 @@
 				meaningJp: values.meaningJp.trim(),
 				active: values.active
 			})
-			if (imageFile) await uploadMut.mutateAsync({ id: sticker.id, file: imageFile })
+			await uploadImages(uploadMut, sticker.id, imageFiles)
 			goto(localizeHref('/database/stickers'))
 		},
 		m.db_stickers_save_failed(),
@@ -64,7 +67,10 @@
 	{/if}
 
 	<section class="details">
-		<StickerFormFields bind:values onSelectImage={(file) => (imageFile = file)} />
+		<StickerFormFields
+			bind:values
+			onSelectImage={(file, language) => (imageFiles[language] = file)}
+		/>
 	</section>
 </div>
 

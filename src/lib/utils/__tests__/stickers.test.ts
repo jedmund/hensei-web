@@ -1,10 +1,37 @@
 import { describe, it, expect } from 'vitest'
-import { canShowStickerPicker, findSticker, pickerStickers, withMySticker } from '../stickers'
+import {
+	canShowStickerPicker,
+	findSticker,
+	pickerStickers,
+	stickerImageUrl,
+	withMySticker
+} from '../stickers'
 import type { Sticker } from '$lib/types/api/sticker'
 
 function sticker(slug: string, position: number, active = true): Sticker {
-	return { id: slug, slug, meaning: { en: slug, ja: slug }, imageUrl: null, position, active }
+	return {
+		id: slug,
+		slug,
+		meaning: { en: slug, ja: slug },
+		imageUrl: null,
+		imageUrlJa: null,
+		position,
+		active
+	}
 }
+
+describe('stickerImageUrl', () => {
+	const both = { imageUrl: 'en.png', imageUrlJa: 'ja.png' }
+
+	it('shows the Japanese image in Japanese', () => {
+		expect(stickerImageUrl(both, 'ja')).toBe('ja.png')
+		expect(stickerImageUrl(both, 'en')).toBe('en.png')
+	})
+
+	it('falls back to the English image without a Japanese one', () => {
+		expect(stickerImageUrl({ imageUrl: 'en.png', imageUrlJa: null }, 'ja')).toBe('en.png')
+	})
+})
 
 describe('canShowStickerPicker', () => {
 	const party = { id: 'p1', user: { id: 'owner' } as never, visibility: 1 as const }

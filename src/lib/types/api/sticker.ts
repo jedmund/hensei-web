@@ -10,9 +10,14 @@ export interface Sticker {
 	/** What the sticker says about a team, shown as its tooltip */
 	meaning: LocalizedName
 	imageUrl: string | null
+	/** The stamp with its Japanese caption; null shows imageUrl */
+	imageUrlJa: string | null
 	position: number
 	active: boolean
 }
+
+/** Which of a sticker's images: the English one, or the Japanese one */
+export type StickerImageLanguage = 'en' | 'ja'
 
 /** One row of the owner's private breakdown */
 export interface StickerBreakdownEntry {

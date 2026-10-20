@@ -125,7 +125,16 @@ describe('StickerAdapter', () => {
 		expect(url).toBe('https://api.example.com/stickers/st-1/upload_image')
 		expect(init.body).toBeInstanceOf(FormData)
 		expect((init.body as FormData).get('image')).toBeInstanceOf(Blob)
+		expect((init.body as FormData).get('language')).toBe('en')
 		expect(init.headers['Content-Type']).toBeUndefined()
+	})
+
+	it('uploadImage sends the Japanese image with language=ja', async () => {
+		global.fetch = mockApiResponse(apiSticker)
+
+		await adapter.uploadImage('st-1', new Blob(['png']), 'full-auto.ja.png', 'ja')
+
+		expect((calls()[0]![1].body as FormData).get('language')).toBe('ja')
 	})
 
 	it('giveSticker PUTs only the slug to the party', async () => {

@@ -37,7 +37,8 @@
 	 * and are rendered as text.
 	 */
 	import Icon from '$lib/components/Icon.svelte'
-	import { localizedName } from '$lib/utils/locale'
+	import { appLocale, localizedName } from '$lib/utils/locale'
+	import { stickerImageUrl } from '$lib/utils/stickers'
 	import { getHostedImageUrl } from '$lib/utils/images'
 	import type { Sticker } from '$lib/types/api/sticker'
 
@@ -64,7 +65,7 @@
 	}: Props = $props()
 
 	const meaning = $derived(sticker ? localizedName(sticker.meaning) : slug)
-	const src = $derived(getHostedImageUrl(sticker?.imageUrl))
+	const src = $derived(getHostedImageUrl(stickerImageUrl(sticker, appLocale())))
 	const has = (effect: StickerEffect) => effects.includes(effect)
 	const tilt = $derived(has('tilt') && rotation === null ? tiltFor(sticker?.slug ?? slug) : 0)
 </script>
