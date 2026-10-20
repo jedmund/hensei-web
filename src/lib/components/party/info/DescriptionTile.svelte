@@ -6,81 +6,41 @@
 	import PartyByline from './PartyByline.svelte'
 	import PartySettings from './PartySettings.svelte'
 	import type { AvatarUser } from '$lib/utils/avatar'
-	import type { PartyDifficulty } from '$lib/types/api/party'
-	import type { PartyVisibility } from '$lib/types/visibility'
+	import type { Party } from '$lib/types/api/party'
 
+	/**
+	 * The top of a party page: its name and actions, who it's by, its
+	 * settings chips, and the start of its description.
+	 */
 	interface Props {
-		name?: string
-		description?: string
-		user?: AvatarUser | null
-		collectionSourceUser?: AvatarUser | null
-		sourceParty?: {
-			shortcode?: string
-			name?: string
-			user?: AvatarUser | null
-		} | null
-		/** The currently authenticated user (for collection viewer switcher) */
+		party: Party
+		/** The signed-in user (for the collection viewer switcher) */
 		authUser?: AvatarUser | null
 		/** Which collection is currently being viewed */
 		activeCollectionUser?: 'viewer' | 'source'
-		/** Callback when collection viewer is switched */
 		onSwitchCollectionUser?: (target: 'viewer' | 'source') => void
-		updatedAt?: string
-		visibility?: PartyVisibility
 		canEdit?: boolean
+		/** When true, the difficulty tier chip links to the editor preview */
+		isEditor?: boolean
 		onOpenDescription: () => void
 		onEditDescription?: () => void
 		onOpenEdit?: () => void
 		onOpenCalculator?: () => void
 		menu?: Snippet
-		// Battle settings
-		fullAuto?: boolean
-		solo?: boolean
-		autoGuard?: boolean
-		autoSummon?: boolean
-		chargeAttack?: boolean
-		// Performance
-		clearTime?: number | null
-		buttonCount?: number | null
-		chainCount?: number | null
-		summonCount?: number | null
-		// Computed difficulty assignment (null when not yet scoreable)
-		difficulty?: PartyDifficulty | null
-		/** Party shortcode, used to build the editor preview link */
-		shortcode?: string
-		/** When true, the difficulty tier chip becomes a link to the editor preview */
-		isEditor?: boolean
 	}
 
 	let {
-		name,
-		description,
-		user,
-		collectionSourceUser,
-		sourceParty,
+		party,
 		authUser,
 		activeCollectionUser = 'viewer',
 		onSwitchCollectionUser,
-		updatedAt,
-		visibility,
 		canEdit = false,
+		isEditor = false,
 		onOpenDescription,
 		onEditDescription,
 		onOpenEdit,
 		onOpenCalculator,
-		menu,
-		fullAuto,
-		solo,
-		autoGuard,
-		autoSummon,
-		chargeAttack,
-		clearTime,
-		buttonCount,
-		chainCount,
-		summonCount,
-		difficulty,
-		shortcode,
-		isEditor = false
+		menu
 	}: Props = $props()
 </script>
 
@@ -88,10 +48,10 @@
 	<!-- Header: Title + Actions -->
 	<div class="tile-header-container">
 		<div class="tile-header">
-			<h1 class="party-name" class:empty={!name}>{name || m.party_untitled()}</h1>
+			<h1 class="party-name" class:empty={!party.name}>{party.name || m.party_untitled()}</h1>
 			<PartyActions
 				{authUser}
-				{collectionSourceUser}
+				collectionSourceUser={party.collectionSourceUser}
 				{activeCollectionUser}
 				{onSwitchCollectionUser}
 				{canEdit}
@@ -101,28 +61,21 @@
 			/>
 		</div>
 
-		<PartyByline {user} {sourceParty} {collectionSourceUser} {visibility} {updatedAt} />
+		<PartyByline
+			user={party.user}
+			sourceParty={party.sourceParty}
+			collectionSourceUser={party.collectionSourceUser}
+			visibility={party.visibility}
+			updatedAt={party.lastUpdated ?? party.updatedAt}
+		/>
 	</div>
 
-	<PartySettings
-		{solo}
-		{chargeAttack}
-		{fullAuto}
-		{autoSummon}
-		{autoGuard}
-		{clearTime}
-		{buttonCount}
-		{chainCount}
-		{summonCount}
-		{difficulty}
-		{shortcode}
-		{isEditor}
-	/>
+	<PartySettings {party} {isEditor} />
 
 	<DescriptionPreview
-		{description}
+		description={party.description}
 		{canEdit}
-		element={user?.avatar?.element}
+		element={party.user?.avatar?.element}
 		onOpen={onOpenDescription}
 		onEdit={onEditDescription}
 	/>

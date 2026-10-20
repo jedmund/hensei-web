@@ -8,23 +8,26 @@
 	import type { PartyDifficulty } from '$lib/types/api/party'
 	import { battleSettings, performanceMetrics, type PartySettingsValues } from './partySettings'
 
-	interface Props extends PartySettingsValues {
-		solo?: boolean | undefined
-		/** Computed difficulty assignment (null when not yet scoreable) */
-		difficulty?: PartyDifficulty | null | undefined
-		/** Party shortcode, used to build the editor preview link */
-		shortcode?: string | undefined
+	interface Props {
+		party: PartySettingsValues & {
+			solo?: boolean | undefined
+			/** Computed difficulty assignment (null when not yet scoreable) */
+			difficulty?: PartyDifficulty | null | undefined
+			/** Builds the editor preview link */
+			shortcode?: string | undefined
+		}
 		/** When true, the difficulty tier chip becomes a link to the editor preview */
 		isEditor?: boolean
 	}
 
-	let { solo, difficulty, shortcode, isEditor = false, ...values }: Props = $props()
+	let { party, isEditor = false }: Props = $props()
 
-	const settings = $derived(battleSettings(values))
-	const metrics = $derived(performanceMetrics(values))
+	const difficulty = $derived(party.difficulty)
+	const settings = $derived(battleSettings(party))
+	const metrics = $derived(performanceMetrics(party))
 	const difficultyPreviewHref = $derived(
-		shortcode
-			? `/database/difficulties?tab=preview&shortcode=${encodeURIComponent(shortcode)}`
+		party.shortcode
+			? `/database/difficulties?tab=preview&shortcode=${encodeURIComponent(party.shortcode)}`
 			: null
 	)
 </script>
@@ -54,7 +57,7 @@
 				{/if}
 			</Tooltip>
 		{/if}
-		{#if solo}
+		{#if party.solo}
 			<span class="token solo on">{m.battle_solo()}</span>
 		{/if}
 		{#each settings as setting (setting.key)}

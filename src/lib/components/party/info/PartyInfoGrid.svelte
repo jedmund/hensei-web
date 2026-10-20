@@ -121,13 +121,7 @@
 	<!-- Row 1: Description -->
 	<div class="row row-1">
 		<DescriptionTile
-			name={party.name}
-			description={party.description}
-			updatedAt={party.lastUpdated ?? party.updatedAt}
-			visibility={party.visibility}
-			user={party.user}
-			collectionSourceUser={party.collectionSourceUser}
-			sourceParty={party.sourceParty}
+			{party}
 			{authUser}
 			{activeCollectionUser}
 			{onSwitchCollectionUser}
@@ -137,17 +131,6 @@
 			{onOpenEdit}
 			onOpenCalculator={handleOpenCalculator}
 			{menu}
-			fullAuto={party.fullAuto}
-			solo={party.solo}
-			autoGuard={party.autoGuard}
-			autoSummon={party.autoSummon}
-			chargeAttack={party.chargeAttack}
-			clearTime={party.clearTime}
-			buttonCount={party.buttonCount}
-			chainCount={party.chainCount}
-			summonCount={party.summonCount}
-			difficulty={party.difficulty}
-			shortcode={party.shortcode}
 			{isEditor}
 		/>
 	</div>
