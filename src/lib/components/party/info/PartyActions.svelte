@@ -55,7 +55,16 @@
 		/>
 	{/if}
 	{#if canEdit}
-		<Button variant="secondary" size="small" onclick={onOpenEdit}>{m.action_edit()}</Button>
+		<Tooltip content={m.party_edit_team()}>
+			<Button
+				variant="ghost"
+				size="small"
+				iconOnly
+				icon="edit"
+				aria-label={m.party_edit_team()}
+				onclick={onOpenEdit}
+			/>
+		</Tooltip>
 	{/if}
 	{#if onOpenCalculator}
 		<Tooltip content={m.calculator_open_short()}>
