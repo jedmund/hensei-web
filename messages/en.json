@@ -2216,5 +2216,9 @@
 	"character_refresh_field_targets_all": "targets all",
 	"character_refresh_field_game_action_id": "game action ID",
 	"character_refresh_field_duplicates": "duplicate rows",
-	"character_refresh_version": "version {ordinal}"
+	"character_refresh_version": "version {ordinal}",
+	"character_refresh_batch_select": "Apply {name}",
+	"character_refresh_item_failed": "Couldn't refresh this character",
+	"character_refresh_fetch_wiki": "Fetch Wiki",
+	"character_refresh_fetching_wiki": "Fetching…"
 }

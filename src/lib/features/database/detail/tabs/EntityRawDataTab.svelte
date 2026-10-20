@@ -119,7 +119,9 @@
 								onclick={handleFetchWiki}
 								disabled={isFetching || isReparsing}
 							>
-								{isFetching ? 'Fetching...' : 'Fetch Wiki'}
+								{isFetching
+									? m.character_refresh_fetching_wiki()
+									: m.character_refresh_fetch_wiki()}
 							</Button>
 						{/if}
 					</div>

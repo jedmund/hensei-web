@@ -55,11 +55,17 @@ describe('EntityRawDataTab', () => {
 	it('keeps the checkbox and Re-parse for weapons and summons', () => {
 		const out = text(
 			render(EntityRawDataTab, {
-				props: { wikiRaw: 'text', canEdit: true, onReparse: async () => null }
+				props: {
+					wikiRaw: 'text',
+					canEdit: true,
+					onReparse: async () => null,
+					onFetchWiki: async () => ({ wikiRaw: null, gameRawEn: null, gameRawJp: null })
+				}
 			}).body
 		)
 		expect(out).toContain('Fetch fresh wikitext first')
 		expect(out).toContain('Re-parse')
+		expect(out).toContain('Fetch Wiki')
 		expect(out).not.toContain('wiki fetched')
 	})
 

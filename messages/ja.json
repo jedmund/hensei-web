@@ -2188,5 +2188,9 @@
 	"character_refresh_field_targets_all": "全体対象",
 	"character_refresh_field_game_action_id": "ゲーム内アクションID",
 	"character_refresh_field_duplicates": "重複行",
-	"character_refresh_version": "バージョン{ordinal}"
+	"character_refresh_version": "バージョン{ordinal}",
+	"character_refresh_batch_select": "{name}を適用",
+	"character_refresh_item_failed": "このキャラクターを更新できませんでした",
+	"character_refresh_fetch_wiki": "Wikiを取得",
+	"character_refresh_fetching_wiki": "取得中…"
 }
