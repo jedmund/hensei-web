@@ -27,6 +27,8 @@
 		remix?: Snippet | undefined
 		/** The "Add sticker" button and its picker */
 		stickerPicker?: Snippet | undefined
+		/** The team's element, which colors the buttons' hover */
+		element?: string | null | undefined
 	}
 
 	let {
@@ -39,7 +41,8 @@
 		onOpenCalculator,
 		menu,
 		remix,
-		stickerPicker
+		stickerPicker,
+		element
 	}: Props = $props()
 
 	const showCollectionSwitcher = $derived(
@@ -59,7 +62,11 @@
 		/>
 	{/if}
 	<!-- The team's actions, grouped on a raised pill -->
-	<div class="action-pill">
+	<div
+		class="action-pill"
+		style:--pill-hover-bg={element ? `var(--${element}-nav-selected-bg)` : undefined}
+		style:--pill-hover-text={element ? `var(--${element}-nav-selected-text)` : undefined}
+	>
 		{#if canEdit}
 			<Tooltip content={m.party_edit_team()}>
 				<Button
@@ -116,9 +123,15 @@
 		background: var(--card-bg);
 		box-shadow: var(--shadow-sm);
 
-		// Round hovers, to match the pill
+		// Round hovers, to match the pill, in the team's element (as the
+		// element-ghost button does); teams without one keep the usual hover
 		:global([data-button-root]) {
 			border-radius: $full-corner;
+		}
+
+		:global([data-button-root]:hover:not(:disabled)) {
+			background-color: var(--pill-hover-bg, var(--button-bg));
+			color: var(--pill-hover-text, var(--button-text-hover));
 		}
 	}
 </style>

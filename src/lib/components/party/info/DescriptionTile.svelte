@@ -6,6 +6,7 @@
 	import PartyByline from './PartyByline.svelte'
 	import PartySettings from './PartySettings.svelte'
 	import StickerArea from '$lib/components/stickers/StickerArea.svelte'
+	import { getElementTypeKey } from '$lib/utils/element'
 	import type { AvatarUser } from '$lib/utils/avatar'
 	import type { Party } from '$lib/types/api/party'
 
@@ -71,6 +72,7 @@
 				{menu}
 				{remix}
 				{stickerPicker}
+				element={getElementTypeKey(party.element)}
 			/>
 		</div>
 
