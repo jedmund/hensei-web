@@ -7,9 +7,12 @@
  * @module utils/weaponSeries
  */
 
-import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
+import type { WeaponSeriesRef, WeaponSeriesSummary } from '$lib/types/api/weaponSeries'
 import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
 import { localizedName } from '$lib/utils/locale'
+
+/** Full series ref or the slug-only summary sent in party list views */
+type SeriesInput = WeaponSeriesRef | WeaponSeriesSummary | null | undefined
 
 /**
  * Slugs for series that share the Opus/Draconic conflict rule.
@@ -30,11 +33,14 @@ export const WEAPON_TRANSCENDENCE_ART_SLUGS = ['dark-opus']
 /**
  * Check whether a weapon series has distinct artwork at its transcendence stages.
  *
- * @param series - The series to check (WeaponSeriesRef or null)
+ * Accepts the trimmed series from party list views as well as the full ref,
+ * since only the slug is needed.
+ *
+ * @param series - The series to check (WeaponSeriesRef, WeaponSeriesSummary or null)
  * @returns True if the series ships stage-specific transcendence art
  */
-export function seriesHasTranscendenceArt(series: WeaponSeriesRef | null | undefined): boolean {
-	if (!isWeaponSeriesRef(series)) {
+export function seriesHasTranscendenceArt(series: SeriesInput): boolean {
+	if (typeof series?.slug !== 'string') {
 		return false
 	}
 	return WEAPON_TRANSCENDENCE_ART_SLUGS.includes(series.slug)
@@ -46,8 +52,8 @@ export function seriesHasTranscendenceArt(series: WeaponSeriesRef | null | undef
  * @param series - The series to check (WeaponSeriesRef or null)
  * @returns True if the series is Opus, Draconic, or Draconic Providence
  */
-export function isOpusDraconicSeries(series: WeaponSeriesRef | null | undefined): boolean {
-	if (!isWeaponSeriesRef(series)) {
+export function isOpusDraconicSeries(series: SeriesInput): boolean {
+	if (typeof series?.slug !== 'string') {
 		return false
 	}
 	return OPUS_DRACONIC_SLUGS.includes(series.slug)
@@ -60,7 +66,7 @@ export function isOpusDraconicSeries(series: WeaponSeriesRef | null | undefined)
  * @param locale - The locale to use ('en' or 'ja')
  * @returns The localized series name, or 'Unknown' if not available
  */
-export function getSeriesDisplayName(series: WeaponSeriesRef | null | undefined): string {
+export function getSeriesDisplayName(series: SeriesInput): string {
 	if (!isWeaponSeriesRef(series)) {
 		return 'Unknown'
 	}
@@ -74,8 +80,8 @@ export function getSeriesDisplayName(series: WeaponSeriesRef | null | undefined)
  * @param series - The weapon series
  * @returns The series slug or undefined
  */
-export function getSeriesSlug(series: WeaponSeriesRef | null | undefined): string | undefined {
-	if (!isWeaponSeriesRef(series)) {
+export function getSeriesSlug(series: SeriesInput): string | undefined {
+	if (typeof series?.slug !== 'string') {
 		return undefined
 	}
 	return series.slug
@@ -87,7 +93,7 @@ export function getSeriesSlug(series: WeaponSeriesRef | null | undefined): strin
  * @param series - The weapon series
  * @returns True if the series supports weapon keys
  */
-export function seriesHasWeaponKeys(series: WeaponSeriesRef | null | undefined): boolean {
+export function seriesHasWeaponKeys(series: SeriesInput): boolean {
 	if (!isWeaponSeriesRef(series)) {
 		return false
 	}
@@ -100,7 +106,7 @@ export function seriesHasWeaponKeys(series: WeaponSeriesRef | null | undefined):
  * @param series - The weapon series
  * @returns True if the series supports awakening
  */
-export function seriesHasAwakening(series: WeaponSeriesRef | null | undefined): boolean {
+export function seriesHasAwakening(series: SeriesInput): boolean {
 	if (!isWeaponSeriesRef(series)) {
 		return false
 	}
@@ -113,7 +119,7 @@ export function seriesHasAwakening(series: WeaponSeriesRef | null | undefined): 
  * @param series - The weapon series
  * @returns True if weapons in this series can have their element changed
  */
-export function seriesIsElementChangeable(series: WeaponSeriesRef | null | undefined): boolean {
+export function seriesIsElementChangeable(series: SeriesInput): boolean {
 	if (!isWeaponSeriesRef(series)) {
 		return false
 	}
@@ -126,7 +132,7 @@ export function seriesIsElementChangeable(series: WeaponSeriesRef | null | undef
  * @param series - The weapon series
  * @returns True if weapons in this series can be in extra slots
  */
-export function seriesIsExtra(series: WeaponSeriesRef | null | undefined): boolean {
+export function seriesIsExtra(series: SeriesInput): boolean {
 	if (!isWeaponSeriesRef(series)) {
 		return false
 	}

@@ -24,6 +24,7 @@
 	import BulletSelect from '$lib/components/sidebar/edit/BulletSelect.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { seriesHasWeaponKeys, seriesHasAwakening, getSeriesSlug } from '$lib/utils/weaponSeries'
+	import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
 
 	export interface WeaponEditValues {
 		uncapLevel: number
@@ -100,7 +101,8 @@
 
 	// Derived conditions
 	const canChangeElement = $derived(weaponData?.element === 0)
-	const series = $derived(weaponData?.series)
+	// The edit pane gets full weapon data; narrow out the list-view summary
+	const series = $derived(isWeaponSeriesRef(weaponData?.series) ? weaponData.series : undefined)
 	const seriesSlug = $derived(getSeriesSlug(series))
 
 	// Check if series has weapon keys using the utility (handles both formats)

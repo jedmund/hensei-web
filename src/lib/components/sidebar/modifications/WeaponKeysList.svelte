@@ -3,7 +3,7 @@
 	import type { WeaponKey } from '$lib/types/api/entities'
 	import type { LocalizedName } from '$lib/types/api/entities'
 	import { localizedName } from '$lib/utils/locale'
-	import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
+	import type { WeaponSeriesRef, WeaponSeriesSummary } from '$lib/types/api/weaponSeries'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -11,7 +11,7 @@
 		weaponData?: {
 			element?: number
 			proficiency?: number | number[]
-			series?: WeaponSeriesRef | null
+			series?: WeaponSeriesRef | WeaponSeriesSummary | null
 			name?: LocalizedName
 		}
 		layout?: 'list' | 'grid'
@@ -30,8 +30,7 @@
 		return key.slug || m.details_weapon_key_fallback()
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	function getSlotLabel(slot: number, series?: WeaponSeriesRef | null): string {
+	function getSlotLabel(slot: number): string {
 		return m.details_skill_slot({ slot: String(slot + 1) })
 	}
 </script>
@@ -46,7 +45,7 @@
 				{/if}
 				<div class="weapon-key-info">
 					<span class="slot-label">
-						{getSlotLabel(key.slot, weaponData?.series)}
+						{getSlotLabel(key.slot)}
 					</span>
 					<span class="key-name">
 						{getKeyDescription(key)}

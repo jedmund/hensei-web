@@ -97,6 +97,11 @@ describe('seriesHasTranscendenceArt', () => {
 		expect(WEAPON_TRANSCENDENCE_ART_SLUGS).toEqual(['dark-opus'])
 	})
 
+	it('accepts the trimmed series from party list views', () => {
+		expect(seriesHasTranscendenceArt({ id: '1', slug: 'dark-opus' })).toBe(true)
+		expect(seriesHasTranscendenceArt({ id: '2', slug: 'illustrious' })).toBe(false)
+	})
+
 	it('returns false for null/undefined', () => {
 		expect(seriesHasTranscendenceArt(null)).toBe(false)
 		expect(seriesHasTranscendenceArt(undefined)).toBe(false)
@@ -186,5 +191,24 @@ describe('seriesIsExtra', () => {
 
 	it('returns false for null', () => {
 		expect(seriesIsExtra(null)).toBe(false)
+	})
+})
+
+// ============================================================================
+// List-view series summary (id/slug only)
+// ============================================================================
+
+describe('with a list-view series summary', () => {
+	const opus = { id: 's-1', slug: 'dark-opus' }
+
+	it('slug-based helpers read the slug', () => {
+		expect(isOpusDraconicSeries(opus)).toBe(true)
+		expect(getSeriesSlug(opus)).toBe('dark-opus')
+	})
+
+	it('flag-based helpers treat it as missing', () => {
+		expect(isWeaponSeriesRef(opus)).toBe(false)
+		expect(seriesHasWeaponKeys(opus)).toBe(false)
+		expect(getSeriesDisplayName(opus)).toBe('Unknown')
 	})
 })

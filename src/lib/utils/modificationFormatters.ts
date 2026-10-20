@@ -1,6 +1,6 @@
 import type { AugmentSkill } from '$lib/types/api/weaponStatModifier'
 import { getRingStat, getEarringStat, getElementalizedEarringStat } from './masteryUtils'
-import { isWeaponSeriesRef, type WeaponSeriesRef } from '$lib/types/api/weaponSeries'
+import type { WeaponSeriesRef, WeaponSeriesSummary } from '$lib/types/api/weaponSeries'
 import * as m from '$lib/paraglide/messages'
 
 export function formatRingStat(
@@ -39,8 +39,8 @@ export function formatAxSkill(ax: AugmentSkill, locale: 'en' | 'ja' = 'en'): str
 	return `${skillName} +${ax.strength}${suffix}`
 }
 
-export function getWeaponKeyTitle(series?: WeaponSeriesRef | null): string {
-	if (!isWeaponSeriesRef(series)) {
+export function getWeaponKeyTitle(series?: WeaponSeriesRef | WeaponSeriesSummary | null): string {
+	if (typeof series?.slug !== 'string') {
 		return m.details_weapon_keys()
 	}
 

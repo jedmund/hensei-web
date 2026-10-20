@@ -12,6 +12,7 @@
 	import { openCharacterEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
 	import { seriesHasWeaponKeys, getSeriesSlug } from '$lib/utils/weaponSeries'
+	import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
 	import WeaponKeySelect from '$lib/components/sidebar/edit/WeaponKeySelect.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ElementPickerSegmented from '$lib/components/ui/element-picker/ElementPickerSegmented.svelte'
@@ -114,7 +115,10 @@
 
 	// Weapon key editing
 	const seriesSlug = $derived(getSeriesSlug((item as GridWeapon).weapon?.series))
-	const keySlotCount = $derived((item as GridWeapon).weapon?.series?.numWeaponKeys ?? 0)
+	const keySlotCount = $derived.by(() => {
+		const series = (item as GridWeapon).weapon?.series
+		return isWeaponSeriesRef(series) ? (series.numWeaponKeys ?? 0) : 0
+	})
 
 	function handleWeaponKeySave() {
 		const weapon = item as GridWeapon
