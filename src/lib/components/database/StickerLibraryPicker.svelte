@@ -8,6 +8,7 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import SlidingPages from '$lib/components/ui/SlidingPages.svelte'
 	import { stickerQueries } from '$lib/api/queries/sticker.queries'
 	import { getHostedImageUrl } from '$lib/utils/images'
 	import { appLocale } from '$lib/utils/locale'
@@ -42,6 +43,21 @@
 
 	let section = $state(ALL)
 	let search = $state('')
+
+	// A 10×4 grid per page, back to the first when the filter changes
+	const PAGE_SIZE = 40
+	let pageIndex = $state(0)
+	const pageLabels = {
+		previous: m.sticker_page_previous(),
+		next: m.sticker_page_next(),
+		page: (page: number, count: number) => m.sticker_page({ page, count })
+	}
+
+	$effect(() => {
+		void section
+		void search
+		pageIndex = 0
+	})
 
 	// In the wiki's order, then any others
 	const sections = $derived.by(() => {
@@ -85,28 +101,38 @@
 	{:else if shown.length === 0}
 		<p class="status">{m.db_stickers_library_empty()}</p>
 	{:else}
-		<div class="grid">
-			{#each shown as entry (entry.id)}
-				<button
-					type="button"
-					class="stamp"
-					class:selected={entry.id === picked}
-					class:used={!!entry.stickerId}
-					title={entry.stickerId ? `${entry.label} · ${m.db_stickers_library_used()}` : entry.label}
-					aria-label={entry.label}
-					aria-pressed={entry.id === picked}
-					onclick={() => onSelect(entry)}
-				>
-					<img
-						src={getHostedImageUrl(stickerImageUrl(entry, appLocale()))}
-						alt=""
-						width="64"
-						height="64"
-						loading="lazy"
-					/>
-				</button>
-			{/each}
-		</div>
+		<SlidingPages items={shown} pageSize={PAGE_SIZE} bind:index={pageIndex} labels={pageLabels}>
+			{#snippet page(entries)}
+				<div class="grid">
+					{#each entries as entry (entry.id)}
+						<button
+							type="button"
+							class="stamp"
+							class:selected={entry.id === picked}
+							class:used={!!entry.stickerId}
+							title={entry.stickerId
+								? `${entry.label} · ${m.db_stickers_library_used()}`
+								: entry.label}
+							aria-label={entry.label}
+							aria-pressed={entry.id === picked}
+							onclick={() => onSelect(entry)}
+						>
+							<img
+								src={getHostedImageUrl(stickerImageUrl(entry, appLocale()))}
+								alt=""
+								width="64"
+								height="64"
+								loading="lazy"
+							/>
+						</button>
+					{/each}
+					<!-- A short last page keeps a full page's height -->
+					{#each { length: shown.length > PAGE_SIZE ? PAGE_SIZE - entries.length : 0 }, filler (filler)}
+						<span class="stamp filler" aria-hidden="true"><span class="filler-image"></span></span>
+					{/each}
+				</div>
+			{/snippet}
+		</SlidingPages>
 	{/if}
 </div>
 
@@ -132,10 +158,8 @@
 
 	.grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+		grid-template-columns: repeat(10, minmax(0, 1fr));
 		gap: spacing.$unit-half;
-		max-height: 360px;
-		overflow-y: auto;
 	}
 
 	.stamp {
@@ -162,9 +186,21 @@
 			opacity: 0.4;
 		}
 
-		img {
-			width: 64px;
-			height: 64px;
+		&.filler {
+			cursor: default;
+
+			&:hover {
+				background: none;
+			}
+		}
+
+		// Shrinks on narrow screens, so every page keeps its 10×4 shape
+		img,
+		.filler-image {
+			width: 100%;
+			max-width: 64px;
+			height: auto;
+			aspect-ratio: 1;
 			object-fit: contain;
 		}
 	}
