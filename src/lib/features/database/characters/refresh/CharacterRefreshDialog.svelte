@@ -49,9 +49,9 @@
 		onApplied?.(response)
 	}
 
-	function handleOpenChange(next: boolean) {
-		// Keep the dialog up while a write is in flight
-		if (!next && phase === 'applying') open = true
+	// Keep the dialog up while a write is in flight
+	function holdWhileApplying(event: Event) {
+		if (phase === 'applying') event.preventDefault()
 	}
 
 	const primaryAction = $derived.by(() => {
@@ -77,7 +77,12 @@
 	})
 </script>
 
-<Dialog bind:open onOpenChange={handleOpenChange}>
+<Dialog
+	bind:open
+	hideClose={phase === 'applying'}
+	onEscapeKeydown={holdWhileApplying}
+	onInteractOutside={holdWhileApplying}
+>
 	<ModalHeader
 		title={m.character_refresh_title()}
 		description={m.character_refresh_description()}

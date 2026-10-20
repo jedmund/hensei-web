@@ -331,6 +331,33 @@ describe('BatchRefreshSession', () => {
 		expect(session.failure).toBeNull()
 	})
 
+	it('stays on the refresh when its first poll fails, and resumes it', async () => {
+		const timer = manualSchedule()
+		const fetch = replies(
+			ok(API.batchCreated.body),
+			// Not retried by the adapter (a 5xx would be, on a GET)
+			fail(403, { error: 'Forbidden' }),
+			ok(API.batchPreviewed)
+		)
+		const session = new BatchRefreshSession(adapter, { schedule: timer.schedule })
+		session.add(pick('x'))
+
+		await session.start()
+
+		expect(session.refreshId).toBe('rf_3c4d5e6f7a8b')
+		expect(session.batch).toBeNull()
+		expect(session.phase).toBe('running')
+		expect(session.pollStopped).toBe(true)
+		// No second refresh against the rate limit
+		expect(session.canStart).toBe(false)
+
+		session.resume()
+		await new Promise((r) => setTimeout(r, 0))
+		expect(session.phase).toBe('previewed')
+		expect(session.canStart).toBe(false)
+		expect(fetch).toHaveBeenCalledTimes(3)
+	})
+
 	it('stops polling once disposed', async () => {
 		const timer = manualSchedule()
 		replies(ok(API.batchCreated.body), ok(API.batchRunning))

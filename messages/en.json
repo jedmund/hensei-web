@@ -2191,10 +2191,9 @@
 	"character_refresh_batch_empty": "No characters picked yet.",
 	"character_refresh_batch_progress": "{done} of {total} previewed",
 	"character_refresh_batch_apply": "Apply selected ({count})",
-	"character_refresh_batch_applied": "Applied {count} refreshed characters",
+	"character_refresh_batch_applied": "Characters updated: {count}",
 	"character_refresh_batch_failed": "The refresh failed.",
 	"character_refresh_batch_open": "Open {name} in a new tab",
-	"character_refresh_batch_select": "Apply {name}",
 	"character_refresh_status_queued": "Queued",
 	"character_refresh_status_fetching": "Fetching",
 	"character_refresh_status_previewed": "Previewed",
@@ -2204,6 +2203,5 @@
 	"character_refresh_status_failed": "Failed",
 	"character_refresh_summary_changes": "Skills changed: {count}",
 	"character_refresh_summary_none": "No changes",
-	"character_refresh_summary_text_only": "Wikitext only",
-	"character_refresh_close": "Close"
+	"character_refresh_summary_text_only": "Wikitext only"
 }

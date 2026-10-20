@@ -134,6 +134,8 @@ type BatchAdapter = Pick<CharacterRefreshAdapter, 'createBatch' | 'getBatch' | '
 export class BatchRefreshSession {
 	picks = $state<CharacterTypeaheadOption[]>([])
 	includeJp = $state(false)
+	/** Set as soon as the API accepts the refresh, before its first poll returns */
+	refreshId = $state<string | null>(null)
 	batch = $state<RefreshBatch | null>(null)
 	selected = $state<string[]>([])
 	failure = $state<RefreshFailure | null>(null)
@@ -146,7 +148,10 @@ export class BatchRefreshSession {
 
 	readonly phase: BatchPhase = $derived.by(() => {
 		if (this.#applying) return 'applying'
-		if (!this.batch) return this.#starting ? 'starting' : 'picking'
+		if (!this.batch) {
+			if (this.refreshId) return 'running'
+			return this.#starting ? 'starting' : 'picking'
+		}
 		switch (this.batch.status) {
 			case 'queued':
 			case 'running':
@@ -202,6 +207,7 @@ export class BatchRefreshSession {
 				this.picks.map((p) => p.id),
 				this.includeJp
 			)
+			this.refreshId = id
 			if (this.#disposed) return
 			await this.#poll(id)
 		} catch (error) {
@@ -242,10 +248,10 @@ export class BatchRefreshSession {
 
 	/** Polls again after polling stopped on an error. */
 	resume(): void {
-		if (!this.batch || !this.pollStopped) return
+		if (!this.refreshId || !this.pollStopped) return
 		this.pollStopped = false
 		this.#clearFailure()
-		void this.#poll(this.batch.id)
+		void this.#poll(this.refreshId)
 	}
 
 	/** Stops polling; call when the dialog closes. */

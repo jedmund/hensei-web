@@ -2163,10 +2163,9 @@
 	"character_refresh_batch_empty": "キャラクターが選択されていません。",
 	"character_refresh_batch_progress": "{total}人中{done}人をプレビュー済み",
 	"character_refresh_batch_apply": "選択した項目を適用（{count}）",
-	"character_refresh_batch_applied": "{count}人のキャラクターを更新しました",
+	"character_refresh_batch_applied": "更新したキャラクター: {count}",
 	"character_refresh_batch_failed": "更新に失敗しました。",
 	"character_refresh_batch_open": "{name}を新しいタブで開く",
-	"character_refresh_batch_select": "{name}を適用",
 	"character_refresh_status_queued": "待機中",
 	"character_refresh_status_fetching": "取得中",
 	"character_refresh_status_previewed": "プレビュー済み",
@@ -2176,6 +2175,5 @@
 	"character_refresh_status_failed": "失敗",
 	"character_refresh_summary_changes": "変更されたスキル: {count}",
 	"character_refresh_summary_none": "変更なし",
-	"character_refresh_summary_text_only": "Wikiテキストのみ",
-	"character_refresh_close": "閉じる"
+	"character_refresh_summary_text_only": "Wikiテキストのみ"
 }
