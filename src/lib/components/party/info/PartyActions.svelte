@@ -58,48 +58,62 @@
 			onSwitchCollectionUser={(v) => onSwitchCollectionUser?.(v)}
 		/>
 	{/if}
-	{#if canEdit}
-		<Tooltip content={m.party_edit_team()}>
-			<Button
-				variant="ghost"
-				size="small"
-				iconOnly
-				icon="edit"
-				aria-label={m.party_edit_team()}
-				onclick={onOpenEdit}
-			/>
-		</Tooltip>
-	{/if}
-	{#if stickerPicker}
-		{@render stickerPicker()}
-	{/if}
-	{#if remix}
-		{@render remix()}
-	{/if}
-	{#if onOpenCalculator}
-		<Tooltip content={m.calculator_open_short()}>
-			<Button
-				variant="ghost"
-				size="small"
-				iconOnly
-				icon="calculator"
-				aria-label={m.calculator_open_short()}
-				onclick={onOpenCalculator}
-			/>
-		</Tooltip>
-	{/if}
-	{#if menu}
-		{@render menu()}
-	{/if}
+	<!-- The team's actions, grouped on a raised pill -->
+	<div class="action-pill">
+		{#if canEdit}
+			<Tooltip content={m.party_edit_team()}>
+				<Button
+					variant="ghost"
+					size="small"
+					iconOnly
+					icon="edit"
+					aria-label={m.party_edit_team()}
+					onclick={onOpenEdit}
+				/>
+			</Tooltip>
+		{/if}
+		{#if stickerPicker}
+			{@render stickerPicker()}
+		{/if}
+		{#if remix}
+			{@render remix()}
+		{/if}
+		{#if onOpenCalculator}
+			<Tooltip content={m.calculator_open_short()}>
+				<Button
+					variant="ghost"
+					size="small"
+					iconOnly
+					icon="calculator"
+					aria-label={m.calculator_open_short()}
+					onclick={onOpenCalculator}
+				/>
+			</Tooltip>
+		{/if}
+		{#if menu}
+			{@render menu()}
+		{/if}
+	</div>
 </div>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/layout' as *;
 
 	.actions {
 		display: flex;
 		align-items: center;
 		gap: $unit-half;
 		flex-shrink: 0;
+	}
+
+	.action-pill {
+		display: flex;
+		align-items: center;
+		gap: $unit-fourth;
+		padding: $unit-fourth;
+		border-radius: $full-corner;
+		background: var(--card-bg);
+		box-shadow: var(--shadow-sm);
 	}
 </style>
