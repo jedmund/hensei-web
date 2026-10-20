@@ -263,6 +263,8 @@
 			&:hover .name-row :global(.sticker-labels),
 			&:focus-visible .name-row :global(.sticker-labels) {
 				scale: 1;
+				filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.18))
+					drop-shadow(0 3px 6px rgba(0, 0, 0, 0.12));
 			}
 		}
 	}
@@ -299,12 +301,15 @@
 			// At the card's right edge. Taller than the name, so they overhang the
 			// row rather than grow it, keeping cards with and without stickers the
 			// same height. Drawn at full size and shrunk at rest, so they stay
-			// sharp when they grow on hover.
+			// sharp when they grow on hover; they grow from their center, out
+			// into the card's padding.
 			:global(.sticker-labels) {
 				margin-block: -6px;
-				margin-inline-start: auto;
+				margin-inline: auto -4px;
 				scale: 0.75;
-				transition: scale 0.15s ease;
+				transition:
+					scale 0.15s ease,
+					filter 0.15s ease;
 
 				@media (prefers-reduced-motion: reduce) {
 					transition: none;
