@@ -5,6 +5,7 @@
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import CollectionViewerSwitcher from './CollectionViewerSwitcher.svelte'
 	import PartyByline from './PartyByline.svelte'
+	import PartySettings from './PartySettings.svelte'
 	import type { AvatarUser } from '$lib/utils/avatar'
 	import { descriptionPreview } from '$lib/utils/descriptionPreview'
 	import type { PartyDifficulty } from '$lib/types/api/party'
@@ -84,12 +85,6 @@
 		isEditor = false
 	}: Props = $props()
 
-	const difficultyPreviewHref = $derived(
-		shortcode
-			? `/database/difficulties?tab=preview&shortcode=${encodeURIComponent(shortcode)}`
-			: null
-	)
-
 	const showCollectionSwitcher = $derived(
 		!!authUser?.username &&
 			!!collectionSourceUser?.username &&
@@ -107,50 +102,6 @@
 	})
 
 	const preview = $derived(descriptionPreview(description))
-
-	// Battle settings tokens
-	interface Setting {
-		key: string
-		label: string
-		tooltip: string
-		active: boolean
-	}
-
-	const settings: Setting[] = $derived([
-		{
-			key: 'chargeAttack',
-			label: `${m.battle_charge_attack()} ${(chargeAttack ?? true) ? m.battle_on() : m.battle_off()}`,
-			tooltip: m.battle_charge_attack(),
-			active: chargeAttack ?? true
-		},
-		{
-			key: 'fullAuto',
-			label: `${m.battle_full_auto()} ${fullAuto ? m.battle_on() : m.battle_off()}`,
-			tooltip: m.battle_full_auto(),
-			active: fullAuto ?? false
-		},
-		{
-			key: 'autoSummon',
-			label: `${m.battle_auto_summon()} ${autoSummon ? m.battle_on() : m.battle_off()}`,
-			tooltip: m.battle_auto_summon(),
-			active: autoSummon ?? false
-		},
-		{
-			key: 'autoGuard',
-			label: `${m.battle_auto_guard()} ${autoGuard ? m.battle_on() : m.battle_off()}`,
-			tooltip: m.battle_auto_guard(),
-			active: autoGuard ?? false
-		}
-	])
-
-	function formatClearTime(seconds?: number | null): string | null {
-		if (seconds == null || seconds <= 0) return null
-		const minutes = Math.floor(seconds / 60)
-		const secs = seconds % 60
-		return `${minutes}:${secs.toString().padStart(2, '0')}`
-	}
-
-	const formattedClearTime = $derived(formatClearTime(clearTime))
 </script>
 
 <div class="description-tile">
@@ -191,62 +142,20 @@
 		<PartyByline {user} {sourceParty} {collectionSourceUser} {visibility} {updatedAt} />
 	</div>
 
-	<!-- Battle settings & performance -->
-	<div class="battle-section">
-		<div class="settings-tokens">
-			{#if difficulty?.tier}
-				<Tooltip
-					content={m.party_difficulty_tooltip({
-						tier: difficulty.tier.name,
-						score: difficulty.score?.toFixed(0) ?? '—'
-					})}
-				>
-					{#if isEditor && difficultyPreviewHref}
-						<a
-							class="token difficulty editor-link"
-							href={difficultyPreviewHref}
-							target="_blank"
-							rel="noopener"
-						>
-							{difficulty.tier.name}
-						</a>
-					{:else}
-						<span class="token difficulty">
-							{difficulty.tier.name}
-						</span>
-					{/if}
-				</Tooltip>
-			{/if}
-			{#if solo}
-				<span class="token solo on">{m.battle_solo()}</span>
-			{/if}
-			{#each settings as setting (setting.key)}
-				<span class="token {setting.key}" class:on={setting.active} class:off={!setting.active}>
-					{setting.label}
-				</span>
-			{/each}
-			{#if formattedClearTime}
-				<Tooltip content={m.party_edit_clear_time()}>
-					<span class="token metric">{formattedClearTime}</span>
-				</Tooltip>
-			{/if}
-			{#if buttonCount != null}
-				<Tooltip content={m.party_edit_button_count()}>
-					<span class="token metric">{buttonCount}B</span>
-				</Tooltip>
-			{/if}
-			{#if chainCount != null}
-				<Tooltip content={m.party_edit_chain_count()}>
-					<span class="token metric">{chainCount}C</span>
-				</Tooltip>
-			{/if}
-			{#if summonCount != null}
-				<Tooltip content={m.party_edit_summon_count()}>
-					<span class="token metric">{summonCount}S</span>
-				</Tooltip>
-			{/if}
-		</div>
-	</div>
+	<PartySettings
+		{solo}
+		{chargeAttack}
+		{fullAuto}
+		{autoSummon}
+		{autoGuard}
+		{clearTime}
+		{buttonCount}
+		{chainCount}
+		{summonCount}
+		{difficulty}
+		{shortcode}
+		{isEditor}
+	/>
 
 	<!-- Description content (clickable) -->
 	<button
@@ -375,81 +284,5 @@
 		flex: 1;
 		font-size: $font-regular;
 		color: var(--text-tertiary);
-	}
-
-	// Battle settings & performance
-	.battle-section {
-		display: flex;
-		flex-direction: column;
-		gap: $unit;
-	}
-
-	.settings-tokens {
-		display: flex;
-		flex-wrap: wrap;
-		gap: $unit;
-	}
-
-	.token {
-		display: inline-flex;
-		align-items: center;
-		padding: $unit-half $unit;
-		border-radius: $full-corner;
-		font-size: $font-small;
-		font-weight: $bold;
-		line-height: 1;
-		text-align: center;
-		user-select: none;
-		background: var(--input-bg);
-
-		&.off {
-			background: var(--button-bg);
-			color: var(--text-secondary);
-		}
-
-		&.metric {
-			background: var(--button-bg);
-			color: var(--text-secondary);
-			font-variant-numeric: tabular-nums;
-		}
-
-		&.difficulty {
-			background: var(--button-bg);
-			color: var(--text-secondary);
-		}
-
-		&.editor-link {
-			text-decoration: none;
-			cursor: pointer;
-			transition:
-				opacity 120ms ease,
-				transform 120ms ease;
-
-			&:hover {
-				opacity: 0.85;
-			}
-
-			&:focus-visible {
-				outline: 2px solid var(--focus-ring);
-				outline-offset: 2px;
-			}
-		}
-
-		&.chargeAttack.on {
-			background: var(--charge-attack-bg);
-			color: var(--charge-attack-text);
-		}
-
-		&.fullAuto.on,
-		&.autoSummon.on,
-		&.solo.on {
-			background: var(--full-auto-bg);
-			color: var(--full-auto-text);
-		}
-
-		&.autoGuard.on {
-			background: var(--auto-guard-bg);
-			color: var(--auto-guard-text);
-		}
 	}
 </style>
