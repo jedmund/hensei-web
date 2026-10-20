@@ -21,7 +21,10 @@
 		canEdit?: boolean
 		onOpenEdit?: (() => void) | undefined
 		onOpenCalculator?: (() => void) | undefined
+		/** The overflow menu, last */
 		menu?: Snippet | undefined
+		/** The Remix button, before the calculator */
+		remix?: Snippet | undefined
 		/** The "Add sticker" button and its picker */
 		stickerPicker?: Snippet | undefined
 	}
@@ -35,6 +38,7 @@
 		onOpenEdit,
 		onOpenCalculator,
 		menu,
+		remix,
 		stickerPicker
 	}: Props = $props()
 
@@ -66,6 +70,12 @@
 			/>
 		</Tooltip>
 	{/if}
+	{#if stickerPicker}
+		{@render stickerPicker()}
+	{/if}
+	{#if remix}
+		{@render remix()}
+	{/if}
 	{#if onOpenCalculator}
 		<Tooltip content={m.calculator_open_short()}>
 			<Button
@@ -77,9 +87,6 @@
 				onclick={onOpenCalculator}
 			/>
 		</Tooltip>
-	{/if}
-	{#if stickerPicker}
-		{@render stickerPicker()}
 	{/if}
 	{#if menu}
 		{@render menu()}

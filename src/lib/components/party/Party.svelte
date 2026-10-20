@@ -521,7 +521,7 @@
 				stickerPicker={canGiveSticker ? stickerPicker : undefined}
 				{canGiveSticker}
 			>
-				{#snippet menu()}
+				{#snippet remix()}
 					{#if !isNew}
 						<Tooltip content={m.party_remix()}>
 							<Button
@@ -534,6 +534,10 @@
 								disabled={actions.loading}
 							/>
 						</Tooltip>
+					{/if}
+				{/snippet}
+				{#snippet menu()}
+					{#if !isNew}
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger>
 								{#snippet child({ props })}
