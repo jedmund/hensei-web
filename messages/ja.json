@@ -2196,5 +2196,7 @@
 	"character_refresh_item_fetch_failed": "Wikiページを取得できませんでした",
 	"character_refresh_item_fetch_failed_status": "Wikiページを取得できませんでした（HTTP {status}）",
 	"character_refresh_item_build_refused": "このページからスキルを作成できませんでした",
-	"character_refresh_item_unexpected": "このキャラクターの更新中にエラーが発生しました"
+	"character_refresh_item_unexpected": "このキャラクターの更新中にエラーが発生しました",
+	"character_refresh_item_preview_expired": "適用前にプレビューの有効期限が切れました。新しく更新を開始して、もう一度プレビューしてください。",
+	"character_refresh_item_character_missing": "選択後にこのキャラクターは削除されました"
 }

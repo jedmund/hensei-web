@@ -2224,5 +2224,7 @@
 	"character_refresh_item_fetch_failed": "The wiki page couldn't be fetched",
 	"character_refresh_item_fetch_failed_status": "The wiki page couldn't be fetched (HTTP {status})",
 	"character_refresh_item_build_refused": "No skills could be built from this page",
-	"character_refresh_item_unexpected": "Something went wrong refreshing this character"
+	"character_refresh_item_unexpected": "Something went wrong refreshing this character",
+	"character_refresh_item_preview_expired": "This preview expired before it was applied. Start a new refresh to preview it again.",
+	"character_refresh_item_character_missing": "This character was deleted after it was picked"
 }

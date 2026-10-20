@@ -196,6 +196,8 @@ describe('batch helpers', () => {
 		expect(line('wiki_fetch_failed')).toBe("The wiki page couldn't be fetched")
 		expect(line('build_refused')).toBe('No skills could be built from this page')
 		expect(line('unexpected')).toBe('Something went wrong refreshing this character')
+		expect(line('preview_expired')).toMatch(/expired before it was applied.*preview it again/)
+		expect(line('character_missing')).toBe('This character was deleted after it was picked')
 		expect(line(null)).toBe("Couldn't refresh this character")
 		expect(line('something_new')).toBe("Couldn't refresh this character")
 	})

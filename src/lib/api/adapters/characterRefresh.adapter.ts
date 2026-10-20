@@ -78,7 +78,8 @@ export type RefreshItemStatus =
 	'queued' | 'fetching' | 'previewed' | 'applying' | 'applied' | 'skipped' | 'failed'
 
 /** Why a batch item failed (D28); null when it didn't */
-export type RefreshItemErrorCode = 'wiki_fetch_failed' | 'build_refused' | 'unexpected'
+export type RefreshItemErrorCode =
+	'wiki_fetch_failed' | 'build_refused' | 'unexpected' | 'preview_expired' | 'character_missing'
 
 export interface RefreshBatchItem {
 	characterId: string

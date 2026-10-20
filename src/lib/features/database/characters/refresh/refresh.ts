@@ -323,6 +323,10 @@ export function itemFailure(item: Pick<RefreshBatchItem, 'errorCode' | 'errorSta
 			return m.character_refresh_item_build_refused()
 		case 'unexpected':
 			return m.character_refresh_item_unexpected()
+		case 'preview_expired':
+			return m.character_refresh_item_preview_expired()
+		case 'character_missing':
+			return m.character_refresh_item_character_missing()
 		default:
 			return m.character_refresh_item_failed()
 	}
