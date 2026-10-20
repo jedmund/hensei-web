@@ -14,6 +14,7 @@ import FavoriteToast from '$lib/components/ui/FavoriteToast.svelte'
 import * as m from '$lib/paraglide/messages'
 import { isFullExpedition, solomonisName } from '$lib/components/solomonis/party/solomonisParty'
 import { appLocale } from '$lib/utils/locale'
+import { partyToWikiText } from '$lib/utils/wikiExport'
 
 type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -319,6 +320,18 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		})
 	}
 
+	/** Copies the team as gbf.wiki TeamSpread markup, linking back to this page. */
+	async function exportToWiki() {
+		const party = opts.getParty()
+		const url = `${window.location.origin}/teams/${party.shortcode}`
+		try {
+			await navigator.clipboard.writeText(partyToWikiText(party, { url }))
+			toast.success(m.toast_copied_wiki_export())
+		} catch {
+			toast.error(m.toast_copy_failed())
+		}
+	}
+
 	return {
 		get loading() {
 			return loading
@@ -349,7 +362,8 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		handleUnlinkCollection,
 		openDescriptionPanel,
 		editDescriptionPanel,
-		openSettingsPanel
+		openSettingsPanel,
+		exportToWiki
 	}
 }
 

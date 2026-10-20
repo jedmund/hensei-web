@@ -216,7 +216,19 @@ function bulletParams(mainhand: GridWeapon | undefined): string {
 	return aliases.length > 0 ? `|bullets=${aliases.join(',')}` : ''
 }
 
-export function partyToWikiText(party: Party): string {
+/** Escapes text for an external link's label inside a template parameter. */
+function linkLabel(text: string): string {
+	return text
+		.replace(/\s+/g, ' ')
+		.replace(/[|[\]{}]/g, (c) => `&#${c.charCodeAt(0)};`)
+		.trim()
+}
+
+/**
+ * `url` is the team's page on granblue.team. It's written as the template's
+ * source, which the wiki shows under the team, so the wiki links back to it.
+ */
+export function partyToWikiText(party: Party, { url }: { url?: string } = {}): string {
 	const characterAt = (position: number) => party.characters.find((c) => c.position === position)
 	const weaponAt = (position: number) =>
 		party.weapons.find((w) =>
@@ -283,7 +295,7 @@ export function partyToWikiText(party: Party): string {
 		'',
 		...summonLines,
 		'',
-		'|source=',
+		`|source=${url ? `[${url} ${linkLabel(party.name || 'This team')} on granblue.team]` : ''}`,
 		'|setup=',
 		'|comments=',
 		'|rotation=',

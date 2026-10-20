@@ -507,6 +507,19 @@ describe('partyToWikiText', () => {
 		expect(line(text, 'class')).toBe('|class=')
 	})
 
+	it('links back to the team on granblue.team as the source', () => {
+		const url = 'https://granblue.team/teams/abc'
+		expect(
+			line(partyToWikiText(party({ name: 'Fire | {{Hexa}} [Full]' }), { url }), 'source')
+		).toBe(
+			'|source=[https://granblue.team/teams/abc Fire &#124; &#123;&#123;Hexa&#125;&#125; &#91;Full&#93; on granblue.team]'
+		)
+		expect(line(partyToWikiText(party(), { url }), 'source')).toBe(
+			'|source=[https://granblue.team/teams/abc This team on granblue.team]'
+		)
+		expect(line(partyToWikiText(party()), 'source')).toBe('|source=')
+	})
+
 	it('adds the extra character and weapon slots only when used', () => {
 		const text = partyToWikiText(
 			party({ characters: [character(6, 'Sandalphon')], weapons: [weapon(10, 'Extra Weapon')] })

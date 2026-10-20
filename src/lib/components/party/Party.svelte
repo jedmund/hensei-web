@@ -496,12 +496,6 @@
 	// Hidden on your own team and on teams that can't receive stickers, so the
 	// sticker row doesn't show an empty picker slot
 	const canGiveSticker = $derived(!isNew && canShowStickerPicker(party, authUserId))
-
-	// The overflow menu only shows when it has something in it: the same
-	// conditions as its items (signed-out viewers usually get none)
-	const hasMenuActions = $derived(
-		(canEdit() && hasCollectionLinks) || !!authUserId || party.user?.id === authUserId
-	)
 </script>
 
 <svelte:window onpopstate={handlePopState} />
@@ -543,7 +537,7 @@
 					{/if}
 				{/snippet}
 				{#snippet menu()}
-					{#if !isNew && hasMenuActions}
+					{#if !isNew}
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger>
 								{#snippet child({ props })}
@@ -599,6 +593,10 @@
 											{m.playlist_add_to()}
 										</DropdownMenu.Item>
 									{/if}
+
+									<DropdownMenu.Item class="dropdown-menu-item" onSelect={actions.exportToWiki}>
+										{m.party_export_wiki()}
+									</DropdownMenu.Item>
 
 									{#if party.user?.id === authUserId}
 										<DropdownMenu.Separator class="dropdown-menu-separator" />
