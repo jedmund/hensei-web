@@ -2,7 +2,11 @@
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import type { Snippet } from 'svelte'
 	import type { EntityRawData } from '$lib/api/adapters/entity.adapter'
+	import * as m from '$lib/paraglide/messages'
+	import { formatRelativeTime } from '$lib/utils/date'
+	import { getLocale } from '$lib/paraglide/runtime'
 
 	interface Props {
 		wikiRaw?: string | null
@@ -13,6 +17,10 @@
 		onFetchWiki?: () => Promise<EntityRawData>
 		/** Re-parses stored wikitext into structured rows (skills/auras); receives fetch-first */
 		onReparse?: (refetch: boolean) => Promise<unknown>
+		/** Replaces the checkbox and Re-parse with the entity's own actions (characters) */
+		wikiActions?: Snippet
+		/** When the stored wikitext was fetched; shown when passed */
+		fetchedAt?: { en: string | null | undefined; jp: string | null | undefined }
 	}
 
 	let {
@@ -22,8 +30,19 @@
 		isLoading = false,
 		canEdit = false,
 		onFetchWiki,
-		onReparse
+		onReparse,
+		wikiActions,
+		fetchedAt
 	}: Props = $props()
+
+	const fetchedRows = $derived(
+		fetchedAt
+			? [
+					{ key: 'en', label: m.character_refresh_fetched_en(), at: fetchedAt.en },
+					{ key: 'jp', label: m.character_refresh_fetched_jp(), at: fetchedAt.jp }
+				]
+			: []
+	)
 
 	let selectedLang = $state('en')
 	let isFetching = $state(false)
@@ -77,7 +96,9 @@
 				<h3>Wiki Raw</h3>
 				{#if canEdit}
 					<div class="section-actions">
-						{#if onReparse}
+						{#if wikiActions}
+							{@render wikiActions()}
+						{:else if onReparse}
 							<label class="reparse-option">
 								<input type="checkbox" bind:checked={reparseFetchFirst} />
 								Fetch fresh wikitext first
@@ -104,6 +125,20 @@
 					</div>
 				{/if}
 			</div>
+			{#if fetchedRows.length > 0}
+				<dl class="fetched-at">
+					{#each fetchedRows as row (row.key)}
+						<div>
+							<dt>{row.label}</dt>
+							<dd title={row.at ? new Date(row.at).toLocaleString() : undefined}>
+								{row.at
+									? formatRelativeTime(row.at, getLocale())
+									: m.character_refresh_never_fetched()}
+							</dd>
+						</div>
+					{/each}
+				</dl>
+			{/if}
 			{#if fetchError}
 				<p class="error">{fetchError}</p>
 			{/if}
@@ -208,6 +243,28 @@
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit;
+	}
+
+	.fetched-at {
+		display: flex;
+		flex-wrap: wrap;
+		gap: spacing.$unit-half spacing.$unit-3x;
+		margin: 0 0 spacing.$unit 0;
+		font-size: typography.$font-small;
+
+		div {
+			display: flex;
+			gap: spacing.$unit-half;
+		}
+
+		dt {
+			color: var(--text-secondary);
+		}
+
+		dd {
+			margin: 0;
+			color: var(--text-primary);
+		}
 	}
 
 	.reparse-option {

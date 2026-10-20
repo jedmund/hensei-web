@@ -15,6 +15,14 @@ import type {
 	RefreshItemStatus
 } from '$lib/api/adapters/characterRefresh.adapter'
 import { MAX_BATCH_CHARACTERS } from '$lib/api/adapters/characterRefresh.adapter'
+import { localizedName } from '$lib/utils/locale'
+
+/** A refresh name ({en, ja}, either may be null) in the current locale */
+export function refreshName(
+	name: { en?: string | null; ja?: string | null } | null | undefined
+): string {
+	return localizedName({ en: name?.en ?? '', ja: name?.ja ?? '' })
+}
 
 /** none: nothing to apply; text_only: the wikitext changed but no skill does */
 export type RefreshOutcome = 'none' | 'text_only' | 'changes'
