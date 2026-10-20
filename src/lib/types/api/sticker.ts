@@ -35,4 +35,22 @@ export interface StickerPayload {
 	meaningJp: string
 	position?: number
 	active?: boolean
+	/** Use this library sticker's images */
+	libraryId?: number
+}
+
+/** One of the game's own stickers, which editors can make a sticker from */
+export interface LibrarySticker {
+	/** The game's sticker number */
+	id: number
+	/** The wiki's caption: who's on it and what it says */
+	label: string
+	/** Standard, Event, Rupie or Promotional Stickers */
+	section: string
+	/** The event or promotion it came from, within its section */
+	group: string | null
+	imageUrl: string
+	imageUrlJa: string | null
+	/** The catalogue sticker already made from it */
+	stickerId: string | null
 }

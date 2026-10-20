@@ -11,7 +11,7 @@
 		useCreateSticker,
 		useUploadStickerImage
 	} from '$lib/api/mutations/sticker-catalogue.mutations'
-	import type { StickerImageLanguage } from '$lib/types/api/sticker'
+	import type { LibrarySticker, StickerImageLanguage } from '$lib/types/api/sticker'
 	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
@@ -22,6 +22,15 @@
 	// Chosen images, uploaded once the sticker is created
 	let imageFiles = $state<Partial<Record<StickerImageLanguage, File>>>({})
 	let saveError = $state<string | null>(null)
+	// The game's sticker whose images it takes, if picked
+	let library = $state<LibrarySticker | null>(null)
+
+	function pickLibrary(entry: LibrarySticker) {
+		library = entry
+		// Suggest a slug and the caption as its meaning, keeping anything typed
+		if (!values.slug.trim()) values.slug = `stamp-${entry.id}`
+		if (!values.meaningEn.trim()) values.meaningEn = entry.label
+	}
 
 	const SLUG = /^[a-z0-9][a-z0-9_-]*$/
 	const canSave = $derived(
@@ -38,7 +47,8 @@
 				slug: values.slug.trim(),
 				meaningEn: values.meaningEn.trim(),
 				meaningJp: values.meaningJp.trim(),
-				active: values.active
+				active: values.active,
+				...(library ? { libraryId: library.id } : {})
 			})
 			await uploadImages(uploadMut, sticker.id, imageFiles)
 			goto(localizeHref('/database/stickers'))
@@ -69,6 +79,10 @@
 	<section class="details">
 		<StickerFormFields
 			bind:values
+			imageUrl={library?.imageUrl}
+			imageUrlJa={library?.imageUrlJa}
+			libraryId={library?.id}
+			onPickLibrary={pickLibrary}
 			onSelectImage={(file, language) => (imageFiles[language] = file)}
 		/>
 	</section>

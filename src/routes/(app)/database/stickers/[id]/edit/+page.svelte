@@ -20,7 +20,7 @@
 	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
-	import type { StickerImageLanguage } from '$lib/types/api/sticker'
+	import type { LibrarySticker, StickerImageLanguage } from '$lib/types/api/sticker'
 	import type { PageData } from './$types'
 
 	let { data }: { data: PageData } = $props()
@@ -42,6 +42,8 @@
 	// Chosen images, uploaded on save
 	let imageFiles = $state<Partial<Record<StickerImageLanguage, File>>>({})
 	let saveError = $state<string | null>(null)
+	// The game's sticker to take its images from instead, if picked
+	let library = $state<LibrarySticker | null>(null)
 	let confirmDeleteOpen = $state(false)
 
 	const canSave = $derived(values.meaningEn.trim() !== '' && values.meaningJp.trim() !== '')
@@ -54,7 +56,8 @@
 				payload: {
 					meaningEn: values.meaningEn.trim(),
 					meaningJp: values.meaningJp.trim(),
-					active: values.active
+					active: values.active,
+					...(library ? { libraryId: library.id } : {})
 				}
 			})
 			await uploadImages(uploadMut, sticker.id, imageFiles)
@@ -102,8 +105,11 @@
 	<section class="details">
 		<StickerFormFields
 			bind:values
-			imageUrl={sticker.imageUrl}
-			imageUrlJa={sticker.imageUrlJa}
+			imageUrl={library?.imageUrl ?? sticker.imageUrl}
+			imageUrlJa={library ? library.imageUrlJa : sticker.imageUrlJa}
+			libraryId={library?.id}
+			stickerId={sticker.id}
+			onPickLibrary={(entry) => (library = entry)}
 			slugLocked
 			onSelectImage={(file, language) => (imageFiles[language] = file)}
 		/>

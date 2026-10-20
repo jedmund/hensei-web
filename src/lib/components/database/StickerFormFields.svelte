@@ -7,8 +7,9 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import ImageFileField from '$lib/components/database/ImageFileField.svelte'
+	import StickerLibraryPicker from '$lib/components/database/StickerLibraryPicker.svelte'
 	import * as m from '$lib/paraglide/messages'
-	import type { StickerImageLanguage } from '$lib/types/api/sticker'
+	import type { LibrarySticker, StickerImageLanguage } from '$lib/types/api/sticker'
 
 	interface StickerValues {
 		slug: string
@@ -24,6 +25,11 @@
 		/** The slug names the image file, so it can't change once created */
 		slugLocked?: boolean
 		onSelectImage: (file: File, language: StickerImageLanguage) => void
+		/** The game's sticker picked to take the images from */
+		libraryId?: number | null | undefined
+		/** The sticker being edited (see StickerLibraryPicker) */
+		stickerId?: string | undefined
+		onPickLibrary: (entry: LibrarySticker) => void
 	}
 
 	let {
@@ -31,7 +37,10 @@
 		imageUrl,
 		imageUrlJa,
 		slugLocked = false,
-		onSelectImage
+		onSelectImage,
+		libraryId = null,
+		stickerId,
+		onPickLibrary
 	}: Props = $props()
 </script>
 
@@ -64,6 +73,10 @@
 	<DetailItem label={m.db_stickers_field_active()} editable={true}>
 		<Switch bind:checked={values.active} size="small" />
 	</DetailItem>
+</DetailsContainer>
+
+<DetailsContainer title={m.db_stickers_section_library()}>
+	<StickerLibraryPicker selected={libraryId} {stickerId} onSelect={onPickLibrary} />
 </DetailsContainer>
 
 <DetailsContainer title={m.db_stickers_section_image()}>

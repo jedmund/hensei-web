@@ -12,7 +12,12 @@ import type { StickerPlacement } from '$lib/types/api/party'
 import { BaseAdapter } from './base.adapter'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { RequestOptions } from './types'
-import type { Sticker, StickerImageLanguage, StickerPayload } from '$lib/types/api/sticker'
+import type {
+	LibrarySticker,
+	Sticker,
+	StickerImageLanguage,
+	StickerPayload
+} from '$lib/types/api/sticker'
 
 const BASE = '/stickers'
 
@@ -30,6 +35,12 @@ export class StickerAdapter extends BaseAdapter {
 			query: params.includeInactive ? { includeInactive: true } : undefined
 		})
 		return response.stickers
+	}
+
+	/** The game's own stickers, to make stickers from (editors) */
+	async listLibrary(options?: RequestOptions): Promise<LibrarySticker[]> {
+		const response = await this.request<{ library: LibrarySticker[] }>(`${BASE}/library`, options)
+		return response.library
 	}
 
 	async createSticker(payload: StickerPayload, options?: RequestOptions): Promise<Sticker> {
@@ -57,8 +68,8 @@ export class StickerAdapter extends BaseAdapter {
 		return this.request<void>(`${BASE}/${id}`, { ...options, method: 'DELETE' })
 	}
 
-	/** Uploads a PNG or WebP as the multipart field `image` */
-	/** Uploads the English image, or with `language: 'ja'` the Japanese one */
+	/** Uploads a PNG or WebP as the English image, or with `language: 'ja'`
+	 * the Japanese one */
 	async uploadImage(
 		id: string,
 		file: Blob,

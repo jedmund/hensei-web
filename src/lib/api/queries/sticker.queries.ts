@@ -10,7 +10,8 @@ import { stickerAdapter } from '$lib/api/adapters/sticker.adapter'
 export const stickerKeys = {
 	all: ['stickers'] as const,
 	active: () => [...stickerKeys.all, 'active'] as const,
-	catalogue: () => [...stickerKeys.all, 'catalogue'] as const
+	catalogue: () => [...stickerKeys.all, 'catalogue'] as const,
+	library: () => [...stickerKeys.all, 'library'] as const
 }
 
 export const stickerQueries = {
@@ -28,6 +29,14 @@ export const stickerQueries = {
 		queryOptions({
 			queryKey: stickerKeys.catalogue(),
 			queryFn: () => stickerAdapter.listStickers({ includeInactive: true }),
+			staleTime: 1000 * 60
+		}),
+
+	/** The game's own stickers, for editors making stickers */
+	library: () =>
+		queryOptions({
+			queryKey: stickerKeys.library(),
+			queryFn: () => stickerAdapter.listLibrary(),
 			staleTime: 1000 * 60
 		})
 }
