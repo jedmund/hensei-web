@@ -8,6 +8,7 @@
 	 */
 	import type { Snippet } from 'svelte'
 	import { cubicOut } from 'svelte/easing'
+	import { SvelteSet } from 'svelte/reactivity'
 	import Button from './Button.svelte'
 	import { prefersReducedMotion } from '$lib/utils/motion'
 
@@ -32,7 +33,19 @@
 
 	// Which way the pages slide: 1 to the next page, -1 to the previous
 	let direction = $state<1 | -1>(1)
+	// Clipped from a page turn until every page has stopped moving: paging
+	// again mid-slide leaves earlier pages still sliding out
 	let sliding = $state(false)
+	const moving = new SvelteSet<EventTarget>()
+
+	function started(event: Event) {
+		if (event.currentTarget) moving.add(event.currentTarget)
+	}
+
+	function stopped(event: Event) {
+		if (event.currentTarget) moving.delete(event.currentTarget)
+		if (moving.size === 0) sliding = false
+	}
 
 	function goTo(next: number) {
 		const target = Math.min(Math.max(next, 0), count - 1)
@@ -58,7 +71,10 @@
 		<div
 			in:slide={{ from: direction }}
 			out:slide={{ from: direction === 1 ? -1 : 1 }}
-			onintroend={() => (sliding = false)}
+			onintrostart={started}
+			onoutrostart={started}
+			onintroend={stopped}
+			onoutroend={stopped}
 		>
 			{@render page(shown)}
 		</div>
