@@ -291,10 +291,12 @@
 			gap: spacing.$unit-half;
 			min-width: 0;
 
-			// Taller than the name, so they overhang the row rather than grow it,
-			// keeping cards with and without stickers the same height
+			// At the card's right edge. Taller than the name, so they overhang the
+			// row rather than grow it, keeping cards with and without stickers the
+			// same height.
 			:global(.sticker-labels) {
 				margin-block: -6px;
+				margin-inline-start: auto;
 			}
 		}
 
