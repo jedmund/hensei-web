@@ -2215,5 +2215,6 @@
 	"character_refresh_field_mimicable": "can be copied",
 	"character_refresh_field_targets_all": "targets all",
 	"character_refresh_field_game_action_id": "game action ID",
-	"character_refresh_field_duplicates": "duplicate rows"
+	"character_refresh_field_duplicates": "duplicate rows",
+	"character_refresh_version": "version {ordinal}"
 }

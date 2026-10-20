@@ -82,6 +82,21 @@ export function groupByKind<T extends { kind: string; position: number; ordinal:
 		}))
 }
 
+/**
+ * Display names for one group's entries. Versions of a skill often share a
+ * name (Heal III at two uncaps), so a repeated name gets its version number.
+ */
+export function entryLabels<T extends { ordinal: number; name: RefreshChange['name'] }>(
+	items: T[]
+): string[] {
+	const names = items.map((item) => refreshName(item.name))
+	return names.map((name, i) =>
+		names.indexOf(name) !== names.lastIndexOf(name)
+			? `${name} (${m.character_refresh_version({ ordinal: items[i]!.ordinal })})`
+			: name
+	)
+}
+
 export function groupChanges(changes: RefreshChange[]): ChangeGroup<RefreshChange>[] {
 	return groupByKind(changes)
 }

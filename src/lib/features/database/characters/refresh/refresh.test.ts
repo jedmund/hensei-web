@@ -8,6 +8,7 @@ import { API } from '$lib/api/adapters/__tests__/fixtures/characterRefresh.fixtu
 import {
 	FIELD_LABELS,
 	characterPath,
+	entryLabels,
 	countRows,
 	defaultSelection,
 	failureMessage,
@@ -76,6 +77,18 @@ describe('groupChanges', () => {
 			{ ...base, kind: 'ougi' }
 		])
 		expect(groups.map((g) => g.label)).toEqual(['Charge attack', 'Support skills', 'mystery'])
+	})
+})
+
+describe('entryLabels', () => {
+	it('adds the version number only to repeated names', () => {
+		const base = changes.changes[0]!
+		const labels = entryLabels([
+			{ ...base, ordinal: 1, name: { en: 'Heal III', ja: null } },
+			{ ...base, ordinal: 2, name: { en: 'Heal III', ja: null } },
+			{ ...base, ordinal: 1, name: { en: 'Cure', ja: null } }
+		])
+		expect(labels).toEqual(['Heal III (version 1)', 'Heal III (version 2)', 'Cure'])
 	})
 })
 

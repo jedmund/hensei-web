@@ -5,11 +5,11 @@
 	import type { CharacterRefreshResult } from '$lib/api/adapters/characterRefresh.adapter'
 	import {
 		changeLabel,
+		entryLabels,
 		countRows,
 		fieldLabels,
 		groupChanges,
 		groupIconFallbacks,
-		refreshName,
 		refreshOutcome,
 		wikiState,
 		wikiStateLabel
@@ -59,14 +59,15 @@
 	{/if}
 
 	{#each groups as group (group.kind)}
+		{@const labels = entryLabels(group.items)}
 		<section class="group">
 			<h4>{group.label}</h4>
 			<ul class="changes">
-				{#each group.items as change (`${change.position}-${change.ordinal}`)}
+				{#each group.items as change, i (`${change.position}-${change.ordinal}`)}
 					<li class="change {change.change}">
 						<span class="change-op">{changeLabel(change.change)}</span>
 						<div class="change-detail">
-							<span class="change-name">{refreshName(change.name)}</span>
+							<span class="change-name">{labels[i]}</span>
 							{#if change.change === 'updated' && change.fields.length > 0}
 								<span class="change-fields">{fieldLabels(change.fields).join(', ')}</span>
 							{/if}
@@ -84,8 +85,9 @@
 				<p>{m.character_refresh_icon_fallbacks_note()}</p>
 				<ul>
 					{#each fallbacks as group (group.kind)}
-						{#each group.items as fallback (`${group.kind}-${fallback.position}-${fallback.ordinal}`)}
-							<li>{group.label}: {refreshName(fallback.name)}</li>
+						{@const labels = entryLabels(group.items)}
+						{#each group.items as fallback, i (`${group.kind}-${fallback.position}-${fallback.ordinal}`)}
+							<li>{group.label}: {labels[i]}</li>
 						{/each}
 					{/each}
 				</ul>
