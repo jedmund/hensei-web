@@ -1,14 +1,13 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import type { Snippet } from 'svelte'
-	import type { JSONContent } from '@tiptap/core'
 	import Button from '$lib/components/ui/Button.svelte'
 	import AvatarPair from '$lib/components/ui/AvatarPair.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import CollectionViewerSwitcher from './CollectionViewerSwitcher.svelte'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { localizedName } from '$lib/utils/locale'
+	import { descriptionPreview } from '$lib/utils/descriptionPreview'
 	import { formatRelativeTime } from '$lib/utils/date'
 	import { PartyVisibility } from '$lib/types/visibility'
 	import type { PartyDifficulty } from '$lib/types/api/party'
@@ -130,71 +129,7 @@
 		}
 	})
 
-	/** Extract inline text from a TipTap node */
-	function getNodeText(node: JSONContent): string {
-		if (node.type === 'text') return node.text ?? ''
-		if (node.type === 'mention') {
-			const id = node.attrs?.id as
-				{ name?: { en?: string; ja?: string }; granblue_en?: string } | undefined
-			const name = localizedName(id?.name)
-			return name !== '—' ? name : (id?.granblue_en ?? '')
-		}
-		return ''
-	}
-
-	/** Extract text from a block node */
-	function getBlockText(block: JSONContent): string {
-		return block.content?.map(getNodeText).join('') ?? ''
-	}
-
-	/** Extract first paragraph text and whether more content exists */
-	function getPreviewData(content?: string): { text: string; hasMore: boolean } {
-		if (!content) return { text: '', hasMore: false }
-
-		try {
-			const json = JSON.parse(content) as JSONContent
-			if (json.type !== 'doc' || !json.content?.length) return { text: '', hasMore: false }
-
-			// Find the first non-empty paragraph or heading
-			let firstText = ''
-			let firstBlockIndex = -1
-			for (let i = 0; i < json.content.length; i++) {
-				const node = json.content[i]!
-				if (node.type !== 'paragraph' && node.type !== 'heading') continue
-				const text = getBlockText(node).trim()
-				if (text) {
-					firstText = text
-					firstBlockIndex = i
-					break
-				}
-			}
-
-			if (!firstText) return { text: '', hasMore: false }
-
-			// Check if there's more content after the first block
-			const hasMoreBlocks = json.content.slice(firstBlockIndex + 1).some((node) => {
-				if (node.type === 'paragraph' || node.type === 'heading') {
-					return getBlockText(node).trim().length > 0
-				}
-				// Lists, blockquotes, etc. count as more content
-				return node.type !== 'paragraph'
-			})
-
-			return { text: firstText, hasMore: hasMoreBlocks }
-		} catch {
-			// Plain text fallback
-			const lines = content
-				.split('\n')
-				.map((l) => l.trim())
-				.filter(Boolean)
-			return {
-				text: lines[0] ?? '',
-				hasMore: lines.length > 1
-			}
-		}
-	}
-
-	const preview = $derived(getPreviewData(description))
+	const preview = $derived(descriptionPreview(description))
 
 	// Battle settings tokens
 	interface Setting {
