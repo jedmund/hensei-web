@@ -6,9 +6,11 @@
 		children: Snippet
 		href?: string
 		class?: string
+		/** Called when the item is chosen (click or keyboard) */
+		onSelect?: () => void
 	}
 
-	const { children, href, class: className = '' }: Props = $props()
+	const { children, href, class: className = '', onSelect }: Props = $props()
 </script>
 
 {#if href}
@@ -20,7 +22,7 @@
 		{/snippet}
 	</DropdownMenu.Item>
 {:else}
-	<DropdownMenu.Item class="dropdown-item {className}">
+	<DropdownMenu.Item class="dropdown-item {className}" {onSelect}>
 		{@render children()}
 	</DropdownMenu.Item>
 {/if}

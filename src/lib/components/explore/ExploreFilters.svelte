@@ -23,7 +23,8 @@
 		getRecencyOptions,
 		getPartyOptions,
 		getBoostOptions,
-		getSideOptions
+		getSideOptions,
+		getSortOptions
 	} from '$lib/utils/exploreFilterOptions'
 	import { MediaQuery } from 'svelte/reactivity'
 
@@ -81,6 +82,7 @@
 	const partyOptions = $derived(getPartyOptions())
 	const boostOptions = $derived(getBoostOptions())
 	const sideOptions = $derived(getSideOptions())
+	const sortOptions = $derived(getSortOptions())
 	// Sticker labels: the active catalogue, by slug + meaning
 	const stickersQuery = createQuery(() => stickerQueries.active())
 	const labelOptions = $derived(
@@ -147,7 +149,8 @@
 		side: m.filter_cat_side(),
 		difficulty: m.filter_cat_difficulty(),
 		evoker: m.filter_cat_evoker(),
-		label: m.explore_filter_label()
+		label: m.explore_filter_label(),
+		sort: m.filter_cat_sort()
 	})
 
 	// Evoking Solomonis route Evokers not already filtered by
@@ -206,6 +209,19 @@
 					category: categoryLabels.raid
 				}
 				picks.push({ label: opt.label, category: categoryLabels.raid, option: opt })
+			}
+		}
+
+		if (!excludedKinds.includes('sort') && !filters.some((f) => f.kind === 'sort')) {
+			const sort = sortOptions[0]
+			if (sort) {
+				const opt: FilterOption = {
+					kind: 'sort',
+					value: sort.value,
+					label: sort.label,
+					category: categoryLabels.sort
+				}
+				picks.push({ label: opt.label, category: opt.category, option: opt })
 			}
 		}
 
@@ -344,6 +360,7 @@
 			sideOptions,
 			difficultyOptions,
 			labelOptions,
+			sortOptions,
 			allRaids,
 			categoryLabels
 		})
@@ -409,7 +426,7 @@
 	}
 
 	// Single-select kinds replace existing filter of the same kind
-	const singleSelectKinds = new Set(['recency', 'boost', 'side', 'evoker', 'label'])
+	const singleSelectKinds = new Set(['recency', 'boost', 'side', 'evoker', 'label', 'sort'])
 
 	function selectOption(option: FilterOption) {
 		if (isAlreadySelected(option)) return

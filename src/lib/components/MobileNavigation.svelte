@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { HOME_LAUNCHED, HOME_PATH, GALLERY_PATH, isHomePath } from '$lib/utils/browseRoutes'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { m } from '$lib/paraglide/messages'
 	import { page } from '$app/stores'
@@ -46,7 +47,8 @@
 	const isBahamut = $derived(currentUser?.bahamut === true)
 
 	// Localized links
-	const galleryHref = $derived(localizeHref('/teams/explore'))
+	const homeHref = $derived(localizeHref(HOME_PATH))
+	const galleryHref = $derived(localizeHref(GALLERY_PATH))
 	const meHref = $derived(localizeHref('/me'))
 	const loginHref = $derived(localizeHref('/auth/login'))
 	const registerHref = $derived(localizeHref('/auth/register'))
@@ -69,7 +71,7 @@
 	// Route detection
 	function isNavSelected(href: string): boolean {
 		const path = $page.url.pathname
-		if (href === galleryHref) return path === href
+		if (href === homeHref) return isHomePath(path, homeHref)
 		return path === href || path.startsWith(href + '/')
 	}
 
@@ -83,6 +85,7 @@
 
 	// Current page label
 	const currentPageLabel = $derived.by(() => {
+		if (isNavSelected(homeHref)) return m.nav_home()
 		if (isNavSelected(galleryHref)) return m.nav_gallery()
 		if (isNavSelected(crewHref)) return m.nav_crew()
 		if (isNavSelected(collectionHref)) return m.nav_collection()
@@ -93,7 +96,7 @@
 		if (isNavSelected(databaseHref)) return m.nav_database()
 		if (isNavSelected(loginHref)) return m.nav_login()
 		if (isNavSelected(registerHref)) return m.nav_register()
-		return m.nav_gallery()
+		return HOME_LAUNCHED ? m.nav_home() : m.nav_gallery()
 	})
 
 	// Sheet state
@@ -210,6 +213,11 @@
 		{#if isAuth}
 			<ul class="sheet-nav-group" role="list">
 				<li>
+					{#if HOME_LAUNCHED}
+						<a href={homeHref} class:selected={isNavSelected(homeHref)}>{m.nav_home()}</a>
+					{/if}
+				</li>
+				<li>
 					<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
 				</li>
 				<li>
@@ -283,6 +291,11 @@
 			</ul>
 		{:else}
 			<ul class="sheet-nav-group" role="list">
+				<li>
+					{#if HOME_LAUNCHED}
+						<a href={homeHref} class:selected={isNavSelected(homeHref)}>{m.nav_home()}</a>
+					{/if}
+				</li>
 				<li>
 					<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
 				</li>

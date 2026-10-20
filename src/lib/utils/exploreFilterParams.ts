@@ -8,7 +8,8 @@ import {
 	getRecencyLabel,
 	getPartyLabel,
 	getBoostLabel,
-	getSideLabel
+	getSideLabel,
+	getSortLabel
 } from '$lib/utils/exploreFilterOptions'
 import { filterItemsToParams } from '$lib/utils/filterConversion'
 import { entityAdapter } from '$lib/api/adapters/entity.adapter'
@@ -59,7 +60,10 @@ export interface DeserializedExploreFilters {
  * Returns true if the URL has any explore filter params
  */
 export function urlHasExploreFilters(params: URLSearchParams): boolean {
-	return EXPLORE_FILTER_KEYS.some((key) => params.has(key))
+	// `sort` only counts for values explore knows (e.g. not the old ?sort=recent)
+	return (
+		EXPLORE_FILTER_KEYS.some((key) => params.has(key)) || params.get('sort') === 'participation'
+	)
 }
 
 /**
@@ -114,6 +118,10 @@ export function serializeExploreFilters(
 	// Sticker label — slug
 	const label = filters.find((f) => f.kind === 'label')
 	if (label) params.set('label', label.value as string)
+
+	// Sort — e.g. participation
+	const sort = filters.find((f) => f.kind === 'sort')
+	if (sort) params.set('sort', sort.value as string)
 
 	// Entity include/exclude — type:granblueId format
 	const entities = filters.filter((f): f is FilterItem & { kind: 'entity' } => f.kind === 'entity')
@@ -232,6 +240,12 @@ export function deserializeExploreFilters(
 	const labelParam = params.get('label')?.trim()
 	if (labelParam) {
 		filters.push({ kind: 'label', value: labelParam, label: labelParam })
+	}
+
+	// Sort (only known values)
+	const sortParam = params.get('sort')?.trim()
+	if (sortParam === 'participation') {
+		filters.push({ kind: 'sort', value: sortParam, label: getSortLabel(sortParam) })
 	}
 
 	// Entity refs (need async resolution)
