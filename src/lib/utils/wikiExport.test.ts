@@ -84,6 +84,264 @@ function party(overrides: Partial<Party> = {}): Party {
 	} as Party
 }
 
+const bullet = (slug: string) => ({ slug, name: name(slug) }) as BulletLoadout['bullet']
+
+/** Every weapon key in the game as [granblue ID, slot], from the weapon_keys table. */
+const GAME_KEYS: [number, number][] = [
+	[1, 0],
+	[2, 0],
+	[3, 0],
+	[10001, 0],
+	[10002, 0],
+	[10003, 0],
+	[10004, 0],
+	[10005, 0],
+	[10006, 0],
+	[11001, 1],
+	[11002, 1],
+	[11003, 1],
+	[11004, 1],
+	[13001, 0],
+	[13002, 0],
+	[13003, 0],
+	[13004, 0],
+	[14001, 1],
+	[14002, 1],
+	[14003, 1],
+	[14004, 1],
+	[14005, 1],
+	[14006, 1],
+	[14007, 1],
+	[14011, 1],
+	[14012, 1],
+	[14013, 1],
+	[14014, 1],
+	[14015, 1],
+	[14016, 1],
+	[14017, 1],
+	[15001, 0],
+	[15002, 0],
+	[15003, 0],
+	[15004, 0],
+	[15005, 0],
+	[15006, 0],
+	[15007, 0],
+	[15008, 0],
+	[15009, 0],
+	[16001, 1],
+	[16002, 1],
+	[17001, 2],
+	[17002, 2],
+	[17003, 2],
+	[17004, 2],
+	[19001, 0],
+	[19002, 0],
+	[19003, 0]
+]
+
+/**
+ * The aliases gbf.wiki's Module:WeaponGrid accepts for each key parameter, by
+ * position in the comma-separated list (https://gbf.wiki/Module:WeaponGrid).
+ */
+const WIKI_KEY_ALIASES = {
+	opus: [
+		['alpha', 'auto', 'beta', 'skill', 'gamma', 'ca', 'ougi', 'delta', 'cb'],
+		[
+			'strength',
+			'stamina',
+			'zeal',
+			'enmity',
+			'strife',
+			'trium',
+			'prosperity',
+			'progression',
+			'temperament',
+			'celere',
+			'restoration',
+			'majesty',
+			'glorification',
+			'glory',
+			'temptation',
+			'freyr',
+			'fruit',
+			'forbiddance',
+			'apple',
+			'conduct',
+			'depravity',
+			'fallacy',
+			'falsehood',
+			'echo',
+			'extremity',
+			'ruination',
+			'sagacity',
+			'honing',
+			'supremacy',
+			'fathoms'
+		]
+	],
+	ultima: [
+		[
+			'dominion',
+			'will',
+			'atk',
+			'parity',
+			'strife',
+			'ma',
+			'utopia',
+			'vitality',
+			'hp',
+			'strength',
+			'stamina',
+			'ultio',
+			'zeal',
+			'enmity',
+			'ars',
+			'courage',
+			'crit'
+		],
+		[
+			'aggressio',
+			'alpha',
+			'auto',
+			'facultas',
+			'beta',
+			'skill',
+			'gamma',
+			'ca',
+			'ougi',
+			'catena',
+			'delta',
+			'cb'
+		],
+		[
+			'fortis',
+			'ena',
+			'cap',
+			'sanatio',
+			'dio',
+			'healing',
+			'impetus',
+			'tria',
+			'seraphic',
+			'elatio',
+			'tessera',
+			'cbgain'
+		]
+	],
+	draconic: [
+		[
+			'endurance',
+			'def',
+			'vermillion',
+			'inferno',
+			'fire',
+			'azure',
+			'abyss',
+			'water',
+			'golden',
+			'crag',
+			'earth',
+			'emerald',
+			'tempest',
+			'wind',
+			'white',
+			'aureole',
+			'light',
+			'black',
+			'malice',
+			'dark',
+			'fortitude',
+			'salvation',
+			'hp',
+			'magnitude',
+			'oblivion',
+			'amp'
+		],
+		['optimus', 'primal', 'omega', 'magna']
+	],
+	destroyer: [
+		[
+			'auto',
+			'oblivion',
+			'godstrike',
+			'skill',
+			'ascendance',
+			'godflair',
+			'ougi',
+			'ca',
+			'maximality',
+			'godheart'
+		]
+	],
+	ccw: [['humanity', 'divinity', 'devilry']]
+}
+
+/** Bullets Template:Team/Bullets has an icon for (https://gbf.wiki/Template:Team/Bullets). */
+const WIKI_BULLETS = [
+	'iron-bullet-v',
+	'full-metal-jacket-v',
+	'expert-model-paradise-lost',
+	'expert-model-chaos-legion',
+	'expert-model-anagenesis',
+	'expert-model-genesis-nova',
+	'expert-model-rationale-exitium',
+	'expert-model-anti-vasileia',
+	'expert-model-apocalypse',
+	'expert-model-hexachromatic',
+	'slug-shot-ii',
+	'chaser-shell',
+	'enhancing-shell',
+	'agni-point-iv',
+	'neptune-point-iv',
+	'titan-point-iv',
+	'zephyrus-point-iv',
+	'zeus-point-iv',
+	'hades-point-iv'
+]
+
+/** The aliases Template:Team/Bullets accepts (matched case-sensitively). */
+const WIKI_BULLET_ALIASES = [
+	'iron',
+	'fmj',
+	'chaos',
+	'chaos legion',
+	'bubs',
+	'bubz',
+	'anagenesis',
+	'apple',
+	'belial',
+	'subhl',
+	'genesis nova',
+	'baha',
+	'slug',
+	'echo',
+	'chaser',
+	'supp',
+	'enhancing',
+	'primal',
+	'agni',
+	'neptune',
+	'titan',
+	'zeph',
+	'zephyrus',
+	'zeus',
+	'hades',
+	'hexa',
+	'hexarifle',
+	'rationale exitium',
+	'faa0',
+	'faa0rifle',
+	'faazero',
+	'anti vasileia',
+	'faa',
+	'paradise lost',
+	'pl',
+	'faa0cartridge',
+	'apocalypse',
+	'hexaaether',
+	'hexachromatic'
+]
+
 const line = (text: string, param: string) =>
 	text.split('\n').find((l) => l.startsWith(`|${param}=`))
 
@@ -163,32 +421,44 @@ describe('partyToWikiText', () => {
 		expect(line(partyToWikiText(party({ characters: [gc] })), 'char1')).toBe('|char1=Fallback Name')
 	})
 
-	it('drops the element suffix from Ultima weapons outside the mainhand', () => {
-		const ultima = { series: { id: 'u', slug: 'ultima', name: name('Ultima') } }
-		const text = partyToWikiText(
-			party({
-				weapons: [
-					weapon(-1, 'Ultima Sword (Fire)', {}, ultima),
-					weapon(0, 'Ultima Staff (Fire)', {}, ultima)
-				]
-			})
-		)
-		expect(line(text, 'mh')).toBe('|mh=Ultima Sword (Fire)')
-		expect(line(text, 'wp1')).toBe('|wp1=Ultima Staff')
-	})
-
-	it('writes weapon keys once per series in slot order', () => {
+	it('writes weapon keys as positional aliases, one set per series', () => {
 		const text = partyToWikiText(
 			party({
 				weapons: [
 					weapon(0, 'Renunciation', { weaponKeys: [key(14001, 1), key(13002, 0)] }),
-					weapon(1, 'Ultima Sword', { weaponKeys: [key(10001, 0), key(11003, 1), key(17001, 2)] })
+					weapon(1, 'Ultima Sword', { weaponKeys: [key(10001, 0), key(11003, 1), key(17001, 2)] }),
+					weapon(2, 'Ultima Staff', { weaponKeys: [key(10002, 0)] }),
+					weapon(3, 'Draconic Harp', { weaponKeys: [key(16002, 1)] })
 				]
 			})
 		)
-		expect(line(text, 'opus')).toBe('|opus=Skill,Stamina')
-		expect(line(text, 'ultima')).toBe('|ultima=Will,Charge Attack,Damage Cap')
-		expect(line(text, 'draconic')).toBeUndefined()
+		expect(line(text, 'opus')).toBe('|opus=skill,stamina')
+		expect(line(text, 'ultima')).toBe('|ultima=will,ca,cap')
+		expect(line(text, 'draconic')).toBe('|draconic=,omega')
+		expect(line(text, 'ccw')).toBeUndefined()
+	})
+
+	it('takes the mainhand keys over other weapons of the same series', () => {
+		const text = partyToWikiText(
+			party({
+				weapons: [
+					weapon(0, 'Ultima Staff', { weaponKeys: [key(10002, 0)] }),
+					weapon(-1, 'Ultima Sword', { weaponKeys: [key(10004, 0), key(11002, 1)] })
+				]
+			})
+		)
+		expect(line(text, 'ultima')).toBe('|ultima=strength,skill')
+	})
+
+	it.each(GAME_KEYS)('exports key %i as an alias the wiki accepts', (granblueId, slot) => {
+		const text = partyToWikiText(
+			party({ weapons: [weapon(0, 'Keyed Weapon', { weaponKeys: [key(granblueId, slot)] })] })
+		)
+		const [, param, value = ''] = text.match(/^\|(opus|ultima|draconic|destroyer|ccw)=(.*)$/m)!
+		const positions = WIKI_KEY_ALIASES[param as keyof typeof WIKI_KEY_ALIASES]
+		// Destroyer and Class Champion take a single value that isn't split.
+		const exported = positions.length > 1 ? value.split(',')[slot] : value
+		expect(positions[slot]).toContain(exported)
 	})
 
 	it('maps summon slots, uncaps and the quick summon', () => {
@@ -209,18 +479,27 @@ describe('partyToWikiText', () => {
 		expect(line(text, 'quick')).toBe('|quick=main')
 	})
 
-	it('writes mainhand bullets by full name, keeping empty slots', () => {
-		const bullet = (en: string) => ({ name: name(en) }) as BulletLoadout['bullet']
+	it('writes mainhand bullets as wiki aliases, leaving out ones it has no icon for', () => {
 		const mainhand = weapon(-1, 'Hexachromatic Gun', {
 			bullets: [
-				{ position: 0, bullet: bullet('Iron Bullet V') },
-				{ position: 2, bullet: bullet('Chaser Shell') }
+				{ position: 3, bullet: bullet('chaser-shell') },
+				{ position: 0, bullet: bullet('expert-model-chaos-legion') },
+				{ position: 1, bullet: bullet('iron-bullet-iv') },
+				{ position: 2, bullet: bullet('rapid-bullet') }
 			]
 		})
 		const text = partyToWikiText(
 			party({ job: { name: name('Soldier') } as Party['job'], weapons: [mainhand] })
 		)
-		expect(line(text, 'class')).toBe('|class=Soldier|bullets=Iron Bullet V,,Chaser Shell')
+		expect(line(text, 'class')).toBe('|class=Soldier|bullets=chaos legion,chaser')
+	})
+
+	it.each(WIKI_BULLETS)('exports the %s bullet as an alias the wiki accepts', (slug) => {
+		const mainhand = weapon(-1, 'Gun', { bullets: [{ position: 0, bullet: bullet(slug) }] })
+		const value = line(partyToWikiText(party({ weapons: [mainhand] })), 'class')!.split(
+			'|bullets='
+		)[1]
+		expect(WIKI_BULLET_ALIASES).toContain(value)
 	})
 
 	it('omits bullets when the mainhand has none', () => {
