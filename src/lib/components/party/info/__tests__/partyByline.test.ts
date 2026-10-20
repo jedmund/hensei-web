@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { partyByline } from '../partyByline'
+import { bylineText, partyByline } from '../partyByline'
 
 const alice = { username: 'alice' }
 const bob = { username: 'bob' }
@@ -7,38 +7,59 @@ const carol = { username: 'carol' }
 
 describe('partyByline', () => {
 	it('remixed using a collection: the source creator behind the creator', () => {
-		expect(
-			partyByline({ user: alice, sourceParty: { user: bob }, collectionSourceUser: carol })
-		).toEqual({
-			kind: 'pair',
-			back: bob,
-			front: alice,
-			text: "alice remixed bob's team using carol's collection"
+		const byline = partyByline({
+			user: alice,
+			sourceParty: { shortcode: 'abc123', user: bob },
+			collectionSourceUser: carol
 		})
+		expect(byline).toMatchObject({ kind: 'pair', back: bob, front: alice })
+		expect(byline?.segments).toEqual([
+			{ text: 'alice', href: '/alice' },
+			{ text: ' remixed ' },
+			{ text: "bob's team", href: '/teams/abc123' },
+			{ text: ' using ' },
+			{ text: 'carol', href: '/carol' },
+			{ text: "'s collection" }
+		])
 	})
 
-	it('remixed', () => {
-		expect(partyByline({ user: alice, sourceParty: { user: bob } })).toEqual({
-			kind: 'pair',
-			back: bob,
-			front: alice,
-			text: "alice remixed bob's team"
-		})
+	it("remixed: the creator links to their profile and bob's team to the original", () => {
+		const byline = partyByline({ user: alice, sourceParty: { shortcode: 'abc123', user: bob } })
+		expect(byline).toMatchObject({ kind: 'pair', back: bob, front: alice })
+		expect(byline?.segments).toEqual([
+			{ text: 'alice', href: '/alice' },
+			{ text: ' remixed ' },
+			{ text: "bob's team", href: '/teams/abc123' }
+		])
+	})
+
+	it("doesn't link the team without the original's shortcode", () => {
+		const byline = partyByline({ user: alice, sourceParty: { user: bob } })
+		expect(bylineText(byline!.segments)).toBe("alice remixed bob's team")
+		expect(byline?.segments.at(-1)).toEqual({ text: "bob's team" })
 	})
 
 	it('remixed without an account', () => {
-		expect(partyByline({ sourceParty: { user: bob } })).toMatchObject({ kind: 'plain' })
+		const byline = partyByline({ sourceParty: { shortcode: 'abc123', user: bob } })
+		expect(byline).toMatchObject({ kind: 'plain' })
+		expect(byline?.segments).toContainEqual({ text: "bob's team", href: '/teams/abc123' })
 	})
 
-	it("remixed from a team without an account links the creator's profile", () => {
-		expect(partyByline({ user: alice, sourceParty: { user: null } })).toMatchObject({
-			kind: 'link',
-			user: alice
+	it('remixed from a team without an account links the creator and the original', () => {
+		const byline = partyByline({ user: alice, sourceParty: { shortcode: 'abc123', user: null } })
+		expect(byline).toMatchObject({ kind: 'link', user: alice })
+		expect(byline?.segments).toEqual([
+			{ text: 'alice', href: '/alice' },
+			{ text: ' remixed ' },
+			{ text: 'an anonymous team', href: '/teams/abc123' }
+		])
+	})
+
+	it('remixed between teams without accounts links the original', () => {
+		expect(partyByline({ sourceParty: { shortcode: 'abc123' } })).toEqual({
+			kind: 'plain',
+			segments: [{ text: 'Remix', href: '/teams/abc123' }]
 		})
-	})
-
-	it('remixed between teams without accounts', () => {
-		expect(partyByline({ sourceParty: {} })).toMatchObject({ kind: 'plain' })
 	})
 
 	it('using their own collection', () => {
@@ -57,7 +78,11 @@ describe('partyByline', () => {
 	})
 
 	it('by the creator alone, named', () => {
-		expect(partyByline({ user: alice })).toEqual({ kind: 'link', user: alice, text: 'alice' })
+		expect(partyByline({ user: alice })).toEqual({
+			kind: 'link',
+			user: alice,
+			segments: [{ text: 'alice', href: '/alice' }]
+		})
 	})
 
 	it('is empty without a creator or source', () => {
