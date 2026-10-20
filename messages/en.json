@@ -2111,6 +2111,7 @@
 	"db_stickers_library_empty": "No stickers match.",
 	"db_stickers_library_used": "Already a sticker",
 	"db_stickers_image_ja": "Japanese",
+	"db_stickers_image_ja_remove": "Remove Japanese image",
 	"db_stickers_save_failed": "Couldn't save the sticker.",
 	"db_stickers_reorder_failed": "Couldn't save the new order.",
 	"db_stickers_delete": "Delete sticker",

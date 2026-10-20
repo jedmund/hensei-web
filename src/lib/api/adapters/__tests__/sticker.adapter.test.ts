@@ -137,6 +137,16 @@ describe('StickerAdapter', () => {
 		expect((calls()[0]![1].body as FormData).get('language')).toBe('ja')
 	})
 
+	it('removeJapaneseImage DELETEs the image with language=ja', async () => {
+		global.fetch = mockApiResponse(apiSticker)
+
+		await adapter.removeJapaneseImage('st-1')
+
+		const [url, init] = calls()[0]!
+		expect(url).toBe('https://api.example.com/stickers/st-1/image?language=ja')
+		expect(init.method).toBe('DELETE')
+	})
+
 	it('giveSticker PUTs only the slug to the party', async () => {
 		global.fetch = mockApiResponse({ sticker: 'full-auto' })
 

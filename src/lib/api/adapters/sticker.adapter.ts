@@ -86,6 +86,15 @@ export class StickerAdapter extends BaseAdapter {
 		})
 	}
 
+	/** Removes the Japanese image, so Japanese viewers see the English one */
+	async removeJapaneseImage(id: string, options?: RequestOptions): Promise<Sticker> {
+		return this.request<Sticker>(`${BASE}/${id}/image`, {
+			...options,
+			method: 'DELETE',
+			query: { language: 'ja' }
+		})
+	}
+
 	async reorderStickers(ids: string[], options?: RequestOptions): Promise<Sticker[]> {
 		const response = await this.request<{ stickers: Sticker[] }>(`${BASE}/reorder`, {
 			...options,

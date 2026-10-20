@@ -8,6 +8,7 @@
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import ImageFileField from '$lib/components/database/ImageFileField.svelte'
 	import StickerLibraryPicker from '$lib/components/database/StickerLibraryPicker.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import type { LibrarySticker, StickerImageLanguage } from '$lib/types/api/sticker'
 
@@ -30,6 +31,8 @@
 		/** The sticker being edited (see StickerLibraryPicker) */
 		stickerId?: string | undefined
 		onPickLibrary: (entry: LibrarySticker) => void
+		/** Offers to remove the Japanese image (on saved stickers) */
+		onRemoveImageJa?: (() => void) | undefined
 	}
 
 	let {
@@ -40,7 +43,8 @@
 		onSelectImage,
 		libraryId = null,
 		stickerId,
-		onPickLibrary
+		onPickLibrary,
+		onRemoveImageJa
 	}: Props = $props()
 </script>
 
@@ -88,7 +92,15 @@
 		</div>
 		<div class="image">
 			<h3>{m.db_stickers_image_ja()}</h3>
-			<ImageFileField currentUrl={imageUrlJa} onSelect={(file) => onSelectImage(file, 'ja')} />
+			<!-- Remounted when the image changes, dropping a chosen file's preview -->
+			{#key imageUrlJa}
+				<ImageFileField currentUrl={imageUrlJa} onSelect={(file) => onSelectImage(file, 'ja')} />
+			{/key}
+			{#if imageUrlJa && onRemoveImageJa}
+				<Button variant="ghost" size="small" onclick={onRemoveImageJa}>
+					{m.db_stickers_image_ja_remove()}
+				</Button>
+			{/if}
 		</div>
 	</div>
 </DetailsContainer>

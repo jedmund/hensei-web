@@ -87,6 +87,18 @@ export function useUploadStickerImage() {
 	return createMutation(() => uploadStickerImageOptions(queryClient))
 }
 
+export function removeJapaneseImageOptions(queryClient: QueryClient) {
+	return {
+		mutationFn: ({ id }: { id: string }) => stickerAdapter.removeJapaneseImage(id),
+		onSuccess: () => invalidateCatalogue(queryClient)
+	}
+}
+
+export function useRemoveJapaneseImage() {
+	const queryClient = useQueryClient()
+	return createMutation(() => removeJapaneseImageOptions(queryClient))
+}
+
 type UploadStickerImage = {
 	mutateAsync: (variables: {
 		id: string

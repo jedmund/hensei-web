@@ -13,6 +13,7 @@
 	import StickerFormFields from '$lib/components/database/StickerFormFields.svelte'
 	import {
 		uploadImages,
+		useRemoveJapaneseImage,
 		useDeleteSticker,
 		useUpdateSticker,
 		useUploadStickerImage
@@ -44,6 +45,9 @@
 	let saveError = $state<string | null>(null)
 	// The game's sticker to take its images from instead, if picked
 	let library = $state<LibrarySticker | null>(null)
+	// Remove the Japanese image on save, unless a new one was chosen after
+	let removeJa = $state(false)
+	const removeJaMut = useRemoveJapaneseImage()
 	let confirmDeleteOpen = $state(false)
 
 	const canSave = $derived(values.meaningEn.trim() !== '' && values.meaningJp.trim() !== '')
@@ -61,6 +65,7 @@
 				}
 			})
 			await uploadImages(uploadMut, sticker.id, imageFiles)
+			if (removeJa && !imageFiles.ja) await removeJaMut.mutateAsync({ id: sticker.id })
 			goto(localizeHref('/database/stickers'))
 		},
 		m.db_stickers_save_failed(),
@@ -106,10 +111,17 @@
 		<StickerFormFields
 			bind:values
 			imageUrl={library?.imageUrl ?? sticker.imageUrl}
-			imageUrlJa={library ? library.imageUrlJa : sticker.imageUrlJa}
+			imageUrlJa={removeJa ? null : library ? library.imageUrlJa : sticker.imageUrlJa}
 			libraryId={library?.id}
 			stickerId={sticker.id}
-			onPickLibrary={(entry) => (library = entry)}
+			onPickLibrary={(entry) => {
+				library = entry
+				removeJa = false
+			}}
+			onRemoveImageJa={() => {
+				removeJa = true
+				delete imageFiles.ja
+			}}
 			slugLocked
 			onSelectImage={(file, language) => (imageFiles[language] = file)}
 		/>
