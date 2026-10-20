@@ -38,36 +38,45 @@
 	}
 </script>
 
-{#if editable}
-	<Tooltip content={m.solomonis_web_grid_brought_by_blessing()}>
-		<label class="brought-by-blessing">
-			<Checkbox
-				checked={!!character.broughtByBlessing}
-				onCheckedChange={handleChange}
-				disabled={saving}
-				size="small"
-			/>
-			<span>{m.solomonis_web_grid_brought_by_blessing_short()}</span>
-		</label>
-	</Tooltip>
-{:else if character.broughtByBlessing}
-	<Tooltip content={m.solomonis_web_grid_brought_by_blessing()}>
-		<span class="brought-by-blessing static">
-			{m.solomonis_web_grid_brought_by_blessing_short()}
-		</span>
-	</Tooltip>
+{#if editable || character.broughtByBlessing}
+	<div class="brought-by-blessing-row">
+		{#if editable}
+			<Tooltip content={m.solomonis_web_grid_brought_by_blessing()}>
+				<label class="brought-by-blessing">
+					<Checkbox
+						checked={!!character.broughtByBlessing}
+						onCheckedChange={handleChange}
+						disabled={saving}
+						size="small"
+					/>
+					<span>{m.solomonis_web_grid_brought_by_blessing_short()}</span>
+				</label>
+			</Tooltip>
+		{:else if character.broughtByBlessing}
+			<Tooltip content={m.solomonis_web_grid_brought_by_blessing()}>
+				<span class="brought-by-blessing static">
+					{m.solomonis_web_grid_brought_by_blessing_short()}
+				</span>
+			</Tooltip>
+		{/if}
+	</div>
 {/if}
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 
+	.brought-by-blessing-row {
+		display: flex;
+		justify-content: center;
+		margin-top: spacing.$unit-half;
+	}
+
 	.brought-by-blessing {
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		gap: spacing.$unit-half;
-		margin-top: spacing.$unit-half;
 		font-size: typography.$font-tiny;
 		color: var(--text-secondary);
 		white-space: nowrap;
