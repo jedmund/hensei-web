@@ -16,6 +16,8 @@ import type {
 } from '$lib/api/adapters/characterRefresh.adapter'
 import { MAX_BATCH_CHARACTERS } from '$lib/api/adapters/characterRefresh.adapter'
 import { localizedName } from '$lib/utils/locale'
+import { CharacterSeason } from '$lib/types/enums'
+import type { CharacterTypeaheadOption } from '$lib/components/ui/characterTypeahead'
 
 /** A refresh name ({en, ja}, either may be null) in the current locale */
 export function refreshName(
@@ -282,9 +284,13 @@ export function itemStatusLabel(status: RefreshItemStatus): string {
 	}
 }
 
-/** One line per batch item: the change summary, or its error. */
+/**
+ * One line per batch item: the change summary, or a localized failure line.
+ * The API's own error text is English and has no code per item yet, so the
+ * dialog shows it as a secondary line under this one.
+ */
 export function itemSummary(item: RefreshBatchItem): string | null {
-	if (item.error) return item.error
+	if (item.error || item.status === 'failed') return m.character_refresh_item_failed()
 	if (!item.refresh) return null
 	return refreshSummary(item.refresh)
 }
@@ -320,4 +326,43 @@ export function isSelectable(item: RefreshBatchItem): boolean {
 /** Database page of a batch row: style rows live under /style. */
 export function characterPath(item: Pick<RefreshBatchItem, 'granblueId' | 'styleSwap'>): string {
 	return `/database/characters/${item.granblueId}${item.styleSwap ? '/style' : ''}`
+}
+
+const SEASON_LABELS: Record<number, () => string> = {
+	[CharacterSeason.Valentine]: m.season_valentine,
+	[CharacterSeason.Formal]: m.season_formal,
+	[CharacterSeason.Summer]: m.season_summer,
+	[CharacterSeason.Halloween]: m.season_halloween,
+	[CharacterSeason.Holiday]: m.season_holiday
+}
+
+/**
+ * The words that tell a picked character from others with the same name
+ * (Eugen vs Eugen (Summer) vs Eugen (Grand)): its season and series, as the
+ * CharacterTags show them. For accessible names.
+ */
+export function variantNames(
+	option: Pick<CharacterTypeaheadOption, 'season' | 'series'> | null | undefined
+): string[] {
+	if (!option) return []
+	const names: string[] = []
+	const season = option.season ? SEASON_LABELS[option.season]?.() : undefined
+	if (season) names.push(season)
+	for (const entry of option.series ?? []) {
+		if (typeof entry !== 'object' || entry === null) continue
+		if (entry.name.en === 'Standard') continue
+		const name = localizedName(entry.name)
+		if (name !== '—' && !names.includes(name)) names.push(name)
+	}
+	return names
+}
+
+/**
+ * Outside clicks don't close the batch dialog once a refresh exists: closing
+ * drops it from view and there's no way back to it.
+ */
+export function holdsOnOutsideClick(phase: string): boolean {
+	return (
+		phase === 'starting' || phase === 'running' || phase === 'previewed' || phase === 'applying'
+	)
 }

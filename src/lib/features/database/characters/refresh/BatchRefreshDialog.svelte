@@ -16,14 +16,17 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import CharacterTypeahead from '$lib/components/ui/CharacterTypeahead.svelte'
 	import SearchOptionItem from '$lib/components/search/SearchOptionItem.svelte'
+	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import { BatchRefreshSession } from './refreshSession.svelte'
 	import {
 		characterPath,
 		failureMessage,
+		holdsOnOutsideClick,
 		isSelectable,
 		itemStatusLabel,
 		itemSummary,
-		refreshName
+		refreshName,
+		variantNames
 	} from './refresh'
 	import {
 		characterRefreshAdapter,
@@ -59,6 +62,13 @@
 
 	const phase = $derived(session?.phase ?? 'picking')
 	const picking = $derived(phase === 'picking' || phase === 'starting')
+	const finished = $derived(phase === 'applied' || phase === 'failed')
+	// Batch items carry only the plain name; the picks know season and series.
+	const pickById = $derived(new Map((session?.picks ?? []).map((pick) => [pick.id, pick])))
+
+	function holdOnOutsideClick(event: PointerEvent) {
+		if (holdsOnOutsideClick(phase)) event.preventDefault()
+	}
 
 	function handlePick(option: Parameters<BatchRefreshSession['add']>[0]) {
 		session?.add(option)
@@ -94,7 +104,7 @@
 	})
 </script>
 
-<Dialog bind:open size="small">
+<Dialog bind:open size="small" onInteractOutside={holdOnOutsideClick}>
 	<ModalHeader
 		title={m.character_refresh_batch_action()}
 		description={m.character_refresh_batch_description({ max: MAX_BATCH_CHARACTERS })}
@@ -190,25 +200,39 @@
 							{@const name = refreshName(item.name)}
 							{@const styleName = item.styleName ? refreshName(item.styleName) : null}
 							{@const summary = itemSummary(item)}
+							{@const pick = pickById.get(item.characterId)}
+							{@const fullName = [name, styleName, ...variantNames(pick)].filter(Boolean).join(' ')}
 							<li class="item {item.status}">
-								<Checkbox
-									checked={session.isSelected(item.characterId)}
-									disabled={phase !== 'previewed' || !isSelectable(item)}
-									onCheckedChange={(checked) => session?.toggle(item.characterId, checked)}
-									size="small"
-								/>
-								<div class="item-text">
-									<a
-										class="item-name"
-										href={localizeHref(characterPath(item))}
-										target="_blank"
-										rel="noopener noreferrer"
-										aria-label={m.character_refresh_batch_open({ name: styleName ?? name })}
+								<label class="item-check">
+									<Checkbox
+										checked={session.isSelected(item.characterId)}
+										disabled={phase !== 'previewed' || !isSelectable(item)}
+										onCheckedChange={(checked) => session?.toggle(item.characterId, checked)}
+										size="small"
+									/>
+									<span class="sr-only">{m.character_refresh_batch_select({ name: fullName })}</span
 									>
-										{name}{#if styleName}<span class="style-name">{styleName}</span>{/if}
-									</a>
+								</label>
+								<div class="item-text">
+									<div class="item-heading">
+										<a
+											class="item-name"
+											href={localizeHref(characterPath(item))}
+											target="_blank"
+											rel="noopener noreferrer"
+											aria-label={m.character_refresh_batch_open({ name: fullName })}
+										>
+											{name}{#if styleName}<span class="style-name">{styleName}</span>{/if}
+										</a>
+										{#if pick}
+											<CharacterTags character={pick} />
+										{/if}
+									</div>
 									{#if summary}
 										<span class="item-summary">{summary}</span>
+									{/if}
+									{#if item.error}
+										<span class="item-detail">{item.error}</span>
 									{/if}
 								</div>
 								<span class="item-status">{itemStatusLabel(item.status)}</span>
@@ -220,7 +244,16 @@
 		{/if}
 	</ModalBody>
 
-	<ModalFooter onCancel={() => (open = false)} {primaryAction} />
+	{#if finished}
+		<!-- Nothing left to do: one button, like the other read-only dialogs -->
+		<div class="done-footer">
+			<Button variant="primary" size="small" onclick={() => (open = false)}>
+				{m.action_done()}
+			</Button>
+		</div>
+	{:else}
+		<ModalFooter onCancel={() => (open = false)} {primaryAction} />
+	{/if}
 </Dialog>
 
 <style lang="scss">
@@ -305,6 +338,40 @@
 
 	.item.failed .item-summary {
 		color: var(--danger);
+	}
+
+	.item-detail {
+		font-size: typography.$font-tiny;
+		color: var(--text-tertiary);
+	}
+
+	.item-heading {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: spacing.$unit-half;
+	}
+
+	.item-check {
+		display: flex;
+	}
+
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	.done-footer {
+		display: flex;
+		justify-content: flex-end;
+		padding: spacing.$unit-2x;
 	}
 
 	.item-status {

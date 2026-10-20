@@ -8,6 +8,8 @@ import { API } from '$lib/api/adapters/__tests__/fixtures/characterRefresh.fixtu
 import {
 	FIELD_LABELS,
 	characterPath,
+	holdsOnOutsideClick,
+	variantNames,
 	entryLabels,
 	countRows,
 	defaultSelection,
@@ -182,7 +184,7 @@ describe('batch helpers', () => {
 		expect(previewed.items.map(itemSummary)).toEqual([
 			'Skills changed: 1',
 			'No changes',
-			'The wiki page Lecia could not be fetched (502)'
+			"Couldn't refresh this character"
 		])
 	})
 
@@ -199,5 +201,31 @@ describe('batch helpers', () => {
 	it('links style rows to their style page', () => {
 		expect(characterPath(previewed.items[0]!)).toBe('/database/characters/3040377000')
 		expect(characterPath(previewed.items[1]!)).toBe('/database/characters/3040377000/style')
+	})
+})
+
+describe('variantNames', () => {
+	it('names the season and non-standard series', () => {
+		expect(
+			variantNames({
+				season: 3,
+				series: [
+					{ id: 's', slug: 'standard', name: { en: 'Standard', ja: '恒常' } },
+					{ id: 'g', slug: 'grand', name: { en: 'Grand', ja: 'リミテッド' } }
+				]
+			})
+		).toEqual(['Summer', 'Grand'])
+		expect(variantNames({ season: null, series: null })).toEqual([])
+		expect(variantNames(undefined)).toEqual([])
+	})
+})
+
+describe('holdsOnOutsideClick', () => {
+	it('holds once a refresh exists', () => {
+		expect(holdsOnOutsideClick('picking')).toBe(false)
+		expect(holdsOnOutsideClick('running')).toBe(true)
+		expect(holdsOnOutsideClick('previewed')).toBe(true)
+		expect(holdsOnOutsideClick('applying')).toBe(true)
+		expect(holdsOnOutsideClick('applied')).toBe(false)
 	})
 })
