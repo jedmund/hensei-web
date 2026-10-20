@@ -86,7 +86,7 @@
 					{@render indicator()}
 				{/if}
 				<h2 class:empty={!party.name}>{party.name || m.grid_untitled()}</h2>
-				<StickerLabels labels={party.labels} mySticker={party.mySticker} size={20} />
+				<StickerLabels labels={party.labels} mySticker={party.mySticker} size={32} />
 			</div>
 			{#if showUser}
 				{#if party.user}
@@ -290,6 +290,12 @@
 			align-items: center;
 			gap: spacing.$unit-half;
 			min-width: 0;
+
+			// Taller than the name, so they overhang the row rather than grow it,
+			// keeping cards with and without stickers the same height
+			:global(.sticker-labels) {
+				margin-block: -6px;
+			}
 		}
 
 		h2 {
