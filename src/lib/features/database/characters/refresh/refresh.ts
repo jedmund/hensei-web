@@ -227,10 +227,14 @@ export function failureMessage(failure: RefreshFailure, message?: string | null)
 			return m.character_refresh_too_many({ max: MAX_BATCH_CHARACTERS })
 		case 'rate_limited':
 			return m.character_refresh_rate_limited()
-		case 'forbidden':
-			return m.character_refresh_forbidden()
+		case 'invalid_characters':
+			return m.character_refresh_invalid_characters()
+		case 'unauthorized':
+			return m.character_refresh_unauthorized()
 		case 'not_found':
 			return m.character_refresh_not_found()
+		case 'not_previewed':
+			return m.character_refresh_not_previewed()
 		default:
 			return m.character_refresh_error({ message: message || '—' })
 	}

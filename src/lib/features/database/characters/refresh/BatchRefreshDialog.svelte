@@ -104,7 +104,11 @@
 		{#if session}
 			<div class="batch-body">
 				{#if session.failure}
-					<Notice variant={session.failure === 'rate_limited' ? 'yellow' : 'red'}>
+					<Notice
+						variant={session.failure === 'rate_limited' || session.failure === 'not_previewed'
+							? 'yellow'
+							: 'red'}
+					>
 						<div class="notice-row">
 							<span>{failureMessage(session.failure, session.failureDetail)}</span>
 							{#if session.pollStopped}

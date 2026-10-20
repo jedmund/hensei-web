@@ -230,9 +230,47 @@ describe('CharacterRefreshAdapter', () => {
 		})
 	})
 
+	describe('API error codes (D24)', () => {
+		it('a non-editor gets 401', async () => {
+			global.fetch = mockApiError(401, { error: 'Unauthorized' })
+
+			const error = await adapter.preview(CHARACTER_ID).catch((e: unknown) => e)
+
+			expect(refreshFailure(error)).toBe('unauthorized')
+		})
+
+		it('applying a batch that is not previewed is a 409', async () => {
+			global.fetch = mockApiError(409, { error: 'not_previewed' })
+
+			const error = await adapter.applyBatch('rf_x', ['a']).catch((e: unknown) => e)
+
+			expect(refreshFailure(error)).toBe('not_previewed')
+		})
+
+		it('unknown ids are invalid_characters', async () => {
+			global.fetch = mockApiError(422, { error: 'invalid_characters', message: 'No such ids' })
+
+			const error = await adapter.createBatch(['nope']).catch((e: unknown) => e)
+
+			expect(refreshFailure(error)).toBe('invalid_characters')
+		})
+
+		it('a build refusal keeps its message', async () => {
+			const refusal = 'The build made no skills for this character.'
+			global.fetch = mockApiError(422, { error: refusal, message: refusal })
+
+			const error = await adapter.preview(CHARACTER_ID).catch((e: unknown) => e)
+
+			expect(refreshFailure(error)).toBe('other')
+			expect(error).toMatchObject({ message: refusal })
+		})
+	})
+
 	describe('refreshFailure', () => {
 		it('classifies by status', () => {
-			expect(refreshFailure({ status: 403 })).toBe('forbidden')
+			expect(refreshFailure({ status: 401 })).toBe('unauthorized')
+			expect(refreshFailure({ status: 403 })).toBe('unauthorized')
+			expect(refreshFailure({ status: 409 })).toBe('not_previewed')
 			expect(refreshFailure({ status: 404 })).toBe('not_found')
 			expect(refreshFailure({ status: 500 })).toBe('other')
 			expect(refreshFailure(new Error('boom'))).toBe('other')

@@ -243,6 +243,8 @@ export class BatchRefreshSession {
 		} catch (error) {
 			this.#applying = false
 			this.#fail(error)
+			// The refresh moved on (still running, or already applied): show where it is.
+			if (this.failure === 'not_previewed' && !this.#disposed) void this.#poll(batch.id)
 		}
 	}
 

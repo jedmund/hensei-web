@@ -98,11 +98,23 @@ export interface RefreshBatch {
 	items: RefreshBatchItem[]
 }
 
-/** Error codes the API puts in a 422 body's `error` (D11) */
-export type RefreshErrorCode = 'preview_expired' | 'too_many_characters'
+/** Error codes the API puts in a 422 body's `error` (D11, D24) */
+export type RefreshErrorCode = 'preview_expired' | 'too_many_characters' | 'invalid_characters'
 
-/** What went wrong with a refresh request, for the dialog to say so */
-export type RefreshFailure = RefreshErrorCode | 'rate_limited' | 'forbidden' | 'not_found' | 'other'
+const REFRESH_ERROR_CODES: readonly string[] = [
+	'preview_expired',
+	'too_many_characters',
+	'invalid_characters'
+]
+
+/**
+ * What went wrong with a refresh request, for the dialog to say so.
+ * - unauthorized: 401, the session expired or isn't an editor's (ensure_editor_role);
+ * - not_previewed: 409, a batch apply before the preview finished or after it was applied;
+ * - other: anything else, including a 422 build refusal, whose `message` is shown.
+ */
+export type RefreshFailure =
+	RefreshErrorCode | 'rate_limited' | 'unauthorized' | 'not_found' | 'not_previewed' | 'other'
 
 /**
  * Classifies a rejected refresh request. Adapter errors arrive as plain
@@ -112,13 +124,17 @@ export type RefreshFailure = RefreshErrorCode | 'rate_limited' | 'forbidden' | '
 export function refreshFailure(error: unknown): RefreshFailure {
 	const status = (error as { status?: unknown } | null)?.status
 	if (status === 429) return 'rate_limited'
-	if (status === 403) return 'forbidden'
+	// 403 isn't sent today (ensure_editor_role answers 401); treated the same.
+	if (status === 401 || status === 403) return 'unauthorized'
 	if (status === 404) return 'not_found'
+	if (status === 409) return 'not_previewed'
 	if (status === 422) {
 		let node: unknown = error
 		for (let depth = 0; node && typeof node === 'object' && depth < 5; depth++) {
 			const code = (node as { error?: unknown }).error
-			if (code === 'preview_expired' || code === 'too_many_characters') return code
+			if (typeof code === 'string' && REFRESH_ERROR_CODES.includes(code)) {
+				return code as RefreshErrorCode
+			}
 			node = (node as { details?: unknown }).details
 		}
 	}

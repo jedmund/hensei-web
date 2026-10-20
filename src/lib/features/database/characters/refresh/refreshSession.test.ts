@@ -144,14 +144,25 @@ describe('CharacterRefreshSession', () => {
 		expect(session.canApply).toBe(true)
 	})
 
-	it('reports a failed preview', async () => {
-		replies(fail(403, { error: 'Forbidden' }))
+	it('reports a non-editor (401)', async () => {
+		replies(fail(401, { error: 'Unauthorized' }))
 		const session = new CharacterRefreshSession(ID, adapter)
 
 		await session.preview()
 
 		expect(session.phase).toBe('failed')
-		expect(session.failure).toBe('forbidden')
+		expect(session.failure).toBe('unauthorized')
+	})
+
+	it("shows a build refusal's message", async () => {
+		const refusal = 'The build made no skills for this character.'
+		replies(fail(422, { error: refusal, message: refusal }))
+		const session = new CharacterRefreshSession(ID, adapter)
+
+		await session.preview()
+
+		expect(session.failure).toBe('other')
+		expect(session.failureDetail).toBe(refusal)
 	})
 
 	it('ignores a preview that finishes after reset', async () => {
@@ -284,6 +295,36 @@ describe('BatchRefreshSession', () => {
 		expect(timer.count).toBe(0)
 		expect(onApplied).toHaveBeenCalledWith(1)
 		expect(session.batch?.items.map((i) => i.status)).toEqual(['applied', 'skipped', 'failed'])
+	})
+
+	it('shows where the refresh is when apply gets 409 not_previewed', async () => {
+		replies(
+			ok(API.batchCreated.body),
+			ok(API.batchPreviewed),
+			fail(409, { error: 'not_previewed' }),
+			ok(API.batchApplied)
+		)
+		const session = new BatchRefreshSession(adapter, { schedule: manualSchedule().schedule })
+		session.add(pick('x'))
+		await session.start()
+
+		await session.apply()
+		await new Promise((r) => setTimeout(r, 0))
+
+		expect(session.failure).toBe('not_previewed')
+		expect(session.phase).toBe('applied')
+		expect(session.canApply).toBe(false)
+	})
+
+	it('reports invalid characters and stays on the picker', async () => {
+		replies(fail(422, { error: 'invalid_characters', message: 'No such ids' }))
+		const session = new BatchRefreshSession(adapter)
+		session.add(pick('x'))
+
+		await session.start()
+
+		expect(session.failure).toBe('invalid_characters')
+		expect(session.phase).toBe('picking')
 	})
 
 	it('reports a failed refresh', async () => {
