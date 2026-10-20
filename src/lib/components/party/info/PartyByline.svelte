@@ -5,8 +5,7 @@
 	 */
 	import * as m from '$lib/paraglide/messages'
 	import AvatarPair from '$lib/components/ui/AvatarPair.svelte'
-	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
-	import { localizeHref } from '$lib/paraglide/runtime'
+	import UserLink from '$lib/components/ui/UserLink.svelte'
 	import { formatRelativeTime } from '$lib/utils/date'
 	import { PartyVisibility } from '$lib/types/visibility'
 	import { partyByline, type BylineParty } from './partyByline'
@@ -48,23 +47,7 @@
 	</div>
 {:else if byline?.kind === 'link'}
 	<div class="creator-line">
-		<a href={localizeHref(`/${byline.user.username}`)} class="creator-link">
-			<div class="avatar-wrapper {byline.user.avatar?.element || ''}">
-				{#if byline.user.avatar?.picture}
-					<img
-						class="avatar"
-						alt={`Avatar of ${byline.user.username}`}
-						src={getAvatarSrc(byline.user.avatar.picture)}
-						srcset={getAvatarSrcSet(byline.user.avatar.picture)}
-						width="24"
-						height="24"
-					/>
-				{:else}
-					<div class="avatar-placeholder" aria-hidden="true"></div>
-				{/if}
-			</div>
-			<span class="username">{byline.text}</span>
-		</a>
+		<UserLink user={byline.user} label={byline.text} />
 		{@render meta()}
 	</div>
 {:else if byline?.kind === 'plain'}
@@ -82,49 +65,6 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 0;
-	}
-
-	.creator-link {
-		display: inline-flex;
-		align-items: center;
-		gap: $unit-half;
-		text-decoration: none;
-		color: var(--text-secondary);
-		width: fit-content;
-
-		&:hover {
-			color: var(--text-primary);
-
-			.username {
-				text-decoration: underline;
-			}
-		}
-	}
-
-	.avatar-wrapper {
-		width: 24px;
-		height: 24px;
-		border-radius: 50%;
-		overflow: hidden;
-		background: var(--button-bg);
-		flex-shrink: 0;
-	}
-
-	.avatar {
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-	}
-
-	.avatar-placeholder {
-		width: 100%;
-		height: 100%;
-		background: var(--button-bg);
-	}
-
-	.username {
-		font-size: $font-small;
-		font-weight: $medium;
 	}
 
 	.updated-time,
