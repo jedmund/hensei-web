@@ -34,6 +34,7 @@
 	import PartySegmentedControl from '$lib/components/party/PartySegmentedControl.svelte'
 	import { GridType } from '$lib/types/enums'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import PartyInfoGrid from '$lib/components/party/info/PartyInfoGrid.svelte'
 	import StickerPicker from '$lib/components/stickers/StickerPicker.svelte'
 	import { setStickerStage } from '$lib/components/stickers/stickerStage.svelte'
@@ -522,14 +523,17 @@
 			>
 				{#snippet menu()}
 					{#if !isNew}
-						<Button
-							variant="secondary"
-							size="small"
-							onclick={actions.remixParty}
-							disabled={actions.loading}
-						>
-							{m.party_remix()}
-						</Button>
+						<Tooltip content={m.party_remix()}>
+							<Button
+								variant="ghost"
+								size="small"
+								iconOnly
+								icon="remix"
+								aria-label={m.party_remix()}
+								onclick={actions.remixParty}
+								disabled={actions.loading}
+							/>
+						</Tooltip>
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger>
 								{#snippet child({ props })}

@@ -58,9 +58,16 @@
 		<Button variant="secondary" size="small" onclick={onOpenEdit}>{m.action_edit()}</Button>
 	{/if}
 	{#if onOpenCalculator}
-		<Button variant="secondary" size="small" onclick={onOpenCalculator}>
-			{m.calculator_open_short()}
-		</Button>
+		<Tooltip content={m.calculator_open_short()}>
+			<Button
+				variant="ghost"
+				size="small"
+				iconOnly
+				icon="calculator"
+				aria-label={m.calculator_open_short()}
+				onclick={onOpenCalculator}
+			/>
+		</Tooltip>
 	{/if}
 	{#if stickerPicker}
 		{@render stickerPicker()}

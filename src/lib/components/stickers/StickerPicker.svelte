@@ -12,6 +12,7 @@
 	import { createQuery } from '@tanstack/svelte-query'
 	import { page } from '$app/stores'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import SlidingPages from '$lib/components/ui/SlidingPages.svelte'
 	import StickerImage, { STICKER_EFFECTS } from './StickerImage.svelte'
 	import StickerRemoveButton from './StickerRemoveButton.svelte'
@@ -126,9 +127,17 @@
 	<DropdownMenu.Root bind:open>
 		<DropdownMenu.Trigger>
 			{#snippet child({ props })}
-				<Button {...props} variant="secondary" size="small" disabled={busy}>
-					{m.sticker_add()}
-				</Button>
+				<Tooltip content={m.sticker_add()}>
+					<Button
+						{...props}
+						variant="ghost"
+						size="small"
+						iconOnly
+						icon="sticker"
+						aria-label={m.sticker_add()}
+						disabled={busy}
+					/>
+				</Tooltip>
 			{/snippet}
 		</DropdownMenu.Trigger>
 
