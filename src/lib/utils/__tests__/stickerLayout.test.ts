@@ -18,16 +18,31 @@ const NO_INSETS = { left: 0, right: 0, bottom: 0 }
 
 describe('areaHeight', () => {
 	it('is one row before the width is known', () => {
-		expect(areaHeight(0, 21, SIZE)).toBe(100)
+		expect(areaHeight(0, 21, 21, SIZE)).toBe(100)
 	})
 
 	it('is one row when every sticker fits side by side', () => {
-		expect(areaHeight(800, 5, SIZE)).toBe(100)
+		expect(areaHeight(800, 5, 5, SIZE)).toBe(100)
 	})
 
-	it('grows with the rows a popular team needs', () => {
+	it('has room for every row of unplaced stickers', () => {
+		const width = 787
+		const count = 56
+		const height = areaHeight(width, count, count, SIZE)
+		const layout = layoutStickers({
+			entries: Array.from({ length: count }, (_, i) => ({ key: `${i}`, placement: null })),
+			width,
+			height,
+			size: SIZE,
+			bounds: stickerBounds(width, height, NO_INSETS, SIZE)
+		})
+		const bottom = Math.max(...[...layout.values()].map((item) => item.top + SIZE))
+		expect(bottom).toBeLessThanOrEqual(height - ROW_TOP)
+	})
+
+	it('has room for a popular team packed at the minimum distance', () => {
 		// 787px fits 13 stickers per row at the minimum distance; 21 need two
-		expect(areaHeight(787, 21, SIZE)).toBe(135)
+		expect(areaHeight(787, 21, 0, SIZE)).toBe(135)
 	})
 })
 

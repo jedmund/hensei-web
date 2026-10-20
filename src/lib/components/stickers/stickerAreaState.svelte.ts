@@ -81,7 +81,15 @@ export class StickerAreaState {
 		return (placed ?? []).filter((given) => !given.mine).length + (mySticker ? 1 : 0)
 	})
 
-	readonly height = $derived(areaHeight(this.width, this.count, this.size))
+	// Lines up unplaced stickers; reads placements, declared below
+	readonly height = $derived.by(() =>
+		areaHeight(
+			this.width,
+			this.count,
+			Math.max(0, this.count - Object.keys(this.placements).length),
+			this.size
+		)
+	)
 
 	readonly bounds = $derived(stickerBounds(this.width, this.height, this.insets, this.size))
 

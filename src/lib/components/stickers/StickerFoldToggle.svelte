@@ -26,5 +26,9 @@
 <style lang="scss">
 	.fold {
 		margin-top: 4px;
+		// Over any sticker hanging past the area (which is z-index 2), so it
+		// can always be clicked
+		position: relative;
+		z-index: 3;
 	}
 </style>

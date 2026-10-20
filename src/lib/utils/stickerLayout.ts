@@ -69,19 +69,29 @@ export function minDistance(size: number): number {
 	return size * MIN_DISTANCE_RATIO
 }
 
+/** How many unplaced stickers line up in one row */
+export function stickersPerRow(width: number, size: number): number {
+	return Math.max(1, Math.floor(width / (size + ROW_GAP)))
+}
+
 /**
- * The area's height for `count` stickers: one row's room, taller when more
- * stickers than fit side by side at the minimum distance (a narrow screen,
- * or a popular team). The width is only known in the browser: until then
- * (the server render) it's one row, which is right for most teams.
+ * The area's height: one row's room, and taller for whichever needs more:
+ * all `count` stickers packed at the minimum distance (a narrow screen, or
+ * a popular team), or the rows the `unplaced` ones line up in. Placed
+ * stickers aren't counted on their own: they were dropped inside the area,
+ * and growing it to fit them would let each drop in the overhang push it
+ * further. The width is only known in the browser: until then (the server
+ * render) it's one row, which is right for most teams.
  */
-export function areaHeight(width: number, count: number, size: number): number {
+export function areaHeight(width: number, count: number, unplaced: number, size: number): number {
 	const oneRow = size + ONE_ROW_ROOM
 	if (width === 0) return oneRow
 	const distance = minDistance(size)
-	const perRow = Math.max(1, Math.floor(width / distance))
-	const rows = Math.ceil(count / perRow)
-	return Math.max(oneRow, Math.round((rows - 1) * distance * ROW_STEP_RATIO + size + ROWS_ROOM))
+	const packedRows = Math.ceil(count / Math.max(1, Math.floor(width / distance)))
+	const packed = Math.round((packedRows - 1) * distance * ROW_STEP_RATIO + size + ROWS_ROOM)
+	const lineRows = Math.ceil(unplaced / stickersPerRow(width, size))
+	const lined = lineRows > 0 ? ROW_TOP * 2 + lineRows * (size + ROW_GAP) - ROW_GAP : 0
+	return Math.max(oneRow, packed, lined)
 }
 
 /** Stickers may hang half their size past the card's edges, but never
@@ -152,7 +162,7 @@ export function layoutStickers({
 	excluded = null
 }: LayoutInput): Map<string, LayoutItem> {
 	const distanceMin = minDistance(size)
-	const perRow = Math.max(1, Math.floor(width / (size + ROW_GAP)))
+	const perRow = stickersPerRow(width, size)
 	let slot = 0
 	const items: LayoutItem[] = entries.map(({ key, placement }) => {
 		if (placement) {
