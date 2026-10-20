@@ -270,11 +270,16 @@ export function itemStatusLabel(status: RefreshItemStatus): string {
 export function itemSummary(item: RefreshBatchItem): string | null {
 	if (item.error) return item.error
 	if (!item.refresh) return null
-	switch (refreshOutcome(item.refresh)) {
+	return refreshSummary(item.refresh)
+}
+
+/** What a refresh changes (or changed), in one line. */
+export function refreshSummary(result: CharacterRefreshResult): string {
+	switch (refreshOutcome(result)) {
 		case 'changes': {
-			const skills = new Set(item.refresh.changes.map((c) => `${c.kind}:${c.position}`)).size
+			const skills = new Set(result.changes.map((c) => `${c.kind}:${c.position}`)).size
 			if (skills > 0) return m.character_refresh_summary_changes({ count: skills })
-			return countRows(item.refresh.counts)
+			return countRows(result.counts)
 				.map((row) => `${row.label}: ${row.parts.join(', ')}`)
 				.join('; ')
 		}

@@ -2097,7 +2097,7 @@
 	"character_refresh_button": "Wikiから更新",
 	"character_refresh_more_actions": "その他の操作",
 	"character_refresh_reparse": "保存済みテキストを再解析",
-	"character_refresh_reparse_done": "保存済みのWikiテキストから再解析しました",
+	"character_refresh_reparse_done": "保存済みのWikiテキストから再解析しました: {summary}",
 	"character_refresh_title": "Wikiから更新",
 	"character_refresh_description": "最新のWikiテキストを取得して変更内容を表示します。適用するまで保存されません。",
 	"character_refresh_include_jp": "日本語Wikiも取得",

@@ -6,7 +6,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import CharacterRefreshDialog from './CharacterRefreshDialog.svelte'
-	import { failureMessage, refreshName } from './refresh'
+	import { failureMessage, refreshName, refreshSummary } from './refresh'
 	import {
 		characterRefreshAdapter,
 		refreshFailure
@@ -31,8 +31,8 @@
 	async function handleReparse() {
 		isReparsing = true
 		try {
-			await characterRefreshAdapter.reparse(characterId)
-			toast.success(m.character_refresh_reparse_done())
+			const { refresh } = await characterRefreshAdapter.reparse(characterId)
+			toast.success(m.character_refresh_reparse_done({ summary: refreshSummary(refresh) }))
 			onRefreshed()
 		} catch (error) {
 			const message = (error as { message?: unknown } | null)?.message

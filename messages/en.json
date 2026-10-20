@@ -2125,7 +2125,7 @@
 	"character_refresh_button": "Refresh from wiki",
 	"character_refresh_more_actions": "More actions",
 	"character_refresh_reparse": "Re-parse stored text",
-	"character_refresh_reparse_done": "Re-parsed from the stored wikitext",
+	"character_refresh_reparse_done": "Re-parsed from the stored wikitext: {summary}",
 	"character_refresh_title": "Refresh from wiki",
 	"character_refresh_description": "Fetches the current wikitext and shows what would change. Nothing is saved until you apply.",
 	"character_refresh_include_jp": "Include Japanese wiki",

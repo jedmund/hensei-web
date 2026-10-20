@@ -14,6 +14,7 @@ import {
 	groupChanges,
 	itemSummary,
 	refreshOutcome,
+	refreshSummary,
 	wikiState
 } from './refresh'
 
@@ -132,6 +133,12 @@ describe('batch helpers', () => {
 			'No changes',
 			'The wiki page Lecia could not be fetched (502)'
 		])
+	})
+
+	it('summarizes a plain re-parse (EN not fetched, no fetched_at)', () => {
+		const reparsed = { ...changes, wikiChanged: false, wikiJpChanged: null, fetchedAt: null }
+		expect(refreshSummary(reparsed)).toBe('Skills changed: 4')
+		expect(refreshSummary({ ...noChanges, fetchedAt: null })).toBe('No changes')
 	})
 
 	it('ticks only previewed items that change something', () => {
