@@ -2192,5 +2192,9 @@
 	"character_refresh_batch_select": "{name}を適用",
 	"character_refresh_item_failed": "このキャラクターを更新できませんでした",
 	"character_refresh_fetch_wiki": "Wikiを取得",
-	"character_refresh_fetching_wiki": "取得中…"
+	"character_refresh_fetching_wiki": "取得中…",
+	"character_refresh_item_fetch_failed": "Wikiページを取得できませんでした",
+	"character_refresh_item_fetch_failed_status": "Wikiページを取得できませんでした（HTTP {status}）",
+	"character_refresh_item_build_refused": "このページからスキルを作成できませんでした",
+	"character_refresh_item_unexpected": "このキャラクターの更新中にエラーが発生しました"
 }

@@ -1,7 +1,8 @@
 /**
  * Contract C6 example responses (snake_case, as the API emits them).
  * Copied from lanes/board/fixtures/refresh/ (D11, D13). `reparseApplied.character`
- * is a placeholder there; tests substitute a character.
+ * is a placeholder there; tests substitute a character. Failed items carry
+ * error_code / error_status (D28), added here ahead of the board fixtures.
  */
 
 export const API = {
@@ -271,6 +272,8 @@ export const API = {
 				style_name: null,
 				status: 'failed',
 				error: 'The wiki page Lecia could not be fetched (502)',
+				error_code: 'wiki_fetch_failed',
+				error_status: 502,
 				refresh: null
 			}
 		]
@@ -309,6 +312,8 @@ export const API = {
 				style_name: null,
 				status: 'failed',
 				error: 'The wiki page Lecia could not be fetched (502)',
+				error_code: 'wiki_fetch_failed',
+				error_status: 502,
 				refresh: null
 			}
 		]

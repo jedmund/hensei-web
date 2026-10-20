@@ -77,6 +77,9 @@ export type RefreshBatchStatus =
 export type RefreshItemStatus =
 	'queued' | 'fetching' | 'previewed' | 'applying' | 'applied' | 'skipped' | 'failed'
 
+/** Why a batch item failed (D28); null when it didn't */
+export type RefreshItemErrorCode = 'wiki_fetch_failed' | 'build_refused' | 'unexpected'
+
 export interface RefreshBatchItem {
 	characterId: string
 	/** With styleSwap, builds the row's database link (D13) */
@@ -86,7 +89,11 @@ export interface RefreshBatchItem {
 	/** Set on a style row so it can be told apart from its base */
 	styleName: LocalizedName | null
 	status: RefreshItemStatus
+	/** English detail from the API; shown under the localized line */
 	error: string | null
+	errorCode?: RefreshItemErrorCode | null
+	/** The wiki's HTTP status for wiki_fetch_failed; null on a network error */
+	errorStatus?: number | null
 	refresh: CharacterRefreshResult | null
 }
 

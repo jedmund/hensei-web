@@ -286,11 +286,11 @@ export function itemStatusLabel(status: RefreshItemStatus): string {
 
 /**
  * One line per batch item: the change summary, or a localized failure line.
- * The API's own error text is English and has no code per item yet, so the
- * dialog shows it as a secondary line under this one.
+ * The API's own error text is English, so the dialog shows it as a secondary
+ * line under this one.
  */
 export function itemSummary(item: RefreshBatchItem): string | null {
-	if (item.error || item.status === 'failed') return m.character_refresh_item_failed()
+	if (item.error || item.errorCode || item.status === 'failed') return itemFailure(item)
 	if (!item.refresh) return null
 	return refreshSummary(item.refresh)
 }
@@ -309,6 +309,22 @@ export function refreshSummary(result: CharacterRefreshResult): string {
 			return m.character_refresh_summary_text_only()
 		default:
 			return m.character_refresh_summary_none()
+	}
+}
+
+/** A failed item's line, by the API's error code (D28); a generic line for none or an unknown one. */
+export function itemFailure(item: Pick<RefreshBatchItem, 'errorCode' | 'errorStatus'>): string {
+	switch (item.errorCode) {
+		case 'wiki_fetch_failed':
+			return item.errorStatus
+				? m.character_refresh_item_fetch_failed_status({ status: item.errorStatus })
+				: m.character_refresh_item_fetch_failed()
+		case 'build_refused':
+			return m.character_refresh_item_build_refused()
+		case 'unexpected':
+			return m.character_refresh_item_unexpected()
+		default:
+			return m.character_refresh_item_failed()
 	}
 }
 

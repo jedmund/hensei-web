@@ -9,6 +9,7 @@ import {
 	FIELD_LABELS,
 	characterPath,
 	holdsOnOutsideClick,
+	itemFailure,
 	variantNames,
 	entryLabels,
 	countRows,
@@ -184,8 +185,19 @@ describe('batch helpers', () => {
 		expect(previewed.items.map(itemSummary)).toEqual([
 			'Skills changed: 1',
 			'No changes',
-			"Couldn't refresh this character"
+			"The wiki page couldn't be fetched (HTTP 502)"
 		])
+	})
+
+	it('localizes each item error code, with a generic line otherwise', () => {
+		const line = (errorCode: unknown, errorStatus: number | null = null) =>
+			itemFailure({ errorCode, errorStatus } as Parameters<typeof itemFailure>[0])
+		expect(line('wiki_fetch_failed', 404)).toBe("The wiki page couldn't be fetched (HTTP 404)")
+		expect(line('wiki_fetch_failed')).toBe("The wiki page couldn't be fetched")
+		expect(line('build_refused')).toBe('No skills could be built from this page')
+		expect(line('unexpected')).toBe('Something went wrong refreshing this character')
+		expect(line(null)).toBe("Couldn't refresh this character")
+		expect(line('something_new')).toBe("Couldn't refresh this character")
 	})
 
 	it('summarizes a plain re-parse (EN not fetched, no fetched_at)', () => {

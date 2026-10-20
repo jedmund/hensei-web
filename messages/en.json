@@ -2220,5 +2220,9 @@
 	"character_refresh_batch_select": "Apply {name}",
 	"character_refresh_item_failed": "Couldn't refresh this character",
 	"character_refresh_fetch_wiki": "Fetch Wiki",
-	"character_refresh_fetching_wiki": "Fetching…"
+	"character_refresh_fetching_wiki": "Fetching…",
+	"character_refresh_item_fetch_failed": "The wiki page couldn't be fetched",
+	"character_refresh_item_fetch_failed_status": "The wiki page couldn't be fetched (HTTP {status})",
+	"character_refresh_item_build_refused": "No skills could be built from this page",
+	"character_refresh_item_unexpected": "Something went wrong refreshing this character"
 }

@@ -208,7 +208,12 @@ describe('CharacterRefreshAdapter', () => {
 			})
 			expect(batch.items[0]!.granblueId).toBe('3040377000')
 			expect(batch.items[0]!.refresh?.counts.versionsUpdated).toBe(2)
-			expect(batch.items[2]).toMatchObject({ status: 'failed', refresh: null })
+			expect(batch.items[2]).toMatchObject({
+				status: 'failed',
+				errorCode: 'wiki_fetch_failed',
+				errorStatus: 502,
+				refresh: null
+			})
 		})
 
 		it('applyBatch POSTs the chosen row ids', async () => {
