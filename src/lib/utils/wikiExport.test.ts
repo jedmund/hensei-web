@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { partyToWikiText } from './wikiExport'
 import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
-import type { WeaponKey } from '$lib/types/api/entities'
+import type { WeaponKey, BulletLoadout } from '$lib/types/api/entities'
 
 const name = (en: string) => ({ en, ja: en })
 
@@ -207,6 +207,25 @@ describe('partyToWikiText', () => {
 		expect(line(text, 's1')).toBe('|s1=Agni|us1=4')
 		expect(line(text, 'sub1')).toBe('|sub1=Belial')
 		expect(line(text, 'quick')).toBe('|quick=main')
+	})
+
+	it('writes mainhand bullets by full name, keeping empty slots', () => {
+		const bullet = (en: string) => ({ name: name(en) }) as BulletLoadout['bullet']
+		const mainhand = weapon(-1, 'Hexachromatic Gun', {
+			bullets: [
+				{ position: 0, bullet: bullet('Iron Bullet V') },
+				{ position: 2, bullet: bullet('Chaser Shell') }
+			]
+		})
+		const text = partyToWikiText(
+			party({ job: { name: name('Soldier') } as Party['job'], weapons: [mainhand] })
+		)
+		expect(line(text, 'class')).toBe('|class=Soldier|bullets=Iron Bullet V,,Chaser Shell')
+	})
+
+	it('omits bullets when the mainhand has none', () => {
+		const text = partyToWikiText(party({ weapons: [weapon(-1, 'Ixaba', { bullets: [] })] }))
+		expect(line(text, 'class')).toBe('|class=')
 	})
 
 	it('adds the extra character and weapon slots only when used', () => {
