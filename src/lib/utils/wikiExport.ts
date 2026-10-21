@@ -1,4 +1,10 @@
-import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
+import type {
+	Party,
+	GridCharacter,
+	GridWeapon,
+	GridSummon,
+	Substitution
+} from '$lib/types/api/party'
 import type { WeaponKey } from '$lib/types/api/entities'
 import { ACCESSORY_TYPES } from '$lib/utils/jobAccessoryUtils'
 
@@ -20,6 +26,7 @@ import { ACCESSORY_TYPES } from '$lib/utils/jobAccessoryUtils'
  *   wiki has one.
  * - Opus, Ultima, Draconic, Destroyer and Class Champion keys are written once
  *   per team (`|opus=skill,stamina`).
+ * - Substitutes go in the swap bubble as `{{itm|Page}}` links, one per line.
  */
 
 /**
@@ -103,6 +110,29 @@ const WEAPON_AWAKENINGS: Record<string, string> = {
 	'weapon-skill': 'skill',
 	'weapon-heal': 'heal',
 	'weapon-multi': 'multiattack'
+}
+
+/** AX modifier slug → the Template:Richitm `ax` value. Other AX skills have no icon. */
+const AX_VALUES: Record<string, string> = {
+	ax_atk: 'atk',
+	ax_def: 'def',
+	ax_hp: 'hp',
+	ax_ca_dmg: 'ca',
+	ax_multiattack: 'ma',
+	ax_exp: 'exp',
+	ax_rupie: 'rupie'
+}
+
+/** Befoulment modifier slug → the Template:Richitm `bf` value. */
+const BEFOULMENT_VALUES: Record<string, string> = {
+	befoul_atk_down: 'atk',
+	befoul_def_down: 'def',
+	befoul_hp_down: 'hp',
+	befoul_ca_dmg_down: 'ca',
+	befoul_da_ta_down: 'ma',
+	befoul_ability_dmg_down: 'skill',
+	befoul_dot: 'turn dmg',
+	befoul_debuff_down: 'dsr'
 }
 
 /**
@@ -210,6 +240,33 @@ function uncapValue(level: number): string {
 	return level > 5 ? `t${level - 5}` : `${level}`
 }
 
+/**
+ * Full Auto toggles → the 1-4 ability numbers turned off, concatenated as
+ * Template:Team/DisabledSkills reads them (`13`). Keys are 0-based slots.
+ */
+function skillsOff(
+	fullAutoSkills: Record<string, boolean> | undefined,
+	include: (slot: number) => boolean = () => true
+): string {
+	return [0, 1, 2, 3]
+		.filter((slot) => fullAutoSkills?.[String(slot)] === false && include(slot))
+		.map((slot) => slot + 1)
+		.join('')
+}
+
+/** Substitutes as `{{itm|Page}}` links, one per line in the swap bubble. */
+function swapParam(param: string, substitutions: Substitution[] | undefined): string {
+	const pages = [...(substitutions ?? [])]
+		.sort((a, b) => a.position - b.position)
+		.flatMap((sub) => {
+			if (sub.gridCharacter) return [pageName(sub.gridCharacter.character)]
+			if (sub.gridWeapon) return [weaponPageName(sub.gridWeapon)]
+			if (sub.gridSummon) return [pageName(sub.gridSummon.summon)]
+			return []
+		})
+	return pages.length > 0 ? `|${param}=${pages.map((page) => `{{itm|${page}}}`).join('<br/>')}` : ''
+}
+
 function characterParams(gc: GridCharacter | undefined, slot: number): string {
 	if (!gc) return ''
 	let out = pageName(gc.character)
@@ -218,7 +275,10 @@ function characterParams(gc: GridCharacter | undefined, slot: number): string {
 	if (uncap >= 5) out += `|uchar${slot}=${uncapValue(uncap)}`
 	const awakening = gc.awakening?.type?.slug && CHARACTER_AWAKENINGS[gc.awakening.type.slug]
 	if (awakening) out += `|awkchar${slot}=${awakening}`
-	return out
+	if (gc.perpetuity) out += `|ringchar${slot}=true`
+	const off = skillsOff(gc.fullAutoSkills)
+	if (off) out += `|skilloff${slot}=${off}`
+	return out + swapParam(`swapchar${slot}`, gc.substitutions)
 }
 
 function weaponParams(gw: GridWeapon | undefined, index: string): string {
@@ -234,15 +294,19 @@ function weaponParams(gw: GridWeapon | undefined, index: string): string {
 
 	const awakening = gw.awakening?.type?.slug && WEAPON_AWAKENINGS[gw.awakening.type.slug]
 	if (awakening) out += `|awk${index}=${awakening}`
-	return out
+	const ax = AX_VALUES[gw.ax?.[0]?.modifier.slug ?? '']
+	if (ax) out += `|ax${index}=${ax}`
+	const befoulment = BEFOULMENT_VALUES[gw.befoulment?.modifier.slug ?? '']
+	if (befoulment) out += `|bf${index}=${befoulment}`
+	return out + swapParam(`swap${index}`, gw.substitutions)
 }
 
 function summonParams(gs: GridSummon | undefined, slot: string): string {
 	if (!gs) return ''
-	const name = pageName(gs.summon)
+	let out = pageName(gs.summon)
 	const uncap = wikiUncap(gs)
-	if (uncap === maxUncap(gs.summon.uncap)) return name
-	return `${name}|u${slot}=${uncapValue(uncap)}`
+	if (uncap !== maxUncap(gs.summon.uncap)) out += `|u${slot}=${uncapValue(uncap)}`
+	return out + swapParam(`swap${slot}`, gs.substitutions)
 }
 
 function keyParams(weapons: GridWeapon[]): string {
@@ -313,6 +377,11 @@ export function partyToWikiText(party: Party, { url }: { url?: string } = {}): s
 	if (accessory && job?.accessoryType === ACCESSORY_TYPES.SHIELD)
 		classLine += `|shield=${accessory.name.en.trim()}`
 	classLine += bulletParams(weaponAt(-1))
+	// MC abilities: 1 is the class's own skill, 2-4 the subskills.
+	const mcOff = skillsOff(party.fullAutoSkills, (slot) =>
+		slot === 0 ? !!job : !!party.jobSkills?.[slot as 1 | 2 | 3]
+	)
+	if (mcOff) classLine += `|skilloffmc=${mcOff}`
 
 	const unlimited = party.characters.some((c) => c.position >= 5)
 	const characterCount = unlimited ? 8 : 5
