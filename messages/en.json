@@ -372,6 +372,8 @@
 	"party_syncing": "Syncing...",
 	"party_add_favorite": "Add to favorites",
 	"party_export_wiki": "Export to gbf.wiki",
+	"party_export_wiki_description": "Paste this into a page on gbf.wiki to show your team there. It links back to this team.",
+	"party_export_wiki_notice": "gbf.wiki can't hold everything a granblue.team team has. Lower bullet tiers, ring and AX values, second AX skills, earrings and artifacts are left out, and only one set of keys per weapon series is kept.",
 	"party_remove_favorite": "Remove from favorites",
 	"party_remix": "Remix this team",
 	"party_edit_team": "Edit this team",

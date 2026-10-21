@@ -50,6 +50,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import Notice from '$lib/components/ui/Notice.svelte'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
+	import WikiTextDialog from '$lib/components/party/WikiTextDialog.svelte'
 	import { openEditSolomonisPane } from '$lib/components/solomonis/party/openSolomonisPanes'
 	import {
 		isSolomonisParty,
@@ -594,7 +595,7 @@
 										</DropdownMenu.Item>
 									{/if}
 
-									<DropdownMenu.Item class="dropdown-menu-item" onSelect={actions.exportToWiki}>
+									<DropdownMenu.Item class="dropdown-menu-item" onSelect={actions.openWikiExport}>
 										{m.party_export_wiki()}
 									</DropdownMenu.Item>
 
@@ -705,6 +706,16 @@
 	deleting={actions.deleting}
 	onDelete={actions.deleteParty}
 	onCancel={() => (actions.deleteDialogOpen = false)}
+/>
+
+<WikiTextDialog
+	bind:open={actions.wikiExportOpen}
+	title={m.party_export_wiki()}
+	description={m.party_export_wiki_description()}
+	notice={m.party_export_wiki_notice()}
+	value={actions.wikiExportText}
+	readonly
+	primaryAction={{ label: m.code_copy(), onclick: actions.copyWikiExport }}
 />
 
 <!-- Leaving Evoking Solomonis deletes its data -->
