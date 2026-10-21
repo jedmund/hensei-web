@@ -16,6 +16,8 @@ import { ACCESSORY_TYPES } from '$lib/utils/jobAccessoryUtils'
  *   its art and skill icons.
  * - Uncaps are omitted when the item is at its max uncap; otherwise the star
  *   count, or `t1`..`t5` for transcendence stages.
+ * - Element-changed weapons are named by their `Name (Element)` page where the
+ *   wiki has one.
  * - Opus, Ultima, Draconic, Destroyer and Class Champion keys are written once
  *   per team (`|opus=skill,stamina`).
  */
@@ -130,28 +132,90 @@ const BULLET_ALIASES: Record<string, string> = {
 	'hades-point-iv': 'hades'
 }
 
+/** Grid element → the suffix gbf.wiki uses on element-changed weapon pages. */
+const WIKI_ELEMENTS: Record<number, string> = {
+	1: 'Wind',
+	2: 'Fire',
+	3: 'Water',
+	4: 'Earth',
+	5: 'Dark',
+	6: 'Light'
+}
+
+/**
+ * Series whose element-changed weapons have `Name (Fire)`..`Name (Dark)` pages
+ * on gbf.wiki. Checked against the wiki's page list: every Ultima, Atma and
+ * Superlative weapon has them, Revenant weapons have none, and Class Champion
+ * weapons have them except for those in NO_ELEMENT_PAGES.
+ */
+const ELEMENT_PAGE_SERIES = new Set(['ultima', 'superlative', 'class-champion'])
+
+/** Class Champion weapons gbf.wiki has no element pages for. */
+const NO_ELEMENT_PAGES = new Set([
+	'Arabesque',
+	'Aschallon',
+	'Avenger',
+	'Faust',
+	'Hellion Gauntlet',
+	'Ipetam',
+	'Kapilavastu',
+	'Keraunos',
+	'Langeleik',
+	'Misericorde',
+	'Murakumo',
+	'Muramasa',
+	'Nebuchad',
+	'Nirvana',
+	'Oliver',
+	'Proximo',
+	'Romulus Spear',
+	'Rosenbogen',
+	'Skofnung',
+	'Soul Echoer'
+])
+
 function pageName(item: { wiki?: { en?: string }; name: { en: string } }): string {
 	return item.wiki?.en || item.name.en
 }
 
+/** A weapon's page, or its `Name (Element)` page when its element was changed. */
+function weaponPageName(gw: GridWeapon): string {
+	const page = pageName(gw.weapon)
+	const element = gw.element ? WIKI_ELEMENTS[gw.element] : undefined
+	const hasElementPages =
+		ELEMENT_PAGE_SERIES.has(gw.weapon.series?.slug ?? '') && !NO_ELEMENT_PAGES.has(page)
+	return element && hasElementPages ? `${page} (${element})` : page
+}
+
+/** Max uncap on the wiki's scale: stars 3-5, or 10 for t5. */
 function maxUncap(uncap?: { flb?: boolean; ulb?: boolean; transcendence?: boolean }): number {
-	if (uncap?.transcendence) return 6
+	if (uncap?.transcendence) return 10
 	if (uncap?.ulb) return 5
 	if (uncap?.flb) return 4
 	return 3
 }
 
-function uncapValue(uncapLevel: number, transcendenceStep: number | undefined): string {
-	return transcendenceStep ? `t${transcendenceStep}` : `${uncapLevel}`
+/**
+ * An item's uncap on the wiki's scale: stars 0-5, then 6-10 for `t1`..`t5`.
+ * The transcendence step decides it when set; uncap 6 without a step is 5★,
+ * which the wiki would otherwise read as fully transcended.
+ */
+function wikiUncap(item: { uncapLevel?: number; transcendenceStep?: number }): number {
+	const step = item.transcendenceStep ?? 0
+	if (step > 0) return 5 + Math.min(step, 5)
+	return Math.min(item.uncapLevel ?? 0, 5)
+}
+
+function uncapValue(level: number): string {
+	return level > 5 ? `t${level - 5}` : `${level}`
 }
 
 function characterParams(gc: GridCharacter | undefined, slot: number): string {
 	if (!gc) return ''
 	let out = pageName(gc.character)
-	const uncap = gc.uncapLevel ?? 0
-	if (uncap > 4 || gc.transcendenceStep) {
-		out += `|uchar${slot}=${uncapValue(uncap, gc.transcendenceStep)}`
-	}
+	// Below 5★ the wiki shows the same art as with no uncap.
+	const uncap = wikiUncap(gc)
+	if (uncap >= 5) out += `|uchar${slot}=${uncapValue(uncap)}`
 	const awakening = gc.awakening?.type?.slug && CHARACTER_AWAKENINGS[gc.awakening.type.slug]
 	if (awakening) out += `|awkchar${slot}=${awakening}`
 	return out
@@ -159,13 +223,14 @@ function characterParams(gc: GridCharacter | undefined, slot: number): string {
 
 function weaponParams(gw: GridWeapon | undefined, index: string): string {
 	if (!gw) return ''
-	let out = pageName(gw.weapon)
+	let out = weaponPageName(gw)
 
-	const uncap = gw.uncapLevel ?? 0
+	// Transcendable weapons always get an uncap, except Dark Opus at 5★.
+	const uncap = wikiUncap(gw)
 	const max = maxUncap(gw.weapon.uncap)
 	const atMax =
-		(uncap === max && max !== 6) || (gw.weapon.series?.slug === 'dark-opus' && uncap === 5)
-	if (!atMax) out += `|u${index}=${uncapValue(uncap, gw.transcendenceStep)}`
+		(uncap === max && max <= 5) || (gw.weapon.series?.slug === 'dark-opus' && uncap === 5)
+	if (!atMax) out += `|u${index}=${uncapValue(uncap)}`
 
 	const awakening = gw.awakening?.type?.slug && WEAPON_AWAKENINGS[gw.awakening.type.slug]
 	if (awakening) out += `|awk${index}=${awakening}`
@@ -175,10 +240,9 @@ function weaponParams(gw: GridWeapon | undefined, index: string): string {
 function summonParams(gs: GridSummon | undefined, slot: string): string {
 	if (!gs) return ''
 	const name = pageName(gs.summon)
-	const uncap = gs.uncapLevel ?? 0
-	const max = maxUncap(gs.summon.uncap)
-	if (gs.transcendenceStep === 5 || (uncap === max && max !== 6)) return name
-	return `${name}|u${slot}=${uncapValue(uncap, gs.transcendenceStep)}`
+	const uncap = wikiUncap(gs)
+	if (uncap === maxUncap(gs.summon.uncap)) return name
+	return `${name}|u${slot}=${uncapValue(uncap)}`
 }
 
 function keyParams(weapons: GridWeapon[]): string {
