@@ -606,7 +606,7 @@
 										</DropdownMenu.Item>
 									{/if}
 
-									{#if authUserId}
+									{#if authUserId || party.sourceParty?.shortcode}
 										<DropdownMenu.Separator class="dropdown-menu-separator" />
 									{/if}
 									<DropdownMenu.Item class="dropdown-menu-item" onSelect={actions.openWikiExport}>
