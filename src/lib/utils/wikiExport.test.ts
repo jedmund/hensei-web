@@ -821,13 +821,17 @@ describe('partyToWikiText', () => {
 
 	it('links back to the team on granblue.team as the source', () => {
 		const url = 'https://granblue.team/teams/abc'
+		const user = { username: 'Vazkii' } as Party['user']
+		expect(line(partyToWikiText(party({ name: 'Fire Hexa', user }), { url }), 'source')).toBe(
+			'|source=[https://granblue.team/teams/abc Fire Hexa by Vazkii on granblue.team]'
+		)
 		expect(
 			line(partyToWikiText(party({ name: 'Fire | {{Hexa}} [Full]' }), { url }), 'source')
 		).toBe(
 			'|source=[https://granblue.team/teams/abc Fire &#124; &#123;&#123;Hexa&#125;&#125; &#91;Full&#93; on granblue.team]'
 		)
 		expect(line(partyToWikiText(party(), { url }), 'source')).toBe(
-			'|source=[https://granblue.team/teams/abc This team on granblue.team]'
+			'|source=[https://granblue.team/teams/abc Untitled team on granblue.team]'
 		)
 		expect(line(partyToWikiText(party()), 'source')).toBe('|source=')
 	})

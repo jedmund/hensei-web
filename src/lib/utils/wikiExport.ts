@@ -352,6 +352,13 @@ function linkLabel(text: string): string {
 		.trim()
 }
 
+/** "{team} by {author} on granblue.team", linking to the team. */
+function sourceLink(party: Party, url: string): string {
+	let label = linkLabel(party.name || 'Untitled team')
+	if (party.user?.username) label += ` by ${linkLabel(party.user.username)}`
+	return `[${url} ${label} on granblue.team]`
+}
+
 /**
  * `url` is the team's page on granblue.team. It's written as the template's
  * source, which the wiki shows under the team, so the wiki links back to it.
@@ -428,7 +435,7 @@ export function partyToWikiText(party: Party, { url }: { url?: string } = {}): s
 		'',
 		...summonLines,
 		'',
-		`|source=${url ? `[${url} ${linkLabel(party.name || 'This team')} on granblue.team]` : ''}`,
+		`|source=${url ? sourceLink(party, url) : ''}`,
 		'|setup=',
 		'|comments=',
 		'|rotation=',
