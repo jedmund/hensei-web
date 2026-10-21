@@ -23,6 +23,7 @@
 	import CharacterStatsSection from '$lib/features/database/characters/sections/CharacterStatsSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
+	import { resolveDetailTab } from '$lib/features/database/detail/detailTab'
 	import CharacterRefreshActions from '$lib/features/database/characters/refresh/CharacterRefreshActions.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
@@ -54,9 +55,6 @@
 		wikiRawJpFetchedAt?: string | null
 	}
 
-	// Tab state from URL
-	const currentTab = $derived(($page.url.searchParams.get('tab') as DetailTab) || 'info')
-
 	function handleTabChange(tab: DetailTab) {
 		const url = new URL($page.url)
 		if (tab === 'info') {
@@ -77,6 +75,9 @@
 	const character = $derived(characterQuery.data)
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
+
+	// Tab state from URL; raw data is editor-only, so non-editors fall back to Info
+	const currentTab = $derived(resolveDetailTab($page.url.searchParams.get('tab'), canEdit))
 
 	// Element for button styling
 	const elementName = $derived(
@@ -196,6 +197,7 @@
 			image={getCharacterGridImage(character)}
 			{currentTab}
 			onTabChange={handleTabChange}
+			showRaw={canEdit}
 			onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
 			onDownloadSize={canEdit ? handleDownloadSize : undefined}
 			availableSizes={characterSizes}

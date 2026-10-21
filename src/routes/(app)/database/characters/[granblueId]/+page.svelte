@@ -27,6 +27,7 @@
 	import CharacterAppearanceSection from '$lib/features/database/characters/sections/CharacterAppearanceSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
+	import { resolveDetailTab } from '$lib/features/database/detail/detailTab'
 	import CharacterRefreshActions from '$lib/features/database/characters/refresh/CharacterRefreshActions.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
@@ -59,10 +60,6 @@
 		wikiRawJpFetchedAt?: string | null
 	}
 
-	// Tab state from URL
-	type CharacterTab = 'info' | 'skills' | 'images' | 'raw'
-	const currentTab = $derived(($page.url.searchParams.get('tab') as CharacterTab) || 'info')
-
 	function handleTabChange(tab: string) {
 		const url = new URL($page.url)
 		if (tab === 'info') {
@@ -91,6 +88,9 @@
 	)
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
+
+	// Tab state from URL; raw data is editor-only, so non-editors fall back to Info
+	const currentTab = $derived(resolveDetailTab($page.url.searchParams.get('tab'), canEdit))
 
 	// Element for button styling
 	const elementName = $derived(
@@ -412,7 +412,9 @@
 					<Segment value="info">Info</Segment>
 					<Segment value="skills">{m.character_skills_tab()}</Segment>
 					<Segment value="images">Images</Segment>
-					<Segment value="raw">Raw Data</Segment>
+					{#if canEdit}
+						<Segment value="raw">Raw Data</Segment>
+					{/if}
 				</SegmentedControl>
 			</div>
 

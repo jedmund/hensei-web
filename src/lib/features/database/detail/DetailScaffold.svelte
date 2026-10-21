@@ -30,6 +30,8 @@
 		showSkills?: boolean
 		/** Label for the skills tab segment (summons use it for Auras) */
 		skillsLabel?: string
+		/** Show the Raw Data tab (editor-only for characters, weapons and summons) */
+		showRaw?: boolean
 		// Image download handlers
 		onDownloadAllImages?: (force: boolean) => Promise<void>
 		onDownloadSize?: (size: string) => Promise<void>
@@ -54,6 +56,7 @@
 		showTabs = true,
 		showSkills = false,
 		skillsLabel = 'Skills',
+		showRaw = true,
 		onDownloadAllImages,
 		onDownloadSize,
 		availableSizes = [],
@@ -122,7 +125,9 @@
 					<Segment value="skills">{skillsLabel}</Segment>
 				{/if}
 				<Segment value="images">Images</Segment>
-				<Segment value="raw">Raw Data</Segment>
+				{#if showRaw}
+					<Segment value="raw">Raw Data</Segment>
+				{/if}
 			</SegmentedControl>
 
 			{#if showDownloadDropdown}
