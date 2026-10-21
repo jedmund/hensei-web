@@ -14,6 +14,7 @@ import FavoriteToast from '$lib/components/ui/FavoriteToast.svelte'
 import * as m from '$lib/paraglide/messages'
 import { isFullExpedition, solomonisName } from '$lib/components/solomonis/party/solomonisParty'
 import { appLocale } from '$lib/utils/locale'
+import { partyToWikiText } from '$lib/utils/wikiExport'
 
 type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -39,6 +40,8 @@ export function usePartyActions(opts: PartyActionsOptions) {
 	let error = $state<string | null>(null)
 	let deleteDialogOpen = $state(false)
 	let deleting = $state(false)
+	let wikiExportOpen = $state(false)
+	let wikiExportText = $state('')
 
 	async function updatePartyDetails(updates: Omit<UpdatePartyParams, 'id' | 'shortcode'>) {
 		if (!opts.canEdit()) return
@@ -319,6 +322,24 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		})
 	}
 
+	/** Shows the team as gbf.wiki TeamSpread markup, linking back to this page. */
+	function openWikiExport() {
+		const party = opts.getParty()
+		const url = `${window.location.origin}/teams/${party.shortcode}`
+		wikiExportText = partyToWikiText(party, { url })
+		wikiExportOpen = true
+	}
+
+	async function copyWikiExport() {
+		try {
+			await navigator.clipboard.writeText(wikiExportText)
+			toast.success(m.toast_copied_wiki_export())
+			wikiExportOpen = false
+		} catch {
+			toast.error(m.toast_copy_failed())
+		}
+	}
+
 	return {
 		get loading() {
 			return loading
@@ -338,6 +359,15 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		get deleting() {
 			return deleting
 		},
+		get wikiExportOpen() {
+			return wikiExportOpen
+		},
+		set wikiExportOpen(v: boolean) {
+			wikiExportOpen = v
+		},
+		get wikiExportText() {
+			return wikiExportText
+		},
 		get isSyncingAll() {
 			return opts.mutations.grid.syncAllItems.isPending
 		},
@@ -349,7 +379,9 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		handleUnlinkCollection,
 		openDescriptionPanel,
 		editDescriptionPanel,
-		openSettingsPanel
+		openSettingsPanel,
+		openWikiExport,
+		copyWikiExport
 	}
 }
 
