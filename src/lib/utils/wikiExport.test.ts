@@ -42,7 +42,12 @@ function weapon(
 	} as GridWeapon
 }
 
-function summon(position: number, en: string, extra: Partial<GridSummon> = {}): GridSummon {
+function summon(
+	position: number,
+	en: string,
+	extra: Partial<GridSummon> = {},
+	summonExtra: Record<string, unknown> = {}
+): GridSummon {
 	return {
 		id: `s${position}`,
 		position,
@@ -54,7 +59,8 @@ function summon(position: number, en: string, extra: Partial<GridSummon> = {}): 
 			granblueId: '2040000000',
 			name: name(en),
 			wiki: { en },
-			uncap: { flb: true, ulb: true, transcendence: false }
+			uncap: { flb: true, ulb: true, transcendence: false },
+			...summonExtra
 		},
 		...extra
 	} as GridSummon
@@ -466,7 +472,12 @@ describe('partyToWikiText', () => {
 			party({
 				summons: [
 					summon(-1, 'Bahamut', { quickSummon: true }),
-					summon(6, 'Lucifer', { uncapLevel: 6, transcendenceStep: 5 }),
+					summon(
+						6,
+						'Lucifer',
+						{ uncapLevel: 6, transcendenceStep: 5 },
+						{ uncap: { flb: true, ulb: true, transcendence: true } }
+					),
 					summon(0, 'Agni', { uncapLevel: 4 }),
 					summon(4, 'Belial')
 				]
@@ -477,6 +488,119 @@ describe('partyToWikiText', () => {
 		expect(line(text, 's1')).toBe('|s1=Agni|us1=4')
 		expect(line(text, 'sub1')).toBe('|sub1=Belial')
 		expect(line(text, 'quick')).toBe('|quick=main')
+	})
+
+	it('exports uncap 6 without a transcendence step as 5★', () => {
+		const transcends = { uncap: { flb: true, ulb: true, transcendence: true } }
+		const text = partyToWikiText(
+			party({
+				characters: [
+					character(0, 'Seofon', { uncapLevel: 6, transcendenceStep: 0 }),
+					character(1, 'Tikoh', { uncapLevel: 6 })
+				],
+				weapons: [
+					weapon(0, 'Ixaba', { uncapLevel: 6, transcendenceStep: 0 }, transcends),
+					weapon(1, 'Celestial Harp', { uncapLevel: 6 }, transcends)
+				],
+				summons: [
+					summon(0, 'Agni', { uncapLevel: 6, transcendenceStep: 0 }, transcends),
+					summon(1, 'Zeus', { uncapLevel: 6 }, transcends)
+				]
+			})
+		)
+		expect(line(text, 'char1')).toBe('|char1=Seofon|uchar1=5')
+		expect(line(text, 'char2')).toBe('|char2=Tikoh|uchar2=5')
+		expect(line(text, 'wp1')).toBe('|wp1=Ixaba|u1=5')
+		expect(line(text, 'wp2')).toBe('|wp2=Celestial Harp|u2=5')
+		expect(line(text, 's1')).toBe('|s1=Agni|us1=5')
+		expect(line(text, 's2')).toBe('|s2=Zeus|us2=5')
+	})
+
+	it('writes transcendence stages and omits t5 on summons', () => {
+		const transcends = { uncap: { flb: true, ulb: true, transcendence: true } }
+		const text = partyToWikiText(
+			party({
+				weapons: [weapon(0, 'Ixaba', { uncapLevel: 6, transcendenceStep: 5 }, transcends)],
+				summons: [
+					summon(-1, 'Bahamut', { uncapLevel: 6, transcendenceStep: 3 }, transcends),
+					summon(6, 'Lucifer', { uncapLevel: 6, transcendenceStep: 5 }, transcends),
+					summon(4, 'Agni', { uncapLevel: 5 }, transcends)
+				]
+			})
+		)
+		expect(line(text, 'wp1')).toBe('|wp1=Ixaba|u1=t5')
+		expect(line(text, 'main')).toBe('|main=Bahamut|umain=t3')
+		expect(line(text, 'support')).toBe('|support=Lucifer')
+		expect(line(text, 'sub1')).toBe('|sub1=Agni|usub1=5')
+	})
+
+	it('trusts the transcendence step over a stale uncap level', () => {
+		const transcends = { uncap: { flb: true, ulb: true, transcendence: true } }
+		const text = partyToWikiText(
+			party({
+				summons: [
+					summon(0, 'Hades', { uncapLevel: 5, transcendenceStep: 5 }, transcends),
+					summon(1, 'Titan', { uncapLevel: 5, transcendenceStep: 2 }, transcends)
+				]
+			})
+		)
+		expect(line(text, 's1')).toBe('|s1=Hades')
+		expect(line(text, 's2')).toBe('|s2=Titan|us2=t2')
+	})
+
+	it('omits Dark Opus uncaps at 5★ but writes their transcendence', () => {
+		const opus = {
+			series: { slug: 'dark-opus' },
+			uncap: { flb: true, ulb: true, transcendence: true }
+		}
+		const text = partyToWikiText(
+			party({
+				weapons: [
+					weapon(0, 'Renunciation', { uncapLevel: 5 }, opus),
+					weapon(1, 'Repudiation', { uncapLevel: 6, transcendenceStep: 0 }, opus),
+					weapon(2, 'Renunciation', { uncapLevel: 6, transcendenceStep: 2 }, opus),
+					weapon(3, 'Repudiation', { uncapLevel: 4 }, opus)
+				]
+			})
+		)
+		expect(line(text, 'wp1')).toBe('|wp1=Renunciation')
+		expect(line(text, 'wp2')).toBe('|wp2=Repudiation')
+		expect(line(text, 'wp3')).toBe('|wp3=Renunciation|u3=t2')
+		expect(line(text, 'wp4')).toBe('|wp4=Repudiation|u4=4')
+	})
+
+	it('writes uncaps for weapons in the extra slots', () => {
+		const text = partyToWikiText(
+			party({ weapons: [weapon(9, 'Extra Weapon', { uncapLevel: 3 }), weapon(11, 'Max Weapon')] })
+		)
+		expect(line(text, 'wp10')).toBe('|wp10=Extra Weapon|u10=3')
+		expect(line(text, 'wp12')).toBe('|wp12=Max Weapon')
+	})
+
+	it('names element-changed weapons by their element page', () => {
+		const series = (slug: string) => ({ series: { slug, elementChangeable: true } })
+		const text = partyToWikiText(
+			party({
+				weapons: [
+					weapon(-1, 'Ultima Sword', { element: 5 }, series('ultima')),
+					weapon(0, 'Excalibur', { element: 2 }, series('superlative')),
+					weapon(1, 'Unsigned Kaneshige', { element: 4 }, series('class-champion')),
+					weapon(2, 'Murakumo', { element: 6 }, series('class-champion')),
+					weapon(3, 'Seven-Star Sword (Awakened)', { element: 1 }, series('revenant')),
+					weapon(4, 'Ultima Staff', { element: 0 }, series('ultima')),
+					weapon(5, 'Ultima Claw', {}, series('ultima')),
+					weapon(6, 'Ixaba', { element: 2 }, { series: { slug: 'xeno' } })
+				]
+			})
+		)
+		expect(line(text, 'mh')).toBe('|mh=Ultima Sword (Dark)')
+		expect(line(text, 'wp1')).toBe('|wp1=Excalibur (Fire)')
+		expect(line(text, 'wp2')).toBe('|wp2=Unsigned Kaneshige (Earth)')
+		expect(line(text, 'wp3')).toBe('|wp3=Murakumo')
+		expect(line(text, 'wp4')).toBe('|wp4=Seven-Star Sword (Awakened)')
+		expect(line(text, 'wp5')).toBe('|wp5=Ultima Staff')
+		expect(line(text, 'wp6')).toBe('|wp6=Ultima Claw')
+		expect(line(text, 'wp7')).toBe('|wp7=Ixaba')
 	})
 
 	it('writes mainhand bullets as wiki aliases, leaving out ones it has no icon for', () => {
