@@ -9,6 +9,7 @@
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import Notice from '$lib/components/ui/Notice.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		open: boolean
@@ -16,6 +17,8 @@
 		description: string
 		/** What the conversion loses or leaves to fill in */
 		notice: string
+		/** The full list behind the notice, shown under "Learn more" */
+		details?: string[]
 		/** The markup; editable unless readonly */
 		value: string
 		readonly?: boolean
@@ -28,18 +31,42 @@
 		title,
 		description,
 		notice,
+		details = [],
 		value = $bindable(''),
 		readonly = false,
 		placeholder,
 		primaryAction
 	}: Props = $props()
+
+	let expanded = $state(false)
 </script>
 
 <Dialog bind:open size="medium">
 	<ModalHeader {title} descriptionText={description} />
 	<ModalBody>
 		<div class="content">
-			<Notice variant="yellow">{notice}</Notice>
+			<Notice variant="yellow">
+				<p>
+					{notice}
+					{#if details.length > 0}
+						<button
+							type="button"
+							class="toggle"
+							aria-expanded={expanded}
+							onclick={() => (expanded = !expanded)}
+						>
+							{expanded ? m.notice_show_less() : m.notice_learn_more()}
+						</button>
+					{/if}
+				</p>
+				{#if expanded}
+					<ul class="details">
+						{#each details as detail (detail)}
+							<li>{detail}</li>
+						{/each}
+					</ul>
+				{/if}
+			</Notice>
 			<textarea
 				class="markup"
 				bind:value
@@ -64,6 +91,23 @@
 		display: flex;
 		flex-direction: column;
 		gap: $unit-2x;
+	}
+
+	.toggle {
+		padding: 0;
+		border: none;
+		background: none;
+		font: inherit;
+		color: inherit;
+		font-weight: $medium;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+	.details {
+		margin: 0;
+		padding-left: $unit-3x;
+		list-style: disc;
 	}
 
 	.markup {

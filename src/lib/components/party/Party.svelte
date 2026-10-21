@@ -727,6 +727,18 @@
 	title={m.party_export_wiki()}
 	description={m.party_export_wiki_description()}
 	notice={m.party_export_wiki_notice()}
+	details={[
+		m.party_export_wiki_lost_rings(),
+		m.party_export_wiki_lost_earrings(),
+		m.party_export_wiki_lost_artifacts(),
+		m.party_export_wiki_lost_ax(),
+		m.party_export_wiki_lost_befoulments(),
+		m.party_export_wiki_lost_awakening_levels(),
+		m.party_export_wiki_lost_masteries(),
+		m.party_export_wiki_lost_bullets(),
+		m.party_export_wiki_lost_keys(),
+		m.party_export_wiki_lost_details()
+	]}
 	value={actions.wikiExportText}
 	readonly
 	primaryAction={{ label: m.code_copy(), onclick: actions.copyWikiExport }}
