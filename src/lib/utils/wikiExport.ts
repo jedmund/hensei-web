@@ -177,6 +177,22 @@ function keyParams(weapons: GridWeapon[]): string {
 		.join('')
 }
 
+/**
+ * Bullets on the mainhand, by full name in slot order. Empty slots stay as
+ * blanks so later bullets keep their position; trailing blanks are dropped.
+ * GBF-Grid-Maker writes short aliases instead ("iron" for every Iron Bullet
+ * tier), which loses the tier; its importer also accepts full names.
+ */
+function bulletParams(mainhand: GridWeapon | undefined): string {
+	const loadout = mainhand?.bullets ?? []
+	if (loadout.length === 0) return ''
+	const names: string[] = []
+	for (const { position, bullet } of loadout) names[position] = bullet.name.en
+	const filled = Array.from(names, (n) => n ?? '')
+	while (filled.length > 0 && !filled[filled.length - 1]) filled.pop()
+	return filled.length > 0 ? `|bullets=${filled.join(',')}` : ''
+}
+
 export function partyToWikiText(party: Party): string {
 	const characterAt = (position: number) => party.characters.find((c) => c.position === position)
 	const weaponAt = (position: number) =>
@@ -197,6 +213,7 @@ export function partyToWikiText(party: Party): string {
 		classLine += `|mino=${accessory.name.en}`
 	if (accessory && job?.accessoryType === ACCESSORY_TYPES.SHIELD)
 		classLine += `|shield=${accessory.name.en}`
+	classLine += bulletParams(weaponAt(-1))
 
 	const unlimited = party.characters.some((c) => c.position >= 5)
 	const characterCount = unlimited ? 8 : 5
