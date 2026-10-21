@@ -19,11 +19,21 @@
 	import DateCell from '$lib/components/database/cells/DateCell.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import BatchRefreshDialog from '$lib/features/database/characters/refresh/BatchRefreshDialog.svelte'
 
 	// Utilities
 	import { getRarityLabel } from '$lib/utils/rarity'
 	import { getGenderLabel } from '$lib/utils/gender'
 	import { localizedName } from '$lib/utils/locale'
+
+	import type { PageData } from './$types'
+
+	let { data }: { data: PageData } = $props()
+
+	// The database is editor-only already; checked again so the action never shows otherwise
+	const canEdit = $derived((data.role ?? 0) >= 7)
+	let batchRefreshOpen = $state(false)
 
 	type ViewMode = 'characters' | 'series'
 
@@ -211,6 +221,10 @@
 
 <PageMeta title={m.page_title_db_characters()} description={m.page_desc_home()} />
 
+{#if canEdit}
+	<BatchRefreshDialog bind:open={batchRefreshOpen} />
+{/if}
+
 <div class="database-page">
 	{#if viewMode === 'characters'}
 		<DatabaseGridWithProvider resource="characters" {columns} pageSize={20}>
@@ -219,6 +233,13 @@
 					<Segment value="characters">Characters</Segment>
 					<Segment value="series">Series</Segment>
 				</SegmentedControl>
+			{/snippet}
+			{#snippet headerActions()}
+				{#if canEdit}
+					<Button variant="ghost" size="small" onclick={() => (batchRefreshOpen = true)}>
+						{m.character_refresh_batch_action()}
+					</Button>
+				{/if}
 			{/snippet}
 		</DatabaseGridWithProvider>
 	{:else if viewMode === 'series'}

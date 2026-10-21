@@ -12,7 +12,6 @@
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import { withInitialData } from '$lib/query/ssr'
-	import { fetchWikiPage } from '$lib/api/wiki'
 
 	// Components
 	import DetailScaffold, {
@@ -28,6 +27,7 @@
 	import CharacterAppearanceSection from '$lib/features/database/characters/sections/CharacterAppearanceSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
+	import CharacterRefreshActions from '$lib/features/database/characters/refresh/CharacterRefreshActions.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
@@ -52,6 +52,12 @@
 	import type { ImageItem } from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 
 	let { data }: { data: PageData } = $props()
+
+	// The :full character carries when its wikitext was fetched (not on the shared Character type)
+	type CharacterFetchTimes = {
+		wikiRawFetchedAt?: string | null
+		wikiRawJpFetchedAt?: string | null
+	}
 
 	// Tab state from URL
 	type CharacterTab = 'info' | 'skills' | 'images' | 'raw'
@@ -572,27 +578,24 @@
 					gameRawJp={rawDataQuery.data?.gameRawJp}
 					isLoading={rawDataQuery.isLoading}
 					{canEdit}
-					onReparse={canEdit && character?.id
-						? async (refetch) => {
-								await entityAdapter.reparseCharacter(character.id, refetch)
-								characterQuery.refetch()
-								rawDataQuery.refetch()
-							}
-						: undefined}
-					onFetchWiki={canEdit && character?.id && character?.wiki?.en
-						? async () => {
-								// Fetch wiki data client-side (bypasses CloudFlare)
-								const wikiResult = await fetchWikiPage(character.wiki!.en!)
-								if (wikiResult.error) {
-									throw new Error(wikiResult.error)
-								}
-								// Update the character with the wiki_raw data
-								await entityAdapter.updateCharacter(character.id, { wiki_raw: wikiResult.wikiRaw })
-								rawDataQuery.refetch()
-								return { wikiRaw: wikiResult.wikiRaw ?? null, gameRawEn: null, gameRawJp: null }
-							}
-						: undefined}
-				/>
+					fetchedAt={{
+						en: (character as CharacterFetchTimes | undefined)?.wikiRawFetchedAt,
+						jp: (character as CharacterFetchTimes | undefined)?.wikiRawJpFetchedAt
+					}}
+				>
+					{#snippet wikiActions()}
+						{#if canEdit && character?.id}
+							<CharacterRefreshActions
+								characterId={character.id}
+								characterName={character.name}
+								onRefreshed={() => {
+									characterQuery.refetch()
+									rawDataQuery.refetch()
+								}}
+							/>
+						{/if}
+					{/snippet}
+				</EntityRawDataTab>
 			{/if}
 		</DetailScaffold>
 	{:else}

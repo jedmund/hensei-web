@@ -7,18 +7,12 @@
 	import Button from './Button.svelte'
 	import SearchOptionItem from '$lib/components/search/SearchOptionItem.svelte'
 	import { searchAdapter, type SearchResult } from '$lib/api/adapters/search.adapter'
-	import { localizedName, appLocale } from '$lib/utils/locale'
-	import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'
-
-	interface CharacterOption {
-		id: string
-		label: string
-		granblueId: string
-		element?: number | null
-		season?: number | null
-		series?: (number | CharacterSeriesRef)[] | null
-		styleSwap?: boolean
-	}
+	import { appLocale } from '$lib/utils/locale'
+	import {
+		toCharacterTypeaheadOption,
+		rowIdForValue,
+		type CharacterTypeaheadOption as CharacterOption
+	} from './characterTypeahead'
 
 	interface Props {
 		/** Selected character granblue ID (e.g. "3040581000") */
@@ -29,6 +23,8 @@
 		query?: string
 		/** Callback when value changes */
 		onValueChange?: (granblueId: string | null) => void
+		/** Called with the picked row. Unlike `value`, it tells a style row from its base. */
+		onSelect?: (character: CharacterOption) => void
 		/** Placeholder text */
 		placeholder?: string
 		/** Disabled state */
@@ -48,6 +44,7 @@
 		initialCharacter = null,
 		query = $bindable(''),
 		onValueChange,
+		onSelect,
 		placeholder = 'Search characters...',
 		disabled = false,
 		size = 'medium',
@@ -63,15 +60,16 @@
 	let initializedQuery = $state('')
 	let inputElement = $state<HTMLInputElement | null>(null)
 
-	// The selected granblueId used as the combobox value
-	let selectedGranblueId = $state<string>(value ?? '')
+	// The combobox value is the row id: a base character and its style row
+	// share a granblueId. `value` stays the granblueId for callers.
+	let selectedRowId = $state<string>('')
 
 	// Track the currently displayed character for the selection display
 	let displayedCharacter = $state<CharacterOption | null>(null)
 
 	// Sync external value changes into combobox and reset internal state
 	$effect(() => {
-		selectedGranblueId = value ?? ''
+		selectedRowId = rowIdForValue(value, displayedCharacter, initialCharacter)
 
 		if (!value) {
 			displayedCharacter = null
@@ -94,9 +92,7 @@
 		searchTimeout = setTimeout(() => searchCharacters(nextQuery), 300)
 	})
 
-	const comboboxItems = $derived(
-		searchResults.map((c) => ({ value: c.granblueId, label: c.label }))
-	)
+	const comboboxItems = $derived(searchResults.map((c) => ({ value: c.id, label: c.label })))
 
 	const wrapperClasses = $derived(
 		['character-typeahead', size, contained && 'contained', disabled && 'disabled']
@@ -118,15 +114,9 @@
 				locale: appLocale()
 			})
 
-			searchResults = response.results.map((result: SearchResult) => ({
-				id: result.id,
-				label: localizedName(result.name) !== '—' ? localizedName(result.name) : result.granblueId,
-				granblueId: result.granblueId,
-				element: result.element,
-				season: result.season,
-				series: Array.isArray(result.series) ? result.series : null,
-				styleSwap: result.styleSwap
-			}))
+			searchResults = response.results.map((result: SearchResult) =>
+				toCharacterTypeaheadOption(result)
+			)
 			if (searchResults.length > 0) {
 				comboboxOpen = true
 			}
@@ -147,7 +137,7 @@
 		searchTimeout = setTimeout(() => searchCharacters(val), 300)
 
 		if (!val.trim()) {
-			selectedGranblueId = ''
+			selectedRowId = ''
 			displayedCharacter = null
 			value = null
 			comboboxOpen = false
@@ -155,15 +145,16 @@
 		}
 	}
 
-	function handleValueChange(granblueId: string) {
-		selectedGranblueId = granblueId
-		if (granblueId) {
-			const match = searchResults.find((c) => c.granblueId === granblueId)
+	function handleValueChange(rowId: string) {
+		selectedRowId = rowId
+		if (rowId) {
+			const match = searchResults.find((c) => c.id === rowId)
 			if (match) {
 				displayedCharacter = match
 				query = match.label
-				value = granblueId
-				onValueChange?.(granblueId)
+				value = match.granblueId
+				onValueChange?.(match.granblueId)
+				onSelect?.(match)
 			}
 		} else {
 			displayedCharacter = null
@@ -174,7 +165,7 @@
 	}
 
 	async function handleClear() {
-		selectedGranblueId = ''
+		selectedRowId = ''
 		query = ''
 		initializedQuery = ''
 		displayedCharacter = null
@@ -215,7 +206,7 @@
 	{:else}
 		<Combobox.Root
 			type="single"
-			bind:value={selectedGranblueId}
+			bind:value={selectedRowId}
 			onValueChange={handleValueChange}
 			bind:open={comboboxOpen}
 			inputValue={query}
@@ -239,12 +230,8 @@
 
 			<Combobox.Content class="combobox-content">
 				<Combobox.Viewport>
-					{#each searchResults as character (character.granblueId)}
-						<Combobox.Item
-							value={character.granblueId}
-							label={character.label}
-							class="combobox-item"
-						>
+					{#each searchResults as character (character.id)}
+						<Combobox.Item value={character.id} label={character.label} class="combobox-item">
 							{#snippet children({ selected })}
 								<SearchOptionItem
 									label={character.label}
