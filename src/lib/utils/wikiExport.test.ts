@@ -1,7 +1,14 @@
 import { describe, it, expect } from 'vitest'
 import { partyToWikiText } from './wikiExport'
-import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
+import type {
+	Party,
+	GridCharacter,
+	GridWeapon,
+	GridSummon,
+	Substitution
+} from '$lib/types/api/party'
 import type { WeaponKey, BulletLoadout } from '$lib/types/api/entities'
+import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'
 
 const name = (en: string) => ({ en, ja: en })
 
@@ -348,6 +355,59 @@ const WIKI_BULLET_ALIASES = [
 	'hexachromatic'
 ]
 
+/** Every AX modifier slug, from the weapon_stat_modifiers table. */
+const AX_SLUGS = [
+	'ax_atk',
+	'ax_ca_cap',
+	'ax_ca_dmg',
+	'ax_ca_supp',
+	'ax_da',
+	'ax_debuff_res',
+	'ax_def',
+	'ax_ele_atk',
+	'ax_ele_dmg_red',
+	'ax_enmity',
+	'ax_exp',
+	'ax_healing',
+	'ax_hp',
+	'ax_multiattack',
+	'ax_na_cap',
+	'ax_rupie',
+	'ax_skill_cap',
+	'ax_skill_supp',
+	'ax_stamina',
+	'ax_ta'
+]
+
+/** Every befoulment modifier slug, from the weapon_stat_modifiers table. */
+const BEFOULMENT_SLUGS = [
+	'befoul_ability_dmg_down',
+	'befoul_atk_down',
+	'befoul_ca_dmg_down',
+	'befoul_da_ta_down',
+	'befoul_debuff_down',
+	'befoul_def_down',
+	'befoul_dot',
+	'befoul_hp_down'
+]
+
+/** The `ax` values Template:Richitm has an icon for (https://gbf.wiki/Template:Richitm). */
+const WIKI_AX = ['atk', 'def', 'hp', 'ca', 'ma', 'exp', 'rupie']
+
+/** The `bf` values Template:Richitm and Template:Icon accept (`{{icon|bf …}}`). */
+const WIKI_BEFOULMENTS = [
+	'atk',
+	'def',
+	'ma',
+	'ca',
+	'skill',
+	'hp',
+	'turn dmg',
+	'dot',
+	'dsr',
+	'debuff success'
+]
+
 const line = (text: string, param: string) =>
 	text.split('\n').find((l) => l.startsWith(`|${param}=`))
 
@@ -601,6 +661,134 @@ describe('partyToWikiText', () => {
 		expect(line(text, 'wp5')).toBe('|wp5=Ultima Staff')
 		expect(line(text, 'wp6')).toBe('|wp6=Ultima Claw')
 		expect(line(text, 'wp7')).toBe('|wp7=Ixaba')
+	})
+
+	it('marks characters with a perpetuity ring', () => {
+		const text = partyToWikiText(
+			party({
+				characters: [character(0, 'Caim', { perpetuity: true }), character(1, 'Eahta')]
+			})
+		)
+		expect(line(text, 'char1')).toBe('|char1=Caim|ringchar1=true')
+		expect(line(text, 'char2')).toBe('|char2=Eahta')
+	})
+
+	it('writes the abilities turned off in Full Auto', () => {
+		const text = partyToWikiText(
+			party({
+				job: { name: name('Manadiver') } as Party['job'],
+				jobSkills: {
+					0: { name: name('Mana Burst') },
+					1: { name: name('Miserable Mist') },
+					2: { name: name('Clarity') }
+				} as Party['jobSkills'],
+				fullAutoSkills: { '0': false, '1': true, '2': false, '3': false },
+				characters: [
+					character(0, 'Makura (Valentine)', { fullAutoSkills: { '2': false, '0': false } }),
+					character(1, 'Uriel', { fullAutoSkills: { '0': true } })
+				]
+			})
+		)
+		// Slot 3 has no subskill, so it isn't listed.
+		expect(line(text, 'class')).toBe('|class=Manadiver|skilloffmc=13')
+		expect(line(text, 'char1')).toBe('|char1=Makura (Valentine)|skilloff1=13')
+		expect(line(text, 'char2')).toBe('|char2=Uriel')
+	})
+
+	it('writes the first AX skill and the befoulment', () => {
+		const modifier = (slug: string) => ({ modifier: { slug } }) as AugmentSkill
+		const text = partyToWikiText(
+			party({
+				weapons: [
+					weapon(-1, 'Staff of Renunciation', {
+						befoulment: { ...modifier('befoul_ca_dmg_down'), exorcismLevel: 1 }
+					}),
+					weapon(0, 'Pillardriver', { ax: [modifier('ax_atk'), modifier('ax_da')] }),
+					weapon(1, 'Wrathfire Longblade', { ax: [modifier('ax_stamina')] }),
+					weapon(2, 'Vortex of the Void', {
+						befoulment: { ...modifier('befoul_dot'), exorcismLevel: 1 }
+					})
+				]
+			})
+		)
+		expect(line(text, 'mh')).toBe('|mh=Staff of Renunciation|bfmh=ca')
+		expect(line(text, 'wp1')).toBe('|wp1=Pillardriver|ax1=atk')
+		expect(line(text, 'wp2')).toBe('|wp2=Wrathfire Longblade')
+		expect(line(text, 'wp3')).toBe('|wp3=Vortex of the Void|bf3=turn dmg')
+	})
+
+	it.each(AX_SLUGS)('exports AX skill %s as a Richitm value or not at all', (slug) => {
+		const ax = [{ modifier: { slug } } as AugmentSkill]
+		const value = line(partyToWikiText(party({ weapons: [weapon(0, 'AX', { ax })] })), 'wp1')!
+		const exported = value.split('|ax1=')[1]
+		expect([undefined, ...WIKI_AX]).toContain(exported)
+	})
+
+	it.each(BEFOULMENT_SLUGS)('exports befoulment %s as a Richitm value', (slug) => {
+		const befoulment = { modifier: { slug }, strength: 1, exorcismLevel: 1 } as Befoulment
+		const value = line(
+			partyToWikiText(party({ weapons: [weapon(0, 'Bf', { befoulment })] })),
+			'wp1'
+		)
+		expect(WIKI_BEFOULMENTS).toContain(value!.split('|bf1=')[1])
+	})
+
+	it('writes substitutes as item links in the swap bubble', () => {
+		const sub = (position: number, item: Partial<Substitution>) =>
+			({ id: `sub${position}`, position, ...item }) as Substitution
+		const text = partyToWikiText(
+			party({
+				characters: [
+					character(0, 'Uriel', {
+						substitutions: [
+							sub(1, { gridCharacter: character(0, 'Vira (Grand)') }),
+							sub(0, { gridCharacter: character(0, 'Alexiel (Summer)') })
+						]
+					})
+				],
+				weapons: [
+					weapon(-1, 'Unsigned Kaneshige', {
+						substitutions: [
+							sub(0, {
+								gridWeapon: weapon(
+									-1,
+									'Ultima Blade',
+									{ element: 4 },
+									{ series: { slug: 'ultima' } }
+								)
+							})
+						]
+					}),
+					weapon(3, 'Vortex of the Void', {
+						substitutions: [
+							sub(0, { gridWeapon: weapon(3, 'Collapse of The Tower') }),
+							sub(1, { gridWeapon: weapon(3, 'Axe of Eternal Splendor') })
+						]
+					})
+				],
+				summons: [
+					summon(-1, 'Zeus', { substitutions: [sub(0, { gridSummon: summon(-1, 'Versusia') })] }),
+					summon(6, 'Yggdrasil Omega', {
+						substitutions: [sub(0, { gridSummon: summon(6, 'Varuna') })]
+					}),
+					summon(0, 'Mammoth', { substitutions: [sub(0, { gridSummon: summon(0, 'Kaguya') })] }),
+					summon(5, 'Wedges of the Sky', {
+						substitutions: [sub(0, { gridSummon: summon(5, 'Morrigna (Summon)') })]
+					})
+				]
+			})
+		)
+		expect(line(text, 'char1')).toBe(
+			'|char1=Uriel|swapchar1={{itm|Alexiel (Summer)}}<br/>{{itm|Vira (Grand)}}'
+		)
+		expect(line(text, 'mh')).toBe('|mh=Unsigned Kaneshige|swapmh={{itm|Ultima Blade (Earth)}}')
+		expect(line(text, 'wp4')).toBe(
+			'|wp4=Vortex of the Void|swap4={{itm|Collapse of The Tower}}<br/>{{itm|Axe of Eternal Splendor}}'
+		)
+		expect(line(text, 'main')).toBe('|main=Zeus|swapmain={{itm|Versusia}}')
+		expect(line(text, 'support')).toBe('|support=Yggdrasil Omega|swapsupport={{itm|Varuna}}')
+		expect(line(text, 's1')).toBe('|s1=Mammoth|swaps1={{itm|Kaguya}}')
+		expect(line(text, 'sub2')).toBe('|sub2=Wedges of the Sky|swapsub2={{itm|Morrigna (Summon)}}')
 	})
 
 	it('writes mainhand bullets as wiki aliases, leaving out ones it has no icon for', () => {
