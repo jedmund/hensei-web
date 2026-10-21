@@ -373,7 +373,7 @@
 	"party_add_favorite": "お気に入りに追加",
 	"party_export_wiki": "gbf.wikiにエクスポート",
 	"party_export_wiki_description": "gbf.wikiのページに貼り付けると、編成が表示されます。この編成へのリンクも含まれます。",
-	"party_export_wiki_notice": "gbf.wikiの形式では、granblue.teamの編成をすべては表せません。下位ランクのバレット、久遠の指輪とEXスキルの数値、2つ目のEXスキル、耳飾り、アーティファクトは含まれず、キーは武器シリーズごとに1組だけ出力されます。",
+	"party_export_wiki_notice": "久遠の指輪やEXスキルの数値、耳飾り、アーティファクトなど、gbf.wikiで表せない情報は含まれません。",
 	"party_remove_favorite": "お気に入りから削除",
 	"party_remix": "このチームをリミックス",
 	"party_edit_team": "このチームを編集",
