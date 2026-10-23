@@ -81,7 +81,7 @@
 
 	.title {
 		margin: 0;
-		font-size: $font-body;
+		font-size: $font-small;
 		font-weight: $medium;
 		color: var(--text-primary);
 	}

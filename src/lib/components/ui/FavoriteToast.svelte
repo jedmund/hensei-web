@@ -70,7 +70,7 @@
 
 	.message {
 		margin: 0;
-		font-size: $font-body;
+		font-size: $font-small;
 		line-height: 1.4;
 	}
 

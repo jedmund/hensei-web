@@ -300,7 +300,7 @@
 			}
 
 			.skill-name {
-				font-size: typography.$font-body;
+				font-size: typography.$font-small;
 				font-weight: typography.$medium;
 				color: var(--text-primary);
 				white-space: nowrap;
@@ -360,7 +360,7 @@
 		}
 
 		.placeholder-text {
-			font-size: typography.$font-body;
+			font-size: typography.$font-small;
 			color: var(--text-tertiary);
 			transition: color 0.15s ease;
 		}

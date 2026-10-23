@@ -440,7 +440,7 @@
 			padding: 8px 12px;
 			border: 1px solid var(--border-subtle);
 			border-radius: layout.$bubble-menu-item-corner;
-			font-size: typography.$font-body;
+			font-size: typography.$font-small;
 			background: var(--input-bg);
 			color: var(--text-primary);
 
@@ -525,7 +525,7 @@
 			text-align: center;
 			padding: spacing.$unit-3x;
 			color: var(--text-tertiary);
-			font-size: typography.$font-body;
+			font-size: typography.$font-small;
 		}
 
 		.results-list {
@@ -585,7 +585,7 @@
 
 			.result-name {
 				flex: 1;
-				font-size: typography.$font-body;
+				font-size: typography.$font-small;
 				color: var(--text-primary);
 			}
 
