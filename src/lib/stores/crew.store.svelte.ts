@@ -124,6 +124,15 @@ class CrewStore {
 	}
 
 	/**
+	 * Check if current user can edit a member's details (join date).
+	 * Captains can edit anyone; vice captains only their own membership.
+	 */
+	canEditMember(isOwnMembership: boolean): boolean {
+		if (this.isCaptain) return true
+		return this.isViceCaptain && isOwnMembership
+	}
+
+	/**
 	 * Check if current user can promote a member to a specific role
 	 */
 	canPromoteTo(targetRole: 'vice_captain' | 'captain'): boolean {
