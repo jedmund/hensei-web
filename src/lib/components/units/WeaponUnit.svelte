@@ -523,7 +523,6 @@
 			}
 
 			.name {
-				font-weight: typography.$medium;
 				color: var(--extra-purple-text);
 			}
 		}

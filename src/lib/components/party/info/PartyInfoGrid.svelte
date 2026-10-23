@@ -7,9 +7,8 @@
 	import RaidTile from './RaidTile.svelte'
 	import VideoTile from './VideoTile.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import * as m from '$lib/paraglide/messages'
 	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
-	import CalculatorPane from '$lib/components/sidebar/CalculatorPane.svelte'
+	import { openCalculatorPane } from '$lib/features/party/openCalculatorPane'
 	import { getRaidImage } from '$lib/utils/images'
 	import { appLocale, localizedName } from '$lib/utils/locale'
 	import type { FilterItem } from '$lib/types/filter'
@@ -62,16 +61,6 @@
 	const showRaid = $derived(hasRaid || canEdit)
 	const showVideo = $derived(hasVideo || canEdit)
 	const showRow2 = $derived(showVideo || showRaid)
-
-	function handleOpenCalculator() {
-		if (!party.shortcode) return
-		sidebar.openWithComponent(
-			m.pane_skill_boosts(),
-			CalculatorPane,
-			{ shortcode: party.shortcode, element: party.element },
-			{ scrollable: true }
-		)
-	}
 
 	// Evoking Solomonis: the tile shows the route Evoker and opens the details pane
 	const expedition = $derived(isFullExpedition(party.solomonis) ? party.solomonis : null)
@@ -139,7 +128,7 @@
 			{onOpenDescription}
 			{onEditDescription}
 			{onOpenEdit}
-			onOpenCalculator={handleOpenCalculator}
+			onOpenCalculator={() => openCalculatorPane(party)}
 			{menu}
 			{remix}
 			{stickerPicker}

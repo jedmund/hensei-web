@@ -199,6 +199,25 @@
 		return faSkills[String(slot)] !== false
 	}
 
+	async function toggleFaSkill(e: Event, slot: number) {
+		e.stopPropagation()
+		if (!item?.id || !ctx?.canEdit()) return
+
+		try {
+			const party = ctx.getParty()
+			const editKey = ctx.getEditKey()
+			// Send the full object so persisted state stays explicit.
+			await ctx.services.gridService.updateCharacter(
+				party.id,
+				item.id,
+				{ fullAutoSkills: { ...faSkills, [String(slot)]: !isFaSlotOn(slot) } },
+				editKey || undefined
+			)
+		} catch (err) {
+			console.error('Error toggling Full Auto skill:', err)
+		}
+	}
+
 	async function togglePerpetuity(e: Event) {
 		e.stopPropagation()
 		if (!item?.id || !ctx?.canEdit()) return
@@ -423,7 +442,7 @@
 		<CharacterTags character={item.character} />
 	{/if}
 	{#if item?.character && partyFullAuto && abilitySlots.length > 0}
-		<div class="fa-skills">
+		<div class="fa-skills" data-own-hover>
 			{#each abilitySlots as s (s.slot)}
 				{@const on = s.eligible && isFaSlotOn(s.slot)}
 				{@const dimmed = s.eligible && !isFaSlotOn(s.slot)}
@@ -437,8 +456,14 @@
 							</span>
 						</div>
 					{/snippet}
-					{#if ctx?.canEdit()}
-						<button class="fa-skill" class:dimmed onclick={() => viewDetails()} aria-label={s.name}>
+					{#if ctx?.canEdit() && s.eligible}
+						<button
+							class="fa-skill"
+							class:dimmed
+							onclick={(e) => toggleFaSkill(e, s.slot)}
+							aria-label={s.name}
+							aria-pressed={on}
+						>
 							{@render FaSkillIcon(s.iconUrl, s.name)}
 						</button>
 					{:else}
@@ -632,7 +657,9 @@
 		border: none;
 		background: transparent;
 		line-height: 0;
-		transition: opacity 0.15s ease;
+		transition:
+			opacity 0.15s ease,
+			transform 0.15s ease;
 
 		&.dimmed {
 			opacity: 0.35;
@@ -643,11 +670,7 @@
 		cursor: pointer;
 
 		&:hover {
-			opacity: 0.85;
-
-			&.dimmed {
-				opacity: 0.55;
-			}
+			transform: scale(1.15);
 		}
 	}
 
@@ -673,6 +696,7 @@
 	:global(.fa-skill-tip-status) {
 		display: flex;
 		align-items: center;
+		justify-content: center;
 		gap: spacing.$unit-half;
 		color: var(--text-secondary);
 	}

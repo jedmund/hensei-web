@@ -50,6 +50,8 @@
 	import PickPlaylistPane from '$lib/components/sidebar/PickPlaylistPane.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import Notice from '$lib/components/ui/Notice.svelte'
+	import DismissibleNotice from '$lib/components/ui/DismissibleNotice.svelte'
+	import { openCalculatorPane } from '$lib/features/party/openCalculatorPane'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import WikiTextDialog from '$lib/components/party/WikiTextDialog.svelte'
 	import WikiImportReview from '$lib/components/party/WikiImportReview.svelte'
@@ -674,24 +676,52 @@
 					}}
 				>
 					{#if activeTab === GridType.Weapon}
-						<WeaponGrid
-							weapons={party.weapons}
-							raidExtra={party.raid?.extra}
-							showGuidebooks={party.raid?.group?.guidebooks && !isSolomonis}
-							guidebooks={party.guidebooks}
-							canEdit={canEdit()}
-							onClickGuidebookSlot={handleClickGuidebookSlot}
-							onRemoveGuidebook={handleRemoveGuidebook}
-							{collectionWeaponItems}
-						/>
+						<div class="tab-content">
+							{#if party.shortcode}
+								<DismissibleNotice
+									id="weapon-calculator"
+									variant="yellow"
+									badge={m.notice_new()}
+									class="calculator-notice"
+								>
+									{m.weapon_calculator_notice()}
+									{#snippet action()}
+										<Button variant="ghost" size="small" onclick={() => openCalculatorPane(party)}>
+											{m.calculator_open_short()}
+										</Button>
+									{/snippet}
+								</DismissibleNotice>
+							{/if}
+							<WeaponGrid
+								weapons={party.weapons}
+								raidExtra={party.raid?.extra}
+								showGuidebooks={party.raid?.group?.guidebooks && !isSolomonis}
+								guidebooks={party.guidebooks}
+								canEdit={canEdit()}
+								onClickGuidebookSlot={handleClickGuidebookSlot}
+								onRemoveGuidebook={handleRemoveGuidebook}
+								{collectionWeaponItems}
+							/>
+						</div>
 					{:else if activeTab === GridType.Summon}
 						<SummonGrid summons={party.summons} {collectionSummonItems} />
 					{:else}
-						<div class="character-tab-content">
+						<div class="tab-content">
+							{#if canEdit() && !party.fullAuto}
+								<DismissibleNotice id="full-auto-skills" variant="yellow" badge={m.notice_new()}>
+									{m.full_auto_skills_notice()}
+									{#snippet action()}
+										<Button variant="ghost" size="small" onclick={actions.openSettingsPanel}>
+											{m.full_auto_skills_notice_action()}
+										</Button>
+									{/snippet}
+								</DismissibleNotice>
+							{/if}
 							<JobSection
 								job={party.job}
 								jobSkills={party.jobSkills}
 								fullAutoSkills={party.fullAutoSkills}
+								fullAuto={party.fullAuto}
 								accessory={party.accessory}
 								canEdit={canEdit()}
 								gender={party.user?.gender ?? Gender.Gran}
@@ -870,9 +900,13 @@
 		min-height: 400px;
 	}
 
-	.character-tab-content {
+	.tab-content {
 		display: flex;
 		flex-direction: column;
 		gap: $unit-2x;
+
+		:global(.calculator-notice) {
+			margin-bottom: $unit;
+		}
 	}
 </style>

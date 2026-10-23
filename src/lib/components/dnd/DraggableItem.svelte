@@ -195,7 +195,8 @@
 			touch-action: none;
 			user-select: none;
 
-			&:hover {
+			// Children marked data-own-hover handle their own hover state.
+			&:hover:not(:has(:global([data-own-hover]:hover))) {
 				transform: scale(1.02);
 			}
 

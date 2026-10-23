@@ -23,6 +23,8 @@
 		jobSkills?: JobSkillList | undefined
 		/** Per-slot MC Full Auto toggles ("0".."3" → boolean). Absent = ON. */
 		fullAutoSkills?: Record<string, boolean> | undefined
+		/** Party-level Full Auto setting; skill FA state only shows when it's on. */
+		fullAuto?: boolean | undefined
 		accessory?: JobAccessory | undefined
 		canEdit?: boolean | undefined
 		gender?: Gender | undefined
@@ -38,6 +40,7 @@
 		job,
 		jobSkills = {},
 		fullAutoSkills = {},
+		fullAuto = false,
 		accessory,
 		canEdit = false,
 		gender = Gender.Gran,
@@ -175,6 +178,7 @@
 							locked={isSkillSlotLocked(slot, job, jobSkills)}
 							editable={canEdit}
 							available={true}
+							{fullAuto}
 							faOn={isSkillFaOn(slot)}
 							onclick={() => handleSelectSkill(slot)}
 							onRemove={() => handleRemoveSkill(slot)}

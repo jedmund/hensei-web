@@ -265,13 +265,14 @@
 		}
 	}
 
+	// Colored surfaces set --ghost-text: currentColor so ghosts take their text color.
 	:global([data-button-root].ghost) {
 		background-color: transparent;
-		color: var(--text-secondary);
+		color: var(--ghost-text, var(--text-secondary));
 
 		&:hover:not(:disabled) {
-			background-color: var(--ghost-hover-bg, var(--button-bg));
-			color: var(--text-primary);
+			background-color: var(--ghost-hover-bg);
+			color: var(--ghost-text, var(--text-primary));
 		}
 	}
 

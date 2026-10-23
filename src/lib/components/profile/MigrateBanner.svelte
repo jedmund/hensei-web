@@ -36,7 +36,7 @@
 			<Icon name="info" size={18} />
 			<p>{m.migrate_banner_text()}</p>
 		</div>
-		<Button size="small" variant="primary" onclick={() => goto(localizeHref('/teams/migrate'))}>
+		<Button size="small" variant="ghost" onclick={() => goto(localizeHref('/teams/migrate'))}>
 			{m.migrate_banner_action()}
 		</Button>
 	</div>
@@ -48,6 +48,7 @@
 	@use '$src/themes/layout' as *;
 
 	.migrate-banner {
+		--ghost-text: currentColor;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
