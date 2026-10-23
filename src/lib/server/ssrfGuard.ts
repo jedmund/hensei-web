@@ -1,13 +1,18 @@
 import { lookup } from 'node:dns/promises'
+import type { LookupAddress, LookupOptions } from 'node:dns'
 import { isIP } from 'node:net'
+import { Agent } from 'undici'
 
 /**
  * Guards server-side fetches of user-supplied URLs (e.g. link previews) so
  * they can't reach loopback, private-network or Railway-internal services.
  *
- * DNS is resolved before each request and every redirect hop is re-checked.
- * The fetch itself resolves again, so a DNS-rebinding host could still slip
- * through between the check and the request; this blocks the direct cases.
+ * DNS is resolved once per request and every redirect hop is re-checked. The
+ * connection is then made through an undici Agent whose DNS lookup only
+ * answers with the addresses that were validated for that hostname, so the
+ * socket can't land on a different address than the one that was checked.
+ * Only the socket's address lookup is replaced: the URL keeps its hostname,
+ * so the Host header, TLS SNI and certificate verification are unchanged.
  */
 
 export class BlockedUrlError extends Error {
@@ -18,6 +23,14 @@ export class BlockedUrlError extends Error {
 }
 
 type Resolver = (hostname: string) => Promise<string[]>
+
+/** Lowercases and strips brackets and a trailing dot, as the guard and the lookup both compare. */
+function normalizeHostname(hostname: string): string {
+	return hostname
+		.replace(/^\[|\]$/g, '')
+		.replace(/\.$/, '')
+		.toLowerCase()
+}
 
 const defaultResolver: Resolver = async (hostname) =>
 	(await lookup(hostname, { all: true, verbatim: true })).map((entry) => entry.address)
@@ -101,6 +114,16 @@ export async function assertPublicHttpUrl(
 	raw: string | URL,
 	resolve: Resolver = defaultResolver
 ): Promise<URL> {
+	return (await resolvePublicHttpUrl(raw, resolve)).url
+}
+
+interface ValidatedUrl {
+	url: URL
+	hostname: string
+	addresses: string[]
+}
+
+async function resolvePublicHttpUrl(raw: string | URL, resolve: Resolver): Promise<ValidatedUrl> {
 	let url: URL
 	try {
 		url = new URL(raw)
@@ -112,10 +135,7 @@ export async function assertPublicHttpUrl(
 	if (!ALLOWED_PORTS.has(url.port)) throw new BlockedUrlError('port')
 	if (url.username || url.password) throw new BlockedUrlError('credentials')
 
-	const hostname = url.hostname
-		.replace(/^\[|\]$/g, '')
-		.replace(/\.$/, '')
-		.toLowerCase()
+	const hostname = normalizeHostname(url.hostname)
 	if (hostname === 'localhost' || BLOCKED_HOST_SUFFIXES.some((s) => hostname.endsWith(s))) {
 		throw new BlockedUrlError('host')
 	}
@@ -134,12 +154,43 @@ export async function assertPublicHttpUrl(
 	if (addresses.length === 0 || addresses.some(isPrivateAddress)) {
 		throw new BlockedUrlError('non-public address')
 	}
-	return url
+	return { url, hostname, addresses }
+}
+
+type LookupCallback = (
+	err: NodeJS.ErrnoException | null,
+	address: string | LookupAddress[],
+	family?: number
+) => void
+
+/**
+ * A `lookup` for net/tls connections that answers only from `pins`
+ * (hostname → validated addresses) and never queries DNS. Hostnames that
+ * weren't validated fail like an unknown host.
+ */
+export function createPinnedLookup(pins: Map<string, string[]>) {
+	return (hostname: string, options: LookupOptions, callback: LookupCallback): void => {
+		const addresses = pins.get(normalizeHostname(hostname))
+		const entries = (addresses ?? []).map((address) => ({ address, family: isIP(address) }))
+		const wanted = options.family === 4 || options.family === 6 ? options.family : 0
+		const matching = wanted ? entries.filter((e) => e.family === wanted) : entries
+
+		const first = matching[0]
+		if (!first) {
+			const err: NodeJS.ErrnoException = new Error(`getaddrinfo ENOTFOUND ${hostname}`)
+			err.code = 'ENOTFOUND'
+			process.nextTick(() => callback(err, ''))
+			return
+		}
+		if (options.all) process.nextTick(() => callback(null, matching))
+		else process.nextTick(() => callback(null, first.address, first.family))
+	}
 }
 
 /**
  * fetch() for user-supplied URLs: validates the URL and each redirect target
- * with assertPublicHttpUrl, following at most `maxRedirects` redirects.
+ * with assertPublicHttpUrl, following at most `maxRedirects` redirects, and
+ * connects only to the addresses validated for each hop.
  */
 export async function fetchPublicUrl(
 	raw: string,
@@ -149,15 +200,36 @@ export async function fetchPublicUrl(
 		resolve = defaultResolver
 	}: { maxRedirects?: number; resolve?: Resolver } = {}
 ): Promise<Response> {
-	let current = await assertPublicHttpUrl(raw, resolve)
+	const pins = new Map<string, string[]>()
+	const pin = (validated: ValidatedUrl) => {
+		pins.set(validated.hostname, validated.addresses)
+		return validated.url
+	}
 
-	for (let hop = 0; ; hop++) {
-		const res = await fetch(current, { ...init, redirect: 'manual' })
-		const location = res.headers.get('location')
-		if (res.status < 300 || res.status >= 400 || !location) return res
+	let current = pin(await resolvePublicHttpUrl(raw, resolve))
+	const dispatcher = new Agent({ connect: { lookup: createPinnedLookup(pins) } })
 
-		if (hop >= maxRedirects) throw new BlockedUrlError('too many redirects')
-		await res.body?.cancel()
-		current = await assertPublicHttpUrl(new URL(location, current), resolve)
+	try {
+		for (let hop = 0; ; hop++) {
+			// `dispatcher` is Node's fetch extension; lib.dom's RequestInit doesn't declare it.
+			const res = await fetch(current, {
+				...init,
+				redirect: 'manual',
+				dispatcher
+			} as RequestInit)
+			const location = res.headers.get('location')
+			if (res.status < 300 || res.status >= 400 || !location) {
+				// Graceful: lets the caller finish reading the body, then frees the pool.
+				void dispatcher.close()
+				return res
+			}
+
+			if (hop >= maxRedirects) throw new BlockedUrlError('too many redirects')
+			await res.body?.cancel()
+			current = pin(await resolvePublicHttpUrl(new URL(location, current), resolve))
+		}
+	} catch (err) {
+		void dispatcher.destroy()
+		throw err
 	}
 }

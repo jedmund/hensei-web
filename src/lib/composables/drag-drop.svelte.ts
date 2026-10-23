@@ -235,11 +235,15 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 						? item.summon.name
 						: 'Unknown'
 
-		preview.innerHTML = `
-			<div class="drag-preview-content" style="padding: 8px; background: white; border: 2px solid #ccc; border-radius: 4px;">
-				<span>${itemName || 'Item'}</span>
-			</div>
-		`
+		// Built with DOM nodes so catalogue names are never parsed as HTML.
+		const content = document.createElement('div')
+		content.className = 'drag-preview-content'
+		content.style.cssText =
+			'padding: 8px; background: white; border: 2px solid #ccc; border-radius: 4px;'
+		const label = document.createElement('span')
+		label.textContent = `${itemName || 'Item'}`
+		content.appendChild(label)
+		preview.appendChild(content)
 		document.body.appendChild(preview)
 		state.dragPreview = preview
 	}

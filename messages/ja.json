@@ -1563,6 +1563,7 @@
 	"editor_link_dialog_title": "リンクを挿入",
 	"editor_link_insert": "挿入",
 	"editor_link_text": "リンクテキスト",
+	"editor_link_invalid_url": "http:// または https:// で始まるリンクを入力してください",
 	"editor_blockquote": "引用",
 	"editor_inline_code": "インラインコード",
 	"editor_superscript": "上付き",

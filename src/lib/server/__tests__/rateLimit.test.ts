@@ -25,6 +25,25 @@ describe('createRateLimiter', () => {
 		expect(limiter.hit('b', 20)).toBe(true)
 	})
 
+	it('keeps active counters when the key table fills up', () => {
+		const limiter = createRateLimiter({ limit: 2, windowMs: 1000, maxKeys: 3 })
+		expect(limiter.hit('victim', 0)).toBe(true)
+		expect(limiter.hit('victim', 1)).toBe(true)
+		for (let i = 0; i < 50; i++) {
+			limiter.hit(`spray-${i}`, 2)
+			// Recently seen keys stay; only the least recently seen are evicted.
+			expect(limiter.hit('victim', 2)).toBe(false)
+		}
+	})
+
+	it('drops expired windows before evicting live ones', () => {
+		const limiter = createRateLimiter({ limit: 1, windowMs: 1000, maxKeys: 2 })
+		expect(limiter.hit('old', 0)).toBe(true)
+		expect(limiter.hit('active', 600)).toBe(true)
+		expect(limiter.hit('new', 1200)).toBe(true)
+		expect(limiter.hit('active', 1300)).toBe(false)
+	})
+
 	it('resets after the window', () => {
 		const limiter = createRateLimiter({ limit: 1, windowMs: 1000 })
 		expect(limiter.hit('a', 0)).toBe(true)
@@ -91,13 +110,24 @@ describe('rateLimitResponse', () => {
 		expect(rateLimitResponse(request('POST', '198.51.100.1'), '/auth/login', r)).toBeNull()
 	})
 
-	it('ignores other methods, other paths and internal requests', () => {
+	it('ignores other methods, other paths and sub-requests', () => {
 		const r = rules()
 		for (let i = 0; i < 5; i++) {
 			expect(rateLimitResponse(request('GET', '203.0.113.9'), '/auth/login', r)).toBeNull()
 			expect(rateLimitResponse(request('POST', '203.0.113.9'), '/teams', r)).toBeNull()
-			expect(rateLimitResponse(request('POST'), '/auth/login', r)).toBeNull()
+			expect(
+				rateLimitResponse(request('POST'), '/auth/login', r, { isSubRequest: true })
+			).toBeNull()
 		}
+	})
+
+	it('puts requests without a client address in one shared bucket', () => {
+		const r = rules()
+		expect(rateLimitResponse(request('POST'), '/auth/login', r)).toBeNull()
+		expect(rateLimitResponse(request('POST'), '/auth/login', r)).toBeNull()
+		expect(rateLimitResponse(request('POST'), '/auth/login', r)?.status).toBe(429)
+		// Identified clients keep their own buckets.
+		expect(rateLimitResponse(request('POST', '203.0.113.9'), '/auth/login', r)).toBeNull()
 	})
 })
 
@@ -149,6 +179,11 @@ describe('RATE_LIMIT_RULES paths', () => {
 	it('limits CSP violation reports', () => {
 		expect(ruleFor('POST', '/api/csp-report')).toBe('csp-report')
 		expect(ruleFor('GET', '/api/csp-report')).toBeUndefined()
+	})
+
+	it('limits client error reports', () => {
+		expect(ruleFor('POST', '/api/client-error')).toBe('client-error')
+		expect(ruleFor('POST', '/ja/api/client-error')).toBe('client-error')
 	})
 
 	it('limits social login starts, callbacks and the username step', () => {

@@ -143,6 +143,14 @@ describe('GET /download/gacha', () => {
 		expect((await get('seed=s0', undefined, '198.51.100.7')).status).toBe(200)
 	})
 
+	it('rate-limits cache misses without a client address in one shared bucket', async () => {
+		const statuses: number[] = []
+		for (let i = 0; i < 11; i++)
+			statuses.push((await get(`seed=u${i}`, undefined, i % 2 ? '10.0.0.1' : '')).status)
+		expect(statuses.slice(0, 10).every((code) => code === 200)).toBe(true)
+		expect(statuses[10]).toBe(429)
+	})
+
 	it('accepts signed URLs from our pages and rejects tampered ones', async () => {
 		env.RENDER_HMAC_SECRET = 'secret'
 		const params = new URLSearchParams('seed=abc')

@@ -10,6 +10,7 @@
 
 import { error } from '@sveltejs/kit'
 import { env } from '$env/dynamic/private'
+import { secureEquals } from '$lib/server/secureEquals'
 import type { LayoutServerLoad } from './$types'
 
 const LOOPBACK_HOSTS = new Set(['127.0.0.1', '::1', 'localhost'])
@@ -23,7 +24,7 @@ export const load: LayoutServerLoad = async ({ request, getClientAddress }) => {
 	}
 
 	const provided = request.headers.get('x-render-secret')
-	if (provided && provided === expected) {
+	if (provided && secureEquals(provided, expected)) {
 		return {}
 	}
 
