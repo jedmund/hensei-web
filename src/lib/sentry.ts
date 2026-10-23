@@ -9,6 +9,23 @@
 // for requests the web app traces (see its traces_sampler).
 export const SENTRY_TRACES_SAMPLE_RATE = 0.01
 
+// Sentry 11 collects more data by default. Keep the v10 collection policy on
+// both client and server so upgrading doesn't start sending cookies or bodies.
+export const SENTRY_DATA_COLLECTION = {
+	userInfo: false,
+	cookies: false,
+	httpHeaders: {
+		request: { deny: ['forwarded', '-ip', 'remote-', 'via', '-user'] },
+		response: { deny: ['forwarded', '-ip', 'remote-', 'via', '-user'] }
+	},
+	httpBodies: [],
+	urlQueryParams: { deny: ['forwarded', '-ip', 'remote-', 'via', '-user'] },
+	genAI: { inputs: false, outputs: false },
+	databaseQueryData: false,
+	queues: false,
+	graphQL: { document: false, variables: false }
+}
+
 // Expected / noisy errors that should never be reported as bugs. Matched
 // against the error message; works on both client and server.
 export const SENTRY_IGNORE_ERRORS: (string | RegExp)[] = [

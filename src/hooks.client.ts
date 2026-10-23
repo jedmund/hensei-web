@@ -4,6 +4,7 @@ import { z } from 'zod'
 import {
 	isExpectedError,
 	isInjectedScriptError,
+	SENTRY_DATA_COLLECTION,
 	SENTRY_DENY_URLS,
 	SENTRY_IGNORE_ERRORS,
 	SENTRY_TRACES_SAMPLE_RATE
@@ -21,6 +22,7 @@ if (env.PUBLIC_SENTRY_DSN) {
 		dsn: env.PUBLIC_SENTRY_DSN,
 		environment: env.PUBLIC_SENTRY_ENVIRONMENT || 'production',
 		tracesSampleRate: SENTRY_TRACES_SAMPLE_RATE,
+		dataCollection: SENTRY_DATA_COLLECTION,
 		ignoreErrors: SENTRY_IGNORE_ERRORS,
 		denyUrls: SENTRY_DENY_URLS,
 		beforeSend: (event, hint) =>
