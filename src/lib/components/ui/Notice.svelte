@@ -1,5 +1,8 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
+	import Button from './Button.svelte'
+	import Tooltip from './Tooltip.svelte'
+	import * as m from '$lib/paraglide/messages'
 
 	type Variant =
 		'gray' | 'blue' | 'yellow' | 'red' | 'wind' | 'fire' | 'water' | 'earth' | 'light' | 'dark'
@@ -7,24 +10,59 @@
 	interface Props {
 		variant?: Variant
 		icon?: Snippet
+		/** Short label shown in a pill before the text, e.g. "New". */
+		badge?: string
 		children: Snippet
+		/** Trailing control, placed to the left of the dismiss button. */
+		action?: Snippet
+		/** Shows a dismiss (X) button when set. */
+		onDismiss?: () => void
+		class?: string
 	}
 
-	let { variant = 'gray', icon, children }: Props = $props()
+	let {
+		variant = 'gray',
+		icon,
+		badge,
+		children,
+		action,
+		onDismiss,
+		class: className = ''
+	}: Props = $props()
 
 	const elementVariants = ['wind', 'fire', 'water', 'earth', 'light', 'dark']
 	const isElement = $derived(elementVariants.includes(variant))
 </script>
 
-<div class="notice {variant}" class:element={isElement} role="status">
+<div class="notice {variant} {className}" class:element={isElement} role="status">
 	{#if icon}
 		<span class="notice-icon">
 			{@render icon()}
 		</span>
 	{/if}
+	{#if badge}
+		<span class="notice-badge"><span>{badge}</span></span>
+	{/if}
 	<div class="notice-text">
 		{@render children()}
 	</div>
+	{#if action || onDismiss}
+		<div class="notice-actions">
+			{@render action?.()}
+			{#if onDismiss}
+				<Tooltip content={m.notice_dismiss()}>
+					<Button
+						variant="ghost"
+						size="small"
+						icon="close"
+						iconOnly
+						onclick={onDismiss}
+						aria-label={m.notice_dismiss()}
+					/>
+				</Tooltip>
+			{/if}
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -33,6 +71,7 @@
 	@use '$src/themes/typography' as *;
 
 	.notice {
+		--ghost-text: currentColor;
 		display: flex;
 		align-items: center;
 		gap: $unit;
@@ -42,6 +81,8 @@
 	}
 
 	.notice-text {
+		flex: 1;
+		min-width: 0;
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
@@ -52,6 +93,30 @@
 		:global(p) {
 			margin: 0;
 		}
+	}
+
+	// Filled with the variant's text color, so it matches any notice.
+	.notice-badge {
+		flex-shrink: 0;
+		padding: $unit-quarter $unit;
+		border-radius: $item-corner;
+		background: currentColor;
+		font-size: $font-tiny;
+		font-weight: $bold;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+		line-height: 1.5;
+
+		span {
+			color: var(--card-bg);
+		}
+	}
+
+	.notice-actions {
+		display: flex;
+		align-items: center;
+		flex-shrink: 0;
+		gap: $unit-half;
 	}
 
 	.notice-icon {
