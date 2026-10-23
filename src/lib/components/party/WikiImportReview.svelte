@@ -177,7 +177,12 @@
 		}
 
 		.placeholder {
-			background: var(--placeholder-bg);
+			// Translucent, so it darkens whatever notice color sits behind it
+			background: rgba(0, 0, 0, 0.08);
+
+			:global(html[data-theme='dark']) & {
+				background: rgba(0, 0, 0, 0.3);
+			}
 		}
 	}
 
