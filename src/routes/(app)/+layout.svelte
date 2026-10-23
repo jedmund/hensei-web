@@ -319,7 +319,6 @@
 
 			// Main content area with independent scroll
 			.main-content {
-				--ghost-hover-bg: var(--ghost-hover-bg-on-page);
 				flex: 1;
 				overflow-y: auto;
 				overflow-x: hidden;
