@@ -96,6 +96,10 @@ export interface DescriptionSegment {
 	strong?: boolean
 	/** Hover text (plain, may contain "\n") */
 	tooltip?: string
+	/** Character skills: the ordinal of the version's skill effect this status mention produced */
+	effect?: number
+	/** Character skills: the text names another skill */
+	skill?: boolean
 }
 
 /** One uncap/transcendence tier of a weapon skill slot. */
@@ -237,6 +241,8 @@ export interface SkillEffectStatus {
 	family?: string | null
 	category?: string | null
 	icon?: string | null
+	/** What the status does (English, from the gbf.wiki status list) */
+	description?: string | null
 }
 
 /** A single normalized effect within a skill version. */
@@ -244,6 +250,8 @@ export interface CharacterSkillEffect {
 	id: string
 	ordinal: number
 	effectType: string
+	/** buff | debuff | field | special in this skill; the status's own category is its usual one */
+	category?: string | null
 	target?: string | null
 	amount?: string | null
 	amountMax?: string | null
@@ -275,6 +283,11 @@ export interface CharacterSkillVersion {
 	id: string
 	name: LocalizedName
 	description: LocalizedName
+	/** The description as display segments; English only for now */
+	descriptionSegments?: {
+		en?: DescriptionSegment[] | null
+		ja?: DescriptionSegment[] | null
+	} | null
 	icon?: string | null
 	/** Game asset stem "{id}_{N}" for the icon at /icons/abilities/{gameIcon}.png */
 	gameIcon?: string | null
