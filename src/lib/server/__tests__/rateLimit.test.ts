@@ -181,6 +181,11 @@ describe('RATE_LIMIT_RULES paths', () => {
 		expect(ruleFor('GET', '/api/csp-report')).toBeUndefined()
 	})
 
+	it('limits client error reports', () => {
+		expect(ruleFor('POST', '/api/client-error')).toBe('client-error')
+		expect(ruleFor('POST', '/ja/api/client-error')).toBe('client-error')
+	})
+
 	it('limits social login starts, callbacks and the username step', () => {
 		for (const provider of ['discord', 'google', 'apple']) {
 			expect(ruleFor('GET', `/auth/${provider}`)).toBe('social-start')
