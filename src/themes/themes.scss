@@ -64,6 +64,11 @@
 
 	--accent-yellow: #{colors.$accent--yellow--light};
 
+	// Skill effect categories (EffectTooltip)
+	--effect-buff: #{colors.$accent--yellow--light};
+	--effect-debuff: #{colors.$accent--blue--light};
+	--effect-field: #{colors.$extra--purple--primary--light};
+
 	--selected-item-bg: #{colors.$selected--item--bg--light};
 	--selected-item-bg-hover: #{colors.$selected--item--bg--light--hover};
 	--anonymous-bg: #{colors.$anonymous--bg--light};
@@ -583,6 +588,11 @@ html[data-theme='dark'] {
 	--accent-blue-focus: #{colors.$accent--blue--dark--focus};
 
 	--accent-yellow: #{colors.$accent--yellow--dark};
+
+	// Skill effect categories (EffectTooltip)
+	--effect-buff: #{colors.$accent--yellow--dark};
+	--effect-debuff: #{colors.$accent--blue--dark};
+	--effect-field: #{colors.$extra--purple--primary--dark};
 
 	--selected-item-bg: #{colors.$selected--item--bg--dark};
 	--selected-item-bg-hover: #{colors.$selected--item--bg--dark--hover};

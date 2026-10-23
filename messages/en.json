@@ -398,7 +398,16 @@
 	"party_import_wiki_placeholder": "Paste the TeamSpread template here",
 	"party_import_wiki_action": "Import",
 	"party_import_wiki_create": "Create team",
-	"party_import_wiki_matched": "Found {matched} of {total} items on the page.",
+	"party_import_wiki_matched": [
+		{
+			"declarations": ["input total", "input matched", "local totalPlural = total: plural"],
+			"selectors": ["totalPlural"],
+			"match": {
+				"totalPlural=one": "Found {matched} of {total} item on the page.",
+				"totalPlural=other": "Found {matched} of {total} items on the page."
+			}
+		}
+	],
 	"party_import_wiki_unmatched": "Not found (left empty)",
 	"party_import_wiki_ambiguous": "More than one match (left empty)",
 	"party_import_wiki_skipped": "Not imported",
@@ -626,6 +635,7 @@
 	"proficiency_katana": "Katana",
 	"details_tab_team": "This team",
 	"details_tab_info": "Info",
+	"details_tab_skills": "Skills",
 	"details_basic_info": "Basic Information",
 	"details_style": "Style",
 	"details_switch_style": "Switch Style",
@@ -669,7 +679,16 @@
 	"details_collection_count_your": "{count} in your Collection",
 	"details_collection_count_other": "{count} in {owner}'s Collection",
 	"details_collection_out_of_sync": "Out of sync",
-	"details_collection_changes_count": "{count} changes from your Collection",
+	"details_collection_changes_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} change from your Collection",
+				"countPlural=other": "{count} changes from your Collection"
+			}
+		}
+	],
 	"details_collection_changes_count_singular": "1 change from your Collection",
 	"details_collection_sync": "Sync",
 	"details_collection_sync_all": "Sync all",
@@ -750,7 +769,16 @@
 	"crew_no_events": "No events yet",
 	"crew_starting_soon": "Starting soon",
 	"crew_starts_in_1_day": "in 1 day",
-	"crew_starts_in_days": "in {days} days",
+	"crew_starts_in_days": [
+		{
+			"declarations": ["input days", "local daysPlural = days: plural"],
+			"selectors": ["daysPlural"],
+			"match": {
+				"daysPlural=one": "in {days} day",
+				"daysPlural=other": "in {days} days"
+			}
+		}
+	],
 	"crew_name_label": "Crew Name",
 	"crew_name_placeholder": "Enter your crew name",
 	"crew_name_placeholder_short": "Enter crew name",
@@ -875,7 +903,16 @@
 	"crew_bulk_add_another": "Add Another",
 	"crew_bulk_error": "Failed to create phantom players. Please check the inputs and try again.",
 	"crew_bulk_creating": "Creating…",
-	"crew_bulk_create_count": "Create {count} Phantoms",
+	"crew_bulk_create_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Create {count} Phantom",
+				"countPlural=other": "Create {count} Phantoms"
+			}
+		}
+	],
 	"crew_scout_title": "Scout Player",
 	"crew_scout_desc": "Search for a user to invite to your crew",
 	"crew_scout_success": "Invitation sent to {username}!",
@@ -1257,7 +1294,16 @@
 	"collection_add_no_results": "No {type} match your search",
 	"collection_add_search_prompt": "Start searching to find {type}",
 	"collection_add_selected": "{count} {type} selected",
-	"collection_add_items_selected": "{count} items ({total} total) selected",
+	"collection_add_items_selected": [
+		{
+			"declarations": ["input count", "input total", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} item ({total} total) selected",
+				"countPlural=other": "{count} items ({total} total) selected"
+			}
+		}
+	],
 	"collection_adding": "Adding...",
 	"collection_add_button": "Add to Collection",
 	"collection_add_error": "Failed to add to collection",
@@ -1473,12 +1519,39 @@
 	"party_remixed_anonymous_team": "an anonymous team",
 	"time_just_now": "Just now",
 	"time_minute_ago": "1 minute ago",
-	"time_minutes_ago": "{count} minutes ago",
+	"time_minutes_ago": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} minute ago",
+				"countPlural=other": "{count} minutes ago"
+			}
+		}
+	],
 	"time_hour_ago": "1 hour ago",
-	"time_hours_ago": "{count} hours ago",
+	"time_hours_ago": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} hour ago",
+				"countPlural=other": "{count} hours ago"
+			}
+		}
+	],
 	"time_today": "Today",
 	"time_yesterday": "Yesterday",
-	"time_days_ago": "{count} days ago",
+	"time_days_ago": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} day ago",
+				"countPlural=other": "{count} days ago"
+			}
+		}
+	],
 	"time_one_week_ago": "1 week ago",
 	"time_last_updated": "Last updated {time}",
 	"section_general": "General",
@@ -1679,7 +1752,16 @@
 	"crew_join_description": "Accept an invitation to join a crew.",
 	"crew_join_failed_load": "Failed to load invitations",
 	"crew_join_phantom_assigned": "Phantom assigned: {name}",
-	"crew_join_member_count": "{count} members",
+	"crew_join_member_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} member",
+				"countPlural=other": "{count} members"
+			}
+		}
+	],
 	"crew_join_declining": "Declining...",
 	"crew_join_decline": "Decline",
 	"crew_join_joining": "Joining...",
@@ -1708,7 +1790,16 @@
 	"playlist_field_title_placeholder": "My playlist",
 	"playlist_field_description": "Description",
 	"playlist_field_description_placeholder": "Optional description",
-	"playlist_party_count": "{count} teams",
+	"playlist_party_count": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} team",
+				"countPlural=other": "{count} teams"
+			}
+		}
+	],
 	"playlist_party_count_one": "{count} team",
 	"playlist_no_parties": "No teams in this playlist yet.",
 	"playlist_loading": "Loading playlists…",
@@ -1826,13 +1917,40 @@
 	"character_skills_rel_transforms_to": "Transforms into",
 	"character_skills_rel_option_of": "Option",
 	"character_skills_rel_form_counterpart": "Alternate form",
-	"character_skills_cooldown": "CD",
-	"character_skills_initial_cooldown_value": "Initial {n}",
+	"character_skills_cooldown": "Cooldown",
+	"character_skills_initial_cooldown_value": [
+		{
+			"declarations": ["input n", "local nPlural = n: plural"],
+			"selectors": ["nPlural"],
+			"match": {
+				"nPlural=one": "Ready in {n} turn",
+				"nPlural=other": "Ready in {n} turns"
+			}
+		}
+	],
 	"character_skills_duration": "Duration",
-	"character_skills_turns": "{n} turns",
+	"character_skills_turns": [
+		{
+			"declarations": ["input n", "local nPlural = n: plural"],
+			"selectors": ["nPlural"],
+			"match": {
+				"nPlural=one": "{n} turn",
+				"nPlural=other": "{n} turns"
+			}
+		}
+	],
 	"character_skills_seconds": "{n} sec",
 	"character_skills_level": "Lv {n}",
 	"character_skills_uncap_star": "★{n}",
+	"effect_tooltip_buff": "Buff",
+	"effect_tooltip_debuff": "Debuff",
+	"effect_tooltip_field": "Field effect",
+	"effect_tooltip_special": "Special",
+	"effect_tooltip_amount": "Amount",
+	"effect_tooltip_max": "Max {value}",
+	"effect_tooltip_accuracy": "Accuracy",
+	"effect_tooltip_guaranteed": "Guaranteed",
+	"effect_tooltip_indefinite": "Indefinite",
 	"weapon_skills_title": "Skills",
 	"weapon_skills_empty": "No skills found for this weapon",
 	"weapon_skills_slot": "Skill {n}",
@@ -2007,11 +2125,59 @@
 	"gacha_log_clear": "Clear log",
 	"gacha_log_clear_title": "Clear the draw log?",
 	"gacha_log_clear_message": "This removes every draw saved in this browser.",
-	"gacha_log_draws": "{draws} draws",
+	"gacha_log_draws": [
+		{
+			"declarations": ["input draws", "local drawsPlural = draws: plural"],
+			"selectors": ["drawsPlural"],
+			"match": {
+				"drawsPlural=one": "{draws} draw",
+				"drawsPlural=other": "{draws} draws"
+			}
+		}
+	],
 	"gacha_share": "Share",
-	"gacha_share_draw": "{ssr} SSRs in {draws} draws",
-	"gacha_share_until": "{name} took {draws} draws",
-	"gacha_share_odds": "{percent} chance of {name} in {draws} draws",
+	"gacha_share_draw": [
+		{
+			"declarations": [
+				"input ssr",
+				"input draws",
+				"local ssrPlural = ssr: plural",
+				"local drawsPlural = draws: plural"
+			],
+			"selectors": ["ssrPlural", "drawsPlural"],
+			"match": {
+				"ssrPlural=one, drawsPlural=one": "{ssr} SSR in {draws} draw",
+				"ssrPlural=one, drawsPlural=other": "{ssr} SSR in {draws} draws",
+				"ssrPlural=other, drawsPlural=one": "{ssr} SSRs in {draws} draw",
+				"ssrPlural=other, drawsPlural=other": "{ssr} SSRs in {draws} draws"
+			}
+		}
+	],
+	"gacha_share_until": [
+		{
+			"declarations": ["input draws", "input name", "local drawsPlural = draws: plural"],
+			"selectors": ["drawsPlural"],
+			"match": {
+				"drawsPlural=one": "{name} took {draws} draw",
+				"drawsPlural=other": "{name} took {draws} draws"
+			}
+		}
+	],
+	"gacha_share_odds": [
+		{
+			"declarations": [
+				"input draws",
+				"input name",
+				"input percent",
+				"local drawsPlural = draws: plural"
+			],
+			"selectors": ["drawsPlural"],
+			"match": {
+				"drawsPlural=one": "{percent} chance of {name} in {draws} draw",
+				"drawsPlural=other": "{percent} chance of {name} in {draws} draws"
+			}
+		}
+	],
 	"gacha_copy": "Copy",
 	"gacha_copy_link": "Copy link",
 	"gacha_copy_image": "Copy image",

@@ -3,21 +3,25 @@
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import * as m from '$lib/paraglide/messages'
 
+	type DetailsSidebarView = 'canonical' | 'user' | 'skills'
+
 	interface Props {
-		hasModifications: boolean
-		selectedView: 'canonical' | 'user'
-		onViewChange?: (view: 'canonical' | 'user') => void
+		showTeam: boolean
+		/** Label for the Skills tab; the tab is hidden when omitted. */
+		skillsLabel?: string
+		selectedView: DetailsSidebarView
+		onViewChange?: (view: DetailsSidebarView) => void
 	}
 
-	let { hasModifications, selectedView = $bindable('user'), onViewChange }: Props = $props()
+	let { showTeam, skillsLabel, selectedView = $bindable('user'), onViewChange }: Props = $props()
 
 	function handleViewChange(value: string) {
-		selectedView = value as 'canonical' | 'user'
+		selectedView = value as DetailsSidebarView
 		onViewChange?.(selectedView)
 	}
 </script>
 
-{#if hasModifications}
+{#if showTeam || skillsLabel}
 	<div class="details-sidebar-segmented-control">
 		<SegmentedControl
 			bind:value={selectedView}
@@ -26,8 +30,13 @@
 			size="small"
 			grow
 		>
-			<Segment value="user">{m.details_tab_team()}</Segment>
+			{#if showTeam}
+				<Segment value="user">{m.details_tab_team()}</Segment>
+			{/if}
 			<Segment value="canonical">{m.details_tab_info()}</Segment>
+			{#if skillsLabel}
+				<Segment value="skills">{skillsLabel}</Segment>
+			{/if}
 		</SegmentedControl>
 	</div>
 {/if}

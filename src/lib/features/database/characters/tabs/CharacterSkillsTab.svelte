@@ -5,6 +5,7 @@
 		CharacterSkillVersion
 	} from '$lib/types/api/entities'
 	import SkillVersionCard from './SkillVersionCard.svelte'
+	import SkillGroup from '$lib/components/skills/SkillGroup.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	// Only the skill graph is needed; typed structurally so either Character shape
@@ -100,31 +101,28 @@
 		{#each groups as group (group.kind)}
 			{@const groupSlots = slotsOfKind(group.kind)}
 			{#if groupSlots.length}
-				<section class="skill-group">
-					<h3 class="group-title">{group.title()}</h3>
-					<div class="slot-list">
-						{#each groupSlots as slot (slot.kind + slot.position)}
-							{@const primary = primaryVersion(slot)}
-							{#if primary}
-								<div class="slot">
+				<SkillGroup title={group.title()}>
+					{#each groupSlots as slot (slot.kind + slot.position)}
+						{@const primary = primaryVersion(slot)}
+						{#if primary}
+							<div class="skill-slot">
+								<SkillVersionCard
+									version={primary}
+									kind={slot.kind}
+									badges={progressionBadges(slot)}
+								/>
+								{#each subVariants(slot) as sub (sub.version.id)}
 									<SkillVersionCard
-										version={primary}
+										version={sub.version}
 										kind={slot.kind}
-										badges={progressionBadges(slot)}
+										relationLabel={sub.label}
+										linked
 									/>
-									{#each subVariants(slot) as sub (sub.version.id)}
-										<SkillVersionCard
-											version={sub.version}
-											kind={slot.kind}
-											relationLabel={sub.label}
-											linked
-										/>
-									{/each}
-								</div>
-							{/if}
-						{/each}
-					</div>
-				</section>
+								{/each}
+							</div>
+						{/if}
+					{/each}
+				</SkillGroup>
 			{/if}
 		{/each}
 	{/if}
@@ -132,7 +130,6 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
 
 	.skills-tab {
 		display: flex;
@@ -147,28 +144,5 @@
 		p {
 			margin: 0;
 		}
-	}
-
-	.skill-group {
-		padding: spacing.$unit-2x;
-	}
-
-	.group-title {
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-		color: var(--text-secondary);
-		margin: 0 0 spacing.$unit 0;
-	}
-
-	.slot-list {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-2x;
-	}
-
-	.slot {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-half;
 	}
 </style>

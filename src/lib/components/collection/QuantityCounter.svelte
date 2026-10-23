@@ -97,7 +97,7 @@
 		border: none;
 		background: transparent;
 		color: white;
-		font-size: typography.$font-body;
+		font-size: typography.$font-small;
 		font-weight: typography.$bold;
 		cursor: pointer;
 		border-radius: 2px;

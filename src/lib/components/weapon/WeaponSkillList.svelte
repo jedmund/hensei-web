@@ -2,17 +2,16 @@
 	import * as m from '$lib/paraglide/messages'
 	import { localizedName, appLocale } from '$lib/utils/locale'
 	import { getWeaponSkillIcon } from '$lib/utils/images'
-	import SkillDescription from '$lib/components/weapon/SkillDescription.svelte'
+	import SkillCard from '$lib/components/skills/SkillCard.svelte'
+	import SkillGroup from '$lib/components/skills/SkillGroup.svelte'
 	import { resolvedClassification } from '$lib/utils/weaponSkillClassification'
 	import type { WeaponSkill, WeaponSkillVersion } from '$lib/types/api/entities'
 
 	interface Props {
 		skills: WeaponSkill[] | undefined
-		/** Tighter layout (smaller icon, EN-only) for narrow contexts like the sidebar. */
-		compact?: boolean
 	}
 
-	let { skills, compact = false }: Props = $props()
+	let { skills }: Props = $props()
 
 	const locale = $derived(appLocale())
 	const slots = $derived([...(skills ?? [])].sort((a, b) => a.position - b.position))
@@ -31,205 +30,72 @@
 		return m.weapon_skills_tier_base()
 	}
 
-	// modifier · series · size — only present for standard grid-scaling skills.
-	// Shows the resolved classification (curated override, else derived).
-	function scalingMeta(version: WeaponSkillVersion): string {
+	// When a version unlocks: "FLB · Lv 120". A slot's first version shows it as badges, its
+	// upgrades as the linked card's label.
+	function unlockParts(version: WeaponSkillVersion): string[] {
+		const parts = [tierLabel(version)]
+		if (version.unlockLevel) parts.push(m.weapon_skills_level({ n: version.unlockLevel }))
+		return parts
+	}
+
+	// Who the skill applies to, shown as badges.
+	function flags(version: WeaponSkillVersion): string[] {
+		const flags: string[] = []
+		if (version.mainHandOnly) flags.push(m.weapon_skills_main_hand())
+		if (version.mcOnly) flags.push(m.weapon_skills_mc_only())
+		return flags
+	}
+
+	// modifier · series · size (the resolved classification: curated override, else derived),
+	// and whether the skill has a skill level in game. That's a per-skill property: Fediel's
+	// Spine's Eclipse's Stamina has one, its Black Covenant doesn't. An unknown flag counts
+	// as leveling.
+	function metaParts(version: WeaponSkillVersion): string[] {
 		const { modifier, series, size } = resolvedClassification(version)
-		return [modifier, series, size].filter(Boolean).join(' · ')
+		const parts = [modifier, series, size].filter((part): part is string => !!part)
+		if (version.scalesWithSkillLevel !== false) parts.push(m.weapon_skills_skill_level())
+		return parts
 	}
 
-	// Whether the skill has a skill level in game (a per-skill property: Fediel's Spine's
-	// Eclipse's Stamina has one, its Black Covenant doesn't). An unknown flag counts as leveling.
-	function hasSkillLevel(version: WeaponSkillVersion): boolean {
-		return version.scalesWithSkillLevel !== false
+	// The current locale's segments, else English; the raw text is the fallback for
+	// responses without segments.
+	function segmentsFor(version: WeaponSkillVersion) {
+		const segments = version.descriptionSegments
+		return segments?.[locale]?.length ? segments[locale] : (segments?.en ?? undefined)
 	}
 
-	// Hide an icon that 404s rather than showing a broken-image glyph.
-	function hideBrokenIcon(event: Event) {
-		;(event.currentTarget as HTMLImageElement).style.display = 'none'
+	function rawFor(version: WeaponSkillVersion): string | undefined {
+		return version.description?.[locale]?.trim() || version.description?.en?.trim() || undefined
 	}
 </script>
 
-<div class="weapon-skill-list" class:compact>
-	{#each slots as slot (slot.position)}
-		<section class="slot">
-			<h5 class="slot-title">{m.weapon_skills_slot({ n: slot.position + 1 })}</h5>
-			{#each versions(slot) as version (version.ordinal)}
-				{@const descriptionEn = version.description?.en?.trim()}
-				{@const descriptionJa = version.description?.ja?.trim()}
-				{@const meta = scalingMeta(version)}
-				{@const iconUrl = getWeaponSkillIcon(version.iconStem, locale)}
-				<div class="version-card">
-					{#if iconUrl}
-						<img
-							class="icon"
-							src={iconUrl}
-							alt={localizedName(version.name)}
-							loading="lazy"
-							onerror={hideBrokenIcon}
-						/>
-					{/if}
-					<div class="info">
-						<div class="name-row">
-							<span class="name">{localizedName(version.name)}</span>
-							{#if !compact && version.name?.ja}
-								<span class="name-jp">{version.name.ja}</span>
-							{/if}
-							<span class="badge tier">{tierLabel(version)}</span>
-							{#if version.unlockLevel}
-								<span class="badge">{m.weapon_skills_level({ n: version.unlockLevel })}</span>
-							{/if}
-							{#if version.mainHandOnly}
-								<span class="badge flag">{m.weapon_skills_main_hand()}</span>
-							{/if}
-							{#if version.mcOnly}
-								<span class="badge flag">{m.weapon_skills_mc_only()}</span>
-							{/if}
-							{#if hasSkillLevel(version)}
-								<span class="badge flag">{m.weapon_skills_skill_level()}</span>
-							{/if}
-						</div>
-						{#if meta}
-							<div class="meta">{meta}</div>
-						{/if}
-						{#if descriptionEn}
-							<SkillDescription
-								class="description"
-								segments={version.descriptionSegments?.en}
-								raw={descriptionEn}
-							/>
-						{/if}
-						{#if !compact && descriptionJa}
-							<SkillDescription
-								class="description description-jp"
-								segments={version.descriptionSegments?.ja}
-								raw={descriptionJa}
-							/>
-						{/if}
-					</div>
-				</div>
-			{/each}
-		</section>
-	{/each}
-</div>
+{#each slots as slot (slot.position)}
+	{@const [first, ...upgrades] = versions(slot)}
+	{#if first}
+		<SkillGroup title={m.weapon_skills_slot({ n: slot.position + 1 })}>
+			<div class="skill-slot">
+				{@render card(first, false)}
+				{#each upgrades as version (version.ordinal)}
+					{@render card(version, true)}
+				{/each}
+			</div>
+		</SkillGroup>
+	{/if}
+{/each}
 
-<style lang="scss">
-	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
-	@use '$src/themes/layout' as layout;
-
-	.weapon-skill-list {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-3x;
-	}
-
-	.slot {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-half;
-	}
-
-	.slot-title {
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-		color: var(--text-secondary);
-		margin: 0;
-	}
-
-	.version-card {
-		display: flex;
-		flex-direction: row;
-		align-items: flex-start;
-		gap: spacing.$unit;
-		background: var(--card-bg);
-		border-radius: layout.$item-corner;
-		padding: spacing.$unit 0;
-	}
-
-	.icon {
-		flex: 0 0 auto;
-		width: spacing.$unit-6x;
-		height: spacing.$unit-6x;
-		border-radius: layout.$item-corner-small;
-		object-fit: contain;
-	}
-
-	.info {
-		flex: 1;
-		min-width: 0;
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-half;
-	}
-
-	.name-row {
-		display: flex;
-		align-items: baseline;
-		flex-wrap: wrap;
-		gap: spacing.$unit-half spacing.$unit;
-	}
-
-	.name {
-		font-size: typography.$font-medium;
-		font-weight: typography.$medium;
-		color: var(--text-primary);
-	}
-
-	.name-jp {
-		font-size: typography.$font-small;
-		color: var(--text-secondary);
-	}
-
-	.badge {
-		font-size: typography.$font-tiny;
-		font-weight: typography.$medium;
-		color: var(--text-secondary);
-		background: var(--background);
-		padding: 0 spacing.$unit-half;
-		border-radius: layout.$item-corner-small;
-		line-height: 1.6;
-
-		&.tier {
-			color: var(--text-primary);
-		}
-
-		&.flag {
-			font-style: italic;
-		}
-	}
-
-	.meta {
-		font-size: typography.$font-small;
-		color: var(--text-secondary);
-	}
-
-	.info :global(.description) {
-		margin: 0;
-		font-size: typography.$font-small;
-		line-height: 1.5;
-		color: var(--text-primary);
-	}
-
-	.info :global(.description-jp) {
-		color: var(--text-secondary);
-	}
-
-	// Sidebar / narrow layout
-	.compact {
-		gap: spacing.$unit-2x;
-
-		.version-card {
-			gap: spacing.$unit-half;
-		}
-
-		.icon {
-			width: spacing.$unit-4x;
-			height: spacing.$unit-4x;
-		}
-
-		.name {
-			font-size: typography.$font-small;
-		}
-	}
-</style>
+{#snippet card(version: WeaponSkillVersion, linked: boolean)}
+	{@const parts = metaParts(version)}
+	<SkillCard
+		name={localizedName(version.name)}
+		iconUrl={getWeaponSkillIcon(version.iconStem, locale)}
+		badges={[...(linked ? [] : unlockParts(version)), ...flags(version)]}
+		segments={segmentsFor(version)}
+		raw={rawFor(version)}
+		relationLabel={linked ? unlockParts(version).join(' · ') : undefined}
+		{linked}
+		meta={parts.length ? metaLine : undefined}
+	/>
+	{#snippet metaLine()}
+		<span>{parts.join(' · ')}</span>
+	{/snippet}
+{/snippet}

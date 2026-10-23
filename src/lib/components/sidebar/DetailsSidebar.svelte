@@ -14,6 +14,8 @@
 	import SkillsSection from './details/SkillsSection.svelte'
 	import LinksSection from './details/LinksSection.svelte'
 	import TeamView from './details/TeamView.svelte'
+	import WeaponSkillList from '$lib/components/weapon/WeaponSkillList.svelte'
+	import CharacterSkillsTab from '$lib/features/database/characters/tabs/CharacterSkillsTab.svelte'
 	import OutOfSyncBanner from './details/OutOfSyncBanner.svelte'
 	import SyncToCollectionDialog from './details/SyncToCollectionDialog.svelte'
 	import { getElementKey } from '$lib/utils/element'
@@ -21,6 +23,7 @@
 	import { authStore } from '$lib/stores/auth.store.svelte'
 	import { getEditKey } from '$lib/utils/editKeys'
 	import { localizedName } from '$lib/utils/locale'
+	import * as m from '$lib/paraglide/messages'
 	import {
 		useSyncGridCharacter,
 		useSyncGridWeapon,
@@ -80,8 +83,18 @@
 			hasNotesOrSubstitutions(item)
 	)
 
+	// Weapons and characters get a Skills tab when they have skill data.
+	// Summon auras stay in the Info view.
+	const skillsLabel = $derived.by(() => {
+		if (type === 'weapon' && (item as GridWeapon).weapon?.weaponSkills?.length)
+			return m.details_tab_skills()
+		if (type === 'character' && (item as GridCharacter).character?.skills?.length)
+			return m.character_skills_tab()
+		return undefined
+	})
+
 	// Track selected view - updated reactively based on modifiability
-	let selectedView = $state<'canonical' | 'user'>('user')
+	let selectedView = $state<'canonical' | 'user' | 'skills'>('user')
 
 	// Track the item ID to detect when switching to a different item
 	let currentItemId = $state<string | undefined>(undefined)
@@ -364,7 +377,7 @@
 			: undefined}
 	/>
 
-	<DetailsSidebarSegmentedControl hasModifications={showSegmentedControl} bind:selectedView />
+	<DetailsSidebarSegmentedControl showTeam={showSegmentedControl} {skillsLabel} bind:selectedView />
 
 	{#if isOutOfSync}
 		<OutOfSyncBanner
@@ -398,6 +411,12 @@
 			<StatsSection {type} {itemData} {gridUncapLevel} {gridTranscendence} />
 			<SkillsSection {type} {itemData} />
 		</div>
+	{:else if selectedView === 'skills'}
+		{#if type === 'weapon'}
+			<WeaponSkillList skills={(item as GridWeapon).weapon.weaponSkills ?? []} />
+		{:else if type === 'character'}
+			<CharacterSkillsTab character={(item as GridCharacter).character} />
+		{/if}
 	{:else}
 		<TeamView
 			{type}

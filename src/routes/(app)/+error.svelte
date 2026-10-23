@@ -95,7 +95,7 @@
 
 	.browse-link {
 		color: var(--text-secondary);
-		font-size: typography.$font-body;
+		font-size: typography.$font-small;
 		margin-top: spacing.$unit-3x;
 
 		a {
@@ -119,7 +119,7 @@
 	}
 
 	.random-label {
-		font-size: typography.$font-body;
+		font-size: typography.$font-small;
 		color: var(--text-secondary);
 		margin: 0;
 		text-align: center;

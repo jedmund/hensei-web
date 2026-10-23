@@ -123,7 +123,7 @@
 
 	.size-large {
 		.score-value {
-			font-size: typography.$font-body;
+			font-size: typography.$font-small;
 		}
 	}
 </style>

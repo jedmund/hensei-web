@@ -1,7 +1,6 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { localizedName } from '$lib/utils/locale'
-	import WeaponSkillList from '$lib/components/weapon/WeaponSkillList.svelte'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
@@ -18,13 +17,6 @@
 		return localizedName(name)
 	}
 </script>
-
-{#if type === 'weapon' && itemData?.weaponSkills?.length}
-	<div class="details-section">
-		<h3>{m.details_skills()}</h3>
-		<WeaponSkillList skills={itemData.weaponSkills} compact />
-	</div>
-{/if}
 
 {#if type === 'summon' && itemData?.summonAuras && itemData.summonAuras.length > 0}
 	<div class="details-section">

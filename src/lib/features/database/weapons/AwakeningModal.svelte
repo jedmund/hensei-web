@@ -262,7 +262,7 @@
 
 		p {
 			margin: 0;
-			font-size: typography.$font-body;
+			font-size: typography.$font-small;
 			color: var(--text-primary);
 		}
 	}
