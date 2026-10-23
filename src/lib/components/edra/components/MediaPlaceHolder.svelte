@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { Icon } from '@lucide/svelte'
+	import type { LucideIcon } from '@lucide/svelte'
 	import type { Snippet } from 'svelte'
 	import { NodeViewWrapper } from 'svelte-tiptap'
 
 	interface Props {
-		icon?: typeof Icon
+		icon?: LucideIcon
 		title?: string
 		onClick?: () => void
 		class?: string
