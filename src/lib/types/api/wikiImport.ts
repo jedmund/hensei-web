@@ -63,6 +63,8 @@ export interface WikiImportRequest {
 	summons: WikiImportSummon[]
 	/** Summon position of the quick summon */
 	quick: number | null
+	/** The anonymous creator's local ID, so the team stays editable after a reload */
+	localId?: string
 }
 
 export type WikiImportKind =

@@ -108,9 +108,11 @@ describe('WikiImportAdapter', () => {
 			report
 		})
 
-		const result = await adapter.create(request)
+		const result = await adapter.create({ ...request, localId: 'local-1' })
 
-		expect(JSON.parse(calls()[0]![1].body).wiki.preview).toBe(false)
+		const body = JSON.parse(calls()[0]![1].body).wiki
+		expect(body.preview).toBe(false)
+		expect(body.local_id).toBe('local-1')
 		expect(result.party?.shortcode).toBe('abc123')
 		expect(result.party?.editKey).toBe('secret')
 	})

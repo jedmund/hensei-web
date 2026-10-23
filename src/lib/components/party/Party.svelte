@@ -179,7 +179,10 @@
 	})
 
 	// New teams can be filled from a gbf.wiki TeamSpread paste
-	const wikiImport = useWikiImport({ getParty: () => party })
+	const wikiImport = useWikiImport({
+		getParty: () => party,
+		getAuthUserId: () => authUserId
+	})
 
 	const jobHandlers = useJobHandlers({
 		mutations,

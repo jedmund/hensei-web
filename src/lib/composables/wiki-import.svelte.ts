@@ -7,6 +7,7 @@ import type { WikiImportReport, WikiImportRequest } from '$lib/types/api/wikiImp
 import { wikiImportAdapter } from '$lib/api/adapters/wikiImport.adapter'
 import { useImportWikiParty } from '$lib/api/mutations/party.mutations'
 import { storeEditKey } from '$lib/utils/editKeys'
+import { getLocalId } from '$lib/utils/localId'
 import {
 	isEmptyWikiImport,
 	parseTeamSpread,
@@ -16,6 +17,7 @@ import {
 
 interface WikiImportOptions {
 	getParty: () => Party
+	getAuthUserId: () => string | undefined
 }
 
 /** The error toast for a failed preview or create, by HTTP status. */
@@ -110,7 +112,10 @@ export function useWikiImport(opts: WikiImportOptions) {
 		if (!request) return
 		busy = true
 		try {
-			const { party, report: created } = await importParty.mutateAsync(request)
+			const { party, report: created } = await importParty.mutateAsync(
+				// Anonymous teams are tied to this browser, like a normal new team
+				opts.getAuthUserId() ? request : { ...request, localId: getLocalId() }
+			)
 			if (!party) throw new Error('No party in the import response')
 			if (party.editKey) {
 				storeEditKey(party.shortcode, party.editKey)
