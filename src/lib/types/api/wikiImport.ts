@@ -97,6 +97,10 @@ export interface WikiImportAmbiguous extends WikiImportUnmatched {
 export interface WikiImportWarning {
 	code: string
 	detail?: string
+	/** The slot and title the warning is about, when it's about one */
+	kind?: WikiImportKind
+	position?: number
+	title?: string
 }
 
 export interface WikiImportReport {

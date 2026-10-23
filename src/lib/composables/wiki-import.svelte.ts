@@ -159,6 +159,9 @@ export function useWikiImport(opts: WikiImportOptions) {
 		get busy() {
 			return busy
 		},
+		get request() {
+			return request
+		},
 		get notes() {
 			return notes
 		},

@@ -784,7 +784,11 @@
 >
 	{#snippet review()}
 		{#if wikiImport.report}
-			<WikiImportReview report={wikiImport.report} notes={wikiImport.notes} />
+			<WikiImportReview
+				report={wikiImport.report}
+				notes={wikiImport.notes}
+				request={wikiImport.request}
+			/>
 		{/if}
 	{/snippet}
 </WikiTextDialog>
