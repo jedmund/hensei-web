@@ -3,6 +3,7 @@
 
 import type { WeaponSeriesRef, WeaponSeriesSummary } from './weaponSeries'
 import type { CharacterSeriesRef } from './characterSeries'
+import type { SummonSeriesRef, SummonSeriesSummary } from './summonSeries'
 
 export interface LocalizedName {
 	en: string
@@ -359,7 +360,7 @@ export interface Summon {
 	}
 	transcendenceHp?: number
 	transcendenceAtk?: number
-	series?: number
+	series?: SummonSeriesRef | SummonSeriesSummary | null
 	// Database/admin fields
 	releaseDate?: string
 	flbDate?: string

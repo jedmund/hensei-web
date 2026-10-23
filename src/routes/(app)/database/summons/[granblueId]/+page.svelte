@@ -30,6 +30,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getSummonImage, getSummonTransformationStages } from '$lib/utils/images'
+	import { seriesHasUlbArt } from '$lib/utils/summonSeries'
 	import { getElementLabel } from '$lib/utils/element'
 	import {
 		buildWikiEnUrl,
@@ -103,13 +104,16 @@
 	const summonSizes = ['detail', 'grid', 'main', 'tall', 'square', 'wide']
 
 	// Generate image items for summon (detail, grid, main, tall, square, wide variants)
-	// Summons have transformations: Base (no suffix), ULB (_02), Transcendence Stage 1 (_03), Transcendence Stage 5 (_04)
+	// Summons have transformations: Base (no suffix), FLB/ULB (_02), Transcendence Stage 1 (_03), Transcendence Stage 5 (_04)
 	const summonImages = $derived.by((): ImageItem[] => {
 		if (!summon?.granblueId) return []
 
 		const variants = ['detail', 'grid', 'main', 'tall', 'square', 'wide'] as const
 		const images: ImageItem[] = []
-		const transformations = getSummonTransformationStages(summon.granblueId)
+		const transformations = getSummonTransformationStages(
+			summon.granblueId,
+			seriesHasUlbArt(summon.series)
+		)
 
 		for (const transformation of transformations) {
 			for (const variant of variants) {
@@ -154,7 +158,7 @@
 
 	async function handleDownloadSize(size: string) {
 		if (!summon?.id) return
-		const stages = getSummonTransformationStages(summon.granblueId)
+		const stages = getSummonTransformationStages(summon.granblueId, seriesHasUlbArt(summon.series))
 		for (const stage of stages) {
 			await entityAdapter.downloadSummonImage(summon.id, size, stage.suffix, false)
 		}

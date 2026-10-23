@@ -2,6 +2,7 @@
 	import type { CollectionSummon } from '$lib/types/api/collection'
 	import { localizedName } from '$lib/utils/locale'
 	import { getSummonImage, getSummonTransformation } from '$lib/utils/images'
+	import { seriesHasUlbArt } from '$lib/utils/summonSeries'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	interface Props {
@@ -15,7 +16,12 @@
 	let { summon, onClick, editable = false, onUncapChange, onTranscendenceChange }: Props = $props()
 
 	const transformation = $derived(
-		getSummonTransformation(summon.summon?.granblueId, summon.uncapLevel, summon.transcendenceStep)
+		getSummonTransformation(
+			summon.summon?.granblueId,
+			summon.uncapLevel,
+			summon.transcendenceStep,
+			seriesHasUlbArt(summon.summon?.series)
+		)
 	)
 
 	const imageUrl = $derived(getSummonImage(summon.summon?.granblueId, 'wide', transformation))

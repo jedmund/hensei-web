@@ -2,6 +2,7 @@
 	import type { Party, GridSummon } from '$lib/types/api/party'
 	import { getSummonImage } from '$lib/features/database/detail/image'
 	import { getSummonTransformation } from '$lib/utils/images'
+	import { seriesHasUlbArt } from '$lib/utils/summonSeries'
 	interface Props {
 		party?: Party
 		summons?: GridSummon[]
@@ -29,7 +30,12 @@
 		const id = s?.summon?.granblueId
 		if (!id) return isMain ? mainPlaceholder : gridPlaceholder
 		const size = isMain ? 'main' : 'grid'
-		const transformation = getSummonTransformation(id, s?.uncapLevel, s?.transcendenceStep)
+		const transformation = getSummonTransformation(
+			id,
+			s?.uncapLevel,
+			s?.transcendenceStep,
+			seriesHasUlbArt(s?.summon?.series)
+		)
 		return getSummonImage(id, size, transformation)
 	}
 </script>

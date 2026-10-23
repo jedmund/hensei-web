@@ -12,6 +12,7 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getSummonImage } from '$lib/features/database/detail/image'
 	import { getPlaceholderImage, getSummonTransformation } from '$lib/utils/images'
+	import { seriesHasUlbArt } from '$lib/utils/summonSeries'
 	import {
 		openDetailsSidebar,
 		openSummonEditSidebar
@@ -92,7 +93,8 @@
 		const transformation = getSummonTransformation(
 			item?.summon?.granblueId,
 			item?.uncapLevel,
-			item?.transcendenceStep
+			item?.transcendenceStep,
+			seriesHasUlbArt(item?.summon?.series)
 		)
 		return getSummonImage(item?.summon?.granblueId, variant, transformation)
 	})

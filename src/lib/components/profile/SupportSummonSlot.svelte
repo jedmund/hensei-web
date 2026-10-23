@@ -5,6 +5,7 @@
 	import { getLocale } from '$lib/paraglide/runtime.js'
 	import asteriskIcon from '$src/assets/icons/required-asterisk.svg?raw'
 	import { getSummonImage, getSummonTransformation } from '$lib/utils/images'
+	import { seriesHasUlbArt } from '$lib/utils/summonSeries'
 	import type { SupportSummon, SupportSummonSection } from '$lib/types/api/supportSummon'
 
 	interface Props {
@@ -26,7 +27,8 @@
 		const transformation = getSummonTransformation(
 			cs.summon?.granblueId,
 			cs.uncapLevel,
-			cs.transcendenceStep
+			cs.transcendenceStep,
+			seriesHasUlbArt(cs.summon?.series)
 		)
 		return getSummonImage(cs.summon?.granblueId, variant, transformation)
 	})
