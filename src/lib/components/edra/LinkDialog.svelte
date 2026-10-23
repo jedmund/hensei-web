@@ -3,6 +3,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import { linkDialogState } from '$lib/stores/linkDialog.svelte'
+	import { isHttpUrl } from '$lib/utils/safeHtml'
 	import * as m from '$lib/paraglide/messages'
 
 	let url = $state('')
@@ -11,12 +12,14 @@
 	let ogTitle = $state<string | null>(null)
 	let ogImage = $state<string | null>(null)
 	let isLoading = $state(false)
+	let urlTouched = $state(false)
 
 	$effect(() => {
 		if (linkDialogState.open) {
 			url = linkDialogState.initialUrl
 			linkText = linkDialogState.initialText
 			userEditedText = false
+			urlTouched = false
 			ogTitle = null
 			ogImage = null
 		}
@@ -35,15 +38,7 @@
 		ogTitle = null
 		ogImage = null
 
-		if (!current) return
-
-		let valid: URL
-		try {
-			valid = new URL(current)
-		} catch {
-			return
-		}
-		if (!['http:', 'https:'].includes(valid.protocol)) return
+		if (!isHttpUrl(current)) return
 
 		isLoading = true
 		const controller = new AbortController()
@@ -73,8 +68,17 @@
 		userEditedText = true
 	}
 
+	const isValidUrl = $derived(isHttpUrl(url))
+	// Like other URL inputs: flag a bad URL once the field is left or submitted.
+	const showUrlError = $derived(urlTouched && url.trim() !== '' && !isValidUrl)
+
+	function handleUrlBlur() {
+		urlTouched = true
+	}
+
 	function handleInsert() {
-		if (url.trim()) {
+		urlTouched = true
+		if (isValidUrl) {
 			const text = linkText.trim()
 			if (text && !linkDialogState.hasSelection) {
 				// No selection: insert new linked text
@@ -116,6 +120,8 @@
 			bind:value={url}
 			contained
 			fullWidth
+			handleBlur={handleUrlBlur}
+			error={showUrlError ? m.editor_link_invalid_url() : undefined}
 			onkeydown={handleKeydown}
 		/>
 		<Input
@@ -145,7 +151,7 @@
 			<Button variant="ghost" size="small" onclick={handleCancel}>
 				{m.action_cancel()}
 			</Button>
-			<Button variant="primary" size="small" onclick={handleInsert} disabled={!url.trim()}>
+			<Button variant="primary" size="small" onclick={handleInsert} disabled={!isValidUrl}>
 				{m.editor_link_insert()}
 			</Button>
 		</div>

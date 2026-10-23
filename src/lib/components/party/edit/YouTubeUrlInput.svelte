@@ -7,6 +7,7 @@
 	import { untrack } from 'svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import { fetchYoutubeTitle } from '$lib/utils/youtube'
+	import { isHttpUrl } from '$lib/utils/safeHtml'
 
 	interface Props {
 		/** YouTube URL value */
@@ -33,14 +34,14 @@
 	const YOUTUBE_REGEX = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/
 
 	function extractVideoId(url: string | null | undefined): string | null {
-		if (!url) return null
+		if (!url || !isHttpUrl(url)) return null
 		const match = url.match(YOUTUBE_REGEX)
 		return match?.[1] ?? null
 	}
 
 	function isValidYouTubeUrl(url: string | null | undefined): boolean {
 		if (!url || url.trim() === '') return true // Empty is valid (optional field)
-		return YOUTUBE_REGEX.test(url)
+		return isHttpUrl(url) && YOUTUBE_REGEX.test(url)
 	}
 
 	// Local input state

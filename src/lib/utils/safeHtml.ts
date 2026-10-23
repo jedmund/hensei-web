@@ -1,4 +1,5 @@
 const SAFE_PROTOCOLS = new Set(['http:', 'https:', 'mailto:'])
+const WEB_PROTOCOLS = new Set(['http:', 'https:'])
 
 export function escapeHtml(input: unknown): string {
 	if (typeof input !== 'string') return ''
@@ -32,4 +33,17 @@ export function safeHref(raw: unknown): string {
 	}
 
 	return '#'
+}
+
+/**
+ * True for an absolute http(s) URL. Uses the WHATWG parser, so obfuscated
+ * schemes (embedded tabs/newlines, mixed case) are judged as browsers see them.
+ */
+export function isHttpUrl(raw: unknown): boolean {
+	if (typeof raw !== 'string' || !raw.trim()) return false
+	try {
+		return WEB_PROTOCOLS.has(new URL(raw.trim()).protocol)
+	} catch {
+		return false
+	}
 }

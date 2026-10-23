@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { escapeHtml, safeHref } from './safeHtml'
+import { escapeHtml, isHttpUrl, safeHref } from './safeHtml'
 
 describe('escapeHtml', () => {
 	it('escapes the five HTML-significant characters', () => {
@@ -82,5 +82,34 @@ describe('safeHref', () => {
 
 	it('HTML-escapes anchors with significant characters', () => {
 		expect(safeHref('#a"b')).toBe('#a&quot;b')
+	})
+})
+
+describe('isHttpUrl', () => {
+	it.each(['https://example.com/', 'http://example.com/a?b=c', '  HTTPS://Example.com  '])(
+		'accepts %j',
+		(url) => {
+			expect(isHttpUrl(url)).toBe(true)
+		}
+	)
+
+	it.each([
+		'javascript:alert(1)',
+		'JavaScript:alert(1)',
+		'java\tscript:alert(1)',
+		'java\nscript:alert(1)',
+		' javascript:alert(1)',
+		'javascript:alert(1)//youtube.com/watch?v=abc',
+		'data:text/html,<script>alert(1)</script>',
+		'vbscript:msgbox(1)',
+		'mailto:a@example.com',
+		'//example.com',
+		'/relative',
+		'example.com',
+		'',
+		null,
+		42
+	])('rejects %j', (url) => {
+		expect(isHttpUrl(url)).toBe(false)
 	})
 })
