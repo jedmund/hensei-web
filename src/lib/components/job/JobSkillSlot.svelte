@@ -17,6 +17,8 @@
 		locked?: boolean
 		editable?: boolean
 		available?: boolean
+		/** Whether the party uses Full Auto; per-skill FA state is hidden when it doesn't. */
+		fullAuto?: boolean
 		/** Whether this skill is used in Full Auto. Absent slot defaults to ON. */
 		faOn?: boolean
 		onclick?: () => void
@@ -31,6 +33,7 @@
 		locked = false,
 		editable = false,
 		available = true,
+		fullAuto = false,
 		faOn = true,
 		onclick,
 		onRemove,
@@ -50,6 +53,9 @@
 	const isUnavailable = $derived(!available)
 	const isFilled = $derived(Boolean(skill))
 	const allowsRemove = $derived(isFilled && isEditable && skill)
+	// Viewers get no switches; a skill left out of Full Auto is faded with a badge instead.
+	const showFaOff = $derived(fullAuto && isFilled && !editable && !faOn)
+	const showFaSwitch = $derived(fullAuto && isFilled && editable)
 
 	function handleClick() {
 		if (isEditable && onclick) {
@@ -75,7 +81,7 @@
 		>
 			{@render SlotBody()}
 		</button>
-		{#if isFilled}
+		{#if showFaSwitch}
 			{@render FaSwitch({ disabled: false })}
 		{/if}
 		{#if allowsRemove}
@@ -101,19 +107,12 @@
 		>
 			{@render SlotBody()}
 		</div>
-		{#if isFilled}
+		{#if showFaSwitch}
 			<!-- A locked main skill can't be swapped, but its Full Auto use is still
-			toggleable; gate the switch on edit permission, not the slot lock. -->
-			{@render FaSwitch({ disabled: !editable })}
-		{/if}
-		{#if locked}
-			<!-- Sits in the trailing column so it lines up with the remove (X)
-			buttons on the editable slots below. -->
-			<Tooltip content="Main skill (locked)">
-				<span class="lock-indicator">
-					<Icon name="lock" size={16} class="lock-icon" />
-				</span>
-			</Tooltip>
+			toggleable by the owner. -->
+			{@render FaSwitch({ disabled: false })}
+			<!-- Reserves the remove (X) button's column so the switches line up. -->
+			<span class="remove-spacer" aria-hidden="true"></span>
 		{/if}
 	</div>
 {/if}
@@ -145,10 +144,28 @@
 {#snippet SkillContent({ skill, skillIconUrl }: { skill: JobSkill; skillIconUrl: string })}
 	<div class="skill-content">
 		{#if skillIconUrl}
-			<img src={skillIconUrl} alt={localizedName(skill.name)} class="skill-icon" loading="lazy" />
+			<img
+				src={skillIconUrl}
+				alt={localizedName(skill.name)}
+				class="skill-icon"
+				class:fa-off={showFaOff}
+				loading="lazy"
+			/>
 		{/if}
 		<div class="skill-info">
-			<span class="skill-name">{localizedName(skill.name)}</span>
+			<div class="skill-title">
+				<span class="skill-name" class:fa-off={showFaOff}>{localizedName(skill.name)}</span>
+				{#if locked}
+					<Tooltip content="Main skill (locked)">
+						<span class="lock-indicator">
+							<Icon name="lock" size={14} class="lock-icon" />
+						</span>
+					</Tooltip>
+				{/if}
+			</div>
+			{#if showFaOff}
+				<span class="fa-off-badge">{m.battle_off()}</span>
+			{/if}
 		</div>
 	</div>
 {/snippet}
@@ -261,14 +278,26 @@
 			border-radius: $unit-half;
 			flex-shrink: 0;
 			object-fit: cover;
+
+			&.fa-off {
+				opacity: 0.4;
+			}
 		}
 
 		.skill-info {
 			flex: 1;
 			min-width: 0;
 			display: flex;
-			flex-direction: column;
-			gap: $unit-fourth;
+			align-items: center;
+			justify-content: space-between;
+			gap: $unit;
+
+			.skill-title {
+				display: flex;
+				align-items: center;
+				gap: $unit-half;
+				min-width: 0;
+			}
 
 			.skill-name {
 				font-size: typography.$font-body;
@@ -277,6 +306,22 @@
 				white-space: nowrap;
 				overflow: hidden;
 				text-overflow: ellipsis;
+
+				&.fa-off {
+					color: var(--text-tertiary);
+				}
+			}
+
+			.fa-off-badge {
+				flex-shrink: 0;
+				padding: $unit-quarter $unit;
+				border-radius: $item-corner;
+				background: var(--button-contained-bg);
+				color: var(--text-secondary);
+				font-size: typography.$font-small;
+				font-weight: typography.$bold;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
 			}
 
 			.skill-category {
@@ -331,15 +376,17 @@
 		font-size: 18px;
 	}
 
-	// Matches the medium icon-only remove button footprint so the lock lines up
-	// with the remove (X) buttons in the editable slots.
-	.lock-indicator {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
+	// Matches the medium icon-only remove button footprint.
+	.remove-spacer {
 		flex-shrink: 0;
 		width: calc($unit * 5.5);
-		height: calc($unit * 5.5);
+	}
+
+	// Block-level so it doesn't sit on the Tooltip span's text baseline.
+	.lock-indicator {
+		display: flex;
+		align-items: center;
+		flex-shrink: 0;
 	}
 
 	:global(.lock-icon.icon) {
