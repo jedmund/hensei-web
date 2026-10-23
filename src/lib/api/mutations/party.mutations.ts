@@ -19,6 +19,8 @@ import { partyKeys } from '$lib/api/queries/party.queries'
 import { userKeys } from '$lib/api/queries/user.queries'
 import { crewKeys } from '$lib/api/queries/crew.queries'
 import type { Party } from '$lib/types/api/party'
+import { wikiImportAdapter } from '$lib/api/adapters/wikiImport.adapter'
+import type { WikiImportRequest } from '$lib/types/api/wikiImport'
 import { getEditKey } from '$lib/utils/editKeys'
 
 function editKeyHeaders(shortcode: string): Record<string, string> | undefined {
@@ -137,6 +139,19 @@ export function remixPartyOptions(queryClient: QueryClient) {
 		mutationFn: (shortcode: string) => partyAdapter.remix(shortcode),
 		onSuccess: (newParty: Party) => {
 			queryClient.setQueryData(partyKeys.detail(newParty.shortcode), newParty)
+			queryClient.invalidateQueries({ queryKey: partyKeys.lists() })
+			queryClient.invalidateQueries({ queryKey: userKeys.all })
+		}
+	}
+}
+
+/** Creates a party from parsed gbf.wiki TeamSpread wikitext. */
+export function importWikiPartyOptions(queryClient: QueryClient) {
+	return {
+		mutationFn: (request: WikiImportRequest) => wikiImportAdapter.create(request),
+		onSuccess: ({ party }: { party: Party | null }) => {
+			if (!party) return
+			queryClient.setQueryData(partyKeys.detail(party.shortcode), party)
 			queryClient.invalidateQueries({ queryKey: partyKeys.lists() })
 			queryClient.invalidateQueries({ queryKey: userKeys.all })
 		}
@@ -272,6 +287,11 @@ export function useDeleteParty() {
 export function useRemixParty() {
 	const queryClient = useQueryClient()
 	return createMutation(() => remixPartyOptions(queryClient))
+}
+
+export function useImportWikiParty() {
+	const queryClient = useQueryClient()
+	return createMutation(() => importWikiPartyOptions(queryClient))
 }
 
 export function useFavoriteParty() {
