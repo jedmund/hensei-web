@@ -1,7 +1,8 @@
 <script lang="ts">
-	import type { CharacterSkillVersion } from '$lib/types/api/entities'
+	import type { CharacterSkillVersion, DescriptionSegment } from '$lib/types/api/entities'
 	import { getCharacterSkillIcon } from '$lib/utils/images'
-	import { localizedName } from '$lib/utils/locale'
+	import { appLocale, localizedName } from '$lib/utils/locale'
+	import SkillDescription from '$lib/components/weapon/SkillDescription.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -23,14 +24,27 @@
 	const showImg = $derived(!!iconUrl && !imgFailed)
 	const typeColor = $derived(version.typeColor ?? 'none')
 
-	const nameJa = $derived(version.name?.ja)
-	const descriptionEn = $derived(version.description?.en?.trim())
-	const descriptionJa = $derived(version.description?.ja?.trim())
+	// The current locale's description as segments. Segments (effect hovercards, skill names)
+	// exist for English only, so another locale with its own text shows that text plain; with
+	// none, it falls back to English.
+	const segments = $derived.by((): DescriptionSegment[] => {
+		const locale = appLocale()
+		const localized = version.descriptionSegments?.[locale]
+		if (localized?.length) return localized
+		const text = version.description?.[locale]?.trim()
+		if (text) return [{ text }]
+		if (version.descriptionSegments?.en?.length) return version.descriptionSegments.en
+		const english = version.description?.en?.trim()
+		return english ? [{ text: english }] : []
+	})
 
-	// Compact "CD 8 · Initial 3 · 3 turns" timing line.
+	// "Cooldown 8 turns · Ready in 3 turns · Duration 3 turns" timing line.
 	const timing = $derived.by(() => {
 		const parts: string[] = []
-		if (version.cooldown != null) parts.push(`${m.character_skills_cooldown()} ${version.cooldown}`)
+		if (version.cooldown != null)
+			parts.push(
+				`${m.character_skills_cooldown()} ${m.character_skills_turns({ n: version.cooldown })}`
+			)
 		if (version.initialCooldown != null)
 			parts.push(m.character_skills_initial_cooldown_value({ n: version.initialCooldown }))
 		const duration = formatDuration(version.durationValue, version.durationUnit)
@@ -75,11 +89,16 @@
 		<div class="info">
 			<div class="name-row">
 				<span class="name">{localizedName(version.name)}</span>
-				{#if nameJa}<span class="name-jp">{nameJa}</span>{/if}
 				{#each badges as badge (badge)}
 					<span class="badge">{badge}</span>
 				{/each}
 			</div>
+
+			{#if segments.length}
+				<div class="description">
+					<SkillDescription {segments} effects={version.skillEffects} />
+				</div>
+			{/if}
 
 			{#if timing.length || triggerText}
 				<div class="meta">
@@ -87,9 +106,6 @@
 					{#if triggerText}<span class="trigger">{triggerText}</span>{/if}
 				</div>
 			{/if}
-
-			{#if descriptionEn}<p class="description">{descriptionEn}</p>{/if}
-			{#if descriptionJa}<p class="description description-jp">{descriptionJa}</p>{/if}
 		</div>
 	</div>
 </div>
@@ -119,7 +135,7 @@
 
 	.body {
 		display: flex;
-		gap: spacing.$unit;
+		gap: spacing.$unit * 1.5;
 		padding: spacing.$unit;
 	}
 
@@ -176,11 +192,6 @@
 		color: var(--text-primary);
 	}
 
-	.name-jp {
-		font-size: typography.$font-small;
-		color: var(--text-secondary);
-	}
-
 	.badge {
 		font-size: typography.$font-tiny;
 		font-weight: typography.$medium;
@@ -204,14 +215,8 @@
 	}
 
 	.description {
-		margin: 0;
-		font-size: typography.$font-small;
+		font-size: typography.$font-regular;
 		line-height: 1.5;
 		color: var(--text-primary);
-		white-space: pre-line;
-	}
-
-	.description-jp {
-		color: var(--text-secondary);
 	}
 </style>
