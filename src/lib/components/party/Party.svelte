@@ -9,6 +9,7 @@
 	import { usePartyMutations } from '$lib/composables/party-mutations.svelte'
 	import { useGridService } from '$lib/composables/grid-service.svelte'
 	import { usePartyActions } from '$lib/composables/party-actions.svelte'
+	import { useWikiImport } from '$lib/composables/wiki-import.svelte'
 	import { useJobHandlers } from '$lib/composables/job-handlers.svelte'
 	import { usePartyDragDrop } from '$lib/composables/party-drag-drop.svelte'
 	import { useItemAddition } from '$lib/composables/item-addition.svelte'
@@ -51,6 +52,7 @@
 	import Notice from '$lib/components/ui/Notice.svelte'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import WikiTextDialog from '$lib/components/party/WikiTextDialog.svelte'
+	import WikiImportReview from '$lib/components/party/WikiImportReview.svelte'
 	import { openEditSolomonisPane } from '$lib/components/solomonis/party/openSolomonisPanes'
 	import {
 		isSolomonisParty,
@@ -174,6 +176,12 @@
 			setTimeout(() => startSolomonisRaidTransition(transition, raid?.id ?? null))
 			return true
 		}
+	})
+
+	// New teams can be filled from a gbf.wiki TeamSpread paste
+	const wikiImport = useWikiImport({
+		getParty: () => party,
+		getAuthUserId: () => authUserId
 	})
 
 	const jobHandlers = useJobHandlers({
@@ -540,25 +548,29 @@
 					{/if}
 				{/snippet}
 				{#snippet menu()}
-					{#if !isNew}
-						<DropdownMenu.Root>
-							<DropdownMenu.Trigger>
-								{#snippet child({ props })}
-									<Tooltip content={m.party_see_more()}>
-										<Button
-											{...props}
-											variant="ghost"
-											size="small"
-											iconOnly
-											icon="ellipsis"
-											aria-label={m.party_see_more()}
-										/>
-									</Tooltip>
-								{/snippet}
-							</DropdownMenu.Trigger>
+					<DropdownMenu.Root>
+						<DropdownMenu.Trigger>
+							{#snippet child({ props })}
+								<Tooltip content={m.party_see_more()}>
+									<Button
+										{...props}
+										variant="ghost"
+										size="small"
+										iconOnly
+										icon="ellipsis"
+										aria-label={m.party_see_more()}
+									/>
+								</Tooltip>
+							{/snippet}
+						</DropdownMenu.Trigger>
 
-							<DropdownMenu.Portal>
-								<DropdownMenu.Content class="dropdown-menu" sideOffset={6} align="end">
+						<DropdownMenu.Portal>
+							<DropdownMenu.Content class="dropdown-menu" sideOffset={6} align="end">
+								{#if isNew}
+									<DropdownMenu.Item class="dropdown-menu-item" onSelect={wikiImport.start}>
+										{m.party_import_wiki()}
+									</DropdownMenu.Item>
+								{:else}
 									{#if canEdit() && hasCollectionLinks}
 										<DropdownMenu.Item
 											class="dropdown-menu-item"
@@ -623,10 +635,10 @@
 											{m.party_delete()}
 										</DropdownMenu.Item>
 									{/if}
-								</DropdownMenu.Content>
-							</DropdownMenu.Portal>
-						</DropdownMenu.Root>
-					{/if}
+								{/if}
+							</DropdownMenu.Content>
+						</DropdownMenu.Portal>
+					</DropdownMenu.Root>
 				{/snippet}
 			</PartyInfoGrid>
 
@@ -742,6 +754,53 @@
 	value={actions.wikiExportText}
 	readonly
 	primaryAction={{ label: m.code_copy(), onclick: actions.copyWikiExport }}
+/>
+
+<WikiTextDialog
+	bind:open={wikiImport.open}
+	title={m.party_import_wiki()}
+	description={m.party_import_wiki_description()}
+	notice={m.party_import_wiki_notice()}
+	details={[
+		m.party_import_wiki_missing_bullets(),
+		m.party_import_wiki_missing_rings(),
+		m.party_import_wiki_missing_ax(),
+		m.party_import_wiki_missing_befoulments(),
+		m.party_export_wiki_lost_awakening_levels(),
+		m.party_export_wiki_lost_masteries(),
+		m.party_export_wiki_lost_earrings(),
+		m.party_export_wiki_lost_artifacts(),
+		m.party_import_wiki_missing_substitutes(),
+		m.party_import_wiki_missing_uncaps()
+	]}
+	bind:value={wikiImport.text}
+	placeholder={m.party_import_wiki_placeholder()}
+	busy={wikiImport.busy}
+	primaryAction={{
+		label: wikiImport.report ? m.party_import_wiki_create() : m.party_import_wiki_action(),
+		onclick: wikiImport.submit,
+		disabled: wikiImport.busy || !wikiImport.text.trim() || wikiImport.report?.matched.length === 0
+	}}
+>
+	{#snippet review()}
+		{#if wikiImport.report}
+			<WikiImportReview
+				report={wikiImport.report}
+				notes={wikiImport.notes}
+				request={wikiImport.request}
+			/>
+		{/if}
+	{/snippet}
+</WikiTextDialog>
+
+<!-- Importing makes a separate team; the one on screen is left as is -->
+<ConfirmDialog
+	bind:open={wikiImport.confirmOpen}
+	title={m.party_import_wiki_confirm_title()}
+	message={m.party_import_wiki_confirm_message()}
+	confirmLabel={m.party_import_wiki_confirm()}
+	confirmVariant="primary"
+	onconfirm={wikiImport.confirmStart}
 />
 
 <!-- Leaving Evoking Solomonis deletes its data -->

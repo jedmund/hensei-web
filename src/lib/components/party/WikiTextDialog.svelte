@@ -2,8 +2,9 @@
 	/**
 	 * A team as gbf.wiki TeamSpread markup, with a note on what the conversion
 	 * can't carry. Exporting shows the markup read-only to copy; importing
-	 * takes pasted markup.
+	 * takes pasted markup and shows what it found under it.
 	 */
+	import type { Snippet } from 'svelte'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
@@ -24,6 +25,10 @@
 		readonly?: boolean
 		placeholder?: string
 		primaryAction: { label: string; onclick: () => void; disabled?: boolean }
+		/** Shown under the markup, e.g. what an import found */
+		review?: Snippet
+		/** Locks the markup and Cancel while a request is in flight */
+		busy?: boolean
 	}
 
 	let {
@@ -35,7 +40,9 @@
 		value = $bindable(''),
 		readonly = false,
 		placeholder,
-		primaryAction
+		primaryAction,
+		review,
+		busy = false
 	}: Props = $props()
 
 	let expanded = $state(false)
@@ -70,15 +77,16 @@
 			<textarea
 				class="markup"
 				bind:value
-				{readonly}
+				readonly={readonly || busy}
 				{placeholder}
 				rows="14"
 				spellcheck="false"
 				aria-label={title}
 				onfocus={(e) => readonly && e.currentTarget.select()}></textarea>
+			{@render review?.()}
 		</div>
 	</ModalBody>
-	<ModalFooter onCancel={() => (open = false)} {primaryAction} />
+	<ModalFooter onCancel={() => (open = false)} cancelDisabled={busy} {primaryAction} />
 </Dialog>
 
 <style lang="scss">

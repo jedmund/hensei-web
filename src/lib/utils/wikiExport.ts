@@ -7,6 +7,14 @@ import type {
 } from '$lib/types/api/party'
 import type { WeaponKey } from '$lib/types/api/entities'
 import { ACCESSORY_TYPES } from '$lib/utils/jobAccessoryUtils'
+import {
+	BULLET_ALIASES,
+	CHARACTER_AWAKENINGS,
+	KEY_EXPORT_VALUES,
+	KEY_PARAMS,
+	WEAPON_AWAKENINGS,
+	type KeyParam
+} from '$lib/utils/wikiAliases'
 
 /**
  * Exports a party as a gbf.wiki `{{TeamSpread}}` template call, the format the
@@ -29,89 +37,6 @@ import { ACCESSORY_TYPES } from '$lib/utils/jobAccessoryUtils'
  * - Substitutes go in the swap bubble as `{{itm|Page}}` links, one per line.
  */
 
-/**
- * Weapon key granblue ID → the TeamSpread parameter and the alias
- * Module:WeaponGrid accepts for it. The module lowercases the value, splits it
- * on commas and reads each skill slot by position, so aliases are single words
- * and a key's `slot` is its position in the list.
- */
-const KEY_VALUES: Record<number, { param: KeyParam; value: string }> = {
-	// Dark Opus: Pendulums (skill 2) and Pendulums/Chains (skill 3)
-	13001: { param: 'opus', value: 'auto' },
-	13002: { param: 'opus', value: 'skill' },
-	13003: { param: 'opus', value: 'ca' },
-	13004: { param: 'opus', value: 'cb' },
-	14001: { param: 'opus', value: 'stamina' },
-	14002: { param: 'opus', value: 'enmity' },
-	14003: { param: 'opus', value: 'trium' },
-	14004: { param: 'opus', value: 'progression' },
-	14005: { param: 'opus', value: 'extremity' },
-	14006: { param: 'opus', value: 'sagacity' },
-	14007: { param: 'opus', value: 'supremacy' },
-	14011: { param: 'opus', value: 'celere' },
-	14012: { param: 'opus', value: 'majesty' },
-	14013: { param: 'opus', value: 'glory' },
-	14014: { param: 'opus', value: 'temptation' },
-	14015: { param: 'opus', value: 'forbiddance' },
-	14016: { param: 'opus', value: 'depravity' },
-	14017: { param: 'opus', value: 'falsehood' },
-	// Ultima: Gauph Keys
-	10001: { param: 'ultima', value: 'will' },
-	10002: { param: 'ultima', value: 'strife' },
-	10003: { param: 'ultima', value: 'vitality' },
-	10004: { param: 'ultima', value: 'strength' },
-	10005: { param: 'ultima', value: 'zeal' },
-	10006: { param: 'ultima', value: 'courage' },
-	11001: { param: 'ultima', value: 'auto' },
-	11002: { param: 'ultima', value: 'skill' },
-	11003: { param: 'ultima', value: 'ca' },
-	11004: { param: 'ultima', value: 'cb' },
-	17001: { param: 'ultima', value: 'cap' },
-	17002: { param: 'ultima', value: 'healing' },
-	17003: { param: 'ultima', value: 'seraphic' },
-	17004: { param: 'ultima', value: 'cbgain' },
-	// Draconic and Draconic Provenance: Telumas
-	15001: { param: 'draconic', value: 'endurance' },
-	15002: { param: 'draconic', value: 'inferno' },
-	15003: { param: 'draconic', value: 'abyss' },
-	15004: { param: 'draconic', value: 'crag' },
-	15005: { param: 'draconic', value: 'tempest' },
-	15006: { param: 'draconic', value: 'aureole' },
-	15007: { param: 'draconic', value: 'malice' },
-	15008: { param: 'draconic', value: 'salvation' },
-	15009: { param: 'draconic', value: 'oblivion' },
-	16001: { param: 'draconic', value: 'optimus' },
-	16002: { param: 'draconic', value: 'omega' },
-	// Destroyer: Anklets
-	19001: { param: 'destroyer', value: 'auto' },
-	19002: { param: 'destroyer', value: 'skill' },
-	19003: { param: 'destroyer', value: 'ca' },
-	// Class Champion: Emblems
-	1: { param: 'ccw', value: 'humanity' },
-	2: { param: 'ccw', value: 'divinity' },
-	3: { param: 'ccw', value: 'devilry' }
-}
-
-type KeyParam = 'opus' | 'ultima' | 'draconic' | 'destroyer' | 'ccw'
-
-const KEY_PARAMS: KeyParam[] = ['opus', 'ultima', 'draconic', 'destroyer', 'ccw']
-
-const CHARACTER_AWAKENINGS: Record<string, string> = {
-	'character-atk': 'attack',
-	'character-def': 'defense',
-	'character-multi': 'multiattack'
-}
-
-const WEAPON_AWAKENINGS: Record<string, string> = {
-	'weapon-atk': 'attack',
-	'weapon-def': 'defense',
-	'weapon-special': 'special',
-	'weapon-ca': 'ca',
-	'weapon-skill': 'skill',
-	'weapon-heal': 'heal',
-	'weapon-multi': 'multiattack'
-}
-
 /** AX modifier slug → the Template:Richitm `ax` value. Other AX skills have no icon. */
 const AX_VALUES: Record<string, string> = {
 	ax_atk: 'atk',
@@ -133,33 +58,6 @@ const BEFOULMENT_VALUES: Record<string, string> = {
 	befoul_ability_dmg_down: 'skill',
 	befoul_dot: 'turn dmg',
 	befoul_debuff_down: 'dsr'
-}
-
-/**
- * Bullet slug → the alias Template:Team/Bullets accepts. The template only
- * knows these bullets, each at one tier, and matches aliases case-sensitively;
- * anything else renders nothing, so it isn't exported.
- */
-const BULLET_ALIASES: Record<string, string> = {
-	'iron-bullet-v': 'iron',
-	'full-metal-jacket-v': 'fmj',
-	'expert-model-paradise-lost': 'faa',
-	'expert-model-chaos-legion': 'chaos legion',
-	'expert-model-anagenesis': 'anagenesis',
-	'expert-model-genesis-nova': 'genesis nova',
-	'expert-model-rationale-exitium': 'rationale exitium',
-	'expert-model-anti-vasileia': 'anti vasileia',
-	'expert-model-apocalypse': 'apocalypse',
-	'expert-model-hexachromatic': 'hexachromatic',
-	'slug-shot-ii': 'slug',
-	'chaser-shell': 'chaser',
-	'enhancing-shell': 'enhancing',
-	'agni-point-iv': 'agni',
-	'neptune-point-iv': 'neptune',
-	'titan-point-iv': 'titan',
-	'zephyrus-point-iv': 'zephyrus',
-	'zeus-point-iv': 'zeus',
-	'hades-point-iv': 'hades'
 }
 
 /** Grid element → the suffix gbf.wiki uses on element-changed weapon pages. */
@@ -318,7 +216,7 @@ function keyParams(weapons: GridWeapon[]): string {
 	)
 	for (const gw of ordered) {
 		const keys = (gw.weaponKeys ?? []).flatMap((key: WeaponKey) => {
-			const mapped = KEY_VALUES[key.granblueId]
+			const mapped = KEY_EXPORT_VALUES[key.granblueId]
 			return mapped ? [{ ...mapped, slot: key.slot }] : []
 		})
 		const param = keys[0]?.param
@@ -340,7 +238,7 @@ function keyParams(weapons: GridWeapon[]): string {
 function bulletParams(mainhand: GridWeapon | undefined): string {
 	const aliases = [...(mainhand?.bullets ?? [])]
 		.sort((a, b) => a.position - b.position)
-		.flatMap(({ bullet }) => BULLET_ALIASES[bullet.slug] ?? [])
+		.flatMap(({ bullet }) => BULLET_ALIASES[bullet.slug]?.[0] ?? [])
 	return aliases.length > 0 ? `|bullets=${aliases.join(',')}` : ''
 }
 
