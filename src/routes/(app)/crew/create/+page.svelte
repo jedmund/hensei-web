@@ -185,8 +185,7 @@
 						class:error={errors.description}
 						placeholder={m.crew_description_placeholder()}
 						maxlength="500"
-						rows="4"
-					></textarea>
+						rows="4"></textarea>
 					{#if errors.description}
 						<span class="field-error">{errors.description}</span>
 					{/if}

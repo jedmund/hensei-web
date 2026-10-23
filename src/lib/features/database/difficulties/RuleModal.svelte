@@ -199,8 +199,7 @@
 			rows="8"
 			spellcheck="false"
 			class="params-input"
-			class:error={!!paramsError}
-		></textarea>
+			class:error={!!paramsError}></textarea>
 		{#if paramsError}
 			<p class="params-error">{paramsError}</p>
 		{/if}
