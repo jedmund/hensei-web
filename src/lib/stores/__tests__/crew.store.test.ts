@@ -189,6 +189,30 @@ describe('canActOnMember', () => {
 })
 
 // ============================================================================
+// canEditMember
+// ============================================================================
+
+describe('canEditMember', () => {
+	it('captain can edit any membership', () => {
+		crewStore.setCrew(makeCrew(), makeMembership('captain'))
+		expect(crewStore.canEditMember(true)).toBe(true)
+		expect(crewStore.canEditMember(false)).toBe(true)
+	})
+
+	it('vice_captain can edit only their own membership', () => {
+		crewStore.setCrew(makeCrew(), makeMembership('vice_captain'))
+		expect(crewStore.canEditMember(true)).toBe(true)
+		expect(crewStore.canEditMember(false)).toBe(false)
+	})
+
+	it('member cannot edit memberships', () => {
+		crewStore.setCrew(makeCrew(), makeMembership('member'))
+		expect(crewStore.canEditMember(true)).toBe(false)
+		expect(crewStore.canEditMember(false)).toBe(false)
+	})
+})
+
+// ============================================================================
 // canPromoteTo / canDemote
 // ============================================================================
 

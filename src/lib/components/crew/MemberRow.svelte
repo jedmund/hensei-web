@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { page } from '$app/stores'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
@@ -56,6 +57,11 @@
 			crewStore.canActOnMember(member.role) &&
 			!member.retired &&
 			member.id !== crewStore.membership?.id
+	)
+
+	const canEdit = $derived(
+		!!onEdit &&
+			crewStore.canEditMember(!!member.user?.id && member.user.id === $page.data.account?.userId)
 	)
 
 	const canPromote = $derived(member.role === 'member' && crewStore.canPromoteTo('vice_captain'))
@@ -116,11 +122,11 @@
 					</DropdownMenuBase.Item>
 				{/if}
 
-				{#if (crewStore.isOfficer && onEdit) || canShowOfficerActions}
+				{#if canEdit || canShowOfficerActions}
 					<DropdownMenuBase.Separator class="dropdown-menu-separator" />
 				{/if}
 
-				{#if crewStore.isOfficer && onEdit}
+				{#if canEdit}
 					<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onEdit}>
 						{m.crew_edit_member()}
 					</DropdownMenuBase.Item>
