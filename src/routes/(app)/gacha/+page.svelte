@@ -311,7 +311,7 @@
 		}
 	}
 	onMount(() => {
-		let remembered = false
+		let remembered: boolean
 		try {
 			remembered = localStorage.getItem(ANIMATION_KEY) === '1'
 		} catch {

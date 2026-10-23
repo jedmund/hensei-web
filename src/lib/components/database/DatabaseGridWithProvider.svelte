@@ -259,7 +259,7 @@
 			const { key } = ev
 			const currentOrder = sortMarks[key]?.order
 
-			let newSortKey: string | null = null
+			let newSortKey: string | null
 			let newSortOrder: 'asc' | 'desc' = 'asc'
 
 			if (currentOrder === 'asc') {

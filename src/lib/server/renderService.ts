@@ -10,7 +10,7 @@
  * component would be enough to fetch AWS metadata, internal services, etc.
  */
 
-import type { Browser, BrowserContext, Page } from 'playwright'
+import type { Browser, BrowserContext } from 'playwright'
 import { env } from '$env/dynamic/private'
 import { env as publicEnv } from '$env/dynamic/public'
 
@@ -221,10 +221,9 @@ export async function renderToImage(opts: RenderOptions): Promise<Buffer> {
 		throw err
 	}
 
-	let page: Page | null = null
 	try {
 		await applyNetworkAllowlist(context, buildAllowlist(), internalHostname, secret)
-		page = await context.newPage()
+		const page = await context.newPage()
 		await page.goto(url, { waitUntil: 'networkidle', timeout: timeoutMs })
 		const locator = page.locator(selector).first()
 		const buffer =
