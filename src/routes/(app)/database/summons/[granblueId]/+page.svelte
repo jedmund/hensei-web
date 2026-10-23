@@ -25,6 +25,8 @@
 	import SummonStatsSection from '$lib/features/database/summons/sections/SummonStatsSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
+	import { resolveDetailTab } from '$lib/features/database/detail/detailTab'
+	import SummonAurasTab from '$lib/features/database/summons/tabs/SummonAurasTab.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getSummonImage, getSummonTransformationStages } from '$lib/utils/images'
@@ -45,9 +47,6 @@
 	import type { ImageItem } from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 
 	let { data }: { data: PageData } = $props()
-
-	// Tab state from URL
-	const currentTab = $derived(($page.url.searchParams.get('tab') as DetailTab) || 'info')
 
 	function handleTabChange(tab: DetailTab) {
 		const url = new URL($page.url)
@@ -70,16 +69,13 @@
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
 
+	// Tab state from URL; raw data is editor-only, so non-editors fall back to Info
+	const currentTab = $derived(resolveDetailTab($page.url.searchParams.get('tab'), canEdit))
+
 	// Element for button styling
 	const elementName = $derived(
 		getElementLabel(summon?.element)?.toLowerCase() as
-			| 'wind'
-			| 'fire'
-			| 'water'
-			| 'earth'
-			| 'dark'
-			| 'light'
-			| undefined
+			'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 	)
 
 	// Edit URL for navigation
@@ -193,6 +189,9 @@
 			image={getSummonGridImage(summon)}
 			{currentTab}
 			onTabChange={handleTabChange}
+			showRaw={canEdit}
+			showSkills={(summon.summonAuras?.length ?? 0) > 0}
+			skillsLabel="Auras"
 			onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
 			onDownloadSize={canEdit ? handleDownloadSize : undefined}
 			availableSizes={summonSizes}
@@ -346,6 +345,8 @@
 						{/if}
 					</div>
 				</section>
+			{:else if currentTab === 'skills'}
+				<SummonAurasTab auras={summon.summonAuras ?? []} />
 			{:else if currentTab === 'images'}
 				<EntityImagesTab
 					images={summonImages}
@@ -360,6 +361,13 @@
 					gameRawJp={rawDataQuery.data?.gameRawJp}
 					isLoading={rawDataQuery.isLoading}
 					{canEdit}
+					onReparse={canEdit && summon?.id
+						? async (refetch) => {
+								await entityAdapter.reparseSummon(summon.id, refetch)
+								summonQuery.refetch()
+								rawDataQuery.refetch()
+							}
+						: undefined}
 					onFetchWiki={canEdit && summon?.id && summon?.wiki?.en
 						? async () => {
 								// Fetch wiki data client-side (bypasses CloudFlare)

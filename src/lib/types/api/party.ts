@@ -19,6 +19,8 @@ import type { GridArtifact, CollectionArtifact } from './artifact'
 import type { AugmentSkill, Befoulment } from './weaponStatModifier'
 import type { CollectionCharacter, CollectionWeapon, CollectionSummon } from './collection'
 import type { PartyShare } from './partyShare'
+import type { SealState, SolomonisExpedition, SolomonisSummary } from './solomonis'
+import type { StickerBreakdownEntry } from './sticker'
 
 /** Embedded collection data for a single user, scoped to the party's items */
 export interface PartyCollection {
@@ -33,12 +35,41 @@ export interface PartyCollectionSource {
 	collectionSourceUser?: User
 }
 
+// Role catalog entry. Roles only apply to characters and a character can hold
+// up to 3.
+export interface Role {
+	id: string
+	nameEn: string
+	nameJp?: string
+	sortOrder?: number
+	iconKey?: string | null
+}
+
+// Substitution linking a primary grid item to a substitute
+export interface Substitution {
+	id: string
+	position: number
+	gridCharacter?: GridCharacter
+	gridWeapon?: GridWeapon
+	gridSummon?: GridSummon
+}
+
+/**
+ * Rich-text per-item description. The backend stores this as a `jsonb` column
+ * holding a Tiptap document. The shape is intentionally loose — the editor
+ * owns the schema. Null/undefined means "no description".
+ */
+export type Description = Record<string, unknown>
+
 // Grid item types - these are the junction tables between Party and entities
 
 // GridWeapon from GridWeaponBlueprint
 export interface GridWeapon {
 	id: string
 	position: number
+	/** Evoking Solomonis only; null elsewhere. */
+	sealState?: SealState | null
+	unsealPriority?: number | null
 	mainhand?: boolean
 	uncapLevel?: number
 	transcendenceStep?: number
@@ -59,16 +90,32 @@ export interface GridWeapon {
 	collectionWeaponId?: string
 	/** Whether the grid item is out of sync with its collection source */
 	outOfSync?: boolean
+	/** Camel-cased dotted-key list of fields that drift from the linked collection item.
+	 * E.g. ['uncapLevel', 'weaponKey2', 'bullets.0']. Empty/undefined when in sync. */
+	outOfSyncFields?: string[]
 	/** Whether the linked collection item has been deleted (item is orphaned) */
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
 	party?: PartyCollectionSource
+	/** Rich-text per-item description (Tiptap doc) */
+	description?: Description
+	/** Ordered list of substitute items for this slot */
+	substitutions?: Substitution[]
+	/** Stamped by the API when this grid item is rendered as a substitute —
+	 * true if current_user has the underlying weapon in their collection. */
+	owned?: boolean
+	/** True when this weapon is part of a notes sync group — its description
+	 * and substitutions are mirrored to every party slot with the same
+	 * canonical weapon. Toggling it propagates to every sibling. */
+	notesSynced?: boolean
 }
 
 // GridCharacter from GridCharacterBlueprint
 export interface GridCharacter {
 	id: string
 	position: number
+	/** Evoking Solomonis runs: the ally brought by The Hanged Man. */
+	broughtByBlessing?: boolean
 	uncapLevel?: number
 	perpetuity?: boolean
 	transcendenceStep?: number
@@ -77,24 +124,45 @@ export interface GridCharacter {
 		type?: Awakening
 		level?: number
 	}
-	aetherialMastery?: { modifier: number; strength: number }
-	overMastery?: Array<{ modifier: number; strength: number }>
+	/** Single earring slot, or null/undefined when empty. */
+	aetherialMastery?: { modifier: number; strength: number } | null
+	/** Positional ring loadout: always length 4. Index 0=ATK, 1=HP, 2/3=optional.
+	 * Empty slots are null. */
+	overMastery?: Array<{ modifier: number; strength: number } | null>
 	/** Equipped artifact (can be grid or collection artifact) */
 	artifact?: GridArtifact | CollectionArtifact
 	/** Reference to the source collection character if linked */
 	collectionCharacterId?: string
 	/** Whether the grid item is out of sync with its collection source */
 	outOfSync?: boolean
+	/** Camel-cased dotted-key list of fields that drift from the linked collection item.
+	 * E.g. ['uncapLevel', 'overMastery.1']. Empty/undefined when in sync. */
+	outOfSyncFields?: string[]
 	/** Whether the linked collection item has been deleted (item is orphaned) */
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
 	party?: PartyCollectionSource
+	/** Roles assigned to this character (max 3, sorted by Role.sortOrder) */
+	roles?: Role[]
+	/** Rich-text per-item description (Tiptap doc) */
+	description?: Description
+	/** Ordered list of substitute items for this slot */
+	substitutions?: Substitution[]
+	/** Stamped by the API when this grid item is rendered as a substitute —
+	 * true if current_user has the underlying character in their collection. */
+	owned?: boolean
+	/** Party-specific Full Auto toggles per ability slot ("0".."3" → used in FA).
+	 * Absent slot defaults to ON. */
+	fullAutoSkills?: Record<string, boolean>
 }
 
 // GridSummon from GridSummonBlueprint
 export interface GridSummon {
 	id: string
 	position: number
+	/** Evoking Solomonis only; null elsewhere. */
+	sealState?: SealState | null
+	unsealPriority?: number | null
 	main?: boolean
 	friend?: boolean
 	quickSummon?: boolean
@@ -105,10 +173,24 @@ export interface GridSummon {
 	collectionSummonId?: string
 	/** Whether the grid item is out of sync with its collection source */
 	outOfSync?: boolean
+	/** Camel-cased dotted-key list of fields that drift from the linked collection item.
+	 * E.g. ['uncapLevel', 'transcendenceStep']. Empty/undefined when in sync. */
+	outOfSyncFields?: string[]
 	/** Whether the linked collection item has been deleted (item is orphaned) */
 	orphaned?: boolean
 	/** Embedded party stub from :full view (collection source fields only) */
 	party?: PartyCollectionSource
+	/** Rich-text per-item description (Tiptap doc) */
+	description?: Description
+	/** Ordered list of substitute items for this slot */
+	substitutions?: Substitution[]
+	/** Stamped by the API when this grid item is rendered as a substitute —
+	 * true if current_user has the underlying summon in their collection. */
+	owned?: boolean
+	/** True when this summon is part of a notes sync group — its description
+	 * and substitutions are mirrored to every party slot with the same
+	 * canonical summon. Toggling it propagates to every sibling. */
+	notesSynced?: boolean
 }
 
 // JobSkillList for party job skills
@@ -126,10 +208,39 @@ export interface GuidebookList {
 	3?: Guidebook
 }
 
+// Difficulty tier assigned to a party by the scoring engine
+export interface DifficultyTier {
+	id: string
+	slug: string
+	name: string
+	sortOrder: number
+	description?: string
+	minScore?: number
+	maxScore?: number
+	/** Optional uploaded tier icon. Stored as an S3-style key, e.g. `images/difficulties/<id>.png` */
+	imageKey?: string | null
+	/** Editor-only metadata when the row reflects an unsaved draft */
+	pending?: boolean
+	pendingOperation?: 'create' | 'update' | 'destroy' | null
+	draftId?: string | null
+}
+
+// Embedded difficulty payload on Party. score/breakdown are null when the
+// party isn't yet scoreable (matches DifficultyPreviewResult on the editor
+// side).
+export interface PartyDifficulty {
+	tier: DifficultyTier | null
+	score: number | null
+	breakdown: Record<string, unknown> | null
+	computedAt: string
+}
+
 // Party from PartyBlueprint
 export interface Party {
 	id: string
 	shortcode: string
+	/** Full view: SolomonisExpedition. List views: SolomonisSummary. Null outside the mode. */
+	solomonis?: SolomonisExpedition | SolomonisSummary | null
 	name?: string
 	description?: string
 	fullAuto?: boolean
@@ -151,6 +262,16 @@ export interface Party {
 	editKey?: string
 	/** Boost mod (omega, primal, odious, unboosted) and side (double, single, none) */
 	boost?: { mod: string | null; side: string | null }
+	/** Computed party difficulty assignment, null when the party is not yet scoreable */
+	difficulty?: PartyDifficulty | null
+	/** Sticker slugs the team is known for (at most 2, most given first, no counts) */
+	labels?: string[]
+	/** The current user's sticker on this team, if any */
+	mySticker?: string | null
+	/** Every sticker given, one per giver (full view) */
+	placedStickers?: PlacedSticker[]
+	/** Private per-sticker counts, only present for the owner */
+	stickerBreakdown?: StickerBreakdownEntry[]
 	/** Whether the party contains any orphaned grid items */
 	hasOrphanedItems?: boolean
 	/** The user whose collection is linked to this party (null if no collection items) */
@@ -164,6 +285,9 @@ export interface Party {
 	summons: GridSummon[]
 	job?: Job
 	jobSkills?: JobSkillList
+	/** Per-slot Full Auto toggles for the MC's abilities ("0".."3" → used in FA).
+	 * Absent slot defaults to ON. */
+	fullAutoSkills?: Record<string, boolean>
 	accessory?: JobAccessory
 	raid?: Raid
 	guidebooks?: GuidebookList
@@ -233,7 +357,26 @@ export interface PartyPreview {
 		id: string
 		username: string
 	}
+	difficulty?: PartyDifficulty | null
 	createdAt?: string
 	updatedAt?: string
 	lastUpdated?: string
+}
+
+/**
+ * Where a sticker sits in the sticker area: x as a fraction of the area's
+ * horizontal range, y in px from its top, and the lean it was placed with
+ */
+export interface StickerPlacement {
+	x: number
+	y: number
+	rotation: number | null
+}
+
+/** One given sticker; givers stay anonymous, `mine` marks the viewer's */
+export interface PlacedSticker {
+	id: string
+	sticker: string
+	mine: boolean
+	placement: StickerPlacement | null
 }

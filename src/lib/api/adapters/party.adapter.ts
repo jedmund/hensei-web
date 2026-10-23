@@ -14,6 +14,7 @@ import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { Party } from '$lib/types/api/party'
 import type { PartyShare } from '$lib/types/api/partyShare'
 import type { PartyVisibility } from '$lib/types/visibility'
+import type { SkillBoostRequestState, SkillBoosts } from '$lib/types/api/skillBoosts'
 
 /**
  * Parameters for creating a new party
@@ -42,6 +43,8 @@ export interface UpdatePartyParams extends CreatePartyParams {
 	autoGuard?: boolean
 	autoSummon?: boolean
 	chargeAttack?: boolean
+	/** Per-slot Full Auto toggles for the MC's abilities ("0".."3" → boolean). */
+	fullAutoSkills?: Record<string, boolean>
 	// Performance metrics (null to clear)
 	clearTime?: number | null
 	buttonCount?: number | null
@@ -88,6 +91,12 @@ export interface ExploreFilterParams {
 	collectionFilter?: boolean
 	boostMod?: string
 	boostSide?: string
+	/** Comma-separated list of difficulty tier slugs or ids */
+	difficulty?: string
+	/** Evoking Solomonis route Evoker (character granblue_id); needs a zone `raid` */
+	routeEvoker?: string
+	/** Sticker slug: only teams with this label */
+	label?: string
 }
 
 /**
@@ -168,6 +177,25 @@ export class PartyAdapter extends BaseAdapter {
 	async getByShortcode(shortcode: string, options?: RequestOptions): Promise<Party> {
 		const response = await this.request<{ party: Party }>(`/parties/${shortcode}`, options)
 		return response.party
+	}
+
+	/**
+	 * Gets the computed Weapon Skill Boosts panel for a party, optionally at a
+	 * specific battle state (the game's "Calculator Conditions").
+	 */
+	async getSkillBoosts(
+		shortcode: string,
+		state?: SkillBoostRequestState,
+		options?: RequestOptions
+	): Promise<SkillBoosts> {
+		const query = new URLSearchParams()
+		if (state?.hpPercent != null) query.set('hp_percent', String(state.hpPercent))
+		if (state?.allyMaxHp != null) query.set('ally_max_hp', String(state.allyMaxHp))
+		if (state?.turn != null) query.set('turn', String(state.turn))
+		if (state?.foeElement) query.set('foe_element', state.foeElement)
+		if (state?.arcarum != null) query.set('arcarum', String(state.arcarum))
+		const qs = query.size > 0 ? `?${query.toString()}` : ''
+		return this.request<SkillBoosts>(`/parties/${shortcode}/skill_boosts${qs}`, options)
 	}
 
 	/**
@@ -451,40 +479,6 @@ export class PartyAdapter extends BaseAdapter {
 			headers
 		})
 		return response.party
-	}
-
-	/**
-	 * Gets party preview image
-	 */
-	async getPreview(shortcode: string): Promise<Blob> {
-		return this.request<Blob>(`/parties/${shortcode}/preview`, {
-			method: 'GET',
-			headers: {
-				Accept: 'image/png'
-			}
-		})
-	}
-
-	/**
-	 * Gets party preview status
-	 */
-	async getPreviewStatus(shortcode: string): Promise<{
-		state: string
-		generatedAt?: string
-		readyForPreview: boolean
-	}> {
-		return this.request(`/parties/${shortcode}/preview_status`, {
-			method: 'GET'
-		})
-	}
-
-	/**
-	 * Regenerates party preview
-	 */
-	async regeneratePreview(shortcode: string): Promise<{ status: string }> {
-		return this.request(`/parties/${shortcode}/regenerate_preview`, {
-			method: 'POST'
-		})
 	}
 
 	/**

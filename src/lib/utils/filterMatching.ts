@@ -17,6 +17,9 @@ interface MatchLocalParams {
 	partyOptions: { value: string; label: string }[]
 	boostOptions: OptionWithAliases[]
 	sideOptions: { value: string; label: string }[]
+	difficultyOptions?: { value: string; label: string }[]
+	/** Active stickers as label filters: slug + meaning */
+	labelOptions?: { value: string; label: string }[]
 	allRaids: RaidFull[]
 	categoryLabels: {
 		element: string
@@ -25,6 +28,8 @@ interface MatchLocalParams {
 		raid: string
 		boost: string
 		side: string
+		difficulty?: string
+		label?: string
 	}
 }
 
@@ -38,6 +43,8 @@ export function matchLocal(params: MatchLocalParams): FilterOption[] {
 		partyOptions,
 		boostOptions,
 		sideOptions,
+		difficultyOptions,
+		labelOptions,
 		allRaids,
 		categoryLabels
 	} = params
@@ -143,11 +150,58 @@ export function matchLocal(params: MatchLocalParams): FilterOption[] {
 		}
 	}
 
+	// Difficulty (multi-select)
+	if (!excludedKinds.includes('difficulty') && difficultyOptions && categoryLabels.difficulty) {
+		for (const tier of difficultyOptions) {
+			if (tier.label.toLowerCase().includes(q)) {
+				const alreadySelected = filters.some(
+					(f) => f.kind === 'difficulty' && f.value === tier.value
+				)
+				if (!alreadySelected) {
+					results.push({
+						kind: 'difficulty',
+						value: tier.value,
+						label: tier.label,
+						category: categoryLabels.difficulty
+					})
+				}
+			}
+		}
+	}
+
+	// Sticker label (single-select)
+	if (
+		!excludedKinds.includes('label') &&
+		labelOptions &&
+		categoryLabels.label &&
+		!filters.some((f) => f.kind === 'label')
+	) {
+		for (const option of labelOptions) {
+			if (option.label.toLowerCase().includes(q)) {
+				results.push({
+					kind: 'label',
+					value: option.value,
+					label: option.label,
+					category: categoryLabels.label
+				})
+			}
+		}
+	}
+
 	return results
 }
 
 export function rankResults(results: FilterOption[], query: string): FilterOption[] {
-	const filterKinds = new Set(['element', 'recency', 'party', 'boost', 'side', 'class'])
+	const filterKinds = new Set([
+		'element',
+		'recency',
+		'party',
+		'boost',
+		'side',
+		'class',
+		'difficulty',
+		'label'
+	])
 
 	return results.toSorted((a, b) => {
 		const aLabel = a.label.toLowerCase()

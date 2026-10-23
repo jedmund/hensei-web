@@ -105,6 +105,11 @@
 				<DetailItem label="Unlimited">
 					<span class="badge" class:active={group.unlimited}>{group.unlimited ? 'Yes' : 'No'}</span>
 				</DetailItem>
+				<DetailItem label="Support summon">
+					<span class="badge" class:active={group.supportSummon !== false}
+						>{group.supportSummon !== false ? 'Yes' : 'No'}</span
+					>
+				</DetailItem>
 			</DetailsContainer>
 
 			{#if group.raids && group.raids.length > 0}

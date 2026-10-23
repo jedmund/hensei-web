@@ -3,6 +3,10 @@
 	import type { UnifiedSearchResult } from '$lib/api/adapters/search.adapter'
 	import type { RaidFull } from '$lib/types/api/raid'
 	import type { FilterItem, FilterOption, PlaceholderSuggestion } from '$lib/types/filter'
+	import { createQuery } from '@tanstack/svelte-query'
+	import { difficultyQueries } from '$lib/api/queries/difficulty.queries'
+	import { stickerQueries } from '$lib/api/queries/sticker.queries'
+	import { pickerStickers } from '$lib/utils/stickers'
 	import { matchLocal, rankResults } from '$lib/utils/filterMatching'
 	import ExploreFilterPill from './ExploreFilterPill.svelte'
 	import FilterDropdown from './FilterDropdown.svelte'
@@ -41,6 +45,8 @@
 		element?: ElementName
 		/** Whether the user is authenticated (controls collection filter visibility) */
 		isAuthenticated?: boolean
+		/** Evoking Solomonis route Evokers to offer as filters (granblue_id + name) */
+		evokerOptions?: { value: string; label: string }[]
 	}
 
 	let {
@@ -49,6 +55,7 @@
 		excludedKinds = [],
 		contained = false,
 		allRaids = [],
+		evokerOptions = [],
 		collectionFilterActive = $bindable(false),
 		onCollectionFilterChange,
 		onAdvancedFiltersOpen,
@@ -74,6 +81,62 @@
 	const partyOptions = $derived(getPartyOptions())
 	const boostOptions = $derived(getBoostOptions())
 	const sideOptions = $derived(getSideOptions())
+	// Sticker labels: the active catalogue, by slug + meaning
+	const stickersQuery = createQuery(() => stickerQueries.active())
+	const labelOptions = $derived(
+		pickerStickers(stickersQuery.data).map((sticker) => ({
+			value: sticker.slug,
+			label: localizedName(sticker.meaning)
+		}))
+	)
+
+	// A label restored from the URL (?label=fast) lands with label === value;
+	// swap in the sticker's meaning once the catalogue loads.
+	$effect(() => {
+		const stickers = stickersQuery.data
+		if (!stickers || stickers.length === 0) return
+		let changed = false
+		const next = filters.map((f) => {
+			if (f.kind !== 'label' || f.label !== f.value) return f
+			const sticker = stickers.find((s) => s.slug === f.value)
+			if (!sticker) return f
+			changed = true
+			return { ...f, label: localizedName(sticker.meaning) }
+		})
+		if (changed) {
+			filters = next
+			onFiltersChange(filters)
+		}
+	})
+
+	// Difficulty tiers fetched from API; refreshed on staleness
+	const difficultyTiersQuery = createQuery(() => difficultyQueries.tiers())
+	const difficultyOptions = $derived(
+		(difficultyTiersQuery.data ?? []).map((tier) => ({
+			value: tier.slug,
+			label: tier.name
+		}))
+	)
+
+	// When filters are restored from a URL (?difficulty=casual,mid), pills land
+	// with label === value because the tier list hasn't loaded yet. Once it
+	// settles, replace those placeholder labels with the resolved tier name.
+	$effect(() => {
+		const tiers = difficultyTiersQuery.data
+		if (!tiers || tiers.length === 0) return
+		let changed = false
+		const next = filters.map((f) => {
+			if (f.kind !== 'difficulty' || f.label !== f.value) return f
+			const tier = tiers.find((t) => t.slug === f.value)
+			if (!tier) return f
+			changed = true
+			return { ...f, label: tier.name }
+		})
+		if (changed) {
+			filters = next
+			onFiltersChange(filters)
+		}
+	})
 
 	const categoryLabels = $derived({
 		element: m.filter_cat_element(),
@@ -81,8 +144,23 @@
 		party: m.filter_cat_party(),
 		raid: m.filter_cat_raid(),
 		boost: m.filter_cat_boost(),
-		side: m.filter_cat_side()
+		side: m.filter_cat_side(),
+		difficulty: m.filter_cat_difficulty(),
+		evoker: m.filter_cat_evoker(),
+		label: m.explore_filter_label()
 	})
+
+	// Evoking Solomonis route Evokers not already filtered by
+	const evokerSuggestions = $derived<FilterOption[]>(
+		evokerOptions
+			.filter((e) => !filters.some((f) => f.kind === 'evoker' && f.value === e.value))
+			.map((e) => ({
+				kind: 'evoker',
+				value: e.value,
+				label: e.label,
+				category: categoryLabels.evoker
+			}))
+	)
 
 	// Suggestion pools per category
 	const elementSuggestions = $derived<FilterOption[]>(
@@ -106,6 +184,10 @@
 	async function refreshSuggestions() {
 		const picks: PlaceholderSuggestion[] = []
 
+		for (const evoker of evokerSuggestions) {
+			picks.push({ label: evoker.label, category: categoryLabels.evoker, option: evoker })
+		}
+
 		if (!excludedKinds.includes('element')) {
 			const el = pickRandom(elementSuggestions)
 			if (el) picks.push({ label: el.label, category: categoryLabels.element, option: el })
@@ -124,6 +206,19 @@
 					category: categoryLabels.raid
 				}
 				picks.push({ label: opt.label, category: categoryLabels.raid, option: opt })
+			}
+		}
+
+		if (!excludedKinds.includes('label') && !filters.some((f) => f.kind === 'label')) {
+			const sticker = pickRandom(labelOptions)
+			if (sticker) {
+				const opt: FilterOption = {
+					kind: 'label',
+					value: sticker.value,
+					label: sticker.label,
+					category: categoryLabels.label
+				}
+				picks.push({ label: opt.label, category: opt.category, option: opt })
 			}
 		}
 
@@ -247,6 +342,8 @@
 			partyOptions,
 			boostOptions,
 			sideOptions,
+			difficultyOptions,
+			labelOptions,
 			allRaids,
 			categoryLabels
 		})
@@ -274,7 +371,10 @@
 				}
 			})
 
-		return rankResults([...local, ...apiResults], inputValue.trim().toLowerCase())
+		const query = inputValue.trim().toLowerCase()
+		const evokers = evokerSuggestions.filter((e) => e.label.toLowerCase().includes(query))
+
+		return rankResults([...evokers, ...local, ...apiResults], query)
 	})
 
 	// Reset selected index when results change
@@ -309,7 +409,7 @@
 	}
 
 	// Single-select kinds replace existing filter of the same kind
-	const singleSelectKinds = new Set(['recency', 'boost', 'side'])
+	const singleSelectKinds = new Set(['recency', 'boost', 'side', 'evoker', 'label'])
 
 	function selectOption(option: FilterOption) {
 		if (isAlreadySelected(option)) return
@@ -340,6 +440,12 @@
 			newFilter = { kind: 'raid', value: option.value as string, label: option.label }
 		} else if (option.kind === 'class') {
 			newFilter = { kind: 'class', value: option.value as string, label: option.label }
+		} else if (option.kind === 'difficulty') {
+			newFilter = {
+				kind: 'difficulty',
+				value: option.value as string,
+				label: option.label
+			}
 		} else {
 			newFilter = { kind: 'party', value: option.value as string, label: option.label }
 		}

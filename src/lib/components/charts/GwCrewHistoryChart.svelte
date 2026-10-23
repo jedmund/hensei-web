@@ -1,14 +1,14 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
-	import { Chart } from 'svelte-echarts'
+	import Chart from './Chart.svelte'
 	import {
-		init,
 		CHART_FONT_FAMILY,
 		CHART_SPLIT_LINE,
 		CHART_AXIS_LINE,
 		CHART_LABEL_COLOR
 	} from './echarts-setup'
 	import { formatScore, formatScoreCompact, type HistoryDataPoint } from '$lib/utils/gw'
+	import { escapeHtml } from '$lib/utils/safeHtml'
 
 	interface Props {
 		data: HistoryDataPoint[]
@@ -62,9 +62,9 @@
 				if (!point) return ''
 				const dataPoint = data[point.dataIndex]
 				if (dataPoint?.isGap) {
-					return `${point.name}<br/><span style="color: var(--text-tertiary)">${m.gw_chart_not_in_crew()}</span><br/>${dataPoint?.date ?? ''}`
+					return `${escapeHtml(point.name)}<br/><span style="color: var(--text-tertiary)">${m.gw_chart_not_in_crew()}</span><br/>${escapeHtml(dataPoint?.date)}`
 				}
-				return `${point.name}<br/>${m.gw_chart_score_label({ score: formatScore(point.value ?? 0) })}<br/>${dataPoint?.date ?? ''}`
+				return `${escapeHtml(point.name)}<br/>${m.gw_chart_score_label({ score: formatScore(point.value ?? 0) })}<br/>${escapeHtml(dataPoint?.date)}`
 			}
 		},
 		toolbox: {
@@ -159,7 +159,7 @@
 
 <div class="chart-wrapper">
 	<div class="chart-container" style:height="{height}px">
-		<Chart {init} {options} />
+		<Chart {options} />
 	</div>
 	<p class="chart-hint">{m.gw_chart_hint()}</p>
 </div>

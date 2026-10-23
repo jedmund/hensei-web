@@ -3,9 +3,10 @@ import {
 	detectModifications,
 	hasAnyModification,
 	canWeaponBeModified,
-	canCharacterBeModified
+	canCharacterBeModified,
+	hasNotesOrSubstitutions
 } from '../modificationDetector'
-import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
+import type { GridCharacter, GridWeapon, GridSummon, Substitution } from '$lib/types/api/party'
 import type { Awakening, WeaponKey } from '$lib/types/api/entities'
 import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'
 
@@ -342,5 +343,70 @@ describe('canCharacterBeModified', () => {
 		const char = makeGridCharacter()
 		char.character.maxAwakeningLevel = 3
 		expect(canCharacterBeModified(char)).toBe(true)
+	})
+})
+
+// ============================================================================
+// hasNotesOrSubstitutions
+// ============================================================================
+
+describe('hasNotesOrSubstitutions', () => {
+	it('returns false for undefined', () => {
+		expect(hasNotesOrSubstitutions(undefined)).toBe(false)
+	})
+
+	it('returns false when item has no description and no substitutions', () => {
+		expect(hasNotesOrSubstitutions(makeGridWeapon())).toBe(false)
+	})
+
+	it('returns false for a null description', () => {
+		const weapon = makeGridWeapon({ description: null } as unknown as Partial<GridWeapon>)
+		expect(hasNotesOrSubstitutions(weapon)).toBe(false)
+	})
+
+	it('returns false for a description with no content array', () => {
+		const weapon = makeGridWeapon({ description: { type: 'doc' } } as Partial<GridWeapon>)
+		expect(hasNotesOrSubstitutions(weapon)).toBe(false)
+	})
+
+	it('returns false for a description containing only an empty paragraph', () => {
+		const weapon = makeGridWeapon({
+			description: { type: 'doc', content: [{ type: 'paragraph' }] }
+		} as Partial<GridWeapon>)
+		expect(hasNotesOrSubstitutions(weapon)).toBe(false)
+	})
+
+	it('returns true for a description with real text content', () => {
+		const weapon = makeGridWeapon({
+			description: {
+				type: 'doc',
+				content: [{ type: 'paragraph', content: [{ type: 'text', text: 'note' }] }]
+			}
+		} as Partial<GridWeapon>)
+		expect(hasNotesOrSubstitutions(weapon)).toBe(true)
+	})
+
+	it('returns true when substitutions are present', () => {
+		const weapon = makeGridWeapon({
+			substitutions: [{ id: 'sub-1', position: 0 } as Substitution]
+		})
+		expect(hasNotesOrSubstitutions(weapon)).toBe(true)
+	})
+
+	it('returns true for a character with substitutions', () => {
+		const char = makeGridCharacter({
+			substitutions: [{ id: 'sub-1', position: 0 } as Substitution]
+		} as Partial<GridCharacter>)
+		expect(hasNotesOrSubstitutions(char)).toBe(true)
+	})
+
+	it('returns true for a summon with a non-empty description', () => {
+		const summon = makeGridSummon({
+			description: {
+				type: 'doc',
+				content: [{ type: 'paragraph', content: [{ type: 'text', text: 'note' }] }]
+			}
+		} as Partial<GridSummon>)
+		expect(hasNotesOrSubstitutions(summon)).toBe(true)
 	})
 })

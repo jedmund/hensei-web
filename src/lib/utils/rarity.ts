@@ -41,5 +41,5 @@ export function getRarityClass(rarity: number): string {
 export function getRarityImage(rarity: number): string {
 	const label = RARITY_LABELS[rarity]
 	if (!label) return ''
-	return `${getBasePath()}/rarity/${label.toLowerCase()}.png`
+	return `${getBasePath()}/icons/rarity/${label.toLowerCase()}.png`
 }

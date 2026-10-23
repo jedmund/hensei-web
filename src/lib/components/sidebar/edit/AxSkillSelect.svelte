@@ -5,17 +5,33 @@
 	import type { AugmentSkill, WeaponStatModifier } from '$lib/types/api/weaponStatModifier'
 	import Select from '$lib/components/ui/Select.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
+	import { initialAxStrength, primaryAxRange, secondaryAxRange } from '$lib/utils/axStrength'
 
+	// Fallback when the API hasn't populated axGroup yet
 	const PRIMARY_AX_SLUGS = ['ax_atk', 'ax_def', 'ax_hp', 'ax_ca_dmg', 'ax_multiattack']
+	const UTILITY_AX_SLUGS = ['ax_exp', 'ax_rupie']
 
 	interface Props {
 		/** Current AX skills on the weapon (bindable) */
 		currentSkills?: AugmentSkill[]
 		/** Language for display */
 		locale?: 'en' | 'ja'
+		/** The weapon's AX slot rules per gbf.wiki/AX_Skills */
+		axType?: 'standard' | 'xeno' | 'primal'
 	}
 
-	let { currentSkills = $bindable<AugmentSkill[]>([]), locale = 'en' }: Props = $props()
+	let {
+		currentSkills = $bindable<AugmentSkill[]>([]),
+		locale = 'en',
+		axType = 'standard'
+	}: Props = $props()
+
+	function groupOf(skill: WeaponStatModifier): string {
+		if (skill.axGroup) return skill.axGroup
+		if (PRIMARY_AX_SLUGS.includes(skill.slug)) return 'primary'
+		if (UTILITY_AX_SLUGS.includes(skill.slug)) return 'utility'
+		return 'secondary'
+	}
 
 	const axQuery = createQuery(() => entityQueries.axSkills())
 
@@ -32,13 +48,16 @@
 		selectedSecondaryId ? (axQuery.data ?? []).find((m) => m.id === selectedSecondaryId) : undefined
 	)
 
-	const showSecondary = $derived(!!selectedPrimary)
+	// EXP/Rupie primaries have no secondary skill (gbf.wiki/AX_Skills)
+	const showSecondary = $derived(!!selectedPrimary && groupOf(selectedPrimary) !== 'utility')
 
 	// Build primary skill options
 	const primaryOptions = $derived.by(() => {
 		const items: Array<{ value: string; label: string }> = [{ value: '', label: m.ax_no_skill() }]
 
-		for (const skill of (axQuery.data ?? []).filter((s) => PRIMARY_AX_SLUGS.includes(s.slug))) {
+		// Primal-series weapons roll standard primaries AND EXP/Rupie
+		const wanted = axType === 'primal' ? ['primary', 'utility'] : ['primary']
+		for (const skill of (axQuery.data ?? []).filter((s) => wanted.includes(groupOf(s)))) {
 			items.push({
 				value: skill.id,
 				label: locale === 'ja' ? skill.nameJp : skill.nameEn
@@ -48,11 +67,19 @@
 		return items
 	})
 
-	// Build secondary skill options
+	// Build secondary skill options: the pool is keyed by (AX type, chosen primary)
+	// per gbf.wiki/AX_Skills — a Magna weapon's ATK primary offers Skill DMG Cap,
+	// a Xeno's offers Supplemental Skill DMG. Falls back to the flat group split
+	// until the API exposes axSecondaries.
 	const secondaryOptions = $derived.by(() => {
 		const items: Array<{ value: string; label: string }> = [{ value: '', label: m.ax_no_skill() }]
 
-		for (const skill of (axQuery.data ?? []).filter((s) => !PRIMARY_AX_SLUGS.includes(s.slug))) {
+		const poolKey = axType === 'xeno' ? 'xeno' : 'standard'
+		const pool = selectedPrimary?.axSecondaries?.[poolKey]
+		const candidates = (axQuery.data ?? []).filter((s) =>
+			pool ? pool.includes(s.slug) : ['secondary', 'extended'].includes(groupOf(s))
+		)
+		for (const skill of candidates) {
 			items.push({
 				value: skill.id,
 				label: locale === 'ja' ? skill.nameJp : skill.nameEn
@@ -73,9 +100,13 @@
 			currentSkills = []
 			return
 		}
-		const existing = currentSkills[1]
+		// EXP/Rupie can't have a secondary, so drop any existing one
+		const existing = groupOf(modifier) === 'utility' ? undefined : currentSkills[1]
 		currentSkills = [
-			{ modifier, strength: currentSkills[0]?.strength ?? 0 },
+			{
+				modifier,
+				strength: initialAxStrength(currentSkills[0]?.strength, primaryAxRange(modifier))
+			},
 			...(existing ? [existing] : [])
 		]
 	}
@@ -101,14 +132,20 @@
 			return
 		}
 		if (first) {
-			currentSkills = [first, { modifier, strength: currentSkills[1]?.strength ?? 0 }]
+			currentSkills = [
+				first,
+				{
+					modifier,
+					strength: initialAxStrength(currentSkills[1]?.strength, secondaryAxRange(modifier))
+				}
+			]
 		}
 	}
 
 	function handleSecondaryStrengthChange(event: Event) {
 		const input = event.target as HTMLInputElement
 		const val = parseFloat(input.value) || 0
-		const max = selectedSecondary?.baseMax ?? 999
+		const max = selectedSecondary ? secondaryAxRange(selectedSecondary).max : 999
 		const clamped = Math.min(val, max)
 		if (val > max) input.value = String(clamped)
 		const first = currentSkills[0]
@@ -186,14 +223,16 @@
 							<div class="skill-value-input">
 								<Input
 									type="number"
-									min={selectedSecondary.baseMin}
-									max={selectedSecondary.baseMax}
+									min={secondaryAxRange(selectedSecondary).min}
+									max={secondaryAxRange(selectedSecondary).max}
 									step={0.5}
 									value={secondaryStrength || ''}
 									oninput={handleSecondaryStrengthChange}
 									contained
 									variant="number"
-									placeholder="{selectedSecondary.baseMin}~{selectedSecondary.baseMax}"
+									placeholder="{secondaryAxRange(selectedSecondary).min}~{secondaryAxRange(
+										selectedSecondary
+									).max}"
 								/>
 							</div>
 							<span class="suffix">{getSuffix(selectedSecondary) ?? ''}</span>

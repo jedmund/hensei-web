@@ -2,25 +2,29 @@
 
 <script lang="ts">
 	import { Combobox } from 'bits-ui'
+	import { tick } from 'svelte'
 	import Icon from '../Icon.svelte'
+	import Button from './Button.svelte'
+	import SearchOptionItem from '$lib/components/search/SearchOptionItem.svelte'
 	import { searchAdapter, type SearchResult } from '$lib/api/adapters/search.adapter'
-	import { getCharacterImage } from '$lib/utils/images'
-	import { localizedName, appLocale } from '$lib/utils/locale'
-
-	interface CharacterOption {
-		id: string
-		label: string
-		granblueId: string
-		element?: number
-	}
+	import { appLocale } from '$lib/utils/locale'
+	import {
+		toCharacterTypeaheadOption,
+		rowIdForValue,
+		type CharacterTypeaheadOption as CharacterOption
+	} from './characterTypeahead'
 
 	interface Props {
 		/** Selected character granblue ID (e.g. "3040581000") */
 		value?: string | null
 		/** Initial character data for display (when loading existing value) */
-		initialCharacter?: { id: string; name: string; granblueId: string } | null
+		initialCharacter?: CharacterOption | null
+		/** Search input value. Can be prefilled and bound independently from the selected value. */
+		query?: string
 		/** Callback when value changes */
 		onValueChange?: (granblueId: string | null) => void
+		/** Called with the picked row. Unlike `value`, it tells a style row from its base. */
+		onSelect?: (character: CharacterOption) => void
 		/** Placeholder text */
 		placeholder?: string
 		/** Disabled state */
@@ -38,7 +42,9 @@
 	let {
 		value = $bindable(null),
 		initialCharacter = null,
+		query = $bindable(''),
 		onValueChange,
+		onSelect,
 		placeholder = 'Search characters...',
 		disabled = false,
 		size = 'medium',
@@ -51,34 +57,42 @@
 	let isLoading = $state(false)
 	let searchTimeout: ReturnType<typeof setTimeout> | null = null
 	let comboboxOpen = $state(false)
-	let inputValue = $state('')
+	let initializedQuery = $state('')
+	let inputElement = $state<HTMLInputElement | null>(null)
 
-	// The selected granblueId used as the combobox value
-	let selectedGranblueId = $state<string>(value ?? '')
+	// The combobox value is the row id: a base character and its style row
+	// share a granblueId. `value` stays the granblueId for callers.
+	let selectedRowId = $state<string>('')
 
 	// Track the currently displayed character for the selection display
 	let displayedCharacter = $state<CharacterOption | null>(null)
 
 	// Sync external value changes into combobox and reset internal state
 	$effect(() => {
-		selectedGranblueId = value ?? ''
+		selectedRowId = rowIdForValue(value, displayedCharacter, initialCharacter)
 
 		if (!value) {
-			inputValue = ''
 			displayedCharacter = null
 		} else if (initialCharacter && initialCharacter.granblueId === value) {
-			inputValue = initialCharacter.name
-			displayedCharacter = {
-				id: initialCharacter.id,
-				label: initialCharacter.name,
-				granblueId: initialCharacter.granblueId
-			}
+			query = initialCharacter.label
+			displayedCharacter = initialCharacter
+		} else if (displayedCharacter?.granblueId !== value) {
+			displayedCharacter = null
 		}
 	})
 
-	const comboboxItems = $derived(
-		searchResults.map((c) => ({ value: c.granblueId, label: c.label }))
-	)
+	// A prefilled query (used by Batch Import) should behave like typed search text,
+	// but must not become a selected value until the editor chooses a result.
+	$effect(() => {
+		const nextQuery = query.trim()
+		if (value || !nextQuery || nextQuery === initializedQuery) return
+
+		initializedQuery = nextQuery
+		if (searchTimeout) clearTimeout(searchTimeout)
+		searchTimeout = setTimeout(() => searchCharacters(nextQuery), 300)
+	})
+
+	const comboboxItems = $derived(searchResults.map((c) => ({ value: c.id, label: c.label })))
 
 	const wrapperClasses = $derived(
 		['character-typeahead', size, contained && 'contained', disabled && 'disabled']
@@ -100,12 +114,9 @@
 				locale: appLocale()
 			})
 
-			searchResults = response.results.map((result: SearchResult) => ({
-				id: result.id,
-				label: localizedName(result.name) !== '—' ? localizedName(result.name) : result.granblueId,
-				granblueId: result.granblueId,
-				element: result.element
-			}))
+			searchResults = response.results.map((result: SearchResult) =>
+				toCharacterTypeaheadOption(result)
+			)
 			if (searchResults.length > 0) {
 				comboboxOpen = true
 			}
@@ -120,27 +131,30 @@
 	}
 
 	function handleInputChange(val: string) {
-		inputValue = val
+		query = val
+		initializedQuery = val.trim()
 		if (searchTimeout) clearTimeout(searchTimeout)
 		searchTimeout = setTimeout(() => searchCharacters(val), 300)
 
 		if (!val.trim()) {
-			selectedGranblueId = ''
+			selectedRowId = ''
 			displayedCharacter = null
 			value = null
+			comboboxOpen = false
 			onValueChange?.(null)
 		}
 	}
 
-	function handleValueChange(granblueId: string) {
-		selectedGranblueId = granblueId
-		if (granblueId) {
-			const match = searchResults.find((c) => c.granblueId === granblueId)
+	function handleValueChange(rowId: string) {
+		selectedRowId = rowId
+		if (rowId) {
+			const match = searchResults.find((c) => c.id === rowId)
 			if (match) {
 				displayedCharacter = match
-				inputValue = match.label
-				value = granblueId
-				onValueChange?.(granblueId)
+				query = match.label
+				value = match.granblueId
+				onValueChange?.(match.granblueId)
+				onSelect?.(match)
 			}
 		} else {
 			displayedCharacter = null
@@ -150,66 +164,98 @@
 		comboboxOpen = false
 	}
 
-	function handleClear() {
-		selectedGranblueId = ''
-		inputValue = ''
+	async function handleClear() {
+		selectedRowId = ''
+		query = ''
+		initializedQuery = ''
 		displayedCharacter = null
 		searchResults = []
 		value = null
 		onValueChange?.(null)
+		await tick()
+		inputElement?.focus()
 	}
 </script>
 
 <div class={wrapperClasses}>
-	<Combobox.Root
-		type="single"
-		bind:value={selectedGranblueId}
-		onValueChange={handleValueChange}
-		bind:open={comboboxOpen}
-		{inputValue}
-		items={comboboxItems}
-		{disabled}
-	>
-		<div class="combobox-input-wrapper">
-			<Combobox.Input
-				class="combobox-input"
-				{placeholder}
-				oninput={(e) => handleInputChange(e.currentTarget.value)}
-				{disabled}
+	{#if displayedCharacter && value}
+		<div class="selected-character">
+			<SearchOptionItem
+				label={displayedCharacter.label}
+				granblueId={displayedCharacter.granblueId}
+				type="Character"
+				element={displayedCharacter.element ?? undefined}
+				season={displayedCharacter.season}
+				series={displayedCharacter.series}
+				styleSwap={displayedCharacter.styleSwap}
+				showType={false}
+				imageSize={40}
 			/>
-			{#if isLoading}
-				<span class="input-loading">
-					<Icon name="loader-2" size={14} />
-				</span>
-			{:else if clearable && displayedCharacter}
-				<button type="button" class="clear-button" onclick={handleClear}>
-					<Icon name="close" size={12} />
-				</button>
+			{#if clearable}
+				<Button
+					variant="ghost"
+					size="small"
+					iconOnly
+					icon="close"
+					onclick={handleClear}
+					aria-label="Remove {displayedCharacter.label}"
+					{disabled}
+				/>
 			{/if}
 		</div>
+	{:else}
+		<Combobox.Root
+			type="single"
+			bind:value={selectedRowId}
+			onValueChange={handleValueChange}
+			bind:open={comboboxOpen}
+			inputValue={query}
+			items={comboboxItems}
+			{disabled}
+		>
+			<div class="combobox-input-wrapper">
+				<Combobox.Input
+					bind:ref={inputElement}
+					class="combobox-input"
+					{placeholder}
+					oninput={(e) => handleInputChange(e.currentTarget.value)}
+					{disabled}
+				/>
+				{#if isLoading}
+					<span class="input-loading">
+						<Icon name="loader-2" size={14} />
+					</span>
+				{/if}
+			</div>
 
-		<Combobox.Content class="combobox-content">
-			<Combobox.Viewport>
-				{#each searchResults as character (character.granblueId)}
-					<Combobox.Item value={character.granblueId} label={character.label} class="combobox-item">
-						{#snippet children({ selected })}
-							<img
-								src={getCharacterImage(character.granblueId, 'square', '01')}
-								alt=""
-								class="item-image"
-							/>
-							<span class="item-label">{character.label}</span>
-							{#if selected}
-								<span class="item-check">
-									<Icon name="check" size={14} />
-								</span>
-							{/if}
-						{/snippet}
-					</Combobox.Item>
-				{/each}
-			</Combobox.Viewport>
-		</Combobox.Content>
-	</Combobox.Root>
+			<Combobox.Content class="combobox-content">
+				<Combobox.Viewport>
+					{#each searchResults as character (character.id)}
+						<Combobox.Item value={character.id} label={character.label} class="combobox-item">
+							{#snippet children({ selected })}
+								<SearchOptionItem
+									label={character.label}
+									granblueId={character.granblueId}
+									type="Character"
+									element={character.element ?? undefined}
+									season={character.season}
+									series={character.series}
+									styleSwap={character.styleSwap}
+									showType={false}
+									imageSize={40}
+								/>
+								{#if selected}
+									<span class="item-check">
+										<Icon name="check" size={14} />
+									</span>
+								{/if}
+							{/snippet}
+						</Combobox.Item>
+					{/each}
+				</Combobox.Viewport>
+			</Combobox.Content>
+		</Combobox.Root>
+	{/if}
 </div>
 
 <style lang="scss">
@@ -234,13 +280,32 @@
 		position: relative;
 	}
 
+	.selected-character {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+		min-height: calc($unit * 6);
+		padding: $unit;
+		border-radius: $input-corner;
+		background-color: var(--input-bg);
+
+		:global(.option-item) {
+			min-width: 0;
+		}
+	}
+
+	.character-typeahead.contained .selected-character {
+		background-color: var(--input-bound-bg);
+	}
+
 	:global(.character-typeahead .combobox-input) {
 		all: unset;
 		box-sizing: border-box;
 		-webkit-font-smoothing: antialiased;
 		background-color: var(--input-bg);
 		border-radius: $input-corner;
-		border: 1px solid transparent;
+		// Matches Input: 2px reserved for the focus border
+		border: 2px solid transparent;
 		color: var(--text-primary);
 		display: block;
 		font-family: var(--font-family);
@@ -271,10 +336,10 @@
 
 	// Contained variant
 	.character-typeahead.contained :global(.combobox-input) {
-		background-color: var(--select-contained-bg);
+		background-color: var(--input-bound-bg);
 
 		&:hover {
-			background-color: var(--select-contained-bg-hover);
+			background-color: var(--input-bound-bg-hover);
 		}
 	}
 
@@ -290,34 +355,6 @@
 
 		:global(svg) {
 			animation: spin 1s linear infinite;
-		}
-	}
-
-	.clear-button {
-		position: absolute;
-		right: $unit;
-		top: 50%;
-		transform: translateY(-50%);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 20px;
-		height: 20px;
-		padding: 0;
-		border: none;
-		background: transparent;
-		color: var(--text-secondary);
-		cursor: pointer;
-		border-radius: $unit-half;
-		@include smooth-transition($duration-quick, background-color, color);
-
-		&:hover {
-			background: var(--surface-tertiary);
-			color: var(--text-primary);
-		}
-
-		:global(svg) {
-			fill: currentColor;
 		}
 	}
 
@@ -355,20 +392,6 @@
 		&[data-selected] {
 			font-weight: $medium;
 		}
-	}
-
-	.item-image {
-		width: 24px;
-		height: 24px;
-		border-radius: $item-corner-small;
-		flex-shrink: 0;
-	}
-
-	.item-label {
-		flex: 1;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
 	}
 
 	.item-check {

@@ -3,6 +3,7 @@
 	import LinkItem from '$lib/components/about/LinkItem.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { getBasePath } from '$lib/utils/images'
+	import { localizeHref } from '$lib/paraglide/runtime.js'
 </script>
 
 <PageMeta title={m.page_title_about()} description={m.page_desc_about()} />
@@ -60,15 +61,15 @@
 	<p>{m.about_data_explanation()}</p>
 	<ul class="data-sources">
 		<li>
-			<img src="{getBasePath()}/external/gbf-wiki-en.png" alt="" width="16" height="16" />
+			<img src="{getBasePath()}/app/external/gbf-wiki-en.png" alt="" width="16" height="16" />
 			<a href="https://gbf.wiki" target="_blank" rel="noreferrer">gbf.wiki</a>
 		</li>
 		<li>
-			<img src="{getBasePath()}/external/gbf-wiki-jp.png" alt="" width="16" height="16" />
+			<img src="{getBasePath()}/app/external/gbf-wiki-jp.png" alt="" width="16" height="16" />
 			<a href="https://gbf-wiki.com/" target="_blank" rel="noreferrer">gbf-wiki</a>
 		</li>
 		<li>
-			<img src="{getBasePath()}/external/kamigame.png" alt="" width="16" height="16" />
+			<img src="{getBasePath()}/app/external/kamigame.png" alt="" width="16" height="16" />
 			<a
 				href="https://kamigame.jp/%E3%82%B0%E3%83%A9%E3%83%96%E3%83%AB/index.html"
 				target="_blank"
@@ -76,11 +77,20 @@
 			>
 		</li>
 		<li>
-			<img src="{getBasePath()}/external/gamewith.png" alt="" width="16" height="16" />
+			<img src="{getBasePath()}/app/external/gamewith.png" alt="" width="16" height="16" />
 			<a href="https://xn--bck3aza1a2if6kra4ee0hf.gamewith.jp/" target="_blank" rel="noreferrer"
 				>Gamewith</a
 			>
 		</li>
+	</ul>
+</div>
+
+<div class="about-card">
+	<h2>{m.about_legal_title()}</h2>
+	<p>{m.about_legal_explanation()}</p>
+	<ul class="legal-links">
+		<li><a href={localizeHref('/about/privacy')}>{m.legal_privacy_title()}</a></li>
+		<li><a href={localizeHref('/about/terms')}>{m.legal_terms_title()}</a></li>
 	</ul>
 </div>
 
@@ -127,6 +137,15 @@
 			&:hover {
 				text-decoration: underline;
 			}
+		}
+
+		.legal-links {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+			display: flex;
+			gap: $unit-2x;
+			font-size: $font-medium;
 		}
 
 		.data-sources {

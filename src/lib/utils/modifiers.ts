@@ -4,7 +4,7 @@
 
 import type { Awakening, WeaponKey } from '$lib/types/api/entities'
 import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'
-import { getBasePath } from '$lib/utils/images'
+import { BUCKET, getBasePath } from '$lib/utils/images'
 import { localizedName } from '$lib/utils/locale'
 
 /**
@@ -22,33 +22,28 @@ export function getAwakeningImage(awakening?: { type?: Awakening; level?: number
 	const isCharacterAwakening = slug.startsWith('character-')
 	const extension = isCharacterAwakening ? 'jpg' : 'png'
 
-	return `${getBasePath()}/awakening/${slug}.${extension}`
+	return `${getBasePath()}/icons/awakening/${slug}.${extension}`
 }
 
 /**
  * Get the image URL for a weapon key
- * Gauph keys (ultima slot 0) require a proficiency suffix for the correct image variant
+ * Gauph keys (ultima slot 0) use proficiency-specific variants when available.
  */
 export function getWeaponKeyImage(key: WeaponKey, weaponProficiency?: number): string {
 	if (!key.slug) return ''
 
-	let filename = key.slug
-
-	// Gauph keys have proficiency-specific image variants
-	const hasVariant = [
+	const hasProficiencyVariant = [
 		'gauph-courage',
 		'gauph-strength',
 		'gauph-strife',
 		'gauph-vitality',
 		'gauph-will',
 		'gauph-zeal'
-	]
+	].includes(key.slug)
+	const filename =
+		hasProficiencyVariant && weaponProficiency ? `${key.slug}-${weaponProficiency}` : key.slug
 
-	if (hasVariant.includes(key.slug)) {
-		filename += `-${weaponProficiency}`
-	}
-
-	return `${getBasePath()}/weapon-keys/${filename}.png`
+	return `${getBasePath()}/${BUCKET.weaponKeys}/${filename}.png`
 }
 
 /**
@@ -74,7 +69,7 @@ export function getWeaponKeyImages(
  */
 export function getAxSkillImage(axSkill?: { slug?: string }): string | null {
 	if (!axSkill?.slug) return null
-	return `${getBasePath()}/ax/${axSkill.slug}.png`
+	return `${getBasePath()}/icons/ax-skills/${axSkill.slug}.png`
 }
 
 /**
@@ -86,7 +81,7 @@ export function getAxSkillImages(ax?: AugmentSkill[]): Array<{ url: string; alt:
 	return ax
 		.filter((skill) => skill.modifier?.slug)
 		.map((skill) => ({
-			url: `${getBasePath()}/ax/${skill.modifier.slug}.png`,
+			url: `${getBasePath()}/icons/ax-skills/${skill.modifier.slug}.png`,
 			alt: skill.modifier.nameEn || skill.modifier.slug || 'AX Skill'
 		}))
 }
@@ -101,7 +96,7 @@ export function getBefoulmentImages(
 
 	return [
 		{
-			url: `${getBasePath()}/ax/${befoulment.modifier.slug}.png`,
+			url: `${getBasePath()}/icons/ax-skills/${befoulment.modifier.slug}.png`,
 			alt: befoulment.modifier.nameEn || befoulment.modifier.slug || 'Befoulment'
 		}
 	]

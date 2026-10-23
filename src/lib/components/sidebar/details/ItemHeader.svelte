@@ -5,11 +5,16 @@
 		getWeaponBaseImage,
 		getSummonDetailImage,
 		getCharacterPose,
+		getSummonTransformation,
+		getWeaponTransformation,
 		getBasePath
 	} from '$lib/utils/images'
 	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import { getElementKey } from '$lib/utils/element'
+	import { seriesHasTranscendenceArt } from '$lib/utils/weaponSeries'
+	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
+	import CollectionPill from './CollectionPill.svelte'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'
@@ -18,9 +23,21 @@
 		itemData: any
 		gridUncapLevel: number | null | undefined
 		gridTranscendence: number | null | undefined
+		/** When set, renders a Collection pill in the bottom-left of the image area. */
+		collectionPill?:
+			| {
+					count: number
+					gridCount?: number | undefined
+					isLimitItem?: boolean
+					sourceUsername?: string | undefined
+					isOutOfSync?: boolean
+			  }
+			| undefined
 	}
 
-	let { type, item, itemData, gridUncapLevel, gridTranscendence }: Props = $props()
+	let { type, item, itemData, gridUncapLevel, gridTranscendence, collectionPill }: Props = $props()
+
+	const hasPerpetuity = $derived(type === 'character' && !!(item as GridCharacter).perpetuity)
 
 	const simplePortraits = getSimplePortraits()
 
@@ -35,13 +52,24 @@
 				: getCharacterPose(
 						gridUncapLevel ?? undefined,
 						gridTranscendence ?? undefined,
-						simplePortraits.value
+						simplePortraits.value,
+						!!itemData?.special
 					)
 			return getCharacterDetailImage(id, pose)
 		} else if (type === 'weapon') {
-			return getWeaponBaseImage(id)
+			const transformation = getWeaponTransformation(
+				seriesHasTranscendenceArt(itemData?.series),
+				gridUncapLevel ?? undefined,
+				gridTranscendence ?? undefined
+			)
+			return getWeaponBaseImage(id, transformation)
 		} else {
-			return getSummonDetailImage(id)
+			const transformation = getSummonTransformation(
+				id,
+				gridUncapLevel ?? undefined,
+				gridTranscendence ?? undefined
+			)
+			return getSummonDetailImage(id, transformation)
 		}
 	}
 
@@ -75,7 +103,7 @@
 
 	const elementName = $derived(getElementKey(itemData?.element))
 
-	const reliefBackgroundUrl = `${getBasePath()}/relief.png`
+	const reliefBackgroundUrl = `${getBasePath()}/app/marketing/relief.png`
 </script>
 
 <div class="item-header-container">
@@ -87,6 +115,27 @@
 		style:--element-color="var(--{elementName}-bg)"
 	>
 		<img src={getImageUrl()} alt={displayName(itemData)} class="item-image {type}" />
+		{#if hasPerpetuity}
+			<img
+				src={perpetuityFilled}
+				alt="Perpetuity Ring"
+				class="perpetuity-overlay"
+				aria-label="Perpetuity Ring"
+			/>
+		{/if}
+		{#if collectionPill}
+			<div class="collection-pill-slot">
+				<CollectionPill
+					{type}
+					element={itemData?.element}
+					count={collectionPill.count}
+					gridCount={collectionPill.gridCount}
+					isLimitItem={collectionPill.isLimitItem}
+					sourceUsername={collectionPill.sourceUsername}
+					isOutOfSync={collectionPill.isOutOfSync}
+				/>
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -188,6 +237,24 @@
 			.item-image.summon,
 			.item-image.character {
 				width: 100%;
+			}
+
+			.perpetuity-overlay {
+				position: absolute;
+				top: spacing.$unit;
+				right: spacing.$unit;
+				width: 28px;
+				height: 28px;
+				object-fit: contain;
+				z-index: 2;
+				pointer-events: none;
+			}
+
+			.collection-pill-slot {
+				position: absolute;
+				bottom: spacing.$unit;
+				left: spacing.$unit;
+				z-index: 2;
 			}
 		}
 	}

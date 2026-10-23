@@ -147,11 +147,11 @@ export function getOppositeElement(element?: number): number | undefined {
 }
 
 /**
- * Get the path to the element image from /images/elements/
+ * Get the path to the element image from /images/icons/elements/
  * Used by ElementPicker component
  */
 export function getElementImage(element?: number): string {
 	if (element === undefined || element === null) return ''
 	const key = ELEMENT_KEYS[element]?.toLowerCase() ?? 'null'
-	return `${getBasePath()}/elements/${key}.png`
+	return `${getBasePath()}/icons/elements/${key}.png`
 }

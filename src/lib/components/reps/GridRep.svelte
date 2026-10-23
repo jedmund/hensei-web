@@ -6,6 +6,7 @@
 	import CharacterRep from '$lib/components/reps/CharacterRep.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
+	import StickerLabels from '$lib/components/stickers/StickerLabels.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
@@ -85,6 +86,7 @@
 					{@render indicator()}
 				{/if}
 				<h2 class:empty={!party.name}>{party.name || m.grid_untitled()}</h2>
+				<StickerLabels labels={party.labels} mySticker={party.mySticker} size={32} />
 			</div>
 			{#if showUser}
 				{#if party.user}
@@ -257,6 +259,13 @@
 			&:hover .indicators {
 				opacity: 1;
 			}
+
+			&:hover .name-row :global(.sticker-labels),
+			&:focus-visible .name-row :global(.sticker-labels) {
+				scale: 1;
+				filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.18))
+					drop-shadow(0 3px 6px rgba(0, 0, 0, 0.12));
+			}
 		}
 	}
 
@@ -288,6 +297,24 @@
 			align-items: center;
 			gap: spacing.$unit-half;
 			min-width: 0;
+
+			// At the card's right edge. Taller than the name, so they overhang the
+			// row rather than grow it, keeping cards with and without stickers the
+			// same height. Drawn at full size and shrunk at rest, so they stay
+			// sharp when they grow on hover; they grow from their center, out
+			// into the card's padding.
+			:global(.sticker-labels) {
+				margin-block: -6px;
+				margin-inline: auto -4px;
+				scale: 0.75;
+				transition:
+					scale 0.15s ease,
+					filter 0.15s ease;
+
+				@media (prefers-reduced-motion: reduce) {
+					transition: none;
+				}
+			}
 		}
 
 		h2 {
@@ -382,6 +409,9 @@
 
 		.pills {
 			flex-shrink: 0;
+			display: inline-flex;
+			align-items: center;
+			gap: spacing.$unit-fourth;
 
 			.pill {
 				display: inline-flex;

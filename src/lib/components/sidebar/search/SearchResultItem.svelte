@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Icon from '../../Icon.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { localizedName } from '$lib/utils/locale'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import CollectionBadge from '$lib/components/CollectionBadge.svelte'
 	import {
 		getCharacterImage,
 		getWeaponImage,
@@ -20,6 +20,15 @@
 		disabled?: boolean
 		fromCollection?: boolean
 		inTeam?: boolean
+		/** For characters: the name of the weapon that recruits them, shown under the name */
+		weaponName?: string
+		/** Use a larger image, for lists with room for it */
+		large?: boolean
+		/**
+		 * Render as its own button (default). Turn off when a parent element,
+		 * like a combobox option, handles selection, hover and focus.
+		 */
+		interactive?: boolean
 		onclick?: (item: AddItemResult) => void
 	}
 
@@ -29,6 +38,9 @@
 		disabled = false,
 		fromCollection = false,
 		inTeam = false,
+		weaponName,
+		large = false,
+		interactive = true,
 		onclick
 	}: Props = $props()
 
@@ -64,20 +76,8 @@
 	const isDisabled = $derived(disabled || inTeam)
 </script>
 
-<li class="result-item">
-	<button
-		class="result-button"
-		class:disabled={isDisabled}
-		class:from-collection={fromCollection}
-		class:in-team={inTeam}
-		onclick={() => onclick?.(item)}
-		aria-label={inTeam
-			? m.search_already_in_team()
-			: isDisabled
-				? m.search_grid_full()
-				: m.search_add_item({ name: itemName })}
-		disabled={isDisabled}
-	>
+{#snippet content()}
+	<div class="result-image-wrapper" class:large>
 		<img
 			src={imageUrl}
 			alt={itemName}
@@ -85,32 +85,61 @@
 			loading="lazy"
 			onerror={(e) => handleImageFallback(e, weaponFallbackUrl)}
 		/>
-		<div class="result-info">
-			<span class="result-name">{itemName}</span>
-			<div class="result-labels">
-				{#if item.element !== undefined}
-					<ElementLabel element={item.element} size="small" />
-				{/if}
-				{#if inTeam}
-					<span class="in-team-pill">{m.search_added_pill()}</span>
-				{/if}
-				{#if Array.isArray(item.proficiency)}
-					{#each item.proficiency as prof (prof)}
-						<ProficiencyLabel proficiency={prof} size="small" />
-					{/each}
-				{:else if item.proficiency !== undefined}
-					<ProficiencyLabel proficiency={item.proficiency} size="small" />
-				{/if}
-			</div>
-		</div>
-		{#if type === 'character'}
-			<CharacterTags character={item} />
-		{/if}
 		{#if fromCollection && !inTeam}
-			<Icon name="bookmark" size={14} class="collection-indicator" />
+			<CollectionBadge />
 		{/if}
-	</button>
-</li>
+	</div>
+	<div class="result-info">
+		<span class="result-name">{itemName}</span>
+		{#if weaponName}
+			<span class="result-weapon">{weaponName}</span>
+		{/if}
+		<div class="result-labels">
+			{#if item.element !== undefined}
+				<ElementLabel element={item.element} size="small" />
+			{/if}
+			{#if inTeam}
+				<span class="in-team-pill">{m.search_added_pill()}</span>
+			{/if}
+			{#if Array.isArray(item.proficiency)}
+				{#each item.proficiency as prof (prof)}
+					<ProficiencyLabel proficiency={prof} size="small" />
+				{/each}
+			{:else if item.proficiency !== undefined}
+				<ProficiencyLabel proficiency={item.proficiency} size="small" />
+			{/if}
+		</div>
+	</div>
+	{#if type === 'character'}
+		<CharacterTags character={item} />
+	{/if}
+{/snippet}
+
+{#if interactive}
+	<li class="result-item">
+		<button
+			class="result-button"
+			class:disabled={isDisabled}
+			class:from-collection={fromCollection}
+			class:in-team={inTeam}
+			onclick={() => onclick?.(item)}
+			aria-label={inTeam
+				? m.search_already_in_team()
+				: isDisabled
+					? m.search_grid_full()
+					: m.search_add_item({ name: itemName })}
+			disabled={isDisabled}
+		>
+			{@render content()}
+		</button>
+	</li>
+{:else}
+	<div class="result-item">
+		<div class="result-button static">
+			{@render content()}
+		</div>
+	</div>
+{/if}
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
@@ -149,6 +178,19 @@
 				}
 			}
 
+			// Selection, hover and focus come from the parent element
+			&.static {
+				cursor: inherit;
+
+				&:hover {
+					background: transparent;
+				}
+
+				&:active {
+					transform: none;
+				}
+			}
+
 			&.in-team {
 				cursor: not-allowed;
 
@@ -166,13 +208,25 @@
 			}
 		}
 
-		.result-image {
+		.result-image-wrapper {
+			position: relative;
 			width: 48px;
 			height: 48px;
+			flex-shrink: 0;
+
+			&.large {
+				width: 60px;
+				height: 60px;
+			}
+		}
+
+		.result-image {
+			display: block;
+			width: 100%;
+			height: 100%;
 			object-fit: cover;
 			border-radius: $item-corner-small;
 			border: 1px solid var(--border-primary);
-			flex-shrink: 0;
 		}
 
 		.result-info {
@@ -186,6 +240,11 @@
 		.result-name {
 			font-size: $font-regular;
 			color: var(--text-primary);
+		}
+
+		.result-weapon {
+			font-size: $font-small;
+			color: var(--text-secondary);
 		}
 
 		.result-labels {
@@ -204,11 +263,6 @@
 			font-size: $font-tiny;
 			font-weight: $medium;
 			white-space: nowrap;
-		}
-
-		:global(.collection-indicator) {
-			color: var(--accent-blue);
-			flex-shrink: 0;
 		}
 	}
 </style>

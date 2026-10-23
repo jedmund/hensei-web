@@ -12,6 +12,8 @@
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import UserSettingsModal from './UserSettingsModal.svelte'
+	import { useSettingsReturn } from './settings/settingsReturn.svelte'
+	import type { SettingsReturn } from '$lib/auth/socialResult'
 	import InvitationsModal from './crew/InvitationsModal.svelte'
 	import { authStore } from '$lib/stores/auth.store.svelte'
 	import { invalidateAll, beforeNavigate } from '$app/navigation'
@@ -55,6 +57,7 @@
 		isAuth ? localizeHref(`/${username}/collection`) : localizeHref('/collection')
 	)
 	const aboutHref = $derived(localizeHref('/about'))
+	const gachaHref = $derived(localizeHref('/gacha'))
 	const extensionHref = $derived(localizeHref('/extension'))
 
 	const elementClass = $derived(userElement ? `element-${userElement}` : '')
@@ -85,6 +88,7 @@
 		if (isNavSelected(collectionHref)) return m.nav_collection()
 		if (isProfileSelected) return username
 		if (isNavSelected(aboutHref)) return m.nav_about()
+		if (isNavSelected(gachaHref)) return m.nav_gacha()
 		if (isNavSelected(extensionHref)) return m.nav_extension()
 		if (isNavSelected(databaseHref)) return m.nav_database()
 		if (isNavSelected(loginHref)) return m.nav_login()
@@ -102,6 +106,25 @@
 
 	// Modal state
 	let settingsModalOpen = $state(false)
+	let settingsSection = $state<string | undefined>(undefined)
+	let socialResult = $state<SettingsReturn | null>(null)
+
+	useSettingsReturn(
+		() => isAuth,
+		(result) => {
+			socialResult = result
+			settingsSection = 'account'
+			settingsModalOpen = true
+		}
+	)
+
+	function handleSettingsOpenChange(open: boolean) {
+		settingsModalOpen = open
+		if (!open) {
+			socialResult = null
+			settingsSection = undefined
+		}
+	}
 	let invitationsModalOpen = $state(false)
 
 	// Queries
@@ -216,6 +239,7 @@
 			<hr class="sheet-separator" />
 			<ul class="sheet-nav-group" role="list">
 				<li><a href={aboutHref}>{m.nav_about()}</a></li>
+				<li><a href={gachaHref}>{m.nav_gacha()}</a></li>
 				<li><a href={extensionHref}>{m.nav_extension()}</a></li>
 				{#if role !== null && role >= 7}
 					<li><a href={databaseHref}>{m.nav_database()}</a></li>
@@ -274,6 +298,7 @@
 			<hr class="sheet-separator" />
 			<ul class="sheet-nav-group" role="list">
 				<li><a href={aboutHref}>{m.nav_about()}</a></li>
+				<li><a href={gachaHref}>{m.nav_gacha()}</a></li>
 				<li><a href={extensionHref}>{m.nav_extension()}</a></li>
 			</ul>
 			<hr class="sheet-separator" />
@@ -293,11 +318,13 @@
 {#if isAuth && account && currentUser}
 	<UserSettingsModal
 		bind:open={settingsModalOpen}
-		onOpenChange={(open) => (settingsModalOpen = open)}
+		onOpenChange={handleSettingsOpenChange}
 		{username}
 		userId={account.userId}
 		user={currentUser}
 		role={role ?? 0}
+		initialSection={settingsSection}
+		{socialResult}
 	/>
 {/if}
 

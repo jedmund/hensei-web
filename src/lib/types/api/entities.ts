@@ -1,7 +1,7 @@
 // Core entity types based on Rails blueprints
 // These are the base types for game objects
 
-import type { WeaponSeriesRef } from './weaponSeries'
+import type { WeaponSeriesRef, WeaponSeriesSummary } from './weaponSeries'
 import type { CharacterSeriesRef } from './characterSeries'
 
 export interface LocalizedName {
@@ -21,11 +21,11 @@ export interface Weapon {
 	maxSkillLevel?: number
 	maxAwakeningLevel?: number | null
 	maxExorcismLevel?: number | null
-	/** Weapon series - object with slug/name/flags */
-	series?: WeaponSeriesRef | null
+	/** Full views: WeaponSeriesRef (slug/name/flags). Party list views: WeaponSeriesSummary. */
+	series?: WeaponSeriesRef | WeaponSeriesSummary | null
 	/** Variant override ID (via series.weaponSeriesVariantId from API) */
 	weaponSeriesVariantId?: string | null
-	limit?: number
+	limit?: boolean
 	extra?: boolean
 	hp?: {
 		minHp: number
@@ -58,7 +58,17 @@ export interface Weapon {
 	gamewith?: string
 	kamigame?: string
 	nicknames?: { en?: string[]; ja?: string[] }
-	recruits?: string | { id: string; granblueId: string; name: LocalizedName }
+	recruits?:
+		| string
+		| {
+				id: string
+				granblueId: string
+				name: LocalizedName
+				element?: number | null
+				season?: number | null
+				series?: (number | CharacterSeriesRef)[] | null
+				styleSwap?: boolean
+		  }
 	// Forge chain fields (forgedFrom available in :grid and :full views)
 	forgeOrder?: number | null
 	forgedFrom?: { id: string; granblueId: string; name: LocalizedName } | null
@@ -72,6 +82,54 @@ export interface Weapon {
 	elementVariantIds?: Record<string, string> | null
 	// Bullet slots for gun-proficiency weapons (array of bullet type integers)
 	bulletSlots?: number[]
+	/** Passive weapon skills, one entry per slot, each holding its evolving version tiers. */
+	weaponSkills?: WeaponSkill[]
+}
+
+/**
+ * A run of skill-description text from the API, with the wiki markup already resolved.
+ * Line breaks are "\n" in `text`.
+ */
+export interface DescriptionSegment {
+	text: string
+	strong?: boolean
+	/** Hover text (plain, may contain "\n") */
+	tooltip?: string
+}
+
+/** One uncap/transcendence tier of a weapon skill slot. */
+export interface WeaponSkillVersion {
+	name: LocalizedName
+	/** Raw gbf.wiki text; prefer descriptionSegments for display */
+	description: LocalizedName
+	descriptionSegments?: { en?: DescriptionSegment[]; ja?: DescriptionSegment[] } | null
+	/** Resolved CDN icon stem (internal element numbering), e.g. "skill_atk_4_4". */
+	iconStem?: string | null
+	ordinal: number
+	/** Weapon level at which this version unlocks (null for the base version). */
+	unlockLevel?: number | null
+	/** Minimum uncap stars: 3 = base/MLB, 4 = FLB, 5 = ULB. */
+	minUncap?: number | null
+	/** Transcendence stage 0–5 (0 = not transcended). */
+	transcendenceStage?: number | null
+	skillModifier?: string | null
+	skillSeries?: string | null
+	skillSize?: string | null
+	mainHandOnly?: boolean
+	mcOnly?: boolean
+	scalesWithSkillLevel?: boolean
+	skill?: {
+		id: string
+		name: LocalizedName
+		description: LocalizedName
+		skillType?: string
+	} | null
+}
+
+/** A weapon skill slot (one position) holding its evolving version tiers. */
+export interface WeaponSkill {
+	position: number
+	versions: WeaponSkillVersion[]
 }
 
 // Character entity from CharacterBlueprint
@@ -85,7 +143,9 @@ export interface Character {
 	maxAwakeningLevel?: number
 	uncap?: {
 		flb: boolean
+		ulb?: boolean
 		transcendence: boolean
+		maxTranscendenceStage?: number
 	}
 	special?: boolean
 	recruits?: string | null
@@ -99,12 +159,14 @@ export interface Character {
 		minHp?: number
 		maxHp?: number
 		maxHpFlb?: number
+		maxHpUlb?: number
 		maxHpTranscendence?: number
 	}
 	atk?: {
 		minAtk?: number
 		maxAtk?: number
 		maxAtkFlb?: number
+		maxAtkUlb?: number
 		maxAtkTranscendence?: number
 	}
 	// Other stats
@@ -124,6 +186,7 @@ export interface Character {
 	seriesNames?: string[]
 	releaseDate?: string
 	flbDate?: string
+	ulbDate?: string
 	transcendenceDate?: string
 	wiki?: { en?: string; ja?: string }
 	gamewith?: string
@@ -142,9 +205,119 @@ export interface Character {
 		name: LocalizedName
 		styleName: LocalizedName | null
 	}>
+	/** Parsed skill graph (from :full view) — slots, each with one or more versions */
+	skills?: CharacterSkill[]
+	/** Edges between skill versions (transform/option/form), referencing version ids */
+	skillLinks?: CharacterSkillLink[]
+}
+
+// ===== Character skills (from CharacterBlueprint :full view) =====
+
+/** How one skill version relates to another. */
+export type CharacterSkillRelation = 'transforms_to' | 'option_of' | 'form_counterpart'
+
+/** A status (buff/debuff/field effect) referenced by a skill effect. */
+export interface SkillEffectStatus {
+	id: string
+	name: LocalizedName
+	/**
+	 * Tells apart two statuses that show the same name ("Asleep" and "Asleep" with
+	 * qualifier "Turns"). Null for most; meant for status lists, not skill cards.
+	 */
+	qualifier?: string | null
+	family?: string | null
+	category?: string | null
+	icon?: string | null
+}
+
+/** A single normalized effect within a skill version. */
+export interface CharacterSkillEffect {
+	id: string
+	ordinal: number
+	effectType: string
+	target?: string | null
+	amount?: string | null
+	amountMax?: string | null
+	durationValue?: number | null
+	durationUnit?: string | null
+	accuracy?: string | null
+	stackingFrame?: string | null
+	damagePct?: number | null
+	hitCount?: number | null
+	damageCap?: number | null
+	damageElement?: string | null
+	healPct?: number | null
+	healCap?: number | null
+	/**
+	 * The skill's own name for its status when the wiki links that name to another
+	 * status (Ayer's "Guilty Break" is a Jammed effect). English only for now; null
+	 * when the skill names the status itself. Display it with `effectStatusName`.
+	 */
+	label?: string | null
+	status?: SkillEffectStatus | null
+}
+
+/**
+ * One incarnation of a skill slot. Two axes of variation share this shape:
+ * progression (variantRole base/enhanced/uncap_upgrade/transcendence_upgrade)
+ * and battle-state (transform_alt/option/form_alt/conditional).
+ */
+export interface CharacterSkillVersion {
+	id: string
+	name: LocalizedName
+	description: LocalizedName
+	icon?: string | null
+	/** Game asset stem "{id}_{N}" for the icon at /icons/abilities/{gameIcon}.png */
+	gameIcon?: string | null
+	typeColor?: 'damage' | 'heal' | 'buff' | 'debuff' | 'field' | string | null
+	cooldown?: number | null
+	initialCooldown?: number | null
+	durationValue?: number | null
+	durationUnit?: string | null
+	variantRole: string
+	ordinal: number
+	unlockLevel?: number | null
+	enhanceLevels?: number[]
+	minUncap?: number | null
+	transcendenceStage?: number | null
+	triggerType?: string | null
+	triggerValue?: string | null
+	cantRecast?: boolean
+	oneTimeUse?: boolean
+	autoActivate?: boolean
+	mimicable?: boolean
+	targetsAll?: boolean
+	skillEffects?: CharacterSkillEffect[]
+}
+
+/** A skill slot (one ability/ougi/support position) holding its versions. */
+export interface CharacterSkill {
+	kind: 'ability' | 'ougi' | 'support' | string
+	position: number
+	versions: CharacterSkillVersion[]
+}
+
+/** A directed edge between two skill versions, by version id. */
+export interface CharacterSkillLink {
+	from: string
+	to: string
+	relation: CharacterSkillRelation
 }
 
 // Summon entity from SummonBlueprint
+/** One parsed summon aura row (main or sub) at a given uncap/transcendence tier */
+export interface SummonAura {
+	id: string
+	slot: 'main' | 'sub' | string
+	target: string
+	element?: string | null
+	value?: number | null
+	uncapLevel: number
+	transcendenceStage: number
+	condition?: string | null
+	description: { en?: string | null; ja?: string | null }
+}
+
 export interface Summon {
 	id: string
 	granblueId: string
@@ -158,7 +331,12 @@ export interface Summon {
 		transcendence: boolean
 	}
 	subaura?: boolean
+	/** Structured per-tier auras parsed from the wiki (the calculator's source) */
+	summonAuras?: SummonAura[]
 	limit?: boolean
+	/** Whether this summon can be set as a support (friend) summon. Defaults
+	 * to true server-side; only certain summons are explicitly excluded. */
+	supportEligible?: boolean
 	hp?: {
 		minHp: number
 		maxHp: number
@@ -261,7 +439,14 @@ export interface RaidGroup {
 	extra: boolean
 	guidebooks: boolean
 	unlimited: boolean
+	/** False for single-player content (Arcarum) that takes no support summon */
+	supportSummon?: boolean
+	/** Special content mode; `solomonis` shows the Evoking Solomonis panel. */
+	contentMode?: RaidGroupContentMode | null
 }
+
+/** Values of `raid_groups.content_mode`. */
+export type RaidGroupContentMode = 'solomonis'
 
 // Awakening entity
 export interface Awakening {

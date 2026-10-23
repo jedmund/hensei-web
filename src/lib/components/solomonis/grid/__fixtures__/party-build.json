@@ -1,0 +1,348 @@
+{
+	"party": {
+		"id": "06ef6548-3b93-5421-b55d-f9dec26bfc35",
+		"shortcode": "bld001",
+		"name": "Nier build",
+		"element": 5,
+		"raid": {
+			"id": "bf7cd555-ac37-569c-91f4-f9836d04f695",
+			"name": {
+				"en": "Allotropic Microcosm",
+				"ja": null
+			},
+			"slug": "allotropic-microcosm"
+		},
+		"turn_count": null,
+		"solomonis": {
+			"route_evoker": {
+				"id": "c816c582-b04a-5173-982b-fa833919f4e6",
+				"granblue_id": "3040169000",
+				"name": {
+					"en": "Nier",
+					"ja": "ニーア"
+				},
+				"element": 5
+			},
+			"zone": {
+				"id": "bf7cd555-ac37-569c-91f4-f9836d04f695",
+				"slug": "allotropic-microcosm",
+				"name": {
+					"en": "Allotropic Microcosm",
+					"ja": null
+				}
+			},
+			"pledge_level": 0,
+			"outcome": null,
+			"game_report_id": null,
+			"ended_at": null,
+			"stats": {},
+			"blessing_cost_limit": 100,
+			"blessing_cost_total": 70,
+			"blessings": [
+				{
+					"blessing": {
+						"id": "43e4bc59-4585-512a-b9eb-ae83eb6109b8",
+						"slug": "justice",
+						"arcana_number": 11,
+						"name": {
+							"en": "Justice",
+							"ja": null
+						}
+					},
+					"level_id": "4bffc53c-442a-5299-b049-2988981e8ff3",
+					"level": 3,
+					"cost": 50
+				},
+				{
+					"blessing": {
+						"id": "ff71c426-957b-51eb-825b-fa9a82d2d83a",
+						"slug": "death",
+						"arcana_number": 13,
+						"name": {
+							"en": "Death",
+							"ja": null
+						}
+					},
+					"level_id": "1b401969-49ac-534d-9382-f22af724dd88",
+					"level": 9,
+					"cost": 20
+				}
+			],
+			"guidebook": []
+		},
+		"weapons": [
+			{
+				"id": "0d899cfa-e123-5ee0-844e-31defe940375",
+				"position": -1,
+				"mainhand": true,
+				"seal_state": "start",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "ce1a436b-6c31-59fd-996e-77e50ce60f02",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon -1",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "27b94c81-b4cc-5f87-a872-fafbefb794c0",
+				"position": 0,
+				"mainhand": false,
+				"seal_state": "start",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "e5a668a1-83e3-52fb-b1f9-8eab32184b95",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 0",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "a9ceb709-a50c-564a-b284-695e40a999e2",
+				"position": 1,
+				"mainhand": false,
+				"seal_state": "start",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "12afdad9-6218-5090-ae33-833fa12f0026",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 1",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "004c1ef8-f7bf-55af-be64-838c34a29963",
+				"position": 2,
+				"mainhand": false,
+				"seal_state": "start",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "111a3323-f786-5f7b-bef3-c419d729f5c4",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 2",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "a869004c-b353-5c46-af2c-5574362e5e71",
+				"position": 3,
+				"mainhand": false,
+				"seal_state": "sealed",
+				"unseal_priority": 3,
+				"weapon": {
+					"id": "c32cb652-3385-52b2-bbdc-ec7f226d35ca",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 3",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "d5a90241-a2f3-5142-856b-c2602a56edc6",
+				"position": 4,
+				"mainhand": false,
+				"seal_state": "sealed",
+				"unseal_priority": 1,
+				"weapon": {
+					"id": "75b773ef-89f1-5616-a947-0916e91e3e1a",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 4",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "b0eb263e-3437-5d15-8658-91a7910ca03e",
+				"position": 5,
+				"mainhand": false,
+				"seal_state": "sealed",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "dccbf339-31ed-5808-9e6e-9ec7b339b2e7",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 5",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "5f552b76-6379-51fd-a477-252f4013f5e7",
+				"position": 6,
+				"mainhand": false,
+				"seal_state": "sealed",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "c8b4712a-a851-5a1b-a08f-3ce45658ccbb",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 6",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "169554be-b74f-5231-894a-bc4efa7fd7a5",
+				"position": 7,
+				"mainhand": false,
+				"seal_state": "sealed",
+				"unseal_priority": 2,
+				"weapon": {
+					"id": "4db6d4eb-33db-51c5-bb7b-d3a07f293063",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 7",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "010001b7-8cad-54d3-ad8c-43721ef86d02",
+				"position": 8,
+				"mainhand": false,
+				"seal_state": "sealed",
+				"unseal_priority": null,
+				"weapon": {
+					"id": "1d0be7d5-53a7-5197-a3b6-d3fe16f0b94e",
+					"granblue_id": "1040000000",
+					"name": {
+						"en": "Weapon 8",
+						"ja": null
+					}
+				}
+			}
+		],
+		"summons": [
+			{
+				"id": "fd12736b-7f74-5c7e-9a8c-9311b49bb62d",
+				"position": -1,
+				"main": true,
+				"seal_state": "start",
+				"unseal_priority": null,
+				"summon": {
+					"id": "a3d8ccae-f13c-5c2b-a22c-400278ce0cf3",
+					"granblue_id": "2040000000",
+					"name": {
+						"en": "Summon -1",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "f2d22be9-2561-5db6-a3c2-4309eeab12f6",
+				"position": 0,
+				"main": false,
+				"seal_state": "sealed",
+				"unseal_priority": 4,
+				"summon": {
+					"id": "9b5af47d-7648-5638-851e-679764540568",
+					"granblue_id": "2040000000",
+					"name": {
+						"en": "Summon 0",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "2e246cb1-2036-5431-a7b4-ffd291b3d8b1",
+				"position": 1,
+				"main": false,
+				"seal_state": "sealed",
+				"unseal_priority": null,
+				"summon": {
+					"id": "ad7e291d-d88c-5d55-847f-669929b97c01",
+					"granblue_id": "2040000000",
+					"name": {
+						"en": "Summon 1",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "011417e4-5d16-5271-bc91-73dd7057c3de",
+				"position": 2,
+				"main": false,
+				"seal_state": "sealed",
+				"unseal_priority": null,
+				"summon": {
+					"id": "60db17f7-b22d-5abf-8376-51dc6e8bdad2",
+					"granblue_id": "2040000000",
+					"name": {
+						"en": "Summon 2",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "90a36a5a-4f5a-59fc-ae3e-8f57da740af6",
+				"position": 3,
+				"main": false,
+				"seal_state": "sealed",
+				"unseal_priority": null,
+				"summon": {
+					"id": "dfaefcdc-16f0-5c96-ad35-27ed13997a4d",
+					"granblue_id": "2040000000",
+					"name": {
+						"en": "Summon 3",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "e8114827-1f57-5c1c-8f62-1d2667a64736",
+				"position": 4,
+				"main": false,
+				"seal_state": "sealed",
+				"unseal_priority": null,
+				"summon": {
+					"id": "3a20a3be-efdd-55ca-93dd-8090cc0d47b0",
+					"granblue_id": "2040000000",
+					"name": {
+						"en": "Summon 4",
+						"ja": null
+					}
+				}
+			},
+			{
+				"id": "3405f6a2-a823-5c22-baaa-3d6081942b30",
+				"position": 5,
+				"main": false,
+				"seal_state": "sealed",
+				"unseal_priority": null,
+				"summon": {
+					"id": "ed6fa39f-0acc-5d75-9832-9c96bc30a7f0",
+					"granblue_id": "2040000000",
+					"name": {
+						"en": "Summon 5",
+						"ja": null
+					}
+				}
+			}
+		],
+		"characters": [
+			{
+				"id": "3673d048-c4d9-5318-a10f-382ecff916d7",
+				"position": 0,
+				"brought_by_blessing": false,
+				"character": {
+					"id": "c816c582-b04a-5173-982b-fa833919f4e6",
+					"granblue_id": "3040169000",
+					"name": {
+						"en": "Nier",
+						"ja": "ニーア"
+					}
+				}
+			}
+		]
+	}
+}

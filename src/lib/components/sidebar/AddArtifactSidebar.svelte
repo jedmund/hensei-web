@@ -344,7 +344,7 @@
 
 		{#if selectedArtifact}
 			<DetailsSection title={m.section_configuration()}>
-				<DetailRow label={m.label_level()} noHover>
+				<DetailRow label={m.label_level()}>
 					{#if isQuirk}
 						<span>1</span>
 					{:else}
@@ -357,7 +357,7 @@
 					{/if}
 				</DetailRow>
 
-				<DetailRow label={m.label_nickname()} noHover>
+				<DetailRow label={m.label_nickname()}>
 					<Input
 						bind:value={nickname}
 						placeholder={m.placeholder_optional_nickname()}

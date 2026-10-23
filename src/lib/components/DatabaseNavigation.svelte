@@ -24,6 +24,9 @@
 	const databaseBulletsHref = $derived(localizeHref('/database/bullets'))
 	const databaseRaidsHref = $derived(localizeHref('/database/raids'))
 	const databaseRaidGroupsHref = $derived(localizeHref('/database/raid-groups'))
+	const databaseRolesHref = $derived(localizeHref('/database/character-roles'))
+	const databaseDifficultiesHref = $derived(localizeHref('/database/difficulties'))
+	const databaseStickersHref = $derived(localizeHref('/database/stickers'))
 
 	// Detect current database entity type
 	const currentDatabaseEntity = $derived.by(() => {
@@ -131,6 +134,16 @@
 						<DropdownMenu.Separator class="dropdown-separator" />
 						<DropdownItem>
 							<a href={databaseGwEventsHref}>{m.nav_unite_and_fight()}</a>
+						</DropdownItem>
+						<DropdownItem>
+							<a href={databaseStickersHref}>{m.nav_stickers()}</a>
+						</DropdownItem>
+						<DropdownItem>
+							<a href={databaseRolesHref}>{m.nav_roles()}</a>
+						</DropdownItem>
+						<DropdownMenu.Separator class="dropdown-separator" />
+						<DropdownItem>
+							<a href={databaseDifficultiesHref}>{m.party_difficulty_label()}</a>
 						</DropdownItem>
 					</DropdownMenu.Content>
 				</DropdownMenu.Portal>

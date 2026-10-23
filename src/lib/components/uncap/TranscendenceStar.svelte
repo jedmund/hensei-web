@@ -13,7 +13,8 @@
 		type?: 'character' | 'weapon' | 'summon'
 		interactive?: boolean
 		tabindex?: number
-		size?: 'regular' | 'small'
+		size?: 'regular' | 'medium' | 'small'
+		maxStage?: number
 		onStarClick?: () => void
 		onFragmentClick?: (newStage: number) => void
 		onFragmentHover?: (newStage: number) => void
@@ -26,6 +27,7 @@
 		interactive = false,
 		tabindex,
 		size = 'regular',
+		maxStage = 5,
 		onStarClick, // eslint-disable-line @typescript-eslint/no-unused-vars
 		onFragmentClick,
 		onFragmentHover
@@ -51,6 +53,8 @@
 	})
 
 	function handleFragmentClick(index: number) {
+		if (index > maxStage) return
+
 		let newStage = index
 		if (index === currentStage) {
 			newStage = 0
@@ -65,6 +69,8 @@
 	}
 
 	function handleFragmentHover(index: number) {
+		if (index > maxStage) return
+
 		visibleStage = index
 		if (onFragmentHover) {
 			onFragmentHover(index)
@@ -79,7 +85,7 @@
 	}
 
 	function incrementStage() {
-		if (currentStage < NUM_FRAGMENTS) {
+		if (currentStage < maxStage) {
 			const newStage = currentStage + 1
 			visibleStage = newStage
 			currentStage = newStage
@@ -91,7 +97,7 @@
 
 	function decrementStage() {
 		if (currentStage > 0) {
-			const newStage = currentStage - 1
+			const newStage = currentStage > maxStage ? maxStage : currentStage - 1
 			visibleStage = newStage
 			currentStage = newStage
 			if (onFragmentClick) {
@@ -117,6 +123,7 @@
 				class:stage4={currentStage === 4}
 				class:stage5={currentStage === 5}
 				class:small={size === 'small'}
+				class:medium={size === 'medium'}
 				onmouseleave={interactive ? handleMouseLeave : undefined}
 				tabindex={interactive ? (tabindex ?? 0) : undefined}
 				role={interactive ? 'button' : undefined}
@@ -150,6 +157,7 @@
 							stage={loopStage}
 							visible={loopStage <= visibleStage}
 							{interactive}
+							disabled={loopStage > maxStage}
 							onClick={handleFragmentClick}
 							onHover={handleFragmentHover}
 						/>
@@ -179,7 +187,7 @@
 						iconOnly
 						shape="circular"
 						onclick={incrementStage}
-						disabled={currentStage >= NUM_FRAGMENTS}
+						disabled={currentStage >= maxStage}
 					>
 						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 						{@html plusIcon}
@@ -207,6 +215,10 @@
 
 		&.small {
 			--size: 12px;
+		}
+
+		&.medium {
+			--size: 15px;
 		}
 
 		&:not(.readonly):hover {
@@ -333,6 +345,10 @@
 
 		&.small .figure {
 			--size: 12px;
+		}
+
+		&.medium .figure {
+			--size: 15px;
 		}
 	}
 

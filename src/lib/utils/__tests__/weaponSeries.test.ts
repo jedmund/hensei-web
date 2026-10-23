@@ -8,6 +8,8 @@ import {
 	seriesHasAwakening,
 	seriesIsElementChangeable,
 	seriesIsExtra,
+	seriesHasTranscendenceArt,
+	WEAPON_TRANSCENDENCE_ART_SLUGS,
 	isWeaponSeriesRef
 } from '../weaponSeries'
 import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
@@ -70,6 +72,39 @@ describe('isOpusDraconicSeries', () => {
 	it('returns false for null/undefined', () => {
 		expect(isOpusDraconicSeries(null)).toBe(false)
 		expect(isOpusDraconicSeries(undefined)).toBe(false)
+	})
+})
+
+// ============================================================================
+// seriesHasTranscendenceArt
+// ============================================================================
+
+describe('seriesHasTranscendenceArt', () => {
+	it('returns true for Dark Opus (ships stage-specific art)', () => {
+		expect(seriesHasTranscendenceArt(makeSeries({ slug: 'dark-opus' }))).toBe(true)
+	})
+
+	it('returns false for Illustrious (transcends but reuses base art)', () => {
+		expect(seriesHasTranscendenceArt(makeSeries({ slug: 'illustrious' }))).toBe(false)
+	})
+
+	it('returns false for other transcendable series', () => {
+		expect(seriesHasTranscendenceArt(makeSeries({ slug: 'ultima' }))).toBe(false)
+		expect(seriesHasTranscendenceArt(makeSeries({ slug: 'draconic-providence' }))).toBe(false)
+	})
+
+	it('only Dark Opus is currently in the allow-list', () => {
+		expect(WEAPON_TRANSCENDENCE_ART_SLUGS).toEqual(['dark-opus'])
+	})
+
+	it('accepts the trimmed series from party list views', () => {
+		expect(seriesHasTranscendenceArt({ id: '1', slug: 'dark-opus' })).toBe(true)
+		expect(seriesHasTranscendenceArt({ id: '2', slug: 'illustrious' })).toBe(false)
+	})
+
+	it('returns false for null/undefined', () => {
+		expect(seriesHasTranscendenceArt(null)).toBe(false)
+		expect(seriesHasTranscendenceArt(undefined)).toBe(false)
 	})
 })
 
@@ -156,5 +191,24 @@ describe('seriesIsExtra', () => {
 
 	it('returns false for null', () => {
 		expect(seriesIsExtra(null)).toBe(false)
+	})
+})
+
+// ============================================================================
+// List-view series summary (id/slug only)
+// ============================================================================
+
+describe('with a list-view series summary', () => {
+	const opus = { id: 's-1', slug: 'dark-opus' }
+
+	it('slug-based helpers read the slug', () => {
+		expect(isOpusDraconicSeries(opus)).toBe(true)
+		expect(getSeriesSlug(opus)).toBe('dark-opus')
+	})
+
+	it('flag-based helpers treat it as missing', () => {
+		expect(isWeaponSeriesRef(opus)).toBe(false)
+		expect(seriesHasWeaponKeys(opus)).toBe(false)
+		expect(getSeriesDisplayName(opus)).toBe('Unknown')
 	})
 })

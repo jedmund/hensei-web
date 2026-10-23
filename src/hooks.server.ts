@@ -1,6 +1,10 @@
 import type { Handle, HandleFetch } from '@sveltejs/kit'
 import { sequence } from '@sveltejs/kit/hooks'
+import { handleErrorWithSentry, init, sentryHandle } from '@sentry/sveltekit'
+import { env as publicEnv } from '$env/dynamic/public'
+import { env as privateEnv } from '$env/dynamic/private'
 import { paraglideMiddleware } from '$lib/paraglide/server'
+import { isExpectedError, SENTRY_IGNORE_ERRORS, SENTRY_TRACES_SAMPLE_RATE } from '$lib/sentry'
 import { dev } from '$app/environment'
 import {
 	clearAuthCookies,
@@ -11,6 +15,21 @@ import {
 import { performRefresh } from '$lib/auth/refresh'
 import { PUBLIC_SIERO_API_URL } from '$env/static/public'
 import { generateFontFaceCSS, getFontPreloadLinks } from '$lib/utils/fonts'
+import { clientIp, handleRateLimit } from '$lib/server/rateLimit'
+import { withApiHeaders } from '$lib/server/apiHeaders'
+import { handleSecurityHeaders } from '$lib/server/securityHeaders'
+import { handleCsrf } from '$lib/server/csrf'
+
+// Only initialize when a DSN is configured (keeps dev/test silent).
+if (publicEnv.PUBLIC_SENTRY_DSN) {
+	init({
+		dsn: publicEnv.PUBLIC_SENTRY_DSN,
+		environment: publicEnv.PUBLIC_SENTRY_ENVIRONMENT || 'production',
+		tracesSampleRate: SENTRY_TRACES_SAMPLE_RATE,
+		ignoreErrors: SENTRY_IGNORE_ERRORS,
+		beforeSend: (event, hint) => (isExpectedError(hint?.originalException) ? null : event)
+	})
+}
 
 const BOT_PATHS = [
 	'/wp-admin',
@@ -125,22 +144,35 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 		})
 	})
 
-export const handle: Handle = sequence(handleBotFilter, handleSession, handleParaglide)
+// sentryHandle() runs first so it captures errors from the downstream handlers
+// and sets up per-request isolation for the SSR scope. Its inline fetch-proxy
+// script is only needed before SvelteKit 2.16 and would need a CSP nonce.
+// Security headers come next so bot 404s and rate-limit 429s get them too.
+// handleCsrf replaces SvelteKit's built-in origin check (see csrf.ts).
+export const handle: Handle = sequence(
+	sentryHandle({ injectFetchProxyScript: false }),
+	handleSecurityHeaders,
+	handleCsrf,
+	handleBotFilter,
+	handleRateLimit,
+	handleSession,
+	handleParaglide
+)
+
+// Reports uncaught server (SSR / load / action) errors to Sentry, then falls
+// through to SvelteKit's default rendering. No-op when the SDK isn't initialized.
+export const handleError = handleErrorWithSentry()
 
 const apiOrigin = new URL(PUBLIC_SIERO_API_URL || 'http://localhost:3000/api/v1').origin
 
 export const handleFetch: HandleFetch = async ({ event, request, fetch }) => {
 	const url = new URL(request.url)
 	if (url.origin === apiOrigin) {
-		const token = event.locals.session?.account?.token
-		if (token) {
-			request = new Request(request, {
-				headers: new Headers({
-					...Object.fromEntries(request.headers),
-					authorization: `Bearer ${token}`
-				})
-			})
-		}
+		request = withApiHeaders(request, {
+			token: event.locals.session?.account?.token,
+			internalSecret: privateEnv.API_INTERNAL_SECRET,
+			visitorIp: clientIp(event.request)
+		})
 	}
 
 	return fetch(request)

@@ -159,6 +159,22 @@ describe('GridAdapter', () => {
 			)
 		})
 
+		it('should send level 1 when clearing a weapon awakening', async () => {
+			global.fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({ gridWeapon: mockGridWeapon })
+			})
+
+			await adapter.updateWeapon('gw-1', { awakening: null } as never)
+
+			expect(global.fetch).toHaveBeenCalledWith(
+				'https://api.example.com/grid_weapons/gw-1',
+				expect.objectContaining({
+					body: JSON.stringify({ weapon: { awakening_id: null, awakening_level: 1 } })
+				})
+			)
+		})
+
 		it('should delete a grid weapon', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,

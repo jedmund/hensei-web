@@ -4,32 +4,47 @@
 	import { getSkillCategoryColor } from '$lib/utils/jobUtils'
 	import { getJobSkillIcon } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
+	import { getElementTypeKey } from '$lib/utils/element'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Switch from '$lib/components/ui/switch/Switch.svelte'
 
 	interface Props {
 		skill?: JobSkill
 		slot: number
+		element?: number | undefined
 		locked?: boolean
 		editable?: boolean
 		available?: boolean
+		/** Whether this skill is used in Full Auto. Absent slot defaults to ON. */
+		faOn?: boolean
 		onclick?: () => void
 		onRemove?: () => void
+		onToggleFa?: (on: boolean) => void
 	}
 
 	let {
 		skill,
 		slot,
+		element,
 		locked = false,
 		editable = false,
 		available = true,
+		faOn = true,
 		onclick,
-		onRemove
+		onRemove,
+		onToggleFa
 	}: Props = $props()
 
 	const categoryColor = $derived(skill ? getSkillCategoryColor(skill) : '')
 	const skillIconUrl = $derived(skill ? getJobSkillIcon(skill) : '')
+	const elementKey = $derived(getElementTypeKey(element))
+
+	function handleToggleFa(checked: boolean) {
+		// Guard against the Switch's mount-time callback firing a no-op write.
+		if (checked !== faOn) onToggleFa?.(checked)
+	}
 
 	const isEditable = $derived(editable && !locked && available)
 	const isUnavailable = $derived(!available)
@@ -58,8 +73,11 @@
 			onclick={handleClick}
 			type="button"
 		>
-			{@render SlotBody({ locked: false })}
+			{@render SlotBody()}
 		</button>
+		{#if isFilled}
+			{@render FaSwitch({ disabled: false })}
+		{/if}
 		{#if allowsRemove}
 			<Button
 				variant="ghost"
@@ -73,20 +91,50 @@
 		{/if}
 	</div>
 {:else}
-	<div
-		class="skill-slot"
-		class:empty={!isFilled}
-		class:locked
-		class:unavailable={isUnavailable}
-		style:--category-color={categoryColor}
-	>
-		{@render SlotBody({ locked })}
+	<div class="slot-row">
+		<div
+			class="skill-slot"
+			class:empty={!isFilled}
+			class:locked
+			class:unavailable={isUnavailable}
+			style:--category-color={categoryColor}
+		>
+			{@render SlotBody()}
+		</div>
+		{#if isFilled}
+			<!-- A locked main skill can't be swapped, but its Full Auto use is still
+			toggleable; gate the switch on edit permission, not the slot lock. -->
+			{@render FaSwitch({ disabled: !editable })}
+		{/if}
+		{#if locked}
+			<!-- Sits in the trailing column so it lines up with the remove (X)
+			buttons on the editable slots below. -->
+			<Tooltip content="Main skill (locked)">
+				<span class="lock-indicator">
+					<Icon name="lock" size={16} class="lock-icon" />
+				</span>
+			</Tooltip>
+		{/if}
 	</div>
 {/if}
 
-{#snippet SlotBody({ locked }: { locked: boolean })}
+{#snippet FaSwitch({ disabled }: { disabled: boolean })}
+	<Tooltip content={m.full_auto_skill_toggle()}>
+		<span class="fa-switch">
+			<Switch
+				size="small"
+				element={elementKey}
+				checked={faOn}
+				{disabled}
+				onCheckedChange={handleToggleFa}
+			/>
+		</span>
+	</Tooltip>
+{/snippet}
+
+{#snippet SlotBody()}
 	{#if isFilled}
-		{@render SkillContent({ skill: skill!, skillIconUrl, locked })}
+		{@render SkillContent({ skill: skill!, skillIconUrl })}
 	{:else if !isUnavailable}
 		{@render EmptyState({ slot })}
 	{:else}
@@ -94,15 +142,7 @@
 	{/if}
 {/snippet}
 
-{#snippet SkillContent({
-	skill,
-	skillIconUrl,
-	locked
-}: {
-	skill: JobSkill
-	skillIconUrl: string
-	locked: boolean
-})}
+{#snippet SkillContent({ skill, skillIconUrl }: { skill: JobSkill; skillIconUrl: string })}
 	<div class="skill-content">
 		{#if skillIconUrl}
 			<img src={skillIconUrl} alt={localizedName(skill.name)} class="skill-icon" loading="lazy" />
@@ -110,11 +150,6 @@
 		<div class="skill-info">
 			<span class="skill-name">{localizedName(skill.name)}</span>
 		</div>
-		{#if locked}
-			<Tooltip content="Main skill (locked)">
-				<Icon name="lock" size={16} class="lock-icon" />
-			</Tooltip>
-		{/if}
 	</div>
 {/snippet}
 
@@ -150,12 +185,20 @@
 		gap: $unit-half;
 	}
 
+	.fa-switch {
+		display: inline-flex;
+		flex-shrink: 0;
+		margin-left: $unit-half;
+	}
+
 	.skill-slot {
 		position: relative;
 		border: none;
 		border-radius: $card-corner;
 		background: var(--button-bound-bg);
 		transition: all 0.2s ease;
+		flex: 1;
+		min-width: 0;
 		width: 100%;
 		text-align: left;
 		font: inherit;
@@ -286,6 +329,17 @@
 		color: var(--text-tertiary);
 		height: 60px;
 		font-size: 18px;
+	}
+
+	// Matches the medium icon-only remove button footprint so the lock lines up
+	// with the remove (X) buttons in the editable slots.
+	.lock-indicator {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		width: calc($unit * 5.5);
+		height: calc($unit * 5.5);
 	}
 
 	:global(.lock-icon.icon) {

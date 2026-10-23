@@ -16,9 +16,21 @@
 	import SummonUnit from '$lib/components/units/SummonUnit.svelte'
 	import ExtraSummons from '$lib/components/extra/ExtraSummonsGrid.svelte'
 	import * as m from '$lib/paraglide/messages'
+	import SealControls from '$lib/components/solomonis/grid/SealControls.svelte'
+	import { getExpedition } from '$lib/components/solomonis/grid/seal'
 
 	const ctx = usePartyContext()
 	const dragContext = getDragDropContext()
+
+	// Evoking Solomonis ranks its sealed slots
+	let expedition = $derived(getExpedition(ctx?.getParty()))
+	let isSolomonis = $derived(!!expedition)
+
+	// Arcarum content (Solomonis included) takes no support summon. The slot
+	// shows disabled and empty, even on an older party that saved one
+	let noSupportSummon = $derived(
+		isSolomonis || ctx?.getParty()?.raid?.group?.supportSummon === false
+	)
 
 	let main = $derived(summons.find((s) => s.position === -1) ?? summons.find((s) => s.main))
 	let friend = $derived(summons.find((s) => s.position === 6) ?? summons.find((s) => s.friend))
@@ -67,7 +79,10 @@
 
 		check(main, -1)
 		subSummonSlots.forEach((s, i) => check(s, i))
-		// Skip friend slot — friend summons aren't owned, so collection doesn't apply
+		// Skip friend slot — friend summons aren't owned, so collection doesn't apply.
+		// Include subaura positions (offset 4, 5) so ExtraSummonsGrid can
+		// surface in-collection status there too.
+		summons.filter((s) => s.position >= 4 && s.position <= 5).forEach((s) => check(s, s.position))
 		return status
 	})
 </script>
@@ -137,7 +152,12 @@
 
 		<!-- Friend summon: in main grid on desktop, hidden on mobile -->
 		<div class="LabeledUnit friend-desktop">
-			<SummonUnit item={friend} position={6} />
+			<SummonUnit
+				item={noSupportSummon ? undefined : friend}
+				position={6}
+				disabled={noSupportSummon}
+				disabledTooltip={m.summon_support_unavailable_arcarum()}
+			/>
 		</div>
 	</div>
 
@@ -146,11 +166,20 @@
 		<div class="friend-mobile">
 			<h3>{m.summon_friend_label()}</h3>
 			<div class="friend-unit">
-				<SummonUnit item={friend} position={6} sizeOverride="grid" />
+				<SummonUnit
+					item={noSupportSummon ? undefined : friend}
+					position={6}
+					sizeOverride="grid"
+					disabled={noSupportSummon}
+					disabledTooltip={m.summon_support_unavailable_arcarum()}
+				/>
 			</div>
 		</div>
-		<ExtraSummons {summons} offset={4} />
+		<ExtraSummons {summons} offset={4} {collectionStatus} />
 	</div>
+	{#if isSolomonis}
+		<SealControls canEdit={ctx?.canEdit() ?? false} />
+	{/if}
 </div>
 
 <style lang="scss">

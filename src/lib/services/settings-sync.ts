@@ -1,7 +1,7 @@
 import { users } from '$lib/api/resources/users'
 import { themeStore, type ThemePreference } from '$lib/stores/theme.svelte'
 import { invalidateAll } from '$app/navigation'
-import { localizeHref, deLocalizeHref } from '$lib/paraglide/runtime'
+import { localizeHref, deLocalizeHref, toLocale } from '$lib/paraglide/runtime'
 import type { UserCookie } from '$lib/types/UserCookie'
 
 /**
@@ -70,7 +70,7 @@ export async function syncLanguage(
 		const basePath = deLocalizeHref(
 			window.location.pathname + window.location.search + window.location.hash
 		)
-		const newPath = localizeHref(basePath, { locale: newLanguage })
+		const newPath = localizeHref(basePath, { locale: toLocale(newLanguage) })
 		window.location.href = newPath
 	} catch (err) {
 		console.error('Failed to persist language:', err)

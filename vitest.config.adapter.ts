@@ -22,8 +22,12 @@ export default defineConfig({
 	},
 	resolve: {
 		alias: {
+			'$lib/stores/auth.store.svelte': resolve(
+				'./src/lib/api/adapters/__tests__/auth-store-mock.ts'
+			),
 			$lib: resolve('./src/lib'),
 			$types: resolve('./src/lib/types'),
+			'$app/environment': resolve('./src/lib/api/adapters/__tests__/app-environment-mock.ts'),
 			'$env/static/public': resolve('./src/lib/api/adapters/__tests__/env-mock.ts')
 		}
 	}

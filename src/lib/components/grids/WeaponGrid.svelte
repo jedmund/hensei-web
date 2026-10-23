@@ -32,9 +32,14 @@
 	import ExtraContainer from '$lib/components/extra/ExtraContainer.svelte'
 	import ExtraWeapons from '$lib/components/extra/ExtraWeaponsGrid.svelte'
 	import Guidebooks from '$lib/components/extra/GuidebooksGrid.svelte'
+	import SealControls from '$lib/components/solomonis/grid/SealControls.svelte'
+	import { getExpedition } from '$lib/components/solomonis/grid/seal'
 
 	const ctx = usePartyContext()
 	const dragContext = getDragDropContext()
+
+	// Evoking Solomonis parties rank their sealed slots in a pane
+	let isSolomonis = $derived(!!getExpedition(ctx?.getParty()))
 
 	let mainhand = $derived(
 		weapons.find((w) => (w as unknown as Record<string, unknown>).mainhand || w.position === -1)
@@ -84,6 +89,9 @@
 
 		check(mainhand, -1)
 		subWeaponSlots.forEach((w, i) => check(w, i))
+		// Include the extra weapon positions (offset 9, 10, 11) so
+		// ExtraWeaponsGrid can surface in-collection status there too.
+		weapons.filter((w) => w.position >= 9 && w.position <= 11).forEach((w) => check(w, w.position))
 		return status
 	})
 </script>
@@ -156,7 +164,7 @@
 	{#if raidExtra || showGuidebooks}
 		<ExtraContainer>
 			{#if raidExtra}
-				<ExtraWeapons {weapons} offset={9} />
+				<ExtraWeapons {weapons} offset={9} {collectionStatus} />
 			{/if}
 			{#if showGuidebooks}
 				<Guidebooks
@@ -167,6 +175,9 @@
 				/>
 			{/if}
 		</ExtraContainer>
+	{/if}
+	{#if isSolomonis}
+		<SealControls canEdit={ctx?.canEdit() ?? false} />
 	{/if}
 </div>
 

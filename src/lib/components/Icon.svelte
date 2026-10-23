@@ -1,3 +1,42 @@
+<script lang="ts" module>
+	// Bundled eagerly so icons are in the server-rendered HTML instead of
+	// popping in after hydration (~40 KB raw for the whole set)
+	const files = import.meta.glob<string>('../../assets/icons/*.svg', {
+		query: '?raw',
+		import: 'default',
+		eager: true
+	})
+
+	function normalize(content: string): string {
+		// Remove width and height from root <svg> only (preserve inner element dimensions)
+		content = content.replace(/<svg([^>]*)width="[^"]*"/, '<svg$1')
+		content = content.replace(/<svg([^>]*)height="[^"]*"/, '<svg$1')
+
+		// Add viewBox if not present (fallback to 0 0 24 24)
+		if (!content.includes('viewBox')) {
+			content = content.replace('<svg', '<svg viewBox="0 0 24 24"')
+		}
+
+		return content
+	}
+
+	const icons: Record<string, string> = Object.fromEntries(
+		Object.entries(files).map(([path, content]) => [
+			path.slice(path.lastIndexOf('/') + 1, -'.svg'.length),
+			normalize(content)
+		])
+	)
+
+	function iconSvg(name: string): string {
+		const content = icons[name]
+		if (content === undefined) {
+			if (import.meta.env.DEV) console.error(`Failed to load icon: ${name}`)
+			return ''
+		}
+		return content
+	}
+</script>
+
 <script lang="ts">
 	interface Props {
 		name: string
@@ -20,39 +59,10 @@
 	const resolvedWidth = $derived(explicitWidth ?? size)
 	const resolvedHeight = $derived(explicitHeight ?? size)
 
-	let svgContent = $state<string>('')
-	let loading = $state(true)
-
-	$effect(() => {
-		loadIcon()
-	})
-
-	async function loadIcon() {
-		try {
-			loading = true
-			const iconModule = await import(`../../assets/icons/${name}.svg?raw`)
-			let content = iconModule.default
-
-			// Remove width and height from root <svg> only (preserve inner element dimensions)
-			content = content.replace(/<svg([^>]*)width="[^"]*"/, '<svg$1')
-			content = content.replace(/<svg([^>]*)height="[^"]*"/, '<svg$1')
-
-			// Add viewBox if not present (fallback to 0 0 24 24)
-			if (!content.includes('viewBox')) {
-				content = content.replace('<svg', '<svg viewBox="0 0 24 24"')
-			}
-
-			svgContent = content
-		} catch (error) {
-			if (import.meta.env.DEV) console.error(`Failed to load icon: ${name}`, error)
-			svgContent = ''
-		} finally {
-			loading = false
-		}
-	}
+	const svgContent = $derived(iconSvg(name))
 </script>
 
-{#if !loading && svgContent}
+{#if svgContent}
 	<span
 		class="icon {className}"
 		style="width: {typeof resolvedWidth === 'number' ? `${resolvedWidth}px` : resolvedWidth};

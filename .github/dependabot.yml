@@ -1,0 +1,19 @@
+version: 2
+updates:
+  - package-ecosystem: npm # covers pnpm (pnpm-lock.yaml)
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      # Routine minor/patch bumps arrive as one PR; majors stay separate.
+      dependencies:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    groups:
+      actions:
+        patterns: ['*']

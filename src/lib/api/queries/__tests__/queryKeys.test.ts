@@ -40,17 +40,11 @@ describe('partyKeys', () => {
 		expect(partyKeys.raidList('raid-1')).toEqual(['parties', 'raid', 'raid-1', undefined])
 		expect(partyKeys.details()).toEqual(['party'])
 		expect(partyKeys.detail('abc')).toEqual(['party', 'abc'])
-		expect(partyKeys.preview('abc')).toEqual(['party', 'abc', 'preview'])
 	})
 
 	it('detail key matches byShortcode queryKey', () => {
 		const opts = partyQueries.byShortcode('abc')
 		expect(partyKeys.detail('abc')).toEqual(opts.queryKey)
-	})
-
-	it('preview key matches previewStatus queryKey', () => {
-		const opts = partyQueries.previewStatus('abc')
-		expect(partyKeys.preview('abc')).toEqual(opts.queryKey)
 	})
 
 	it('list key matches list queryKey', () => {

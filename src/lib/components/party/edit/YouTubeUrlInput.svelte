@@ -6,6 +6,7 @@
 	 */
 	import { untrack } from 'svelte'
 	import Input from '$lib/components/ui/Input.svelte'
+	import { fetchYoutubeTitle } from '$lib/utils/youtube'
 
 	interface Props {
 		/** YouTube URL value */
@@ -68,17 +69,9 @@
 		isLoadingMetadata = true
 		const controller = new AbortController()
 
-		fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`, {
-			signal: controller.signal
-		})
-			.then((res) => (res.ok ? res.json() : null))
-			.then((data) => {
-				if (data?.title) {
-					videoTitle = data.title
-				}
-			})
-			.catch(() => {
-				// Ignore fetch errors (aborted, network, etc.)
+		fetchYoutubeTitle(id, controller.signal)
+			.then((title) => {
+				if (title) videoTitle = title
 			})
 			.finally(() => {
 				isLoadingMetadata = false

@@ -9,6 +9,8 @@
 		disableCloseOnTriggerClick?: boolean
 		disabled?: boolean
 		disableHoverableContent?: boolean
+		/** Class for the trigger wrapper, e.g. to make it fill its parent */
+		class?: string
 	}
 
 	const {
@@ -17,19 +19,20 @@
 		delayDuration = 200,
 		disableCloseOnTriggerClick = false,
 		disabled = false,
-		disableHoverableContent = false
+		disableHoverableContent = false,
+		class: className
 	}: Props = $props()
 </script>
 
 <TooltipBase.Root {delayDuration} {disableCloseOnTriggerClick} {disabled} {disableHoverableContent}>
 	<TooltipBase.Trigger>
 		{#snippet child({ props })}
-			<span {...props}>
+			<span class={className} {...props}>
 				{@render children()}
 			</span>
 		{/snippet}
-	</TooltipBase.Trigger>
-	<TooltipBase.Portal>
+		<!-- No whitespace before the portal: it would render as a space next to inline triggers. -->
+	</TooltipBase.Trigger><TooltipBase.Portal>
 		<TooltipBase.Content class="rich-tooltip-content" sideOffset={8}>
 			{@render content()}
 		</TooltipBase.Content>

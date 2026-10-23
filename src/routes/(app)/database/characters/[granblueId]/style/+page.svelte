@@ -12,7 +12,6 @@
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import { withInitialData } from '$lib/query/ssr'
-	import { fetchWikiPage } from '$lib/api/wiki'
 
 	// Components
 	import DetailScaffold, {
@@ -24,6 +23,8 @@
 	import CharacterStatsSection from '$lib/features/database/characters/sections/CharacterStatsSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
+	import { resolveDetailTab } from '$lib/features/database/detail/detailTab'
+	import CharacterRefreshActions from '$lib/features/database/characters/refresh/CharacterRefreshActions.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
@@ -48,8 +49,11 @@
 
 	let { data }: { data: PageData } = $props()
 
-	// Tab state from URL
-	const currentTab = $derived(($page.url.searchParams.get('tab') as DetailTab) || 'info')
+	// The :full character carries when its wikitext was fetched (not on the shared Character type)
+	type CharacterFetchTimes = {
+		wikiRawFetchedAt?: string | null
+		wikiRawJpFetchedAt?: string | null
+	}
 
 	function handleTabChange(tab: DetailTab) {
 		const url = new URL($page.url)
@@ -72,16 +76,13 @@
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
 
+	// Tab state from URL; raw data is editor-only, so non-editors fall back to Info
+	const currentTab = $derived(resolveDetailTab($page.url.searchParams.get('tab'), canEdit))
+
 	// Element for button styling
 	const elementName = $derived(
 		getElementLabel(character?.element)?.toLowerCase() as
-			| 'wind'
-			| 'fire'
-			| 'water'
-			| 'earth'
-			| 'dark'
-			| 'light'
-			| undefined
+			'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 	)
 
 	// Edit URL — style swap characters use the style edit page
@@ -196,6 +197,7 @@
 			image={getCharacterGridImage(character)}
 			{currentTab}
 			onTabChange={handleTabChange}
+			showRaw={canEdit}
 			onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
 			onDownloadSize={canEdit ? handleDownloadSize : undefined}
 			availableSizes={characterSizes}
@@ -239,6 +241,9 @@
 						{/if}
 						{#if character.uncap?.transcendence}
 							<DetailItem label="Transcendence Date" value={character.transcendenceDate || '—'} />
+						{/if}
+						{#if character.uncap?.ulb}
+							<DetailItem label="ULB Date" value={character.ulbDate || '—'} />
 						{/if}
 					</DetailsContainer>
 
@@ -350,18 +355,24 @@
 					gameRawJp={rawDataQuery.data?.gameRawJp}
 					isLoading={rawDataQuery.isLoading}
 					{canEdit}
-					onFetchWiki={canEdit && character?.id && character?.wiki?.en
-						? async () => {
-								const wikiResult = await fetchWikiPage(character.wiki!.en!)
-								if (wikiResult.error) {
-									throw new Error(wikiResult.error)
-								}
-								await entityAdapter.updateCharacter(character.id, { wiki_raw: wikiResult.wikiRaw })
-								rawDataQuery.refetch()
-								return { wikiRaw: wikiResult.wikiRaw ?? null, gameRawEn: null, gameRawJp: null }
-							}
-						: undefined}
-				/>
+					fetchedAt={{
+						en: (character as CharacterFetchTimes | undefined)?.wikiRawFetchedAt,
+						jp: (character as CharacterFetchTimes | undefined)?.wikiRawJpFetchedAt
+					}}
+				>
+					{#snippet wikiActions()}
+						{#if canEdit && character?.id}
+							<CharacterRefreshActions
+								characterId={character.id}
+								characterName={character.styleName ?? character.name}
+								onRefreshed={() => {
+									characterQuery.refetch()
+									rawDataQuery.refetch()
+								}}
+							/>
+						{/if}
+					{/snippet}
+				</EntityRawDataTab>
 			{/if}
 		</DetailScaffold>
 	{:else}

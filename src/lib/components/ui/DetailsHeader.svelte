@@ -64,11 +64,11 @@
 					}
 					const placeholder =
 						type === 'job'
-							? `${getBasePath()}/placeholders/placeholder-job.png`
+							? `${getBasePath()}/app/placeholders/placeholder-job.png`
 							: type === 'raid'
-								? `${getBasePath()}/placeholders/placeholder-raid-thumbnail.png`
+								? `${getBasePath()}/app/placeholders/placeholder-raid-thumbnail.png`
 								: type === 'accessory'
-									? `${getBasePath()}/placeholders/placeholder-weapon-grid.png`
+									? `${getBasePath()}/app/placeholders/placeholder-weapon-grid.png`
 									: getPlaceholderImage(type, 'grid')
 					img.src = placeholder
 				}}
@@ -111,13 +111,7 @@
 					variant="primary"
 					size="medium"
 					element={elementName as
-						| 'fire'
-						| 'water'
-						| 'earth'
-						| 'wind'
-						| 'light'
-						| 'dark'
-						| undefined}
+						'fire' | 'water' | 'earth' | 'wind' | 'light' | 'dark' | undefined}
 					onclick={onSave}
 					disabled={isSaving}
 				>

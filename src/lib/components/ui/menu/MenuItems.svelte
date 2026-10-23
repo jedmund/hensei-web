@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte'
 	import { ContextMenu, DropdownMenu } from 'bits-ui'
 
 	interface MenuItemsProps {
@@ -21,6 +22,8 @@
 		duplicateLabel?: string | undefined
 		duplicateDisabled?: boolean | undefined
 		removeLabel?: string | undefined
+		/** Extra edit items, shown after Duplicate (only to editors) */
+		editExtras?: Snippet | undefined
 	}
 
 	let {
@@ -42,7 +45,8 @@
 		replaceLabel = 'Replace',
 		duplicateLabel = 'Duplicate',
 		duplicateDisabled = false,
-		removeLabel = 'Remove from team'
+		removeLabel = 'Remove from team',
+		editExtras
 	}: MenuItemsProps = $props()
 
 	// Select the appropriate component based on variant
@@ -54,7 +58,7 @@
 	)
 
 	// Track whether we've rendered any items above the details/database section (for separator logic)
-	const hasEditSection = $derived(canEdit && (onEdit || onReplace || onDuplicate))
+	const hasEditSection = $derived(canEdit && (onEdit || onReplace || onDuplicate || editExtras))
 	const hasViewSection = $derived(onViewDetails || onViewInDatabase)
 	const hasTeamsSection = $derived(onViewTeams || onAddToTeamsView)
 </script>
@@ -75,6 +79,13 @@
 	<Item class={itemClass} onclick={onDuplicate} disabled={duplicateDisabled}>
 		{duplicateLabel}
 	</Item>
+{/if}
+
+{#if canEdit && editExtras}
+	{#if onEdit || onReplace || onDuplicate}
+		<Separator class={separatorClass} />
+	{/if}
+	{@render editExtras()}
 {/if}
 
 {#if hasEditSection && (onViewDetails || onViewInDatabase)}

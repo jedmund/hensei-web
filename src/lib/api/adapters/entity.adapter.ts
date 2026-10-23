@@ -30,7 +30,20 @@ import type {
 	CreateSummonSeriesPayload,
 	UpdateSummonSeriesPayload
 } from '$lib/types/api/summonSeries'
-import type { Awakening, Bullet } from '$lib/types/api/entities'
+import type {
+	Awakening,
+	Bullet,
+	CharacterSkill,
+	CharacterSkillLink,
+	SummonAura,
+	WeaponSkill
+} from '$lib/types/api/entities'
+import type {
+	DeleteImpact,
+	PanelValidation,
+	WeaponSkillFamily,
+	WeaponSkillFamilySummary
+} from '$lib/types/api/weaponSkillFamily'
 import type {
 	WeaponSeriesVariant,
 	CreateWeaponSeriesVariantPayload,
@@ -57,6 +70,8 @@ export interface Weapon {
 	promotions?: number[]
 	/** Human-readable promotion names */
 	promotionNames?: string[]
+	/** Structured per-tier auras parsed from the wiki (the calculator's source) */
+	summonAuras?: SummonAura[]
 	minHp?: number
 	maxHp?: number
 	minAttack?: number
@@ -95,10 +110,7 @@ export interface Weapon {
 	axType?: number
 	bulletSlots?: number[]
 	skillLevelCap?: number
-	weapon_skills?: Array<{
-		name?: string
-		description?: string
-	}>
+	weaponSkills?: WeaponSkill[]
 	awakenings?: Array<{
 		id: string
 		name: Record<string, string>
@@ -115,6 +127,10 @@ export interface Weapon {
 			en?: string
 			ja?: string
 		}
+		element?: number | null
+		season?: number | null
+		series?: (number | CharacterSeriesRef)[] | null
+		styleSwap?: boolean
 	}
 	// Forge chain fields (from :grid and :full views)
 	forgeOrder?: number | null
@@ -161,12 +177,14 @@ export interface Character {
 		minHp?: number
 		maxHp?: number
 		maxHpFlb?: number
+		maxHpUlb?: number
 		maxHpTranscendence?: number
 	}
 	atk?: {
 		minAtk?: number
 		maxAtk?: number
 		maxAtkFlb?: number
+		maxAtkUlb?: number
 		maxAtkTranscendence?: number
 	}
 	// Other stats
@@ -178,7 +196,9 @@ export interface Character {
 	}
 	uncap?: {
 		flb?: boolean
+		ulb?: boolean
 		transcendence?: boolean
+		maxTranscendenceStage?: number
 	}
 	special?: boolean
 	awakenings?: Array<{
@@ -216,10 +236,14 @@ export interface Character {
 	// Date fields
 	releaseDate?: string
 	flbDate?: string
+	ulbDate?: string
 	transcendenceDate?: string
 	wiki?: { en?: string; ja?: string }
 	gamewith?: string
 	kamigame?: string
+	// Parsed skill graph (from :full view)
+	skills?: CharacterSkill[]
+	skillLinks?: CharacterSkillLink[]
 }
 
 /**
@@ -267,6 +291,8 @@ export interface Summon {
 	promotions?: number[]
 	/** Human-readable promotion names */
 	promotionNames?: string[]
+	/** Structured per-tier auras parsed from the wiki (the calculator's source) */
+	summonAuras?: SummonAura[]
 	minHp?: number
 	maxHp?: number
 	minAttack?: number
@@ -352,20 +378,25 @@ export interface CreateCharacterPayload {
 	min_hp?: number
 	max_hp?: number
 	max_hp_flb?: number
+	max_hp_ulb?: number
 	max_hp_transcendence?: number
 	min_atk?: number
 	max_atk?: number
 	max_atk_flb?: number
+	max_atk_ulb?: number
 	max_atk_transcendence?: number
 	base_da?: number
 	base_ta?: number
 	ougi_ratio?: number
 	ougi_ratio_flb?: number
 	flb?: boolean
+	ulb?: boolean
 	transcendence?: boolean
+	max_transcendence_stage?: number
 	special?: boolean
 	release_date?: string | null
 	flb_date?: string | null
+	ulb_date?: string | null
 	transcendence_date?: string | null
 	wiki_en?: string
 	wiki_ja?: string
@@ -603,11 +634,15 @@ export interface ParsedCharacterData {
 	maxAtk?: number
 	maxAtkFlb?: number
 	flb?: boolean
+	ulb?: boolean
 	transcendence?: boolean
+	maxTranscendenceStage?: number
+	special?: boolean
 	/** Series array (e.g., [2] for Grand, [3] for Zodiac) */
 	series?: number[]
 	releaseDate?: string
 	flbDate?: string
+	ulbDate?: string
 	transcendenceDate?: string
 	gamewith?: string
 	kamigame?: string
@@ -1373,6 +1408,132 @@ export class EntityAdapter extends BaseAdapter {
 		return this.request<EntityRawData>(`/summons/${id}/fetch_wiki`, {
 			method: 'POST'
 		})
+	}
+
+	// ============================================
+	// Re-parse Methods (editor-only)
+	// ============================================
+
+	/**
+	 * Re-parses an entity's stored wikitext into structured rows (weapon
+	 * skills / summon auras). Characters go through characterRefresh.adapter. Pass refetch to pull fresh
+	 * wikitext from the wiki first. Requires editor role (>= 7).
+	 */
+	async reparseWeapon(id: string, refetch = false): Promise<Weapon> {
+		return this.request<Weapon>(`/weapons/${id}/reparse${refetch ? '?refetch=true' : ''}`, {
+			method: 'POST'
+		})
+	}
+
+	async reparseSummon(id: string, refetch = false): Promise<Summon> {
+		return this.request<Summon>(`/summons/${id}/reparse${refetch ? '?refetch=true' : ''}`, {
+			method: 'POST'
+		})
+	}
+
+	// ============================================
+	// Weapon Skill Family Methods (admin editor)
+	// ============================================
+
+	async getWeaponSkillFamilies(filters?: {
+		q?: string
+		series?: string
+		size?: string
+		boostType?: string
+	}): Promise<WeaponSkillFamilySummary[]> {
+		const query = new URLSearchParams()
+		if (filters?.q) query.set('q', filters.q)
+		if (filters?.series) query.set('series', filters.series)
+		if (filters?.size) query.set('size', filters.size)
+		if (filters?.boostType) query.set('boost_type', filters.boostType)
+		const qs = query.size > 0 ? `?${query.toString()}` : ''
+		const response = await this.request<{ weaponSkillFamilies: WeaponSkillFamilySummary[] }>(
+			`/weapon_skill_families${qs}`
+		)
+		return response.weaponSkillFamilies
+	}
+
+	async getWeaponSkillFamily(modifier: string): Promise<WeaponSkillFamily> {
+		const response = await this.request<{ weaponSkillFamily: WeaponSkillFamily }>(
+			`/weapon_skill_families/${encodeURIComponent(modifier)}`
+		)
+		return response.weaponSkillFamily
+	}
+
+	async createWeaponSkillDatum(payload: Record<string, unknown>): Promise<unknown> {
+		return this.request('/weapon_skill_data', {
+			method: 'POST',
+			body: { weapon_skill_datum: payload }
+		})
+	}
+
+	async updateWeaponSkillDatum(id: string, payload: Record<string, unknown>): Promise<unknown> {
+		return this.request(`/weapon_skill_data/${id}`, {
+			method: 'PATCH',
+			body: { weapon_skill_datum: payload }
+		})
+	}
+
+	async deleteWeaponSkillDatum(id: string, force = false): Promise<DeleteImpact> {
+		return this.request<DeleteImpact>(`/weapon_skill_data/${id}${force ? '?force=true' : ''}`, {
+			method: 'DELETE'
+		})
+	}
+
+	async createWeaponSkillEffect(payload: Record<string, unknown>): Promise<unknown> {
+		return this.request('/weapon_skill_effects', {
+			method: 'POST',
+			body: { weapon_skill_effect: payload }
+		})
+	}
+
+	async updateWeaponSkillEffect(id: string, payload: Record<string, unknown>): Promise<unknown> {
+		return this.request(`/weapon_skill_effects/${id}`, {
+			method: 'PATCH',
+			body: { weapon_skill_effect: payload }
+		})
+	}
+
+	async deleteWeaponSkillEffect(id: string, force = false): Promise<DeleteImpact> {
+		return this.request<DeleteImpact>(`/weapon_skill_effects/${id}${force ? '?force=true' : ''}`, {
+			method: 'DELETE'
+		})
+	}
+
+	async updateWeaponSkillVersion(id: string, payload: Record<string, unknown>): Promise<unknown> {
+		return this.request(`/weapon_skill_versions/${id}`, {
+			method: 'PATCH',
+			body: { weapon_skill_version: payload }
+		})
+	}
+
+	async updateSkillLabels(
+		id: string,
+		payload: {
+			name_en?: string
+			name_jp?: string
+			description_en?: string
+			description_jp?: string
+		}
+	): Promise<{ sharedByCount: number }> {
+		return this.request<{ sharedByCount: number }>(`/skills/${id}`, {
+			method: 'PATCH',
+			body: { skill: payload }
+		})
+	}
+
+	async updateWeaponKey(
+		id: string,
+		payload: { name_en?: string; name_jp?: string }
+	): Promise<unknown> {
+		return this.request(`/weapon_keys/${id}`, {
+			method: 'PATCH',
+			body: { weapon_key: payload }
+		})
+	}
+
+	async validatePanels(): Promise<PanelValidation> {
+		return this.request<PanelValidation>('/calculator/validate_panels', { method: 'POST' })
 	}
 
 	// ============================================

@@ -49,7 +49,9 @@ export default (
 				link: {
 					openOnClick: false,
 					autolink: true,
-					linkOnPaste: true
+					linkOnPaste: true,
+					protocols: ['http', 'https', 'mailto'],
+					isAllowedUri: (url, ctx) => ctx.defaultValidate(url)
 				},
 				codeBlock: false
 			}),
@@ -121,7 +123,9 @@ export default (
 			Markdown,
 			Youtube.configure({
 				inline: false,
-				modestBranding: true
+				modestBranding: true,
+				// The CSP's frame-src only allows the privacy-enhanced host.
+				nocookie: true
 			}),
 			EntityMention.configure({
 				HTMLAttributes: {

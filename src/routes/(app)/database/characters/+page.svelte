@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
+	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 
 	// Svelte components
@@ -19,11 +20,22 @@
 	import DateCell from '$lib/components/database/cells/DateCell.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
+	import BatchRefreshDialog from '$lib/features/database/characters/refresh/BatchRefreshDialog.svelte'
 
 	// Utilities
 	import { getRarityLabel } from '$lib/utils/rarity'
 	import { getGenderLabel } from '$lib/utils/gender'
 	import { localizedName } from '$lib/utils/locale'
+
+	import type { PageData } from './$types'
+
+	let { data }: { data: PageData } = $props()
+
+	// The database is editor-only already; checked again so the action never shows otherwise
+	const canEdit = $derived((data.role ?? 0) >= 7)
+	let batchRefreshOpen = $state(false)
 
 	type ViewMode = 'characters' | 'series'
 
@@ -106,6 +118,15 @@
 			getter: (row: any) => row.uncap?.flb
 		},
 		{
+			id: 'ulb',
+			header: 'ULB',
+			width: 70,
+			hidden: true,
+			cell: BooleanCell,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			getter: (row: any) => row.uncap?.ulb
+		},
+		{
 			id: 'transcendence',
 			header: 'Transcendence',
 			width: 70,
@@ -113,6 +134,14 @@
 			cell: BooleanCell,
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
 			getter: (row: any) => row.uncap?.transcendence
+		},
+		{
+			id: 'maxTranscendenceStage',
+			header: 'Max Trans. Stage',
+			width: 120,
+			hidden: true,
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
+			getter: (row: any) => row.uncap?.maxTranscendenceStage ?? 0
 		},
 		{
 			id: 'maxLevel',
@@ -176,6 +205,13 @@
 			cell: DateCell
 		},
 		{
+			id: 'ulbDate',
+			header: 'ULB Date',
+			width: 110,
+			hidden: true,
+			cell: DateCell
+		},
+		{
 			id: 'transcendenceDate',
 			header: 'Transcendence Date',
 			width: 110,
@@ -187,6 +223,10 @@
 
 <PageMeta title={m.page_title_db_characters()} description={m.page_desc_home()} />
 
+{#if canEdit}
+	<BatchRefreshDialog bind:open={batchRefreshOpen} />
+{/if}
+
 <div class="database-page">
 	{#if viewMode === 'characters'}
 		<DatabaseGridWithProvider resource="characters" {columns} pageSize={20}>
@@ -195,6 +235,30 @@
 					<Segment value="characters">Characters</Segment>
 					<Segment value="series">Series</Segment>
 				</SegmentedControl>
+			{/snippet}
+			{#snippet headerActions()}
+				{#if canEdit}
+					<DropdownMenu>
+						{#snippet trigger({ props })}
+							<Button
+								variant="ghost"
+								size="small"
+								iconOnly
+								icon="ellipsis"
+								aria-label={m.character_refresh_more_actions()}
+								{...props}
+							/>
+						{/snippet}
+						{#snippet menu()}
+							<DropdownMenuBase.Item
+								class="dropdown-menu-item"
+								onclick={() => (batchRefreshOpen = true)}
+							>
+								{m.character_refresh_batch_action()}
+							</DropdownMenuBase.Item>
+						{/snippet}
+					</DropdownMenu>
+				{/if}
 			{/snippet}
 		</DatabaseGridWithProvider>
 	{:else if viewMode === 'series'}

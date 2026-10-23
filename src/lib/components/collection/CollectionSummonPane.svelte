@@ -106,7 +106,7 @@
 			updateActionVisibility()
 		} catch (error) {
 			console.error('Failed to update collection summon:', error)
-			toast.error(extractErrorMessage(error, 'Failed to update summon'))
+			toast.error(extractErrorMessage(error, m.toast_failed_update_summon()))
 		}
 	}
 
@@ -220,6 +220,7 @@
 			<div class="info-view">
 				<BasicInfoSection type="summon" itemData={summonData} />
 				<StatsSection
+					type="summon"
 					itemData={summonData}
 					gridUncapLevel={summon.uncapLevel}
 					gridTranscendence={summon.transcendenceStep}

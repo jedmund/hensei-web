@@ -55,5 +55,5 @@ export function getProficiencyOptions() {
 export function getProficiencyImage(proficiency: number): string {
 	const key = PROFICIENCY_KEYS[proficiency]
 	if (!key || key === 'None') return ''
-	return `${getBasePath()}/proficiencies/${key.toLowerCase()}.png`
+	return `${getBasePath()}/icons/proficiencies/${key.toLowerCase()}.png`
 }

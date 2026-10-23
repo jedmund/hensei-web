@@ -17,9 +17,10 @@
 		onPromote?: () => void
 		onDemote?: () => void
 		onRemove?: () => void
+		onMakeCaptain?: () => void
 	}
 
-	const { member, onEdit, onPromote, onDemote, onRemove }: Props = $props()
+	const { member, onEdit, onPromote, onDemote, onRemove, onMakeCaptain }: Props = $props()
 
 	function getTimezoneTooltip(tz: string): string {
 		const diff = getTimezoneHourDiff(tz)
@@ -59,6 +60,12 @@
 
 	const canPromote = $derived(member.role === 'member' && crewStore.canPromoteTo('vice_captain'))
 	const canDemote = $derived(member.role === 'vice_captain' && crewStore.canDemote('vice_captain'))
+	const canMakeCaptain = $derived(
+		crewStore.isCaptain &&
+			!member.retired &&
+			member.role === 'vice_captain' &&
+			member.id !== crewStore.membership?.id
+	)
 </script>
 
 <li class="member-row" class:retired={member.retired}>
@@ -108,9 +115,14 @@
 						{m.crew_view_profile()}
 					</DropdownMenuBase.Item>
 				{/if}
+
+				{#if (crewStore.isOfficer && onEdit) || canShowOfficerActions}
+					<DropdownMenuBase.Separator class="dropdown-menu-separator" />
+				{/if}
+
 				{#if crewStore.isOfficer && onEdit}
 					<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onEdit}>
-						{m.crew_edit()}
+						{m.crew_edit_member()}
 					</DropdownMenuBase.Item>
 				{/if}
 				{#if canShowOfficerActions}
@@ -119,12 +131,18 @@
 							{m.crew_promote()}
 						</DropdownMenuBase.Item>
 					{/if}
+					{#if canMakeCaptain && onMakeCaptain}
+						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onMakeCaptain}>
+							{m.crew_make_captain()}
+						</DropdownMenuBase.Item>
+					{/if}
 					{#if canDemote && onDemote}
 						<DropdownMenuBase.Item class="dropdown-menu-item" onclick={onDemote}>
 							{m.crew_demote()}
 						</DropdownMenuBase.Item>
 					{/if}
 					{#if onRemove}
+						<DropdownMenuBase.Separator class="dropdown-menu-separator" />
 						<DropdownMenuBase.Item class="dropdown-menu-item danger" onclick={onRemove}>
 							{m.crew_remove()}
 						</DropdownMenuBase.Item>

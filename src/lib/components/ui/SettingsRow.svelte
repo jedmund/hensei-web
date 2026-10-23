@@ -4,20 +4,31 @@
 	interface Props {
 		title: string
 		subtitle?: string
+		/** Optional leading icon, shown to the left of the title and subtitle. */
+		icon?: Snippet
 		control: Snippet
+		/** Size the control to its content (e.g. a switch) instead of the fixed column, so the text gets the rest. */
+		compact?: boolean
 	}
 
-	let { title, subtitle, control }: Props = $props()
+	let { title, subtitle, icon, control, compact = false }: Props = $props()
 </script>
 
 <div class="settings-row">
-	<div class="text">
-		<span class="title">{title}</span>
-		{#if subtitle}
-			<p class="subtitle">{subtitle}</p>
+	<div class="lead">
+		{#if icon}
+			<div class="icon">
+				{@render icon()}
+			</div>
 		{/if}
+		<div class="text">
+			<span class="title">{title}</span>
+			{#if subtitle}
+				<p class="subtitle">{subtitle}</p>
+			{/if}
+		</div>
 	</div>
-	<div class="control">
+	<div class="control" class:compact>
 		{@render control()}
 	</div>
 </div>
@@ -31,6 +42,22 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: spacing.$unit-2x;
+
+		.lead {
+			display: flex;
+			align-items: center;
+			gap: spacing.$unit-2x;
+			min-width: 0;
+		}
+
+		.icon {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-shrink: 0;
+			width: spacing.$unit-4x;
+			color: var(--text-primary);
+		}
 
 		.text {
 			display: flex;
@@ -59,6 +86,10 @@
 			:global([data-select-trigger]),
 			:global(.fieldset) {
 				width: 100%;
+			}
+
+			&.compact {
+				width: auto;
 			}
 		}
 	}

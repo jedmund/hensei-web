@@ -10,6 +10,8 @@
 	import { themeStore, type ThemePreference } from '$lib/stores/theme.svelte'
 	import { setSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import { setDefaultRepView } from '$lib/stores/defaultRepView.svelte'
+	import { setStickersFolded } from '$lib/stores/stickersFolded.svelte'
+	import { fadeImagesIn } from '$lib/utils/motion'
 	import type { LayoutData } from './$types'
 
 	const { data, children } = $props<{
@@ -19,6 +21,7 @@
 
 	setSimplePortraits(data.currentUser?.simplePortraits ?? false)
 	setDefaultRepView(data.currentUser?.defaultRepView ?? 'weapons')
+	setStickersFolded(data.stickersFolded === true)
 
 	// Initialize theme from user cookie preference
 	$effect(() => {
@@ -27,6 +30,9 @@
 			untrack(() => themeStore.init(userTheme))
 		}
 	})
+
+	// Every image on the site fades in as it loads
+	$effect(() => fadeImagesIn())
 </script>
 
 <svelte:head>

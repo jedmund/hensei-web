@@ -59,7 +59,7 @@
 </script>
 
 <DetailsSection title={m.section_battle_settings()}>
-	<DetailRow label={m.battle_solo()} noHover compact>
+	<DetailRow label={m.battle_solo()} compact>
 		<Switch
 			checked={solo}
 			size="small"
@@ -69,7 +69,7 @@
 		/>
 	</DetailRow>
 
-	<DetailRow label={m.battle_charge_attack()} noHover compact>
+	<DetailRow label={m.battle_charge_attack()} compact>
 		<Switch
 			checked={chargeAttack}
 			size="small"
@@ -79,7 +79,7 @@
 		/>
 	</DetailRow>
 
-	<DetailRow label={m.battle_full_auto()} noHover compact>
+	<DetailRow label={m.battle_full_auto()} compact>
 		<Switch
 			checked={fullAuto}
 			size="small"
@@ -89,7 +89,7 @@
 		/>
 	</DetailRow>
 
-	<DetailRow label={m.battle_auto_summon()} noHover compact>
+	<DetailRow label={m.battle_auto_summon()} compact>
 		<Switch
 			checked={autoSummon}
 			size="small"
@@ -99,7 +99,7 @@
 		/>
 	</DetailRow>
 
-	<DetailRow label={m.battle_auto_guard()} noHover compact>
+	<DetailRow label={m.battle_auto_guard()} compact>
 		<Switch
 			checked={autoGuard}
 			size="small"

@@ -211,3 +211,44 @@
 		opacity: 0.7;
 	}
 }
+
+// Sliding-pill mode: the pill renders behind the segment via SlidingSelection.
+//
+// Layering, top → bottom:
+//   1. Segment text (in source order, above the pill)
+//   2. Pill (.sliding-selection at z-index: 0)
+//   3. Hover bg (segment::before at z-index: -1)
+//
+// Putting the hover bg on a ::before at negative z-index drops it below the
+// pill, so an in-flight pill passing through a hovered segment renders ON TOP
+// of the hover bg rather than the other way around. The host has
+// `isolation: isolate` so the negative z-index stays contained within the
+// segmented control.
+.slidingIndicator {
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: transparent;
+		border-radius: layout.$full-corner;
+		z-index: -1;
+		pointer-events: none;
+		transition: background-color 0.15s ease-in-out;
+	}
+
+	&:hover:not([data-state='checked'])::before {
+		background: var(--menu-bg-item-hover);
+	}
+
+	&[data-state='checked'] .label {
+		background: transparent;
+		border-color: transparent;
+		box-shadow: none;
+	}
+
+	&:hover:not([data-state='checked']) .label {
+		background: transparent;
+		color: var(--text-primary);
+		opacity: 1;
+	}
+}

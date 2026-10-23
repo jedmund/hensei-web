@@ -6,6 +6,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import expandIcon from '$src/assets/icons/expand.svg?raw'
+	import { fetchYoutubeTitle } from '$lib/utils/youtube'
 
 	interface Props {
 		videoUrl?: string
@@ -42,18 +43,9 @@
 
 		const controller = new AbortController()
 
-		fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${id}&format=json`, {
-			signal: controller.signal
+		fetchYoutubeTitle(id, controller.signal).then((title) => {
+			if (title) videoTitle = title
 		})
-			.then((res) => (res.ok ? res.json() : null))
-			.then((data) => {
-				if (data?.title) {
-					videoTitle = data.title
-				}
-			})
-			.catch(() => {
-				// Ignore fetch errors
-			})
 
 		return () => controller.abort()
 	})

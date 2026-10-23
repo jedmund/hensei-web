@@ -30,6 +30,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { normalizeCharacterUncap } from '$lib/utils/uncap'
 
 	type SearchResultItem = SearchPageResult['results'][number]
 	type EntityType = 'character' | 'weapon' | 'summon'
@@ -258,7 +259,18 @@
 		const uncap = item?.uncap
 		const baseLevel = isCharacter ? 4 : 3
 		if (!uncap) return { uncapLevel: baseLevel, transcendenceStep: 0 }
-		if (uncap.transcendence) return { uncapLevel: 6, transcendenceStep: 5 }
+		if (isCharacter && item?.special) {
+			const normalized = normalizeCharacterUncap({ special: true, uncap })
+			if (normalized.ulb) return { uncapLevel: 5, transcendenceStep: 0 }
+			if (uncap.flb) return { uncapLevel: 4, transcendenceStep: 0 }
+			return { uncapLevel: 3, transcendenceStep: 0 }
+		}
+		if (uncap.transcendence) {
+			return {
+				uncapLevel: 6,
+				transcendenceStep: isCharacter ? (uncap.maxTranscendenceStage ?? 5) : 5
+			}
+		}
 		if (uncap.ulb) return { uncapLevel: 5, transcendenceStep: 0 }
 		if (uncap.flb) return { uncapLevel: isCharacter ? 5 : 4, transcendenceStep: 0 }
 		return { uncapLevel: baseLevel, transcendenceStep: 0 }

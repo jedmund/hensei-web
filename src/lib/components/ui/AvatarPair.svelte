@@ -1,13 +1,5 @@
 <script lang="ts">
-	import { getAvatarSrc } from '$lib/utils/avatar'
-
-	interface AvatarUser {
-		username?: string
-		avatar?: {
-			picture?: string | null
-			element?: string | null
-		} | null
-	}
+	import { getAvatarSrc, type AvatarUser } from '$lib/utils/avatar'
 
 	interface Props {
 		back: AvatarUser

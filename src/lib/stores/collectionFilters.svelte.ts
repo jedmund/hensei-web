@@ -45,18 +45,18 @@ type EntityFilters = {
 	artifacts: ArtifactFilters
 }
 
-const DEFAULTS: EntityFilters = {
+export const COLLECTION_FILTER_DEFAULTS: EntityFilters = {
 	characters: {
 		element: [],
-		rarity: [],
+		rarity: [3],
 		series: [],
 		race: [],
 		proficiency: [],
 		gender: [],
 		sort: 'name_asc'
 	},
-	weapons: { element: [], rarity: [], proficiency: [], series: [], sort: 'name_asc' },
-	summons: { element: [], rarity: [], series: [], sort: 'name_asc' },
+	weapons: { element: [], rarity: [3], proficiency: [], series: [], sort: 'name_asc' },
+	summons: { element: [], rarity: [3], series: [], sort: 'name_asc' },
 	artifacts: {
 		element: [],
 		proficiency: [],
@@ -70,10 +70,10 @@ const DEFAULTS: EntityFilters = {
 }
 
 class CollectionFiltersStore {
-	#characters = $state<CharacterFilters>({ ...DEFAULTS.characters })
-	#weapons = $state<WeaponFilters>({ ...DEFAULTS.weapons })
-	#summons = $state<SummonFilters>({ ...DEFAULTS.summons })
-	#artifacts = $state<ArtifactFilters>({ ...DEFAULTS.artifacts })
+	#characters = $state<CharacterFilters>({ ...COLLECTION_FILTER_DEFAULTS.characters })
+	#weapons = $state<WeaponFilters>({ ...COLLECTION_FILTER_DEFAULTS.weapons })
+	#summons = $state<SummonFilters>({ ...COLLECTION_FILTER_DEFAULTS.summons })
+	#artifacts = $state<ArtifactFilters>({ ...COLLECTION_FILTER_DEFAULTS.artifacts })
 	#initialized = false
 
 	constructor() {
@@ -86,10 +86,10 @@ class CollectionFiltersStore {
 		if (this.#initialized) return
 		this.#initialized = true
 
-		this.#characters = this.#load('characters', DEFAULTS.characters)
-		this.#weapons = this.#load('weapons', DEFAULTS.weapons)
-		this.#summons = this.#load('summons', DEFAULTS.summons)
-		this.#artifacts = this.#load('artifacts', DEFAULTS.artifacts)
+		this.#characters = this.#load('characters', COLLECTION_FILTER_DEFAULTS.characters)
+		this.#weapons = this.#load('weapons', COLLECTION_FILTER_DEFAULTS.weapons)
+		this.#summons = this.#load('summons', COLLECTION_FILTER_DEFAULTS.summons)
+		this.#artifacts = this.#load('artifacts', COLLECTION_FILTER_DEFAULTS.artifacts)
 	}
 
 	#load<K extends keyof EntityFilters>(key: K, defaults: EntityFilters[K]): EntityFilters[K] {

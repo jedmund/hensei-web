@@ -123,14 +123,44 @@
 	--placeholder-bound-bg: #{colors.$placeholder--bound--bg--light};
 	--placeholder-bound-bg-hover: #{colors.$placeholder--bound--bg--light--hover};
 
-	// Light - Notices
-	--notice-bg: #{colors.$notice--bg--light};
-	--notice-text: #{colors.$notice--text--light};
+	// Light - Notices (Yellow)
+	--notice-yellow-bg: #{colors.$notice--yellow--bg--light};
+	--notice-yellow-text: #{colors.$notice--yellow--text--light};
+	--notice-yellow-button-bg: #{colors.$notice--yellow--button--bg--light};
+	--notice-yellow-button-bg-hover: #{colors.$notice--yellow--button--bg--light--hover};
+	--notice-yellow-button-text: #{colors.$notice--yellow--button--text--light};
+	--notice-yellow-button-text-hover: #{colors.$notice--yellow--button--text--light--hover};
+	--notice-yellow-button-text-disabled: #{colors.$notice--yellow--button--text--light--disabled};
+	--notice-yellow-button-bg-disabled: #{colors.$notice--yellow--button--bg--light--disabled};
 
-	--notice-button-bg: #{colors.$notice--button--bg--light};
-	--notice-button-bg-hover: #{colors.$notice--button--bg--light--hover};
-	--notice-button-text: #{colors.$notice--button--text--light};
-	--notice-button-text-hover: #{colors.$notice--button--text--light--hover};
+	// Light - Notices (Blue)
+	--notice-blue-bg: #{colors.$notice--blue--bg--light};
+	--notice-blue-text: #{colors.$notice--blue--text--light};
+	--notice-blue-button-bg: #{colors.$notice--blue--button--bg--light};
+	--notice-blue-button-bg-hover: #{colors.$notice--blue--button--bg--light--hover};
+	--notice-blue-button-text: #{colors.$notice--blue--button--text--light};
+	--notice-blue-button-text-hover: #{colors.$notice--blue--button--text--light--hover};
+	--notice-blue-button-text-disabled: #{colors.$notice--blue--button--text--light--disabled};
+	--notice-blue-button-bg-disabled: #{colors.$notice--blue--button--bg--light--disabled};
+
+	// Light - Notices (Grey)
+	--notice-grey-bg: #{colors.$notice--grey--bg--light};
+	--notice-grey-text: #{colors.$notice--grey--text--light};
+	--notice-grey-button-bg: #{colors.$notice--grey--button--bg--light};
+	--notice-grey-button-bg-hover: #{colors.$notice--grey--button--bg--light--hover};
+	--notice-grey-button-text: #{colors.$notice--grey--button--text--light};
+	--notice-grey-button-text-hover: #{colors.$notice--grey--button--text--light--hover};
+	--notice-grey-button-text-disabled: #{colors.$notice--grey--button--text--light--disabled};
+	--notice-grey-button-bg-disabled: #{colors.$notice--grey--button--bg--light--disabled};
+
+	// Light - Tags / chips
+	// Default = subtle / flat surface for non-interactive tags.
+	// Contained = emphasis variant used by clickable / linking tags; sits
+	// against the page rather than blending into it, with a stronger hover.
+	--tag-bg: #{colors.$grey-85};
+	--tag-bg-hover: #{colors.$grey-75};
+	--tag-contained-bg: #{colors.$grey-85};
+	--tag-contained-bg-hover: #{colors.$grey-70};
 
 	// Light - Buttons
 	--button-bg: #{colors.$button--bg--light};
@@ -484,8 +514,8 @@
 	--toast-success-text: #2e7d32;
 	--toast-error-bg: #{colors.$error--bg--light};
 	--toast-error-text: #{colors.$error};
-	--toast-warning-bg: #{colors.$notice--bg--light};
-	--toast-warning-text: #{colors.$notice--text--light};
+	--toast-warning-bg: #{colors.$notice--yellow--bg--light};
+	--toast-warning-text: #{colors.$notice--yellow--text--light};
 	--toast-info-bg: #e3f2fd;
 	--toast-info-text: #1565c0;
 
@@ -613,14 +643,45 @@ html[data-theme='dark'] {
 	--placeholder-bound-bg: #{colors.$placeholder--bound--bg--dark};
 	--placeholder-bound-bg-hover: #{colors.$placeholder--bound--bg--dark--hover};
 
-	// Dark - Notices
-	--notice-bg: #{colors.$notice--bg--dark};
-	--notice-text: #{colors.$notice--text--dark};
+	// Dark - Notices (Yellow)
+	--notice-yellow-bg: #{colors.$notice--yellow--bg--dark};
+	--notice-yellow-text: #{colors.$notice--yellow--text--dark};
+	--notice-yellow-button-bg: #{colors.$notice--yellow--button--bg--dark};
+	--notice-yellow-button-bg-hover: #{colors.$notice--yellow--button--bg--dark--hover};
+	--notice-yellow-button-text: #{colors.$notice--yellow--button--text--dark};
+	--notice-yellow-button-text-hover: #{colors.$notice--yellow--button--text--dark--hover};
+	--notice-yellow-button-text-disabled: #{colors.$notice--yellow--button--text--dark--disabled};
+	--notice-yellow-button-bg-disabled: #{colors.$notice--yellow--button--bg--dark--disabled};
 
-	--notice-button-bg: #{colors.$notice--button--bg--dark};
-	--notice-button-bg-hover: #{colors.$notice--button--bg--dark--hover};
-	--notice-button-text: #{colors.$notice--button--text--dark};
-	--notice-button-text-hover: #{colors.$notice--button--text--dark--hover};
+	// Dark - Notices (Blue)
+	--notice-blue-bg: #{colors.$notice--blue--bg--dark};
+	--notice-blue-text: #{colors.$notice--blue--text--dark};
+	--notice-blue-button-bg: #{colors.$notice--blue--button--bg--dark};
+	--notice-blue-button-bg-hover: #{colors.$notice--blue--button--bg--dark--hover};
+	--notice-blue-button-text: #{colors.$notice--blue--button--text--dark};
+	--notice-blue-button-text-hover: #{colors.$notice--blue--button--text--dark--hover};
+	--notice-blue-button-text-disabled: #{colors.$notice--blue--button--text--dark--disabled};
+	--notice-blue-button-bg-disabled: #{colors.$notice--blue--button--bg--dark--disabled};
+
+	// Dark - Notices (Grey)
+	--notice-grey-bg: #{colors.$notice--grey--bg--dark};
+	--notice-grey-text: #{colors.$notice--grey--text--dark};
+	--notice-grey-button-bg: #{colors.$notice--grey--button--bg--dark};
+	--notice-grey-button-bg-hover: #{colors.$notice--grey--button--bg--dark--hover};
+	--notice-grey-button-text: #{colors.$notice--grey--button--text--dark};
+	--notice-grey-button-text-hover: #{colors.$notice--grey--button--text--dark--hover};
+	--notice-grey-button-text-disabled: #{colors.$notice--grey--button--text--dark--disabled};
+	--notice-grey-button-bg-disabled: #{colors.$notice--grey--button--bg--dark--disabled};
+
+	// Dark - Tags / chips
+	// Default tag matches the sidebar/card surface for ambient labels.
+	// Contained variant is pure black, sitting clearly below the sidebar bg;
+	// hover steps to grey-15 — still darker than the surrounding panel so it
+	// doesn't disappear into it.
+	--tag-bg: #{colors.$grey-20};
+	--tag-bg-hover: #{colors.$grey-30};
+	--tag-contained-bg: #{colors.$grey-00};
+	--tag-contained-bg-hover: #{colors.$grey-10};
 
 	// Dark - Buttons
 	--button-bg: #{colors.$button--bg--dark};
@@ -974,8 +1035,8 @@ html[data-theme='dark'] {
 	--toast-success-text: #66bb6a;
 	--toast-error-bg: #{colors.$error--bg--dark};
 	--toast-error-text: #{colors.$error};
-	--toast-warning-bg: #{colors.$notice--bg--dark};
-	--toast-warning-text: #{colors.$notice--text--dark};
+	--toast-warning-bg: #{colors.$notice--yellow--bg--dark};
+	--toast-warning-text: #{colors.$notice--yellow--text--dark};
 	--toast-info-bg: #0d2744;
 	--toast-info-text: #64b5f6;
 

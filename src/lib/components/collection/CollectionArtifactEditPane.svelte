@@ -75,7 +75,7 @@
 				},
 				onError: (error) => {
 					console.error('[CollectionArtifactEditPane] Save failed:', error)
-					toast.error(extractErrorMessage(error, 'Failed to save artifact'))
+					toast.error(extractErrorMessage(error, m.toast_failed_save_artifact()))
 				}
 			}
 		)

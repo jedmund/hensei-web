@@ -1,0 +1,204 @@
+/**
+ * How a draw is presented in the animation: which crystal opens it, which
+ * opening pattern plays, which stones fake out by starting at a lower rarity,
+ * and whether the transition bursts. In the game the server picks these per
+ * draw (`rendering_id`); here they follow from the result, with the random
+ * choices seeded by the result's seed so the same result plays the same show.
+ */
+
+import type { CatalogueItem } from '$lib/types/gacha'
+
+export type Rarity = 'R' | 'SR' | 'SSR'
+/** The opening crystal's colour, the game's main "tell" */
+export type Crystal = 'rainbow' | 'gold' | 'violet' | 'blue'
+
+export interface Stone {
+	rarity: Rarity
+	/** Rarity the stone shows first; differs from `rarity` when it classes up */
+	startsAs: Rarity
+}
+
+/**
+ * The game's opening pattern (`main_pattern`, `sub_pattern`, `add_pattern`).
+ * Main 1–5 open on a rainbow crystal, 6 gold, 7 blue-violet and 8 blue.
+ */
+export interface Pattern {
+	main: number
+	sub: number
+	add: number
+}
+
+export interface Presentation {
+	crystal: Crystal
+	pattern: Pattern
+	/** A 10-part opening on blue is a fake-out: it always hides an SSR */
+	fakeOut: boolean
+	/** Gold's prismatic burst between the opening and the stones */
+	burst: boolean
+	stones: Stone[]
+	/** Indices of items that play the "joined your party" scene */
+	newCharacters: number[]
+}
+
+/**
+ * Chance that a 10-part draw with one SSR opens on the blue fake-out instead
+ * of gold. The fake-out always hides its SSR.
+ */
+export const FAKE_OUT_CHANCE = 0.1
+/**
+ * Chance that each SSR stone is hidden: it shows as an SR stone, then classes
+ * up. Only SSRs hide; other stones show their rarity.
+ */
+export const CLASS_UP_CHANCE = 0.15
+/** Chance that a gold opening plays the prismatic burst transition */
+export const BURST_CHANCE = 0.1
+
+/**
+ * Chance that a single-SSR draw opens on Rainbow 5, the single-SSR rainbow,
+ * instead of gold. The game's rate isn't known.
+ */
+export const SINGLE_SSR_RAINBOW_CHANCE = 0.1
+/**
+ * Chance that a draw with a new SSR character or summon plays the opening for
+ * it. It isn't guaranteed: a new summon has played Rainbow 5 in the game. The
+ * game's rate isn't known.
+ */
+export const NEW_ITEM_RAINBOW_CHANCE = 0.5
+/** New characters released from this date play the blue-sky shrine openings */
+export const SHRINE_SINCE = '2026-03-10'
+
+/**
+ * The rainbow openings (`main/add`), from the game, as observed in play. A
+ * single SSR plays its own opening; several play Rainbow 2 with an add
+ * variant:
+ *
+ * | Draw                                      | One SSR    | Several            |
+ * | ----------------------------------------- | ---------- | ------------------ |
+ * | New character released from 10 March 2026 | 1 (shrine) | 2 + add 1 (shrine) |
+ * | New character released before then        | 4          | 2 + add 4          |
+ * | New summon                                | 3          | 2 + add 3          |
+ * | Any                                       | 5          | 2                  |
+ */
+const RAINBOW = {
+	shrine: { single: 1, add: 1 },
+	newCharacter: { single: 4, add: 4 },
+	newSummon: { single: 3, add: 3 },
+	any: { single: 5, add: 0 }
+}
+
+const RARITY: Record<number, Rarity> = { 1: 'R', 2: 'SR', 3: 'SSR' }
+const LOWER: Record<Rarity, Rarity> = { R: 'R', SR: 'R', SSR: 'SR' }
+
+/** Small, fast PRNG (mulberry32) seeded from a string hash (FNV-1a) */
+export function seededRandom(seed: string): () => number {
+	let hash = 0x811c9dc5
+	for (let i = 0; i < seed.length; i++) {
+		hash ^= seed.charCodeAt(i)
+		hash = Math.imul(hash, 0x01000193)
+	}
+	let state = hash >>> 0
+	return () => {
+		state = (state + 0x6d2b79f5) >>> 0
+		let t = state
+		t = Math.imul(t ^ (t >>> 15), t | 1)
+		t ^= t + Math.imul(t ^ (t >>> 7), t | 61)
+		return ((t ^ (t >>> 14)) >>> 0) / 4294967296
+	}
+}
+
+export function choosePresentation(
+	items: CatalogueItem[],
+	seed: string,
+	{
+		newCharacters = new Set<string>(),
+		newSummons = new Set<string>()
+	}: {
+		newCharacters?: ReadonlySet<string>
+		/** Identities of drawn summons the viewer doesn't have yet */
+		newSummons?: ReadonlySet<string>
+	} = {}
+): Presentation {
+	const random = seededRandom(seed)
+	const rarities = items.map((item) => RARITY[item.rarity] ?? 'R')
+	const ssrCount = rarities.filter((rarity) => rarity === 'SSR').length
+	const newIndices = items.flatMap((item, index) =>
+		newCharacters.has(item.identity) ? [index] : []
+	)
+
+	const newSsrCharacters = newIndices.filter((index) => rarities[index] === 'SSR')
+	const newSummon = items.some(
+		(item, index) => rarities[index] === 'SSR' && newSummons.has(item.identity)
+	)
+
+	// The rainbow opening this draw would play, if it plays one
+	let rainbow: keyof typeof RAINBOW = 'any'
+	if (newSsrCharacters.length > 0 && random() < NEW_ITEM_RAINBOW_CHANCE) {
+		const shrine = newSsrCharacters.some(
+			(index) => (items[index]?.release_date ?? '') >= SHRINE_SINCE
+		)
+		rainbow = shrine ? 'shrine' : 'newCharacter'
+	} else if (newSummon && random() < NEW_ITEM_RAINBOW_CHANCE) {
+		rainbow = 'newSummon'
+	}
+
+	// Rainbow for several SSRs. For one SSR, its rainbow opening when it has
+	// one, else sometimes Rainbow 5, else gold; a 10-part sometimes fakes out
+	// with blue instead. Without an SSR, a 10-part opens on gold (it always
+	// has an SR); a single draw opens on blue-violet for an SR, blue for an R.
+	const single = items.length === 1
+	let crystal: Crystal
+	let fakeOut = false
+	if (ssrCount >= 2) {
+		crystal = 'rainbow'
+	} else if (ssrCount === 1) {
+		if (rainbow !== 'any' || random() < SINGLE_SSR_RAINBOW_CHANCE) {
+			crystal = 'rainbow'
+		} else {
+			fakeOut = !single && random() < FAKE_OUT_CHANCE
+			crystal = fakeOut ? 'blue' : 'gold'
+		}
+	} else if (!single) {
+		crystal = 'gold'
+	} else {
+		crystal = rarities[0] === 'SR' ? 'violet' : 'blue'
+	}
+
+	// Only SSR stones hide, and the fake-out always hides its SSR
+	const stones = rarities.map((rarity) => ({
+		rarity,
+		startsAs: rarity === 'SSR' && (fakeOut || random() < CLASS_UP_CHANCE) ? LOWER[rarity] : rarity
+	}))
+
+	const burst = crystal === 'gold' && random() < BURST_CHANCE
+	return {
+		crystal,
+		pattern:
+			crystal === 'rainbow'
+				? ssrCount >= 2
+					? { main: 2, sub: 0, add: RAINBOW[rainbow].add }
+					: { main: RAINBOW[rainbow].single, sub: 0, add: 0 }
+				: patternFor(crystal, burst, fakeOut, random),
+		fakeOut,
+		burst,
+		stones,
+		newCharacters: newIndices
+	}
+}
+
+function patternFor(
+	crystal: Exclude<Crystal, 'rainbow'>,
+	burst: boolean,
+	fakeOut: boolean,
+	random: () => number
+): Pattern {
+	switch (crystal) {
+		case 'gold':
+			// Sub-pattern 1 is gold's prismatic burst transition
+			return { main: 6, sub: burst ? 1 : 0, add: 0 }
+		case 'violet':
+			return { main: 7, sub: 0, add: 0 }
+		case 'blue':
+			// A single R plays the plain blue opening, as in the game
+			return { main: 8, sub: fakeOut && random() < 0.5 ? 1 : 0, add: 0 }
+	}
+}

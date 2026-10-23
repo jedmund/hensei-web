@@ -72,8 +72,11 @@
 		display: grid;
 		gap: $unit-half;
 
-		// Layout: main summon | 6 grid summons (3x2) | friend summon
-		grid-template-columns: auto 1fr auto;
+		// Layout: main summon | 6 grid summons (3x2) | friend summon.
+		// Fixed proportions, with the main and friend summons' height
+		// following their width: sizing them from the row's height loops
+		// when the slots are empty, and the main summon grows over the grid.
+		grid-template-columns: 2fr 2.74fr 2fr;
 		grid-template-rows: 1fr;
 
 		.summon,
@@ -98,7 +101,7 @@
 		.mainSummon,
 		.friendSummon {
 			@include rep.aspect(rep.$summon-main-w, rep.$summon-main-h);
-			height: calc(100% - 6px);
+			width: 100%;
 			align-self: center;
 		}
 

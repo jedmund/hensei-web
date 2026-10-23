@@ -21,11 +21,11 @@ export interface CollectionCharacter {
 	uncapLevel: number
 	transcendenceStep: number
 	perpetuity: boolean
-	ring1: ExtendedMastery | null
-	ring2: ExtendedMastery | null
-	ring3: ExtendedMastery | null
-	ring4: ExtendedMastery | null
-	earring: ExtendedMastery | null
+	/** Positional ring loadout shared with GridCharacter — always length 4.
+	 * Index 0=ATK, 1=HP, 2/3=optional. Empty slots are null. */
+	overMastery: Array<ExtendedMastery | null>
+	/** Single earring slot, or null when empty. */
+	aetherialMastery: ExtendedMastery | null
 	awakening: {
 		type: Awakening
 		level: number
@@ -136,6 +136,7 @@ export interface CollectionWeaponInput {
 	// Befoulment (for Odiant weapons)
 	befoulmentModifierId?: string
 	befoulmentStrength?: number
+	befoulmentPermeation?: number | null
 	exorcismLevel?: number
 }
 
@@ -167,12 +168,17 @@ export type CollectionSortKey =
 	| 'proficiency_desc'
 	| 'score_desc'
 	| 'score_asc'
+	| 'uncap_asc'
+	| 'uncap_desc'
+	// "Release Date" in the UI; ordered by the generated latest_date column.
+	| 'release_date_desc'
+	| 'release_date_asc'
 
 /**
  * Filters for listing collection items
  */
 export interface CollectionFilters {
-	[key: string]: string | number | number[] | (string | number)[] | undefined
+	[key: string]: string | number | number[] | (string | number)[] | boolean | undefined
 	element?: number[]
 	rarity?: number[]
 	race?: number[]
@@ -184,6 +190,8 @@ export interface CollectionFilters {
 	page?: number
 	limit?: number
 	unowned?: string
+	/** Restrict to summons that can be set as support (friend) summons. */
+	supportEligible?: boolean
 }
 
 /**

@@ -1,7 +1,9 @@
 import { BaseAdapter } from './base.adapter'
 import type { Party } from '$lib/types/api/party'
-import type { RequestOptions } from './types'
+import type { SupportSummon } from '$lib/types/api/supportSummon'
+import type { QueryParams, RequestOptions } from './types'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
+import type { SocialProvider } from '$lib/auth/socialProviders'
 
 /**
  * API response for user data (already camelCased by BaseAdapter.transformResponse)
@@ -23,6 +25,8 @@ interface ApiUserResponse {
 	wikiProfile?: string | null // transformed from wiki_profile
 	youtube?: string | null
 	collectionPrivacy?: number // transformed from collection_privacy (0=everyone, 1=crew_only, 2=private)
+	collectionAccessible?: boolean // transformed from collection_accessible (only present when ?check_collection=true)
+	supportSummonsAccessible?: boolean // transformed from support_summons_accessible (only present when ?check_support_summons=true)
 	importWeapons?: boolean // transformed from import_weapons
 	defaultImportVisibility?: number // transformed from default_import_visibility
 	simplePortraits?: boolean // transformed from simple_portraits
@@ -32,6 +36,8 @@ interface ApiUserResponse {
 	crewName?: string
 	email?: string // Only included in settings view
 	emailVerified?: boolean // Only included in settings view
+	hasPassword?: boolean // Only included in settings view
+	passwordPromptDismissed?: boolean // Only included in settings view
 	avatar: {
 		picture: string
 		element: string
@@ -57,6 +63,8 @@ export interface UserInfo {
 	wikiProfile?: string
 	youtube?: string
 	collectionPrivacy?: number
+	collectionAccessible?: boolean
+	supportSummonsAccessible?: boolean
 	importWeapons?: boolean
 	defaultImportVisibility?: number
 	simplePortraits?: boolean
@@ -77,6 +85,17 @@ export interface UserSettings extends UserInfo {
 	email: string
 	emailVerified: boolean
 	hasStoredEditKeys?: boolean
+	/** False for accounts created with a provider that haven't set a password. */
+	hasPassword: boolean
+	passwordPromptDismissed: boolean
+}
+
+/** A provider linked to the current user (`GET /users/me/identities`). */
+export interface UserIdentity {
+	provider: SocialProvider
+	email: string | null
+	isPrivateEmail: boolean
+	createdAt: string
 }
 
 export interface UserProfile extends UserInfo {
@@ -114,6 +133,8 @@ function transformUserResponse(apiUser: ApiUserResponse): UserInfo {
 		wikiProfile: apiUser.wikiProfile ?? undefined,
 		youtube: apiUser.youtube ?? undefined,
 		collectionPrivacy: apiUser.collectionPrivacy,
+		collectionAccessible: apiUser.collectionAccessible,
+		supportSummonsAccessible: apiUser.supportSummonsAccessible,
 		importWeapons: apiUser.importWeapons,
 		defaultImportVisibility: apiUser.defaultImportVisibility,
 		simplePortraits: apiUser.simplePortraits,
@@ -136,7 +157,10 @@ function transformSettingsResponse(
 		...transformUserResponse(apiUser),
 		email: apiUser.email ?? '',
 		emailVerified: apiUser.emailVerified ?? false,
-		hasStoredEditKeys: apiUser.hasStoredEditKeys ?? false
+		hasStoredEditKeys: apiUser.hasStoredEditKeys ?? false,
+		// Default to "has a password" so the banner never shows on missing data
+		hasPassword: apiUser.hasPassword ?? true,
+		passwordPromptDismissed: apiUser.passwordPromptDismissed ?? false
 	}
 }
 
@@ -156,14 +180,40 @@ export class UserAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Get user information
+	 * Get user information.
+	 *
+	 * Pass `checkCollection: true` to have the backend include
+	 * `collection_accessible` so the caller can decide whether to render the
+	 * private state. `checkSupportSummons: true` does the same for support
+	 * summons via the `support_summons_accessible` field.
 	 */
-	async getInfo(username: string, options?: RequestOptions): Promise<UserInfo> {
+	async getInfo(
+		username: string,
+		options?: RequestOptions & { checkCollection?: boolean; checkSupportSummons?: boolean }
+	): Promise<UserInfo> {
+		const { checkCollection, checkSupportSummons, query, ...rest } = options ?? {}
+		const mergedQuery: QueryParams = { ...(query ?? {}) }
+		if (checkCollection) mergedQuery.check_collection = true
+		if (checkSupportSummons) mergedQuery.check_support_summons = true
+		const hasQuery = Object.keys(mergedQuery).length > 0
 		const result = await this.request<ApiUserResponse>(
 			`/users/info/${encodeURIComponent(username)}`,
-			options
+			{ ...rest, ...(hasQuery ? { query: mergedQuery } : {}) }
 		)
 		return transformUserResponse(result)
+	}
+
+	/**
+	 * List a user's support summons. Returns up to 22 slots (3 per element
+	 * section + 4 misc). 403s when the user has their support summons set to
+	 * private and the viewer isn't the owner.
+	 */
+	async getSupportSummons(username: string, options?: RequestOptions): Promise<SupportSummon[]> {
+		const response = await this.request<{ supportSummons: SupportSummon[] }>(
+			`/users/${encodeURIComponent(username)}/support_summons`,
+			options
+		)
+		return response.supportSummons ?? []
 	}
 
 	/**
@@ -320,6 +370,44 @@ export class UserAdapter extends BaseAdapter {
 	async getCurrentUser(): Promise<UserSettings> {
 		const result = await this.request<ApiUserResponse>('/users/me')
 		return transformSettingsResponse(result)
+	}
+
+	/**
+	 * List the providers linked to the current user
+	 */
+	async getIdentities(): Promise<UserIdentity[]> {
+		return this.request<UserIdentity[]>('/users/me/identities')
+	}
+
+	/**
+	 * Unlink a provider. The API refuses (422 last_login_method) when it's
+	 * the account's only way to log in.
+	 */
+	async unlinkIdentity(provider: SocialProvider): Promise<void> {
+		await this.request<void>(`/users/me/identities/${encodeURIComponent(provider)}`, {
+			method: 'DELETE'
+		})
+	}
+
+	/**
+	 * Hide the "set a password" banner for good
+	 */
+	async dismissPasswordPrompt(): Promise<void> {
+		await this.request<unknown>('/users/me', {
+			method: 'PUT',
+			body: { user: { passwordPromptDismissed: true } }
+		})
+		this.clearCache('/users/me')
+	}
+
+	/**
+	 * Send the password reset email, which also sets a first password
+	 */
+	async requestPasswordReset(email: string): Promise<void> {
+		await this.request<unknown>('/password_resets', {
+			method: 'POST',
+			body: { email }
+		})
 	}
 
 	/**

@@ -15,6 +15,7 @@
 	import MetricField from '$lib/components/party/edit/MetricField.svelte'
 	import EditRaidPane from '$lib/components/sidebar/EditRaidPane.svelte'
 	import EditDescriptionPane from '$lib/components/sidebar/EditDescriptionPane.svelte'
+	import SolomonisDetailsPane from '$lib/components/solomonis/party/SolomonisDetailsPane.svelte'
 	import PrivacySelector from '$lib/components/party/edit/PrivacySelector.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
@@ -25,10 +26,14 @@
 	import { untrack } from 'svelte'
 	import { getElementKey } from '$lib/utils/element'
 	import type { Raid } from '$lib/types/api/entities'
+	import type { Party } from '$lib/types/api/party'
 	import type { RaidFull } from '$lib/types/api/raid'
 	import type { PartyVisibility } from '$lib/types/visibility'
 	import Icon from '$lib/components/Icon.svelte'
 	import { localizedName } from '$lib/utils/locale'
+	import { descriptionPreview } from '$lib/utils/descriptionPreview'
+	import StickerBreakdownSection from '$lib/components/stickers/StickerBreakdownSection.svelte'
+	import type { StickerBreakdownEntry } from '$lib/types/api/sticker'
 
 	export interface PartyEditValues {
 		name: string
@@ -49,6 +54,15 @@
 		raidId: string | null
 	}
 
+	/** The Evoking Solomonis row under Raid */
+	export interface SolomonisDetailsLink {
+		label: string
+		/** e.g. "Nier · Pledge 3" */
+		summary: string
+		getParty: () => Party
+		canEdit: boolean
+	}
+
 	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
@@ -62,9 +76,21 @@
 		onSave?: (values: PartyEditValues) => void
 		/** Callback to save description independently (server-side) */
 		onDescriptionSave?: (content: string) => Promise<void>
+		/** Evoking Solomonis parties: a row under Raid that opens the details pane */
+		solomonisDetails?: SolomonisDetailsLink
+		/** The owner's private sticker counts; absent for anyone but the owner */
+		stickerBreakdown?: StickerBreakdownEntry[] | undefined
 	}
 
-	let { paneId, initialValues, element: elementProp, onSave, onDescriptionSave }: Props = $props()
+	let {
+		paneId,
+		initialValues,
+		element: elementProp,
+		onSave,
+		onDescriptionSave,
+		solomonisDetails,
+		stickerBreakdown
+	}: Props = $props()
 
 	// Derive element reactively from the user cookie (updates after settings save via invalidateAll)
 	const element = $derived(
@@ -227,7 +253,9 @@
 							hl: selectedRaid.group.hl,
 							extra: selectedRaid.group.extra,
 							guidebooks: selectedRaid.group.guidebooks,
-							unlimited: selectedRaid.group.unlimited
+							unlimited: selectedRaid.group.unlimited,
+							supportSummon: selectedRaid.group.supportSummon ?? true,
+							contentMode: selectedRaid.group.contentMode ?? null
 						}
 					: undefined,
 				extra: selectedRaid.extra
@@ -240,57 +268,21 @@
 		paneStack.pop()
 	}
 
-	interface JSONContent {
-		type?: string
-		text?: string
-		content?: JSONContent[]
-		attrs?: Record<string, unknown>
+	const descriptionPreviewText = $derived(descriptionPreview(description).text || null)
+
+	// Only while the raid is still the Solomonis zone the party was opened with
+	const showSolomonisDetails = $derived(!!solomonisDetails && raidId === initial.raidId)
+
+	function openSolomonisDetailsPane() {
+		if (!solomonisDetails) return
+		paneStack.push({
+			id: 'solomonis-details',
+			title: solomonisDetails.label,
+			component: SolomonisDetailsPane,
+			props: { getParty: solomonisDetails.getParty, canEdit: solomonisDetails.canEdit },
+			scrollable: true
+		})
 	}
-
-	/** Extract first non-empty paragraph from TipTap JSON content */
-	function getDescriptionPreview(desc: string | null): string | null {
-		if (!desc) return null
-		try {
-			const parsed = JSON.parse(desc) as JSONContent
-			if (parsed.type !== 'doc' || !parsed.content?.length) return null
-
-			// Extract text from an inline node (text or mention)
-			const getNodeText = (node: JSONContent): string => {
-				if (node.type === 'text') return node.text ?? ''
-				if (node.type === 'mention') {
-					const id = node.attrs?.id as
-						| { name?: { en?: string; ja?: string }; granblue_en?: string }
-						| undefined
-					const name = localizedName(id?.name)
-					return name !== '—' ? name : (id?.granblue_en ?? '')
-				}
-				return ''
-			}
-
-			// Extract text from a block
-			const getBlockText = (block: JSONContent): string =>
-				block.content?.map(getNodeText).join('') ?? ''
-
-			// Find first non-empty paragraph or heading
-			for (const node of parsed.content) {
-				if (node.type !== 'paragraph' && node.type !== 'heading') continue
-				const text = getBlockText(node).trim()
-				if (text) return text
-			}
-
-			return null
-		} catch {
-			// Legacy plain text - return first non-empty line
-			return (
-				desc
-					.split('\n')
-					.map((l) => l.trim())
-					.find(Boolean) ?? null
-			)
-		}
-	}
-
-	const descriptionPreview = $derived(getDescriptionPreview(description))
 
 	function openDescriptionPane() {
 		paneStack.push({
@@ -340,11 +332,20 @@
 					<Icon name="chevron-right" size={16} class="chevron-icon" />
 				</button>
 			</div>
+			{#if showSolomonisDetails && solomonisDetails}
+				<div class="raid-field">
+					<span class="raid-label">{solomonisDetails.label}</span>
+					<button type="button" class="raid-select-button" onclick={openSolomonisDetailsPane}>
+						<span class="raid-name">{solomonisDetails.summary}</span>
+						<Icon name="chevron-right" size={16} class="chevron-icon" />
+					</button>
+				</div>
+			{/if}
 			<div class="description-field">
 				<span class="description-label">{m.party_description()}</span>
 				<button type="button" class="description-button" onclick={openDescriptionPane}>
-					{#if descriptionPreview}
-						<span class="description-preview">{descriptionPreview}</span>
+					{#if descriptionPreviewText}
+						<span class="description-preview">{descriptionPreviewText}</span>
 					{:else}
 						<span class="description-placeholder">{m.sidebar_add_description()}</span>
 					{/if}
@@ -359,7 +360,7 @@
 	<DetailsSection title={m.visibility_label()}>
 		<PrivacySelector bind:value={visibility} {element} showLabel={false} />
 		{#if isInCrew}
-			<DetailRow label={m.party_edit_share_crew()} noHover compact>
+			<DetailRow label={m.party_edit_share_crew()} compact>
 				<Switch bind:checked={sharedWithCrew} size="small" {element} />
 			</DetailRow>
 		{/if}
@@ -380,19 +381,24 @@
 	<hr class="divider" />
 
 	<DetailsSection title={m.section_performance()}>
-		<DetailRow label={m.party_edit_clear_time()} noHover compact>
+		<DetailRow label={m.party_edit_clear_time()} compact>
 			<ClearTimeInput bind:value={clearTime} contained />
 		</DetailRow>
-		<DetailRow label={m.party_edit_button_count()} noHover compact>
+		<DetailRow label={m.party_edit_button_count()} compact>
 			<MetricField bind:value={buttonCount} label="B" contained />
 		</DetailRow>
-		<DetailRow label={m.party_edit_chain_count()} noHover compact>
+		<DetailRow label={m.party_edit_chain_count()} compact>
 			<MetricField bind:value={chainCount} label="C" contained />
 		</DetailRow>
-		<DetailRow label={m.party_edit_summon_count()} noHover compact>
+		<DetailRow label={m.party_edit_summon_count()} compact>
 			<MetricField bind:value={summonCount} label="S" contained />
 		</DetailRow>
 	</DetailsSection>
+
+	{#if stickerBreakdown}
+		<hr class="divider" />
+		<StickerBreakdownSection breakdown={stickerBreakdown} />
+	{/if}
 </div>
 
 <style lang="scss">

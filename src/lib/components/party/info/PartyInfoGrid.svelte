@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { AvatarUser } from '$lib/utils/avatar'
 	import type { Snippet } from 'svelte'
 	import type { Party } from '$lib/types/api/party'
 	import type { RaidFull } from '$lib/types/api/raid'
@@ -6,17 +7,14 @@
 	import RaidTile from './RaidTile.svelte'
 	import VideoTile from './VideoTile.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import * as m from '$lib/paraglide/messages'
 	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
+	import CalculatorPane from '$lib/components/sidebar/CalculatorPane.svelte'
 	import { getRaidImage } from '$lib/utils/images'
-	import { localizedName } from '$lib/utils/locale'
-
-	type AvatarUser = {
-		username?: string
-		avatar?: {
-			picture?: string | null
-			element?: string | null
-		} | null
-	}
+	import { appLocale, localizedName } from '$lib/utils/locale'
+	import type { FilterItem } from '$lib/types/filter'
+	import { isFullExpedition, solomonisName } from '$lib/components/solomonis/party/solomonisParty'
+	import { openSolomonisDetailsPane } from '$lib/components/solomonis/party/openSolomonisPanes'
 
 	interface Props {
 		party: Party
@@ -25,10 +23,18 @@
 		onEditDescription?: () => void
 		onOpenEdit?: () => void
 		onRaidSelect?: (raid: RaidFull | null) => void
+		/** The overflow menu, last in the header */
 		menu?: Snippet
+		/** The Remix button, before the calculator */
+		remix?: Snippet | undefined
+		/** The "Add sticker" button and its picker */
+		stickerPicker?: Snippet | undefined
+		/** The viewer can give this team a sticker */
+		canGiveSticker?: boolean
 		authUser?: AvatarUser | null
 		activeCollectionUser?: 'viewer' | 'source'
 		onSwitchCollectionUser?: (target: 'viewer' | 'source') => void
+		isEditor?: boolean
 	}
 
 	let {
@@ -39,9 +45,13 @@
 		onOpenEdit,
 		onRaidSelect,
 		menu,
+		remix,
+		stickerPicker,
+		canGiveSticker = false,
 		authUser,
 		activeCollectionUser,
-		onSwitchCollectionUser
+		onSwitchCollectionUser,
+		isEditor = false
 	}: Props = $props()
 
 	// Check if data exists for each tile
@@ -53,11 +63,41 @@
 	const showVideo = $derived(hasVideo || canEdit)
 	const showRow2 = $derived(showVideo || showRaid)
 
+	function handleOpenCalculator() {
+		if (!party.shortcode) return
+		sidebar.openWithComponent(
+			m.pane_skill_boosts(),
+			CalculatorPane,
+			{ shortcode: party.shortcode, element: party.element },
+			{ scrollable: true }
+		)
+	}
+
+	// Evoking Solomonis: the tile shows the route Evoker and opens the details pane
+	const expedition = $derived(isFullExpedition(party.solomonis) ? party.solomonis : null)
+	const locale = appLocale()
+
+	function handleViewSolomonisDetails() {
+		openSolomonisDetailsPane(() => party, canEdit)
+	}
+
 	function handleRaidClick() {
 		if (!party.raid) return
 
 		const raidName = localizedName(party.raid.name)
+		// Solomonis zones have no element; their teams differ by route Evoker
+		// instead, and some elements have two Evokers.
+		const evokerFilter: FilterItem[] | undefined = expedition
+			? [
+					{
+						kind: 'evoker' as const,
+						value: expedition.routeEvoker.granblueId,
+						label: solomonisName(expedition.routeEvoker.name, locale)
+					}
+				]
+			: undefined
 
+		// Titled by zone: the Evoker is a filter chip the user can switch
 		sidebar.openWithComponent(
 			raidName,
 			PartiesPane,
@@ -71,8 +111,13 @@
 					}
 				],
 				defaultElement: party.element,
-				excludedKinds: ['raid'] as const,
-				resetKey: party.raid.id
+				defaultFilters: evokerFilter,
+				solomonisZoneId: expedition ? party.raid.id : undefined,
+				// A zone's element follows its Evoker, so filter by Evoker instead
+				excludedKinds: expedition ? (['raid', 'element'] as const) : (['raid'] as const),
+				resetKey: expedition
+					? `${party.raid.id}:${expedition.routeEvoker.granblueId}`
+					: party.raid.id
 			},
 			{
 				scrollable: true,
@@ -86,13 +131,7 @@
 	<!-- Row 1: Description -->
 	<div class="row row-1">
 		<DescriptionTile
-			name={party.name}
-			description={party.description}
-			updatedAt={party.lastUpdated ?? party.updatedAt}
-			visibility={party.visibility}
-			user={party.user}
-			collectionSourceUser={party.collectionSourceUser}
-			sourceParty={party.sourceParty}
+			{party}
 			{authUser}
 			{activeCollectionUser}
 			{onSwitchCollectionUser}
@@ -100,16 +139,12 @@
 			{onOpenDescription}
 			{onEditDescription}
 			{onOpenEdit}
+			onOpenCalculator={handleOpenCalculator}
 			{menu}
-			fullAuto={party.fullAuto}
-			solo={party.solo}
-			autoGuard={party.autoGuard}
-			autoSummon={party.autoSummon}
-			chargeAttack={party.chargeAttack}
-			clearTime={party.clearTime}
-			buttonCount={party.buttonCount}
-			chainCount={party.chainCount}
-			summonCount={party.summonCount}
+			{remix}
+			{stickerPicker}
+			{canGiveSticker}
+			{isEditor}
 		/>
 	</div>
 
@@ -121,7 +156,14 @@
 			{/if}
 
 			{#if showRaid}
-				<RaidTile raid={party.raid} {canEdit} onclick={handleRaidClick} {onRaidSelect} />
+				<RaidTile
+					raid={party.raid}
+					{canEdit}
+					onclick={handleRaidClick}
+					{onRaidSelect}
+					{expedition}
+					onViewDetails={expedition ? handleViewSolomonisDetails : undefined}
+				/>
 			{/if}
 		</div>
 	{/if}

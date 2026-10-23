@@ -59,17 +59,15 @@
 		if (item.transcendenceDate) {
 			const transcendDate = new Date(item.transcendenceDate)
 			if (!isNaN(transcendDate.getTime()) && transcendDate.getTime() === lastTime) {
-				return 'Transcendence'
+				// Rolling-deploy fallback: this date represented ULB for special
+				// characters before the dedicated ULB fields were introduced.
+				return item.special && item.uncap?.ulb === undefined ? 'ULB' : 'Transcendence'
 			}
 		}
 		if (item.ulbDate) {
 			const ulbDate = new Date(item.ulbDate)
 			if (!isNaN(ulbDate.getTime()) && ulbDate.getTime() === lastTime) {
-				// Characters with transcendence have their "ULB" date but it's actually transcendence
-				// Check if this is a character by looking for character-specific fields
-				// Characters have 'race' and 'proficiency' arrays, weapons/summons don't have 'race'
-				const isCharacter = Array.isArray(item.race) && Array.isArray(item.proficiency)
-				return isCharacter ? 'Transcendence' : 'ULB'
+				return 'ULB'
 			}
 		}
 		if (item.flbDate) {

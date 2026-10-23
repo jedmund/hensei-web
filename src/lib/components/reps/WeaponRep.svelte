@@ -6,6 +6,7 @@
 		getWeaponFallbackImage,
 		handleImageFallback
 	} from '$lib/utils/images'
+	import { seriesHasTranscendenceArt } from '$lib/utils/weaponSeries'
 	interface Props {
 		party?: Party
 		weapons?: GridWeapon[]
@@ -29,7 +30,7 @@
 		if (w?.element) return undefined
 		const variant = isMain ? 'main' : 'grid'
 		const transformation = getWeaponTransformation(
-			w?.weapon?.uncap?.transcendence,
+			seriesHasTranscendenceArt(w?.weapon?.series),
 			w?.uncapLevel,
 			w?.transcendenceStep
 		)
@@ -42,7 +43,7 @@
 		// Mainhand images don't have a null-element variant, so default to fire (2).
 		const element = w?.weapon?.element === 0 ? (w?.element ?? (isMain ? 2 : 0)) : undefined
 		const transformation = getWeaponTransformation(
-			w?.weapon?.uncap?.transcendence,
+			seriesHasTranscendenceArt(w?.weapon?.series),
 			w?.uncapLevel,
 			w?.transcendenceStep
 		)

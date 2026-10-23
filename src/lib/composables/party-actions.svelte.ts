@@ -12,6 +12,9 @@ import { toast } from 'svelte-sonner'
 import { extractErrorMessage } from '$lib/utils/errors'
 import FavoriteToast from '$lib/components/ui/FavoriteToast.svelte'
 import * as m from '$lib/paraglide/messages'
+import { isFullExpedition, solomonisName } from '$lib/components/solomonis/party/solomonisParty'
+import { appLocale } from '$lib/utils/locale'
+import { partyToWikiText } from '$lib/utils/wikiExport'
 
 type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -24,6 +27,12 @@ interface PartyActionsOptions {
 	getUserElement: () => ElementType | undefined
 	getHasCollectionLinks: () => boolean
 	onDetailsUpdated?: () => void
+	/**
+	 * Called when the settings pane picks a different raid. Return true to
+	 * take over the raid change (e.g. Evoking Solomonis opens its route
+	 * picker or a confirm); the other settings are still saved.
+	 */
+	handleRaidChange?: (raid: PartyEditValues['raid']) => boolean
 }
 
 export function usePartyActions(opts: PartyActionsOptions) {
@@ -31,6 +40,8 @@ export function usePartyActions(opts: PartyActionsOptions) {
 	let error = $state<string | null>(null)
 	let deleteDialogOpen = $state(false)
 	let deleting = $state(false)
+	let wikiExportOpen = $state(false)
+	let wikiExportText = $state('')
 
 	async function updatePartyDetails(updates: Omit<UpdatePartyParams, 'id' | 'shortcode'>) {
 		if (!opts.canEdit()) return
@@ -232,13 +243,37 @@ export function usePartyActions(opts: PartyActionsOptions) {
 			raidId: party.raid?.id ?? null
 		}
 
+		const expedition = isFullExpedition(party.solomonis) ? party.solomonis : null
+		const locale = appLocale()
+
 		openPartyEditSidebar({
 			initialValues,
 			element: opts.getUserElement(),
+			// Only present in the owner's response
+			stickerBreakdown: party.stickerBreakdown,
+			solomonisDetails: expedition
+				? {
+						label: m.solomonis_web_party_title(),
+						// The zone already shows in the Raid row above
+						summary: [
+							solomonisName(expedition.routeEvoker.name, locale),
+							expedition.pledgeLevel > 0
+								? m.solomonis_web_party_pledge_short({ level: expedition.pledgeLevel })
+								: null
+						]
+							.filter(Boolean)
+							.join(' · '),
+						getParty: opts.getParty,
+						canEdit: true
+					}
+				: undefined,
 			onDescriptionSave: async (content) => {
 				await updatePartyDetails({ description: content })
 			},
 			onSave: async (values) => {
+				const raidHandled =
+					values.raidId !== initialValues.raidId && (opts.handleRaidChange?.(values.raid) ?? false)
+
 				await updatePartyDetails({
 					name: values.name,
 					description: values.description ?? undefined,
@@ -253,7 +288,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 					chainCount: values.chainCount,
 					summonCount: values.summonCount,
 					videoUrl: values.videoUrl,
-					raidId: values.raidId
+					...(raidHandled ? {} : { raidId: values.raidId })
 				})
 
 				// Handle crew share toggle
@@ -287,6 +322,24 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		})
 	}
 
+	/** Shows the team as gbf.wiki TeamSpread markup, linking back to this page. */
+	function openWikiExport() {
+		const party = opts.getParty()
+		const url = `${window.location.origin}/teams/${party.shortcode}`
+		wikiExportText = partyToWikiText(party, { url })
+		wikiExportOpen = true
+	}
+
+	async function copyWikiExport() {
+		try {
+			await navigator.clipboard.writeText(wikiExportText)
+			toast.success(m.toast_copied_wiki_export())
+			wikiExportOpen = false
+		} catch {
+			toast.error(m.toast_copy_failed())
+		}
+	}
+
 	return {
 		get loading() {
 			return loading
@@ -306,6 +359,15 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		get deleting() {
 			return deleting
 		},
+		get wikiExportOpen() {
+			return wikiExportOpen
+		},
+		set wikiExportOpen(v: boolean) {
+			wikiExportOpen = v
+		},
+		get wikiExportText() {
+			return wikiExportText
+		},
 		get isSyncingAll() {
 			return opts.mutations.grid.syncAllItems.isPending
 		},
@@ -317,7 +379,9 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		handleUnlinkCollection,
 		openDescriptionPanel,
 		editDescriptionPanel,
-		openSettingsPanel
+		openSettingsPanel,
+		openWikiExport,
+		copyWikiExport
 	}
 }
 

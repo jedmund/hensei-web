@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest'
 
 vi.mock('$lib/utils/images', () => ({
+	BUCKET: { weaponKeys: 'weapons/keys' },
 	getBasePath: vi.fn(() => '/images')
 }))
 
@@ -45,12 +46,12 @@ describe('getAwakeningImage', () => {
 
 	it('returns jpg for character awakenings', () => {
 		const url = getAwakeningImage({ type: { slug: 'character-attack' } as unknown as Awakening })
-		expect(url).toBe('/images/awakening/character-attack.jpg')
+		expect(url).toBe('/images/icons/awakening/character-attack.jpg')
 	})
 
 	it('returns png for weapon awakenings', () => {
 		const url = getAwakeningImage({ type: { slug: 'attack' } as unknown as Awakening })
-		expect(url).toBe('/images/awakening/attack.png')
+		expect(url).toBe('/images/icons/awakening/attack.png')
 	})
 })
 
@@ -63,13 +64,19 @@ describe('getWeaponKeyImage', () => {
 		expect(getWeaponKeyImage(makeKey({ slug: '' }))).toBe('')
 	})
 
-	it('returns key image using slug directly', () => {
-		expect(getWeaponKeyImage(makeKey())).toBe('/images/weapon-keys/alpha.png')
+	it('returns the new weapon-key path using the slug directly', () => {
+		const key = makeKey({ slug: 'anklet-ascendance' })
+		expect(getWeaponKeyImage(key)).toBe('/images/weapons/keys/anklet-ascendance.png')
 	})
 
-	it('does not add any suffixes', () => {
-		const key = makeKey({ slug: 'pendulum-strength', slot: 1, granblueId: 15008 })
-		expect(getWeaponKeyImage(key)).toBe('/images/weapon-keys/pendulum-strength.png')
+	it('uses a proficiency-specific Gauph image when available', () => {
+		const key = makeKey({ slug: 'gauph-strength', slot: 0 })
+		expect(getWeaponKeyImage(key, 1)).toBe('/images/weapons/keys/gauph-strength-1.png')
+	})
+
+	it('falls back to the slug-only Gauph image without a proficiency', () => {
+		const key = makeKey({ slug: 'gauph-strength', slot: 0 })
+		expect(getWeaponKeyImage(key)).toBe('/images/weapons/keys/gauph-strength.png')
 	})
 })
 
@@ -103,7 +110,7 @@ describe('getWeaponKeyImages', () => {
 	it('uses slug directly without suffixes', () => {
 		const keys = [makeKey({ slug: 'strife', slot: 0 })]
 		const result = getWeaponKeyImages(keys)
-		expect(result[0]!.url).toBe('/images/weapon-keys/strife.png')
+		expect(result[0]!.url).toBe('/images/weapons/keys/strife.png')
 	})
 
 	it('returns all entries even with duplicate slugs', () => {
@@ -113,8 +120,8 @@ describe('getWeaponKeyImages', () => {
 		]
 		const result = getWeaponKeyImages(keys)
 		expect(result).toHaveLength(2)
-		expect(result[0]!.url).toBe('/images/weapon-keys/pendulum-supremacy.png')
-		expect(result[1]!.url).toBe('/images/weapon-keys/pendulum-supremacy.png')
+		expect(result[0]!.url).toBe('/images/weapons/keys/pendulum-supremacy.png')
+		expect(result[1]!.url).toBe('/images/weapons/keys/pendulum-supremacy.png')
 	})
 })
 
@@ -132,7 +139,7 @@ describe('getAxSkillImage', () => {
 	})
 
 	it('returns ax image path', () => {
-		expect(getAxSkillImage({ slug: 'might' })).toBe('/images/ax/might.png')
+		expect(getAxSkillImage({ slug: 'might' })).toBe('/images/icons/ax-skills/might.png')
 	})
 })
 

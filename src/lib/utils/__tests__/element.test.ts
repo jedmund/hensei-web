@@ -152,11 +152,11 @@ describe('getOppositeElement', () => {
 
 describe('getElementImage', () => {
 	it('returns element image path', () => {
-		expect(getElementImage(2)).toBe('/images/elements/fire.png')
+		expect(getElementImage(2)).toBe('/images/icons/elements/fire.png')
 	})
 
 	it('returns null element image', () => {
-		expect(getElementImage(0)).toBe('/images/elements/null.png')
+		expect(getElementImage(0)).toBe('/images/icons/elements/null.png')
 	})
 
 	it('returns empty string for undefined/null', () => {

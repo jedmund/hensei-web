@@ -6,9 +6,14 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
+	import RemoveUnitDialog from './RemoveUnitDialog.svelte'
+	import SubstituteCountBadge from './SubstituteCountBadge.svelte'
+	import BookmarkOverlay from './BookmarkOverlay.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
+	import RichTooltip from '$lib/components/ui/RichTooltip.svelte'
+	import { getAbilitySlots } from '$lib/utils/fullAutoSkills'
 	import { getCharacterImageWithPose, getPlaceholderImage } from '$lib/utils/images'
 	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import {
@@ -27,6 +32,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 	interface Props {
 		item?: GridCharacter | undefined
 		position: number
@@ -67,7 +73,8 @@
 			item.character.styleSwap,
 			simplePortraits.value,
 			item.character.element,
-			item.character.genderVariants ? gender : undefined
+			item.character.genderVariants ? gender : undefined,
+			item.character.special
 		)
 	})
 
@@ -84,17 +91,19 @@
 		getElementClassName(item?.character?.element || mainWeaponElement || partyElement)
 	)
 
-	async function remove() {
+	let removeConfirmOpen = $state(false)
+
+	function remove() {
 		if (!item?.id) return
-		try {
-			const party = ctx.getParty()
-			const editKey = ctx.getEditKey()
-			await ctx.services.gridService.removeCharacter(party.id, item.id, editKey || undefined)
-		} catch (err) {
-			console.error('Error removing character:', err)
-			toast.error(extractErrorMessage(err, 'Failed to remove character'))
-		}
+		removeConfirmOpen = true
 	}
+
+	const removeAction = useAsyncAction(async () => {
+		if (!item?.id) return
+		const party = ctx.getParty()
+		const editKey = ctx.getEditKey()
+		await ctx.services.gridService.removeCharacter(party.id, item.id, editKey || undefined)
+	}, 'Failed to remove character')
 
 	let canEditItem = $derived(canCharacterBeModified(item))
 
@@ -107,18 +116,26 @@
 
 	function viewDetails() {
 		if (!item) return
+		const party = ctx.getParty()
 		openDetailsSidebar({
 			type: 'character',
 			item,
 			onSaveCharacter: getSaveCallback(),
 			isOwner: ctx?.canEdit() ?? false,
-			onReplace: ctx?.canEdit() ? replace : undefined
+			onReplace: ctx?.canEdit() ? replace : undefined,
+			onRemove: ctx?.canEdit() ? remove : undefined,
+			partyId: party?.id,
+			partyShortcode: party?.shortcode
 		})
 	}
 
 	function editItem() {
 		if (!item) return
-		openCharacterEditSidebar(item, getSaveCallback())
+		const party = ctx.getParty()
+		openCharacterEditSidebar(item, getSaveCallback(), {
+			partyId: party?.id,
+			partyShortcode: party?.shortcode
+		})
 	}
 
 	function replace() {
@@ -169,6 +186,19 @@
 		}
 	}
 
+	// Full Auto skill display: only meaningful when the party is in Full Auto.
+	// Shows every ability as an icon; an eligible ability that is toggled off is
+	// dimmed, while ineligible abilities (heal/field/target-ally) never dim and
+	// always read as Disabled since they can't be used in Full Auto.
+	let partyFullAuto = $derived(ctx?.getParty?.()?.fullAuto ?? false)
+	let abilitySlots = $derived(item?.character ? getAbilitySlots(item.character) : [])
+	let faSkills = $derived(item?.fullAutoSkills ?? {})
+
+	// Absent or true => ON; only an explicit false is OFF.
+	function isFaSlotOn(slot: number): boolean {
+		return faSkills[String(slot)] !== false
+	}
+
 	async function togglePerpetuity(e: Event) {
 		e.stopPropagation()
 		if (!item?.id || !ctx?.canEdit()) return
@@ -196,7 +226,7 @@
 	class:orphaned={item?.orphaned}
 >
 	{#if item}
-		<UnitMenuContainer showGearButton={true}>
+		<UnitMenuContainer showGearButton={true} gearPosition="top-right">
 			{#snippet trigger()}
 				<div
 					class="focus-ring-wrapper {elementClass}"
@@ -272,6 +302,11 @@
 							{/if}
 						</div>
 					{/key}
+					{#if inCollection}
+						<BookmarkOverlay
+							element={item?.character?.element ?? mainWeaponElement ?? partyElement}
+						/>
+					{/if}
 				</div>
 			{/snippet}
 
@@ -333,8 +368,9 @@
 				transcendenceStage={item.transcendenceStep}
 				special={item.character?.special}
 				flb={item.character?.uncap?.flb}
-				ulb={item.character?.uncap?.transcendence}
+				ulb={item.character?.uncap?.ulb}
 				transcendence={item.character?.uncap?.transcendence}
+				maxTranscendenceStage={item.character?.uncap?.maxTranscendenceStage}
 				editable={ctx?.canEdit()}
 				updateUncap={async (level) => {
 					if (!item?.id || !ctx) return
@@ -372,16 +408,70 @@
 		{/if}
 	{/key}
 	<div class="name" class:not-in-collection={notInCollection}>
-		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
-		{item ? localizedName(item?.character?.name) : ''}
+		<span class="name-text">{item ? localizedName(item?.character?.name) : ''}</span>
 		{#if item?.artifact}
 			<Icon name="gem" size={12} class="artifact-indicator" />
+		{/if}
+		{#if item}
+			<SubstituteCountBadge
+				count={item.substitutions?.length ?? 0}
+				element={item.character?.element ?? mainWeaponElement ?? partyElement}
+			/>
 		{/if}
 	</div>
 	{#if item?.character}
 		<CharacterTags character={item.character} />
 	{/if}
+	{#if item?.character && partyFullAuto && abilitySlots.length > 0}
+		<div class="fa-skills">
+			{#each abilitySlots as s (s.slot)}
+				{@const on = s.eligible && isFaSlotOn(s.slot)}
+				{@const dimmed = s.eligible && !isFaSlotOn(s.slot)}
+				<RichTooltip>
+					{#snippet content()}
+						<div class="fa-skill-tip">
+							<span class="fa-skill-tip-name">{s.name}</span>
+							<span class="fa-skill-tip-status" class:enabled={on}>
+								<Icon name="full-auto" size={16} />
+								{on ? m.full_auto_skill_enabled() : m.full_auto_skill_disabled()}
+							</span>
+						</div>
+					{/snippet}
+					{#if ctx?.canEdit()}
+						<button class="fa-skill" class:dimmed onclick={() => viewDetails()} aria-label={s.name}>
+							{@render FaSkillIcon(s.iconUrl, s.name)}
+						</button>
+					{:else}
+						<span class="fa-skill" class:dimmed>
+							{@render FaSkillIcon(s.iconUrl, s.name)}
+						</span>
+					{/if}
+				</RichTooltip>
+			{/each}
+		</div>
+	{/if}
 </div>
+
+{#snippet FaSkillIcon(iconUrl: string | null, name: string)}
+	{#if iconUrl}
+		<img
+			class="fa-skill-icon"
+			src={iconUrl}
+			alt={name}
+			loading="lazy"
+			onerror={(e) => ((e.currentTarget as HTMLImageElement).style.visibility = 'hidden')}
+		/>
+	{:else}
+		<span class="fa-skill-icon placeholder"></span>
+	{/if}
+{/snippet}
+
+<RemoveUnitDialog
+	bind:open={removeConfirmOpen}
+	type="character"
+	name={item?.character ? localizedName(item.character.name) : null}
+	onConfirm={removeAction.run}
+/>
 
 <style lang="scss">
 	@use '$src/themes/colors' as colors;
@@ -506,18 +596,12 @@
 	}
 
 	.name {
-		font-size: typography.$font-small;
-		text-align: center;
-		color: var(--text-secondary);
-
-		:global(span) {
-			display: inline;
-			vertical-align: -4px;
-		}
-
+		display: flex;
 		align-items: center;
 		justify-content: center;
-		gap: spacing.$unit-fourth;
+		gap: spacing.$unit-half;
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
 
 		:global(.artifact-indicator) {
 			color: var(--extra-purple-text);
@@ -525,11 +609,86 @@
 		}
 	}
 
+	.name-text {
+		// min-width: 0 lets the text item shrink under content size so long
+		// names wrap inside the span instead of forcing the bookmark/badge
+		// onto their own flex line.
+		min-width: 0;
+		text-align: center;
+		overflow-wrap: anywhere;
+	}
+
+	.fa-skills {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: spacing.$unit-half;
+	}
+
+	.fa-skill {
+		display: inline-flex;
+		padding: 0;
+		border: none;
+		background: transparent;
+		line-height: 0;
+		transition: opacity 0.15s ease;
+
+		&.dimmed {
+			opacity: 0.35;
+		}
+	}
+
+	button.fa-skill {
+		cursor: pointer;
+
+		&:hover {
+			opacity: 0.85;
+
+			&.dimmed {
+				opacity: 0.55;
+			}
+		}
+	}
+
+	.fa-skill-icon {
+		width: 32px;
+		height: 32px;
+		object-fit: cover;
+		border-radius: layout.$item-corner-small;
+		border: 1px solid var(--border-primary);
+		background: var(--placeholder-bg);
+
+		&.placeholder {
+			display: inline-block;
+		}
+	}
+
+	:global(.fa-skill-tip) {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit-quarter;
+	}
+
+	:global(.fa-skill-tip-status) {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit-half;
+		color: var(--text-secondary);
+	}
+
+	// Enabled abilities use the bright Full Auto yellow for the icon (currentColor)
+	// and label. --full-auto-bg is the brand yellow and stays bright on the dark
+	// tooltip background regardless of the app theme.
+	:global(.fa-skill-tip-status.enabled) {
+		color: var(--full-auto-bg);
+	}
+
 	.perpetuity {
 		position: absolute;
 		z-index: effects.$z-tooltip;
 		top: calc(spacing.$unit * -1);
-		right: spacing.$unit-3x;
+		right: 44px;
 		width: spacing.$unit-4x;
 		height: spacing.$unit-4x;
 		padding: 0;

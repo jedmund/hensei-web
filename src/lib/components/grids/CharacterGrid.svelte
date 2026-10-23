@@ -26,13 +26,23 @@
 		collectionCharacterItems = undefined
 	}: Props = $props()
 
-	// Dynamic slot count based on unlimited flag
-	const slotCount = $derived(unlimited ? 8 : 5)
-
 	import CharacterUnit from '$lib/components/units/CharacterUnit.svelte'
+	import BroughtByBlessing from '$lib/components/solomonis/grid/BroughtByBlessing.svelte'
+	import {
+		canMarkBroughtByBlessing,
+		characterSlotCount,
+		getExpedition
+	} from '$lib/components/solomonis/grid/seal'
 
 	const ctx = usePartyContext()
 	const dragContext = getDragDropContext()
+
+	// Evoking Solomonis limits characters to the route Evoker and up to 4
+	// recruits.
+	const expedition = $derived(getExpedition(ctx?.getParty()))
+
+	// Dynamic slot count based on unlimited flag
+	const slotCount = $derived(expedition ? characterSlotCount(characters) : unlimited ? 8 : 5)
 
 	// Create array with proper empty slots
 	let characterSlots = $derived.by(() => {
@@ -79,6 +89,15 @@
 	})
 </script>
 
+{#snippet solomonisAlly(character: GridCharacter | undefined)}
+	{#if expedition && character}
+		<BroughtByBlessing
+			{character}
+			allowed={canMarkBroughtByBlessing(expedition, characters, character)}
+		/>
+	{/if}
+{/snippet}
+
 <div class="wrapper">
 	<ul class="characters" class:unlimited aria-label="Character Grid">
 		{#each characterSlots as character, i (i)}
@@ -113,6 +132,7 @@
 							/>
 						</DraggableItem>
 					</DropZone>
+					{@render solomonisAlly(character)}
 				{:else}
 					<CharacterUnit
 						item={character}
@@ -126,6 +146,7 @@
 							!!character?.character?.granblueId &&
 							!!collectionStatus.get(i)}
 					/>
+					{@render solomonisAlly(character)}
 				{/if}
 			</li>
 		{/each}

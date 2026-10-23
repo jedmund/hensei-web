@@ -56,13 +56,7 @@
 	// Element for button styling
 	const elementName = $derived(
 		getElementLabel(weapon?.element)?.toLowerCase() as
-			| 'wind'
-			| 'fire'
-			| 'water'
-			| 'earth'
-			| 'dark'
-			| 'light'
-			| undefined
+			'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 	)
 
 	// Save state
@@ -109,6 +103,7 @@
 		nicknamesEn: [] as string[],
 		nicknamesJp: [] as string[],
 		recruits: '',
+		recruitQuery: '',
 		// Forge chain fields
 		forgedFrom: '' as string | null,
 		forgeOrder: null as number | null,
@@ -169,6 +164,7 @@
 					typeof weapon.recruits === 'string'
 						? weapon.recruits
 						: (weapon.recruits?.granblueId ?? ''),
+				recruitQuery: '',
 				// Forge chain fields
 				forgedFrom: weapon.forgedFrom?.granblueId || null,
 				forgeOrder: weapon.forgeOrder ?? null,

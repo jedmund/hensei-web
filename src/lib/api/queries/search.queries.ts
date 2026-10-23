@@ -8,7 +8,11 @@
  */
 
 import { infiniteQueryOptions } from '@tanstack/svelte-query'
-import { searchAdapter, type SearchParams } from '$lib/api/adapters/search.adapter'
+import {
+	searchAdapter,
+	type SearchParams,
+	type UnifiedSearchSeriesRef
+} from '$lib/api/adapters/search.adapter'
 
 /**
  * Filter configuration for search queries
@@ -42,13 +46,19 @@ export interface SearchPageResult {
 		rarity?: number
 		/** Proficiency - number for weapons, array for characters */
 		proficiency?: number | number[]
-		/** Series - object for weapons, number array for characters */
-		series?: { id: string; slug: string; name: { en: string; ja: string } } | number[]
+		/** Series - object for weapons, reference/legacy-number array for characters */
+		series?: UnifiedSearchSeriesRef | (number | UnifiedSearchSeriesRef)[]
 		imageUrl?: string
 		searchableType: 'Weapon' | 'Character' | 'Summon'
 		/** Season variant (characters only) */
 		season?: number | null
-		uncap?: { flb?: boolean; ulb?: boolean; transcendence?: boolean }
+		special?: boolean
+		uncap?: {
+			flb?: boolean
+			ulb?: boolean
+			transcendence?: boolean
+			maxTranscendenceStage?: number
+		}
 	}>
 	page: number
 	totalPages: number

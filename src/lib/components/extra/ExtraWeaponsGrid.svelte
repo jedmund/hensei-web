@@ -7,9 +7,11 @@
 	interface Props {
 		weapons?: GridWeapon[]
 		offset?: number
+		/** Per-position in-collection map plumbed through from WeaponGrid. */
+		collectionStatus?: Map<number, boolean> | null
 	}
 
-	let { weapons = [], offset = 9 }: Props = $props()
+	let { weapons = [], offset = 9, collectionStatus = null }: Props = $props()
 
 	// Create array for extra weapon slots by finding weapons at positions offset+0, offset+1, offset+2
 	let extraWeaponSlots = $derived.by(() => {
@@ -21,7 +23,16 @@
 	<ul class="grid">
 		{#each extraWeaponSlots as weapon, i (i)}
 			<li class:empty={!weapon}>
-				<WeaponUnit item={weapon} position={offset + i} />
+				<WeaponUnit
+					item={weapon}
+					position={offset + i}
+					notInCollection={collectionStatus != null &&
+						!!weapon?.weapon?.granblueId &&
+						!collectionStatus.get(offset + i)}
+					inCollection={collectionStatus != null &&
+						!!weapon?.weapon?.granblueId &&
+						!!collectionStatus.get(offset + i)}
+				/>
 			</li>
 		{/each}
 	</ul>

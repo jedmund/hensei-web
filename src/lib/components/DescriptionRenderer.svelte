@@ -1,20 +1,8 @@
 <script lang="ts">
-	import type { JSONContent } from '@tiptap/core'
-	import { localizedName } from '$lib/utils/locale'
 	import { computePosition, flip, shift, offset } from '@floating-ui/dom'
 	import MentionTooltip from '$lib/components/ui/MentionTooltip.svelte'
-	import * as m from '$lib/paraglide/messages'
-
-	interface MentionEntity {
-		granblue_id: string
-		name: { en: string; ja: string }
-		type: string
-		element: { id: number; slug: string }
-		proficiency?: number | number[]
-		season?: number | null
-		series?: number[] | { id: string; slug: string; name: { en: string; ja: string } }[] | null
-		styleSwap?: boolean
-	}
+	import type { MentionToken } from './edra/extensions/entity-mention/mentions/index.js'
+	import { parseDescription } from '$lib/utils/descriptionHtml'
 
 	interface Props {
 		content?: string
@@ -25,218 +13,12 @@
 	let { content, truncate = false, maxLines = 3 }: Props = $props()
 
 	// Tooltip state
-	let tooltipEntity: MentionEntity | null = $state(null)
+	let tooltipEntity: MentionToken | null = $state(null)
 	let tooltipVisible = $state(false)
 	let tooltipEl: HTMLDivElement | null = $state(null)
 	let containerEl: HTMLDivElement | null = $state(null)
 
-	// Convert TipTap JSON to HTML, collecting mention entities as a side effect
-	// The collector map is passed in rather than mutating module-level state
-	function jsonToHtml(
-		node: JSONContent,
-		collector: Map<number, MentionEntity>,
-		counter: { value: number }
-	): string {
-		if (!node) return ''
-
-		// Handle text nodes
-		if (node.type === 'text') {
-			let text = node.text || ''
-
-			// Apply marks (formatting)
-			if (node.marks) {
-				node.marks.forEach((mark) => {
-					switch (mark.type) {
-						case 'bold':
-							text = `<strong>${text}</strong>`
-							break
-						case 'italic':
-							text = `<em>${text}</em>`
-							break
-						case 'strike':
-							text = `<s>${text}</s>`
-							break
-						case 'underline':
-							text = `<u>${text}</u>`
-							break
-						case 'highlight':
-							text = `<mark>${text}</mark>`
-							break
-						case 'link':
-							text = `<a href="${mark.attrs?.href}" target="_blank" rel="noopener noreferrer">${text}</a>`
-							break
-						case 'code':
-							text = `<code>${text}</code>`
-							break
-					}
-				})
-			}
-			return text
-		}
-
-		// Handle different node types
-		switch (node.type) {
-			case 'doc':
-				return (node.content || []).map((n) => jsonToHtml(n, collector, counter)).join('')
-
-			case 'paragraph': {
-				const content = (node.content || []).map((n) => jsonToHtml(n, collector, counter)).join('')
-				return `<p>${content || '<br>'}</p>`
-			}
-
-			case 'heading': {
-				const level = node.attrs?.level || 1
-				const headingContent = (node.content || [])
-					.map((n) => jsonToHtml(n, collector, counter))
-					.join('')
-				return `<h${level}>${headingContent}</h${level}>`
-			}
-
-			case 'bulletList': {
-				const listItems = (node.content || [])
-					.map((n) => jsonToHtml(n, collector, counter))
-					.join('')
-				return `<ul>${listItems}</ul>`
-			}
-
-			case 'orderedList': {
-				const orderedItems = (node.content || [])
-					.map((n) => jsonToHtml(n, collector, counter))
-					.join('')
-				return `<ol>${orderedItems}</ol>`
-			}
-
-			case 'listItem': {
-				const itemContent = (node.content || [])
-					.map((n) => jsonToHtml(n, collector, counter))
-					.join('')
-				return `<li>${itemContent}</li>`
-			}
-
-			case 'blockquote': {
-				const quoteContent = (node.content || [])
-					.map((n) => jsonToHtml(n, collector, counter))
-					.join('')
-				return `<blockquote>${quoteContent}</blockquote>`
-			}
-
-			case 'codeBlock': {
-				const codeContent = (node.content || []).map((n) => n.text || '').join('')
-				return `<pre><code>${codeContent}</code></pre>`
-			}
-
-			case 'hardBreak':
-				return '<br>'
-
-			case 'horizontalRule':
-				return '<hr>'
-
-			case 'youtube': {
-				const videoUrl = node.attrs?.src || ''
-				// Extract video ID from various YouTube URL formats
-				let videoId = ''
-
-				// Handle different YouTube URL formats
-				const patterns = [
-					/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
-					/youtube\.com\/watch\?.*v=([^&\n?#]+)/
-				]
-
-				for (const pattern of patterns) {
-					const match = videoUrl.match(pattern)
-					if (match) {
-						videoId = match[1]
-						break
-					}
-				}
-
-				// If we couldn't extract an ID, fall back to link
-				if (!videoId) {
-					return `<p><a href="${videoUrl}" target="_blank" rel="noopener noreferrer">${m.description_view_video()}</a></p>`
-				}
-
-				// For truncated view, show a link instead of embed
-				if (truncate) {
-					return `<p><a href="${videoUrl}" target="_blank" rel="noopener noreferrer">${m.description_view_video()}</a></p>`
-				}
-
-				// Embed YouTube video with responsive iframe
-				return `<div class="video-wrapper">
-					<iframe
-						src="https://www.youtube.com/embed/${videoId}"
-						title="${m.tooltip_youtube_video()}"
-						frameborder="0"
-						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-						allowfullscreen
-					></iframe>
-				</div>`
-			}
-
-			case 'mention': {
-				// Handle game item mentions
-				const attrs = node.attrs?.id
-				const wikiName = attrs?.name?.en || attrs?.granblue_en || 'Unknown'
-				const mentionName = localizedName(attrs?.name)
-				const displayName = mentionName !== '—' ? mentionName : attrs?.granblue_en || 'Unknown'
-				const wikiUrl = `https://gbf.wiki/${wikiName}`
-				const elementSlug = attrs?.element?.slug ?? ''
-				const entityType = attrs?.type ?? ''
-
-				// Store entity data for tooltip
-				const idx = counter.value++
-				collector.set(idx, {
-					granblue_id: attrs?.granblue_id ?? '',
-					name: attrs?.name ?? { en: wikiName, ja: wikiName },
-					type: entityType,
-					element: attrs?.element ?? { id: 0, slug: 'null' },
-					proficiency: attrs?.proficiency,
-					season: attrs?.season,
-					series: attrs?.series,
-					styleSwap: attrs?.styleSwap
-				})
-
-				const entityJson = JSON.stringify(collector.get(idx)).replace(/"/g, '&quot;')
-				return `<a href="${wikiUrl}" target="_blank" rel="noopener noreferrer" class="mention" data-type="mention" data-id="${entityJson}" data-element="${elementSlug}" data-entity-type="${entityType}" data-mention-index="${idx}">${displayName}</a>`
-			}
-
-			default:
-				// For unknown types, try to render content if it exists
-				if (node.content) {
-					return (node.content || []).map((n) => jsonToHtml(n, collector, counter)).join('')
-				}
-				return ''
-		}
-	}
-
-	// Parse content - handle both JSON and plain text
-	function parseContent(content?: string): {
-		html: string
-		entities: Map<number, MentionEntity>
-	} {
-		if (!content) return { html: '', entities: new Map() }
-
-		const collector = new Map<number, MentionEntity>()
-		const counter = { value: 0 }
-
-		// Try to parse as JSON first
-		try {
-			const json = JSON.parse(content) as JSONContent
-			return { html: jsonToHtml(json, collector, counter), entities: collector }
-		} catch {
-			// If not JSON, treat as plain text
-			// Convert double newlines to paragraphs and single newlines to br tags
-			const paragraphs = content.split('\n\n')
-			const formatted = paragraphs
-				.map((p) => {
-					const lines = p.split('\n')
-					return `<p>${lines.join('<br />')}</p>`
-				})
-				.join('')
-			return { html: formatted, entities: collector }
-		}
-	}
-
-	const parsed = $derived(parseContent(content))
+	const parsed = $derived(parseDescription(content, truncate))
 	const parsedHTML = $derived(parsed.html)
 	const mentionEntities = $derived(parsed.entities)
 
@@ -435,6 +217,32 @@
 				&[data-element='light'] {
 					background: var(--light-mention-bg);
 					color: var(--light-text);
+				}
+
+				// Skill mentions tint by skill type color rather than element.
+				&[data-skill-color='damage'] {
+					background: color-mix(in srgb, #d64545 18%, transparent);
+					color: #d64545;
+				}
+
+				&[data-skill-color='heal'] {
+					background: color-mix(in srgb, #3fa34d 18%, transparent);
+					color: #3fa34d;
+				}
+
+				&[data-skill-color='buff'] {
+					background: color-mix(in srgb, #e0a93b 18%, transparent);
+					color: #b9831f;
+				}
+
+				&[data-skill-color='debuff'] {
+					background: color-mix(in srgb, #4a6fd6 18%, transparent);
+					color: #4a6fd6;
+				}
+
+				&[data-skill-color='field'] {
+					background: color-mix(in srgb, #8b5cf6 18%, transparent);
+					color: #8b5cf6;
 				}
 			}
 

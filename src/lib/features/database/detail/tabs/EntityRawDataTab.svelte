@@ -2,7 +2,11 @@
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import type { Snippet } from 'svelte'
 	import type { EntityRawData } from '$lib/api/adapters/entity.adapter'
+	import * as m from '$lib/paraglide/messages'
+	import { formatRelativeTime } from '$lib/utils/date'
+	import { getLocale } from '$lib/paraglide/runtime'
 
 	interface Props {
 		wikiRaw?: string | null
@@ -11,6 +15,12 @@
 		isLoading?: boolean
 		canEdit?: boolean
 		onFetchWiki?: () => Promise<EntityRawData>
+		/** Re-parses stored wikitext into structured rows (skills/auras); receives fetch-first */
+		onReparse?: (refetch: boolean) => Promise<unknown>
+		/** Replaces the checkbox and Re-parse with the entity's own actions (characters) */
+		wikiActions?: Snippet
+		/** When the stored wikitext was fetched; shown when passed */
+		fetchedAt?: { en: string | null | undefined; jp: string | null | undefined }
 	}
 
 	let {
@@ -19,15 +29,47 @@
 		gameRawJp,
 		isLoading = false,
 		canEdit = false,
-		onFetchWiki
+		onFetchWiki,
+		onReparse,
+		wikiActions,
+		fetchedAt
 	}: Props = $props()
+
+	const fetchedRows = $derived(
+		fetchedAt
+			? [
+					{ key: 'en', label: m.character_refresh_fetched_en(), at: fetchedAt.en },
+					{ key: 'jp', label: m.character_refresh_fetched_jp(), at: fetchedAt.jp }
+				]
+			: []
+	)
 
 	let selectedLang = $state('en')
 	let isFetching = $state(false)
 	let fetchError = $state<string | null>(null)
+	let isReparsing = $state(false)
+	let reparseFetchFirst = $state(false)
+	let reparseMessage = $state<string | null>(null)
 
 	const currentGameRaw = $derived(selectedLang === 'en' ? gameRawEn : gameRawJp)
 	const formattedGameRaw = $derived(currentGameRaw ? JSON.stringify(currentGameRaw, null, 2) : null)
+
+	async function handleReparse() {
+		if (!onReparse) return
+
+		isReparsing = true
+		fetchError = null
+		reparseMessage = null
+
+		try {
+			await onReparse(reparseFetchFirst)
+			reparseMessage = 'Re-parsed successfully.'
+		} catch (err: unknown) {
+			fetchError = err instanceof Error ? err.message : 'Failed to re-parse'
+		} finally {
+			isReparsing = false
+		}
+	}
 
 	async function handleFetchWiki() {
 		if (!onFetchWiki) return
@@ -52,14 +94,58 @@
 		<section class="raw-section">
 			<div class="section-header">
 				<h3>Wiki Raw</h3>
-				{#if canEdit && onFetchWiki}
-					<Button variant="secondary" size="small" onclick={handleFetchWiki} disabled={isFetching}>
-						{isFetching ? 'Fetching...' : 'Fetch Wiki'}
-					</Button>
+				{#if canEdit}
+					<div class="section-actions">
+						{#if wikiActions}
+							{@render wikiActions()}
+						{:else if onReparse}
+							<label class="reparse-option">
+								<input type="checkbox" bind:checked={reparseFetchFirst} />
+								Fetch fresh wikitext first
+							</label>
+							<Button
+								variant="secondary"
+								size="small"
+								onclick={handleReparse}
+								disabled={isReparsing || isFetching}
+							>
+								{isReparsing ? 'Re-parsing...' : 'Re-parse'}
+							</Button>
+						{/if}
+						{#if onFetchWiki}
+							<Button
+								variant="secondary"
+								size="small"
+								onclick={handleFetchWiki}
+								disabled={isFetching || isReparsing}
+							>
+								{isFetching
+									? m.character_refresh_fetching_wiki()
+									: m.character_refresh_fetch_wiki()}
+							</Button>
+						{/if}
+					</div>
 				{/if}
 			</div>
+			{#if fetchedRows.length > 0}
+				<dl class="fetched-at">
+					{#each fetchedRows as row (row.key)}
+						<div>
+							<dt>{row.label}</dt>
+							<dd title={row.at ? new Date(row.at).toLocaleString() : undefined}>
+								{row.at
+									? formatRelativeTime(row.at, getLocale())
+									: m.character_refresh_never_fetched()}
+							</dd>
+						</div>
+					{/each}
+				</dl>
+			{/if}
 			{#if fetchError}
 				<p class="error">{fetchError}</p>
+			{/if}
+			{#if reparseMessage}
+				<p class="success">{reparseMessage}</p>
 			{/if}
 			{#if wikiRaw}
 				<pre class="raw-content">{wikiRaw}</pre>
@@ -147,5 +233,48 @@
 		color: var(--danger);
 		font-size: typography.$font-small;
 		margin: 0 0 spacing.$unit 0;
+	}
+
+	.success {
+		color: var(--text-secondary);
+		font-size: typography.$font-small;
+		margin: 0 0 spacing.$unit 0;
+	}
+
+	.section-actions {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+	}
+
+	.fetched-at {
+		display: flex;
+		flex-wrap: wrap;
+		gap: spacing.$unit-half spacing.$unit-3x;
+		margin: 0 0 spacing.$unit 0;
+		font-size: typography.$font-small;
+
+		div {
+			display: flex;
+			gap: spacing.$unit-half;
+		}
+
+		dt {
+			color: var(--text-secondary);
+		}
+
+		dd {
+			margin: 0;
+			color: var(--text-primary);
+		}
+	}
+
+	.reparse-option {
+		display: inline-flex;
+		align-items: center;
+		gap: spacing.$unit-half;
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
+		cursor: pointer;
 	}
 </style>

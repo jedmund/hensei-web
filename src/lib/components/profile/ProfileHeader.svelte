@@ -10,8 +10,10 @@
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import InviteUserModal from '$lib/components/crew/InviteUserModal.svelte'
+	import SupportSummonModal from '$lib/components/profile/SupportSummonModal.svelte'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import type { CrewRole } from '$lib/types/api/crew'
+	import type { SupportSummon } from '$lib/types/api/supportSummon'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import * as m from '$lib/paraglide/messages'
 
@@ -47,6 +49,10 @@
 		collectionPrivacy?: number
 		/** Whether the viewer is logged in */
 		isAuthenticated?: boolean
+		/** Whether the header is expanded (bindable) */
+		expanded?: boolean
+		/** Support summon slots shown inside the expandable drawer. */
+		supportSummons?: SupportSummon[]
 	}
 
 	let {
@@ -68,7 +74,9 @@
 		viewerCrewRole = null,
 		viewerCrewId = null,
 		collectionPrivacy,
-		isAuthenticated = false
+		isAuthenticated = false,
+		expanded = $bindable(false),
+		supportSummons = []
 	}: Props = $props()
 
 	// GBF profile URL - shown if user has filled in their Granblue ID
@@ -117,8 +125,10 @@
 	// Can create team from collection if: not owner, logged in, collection is public, and user exists
 	const canCreateTeam = $derived(!isOwner && isAuthenticated && collectionPrivacy === 1 && userId)
 
-	// Show dropdown if there are any crew-related actions available
-	const showMenu = $derived(canInvite || showAlreadyInCrew)
+	// Owners always see the menu (to access their support summons); others see
+	// it when there's a crew-related action available.
+	const showSupportSummons = $derived(isOwner)
+	const showMenu = $derived(showSupportSummons || canInvite || showAlreadyInCrew)
 
 	// Typed element for SegmentedControl
 	const typedElement = $derived(
@@ -139,6 +149,7 @@
 
 	// Invite modal state
 	let inviteModalOpen = $state(false)
+	let supportSummonsModalOpen = $state(false)
 </script>
 
 <header class="header">
@@ -194,6 +205,14 @@
 
 					<DropdownMenu.Portal>
 						<DropdownMenu.Content class="dropdown-content" sideOffset={5} align="end">
+							{#if showSupportSummons}
+								<DropdownItem>
+									<button onclick={() => (supportSummonsModalOpen = true)}>
+										<Icon name="sparkles" size={14} />
+										<span>{m.profile_support_summons()}</span>
+									</button>
+								</DropdownItem>
+							{/if}
 							{#if canInvite}
 								<DropdownItem>
 									<button onclick={() => (inviteModalOpen = true)}>
@@ -248,7 +267,9 @@
 		</div>
 	{/if}
 
-	<nav class="tabs" aria-label="Profile sections">
+	<div class="expand-spacer" class:open={expanded}></div>
+
+	<nav class="tabs" class:dimmed={expanded} aria-label="Profile sections">
 		<SegmentedControl
 			value={activeTab}
 			onValueChange={handleTabChange}
@@ -256,6 +277,7 @@
 			size="small"
 			element={typedElement}
 			grow
+			slidingIndicator
 		>
 			<Segment value="teams">{m.profile_tab_teams()}</Segment>
 			<Segment value="playlists">{m.profile_tab_playlists()}</Segment>
@@ -265,10 +287,34 @@
 			{/if}
 		</SegmentedControl>
 	</nav>
+
+	<div class="expand-section">
+		<button
+			type="button"
+			class="expand-toggle"
+			aria-expanded={expanded}
+			aria-label={expanded ? m.profile_collapse() : m.profile_expand()}
+			onclick={() => (expanded = !expanded)}
+		>
+			<Icon name={expanded ? 'chevron-up-small' : 'chevron-down-small'} size={16} />
+		</button>
+	</div>
 </header>
 
 {#if canInvite && userId && viewerCrewId}
 	<InviteUserModal bind:open={inviteModalOpen} {userId} {username} crewId={viewerCrewId} />
+{/if}
+
+{#if showSupportSummons}
+	<SupportSummonModal
+		bind:open={supportSummonsModalOpen}
+		summons={supportSummons}
+		{userId}
+		{username}
+		{displayName}
+		{granblueId}
+		{isOwner}
+	/>
 {/if}
 
 <style lang="scss">
@@ -415,7 +461,65 @@
 	}
 
 	.tabs {
+		// Bottom matches the horizontal inset now that the expand drawer
+		// below is hidden — without the chevron toggle catching the eye,
+		// the smaller $unit gap looked cramped against the page content.
 		padding: 0 $unit-2x $unit-2x;
+		transition: opacity effects.$duration-slide ease-in-out;
+
+		&.dimmed {
+			opacity: 0.4;
+		}
+	}
+
+	// TODO: profile expand drawer is hidden until the feature is ready to
+	// ship. Switch `display: none` back to `display: flex` (and re-enable
+	// .expand-spacer) when re-enabling — all the state, handlers, and DOM
+	// stay intact behind this single rule.
+	.expand-section {
+		display: none;
+		flex-direction: column;
+		padding: 0 $unit-2x $unit-2x;
+	}
+
+	.expand-spacer {
+		display: none;
+		width: 100%;
+		height: 0;
+		overflow: hidden;
+		transition: height effects.$duration-slide ease-in-out;
+
+		&.open {
+			height: 50dvh;
+		}
+	}
+
+	.expand-toggle {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 24px;
+		padding: 0;
+		border-radius: $input-corner;
+		background: transparent;
+		border: none;
+		cursor: pointer;
+		color: var(--text-tertiary);
+		transition:
+			background-color effects.$duration-quick ease,
+			color effects.$duration-quick ease;
+
+		&:hover {
+			background: var(--button-contained-bg-hover, $grey-90);
+			color: var(--text-primary);
+			cursor: pointer;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--focus-ring);
+			outline-offset: 2px;
+		}
 	}
 
 	.header-actions {

@@ -12,12 +12,14 @@
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import { withInitialData } from '$lib/query/ssr'
-	import { fetchWikiPage } from '$lib/api/wiki'
 
 	// Components
 	import DetailScaffold, {
 		type DetailTab
 	} from '$lib/features/database/detail/DetailScaffold.svelte'
+	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
+	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import CharacterSkillsTab from '$lib/features/database/characters/tabs/CharacterSkillsTab.svelte'
 	import CharacterMetadataSection from '$lib/features/database/characters/sections/CharacterMetadataSection.svelte'
 	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
 	import CharacterTaxonomySection from '$lib/features/database/characters/sections/CharacterTaxonomySection.svelte'
@@ -25,6 +27,8 @@
 	import CharacterAppearanceSection from '$lib/features/database/characters/sections/CharacterAppearanceSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
+	import { resolveDetailTab } from '$lib/features/database/detail/detailTab'
+	import CharacterRefreshActions from '$lib/features/database/characters/refresh/CharacterRefreshActions.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
@@ -42,6 +46,7 @@
 	import { getListUrl } from '$lib/utils/listNavigation'
 	import { localizedName } from '$lib/utils/locale'
 	import { localizeHref } from '$lib/paraglide/runtime'
+	import { normalizeCharacterUncap } from '$lib/utils/uncap'
 
 	// Types
 	import type { PageData } from './$types'
@@ -49,10 +54,13 @@
 
 	let { data }: { data: PageData } = $props()
 
-	// Tab state from URL
-	const currentTab = $derived(($page.url.searchParams.get('tab') as DetailTab) || 'info')
+	// The :full character carries when its wikitext was fetched (not on the shared Character type)
+	type CharacterFetchTimes = {
+		wikiRawFetchedAt?: string | null
+		wikiRawJpFetchedAt?: string | null
+	}
 
-	function handleTabChange(tab: DetailTab) {
+	function handleTabChange(tab: string) {
 		const url = new URL($page.url)
 		if (tab === 'info') {
 			url.searchParams.delete('tab')
@@ -70,19 +78,24 @@
 
 	// Get character from query
 	const character = $derived(characterQuery.data)
+	const characterUncap = $derived(
+		character
+			? normalizeCharacterUncap({
+					special: !!character.special,
+					uncap: character.uncap ?? { flb: false }
+				})
+			: null
+	)
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
+
+	// Tab state from URL; raw data is editor-only, so non-editors fall back to Info
+	const currentTab = $derived(resolveDetailTab($page.url.searchParams.get('tab'), canEdit))
 
 	// Element for button styling
 	const elementName = $derived(
 		getElementLabel(character?.element)?.toLowerCase() as
-			| 'wind'
-			| 'fire'
-			| 'water'
-			| 'earth'
-			| 'dark'
-			| 'light'
-			| undefined
+			'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 	)
 
 	// Edit URL for navigation
@@ -141,7 +154,8 @@
 			return images
 		}
 
-		// Only include poses that are available - _01 = Base, _02 = MLB (3*), _03 = FLB (5*), _04 = Transcendence
+		// Only include poses that are available - _04 is ULB for story characters and
+		// transcendence for regular characters.
 		const poses: { id: string; label: string }[] = [
 			{ id: '01', label: 'Base' },
 			{ id: '02', label: 'MLB' }
@@ -151,8 +165,8 @@
 			poses.push({ id: '03', label: 'FLB' })
 		}
 
-		if (character.uncap?.transcendence) {
-			poses.push({ id: '04', label: 'Transcendence' })
+		if (characterUncap?.ulb || characterUncap?.transcendence) {
+			poses.push({ id: '04', label: characterUncap.ulb ? 'ULB' : 'Transcendence' })
 		}
 
 		const genderLabels = ['Gran', 'Djeeta'] as const
@@ -308,7 +322,7 @@
 		// Download this size for all available poses
 		const poses = ['01', '02']
 		if (character.uncap?.flb) poses.push('03')
-		if (character.uncap?.transcendence) poses.push('04')
+		if (characterUncap?.ulb || characterUncap?.transcendence) poses.push('04')
 		if (character.styleSwap) poses.push('style')
 
 		for (const pose of poses) {
@@ -381,12 +395,29 @@
 			type="character"
 			item={character}
 			image={getCharacterGridImage(character)}
-			{currentTab}
+			currentTab={currentTab as DetailTab}
 			onTabChange={handleTabChange}
+			showTabs={false}
 			onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
 			onDownloadSize={canEdit ? handleDownloadSize : undefined}
 			availableSizes={characterSizes}
 		>
+			<div class="tabs-bar">
+				<SegmentedControl
+					value={currentTab}
+					onValueChange={handleTabChange}
+					variant="background"
+					size="small"
+				>
+					<Segment value="info">Info</Segment>
+					<Segment value="skills">{m.character_skills_tab()}</Segment>
+					<Segment value="images">Images</Segment>
+					{#if canEdit}
+						<Segment value="raw">Raw Data</Segment>
+					{/if}
+				</SegmentedControl>
+			</div>
+
 			{#if currentTab === 'info'}
 				<section class="details">
 					<CharacterMetadataSection {character} />
@@ -425,8 +456,16 @@
 						{#if character.uncap?.flb}
 							<DetailItem label="FLB Date" value={character.flbDate || '—'} />
 						{/if}
-						{#if character.uncap?.transcendence}
+						{#if characterUncap?.transcendence}
 							<DetailItem label="Transcendence Date" value={character.transcendenceDate || '—'} />
+						{/if}
+						{#if characterUncap?.ulb}
+							<DetailItem
+								label="ULB Date"
+								value={character.ulbDate ||
+									(characterUncap.legacySpecialUlb ? character.transcendenceDate : '') ||
+									'—'}
+							/>
 						{/if}
 					</DetailsContainer>
 
@@ -524,6 +563,8 @@
 						</DetailsContainer>
 					{/if}
 				</section>
+			{:else if currentTab === 'skills'}
+				<CharacterSkillsTab {character} />
 			{:else if currentTab === 'images'}
 				<EntityImagesTab
 					images={characterImages}
@@ -539,20 +580,24 @@
 					gameRawJp={rawDataQuery.data?.gameRawJp}
 					isLoading={rawDataQuery.isLoading}
 					{canEdit}
-					onFetchWiki={canEdit && character?.id && character?.wiki?.en
-						? async () => {
-								// Fetch wiki data client-side (bypasses CloudFlare)
-								const wikiResult = await fetchWikiPage(character.wiki!.en!)
-								if (wikiResult.error) {
-									throw new Error(wikiResult.error)
-								}
-								// Update the character with the wiki_raw data
-								await entityAdapter.updateCharacter(character.id, { wiki_raw: wikiResult.wikiRaw })
-								rawDataQuery.refetch()
-								return { wikiRaw: wikiResult.wikiRaw ?? null, gameRawEn: null, gameRawJp: null }
-							}
-						: undefined}
-				/>
+					fetchedAt={{
+						en: (character as CharacterFetchTimes | undefined)?.wikiRawFetchedAt,
+						jp: (character as CharacterFetchTimes | undefined)?.wikiRawJpFetchedAt
+					}}
+				>
+					{#snippet wikiActions()}
+						{#if canEdit && character?.id}
+							<CharacterRefreshActions
+								characterId={character.id}
+								characterName={character.name}
+								onRefreshed={() => {
+									characterQuery.refetch()
+									rawDataQuery.refetch()
+								}}
+							/>
+						{/if}
+					{/snippet}
+				</EntityRawDataTab>
 			{/if}
 		</DetailScaffold>
 	{:else}
@@ -579,6 +624,11 @@
 
 	.details {
 		@include database.details;
+	}
+
+	.tabs-bar {
+		padding: spacing.$unit-2x;
+		border-bottom: 1px solid var(--separator-bg);
 	}
 
 	.related-units {

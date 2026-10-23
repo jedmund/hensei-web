@@ -25,6 +25,17 @@ npm run dev
 npm run dev -- --open
 ```
 
+### Local images
+
+When `PUBLIC_SIERO_IMG_URL` is empty, images are served from `static/images/`, a git-ignored mirror of the `siero-img` S3 bucket. To pull down anything missing without re-downloading what you already have:
+
+```sh
+cd static/images
+aws s3 sync s3://siero-img/ . --size-only
+```
+
+`--size-only` skips files that already match by size, even if their timestamps differ. Add `--dryrun` first to preview what will download.
+
 ## Building
 
 To create a production version of your app:

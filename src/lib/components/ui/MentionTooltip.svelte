@@ -1,34 +1,28 @@
 <script lang="ts">
-	import { getBasePath } from '$lib/utils/images'
+	import * as m from '$lib/paraglide/messages'
 	import { localizedName } from '$lib/utils/locale'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
-
-	interface MentionEntity {
-		granblue_id: string
-		name: { en: string; ja: string }
-		type: string
-		element: { id: number; [key: string]: unknown }
-		proficiency?: number | number[]
-		season?: number | null
-		series?: number[] | { id: string; slug: string; name: { en: string; ja: string } }[] | null
-		styleSwap?: boolean
-	}
+	import {
+		descriptorFor,
+		mentionImageUrl,
+		skillDescriptionLines,
+		skillMentionSubheader,
+		typeColorSwatch
+	} from '$lib/components/edra/extensions/entity-mention/mentions/index.js'
+	import type { MentionToken } from '$lib/components/edra/extensions/entity-mention/mentions/index.js'
 
 	interface Props {
-		entity: MentionEntity
+		entity: MentionToken
 		visible: boolean
 	}
 
 	let { entity, visible }: Props = $props()
 
-	const imageUrl = $derived.by(() => {
-		const base = getBasePath()
-		if (entity.type === 'character') {
-			return `${base}/character-square/${entity.granblue_id}_01.jpg`
-		}
-		return `${base}/${entity.type}-square/${entity.granblue_id}.jpg`
-	})
+	const imageUrl = $derived(mentionImageUrl(entity))
+	const swatchColor = $derived(typeColorSwatch(entity.skill?.typeColor))
+	const secondary = $derived(descriptorFor(entity.type).secondary)
+	const isSkill = $derived(secondary === 'skill-meta')
 
 	const proficiencies = $derived.by(() => {
 		if (entity.proficiency === undefined || entity.proficiency === null) return []
@@ -36,34 +30,76 @@
 		return entity.proficiency > 0 ? [entity.proficiency] : []
 	})
 
-	const isCharacter = $derived(entity.type === 'character')
+	const skillDescription = $derived(entity.skill ? localizedName(entity.skill.description) : '')
+	const descriptionLines = $derived(
+		skillDescription && skillDescription !== '—' ? skillDescriptionLines(skillDescription) : []
+	)
 	const hasProficiencies = $derived(proficiencies.length > 0)
 </script>
 
+{#snippet thumbnail()}
+	<div class="entity-image {entity.type}">
+		{#if imageUrl}
+			<img src={imageUrl} alt="" loading="lazy" />
+		{:else}
+			<span class="entity-swatch" style:background={swatchColor ?? 'var(--border-color)'}></span>
+		{/if}
+	</div>
+{/snippet}
+
 {#if visible}
-	<div class="mention-tooltip">
-		<img class="entity-image" src={imageUrl} alt="" loading="lazy" />
-		<div class="entity-info">
-			<span class="entity-name">{localizedName(entity.name)}</span>
-			{#if isCharacter}
-				<CharacterTags
-					character={{
-						element: entity.element.id,
-						season: entity.season,
-						series: entity.series,
-						styleSwap: entity.styleSwap
-					}}
-				/>
-			{/if}
-			{#if hasProficiencies}
-				<div class="proficiencies">
-					{#each proficiencies as prof (prof)}
-						<ProficiencyLabel proficiency={prof} size="small" />
+	{#if isSkill}
+		<div class="mention-tooltip skill-tooltip">
+			<div class="skill-lockup">
+				{@render thumbnail()}
+				<div class="skill-headings">
+					<span class="entity-name">{localizedName(entity.name)}</span>
+					{#if entity.skill?.character}
+						<span class="skill-owner">{skillMentionSubheader(entity)}</span>
+					{/if}
+				</div>
+			</div>
+			{#if descriptionLines.length > 0}
+				<div class="skill-description">
+					{#each descriptionLines as line, i (i)}
+						<p>{line}</p>
 					{/each}
 				</div>
 			{/if}
+			{#if entity.skill?.cooldown != null}
+				<div class="skill-stat">{m.mention_skill_cooldown({ n: entity.skill.cooldown })}</div>
+			{/if}
+			{#if entity.skill?.initialCooldown}
+				<div class="skill-stat">
+					{m.mention_skill_available_in({ n: entity.skill.initialCooldown })}
+				</div>
+			{/if}
 		</div>
-	</div>
+	{:else}
+		<div class="mention-tooltip">
+			{@render thumbnail()}
+			<div class="entity-info">
+				<span class="entity-name">{localizedName(entity.name)}</span>
+				{#if secondary === 'character-tags'}
+					<CharacterTags
+						character={{
+							element: entity.element?.id,
+							season: entity.season,
+							series: entity.series,
+							styleSwap: entity.styleSwap
+						}}
+					/>
+				{/if}
+				{#if hasProficiencies}
+					<div class="proficiencies">
+						{#each proficiencies as prof (prof)}
+							<ProficiencyLabel proficiency={prof} size="small" />
+						{/each}
+					</div>
+				{/if}
+			</div>
+		</div>
+	{/if}
 {/if}
 
 <style lang="scss">
@@ -85,15 +121,54 @@
 		box-shadow: var(--shadow-md);
 	}
 
+	// Skills stack a name/owner lockup over a full-width description + timing lines.
+	.skill-tooltip {
+		flex-direction: column;
+		gap: $unit-half;
+		max-width: 280px;
+	}
+
+	.skill-lockup {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		gap: $unit;
+		width: 100%;
+	}
+
 	.entity-image {
 		width: 60px;
 		height: 60px;
 		border-radius: $item-corner-small;
-		object-fit: cover;
+		overflow: hidden;
 		flex-shrink: 0;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		// Skill icons are transparent PNGs; show them whole.
+		&.skill img {
+			object-fit: contain;
+		}
 	}
 
-	.entity-info {
+	// Slightly smaller icon in the skill lockup.
+	.skill-lockup .entity-image {
+		width: 44px;
+		height: 44px;
+	}
+
+	.entity-swatch {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	.entity-info,
+	.skill-headings {
 		display: flex;
 		flex-direction: column;
 		gap: $unit-half;
@@ -104,6 +179,36 @@
 		font-size: $font-regular;
 		font-weight: $medium;
 		white-space: nowrap;
+	}
+
+	// Skill names can be long; let them wrap within the lockup instead of clipping.
+	.skill-headings .entity-name {
+		white-space: normal;
+	}
+
+	.skill-owner {
+		font-size: $font-small;
+		color: var(--tooltip-text, white);
+		opacity: 0.7;
+	}
+
+	.skill-description {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-half;
+		font-size: $font-small;
+		line-height: 1.4;
+		opacity: 0.9;
+
+		p {
+			margin: 0;
+			white-space: normal;
+		}
+	}
+
+	.skill-stat {
+		font-size: $font-small;
+		opacity: 0.7;
 	}
 
 	.proficiencies {

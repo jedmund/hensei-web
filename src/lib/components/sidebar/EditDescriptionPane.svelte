@@ -8,6 +8,7 @@
 	import EdraEditor from '$lib/components/edra/headless/editor.svelte'
 	import LinkDialog from '$lib/components/edra/LinkDialog.svelte'
 	import MentionTooltip from '$lib/components/ui/MentionTooltip.svelte'
+	import type { MentionToken } from '$lib/components/edra/extensions/entity-mention/mentions/index.js'
 	import { linkDialogState } from '$lib/stores/linkDialog.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { usePaneStack } from '$lib/stores/paneStack.svelte'
@@ -135,18 +136,7 @@
 	}
 
 	// Mention tooltip state
-	interface MentionEntity {
-		granblue_id: string
-		name: { en: string; ja: string }
-		type: string
-		element: { id: number; slug: string }
-		proficiency?: number | number[]
-		season?: number | null
-		series?: number[] | { id: string; slug: string; name: { en: string; ja: string } }[] | null
-		styleSwap?: boolean
-	}
-
-	let tooltipEntity: MentionEntity | null = $state(null)
+	let tooltipEntity: MentionToken | null = $state(null)
 	let tooltipVisible = $state(false)
 	let tooltipEl: HTMLDivElement | null = $state(null)
 
@@ -186,14 +176,15 @@
 		if (!attrs) return
 
 		tooltipEntity = {
+			type: attrs.type ?? attrs.searchableType?.toLowerCase() ?? 'unknown',
 			granblue_id: attrs.granblue_id ?? '',
 			name: attrs.name ?? { en: 'Unknown', ja: 'Unknown' },
-			type: attrs.type ?? '',
-			element: attrs.element ?? { id: 0, slug: 'null' },
+			element: attrs.element,
 			proficiency: attrs.proficiency,
 			season: attrs.season,
 			series: attrs.series,
-			styleSwap: attrs.styleSwap
+			styleSwap: attrs.styleSwap,
+			skill: attrs.skill
 		}
 		tooltipVisible = true
 

@@ -9,6 +9,7 @@
 	import type { ElementType } from './ui/SettingsNav.svelte'
 	import AccountSettings from './settings/AccountSettings.svelte'
 	import ProfileSettings from './settings/ProfileSettings.svelte'
+	import AppearanceSettings from './settings/AppearanceSettings.svelte'
 	import PrivacySettings from './settings/PrivacySettings.svelte'
 	import ConfirmDialog from './ui/ConfirmDialog.svelte'
 	import { users } from '$lib/api/resources/users'
@@ -19,9 +20,10 @@
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import { themeStore, type ThemePreference } from '$lib/stores/theme.svelte'
 	import { untrack } from 'svelte'
-	import { localizeHref, deLocalizeHref } from '$lib/paraglide/runtime'
+	import { localizeHref, deLocalizeHref, toLocale } from '$lib/paraglide/runtime'
 	import { updateSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import { updateDefaultRepView } from '$lib/stores/defaultRepView.svelte'
+	import type { SettingsReturn } from '$lib/auth/socialResult'
 
 	interface Props {
 		open: boolean
@@ -30,9 +32,22 @@
 		userId: string
 		user: UserCookie
 		role: number
+		/** Section to jump to when the modal opens (otherwise the last one shown). */
+		initialSection?: string | undefined
+		/** Result of linking a provider, shown in the Account section. */
+		socialResult?: SettingsReturn | null
 	}
 
-	let { open = $bindable(false), onOpenChange, username, userId, user, role }: Props = $props()
+	let {
+		open = $bindable(false),
+		onOpenChange,
+		username,
+		userId,
+		user,
+		role,
+		initialSection,
+		socialResult = null
+	}: Props = $props()
 
 	const queryClient = useQueryClient()
 
@@ -44,6 +59,8 @@
 	let formDisplayName = $state('')
 	let formEmail = $state('')
 	let emailVerified = $state(false)
+	let hasPassword = $state(true)
+	let passwordPromptDismissed = $state(false)
 	let currentPassword = $state('')
 	let newPassword = $state('')
 	let confirmPassword = $state('')
@@ -110,6 +127,8 @@
 			formDisplayName = data.displayName ?? ''
 			formEmail = data.email ?? ''
 			emailVerified = data.emailVerified ?? false
+			hasPassword = data.hasPassword ?? true
+			passwordPromptDismissed = data.passwordPromptDismissed ?? false
 			// Profile
 			picture = data.avatar?.picture ?? ''
 			element = (data.avatar?.element as ElementType) ?? 'wind'
@@ -141,6 +160,20 @@
 			formInitialized = false
 		}
 	})
+
+	// Jump to the requested section when the modal is opened with one
+	$effect(() => {
+		if (open && initialSection) activeSection = initialSection
+	})
+
+	function handlePasswordPromptDismissed() {
+		passwordPromptDismissed = true
+		queryClient.setQueryData(
+			['currentUser', 'settings'],
+			(oldData: Record<string, unknown> | undefined) =>
+				oldData ? { ...oldData, passwordPromptDismissed: true } : oldData
+		)
+	}
 
 	// Handle section change from segmented control
 	function handleSectionChange(value: string) {
@@ -285,7 +318,7 @@
 				const basePath = deLocalizeHref(
 					window.location.pathname + window.location.search + window.location.hash
 				)
-				window.location.href = localizeHref(basePath, { locale: language })
+				window.location.href = localizeHref(basePath, { locale: toLocale(language) })
 			} else {
 				// For other changes (element, picture, gender, theme), invalidate to refresh layout data
 				await invalidateAll()
@@ -307,7 +340,7 @@
 	}
 </script>
 
-<Dialog bind:open {...onOpenChange ? { onOpenChange } : {}} size="small" hideClose>
+<Dialog bind:open {...onOpenChange ? { onOpenChange } : {}} size="medium" hideClose>
 	<ModalHeader title={m.settings_title()}>
 		<span class="header-username">@{username}</span>
 	</ModalHeader>
@@ -323,6 +356,7 @@
 					grow
 				>
 					<Segment value="profile">{m.settings_nav_profile()}</Segment>
+					<Segment value="appearance">{m.settings_nav_appearance()}</Segment>
 					<Segment value="account">{m.settings_nav_account()}</Segment>
 					<Segment value="privacy">{m.settings_nav_privacy()}</Segment>
 				</SegmentedControl>
@@ -356,35 +390,43 @@
 						onYoutubeChange={(v) => (youtube = v)}
 						onGenderChange={(v) => (gender = v)}
 					/>
+				{:else if activeSection === 'appearance'}
+					<AppearanceSettings
+						{element}
+						{theme}
+						{language}
+						{timezone}
+						{defaultRepView}
+						{simplePortraits}
+						onElementChange={(v) => (element = v as ElementType)}
+						onThemeChange={(v) => (theme = v)}
+						onLanguageChange={(v) => (language = v)}
+						onTimezoneChange={(v) => (timezone = v)}
+						onDefaultRepViewChange={(v) => (defaultRepView = v)}
+						onSimplePortraitsChange={(v) => (simplePortraits = v)}
+					/>
 				{:else if activeSection === 'account'}
 					<AccountSettings
 						username={formUsername}
 						email={formEmail}
 						{emailVerified}
 						{bahamut}
-						{simplePortraits}
-						{defaultRepView}
 						{role}
 						{element}
-						{language}
-						{theme}
-						{timezone}
 						{currentPassword}
 						{newPassword}
 						{confirmPassword}
 						onUsernameChange={(v) => (formUsername = v)}
 						onEmailChange={(v) => (formEmail = v)}
 						onBahamutChange={(v) => (bahamut = v)}
-						onSimplePortraitsChange={(v) => (simplePortraits = v)}
-						onDefaultRepViewChange={(v) => (defaultRepView = v)}
 						onUsernameValidChange={(v) => (usernameValid = v)}
-						onElementChange={(v) => (element = v as ElementType)}
-						onLanguageChange={(v) => (language = v)}
-						onThemeChange={(v) => (theme = v)}
-						onTimezoneChange={(v) => (timezone = v)}
 						onCurrentPasswordChange={(v) => (currentPassword = v)}
 						onNewPasswordChange={(v) => (newPassword = v)}
 						onConfirmPasswordChange={(v) => (confirmPassword = v)}
+						{hasPassword}
+						{passwordPromptDismissed}
+						onPasswordPromptDismissed={handlePasswordPromptDismissed}
+						{socialResult}
 					/>
 				{:else if activeSection === 'privacy'}
 					<PrivacySettings

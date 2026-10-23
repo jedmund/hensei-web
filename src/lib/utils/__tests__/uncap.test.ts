@@ -2,6 +2,8 @@ import { describe, it, expect } from 'vitest'
 import {
 	getMaxUncapLevel,
 	getCharacterMaxUncapLevel,
+	normalizeCharacterUncap,
+	normalizeCharacterProgression,
 	getSummonMaxUncapLevel,
 	getDefaultMaxUncapLevel
 } from '../uncap'
@@ -45,13 +47,72 @@ describe('getMaxUncapLevel', () => {
 // ============================================================================
 
 describe('getCharacterMaxUncapLevel', () => {
-	it('delegates to getMaxUncapLevel', () => {
+	it('uses ULB for special characters and transcendence for regular characters', () => {
 		expect(
-			getCharacterMaxUncapLevel({ special: true, uncap: { flb: true, transcendence: false } })
-		).toBe(4)
+			getCharacterMaxUncapLevel({
+				special: true,
+				uncap: { flb: true, ulb: true, transcendence: false }
+			})
+		).toBe(5)
 		expect(
 			getCharacterMaxUncapLevel({ special: false, uncap: { flb: true, transcendence: true } })
 		).toBe(6)
+	})
+
+	it('does not treat special-character transcendence as ULB', () => {
+		expect(
+			getCharacterMaxUncapLevel({
+				special: true,
+				uncap: { flb: true, ulb: false, transcendence: true }
+			})
+		).toBe(4)
+	})
+
+	it('does not treat regular-character ULB as transcendence', () => {
+		expect(getCharacterMaxUncapLevel({ special: false, uncap: { flb: true, ulb: true } })).toBe(5)
+	})
+})
+
+describe('normalizeCharacterUncap', () => {
+	it('reads legacy special-character transcendence as ULB only when ulb is absent', () => {
+		expect(
+			normalizeCharacterUncap({ special: true, uncap: { flb: true, transcendence: true } })
+		).toMatchObject({
+			ulb: true,
+			transcendence: false,
+			maxTranscendenceStage: 0,
+			legacySpecialUlb: true
+		})
+	})
+
+	it('defaults legacy regular transcendence to stage 5', () => {
+		expect(
+			normalizeCharacterUncap({ special: false, uncap: { flb: true, transcendence: true } })
+		).toMatchObject({ transcendence: true, maxTranscendenceStage: 5 })
+	})
+})
+
+describe('normalizeCharacterProgression', () => {
+	it('moves legacy story ULB stats and dates into the ULB edit fields', () => {
+		expect(
+			normalizeCharacterProgression({
+				special: true,
+				uncap: { flb: true, transcendence: true },
+				hp: { maxHpTranscendence: 1900 },
+				atk: { maxAtkTranscendence: 10_000 },
+				transcendenceDate: '2019-08-22'
+			})
+		).toMatchObject({
+			ulb: true,
+			transcendence: false,
+			maxTranscendenceStage: 0,
+			maxHpUlb: 1900,
+			maxHpTranscendence: 0,
+			maxAtkUlb: 10_000,
+			maxAtkTranscendence: 0,
+			ulbDate: '2019-08-22',
+			transcendenceDate: ''
+		})
 	})
 })
 

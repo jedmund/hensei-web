@@ -21,6 +21,11 @@ describe('buildFilterQuery', () => {
 		expect(result.element).toBeUndefined()
 	})
 
+	it('includes the Solomonis route Evoker', () => {
+		const result = buildFilterQuery({ ...emptyFilters(), raid: 'zone', routeEvoker: '3040169000' })
+		expect(result.routeEvoker).toBe('3040169000')
+	})
+
 	it('includes raid when truthy', () => {
 		const result = buildFilterQuery({ ...emptyFilters(), raid: 'raid-1' })
 		expect(result.raid).toBe('raid-1')

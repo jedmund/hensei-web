@@ -26,7 +26,7 @@ vi.mock('$lib/api/adapters/config', () => ({
 }))
 
 vi.mock('../images', () => ({
-	getGenericPlaceholder: vi.fn(() => '/images/placeholders/placeholder-weapon-grid.png')
+	getGenericPlaceholder: vi.fn(() => '/images/app/placeholders/placeholder-weapon-grid.png')
 }))
 
 // ============================================================================
@@ -68,13 +68,13 @@ describe('getJobPortraitUrl', () => {
 	it('generates slug from job name with Gran (default)', () => {
 		const job = makeJob({ name: { en: 'Dark Fencer', ja: '' } })
 		const url = getJobPortraitUrl(job)
-		expect(url).toBe('/images/job-portraits/dark-fencer_a.png')
+		expect(url).toBe('/images/jobs/portrait/dark-fencer_a.png')
 	})
 
 	it('uses gender suffix b for Djeeta', () => {
 		const job = makeJob({ name: { en: 'Dark Fencer', ja: '' } })
 		const url = getJobPortraitUrl(job, Gender.Djeeta)
-		expect(url).toBe('/images/job-portraits/dark-fencer_b.png')
+		expect(url).toBe('/images/jobs/portrait/dark-fencer_b.png')
 	})
 })
 
@@ -85,8 +85,8 @@ describe('getJobFullImageUrl', () => {
 
 	it('uses granblueId with gender suffix', () => {
 		const job = makeJob({ granblueId: '100101' })
-		expect(getJobFullImageUrl(job)).toBe('/images/job-zoom/100101_a.png')
-		expect(getJobFullImageUrl(job, Gender.Djeeta)).toBe('/images/job-zoom/100101_b.png')
+		expect(getJobFullImageUrl(job)).toBe('/images/jobs/zoom/100101_a.png')
+		expect(getJobFullImageUrl(job, Gender.Djeeta)).toBe('/images/jobs/zoom/100101_b.png')
 	})
 })
 
@@ -96,7 +96,7 @@ describe('getJobIconUrl', () => {
 	})
 
 	it('generates icon path from granblueId', () => {
-		expect(getJobIconUrl('100101')).toBe('/images/job-icons/100101.png')
+		expect(getJobIconUrl('100101')).toBe('/images/jobs/icon/100101.png')
 	})
 })
 
@@ -107,7 +107,7 @@ describe('getJobWideImageUrl', () => {
 
 	it('uses jpg extension and granblueId', () => {
 		const job = makeJob({ granblueId: '100101' })
-		expect(getJobWideImageUrl(job)).toBe('/images/job-wide/100101_a.jpg')
+		expect(getJobWideImageUrl(job)).toBe('/images/jobs/wide/100101_a.jpg')
 	})
 })
 

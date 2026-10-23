@@ -2,21 +2,29 @@
 	interface Props {
 		stage: number
 		interactive?: boolean
+		disabled?: boolean
 		visible?: boolean
 		onClick?: (index: number) => void
 		onHover?: (index: number) => void
 	}
 
-	let { stage, interactive = false, visible = false, onClick, onHover }: Props = $props()
+	let {
+		stage,
+		interactive = false,
+		disabled = false,
+		visible = false,
+		onClick,
+		onHover
+	}: Props = $props()
 
 	function handleClick() {
-		if (interactive && onClick) {
+		if (interactive && !disabled && onClick) {
 			onClick(stage)
 		}
 	}
 
 	function handleHover() {
-		if (interactive && onHover) {
+		if (interactive && !disabled && onHover) {
 			onHover(stage)
 		}
 	}
@@ -26,6 +34,7 @@
 <i
 	class="fragment"
 	class:visible
+	class:disabled
 	class:stage1={stage === 1}
 	class:stage2={stage === 2}
 	class:stage3={stage === 3}
@@ -40,8 +49,9 @@
 			handleClick()
 		}
 	}}
-	role={interactive ? 'button' : undefined}
-	tabindex={interactive ? 0 : undefined}
+	role={interactive && !disabled ? 'button' : undefined}
+	tabindex={interactive && !disabled ? 0 : undefined}
+	aria-disabled={interactive ? disabled : undefined}
 	aria-label={interactive ? `Transcendence fragment ${stage}` : undefined}
 ></i>
 
@@ -75,6 +85,12 @@
 
 		&.visible {
 			opacity: 1;
+		}
+
+		&.disabled {
+			opacity: 0.2;
+			filter: grayscale(1);
+			cursor: not-allowed;
 		}
 
 		&.stage1 {

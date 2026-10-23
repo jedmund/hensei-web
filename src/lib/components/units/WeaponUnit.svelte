@@ -6,6 +6,9 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
+	import RemoveUnitDialog from './RemoveUnitDialog.svelte'
+	import SubstituteCountBadge from './SubstituteCountBadge.svelte'
+	import BookmarkOverlay from './BookmarkOverlay.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getWeaponImage } from '$lib/features/database/detail/image'
@@ -15,13 +18,14 @@
 		getWeaponFallbackImage,
 		handleImageFallback
 	} from '$lib/utils/images'
+	import { seriesHasTranscendenceArt } from '$lib/utils/weaponSeries'
 	import {
 		openDetailsSidebar,
 		openWeaponEditSidebar
 	} from '$lib/features/details/openDetailsSidebar.svelte'
-	import { canWeaponBeModified } from '$lib/utils/modificationDetector'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName } from '$lib/utils/element'
+	import { skillHighlight } from '$lib/stores/skillHighlight.svelte'
 	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
 	import {
 		getAwakeningImage,
@@ -37,6 +41,11 @@
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
+	import SealOverlay from '$lib/components/solomonis/grid/SealOverlay.svelte'
+	import SealMenuItems from '$lib/components/solomonis/grid/SealMenuItems.svelte'
+	import { nextSealState, writeSealState } from '$lib/components/solomonis/grid/sealActions'
+	import { getExpedition, slotSeal } from '$lib/components/solomonis/grid/seal'
 	interface Props {
 		item?: GridWeapon | undefined
 		position: number
@@ -48,6 +57,21 @@
 
 	const ctx = usePartyContext()
 
+	// Evoking Solomonis: seal state, including the Extra slots
+	let seal = $derived.by(() => {
+		const expedition = getExpedition(ctx?.getParty())
+		if (!expedition) return null
+		return slotSeal(expedition, 'weapon', position, item)
+	})
+
+	// Editors mark a non-starting item sealed or unsealed from the lock or the menu
+	let canToggleSeal = $derived(!!item && !!seal?.editable && !!ctx?.canEdit())
+
+	function toggleSeal() {
+		if (!item || !seal || !ctx) return
+		void writeSealState(ctx, 'weapon', item, nextSealState(seal.state))
+	}
+
 	// Use $derived to ensure consistent computation between server and client
 	let imageUrl = $derived.by(() => {
 		const isMain = position === -1 || item?.mainhand
@@ -57,7 +81,7 @@
 		// Mainhand images don't have a null-element variant, so default to fire (2).
 		const element = item?.weapon?.element === 0 ? (item?.element ?? (isMain ? 2 : 0)) : undefined
 		const transformation = getWeaponTransformation(
-			item?.weapon?.uncap?.transcendence,
+			seriesHasTranscendenceArt(item?.weapon?.series),
 			item?.uncapLevel,
 			item?.transcendenceStep
 		)
@@ -79,7 +103,7 @@
 		const isMain = position === -1 || item?.mainhand
 		const variant = isMain ? 'main' : 'grid'
 		const transformation = getWeaponTransformation(
-			item?.weapon?.uncap?.transcendence,
+			seriesHasTranscendenceArt(item?.weapon?.series),
 			item?.uncapLevel,
 			item?.transcendenceStep
 		)
@@ -114,19 +138,23 @@
 		)
 	)
 
-	async function remove() {
+	let removeConfirmOpen = $state(false)
+
+	function remove() {
 		if (!item?.id) return
-		try {
-			const party = ctx.getParty()
-			const editKey = ctx.getEditKey()
-			await ctx.services.gridService.removeWeapon(party.id, item.id, editKey || undefined)
-		} catch (err) {
-			console.error('Error removing weapon:', err)
-			toast.error(extractErrorMessage(err, 'Failed to remove weapon'))
-		}
+		removeConfirmOpen = true
 	}
 
-	let canEditItem = $derived(canWeaponBeModified(item))
+	const removeAction = useAsyncAction(async () => {
+		if (!item?.id) return
+		const party = ctx.getParty()
+		const editKey = ctx.getEditKey()
+		await ctx.services.gridService.removeWeapon(party.id, item.id, editKey || undefined)
+	}, 'Failed to remove weapon')
+
+	// Edit is always available for owners — non-modifiable weapons still get
+	// the notes-only pane so substitutes/description can be configured.
+	let canEditItem = $derived(!!item?.id)
 
 	function getSaveCallback() {
 		return async (id: string, updates: Partial<GridWeapon>) => {
@@ -137,18 +165,26 @@
 
 	function viewDetails() {
 		if (!item) return
+		const party = ctx.getParty()
 		openDetailsSidebar({
 			type: 'weapon',
 			item,
 			onSaveWeapon: getSaveCallback(),
 			isOwner: ctx?.canEdit() ?? false,
-			onReplace: ctx?.canEdit() ? replace : undefined
+			onReplace: ctx?.canEdit() ? replace : undefined,
+			onRemove: ctx?.canEdit() ? remove : undefined,
+			partyId: party?.id,
+			partyShortcode: party?.shortcode
 		})
 	}
 
 	function editItem() {
 		if (!item) return
-		openWeaponEditSidebar(item, getSaveCallback())
+		const party = ctx.getParty()
+		openWeaponEditSidebar(item, getSaveCallback(), {
+			partyId: party?.id,
+			partyShortcode: party?.shortcode
+		})
 	}
 
 	function replace() {
@@ -178,28 +214,27 @@
 
 	let duplicateCollectionDialogOpen = $state(false)
 
-	async function duplicate() {
+	function duplicate() {
 		if (!item?.id || firstEmptySlot === undefined) return
 		if (item.collectionWeaponId) {
 			duplicateCollectionDialogOpen = true
 			return
 		}
-		await executeDuplicate()
+		void duplicateAction.run()
 	}
 
-	async function executeDuplicate() {
+	const duplicateAction = useAsyncAction(async () => {
 		if (!item?.id || firstEmptySlot === undefined) return
-		try {
-			await ctx.services.gridService.duplicateWeapon(item.id, firstEmptySlot)
-			const nextSlot = findNextEmptySlot(ctx.getParty(), GridType.Weapon, firstEmptySlot)
-			if (nextSlot !== SLOT_NOT_FOUND) {
-				ctx.setSelectedSlot?.(nextSlot)
-			}
-		} catch (err) {
-			console.error('Error duplicating weapon:', err)
-			toast.error(extractErrorMessage(err, 'Failed to duplicate weapon'))
+		await ctx.services.gridService.duplicateWeapon(item.id, firstEmptySlot)
+		const nextSlot = findNextEmptySlot(ctx.getParty(), GridType.Weapon, firstEmptySlot)
+		if (nextSlot !== SLOT_NOT_FOUND) {
+			ctx.setSelectedSlot?.(nextSlot)
 		}
-	}
+	}, 'Failed to duplicate weapon')
+
+	// `executeDuplicate` is referenced by the DuplicateCollectionDialog's confirm
+	// callback when the user opts to keep their collection record.
+	const executeDuplicate = () => duplicateAction.run()
 
 	// Check if user can view database (role >= 7)
 	let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
@@ -216,6 +251,7 @@
 		if (!item?.weapon) return
 		collectionTeamsPane.addEntityToTeamsView(item.weapon, 'weapon')
 	}
+	const skillDimmed = $derived(skillHighlight.active && !skillHighlight.contributes(item?.id))
 </script>
 
 <div
@@ -224,9 +260,10 @@
 	class:extra={position >= 9}
 	class:is-active={isActive}
 	class:orphaned={item?.orphaned}
+	class:skill-dimmed={skillDimmed}
 >
 	{#if item}
-		<UnitMenuContainer showGearButton={true}>
+		<UnitMenuContainer showGearButton={true} gearPosition="top-right">
 			{#snippet trigger()}
 				<div
 					class="focus-ring-wrapper {elementClass}"
@@ -289,8 +326,18 @@
 								src={imageUrl}
 								onerror={(e) => handleImageFallback(e, fallbackUrl)}
 							/>
+							{#if seal}
+								<SealOverlay
+									{seal}
+									filled={true}
+									onToggle={canToggleSeal ? toggleSeal : undefined}
+								/>
+							{/if}
 						</div>
 					{/key}
+					{#if inCollection}
+						<BookmarkOverlay element={item?.element || item?.weapon?.element} />
+					{/if}
 				</div>
 			{/snippet}
 
@@ -304,7 +351,7 @@
 					onAddToTeamsView={isTeamsPaneOpen ? addWeaponToTeamsView : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onDuplicate={ctx?.canEdit() ? duplicate : undefined}
-					duplicateDisabled={!canDuplicate}
+					duplicateDisabled={!canDuplicate || duplicateAction.busy}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					editLabel={m.context_edit({ type: m.type_weapon() })}
@@ -315,7 +362,13 @@
 					replaceLabel={m.context_replace({ type: m.type_weapon() })}
 					duplicateLabel={m.context_duplicate({ type: m.type_weapon() })}
 					removeLabel={m.context_remove()}
+					editExtras={canToggleSeal ? sealMenuItems : undefined}
 				/>
+				{#snippet sealMenuItems()}
+					{#if item && seal}
+						<SealMenuItems {variant} type="weapon" {item} {seal} />
+					{/if}
+				{/snippet}
 			{/snippet}
 		</UnitMenuContainer>
 	{:else}
@@ -344,6 +397,9 @@
 					alt=""
 					src={getPlaceholderImage('weapon', position === -1 ? 'main' : 'grid')}
 				/>
+				{#if seal}
+					<SealOverlay {seal} filled={false} />
+				{/if}
 				{#if ctx?.canEdit()}
 					<span class="icon">
 						<Icon name="plus" size={24} />
@@ -399,8 +455,13 @@
 		/>
 	{/if}
 	<div class="name" class:not-in-collection={notInCollection}>
-		{#if item && inCollection}<Icon name="bookmark" width={12} height={16} />{/if}
-		{item ? localizedName(item?.weapon?.name) : ''}
+		<span class="name-text">{item ? localizedName(item?.weapon?.name) : ''}</span>
+		{#if item}
+			<SubstituteCountBadge
+				count={item.substitutions?.length ?? 0}
+				element={item.element || item.weapon?.element}
+			/>
+		{/if}
 	</div>
 </div>
 
@@ -415,6 +476,13 @@
 	}}
 />
 
+<RemoveUnitDialog
+	bind:open={removeConfirmOpen}
+	type="weapon"
+	name={item?.weapon ? localizedName(item.weapon.name) : null}
+	onConfirm={removeAction.run}
+/>
+
 <style lang="scss">
 	@use '$src/themes/colors' as colors;
 	@use '$src/themes/typography' as typography;
@@ -426,6 +494,11 @@
 
 	.unit {
 		position: relative;
+		transition: opacity 150ms ease;
+
+		&.skill-dimmed {
+			opacity: 0.3;
+		}
 		width: 100%;
 		display: flex;
 		flex-direction: column;
@@ -565,14 +638,27 @@
 	}
 
 	.name {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: spacing.$unit-half;
 		font-size: typography.$font-small;
-		text-align: center;
 		color: var(--text-secondary);
+	}
 
-		:global(span) {
-			display: inline;
-			vertical-align: -4px;
-		}
+	// Weapons render the awakening icon at the top-left of the frame, which
+	// collides with the bookmark overlay's default top-anchored position.
+	// Pull the bookmark up and slightly out so it sits above the awakening
+	// icon. Awakening's own positioning is unchanged.
+	.focus-ring-wrapper :global(.bookmark-overlay) {
+		margin-top: -21px;
+		margin-left: -6px;
+	}
+
+	.name-text {
+		min-width: 0;
+		text-align: center;
+		overflow-wrap: anywhere;
 	}
 
 	.modifiers {

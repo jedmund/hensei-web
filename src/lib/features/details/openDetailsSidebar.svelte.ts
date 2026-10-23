@@ -2,12 +2,15 @@ import { localizedName } from '$lib/utils/locale'
 import { getElementTypeKey } from '$lib/utils/element'
 import { sidebar } from '$lib/stores/sidebar.svelte'
 import { partyStore } from '$lib/stores/partyStore.svelte'
-import { type ElementType } from '$lib/stores/paneStack.svelte'
+import { toast } from 'svelte-sonner'
+import { extractErrorMessage } from '$lib/utils/errors'
+import { type ElementType, type OverflowMenuItem } from '$lib/stores/paneStack.svelte'
 import DetailsSidebar from '$lib/components/sidebar/DetailsSidebar.svelte'
 import EditWeaponPane from '$lib/components/sidebar/EditWeaponPane.svelte'
 import EditCharacterPane from '$lib/components/sidebar/EditCharacterPane.svelte'
+import EditSummonPane from '$lib/components/sidebar/EditSummonPane.svelte'
 import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
-import { canWeaponBeModified, canCharacterBeModified } from '$lib/utils/modificationDetector'
+import { canCharacterBeModified } from '$lib/utils/modificationDetector'
 import * as m from '$lib/paraglide/messages'
 
 interface DetailsSidebarOptions {
@@ -16,7 +19,14 @@ interface DetailsSidebarOptions {
 	onSaveWeapon?: (id: string, updates: Partial<GridWeapon>) => Promise<void>
 	onSaveCharacter?: (id: string, updates: Partial<GridCharacter>) => Promise<void>
 	isOwner?: boolean
+	/** Owner-only: swap this slot's item for a different one (opens picker). */
 	onReplace?: () => void
+	/** Owner-only: remove the item from the slot. */
+	onRemove?: () => void
+	/** Forwarded to the edit pane so the Role tab can hit substitution + grid mutations */
+	partyId?: string
+	/** Forwarded to the edit pane so the Role tab can subscribe to the live party query */
+	partyShortcode?: string
 }
 
 function getItemElement(
@@ -42,7 +52,7 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 	const { type, item } = options
 
 	// Get the item name for the title
-	let itemName = 'Details'
+	let itemName = ''
 	if (type === 'character' && (item as GridCharacter).character) {
 		const char = (item as GridCharacter).character
 		itemName = getName(char)
@@ -54,8 +64,10 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 		itemName = getName(summon)
 	}
 
-	// Check if this item can be edited
-	const canEditWeapon = type === 'weapon' && canWeaponBeModified(item as GridWeapon)
+	// Owners can always edit notes (substitutes + description) on any weapon
+	// or character, regardless of whether the item has stat-modifiable fields.
+	// The edit pane itself decides whether to surface the Stats tab.
+	const canEditWeapon = type === 'weapon' && !!(item as GridWeapon).id
 	const canEditCharacter = type === 'character' && canCharacterBeModified(item as GridCharacter)
 	const canEdit = canEditWeapon || canEditCharacter
 
@@ -67,11 +79,17 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 				if (canEditWeapon) {
 					const freshWeapon = (partyStore.getItem('weapon', (item as GridWeapon).id!) ??
 						item) as GridWeapon
-					openWeaponEditSidebar(freshWeapon, options.onSaveWeapon)
+					openWeaponEditSidebar(freshWeapon, options.onSaveWeapon, {
+						partyId: options.partyId,
+						partyShortcode: options.partyShortcode
+					})
 				} else if (canEditCharacter) {
 					const freshChar = (partyStore.getItem('character', (item as GridCharacter).id!) ??
 						item) as GridCharacter
-					openCharacterEditSidebar(freshChar, options.onSaveCharacter)
+					openCharacterEditSidebar(freshChar, options.onSaveCharacter, {
+						partyId: options.partyId,
+						partyShortcode: options.partyShortcode
+					})
 				}
 			}
 		: undefined
@@ -80,15 +98,21 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 	const element = getItemElement(type, item)
 
 	// Open the sidebar with the details component
-	const title =
-		itemName !== 'Details' ? itemName : `${type.charAt(0).toUpperCase() + type.slice(1)} Details`
+	const fallbackTitle = {
+		weapon: m.details_title_weapon,
+		character: m.details_title_character,
+		summon: m.details_title_summon
+	}[type]
+	const title = itemName || fallbackTitle()
 
-	// When the user is the owner, "Replace" is the primary action and "Edit" goes to overflow
+	// Owner: primary action is Edit (opens edit pane). The picker (was the
+	// "Replace" primary) and Remove drop into the overflow menu, both labelled
+	// per type ("Edit character", "Remove character"). Non-owners just get the
+	// view; the "Edit" primary stays for any editable items they have access to.
 	const isOwner = options.isOwner ?? false
 	const onReplace = options.onReplace
-
-	const primaryAction = isOwner && onReplace ? onReplace : onsave
-	const primaryLabel = isOwner && onReplace ? m.action_replace() : 'Edit'
+	const onRemove = options.onRemove
+	const typeLabel = getTypeLabel(type)
 
 	sidebar.openWithComponent(
 		title,
@@ -98,24 +122,44 @@ export function openDetailsSidebar(options: DetailsSidebarOptions) {
 			item
 		},
 		{
-			onsave: primaryAction,
-			saveLabel: primaryLabel,
+			onsave: onsave,
+			saveLabel: m.action_edit(),
 			element
 		}
 	)
 
-	// If owner with replace as primary, move Edit to overflow menu
-	if (isOwner && onReplace && onsave) {
-		sidebar.setOverflowMenu([{ label: m.action_edit(), handler: onsave }])
+	if (isOwner) {
+		const overflow: OverflowMenuItem[] = []
+		if (onReplace) {
+			// The "replace" handler swaps the slot to a different item — label it
+			// honestly so it doesn't get confused with the primary Edit action
+			// (which opens the stat/notes edit pane).
+			overflow.push({ label: m.context_replace({ type: typeLabel }), handler: onReplace })
+		}
+		if (onRemove) {
+			overflow.push({
+				label: m.context_remove_typed({ type: typeLabel }),
+				handler: onRemove,
+				variant: 'danger'
+			})
+		}
+		if (overflow.length > 0) sidebar.setOverflowMenu(overflow)
 	}
+}
+
+function getTypeLabel(type: 'character' | 'weapon' | 'summon'): string {
+	if (type === 'character') return m.type_character()
+	if (type === 'weapon') return m.type_weapon()
+	return m.type_summon()
 }
 
 export function openWeaponEditSidebar(
 	weapon: GridWeapon,
-	onSaveWeapon?: (id: string, updates: Partial<GridWeapon>) => Promise<void>
+	onSaveWeapon?: (id: string, updates: Partial<GridWeapon>) => Promise<void>,
+	context: { partyId?: string; partyShortcode?: string } = {}
 ) {
 	const weaponName = getName(weapon.weapon)
-	const title = weaponName !== 'Details' ? weaponName : 'Edit Weapon'
+	const title = weaponName || m.context_edit_weapon()
 	const editPaneId = `edit-weapon-${weapon.id}`
 
 	// If this edit pane is already in the stack, don't push a duplicate
@@ -144,14 +188,20 @@ export function openWeaponEditSidebar(
 
 		try {
 			if (onSaveWeapon) {
+				// gridService shows its own error toast before rethrowing.
 				await onSaveWeapon(String(weapon.id), updates)
 			} else {
-				await partyStore.updateWeapon(String(weapon.id), updates)
+				try {
+					await partyStore.updateWeapon(String(weapon.id), updates)
+				} catch (error) {
+					toast.error(extractErrorMessage(error, m.toast_failed_update_weapon()))
+					throw error
+				}
 			}
 			goBack()
 		} catch (error) {
+			// Keep the pane open so the user's edits aren't discarded.
 			console.error('Failed to save weapon:', error)
-			goBack()
 		}
 	}
 
@@ -161,6 +211,8 @@ export function openWeaponEditSidebar(
 		component: EditWeaponPane,
 		props: {
 			weapon,
+			partyId: context.partyId,
+			partyShortcode: context.partyShortcode,
 			onSave: handleSave,
 			onCancel: goBack
 		},
@@ -177,10 +229,16 @@ export function openWeaponEditSidebar(
 
 export function openCharacterEditSidebar(
 	character: GridCharacter,
-	onSaveCharacter?: (id: string, updates: Partial<GridCharacter>) => Promise<void>
+	onSaveCharacter?: (id: string, updates: Partial<GridCharacter>) => Promise<void>,
+	context: {
+		partyId?: string
+		partyShortcode?: string
+		/** Tab to open the edit pane on; defaults to 'stats'. */
+		initialTab?: 'stats' | 'notes'
+	} = {}
 ) {
 	const characterName = getName(character.character)
-	const title = characterName !== 'Details' ? characterName : 'Edit Character'
+	const title = characterName || m.context_edit_character()
 	const editPaneId = `edit-character-${character.id}`
 
 	// If this edit pane is already in the stack, don't push a duplicate
@@ -209,14 +267,20 @@ export function openCharacterEditSidebar(
 
 		try {
 			if (onSaveCharacter) {
+				// gridService shows its own error toast before rethrowing.
 				await onSaveCharacter(String(character.id), updates)
 			} else {
-				await partyStore.updateCharacter(String(character.id), updates)
+				try {
+					await partyStore.updateCharacter(String(character.id), updates)
+				} catch (error) {
+					toast.error(extractErrorMessage(error, m.toast_failed_update_character()))
+					throw error
+				}
 			}
 			goBack()
 		} catch (error) {
+			// Keep the pane open so the user's edits aren't discarded.
 			console.error('Failed to save character:', error)
-			goBack()
 		}
 	}
 
@@ -226,6 +290,9 @@ export function openCharacterEditSidebar(
 		component: EditCharacterPane,
 		props: {
 			character,
+			partyId: context.partyId,
+			partyShortcode: context.partyShortcode,
+			initialTab: context.initialTab,
 			onSave: handleSave,
 			onCancel: goBack
 		},
@@ -240,14 +307,55 @@ export function openCharacterEditSidebar(
 	}
 }
 
+export function openSummonEditSidebar(
+	summon: GridSummon,
+	context: { partyId?: string; partyShortcode?: string } = {}
+) {
+	const summonName = getName(summon.summon)
+	const title = summonName || m.context_edit_summon()
+	const editPaneId = `edit-summon-${summon.id}`
+
+	if (sidebar.paneStack.panes.some((p) => p.id === editPaneId)) return
+
+	const hasDetailsRoot = sidebar.isOpen && sidebar.paneStack.depth > 0
+	const goBack = () => {
+		if (hasDetailsRoot) {
+			sidebar.pop()
+		} else {
+			sidebar.close()
+		}
+	}
+
+	const paneConfig = {
+		id: editPaneId,
+		title,
+		component: EditSummonPane,
+		props: {
+			summon,
+			partyId: context.partyId,
+			partyShortcode: context.partyShortcode,
+			onCancel: goBack
+		},
+		onback: goBack
+	}
+
+	if (hasDetailsRoot) {
+		sidebar.push(paneConfig)
+	} else {
+		sidebar.paneStack.reset(paneConfig)
+		sidebar.state.open = true
+	}
+}
+
+/** Localized item name, or '' when it can't be resolved. */
 function getName(obj: unknown): string {
-	if (!obj) return 'Details'
+	if (!obj) return ''
 	const name =
 		(typeof obj === 'object' && obj !== null && 'name' in obj
 			? (obj as Record<string, unknown>).name
 			: obj) ?? obj
 	const resolved = localizedName(name)
-	return resolved === '—' ? 'Details' : resolved
+	return resolved === '—' ? '' : resolved
 }
 
 export function closeDetailsSidebar() {

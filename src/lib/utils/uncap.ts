@@ -3,9 +3,10 @@
  */
 
 export interface UncapData {
-	flb: boolean
+	flb?: boolean
 	ulb?: boolean
 	transcendence?: boolean
+	maxTranscendenceStage?: number
 }
 
 export interface CharacterUncapData {
@@ -17,20 +18,88 @@ export interface SummonUncapData {
 	uncap: UncapData
 }
 
+export interface NormalizedCharacterUncap {
+	flb: boolean
+	ulb: boolean
+	transcendence: boolean
+	maxTranscendenceStage: number
+	/** True only for responses from before story-character ULB had its own API field. */
+	legacySpecialUlb: boolean
+}
+
+export interface CharacterProgressionData extends CharacterUncapData {
+	hp?: { maxHpUlb?: number; maxHpTranscendence?: number }
+	atk?: { maxAtkUlb?: number; maxAtkTranscendence?: number }
+	ulbDate?: string
+	transcendenceDate?: string
+}
+
+export interface NormalizedCharacterProgression extends NormalizedCharacterUncap {
+	maxHpUlb: number
+	maxHpTranscendence: number
+	maxAtkUlb: number
+	maxAtkTranscendence: number
+	ulbDate: string
+	transcendenceDate: string
+}
+
+/**
+ * Normalizes character uncap capabilities across the old and new API shapes.
+ * The legacy fallback can be removed once every deployed API returns `ulb` and
+ * `maxTranscendenceStage` for characters.
+ */
+export function normalizeCharacterUncap(character: CharacterUncapData): NormalizedCharacterUncap {
+	const { special, uncap } = character
+	const legacySpecialUlb = special && uncap.ulb === undefined && uncap.transcendence === true
+	const transcendence = special && legacySpecialUlb ? false : (uncap.transcendence ?? false)
+
+	return {
+		flb: uncap.flb ?? false,
+		ulb: uncap.ulb ?? legacySpecialUlb,
+		transcendence,
+		maxTranscendenceStage: transcendence ? (uncap.maxTranscendenceStage ?? 5) : 0,
+		legacySpecialUlb
+	}
+}
+
+/** Moves legacy story-ULB stats and dates out of transcendence fields for editing. */
+export function normalizeCharacterProgression(
+	character: CharacterProgressionData
+): NormalizedCharacterProgression {
+	const normalized = normalizeCharacterUncap(character)
+	const legacy = normalized.legacySpecialUlb
+
+	return {
+		...normalized,
+		maxHpUlb: legacy
+			? (character.hp?.maxHpUlb ?? character.hp?.maxHpTranscendence ?? 0)
+			: (character.hp?.maxHpUlb ?? 0),
+		maxHpTranscendence: legacy ? 0 : (character.hp?.maxHpTranscendence ?? 0),
+		maxAtkUlb: legacy
+			? (character.atk?.maxAtkUlb ?? character.atk?.maxAtkTranscendence ?? 0)
+			: (character.atk?.maxAtkUlb ?? 0),
+		maxAtkTranscendence: legacy ? 0 : (character.atk?.maxAtkTranscendence ?? 0),
+		ulbDate: legacy
+			? (character.ulbDate ?? character.transcendenceDate ?? '')
+			: (character.ulbDate ?? ''),
+		transcendenceDate: legacy ? '' : (character.transcendenceDate ?? '')
+	}
+}
+
 /**
  * Calculate the maximum uncap level for a character based on their uncap data
- * @param special - Whether the character is special (limited/seasonal)
+ * @param special - Whether the character uses the three-star story-character uncap model
  * @param flb - Whether the character has FLB (4th uncap)
- * @param ulb - Whether the character has ULB (5th uncap)
+ * @param finalUncap - Whether the character has ULB (special) or transcendence (regular)
  * @returns The maximum uncap level
  */
-export function getMaxUncapLevel(special: boolean, flb: boolean, ulb: boolean): number {
+export function getMaxUncapLevel(special: boolean, flb: boolean, finalUncap: boolean): number {
 	if (special) {
 		// Special characters: 3 base + FLB + ULB
-		return ulb ? 5 : flb ? 4 : 3
+		return finalUncap ? 5 : flb ? 4 : 3
 	} else {
-		// Regular characters: 4 base + FLB + ULB/transcendence
-		return ulb ? 6 : flb ? 5 : 4
+		// Regular characters: 4 base + FLB + transcendence
+		return finalUncap ? 6 : flb ? 5 : 4
 	}
 }
 
@@ -40,8 +109,9 @@ export function getMaxUncapLevel(special: boolean, flb: boolean, ulb: boolean): 
  * @returns The maximum uncap level
  */
 export function getCharacterMaxUncapLevel(character: CharacterUncapData): number {
-	const { special, uncap } = character
-	return getMaxUncapLevel(special, uncap.flb, uncap.transcendence ?? uncap.ulb ?? false)
+	const uncap = normalizeCharacterUncap(character)
+	const finalUncap = character.special ? uncap.ulb : uncap.transcendence
+	return getMaxUncapLevel(character.special, uncap.flb, finalUncap)
 }
 
 /**

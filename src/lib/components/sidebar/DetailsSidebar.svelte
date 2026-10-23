@@ -1,6 +1,10 @@
 <script lang="ts">
 	import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
-	import { detectModifications, canWeaponBeModified } from '$lib/utils/modificationDetector'
+	import {
+		detectModifications,
+		canWeaponBeModified,
+		hasNotesOrSubstitutions
+	} from '$lib/utils/modificationDetector'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import DetailsSidebarSegmentedControl from './modifications/DetailsSidebarSegmentedControl.svelte'
@@ -8,11 +12,15 @@
 	import BasicInfoSection from './details/BasicInfoSection.svelte'
 	import StatsSection from './details/StatsSection.svelte'
 	import SkillsSection from './details/SkillsSection.svelte'
+	import LinksSection from './details/LinksSection.svelte'
 	import TeamView from './details/TeamView.svelte'
-	import CollectionSection from './details/CollectionSection.svelte'
+	import OutOfSyncBanner from './details/OutOfSyncBanner.svelte'
 	import SyncToCollectionDialog from './details/SyncToCollectionDialog.svelte'
+	import { getElementKey } from '$lib/utils/element'
+	import { getAbilitySlots } from '$lib/utils/fullAutoSkills'
 	import { authStore } from '$lib/stores/auth.store.svelte'
 	import { getEditKey } from '$lib/utils/editKeys'
+	import { localizedName } from '$lib/utils/locale'
 	import {
 		useSyncGridCharacter,
 		useSyncGridWeapon,
@@ -55,11 +63,21 @@
 
 	let modificationStatus = $derived(detectModifications(type, item))
 
-	// For weapons, only show segmented control if the weapon can be modified
+	// A character's Full Auto section (ability-slot toggles) lives in the Team
+	// view, so the segmented control must be reachable whenever it will render.
+	const hasFullAutoSkills = $derived(
+		type === 'character' && getAbilitySlots((item as GridCharacter).character).length > 0
+	)
+
+	// Show segmented control whenever Team view has something to show: actual
+	// modifications, a modifiable weapon, Full Auto toggles, or party-side
+	// notes/substitutions.
 	const showSegmentedControl = $derived(
-		type === 'weapon'
+		(type === 'weapon'
 			? canWeaponBeModified(item as GridWeapon)
-			: modificationStatus.hasModifications
+			: modificationStatus.hasModifications) ||
+			hasFullAutoSkills ||
+			hasNotesOrSubstitutions(item)
 	)
 
 	// Track selected view - updated reactively based on modifiability
@@ -68,16 +86,36 @@
 	// Track the item ID to detect when switching to a different item
 	let currentItemId = $state<string | undefined>(undefined)
 
+	// Default-tab rules per type:
+	// - Weapon: Team only when there's substantive team-side content (notes,
+	//   subs, awakening, AX, befoulment, weapon keys, bullets, or a picked
+	//   element override). Bare affordances like an empty key slot aren't
+	//   enough.
+	// - Summon: Team only when there are notes or substitutions. Uncap/quick/
+	//   friend flags alone aren't enough to push past the canonical Info view.
+	// - Character: Team whenever there are modifications or notes/subs.
+	const defaultToTeamView = $derived(
+		type === 'weapon'
+			? hasNotesOrSubstitutions(item) ||
+					modificationStatus.hasAwakening ||
+					modificationStatus.hasAxSkills ||
+					modificationStatus.hasBefoulment ||
+					modificationStatus.hasWeaponKeys ||
+					modificationStatus.hasBullets ||
+					modificationStatus.hasElement
+			: type === 'summon'
+				? hasNotesOrSubstitutions(item)
+				: modificationStatus.hasModifications || hasNotesOrSubstitutions(item)
+	)
+
 	// Update view when switching to a different item
 	$effect(() => {
 		const itemId = item && 'id' in item ? item.id : undefined
 		if (itemId !== currentItemId) {
 			currentItemId = itemId
-			if (!showSegmentedControl) {
-				// Force canonical view for non-modifiable items
+			if (!showSegmentedControl || !defaultToTeamView) {
 				selectedView = 'canonical'
 			} else {
-				// Default to user view for modifiable items
 				selectedView = 'user'
 			}
 		}
@@ -166,12 +204,54 @@
 		return false
 	})
 
-	const isOutOfSync = $derived.by(() => {
-		if (type === 'character') return (item as GridCharacter).outOfSync ?? false
-		if (type === 'weapon') return (item as GridWeapon).outOfSync ?? false
-		if (type === 'summon') return (item as GridSummon).outOfSync ?? false
+	const outOfSyncFields = $derived.by((): string[] => {
+		if (type === 'character') return (item as GridCharacter).outOfSyncFields ?? []
+		if (type === 'weapon') return (item as GridWeapon).outOfSyncFields ?? []
+		if (type === 'summon') return (item as GridSummon).outOfSyncFields ?? []
+		return []
+	})
+
+	const isOutOfSync = $derived(isLinkedToCollection && outOfSyncFields.length > 0)
+
+	// Element key for ghost button styling (matches Button's element prop union)
+	const buttonElement = $derived.by(() => {
+		const key = getElementKey(itemData?.element)
+		const allowed = ['wind', 'fire', 'water', 'earth', 'dark', 'light'] as const
+		return (allowed as readonly string[]).includes(key)
+			? (key as (typeof allowed)[number])
+			: undefined
+	})
+
+	// Limit detection for the bool-style pill copy
+	const isLimitItem = $derived.by(() => {
+		if (type === 'weapon') return !!(item as GridWeapon).weapon?.limit
+		if (type === 'summon') return !!(item as GridSummon).summon?.limit
 		return false
 	})
+
+	// Find the linked collection item so the push-confirm dialog can render
+	// before/after diffs. Looked up by the grid item's collection_*_id, which
+	// the backend stamps when an item is linked.
+	const linkedCollectionItem = $derived.by(() => {
+		const vc = partyStore.activeCollection
+		if (!vc) return undefined
+		if (type === 'character') {
+			const cid = (item as GridCharacter).collectionCharacterId
+			return cid ? vc.characters.find((c) => c.id === cid) : undefined
+		}
+		if (type === 'weapon') {
+			const wid = (item as GridWeapon).collectionWeaponId
+			return wid ? vc.weapons.find((w) => w.id === wid) : undefined
+		}
+		if (type === 'summon') {
+			const sid = (item as GridSummon).collectionSummonId
+			return sid ? vc.summons.find((s) => s.id === sid) : undefined
+		}
+		return undefined
+	})
+
+	// Localized item name for the dialog copy.
+	const itemName = $derived(itemData?.name ? localizedName(itemData.name) : undefined)
 
 	// Permission checks
 	const isPartyOwner = $derived.by(() => {
@@ -196,72 +276,126 @@
 			syncSummonToCollectionMutation.isPending
 	)
 
-	// Handle sync from collection
-	async function handleSync() {
+	// Handle sync from collection. When `fields` is omitted or empty, the
+	// backend syncs every tracked column (full sync); otherwise it only copies
+	// the named camelCase fields (e.g. ['uncapLevel', 'overMastery.1']).
+	async function handleSync(fields?: string[]) {
 		const itemId = item && 'id' in item ? item.id : undefined
 		const partyShortcode = partyStore.party?.shortcode ?? ''
 		if (!itemId || !isLinkedToCollection || !partyShortcode) return
 
+		const params = { id: itemId, partyShortcode, fields }
+
 		if (type === 'character') {
-			await syncCharacterMutation.mutateAsync({ id: itemId, partyShortcode })
+			await syncCharacterMutation.mutateAsync(params)
 		} else if (type === 'weapon') {
-			await syncWeaponMutation.mutateAsync({ id: itemId, partyShortcode })
+			await syncWeaponMutation.mutateAsync(params)
 		} else if (type === 'summon') {
-			await syncSummonMutation.mutateAsync({ id: itemId, partyShortcode })
+			await syncSummonMutation.mutateAsync(params)
 		}
 	}
 
-	// Handle sync to collection (grid → collection)
-	async function handleSyncToCollection() {
+	// Handle sync to collection (grid → collection). `fields` semantics match
+	// `handleSync` above.
+	async function handleSyncToCollection(fields?: string[]) {
 		const itemId = item && 'id' in item ? item.id : undefined
 		const partyShortcode = partyStore.party?.shortcode ?? ''
 		if (!itemId || !isLinkedToCollection || !partyShortcode) return
 
+		const params = { id: itemId, partyShortcode, fields }
+
 		if (type === 'character') {
-			await syncCharacterToCollectionMutation.mutateAsync({ id: itemId, partyShortcode })
+			await syncCharacterToCollectionMutation.mutateAsync(params)
 		} else if (type === 'weapon') {
-			await syncWeaponToCollectionMutation.mutateAsync({ id: itemId, partyShortcode })
+			await syncWeaponToCollectionMutation.mutateAsync(params)
 		} else if (type === 'summon') {
-			await syncSummonToCollectionMutation.mutateAsync({ id: itemId, partyShortcode })
+			await syncSummonToCollectionMutation.mutateAsync(params)
 		}
+	}
+
+	// Permission flags for the sync menu buttons.
+	//
+	// Pull (collection → grid) requires party-edit rights. Push (grid →
+	// collection) is also offered to the party owner, since the common case is
+	// "owner of the party is the owner of the linked collection". When that
+	// isn't true (someone editing their own party with a friend's collection
+	// linked) the push request still hits the backend, which rejects unless
+	// the requester is the actual collection_source_user. We accept that
+	// trade-off — surfacing the option is better than silently hiding it from
+	// the user who in practice owns both.
+	const canPull = $derived(isLinkedToCollection && isPartyOwner)
+	const canPush = $derived(isLinkedToCollection && (isCollectionOwner || isPartyOwner))
+
+	// Captured fields for the pending push action. Set when an inline section
+	// button opens the dialog; cleared back to undefined for the banner's
+	// "Sync all" which intentionally pushes everything.
+	let pendingPushScope = $state<string | undefined>(undefined)
+	let pendingPushFields = $state<string[] | undefined>(undefined)
+
+	function openPushDialog(scope?: string, fields?: string[]) {
+		pendingPushScope = scope
+		pendingPushFields = fields
+		syncToCollectionDialogOpen = true
+	}
+
+	function confirmPush() {
+		return handleSyncToCollection(pendingPushFields)
 	}
 </script>
 
 <div class="details-sidebar">
-	<ItemHeader {type} {item} {itemData} {gridUncapLevel} {gridTranscendence} />
+	<ItemHeader
+		{type}
+		{item}
+		{itemData}
+		{gridUncapLevel}
+		{gridTranscendence}
+		collectionPill={partyStore.activeCollection
+			? {
+					count: collectionCount,
+					gridCount,
+					isLimitItem,
+					sourceUsername:
+						partyStore.activeCollectionUser === 'source'
+							? partyStore.party?.collectionSourceUser?.username
+							: undefined,
+					isOutOfSync
+				}
+			: undefined}
+	/>
 
 	<DetailsSidebarSegmentedControl hasModifications={showSegmentedControl} bind:selectedView />
 
-	<CollectionSection
-		{type}
-		count={collectionCount}
-		{gridCount}
-		element={itemData?.element}
-		hasCollection={!!partyStore.activeCollection}
-		sourceUsername={partyStore.activeCollectionUser === 'source'
-			? partyStore.party?.collectionSourceUser?.username
-			: undefined}
-		isOutOfSync={isLinkedToCollection && isOutOfSync}
-		{isPartyOwner}
-		{isCollectionOwner}
-		{isSyncing}
-		{isSyncingToCollection}
-		onSync={handleSync}
-		onSyncToCollection={() => {
-			syncToCollectionDialogOpen = true
-		}}
-	/>
+	{#if isOutOfSync}
+		<OutOfSyncBanner
+			{type}
+			fieldCount={outOfSyncFields.length}
+			element={buttonElement}
+			{canPull}
+			{canPush}
+			{isSyncing}
+			{isSyncingToCollection}
+			onSyncFromCollection={() => handleSync()}
+			onSyncToCollection={() => openPushDialog()}
+		/>
+	{/if}
 
 	<SyncToCollectionDialog
 		bind:open={syncToCollectionDialogOpen}
 		{type}
-		onConfirm={handleSyncToCollection}
+		scope={pendingPushScope}
+		name={itemName}
+		fields={pendingPushFields ?? outOfSyncFields}
+		gridItem={item}
+		collectionItem={linkedCollectionItem}
+		onConfirm={confirmPush}
 	/>
 
 	{#if selectedView === 'canonical'}
 		<div class="canonical-view">
+			<LinksSection {type} {itemData} />
 			<BasicInfoSection {type} {itemData} />
-			<StatsSection {itemData} {gridUncapLevel} {gridTranscendence} />
+			<StatsSection {type} {itemData} {gridUncapLevel} {gridTranscendence} />
 			<SkillsSection {type} {itemData} />
 		</div>
 	{:else}
@@ -272,6 +406,14 @@
 			{gridTranscendence}
 			{modificationStatus}
 			{isPartyOwner}
+			{outOfSyncFields}
+			{canPull}
+			{canPush}
+			{isSyncing}
+			{isSyncingToCollection}
+			syncElement={buttonElement}
+			onSyncFromCollection={(fields) => handleSync(fields)}
+			onSyncToCollection={(scope, fields) => openPushDialog(scope, fields)}
 		/>
 	{/if}
 </div>

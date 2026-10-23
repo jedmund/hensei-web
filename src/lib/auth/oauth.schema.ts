@@ -9,7 +9,8 @@ export const OAuthLoginResponseSchema = z.object({
 	user: z.object({
 		id: z.string(),
 		username: z.string(),
-		role: z.number().int()
+		role: z.number().int(),
+		deletion_scheduled_at: z.string().nullable().optional()
 	})
 })
 

@@ -7,6 +7,7 @@
 		handleImageFallback
 	} from '$lib/utils/images'
 	import { getAwakeningImage } from '$lib/utils/modifiers'
+	import { seriesHasTranscendenceArt } from '$lib/utils/weaponSeries'
 	import { localizedName } from '$lib/utils/locale'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	interface Props {
@@ -30,7 +31,7 @@
 	// Get transformation suffix for transcendence
 	const transformation = $derived(
 		getWeaponTransformation(
-			weapon.weapon?.uncap?.transcendence,
+			seriesHasTranscendenceArt(weapon.weapon?.series),
 			weapon.uncapLevel,
 			weapon.transcendenceStep
 		)

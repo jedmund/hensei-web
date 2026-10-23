@@ -24,6 +24,7 @@
 	import BulletSelect from '$lib/components/sidebar/edit/BulletSelect.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { seriesHasWeaponKeys, seriesHasAwakening, getSeriesSlug } from '$lib/utils/weaponSeries'
+	import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
 
 	export interface WeaponEditValues {
 		uncapLevel: number
@@ -59,6 +60,7 @@
 		axStrength2?: number
 		befoulmentModifierId?: string
 		befoulmentStrength?: number
+		befoulmentPermeation?: number | null
 		exorcismLevel?: number
 		bullets?: BulletLoadout[]
 	}
@@ -99,7 +101,8 @@
 
 	// Derived conditions
 	const canChangeElement = $derived(weaponData?.element === 0)
-	const series = $derived(weaponData?.series)
+	// The edit pane gets full weapon data; narrow out the list-view summary
+	const series = $derived(isWeaponSeriesRef(weaponData?.series) ? weaponData.series : undefined)
 	const seriesSlug = $derived(getSeriesSlug(series))
 
 	// Check if series has weapon keys using the utility (handles both formats)
@@ -120,6 +123,8 @@
 
 	function handleUncapUpdate(newLevel: number) {
 		uncapLevel = newLevel
+		// Transcendence requires uncap level 5; the API rejects a leftover stage.
+		if (newLevel < 5) transcendenceStep = 0
 	}
 
 	function handleTranscendenceUpdate(newStage: number) {
@@ -186,6 +191,7 @@
 			if (befoulment?.modifier?.id) {
 				updates.befoulmentModifierId = befoulment.modifier.id
 				updates.befoulmentStrength = befoulment.strength
+				updates.befoulmentPermeation = befoulment.permeation ?? 1
 				updates.exorcismLevel = befoulment.exorcismLevel
 			}
 		}
@@ -250,7 +256,7 @@
 		{#if hasAxSkills}
 			<DetailsSection title={m.details_ax_skills()}>
 				<div class="section-content">
-					<AxSkillSelect bind:currentSkills={axSkills} />
+					<AxSkillSelect bind:currentSkills={axSkills} axType={series?.axType ?? 'standard'} />
 				</div>
 			</DetailsSection>
 		{/if}

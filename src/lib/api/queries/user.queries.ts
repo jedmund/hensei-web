@@ -84,6 +84,21 @@ export const userQueries = {
 		}),
 
 	/**
+	 * Support summons query options for a given user (by username).
+	 *
+	 * Used by the support-summon grid + picker + mutations to keep the
+	 * cache in sync after create/update/destroy.
+	 */
+	supportSummons: (username: string) =>
+		queryOptions({
+			queryKey: ['user', username, 'supportSummons'] as const,
+			queryFn: () => userAdapter.getSupportSummons(username),
+			enabled: !!username,
+			staleTime: 1000 * 60 * 2,
+			gcTime: 1000 * 60 * 15
+		}),
+
+	/**
 	 * User profile query options (includes first page of parties)
 	 *
 	 * @param username - Username to fetch profile for

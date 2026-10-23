@@ -51,6 +51,10 @@ export const load: PageLoad = async ({ url, depends, fetch }) => {
 			stack: err?.stack,
 			details: err?.details
 		})
+		// status 0 means the request was cancelled (e.g. the user navigated away
+		// mid-load). Don't relabel that as a 502 server error — rethrow the
+		// original so it's treated as a cancellation, not a bug.
+		if (status === 0) throw e
 		const errorMessage = `Failed to load teams: ${message || 'Unknown error'}. Status: ${status || 'unknown'}`
 		throw error(status || 502, errorMessage)
 	}

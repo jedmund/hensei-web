@@ -35,6 +35,27 @@ body {
 	}
 }
 
+// Images hidden while they load, then faded in (see fadeImagesIn in
+// utils/motion.ts). The fade only starts from 0, so it ends at the image's
+// own opacity.
+img[data-fade='pending'] {
+	opacity: 0;
+}
+
+img[data-fade='in'] {
+	animation: img-fade-in 0.2s ease;
+
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+	}
+}
+
+@keyframes img-fade-in {
+	from {
+		opacity: 0;
+	}
+}
+
 ul {
 	padding-inline-start: 0;
 	margin: 0;

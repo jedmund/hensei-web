@@ -15,7 +15,6 @@ import {
 	remixPartyOptions,
 	favoritePartyOptions,
 	unfavoritePartyOptions,
-	regeneratePreviewOptions,
 	sharePartyWithCrewOptions,
 	removePartyShareOptions
 } from '../party.mutations'
@@ -36,7 +35,6 @@ vi.mock('$lib/api/adapters/party.adapter', () => ({
 		remix: vi.fn(),
 		favorite: vi.fn(),
 		unfavorite: vi.fn(),
-		regeneratePreview: vi.fn(),
 		shareWithCrew: vi.fn(),
 		removeShare: vi.fn()
 	}
@@ -308,22 +306,6 @@ describe('unfavoritePartyOptions', () => {
 		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
 		expect(keys).toContainEqual(['user', 'favorites'])
 		expect(keys).toContainEqual(['party', MOCK_SHORTCODE])
-	})
-})
-
-// ============================================================================
-// regeneratePreview
-// ============================================================================
-
-describe('regeneratePreviewOptions', () => {
-	it('invalidates preview key on success', () => {
-		const spy = vi.spyOn(queryClient, 'invalidateQueries')
-		const opts = regeneratePreviewOptions(queryClient)
-
-		opts.onSuccess(undefined, MOCK_SHORTCODE)
-
-		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
-		expect(keys).toContainEqual(['party', MOCK_SHORTCODE, 'preview'])
 	})
 })
 

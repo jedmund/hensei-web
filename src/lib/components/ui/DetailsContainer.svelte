@@ -31,7 +31,7 @@
 			color: var(--text-primary);
 			font-size: typography.$font-medium;
 			font-weight: typography.$bold;
-			margin: 0 0 spacing.$unit 0;
+			margin: 0;
 		}
 
 		.details {

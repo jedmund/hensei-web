@@ -154,6 +154,7 @@
 			if (updates.befoulmentModifierId !== undefined) {
 				input.befoulmentModifierId = updates.befoulmentModifierId
 				input.befoulmentStrength = updates.befoulmentStrength
+				input.befoulmentPermeation = updates.befoulmentPermeation
 				input.exorcismLevel = updates.exorcismLevel
 			}
 
@@ -169,7 +170,7 @@
 			updateActionVisibility()
 		} catch (error) {
 			console.error('Failed to update collection weapon:', error)
-			toast.error(extractErrorMessage(error, 'Failed to update weapon'))
+			toast.error(extractErrorMessage(error, m.toast_failed_update_weapon()))
 		}
 	}
 
@@ -307,6 +308,7 @@
 			<div class="info-view">
 				<BasicInfoSection type="weapon" itemData={weaponData} />
 				<StatsSection
+					type="weapon"
 					itemData={weaponData}
 					gridUncapLevel={weapon.uncapLevel}
 					gridTranscendence={weapon.transcendenceStep}

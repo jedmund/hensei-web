@@ -549,3 +549,30 @@ input[type='checkbox'] {
 	background: var(--light-mention-bg);
 	color: var(--light-text);
 }
+
+/* Skill mentions: tinted by skill type color (damage/heal/buff/debuff/field)
+   rather than element, matching the Skills tab / Full Auto chips. */
+.tiptap span.entity-mention[data-skill-color='damage'] {
+	background: color-mix(in srgb, #d64545 18%, transparent);
+	color: #d64545;
+}
+
+.tiptap span.entity-mention[data-skill-color='heal'] {
+	background: color-mix(in srgb, #3fa34d 18%, transparent);
+	color: #3fa34d;
+}
+
+.tiptap span.entity-mention[data-skill-color='buff'] {
+	background: color-mix(in srgb, #e0a93b 18%, transparent);
+	color: #b9831f;
+}
+
+.tiptap span.entity-mention[data-skill-color='debuff'] {
+	background: color-mix(in srgb, #4a6fd6 18%, transparent);
+	color: #4a6fd6;
+}
+
+.tiptap span.entity-mention[data-skill-color='field'] {
+	background: color-mix(in srgb, #8b5cf6 18%, transparent);
+	color: #8b5cf6;
+}

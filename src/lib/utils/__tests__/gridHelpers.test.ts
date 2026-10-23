@@ -2,6 +2,9 @@ import { describe, it, expect } from 'vitest'
 import { findNextEmptySlot, SLOT_NOT_FOUND } from '../gridHelpers'
 import { GridType } from '$lib/types/enums'
 import type { Party, GridWeapon, GridSummon, GridCharacter } from '$lib/types/api/party'
+import { transformResponse } from '$lib/api/schemas/transforms'
+import buildJson from '$lib/components/solomonis/grid/__fixtures__/party-build.json'
+import runJson from '$lib/components/solomonis/grid/__fixtures__/party-run.json'
 
 function makeParty(overrides: Partial<Party> = {}): Party {
 	return {
@@ -84,6 +87,18 @@ describe('findNextEmptySlot — summons', () => {
 		const party = makeParty({ summons })
 		expect(findNextEmptySlot(party, GridType.Summon)).toBe(SLOT_NOT_FOUND)
 	})
+
+	it('never offers the support summon slot for content without one', () => {
+		// e.g. Replicard Sandbox: Arcarum, no Solomonis expedition
+		const summons = [{ id: 's-main', position: -1, main: true }] as unknown as GridSummon[]
+		for (let i = 0; i <= 5; i++) {
+			summons.push({ id: `s-${i}`, position: i } as unknown as GridSummon)
+		}
+		const raid = { id: 'r-1', group: { id: 'g-1', supportSummon: false } } as Party['raid']
+		const party = makeParty({ summons, raid })
+		expect(findNextEmptySlot(party, GridType.Summon)).toBe(SLOT_NOT_FOUND)
+		expect(findNextEmptySlot(makeParty({ summons }), GridType.Summon)).toBe(6)
+	})
 })
 
 // ============================================================================
@@ -113,5 +128,28 @@ describe('findNextEmptySlot — characters', () => {
 		}
 		const party = makeParty({ characters })
 		expect(findNextEmptySlot(party, GridType.Character)).toBe(SLOT_NOT_FOUND)
+	})
+})
+
+describe('findNextEmptySlot — Evoking Solomonis', () => {
+	const load = (json: unknown) => transformResponse<{ party: Party }>(json).party
+	it('offers the slots after the route Evoker', () => {
+		const party = load(buildJson)
+		expect(findNextEmptySlot(party, GridType.Character)).toBe(1)
+	})
+
+	it('allows the route Evoker and four recruits', () => {
+		const party = load(runJson)
+		expect(party.characters).toHaveLength(5)
+		expect(findNextEmptySlot(party, GridType.Character)).toBe(SLOT_NOT_FOUND)
+		const characters = party.characters.filter((c) => c.position !== 3)
+		expect(findNextEmptySlot({ ...party, characters }, GridType.Character)).toBe(3)
+	})
+
+	it('never offers the support summon slot', () => {
+		const party = load(buildJson)
+		expect(findNextEmptySlot(party, GridType.Summon)).toBe(SLOT_NOT_FOUND)
+		const summons = party.summons.filter((s) => s.position !== 2)
+		expect(findNextEmptySlot({ ...party, summons }, GridType.Summon)).toBe(2)
 	})
 })

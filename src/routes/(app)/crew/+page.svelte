@@ -317,8 +317,7 @@
 						bind:value={crewDescription}
 						placeholder={m.crew_description_placeholder()}
 						maxlength="500"
-						rows="3"
-					></textarea>
+						rows="3"></textarea>
 				</div>
 			</div>
 		</div>

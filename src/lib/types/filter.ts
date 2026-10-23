@@ -18,6 +18,11 @@ export type FilterItem =
 	| { kind: 'party'; value: string; label: string; pinned?: boolean }
 	| { kind: 'boost'; value: string; label: string; pinned?: boolean }
 	| { kind: 'side'; value: string; label: string; pinned?: boolean }
+	| { kind: 'difficulty'; value: string; label: string; pinned?: boolean }
+	/** Evoking Solomonis route Evoker, by character granblue_id */
+	| { kind: 'evoker'; value: string; label: string; pinned?: boolean }
+	/** Sticker label, by slug; the label text is the sticker's meaning */
+	| { kind: 'label'; value: string; label: string; pinned?: boolean }
 
 export interface FilterOption {
 	kind: FilterItem['kind']

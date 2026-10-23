@@ -1,13 +1,11 @@
 import type { PageServerLoad } from './$types'
 import { entityAdapter } from '$lib/api/adapters/entity.adapter'
-import { error, redirect } from '@sveltejs/kit'
+import { error } from '@sveltejs/kit'
+import { requireEditor } from '$lib/auth/requireEditor'
 
 export const load: PageServerLoad = async ({ params, parent }) => {
 	const parentData = await parent()
-
-	if (!parentData.role || parentData.role < 7) {
-		throw redirect(303, `/database/characters/${params.granblueId}/style`)
-	}
+	requireEditor(parentData, `/database/characters/${params.granblueId}/style`)
 
 	try {
 		const character = await entityAdapter.getCharacter(params.granblueId, { styleSwap: true })

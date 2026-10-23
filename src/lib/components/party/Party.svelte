@@ -33,10 +33,13 @@
 	import type { Guidebook } from '$lib/types/api/entities'
 	import PartySegmentedControl from '$lib/components/party/PartySegmentedControl.svelte'
 	import { GridType } from '$lib/types/enums'
-	import Icon from '$lib/components/Icon.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import PartyInfoGrid from '$lib/components/party/info/PartyInfoGrid.svelte'
+	import StickerPicker from '$lib/components/stickers/StickerPicker.svelte'
+	import { setStickerStage } from '$lib/components/stickers/stickerStage.svelte'
+	import { canShowStickerPicker } from '$lib/utils/stickers'
 	import { DropdownMenu } from 'bits-ui'
-	import DropdownItem from '$lib/components/ui/dropdown/DropdownItem.svelte'
 	import JobSection from '$lib/components/job/JobSection.svelte'
 	import { Gender } from '$lib/utils/jobUtils'
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
@@ -46,7 +49,22 @@
 	import PickPlaylistPane from '$lib/components/sidebar/PickPlaylistPane.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import Notice from '$lib/components/ui/Notice.svelte'
+	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
+	import WikiTextDialog from '$lib/components/party/WikiTextDialog.svelte'
+	import { openEditSolomonisPane } from '$lib/components/solomonis/party/openSolomonisPanes'
+	import {
+		isSolomonisParty,
+		solomonisRaidTransition,
+		type SolomonisRaidTransition
+	} from '$lib/components/solomonis/party/solomonisParty'
+	import {
+		useUpdatePartyBlessings,
+		useUpdateSolomonisExpedition
+	} from '$lib/api/mutations/solomonis.mutations'
+	import type { RaidFull } from '$lib/types/api/raid'
 	import * as m from '$lib/paraglide/messages'
+	import { goto } from '$app/navigation'
+	import { localizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {
 		party?: Party
@@ -58,6 +76,8 @@
 		isNew?: boolean
 		ensurePartyExists?: () => Promise<{ id: string; shortcode: string }>
 		initialCollectionSourceUsername?: string
+		/** When true, the difficulty tier chip becomes a link to the editor preview */
+		isEditor?: boolean
 	}
 
 	let {
@@ -69,7 +89,8 @@
 		initialTab,
 		isNew = false,
 		ensurePartyExists,
-		initialCollectionSourceUsername
+		initialCollectionSourceUsername,
+		isEditor = false
 	}: Props = $props()
 
 	// Default empty party
@@ -145,6 +166,13 @@
 		getHasCollectionLinks: () => hasCollectionLinks,
 		onDetailsUpdated: () => {
 			if (isNew && party.id === 'new') hasEditedInfo = true
+		},
+		handleRaidChange: (raid) => {
+			// The settings pane closes right after saving; open our pane after it.
+			const transition = solomonisRaidTransition(isSolomonis, raid)
+			if (transition === 'none') return false
+			setTimeout(() => startSolomonisRaidTransition(transition, raid?.id ?? null))
+			return true
 		}
 	})
 
@@ -205,6 +233,42 @@
 		},
 		ensurePartyExists: ensurePartyExistsFn
 	})
+
+	// --- Evoking Solomonis ---
+	const isSolomonis = $derived(isSolomonisParty(party))
+	const solomonisMutations = {
+		expedition: useUpdateSolomonisExpedition(),
+		blessings: useUpdatePartyBlessings(() => party.id)
+	}
+	let leaveSolomonisOpen = $state(false)
+	let pendingLeaveSolomonisRaidId = $state<string | null>(null)
+
+	/** Raid tile and settings pane: entering or leaving Solomonis goes through us (D12). */
+	function startSolomonisRaidTransition(
+		transition: SolomonisRaidTransition,
+		raidId: string | null
+	) {
+		if (transition === 'enter') {
+			openEditSolomonisPane(party, solomonisMutations, ensurePartyExistsFn)
+		} else if (transition === 'leave') {
+			pendingLeaveSolomonisRaidId = raidId
+			leaveSolomonisOpen = true
+		}
+	}
+
+	async function handleRaidSelect(raid: RaidFull | null) {
+		const transition = solomonisRaidTransition(isSolomonis, raid)
+		if (transition !== 'none') {
+			startSolomonisRaidTransition(transition, raid?.id ?? null)
+			return
+		}
+		await actions.updatePartyDetails({ raidId: raid?.id ?? null })
+	}
+
+	async function confirmLeaveSolomonis() {
+		leaveSolomonisOpen = false
+		await actions.updatePartyDetails({ raidId: pendingLeaveSolomonisRaidId })
+	}
 
 	// --- Guidebook mutations ---
 	const updateGuidebook = useUpdatePartyGuidebook()
@@ -378,6 +442,8 @@
 	})
 
 	// --- Context setup ---
+	// Shared by the sticker picker and the sticker area
+	setStickerStage(() => party)
 	setPartyContext({
 		getParty: () => party,
 		canEdit: () => canEdit(),
@@ -429,9 +495,17 @@
 	})
 
 	setDragDropContext(dragContext)
+
+	// Hidden on your own team and on teams that can't receive stickers, so the
+	// sticker row doesn't show an empty picker slot
+	const canGiveSticker = $derived(!isNew && canShowStickerPicker(party, authUserId))
 </script>
 
 <svelte:window onpopstate={handlePopState} />
+
+{#snippet stickerPicker()}
+	<StickerPicker {party} />
+{/snippet}
 
 <div class="page-wrap">
 	<div class="track">
@@ -442,76 +516,112 @@
 				onOpenDescription={actions.openDescriptionPanel}
 				onEditDescription={actions.editDescriptionPanel}
 				onOpenEdit={actions.openSettingsPanel}
-				onRaidSelect={async (raid) => {
-					await actions.updatePartyDetails({ raidId: raid?.id ?? null })
-				}}
+				onRaidSelect={handleRaidSelect}
 				{authUser}
 				{activeCollectionUser}
 				onSwitchCollectionUser={handleSwitchCollectionUser}
+				{isEditor}
+				stickerPicker={canGiveSticker ? stickerPicker : undefined}
+				{canGiveSticker}
 			>
+				{#snippet remix()}
+					{#if !isNew}
+						<Tooltip content={m.party_remix()}>
+							<Button
+								variant="ghost"
+								size="small"
+								iconOnly
+								icon="remix"
+								aria-label={m.party_remix()}
+								onclick={actions.remixParty}
+								disabled={actions.loading}
+							/>
+						</Tooltip>
+					{/if}
+				{/snippet}
 				{#snippet menu()}
 					{#if !isNew}
 						<DropdownMenu.Root>
-							<DropdownMenu.Trigger class="party-actions-trigger" aria-label="Open actions menu">
-								<Icon name="ellipsis" size={14} />
+							<DropdownMenu.Trigger>
+								{#snippet child({ props })}
+									<Tooltip content={m.party_see_more()}>
+										<Button
+											{...props}
+											variant="ghost"
+											size="small"
+											iconOnly
+											icon="ellipsis"
+											aria-label={m.party_see_more()}
+										/>
+									</Tooltip>
+								{/snippet}
 							</DropdownMenu.Trigger>
 
 							<DropdownMenu.Portal>
-								<DropdownMenu.Content class="dropdown-content" sideOffset={6} align="end">
+								<DropdownMenu.Content class="dropdown-menu" sideOffset={6} align="end">
 									{#if canEdit() && hasCollectionLinks}
-										<DropdownItem>
-											<button
-												onclick={actions.syncFromCollection}
-												disabled={actions.loading || actions.isSyncingAll}
-											>
-												{actions.isSyncingAll ? m.party_syncing() : m.party_sync_collection()}
-											</button>
-										</DropdownItem>
-										<DropdownMenu.Separator class="dropdown-separator" />
+										<DropdownMenu.Item
+											class="dropdown-menu-item"
+											onSelect={actions.syncFromCollection}
+											disabled={actions.loading || actions.isSyncingAll}
+										>
+											{actions.isSyncingAll ? m.party_syncing() : m.party_sync_collection()}
+										</DropdownMenu.Item>
+										<DropdownMenu.Separator class="dropdown-menu-separator" />
+									{/if}
+
+									{#if party.sourceParty?.shortcode}
+										<DropdownMenu.Item
+											class="dropdown-menu-item"
+											onSelect={() => goto(localizeHref(`/teams/${party.sourceParty?.shortcode}`))}
+										>
+											{m.party_view_original()}
+										</DropdownMenu.Item>
 									{/if}
 
 									{#if authUserId}
-										<DropdownItem>
-											<button onclick={actions.toggleFavorite} disabled={actions.loading}>
-												{party.favorited ? m.party_remove_favorite() : m.party_add_favorite()}
-											</button>
-										</DropdownItem>
+										<DropdownMenu.Item
+											class="dropdown-menu-item"
+											onSelect={actions.toggleFavorite}
+											disabled={actions.loading}
+										>
+											{party.favorited ? m.party_remove_favorite() : m.party_add_favorite()}
+										</DropdownMenu.Item>
 									{/if}
 
 									{#if party.user?.id === authUserId && authUsername}
-										<DropdownItem>
-											<button
-												onclick={() => {
-													sidebar.openWithComponent(
-														m.playlist_add_to(),
-														PickPlaylistPane,
-														{ partyId: party.id, username: authUsername },
-														{ scrollable: false }
-													)
-												}}
-												disabled={actions.loading}
-											>
-												{m.playlist_add_to()}
-											</button>
-										</DropdownItem>
+										<DropdownMenu.Item
+											class="dropdown-menu-item"
+											onSelect={() => {
+												sidebar.openWithComponent(
+													m.playlist_add_to(),
+													PickPlaylistPane,
+													{ partyId: party.id, username: authUsername },
+													{ scrollable: false }
+												)
+											}}
+											disabled={actions.loading}
+										>
+											{m.playlist_add_to()}
+										</DropdownMenu.Item>
 									{/if}
 
-									<DropdownItem>
-										<button onclick={actions.remixParty} disabled={actions.loading}
-											>{m.party_remix()}</button
-										>
-									</DropdownItem>
+									{#if authUserId || party.sourceParty?.shortcode}
+										<DropdownMenu.Separator class="dropdown-menu-separator" />
+									{/if}
+									<DropdownMenu.Item class="dropdown-menu-item" onSelect={actions.openWikiExport}>
+										{m.party_export_wiki()}
+									</DropdownMenu.Item>
 
 									{#if party.user?.id === authUserId}
-										<DropdownMenu.Separator class="dropdown-separator" />
-										<DropdownItem>
-											<button
-												onclick={() => (actions.deleteDialogOpen = true)}
-												disabled={actions.loading}
-											>
-												{m.party_delete()}
-											</button>
-										</DropdownItem>
+										<DropdownMenu.Separator class="dropdown-menu-separator" />
+										<DropdownMenu.Item
+											class="dropdown-menu-item danger"
+											onSelect={() => (actions.deleteDialogOpen = true)}
+											disabled={actions.loading}
+										>
+											{m.party_delete()}
+										</DropdownMenu.Item>
 									{/if}
 								</DropdownMenu.Content>
 							</DropdownMenu.Portal>
@@ -555,7 +665,7 @@
 						<WeaponGrid
 							weapons={party.weapons}
 							raidExtra={party.raid?.extra}
-							showGuidebooks={party.raid?.group?.guidebooks}
+							showGuidebooks={party.raid?.group?.guidebooks && !isSolomonis}
 							guidebooks={party.guidebooks}
 							canEdit={canEdit()}
 							onClickGuidebookSlot={handleClickGuidebookSlot}
@@ -569,6 +679,7 @@
 							<JobSection
 								job={party.job}
 								jobSkills={party.jobSkills}
+								fullAutoSkills={party.fullAutoSkills}
 								accessory={party.accessory}
 								canEdit={canEdit()}
 								gender={party.user?.gender ?? Gender.Gran}
@@ -576,6 +687,7 @@
 								onSelectJob={jobHandlers.handleSelectJob}
 								onSelectSkill={jobHandlers.handleSelectJobSkill}
 								onRemoveSkill={jobHandlers.handleRemoveJobSkill}
+								onToggleSkillFa={jobHandlers.handleToggleJobSkillFa}
 								onSelectAccessory={jobHandlers.handleSelectAccessory}
 							/>
 							<CharacterGrid
@@ -608,6 +720,37 @@
 	deleting={actions.deleting}
 	onDelete={actions.deleteParty}
 	onCancel={() => (actions.deleteDialogOpen = false)}
+/>
+
+<WikiTextDialog
+	bind:open={actions.wikiExportOpen}
+	title={m.party_export_wiki()}
+	description={m.party_export_wiki_description()}
+	notice={m.party_export_wiki_notice()}
+	details={[
+		m.party_export_wiki_lost_rings(),
+		m.party_export_wiki_lost_earrings(),
+		m.party_export_wiki_lost_artifacts(),
+		m.party_export_wiki_lost_ax(),
+		m.party_export_wiki_lost_befoulments(),
+		m.party_export_wiki_lost_awakening_levels(),
+		m.party_export_wiki_lost_masteries(),
+		m.party_export_wiki_lost_bullets(),
+		m.party_export_wiki_lost_keys(),
+		m.party_export_wiki_lost_details()
+	]}
+	value={actions.wikiExportText}
+	readonly
+	primaryAction={{ label: m.code_copy(), onclick: actions.copyWikiExport }}
+/>
+
+<!-- Leaving Evoking Solomonis deletes its data -->
+<ConfirmDialog
+	bind:open={leaveSolomonisOpen}
+	title={m.solomonis_web_party_leave_title()}
+	message={m.solomonis_web_party_leave_message()}
+	confirmLabel={m.solomonis_web_party_leave_confirm()}
+	onconfirm={confirmLeaveSolomonis}
 />
 
 <!-- Conflict Resolution Dialog -->
@@ -652,37 +795,6 @@
 		gap: $unit-2x;
 		display: flex;
 		flex-direction: column;
-	}
-
-	:global(.party-actions-trigger) {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 30px;
-		height: 30px;
-		padding: $unit;
-		border-radius: $input-corner;
-		background-color: transparent;
-		color: var(--text-secondary);
-		border: none;
-		cursor: pointer;
-		transition:
-			background-color 0.2s ease,
-			color 0.2s ease;
-		outline: none;
-
-		&:hover {
-			background-color: var(--button-bg);
-			color: var(--text-primary);
-		}
-
-		&:focus-visible {
-			box-shadow: 0 0 0 2px var(--accent-blue-focus);
-		}
-
-		&:active {
-			background-color: var(--button-subtle-bg-active);
-		}
 	}
 
 	.error-message {

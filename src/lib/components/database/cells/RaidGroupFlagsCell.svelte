@@ -12,7 +12,8 @@
 	{#if row.extra}<span class="flag extra">Extra</span>{/if}
 	{#if row.guidebooks}<span class="flag guidebooks">Guidebooks</span>{/if}
 	{#if row.unlimited}<span class="flag unlimited">Unlimited</span>{/if}
-	{#if !row.hl && !row.extra && !row.guidebooks && !row.unlimited}
+	{#if row.supportSummon === false}<span class="flag no-support">No support</span>{/if}
+	{#if !row.hl && !row.extra && !row.guidebooks && !row.unlimited && row.supportSummon !== false}
 		<span class="no-flags">—</span>
 	{/if}
 </div>
@@ -52,6 +53,11 @@
 		&.unlimited {
 			background: var(--flag-unlimited);
 			color: white;
+		}
+
+		&.no-support {
+			background: var(--button-contained-bg);
+			color: var(--text-secondary);
 		}
 	}
 

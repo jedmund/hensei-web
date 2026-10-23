@@ -34,10 +34,19 @@ export interface WeaponStatModifier {
 	polarity: 1 | -1
 	/** Display suffix for values (e.g., "%") */
 	suffix: string | null
+	/** AX pool this skill rolls from: primary | secondary | extended | utility (null for befoulments) */
+	axGroup?: 'primary' | 'secondary' | 'extended' | 'utility' | null
+	/** Secondary-roll value range (differs from the primary base range) */
+	secondaryMin?: number | null
+	secondaryMax?: number | null
+	/** On primaries: the 4-option secondary pools keyed by AX type (standard/xeno) */
+	axSecondaries?: Record<string, string[]>
 	/** Minimum valid strength value */
 	baseMin: number
 	/** Maximum valid strength value */
 	baseMax: number
+	/** Smallest exorcision reduction roll (befoulments; each level-up reduces by 1-3x this) */
+	reductionStep?: number | null
 }
 
 /**
@@ -58,8 +67,10 @@ export interface AugmentSkill {
 export interface Befoulment {
 	/** The befoulment modifier definition */
 	modifier: WeaponStatModifier
-	/** The strength/value of this befoulment */
+	/** The CURRENT (post-exorcision) value the game displays on the skill */
 	strength: number
-	/** Exorcism level (0-5) - higher levels reduce the negative effect */
+	/** Permeation (深度): the game's 1-6 severity depth of the base roll, unaffected by exorcision */
+	permeation?: number | null
+	/** Exorcism level (0-5; the game starts weapons at 1) - higher levels reduce the negative effect */
 	exorcismLevel: number
 }

@@ -250,13 +250,7 @@
 			onCollectionFilterChange={(active) => (collectionFilterActive = active)}
 			onAdvancedFiltersOpen={() => (settingsOpen = true)}
 			element={currentUser?.element as
-				| 'wind'
-				| 'fire'
-				| 'water'
-				| 'earth'
-				| 'dark'
-				| 'light'
-				| undefined}
+				'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined}
 			{isAuthenticated}
 		/>
 		{#if !isMobile.current}
@@ -265,13 +259,7 @@
 					<CollectionFilterButton
 						active={collectionFilterActive}
 						element={currentUser?.element as
-							| 'wind'
-							| 'fire'
-							| 'water'
-							| 'earth'
-							| 'dark'
-							| 'light'
-							| undefined}
+							'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined}
 						onclick={() => (collectionFilterActive = !collectionFilterActive)}
 						aria-label={m.explore_collection_aria()}
 						aria-pressed={collectionFilterActive}
@@ -317,13 +305,7 @@
 		filters={advancedFilters}
 		onSave={handleSettingsSave}
 		element={currentUser?.element as
-			| 'wind'
-			| 'fire'
-			| 'water'
-			| 'earth'
-			| 'dark'
-			| 'light'
-			| undefined}
+			'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined}
 	/>
 
 	{#if showCollectionPrompt}

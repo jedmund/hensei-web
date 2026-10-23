@@ -111,7 +111,8 @@ export enum Promotion {
 	Halloween = 8,
 	Holiday = 9,
 	Collab = 10,
-	Formal = 11
+	Formal = 11,
+	ClassicIII = 12
 }
 
 export const PROMOTION_NAMES: Record<number, string> = {
@@ -125,7 +126,8 @@ export const PROMOTION_NAMES: Record<number, string> = {
 	[Promotion.Halloween]: 'Halloween',
 	[Promotion.Holiday]: 'Holiday',
 	[Promotion.Collab]: 'Collab',
-	[Promotion.Formal]: 'Formal'
+	[Promotion.Formal]: 'Formal',
+	[Promotion.ClassicIII]: 'Classic III'
 }
 
 export function getPromotionNames(promotions: number[]): string[] {

@@ -101,6 +101,7 @@
 
 		// Recruits (Character ID)
 		recruits: null as string | null,
+		recruitQuery: '',
 
 		// Forge chain
 		forgedFrom: null as string | null,
@@ -313,6 +314,7 @@
 			>
 				<CharacterTypeahead
 					bind:value={editData.recruits}
+					bind:query={editData.recruitQuery}
 					placeholder="Search for character..."
 					contained
 				/>

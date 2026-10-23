@@ -6,9 +6,18 @@
 		party?: Party
 		characters?: GridCharacter[]
 		unlimited?: boolean
+		/** Slots the party can use (Evoking Solomonis); the rest render as gaps. */
+		slotLimit?: number | undefined
 	}
 
-	let { party, characters: directCharacters, unlimited = false }: Props = $props()
+	let {
+		party,
+		characters: directCharacters,
+		unlimited = false,
+		slotLimit = undefined
+	}: Props = $props()
+
+	const isUnusable = (position: number) => slotLimit != null && position >= slotLimit
 	const simplePortraits = getSimplePortraits()
 
 	// Use direct characters if provided, otherwise get from party
@@ -54,7 +63,8 @@
 			c?.character?.styleSwap,
 			simplePortraits.value,
 			c?.character?.element,
-			c?.character?.genderVariants ? characterGender : undefined
+			c?.character?.genderVariants ? characterGender : undefined,
+			c?.character?.special
 		)
 	}
 </script>
@@ -78,7 +88,7 @@
 		<!-- Standard mode: 3 portraits + 2 stacked squares -->
 		<div class="portraits">
 			{#each portraits as c, i (i)}
-				<div class="character portrait" class:empty={!c}>
+				<div class="character portrait" class:empty={!c} class:unusable={!c && isUnusable(i)}>
 					{#if c}<img
 							alt="Character"
 							src={characterImageUrl(c, i)}
@@ -90,7 +100,7 @@
 		</div>
 		<div class="squares">
 			{#each squares as c, i (i)}
-				<div class="character square" class:empty={!c}>
+				<div class="character square" class:empty={!c} class:unusable={!c && isUnusable(i + 3)}>
 					{#if c}<img
 							alt="Character"
 							src={characterImageUrl(c, i + 3)}
@@ -172,5 +182,10 @@
 			height: 100%;
 			object-fit: cover;
 		}
+	}
+
+	// Slots past an Evoking Solomonis character limit keep their space but stay blank
+	.character.unusable {
+		visibility: hidden;
 	}
 </style>

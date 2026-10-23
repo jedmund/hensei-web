@@ -11,6 +11,12 @@ import type { AugmentType } from './weaponStatModifier'
 import type { WeaponSeriesVariant } from './weaponSeriesVariant'
 
 /**
+ * Trimmed series reference sent on weapons in party list views
+ * (cards and reps), which only need the slug to pick weapon art.
+ */
+export type WeaponSeriesSummary = Pick<WeaponSeriesRef, 'id' | 'slug'>
+
+/**
  * Embedded series reference on weapons.
  * This is the structure returned in weapon.series field.
  * Includes boolean flags for convenience to avoid extra lookups.
@@ -23,6 +29,11 @@ export interface WeaponSeriesRef {
 	hasAwakening: boolean
 	/** Type of augment this series supports: "ax", "befoulment", or "no_augment" */
 	augmentType: AugmentType
+	/**
+	 * AX slot rules per gbf.wiki/AX_Skills: 'standard' and 'xeno' use different
+	 * secondary pools; 'primal' also allows EXP/Rupie primaries (no secondary)
+	 */
+	axType?: 'standard' | 'xeno' | 'primal' | null
 	extra: boolean
 	elementChangeable: boolean
 	/** Number of weapon key slots this series supports (null if no keys) */

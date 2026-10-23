@@ -12,7 +12,11 @@ export const RACE_LABELS: Record<number, string> = {
 	3: 'Draph',
 	4: 'Harvin',
 	5: 'Primal',
-	6: 'Other'
+	6: 'Other',
+	7: 'Geonoid',
+	8: 'Levleath',
+	9: 'Grokkle',
+	10: 'Wolvir'
 }
 
 export function getRaceLabel(race?: number | null): string {
@@ -24,7 +28,11 @@ export function getRaceLabel(race?: number | null): string {
 		3: m.race_draph,
 		4: m.race_harvin,
 		5: m.race_primal,
-		6: m.race_other
+		6: m.race_other,
+		7: m.race_geonoid,
+		8: m.race_levleath,
+		9: m.race_grokkle,
+		10: m.race_wolvir
 	}
 	const messageFn = raceMessages[race]
 	return messageFn ? messageFn() : '—'
@@ -46,7 +54,11 @@ export function getRaceOptions() {
 		3: m.race_draph,
 		4: m.race_harvin,
 		5: m.race_primal,
-		6: m.race_other
+		6: m.race_other,
+		7: m.race_geonoid,
+		8: m.race_levleath,
+		9: m.race_grokkle,
+		10: m.race_wolvir
 	}
 	const options = [
 		{ value: null as unknown as number, label: m.proficiency_none() },

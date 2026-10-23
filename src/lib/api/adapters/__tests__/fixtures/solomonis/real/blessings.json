@@ -1,0 +1,83 @@
+{
+	"status": 200,
+	"body": {
+		"cost_limit": 100,
+		"blessings": [
+			{
+				"id": "5408a292-fb4e-4450-aa63-34f8b860cbb1",
+				"slug": "justice",
+				"arcana_number": 11,
+				"name": {
+					"en": "Justice",
+					"ja": null
+				},
+				"released": true,
+				"levels": [
+					{
+						"id": "eca8eeae-0f75-4ed5-b432-f001f3fe8311",
+						"level": 1,
+						"cost": 70,
+						"scintillas": 6000,
+						"description": {
+							"en": "Unseal 1 weapon",
+							"ja": null
+						}
+					},
+					{
+						"id": "7709314a-6c25-4e73-802d-5a3ce7573d19",
+						"level": 2,
+						"cost": 60,
+						"scintillas": 49000,
+						"description": {
+							"en": "Unseal 1 weapon",
+							"ja": null
+						}
+					},
+					{
+						"id": "749bea05-11c7-4451-a7f3-93a3f7e2aa78",
+						"level": 3,
+						"cost": 50,
+						"scintillas": 135100,
+						"description": {
+							"en": "Unseal 1 weapon",
+							"ja": null
+						}
+					}
+				]
+			},
+			{
+				"id": "0cc79e73-dcff-4688-a402-e006e4c1ba00",
+				"slug": "death",
+				"arcana_number": 13,
+				"name": {
+					"en": "Death",
+					"ja": null
+				},
+				"released": true,
+				"levels": [
+					{
+						"id": "47a22a9f-358c-459c-b02d-c809868e6d56",
+						"level": 9,
+						"cost": 20,
+						"scintillas": 90000,
+						"description": {
+							"en": "Set foes' HP to 1 when entering a battle space (3 times)",
+							"ja": null
+						}
+					}
+				]
+			},
+			{
+				"id": "7cb11c55-b449-4bce-8a73-9e1bff6aadf3",
+				"slug": "tower",
+				"arcana_number": 16,
+				"name": {
+					"en": "The Tower",
+					"ja": null
+				},
+				"released": false,
+				"levels": []
+			}
+		]
+	}
+}

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Job } from '$lib/types/api/entities'
 	import {
-		getJobPortraitUrl,
 		getJobFullImageUrl,
 		getJobIconUrl,
 		getJobWideImageUrl,
@@ -25,7 +24,6 @@
 
 	// Compute image URLs based on selected gender
 	const images = $derived({
-		portrait: getJobPortraitUrl(job, selectedGender),
 		full: getJobFullImageUrl(job, selectedGender),
 		icon: getJobIconUrl(job.granblueId),
 		wide: getJobWideImageUrl(job, selectedGender)
@@ -45,18 +43,6 @@
 	</div>
 
 	<div class="images-grid">
-		<div class="image-item">
-			<a
-				href={images.portrait}
-				target="_blank"
-				rel="noopener noreferrer"
-				class="image-container portrait"
-			>
-				<img src={images.portrait} alt="{localizedName(job.name)} Portrait" loading="lazy" />
-			</a>
-			<span class="image-label">Portrait</span>
-		</div>
-
 		<div class="image-item">
 			<a href={images.full} target="_blank" rel="noopener noreferrer" class="image-container full">
 				<img src={images.full} alt="{localizedName(job.name)} Full" loading="lazy" />
@@ -138,7 +124,6 @@
 		}
 	}
 
-	.portrait,
 	.full {
 		aspect-ratio: 1;
 	}

@@ -11,6 +11,7 @@
 	import { createQuery } from '@tanstack/svelte-query'
 	import { raidQueries } from '$lib/api/queries/raid.queries'
 	import { RaidSection } from '$lib/utils/raidSection'
+	import { sortRaidGroups } from '$lib/utils/raidGroupSort'
 	import RaidSectionTabs from '$lib/components/raid/RaidSectionTabs.svelte'
 	import RaidGroupList from '$lib/components/raid/RaidGroupList.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -38,19 +39,13 @@
 		if (!groupsQuery.data) return []
 
 		// Filter by section
-		let groups = groupsQuery.data.filter((group) => {
+		const groups = groupsQuery.data.filter((group) => {
 			const groupSection =
 				typeof group.section === 'string' ? parseInt(group.section, 10) : group.section
 			return groupSection === selectedSection
 		})
 
-		// Sort by difficulty
-		groups = [...groups].sort((a, b) => {
-			const diff = a.difficulty - b.difficulty
-			return sortAscending ? diff : -diff
-		})
-
-		return groups
+		return sortRaidGroups(groups, selectedSection, sortAscending)
 	})
 
 	function handleRaidSelect(raid: RaidFull) {

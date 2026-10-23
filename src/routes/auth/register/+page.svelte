@@ -4,11 +4,14 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
+	import SocialLoginButtons from '$lib/components/auth/SocialLoginButtons.svelte'
+	import type { SocialProvider } from '$lib/auth/socialProviders'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import * as m from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {
+		data: { socialProviders: SocialProvider[]; next: string | null }
 		form: {
 			error?: string
 			details?: { fieldErrors?: Record<string, string[]> }
@@ -17,7 +20,11 @@
 		} | null
 	}
 
-	let { form }: Props = $props()
+	let { data, form }: Props = $props()
+
+	// Keep ?next= when switching between signing in and signing up.
+	const withNext = (path: string) =>
+		data.next ? `${path}?next=${encodeURIComponent(data.next)}` : path
 
 	let username = $derived(form?.username ?? '')
 	let email = $derived(form?.email ?? '')
@@ -238,7 +245,9 @@
 
 <PageMeta title={m.page_title_register()} description={m.page_desc_home()} />
 
-<AuthCard title={m.auth_register_title()}>
+<AuthCard title={m.auth_register_title()} legalConsent>
+	<SocialLoginButtons providers={data.socialProviders} next={data.next} />
+
 	<form
 		method="post"
 		use:enhance={() => {
@@ -323,7 +332,7 @@
 	{#snippet footer()}
 		<p>
 			{m.auth_register_hasAccount()}
-			<a href={localizeHref('/auth/login')}>{m.auth_register_login()}</a>
+			<a href={withNext(localizeHref('/auth/login'))}>{m.auth_register_login()}</a>
 		</p>
 	{/snippet}
 </AuthCard>

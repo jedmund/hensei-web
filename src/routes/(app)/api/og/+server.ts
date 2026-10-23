@@ -1,6 +1,9 @@
 import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
+import { BlockedUrlError, fetchPublicUrl } from '$lib/server/ssrfGuard'
 
+// Link previews for the description editor. Open to anonymous editors too;
+// fetchPublicUrl blocks internal destinations and hooks rate-limit per IP.
 export const GET: RequestHandler = async ({ url }) => {
 	const target = url.searchParams.get('url')
 	if (!target) {
@@ -22,7 +25,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		const controller = new AbortController()
 		const timeout = setTimeout(() => controller.abort(), 5000)
 
-		const res = await fetch(target, {
+		const res = await fetchPublicUrl(target, {
 			signal: controller.signal,
 			headers: { 'User-Agent': 'bot' }
 		})
@@ -51,10 +54,13 @@ export const GET: RequestHandler = async ({ url }) => {
 		reader.cancel()
 
 		const title = extractMeta(html, 'og:title') ?? extractTitle(html)
-		const image = extractMeta(html, 'og:image')
+		const image = proxiedImageUrl(extractMeta(html, 'og:image'), res.url || target)
 
-		return json({ title: title ?? null, image: image ?? null })
-	} catch {
+		return json({ title: title ?? null, image })
+	} catch (err) {
+		if (err instanceof BlockedUrlError) {
+			return json({ error: 'URL not allowed' }, { status: 400 })
+		}
 		return json({ error: 'Fetch failed' }, { status: 502 })
 	}
 }
@@ -68,6 +74,21 @@ function extractMeta(html: string, property: string): string | undefined {
 	)
 	const match = html.match(regex)
 	return match?.[1] ?? match?.[2]
+}
+
+// Resolves a (possibly relative) og:image against the page it came from and
+// points it at our image proxy, so the browser never loads it from the other
+// site directly (keeps the CSP's img-src short).
+function proxiedImageUrl(image: string | undefined, pageUrl: string): string | null {
+	if (!image) return null
+	let resolved: URL
+	try {
+		resolved = new URL(image, pageUrl)
+	} catch {
+		return null
+	}
+	if (resolved.protocol !== 'http:' && resolved.protocol !== 'https:') return null
+	return `/api/og/image?url=${encodeURIComponent(resolved.href)}`
 }
 
 function extractTitle(html: string): string | undefined {

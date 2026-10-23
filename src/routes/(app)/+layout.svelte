@@ -15,6 +15,7 @@
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
+	import AccountDeletionBanner from '$lib/components/AccountDeletionBanner.svelte'
 	import { hasEditKeys, getAllEditKeys } from '$lib/utils/editKeys'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import type { LayoutData } from './$types'
@@ -186,6 +187,9 @@
 				{/if}
 			</div>
 			<main class="main-content" bind:this={mainContent} onscroll={handleScroll}>
+				{#if data?.account?.deletionScheduledAt}
+					<AccountDeletionBanner deletionScheduledAt={data.account.deletionScheduledAt} />
+				{/if}
 				<svelte:boundary
 					onerror={(e) => {
 						console.error('Page render error:', e)
