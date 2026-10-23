@@ -23,24 +23,34 @@ const MAX_KEYS = 10_000
 
 export function createRateLimiter({
 	limit,
-	windowMs
+	windowMs,
+	maxKeys = MAX_KEYS
 }: {
 	limit: number
 	windowMs: number
+	maxKeys?: number
 }): RateLimiter {
+	// Map order is recency: each hit moves its key to the end, so the first
+	// entries are the least recently seen.
 	const windows = new Map<string, { count: number; resetAt: number }>()
 
 	return {
 		hit(key, now = Date.now()) {
 			let entry = windows.get(key)
+			windows.delete(key)
 			if (!entry || entry.resetAt <= now) {
-				if (windows.size >= MAX_KEYS) {
+				if (windows.size >= maxKeys) {
 					for (const [k, v] of windows) if (v.resetAt <= now) windows.delete(k)
-					if (windows.size >= MAX_KEYS) windows.clear()
+					// Still full: evict the least recently seen keys rather than
+					// resetting every counter.
+					for (const k of windows.keys()) {
+						if (windows.size < maxKeys) break
+						windows.delete(k)
+					}
 				}
 				entry = { count: 0, resetAt: now + windowMs }
-				windows.set(key, entry)
 			}
+			windows.set(key, entry)
 			entry.count += 1
 			return entry.count <= limit
 		}
@@ -219,18 +229,29 @@ export const RATE_LIMIT_RULES: Rule[] = [
 	}
 ]
 
+/** Bucket for requests on a limited route whose client can't be identified. */
+export const UNIDENTIFIED_CLIENT = 'unidentified'
+
+/**
+ * A 429 response once the client is over the matching rule's limit, else null.
+ * Requests without a trusted client address share one bucket per rule (with
+ * that rule's limit) rather than going unlimited. Sub-requests (SvelteKit's
+ * server-side fetches to its own routes) are skipped: the request that made
+ * them was already counted.
+ */
 export function rateLimitResponse(
 	request: Request,
 	pathname: string,
-	rules: Rule[] = RATE_LIMIT_RULES
+	rules: Rule[] = RATE_LIMIT_RULES,
+	{ isSubRequest = false }: { isSubRequest?: boolean } = {}
 ): Response | null {
+	if (isSubRequest) return null
+
 	const rule = rules.find((r) => r.methods.includes(request.method) && r.path.test(pathname))
 	if (!rule) return null
 
-	const ip = clientIp(request)
-	if (!ip) return null
-
-	if (rule.limiter.hit(`${rule.name}:${ip}`)) return null
+	const identity = clientIp(request) ?? UNIDENTIFIED_CLIENT
+	if (rule.limiter.hit(`${rule.name}:${identity}`)) return null
 	return new Response(JSON.stringify({ error: 'Too many requests. Please try again later.' }), {
 		status: 429,
 		headers: { 'Content-Type': 'application/json', 'Retry-After': '60' }
@@ -238,4 +259,6 @@ export function rateLimitResponse(
 }
 
 export const handleRateLimit: Handle = async ({ event, resolve }) =>
-	rateLimitResponse(event.request, event.url.pathname) ?? resolve(event)
+	rateLimitResponse(event.request, event.url.pathname, RATE_LIMIT_RULES, {
+		isSubRequest: event.isSubRequest
+	}) ?? resolve(event)
