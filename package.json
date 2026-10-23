@@ -80,7 +80,7 @@
 		"@floating-ui/dom": "^1.8.0",
 		"@internationalized/date": "^3.12.4",
 		"@lucide/svelte": "^1.59.0",
-		"@sentry/sveltekit": "^10.75.3",
+		"@sentry/sveltekit": "^11.8.0",
 		"@tanstack/svelte-query": "^6.3.2",
 		"@tiptap/core": "^3.31.4",
 		"@tiptap/extension-bubble-menu": "^3.31.4",
