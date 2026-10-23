@@ -13,26 +13,46 @@ function version(name: string, scalesWithSkillLevel?: boolean): WeaponSkillVersi
 	}
 }
 
-function badgesFor(skills: WeaponSkill[]): string[] {
+// The meta line under each card (classification, skill level), one per skill.
+function metaFor(skills: WeaponSkill[]): string[] {
 	const { body } = render(WeaponSkillList, { props: { skills } })
-	return [...body.matchAll(/<span class="badge flag[^"]*">([^<]*)<\/span>/g)].map(
-		(match) => match[1] ?? ''
+	return [...body.matchAll(/<div class="meta[^"]*">([\s\S]*?)<\/div>/g)].map((match) =>
+		(match[1] ?? '')
+			.replace(/<!--[\s\S]*?-->/g, '')
+			.replace(/<[^>]+>/g, '')
+			.trim()
 	)
 }
 
 describe('WeaponSkillList', () => {
 	// Fediel's Spine: Eclipse's Stamina has a skill level, Black Covenant doesn't.
 	it('marks only the skills that have a skill level', () => {
-		const badges = badgesFor([
+		const meta = metaFor([
 			{ position: 0, versions: [version("Eclipse's Stamina", true)] },
 			{ position: 1, versions: [version('Black Covenant', false)] }
 		])
-		expect(badges).toEqual(['Skill Level'])
+		expect(meta).toEqual(['Skill Level'])
 	})
 
 	it('treats a skill without the flag as leveling', () => {
-		expect(badgesFor([{ position: 0, versions: [version("Fire's Might")] }])).toEqual([
-			'Skill Level'
-		])
+		expect(metaFor([{ position: 0, versions: [version("Fire's Might")] }])).toEqual(['Skill Level'])
+	})
+
+	it("shows a slot's later versions as linked cards labelled with their tier", () => {
+		const { body } = render(WeaponSkillList, {
+			props: {
+				skills: [
+					{
+						position: 0,
+						versions: [
+							version('Majesty'),
+							{ ...version('Majesty II'), ordinal: 1, transcendenceStage: 2, unlockLevel: 220 }
+						]
+					}
+				]
+			}
+		})
+		expect(body.match(/class="skill-card[^"]*linked/g)).toHaveLength(1)
+		expect(body).toContain('↳ T2 · Lv 220')
 	})
 })
