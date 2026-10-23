@@ -42,7 +42,7 @@
 		"@vitest/browser": "^4.1.11",
 		"@vitest/browser-playwright": "^4.1.11",
 		"echarts": "^6.1.0",
-		"eslint": "^9.39.5",
+		"eslint": "^10.13.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-storybook": "^10.6.2",
 		"eslint-plugin-svelte": "^3.23.1",
