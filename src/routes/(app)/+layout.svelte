@@ -438,7 +438,7 @@
 
 			p {
 				color: var(--text-secondary);
-				font-size: $font-body;
+				font-size: $font-small;
 				margin: spacing.$unit 0 0;
 			}
 		}

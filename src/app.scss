@@ -25,7 +25,7 @@ body {
 	-webkit-font-smoothing: antialiased;
 	box-sizing: border-box;
 	font-family: var(--font-family);
-	font-size: typography.$font-body;
+	font-size: typography.$font-small;
 	height: 100%;
 	margin: 0;
 	overflow: hidden; // Prevent body scroll since we handle scrolling in layout
@@ -137,5 +137,5 @@ $font-size-base: 16px;
 [data-sonner-toast] {
 	border-radius: layout.$input-corner;
 	box-shadow: var(--shadow-lg);
-	font-size: typography.$font-body;
+	font-size: typography.$font-small;
 }

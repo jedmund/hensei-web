@@ -152,7 +152,7 @@
 
 	.message p {
 		margin: 0;
-		font-size: typography.$font-body;
+		font-size: typography.$font-small;
 		line-height: 1.5;
 		color: var(--text-secondary);
 

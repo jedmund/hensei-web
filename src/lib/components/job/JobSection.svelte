@@ -354,7 +354,7 @@
 
 				h3 {
 					margin: 0;
-					font-size: typography.$font-body;
+					font-size: typography.$font-small;
 					font-weight: typography.$medium;
 					color: var(--text-primary);
 				}
@@ -402,7 +402,7 @@
 			justify-content: center;
 			height: 100%;
 			color: var(--text-tertiary);
-			font-size: typography.$font-body;
+			font-size: typography.$font-small;
 
 			&.readonly {
 				color: var(--text-secondary);

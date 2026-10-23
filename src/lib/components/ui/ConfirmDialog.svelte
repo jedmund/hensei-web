@@ -89,7 +89,7 @@
 
 	.message {
 		margin: 0;
-		font-size: $font-body;
+		font-size: $font-small;
 		color: var(--text-secondary);
 		line-height: 1.5;
 	}
