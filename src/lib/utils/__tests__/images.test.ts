@@ -134,7 +134,11 @@ describe('getCharacterPose', () => {
 // getSummonTransformation
 // ============================================================================
 
-import { getSummonTransformation, getWeaponTransformation } from '../images'
+import {
+	getSummonTransformation,
+	getSummonTransformationStages,
+	getWeaponTransformation
+} from '../images'
 
 describe('getSummonTransformation', () => {
 	const PRIMAL_SUMMON = '2040094000' // Agni (first upgrade at uncap 5)
@@ -180,6 +184,50 @@ describe('getSummonTransformation', () => {
 
 	it('accepts numeric id', () => {
 		expect(getSummonTransformation(2040094000, 5)).toBe('02')
+	})
+
+	describe('summons with ULB art only (e.g. Odious)', () => {
+		const ODIOUS_SUMMON = '2040446000' // Belmervolk
+
+		it('returns undefined below ULB', () => {
+			expect(getSummonTransformation(ODIOUS_SUMMON, 4, undefined, true)).toBeUndefined()
+			expect(getSummonTransformation(ODIOUS_SUMMON, undefined, undefined, true)).toBeUndefined()
+		})
+
+		it('returns 02 from ULB', () => {
+			expect(getSummonTransformation(ODIOUS_SUMMON, 5, undefined, true)).toBe('02')
+		})
+
+		it('never returns transcendence art', () => {
+			expect(getSummonTransformation(ODIOUS_SUMMON, 6, undefined, true)).toBe('02')
+			expect(getSummonTransformation(ODIOUS_SUMMON, 6, 5, true)).toBe('02')
+		})
+
+		it('keeps base art without the flag', () => {
+			expect(getSummonTransformation(ODIOUS_SUMMON, 5)).toBeUndefined()
+		})
+	})
+})
+
+describe('getSummonTransformationStages', () => {
+	it('returns Base only for summons without alt art', () => {
+		expect(getSummonTransformationStages('9999999999').map((s) => s.suffix)).toEqual([undefined])
+	})
+
+	it('returns every stage for mapped summons', () => {
+		expect(getSummonTransformationStages('2040094000').map((s) => s.suffix)).toEqual([
+			undefined,
+			'02',
+			'03',
+			'04'
+		])
+	})
+
+	it('returns Base and ULB for summons with ULB art only', () => {
+		expect(getSummonTransformationStages('2040446000', true)).toEqual([
+			{ id: '01', label: 'Base', suffix: undefined },
+			{ id: '02', label: 'ULB', suffix: '02' }
+		])
 	})
 })
 

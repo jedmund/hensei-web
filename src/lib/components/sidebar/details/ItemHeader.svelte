@@ -13,6 +13,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { getElementKey } from '$lib/utils/element'
 	import { seriesHasTranscendenceArt } from '$lib/utils/weaponSeries'
+	import { seriesHasUlbArt } from '$lib/utils/summonSeries'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 	import CollectionPill from './CollectionPill.svelte'
 
@@ -67,7 +68,8 @@
 			const transformation = getSummonTransformation(
 				id,
 				gridUncapLevel ?? undefined,
-				gridTranscendence ?? undefined
+				gridTranscendence ?? undefined,
+				seriesHasUlbArt(itemData?.series)
 			)
 			return getSummonDetailImage(id, transformation)
 		}

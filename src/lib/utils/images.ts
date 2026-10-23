@@ -146,11 +146,20 @@ export interface TransformationStage {
  * Returns the list of available transformation stages for a summon.
  * Uses the SUMMON_ALT_ART_THRESHOLD map to determine which stages exist
  * and what to label the first art upgrade (FLB vs ULB).
+ *
+ * Summons whose series only ships ULB art (see {@link seriesHasUlbArt}) get
+ * Base and ULB only; pass that result as `hasUlbArt`.
  */
 export function getSummonTransformationStages(
-	granblueId?: string | number | null
+	granblueId?: string | number | null,
+	hasUlbArt?: boolean
 ): TransformationStage[] {
 	const stages: TransformationStage[] = [{ id: '01', label: 'Base', suffix: undefined }]
+
+	if (hasUlbArt) {
+		stages.push({ id: '02', label: 'ULB', suffix: '02' })
+		return stages
+	}
 
 	const id = String(granblueId)
 	const threshold = granblueId ? SUMMON_ALT_ART_THRESHOLD.get(id) : undefined
@@ -170,12 +179,18 @@ export function getSummonTransformationStages(
  * Calculates the summon transformation suffix based on uncap level and transcendence.
  * Returns undefined for base art, '02' for first upgrade, '03' for uncap 6, '04' for uncap 6 + transcendence 5.
  * The first upgrade threshold varies per summon (see SUMMON_ALT_ART_THRESHOLD).
+ *
+ * Summons whose series only ships ULB art (see {@link seriesHasUlbArt}) return
+ * '02' from uncap 5 and never a transcendence suffix; pass that result as `hasUlbArt`.
  */
 export function getSummonTransformation(
 	granblueId?: string | number | null,
 	uncapLevel?: number,
-	transcendenceStep?: number
+	transcendenceStep?: number,
+	hasUlbArt?: boolean
 ): string | undefined {
+	if (hasUlbArt) return uncapLevel !== undefined && uncapLevel >= 5 ? '02' : undefined
+
 	const id = String(granblueId)
 	const threshold = granblueId ? SUMMON_ALT_ART_THRESHOLD.get(id) : undefined
 	if (threshold === undefined) return undefined

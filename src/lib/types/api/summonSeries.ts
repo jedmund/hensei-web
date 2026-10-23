@@ -18,6 +18,12 @@ export interface SummonSeriesRef {
 }
 
 /**
+ * Slug-only series sent in party list views (cards and reps), which only
+ * need the slug to pick summon art.
+ */
+export type SummonSeriesSummary = Pick<SummonSeriesRef, 'id' | 'slug'>
+
+/**
  * Full summon series from /api/v1/summon_series endpoint.
  * summonCount is only included in the :full view (show endpoint).
  */
