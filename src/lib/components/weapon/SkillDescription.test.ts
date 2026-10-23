@@ -20,9 +20,19 @@ describe('SkillDescription', () => {
 				]
 			}
 		})
-		expect(text(body)).toBe('Take 5% damage every turn\nWhen main weapon:')
+		expect(text(body)).toBe('Take 5% damage every turnWhen main weapon:')
 		expect(body).toContain('class="has-tooltip')
 		expect(body).toContain('<strong>When main weapon:</strong>')
+	})
+
+	it('puts each line in its own paragraph', () => {
+		const { body } = render(SkillDescriptionTestHarness, {
+			props: { segments: [{ text: 'Gain DA Up.\nGain TA Up.' }, { text: '\nHeal 10%.' }] }
+		})
+		const paragraphs = [...body.matchAll(/<p[^>]*>([\s\S]*?)<\/p>/g)].map(([, inner]) =>
+			text(inner ?? '')
+		)
+		expect(paragraphs).toEqual(['Gain DA Up.', 'Gain TA Up.', 'Heal 10%.'])
 	})
 
 	it('falls back to the raw wiki text without segments', () => {

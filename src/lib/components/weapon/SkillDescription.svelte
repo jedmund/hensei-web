@@ -19,40 +19,71 @@
 	const effectsByOrdinal = $derived(
 		new Map((effects ?? []).map((effect) => [effect.ordinal, effect]))
 	)
+
+	// One paragraph per line, so the space between lines is ours to set: a segment that
+	// spans a line break is split, each piece keeping the segment's formatting.
+	const paragraphs = $derived.by(() => {
+		const lines: DescriptionSegment[][] = [[]]
+		for (const segment of segments ?? []) {
+			segment.text.split('\n').forEach((text, index) => {
+				if (index > 0) lines.push([])
+				if (text) lines[lines.length - 1]!.push({ ...segment, text })
+			})
+		}
+		return lines.filter((line) => line.length)
+	})
 </script>
 
-{#if segments?.length}
-	<p class="skill-description {className}">
-		{#each segments as segment, i (i)}
-			{@const effect = segment.effect != null ? effectsByOrdinal.get(segment.effect) : undefined}
-			{#if effect}
-				<EffectTooltip {effect} text={segment.text} strong={segment.strong ?? false} />
-			{:else if segment.skill}
-				<span class="skill-reference">{segment.text}</span>
-			{:else if segment.tooltip}
-				<RichTooltip>
-					{#snippet content()}
-						<span class="skill-description-tip">{segment.tooltip}</span>
-					{/snippet}
-					<span class="has-tooltip" class:strong={segment.strong}>{segment.text}</span>
-				</RichTooltip>
-			{:else if segment.strong}
-				<strong>{segment.text}</strong>
-			{:else}
-				{segment.text}
-			{/if}
+{#if paragraphs.length}
+	<div class="skill-description {className}">
+		{#each paragraphs as line, l (l)}
+			<p>{@render paragraph(line)}</p>
 		{/each}
-	</p>
+	</div>
 {:else if raw}
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -- wikiToHtml emits only whitelisted tags -->
 	<p class="skill-description {className}">{@html wikiToHtml(raw)}</p>
 {/if}
 
+{#snippet paragraph(line: DescriptionSegment[])}
+	{#each line as segment, i (i)}
+		{@const effect = segment.effect != null ? effectsByOrdinal.get(segment.effect) : undefined}
+		{#if effect}
+			<EffectTooltip {effect} text={segment.text} strong={segment.strong ?? false} />
+		{:else if segment.skill}
+			<span class="skill-reference">{segment.text}</span>
+		{:else if segment.tooltip}
+			<RichTooltip>
+				{#snippet content()}
+					<span class="skill-description-tip">{segment.tooltip}</span>
+				{/snippet}
+				<span class="has-tooltip" class:strong={segment.strong}>{segment.text}</span>
+			</RichTooltip>
+		{:else if segment.strong}
+			<strong>{segment.text}</strong>
+		{:else}
+			{segment.text}
+		{/if}
+	{/each}
+{/snippet}
+
 <style lang="scss">
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/spacing' as spacing;
 
 	.skill-description {
 		white-space: pre-line;
+
+		// Segment paragraphs; set --skill-description-gap to change the space between them.
+		&:is(div) {
+			display: flex;
+			flex-direction: column;
+			gap: var(--skill-description-gap, #{spacing.$unit-half});
+		}
+
+		p {
+			margin: 0;
+		}
 
 		:global(strong),
 		.strong {
