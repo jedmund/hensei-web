@@ -123,6 +123,9 @@
 	@use '$src/themes/effects' as *;
 
 	.migrate-page {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-2x;
 		padding: $unit-2x 0;
 	}
 
