@@ -32,7 +32,7 @@
 		const parts: string[] = []
 		if (version.cooldown != null) parts.push(`${m.character_skills_cooldown()} ${version.cooldown}`)
 		if (version.initialCooldown != null)
-			parts.push(`${m.character_skills_initial_cooldown()} ${version.initialCooldown}`)
+			parts.push(m.character_skills_initial_cooldown_value({ n: version.initialCooldown }))
 		const duration = formatDuration(version.durationValue, version.durationUnit)
 		if (duration) parts.push(`${m.character_skills_duration()} ${duration}`)
 		return parts
