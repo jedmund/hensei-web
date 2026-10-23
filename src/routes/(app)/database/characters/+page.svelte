@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
+	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 
 	// Svelte components
@@ -20,6 +21,7 @@
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import BatchRefreshDialog from '$lib/features/database/characters/refresh/BatchRefreshDialog.svelte'
 
 	// Utilities
@@ -236,9 +238,26 @@
 			{/snippet}
 			{#snippet headerActions()}
 				{#if canEdit}
-					<Button variant="ghost" size="small" onclick={() => (batchRefreshOpen = true)}>
-						{m.character_refresh_batch_action()}
-					</Button>
+					<DropdownMenu>
+						{#snippet trigger({ props })}
+							<Button
+								variant="ghost"
+								size="small"
+								iconOnly
+								icon="ellipsis"
+								aria-label={m.character_refresh_more_actions()}
+								{...props}
+							/>
+						{/snippet}
+						{#snippet menu()}
+							<DropdownMenuBase.Item
+								class="dropdown-menu-item"
+								onclick={() => (batchRefreshOpen = true)}
+							>
+								{m.character_refresh_batch_action()}
+							</DropdownMenuBase.Item>
+						{/snippet}
+					</DropdownMenu>
 				{/if}
 			{/snippet}
 		</DatabaseGridWithProvider>
