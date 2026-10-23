@@ -1,11 +1,23 @@
 <script lang="ts">
 	/**
-	 * What a gbf.wiki import will bring in: how many items matched, which
-	 * titles didn't (by slot), and what the page has that can't be imported.
+	 * What a gbf.wiki import will bring in: the items that matched as a row of
+	 * square icons, which titles didn't (by slot), and what the page has that
+	 * can't be imported.
 	 */
 	import Notice from '$lib/components/ui/Notice.svelte'
 	import * as m from '$lib/paraglide/messages'
-	import type { WikiImportReport, WikiImportRequest } from '$lib/types/api/wikiImport'
+	import type {
+		WikiImportMatch,
+		WikiImportReport,
+		WikiImportRequest
+	} from '$lib/types/api/wikiImport'
+	import {
+		getCharacterImage,
+		getSummonImage,
+		getWeaponFallbackImage,
+		getWeaponImage
+	} from '$lib/utils/images'
+	import { localizedName } from '$lib/utils/locale'
 	import type { WikiImportNote } from '$lib/utils/wikiImport'
 	import { noteText, slotLabel, sortWarnings, warningText } from '$lib/utils/wikiImportMessages'
 
@@ -18,6 +30,34 @@
 
 	let { report, notes, request }: Props = $props()
 
+	const KIND_ORDER = ['character', 'weapon', 'summon'] as const
+
+	// Characters, then weapons (mainhand first), then summons, each in slot order
+	const items = $derived(
+		report.matched
+			.filter((match) => (KIND_ORDER as readonly string[]).includes(match.kind))
+			.toSorted(
+				(a, b) =>
+					KIND_ORDER.indexOf(a.kind as (typeof KIND_ORDER)[number]) -
+						KIND_ORDER.indexOf(b.kind as (typeof KIND_ORDER)[number]) || a.position - b.position
+			)
+	)
+
+	function squareImage({ kind, item }: WikiImportMatch): string {
+		if (kind === 'character') return getCharacterImage(item.granblueId, 'square', '01')
+		if (kind === 'weapon')
+			return getWeaponImage(item.granblueId, 'square', item.element ?? undefined)
+		return getSummonImage(item.granblueId, 'square')
+	}
+
+	// An element-changed weapon without its own square art falls back to the base image
+	function fallBack(event: Event, match: WikiImportMatch) {
+		const img = event.currentTarget as HTMLImageElement
+		const fallback =
+			match.kind === 'weapon' ? getWeaponFallbackImage(match.item.granblueId, 'square') : undefined
+		if (fallback && img.src !== new URL(fallback, img.baseURI).href) img.src = fallback
+	}
+
 	const total = $derived(report.matched.length + report.unmatched.length + report.ambiguous.length)
 	const skipped = $derived([
 		...notes.map(noteText),
@@ -27,7 +67,23 @@
 
 <div class="review" aria-live="polite">
 	<Notice variant={report.matched.length === total ? 'blue' : 'gray'}>
-		<p>{m.party_import_wiki_matched({ matched: report.matched.length, total })}</p>
+		<ul
+			class="found"
+			aria-label={m.party_import_wiki_matched({ matched: report.matched.length, total })}
+		>
+			{#each items as match (`${match.kind}:${match.position}`)}
+				{@const name = localizedName(match.item.name)}
+				<li>
+					<img
+						src={squareImage(match)}
+						alt={name}
+						title={name}
+						loading="lazy"
+						onerror={(e) => fallBack(e, match)}
+					/>
+				</li>
+			{/each}
+		</ul>
 	</Notice>
 
 	{#if report.unmatched.length > 0}
@@ -67,6 +123,7 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
+	@use '$src/themes/layout' as *;
 
 	.review {
 		display: flex;
@@ -87,11 +144,23 @@
 		list-style: disc;
 	}
 
-	.slot {
-		color: var(--text-secondary);
+	.found {
+		display: flex;
+		flex-wrap: wrap;
+		gap: $unit-half;
+		padding: 0;
+		list-style: none;
+
+		img {
+			display: block;
+			width: 32px;
+			height: 32px;
+			border-radius: $item-corner-small;
+			object-fit: cover;
+		}
 	}
 
-	p {
-		margin: 0;
+	.slot {
+		color: var(--text-secondary);
 	}
 </style>
