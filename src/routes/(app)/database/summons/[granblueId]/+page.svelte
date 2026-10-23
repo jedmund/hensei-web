@@ -25,6 +25,7 @@
 	import SummonStatsSection from '$lib/features/database/summons/sections/SummonStatsSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
+	import { resolveDetailTab } from '$lib/features/database/detail/detailTab'
 	import SummonAurasTab from '$lib/features/database/summons/tabs/SummonAurasTab.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
@@ -47,9 +48,6 @@
 
 	let { data }: { data: PageData } = $props()
 
-	// Tab state from URL
-	const currentTab = $derived(($page.url.searchParams.get('tab') as DetailTab) || 'info')
-
 	function handleTabChange(tab: DetailTab) {
 		const url = new URL($page.url)
 		if (tab === 'info') {
@@ -70,6 +68,9 @@
 	const summon = $derived(summonQuery.data)
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
+
+	// Tab state from URL; raw data is editor-only, so non-editors fall back to Info
+	const currentTab = $derived(resolveDetailTab($page.url.searchParams.get('tab'), canEdit))
 
 	// Element for button styling
 	const elementName = $derived(
@@ -188,6 +189,7 @@
 			image={getSummonGridImage(summon)}
 			{currentTab}
 			onTabChange={handleTabChange}
+			showRaw={canEdit}
 			showSkills={(summon.summonAuras?.length ?? 0) > 0}
 			skillsLabel="Auras"
 			onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}

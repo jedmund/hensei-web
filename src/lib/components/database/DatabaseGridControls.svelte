@@ -35,10 +35,6 @@
 	{/if}
 
 	<div class="controls-right">
-		{#if headerActions}
-			{@render headerActions()}
-		{/if}
-
 		{#if hasCustomColumns && onResetColumns}
 			<Button variant="ghost" size="small" onclick={onResetColumns}>Reset columns</Button>
 		{/if}
@@ -57,6 +53,10 @@
 					</span>
 				{/if}
 			</Button>
+		{/if}
+
+		{#if headerActions}
+			{@render headerActions()}
 		{/if}
 
 		{#if rightActions}

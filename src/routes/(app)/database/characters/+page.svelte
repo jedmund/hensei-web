@@ -4,6 +4,7 @@
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
+	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 
 	// Svelte components
@@ -19,11 +20,22 @@
 	import DateCell from '$lib/components/database/cells/DateCell.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
+	import BatchRefreshDialog from '$lib/features/database/characters/refresh/BatchRefreshDialog.svelte'
 
 	// Utilities
 	import { getRarityLabel } from '$lib/utils/rarity'
 	import { getGenderLabel } from '$lib/utils/gender'
 	import { localizedName } from '$lib/utils/locale'
+
+	import type { PageData } from './$types'
+
+	let { data }: { data: PageData } = $props()
+
+	// The database is editor-only already; checked again so the action never shows otherwise
+	const canEdit = $derived((data.role ?? 0) >= 7)
+	let batchRefreshOpen = $state(false)
 
 	type ViewMode = 'characters' | 'series'
 
@@ -211,6 +223,10 @@
 
 <PageMeta title={m.page_title_db_characters()} description={m.page_desc_home()} />
 
+{#if canEdit}
+	<BatchRefreshDialog bind:open={batchRefreshOpen} />
+{/if}
+
 <div class="database-page">
 	{#if viewMode === 'characters'}
 		<DatabaseGridWithProvider resource="characters" {columns} pageSize={20}>
@@ -219,6 +235,30 @@
 					<Segment value="characters">Characters</Segment>
 					<Segment value="series">Series</Segment>
 				</SegmentedControl>
+			{/snippet}
+			{#snippet headerActions()}
+				{#if canEdit}
+					<DropdownMenu>
+						{#snippet trigger({ props })}
+							<Button
+								variant="ghost"
+								size="small"
+								iconOnly
+								icon="ellipsis"
+								aria-label={m.character_refresh_more_actions()}
+								{...props}
+							/>
+						{/snippet}
+						{#snippet menu()}
+							<DropdownMenuBase.Item
+								class="dropdown-menu-item"
+								onclick={() => (batchRefreshOpen = true)}
+							>
+								{m.character_refresh_batch_action()}
+							</DropdownMenuBase.Item>
+						{/snippet}
+					</DropdownMenu>
+				{/if}
 			{/snippet}
 		</DatabaseGridWithProvider>
 	{:else if viewMode === 'series'}

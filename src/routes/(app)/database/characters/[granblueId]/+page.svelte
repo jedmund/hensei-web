@@ -12,7 +12,6 @@
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
 	import { withInitialData } from '$lib/query/ssr'
-	import { fetchWikiPage } from '$lib/api/wiki'
 
 	// Components
 	import DetailScaffold, {
@@ -28,6 +27,8 @@
 	import CharacterAppearanceSection from '$lib/features/database/characters/sections/CharacterAppearanceSection.svelte'
 	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
+	import { resolveDetailTab } from '$lib/features/database/detail/detailTab'
+	import CharacterRefreshActions from '$lib/features/database/characters/refresh/CharacterRefreshActions.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { getCharacterImage } from '$lib/utils/images'
@@ -53,9 +54,11 @@
 
 	let { data }: { data: PageData } = $props()
 
-	// Tab state from URL
-	type CharacterTab = 'info' | 'skills' | 'images' | 'raw'
-	const currentTab = $derived(($page.url.searchParams.get('tab') as CharacterTab) || 'info')
+	// The :full character carries when its wikitext was fetched (not on the shared Character type)
+	type CharacterFetchTimes = {
+		wikiRawFetchedAt?: string | null
+		wikiRawJpFetchedAt?: string | null
+	}
 
 	function handleTabChange(tab: string) {
 		const url = new URL($page.url)
@@ -85,6 +88,9 @@
 	)
 	const userRole = $derived(data.role || 0)
 	const canEdit = $derived(userRole >= 7)
+
+	// Tab state from URL; raw data is editor-only, so non-editors fall back to Info
+	const currentTab = $derived(resolveDetailTab($page.url.searchParams.get('tab'), canEdit))
 
 	// Element for button styling
 	const elementName = $derived(
@@ -406,7 +412,9 @@
 					<Segment value="info">Info</Segment>
 					<Segment value="skills">{m.character_skills_tab()}</Segment>
 					<Segment value="images">Images</Segment>
-					<Segment value="raw">Raw Data</Segment>
+					{#if canEdit}
+						<Segment value="raw">Raw Data</Segment>
+					{/if}
 				</SegmentedControl>
 			</div>
 
@@ -572,27 +580,24 @@
 					gameRawJp={rawDataQuery.data?.gameRawJp}
 					isLoading={rawDataQuery.isLoading}
 					{canEdit}
-					onReparse={canEdit && character?.id
-						? async (refetch) => {
-								await entityAdapter.reparseCharacter(character.id, refetch)
-								characterQuery.refetch()
-								rawDataQuery.refetch()
-							}
-						: undefined}
-					onFetchWiki={canEdit && character?.id && character?.wiki?.en
-						? async () => {
-								// Fetch wiki data client-side (bypasses CloudFlare)
-								const wikiResult = await fetchWikiPage(character.wiki!.en!)
-								if (wikiResult.error) {
-									throw new Error(wikiResult.error)
-								}
-								// Update the character with the wiki_raw data
-								await entityAdapter.updateCharacter(character.id, { wiki_raw: wikiResult.wikiRaw })
-								rawDataQuery.refetch()
-								return { wikiRaw: wikiResult.wikiRaw ?? null, gameRawEn: null, gameRawJp: null }
-							}
-						: undefined}
-				/>
+					fetchedAt={{
+						en: (character as CharacterFetchTimes | undefined)?.wikiRawFetchedAt,
+						jp: (character as CharacterFetchTimes | undefined)?.wikiRawJpFetchedAt
+					}}
+				>
+					{#snippet wikiActions()}
+						{#if canEdit && character?.id}
+							<CharacterRefreshActions
+								characterId={character.id}
+								characterName={character.name}
+								onRefreshed={() => {
+									characterQuery.refetch()
+									rawDataQuery.refetch()
+								}}
+							/>
+						{/if}
+					{/snippet}
+				</EntityRawDataTab>
 			{/if}
 		</DetailScaffold>
 	{:else}

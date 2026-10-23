@@ -1416,7 +1416,7 @@ export class EntityAdapter extends BaseAdapter {
 
 	/**
 	 * Re-parses an entity's stored wikitext into structured rows (weapon
-	 * skills / summon auras / character skills). Pass refetch to pull fresh
+	 * skills / summon auras). Characters go through characterRefresh.adapter. Pass refetch to pull fresh
 	 * wikitext from the wiki first. Requires editor role (>= 7).
 	 */
 	async reparseWeapon(id: string, refetch = false): Promise<Weapon> {
@@ -1427,12 +1427,6 @@ export class EntityAdapter extends BaseAdapter {
 
 	async reparseSummon(id: string, refetch = false): Promise<Summon> {
 		return this.request<Summon>(`/summons/${id}/reparse${refetch ? '?refetch=true' : ''}`, {
-			method: 'POST'
-		})
-	}
-
-	async reparseCharacter(id: string, refetch = false): Promise<Character> {
-		return this.request<Character>(`/characters/${id}/reparse${refetch ? '?refetch=true' : ''}`, {
 			method: 'POST'
 		})
 	}

@@ -220,6 +220,11 @@ export type CharacterSkillRelation = 'transforms_to' | 'option_of' | 'form_count
 export interface SkillEffectStatus {
 	id: string
 	name: LocalizedName
+	/**
+	 * Tells apart two statuses that show the same name ("Asleep" and "Asleep" with
+	 * qualifier "Turns"). Null for most; meant for status lists, not skill cards.
+	 */
+	qualifier?: string | null
 	family?: string | null
 	category?: string | null
 	icon?: string | null
@@ -243,6 +248,12 @@ export interface CharacterSkillEffect {
 	damageElement?: string | null
 	healPct?: number | null
 	healCap?: number | null
+	/**
+	 * The skill's own name for its status when the wiki links that name to another
+	 * status (Ayer's "Guilty Break" is a Jammed effect). English only for now; null
+	 * when the skill names the status itself. Display it with `effectStatusName`.
+	 */
+	label?: string | null
 	status?: SkillEffectStatus | null
 }
 
