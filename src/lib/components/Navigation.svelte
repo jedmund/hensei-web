@@ -38,7 +38,7 @@
 		account,
 		currentUser,
 		isAuthenticated: isAuthProp
-	} = $props<{
+	}: {
 		account?: {
 			userId: string
 			username: string
@@ -46,7 +46,7 @@
 		} | null
 		currentUser?: UserCookie | null
 		isAuthenticated?: boolean
-	}>()
+	} = $props()
 
 	const username = $derived(account?.username ?? '')
 	// Use reactive authStore instead of static server prop for real-time auth state

@@ -20,10 +20,13 @@
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import type { LayoutData } from './$types'
 
-	const { data, children } = $props<{
+	const {
+		data,
+		children
+	}: {
 		data: LayoutData & { [key: string]: unknown }
 		children: Snippet
-	}>()
+	} = $props()
 
 	// Populate crew store for authenticated users (needed globally for collection features)
 	const crewQuery = createQuery(() => ({

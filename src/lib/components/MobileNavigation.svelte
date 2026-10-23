@@ -26,7 +26,7 @@
 		account,
 		currentUser,
 		isAuthenticated: isAuthProp
-	} = $props<{
+	}: {
 		account?: {
 			userId: string
 			username: string
@@ -34,7 +34,7 @@
 		} | null
 		currentUser?: UserCookie | null
 		isAuthenticated?: boolean
-	}>()
+	} = $props()
 
 	const username = $derived(account?.username ?? '')
 	const isAuth = $derived(authStore.isAuthenticated || (isAuthProp ?? false))

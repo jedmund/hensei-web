@@ -14,10 +14,13 @@
 	import { fadeImagesIn } from '$lib/utils/motion'
 	import type { LayoutData } from './$types'
 
-	const { data, children } = $props<{
+	const {
+		data,
+		children
+	}: {
 		data: LayoutData & { [key: string]: unknown }
 		children: Snippet
-	}>()
+	} = $props()
 
 	setSimplePortraits(data.currentUser?.simplePortraits ?? false)
 	setDefaultRepView(data.currentUser?.defaultRepView ?? 'weapons')
