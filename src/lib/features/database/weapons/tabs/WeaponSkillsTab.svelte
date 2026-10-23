@@ -24,10 +24,6 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 
-	.skills-tab {
-		padding: spacing.$unit-2x;
-	}
-
 	.empty {
 		text-align: center;
 		padding: spacing.$unit-4x;
