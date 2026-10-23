@@ -4,6 +4,7 @@
 	 * square icons, which titles didn't (by slot), and what the page has that
 	 * can't be imported.
 	 */
+	import { SvelteSet } from 'svelte/reactivity'
 	import Notice from '$lib/components/ui/Notice.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import type {
@@ -50,12 +51,21 @@
 		return getSummonImage(item.granblueId, 'square')
 	}
 
-	// An element-changed weapon without its own square art falls back to the base image
+	// Items whose square art couldn't load, drawn as placeholders instead
+	const missing = new SvelteSet<string>()
+	const key = (match: WikiImportMatch) => `${match.kind}:${match.position}`
+
+	// An element-changed weapon without its own square art falls back to the base
+	// image; anything still missing becomes a placeholder
 	function fallBack(event: Event, match: WikiImportMatch) {
 		const img = event.currentTarget as HTMLImageElement
 		const fallback =
 			match.kind === 'weapon' ? getWeaponFallbackImage(match.item.granblueId, 'square') : undefined
-		if (fallback && img.src !== new URL(fallback, img.baseURI).href) img.src = fallback
+		if (fallback && img.src !== new URL(fallback, img.baseURI).href) {
+			img.src = fallback
+			return
+		}
+		missing.add(key(match))
 	}
 
 	const total = $derived(report.matched.length + report.unmatched.length + report.ambiguous.length)
@@ -71,16 +81,19 @@
 			class="found"
 			aria-label={m.party_import_wiki_matched({ matched: report.matched.length, total })}
 		>
-			{#each items as match (`${match.kind}:${match.position}`)}
+			{#each items as match (key(match))}
 				{@const name = localizedName(match.item.name)}
-				<li>
-					<img
-						src={squareImage(match)}
-						alt={name}
-						title={name}
-						loading="lazy"
-						onerror={(e) => fallBack(e, match)}
-					/>
+				<li title={name}>
+					{#if missing.has(key(match))}
+						<span class="placeholder" role="img" aria-label={name}></span>
+					{:else}
+						<img
+							src={squareImage(match)}
+							alt={name}
+							loading="lazy"
+							onerror={(e) => fallBack(e, match)}
+						/>
+					{/if}
 				</li>
 			{/each}
 		</ul>
@@ -151,12 +164,20 @@
 		padding: 0;
 		list-style: none;
 
-		img {
+		img,
+		.placeholder {
 			display: block;
-			width: 32px;
-			height: 32px;
+			width: 60px;
+			height: 60px;
 			border-radius: $item-corner-small;
+		}
+
+		img {
 			object-fit: cover;
+		}
+
+		.placeholder {
+			background: var(--placeholder-bg);
 		}
 	}
 
