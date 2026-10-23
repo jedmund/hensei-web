@@ -1,23 +1,35 @@
 <script lang="ts">
 	import RichTooltip from '$lib/components/ui/RichTooltip.svelte'
+	import EffectTooltip from '$lib/components/skills/EffectTooltip.svelte'
 	import { wikiToHtml } from '$lib/utils/wikiText'
-	import type { DescriptionSegment } from '$lib/types/api/entities'
+	import type { CharacterSkillEffect, DescriptionSegment } from '$lib/types/api/entities'
 
 	interface Props {
 		/** Display segments from the API; rendered when present */
 		segments?: DescriptionSegment[] | undefined
 		/** Raw wiki text, the fallback for responses without segments */
 		raw?: string | null | undefined
+		/** Character skills: the version's effects, which `effect` segments point at by ordinal */
+		effects?: CharacterSkillEffect[] | undefined
 		class?: string
 	}
 
-	const { segments, raw, class: className = '' }: Props = $props()
+	const { segments, raw, effects, class: className = '' }: Props = $props()
+
+	const effectsByOrdinal = $derived(
+		new Map((effects ?? []).map((effect) => [effect.ordinal, effect]))
+	)
 </script>
 
 {#if segments?.length}
 	<p class="skill-description {className}">
 		{#each segments as segment, i (i)}
-			{#if segment.tooltip}
+			{@const effect = segment.effect != null ? effectsByOrdinal.get(segment.effect) : undefined}
+			{#if effect}
+				<EffectTooltip {effect} text={segment.text} strong={segment.strong ?? false} />
+			{:else if segment.skill}
+				<span class="skill-reference">{segment.text}</span>
+			{:else if segment.tooltip}
 				<RichTooltip>
 					{#snippet content()}
 						<span class="skill-description-tip">{segment.tooltip}</span>
@@ -50,6 +62,10 @@
 		:global(em) {
 			font-style: italic;
 		}
+	}
+
+	.skill-reference {
+		font-weight: typography.$medium;
 	}
 
 	.has-tooltip {
