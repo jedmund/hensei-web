@@ -1,7 +1,7 @@
 import type { Handle } from '@sveltejs/kit'
-import { timingSafeEqual } from 'node:crypto'
 import { isIP } from 'node:net'
 import { env } from '$env/dynamic/private'
+import { secureEquals } from '$lib/server/secureEquals'
 import { isPrivateAddress } from '$lib/server/ssrfGuard'
 
 /**
@@ -90,12 +90,6 @@ function configuredOriginSecrets(): OriginSecrets {
 		current: env.CLOUDFLARE_ORIGIN_SECRET,
 		previous: env.CLOUDFLARE_ORIGIN_SECRET_PREVIOUS
 	}
-}
-
-function secureEquals(a: string, b: string): boolean {
-	const left = Buffer.from(a)
-	const right = Buffer.from(b)
-	return left.length === right.length && timingSafeEqual(left, right)
 }
 
 const WARN_INTERVAL_MS = 60_000

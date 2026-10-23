@@ -1,5 +1,4 @@
 import type { Cookies } from '@sveltejs/kit'
-import { timingSafeEqual } from 'node:crypto'
 import type { OAuthLoginResponse } from '$lib/auth/oauth'
 import type { SocialProvider } from '$lib/auth/socialProviders'
 import {
@@ -10,6 +9,7 @@ import {
 	withParams,
 	type SocialErrorCode
 } from '$lib/auth/socialResult'
+import { secureEquals } from '$lib/server/secureEquals'
 import { safeRedirectPath } from '$lib/utils/safeRedirect'
 import { linkIdentity, signInWithProvider } from './api'
 import {
@@ -59,12 +59,6 @@ export interface CallbackDeps {
 		oauth: OAuthLoginResponse,
 		opts: { secure: boolean }
 	) => Promise<unknown>
-}
-
-function statesMatch(expected: string, actual: string): boolean {
-	const a = Buffer.from(expected)
-	const b = Buffer.from(actual)
-	return a.length === b.length && timingSafeEqual(a, b)
 }
 
 /**
@@ -128,7 +122,7 @@ export async function handleSocialCallback(
 	const flow = readFlowCookies(cookies, provider)
 	clearFlowCookies(cookies, provider, { secure })
 
-	if (!flow || !params.state || !statesMatch(flow.state, params.state)) {
+	if (!flow || !params.state || !secureEquals(flow.state, params.state)) {
 		return loginError('failed')
 	}
 
