@@ -79,6 +79,10 @@ export interface FamilyVersion {
 	modifierOverride?: string | null
 	seriesOverride?: string | null
 	sizeOverride?: string | null
+	/** Override, else derived; modifier "none" resolves to null. */
+	resolvedModifier?: string | null
+	resolvedSeries?: string | null
+	resolvedSize?: string | null
 	overridesEditedAt?: string | null
 	mainHandOnly?: boolean
 	mcOnly?: boolean
