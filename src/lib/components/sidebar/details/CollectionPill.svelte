@@ -111,8 +111,8 @@
 	}
 
 	.collection-pill.out-of-sync {
-		background: var(--danger-bg, rgba(220, 60, 60, 0.92));
-		color: var(--danger-fg, #fff);
+		background: var(--danger);
+		color: white;
 	}
 
 	.dot {
