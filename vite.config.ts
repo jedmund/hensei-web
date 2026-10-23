@@ -1,6 +1,6 @@
 /// <reference types="vitest/config" />
 import { paraglideVitePlugin } from '@inlang/paraglide-js'
-import { sentrySvelteKit } from '@sentry/sveltekit'
+import { sentrySvelteKit } from '@sentry/sveltekit/vite'
 import { sveltekit } from '@sveltejs/kit/vite'
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
@@ -38,12 +38,10 @@ export default defineConfig({
 			? []
 			: [
 					sentrySvelteKit({
-						sourceMapsUploadOptions: {
-							org: process.env.SENTRY_ORG,
-							project: process.env.SENTRY_PROJECT,
-							authToken: process.env.SENTRY_AUTH_TOKEN,
-							telemetry: false
-						}
+						org: process.env.SENTRY_ORG,
+						project: process.env.SENTRY_PROJECT,
+						authToken: process.env.SENTRY_AUTH_TOKEN,
+						telemetry: false
 					})
 				]),
 		sveltekit(),

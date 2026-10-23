@@ -4,7 +4,12 @@ import { handleErrorWithSentry, init, sentryHandle } from '@sentry/sveltekit'
 import { env as publicEnv } from '$env/dynamic/public'
 import { env as privateEnv } from '$env/dynamic/private'
 import { paraglideMiddleware } from '$lib/paraglide/server'
-import { isExpectedError, SENTRY_IGNORE_ERRORS, SENTRY_TRACES_SAMPLE_RATE } from '$lib/sentry'
+import {
+	isExpectedError,
+	SENTRY_DATA_COLLECTION,
+	SENTRY_IGNORE_ERRORS,
+	SENTRY_TRACES_SAMPLE_RATE
+} from '$lib/sentry'
 import { dev } from '$app/environment'
 import {
 	clearAuthCookies,
@@ -26,6 +31,7 @@ if (publicEnv.PUBLIC_SENTRY_DSN) {
 		dsn: publicEnv.PUBLIC_SENTRY_DSN,
 		environment: publicEnv.PUBLIC_SENTRY_ENVIRONMENT || 'production',
 		tracesSampleRate: SENTRY_TRACES_SAMPLE_RATE,
+		dataCollection: SENTRY_DATA_COLLECTION,
 		ignoreErrors: SENTRY_IGNORE_ERRORS,
 		beforeSend: (event, hint) => (isExpectedError(hint?.originalException) ? null : event)
 	})
