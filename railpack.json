@@ -1,0 +1,14 @@
+{
+	"$schema": "https://schema.railpack.com",
+	"steps": {
+		"install": {
+			"commands": [
+				{ "path": "/app/node_modules/.bin" },
+				"mkdir -p /app/node_modules/.cache",
+				{ "path": "/opt/pnpm" },
+				"pnpm install --frozen-lockfile --prefer-offline",
+				"pnpm exec playwright install --only-shell chromium"
+			]
+		}
+	}
+}

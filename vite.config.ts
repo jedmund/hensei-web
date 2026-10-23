@@ -27,6 +27,10 @@ export default defineConfig({
 			}
 		}
 	},
+	build: {
+		// Gzipping every chunk just to print its size costs 5-12s per deploy
+		reportCompressedSize: false
+	},
 	assetsInclude: ['**/*.svg'],
 	plugins: [
 		// Must come before sveltekit(). Uploads source maps when SENTRY_AUTH_TOKEN
