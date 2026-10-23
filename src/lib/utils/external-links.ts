@@ -44,16 +44,29 @@ const WIKI_JA_PATHS = {
  *
  * Input: "新神気鋭・猫之印 (SSR)", entityType: "weapon"
  * Output: "https://gbf-wiki.com/?武器/新神気鋭・猫之印+(SSR)"
+ *
+ * The type prefix is only added to bare titles. A stored title that already
+ * contains a path (e.g. "武器/…" or "武器概要/四象武器#jfce0a20") is used as is,
+ * matching the API's JpWikiDownloader. A "#anchor" stays a URL fragment.
+ * (Outputs above are shown decoded; the page name is percent-encoded.)
  */
 export function buildWikiJaUrl(
 	pageName: string | undefined | null,
 	entityType?: EntityType
 ): string | null {
-	if (!pageName?.trim()) return null
-	const prefix = entityType ? WIKI_JA_PATHS[entityType] : ''
-	// Japanese wiki uses query string with + for spaces
-	const encoded = encodeURIComponent(prefix + pageName.trim()).replace(/%20/g, '+')
-	return `${WIKI_JA_BASE}/?${encoded}`
+	const trimmed = pageName?.trim()
+	if (!trimmed) return null
+
+	const hashIndex = trimmed.indexOf('#')
+	const title = (hashIndex === -1 ? trimmed : trimmed.slice(0, hashIndex)).trim()
+	const anchor = hashIndex === -1 ? '' : trimmed.slice(hashIndex + 1).trim()
+	if (!title) return null
+
+	const prefix = entityType && !title.includes('/') ? WIKI_JA_PATHS[entityType] : ''
+	// PukiWiki takes the page name as the query string, with + for spaces
+	const encoded = encodeURIComponent(prefix + title).replace(/%20/g, '+')
+	const fragment = anchor ? `#${encodeURIComponent(anchor)}` : ''
+	return `${WIKI_JA_BASE}/?${encoded}${fragment}`
 }
 
 /**

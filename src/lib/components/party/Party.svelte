@@ -50,6 +50,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import Notice from '$lib/components/ui/Notice.svelte'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
+	import WikiTextDialog from '$lib/components/party/WikiTextDialog.svelte'
 	import { openEditSolomonisPane } from '$lib/components/solomonis/party/openSolomonisPanes'
 	import {
 		isSolomonisParty,
@@ -498,15 +499,6 @@
 	// Hidden on your own team and on teams that can't receive stickers, so the
 	// sticker row doesn't show an empty picker slot
 	const canGiveSticker = $derived(!isNew && canShowStickerPicker(party, authUserId))
-
-	// The overflow menu only shows when it has something in it: the same
-	// conditions as its items (signed-out viewers usually get none)
-	const hasMenuActions = $derived(
-		(canEdit() && hasCollectionLinks) ||
-			!!authUserId ||
-			party.user?.id === authUserId ||
-			!!party.sourceParty?.shortcode
-	)
 </script>
 
 <svelte:window onpopstate={handlePopState} />
@@ -548,7 +540,7 @@
 					{/if}
 				{/snippet}
 				{#snippet menu()}
-					{#if !isNew && hasMenuActions}
+					{#if !isNew}
 						<DropdownMenu.Root>
 							<DropdownMenu.Trigger>
 								{#snippet child({ props })}
@@ -613,6 +605,13 @@
 											{m.playlist_add_to()}
 										</DropdownMenu.Item>
 									{/if}
+
+									{#if authUserId || party.sourceParty?.shortcode}
+										<DropdownMenu.Separator class="dropdown-menu-separator" />
+									{/if}
+									<DropdownMenu.Item class="dropdown-menu-item" onSelect={actions.openWikiExport}>
+										{m.party_export_wiki()}
+									</DropdownMenu.Item>
 
 									{#if party.user?.id === authUserId}
 										<DropdownMenu.Separator class="dropdown-menu-separator" />
@@ -721,6 +720,28 @@
 	deleting={actions.deleting}
 	onDelete={actions.deleteParty}
 	onCancel={() => (actions.deleteDialogOpen = false)}
+/>
+
+<WikiTextDialog
+	bind:open={actions.wikiExportOpen}
+	title={m.party_export_wiki()}
+	description={m.party_export_wiki_description()}
+	notice={m.party_export_wiki_notice()}
+	details={[
+		m.party_export_wiki_lost_rings(),
+		m.party_export_wiki_lost_earrings(),
+		m.party_export_wiki_lost_artifacts(),
+		m.party_export_wiki_lost_ax(),
+		m.party_export_wiki_lost_befoulments(),
+		m.party_export_wiki_lost_awakening_levels(),
+		m.party_export_wiki_lost_masteries(),
+		m.party_export_wiki_lost_bullets(),
+		m.party_export_wiki_lost_keys(),
+		m.party_export_wiki_lost_details()
+	]}
+	value={actions.wikiExportText}
+	readonly
+	primaryAction={{ label: m.code_copy(), onclick: actions.copyWikiExport }}
 />
 
 <!-- Leaving Evoking Solomonis deletes its data -->
