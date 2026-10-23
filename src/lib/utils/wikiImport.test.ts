@@ -392,6 +392,14 @@ describe('parseTeamSpread aliases', () => {
 		])
 	})
 
+	it('keeps the first 10 bullets, the most the API takes', () => {
+		const { request: parsed, unsupported } = parseTeamSpread(
+			wrap(`|bullets=${Array(12).fill('iron').join(',')}`)
+		)
+		expect(parsed.bullets).toHaveLength(10)
+		expect(unsupported).toEqual([{ code: 'too_many_bullets', param: 'bullets' }])
+	})
+
 	it.each(Object.entries(MINO_ALIASES))('reads mino=%s as %s', (alias, full) => {
 		expect(parseTeamSpread(wrap(`|mino=${alias.toUpperCase()}`)).request.job.accessory).toBe(full)
 	})

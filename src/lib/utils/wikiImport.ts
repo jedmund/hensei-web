@@ -34,6 +34,9 @@ import {
 /** The API rejects bodies over 64 KB, so longer pastes are refused up front. */
 export const MAX_WIKI_IMPORT_BYTES = 64 * 1024
 
+/** The API takes at most this many bullets; a Soldier loads six. */
+const MAX_BULLETS = 10
+
 export type WikiImportNoteCode =
 	| 'old_format'
 	| 'multiple_grids'
@@ -44,6 +47,7 @@ export type WikiImportNoteCode =
 	| 'unknown_awakening'
 	| 'unknown_uncap'
 	| 'unreadable_value'
+	| 'too_many_bullets'
 
 /** Something on the page that can't be imported. `param` is the template parameter. */
 export interface WikiImportNote {
@@ -303,7 +307,7 @@ class ParamReader {
 	}
 
 	bullets(): string[] {
-		return this.alias('bullets')
+		const bullets = this.alias('bullets')
 			.split(',')
 			.map((alias) => alias.trim())
 			.filter(Boolean)
@@ -317,6 +321,9 @@ class ParamReader {
 				)
 				return []
 			})
+		if (bullets.length <= MAX_BULLETS) return bullets
+		this.notes.push({ code: 'too_many_bullets', param: 'bullets' })
+		return bullets.slice(0, MAX_BULLETS)
 	}
 
 	characters(): WikiImportCharacter[] {
