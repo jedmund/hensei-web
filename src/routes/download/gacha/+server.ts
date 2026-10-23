@@ -6,7 +6,7 @@
  */
 
 import { error } from '@sveltejs/kit'
-import { clientIp } from '$lib/server/rateLimit'
+import { UNIDENTIFIED_CLIENT, clientIp } from '$lib/server/rateLimit'
 import { storePrefetch } from '$lib/server/renderPrefetch'
 import { getTemplate } from '$lib/server/renderRegistry'
 import { RenderBusyError, renderToImage } from '$lib/server/renderService'
@@ -58,9 +58,9 @@ export const GET: RequestHandler = async ({ url, request, fetch }) => {
 	if (cached) return png(cached, HIT_CACHE_CONTROL)
 
 	// Only cache misses cost a simulation and a render, so only they count
-	const ip = clientIp(request)
+	const identity = clientIp(request) ?? UNIDENTIFIED_CLIENT
 	const limiter = signature === 'signed' ? signedLimiter : unsignedLimiter
-	if (ip && !limiter.hit(`gacha-image:${signature}:${ip}`)) return tooManyRequests()
+	if (!limiter.hit(`gacha-image:${signature}:${identity}`)) return tooManyRequests()
 
 	let simulation
 	try {
