@@ -4,7 +4,12 @@ import { handleErrorWithSentry, init, sentryHandle } from '@sentry/sveltekit'
 import { env as publicEnv } from '$env/dynamic/public'
 import { env as privateEnv } from '$env/dynamic/private'
 import { paraglideMiddleware } from '$lib/paraglide/server'
-import { isExpectedError, SENTRY_IGNORE_ERRORS, SENTRY_TRACES_SAMPLE_RATE } from '$lib/sentry'
+import {
+	isExpectedError,
+	SENTRY_DATA_COLLECTION,
+	SENTRY_IGNORE_ERRORS,
+	SENTRY_TRACES_SAMPLE_RATE
+} from '$lib/sentry'
 import { dev } from '$app/environment'
 import {
 	clearAuthCookies,
@@ -19,6 +24,7 @@ import { clientIp, handleRateLimit } from '$lib/server/rateLimit'
 import { withApiHeaders } from '$lib/server/apiHeaders'
 import { handleSecurityHeaders } from '$lib/server/securityHeaders'
 import { handleCsrf } from '$lib/server/csrf'
+import { logServerError } from '$lib/server/logServerError'
 
 // Only initialize when a DSN is configured (keeps dev/test silent).
 if (publicEnv.PUBLIC_SENTRY_DSN) {
@@ -26,6 +32,7 @@ if (publicEnv.PUBLIC_SENTRY_DSN) {
 		dsn: publicEnv.PUBLIC_SENTRY_DSN,
 		environment: publicEnv.PUBLIC_SENTRY_ENVIRONMENT || 'production',
 		tracesSampleRate: SENTRY_TRACES_SAMPLE_RATE,
+		dataCollection: SENTRY_DATA_COLLECTION,
 		ignoreErrors: SENTRY_IGNORE_ERRORS,
 		beforeSend: (event, hint) => (isExpectedError(hint?.originalException) ? null : event)
 	})
@@ -159,9 +166,10 @@ export const handle: Handle = sequence(
 	handleParaglide
 )
 
-// Reports uncaught server (SSR / load / action) errors to Sentry, then falls
-// through to SvelteKit's default rendering. No-op when the SDK isn't initialized.
-export const handleError = handleErrorWithSentry()
+// Reports uncaught server (SSR / load / action) errors to Sentry, then logs
+// them (skipping 4xx noise, see logServerError). Sentry's part is a no-op when
+// the SDK isn't initialized.
+export const handleError = handleErrorWithSentry(logServerError)
 
 const apiOrigin = new URL(PUBLIC_SIERO_API_URL || 'http://localhost:3000/api/v1').origin
 

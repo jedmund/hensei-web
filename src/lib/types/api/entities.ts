@@ -112,9 +112,17 @@ export interface WeaponSkillVersion {
 	minUncap?: number | null
 	/** Transcendence stage 0–5 (0 = not transcended). */
 	transcendenceStage?: number | null
+	/** Derived by the wiki parse; a reparse rewrites these. */
 	skillModifier?: string | null
 	skillSeries?: string | null
 	skillSize?: string | null
+	/**
+	 * What the calculator uses: the curated override, else the derived value.
+	 * A modifier pinned to "none" resolves to null. Absent on older API responses.
+	 */
+	resolvedModifier?: string | null
+	resolvedSeries?: string | null
+	resolvedSize?: string | null
 	mainHandOnly?: boolean
 	mcOnly?: boolean
 	scalesWithSkillLevel?: boolean
