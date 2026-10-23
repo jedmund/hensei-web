@@ -220,8 +220,7 @@
 											class="excuse-textarea"
 											bind:value={excuseReasonValues[score.id]}
 											placeholder={m.crew_score_excusal_reason()}
-											rows="2"
-										></textarea>
+											rows="2"></textarea>
 									{/if}
 								</div>
 							</div>

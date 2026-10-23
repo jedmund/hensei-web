@@ -113,8 +113,7 @@
 						bind:value={description}
 						placeholder={m.playlist_field_description_placeholder()}
 						maxlength={320}
-						rows="4"
-					></textarea>
+						rows="4"></textarea>
 					{#if 320 - description.length <= 30}
 						<span class="counter" class:warning={320 - description.length <= 5}>
 							{320 - description.length}

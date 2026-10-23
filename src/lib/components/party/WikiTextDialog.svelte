@@ -75,8 +75,7 @@
 				rows="14"
 				spellcheck="false"
 				aria-label={title}
-				onfocus={(e) => readonly && e.currentTarget.select()}
-			></textarea>
+				onfocus={(e) => readonly && e.currentTarget.select()}></textarea>
 		</div>
 	</ModalBody>
 	<ModalFooter onCancel={() => (open = false)} {primaryAction} />

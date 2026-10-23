@@ -272,8 +272,7 @@
 				bind:value={description}
 				placeholder="Optional description shown to editors"
 				rows="3"
-				class="description-input"
-			></textarea>
+				class="description-input"></textarea>
 		</DetailItem>
 	</div>
 	<ModalFooter

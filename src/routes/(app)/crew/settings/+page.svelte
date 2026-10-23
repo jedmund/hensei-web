@@ -209,8 +209,7 @@
 				class="form-input form-textarea"
 				class:error={errors.description}
 				maxlength="500"
-				rows="4"
-			></textarea>
+				rows="4"></textarea>
 			{#if errors.description}
 				<span class="field-error">{errors.description}</span>
 			{/if}

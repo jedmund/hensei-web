@@ -147,8 +147,7 @@
 				bind:value={note}
 				rows="3"
 				placeholder="What's the intent of this change?"
-				class="note-input"
-			></textarea>
+				class="note-input"></textarea>
 		</label>
 	</div>
 
