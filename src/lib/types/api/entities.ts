@@ -220,6 +220,11 @@ export type CharacterSkillRelation = 'transforms_to' | 'option_of' | 'form_count
 export interface SkillEffectStatus {
 	id: string
 	name: LocalizedName
+	/**
+	 * Tells apart two statuses that show the same name ("Asleep" and "Asleep" with
+	 * qualifier "Turns"). Null for most; meant for status lists, not skill cards.
+	 */
+	qualifier?: string | null
 	family?: string | null
 	category?: string | null
 	icon?: string | null
