@@ -1,6 +1,13 @@
 import { describe, it, expect } from 'vitest'
-import { noteText, slotLabel, warningText } from './wikiImportMessages'
-import type { WikiImportRequest } from '$lib/types/api/wikiImport'
+import {
+	createdWarningsToast,
+	newWarnings,
+	noteText,
+	slotLabel,
+	sortWarnings,
+	warningText
+} from './wikiImportMessages'
+import type { WikiImportRequest, WikiImportWarning } from '$lib/types/api/wikiImport'
 
 const request: WikiImportRequest = {
 	job: { name: 'Viking', accessory: 'Ouroboros Mino', skills: [null, null, null], fullAutoOff: [] },
@@ -111,7 +118,7 @@ describe('warningText', () => {
 		['unknown_accessory', 'Manatura or shield not found: Nope'],
 		['unknown_key', 'Weapon key not found: Nope'],
 		['unknown_bullet', 'Bullet not found: Nope'],
-		['invalid_item', "Nope couldn't be added"],
+		['invalid_item', "Nope couldn't be added to this team"],
 		['element_not_changeable', "Nope's element can't be changed"],
 		['invalid_position', "Nope can't go in this slot"],
 		['slot_conflict', 'more than one item for this slot, so Nope was left out']
@@ -145,5 +152,89 @@ describe('noteText', () => {
 			'Unknown bullet "mystery"'
 		)
 		expect(noteText({ code: 'multiple_grids' })).toBe('Only the first weapon grid is imported.')
+	})
+})
+
+const invalid = (kind: WikiImportWarning['kind'], position: number, title: string) =>
+	({
+		code: 'invalid_item',
+		detail: 'Weapon is invalid',
+		kind,
+		position,
+		title
+	}) as WikiImportWarning
+
+describe('invalid_item', () => {
+	it('names the slot and item without the model errors', () => {
+		expect(warningText(invalid('weapon', -1, 'Ixaba'), request)).toBe(
+			"Mainhand: Ixaba couldn't be added to this team"
+		)
+	})
+})
+
+describe('sortWarnings', () => {
+	it('puts the mainhand, then the class and its subskills and accessory, first', () => {
+		const warnings = [
+			invalid('character', 0, 'Anne'),
+			{ code: 'skill_not_allowed', kind: 'skill', position: 2, title: 'Secret Triad' },
+			invalid('weapon', 3, 'Pillardriver'),
+			{ code: 'unknown_job', kind: 'job', position: 0, title: 'Nope' },
+			invalid('weapon', -1, 'Ixaba')
+		] as WikiImportWarning[]
+		expect(sortWarnings(warnings).map((w) => w.title)).toEqual([
+			'Ixaba',
+			'Nope',
+			'Secret Triad',
+			'Anne',
+			'Pillardriver'
+		])
+	})
+})
+
+describe('newWarnings', () => {
+	it('keeps only warnings the preview did not report', () => {
+		const previewed = [invalid('weapon', -1, 'Ixaba'), invalid('character', 0, 'Anne')]
+		const created = [
+			invalid('weapon', -1, 'Ixaba'),
+			invalid('character', 0, 'Anne'),
+			invalid('character', 1, 'Anne'),
+			{ ...invalid('weapon', -1, 'Ixaba'), code: 'uncap_clamped' }
+		]
+		expect(newWarnings(created, previewed)).toEqual([created[2], created[3]])
+	})
+
+	it('ignores the detail, which can differ between runs', () => {
+		const previewed = [{ ...invalid('weapon', 0, 'Ixaba'), detail: 'a' }]
+		expect(newWarnings([{ ...invalid('weapon', 0, 'Ixaba'), detail: 'b' }], previewed)).toEqual([])
+	})
+})
+
+describe('createdWarningsToast', () => {
+	it('says nothing when there is nothing new', () => {
+		expect(createdWarningsToast([])).toBeNull()
+	})
+
+	it('names up to three items by title and slot', () => {
+		expect(
+			createdWarningsToast([invalid('character', 1, 'Anne'), invalid('weapon', -1, 'Ixaba')])
+		).toBe("Some items couldn't be added: Ixaba (Mainhand), Anne (Character 2)")
+	})
+
+	it('counts the rest', () => {
+		expect(
+			createdWarningsToast([
+				invalid('weapon', 0, 'A'),
+				invalid('weapon', 1, 'B'),
+				invalid('weapon', 2, 'C'),
+				invalid('weapon', 3, 'D'),
+				{ code: 'something_new' }
+			])
+		).toBe("Some items couldn't be added: A (Weapon 1), B (Weapon 2), C (Weapon 3), and 2 more")
+	})
+
+	it('falls back to the detail or code for warnings without a title', () => {
+		expect(createdWarningsToast([{ code: 'something_new' }])).toBe(
+			"Some items couldn't be added: something_new"
+		)
 	})
 })

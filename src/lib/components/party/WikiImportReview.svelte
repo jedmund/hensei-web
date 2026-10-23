@@ -7,7 +7,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import type { WikiImportReport, WikiImportRequest } from '$lib/types/api/wikiImport'
 	import type { WikiImportNote } from '$lib/utils/wikiImport'
-	import { noteText, slotLabel, warningText } from '$lib/utils/wikiImportMessages'
+	import { noteText, slotLabel, sortWarnings, warningText } from '$lib/utils/wikiImportMessages'
 
 	interface Props {
 		report: WikiImportReport
@@ -21,7 +21,7 @@
 	const total = $derived(report.matched.length + report.unmatched.length + report.ambiguous.length)
 	const skipped = $derived([
 		...notes.map(noteText),
-		...report.warnings.map((w) => warningText(w, request))
+		...sortWarnings(report.warnings).map((w) => warningText(w, request))
 	])
 </script>
 

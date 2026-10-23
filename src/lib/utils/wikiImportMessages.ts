@@ -160,3 +160,49 @@ export function warningText(warning: WikiImportWarning, request: WikiImportReque
 	const slot = gridKind ? slotLabel(warning.kind, warning.position) : null
 	return slot ? m.party_import_wiki_slot_line({ slot, text: body }) : body
 }
+
+/**
+ * Problems that keep the team from working first: the mainhand, then the
+ * class and what hangs off it, then everything else in the API's order.
+ */
+function warningRank({ kind, position }: WikiImportWarning): number {
+	if (kind === 'weapon' && position === -1) return 0
+	if (kind === 'job') return 1
+	if (kind === 'accessory' || kind === 'skill') return 2
+	return 3
+}
+
+export function sortWarnings(warnings: WikiImportWarning[]): WikiImportWarning[] {
+	return [...warnings].sort((a, b) => warningRank(a) - warningRank(b))
+}
+
+function warningKey({ code, kind, position, title }: WikiImportWarning): string {
+	return JSON.stringify([code, kind ?? null, position ?? null, title ?? null])
+}
+
+/** Warnings from the create that the preview didn't show. */
+export function newWarnings(
+	created: WikiImportWarning[],
+	previewed: WikiImportWarning[]
+): WikiImportWarning[] {
+	const seen = new Set(previewed.map(warningKey))
+	return created.filter((w) => !seen.has(warningKey(w)))
+}
+
+/** A warning's item for a list: "Title (Slot)", or whichever of the two it has. */
+function warningItem(warning: WikiImportWarning): string {
+	const slot = slotLabel(warning.kind, warning.position)
+	const title = warning.title || warning.detail
+	if (title && slot) return m.party_import_wiki_item_in_slot({ title, slot })
+	return title || slot || warning.code
+}
+
+/** The toast after create for warnings the review didn't show, naming up to three. */
+export function createdWarningsToast(warnings: WikiImportWarning[]): string | null {
+	if (warnings.length === 0) return null
+	const items = sortWarnings(warnings).slice(0, 3).map(warningItem).join(', ')
+	const more = warnings.length - 3
+	return more > 0
+		? m.party_import_wiki_created_warnings_more({ items, count: more })
+		: m.party_import_wiki_created_warnings({ items })
+}

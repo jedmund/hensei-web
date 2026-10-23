@@ -14,6 +14,7 @@ import {
 	WikiImportParseError,
 	type WikiImportNote
 } from '$lib/utils/wikiImport'
+import { createdWarningsToast, newWarnings } from '$lib/utils/wikiImportMessages'
 
 interface WikiImportOptions {
 	getParty: () => Party
@@ -112,6 +113,7 @@ export function useWikiImport(opts: WikiImportOptions) {
 		if (!request) return
 		busy = true
 		try {
+			const previewed = report?.warnings ?? []
 			const { party, report: created } = await importParty.mutateAsync(
 				// Anonymous teams are tied to this browser, like a normal new team
 				opts.getAuthUserId() ? request : { ...request, localId: getLocalId() }
@@ -125,8 +127,10 @@ export function useWikiImport(opts: WikiImportOptions) {
 			toast.success(m.party_import_wiki_success())
 			// Some items only fail once the grid is built (series conflicts,
 			// proficiency), which the preview can't know.
-			if (created.warnings.length > 0)
-				toast.warning(m.party_import_wiki_created_warnings({ count: created.warnings.length }))
+			// The preview runs the same create, so its warnings are already in
+			// the review; only name anything it didn't show.
+			const unseen = createdWarningsToast(newWarnings(created.warnings, previewed))
+			if (unseen) toast.warning(unseen)
 			await goto(localizeHref(`/teams/${party.shortcode}`))
 		} catch (err) {
 			toast.error(failureMessage(err))
