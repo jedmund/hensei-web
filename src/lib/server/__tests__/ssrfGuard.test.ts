@@ -242,4 +242,27 @@ describe('fetchPublicUrl DNS pinning', () => {
 		expect(resolve).toHaveBeenCalledTimes(1)
 		expect(dialed).toMatchObject({ err: null, address: [{ address: '93.184.216.34', family: 4 }] })
 	})
+
+	it('pins every redirect hop on the same connection pool', async () => {
+		const addresses: Record<string, string[]> = {
+			'first.example': ['93.184.216.34'],
+			'second.example': ['142.250.72.14']
+		}
+		const resolve = vi.fn(async (hostname: string) => addresses[hostname] ?? [])
+		vi.stubGlobal(
+			'fetch',
+			vi.fn(async (url: URL) =>
+				url.hostname === 'first.example'
+					? new Response(null, { status: 302, headers: { location: 'https://second.example/' } })
+					: new Response('ok', { status: 200 })
+			)
+		)
+
+		await fetchPublicUrl('https://first.example/', {}, { resolve })
+
+		const lookup = agentOptions.at(-1)?.connect?.lookup as ReturnType<typeof createPinnedLookup>
+		expect(await runLookup(lookup, 'first.example')).toMatchObject({ address: '93.184.216.34' })
+		expect(await runLookup(lookup, 'second.example')).toMatchObject({ address: '142.250.72.14' })
+		expect(resolve).toHaveBeenCalledTimes(2)
+	})
 })
