@@ -23,6 +23,8 @@ export type FilterItem =
 	| { kind: 'evoker'; value: string; label: string; pinned?: boolean }
 	/** Sticker label, by slug; the label text is the sticker's meaning */
 	| { kind: 'label'; value: string; label: string; pinned?: boolean }
+	/** List order; 'participation' is the Recommended sort */
+	| { kind: 'sort'; value: string; label: string; pinned?: boolean }
 
 export interface FilterOption {
 	kind: FilterItem['kind']

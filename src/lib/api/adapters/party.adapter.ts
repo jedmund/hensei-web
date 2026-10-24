@@ -97,6 +97,8 @@ export interface ExploreFilterParams {
 	routeEvoker?: string
 	/** Sticker slug: only teams with this label */
 	label?: string
+	/** 'participation' sorts by community stickers (Recommended) */
+	sort?: string
 }
 
 /**

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { HOME_PATH, GALLERY_PATH, isHomePath } from '$lib/utils/browseRoutes'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { m } from '$lib/paraglide/messages'
 	import { page } from '$app/stores'
@@ -61,7 +62,8 @@
 	const isBahamut = $derived(currentUser?.bahamut === true)
 
 	// Localized links
-	const galleryHref = $derived(localizeHref('/teams/explore'))
+	const homeHref = $derived(localizeHref(HOME_PATH))
+	const galleryHref = $derived(localizeHref(GALLERY_PATH))
 	const meHref = $derived(localizeHref('/me'))
 	const loginHref = $derived(localizeHref('/auth/login'))
 	const registerHref = $derived(localizeHref('/auth/register'))
@@ -89,10 +91,8 @@
 	function isNavSelected(href: string): boolean {
 		const path = $page.url.pathname
 
-		// For gallery/teams, we need to check for /teams paths
-		if (href === galleryHref) {
-			return path === href
-		}
+		// Every path starts with the home path, so Home only matches exactly
+		if (href === homeHref) return isHomePath(path, homeHref)
 
 		// Exact match or starts with href + /
 		return path === href || path.startsWith(href + '/')
@@ -239,6 +239,7 @@
 						out:fly={STATE_OUT}
 					>
 						<SlidingSelection host={pillDefaultEl} trigger={$page.url.pathname} />
+						<a href={homeHref} class:selected={isNavSelected(homeHref)}>{m.nav_home()}</a>
 						<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
 						<a href={crewHref} class:selected={isNavSelected(crewHref)} class="crew-link">
 							{m.nav_crew()}
@@ -348,6 +349,7 @@
 						out:fly={STATE_OUT}
 					>
 						<SlidingSelection host={pillDefaultEl} trigger={$page.url.pathname} />
+						<a href={homeHref} class:selected={isNavSelected(homeHref)}>{m.nav_home()}</a>
 						<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
 						<a href={crewHref} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
 						<a href={collectionHref} class:selected={isNavSelected(collectionHref)}
