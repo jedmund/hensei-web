@@ -4,6 +4,8 @@
 	import '$src/app.scss'
 
 	import { browser } from '$app/environment'
+	import { beforeNavigate } from '$app/navigation'
+	import { updated } from '$app/state'
 	import { QueryClientProvider } from '@tanstack/svelte-query'
 	import { Toaster } from 'svelte-sonner'
 	import { untrack, type Snippet } from 'svelte'
@@ -28,6 +30,13 @@
 		if (browser) {
 			const userTheme = (data.themePreference as ThemePreference) ?? 'system'
 			untrack(() => themeStore.init(userTheme))
+		}
+	})
+
+	// After a deploy, load the next page in full so the tab runs the new build
+	beforeNavigate(({ willUnload, to }) => {
+		if (updated.current && !willUnload && to?.url) {
+			location.href = to.url.href
 		}
 	})
 
