@@ -7,60 +7,71 @@ interface ElementData {
 	opposite_id: number
 }
 
+/** Element ids, matching the game's own numbering */
+export const ElementId = {
+	Null: 0,
+	Fire: 1,
+	Water: 2,
+	Earth: 3,
+	Wind: 4,
+	Light: 5,
+	Dark: 6
+} as const
+
 export const ELEMENTS: Record<number, ElementData> = {
 	0: { en: 'Null', ja: '無', opposite_id: 0 },
-	1: { en: 'Wind', ja: '風', opposite_id: 4 },
-	2: { en: 'Fire', ja: '火', opposite_id: 3 },
-	3: { en: 'Water', ja: '水', opposite_id: 2 },
-	4: { en: 'Earth', ja: '土', opposite_id: 1 },
-	5: { en: 'Dark', ja: '闇', opposite_id: 6 },
-	6: { en: 'Light', ja: '光', opposite_id: 5 }
+	1: { en: 'Fire', ja: '火', opposite_id: 2 },
+	2: { en: 'Water', ja: '水', opposite_id: 1 },
+	3: { en: 'Earth', ja: '土', opposite_id: 4 },
+	4: { en: 'Wind', ja: '風', opposite_id: 3 },
+	5: { en: 'Light', ja: '光', opposite_id: 6 },
+	6: { en: 'Dark', ja: '闇', opposite_id: 5 }
 }
 
 // English keys used for file paths and CSS classes — not for display
 const ELEMENT_KEYS: Record<number, string> = {
 	0: 'Null',
-	1: 'Wind',
-	2: 'Fire',
-	3: 'Water',
-	4: 'Earth',
-	5: 'Dark',
-	6: 'Light'
+	1: 'Fire',
+	2: 'Water',
+	3: 'Earth',
+	4: 'Wind',
+	5: 'Light',
+	6: 'Dark'
 }
 
 // Hex colors for each element (used in charts, filters, SVG rendering)
 const ELEMENT_COLORS: Record<number, string> = {
 	0: '#888888',
-	1: '#3ee489',
-	2: '#fa6d6d',
-	3: '#6cc9ff',
-	4: '#fd9f5b',
-	5: '#de7bff',
-	6: '#e8d633'
+	1: '#fa6d6d',
+	2: '#6cc9ff',
+	3: '#fd9f5b',
+	4: '#3ee489',
+	5: '#e8d633',
+	6: '#de7bff'
 }
 
 // Emoji for each element (used in embed titles, text representations)
 const ELEMENT_EMOJIS: Record<number, string> = {
 	0: '⚪',
-	1: '🟢',
-	2: '🔴',
-	3: '🔵',
-	4: '🟤',
-	5: '🟣',
-	6: '🟡'
+	1: '🔴',
+	2: '🔵',
+	3: '🟤',
+	4: '🟢',
+	5: '🟡',
+	6: '🟣'
 }
 
 // Display order: Fire → Water → Earth → Wind → Light → Dark
-export const ELEMENT_DISPLAY_ORDER = [2, 3, 4, 1, 6, 5] as const
+export const ELEMENT_DISPLAY_ORDER = [1, 2, 3, 4, 5, 6] as const
 
 const ELEMENT_MESSAGES: Record<number, () => string> = {
 	0: m.element_null,
-	1: m.element_wind,
-	2: m.element_fire,
-	3: m.element_water,
-	4: m.element_earth,
-	5: m.element_dark,
-	6: m.element_light
+	1: m.element_fire,
+	2: m.element_water,
+	3: m.element_earth,
+	4: m.element_wind,
+	5: m.element_light,
+	6: m.element_dark
 }
 
 export function getElementLabel(element?: number): string {

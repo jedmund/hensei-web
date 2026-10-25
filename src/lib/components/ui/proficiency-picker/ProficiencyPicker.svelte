@@ -4,10 +4,11 @@
 	import Select from '../Select.svelte'
 	import MultiSelect from '../MultiSelect.svelte'
 	import ProficiencyPickerSegmented from './ProficiencyPickerSegmented.svelte'
-	import { PROFICIENCY_LABELS, getProficiencyImage } from '$lib/utils/proficiency'
-
-	// Proficiency display order for dropdown: Sabre, Dagger, Spear, Axe, Staff, Gun, Melee, Bow, Harp, Katana
-	const PROFICIENCY_DISPLAY_ORDER = [1, 2, 4, 3, 6, 9, 7, 5, 8, 10]
+	import {
+		PROFICIENCY_DISPLAY_ORDER,
+		getProficiencyImage,
+		getProficiencyLabel
+	} from '$lib/utils/proficiency'
 
 	interface Props {
 		value?: number | number[]
@@ -46,7 +47,7 @@
 	const options = $derived.by(() => {
 		return PROFICIENCY_DISPLAY_ORDER.map((proficiency) => ({
 			value: proficiency,
-			label: PROFICIENCY_LABELS[proficiency] ?? 'Unknown',
+			label: getProficiencyLabel(proficiency),
 			image: getProficiencyImage(proficiency)
 		}))
 	})

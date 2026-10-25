@@ -74,24 +74,3 @@ export function formatTranscendenceStep(step?: number | null): string {
 export function getStatModifierIcon(_type: 'ring' | 'earring', _modifier: number): string | null {
 	return null
 }
-
-export function getElementName(element?: number | null): string {
-	switch (element) {
-		case 0:
-			return m.element_null()
-		case 1:
-			return m.element_wind()
-		case 2:
-			return m.element_fire()
-		case 3:
-			return m.element_water()
-		case 4:
-			return m.element_earth()
-		case 5:
-			return m.element_dark()
-		case 6:
-			return m.element_light()
-		default:
-			return m.mention_unknown()
-	}
-}

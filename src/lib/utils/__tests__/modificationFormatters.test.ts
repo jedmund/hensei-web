@@ -5,8 +5,7 @@ import {
 	formatAxSkill,
 	getWeaponKeyTitle,
 	formatUncapLevel,
-	formatTranscendenceStep,
-	getElementName
+	formatTranscendenceStep
 } from '../modificationFormatters'
 import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 import type { AugmentSkill } from '$lib/types/api/weaponStatModifier'
@@ -57,14 +56,14 @@ describe('formatEarringStat', () => {
 	})
 
 	it('formats element-specific stat with character element', () => {
-		const result = formatEarringStat(3, 22, 'en', 2)
+		const result = formatEarringStat(3, 22, 'en', 1)
 		expect(result).toContain('Fire')
 		expect(result).toContain('+22')
 	})
 
 	it('formats opposite element stat', () => {
-		// Fire (2) → Water (3)
-		const result = formatEarringStat(4, 12, 'en', 2)
+		// Fire (1) → Water (2)
+		const result = formatEarringStat(4, 12, 'en', 1)
 		expect(result).toContain('Water')
 	})
 
@@ -160,27 +159,5 @@ describe('formatTranscendenceStep', () => {
 		expect(formatTranscendenceStep(0)).toBe('')
 		expect(formatTranscendenceStep(null)).toBe('')
 		expect(formatTranscendenceStep(undefined)).toBe('')
-	})
-})
-
-// ============================================================================
-// getElementName
-// ============================================================================
-
-describe('getElementName', () => {
-	it('maps element IDs to names', () => {
-		expect(getElementName(0)).toBe('Null')
-		expect(getElementName(1)).toBe('Wind')
-		expect(getElementName(2)).toBe('Fire')
-		expect(getElementName(3)).toBe('Water')
-		expect(getElementName(4)).toBe('Earth')
-		expect(getElementName(5)).toBe('Dark')
-		expect(getElementName(6)).toBe('Light')
-	})
-
-	it('returns Unknown for null/undefined/invalid', () => {
-		expect(getElementName(null)).toBe('Unknown')
-		expect(getElementName(undefined)).toBe('Unknown')
-		expect(getElementName(99)).toBe('Unknown')
 	})
 })

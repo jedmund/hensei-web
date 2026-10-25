@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { getElementKey } from '$lib/utils/element'
 	import * as m from '$lib/paraglide/messages'
 	import type { Job } from '$lib/types/api/entities'
 	import { getJobFullImageUrl, getJobIconUrl, Gender } from '$lib/utils/jobUtils'
@@ -29,11 +30,7 @@
 	const iconUrl = $derived(job ? getJobIconUrl(job.granblueId) : '')
 
 	// Get element class for protagonist styling
-	const elementClass = $derived(
-		element !== undefined
-			? ['null', 'wind', 'fire', 'water', 'earth', 'light', 'dark'][element] || ''
-			: ''
-	)
+	const elementClass = $derived(element !== undefined ? getElementKey(element) : '')
 
 	function handleClick() {
 		if (clickable && onclick) {

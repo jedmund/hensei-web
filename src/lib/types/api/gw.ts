@@ -25,7 +25,7 @@ export type GwEventStatus = 'upcoming' | 'active' | 'completed'
 // GwEvent from GwEventBlueprint
 export interface GwEvent {
 	id: string
-	element: number // Uses GranblueEnums.ELEMENTS (0-5)
+	element: number // Element id (0-6)
 	startDate: string
 	endDate: string
 	eventNumber: number // GW #XX

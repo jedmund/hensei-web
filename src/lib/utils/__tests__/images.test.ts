@@ -291,7 +291,7 @@ describe('getImageUrl', () => {
 
 	it('returns weapon grid URL with element suffix', () => {
 		expect(getImageUrl('weapon', '1040001', 'grid', { element: 3 })).toBe(
-			'/images/weapons/grid/1040001_3.jpg'
+			'/images/weapons/grid/1040001_3.jpg?ids=game'
 		)
 	})
 
@@ -369,7 +369,7 @@ describe('getWeaponImage', () => {
 	})
 
 	it('adds element suffix for grid variant', () => {
-		expect(getWeaponImage('1040001', 'grid', 2)).toBe('/images/weapons/grid/1040001_2.jpg')
+		expect(getWeaponImage('1040001', 'grid', 2)).toBe('/images/weapons/grid/1040001_2.jpg?ids=game')
 	})
 
 	it('element 0 produces _0 suffix', () => {
@@ -467,15 +467,15 @@ describe('getCharacterImageWithPose', () => {
 
 	it('null-element characters get element-suffixed images without gender by default', () => {
 		const url = getCharacterImageWithPose('3030182000', 'main', 3, 0, 2, null, false, false, 0)
-		expect(url).toBe('/images/characters/main/3030182000_02_02.jpg')
+		expect(url).toBe('/images/characters/main/3030182000_02_02.jpg?ids=game')
 
 		const lyria = getCharacterImageWithPose('3040643000', 'main', 3, 0, 3, null, false, false, 0)
-		expect(lyria).toBe('/images/characters/main/3040643000_02_03.jpg')
+		expect(lyria).toBe('/images/characters/main/3040643000_02_03.jpg?ids=game')
 	})
 
 	it('null-element characters get element + gender suffix when gender is provided', () => {
 		const gran = getCharacterImageWithPose('3040643000', 'main', 3, 0, 3, null, false, false, 0, 0)
-		expect(gran).toBe('/images/characters/main/3040643000_02_03_0.jpg')
+		expect(gran).toBe('/images/characters/main/3040643000_02_03_0.jpg?ids=game')
 
 		const djeeta = getCharacterImageWithPose(
 			'3040643000',
@@ -489,7 +489,7 @@ describe('getCharacterImageWithPose', () => {
 			0,
 			1
 		)
-		expect(djeeta).toBe('/images/characters/main/3040643000_02_03_1.jpg')
+		expect(djeeta).toBe('/images/characters/main/3040643000_02_03_1.jpg?ids=game')
 	})
 
 	it('gender suffix works for non-null-element characters too', () => {
@@ -564,7 +564,7 @@ describe('getWeaponGridImage', () => {
 	})
 
 	it('handles element-changeable weapons (element === 0) with instance element', () => {
-		expect(getWeaponGridImage('1040001', 0, 3)).toBe('/images/weapons/grid/1040001_3.jpg')
+		expect(getWeaponGridImage('1040001', 0, 3)).toBe('/images/weapons/grid/1040001_3.jpg?ids=game')
 	})
 
 	it('element-changeable without instanceElement defaults to 0', () => {
@@ -630,9 +630,11 @@ describe('getAwakeningImage', () => {
 
 describe('getWeaponKeyImage', () => {
 	it('returns key image using slug directly', () => {
-		expect(getWeaponKeyImage('alpha')).toBe('/images/weapons/keys/alpha.png')
-		expect(getWeaponKeyImage('pendulum')).toBe('/images/weapons/keys/pendulum.png')
-		expect(getWeaponKeyImage('elemental-teluma')).toBe('/images/weapons/keys/elemental-teluma.png')
+		expect(getWeaponKeyImage('alpha')).toBe('/images/weapons/keys/alpha.png?ids=game')
+		expect(getWeaponKeyImage('pendulum')).toBe('/images/weapons/keys/pendulum.png?ids=game')
+		expect(getWeaponKeyImage('elemental-teluma')).toBe(
+			'/images/weapons/keys/elemental-teluma.png?ids=game'
+		)
 	})
 })
 
@@ -648,7 +650,7 @@ describe('getAxSkillImage', () => {
 
 describe('getMasteryImage', () => {
 	it('returns mastery URL', () => {
-		expect(getMasteryImage('atk')).toBe('/images/icons/mastery/atk.png')
+		expect(getMasteryImage('atk')).toBe('/images/icons/mastery/atk.png?ids=game')
 	})
 
 	it('returns empty string for undefined', () => {
@@ -699,12 +701,12 @@ describe('getGenderLabelImage', () => {
 
 describe('getElementIcon', () => {
 	it('maps element IDs to names', () => {
-		expect(getElementIcon(1)).toBe('/images/icons/elements/element-wind.png')
-		expect(getElementIcon(2)).toBe('/images/icons/elements/element-fire.png')
-		expect(getElementIcon(3)).toBe('/images/icons/elements/element-water.png')
-		expect(getElementIcon(4)).toBe('/images/icons/elements/element-earth.png')
-		expect(getElementIcon(5)).toBe('/images/icons/elements/element-dark.png')
-		expect(getElementIcon(6)).toBe('/images/icons/elements/element-light.png')
+		expect(getElementIcon(1)).toBe('/images/icons/elements/element-fire.png')
+		expect(getElementIcon(2)).toBe('/images/icons/elements/element-water.png')
+		expect(getElementIcon(3)).toBe('/images/icons/elements/element-earth.png')
+		expect(getElementIcon(4)).toBe('/images/icons/elements/element-wind.png')
+		expect(getElementIcon(5)).toBe('/images/icons/elements/element-light.png')
+		expect(getElementIcon(6)).toBe('/images/icons/elements/element-dark.png')
 	})
 
 	it('returns null element for unknown element', () => {

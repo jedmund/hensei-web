@@ -75,6 +75,13 @@ describe('bidirectional mappings', () => {
 		}
 	})
 
+	it('uses the game numbering for proficiencies', () => {
+		expect(Object.keys(PROFICIENCY_TO_PARAM)).toHaveLength(10)
+		expect(PROFICIENCY_TO_PARAM[3]).toBe('spear')
+		expect(PROFICIENCY_TO_PARAM[6]).toBe('gun')
+		expect(PARAM_TO_PROFICIENCY.harp).toBe(9)
+	})
+
 	it('season mappings are consistent', () => {
 		for (const [num, param] of Object.entries(SEASON_TO_PARAM)) {
 			expect(PARAM_TO_SEASON[param]).toBe(Number(num))
@@ -107,7 +114,7 @@ describe('parseFiltersFromUrl', () => {
 	it('parses element filter', () => {
 		const params = new URLSearchParams('element=fire,water')
 		const result = parseFiltersFromUrl(params, 'character')
-		expect(result.element).toEqual([2, 3])
+		expect(result.element).toEqual([1, 2])
 	})
 
 	it('parses rarity filter', () => {
@@ -169,7 +176,7 @@ describe('parseFiltersFromUrl', () => {
 	it('ignores invalid values in mappings', () => {
 		const params = new URLSearchParams('element=fire,invalid,water')
 		const result = parseFiltersFromUrl(params, 'character')
-		expect(result.element).toEqual([2, 3])
+		expect(result.element).toEqual([1, 2])
 	})
 })
 
@@ -184,7 +191,7 @@ describe('buildUrlFromFilters', () => {
 	})
 
 	it('builds element param', () => {
-		const filters = { ...emptyFilters(), element: [2, 3] }
+		const filters = { ...emptyFilters(), element: [1, 2] }
 		const params = buildUrlFromFilters(filters, '', 1, 'character')
 		expect(params.get('element')).toBe('fire,water')
 	})

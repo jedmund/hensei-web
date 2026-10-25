@@ -9,11 +9,11 @@ describe('filterItemsToParams', () => {
 
 	it('collects multiple element filters into a single array', () => {
 		const items: FilterItem[] = [
-			{ kind: 'element', value: 2, label: 'Fire' },
-			{ kind: 'element', value: 3, label: 'Water' }
+			{ kind: 'element', value: 1, label: 'Fire' },
+			{ kind: 'element', value: 2, label: 'Water' }
 		]
 		const params = filterItemsToParams(items)
-		expect(params.element).toEqual([2, 3])
+		expect(params.element).toEqual([1, 2])
 	})
 
 	it('maps a raid filter to the raid slug', () => {
@@ -80,7 +80,7 @@ describe('filterItemsToParams', () => {
 	})
 
 	it('omits entity fields when no entities are present', () => {
-		const items: FilterItem[] = [{ kind: 'element', value: 1, label: 'Wind' }]
+		const items: FilterItem[] = [{ kind: 'element', value: 4, label: 'Wind' }]
 		const params = filterItemsToParams(items)
 		expect(params.includes).toBeUndefined()
 		expect(params.excludes).toBeUndefined()
@@ -89,7 +89,7 @@ describe('filterItemsToParams', () => {
 	it('handles a mixed filter set with all kinds', () => {
 		const items: FilterItem[] = [
 			{ kind: 'raid', value: 'lucilius-hard', label: 'Lucilius HL', pinned: true },
-			{ kind: 'element', value: 5, label: 'Dark' },
+			{ kind: 'element', value: 6, label: 'Dark' },
 			{ kind: 'party', value: 'full_auto', label: 'Full Auto' },
 			{
 				kind: 'entity',
@@ -102,7 +102,7 @@ describe('filterItemsToParams', () => {
 		]
 		const params = filterItemsToParams(items)
 		expect(params.raid).toBe('lucilius-hard')
-		expect(params.element).toEqual([5])
+		expect(params.element).toEqual([6])
 		expect(params.fullAuto).toBe(1)
 		expect(params.includes).toBe('3040215000')
 	})
@@ -118,7 +118,7 @@ describe('filterItemsToParams', () => {
 	})
 
 	it('omits boost/side params when no boost or side filter is present', () => {
-		const items: FilterItem[] = [{ kind: 'element', value: 1, label: 'Wind' }]
+		const items: FilterItem[] = [{ kind: 'element', value: 4, label: 'Wind' }]
 		const params = filterItemsToParams(items)
 		expect(params.boostMod).toBeUndefined()
 		expect(params.boostSide).toBeUndefined()
@@ -144,7 +144,7 @@ describe('filterItemsToParams', () => {
 	})
 
 	it('omits the difficulty param when there are no difficulty filters', () => {
-		const items: FilterItem[] = [{ kind: 'element', value: 1, label: 'Wind' }]
+		const items: FilterItem[] = [{ kind: 'element', value: 4, label: 'Wind' }]
 		expect(filterItemsToParams(items).difficulty).toBeUndefined()
 	})
 

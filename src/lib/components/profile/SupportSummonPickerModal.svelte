@@ -2,10 +2,14 @@
 	import { createInfiniteQuery, keepPreviousData, useQueryClient } from '@tanstack/svelte-query'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import { getSummonImage } from '$lib/utils/images'
-	import { getElementLabel } from '$lib/utils/element'
+	import {
+		ELEMENT_DISPLAY_ORDER,
+		getElementFromKey,
+		getElementImage,
+		getElementLabel
+	} from '$lib/utils/element'
 	import { localizedName } from '$lib/utils/locale'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
-	import { getElementImage } from '$lib/utils/element'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
@@ -36,17 +40,7 @@
 		onClear
 	}: Props = $props()
 
-	// Internal element ids: wind=1, fire=2, water=3, earth=4, dark=5, light=6.
-	const SECTION_TO_ELEMENT: Record<Exclude<SupportSummonSection, 'misc'>, number> = {
-		wind: 1,
-		fire: 2,
-		water: 3,
-		earth: 4,
-		dark: 5,
-		light: 6
-	}
-
-	const sectionElementId = $derived(section === 'misc' ? undefined : SECTION_TO_ELEMENT[section])
+	const sectionElementId = $derived(section === 'misc' ? undefined : getElementFromKey(section))
 	const sectionLabel = $derived(
 		section === 'misc' ? m.support_summon_picker_section_misc() : getElementLabel(sectionElementId)
 	)
@@ -58,7 +52,7 @@
 
 	$effect(() => {
 		if (open) {
-			elementFilter = section === 'misc' ? [] : [SECTION_TO_ELEMENT[section]]
+			elementFilter = sectionElementId === undefined ? [] : [sectionElementId]
 			searchInput = ''
 			void prefetchAllVariants()
 		}
@@ -74,12 +68,7 @@
 		if (!userId) return
 		const baseFilters = [
 			{}, // "All elements" — used by misc + cleared filter
-			{ element: [1] }, // wind
-			{ element: [2] }, // fire
-			{ element: [3] }, // water
-			{ element: [4] }, // earth
-			{ element: [5] }, // dark
-			{ element: [6] } // light
+			...ELEMENT_DISPLAY_ORDER.map((element) => ({ element: [element] }))
 		]
 		await Promise.all(
 			baseFilters.map((filters) =>

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { ELEMENT_DISPLAY_ORDER, getElementLabel } from '$lib/utils/element'
+	import { getWeaponProficiencyOptions } from '$lib/utils/proficiency'
 	import * as m from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
@@ -63,28 +65,13 @@
 	]
 
 	// Element options for MultiSelect
-	const elementOptions = [
-		{ value: 1, label: m.element_wind() },
-		{ value: 2, label: m.element_fire() },
-		{ value: 3, label: m.element_water() },
-		{ value: 4, label: m.element_earth() },
-		{ value: 5, label: m.element_dark() },
-		{ value: 6, label: m.element_light() }
-	]
+	const elementOptions = ELEMENT_DISPLAY_ORDER.map((value) => ({
+		value: value as number,
+		label: getElementLabel(value)
+	}))
 
 	// Proficiency options for MultiSelect
-	const proficiencyOptions = [
-		{ value: 1, label: m.proficiency_sabre() },
-		{ value: 2, label: m.proficiency_dagger() },
-		{ value: 3, label: m.proficiency_axe() },
-		{ value: 4, label: m.proficiency_spear() },
-		{ value: 5, label: m.proficiency_bow() },
-		{ value: 6, label: m.proficiency_staff() },
-		{ value: 7, label: m.proficiency_melee() },
-		{ value: 8, label: m.proficiency_harp() },
-		{ value: 9, label: m.proficiency_gun() },
-		{ value: 10, label: m.proficiency_katana() }
-	]
+	const proficiencyOptions = getWeaponProficiencyOptions()
 
 	// Query for artifact skills (cached 1 hour)
 	const skillsQuery = createQuery(() => artifactQueries.skills())

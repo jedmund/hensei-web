@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'
-	import { getElementLabel } from '$lib/utils/element'
+	import { getElementLabel, getElementClassName } from '$lib/utils/element'
 	import { CharacterSeason } from '$lib/types/enums'
 	import { localizedName } from '$lib/utils/locale'
 	import * as m from '$lib/paraglide/messages'
@@ -27,25 +27,7 @@
 	let { character, type, seriesIndex = 0 }: Props = $props()
 
 	// Get element class name for styling
-	const elementClass = $derived.by(() => {
-		const element = character.element
-		switch (element) {
-			case 1:
-				return 'wind'
-			case 2:
-				return 'fire'
-			case 3:
-				return 'water'
-			case 4:
-				return 'earth'
-			case 5:
-				return 'dark'
-			case 6:
-				return 'light'
-			default:
-				return 'neutral'
-		}
-	})
+	const elementClass = $derived(getElementClassName(character.element))
 
 	// Get the display text based on tag type
 	const displayText = $derived.by(() => {

@@ -1,6 +1,11 @@
 <script lang="ts">
 	import SupportSummonSlot from '$lib/components/profile/SupportSummonSlot.svelte'
-	import { getElementImage, getElementLabel } from '$lib/utils/element'
+	import {
+		ELEMENT_DISPLAY_ORDER,
+		getElementImage,
+		getElementKey,
+		getElementLabel
+	} from '$lib/utils/element'
 	import * as m from '$lib/paraglide/messages'
 	import {
 		SUPPORT_SUMMON_SECTION_LIMITS,
@@ -19,20 +24,14 @@
 
 	let { summons = [], isOwner = false, onSelect, onToggleRequired }: Props = $props()
 
-	// GBF in-game element ordering for visual columns:
-	// Fire → Water → Earth → Wind → Light → Dark
-	// (Internal element ids: 2=fire, 3=water, 4=earth, 1=wind, 6=light, 5=dark.)
+	// GBF in-game element ordering for visual columns
 	const ELEMENT_COLUMNS: ReadonlyArray<{
 		section: SupportSummonSection
 		elementId: number
-	}> = [
-		{ section: 'fire', elementId: 2 },
-		{ section: 'water', elementId: 3 },
-		{ section: 'earth', elementId: 4 },
-		{ section: 'wind', elementId: 1 },
-		{ section: 'light', elementId: 6 },
-		{ section: 'dark', elementId: 5 }
-	] as const
+	}> = ELEMENT_DISPLAY_ORDER.map((elementId) => ({
+		section: getElementKey(elementId) as SupportSummonSection,
+		elementId
+	}))
 
 	const bySlot = $derived.by(() => {
 		const map: Record<string, SupportSummon> = {}

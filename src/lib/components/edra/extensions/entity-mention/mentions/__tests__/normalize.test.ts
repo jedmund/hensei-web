@@ -14,7 +14,7 @@ describe('entityResultToSuggestion', () => {
 			granblueId: '3040001000',
 			nameEn: 'Percival',
 			nameJp: 'パーシヴァル',
-			element: 2,
+			element: 1,
 			season: null,
 			series: [{ id: 's1', slug: 'standard', name: { en: 'Standard', ja: '' } }],
 			proficiency: [1, 2],
@@ -24,7 +24,7 @@ describe('entityResultToSuggestion', () => {
 		expect(suggestion.key).toBe('character:abc-123')
 		expect(suggestion.token.type).toBe('character')
 		expect(suggestion.token.granblue_id).toBe('3040001000')
-		expect(suggestion.token.element).toEqual({ id: 2, slug: 'fire' })
+		expect(suggestion.token.element).toEqual({ id: 1, slug: 'fire' })
 		expect(suggestion.token.proficiency).toEqual([1, 2])
 		expect(suggestion.imageUrl).toBe(`${base}/characters/square/3040001000_01.jpg`)
 		expect(suggestion.primaryLabel).toBe('Percival')

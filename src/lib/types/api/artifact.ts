@@ -88,7 +88,7 @@ export interface ArtifactSkillInstance {
  */
 export interface CollectionArtifact {
 	id: string
-	/** Element (1-6: wind, fire, water, earth, dark, light) */
+	/** Element (1-6: fire, water, earth, wind, light, dark) */
 	element: number
 	/** Artifact level (1-5 for standard, always 1 for quirk) */
 	level: number
@@ -114,7 +114,7 @@ export interface CollectionArtifact {
  */
 export interface GridArtifact {
 	id: string
-	/** Element (1-6: wind, fire, water, earth, dark, light) */
+	/** Element (1-6: fire, water, earth, wind, light, dark) */
 	element: number
 	/** Artifact level (1-5 for standard, always 1 for quirk) */
 	level: number

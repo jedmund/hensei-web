@@ -4,7 +4,7 @@
 
 import type { Awakening, WeaponKey } from '$lib/types/api/entities'
 import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'
-import { BUCKET, getBasePath } from '$lib/utils/images'
+import { BUCKET, getBasePath, renumberedImage } from '$lib/utils/images'
 import { localizedName } from '$lib/utils/locale'
 
 /**
@@ -43,7 +43,7 @@ export function getWeaponKeyImage(key: WeaponKey, weaponProficiency?: number): s
 	const filename =
 		hasProficiencyVariant && weaponProficiency ? `${key.slug}-${weaponProficiency}` : key.slug
 
-	return `${getBasePath()}/${BUCKET.weaponKeys}/${filename}.png`
+	return renumberedImage(`${getBasePath()}/${BUCKET.weaponKeys}/${filename}.png`)
 }
 
 /**

@@ -267,6 +267,15 @@ export function getCharacterPose(
 }
 
 /**
+ * Images whose file names carry an element or proficiency number swapped names when those
+ * numbers became the game's (October 2026). The query string keeps a browser from showing
+ * a copy it cached under the old numbering.
+ */
+export function renumberedImage(url: string): string {
+	return `${url}?ids=game`
+}
+
+/**
  * Pose suffix for style swap character images.
  * Style swap images are stored as {id}_01_style.{ext}
  */
@@ -296,7 +305,8 @@ export function getImageUrl(
 	// Handle character-specific logic
 	if (type === 'character') {
 		const pose = options?.pose || '01'
-		return `${basePath}/${id}_${pose}${extension}`
+		const url = `${basePath}/${id}_${pose}${extension}`
+		return /_0[1-6](_|$)/.test(pose) ? renumberedImage(url) : url
 	}
 
 	// Handle weapon element variants (including element 0 for null-element weapons)
@@ -306,7 +316,8 @@ export function getImageUrl(
 		options?.element !== undefined &&
 		options.element >= 0
 	) {
-		return `${basePath}/${id}_${options.element}${extension}`
+		const url = `${basePath}/${id}_${options.element}${extension}`
+		return options.element > 0 ? renumberedImage(url) : url
 	}
 
 	// Standard format for weapons and summons
@@ -361,7 +372,8 @@ export function getWeaponImage(
 		if (variantId) {
 			return `${basePath}/${variantId}${extension}`
 		}
-		return `${basePath}/${id}_${element}${extension}`
+		const url = `${basePath}/${id}_${element}${extension}`
+		return element > 0 ? renumberedImage(url) : url
 	}
 
 	// Handle transformation suffix (transcendence)
@@ -657,7 +669,7 @@ export function getWeaponSkillIcon(
 ): string | null {
 	if (!stem) return null
 	const lang = locale === 'ja' ? 'ja' : 'en'
-	return `${getBasePath()}/${BUCKET.weaponSkills}/${lang}/${stem}.png`
+	return renumberedImage(`${getBasePath()}/${BUCKET.weaponSkills}/${lang}/${stem}.png`)
 }
 
 /**
@@ -688,7 +700,7 @@ export function getSolomonisSpaceIcon(key: string): string {
  * Get weapon key image URL
  */
 export function getWeaponKeyImage(slug: string): string {
-	return `${getBasePath()}/${BUCKET.weaponKeys}/${slug}.png`
+	return renumberedImage(`${getBasePath()}/${BUCKET.weaponKeys}/${slug}.png`)
 }
 
 /**
@@ -704,7 +716,7 @@ export function getAxSkillImage(slug: string | undefined): string {
  */
 export function getMasteryImage(slug: string | undefined): string {
 	if (!slug) return ''
-	return `${getBasePath()}/${BUCKET.mastery}/${slug}.png`
+	return renumberedImage(`${getBasePath()}/${BUCKET.mastery}/${slug}.png`)
 }
 
 // ===== Label Images =====

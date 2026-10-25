@@ -5,6 +5,7 @@
 	import Select from '$lib/components/ui/Select.svelte'
 	import { getProficiencyLabelImage } from '$lib/utils/images'
 	import { formatJobProficiency } from '$lib/utils/jobUtils'
+	import { getProficiencyOptions } from '$lib/utils/proficiency'
 
 	interface Props {
 		job: Job
@@ -16,19 +17,7 @@
 	let { job, editMode = false, editData = $bindable() }: Props = $props()
 
 	// Proficiency options for the select dropdowns
-	const proficiencyOptions = [
-		{ value: 0, label: 'None' },
-		{ value: 1, label: 'Sabre' },
-		{ value: 2, label: 'Dagger' },
-		{ value: 3, label: 'Axe' },
-		{ value: 4, label: 'Spear' },
-		{ value: 5, label: 'Bow' },
-		{ value: 6, label: 'Staff' },
-		{ value: 7, label: 'Melee' },
-		{ value: 8, label: 'Harp' },
-		{ value: 9, label: 'Gun' },
-		{ value: 10, label: 'Katana' }
-	]
+	const proficiencyOptions = getProficiencyOptions()
 
 	// Get proficiency names for display
 	const proficiencyNames = $derived(formatJobProficiency(job.proficiency))

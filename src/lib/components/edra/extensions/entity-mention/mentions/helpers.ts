@@ -1,17 +1,7 @@
 import { getBasePath, getCharacterSkillIcon } from '$lib/utils/images'
 import { localizedName } from '$lib/utils/locale'
+import { getElementKey } from '$lib/utils/element'
 import type { MentionToken } from './types'
-
-/** Element ID → slug. The single copy (previously duplicated in EntityMention + EntityMentionList). */
-const ELEMENT_SLUGS: Record<number, string> = {
-	0: 'null',
-	1: 'wind',
-	2: 'fire',
-	3: 'water',
-	4: 'earth',
-	5: 'dark',
-	6: 'light'
-}
 
 /** Type color → swatch CSS, matching the Skills tab / Full Auto chips. */
 const TYPE_COLOR_CSS: Record<string, string> = {
@@ -31,7 +21,7 @@ export function elementSlug(element: unknown): string {
 	if (typeof element === 'object' && 'slug' in element) {
 		return (element as { slug: string }).slug
 	}
-	if (typeof element === 'number') return ELEMENT_SLUGS[element] ?? 'null'
+	if (typeof element === 'number') return getElementKey(element)
 	return 'null'
 }
 

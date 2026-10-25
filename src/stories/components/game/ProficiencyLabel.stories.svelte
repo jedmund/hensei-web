@@ -13,8 +13,8 @@
 					labels: {
 						1: 'Sabre',
 						2: 'Dagger',
-						3: 'Axe',
-						4: 'Spear',
+						3: 'Spear',
+						4: 'Axe',
 						5: 'Staff',
 						6: 'Gun',
 						7: 'Melee',
@@ -25,7 +25,7 @@
 				},
 				options: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
 				description:
-					'Proficiency type (1=Sabre, 2=Dagger, 3=Axe, 4=Spear, 5=Staff, 6=Gun, 7=Melee, 8=Bow, 9=Harp, 10=Katana)'
+					'Proficiency type (1=Sabre, 2=Dagger, 3=Spear, 4=Axe, 5=Staff, 6=Gun, 7=Melee, 8=Bow, 9=Harp, 10=Katana)'
 			},
 			size: {
 				control: 'select',
@@ -38,8 +38,8 @@
 	const proficiencies = [
 		{ id: 1, name: 'Sabre' },
 		{ id: 2, name: 'Dagger' },
-		{ id: 3, name: 'Axe' },
-		{ id: 4, name: 'Spear' },
+		{ id: 3, name: 'Spear' },
+		{ id: 4, name: 'Axe' },
 		{ id: 5, name: 'Staff' },
 		{ id: 6, name: 'Gun' },
 		{ id: 7, name: 'Melee' },

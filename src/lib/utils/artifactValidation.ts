@@ -18,20 +18,6 @@ import type {
 import type { Character } from '$lib/types/api/entities'
 
 /**
- * Element enum values
- * Used for filtering and matching
- */
-export const ELEMENT_VALUES = {
-	NULL: 0,
-	WIND: 1,
-	FIRE: 2,
-	WATER: 3,
-	EARTH: 4,
-	DARK: 5,
-	LIGHT: 6
-} as const
-
-/**
  * Maps skill slot (1-4) to skill group
  * Slots 1-2: group_i
  * Slot 3: group_ii

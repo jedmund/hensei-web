@@ -6,10 +6,11 @@
 	 * Handles saving and deleting artifacts.
 	 */
 	import * as m from '$lib/paraglide/messages'
+	import { getElementTypeKey } from '$lib/utils/element'
 	import { onMount, untrack } from 'svelte'
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
 	import { useUpdateCollectionArtifact } from '$lib/api/mutations/artifact.mutations'
-	import { usePaneStack, type ElementType } from '$lib/stores/paneStack.svelte'
+	import { usePaneStack } from '$lib/stores/paneStack.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import ArtifactEditPane from '$lib/components/artifact/ArtifactEditPane.svelte'
 	import { toast } from 'svelte-sonner'
@@ -32,16 +33,7 @@
 	let pendingUpdates = $state<Partial<CollectionArtifact> | null>(null)
 	let hasChanges = $derived(pendingUpdates !== null)
 
-	// Convert numeric element to ElementType string
-	const elementNames: Record<number, ElementType> = {
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
-	const elementType = $derived(elementNames[artifact.element] ?? undefined)
+	const elementType = $derived(getElementTypeKey(artifact.element))
 
 	// Handle updates from ArtifactEditPane (store locally until save)
 	function handleUpdate(updates: Partial<CollectionArtifact>) {

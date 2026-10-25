@@ -5,7 +5,7 @@ export const mockJob: Job = {
 	id: 'job-1',
 	granblueId: '180001',
 	name: { en: 'Lumberjack', ja: 'ランバージャック' },
-	proficiency: [3, 0], // Axe
+	proficiency: [4, 0], // Axe
 	row: 5,
 	order: 1,
 	ultimateMastery: true
@@ -25,7 +25,7 @@ export const mockJobMultiProf: Job = {
 	id: 'job-3',
 	granblueId: '180101',
 	name: { en: 'Kengo', ja: 'ケンゴウ' },
-	proficiency: [1, 2], // Sword, Katana
+	proficiency: [1, 10], // Sabre, Katana
 	row: 5,
 	order: 1,
 	ultimateMastery: true

@@ -1,6 +1,11 @@
 import type { CollectionSortKey } from '$lib/types/api/collection'
 
-const STORAGE_KEY_PREFIX = 'collection-filters'
+// Bump the version when the stored filter values change meaning; older keys are removed on load
+const STORAGE_VERSION = 2
+const STORAGE_KEY_PREFIX = `collection-filters-v${STORAGE_VERSION}`
+const LEGACY_STORAGE_KEYS = ['characters', 'weapons', 'summons', 'artifacts'].map(
+	(key) => `collection-filters-${key}`
+)
 
 interface CharacterFilters {
 	element: number[]
@@ -86,6 +91,12 @@ class CollectionFiltersStore {
 		if (this.#initialized) return
 		this.#initialized = true
 
+		try {
+			for (const key of LEGACY_STORAGE_KEYS) localStorage.removeItem(key)
+		} catch {
+			// Storage unavailable
+		}
+
 		this.#characters = this.#load('characters', COLLECTION_FILTER_DEFAULTS.characters)
 		this.#weapons = this.#load('weapons', COLLECTION_FILTER_DEFAULTS.weapons)
 		this.#summons = this.#load('summons', COLLECTION_FILTER_DEFAULTS.summons)
@@ -106,7 +117,11 @@ class CollectionFiltersStore {
 
 	#save<K extends keyof EntityFilters>(key: K, value: EntityFilters[K]) {
 		if (typeof window !== 'undefined') {
-			localStorage.setItem(`${STORAGE_KEY_PREFIX}-${key}`, JSON.stringify(value))
+			try {
+				localStorage.setItem(`${STORAGE_KEY_PREFIX}-${key}`, JSON.stringify(value))
+			} catch {
+				// Storage unavailable or full
+			}
 		}
 	}
 

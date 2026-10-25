@@ -15,13 +15,14 @@
 	import { getWeaponSkillIcon } from '$lib/utils/images'
 	import { getLocale } from '$lib/paraglide/runtime.js'
 	import { localizedName } from '$lib/utils/locale'
+	import { getElementFromKey, getElementKey, getElementTypeKey } from '$lib/utils/element'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import type { SkillBoostLine } from '$lib/types/api/skillBoosts'
 
 	interface Props {
 		shortcode: string
-		/** Party element id (1 wind … 6 light) for elemental slider theming */
+		/** Party element id for elemental slider theming */
 		element?: number
 	}
 
@@ -42,25 +43,9 @@
 
 	const hpPercent = $derived(hpStop === 0 ? 1 : hpStop * 5)
 
-	// API element words ↔ app element ids (0 null, 1 wind … 6 light)
-	const ELEMENT_WORDS: Record<number, string> = {
-		0: 'null',
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
-	const foeElementId = $derived.by(() => {
-		const entry = Object.entries(ELEMENT_WORDS).find(([, word]) => word === foeElement)
-		return entry ? Number(entry[0]) : undefined
-	})
-
-	type SliderElement = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
-	const partyElement = $derived(
-		element ? (ELEMENT_WORDS[element] as SliderElement | undefined) : undefined
-	)
+	// The API names elements by their lowercase key ('null', 'fire', …)
+	const foeElementId = $derived(getElementFromKey(foeElement))
+	const partyElement = $derived(getElementTypeKey(element))
 
 	let requestId = 0
 	async function refetch() {
@@ -252,7 +237,7 @@
 						class="foe-picker"
 						onValueChange={(v) => {
 							if (typeof v === 'number') {
-								foeElement = ELEMENT_WORDS[v]
+								foeElement = getElementKey(v)
 								refetch()
 							}
 						}}

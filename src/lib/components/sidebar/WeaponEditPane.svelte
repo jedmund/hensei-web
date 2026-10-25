@@ -10,6 +10,7 @@
 	 * - AX skills (for weapons with AX support)
 	 * - Awakening (for weapons with awakening support)
 	 */
+	import { ProficiencyId } from '$lib/utils/proficiency'
 	import { SvelteMap } from 'svelte/reactivity'
 	import * as m from '$lib/paraglide/messages'
 	import type { Weapon, Awakening, Bullet, BulletLoadout } from '$lib/types/api/entities'
@@ -118,7 +119,9 @@
 	)
 	const bulletSlots = $derived(weaponData?.bulletSlots ?? [])
 	const isMainhand = $derived(position === -1)
-	const hasBullets = $derived(bulletSlots.length > 0 && isMainhand && weaponData?.proficiency === 9)
+	const hasBullets = $derived(
+		bulletSlots.length > 0 && isMainhand && weaponData?.proficiency === ProficiencyId.Gun
+	)
 	const availableAwakenings = $derived(weaponData?.awakenings ?? [])
 
 	function handleUncapUpdate(newLevel: number) {

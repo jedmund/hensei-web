@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { getWeaponProficiencyOptions } from '$lib/utils/proficiency'
 	import * as m from '$lib/paraglide/messages'
 	import { getElementColor, getElementOptions } from '$lib/utils/element'
 	import { CHARACTER_SEASON_NAMES } from '$lib/types/enums'
-	import { RACE_LABELS } from '$lib/utils/race'
+	import { RACE_LABELS, getRaceLabel } from '$lib/utils/race'
 	import { GENDER_LABELS } from '$lib/utils/gender'
 	import type { CollectionSortKey } from '$lib/types/api/collection'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -155,18 +156,7 @@
 		{ value: 3, label: 'SSR' }
 	]
 
-	const proficiencies = [
-		{ value: 1, label: m.proficiency_sabre() },
-		{ value: 2, label: m.proficiency_dagger() },
-		{ value: 3, label: m.proficiency_axe() },
-		{ value: 4, label: m.proficiency_spear() },
-		{ value: 5, label: m.proficiency_bow() },
-		{ value: 6, label: m.proficiency_staff() },
-		{ value: 7, label: m.proficiency_melee() },
-		{ value: 8, label: m.proficiency_harp() },
-		{ value: 9, label: m.proficiency_gun() },
-		{ value: 10, label: m.proficiency_katana() }
-	]
+	const proficiencies = getWeaponProficiencyOptions()
 
 	// Fetch weapon series from API (only when entityType is weapon)
 	const weaponSeriesQuery = createQuery(() =>
@@ -237,12 +227,10 @@
 		return []
 	})
 
-	const races = Object.entries(RACE_LABELS)
-		.filter(([value]) => Number(value) !== 0) // Exclude Unknown
-		.map(([value, label]) => ({
-			value: Number(value),
-			label
-		}))
+	const races = Object.keys(RACE_LABELS).map((value) => ({
+		value: Number(value),
+		label: getRaceLabel(Number(value))
+	}))
 
 	const genders = Object.entries(GENDER_LABELS)
 		.filter(([value]) => Number(value) !== 0) // Exclude Unknown
