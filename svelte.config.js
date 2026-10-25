@@ -37,6 +37,10 @@ const config = {
 		paths: {
 			relative: false
 		},
+		// Lets open tabs notice a new deploy (see the root layout)
+		version: {
+			pollInterval: 60_000
+		},
 		alias: {
 			$types: 'src/lib/types',
 			'$lib/paraglide/messages': 'src/lib/paraglide/messages.js',
