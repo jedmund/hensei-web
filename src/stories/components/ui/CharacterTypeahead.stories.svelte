@@ -16,7 +16,7 @@
 		id: 'character-narmaya-summer',
 		granblueId: '3040169000',
 		label: 'Narmaya',
-		element: 3,
+		element: 2,
 		season: 4,
 		series: [
 			{

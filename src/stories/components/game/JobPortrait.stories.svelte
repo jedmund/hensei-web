@@ -30,10 +30,10 @@
 				control: {
 					type: 'select',
 					labels: {
-						1: 'Wind',
-						2: 'Fire',
-						3: 'Water',
-						4: 'Earth',
+						1: 'Fire',
+						2: 'Water',
+						3: 'Earth',
+						4: 'Wind',
 						5: 'Light',
 						6: 'Dark'
 					}
@@ -96,19 +96,19 @@
 	<div style="display: flex; flex-wrap: wrap; gap: 16px;">
 		<div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
 			<JobPortrait job={mockJob} element={1} />
-			<span style="font-size: 12px; color: #666;">Wind</span>
-		</div>
-		<div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-			<JobPortrait job={mockJob} element={2} />
 			<span style="font-size: 12px; color: #666;">Fire</span>
 		</div>
 		<div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-			<JobPortrait job={mockJob} element={3} />
+			<JobPortrait job={mockJob} element={2} />
 			<span style="font-size: 12px; color: #666;">Water</span>
 		</div>
 		<div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-			<JobPortrait job={mockJob} element={4} />
+			<JobPortrait job={mockJob} element={3} />
 			<span style="font-size: 12px; color: #666;">Earth</span>
+		</div>
+		<div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+			<JobPortrait job={mockJob} element={4} />
+			<span style="font-size: 12px; color: #666;">Wind</span>
 		</div>
 		<div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
 			<JobPortrait job={mockJob} element={5} />

@@ -12,16 +12,16 @@
 					type: 'select',
 					labels: {
 						0: 'Null',
-						1: 'Wind',
-						2: 'Fire',
-						3: 'Water',
-						4: 'Earth',
-						5: 'Dark',
-						6: 'Light'
+						1: 'Fire',
+						2: 'Water',
+						3: 'Earth',
+						4: 'Wind',
+						5: 'Light',
+						6: 'Dark'
 					}
 				},
 				options: [0, 1, 2, 3, 4, 5, 6],
-				description: 'Element type (0=Null, 1=Wind, 2=Fire, 3=Water, 4=Earth, 5=Dark, 6=Light)'
+				description: 'Element type (0=Null, 1=Fire, 2=Water, 3=Earth, 4=Wind, 5=Light, 6=Dark)'
 			},
 			size: {
 				control: 'select',
@@ -32,12 +32,12 @@
 	})
 
 	const elements = [
-		{ id: 1, name: 'Wind' },
-		{ id: 2, name: 'Fire' },
-		{ id: 3, name: 'Water' },
-		{ id: 4, name: 'Earth' },
-		{ id: 5, name: 'Dark' },
-		{ id: 6, name: 'Light' }
+		{ id: 1, name: 'Fire' },
+		{ id: 2, name: 'Water' },
+		{ id: 3, name: 'Earth' },
+		{ id: 4, name: 'Wind' },
+		{ id: 5, name: 'Light' },
+		{ id: 6, name: 'Dark' }
 	]
 </script>
 

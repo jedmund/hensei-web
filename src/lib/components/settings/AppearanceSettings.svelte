@@ -5,7 +5,7 @@
 	import SettingsRow from '../ui/SettingsRow.svelte'
 	import ElementPicker from '../ui/element-picker/ElementPicker.svelte'
 	import type { ElementType } from '../ui/SettingsNav.svelte'
-	import { getElementKey } from '$lib/utils/element'
+	import { ElementId, getElementFromKey, getElementKey } from '$lib/utils/element'
 	import { getTimezoneOptions, normalizeTimezone } from '$lib/utils/timezone'
 
 	interface Props {
@@ -38,16 +38,7 @@
 		onSimplePortraitsChange
 	}: Props = $props()
 
-	// Element key ↔ numeric ID conversion
-	const ELEMENT_KEY_TO_ID: Record<string, number> = {
-		wind: 1,
-		fire: 2,
-		water: 3,
-		earth: 4,
-		dark: 5,
-		light: 6
-	}
-	const elementId = $derived(ELEMENT_KEY_TO_ID[element] ?? 1)
+	const elementId = $derived(getElementFromKey(element) ?? ElementId.Wind)
 
 	// Language/Theme local state (writable derived syncs from props)
 	let localLanguage = $derived(language)

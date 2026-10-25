@@ -88,25 +88,25 @@ describe('getEarringStat', () => {
 
 describe('getElementalizedEarringStat', () => {
 	it('substitutes element name for modifier 3 (en)', () => {
-		const stat = getElementalizedEarringStat(3, 2, 'en')
+		const stat = getElementalizedEarringStat(3, 1, 'en')
 		expect(stat).toBeDefined()
 		expect(stat!.name.en).toContain('Fire')
 		expect(stat!.name.en).not.toContain('{Element}')
-		expect(stat!.slug).toBe('ele-2')
+		expect(stat!.slug).toBe('ele-1')
 	})
 
 	it('substitutes element name for modifier 3 (ja)', () => {
-		const stat = getElementalizedEarringStat(3, 1, 'ja')
+		const stat = getElementalizedEarringStat(3, 4, 'ja')
 		expect(stat!.name.ja).toContain('風')
 		expect(stat!.name.ja).not.toContain('{属性}')
 	})
 
 	it('substitutes opposite element for modifier 4', () => {
-		// Fire (2) → opposite is Water (3)
-		const stat = getElementalizedEarringStat(4, 2, 'en')
+		// Fire (1) → opposite is Water (2)
+		const stat = getElementalizedEarringStat(4, 1, 'en')
 		expect(stat).toBeDefined()
 		expect(stat!.name.en).toContain('Water')
-		expect(stat!.slug).toBe('ele-3')
+		expect(stat!.slug).toBe('ele-2')
 	})
 
 	it('returns unmodified stat for non-element modifiers', () => {

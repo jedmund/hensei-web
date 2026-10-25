@@ -73,14 +73,16 @@ describe('parseScore', () => {
 describe('getElementKey', () => {
 	it('maps all elements 0-6 to lowercase keys', () => {
 		expect(getElementKey(0)).toBe('null')
-		expect(getElementKey(2)).toBe('fire')
+		expect(getElementKey(1)).toBe('fire')
+		expect(getElementKey(4)).toBe('wind')
+		expect(getElementKey(6)).toBe('dark')
 	})
 })
 
 describe('getElementColor', () => {
 	it('returns hex color for valid element', () => {
-		expect(getElementColor(1)).toBe('#3ee489')
-		expect(getElementColor(2)).toBe('#fa6d6d')
+		expect(getElementColor(1)).toBe('#fa6d6d')
+		expect(getElementColor(4)).toBe('#3ee489')
 	})
 
 	it('returns fallback for unknown element', () => {

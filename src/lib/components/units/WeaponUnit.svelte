@@ -24,7 +24,7 @@
 		openWeaponEditSidebar
 	} from '$lib/features/details/openDetailsSidebar.svelte'
 	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
-	import { getElementClassName } from '$lib/utils/element'
+	import { getElementClassName, ElementId } from '$lib/utils/element'
 	import { skillHighlight } from '$lib/stores/skillHighlight.svelte'
 	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
 	import {
@@ -78,8 +78,9 @@
 		const variant = isMain ? 'main' : 'grid'
 
 		// For element-changeable weapons (element === 0), use instance element.
-		// Mainhand images don't have a null-element variant, so default to fire (2).
-		const element = item?.weapon?.element === 0 ? (item?.element ?? (isMain ? 2 : 0)) : undefined
+		// Mainhand images don't have a null-element variant, so default to fire.
+		const element =
+			item?.weapon?.element === 0 ? (item?.element ?? (isMain ? ElementId.Fire : 0)) : undefined
 		const transformation = getWeaponTransformation(
 			seriesHasTranscendenceArt(item?.weapon?.series),
 			item?.uncapLevel,

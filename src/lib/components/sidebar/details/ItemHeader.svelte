@@ -75,27 +75,6 @@
 		}
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- kept for future use
-	function getElementBackground(): string {
-		const element = itemData?.element
-		switch (element) {
-			case 1:
-				return 'var(--wind-item-detail-bg)'
-			case 2:
-				return 'var(--fire-item-detail-bg)'
-			case 3:
-				return 'var(--water-item-detail-bg)'
-			case 4:
-				return 'var(--earth-item-detail-bg)'
-			case 5:
-				return 'var(--dark-item-detail-bg)'
-			case 6:
-				return 'var(--light-item-detail-bg)'
-			default:
-				return 'var(--null-item-detail-bg)'
-		}
-	}
-
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data
 	function displayName(input: any): string {
 		if (!input) return '—'

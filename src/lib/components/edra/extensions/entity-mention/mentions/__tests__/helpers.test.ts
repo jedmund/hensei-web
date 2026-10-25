@@ -19,7 +19,7 @@ function characterToken(overrides: Partial<MentionToken> = {}): MentionToken {
 		type: 'character',
 		granblue_id: '3040001000',
 		name: { en: 'Percival', ja: 'パーシヴァル' },
-		element: { id: 2, slug: 'fire' },
+		element: { id: 1, slug: 'fire' },
 		...overrides
 	}
 }
@@ -40,10 +40,10 @@ function skillToken(overrides: Partial<MentionToken['skill']> = {}): MentionToke
 
 describe('elementSlug', () => {
 	it('reads the slug from an object element', () => {
-		expect(elementSlug({ id: 2, slug: 'fire' })).toBe('fire')
+		expect(elementSlug({ id: 1, slug: 'fire' })).toBe('fire')
 	})
 	it('maps a numeric element id to its slug', () => {
-		expect(elementSlug(2)).toBe('fire')
+		expect(elementSlug(1)).toBe('fire')
 		expect(elementSlug(0)).toBe('null')
 	})
 	it('falls back to null for unknown / missing values', () => {

@@ -2,7 +2,8 @@ import { describe, it, expect, vi } from 'vitest'
 
 vi.mock('$lib/utils/images', () => ({
 	BUCKET: { weaponKeys: 'weapons/keys' },
-	getBasePath: vi.fn(() => '/images')
+	getBasePath: vi.fn(() => '/images'),
+	renumberedImage: (url: string) => `${url}?ids=game`
 }))
 
 import {
@@ -66,17 +67,17 @@ describe('getWeaponKeyImage', () => {
 
 	it('returns the new weapon-key path using the slug directly', () => {
 		const key = makeKey({ slug: 'anklet-ascendance' })
-		expect(getWeaponKeyImage(key)).toBe('/images/weapons/keys/anklet-ascendance.png')
+		expect(getWeaponKeyImage(key)).toBe('/images/weapons/keys/anklet-ascendance.png?ids=game')
 	})
 
 	it('uses a proficiency-specific Gauph image when available', () => {
 		const key = makeKey({ slug: 'gauph-strength', slot: 0 })
-		expect(getWeaponKeyImage(key, 1)).toBe('/images/weapons/keys/gauph-strength-1.png')
+		expect(getWeaponKeyImage(key, 1)).toBe('/images/weapons/keys/gauph-strength-1.png?ids=game')
 	})
 
 	it('falls back to the slug-only Gauph image without a proficiency', () => {
 		const key = makeKey({ slug: 'gauph-strength', slot: 0 })
-		expect(getWeaponKeyImage(key)).toBe('/images/weapons/keys/gauph-strength.png')
+		expect(getWeaponKeyImage(key)).toBe('/images/weapons/keys/gauph-strength.png?ids=game')
 	})
 })
 
@@ -110,7 +111,7 @@ describe('getWeaponKeyImages', () => {
 	it('uses slug directly without suffixes', () => {
 		const keys = [makeKey({ slug: 'strife', slot: 0 })]
 		const result = getWeaponKeyImages(keys)
-		expect(result[0]!.url).toBe('/images/weapons/keys/strife.png')
+		expect(result[0]!.url).toBe('/images/weapons/keys/strife.png?ids=game')
 	})
 
 	it('returns all entries even with duplicate slugs', () => {
@@ -120,8 +121,8 @@ describe('getWeaponKeyImages', () => {
 		]
 		const result = getWeaponKeyImages(keys)
 		expect(result).toHaveLength(2)
-		expect(result[0]!.url).toBe('/images/weapons/keys/pendulum-supremacy.png')
-		expect(result[1]!.url).toBe('/images/weapons/keys/pendulum-supremacy.png')
+		expect(result[0]!.url).toBe('/images/weapons/keys/pendulum-supremacy.png?ids=game')
+		expect(result[1]!.url).toBe('/images/weapons/keys/pendulum-supremacy.png?ids=game')
 	})
 })
 

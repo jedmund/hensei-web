@@ -20,6 +20,7 @@
 	import type { RaidGroupFull } from '$lib/types/api/raid'
 	import { getRaidSectionLabel } from '$lib/utils/raidSection'
 	import { localizedName } from '$lib/utils/locale'
+	import { getElementColor, getElementOptions } from '$lib/utils/element'
 
 	function displayName(input: unknown): string {
 		if (!input) return '—'
@@ -172,16 +173,10 @@
 		extraFilter = undefined
 	}
 
-	// Element options (matching internal mapping)
-	const elements = [
-		{ value: 0, label: 'Null', color: '#888' },
-		{ value: 1, label: 'Wind', color: '#4A9B3F' },
-		{ value: 2, label: 'Fire', color: '#D94444' },
-		{ value: 3, label: 'Water', color: '#4A7FB8' },
-		{ value: 4, label: 'Earth', color: '#9B6E3F' },
-		{ value: 5, label: 'Dark', color: '#6B3E9B' },
-		{ value: 6, label: 'Light', color: '#F4B643' }
-	]
+	const elements = getElementOptions().map((opt) => ({
+		...opt,
+		color: getElementColor(opt.value)
+	}))
 
 	// Boolean filter options
 	const booleanOptions = [

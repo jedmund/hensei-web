@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ElementId } from '$lib/utils/element'
 	import { goto } from '$app/navigation'
 	import { useQueryClient } from '@tanstack/svelte-query'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
@@ -24,7 +25,7 @@
 	// Edit data state
 	let editData = $state({
 		eventNumber: 0,
-		element: 2, // Fire
+		element: ElementId.Fire as number,
 		startDate: '',
 		endDate: ''
 	})

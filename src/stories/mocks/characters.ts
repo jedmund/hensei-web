@@ -6,7 +6,7 @@ export const mockCharacter: Character = {
 	id: 'char-1',
 	granblueId: '3040000000',
 	name: { en: 'Narmaya', ja: 'ナルメア' },
-	element: 5, // Dark
+	element: 6, // Dark
 	rarity: 3, // SSR
 	maxLevel: 100,
 	special: false,
@@ -23,7 +23,7 @@ export const mockSpecialCharacter: Character = {
 	id: 'char-2',
 	granblueId: '3040100000',
 	name: { en: 'Cagliostro', ja: 'カリオストロ' },
-	element: 4, // Earth
+	element: 3, // Earth
 	rarity: 3, // SSR
 	maxLevel: 100,
 	special: true, // Limited
@@ -31,7 +31,7 @@ export const mockSpecialCharacter: Character = {
 	gender: 2, // Female (canonical)
 	race: { race1: 1, race2: 0 }, // Human
 	uncap: { flb: true, transcendence: false },
-	proficiency: [6, 0], // Staff
+	proficiency: [5, 0], // Staff
 	hp: { minHp: 180, maxHp: 1100, maxHpFlb: 1400 },
 	atk: { minAtk: 5500, maxAtk: 8000, maxAtkFlb: 9500 }
 }
@@ -56,30 +56,30 @@ export const mockGridCharacterWithRing: GridCharacter = {
 
 /** Characters organized by element for element-specific stories */
 export const mockCharactersByElement: Record<string, Character> = {
-	wind: { ...mockCharacter, id: 'char-wind', element: 1, name: { en: 'Tiamat', ja: 'ティアマト' } },
+	wind: { ...mockCharacter, id: 'char-wind', element: 4, name: { en: 'Tiamat', ja: 'ティアマト' } },
 	fire: {
 		...mockCharacter,
 		id: 'char-fire',
-		element: 2,
+		element: 1,
 		name: { en: 'Colossus', ja: 'コロッサス' }
 	},
 	water: {
 		...mockCharacter,
 		id: 'char-water',
-		element: 3,
+		element: 2,
 		name: { en: 'Leviathan', ja: 'リヴァイアサン' }
 	},
 	earth: {
 		...mockCharacter,
 		id: 'char-earth',
-		element: 4,
+		element: 3,
 		name: { en: 'Yggdrasil', ja: 'ユグドラシル' }
 	},
-	dark: { ...mockCharacter, id: 'char-dark', element: 5, name: { en: 'Celeste', ja: 'セレスト' } },
+	dark: { ...mockCharacter, id: 'char-dark', element: 6, name: { en: 'Celeste', ja: 'セレスト' } },
 	light: {
 		...mockCharacter,
 		id: 'char-light',
-		element: 6,
+		element: 5,
 		name: { en: 'Luminiera', ja: 'シュヴァリエ' }
 	}
 }

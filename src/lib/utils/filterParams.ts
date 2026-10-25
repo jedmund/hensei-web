@@ -8,6 +8,7 @@
 import type { CollectionFilterState } from '$lib/components/collection/CollectionFilters.svelte'
 import type { WeaponSeries } from '$lib/types/api/weaponSeries'
 import { getElementKey, ELEMENTS } from '$lib/utils/element'
+import { PROFICIENCY_DISPLAY_ORDER, getProficiencyKey } from '$lib/utils/proficiency'
 
 // ============================================================================
 // Element Mapping (0-6) — derived from central element utils
@@ -41,31 +42,13 @@ export const PARAM_TO_RARITY: Record<string, number> = {
 // Proficiency Mapping (1-10)
 // ============================================================================
 
-export const PROFICIENCY_TO_PARAM: Record<number, string> = {
-	1: 'sabre',
-	2: 'dagger',
-	3: 'axe',
-	4: 'spear',
-	5: 'bow',
-	6: 'staff',
-	7: 'melee',
-	8: 'harp',
-	9: 'gun',
-	10: 'katana'
-}
+export const PROFICIENCY_TO_PARAM: Record<number, string> = Object.fromEntries(
+	PROFICIENCY_DISPLAY_ORDER.map((id) => [id, getProficiencyKey(id)])
+)
 
-export const PARAM_TO_PROFICIENCY: Record<string, number> = {
-	sabre: 1,
-	dagger: 2,
-	axe: 3,
-	spear: 4,
-	bow: 5,
-	staff: 6,
-	melee: 7,
-	harp: 8,
-	gun: 9,
-	katana: 10
-}
+export const PARAM_TO_PROFICIENCY: Record<string, number> = Object.fromEntries(
+	PROFICIENCY_DISPLAY_ORDER.map((id) => [getProficiencyKey(id), id])
+)
 
 // ============================================================================
 // Season Mapping (1-5) - Characters only

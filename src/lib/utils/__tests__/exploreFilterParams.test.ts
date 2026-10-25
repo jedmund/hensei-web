@@ -68,8 +68,8 @@ describe('serializeExploreFilters', () => {
 
 	it('serializes element filters as comma-separated names', () => {
 		const filters: FilterItem[] = [
-			{ kind: 'element', value: 2, label: 'Fire' },
-			{ kind: 'element', value: 3, label: 'Water' }
+			{ kind: 'element', value: 1, label: 'Fire' },
+			{ kind: 'element', value: 2, label: 'Water' }
 		]
 		const params = serializeExploreFilters(filters)
 		expect(params.get('element')).toBe('fire,water')
@@ -192,8 +192,8 @@ describe('deserializeExploreFilters', () => {
 		const result = deserializeExploreFilters(new URLSearchParams('element=fire,water'))
 		const elements = result.filters.filter((f) => f.kind === 'element')
 		expect(elements).toHaveLength(2)
-		expect(elements[0]!.value).toBe(2)
-		expect(elements[1]!.value).toBe(3)
+		expect(elements[0]!.value).toBe(1)
+		expect(elements[1]!.value).toBe(2)
 	})
 
 	it('deserializes raid with raids list', () => {
@@ -289,12 +289,12 @@ describe('deserializeExploreFilters', () => {
 describe('roundtrip', () => {
 	it('roundtrips element filters', () => {
 		const original: FilterItem[] = [
-			{ kind: 'element', value: 2, label: 'Fire' },
-			{ kind: 'element', value: 6, label: 'Light' }
+			{ kind: 'element', value: 1, label: 'Fire' },
+			{ kind: 'element', value: 5, label: 'Light' }
 		]
 		const params = serializeExploreFilters(original)
 		const { filters } = deserializeExploreFilters(params)
-		expect(filters.map((f) => f.value)).toEqual([2, 6])
+		expect(filters.map((f) => f.value)).toEqual([1, 5])
 	})
 
 	it('roundtrips raid filter with raids list', () => {
@@ -360,7 +360,7 @@ describe('roundtrip', () => {
 
 	it('roundtrips a complex filter set', () => {
 		const original: FilterItem[] = [
-			{ kind: 'element', value: 5, label: 'Dark' },
+			{ kind: 'element', value: 6, label: 'Dark' },
 			{ kind: 'raid', value: 'raid-uuid-1', label: 'Proto Bahamut HL' },
 			{ kind: 'recency', value: 86400, label: 'Last day' },
 			{ kind: 'party', value: 'full_auto', label: 'Full Auto' },
@@ -375,7 +375,7 @@ describe('roundtrip', () => {
 		const { filters, collectionFilter } = deserializeExploreFilters(params, mockRaids)
 
 		expect(filters).toHaveLength(7)
-		expect(filters.find((f) => f.kind === 'element')!.value).toBe(5)
+		expect(filters.find((f) => f.kind === 'element')!.value).toBe(6)
 		expect(filters.find((f) => f.kind === 'raid')!.value).toBe('raid-uuid-1')
 		expect(filters.find((f) => f.kind === 'recency')!.value).toBe(86400)
 		expect(filters.find((f) => f.kind === 'party')!.value).toBe('full_auto')
@@ -513,7 +513,7 @@ describe('difficulty filter (multi-select)', () => {
 	})
 
 	it('omits the difficulty param entirely when no difficulty filters are set', () => {
-		const params = serializeExploreFilters([{ kind: 'element', value: 2, label: 'Fire' }])
+		const params = serializeExploreFilters([{ kind: 'element', value: 1, label: 'Fire' }])
 		expect(params.has('difficulty')).toBe(false)
 	})
 
@@ -559,14 +559,14 @@ describe('difficulty filter (multi-select)', () => {
 
 	it('preserves difficulty alongside other filters in a complex roundtrip', () => {
 		const original: FilterItem[] = [
-			{ kind: 'element', value: 5, label: 'Dark' },
+			{ kind: 'element', value: 6, label: 'Dark' },
 			{ kind: 'difficulty', value: 'endgame', label: 'Endgame' },
 			{ kind: 'recency', value: 86400, label: 'Last day' }
 		]
 		const params = serializeExploreFilters(original)
 		const { filters } = deserializeExploreFilters(params)
 		expect(filters.find((f) => f.kind === 'difficulty')!.value).toBe('endgame')
-		expect(filters.find((f) => f.kind === 'element')!.value).toBe(5)
+		expect(filters.find((f) => f.kind === 'element')!.value).toBe(6)
 		expect(filters.find((f) => f.kind === 'recency')!.value).toBe(86400)
 	})
 

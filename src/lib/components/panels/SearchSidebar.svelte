@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { getWeaponProficiencyOptions } from '$lib/utils/proficiency'
 	import { searchAdapter, type SearchResult } from '$lib/api/adapters'
 	import {
 		getCharacterImage,
@@ -61,18 +62,7 @@
 		{ value: 3, label: 'SSR' }
 	]
 
-	const proficiencies = [
-		{ value: 1, label: m.proficiency_sabre() },
-		{ value: 2, label: m.proficiency_dagger() },
-		{ value: 3, label: m.proficiency_spear() },
-		{ value: 4, label: m.proficiency_axe() },
-		{ value: 5, label: m.proficiency_staff() },
-		{ value: 6, label: m.proficiency_gun() },
-		{ value: 7, label: m.proficiency_melee() },
-		{ value: 8, label: m.proficiency_bow() },
-		{ value: 9, label: m.proficiency_harp() },
-		{ value: 10, label: m.proficiency_katana() }
-	]
+	const proficiencies = getWeaponProficiencyOptions()
 
 	// Focus search input and load recent items when opened
 	$effect(() => {

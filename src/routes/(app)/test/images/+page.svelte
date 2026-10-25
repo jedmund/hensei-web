@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ELEMENTS, ELEMENT_DISPLAY_ORDER } from '$lib/utils/element'
 	import {
 		getImageUrl,
 		getCharacterPose,
@@ -184,7 +185,7 @@
 					<div class="element-group">
 						<h3>Gran/Djeeta Element</h3>
 						<div class="radio-group">
-							{#each [{ value: 0, label: 'None' }, { value: 1, label: 'Wind' }, { value: 2, label: 'Fire' }, { value: 3, label: 'Water' }, { value: 4, label: 'Earth' }, { value: 5, label: 'Dark' }, { value: 6, label: 'Light' }] as elem (elem.value)}
+							{#each [{ value: 0, label: 'None' }, ...ELEMENT_DISPLAY_ORDER.map( (value) => ({ value: value as number, label: ELEMENTS[value]?.en }) )] as elem (elem.value)}
 								<label>
 									<input type="radio" bind:group={weaponElement} value={elem.value} />
 									{elem.label}
@@ -200,7 +201,7 @@
 			<section>
 				<h2>Weapon Element (Grid Only)</h2>
 				<div class="radio-group">
-					{#each [{ value: 0, label: 'Default' }, { value: 1, label: 'Wind' }, { value: 2, label: 'Fire' }, { value: 3, label: 'Water' }, { value: 4, label: 'Earth' }, { value: 5, label: 'Dark' }, { value: 6, label: 'Light' }] as elem (elem.value)}
+					{#each [{ value: 0, label: 'Default' }, ...ELEMENT_DISPLAY_ORDER.map( (value) => ({ value: value as number, label: ELEMENTS[value]?.en }) )] as elem (elem.value)}
 						<label>
 							<input type="radio" bind:group={weaponElement} value={elem.value} />
 							{elem.label}

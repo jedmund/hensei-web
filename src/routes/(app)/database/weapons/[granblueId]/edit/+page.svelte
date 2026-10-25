@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ProficiencyId } from '$lib/utils/proficiency'
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
 
@@ -117,7 +118,7 @@
 		bulletSlots: [] as number[]
 	})
 
-	const isGun = $derived(editData.proficiency === 9)
+	const isGun = $derived(editData.proficiency === ProficiencyId.Gun)
 
 	// Populate edit data when weapon loads
 	$effect(() => {

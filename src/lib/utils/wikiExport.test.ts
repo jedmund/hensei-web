@@ -642,14 +642,14 @@ describe('partyToWikiText', () => {
 		const text = partyToWikiText(
 			party({
 				weapons: [
-					weapon(-1, 'Ultima Sword', { element: 5 }, series('ultima')),
-					weapon(0, 'Excalibur', { element: 2 }, series('superlative')),
-					weapon(1, 'Unsigned Kaneshige', { element: 4 }, series('class-champion')),
-					weapon(2, 'Murakumo', { element: 6 }, series('class-champion')),
-					weapon(3, 'Seven-Star Sword (Awakened)', { element: 1 }, series('revenant')),
+					weapon(-1, 'Ultima Sword', { element: 6 }, series('ultima')),
+					weapon(0, 'Excalibur', { element: 1 }, series('superlative')),
+					weapon(1, 'Unsigned Kaneshige', { element: 3 }, series('class-champion')),
+					weapon(2, 'Murakumo', { element: 5 }, series('class-champion')),
+					weapon(3, 'Seven-Star Sword (Awakened)', { element: 4 }, series('revenant')),
 					weapon(4, 'Ultima Staff', { element: 0 }, series('ultima')),
 					weapon(5, 'Ultima Claw', {}, series('ultima')),
-					weapon(6, 'Ixaba', { element: 2 }, { series: { slug: 'xeno' } })
+					weapon(6, 'Ixaba', { element: 1 }, { series: { slug: 'xeno' } })
 				]
 			})
 		)
@@ -753,7 +753,7 @@ describe('partyToWikiText', () => {
 								gridWeapon: weapon(
 									-1,
 									'Ultima Blade',
-									{ element: 4 },
+									{ element: 3 },
 									{ series: { slug: 'ultima' } }
 								)
 							})

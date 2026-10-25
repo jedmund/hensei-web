@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { ElementId } from '$lib/utils/element'
 	import type { Party, GridWeapon } from '$lib/types/api/party'
 	import { getWeaponImage } from '$lib/features/database/detail/image'
 	import {
@@ -40,8 +41,9 @@
 	function weaponImageUrl(w?: GridWeapon, isMain = false): string {
 		const variant = isMain ? 'main' : 'grid'
 		// For weapons with null element that have an instance element, use it.
-		// Mainhand images don't have a null-element variant, so default to fire (2).
-		const element = w?.weapon?.element === 0 ? (w?.element ?? (isMain ? 2 : 0)) : undefined
+		// Mainhand images don't have a null-element variant, so default to fire.
+		const element =
+			w?.weapon?.element === 0 ? (w?.element ?? (isMain ? ElementId.Fire : 0)) : undefined
 		const transformation = getWeaponTransformation(
 			seriesHasTranscendenceArt(w?.weapon?.series),
 			w?.uncapLevel,

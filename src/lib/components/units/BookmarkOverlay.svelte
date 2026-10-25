@@ -5,33 +5,17 @@
 	 * so it reads as part of the unit's chrome, with the background staying
 	 * translucent enough to let the artwork show through.
 	 */
+	import { getElementClassName } from '$lib/utils/element'
 	import Icon from '$lib/components/Icon.svelte'
 
 	interface Props {
-		/** Granblue element id (1=wind, 2=fire, 3=water, 4=earth, 5=dark, 6=light). */
+		/** Granblue element id */
 		element?: number | null | undefined
 	}
 
 	let { element }: Props = $props()
 
-	const elementClass = $derived.by(() => {
-		switch (element) {
-			case 1:
-				return 'wind'
-			case 2:
-				return 'fire'
-			case 3:
-				return 'water'
-			case 4:
-				return 'earth'
-			case 5:
-				return 'dark'
-			case 6:
-				return 'light'
-			default:
-				return 'neutral'
-		}
-	})
+	const elementClass = $derived(getElementClassName(element))
 </script>
 
 <div class="bookmark-overlay {elementClass}" aria-hidden="true">

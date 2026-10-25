@@ -13,8 +13,6 @@ import type { CatalogueItem } from '$lib/types/gacha'
 const RARE: Record<Rarity, number> = { R: 2, SR: 3, SSR: 4 }
 /** Class-up codes: the rarity a stone classes up to */
 const CLASSUP: Record<Rarity, number> = { R: 0, SR: 1, SSR: 2 }
-/** Hensei element ids → the game's attribute ids */
-const ATTRIBUTE: Record<number, number> = { 1: 4, 2: 1, 3: 2, 4: 3, 5: 6, 6: 5 }
 
 export type SceneParams = Record<string, unknown>
 
@@ -63,7 +61,7 @@ export function scene2Params(
 		gacha_npc_cutin_voice: items.map(() => ''),
 		gacha_voice_wait_time_array: items.map(() => 0),
 		gacha_type_array: items.map((item) => (item.drawable_type === 'Summon' ? 2 : 1)),
-		gacha_attribute_array: items.map((item) => ATTRIBUTE[item.element] ?? 0),
+		gacha_attribute_array: items.map((item) => item.element),
 		gacha_moon_array: items.map((_, index) => moons[index] ?? 0),
 		limited_gene_attribute: items.map(() => 0),
 		gacha_text1: names,

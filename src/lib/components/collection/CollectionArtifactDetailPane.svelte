@@ -6,6 +6,7 @@
 	 * provides Edit button in header to push edit pane onto stack.
 	 */
 	import * as m from '$lib/paraglide/messages'
+	import { getElementTypeKey } from '$lib/utils/element'
 	import { localizedName } from '$lib/utils/locale'
 	import { onMount, untrack } from 'svelte'
 	import type { CollectionArtifact, ArtifactSkillInstance } from '$lib/types/api/artifact'
@@ -13,7 +14,7 @@
 	import { createQuery } from '@tanstack/svelte-query'
 	import { artifactQueries } from '$lib/api/queries/artifact.queries'
 	import { useDeleteCollectionArtifact } from '$lib/api/mutations/artifact.mutations'
-	import { usePaneStack, type PaneConfig, type ElementType } from '$lib/stores/paneStack.svelte'
+	import { usePaneStack, type PaneConfig } from '$lib/stores/paneStack.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { getArtifactImage, getBasePath } from '$lib/utils/images'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
@@ -72,16 +73,7 @@
 		return localizedName(skillDef?.name)
 	}
 
-	// Convert numeric element to ElementType string
-	const elementNames: Record<number, ElementType> = {
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
-	const elementType = $derived(elementNames[artifact.element] ?? undefined)
+	const elementType = $derived(getElementTypeKey(artifact.element))
 
 	// Push edit pane
 	function handleEdit() {

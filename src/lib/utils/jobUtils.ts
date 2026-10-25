@@ -10,6 +10,11 @@ import type { JobSkillList } from '$lib/types/api/party'
 import { getImageBaseUrl } from '$lib/api/adapters/config'
 import { getGenericPlaceholder } from './images'
 import { localizedName } from '$lib/utils/locale'
+import {
+	getProficiencyKey,
+	getProficiencyLabel,
+	getProficiencyOptions
+} from '$lib/utils/proficiency'
 import * as m from '$lib/paraglide/messages'
 
 /**
@@ -216,30 +221,9 @@ export function getSkillCategoryColor(skill: JobSkill): string {
  * Converts proficiency numbers to weapon type names
  */
 export function formatJobProficiency(proficiency: [number, number]): string[] {
-	const weaponTypes: Record<number, () => string> = {
-		1: m.proficiency_sabre,
-		2: m.proficiency_dagger,
-		3: m.proficiency_axe,
-		4: m.proficiency_spear,
-		5: m.proficiency_bow,
-		6: m.proficiency_staff,
-		7: m.proficiency_melee,
-		8: m.proficiency_harp,
-		9: m.proficiency_gun,
-		10: m.proficiency_katana
-	}
-
-	const result: string[] = []
-	const type1 = proficiency[0] ? weaponTypes[proficiency[0]]?.() : undefined
-	if (type1) {
-		result.push(type1)
-	}
-	const type2 = proficiency[1] ? weaponTypes[proficiency[1]]?.() : undefined
-	if (type2) {
-		result.push(type2)
-	}
-
-	return result
+	return proficiency
+		.filter((value) => value && getProficiencyKey(value))
+		.map((value) => getProficiencyLabel(value))
 }
 
 /**
@@ -320,19 +304,7 @@ export function validateSkillConfiguration(
 /**
  * Proficiency options for job forms
  */
-export const PROFICIENCIES = [
-	{ value: 0, label: m.proficiency_none() },
-	{ value: 1, label: m.proficiency_sabre() },
-	{ value: 2, label: m.proficiency_dagger() },
-	{ value: 3, label: m.proficiency_axe() },
-	{ value: 4, label: m.proficiency_spear() },
-	{ value: 5, label: m.proficiency_bow() },
-	{ value: 6, label: m.proficiency_staff() },
-	{ value: 7, label: m.proficiency_melee() },
-	{ value: 8, label: m.proficiency_harp() },
-	{ value: 9, label: m.proficiency_gun() },
-	{ value: 10, label: m.proficiency_katana() }
-]
+export const PROFICIENCIES = getProficiencyOptions()
 
 /**
  * Row options for job forms

@@ -7,6 +7,7 @@ import type {
 } from '$lib/types/api/party'
 import type { WeaponKey } from '$lib/types/api/entities'
 import { ACCESSORY_TYPES } from '$lib/utils/jobAccessoryUtils'
+import { ELEMENTS } from '$lib/utils/element'
 import {
 	BULLET_ALIASES,
 	CHARACTER_AWAKENINGS,
@@ -60,16 +61,6 @@ const BEFOULMENT_VALUES: Record<string, string> = {
 	befoul_debuff_down: 'dsr'
 }
 
-/** Grid element → the suffix gbf.wiki uses on element-changed weapon pages. */
-const WIKI_ELEMENTS: Record<number, string> = {
-	1: 'Wind',
-	2: 'Fire',
-	3: 'Water',
-	4: 'Earth',
-	5: 'Dark',
-	6: 'Light'
-}
-
 /**
  * Series whose element-changed weapons have `Name (Fire)`..`Name (Dark)` pages
  * on gbf.wiki. Checked against the wiki's page list: every Ultima, Atma and
@@ -109,7 +100,7 @@ function pageName(item: { wiki?: { en?: string }; name: { en: string } }): strin
 /** A weapon's page, or its `Name (Element)` page when its element was changed. */
 function weaponPageName(gw: GridWeapon): string {
 	const page = pageName(gw.weapon)
-	const element = gw.element ? WIKI_ELEMENTS[gw.element] : undefined
+	const element = gw.element ? ELEMENTS[gw.element]?.en : undefined
 	const hasElementPages =
 		ELEMENT_PAGE_SERIES.has(gw.weapon.series?.slug ?? '') && !NO_ELEMENT_PAGES.has(page)
 	return element && hasElementPages ? `${page} (${element})` : page

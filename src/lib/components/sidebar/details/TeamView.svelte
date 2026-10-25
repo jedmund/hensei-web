@@ -22,6 +22,7 @@
 	import { BULLET_TYPES } from '$lib/types/api/entities'
 	import { getBulletImage } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
+	import { getElementTypeKey } from '$lib/utils/element'
 	import { useUpdateGridWeapon } from '$lib/api/mutations/grid.mutations'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import SyncMenuButton from './SyncMenuButton.svelte'
@@ -77,23 +78,12 @@
 	let editKey2 = $state<string | undefined>(undefined)
 	let editKey3 = $state<string | undefined>(undefined)
 
-	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
-
-	const ELEMENT_SLUG_MAP: Record<number, ElementType> = {
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
-
 	// Use the weapon's effective element (grid override or base) for button color
 	const weaponElement = $derived.by(() => {
 		if (type !== 'weapon') return undefined
 		const weapon = item as GridWeapon
 		const el = weapon.element || weapon.weapon?.element
-		return el ? ELEMENT_SLUG_MAP[el] : undefined
+		return getElementTypeKey(el)
 	})
 
 	function handleElementChange(value: number | number[]) {

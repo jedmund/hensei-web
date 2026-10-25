@@ -65,7 +65,7 @@ export interface GuideEffect {
 	iconCategory: number
 	iconType: number
 	targetType: GuideEffectTargetType | null
-	/** In Hensei's numbering (race, proficiency) or character ID. */
+	/** A race or proficiency id (the game's numbering), or a character ID. */
 	targetValues: number[]
 	characterId: string | null
 	/** From the wiki (D14); null when the wiki had no match. */

@@ -43,7 +43,7 @@ export const mockWeapon: Weapon = {
 	id: 'weapon-1',
 	granblueId: '1040000000',
 	name: { en: 'Luminiera Sword Omega', ja: 'シュヴァリエソード・マグナ' },
-	element: 6, // Light
+	element: 5, // Light
 	rarity: 3, // SSR
 	maxLevel: 200,
 	maxSkillLevel: 20,
@@ -59,7 +59,7 @@ export const mockOpusWeapon: Weapon = {
 	id: 'weapon-opus',
 	granblueId: '1040900000',
 	name: { en: 'Cosmic Sword', ja: 'コスミックソード' },
-	element: 6,
+	element: 5,
 	rarity: 3,
 	maxLevel: 250,
 	maxSkillLevel: 20,
@@ -75,13 +75,13 @@ export const mockDraconicWeapon: Weapon = {
 	id: 'weapon-draconic',
 	granblueId: '1040800000',
 	name: { en: 'Draconic Harp', ja: 'ドラゴニックハープ' },
-	element: 1, // Wind
+	element: 4, // Wind
 	rarity: 3,
 	maxLevel: 200,
 	maxSkillLevel: 20,
 	maxAwakeningLevel: 9,
 	series: mockDraconicSeries,
-	proficiency: 4, // Harp
+	proficiency: 9, // Harp
 	uncap: { flb: true, ulb: true, transcendence: false },
 	hp: { minHp: 150, maxHp: 300, maxHpFlb: 400, maxHpUlb: 500 },
 	atk: { minAtk: 2500, maxAtk: 4000, maxAtkFlb: 5000, maxAtkUlb: 5500 }
@@ -118,37 +118,37 @@ export const mockWeaponsByElement: Record<string, Weapon> = {
 	wind: {
 		...mockWeapon,
 		id: 'weapon-wind',
-		element: 1,
+		element: 4,
 		name: { en: 'Tiamat Bolt', ja: 'ティアマトボルト' }
 	},
 	fire: {
 		...mockWeapon,
 		id: 'weapon-fire',
-		element: 2,
+		element: 1,
 		name: { en: 'Colossus Cane', ja: 'コロッサスケーン' }
 	},
 	water: {
 		...mockWeapon,
 		id: 'weapon-water',
-		element: 3,
+		element: 2,
 		name: { en: 'Leviathan Gaze', ja: 'リヴァイアサンゲイズ' }
 	},
 	earth: {
 		...mockWeapon,
 		id: 'weapon-earth',
-		element: 4,
+		element: 3,
 		name: { en: 'Yggdrasil Bow', ja: 'ユグドラシルボウ' }
 	},
 	dark: {
 		...mockWeapon,
 		id: 'weapon-dark',
-		element: 5,
+		element: 6,
 		name: { en: 'Celeste Claw', ja: 'セレストクロー' }
 	},
 	light: {
 		...mockWeapon,
 		id: 'weapon-light',
-		element: 6,
+		element: 5,
 		name: { en: 'Luminiera Sword', ja: 'シュヴァリエソード' }
 	}
 }

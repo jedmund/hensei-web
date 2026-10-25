@@ -14,7 +14,7 @@ const item = (identity: string, rarity: number, type: 'Weapon' | 'Summon', eleme
 		element
 	}) as CatalogueItem
 
-const items = [item('a', 3, 'Weapon', 2), item('b', 2, 'Summon', 1), item('c', 1, 'Weapon', 6)]
+const items = [item('a', 3, 'Weapon', 1), item('b', 2, 'Summon', 4), item('c', 1, 'Weapon', 5)]
 const presentation: Presentation = {
 	crystal: 'gold',
 	pattern: { main: 6, sub: 1, add: 0 },

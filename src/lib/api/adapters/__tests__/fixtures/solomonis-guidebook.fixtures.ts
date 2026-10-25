@@ -1192,7 +1192,7 @@ export const API = {
 				icon_category: 1,
 				icon_type: 401,
 				target_type: 'proficiency',
-				target_values: [1, 2, 4, 3, 6],
+				target_values: [1, 2, 3, 4, 5],
 				character_id: null
 			},
 			{
@@ -1207,7 +1207,7 @@ export const API = {
 				icon_category: 1,
 				icon_type: 401,
 				target_type: 'proficiency',
-				target_values: [9, 7, 5, 8, 10],
+				target_values: [6, 7, 8, 9, 10],
 				character_id: null
 			},
 			{
@@ -1639,7 +1639,7 @@ export const API = {
 					icon_category: 1,
 					icon_type: 401,
 					target_type: 'proficiency',
-					target_values: [1, 2, 4, 3, 6],
+					target_values: [1, 2, 3, 4, 5],
 					character_id: null
 				},
 				count: 1,

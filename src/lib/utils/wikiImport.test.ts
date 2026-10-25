@@ -157,7 +157,7 @@ describe('parseTeamSpread round trip', () => {
 					-1,
 					'Ultima Sword',
 					{
-						element: 5,
+						element: 6,
 						awakening: awakening('weapon-multi'),
 						weaponKeys: [key(10001, 0), key(11003, 1), key(17001, 2)],
 						bullets: [

@@ -2,16 +2,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import * as m from '$lib/paraglide/messages'
-
-	const ELEMENT_CLASSES: Record<number, string> = {
-		0: 'null',
-		1: 'wind',
-		2: 'fire',
-		3: 'water',
-		4: 'earth',
-		5: 'dark',
-		6: 'light'
-	}
+	import { getElementKey } from '$lib/utils/element'
 
 	interface Props {
 		label: string
@@ -27,7 +18,7 @@
 
 	const isEntity = $derived(kind === 'entity')
 	const prefixIcon = $derived(isEntity ? (mode === 'exclude' ? 'minus' : 'plus') : '')
-	const elementClass = $derived(element !== undefined ? (ELEMENT_CLASSES[element] ?? '') : '')
+	const elementClass = $derived(element !== undefined ? getElementKey(element) : '')
 </script>
 
 <span class="pill {elementClass}" class:entity={isEntity}>

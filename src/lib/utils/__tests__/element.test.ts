@@ -6,6 +6,7 @@ vi.mock('$lib/utils/images', () => ({
 
 import {
 	ELEMENTS,
+	ELEMENT_DISPLAY_ORDER,
 	getElementLabel,
 	getElementClass,
 	getElementIcon,
@@ -22,9 +23,10 @@ import {
 describe('ELEMENTS', () => {
 	it('maps 0-6 with en/ja/opposite_id', () => {
 		expect(ELEMENTS[0]!.en).toBe('Null')
-		expect(ELEMENTS[1]!.ja).toBe('風')
-		expect(ELEMENTS[2]!.opposite_id).toBe(3)
-		expect(ELEMENTS[6]!.en).toBe('Light')
+		expect(ELEMENTS[1]!.ja).toBe('火')
+		expect(ELEMENTS[2]!.opposite_id).toBe(1)
+		expect(ELEMENTS[4]!.ja).toBe('風')
+		expect(ELEMENTS[6]!.en).toBe('Dark')
 	})
 })
 
@@ -34,7 +36,8 @@ describe('ELEMENTS', () => {
 
 describe('getElementLabel', () => {
 	it('returns label for valid element', () => {
-		expect(getElementLabel(1)).toBe('Wind')
+		expect(getElementLabel(1)).toBe('Fire')
+		expect(getElementLabel(4)).toBe('Wind')
 		expect(getElementLabel(0)).toBe('Null')
 	})
 
@@ -54,8 +57,8 @@ describe('getElementLabel', () => {
 
 describe('getElementClass', () => {
 	it('returns lowercase CSS class', () => {
-		expect(getElementClass(2)).toBe('element-fire')
-		expect(getElementClass(5)).toBe('element-dark')
+		expect(getElementClass(1)).toBe('element-fire')
+		expect(getElementClass(6)).toBe('element-dark')
 	})
 
 	it('returns empty string for undefined/null', () => {
@@ -74,7 +77,7 @@ describe('getElementClass', () => {
 
 describe('getElementIcon', () => {
 	it('returns label image path for valid element', () => {
-		expect(getElementIcon(2)).toBe('/images/labels/element/Label_Element_Fire.png')
+		expect(getElementIcon(1)).toBe('/images/labels/element/Label_Element_Fire.png')
 	})
 
 	it('returns empty for undefined', () => {
@@ -95,7 +98,8 @@ describe('getElementOptions', () => {
 		const options = getElementOptions()
 		expect(options).toHaveLength(7)
 		expect(options[0]).toEqual({ value: 0, label: 'Null' })
-		expect(options[6]).toEqual({ value: 6, label: 'Light' })
+		expect(options[1]).toEqual({ value: 1, label: 'Fire' })
+		expect(options[6]).toEqual({ value: 6, label: 'Dark' })
 	})
 })
 
@@ -105,11 +109,11 @@ describe('getElementOptions', () => {
 
 describe('getElementName', () => {
 	it('returns English name by default', () => {
-		expect(getElementName(1)).toBe('Wind')
+		expect(getElementName(4)).toBe('Wind')
 	})
 
 	it('returns Japanese name', () => {
-		expect(getElementName(2, 'ja')).toBe('火')
+		expect(getElementName(1, 'ja')).toBe('火')
 	})
 
 	it('returns dash for undefined/null', () => {
@@ -126,14 +130,20 @@ describe('getElementName', () => {
 // getOppositeElement
 // ============================================================================
 
+describe('ELEMENT_DISPLAY_ORDER', () => {
+	it('lists the elements in game order', () => {
+		expect(ELEMENT_DISPLAY_ORDER).toEqual([1, 2, 3, 4, 5, 6])
+	})
+})
+
 describe('getOppositeElement', () => {
 	it('returns opposite element pairs', () => {
-		expect(getOppositeElement(1)).toBe(4) // Wind → Earth
-		expect(getOppositeElement(4)).toBe(1) // Earth → Wind
-		expect(getOppositeElement(2)).toBe(3) // Fire → Water
-		expect(getOppositeElement(3)).toBe(2) // Water → Fire
-		expect(getOppositeElement(5)).toBe(6) // Dark → Light
-		expect(getOppositeElement(6)).toBe(5) // Light → Dark
+		expect(getOppositeElement(1)).toBe(2) // Fire → Water
+		expect(getOppositeElement(2)).toBe(1) // Water → Fire
+		expect(getOppositeElement(3)).toBe(4) // Earth → Wind
+		expect(getOppositeElement(4)).toBe(3) // Wind → Earth
+		expect(getOppositeElement(5)).toBe(6) // Light → Dark
+		expect(getOppositeElement(6)).toBe(5) // Dark → Light
 	})
 
 	it('returns 0 for Null element', () => {
@@ -152,7 +162,7 @@ describe('getOppositeElement', () => {
 
 describe('getElementImage', () => {
 	it('returns element image path', () => {
-		expect(getElementImage(2)).toBe('/images/icons/elements/fire.png')
+		expect(getElementImage(1)).toBe('/images/icons/elements/fire.png')
 	})
 
 	it('returns null element image', () => {

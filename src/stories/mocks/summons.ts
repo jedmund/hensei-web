@@ -6,7 +6,7 @@ export const mockSummon: Summon = {
 	id: 'summon-1',
 	granblueId: '2040000000',
 	name: { en: 'Bahamut', ja: 'バハムート' },
-	element: 5, // Dark
+	element: 6, // Dark
 	rarity: 3, // SSR
 	maxLevel: 200,
 	subaura: true,
@@ -47,30 +47,30 @@ export const mockFriendSummon: GridSummon = {
 
 /** Summons organized by element */
 export const mockSummonsByElement: Record<string, Summon> = {
-	wind: { ...mockSummon, id: 'summon-wind', element: 1, name: { en: 'Tiamat', ja: 'ティアマト' } },
+	wind: { ...mockSummon, id: 'summon-wind', element: 4, name: { en: 'Tiamat', ja: 'ティアマト' } },
 	fire: {
 		...mockSummon,
 		id: 'summon-fire',
-		element: 2,
+		element: 1,
 		name: { en: 'Colossus', ja: 'コロッサス' }
 	},
 	water: {
 		...mockSummon,
 		id: 'summon-water',
-		element: 3,
+		element: 2,
 		name: { en: 'Leviathan', ja: 'リヴァイアサン' }
 	},
 	earth: {
 		...mockSummon,
 		id: 'summon-earth',
-		element: 4,
+		element: 3,
 		name: { en: 'Yggdrasil', ja: 'ユグドラシル' }
 	},
-	dark: { ...mockSummon, id: 'summon-dark', element: 5, name: { en: 'Celeste', ja: 'セレスト' } },
+	dark: { ...mockSummon, id: 'summon-dark', element: 6, name: { en: 'Celeste', ja: 'セレスト' } },
 	light: {
 		...mockSummon,
 		id: 'summon-light',
-		element: 6,
+		element: 5,
 		name: { en: 'Luminiera', ja: 'シュヴァリエ' }
 	}
 }
