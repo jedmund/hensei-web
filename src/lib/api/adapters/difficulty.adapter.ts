@@ -87,7 +87,16 @@ export interface CommitResult {
 	changeLogId: string
 }
 
+export interface DifficultyRuleDefinition {
+	ruleType: string
+	component: string
+	description: string
+	params: Record<string, unknown>
+	parameters: Array<{ key: string; description: string }>
+}
+
 export interface DifficultyRuleTypes {
+	definitions?: DifficultyRuleDefinition[]
 	types: string[]
 	grouped: Record<string, string[]>
 }

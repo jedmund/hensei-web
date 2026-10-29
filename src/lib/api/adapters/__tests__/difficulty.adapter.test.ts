@@ -259,6 +259,25 @@ describe('DifficultyAdapter', () => {
 			expect(result.grouped).toEqual(API.ruleTypes.grouped)
 		})
 
+		it('preserves snake_case keys inside rule templates', async () => {
+			global.fetch = mockApiResponse({
+				...API.ruleTypes,
+				definitions: [
+					{
+						rule_type: 'weapon_uncap_at_least',
+						component: 'weapon',
+						description: 'Uncap level',
+						params: { min_uncap_level: 5, min_count: 1 },
+						parameters: [{ key: 'min_uncap_level', description: 'Minimum level' }]
+					}
+				]
+			})
+			const result = await adapter.getRuleTypes()
+			expect(result.definitions?.[0]?.ruleType).toBe('weapon_uncap_at_least')
+			expect(result.definitions?.[0]?.params).toEqual({ min_uncap_level: 5, min_count: 1 })
+			expect(result.definitions?.[0]?.parameters[0]?.key).toBe('min_uncap_level')
+		})
+
 		it('deleteRule DELETEs the rule by id', async () => {
 			global.fetch = mockApiResponse(undefined)
 

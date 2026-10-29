@@ -225,6 +225,7 @@
 				{:else if filteredRules.length === 0}
 					<div class="empty-state">
 						<p>No rules match this filter.</p>
+						<Button variant="primary" size="small" onclick={openNewRule}>New rule</Button>
 					</div>
 				{:else}
 					<div class="section-header-row">
