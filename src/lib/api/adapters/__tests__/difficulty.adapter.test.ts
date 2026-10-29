@@ -268,7 +268,20 @@ describe('DifficultyAdapter', () => {
 						component: 'weapon',
 						description: 'Uncap level',
 						params: { min_uncap_level: 5, min_count: 1 },
-						parameters: [{ key: 'min_uncap_level', description: 'Minimum level' }]
+						parameters: [
+							{
+								key: 'min_uncap_level',
+								description: 'Minimum level',
+								value_type: 'number',
+								example: 5
+							}
+						],
+						examples: [
+							{
+								name: 'Illustrious 5',
+								params: { series_slugs: ['illustrious'], min_transcendence_step: 5 }
+							}
+						]
 					}
 				]
 			})
@@ -276,6 +289,12 @@ describe('DifficultyAdapter', () => {
 			expect(result.definitions?.[0]?.ruleType).toBe('weapon_uncap_at_least')
 			expect(result.definitions?.[0]?.params).toEqual({ min_uncap_level: 5, min_count: 1 })
 			expect(result.definitions?.[0]?.parameters[0]?.key).toBe('min_uncap_level')
+			expect(result.definitions?.[0]?.parameters[0]?.valueType).toBe('number')
+			expect(result.definitions?.[0]?.parameters[0]?.example).toBe(5)
+			expect(result.definitions?.[0]?.examples?.[0]?.params).toEqual({
+				series_slugs: ['illustrious'],
+				min_transcendence_step: 5
+			})
 		})
 
 		it('deleteRule DELETEs the rule by id', async () => {
