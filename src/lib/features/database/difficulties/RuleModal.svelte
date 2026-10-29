@@ -99,9 +99,13 @@
 		}
 	})
 
-	function changeSelection(nextComponent: string, nextType: string) {
+	function changeSelection(
+		nextComponent: string,
+		nextType: string,
+		params?: Record<string, unknown>
+	) {
 		const nextDefinition = ruleTypesQuery.data?.definitions?.find((d) => d.ruleType === nextType)
-		const text = formatTemplate(nextDefinition?.params ?? {})
+		const text = formatTemplate(params ?? nextDefinition?.params ?? {})
 		const next = { component: nextComponent, ruleType: nextType, text }
 		if (needsTemplateConfirmation(paramsText, generatedText)) {
 			replacement = next
@@ -361,10 +365,45 @@
 		<h4 class="section-header">Parameters</h4>
 		{#if definition}
 			<p class="hint">{definition.description}. Edit the JSON below to configure this rule.</p>
-			<details>
+
+			{#if definition.examples?.length}
+				<h4 class="section-header">Worked examples</h4>
+				<p class="hint">
+					Each example is one scored rule. Create separate rules to give different weights to
+					different tiers. Filters within a tier rule must match the same weapon.
+				</p>
+				{#each definition.examples as example (example.name)}
+					<div class="worked-example">
+						<strong>{example.name}</strong>
+						<pre>{formatTemplate(example.params)}</pre>
+						<Button
+							variant="ghost"
+							size="small"
+							onclick={() => changeSelection(component, ruleType, example.params)}
+							>Use example</Button
+						>
+					</div>
+				{/each}
+			{/if}
+			<details class="parameter-reference" open>
 				<summary>Parameter reference</summary>
+				<p class="hint">
+					Use the exact keys below in the JSON object. Arrays use brackets; strings use double
+					quotes. UUID examples must be replaced with real catalogue IDs.
+				</p>
 				{#each definition.parameters as parameter (parameter.key)}
-					<p class="hint"><code>{parameter.key}</code>: {parameter.description}</p>
+					<div class="parameter-entry">
+						<div class="parameter-name">
+							<code>{parameter.key}</code>
+							{#if parameter.valueType}<span>{parameter.valueType}</span>{/if}
+						</div>
+						<p class="hint">{parameter.description}</p>
+						{#if parameter.example !== undefined}
+							<code class="parameter-example"
+								>"{parameter.key}": {JSON.stringify(parameter.example)}</code
+							>
+						{/if}
+					</div>
 				{/each}
 			</details>
 			<Button variant="ghost" size="small" onclick={() => changeSelection(component, ruleType)}>
@@ -486,19 +525,65 @@
 		margin-bottom: spacing.$unit;
 	}
 
+	.parameter-reference {
+		border: 1px solid var(--border-subtle);
+		border-radius: layout.$input-corner;
+		padding: spacing.$unit;
+		summary {
+			cursor: pointer;
+			font-weight: typography.$bold;
+			margin-bottom: spacing.$unit;
+		}
+	}
+	.parameter-entry {
+		padding: spacing.$unit 0;
+		border-top: 1px solid var(--border-subtle);
+	}
+	.parameter-name {
+		display: flex;
+		gap: spacing.$unit;
+		align-items: baseline;
+		margin-bottom: spacing.$unit-half;
+		span {
+			color: var(--text-tertiary);
+			font-size: typography.$font-small;
+		}
+	}
+	.parameter-example {
+		display: block;
+		margin-top: spacing.$unit-half;
+		font-size: typography.$font-small;
+		overflow-wrap: anywhere;
+	}
+	.worked-example {
+		border: 1px solid var(--border-subtle);
+		border-radius: layout.$input-corner;
+		padding: spacing.$unit;
+		pre {
+			background: var(--input-bound-bg);
+			padding: spacing.$unit;
+			overflow-x: auto;
+			font-size: typography.$font-small;
+		}
+	}
+
 	.params-input {
 		width: 100%;
 		min-height: 160px;
 		padding: spacing.$unit;
 		border: 1px solid var(--border-subtle);
 		border-radius: layout.$input-corner;
-		background: var(--input-bg);
+		background: var(--input-bound-bg);
 		color: var(--text-primary);
 		font: inherit;
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 		font-size: typography.$font-small;
 		resize: vertical;
 		white-space: pre;
+
+		&:hover {
+			background: var(--input-bound-bg-hover);
+		}
 
 		&:focus {
 			outline: 2px solid var(--focus-ring);
