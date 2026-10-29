@@ -6,7 +6,16 @@
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
-	import { formatTemplate, needsTemplateConfirmation, parseRuleParams } from './rule-form'
+	import {
+		formatTemplate,
+		needsTemplateConfirmation,
+		parseRuleParams,
+		toWeaponTier,
+		weaponConditions,
+		weaponConditionOptions,
+		replaceWeaponCondition
+	} from './rule-form'
+	import WeaponRuleCondition from './WeaponRuleCondition.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { difficultyAdapter, type DifficultyRule } from '$lib/api/adapters/difficulty.adapter'
@@ -49,6 +58,36 @@
 	const definition = $derived(
 		ruleTypesQuery.data?.definitions?.find((d) => d.ruleType === ruleType)
 	)
+	const currentParams = $derived(parseRuleParams(paramsText).params)
+	const conditionTypes = $derived(weaponConditions(currentParams ?? {}))
+	const canAddCondition = $derived(
+		component === 'weapon' &&
+			!!currentParams &&
+			toWeaponTier(ruleType, currentParams) !== null &&
+			conditionTypes.length < weaponConditionOptions.length
+	)
+
+	function updateTier(params: Record<string, unknown>) {
+		ruleType = 'weapon_tier_match'
+		paramsText = formatTemplate(params)
+		generatedText = null
+		paramsError = null
+		saveError = null
+	}
+
+	function addCondition() {
+		if (!currentParams) return
+		const tier = toWeaponTier(ruleType, currentParams)
+		if (!tier) return
+		const existing = weaponConditions(tier)
+		const next = weaponConditionOptions.find(({ value }) => !existing.includes(value))
+		if (next) updateTier(replaceWeaponCondition(tier, null, next.value))
+	}
+
+	function changeCondition(previous: string, next: string | null) {
+		if (currentParams) updateTier(replaceWeaponCondition(currentParams, previous, next))
+	}
+
 	const pendingCreation = $derived(rule?.pendingOperation === 'create')
 
 	// Select keeps local display state. Restore it when a replacement is
@@ -60,9 +99,13 @@
 		}
 	})
 
-	function changeSelection(nextComponent: string, nextType: string) {
+	function changeSelection(
+		nextComponent: string,
+		nextType: string,
+		params?: Record<string, unknown>
+	) {
 		const nextDefinition = ruleTypesQuery.data?.definitions?.find((d) => d.ruleType === nextType)
-		const text = formatTemplate(nextDefinition?.params ?? {})
+		const text = formatTemplate(params ?? nextDefinition?.params ?? {})
 		const next = { component: nextComponent, ruleType: nextType, text }
 		if (needsTemplateConfirmation(paramsText, generatedText)) {
 			replacement = next
@@ -193,7 +236,7 @@
 	}
 </script>
 
-<Dialog bind:open {onOpenChange} size="small">
+<Dialog bind:open {onOpenChange} size="medium">
 	<ModalHeader
 		{title}
 		description="Each rule contributes its weight to its component sub-score when its condition fires."
@@ -218,18 +261,90 @@
 				}}
 			/>
 		</DetailItem>
-		<DetailItem label="Rule type" sublabel="Types available for this component" editable>
-			<Select
-				bind:value={selectedRuleType}
-				options={ruleTypeOptions}
-				contained
-				placeholder={ruleTypesQuery.isLoading ? 'Loading rule types…' : 'Select a rule type'}
-				disabled={!ruleTypesQuery.data}
-				onValueChange={(value) => {
-					if (value && value !== ruleType) changeSelection(component, value)
-				}}
-			/>
-		</DetailItem>
+		{#if ruleType === 'weapon_tier_match'}
+			<div class="conditions">
+				<div class="condition-heading"><strong>Rule types</strong></div>
+				<p class="hint">
+					All conditions must match the same weapon. The rule contributes one weight; JSON below
+					shows the combined parameters.
+				</p>
+				{#each conditionTypes as type, index (type)}
+					<div class="condition-card">
+						<div class="condition-select">
+							<Select
+								value={type}
+								options={weaponConditionOptions.map((option) => ({
+									...option,
+									disabled: option.value !== type && conditionTypes.includes(option.value)
+								}))}
+								contained
+								onValueChange={(value) => {
+									if (value && value !== type) changeCondition(type, value)
+								}}
+							/>
+							{#if index === 0}
+								<Button
+									variant="ghost"
+									size="icon"
+									iconOnly
+									leftIcon="plus"
+									aria-label="Add rule condition"
+									title="Add another condition on the same weapon"
+									disabled={!canAddCondition}
+									onclick={addCondition}
+								/>
+							{/if}
+							<Button
+								variant="ghost"
+								size="icon"
+								iconOnly
+								leftIcon="x"
+								aria-label={`Remove ${type} condition`}
+								disabled={conditionTypes.length <= 1}
+								onclick={() => changeCondition(type, null)}
+							/>
+						</div>
+						<WeaponRuleCondition
+							{type}
+							params={currentParams ?? {}}
+							onchange={(changes) => updateTier({ ...currentParams, ...changes })}
+						/>
+					</div>
+				{/each}
+				<p class="hint">
+					Combined type: <code>weapon_tier_match</code>. Advanced filters such as gacha status,
+					awakening ID, and age decay remain editable in JSON.
+				</p>
+			</div>
+		{:else}
+			<DetailItem label="Rule type" sublabel="Types available for this component" editable>
+				<div class="condition-select">
+					<Select
+						bind:value={selectedRuleType}
+						options={ruleTypeOptions}
+						contained
+						placeholder={ruleTypesQuery.isLoading ? 'Loading rule types…' : 'Select a rule type'}
+						disabled={!ruleTypesQuery.data}
+						onValueChange={(value) => {
+							if (value && value !== ruleType) changeSelection(component, value)
+						}}
+					/>
+					<Button
+						variant="ghost"
+						size="icon"
+						iconOnly
+						leftIcon="plus"
+						aria-label="Add rule condition"
+						title="Combine weapon series, transcendence, uncap, and awakening conditions"
+						disabled={!canAddCondition}
+						onclick={addCondition}
+					/>
+				</div>
+			</DetailItem>
+			{#if component === 'weapon'}<p class="hint">
+					Use + to combine series, transcendence, uncap, and awakening filters on the same weapon.
+				</p>{/if}
+		{/if}
 
 		<DetailItem
 			label="Weight"
@@ -250,10 +365,45 @@
 		<h4 class="section-header">Parameters</h4>
 		{#if definition}
 			<p class="hint">{definition.description}. Edit the JSON below to configure this rule.</p>
-			<details>
+
+			{#if definition.examples?.length}
+				<h4 class="section-header">Worked examples</h4>
+				<p class="hint">
+					Each example is one scored rule. Create separate rules to give different weights to
+					different tiers. Filters within a tier rule must match the same weapon.
+				</p>
+				{#each definition.examples as example (example.name)}
+					<div class="worked-example">
+						<strong>{example.name}</strong>
+						<pre>{formatTemplate(example.params)}</pre>
+						<Button
+							variant="ghost"
+							size="small"
+							onclick={() => changeSelection(component, ruleType, example.params)}
+							>Use example</Button
+						>
+					</div>
+				{/each}
+			{/if}
+			<details class="parameter-reference" open>
 				<summary>Parameter reference</summary>
+				<p class="hint">
+					Use the exact keys below in the JSON object. Arrays use brackets; strings use double
+					quotes. UUID examples must be replaced with real catalogue IDs.
+				</p>
 				{#each definition.parameters as parameter (parameter.key)}
-					<p class="hint"><code>{parameter.key}</code>: {parameter.description}</p>
+					<div class="parameter-entry">
+						<div class="parameter-name">
+							<code>{parameter.key}</code>
+							{#if parameter.valueType}<span>{parameter.valueType}</span>{/if}
+						</div>
+						<p class="hint">{parameter.description}</p>
+						{#if parameter.example !== undefined}
+							<code class="parameter-example"
+								>"{parameter.key}": {JSON.stringify(parameter.example)}</code
+							>
+						{/if}
+					</div>
 				{/each}
 			</details>
 			<Button variant="ghost" size="small" onclick={() => changeSelection(component, ruleType)}>
@@ -352,19 +502,88 @@
 		font-size: typography.$font-small;
 	}
 
+	.conditions {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit;
+	}
+	.condition-heading,
+	.condition-select {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit;
+	}
+	.condition-heading {
+		justify-content: space-between;
+	}
+	.condition-card {
+		padding: spacing.$unit;
+		border: 1px solid var(--border-subtle);
+		border-radius: layout.$input-corner;
+	}
+	.condition-card .condition-select {
+		margin-bottom: spacing.$unit;
+	}
+
+	.parameter-reference {
+		border: 1px solid var(--border-subtle);
+		border-radius: layout.$input-corner;
+		padding: spacing.$unit;
+		summary {
+			cursor: pointer;
+			font-weight: typography.$bold;
+			margin-bottom: spacing.$unit;
+		}
+	}
+	.parameter-entry {
+		padding: spacing.$unit 0;
+		border-top: 1px solid var(--border-subtle);
+	}
+	.parameter-name {
+		display: flex;
+		gap: spacing.$unit;
+		align-items: baseline;
+		margin-bottom: spacing.$unit-half;
+		span {
+			color: var(--text-tertiary);
+			font-size: typography.$font-small;
+		}
+	}
+	.parameter-example {
+		display: block;
+		margin-top: spacing.$unit-half;
+		font-size: typography.$font-small;
+		overflow-wrap: anywhere;
+	}
+	.worked-example {
+		border: 1px solid var(--border-subtle);
+		border-radius: layout.$input-corner;
+		padding: spacing.$unit;
+		pre {
+			background: var(--input-bound-bg);
+			padding: spacing.$unit;
+			overflow-x: auto;
+			font-size: typography.$font-small;
+		}
+	}
+
 	.params-input {
 		width: 100%;
 		min-height: 160px;
 		padding: spacing.$unit;
 		border: 1px solid var(--border-subtle);
 		border-radius: layout.$input-corner;
-		background: var(--input-bg);
+		background: var(--input-bound-bg);
 		color: var(--text-primary);
 		font: inherit;
 		font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 		font-size: typography.$font-small;
 		resize: vertical;
 		white-space: pre;
+
+		&:hover {
+			background: var(--input-bound-bg-hover);
+		}
 
 		&:focus {
 			outline: 2px solid var(--focus-ring);

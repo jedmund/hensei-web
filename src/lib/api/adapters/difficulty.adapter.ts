@@ -92,7 +92,13 @@ export interface DifficultyRuleDefinition {
 	component: string
 	description: string
 	params: Record<string, unknown>
-	parameters: Array<{ key: string; description: string }>
+	parameters: Array<{
+		key: string
+		description: string
+		valueType?: string
+		example?: unknown
+	}>
+	examples?: Array<{ name: string; params: Record<string, unknown> }>
 }
 
 export interface DifficultyRuleTypes {
