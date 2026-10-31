@@ -16,6 +16,7 @@
 	import { escapeHtml } from '$lib/utils/safeHtml'
 	import { formatDateJST } from '$lib/utils/date'
 	import { getRaidImage } from '$lib/utils/images'
+	import { getElementTypeKey } from '$lib/utils/element'
 	import { exploreQuery } from '$lib/utils/home'
 	import { galleryPath, newTeamPath } from '$lib/utils/browseRoutes'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -60,6 +61,10 @@
 		selected && selected.raid.playerCount > 1 ? getRaidImage(selected.raid.slug, 'banner') : null
 	)
 
+	// The banners fade out at the edges; fade into the battle's element color
+	const coverElement = $derived(selected ? getElementTypeKey(selected.raid.element) : undefined)
+	const coverBackground = $derived(coverElement ? `var(--${coverElement}-bg)` : undefined)
+
 	const seeAllHref = $derived(
 		selected
 			? localizeHref(
@@ -81,7 +86,7 @@
 {#if selected}
 	<section class="new-battles">
 		<HomeCard title={sectionTitle}>
-			<CardCover src={bannerUrl}>
+			<CardCover src={bannerUrl} background={coverBackground}>
 				{#snippet placeholder()}
 					<!-- The battle's thumbnail, or its name when there's none either -->
 					{#if thumbFailed.has(selected.raid.slug)}

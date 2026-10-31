@@ -4,6 +4,7 @@
 	 * banner). The frame stays the same size whatever the art, so switching
 	 * doesn't jump; art of another shape fills it, cropped around the centre.
 	 * Without art, or if it fails to load, `placeholder` fills the frame.
+	 * `background` shows through art with transparent edges.
 	 */
 	import type { Snippet } from 'svelte'
 
@@ -12,9 +13,11 @@
 		/** Shown over the art, e.g. pills along the bottom */
 		children?: Snippet
 		placeholder?: Snippet
+		/** A CSS color for the frame, e.g. the battle's element */
+		background?: string
 	}
 
-	let { src, children, placeholder }: Props = $props()
+	let { src, children, placeholder, background }: Props = $props()
 
 	let failed = $state(false)
 	$effect(() => {
@@ -24,7 +27,7 @@
 	})
 </script>
 
-<div class="cover">
+<div class="cover" style:background>
 	{#if src && !failed}
 		<img {src} alt="" loading="lazy" onerror={() => (failed = true)} />
 	{:else}
