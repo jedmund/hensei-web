@@ -7,7 +7,7 @@
 	 * focus in the panel) step through the ResultSet, Esc closes, e edits.
 	 * Open records with `openRecordInPanel()` so Back closes the panel.
 	 */
-	import { onDestroy, tick } from 'svelte'
+	import { onDestroy, tick, untrack } from 'svelte'
 	import { MediaQuery } from 'svelte/reactivity'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/state'
@@ -80,7 +80,11 @@
 		}
 		openRecord.set({ path: href, title })
 		const section = rootOf(sectionForUrl(new URL(href, page.url.origin)))
-		if (section) recentPages.record({ path: localizeHref(href), title, sectionId: section.id })
+		// record() reads the list it writes: untracked, or this effect would loop
+		if (section) {
+			const entry = { path: localizeHref(href), title, sectionId: section.id }
+			untrack(() => recentPages.record(entry))
+		}
 	})
 
 	onDestroy(() => openRecord.set(null))
