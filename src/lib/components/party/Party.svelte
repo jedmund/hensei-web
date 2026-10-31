@@ -13,6 +13,7 @@
 	import { useJobHandlers } from '$lib/composables/job-handlers.svelte'
 	import { usePartyDragDrop } from '$lib/composables/party-drag-drop.svelte'
 	import { useItemAddition } from '$lib/composables/item-addition.svelte'
+	import { useSolomonisRaid } from '$lib/composables/solomonis-raid.svelte'
 	import { setDragDropContext } from '$lib/composables/drag-drop.svelte'
 
 	// Utilities
@@ -55,17 +56,6 @@
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import WikiTextDialog from '$lib/components/party/WikiTextDialog.svelte'
 	import WikiImportReview from '$lib/components/party/WikiImportReview.svelte'
-	import { openEditSolomonisPane } from '$lib/components/solomonis/party/openSolomonisPanes'
-	import {
-		isSolomonisParty,
-		solomonisRaidTransition,
-		type SolomonisRaidTransition
-	} from '$lib/components/solomonis/party/solomonisParty'
-	import {
-		useUpdatePartyBlessings,
-		useUpdateSolomonisExpedition
-	} from '$lib/api/mutations/solomonis.mutations'
-	import type { RaidFull } from '$lib/types/api/raid'
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -170,13 +160,14 @@
 		onDetailsUpdated: () => {
 			if (isNew && party.id === 'new') hasEditedInfo = true
 		},
-		handleRaidChange: (raid) => {
-			// The settings pane closes right after saving; open our pane after it.
-			const transition = solomonisRaidTransition(isSolomonis, raid)
-			if (transition === 'none') return false
-			setTimeout(() => startSolomonisRaidTransition(transition, raid?.id ?? null))
-			return true
-		}
+		handleRaidChange: (raid) => solomonisRaid.handleRaidChange(raid)
+	})
+
+	// --- Evoking Solomonis ---
+	const solomonisRaid = useSolomonisRaid({
+		getParty: () => party,
+		updateRaid: (raidId) => actions.updatePartyDetails({ raidId }),
+		ensurePartyExists: ensurePartyExistsFn
 	})
 
 	// New teams can be filled from a gbf.wiki TeamSpread paste
@@ -242,42 +233,6 @@
 		},
 		ensurePartyExists: ensurePartyExistsFn
 	})
-
-	// --- Evoking Solomonis ---
-	const isSolomonis = $derived(isSolomonisParty(party))
-	const solomonisMutations = {
-		expedition: useUpdateSolomonisExpedition(),
-		blessings: useUpdatePartyBlessings(() => party.id)
-	}
-	let leaveSolomonisOpen = $state(false)
-	let pendingLeaveSolomonisRaidId = $state<string | null>(null)
-
-	/** Raid tile and settings pane: entering or leaving Solomonis goes through us (D12). */
-	function startSolomonisRaidTransition(
-		transition: SolomonisRaidTransition,
-		raidId: string | null
-	) {
-		if (transition === 'enter') {
-			openEditSolomonisPane(party, solomonisMutations, ensurePartyExistsFn)
-		} else if (transition === 'leave') {
-			pendingLeaveSolomonisRaidId = raidId
-			leaveSolomonisOpen = true
-		}
-	}
-
-	async function handleRaidSelect(raid: RaidFull | null) {
-		const transition = solomonisRaidTransition(isSolomonis, raid)
-		if (transition !== 'none') {
-			startSolomonisRaidTransition(transition, raid?.id ?? null)
-			return
-		}
-		await actions.updatePartyDetails({ raidId: raid?.id ?? null })
-	}
-
-	async function confirmLeaveSolomonis() {
-		leaveSolomonisOpen = false
-		await actions.updatePartyDetails({ raidId: pendingLeaveSolomonisRaidId })
-	}
 
 	// --- Guidebook mutations ---
 	const updateGuidebook = useUpdatePartyGuidebook()
@@ -525,7 +480,7 @@
 				onOpenDescription={actions.openDescriptionPanel}
 				onEditDescription={actions.editDescriptionPanel}
 				onOpenEdit={actions.openSettingsPanel}
-				onRaidSelect={handleRaidSelect}
+				onRaidSelect={solomonisRaid.handleRaidSelect}
 				{authUser}
 				{activeCollectionUser}
 				onSwitchCollectionUser={handleSwitchCollectionUser}
@@ -694,7 +649,7 @@
 							<WeaponGrid
 								weapons={party.weapons}
 								raidExtra={party.raid?.extra}
-								showGuidebooks={party.raid?.group?.guidebooks && !isSolomonis}
+								showGuidebooks={party.raid?.group?.guidebooks && !solomonisRaid.isSolomonis}
 								guidebooks={party.guidebooks}
 								canEdit={canEdit()}
 								onClickGuidebookSlot={handleClickGuidebookSlot}
@@ -834,11 +789,11 @@
 
 <!-- Leaving Evoking Solomonis deletes its data -->
 <ConfirmDialog
-	bind:open={leaveSolomonisOpen}
+	bind:open={solomonisRaid.leaveOpen}
 	title={m.solomonis_web_party_leave_title()}
 	message={m.solomonis_web_party_leave_message()}
 	confirmLabel={m.solomonis_web_party_leave_confirm()}
-	onconfirm={confirmLeaveSolomonis}
+	onconfirm={solomonisRaid.confirmLeave}
 />
 
 <!-- Conflict Resolution Dialog -->
