@@ -10,6 +10,7 @@
 	import SummonUncapSection from '$lib/features/database/summons/sections/SummonUncapSection.svelte'
 	import SummonTaxonomySection from '$lib/features/database/summons/sections/SummonTaxonomySection.svelte'
 	import SummonStatsSection from '$lib/features/database/summons/sections/SummonStatsSection.svelte'
+	import SummonGachaSection from '$lib/features/database/summons/sections/SummonGachaSection.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import SidebarHeader from '$lib/components/ui/SidebarHeader.svelte'
@@ -285,6 +286,7 @@
 		<SummonUncapSection summon={emptySummon} {editMode} bind:editData />
 		<SummonTaxonomySection summon={emptySummon} {editMode} bind:editData />
 		<SummonStatsSection summon={emptySummon} {editMode} bind:editData />
+		<SummonGachaSection summon={emptySummon} {editMode} bind:editData />
 
 		<DetailsContainer title="Nicknames">
 			<DetailItem label="Nicknames (EN)">

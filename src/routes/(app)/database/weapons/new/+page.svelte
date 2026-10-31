@@ -10,6 +10,7 @@
 	import WeaponUncapSection from '$lib/features/database/weapons/sections/WeaponUncapSection.svelte'
 	import WeaponTaxonomySection from '$lib/features/database/weapons/sections/WeaponTaxonomySection.svelte'
 	import WeaponStatsSection from '$lib/features/database/weapons/sections/WeaponStatsSection.svelte'
+	import WeaponGachaSection from '$lib/features/database/weapons/sections/WeaponGachaSection.svelte'
 	import WeaponForgeSection from '$lib/features/database/weapons/sections/WeaponForgeSection.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
@@ -170,6 +171,7 @@
 				proficiency: editData.proficiency,
 				series: editData.series || undefined,
 				new_series: editData.newSeries || undefined,
+				promotions: editData.promotions,
 
 				// Stats
 				min_hp: editData.minHp,
@@ -295,6 +297,7 @@
 		<WeaponUncapSection weapon={emptyWeapon} {editMode} bind:editData />
 		<WeaponTaxonomySection weapon={emptyWeapon} {editMode} bind:editData />
 		<WeaponStatsSection weapon={emptyWeapon} {editMode} bind:editData />
+		<WeaponGachaSection weapon={emptyWeapon} {editMode} bind:editData />
 		<WeaponForgeSection weapon={emptyWeapon} {editMode} bind:editData />
 
 		<DetailsContainer title="Nicknames">
