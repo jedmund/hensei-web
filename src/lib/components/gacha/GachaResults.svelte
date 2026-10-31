@@ -778,6 +778,12 @@
 			min-height: 0;
 		}
 
+		// Columns down to the target, so its flex reaches the card's height
+		.results-head {
+			display: flex;
+			flex-direction: column;
+		}
+
 		.target {
 			height: auto;
 		}
