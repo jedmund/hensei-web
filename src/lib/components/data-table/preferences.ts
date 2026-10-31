@@ -38,11 +38,14 @@ export function loadColumnVisibility<T>(
 	try {
 		const saved = JSON.parse(raw) as unknown
 		if (!saved || typeof saved !== 'object') return visibility
-		const entries = Object.entries(saved as Record<string, unknown>)
-		// The old grid's first format stored only hidden ids as `true`; it can't be read reliably
-		if (!entries.some(([, value]) => value === false)) return visibility
+		const record = saved as Record<string, unknown>
+		// The old grid's first format stored only hidden ids, as `true`. The current
+		// format writes every column, so all-true with columns missing is the old one.
+		const allTrue = Object.values(record).every((value) => value === true)
+		const coversColumns = columns.every((column) => column.id in record)
+		if (allTrue && !coversColumns) return visibility
 		for (const column of columns) {
-			const value = (saved as Record<string, unknown>)[column.id]
+			const value = record[column.id]
 			if (typeof value === 'boolean' && canHide(column)) visibility[column.id] = value
 		}
 	} catch {

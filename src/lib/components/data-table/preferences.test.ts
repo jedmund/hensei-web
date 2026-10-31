@@ -70,6 +70,14 @@ describe('column visibility', () => {
 	})
 })
 
+describe('column visibility: showing a hidden-by-default column', () => {
+	it('survives a reload even though every column is now visible', () => {
+		const store = memoryStorage()
+		saveColumnVisibility('weapons', columns, { name: true, element: true, slug: true }, store)
+		expect(loadColumnVisibility('weapons', columns, store).slug).toBe(true)
+	})
+})
+
 describe('row height', () => {
 	it('round-trips presets and rejects unknown values', () => {
 		const store = memoryStorage()

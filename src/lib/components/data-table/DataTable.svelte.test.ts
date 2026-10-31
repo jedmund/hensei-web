@@ -155,6 +155,27 @@ describe('DataTable', () => {
 		expect(document.querySelector('.empty-state button')).not.toBeNull()
 	})
 
+	it('virtualises long static lists with spacer rows', () => {
+		const many: Series[] = Array.from({ length: 300 }, (_, i) => ({
+			id: `s${i}`,
+			slug: `series-${i}`,
+			order: i,
+			name: { en: `Series ${i}`, ja: `シリーズ${i}` }
+		}))
+		// jsdom has no layout: give the scroll area a size so the virtualizer has a window
+		const height = vi.spyOn(HTMLElement.prototype, 'clientHeight', 'get').mockReturnValue(480)
+		const width = vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockReturnValue(800)
+		render(many)
+		height.mockRestore()
+		width.mockRestore()
+		const rendered = document.querySelectorAll('tbody tr:not(.spacer)').length
+		expect(rendered).toBeGreaterThan(0)
+		expect(rendered).toBeLessThan(many.length)
+		expect(document.querySelector('tr.spacer')).not.toBeNull()
+		// The footer still counts every row
+		expect(document.querySelector('.range')?.textContent).toContain('300')
+	})
+
 	it('hides columns turned off in the stored preferences', () => {
 		localStorage.setItem('database-columns-test-series', JSON.stringify({ slug: false }))
 		render(data)
