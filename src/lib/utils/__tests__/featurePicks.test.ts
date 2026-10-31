@@ -90,6 +90,17 @@ describe('buildFeatureRows', () => {
 	})
 })
 
+describe('expired general picks', () => {
+	it('treat the team as not featured in general once the pick has expired', () => {
+		const expired = { ...pick('old', null), expiresAt: '2026-10-30T00:00:00Z' } as FeaturedParty
+		const live = { ...pick('new', null), expiresAt: '2026-11-20T00:00:00Z' } as FeaturedParty
+		const general = (p: FeaturedParty) =>
+			buildFeatureRows({ current: [], upcoming: [], picks: [p], role: 6, now })[0]!
+		expect(general(expired).pick).toBeUndefined()
+		expect(general(live).pick?.id).toBe('new')
+	})
+})
+
 describe('nextPickPosition', () => {
 	it('goes after the highest position', () => {
 		expect(nextPickPosition([])).toBe(0)

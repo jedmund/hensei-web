@@ -137,7 +137,8 @@
 		const parts: string[] = []
 		if (row.pick) parts.push(m.feature_featured())
 		if (row.state === 'general') {
-			parts.push(m.feature_general_hint())
+			const duration = row.pick?.expiresAt ? countdownLabel(row.pick.expiresAt, now) : null
+			parts.push(duration ? m.home_ends_in({ duration }) : m.feature_general_hint())
 		} else if (row.state === 'ended') {
 			parts.push(m.feature_ended())
 		} else if (row.event) {
@@ -192,11 +193,7 @@
 </script>
 
 <Dialog bind:open size="small">
-	<ModalHeader
-		title={m.feature_team()}
-		description={m.feature_description()}
-		showShadow={scrolledFromTop}
-	/>
+	<ModalHeader title={m.feature_team()} showShadow={scrolledFromTop} />
 	<ModalBody>
 		{#if loadFailed}
 			<p class="hint">{m.feature_load_failed()}</p>

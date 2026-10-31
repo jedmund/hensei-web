@@ -55,7 +55,10 @@ export function buildFeatureRows({
 	role,
 	now = Date.now()
 }: BuildOptions): FeatureRow[] {
-	const pickFor = (eventId: string | null) => picks.find((p) => (p.eventId ?? null) === eventId)
+	// An expired general pick no longer shows on Home, so featuring the team in
+	// general again is allowed (the API replaces the old pick)
+	const live = picks.filter((p) => !p.expiresAt || Date.parse(p.expiresAt) > now)
+	const pickFor = (eventId: string | null) => live.find((p) => (p.eventId ?? null) === eventId)
 
 	const rows: FeatureRow[] = [
 		{
