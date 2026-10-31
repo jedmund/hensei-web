@@ -12,9 +12,9 @@ import { partyKeys } from '$lib/api/queries/party.queries'
 import { applyPriorities } from '$lib/components/solomonis/grid/seal'
 import type { Party } from '$lib/types/api/party'
 import type { UnsealPriorityItem } from '$lib/types/api/solomonis'
-import { getEditKey } from '$lib/utils/editKeys'
 import { extractErrorMessage } from '$lib/utils/errors'
 import * as m from '$lib/paraglide/messages'
+import { editKeyHeaders } from './gridShared'
 import { hasQueuedSave, serialSaveKey, serialSaveScope } from './serialSaves'
 
 export interface UpdateUnsealPriorityVars {
@@ -25,11 +25,6 @@ export interface UpdateUnsealPriorityVars {
 
 interface MutationContext {
 	previousParty?: Party
-}
-
-function editKeyHeaders(partyShortcode: string): Record<string, string> | undefined {
-	const editKey = getEditKey(partyShortcode)
-	return editKey ? { 'X-Edit-Key': editKey } : undefined
 }
 
 export function updateUnsealPriorityOptions(queryClient: QueryClient, partyId?: string) {

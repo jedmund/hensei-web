@@ -23,7 +23,7 @@
 	import { getBulletImage } from '$lib/utils/images'
 	import { localizedName } from '$lib/utils/locale'
 	import { getElementTypeKey } from '$lib/utils/element'
-	import { useUpdateGridWeapon } from '$lib/api/mutations/grid.mutations'
+	import { useUpdateGridWeapon } from '$lib/api/mutations/gridWeapon.mutations'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import SyncMenuButton from './SyncMenuButton.svelte'
 	import { hasField, hasAnyField, type OutOfSyncFields } from '$lib/utils/outOfSync'
