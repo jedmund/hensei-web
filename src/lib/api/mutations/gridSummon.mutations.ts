@@ -14,231 +14,73 @@ import {
 	type UpdateUncapParams,
 	type SwapPositionsParams
 } from '$lib/api/adapters/grid.adapter'
-import { partyKeys } from '$lib/api/queries/party.queries'
-import type { Party, GridSummon } from '$lib/types/api/party'
-import { editKeyHeaders, invalidateOnSettled, optimisticRollback } from './gridShared'
+import type { GridSummon } from '$lib/types/api/party'
+import {
+	applyGridUncap,
+	applyNotesSyncedUpdate,
+	editKeyHeaders,
+	invalidatePartyOnSuccess,
+	optimisticGridList,
+	removeGridItem,
+	type DeleteGridItemVars,
+	type GridSlotVars
+} from './gridShared'
+
+type CreateVars = CreateGridSummonParams & { partyShortcode: string }
+type UpdateVars = { id: string; partyShortcode: string; updates: Partial<GridSummon> }
+type QuickSummonVars = DeleteGridItemVars & { quickSummon: boolean }
 
 export function createGridSummonOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: ({
-			partyShortcode,
-			...rest
-		}: CreateGridSummonParams & { partyShortcode: string }) =>
+		mutationFn: ({ partyShortcode, ...rest }: CreateVars) =>
 			gridAdapter.createSummon(rest, editKeyHeaders(partyShortcode)),
-		onMutate: async ({
-			partyShortcode,
-			position,
-			main,
-			friend
-		}: CreateGridSummonParams & { partyShortcode: string }) => {
-			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
-
-			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
-
-			if (previousParty?.summons) {
-				const updatedSummons = previousParty.summons.filter((s) =>
-					main ? !s.main : friend ? !s.friend : s.position !== position
-				)
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
-					...previousParty,
-					summons: updatedSummons
-				})
-			}
-
-			return { previousParty }
-		},
-		onError: (
-			_err: unknown,
-			{ partyShortcode }: CreateGridSummonParams & { partyShortcode: string },
-			context: { previousParty?: Party } | undefined
-		) => {
-			optimisticRollback(queryClient, partyShortcode, context)
-		},
-		onSettled: (
-			_data: unknown,
-			_err: unknown,
-			{ partyShortcode }: CreateGridSummonParams & { partyShortcode: string }
-		) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		// Clear the slot being filled; main and friend summons have their own slots.
+		...optimisticGridList(
+			queryClient,
+			'summons',
+			(summons, { position, main, friend }: CreateVars) =>
+				summons.filter((s) => (main ? !s.main : friend ? !s.friend : s.position !== position))
+		)
 	}
 }
 
 export function updateGridSummonOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: ({
-			id,
-			partyShortcode,
-			updates
-		}: {
-			id: string
-			partyShortcode: string
-			updates: Partial<GridSummon>
-		}) => gridAdapter.updateSummon(id, updates, editKeyHeaders(partyShortcode)),
-		onMutate: async ({
-			id,
-			partyShortcode,
-			updates
-		}: {
-			id: string
-			partyShortcode: string
-			updates: Partial<GridSummon>
-		}) => {
-			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
-
-			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
-
-			if (previousParty?.summons) {
-				// Optimistic notes-sync fan-out — see updateGridWeaponOptions for
-				// the rationale. Mirrors description/notesSynced/substitutions
-				// onto every sibling sharing this summon's granblue_id.
-				const target = previousParty.summons.find((s) => s.id === id)
-				const targetGranblueId = target?.summon?.granblueId
-				const groupKeysSet = new Set(['description', 'notesSynced', 'substitutions'])
-				const groupPayload = Object.fromEntries(
-					Object.entries(updates).filter(([k]) => groupKeysSet.has(k))
-				) as Partial<GridSummon>
-				const flagInPayload = 'notesSynced' in updates
-				const willBeSynced = flagInPayload
-					? (updates as { notesSynced?: boolean }).notesSynced === true
-					: !!target?.notesSynced
-				const shouldFanOut =
-					!!targetGranblueId &&
-					willBeSynced &&
-					(flagInPayload || Object.keys(groupPayload).length > 0)
-
-				const updatedSummons = previousParty.summons.map((s) => {
-					if (s.id === id) return { ...s, ...updates }
-					if (shouldFanOut && String(s.summon?.granblueId) === String(targetGranblueId)) {
-						return { ...s, ...groupPayload }
-					}
-					return s
-				})
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
-					...previousParty,
-					summons: updatedSummons
-				})
-			}
-
-			return { previousParty }
-		},
-		onError: (
-			_err: unknown,
-			{ partyShortcode }: { partyShortcode: string },
-			context: { previousParty?: Party } | undefined
-		) => {
-			optimisticRollback(queryClient, partyShortcode, context)
-		},
-		onSettled: (_data: unknown, _err: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		mutationFn: ({ id, partyShortcode, updates }: UpdateVars) =>
+			gridAdapter.updateSummon(id, updates, editKeyHeaders(partyShortcode)),
+		...optimisticGridList(queryClient, 'summons', (summons, { id, updates }: UpdateVars) =>
+			applyNotesSyncedUpdate(summons, id, updates, (s) => s.summon?.granblueId)
+		)
 	}
 }
 
 export function deleteGridSummonOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: {
-			id?: string
-			partyId: string
-			partyShortcode: string
-			position?: number
-		}) =>
+		mutationFn: (params: DeleteGridItemVars) =>
 			gridAdapter.deleteSummon(
 				{ id: params.id, partyId: params.partyId, position: params.position },
 				editKeyHeaders(params.partyShortcode)
 			),
-		onMutate: async ({
-			partyShortcode,
-			id,
-			position
-		}: {
-			partyShortcode: string
-			id?: string
-			position?: number
-		}) => {
-			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
-
-			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
-
-			if (previousParty?.summons) {
-				const updatedSummons = previousParty.summons.filter((s) =>
-					id ? s.id !== id : s.position !== position
-				)
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
-					...previousParty,
-					summons: updatedSummons
-				})
-			}
-
-			return { previousParty }
-		},
-		onError: (
-			_err: unknown,
-			{ partyShortcode }: { partyShortcode: string },
-			context: { previousParty?: Party } | undefined
-		) => {
-			optimisticRollback(queryClient, partyShortcode, context)
-		},
-		onSettled: (_data: unknown, _err: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		...optimisticGridList(queryClient, 'summons', (summons, vars: GridSlotVars) =>
+			removeGridItem(summons, vars)
+		)
 	}
 }
 
 export function updateSummonUncapOptions(queryClient: QueryClient) {
+	type Vars = UpdateUncapParams & { partyShortcode: string }
 	return {
-		mutationFn: (params: UpdateUncapParams & { partyShortcode: string }) =>
+		mutationFn: (params: Vars) =>
 			gridAdapter.updateSummonUncap(params, editKeyHeaders(params.partyShortcode)),
-		onMutate: async ({
-			partyShortcode,
-			id,
-			uncapLevel,
-			transcendenceStep
-		}: UpdateUncapParams & { partyShortcode: string }) => {
-			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
-
-			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
-
-			if (previousParty?.summons) {
-				const updatedSummons = previousParty.summons.map((s) =>
-					s.id === id
-						? {
-								...s,
-								uncapLevel,
-								...(transcendenceStep !== undefined && { transcendenceStep })
-							}
-						: s
-				)
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
-					...previousParty,
-					summons: updatedSummons
-				})
-			}
-
-			return { previousParty }
-		},
-		onError: (
-			_err: unknown,
-			{ partyShortcode }: { partyShortcode: string },
-			context: { previousParty?: Party } | undefined
-		) => {
-			optimisticRollback(queryClient, partyShortcode, context)
-		},
-		onSettled: (_data: unknown, _err: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		...optimisticGridList(queryClient, 'summons', (summons, vars: Vars) =>
+			applyGridUncap(summons, vars)
+		)
 	}
 }
 
 export function updateQuickSummonOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: {
-			id?: string
-			partyId: string
-			partyShortcode: string
-			position?: number
-			quickSummon: boolean
-		}) =>
+		mutationFn: (params: QuickSummonVars) =>
 			gridAdapter.updateQuickSummon(
 				{
 					id: params.id,
@@ -248,41 +90,12 @@ export function updateQuickSummonOptions(queryClient: QueryClient) {
 				},
 				editKeyHeaders(params.partyShortcode)
 			),
-		onMutate: async ({
-			partyShortcode,
-			id,
-			quickSummon
-		}: {
-			partyShortcode: string
-			id?: string
-			quickSummon: boolean
-		}) => {
-			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
-
-			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
-
-			if (previousParty?.summons) {
-				const updatedSummons = previousParty.summons.map((s) =>
-					s.id === id ? { ...s, quickSummon } : s
-				)
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
-					...previousParty,
-					summons: updatedSummons
-				})
-			}
-
-			return { previousParty }
-		},
-		onError: (
-			_err: unknown,
-			{ partyShortcode }: { partyShortcode: string },
-			context: { previousParty?: Party } | undefined
-		) => {
-			optimisticRollback(queryClient, partyShortcode, context)
-		},
-		onSettled: (_data: unknown, _err: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		...optimisticGridList(
+			queryClient,
+			'summons',
+			(summons, { id, quickSummon }: GridSlotVars & { quickSummon: boolean }) =>
+				summons.map((s) => (s.id === id ? { ...s, quickSummon } : s))
+		)
 	}
 }
 
@@ -290,9 +103,7 @@ export function swapSummonsOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
 			gridAdapter.swapSummons(params, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		...invalidatePartyOnSuccess(queryClient)
 	}
 }
 
@@ -303,9 +114,7 @@ export function duplicateGridSummonOptions(queryClient: QueryClient) {
 				{ id: params.id, position: params.position },
 				editKeyHeaders(params.partyShortcode)
 			),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		...invalidatePartyOnSuccess(queryClient)
 	}
 }
 

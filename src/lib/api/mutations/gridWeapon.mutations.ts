@@ -15,219 +15,63 @@ import {
 	type ResolveConflictParams,
 	type SwapPositionsParams
 } from '$lib/api/adapters/grid.adapter'
-import { partyKeys } from '$lib/api/queries/party.queries'
-import type { Party, GridWeapon } from '$lib/types/api/party'
-import { editKeyHeaders, invalidateOnSettled, optimisticRollback } from './gridShared'
+import type { GridWeapon } from '$lib/types/api/party'
+import {
+	applyGridUncap,
+	applyNotesSyncedUpdate,
+	editKeyHeaders,
+	invalidatePartyOnSuccess,
+	optimisticGridList,
+	removeGridItem,
+	type DeleteGridItemVars,
+	type GridSlotVars
+} from './gridShared'
+
+type CreateVars = CreateGridWeaponParams & { partyShortcode: string }
+type UpdateVars = { id: string; partyShortcode: string; updates: Partial<GridWeapon> }
 
 export function createGridWeaponOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: ({
-			partyShortcode,
-			...rest
-		}: CreateGridWeaponParams & { partyShortcode: string }) =>
+		mutationFn: ({ partyShortcode, ...rest }: CreateVars) =>
 			gridAdapter.createWeapon(rest, editKeyHeaders(partyShortcode)),
-		onMutate: async ({
-			partyShortcode,
-			position,
-			mainhand
-		}: CreateGridWeaponParams & { partyShortcode: string }) => {
-			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
-
-			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
-
-			if (previousParty?.weapons) {
-				const updatedWeapons = previousParty.weapons.filter((w) =>
-					mainhand ? !w.mainhand : w.position !== position
-				)
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
-					...previousParty,
-					weapons: updatedWeapons
-				})
-			}
-
-			return { previousParty }
-		},
-		onError: (
-			_err: unknown,
-			{ partyShortcode }: CreateGridWeaponParams & { partyShortcode: string },
-			context: { previousParty?: Party } | undefined
-		) => {
-			optimisticRollback(queryClient, partyShortcode, context)
-		},
-		onSettled: (
-			_data: unknown,
-			_err: unknown,
-			{ partyShortcode }: CreateGridWeaponParams & { partyShortcode: string }
-		) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		// Clear the slot being filled; the mainhand has its own slot.
+		...optimisticGridList(queryClient, 'weapons', (weapons, { position, mainhand }: CreateVars) =>
+			weapons.filter((w) => (mainhand ? !w.mainhand : w.position !== position))
+		)
 	}
 }
 
 export function updateGridWeaponOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: ({
-			id,
-			partyShortcode,
-			updates
-		}: {
-			id: string
-			partyShortcode: string
-			updates: Partial<GridWeapon>
-		}) => gridAdapter.updateWeapon(id, updates, editKeyHeaders(partyShortcode)),
-		onMutate: async ({
-			id,
-			partyShortcode,
-			updates
-		}: {
-			id: string
-			partyShortcode: string
-			updates: Partial<GridWeapon>
-		}) => {
-			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
-
-			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
-
-			if (previousParty?.weapons) {
-				// Optimistic notes-sync fan-out: when the edit touches a synced
-				// weapon's description or flips the flag, mirror those keys onto
-				// every sibling (same canonical weapon in the party) so the UI
-				// matches what the backend will produce.
-				const target = previousParty.weapons.find((w) => w.id === id)
-				const targetGranblueId = target?.weapon?.granblueId
-				const groupKeysSet = new Set(['description', 'notesSynced', 'substitutions'])
-				const groupPayload = Object.fromEntries(
-					Object.entries(updates).filter(([k]) => groupKeysSet.has(k))
-				) as Partial<GridWeapon>
-				const flagInPayload = 'notesSynced' in updates
-				const willBeSynced = flagInPayload
-					? (updates as { notesSynced?: boolean }).notesSynced === true
-					: !!target?.notesSynced
-				const shouldFanOut =
-					!!targetGranblueId &&
-					willBeSynced &&
-					(flagInPayload || Object.keys(groupPayload).length > 0)
-
-				const updatedWeapons = previousParty.weapons.map((w) => {
-					if (w.id === id) return { ...w, ...updates }
-					if (shouldFanOut && String(w.weapon?.granblueId) === String(targetGranblueId)) {
-						return { ...w, ...groupPayload }
-					}
-					return w
-				})
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
-					...previousParty,
-					weapons: updatedWeapons
-				})
-			}
-
-			return { previousParty }
-		},
-		onError: (
-			_err: unknown,
-			{ partyShortcode }: { partyShortcode: string },
-			context: { previousParty?: Party } | undefined
-		) => {
-			optimisticRollback(queryClient, partyShortcode, context)
-		},
-		onSettled: (_data: unknown, _err: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		mutationFn: ({ id, partyShortcode, updates }: UpdateVars) =>
+			gridAdapter.updateWeapon(id, updates, editKeyHeaders(partyShortcode)),
+		...optimisticGridList(queryClient, 'weapons', (weapons, { id, updates }: UpdateVars) =>
+			applyNotesSyncedUpdate(weapons, id, updates, (w) => w.weapon?.granblueId)
+		)
 	}
 }
 
 export function deleteGridWeaponOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: {
-			id?: string
-			partyId: string
-			partyShortcode: string
-			position?: number
-		}) =>
+		mutationFn: (params: DeleteGridItemVars) =>
 			gridAdapter.deleteWeapon(
 				{ id: params.id, partyId: params.partyId, position: params.position },
 				editKeyHeaders(params.partyShortcode)
 			),
-		onMutate: async ({
-			partyShortcode,
-			id,
-			position
-		}: {
-			partyShortcode: string
-			id?: string
-			position?: number
-		}) => {
-			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
-
-			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
-
-			if (previousParty?.weapons) {
-				const updatedWeapons = previousParty.weapons.filter((w) =>
-					id ? w.id !== id : w.position !== position
-				)
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
-					...previousParty,
-					weapons: updatedWeapons
-				})
-			}
-
-			return { previousParty }
-		},
-		onError: (
-			_err: unknown,
-			{ partyShortcode }: { partyShortcode: string },
-			context: { previousParty?: Party } | undefined
-		) => {
-			optimisticRollback(queryClient, partyShortcode, context)
-		},
-		onSettled: (_data: unknown, _err: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		...optimisticGridList(queryClient, 'weapons', (weapons, vars: GridSlotVars) =>
+			removeGridItem(weapons, vars)
+		)
 	}
 }
 
 export function updateWeaponUncapOptions(queryClient: QueryClient) {
+	type Vars = UpdateUncapParams & { partyShortcode: string }
 	return {
-		mutationFn: (params: UpdateUncapParams & { partyShortcode: string }) =>
+		mutationFn: (params: Vars) =>
 			gridAdapter.updateWeaponUncap(params, editKeyHeaders(params.partyShortcode)),
-		onMutate: async ({
-			partyShortcode,
-			id,
-			uncapLevel,
-			transcendenceStep
-		}: UpdateUncapParams & { partyShortcode: string }) => {
-			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
-
-			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
-
-			if (previousParty?.weapons) {
-				const updatedWeapons = previousParty.weapons.map((w) =>
-					w.id === id
-						? {
-								...w,
-								uncapLevel,
-								...(transcendenceStep !== undefined && { transcendenceStep })
-							}
-						: w
-				)
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
-					...previousParty,
-					weapons: updatedWeapons
-				})
-			}
-
-			return { previousParty }
-		},
-		onError: (
-			_err: unknown,
-			{ partyShortcode }: { partyShortcode: string },
-			context: { previousParty?: Party } | undefined
-		) => {
-			optimisticRollback(queryClient, partyShortcode, context)
-		},
-		onSettled: (_data: unknown, _err: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		...optimisticGridList(queryClient, 'weapons', (weapons, vars: Vars) =>
+			applyGridUncap(weapons, vars)
+		)
 	}
 }
 
@@ -235,9 +79,7 @@ export function resolveWeaponConflictOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: ResolveConflictParams & { partyShortcode: string }) =>
 			gridAdapter.resolveWeaponConflict(params, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		...invalidatePartyOnSuccess(queryClient)
 	}
 }
 
@@ -245,9 +87,7 @@ export function swapWeaponsOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
 			gridAdapter.swapWeapons(params, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		...invalidatePartyOnSuccess(queryClient)
 	}
 }
 
@@ -258,9 +98,7 @@ export function duplicateGridWeaponOptions(queryClient: QueryClient) {
 				{ id: params.id, position: params.position },
 				editKeyHeaders(params.partyShortcode)
 			),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		...invalidatePartyOnSuccess(queryClient)
 	}
 }
 

@@ -15,193 +15,62 @@ import {
 	type ResolveConflictParams,
 	type SwapPositionsParams
 } from '$lib/api/adapters/grid.adapter'
-import { partyKeys } from '$lib/api/queries/party.queries'
-import type { Party, GridCharacter } from '$lib/types/api/party'
-import { editKeyHeaders, invalidateOnSettled, optimisticRollback } from './gridShared'
+import type { GridCharacter } from '$lib/types/api/party'
+import {
+	applyGridUncap,
+	editKeyHeaders,
+	invalidatePartyOnSuccess,
+	optimisticGridList,
+	removeGridItem,
+	type DeleteGridItemVars,
+	type GridSlotVars
+} from './gridShared'
+
+type CreateVars = CreateGridCharacterParams & { partyShortcode: string }
+type UpdateVars = { id: string; partyShortcode: string; updates: Partial<GridCharacter> }
 
 export function createGridCharacterOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: ({
-			partyShortcode,
-			...rest
-		}: CreateGridCharacterParams & { partyShortcode: string }) =>
+		mutationFn: ({ partyShortcode, ...rest }: CreateVars) =>
 			gridAdapter.createCharacter(rest, editKeyHeaders(partyShortcode)),
-		onMutate: async ({
-			partyShortcode,
-			position
-		}: CreateGridCharacterParams & { partyShortcode: string }) => {
-			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
-
-			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
-
-			if (previousParty?.characters) {
-				const updatedCharacters = previousParty.characters.filter((c) => c.position !== position)
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
-					...previousParty,
-					characters: updatedCharacters
-				})
-			}
-
-			return { previousParty }
-		},
-		onError: (
-			_err: unknown,
-			{ partyShortcode }: CreateGridCharacterParams & { partyShortcode: string },
-			context: { previousParty?: Party } | undefined
-		) => {
-			optimisticRollback(queryClient, partyShortcode, context)
-		},
-		onSettled: (
-			_data: unknown,
-			_err: unknown,
-			{ partyShortcode }: CreateGridCharacterParams & { partyShortcode: string }
-		) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		...optimisticGridList(queryClient, 'characters', (characters, { position }: CreateVars) =>
+			characters.filter((c) => c.position !== position)
+		)
 	}
 }
 
 export function updateGridCharacterOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: ({
-			id,
-			partyShortcode,
-			updates
-		}: {
-			id: string
-			partyShortcode: string
-			updates: Partial<GridCharacter>
-		}) => gridAdapter.updateCharacter(id, updates, editKeyHeaders(partyShortcode)),
-		onMutate: async ({
-			id,
-			partyShortcode,
-			updates
-		}: {
-			id: string
-			partyShortcode: string
-			updates: Partial<GridCharacter>
-		}) => {
-			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
-
-			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
-
-			if (previousParty?.characters) {
-				const updatedCharacters = previousParty.characters.map((c) =>
-					c.id === id ? { ...c, ...updates } : c
-				)
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
-					...previousParty,
-					characters: updatedCharacters
-				})
-			}
-
-			return { previousParty }
-		},
-		onError: (
-			_err: unknown,
-			{ partyShortcode }: { partyShortcode: string },
-			context: { previousParty?: Party } | undefined
-		) => {
-			optimisticRollback(queryClient, partyShortcode, context)
-		},
-		onSettled: (_data: unknown, _err: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		mutationFn: ({ id, partyShortcode, updates }: UpdateVars) =>
+			gridAdapter.updateCharacter(id, updates, editKeyHeaders(partyShortcode)),
+		// Characters have no notes sync, so the edit only touches the target.
+		...optimisticGridList(queryClient, 'characters', (characters, { id, updates }: UpdateVars) =>
+			characters.map((c) => (c.id === id ? { ...c, ...updates } : c))
+		)
 	}
 }
 
 export function deleteGridCharacterOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (params: {
-			id?: string
-			partyId: string
-			partyShortcode: string
-			position?: number
-		}) =>
+		mutationFn: (params: DeleteGridItemVars) =>
 			gridAdapter.deleteCharacter(
 				{ id: params.id, partyId: params.partyId, position: params.position },
 				editKeyHeaders(params.partyShortcode)
 			),
-		onMutate: async ({
-			partyShortcode,
-			id,
-			position
-		}: {
-			partyShortcode: string
-			id?: string
-			position?: number
-		}) => {
-			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
-
-			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
-
-			if (previousParty?.characters) {
-				const updatedCharacters = previousParty.characters.filter((c) =>
-					id ? c.id !== id : c.position !== position
-				)
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
-					...previousParty,
-					characters: updatedCharacters
-				})
-			}
-
-			return { previousParty }
-		},
-		onError: (
-			_err: unknown,
-			{ partyShortcode }: { partyShortcode: string },
-			context: { previousParty?: Party } | undefined
-		) => {
-			optimisticRollback(queryClient, partyShortcode, context)
-		},
-		onSettled: (_data: unknown, _err: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		...optimisticGridList(queryClient, 'characters', (characters, vars: GridSlotVars) =>
+			removeGridItem(characters, vars)
+		)
 	}
 }
 
 export function updateCharacterUncapOptions(queryClient: QueryClient) {
+	type Vars = UpdateUncapParams & { partyShortcode: string }
 	return {
-		mutationFn: (params: UpdateUncapParams & { partyShortcode: string }) =>
+		mutationFn: (params: Vars) =>
 			gridAdapter.updateCharacterUncap(params, editKeyHeaders(params.partyShortcode)),
-		onMutate: async ({
-			partyShortcode,
-			id,
-			uncapLevel,
-			transcendenceStep
-		}: UpdateUncapParams & { partyShortcode: string }) => {
-			await queryClient.cancelQueries({ queryKey: partyKeys.detail(partyShortcode) })
-
-			const previousParty = queryClient.getQueryData<Party>(partyKeys.detail(partyShortcode))
-
-			if (previousParty?.characters) {
-				const updatedCharacters = previousParty.characters.map((c) =>
-					c.id === id
-						? {
-								...c,
-								uncapLevel,
-								...(transcendenceStep !== undefined && { transcendenceStep })
-							}
-						: c
-				)
-				queryClient.setQueryData(partyKeys.detail(partyShortcode), {
-					...previousParty,
-					characters: updatedCharacters
-				})
-			}
-
-			return { previousParty }
-		},
-		onError: (
-			_err: unknown,
-			{ partyShortcode }: { partyShortcode: string },
-			context: { previousParty?: Party } | undefined
-		) => {
-			optimisticRollback(queryClient, partyShortcode, context)
-		},
-		onSettled: (_data: unknown, _err: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		...optimisticGridList(queryClient, 'characters', (characters, vars: Vars) =>
+			applyGridUncap(characters, vars)
+		)
 	}
 }
 
@@ -209,9 +78,7 @@ export function resolveCharacterConflictOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: ResolveConflictParams & { partyShortcode: string }) =>
 			gridAdapter.resolveCharacterConflict(params, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		...invalidatePartyOnSuccess(queryClient)
 	}
 }
 
@@ -219,23 +86,15 @@ export function swapCharactersOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
 			gridAdapter.swapCharacters(params, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		...invalidatePartyOnSuccess(queryClient)
 	}
 }
-
-// ============================================================================
-// Style Swap Mutation Options
-// ============================================================================
 
 export function switchCharacterStyleOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: { id: string; partyShortcode: string }) =>
 			gridAdapter.switchCharacterStyle(params.id, editKeyHeaders(params.partyShortcode)),
-		onSuccess: (_data: unknown, { partyShortcode }: { partyShortcode: string }) => {
-			invalidateOnSettled(queryClient, partyShortcode)
-		}
+		...invalidatePartyOnSuccess(queryClient)
 	}
 }
 
