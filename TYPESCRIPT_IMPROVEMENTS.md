@@ -189,7 +189,7 @@ grep -r ": any" src/lib --include="*.ts" --include="*.svelte"
 
 **Files:**
 
-- `src/lib/api/adapters/__tests__/entity.adapter.test.ts`
+- `src/lib/api/adapters/__tests__/weapon.adapter.test.ts` (and the character/summon adapter tests)
 - `src/lib/api/adapters/__tests__/grid.adapter.test.ts`
 - Other test files
 

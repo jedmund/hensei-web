@@ -85,4 +85,15 @@ describe('SummonAdapter', () => {
 			expect(global.fetch).toHaveBeenCalledTimes(2)
 		})
 	})
+
+	it('should handle JSON parse errors', async () => {
+		global.fetch = vi.fn().mockResolvedValue({
+			ok: true,
+			json: async () => {
+				throw new Error('Invalid JSON')
+			}
+		})
+
+		await expect(adapter.getSummon('summon-1')).rejects.toThrow()
+	})
 })

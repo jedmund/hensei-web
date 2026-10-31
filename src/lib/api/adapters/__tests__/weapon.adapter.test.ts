@@ -98,4 +98,28 @@ describe('WeaponAdapter', () => {
 			expect(global.fetch).toHaveBeenCalledTimes(2)
 		})
 	})
+
+	it('should not cache at adapter level (TanStack Query handles caching)', async () => {
+		global.fetch = vi.fn().mockResolvedValue({
+			ok: true,
+			json: async () => mockWeapon
+		})
+
+		await adapter.getWeapon('weapon-1')
+		await adapter.getWeapon('weapon-1')
+
+		// Both calls hit fetch since adapter-level caching was removed
+		expect(global.fetch).toHaveBeenCalledTimes(2)
+	})
+
+	it('should handle 404 errors', async () => {
+		global.fetch = vi.fn().mockResolvedValue({
+			ok: false,
+			status: 404,
+			statusText: 'Not Found',
+			json: async () => ({ error: 'Weapon not found' })
+		})
+
+		await expect(adapter.getWeapon('invalid-id')).rejects.toThrow()
+	})
 })

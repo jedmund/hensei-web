@@ -86,4 +86,10 @@ describe('CharacterAdapter', () => {
 			expect(global.fetch).toHaveBeenCalledTimes(2)
 		})
 	})
+
+	it('should handle network errors', async () => {
+		global.fetch = vi.fn().mockRejectedValue(new Error('Network error'))
+
+		await expect(adapter.getCharacter('char-1')).rejects.toThrow('Network error')
+	})
 })

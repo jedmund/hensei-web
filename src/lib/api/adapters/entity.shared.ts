@@ -1,6 +1,6 @@
 /**
- * Shared types and response mappers for the entity adapters
- * (weapon, character and summon).
+ * Shared types and response mappers for the weapon, character
+ * and summon adapters.
  *
  * @module adapters/entity.shared
  */
