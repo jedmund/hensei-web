@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { buildFeatureRows, nextPickPosition } from '../featurePicks'
+import { buildFeatureRows, featuredKeys, nextPickPosition, pickChanges } from '../featurePicks'
 import type { GameEvent } from '$lib/types/api/event'
 import type { FeaturedParty } from '$lib/types/api/featuredParty'
 
@@ -94,5 +94,33 @@ describe('nextPickPosition', () => {
 	it('goes after the highest position', () => {
 		expect(nextPickPosition([])).toBe(0)
 		expect(nextPickPosition([{ position: 0 }, { position: 4 }, { position: 2 }])).toBe(5)
+	})
+})
+
+describe('pickChanges', () => {
+	const rows = buildFeatureRows({
+		current: [runningEarly],
+		upcoming: [soon],
+		picks: [pick('p1', null), pick('p2', 'past')],
+		pickEvents: { past },
+		role: 6,
+		now
+	})
+
+	it('starts with the rows the team is featured in selected', () => {
+		expect([...featuredKeys(rows)].sort()).toEqual(['general', 'past'])
+	})
+
+	it('adds newly selected rows and removes deselected picks', () => {
+		const { add, remove } = pickChanges(rows, new Set(['soon', 'past']))
+		expect(add.map((r) => r.key)).toEqual(['soon'])
+		expect(remove.map((r) => r.key)).toEqual(['general'])
+	})
+
+	it("never changes rows the role can't edit", () => {
+		const { add, remove } = pickChanges(rows, new Set(['general']))
+		expect(add).toEqual([])
+		// The ended event's pick stays for a curator
+		expect(remove).toEqual([])
 	})
 })

@@ -6,18 +6,25 @@
 	 */
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { toast } from 'svelte-sonner'
+	import { SvelteSet } from 'svelte/reactivity'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
-	import SettingsRow from '$lib/components/ui/SettingsRow.svelte'
-	import Input from '$lib/components/ui/Input.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
+	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
+	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
+	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import EventThumbnailImage from '$lib/components/home/EventThumbnailImage.svelte'
 	import { eventQueries } from '$lib/api/queries/event.queries'
 	import { useCreateStaffPick, useDeleteStaffPick } from '$lib/api/mutations/event.mutations'
 	import { featuredPartyAdapter } from '$lib/api/adapters/featuredParty.adapter'
-	import { buildFeatureRows, nextPickPosition, type FeatureRow } from '$lib/utils/featurePicks'
+	import {
+		buildFeatureRows,
+		featuredKeys,
+		nextPickPosition,
+		pickChanges,
+		type FeatureRow
+	} from '$lib/utils/featurePicks'
 	import { countdownLabel, eventThumbnailUrl } from '$lib/utils/home'
 	import { getElementLabel } from '$lib/utils/element'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -76,11 +83,14 @@
 	let now = $state(Date.now())
 	let noteEn = $state('')
 	let noteJp = $state('')
+	// Which language's note the one field edits
+	let noteLanguage = $state<'en' | 'ja'>('en')
 	$effect(() => {
 		if (open) {
 			now = Date.now()
 			noteEn = ''
 			noteJp = ''
+			noteLanguage = 'en'
 		}
 	})
 
@@ -102,7 +112,29 @@
 
 	const createMut = useCreateStaffPick()
 	const deleteMut = useDeleteStaffPick()
-	let busyKey = $state<string | null>(null)
+	let saving = $state(false)
+
+	// The rows the team will be featured in; starts as where it already is
+	const selected = new SvelteSet<string>()
+	let seeded = $state(false)
+	$effect(() => {
+		if (!open) {
+			seeded = false
+		} else if (!seeded && !loading && !loadFailed) {
+			selected.clear()
+			for (const key of featuredKeys(rows)) selected.add(key)
+			seeded = true
+		}
+	})
+
+	const changes = $derived(pickChanges(rows, selected))
+	const hasChanges = $derived(changes.add.length > 0 || changes.remove.length > 0)
+
+	function toggle(row: FeatureRow) {
+		if (!row.editable) return
+		if (selected.has(row.key)) selected.delete(row.key)
+		else selected.add(row.key)
+	}
 
 	function rowTitle(row: FeatureRow): string {
 		if (row.state === 'general') return m.feature_general()
@@ -135,37 +167,33 @@
 		return parts.join(' · ')
 	}
 
-	async function feature(row: FeatureRow) {
-		busyKey = row.key
+	// Features the team in newly selected rows (with the note) and removes it
+	// from deselected ones, then closes
+	async function save() {
+		saving = true
 		try {
-			// New picks go after the others in the same place
-			const existing = await featuredPartyAdapter.listFeaturedParties(
-				row.eventId ? { eventId: row.eventId } : {}
-			)
-			const siblings = row.eventId ? existing : existing.filter((p) => !p.eventId)
-			await createMut.mutateAsync({
-				eventId: row.eventId,
-				partyId,
-				position: nextPickPosition(siblings),
-				noteEn: noteEn.trim(),
-				noteJp: noteJp.trim()
-			})
-		} catch (err) {
-			toast.error(extractErrorMessage(err, m.db_picks_add_failed()))
-		} finally {
-			busyKey = null
-		}
-	}
-
-	async function remove(row: FeatureRow) {
-		if (!row.pick) return
-		busyKey = row.key
-		try {
-			await deleteMut.mutateAsync({ id: row.pick.id, eventId: row.eventId })
+			for (const row of changes.add) {
+				// New picks go after the others in the same place
+				const existing = await featuredPartyAdapter.listFeaturedParties(
+					row.eventId ? { eventId: row.eventId } : {}
+				)
+				const siblings = row.eventId ? existing : existing.filter((p) => !p.eventId)
+				await createMut.mutateAsync({
+					eventId: row.eventId,
+					partyId,
+					position: nextPickPosition(siblings),
+					noteEn: noteEn.trim(),
+					noteJp: noteJp.trim()
+				})
+			}
+			for (const row of changes.remove) {
+				if (row.pick) await deleteMut.mutateAsync({ id: row.pick.id, eventId: row.eventId })
+			}
+			open = false
 		} catch (err) {
 			toast.error(extractErrorMessage(err, m.db_picks_save_failed()))
 		} finally {
-			busyKey = null
+			saving = false
 		}
 	}
 </script>
@@ -173,61 +201,79 @@
 <Dialog bind:open size="small">
 	<ModalHeader title={m.feature_team()} description={m.feature_description()} />
 	<ModalBody>
-		<div class="content">
-			<div class="notes">
-				<Input bind:value={noteEn} placeholder={m.db_picks_note_en()} contained fullWidth />
-				<Input bind:value={noteJp} placeholder={m.db_picks_note_jp()} contained fullWidth />
-			</div>
-
-			{#if loadFailed}
-				<p class="hint">{m.feature_load_failed()}</p>
-			{:else if loading}
-				<p class="hint">{m.feature_loading()}</p>
-			{:else}
-				<ul class="rows">
-					{#each rows as row (row.key)}
-						<li>
-							<SettingsRow title={rowTitle(row)} subtitle={rowSubtitle(row)} compact>
-								{#snippet icon()}
-									<span class="thumb">
-										{#if row.state === 'general'}
-											<Icon name="home" size={16} />
-										{:else}
-											<EventThumbnailImage
-												imageUrl={row.event ? eventThumbnailUrl(row.event) : null}
-												label={rowTitle(row)}
-											/>
-										{/if}
-									</span>
-								{/snippet}
-								{#snippet control()}
-									{#if row.pick}
-										<Button
-											variant="secondary"
-											size="small"
-											onclick={() => remove(row)}
-											disabled={!row.editable || busyKey !== null}
-										>
-											{m.db_picks_remove()}
-										</Button>
-									{:else}
-										<Button
-											variant="primary"
-											size="small"
-											onclick={() => feature(row)}
-											disabled={!row.editable || busyKey !== null}
-										>
-											{m.feature_action()}
-										</Button>
-									{/if}
-								{/snippet}
-							</SettingsRow>
-						</li>
-					{/each}
-				</ul>
-			{/if}
-		</div>
+		{#if loadFailed}
+			<p class="hint">{m.feature_load_failed()}</p>
+		{:else if loading}
+			<p class="hint">{m.feature_loading()}</p>
+		{:else}
+			<ul class="rows">
+				{#each rows as row (row.key)}
+					{@const isSelected = selected.has(row.key)}
+					<li>
+						<button
+							type="button"
+							class="row"
+							class:selected={isSelected}
+							aria-pressed={isSelected}
+							disabled={!row.editable || saving}
+							onclick={() => toggle(row)}
+						>
+							<span class="thumb">
+								{#if row.state === 'general'}
+									<Icon name="home" size={16} />
+								{:else}
+									<EventThumbnailImage
+										imageUrl={row.event ? eventThumbnailUrl(row.event) : null}
+										label={rowTitle(row)}
+									/>
+								{/if}
+							</span>
+							<span class="text">
+								<span class="title">{rowTitle(row)}</span>
+								<span class="subtitle">{rowSubtitle(row)}</span>
+							</span>
+							<span class="check" aria-hidden="true">
+								{#if isSelected}
+									<Icon name="check" size={16} />
+								{/if}
+							</span>
+						</button>
+					</li>
+				{/each}
+			</ul>
+		{/if}
 	</ModalBody>
+
+	<div class="note">
+		<SegmentedControl
+			value={noteLanguage}
+			onValueChange={(v) => (noteLanguage = v === 'ja' ? 'ja' : 'en')}
+			variant="background"
+			size="small"
+			grow
+		>
+			<!-- Language names are written in their own language -->
+			<Segment value="en">English</Segment>
+			<Segment value="ja">日本語</Segment>
+		</SegmentedControl>
+		{#if noteLanguage === 'en'}
+			<textarea class="textarea" bind:value={noteEn} placeholder={m.feature_note()} rows="2"
+			></textarea>
+		{:else}
+			<textarea class="textarea" bind:value={noteJp} placeholder={m.feature_note()} rows="2"
+			></textarea>
+		{/if}
+	</div>
+
+	<ModalFooter
+		onCancel={() => (open = false)}
+		cancelDisabled={saving}
+		primaryAction={{
+			label: m.feature_action(),
+			onclick: save,
+			disabled: !hasChanges || saving
+		}}
+	/>
 </Dialog>
 
 <style lang="scss">
@@ -235,26 +281,38 @@
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/typography' as typography;
 
-	.content {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-2x;
-		padding-bottom: spacing.$unit-2x;
-	}
-
-	.notes {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-half;
-	}
-
 	.rows {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 		display: flex;
 		flex-direction: column;
+		gap: spacing.$unit-half;
+	}
+
+	.row {
+		display: flex;
+		align-items: center;
 		gap: spacing.$unit-2x;
+		width: 100%;
+		padding: spacing.$unit;
+		border: none;
+		border-radius: layout.$card-corner;
+		background: none;
+		color: inherit;
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
+
+		&:hover:not(:disabled),
+		&.selected {
+			background: var(--button-bg);
+		}
+
+		&:disabled {
+			cursor: default;
+			opacity: 0.6;
+		}
 	}
 
 	// Same shape as the Home event switcher's thumbnails
@@ -262,12 +320,69 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		flex-shrink: 0;
 		width: 80px;
 		aspect-ratio: 2 / 1;
 		border-radius: layout.$item-corner;
 		overflow: hidden;
 		background: var(--button-bg);
 		color: var(--text-secondary);
+	}
+
+	.text {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit-half;
+		flex: 1;
+		min-width: 0;
+	}
+
+	.title {
+		font-size: typography.$font-regular;
+		color: var(--text-primary);
+	}
+
+	.subtitle {
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
+	}
+
+	.check {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+		width: spacing.$unit-3x;
+		color: var(--accent-blue);
+	}
+
+	.note {
+		display: flex;
+		flex-direction: column;
+		gap: spacing.$unit;
+		padding: spacing.$unit spacing.$unit-2x;
+	}
+
+	.textarea {
+		width: 100%;
+		padding: spacing.$unit calc(spacing.$unit * 1.5);
+		border: none;
+		border-radius: layout.$input-corner;
+		font-size: typography.$font-regular;
+		font-family: inherit;
+		background: var(--input-bound-bg);
+		color: var(--text-primary);
+		resize: vertical;
+		box-sizing: border-box;
+
+		&::placeholder {
+			color: var(--text-tertiary);
+			opacity: 1;
+		}
+
+		&:hover {
+			background: var(--input-bound-bg-hover);
+		}
 	}
 
 	.hint {

@@ -2398,6 +2398,7 @@
 	"db_events_back": "戻る",
 	"feature_team": "この編成をおすすめに追加",
 	"feature_description": "この編成をスタッフのおすすめとしてホームに表示します。常に表示するか、イベントを選んでください。",
+	"feature_note": "メモ（任意）",
 	"feature_general": "全般",
 	"feature_general_hint": "ホームに常に表示",
 	"feature_featured": "おすすめ中",

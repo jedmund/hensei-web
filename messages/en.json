@@ -2609,6 +2609,7 @@
 	"db_events_back": "Back",
 	"feature_team": "Feature this team",
 	"feature_description": "Show this team as a staff pick on Home, in general or for an event.",
+	"feature_note": "Note (optional)",
 	"feature_general": "General",
 	"feature_general_hint": "Always shown on Home",
 	"feature_featured": "Featured",
