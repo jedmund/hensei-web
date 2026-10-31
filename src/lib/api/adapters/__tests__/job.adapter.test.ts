@@ -230,4 +230,24 @@ describe('JobAdapter', () => {
 			expect(clearSpy).toHaveBeenCalledWith('/job_accessories')
 		})
 	})
+
+	describe('getAccessoryDownloadStatus', () => {
+		it('maps the snake_case progress fields', async () => {
+			global.fetch = mockApiResponse({
+				status: 'completed',
+				progress: 100,
+				images_downloaded: 4,
+				images_total: 4
+			})
+
+			const result = await adapter.getAccessoryDownloadStatus('acc-1')
+
+			expect(result).toMatchObject({
+				status: 'completed',
+				progress: 100,
+				imagesDownloaded: 4,
+				imagesTotal: 4
+			})
+		})
+	})
 })
