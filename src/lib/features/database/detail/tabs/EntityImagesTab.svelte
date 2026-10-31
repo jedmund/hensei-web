@@ -158,7 +158,7 @@
 		{/if}
 
 		<div class="images-grid">
-			{#each poseImages as image (image.url)}
+			{#each poseImages as image (getImageKey(image))}
 				{@const imageKey = getImageKey(image)}
 				{@const isDownloading = downloadingImages.has(imageKey)}
 				{@const isFailed = failedImages.has(imageKey)}

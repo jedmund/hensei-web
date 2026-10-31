@@ -67,6 +67,17 @@ export default defineConfig({
 					include: ['src/**/*.{test,spec}.{js,ts}'],
 					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
 				}
+			},
+			{
+				extends: './vite.config.ts',
+				// Mount components with Svelte's client runtime, which checks
+				// things SSR doesn't (e.g. duplicate keys in keyed each blocks).
+				resolve: { conditions: ['browser'] },
+				test: {
+					name: 'client',
+					environment: 'jsdom',
+					include: ['src/**/*.svelte.{test,spec}.{js,ts}']
+				}
 			}
 		]
 	}
