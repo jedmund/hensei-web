@@ -10,9 +10,11 @@
 		trigger: Snippet<[TriggerProps]>
 		menu: Snippet
 		open?: boolean
+		/** Which edge of the trigger the menu lines up with */
+		align?: 'start' | 'center' | 'end'
 	}
 
-	let { trigger, menu, open = $bindable(false) }: DropdownMenuProps = $props()
+	let { trigger, menu, open = $bindable(false), align = 'start' }: DropdownMenuProps = $props()
 </script>
 
 <DropdownMenuBase.Root bind:open>
@@ -23,7 +25,7 @@
 	</DropdownMenuBase.Trigger>
 
 	<DropdownMenuBase.Portal>
-		<DropdownMenuBase.Content class="dropdown-menu" side="bottom" align="start" sideOffset={4}>
+		<DropdownMenuBase.Content class="dropdown-menu" side="bottom" {align} sideOffset={4}>
 			{@render menu()}
 		</DropdownMenuBase.Content>
 	</DropdownMenuBase.Portal>
@@ -61,7 +63,8 @@
 		text-align: left;
 		@include smooth-transition($duration-standard, background);
 
-		&:hover {
+		&:hover,
+		&[data-highlighted] {
 			background: var(--button-contained-bg-hover, #f5f5f5);
 		}
 
@@ -87,6 +90,13 @@
 		&:hover {
 			background: var(--danger-bg);
 		}
+	}
+
+	// Check mark on the chosen radio or checkbox item, at the trailing edge
+	:global(.dropdown-menu-check) {
+		display: flex;
+		margin-left: auto;
+		padding-left: $unit;
 	}
 
 	:global(.dropdown-menu-separator) {

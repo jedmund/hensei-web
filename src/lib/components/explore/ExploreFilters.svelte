@@ -23,9 +23,9 @@
 		getRecencyOptions,
 		getPartyOptions,
 		getBoostOptions,
-		getSideOptions,
-		getSortOptions
+		getSideOptions
 	} from '$lib/utils/exploreFilterOptions'
+	import type { ExploreSort } from '$lib/utils/exploreFilterParams'
 	import { MediaQuery } from 'svelte/reactivity'
 
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
@@ -37,6 +37,9 @@
 		/** Use when placed on a card/white surface — gives the pill a visible background */
 		contained?: boolean
 		allRaids?: RaidFull[]
+		/** Mobile-only: Gallery order, shown in the gear sheet when given */
+		sort?: ExploreSort | undefined
+		onSortChange?: (sort: ExploreSort) => void
 		/** Mobile-only: collection filter state */
 		collectionFilterActive?: boolean
 		onCollectionFilterChange?: (active: boolean) => void
@@ -57,6 +60,8 @@
 		contained = false,
 		allRaids = [],
 		evokerOptions = [],
+		sort,
+		onSortChange,
 		collectionFilterActive = $bindable(false),
 		onCollectionFilterChange,
 		onAdvancedFiltersOpen,
@@ -82,7 +87,10 @@
 	const partyOptions = $derived(getPartyOptions())
 	const boostOptions = $derived(getBoostOptions())
 	const sideOptions = $derived(getSideOptions())
-	const sortOptions = $derived(getSortOptions())
+	const sortOptions = $derived<{ value: ExploreSort; label: string }[]>([
+		{ value: 'rising', label: m.explore_sort_rising() },
+		{ value: 'recent', label: m.explore_sort_recent() }
+	])
 	// Sticker labels: the active catalogue, by slug + meaning
 	const stickersQuery = createQuery(() => stickerQueries.active())
 	const labelOptions = $derived(
@@ -149,8 +157,7 @@
 		side: m.filter_cat_side(),
 		difficulty: m.filter_cat_difficulty(),
 		evoker: m.filter_cat_evoker(),
-		label: m.explore_filter_label(),
-		sort: m.filter_cat_sort()
+		label: m.explore_filter_label()
 	})
 
 	// Evoking Solomonis route Evokers not already filtered by
@@ -209,19 +216,6 @@
 					category: categoryLabels.raid
 				}
 				picks.push({ label: opt.label, category: categoryLabels.raid, option: opt })
-			}
-		}
-
-		if (!excludedKinds.includes('sort') && !filters.some((f) => f.kind === 'sort')) {
-			const sort = sortOptions[0]
-			if (sort) {
-				const opt: FilterOption = {
-					kind: 'sort',
-					value: sort.value,
-					label: sort.label,
-					category: categoryLabels.sort
-				}
-				picks.push({ label: opt.label, category: opt.category, option: opt })
 			}
 		}
 
@@ -360,7 +354,6 @@
 			sideOptions,
 			difficultyOptions,
 			labelOptions,
-			sortOptions,
 			allRaids,
 			categoryLabels
 		})
@@ -426,7 +419,7 @@
 	}
 
 	// Single-select kinds replace existing filter of the same kind
-	const singleSelectKinds = new Set(['recency', 'boost', 'side', 'evoker', 'label', 'sort'])
+	const singleSelectKinds = new Set(['recency', 'boost', 'side', 'evoker', 'label'])
 
 	function selectOption(option: FilterOption) {
 		if (isAlreadySelected(option)) return
@@ -619,9 +612,24 @@
 
 		<BottomSheet bind:open={gearSheetOpen}>
 			<div class="gear-sheet">
+				{#if sort}
+					{#each sortOptions as option (option.value)}
+						<button
+							class="gear-sheet-row gear-sheet-button"
+							aria-pressed={sort === option.value}
+							onclick={() => onSortChange?.(option.value)}
+						>
+							<span class="gear-sheet-label">{option.label}</span>
+							{#if sort === option.value}
+								<Icon name="check" size={16} />
+							{/if}
+						</button>
+					{/each}
+					<hr class="gear-sheet-separator" />
+				{/if}
 				{#if isAuthenticated}
 					<div class="gear-sheet-row">
-						<span class="gear-sheet-label">{m.explore_collection_only()}</span>
+						<span class="gear-sheet-label">{m.explore_collection_buildable()}</span>
 						<Switch
 							checked={collectionFilterActive}
 							onCheckedChange={(checked) => {

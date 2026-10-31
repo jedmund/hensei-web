@@ -89,7 +89,7 @@
 	)
 	const isEmpty = $derived(!!home && !hasRanked && staffPicks.length === 0)
 
-	const risingHref = $derived(localizeHref(galleryPath(exploreQuery({ sort: 'participation' }))))
+	const risingHref = $derived(localizeHref(galleryPath(exploreQuery({ sort: 'rising' }))))
 </script>
 
 <PageMeta title={m.page_title_home()} description={m.page_desc_home_events()} />

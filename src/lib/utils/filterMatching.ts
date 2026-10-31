@@ -20,7 +20,6 @@ interface MatchLocalParams {
 	difficultyOptions?: { value: string; label: string }[]
 	/** Active stickers as label filters: slug + meaning */
 	labelOptions?: { value: string; label: string }[]
-	sortOptions?: { value: string; label: string }[]
 	allRaids: RaidFull[]
 	categoryLabels: {
 		element: string
@@ -31,7 +30,6 @@ interface MatchLocalParams {
 		side: string
 		difficulty?: string
 		label?: string
-		sort?: string
 	}
 }
 
@@ -47,7 +45,6 @@ export function matchLocal(params: MatchLocalParams): FilterOption[] {
 		sideOptions,
 		difficultyOptions,
 		labelOptions,
-		sortOptions,
 		allRaids,
 		categoryLabels
 	} = params
@@ -191,25 +188,6 @@ export function matchLocal(params: MatchLocalParams): FilterOption[] {
 		}
 	}
 
-	// Sort (single-select)
-	if (
-		!excludedKinds.includes('sort') &&
-		sortOptions &&
-		categoryLabels.sort &&
-		!filters.some((f) => f.kind === 'sort')
-	) {
-		for (const option of sortOptions) {
-			if (option.label.toLowerCase().includes(q)) {
-				results.push({
-					kind: 'sort',
-					value: option.value,
-					label: option.label,
-					category: categoryLabels.sort
-				})
-			}
-		}
-	}
-
 	return results
 }
 
@@ -222,8 +200,7 @@ export function rankResults(results: FilterOption[], query: string): FilterOptio
 		'side',
 		'class',
 		'difficulty',
-		'label',
-		'sort'
+		'label'
 	])
 
 	return results.toSorted((a, b) => {

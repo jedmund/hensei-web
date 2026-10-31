@@ -67,7 +67,7 @@
 					galleryPath(
 						exploreQuery({
 							raidSlug: selected.raid.slug,
-							sort: order === 'trending' ? 'participation' : undefined
+							sort: order === 'trending' ? 'rising' : undefined
 						})
 					)
 				)
