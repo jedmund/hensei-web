@@ -34,7 +34,7 @@ export function countdown(
 export function exploreQuery(opts: {
 	raidSlug?: string | undefined
 	element?: number | null | undefined
-	sort?: 'participation' | undefined
+	sort?: 'rising' | undefined
 }): string {
 	const params = new URLSearchParams()
 	if (opts.raidSlug) params.set('raid', opts.raidSlug)

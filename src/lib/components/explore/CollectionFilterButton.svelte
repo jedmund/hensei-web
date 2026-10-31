@@ -8,6 +8,8 @@
 		'aria-label'?: string
 		'aria-pressed'?: boolean
 		children: import('svelte').Snippet
+		/** Passed through to Button (e.g. rightIcon, or a menu trigger's props) */
+		[key: string]: unknown
 	}
 
 	const { active = false, element, children, ...restProps }: Props = $props()

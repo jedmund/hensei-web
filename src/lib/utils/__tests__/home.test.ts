@@ -36,7 +36,7 @@ describe('exploreQuery', () => {
 		expect(exploreQuery({ raidSlug: 'nm200', element: ElementId.Earth })).toBe(
 			'?raid=nm200&element=earth'
 		)
-		expect(exploreQuery({ sort: 'participation' })).toBe('?sort=participation')
+		expect(exploreQuery({ sort: 'rising' })).toBe('?sort=rising')
 		expect(exploreQuery({ element: 0 })).toBe('')
 	})
 })

@@ -58,10 +58,6 @@ export function filterItemsToParams(filterItems: FilterItem[]): ExploreFilterPar
 	const label = filterItems.find((f) => f.kind === 'label')
 	if (label) params.label = label.value as string
 
-	// Sort (single)
-	const sort = filterItems.find((f) => f.kind === 'sort')
-	if (sort) params.sort = sort.value as string
-
 	// Entity includes/excludes — API expects comma-separated granblue_id values
 	const entities = filterItems.filter(
 		(f): f is FilterItem & { kind: 'entity' } => f.kind === 'entity'
