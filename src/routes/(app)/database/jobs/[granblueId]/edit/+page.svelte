@@ -1,6 +1,8 @@
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
+	import { UnsavedChangesGuard } from '$lib/features/database/detail/unsavedChanges.svelte'
+	import UnsavedChangesDialog from '$lib/features/database/detail/UnsavedChangesDialog.svelte'
 
 	// Page metadata
 	import PageMeta from '$lib/components/PageMeta.svelte'
@@ -64,6 +66,9 @@
 		accessoryType: 0
 	})
 
+	// Ask before leaving with unsaved edits
+	const unsaved = new UnsavedChangesGuard(() => editData)
+
 	// Populate edit data when job loads
 	$effect(() => {
 		if (job) {
@@ -81,6 +86,7 @@
 				accessory: job.accessory || false,
 				accessoryType: job.accessoryType || 0
 			}
+			unsaved.reset()
 		}
 	})
 
@@ -113,6 +119,7 @@
 
 			saveSuccess = true
 
+			unsaved.release()
 			setTimeout(() => {
 				goto(`/database/jobs/${editData.granblueId}`)
 			}, 500)
@@ -160,6 +167,8 @@
 		/>
 	{/if}
 </div>
+
+<UnsavedChangesDialog guard={unsaved} />
 
 <style lang="scss">
 	@use '$src/themes/layout' as layout;

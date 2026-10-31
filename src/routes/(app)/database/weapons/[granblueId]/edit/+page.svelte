@@ -2,6 +2,8 @@
 	import { ProficiencyId } from '$lib/utils/proficiency'
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
+	import { UnsavedChangesGuard } from '$lib/features/database/detail/unsavedChanges.svelte'
+	import UnsavedChangesDialog from '$lib/features/database/detail/UnsavedChangesDialog.svelte'
 
 	// TanStack Query
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
@@ -118,6 +120,9 @@
 		bulletSlots: [] as number[]
 	})
 
+	// Ask before leaving with unsaved edits
+	const unsaved = new UnsavedChangesGuard(() => editData)
+
 	const isGun = $derived(editData.proficiency === ProficiencyId.Gun)
 
 	// Populate edit data when weapon loads
@@ -179,6 +184,7 @@
 				// Bullet slots
 				bulletSlots: weapon.bulletSlots || []
 			}
+			unsaved.reset()
 		}
 	})
 
@@ -250,6 +256,7 @@
 			})
 
 			// Navigate back to detail page
+			unsaved.release()
 			goto(`/database/weapons/${weapon.granblueId}`)
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
@@ -494,6 +501,8 @@
 		/>
 	{/if}
 </div>
+
+<UnsavedChangesDialog guard={unsaved} />
 
 <style lang="scss">
 	@use '$src/themes/database' as database;
