@@ -14,6 +14,7 @@
 	import EventSection from '$lib/components/home/EventSection.svelte'
 	import EventSwitcher from '$lib/components/home/EventSwitcher.svelte'
 	import NewItemsSection from '$lib/components/home/NewItemsSection.svelte'
+	import NewBattlesSection from '$lib/components/home/NewBattlesSection.svelte'
 	import HomeCard from '$lib/components/home/HomeCard.svelte'
 	import { homeQueries } from '$lib/api/queries/home.queries'
 	import { exploreQuery } from '$lib/utils/home'
@@ -67,11 +68,25 @@
 	)
 	const rising = $derived((home?.rising ?? []).slice(0, 9))
 	const newItems = $derived(home?.newItems ?? [])
+	const newBattles = $derived(home?.newBattles ?? [])
+	// New items and New battles come after the events, newest change first
+	const latestItem = $derived(
+		newItems.reduce((max, n) => (n.item.latestDate > max ? n.item.latestDate : max), '')
+	)
+	const latestBattle = $derived(
+		newBattles.reduce(
+			(max, b) => ((b.raid.releasedAt ?? '') > max ? (b.raid.releasedAt ?? '') : max),
+			''
+		)
+	)
+	const battlesFirst = $derived(latestBattle > latestItem)
 	const staffPicks = $derived(
 		(home?.staffPicks ?? []).toSorted((a, b) => a.position - b.position).slice(0, 6)
 	)
 
-	const hasRanked = $derived(current.length + upcoming.length + rising.length + newItems.length > 0)
+	const hasRanked = $derived(
+		current.length + upcoming.length + rising.length + newItems.length + newBattles.length > 0
+	)
 	const isEmpty = $derived(!!home && !hasRanked && staffPicks.length === 0)
 
 	const risingHref = $derived(localizeHref(galleryPath(exploreQuery({ sort: 'participation' }))))
@@ -118,10 +133,26 @@
 				</div>
 			{/if}
 
-			{#if newItems.length > 0}
-				<div class="section">
-					<NewItemsSection items={newItems} sectionTitle={m.home_new_items()} />
-				</div>
+			{#snippet newItemsCard()}
+				{#if newItems.length > 0}
+					<div class="section">
+						<NewItemsSection items={newItems} sectionTitle={m.home_new_items()} />
+					</div>
+				{/if}
+			{/snippet}
+			{#snippet newBattlesCard()}
+				{#if newBattles.length > 0}
+					<div class="section">
+						<NewBattlesSection battles={newBattles} sectionTitle={m.home_new_battles()} />
+					</div>
+				{/if}
+			{/snippet}
+			{#if battlesFirst}
+				{@render newBattlesCard()}
+				{@render newItemsCard()}
+			{:else}
+				{@render newItemsCard()}
+				{@render newBattlesCard()}
 			{/if}
 
 			{#if rising.length > 0}

@@ -15,6 +15,7 @@
 	import { getElementKey, getElementLabel } from '$lib/utils/element'
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
 	import HomeCard from '$lib/components/home/HomeCard.svelte'
+	import CardCover from '$lib/components/home/CardCover.svelte'
 	import PinnedCardHeader from '$lib/components/home/PinnedCardHeader.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import { formatDateJST } from '$lib/utils/date'
@@ -133,8 +134,7 @@
 		{#if coverUrl}
 			<!-- The cover art names the event, so the title is only for screen readers -->
 			<h3 class="visually-hidden">{title}</h3>
-			<div class="cover">
-				<img src={coverUrl} alt="" loading="lazy" />
+			<CardCover src={coverUrl}>
 				{#if event.advantageElement || timing}
 					<div class="overlay">
 						{#if event.advantageElement}
@@ -155,7 +155,7 @@
 						{/if}
 					</div>
 				{/if}
-			</div>
+			</CardCover>
 		{/if}
 		<!-- Event and raid pickers stay at the top of the screen while the card scrolls past -->
 		<PinnedCardHeader>
@@ -229,29 +229,6 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/typography' as *;
-
-	// The header image from the event's wiki page. The frame stays the same
-	// size across events (most covers are 640×300) so switching doesn't jump;
-	// covers of another shape fill it, cropped around the centre.
-	.cover {
-		position: relative;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		aspect-ratio: 640 / 300;
-		border-radius: $item-corner;
-		overflow: hidden;
-		background: var(--background);
-
-		img {
-			display: block;
-			max-width: 100%;
-			max-height: 100%;
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-		}
-	}
 
 	// Raid picker and its "See all" link, side by side on mobile
 	.raid-row {

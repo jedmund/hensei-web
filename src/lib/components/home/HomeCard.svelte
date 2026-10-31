@@ -33,6 +33,8 @@
 		box-shadow: effects.$page-elevation;
 		padding: $unit-2x $unit-2x calc($unit * 1.5);
 		display: grid;
+		// Content never widens the card past its column (long names, wide pickers)
+		grid-template-columns: minmax(0, 1fr);
 		gap: calc($unit * 1.5);
 
 		@media (max-width: 768px) {

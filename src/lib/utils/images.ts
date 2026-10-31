@@ -863,7 +863,8 @@ const RAID_BACKGROUND_CDN =
  */
 export function getRaidImage(
 	slug: string | undefined,
-	variant: RaidImageVariant = 'thumbnail'
+	/** Stored sizes: the CDN's, plus 'banner' (the battle's news art, 588×256) */
+	variant: RaidImageVariant | 'banner' = 'thumbnail'
 ): string {
 	if (!slug) return getGenericPlaceholder()
 	return `${getBasePath()}/${BUCKET.raids}/${variant}/${slug}.png?v=${BUILD_TIMESTAMP}`

@@ -22,6 +22,8 @@ export interface RaidFull {
 	enemyId?: number
 	summonId?: number
 	questId?: number
+	/** ISO date (YYYY-MM-DD) the raid was released, when known */
+	releasedAt?: string | null
 	group?: RaidGroupFlat
 }
 
@@ -58,6 +60,8 @@ export interface CreateRaidInput {
 	enemy_id?: number
 	summon_id?: number
 	quest_id?: number
+	/** ISO date (YYYY-MM-DD); null clears it */
+	released_at?: string | null
 	extra?: boolean
 }
 
@@ -72,6 +76,8 @@ export interface UpdateRaidInput {
 	enemy_id?: number
 	summon_id?: number
 	quest_id?: number
+	/** ISO date (YYYY-MM-DD); null clears it */
+	released_at?: string | null
 	extra?: boolean
 }
 

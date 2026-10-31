@@ -50,10 +50,20 @@ export interface HomeNewItem {
 	parties: Party[]
 }
 
+/** A battle released in the last 4 weeks, with its teams in two orders */
+export interface HomeNewBattle {
+	raid: RaidFull
+	recent: Party[]
+	/** Participation score first, then most recent */
+	trending: Party[]
+}
+
 export interface HomeResponse {
 	current: HomeCurrentEvent[]
 	upcoming: HomeUpcomingEvent[]
 	rising: Party[]
 	staffPicks: FeaturedParty[]
 	newItems: HomeNewItem[]
+	/** Absent from APIs older than the New battles card */
+	newBattles?: HomeNewBattle[]
 }
