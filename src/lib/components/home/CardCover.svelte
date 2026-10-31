@@ -4,7 +4,7 @@
 	 * banner). The frame stays the same size whatever the art, so switching
 	 * doesn't jump; art of another shape fills it, cropped around the centre.
 	 * Without art, or if it fails to load, `placeholder` fills the frame.
-	 * `dark` puts art with transparent edges on an off-black frame.
+	 * `dark` puts art with transparent edges on a mid-grey frame.
 	 */
 	import type { Snippet } from 'svelte'
 
@@ -57,7 +57,7 @@
 		}
 
 		&.dark {
-			background: colors.$grey-15;
+			background: colors.$grey-50;
 		}
 	}
 </style>
