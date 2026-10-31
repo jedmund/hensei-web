@@ -11,6 +11,7 @@
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import WikiTextDialog from '$lib/components/party/WikiTextDialog.svelte'
 	import WikiImportReview from '$lib/components/party/WikiImportReview.svelte'
+	import FeatureTeamDialog from '$lib/components/party/FeatureTeamDialog.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	/**
@@ -23,9 +24,11 @@
 		itemAddition: ItemAddition
 		partyDragDrop: PartyDragDrop
 		solomonisRaid: SolomonisRaid
+		/** The viewer's account role, for Feature this team */
+		role?: number | null | undefined
 	}
 
-	let { actions, wikiImport, itemAddition, partyDragDrop, solomonisRaid }: Props = $props()
+	let { actions, wikiImport, itemAddition, partyDragDrop, solomonisRaid, role }: Props = $props()
 
 	const ctx = usePartyContext()
 	const party = $derived(ctx.getParty())
@@ -98,6 +101,8 @@
 		{/if}
 	{/snippet}
 </WikiTextDialog>
+
+<FeatureTeamDialog bind:open={actions.featureDialogOpen} partyId={party.id} {role} />
 
 <!-- Importing makes a separate team; the one on screen is left as is -->
 <ConfirmDialog

@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { countdown, exploreQuery, raidsWithParties } from '../home'
+import {
+	countdown,
+	countdownLabel,
+	eventThumbnailUrl,
+	exploreQuery,
+	raidsWithParties
+} from '../home'
 import type { HomeRaidSection } from '$lib/types/api/home'
 import { ElementId } from '$lib/utils/element'
 
@@ -38,5 +44,25 @@ describe('exploreQuery', () => {
 		)
 		expect(exploreQuery({ sort: 'rising' })).toBe('?sort=rising')
 		expect(exploreQuery({ element: 0 })).toBe('')
+	})
+})
+
+describe('eventThumbnailUrl', () => {
+	it("uses the event's image, then its first raid's art", () => {
+		const withImage = { imageUrl: 'https://cdn.example/events/a.webp', raids: [] }
+		expect(eventThumbnailUrl(withImage)).toBe('https://cdn.example/events/a.webp')
+
+		const withRaid = { imageUrl: null, raids: [{ slug: 'lucilius' }] } as never
+		expect(eventThumbnailUrl(withRaid)).toContain('lucilius')
+		expect(eventThumbnailUrl(withRaid, 'beelzebub')).toContain('beelzebub')
+
+		expect(eventThumbnailUrl({ imageUrl: null, raids: [] })).toBeNull()
+	})
+})
+
+describe('countdownLabel', () => {
+	it('is empty once the time has passed', () => {
+		expect(countdownLabel('2026-10-16T00:00:00Z', now)).toBe('')
+		expect(countdownLabel('2026-10-19T03:15:00Z', now)).not.toBe('')
 	})
 })

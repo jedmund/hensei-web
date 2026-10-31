@@ -103,8 +103,9 @@ export function useRunEventSync() {
 // Staff picks
 // ============================================================================
 
-function invalidatePicks(queryClient: QueryClient, eventId: string | null | undefined) {
-	if (eventId) queryClient.invalidateQueries({ queryKey: eventKeys.staffPicks(eventId) })
+// Every pick list (per event and per team) and Home, which shows them
+function invalidatePicks(queryClient: QueryClient) {
+	queryClient.invalidateQueries({ queryKey: eventKeys.staffPicksAll() })
 	queryClient.invalidateQueries({ queryKey: homeKeys.all })
 }
 
@@ -112,8 +113,7 @@ export function createStaffPickOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (payload: FeaturedPartyPayload) =>
 			featuredPartyAdapter.createFeaturedParty(payload),
-		onSuccess: (_data: unknown, payload: FeaturedPartyPayload) =>
-			invalidatePicks(queryClient, payload.eventId)
+		onSuccess: () => invalidatePicks(queryClient)
 	}
 }
 
@@ -132,8 +132,7 @@ export function updateStaffPickOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ id, payload }: UpdateStaffPickVars) =>
 			featuredPartyAdapter.updateFeaturedParty(id, payload),
-		onSuccess: (_data: unknown, { eventId }: UpdateStaffPickVars) =>
-			invalidatePicks(queryClient, eventId)
+		onSuccess: () => invalidatePicks(queryClient)
 	}
 }
 
@@ -146,8 +145,7 @@ export function deleteStaffPickOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ id }: { id: string; eventId: string | null }) =>
 			featuredPartyAdapter.deleteFeaturedParty(id),
-		onSuccess: (_data: unknown, { eventId }: { id: string; eventId: string | null }) =>
-			invalidatePicks(queryClient, eventId)
+		onSuccess: () => invalidatePicks(queryClient)
 	}
 }
 

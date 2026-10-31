@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isEditor } from '$lib/auth/roles'
 	import type { PageData } from './$types'
 	import Party from '$lib/components/party/Party.svelte'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -86,7 +87,8 @@
 		authUserAvatar={data.currentUser
 			? { picture: data.currentUser.picture, element: data.currentUser.element }
 			: undefined}
-		isEditor={(data.account?.role ?? 0) >= 7}
+		isEditor={isEditor(data.account?.role)}
+		role={data.account?.role}
 		{initialTab}
 	/>
 {:else}
