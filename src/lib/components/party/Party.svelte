@@ -21,18 +21,7 @@
 	import { getEditKey, computeEditability } from '$lib/utils/editKeys'
 	import { localizedName } from '$lib/utils/locale'
 
-	import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
-	import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
-	import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
-	import {
-		openSearchSidebar,
-		openGuidebookSearchSidebar
-	} from '$lib/features/search/openSearchSidebar.svelte'
-	import {
-		useUpdatePartyGuidebook,
-		useRemovePartyGuidebook
-	} from '$lib/api/mutations/guidebook.mutations'
-	import type { Guidebook } from '$lib/types/api/entities'
+	import { openSearchSidebar } from '$lib/features/search/openSearchSidebar.svelte'
 	import PartySegmentedControl from '$lib/components/party/PartySegmentedControl.svelte'
 	import { GridType } from '$lib/types/enums'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -41,14 +30,11 @@
 	import StickerPicker from '$lib/components/stickers/StickerPicker.svelte'
 	import { setStickerStage } from '$lib/components/stickers/stickerStage.svelte'
 	import { canShowStickerPicker } from '$lib/utils/stickers'
-	import JobSection from '$lib/components/job/JobSection.svelte'
-	import { Gender } from '$lib/utils/jobUtils'
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
-	import DismissibleNotice from '$lib/components/ui/DismissibleNotice.svelte'
-	import { openCalculatorPane } from '$lib/features/party/openCalculatorPane'
 	import PartyDialogs from '$lib/components/party/PartyDialogs.svelte'
 	import PartyHeaderMenu from '$lib/components/party/PartyHeaderMenu.svelte'
 	import PartyNotices from '$lib/components/party/PartyNotices.svelte'
+	import PartyGrids from '$lib/components/party/PartyGrids.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -225,48 +211,7 @@
 		ensurePartyExists: ensurePartyExistsFn
 	})
 
-	// --- Guidebook mutations ---
-	const updateGuidebook = useUpdatePartyGuidebook()
-	const removeGuidebook = useRemovePartyGuidebook()
-
-	function handleClickGuidebookSlot(position: number) {
-		if (!canEdit()) return
-		openGuidebookSearchSidebar({
-			position,
-			onSelect: (result) => {
-				const guidebook: Guidebook = {
-					id: result.id,
-					granblueId: Number(result.granblueId),
-					name: result.name as { en: string; ja: string },
-					slug: ''
-				}
-				updateGuidebook.mutate({
-					partyId: party.id,
-					shortcode: party.shortcode,
-					guidebookId: result.id,
-					guidebook,
-					position: position as 1 | 2 | 3
-				})
-			}
-		})
-	}
-
-	function handleRemoveGuidebook(position: number) {
-		if (!canEdit()) return
-		removeGuidebook.mutate({
-			partyId: party.id,
-			shortcode: party.shortcode,
-			position: position as 1 | 2 | 3
-		})
-	}
-
 	// --- Derived values ---
-	const mainWeapon = $derived((party?.weapons ?? []).find((w) => w?.mainhand || w?.position === -1))
-	const mainWeaponElement = $derived(mainWeapon?.element ?? mainWeapon?.weapon?.element)
-	const partyElement = $derived(party?.element)
-	// Convert user gender (1=Male, 2=Female) to image gender suffix (0=Gran, 1=Djeeta)
-	const characterGender = $derived(party.user?.gender === 2 ? 1 : 0)
-
 	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	const userElement = $derived(party.user?.avatar?.element as ElementType | undefined)
 
@@ -301,42 +246,6 @@
 		activeCollectionUser = target
 		partyStore.setActiveCollectionUser(target)
 	}
-
-	// Derive collection item maps from embedded data (granblueId → items with levels)
-	type CollectionEntry = { uncapLevel: number; transcendenceStep: number }
-	const collectionWeaponItems = $derived(
-		activeCollection
-			? activeCollection.weapons.reduce((map, w) => {
-					const gid = String(w.weapon.granblueId)
-					const arr = map.get(gid) ?? []
-					arr.push({ uncapLevel: w.uncapLevel ?? 0, transcendenceStep: w.transcendenceStep ?? 0 })
-					map.set(gid, arr)
-					return map
-				}, new Map<string, CollectionEntry[]>())
-			: undefined
-	)
-	const collectionCharacterItems = $derived(
-		activeCollection
-			? activeCollection.characters.reduce((map, c) => {
-					const gid = String(c.character.granblueId)
-					const arr = map.get(gid) ?? []
-					arr.push({ uncapLevel: c.uncapLevel ?? 0, transcendenceStep: c.transcendenceStep ?? 0 })
-					map.set(gid, arr)
-					return map
-				}, new Map<string, CollectionEntry[]>())
-			: undefined
-	)
-	const collectionSummonItems = $derived(
-		activeCollection
-			? activeCollection.summons.reduce((map, s) => {
-					const gid = String(s.summon.granblueId)
-					const arr = map.get(gid) ?? []
-					arr.push({ uncapLevel: s.uncapLevel ?? 0, transcendenceStep: s.transcendenceStep ?? 0 })
-					map.set(gid, arr)
-					return map
-				}, new Map<string, CollectionEntry[]>())
-			: undefined
-	)
 
 	// --- Tab management ---
 	function handleTabChange(tab: GridType) {
@@ -514,88 +423,13 @@
 				</div>
 			{/if}
 
-			<div class="party-content">
-				<svelte:boundary
-					onerror={(e) => {
-						if (import.meta.env.DEV) console.error('Grid render error:', e)
-					}}
-				>
-					{#if activeTab === GridType.Weapon}
-						<div class="tab-content">
-							{#if party.shortcode}
-								<DismissibleNotice
-									id="weapon-calculator"
-									variant="yellow"
-									badge={m.notice_new()}
-									class="calculator-notice"
-								>
-									{m.weapon_calculator_notice()}
-									{#snippet action()}
-										<Button variant="ghost" size="small" onclick={() => openCalculatorPane(party)}>
-											{m.calculator_open_short()}
-										</Button>
-									{/snippet}
-								</DismissibleNotice>
-							{/if}
-							<WeaponGrid
-								weapons={party.weapons}
-								raidExtra={party.raid?.extra}
-								showGuidebooks={party.raid?.group?.guidebooks && !solomonisRaid.isSolomonis}
-								guidebooks={party.guidebooks}
-								canEdit={canEdit()}
-								onClickGuidebookSlot={handleClickGuidebookSlot}
-								onRemoveGuidebook={handleRemoveGuidebook}
-								{collectionWeaponItems}
-							/>
-						</div>
-					{:else if activeTab === GridType.Summon}
-						<SummonGrid summons={party.summons} {collectionSummonItems} />
-					{:else}
-						<div class="tab-content">
-							{#if canEdit() && !party.fullAuto}
-								<DismissibleNotice id="full-auto-skills" variant="yellow" badge={m.notice_new()}>
-									{m.full_auto_skills_notice()}
-									{#snippet action()}
-										<Button variant="ghost" size="small" onclick={actions.openSettingsPanel}>
-											{m.full_auto_skills_notice_action()}
-										</Button>
-									{/snippet}
-								</DismissibleNotice>
-							{/if}
-							<JobSection
-								job={party.job}
-								jobSkills={party.jobSkills}
-								fullAutoSkills={party.fullAutoSkills}
-								fullAuto={party.fullAuto}
-								accessory={party.accessory}
-								canEdit={canEdit()}
-								gender={party.user?.gender ?? Gender.Gran}
-								element={mainWeaponElement}
-								onSelectJob={jobHandlers.handleSelectJob}
-								onSelectSkill={jobHandlers.handleSelectJobSkill}
-								onRemoveSkill={jobHandlers.handleRemoveJobSkill}
-								onToggleSkillFa={jobHandlers.handleToggleJobSkillFa}
-								onSelectAccessory={jobHandlers.handleSelectAccessory}
-							/>
-							<CharacterGrid
-								characters={party.characters}
-								{mainWeaponElement}
-								{partyElement}
-								gender={characterGender}
-								unlimited={party?.raid?.group?.unlimited}
-								{collectionCharacterItems}
-							/>
-						</div>
-					{/if}
-					<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
-					{#snippet failed(error, reset)}
-						<div class="grid-error" role="alert">
-							<p>{m.party_grid_error()}</p>
-							<button onclick={reset}>{m.retry()}</button>
-						</div>
-					{/snippet}
-				</svelte:boundary>
-			</div>
+			<PartyGrids
+				{activeTab}
+				{activeCollection}
+				isSolomonis={solomonisRaid.isSolomonis}
+				{jobHandlers}
+				onOpenSettings={actions.openSettingsPanel}
+			/>
 		</section>
 	</div>
 </div>
@@ -637,19 +471,5 @@
 		color: $error;
 		margin-bottom: $unit;
 		font-size: $font-small;
-	}
-
-	.party-content {
-		min-height: 400px;
-	}
-
-	.tab-content {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-2x;
-
-		:global(.calculator-notice) {
-			margin-bottom: $unit;
-		}
 	}
 </style>
