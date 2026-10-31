@@ -16,6 +16,7 @@
 	import { escapeHtml } from '$lib/utils/safeHtml'
 	import { formatDateJST } from '$lib/utils/date'
 	import { getRaidImage } from '$lib/utils/images'
+	import { getElementKey } from '$lib/utils/element'
 	import { exploreQuery } from '$lib/utils/home'
 	import { galleryPath, newTeamPath } from '$lib/utils/browseRoutes'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -81,8 +82,8 @@
 {#if selected}
 	<section class="new-battles">
 		<HomeCard title={sectionTitle}>
-			<!-- The banners fade out at the edges; fade into the neutral background -->
-			<CardCover src={bannerUrl} framed>
+			<!-- The banners fade out at the edges, into the battle's muted element tone -->
+			<CardCover src={bannerUrl} frame={getElementKey(selected.raid.element)}>
 				{#snippet placeholder()}
 					<!-- The battle's thumbnail, or its name when there's none either -->
 					{#if thumbFailed.has(selected.raid.slug)}
