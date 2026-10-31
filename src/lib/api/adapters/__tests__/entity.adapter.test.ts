@@ -1,8 +1,9 @@
 /**
  * Tests for EntityAdapter
  *
- * These tests verify read-only access to canonical game data
- * for weapons, characters, and summons.
+ * EntityAdapter is a facade over the per-entity adapters. These tests
+ * cover the facade itself: forwarding, caching and error handling.
+ * Per-entity behaviour is tested in each adapter's own test file.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
@@ -119,120 +120,6 @@ describe('EntityAdapter', () => {
 	afterEach(() => {
 		global.fetch = originalFetch
 		vi.clearAllTimers()
-	})
-
-	describe('weapon operations', () => {
-		it('should get a weapon by ID', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => mockWeapon
-			})
-
-			const result = await adapter.getWeapon('weapon-1')
-
-			expect(result).toEqual(mockWeapon)
-			expect(global.fetch).toHaveBeenCalledWith(
-				'https://api.example.com/weapons/weapon-1',
-				expect.objectContaining({
-					credentials: 'include'
-				})
-			)
-		})
-
-		it('should batch fetch multiple weapons', async () => {
-			const mockWeapon2 = { ...mockWeapon, id: 'weapon-2' }
-			global.fetch = vi
-				.fn()
-				.mockResolvedValueOnce({
-					ok: true,
-					json: async () => mockWeapon
-				})
-				.mockResolvedValueOnce({
-					ok: true,
-					json: async () => mockWeapon2
-				})
-
-			const result = await adapter.getWeapons(['weapon-1', 'weapon-2'])
-
-			expect(result).toEqual([mockWeapon, mockWeapon2])
-			expect(global.fetch).toHaveBeenCalledTimes(2)
-		})
-	})
-
-	describe('character operations', () => {
-		it('should get a character by ID', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => mockCharacter
-			})
-
-			const result = await adapter.getCharacter('char-1')
-
-			expect(result).toEqual(mockCharacter)
-			expect(global.fetch).toHaveBeenCalledWith(
-				'https://api.example.com/characters/char-1',
-				expect.objectContaining({
-					credentials: 'include'
-				})
-			)
-		})
-
-		it('should batch fetch multiple characters', async () => {
-			const mockCharacter2 = { ...mockCharacter, id: 'char-2' }
-			global.fetch = vi
-				.fn()
-				.mockResolvedValueOnce({
-					ok: true,
-					json: async () => mockCharacter
-				})
-				.mockResolvedValueOnce({
-					ok: true,
-					json: async () => mockCharacter2
-				})
-
-			const result = await adapter.getCharacters(['char-1', 'char-2'])
-
-			expect(result).toEqual([mockCharacter, mockCharacter2])
-			expect(global.fetch).toHaveBeenCalledTimes(2)
-		})
-	})
-
-	describe('summon operations', () => {
-		it('should get a summon by ID', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => mockSummon
-			})
-
-			const result = await adapter.getSummon('summon-1')
-
-			expect(result).toEqual(mockSummon)
-			expect(global.fetch).toHaveBeenCalledWith(
-				'https://api.example.com/summons/summon-1',
-				expect.objectContaining({
-					credentials: 'include'
-				})
-			)
-		})
-
-		it('should batch fetch multiple summons', async () => {
-			const mockSummon2 = { ...mockSummon, id: 'summon-2' }
-			global.fetch = vi
-				.fn()
-				.mockResolvedValueOnce({
-					ok: true,
-					json: async () => mockSummon
-				})
-				.mockResolvedValueOnce({
-					ok: true,
-					json: async () => mockSummon2
-				})
-
-			const result = await adapter.getSummons(['summon-1', 'summon-2'])
-
-			expect(result).toEqual([mockSummon, mockSummon2])
-			expect(global.fetch).toHaveBeenCalledTimes(2)
-		})
 	})
 
 	describe('caching', () => {
@@ -375,6 +262,30 @@ describe('EntityAdapter', () => {
 			})
 
 			await expect(adapter.getSummon('summon-1')).rejects.toThrow()
+		})
+	})
+
+	describe('forwarding', () => {
+		it.each([
+			['getWeapon', () => adapter.getWeapon('weapon-1'), '/weapons/weapon-1'],
+			['getCharacter', () => adapter.getCharacter('char-1'), '/characters/char-1'],
+			['getSummon', () => adapter.getSummon('summon-1'), '/summons/summon-1'],
+			['getWeaponSkillFamilies', () => adapter.getWeaponSkillFamilies(), '/weapon_skill_families'],
+			['getWeaponSeriesList', () => adapter.getWeaponSeriesList(), '/weapon_series'],
+			['getBulletById', () => adapter.getBulletById('bullet-1'), '/bullets/bullet-1'],
+			['getAwakenings', () => adapter.getAwakenings(), '/awakenings']
+		])('%s requests the owning endpoint', async (_name, call, path) => {
+			global.fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({})
+			})
+
+			await call()
+
+			expect(global.fetch).toHaveBeenCalledWith(
+				`https://api.example.com${path}`,
+				expect.objectContaining({ credentials: 'include' })
+			)
 		})
 	})
 
