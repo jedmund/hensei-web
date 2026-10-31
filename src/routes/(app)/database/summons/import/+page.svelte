@@ -19,6 +19,7 @@
 	import SummonUncapSection from '$lib/features/database/summons/sections/SummonUncapSection.svelte'
 	import SummonTaxonomySection from '$lib/features/database/summons/sections/SummonTaxonomySection.svelte'
 	import SummonStatsSection from '$lib/features/database/summons/sections/SummonStatsSection.svelte'
+	import SummonGachaSection from '$lib/features/database/summons/sections/SummonGachaSection.svelte'
 	import SummonMetadataSection from '$lib/features/database/summons/sections/SummonMetadataSection.svelte'
 	import TabbedEntitySelector from '$lib/features/database/import/TabbedEntitySelector.svelte'
 	import type { EntityTab } from '$lib/features/database/import/TabbedEntitySelector.svelte'
@@ -446,6 +447,12 @@
 					/>
 
 					<SummonStatsSection
+						summon={emptySummon}
+						editMode={true}
+						editData={formDataByPage[selectedWikiPage!]}
+					/>
+
+					<SummonGachaSection
 						summon={emptySummon}
 						editMode={true}
 						editData={formDataByPage[selectedWikiPage!]}
