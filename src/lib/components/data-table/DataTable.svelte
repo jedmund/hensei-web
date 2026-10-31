@@ -60,6 +60,13 @@
 		rowHref: (row: T) => string
 		/** Panel title before the record loads */
 		rowTitle?: (row: T) => string | null | undefined
+		/**
+		 * Called on a click of the row link, before navigation. Call
+		 * `event.preventDefault()` to handle it yourself (e.g. open the record
+		 * panel for plain clicks); leave ⌘/ctrl/shift/middle clicks alone so they
+		 * open the link. Middle-click never reaches this (it fires auxclick).
+		 */
+		onRowActivate?: (row: T, event: MouseEvent) => void
 		/** Defaults to the one provided with setResultSet() */
 		resultSet?: ResultSet | undefined
 		/** localStorage key for column visibility and row height, e.g. 'weapons' */
@@ -88,6 +95,7 @@
 		rowId,
 		rowHref,
 		rowTitle,
+		onRowActivate,
 		resultSet: resultSetProp,
 		storageKey,
 		rowHeight: initialRowHeight = 'default',
@@ -417,7 +425,13 @@
 										style={cellStyle(column)}
 									>
 										{#if column.id === primaryId}
-											<a class="row-link" href={localizeHref(rowHref(original))}>
+											<a
+												class="row-link"
+												href={localizeHref(rowHref(original))}
+												onclick={onRowActivate
+													? (event) => onRowActivate(original, event)
+													: undefined}
+											>
 												<DataTableCell {column} row={original} />
 											</a>
 										{:else}

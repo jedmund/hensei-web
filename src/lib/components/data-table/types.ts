@@ -92,6 +92,13 @@ export type DataTableColumn<T> =
 
 export type Facets = Record<string, Record<string, number>>
 
+export interface LoadedPage<T> {
+	rows: T[]
+	/** The page the server returned (it clamps out-of-range requests) */
+	page: number
+	totalPages: number
+}
+
 /**
  * What DataTable renders. Static and server sources both deliver rows that
  * are already filtered, sorted and paged, in display order.
@@ -118,7 +125,7 @@ export interface DataTableSource<T> {
 	 * Fetch a page with the current search, filters and sort, move the URL to
 	 * it, and resolve with its rows. Null when there's only ever one page.
 	 */
-	readonly loadPage: ((page: number) => Promise<T[]>) | null
+	readonly loadPage: ((page: number) => Promise<LoadedPage<T>>) | null
 	refetch(): void
 }
 

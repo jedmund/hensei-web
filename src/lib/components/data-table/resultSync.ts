@@ -13,6 +13,24 @@ export interface RowAccessors<T> {
 	rowTitle?: ((row: T) => string | null | undefined) | undefined
 }
 
+/** Row id for catalogue items: the granblueId (weapons, summons, jobs, characters) */
+export function catalogueRowId(row: { granblueId: string }): string {
+	return row.granblueId
+}
+
+/**
+ * Characters: style-swap variants share their base character's granblueId,
+ * so they get their own id and URL (convention shared with the record panel).
+ */
+export function characterRowId(row: { granblueId: string; styleSwap?: boolean | null }): string {
+	return row.styleSwap ? `${row.granblueId}-style` : row.granblueId
+}
+
+export function characterRowHref(row: { granblueId: string; styleSwap?: boolean | null }): string {
+	const base = `/database/characters/${row.granblueId}`
+	return row.styleSwap ? `${base}/style` : base
+}
+
 export function toResultItems<T>(rows: T[], accessors: RowAccessors<T>): ResultItem[] {
 	return rows.map((row) => ({
 		id: accessors.rowId(row),
@@ -33,10 +51,11 @@ export function syncResultSet<T>(
 	const loadPage = source.loadPage
 	resultSet.loadPage = loadPage
 		? async (page: number) => {
-				const rows = await loadPage(page)
-				// Update before resolving: ResultSet.next/prev read items right after
-				resultSet.items = toResultItems(rows, accessors)
-				resultSet.page = page
+				const loaded = await loadPage(page)
+				// Update synchronously before resolving: ResultSet.next/prev read items right after
+				resultSet.items = toResultItems(loaded.rows, accessors)
+				resultSet.page = loaded.page
+				resultSet.totalPages = loaded.totalPages
 			}
 		: null
 }

@@ -8,7 +8,7 @@ import { adminQueries } from '$lib/api/queries/admin.queries'
 import type { AdminListParams, AdminListResponse, AdminResource } from '$lib/types/api/admin'
 import { buildListParams, fetchListPage } from './serverParams'
 import type { TableUrl } from './tableUrl.svelte'
-import type { DataTableColumn, DataTableSource, Facets } from './types'
+import type { DataTableColumn, DataTableSource, Facets, LoadedPage } from './types'
 
 export interface ServerSourceOptions<T> {
 	url: TableUrl
@@ -65,10 +65,14 @@ export class ServerSource<T> implements DataTableSource<T> {
 		return this.#query.error
 	}
 
-	readonly loadPage = async (page: number): Promise<T[]> => {
+	readonly loadPage = async (page: number): Promise<LoadedPage<T>> => {
 		const response = await fetchListPage<T>(this.#queryClient, this.resource, this.params, page)
-		await this.url.setPage(page)
-		return response.results
+		await this.url.setPage(response.meta.page)
+		return {
+			rows: response.results,
+			page: response.meta.page,
+			totalPages: response.meta.totalPages
+		}
 	}
 
 	refetch(): void {
