@@ -41,19 +41,15 @@
 	import StickerPicker from '$lib/components/stickers/StickerPicker.svelte'
 	import { setStickerStage } from '$lib/components/stickers/stickerStage.svelte'
 	import { canShowStickerPicker } from '$lib/utils/stickers'
-	import { DropdownMenu } from 'bits-ui'
 	import JobSection from '$lib/components/job/JobSection.svelte'
 	import { Gender } from '$lib/utils/jobUtils'
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
-	import PickPlaylistPane from '$lib/components/sidebar/PickPlaylistPane.svelte'
-	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import Notice from '$lib/components/ui/Notice.svelte'
 	import DismissibleNotice from '$lib/components/ui/DismissibleNotice.svelte'
 	import { openCalculatorPane } from '$lib/features/party/openCalculatorPane'
 	import PartyDialogs from '$lib/components/party/PartyDialogs.svelte'
+	import PartyHeaderMenu from '$lib/components/party/PartyHeaderMenu.svelte'
 	import * as m from '$lib/paraglide/messages'
-	import { goto } from '$app/navigation'
-	import { localizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {
 		party?: Party
@@ -499,97 +495,14 @@
 					{/if}
 				{/snippet}
 				{#snippet menu()}
-					<DropdownMenu.Root>
-						<DropdownMenu.Trigger>
-							{#snippet child({ props })}
-								<Tooltip content={m.party_see_more()}>
-									<Button
-										{...props}
-										variant="ghost"
-										size="small"
-										iconOnly
-										icon="ellipsis"
-										aria-label={m.party_see_more()}
-									/>
-								</Tooltip>
-							{/snippet}
-						</DropdownMenu.Trigger>
-
-						<DropdownMenu.Portal>
-							<DropdownMenu.Content class="dropdown-menu" sideOffset={6} align="end">
-								{#if isNew}
-									<DropdownMenu.Item class="dropdown-menu-item" onSelect={wikiImport.start}>
-										{m.party_import_wiki()}
-									</DropdownMenu.Item>
-								{:else}
-									{#if canEdit() && hasCollectionLinks}
-										<DropdownMenu.Item
-											class="dropdown-menu-item"
-											onSelect={actions.syncFromCollection}
-											disabled={actions.loading || actions.isSyncingAll}
-										>
-											{actions.isSyncingAll ? m.party_syncing() : m.party_sync_collection()}
-										</DropdownMenu.Item>
-										<DropdownMenu.Separator class="dropdown-menu-separator" />
-									{/if}
-
-									{#if party.sourceParty?.shortcode}
-										<DropdownMenu.Item
-											class="dropdown-menu-item"
-											onSelect={() => goto(localizeHref(`/teams/${party.sourceParty?.shortcode}`))}
-										>
-											{m.party_view_original()}
-										</DropdownMenu.Item>
-									{/if}
-
-									{#if authUserId}
-										<DropdownMenu.Item
-											class="dropdown-menu-item"
-											onSelect={actions.toggleFavorite}
-											disabled={actions.loading}
-										>
-											{party.favorited ? m.party_remove_favorite() : m.party_add_favorite()}
-										</DropdownMenu.Item>
-									{/if}
-
-									{#if party.user?.id === authUserId && authUsername}
-										<DropdownMenu.Item
-											class="dropdown-menu-item"
-											onSelect={() => {
-												sidebar.openWithComponent(
-													m.playlist_add_to(),
-													PickPlaylistPane,
-													{ partyId: party.id, username: authUsername },
-													{ scrollable: false }
-												)
-											}}
-											disabled={actions.loading}
-										>
-											{m.playlist_add_to()}
-										</DropdownMenu.Item>
-									{/if}
-
-									{#if authUserId || party.sourceParty?.shortcode}
-										<DropdownMenu.Separator class="dropdown-menu-separator" />
-									{/if}
-									<DropdownMenu.Item class="dropdown-menu-item" onSelect={actions.openWikiExport}>
-										{m.party_export_wiki()}
-									</DropdownMenu.Item>
-
-									{#if party.user?.id === authUserId}
-										<DropdownMenu.Separator class="dropdown-menu-separator" />
-										<DropdownMenu.Item
-											class="dropdown-menu-item danger"
-											onSelect={() => (actions.deleteDialogOpen = true)}
-											disabled={actions.loading}
-										>
-											{m.party_delete()}
-										</DropdownMenu.Item>
-									{/if}
-								{/if}
-							</DropdownMenu.Content>
-						</DropdownMenu.Portal>
-					</DropdownMenu.Root>
+					<PartyHeaderMenu
+						{actions}
+						{wikiImport}
+						{isNew}
+						{authUserId}
+						{authUsername}
+						{hasCollectionLinks}
+					/>
 				{/snippet}
 			</PartyInfoGrid>
 
