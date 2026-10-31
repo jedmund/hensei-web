@@ -1,930 +1,437 @@
 /**
  * Entity Adapter
  *
- * Handles read-only access to canonical game data (weapons, characters, summons).
- * This data represents the official game information that users reference
- * but cannot modify.
+ * Facade over the per-entity adapters for canonical game data and its
+ * editor endpoints. Each method forwards to the adapter that owns it:
+ * weapon, character, summon, weaponSkill, series, bullet and awakening.
+ * New code can import those adapters directly.
  *
  * @module adapters/entity
  */
 
 import { BaseAdapter } from './base.adapter'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
-import type { RequestOptions } from './types'
-import type {
-	WeaponSeriesRef,
-	WeaponSeries,
-	CreateWeaponSeriesPayload,
-	UpdateWeaponSeriesPayload
-} from '$lib/types/api/weaponSeries'
-import type { WeaponStatModifier } from '$lib/types/api/weaponStatModifier'
-import type {
-	CharacterSeriesRef,
-	CharacterSeries,
-	CreateCharacterSeriesPayload,
-	UpdateCharacterSeriesPayload
-} from '$lib/types/api/characterSeries'
-import type {
-	SummonSeriesRef,
-	SummonSeries,
-	CreateSummonSeriesPayload,
-	UpdateSummonSeriesPayload
-} from '$lib/types/api/summonSeries'
-import type {
-	Awakening,
-	Bullet,
-	CharacterSkill,
-	CharacterSkillLink,
-	SummonAura,
-	WeaponSkill
-} from '$lib/types/api/entities'
-import type {
-	DeleteImpact,
-	PanelValidation,
-	WeaponSkillFamily,
-	WeaponSkillFamilySummary
-} from '$lib/types/api/weaponSkillFamily'
-import type {
-	WeaponSeriesVariant,
-	CreateWeaponSeriesVariantPayload,
-	UpdateWeaponSeriesVariantPayload
-} from '$lib/types/api/weaponSeriesVariant'
+import type { AdapterOptions } from './types'
+import { WeaponAdapter } from './weapon.adapter'
+import { CharacterAdapter } from './character.adapter'
+import { SummonAdapter } from './summon.adapter'
+import { WeaponSkillAdapter } from './weaponSkill.adapter'
+import { SeriesAdapter } from './series.adapter'
+import { BulletAdapter } from './bullet.adapter'
+import { AwakeningAdapter } from './awakening.adapter'
 
-/**
- * Canonical weapon data from the game
- */
-export interface Weapon {
-	id: string
-	granblueId: string
-	name: {
-		en?: string
-		ja?: string
-	}
-	rarity: number
-	element: number
-	proficiency: number
-	/** Weapon series - object with slug/name/flags */
-	series?: WeaponSeriesRef | null
-	weaponType?: number
-	/** Gacha promotions (1=Premium, 2=Classic, 3=ClassicII, 4=Flash, 5=Legend, etc.) */
-	promotions?: number[]
-	/** Human-readable promotion names */
-	promotionNames?: string[]
-	/** Structured per-tier auras parsed from the wiki (the calculator's source) */
-	summonAuras?: SummonAura[]
-	minHp?: number
-	maxHp?: number
-	minAttack?: number
-	maxAttack?: number
-	flbHp?: number
-	flbAttack?: number
-	ulbHp?: number
-	ulbAttack?: number
-	transcendenceHp?: number
-	transcendenceAttack?: number
-	hp?: {
-		minHp?: number
-		maxHp?: number
-		maxHpFlb?: number
-		maxHpUlb?: number
-	}
-	atk?: {
-		minAtk?: number
-		maxAtk?: number
-		maxAtkFlb?: number
-		maxAtkUlb?: number
-	}
-	uncap?: {
-		flb?: boolean
-		ulb?: boolean
-		transcendence?: boolean
-		extraPrerequisite?: number | null
-	}
-	maxLevel?: number
-	maxSkillLevel?: number
-	maxAwakeningLevel?: number
-	maxExorcismLevel?: number | null
-	limit?: number
-	extra?: boolean
-	ax?: boolean
-	axType?: number
-	bulletSlots?: number[]
-	skillLevelCap?: number
-	weaponSkills?: WeaponSkill[]
-	awakenings?: Array<{
-		id: string
-		name: Record<string, string>
-		level: number
-	}>
-	nicknames?: {
-		en?: string[]
-		ja?: string[]
-	}
-	recruits?: {
-		id: string
-		granblueId: string
-		name: {
-			en?: string
-			ja?: string
-		}
-		element?: number | null
-		season?: number | null
-		series?: (number | CharacterSeriesRef)[] | null
-		styleSwap?: boolean
-	}
-	// Forge chain fields (from :grid and :full views)
-	forgeOrder?: number | null
-	forgedFrom?: { id: string; granblueId: string; name: { en?: string; ja?: string } } | null
-	// Element variant IDs: maps element number (as string key) to variant game ID
-	elementVariantIds?: Record<string, string> | null
-	// Date fields
-	releaseDate?: string
-	flbDate?: string
-	ulbDate?: string
-	transcendenceDate?: string
-	wiki?: { en?: string; ja?: string }
-	gamewith?: string
-	kamigame?: string
-}
-
-/**
- * Canonical character data from the game
- */
-export interface Character {
-	id: string
-	granblueId: string
-	characterId?: number[]
-	name: {
-		en?: string
-		ja?: string
-	}
-	rarity: number
-	element: number
-	gender?: number
-	proficiency?: number[]
-	proficiency1?: number
-	proficiency2?: number
-	race?: number[]
-	/** Season integer (1=Standard, 2=Valentine, 3=Formal, 4=Summer, 5=Halloween, 6=Holiday) */
-	season?: number | null
-	/** Human-readable season name */
-	seasonName?: string | null
-	/** Series - array of objects with slug/name or legacy integers */
-	series?: CharacterSeriesRef[] | number[]
-	/** Human-readable series names */
-	seriesNames?: string[]
-	hp?: {
-		minHp?: number
-		maxHp?: number
-		maxHpFlb?: number
-		maxHpUlb?: number
-		maxHpTranscendence?: number
-	}
-	atk?: {
-		minAtk?: number
-		maxAtk?: number
-		maxAtkFlb?: number
-		maxAtkUlb?: number
-		maxAtkTranscendence?: number
-	}
-	// Other stats
-	baseDa?: number
-	baseTa?: number
-	ougiRatio?: {
-		ougiRatio?: number
-		ougiRatioFlb?: number
-	}
-	uncap?: {
-		flb?: boolean
-		ulb?: boolean
-		transcendence?: boolean
-		maxTranscendenceStage?: number
-	}
-	special?: boolean
-	awakenings?: Array<{
-		id: string
-		name: Record<string, string>
-		level: number
-	}>
-	nicknames?: {
-		en?: string[]
-		ja?: string[]
-	}
-	/** Weapon that recruits this character (reverse of Weapon.recruits) */
-	recruitedBy?: {
-		id: string
-		granblueId: string
-		name: {
-			en?: string
-			ja?: string
-		}
-		promotions: number[]
-		promotionNames: string[]
-	}
-	// Gender variant fields
-	genderVariants?: boolean
-	// Style swap fields (from :full view)
-	styleSwap?: boolean
-	styleName?: { en?: string; ja?: string } | null
-	baseCharacter?: { id: string; granblueId: string; name: { en?: string; ja?: string } } | null
-	styleSwaps?: Array<{
-		id: string
-		granblueId: string
-		name: { en?: string; ja?: string }
-		styleName: { en?: string; ja?: string } | null
-	}>
-	// Date fields
-	releaseDate?: string
-	flbDate?: string
-	ulbDate?: string
-	transcendenceDate?: string
-	wiki?: { en?: string; ja?: string }
-	gamewith?: string
-	kamigame?: string
-	// Parsed skill graph (from :full view)
-	skills?: CharacterSkill[]
-	skillLinks?: CharacterSkillLink[]
-}
-
-/**
- * Weapon key data for customizing weapons
- */
-export interface WeaponKey {
-	id: string
-	granblue_id: number
-	name: {
-		en: string
-		ja: string
-	}
-	slug: string
-	series: number[]
-	slot: number
-	group: number
-	order: number
-}
-
-/**
- * Query parameters for fetching weapon keys
- */
-export interface WeaponKeyQueryParams {
-	/** Filter by weapon series slug (e.g., 'dark-opus', 'ultima') */
-	seriesSlug?: string
-	slot?: number
-	group?: number
-}
-
-/**
- * Canonical summon data from the game
- */
-export interface Summon {
-	id: string
-	granblueId: string
-	name: {
-		en?: string
-		ja?: string
-	}
-	rarity: number
-	element: number
-	/** Series - object with slug/name or null */
-	series?: SummonSeriesRef | null
-	/** Gacha promotions (1=Premium, 2=Classic, 3=ClassicII, 4=Flash, 5=Legend, etc.) */
-	promotions?: number[]
-	/** Human-readable promotion names */
-	promotionNames?: string[]
-	/** Structured per-tier auras parsed from the wiki (the calculator's source) */
-	summonAuras?: SummonAura[]
-	minHp?: number
-	maxHp?: number
-	minAttack?: number
-	maxAttack?: number
-	flbHp?: number
-	flbAttack?: number
-	ulbHp?: number
-	ulbAttack?: number
-	transcendenceHp?: number
-	transcendenceAttack?: number
-	hp?: {
-		minHp?: number
-		maxHp?: number
-		maxHpFlb?: number
-		maxHpUlb?: number
-		maxHpXlb?: number
-	}
-	atk?: {
-		minAtk?: number
-		maxAtk?: number
-		maxAtkFlb?: number
-		maxAtkUlb?: number
-		maxAtkXlb?: number
-	}
-	uncap?: {
-		flb?: boolean
-		ulb?: boolean
-		transcendence?: boolean
-	}
-	subaura?: boolean
-	limit?: boolean
-	cooldown?: number
-	callName?: string
-	callDescription?: string
-	auraName?: string
-	auraDescription?: string
-	subAuraName?: string
-	subAuraDescription?: string
-	nicknames?: {
-		en?: string[]
-		ja?: string[]
-	}
-	// Date fields
-	releaseDate?: string
-	flbDate?: string
-	ulbDate?: string
-	transcendenceDate?: string
-	wiki?: { en?: string; ja?: string }
-	gamewith?: string
-	kamigame?: string
-}
-
-/**
- * Response from character granblue_id validation
- */
-export interface CharacterValidationResult {
-	valid: boolean
-	granblueId: string
-	existsInDb: boolean
-	error?: string
-	imageUrls?: {
-		main?: string
-		grid?: string
-		square?: string
-	}
-}
-
-/**
- * Payload for creating a new character
- */
-export interface CreateCharacterPayload {
-	granblue_id: string
-	name_en: string
-	name_jp?: string
-	character_id?: number[] // Array for dual/trio units
-	rarity?: number
-	element?: number
-	race1?: number | null
-	race2?: number | null
-	gender?: number
-	proficiency1?: number
-	proficiency2?: number
-	min_hp?: number
-	max_hp?: number
-	max_hp_flb?: number
-	max_hp_ulb?: number
-	max_hp_transcendence?: number
-	min_atk?: number
-	max_atk?: number
-	max_atk_flb?: number
-	max_atk_ulb?: number
-	max_atk_transcendence?: number
-	base_da?: number
-	base_ta?: number
-	ougi_ratio?: number
-	ougi_ratio_flb?: number
-	flb?: boolean
-	ulb?: boolean
-	transcendence?: boolean
-	max_transcendence_stage?: number
-	special?: boolean
-	release_date?: string | null
-	flb_date?: string | null
-	ulb_date?: string | null
-	transcendence_date?: string | null
-	wiki_en?: string
-	wiki_ja?: string
-	gamewith?: string
-	kamigame?: string
-	nicknames_en?: string[]
-	nicknames_jp?: string[]
-	wiki_raw?: string | null
-}
-
-/**
- * Response from character image download status
- */
-export interface CharacterDownloadStatus {
-	status: 'queued' | 'processing' | 'completed' | 'failed' | 'not_found'
-	progress?: number
-	imagesDownloaded?: number
-	imagesTotal?: number
-	error?: string
-	characterId?: string
-	granblueId?: string
-	images?: Record<string, string[]>
-	updatedAt?: string
-}
-
-/**
- * Response from summon granblue_id validation
- */
-export interface SummonValidationResult {
-	valid: boolean
-	granblueId: string
-	existsInDb: boolean
-	error?: string
-	imageUrls?: {
-		main?: string
-		grid?: string
-		square?: string
-	}
-}
-
-/**
- * Payload for creating a new summon
- * Note: Frontend uses "transcendence" but API expects "xlb" for stats
- */
-export interface CreateSummonPayload {
-	granblue_id: string
-	name_en: string
-	name_jp?: string
-	summon_id?: string
-	rarity?: number
-	element?: number
-	series?: string
-	min_hp?: number
-	max_hp?: number
-	max_hp_flb?: number
-	max_hp_ulb?: number
-	max_hp_xlb?: number // transcendence HP
-	min_atk?: number
-	max_atk?: number
-	max_atk_flb?: number
-	max_atk_ulb?: number
-	max_atk_xlb?: number // transcendence ATK
-	max_level?: number
-	flb?: boolean
-	ulb?: boolean
-	transcendence?: boolean
-	subaura?: boolean
-	limit?: boolean
-	release_date?: string | null
-	flb_date?: string | null
-	ulb_date?: string | null
-	transcendence_date?: string | null
-	wiki_en?: string
-	wiki_ja?: string
-	wiki_raw?: string
-	gamewith?: string
-	kamigame?: string
-	nicknames_en?: string[]
-	nicknames_jp?: string[]
-}
-
-/**
- * Response from summon image download status
- */
-export interface SummonDownloadStatus {
-	status: 'queued' | 'processing' | 'completed' | 'failed' | 'not_found'
-	progress?: number
-	imagesDownloaded?: number
-	imagesTotal?: number
-	error?: string
-	summonId?: string
-	granblueId?: string
-	images?: Record<string, string[]>
-	updatedAt?: string
-}
-
-/**
- * Response from weapon granblue_id validation
- */
-export interface WeaponValidationResult {
-	valid: boolean
-	granblueId: string
-	existsInDb: boolean
-	error?: string
-	imageUrls?: {
-		main?: string
-		grid?: string
-		square?: string
-	}
-}
-
-/**
- * Payload for creating a new weapon
- * Note: Frontend uses "transcendence" but API expects "xlb" for stats
- */
-export interface CreateWeaponPayload {
-	granblue_id: string
-	name_en: string
-	name_jp?: string
-	rarity?: number
-	element?: number
-	proficiency?: number
-	/** Weapon series ID (UUID) */
-	weapon_series_id?: string
-	min_hp?: number
-	max_hp?: number
-	max_hp_flb?: number
-	max_hp_ulb?: number
-	min_atk?: number
-	max_atk?: number
-	max_atk_flb?: number
-	max_atk_ulb?: number
-	max_level?: number
-	max_skill_level?: number
-	max_awakening_level?: number | null
-	flb?: boolean
-	ulb?: boolean
-	transcendence?: boolean
-	extra?: boolean
-	limit?: boolean
-	ax?: boolean
-	release_date?: string | null
-	flb_date?: string | null
-	ulb_date?: string | null
-	transcendence_date?: string | null
-	wiki_en?: string
-	wiki_ja?: string
-	wiki_raw?: string
-	gamewith?: string
-	kamigame?: string
-	recruits?: string | null // Character ID reference
-	nicknames_en?: string[]
-	nicknames_jp?: string[]
-	awakening_ids?: string[]
-}
-
-/**
- * Response from weapon image download status
- */
-export interface WeaponDownloadStatus {
-	status: 'queued' | 'processing' | 'completed' | 'failed' | 'not_found'
-	progress?: number
-	imagesDownloaded?: number
-	imagesTotal?: number
-	error?: string
-	weaponId?: string
-	granblueId?: string
-	images?: Record<string, string[]>
-	updatedAt?: string
-}
-
-/**
- * Payload for creating a new awakening
- */
-export interface CreateAwakeningPayload {
-	name_en: string
-	name_jp?: string
-	slug: string
-	object_type: string
-	order?: number
-}
-
-/**
- * Payload for updating an awakening
- */
-export interface UpdateAwakeningPayload {
-	name_en?: string
-	name_jp?: string
-	slug?: string
-	object_type?: string
-	order?: number
-}
-
-export interface BulletPayload {
-	name_en: string
-	name_jp?: string
-	effect_en?: string
-	effect_jp?: string
-	granblue_id?: string
-	slug: string
-	bullet_type: number
-	atk?: number
-	hits_all?: boolean
-	order?: number
-}
-
-/**
- * Raw data response from /raw endpoint
- */
-export interface EntityRawData {
-	wikiRaw: string | null
-	gameRawEn: Record<string, unknown> | null
-	gameRawJp: Record<string, unknown> | null
-}
-
-/**
- * Parsed character data from wiki text
- */
-export interface ParsedCharacterData {
-	nameEn?: string
-	nameJp?: string
-	granblueId?: string
-	characterId?: number[]
-	rarity?: number
-	element?: number
-	gender?: number
-	proficiency1?: number
-	proficiency2?: number
-	race1?: number
-	race2?: number
-	minHp?: number
-	maxHp?: number
-	maxHpFlb?: number
-	minAtk?: number
-	maxAtk?: number
-	maxAtkFlb?: number
-	flb?: boolean
-	ulb?: boolean
-	transcendence?: boolean
-	maxTranscendenceStage?: number
-	special?: boolean
-	/** Series array (e.g., [2] for Grand, [3] for Zodiac) */
-	series?: number[]
-	releaseDate?: string
-	flbDate?: string
-	ulbDate?: string
-	transcendenceDate?: string
-	gamewith?: string
-	kamigame?: string
-	/** Season enum value (1=Standard, 2=Valentine, etc.) */
-	season?: number
-	/** Whether character can be pulled from gacha */
-	gachaAvailable?: boolean
-	/** Promotion IDs where character appears */
-	promotions?: number[]
-}
-
-/**
- * Parsed weapon data from wiki text
- */
-export interface ParsedWeaponData {
-	nameEn?: string
-	nameJp?: string
-	granblueId?: string
-	rarity?: number
-	element?: number
-	proficiency?: number
-	minHp?: number
-	maxHp?: number
-	maxHpFlb?: number
-	maxHpUlb?: number
-	minAtk?: number
-	maxAtk?: number
-	maxAtkFlb?: number
-	maxAtkUlb?: number
-	maxLevel?: number
-	flb?: boolean
-	ulb?: boolean
-	transcendence?: boolean
-	/** Series ID (UUID) - looked up from wiki series name */
-	series?: string
-	releaseDate?: string
-	flbDate?: string
-	ulbDate?: string
-	gamewith?: string
-	kamigame?: string
-	recruits?: string
-}
-
-/**
- * Parsed summon data from wiki text
- */
-export interface ParsedSummonData {
-	nameEn?: string
-	nameJp?: string
-	granblueId?: string
-	summonId?: string
-	rarity?: number
-	element?: number
-	minHp?: number
-	maxHp?: number
-	maxHpFlb?: number
-	maxHpUlb?: number
-	minAtk?: number
-	maxAtk?: number
-	maxAtkFlb?: number
-	maxAtkUlb?: number
-	maxLevel?: number
-	flb?: boolean
-	ulb?: boolean
-	transcendence?: boolean
-	/** Series name (e.g., "Optimus", "Arcarum") */
-	series?: string
-	subaura?: boolean
-	releaseDate?: string
-	flbDate?: string
-	ulbDate?: string
-	gamewith?: string
-	kamigame?: string
-}
-
-/**
- * Result from batch_preview for a single wiki page
- */
-export interface BatchPreviewResult<T> {
-	wikiPage: string
-	status: 'success' | 'error'
-	granblueId?: string
-	wikiRaw?: string
-	parsedData?: T
-	imageStatus?: 'pending' | 'exists' | 'error' | 'no_id'
-	error?: string
-	redirectedFrom?: string
-}
-
-/**
- * Response from batch_preview endpoint
- */
-export interface BatchPreviewResponse<T> {
-	results: BatchPreviewResult<T>[]
-}
+export type {
+	Weapon,
+	WeaponKey,
+	WeaponKeyQueryParams,
+	WeaponValidationResult,
+	CreateWeaponPayload,
+	WeaponDownloadStatus,
+	ParsedWeaponData
+} from './weapon.adapter'
+export type {
+	Character,
+	CharacterValidationResult,
+	CreateCharacterPayload,
+	CharacterDownloadStatus,
+	ParsedCharacterData
+} from './character.adapter'
+export type {
+	Summon,
+	SummonValidationResult,
+	CreateSummonPayload,
+	SummonDownloadStatus,
+	ParsedSummonData
+} from './summon.adapter'
+export type { BulletPayload } from './bullet.adapter'
+export type { CreateAwakeningPayload, UpdateAwakeningPayload } from './awakening.adapter'
+export type { EntityRawData, BatchPreviewResult, BatchPreviewResponse } from './entity.shared'
 
 /**
  * Entity adapter for accessing canonical game data
  */
 export class EntityAdapter extends BaseAdapter {
-	/**
-	 * Gets canonical weapon data by ID
-	 */
-	async getWeapon(id: string, options?: RequestOptions): Promise<Weapon> {
-		return this.request<Weapon>(`/weapons/${id}`, options)
+	private readonly weapons: WeaponAdapter
+	private readonly characters: CharacterAdapter
+	private readonly summons: SummonAdapter
+	private readonly weaponSkills: WeaponSkillAdapter
+	private readonly series: SeriesAdapter
+	private readonly bullets: BulletAdapter
+	private readonly awakenings: AwakeningAdapter
+
+	constructor(options: AdapterOptions = {}) {
+		super(options)
+		this.weapons = new WeaponAdapter(this.options)
+		this.characters = new CharacterAdapter(this.options)
+		this.summons = new SummonAdapter(this.options)
+		this.weaponSkills = new WeaponSkillAdapter(this.options)
+		this.series = new SeriesAdapter(this.options)
+		this.bullets = new BulletAdapter(this.options)
+		this.awakenings = new AwakeningAdapter(this.options)
 	}
 
-	/**
-	 * Gets canonical character data by ID
-	 */
-	async getCharacter(
-		id: string,
-		options?: { styleSwap?: boolean } & RequestOptions
-	): Promise<Character> {
-		const params = options?.styleSwap ? '?style_swap=true' : ''
-		return this.request<Character>(`/characters/${id}${params}`, options)
+	// Weapons (weapon.adapter)
+
+	getWeapon(...args: Parameters<WeaponAdapter['getWeapon']>) {
+		return this.weapons.getWeapon(...args)
 	}
 
-	/**
-	 * Gets related characters (same character_id) for a given character
-	 */
-	async getRelatedCharacters(id: string): Promise<Character[]> {
-		return this.request<Character[]>(`/characters/${id}/related`)
+	getWeapons(...args: Parameters<WeaponAdapter['getWeapons']>) {
+		return this.weapons.getWeapons(...args)
 	}
 
-	/**
-	 * Gets canonical summon data by ID
-	 */
-	async getSummon(id: string, options?: RequestOptions): Promise<Summon> {
-		return this.request<Summon>(`/summons/${id}`, options)
+	getWeaponKeys(...args: Parameters<WeaponAdapter['getWeaponKeys']>) {
+		return this.weapons.getWeaponKeys(...args)
 	}
 
-	/**
-	 * Batch fetch multiple weapons
-	 */
-	async getWeapons(ids: string[]): Promise<Weapon[]> {
-		// Fetch in parallel with individual caching
-		const promises = ids.map((id) => this.getWeapon(id))
-		return Promise.all(promises)
+	updateWeaponKey(...args: Parameters<WeaponAdapter['updateWeaponKey']>) {
+		return this.weapons.updateWeaponKey(...args)
 	}
 
-	/**
-	 * Batch fetch multiple characters
-	 */
-	async getCharacters(ids: string[]): Promise<Character[]> {
-		const promises = ids.map((id) => this.getCharacter(id))
-		return Promise.all(promises)
+	getWeaponStatModifiers(...args: Parameters<WeaponAdapter['getWeaponStatModifiers']>) {
+		return this.weapons.getWeaponStatModifiers(...args)
 	}
 
-	/**
-	 * Batch fetch multiple summons
-	 */
-	async getSummons(ids: string[]): Promise<Summon[]> {
-		const promises = ids.map((id) => this.getSummon(id))
-		return Promise.all(promises)
+	getAxSkills(...args: Parameters<WeaponAdapter['getAxSkills']>) {
+		return this.weapons.getAxSkills(...args)
 	}
 
-	/**
-	 * Gets weapon keys with optional filtering
-	 */
-	async getWeaponKeys(params?: WeaponKeyQueryParams): Promise<WeaponKey[]> {
-		const searchParams = new URLSearchParams()
-		if (params?.seriesSlug) {
-			searchParams.set('series_slug', params.seriesSlug)
-		}
-		if (params?.slot !== undefined) searchParams.set('slot', String(params.slot))
-		if (params?.group !== undefined) searchParams.set('group', String(params.group))
-
-		const queryString = searchParams.toString()
-		const url = queryString ? `/weapon_keys?${queryString}` : '/weapon_keys'
-
-		return this.request<WeaponKey[]>(url)
+	getBefoulments(...args: Parameters<WeaponAdapter['getBefoulments']>) {
+		return this.weapons.getBefoulments(...args)
 	}
 
-	// ============================================
-	// Bullet Methods
-	// ============================================
-
-	/**
-	 * Gets all bullets, optionally filtered by bullet type
-	 * @param bulletType - Optional filter: 1=Parabellum, 2=Rifle, 3=Cartridge, 4=Aetherial
-	 */
-	async getBullets(bulletType?: number): Promise<Bullet[]> {
-		const searchParams = new URLSearchParams()
-		if (bulletType !== undefined) searchParams.set('bullet_type', String(bulletType))
-
-		const queryString = searchParams.toString()
-		const url = queryString ? `/bullets?${queryString}` : '/bullets'
-
-		const response = await this.request<{ bullets: Bullet[] }>(url)
-		return response.bullets
+	validateWeaponGranblueId(...args: Parameters<WeaponAdapter['validateWeaponGranblueId']>) {
+		return this.weapons.validateWeaponGranblueId(...args)
 	}
 
-	async getBulletById(id: string): Promise<Bullet> {
-		return this.request<Bullet>(`/bullets/${id}`)
+	createWeapon(...args: Parameters<WeaponAdapter['createWeapon']>) {
+		return this.weapons.createWeapon(...args)
 	}
 
-	async createBullet(data: BulletPayload): Promise<Bullet> {
-		const response = await this.request<Bullet>('/bullets', {
-			method: 'POST',
-			body: data
-		})
-		this.clearCache('/bullets')
-		return response
+	updateWeapon(...args: Parameters<WeaponAdapter['updateWeapon']>) {
+		return this.weapons.updateWeapon(...args)
 	}
 
-	async updateBullet(id: string, data: Partial<BulletPayload>): Promise<Bullet> {
-		const response = await this.request<Bullet>(`/bullets/${id}`, {
-			method: 'PUT',
-			body: data
-		})
-		this.clearCache('/bullets')
-		this.clearCache(`/bullets/${id}`)
-		return response
+	downloadWeaponImages(...args: Parameters<WeaponAdapter['downloadWeaponImages']>) {
+		return this.weapons.downloadWeaponImages(...args)
 	}
 
-	async deleteBullet(id: string): Promise<void> {
-		await this.request(`/bullets/${id}`, {
-			method: 'DELETE'
-		})
-		this.clearCache('/bullets')
+	downloadWeaponImage(...args: Parameters<WeaponAdapter['downloadWeaponImage']>) {
+		return this.weapons.downloadWeaponImage(...args)
 	}
 
-	async downloadBulletImage(
-		bulletId: string,
-		size: string,
-		force?: boolean
-	): Promise<{ success: boolean; error?: string }> {
-		return this.request(`/bullets/${bulletId}/download_image`, {
-			method: 'POST',
-			body: JSON.stringify({ size, force: force ?? false })
-		})
+	getWeaponDownloadStatus(...args: Parameters<WeaponAdapter['getWeaponDownloadStatus']>) {
+		return this.weapons.getWeaponDownloadStatus(...args)
 	}
 
-	async downloadBulletImages(
-		bulletId: string,
-		options?: { force?: boolean; size?: 'all' | string }
-	): Promise<{ status: string; bulletId: string; message: string }> {
-		return this.request(`/bullets/${bulletId}/download_images`, {
-			method: 'POST',
-			body: JSON.stringify({ options: options ?? {} })
-		})
+	getWeaponRawData(...args: Parameters<WeaponAdapter['getWeaponRawData']>) {
+		return this.weapons.getWeaponRawData(...args)
 	}
 
-	async getBulletDownloadStatus(
-		bulletId: string
-	): Promise<{ status: string; progress?: number; error?: string }> {
-		return this.request(`/bullets/${bulletId}/download_status`)
+	fetchWeaponWiki(...args: Parameters<WeaponAdapter['fetchWeaponWiki']>) {
+		return this.weapons.fetchWeaponWiki(...args)
 	}
 
-	// ============================================
-	// Weapon Stat Modifier Methods (AX Skills & Befoulments)
-	// ============================================
-
-	/**
-	 * Gets all weapon stat modifiers (AX skills and befoulments)
-	 * @param category - Optional filter: 'ax' or 'befoulment'
-	 */
-	async getWeaponStatModifiers(category?: 'ax' | 'befoulment'): Promise<WeaponStatModifier[]> {
-		const searchParams = new URLSearchParams()
-		if (category) {
-			searchParams.set('category', category)
-		}
-
-		const queryString = searchParams.toString()
-		const url = queryString ? `/weapon_stat_modifiers?${queryString}` : '/weapon_stat_modifiers'
-
-		return this.request<WeaponStatModifier[]>(url)
+	reparseWeapon(...args: Parameters<WeaponAdapter['reparseWeapon']>) {
+		return this.weapons.reparseWeapon(...args)
 	}
 
-	/**
-	 * Gets AX skills only
-	 */
-	async getAxSkills(): Promise<WeaponStatModifier[]> {
-		return this.getWeaponStatModifiers('ax')
+	batchPreviewWeapons(...args: Parameters<WeaponAdapter['batchPreviewWeapons']>) {
+		return this.weapons.batchPreviewWeapons(...args)
 	}
 
-	/**
-	 * Gets befoulments only
-	 */
-	async getBefoulments(): Promise<WeaponStatModifier[]> {
-		return this.getWeaponStatModifiers('befoulment')
+	// Characters (character.adapter)
+
+	getCharacter(...args: Parameters<CharacterAdapter['getCharacter']>) {
+		return this.characters.getCharacter(...args)
+	}
+
+	getRelatedCharacters(...args: Parameters<CharacterAdapter['getRelatedCharacters']>) {
+		return this.characters.getRelatedCharacters(...args)
+	}
+
+	getCharacters(...args: Parameters<CharacterAdapter['getCharacters']>) {
+		return this.characters.getCharacters(...args)
+	}
+
+	validateCharacterGranblueId(
+		...args: Parameters<CharacterAdapter['validateCharacterGranblueId']>
+	) {
+		return this.characters.validateCharacterGranblueId(...args)
+	}
+
+	createCharacter(...args: Parameters<CharacterAdapter['createCharacter']>) {
+		return this.characters.createCharacter(...args)
+	}
+
+	updateCharacter(...args: Parameters<CharacterAdapter['updateCharacter']>) {
+		return this.characters.updateCharacter(...args)
+	}
+
+	downloadCharacterImages(...args: Parameters<CharacterAdapter['downloadCharacterImages']>) {
+		return this.characters.downloadCharacterImages(...args)
+	}
+
+	downloadCharacterImage(...args: Parameters<CharacterAdapter['downloadCharacterImage']>) {
+		return this.characters.downloadCharacterImage(...args)
+	}
+
+	getCharacterDownloadStatus(...args: Parameters<CharacterAdapter['getCharacterDownloadStatus']>) {
+		return this.characters.getCharacterDownloadStatus(...args)
+	}
+
+	getCharacterRawData(...args: Parameters<CharacterAdapter['getCharacterRawData']>) {
+		return this.characters.getCharacterRawData(...args)
+	}
+
+	fetchCharacterWiki(...args: Parameters<CharacterAdapter['fetchCharacterWiki']>) {
+		return this.characters.fetchCharacterWiki(...args)
+	}
+
+	batchPreviewCharacters(...args: Parameters<CharacterAdapter['batchPreviewCharacters']>) {
+		return this.characters.batchPreviewCharacters(...args)
+	}
+
+	// Summons (summon.adapter)
+
+	getSummon(...args: Parameters<SummonAdapter['getSummon']>) {
+		return this.summons.getSummon(...args)
+	}
+
+	getSummons(...args: Parameters<SummonAdapter['getSummons']>) {
+		return this.summons.getSummons(...args)
+	}
+
+	validateSummonGranblueId(...args: Parameters<SummonAdapter['validateSummonGranblueId']>) {
+		return this.summons.validateSummonGranblueId(...args)
+	}
+
+	createSummon(...args: Parameters<SummonAdapter['createSummon']>) {
+		return this.summons.createSummon(...args)
+	}
+
+	updateSummon(...args: Parameters<SummonAdapter['updateSummon']>) {
+		return this.summons.updateSummon(...args)
+	}
+
+	downloadSummonImages(...args: Parameters<SummonAdapter['downloadSummonImages']>) {
+		return this.summons.downloadSummonImages(...args)
+	}
+
+	downloadSummonImage(...args: Parameters<SummonAdapter['downloadSummonImage']>) {
+		return this.summons.downloadSummonImage(...args)
+	}
+
+	getSummonDownloadStatus(...args: Parameters<SummonAdapter['getSummonDownloadStatus']>) {
+		return this.summons.getSummonDownloadStatus(...args)
+	}
+
+	getSummonRawData(...args: Parameters<SummonAdapter['getSummonRawData']>) {
+		return this.summons.getSummonRawData(...args)
+	}
+
+	fetchSummonWiki(...args: Parameters<SummonAdapter['fetchSummonWiki']>) {
+		return this.summons.fetchSummonWiki(...args)
+	}
+
+	reparseSummon(...args: Parameters<SummonAdapter['reparseSummon']>) {
+		return this.summons.reparseSummon(...args)
+	}
+
+	batchPreviewSummons(...args: Parameters<SummonAdapter['batchPreviewSummons']>) {
+		return this.summons.batchPreviewSummons(...args)
+	}
+
+	// Weapon skill families (weaponSkill.adapter)
+
+	getWeaponSkillFamilies(...args: Parameters<WeaponSkillAdapter['getWeaponSkillFamilies']>) {
+		return this.weaponSkills.getWeaponSkillFamilies(...args)
+	}
+
+	getWeaponSkillFamily(...args: Parameters<WeaponSkillAdapter['getWeaponSkillFamily']>) {
+		return this.weaponSkills.getWeaponSkillFamily(...args)
+	}
+
+	createWeaponSkillDatum(...args: Parameters<WeaponSkillAdapter['createWeaponSkillDatum']>) {
+		return this.weaponSkills.createWeaponSkillDatum(...args)
+	}
+
+	updateWeaponSkillDatum(...args: Parameters<WeaponSkillAdapter['updateWeaponSkillDatum']>) {
+		return this.weaponSkills.updateWeaponSkillDatum(...args)
+	}
+
+	deleteWeaponSkillDatum(...args: Parameters<WeaponSkillAdapter['deleteWeaponSkillDatum']>) {
+		return this.weaponSkills.deleteWeaponSkillDatum(...args)
+	}
+
+	createWeaponSkillEffect(...args: Parameters<WeaponSkillAdapter['createWeaponSkillEffect']>) {
+		return this.weaponSkills.createWeaponSkillEffect(...args)
+	}
+
+	updateWeaponSkillEffect(...args: Parameters<WeaponSkillAdapter['updateWeaponSkillEffect']>) {
+		return this.weaponSkills.updateWeaponSkillEffect(...args)
+	}
+
+	deleteWeaponSkillEffect(...args: Parameters<WeaponSkillAdapter['deleteWeaponSkillEffect']>) {
+		return this.weaponSkills.deleteWeaponSkillEffect(...args)
+	}
+
+	updateWeaponSkillVersion(...args: Parameters<WeaponSkillAdapter['updateWeaponSkillVersion']>) {
+		return this.weaponSkills.updateWeaponSkillVersion(...args)
+	}
+
+	updateSkillLabels(...args: Parameters<WeaponSkillAdapter['updateSkillLabels']>) {
+		return this.weaponSkills.updateSkillLabels(...args)
+	}
+
+	validatePanels(...args: Parameters<WeaponSkillAdapter['validatePanels']>) {
+		return this.weaponSkills.validatePanels(...args)
+	}
+
+	// Series (series.adapter)
+
+	getWeaponSeriesList(...args: Parameters<SeriesAdapter['getWeaponSeriesList']>) {
+		return this.series.getWeaponSeriesList(...args)
+	}
+
+	getWeaponSeries(...args: Parameters<SeriesAdapter['getWeaponSeries']>) {
+		return this.series.getWeaponSeries(...args)
+	}
+
+	createWeaponSeries(...args: Parameters<SeriesAdapter['createWeaponSeries']>) {
+		return this.series.createWeaponSeries(...args)
+	}
+
+	updateWeaponSeries(...args: Parameters<SeriesAdapter['updateWeaponSeries']>) {
+		return this.series.updateWeaponSeries(...args)
+	}
+
+	deleteWeaponSeries(...args: Parameters<SeriesAdapter['deleteWeaponSeries']>) {
+		return this.series.deleteWeaponSeries(...args)
+	}
+
+	clearWeaponSeriesCache(...args: Parameters<SeriesAdapter['clearWeaponSeriesCache']>) {
+		return this.series.clearWeaponSeriesCache(...args)
+	}
+
+	createWeaponSeriesVariant(...args: Parameters<SeriesAdapter['createWeaponSeriesVariant']>) {
+		return this.series.createWeaponSeriesVariant(...args)
+	}
+
+	updateWeaponSeriesVariant(...args: Parameters<SeriesAdapter['updateWeaponSeriesVariant']>) {
+		return this.series.updateWeaponSeriesVariant(...args)
+	}
+
+	deleteWeaponSeriesVariant(...args: Parameters<SeriesAdapter['deleteWeaponSeriesVariant']>) {
+		return this.series.deleteWeaponSeriesVariant(...args)
+	}
+
+	getCharacterSeriesList(...args: Parameters<SeriesAdapter['getCharacterSeriesList']>) {
+		return this.series.getCharacterSeriesList(...args)
+	}
+
+	getCharacterSeries(...args: Parameters<SeriesAdapter['getCharacterSeries']>) {
+		return this.series.getCharacterSeries(...args)
+	}
+
+	createCharacterSeries(...args: Parameters<SeriesAdapter['createCharacterSeries']>) {
+		return this.series.createCharacterSeries(...args)
+	}
+
+	updateCharacterSeries(...args: Parameters<SeriesAdapter['updateCharacterSeries']>) {
+		return this.series.updateCharacterSeries(...args)
+	}
+
+	deleteCharacterSeries(...args: Parameters<SeriesAdapter['deleteCharacterSeries']>) {
+		return this.series.deleteCharacterSeries(...args)
+	}
+
+	clearCharacterSeriesCache(...args: Parameters<SeriesAdapter['clearCharacterSeriesCache']>) {
+		return this.series.clearCharacterSeriesCache(...args)
+	}
+
+	getSummonSeriesList(...args: Parameters<SeriesAdapter['getSummonSeriesList']>) {
+		return this.series.getSummonSeriesList(...args)
+	}
+
+	getSummonSeries(...args: Parameters<SeriesAdapter['getSummonSeries']>) {
+		return this.series.getSummonSeries(...args)
+	}
+
+	createSummonSeries(...args: Parameters<SeriesAdapter['createSummonSeries']>) {
+		return this.series.createSummonSeries(...args)
+	}
+
+	updateSummonSeries(...args: Parameters<SeriesAdapter['updateSummonSeries']>) {
+		return this.series.updateSummonSeries(...args)
+	}
+
+	deleteSummonSeries(...args: Parameters<SeriesAdapter['deleteSummonSeries']>) {
+		return this.series.deleteSummonSeries(...args)
+	}
+
+	clearSummonSeriesCache(...args: Parameters<SeriesAdapter['clearSummonSeriesCache']>) {
+		return this.series.clearSummonSeriesCache(...args)
+	}
+
+	// Bullets (bullet.adapter)
+
+	getBullets(...args: Parameters<BulletAdapter['getBullets']>) {
+		return this.bullets.getBullets(...args)
+	}
+
+	getBulletById(...args: Parameters<BulletAdapter['getBulletById']>) {
+		return this.bullets.getBulletById(...args)
+	}
+
+	createBullet(...args: Parameters<BulletAdapter['createBullet']>) {
+		return this.bullets.createBullet(...args)
+	}
+
+	updateBullet(...args: Parameters<BulletAdapter['updateBullet']>) {
+		return this.bullets.updateBullet(...args)
+	}
+
+	deleteBullet(...args: Parameters<BulletAdapter['deleteBullet']>) {
+		return this.bullets.deleteBullet(...args)
+	}
+
+	downloadBulletImage(...args: Parameters<BulletAdapter['downloadBulletImage']>) {
+		return this.bullets.downloadBulletImage(...args)
+	}
+
+	downloadBulletImages(...args: Parameters<BulletAdapter['downloadBulletImages']>) {
+		return this.bullets.downloadBulletImages(...args)
+	}
+
+	getBulletDownloadStatus(...args: Parameters<BulletAdapter['getBulletDownloadStatus']>) {
+		return this.bullets.getBulletDownloadStatus(...args)
+	}
+
+	// Awakenings (awakening.adapter)
+
+	getAwakenings(...args: Parameters<AwakeningAdapter['getAwakenings']>) {
+		return this.awakenings.getAwakenings(...args)
+	}
+
+	getAwakening(...args: Parameters<AwakeningAdapter['getAwakening']>) {
+		return this.awakenings.getAwakening(...args)
+	}
+
+	createAwakening(...args: Parameters<AwakeningAdapter['createAwakening']>) {
+		return this.awakenings.createAwakening(...args)
+	}
+
+	updateAwakening(...args: Parameters<AwakeningAdapter['updateAwakening']>) {
+		return this.awakenings.updateAwakening(...args)
+	}
+
+	deleteAwakening(...args: Parameters<AwakeningAdapter['deleteAwakening']>) {
+		return this.awakenings.deleteAwakening(...args)
+	}
+
+	uploadAwakeningImage(...args: Parameters<AwakeningAdapter['uploadAwakeningImage']>) {
+		return this.awakenings.uploadAwakeningImage(...args)
 	}
 
 	/**
@@ -950,988 +457,6 @@ export class EntityAdapter extends BaseAdapter {
 			this.clearCache('/weapon_series')
 			this.clearCache('/weapon_stat_modifiers')
 		}
-	}
-
-	// ============================================
-	// Character Creation & Image Download Methods
-	// ============================================
-
-	/**
-	 * Validates a character granblue_id by checking if images exist on GBF servers
-	 * Requires editor role (>= 7)
-	 */
-	async validateCharacterGranblueId(granblueId: string): Promise<CharacterValidationResult> {
-		const response = await this.request<{
-			valid: boolean
-			granblue_id: string
-			exists_in_db: boolean
-			error?: string
-			image_urls?: {
-				main?: string
-				grid?: string
-				square?: string
-			}
-		}>(`/characters/validate/${granblueId}`, {
-			method: 'GET'
-		})
-
-		return {
-			valid: response.valid,
-			granblueId: response.granblue_id,
-			existsInDb: response.exists_in_db,
-			error: response.error,
-			imageUrls: response.image_urls
-		}
-	}
-
-	/**
-	 * Creates a new character record
-	 * Requires editor role (>= 7)
-	 */
-	async createCharacter(payload: CreateCharacterPayload): Promise<Character> {
-		return this.request<Character>('/characters', {
-			method: 'POST',
-			body: { character: payload }
-		})
-	}
-
-	/**
-	 * Updates an existing character record
-	 * Requires editor role (>= 7)
-	 */
-	async updateCharacter(id: string, payload: Partial<CreateCharacterPayload>): Promise<Character> {
-		const result = await this.request<Character>(`/characters/${id}`, {
-			method: 'PATCH',
-			body: { character: payload }
-		})
-		// Invalidate cache for this character (by UUID and granblueId)
-		this.clearCache(`/characters/${id}`)
-		if (result.granblueId) {
-			this.clearCache(`/characters/${result.granblueId}`)
-		}
-		return result
-	}
-
-	/**
-	 * Triggers async image download for a character
-	 * Requires editor role (>= 7)
-	 */
-	async downloadCharacterImages(
-		characterId: string,
-		options?: { force?: boolean; size?: 'all' | string }
-	): Promise<{ status: string; characterId: string; message: string }> {
-		return this.request(`/characters/${characterId}/download_images`, {
-			method: 'POST',
-			body: { options }
-		})
-	}
-
-	/**
-	 * Downloads a single image for a character (synchronous)
-	 * Requires editor role (>= 7)
-	 * @param characterId - Character database ID
-	 * @param size - Image size variant (main, grid, square, detail)
-	 * @param transformation - Pose variant (01=Base, 02=MLB, 03=FLB, 04=Transcendence)
-	 * @param force - Force re-download even if image exists
-	 * @param element - Element variant for null-element characters (1-6)
-	 * @param gender - Gender variant for null-element characters (0=Gran, 1=Djeeta)
-	 */
-	async downloadCharacterImage(
-		characterId: string,
-		size: string,
-		transformation?: string,
-		force?: boolean,
-		element?: number,
-		gender?: number
-	): Promise<{ success: boolean; error?: string }> {
-		return this.request(`/characters/${characterId}/download_image`, {
-			method: 'POST',
-			body: { size, transformation, force, element, gender }
-		})
-	}
-
-	/**
-	 * Gets the status of an ongoing character image download
-	 * Requires editor role (>= 7)
-	 */
-	async getCharacterDownloadStatus(characterId: string): Promise<CharacterDownloadStatus> {
-		const response = await this.request<{
-			status: string
-			progress?: number
-			images_downloaded?: number
-			images_total?: number
-			error?: string
-			character_id?: string
-			granblue_id?: string
-			images?: Record<string, string[]>
-			updated_at?: string
-		}>(`/characters/${characterId}/download_status`, {
-			method: 'GET'
-		})
-
-		return {
-			status: response.status as CharacterDownloadStatus['status'],
-			progress: response.progress,
-			imagesDownloaded: response.images_downloaded,
-			imagesTotal: response.images_total,
-			error: response.error,
-			characterId: response.character_id,
-			granblueId: response.granblue_id,
-			images: response.images,
-			updatedAt: response.updated_at
-		}
-	}
-
-	// ============================================
-	// Summon Creation & Image Download Methods
-	// ============================================
-
-	/**
-	 * Validates a summon granblue_id by checking if images exist on GBF servers
-	 * Requires editor role (>= 7)
-	 */
-	async validateSummonGranblueId(granblueId: string): Promise<SummonValidationResult> {
-		const response = await this.request<{
-			valid: boolean
-			granblue_id: string
-			exists_in_db: boolean
-			error?: string
-			image_urls?: {
-				main?: string
-				grid?: string
-				square?: string
-			}
-		}>(`/summons/validate/${granblueId}`, {
-			method: 'GET'
-		})
-
-		return {
-			valid: response.valid,
-			granblueId: response.granblue_id,
-			existsInDb: response.exists_in_db,
-			error: response.error,
-			imageUrls: response.image_urls
-		}
-	}
-
-	/**
-	 * Creates a new summon record
-	 * Requires editor role (>= 7)
-	 */
-	async createSummon(payload: CreateSummonPayload): Promise<Summon> {
-		return this.request<Summon>('/summons', {
-			method: 'POST',
-			body: { summon: payload }
-		})
-	}
-
-	/**
-	 * Updates an existing summon record
-	 * Requires editor role (>= 7)
-	 */
-	async updateSummon(id: string, payload: Partial<CreateSummonPayload>): Promise<Summon> {
-		const result = await this.request<Summon>(`/summons/${id}`, {
-			method: 'PATCH',
-			body: { summon: payload }
-		})
-		// Invalidate cache for this summon
-		this.clearCache(`/summons/${id}`)
-		return result
-	}
-
-	/**
-	 * Triggers async image download for a summon
-	 * Requires editor role (>= 7)
-	 */
-	async downloadSummonImages(
-		summonId: string,
-		options?: { force?: boolean; size?: 'all' | string }
-	): Promise<{ status: string; summonId: string; message: string }> {
-		return this.request(`/summons/${summonId}/download_images`, {
-			method: 'POST',
-			body: { options }
-		})
-	}
-
-	/**
-	 * Downloads a single image for a summon (synchronous)
-	 * Requires editor role (>= 7)
-	 * @param summonId - Summon database ID
-	 * @param size - Image size variant (main, grid, wide, square, detail)
-	 * @param transformation - Pose variant (empty=Base, 02=ULB, 03=Trans1, 04=Trans5)
-	 * @param force - Force re-download even if image exists
-	 */
-	async downloadSummonImage(
-		summonId: string,
-		size: string,
-		transformation?: string,
-		force?: boolean
-	): Promise<{ success: boolean; error?: string }> {
-		return this.request(`/summons/${summonId}/download_image`, {
-			method: 'POST',
-			body: { size, transformation, force }
-		})
-	}
-
-	/**
-	 * Gets the status of an ongoing summon image download
-	 * Requires editor role (>= 7)
-	 */
-	async getSummonDownloadStatus(summonId: string): Promise<SummonDownloadStatus> {
-		const response = await this.request<{
-			status: string
-			progress?: number
-			images_downloaded?: number
-			images_total?: number
-			error?: string
-			summon_id?: string
-			granblue_id?: string
-			images?: Record<string, string[]>
-			updated_at?: string
-		}>(`/summons/${summonId}/download_status`, {
-			method: 'GET'
-		})
-
-		return {
-			status: response.status as SummonDownloadStatus['status'],
-			progress: response.progress,
-			imagesDownloaded: response.images_downloaded,
-			imagesTotal: response.images_total,
-			error: response.error,
-			summonId: response.summon_id,
-			granblueId: response.granblue_id,
-			images: response.images,
-			updatedAt: response.updated_at
-		}
-	}
-
-	// ============================================
-	// Weapon Creation & Image Download Methods
-	// ============================================
-
-	/**
-	 * Validates a weapon granblue_id by checking if images exist on GBF servers
-	 * Requires editor role (>= 7)
-	 */
-	async validateWeaponGranblueId(granblueId: string): Promise<WeaponValidationResult> {
-		const response = await this.request<{
-			valid: boolean
-			granblue_id: string
-			exists_in_db: boolean
-			error?: string
-			image_urls?: {
-				main?: string
-				grid?: string
-				square?: string
-			}
-		}>(`/weapons/validate/${granblueId}`, {
-			method: 'GET'
-		})
-
-		return {
-			valid: response.valid,
-			granblueId: response.granblue_id,
-			existsInDb: response.exists_in_db,
-			error: response.error,
-			imageUrls: response.image_urls
-		}
-	}
-
-	/**
-	 * Creates a new weapon record
-	 * Requires editor role (>= 7)
-	 */
-	async createWeapon(payload: CreateWeaponPayload): Promise<Weapon> {
-		return this.request<Weapon>('/weapons', {
-			method: 'POST',
-			body: { weapon: payload }
-		})
-	}
-
-	/**
-	 * Updates an existing weapon record
-	 * Requires editor role (>= 7)
-	 */
-	async updateWeapon(id: string, payload: Partial<CreateWeaponPayload>): Promise<Weapon> {
-		const result = await this.request<Weapon>(`/weapons/${id}`, {
-			method: 'PATCH',
-			body: { weapon: payload }
-		})
-		this.clearCache(`/weapons/${id}`)
-		if (result.granblueId) {
-			this.clearCache(`/weapons/${result.granblueId}`)
-		}
-		return result
-	}
-
-	/**
-	 * Triggers async image download for a weapon
-	 * Requires editor role (>= 7)
-	 */
-	async downloadWeaponImages(
-		weaponId: string,
-		options?: { force?: boolean; size?: 'all' | string }
-	): Promise<{ status: string; weaponId: string; message: string }> {
-		return this.request(`/weapons/${weaponId}/download_images`, {
-			method: 'POST',
-			body: { options }
-		})
-	}
-
-	/**
-	 * Downloads a single image for a weapon (synchronous)
-	 * Requires editor role (>= 7)
-	 * @param weaponId - Weapon database ID
-	 * @param size - Image size variant (main, grid, square, base)
-	 * @param transformation - Pose variant (empty=Base, 02=Trans1, 03=Trans5)
-	 * @param force - Force re-download even if image exists
-	 */
-	async downloadWeaponImage(
-		weaponId: string,
-		size: string,
-		transformation?: string,
-		force?: boolean
-	): Promise<{ success: boolean; error?: string }> {
-		return this.request(`/weapons/${weaponId}/download_image`, {
-			method: 'POST',
-			body: { size, transformation, force }
-		})
-	}
-
-	/**
-	 * Gets the status of an ongoing weapon image download
-	 * Requires editor role (>= 7)
-	 */
-	async getWeaponDownloadStatus(weaponId: string): Promise<WeaponDownloadStatus> {
-		const response = await this.request<{
-			status: string
-			progress?: number
-			images_downloaded?: number
-			images_total?: number
-			error?: string
-			weapon_id?: string
-			granblue_id?: string
-			images?: Record<string, string[]>
-			updated_at?: string
-		}>(`/weapons/${weaponId}/download_status`, {
-			method: 'GET'
-		})
-
-		return {
-			status: response.status as WeaponDownloadStatus['status'],
-			progress: response.progress,
-			imagesDownloaded: response.images_downloaded,
-			imagesTotal: response.images_total,
-			error: response.error,
-			weaponId: response.weapon_id,
-			granblueId: response.granblue_id,
-			images: response.images,
-			updatedAt: response.updated_at
-		}
-	}
-
-	// ============================================
-	// Raw Data Methods (for database viewing)
-	// ============================================
-
-	/**
-	 * Gets raw wiki and game data for a character
-	 * This data is fetched separately to avoid bloating regular entity responses
-	 * Note: BaseAdapter.request() automatically transforms snake_case to camelCase
-	 */
-	async getCharacterRawData(id: string): Promise<EntityRawData> {
-		// Response keys are already camelCase after BaseAdapter.transformResponse()
-		const response = await this.request<EntityRawData>(`/characters/${id}/raw`, {
-			method: 'GET'
-		})
-
-		return response
-	}
-
-	/**
-	 * Gets raw wiki and game data for a weapon
-	 * This data is fetched separately to avoid bloating regular entity responses
-	 * Note: BaseAdapter.request() automatically transforms snake_case to camelCase
-	 */
-	async getWeaponRawData(id: string): Promise<EntityRawData> {
-		// Response keys are already camelCase after BaseAdapter.transformResponse()
-		const response = await this.request<EntityRawData>(`/weapons/${id}/raw`, {
-			method: 'GET'
-		})
-
-		return response
-	}
-
-	/**
-	 * Gets raw wiki and game data for a summon
-	 * This data is fetched separately to avoid bloating regular entity responses
-	 * Note: BaseAdapter.request() automatically transforms snake_case to camelCase
-	 */
-	async getSummonRawData(id: string): Promise<EntityRawData> {
-		// Response keys are already camelCase after BaseAdapter.transformResponse()
-		const response = await this.request<EntityRawData>(`/summons/${id}/raw`, {
-			method: 'GET'
-		})
-
-		return response
-	}
-
-	// ============================================
-	// Wiki Fetch Methods (editor-only)
-	// ============================================
-
-	/**
-	 * Fetches and stores wiki data for a character
-	 * Requires editor role (>= 7)
-	 */
-	async fetchCharacterWiki(id: string): Promise<EntityRawData> {
-		return this.request<EntityRawData>(`/characters/${id}/fetch_wiki`, {
-			method: 'POST'
-		})
-	}
-
-	/**
-	 * Fetches and stores wiki data for a weapon
-	 * Requires editor role (>= 7)
-	 */
-	async fetchWeaponWiki(id: string): Promise<EntityRawData> {
-		return this.request<EntityRawData>(`/weapons/${id}/fetch_wiki`, {
-			method: 'POST'
-		})
-	}
-
-	/**
-	 * Fetches and stores wiki data for a summon
-	 * Requires editor role (>= 7)
-	 */
-	async fetchSummonWiki(id: string): Promise<EntityRawData> {
-		return this.request<EntityRawData>(`/summons/${id}/fetch_wiki`, {
-			method: 'POST'
-		})
-	}
-
-	// ============================================
-	// Re-parse Methods (editor-only)
-	// ============================================
-
-	/**
-	 * Re-parses an entity's stored wikitext into structured rows (weapon
-	 * skills / summon auras). Characters go through characterRefresh.adapter. Pass refetch to pull fresh
-	 * wikitext from the wiki first. Requires editor role (>= 7).
-	 */
-	async reparseWeapon(id: string, refetch = false): Promise<Weapon> {
-		return this.request<Weapon>(`/weapons/${id}/reparse${refetch ? '?refetch=true' : ''}`, {
-			method: 'POST'
-		})
-	}
-
-	async reparseSummon(id: string, refetch = false): Promise<Summon> {
-		return this.request<Summon>(`/summons/${id}/reparse${refetch ? '?refetch=true' : ''}`, {
-			method: 'POST'
-		})
-	}
-
-	// ============================================
-	// Weapon Skill Family Methods (admin editor)
-	// ============================================
-
-	async getWeaponSkillFamilies(filters?: {
-		q?: string
-		series?: string
-		size?: string
-		boostType?: string
-	}): Promise<WeaponSkillFamilySummary[]> {
-		const query = new URLSearchParams()
-		if (filters?.q) query.set('q', filters.q)
-		if (filters?.series) query.set('series', filters.series)
-		if (filters?.size) query.set('size', filters.size)
-		if (filters?.boostType) query.set('boost_type', filters.boostType)
-		const qs = query.size > 0 ? `?${query.toString()}` : ''
-		const response = await this.request<{ weaponSkillFamilies: WeaponSkillFamilySummary[] }>(
-			`/weapon_skill_families${qs}`
-		)
-		return response.weaponSkillFamilies
-	}
-
-	async getWeaponSkillFamily(modifier: string): Promise<WeaponSkillFamily> {
-		const response = await this.request<{ weaponSkillFamily: WeaponSkillFamily }>(
-			`/weapon_skill_families/${encodeURIComponent(modifier)}`
-		)
-		return response.weaponSkillFamily
-	}
-
-	async createWeaponSkillDatum(payload: Record<string, unknown>): Promise<unknown> {
-		return this.request('/weapon_skill_data', {
-			method: 'POST',
-			body: { weapon_skill_datum: payload }
-		})
-	}
-
-	async updateWeaponSkillDatum(id: string, payload: Record<string, unknown>): Promise<unknown> {
-		return this.request(`/weapon_skill_data/${id}`, {
-			method: 'PATCH',
-			body: { weapon_skill_datum: payload }
-		})
-	}
-
-	async deleteWeaponSkillDatum(id: string, force = false): Promise<DeleteImpact> {
-		return this.request<DeleteImpact>(`/weapon_skill_data/${id}${force ? '?force=true' : ''}`, {
-			method: 'DELETE'
-		})
-	}
-
-	async createWeaponSkillEffect(payload: Record<string, unknown>): Promise<unknown> {
-		return this.request('/weapon_skill_effects', {
-			method: 'POST',
-			body: { weapon_skill_effect: payload }
-		})
-	}
-
-	async updateWeaponSkillEffect(id: string, payload: Record<string, unknown>): Promise<unknown> {
-		return this.request(`/weapon_skill_effects/${id}`, {
-			method: 'PATCH',
-			body: { weapon_skill_effect: payload }
-		})
-	}
-
-	async deleteWeaponSkillEffect(id: string, force = false): Promise<DeleteImpact> {
-		return this.request<DeleteImpact>(`/weapon_skill_effects/${id}${force ? '?force=true' : ''}`, {
-			method: 'DELETE'
-		})
-	}
-
-	async updateWeaponSkillVersion(id: string, payload: Record<string, unknown>): Promise<unknown> {
-		return this.request(`/weapon_skill_versions/${id}`, {
-			method: 'PATCH',
-			body: { weapon_skill_version: payload }
-		})
-	}
-
-	async updateSkillLabels(
-		id: string,
-		payload: {
-			name_en?: string
-			name_jp?: string
-			description_en?: string
-			description_jp?: string
-		}
-	): Promise<{ sharedByCount: number }> {
-		return this.request<{ sharedByCount: number }>(`/skills/${id}`, {
-			method: 'PATCH',
-			body: { skill: payload }
-		})
-	}
-
-	async updateWeaponKey(
-		id: string,
-		payload: { name_en?: string; name_jp?: string }
-	): Promise<unknown> {
-		return this.request(`/weapon_keys/${id}`, {
-			method: 'PATCH',
-			body: { weapon_key: payload }
-		})
-	}
-
-	async validatePanels(): Promise<PanelValidation> {
-		return this.request<PanelValidation>('/calculator/validate_panels', { method: 'POST' })
-	}
-
-	// ============================================
-	// Batch Preview Methods (for batch import)
-	// ============================================
-
-	/**
-	 * Fetches wiki data and parses it for multiple character wiki pages
-	 * Requires editor role (>= 7)
-	 * @param wikiPages - Array of wiki page names (max 10)
-	 * @param wikiData - Optional pre-fetched wiki text keyed by page name
-	 */
-	async batchPreviewCharacters(
-		wikiPages: string[],
-		wikiData?: Record<string, string>
-	): Promise<BatchPreviewResponse<ParsedCharacterData>> {
-		const body: { wiki_pages: string[]; wiki_data?: Record<string, string> } = {
-			wiki_pages: wikiPages
-		}
-		if (wikiData) {
-			body.wiki_data = wikiData
-		}
-		return this.request<BatchPreviewResponse<ParsedCharacterData>>('/characters/batch_preview', {
-			method: 'POST',
-			body
-		})
-	}
-
-	/**
-	 * Fetches wiki data and parses it for multiple weapon wiki pages
-	 * Requires editor role (>= 7)
-	 * @param wikiPages - Array of wiki page names (max 10)
-	 * @param wikiData - Optional pre-fetched wiki text keyed by page name
-	 */
-	async batchPreviewWeapons(
-		wikiPages: string[],
-		wikiData?: Record<string, string>
-	): Promise<BatchPreviewResponse<ParsedWeaponData>> {
-		const body: { wiki_pages: string[]; wiki_data?: Record<string, string> } = {
-			wiki_pages: wikiPages
-		}
-		if (wikiData) {
-			body.wiki_data = wikiData
-		}
-		return this.request<BatchPreviewResponse<ParsedWeaponData>>('/weapons/batch_preview', {
-			method: 'POST',
-			body
-		})
-	}
-
-	/**
-	 * Fetches wiki data and parses it for multiple summon wiki pages
-	 * Requires editor role (>= 7)
-	 * @param wikiPages - Array of wiki page names (max 10)
-	 * @param wikiData - Optional pre-fetched wiki text keyed by page name
-	 */
-	async batchPreviewSummons(
-		wikiPages: string[],
-		wikiData?: Record<string, string>
-	): Promise<BatchPreviewResponse<ParsedSummonData>> {
-		const body: { wiki_pages: string[]; wiki_data?: Record<string, string> } = {
-			wiki_pages: wikiPages
-		}
-		if (wikiData) {
-			body.wiki_data = wikiData
-		}
-		return this.request<BatchPreviewResponse<ParsedSummonData>>('/summons/batch_preview', {
-			method: 'POST',
-			body
-		})
-	}
-
-	// ============================================
-	// Weapon Series Methods
-	// ============================================
-
-	/**
-	 * Gets all weapon series ordered by display order
-	 * Returns minimal view (id, name, slug, order)
-	 */
-	async getWeaponSeriesList(): Promise<WeaponSeries[]> {
-		return this.request<WeaponSeries[]>('/weapon_series')
-	}
-
-	/**
-	 * Gets a single weapon series by ID or slug
-	 * Returns full view with boolean flags and weapon count
-	 *
-	 * @param idOrSlug - UUID or slug (e.g., 'dark-opus')
-	 */
-	async getWeaponSeries(idOrSlug: string): Promise<WeaponSeries> {
-		return this.request<WeaponSeries>(`/weapon_series/${idOrSlug}`)
-	}
-
-	/**
-	 * Creates a new weapon series
-	 * Requires editor role (>= 7)
-	 */
-	async createWeaponSeries(payload: CreateWeaponSeriesPayload): Promise<WeaponSeries> {
-		const result = await this.request<WeaponSeries>('/weapon_series', {
-			method: 'POST',
-			body: { weapon_series: payload }
-		})
-		// Clear weapon series cache
-		this.clearCache('/weapon_series')
-		return result
-	}
-
-	/**
-	 * Updates an existing weapon series
-	 * Requires editor role (>= 7)
-	 *
-	 * @param id - Weapon series UUID
-	 * @param payload - Fields to update
-	 */
-	async updateWeaponSeries(id: string, payload: UpdateWeaponSeriesPayload): Promise<WeaponSeries> {
-		const result = await this.request<WeaponSeries>(`/weapon_series/${id}`, {
-			method: 'PATCH',
-			body: { weapon_series: payload }
-		})
-		// Clear weapon series caches
-		this.clearCache('/weapon_series')
-		return result
-	}
-
-	/**
-	 * Deletes a weapon series
-	 * Requires editor role (>= 7)
-	 * Will fail if series has associated weapons
-	 *
-	 * @param id - Weapon series UUID
-	 */
-	async deleteWeaponSeries(id: string): Promise<void> {
-		await this.request<void>(`/weapon_series/${id}`, {
-			method: 'DELETE'
-		})
-		// Clear weapon series cache
-		this.clearCache('/weapon_series')
-	}
-
-	/**
-	 * Clears weapon series cache
-	 */
-	clearWeaponSeriesCache() {
-		this.clearCache('/weapon_series')
-	}
-
-	// ============================================================
-	// WEAPON SERIES VARIANT METHODS
-	// ============================================================
-
-	async createWeaponSeriesVariant(
-		seriesId: string,
-		payload: CreateWeaponSeriesVariantPayload
-	): Promise<WeaponSeriesVariant> {
-		return this.request<WeaponSeriesVariant>(`/weapon_series/${seriesId}/weapon_series_variants`, {
-			method: 'POST',
-			body: { weapon_series_variant: payload }
-		})
-	}
-
-	async updateWeaponSeriesVariant(
-		seriesId: string,
-		variantId: string,
-		payload: UpdateWeaponSeriesVariantPayload
-	): Promise<WeaponSeriesVariant> {
-		return this.request<WeaponSeriesVariant>(
-			`/weapon_series/${seriesId}/weapon_series_variants/${variantId}`,
-			{
-				method: 'PATCH',
-				body: { weapon_series_variant: payload }
-			}
-		)
-	}
-
-	async deleteWeaponSeriesVariant(seriesId: string, variantId: string): Promise<void> {
-		await this.request(`/weapon_series/${seriesId}/weapon_series_variants/${variantId}`, {
-			method: 'DELETE'
-		})
-	}
-
-	// ============================================================
-	// CHARACTER SERIES METHODS
-	// ============================================================
-
-	/**
-	 * Gets all character series, sorted by order
-	 * Returns list view with basic info (no character count)
-	 */
-	async getCharacterSeriesList(): Promise<CharacterSeries[]> {
-		return this.request<CharacterSeries[]>('/character_series')
-	}
-
-	/**
-	 * Gets a single character series by ID or slug
-	 * Returns full view with character count
-	 *
-	 * @param idOrSlug - UUID or slug (e.g., 'grand')
-	 */
-	async getCharacterSeries(idOrSlug: string): Promise<CharacterSeries> {
-		return this.request<CharacterSeries>(`/character_series/${idOrSlug}`)
-	}
-
-	/**
-	 * Creates a new character series
-	 * Requires editor role (>= 7)
-	 */
-	async createCharacterSeries(payload: CreateCharacterSeriesPayload): Promise<CharacterSeries> {
-		const result = await this.request<CharacterSeries>('/character_series', {
-			method: 'POST',
-			body: { character_series: payload }
-		})
-		// Clear character series cache
-		this.clearCache('/character_series')
-		return result
-	}
-
-	/**
-	 * Updates an existing character series
-	 * Requires editor role (>= 7)
-	 *
-	 * @param id - Character series UUID
-	 * @param payload - Fields to update
-	 */
-	async updateCharacterSeries(
-		id: string,
-		payload: UpdateCharacterSeriesPayload
-	): Promise<CharacterSeries> {
-		const result = await this.request<CharacterSeries>(`/character_series/${id}`, {
-			method: 'PATCH',
-			body: { character_series: payload }
-		})
-		// Clear character series cache
-		this.clearCache('/character_series')
-		return result
-	}
-
-	/**
-	 * Deletes a character series
-	 * Requires editor role (>= 7)
-	 * Will fail if series has associated characters
-	 *
-	 * @param id - Character series UUID
-	 */
-	async deleteCharacterSeries(id: string): Promise<void> {
-		await this.request<void>(`/character_series/${id}`, {
-			method: 'DELETE'
-		})
-		// Clear character series cache
-		this.clearCache('/character_series')
-	}
-
-	/**
-	 * Clears character series cache
-	 */
-	clearCharacterSeriesCache() {
-		this.clearCache('/character_series')
-	}
-
-	// ============================================================
-	// SUMMON SERIES METHODS
-	// ============================================================
-
-	/**
-	 * Gets all summon series, sorted by order
-	 * Returns list view with basic info (no summon count)
-	 */
-	async getSummonSeriesList(): Promise<SummonSeries[]> {
-		return this.request<SummonSeries[]>('/summon_series')
-	}
-
-	/**
-	 * Gets a single summon series by ID or slug
-	 * Returns full view with summon count
-	 *
-	 * @param idOrSlug - UUID or slug (e.g., 'magna')
-	 */
-	async getSummonSeries(idOrSlug: string): Promise<SummonSeries> {
-		return this.request<SummonSeries>(`/summon_series/${idOrSlug}`)
-	}
-
-	/**
-	 * Creates a new summon series
-	 * Requires editor role (>= 7)
-	 */
-	async createSummonSeries(payload: CreateSummonSeriesPayload): Promise<SummonSeries> {
-		const result = await this.request<SummonSeries>('/summon_series', {
-			method: 'POST',
-			body: { summon_series: payload }
-		})
-		// Clear summon series cache
-		this.clearCache('/summon_series')
-		return result
-	}
-
-	/**
-	 * Updates an existing summon series
-	 * Requires editor role (>= 7)
-	 *
-	 * @param id - Summon series UUID
-	 * @param payload - Fields to update
-	 */
-	async updateSummonSeries(id: string, payload: UpdateSummonSeriesPayload): Promise<SummonSeries> {
-		const result = await this.request<SummonSeries>(`/summon_series/${id}`, {
-			method: 'PATCH',
-			body: { summon_series: payload }
-		})
-		// Clear summon series cache
-		this.clearCache('/summon_series')
-		return result
-	}
-
-	/**
-	 * Deletes a summon series
-	 * Requires editor role (>= 7)
-	 * Will fail if series has associated summons
-	 *
-	 * @param id - Summon series UUID
-	 */
-	async deleteSummonSeries(id: string): Promise<void> {
-		await this.request<void>(`/summon_series/${id}`, {
-			method: 'DELETE'
-		})
-		// Clear summon series cache
-		this.clearCache('/summon_series')
-	}
-
-	/**
-	 * Clears summon series cache
-	 */
-	clearSummonSeriesCache() {
-		this.clearCache('/summon_series')
-	}
-
-	// ============================================================
-	// AWAKENING METHODS
-	// ============================================================
-
-	/**
-	 * Gets all awakenings, optionally filtered by object_type
-	 */
-	async getAwakenings(objectType?: string): Promise<Awakening[]> {
-		const params = objectType ? `?object_type=${objectType}` : ''
-		return this.request<Awakening[]>(`/awakenings${params}`, {
-			method: 'GET'
-		})
-	}
-
-	/**
-	 * Gets a single awakening by ID
-	 */
-	async getAwakening(id: string): Promise<Awakening> {
-		return this.request<Awakening>(`/awakenings/${id}`, {
-			method: 'GET'
-		})
-	}
-
-	/**
-	 * Creates a new awakening
-	 * Requires editor role (>= 7)
-	 */
-	async createAwakening(payload: CreateAwakeningPayload): Promise<Awakening> {
-		return this.request<Awakening>('/awakenings', {
-			method: 'POST',
-			body: { awakening: payload }
-		})
-	}
-
-	/**
-	 * Updates an existing awakening
-	 * Requires editor role (>= 7)
-	 */
-	async updateAwakening(id: string, payload: UpdateAwakeningPayload): Promise<Awakening> {
-		return this.request<Awakening>(`/awakenings/${id}`, {
-			method: 'PATCH',
-			body: { awakening: payload }
-		})
-	}
-
-	/**
-	 * Deletes an awakening
-	 * Requires editor role (>= 7)
-	 */
-	async deleteAwakening(id: string): Promise<void> {
-		await this.request<void>(`/awakenings/${id}`, {
-			method: 'DELETE'
-		})
-	}
-
-	/**
-	 * Uploads an image for an awakening
-	 * Requires editor role (>= 7)
-	 */
-	async uploadAwakeningImage(id: string, imageData: string, filename: string): Promise<Awakening> {
-		return this.request<Awakening>(`/awakenings/${id}/upload_image`, {
-			method: 'POST',
-			body: { image: imageData, filename }
-		})
 	}
 }
 
