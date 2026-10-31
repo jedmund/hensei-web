@@ -10,7 +10,7 @@
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { createQuery, queryOptions } from '@tanstack/svelte-query'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { seriesAdapter } from '$lib/api/adapters/series.adapter'
 	import { localizedName } from '$lib/utils/locale'
 	import { DropdownMenu } from 'bits-ui'
 	import Icon from '$lib/components/Icon.svelte'
@@ -162,7 +162,7 @@
 	const weaponSeriesQuery = createQuery(() =>
 		queryOptions({
 			queryKey: ['weaponSeries', 'list'] as const,
-			queryFn: () => entityAdapter.getWeaponSeriesList(),
+			queryFn: () => seriesAdapter.getWeaponSeriesList(),
 			enabled: entityType === 'weapon',
 			staleTime: 1000 * 60 * 60, // 1 hour
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
@@ -173,7 +173,7 @@
 	const characterSeriesQuery = createQuery(() =>
 		queryOptions({
 			queryKey: ['characterSeries', 'list'] as const,
-			queryFn: () => entityAdapter.getCharacterSeriesList(),
+			queryFn: () => seriesAdapter.getCharacterSeriesList(),
 			enabled: entityType === 'character',
 			staleTime: 1000 * 60 * 60,
 			gcTime: 1000 * 60 * 60 * 24
@@ -184,7 +184,7 @@
 	const summonSeriesQuery = createQuery(() =>
 		queryOptions({
 			queryKey: ['summonSeries', 'list'] as const,
-			queryFn: () => entityAdapter.getSummonSeriesList(),
+			queryFn: () => seriesAdapter.getSummonSeriesList(),
 			enabled: entityType === 'summon',
 			staleTime: 1000 * 60 * 60,
 			gcTime: 1000 * 60 * 60 * 24

@@ -6,7 +6,7 @@
 	// TanStack Query
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { weaponAdapter } from '$lib/api/adapters/weapon.adapter'
 	import { withInitialData } from '$lib/query/ssr'
 
 	// Components
@@ -241,7 +241,7 @@
 				bullet_slots: editData.bulletSlots
 			}
 
-			await entityAdapter.updateWeapon(weapon.id, payload)
+			await weaponAdapter.updateWeapon(weapon.id, payload)
 
 			// Invalidate TanStack Query cache and force immediate refetch
 			await queryClient.invalidateQueries({

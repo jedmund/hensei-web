@@ -5,7 +5,7 @@
 	// TanStack Query
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { summonAdapter } from '$lib/api/adapters/summon.adapter'
 	import { withInitialData } from '$lib/query/ssr'
 
 	// Components
@@ -181,7 +181,7 @@
 				promotions: editData.promotions
 			}
 
-			await entityAdapter.updateSummon(summon.id, payload)
+			await summonAdapter.updateSummon(summon.id, payload)
 
 			// Invalidate TanStack Query cache and force immediate refetch
 			await queryClient.invalidateQueries({

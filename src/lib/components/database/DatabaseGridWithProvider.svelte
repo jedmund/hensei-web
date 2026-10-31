@@ -7,7 +7,7 @@
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { createQuery, queryOptions } from '@tanstack/svelte-query'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { seriesAdapter } from '$lib/api/adapters/series.adapter'
 	import { storeListUrl } from '$lib/utils/listNavigation'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -56,7 +56,7 @@
 	const weaponSeriesQuery = createQuery(() =>
 		queryOptions({
 			queryKey: ['weaponSeries', 'list'] as const,
-			queryFn: () => entityAdapter.getWeaponSeriesList(),
+			queryFn: () => seriesAdapter.getWeaponSeriesList(),
 			enabled: resource === 'weapons',
 			staleTime: 1000 * 60 * 60,
 			gcTime: 1000 * 60 * 60 * 24

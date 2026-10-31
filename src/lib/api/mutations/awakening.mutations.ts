@@ -1,14 +1,14 @@
 import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svelte-query'
 import {
-	entityAdapter,
+	awakeningAdapter,
 	type CreateAwakeningPayload,
 	type UpdateAwakeningPayload
-} from '$lib/api/adapters/entity.adapter'
+} from '$lib/api/adapters/awakening.adapter'
 import { entityKeys } from '$lib/api/queries/entity.queries'
 
 export function createAwakeningOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (payload: CreateAwakeningPayload) => entityAdapter.createAwakening(payload),
+		mutationFn: (payload: CreateAwakeningPayload) => awakeningAdapter.createAwakening(payload),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: entityKeys.allAwakenings() })
 		}
@@ -18,7 +18,7 @@ export function createAwakeningOptions(queryClient: QueryClient) {
 export function updateAwakeningOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ id, payload }: { id: string; payload: UpdateAwakeningPayload }) =>
-			entityAdapter.updateAwakening(id, payload),
+			awakeningAdapter.updateAwakening(id, payload),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: entityKeys.allAwakenings() })
 		}
@@ -27,7 +27,7 @@ export function updateAwakeningOptions(queryClient: QueryClient) {
 
 export function deleteAwakeningOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: (id: string) => entityAdapter.deleteAwakening(id),
+		mutationFn: (id: string) => awakeningAdapter.deleteAwakening(id),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: entityKeys.allAwakenings() })
 		}
@@ -44,7 +44,7 @@ export function uploadAwakeningImageOptions(queryClient: QueryClient) {
 			id: string
 			imageData: string
 			filename: string
-		}) => entityAdapter.uploadAwakeningImage(id, imageData, filename),
+		}) => awakeningAdapter.uploadAwakeningImage(id, imageData, filename),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: entityKeys.allAwakenings() })
 		}
