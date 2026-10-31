@@ -228,6 +228,12 @@ export const RATE_LIMIT_RULES: Rule[] = [
 		limiter: createRateLimiter({ limit: 30, windowMs: MINUTE })
 	},
 	{
+		name: 'team-view',
+		methods: ['POST'],
+		path: route('/api/teams/[^/]+/view'),
+		limiter: createRateLimiter({ limit: 60, windowMs: MINUTE })
+	},
+	{
 		name: 'client-error',
 		methods: ['POST'],
 		path: route('/api/client-error'),
