@@ -15,11 +15,9 @@
 	} from '$lib/types/api/party'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { partyQueries } from '$lib/api/queries/party.queries'
-	import {
-		useUpdateGridWeapon,
-		useUpdateGridCharacter,
-		useUpdateGridSummon
-	} from '$lib/api/mutations/grid.mutations'
+	import { useUpdateGridWeapon } from '$lib/api/mutations/gridWeapon.mutations'
+	import { useUpdateGridCharacter } from '$lib/api/mutations/gridCharacter.mutations'
+	import { useUpdateGridSummon } from '$lib/api/mutations/gridSummon.mutations'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DescriptionEditor from './DescriptionEditor.svelte'
 	import RolesField from './RolesField.svelte'

@@ -6,11 +6,9 @@
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { partyQueries, partyKeys } from '$lib/api/queries/party.queries'
 	import { useCreateParty } from '$lib/api/mutations/party.mutations'
-	import {
-		useCreateGridCharacter,
-		useCreateGridSummon,
-		useCreateGridWeapon
-	} from '$lib/api/mutations/grid.mutations'
+	import { useCreateGridCharacter } from '$lib/api/mutations/gridCharacter.mutations'
+	import { useCreateGridSummon } from '$lib/api/mutations/gridSummon.mutations'
+	import { useCreateGridWeapon } from '$lib/api/mutations/gridWeapon.mutations'
 	import { parseNewTeamStart } from '$lib/utils/browseRoutes'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
