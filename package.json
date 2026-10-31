@@ -83,6 +83,8 @@
 		"@lucide/svelte": "^1.59.0",
 		"@sentry/sveltekit": "^11.8.0",
 		"@tanstack/svelte-query": "^6.3.2",
+		"@tanstack/svelte-table": "^9.3.1",
+		"@tanstack/svelte-virtual": "^3.13.50",
 		"@tiptap/core": "^3.31.4",
 		"@tiptap/extension-bubble-menu": "^3.31.4",
 		"@tiptap/extension-code-block-lowlight": "^3.31.4",
