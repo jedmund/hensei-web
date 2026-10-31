@@ -17,7 +17,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import ValidatedInput from '$lib/components/ui/ValidatedInput.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { summonAdapter } from '$lib/api/adapters/summon.adapter'
 	import { getRarityOptions } from '$lib/utils/rarity'
 
 	// Always in edit mode for new summon
@@ -116,7 +116,7 @@
 		}
 
 		try {
-			const result = await entityAdapter.validateSummonGranblueId(value)
+			const result = await summonAdapter.validateSummonGranblueId(value)
 
 			if (!result.valid) {
 				granblueIdValid = false
@@ -199,9 +199,9 @@
 				nicknames_jp: editData.nicknamesJp
 			}
 
-			const newSummon = await entityAdapter.createSummon(payload)
+			const newSummon = await summonAdapter.createSummon(payload)
 			// Trigger image download in background (don't await - it queues a job)
-			entityAdapter.downloadSummonImages(newSummon.id).catch(console.error)
+			summonAdapter.downloadSummonImages(newSummon.id).catch(console.error)
 			await goto(`/database/summons/${newSummon.granblueId}`)
 		} catch (error) {
 			saveError = 'Failed to create summon. Please try again.'

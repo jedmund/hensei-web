@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { weaponAdapter } from '$lib/api/adapters/weapon.adapter'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import { getBoostTypeLabel } from '$lib/utils/boostType'
@@ -54,7 +54,7 @@
 		savingId = key.id
 		error = null
 		try {
-			await entityAdapter.updateWeaponKey(key.id, { name_en: buf.nameEn, name_jp: buf.nameJp })
+			await weaponAdapter.updateWeaponKey(key.id, { name_en: buf.nameEn, name_jp: buf.nameJp })
 			delete edits[key.id]
 			await onMutated()
 		} catch (err) {

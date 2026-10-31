@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { weaponSkillAdapter } from '$lib/api/adapters/weaponSkill.adapter'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import { ApiError } from '$lib/api/adapters/errors'
 	import PageMeta from '$lib/components/PageMeta.svelte'
@@ -35,7 +35,7 @@
 
 	const familyQuery = createQuery(() => ({
 		queryKey: ['weaponSkillFamily', data.modifier],
-		queryFn: () => entityAdapter.getWeaponSkillFamily(data.modifier ?? '')
+		queryFn: () => weaponSkillAdapter.getWeaponSkillFamily(data.modifier ?? '')
 	}))
 	const family = $derived(familyQuery.data)
 
@@ -183,7 +183,7 @@
 	async function runValidation() {
 		validating = true
 		try {
-			validation = await entityAdapter.validatePanels()
+			validation = await weaponSkillAdapter.validatePanels()
 			if (validation.ok) dirty = false
 		} finally {
 			validating = false

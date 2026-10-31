@@ -16,7 +16,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import ValidatedInput from '$lib/components/ui/ValidatedInput.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { characterAdapter } from '$lib/api/adapters/character.adapter'
 	import { getRarityOptions } from '$lib/utils/rarity'
 
 	// Types
@@ -136,7 +136,7 @@
 		}
 
 		try {
-			const result = await entityAdapter.validateCharacterGranblueId(value)
+			const result = await characterAdapter.validateCharacterGranblueId(value)
 
 			if (!result.valid) {
 				granblueIdValid = false
@@ -235,9 +235,9 @@
 				nicknames_jp: editData.nicknamesJp
 			}
 
-			const newCharacter = await entityAdapter.createCharacter(payload)
+			const newCharacter = await characterAdapter.createCharacter(payload)
 			// Trigger image download in background (don't await - it queues a job)
-			entityAdapter.downloadCharacterImages(newCharacter.id).catch(console.error)
+			characterAdapter.downloadCharacterImages(newCharacter.id).catch(console.error)
 			const styleSuffix = newCharacter.styleSwap ? '/style' : ''
 			await goto(`/database/characters/${newCharacter.granblueId}${styleSuffix}`)
 		} catch (error) {

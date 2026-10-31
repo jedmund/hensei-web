@@ -11,7 +11,9 @@ import {
 	getSideLabel
 } from '$lib/utils/exploreFilterOptions'
 import { filterItemsToParams } from '$lib/utils/filterConversion'
-import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+import { characterAdapter } from '$lib/api/adapters/character.adapter'
+import { summonAdapter } from '$lib/api/adapters/summon.adapter'
+import { weaponAdapter } from '$lib/api/adapters/weapon.adapter'
 import { localizedName } from '$lib/utils/locale'
 
 // All recognized explore filter param keys
@@ -290,10 +292,10 @@ export async function resolveEntityFilters(
 		refs.map(async (ref): Promise<FilterItem> => {
 			const entity =
 				ref.type === 'character'
-					? await entityAdapter.getCharacter(ref.granblueId, options)
+					? await characterAdapter.getCharacter(ref.granblueId, options)
 					: ref.type === 'weapon'
-						? await entityAdapter.getWeapon(ref.granblueId, options)
-						: await entityAdapter.getSummon(ref.granblueId, options)
+						? await weaponAdapter.getWeapon(ref.granblueId, options)
+						: await summonAdapter.getSummon(ref.granblueId, options)
 			const label = localizedName(entity.name) ?? ref.granblueId
 			return {
 				kind: 'entity',

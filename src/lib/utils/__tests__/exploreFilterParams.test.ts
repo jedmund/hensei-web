@@ -9,13 +9,15 @@ import {
 	urlParamsToExploreFilterParams
 } from '../exploreFilterParams'
 
-// Mock entity adapter for resolveEntityFilters tests
-vi.mock('$lib/api/adapters/entity.adapter', () => ({
-	entityAdapter: {
-		getCharacter: vi.fn(),
-		getWeapon: vi.fn(),
-		getSummon: vi.fn()
-	}
+// Mock the character, weapon and summon adapters for resolveEntityFilters tests
+vi.mock('$lib/api/adapters/character.adapter', () => ({
+	characterAdapter: { getCharacter: vi.fn() }
+}))
+vi.mock('$lib/api/adapters/weapon.adapter', () => ({
+	weaponAdapter: { getWeapon: vi.fn() }
+}))
+vi.mock('$lib/api/adapters/summon.adapter', () => ({
+	summonAdapter: { getSummon: vi.fn() }
 }))
 
 const mockRaid: RaidFull = {
@@ -392,13 +394,13 @@ describe('roundtrip', () => {
 
 describe('resolveEntityFilters', () => {
 	it('resolves character entities', async () => {
-		const { entityAdapter } = await import('$lib/api/adapters/entity.adapter')
-		vi.mocked(entityAdapter.getCharacter).mockResolvedValue({
+		const { characterAdapter } = await import('$lib/api/adapters/character.adapter')
+		vi.mocked(characterAdapter.getCharacter).mockResolvedValue({
 			id: 'char-uuid',
 			granblueId: '3040000000',
 			name: { en: 'Narmaya', ja: 'ナルメア' },
 			element: 5
-		} as Awaited<ReturnType<typeof entityAdapter.getCharacter>>)
+		} as Awaited<ReturnType<typeof characterAdapter.getCharacter>>)
 
 		const result = await resolveEntityFilters([
 			{ granblueId: '3040000000', type: 'character', mode: 'include' }
@@ -414,8 +416,8 @@ describe('resolveEntityFilters', () => {
 	})
 
 	it('silently drops failed resolutions', async () => {
-		const { entityAdapter } = await import('$lib/api/adapters/entity.adapter')
-		vi.mocked(entityAdapter.getCharacter).mockRejectedValue(new Error('Not found'))
+		const { characterAdapter } = await import('$lib/api/adapters/character.adapter')
+		vi.mocked(characterAdapter.getCharacter).mockRejectedValue(new Error('Not found'))
 
 		const result = await resolveEntityFilters([
 			{ granblueId: '9999999999', type: 'character', mode: 'include' }
@@ -425,20 +427,20 @@ describe('resolveEntityFilters', () => {
 	})
 
 	it('passes options through to adapter methods', async () => {
-		const { entityAdapter } = await import('$lib/api/adapters/entity.adapter')
+		const { weaponAdapter } = await import('$lib/api/adapters/weapon.adapter')
 		const mockFetch = vi.fn()
-		vi.mocked(entityAdapter.getWeapon).mockResolvedValue({
+		vi.mocked(weaponAdapter.getWeapon).mockResolvedValue({
 			id: 'wpn-uuid',
 			granblueId: '1040000000',
 			name: { en: 'AK-4A', ja: 'AK-4A' },
 			element: 3
-		} as Awaited<ReturnType<typeof entityAdapter.getWeapon>>)
+		} as Awaited<ReturnType<typeof weaponAdapter.getWeapon>>)
 
 		await resolveEntityFilters([{ granblueId: '1040000000', type: 'weapon', mode: 'include' }], {
 			fetch: mockFetch as unknown as typeof globalThis.fetch
 		})
 
-		expect(entityAdapter.getWeapon).toHaveBeenCalledWith('1040000000', {
+		expect(weaponAdapter.getWeapon).toHaveBeenCalledWith('1040000000', {
 			fetch: mockFetch
 		})
 	})
@@ -473,13 +475,13 @@ describe('urlParamsToExploreFilterParams', () => {
 	})
 
 	it('resolves entity filters when fetch is provided', async () => {
-		const { entityAdapter } = await import('$lib/api/adapters/entity.adapter')
-		vi.mocked(entityAdapter.getCharacter).mockResolvedValue({
+		const { characterAdapter } = await import('$lib/api/adapters/character.adapter')
+		vi.mocked(characterAdapter.getCharacter).mockResolvedValue({
 			id: 'char-uuid',
 			granblueId: '3040000000',
 			name: { en: 'Narmaya', ja: 'ナルメア' },
 			element: 5
-		} as Awaited<ReturnType<typeof entityAdapter.getCharacter>>)
+		} as Awaited<ReturnType<typeof characterAdapter.getCharacter>>)
 
 		const mockFetch = vi.fn()
 		const result = await urlParamsToExploreFilterParams(
