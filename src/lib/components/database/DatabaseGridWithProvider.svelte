@@ -12,7 +12,7 @@
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { MediaQuery } from 'svelte/reactivity'
-	import { localizeHref } from '$lib/paraglide/runtime'
+	import { getLocale, localizeHref } from '$lib/paraglide/runtime'
 	import { ResultSet, setResultSet } from '$lib/features/database/resultSet.svelte'
 	import RecordPanel from '$lib/features/database/panel/RecordPanel.svelte'
 	import {
@@ -112,7 +112,13 @@
 
 	function rowTitle(row: IRow): string | undefined {
 		if (typeof row.displayName === 'string') return row.displayName
-		return typeof row.name === 'string' ? row.name : undefined
+		if (typeof row.name === 'string') return row.name
+		// Search results carry a localized name object ({ en, ja })
+		const name = row.name as { en?: string; ja?: string } | undefined
+		if (name && typeof name === 'object') {
+			return (getLocale() === 'ja' ? (name.ja ?? name.en) : (name.en ?? name.ja)) || undefined
+		}
+		return undefined
 	}
 
 	// Called synchronously at the end of each load, so ResultSet.next()/prev()
