@@ -8,9 +8,11 @@
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import HomeCard from '$lib/components/home/HomeCard.svelte'
+	import EmptyTeams from '$lib/components/home/EmptyTeams.svelte'
 	import PinnedCardHeader from '$lib/components/home/PinnedCardHeader.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import { localizedName } from '$lib/utils/locale'
+	import { escapeHtml } from '$lib/utils/safeHtml'
 	import { formatDateJST } from '$lib/utils/date'
 	import { getCharacterImage, getSummonImage, getWeaponImage } from '$lib/utils/images'
 	import { galleryPath, newTeamPath } from '$lib/utils/browseRoutes'
@@ -113,12 +115,12 @@
 			</PinnedCardHeader>
 
 			{#if selected.parties.length === 0}
-				<div class="empty">
-					<p>{m.home_no_item_teams({ item: localizedName(selected.item.name) })}</p>
-					{#if newTeamHref}
-						<Button href={newTeamHref}>{m.nav_new_team()}</Button>
-					{/if}
-				</div>
+				<EmptyTeams
+					messageHtml={m.home_no_item_teams({
+						item: escapeHtml(localizedName(selected.item.name))
+					})}
+					href={newTeamHref}
+				/>
 			{:else}
 				<ExploreGrid items={selected.parties} showRaid contained />
 			{/if}
@@ -170,20 +172,6 @@
 	// Takes the space of one row of team cards plus the "see all" button
 	// (231 + 12 gap + 44), so the card keeps its height when switching to an
 	// item nobody has used yet
-	.empty {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: calc($unit * 1.5);
-		min-height: 287px;
-		color: var(--text-tertiary);
-		text-align: center;
-
-		p {
-			margin: 0;
-		}
-	}
 
 	.date {
 		font-size: $font-small;

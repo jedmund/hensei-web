@@ -9,9 +9,11 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import HomeCard from '$lib/components/home/HomeCard.svelte'
+	import EmptyTeams from '$lib/components/home/EmptyTeams.svelte'
 	import CardCover from '$lib/components/home/CardCover.svelte'
 	import PinnedCardHeader from '$lib/components/home/PinnedCardHeader.svelte'
 	import { localizedName } from '$lib/utils/locale'
+	import { escapeHtml } from '$lib/utils/safeHtml'
 	import { formatDateJST } from '$lib/utils/date'
 	import { getRaidImage } from '$lib/utils/images'
 	import { exploreQuery } from '$lib/utils/home'
@@ -135,12 +137,12 @@
 			</PinnedCardHeader>
 
 			{#if parties.length === 0}
-				<div class="empty">
-					<p>{m.home_no_battle_teams({ raid: localizedName(selected.raid.name) })}</p>
-					{#if newTeamHref}
-						<Button href={newTeamHref}>{m.nav_new_team()}</Button>
-					{/if}
-				</div>
+				<EmptyTeams
+					messageHtml={m.home_no_battle_teams({
+						raid: escapeHtml(localizedName(selected.raid.name))
+					})}
+					href={newTeamHref}
+				/>
 			{:else}
 				<ExploreGrid items={parties} showRaid={false} contained />
 				{#if seeAllHref}
@@ -220,22 +222,5 @@
 	.date {
 		font-size: $font-small;
 		color: var(--text-secondary);
-	}
-
-	// Same height as one row of team cards plus the "see all" button, so the
-	// card doesn't jump when switching to a battle nobody has posted yet
-	.empty {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		gap: calc($unit * 1.5);
-		min-height: 287px;
-		color: var(--text-tertiary);
-		text-align: center;
-
-		p {
-			margin: 0;
-		}
 	}
 </style>
