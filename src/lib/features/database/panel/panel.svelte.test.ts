@@ -3,6 +3,7 @@ import { ResultSet, type ResultItem } from '../resultSet.svelte'
 import { parseRecordId, preserveParams, readOpen, recordId, recordPath, withOpen } from './panelUrl'
 import { panelPosition, stepRecord } from './panelNavigation'
 import { isTextField, panelKeyAction } from './panelKeys'
+import { opensInPanel } from './openInPanel'
 
 describe('panel URL state', () => {
 	const base = new URL('https://granblue.team/database/weapons?view=weapons&element=fire&page=2')
@@ -209,5 +210,32 @@ describe('panel keys', () => {
 		expect(isTextField(button)).toBe(false)
 		expect(isTextField(checkbox)).toBe(false)
 		expect(panelKeyAction(key('j', { target: button }), inside)).toBe('next')
+	})
+})
+
+describe('opening from a list row', () => {
+	const click = (init: Partial<MouseEvent> = {}) => ({
+		button: 0,
+		metaKey: false,
+		ctrlKey: false,
+		shiftKey: false,
+		altKey: false,
+		...init
+	})
+
+	it('opens plain clicks in the panel on wide screens', () => {
+		expect(opensInPanel(click(), true)).toBe(true)
+		expect(opensInPanel(null, true)).toBe(true)
+	})
+
+	it('leaves modified and middle clicks to the browser', () => {
+		expect(opensInPanel(click({ metaKey: true }), true)).toBe(false)
+		expect(opensInPanel(click({ ctrlKey: true }), true)).toBe(false)
+		expect(opensInPanel(click({ shiftKey: true }), true)).toBe(false)
+		expect(opensInPanel(click({ button: 1 }), true)).toBe(false)
+	})
+
+	it('opens the full page on phones', () => {
+		expect(opensInPanel(click(), false)).toBe(false)
 	})
 })

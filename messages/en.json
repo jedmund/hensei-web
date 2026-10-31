@@ -2664,5 +2664,13 @@
 	"db_weapon_series_flag_keys": "Keys",
 	"db_weapon_series_flag_awaken": "Awaken",
 	"db_weapon_series_flag_ax": "AX",
-	"db_weapon_series_empty": "No weapon series found"
+	"db_weapon_series_empty": "No weapon series found",
+	"db_panel_label": "Record details",
+	"db_panel_previous": "Previous (K)",
+	"db_panel_next": "Next (J)",
+	"db_panel_close": "Close (Esc)",
+	"db_panel_edit": "Edit (E)",
+	"db_panel_open_full": "Open full page",
+	"db_panel_position": "{index} of {count}",
+	"db_panel_page": "page {page} of {total}"
 }
