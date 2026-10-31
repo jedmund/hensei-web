@@ -14,6 +14,7 @@
 	import { DropdownMenu } from 'bits-ui'
 	import { rootOf, sectionForUrl, sectionHref } from '$lib/features/database/sections'
 	import { modeLabel, recordTitle } from '$lib/features/database/breadcrumb'
+	import { openRecord } from '$lib/features/database/panel/openRecord.svelte'
 
 	interface Props {
 		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
@@ -44,7 +45,10 @@
 		if (current && current.id !== root?.id) {
 			list.push({ label: current.label(), href: localizeHref(sectionHref(current)) })
 		}
-		if (record) {
+		if (!record && openRecord.current) {
+			// A record open in the list's side panel reads like a visit to it
+			list.push({ label: openRecord.current.title })
+		} else if (record) {
 			// On /edit (and similar sub-pages) the record crumb links back to its detail page
 			const detailPath = page.url.pathname.replace(/\/(edit|style(\/edit)?)$/, '')
 			list.push({
