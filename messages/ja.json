@@ -2459,7 +2459,7 @@
 	"db_panel_next": "次へ (J)",
 	"db_panel_close": "閉じる (Esc)",
 	"db_panel_edit": "編集 (E)",
-	"db_panel_open_full": "ページで開く",
+	"db_panel_open_full": "詳細ページを開く",
 	"db_panel_position": "{count}件中{index}件目",
 	"db_panel_page": "{page}/{total}ページ"
 }
