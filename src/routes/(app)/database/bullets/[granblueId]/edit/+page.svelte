@@ -4,7 +4,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { bulletQueries, bulletKeys } from '$lib/api/queries/bullet.queries'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { bulletAdapter } from '$lib/api/adapters/bullet.adapter'
 	import { withInitialData } from '$lib/query/ssr'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
 	import DatabaseFormHeader from '$lib/components/database/DatabaseFormHeader.svelte'
@@ -83,7 +83,7 @@
 				order: editData.order
 			}
 
-			await entityAdapter.updateBullet(bullet.granblueId || bullet.id, payload)
+			await bulletAdapter.updateBullet(bullet.granblueId || bullet.id, payload)
 
 			await queryClient.invalidateQueries({ queryKey: bulletKeys.all })
 

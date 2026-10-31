@@ -2,8 +2,7 @@
 	import { SvelteMap } from 'svelte/reactivity'
 	import * as m from '$lib/paraglide/messages'
 	import { createQuery } from '@tanstack/svelte-query'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
-	import type { WeaponKey } from '$lib/api/adapters/entity.adapter'
+	import { weaponAdapter, type WeaponKey } from '$lib/api/adapters/weapon.adapter'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { queryOptions } from '@tanstack/svelte-query'
 	import { localizedName } from '$lib/utils/locale'
@@ -61,7 +60,7 @@
 			queryKey: ['weaponKeys', 'slug', seriesSlug, slot] as const,
 			queryFn: async () => {
 				if (!seriesSlug) return []
-				return entityAdapter.getWeaponKeys({ seriesSlug, slot })
+				return weaponAdapter.getWeaponKeys({ seriesSlug, slot })
 			},
 			enabled: !!seriesSlug,
 			staleTime: 1000 * 60 * 60,

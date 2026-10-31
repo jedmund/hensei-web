@@ -9,7 +9,7 @@
 	// TanStack Query
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { characterAdapter } from '$lib/api/adapters/character.adapter'
 	import { withInitialData } from '$lib/query/ssr'
 
 	// Components
@@ -277,7 +277,7 @@
 				kamigame: editData.kamigame || undefined
 			}
 
-			await entityAdapter.updateCharacter(character.id, payload)
+			await characterAdapter.updateCharacter(character.id, payload)
 
 			// Invalidate TanStack Query cache and force immediate refetch
 			await queryClient.invalidateQueries({

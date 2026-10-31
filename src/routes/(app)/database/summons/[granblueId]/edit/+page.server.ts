@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types'
-import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+import { summonAdapter } from '$lib/api/adapters/summon.adapter'
 import { error } from '@sveltejs/kit'
 import { requireEditor } from '$lib/auth/requireEditor'
 
@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 	requireEditor(parentData, `/database/summons/${params.granblueId}`)
 
 	try {
-		const summon = await entityAdapter.getSummon(params.granblueId)
+		const summon = await summonAdapter.getSummon(params.granblueId)
 
 		if (!summon) {
 			throw error(404, 'Summon not found')

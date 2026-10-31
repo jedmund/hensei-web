@@ -3,7 +3,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { entityAdapter, type ParsedCharacterData } from '$lib/api/adapters/entity.adapter'
+	import { characterAdapter, type ParsedCharacterData } from '$lib/api/adapters/character.adapter'
 	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'
 	import { getGameCdnCharacterImage, getPlaceholderImage } from '$lib/utils/images'
 	import {
@@ -221,7 +221,7 @@
 			const finalPages = wikiResults.map((r) => r.wikiPage)
 
 			// Step 2: Send to API for parsing (with pre-fetched wiki data)
-			const response = await entityAdapter.batchPreviewCharacters(finalPages, wikiData)
+			const response = await characterAdapter.batchPreviewCharacters(finalPages, wikiData)
 
 			// Update entities with results
 			entities.clear()
@@ -317,9 +317,9 @@
 				wiki_raw: wikiRawByPage[selectedWikiPage] || undefined
 			}
 
-			const newCharacter = await entityAdapter.createCharacter(payload)
+			const newCharacter = await characterAdapter.createCharacter(payload)
 			// Trigger image download in background (don't await - it queues a job)
-			entityAdapter.downloadCharacterImages(newCharacter.id).catch(console.error)
+			characterAdapter.downloadCharacterImages(newCharacter.id).catch(console.error)
 			savedEntities.add(selectedWikiPage)
 			savedEntities = new SvelteSet(savedEntities)
 

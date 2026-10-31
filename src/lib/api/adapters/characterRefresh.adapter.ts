@@ -13,7 +13,7 @@
 
 import { BaseAdapter } from './base.adapter'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
-import type { Character } from './entity.adapter'
+import type { Character } from './character.adapter'
 
 export type RefreshChangeKind = 'created' | 'updated' | 'deleted'
 

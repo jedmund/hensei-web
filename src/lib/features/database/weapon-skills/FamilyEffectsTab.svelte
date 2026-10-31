@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { weaponSkillAdapter } from '$lib/api/adapters/weaponSkill.adapter'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import { getBoostTypeLabel } from '$lib/utils/boostType'
@@ -84,7 +84,7 @@
 		error = null
 		try {
 			const num = (v: string) => (v === '' ? null : Number(v))
-			await entityAdapter.updateWeaponSkillEffect(effect.id, {
+			await weaponSkillAdapter.updateWeaponSkillEffect(effect.id, {
 				value: num(buf.value),
 				total_cap: num(buf.totalCap),
 				per_copy_cap: num(buf.perCopyCap),
@@ -102,7 +102,7 @@
 	async function deleteEffect(effect: WeaponSkillEffectRow) {
 		error = null
 		try {
-			await onDelete((force) => entityAdapter.deleteWeaponSkillEffect(effect.id, force))
+			await onDelete((force) => weaponSkillAdapter.deleteWeaponSkillEffect(effect.id, force))
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to delete'
 		}

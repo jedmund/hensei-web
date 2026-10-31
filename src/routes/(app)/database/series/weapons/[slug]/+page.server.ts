@@ -1,12 +1,12 @@
 import type { PageServerLoad } from './$types'
-import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+import { seriesAdapter } from '$lib/api/adapters/series.adapter'
 import { error } from '@sveltejs/kit'
 
 export const load: PageServerLoad = async ({ params, parent }) => {
 	const parentData = await parent()
 
 	try {
-		const series = await entityAdapter.getWeaponSeries(params.slug)
+		const series = await seriesAdapter.getWeaponSeries(params.slug)
 
 		if (!series) {
 			throw error(404, 'Weapon series not found')

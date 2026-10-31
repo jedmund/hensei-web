@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types'
-import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+import { characterAdapter } from '$lib/api/adapters/character.adapter'
 import { error } from '@sveltejs/kit'
 
 export const load: PageServerLoad = async ({ params, parent }) => {
@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 		// Get parent data to access role
 		const parentData = await parent()
 
-		const character = await entityAdapter.getCharacter(params.granblueId)
+		const character = await characterAdapter.getCharacter(params.granblueId)
 
 		if (!character) {
 			throw error(404, 'Character not found')
