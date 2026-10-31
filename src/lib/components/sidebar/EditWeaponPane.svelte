@@ -15,7 +15,7 @@
 	import NotesEditSection from './notes/NotesEditSection.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
-	import { useSyncGridWeapon } from '$lib/api/mutations/grid.mutations'
+	import { useSyncGridWeapon } from '$lib/api/mutations/gridSync.mutations'
 	import Icon from '$lib/components/Icon.svelte'
 	import { getElementKey } from '$lib/utils/element'
 	import { canWeaponBeModified } from '$lib/utils/modificationDetector'

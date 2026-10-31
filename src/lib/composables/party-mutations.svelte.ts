@@ -1,26 +1,32 @@
 import {
 	useCreateGridWeapon,
-	useCreateGridCharacter,
-	useCreateGridSummon,
 	useDeleteGridWeapon,
-	useDeleteGridCharacter,
-	useDeleteGridSummon,
 	useUpdateGridWeapon,
-	useUpdateGridCharacter,
-	useUpdateGridSummon,
 	useUpdateWeaponUncap,
-	useUpdateCharacterUncap,
-	useUpdateSummonUncap,
 	useSwapWeapons,
+	useDuplicateGridWeapon
+} from '$lib/api/mutations/gridWeapon.mutations'
+import {
+	useCreateGridCharacter,
+	useDeleteGridCharacter,
+	useUpdateGridCharacter,
+	useUpdateCharacterUncap,
 	useSwapCharacters,
+	useSwitchCharacterStyle
+} from '$lib/api/mutations/gridCharacter.mutations'
+import {
+	useCreateGridSummon,
+	useDeleteGridSummon,
+	useUpdateGridSummon,
+	useUpdateSummonUncap,
 	useSwapSummons,
-	useDuplicateGridWeapon,
 	useDuplicateGridSummon,
-	useSwitchCharacterStyle,
-	useSyncAllPartyItems,
-	useUnlinkCollectionSource,
 	useUpdateQuickSummon
-} from '$lib/api/mutations/grid.mutations'
+} from '$lib/api/mutations/gridSummon.mutations'
+import {
+	useSyncAllPartyItems,
+	useUnlinkCollectionSource
+} from '$lib/api/mutations/gridSync.mutations'
 
 import {
 	useCreateParty,
