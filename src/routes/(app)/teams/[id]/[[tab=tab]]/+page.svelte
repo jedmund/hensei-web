@@ -43,6 +43,16 @@
 		enabled: !!data.party?.shortcode
 	}))
 
+	// Report one view per team opened, once the page is in the browser (so
+	// hover preloads don't count). Owners are skipped here and by the API.
+	let reportedViewOf: string | null = null
+	$effect(() => {
+		const id = data.party?.id
+		if (!id || data.canEdit || reportedViewOf === id) return
+		reportedViewOf = id
+		fetch(`/api/teams/${id}/view`, { method: 'POST', keepalive: true }).catch(() => {})
+	})
+
 	// Use query data if available, fall back to server data
 	// This allows the query to refetch and update the UI automatically
 	const party = $derived(partyQuery.data ?? data.party)

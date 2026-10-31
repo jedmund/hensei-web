@@ -181,6 +181,14 @@ describe('RATE_LIMIT_RULES paths', () => {
 		expect(ruleFor('GET', '/api/csp-report')).toBeUndefined()
 	})
 
+	it('limits team view reports', () => {
+		expect(ruleFor('POST', '/api/teams/0f8c6f3e-2b1a-4c5d-9e7f-1a2b3c4d5e6f/view')).toBe(
+			'team-view'
+		)
+		expect(ruleFor('POST', '/ja/api/teams/abc/view')).toBe('team-view')
+		expect(ruleFor('GET', '/api/teams/abc/view')).toBeUndefined()
+	})
+
 	it('limits client error reports', () => {
 		expect(ruleFor('POST', '/api/client-error')).toBe('client-error')
 		expect(ruleFor('POST', '/ja/api/client-error')).toBe('client-error')
