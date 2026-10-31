@@ -9,21 +9,17 @@
 
 	import Button from '$lib/components/ui/Button.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
+	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
+	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import DatabaseFormHeader from '$lib/components/database/DatabaseFormHeader.svelte'
 	import EventFormFields from '$lib/components/database/EventFormFields.svelte'
 	import ImageFileField from '$lib/components/database/ImageFileField.svelte'
 	import StaffPicksSection from '$lib/components/database/StaffPicksSection.svelte'
 
 	import { eventQueries } from '$lib/api/queries/event.queries'
-	import {
-		useApproveEvent,
-		useHideEvent,
-		useUpdateEvent,
-		useUploadEventImage
-	} from '$lib/api/mutations/event.mutations'
-	import { eventStatusLabel, eventToForm, formToEventPayload } from '$lib/utils/eventLabels'
+	import { useUpdateEvent, useUploadEventImage } from '$lib/api/mutations/event.mutations'
+	import { eventToForm, formToEventPayload } from '$lib/utils/eventLabels'
 	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
-	import { extractErrorMessage } from '$lib/utils/errors'
 	import { withInitialData } from '$lib/query/ssr'
 	import { localizedName } from '$lib/utils/locale'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -45,9 +41,12 @@
 	const canEditPicks = $derived(canEditStaffPicks(data.role, event.endsAt))
 
 	const updateMut = useUpdateEvent()
-	const approveMut = useApproveEvent()
-	const hideMut = useHideEvent()
 	const uploadMut = useUploadEventImage()
+
+	// The event's details, or its staff picks
+	let view = $state<'details' | 'picks'>('details')
+	const picksQuery = createQuery(() => eventQueries.staffPicks(data.event.id))
+	const pickCount = $derived(picksQuery.data?.length ?? 0)
 
 	let values = $state(untrack(() => eventToForm(data.event)))
 	let loadedId = $state(untrack(() => data.event.id))
@@ -79,15 +78,6 @@
 		m.db_events_save_failed(),
 		{ onError: (_, message) => (saveError = message) }
 	)
-
-	function setStatus(action: 'approve' | 'hide') {
-		const mut = action === 'approve' ? approveMut : hideMut
-		mut.mutate(event.id, {
-			onSuccess: () =>
-				toast.success(action === 'approve' ? m.db_events_approved() : m.db_events_hidden()),
-			onError: (err) => toast.error(extractErrorMessage(err, m.db_events_save_failed()))
-		})
-	}
 </script>
 
 <PageMeta
@@ -122,62 +112,45 @@
 		<div class="error-banner">{saveError}</div>
 	{/if}
 
-	<div class="status-row">
-		<span class="status">
-			{m.db_events_col_status()}: <strong>{eventStatusLabel(event.status)}</strong>
-		</span>
-		<div class="status-actions">
-			{#if canEdit && event.status !== 'approved'}
-				<Button
-					variant="primary"
-					size="small"
-					onclick={() => setStatus('approve')}
-					disabled={approveMut.isPending}
-				>
-					{m.db_events_approve()}
-				</Button>
-			{/if}
-			{#if canEdit && event.status !== 'hidden'}
-				<Button
-					variant="secondary"
-					size="small"
-					onclick={() => setStatus('hide')}
-					disabled={hideMut.isPending}
-				>
-					{m.db_events_hide()}
-				</Button>
-			{/if}
-		</div>
+	<div class="view-switch">
+		<SegmentedControl
+			value={view}
+			onValueChange={(v) => (view = v === 'picks' ? 'picks' : 'details')}
+			variant="background"
+			size="small"
+		>
+			<Segment value="details">{m.db_events_section_details()}</Segment>
+			<Segment value="picks">{m.db_picks_title()} ({pickCount})</Segment>
+		</SegmentedControl>
 	</div>
 
-	<p class="jst-note">{m.db_events_times_jst()}</p>
+	{#if view === 'details'}
+		<section class="details">
+			<EventFormFields bind:values eventNumber={event.eventNumber} readonly={!canEdit} />
 
-	<section class="details">
-		<EventFormFields bind:values eventNumber={event.eventNumber} readonly={!canEdit} />
-
-		{#if canEdit}
-			<DetailsContainer title={m.db_events_section_image()}>
-				<div class="image-section">
-					<ImageFileField
-						variant="banner"
-						currentUrl={event.imageUrl}
-						accept={['image/png', 'image/webp', 'image/jpeg']}
-						maxBytes={5 * 1024 * 1024}
-						hint={m.db_events_image_hint()}
-						onSelect={(file) => (imageFile = file)}
-					/>
-				</div>
-			</DetailsContainer>
-		{/if}
-
+			{#if canEdit}
+				<DetailsContainer title={m.db_events_section_image()}>
+					<div class="image-section">
+						<ImageFileField
+							variant="banner"
+							currentUrl={event.imageUrl}
+							accept={['image/png', 'image/webp', 'image/jpeg']}
+							maxBytes={5 * 1024 * 1024}
+							hint={m.db_events_image_hint()}
+							onSelect={(file) => (imageFile = file)}
+						/>
+					</div>
+				</DetailsContainer>
+			{/if}
+		</section>
+	{:else}
 		<StaffPicksSection eventId={event.id} readonly={!canEditPicks} />
-	</section>
+	{/if}
 </div>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/layout' as layout;
-	@use '$src/themes/typography' as typography;
 	@use '$src/themes/database' as database;
 
 	.page {
@@ -194,28 +167,8 @@
 		@include database.error-banner;
 	}
 
-	.status-row {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: spacing.$unit-2x;
+	.view-switch {
 		padding: 0 spacing.$unit-2x spacing.$unit;
-	}
-
-	.status {
-		color: var(--text-secondary);
-	}
-
-	.status-actions {
-		display: flex;
-		gap: spacing.$unit;
-	}
-
-	.jst-note {
-		margin: 0;
-		padding: 0 spacing.$unit-2x;
-		font-size: typography.$font-small;
-		color: var(--text-secondary);
 	}
 
 	.image-section {

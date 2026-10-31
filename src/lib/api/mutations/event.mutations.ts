@@ -50,30 +50,6 @@ export function useUpdateEvent() {
 	return createMutation(() => updateEventOptions(queryClient))
 }
 
-export function approveEventOptions(queryClient: QueryClient) {
-	return {
-		mutationFn: (id: string) => eventAdapter.approveEvent(id),
-		onSuccess: (event: GameEvent) => storeEvent(queryClient, event)
-	}
-}
-
-export function useApproveEvent() {
-	const queryClient = useQueryClient()
-	return createMutation(() => approveEventOptions(queryClient))
-}
-
-export function hideEventOptions(queryClient: QueryClient) {
-	return {
-		mutationFn: (id: string) => eventAdapter.hideEvent(id),
-		onSuccess: (event: GameEvent) => storeEvent(queryClient, event)
-	}
-}
-
-export function useHideEvent() {
-	const queryClient = useQueryClient()
-	return createMutation(() => hideEventOptions(queryClient))
-}
-
 export function uploadEventImageOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ id, file }: { id: string; file: File }) =>
