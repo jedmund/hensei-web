@@ -13,8 +13,16 @@
 	import GwEventScoreRow from '$lib/components/crew/GwEventScoreRow.svelte'
 	import GwCrewHistoryChart from '$lib/components/charts/GwCrewHistoryChart.svelte'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
+	import RaidElementsSection from '$lib/components/crew/RaidElementsSection.svelte'
+	import type { PageData } from './$types'
+
+	const { data: pageData }: { data: PageData } = $props()
 
 	const username = $derived($page.params.username ?? '')
+	const isOwnProfile = $derived(
+		!!pageData.account?.username &&
+			pageData.account.username.toLowerCase() === username.toLowerCase()
+	)
 
 	// Query for member's GW scores
 	const scoresQuery = createQuery(() => gwQueries.memberGwScoresByUsername(username))
@@ -74,6 +82,8 @@
 					<span class="stat-label">{m.gw_events_count()}</span>
 				</div>
 			</div>
+
+			<RaidElementsSection {username} {isOwnProfile} />
 
 			{#if historyChartData.length > 0}
 				<div class="chart-section">

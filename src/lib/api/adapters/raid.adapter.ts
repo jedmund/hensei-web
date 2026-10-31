@@ -46,6 +46,7 @@ export class RaidAdapter extends BaseAdapter {
 			if (filters.hl !== undefined) queryParams.hl = filters.hl
 			if (filters.extra !== undefined) queryParams.extra = filters.extra
 			if (filters.guidebooks !== undefined) queryParams.guidebooks = filters.guidebooks
+			if (filters.trackable !== undefined) queryParams.trackable = filters.trackable
 		}
 
 		const response = await this.request<Raid[]>('/raids', {
