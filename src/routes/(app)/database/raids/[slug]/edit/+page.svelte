@@ -8,6 +8,7 @@
 	import DatabaseFormHeader from '$lib/components/database/DatabaseFormHeader.svelte'
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
+	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import type { PageData } from './$types'
 
 	function displayName(input: unknown): string {
@@ -67,7 +68,8 @@
 		summon_id: undefined as number | undefined,
 		quest_id: undefined as number | undefined,
 		released_at: '',
-		extra: false
+		extra: false,
+		trackable: false
 	})
 
 	// Sync edit data when raid changes
@@ -85,7 +87,8 @@
 				summon_id: raid.summonId,
 				quest_id: raid.questId,
 				released_at: raid.releasedAt ?? '',
-				extra: raid.extra ?? false
+				extra: raid.extra ?? false,
+				trackable: raid.trackable ?? false
 			}
 		}
 	})
@@ -138,7 +141,8 @@
 				summon_id: toNumberOrUndefined(editData.summon_id),
 				quest_id: toNumberOrUndefined(editData.quest_id),
 				released_at: editData.released_at || null,
-				extra: editData.extra
+				extra: editData.extra,
+				trackable: editData.trackable
 			})
 
 			// Invalidate queries
@@ -246,6 +250,13 @@
 					editable={true}
 					type="checkbox"
 				/>
+				<DetailItem
+					label="Trackable"
+					sublabel="Crew members can record their elements for it"
+					editable={true}
+				>
+					<Switch bind:checked={editData.trackable} />
+				</DetailItem>
 			</DetailsContainer>
 		</section>
 	{:else}

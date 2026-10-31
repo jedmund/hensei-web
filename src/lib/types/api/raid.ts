@@ -24,6 +24,8 @@ export interface RaidFull {
 	questId?: number
 	/** ISO date (YYYY-MM-DD) the raid was released, when known */
 	releasedAt?: string | null
+	/** Crew members can record which elements they have teams for */
+	trackable?: boolean
 	group?: RaidGroupFlat
 }
 
@@ -63,6 +65,7 @@ export interface CreateRaidInput {
 	/** ISO date (YYYY-MM-DD); null clears it */
 	released_at?: string | null
 	extra?: boolean
+	trackable?: boolean
 }
 
 export interface UpdateRaidInput {
@@ -79,6 +82,7 @@ export interface UpdateRaidInput {
 	/** ISO date (YYYY-MM-DD); null clears it */
 	released_at?: string | null
 	extra?: boolean
+	trackable?: boolean
 }
 
 // Input types for creating/updating raid groups
@@ -117,4 +121,5 @@ export interface RaidFilters {
 	extra?: boolean
 	guidebooks?: boolean
 	unlimited?: boolean
+	trackable?: boolean
 }
