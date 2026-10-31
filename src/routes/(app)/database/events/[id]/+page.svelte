@@ -27,6 +27,8 @@
 	import { withInitialData } from '$lib/query/ssr'
 	import { localizedName } from '$lib/utils/locale'
 	import { localizeHref } from '$lib/paraglide/runtime'
+	import { canEditStaffPicks, isEditor } from '$lib/auth/roles'
+	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 
 	import type { PageData } from './$types'
 
@@ -37,6 +39,10 @@
 		...withInitialData(data.event)
 	}))
 	const event = $derived(eventQuery.data ?? data.event)
+
+	// Curators read the event and manage its staff picks while it hasn't ended
+	const canEdit = $derived(isEditor(data.role))
+	const canEditPicks = $derived(canEditStaffPicks(data.role, event.endsAt))
 
 	const updateMut = useUpdateEvent()
 	const approveMut = useApproveEvent()
@@ -90,13 +96,27 @@
 />
 
 <div class="page">
-	<DatabaseFormHeader
-		title={m.db_events_review_title()}
-		onCancel={() => goto(localizeHref('/database/events'))}
-		onSave={saveAction.run}
-		isSaving={saveAction.busy}
-		disabled={!payload}
-	/>
+	{#if canEdit}
+		<DatabaseFormHeader
+			title={m.db_events_review_title()}
+			onCancel={() => goto(localizeHref('/database/events'))}
+			onSave={saveAction.run}
+			isSaving={saveAction.busy}
+			disabled={!payload}
+		/>
+	{:else}
+		<DatabasePageHeader title={localizedName(event.name)}>
+			{#snippet leftAction()}
+				<Button
+					variant="secondary"
+					size="small"
+					onclick={() => goto(localizeHref('/database/events'))}
+				>
+					{m.db_events_back()}
+				</Button>
+			{/snippet}
+		</DatabasePageHeader>
+	{/if}
 
 	{#if saveError}
 		<div class="error-banner">{saveError}</div>
@@ -107,7 +127,7 @@
 			{m.db_events_col_status()}: <strong>{eventStatusLabel(event.status)}</strong>
 		</span>
 		<div class="status-actions">
-			{#if event.status !== 'approved'}
+			{#if canEdit && event.status !== 'approved'}
 				<Button
 					variant="primary"
 					size="small"
@@ -117,7 +137,7 @@
 					{m.db_events_approve()}
 				</Button>
 			{/if}
-			{#if event.status !== 'hidden'}
+			{#if canEdit && event.status !== 'hidden'}
 				<Button
 					variant="secondary"
 					size="small"
@@ -133,22 +153,24 @@
 	<p class="jst-note">{m.db_events_times_jst()}</p>
 
 	<section class="details">
-		<EventFormFields bind:values eventNumber={event.eventNumber} />
+		<EventFormFields bind:values eventNumber={event.eventNumber} readonly={!canEdit} />
 
-		<DetailsContainer title={m.db_events_section_image()}>
-			<div class="image-section">
-				<ImageFileField
-					variant="banner"
-					currentUrl={event.imageUrl}
-					accept={['image/png', 'image/webp', 'image/jpeg']}
-					maxBytes={5 * 1024 * 1024}
-					hint={m.db_events_image_hint()}
-					onSelect={(file) => (imageFile = file)}
-				/>
-			</div>
-		</DetailsContainer>
+		{#if canEdit}
+			<DetailsContainer title={m.db_events_section_image()}>
+				<div class="image-section">
+					<ImageFileField
+						variant="banner"
+						currentUrl={event.imageUrl}
+						accept={['image/png', 'image/webp', 'image/jpeg']}
+						maxBytes={5 * 1024 * 1024}
+						hint={m.db_events_image_hint()}
+						onSelect={(file) => (imageFile = file)}
+					/>
+				</div>
+			</DetailsContainer>
+		{/if}
 
-		<StaffPicksSection eventId={event.id} />
+		<StaffPicksSection eventId={event.id} readonly={!canEditPicks} />
 	</section>
 </div>
 

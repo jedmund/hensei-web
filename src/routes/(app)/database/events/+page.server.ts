@@ -1,15 +1,19 @@
 import type { PageServerLoad } from './$types'
 import { eventAdapter } from '$lib/api/adapters/event.adapter'
 import { error, isHttpError, isRedirect } from '@sveltejs/kit'
-import { requireEditor } from '$lib/auth/requireEditor'
+import { requireCurator } from '$lib/auth/requireEditor'
+import { isEditor } from '$lib/auth/roles'
+import type { EventStatus } from '$lib/types/api/event'
 
-// Drafts first: synced events wait here for review
+// Editors start on drafts: synced events wait there for review. Curators
+// don't review events, so they start on all of them.
 export const load: PageServerLoad = async ({ parent, fetch }) => {
 	try {
 		const parentData = await parent()
-		requireEditor(parentData, '/database')
-		const events = await eventAdapter.listEvents({ status: 'draft' }, { fetch })
-		return { events, role: parentData.role }
+		requireCurator(parentData, '/database')
+		const status: EventStatus | 'all' = isEditor(parentData.role) ? 'draft' : 'all'
+		const events = await eventAdapter.listEvents({ status }, { fetch })
+		return { events, status, role: parentData.role }
 	} catch (err) {
 		if (isHttpError(err) || isRedirect(err)) throw err
 		console.error('Failed to load events:', err)

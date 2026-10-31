@@ -6,12 +6,17 @@
 	import Tooltip from './ui/Tooltip.svelte'
 	import DropdownItem from './ui/dropdown/DropdownItem.svelte'
 	import { DropdownMenu } from 'bits-ui'
+	import { isEditor } from '$lib/auth/roles'
 
 	interface Props {
 		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
+		role?: number | null | undefined
 	}
 
-	let { userElement }: Props = $props()
+	let { userElement, role }: Props = $props()
+
+	// Curators can only open Events
+	const editor = $derived(isEditor(role))
 
 	// Localized links
 	const galleryHref = $derived(localizeHref('/'))
@@ -93,70 +98,78 @@
 
 	<!-- Database sub-navigation -->
 	<ul role="list" class="database-subnav">
-		<li>
-			<a
-				href={databaseCharactersHref}
-				class:selected={isDatabaseNavSelected(databaseCharactersHref)}
-			>
-				{m.nav_characters()}
-			</a>
-		</li>
-		<li>
-			<a href={databaseWeaponsHref} class:selected={isDatabaseNavSelected(databaseWeaponsHref)}>
-				{m.nav_weapons()}
-			</a>
-		</li>
-		<li>
-			<a href={databaseSummonsHref} class:selected={isDatabaseNavSelected(databaseSummonsHref)}>
-				{m.nav_summons()}
-			</a>
-		</li>
-		<li>
-			<DropdownMenu.Root>
-				<DropdownMenu.Trigger class="nav-more-trigger">
-					<Icon name="ellipsis" size={14} />
-				</DropdownMenu.Trigger>
+		{#if !editor}
+			<li>
+				<a href={databaseEventsHref} class:selected={isDatabaseNavSelected(databaseEventsHref)}>
+					{m.nav_events()}
+				</a>
+			</li>
+		{:else}
+			<li>
+				<a
+					href={databaseCharactersHref}
+					class:selected={isDatabaseNavSelected(databaseCharactersHref)}
+				>
+					{m.nav_characters()}
+				</a>
+			</li>
+			<li>
+				<a href={databaseWeaponsHref} class:selected={isDatabaseNavSelected(databaseWeaponsHref)}>
+					{m.nav_weapons()}
+				</a>
+			</li>
+			<li>
+				<a href={databaseSummonsHref} class:selected={isDatabaseNavSelected(databaseSummonsHref)}>
+					{m.nav_summons()}
+				</a>
+			</li>
+			<li>
+				<DropdownMenu.Root>
+					<DropdownMenu.Trigger class="nav-more-trigger">
+						<Icon name="ellipsis" size={14} />
+					</DropdownMenu.Trigger>
 
-				<DropdownMenu.Portal>
-					<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
-						<DropdownItem>
-							<a href={databaseJobsHref}>{m.nav_jobs()}</a>
-						</DropdownItem>
-						<DropdownItem>
-							<a href={databaseRaidsHref}>{m.nav_raids()}</a>
-						</DropdownItem>
-						<DropdownMenu.Separator class="dropdown-separator" />
-						<DropdownItem>
-							<a href={databaseArtifactSkillsHref}>{m.nav_artifact_skills()}</a>
-						</DropdownItem>
-						<DropdownItem>
-							<a href={databaseBulletsHref}>{m.nav_bullets()}</a>
-						</DropdownItem>
-						<DropdownMenu.Separator class="dropdown-separator" />
-						<DropdownItem>
-							<a href={databaseEventsHref}>{m.nav_events()}</a>
-						</DropdownItem>
-						<DropdownItem>
-							<a href={databaseGwEventsHref}>{m.nav_unite_and_fight()}</a>
-						</DropdownItem>
-						<DropdownItem>
-							<a href={databaseStickersHref}>{m.nav_stickers()}</a>
-						</DropdownItem>
-						<DropdownItem>
-							<a href={databaseRolesHref}>{m.nav_roles()}</a>
-						</DropdownItem>
-						<DropdownMenu.Separator class="dropdown-separator" />
-						<DropdownItem>
-							<a href={databaseDifficultiesHref}>{m.party_difficulty_label()}</a>
-						</DropdownItem>
-					</DropdownMenu.Content>
-				</DropdownMenu.Portal>
-			</DropdownMenu.Root>
-		</li>
+					<DropdownMenu.Portal>
+						<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
+							<DropdownItem>
+								<a href={databaseJobsHref}>{m.nav_jobs()}</a>
+							</DropdownItem>
+							<DropdownItem>
+								<a href={databaseRaidsHref}>{m.nav_raids()}</a>
+							</DropdownItem>
+							<DropdownMenu.Separator class="dropdown-separator" />
+							<DropdownItem>
+								<a href={databaseArtifactSkillsHref}>{m.nav_artifact_skills()}</a>
+							</DropdownItem>
+							<DropdownItem>
+								<a href={databaseBulletsHref}>{m.nav_bullets()}</a>
+							</DropdownItem>
+							<DropdownMenu.Separator class="dropdown-separator" />
+							<DropdownItem>
+								<a href={databaseEventsHref}>{m.nav_events()}</a>
+							</DropdownItem>
+							<DropdownItem>
+								<a href={databaseGwEventsHref}>{m.nav_unite_and_fight()}</a>
+							</DropdownItem>
+							<DropdownItem>
+								<a href={databaseStickersHref}>{m.nav_stickers()}</a>
+							</DropdownItem>
+							<DropdownItem>
+								<a href={databaseRolesHref}>{m.nav_roles()}</a>
+							</DropdownItem>
+							<DropdownMenu.Separator class="dropdown-separator" />
+							<DropdownItem>
+								<a href={databaseDifficultiesHref}>{m.party_difficulty_label()}</a>
+							</DropdownItem>
+						</DropdownMenu.Content>
+					</DropdownMenu.Portal>
+				</DropdownMenu.Root>
+			</li>
+		{/if}
 	</ul>
 </div>
 
-{#if databaseEntityLabel}
+{#if editor && databaseEntityLabel}
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger class="new-item-trigger {userElement ?? ''}">
 			<span>{m.nav_new_entity({ entity: databaseEntityLabel ?? '' })}</span>

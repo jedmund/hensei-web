@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
+	import { untrack } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { toast } from 'svelte-sonner'
 
@@ -19,17 +20,21 @@
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { localizedName } from '$lib/utils/locale'
 	import { localizeHref } from '$lib/paraglide/runtime'
+	import { isEditor } from '$lib/auth/roles'
 
 	import type { EventStatus, GameEvent } from '$lib/types/api/event'
 	import type { PageData } from './$types'
 
 	let { data }: { data: PageData } = $props()
 
-	let status = $state<EventStatus | 'all'>('draft')
+	// Curators can read events but not review or create them
+	const canEdit = $derived(isEditor(data.role))
+
+	let status = $state<EventStatus | 'all'>(untrack(() => data.status))
 
 	const eventsQuery = createQuery(() => ({
 		...eventQueries.list({ status }),
-		initialData: status === 'draft' ? data.events : undefined
+		initialData: status === data.status ? data.events : undefined
 	}))
 
 	const events = $derived(
@@ -68,12 +73,14 @@
 			</SegmentedControl>
 		{/snippet}
 		{#snippet rightAction()}
-			<Button variant="secondary" size="small" onclick={runSync} disabled={syncMut.isPending}>
-				{m.db_events_run_sync()}
-			</Button>
-			<Button variant="primary" size="small" href={localizeHref('/database/events/new')}>
-				{m.db_events_new()}
-			</Button>
+			{#if canEdit}
+				<Button variant="secondary" size="small" onclick={runSync} disabled={syncMut.isPending}>
+					{m.db_events_run_sync()}
+				</Button>
+				<Button variant="primary" size="small" href={localizeHref('/database/events/new')}>
+					{m.db_events_new()}
+				</Button>
+			{/if}
 		{/snippet}
 	</DatabasePageHeader>
 

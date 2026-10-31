@@ -1,7 +1,8 @@
 <script lang="ts">
 	/**
 	 * Staff picks for one event: add a team by its link or shortcode, edit the
-	 * EN/JA note, remove it. Notes are rendered as plain text.
+	 * EN/JA note, remove it. Notes are rendered as plain text. `readonly` lists
+	 * the picks without controls (curators, once the event has ended).
 	 */
 	import { createQuery } from '@tanstack/svelte-query'
 	import { toast } from 'svelte-sonner'
@@ -23,9 +24,10 @@
 
 	interface Props {
 		eventId: string
+		readonly?: boolean | undefined
 	}
 
-	let { eventId }: Props = $props()
+	let { eventId, readonly = false }: Props = $props()
 
 	const picksQuery = createQuery(() => eventQueries.staffPicks(eventId))
 	const picks = $derived([...(picksQuery.data ?? [])].sort((a, b) => a.position - b.position))
@@ -105,53 +107,62 @@
 							{pick.party.name || m.party_untitled()}
 							<span class="shortcode">{pick.party.shortcode}</span>
 						</a>
-						<Input
-							value={draft.en}
-							oninput={(e) =>
-								(drafts[pick.id] = { ...draft, en: (e.target as HTMLInputElement).value })}
-							placeholder={m.db_picks_note_en()}
-							contained
-							fullWidth
-						/>
-						<Input
-							value={draft.ja}
-							oninput={(e) =>
-								(drafts[pick.id] = { ...draft, ja: (e.target as HTMLInputElement).value })}
-							placeholder={m.db_picks_note_jp()}
-							contained
-							fullWidth
-						/>
-						<div class="pick-actions">
-							<Button variant="secondary" size="small" onclick={() => saveNote(pick)}>
-								{m.db_picks_save()}
-							</Button>
-							<Button variant="ghost" size="small" onclick={() => removePick(pick)}>
-								{m.db_picks_remove()}
-							</Button>
-						</div>
+						{#if readonly}
+							{#if pick.note?.en}<p class="note">{pick.note.en}</p>{/if}
+							{#if pick.note?.ja}<p class="note">{pick.note.ja}</p>{/if}
+						{:else}
+							<Input
+								value={draft.en}
+								oninput={(e) =>
+									(drafts[pick.id] = { ...draft, en: (e.target as HTMLInputElement).value })}
+								placeholder={m.db_picks_note_en()}
+								contained
+								fullWidth
+							/>
+							<Input
+								value={draft.ja}
+								oninput={(e) =>
+									(drafts[pick.id] = { ...draft, ja: (e.target as HTMLInputElement).value })}
+								placeholder={m.db_picks_note_jp()}
+								contained
+								fullWidth
+							/>
+							<div class="pick-actions">
+								<Button variant="secondary" size="small" onclick={() => saveNote(pick)}>
+									{m.db_picks_save()}
+								</Button>
+								<Button variant="ghost" size="small" onclick={() => removePick(pick)}>
+									{m.db_picks_remove()}
+								</Button>
+							</div>
+						{/if}
 					</li>
 				{/each}
 			</ul>
 		{/if}
 
-		<div class="add">
-			<Input
-				bind:value={teamInput}
-				placeholder={m.db_picks_team_placeholder()}
-				contained
-				fullWidth
-			/>
-			<Input bind:value={noteEn} placeholder={m.db_picks_note_en()} contained fullWidth />
-			<Input bind:value={noteJp} placeholder={m.db_picks_note_jp()} contained fullWidth />
-			<Button
-				variant="primary"
-				size="small"
-				onclick={addPick}
-				disabled={adding || !teamInput.trim()}
-			>
-				{m.db_picks_add()}
-			</Button>
-		</div>
+		{#if readonly}
+			<p class="hint">{m.db_picks_ended()}</p>
+		{:else}
+			<div class="add">
+				<Input
+					bind:value={teamInput}
+					placeholder={m.db_picks_team_placeholder()}
+					contained
+					fullWidth
+				/>
+				<Input bind:value={noteEn} placeholder={m.db_picks_note_en()} contained fullWidth />
+				<Input bind:value={noteJp} placeholder={m.db_picks_note_jp()} contained fullWidth />
+				<Button
+					variant="primary"
+					size="small"
+					onclick={addPick}
+					disabled={adding || !teamInput.trim()}
+				>
+					{m.db_picks_add()}
+				</Button>
+			</div>
+		{/if}
 	</div>
 </DetailsContainer>
 
@@ -209,6 +220,12 @@
 	.pick-actions {
 		display: flex;
 		gap: spacing.$unit;
+	}
+
+	.note {
+		margin: 0;
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
 	}
 
 	.hint {

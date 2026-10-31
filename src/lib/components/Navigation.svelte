@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isCurator } from '$lib/auth/roles'
 	import { HOME_LAUNCHED, HOME_PATH, GALLERY_PATH, isHomePath } from '$lib/utils/browseRoutes'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { m } from '$lib/paraglide/messages'
@@ -218,7 +219,7 @@
 
 <nav aria-label="Global" class={elementClass}>
 	{#if isDatabaseRoute}
-		<DatabaseNavigation {userElement} />
+		<DatabaseNavigation {userElement} {role} />
 	{:else if isAuth}
 		<!-- Authenticated navigation -->
 		<div class="nav-links">
@@ -291,7 +292,7 @@
 									<DropdownItem>
 										<a href={extensionHref}>{m.nav_extension()}</a>
 									</DropdownItem>
-									{#if role !== null && role >= 7}
+									{#if isCurator(role)}
 										<DropdownItem>
 											<a href={databaseHref}>{m.nav_database()}</a>
 										</DropdownItem>
