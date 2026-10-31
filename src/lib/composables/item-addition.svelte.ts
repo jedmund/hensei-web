@@ -192,3 +192,5 @@ function findItemAtSlot(party: Party, gridType: GridType, position: number): Nam
 	const gc = party.characters.find((c) => c.position === position)
 	return gc?.character
 }
+
+export type ItemAddition = ReturnType<typeof useItemAddition>

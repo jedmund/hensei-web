@@ -242,3 +242,5 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 		cancelDuplicate
 	}
 }
+
+export type PartyDragDrop = ReturnType<typeof usePartyDragDrop>
