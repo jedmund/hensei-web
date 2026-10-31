@@ -4,7 +4,7 @@
 	 * banner). The frame stays the same size whatever the art, so switching
 	 * doesn't jump; art of another shape fills it, cropped around the centre.
 	 * Without art, or if it fails to load, `placeholder` fills the frame.
-	 * `framed` puts art with transparent edges on a mid-grey frame.
+	 * `framed` puts art with transparent edges on the neutral (null element) background.
 	 */
 	import type { Snippet } from 'svelte'
 
@@ -36,7 +36,6 @@
 </div>
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/layout' as *;
 
 	.cover {
@@ -57,7 +56,7 @@
 		}
 
 		&.framed {
-			background: colors.$grey-50;
+			background: var(--null-bg);
 		}
 	}
 </style>

@@ -81,7 +81,7 @@
 {#if selected}
 	<section class="new-battles">
 		<HomeCard title={sectionTitle}>
-			<!-- The banners fade out at the edges; fade into mid-grey -->
+			<!-- The banners fade out at the edges; fade into the neutral background -->
 			<CardCover src={bannerUrl} framed>
 				{#snippet placeholder()}
 					<!-- The battle's thumbnail, or its name when there's none either -->
