@@ -4,7 +4,7 @@
 	 * banner). The frame stays the same size whatever the art, so switching
 	 * doesn't jump; art of another shape fills it, cropped around the centre.
 	 * Without art, or if it fails to load, `placeholder` fills the frame.
-	 * `dark` puts art with transparent edges on a mid-grey frame.
+	 * `framed` puts art with transparent edges on a mid-grey frame.
 	 */
 	import type { Snippet } from 'svelte'
 
@@ -13,10 +13,10 @@
 		/** Shown over the art, e.g. pills along the bottom */
 		children?: Snippet
 		placeholder?: Snippet
-		dark?: boolean
+		framed?: boolean
 	}
 
-	let { src, children, placeholder, dark = false }: Props = $props()
+	let { src, children, placeholder, framed = false }: Props = $props()
 
 	let failed = $state(false)
 	$effect(() => {
@@ -26,7 +26,7 @@
 	})
 </script>
 
-<div class="cover" class:dark={dark && src && !failed}>
+<div class="cover" class:framed={framed && src && !failed}>
 	{#if src && !failed}
 		<img {src} alt="" loading="lazy" onerror={() => (failed = true)} />
 	{:else}
@@ -56,7 +56,7 @@
 			object-fit: cover;
 		}
 
-		&.dark {
+		&.framed {
 			background: colors.$grey-50;
 		}
 	}
