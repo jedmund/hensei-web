@@ -66,6 +66,7 @@
 		enemy_id: undefined as number | undefined,
 		summon_id: undefined as number | undefined,
 		quest_id: undefined as number | undefined,
+		released_at: '',
 		extra: false
 	})
 
@@ -83,6 +84,7 @@
 				enemy_id: raid.enemyId,
 				summon_id: raid.summonId,
 				quest_id: raid.questId,
+				released_at: raid.releasedAt ?? '',
 				extra: raid.extra ?? false
 			}
 		}
@@ -135,6 +137,7 @@
 				enemy_id: toNumberOrUndefined(editData.enemy_id),
 				summon_id: toNumberOrUndefined(editData.summon_id),
 				quest_id: toNumberOrUndefined(editData.quest_id),
+				released_at: editData.released_at || null,
 				extra: editData.extra
 			})
 
@@ -219,6 +222,13 @@
 					type="number"
 				/>
 				<DetailItem label="Quest ID" bind:value={editData.quest_id} editable={true} type="number" />
+				<DetailItem
+					label="Release date"
+					sublabel="Raids from the last 4 weeks appear in Home's New battles"
+					bind:value={editData.released_at}
+					editable={true}
+					type="date"
+				/>
 			</DetailsContainer>
 
 			<DetailsContainer title="Classification">
