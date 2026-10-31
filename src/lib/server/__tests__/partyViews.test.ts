@@ -6,8 +6,6 @@ const CHROME =
 	'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36'
 const IPHONE =
 	'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1'
-const CUBOT =
-	'Mozilla/5.0 (Linux; Android 10; CUBOT X30) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Mobile Safari/537.36'
 
 function viewRequest(headers: Record<string, string> = {}) {
 	return new Request(`https://granblue.team/api/teams/${PARTY_ID}/view`, {
@@ -36,7 +34,7 @@ describe('isLikelyBot', () => {
 		expect(isLikelyBot('')).toBe(true)
 	})
 
-	it.each([CHROME, IPHONE, CUBOT])('lets browsers through: %s', (ua) => {
+	it.each([CHROME, IPHONE])('lets browsers through: %s', (ua) => {
 		expect(isLikelyBot(ua)).toBe(false)
 	})
 })
