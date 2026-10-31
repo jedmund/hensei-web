@@ -2614,5 +2614,22 @@
 	"event_kind_alchemy": "Alchemy",
 	"event_kind_other": "Other",
 	"db_events_element_required": "Required for Unite and Fight and Dread Barrage",
-	"page_desc_home_events": "Teams for the events running in Granblue Fantasy right now"
+	"page_desc_home_events": "Teams for the events running in Granblue Fantasy right now",
+	"db_nav_overview": "Overview",
+	"db_nav_group_catalogue": "Catalogue",
+	"db_nav_group_battles": "Battles & events",
+	"db_nav_group_site": "Site",
+	"db_nav_group_admin": "Admin",
+	"db_nav_series": "Series",
+	"db_nav_awakenings": "Awakenings",
+	"db_nav_accessories": "Accessories",
+	"db_nav_skills": "Skills",
+	"db_nav_groups": "Groups",
+	"db_nav_sections": "Sections",
+	"db_nav_recent": "Recently opened",
+	"db_nav_clear": "Clear",
+	"db_nav_search_placeholder": "Find a character, weapon or summon…",
+	"db_nav_searching": "Searching…",
+	"db_nav_search_empty": "No items match “{query}”",
+	"db_nav_browse": "Browse"
 }

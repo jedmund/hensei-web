@@ -45,6 +45,7 @@
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/effects' as effects;
+	@use '$src/themes/navigation' as navigation;
 
 	.settings-nav {
 		display: flex;
@@ -60,28 +61,7 @@
 	}
 
 	:global(.nav-item) {
-		display: flex;
-		align-items: center;
-		padding: spacing.$unit spacing.$unit-2x;
-		border: none;
-		border-radius: layout.$item-corner;
-		background: transparent;
-		color: var(--text-secondary);
-		font-size: typography.$font-regular;
-		font-weight: typography.$medium;
-		cursor: pointer;
-		text-align: left;
-		@include effects.smooth-transition(effects.$duration-quick, background-color, color);
-
-		&:hover:not([data-state='checked']) {
-			background: var(--button-contained-bg-hover);
-			color: var(--text-primary);
-		}
-
-		&:focus-visible {
-			outline: 2px solid var(--focus-ring);
-			outline-offset: 2px;
-		}
+		@include navigation.nav-list-item;
 	}
 
 	// Element-specific styles for checked state

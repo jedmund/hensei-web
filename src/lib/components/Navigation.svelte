@@ -216,7 +216,7 @@
 	</button>
 {/if}
 
-<nav aria-label="Global" class={elementClass}>
+<nav aria-label="Global" class={elementClass} class:database-layout={isDatabaseRoute}>
 	{#if isDatabaseRoute}
 		<DatabaseNavigation {userElement} />
 	{:else if isAuth}
@@ -462,9 +462,14 @@
 		margin: 0 auto;
 		width: 100%;
 
-		// Match database layout width
+		// Match the database page width; beside the sidebar, start where the
+		// content column starts so the bar never overlaps the sidebar
 		&.database-layout {
-			max-width: 1400px;
+			max-width: layout.$database-max-width;
+
+			@media (min-width: layout.$database-sidebar-breakpoint) {
+				padding-left: calc(layout.$database-sidebar-width + layout.$database-sidebar-gap);
+			}
 		}
 
 		// Responsive padding

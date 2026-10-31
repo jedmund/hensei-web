@@ -40,8 +40,8 @@
 	type ViewMode = 'characters' | 'series'
 
 	// View mode state - read initial value from URL
-	const initialView = $page.url.searchParams.get('view') as ViewMode | null
-	let viewMode = $state<ViewMode>(initialView === 'series' ? 'series' : 'characters')
+	const initialView = $derived($page.url.searchParams.get('view') as ViewMode | null)
+	let viewMode = $derived<ViewMode>(initialView === 'series' ? 'series' : 'characters')
 
 	// Sync viewMode changes to URL
 	$effect(() => {

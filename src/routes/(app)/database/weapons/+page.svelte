@@ -38,9 +38,10 @@
 
 	type ViewMode = 'weapons' | 'series' | 'awakenings' | 'skills'
 
-	// View mode state - read initial value from URL
-	const initialView = $page.url.searchParams.get('view') as ViewMode | null
-	let viewMode = $state<ViewMode>(
+	// View mode follows the URL (so sidebar links can switch views); assigning
+	// it from the segmented control overrides it until the URL catches up.
+	const initialView = $derived($page.url.searchParams.get('view') as ViewMode | null)
+	let viewMode = $derived<ViewMode>(
 		initialView === 'series'
 			? 'series'
 			: initialView === 'awakenings'

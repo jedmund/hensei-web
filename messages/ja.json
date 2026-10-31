@@ -2403,5 +2403,22 @@
 	"event_kind_alchemy": "錬金イベント",
 	"event_kind_other": "その他",
 	"db_events_element_required": "古戦場とドレッドバラージュでは必須",
-	"page_desc_home_events": "開催中のイベントで使える編成をチェック"
+	"page_desc_home_events": "開催中のイベントで使える編成をチェック",
+	"db_nav_overview": "概要",
+	"db_nav_group_catalogue": "カタログ",
+	"db_nav_group_battles": "バトル・イベント",
+	"db_nav_group_site": "サイト",
+	"db_nav_group_admin": "管理",
+	"db_nav_series": "シリーズ",
+	"db_nav_awakenings": "覚醒",
+	"db_nav_accessories": "アクセサリー",
+	"db_nav_skills": "スキル",
+	"db_nav_groups": "グループ",
+	"db_nav_sections": "セクション",
+	"db_nav_recent": "最近開いた項目",
+	"db_nav_clear": "クリア",
+	"db_nav_search_placeholder": "キャラ・武器・召喚石を検索…",
+	"db_nav_searching": "検索中…",
+	"db_nav_search_empty": "「{query}」に一致する項目はありません",
+	"db_nav_browse": "一覧"
 }

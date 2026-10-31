@@ -1,16 +1,54 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
-	import type { PageData } from './$types'
+	import { page } from '$app/state'
+	import { afterNavigate } from '$app/navigation'
+	import { getLocale } from '$lib/paraglide/runtime'
+	import DatabaseSidebar from '$lib/components/database/DatabaseSidebar.svelte'
+	import { rootOf, sectionForUrl } from '$lib/features/database/sections'
+	import { recordTitle } from '$lib/features/database/breadcrumb'
+	import { recentPages } from '$lib/features/database/recent.svelte'
+	import type { LayoutData } from './$types'
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	const { data, children }: { data: PageData; children: Snippet } = $props()
+	const { data, children }: { data: LayoutData; children: Snippet } = $props()
+
+	// Remember record pages (detail/edit) for the overview's "Recently opened"
+	afterNavigate(() => {
+		const title = recordTitle(page.data as Record<string, unknown>, getLocale())
+		const section = rootOf(sectionForUrl(page.url))
+		if (!title || !section) return
+		recentPages.record({ path: page.url.pathname, title, sectionId: section.id })
+	})
+
+	const element = $derived(
+		(page.data as { currentUser?: { element?: string } | null }).currentUser?.element
+	)
 </script>
 
-{@render children?.()}
+<div class="database-layout database-shell">
+	<DatabaseSidebar role={data.role} {element} />
+	<div class="database-content">
+		{@render children?.()}
+	</div>
+</div>
 
 <style lang="scss">
 	@use '$src/themes/layout' as layout;
-	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
-	@use '$src/themes/colors' as colors;
+
+	.database-shell {
+		display: flex;
+		align-items: flex-start;
+		gap: layout.$database-sidebar-gap;
+	}
+
+	.database-content {
+		flex: 1;
+		min-width: 0;
+
+		// List toolbars keep one height whichever view's controls they hold.
+		// Content-box so each page keeps its own padding.
+		:global(.controls) {
+			box-sizing: content-box;
+			min-height: layout.$database-control-height;
+		}
+	}
 </style>

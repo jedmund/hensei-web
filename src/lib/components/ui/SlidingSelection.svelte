@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte'
 	import { Spring } from 'svelte/motion'
 
 	type SpringConfig = { stiffness?: number; damping?: number; precision?: number }
@@ -67,7 +66,9 @@
 		measure()
 	})
 
-	onMount(() => {
+	// An effect rather than onMount: a parent's bind:this assigns `host` after
+	// this component mounts, so onMount would see it undefined and never observe.
+	$effect(() => {
 		if (!host) return
 		const observer = new ResizeObserver(() => measure())
 		observer.observe(host)
