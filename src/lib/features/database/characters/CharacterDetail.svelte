@@ -1,0 +1,650 @@
+<script lang="ts">
+	// Character detail body, shared by the full page and the database record panel.
+
+	import * as m from '$lib/paraglide/messages'
+
+	// TanStack Query
+	import { createQuery } from '@tanstack/svelte-query'
+	import { entityQueries } from '$lib/api/queries/entity.queries'
+	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { withInitialData } from '$lib/query/ssr'
+
+	// Components
+	import DetailScaffold, {
+		type DetailTab
+	} from '$lib/features/database/detail/DetailScaffold.svelte'
+	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
+	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import CharacterSkillsTab from '$lib/features/database/characters/tabs/CharacterSkillsTab.svelte'
+	import CharacterMetadataSection from '$lib/features/database/characters/sections/CharacterMetadataSection.svelte'
+	import CharacterUncapSection from '$lib/features/database/characters/sections/CharacterUncapSection.svelte'
+	import CharacterTaxonomySection from '$lib/features/database/characters/sections/CharacterTaxonomySection.svelte'
+	import CharacterStatsSection from '$lib/features/database/characters/sections/CharacterStatsSection.svelte'
+	import CharacterAppearanceSection from '$lib/features/database/characters/sections/CharacterAppearanceSection.svelte'
+	import EntityImagesTab from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
+	import EntityRawDataTab from '$lib/features/database/detail/tabs/EntityRawDataTab.svelte'
+	import { resolveDetailTab } from '$lib/features/database/detail/detailTab'
+	import CharacterRefreshActions from '$lib/features/database/characters/refresh/CharacterRefreshActions.svelte'
+	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
+	import DetailItem from '$lib/components/ui/DetailItem.svelte'
+	import { getCharacterImage } from '$lib/utils/images'
+	import { getElementLabel, ELEMENT_DISPLAY_ORDER } from '$lib/utils/element'
+	import {
+		buildWikiEnUrl,
+		buildWikiJaUrl,
+		buildGamewithUrl,
+		buildKamigameUrl
+	} from '$lib/utils/external-links'
+	import Button from '$lib/components/ui/Button.svelte'
+	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
+	import { localizedName } from '$lib/utils/locale'
+	import { localizeHref } from '$lib/paraglide/runtime'
+	import { normalizeCharacterUncap } from '$lib/utils/uncap'
+
+	// Types
+	import type { Character } from '$lib/api/adapters/entity.adapter'
+	import type { ImageItem } from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
+
+	interface Props {
+		granblueId: string
+		/** Server-loaded record (full page); the panel loads it through the query */
+		initialData?: Character | null | undefined
+		role: number
+		/** Requested tab (`?tab=` on the full page, local state in the panel) */
+		tab: string | null
+		onTabChange: (tab: DetailTab) => void
+	}
+
+	let { granblueId, initialData, role, tab, onTabChange }: Props = $props()
+
+	// The :full character carries when its wikitext was fetched (not on the shared Character type)
+	type CharacterFetchTimes = {
+		wikiRawFetchedAt?: string | null
+		wikiRawJpFetchedAt?: string | null
+	}
+
+	// Use TanStack Query with SSR initial data
+	const characterQuery = createQuery(() => ({
+		...entityQueries.character(granblueId),
+		...(initialData ? withInitialData(initialData) : {})
+	}))
+
+	// Get character from query
+	const character = $derived(characterQuery.data)
+	const characterUncap = $derived(
+		character
+			? normalizeCharacterUncap({
+					special: !!character.special,
+					uncap: character.uncap ?? { flb: false }
+				})
+			: null
+	)
+	const userRole = $derived(role || 0)
+	const canEdit = $derived(userRole >= 7)
+
+	// Tab state from URL; raw data is editor-only, so non-editors fall back to Info
+	const currentTab = $derived(resolveDetailTab(tab, canEdit))
+
+	// Element for button styling
+	const elementName = $derived(
+		getElementLabel(character?.element)?.toLowerCase() as
+			'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
+	)
+
+	// Query for related characters (same character_id)
+	const relatedQuery = createQuery(() => ({
+		queryKey: ['characters', 'related', character?.id],
+		queryFn: async () => {
+			if (!character?.id) return []
+			return entityAdapter.getRelatedCharacters(character.id)
+		},
+		enabled: !!character?.characterId
+	}))
+
+	// Query for raw data (only when on raw tab)
+	const rawDataQuery = createQuery(() => ({
+		queryKey: ['characters', 'raw', character?.id],
+		queryFn: async () => {
+			if (!character?.id) return null
+			return entityAdapter.getCharacterRawData(character.id)
+		},
+		enabled: currentTab === 'raw' && !!character?.id
+	}))
+
+	// Helper function for character grid image
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity data from API
+	function getCharacterGridImage(character: any): string {
+		const pose = character?.styleSwap ? '01_style' : '01'
+		return getCharacterImage(character?.granblueId, 'grid', pose)
+	}
+
+	// Available image sizes for characters
+	const characterSizes = ['detail', 'grid', 'main', 'square']
+
+	// Generate image items for character (variants and poses based on uncap level)
+	const characterImages = $derived.by((): ImageItem[] => {
+		if (!character?.granblueId) return []
+
+		const variants = ['detail', 'grid', 'main', 'square'] as const
+		const images: ImageItem[] = []
+
+		// Style swap characters only have a single _01_style pose
+		if (character.styleSwap) {
+			for (const variant of variants) {
+				images.push({
+					url: getCharacterImage(character.granblueId, variant, '01_style'),
+					label: `${variant} (Style)`,
+					variant,
+					pose: '01_style',
+					poseLabel: 'Style'
+				})
+			}
+			return images
+		}
+
+		// Only include poses that are available - _04 is ULB for story characters and
+		// transcendence for regular characters.
+		const poses: { id: string; label: string }[] = [
+			{ id: '01', label: 'Base' },
+			{ id: '02', label: 'MLB' }
+		]
+
+		if (character.uncap?.flb) {
+			poses.push({ id: '03', label: 'FLB' })
+		}
+
+		if (characterUncap?.ulb || characterUncap?.transcendence) {
+			poses.push({ id: '04', label: characterUncap.ulb ? 'ULB' : 'Transcendence' })
+		}
+
+		const genderLabels = ['Gran', 'Djeeta'] as const
+
+		if (character.element === 0) {
+			// Null-element characters: show all 6 element variants for each pose
+			for (const element of ELEMENT_DISPLAY_ORDER) {
+				const elementLabel = getElementLabel(element)
+				for (const pose of poses) {
+					if (character.genderVariants) {
+						// With gender variants: show both Gran and Djeeta for each element
+						for (const [genderIdx, genderLabel] of genderLabels.entries()) {
+							for (const variant of variants) {
+								images.push({
+									url: getCharacterImage(
+										character.granblueId,
+										variant,
+										`${pose.id}_0${element}_${genderIdx}`
+									),
+									label: `${variant} (${pose.label} — ${elementLabel} — ${genderLabel})`,
+									variant,
+									pose: `${pose.id}-element-${element}-gender-${genderIdx}`,
+									poseLabel: `${pose.label} (${elementLabel} — ${genderLabel})`
+								})
+							}
+						}
+					} else {
+						// Without gender variants: element only
+						for (const variant of variants) {
+							images.push({
+								url: getCharacterImage(character.granblueId, variant, `${pose.id}_0${element}`),
+								label: `${variant} (${pose.label} — ${elementLabel})`,
+								variant,
+								pose: `${pose.id}-element-${element}`,
+								poseLabel: `${pose.label} (${elementLabel})`
+							})
+						}
+					}
+				}
+			}
+		} else {
+			// Non-null-element characters: base images
+			for (const pose of poses) {
+				for (const variant of variants) {
+					images.push({
+						url: getCharacterImage(character.granblueId, variant, pose.id),
+						label: `${variant} (${pose.label})`,
+						variant,
+						pose: pose.id,
+						poseLabel: pose.label
+					})
+				}
+			}
+
+			// Gender variants only when character has them
+			if (character.genderVariants) {
+				for (const pose of poses) {
+					for (const [genderIdx, genderLabel] of genderLabels.entries()) {
+						for (const variant of variants) {
+							images.push({
+								url: getCharacterImage(character.granblueId, variant, `${pose.id}_${genderIdx}`),
+								label: `${variant} (${pose.label} — ${genderLabel})`,
+								variant,
+								pose: `${pose.id}-gender-${genderIdx}`,
+								poseLabel: `${pose.label} (${genderLabel})`
+							})
+						}
+					}
+				}
+			}
+
+			// Include style swap images if this base character has style variants
+			if (character.styleSwaps?.length) {
+				for (const variant of variants) {
+					images.push({
+						url: getCharacterImage(character.granblueId, variant, '01_style'),
+						label: `${variant} (Style)`,
+						variant,
+						pose: '01_style',
+						poseLabel: 'Style'
+					})
+				}
+			}
+		}
+
+		return images
+	})
+
+	/**
+	 * Parse a pose key that may contain element and/or gender info.
+	 * e.g. "01-element-2-gender-0" → { pose: "01", element: 2, gender: 0 }
+	 *      "01-element-2" → { pose: "01", element: 2, gender: undefined }
+	 *      "01-gender-0" → { pose: "01", element: undefined, gender: 0 }
+	 *      "02" → { pose: "02", element: undefined, gender: undefined }
+	 */
+	function parsePoseKey(poseKey: string | undefined): {
+		pose: string | undefined
+		element: number | undefined
+		gender: number | undefined
+	} {
+		if (!poseKey) return { pose: undefined, element: undefined, gender: undefined }
+
+		// Try element (with optional gender)
+		const elementMatch = poseKey.match(/^(\d+)-element-(\d+)(?:-gender-(\d+))?$/)
+		if (elementMatch) {
+			return {
+				pose: elementMatch[1],
+				element: parseInt(elementMatch[2]!, 10),
+				gender: elementMatch[3] !== undefined ? parseInt(elementMatch[3], 10) : undefined
+			}
+		}
+
+		// Try gender-only
+		const genderMatch = poseKey.match(/^(\d+)-gender-(\d+)$/)
+		if (genderMatch) {
+			return {
+				pose: genderMatch[1],
+				element: undefined,
+				gender: parseInt(genderMatch[2]!, 10)
+			}
+		}
+
+		return { pose: poseKey, element: undefined, gender: undefined }
+	}
+
+	// Image download handlers
+	async function handleDownloadImage(
+		size: string,
+		transformation: string | undefined,
+		force: boolean
+	) {
+		if (!character?.id) return
+		const { pose, element, gender } = parsePoseKey(transformation)
+		await entityAdapter.downloadCharacterImage(character.id, size, pose, force, element, gender)
+	}
+
+	async function handleDownloadAllPose(poseKey: string, force: boolean) {
+		if (!character?.id) return
+		const { pose, element, gender } = parsePoseKey(poseKey)
+		// Download all sizes for this pose
+		for (const size of characterSizes) {
+			await entityAdapter.downloadCharacterImage(character.id, size, pose, force, element, gender)
+		}
+	}
+
+	async function handleDownloadAllImages(force: boolean) {
+		if (!character?.id) return
+		await entityAdapter.downloadCharacterImages(character.id, { force })
+	}
+
+	async function handleDownloadSize(size: string) {
+		if (!character?.id) return
+		// Download this size for all available poses
+		const poses = ['01', '02']
+		if (character.uncap?.flb) poses.push('03')
+		if (characterUncap?.ulb || characterUncap?.transcendence) poses.push('04')
+		if (character.styleSwap) poses.push('style')
+
+		for (const pose of poses) {
+			await entityAdapter.downloadCharacterImage(character.id, size, pose, false)
+		}
+
+		// Download gender variants only when character has them
+		if (character.genderVariants) {
+			for (const pose of poses) {
+				for (const gender of [0, 1]) {
+					await entityAdapter.downloadCharacterImage(
+						character.id,
+						size,
+						pose,
+						false,
+						undefined,
+						gender
+					)
+				}
+			}
+		}
+
+		// Download element variants for null-element characters
+		if (character.element === 0) {
+			for (const element of ELEMENT_DISPLAY_ORDER) {
+				for (const pose of poses) {
+					if (character.genderVariants) {
+						for (const gender of [0, 1]) {
+							await entityAdapter.downloadCharacterImage(
+								character.id,
+								size,
+								pose,
+								false,
+								element,
+								gender
+							)
+						}
+					} else {
+						await entityAdapter.downloadCharacterImage(character.id, size, pose, false, element)
+					}
+				}
+			}
+		}
+	}
+</script>
+
+{#if character}
+	<DetailScaffold
+		type="character"
+		item={character}
+		image={getCharacterGridImage(character)}
+		currentTab={currentTab as DetailTab}
+		{onTabChange}
+		showTabs={false}
+		onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
+		onDownloadSize={canEdit ? handleDownloadSize : undefined}
+		availableSizes={characterSizes}
+	>
+		<div class="tabs-bar">
+			<SegmentedControl
+				value={currentTab}
+				onValueChange={(value) => onTabChange(value as DetailTab)}
+				variant="background"
+				size="small"
+			>
+				<Segment value="info">Info</Segment>
+				<Segment value="skills">{m.character_skills_tab()}</Segment>
+				<Segment value="images">Images</Segment>
+				{#if canEdit}
+					<Segment value="raw">Raw Data</Segment>
+				{/if}
+			</SegmentedControl>
+		</div>
+
+		{#if currentTab === 'info'}
+			<section class="details">
+				<CharacterMetadataSection {character} />
+				<CharacterUncapSection {character} />
+				<CharacterAppearanceSection {character} />
+				<CharacterTaxonomySection {character} />
+				<CharacterStatsSection {character} />
+
+				<DetailsContainer title="Nicknames">
+					<DetailItem label="Nicknames (EN)">
+						{#if character.nicknames?.en?.length}
+							<div class="nickname-tags">
+								{#each character.nicknames.en as nickname, i (i)}
+									<span class="nickname-tag">{nickname}</span>
+								{/each}
+							</div>
+						{:else}
+							<span class="empty-value">—</span>
+						{/if}
+					</DetailItem>
+					<DetailItem label="Nicknames (JP)">
+						{#if character.nicknames?.ja?.length}
+							<div class="nickname-tags">
+								{#each character.nicknames.ja as nickname, i (i)}
+									<span class="nickname-tag">{nickname}</span>
+								{/each}
+							</div>
+						{:else}
+							<span class="empty-value">—</span>
+						{/if}
+					</DetailItem>
+				</DetailsContainer>
+
+				<DetailsContainer title="Dates">
+					<DetailItem label="Release Date" value={character.releaseDate || '—'} />
+					{#if character.uncap?.flb}
+						<DetailItem label="FLB Date" value={character.flbDate || '—'} />
+					{/if}
+					{#if characterUncap?.transcendence}
+						<DetailItem label="Transcendence Date" value={character.transcendenceDate || '—'} />
+					{/if}
+					{#if characterUncap?.ulb}
+						<DetailItem
+							label="ULB Date"
+							value={character.ulbDate ||
+								(characterUncap.legacySpecialUlb ? character.transcendenceDate : '') ||
+								'—'}
+						/>
+					{/if}
+				</DetailsContainer>
+
+				<DetailsContainer title="Links">
+					<DetailItem label="Wiki (EN)">
+						{#if character.wiki?.en}
+							<Button
+								href={buildWikiEnUrl(character.wiki.en) ?? undefined}
+								target="_blank"
+								variant="element-ghost"
+								element={elementName}
+								size="small"
+								rightIcon="link"
+							>
+								Open
+							</Button>
+						{:else}
+							<span class="empty-value">—</span>
+						{/if}
+					</DetailItem>
+					<DetailItem label="Wiki (JP)">
+						{#if character.wiki?.ja}
+							<Button
+								href={buildWikiJaUrl(character.wiki.ja, 'character') ?? undefined}
+								target="_blank"
+								variant="element-ghost"
+								element={elementName}
+								size="small"
+								rightIcon="link"
+							>
+								Open
+							</Button>
+						{:else}
+							<span class="empty-value">—</span>
+						{/if}
+					</DetailItem>
+					<DetailItem label="Gamewith">
+						{#if character.gamewith}
+							<Button
+								href={buildGamewithUrl(character.gamewith) ?? undefined}
+								target="_blank"
+								variant="element-ghost"
+								element={elementName}
+								size="small"
+								rightIcon="link"
+							>
+								Open
+							</Button>
+						{:else}
+							<span class="empty-value">—</span>
+						{/if}
+					</DetailItem>
+					<DetailItem label="Kamigame">
+						{#if character.kamigame}
+							<Button
+								href={buildKamigameUrl(character.kamigame, 'character') ?? undefined}
+								target="_blank"
+								variant="element-ghost"
+								element={elementName}
+								size="small"
+								rightIcon="link"
+							>
+								Open
+							</Button>
+						{:else}
+							<span class="empty-value">—</span>
+						{/if}
+					</DetailItem>
+				</DetailsContainer>
+
+				{#if relatedQuery.data?.length}
+					<DetailsContainer title="Related Units">
+						<div class="related-units">
+							{#each relatedQuery.data as related (related.id)}
+								<a
+									href={localizeHref(
+										`/database/characters/${related.granblueId}${related.styleSwap ? '/style' : ''}`
+									)}
+									class="related-unit"
+								>
+									<img
+										src={getCharacterImage(
+											related.granblueId,
+											'grid',
+											related.styleSwap ? '01_style' : '01'
+										)}
+										alt={localizedName(related.name)}
+										class="related-image"
+									/>
+									<span class="related-name">{localizedName(related.name)}</span>
+									<CharacterTags character={related} />
+								</a>
+							{/each}
+						</div>
+					</DetailsContainer>
+				{/if}
+			</section>
+		{:else if currentTab === 'skills'}
+			<CharacterSkillsTab {character} />
+		{:else if currentTab === 'images'}
+			<EntityImagesTab
+				images={characterImages}
+				{canEdit}
+				onDownloadImage={canEdit ? handleDownloadImage : undefined}
+				onDownloadAllPose={canEdit ? handleDownloadAllPose : undefined}
+				onDownloadAllImages={canEdit ? handleDownloadAllImages : undefined}
+			/>
+		{:else if currentTab === 'raw'}
+			<EntityRawDataTab
+				wikiRaw={rawDataQuery.data?.wikiRaw}
+				gameRawEn={rawDataQuery.data?.gameRawEn}
+				gameRawJp={rawDataQuery.data?.gameRawJp}
+				isLoading={rawDataQuery.isLoading}
+				{canEdit}
+				fetchedAt={{
+					en: (character as CharacterFetchTimes | undefined)?.wikiRawFetchedAt,
+					jp: (character as CharacterFetchTimes | undefined)?.wikiRawJpFetchedAt
+				}}
+			>
+				{#snippet wikiActions()}
+					{#if canEdit && character?.id}
+						<CharacterRefreshActions
+							characterId={character.id}
+							characterName={character.name}
+							onRefreshed={() => {
+								characterQuery.refetch()
+								rawDataQuery.refetch()
+							}}
+						/>
+					{/if}
+				{/snippet}
+			</EntityRawDataTab>
+		{/if}
+	</DetailScaffold>
+{:else if characterQuery.isPending}
+	<div class="loading" aria-busy="true"></div>
+{:else}
+	<NotFoundPlaceholder
+		title="Character Not Found"
+		message="The character you're looking for could not be found."
+		backHref={localizeHref('/database/characters')}
+		backLabel="Back to Characters"
+	/>
+{/if}
+
+<style lang="scss">
+	@use '$src/themes/database' as database;
+	@use '$src/themes/layout' as layout;
+	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/typography' as typography;
+
+	.loading {
+		min-height: 320px;
+	}
+
+	.details {
+		@include database.details;
+	}
+
+	.tabs-bar {
+		padding: spacing.$unit-2x;
+		border-bottom: 1px solid var(--separator-bg);
+	}
+
+	.related-units {
+		display: flex;
+		flex-wrap: wrap;
+		gap: spacing.$unit-2x;
+		padding: spacing.$unit-2x 0;
+	}
+
+	.related-unit {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: spacing.$unit-half;
+		text-decoration: none;
+		color: var(--text-primary);
+
+		&:hover .related-image {
+			transform: scale(1.05);
+		}
+	}
+
+	.related-image {
+		width: 128px;
+		height: auto;
+		border-radius: layout.$item-corner;
+		transition: transform 0.2s ease;
+	}
+
+	.related-name {
+		margin-top: spacing.$unit;
+		font-size: typography.$font-small;
+		text-align: center;
+	}
+
+	.nickname-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: spacing.$unit;
+	}
+
+	.nickname-tag {
+		background: var(--background);
+		padding: spacing.$unit-half spacing.$unit;
+		border-radius: layout.$item-corner-small;
+		font-size: typography.$font-small;
+	}
+
+	.empty-value {
+		color: var(--text-secondary);
+	}
+</style>
