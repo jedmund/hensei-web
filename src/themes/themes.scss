@@ -6,6 +6,18 @@
 @use 'layout';
 @use 'mixins';
 
+// Each element's base tone, muted into the *-cover-bg tokens below
+$cover-element-tones: (
+	'fire': colors.$fire-bg-00,
+	'water': colors.$water-bg-00,
+	'earth': colors.$earth-bg-00,
+	'wind': colors.$wind-bg-00,
+	'light': colors.$light-bg-00,
+	'dark': colors.$dark-bg-00,
+	// No element: plain grey
+	'null': colors.$grey-50
+);
+
 :root {
 	--font-family: 'AGrot', system-ui, sans-serif;
 
@@ -552,6 +564,12 @@
 	// Gradients
 	--hero-gradient: #{effects.$hero--gradient--light};
 	--hero-gradient-overlay: #{effects.$hero--gradient--light--overlay};
+
+	// Muted element tones behind cover art with feathered edges (New battles
+	// banners): mostly grey, with a little of the element.
+	@each $element, $tone in $cover-element-tones {
+		--#{$element}-cover-bg: #{color.mix($tone, colors.$grey-45, 30%)};
+	}
 }
 
 html[data-theme='dark'] {
@@ -1079,4 +1097,10 @@ html[data-theme='dark'] {
 	// Gradients
 	--hero-gradient: #{effects.$hero--gradient--dark};
 	--hero-gradient-overlay: #{effects.$hero--gradient--dark--overlay};
+
+	// Muted element tones behind cover art with feathered edges (New battles
+	// banners): mostly grey, with a little of the element.
+	@each $element, $tone in $cover-element-tones {
+		--#{$element}-cover-bg: #{color.mix($tone, colors.$grey-25, 30%)};
+	}
 }
