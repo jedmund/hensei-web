@@ -63,7 +63,7 @@
 
 	// The banners fade out at the edges; fade into the battle's element color
 	const coverElement = $derived(selected ? getElementTypeKey(selected.raid.element) : undefined)
-	const coverBackground = $derived(coverElement ? `var(--${coverElement}-bg)` : undefined)
+	const coverBackground = $derived(coverElement ? `var(--${coverElement}-ghost-text)` : undefined)
 
 	const seeAllHref = $derived(
 		selected
