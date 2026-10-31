@@ -29,12 +29,9 @@
 	let { items, sectionTitle }: Props = $props()
 
 	let selectedId = $state<string | null>(null)
-	// Opens on the first item someone has made a team with
-	const selected = $derived(
-		items.find((i) => i.item.id === selectedId) ??
-			items.find((i) => i.parties.length > 0) ??
-			items[0]
-	)
+	// Opens on the newest item (the API lists them newest first), even before
+	// anyone has made a team with it
+	const selected = $derived(items.find((i) => i.item.id === selectedId) ?? items[0])
 
 	const CHANGE_LABELS: Record<HomeItemChange, () => string> = {
 		release: m.home_item_change_release,
