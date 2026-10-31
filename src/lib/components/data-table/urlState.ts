@@ -9,7 +9,7 @@
  * URL format:
  *   ?q=dark&sort=-updated_at,name_en&page=2&per=100
  *   &element=1,2              (multi filter)
- *   &missing_images=true      (boolean filter)
+ *   &missing_name_jp=true      (boolean filter)
  *   &release_date=2024-01-01..2024-12-31   (range filter; either side optional)
  *
  * Defaults (page 1, the default page size, the default sort, empty search,

@@ -7,14 +7,12 @@ import { mockApiResponse } from '$lib/api/adapters/__tests__/fixtures/helpers'
 import type { DataTableColumn } from './types'
 import { defaultTableState, parseTableUrl, type TableUrlConfig } from './urlState'
 
-interface Weapon {
-	granblueId: string
-	name: { en: string; ja: string }
-	updatedAt: string
-}
+import type { AdminWeaponRow } from '$lib/types/api/admin'
+
+type Weapon = AdminWeaponRow
 
 const columns: DataTableColumn<Weapon>[] = [
-	{ id: 'name_en', header: 'Name', type: 'name', name: (w) => w.name },
+	{ id: 'name_en', header: 'Name', type: 'name', name: (w) => ({ en: w.nameEn, ja: w.nameJp }) },
 	{ id: 'updated_at', header: 'Updated', type: 'date', value: (w) => w.updatedAt },
 	{
 		id: 'released',
@@ -29,7 +27,8 @@ const columns: DataTableColumn<Weapon>[] = [
 const config: TableUrlConfig = {
 	filters: [
 		{ key: 'element', kind: 'multi' },
-		{ key: 'missing_images', kind: 'boolean' },
+		{ key: 'no_skills', kind: 'boolean' },
+		{ key: 'updated_at', kind: 'range' },
 		{ key: 'release_date', kind: 'range' }
 	]
 }
@@ -49,10 +48,10 @@ describe('buildListParams', () => {
 	})
 
 	it('normalizes filters so equal state gives an equal query key', () => {
-		const a = buildListParams(stateFrom('element=2,1,2&missing_images=true&q=%20opus%20'), {
+		const a = buildListParams(stateFrom('element=2,1,2&no_skills=true&q=%20opus%20'), {
 			columns
 		})
-		const b = buildListParams(stateFrom('missing_images=true&element=1,2&q=opus'), { columns })
+		const b = buildListParams(stateFrom('no_skills=true&element=1,2&q=opus'), { columns })
 		expect(a).toEqual(b)
 		expect(JSON.stringify(adminKeys.list('weapons', a))).toBe(
 			JSON.stringify(adminKeys.list('weapons', b))
@@ -61,7 +60,7 @@ describe('buildListParams', () => {
 			page: 1,
 			per: 50,
 			q: 'opus',
-			filters: { element: ['1', '2'], missing_images: true }
+			filters: { element: ['1', '2'], no_skills: true }
 		})
 	})
 
@@ -101,7 +100,7 @@ describe('admin list query', () => {
 				filters: {
 					element: ['1', '2'],
 					release_date: { gte: '2024-01-01' },
-					missing_images: true
+					no_skills: true
 				},
 				fields: ['granblue_id', 'name_en'],
 				facets: ['element', 'rarity']
@@ -110,7 +109,7 @@ describe('admin list query', () => {
 			q: 'dark',
 			'filter[element]': '1,2',
 			'filter[release_date][gte]': '2024-01-01',
-			'filter[missing_images]': 'true',
+			'filter[no_skills]': 'true',
 			sort: '-updated_at,name_en',
 			page: '1',
 			per: '50',
@@ -140,7 +139,7 @@ describe('AdminAdapter.list', () => {
 			page: 2,
 			per: 50,
 			sort: '-updated_at',
-			filters: { element: ['1', '2'], release_date: { lte: '2024-12-31' } },
+			filters: { element: ['1', '2'], updated_at: { lte: '2024-12-31' } },
 			facets: ['element']
 		})
 
@@ -148,7 +147,7 @@ describe('AdminAdapter.list', () => {
 		expect(url.pathname).toBe('/admin/weapons')
 		expect(Object.fromEntries(url.searchParams)).toEqual({
 			'filter[element]': '1,2',
-			'filter[release_date][lte]': '2024-12-31',
+			'filter[updated_at][lte]': '2024-12-31',
 			sort: '-updated_at',
 			page: '2',
 			per: '50',
@@ -157,6 +156,17 @@ describe('AdminAdapter.list', () => {
 		expect(result.meta).toEqual({ total: 312, page: 2, per: 50, totalPages: 7 })
 		expect(result.results[0]).toMatchObject({ granblueId: '1040001000', nameEn: 'Bahamut Sword' })
 		expect(result.facets).toEqual({ element: { '1': 40, '2': 52 } })
+	})
+
+	it('treats total_pages 0 (no results) as a single empty page', async () => {
+		global.fetch = mockApiResponse({
+			results: [],
+			meta: { total: 0, page: 1, per: 50, total_pages: 0 }
+		})
+		const adapter = new AdminAdapter({ baseURL: 'https://api.example.com' })
+		const result = await adapter.list('weapons', { page: 1, per: 50, q: 'zzz' })
+		expect(result.meta).toEqual({ total: 0, page: 1, per: 50, totalPages: 1 })
+		expect(result.facets).toEqual({})
 	})
 
 	it('fills in meta and facets when the API omits them', async () => {

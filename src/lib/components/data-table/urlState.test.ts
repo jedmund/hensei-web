@@ -12,7 +12,7 @@ import {
 const config: TableUrlConfig = {
 	filters: [
 		{ key: 'element', kind: 'multi' },
-		{ key: 'missing_images', kind: 'boolean' },
+		{ key: 'missing_name_jp', kind: 'boolean' },
 		{ key: 'release_date', kind: 'range' }
 	],
 	defaultPer: 50
@@ -44,7 +44,7 @@ describe('parseTableUrl', () => {
 	it('reads page, per, sort, search and every filter kind', () => {
 		const state = parseTableUrl(
 			params(
-				'q=%20dark%20&sort=-updated_at,name_en&page=3&per=100&element=1,2&missing_images=true&release_date=2024-01-01..2024-12-31'
+				'q=%20dark%20&sort=-updated_at,name_en&page=3&per=100&element=1,2&missing_name_jp=true&release_date=2024-01-01..2024-12-31'
 			),
 			config
 		)
@@ -58,7 +58,7 @@ describe('parseTableUrl', () => {
 			q: 'dark',
 			filters: {
 				element: ['1', '2'],
-				missing_images: true,
+				missing_name_jp: true,
 				release_date: { gte: '2024-01-01', lte: '2024-12-31' }
 			}
 		})
@@ -81,7 +81,7 @@ describe('parseTableUrl', () => {
 	})
 
 	it('ignores undeclared filter keys and invalid booleans', () => {
-		const state = parseTableUrl(params('rarity=3&missing_images=maybe'), config)
+		const state = parseTableUrl(params('rarity=3&missing_name_jp=maybe'), config)
 		expect(state.filters).toEqual({})
 	})
 
@@ -115,11 +115,11 @@ describe('writeTableUrl', () => {
 	it('removes filters that were cleared', () => {
 		const next = writeTableUrl(
 			defaultTableState(config),
-			params('element=1,2&missing_images=true'),
+			params('element=1,2&missing_name_jp=true'),
 			config
 		)
 		expect(next.has('element')).toBe(false)
-		expect(next.has('missing_images')).toBe(false)
+		expect(next.has('missing_name_jp')).toBe(false)
 	})
 
 	it('round-trips through parse', () => {
@@ -133,7 +133,7 @@ describe('writeTableUrl', () => {
 			q: 'bahamut',
 			filters: {
 				element: ['3'],
-				missing_images: false,
+				missing_name_jp: false,
 				release_date: { gte: '2023-06-01' }
 			}
 		}
