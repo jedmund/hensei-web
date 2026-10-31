@@ -4,6 +4,8 @@
 
 	interface TooltipProps {
 		content: string
+		/** Rich content shown instead of `content`, e.g. a name with tags */
+		body?: Snippet
 		children: Snippet
 		delayDuration?: number
 		disableCloseOnTriggerClick?: boolean
@@ -15,6 +17,7 @@
 
 	const {
 		content,
+		body,
 		children,
 		delayDuration = 200,
 		disableCloseOnTriggerClick = false,
@@ -34,7 +37,11 @@
 	</TooltipBase.Trigger>
 	<TooltipBase.Portal>
 		<TooltipBase.Content class="tooltip-content" sideOffset={8}>
-			{content}
+			{#if body}
+				{@render body()}
+			{:else}
+				{content}
+			{/if}
 		</TooltipBase.Content>
 	</TooltipBase.Portal>
 </TooltipBase.Root>

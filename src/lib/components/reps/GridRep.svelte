@@ -7,6 +7,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import StickerLabels from '$lib/components/stickers/StickerLabels.svelte'
+	import { formatRelativeTime } from '$lib/utils/date'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
@@ -22,6 +23,12 @@
 		dimmed?: boolean
 		showUser?: boolean
 		indicator?: Snippet
+		/** Show the raid name; when false, show when the team was last updated */
+		showRaid?: boolean
+		/** Rendered below the grid preview, e.g. a staff-pick note */
+		footer?: Snippet
+		/** For reps inside a card: a light stroke and no minimum width */
+		outlined?: boolean
 	}
 
 	let {
@@ -31,8 +38,13 @@
 		disabled = false,
 		dimmed = false,
 		showUser = true,
-		indicator
+		indicator,
+		showRaid = true,
+		footer,
+		outlined = false
 	}: Props = $props()
+
+	const updatedAt = $derived(party.lastUpdated ?? party.updatedAt)
 
 	const defaultRepView = getDefaultRepView()
 	// eslint-disable-next-line svelte/prefer-writable-derived -- $derived.writable not available in Svelte 5
@@ -70,6 +82,7 @@
 	class={`gridRep ${loading ? 'hidden' : 'visible'}`}
 	class:disabled
 	class:dimmed
+	class:outlined
 	role={disabled ? undefined : 'link'}
 	tabindex={disabled ? undefined : 0}
 	onmouseleave={() => (currentView = defaultRepView.value as 'weapons' | 'summons' | 'characters')}
@@ -135,9 +148,13 @@
 							/>
 						</Tooltip>
 					{/if}
-					<span class={`raid ${!party.raid ? 'empty' : ''}`}
-						>{party.raid ? displayName(party.raid) : m.grid_no_raid()}</span
-					>
+					{#if showRaid}
+						<span class={`raid ${!party.raid ? 'empty' : ''}`}
+							>{party.raid ? displayName(party.raid) : m.grid_no_raid()}</span
+						>
+					{:else if updatedAt}
+						<span class="raid">{formatRelativeTime(updatedAt)}</span>
+					{/if}
 				</div>
 
 				<div class="pills">
@@ -176,6 +193,9 @@
 				<div class="weaponGrid"><WeaponRep {party} /></div>
 			{/if}
 		</div>
+		{#if footer}
+			<div class="footer">{@render footer()}</div>
+		{/if}
 		<ul class="indicators">
 			<li
 				class:active={currentView === 'characters'}
@@ -283,6 +303,24 @@
 	.summonGrid {
 		width: 100%;
 		height: 100%;
+	}
+
+	// Inside a card the reps sit on the card's own background, so they need
+	// a stroke, and the card's padding leaves less room than a full-width grid
+	.gridRep.outlined {
+		min-width: 0;
+
+		.inner {
+			border-color: var(--grid-border-color);
+		}
+	}
+
+	.footer {
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
+		line-height: 1.4;
+		border-top: 1px solid var(--border-subtle);
+		padding-top: spacing.$unit;
 	}
 
 	.info {

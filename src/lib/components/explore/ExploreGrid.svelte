@@ -1,21 +1,34 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte'
 	import type { Party } from '$lib/types/api/party'
 	import GridRep from '$lib/components/reps/GridRep.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
 		items?: Party[]
+		/** Passed to each card; false shows the updated time instead of the raid */
+		showRaid?: boolean
+		/** Custom card renderer, e.g. a GridRep with a footer */
+		card?: Snippet<[Party, number]>
+		/** Inside a card: outlined reps, tighter columns, and one column of at most 4 on narrow screens */
+		contained?: boolean
 	}
 
-	let { items = [] }: Props = $props()
+	let { items = [], showRaid = true, card, contained = false }: Props = $props()
 </script>
 
 {#if items.length === 0}
 	<p class="empty">{m.explore_empty()}</p>
 {:else}
-	<ul class="grid" role="list">
+	<ul class="grid" class:contained role="list">
 		{#each items as p, i (i)}
-			<li><GridRep party={p} /></li>
+			<li>
+				{#if card}
+					{@render card(p, i)}
+				{:else}
+					<GridRep party={p} {showRaid} outlined={contained} />
+				{/if}
+			</li>
 		{/each}
 	</ul>
 {/if}
@@ -41,6 +54,20 @@
 
 		& > li {
 			list-style: none;
+		}
+
+		// Inside a card on narrow screens: one column, at most 4 teams
+		&.contained {
+			gap: $unit-2x;
+
+			@include respond-to(tablet) {
+				grid-template-columns: 1fr;
+				gap: $unit;
+
+				& > li:nth-child(n + 5) {
+					display: none;
+				}
+			}
 		}
 	}
 

@@ -37,6 +37,8 @@
 		contained?: boolean
 		fullWidth?: boolean
 		label?: string
+		/** Accessible name for the trigger when there's no visible label */
+		ariaLabel?: string
 		error?: string
 		required?: boolean
 		portal?: boolean
@@ -57,6 +59,7 @@
 		contained = false,
 		fullWidth = false,
 		label,
+		ariaLabel,
 		error,
 		required = false,
 		portal = false,
@@ -139,7 +142,11 @@
 			{disabled}
 			items={stringOptions}
 		>
-			<SelectPrimitive.Trigger class={selectClasses} data-placeholder={selected === undefined}>
+			<SelectPrimitive.Trigger
+				class={selectClasses}
+				data-placeholder={selected === undefined}
+				aria-label={ariaLabel}
+			>
 				{#if selected?.color}
 					<span class="color-dot" style="background-color: {selected.color}"></span>
 				{:else if selected?.image}
@@ -289,7 +296,11 @@
 		{disabled}
 		items={stringOptions}
 	>
-		<SelectPrimitive.Trigger class={selectClasses} data-placeholder={selected === undefined}>
+		<SelectPrimitive.Trigger
+			class={selectClasses}
+			data-placeholder={selected === undefined}
+			aria-label={ariaLabel}
+		>
 			{#if selected?.color}
 				<span class="color-dot" style="background-color: {selected.color}"></span>
 			{:else if selected?.image}

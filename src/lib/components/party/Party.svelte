@@ -108,10 +108,9 @@
 		characters: []
 	}
 
-	// Derive party from prop
-	let party = $derived(
-		initial?.id && initial?.id !== 'new' && Array.isArray(initial?.weapons) ? initial : defaultParty
-	)
+	// Derive party from prop. A new, unsaved team ('new') can arrive with items
+	// already in it (a starting item from Home's "New team" links).
+	let party = $derived(initial?.id && Array.isArray(initial?.weapons) ? initial : defaultParty)
 
 	// Sync party to global store
 	$effect(() => {
