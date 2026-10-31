@@ -235,6 +235,80 @@ describe('EntityAdapter', () => {
 		})
 	})
 
+	describe('validation and download status (snake_case API bodies)', () => {
+		const mockJson = (body: unknown) =>
+			vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => body })
+
+		const validateBody = {
+			valid: true,
+			granblue_id: '1040001000',
+			exists_in_db: true,
+			image_urls: { main: 'https://example.com/main.jpg' }
+		}
+
+		const statusBody = (idKey: string) => ({
+			status: 'processing',
+			progress: 50,
+			images_downloaded: 3,
+			images_total: 6,
+			[idKey]: 'item-1',
+			granblue_id: '1040001000',
+			updated_at: '2026-10-31T00:00:00Z'
+		})
+
+		it.each([
+			['weapon', (a: EntityAdapter) => a.validateWeaponGranblueId('1040001000')],
+			['summon', (a: EntityAdapter) => a.validateSummonGranblueId('1040001000')],
+			['character', (a: EntityAdapter) => a.validateCharacterGranblueId('1040001000')]
+		])('maps %s validation fields', async (_type, validate) => {
+			global.fetch = mockJson(validateBody)
+
+			const result = await validate(adapter)
+
+			expect(result).toMatchObject({
+				valid: true,
+				granblueId: '1040001000',
+				existsInDb: true,
+				imageUrls: { main: 'https://example.com/main.jpg' }
+			})
+		})
+
+		it.each([
+			[
+				'weapon',
+				'weapon_id',
+				'weaponId',
+				(a: EntityAdapter) => a.getWeaponDownloadStatus('item-1')
+			],
+			[
+				'summon',
+				'summon_id',
+				'summonId',
+				(a: EntityAdapter) => a.getSummonDownloadStatus('item-1')
+			],
+			[
+				'character',
+				'character_id',
+				'characterId',
+				(a: EntityAdapter) => a.getCharacterDownloadStatus('item-1')
+			]
+		])('maps %s download status fields', async (_type, idKey, camelIdKey, getStatus) => {
+			global.fetch = mockJson(statusBody(idKey))
+
+			const result = await getStatus(adapter)
+
+			expect(result).toMatchObject({
+				status: 'processing',
+				progress: 50,
+				imagesDownloaded: 3,
+				imagesTotal: 6,
+				[camelIdKey]: 'item-1',
+				granblueId: '1040001000',
+				updatedAt: '2026-10-31T00:00:00Z'
+			})
+		})
+	})
+
 	describe('caching', () => {
 		it('should not cache at adapter level (TanStack Query handles caching)', async () => {
 			global.fetch = vi.fn().mockResolvedValue({

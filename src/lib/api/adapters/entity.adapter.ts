@@ -961,27 +961,9 @@ export class EntityAdapter extends BaseAdapter {
 	 * Requires editor role (>= 7)
 	 */
 	async validateCharacterGranblueId(granblueId: string): Promise<CharacterValidationResult> {
-		const response = await this.request<{
-			valid: boolean
-			granblue_id: string
-			exists_in_db: boolean
-			error?: string
-			image_urls?: {
-				main?: string
-				grid?: string
-				square?: string
-			}
-		}>(`/characters/validate/${granblueId}`, {
+		return this.request<CharacterValidationResult>(`/characters/validate/${granblueId}`, {
 			method: 'GET'
 		})
-
-		return {
-			valid: response.valid,
-			granblueId: response.granblue_id,
-			existsInDb: response.exists_in_db,
-			error: response.error,
-			imageUrls: response.image_urls
-		}
 	}
 
 	/**
@@ -1055,31 +1037,9 @@ export class EntityAdapter extends BaseAdapter {
 	 * Requires editor role (>= 7)
 	 */
 	async getCharacterDownloadStatus(characterId: string): Promise<CharacterDownloadStatus> {
-		const response = await this.request<{
-			status: string
-			progress?: number
-			images_downloaded?: number
-			images_total?: number
-			error?: string
-			character_id?: string
-			granblue_id?: string
-			images?: Record<string, string[]>
-			updated_at?: string
-		}>(`/characters/${characterId}/download_status`, {
+		return this.request<CharacterDownloadStatus>(`/characters/${characterId}/download_status`, {
 			method: 'GET'
 		})
-
-		return {
-			status: response.status as CharacterDownloadStatus['status'],
-			progress: response.progress,
-			imagesDownloaded: response.images_downloaded,
-			imagesTotal: response.images_total,
-			error: response.error,
-			characterId: response.character_id,
-			granblueId: response.granblue_id,
-			images: response.images,
-			updatedAt: response.updated_at
-		}
 	}
 
 	// ============================================
@@ -1091,27 +1051,9 @@ export class EntityAdapter extends BaseAdapter {
 	 * Requires editor role (>= 7)
 	 */
 	async validateSummonGranblueId(granblueId: string): Promise<SummonValidationResult> {
-		const response = await this.request<{
-			valid: boolean
-			granblue_id: string
-			exists_in_db: boolean
-			error?: string
-			image_urls?: {
-				main?: string
-				grid?: string
-				square?: string
-			}
-		}>(`/summons/validate/${granblueId}`, {
+		return this.request<SummonValidationResult>(`/summons/validate/${granblueId}`, {
 			method: 'GET'
 		})
-
-		return {
-			valid: response.valid,
-			granblueId: response.granblue_id,
-			existsInDb: response.exists_in_db,
-			error: response.error,
-			imageUrls: response.image_urls
-		}
 	}
 
 	/**
@@ -1178,31 +1120,9 @@ export class EntityAdapter extends BaseAdapter {
 	 * Requires editor role (>= 7)
 	 */
 	async getSummonDownloadStatus(summonId: string): Promise<SummonDownloadStatus> {
-		const response = await this.request<{
-			status: string
-			progress?: number
-			images_downloaded?: number
-			images_total?: number
-			error?: string
-			summon_id?: string
-			granblue_id?: string
-			images?: Record<string, string[]>
-			updated_at?: string
-		}>(`/summons/${summonId}/download_status`, {
+		return this.request<SummonDownloadStatus>(`/summons/${summonId}/download_status`, {
 			method: 'GET'
 		})
-
-		return {
-			status: response.status as SummonDownloadStatus['status'],
-			progress: response.progress,
-			imagesDownloaded: response.images_downloaded,
-			imagesTotal: response.images_total,
-			error: response.error,
-			summonId: response.summon_id,
-			granblueId: response.granblue_id,
-			images: response.images,
-			updatedAt: response.updated_at
-		}
 	}
 
 	// ============================================
@@ -1214,27 +1134,9 @@ export class EntityAdapter extends BaseAdapter {
 	 * Requires editor role (>= 7)
 	 */
 	async validateWeaponGranblueId(granblueId: string): Promise<WeaponValidationResult> {
-		const response = await this.request<{
-			valid: boolean
-			granblue_id: string
-			exists_in_db: boolean
-			error?: string
-			image_urls?: {
-				main?: string
-				grid?: string
-				square?: string
-			}
-		}>(`/weapons/validate/${granblueId}`, {
+		return this.request<WeaponValidationResult>(`/weapons/validate/${granblueId}`, {
 			method: 'GET'
 		})
-
-		return {
-			valid: response.valid,
-			granblueId: response.granblue_id,
-			existsInDb: response.exists_in_db,
-			error: response.error,
-			imageUrls: response.image_urls
-		}
 	}
 
 	/**
@@ -1303,31 +1205,9 @@ export class EntityAdapter extends BaseAdapter {
 	 * Requires editor role (>= 7)
 	 */
 	async getWeaponDownloadStatus(weaponId: string): Promise<WeaponDownloadStatus> {
-		const response = await this.request<{
-			status: string
-			progress?: number
-			images_downloaded?: number
-			images_total?: number
-			error?: string
-			weapon_id?: string
-			granblue_id?: string
-			images?: Record<string, string[]>
-			updated_at?: string
-		}>(`/weapons/${weaponId}/download_status`, {
+		return this.request<WeaponDownloadStatus>(`/weapons/${weaponId}/download_status`, {
 			method: 'GET'
 		})
-
-		return {
-			status: response.status as WeaponDownloadStatus['status'],
-			progress: response.progress,
-			imagesDownloaded: response.images_downloaded,
-			imagesTotal: response.images_total,
-			error: response.error,
-			weaponId: response.weapon_id,
-			granblueId: response.granblue_id,
-			images: response.images,
-			updatedAt: response.updated_at
-		}
 	}
 
 	// ============================================

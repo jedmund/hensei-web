@@ -453,23 +453,12 @@ export class JobAdapter extends BaseAdapter {
 	 * Gets the download status for an accessory image job
 	 */
 	async getAccessoryDownloadStatus(accessoryId: string): Promise<AccessoryDownloadStatus> {
-		const response = await this.request<{
-			status: string
-			progress?: number
-			images_downloaded?: number
-			images_total?: number
-			error?: string
-		}>(`/job_accessories/${accessoryId}/download_status`, {
-			method: 'GET'
-		})
-
-		return {
-			status: response.status as AccessoryDownloadStatus['status'],
-			progress: response.progress,
-			imagesDownloaded: response.images_downloaded,
-			imagesTotal: response.images_total,
-			error: response.error
-		}
+		return this.request<AccessoryDownloadStatus>(
+			`/job_accessories/${accessoryId}/download_status`,
+			{
+				method: 'GET'
+			}
+		)
 	}
 
 	/**
