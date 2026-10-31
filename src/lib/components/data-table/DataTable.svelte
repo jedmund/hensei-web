@@ -80,7 +80,7 @@
 		emptyMessage?: string
 		/** Static lists longer than this are virtualised */
 		virtualizeAfter?: number
-		/** Height of the scroll area (needed for virtualisation and the sticky header) */
+		/** Height of the scroll area when virtualising. Shorter lists scroll with the page. */
 		maxHeight?: string
 		perOptions?: number[]
 		/** Toolbar content before the search box, e.g. view tabs */
@@ -356,7 +356,7 @@
 			class="scroll"
 			class:scrolled-x={scrolledX}
 			class:fetching={source.isFetching && !source.isPending}
-			style:max-height={maxHeight}
+			style:max-height={virtualize ? maxHeight : undefined}
 			bind:this={scrollEl}
 			onscroll={handleScroll}
 		>
