@@ -2654,5 +2654,15 @@
 	"data_table_pagination": "Pagination",
 	"data_table_sort_by": "Sort by {column}",
 	"data_table_yes": "Yes",
-	"data_table_no": "No"
+	"data_table_no": "No",
+	"db_weapon_series_col_order": "Order",
+	"db_weapon_series_col_name": "Name",
+	"db_weapon_series_col_slug": "Slug",
+	"db_weapon_series_col_flags": "Flags",
+	"db_weapon_series_flag_extra": "Extra",
+	"db_weapon_series_flag_element": "Element",
+	"db_weapon_series_flag_keys": "Keys",
+	"db_weapon_series_flag_awaken": "Awaken",
+	"db_weapon_series_flag_ax": "AX",
+	"db_weapon_series_empty": "No weapon series found"
 }

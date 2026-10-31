@@ -2443,5 +2443,15 @@
 	"data_table_pagination": "ページ送り",
 	"data_table_sort_by": "{column}で並べ替え",
 	"data_table_yes": "はい",
-	"data_table_no": "いいえ"
+	"data_table_no": "いいえ",
+	"db_weapon_series_col_order": "並び順",
+	"db_weapon_series_col_name": "名前",
+	"db_weapon_series_col_slug": "スラッグ",
+	"db_weapon_series_col_flags": "特性",
+	"db_weapon_series_flag_extra": "追加武器",
+	"db_weapon_series_flag_element": "属性変更",
+	"db_weapon_series_flag_keys": "武器スキル",
+	"db_weapon_series_flag_awaken": "覚醒",
+	"db_weapon_series_flag_ax": "EXスキル",
+	"db_weapon_series_empty": "武器シリーズが見つかりません"
 }

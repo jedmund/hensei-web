@@ -28,6 +28,11 @@
 	import type { Awakening } from '$lib/types/api/entities'
 	import type { WeaponSkillFamilySummary } from '$lib/types/api/weaponSkillFamily'
 	import WeaponSkillIcon from '$lib/components/database/WeaponSkillIcon.svelte'
+	import DataTable from '$lib/components/data-table/DataTable.svelte'
+	import { createTableUrl } from '$lib/components/data-table/tableUrl.svelte'
+	import { createStaticSource } from '$lib/components/data-table/staticSource.svelte'
+	import type { DataTableColumn, FlagValue } from '$lib/components/data-table/types'
+	import type { WeaponSeries } from '$lib/types/api/weaponSeries'
 
 	const extraPrerequisiteLabels: Record<number, string> = {
 		3: 'MLB',
@@ -67,10 +72,61 @@
 	// Query for awakenings (weapon type)
 	const awakeningsQuery = createQuery(() => entityQueries.awakenings('Weapon'))
 
-	// Sorted series data
-	const sortedSeries = $derived.by(() => {
-		if (!weaponSeriesQuery.data) return []
-		return [...weaponSeriesQuery.data].sort((a, b) => a.order - b.order)
+	// Series view: DataTable over the full list, sorted and searched from the URL
+	function seriesFlags(series: WeaponSeries): FlagValue[] {
+		const flags: FlagValue[] = []
+		if (series.extra) flags.push({ label: m.db_weapon_series_flag_extra(), tone: 'extra' })
+		if (series.elementChangeable)
+			flags.push({ label: m.db_weapon_series_flag_element(), tone: 'element' })
+		if (series.hasWeaponKeys) flags.push({ label: m.db_weapon_series_flag_keys(), tone: 'keys' })
+		if (series.hasAwakening) flags.push({ label: m.db_weapon_series_flag_awaken(), tone: 'awaken' })
+		if (series.hasAxSkills) flags.push({ label: m.db_weapon_series_flag_ax(), tone: 'ax' })
+		return flags
+	}
+
+	const seriesColumns: DataTableColumn<WeaponSeries>[] = [
+		{
+			id: 'order',
+			header: m.db_weapon_series_col_order,
+			type: 'number',
+			value: (s) => s.order,
+			width: '80px',
+			align: 'center'
+		},
+		{
+			id: 'name',
+			header: m.db_weapon_series_col_name,
+			type: 'name',
+			name: (s) => s.name,
+			primary: true,
+			minWidth: '200px'
+		},
+		{
+			id: 'slug',
+			header: m.db_weapon_series_col_slug,
+			type: 'code',
+			value: (s) => s.slug,
+			searchable: true,
+			minWidth: '150px'
+		},
+		{
+			id: 'flags',
+			header: m.db_weapon_series_col_flags,
+			type: 'flags',
+			flags: seriesFlags,
+			minWidth: '200px'
+		}
+	]
+
+	const seriesUrl = createTableUrl({ defaultSort: [{ id: 'order', desc: false }] })
+	const seriesSource = createStaticSource({
+		url: seriesUrl,
+		columns: seriesColumns,
+		data: () => weaponSeriesQuery.data,
+		isPending: () => weaponSeriesQuery.isPending,
+		isFetching: () => weaponSeriesQuery.isFetching,
+		error: () => weaponSeriesQuery.error,
+		refetch: () => weaponSeriesQuery.refetch()
 	})
 
 	// Sorted awakenings
@@ -78,11 +134,6 @@
 		if (!awakeningsQuery.data) return []
 		return [...awakeningsQuery.data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
 	})
-
-	// Navigate to series detail
-	function handleSeriesClick(slug: string) {
-		goto(`/database/series/weapons/${slug}`)
-	}
 
 	// Awakening modal state
 	let awakeningModalOpen = $state(false)
@@ -356,66 +407,25 @@
 			{/snippet}
 		</DatabaseGridWithProvider>
 	{:else if viewMode === 'series'}
-		<div class="grid-container">
-			<div class="controls">
+		<DataTable
+			columns={seriesColumns}
+			source={seriesSource}
+			rowId={(series) => series.id}
+			rowHref={(series) => `/database/series/weapons/${series.slug}`}
+			rowTitle={(series) => localizedName(series.name)}
+			storageKey="weapon-series"
+			label={m.nav_new_weapon_series()}
+			emptyMessage={m.db_weapon_series_empty()}
+		>
+			{#snippet toolbar()}
 				<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
 					<Segment value="weapons">Weapons</Segment>
 					<Segment value="series">Series</Segment>
 					<Segment value="awakenings">Awakenings</Segment>
 					<Segment value="skills">Skills</Segment>
 				</SegmentedControl>
-			</div>
-
-			{#if weaponSeriesQuery.isPending}
-				<div class="loading-state">Loading series...</div>
-			{:else if weaponSeriesQuery.error}
-				<div class="error-state">Failed to load series</div>
-			{:else if sortedSeries.length > 0}
-				<div class="grid-wrapper">
-					<table class="series-table">
-						<thead>
-							<tr>
-								<th class="col-order">Order</th>
-								<th class="col-name">Name</th>
-								<th class="col-slug">Slug</th>
-								<th class="col-flags">Flags</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each sortedSeries as series (series.id)}
-								<tr onclick={() => handleSeriesClick(series.slug)} class="clickable">
-									<td class="col-order">{series.order}</td>
-									<td class="col-name">
-										<span class="series-name">{localizedName(series.name)}</span>
-									</td>
-									<td class="col-slug"><code>{series.slug}</code></td>
-									<td class="col-flags">
-										<div class="flags">
-											{#if series.extra}<span class="flag extra">Extra</span>{/if}
-											{#if series.elementChangeable}<span class="flag element">Element</span>{/if}
-											{#if series.hasWeaponKeys}<span class="flag keys">Keys</span>{/if}
-											{#if series.hasAwakening}<span class="flag awaken">Awaken</span>{/if}
-											{#if series.hasAxSkills}<span class="flag ax">AX</span>{/if}
-											{#if !series.extra && !series.elementChangeable && !series.hasWeaponKeys && !series.hasAwakening && !series.hasAxSkills}
-												<span class="no-flags">-</span>
-											{/if}
-										</div>
-									</td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				</div>
-
-				<div class="grid-footer">
-					<div class="pagination-info">
-						{sortedSeries.length} series
-					</div>
-				</div>
-			{:else}
-				<div class="empty-state">No weapon series found</div>
-			{/if}
-		</div>
+			{/snippet}
+		</DataTable>
 	{:else if viewMode === 'awakenings'}
 		<!-- Awakenings view -->
 		<div class="grid-container">
@@ -724,10 +734,6 @@
 			}
 		}
 
-		.col-flags {
-			min-width: 200px;
-		}
-
 		.col-image {
 			width: 60px;
 			text-align: center;
@@ -767,49 +773,6 @@
 		font-family: monospace;
 		font-size: typography.$font-tiny;
 		color: var(--text-tertiary);
-	}
-
-	.no-flags {
-		color: var(--text-secondary);
-	}
-
-	.flags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: spacing.$unit-half;
-	}
-
-	.flag {
-		display: inline-block;
-		font-size: typography.$font-tiny;
-		padding: 2px 6px;
-		border-radius: layout.$item-corner-small;
-		font-weight: typography.$medium;
-
-		&.extra {
-			background: var(--badge-extra-bg);
-			color: var(--badge-extra-text);
-		}
-
-		&.element {
-			background: var(--badge-element-bg);
-			color: var(--badge-element-text);
-		}
-
-		&.keys {
-			background: var(--badge-keys-bg);
-			color: var(--badge-keys-text);
-		}
-
-		&.awaken {
-			background: var(--badge-awaken-bg);
-			color: var(--badge-awaken-text);
-		}
-
-		&.ax {
-			background: var(--badge-ax-bg);
-			color: var(--badge-ax-text);
-		}
 	}
 
 	.grid-footer {
