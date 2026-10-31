@@ -31,6 +31,6 @@ export function openInPanel(url: URL, id: string, state: App.PageState): Promise
 		noScroll: true,
 		keepFocus: true,
 		replaceState: alreadyOpen,
-		state: alreadyOpen ? state : { recordPanel: true }
+		state: alreadyOpen ? state : { recordPanel: relativeHref(withOpen(url, null)) }
 	})
 }

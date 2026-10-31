@@ -17,8 +17,11 @@ declare global {
 		}
 		// interface PageData {}
 		interface PageState {
-			/** The database record panel was opened from the list: closing it goes Back */
-			recordPanel?: boolean
+			/**
+			 * The database record panel was opened from this list URL (without
+			 * ?open=); closing it goes Back while the list is still there
+			 */
+			recordPanel?: string
 		}
 		// interface Platform {}
 	}

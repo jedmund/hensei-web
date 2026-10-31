@@ -384,7 +384,15 @@
 		const openId = readOpen($page.url)
 		if (!api || !openId) return
 		const row = data.find((r) => r.granblueId && rowRecordId(r) === openId)
-		if (row) api.exec('select-row', { id: row.id })
+		if (!row) return
+		// After the grid has taken the new rows
+		tick().then(() => {
+			try {
+				api.exec('select-row', { id: row.id })
+			} catch {
+				// Highlight only
+			}
+		})
 	})
 
 	// --- Pagination ---

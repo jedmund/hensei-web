@@ -108,7 +108,9 @@
 	}
 
 	function close() {
-		if (page.state.recordPanel) {
+		// Back returns to the entry the panel was opened from, but only while the
+		// list hasn't paged or filtered since (the grid doesn't reload on Back)
+		if (page.state.recordPanel === relativeHref(withOpen(page.url, null))) {
 			history.back()
 		} else {
 			goto(relativeHref(withOpen(page.url, null)), {
