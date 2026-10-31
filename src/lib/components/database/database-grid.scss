@@ -97,6 +97,17 @@
 	background: var(--table-row-hover);
 }
 
+// The row open in the record panel (the grid marks it selected)
+:global(.wx-grid .wx-row.wx-selected),
+:global(.wx-grid .wx-row.wx-selected .wx-cell.wx-fixed),
+:global(.wx-grid .wx-row.wx-selected .wx-cell.wx-shadow) {
+	background: var(--table-row-hover);
+}
+
+:global(.wx-grid .wx-row.wx-selected .wx-cell:first-child) {
+	box-shadow: inset 3px 0 0 var(--text-primary);
+}
+
 // Element color classes
 :global(.element-fire) {
 	color: var(--fire-text);
