@@ -2,7 +2,7 @@
  * Client-side search, filter and sort for static DataTable sources.
  * Pure functions, so they're testable without Svelte.
  */
-import { localizedName } from '$lib/utils/locale'
+import { primaryName } from './format'
 import type { DataTableColumn, SortPrimitive } from './types'
 import type { FilterValue, SortSpec, TableUrlState } from './urlState'
 
@@ -26,8 +26,7 @@ function toSortPrimitive(value: unknown): SortPrimitive {
 export function sortValueOf<T>(column: DataTableColumn<T>, row: T): SortPrimitive {
 	if (column.sortValue) return column.sortValue(row)
 	if (column.type === 'name') {
-		const name = column.name(row)
-		return name ? localizedName(name) : null
+		return primaryName(column.name(row)) || null
 	}
 	const raw = column.value?.(row)
 	if (column.type === 'date' && typeof raw === 'string') {
