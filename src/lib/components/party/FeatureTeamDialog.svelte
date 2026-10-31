@@ -6,7 +6,6 @@
 	 */
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { toast } from 'svelte-sonner'
-	import { SvelteSet } from 'svelte/reactivity'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
@@ -18,13 +17,7 @@
 	import { eventQueries } from '$lib/api/queries/event.queries'
 	import { useCreateStaffPick, useDeleteStaffPick } from '$lib/api/mutations/event.mutations'
 	import { featuredPartyAdapter } from '$lib/api/adapters/featuredParty.adapter'
-	import {
-		buildFeatureRows,
-		featuredKeys,
-		nextPickPosition,
-		pickChanges,
-		type FeatureRow
-	} from '$lib/utils/featurePicks'
+	import { buildFeatureRows, nextPickPosition, type FeatureRow } from '$lib/utils/featurePicks'
 	import { countdownLabel, eventThumbnailUrl } from '$lib/utils/home'
 	import { getElementLabel } from '$lib/utils/element'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -114,27 +107,26 @@
 	const deleteMut = useDeleteStaffPick()
 	let saving = $state(false)
 
-	// The rows the team will be featured in; starts as where it already is
-	const selected = new SvelteSet<string>()
-	let seeded = $state(false)
+	// The one row to feature the team in (or, if it's already there, remove it from)
+	let selectedKey = $state<string | null>(null)
 	$effect(() => {
-		if (!open) {
-			seeded = false
-		} else if (!seeded && !loading && !loadFailed) {
-			selected.clear()
-			for (const key of featuredKeys(rows)) selected.add(key)
-			seeded = true
-		}
+		if (!open) selectedKey = null
 	})
+	const selectedRow = $derived(rows.find((row) => row.key === selectedKey))
 
-	const changes = $derived(pickChanges(rows, selected))
-	const hasChanges = $derived(changes.add.length > 0 || changes.remove.length > 0)
-
-	function toggle(row: FeatureRow) {
-		if (!row.editable) return
-		if (selected.has(row.key)) selected.delete(row.key)
-		else selected.add(row.key)
+	// Shadows on the header and the note while the list has more above or below
+	let listEl = $state<HTMLElement>()
+	let scrolledFromTop = $state(false)
+	let scrolledToBottom = $state(true)
+	function checkScroll() {
+		if (!listEl) return
+		const { scrollTop, scrollHeight, clientHeight } = listEl
+		scrolledFromTop = scrollTop > 5
+		scrolledToBottom = scrollTop + clientHeight >= scrollHeight - 5
 	}
+	$effect(() => {
+		if (listEl && rows.length) setTimeout(checkScroll, 0)
+	})
 
 	function rowTitle(row: FeatureRow): string {
 		if (row.state === 'general') return m.feature_general()
@@ -167,12 +159,16 @@
 		return parts.join(' · ')
 	}
 
-	// Features the team in newly selected rows (with the note) and removes it
-	// from deselected ones, then closes
+	// Features the team in the selected row with the note, or removes it from
+	// there if it's already featured, then closes
 	async function save() {
+		const row = selectedRow
+		if (!row) return
 		saving = true
 		try {
-			for (const row of changes.add) {
+			if (row.pick) {
+				await deleteMut.mutateAsync({ id: row.pick.id, eventId: row.eventId })
+			} else {
 				// New picks go after the others in the same place
 				const existing = await featuredPartyAdapter.listFeaturedParties(
 					row.eventId ? { eventId: row.eventId } : {}
@@ -186,9 +182,6 @@
 					noteJp: noteJp.trim()
 				})
 			}
-			for (const row of changes.remove) {
-				if (row.pick) await deleteMut.mutateAsync({ id: row.pick.id, eventId: row.eventId })
-			}
 			open = false
 		} catch (err) {
 			toast.error(extractErrorMessage(err, m.db_picks_save_failed()))
@@ -199,24 +192,35 @@
 </script>
 
 <Dialog bind:open size="small">
-	<ModalHeader title={m.feature_team()} description={m.feature_description()} />
+	<ModalHeader
+		title={m.feature_team()}
+		description={m.feature_description()}
+		showShadow={scrolledFromTop}
+	/>
 	<ModalBody>
 		{#if loadFailed}
 			<p class="hint">{m.feature_load_failed()}</p>
 		{:else if loading}
 			<p class="hint">{m.feature_loading()}</p>
 		{:else}
-			<ul class="rows">
+			<ul
+				class="rows"
+				role="radiogroup"
+				aria-label={m.feature_team()}
+				bind:this={listEl}
+				onscroll={checkScroll}
+			>
 				{#each rows as row (row.key)}
-					{@const isSelected = selected.has(row.key)}
+					{@const isSelected = row.key === selectedKey}
 					<li>
 						<button
 							type="button"
 							class="row"
 							class:selected={isSelected}
-							aria-pressed={isSelected}
+							role="radio"
+							aria-checked={isSelected}
 							disabled={!row.editable || saving}
-							onclick={() => toggle(row)}
+							onclick={() => (selectedKey = row.key)}
 						>
 							<span class="thumb">
 								{#if row.state === 'general'}
@@ -244,7 +248,7 @@
 		{/if}
 	</ModalBody>
 
-	<div class="note">
+	<div class="note" class:shadow={!scrolledToBottom}>
 		<SegmentedControl
 			value={noteLanguage}
 			onValueChange={(v) => (noteLanguage = v === 'ja' ? 'ja' : 'en')}
@@ -269,9 +273,10 @@
 		onCancel={() => (open = false)}
 		cancelDisabled={saving}
 		primaryAction={{
-			label: m.feature_action(),
+			label: selectedRow?.pick ? m.db_picks_remove() : m.feature_action(),
+			destructive: !!selectedRow?.pick,
 			onclick: save,
-			disabled: !hasChanges || saving
+			disabled: !selectedRow || saving
 		}}
 	/>
 </Dialog>
@@ -280,6 +285,12 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/typography' as typography;
+	@use '$src/themes/effects' as effects;
+
+	// Rows are the thumbnail plus padding; the list shows four at a time
+	$thumb-height: spacing.$unit * 7;
+	$row-height: $thumb-height + spacing.$unit * 2;
+	$row-gap: spacing.$unit-half;
 
 	.rows {
 		list-style: none;
@@ -287,7 +298,9 @@
 		padding: 0;
 		display: flex;
 		flex-direction: column;
-		gap: spacing.$unit-half;
+		gap: $row-gap;
+		max-height: $row-height * 4 + $row-gap * 3;
+		overflow-y: auto;
 	}
 
 	.row {
@@ -321,7 +334,7 @@
 		align-items: center;
 		justify-content: center;
 		flex-shrink: 0;
-		width: 80px;
+		height: $thumb-height;
 		aspect-ratio: 2 / 1;
 		border-radius: layout.$item-corner;
 		overflow: hidden;
@@ -356,11 +369,24 @@
 		color: var(--accent-blue);
 	}
 
+	// ModalFooter's padding spaces it from the buttons below
 	.note {
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit;
-		padding: spacing.$unit spacing.$unit-2x;
+		padding: spacing.$unit spacing.$unit-2x 0;
+		position: relative;
+		z-index: 1;
+		@include effects.smooth-transition(effects.$duration-quick, box-shadow);
+
+		// Same shadow as ModalFooter's
+		&.shadow {
+			box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+
+			:global(html[data-theme='dark']) & {
+				box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
+			}
+		}
 	}
 
 	.textarea {
@@ -374,6 +400,8 @@
 		color: var(--text-primary);
 		resize: vertical;
 		box-sizing: border-box;
+		// About 20% taller than two rows of text
+		min-height: spacing.$unit * 8;
 
 		&::placeholder {
 			color: var(--text-tertiary);

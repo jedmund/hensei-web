@@ -111,24 +111,3 @@ export function buildFeatureRows({
 export function nextPickPosition(picks: Pick<FeaturedParty, 'position'>[]): number {
 	return picks.reduce((max, p) => Math.max(max, p.position + 1), 0)
 }
-
-/**
- * What saving the dialog's selection changes: rows to feature the team in
- * (selected, not featured yet) and picks to remove (featured, deselected).
- * Rows the role can't edit never change.
- */
-export function pickChanges(
-	rows: FeatureRow[],
-	selected: ReadonlySet<string>
-): { add: FeatureRow[]; remove: FeatureRow[] } {
-	const editable = rows.filter((row) => row.editable)
-	return {
-		add: editable.filter((row) => !row.pick && selected.has(row.key)),
-		remove: editable.filter((row) => !!row.pick && !selected.has(row.key))
-	}
-}
-
-/** The keys of the rows the team is already featured in. */
-export function featuredKeys(rows: FeatureRow[]): Set<string> {
-	return new Set(rows.filter((row) => row.pick).map((row) => row.key))
-}
