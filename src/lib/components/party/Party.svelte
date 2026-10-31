@@ -44,11 +44,11 @@
 	import JobSection from '$lib/components/job/JobSection.svelte'
 	import { Gender } from '$lib/utils/jobUtils'
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
-	import Notice from '$lib/components/ui/Notice.svelte'
 	import DismissibleNotice from '$lib/components/ui/DismissibleNotice.svelte'
 	import { openCalculatorPane } from '$lib/features/party/openCalculatorPane'
 	import PartyDialogs from '$lib/components/party/PartyDialogs.svelte'
 	import PartyHeaderMenu from '$lib/components/party/PartyHeaderMenu.svelte'
+	import PartyNotices from '$lib/components/party/PartyNotices.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -277,13 +277,6 @@
 		return hasLinkedWeapons || hasLinkedCharacters || hasLinkedSummons
 	})
 
-	const hasOrphanedItems = $derived.by(() => {
-		const hasOrphanedWeapons = (party?.weapons ?? []).some((w) => w?.orphaned)
-		const hasOrphanedCharacters = (party?.characters ?? []).some((c) => c?.orphaned)
-		const hasOrphanedSummons = (party?.summons ?? []).some((s) => s?.orphaned)
-		return hasOrphanedWeapons || hasOrphanedCharacters || hasOrphanedSummons
-	})
-
 	// --- Collection viewer switcher ---
 	let activeCollectionUser = $state<'viewer' | 'source'>('viewer')
 
@@ -506,17 +499,7 @@
 				{/snippet}
 			</PartyInfoGrid>
 
-			{#if hasEditedInfo && isNew && party.id === 'new'}
-				<Notice variant="blue">
-					{m.party_unsaved_notice()}
-				</Notice>
-			{/if}
-
-			{#if hasOrphanedItems}
-				<Notice variant="yellow">
-					{m.party_orphan_warning()}
-				</Notice>
-			{/if}
+			<PartyNotices {hasEditedInfo} {isNew} />
 
 			<PartySegmentedControl
 				selectedTab={activeTab}
