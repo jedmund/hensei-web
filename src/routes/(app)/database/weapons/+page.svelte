@@ -5,7 +5,7 @@
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { weaponSkillAdapter } from '$lib/api/adapters/weaponSkill.adapter'
 	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
@@ -105,7 +105,7 @@
 	// Query for weapon skill families (client-side filtered — not paginated like the main grid)
 	const weaponSkillFamiliesQuery = createQuery(() => ({
 		queryKey: ['weaponSkillFamilies'],
-		queryFn: () => entityAdapter.getWeaponSkillFamilies(),
+		queryFn: () => weaponSkillAdapter.getWeaponSkillFamilies(),
 		enabled: viewMode === 'skills'
 	}))
 

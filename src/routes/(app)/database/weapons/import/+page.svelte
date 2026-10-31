@@ -2,7 +2,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
-	import { entityAdapter, type ParsedWeaponData } from '$lib/api/adapters/entity.adapter'
+	import { weaponAdapter, type ParsedWeaponData } from '$lib/api/adapters/weapon.adapter'
 	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'
 	import { getGameCdnWeaponImage, getPlaceholderImage } from '$lib/utils/images'
 	import {
@@ -211,7 +211,7 @@
 			const finalPages = wikiResults.map((r) => r.wikiPage)
 
 			// Step 2: Send to API for parsing (with pre-fetched wiki data)
-			const response = await entityAdapter.batchPreviewWeapons(finalPages, wikiData)
+			const response = await weaponAdapter.batchPreviewWeapons(finalPages, wikiData)
 
 			// Update entities with results
 			entities.clear()
@@ -302,9 +302,9 @@
 				weapon_series_variant_id: formData.weaponSeriesVariantId || null
 			}
 
-			const newWeapon = await entityAdapter.createWeapon(payload)
+			const newWeapon = await weaponAdapter.createWeapon(payload)
 			// Trigger image download in background (don't await - it queues a job)
-			entityAdapter.downloadWeaponImages(newWeapon.id).catch(console.error)
+			weaponAdapter.downloadWeaponImages(newWeapon.id).catch(console.error)
 			savedEntities.add(selectedWikiPage)
 			savedEntities = new SvelteSet(savedEntities)
 

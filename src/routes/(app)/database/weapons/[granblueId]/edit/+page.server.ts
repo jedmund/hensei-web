@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types'
-import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+import { weaponAdapter } from '$lib/api/adapters/weapon.adapter'
 import { error } from '@sveltejs/kit'
 import { requireEditor } from '$lib/auth/requireEditor'
 
@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 	requireEditor(parentData, `/database/weapons/${params.granblueId}`)
 
 	try {
-		const weapon = await entityAdapter.getWeapon(params.granblueId)
+		const weapon = await weaponAdapter.getWeapon(params.granblueId)
 
 		if (!weapon) {
 			throw error(404, 'Weapon not found')

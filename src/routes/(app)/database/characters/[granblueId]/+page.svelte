@@ -10,7 +10,7 @@
 	// TanStack Query
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { characterAdapter } from '$lib/api/adapters/character.adapter'
 	import { withInitialData } from '$lib/query/ssr'
 
 	// Components
@@ -108,7 +108,7 @@
 		queryKey: ['characters', 'related', character?.id],
 		queryFn: async () => {
 			if (!character?.id) return []
-			return entityAdapter.getRelatedCharacters(character.id)
+			return characterAdapter.getRelatedCharacters(character.id)
 		},
 		enabled: !!character?.characterId
 	}))
@@ -118,7 +118,7 @@
 		queryKey: ['characters', 'raw', character?.id],
 		queryFn: async () => {
 			if (!character?.id) return null
-			return entityAdapter.getCharacterRawData(character.id)
+			return characterAdapter.getCharacterRawData(character.id)
 		},
 		enabled: currentTab === 'raw' && !!character?.id
 	}))
@@ -300,7 +300,7 @@
 	) {
 		if (!character?.id) return
 		const { pose, element, gender } = parsePoseKey(transformation)
-		await entityAdapter.downloadCharacterImage(character.id, size, pose, force, element, gender)
+		await characterAdapter.downloadCharacterImage(character.id, size, pose, force, element, gender)
 	}
 
 	async function handleDownloadAllPose(poseKey: string, force: boolean) {
@@ -308,13 +308,20 @@
 		const { pose, element, gender } = parsePoseKey(poseKey)
 		// Download all sizes for this pose
 		for (const size of characterSizes) {
-			await entityAdapter.downloadCharacterImage(character.id, size, pose, force, element, gender)
+			await characterAdapter.downloadCharacterImage(
+				character.id,
+				size,
+				pose,
+				force,
+				element,
+				gender
+			)
 		}
 	}
 
 	async function handleDownloadAllImages(force: boolean) {
 		if (!character?.id) return
-		await entityAdapter.downloadCharacterImages(character.id, { force })
+		await characterAdapter.downloadCharacterImages(character.id, { force })
 	}
 
 	async function handleDownloadSize(size: string) {
@@ -326,14 +333,14 @@
 		if (character.styleSwap) poses.push('style')
 
 		for (const pose of poses) {
-			await entityAdapter.downloadCharacterImage(character.id, size, pose, false)
+			await characterAdapter.downloadCharacterImage(character.id, size, pose, false)
 		}
 
 		// Download gender variants only when character has them
 		if (character.genderVariants) {
 			for (const pose of poses) {
 				for (const gender of [0, 1]) {
-					await entityAdapter.downloadCharacterImage(
+					await characterAdapter.downloadCharacterImage(
 						character.id,
 						size,
 						pose,
@@ -351,7 +358,7 @@
 				for (const pose of poses) {
 					if (character.genderVariants) {
 						for (const gender of [0, 1]) {
-							await entityAdapter.downloadCharacterImage(
+							await characterAdapter.downloadCharacterImage(
 								character.id,
 								size,
 								pose,
@@ -361,7 +368,7 @@
 							)
 						}
 					} else {
-						await entityAdapter.downloadCharacterImage(character.id, size, pose, false, element)
+						await characterAdapter.downloadCharacterImage(character.id, size, pose, false, element)
 					}
 				}
 			}

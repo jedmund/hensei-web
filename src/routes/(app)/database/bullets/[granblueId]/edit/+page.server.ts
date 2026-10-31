@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types'
-import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+import { bulletAdapter } from '$lib/api/adapters/bullet.adapter'
 import { error } from '@sveltejs/kit'
 import { requireEditor } from '$lib/auth/requireEditor'
 
@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 	requireEditor(parentData, `/database/bullets/${params.granblueId}`)
 
 	try {
-		const bullet = await entityAdapter.getBulletById(params.granblueId)
+		const bullet = await bulletAdapter.getBulletById(params.granblueId)
 
 		if (!bullet) {
 			throw error(404, 'Bullet not found')

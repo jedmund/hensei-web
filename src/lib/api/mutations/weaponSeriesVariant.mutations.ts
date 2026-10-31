@@ -1,5 +1,5 @@
 import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svelte-query'
-import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+import { seriesAdapter } from '$lib/api/adapters/series.adapter'
 import type {
 	CreateWeaponSeriesVariantPayload,
 	UpdateWeaponSeriesVariantPayload
@@ -14,7 +14,7 @@ export function createWeaponSeriesVariantOptions(queryClient: QueryClient) {
 		}: {
 			seriesId: string
 			payload: CreateWeaponSeriesVariantPayload
-		}) => entityAdapter.createWeaponSeriesVariant(seriesId, payload),
+		}) => seriesAdapter.createWeaponSeriesVariant(seriesId, payload),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: entityKeys.allWeaponSeries() })
 		}
@@ -31,7 +31,7 @@ export function updateWeaponSeriesVariantOptions(queryClient: QueryClient) {
 			seriesId: string
 			variantId: string
 			payload: UpdateWeaponSeriesVariantPayload
-		}) => entityAdapter.updateWeaponSeriesVariant(seriesId, variantId, payload),
+		}) => seriesAdapter.updateWeaponSeriesVariant(seriesId, variantId, payload),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: entityKeys.allWeaponSeries() })
 		}
@@ -41,7 +41,7 @@ export function updateWeaponSeriesVariantOptions(queryClient: QueryClient) {
 export function deleteWeaponSeriesVariantOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ seriesId, variantId }: { seriesId: string; variantId: string }) =>
-			entityAdapter.deleteWeaponSeriesVariant(seriesId, variantId),
+			seriesAdapter.deleteWeaponSeriesVariant(seriesId, variantId),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: entityKeys.allWeaponSeries() })
 		}

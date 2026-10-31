@@ -8,7 +8,11 @@
  */
 
 import { queryOptions } from '@tanstack/svelte-query'
-import { entityAdapter, type WeaponKeyQueryParams } from '$lib/api/adapters/entity.adapter'
+import { awakeningAdapter } from '$lib/api/adapters/awakening.adapter'
+import { characterAdapter } from '$lib/api/adapters/character.adapter'
+import { seriesAdapter } from '$lib/api/adapters/series.adapter'
+import { summonAdapter } from '$lib/api/adapters/summon.adapter'
+import { weaponAdapter, type WeaponKeyQueryParams } from '$lib/api/adapters/weapon.adapter'
 
 /**
  * Entity query options factory
@@ -38,7 +42,7 @@ export const entityQueries = {
 	weapon: (granblueId: string) =>
 		queryOptions({
 			queryKey: ['weapon', granblueId] as const,
-			queryFn: () => entityAdapter.getWeapon(granblueId),
+			queryFn: () => weaponAdapter.getWeapon(granblueId),
 			enabled: !!granblueId,
 			staleTime: 1000 * 60 * 60, // 1 hour - canonical data rarely changes
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
@@ -53,7 +57,7 @@ export const entityQueries = {
 	character: (granblueId: string, options?: { styleSwap?: boolean }) =>
 		queryOptions({
 			queryKey: ['character', granblueId, options?.styleSwap ? 'style' : 'base'] as const,
-			queryFn: () => entityAdapter.getCharacter(granblueId, options),
+			queryFn: () => characterAdapter.getCharacter(granblueId, options),
 			enabled: !!granblueId,
 			staleTime: 1000 * 60 * 60, // 1 hour - canonical data rarely changes
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
@@ -68,7 +72,7 @@ export const entityQueries = {
 	summon: (granblueId: string) =>
 		queryOptions({
 			queryKey: ['summon', granblueId] as const,
-			queryFn: () => entityAdapter.getSummon(granblueId),
+			queryFn: () => summonAdapter.getSummon(granblueId),
 			enabled: !!granblueId,
 			staleTime: 1000 * 60 * 60, // 1 hour - canonical data rarely changes
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
@@ -83,7 +87,7 @@ export const entityQueries = {
 	weaponKeys: (params?: WeaponKeyQueryParams) =>
 		queryOptions({
 			queryKey: ['weaponKeys', params?.seriesSlug, params?.slot, params?.group] as const,
-			queryFn: () => entityAdapter.getWeaponKeys(params),
+			queryFn: () => weaponAdapter.getWeaponKeys(params),
 			staleTime: 1000 * 60 * 60, // 1 hour - weapon keys rarely change
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
 		}),
@@ -97,7 +101,7 @@ export const entityQueries = {
 	weaponSeriesList: () =>
 		queryOptions({
 			queryKey: ['weaponSeries', 'list'] as const,
-			queryFn: () => entityAdapter.getWeaponSeriesList(),
+			queryFn: () => seriesAdapter.getWeaponSeriesList(),
 			staleTime: 1000 * 60 * 60, // 1 hour - rarely changes
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
 		}),
@@ -111,7 +115,7 @@ export const entityQueries = {
 	weaponSeries: (idOrSlug: string) =>
 		queryOptions({
 			queryKey: ['weaponSeries', idOrSlug] as const,
-			queryFn: () => entityAdapter.getWeaponSeries(idOrSlug),
+			queryFn: () => seriesAdapter.getWeaponSeries(idOrSlug),
 			enabled: !!idOrSlug,
 			staleTime: 1000 * 60 * 60, // 1 hour
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
@@ -126,7 +130,7 @@ export const entityQueries = {
 	characterSeriesList: () =>
 		queryOptions({
 			queryKey: ['characterSeries', 'list'] as const,
-			queryFn: () => entityAdapter.getCharacterSeriesList(),
+			queryFn: () => seriesAdapter.getCharacterSeriesList(),
 			staleTime: 1000 * 60 * 60, // 1 hour - rarely changes
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
 		}),
@@ -140,7 +144,7 @@ export const entityQueries = {
 	characterSeries: (idOrSlug: string) =>
 		queryOptions({
 			queryKey: ['characterSeries', idOrSlug] as const,
-			queryFn: () => entityAdapter.getCharacterSeries(idOrSlug),
+			queryFn: () => seriesAdapter.getCharacterSeries(idOrSlug),
 			enabled: !!idOrSlug,
 			staleTime: 1000 * 60 * 60, // 1 hour
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
@@ -155,7 +159,7 @@ export const entityQueries = {
 	summonSeriesList: () =>
 		queryOptions({
 			queryKey: ['summonSeries', 'list'] as const,
-			queryFn: () => entityAdapter.getSummonSeriesList(),
+			queryFn: () => seriesAdapter.getSummonSeriesList(),
 			staleTime: 1000 * 60 * 60, // 1 hour - rarely changes
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
 		}),
@@ -169,7 +173,7 @@ export const entityQueries = {
 	summonSeries: (idOrSlug: string) =>
 		queryOptions({
 			queryKey: ['summonSeries', idOrSlug] as const,
-			queryFn: () => entityAdapter.getSummonSeries(idOrSlug),
+			queryFn: () => seriesAdapter.getSummonSeries(idOrSlug),
 			enabled: !!idOrSlug,
 			staleTime: 1000 * 60 * 60, // 1 hour
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
@@ -184,7 +188,7 @@ export const entityQueries = {
 	weaponStatModifiers: (category?: 'ax' | 'befoulment') =>
 		queryOptions({
 			queryKey: ['weaponStatModifiers', category ?? 'all'] as const,
-			queryFn: () => entityAdapter.getWeaponStatModifiers(category),
+			queryFn: () => weaponAdapter.getWeaponStatModifiers(category),
 			staleTime: 1000 * 60 * 60, // 1 hour - reference data
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
 		}),
@@ -197,7 +201,7 @@ export const entityQueries = {
 	axSkills: () =>
 		queryOptions({
 			queryKey: ['weaponStatModifiers', 'ax'] as const,
-			queryFn: () => entityAdapter.getAxSkills(),
+			queryFn: () => weaponAdapter.getAxSkills(),
 			staleTime: 1000 * 60 * 60, // 1 hour
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
 		}),
@@ -210,7 +214,7 @@ export const entityQueries = {
 	befoulments: () =>
 		queryOptions({
 			queryKey: ['weaponStatModifiers', 'befoulment'] as const,
-			queryFn: () => entityAdapter.getBefoulments(),
+			queryFn: () => weaponAdapter.getBefoulments(),
 			staleTime: 1000 * 60 * 60, // 1 hour
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
 		}),
@@ -218,7 +222,7 @@ export const entityQueries = {
 	awakenings: (objectType?: string) =>
 		queryOptions({
 			queryKey: ['awakenings', objectType ?? 'all'] as const,
-			queryFn: () => entityAdapter.getAwakenings(objectType),
+			queryFn: () => awakeningAdapter.getAwakenings(objectType),
 			staleTime: 1000 * 60 * 60,
 			gcTime: 1000 * 60 * 60 * 24
 		}),

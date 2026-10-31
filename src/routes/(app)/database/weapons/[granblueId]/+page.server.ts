@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types'
-import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+import { weaponAdapter } from '$lib/api/adapters/weapon.adapter'
 import { error } from '@sveltejs/kit'
 
 export const load: PageServerLoad = async ({ params, parent }) => {
@@ -7,7 +7,7 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 		// Get parent data to access role
 		const parentData = await parent()
 
-		const weapon = await entityAdapter.getWeapon(params.granblueId)
+		const weapon = await weaponAdapter.getWeapon(params.granblueId)
 
 		if (!weapon) {
 			throw error(404, 'Weapon not found')

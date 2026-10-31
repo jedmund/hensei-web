@@ -9,7 +9,7 @@
 	import { CHARACTER_SEASON_NAMES, getSeasonName } from '$lib/types/enums'
 	import { localizedName } from '$lib/utils/locale'
 	import { createQuery, queryOptions } from '@tanstack/svelte-query'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { seriesAdapter } from '$lib/api/adapters/series.adapter'
 
 	interface Props {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
@@ -36,7 +36,7 @@
 	const characterSeriesQuery = createQuery(() =>
 		queryOptions({
 			queryKey: ['characterSeries', 'list'] as const,
-			queryFn: () => entityAdapter.getCharacterSeriesList(),
+			queryFn: () => seriesAdapter.getCharacterSeriesList(),
 			enabled: editMode,
 			staleTime: 1000 * 60 * 60,
 			gcTime: 1000 * 60 * 60 * 24

@@ -19,7 +19,7 @@
 	import ValidatedInput from '$lib/components/ui/ValidatedInput.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
 	import CharacterTypeahead from '$lib/components/ui/CharacterTypeahead.svelte'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { weaponAdapter } from '$lib/api/adapters/weapon.adapter'
 	import { getRarityOptions } from '$lib/utils/rarity'
 
 	// Always in edit mode for new weapon
@@ -127,7 +127,7 @@
 		}
 
 		try {
-			const result = await entityAdapter.validateWeaponGranblueId(value)
+			const result = await weaponAdapter.validateWeaponGranblueId(value)
 
 			if (!result.valid) {
 				granblueIdValid = false
@@ -219,9 +219,9 @@
 				forge_order: editData.forgeOrder
 			}
 
-			const newWeapon = await entityAdapter.createWeapon(payload)
+			const newWeapon = await weaponAdapter.createWeapon(payload)
 			// Trigger image download in background (don't await - it queues a job)
-			entityAdapter.downloadWeaponImages(newWeapon.id).catch(console.error)
+			weaponAdapter.downloadWeaponImages(newWeapon.id).catch(console.error)
 			await goto(`/database/weapons/${newWeapon.granblueId}`)
 		} catch (error) {
 			saveError = 'Failed to create weapon. Please try again.'
