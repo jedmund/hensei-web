@@ -1,5 +1,5 @@
 /**
- * Shared types and response mappers for the weapon, character
+ * Shared types and helpers for the weapon, character
  * and summon adapters.
  *
  * @module adapters/entity.shared
@@ -21,33 +21,6 @@ export interface GranblueIdValidationResult {
 }
 
 /**
- * Raw validation response shape, as typed by the validate endpoints
- */
-export interface GranblueIdValidationResponse {
-	valid: boolean
-	granblue_id: string
-	exists_in_db: boolean
-	error?: string
-	image_urls?: {
-		main?: string
-		grid?: string
-		square?: string
-	}
-}
-
-export function toValidationResult(
-	response: GranblueIdValidationResponse
-): GranblueIdValidationResult {
-	return {
-		valid: response.valid,
-		granblueId: response.granblue_id,
-		existsInDb: response.exists_in_db,
-		error: response.error,
-		imageUrls: response.image_urls
-	}
-}
-
-/**
  * Fields shared by every entity's image download status
  */
 export interface EntityDownloadStatus {
@@ -59,34 +32,6 @@ export interface EntityDownloadStatus {
 	granblueId?: string
 	images?: Record<string, string[]>
 	updatedAt?: string
-}
-
-/**
- * Raw download status response shape, as typed by the download_status endpoints.
- * Each entity adds its own id key (weapon_id, character_id, summon_id).
- */
-export interface DownloadStatusResponse {
-	status: string
-	progress?: number
-	images_downloaded?: number
-	images_total?: number
-	error?: string
-	granblue_id?: string
-	images?: Record<string, string[]>
-	updated_at?: string
-}
-
-export function toDownloadStatus(response: DownloadStatusResponse): EntityDownloadStatus {
-	return {
-		status: response.status as EntityDownloadStatus['status'],
-		progress: response.progress,
-		imagesDownloaded: response.images_downloaded,
-		imagesTotal: response.images_total,
-		error: response.error,
-		granblueId: response.granblue_id,
-		images: response.images,
-		updatedAt: response.updated_at
-	}
 }
 
 /**

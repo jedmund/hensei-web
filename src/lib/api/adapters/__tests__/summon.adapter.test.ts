@@ -96,4 +96,51 @@ describe('SummonAdapter', () => {
 
 		await expect(adapter.getSummon('summon-1')).rejects.toThrow()
 	})
+
+	describe('validation and download status (snake_case API bodies)', () => {
+		const mockJson = (body: unknown) =>
+			vi.fn().mockResolvedValue({ ok: true, status: 200, json: async () => body })
+
+		it('maps validation fields', async () => {
+			global.fetch = mockJson({
+				valid: true,
+				granblue_id: '1040001000',
+				exists_in_db: true,
+				image_urls: { main: 'https://example.com/main.jpg' }
+			})
+
+			const result = await adapter.validateSummonGranblueId('1040001000')
+
+			expect(result).toMatchObject({
+				valid: true,
+				granblueId: '1040001000',
+				existsInDb: true,
+				imageUrls: { main: 'https://example.com/main.jpg' }
+			})
+		})
+
+		it('maps download status fields', async () => {
+			global.fetch = mockJson({
+				status: 'processing',
+				progress: 50,
+				images_downloaded: 3,
+				images_total: 6,
+				summon_id: 'item-1',
+				granblue_id: '1040001000',
+				updated_at: '2026-10-31T00:00:00Z'
+			})
+
+			const result = await adapter.getSummonDownloadStatus('item-1')
+
+			expect(result).toMatchObject({
+				status: 'processing',
+				progress: 50,
+				imagesDownloaded: 3,
+				imagesTotal: 6,
+				summonId: 'item-1',
+				granblueId: '1040001000',
+				updatedAt: '2026-10-31T00:00:00Z'
+			})
+		})
+	})
 })

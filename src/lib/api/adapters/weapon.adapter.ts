@@ -12,13 +12,9 @@ import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { RequestOptions } from './types'
 import {
 	batchPreviewBody,
-	toDownloadStatus,
-	toValidationResult,
 	type BatchPreviewResponse,
-	type DownloadStatusResponse,
 	type EntityDownloadStatus,
 	type EntityRawData,
-	type GranblueIdValidationResponse,
 	type GranblueIdValidationResult
 } from './entity.shared'
 import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
@@ -321,14 +317,9 @@ export class WeaponAdapter extends BaseAdapter {
 	 * Requires editor role (>= 7)
 	 */
 	async validateWeaponGranblueId(granblueId: string): Promise<WeaponValidationResult> {
-		const response = await this.request<GranblueIdValidationResponse>(
-			`/weapons/validate/${granblueId}`,
-			{
-				method: 'GET'
-			}
-		)
-
-		return toValidationResult(response)
+		return this.request<WeaponValidationResult>(`/weapons/validate/${granblueId}`, {
+			method: 'GET'
+		})
 	}
 
 	/**
@@ -397,12 +388,9 @@ export class WeaponAdapter extends BaseAdapter {
 	 * Requires editor role (>= 7)
 	 */
 	async getWeaponDownloadStatus(weaponId: string): Promise<WeaponDownloadStatus> {
-		const response = await this.request<DownloadStatusResponse & { weapon_id?: string }>(
-			`/weapons/${weaponId}/download_status`,
-			{ method: 'GET' }
-		)
-
-		return { ...toDownloadStatus(response), weaponId: response.weapon_id }
+		return this.request<WeaponDownloadStatus>(`/weapons/${weaponId}/download_status`, {
+			method: 'GET'
+		})
 	}
 
 	/**

@@ -12,13 +12,9 @@ import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { RequestOptions } from './types'
 import {
 	batchPreviewBody,
-	toDownloadStatus,
-	toValidationResult,
 	type BatchPreviewResponse,
-	type DownloadStatusResponse,
 	type EntityDownloadStatus,
 	type EntityRawData,
-	type GranblueIdValidationResponse,
 	type GranblueIdValidationResult
 } from './entity.shared'
 import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'
@@ -259,14 +255,9 @@ export class CharacterAdapter extends BaseAdapter {
 	 * Requires editor role (>= 7)
 	 */
 	async validateCharacterGranblueId(granblueId: string): Promise<CharacterValidationResult> {
-		const response = await this.request<GranblueIdValidationResponse>(
-			`/characters/validate/${granblueId}`,
-			{
-				method: 'GET'
-			}
-		)
-
-		return toValidationResult(response)
+		return this.request<CharacterValidationResult>(`/characters/validate/${granblueId}`, {
+			method: 'GET'
+		})
 	}
 
 	/**
@@ -340,12 +331,9 @@ export class CharacterAdapter extends BaseAdapter {
 	 * Requires editor role (>= 7)
 	 */
 	async getCharacterDownloadStatus(characterId: string): Promise<CharacterDownloadStatus> {
-		const response = await this.request<DownloadStatusResponse & { character_id?: string }>(
-			`/characters/${characterId}/download_status`,
-			{ method: 'GET' }
-		)
-
-		return { ...toDownloadStatus(response), characterId: response.character_id }
+		return this.request<CharacterDownloadStatus>(`/characters/${characterId}/download_status`, {
+			method: 'GET'
+		})
 	}
 
 	/**

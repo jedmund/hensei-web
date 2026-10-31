@@ -12,13 +12,9 @@ import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { RequestOptions } from './types'
 import {
 	batchPreviewBody,
-	toDownloadStatus,
-	toValidationResult,
 	type BatchPreviewResponse,
-	type DownloadStatusResponse,
 	type EntityDownloadStatus,
 	type EntityRawData,
-	type GranblueIdValidationResponse,
 	type GranblueIdValidationResult
 } from './entity.shared'
 import type { SummonSeriesRef } from '$lib/types/api/summonSeries'
@@ -205,14 +201,9 @@ export class SummonAdapter extends BaseAdapter {
 	 * Requires editor role (>= 7)
 	 */
 	async validateSummonGranblueId(granblueId: string): Promise<SummonValidationResult> {
-		const response = await this.request<GranblueIdValidationResponse>(
-			`/summons/validate/${granblueId}`,
-			{
-				method: 'GET'
-			}
-		)
-
-		return toValidationResult(response)
+		return this.request<SummonValidationResult>(`/summons/validate/${granblueId}`, {
+			method: 'GET'
+		})
 	}
 
 	/**
@@ -279,12 +270,9 @@ export class SummonAdapter extends BaseAdapter {
 	 * Requires editor role (>= 7)
 	 */
 	async getSummonDownloadStatus(summonId: string): Promise<SummonDownloadStatus> {
-		const response = await this.request<DownloadStatusResponse & { summon_id?: string }>(
-			`/summons/${summonId}/download_status`,
-			{ method: 'GET' }
-		)
-
-		return { ...toDownloadStatus(response), summonId: response.summon_id }
+		return this.request<SummonDownloadStatus>(`/summons/${summonId}/download_status`, {
+			method: 'GET'
+		})
 	}
 
 	/**
