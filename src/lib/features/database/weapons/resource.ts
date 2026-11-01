@@ -4,7 +4,11 @@
  */
 import { z } from 'zod'
 import * as m from '$lib/paraglide/messages'
-import { weaponAdapter, type Weapon } from '$lib/api/adapters/weapon.adapter'
+import {
+	weaponAdapter,
+	type CreateWeaponPayload,
+	type Weapon
+} from '$lib/api/adapters/weapon.adapter'
 import { entityQueries } from '$lib/api/queries/entity.queries'
 import {
 	elementFilterOptions,
@@ -41,6 +45,7 @@ const UNCAPS = ['flb', 'ulb', 'transcendence']
 const flb = (v: Values) => v.flb === true
 const ulb = (v: Values) => v.ulb === true
 const transcendence = (v: Values) => v.transcendence === true
+const awakening = (v: Values) => v.awakening === true
 /** Detail rows shown whatever the form's `when` says */
 const always = () => true
 
@@ -54,12 +59,15 @@ const EXTRA_PREREQUISITES: Record<number, string> = {
 	6: 'Transcendence'
 }
 
-/** Max level and max skill level for an uncap state */
+/** Max level before any uncap, by rarity (R, SR, SSR) */
+const BASE_LEVEL: Record<number, number> = { 1: 50, 2: 75, 3: 100 }
+
+/** The standard max level and max skill level for a rarity and uncap state */
 function levelCaps(v: Values): { max_level: number; max_skill_level: number } {
 	if (transcendence(v)) return { max_level: 250, max_skill_level: 25 }
 	if (ulb(v)) return { max_level: 200, max_skill_level: 20 }
 	if (flb(v)) return { max_level: 150, max_skill_level: 15 }
-	return { max_level: 100, max_skill_level: 10 }
+	return { max_level: BASE_LEVEL[v.rarity as number] ?? 100, max_skill_level: 10 }
 }
 
 /** Uncaps stack: each needs the one before it, so ticking or unticking one carries the rest */
@@ -83,7 +91,6 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			keys: { en: 'name_en', ja: 'name_jp' },
 			labels: { en: m.db_weapons_field_name_en, ja: m.db_weapons_field_name_jp },
 			required: true,
-			empty: 'omit',
 			list: { primary: true, minWidth: '220px' }
 		},
 		{
@@ -113,6 +120,7 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			default: {},
 			when: (v) => v.element === 0,
 			form: { create: false },
+			render: { input: 'elementVariantIds' },
 			validate: z.record(
 				z.string().regex(/^[0-6]$/),
 				z.string().regex(GRANBLUE_ID, {
@@ -135,9 +143,7 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			sublabel: m.db_weapons_hint_recruits,
 			resource: 'character',
 			id: (ref) =>
-				typeof ref === 'string' ? ref : ((ref as Weapon['recruits'])?.granblueId ?? null),
-			// Today's pages never clear it: a blank is left out
-			empty: 'omit'
+				typeof ref === 'string' ? ref : ((ref as Weapon['recruits'])?.granblueId ?? null)
 		},
 		// Uncap
 		{
@@ -145,7 +151,8 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			kind: 'custom',
 			label: m.db_weapons_col_uncap,
 			write: false,
-			render: { cell: WeaponUncapCell, detail: 'uncapIndicator' },
+			// The forms show the stars too, following the checkboxes
+			render: { cell: WeaponUncapCell, detail: 'uncapIndicator', input: 'uncapIndicator' },
 			detail: { hideWhenEmpty: true },
 			list: { sortable: false, width: '144px', fields: UNCAPS }
 		},
@@ -213,8 +220,6 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			kind: 'reference',
 			label: m.db_weapons_col_series,
 			resource: 'weaponSeries',
-			// Today's pages never clear it: a blank is left out
-			empty: 'omit',
 			list: {
 				value: (w) =>
 					w.seriesNameEn || w.seriesNameJp
@@ -301,7 +306,8 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			label: m.db_weapons_field_max_level,
 			int: true,
 			min: 1,
-			default: 100
+			default: 100,
+			required: true
 		},
 		{
 			key: 'max_skill_level',
@@ -310,17 +316,30 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			int: true,
 			min: 1,
 			default: 10,
+			required: true,
 			detail: { hideWhenEmpty: true }
+		},
+		// Whether the weapon awakens: a form-only switch for the level and the awakenings
+		{
+			key: 'awakening',
+			kind: 'boolean',
+			label: m.db_weapons_field_awakening,
+			read: (w) => (w.maxAwakeningLevel ?? 0) > 0,
+			write: false,
+			form: {},
+			detail: false
 		},
 		{
 			key: 'max_awakening_level',
 			kind: 'number',
 			label: m.db_weapons_field_max_awakening_level,
 			int: true,
-			min: 0,
-			// 0 means none, sent as null
-			write: { value: (v) => v || null },
-			detail: { empty: '0' }
+			min: 1,
+			required: true,
+			when: awakening,
+			// A weapon that doesn't awaken has no level
+			whenHidden: 'empty',
+			detail: { when: always, empty: '0' }
 		},
 		{
 			key: 'max_exorcism_level',
@@ -338,8 +357,12 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			label: m.db_nav_awakenings,
 			resource: 'awakening',
 			read: (w) => w.awakenings,
+			when: awakening,
+			// A weapon that doesn't awaken has no awakenings
+			whenHidden: 'empty',
 			form: { create: false },
-			detail: { hideWhenEmpty: true }
+			render: { input: 'weaponAwakenings' },
+			detail: { when: always, hideWhenEmpty: true }
 		},
 		// Forge chain
 		{
@@ -596,7 +619,13 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			{
 				id: 'caps',
 				title: m.db_weapons_section_caps,
-				fields: ['max_level', 'max_skill_level', 'max_awakening_level', 'max_exorcism_level']
+				fields: [
+					'max_level',
+					'max_skill_level',
+					'awakening',
+					'max_awakening_level',
+					'max_exorcism_level'
+				]
 			},
 			{
 				id: 'awakenings',
@@ -632,8 +661,14 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 
 	derive: [
 		uncapCascade,
-		// On load too, as the edit page's effect did; editing a cap directly sticks
-		(v, changed) => (changed === null || UNCAPS.includes(changed) ? levelCaps(v) : undefined),
+		// Only when an uncap changes: loading keeps the stored caps, and a cap
+		// typed by hand sticks until the next uncap change
+		(v, changed) => (changed !== null && UNCAPS.includes(changed) ? levelCaps(v) : undefined),
+		// Switching awakening off clears what it hid
+		(v, changed) =>
+			changed === 'awakening' && !awakening(v)
+				? { max_awakening_level: null, awakening_ids: [] }
+				: undefined,
 		// A variant belongs to its series
 		(_, changed) => (changed === 'series' ? { weapon_series_variant_id: null } : undefined)
 	],
@@ -641,6 +676,7 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 	record: {
 		fetch: (id) => weaponAdapter.getWeapon(id),
 		query: (id) => entityQueries.weapon(id),
+		routeId: (w) => w.granblueId,
 		noun: m.db_weapons_noun,
 		type: 'weapon',
 		image: (w) => getWeaponGridImage(w.granblueId, w.element, undefined, w.elementVariantIds),
@@ -656,7 +692,13 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 		]
 	},
 
-	// Today's screens until the generated ones replace them (phases 6–7). The
+	save: {
+		// Payload keys are the strong params by construction (see contract.test.ts)
+		update: (w, payload) =>
+			weaponAdapter.updateWeapon(w.id, payload as Partial<CreateWeaponPayload>)
+	},
+
+	// Today's screens until the generated ones replace them (phase 7). The
 	// list screen renders the generated list for weapons and keeps the Series,
 	// Awakenings and Skills views by hand (they move in GBF-143)
 	screens: {

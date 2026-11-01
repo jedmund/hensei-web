@@ -22,14 +22,18 @@ export function fieldFor<Row, Full>(def: ResourceDef<Row, Full>, key: string): F
 	return field
 }
 
-/** Writable fields on the given form, in definition order */
+/** Whether the field is on the given form: a writable field, or a form-only value */
+export function onForm<Row, Full>(field: Field<Row, Full>, mode: FormMode): boolean {
+	if (field.form === false || field.form?.[mode] === false) return false
+	return field.write !== false || field.form !== undefined
+}
+
+/** Fields on the given form, in definition order */
 export function formFields<Row, Full>(
 	def: ResourceDef<Row, Full>,
 	mode: FormMode
 ): Field<Row, Full>[] {
-	return def.fields.filter(
-		(field) => field.write !== false && field.form !== false && field.form?.[mode] !== false
-	)
+	return def.fields.filter((field) => onForm(field, mode))
 }
 
 /** Whether the field shows (and is validated and sent) for these values */

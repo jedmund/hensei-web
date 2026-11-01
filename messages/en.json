@@ -2763,7 +2763,6 @@
 	"db_weapons_field_flb_date": "FLB Date",
 	"db_weapons_field_ulb_date": "ULB Date",
 	"db_weapons_field_transcendence_date": "Transcendence Date",
-	"db_weapons_field_bullet_slot": "Slot {n}",
 	"db_detail_tab_images": "Images",
 	"db_detail_tab_raw": "Raw Data",
 	"db_detail_open": "Open",
@@ -2771,5 +2770,14 @@
 	"db_detail_back": "Back",
 	"db_detail_not_found_title": "{noun} Not Found",
 	"db_detail_not_found_message": "The record you're looking for could not be found.",
-	"db_detail_back_to": "Back to {list}"
+	"db_detail_back_to": "Back to {list}",
+	"db_weapons_field_awakening": "Awakening",
+	"db_edit_title": "Edit {noun}",
+	"db_edit_invalid": "Fix the highlighted fields before saving",
+	"db_edit_save_failed": "Couldn't save the changes. Please try again.",
+	"db_field_slot": "Slot {n}",
+	"db_field_add_slot": "Add slot",
+	"db_field_remove": "Remove",
+	"db_field_add_tag": "Add…",
+	"db_field_select": "Select…"
 }

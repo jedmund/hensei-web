@@ -173,7 +173,8 @@ describe('fromRecord and toPayload', () => {
 		expect(toPayload(def, fromRecord(def, record), 'edit')).toEqual({
 			code: 'abc',
 			title_en: 'Title',
-			title_jp: '',
+			// A blank text side is null, like every blank text (GBF-158)
+			title_jp: null,
 			level: 3,
 			kind_of: 2,
 			owner_id: 'owner-slug',
@@ -204,15 +205,61 @@ describe('fromRecord and toPayload', () => {
 				{ key: 'b', kind: 'text', label, empty: 'null' },
 				{ key: 'c', kind: 'text', label },
 				{ key: 'd', kind: 'custom', label },
-				{ key: 'e', kind: 'number', label, write: { value: (v) => v || null } }
+				{ key: 'e', kind: 'number', label, write: { value: (v) => v || null } },
+				{ key: 'f', kind: 'text', label, empty: 'keep' },
+				{ key: 'g', kind: 'tags', label }
 			]
 		})
-		expect(toPayload(omit, { a: '', b: '', c: '', d: {}, e: 0 }, 'edit')).toEqual({
+		expect(toPayload(omit, { a: '', b: '', c: '', d: {}, e: 0, f: '', g: [] }, 'edit')).toEqual({
 			b: null,
-			c: '',
+			c: null,
 			d: null,
-			e: null
+			e: null,
+			f: '',
+			g: []
 		})
+	})
+
+	it('sends a hidden field empty when its whenHidden says so', () => {
+		const hiding = defineResource<Row, Full>({
+			...def,
+			fields: [
+				{ key: 'on', kind: 'boolean', label },
+				{ key: 'n', kind: 'number', label, when: (v) => v.on === true, whenHidden: 'empty' },
+				{
+					key: 'ids',
+					kind: 'referenceList',
+					label,
+					resource: 'awakening',
+					when: (v) => v.on === true,
+					whenHidden: 'empty'
+				},
+				{ key: 'o', kind: 'number', label, when: (v) => v.on === true }
+			]
+		})
+		expect(toPayload(hiding, { on: false, n: 3, ids: ['a'], o: 4 }, 'edit')).toEqual({
+			on: false,
+			n: null,
+			ids: []
+		})
+		expect(toPayload(hiding, { on: true, n: 3, ids: ['a'], o: 4 }, 'edit')).toEqual({
+			on: true,
+			n: 3,
+			ids: ['a'],
+			o: 4
+		})
+	})
+
+	it('holds form-only values without sending them', () => {
+		const toggled = defineResource<Row, Full>({
+			...def,
+			fields: [
+				{ key: 'switch', kind: 'boolean', label, write: false, form: {}, read: () => true },
+				{ key: 'computed', kind: 'text', label, write: false }
+			]
+		})
+		expect(fromRecord(toggled, record)).toEqual({ switch: true })
+		expect(toPayload(toggled, { switch: true }, 'edit')).toEqual({})
 	})
 
 	it('treats blanks, empty lists and empty objects as empty', () => {

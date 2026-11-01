@@ -9,6 +9,12 @@ import type { EnumOption, Field, FormMode, ResourceDef, Values } from './types'
 
 const required = { error: () => m.db_field_required() }
 
+/** A blank required value says so, rather than naming the type it isn't */
+const missing = {
+	error: (issue: { input?: unknown }) =>
+		issue.input === null || issue.input === undefined ? m.db_field_required() : undefined
+}
+
 const nonBlank = z.string().refine((v) => v.trim() !== '', required)
 
 function oneOf(options: () => EnumOption[]) {
@@ -33,7 +39,7 @@ function kindSchema<Row, Full>(field: Field<Row, Full>): z.ZodType {
 			return z.object({ en: field.required ? nonBlank : side, ja: side })
 		}
 		case 'number': {
-			let number = z.number()
+			let number = z.number(missing)
 			if (field.int) number = number.int()
 			if (field.min !== undefined) number = number.min(field.min)
 			if (field.max !== undefined) number = number.max(field.max)
@@ -90,4 +96,66 @@ export function buildZod<Row, Full>(
 		}
 		def.refine?.(values, (key, message) => ctx.addIssue({ code: 'custom', path: [key], message }))
 	})
+}
+
+/** Problems by field: a field key, or a path into one (`name.en`, `bullet_slots.0`) */
+export type FieldErrors = Record<string, string>
+
+/** The first message for each path */
+export function issueErrors(issues: { path: PropertyKey[]; message: string }[]): FieldErrors {
+	const errors: FieldErrors = {}
+	for (const issue of issues) {
+		const path = issue.path.map(String).join('.')
+		errors[path] ??= issue.message
+	}
+	return errors
+}
+
+/** A field's error: its own, or the first one inside it */
+export function fieldError(errors: FieldErrors, key: string): string | undefined {
+	if (errors[key]) return errors[key]
+	const inside = Object.keys(errors).find((path) => path.startsWith(`${key}.`))
+	return inside ? errors[inside] : undefined
+}
+
+/**
+ * A save's rejection, as field errors and messages for the rest. The API
+ * answers a 422 with `errors` keyed by attribute (the param names); those
+ * map back to their fields, a localized pair's to `key.en` / `key.ja`.
+ * Anything else (`base`, other attributes, other failures) is `other`.
+ */
+export function serverErrors<Row, Full>(
+	def: ResourceDef<Row, Full>,
+	mode: FormMode,
+	error: unknown
+): { fields: FieldErrors; other: string[] } {
+	const fields: FieldErrors = {}
+	const other: string[] = []
+	const failure = error as { status?: number; message?: string; details?: unknown } | null
+	const byParam = (failure?.details as { errors?: unknown } | undefined)?.errors
+
+	if (failure?.status !== 422 || typeof byParam !== 'object' || byParam === null) {
+		other.push(failure?.message || m.db_edit_save_failed())
+		return { fields, other }
+	}
+
+	const paths = new Map<string, string>()
+	for (const field of formFields(def, mode)) {
+		if (field.kind === 'localized') {
+			paths.set(field.keys.en, `${field.key}.en`)
+			paths.set(field.keys.ja, `${field.key}.ja`)
+		} else {
+			const write = field.write
+			const param = typeof write === 'string' ? write : (write && write.key) || field.key
+			paths.set(param, field.key)
+		}
+	}
+
+	for (const [param, messages] of Object.entries(byParam)) {
+		const message = [messages].flat().map(String).join(', ')
+		const path = paths.get(param)
+		if (path) fields[path] ??= message
+		else other.push(param === 'base' ? message : `${param.replace(/_/g, ' ')} ${message}`)
+	}
+	return { fields, other }
 }
