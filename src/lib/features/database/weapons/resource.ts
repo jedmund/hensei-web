@@ -22,6 +22,11 @@ import WeaponRawDataTab from '$lib/features/database/weapons/tabs/WeaponRawDataT
 import WeaponSkillsTab from '$lib/features/database/weapons/tabs/WeaponSkillsTab.svelte'
 import { weaponsSection } from '$lib/features/database/weapons/section'
 import { defineResource, type EnumOption, type Values } from '$lib/features/database/schema/types'
+import {
+	STACKED_UNCAPS,
+	stackedUncapCascade,
+	standardMaxLevel
+} from '$lib/features/database/uncapRules'
 import { BULLET_TYPES } from '$lib/types/api/entities'
 import { PROMOTION_NAMES } from '$lib/types/enums'
 import { getElementOptions } from '$lib/utils/element'
@@ -41,7 +46,7 @@ import type { WeaponSeries } from '$lib/types/api/weaponSeries'
 
 const GRANBLUE_ID = /^\d{10}$/
 
-const UNCAPS = ['flb', 'ulb', 'transcendence']
+const UNCAPS = STACKED_UNCAPS
 
 const flb = (v: Values) => v.flb === true
 const ulb = (v: Values) => v.ulb === true
@@ -62,23 +67,12 @@ const EXTRA_PREREQUISITES: Record<number, string> = {
 
 /**
  * The standard max level and max skill level for a rarity and uncap state:
- * R 50/10; SR 75/10, FLB 150/15; SSR 100/10, FLB 150/15, ULB 200/20,
- * transcendence 250/25. The API's caps_mismatch flag uses the same table.
+ * the skill level is a tenth of the level (R and SR 10, SR FLB 15). The API's
+ * caps_mismatch flag uses the same table.
  */
 function levelCaps(v: Values): { max_level: number; max_skill_level: number } {
-	if (v.rarity === 1) return { max_level: 50, max_skill_level: 10 }
-	if (v.rarity !== 2 && transcendence(v)) return { max_level: 250, max_skill_level: 25 }
-	if (v.rarity !== 2 && ulb(v)) return { max_level: 200, max_skill_level: 20 }
-	if (flb(v)) return { max_level: 150, max_skill_level: 15 }
-	return { max_level: v.rarity === 2 ? 75 : 100, max_skill_level: 10 }
-}
-
-/** Uncaps stack: each needs the one before it, so ticking or unticking one carries the rest */
-function uncapCascade(v: Values, changed: string | null): Values | undefined {
-	if (changed === 'flb' && !flb(v)) return { ulb: false, transcendence: false }
-	if (changed === 'ulb') return ulb(v) ? { flb: true } : { transcendence: false }
-	if (changed === 'transcendence' && transcendence(v)) return { flb: true, ulb: true }
-	return undefined
+	const max_level = standardMaxLevel(v)
+	return { max_level, max_skill_level: max_level <= 100 ? 10 : max_level / 10 }
 }
 
 const stat = { kind: 'number', int: true, min: 0, default: 0 } as const
@@ -657,7 +651,7 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 	},
 
 	derive: [
-		uncapCascade,
+		stackedUncapCascade,
 		// Only when an uncap changes: loading keeps the stored caps, and a cap
 		// typed by hand sticks until the next uncap change
 		(v, changed) => (changed !== null && UNCAPS.includes(changed) ? levelCaps(v) : undefined),
