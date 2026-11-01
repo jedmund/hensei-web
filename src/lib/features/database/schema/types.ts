@@ -13,7 +13,7 @@
  * key names the column, the filter, the sort and the param.
  */
 import type { Component } from 'svelte'
-import type { CreateQueryOptions } from '@tanstack/svelte-query'
+import type { CreateQueryOptions, QueryKey } from '@tanstack/svelte-query'
 import type { z } from 'zod'
 import type {
 	BuiltInCellType,
@@ -265,10 +265,17 @@ export interface ListDef<Row> {
 	/** The field holding a row's element id, which colours the open row's bar */
 	element?: string
 	/**
-	 * A row's id: its panel id and URL (see `recordPath`). Defaults to the
-	 * Granblue ID; style shifts share theirs, so characters need their own
+	 * A row's id: its panel id and URL (see `recordPath`), the same id the
+	 * record's `routeId` gives. Defaults to the Granblue ID; style shifts share
+	 * theirs, so characters need their own, and records without one use their
+	 * slug
 	 */
 	rowId?: (row: Row) => string
+	/**
+	 * `?view=` tabs that moved to resources of their own: the old list URL
+	 * (`?view=<key>`) redirects to `/database/<value>`
+	 */
+	movedViews?: Record<string, string>
 	/** Field keys, or a literal column for things that aren't fields (the thumbnail) */
 	columns: Array<string | DataTableColumn<Row>>
 	/** Field keys with a `multi` or `recent` filter, or toggle groups */
@@ -301,7 +308,8 @@ export interface RecordScreenData<Full> {
 
 /** The panel body: the detail view without the page around it */
 export type RecordBodyProps = {
-	granblueId: string
+	/** The record's route id (its `routeId`): a Granblue ID, or a slug */
+	id: string
 	role: number
 	/** Requested detail tab (local state in the panel) */
 	tab: string | null
@@ -312,11 +320,11 @@ export type RecordBodyProps = {
 type Lazy<Props extends Record<string, unknown>> = () => Promise<{ default: Component<Props> }>
 
 /**
- * Hand-written screens that replace the generated ones. The detail and the
- * panel are generated when a resource has a `record`, the edit page when it
- * can also `save.update`, and the new page when it can `save.create`. There's
- * no generated list screen yet (the list renders `ResourceTable`), and the
- * generic routes 404 any other screen the resource doesn't have.
+ * Hand-written screens that replace the generated ones. The list is always
+ * generated (`ResourceTable`); the detail and the panel when a resource has a
+ * `record`, the edit page when it can also `save.update`, and the new page
+ * when it can `save.create`. The generic routes 404 any other screen the
+ * resource doesn't have.
  */
 export interface Screens<Full> {
 	/** The list takes no props: it reads its state from the URL */
@@ -367,6 +375,11 @@ export interface SaveDef<Full> {
 	 */
 	create?: (payload: Values) => Promise<Full>
 	/**
+	 * Other queries a save makes stale, beyond the record and the admin list
+	 * (e.g. the series list other pages' filters read)
+	 */
+	invalidates?: () => QueryKey[]
+	/**
 	 * Checks that need the server, by field key, run on the create form only
 	 * (a loaded record passes them by definition). Each runs once the value
 	 * passes the field's own rules, debounced while typing, and resolves with
@@ -397,8 +410,9 @@ export interface RecordDef<Full> {
 	/** Singular noun for the page header, e.g. "Weapon" */
 	noun: Message
 	/** Header kind: picks the placeholder image and the labels under the name */
-	type: DetailEntityType
-	image: (record: Full) => string
+	type?: DetailEntityType
+	/** The header image. Without one the header shows only the name */
+	image?: (record: Full) => string
 	/** Tried before the placeholder when `image` fails to load */
 	fallbackImage?: (record: Full) => string | undefined
 	/** The record's element, which colours its buttons */

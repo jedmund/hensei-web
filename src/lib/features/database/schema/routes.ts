@@ -2,7 +2,8 @@
  * Loads for the generic `/database/[resource=resource]` routes: each
  * dispatches to the resource's definition, so the routes name no resource.
  */
-import { error } from '@sveltejs/kit'
+import { error, redirect } from '@sveltejs/kit'
+import { localizeHref } from '$lib/paraglide/runtime'
 import { resourceDef, type AnyResourceDef } from './registry'
 import type { ScreenComponent, ScreenKind } from './types'
 
@@ -13,14 +14,15 @@ function definition(resource: string): AnyResourceDef {
 }
 
 /**
- * Generated screens, for resources with no override. The detail needs a
- * `record`, the edit page a `record` it can `save.update`, the new page one
- * it can `save.create`
+ * Generated screens, for resources with no override. The list is always
+ * there; the detail needs a `record`, the edit page a `record` it can
+ * `save.update`, the new page one it can `save.create`
  */
 function generated(
 	def: AnyResourceDef,
 	kind: ScreenKind
 ): (() => Promise<{ default: unknown }>) | undefined {
+	if (kind === 'list') return () => import('./ResourceListScreen.svelte')
 	if (kind === 'detail' && def.record) return () => import('./ResourceDetailScreen.svelte')
 	if (kind === 'edit' && def.record && def.save?.update) {
 		return () => import('./ResourceEditScreen.svelte')
@@ -52,6 +54,16 @@ export async function loadScreen<K extends ScreenKind>(
 	const screen = screenFor(def, kind)
 	if (!screen) error(404, 'Not found')
 	return (await screen()).default as ScreenComponent<K>
+}
+
+/**
+ * Sends a `?view=` tab that moved to a resource of its own (`list.movedViews`)
+ * to that resource's list, so old links keep working
+ */
+export function redirectMovedView(resource: string, url: URL): void {
+	const view = url.searchParams.get('view')
+	const moved = view ? definition(resource).list.movedViews?.[view] : undefined
+	if (moved) redirect(301, localizeHref(`/database/${moved}`))
 }
 
 /** The full record for the detail and edit pages, under `record` (the breadcrumb reads it) */

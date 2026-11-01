@@ -8,16 +8,14 @@ const STORAGE_KEY = 'database_list_url'
 
 interface StoredListUrl {
 	url: string
-	resource: 'characters' | 'weapons' | 'summons' | 'jobs'
+	/** The list's resource (route segment), e.g. `weapons` or `weapon-series` */
+	resource: string
 }
 
 /**
  * Store the current list URL before navigating to a detail page
  */
-export function storeListUrl(
-	url: string,
-	resource: 'characters' | 'weapons' | 'summons' | 'jobs'
-): void {
+export function storeListUrl(url: string, resource: string): void {
 	try {
 		const data: StoredListUrl = { url, resource }
 		sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data))

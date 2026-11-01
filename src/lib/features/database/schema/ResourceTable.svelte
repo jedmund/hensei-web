@@ -26,7 +26,8 @@
 	import type { ResourceName } from './names'
 	import { RESOURCES } from './registry'
 
-	// Rows are the resource's admin list rows; catalogue rows carry a granblueId
+	// Rows are the resource's admin list rows: catalogue rows carry a
+	// granblueId, the default row id; other resources name theirs (`list.rowId`)
 	type Row = { granblueId: string }
 
 	interface Props {

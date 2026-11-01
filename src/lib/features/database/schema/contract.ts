@@ -17,7 +17,8 @@ export interface AdminSchema {
 	sorts: string[]
 	fields: string[]
 	writable: Record<string, string>
-	enums: Record<string, Record<string, number>>
+	/** Label → value. Values are numbers, or strings for string enums (e.g. `object_type`) */
+	enums: Record<string, Record<string, number | string>>
 }
 
 type AnyField = Field<unknown, unknown>
@@ -74,10 +75,11 @@ export function describeContract(def: AnyResourceDef, api: AdminSchema) {
 				if (field.kind !== 'enum' && field.kind !== 'enumList') return []
 				const published = api.enums[field.key]
 				if (!published) return []
-				const allowed = new Set(Object.values(published))
+				// Rails enums take their names (augment_type: 'ax') as well as their values
+				const allowed = new Set<unknown>([...Object.values(published), ...Object.keys(published)])
 				return field
 					.options()
-					.filter((option) => !allowed.has(Number(option.value)))
+					.filter((option) => !allowed.has(option.value))
 					.map((option) => `${field.key}=${option.value}`)
 			})
 			expect(mismatched).toEqual([])

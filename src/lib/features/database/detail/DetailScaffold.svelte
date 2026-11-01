@@ -11,10 +11,12 @@
 	export type DetailEntityType = 'character' | 'summon' | 'weapon' | 'job' | 'raid' | 'accessory'
 
 	interface Props {
-		type: DetailEntityType
+		/** Picks the placeholder image and the labels under the name */
+		type?: DetailEntityType
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
 		item: any
-		image: string
+		/** Without one the header shows only the name */
+		image?: string
 		fallbackImage?: string
 		showEdit?: boolean
 		editUrl?: string

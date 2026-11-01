@@ -182,7 +182,10 @@ export class RecordForm<Row = unknown, Full = unknown> {
 					),
 				this.#queryClient.invalidateQueries({
 					queryKey: adminKeys.lists(this.#def.name as AdminResource)
-				})
+				}),
+				...(this.#def.save?.invalidates?.() ?? []).map((queryKey) =>
+					this.#queryClient.invalidateQueries({ queryKey })
+				)
 			])
 			return saved
 		} catch (error) {
