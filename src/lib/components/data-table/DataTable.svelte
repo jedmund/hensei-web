@@ -298,8 +298,9 @@
 				get(virtualizer).scrollToIndex(index, { align: 'auto' })
 				return
 			}
+			// Optional call: jsdom (component tests) has no scrollIntoView
 			void tick().then(() =>
-				scrollEl?.querySelector('tbody tr[aria-current]')?.scrollIntoView({ block: 'nearest' })
+				scrollEl?.querySelector('tbody tr[aria-current]')?.scrollIntoView?.({ block: 'nearest' })
 			)
 		})
 	})
