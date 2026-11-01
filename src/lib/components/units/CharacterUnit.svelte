@@ -2,7 +2,6 @@
 	import type { GridCharacter } from '$lib/types/api/party'
 	import { usePartyContext } from '$lib/types/party-context'
 	import { page } from '$app/stores'
-	import { goto } from '$app/navigation'
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
@@ -21,10 +20,8 @@
 		openCharacterEditSidebar
 	} from '$lib/features/details/openDetailsSidebar.svelte'
 	import { canCharacterBeModified } from '$lib/utils/modificationDetector'
-	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
+	import { canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName } from '$lib/utils/element'
-	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
 	import { GridType } from '$lib/types/enums'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 	import perpetuityEmpty from '$src/assets/icons/perpetuity/empty.svg'
@@ -32,7 +29,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
-	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
+	import { useUnitActions } from './useUnitActions.svelte'
 	interface Props {
 		item?: GridCharacter | undefined
 		position: number
@@ -55,6 +52,14 @@
 
 	const ctx = usePartyContext()
 	const simplePortraits = getSimplePortraits()
+	const actions = useUnitActions({
+		type: 'character',
+		ctx,
+		item: () => item,
+		position: () => position,
+		entity: () => item?.character
+	})
+	const { remove, replace } = actions
 
 	// Use $derived to ensure consistent computation between server and client
 	let imageUrl = $derived.by(() => {
@@ -78,8 +83,7 @@
 		)
 	})
 
-	// Check if this item is currently active in the sidebar
-	let isActive = $derived(item?.id && sidebar.activeItemId === String(item.id))
+	let isActive = $derived(actions.isActive)
 
 	// Check if this empty slot is currently selected for adding an item
 	let isEmptySelected = $derived(
@@ -90,20 +94,6 @@
 	let elementClass = $derived(
 		getElementClassName(item?.character?.element || mainWeaponElement || partyElement)
 	)
-
-	let removeConfirmOpen = $state(false)
-
-	function remove() {
-		if (!item?.id) return
-		removeConfirmOpen = true
-	}
-
-	const removeAction = useAsyncAction(async () => {
-		if (!item?.id) return
-		const party = ctx.getParty()
-		const editKey = ctx.getEditKey()
-		await ctx.services.gridService.removeCharacter(party.id, item.id, editKey || undefined)
-	}, 'Failed to remove character')
 
 	let canEditItem = $derived(canCharacterBeModified(item))
 
@@ -138,32 +128,8 @@
 		})
 	}
 
-	function replace() {
-		if (ctx?.openPicker) {
-			ctx.openPicker({ type: 'character', position, item })
-		}
-	}
-
-	function viewInDatabase() {
-		if (!item?.character?.granblueId) return
-		goto(getDatabaseUrl('character', item.character.granblueId, item.character.styleSwap))
-	}
-
 	// Check if user can view database (role >= 7)
 	let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
-
-	// Teams pane state
-	let isTeamsPaneOpen = $derived(collectionTeamsPane.isOpen)
-
-	function viewTeamsWithCharacter() {
-		if (!item?.character) return
-		collectionTeamsPane.openTeamsPaneForEntity(item.character, 'character')
-	}
-
-	function addCharacterToTeamsView() {
-		if (!item?.character) return
-		collectionTeamsPane.addEntityToTeamsView(item.character, 'character')
-	}
 
 	// Check if character has a style swap variant available
 	let hasStyleVariant = $derived.by(() => {
@@ -334,9 +300,9 @@
 					{variant}
 					onEdit={canEditItem ? editItem : undefined}
 					onViewDetails={viewDetails}
-					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
-					onViewTeams={viewTeamsWithCharacter}
-					onAddToTeamsView={isTeamsPaneOpen ? addCharacterToTeamsView : undefined}
+					onViewInDatabase={canViewDatabase ? actions.viewInDatabase : undefined}
+					onViewTeams={actions.viewTeams}
+					onAddToTeamsView={actions.isTeamsPaneOpen ? actions.addToTeamsView : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
@@ -391,38 +357,8 @@
 				transcendence={item.character?.uncap?.transcendence}
 				maxTranscendenceStage={item.character?.uncap?.maxTranscendenceStage}
 				editable={ctx?.canEdit()}
-				updateUncap={async (level) => {
-					if (!item?.id || !ctx) return
-					try {
-						const editKey = ctx.getEditKey()
-						await ctx.services.gridService.updateCharacterUncap(
-							item.id,
-							level,
-							undefined,
-							editKey || undefined
-						)
-					} catch (err) {
-						console.error('Failed to update character uncap:', err)
-						toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
-					}
-				}}
-				updateTranscendence={async (stage) => {
-					if (!item?.id || !ctx) return
-					try {
-						const editKey = ctx.getEditKey()
-						// When setting transcendence > 0, also set uncap to max (6)
-						const maxUncap = stage > 0 ? 6 : undefined
-						await ctx.services.gridService.updateCharacterUncap(
-							item.id,
-							maxUncap,
-							stage,
-							editKey || undefined
-						)
-					} catch (err) {
-						console.error('Failed to update character transcendence:', err)
-						toast.error(extractErrorMessage(err, 'Failed to update transcendence'))
-					}
-				}}
+				updateUncap={actions.updateUncap}
+				updateTranscendence={actions.updateTranscendence}
 			/>
 		{/if}
 	{/key}
@@ -492,10 +428,10 @@
 {/snippet}
 
 <RemoveUnitDialog
-	bind:open={removeConfirmOpen}
+	bind:open={actions.removeConfirmOpen}
 	type="character"
 	name={item?.character ? localizedName(item.character.name) : null}
-	onConfirm={removeAction.run}
+	onConfirm={actions.removeAction.run}
 />
 
 <style lang="scss">

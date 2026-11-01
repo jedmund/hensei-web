@@ -2,7 +2,6 @@
 	import type { GridWeapon } from '$lib/types/api/party'
 	import { usePartyContext } from '$lib/types/party-context'
 	import { page } from '$app/stores'
-	import { goto } from '$app/navigation'
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
@@ -23,25 +22,21 @@
 		openDetailsSidebar,
 		openWeaponEditSidebar
 	} from '$lib/features/details/openDetailsSidebar.svelte'
-	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
+	import { canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName, ElementId } from '$lib/utils/element'
 	import { skillHighlight } from '$lib/stores/skillHighlight.svelte'
-	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
 	import {
 		getAwakeningImage,
 		getWeaponKeyImages,
 		getAxSkillImages,
 		getBefoulmentImages
 	} from '$lib/utils/modifiers'
-	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { GridType } from '$lib/types/enums'
 	import * as m from '$lib/paraglide/messages'
 	import { localizedName } from '$lib/utils/locale'
 	import DuplicateCollectionDialog from '$lib/components/dialogs/DuplicateCollectionDialog.svelte'
-	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
-	import { toast } from 'svelte-sonner'
-	import { extractErrorMessage } from '$lib/utils/errors'
-	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
+	import { useUnitActions } from './useUnitActions.svelte'
+	import { useUnitDuplicate } from './useUnitDuplicate.svelte'
 	import SealOverlay from '$lib/components/solomonis/grid/SealOverlay.svelte'
 	import SealMenuItems from '$lib/components/solomonis/grid/SealMenuItems.svelte'
 	import { nextSealState, writeSealState } from '$lib/components/solomonis/grid/sealActions'
@@ -56,6 +51,21 @@
 	let { item, position, notInCollection = false, inCollection = false }: Props = $props()
 
 	const ctx = usePartyContext()
+	const actions = useUnitActions({
+		type: 'weapon',
+		ctx,
+		item: () => item,
+		position: () => position,
+		entity: () => item?.weapon
+	})
+	const { remove, replace } = actions
+	const duplicate = useUnitDuplicate({
+		type: 'weapon',
+		ctx,
+		item: () => item,
+		allowed: () => !item?.weapon?.limit,
+		linkedToCollection: () => !!item?.collectionWeaponId
+	})
 
 	// Evoking Solomonis: seal state, including the Extra slots
 	let seal = $derived.by(() => {
@@ -123,8 +133,7 @@
 	// Get befoulment images using utility
 	let befoulmentImages = $derived(getBefoulmentImages(item?.befoulment))
 
-	// Check if this item is currently active in the sidebar
-	let isActive = $derived(item?.id && sidebar.activeItemId === String(item.id))
+	let isActive = $derived(actions.isActive)
 
 	// Check if this slot is currently selected for adding/replacing an item
 	let isSelected = $derived(
@@ -138,20 +147,6 @@
 			item?.weapon?.element === 0 && item?.element ? item.element : item?.weapon?.element
 		)
 	)
-
-	let removeConfirmOpen = $state(false)
-
-	function remove() {
-		if (!item?.id) return
-		removeConfirmOpen = true
-	}
-
-	const removeAction = useAsyncAction(async () => {
-		if (!item?.id) return
-		const party = ctx.getParty()
-		const editKey = ctx.getEditKey()
-		await ctx.services.gridService.removeWeapon(party.id, item.id, editKey || undefined)
-	}, 'Failed to remove weapon')
 
 	// Edit is always available for owners — non-modifiable weapons still get
 	// the notes-only pane so substitutes/description can be configured.
@@ -188,70 +183,9 @@
 		})
 	}
 
-	function replace() {
-		if (ctx?.openPicker) {
-			ctx.openPicker({ type: 'weapon', position, item })
-		}
-	}
-
-	function viewInDatabase() {
-		if (!item?.weapon?.granblueId) return
-		goto(getDatabaseUrl('weapon', item.weapon.granblueId))
-	}
-
-	// Duplicate: find the first empty sub-weapon slot (0-8)
-	let firstEmptySlot = $derived.by(() => {
-		const party = ctx.getParty()
-		const occupied = new Set(
-			party.weapons?.filter((w) => w.position >= 0 && w.position < 9).map((w) => w.position) ?? []
-		)
-		for (let i = 0; i < 9; i++) {
-			if (!occupied.has(i)) return i
-		}
-		return undefined
-	})
-
-	let canDuplicate = $derived(!!item && firstEmptySlot !== undefined && !item.weapon?.limit)
-
-	let duplicateCollectionDialogOpen = $state(false)
-
-	function duplicate() {
-		if (!item?.id || firstEmptySlot === undefined) return
-		if (item.collectionWeaponId) {
-			duplicateCollectionDialogOpen = true
-			return
-		}
-		void duplicateAction.run()
-	}
-
-	const duplicateAction = useAsyncAction(async () => {
-		if (!item?.id || firstEmptySlot === undefined) return
-		await ctx.services.gridService.duplicateWeapon(item.id, firstEmptySlot)
-		const nextSlot = findNextEmptySlot(ctx.getParty(), GridType.Weapon, firstEmptySlot)
-		if (nextSlot !== SLOT_NOT_FOUND) {
-			ctx.setSelectedSlot?.(nextSlot)
-		}
-	}, 'Failed to duplicate weapon')
-
-	// `executeDuplicate` is referenced by the DuplicateCollectionDialog's confirm
-	// callback when the user opts to keep their collection record.
-	const executeDuplicate = () => duplicateAction.run()
-
 	// Check if user can view database (role >= 7)
 	let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
 
-	// Teams pane state
-	let isTeamsPaneOpen = $derived(collectionTeamsPane.isOpen)
-
-	function viewTeamsWithWeapon() {
-		if (!item?.weapon) return
-		collectionTeamsPane.openTeamsPaneForEntity(item.weapon, 'weapon')
-	}
-
-	function addWeaponToTeamsView() {
-		if (!item?.weapon) return
-		collectionTeamsPane.addEntityToTeamsView(item.weapon, 'weapon')
-	}
 	const skillDimmed = $derived(skillHighlight.active && !skillHighlight.contributes(item?.id))
 </script>
 
@@ -347,12 +281,12 @@
 					{variant}
 					onEdit={canEditItem ? editItem : undefined}
 					onViewDetails={viewDetails}
-					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
-					onViewTeams={viewTeamsWithWeapon}
-					onAddToTeamsView={isTeamsPaneOpen ? addWeaponToTeamsView : undefined}
+					onViewInDatabase={canViewDatabase ? actions.viewInDatabase : undefined}
+					onViewTeams={actions.viewTeams}
+					onAddToTeamsView={actions.isTeamsPaneOpen ? actions.addToTeamsView : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
-					onDuplicate={ctx?.canEdit() ? duplicate : undefined}
-					duplicateDisabled={!canDuplicate || duplicateAction.busy}
+					onDuplicate={ctx?.canEdit() ? duplicate.duplicate : undefined}
+					duplicateDisabled={!duplicate.canDuplicate || duplicate.busy}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					editLabel={m.context_edit({ type: m.type_weapon() })}
@@ -421,38 +355,8 @@
 			minUncapLevel={position >= 9
 				? (item.weapon?.uncap?.extraPrerequisite ?? undefined)
 				: undefined}
-			updateUncap={async (level) => {
-				if (!item?.id || !ctx) return
-				try {
-					const editKey = ctx.getEditKey()
-					await ctx.services.gridService.updateWeaponUncap(
-						item.id,
-						level,
-						undefined,
-						editKey || undefined
-					)
-				} catch (err) {
-					console.error('Failed to update weapon uncap:', err)
-					toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
-				}
-			}}
-			updateTranscendence={async (stage) => {
-				if (!item?.id || !ctx) return
-				try {
-					const editKey = ctx.getEditKey()
-					// When setting transcendence > 0, also set uncap to max (6)
-					const maxUncap = stage > 0 ? 6 : undefined
-					await ctx.services.gridService.updateWeaponUncap(
-						item.id,
-						maxUncap,
-						stage,
-						editKey || undefined
-					)
-				} catch (err) {
-					console.error('Failed to update weapon transcendence:', err)
-					toast.error(extractErrorMessage(err, 'Failed to update transcendence'))
-				}
-			}}
+			updateUncap={actions.updateUncap}
+			updateTranscendence={actions.updateTranscendence}
 		/>
 	{/if}
 	<div class="name" class:not-in-collection={notInCollection}>
@@ -467,21 +371,21 @@
 </div>
 
 <DuplicateCollectionDialog
-	bind:open={duplicateCollectionDialogOpen}
+	bind:open={duplicate.dialogOpen}
 	onConfirm={async () => {
-		duplicateCollectionDialogOpen = false
-		await executeDuplicate()
+		duplicate.dialogOpen = false
+		await duplicate.run()
 	}}
 	onCancel={() => {
-		duplicateCollectionDialogOpen = false
+		duplicate.dialogOpen = false
 	}}
 />
 
 <RemoveUnitDialog
-	bind:open={removeConfirmOpen}
+	bind:open={actions.removeConfirmOpen}
 	type="weapon"
 	name={item?.weapon ? localizedName(item.weapon.name) : null}
-	onConfirm={removeAction.run}
+	onConfirm={actions.removeAction.run}
 />
 
 <style lang="scss">
