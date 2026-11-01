@@ -83,6 +83,8 @@ export interface Weapon {
 	bulletSlots?: number[]
 	skillLevelCap?: number
 	weaponSkills?: WeaponSkill[]
+	/** When the skills were last built from the wiki; null or missing: never */
+	skillsBuiltAt?: string | null
 	awakenings?: Array<{
 		id: string
 		name: Record<string, string>

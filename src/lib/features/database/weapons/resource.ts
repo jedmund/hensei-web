@@ -649,12 +649,8 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			w.element === 0 ? getWeaponFallbackImage(w.granblueId, 'grid') : undefined,
 		element: (w) => w.element,
 		tabs: [
-			{
-				id: 'skills',
-				label: m.details_tab_skills,
-				component: WeaponSkillsTab,
-				when: (w) => (w.weaponSkills?.length ?? 0) > 0
-			},
+			// Always shown: with no skills it says why, and editors can build them
+			{ id: 'skills', label: m.details_tab_skills, component: WeaponSkillsTab },
 			{ id: 'images', label: m.db_detail_tab_images, component: WeaponImagesTab },
 			{ id: 'raw', label: m.db_detail_tab_raw, component: WeaponRawDataTab, editorOnly: true }
 		]

@@ -310,7 +310,7 @@ export interface RecordTab<Full> {
 	id: Exclude<DetailTab, 'info'>
 	label: Message
 	component: Component<RecordTabProps<Full>>
-	/** Shown only while this holds (e.g. Skills when there are skills) */
+	/** Shown only while this holds */
 	when?: (record: Full) => boolean
 	/** Only editors see it */
 	editorOnly?: boolean

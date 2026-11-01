@@ -41,7 +41,7 @@ vi.mock('@tanstack/svelte-query', async (importOriginal) => {
 	}
 })
 
-import type { Weapon } from '$lib/api/adapters/weapon.adapter'
+import { weaponAdapter, type Weapon } from '$lib/api/adapters/weapon.adapter'
 import { weaponsResource } from '$lib/features/database/weapons/resource'
 import { detailRecords } from '$lib/features/database/weapons/__fixtures__/detailRecords'
 import baseline from '$lib/features/database/weapons/__fixtures__/detail-baseline.json'
@@ -102,6 +102,7 @@ function expectedInfo(name: keyof typeof baseline): string[] {
 }
 
 afterEach(() => {
+	vi.restoreAllMocks()
 	if (mounted) unmount(mounted)
 	mounted = null
 	target?.remove()
@@ -149,10 +150,9 @@ describe('ResourceDetail: links', () => {
 })
 
 describe('ResourceDetail: tabs', () => {
-	it('shows Skills only when the weapon has skills, and Raw Data only to editors', () => {
+	it('always shows Skills, and Raw Data only to editors', () => {
 		render('plain')
-		expect(tabLabels()).toEqual(expect.arrayContaining(['Info', 'Images', 'Raw Data']))
-		expect(tabLabels()).not.toContain('Skills')
+		expect(tabLabels()).toEqual(expect.arrayContaining(['Info', 'Skills', 'Images', 'Raw Data']))
 		unmount(mounted!)
 		mounted = null
 
@@ -169,6 +169,38 @@ describe('ResourceDetail: tabs', () => {
 		render('plain', { tab: 'images' })
 		expect(target.querySelector('.details')).toBeNull()
 		expect(target.querySelectorAll('img').length).toBeGreaterThan(1)
+	})
+})
+
+describe('ResourceDetail: Skills empty states', () => {
+	const buildButton = () =>
+		[...target.querySelectorAll('button')].find((b) => b.textContent?.trim() === 'Build skills')
+
+	it('offers editors a build when the skills were never built', () => {
+		render('plain', { tab: 'skills' })
+		expect(target.textContent).toContain("Skills haven't been built for this weapon yet.")
+		expect(buildButton()).toBeDefined()
+	})
+
+	it('shows non-editors the message without the build', () => {
+		render('plain', { role: 1, tab: 'skills' })
+		expect(target.textContent).toContain("Skills haven't been built for this weapon yet.")
+		expect(buildButton()).toBeUndefined()
+	})
+
+	it('says there are none once built', () => {
+		render('plain', { tab: 'skills', record: { skillsBuiltAt: '2026-11-01T00:00:00Z' } })
+		expect(target.textContent).toContain('This weapon has no skills.')
+		expect(buildButton()).toBeUndefined()
+	})
+
+	it('builds through the re-parse', async () => {
+		const reparse = vi
+			.spyOn(weaponAdapter, 'reparseWeapon')
+			.mockResolvedValue(detailRecords.plain as Weapon)
+		render('plain', { tab: 'skills' })
+		buildButton()!.click()
+		await vi.waitFor(() => expect(reparse).toHaveBeenCalledWith('w-plain'))
 	})
 })
 
