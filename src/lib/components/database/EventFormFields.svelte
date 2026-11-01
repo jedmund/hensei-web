@@ -113,7 +113,10 @@
 	{/if}
 	{#if values.kind === 'unite_and_fight'}
 		{#if readonly}
-			<DetailItem label={m.db_events_field_number()} value={values.eventNumber || '—'} />
+			<!-- The number is editor-only in the API, so curators usually have none -->
+			{#if values.eventNumber > 0}
+				<DetailItem label={m.db_events_field_number()} value={values.eventNumber} />
+			{/if}
 		{:else}
 			<DetailItem
 				label={m.db_events_field_number()}
