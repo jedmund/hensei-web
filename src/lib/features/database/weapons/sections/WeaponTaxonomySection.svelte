@@ -8,7 +8,7 @@
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import { getElementLabel } from '$lib/utils/element'
 	import { localizedName } from '$lib/utils/locale'
-	import { getProficiencyOptions } from '$lib/utils/proficiency'
+	import { getWeaponProficiencyOptions } from '$lib/utils/proficiency'
 	import { getSeriesDisplayName } from '$lib/utils/weaponSeries'
 	import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 
@@ -65,7 +65,7 @@
 		}
 	})
 
-	const proficiencyOptions = getProficiencyOptions()
+	const proficiencyOptions = getWeaponProficiencyOptions()
 
 	// Build series options from fetched data
 	// In edit mode, we need IDs for the select value

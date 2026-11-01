@@ -1,0 +1,151 @@
+/**
+ * Form values from a full record, derived values, and the API payload.
+ */
+import { formFields, isShown, prop } from './fields'
+import type {
+	EmptyPolicy,
+	Field,
+	FieldKind,
+	FormMode,
+	ResourceDef,
+	Values,
+	WriteOptions
+} from './types'
+
+/** What an unset field holds in the form */
+function emptyValue(kind: FieldKind): unknown {
+	switch (kind) {
+		case 'text':
+		case 'link':
+		case 'code':
+		case 'date':
+		case 'datetime':
+			return ''
+		case 'boolean':
+			return false
+		case 'enumList':
+		case 'tags':
+		case 'referenceList':
+			return []
+		default:
+			return null
+	}
+}
+
+function initial<Row, Full>(field: Field<Row, Full>): unknown {
+	if (field.default !== undefined) return structuredClone(field.default)
+	if (field.kind === 'localized') {
+		const empty = field.of === 'tags' ? [] : ''
+		return { en: structuredClone(empty), ja: structuredClone(empty) }
+	}
+	return emptyValue(field.kind)
+}
+
+function refId<Row, Full>(field: Field<Row, Full>, ref: unknown): string | null {
+	if (field.kind === 'reference' || field.kind === 'referenceList') {
+		if (field.id) return field.id(ref)
+	}
+	if (typeof ref === 'string') return ref
+	return ((ref as { id?: string } | null | undefined)?.id ?? null) || null
+}
+
+/** The form value for one field, from what its `read` returns */
+function formValue<Row, Full>(field: Field<Row, Full>, raw: unknown): unknown {
+	switch (field.kind) {
+		case 'localized': {
+			const pair = raw as { en?: unknown; ja?: unknown } | null | undefined
+			const empty = initial(field) as { en: unknown; ja: unknown }
+			return { en: pair?.en ?? empty.en, ja: pair?.ja ?? empty.ja }
+		}
+		case 'reference':
+			return refId(field, raw)
+		case 'referenceList':
+			return Array.isArray(raw)
+				? raw.map((ref) => refId(field, ref)).filter((id) => id !== null)
+				: []
+		default:
+			return raw ?? initial(field)
+	}
+}
+
+/** Runs the derive rules; `changed` is the key just edited, or null on load */
+export function applyDerive<Row, Full>(
+	def: ResourceDef<Row, Full>,
+	values: Values,
+	changed: string | null
+): Values {
+	let next = values
+	for (const rule of def.derive ?? []) {
+		const patch = rule(next, changed)
+		if (patch) next = { ...next, ...patch }
+	}
+	return next
+}
+
+/** Edit form values from the full record, with derived values applied */
+export function fromRecord<Row, Full>(def: ResourceDef<Row, Full>, record: Full): Values {
+	const values: Values = {}
+	for (const field of formFields(def, 'edit')) {
+		const raw = field.read ? field.read(record) : prop(record, field.key)
+		values[field.key] = formValue(field, raw)
+	}
+	return applyDerive(def, values, null)
+}
+
+/** Create form values: defaults, with derived values applied */
+export function initialValues<Row, Full>(def: ResourceDef<Row, Full>): Values {
+	const values: Values = {}
+	for (const field of formFields(def, 'create')) values[field.key] = initial(field)
+	return applyDerive(def, values, null)
+}
+
+export function isEmpty(value: unknown): boolean {
+	if (value === null || value === undefined || value === '') return true
+	if (Array.isArray(value)) return value.length === 0
+	if (typeof value === 'object') return Object.keys(value).length === 0
+	return false
+}
+
+const NULL_WHEN_EMPTY: FieldKind[] = ['date', 'datetime', 'enum', 'number', 'reference', 'custom']
+
+function emptyPolicy<Row, Full>(field: Field<Row, Full>): EmptyPolicy {
+	return field.empty ?? (NULL_WHEN_EMPTY.includes(field.kind) ? 'null' : 'keep')
+}
+
+/**
+ * The API payload: shown, writable fields of the mode, under their param
+ * names, with empty values handled by each field's `empty` policy.
+ */
+export function toPayload<Row, Full>(
+	def: ResourceDef<Row, Full>,
+	values: Values,
+	mode: FormMode
+): Values {
+	const payload: Values = {}
+	for (const field of formFields(def, mode)) {
+		if (!isShown(field, values)) continue
+
+		const write: WriteOptions =
+			typeof field.write === 'string'
+				? { key: field.write }
+				: typeof field.write === 'object'
+					? field.write
+					: {}
+		const value = write.value ? write.value(values[field.key], values) : values[field.key]
+		const policy = emptyPolicy(field)
+		const set = (key: string, v: unknown) => {
+			if (!isEmpty(v)) payload[key] = v
+			else if (policy === 'null') payload[key] = null
+			else if (policy === 'keep') payload[key] = v
+		}
+
+		if (field.kind === 'localized') {
+			const pair = value as { en: unknown; ja: unknown }
+			set(field.keys.en, pair.en)
+			set(field.keys.ja, pair.ja)
+		} else {
+			set(write.key ?? field.key, value)
+		}
+	}
+	return payload
+}
