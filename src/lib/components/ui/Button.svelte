@@ -18,7 +18,6 @@
 			| 'destructive-ghost'
 			| 'notice'
 			| 'subtle'
-			| 'raised'
 			| undefined
 		/** Button size */
 		size?: 'small' | 'medium' | 'large' | 'icon' | undefined
@@ -30,10 +29,6 @@
 		elementStyle?: boolean | undefined
 		/** Whether button is active */
 		active?: boolean | undefined
-		/** Save button behavior */
-		save?: boolean | undefined
-		/** Whether saved (for save buttons) */
-		saved?: boolean | undefined
 		/** Full width button */
 		fullWidth?: boolean | undefined
 		/** Icon only mode */
@@ -62,8 +57,6 @@
 		onclick?: (() => void) | undefined
 		/** Shape of the button corners */
 		shape?: 'default' | 'circular' | 'circle' | 'pill' | undefined
-		/** Element tag override (for slots/triggers) */
-		as?: 'button' | 'a' | 'span' | undefined
 		/** Any additional HTML attributes */
 		[key: string]: unknown
 	}
@@ -75,8 +68,6 @@
 		element,
 		elementStyle = false,
 		active = false,
-		save = false,
-		saved = false,
 		fullWidth = false,
 		iconOnly = false,
 		class: className = '',
@@ -91,7 +82,6 @@
 		href,
 		onclick,
 		shape = 'default',
-		as, // eslint-disable-line @typescript-eslint/no-unused-vars
 		...restProps
 	}: Props = $props()
 
@@ -114,8 +104,6 @@
 			element,
 			elementStyle && element && 'element-styled',
 			active && 'active',
-			save && 'save',
-			saved && 'saved',
 			fullWidth && 'full',
 			iconOnly && 'iconOnly',
 			normalizedShape !== 'default' && normalizedShape,
@@ -292,16 +280,6 @@
 		}
 	}
 
-	// Raised variant: card-like without border
-	:global([data-button-root].raised) {
-		background-color: var(--card-bg);
-		color: var(--text-primary);
-
-		&:hover:not(:disabled) {
-			background-color: var(--button-bg-hover);
-		}
-	}
-
 	:global([data-button-root].text) {
 		background-color: transparent;
 		color: var(--accent-blue);
@@ -419,34 +397,6 @@
 		padding: $unit-2x !important; // Override size padding
 		width: calc($unit * 6.5);
 		height: calc($unit * 6.5);
-	}
-
-	// Save button special states
-	:global([data-button-root].save) {
-		.accessory svg {
-			fill: none;
-			stroke: currentColor;
-		}
-
-		&:hover:not(:disabled) {
-			color: $save-red;
-		}
-	}
-
-	:global([data-button-root].saved) {
-		color: $save-red;
-
-		.accessory svg {
-			fill: $save-red;
-			stroke: $save-red;
-		}
-
-		&:hover:not(:disabled) {
-			.accessory svg {
-				fill: none;
-				stroke: $save-red;
-			}
-		}
 	}
 
 	// Element colors - when elementStyle is true, use the new button-specific variables
