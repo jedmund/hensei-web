@@ -1,0 +1,117 @@
+{
+	"search": ["slug", "meaning_en", "meaning_jp"],
+	"filters": {
+		"active": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"updated_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		}
+	},
+	"flags": [],
+	"sorts": ["position", "slug", "meaning_en", "meaning_jp", "updated_at", "created_at"],
+	"default_sort": ["position", "created_at"],
+	"fields": [
+		"id",
+		"slug",
+		"meaning_en",
+		"meaning_jp",
+		"image_key",
+		"image_key_jp",
+		"position",
+		"active",
+		"created_at",
+		"updated_at",
+		"image_url",
+		"image_url_ja",
+		"given_count"
+	],
+	"default_fields": [
+		"id",
+		"slug",
+		"meaning_en",
+		"meaning_jp",
+		"image_url",
+		"image_url_ja",
+		"position",
+		"active"
+	],
+	"writable": {
+		"slug": "scalar",
+		"meaning_en": "scalar",
+		"meaning_jp": "scalar",
+		"position": "scalar",
+		"active": "scalar",
+		"library_id": "scalar"
+	},
+	"enums": {},
+	"validators": {
+		"slug": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "uniqueness"
+			},
+			{
+				"kind": "format",
+				"pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+				"flags": ""
+			},
+			{
+				"kind": "length",
+				"maximum": 64
+			}
+		],
+		"meaning_en": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "length",
+				"maximum": 255
+			}
+		],
+		"meaning_jp": [
+			{
+				"kind": "length",
+				"maximum": 255
+			}
+		],
+		"position": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0
+			}
+		],
+		"active": [
+			{
+				"kind": "inclusion",
+				"in": [true, false]
+			}
+		],
+		"image_key": [
+			{
+				"kind": "format",
+				"pattern": "^icons/stickers/[a-z0-9][a-z0-9._-]*\\.(?:png|webp)$",
+				"flags": "",
+				"allow_nil": true
+			}
+		],
+		"image_key_jp": [
+			{
+				"kind": "format",
+				"pattern": "^icons/stickers/[a-z0-9][a-z0-9._-]*\\.(?:png|webp)$",
+				"flags": "",
+				"allow_nil": true
+			}
+		]
+	}
+}

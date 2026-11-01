@@ -52,6 +52,7 @@ export type ComponentName =
 	| 'awakeningImage'
 	| 'raidGroupRaids'
 	| 'eventRaids'
+	| 'stickerImages'
 
 /**
  * Form inputs the edit and create forms resolve by name, for values no
@@ -65,6 +66,9 @@ export type InputName =
 	| 'weaponSeriesVariants'
 	| 'awakeningImage'
 	| 'eventRaids'
+	| 'stickerImages'
+	| 'stickerLibrary'
+	| 'stickerSlug'
 
 /**
  * How an empty value ('', null, undefined, [] or {}) is sent:

@@ -3,7 +3,7 @@
  *
  * Giving and removing the viewer's sticker on a team. Optimistic: every
  * cached copy of the team updates before the request returns. The editor
- * catalogue operations are in sticker-catalogue.mutations.
+ * manages the catalogue through the database editor's stickers resource.
  *
  * Each mutation exports an options factory (for tests) and a hook.
  *
