@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import { onMount, untrack } from 'svelte'
-	import type { Editor, Content } from '@tiptap/core'
+	import type { Editor } from '@tiptap/core'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import { computePosition, flip, shift, offset } from '@floating-ui/dom'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
@@ -12,6 +12,7 @@
 	import { linkDialogState } from '$lib/stores/linkDialog.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { usePaneStack } from '$lib/stores/paneStack.svelte'
+	import { descriptionToContent, textStyleLabel } from '$lib/utils/descriptionContent'
 
 	// Lucide icons
 	import Heading1 from '@lucide/svelte/icons/heading-1'
@@ -39,20 +40,7 @@
 	let editor = $state<Editor>()
 
 	// Parse description immediately (not in onMount) so it's available when EdraEditor mounts
-	function parseDescription(desc?: string): Content | undefined {
-		if (!desc) return undefined
-		try {
-			return JSON.parse(desc)
-		} catch {
-			// Legacy plain text - wrap in paragraph
-			return {
-				type: 'doc',
-				content: [{ type: 'paragraph', content: [{ type: 'text', text: desc }] }]
-			}
-		}
-	}
-
-	const initialContent = untrack(() => parseDescription(description))
+	const initialContent = untrack(() => descriptionToContent(description))
 
 	// Get the pane stack for registering unsaved changes
 	const paneStack = usePaneStack()
@@ -70,10 +58,7 @@
 	// Function calls in templates don't create reactive tracking
 	const styleLabel = $derived.by(() => {
 		void editorVersion // Force re-evaluation when version changes
-		if (editor?.isActive('heading', { level: 1 })) return m.editor_heading_1()
-		if (editor?.isActive('heading', { level: 2 })) return m.editor_heading_2()
-		if (editor?.isActive('heading', { level: 3 })) return m.editor_heading_3()
-		return m.editor_paragraph()
+		return textStyleLabel((name, attrs) => editor?.isActive(name, attrs) ?? false)
 	})
 
 	onMount(() => {

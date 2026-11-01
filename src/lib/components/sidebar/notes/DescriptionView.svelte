@@ -4,9 +4,9 @@
 	 * formatting (bold, italic, underline, strike, lists, mentions) without any
 	 * toolbar or edit affordances.
 	 */
-	import type { Content } from '@tiptap/core'
 	import EdraEditor from '$lib/components/edra/headless/editor.svelte'
 	import type { Description } from '$lib/types/api/party'
+	import { descriptionToContent } from '$lib/utils/descriptionContent'
 	import { untrack } from 'svelte'
 
 	interface Props {
@@ -15,19 +15,7 @@
 
 	let { value }: Props = $props()
 
-	function toContent(raw: Description | null | undefined): Content | undefined {
-		if (raw == null) return undefined
-		if (typeof raw === 'object' && (raw as { type?: string }).type === 'doc') return raw as Content
-		if (typeof raw === 'string') {
-			return {
-				type: 'doc',
-				content: [{ type: 'paragraph', content: [{ type: 'text', text: raw }] }]
-			}
-		}
-		return raw as Content
-	}
-
-	const initialContent = untrack(() => toContent(value))
+	const initialContent = untrack(() => descriptionToContent(value))
 </script>
 
 {#if initialContent}

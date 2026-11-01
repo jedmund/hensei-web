@@ -11,7 +11,7 @@
 	 * Saves the full Tiptap JSON document on blur (skipped if unchanged from the
 	 * baseline captured on first load), so the parent doesn't have to debounce.
 	 */
-	import type { Editor, Content } from '@tiptap/core'
+	import type { Editor } from '@tiptap/core'
 	import EdraEditor from '$lib/components/edra/headless/editor.svelte'
 	import Bold from '@lucide/svelte/icons/bold'
 	import Italic from '@lucide/svelte/icons/italic'
@@ -21,6 +21,7 @@
 	import ListOrdered from '@lucide/svelte/icons/list-ordered'
 	import * as m from '$lib/paraglide/messages'
 	import type { Description } from '$lib/types/api/party'
+	import { descriptionToContent } from '$lib/utils/descriptionContent'
 	import { untrack } from 'svelte'
 
 	interface Props {
@@ -35,20 +36,7 @@
 	let baselineJson = $state<string | null>(null)
 	let editorVersion = $state(0)
 
-	function toContent(raw: Description | null | undefined): Content | undefined {
-		if (raw == null) return undefined
-		if (typeof raw === 'object' && (raw as { type?: string }).type === 'doc') return raw as Content
-		// Defensive fallback for legacy plain strings.
-		if (typeof raw === 'string') {
-			return {
-				type: 'doc',
-				content: [{ type: 'paragraph', content: [{ type: 'text', text: raw }] }]
-			}
-		}
-		return raw as Content
-	}
-
-	const initialContent = untrack(() => toContent(value))
+	const initialContent = untrack(() => descriptionToContent(value))
 
 	$effect(() => {
 		if (editor && baselineJson === null) {
