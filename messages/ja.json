@@ -2461,5 +2461,8 @@
 	"db_panel_edit": "編集 (E)",
 	"db_panel_open_full": "詳細ページを開く",
 	"db_panel_position": "{count}件中{index}件目",
-	"db_panel_page": "{page}/{total}ページ"
+	"db_panel_page": "{page}/{total}ページ",
+	"data_table_filter_selected": "{label} · {count}",
+	"data_table_filter_any_time": "すべての期間",
+	"data_table_filter_clear": "フィルターをクリア ({count})"
 }

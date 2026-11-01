@@ -14,6 +14,7 @@ export interface ServerSourceOptions<T> {
 	url: TableUrl
 	resource: AdminResource
 	columns: DataTableColumn<T>[]
+	/** Fields every row needs (ids, link, title). Visible columns add their own `fields`. */
 	fields?: string[]
 	facets?: string[]
 }
@@ -28,9 +29,16 @@ export class ServerSource<T> implements DataTableSource<T> {
 
 	#options: ServerSourceOptions<T>
 	#queryClient: QueryClient
+	/** Visible column ids, reported by DataTable. Null until it does. */
+	#visibleColumnIds = $state<string[] | null>(null)
+	/** Columns declare fields: wait for the visible set so the first request is already trimmed */
+	#waitsForColumns: boolean
 
 	readonly params: AdminListParams = $derived.by(() =>
-		buildListParams(this.url.state, this.#options)
+		buildListParams(this.url.state, {
+			...this.#options,
+			visibleColumnIds: this.#visibleColumnIds
+		})
 	)
 
 	#query: ReturnType<typeof createQuery<AdminListResponse<T>>>
@@ -49,8 +57,18 @@ export class ServerSource<T> implements DataTableSource<T> {
 		this.url = options.url
 		this.resource = options.resource
 		this.#queryClient = useQueryClient()
+		this.#waitsForColumns = options.columns.some((column) => !!column.fields)
 		// Created after the fields above are assigned: the options getter runs immediately
-		this.#query = createQuery(() => adminQueries.list<T>(this.resource, this.params))
+		this.#query = createQuery(() => ({
+			...adminQueries.list<T>(this.resource, this.params),
+			enabled: !this.#waitsForColumns || this.#visibleColumnIds !== null
+		}))
+	}
+
+	setVisibleColumns(ids: string[]): void {
+		const current = this.#visibleColumnIds
+		if (current && current.length === ids.length && current.every((id, i) => id === ids[i])) return
+		this.#visibleColumnIds = ids
 	}
 
 	get isPending(): boolean {

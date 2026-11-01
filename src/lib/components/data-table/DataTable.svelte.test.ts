@@ -127,6 +127,12 @@ describe('DataTable', () => {
 		expect(event.defaultPrevented).toBe(true)
 	})
 
+	it('marks the selected row as current', () => {
+		render(data, { selectedId: 's2' })
+		const rows = [...document.querySelectorAll('tbody tr')]
+		expect(rows.map((row) => row.getAttribute('aria-current'))).toEqual([null, 'true'])
+	})
+
 	it('keeps the ResultSet in display order', () => {
 		const resultSet = new ResultSet()
 		render(data, { resultSet })

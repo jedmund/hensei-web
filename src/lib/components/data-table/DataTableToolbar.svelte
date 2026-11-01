@@ -6,6 +6,7 @@
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
+	import NotificationBadge from '$lib/components/ui/NotificationBadge.svelte'
 	import type { RowHeight } from './types'
 
 	export interface ColumnToggle {
@@ -25,6 +26,10 @@
 		onResetColumns: () => void
 		rowHeight: RowHeight
 		onRowHeight: (value: RowHeight) => void
+		hasFilters?: boolean
+		filterCount?: number
+		filtersOpen?: boolean
+		onToggleFilters?: () => void
 		start?: Snippet | undefined
 		end?: Snippet | undefined
 	}
@@ -39,6 +44,10 @@
 		onResetColumns,
 		rowHeight,
 		onRowHeight,
+		hasFilters = false,
+		filterCount = 0,
+		filtersOpen = false,
+		onToggleFilters,
 		start,
 		end
 	}: Props = $props()
@@ -88,6 +97,21 @@
 					onClear={handleClear}
 				/>
 			</div>
+		{/if}
+
+		{#if hasFilters}
+			<Button
+				variant="ghost"
+				size="small"
+				rightIcon={filtersOpen ? 'chevron-up-small' : 'chevron-down-small'}
+				aria-expanded={filtersOpen}
+				onclick={onToggleFilters}
+			>
+				{m.filters_title()}
+				{#if filterCount > 0}
+					<span class="filter-count"><NotificationBadge count={filterCount} showCount /></span>
+				{/if}
+			</Button>
 		{/if}
 
 		<DropdownMenu align="end">
@@ -166,6 +190,8 @@
 
 	.end {
 		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
 		align-items: center;
 		gap: spacing.$unit;
 		margin-left: auto;
@@ -173,6 +199,16 @@
 
 	.search {
 		width: 220px;
+
+		// Phones: search on its own line, the menus beneath it
+		@media (max-width: 600px) {
+			flex-basis: 100%;
+		}
+	}
+
+	.filter-count {
+		display: inline-flex;
+		margin-left: spacing.$unit-half;
 	}
 
 	/* The menu is portalled, so its heading style has to be global */

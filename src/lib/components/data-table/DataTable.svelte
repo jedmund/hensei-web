@@ -30,6 +30,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import { getResultSet, type ResultSet } from '$lib/features/database/resultSet.svelte'
 	import DataTableCell from './DataTableCell.svelte'
+	import DataTableFilters from './DataTableFilters.svelte'
 	import DataTablePagination from './DataTablePagination.svelte'
 	import DataTableToolbar from './DataTableToolbar.svelte'
 	import {
@@ -40,6 +41,7 @@
 		saveColumnVisibility,
 		saveRowHeight
 	} from './preferences'
+	import { activeFilterCount, type FilterConfig } from './filters'
 	import { syncResultSet } from './resultSync'
 	import { isSortable } from './staticQuery'
 	import {
@@ -69,6 +71,13 @@
 		onRowActivate?: (row: T, event: MouseEvent) => void
 		/** Defaults to the one provided with setResultSet() */
 		resultSet?: ResultSet | undefined
+		/** Id of the row shown elsewhere (e.g. open in the record panel); marked aria-current */
+		selectedId?: string | null | undefined
+		/**
+		 * Filter controls, shown under the toolbar behind a Filters button. Declare
+		 * the same config on the table URL: `createTableUrl({ filters: filterSpecs(config) })`.
+		 */
+		filters?: FilterConfig[] | undefined
 		/** localStorage key for column visibility and row height, e.g. 'weapons' */
 		storageKey: string
 		rowHeight?: RowHeight
@@ -97,6 +106,8 @@
 		rowTitle,
 		onRowActivate,
 		resultSet: resultSetProp,
+		selectedId = null,
+		filters,
 		storageKey,
 		rowHeight: initialRowHeight = 'default',
 		pinFirstColumn = false,
@@ -136,6 +147,12 @@
 		rowHeight = next
 		saveRowHeight(storageKey, next)
 	}
+
+	// --- Filters ---------------------------------------------------------------
+
+	const filterCount = $derived(filters ? activeFilterCount(source.url.state.filters, filters) : 0)
+	// Open when the page loads with filters applied
+	let filtersOpen = $state(untrack(() => filterCount > 0))
 
 	// --- TanStack Table (manual mode) ----------------------------------------
 
@@ -277,6 +294,13 @@
 		virtualize && virtualItems.length > 0 ? totalSize - virtualItems.at(-1)!.end : 0
 	)
 
+	// Server sources request only the fields of the visible columns.
+	// Declared after onMount so the first report has the saved visibility.
+	$effect(() => {
+		const ids = visibleColumns.map((c) => c.id)
+		untrack(() => source.setVisibleColumns?.(ids))
+	})
+
 	// --- ResultSet --------------------------------------------------------------
 
 	$effect(() => {
@@ -329,9 +353,17 @@
 		onResetColumns={() => setVisibility(defaultVisibility(columns))}
 		{rowHeight}
 		onRowHeight={setRowHeight}
+		hasFilters={!!filters}
+		{filterCount}
+		{filtersOpen}
+		onToggleFilters={() => (filtersOpen = !filtersOpen)}
 		start={toolbar}
 		end={toolbarEnd}
 	/>
+
+	{#if filters && filtersOpen}
+		<DataTableFilters config={filters} url={source.url} facets={source.facets} />
+	{/if}
 
 	{#if source.error}
 		<div class="error" role="alert">
@@ -416,7 +448,7 @@
 						{/if}
 						{#each renderedRows as row (row.id)}
 							{@const original = row.original}
-							<tr>
+							<tr aria-current={selectedId !== null && row.id === selectedId ? 'true' : undefined}>
 								{#each visibleColumns as column (column.id)}
 									<td
 										class="align-{column.align ?? 'start'} type-{column.type}"
@@ -594,6 +626,15 @@
 
 	tbody tr:not(.skeleton, .spacer):hover td {
 		background: var(--table-row-hover);
+	}
+
+	// The row open elsewhere (e.g. in the record panel)
+	tbody tr[aria-current] td {
+		background: var(--table-row-hover);
+	}
+
+	tbody tr[aria-current] td:first-child {
+		box-shadow: inset 3px 0 0 var(--text-primary);
 	}
 
 	tbody tr:has(.row-link:focus-visible) {

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { QueryClient } from '@tanstack/svelte-query'
-import { buildListParams, fetchListPage } from './serverParams'
+import { buildListParams, fetchListPage, requestedFields } from './serverParams'
 import { adminKeys, adminQueries } from '$lib/api/queries/admin.queries'
 import { AdminAdapter, adminAdapter, toAdminListQuery } from '$lib/api/adapters/admin.adapter'
 import { mockApiResponse } from '$lib/api/adapters/__tests__/fixtures/helpers'
@@ -76,6 +76,59 @@ describe('buildListParams', () => {
 			fields: ['granblue_id', 'name_en'],
 			facets: ['element', 'rarity']
 		})
+	})
+})
+
+describe('requestedFields', () => {
+	const withFields: DataTableColumn<Weapon>[] = [
+		{
+			id: 'name',
+			header: 'Name',
+			type: 'name',
+			name: (w) => ({ en: w.nameEn }),
+			fields: ['name_en']
+		},
+		{
+			id: 'skills',
+			header: 'Skills',
+			type: 'number',
+			value: (w) => w.skillCount,
+			fields: ['skill_count']
+		},
+		{ id: 'thumb', header: '', type: 'image', image: 'weapon' }
+	]
+
+	it('adds the visible columns’ fields to the base fields, sorted', () => {
+		expect(
+			requestedFields({
+				columns: withFields,
+				fields: ['granblue_id', 'name_en'],
+				visibleColumnIds: ['name', 'thumb']
+			})
+		).toEqual(['granblue_id', 'name_en'])
+		expect(
+			requestedFields({
+				columns: withFields,
+				fields: ['granblue_id'],
+				visibleColumnIds: ['skills', 'name']
+			})
+		).toEqual(['granblue_id', 'name_en', 'skill_count'])
+	})
+
+	it('uses every column until the visible set is known', () => {
+		expect(requestedFields({ columns: withFields, visibleColumnIds: null })).toEqual([
+			'name_en',
+			'skill_count'
+		])
+	})
+
+	it('sends the trimmed list as fields=', () => {
+		const params = buildListParams(defaultTableState(config), {
+			columns: withFields,
+			fields: ['granblue_id'],
+			visibleColumnIds: ['name']
+		})
+		expect(params.fields).toEqual(['granblue_id', 'name_en'])
 	})
 })
 

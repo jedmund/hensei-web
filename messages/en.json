@@ -2672,5 +2672,8 @@
 	"db_panel_edit": "Edit (E)",
 	"db_panel_open_full": "Open full page",
 	"db_panel_position": "{index} of {count}",
-	"db_panel_page": "page {page} of {total}"
+	"db_panel_page": "page {page} of {total}",
+	"data_table_filter_selected": "{label} · {count}",
+	"data_table_filter_any_time": "Any time",
+	"data_table_filter_clear": "Clear filters ({count})"
 }
