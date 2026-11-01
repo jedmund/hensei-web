@@ -3,7 +3,8 @@
  * pages did: the old wx grid's columns, and the edit and new pages' payloads
  * (transcribed below), with the changes decided for GBF-143 applied on top.
  */
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+import { bulletAdapter } from '$lib/api/adapters/bullet.adapter'
 import { columnHeader } from '$lib/components/data-table/types'
 import { columnsFor, filtersFor } from '$lib/features/database/schema/columns'
 import { recordHref } from '$lib/features/database/schema/detail'
@@ -125,6 +126,15 @@ describe('bullets resource: create', () => {
 			order: 0,
 			hits_all: false
 		})
+	})
+})
+
+describe('bullets resource: delete', () => {
+	it('deletes by Granblue ID, leaving in-use checks to the API', async () => {
+		const deleteBullet = vi.spyOn(bulletAdapter, 'deleteBullet').mockResolvedValue()
+		await def.save!.destroy!(neptune)
+		expect(deleteBullet).toHaveBeenCalledWith('40801')
+		expect(def.save!.canDestroy).toBeUndefined()
 	})
 })
 

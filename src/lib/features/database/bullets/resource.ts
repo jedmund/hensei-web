@@ -191,6 +191,8 @@ export const bulletsResource = defineResource<AdminBulletRow, Bullet>({
 		update: (b, payload) =>
 			bulletAdapter.updateBullet(b.granblueId, payload as Partial<BulletPayload>),
 		create: (payload) => bulletAdapter.createBullet(payload as unknown as BulletPayload),
+		// The API refuses (422, with a message) while weapons load the bullet
+		destroy: (b) => bulletAdapter.deleteBullet(b.granblueId),
 		// The party editor's bullet picker reads the public list
 		invalidates: () => [bulletKeys.all]
 	},
