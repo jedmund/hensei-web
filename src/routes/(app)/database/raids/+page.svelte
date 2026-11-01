@@ -2,7 +2,6 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
-	import { onMount } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { Grid } from 'wx-svelte-grid'
 	import type { IColumn } from 'wx-svelte-grid'
@@ -30,20 +29,15 @@
 	}
 
 	// State
-	let viewMode = $state<'raids' | 'groups'>('raids')
+	// View mode follows the URL so sidebar links can switch views
+	let viewMode = $derived<'raids' | 'groups'>(
+		$page.url.searchParams.get('view') === 'groups' ? 'groups' : 'raids'
+	)
 	let searchTerm = $state('')
 	let elementFilters = $state<number[]>([])
 	let groupFilter = $state<string | undefined>(undefined)
 	let hlFilter = $state<number | undefined>(undefined)
 	let extraFilter = $state<number | undefined>(undefined)
-
-	// Read initial view mode from URL
-	onMount(() => {
-		const viewParam = $page.url.searchParams.get('view')
-		if (viewParam === 'groups') {
-			viewMode = 'groups'
-		}
-	})
 
 	// Update URL when view mode changes
 	function updateViewUrl(mode: 'raids' | 'groups') {

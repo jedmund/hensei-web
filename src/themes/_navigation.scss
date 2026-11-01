@@ -46,3 +46,31 @@
 		font-weight: typography.$bold;
 	}
 }
+
+// Vertical nav list item (SettingsNav, database sidebar). Selected colours
+// come from the caller, usually the element's --{el}-nav-selected-* tokens.
+@mixin nav-list-item {
+	display: flex;
+	align-items: center;
+	padding: spacing.$unit spacing.$unit-2x;
+	border: none;
+	border-radius: layout.$item-corner;
+	background: transparent;
+	color: var(--text-secondary);
+	font-size: typography.$font-regular;
+	font-weight: typography.$medium;
+	text-align: left;
+	text-decoration: none;
+	cursor: pointer;
+	@include effects.smooth-transition(effects.$duration-quick, background-color, color);
+
+	&:hover:not([data-state='checked']):not(.selected) {
+		background: var(--button-contained-bg-hover);
+		color: var(--text-primary);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--focus-ring);
+		outline-offset: 2px;
+	}
+}
