@@ -9,12 +9,14 @@
 
 import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svelte-query'
 import {
-	gridAdapter,
-	type CreateGridCharacterParams,
-	type UpdateUncapParams,
-	type ResolveConflictParams,
-	type SwapPositionsParams
-} from '$lib/api/adapters/grid.adapter'
+	gridCharacterAdapter,
+	type CreateGridCharacterParams
+} from '$lib/api/adapters/gridCharacter.adapter'
+import type {
+	UpdateUncapParams,
+	ResolveConflictParams,
+	SwapPositionsParams
+} from '$lib/api/adapters/grid.shared'
 import type { GridCharacter } from '$lib/types/api/party'
 import {
 	applyGridUncap,
@@ -32,7 +34,7 @@ type UpdateVars = { id: string; partyShortcode: string; updates: Partial<GridCha
 export function createGridCharacterOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ partyShortcode, ...rest }: CreateVars) =>
-			gridAdapter.createCharacter(rest, editKeyHeaders(partyShortcode)),
+			gridCharacterAdapter.createCharacter(rest, editKeyHeaders(partyShortcode)),
 		...optimisticGridList(queryClient, 'characters', (characters, { position }: CreateVars) =>
 			characters.filter((c) => c.position !== position)
 		)
@@ -42,7 +44,7 @@ export function createGridCharacterOptions(queryClient: QueryClient) {
 export function updateGridCharacterOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ id, partyShortcode, updates }: UpdateVars) =>
-			gridAdapter.updateCharacter(id, updates, editKeyHeaders(partyShortcode)),
+			gridCharacterAdapter.updateCharacter(id, updates, editKeyHeaders(partyShortcode)),
 		// Characters have no notes sync, so the edit only touches the target.
 		...optimisticGridList(queryClient, 'characters', (characters, { id, updates }: UpdateVars) =>
 			characters.map((c) => (c.id === id ? { ...c, ...updates } : c))
@@ -53,7 +55,7 @@ export function updateGridCharacterOptions(queryClient: QueryClient) {
 export function deleteGridCharacterOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: DeleteGridItemVars) =>
-			gridAdapter.deleteCharacter(
+			gridCharacterAdapter.deleteCharacter(
 				{ id: params.id, partyId: params.partyId, position: params.position },
 				editKeyHeaders(params.partyShortcode)
 			),
@@ -67,7 +69,7 @@ export function updateCharacterUncapOptions(queryClient: QueryClient) {
 	type Vars = UpdateUncapParams & { partyShortcode: string }
 	return {
 		mutationFn: (params: Vars) =>
-			gridAdapter.updateCharacterUncap(params, editKeyHeaders(params.partyShortcode)),
+			gridCharacterAdapter.updateCharacterUncap(params, editKeyHeaders(params.partyShortcode)),
 		...optimisticGridList(queryClient, 'characters', (characters, vars: Vars) =>
 			applyGridUncap(characters, vars)
 		)
@@ -77,7 +79,7 @@ export function updateCharacterUncapOptions(queryClient: QueryClient) {
 export function resolveCharacterConflictOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: ResolveConflictParams & { partyShortcode: string }) =>
-			gridAdapter.resolveCharacterConflict(params, editKeyHeaders(params.partyShortcode)),
+			gridCharacterAdapter.resolveCharacterConflict(params, editKeyHeaders(params.partyShortcode)),
 		...invalidatePartyOnSuccess(queryClient)
 	}
 }
@@ -85,7 +87,7 @@ export function resolveCharacterConflictOptions(queryClient: QueryClient) {
 export function swapCharactersOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
-			gridAdapter.swapCharacters(params, editKeyHeaders(params.partyShortcode)),
+			gridCharacterAdapter.swapCharacters(params, editKeyHeaders(params.partyShortcode)),
 		...invalidatePartyOnSuccess(queryClient)
 	}
 }
@@ -93,7 +95,7 @@ export function swapCharactersOptions(queryClient: QueryClient) {
 export function switchCharacterStyleOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: { id: string; partyShortcode: string }) =>
-			gridAdapter.switchCharacterStyle(params.id, editKeyHeaders(params.partyShortcode)),
+			gridCharacterAdapter.switchCharacterStyle(params.id, editKeyHeaders(params.partyShortcode)),
 		...invalidatePartyOnSuccess(queryClient)
 	}
 }

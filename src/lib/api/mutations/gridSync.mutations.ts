@@ -8,7 +8,7 @@
  */
 
 import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svelte-query'
-import { gridAdapter } from '$lib/api/adapters/grid.adapter'
+import { gridSyncAdapter } from '$lib/api/adapters/gridSync.adapter'
 import { collectionKeys } from '$lib/api/queries/collection.queries'
 import { editKeyHeaders, invalidatePartyOnSuccess } from './gridShared'
 
@@ -18,7 +18,11 @@ type PartyParams = { partyId: string; partyShortcode: string }
 export function syncGridCharacterOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: SyncParams) =>
-			gridAdapter.syncCharacter(params.id, editKeyHeaders(params.partyShortcode), params.fields),
+			gridSyncAdapter.syncCharacter(
+				params.id,
+				editKeyHeaders(params.partyShortcode),
+				params.fields
+			),
 		...invalidatePartyOnSuccess(queryClient)
 	}
 }
@@ -26,7 +30,7 @@ export function syncGridCharacterOptions(queryClient: QueryClient) {
 export function syncGridWeaponOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: SyncParams) =>
-			gridAdapter.syncWeapon(params.id, editKeyHeaders(params.partyShortcode), params.fields),
+			gridSyncAdapter.syncWeapon(params.id, editKeyHeaders(params.partyShortcode), params.fields),
 		...invalidatePartyOnSuccess(queryClient)
 	}
 }
@@ -34,7 +38,7 @@ export function syncGridWeaponOptions(queryClient: QueryClient) {
 export function syncGridSummonOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: SyncParams) =>
-			gridAdapter.syncSummon(params.id, editKeyHeaders(params.partyShortcode), params.fields),
+			gridSyncAdapter.syncSummon(params.id, editKeyHeaders(params.partyShortcode), params.fields),
 		...invalidatePartyOnSuccess(queryClient)
 	}
 }
@@ -46,7 +50,7 @@ export function syncGridSummonOptions(queryClient: QueryClient) {
 export function syncGridCharacterToCollectionOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: SyncParams) =>
-			gridAdapter.syncCharacterToCollection(
+			gridSyncAdapter.syncCharacterToCollection(
 				params.id,
 				editKeyHeaders(params.partyShortcode),
 				params.fields
@@ -58,7 +62,7 @@ export function syncGridCharacterToCollectionOptions(queryClient: QueryClient) {
 export function syncGridWeaponToCollectionOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: SyncParams) =>
-			gridAdapter.syncWeaponToCollection(
+			gridSyncAdapter.syncWeaponToCollection(
 				params.id,
 				editKeyHeaders(params.partyShortcode),
 				params.fields
@@ -70,7 +74,7 @@ export function syncGridWeaponToCollectionOptions(queryClient: QueryClient) {
 export function syncGridSummonToCollectionOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: SyncParams) =>
-			gridAdapter.syncSummonToCollection(
+			gridSyncAdapter.syncSummonToCollection(
 				params.id,
 				editKeyHeaders(params.partyShortcode),
 				params.fields
@@ -82,7 +86,7 @@ export function syncGridSummonToCollectionOptions(queryClient: QueryClient) {
 export function syncAllPartyItemsOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: PartyParams) =>
-			gridAdapter.syncAllPartyItems(params.partyId, editKeyHeaders(params.partyShortcode)),
+			gridSyncAdapter.syncAllPartyItems(params.partyId, editKeyHeaders(params.partyShortcode)),
 		...invalidatePartyOnSuccess(queryClient)
 	}
 }
@@ -90,7 +94,7 @@ export function syncAllPartyItemsOptions(queryClient: QueryClient) {
 export function unlinkCollectionSourceOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: PartyParams) =>
-			gridAdapter.unlinkCollectionSource(params.partyId, editKeyHeaders(params.partyShortcode)),
+			gridSyncAdapter.unlinkCollectionSource(params.partyId, editKeyHeaders(params.partyShortcode)),
 		...invalidatePartyOnSuccess(queryClient)
 	}
 }
