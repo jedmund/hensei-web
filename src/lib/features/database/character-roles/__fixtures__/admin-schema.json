@@ -1,0 +1,51 @@
+{
+	"search": ["name_en", "name_jp"],
+	"filters": {
+		"created_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		},
+		"updated_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		}
+	},
+	"flags": [],
+	"sorts": ["sort_order", "name_en", "name_jp", "created_at", "updated_at"],
+	"default_sort": ["sort_order", "name_en"],
+	"fields": ["id", "name_en", "name_jp", "sort_order", "created_at", "updated_at", "icon_key"],
+	"default_fields": ["id", "name_en", "name_jp", "sort_order", "icon_key"],
+	"writable": {
+		"name_en": "scalar",
+		"name_jp": "scalar",
+		"sort_order": "scalar"
+	},
+	"enums": {},
+	"validators": {
+		"name_en": [
+			{
+				"kind": "presence"
+			}
+		],
+		"sort_order": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"icon_key": [
+			{
+				"kind": "format",
+				"pattern": "^images/grid_character_roles/[0-9a-f-]+\\.png$",
+				"flags": "",
+				"allow_nil": true
+			}
+		]
+	}
+}

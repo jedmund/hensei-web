@@ -15,7 +15,10 @@ export const charactersSection: ResourceSection = {
 			{ label: () => m.nav_new_single({ entity: m.type_character() }), href: 'new' },
 			{ label: () => m.nav_new_multiple({ entity: m.type_character() }), href: 'import' }
 		],
-		[{ label: () => m.nav_new_character_series(), href: '/database/character-series/new' }]
+		[
+			{ label: () => m.nav_new_character_series(), href: '/database/character-series/new' },
+			{ label: () => m.nav_new_role(), href: '/database/character-roles/new' }
+		]
 	]
-	// Character series is a resource of its own, nested here (DATABASE_SECTIONS)
+	// Character series and roles are resources of their own, nested here (DATABASE_SECTIONS)
 }

@@ -4,6 +4,7 @@
  */
 import type { Component } from 'svelte'
 import AwakeningImageInput from '$lib/features/database/awakenings/inputs/AwakeningImageInput.svelte'
+import RoleIconInput from '$lib/features/database/character-roles/inputs/RoleIconInput.svelte'
 import CharacterUncapInput from '$lib/features/database/characters/inputs/CharacterUncapInput.svelte'
 import WeaponSeriesVariantsInput from '$lib/features/database/weapon-series/inputs/WeaponSeriesVariantsInput.svelte'
 import EventRaidsInput from '$lib/features/database/events/inputs/EventRaidsInput.svelte'
@@ -26,5 +27,6 @@ export const INPUT_COMPONENTS: Record<InputName, Component<InputProps>> = {
 	eventRaids: EventRaidsInput,
 	stickerImages: StickerImagesInput,
 	stickerLibrary: StickerLibraryInput,
-	stickerSlug: StickerSlugInput
+	stickerSlug: StickerSlugInput,
+	roleIcon: RoleIconInput
 }
