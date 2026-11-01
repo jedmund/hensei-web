@@ -13,6 +13,9 @@ import {
 	weaponProficiencyFilterOptions
 } from '$lib/components/data-table/filterOptions'
 import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svelte'
+import WeaponImagesTab from '$lib/features/database/weapons/tabs/WeaponImagesTab.svelte'
+import WeaponRawDataTab from '$lib/features/database/weapons/tabs/WeaponRawDataTab.svelte'
+import WeaponSkillsTab from '$lib/features/database/weapons/tabs/WeaponSkillsTab.svelte'
 import { defineResource, type EnumOption, type Values } from '$lib/features/database/schema/types'
 import { BULLET_TYPES } from '$lib/types/api/entities'
 import { PROMOTION_NAMES } from '$lib/types/enums'
@@ -23,6 +26,7 @@ import {
 	buildWikiEnUrl,
 	buildWikiJaUrl
 } from '$lib/utils/external-links'
+import { getWeaponFallbackImage, getWeaponGridImage } from '$lib/utils/images/weapons'
 import { localizedName } from '$lib/utils/locale'
 import { getWeaponProficiencyOptions, ProficiencyId } from '$lib/utils/proficiency'
 import { getRarityOptions } from '$lib/utils/rarity'
@@ -37,6 +41,8 @@ const UNCAPS = ['flb', 'ulb', 'transcendence']
 const flb = (v: Values) => v.flb === true
 const ulb = (v: Values) => v.ulb === true
 const transcendence = (v: Values) => v.transcendence === true
+/** Detail rows shown whatever the form's `when` says */
+const always = () => true
 
 const options = (labels: Record<number, string>) => (): EnumOption[] =>
 	Object.entries(labels).map(([value, label]) => ({ value: Number(value), label }))
@@ -140,25 +146,32 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			label: m.db_weapons_col_uncap,
 			write: false,
 			render: { cell: WeaponUncapCell, detail: 'uncapIndicator' },
+			detail: { hideWhenEmpty: true },
 			list: { sortable: false, width: '144px', fields: UNCAPS }
 		},
 		{
 			key: 'flb',
 			kind: 'boolean',
 			label: m.db_weapons_filter_flb,
-			read: (w) => w.uncap?.flb
+			read: (w) => w.uncap?.flb,
+			// The detail's uncap stars show these
+			detail: false
 		},
 		{
 			key: 'ulb',
 			kind: 'boolean',
 			label: m.db_weapons_filter_ulb,
-			read: (w) => w.uncap?.ulb
+			read: (w) => w.uncap?.ulb,
+			// The detail's uncap stars show these
+			detail: false
 		},
 		{
 			key: 'transcendence',
 			kind: 'boolean',
 			label: m.db_weapons_filter_transcendence,
-			read: (w) => w.uncap?.transcendence
+			read: (w) => w.uncap?.transcendence,
+			// The detail's uncap stars show these
+			detail: false
 		},
 		{
 			key: 'extra_prerequisite',
@@ -166,7 +179,8 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			label: m.db_weapons_field_extra_prerequisite,
 			sublabel: m.db_weapons_hint_extra_prerequisite,
 			options: options(EXTRA_PREREQUISITES),
-			read: (w) => w.uncap?.extraPrerequisite
+			read: (w) => w.uncap?.extraPrerequisite,
+			detail: { hideWhenEmpty: true, sublabel: false }
 		},
 		// Details
 		{
@@ -225,6 +239,11 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			sublabel: m.db_weapons_hint_variant,
 			resource: 'weaponSeriesVariant',
 			read: (w) => w.series?.weaponSeriesVariantId,
+			detail: {
+				hideWhenEmpty: true,
+				sublabel: false,
+				value: (w) => w.series?.weaponSeriesVariantName
+			},
 			// The new page shows the picker but never sent it
 			form: { create: false }
 		},
@@ -290,7 +309,8 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			label: m.db_weapons_field_max_skill_level,
 			int: true,
 			min: 1,
-			default: 10
+			default: 10,
+			detail: { hideWhenEmpty: true }
 		},
 		{
 			key: 'max_awakening_level',
@@ -299,7 +319,8 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			int: true,
 			min: 0,
 			// 0 means none, sent as null
-			write: { value: (v) => v || null }
+			write: { value: (v) => v || null },
+			detail: { empty: '0' }
 		},
 		{
 			key: 'max_exorcism_level',
@@ -307,7 +328,8 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			label: m.db_weapons_field_max_exorcism_level,
 			sublabel: m.db_weapons_hint_max_exorcism_level,
 			int: true,
-			min: 1
+			min: 1,
+			detail: { hideWhenEmpty: true, sublabel: false }
 		},
 		// Awakenings
 		{
@@ -316,7 +338,8 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			label: m.db_nav_awakenings,
 			resource: 'awakening',
 			read: (w) => w.awakenings,
-			form: { create: false }
+			form: { create: false },
+			detail: { hideWhenEmpty: true }
 		},
 		// Forge chain
 		{
@@ -324,21 +347,24 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			kind: 'custom',
 			label: m.db_weapons_field_forge_chain,
 			write: false,
-			read: (w) => (w as Weapon & Pick<WeaponEntity, 'forgeChain'>).forgeChain
+			read: (w) => (w as Weapon & Pick<WeaponEntity, 'forgeChain'>).forgeChain,
+			detail: { hideWhenEmpty: true }
 		},
 		{
 			key: 'forged_from',
 			kind: 'reference',
 			label: m.db_weapons_field_forged_from,
 			resource: 'weapon',
-			id: (ref) => (ref as Weapon['forgedFrom'])?.granblueId ?? null
+			id: (ref) => (ref as Weapon['forgedFrom'])?.granblueId ?? null,
+			detail: { hideWhenEmpty: true }
 		},
 		{
 			key: 'forge_order',
 			kind: 'number',
 			label: m.db_weapons_field_forge_order,
 			int: true,
-			min: 0
+			min: 0,
+			detail: { hideWhenEmpty: true }
 		},
 		// Bullet slots (guns)
 		{
@@ -349,6 +375,8 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			ordered: true,
 			max: 6,
 			when: (v) => v.proficiency === ProficiencyId.Gun,
+			// The detail shows a weapon's slots whatever its proficiency
+			detail: { when: always, hideWhenEmpty: true },
 			form: { create: false }
 		},
 		// Nicknames
@@ -364,28 +392,35 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 		{
 			key: 'release_date',
 			kind: 'date',
-			label: m.db_weapons_col_release_date
+			label: m.db_weapons_field_release_date,
+			list: { header: m.db_weapons_col_release_date }
 		},
 		{
 			key: 'flb_date',
 			kind: 'date',
-			label: m.db_weapons_col_flb_date,
+			label: m.db_weapons_field_flb_date,
 			when: flb,
-			list: { defaultHidden: true }
+			// The detail shows every date, uncapped or not
+			detail: { when: always },
+			list: { header: m.db_weapons_col_flb_date, defaultHidden: true }
 		},
 		{
 			key: 'ulb_date',
 			kind: 'date',
-			label: m.db_weapons_col_ulb_date,
+			label: m.db_weapons_field_ulb_date,
 			when: ulb,
-			list: { defaultHidden: true }
+			// The detail shows every date, uncapped or not
+			detail: { when: always },
+			list: { header: m.db_weapons_col_ulb_date, defaultHidden: true }
 		},
 		{
 			key: 'transcendence_date',
 			kind: 'date',
-			label: m.db_weapons_col_transcendence_date,
+			label: m.db_weapons_field_transcendence_date,
 			when: transcendence,
-			list: { defaultHidden: true }
+			// The detail shows every date, uncapped or not
+			detail: { when: always },
+			list: { header: m.db_weapons_col_transcendence_date, defaultHidden: true }
 		},
 		// Links
 		{
@@ -518,7 +553,8 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 		]
 	},
 
-	// The detail Info tab's order; edit and create use it too
+	// The detail Info tab's order; edit and create use it too. A section shows
+	// while any of its fields does
 	layout: {
 		detail: [
 			{
@@ -530,8 +566,7 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 				id: 'element_variant_ids',
 				title: m.db_weapons_field_element_variant_ids,
 				fields: ['element_variant_ids'],
-				component: 'elementVariantIds',
-				when: (v) => v.element === 0
+				component: 'elementVariantIds'
 			},
 			{ id: 'gacha', title: m.db_weapons_section_gacha, fields: ['promotions', 'recruits'] },
 			{
@@ -575,8 +610,7 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 				id: 'bullet_slots',
 				title: m.db_weapons_field_bullet_slots,
 				fields: ['bullet_slots'],
-				component: 'bulletSlots',
-				when: (v) => v.proficiency === ProficiencyId.Gun
+				component: 'bulletSlots'
 			},
 			{ id: 'nicknames', title: m.db_weapons_field_nicknames, fields: ['nicknames'] },
 			{
@@ -601,17 +635,33 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 	],
 
 	record: {
-		fetch: (id) => weaponAdapter.getWeapon(id)
+		fetch: (id) => weaponAdapter.getWeapon(id),
+		query: (id) => entityQueries.weapon(id),
+		noun: m.db_weapons_noun,
+		type: 'weapon',
+		image: (w) => getWeaponGridImage(w.granblueId, w.element, undefined, w.elementVariantIds),
+		// Element-changeable weapons have no _0 image
+		fallbackImage: (w) =>
+			w.element === 0 ? getWeaponFallbackImage(w.granblueId, 'grid') : undefined,
+		element: (w) => w.element,
+		tabs: [
+			{
+				id: 'skills',
+				label: m.details_tab_skills,
+				component: WeaponSkillsTab,
+				when: (w) => (w.weaponSkills?.length ?? 0) > 0
+			},
+			{ id: 'images', label: m.db_detail_tab_images, component: WeaponImagesTab },
+			{ id: 'raw', label: m.db_detail_tab_raw, component: WeaponRawDataTab, editorOnly: true }
+		]
 	},
 
-	// Today's screens until the generated ones replace them (phases 5–7). The
+	// Today's screens until the generated ones replace them (phases 6–7). The
 	// list screen renders the generated list for weapons and keeps the Series,
 	// Awakenings and Skills views by hand (they move in GBF-143)
 	screens: {
 		list: () => import('$lib/features/database/weapons/screens/WeaponsListScreen.svelte'),
-		detail: () => import('$lib/features/database/weapons/screens/WeaponDetailScreen.svelte'),
 		edit: () => import('$lib/features/database/weapons/screens/WeaponEditScreen.svelte'),
-		new: () => import('$lib/features/database/weapons/screens/WeaponNewScreen.svelte'),
-		panel: () => import('$lib/features/database/weapons/WeaponDetail.svelte')
+		new: () => import('$lib/features/database/weapons/screens/WeaponNewScreen.svelte')
 	}
 })

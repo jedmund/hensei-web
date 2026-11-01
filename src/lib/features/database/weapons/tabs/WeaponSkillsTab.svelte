@@ -1,16 +1,12 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
 	import WeaponSkillList from '$lib/components/weapon/WeaponSkillList.svelte'
-	import type { WeaponSkill } from '$lib/types/api/entities'
+	import type { Weapon } from '$lib/api/adapters/weapon.adapter'
+	import type { RecordTabProps } from '$lib/features/database/schema/types'
 
-	interface Props {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
-		weapon: any
-	}
+	let { record }: RecordTabProps<Weapon> = $props()
 
-	let { weapon }: Props = $props()
-
-	const skills = $derived((weapon?.weaponSkills ?? []) as WeaponSkill[])
+	const skills = $derived(record.weaponSkills ?? [])
 </script>
 
 <div class="skills-tab">

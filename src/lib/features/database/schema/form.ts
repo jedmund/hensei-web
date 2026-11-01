@@ -1,7 +1,7 @@
 /**
  * Form values from a full record, derived values, and the API payload.
  */
-import { formFields, isShown, prop } from './fields'
+import { formFields, isShown, readField } from './fields'
 import type {
 	EmptyPolicy,
 	Field,
@@ -82,14 +82,20 @@ export function applyDerive<Row, Full>(
 	return next
 }
 
+function readValues<Row, Full>(fields: Field<Row, Full>[], record: Full): Values {
+	const values: Values = {}
+	for (const field of fields) values[field.key] = formValue(field, readField(field, record))
+	return values
+}
+
+/** Every field's value from the full record, as the forms hold it: what `when` rules read */
+export function recordValues<Row, Full>(def: ResourceDef<Row, Full>, record: Full): Values {
+	return readValues(def.fields, record)
+}
+
 /** Edit form values from the full record, with derived values applied */
 export function fromRecord<Row, Full>(def: ResourceDef<Row, Full>, record: Full): Values {
-	const values: Values = {}
-	for (const field of formFields(def, 'edit')) {
-		const raw = field.read ? field.read(record) : prop(record, field.key)
-		values[field.key] = formValue(field, raw)
-	}
-	return applyDerive(def, values, null)
+	return applyDerive(def, readValues(formFields(def, 'edit'), record), null)
 }
 
 /** Create form values: defaults, with derived values applied */
