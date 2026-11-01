@@ -1,36 +1,17 @@
 <script lang="ts">
-	import type { Cell } from 'wx-svelte-grid'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import type { AdminWeaponRow } from '$lib/types/api/admin'
 
-	// Only the row is read, so DataTable custom cells can render it too
-	let { row }: Pick<Cell, 'row'> = $props()
+	// A weapons list row: the uncaps the weapon has, shown at their maximum
+	let { row }: { row: Pick<AdminWeaponRow, 'flb' | 'ulb' | 'transcendence'> } = $props()
 
-	// For database view, show maximum possible uncap level
-	const uncap = $derived(row.uncap ?? {})
-	const flb = $derived(uncap.flb ?? false)
-	const ulb = $derived(uncap.ulb ?? false)
-	const transcendence = $derived(uncap.transcendence ?? false)
+	const flb = $derived(!!row.flb)
+	const ulb = $derived(!!row.ulb)
+	const transcendence = $derived(!!row.transcendence)
 
-	// Calculate maximum uncap level based on available uncaps
 	// Weapons: 3 base + FLB + ULB + transcendence
-	const getMaxUncapLevel = () => {
-		return transcendence ? 6 : ulb ? 5 : flb ? 4 : 3
-	}
-
-	const uncapLevel = $derived(getMaxUncapLevel())
-	// For database view, show maximum transcendence stage when available
-	const transcendenceStage = $derived(
-		// First check if API provides direct transcendence_step field on the row
-		row.transcendence_step
-			? row.transcendence_step
-			: // Check if API provides specific max transcendence step in uncap object
-				uncap.max_transcendence_step
-				? uncap.max_transcendence_step
-				: // Otherwise, show maximum stage (5) when transcendence is available
-					transcendence
-					? 5
-					: 0
-	)
+	const uncapLevel = $derived(transcendence ? 6 : ulb ? 5 : flb ? 4 : 3)
+	const transcendenceStage = $derived(transcendence ? 5 : 0)
 </script>
 
 <div class="uncap-cell">

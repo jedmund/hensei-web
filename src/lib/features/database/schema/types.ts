@@ -13,8 +13,14 @@
  * key names the column, the filter, the sort and the param.
  */
 import type { Component } from 'svelte'
+import type { CreateQueryOptions } from '@tanstack/svelte-query'
 import type { z } from 'zod'
-import type { BuiltInCellType, ColumnBase, DataTableColumn } from '$lib/components/data-table/types'
+import type {
+	BuiltInCellType,
+	ColumnBase,
+	DataTableColumn,
+	RowHeight
+} from '$lib/components/data-table/types'
 import type { FilterOption, RecentPreset } from '$lib/components/data-table/filters'
 import type { SortSpec } from '$lib/components/data-table/urlState'
 import type { DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
@@ -58,15 +64,24 @@ export type ListOptions<Row> = Partial<Omit<ColumnBase<Row>, 'id' | 'header'>> &
 	type?: BuiltInCellType
 }
 
+/**
+ * Query options for a filter's option data, as `createQuery` takes them.
+ * Untyped: options read the data as `unknown` anyway
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type FilterQuery = () => CreateQueryOptions<any, any, any, any>
+
 export type FieldFilter =
 	| {
 			kind: 'multi'
 			label?: Message
 			/**
-			 * Defaults to the enum's options. `data` is what the caller passes to
-			 * `filtersFor` under this field's key (e.g. the series list).
+			 * Defaults to the enum's options. `data` is the `query` result (e.g.
+			 * the series list), undefined until it loads.
 			 */
 			options?: (data: unknown) => FilterOption[]
+			/** Loads what `options` needs; the list runs it */
+			query?: FilterQuery
 			facet?: boolean
 	  }
 	/** A boolean in a toggle group (see `ToggleGroupDef`); only overrides the label */
@@ -89,9 +104,13 @@ export interface WriteOptions {
 	value?: (value: unknown, values: Values) => unknown
 }
 
-export interface FieldRender {
-	/** The list cell is a snippet the caller hands to `columnsFor` under the field key */
-	cell?: 'snippet'
+export interface FieldRender<Row> {
+	/**
+	 * The list cell, drawn by this component (a `component` column). Unlike
+	 * the detail and form renderers, a cell is referenced directly: it's typed
+	 * by the row, and only the list screens load definitions
+	 */
+	cell?: Component<{ row: Row }>
 	/** Detail display drawn by a named component */
 	detail?: ComponentName
 	/** Form input drawn by a named component */
@@ -120,7 +139,7 @@ interface FieldBase<Row, Full> {
 	when?: (values: Values) => boolean
 	/** Extra rules the value must also pass */
 	validate?: z.ZodType
-	render?: FieldRender
+	render?: FieldRender<Row>
 }
 
 export type Field<Row = unknown, Full = unknown> = FieldBase<Row, Full> &
@@ -187,6 +206,13 @@ export interface ToggleGroupDef {
 }
 
 export interface ListDef<Row> {
+	/** Accessible name for the table */
+	label: Message
+	/** Lowercase plural noun for the search placeholder, e.g. "weapons" */
+	entity: Message
+	empty: Message
+	/** The field that titles a row: the panel header before the record loads */
+	title: string
 	/** Field keys, or a literal column for things that aren't fields (the thumbnail) */
 	columns: Array<string | DataTableColumn<Row>>
 	/** Field keys with a `multi` or `recent` filter, or toggle groups */
@@ -194,6 +220,9 @@ export interface ListDef<Row> {
 	/** Fields every request asks for, whichever columns are visible */
 	baseFields: string[]
 	defaultSort: SortSpec[]
+	rowHeight?: RowHeight
+	/** Keep the first column in place while scrolling sideways */
+	pinFirstColumn?: boolean
 }
 
 /**
@@ -249,14 +278,13 @@ export type ScreenComponent<K extends ScreenKind, Full = unknown> = Awaited<
 export interface RecordDef<Full> {
 	/**
 	 * The full record the detail and edit pages load, by route id. Rejects with
-	 * an error carrying `status: 404` when there's no such record. Import the
-	 * adapter lazily: the param matcher puts the registry in the app's entry.
+	 * an error carrying `status: 404` when there's no such record.
 	 */
 	fetch: (id: string) => Promise<Full>
 }
 
 export interface ResourceDef<Row = unknown, Full = unknown> {
-	/** Route segment and admin resource, e.g. `weapons` */
+	/** Route segment, admin resource and list storage key, e.g. `weapons` */
 	name: string
 	fields: Field<Row, Full>[]
 	list: ListDef<Row>

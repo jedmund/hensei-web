@@ -21,11 +21,7 @@
 	import { createStaticSource } from '$lib/components/data-table/staticSource.svelte'
 	import type { DataTableColumn, FlagValue } from '$lib/components/data-table/types'
 	import type { WeaponSeries } from '$lib/types/api/weaponSeries'
-	import WeaponsTable from '$lib/features/database/weapons/WeaponsTable.svelte'
-	import { ResultSet, setResultSet } from '$lib/features/database/resultSet.svelte'
-
-	// The weapons list keeps it in step with its rows; the record panel reads it for j/k
-	setResultSet(new ResultSet())
+	import ResourceTable from '$lib/features/database/schema/ResourceTable.svelte'
 
 	type ViewMode = 'weapons' | 'series' | 'awakenings' | 'skills'
 
@@ -196,7 +192,7 @@
 
 <div class="database-page">
 	{#if viewMode === 'weapons'}
-		<WeaponsTable />
+		<ResourceTable resource="weapons" />
 	{:else if viewMode === 'series'}
 		<DataTable
 			columns={seriesColumns}

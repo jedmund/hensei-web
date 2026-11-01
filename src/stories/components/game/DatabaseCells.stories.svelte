@@ -1,10 +1,8 @@
 <script module>
 	import { defineMeta } from '@storybook/addon-svelte-csf'
 	import CharacterImageCell from '$lib/components/database/cells/CharacterImageCell.svelte'
-	import WeaponImageCell from '$lib/components/database/cells/WeaponImageCell.svelte'
 	import SummonImageCell from '$lib/components/database/cells/SummonImageCell.svelte'
 	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
-	import ProficiencyCell from '$lib/components/database/cells/ProficiencyCell.svelte'
 	import CharacterUncapCell from '$lib/components/database/cells/CharacterUncapCell.svelte'
 	import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svelte'
 	import SummonUncapCell from '$lib/components/database/cells/SummonUncapCell.svelte'
@@ -34,15 +32,6 @@
 		uncap: { flb: true, ulb: true }
 	}
 
-	const mockWeaponRow = {
-		granblueId: '1040000000',
-		name: { en: 'Sword of Bahamut', ja: 'バハムートソード' },
-		element: 5, // Dark
-		proficiency: 1, // Sabre
-		rarity: 3,
-		uncap: { flb: true, ulb: true, transcendence: true }
-	}
-
 	const mockSummonRow = {
 		granblueId: '2040001000',
 		name: { en: 'Bahamut', ja: 'バハムート' },
@@ -60,19 +49,6 @@
 		{ id: 5, name: 'Dark' },
 		{ id: 6, name: 'Light' }
 	]
-
-	const proficiencies = [
-		{ id: 1, name: 'Sabre' },
-		{ id: 2, name: 'Dagger' },
-		{ id: 3, name: 'Axe' },
-		{ id: 4, name: 'Spear' },
-		{ id: 5, name: 'Staff' },
-		{ id: 6, name: 'Gun' },
-		{ id: 7, name: 'Melee' },
-		{ id: 8, name: 'Bow' },
-		{ id: 9, name: 'Harp' },
-		{ id: 10, name: 'Katana' }
-	]
 </script>
 
 <!-- Character Image Cell -->
@@ -81,15 +57,6 @@
 		style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; height: 80px;"
 	>
 		<CharacterImageCell row={mockCharacterRow} />
-	</div>
-</Story>
-
-<!-- Weapon Image Cell -->
-<Story name="Weapon Image Cell">
-	<div
-		style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; height: 80px;"
-	>
-		<WeaponImageCell row={mockWeaponRow} />
 	</div>
 </Story>
 
@@ -111,20 +78,6 @@
 			<div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
 				<ElementCell row={{ element: el.id }} />
 				<span style="font-size: 10px; color: #666;">{el.name}</span>
-			</div>
-		{/each}
-	</div>
-</Story>
-
-<!-- Proficiency Cell -->
-<Story name="Proficiency Cell - All Types">
-	<div
-		style="display: flex; flex-wrap: wrap; gap: 12px; background: #f5f5f5; padding: 16px; border-radius: 8px; align-items: center;"
-	>
-		{#each proficiencies as prof (prof)}
-			<div style="display: flex; flex-direction: column; align-items: center; gap: 4px;">
-				<ProficiencyCell row={{ proficiency: [prof.id] }} />
-				<span style="font-size: 10px; color: #666;">{prof.name}</span>
 			</div>
 		{/each}
 	</div>
@@ -169,25 +122,25 @@
 			style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; align-items: center;"
 		>
 			<span style="width: 100px; font-size: 12px; color: #666;">MLB (3★):</span>
-			<WeaponUncapCell row={{ uncap: {}, rarity: 3 }} />
+			<WeaponUncapCell row={{}} />
 		</div>
 		<div
 			style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; align-items: center;"
 		>
 			<span style="width: 100px; font-size: 12px; color: #666;">FLB (4★):</span>
-			<WeaponUncapCell row={{ uncap: { flb: true }, rarity: 3 }} />
+			<WeaponUncapCell row={{ flb: true }} />
 		</div>
 		<div
 			style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; align-items: center;"
 		>
 			<span style="width: 100px; font-size: 12px; color: #666;">ULB (5★):</span>
-			<WeaponUncapCell row={{ uncap: { flb: true, ulb: true }, rarity: 3 }} />
+			<WeaponUncapCell row={{ flb: true, ulb: true }} />
 		</div>
 		<div
 			style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; align-items: center;"
 		>
 			<span style="width: 100px; font-size: 12px; color: #666;">Transcendence:</span>
-			<WeaponUncapCell row={{ uncap: { flb: true, ulb: true, transcendence: true }, rarity: 3 }} />
+			<WeaponUncapCell row={{ flb: true, ulb: true, transcendence: true }} />
 		</div>
 	</div>
 </Story>

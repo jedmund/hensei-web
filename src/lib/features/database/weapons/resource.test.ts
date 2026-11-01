@@ -1,13 +1,22 @@
 /**
  * Parity: the weapons resource must reproduce what the hand-written weapons
- * pages do today: WeaponsTable's columns and filters (tableConfig.ts), and
+ * pages did: the list's columns and filters (pinned as fixtures below), and
  * the edit and new pages' payloads (transcribed below).
  */
 import { describe, expect, it } from 'vitest'
-import type { Snippet } from 'svelte'
-import { labelText, resolveOptions, type FilterConfig } from '$lib/components/data-table/filters'
+import {
+	labelText,
+	resolveOptions,
+	type FilterConfig,
+	type ResolvedOption
+} from '$lib/components/data-table/filters'
 import { columnHeader, type DataTableColumn } from '$lib/components/data-table/types'
-import { columnsFor, filtersFor } from '$lib/features/database/schema/columns'
+import {
+	columnsFor,
+	filterQueries,
+	filtersFor,
+	titleFor
+} from '$lib/features/database/schema/columns'
 import {
 	applyDerive,
 	fromRecord,
@@ -19,13 +28,8 @@ import type { Values } from '$lib/features/database/schema/types'
 import type { Weapon } from '$lib/api/adapters/weapon.adapter'
 import type { AdminWeaponRow } from '$lib/types/api/admin'
 import type { WeaponSeries } from '$lib/types/api/weaponSeries'
+import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svelte'
 import { weaponsResource } from './resource'
-import {
-	WEAPONS_BASE_FIELDS,
-	WEAPONS_DEFAULT_SORT,
-	weaponsColumns,
-	weaponsFilters
-} from './tableConfig'
 
 // --- List ---
 
@@ -80,11 +84,21 @@ function normalizeColumn(column: DataTableColumn<AdminWeaponRow>) {
 	return out
 }
 
+/** Option images are URLs from the shared helpers: pin that there is one */
+function normalizeOption(option: ResolvedOption) {
+	const { image, indicatorColor, ...rest } = option
+	return { ...rest, ...(image ? { image: true } : {}), ...(indicatorColor ? { color: true } : {}) }
+}
+
 function normalizeFilter(filter: FilterConfig) {
 	const label = labelText(filter.label)
 	switch (filter.kind) {
 		case 'multi':
-			return { ...filter, label, options: resolveOptions(filter.options(), undefined, []) }
+			return {
+				...filter,
+				label,
+				options: resolveOptions(filter.options(), undefined, []).map(normalizeOption)
+			}
 		case 'toggles':
 			return {
 				...filter,
@@ -100,25 +114,208 @@ function normalizeFilter(filter: FilterConfig) {
 	}
 }
 
-const uncapCell = (() => {}) as unknown as Snippet<[AdminWeaponRow]>
-
 const series = [
 	{ id: 'uuid-b', slug: 'opus', order: 2, name: { en: 'Opus', ja: 'オプス' } },
 	{ id: 'uuid-a', slug: 'cosmos', order: 1, name: { en: 'Cosmos', ja: 'コスモス' } }
 ] as WeaponSeries[]
 
-describe('weapons resource: list parity with WeaponsTable', () => {
-	it('generates the same columns', () => {
-		const generated = columnsFor(weaponsResource, { uncap: uncapCell })
-		const today = weaponsColumns(uncapCell)
-		expect(generated.map((c) => c.id)).toEqual(today.map((c) => c.id))
-		expect(generated.map(normalizeColumn)).toEqual(today.map(normalizeColumn))
+const date = (id: string, header: string, value: unknown[], hidden = false) => ({
+	id,
+	header,
+	type: 'date',
+	value,
+	...(hidden ? { defaultHidden: true } : {}),
+	fields: [id]
+})
+
+/** What the hand-written weapons list (WeaponsTable) produced, for the rows above */
+const EXPECTED_COLUMNS = [
+	{
+		id: 'image',
+		header: '',
+		type: 'image',
+		image: 'weapon',
+		sortable: false,
+		hideable: false,
+		width: '96px',
+		minWidth: '96px',
+		fields: ['element']
+	},
+	{
+		id: 'name',
+		header: 'Name',
+		type: 'name',
+		name: [
+			{ en: 'Cosmic Sword', ja: 'コスモスソード' },
+			{ en: null, ja: null }
+		],
+		sortField: 'name_en',
+		primary: true,
+		minWidth: '220px',
+		fields: ['name_en', 'name_jp']
+	},
+	{
+		id: 'rarity',
+		header: 'Rarity',
+		type: 'text',
+		value: ['SSR', null],
+		sortValue: [3, null],
+		width: '80px',
+		fields: ['rarity']
+	},
+	{ id: 'element', header: 'Element', type: 'element', value: [3, null], fields: ['element'] },
+	{
+		id: 'proficiency',
+		header: 'Proficiency',
+		type: 'proficiency',
+		value: [1, null],
+		fields: ['proficiency']
+	},
+	{
+		id: 'uncap',
+		header: 'Uncap',
+		type: 'component',
+		component: WeaponUncapCell,
+		sortable: false,
+		width: '144px',
+		fields: ['flb', 'ulb', 'transcendence']
+	},
+	{
+		id: 'series',
+		header: 'Series',
+		type: 'text',
+		value: ['Cosmos', null],
+		sortable: false,
+		width: '172px',
+		fields: ['series_name_en', 'series_name_jp']
+	},
+	date('release_date', 'Release date', ['2016-03-10', null]),
+	date('flb_date', 'FLB date', ['2017-01-01', undefined], true),
+	date('ulb_date', 'ULB date', [null, undefined], true),
+	date('transcendence_date', 'Transcendence date', [null, undefined], true),
+	date('latest_date', 'Last updated', ['2017-01-01', undefined]),
+	date('updated_at', 'Last edited', ['2026-10-30T12:00:00Z', '2026-10-29T12:00:00Z'], true),
+	{
+		id: 'skill_count',
+		header: 'Skills',
+		type: 'number',
+		value: [2, undefined],
+		sortable: false,
+		align: 'end',
+		defaultHidden: true,
+		fields: ['skill_count']
+	}
+]
+
+const labelled = (entries: [string, string][], extra: object = {}) =>
+	entries.map(([value, label]) => ({ value, label, ...extra }))
+
+const toggle = (key: string, label: string) => ({ key, label })
+
+const EXPECTED_FILTERS = [
+	{
+		kind: 'multi',
+		key: 'element',
+		label: 'Element',
+		options: labelled(
+			[
+				['1', 'Fire'],
+				['2', 'Water'],
+				['3', 'Earth'],
+				['4', 'Wind'],
+				['5', 'Light'],
+				['6', 'Dark'],
+				['0', 'Null']
+			],
+			{ image: true, color: true }
+		),
+		facet: true
+	},
+	{
+		kind: 'multi',
+		key: 'rarity',
+		label: 'Rarity',
+		options: labelled(
+			[
+				['1', 'R'],
+				['2', 'SR'],
+				['3', 'SSR']
+			],
+			{ image: true }
+		),
+		facet: true
+	},
+	{
+		kind: 'multi',
+		key: 'proficiency',
+		label: 'Proficiency',
+		options: labelled(
+			[
+				['1', 'Sabre'],
+				['2', 'Dagger'],
+				['3', 'Spear'],
+				['4', 'Axe'],
+				['5', 'Staff'],
+				['6', 'Gun'],
+				['7', 'Melee'],
+				['8', 'Bow'],
+				['9', 'Harp'],
+				['10', 'Katana']
+			],
+			{ image: true }
+		),
+		facet: true
+	},
+	{
+		kind: 'multi',
+		key: 'series',
+		label: 'Series',
+		// Sorted by series order, then "No series"
+		options: labelled([
+			['cosmos', 'Cosmos'],
+			['opus', 'Opus'],
+			['none', 'No series']
+		]),
+		facet: true
+	},
+	{
+		kind: 'toggles',
+		id: 'uncap',
+		label: 'Uncap',
+		toggles: [toggle('flb', 'FLB'), toggle('ulb', 'ULB'), toggle('transcendence', 'Transcendence')]
+	},
+	{
+		kind: 'toggles',
+		id: 'type',
+		label: 'Type',
+		toggles: [toggle('extra', 'Extra'), toggle('limit', 'Limited')]
+	},
+	{
+		kind: 'toggles',
+		id: 'quality',
+		label: 'Data quality',
+		toggles: [toggle('missing_name_jp', 'Missing JA name'), toggle('no_skills', 'No skills')]
+	},
+	{
+		kind: 'recent',
+		key: 'updated_at',
+		label: 'Last edited',
+		presets: [
+			{ days: 7, label: 'Last 7 days' },
+			{ days: 30, label: 'Last 30 days' }
+		]
+	}
+]
+
+describe('weapons resource: list', () => {
+	it('generates the columns the hand-written list had', () => {
+		expect(columnsFor(weaponsResource).map(normalizeColumn)).toEqual(EXPECTED_COLUMNS)
 	})
 
-	it('generates the same filters', () => {
-		const generated = filtersFor(weaponsResource, { series: () => series })
-		const today = weaponsFilters(() => series)
-		expect(generated.map(normalizeFilter)).toEqual(today.map(normalizeFilter))
+	it('generates the filters the hand-written list had', () => {
+		expect(filtersFor(weaponsResource, { series: () => series }).map(normalizeFilter)).toEqual(
+			EXPECTED_FILTERS
+		)
 	})
 
 	it('reads the series list lazily', () => {
@@ -132,13 +329,23 @@ describe('weapons resource: list parity with WeaponsTable', () => {
 		expect(seriesFilter.options().map((o) => o.value)).toEqual(['cosmos', 'opus', 'none'])
 	})
 
-	it('keeps the base fields and default sort', () => {
-		expect(weaponsResource.list.baseFields).toEqual(WEAPONS_BASE_FIELDS)
-		expect(weaponsResource.list.defaultSort).toEqual(WEAPONS_DEFAULT_SORT)
+	it('loads the series list for its filter', () => {
+		expect(filterQueries(weaponsResource).map(([key, query]) => [key, query().queryKey])).toEqual([
+			['series', ['weaponSeries', 'list']]
+		])
 	})
 
-	it('needs the uncap snippet', () => {
-		expect(() => columnsFor(weaponsResource)).toThrow(/uncap/)
+	it('titles rows by name', () => {
+		const title = titleFor(weaponsResource)
+		expect(rows.map(title)).toEqual(['Cosmic Sword', '—'])
+	})
+
+	it('keeps the base fields and default sort', () => {
+		expect(weaponsResource.list.baseFields).toEqual(['granblue_id', 'name_en', 'name_jp'])
+		expect(weaponsResource.list.defaultSort).toEqual([
+			{ id: 'latest_date', desc: true },
+			{ id: 'name', desc: false }
+		])
 	})
 })
 

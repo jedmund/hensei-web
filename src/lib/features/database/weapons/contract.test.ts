@@ -30,10 +30,7 @@ function writeKeys(field: AnyField): string[] {
 }
 
 describe('weapons schema matches the API contract', () => {
-	const columns = columnsFor(weaponsResource, {
-		// Any snippet satisfies the custom cell; only the column config is checked
-		uncap: (() => {}) as never
-	})
+	const columns = columnsFor(weaponsResource)
 
 	it('only filters on published filters and flags', () => {
 		const used = filtersFor(weaponsResource).flatMap((filter) =>

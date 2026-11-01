@@ -1,15 +1,22 @@
 /**
  * List config from a resource definition: DataTable columns and filters.
  */
-import type { Snippet } from 'svelte'
 import { labelText, type FilterConfig, type FilterOption } from '$lib/components/data-table/filters'
 import type {
 	BuiltInCellType,
 	DataTableColumn,
 	SortPrimitive
 } from '$lib/components/data-table/types'
+import { localizedName } from '$lib/utils/locale'
 import { fieldFor, prop } from './fields'
-import type { EnumOption, Field, FieldKind, ResourceDef, ToggleGroupDef } from './types'
+import type {
+	EnumOption,
+	Field,
+	FieldKind,
+	FilterQuery,
+	ResourceDef,
+	ToggleGroupDef
+} from './types'
 
 const CELL_TYPES: Partial<Record<FieldKind, BuiltInCellType>> = {
 	code: 'code',
@@ -19,33 +26,20 @@ const CELL_TYPES: Partial<Record<FieldKind, BuiltInCellType>> = {
 	datetime: 'date'
 }
 
-/**
- * Columns in `list.columns` order. Fields drawn by a snippet
- * (`render.cell: 'snippet'`) take it from `cells`, keyed by field key:
- * snippets can only be created in components. Phase 4 replaces this with a
- * `component` cell type.
- */
-export function columnsFor<Row, Full>(
-	def: ResourceDef<Row, Full>,
-	cells: Record<string, Snippet<[Row]>> = {}
-): DataTableColumn<Row>[] {
+/** Columns in `list.columns` order */
+export function columnsFor<Row, Full>(def: ResourceDef<Row, Full>): DataTableColumn<Row>[] {
 	return def.list.columns.map((entry) =>
-		typeof entry === 'string' ? fieldColumn(fieldFor(def, entry), cells) : entry
+		typeof entry === 'string' ? fieldColumn(fieldFor(def, entry)) : entry
 	)
 }
 
-function fieldColumn<Row, Full>(
-	field: Field<Row, Full>,
-	cells: Record<string, Snippet<[Row]>>
-): DataTableColumn<Row> {
+function fieldColumn<Row, Full>(field: Field<Row, Full>): DataTableColumn<Row> {
 	const { header, type, ...options } = field.list ?? {}
 	const base = { id: field.key, header: header ?? field.label, fields: [field.key] }
 	const raw = (row: Row) => prop(row, field.key)
 
-	if (field.render?.cell === 'snippet') {
-		const cell = cells[field.key]
-		if (!cell) throw new Error(`columnsFor: no cell snippet for "${field.key}"`)
-		return { ...base, type: 'custom', cell, ...options }
+	if (field.render?.cell) {
+		return { ...base, type: 'component', component: field.render.cell, ...options }
 	}
 
 	if (field.kind === 'localized') {
@@ -81,6 +75,20 @@ function fieldColumn<Row, Full>(
 	}
 }
 
+/** A row's title, from the `list.title` field */
+export function titleFor<Row, Full>(def: ResourceDef<Row, Full>): (row: Row) => string {
+	const field = fieldFor(def, def.list.title)
+	if (field.kind === 'localized') {
+		const { en, ja } = field.keys
+		return (row) =>
+			localizedName({
+				en: (prop(row, en) as string | null) ?? '',
+				ja: (prop(row, ja) as string | null) ?? ''
+			})
+	}
+	return (row) => String(prop(row, field.key) ?? '')
+}
+
 function optionLabel(options: EnumOption[], value: unknown): string | null {
 	const option = options.find((o) => o.value === value)
 	return option ? labelText(option.label) : null
@@ -96,8 +104,8 @@ function enumFilterOptions<Row, Full>(field: Field<Row, Full>): FilterOption[] {
 
 /**
  * Filters in `list.filters` order. `data` supplies what option lists need at
- * runtime (e.g. the series list), keyed by field key; it's read lazily, so a
- * query's data can be passed as a getter.
+ * runtime: each `query` filter's result, keyed by field key. It's read
+ * lazily, so the query's data can be passed as a getter.
  */
 export function filtersFor<Row, Full>(
 	def: ResourceDef<Row, Full>,
@@ -125,6 +133,17 @@ export function filtersFor<Row, Full>(
 			default:
 				throw new Error(`filtersFor: "${field.key}" has no multi or recent filter`)
 		}
+	})
+}
+
+/** The listed filters' option queries, by field key: the list runs them for `filtersFor` */
+export function filterQueries<Row, Full>(
+	def: ResourceDef<Row, Full>
+): Array<[string, FilterQuery]> {
+	return def.list.filters.flatMap((entry): Array<[string, FilterQuery]> => {
+		if (typeof entry !== 'string') return []
+		const filter = fieldFor(def, entry).filter
+		return filter?.kind === 'multi' && filter.query ? [[entry, filter.query]] : []
 	})
 }
 

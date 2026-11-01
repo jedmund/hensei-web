@@ -364,7 +364,7 @@
 		image: '96px',
 		name: '220px',
 		flags: '200px',
-		custom: '128px'
+		component: '128px'
 	}
 
 	function columnWidth(column: DataTableColumn<T>): string | undefined {

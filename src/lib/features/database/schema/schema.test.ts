@@ -69,6 +69,10 @@ const def = defineResource<Row, Full>({
 		{ key: 'draft', kind: 'text', label, form: { edit: false }, default: 'new' }
 	],
 	list: {
+		label,
+		entity: () => 'things',
+		empty: label,
+		title: 'title',
 		columns: ['code', 'title', 'level', 'kind_of', 'starts_on'],
 		filters: ['kind_of', { id: 'flags', label, toggles: ['active', { key: 'stale', label }] }],
 		baseFields: ['code'],

@@ -4,12 +4,15 @@
  */
 import { z } from 'zod'
 import * as m from '$lib/paraglide/messages'
+import { weaponAdapter, type Weapon } from '$lib/api/adapters/weapon.adapter'
+import { entityQueries } from '$lib/api/queries/entity.queries'
 import {
 	elementFilterOptions,
 	rarityFilterOptions,
 	seriesFilterOptions,
 	weaponProficiencyFilterOptions
 } from '$lib/components/data-table/filterOptions'
+import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svelte'
 import { defineResource, type EnumOption, type Values } from '$lib/features/database/schema/types'
 import { BULLET_TYPES } from '$lib/types/api/entities'
 import { PROMOTION_NAMES } from '$lib/types/enums'
@@ -23,7 +26,6 @@ import {
 import { localizedName } from '$lib/utils/locale'
 import { getWeaponProficiencyOptions, ProficiencyId } from '$lib/utils/proficiency'
 import { getRarityOptions } from '$lib/utils/rarity'
-import type { Weapon } from '$lib/api/adapters/weapon.adapter'
 import type { AdminWeaponRow } from '$lib/types/api/admin'
 import type { Weapon as WeaponEntity } from '$lib/types/api/entities'
 import type { WeaponSeries } from '$lib/types/api/weaponSeries'
@@ -137,7 +139,7 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			kind: 'custom',
 			label: m.db_weapons_col_uncap,
 			write: false,
-			render: { cell: 'snippet', detail: 'uncapIndicator' },
+			render: { cell: WeaponUncapCell, detail: 'uncapIndicator' },
 			list: { sortable: false, width: '144px', fields: UNCAPS }
 		},
 		{
@@ -210,6 +212,7 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			},
 			filter: {
 				kind: 'multi',
+				query: () => entityQueries.weaponSeriesList(),
 				options: (series) =>
 					seriesFilterOptions(series as WeaponSeries[] | undefined, m.db_weapons_filter_no_series),
 				facet: true
@@ -456,6 +459,12 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 	],
 
 	list: {
+		label: m.db_weapons_label,
+		entity: m.collection_entity_weapons,
+		empty: m.db_weapons_empty,
+		title: 'name',
+		rowHeight: 'image',
+		pinFirstColumn: true,
 		columns: [
 			{
 				id: 'image',
@@ -592,13 +601,12 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 	],
 
 	record: {
-		fetch: async (id) => {
-			const { weaponAdapter } = await import('$lib/api/adapters/weapon.adapter')
-			return weaponAdapter.getWeapon(id)
-		}
+		fetch: (id) => weaponAdapter.getWeapon(id)
 	},
 
-	// Today's screens until the generated ones replace them (phases 4–7)
+	// Today's screens until the generated ones replace them (phases 5–7). The
+	// list screen renders the generated list for weapons and keeps the Series,
+	// Awakenings and Skills views by hand (they move in GBF-143)
 	screens: {
 		list: () => import('$lib/features/database/weapons/screens/WeaponsListScreen.svelte'),
 		detail: () => import('$lib/features/database/weapons/screens/WeaponDetailScreen.svelte'),
