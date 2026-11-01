@@ -18,6 +18,8 @@
 
 	interface Props {
 		searchable: boolean
+		/** Lowercase plural noun for the placeholder, e.g. "weapons" */
+		searchEntity?: string | undefined
 		search: string
 		onSearch: (q: string) => void
 		columns: ColumnToggle[]
@@ -30,12 +32,12 @@
 		filterCount?: number
 		filtersOpen?: boolean
 		onToggleFilters?: () => void
-		start?: Snippet | undefined
 		end?: Snippet | undefined
 	}
 
 	const {
 		searchable,
+		searchEntity,
 		search,
 		onSearch,
 		columns,
@@ -48,7 +50,6 @@
 		filterCount = 0,
 		filtersOpen = false,
 		onToggleFilters,
-		start,
 		end
 	}: Props = $props()
 
@@ -80,25 +81,26 @@
 </script>
 
 <div class="toolbar">
-	{@render start?.()}
+	{#if searchable}
+		<div class="search">
+			<Input
+				type="search"
+				contained
+				size="small"
+				leftIcon="search"
+				clearable
+				value={draft}
+				placeholder={searchEntity
+					? m.data_table_search_entity({ entity: searchEntity })
+					: m.data_table_search()}
+				aria-label={m.data_table_search_label()}
+				oninput={handleInput}
+				onClear={handleClear}
+			/>
+		</div>
+	{/if}
 
 	<div class="end">
-		{#if searchable}
-			<div class="search">
-				<Input
-					type="search"
-					size="small"
-					leftIcon="search"
-					clearable
-					value={draft}
-					placeholder={m.data_table_search()}
-					aria-label={m.data_table_search_label()}
-					oninput={handleInput}
-					onClear={handleClear}
-				/>
-			</div>
-		{/if}
-
 		{#if hasFilters}
 			<Button
 				variant="ghost"

@@ -18,6 +18,7 @@
 	import AccountDeletionBanner from '$lib/components/AccountDeletionBanner.svelte'
 	import { hasEditKeys, getAllEditKeys } from '$lib/utils/editKeys'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
+	import { readOpen } from '$lib/features/database/panel/panelUrl'
 	import type { LayoutData } from './$types'
 
 	const { data, children } = $props<{
@@ -112,9 +113,17 @@
 	})
 
 	// Handle scroll restoration or reset after navigation
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	afterNavigate(({ from, to, type }) => {
 		if (!mainContent || !to) return
+
+		// The database record panel opens, steps and closes in place; the list
+		// keeps its own scroll (and scrolls the open row into view)
+		if (
+			from?.url.pathname === to.url.pathname &&
+			(readOpen(from.url) !== null || readOpen(to.url) !== null)
+		) {
+			return
+		}
 
 		// Use requestAnimationFrame to ensure DOM has updated
 		requestAnimationFrame(() => {

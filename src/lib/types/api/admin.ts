@@ -18,7 +18,8 @@
  * - Boolean filters: flb, ulb, transcendence, extra, limit, and the data-quality
  *   flags missing_name_jp, no_skills.
  * - Sort fields: name_en, name_jp, granblue_id, rarity, element, proficiency,
- *   release_date, updated_at, created_at. NULLS LAST. Default -updated_at,name_en.
+ *   release_date, flb_date, ulb_date, transcendence_date, latest_date, updated_at,
+ *   created_at. NULLS LAST. Default -latest_date,name_en.
  * - page/per: per defaults to 50, max 200; out-of-range values are clamped.
  *   total_pages is 0 when total is 0.
  * - Facets: element, rarity, proficiency, series (keyed by series UUID). Each
@@ -78,6 +79,11 @@ export interface AdminWeaponRow {
 	flb?: boolean
 	ulb?: boolean
 	transcendence?: boolean
+	flbDate?: string | null
+	ulbDate?: string | null
+	transcendenceDate?: string | null
+	/** Newest of the release and uncap dates */
+	latestDate?: string | null
 	extra?: boolean
 	limit?: boolean
 	createdAt?: string

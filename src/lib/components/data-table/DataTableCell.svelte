@@ -117,6 +117,7 @@
 	.name {
 		display: flex;
 		flex-direction: column;
+		gap: var(--dt-name-gap, 0);
 		min-width: 0;
 		line-height: 1.25;
 	}

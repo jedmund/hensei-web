@@ -52,8 +52,8 @@ export interface TableUrlConfig {
 	defaultSort?: SortSpec[]
 }
 
-export const DEFAULT_PER = 50
-export const DEFAULT_PER_OPTIONS = [20, 50, 100, 200]
+export const DEFAULT_PER = 25
+export const DEFAULT_PER_OPTIONS = [25, 50, 100, 200]
 
 /** Params this codec reads and writes, besides the declared filter keys */
 export const TABLE_PARAM_KEYS = ['q', 'sort', 'page', 'per'] as const

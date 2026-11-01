@@ -37,7 +37,7 @@ const stateFrom = (query: string) => parseTableUrl(new URLSearchParams(query), c
 
 describe('buildListParams', () => {
 	it('sends only page and per for a fresh table', () => {
-		expect(buildListParams(defaultTableState(config), { columns })).toEqual({ page: 1, per: 50 })
+		expect(buildListParams(defaultTableState(config), { columns })).toEqual({ page: 1, per: 25 })
 	})
 
 	it('maps sort ids to API fields and drops unknown or unsortable columns', () => {
@@ -58,7 +58,7 @@ describe('buildListParams', () => {
 		)
 		expect(a).toEqual({
 			page: 1,
-			per: 50,
+			per: 25,
 			q: 'opus',
 			filters: { element: ['1', '2'], no_skills: true }
 		})

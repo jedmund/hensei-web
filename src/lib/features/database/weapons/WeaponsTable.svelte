@@ -4,7 +4,6 @@
   ResultSet (setResultSet) so the panel steps through these rows.
 -->
 <script lang="ts">
-	import type { Snippet } from 'svelte'
 	import { MediaQuery } from 'svelte/reactivity'
 	import { page } from '$app/state'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -34,13 +33,6 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { getRarityLabel } from '$lib/utils/rarity'
 	import type { AdminWeaponRow } from '$lib/types/api/admin'
-
-	interface Props {
-		/** Toolbar content before the search box (the view tabs) */
-		toolbar?: Snippet
-	}
-
-	const { toolbar }: Props = $props()
 
 	const seriesQuery = createQuery(() => entityQueries.weaponSeriesList())
 
@@ -112,7 +104,7 @@
 		}
 	]
 
-	// Column ids are the API sort fields, so the URL reads ?sort=-updated_at
+	// Column ids are the API sort fields, so the URL reads ?sort=-latest_date
 	const columns: DataTableColumn<AdminWeaponRow>[] = [
 		{
 			id: 'image',
@@ -142,6 +134,7 @@
 			type: 'text',
 			value: (w) => (w.rarity === null ? null : getRarityLabel(w.rarity)),
 			sortValue: (w) => w.rarity,
+			width: '80px',
 			fields: ['rarity']
 		},
 		{
@@ -164,6 +157,7 @@
 			type: 'custom',
 			cell: uncapCell,
 			sortable: false,
+			width: '144px',
 			fields: ['flb', 'ulb', 'transcendence']
 		},
 		{
@@ -175,7 +169,7 @@
 					? localizedName({ en: w.seriesNameEn ?? '', ja: w.seriesNameJp ?? '' })
 					: null,
 			sortable: false,
-			minWidth: '140px',
+			width: '172px',
 			fields: ['series_name_en', 'series_name_jp']
 		},
 		{
@@ -186,10 +180,44 @@
 			fields: ['release_date']
 		},
 		{
+			id: 'flb_date',
+			header: m.db_weapons_col_flb_date,
+			type: 'date',
+			value: (w) => w.flbDate,
+			defaultHidden: true,
+			fields: ['flb_date']
+		},
+		{
+			id: 'ulb_date',
+			header: m.db_weapons_col_ulb_date,
+			type: 'date',
+			value: (w) => w.ulbDate,
+			defaultHidden: true,
+			fields: ['ulb_date']
+		},
+		{
+			id: 'transcendence_date',
+			header: m.db_weapons_col_transcendence_date,
+			type: 'date',
+			value: (w) => w.transcendenceDate,
+			defaultHidden: true,
+			fields: ['transcendence_date']
+		},
+		// The newest of the release and uncap dates: when the game last changed it
+		{
+			id: 'latest_date',
+			header: m.db_weapons_col_latest_date,
+			type: 'date',
+			value: (w) => w.latestDate,
+			fields: ['latest_date']
+		},
+		// When someone last edited the record on the site
+		{
 			id: 'updated_at',
 			header: m.db_weapons_col_updated_at,
 			type: 'date',
 			value: (w) => w.updatedAt,
+			defaultHidden: true,
 			fields: ['updated_at']
 		},
 		{
@@ -207,7 +235,7 @@
 	const url = createTableUrl({
 		filters: filterSpecs(filters),
 		defaultSort: [
-			{ id: 'updated_at', desc: true },
+			{ id: 'latest_date', desc: true },
 			{ id: 'name', desc: false }
 		]
 	})
@@ -268,8 +296,8 @@
 			rowHeight="image"
 			pinFirstColumn
 			label={m.db_weapons_label()}
+			searchEntity={m.collection_entity_weapons()}
 			emptyMessage={m.db_weapons_empty()}
-			{toolbar}
 		/>
 	</div>
 

@@ -196,7 +196,7 @@
 
 <div class="database-page">
 	{#if viewMode === 'weapons'}
-		<WeaponsTable toolbar={viewTabs} />
+		<WeaponsTable />
 	{:else if viewMode === 'series'}
 		<DataTable
 			columns={seriesColumns}
@@ -206,12 +206,9 @@
 			rowTitle={(series) => localizedName(series.name)}
 			storageKey="weapon-series"
 			label={m.nav_new_weapon_series()}
+			searchEntity={m.db_weapon_series_entity()}
 			emptyMessage={m.db_weapon_series_empty()}
-		>
-			{#snippet toolbar()}
-				{@render viewTabs()}
-			{/snippet}
-		</DataTable>
+		/>
 	{:else if viewMode === 'awakenings'}
 		<!-- Awakenings view -->
 		<div class="grid-container">

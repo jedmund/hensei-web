@@ -24,7 +24,7 @@
 	)
 </script>
 
-<div class="database-layout database-shell">
+<div class="database-layout database-shell element-{element ?? 'null'}">
 	<DatabaseSidebar role={data.role} {element} />
 	<div class="database-content">
 		{@render children?.()}
@@ -40,13 +40,20 @@
 		gap: layout.$database-sidebar-gap;
 	}
 
+	// The user's element, for accents inside the database (e.g. the open row's bar)
+	@each $el in null, wind, fire, water, earth, dark, light {
+		.element-#{$el} {
+			--database-accent: var(--#{$el}-button-bg);
+		}
+	}
+
 	.database-content {
 		flex: 1;
 		min-width: 0;
 
-		// List toolbars keep one height whichever view's controls they hold.
-		// Content-box so each page keeps its own padding.
-		:global(.controls) {
+		// List toolbars and the record panel's header keep one height whichever
+		// controls they hold. Content-box so each keeps its own padding.
+		:global(:is(.controls, .data-table > .toolbar, .panel-header)) {
 			box-sizing: content-box;
 			min-height: layout.$database-control-height;
 		}
