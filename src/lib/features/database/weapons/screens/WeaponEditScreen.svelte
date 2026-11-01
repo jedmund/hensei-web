@@ -38,16 +38,17 @@
 	import Button from '$lib/components/ui/Button.svelte'
 
 	// Types
-	import type { PageData } from './$types'
+	import type { RecordScreenData } from '$lib/features/database/schema/types'
+	import type { Weapon } from '$lib/api/adapters/weapon.adapter'
 
-	let { data }: { data: PageData } = $props()
+	let { data }: { data: RecordScreenData<Weapon> } = $props()
 
 	const queryClient = useQueryClient()
 
 	// Use TanStack Query with SSR initial data
 	const weaponQuery = createQuery(() => ({
-		...entityQueries.weapon(data.weapon?.granblueId ?? ''),
-		...withInitialData(data.weapon)
+		...entityQueries.weapon(data.record?.granblueId ?? ''),
+		...withInitialData(data.record)
 	}))
 
 	// Get weapon from query
