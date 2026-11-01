@@ -22,9 +22,6 @@
 	import { weaponAdapter } from '$lib/api/adapters/weapon.adapter'
 	import { getRarityOptions } from '$lib/utils/rarity'
 
-	// Always in edit mode for new weapon
-	const editMode = true
-
 	let isSaving = $state(false)
 	let saveError = $state<string | null>(null)
 
@@ -294,11 +291,11 @@
 			/>
 		</DetailsContainer>
 
-		<WeaponUncapSection weapon={emptyWeapon} {editMode} bind:editData />
-		<WeaponTaxonomySection weapon={emptyWeapon} {editMode} bind:editData />
-		<WeaponStatsSection weapon={emptyWeapon} {editMode} bind:editData />
-		<WeaponGachaSection weapon={emptyWeapon} {editMode} bind:editData />
-		<WeaponForgeSection weapon={emptyWeapon} {editMode} bind:editData />
+		<WeaponUncapSection bind:editData />
+		<WeaponTaxonomySection bind:editData />
+		<WeaponStatsSection bind:editData />
+		<WeaponGachaSection weapon={emptyWeapon} bind:editData />
+		<WeaponForgeSection weapon={emptyWeapon} bind:editData />
 
 		<DetailsContainer title="Nicknames">
 			<DetailItem label="Nicknames (EN)">

@@ -316,7 +316,7 @@
 			{editMode}
 		>
 			<section class="details">
-				<WeaponMetadataSection {weapon} {editMode} bind:editData />
+				<WeaponMetadataSection bind:editData />
 				{#if editData.element === 0}
 					<DetailsContainer title="Element Variant IDs">
 						{#each ELEMENT_DISPLAY_ORDER as elementNum (elementNum)}
@@ -350,12 +350,12 @@
 					</DetailsContainer>
 				{/if}
 
-				<WeaponGachaSection {weapon} {editMode} bind:editData />
-				<WeaponUncapSection {weapon} {editMode} bind:editData />
-				<WeaponTaxonomySection {weapon} {editMode} bind:editData />
-				<WeaponStatsSection {weapon} {editMode} bind:editData />
-				<WeaponAwakeningSection {weapon} {editMode} bind:editData />
-				<WeaponForgeSection {weapon} {editMode} bind:editData />
+				<WeaponGachaSection {weapon} bind:editData />
+				<WeaponUncapSection bind:editData />
+				<WeaponTaxonomySection bind:editData />
+				<WeaponStatsSection bind:editData />
+				<WeaponAwakeningSection bind:editData />
+				<WeaponForgeSection {weapon} bind:editData />
 
 				{#if isGun}
 					<DetailsContainer title="Bullet Slots">

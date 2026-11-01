@@ -3,32 +3,25 @@
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
-	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
-	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import { getElementLabel } from '$lib/utils/element'
 	import { localizedName } from '$lib/utils/locale'
 	import { getWeaponProficiencyOptions } from '$lib/utils/proficiency'
-	import { getSeriesDisplayName } from '$lib/utils/weaponSeries'
-	import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
-		weapon: any
-		editMode?: boolean
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
-		editData?: any
+		editData: any
 	}
 
-	let { weapon, editMode = false, editData = $bindable() }: Props = $props()
+	let { editData = $bindable() }: Props = $props()
 
 	// Fetch weapon series list from API
 	const weaponSeriesQuery = createQuery(() => entityQueries.weaponSeriesList())
 
-	// Fetch selected series detail to get variants (only in edit mode when a series is selected)
-	const selectedSeriesId = $derived(editMode ? editData?.series : null)
+	// Fetch selected series detail to get variants (when a series is selected)
+	const selectedSeriesId = $derived(editData?.series)
 	const selectedSeriesQuery = createQuery(() => ({
 		...entityQueries.weaponSeries(selectedSeriesId ?? ''),
 		enabled: !!selectedSeriesId
@@ -52,7 +45,7 @@
 
 	// Clear variant when series changes
 	$effect(() => {
-		if (editMode && editData) {
+		if (editData) {
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			const seriesId = editData.series
 			// When series changes, if the current variant doesn't belong to the new series, clear it
@@ -68,7 +61,7 @@
 	const proficiencyOptions = getWeaponProficiencyOptions()
 
 	// Build series options from fetched data
-	// In edit mode, we need IDs for the select value
+	// The select's values are series IDs
 	const seriesOptions = $derived.by(() => {
 		const series = weaponSeriesQuery.data ?? []
 		return [
@@ -82,93 +75,53 @@
 
 	// Get element name for checkbox theming
 	const elementName = $derived.by((): ElementName | undefined => {
-		const el = editMode ? editData.element : weapon?.element
-		const label = getElementLabel(el)
+		const label = getElementLabel(editData.element)
 		return label !== '—' && label !== 'Null' ? (label.toLowerCase() as ElementName) : undefined
 	})
-
-	// Format series label for display mode
-	function formatSeriesLabel(series: WeaponSeriesRef | null | undefined): string {
-		if (!series) return '—'
-		return getSeriesDisplayName(series) || '—'
-	}
-
-	// Format variant label for display mode
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
-	function formatVariantLabel(weapon: any): string {
-		if (!weapon?.series?.weaponSeriesVariantId) return '—'
-		return weapon.series.weaponSeriesVariantName || '—'
-	}
 </script>
 
 <DetailsContainer title="Details">
-	{#if editMode}
-		<DetailItem label="Element" editable={true}>
-			<ElementPicker bind:value={editData.element} includeAny mode="dropdown" contained />
-		</DetailItem>
+	<DetailItem label="Element" editable={true}>
+		<ElementPicker bind:value={editData.element} includeAny mode="dropdown" contained />
+	</DetailItem>
+	<DetailItem
+		label="Proficiency"
+		bind:value={editData.proficiency}
+		editable={true}
+		type="select"
+		options={proficiencyOptions}
+	/>
+	<DetailItem
+		label="Series"
+		bind:value={editData.series}
+		editable={true}
+		type="select"
+		options={seriesOptions}
+	/>
+	{#if hasVariants}
 		<DetailItem
-			label="Proficiency"
-			bind:value={editData.proficiency}
+			label="Variant"
+			sublabel="Override series capabilities for this weapon"
+			bind:value={editData.weaponSeriesVariantId}
 			editable={true}
 			type="select"
-			options={proficiencyOptions}
-		/>
-		<DetailItem
-			label="Series"
-			bind:value={editData.series}
-			editable={true}
-			type="select"
-			options={seriesOptions}
-		/>
-		{#if hasVariants}
-			<DetailItem
-				label="Variant"
-				sublabel="Override series capabilities for this weapon"
-				bind:value={editData.weaponSeriesVariantId}
-				editable={true}
-				type="select"
-				options={variantOptions}
-			/>
-		{/if}
-		<DetailItem
-			label="Extra"
-			sublabel="Can be placed in Additional Weapons"
-			bind:value={editData.extra}
-			editable={true}
-			type="checkbox"
-			element={elementName}
-		/>
-		<DetailItem
-			label="Limit"
-			sublabel="Only one copy can be placed in a team"
-			bind:value={editData.limit}
-			editable={true}
-			type="checkbox"
-			element={elementName}
-		/>
-	{:else}
-		<DetailItem label="Element">
-			<ElementLabel element={weapon.element} size="medium" />
-		</DetailItem>
-		<DetailItem label="Proficiency">
-			<ProficiencyLabel
-				proficiency={Array.isArray(weapon.proficiency) ? weapon.proficiency[0] : weapon.proficiency}
-				size="medium"
-			/>
-		</DetailItem>
-		<DetailItem label="Series" value={formatSeriesLabel(weapon.series)} />
-		{#if weapon.series?.weaponSeriesVariantId}
-			<DetailItem label="Variant" value={formatVariantLabel(weapon)} />
-		{/if}
-		<DetailItem
-			label="Extra"
-			sublabel="Can be placed in Additional Weapons"
-			value={weapon.extra ? 'Yes' : 'No'}
-		/>
-		<DetailItem
-			label="Limit"
-			sublabel="Only one copy can be placed in a team"
-			value={weapon.limit ? 'Yes' : 'No'}
+			options={variantOptions}
 		/>
 	{/if}
+	<DetailItem
+		label="Extra"
+		sublabel="Can be placed in Additional Weapons"
+		bind:value={editData.extra}
+		editable={true}
+		type="checkbox"
+		element={elementName}
+	/>
+	<DetailItem
+		label="Limit"
+		sublabel="Only one copy can be placed in a team"
+		bind:value={editData.limit}
+		editable={true}
+		type="checkbox"
+		element={elementName}
+	/>
 </DetailsContainer>

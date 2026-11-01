@@ -8,35 +8,23 @@
 	import type { Awakening } from '$lib/types/api/entities'
 
 	interface Props {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
-		weapon: any
-		editMode?: boolean
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
-		editData?: any
+		editData: any
 	}
 
-	let { weapon, editMode = false, editData = $bindable() }: Props = $props()
+	let { editData = $bindable() }: Props = $props()
 
 	// Fetch all weapon awakenings from the API
-	const allAwakeningsQuery = createQuery(() => ({
-		...entityQueries.awakenings('Weapon'),
-		enabled: editMode
-	}))
+	const allAwakeningsQuery = createQuery(() => entityQueries.awakenings('Weapon'))
 
 	const allAwakenings = $derived(allAwakeningsQuery.data ?? [])
 
 	const awakenings = $derived.by((): Awakening[] => {
-		if (editMode) {
-			const ids: string[] = editData?.awakeningIds ?? []
-			return allAwakenings
-				.filter((a) => ids.includes(a.id))
-				.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-		}
-		const list = weapon?.awakenings ?? []
-		return [...list].sort((a: Awakening, b: Awakening) => (a.order ?? 0) - (b.order ?? 0))
+		const ids: string[] = editData?.awakeningIds ?? []
+		return allAwakenings
+			.filter((a) => ids.includes(a.id))
+			.sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
 	})
-
-	const hasAwakenings = $derived(awakenings.length > 0)
 
 	// Awakenings not yet added (for the dropdown)
 	const availableOptions = $derived(
@@ -56,42 +44,17 @@
 	}
 </script>
 
-{#if editMode}
-	<DetailsContainer title="Awakenings">
-		{#if availableOptions.length > 0}
-			<Select
-				options={availableOptions}
-				placeholder="Add awakening..."
-				onValueChange={handleAdd}
-				contained
-				fullWidth
-			/>
-		{/if}
-		{#if awakenings.length > 0}
-			<div class="awakening-list">
-				{#each awakenings as awakening (awakening.id)}
-					{@const imageUrl = getAwakeningImage({ type: awakening })}
-					<div class="awakening-item">
-						{#if imageUrl}
-							<img
-								src={imageUrl}
-								alt={awakening.name?.en ?? awakening.slug}
-								class="awakening-icon"
-							/>
-						{:else}
-							<div class="awakening-icon placeholder"></div>
-						{/if}
-						<span class="awakening-name">{awakening.name?.en ?? awakening.slug}</span>
-						<button class="remove-button" onclick={() => removeAwakening(awakening.id)}>
-							<Icon name="close" size={14} />
-						</button>
-					</div>
-				{/each}
-			</div>
-		{/if}
-	</DetailsContainer>
-{:else if hasAwakenings}
-	<DetailsContainer title="Awakenings">
+<DetailsContainer title="Awakenings">
+	{#if availableOptions.length > 0}
+		<Select
+			options={availableOptions}
+			placeholder="Add awakening..."
+			onValueChange={handleAdd}
+			contained
+			fullWidth
+		/>
+	{/if}
+	{#if awakenings.length > 0}
 		<div class="awakening-list">
 			{#each awakenings as awakening (awakening.id)}
 				{@const imageUrl = getAwakeningImage({ type: awakening })}
@@ -102,11 +65,14 @@
 						<div class="awakening-icon placeholder"></div>
 					{/if}
 					<span class="awakening-name">{awakening.name?.en ?? awakening.slug}</span>
+					<button class="remove-button" onclick={() => removeAwakening(awakening.id)}>
+						<Icon name="close" size={14} />
+					</button>
 				</div>
 			{/each}
 		</div>
-	</DetailsContainer>
-{/if}
+	{/if}
+</DetailsContainer>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;

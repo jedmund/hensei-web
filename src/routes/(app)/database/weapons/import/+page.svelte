@@ -448,41 +448,17 @@
 			{:else if selectedWikiPage && formDataByPage[selectedWikiPage!]}
 				{@const formData = formDataByPage[selectedWikiPage!]!}
 				<section class="details">
-					<WeaponMetadataSection
-						weapon={emptyWeapon}
-						editMode={true}
-						editData={formDataByPage[selectedWikiPage!]}
-					/>
+					<WeaponMetadataSection editData={formDataByPage[selectedWikiPage!]} />
 
-					<WeaponUncapSection
-						weapon={emptyWeapon}
-						editMode={true}
-						editData={formDataByPage[selectedWikiPage!]}
-					/>
+					<WeaponUncapSection editData={formDataByPage[selectedWikiPage!]} />
 
-					<WeaponTaxonomySection
-						weapon={emptyWeapon}
-						editMode={true}
-						editData={formDataByPage[selectedWikiPage!]}
-					/>
+					<WeaponTaxonomySection editData={formDataByPage[selectedWikiPage!]} />
 
-					<WeaponStatsSection
-						weapon={emptyWeapon}
-						editMode={true}
-						editData={formDataByPage[selectedWikiPage!]}
-					/>
+					<WeaponStatsSection editData={formDataByPage[selectedWikiPage!]} />
 
-					<WeaponGachaSection
-						weapon={emptyWeapon}
-						editMode={true}
-						editData={formDataByPage[selectedWikiPage!]}
-					/>
+					<WeaponGachaSection weapon={emptyWeapon} editData={formDataByPage[selectedWikiPage!]} />
 
-					<WeaponForgeSection
-						weapon={emptyWeapon}
-						editMode={true}
-						editData={formDataByPage[selectedWikiPage!]}
-					/>
+					<WeaponForgeSection weapon={emptyWeapon} editData={formDataByPage[selectedWikiPage!]} />
 
 					<DetailsContainer title="Nicknames">
 						<DetailItem label="Nicknames (EN)">

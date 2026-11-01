@@ -7,25 +7,17 @@
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
-		weapon: any
-		editMode?: boolean
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
-		editData?: any
+		editData: any
 		// Callback when editData is modified (for triggering reactivity in parent)
 		onDataChange?: () => void
 	}
 
-	let { weapon, editMode = false, editData = $bindable(), onDataChange }: Props = $props()
+	let { editData = $bindable(), onDataChange }: Props = $props()
 
-	const uncap = $derived(
-		editMode
-			? { flb: editData.flb, ulb: editData.ulb, transcendence: editData.transcendence }
-			: (weapon?.uncap ?? {})
-	)
-	const flb = $derived(uncap.flb ?? false)
-	const ulb = $derived(uncap.ulb ?? false)
-	const transcendence = $derived(uncap.transcendence ?? false)
+	const flb = $derived(editData.flb ?? false)
+	const ulb = $derived(editData.ulb ?? false)
+	const transcendence = $derived(editData.transcendence ?? false)
 	// Weapons: 3 base stars, +1 for FLB (4), +1 for ULB (5), +1 for transcendence (6)
 	const uncapLevel = $derived(transcendence ? 6 : ulb ? 5 : flb ? 4 : 3)
 	const transcendenceStage = $derived(transcendence ? 5 : 0)
@@ -39,17 +31,9 @@
 		{ value: 6, label: 'Transcendence' }
 	]
 
-	// Get label for extra prerequisite value
-	function getExtraPrerequisiteLabel(value: number | null | undefined): string {
-		if (value == null) return '—'
-		const option = extraPrerequisiteOptions.find((o) => o.value === value)
-		return option?.label ?? '—'
-	}
-
 	// Get element name for checkbox theming
 	const elementName = $derived.by((): ElementName | undefined => {
-		const el = editMode ? editData.element : weapon?.element
-		const label = getElementLabel(el)
+		const label = getElementLabel(editData.element)
 		return label !== '—' && label !== 'Null' ? (label.toLowerCase() as ElementName) : undefined
 	})
 
@@ -85,57 +69,48 @@
 </script>
 
 <DetailsContainer title="Uncap">
-	{#if weapon?.uncap || editMode}
-		<DetailItem label="Uncap">
-			<UncapIndicator
-				type="weapon"
-				{uncapLevel}
-				{transcendenceStage}
-				{flb}
-				{ulb}
-				{transcendence}
-				editable={false}
-			/>
-		</DetailItem>
-	{/if}
+	<DetailItem label="Uncap">
+		<UncapIndicator
+			type="weapon"
+			{uncapLevel}
+			{transcendenceStage}
+			{flb}
+			{ulb}
+			{transcendence}
+			editable={false}
+		/>
+	</DetailItem>
 
-	{#if editMode}
-		<DetailItem
-			label="FLB"
-			bind:value={editData.flb}
-			editable={true}
-			type="checkbox"
-			element={elementName}
-			onchange={handleFlbChange}
-		/>
-		<DetailItem
-			label="ULB"
-			bind:value={editData.ulb}
-			editable={true}
-			type="checkbox"
-			element={elementName}
-			onchange={handleUlbChange}
-		/>
-		<DetailItem
-			label="Transcendence"
-			bind:value={editData.transcendence}
-			editable={true}
-			type="checkbox"
-			element={elementName}
-			onchange={handleTranscendenceChange}
-		/>
-		<DetailItem
-			label="Extra Prerequisite"
-			sublabel="Min uncap for Additional Weapons"
-			bind:value={editData.extraPrerequisite}
-			editable={true}
-			type="select"
-			options={extraPrerequisiteOptions}
-		/>
-	{:else if weapon?.uncap?.extraPrerequisite != null}
-		<DetailItem
-			label="Extra Prerequisite"
-			value={getExtraPrerequisiteLabel(weapon.uncap.extraPrerequisite)}
-		/>
-	{/if}
+	<DetailItem
+		label="FLB"
+		bind:value={editData.flb}
+		editable={true}
+		type="checkbox"
+		element={elementName}
+		onchange={handleFlbChange}
+	/>
+	<DetailItem
+		label="ULB"
+		bind:value={editData.ulb}
+		editable={true}
+		type="checkbox"
+		element={elementName}
+		onchange={handleUlbChange}
+	/>
+	<DetailItem
+		label="Transcendence"
+		bind:value={editData.transcendence}
+		editable={true}
+		type="checkbox"
+		element={elementName}
+		onchange={handleTranscendenceChange}
+	/>
+	<DetailItem
+		label="Extra Prerequisite"
+		sublabel="Min uncap for Additional Weapons"
+		bind:value={editData.extraPrerequisite}
+		editable={true}
+		type="select"
+		options={extraPrerequisiteOptions}
+	/>
 </DetailsContainer>
