@@ -140,6 +140,36 @@ export interface AdminCharacterRow {
 	createdAt?: string
 }
 
+/** Default `fields` of an admin summon row, camelCased. Rows are flat. */
+export interface AdminSummonRow {
+	id: string
+	granblueId: string
+	nameEn: string | null
+	nameJp: string | null
+	element: number | null
+	rarity: number | null
+	seriesId: string | null
+	seriesSlug: string | null
+	releaseDate: string | null
+	/** Newest of the release and uncap dates */
+	latestDate: string | null
+	updatedAt: string
+	// Not in the default list: request via `fields`
+	seriesNameEn?: string | null
+	seriesNameJp?: string | null
+	flb?: boolean
+	ulb?: boolean
+	transcendence?: boolean
+	subaura?: boolean
+	limit?: boolean
+	maxLevel?: number
+	flbDate?: string | null
+	ulbDate?: string | null
+	transcendenceDate?: string | null
+	auraCount?: number
+	createdAt?: string
+}
+
 /** A raid's group, as `GET /admin/raids` returns it in `group` */
 export interface AdminRaidGroupRef {
 	id: string

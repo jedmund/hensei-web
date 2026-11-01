@@ -1,7 +1,7 @@
 <script lang="ts">
 	// A reference's input, by the resource it points at: a typeahead for
-	// characters and weapons, a select for weapon series and raid groups, and a
-	// select of the chosen series' variants (no row when it has none)
+	// characters and weapons, a select for weapon series, summon series and raid
+	// groups, and a select of the chosen weapon series' variants (no row when it has none)
 	import { createQuery } from '@tanstack/svelte-query'
 	import * as m from '$lib/paraglide/messages'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
@@ -26,9 +26,14 @@
 
 	const none = { value: '', label: m.option_none() }
 
-	const seriesListQuery = createQuery(() => ({
+	// Series drawn as a select: the list for the resource the field points at
+	const weaponSeriesQuery = createQuery(() => ({
 		...entityQueries.weaponSeriesList(),
 		enabled: resource === 'weaponSeries'
+	}))
+	const summonSeriesQuery = createQuery(() => ({
+		...entityQueries.summonSeriesList(),
+		enabled: resource === 'summonSeries'
 	}))
 
 	// Fresh on every form, so a group created a moment ago is there
@@ -48,8 +53,8 @@
 	const options = $derived.by(() => {
 		// No select until the list loads: one without the current series could
 		// write it back as blank
-		if (resource === 'weaponSeries') {
-			const series = seriesListQuery.data
+		if (resource === 'weaponSeries' || resource === 'summonSeries') {
+			const series = resource === 'summonSeries' ? summonSeriesQuery.data : weaponSeriesQuery.data
 			if (!series) return []
 			return [none, ...series.map((s) => ({ value: s.id, label: localizedName(s.name) }))]
 		}

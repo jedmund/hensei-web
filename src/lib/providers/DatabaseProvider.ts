@@ -5,13 +5,13 @@ import type { SearchFilters } from '$lib/api/adapters/types'
 import { localizedName } from '$lib/utils/locale'
 
 interface DatabaseProviderOptions {
-	resource: 'weapons' | 'summons' | 'jobs'
+	resource: 'weapons' | 'jobs'
 	pageSize?: number
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- RestDataProvider generic requires any for compatibility
 export class DatabaseProvider extends RestDataProvider<any> {
-	private resource: 'weapons' | 'summons' | 'jobs'
+	private resource: 'weapons' | 'jobs'
 	private pageSize: number
 	private currentPage: number = 1
 	private totalCount: number = 0
@@ -59,9 +59,6 @@ export class DatabaseProvider extends RestDataProvider<any> {
 			switch (this.resource) {
 				case 'weapons':
 					result = await searchAdapter.searchWeapons(searchParams)
-					break
-				case 'summons':
-					result = await searchAdapter.searchSummons(searchParams)
 					break
 				case 'jobs':
 					result = await searchAdapter.searchJobs(searchParams)

@@ -1,72 +1,19 @@
 import type { CollectionFilterState } from '$lib/types/filter'
-import { parseFiltersFromUrl, buildUrlFromFilters, ELEMENT_TO_PARAM } from '$lib/utils/filterParams'
+import { parseFiltersFromUrl, buildUrlFromFilters } from '$lib/utils/filterParams'
 import type { DatabaseProvider } from '$lib/providers/DatabaseProvider'
 
-export type EntityType = 'summon' | 'job'
-
+/** The jobs grid's URL state: the search, the page and any filters the URL carries */
 export class DatabaseFilters {
 	elementFilters = $state<number[]>([])
 	rarityFilters = $state<number[]>([])
 	seriesFilters = $state<(number | string)[]>([])
 	proficiencyFilters = $state<number[]>([])
 	seasonFilters = $state<number[]>([])
-	showFilters = $state(false)
 
-	#entityType: EntityType
 	#provider: DatabaseProvider
-	#onReload: (page: number) => void
 
-	readonly hasActiveFilters = $derived(
-		this.elementFilters.length > 0 ||
-			this.rarityFilters.length > 0 ||
-			this.seriesFilters.length > 0 ||
-			this.proficiencyFilters.length > 0 ||
-			this.seasonFilters.length > 0
-	)
-
-	readonly filterCount = $derived(
-		this.elementFilters.length +
-			this.rarityFilters.length +
-			this.seriesFilters.length +
-			this.proficiencyFilters.length +
-			this.seasonFilters.length
-	)
-
-	readonly selectedElement = $derived.by(() => {
-		if (this.elementFilters.length === 1) {
-			const elemId = this.elementFilters[0]
-			if (elemId !== undefined) {
-				const elemName = ELEMENT_TO_PARAM[elemId]
-				if (elemName && elemName !== 'null') {
-					return elemName as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
-				}
-			}
-		}
-		return undefined
-	})
-
-	constructor(
-		entityType: EntityType,
-		provider: DatabaseProvider,
-		onReload: (page: number) => void
-	) {
-		this.#entityType = entityType
+	constructor(provider: DatabaseProvider) {
 		this.#provider = provider
-		this.#onReload = onReload
-	}
-
-	handleFiltersChange(filters: CollectionFilterState) {
-		const seriesAsStrings =
-			filters.series.length > 0 ? filters.series.map((s) => String(s)) : undefined
-
-		this.#provider.setFilters({
-			element: filters.element.length > 0 ? filters.element : undefined,
-			rarity: filters.rarity.length > 0 ? filters.rarity : undefined,
-			series: seriesAsStrings,
-			proficiency1: filters.proficiency.length > 0 ? filters.proficiency : undefined,
-			season: filters.season.length > 0 ? filters.season : undefined
-		})
-		this.#onReload(1)
 	}
 
 	buildUrlParams(searchTerm: string, pageNum: number, pathname: string): string {
@@ -79,7 +26,7 @@ export class DatabaseFilters {
 			race: [],
 			gender: []
 		}
-		const params = buildUrlFromFilters(filterState, searchTerm, pageNum, this.#entityType)
+		const params = buildUrlFromFilters(filterState, searchTerm, pageNum, 'job')
 		const search = params.toString()
 		return search ? `${pathname}?${search}` : pathname
 	}
@@ -90,7 +37,7 @@ export class DatabaseFilters {
 		setSearchTerm: (term: string) => void,
 		setLastSearchTerm: (term: string) => void
 	): number {
-		const parsed = parseFiltersFromUrl(searchParams, this.#entityType)
+		const parsed = parseFiltersFromUrl(searchParams, 'job')
 
 		this.elementFilters = parsed.element
 		this.rarityFilters = parsed.rarity
@@ -117,7 +64,6 @@ export class DatabaseFilters {
 				proficiency1: parsed.proficiency.length > 0 ? parsed.proficiency : undefined,
 				season: parsed.season.length > 0 ? parsed.season : undefined
 			})
-			this.showFilters = true
 		}
 
 		if (parsed.searchQuery.length >= 2) {

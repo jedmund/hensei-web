@@ -14,6 +14,7 @@ import { charactersSection } from './characters/section'
 import { eventsSection } from './events/section'
 import { raidGroupsSection } from './raid-groups/section'
 import { raidsSection } from './raids/section'
+import { summonsSection } from './summons/section'
 import { weaponsSection } from './weapons/section'
 
 export type SectionGroupId = 'catalogue' | 'battles' | 'site' | 'admin'
@@ -99,25 +100,7 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 		parent: 'characters'
 	},
 	...resourceSections('weapons', weaponsSection),
-	{
-		id: 'summons',
-		label: () => m.nav_summons(),
-		path: '/database/summons',
-		group: 'catalogue',
-		entity: () => m.type_summon(),
-		actions: [
-			[
-				{
-					label: () => m.nav_new_single({ entity: m.type_summon() }),
-					href: '/database/summons/new'
-				},
-				{
-					label: () => m.nav_new_multiple({ entity: m.type_summon() }),
-					href: '/database/summons/import'
-				}
-			]
-		]
-	},
+	...resourceSections('summons', summonsSection),
 	{
 		id: 'jobs',
 		label: () => m.nav_jobs(),

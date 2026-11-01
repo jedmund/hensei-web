@@ -80,6 +80,7 @@ export type ReferenceResource =
 	| 'weaponSeriesVariant'
 	| 'awakening'
 	| 'characterSeries'
+	| 'summonSeries'
 	| 'raidGroup'
 	| 'raid'
 
@@ -266,6 +267,8 @@ export interface ToggleGroupDef {
 export interface ListDef<Row> {
 	/** Accessible name for the table */
 	label: Message
+	/** The generated list screen's page title. Defaults to `label` */
+	pageTitle?: Message
 	/** Lowercase plural noun for the search placeholder, e.g. "weapons" */
 	entity: Message
 	empty: Message
@@ -326,11 +329,11 @@ export type RecordBodyProps = {
 type Lazy<Props extends Record<string, unknown>> = () => Promise<{ default: Component<Props> }>
 
 /**
- * Hand-written screens that replace the generated ones. The detail and the
- * panel are generated when a resource has a `record`, the edit page when it
- * can also `save.update`, and the new page when it can `save.create`. The
- * list is always generated (`ResourceTable` under the page title), and the
- * generic routes 404 any other screen the resource doesn't have.
+ * Hand-written screens that replace the generated ones. The list is always
+ * generated (`ResourceTable` under the list's page title); the detail and the
+ * panel when a resource has a `record`, the edit page when it can also
+ * `save.update`, and the new page when it can `save.create`. The generic
+ * routes 404 any other screen the resource doesn't have.
  */
 export interface Screens<Full> {
 	/** The list takes no props: it reads its state from the URL */

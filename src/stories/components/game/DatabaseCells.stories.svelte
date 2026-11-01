@@ -1,11 +1,9 @@
 <script module>
 	import { defineMeta } from '@storybook/addon-svelte-csf'
 	import CharacterImageCell from '$lib/components/database/cells/CharacterImageCell.svelte'
-	import SummonImageCell from '$lib/components/database/cells/SummonImageCell.svelte'
 	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
 	import CharacterUncapCell from '$lib/components/database/cells/CharacterUncapCell.svelte'
 	import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svelte'
-	import SummonUncapCell from '$lib/components/database/cells/SummonUncapCell.svelte'
 
 	const { Story } = defineMeta({
 		title: 'Components/Game/Database Cells',
@@ -32,14 +30,6 @@
 		uncap: { flb: true, ulb: true }
 	}
 
-	const mockSummonRow = {
-		granblueId: '2040001000',
-		name: { en: 'Bahamut', ja: 'バハムート' },
-		element: 5, // Dark
-		rarity: 3,
-		uncap: { flb: true, ulb: true, transcendence: true }
-	}
-
 	// All elements for comparison
 	const elements = [
 		{ id: 1, name: 'Wind' },
@@ -57,15 +47,6 @@
 		style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; height: 80px;"
 	>
 		<CharacterImageCell row={mockCharacterRow} />
-	</div>
-</Story>
-
-<!-- Summon Image Cell -->
-<Story name="Summon Image Cell">
-	<div
-		style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; height: 80px;"
-	>
-		<SummonImageCell row={mockSummonRow} />
 	</div>
 </Story>
 
@@ -141,36 +122,6 @@
 		>
 			<span style="width: 100px; font-size: 12px; color: #666;">Transcendence:</span>
 			<WeaponUncapCell row={{ flb: true, ulb: true, transcendence: true }} />
-		</div>
-	</div>
-</Story>
-
-<!-- Summon Uncap Cell -->
-<Story name="Summon Uncap Cell">
-	<div style="display: flex; flex-direction: column; gap: 16px;">
-		<div
-			style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; align-items: center;"
-		>
-			<span style="width: 100px; font-size: 12px; color: #666;">MLB (3★):</span>
-			<SummonUncapCell row={{ uncap: {}, rarity: 3 }} />
-		</div>
-		<div
-			style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; align-items: center;"
-		>
-			<span style="width: 100px; font-size: 12px; color: #666;">FLB (4★):</span>
-			<SummonUncapCell row={{ uncap: { flb: true }, rarity: 3 }} />
-		</div>
-		<div
-			style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; align-items: center;"
-		>
-			<span style="width: 100px; font-size: 12px; color: #666;">ULB (5★):</span>
-			<SummonUncapCell row={{ uncap: { flb: true, ulb: true }, rarity: 3 }} />
-		</div>
-		<div
-			style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; align-items: center;"
-		>
-			<span style="width: 100px; font-size: 12px; color: #666;">Transcendence:</span>
-			<SummonUncapCell row={{ uncap: { flb: true, ulb: true, transcendence: true }, rarity: 3 }} />
 		</div>
 	</div>
 </Story>

@@ -6,7 +6,6 @@ import { match as resource } from '../../../../params/resource'
 import { match as socialProvider } from '../../../../params/socialProvider'
 import { match as tab } from '../../../../params/tab'
 import { weaponsResource } from '$lib/features/database/weapons/resource'
-import { raidsResource } from '$lib/features/database/raids/resource'
 import { loadRecord, loadScreen, redirectMovedView } from './routes'
 
 const getWeapon = vi.hoisted(() => vi.fn())
@@ -65,6 +64,10 @@ describe('generic database routes', () => {
 		expect(routeFor('/database/characters/3040001000')).toBe(`${generic}/[id]`)
 		expect(routeFor('/database/characters/3040001000/edit')).toBe(`${generic}/[id]/edit`)
 		expect(routeFor('/database/characters/new')).toBe(`${generic}/new`)
+		expect(routeFor('/database/summons')).toBe(generic)
+		expect(routeFor('/database/summons/2040001000')).toBe(`${generic}/[id]`)
+		expect(routeFor('/database/summons/2040001000/edit')).toBe(`${generic}/[id]/edit`)
+		expect(routeFor('/database/summons/new')).toBe(`${generic}/new`)
 		expect(routeFor('/database/raids')).toBe(generic)
 		expect(routeFor('/database/raids/lucilius-hard')).toBe(`${generic}/[id]`)
 		expect(routeFor('/database/raids/lucilius-hard/edit')).toBe(`${generic}/[id]/edit`)
@@ -86,7 +89,7 @@ describe('generic database routes', () => {
 		expect(routeFor('/database/characters/3040001000/style/edit')).toBe(
 			'/(app)/database/characters/[granblueId]/style/edit'
 		)
-		expect(routeFor('/database/summons/2040001000')).toBe('/(app)/database/summons/[granblueId]')
+		expect(routeFor('/database/summons/import')).toBe('/(app)/database/summons/import')
 		expect(routeFor('/database/series/weapons/new')).toBe('/(app)/database/series/weapons/new')
 	})
 
@@ -125,10 +128,11 @@ describe('loadScreen', () => {
 		expect(Object.keys(weaponsResource.screens ?? {})).toEqual(['list'])
 	})
 
-	it('generates the list for a resource with no override', async () => {
+	it('generates the list for a resource with no list override', async () => {
+		const { summonsResource } = await import('$lib/features/database/summons/resource')
 		const { default: generated } = await import('./ResourceListScreen.svelte')
-		expect(raidsResource.screens?.list).toBeUndefined()
-		expect(await loadScreen('raids', 'list')).toBe(generated)
+		expect(summonsResource.screens?.list).toBeUndefined()
+		expect(await loadScreen('summons', 'list')).toBe(generated)
 	})
 
 	it('404s an unregistered resource', async () => {

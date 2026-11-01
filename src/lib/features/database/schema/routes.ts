@@ -13,8 +13,8 @@ function definition(resource: string): AnyResourceDef {
 }
 
 /**
- * Generated screens, for resources with no override. The list needs only the
- * definition, the detail a `record`, the edit page a `record` it can
+ * Generated screens, for resources with no override. Every resource has a
+ * list; the detail needs a `record`, the edit page a `record` it can
  * `save.update`, the new page one it can `save.create`
  */
 function generated(

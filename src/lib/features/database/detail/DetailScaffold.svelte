@@ -28,10 +28,6 @@
 		currentTab?: DetailTab
 		onTabChange?: (tab: DetailTab) => void
 		showTabs?: boolean
-		/** Show a Skills tab (between Info and Images) — currently weapons only. */
-		showSkills?: boolean
-		/** Label for the skills tab segment (summons use it for Auras) */
-		skillsLabel?: string
 		/** Show the Raw Data tab (editor-only for characters, weapons and summons) */
 		showRaw?: boolean
 		/** The tabs after Info, replacing Skills/Images/Raw Data and their flags */
@@ -58,8 +54,6 @@
 		currentTab = 'info',
 		onTabChange,
 		showTabs = true,
-		showSkills = false,
-		skillsLabel = 'Skills',
 		showRaw = true,
 		tabs,
 		onDownloadAllImages,
@@ -131,9 +125,6 @@
 						<Segment value={tab.value}>{tab.label}</Segment>
 					{/each}
 				{:else}
-					{#if showSkills}
-						<Segment value="skills">{skillsLabel}</Segment>
-					{/if}
 					<Segment value="images">Images</Segment>
 					{#if showRaw}
 						<Segment value="raw">Raw Data</Segment>
