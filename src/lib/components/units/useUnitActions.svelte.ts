@@ -1,10 +1,11 @@
 /**
  * Actions every grid unit (character, weapon, summon) shares: the sidebar
- * active state, remove with confirmation, replace, view in database, the
- * collection teams pane and the uncap/transcendence handlers.
+ * active and slot-selected state, the details sidebar, remove with
+ * confirmation, replace, view in database, the collection teams pane and the
+ * uncap/transcendence handlers.
  *
- * Per-type pieces (details/edit sidebars, duplicate, seals, badges) stay in
- * the unit component.
+ * Per-type pieces (edit sidebars, duplicate, seals, badges) stay in the unit
+ * component.
  *
  * @example
  * ```ts
@@ -13,7 +14,8 @@
  *   ctx,
  *   item: () => item,
  *   position: () => position,
- *   entity: () => item?.weapon
+ *   entity: () => item?.weapon,
+ *   details: { onSaveWeapon: saveWeapon }
  * })
  * ```
  */
@@ -25,6 +27,11 @@ import { toast } from 'svelte-sonner'
 import { sidebar } from '$lib/stores/sidebar.svelte'
 import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
 import { getDatabaseUrl } from '$lib/utils/database'
+import {
+	openDetailsSidebar,
+	type DetailsSidebarOptions
+} from '$lib/features/details/openDetailsSidebar.svelte'
+import { GridType } from '$lib/types/enums'
 import { extractErrorMessage } from '$lib/utils/errors'
 import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
 
@@ -44,7 +51,17 @@ interface UseUnitActionsArgs {
 	position: () => number
 	/** The catalogue entry behind the grid item (item.character / .weapon / .summon) */
 	entity: () => UnitEntity | undefined
+	/** Save callback the details sidebar edits through (characters and weapons) */
+	details?: Pick<DetailsSidebarOptions, 'onSaveCharacter' | 'onSaveWeapon'>
 }
+
+const GRID_TYPE = {
+	character: GridType.Character,
+	weapon: GridType.Weapon,
+	summon: GridType.Summon
+} as const
+
+export type UnitActions = ReturnType<typeof useUnitActions>
 
 export function useUnitActions(args: UseUnitActionsArgs) {
 	const { type, ctx } = args
@@ -54,6 +71,11 @@ export function useUnitActions(args: UseUnitActionsArgs) {
 		const item = args.item()
 		return item?.id && sidebar.activeItemId === String(item.id)
 	})
+
+	// Check if this slot is currently selected for adding/replacing an item
+	const isSelected = $derived(
+		ctx?.getSelectedSlot?.() === args.position() && ctx?.getActiveTab?.() === GRID_TYPE[type]
+	)
 
 	let removeConfirmOpen = $state(false)
 
@@ -81,6 +103,27 @@ export function useUnitActions(args: UseUnitActionsArgs) {
 		if (ctx?.openPicker) {
 			ctx.openPicker({ type, position: args.position(), item: args.item() })
 		}
+	}
+
+	/** The party ids the details and edit sidebars forward to their panes */
+	function partyRefs() {
+		const party = ctx.getParty()
+		return { partyId: party?.id, partyShortcode: party?.shortcode }
+	}
+
+	function viewDetails() {
+		const item = args.item()
+		if (!item) return
+		const canEdit = ctx?.canEdit()
+		openDetailsSidebar({
+			type,
+			item,
+			...args.details,
+			isOwner: canEdit ?? false,
+			onReplace: canEdit ? replace : undefined,
+			onRemove: canEdit ? remove : undefined,
+			...partyRefs()
+		})
 	}
 
 	function viewInDatabase() {
@@ -149,6 +192,9 @@ export function useUnitActions(args: UseUnitActionsArgs) {
 		get isActive() {
 			return isActive
 		},
+		get isSelected() {
+			return isSelected
+		},
 		get removeConfirmOpen() {
 			return removeConfirmOpen
 		},
@@ -161,6 +207,8 @@ export function useUnitActions(args: UseUnitActionsArgs) {
 		remove,
 		removeAction,
 		replace,
+		partyRefs,
+		viewDetails,
 		viewInDatabase,
 		viewTeams,
 		addToTeamsView,
