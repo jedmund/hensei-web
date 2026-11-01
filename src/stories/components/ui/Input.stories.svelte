@@ -9,7 +9,7 @@
 		argTypes: {
 			variant: {
 				control: 'select',
-				options: ['default', 'contained', 'duration', 'number', 'range'],
+				options: ['default', 'contained', 'number', 'range'],
 				description: 'Input variant style'
 			},
 			contained: {
