@@ -4,18 +4,11 @@
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-
-	interface FilterConfig {
-		key: string
-		options: { value: number | string; label: string; color?: string }[]
-		value: (number | string)[]
-		onChange: (value: (number | string)[]) => void
-		placeholder: string
-	}
+	import type { CollectionFilterConfig } from '$lib/types/filter'
 
 	interface Props {
 		open: boolean
-		filters: FilterConfig[]
+		filters: CollectionFilterConfig[]
 		onClear: () => void
 		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	}

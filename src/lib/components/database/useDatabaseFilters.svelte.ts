@@ -1,4 +1,4 @@
-import type { CollectionFilterState } from '$lib/components/collection/CollectionFilters.svelte'
+import type { CollectionFilterState } from '$lib/types/filter'
 import { parseFiltersFromUrl, buildUrlFromFilters, ELEMENT_TO_PARAM } from '$lib/utils/filterParams'
 import type { DatabaseProvider } from '$lib/providers/DatabaseProvider'
 import type { WeaponSeries } from '$lib/types/api/weaponSeries'

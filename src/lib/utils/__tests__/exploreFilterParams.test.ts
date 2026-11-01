@@ -540,7 +540,7 @@ describe('difficulty filter (multi-select)', () => {
 
 	it('seeds the pill label with the slug as a placeholder (hydrated client-side)', () => {
 		// The deserialize path runs before the tier list is loaded, so labels start
-		// as the slug. ExploreFilters.svelte patches them when the query resolves.
+		// as the slug. ExploreFilterSearch relabels them (relabelFilters) when the query resolves.
 		const { filters } = deserializeExploreFilters(new URLSearchParams('difficulty=casual'))
 		const diff = filters.find((f) => f.kind === 'difficulty')!
 		expect(diff.label).toBe(diff.value)
