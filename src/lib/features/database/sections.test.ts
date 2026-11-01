@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import { CURATOR_ROLE } from '$lib/auth/roles'
-import { groupedSections, rootOf, sectionForUrl } from './sections'
+import { weaponsResource } from './weapons/resource'
+import {
+	DATABASE_SECTIONS,
+	groupedSections,
+	resourceSections,
+	rootOf,
+	sectionById,
+	sectionForUrl,
+	type DatabaseSection
+} from './sections'
 
 const at = (path: string) => sectionForUrl(new URL(path, 'http://localhost'))?.id ?? null
 
@@ -48,5 +57,77 @@ describe('groupedSections', () => {
 	it('shows curators only Events', () => {
 		const ids = groupedSections(CURATOR_ROLE).flatMap((g) => g.sections.map((s) => s.id))
 		expect(ids).toEqual(['events'])
+	})
+})
+
+describe('resourceSections', () => {
+	/** Labels called, so entries compare by what they show */
+	const shown = (section: DatabaseSection) =>
+		JSON.parse(
+			JSON.stringify(section, (_, v) => (typeof v === 'function' ? `fn:${v()}` : v))
+		) as unknown
+
+	it("derives the weapons entries from the definition's section", () => {
+		const derived = resourceSections(weaponsResource.name, weaponsResource.section!)
+		const start = DATABASE_SECTIONS.findIndex((s) => s.id === 'weapons')
+		expect(DATABASE_SECTIONS.slice(start, start + derived.length).map(shown)).toEqual(
+			derived.map(shown)
+		)
+	})
+
+	it('keeps the weapons entries as they were written by hand', () => {
+		const ids = DATABASE_SECTIONS.map((s) => s.id)
+		expect(ids.slice(ids.indexOf('roles'), ids.indexOf('summons') + 1)).toEqual([
+			'roles',
+			'weapons',
+			'weapon-series',
+			'awakenings',
+			'weapon-skills',
+			'summons'
+		])
+		expect(shown(sectionById('weapons')!)).toEqual({
+			id: 'weapons',
+			label: 'fn:Weapons',
+			path: '/database/weapons',
+			group: 'catalogue',
+			entity: 'fn:weapon',
+			actions: [
+				[
+					{ label: 'fn:Single weapon', href: '/database/weapons/new' },
+					{ label: 'fn:Multiple weapons', href: '/database/weapons/import' }
+				],
+				[{ label: 'fn:Weapon series', href: '/database/series/weapons/new' }]
+			]
+		})
+		expect(
+			['weapon-series', 'awakenings', 'weapon-skills'].map((id) => shown(sectionById(id)!))
+		).toEqual([
+			{
+				id: 'weapon-series',
+				label: 'fn:Series',
+				path: '/database/weapons',
+				view: 'series',
+				group: 'catalogue',
+				parent: 'weapons',
+				matches: ['/database/series/weapons']
+			},
+			{
+				id: 'awakenings',
+				label: 'fn:Awakenings',
+				path: '/database/weapons',
+				view: 'awakenings',
+				group: 'catalogue',
+				parent: 'weapons'
+			},
+			{
+				id: 'weapon-skills',
+				label: 'fn:Skills',
+				path: '/database/weapons',
+				view: 'skills',
+				group: 'catalogue',
+				parent: 'weapons',
+				matches: ['/database/weapon-skills']
+			}
+		])
 	})
 })

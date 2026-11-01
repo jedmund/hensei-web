@@ -3,7 +3,17 @@
  * pages did: the list's columns and filters (pinned as fixtures below), and
  * the edit and new pages' payloads (transcribed below).
  */
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
+const adapter = vi.hoisted(() => ({
+	createWeapon: vi.fn(),
+	validateWeaponGranblueId: vi.fn(),
+	downloadWeaponImages: vi.fn()
+}))
+vi.mock('$lib/api/adapters/weapon.adapter', async (importOriginal) => {
+	const actual = await importOriginal<typeof import('$lib/api/adapters/weapon.adapter')>()
+	return { ...actual, weaponAdapter: Object.assign(actual.weaponAdapter, adapter) }
+})
 import {
 	labelText,
 	resolveOptions,
@@ -19,6 +29,7 @@ import {
 } from '$lib/features/database/schema/columns'
 import {
 	applyDerive,
+	formSections,
 	fromRecord,
 	initialValues,
 	toPayload
@@ -475,7 +486,6 @@ function legacyNewData() {
 		element: 0,
 		proficiency: 0,
 		series: 0 as number | string,
-		newSeries: 0,
 		promotions: [] as number[],
 		minHp: 0,
 		maxHp: 0,
@@ -522,7 +532,6 @@ function legacyCreatePayload(editData: ReturnType<typeof legacyNewData>) {
 		element: editData.element,
 		proficiency: editData.proficiency,
 		series: editData.series || undefined,
-		new_series: editData.newSeries || undefined,
 		promotions: editData.promotions,
 		min_hp: editData.minHp,
 		max_hp: editData.maxHp,
@@ -762,7 +771,6 @@ describe('weapons resource: edit payload parity', () => {
 		// Read-only fields aren't form values
 		expect(values).not.toHaveProperty('uncap')
 		expect(values).not.toHaveProperty('forge_chain')
-		expect(values).not.toHaveProperty('new_series')
 	})
 })
 
@@ -830,6 +838,50 @@ describe('weapons resource: create payload parity', () => {
 			nicknames: { en: [], ja: [] },
 			recruits: null
 		})
+	})
+})
+
+describe('weapons resource: create form', () => {
+	it("leaves out what the new page didn't have, metadata first", () => {
+		const sections = formSections(weaponsResource, 'create')
+		expect(sections.map(({ section }) => section.id)).toEqual([
+			'metadata',
+			'gacha',
+			'uncap',
+			'details',
+			'hp',
+			'attack',
+			'caps',
+			'forge',
+			'nicknames',
+			'dates',
+			'links'
+		])
+		const keys = sections.flatMap(({ fields }) => fields.map((f) => f.key))
+		expect(keys).not.toContain('weapon_series_variant_id')
+		// The stars still preview the uncap checkboxes
+		expect(keys).toContain('uncap')
+	})
+
+	it('creates through the adapter, then queues the image download', async () => {
+		const saved = { id: 'new-uuid', granblueId: '1040914000' } as Weapon
+		adapter.createWeapon.mockResolvedValueOnce(saved)
+		adapter.downloadWeaponImages.mockResolvedValueOnce({})
+		const save = weaponsResource.save!
+		expect(await save.create!({ granblue_id: '1040914000' })).toBe(saved)
+		expect(adapter.createWeapon).toHaveBeenCalledWith({ granblue_id: '1040914000' })
+		await save.afterCreate!(saved)
+		expect(adapter.downloadWeaponImages).toHaveBeenCalledWith('new-uuid')
+	})
+
+	it('says when the Granblue ID is taken, and nothing otherwise', async () => {
+		const check = weaponsResource.save!.asyncValidate!.granblue_id!
+		adapter.validateWeaponGranblueId.mockResolvedValueOnce({ valid: true, existsInDb: true })
+		expect(await check('1040001000', {})).toBe('A weapon with this Granblue ID already exists')
+		expect(adapter.validateWeaponGranblueId).toHaveBeenLastCalledWith('1040001000')
+		// No images on the server isn't a reason to block
+		adapter.validateWeaponGranblueId.mockResolvedValueOnce({ valid: false, existsInDb: false })
+		expect(await check('1040001001', {})).toBeNull()
 	})
 })
 

@@ -191,7 +191,6 @@
 		"element": "scalar",
 		"proficiency": "scalar",
 		"series": "scalar",
-		"new_series": "scalar",
 		"weapon_series_variant_id": "scalar",
 		"flb": "scalar",
 		"ulb": "scalar",

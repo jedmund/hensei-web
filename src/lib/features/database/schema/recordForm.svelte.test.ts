@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
 // jsdom has no matchMedia; hoisted, as modules read it on import
 vi.hoisted(() => {
@@ -21,7 +21,7 @@ vi.mock('@tanstack/svelte-query', async (importOriginal) => ({
 import type { Weapon } from '$lib/api/adapters/weapon.adapter'
 import { UnsavedChangesGuard } from '$lib/features/database/detail/unsavedChanges.svelte'
 import { weaponsResource } from '$lib/features/database/weapons/resource'
-import { createRecordForm } from './recordForm.svelte'
+import { ASYNC_CHECK_DELAY, createRecordForm } from './recordForm.svelte'
 
 const weapon: Weapon = {
 	id: 'weapon-uuid',
@@ -166,5 +166,162 @@ describe('createRecordForm', () => {
 			['weapon', '1040912999'],
 			['admin', 'weapons', 'list']
 		])
+	})
+})
+
+describe('createRecordForm without a record (create)', () => {
+	const create = vi.fn()
+	const afterCreate = vi.fn(async () => {})
+	const exists = vi.fn<(id: unknown) => Promise<string | null>>(async () => null)
+	const createDef = {
+		...weaponsResource,
+		save: { create, afterCreate, asyncValidate: { granblue_id: exists } }
+	}
+
+	function setupNew() {
+		const form = createRecordForm(createDef)
+		const guard = new UnsavedChangesGuard(() => form.values)
+		guard.reset()
+		return { form, guard }
+	}
+
+	/** The fields a new weapon needs */
+	function fill(form: ReturnType<typeof setupNew>['form']) {
+		form.set('granblue_id', '1040914000')
+		form.set('name', { en: 'Fresh', ja: '' })
+		form.set('proficiency', 1)
+	}
+
+	beforeEach(() => {
+		vi.useFakeTimers()
+		create.mockReset()
+		afterCreate.mockClear()
+		exists.mockReset()
+		exists.mockResolvedValue(null)
+	})
+	afterEach(() => vi.useRealTimers())
+
+	it('starts from the defaults, clean until something is entered', () => {
+		const { form, guard } = setupNew()
+		expect(form.mode).toBe('create')
+		expect(form.values).toMatchObject({
+			rarity: 3,
+			element: 0,
+			proficiency: null,
+			max_level: 100,
+			max_skill_level: 10,
+			granblue_id: '',
+			name: { en: '', ja: '' }
+		})
+		expect(guard.dirty).toBe(false)
+		form.set('min_hp', 10)
+		expect(guard.dirty).toBe(true)
+	})
+
+	it('requires a Granblue ID, an English name and a proficiency', async () => {
+		const { form } = setupNew()
+		expect(await form.save()).toBeNull()
+		expect(create).not.toHaveBeenCalled()
+		expect(Object.keys(form.errors).sort()).toEqual(['granblue_id', 'name.en', 'proficiency'])
+	})
+
+	it("doesn't ask the server about an ID that isn't 10 digits", async () => {
+		const { form } = setupNew()
+		form.set('granblue_id', '104091')
+		await vi.advanceTimersByTimeAsync(ASYNC_CHECK_DELAY)
+		expect(exists).not.toHaveBeenCalled()
+		expect(await form.save()).toBeNull()
+		expect(form.error('granblue_id')).toBe('Granblue ID must be exactly 10 digits')
+	})
+
+	it('checks the ID once typing pauses, and blocks saving while it exists', async () => {
+		exists.mockResolvedValue('A weapon with this Granblue ID already exists')
+		const { form } = setupNew()
+		fill(form)
+		form.set('granblue_id', '1040914001')
+		await vi.advanceTimersByTimeAsync(ASYNC_CHECK_DELAY)
+		// Debounced: only the value typing stopped at
+		expect(exists).toHaveBeenCalledTimes(1)
+		expect(exists.mock.calls[0]![0]).toBe('1040914001')
+		expect(form.error('granblue_id')).toBe('A weapon with this Granblue ID already exists')
+
+		expect(await form.save()).toBeNull()
+		expect(create).not.toHaveBeenCalled()
+
+		// A new ID clears the problem and asks again
+		exists.mockResolvedValue(null)
+		form.set('granblue_id', '1040914002')
+		expect(form.error('granblue_id')).toBeUndefined()
+		await vi.advanceTimersByTimeAsync(ASYNC_CHECK_DELAY)
+		expect(form.error('granblue_id')).toBeUndefined()
+	})
+
+	it('waits for a check still pending when Save is pressed', async () => {
+		exists.mockResolvedValue('A weapon with this Granblue ID already exists')
+		const { form } = setupNew()
+		fill(form)
+		// Saved before the debounce runs the check
+		expect(await form.save()).toBeNull()
+		expect(exists).toHaveBeenCalledWith('1040914000', expect.anything())
+		expect(create).not.toHaveBeenCalled()
+	})
+
+	it("doesn't block on a check that failed", async () => {
+		vi.spyOn(console, 'error').mockImplementationOnce(() => {})
+		exists.mockRejectedValue(new Error('down'))
+		create.mockResolvedValue({ id: 'new-uuid', granblueId: '1040914000' })
+		const { form } = setupNew()
+		fill(form)
+		expect(await form.save()).not.toBeNull()
+	})
+
+	it('creates the record, then runs afterCreate and refreshes the lists', async () => {
+		const saved = { id: 'new-uuid', granblueId: '1040914000' }
+		create.mockResolvedValue(saved)
+		const { form } = setupNew()
+		fill(form)
+
+		expect(await form.save()).toBe(saved)
+		const [payload] = create.mock.calls[0]!
+		expect(payload).toMatchObject({
+			granblue_id: '1040914000',
+			name_en: 'Fresh',
+			name_jp: null,
+			proficiency: 1,
+			rarity: 3,
+			element: 0,
+			max_level: 100,
+			release_date: null,
+			recruits: null
+		})
+		expect(payload).not.toHaveProperty('new_series')
+		expect(afterCreate).toHaveBeenCalledWith(saved)
+		const keys = client.invalidateQueries.mock.calls.map(
+			(call) => (call as unknown as [{ queryKey: unknown[] }])[0].queryKey
+		)
+		expect(keys).toEqual([
+			['weapon', '1040914000'],
+			['admin', 'weapons', 'list']
+		])
+	})
+
+	it("maps the API's 422 errors back onto the fields", async () => {
+		create.mockRejectedValue({
+			status: 422,
+			message: 'Unprocessable',
+			details: { errors: { granblue_id: ['has already been taken'] } }
+		})
+		const { form } = setupNew()
+		fill(form)
+		expect(await form.save()).toBeNull()
+		expect(form.error('granblue_id')).toBe('has already been taken')
+		expect(afterCreate).not.toHaveBeenCalled()
+	})
+
+	it('runs no server checks on the edit form', async () => {
+		const form = createRecordForm({ ...createDef, save: { ...createDef.save, update } }, weapon)
+		form.set('granblue_id', '1040912001')
+		await vi.advanceTimersByTimeAsync(ASYNC_CHECK_DELAY)
+		expect(exists).not.toHaveBeenCalled()
 	})
 })
