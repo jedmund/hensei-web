@@ -215,21 +215,11 @@
 	:global([data-button-root] .accessory) {
 		display: flex;
 		align-items: center;
-
-		svg {
-			fill: currentColor;
-			height: 1em;
-			width: 1em;
-		}
 	}
 
 	// Ensure icons inherit button text color
 	:global([data-button-root] .icon) {
 		color: inherit;
-
-		svg {
-			fill: currentColor;
-		}
 	}
 
 	// Variants
