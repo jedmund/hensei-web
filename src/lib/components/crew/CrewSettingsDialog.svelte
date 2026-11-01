@@ -2,11 +2,12 @@
 	import { crewAdapter } from '$lib/api/adapters/crew.adapter'
 	import { useUpdateCrew } from '$lib/api/mutations/crew.mutations'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
+	import { toCrewInput } from '$lib/features/crew/crewForm'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
-	import Input from '$lib/components/ui/Input.svelte'
+	import CrewDetailsFields from '$lib/components/crew/form/CrewDetailsFields.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -100,12 +101,14 @@
 		settingsError = null
 
 		try {
-			const crew = await updateCrewMutation.mutateAsync({
-				name: settingsName.trim(),
-				gamertag: settingsGamertag.trim() || undefined,
-				granblueCrewId: settingsGranblueCrewId.trim() || undefined,
-				description: settingsDescription.trim() || undefined
-			})
+			const crew = await updateCrewMutation.mutateAsync(
+				toCrewInput({
+					name: settingsName,
+					gamertag: settingsGamertag,
+					granblueCrewId: settingsGranblueCrewId,
+					description: settingsDescription
+				})
+			)
 
 			crewStore.setCrew(crew, crewStore.membership)
 			open = false
@@ -131,55 +134,17 @@
 	<ModalHeader title={m.crew_settings_title()} />
 
 	<ModalBody>
-		<div class="modal-form">
-			{#if settingsError}
-				<div class="error-message">{settingsError}</div>
-			{/if}
-
-			<div class="form-fields">
-				<Input
-					label={m.crew_name_label()}
-					bind:value={settingsName}
-					placeholder={m.crew_name_placeholder_short()}
-					maxLength={100}
-					fullWidth
-					contained
-				/>
-
-				<Input
-					label="{m.crew_gamertag_label()} {m.crew_gamertag_optional()}"
-					value={settingsGamertag}
-					oninput={onGamertagInput}
-					placeholder={m.crew_gamertag_placeholder()}
-					maxLength={4}
-					fullWidth
-					contained
-					error={gamertagError}
-					rightIcon={gamertagIcon}
-				/>
-
-				<Input
-					label="{m.crew_granblue_id_label()} {m.crew_gamertag_optional()}"
-					bind:value={settingsGranblueCrewId}
-					placeholder={m.crew_granblue_id_placeholder()}
-					fullWidth
-					contained
-				/>
-
-				<div class="form-field">
-					<label for="settings-description"
-						>{m.crew_description_label()}
-						<span class="optional">{m.crew_gamertag_optional()}</span></label
-					>
-					<textarea
-						id="settings-description"
-						bind:value={settingsDescription}
-						placeholder={m.crew_description_placeholder()}
-						maxlength="500"
-						rows="3"></textarea>
-				</div>
-			</div>
-		</div>
+		<CrewDetailsFields
+			bind:name={settingsName}
+			bind:gamertag={settingsGamertag}
+			bind:granblueCrewId={settingsGranblueCrewId}
+			bind:description={settingsDescription}
+			descriptionId="settings-description"
+			{gamertagError}
+			{gamertagIcon}
+			{onGamertagInput}
+			error={settingsError}
+		/>
 	</ModalBody>
 
 	<ModalFooter
@@ -192,66 +157,3 @@
 		}}
 	/>
 </Dialog>
-
-<style lang="scss">
-	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/layout' as layout;
-	@use '$src/themes/typography' as typography;
-
-	.modal-form {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-3x;
-	}
-
-	.error-message {
-		background-color: var(--danger-bg-subtle);
-		border: 1px solid var(--danger);
-		border-radius: layout.$card-corner;
-		color: var(--danger);
-		padding: spacing.$unit-2x;
-	}
-
-	.form-fields {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-3x;
-	}
-
-	.form-field {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-half;
-
-		label {
-			font-size: typography.$font-small;
-			font-weight: typography.$medium;
-			color: var(--text-primary);
-
-			.optional {
-				font-weight: typography.$normal;
-				color: var(--text-secondary);
-			}
-		}
-
-		textarea {
-			padding: spacing.$unit-2x;
-			border: none;
-			border-radius: layout.$input-corner;
-			font-size: typography.$font-regular;
-			font-family: inherit;
-			background: var(--input-bound-bg);
-			color: var(--text-primary);
-			resize: vertical;
-			min-height: 80px;
-
-			&:hover {
-				background: var(--input-bound-bg-hover);
-			}
-
-			&::placeholder {
-				color: var(--text-tertiary);
-			}
-		}
-	}
-</style>
