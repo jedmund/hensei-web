@@ -33,8 +33,8 @@
 	import JobSkillTypeCell from '$lib/components/database/cells/JobSkillTypeCell.svelte'
 
 	// View mode state - read initial value from URL
-	const initialView = $page.url.searchParams.get('view')
-	let viewMode = $state<'jobs' | 'accessories' | 'skills'>(
+	const initialView = $derived($page.url.searchParams.get('view'))
+	let viewMode = $derived<'jobs' | 'accessories' | 'skills'>(
 		initialView === 'accessories' ? 'accessories' : initialView === 'skills' ? 'skills' : 'jobs'
 	)
 

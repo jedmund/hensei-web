@@ -8,6 +8,7 @@
 
 export const CURATOR_ROLE = 6
 export const EDITOR_ROLE = 7
+export const ADMIN_ROLE = 9
 
 type Role = number | null | undefined
 

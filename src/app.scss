@@ -77,7 +77,7 @@ ul {
 
 		// Wider layout for database pages
 		&.database-layout {
-			max-width: 1400px;
+			max-width: layout.$database-max-width;
 		}
 	}
 }

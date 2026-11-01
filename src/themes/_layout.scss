@@ -5,6 +5,14 @@
 $nav-height: 81px; // Matches actual navigation height with avatar
 $nav-height-mobile: 60px;
 
+// Database area: wide page with a left sidebar from $database-sidebar-breakpoint up
+$database-max-width: 1400px;
+$database-sidebar-width: 208px;
+$database-sidebar-gap: spacing.$unit-3x;
+$database-sidebar-breakpoint: 1100px;
+// Tallest control in a database list toolbar (selects, search inputs)
+$database-control-height: 38px;
+
 // Scale factors
 $scale-wide: scale(1.05, 1.05);
 $scale-tall: scale(1.012, 1.012);

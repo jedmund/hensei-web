@@ -11,6 +11,7 @@
 	import Icon from './Icon.svelte'
 	import NotificationBadge from './ui/NotificationBadge.svelte'
 	import BottomSheet from './ui/BottomSheet.svelte'
+	import DatabaseNavigation from './DatabaseNavigation.svelte'
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import UserSettingsModal from './UserSettingsModal.svelte'
@@ -55,6 +56,7 @@
 	const registerHref = $derived(localizeHref('/auth/register'))
 	const databaseHref = $derived(localizeHref('/database'))
 	const newTeamHref = $derived(localizeHref('/teams/new'))
+	const isDatabaseRoute = $derived($page.url.pathname.startsWith(databaseHref))
 	const crewHref = $derived(localizeHref('/crew'))
 	const collectionHref = $derived(
 		isAuth ? localizeHref(`/${username}/collection`) : localizeHref('/collection')
@@ -191,22 +193,26 @@
 {/if}
 
 <nav aria-label="Global" class={elementClass}>
-	<button class="mobile-nav-trigger" onclick={() => (sheetOpen = true)}>
-		<span class="trigger-label">{currentPageLabel}</span>
-		<Icon name="chevron-down" size={14} />
-	</button>
+	{#if isDatabaseRoute}
+		<DatabaseNavigation {userElement} {role} />
+	{:else}
+		<button class="mobile-nav-trigger" onclick={() => (sheetOpen = true)}>
+			<span class="trigger-label">{currentPageLabel}</span>
+			<Icon name="chevron-down" size={14} />
+		</button>
 
-	<Button
-		icon="plus"
-		iconOnly
-		shape="circle"
-		variant={userElement ? 'primary' : 'subtle'}
-		{...userElement ? { element: userElement } : {}}
-		elementStyle={Boolean(userElement)}
-		class="new-team-button"
-		aria-label={m.nav_new_team()}
-		href={newTeamHref}
-	/>
+		<Button
+			icon="plus"
+			iconOnly
+			shape="circle"
+			variant={userElement ? 'primary' : 'subtle'}
+			{...userElement ? { element: userElement } : {}}
+			elementStyle={Boolean(userElement)}
+			class="new-team-button"
+			aria-label={m.nav_new_team()}
+			href={newTeamHref}
+		/>
+	{/if}
 </nav>
 
 <BottomSheet bind:open={sheetOpen}>
