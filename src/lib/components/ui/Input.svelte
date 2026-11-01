@@ -284,6 +284,7 @@
 				color: var(--text-primary);
 				width: 100%;
 				font-family: inherit;
+				border: 2px solid transparent;
 				@include smooth-transition($duration-quick, border-color);
 			}
 
@@ -360,10 +361,6 @@
 				:global(svg) {
 					fill: currentColor;
 				}
-			}
-
-			input {
-				border: 2px solid transparent;
 			}
 		}
 
