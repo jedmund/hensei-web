@@ -7,15 +7,28 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
+	import CrewPage from '$lib/components/crew/CrewPage.svelte'
+	import CrewStatusMessage from '$lib/components/crew/CrewStatusMessage.svelte'
 	import CrewTabs from '$lib/components/crew/CrewTabs.svelte'
-	import MemberRow from '$lib/components/crew/MemberRow.svelte'
-	import PhantomRow from '$lib/components/crew/PhantomRow.svelte'
-	import InvitationRow from '$lib/components/crew/InvitationRow.svelte'
 	import EditMemberDialog from '$lib/components/crew/EditMemberDialog.svelte'
 	import ConfirmMemberActionDialog from '$lib/components/crew/ConfirmMemberActionDialog.svelte'
 	import TransferCaptainDialog from '$lib/components/crew/TransferCaptainDialog.svelte'
 	import ScoutUserModal from '$lib/components/crew/ScoutUserModal.svelte'
 	import BulkPhantomModal from '$lib/components/crew/BulkPhantomModal.svelte'
+	import MemberFilterTabs from '$lib/components/crew/members/MemberFilterTabs.svelte'
+	import MembersListSection from '$lib/components/crew/members/MembersListSection.svelte'
+	import MembersPendingSection from '$lib/components/crew/members/MembersPendingSection.svelte'
+	import type { MemberListActions } from '$lib/components/crew/members/CrewMemberList.svelte'
+	import {
+		CREW_ROSTER_CAP,
+		countActiveMembers,
+		memberFilterFromUrl,
+		memberFilterOptions,
+		pendingClaimPhantoms,
+		splitInvitations,
+		urlForMemberFilter,
+		type MemberAction
+	} from '$lib/features/crew/memberList'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import type { MemberFilter, CrewMembership, PhantomPlayer } from '$lib/types/api/crew'
 	import type { PageData } from './$types'
@@ -28,9 +41,7 @@
 	let { data }: Props = $props()
 
 	// Get filter from URL
-	const filter = $derived<MemberFilter>(
-		($page.url.searchParams.get('filter') as MemberFilter) || 'all'
-	)
+	const filter = $derived<MemberFilter>(memberFilterFromUrl($page.url))
 
 	// Query for members based on filter
 	const membersQuery = createQuery(() => crewQueries.members(filter))
@@ -53,49 +64,27 @@
 		enabled: filter === 'pending' && crewStore.isOfficer
 	}))
 
-	// Calculate active member count (real members only, not phantoms)
-	// Used to determine if scouting is disabled - phantoms can be replaced by real members
-	const activeMemberCount = $derived.by(() => {
-		// Use active filter data if viewing active, otherwise use dedicated query
-		const activeMembers =
+	// Active member count (real members only, not phantoms) decides whether
+	// scouting is disabled - phantoms can be replaced by real members
+	const activeMemberCount = $derived(
+		countActiveMembers(
 			filter === 'active' ? (membersQuery.data?.members ?? []) : (activeQuery.data?.members ?? [])
-		return activeMembers.filter((m) => !m.retired).length
-	})
+		)
+	)
 
-	const isRosterFull = $derived(activeMemberCount >= 30)
+	const isRosterFull = $derived(activeMemberCount >= CREW_ROSTER_CAP)
 
 	// Filter options - Pending only shown to officers
-	const filterOptions = $derived.by(() => {
-		const options: { value: MemberFilter; label: string }[] = [
-			{ value: 'all', label: m.crew_filter_all() },
-			{ value: 'active', label: m.crew_filter_active() }
-		]
-		if (crewStore.isOfficer) {
-			options.push({ value: 'pending', label: m.crew_filter_pending() })
-		}
-		options.push({ value: 'retired', label: m.crew_filter_retired() })
-		return options
-	})
+	const filterOptions = $derived(memberFilterOptions(crewStore.isOfficer))
 
 	// Change filter
 	function handleFilterChange(newFilter: MemberFilter) {
-		const url = new URL($page.url)
-		if (newFilter === 'all') {
-			url.searchParams.delete('filter')
-		} else {
-			url.searchParams.set('filter', newFilter)
-		}
-		goto(url.toString(), { replaceState: true })
+		goto(urlForMemberFilter($page.url, newFilter).toString(), { replaceState: true })
 	}
 
 	// Confirm action dialog state (remove/promote/demote)
 	let confirmMember = $state<CrewMembership | null>(null)
-	let confirmAction = $state<'remove' | 'promote' | 'demote' | null>(null)
-
-	function openConfirmDialog(member: CrewMembership, action: 'remove' | 'promote' | 'demote') {
-		confirmMember = member
-		confirmAction = action
-	}
+	let confirmAction = $state<MemberAction | null>(null)
 
 	function handleConfirmClose() {
 		confirmMember = null
@@ -113,16 +102,6 @@
 	let editingMember = $state<CrewMembership | null>(null)
 	let editingPhantom = $state<PhantomPlayer | null>(null)
 
-	function openEditMemberDialog(member: CrewMembership) {
-		editingPhantom = null
-		editingMember = member
-	}
-
-	function openEditPhantomDialog(phantom: PhantomPlayer) {
-		editingMember = null
-		editingPhantom = phantom
-	}
-
 	function handleEditClose() {
 		editingMember = null
 		editingPhantom = null
@@ -132,273 +111,114 @@
 		membersQuery.refetch()
 	}
 
+	const memberActions: MemberListActions = {
+		onEditMember: (member) => {
+			editingPhantom = null
+			editingMember = member
+		},
+		onConfirm: (member, action) => {
+			confirmMember = member
+			confirmAction = action
+		},
+		onMakeCaptain: (member) => {
+			captainTransferMember = member
+		},
+		onEditPhantom: (phantom) => {
+			editingMember = null
+			editingPhantom = phantom
+		}
+	}
+
 	// Scout and phantom creation modals
 	let scoutModalOpen = $state(false)
 	let bulkPhantomDialogOpen = $state(false)
 
-	// Check if invitation is expired
-	function isInvitationExpired(expiresAt: string): boolean {
-		return new Date(expiresAt) < new Date()
-	}
-
 	// Split invitations into active (still pending) and expired
-	const activeInvitations = $derived(
-		invitationsQuery.data?.filter((inv) => !isInvitationExpired(inv.expiresAt)) ?? []
-	)
-	const expiredInvitations = $derived(
-		invitationsQuery.data?.filter((inv) => isInvitationExpired(inv.expiresAt)) ?? []
-	)
-	const pendingInvitationsCount = $derived(activeInvitations.length)
+	const invitations = $derived(splitInvitations(invitationsQuery.data))
 
-	// Get phantoms with pending claims (assigned but not confirmed)
-	// Use phantom query when viewing pending filter since it doesn't include phantoms
-	const pendingClaimPhantoms = $derived.by(() => {
-		const phantoms =
+	// Phantoms with pending claims (assigned but not confirmed). The pending
+	// filter's member query doesn't include phantoms, so it uses its own query
+	const pendingClaims = $derived(
+		pendingClaimPhantoms(
 			filter === 'pending' ? phantomsQuery.data?.phantoms : membersQuery.data?.phantoms
-		return phantoms?.filter((p) => p.claimedBy && !p.claimConfirmed) ?? []
-	})
-
-	// Split members/phantoms by retired status. Active members are sorted by role
-	// (captain → vice captain → member) so the "All" filter reads top-down by rank.
-	const roleOrder: Record<string, number> = { captain: 0, vice_captain: 1, member: 2 }
-	const activeMembers = $derived(
-		(membersQuery.data?.members ?? [])
-			.filter((mem) => !mem.retired)
-			.toSorted((a, b) => (roleOrder[a.role] ?? 99) - (roleOrder[b.role] ?? 99))
+		)
 	)
-	const retiredMembers = $derived((membersQuery.data?.members ?? []).filter((mem) => mem.retired))
-	const activePhantoms = $derived((membersQuery.data?.phantoms ?? []).filter((p) => !p.retired))
-	const retiredPhantoms = $derived((membersQuery.data?.phantoms ?? []).filter((p) => p.retired))
-	const activeCount = $derived(activeMembers.length + activePhantoms.length)
-	const retiredCount = $derived(retiredMembers.length + retiredPhantoms.length)
 </script>
 
 <svelte:head>
 	<title>Crew Members / granblue.team</title>
 </svelte:head>
 
-<div class="page">
-	<div class="card">
-		<CrewHeader
-			title={crewStore.crew?.name ?? ''}
-			subtitle={crewStore.crew?.gamertag ?? undefined}
-			description={crewStore.crew?.description ?? undefined}
-		>
-			{#snippet actions()}
-				{#if crewStore.isOfficer}
-					<Button
-						variant="secondary"
-						size="small"
-						disabled={isRosterFull}
-						onclick={() => (scoutModalOpen = true)}
-					>
-						{m.crew_scout()}
-					</Button>
-					<DropdownMenu>
-						{#snippet trigger({ props })}
-							<Button variant="ghost" size="small" iconOnly icon="ellipsis" {...props} />
-						{/snippet}
-						{#snippet menu()}
-							<DropdownMenuBase.Item
-								class="dropdown-menu-item"
-								onclick={() => (bulkPhantomDialogOpen = true)}
-							>
-								{m.crew_add_phantoms()}
-							</DropdownMenuBase.Item>
-						{/snippet}
-					</DropdownMenu>
-				{/if}
-			{/snippet}
-		</CrewHeader>
-
-		<CrewTabs userElement={data.currentUser?.element} />
-
-		<div class="filter-tabs">
-			{#each filterOptions as option (option.value)}
-				<button
-					class="filter-tab"
-					class:active={filter === option.value}
-					onclick={() => handleFilterChange(option.value)}
+<CrewPage>
+	<CrewHeader
+		title={crewStore.crew?.name ?? ''}
+		subtitle={crewStore.crew?.gamertag ?? undefined}
+		description={crewStore.crew?.description ?? undefined}
+	>
+		{#snippet actions()}
+			{#if crewStore.isOfficer}
+				<Button
+					variant="secondary"
+					size="small"
+					disabled={isRosterFull}
+					onclick={() => (scoutModalOpen = true)}
 				>
-					{option.label}
-					{#if option.value === 'pending' && (pendingInvitationsCount > 0 || pendingClaimPhantoms.length > 0)}
-						<span class="tab-badge">{pendingInvitationsCount + pendingClaimPhantoms.length}</span>
-					{/if}
-				</button>
-			{/each}
-		</div>
-
-		<!-- Pending tab (invitations and claims) -->
-		{#if filter === 'pending'}
-			{#if invitationsQuery.isLoading || phantomsQuery.isLoading}
-				<div class="loading-state">
-					<p>{m.crew_loading()}</p>
-				</div>
-			{:else}
-				{#if activeInvitations.length > 0}
-					<div class="section-divider">
-						<span
-							>{m.crew_pending_label()} <span class="count">{activeInvitations.length}</span></span
+					{m.crew_scout()}
+				</Button>
+				<DropdownMenu>
+					{#snippet trigger({ props })}
+						<Button variant="ghost" size="small" iconOnly icon="ellipsis" {...props} />
+					{/snippet}
+					{#snippet menu()}
+						<DropdownMenuBase.Item
+							class="dropdown-menu-item"
+							onclick={() => (bulkPhantomDialogOpen = true)}
 						>
-					</div>
-					<ul class="member-list">
-						{#each activeInvitations as invitation (invitation.id)}
-							<InvitationRow {invitation} crewId={crewStore.crew?.id ?? ''} />
-						{/each}
-					</ul>
-				{/if}
-
-				{#if expiredInvitations.length > 0}
-					<div class="section-divider">
-						<span>{m.crew_expired()} <span class="count">{expiredInvitations.length}</span></span>
-					</div>
-					<ul class="member-list">
-						{#each expiredInvitations as invitation (invitation.id)}
-							<InvitationRow {invitation} crewId={crewStore.crew?.id ?? ''} />
-						{/each}
-					</ul>
-				{/if}
-
-				{#if pendingClaimPhantoms.length > 0}
-					<div class="section-divider">
-						<span>{m.crew_pending_claims({ count: String(pendingClaimPhantoms.length) })}</span>
-					</div>
-					<ul class="member-list">
-						{#each pendingClaimPhantoms as phantom (phantom.id)}
-							<PhantomRow
-								{phantom}
-								crewId={crewStore.crew?.id ?? ''}
-								currentUserId={crewStore.membership?.user?.id}
-								onEdit={() => openEditPhantomDialog(phantom)}
-							/>
-						{/each}
-					</ul>
-				{/if}
-
-				{#if (!invitationsQuery.data || invitationsQuery.data.length === 0) && pendingClaimPhantoms.length === 0}
-					<div class="empty-state">
-						<p>{m.crew_no_pending()}</p>
-					</div>
-				{/if}
+							{m.crew_add_phantoms()}
+						</DropdownMenuBase.Item>
+					{/snippet}
+				</DropdownMenu>
 			{/if}
-		{:else if membersQuery.isLoading}
-			<div class="loading-state">
-				<p>{m.crew_loading()}</p>
-			</div>
-		{:else if membersQuery.isError}
-			<div class="error-state">
-				<p>{m.crew_load_members_failed()}</p>
-			</div>
+		{/snippet}
+	</CrewHeader>
+
+	<CrewTabs userElement={data.currentUser?.element} />
+
+	<MemberFilterTabs
+		options={filterOptions}
+		value={filter}
+		pendingCount={invitations.active.length + pendingClaims.length}
+		onChange={handleFilterChange}
+	/>
+
+	<!-- Pending tab (invitations and claims) -->
+	{#if filter === 'pending'}
+		{#if invitationsQuery.isLoading || phantomsQuery.isLoading}
+			<CrewStatusMessage message={m.crew_loading()} />
 		{:else}
-			{@const hasMembers = membersQuery.data?.members && membersQuery.data.members.length > 0}
-			{@const hasPhantoms = membersQuery.data?.phantoms && membersQuery.data.phantoms.length > 0}
-
-			<!-- Empty state for active/retired when no members or phantoms -->
-			{#if (filter === 'active' || filter === 'retired') && !hasMembers && !hasPhantoms}
-				<div class="empty-state">
-					<p>{m.crew_no_filter_players({ filter })}</p>
-				</div>
-			{:else if filter === 'all'}
-				<!-- Active section: members sorted by role, then phantoms -->
-				{#if activeCount > 0}
-					<div class="section-divider">
-						<span>{m.crew_members_label()} <span class="count">{activeCount}</span></span>
-					</div>
-					<ul class="member-list">
-						{#each activeMembers as member (member.id)}
-							<MemberRow
-								{member}
-								onEdit={() => openEditMemberDialog(member)}
-								onPromote={() => openConfirmDialog(member, 'promote')}
-								onDemote={() => openConfirmDialog(member, 'demote')}
-								onRemove={() => openConfirmDialog(member, 'remove')}
-								onMakeCaptain={() => (captainTransferMember = member)}
-							/>
-						{/each}
-						{#each activePhantoms as phantom (phantom.id)}
-							<PhantomRow
-								{phantom}
-								crewId={crewStore.crew?.id ?? ''}
-								currentUserId={crewStore.membership?.user?.id}
-								onEdit={() => openEditPhantomDialog(phantom)}
-							/>
-						{/each}
-					</ul>
-				{/if}
-
-				<!-- Retired Players section (labeled): retired members, then retired phantoms -->
-				{#if retiredCount > 0}
-					<div class="section-divider">
-						<span>{m.crew_retired_players_label()} <span class="count">{retiredCount}</span></span>
-					</div>
-					<ul class="member-list">
-						{#each retiredMembers as member (member.id)}
-							<MemberRow
-								{member}
-								onEdit={() => openEditMemberDialog(member)}
-								onPromote={() => openConfirmDialog(member, 'promote')}
-								onDemote={() => openConfirmDialog(member, 'demote')}
-								onRemove={() => openConfirmDialog(member, 'remove')}
-								onMakeCaptain={() => (captainTransferMember = member)}
-							/>
-						{/each}
-						{#each retiredPhantoms as phantom (phantom.id)}
-							<PhantomRow
-								{phantom}
-								crewId={crewStore.crew?.id ?? ''}
-								currentUserId={crewStore.membership?.user?.id}
-								onEdit={() => openEditPhantomDialog(phantom)}
-							/>
-						{/each}
-					</ul>
-				{/if}
-			{:else}
-				<!-- Active or retired filter: keep existing members + phantoms delineation -->
-				{#if hasMembers}
-					{#if hasPhantoms}
-						<div class="section-divider">
-							<span
-								>{m.crew_members_label()}
-								<span class="count">{membersQuery.data?.members.length ?? 0}</span></span
-							>
-						</div>
-					{/if}
-					<ul class="member-list">
-						{#each membersQuery.data?.members ?? [] as member (member.id)}
-							<MemberRow
-								{member}
-								onEdit={() => openEditMemberDialog(member)}
-								onPromote={() => openConfirmDialog(member, 'promote')}
-								onDemote={() => openConfirmDialog(member, 'demote')}
-								onRemove={() => openConfirmDialog(member, 'remove')}
-								onMakeCaptain={() => (captainTransferMember = member)}
-							/>
-						{/each}
-					</ul>
-				{/if}
-
-				{#if hasPhantoms}
-					<div class="section-divider">
-						<span
-							>{m.crew_phantoms_label()}
-							<span class="count">{membersQuery.data?.phantoms.length ?? 0}</span></span
-						>
-					</div>
-					<ul class="member-list">
-						{#each membersQuery.data?.phantoms ?? [] as phantom (phantom.id)}
-							<PhantomRow
-								{phantom}
-								crewId={crewStore.crew?.id ?? ''}
-								currentUserId={crewStore.membership?.user?.id}
-								onEdit={() => openEditPhantomDialog(phantom)}
-							/>
-						{/each}
-					</ul>
-				{/if}
-			{/if}
+			<MembersPendingSection
+				activeInvitations={invitations.active}
+				expiredInvitations={invitations.expired}
+				{pendingClaims}
+				crewId={crewStore.crew?.id ?? ''}
+				currentUserId={crewStore.membership?.user?.id}
+				actions={memberActions}
+			/>
 		{/if}
-	</div>
-</div>
+	{:else if membersQuery.isLoading}
+		<CrewStatusMessage message={m.crew_loading()} />
+	{:else if membersQuery.isError}
+		<CrewStatusMessage message={m.crew_load_members_failed()} />
+	{:else}
+		<MembersListSection
+			{filter}
+			data={membersQuery.data}
+			crewId={crewStore.crew?.id ?? ''}
+			currentUserId={crewStore.membership?.user?.id}
+			actions={memberActions}
+		/>
+	{/if}
+</CrewPage>
 
 <!-- Confirm Member Action Dialog (remove/promote/demote) -->
 <ConfirmMemberActionDialog
@@ -423,112 +243,3 @@
 	<ScoutUserModal bind:open={scoutModalOpen} crewId={crewStore.crew.id} />
 	<BulkPhantomModal bind:open={bulkPhantomDialogOpen} crewId={crewStore.crew.id} />
 {/if}
-
-<style lang="scss">
-	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
-	@use '$src/themes/layout' as layout;
-
-	.page {
-		margin: 0 auto;
-		max-width: var(--main-max-width);
-	}
-
-	.card {
-		@include layout.page-surface;
-		overflow: hidden;
-	}
-
-	.filter-tabs {
-		display: flex;
-		gap: spacing.$unit-half;
-		padding: spacing.$unit-2x spacing.$unit-2x spacing.$unit;
-	}
-
-	.filter-tab {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit-half;
-		padding: 4px spacing.$unit;
-		background: none;
-		border: none;
-		border-radius: layout.$item-corner-small;
-		color: var(--text-secondary);
-		cursor: pointer;
-		font-size: typography.$font-small;
-		transition:
-			color 0.15s,
-			background-color 0.15s;
-
-		&:hover {
-			color: var(--text-primary);
-			background: rgba(0, 0, 0, 0.04);
-		}
-
-		&.active {
-			color: var(--text-primary);
-			background: rgba(0, 0, 0, 0.06);
-			font-weight: typography.$medium;
-		}
-	}
-
-	.tab-badge {
-		background: var(--color-orange, #f97316);
-		color: white;
-		font-size: 11px;
-		font-weight: typography.$medium;
-		padding: 1px 6px;
-		border-radius: 10px;
-	}
-
-	.loading-state,
-	.error-state {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		padding: spacing.$unit-4x;
-		color: var(--text-secondary);
-		font-size: typography.$font-small;
-	}
-
-	.empty-state {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: spacing.$unit-2x;
-		text-align: center;
-		color: var(--text-secondary);
-		padding: spacing.$unit-4x;
-		font-size: typography.$font-small;
-
-		p {
-			margin: 0;
-		}
-	}
-
-	.member-list {
-		list-style: none;
-		margin: 0;
-		padding: spacing.$unit;
-	}
-
-	.section-divider {
-		display: flex;
-		align-items: center;
-		padding: spacing.$unit spacing.$unit-2x;
-		background: rgba(0, 0, 0, 0.02);
-		border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-
-		span {
-			font-size: typography.$font-small;
-			font-weight: typography.$medium;
-			color: var(--text-secondary);
-		}
-
-		.count {
-			color: var(--text-tertiary);
-			font-weight: typography.$normal;
-			margin-left: spacing.$unit-half;
-		}
-	}
-</style>

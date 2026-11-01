@@ -1,27 +1,19 @@
 <script lang="ts">
-	import { goto } from '$app/navigation'
-	import { localizeHref } from '$lib/paraglide/runtime'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
-	import { useCreateCrew } from '$lib/api/mutations/crew.mutations'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import Dialog from '$lib/components/ui/Dialog.svelte'
-	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
-	import ModalBody from '$lib/components/ui/ModalBody.svelte'
-	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
-	import Input from '$lib/components/ui/Input.svelte'
-	import Icon from '$lib/components/Icon.svelte'
-	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
+	import CrewPage from '$lib/components/crew/CrewPage.svelte'
+	import CrewStatusMessage from '$lib/components/crew/CrewStatusMessage.svelte'
 	import CrewTabs from '$lib/components/crew/CrewTabs.svelte'
 	import CrewSettingsDialog from '$lib/components/crew/CrewSettingsDialog.svelte'
 	import CrewNotificationCards from '$lib/components/crew/CrewNotificationCards.svelte'
-	import { formatDateJST } from '$lib/utils/date'
-	import { formatScore, toCrewHistoryChartData } from '$lib/utils/gw'
-	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
-	import GwCrewHistoryChart from '$lib/components/charts/GwCrewHistoryChart.svelte'
+	import CreateCrewDialog from '$lib/components/crew/dashboard/CreateCrewDialog.svelte'
+	import CrewEventList from '$lib/components/crew/dashboard/CrewEventList.svelte'
+	import CrewGameLink from '$lib/components/crew/dashboard/CrewGameLink.svelte'
+	import CrewIntro from '$lib/components/crew/dashboard/CrewIntro.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 
@@ -58,542 +50,78 @@
 		staleTime: 1000 * 60 * 5
 	}))
 
-	// Mutations
-	const createCrewMutation = useCreateCrew()
-
 	// Modal state
 	let createModalOpen = $state(false)
 	let settingsModalOpen = $state(false)
-
-	// Create form state
-	let crewName = $state('')
-	let crewGamertag = $state('')
-	let crewGranblueCrewId = $state('')
-	let crewDescription = $state('')
-	let error = $state<string | null>(null)
-
-	// Validation
-	const canCreate = $derived(crewName.trim().length > 0)
-
-	// Handle create crew
-	async function handleCreateCrew() {
-		if (!canCreate) return
-
-		error = null
-
-		try {
-			const crew = await createCrewMutation.mutateAsync({
-				name: crewName.trim(),
-				gamertag: crewGamertag.trim() || undefined,
-				granblueCrewId: crewGranblueCrewId.trim() || undefined,
-				description: crewDescription.trim() || undefined
-			})
-
-			// Update the store - creator is always captain
-			crewStore.setCrew(crew, {
-				id: '', // Will be populated when fetching crew
-				role: 'captain',
-				retired: false,
-				retiredAt: null,
-				joinedAt: new Date().toISOString(),
-				createdAt: new Date().toISOString()
-			})
-
-			// Close modal and reset form
-			createModalOpen = false
-			crewName = ''
-			crewGamertag = ''
-			crewGranblueCrewId = ''
-			crewDescription = ''
-		} catch (err: unknown) {
-			error = err instanceof Error ? err.message : 'Failed to create crew'
-		}
-	}
-
-	function handleCloseModal() {
-		createModalOpen = false
-		error = null
-	}
-
-	function formatEventStatus(status: string, startDate: string): string {
-		if (status === 'upcoming') {
-			const now = new Date()
-			const start = new Date(startDate)
-			const diffTime = start.getTime() - now.getTime()
-			const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-			if (diffDays <= 0) return m.crew_starting_soon()
-			if (diffDays === 1) return m.crew_starts_in_1_day()
-			return m.crew_starts_in_days({ days: String(diffDays) })
-		}
-		return status
-	}
-
-	// Transform events data for history chart
-	const historyChartData = $derived(
-		eventsQuery.data ? toCrewHistoryChartData(eventsQuery.data, formatDateJST) : []
-	)
 </script>
 
 <svelte:head>
 	<title>Crew / granblue.team</title>
 </svelte:head>
 
-<div class="page">
-	<div class="card">
-		{#if crewQuery.isLoading}
-			<div class="loading-state">
-				<p>{m.crew_loading()}</p>
-			</div>
-		{:else if !isAuthenticated || crewQuery.isError || !crewStore.isInCrew}
-			<!-- No crew state -->
-			<div class="no-crew">
-				<div class="no-crew-content">
-					<p class="description">
-						{m.crew_intro()}
-					</p>
+<CrewPage>
+	{#if crewQuery.isLoading}
+		<CrewStatusMessage message={m.crew_loading()} />
+	{:else if !isAuthenticated || crewQuery.isError || !crewStore.isInCrew}
+		<!-- No crew state -->
+		<div class="no-crew">
+			<CrewIntro {isAuthenticated} onCreate={() => (createModalOpen = true)} />
 
-					<div class="actions">
-						{#if isAuthenticated}
-							<Button variant="primary" size="small" onclick={() => (createModalOpen = true)}>
-								{m.crew_create()}
-							</Button>
-						{:else}
-							<Button
-								variant="primary"
-								size="small"
-								onclick={() => goto(localizeHref('/auth/register'))}
-							>
-								{m.crew_sign_up()}
-							</Button>
-							<Button
-								variant="secondary"
-								size="small"
-								onclick={() => goto(localizeHref('/auth/login'))}
-							>
-								{m.crew_log_in()}
-							</Button>
-						{/if}
-					</div>
+			{#if isAuthenticated && invitationsQuery.data && invitationsQuery.data.length > 0}
+				<div class="notifications-section">
+					<CrewNotificationCards invitations={invitationsQuery.data} />
 				</div>
+			{/if}
+		</div>
+	{:else}
+		<!-- Has crew - show dashboard -->
+		<div class="crew-dashboard">
+			<CrewHeader
+				title={crewStore.crew?.name ?? ''}
+				subtitle={crewStore.crew?.gamertag ?? undefined}
+				description={crewStore.crew?.description ?? undefined}
+			>
+				{#snippet actions()}
+					{#if crewStore.crew?.granblueCrewId}
+						<CrewGameLink granblueCrewId={crewStore.crew.granblueCrewId} />
+					{/if}
+					{#if crewStore.isOfficer}
+						<Button variant="secondary" size="small" onclick={() => (settingsModalOpen = true)}
+							>{m.crew_settings_title()}</Button
+						>
+					{/if}
+				{/snippet}
+			</CrewHeader>
 
-				{#if isAuthenticated && invitationsQuery.data && invitationsQuery.data.length > 0}
-					<div class="invitations-section">
-						<CrewNotificationCards invitations={invitationsQuery.data} />
-					</div>
-				{/if}
-			</div>
-		{:else}
-			<!-- Has crew - show dashboard -->
-			<div class="crew-dashboard">
-				<CrewHeader
-					title={crewStore.crew?.name ?? ''}
-					subtitle={crewStore.crew?.gamertag ?? undefined}
-					description={crewStore.crew?.description ?? undefined}
-				>
-					{#snippet actions()}
-						{#if crewStore.crew?.granblueCrewId}
-							<Tooltip content={m.crew_ingame()}>
-								<a
-									href={`https://game.granbluefantasy.jp/#guild/detail/${crewStore.crew.granblueCrewId}`}
-									target="_blank"
-									rel="noopener noreferrer"
-									class="crew-profile-link"
-								>
-									<Icon name="sword" size={24} />
-								</a>
-							</Tooltip>
-						{/if}
-						{#if crewStore.isOfficer}
-							<Button variant="secondary" size="small" onclick={() => (settingsModalOpen = true)}
-								>{m.crew_settings_title()}</Button
-							>
-						{/if}
-					{/snippet}
-				</CrewHeader>
+			<CrewTabs userElement={data.currentUser?.element} />
 
-				<CrewTabs userElement={data.currentUser?.element} />
-
-				{#if phantomClaimsQuery.data && phantomClaimsQuery.data.length > 0}
-					<div class="notifications-section">
-						<CrewNotificationCards phantomClaims={phantomClaimsQuery.data} />
-					</div>
-				{/if}
-
-				<!-- GW Events Section -->
-				<div class="section-header">
-					<span class="section-title">{m.crew_unite_and_fight()}</span>
+			{#if phantomClaimsQuery.data && phantomClaimsQuery.data.length > 0}
+				<div class="notifications-section">
+					<CrewNotificationCards phantomClaims={phantomClaimsQuery.data} />
 				</div>
-
-				{#if historyChartData.length > 0}
-					<div class="chart-section">
-						<GwCrewHistoryChart data={historyChartData} />
-					</div>
-				{/if}
-
-				{#if eventsQuery.isLoading}
-					<div class="loading-state">
-						<p>{m.crew_loading_events()}</p>
-					</div>
-				{:else if eventsQuery.data && eventsQuery.data.length > 0}
-					<ul class="event-list">
-						{#each eventsQuery.data as event (event.id)}
-							<li class="event-item">
-								<button
-									type="button"
-									class="event-button"
-									onclick={() => goto(localizeHref(`/crew/events/${event.eventNumber}`))}
-								>
-									<div class="event-info">
-										<span class="event-number">{event.eventNumber}</span>
-										<ElementBadge element={event.element} />
-									</div>
-									<span class="event-dates">
-										{formatDateJST(event.startDate)} – {formatDateJST(event.endDate)}
-									</span>
-									<span class="event-score">
-										{#if event.crewTotalScore !== undefined}
-											{formatScore(event.crewTotalScore)}
-										{/if}
-									</span>
-									<span class="event-status status-{event.status ?? 'unknown'}"
-										>{formatEventStatus(event.status ?? 'unknown', event.startDate)}</span
-									>
-								</button>
-							</li>
-						{/each}
-					</ul>
-				{:else}
-					<p class="empty-state">{m.crew_no_events()}</p>
-				{/if}
-			</div>
-		{/if}
-	</div>
-</div>
-
-<!-- Create Crew Modal -->
-<Dialog bind:open={createModalOpen} onOpenChange={(open) => !open && handleCloseModal()}>
-	<ModalHeader title={m.crew_create()} />
-
-	<ModalBody>
-		<div class="modal-form">
-			{#if error}
-				<div class="error-message">{error}</div>
 			{/if}
 
-			<div class="form-fields">
-				<Input
-					label={m.crew_name_label()}
-					bind:value={crewName}
-					placeholder={m.crew_name_placeholder_short()}
-					maxLength={100}
-					fullWidth
-					contained
-				/>
-
-				<Input
-					label="{m.crew_gamertag_label()} {m.crew_gamertag_optional()}"
-					bind:value={crewGamertag}
-					placeholder={m.crew_gamertag_placeholder()}
-					maxLength={4}
-					fullWidth
-					contained
-				/>
-
-				<Input
-					label="{m.crew_granblue_id_label()} {m.crew_gamertag_optional()}"
-					bind:value={crewGranblueCrewId}
-					placeholder={m.crew_granblue_id_placeholder()}
-					fullWidth
-					contained
-				/>
-
-				<div class="form-field">
-					<label for="crew-description"
-						>{m.crew_description_label()}
-						<span class="optional">{m.crew_gamertag_optional()}</span></label
-					>
-					<textarea
-						id="crew-description"
-						bind:value={crewDescription}
-						placeholder={m.crew_description_placeholder()}
-						maxlength="500"
-						rows="3"></textarea>
-				</div>
-			</div>
+			<CrewEventList events={eventsQuery.data} isLoading={eventsQuery.isLoading} />
 		</div>
-	</ModalBody>
+	{/if}
+</CrewPage>
 
-	<ModalFooter
-		onCancel={handleCloseModal}
-		cancelDisabled={createCrewMutation.isPending}
-		primaryAction={{
-			label: createCrewMutation.isPending ? m.crew_creating() : m.crew_create(),
-			onclick: handleCreateCrew,
-			disabled: !canCreate || createCrewMutation.isPending
-		}}
-	/>
-</Dialog>
+<CreateCrewDialog bind:open={createModalOpen} />
 
 <CrewSettingsDialog bind:open={settingsModalOpen} />
 
 <style lang="scss">
-	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
-	@use '$src/themes/colors' as colors;
 
-	.page {
-		margin: 0 auto;
-		max-width: var(--main-max-width);
-	}
-
-	.card {
-		@include layout.page-surface;
-		overflow: hidden;
-	}
-
-	.loading-state {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		padding: spacing.$unit-4x;
-		color: var(--text-secondary);
-		font-size: typography.$font-small;
-	}
-
-	// No crew state
-	.no-crew-content {
-		padding: spacing.$unit-3x spacing.$unit-2x;
-		text-align: center;
-
-		.description {
-			color: var(--text-primary);
-			font-size: typography.$font-small;
-			line-height: 1.5;
-			margin-bottom: spacing.$unit-2x;
-			max-width: 360px;
-			margin-left: auto;
-			margin-right: auto;
-		}
-	}
-
-	.actions {
-		display: flex;
-		justify-content: center;
-		gap: spacing.$unit;
-	}
-
-	.invitations-section,
 	.notifications-section {
 		padding: spacing.$unit-2x;
 		border-top: 1px solid rgba(0, 0, 0, 0.06);
 	}
 
-	// Section header
-	.section-header {
-		display: flex;
-		align-items: center;
-		padding: spacing.$unit spacing.$unit-2x;
-		background: rgba(0, 0, 0, 0.02);
-		border-top: 1px solid rgba(0, 0, 0, 0.06);
-	}
-
-	.section-title {
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-		color: var(--text-secondary);
-	}
-
-	// Chart section
-	.chart-section {
-		padding: spacing.$unit-2x;
-		border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
-	}
-
-	// Event list (similar to member list)
-	.event-list {
-		list-style: none;
-		margin: 0;
-		padding: spacing.$unit;
-	}
-
-	.event-item {
-		list-style: none;
-	}
-
-	.event-button {
-		all: unset;
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit-2x;
-		padding: spacing.$unit spacing.$unit-2x;
-		border-radius: layout.$item-corner;
-		transition: background-color 0.15s;
-		cursor: pointer;
-		width: 100%;
-		box-sizing: border-box;
-
-		&:hover {
-			background: var(--list-cell-bg-hover, rgba(0, 0, 0, 0.03));
-		}
-
-		&:focus-visible {
-			outline: 2px solid var(--focus-ring-color, #3b82f6);
-			outline-offset: 2px;
-		}
-	}
-
-	.event-info {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit;
-		width: 140px;
-	}
-
-	.event-number {
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-		min-width: 24px;
-		color: var(--text-primary);
-	}
-
-	.event-dates {
-		flex: 1;
-		font-size: typography.$font-small;
-		color: var(--text-secondary);
-	}
-
-	.event-score {
-		width: 140px;
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-		font-variant-numeric: tabular-nums;
-		text-align: right;
-		color: var(--text-primary);
-	}
-
-	.event-status {
-		width: 80px;
-		font-size: typography.$font-small;
-		padding: 2px 6px;
-		border-radius: layout.$item-corner-small;
-		text-align: center;
-		text-transform: capitalize;
-		white-space: nowrap;
-
-		&.status-active {
-			background: var(--color-green-light, #dcfce7);
-			color: var(--color-green-dark, #166534);
-		}
-
-		&.status-upcoming {
-			background: var(--color-blue-light, #dbeafe);
-			color: var(--color-blue-dark, #1e40af);
-		}
-
-		&.status-finished {
-			background: rgba(0, 0, 0, 0.04);
-			color: var(--text-secondary);
-		}
-	}
-
-	.empty-state {
-		text-align: center;
-		color: var(--text-secondary);
-		padding: spacing.$unit-3x;
-		font-size: typography.$font-small;
-	}
-
-	// Modal form styles
-	.modal-form {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-3x;
-	}
-
-	.error-message {
-		background-color: var(--danger-bg-subtle);
-		border: 1px solid var(--danger);
-		border-radius: layout.$card-corner;
-		color: var(--danger);
-		padding: spacing.$unit-2x;
-	}
-
-	.form-fields {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-3x;
-	}
-
-	.form-field {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-half;
-
-		label {
-			font-size: typography.$font-small;
-			font-weight: typography.$medium;
-			color: var(--text-primary);
-
-			.optional {
-				font-weight: typography.$normal;
-				color: var(--text-secondary);
-			}
-		}
-
-		textarea {
-			padding: spacing.$unit-2x;
-			border: none;
-			border-radius: layout.$input-corner;
-			font-size: typography.$font-regular;
-			font-family: inherit;
-			background: var(--input-bound-bg);
-			color: var(--text-primary);
-			resize: vertical;
-			min-height: 80px;
-
-			&:hover {
-				background: var(--input-bound-bg-hover);
-			}
-
-			&::placeholder {
-				color: var(--text-tertiary);
-			}
-		}
-	}
-
+	// Input (used by the crew dialogs) wraps its field in a fieldset
 	:global(fieldset) {
 		border: none;
 		padding: 0;
 		margin: 0;
-	}
-
-	.crew-profile-link {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 40px;
-		height: 40px;
-		border-radius: layout.$card-corner;
-		color: var(--text-secondary);
-		text-decoration: none;
-		cursor: pointer;
-		transition:
-			background-color 0.15s ease,
-			color 0.15s ease;
-
-		:global(svg) {
-			stroke-width: 2px;
-		}
-
-		&:hover {
-			background: var(--button-contained-bg-hover, colors.$grey-90);
-			color: var(--text-primary);
-		}
-
-		&:focus-visible {
-			outline: 2px solid var(--focus-ring);
-			outline-offset: 2px;
-		}
 	}
 </style>

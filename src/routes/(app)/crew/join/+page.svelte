@@ -9,6 +9,7 @@
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { formatDate } from '$lib/utils/date'
+	import { isInvitationExpired } from '$lib/features/crew/memberList'
 	import type { PageData } from './$types'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -66,11 +67,6 @@
 			processingId = null
 		}
 	}
-
-	// Check if invitation is expired
-	function isExpired(expiresAt: string): boolean {
-		return new Date(expiresAt) < new Date()
-	}
 </script>
 
 <svelte:head>
@@ -104,7 +100,7 @@
 	{:else}
 		<div class="invitations-list">
 			{#each invitationsQuery.data as invitation (invitation.id)}
-				{@const expired = isExpired(invitation.expiresAt)}
+				{@const expired = isInvitationExpired(invitation.expiresAt)}
 				{@const highlighted = invitation.id === selectedInvitationId}
 				{@const crew = invitation.crew}
 				{@const invitedBy = invitation.invitedBy}

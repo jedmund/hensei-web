@@ -1,0 +1,14 @@
+@use '$src/themes/spacing' as spacing;
+
+// A chart band inside a crew page card, ruled off from what follows
+@mixin chart-section {
+	padding: spacing.$unit-2x;
+	border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.06));
+}
+
+// A list of rows inside a crew page card (members, events, players)
+@mixin row-list {
+	list-style: none;
+	margin: 0;
+	padding: spacing.$unit;
+}

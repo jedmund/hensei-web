@@ -1,25 +1,17 @@
 <script lang="ts">
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import type { RosterMember, RosterItem } from '$lib/types/api/crew'
+	import type { RosterItemType, SelectedRosterItem } from '$lib/features/crew/rosterItems'
 	import * as m from '$lib/paraglide/messages'
-
-	type ItemType = 'Character' | 'Weapon' | 'Summon'
-
-	interface SelectedItem {
-		id: string
-		granblueId: string
-		name: string
-		type: ItemType
-	}
 
 	interface Props {
 		member: RosterMember
-		selectedItems: SelectedItem[]
+		selectedItems: SelectedRosterItem[]
 	}
 
 	const { member, selectedItems }: Props = $props()
 
-	function getOwnershipInfo(item: SelectedItem): RosterItem | null {
+	function getOwnershipInfo(item: SelectedRosterItem): RosterItem | null {
 		const collection =
 			item.type === 'Character'
 				? member.characters
@@ -30,7 +22,7 @@
 		return collection.find((c) => c.id === item.id) || null
 	}
 
-	function getItemTypeForUncap(type: ItemType): 'character' | 'weapon' | 'summon' {
+	function getItemTypeForUncap(type: RosterItemType): 'character' | 'weapon' | 'summon' {
 		return type.toLowerCase() as 'character' | 'weapon' | 'summon'
 	}
 

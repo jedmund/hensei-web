@@ -4,17 +4,8 @@
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import { formatScore } from '$lib/utils/gw'
-	import type { GwIndividualScore } from '$lib/types/api/gw'
+	import type { PlayerScore } from '$lib/features/crew/playerScores'
 	import * as m from '$lib/paraglide/messages'
-
-	export interface PlayerScore {
-		id: string
-		name: string
-		type: 'member' | 'phantom'
-		totalScore: number
-		isRetired?: boolean
-		scores: GwIndividualScore[]
-	}
 
 	interface Props {
 		player: PlayerScore
