@@ -116,7 +116,10 @@ export class GridSummonAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Updates summon quick summon setting
+	 * Updates summon quick summon setting. Only one summon per party can be
+	 * the quick summon, so the API returns every summon it changed: the
+	 * updated one first, then any whose quick summon it switched off. It
+	 * returns no content for slots that can't be quick summons (4-6).
 	 */
 	async updateQuickSummon(
 		params: {
@@ -126,19 +129,23 @@ export class GridSummonAdapter extends BaseAdapter {
 			quickSummon: boolean
 		},
 		headers?: Record<string, string>
-	): Promise<GridSummon> {
-		return this.request<GridSummon>('/grid_summons/update_quick_summon', {
-			method: 'POST',
-			body: {
-				summon: {
-					id: params.id,
-					party_id: params.partyId,
-					position: params.position,
-					quick_summon: params.quickSummon
-				}
-			},
-			headers
-		})
+	): Promise<GridSummon[]> {
+		const response = await this.request<{ summons: GridSummon[] } | undefined>(
+			'/grid_summons/update_quick_summon',
+			{
+				method: 'POST',
+				body: {
+					summon: {
+						id: params.id,
+						party_id: params.partyId,
+						position: params.position,
+						quick_summon: params.quickSummon
+					}
+				},
+				headers
+			}
+		)
+		return response?.summons ?? []
 	}
 
 	/**

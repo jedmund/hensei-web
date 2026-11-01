@@ -78,19 +78,53 @@ describe('GridSummonAdapter', () => {
 			)
 		})
 
-		it('should update quick summon', async () => {
+		it('should update quick summon and return every summon it changed', async () => {
 			global.fetch = vi.fn().mockResolvedValue({
 				ok: true,
-				json: async () => ({ ...mockGridSummon, quickSummon: false })
+				json: async () => ({
+					summons: [
+						{ ...mockGridSummon, quickSummon: true },
+						{ ...mockGridSummon, id: 'gs-2', quickSummon: false }
+					]
+				})
 			})
 
 			const result = await adapter.updateQuickSummon({
 				id: 'gs-1',
 				partyId: 'party-1',
+				quickSummon: true
+			})
+
+			expect(result.map((s) => [s.id, s.quickSummon])).toEqual([
+				['gs-1', true],
+				['gs-2', false]
+			])
+		})
+
+		it('should return no summons when the slot cannot be a quick summon', async () => {
+			global.fetch = vi.fn().mockResolvedValue({ ok: true, status: 204 })
+
+			const result = await adapter.updateQuickSummon({
+				id: 'gs-6',
+				partyId: 'party-1',
+				quickSummon: true
+			})
+
+			expect(result).toEqual([])
+		})
+
+		it('should send the quick summon params', async () => {
+			global.fetch = vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({ summons: [{ ...mockGridSummon, quickSummon: false }] })
+			})
+
+			await adapter.updateQuickSummon({
+				id: 'gs-1',
+				partyId: 'party-1',
 				quickSummon: false
 			})
 
-			expect(result.quickSummon).toBe(false)
 			expect(global.fetch).toHaveBeenCalledWith(
 				'https://api.example.com/grid_summons/update_quick_summon',
 				expect.objectContaining({
