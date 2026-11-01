@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { ElementId } from '$lib/utils/element'
 	import type { Party, GridWeapon } from '$lib/types/api/party'
-	import { getWeaponImage } from '$lib/features/database/detail/image'
 	import { handleImageFallback } from '$lib/utils/images/core'
-	import { getWeaponTransformation, getWeaponFallbackImage } from '$lib/utils/images/weapons'
+	import {
+		getWeaponTransformation,
+		getWeaponFallbackImage,
+		getWeaponImage
+	} from '$lib/utils/images/weapons'
 	import { seriesHasTranscendenceArt } from '$lib/utils/weaponSeries'
 	interface Props {
 		party?: Party

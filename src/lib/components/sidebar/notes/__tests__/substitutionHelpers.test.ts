@@ -1,18 +1,21 @@
 import { describe, it, expect, vi } from 'vitest'
 
-vi.mock('$lib/features/database/detail/image', () => ({
-	getCharacterImage: (id: string, _shape: string, pose: string) => `char/${id}/${pose}.png`,
-	getWeaponImage: (id: string) => `weapon/${id}.png`,
-	getSummonImage: (id: string) => `summon/${id}.png`,
-	getPlaceholder: (type: string) => `placeholder-${type}.png`
+vi.mock('$lib/utils/images/core', () => ({
+	getPlaceholderImage: (type: string) => `placeholder-${type}.png`
 }))
 
 vi.mock('$lib/utils/images/characters', () => ({
+	getCharacterImage: (id: string, _shape: string, pose: string) => `char/${id}/${pose}.png`,
 	STYLE_SWAP_POSE: 'swap'
 }))
 
 vi.mock('$lib/utils/images/weapons', () => ({
+	getWeaponImage: (id: string) => `weapon/${id}.png`,
 	getWeaponFallbackImage: (id: string) => `weapon-fallback/${id}.png`
+}))
+
+vi.mock('$lib/utils/images/summons', () => ({
+	getSummonImage: (id: string) => `summon/${id}.png`
 }))
 
 vi.mock('$lib/utils/locale', () => ({

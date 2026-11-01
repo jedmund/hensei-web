@@ -1,8 +1,7 @@
 <script lang="ts">
 	import type { Cell } from 'wx-svelte-grid'
-	import { getWeaponImage } from '$lib/features/database/detail/image'
 	import { handleImageFallback } from '$lib/utils/images/core'
-	import { getWeaponFallbackImage } from '$lib/utils/images/weapons'
+	import { getWeaponFallbackImage, getWeaponImage } from '$lib/utils/images/weapons'
 
 	const { row }: Cell = $props()
 

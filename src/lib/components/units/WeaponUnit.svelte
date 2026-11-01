@@ -10,9 +10,12 @@
 	import BookmarkOverlay from './BookmarkOverlay.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
-	import { getWeaponImage } from '$lib/features/database/detail/image'
 	import { getPlaceholderImage, handleImageFallback } from '$lib/utils/images/core'
-	import { getWeaponTransformation, getWeaponFallbackImage } from '$lib/utils/images/weapons'
+	import {
+		getWeaponTransformation,
+		getWeaponFallbackImage,
+		getWeaponImage
+	} from '$lib/utils/images/weapons'
 	import { seriesHasTranscendenceArt } from '$lib/utils/weaponSeries'
 	import {
 		openDetailsSidebar,

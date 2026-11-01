@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Party, GridSummon } from '$lib/types/api/party'
-	import { getSummonImage } from '$lib/features/database/detail/image'
-	import { getSummonTransformation } from '$lib/utils/images/summons'
+	import { getSummonTransformation, getSummonImage } from '$lib/utils/images/summons'
 	import { seriesHasUlbArt } from '$lib/utils/summonSeries'
 	interface Props {
 		party?: Party
