@@ -144,7 +144,7 @@ describe('resourceSections', () => {
 		])
 	})
 
-	it('nests job skills and accessories under Jobs, at their own paths', () => {
+	it('nests job skills, accessories and bullets under Jobs, at their own paths', () => {
 		expect(childrenOf('jobs', 7).map((s) => [s.id, s.path, s.view])).toEqual([
 			['job-skills', '/database/job-skills', undefined],
 			['job-accessories', '/database/job-accessories', undefined],
@@ -155,8 +155,10 @@ describe('resourceSections', () => {
 		expect(sectionById('jobs')!.actions![0]!.map((a) => a.href)).toEqual([
 			'/database/jobs/new',
 			'/database/job-skills/new',
-			'/database/job-accessories/new'
+			'/database/job-accessories/new',
+			'/database/bullets/new'
 		])
+		expect(rootOf(sectionById('bullets')!)?.id).toBe('jobs')
 	})
 
 	it('keeps the summons entry as it was written by hand', () => {
