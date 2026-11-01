@@ -115,7 +115,7 @@
 	{#if isLinkedToCollection && isOutOfSync}
 		<div class="sync-banner">
 			<div class="sync-message">
-				<Icon name="refresh-cw" size={14} />
+				<Icon name="refresh" size={14} />
 				<span>{m.sidebar_weapon_out_of_sync()}</span>
 			</div>
 			<button class="sync-button" onclick={handleSync} disabled={isSyncing}>
