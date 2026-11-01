@@ -1,0 +1,592 @@
+/**
+ * The weapons resource: every field the weapons list, detail, edit and new
+ * pages show, described once (GBF-142).
+ */
+import { z } from 'zod'
+import * as m from '$lib/paraglide/messages'
+import {
+	elementFilterOptions,
+	rarityFilterOptions,
+	seriesFilterOptions,
+	weaponProficiencyFilterOptions
+} from '$lib/components/data-table/filterOptions'
+import { defineResource, type EnumOption, type Values } from '$lib/features/database/schema/types'
+import { BULLET_TYPES } from '$lib/types/api/entities'
+import { PROMOTION_NAMES } from '$lib/types/enums'
+import { getElementOptions } from '$lib/utils/element'
+import {
+	buildGamewithUrl,
+	buildKamigameUrl,
+	buildWikiEnUrl,
+	buildWikiJaUrl
+} from '$lib/utils/external-links'
+import { localizedName } from '$lib/utils/locale'
+import { getProficiencyOptions, ProficiencyId } from '$lib/utils/proficiency'
+import { getRarityOptions } from '$lib/utils/rarity'
+import type { Weapon } from '$lib/api/adapters/weapon.adapter'
+import type { AdminWeaponRow } from '$lib/types/api/admin'
+import type { Weapon as WeaponEntity } from '$lib/types/api/entities'
+import type { WeaponSeries } from '$lib/types/api/weaponSeries'
+
+const GRANBLUE_ID = /^\d{10}$/
+
+const UNCAPS = ['flb', 'ulb', 'transcendence']
+
+const flb = (v: Values) => v.flb === true
+const ulb = (v: Values) => v.ulb === true
+const transcendence = (v: Values) => v.transcendence === true
+
+const options = (labels: Record<number, string>) => (): EnumOption[] =>
+	Object.entries(labels).map(([value, label]) => ({ value: Number(value), label }))
+
+const EXTRA_PREREQUISITES: Record<number, string> = {
+	3: 'MLB',
+	4: 'FLB',
+	5: 'ULB',
+	6: 'Transcendence'
+}
+
+/** Max level and max skill level for an uncap state */
+function levelCaps(v: Values): { max_level: number; max_skill_level: number } {
+	if (transcendence(v)) return { max_level: 250, max_skill_level: 25 }
+	if (ulb(v)) return { max_level: 200, max_skill_level: 20 }
+	if (flb(v)) return { max_level: 150, max_skill_level: 15 }
+	return { max_level: 100, max_skill_level: 10 }
+}
+
+/** Uncaps stack: each needs the one before it, so ticking or unticking one carries the rest */
+function uncapCascade(v: Values, changed: string | null): Values | undefined {
+	if (changed === 'flb' && !flb(v)) return { ulb: false, transcendence: false }
+	if (changed === 'ulb') return ulb(v) ? { flb: true } : { transcendence: false }
+	if (changed === 'transcendence' && transcendence(v)) return { flb: true, ulb: true }
+	return undefined
+}
+
+const stat = { kind: 'number', int: true, min: 0, default: 0 } as const
+
+export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
+	name: 'weapons',
+	fields: [
+		// Metadata
+		{
+			key: 'name',
+			kind: 'localized',
+			label: m.db_weapons_col_name,
+			keys: { en: 'name_en', ja: 'name_jp' },
+			labels: { en: m.db_weapons_field_name_en, ja: m.db_weapons_field_name_jp },
+			required: true,
+			empty: 'omit',
+			list: { primary: true, minWidth: '220px' }
+		},
+		{
+			key: 'rarity',
+			kind: 'enum',
+			label: m.db_weapons_col_rarity,
+			options: getRarityOptions,
+			default: 3,
+			required: true,
+			list: { width: '80px' },
+			filter: { kind: 'multi', options: rarityFilterOptions, facet: true }
+		},
+		{
+			key: 'granblue_id',
+			kind: 'code',
+			label: m.db_weapons_field_granblue_id,
+			required: true,
+			validate: z
+				.string()
+				.regex(GRANBLUE_ID, { error: () => m.db_weapons_field_granblue_id_invalid() })
+		},
+		// Element variant IDs (element-changeable weapons)
+		{
+			key: 'element_variant_ids',
+			kind: 'custom',
+			label: m.db_weapons_field_element_variant_ids,
+			default: {},
+			when: (v) => v.element === 0,
+			form: { create: false },
+			validate: z.record(
+				z.string().regex(/^[0-6]$/),
+				z.string().regex(GRANBLUE_ID, {
+					error: () => m.db_weapons_field_element_variant_ids_invalid()
+				})
+			)
+		},
+		// Gacha
+		{
+			key: 'promotions',
+			kind: 'enumList',
+			label: m.db_weapons_field_promotions,
+			sublabel: m.db_weapons_hint_promotions,
+			options: options(PROMOTION_NAMES)
+		},
+		{
+			key: 'recruits',
+			kind: 'reference',
+			label: m.db_weapons_field_recruits,
+			sublabel: m.db_weapons_hint_recruits,
+			resource: 'character',
+			id: (ref) =>
+				typeof ref === 'string' ? ref : ((ref as Weapon['recruits'])?.granblueId ?? null),
+			// Today's pages never clear it: a blank is left out
+			empty: 'omit'
+		},
+		// Uncap
+		{
+			key: 'uncap',
+			kind: 'custom',
+			label: m.db_weapons_col_uncap,
+			write: false,
+			render: { cell: 'snippet', detail: 'uncapIndicator' },
+			list: { sortable: false, width: '144px', fields: UNCAPS }
+		},
+		{
+			key: 'flb',
+			kind: 'boolean',
+			label: m.db_weapons_filter_flb,
+			read: (w) => w.uncap?.flb
+		},
+		{
+			key: 'ulb',
+			kind: 'boolean',
+			label: m.db_weapons_filter_ulb,
+			read: (w) => w.uncap?.ulb
+		},
+		{
+			key: 'transcendence',
+			kind: 'boolean',
+			label: m.db_weapons_filter_transcendence,
+			read: (w) => w.uncap?.transcendence
+		},
+		{
+			key: 'extra_prerequisite',
+			kind: 'enum',
+			label: m.db_weapons_field_extra_prerequisite,
+			sublabel: m.db_weapons_hint_extra_prerequisite,
+			options: options(EXTRA_PREREQUISITES),
+			read: (w) => w.uncap?.extraPrerequisite
+		},
+		// Details
+		{
+			key: 'element',
+			kind: 'enum',
+			label: m.db_weapons_col_element,
+			options: getElementOptions,
+			default: 0,
+			required: true,
+			list: { type: 'element' },
+			filter: {
+				kind: 'multi',
+				options: () => elementFilterOptions({ includeNull: true }),
+				facet: true
+			}
+		},
+		{
+			key: 'proficiency',
+			kind: 'enum',
+			label: m.db_weapons_col_proficiency,
+			options: getProficiencyOptions,
+			default: 0,
+			required: true,
+			list: { type: 'proficiency' },
+			filter: { kind: 'multi', options: weaponProficiencyFilterOptions, facet: true }
+		},
+		{
+			key: 'series',
+			kind: 'reference',
+			label: m.db_weapons_col_series,
+			resource: 'weaponSeries',
+			// Today's pages never clear it: a blank is left out
+			empty: 'omit',
+			list: {
+				value: (w) =>
+					w.seriesNameEn || w.seriesNameJp
+						? localizedName({ en: w.seriesNameEn ?? '', ja: w.seriesNameJp ?? '' })
+						: null,
+				sortable: false,
+				width: '172px',
+				fields: ['series_name_en', 'series_name_jp']
+			},
+			filter: {
+				kind: 'multi',
+				options: (series) =>
+					seriesFilterOptions(series as WeaponSeries[] | undefined, m.db_weapons_filter_no_series),
+				facet: true
+			}
+		},
+		{
+			key: 'weapon_series_variant_id',
+			kind: 'reference',
+			label: m.db_weapons_field_variant,
+			sublabel: m.db_weapons_hint_variant,
+			resource: 'weaponSeriesVariant',
+			read: (w) => w.series?.weaponSeriesVariantId,
+			// The new page shows the picker but never sent it
+			form: { create: false }
+		},
+		{
+			key: 'extra',
+			kind: 'boolean',
+			label: m.db_weapons_filter_extra,
+			sublabel: m.db_weapons_hint_extra
+		},
+		{
+			key: 'limit',
+			kind: 'boolean',
+			label: m.db_weapons_field_limit,
+			sublabel: m.db_weapons_hint_limit,
+			read: (w) => Boolean(w.limit),
+			filter: { kind: 'toggle', label: m.db_weapons_filter_limit }
+		},
+		// HP and attack
+		{ ...stat, key: 'min_hp', label: m.db_weapons_field_min_hp, read: (w) => w.hp?.minHp },
+		{ ...stat, key: 'max_hp', label: m.db_weapons_field_max_hp, read: (w) => w.hp?.maxHp },
+		{
+			...stat,
+			key: 'max_hp_flb',
+			label: m.db_weapons_field_max_hp_flb,
+			read: (w) => w.hp?.maxHpFlb,
+			when: flb
+		},
+		{
+			...stat,
+			key: 'max_hp_ulb',
+			label: m.db_weapons_field_max_hp_ulb,
+			read: (w) => w.hp?.maxHpUlb,
+			when: ulb
+		},
+		{ ...stat, key: 'min_atk', label: m.db_weapons_field_min_atk, read: (w) => w.atk?.minAtk },
+		{ ...stat, key: 'max_atk', label: m.db_weapons_field_max_atk, read: (w) => w.atk?.maxAtk },
+		{
+			...stat,
+			key: 'max_atk_flb',
+			label: m.db_weapons_field_max_atk_flb,
+			read: (w) => w.atk?.maxAtkFlb,
+			when: flb
+		},
+		{
+			...stat,
+			key: 'max_atk_ulb',
+			label: m.db_weapons_field_max_atk_ulb,
+			read: (w) => w.atk?.maxAtkUlb,
+			when: ulb
+		},
+		// Caps
+		{
+			key: 'max_level',
+			kind: 'number',
+			label: m.db_weapons_field_max_level,
+			int: true,
+			min: 1,
+			default: 100
+		},
+		{
+			key: 'max_skill_level',
+			kind: 'number',
+			label: m.db_weapons_field_max_skill_level,
+			int: true,
+			min: 1,
+			default: 10
+		},
+		{
+			key: 'max_awakening_level',
+			kind: 'number',
+			label: m.db_weapons_field_max_awakening_level,
+			int: true,
+			min: 0,
+			// 0 means none, sent as null
+			write: { value: (v) => v || null }
+		},
+		{
+			key: 'max_exorcism_level',
+			kind: 'number',
+			label: m.db_weapons_field_max_exorcism_level,
+			sublabel: m.db_weapons_hint_max_exorcism_level,
+			int: true,
+			min: 1
+		},
+		// Awakenings
+		{
+			key: 'awakening_ids',
+			kind: 'referenceList',
+			label: m.db_nav_awakenings,
+			resource: 'awakening',
+			read: (w) => w.awakenings,
+			form: { create: false }
+		},
+		// Forge chain
+		{
+			key: 'forge_chain',
+			kind: 'custom',
+			label: m.db_weapons_field_forge_chain,
+			write: false,
+			read: (w) => (w as Weapon & Pick<WeaponEntity, 'forgeChain'>).forgeChain
+		},
+		{
+			key: 'forged_from',
+			kind: 'reference',
+			label: m.db_weapons_field_forged_from,
+			resource: 'weapon',
+			id: (ref) => (ref as Weapon['forgedFrom'])?.granblueId ?? null
+		},
+		{
+			key: 'forge_order',
+			kind: 'number',
+			label: m.db_weapons_field_forge_order,
+			int: true,
+			min: 0
+		},
+		// Bullet slots (guns)
+		{
+			key: 'bullet_slots',
+			kind: 'enumList',
+			label: m.db_weapons_field_bullet_slots,
+			options: options(BULLET_TYPES),
+			ordered: true,
+			max: 6,
+			when: (v) => v.proficiency === ProficiencyId.Gun,
+			form: { create: false }
+		},
+		// Nicknames
+		{
+			key: 'nicknames',
+			kind: 'localized',
+			of: 'tags',
+			label: m.db_weapons_field_nicknames,
+			keys: { en: 'nicknames_en', ja: 'nicknames_jp' },
+			labels: { en: m.db_weapons_field_nicknames_en, ja: m.db_weapons_field_nicknames_ja }
+		},
+		// Dates
+		{
+			key: 'release_date',
+			kind: 'date',
+			label: m.db_weapons_col_release_date
+		},
+		{
+			key: 'flb_date',
+			kind: 'date',
+			label: m.db_weapons_col_flb_date,
+			when: flb,
+			list: { defaultHidden: true }
+		},
+		{
+			key: 'ulb_date',
+			kind: 'date',
+			label: m.db_weapons_col_ulb_date,
+			when: ulb,
+			list: { defaultHidden: true }
+		},
+		{
+			key: 'transcendence_date',
+			kind: 'date',
+			label: m.db_weapons_col_transcendence_date,
+			when: transcendence,
+			list: { defaultHidden: true }
+		},
+		// Links
+		{
+			key: 'wiki_en',
+			kind: 'link',
+			label: m.db_weapons_field_wiki_en,
+			read: (w) => w.wiki?.en,
+			href: (v) => buildWikiEnUrl(v),
+			form: { placeholder: m.db_weapons_hint_wiki_en, width: '480px' }
+		},
+		{
+			key: 'wiki_ja',
+			kind: 'link',
+			label: m.db_weapons_field_wiki_ja,
+			read: (w) => w.wiki?.ja,
+			href: (v) => buildWikiJaUrl(v, 'weapon'),
+			form: { placeholder: m.db_weapons_hint_wiki_ja, width: '480px' }
+		},
+		{
+			key: 'gamewith',
+			kind: 'link',
+			label: m.details_link_gamewith,
+			href: (v) => buildGamewithUrl(v),
+			form: { placeholder: m.db_weapons_hint_gamewith, width: '480px' }
+		},
+		{
+			key: 'kamigame',
+			kind: 'link',
+			label: m.details_link_kamigame,
+			href: (v, values) => buildKamigameUrl(v, 'weapon', values.rarity as number | undefined),
+			form: { placeholder: m.db_weapons_hint_kamigame, width: '480px' }
+		},
+		// Create only: the legacy series param. No input sets it, so it's never sent
+		{
+			key: 'new_series',
+			kind: 'number',
+			label: m.db_weapons_field_new_series,
+			empty: 'omit',
+			write: { value: (v) => v || null },
+			form: { edit: false }
+		},
+		// List only
+		{
+			key: 'latest_date',
+			kind: 'date',
+			label: m.db_weapons_col_latest_date,
+			write: false
+		},
+		{
+			key: 'updated_at',
+			kind: 'datetime',
+			label: m.db_weapons_col_updated_at,
+			write: false,
+			list: { defaultHidden: true },
+			filter: {
+				kind: 'recent',
+				label: m.db_weapons_filter_updated,
+				presets: [
+					{ days: 7, label: m.db_weapons_filter_updated_7 },
+					{ days: 30, label: m.db_weapons_filter_updated_30 }
+				]
+			}
+		},
+		{
+			key: 'skill_count',
+			kind: 'number',
+			label: m.db_weapons_col_skill_count,
+			write: false,
+			list: { sortable: false, defaultHidden: true }
+		}
+	],
+
+	list: {
+		columns: [
+			{
+				id: 'image',
+				header: '',
+				type: 'image',
+				image: 'weapon',
+				sortable: false,
+				hideable: false,
+				width: '96px',
+				// Table cells shrink to their content's minimum, and a thumb has none
+				minWidth: '96px',
+				fields: ['element']
+			},
+			'name',
+			'rarity',
+			'element',
+			'proficiency',
+			'uncap',
+			'series',
+			'release_date',
+			'flb_date',
+			'ulb_date',
+			'transcendence_date',
+			// The newest of the release and uncap dates: when the game last changed it
+			'latest_date',
+			// When someone last edited the record on the site
+			'updated_at',
+			'skill_count'
+		],
+		filters: [
+			'element',
+			'rarity',
+			'proficiency',
+			'series',
+			{ id: 'uncap', label: m.db_weapons_filter_uncap, toggles: UNCAPS },
+			{ id: 'type', label: m.db_weapons_filter_type, toggles: ['extra', 'limit'] },
+			{
+				id: 'quality',
+				label: m.db_weapons_filter_quality,
+				toggles: [
+					{ key: 'missing_name_jp', label: m.db_weapons_filter_missing_name_jp },
+					{ key: 'no_skills', label: m.db_weapons_filter_no_skills }
+				]
+			},
+			'updated_at'
+		],
+		baseFields: ['granblue_id', 'name_en', 'name_jp'],
+		defaultSort: [
+			{ id: 'latest_date', desc: true },
+			{ id: 'name', desc: false }
+		]
+	},
+
+	// The detail Info tab's order; edit and create use it too
+	layout: {
+		detail: [
+			{
+				id: 'metadata',
+				title: m.db_weapons_section_metadata,
+				fields: ['name', 'rarity', 'granblue_id']
+			},
+			{
+				id: 'element_variant_ids',
+				title: m.db_weapons_field_element_variant_ids,
+				fields: ['element_variant_ids'],
+				component: 'elementVariantIds',
+				when: (v) => v.element === 0
+			},
+			{ id: 'gacha', title: m.db_weapons_section_gacha, fields: ['promotions', 'recruits'] },
+			{
+				id: 'uncap',
+				title: m.db_weapons_col_uncap,
+				fields: ['uncap', 'flb', 'ulb', 'transcendence', 'extra_prerequisite']
+			},
+			{
+				id: 'details',
+				title: m.db_weapons_section_details,
+				fields: ['element', 'proficiency', 'series', 'weapon_series_variant_id', 'extra', 'limit']
+			},
+			{
+				id: 'hp',
+				title: m.db_weapons_section_hp,
+				fields: ['min_hp', 'max_hp', 'max_hp_flb', 'max_hp_ulb']
+			},
+			{
+				id: 'attack',
+				title: m.db_weapons_section_attack,
+				fields: ['min_atk', 'max_atk', 'max_atk_flb', 'max_atk_ulb']
+			},
+			{
+				id: 'caps',
+				title: m.db_weapons_section_caps,
+				fields: ['max_level', 'max_skill_level', 'max_awakening_level', 'max_exorcism_level']
+			},
+			{
+				id: 'awakenings',
+				title: m.db_nav_awakenings,
+				fields: ['awakening_ids'],
+				component: 'weaponAwakenings'
+			},
+			{
+				id: 'forge',
+				title: m.db_weapons_field_forge_chain,
+				fields: ['forge_chain', 'forged_from', 'forge_order'],
+				component: 'weaponForge'
+			},
+			{
+				id: 'bullet_slots',
+				title: m.db_weapons_field_bullet_slots,
+				fields: ['bullet_slots'],
+				component: 'bulletSlots',
+				when: (v) => v.proficiency === ProficiencyId.Gun
+			},
+			{ id: 'nicknames', title: m.db_weapons_field_nicknames, fields: ['nicknames'] },
+			{
+				id: 'dates',
+				title: m.db_weapons_section_dates,
+				fields: ['release_date', 'flb_date', 'ulb_date', 'transcendence_date']
+			},
+			{
+				id: 'links',
+				title: m.db_weapons_section_links,
+				fields: ['wiki_en', 'wiki_ja', 'gamewith', 'kamigame']
+			}
+		]
+	},
+
+	derive: [
+		uncapCascade,
+		// On load too, as the edit page's effect did; editing a cap directly sticks
+		(v, changed) => (changed === null || UNCAPS.includes(changed) ? levelCaps(v) : undefined),
+		// A variant belongs to its series
+		(_, changed) => (changed === 'series' ? { weapon_series_variant_id: null } : undefined)
+	]
+})
