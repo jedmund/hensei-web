@@ -9,9 +9,7 @@
  * separate page, so each record set has one list UI.
  */
 import { m } from '$lib/paraglide/messages'
-
-export const EDITOR_ROLE = 7
-export const ADMIN_ROLE = 9
+import { ADMIN_ROLE, CURATOR_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
 
 export type SectionGroupId = 'catalogue' | 'battles' | 'site' | 'admin'
 
@@ -37,6 +35,7 @@ export interface DatabaseSection {
 	entity?: () => string
 	/** "New" menu items, in separator-delimited groups. Children inherit their parent's menu. */
 	actions?: SectionAction[][]
+	/** Lowest role that sees the section. Defaults to editor; curators only see Events. */
 	minRole?: number
 	/** Hidden until the feature exists */
 	hidden?: boolean
@@ -231,7 +230,8 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 		id: 'events',
 		label: () => m.nav_events(),
 		path: '/database/events',
-		group: 'battles'
+		group: 'battles',
+		minRole: CURATOR_ROLE
 	},
 	{
 		id: 'gw-events',
