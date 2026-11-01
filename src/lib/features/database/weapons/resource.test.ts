@@ -11,7 +11,12 @@ import {
 	type ResolvedOption
 } from '$lib/components/data-table/filters'
 import { columnHeader, type DataTableColumn } from '$lib/components/data-table/types'
-import { columnsFor, filtersFor } from '$lib/features/database/schema/columns'
+import {
+	columnsFor,
+	filterQueries,
+	filtersFor,
+	titleFor
+} from '$lib/features/database/schema/columns'
 import {
 	applyDerive,
 	fromRecord,
@@ -25,7 +30,6 @@ import type { AdminWeaponRow } from '$lib/types/api/admin'
 import type { WeaponSeries } from '$lib/types/api/weaponSeries'
 import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svelte'
 import { weaponsResource } from './resource'
-import { weaponsColumns, weaponsFilters } from './tableConfig'
 
 // --- List ---
 
@@ -124,7 +128,7 @@ const date = (id: string, header: string, value: unknown[], hidden = false) => (
 	fields: [id]
 })
 
-/** What the hand-written WeaponsTable config produced, for the rows above */
+/** What the hand-written weapons list (WeaponsTable) produced, for the rows above */
 const EXPECTED_COLUMNS = [
 	{
 		id: 'image',
@@ -306,14 +310,12 @@ const EXPECTED_FILTERS = [
 describe('weapons resource: list', () => {
 	it('generates the columns the hand-written list had', () => {
 		expect(columnsFor(weaponsResource).map(normalizeColumn)).toEqual(EXPECTED_COLUMNS)
-		expect(weaponsColumns().map(normalizeColumn)).toEqual(EXPECTED_COLUMNS)
 	})
 
 	it('generates the filters the hand-written list had', () => {
 		expect(filtersFor(weaponsResource, { series: () => series }).map(normalizeFilter)).toEqual(
 			EXPECTED_FILTERS
 		)
-		expect(weaponsFilters(() => series).map(normalizeFilter)).toEqual(EXPECTED_FILTERS)
 	})
 
 	it('reads the series list lazily', () => {
@@ -325,6 +327,17 @@ describe('weapons resource: list', () => {
 		expect(seriesFilter.options().map((o) => o.value)).toEqual(['none'])
 		loaded.data = series
 		expect(seriesFilter.options().map((o) => o.value)).toEqual(['cosmos', 'opus', 'none'])
+	})
+
+	it('loads the series list for its filter', () => {
+		expect(filterQueries(weaponsResource).map(([key, query]) => [key, query().queryKey])).toEqual([
+			['series', ['weaponSeries', 'list']]
+		])
+	})
+
+	it('titles rows by name', () => {
+		const title = titleFor(weaponsResource)
+		expect(rows.map(title)).toEqual(['Cosmic Sword', '—'])
 	})
 
 	it('keeps the base fields and default sort', () => {
