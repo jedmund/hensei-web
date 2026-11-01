@@ -1,6 +1,5 @@
 // Re-export all adapters and types
 export { BaseAdapter } from './base.adapter'
-export { GridAdapter, gridAdapter } from './grid.adapter'
 export { JobAdapter, jobAdapter } from './job.adapter'
 export { PartyAdapter, partyAdapter } from './party.adapter'
 export { SearchAdapter, searchAdapter } from './search.adapter'

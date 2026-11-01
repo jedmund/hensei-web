@@ -9,12 +9,14 @@
 
 import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svelte-query'
 import {
-	gridAdapter,
-	type CreateGridWeaponParams,
-	type UpdateUncapParams,
-	type ResolveConflictParams,
-	type SwapPositionsParams
-} from '$lib/api/adapters/grid.adapter'
+	gridWeaponAdapter,
+	type CreateGridWeaponParams
+} from '$lib/api/adapters/gridWeapon.adapter'
+import type {
+	UpdateUncapParams,
+	ResolveConflictParams,
+	SwapPositionsParams
+} from '$lib/api/adapters/grid.shared'
 import type { GridWeapon } from '$lib/types/api/party'
 import {
 	applyGridUncap,
@@ -33,7 +35,7 @@ type UpdateVars = { id: string; partyShortcode: string; updates: Partial<GridWea
 export function createGridWeaponOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ partyShortcode, ...rest }: CreateVars) =>
-			gridAdapter.createWeapon(rest, editKeyHeaders(partyShortcode)),
+			gridWeaponAdapter.createWeapon(rest, editKeyHeaders(partyShortcode)),
 		// Clear the slot being filled; the mainhand has its own slot.
 		...optimisticGridList(queryClient, 'weapons', (weapons, { position, mainhand }: CreateVars) =>
 			weapons.filter((w) => (mainhand ? !w.mainhand : w.position !== position))
@@ -44,7 +46,7 @@ export function createGridWeaponOptions(queryClient: QueryClient) {
 export function updateGridWeaponOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ id, partyShortcode, updates }: UpdateVars) =>
-			gridAdapter.updateWeapon(id, updates, editKeyHeaders(partyShortcode)),
+			gridWeaponAdapter.updateWeapon(id, updates, editKeyHeaders(partyShortcode)),
 		...optimisticGridList(queryClient, 'weapons', (weapons, { id, updates }: UpdateVars) =>
 			applyNotesSyncedUpdate(weapons, id, updates, (w) => w.weapon?.granblueId)
 		)
@@ -54,7 +56,7 @@ export function updateGridWeaponOptions(queryClient: QueryClient) {
 export function deleteGridWeaponOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: DeleteGridItemVars) =>
-			gridAdapter.deleteWeapon(
+			gridWeaponAdapter.deleteWeapon(
 				{ id: params.id, partyId: params.partyId, position: params.position },
 				editKeyHeaders(params.partyShortcode)
 			),
@@ -68,7 +70,7 @@ export function updateWeaponUncapOptions(queryClient: QueryClient) {
 	type Vars = UpdateUncapParams & { partyShortcode: string }
 	return {
 		mutationFn: (params: Vars) =>
-			gridAdapter.updateWeaponUncap(params, editKeyHeaders(params.partyShortcode)),
+			gridWeaponAdapter.updateWeaponUncap(params, editKeyHeaders(params.partyShortcode)),
 		...optimisticGridList(queryClient, 'weapons', (weapons, vars: Vars) =>
 			applyGridUncap(weapons, vars)
 		)
@@ -78,7 +80,7 @@ export function updateWeaponUncapOptions(queryClient: QueryClient) {
 export function resolveWeaponConflictOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: ResolveConflictParams & { partyShortcode: string }) =>
-			gridAdapter.resolveWeaponConflict(params, editKeyHeaders(params.partyShortcode)),
+			gridWeaponAdapter.resolveWeaponConflict(params, editKeyHeaders(params.partyShortcode)),
 		...invalidatePartyOnSuccess(queryClient)
 	}
 }
@@ -86,7 +88,7 @@ export function resolveWeaponConflictOptions(queryClient: QueryClient) {
 export function swapWeaponsOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
-			gridAdapter.swapWeapons(params, editKeyHeaders(params.partyShortcode)),
+			gridWeaponAdapter.swapWeapons(params, editKeyHeaders(params.partyShortcode)),
 		...invalidatePartyOnSuccess(queryClient)
 	}
 }
@@ -94,7 +96,7 @@ export function swapWeaponsOptions(queryClient: QueryClient) {
 export function duplicateGridWeaponOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: { id: string; partyShortcode: string; position: number }) =>
-			gridAdapter.duplicateWeapon(
+			gridWeaponAdapter.duplicateWeapon(
 				{ id: params.id, position: params.position },
 				editKeyHeaders(params.partyShortcode)
 			),
