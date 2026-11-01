@@ -13,7 +13,7 @@
  * key names the column, the filter, the sort and the param.
  */
 import type { Component } from 'svelte'
-import type { CreateQueryOptions, QueryKey } from '@tanstack/svelte-query'
+import type { CreateQueryOptions } from '@tanstack/svelte-query'
 import type { z } from 'zod'
 import type {
 	BuiltInCellType,
@@ -52,6 +52,8 @@ export type ComponentName =
 	| 'characterRelated'
 	| 'weaponSeriesVariants'
 	| 'awakeningImage'
+	| 'raidGroupRaids'
+	| 'eventRaids'
 
 /**
  * Form inputs the edit and create forms resolve by name, for values no
@@ -64,6 +66,7 @@ export type InputName =
 	| 'characterUncap'
 	| 'weaponSeriesVariants'
 	| 'awakeningImage'
+	| 'eventRaids'
 
 /**
  * How an empty value ('', null, undefined, [] or {}) is sent:
@@ -79,7 +82,15 @@ export interface EnumOption {
 
 /** Records a reference points at */
 export type ReferenceResource =
-	'character' | 'weapon' | 'weaponSeries' | 'weaponSeriesVariant' | 'awakening' | 'characterSeries'
+	| 'character'
+	| 'weapon'
+	| 'weaponSeries'
+	| 'weaponSeriesVariant'
+	| 'awakening'
+	| 'characterSeries'
+	| 'summonSeries'
+	| 'raidGroup'
+	| 'raid'
 
 /** Column options. The column id is the field key, the header its label */
 export type ListOptions<Row> = Partial<Omit<ColumnBase<Row>, 'id' | 'header'>> & {
@@ -264,6 +275,8 @@ export interface ToggleGroupDef {
 export interface ListDef<Row> {
 	/** Accessible name for the table */
 	label: Message
+	/** The generated list screen's page title. Defaults to `label` */
+	pageTitle?: Message
 	/** Lowercase plural noun for the search placeholder, e.g. "weapons" */
 	entity: Message
 	empty: Message
@@ -278,11 +291,6 @@ export interface ListDef<Row> {
 	 * slug
 	 */
 	rowId?: (row: Row) => string
-	/**
-	 * `?view=` tabs that moved to resources of their own: the old list URL
-	 * (`?view=<key>`) redirects to `/database/<value>`
-	 */
-	movedViews?: Record<string, string>
 	/** Field keys, or a literal column for things that aren't fields (the thumbnail) */
 	columns: Array<string | DataTableColumn<Row>>
 	/** Field keys with a `multi` or `recent` filter, or toggle groups */
@@ -293,6 +301,11 @@ export interface ListDef<Row> {
 	rowHeight?: RowHeight
 	/** Keep the first column in place while scrolling sideways */
 	pinFirstColumn?: boolean
+	/**
+	 * Old `?view=` values of this list and the pages that replaced them, e.g.
+	 * `{ groups: '/database/raid-groups' }`: the list redirects there
+	 */
+	movedViews?: Record<string, string>
 }
 
 /**
@@ -328,10 +341,10 @@ type Lazy<Props extends Record<string, unknown>> = () => Promise<{ default: Comp
 
 /**
  * Hand-written screens that replace the generated ones. The list is always
- * generated (`ResourceTable`); the detail and the panel when a resource has a
- * `record`, the edit page when it can also `save.update`, and the new page
- * when it can `save.create`. The generic routes 404 any other screen the
- * resource doesn't have.
+ * generated (`ResourceTable` under the list's page title); the detail and the
+ * panel when a resource has a `record`, the edit page when it can also
+ * `save.update`, and the new page when it can `save.create`. The generic
+ * routes 404 any other screen the resource doesn't have.
  */
 export interface Screens<Full> {
 	/** The list takes no props: it reads its state from the URL */
@@ -354,6 +367,8 @@ export type ScreenComponent<K extends ScreenKind, Full = unknown> = Awaited<
 export interface RecordTabProps<Full> {
 	record: Full
 	canEdit: boolean
+	/** The viewer's role, for tabs with rules of their own (staff picks) */
+	role: number
 	/** Reloads the record (e.g. after a re-parse changed it) */
 	refetch: () => void
 }
@@ -382,11 +397,6 @@ export interface SaveDef<Full> {
 	 */
 	create?: (payload: Values) => Promise<Full>
 	/**
-	 * Other queries a save makes stale, beyond the record and the admin list
-	 * (e.g. the series list other pages' filters read)
-	 */
-	invalidates?: () => QueryKey[]
-	/**
 	 * Checks that need the server, by field key, run on the create form only
 	 * (a loaded record passes them by definition). Each runs once the value
 	 * passes the field's own rules, debounced while typing, and resolves with
@@ -396,6 +406,11 @@ export interface SaveDef<Full> {
 	asyncValidate?: Record<string, (value: unknown, values: Values) => Promise<string | null>>
 	/** Runs after a create, without holding up the form (e.g. queueing image downloads) */
 	afterCreate?: (record: Full) => Promise<unknown>
+	/**
+	 * Other queries a save makes stale, beyond the record and the admin list
+	 * (e.g. Home, which shows events, or the series lists other pages' filters read)
+	 */
+	invalidates?: () => readonly (readonly unknown[])[]
 }
 
 export interface RecordDef<Full> {

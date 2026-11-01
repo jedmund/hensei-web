@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { CURATOR_ROLE } from '$lib/auth/roles'
+import { CURATOR_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
 import { awakeningsResource } from './awakenings/resource'
 import { weaponSeriesResource } from './weapon-series/resource'
 import { weaponsResource } from './weapons/resource'
 import {
 	DATABASE_SECTIONS,
 	groupedSections,
+	resourceMinRole,
 	resourceSections,
 	rootOf,
 	sectionById,
@@ -19,12 +20,12 @@ describe('sectionForUrl', () => {
 	it('matches list pages', () => {
 		expect(at('/database/weapons')).toBe('weapons')
 		expect(at('/ja/database/summons')).toBe('summons')
+		expect(at('/database/raid-groups')).toBe('raid-groups')
 	})
 
 	it('selects sub-sections by ?view=', () => {
 		expect(at('/database/weapons?view=skills')).toBe('weapon-skills')
 		expect(at('/database/jobs?view=skills')).toBe('job-skills')
-		expect(at('/database/raids?view=groups')).toBe('raid-groups')
 	})
 
 	it('maps record routes to their section', () => {
@@ -72,10 +73,11 @@ describe('resourceSections', () => {
 		) as unknown
 
 	it("derives the weapons entries from the definitions' sections", () => {
-		const derived = resourceSections(weaponsResource.name, weaponsResource.section!, [
-			resourceSections(weaponSeriesResource.name, weaponSeriesResource.section!),
-			resourceSections(awakeningsResource.name, awakeningsResource.section!)
-		])
+		const derived = [
+			...resourceSections(weaponsResource.name, weaponsResource.section!),
+			...resourceSections(weaponSeriesResource.name, weaponSeriesResource.section!),
+			...resourceSections(awakeningsResource.name, awakeningsResource.section!)
+		]
 		const start = DATABASE_SECTIONS.findIndex((s) => s.id === 'weapons')
 		expect(DATABASE_SECTIONS.slice(start, start + derived.length).map(shown)).toEqual(
 			derived.map(shown)
@@ -89,9 +91,9 @@ describe('resourceSections', () => {
 		expect(ids.slice(ids.indexOf('roles'), ids.indexOf('summons') + 1)).toEqual([
 			'roles',
 			'weapons',
+			'weapon-skills',
 			'weapon-series',
 			'awakenings',
-			'weapon-skills',
 			'summons'
 		])
 		expect(shown(sectionById('weapons')!)).toEqual({
@@ -138,5 +140,56 @@ describe('resourceSections', () => {
 				matches: ['/database/weapon-skills']
 			}
 		])
+	})
+
+	it('keeps the summons entry as it was written by hand', () => {
+		expect(shown(sectionById('summons')!)).toEqual({
+			id: 'summons',
+			label: 'fn:Summons',
+			path: '/database/summons',
+			group: 'catalogue',
+			entity: 'fn:summon',
+			actions: [
+				[
+					{ label: 'fn:Single summon', href: '/database/summons/new' },
+					{ label: 'fn:Multiple summons', href: '/database/summons/import' }
+				]
+			]
+		})
+	})
+})
+
+describe('battles sections', () => {
+	const shown = (section: DatabaseSection) =>
+		JSON.parse(
+			JSON.stringify(section, (_, v) => (typeof v === 'function' ? `fn:${v()}` : v))
+		) as unknown
+
+	it('nests raid groups under raids at their own path, sharing its New menu', () => {
+		expect(shown(sectionById('raid-groups')!)).toEqual({
+			id: 'raid-groups',
+			label: 'fn:Groups',
+			path: '/database/raid-groups',
+			group: 'battles',
+			parent: 'raids'
+		})
+		expect(rootOf(sectionById('raid-groups')!)?.id).toBe('raids')
+		expect(shown(sectionById('raids')!)).toMatchObject({
+			path: '/database/raids',
+			actions: [
+				[
+					{ label: 'fn:New raid', href: '/database/raids/new' },
+					{ label: 'fn:New raid group', href: '/database/raid-groups/new' }
+				]
+			]
+		})
+	})
+
+	it('opens Events to curators and every other resource to editors only', () => {
+		expect(resourceMinRole('events')).toBe(CURATOR_ROLE)
+		expect(resourceMinRole('raids')).toBe(EDITOR_ROLE)
+		expect(resourceMinRole('raid-groups')).toBe(EDITOR_ROLE)
+		expect(resourceMinRole('weapons')).toBe(EDITOR_ROLE)
+		expect(resourceMinRole('widgets')).toBe(EDITOR_ROLE)
 	})
 })

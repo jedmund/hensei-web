@@ -1,26 +1,31 @@
 <script lang="ts">
-	// The generated list page: the resource's list, titled by its label
+	// The generated list screen: the page title and the generated list. The
+	// table belongs to one resource, so it starts over when the route moves to
+	// another
 	import { page } from '$app/state'
 	import * as m from '$lib/paraglide/messages'
 	import PageMeta from '$lib/components/PageMeta.svelte'
-	import type { ResourceName } from './names'
-	import { RESOURCES } from './registry'
+	import { isResourceName } from './names'
+	import { resourceDef } from './registry'
 	import ResourceTable from './ResourceTable.svelte'
 
 	// The route only matches registered resources
-	const resource = $derived(page.params.resource as ResourceName)
+	const name = $derived(page.params.resource ?? '')
+	const def = $derived(resourceDef(name)!)
 </script>
 
 <PageMeta
-	title={m.page_title_db_entity({ name: RESOURCES[resource].list.label() })}
+	title={def.list.pageTitle?.() ?? m.page_title_db_entity({ name: def.list.label() })}
 	description={m.page_desc_home()}
 />
 
-<div class="database-page">
-	{#key resource}
-		<ResourceTable {resource} />
+{#if isResourceName(name)}
+	{#key name}
+		<div class="database-page">
+			<ResourceTable resource={name} />
+		</div>
 	{/key}
-</div>
+{/if}
 
 <style lang="scss">
 	.database-page {

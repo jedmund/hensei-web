@@ -154,7 +154,7 @@ export class RecordForm<Row = unknown, Full = unknown> {
 	 * null when validation or the request failed (see `errors` and `formError`).
 	 */
 	async save(): Promise<Full | null> {
-		const { create, update, afterCreate } = this.#def.save ?? {}
+		const { create, update, afterCreate, invalidates } = this.#def.save ?? {}
 		const recordDef = this.#def.record
 		const record = this.#record
 		if (this.saving || !recordDef || !(record === null ? create : update)) return null
@@ -183,7 +183,7 @@ export class RecordForm<Row = unknown, Full = unknown> {
 				this.#queryClient.invalidateQueries({
 					queryKey: adminKeys.lists(this.#def.name as AdminResource)
 				}),
-				...(this.#def.save?.invalidates?.() ?? []).map((queryKey) =>
+				...(invalidates?.() ?? []).map((queryKey) =>
 					this.#queryClient.invalidateQueries({ queryKey })
 				)
 			])

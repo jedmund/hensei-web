@@ -32,6 +32,7 @@ export interface Summon {
 	}
 	rarity: number
 	element: number
+	maxLevel?: number
 	/** Series - object with slug/name or null */
 	series?: SummonSeriesRef | null
 	/** Gacha promotions (1=Premium, 2=Classic, 3=ClassicII, 4=Flash, 5=Legend, etc.) */

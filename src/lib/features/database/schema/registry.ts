@@ -6,6 +6,10 @@ import { awakeningsResource } from '$lib/features/database/awakenings/resource'
 import { characterSeriesResource } from '$lib/features/database/character-series/resource'
 import { charactersResource } from '$lib/features/database/characters/resource'
 import { weaponSeriesResource } from '$lib/features/database/weapon-series/resource'
+import { eventsResource } from '$lib/features/database/events/resource'
+import { raidGroupsResource } from '$lib/features/database/raid-groups/resource'
+import { raidsResource } from '$lib/features/database/raids/resource'
+import { summonsResource } from '$lib/features/database/summons/resource'
 import { weaponsResource } from '$lib/features/database/weapons/resource'
 import { isResourceName, type ResourceName } from './names'
 import type { ResourceDef } from './types'
@@ -18,6 +22,10 @@ export type AnyResourceDef = ResourceDef<any, any>
 export const RESOURCES: Record<ResourceName, AnyResourceDef> = {
 	weapons: weaponsResource,
 	characters: charactersResource,
+	summons: summonsResource,
+	raids: raidsResource,
+	'raid-groups': raidGroupsResource,
+	events: eventsResource,
 	'weapon-series': weaponSeriesResource,
 	'character-series': characterSeriesResource,
 	awakenings: awakeningsResource

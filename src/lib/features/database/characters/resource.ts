@@ -609,7 +609,7 @@ export const charactersResource = defineResource<AdminCharacterRow, Character>({
 			{ id: 'latest_date', desc: true },
 			{ id: 'name', desc: false }
 		],
-		movedViews: { series: 'character-series' }
+		movedViews: { series: '/database/character-series' }
 	},
 
 	// The detail Info tab's order; edit and create use it too. A section shows

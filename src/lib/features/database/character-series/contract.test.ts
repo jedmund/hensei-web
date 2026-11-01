@@ -1,6 +1,6 @@
 /**
  * The character-series schema must only use what the API publishes at
- * GET /admin/character-series/schema: filters, flags, sorts, fields, writable params and
+ * GET /admin/character_series/schema: filters, flags, sorts, fields, writable params and
  * enum values.
  *
  * The fixture is a copy of hensei-api's spec/fixtures/admin_schema/character-series.json.

@@ -8,5 +8,6 @@ import type { ResourceSection } from '$lib/features/database/sections'
 
 export const characterSeriesSection: ResourceSection = {
 	label: () => m.db_nav_series(),
-	group: 'catalogue'
+	group: 'catalogue',
+	parent: 'characters'
 }

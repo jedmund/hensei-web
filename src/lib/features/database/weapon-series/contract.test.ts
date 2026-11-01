@@ -1,6 +1,6 @@
 /**
  * The weapon-series schema must only use what the API publishes at
- * GET /admin/weapon-series/schema: filters, flags, sorts, fields, writable params and
+ * GET /admin/weapon_series/schema: filters, flags, sorts, fields, writable params and
  * enum values.
  *
  * The fixture is a copy of hensei-api's spec/fixtures/admin_schema/weapon-series.json.

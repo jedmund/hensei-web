@@ -1,14 +1,16 @@
 <script lang="ts">
 	// A reference's input, by the resource it points at: a typeahead for
-	// characters and weapons, a select for weapon series, and a select of the
-	// chosen series' variants (no row when it has none)
+	// characters and weapons, a select for weapon series, summon series and raid
+	// groups, and a select of the chosen weapon series' variants (no row when it has none)
 	import { createQuery } from '@tanstack/svelte-query'
 	import * as m from '$lib/paraglide/messages'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
+	import { raidQueries } from '$lib/api/queries/raid.queries'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import CharacterTypeahead from '$lib/components/ui/CharacterTypeahead.svelte'
 	import WeaponTypeahead from '$lib/components/ui/WeaponTypeahead.svelte'
 	import { localizedName } from '$lib/utils/locale'
+	import { compareRaidGroups } from '$lib/utils/raidSection'
 	import { readField } from '../fields'
 	import type { InputProps } from './types'
 
@@ -24,9 +26,21 @@
 
 	const none = { value: '', label: m.option_none() }
 
-	const seriesListQuery = createQuery(() => ({
+	// Series drawn as a select: the list for the resource the field points at
+	const weaponSeriesQuery = createQuery(() => ({
 		...entityQueries.weaponSeriesList(),
 		enabled: resource === 'weaponSeries'
+	}))
+	const summonSeriesQuery = createQuery(() => ({
+		...entityQueries.summonSeriesList(),
+		enabled: resource === 'summonSeries'
+	}))
+
+	// Fresh on every form, so a group created a moment ago is there
+	const raidGroupsQuery = createQuery(() => ({
+		...raidQueries.groups(),
+		staleTime: 0,
+		enabled: resource === 'raidGroup'
 	}))
 
 	// A variant belongs to the series picked on the same form
@@ -39,10 +53,19 @@
 	const options = $derived.by(() => {
 		// No select until the list loads: one without the current series could
 		// write it back as blank
-		if (resource === 'weaponSeries') {
-			const series = seriesListQuery.data
+		if (resource === 'weaponSeries' || resource === 'summonSeries') {
+			const series = resource === 'summonSeries' ? summonSeriesQuery.data : weaponSeriesQuery.data
 			if (!series) return []
 			return [none, ...series.map((s) => ({ value: s.id, label: localizedName(s.name) }))]
+		}
+		if (resource === 'raidGroup') {
+			const groups = raidGroupsQuery.data
+			if (!groups) return []
+			const sorted = groups.toSorted(compareRaidGroups)
+			return [
+				...(field.required ? [] : [none]),
+				...sorted.map((g) => ({ value: g.id, label: localizedName(g.name) }))
+			]
 		}
 		if (resource === 'weaponSeriesVariant') {
 			const variants = seriesQuery.data?.variants ?? []

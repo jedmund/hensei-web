@@ -62,23 +62,6 @@
 	let isSaving = $state(false)
 	let saveError = $state<string | null>(null)
 
-	// Empty summon for form sections
-	const emptySummon = {
-		id: '',
-		name: { en: '', jp: '' },
-		granblueId: '',
-		summonId: '',
-		rarity: 3,
-		element: 0,
-		series: '',
-		hp: { minHp: 0, maxHp: 0, maxHpFlb: 0, maxHpUlb: 0, maxHpXlb: 0 },
-		atk: { minAtk: 0, maxAtk: 0, maxAtkFlb: 0, maxAtkUlb: 0, maxAtkXlb: 0 },
-		uncap: { flb: false, ulb: false, transcendence: false },
-		subaura: false,
-		limit: false,
-		maxLevel: 100
-	}
-
 	// Get selected entity data
 	const selectedEntity = $derived(selectedWikiPage ? entities.get(selectedWikiPage) : null)
 
@@ -429,35 +412,15 @@
 			{:else if selectedWikiPage && formDataByPage[selectedWikiPage!]}
 				{@const formData = formDataByPage[selectedWikiPage!]!}
 				<section class="details">
-					<SummonMetadataSection
-						summon={emptySummon}
-						editMode={true}
-						editData={formDataByPage[selectedWikiPage!]}
-					/>
+					<SummonMetadataSection editData={formDataByPage[selectedWikiPage!]} />
 
-					<SummonUncapSection
-						summon={emptySummon}
-						editMode={true}
-						editData={formDataByPage[selectedWikiPage!]}
-					/>
+					<SummonUncapSection editData={formDataByPage[selectedWikiPage!]} />
 
-					<SummonTaxonomySection
-						summon={emptySummon}
-						editMode={true}
-						editData={formDataByPage[selectedWikiPage!]}
-					/>
+					<SummonTaxonomySection editData={formDataByPage[selectedWikiPage!]} />
 
-					<SummonStatsSection
-						summon={emptySummon}
-						editMode={true}
-						editData={formDataByPage[selectedWikiPage!]}
-					/>
+					<SummonStatsSection editData={formDataByPage[selectedWikiPage!]} />
 
-					<SummonGachaSection
-						summon={emptySummon}
-						editMode={true}
-						editData={formDataByPage[selectedWikiPage!]}
-					/>
+					<SummonGachaSection editData={formDataByPage[selectedWikiPage!]} />
 
 					<DetailsContainer title="Nicknames">
 						<DetailItem label="Nicknames (EN)">

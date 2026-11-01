@@ -8,5 +8,6 @@ import type { ResourceSection } from '$lib/features/database/sections'
 
 export const awakeningsSection: ResourceSection = {
 	label: () => m.db_nav_awakenings(),
-	group: 'catalogue'
+	group: 'catalogue',
+	parent: 'weapons'
 }

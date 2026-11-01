@@ -1,4 +1,5 @@
 <script lang="ts">
+	// Import form: the uncap stars and checkboxes, subaura and limit
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
@@ -8,34 +9,28 @@
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
 	interface Props {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
-		summon: any
-		editMode?: boolean
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
-		editData?: any
+		editData: any
 		// Callback when editData is modified (for triggering reactivity in parent)
 		onDataChange?: () => void
 	}
 
-	let { summon, editMode = false, editData = $bindable(), onDataChange }: Props = $props()
+	let { editData = $bindable(), onDataChange }: Props = $props()
 
-	const uncap = $derived(
-		editMode
-			? { flb: editData.flb, ulb: editData.ulb, transcendence: editData.transcendence }
-			: (summon?.uncap ?? {})
-	)
+	const uncap = $derived({
+		flb: editData.flb,
+		ulb: editData.ulb,
+		transcendence: editData.transcendence
+	})
 	const flb = $derived(uncap.flb ?? false)
 	const ulb = $derived(uncap.ulb ?? false)
 	const transcendence = $derived(uncap.transcendence ?? false)
-	const subaura = $derived(editMode ? editData.subaura : (summon?.subaura ?? false))
-	const limit = $derived(editMode ? editData.limit : (summon?.limit ?? false))
 	const uncapLevel = $derived(getSummonMaxUncapLevel({ uncap }))
 	const transcendenceStage = $derived(transcendence ? 5 : 0)
 
 	// Get element name for checkbox theming
 	const elementName = $derived.by((): ElementName | undefined => {
-		const el = editMode ? editData.element : summon?.element
-		const label = getElementLabel(el)
+		const label = getElementLabel(editData.element)
 		return label !== '—' && label !== 'Null' ? (label.toLowerCase() as ElementName) : undefined
 	})
 
@@ -71,61 +66,54 @@
 </script>
 
 <DetailsContainer title="Uncap">
-	{#if summon?.uncap || editMode}
-		<DetailItem label="Uncap">
-			<UncapIndicator
-				type="summon"
-				{uncapLevel}
-				{transcendenceStage}
-				{flb}
-				{ulb}
-				{transcendence}
-				editable={false}
-			/>
-		</DetailItem>
-	{/if}
+	<DetailItem label="Uncap">
+		<UncapIndicator
+			type="summon"
+			{uncapLevel}
+			{transcendenceStage}
+			{flb}
+			{ulb}
+			{transcendence}
+			editable={false}
+		/>
+	</DetailItem>
 
-	{#if editMode}
-		<DetailItem
-			label="FLB"
-			bind:value={editData.flb}
-			editable={true}
-			type="checkbox"
-			element={elementName}
-			onchange={handleFlbChange}
-		/>
-		<DetailItem
-			label="ULB"
-			bind:value={editData.ulb}
-			editable={true}
-			type="checkbox"
-			element={elementName}
-			onchange={handleUlbChange}
-		/>
-		<DetailItem
-			label="Transcendence"
-			bind:value={editData.transcendence}
-			editable={true}
-			type="checkbox"
-			element={elementName}
-			onchange={handleTranscendenceChange}
-		/>
-		<DetailItem
-			label="Subaura"
-			bind:value={editData.subaura}
-			editable={true}
-			type="checkbox"
-			element={elementName}
-		/>
-		<DetailItem
-			label="Limit"
-			bind:value={editData.limit}
-			editable={true}
-			type="checkbox"
-			element={elementName}
-		/>
-	{:else}
-		<DetailItem label="Subaura" value={subaura ? 'Yes' : 'No'} />
-		<DetailItem label="Limit" value={limit ? 'Yes' : 'No'} />
-	{/if}
+	<DetailItem
+		label="FLB"
+		bind:value={editData.flb}
+		editable={true}
+		type="checkbox"
+		element={elementName}
+		onchange={handleFlbChange}
+	/>
+	<DetailItem
+		label="ULB"
+		bind:value={editData.ulb}
+		editable={true}
+		type="checkbox"
+		element={elementName}
+		onchange={handleUlbChange}
+	/>
+	<DetailItem
+		label="Transcendence"
+		bind:value={editData.transcendence}
+		editable={true}
+		type="checkbox"
+		element={elementName}
+		onchange={handleTranscendenceChange}
+	/>
+	<DetailItem
+		label="Subaura"
+		bind:value={editData.subaura}
+		editable={true}
+		type="checkbox"
+		element={elementName}
+	/>
+	<DetailItem
+		label="Limit"
+		bind:value={editData.limit}
+		editable={true}
+		type="checkbox"
+		element={elementName}
+	/>
 </DetailsContainer>

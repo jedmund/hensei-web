@@ -85,7 +85,8 @@ function kindSchema<Row, Full>(field: Field<Row, Full>): z.ZodType {
 			return z.boolean()
 		case 'date':
 		case 'datetime': {
-			const iso = field.kind === 'date' ? z.iso.date() : z.iso.datetime({ offset: true })
+			const iso =
+				field.kind === 'date' ? z.iso.date() : z.iso.datetime({ offset: true, local: true })
 			return field.required ? iso : z.union([z.literal(''), iso])
 		}
 		case 'enum':

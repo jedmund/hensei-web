@@ -10,13 +10,13 @@ import { DATABASE_SECTIONS, delocalize } from './sections'
 const RECORD_KEYS = [
 	'record',
 	'character',
-	'summon',
 	'job',
 	'bullet',
 	'skill',
 	'accessory',
 	'roleRecord',
-	'event'
+	'event',
+	'series'
 ] as const
 
 type NameLike = string | { en?: string | null; ja?: string | null } | null | undefined

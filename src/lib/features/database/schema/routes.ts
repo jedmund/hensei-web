@@ -14,8 +14,8 @@ function definition(resource: string): AnyResourceDef {
 }
 
 /**
- * Generated screens, for resources with no override. The list is always
- * there; the detail needs a `record`, the edit page a `record` it can
+ * Generated screens, for resources with no override. Every resource has a
+ * list; the detail needs a `record`, the edit page a `record` it can
  * `save.update`, the new page one it can `save.create`
  */
 function generated(
@@ -56,16 +56,6 @@ export async function loadScreen<K extends ScreenKind>(
 	return (await screen()).default as ScreenComponent<K>
 }
 
-/**
- * Sends a `?view=` tab that moved to a resource of its own (`list.movedViews`)
- * to that resource's list, so old links keep working
- */
-export function redirectMovedView(resource: string, url: URL): void {
-	const view = url.searchParams.get('view')
-	const moved = view ? definition(resource).list.movedViews?.[view] : undefined
-	if (moved) redirect(301, localizeHref(`/database/${moved}`))
-}
-
 /** The full record for the detail and edit pages, under `record` (the breadcrumb reads it) */
 export async function loadRecord(resource: string, id: string): Promise<{ record: unknown }> {
 	const record = definition(resource).record
@@ -81,4 +71,14 @@ export async function loadRecord(resource: string, id: string): Promise<{ record
 		console.error(`Failed to load ${resource} ${id}:`, err)
 		error(500, 'Failed to load record')
 	}
+}
+
+/**
+ * Sends an old `?view=` sub-section URL to the resource that replaced it
+ * (`list.movedViews`), e.g. `/database/raids?view=groups` → `/database/raid-groups`
+ */
+export function redirectMovedView(resource: string, url: URL): void {
+	const view = url.searchParams.get('view')
+	const target = view ? definition(resource).list.movedViews?.[view] : undefined
+	if (target) redirect(301, localizeHref(target))
 }

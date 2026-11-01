@@ -5,6 +5,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
+	import Input from '$lib/components/ui/Input.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import { INPUT_COMPONENTS } from '../inputComponents'
@@ -59,7 +60,7 @@
 			/>
 		{/if}
 	{/each}
-{:else if field.kind === 'text' || field.kind === 'code' || field.kind === 'datetime'}
+{:else if field.kind === 'text' || field.kind === 'code'}
 	<DetailItem
 		{label}
 		{sublabel}
@@ -116,9 +117,19 @@
 		type="date"
 		bind:value={() => text, set}
 	/>
+{:else if field.kind === 'datetime'}
+	<!-- A local date and time (YYYY-MM-DDTHH:mm); the definition converts its zone -->
+	<DetailItem {label} {sublabel} {error} editable>
+		<Input type="datetime-local" bind:value={() => text, set} contained />
+	</DetailItem>
 {:else if field.kind === 'enum' && field.list?.type === 'element'}
 	<DetailItem {label} {sublabel} {error} editable>
-		<ElementPicker bind:value={() => value as number, set} includeAny mode="dropdown" contained />
+		<ElementPicker
+			bind:value={() => value as number, set}
+			includeAny={options.some((o) => o.value === 0)}
+			mode="dropdown"
+			contained
+		/>
 	</DetailItem>
 {:else if field.kind === 'enum'}
 	<DetailItem

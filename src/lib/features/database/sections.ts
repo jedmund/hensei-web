@@ -9,10 +9,14 @@
  * their parent's list page (Weapons → Skills links to `weapons?view=skills`).
  */
 import { m } from '$lib/paraglide/messages'
-import { ADMIN_ROLE, CURATOR_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
+import { ADMIN_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
 import { awakeningsSection } from './awakenings/section'
 import { characterSeriesSection } from './character-series/section'
 import { charactersSection } from './characters/section'
+import { eventsSection } from './events/section'
+import { raidGroupsSection } from './raid-groups/section'
+import { raidsSection } from './raids/section'
+import { summonsSection } from './summons/section'
 import { weaponSeriesSection } from './weapon-series/section'
 import { weaponsSection } from './weapons/section'
 
@@ -57,6 +61,14 @@ export interface ResourceSection {
 	entity?: () => string
 	/** "New" menu items; an href without a leading slash is relative to the resource's path */
 	actions?: SectionAction[][]
+	/** Nests the resource under another section in the sidebar (e.g. raid groups under raids) */
+	parent?: string
+	/**
+	 * Lowest role that sees the section and opens the resource's list and
+	 * detail pages (see `resourceMinRole`). Defaults to editor; the edit and
+	 * new pages are editor-only whatever this says.
+	 */
+	minRole?: number
 	/** Sub-sections that are `?view=` tabs on the resource's list */
 	views?: Array<Pick<DatabaseSection, 'id' | 'label' | 'view' | 'matches'>>
 }
@@ -75,9 +87,8 @@ export const SECTION_GROUPS: SectionGroup[] = [
 
 export const DATABASE_SECTIONS: DatabaseSection[] = [
 	// Catalogue
-	...resourceSections('characters', charactersSection, [
-		resourceSections('character-series', characterSeriesSection)
-	]),
+	...resourceSections('characters', charactersSection),
+	...resourceSections('character-series', characterSeriesSection),
 	{
 		id: 'artifact-skills',
 		label: () => m.nav_artifact_skills(),
@@ -92,29 +103,10 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 		group: 'catalogue',
 		parent: 'characters'
 	},
-	...resourceSections('weapons', weaponsSection, [
-		resourceSections('weapon-series', weaponSeriesSection),
-		resourceSections('awakenings', awakeningsSection)
-	]),
-	{
-		id: 'summons',
-		label: () => m.nav_summons(),
-		path: '/database/summons',
-		group: 'catalogue',
-		entity: () => m.type_summon(),
-		actions: [
-			[
-				{
-					label: () => m.nav_new_single({ entity: m.type_summon() }),
-					href: '/database/summons/new'
-				},
-				{
-					label: () => m.nav_new_multiple({ entity: m.type_summon() }),
-					href: '/database/summons/import'
-				}
-			]
-		]
-	},
+	...resourceSections('weapons', weaponsSection),
+	...resourceSections('weapon-series', weaponSeriesSection),
+	...resourceSections('awakenings', awakeningsSection),
+	...resourceSections('summons', summonsSection),
 	{
 		id: 'jobs',
 		label: () => m.nav_jobs(),
@@ -156,35 +148,9 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 	},
 
 	// Battles & events
-	{
-		id: 'raids',
-		label: () => m.nav_raids(),
-		path: '/database/raids',
-		group: 'battles',
-		entity: () => m.type_raid(),
-		actions: [
-			[
-				{ label: () => m.nav_new_raid(), href: '/database/raids/new' },
-				{ label: () => m.nav_new_raid_group(), href: '/database/raid-groups/new' }
-			]
-		]
-	},
-	{
-		id: 'raid-groups',
-		label: () => m.db_nav_groups(),
-		path: '/database/raids',
-		view: 'groups',
-		group: 'battles',
-		parent: 'raids',
-		matches: ['/database/raid-groups']
-	},
-	{
-		id: 'events',
-		label: () => m.nav_events(),
-		path: '/database/events',
-		group: 'battles',
-		minRole: CURATOR_ROLE
-	},
+	...resourceSections('raids', raidsSection),
+	...resourceSections('raid-groups', raidGroupsSection),
+	...resourceSections('events', eventsSection),
 
 	// Site
 	{
@@ -212,16 +178,12 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 ]
 
 /**
- * A schema resource's section, followed by the resources nested under it
- * (each `resourceSections` of its own) and then its `?view=` sub-sections.
+ * A schema resource's section, followed by its `?view=` sub-sections. A
+ * resource nested under another (`parent`) comes right after it in the list.
  * Takes the definition's name and section, not the definition: this list is
  * in every page's bundle, and definitions aren't.
  */
-export function resourceSections(
-	name: string,
-	section: ResourceSection,
-	children: DatabaseSection[][] = []
-): DatabaseSection[] {
+export function resourceSections(name: string, section: ResourceSection): DatabaseSection[] {
 	const path = `/database/${name}`
 	const { views = [], actions, ...rest } = section
 	return [
@@ -235,9 +197,17 @@ export function resourceSections(
 				)
 			})
 		},
-		...children.flatMap(([child, ...rest]) => [{ ...child!, parent: name }, ...rest]),
 		...views.map((view) => ({ ...view, path, group: section.group, parent: name }))
 	]
+}
+
+/**
+ * The lowest role that opens a resource's list and detail pages: its
+ * section's `minRole`, else editor. Read from the sections, not the
+ * definitions, so the database layout's role gate stays light.
+ */
+export function resourceMinRole(name: string): number {
+	return sectionById(name)?.minRole ?? EDITOR_ROLE
 }
 
 export function sectionHref(section: DatabaseSection): string {
