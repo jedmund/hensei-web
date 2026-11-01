@@ -11,7 +11,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { localizedName } from '$lib/utils/locale'
-	import { normalizeCharacterUncap } from '$lib/utils/uncap'
+	import { getGridItemUncapCaps } from '$lib/utils/uncap'
 
 	type GridItem = GridCharacter | GridWeapon | GridSummon
 	type CollectionItem = CollectionCharacter | CollectionWeapon | CollectionSummon
@@ -26,31 +26,7 @@
 	let { fieldKey, type, gridItem, collectionItem }: Props = $props()
 
 	// Resolve uncap capabilities so the indicator renders the right number of stars.
-	const uncapCaps = $derived.by(() => {
-		if (type === 'character') {
-			const character = (gridItem as GridCharacter).character
-			return normalizeCharacterUncap({
-				special: !!character?.special,
-				uncap: character?.uncap ?? { flb: false }
-			})
-		}
-		if (type === 'weapon') {
-			const uncap = (gridItem as GridWeapon).weapon?.uncap
-			return {
-				flb: uncap?.flb,
-				ulb: uncap?.ulb,
-				transcendence: uncap?.transcendence ?? false,
-				maxTranscendenceStage: 5
-			}
-		}
-		const uncap = (gridItem as GridSummon).summon?.uncap
-		return {
-			flb: uncap?.flb,
-			ulb: uncap?.ulb,
-			transcendence: uncap?.transcendence ?? false,
-			maxTranscendenceStage: 5
-		}
-	})
+	const uncapCaps = $derived(getGridItemUncapCaps(type, gridItem))
 
 	const special = $derived(
 		type === 'character' ? ((gridItem as GridCharacter).character?.special ?? false) : false

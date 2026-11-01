@@ -5,7 +5,8 @@ import {
 	normalizeCharacterUncap,
 	normalizeCharacterProgression,
 	getSummonMaxUncapLevel,
-	getDefaultMaxUncapLevel
+	getDefaultMaxUncapLevel,
+	getGridItemUncapCaps
 } from '../uncap'
 
 // ============================================================================
@@ -149,5 +150,56 @@ describe('getDefaultMaxUncapLevel', () => {
 
 	it('returns 3 for summon', () => {
 		expect(getDefaultMaxUncapLevel('summon')).toBe(3)
+	})
+})
+
+// ============================================================================
+// getGridItemUncapCaps
+// ============================================================================
+
+describe('getGridItemUncapCaps', () => {
+	type GridItem = Parameters<typeof getGridItemUncapCaps>[1]
+
+	it('normalizes characters', () => {
+		const item = {
+			character: { special: false, uncap: { flb: true, ulb: true, transcendence: true } }
+		} as unknown as GridItem
+		expect(getGridItemUncapCaps('character', item)).toMatchObject({
+			flb: true,
+			ulb: true,
+			transcendence: true,
+			maxTranscendenceStage: 5
+		})
+	})
+
+	it('treats a character without uncap data as base', () => {
+		expect(getGridItemUncapCaps('character', {} as GridItem)).toMatchObject({
+			flb: false,
+			ulb: false,
+			transcendence: false,
+			maxTranscendenceStage: 0
+		})
+	})
+
+	it('reads weapon uncaps and caps transcendence at stage 5', () => {
+		const item = {
+			weapon: { uncap: { flb: true, ulb: false, transcendence: true } }
+		} as unknown as GridItem
+		expect(getGridItemUncapCaps('weapon', item)).toEqual({
+			flb: true,
+			ulb: false,
+			transcendence: true,
+			maxTranscendenceStage: 5
+		})
+	})
+
+	it('reads summon uncaps, defaulting transcendence to false', () => {
+		const item = { summon: { uncap: { flb: true } } } as unknown as GridItem
+		expect(getGridItemUncapCaps('summon', item)).toEqual({
+			flb: true,
+			ulb: undefined,
+			transcendence: false,
+			maxTranscendenceStage: 5
+		})
 	})
 })

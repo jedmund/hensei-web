@@ -8,8 +8,11 @@ import type { Character, Weapon, Summon } from '$lib/types/api/entities'
 import {
 	getCollectionEntity,
 	mapCollectionToSearchResult,
-	filterCollectionByQuery
+	filterCollectionByQuery,
+	buildMemberOptions,
+	resolveMember
 } from '../collection-search.utils'
+import { getAvatarSrc } from '$lib/utils/avatar'
 
 // --- Factory helpers ---
 
@@ -253,5 +256,75 @@ describe('filterCollectionByQuery', () => {
 		const result = filterCollectionByQuery(items, 'EUSTACE')
 		expect(result).toHaveLength(1)
 		expect(result[0]!.id).toBe('cc-eustace')
+	})
+})
+
+describe('buildMemberOptions', () => {
+	const members = [
+		{ userId: 'u-other', username: 'Other', avatarPicture: 'other' },
+		{ userId: 'u-self', username: 'Me', avatarPicture: 'me' }
+	]
+
+	it('lists the signed-in user first, marked as You', () => {
+		const options = buildMemberOptions(members, 'u-self', undefined)
+		expect(options.map((o) => o.value)).toEqual(['u-self', 'u-other'])
+		expect(options[0]).toEqual({
+			value: 'u-self',
+			label: 'Me',
+			image: getAvatarSrc('me'),
+			suffix: 'You'
+		})
+		expect(options[1]).toEqual({ value: 'u-other', label: 'Other', image: getAvatarSrc('other') })
+	})
+
+	it('falls back to "You" when the user is not in the crew list', () => {
+		const options = buildMemberOptions([], 'u-self', undefined)
+		expect(options).toEqual([{ value: 'u-self', label: 'You', image: undefined, suffix: 'You' }])
+	})
+
+	it('has no self entry when signed out', () => {
+		expect(buildMemberOptions(members, undefined, undefined).map((o) => o.value)).toEqual([
+			'u-other',
+			'u-self'
+		])
+	})
+
+	it('appends an external user once', () => {
+		const external = { id: 'u-ext', username: 'Ext', avatar: { picture: 'ext' } }
+		const options = buildMemberOptions(members, 'u-self', external)
+		expect(options.at(-1)).toEqual({ value: 'u-ext', label: 'Ext', image: getAvatarSrc('ext') })
+		const already = buildMemberOptions(members, 'u-self', { ...external, id: 'u-other' })
+		expect(already).toHaveLength(2)
+	})
+})
+
+describe('resolveMember', () => {
+	const members = [{ userId: 'u-other', username: 'Other', avatarPicture: 'other' }]
+	const external = { id: 'u-ext', username: 'Ext', avatar: { picture: 'ext' } }
+
+	it('returns undefined without a user id', () => {
+		expect(resolveMember(undefined, members, 'u-self', external)).toBeUndefined()
+	})
+
+	it('resolves the signed-in user, defaulting to "You"', () => {
+		expect(resolveMember('u-self', members, 'u-self', external)).toEqual({
+			label: 'You',
+			image: undefined
+		})
+	})
+
+	it('resolves crew members and the external user', () => {
+		expect(resolveMember('u-other', members, 'u-self', external)).toEqual({
+			label: 'Other',
+			image: getAvatarSrc('other')
+		})
+		expect(resolveMember('u-ext', members, 'u-self', external)).toEqual({
+			label: 'Ext',
+			image: getAvatarSrc('ext')
+		})
+	})
+
+	it('returns undefined for an unknown user', () => {
+		expect(resolveMember('u-nobody', members, 'u-self', undefined)).toBeUndefined()
 	})
 })
