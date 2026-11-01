@@ -23,7 +23,7 @@
 	import { viewMode } from '$lib/stores/viewMode.svelte'
 	import type { CollectionSortKey } from '$lib/types/api/collection'
 	import Select from '$lib/components/ui/Select.svelte'
-	import { getArtifactImage } from '$lib/utils/images'
+	import { getArtifactImage } from '$lib/utils/images/equipment'
 	import { localizedName } from '$lib/utils/locale'
 	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'

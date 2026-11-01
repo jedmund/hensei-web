@@ -12,12 +12,9 @@
 		WikiImportReport,
 		WikiImportRequest
 	} from '$lib/types/api/wikiImport'
-	import {
-		getCharacterImage,
-		getSummonImage,
-		getWeaponFallbackImage,
-		getWeaponImage
-	} from '$lib/utils/images'
+	import { getCharacterImage } from '$lib/utils/images/characters'
+	import { getWeaponFallbackImage, getWeaponImage } from '$lib/utils/images/weapons'
+	import { getSummonImage } from '$lib/utils/images/summons'
 	import { localizedName } from '$lib/utils/locale'
 	import type { WikiImportNote } from '$lib/utils/wikiImport'
 	import { noteText, slotLabel, sortWarnings, warningText } from '$lib/utils/wikiImportMessages'

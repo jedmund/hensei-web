@@ -23,7 +23,7 @@
 	import TagInput from '$lib/components/ui/TagInput.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
-	import { getWeaponGridImage, getWeaponFallbackImage } from '$lib/utils/images'
+	import { getWeaponGridImage, getWeaponFallbackImage } from '$lib/utils/images/weapons'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,

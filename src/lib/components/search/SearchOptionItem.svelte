@@ -1,11 +1,8 @@
 <script lang="ts">
-	import {
-		getCharacterImage,
-		getWeaponImage,
-		getSummonImage,
-		getWeaponFallbackImage,
-		handleImageFallback
-	} from '$lib/utils/images'
+	import { handleImageFallback } from '$lib/utils/images/core'
+	import { getCharacterImage } from '$lib/utils/images/characters'
+	import { getWeaponImage, getWeaponFallbackImage } from '$lib/utils/images/weapons'
+	import { getSummonImage } from '$lib/utils/images/summons'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import type { CharacterSeriesRef } from '$lib/types/api/characterSeries'
 

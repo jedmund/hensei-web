@@ -5,7 +5,8 @@
 	 * selected raid's teams and a link to the rest of them in the Gallery.
 	 */
 	import { MediaQuery } from 'svelte/reactivity'
-	import { getHostedImageUrl, getRaidImage } from '$lib/utils/images'
+	import { getHostedImageUrl } from '$lib/utils/images/core'
+	import { getRaidImage } from '$lib/utils/images/raids'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Select from '$lib/components/ui/Select.svelte'

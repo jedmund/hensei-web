@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getLocale } from '$lib/paraglide/runtime.js'
-	import { getSkillLabelImage } from '$lib/utils/images'
+	import { getSkillLabelImage } from '$lib/utils/images/icons'
 
 	interface Props {
 		/** In-game label texture slug (e.g. "omega-might"); null renders the text label */

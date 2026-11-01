@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 	import Icon from '$lib/components/Icon.svelte'
-	import { getBasePath } from '$lib/utils/images'
+	import { getBasePath } from '$lib/utils/images/core'
 	import * as m from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 

@@ -8,7 +8,7 @@
 import type { Job, JobSkill } from '$lib/types/api/entities'
 import type { JobSkillList } from '$lib/types/api/party'
 import { getImageBaseUrl } from '$lib/api/adapters/config'
-import { getGenericPlaceholder } from './images'
+import { getGenericPlaceholder } from '$lib/utils/images/core'
 import { localizedName } from '$lib/utils/locale'
 import {
 	getProficiencyKey,

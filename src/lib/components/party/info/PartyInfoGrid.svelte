@@ -9,7 +9,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
 	import { openCalculatorPane } from '$lib/features/party/openCalculatorPane'
-	import { getRaidImage } from '$lib/utils/images'
+	import { getRaidImage } from '$lib/utils/images/raids'
 	import { appLocale, localizedName } from '$lib/utils/locale'
 	import type { FilterItem } from '$lib/types/filter'
 	import { isFullExpedition, solomonisName } from '$lib/components/solomonis/party/solomonisParty'

@@ -3,7 +3,7 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import WeaponTypeahead from '$lib/components/ui/WeaponTypeahead.svelte'
 	import Icon from '$lib/components/Icon.svelte'
-	import { getWeaponImage } from '$lib/utils/images'
+	import { getWeaponImage } from '$lib/utils/images/weapons'
 	import { getElementKey } from '$lib/utils/element'
 	import { localizeHref } from '$lib/paraglide/runtime'
 

@@ -6,7 +6,8 @@ import {
 	getSummonImage,
 	getPlaceholder
 } from '$lib/features/database/detail/image'
-import { getWeaponFallbackImage, STYLE_SWAP_POSE } from '$lib/utils/images'
+import { STYLE_SWAP_POSE } from '$lib/utils/images/characters'
+import { getWeaponFallbackImage } from '$lib/utils/images/weapons'
 
 export type GridItemType = 'character' | 'weapon' | 'summon'
 

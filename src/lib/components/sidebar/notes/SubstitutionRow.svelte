@@ -9,7 +9,7 @@
 		isFromCollection,
 		getSubstituteFallbackImage
 	} from './substitutionHelpers'
-	import { handleImageFallback } from '$lib/utils/images'
+	import { handleImageFallback } from '$lib/utils/images/core'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'

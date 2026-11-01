@@ -5,7 +5,7 @@
 	 * pattern as the awakening image field, without base64 encoding.
 	 */
 	import Button from '$lib/components/ui/Button.svelte'
-	import { getHostedImageUrl } from '$lib/utils/images'
+	import { getHostedImageUrl } from '$lib/utils/images/core'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {

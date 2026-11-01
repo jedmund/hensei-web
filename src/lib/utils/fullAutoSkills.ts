@@ -1,6 +1,6 @@
 import type { Character, CharacterSkill, CharacterSkillVersion } from '$lib/types/api/entities'
 import { localizedName } from '$lib/utils/locale'
-import { getCharacterSkillIcon } from '$lib/utils/images'
+import { getCharacterSkillIcon } from '$lib/utils/images/icons'
 
 /** An ability slot surfaced in the Full Auto section. */
 export interface AbilitySlot {

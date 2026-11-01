@@ -15,7 +15,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { escapeHtml } from '$lib/utils/safeHtml'
 	import { formatDateJST } from '$lib/utils/date'
-	import { getRaidImage } from '$lib/utils/images'
+	import { getRaidImage } from '$lib/utils/images/raids'
 	import { getElementKey } from '$lib/utils/element'
 	import { exploreQuery } from '$lib/utils/home'
 	import { galleryPath, newTeamPath } from '$lib/utils/browseRoutes'

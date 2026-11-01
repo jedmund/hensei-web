@@ -5,7 +5,8 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { summonAdapter, type ParsedSummonData } from '$lib/api/adapters/summon.adapter'
 	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'
-	import { getGameCdnSummonImage, getPlaceholderImage } from '$lib/utils/images'
+	import { getPlaceholderImage } from '$lib/utils/images/core'
+	import { getGameCdnSummonImage } from '$lib/utils/images/cdn'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,

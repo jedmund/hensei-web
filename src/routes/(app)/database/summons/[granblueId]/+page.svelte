@@ -29,7 +29,7 @@
 	import SummonAurasTab from '$lib/features/database/summons/tabs/SummonAurasTab.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
-	import { getSummonImage, getSummonTransformationStages } from '$lib/utils/images'
+	import { getSummonImage, getSummonTransformationStages } from '$lib/utils/images/summons'
 	import { seriesHasUlbArt } from '$lib/utils/summonSeries'
 	import { getElementLabel } from '$lib/utils/element'
 	import {

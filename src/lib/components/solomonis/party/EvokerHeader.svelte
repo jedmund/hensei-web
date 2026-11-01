@@ -5,7 +5,7 @@
 	 * the party's grid.
 	 */
 	import * as m from '$lib/paraglide/messages'
-	import { getCharacterImage } from '$lib/utils/images'
+	import { getCharacterImage } from '$lib/utils/images/characters'
 	import { appLocale } from '$lib/utils/locale'
 	import type { SolomonisExpedition } from '$lib/types/api/solomonis'
 	import { solomonisName } from './solomonisParty'

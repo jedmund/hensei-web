@@ -7,7 +7,7 @@
  * key with the configured image base — same pattern as every other game asset.
  */
 
-import { getBasePath } from '$lib/utils/images'
+import { getBasePath } from '$lib/utils/images/core'
 
 export function buildEntityIconUrl(iconKey: string | null | undefined): string | null {
 	if (!iconKey) return null

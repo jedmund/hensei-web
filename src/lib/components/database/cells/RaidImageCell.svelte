@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Raid } from '$lib/types/api/entities'
-	import { getRaidImage, getRaidCdnImage } from '$lib/utils/images'
+	import { getRaidImage, getRaidCdnImage } from '$lib/utils/images/raids'
 
 	interface Props {
 		raid: Raid

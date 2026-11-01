@@ -5,7 +5,8 @@
 	 * Used in the add to collection modal for selecting weapons with
 	 * quantity support (users can own multiple copies).
 	 */
-	import { getWeaponImage, getWeaponFallbackImage, handleImageFallback } from '$lib/utils/images'
+	import { handleImageFallback } from '$lib/utils/images/core'
+	import { getWeaponImage, getWeaponFallbackImage } from '$lib/utils/images/weapons'
 	import { localizedName } from '$lib/utils/locale'
 	import QuantityCounter from './QuantityCounter.svelte'
 	import type { SearchPageResult } from '$lib/api/queries/search.queries'

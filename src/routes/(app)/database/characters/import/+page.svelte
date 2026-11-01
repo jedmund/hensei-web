@@ -5,7 +5,8 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { characterAdapter, type ParsedCharacterData } from '$lib/api/adapters/character.adapter'
 	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'
-	import { getGameCdnCharacterImage, getPlaceholderImage } from '$lib/utils/images'
+	import { getPlaceholderImage } from '$lib/utils/images/core'
+	import { getGameCdnCharacterImage } from '$lib/utils/images/cdn'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,

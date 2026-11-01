@@ -10,7 +10,8 @@
 		isSkillSlotAvailable,
 		isSkillSlotLocked
 	} from '$lib/utils/jobUtils'
-	import { getAccessoryImage, getBasePath } from '$lib/utils/images'
+	import { getBasePath } from '$lib/utils/images/core'
+	import { getAccessoryImage } from '$lib/utils/images/equipment'
 	import { getAccessoryTypeName } from '$lib/utils/jobAccessoryUtils'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'

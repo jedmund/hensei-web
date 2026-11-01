@@ -7,10 +7,12 @@ vi.mock('$lib/features/database/detail/image', () => ({
 	getPlaceholder: (type: string) => `placeholder-${type}.png`
 }))
 
-vi.mock('$lib/utils/images', () => ({
-	getWeaponFallbackImage: (id: string) => `weapon-fallback/${id}.png`,
-	STYLE_SWAP_POSE: 'swap',
-	handleImageFallback: () => undefined
+vi.mock('$lib/utils/images/characters', () => ({
+	STYLE_SWAP_POSE: 'swap'
+}))
+
+vi.mock('$lib/utils/images/weapons', () => ({
+	getWeaponFallbackImage: (id: string) => `weapon-fallback/${id}.png`
 }))
 
 vi.mock('$lib/utils/locale', () => ({

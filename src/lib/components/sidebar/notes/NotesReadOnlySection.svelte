@@ -31,7 +31,9 @@
 		getSummonImage,
 		getPlaceholder
 	} from '$lib/features/database/detail/image'
-	import { getWeaponFallbackImage, handleImageFallback, STYLE_SWAP_POSE } from '$lib/utils/images'
+	import { handleImageFallback } from '$lib/utils/images/core'
+	import { STYLE_SWAP_POSE } from '$lib/utils/images/characters'
+	import { getWeaponFallbackImage } from '$lib/utils/images/weapons'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {

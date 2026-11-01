@@ -3,7 +3,8 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
-	import { getCharacterImage, getWeaponImage } from '$lib/utils/images'
+	import { getCharacterImage } from '$lib/utils/images/characters'
+	import { getWeaponImage } from '$lib/utils/images/weapons'
 
 	type EntityType = 'job' | 'character' | 'weapon'
 
