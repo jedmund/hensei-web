@@ -57,12 +57,16 @@ export async function loadScreen<K extends ScreenKind>(
 }
 
 /** The full record for the detail and edit pages, under `record` (the breadcrumb reads it) */
-export async function loadRecord(resource: string, id: string): Promise<{ record: unknown }> {
+export async function loadRecord(
+	resource: string,
+	id: string,
+	fetch?: typeof globalThis.fetch
+): Promise<{ record: unknown }> {
 	const record = definition(resource).record
 	if (!record) error(404, 'Not found')
 
 	try {
-		return { record: await record.fetch(id) }
+		return { record: await record.fetch(id, fetch ? { fetch } : {}) }
 	} catch (err) {
 		// Adapters reject with plain AdapterError objects, not Error instances
 		if (typeof err === 'object' && err !== null && 'status' in err && err.status === 404) {

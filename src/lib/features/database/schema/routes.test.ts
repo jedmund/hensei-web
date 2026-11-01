@@ -10,6 +10,8 @@ import { loadRecord, loadScreen, redirectMovedView } from './routes'
 
 const getWeapon = vi.hoisted(() => vi.fn())
 vi.mock('$lib/api/adapters/weapon.adapter', () => ({ weaponAdapter: { getWeapon } }))
+const getSticker = vi.hoisted(() => vi.fn())
+vi.mock('$lib/api/adapters/sticker.adapter', () => ({ stickerAdapter: { getSticker } }))
 
 const MATCHERS: Record<string, ParamMatcher> = { resource, socialProvider, tab }
 
@@ -202,6 +204,13 @@ describe('loadRecord', () => {
 			record: { granblueId: '1040001000' }
 		})
 		expect(getWeapon).toHaveBeenLastCalledWith('1040001000')
+	})
+
+	it("passes the load's fetch on, so server loads carry the session", async () => {
+		const fetch = vi.fn() as unknown as typeof globalThis.fetch
+		getSticker.mockResolvedValueOnce({ slug: 'stamp-9' })
+		expect(await loadRecord('stickers', 'stamp-9', fetch)).toEqual({ record: { slug: 'stamp-9' } })
+		expect(getSticker).toHaveBeenLastCalledWith('stamp-9', { fetch })
 	})
 
 	it('404s a missing record and 500s anything else', async () => {

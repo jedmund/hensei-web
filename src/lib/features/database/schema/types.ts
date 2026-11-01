@@ -428,12 +428,18 @@ export interface SaveDef<Full> {
 	canDestroy?: (record: Full) => boolean | string | Message
 }
 
+/** What a record load passes on to `RecordDef.fetch` */
+export interface RecordFetchOptions {
+	/** The load's fetch, which carries the session on the server */
+	fetch?: typeof globalThis.fetch
+}
+
 export interface RecordDef<Full> {
 	/**
 	 * The full record the detail and edit pages load, by route id. Rejects with
 	 * an error carrying `status: 404` when there's no such record.
 	 */
-	fetch: (id: string) => Promise<Full>
+	fetch: (id: string, options?: RecordFetchOptions) => Promise<Full>
 	/** The same record as a query, so the panel and the page share its cache */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	query: (id: string) => CreateQueryOptions<Full, any, Full, any>
