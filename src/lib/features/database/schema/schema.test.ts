@@ -3,7 +3,8 @@ import { columnsFor, filtersFor } from './columns'
 import { camelKey } from './fields'
 import { applyDerive, fromRecord, initialValues, isEmpty, toPayload } from './form'
 import { defineResource, type Values } from './types'
-import { buildZod } from './validation'
+import { z } from 'zod'
+import { buildZod, issueErrors, issueMessage } from './validation'
 
 interface Row {
 	id: string
@@ -305,5 +306,34 @@ describe('buildZod', () => {
 		expect(errors({ ...valid(), starts_on: '2026-01-01', note: 42 }).map(([p]) => p)).toEqual([
 			'note'
 		])
+	})
+})
+
+describe('issueMessage', () => {
+	const schema = z.object({
+		level: z.number().int().min(1),
+		name: z.string().max(3),
+		id: z.string().regex(/^\d+$/)
+	})
+	const messages = (values: unknown) => {
+		const result = schema.safeParse(values, { error: issueMessage })
+		return result.success ? {} : issueErrors(result.error.issues)
+	}
+
+	it('words built-in checks for editors', () => {
+		expect(messages({ level: 0, name: 'abcd', id: 'x' })).toEqual({
+			level: 'Must be at least 1',
+			name: 'Must have at most 3',
+			id: "Doesn't match the expected format"
+		})
+		expect(messages({ level: 1.5, name: '', id: '1' })).toEqual({ level: 'Must be a whole number' })
+		expect(messages({ level: 'x', name: '', id: '1' })).toEqual({ level: 'Must be a number' })
+		expect(messages({ level: null, name: '', id: '1' })).toEqual({ level: 'Required' })
+	})
+
+	it('keeps the message a rule sets itself', () => {
+		const own = z.object({ id: z.string().regex(/^\d+$/, { error: () => 'Ten digits' }) })
+		const result = own.safeParse({ id: 'x' }, { error: issueMessage })
+		expect(result.success ? {} : issueErrors(result.error.issues)).toEqual({ id: 'Ten digits' })
 	})
 })

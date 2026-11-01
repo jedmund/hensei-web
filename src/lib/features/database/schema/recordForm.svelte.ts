@@ -14,7 +14,14 @@ import type { AdminResource } from '$lib/types/api/admin'
 import { isShown } from './fields'
 import { applyDerive, fromRecord, isEmpty, toPayload } from './form'
 import type { Field, ResourceDef, Values } from './types'
-import { buildZod, fieldError, issueErrors, serverErrors, type FieldErrors } from './validation'
+import {
+	buildZod,
+	fieldError,
+	issueErrors,
+	issueMessage,
+	serverErrors,
+	type FieldErrors
+} from './validation'
 
 /** Values that send the same thing: equal, or both blank ('' and null alike) */
 function same(a: unknown, b: unknown): boolean {
@@ -71,7 +78,7 @@ export class RecordForm<Row = unknown, Full = unknown> {
 
 	/** Checks the values, setting `errors`. True when they're valid */
 	validate(): boolean {
-		const result = this.#schema.safeParse($state.snapshot(this.values))
+		const result = this.#schema.safeParse($state.snapshot(this.values), { error: issueMessage })
 		this.errors = result.success ? {} : issueErrors(result.error.issues)
 		return result.success
 	}

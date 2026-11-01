@@ -9,6 +9,40 @@ import type { EnumOption, Field, FormMode, ResourceDef, Values } from './types'
 
 const required = { error: () => m.db_field_required() }
 
+/**
+ * Editor-facing wording for zod's built-in checks (bounds, whole numbers,
+ * lengths). Rules with their own message keep it; anything else falls back
+ * to zod's default. Pass as `safeParse(values, { error: issueMessage })`.
+ */
+export function issueMessage(issue: {
+	code?: string
+	origin?: string
+	minimum?: unknown
+	maximum?: unknown
+	expected?: unknown
+	format?: string
+	input?: unknown
+}): string | undefined {
+	switch (issue.code) {
+		case 'too_small':
+			return issue.origin === 'number'
+				? m.db_field_min({ min: String(issue.minimum) })
+				: m.db_field_too_short({ min: String(issue.minimum) })
+		case 'too_big':
+			return issue.origin === 'number'
+				? m.db_field_max({ max: String(issue.maximum) })
+				: m.db_field_too_long({ max: String(issue.maximum) })
+		case 'invalid_type':
+			if (issue.input === null || issue.input === undefined) return m.db_field_required()
+			if (issue.expected === 'int') return m.db_field_whole_number()
+			return issue.expected === 'number' ? m.db_field_number() : undefined
+		case 'invalid_format':
+			return m.db_field_invalid_format()
+		default:
+			return undefined
+	}
+}
+
 /** A blank required value says so, rather than naming the type it isn't */
 const missing = {
 	error: (issue: { input?: unknown }) =>
@@ -86,7 +120,7 @@ export function buildZod<Row, Full>(
 		for (const { field, schemas } of checks) {
 			if (!isShown(field, values)) continue
 			for (const schema of schemas) {
-				const result = schema.safeParse(values[field.key])
+				const result = schema.safeParse(values[field.key], { error: issueMessage })
 				if (result.success) continue
 				for (const issue of result.error.issues) {
 					ctx.addIssue({ code: 'custom', path: [field.key, ...issue.path], message: issue.message })
