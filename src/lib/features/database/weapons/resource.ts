@@ -703,7 +703,6 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 	// Awakenings and Skills views by hand (they move in GBF-143)
 	screens: {
 		list: () => import('$lib/features/database/weapons/screens/WeaponsListScreen.svelte'),
-		edit: () => import('$lib/features/database/weapons/screens/WeaponEditScreen.svelte'),
 		new: () => import('$lib/features/database/weapons/screens/WeaponNewScreen.svelte')
 	}
 })
