@@ -48,8 +48,6 @@
 		<div class="error-banner">{saveError}</div>
 	{/if}
 
-	<p class="jst-note">{m.db_events_times_jst()}</p>
-
 	<section class="details">
 		<EventFormFields bind:values />
 	</section>
@@ -58,7 +56,6 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/layout' as layout;
-	@use '$src/themes/typography' as typography;
 	@use '$src/themes/database' as database;
 
 	.page {
@@ -73,12 +70,5 @@
 
 	.error-banner {
 		@include database.error-banner;
-	}
-
-	.jst-note {
-		margin: 0;
-		padding: 0 spacing.$unit-2x;
-		font-size: typography.$font-small;
-		color: var(--text-secondary);
 	}
 </style>

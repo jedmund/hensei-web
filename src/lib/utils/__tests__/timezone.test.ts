@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import {
 	formatTimezone,
 	formatTimezoneShort,
@@ -31,8 +31,15 @@ describe('getTimezoneName', () => {
 		expect(name.length).toBeGreaterThan(0)
 	})
 
+	afterEach(() => {
+		vi.useRealTimers()
+	})
+
 	it('returns the same generic name for zones in the same region', () => {
-		// Detroit and New York are both Eastern Time
+		// Detroit and New York are both Eastern Time. Pinned to a plain date: around a
+		// daylight saving change ICU names Detroit "Eastern Time (Detroit)".
+		vi.useFakeTimers({ toFake: ['Date'] })
+		vi.setSystemTime(new Date('2026-01-15T12:00:00Z'))
 		expect(getTimezoneName('America/New_York')).toBe(getTimezoneName('America/Detroit'))
 	})
 
