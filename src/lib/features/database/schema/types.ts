@@ -291,9 +291,10 @@ type Lazy<Props extends Record<string, unknown>> = () => Promise<{ default: Comp
 
 /**
  * Hand-written screens that replace the generated ones. The detail and the
- * panel are generated when a resource has a `record`, and the edit page when
- * it can also `save.update`; until the generated create form lands (phase 7)
- * the generic routes 404 any other screen the resource doesn't have.
+ * panel are generated when a resource has a `record`, the edit page when it
+ * can also `save.update`, and the new page when it can `save.create`. There's
+ * no generated list screen yet (the list renders `ResourceTable`), and the
+ * generic routes 404 any other screen the resource doesn't have.
  */
 export interface Screens<Full> {
 	/** The list takes no props: it reads its state from the URL */
@@ -338,6 +339,21 @@ export interface SaveDef<Full> {
 	 * record; rejects with the adapter error (a 422 carries `errors` by param)
 	 */
 	update?: (record: Full, payload: Values) => Promise<Full>
+	/**
+	 * Sends the create form's payload. Resolves with the new record; rejects
+	 * like `update`
+	 */
+	create?: (payload: Values) => Promise<Full>
+	/**
+	 * Checks that need the server, by field key, run on the create form only
+	 * (a loaded record passes them by definition). Each runs once the value
+	 * passes the field's own rules, debounced while typing, and resolves with
+	 * the problem or null. A problem blocks saving until the value changes; a
+	 * rejected check blocks nothing (the server validates on save anyway).
+	 */
+	asyncValidate?: Record<string, (value: unknown, values: Values) => Promise<string | null>>
+	/** Runs after a create, without holding up the form (e.g. queueing image downloads) */
+	afterCreate?: (record: Full) => Promise<unknown>
 }
 
 export interface RecordDef<Full> {

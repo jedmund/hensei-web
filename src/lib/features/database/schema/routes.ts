@@ -14,7 +14,8 @@ function definition(resource: string): AnyResourceDef {
 
 /**
  * Generated screens, for resources with no override. The detail needs a
- * `record`, the edit page a `record` it can `save.update`
+ * `record`, the edit page a `record` it can `save.update`, the new page one
+ * it can `save.create`
  */
 function generated(
 	def: AnyResourceDef,
@@ -23,6 +24,9 @@ function generated(
 	if (kind === 'detail' && def.record) return () => import('./ResourceDetailScreen.svelte')
 	if (kind === 'edit' && def.record && def.save?.update) {
 		return () => import('./ResourceEditScreen.svelte')
+	}
+	if (kind === 'new' && def.record && def.save?.create) {
+		return () => import('./ResourceNewScreen.svelte')
 	}
 	return undefined
 }

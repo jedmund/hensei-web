@@ -10,17 +10,15 @@
 	import * as m from '$lib/paraglide/messages'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import DetailScaffold from '$lib/features/database/detail/DetailScaffold.svelte'
 	import { UnsavedChangesGuard } from '$lib/features/database/detail/unsavedChanges.svelte'
 	import UnsavedChangesDialog from '$lib/features/database/detail/UnsavedChangesDialog.svelte'
-	import { getElementLabel } from '$lib/utils/element'
 	import { recordTitle } from './detail'
 	import { formSections } from './form'
-	import FormField from './inputs/FormField.svelte'
-	import type { ElementName } from './inputs/types'
+	import { formElement } from './inputs/options'
 	import { createRecordForm } from './recordForm.svelte'
+	import ResourceFormSections from './ResourceFormSections.svelte'
 	import type { AnyResourceDef } from './registry'
 
 	interface Props {
@@ -44,11 +42,7 @@
 	const noun = $derived(recordDef.noun())
 	const title = $derived(recordTitle(def, record) || noun)
 	// Checkboxes and buttons follow the element being picked
-	const element = $derived(
-		getElementLabel(
-			(form.values.element as number | null | undefined) ?? undefined
-		).toLowerCase() as ElementName | undefined
-	)
+	const element = $derived(formElement(form.values))
 
 	async function save() {
 		const saved = await form.save()
@@ -84,34 +78,18 @@
 		fallbackImage={recordDef.fallbackImage?.(record)}
 		editMode
 	>
-		<section class="details">
-			{#each sections as { section, fields } (section.id)}
-				{@const shown = fields.filter((field) => form.shown(field))}
-				{#if shown.length}
-					<DetailsContainer title={section.title()}>
-						{#each shown as field (field.key)}
-							<FormField {field} {form} {record} {element} />
-						{/each}
-					</DetailsContainer>
-				{/if}
-			{/each}
-		</section>
+		<ResourceFormSections {form} {sections} {record} {element} />
 	</DetailScaffold>
 </div>
 
 <UnsavedChangesDialog guard={unsaved} />
 
 <style lang="scss">
-	@use '$src/themes/database' as database;
 	@use '$src/themes/layout' as layout;
 
 	.page {
 		background: var(--card-bg);
 		border-radius: layout.$page-corner;
 		box-shadow: var(--shadow-sm);
-	}
-
-	.details {
-		@include database.details;
 	}
 </style>

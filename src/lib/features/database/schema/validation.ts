@@ -111,25 +111,33 @@ export function buildZod<Row, Full>(
 	def: ResourceDef<Row, Full>,
 	mode: FormMode
 ): z.ZodType<Values> {
-	const checks = formFields(def, mode).map((field) => ({
-		field,
-		schemas: field.validate ? [kindSchema(field), field.validate] : [kindSchema(field)]
-	}))
+	const checks = formFields(def, mode).map(fieldCheck)
 
 	return z.record(z.string(), z.unknown()).superRefine((values, ctx) => {
-		for (const { field, schemas } of checks) {
+		for (const { field, check } of checks) {
 			if (!isShown(field, values)) continue
-			for (const schema of schemas) {
-				const result = schema.safeParse(values[field.key], { error: issueMessage })
-				if (result.success) continue
-				for (const issue of result.error.issues) {
-					ctx.addIssue({ code: 'custom', path: [field.key, ...issue.path], message: issue.message })
-				}
-				break
+			for (const issue of check(values[field.key])) {
+				ctx.addIssue({ code: 'custom', path: [field.key, ...issue.path], message: issue.message })
 			}
 		}
 		def.refine?.(values, (key, message) => ctx.addIssue({ code: 'custom', path: [key], message }))
 	})
+}
+
+/**
+ * One field's own rules (its kind, then `validate`): the first failing
+ * rule's issues, paths inside the value
+ */
+export function fieldCheck<Row, Full>(field: Field<Row, Full>) {
+	const schemas = field.validate ? [kindSchema(field), field.validate] : [kindSchema(field)]
+	const check = (value: unknown): z.core.$ZodIssue[] => {
+		for (const schema of schemas) {
+			const result = schema.safeParse(value, { error: issueMessage })
+			if (!result.success) return result.error.issues
+		}
+		return []
+	}
+	return { field, check }
 }
 
 /** Problems by field: a field key, or a path into one (`name.en`, `bullet_slots.0`) */

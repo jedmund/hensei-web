@@ -1,7 +1,7 @@
 /**
  * Form values from a full record, derived values, and the API payload.
  */
-import { fieldFor, formFields, isShown, onForm, readField } from './fields'
+import { fieldFor, formFields, isShown, offForm, onForm, readField } from './fields'
 import type {
 	EmptyPolicy,
 	Field,
@@ -140,7 +140,7 @@ export function formSections<Row, Full>(
 	return (mode === 'edit' ? edit : create).flatMap((section) => {
 		const fields = section.fields
 			.map((key) => fieldFor(def, key))
-			.filter((field) => onForm(field, mode) || field.render?.input)
+			.filter((field) => onForm(field, mode) || (field.render?.input && !offForm(field, mode)))
 		return fields.length ? [{ section, fields }] : []
 	})
 }

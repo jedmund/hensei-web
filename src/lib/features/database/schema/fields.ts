@@ -13,6 +13,8 @@ export function prop(source: unknown, key: string): unknown {
 
 /** What a field's `read` returns for the full record */
 export function readField<Row, Full>(field: Field<Row, Full>, record: Full): unknown {
+	// The create form has no record yet
+	if (record === null || record === undefined) return undefined
 	return field.read ? field.read(record) : prop(record, field.key)
 }
 
@@ -22,9 +24,14 @@ export function fieldFor<Row, Full>(def: ResourceDef<Row, Full>, key: string): F
 	return field
 }
 
+/** Whether the field is kept off the given form (`form: false`, or off for the mode) */
+export function offForm<Row, Full>(field: Field<Row, Full>, mode: FormMode): boolean {
+	return field.form === false || field.form?.[mode] === false
+}
+
 /** Whether the field is on the given form: a writable field, or a form-only value */
 export function onForm<Row, Full>(field: Field<Row, Full>, mode: FormMode): boolean {
-	if (field.form === false || field.form?.[mode] === false) return false
+	if (offForm(field, mode)) return false
 	return field.write !== false || field.form !== undefined
 }
 
