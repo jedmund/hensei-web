@@ -1,0 +1,84 @@
+/**
+ * Admin list endpoints (`GET /admin/<resource>`, editors only), used by the
+ * database DataTable's server source. Contract from GBF-138.
+ *
+ * Wire format (before BaseAdapter camelCases the response):
+ *   GET /admin/weapons?q=&filter[element]=1,2&filter[updated_at][gte]=…
+ *     &filter[no_skills]=true&sort=-updated_at,name_en&page=1&per=50
+ *     &fields=…&facets=element,rarity
+ *   → { results: [...], meta: { total, page, per, total_pages },
+ *       facets: { element: { "1": 312 } } }   (facets only when requested)
+ *
+ * Weapons:
+ * - `q`: case-insensitive substring over name_en, name_jp, granblue_id.
+ * - List or range filters: element, rarity, proficiency (integers), release_date.
+ *   List only: series (slug, UUID or `none`), granblue_id.
+ *   Range only: created_at, updated_at (a bare value is a 422; send [gte]/[lte]).
+ *   `none` in a list matches NULL.
+ * - Boolean filters: flb, ulb, transcendence, extra, limit, and the data-quality
+ *   flags missing_name_jp, no_skills.
+ * - Sort fields: name_en, name_jp, granblue_id, rarity, element, proficiency,
+ *   release_date, updated_at, created_at. NULLS LAST. Default -updated_at,name_en.
+ * - page/per: per defaults to 50, max 200; out-of-range values are clamped.
+ *   total_pages is 0 when total is 0.
+ * - Facets: element, rarity, proficiency, series (keyed by series UUID). Each
+ *   ignores its own filter; NULLs count under "none".
+ * - Unknown filter, sort, field or facet → 422 { error }.
+ */
+
+export type AdminResource = 'weapons' | 'characters' | 'summons'
+
+export type AdminFilterValue = string[] | boolean | { gte?: string; lte?: string }
+
+export interface AdminListParams {
+	page: number
+	per: number
+	q?: string
+	/** API sort string, e.g. `-updated_at,name_en` */
+	sort?: string
+	/** Keyed by API filter name (snake_case), e.g. `release_date` */
+	filters?: Record<string, AdminFilterValue>
+	/** Extra fields beyond the default list; `id` is always included */
+	fields?: string[]
+	facets?: string[]
+}
+
+export interface AdminListMeta {
+	total: number
+	page: number
+	per: number
+	totalPages: number
+}
+
+export type AdminFacets = Record<string, Record<string, number>>
+
+export interface AdminListResponse<T> {
+	results: T[]
+	meta: AdminListMeta
+	facets: AdminFacets
+}
+
+/** Default `fields` of an admin weapon row, camelCased. Rows are flat. */
+export interface AdminWeaponRow {
+	id: string
+	granblueId: string
+	nameEn: string | null
+	nameJp: string | null
+	element: number | null
+	rarity: number | null
+	proficiency: number | null
+	seriesId: string | null
+	seriesSlug: string | null
+	releaseDate: string | null
+	updatedAt: string
+	// Opt-in extras via `fields`
+	seriesNameEn?: string | null
+	seriesNameJp?: string | null
+	skillCount?: number
+	flb?: boolean
+	ulb?: boolean
+	transcendence?: boolean
+	extra?: boolean
+	limit?: boolean
+	createdAt?: string
+}
