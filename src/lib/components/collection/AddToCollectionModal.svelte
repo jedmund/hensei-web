@@ -1,44 +1,23 @@
 <script lang="ts">
-	import { createQuery, createInfiniteQuery } from '@tanstack/svelte-query'
-	import { onDestroy } from 'svelte'
-	import { SvelteMap, SvelteSet } from 'svelte/reactivity'
-	import { collectionQueries } from '$lib/api/queries/collection.queries'
-	import {
-		searchQueries,
-		type SearchFilters,
-		type SearchPageResult
-	} from '$lib/api/queries/search.queries'
-	import {
-		useAddCharactersToCollection,
-		useAddWeaponsToCollection,
-		useAddSummonsToCollection
-	} from '$lib/api/mutations/collection.mutations'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import CollectionFilters from './CollectionFilters.svelte'
-	import type { CollectionFilterState } from '$lib/types/filter'
-	import SelectableCharacterCard from './SelectableCharacterCard.svelte'
-	import SelectableCharacterRow from './SelectableCharacterRow.svelte'
-	import SelectableWeaponCard from './SelectableWeaponCard.svelte'
-	import SelectableWeaponRow from './SelectableWeaponRow.svelte'
-	import SelectableSummonCard from './SelectableSummonCard.svelte'
-	import SelectableSummonRow from './SelectableSummonRow.svelte'
-	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
+	import AddToCollectionResults from './AddToCollectionResults.svelte'
+	import { AddToCollectionState } from './addToCollectionState.svelte'
+	import {
+		entityNames,
+		selectedText,
+		type AddToCollectionEntityType
+	} from './add-to-collection.utils'
 	import { viewMode } from '$lib/stores/viewMode.svelte'
 	import * as m from '$lib/paraglide/messages'
-	import { toast } from 'svelte-sonner'
-	import { extractErrorMessage } from '$lib/utils/errors'
-	import { normalizeCharacterUncap } from '$lib/utils/uncap'
-
-	type SearchResultItem = SearchPageResult['results'][number]
-	type EntityType = 'character' | 'weapon' | 'summon'
 
 	interface Props {
 		userId: string
-		entityType?: EntityType
+		entityType?: AddToCollectionEntityType
 		open?: boolean
 		onOpenChange?: (open: boolean) => void
 		/** User's element for elemental checkbox styling */
@@ -53,25 +32,13 @@
 		userElement
 	}: Props = $props()
 
-	// Search state
-	let searchQuery = $state('')
-
-	// Filter state
-	let elementFilters = $state<number[]>([])
-	let rarityFilters = $state<number[]>([])
-	let seasonFilters = $state<number[]>([])
-	let seriesFilters = $state<(number | string)[]>([])
-	let raceFilters = $state<number[]>([])
-	let proficiencyFilters = $state<number[]>([])
-	let genderFilters = $state<number[]>([])
-
-	// Selection state - characters use Set<string>, weapons/summons use Map<string, number> for quantities
-	let selectedIds = new SvelteSet<string>()
-	let selectedQuantities = new SvelteMap<string, number>()
-	let showOnlySelected = $state(false)
+	const add = new AddToCollectionState({
+		userId: () => userId,
+		entityType: () => entityType,
+		open: () => open
+	})
 
 	// Refs
-	let sentinelEl = $state<HTMLElement>()
 	let resultsAreaEl = $state<HTMLElement>()
 	let footerShadow = $state(false)
 
@@ -83,293 +50,22 @@
 
 	// Re-check shadow when results change
 	$effect(() => {
-		void displayedResults
+		void add.displayedResults
 		requestAnimationFrame(handleResultsScroll)
 	})
 
-	// Localized entity type display names
-	const entityNames: Record<EntityType, { singular: string; plural: string }> = {
-		character: {
-			singular: m.collection_entity_character(),
-			plural: m.collection_entity_characters()
-		},
-		weapon: { singular: m.collection_entity_weapon(), plural: m.collection_entity_weapons() },
-		summon: { singular: m.collection_entity_summon(), plural: m.collection_entity_summons() }
-	}
-
-	// Get IDs of characters already in collection (only used for characters)
-	const collectedIdsQuery = createQuery(() =>
-		collectionQueries.collectedCharacterIds(userId, entityType === 'character')
-	)
-
-	// Build filters for search (using SearchFilters type from search.queries)
-	// All series filters use string UUIDs
-	const stringSeriesFilters = $derived(
-		seriesFilters.filter((s): s is string => typeof s === 'string')
-	)
-	const searchFilters = $derived<SearchFilters>({
-		element: elementFilters.length > 0 ? elementFilters : undefined,
-		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
-		season: seasonFilters.length > 0 ? seasonFilters : undefined,
-		series: stringSeriesFilters.length > 0 ? stringSeriesFilters : undefined,
-		proficiency: proficiencyFilters.length > 0 ? proficiencyFilters : undefined,
-		race: raceFilters.length > 0 ? raceFilters : undefined,
-		gender: genderFilters.length > 0 ? genderFilters : undefined
-	})
-
-	// Search query with infinite scroll - dynamic based on entity type
-	// Type assertion needed because queryKeys differ but data shape is the same
-	const getSearchOptions = () => {
-		const query = searchQuery
-		const filters = searchFilters
-
-		if (entityType === 'character') {
-			const excludeIds = collectedIdsQuery.data ?? []
-			const isEnabled = open && !collectedIdsQuery.isLoading
-			return searchQueries.characters(query, filters, 'en', excludeIds, isEnabled)
-		} else if (entityType === 'weapon') {
-			return {
-				...searchQueries.weapons(query, filters, 'en'),
-				enabled: open
-			}
-		} else {
-			return {
-				...searchQueries.summons(query, filters, 'en'),
-				enabled: open
-			}
-		}
-	}
-	const searchResults = createInfiniteQuery(
-		getSearchOptions as () => ReturnType<typeof searchQueries.weapons>
-	)
-
-	// Flatten results and deduplicate by ID
-	const allResults = $derived.by(() => {
-		const pages = searchResults.data?.pages ?? []
-		const seen = new SvelteSet<string>()
-		const results: (typeof pages)[number]['results'] = []
-
-		for (const page of pages) {
-			for (const result of page.results) {
-				if (!seen.has(result.id)) {
-					seen.add(result.id)
-					results.push(result)
-				}
-			}
-		}
-
-		return results
-	})
-
-	// Filter to show only selected if enabled
-	const displayedResults = $derived.by(() => {
-		if (!showOnlySelected) return allResults
-
-		if (entityType === 'character') {
-			return allResults.filter((r) => selectedIds.has(r.id))
-		} else {
-			return allResults.filter((r) => (selectedQuantities.get(r.id) ?? 0) > 0)
-		}
-	})
-
-	// Add mutations
-	const addCharacterMutation = useAddCharactersToCollection()
-	const addWeaponMutation = useAddWeaponsToCollection()
-	const addSummonMutation = useAddSummonsToCollection()
-
-	// Current mutation based on entity type
-	const currentMutation = $derived(
-		entityType === 'character'
-			? addCharacterMutation
-			: entityType === 'weapon'
-				? addWeaponMutation
-				: addSummonMutation
-	)
-
-	// State-gated infinite scroll
-	const loader = useInfiniteLoader(
-		() => searchResults,
-		() => sentinelEl,
-		{ rootMargin: '200px' }
-	)
-
-	// Reset loader when filters or showOnlySelected changes
-	$effect(() => {
-		void searchFilters
-		void showOnlySelected
-		loader.reset()
-	})
-
-	// Cleanup on destroy
-	onDestroy(() => loader.destroy())
-
-	// Reset state when modal closes or entity type changes
-	$effect(() => {
-		if (!open) {
-			resetState()
-		}
-	})
-
-	function resetState() {
-		selectedIds.clear()
-		selectedQuantities.clear()
-		showOnlySelected = false
-		searchQuery = ''
-		elementFilters = []
-		rarityFilters = []
-		seasonFilters = []
-		seriesFilters = []
-		raceFilters = []
-		proficiencyFilters = []
-		genderFilters = []
-	}
-
-	// Character toggle (binary selection)
-	function toggleCharacterSelection(character: SearchResultItem) {
-		if (selectedIds.has(character.id)) {
-			selectedIds.delete(character.id)
-		} else {
-			selectedIds.add(character.id)
-		}
-	}
-
-	// Weapon/Summon quantity change
-	function handleQuantityChange(item: SearchResultItem, quantity: number) {
-		if (quantity <= 0) {
-			selectedQuantities.delete(item.id)
-		} else {
-			selectedQuantities.set(item.id, quantity)
-		}
-	}
-
-	function handleFiltersChange(filters: CollectionFilterState) {
-		elementFilters = filters.element
-		rarityFilters = filters.rarity
-		seasonFilters = filters.season
-		seriesFilters = filters.series
-		raceFilters = filters.race
-		proficiencyFilters = filters.proficiency
-		genderFilters = filters.gender
-	}
-
-	function toggleShowSelected() {
-		showOnlySelected = !showOnlySelected
-	}
-
-	function getMaxLevels(item: SearchResultItem | undefined, isCharacter: boolean) {
-		const uncap = item?.uncap
-		const baseLevel = isCharacter ? 4 : 3
-		if (!uncap) return { uncapLevel: baseLevel, transcendenceStep: 0 }
-		if (isCharacter && item?.special) {
-			const normalized = normalizeCharacterUncap({ special: true, uncap })
-			if (normalized.ulb) return { uncapLevel: 5, transcendenceStep: 0 }
-			if (uncap.flb) return { uncapLevel: 4, transcendenceStep: 0 }
-			return { uncapLevel: 3, transcendenceStep: 0 }
-		}
-		if (uncap.transcendence) {
-			return {
-				uncapLevel: 6,
-				transcendenceStep: isCharacter ? (uncap.maxTranscendenceStage ?? 5) : 5
-			}
-		}
-		if (uncap.ulb) return { uncapLevel: 5, transcendenceStep: 0 }
-		if (uncap.flb) return { uncapLevel: isCharacter ? 5 : 4, transcendenceStep: 0 }
-		return { uncapLevel: baseLevel, transcendenceStep: 0 }
-	}
-
 	async function handleAdd() {
-		// Capture selected data before any state changes
-		const currentEntityType = entityType
-		const characterInputs =
-			currentEntityType === 'character'
-				? Array.from(selectedIds).map((characterId) => {
-						const item = allResults.find((r) => r.id === characterId)
-						return { characterId, ...getMaxLevels(item, true) }
-					})
-				: []
-		const weaponInputs =
-			currentEntityType === 'weapon'
-				? Array.from(selectedQuantities.entries()).map(([weaponId, quantity]) => {
-						const item = allResults.find((r) => r.id === weaponId)
-						return { weaponId, quantity, ...getMaxLevels(item, false) }
-					})
-				: []
-		const summonInputs =
-			currentEntityType === 'summon'
-				? Array.from(selectedQuantities.entries()).map(([summonId, quantity]) => {
-						const item = allResults.find((r) => r.id === summonId)
-						return { summonId, quantity, ...getMaxLevels(item, false) }
-					})
-				: []
-
-		try {
-			if (currentEntityType === 'character') {
-				if (characterInputs.length === 0) return
-				await addCharacterMutation.mutateAsync(characterInputs)
-			} else if (currentEntityType === 'weapon') {
-				if (weaponInputs.length === 0) return
-				await addWeaponMutation.mutateAsync(weaponInputs)
-			} else {
-				if (summonInputs.length === 0) return
-				await addSummonMutation.mutateAsync(summonInputs)
-			}
-
-			// Close modal after successful mutation
+		if (await add.add()) {
 			open = false
 			onOpenChange?.(false)
-		} catch (error) {
-			// Log all errors except cancellation
-			const isCancelledError =
-				error && typeof error === 'object' && 'name' in error && error.name === 'CancelledError'
-			if (!isCancelledError) {
-				console.error(`Failed to add ${entityNames[currentEntityType].plural}:`, error)
-				toast.error(extractErrorMessage(error, m.collection_add_error()))
-			}
 		}
 	}
 
-	// Selected count
-	const selectedCount = $derived(
-		entityType === 'character'
-			? selectedIds.size
-			: Array.from(selectedQuantities.values()).reduce((sum, qty) => sum + qty, 0)
+	const names = $derived(entityNames(entityType))
+	const dialogTitle = $derived(m.collection_add_title({ type: names.plural }))
+	const footerText = $derived(
+		selectedText(entityType, { count: add.selectedCount, itemCount: add.selectedItemCount }, names)
 	)
-
-	// Total items selected (for weapons/summons, this is unique items, not total quantity)
-	const selectedItemCount = $derived(
-		entityType === 'character' ? selectedIds.size : selectedQuantities.size
-	)
-
-	const isLoading = $derived(
-		searchResults.isLoading || (entityType === 'character' && collectedIdsQuery.isLoading)
-	)
-
-	// View mode from store
-	const currentViewMode = $derived(viewMode.modalView)
-
-	// Dialog title based on entity type
-	const dialogTitle = $derived(m.collection_add_title({ type: entityNames[entityType].plural }))
-
-	// Footer text based on entity type
-	const selectedText = $derived.by(() => {
-		if (entityType === 'character') {
-			return m.collection_add_selected({
-				count: selectedCount,
-				type:
-					selectedCount === 1 ? entityNames[entityType].singular : entityNames[entityType].plural
-			})
-		} else {
-			// For weapons/summons, show both item count and total quantity
-			if (selectedItemCount === 0) return ''
-			if (selectedCount > selectedItemCount) {
-				return m.collection_add_items_selected({ count: selectedItemCount, total: selectedCount })
-			}
-			return m.collection_add_selected({
-				count: selectedItemCount,
-				type: entityNames[entityType].plural
-			})
-		}
-	})
 </script>
 
 <Dialog bind:open {onOpenChange} size="large">
@@ -379,111 +75,60 @@
 		<div class="filters-bar">
 			<CollectionFilters
 				{entityType}
-				bind:elementFilters
-				bind:rarityFilters
-				bind:seasonFilters
-				bind:seriesFilters
-				bind:raceFilters
-				bind:proficiencyFilters
-				bind:genderFilters
-				bind:searchQuery
-				onFiltersChange={handleFiltersChange}
+				bind:elementFilters={add.elementFilters}
+				bind:rarityFilters={add.rarityFilters}
+				bind:seasonFilters={add.seasonFilters}
+				bind:seriesFilters={add.seriesFilters}
+				bind:raceFilters={add.raceFilters}
+				bind:proficiencyFilters={add.proficiencyFilters}
+				bind:genderFilters={add.genderFilters}
+				bind:searchQuery={add.searchQuery}
+				onFiltersChange={add.setFilters}
 				showSort={false}
 			/>
 		</div>
 
 		<!-- Results -->
 		<div class="results-area" bind:this={resultsAreaEl} onscroll={handleResultsScroll}>
-			{#if isLoading}
+			{#if add.isLoading}
 				<div class="loading-state">
 					<Icon name="loader-2" size={32} />
-					<p>{m.collection_add_loading({ type: entityNames[entityType].plural })}</p>
+					<p>{m.collection_add_loading({ type: names.plural })}</p>
 				</div>
-			{:else if displayedResults.length === 0}
+			{:else if add.displayedResults.length === 0}
 				<div class="empty-state">
-					{#if showOnlySelected}
-						<p>{m.collection_add_none_selected({ type: entityNames[entityType].plural })}</p>
-						<Button variant="ghost" size="small" onclick={toggleShowSelected}>
-							{m.collection_add_show_all({ type: entityNames[entityType].plural })}
+					{#if add.showOnlySelected}
+						<p>{m.collection_add_none_selected({ type: names.plural })}</p>
+						<Button variant="ghost" size="small" onclick={add.toggleShowSelected}>
+							{m.collection_add_show_all({ type: names.plural })}
 						</Button>
-					{:else if searchQuery || Object.values(searchFilters).some((v) => v)}
-						<p>{m.collection_add_no_results({ type: entityNames[entityType].plural })}</p>
+					{:else if add.hasActiveSearch}
+						<p>{m.collection_add_no_results({ type: names.plural })}</p>
 					{:else}
-						<p>{m.collection_add_search_prompt({ type: entityNames[entityType].plural })}</p>
-					{/if}
-				</div>
-			{:else if currentViewMode === 'grid'}
-				<div class="results-grid">
-					{#if entityType === 'character'}
-						{#each displayedResults as character (character.id)}
-							<SelectableCharacterCard
-								{character}
-								selected={selectedIds.has(character.id)}
-								onToggle={toggleCharacterSelection}
-								{userElement}
-							/>
-						{/each}
-					{:else if entityType === 'weapon'}
-						{#each displayedResults as weapon (weapon.id)}
-							<SelectableWeaponCard
-								{weapon}
-								quantity={selectedQuantities.get(weapon.id) ?? 0}
-								onQuantityChange={handleQuantityChange}
-								{userElement}
-							/>
-						{/each}
-					{:else}
-						{#each displayedResults as summon (summon.id)}
-							<SelectableSummonCard
-								{summon}
-								quantity={selectedQuantities.get(summon.id) ?? 0}
-								onQuantityChange={handleQuantityChange}
-								{userElement}
-							/>
-						{/each}
+						<p>{m.collection_add_search_prompt({ type: names.plural })}</p>
 					{/if}
 				</div>
 			{:else}
-				<div class="results-list">
-					{#if entityType === 'character'}
-						{#each displayedResults as character (character.id)}
-							<SelectableCharacterRow
-								{character}
-								selected={selectedIds.has(character.id)}
-								onToggle={toggleCharacterSelection}
-								{userElement}
-							/>
-						{/each}
-					{:else if entityType === 'weapon'}
-						{#each displayedResults as weapon (weapon.id)}
-							<SelectableWeaponRow
-								{weapon}
-								quantity={selectedQuantities.get(weapon.id) ?? 0}
-								onQuantityChange={handleQuantityChange}
-								{userElement}
-							/>
-						{/each}
-					{:else}
-						{#each displayedResults as summon (summon.id)}
-							<SelectableSummonRow
-								{summon}
-								quantity={selectedQuantities.get(summon.id) ?? 0}
-								onQuantityChange={handleQuantityChange}
-								{userElement}
-							/>
-						{/each}
-					{/if}
-				</div>
+				<AddToCollectionResults
+					{entityType}
+					results={add.displayedResults}
+					view={viewMode.modalView}
+					selectedIds={add.selectedIds}
+					quantities={add.selectedQuantities}
+					onToggle={add.toggleCharacter}
+					onQuantityChange={add.setQuantity}
+					{userElement}
+				/>
 			{/if}
 
-			{#if displayedResults.length > 0}
+			{#if add.displayedResults.length > 0}
 				<div
 					class="load-more-sentinel"
-					bind:this={sentinelEl}
-					class:hidden={showOnlySelected || !searchResults.hasNextPage}
+					bind:this={add.sentinelEl}
+					class:hidden={add.showOnlySelected || !add.hasNextPage}
 				></div>
 
-				{#if searchResults.isFetchingNextPage}
+				{#if add.isFetchingNextPage}
 					<div class="loading-more">
 						<Icon name="loader-2" size={20} />
 						<span>{m.loading_more()}</span>
@@ -497,15 +142,20 @@
 		showShadow={footerShadow}
 		{userElement}
 		primaryAction={{
-			label: currentMutation.isPending ? m.collection_adding() : m.collection_add_button(),
+			label: add.isAdding ? m.collection_adding() : m.collection_add_button(),
 			onclick: handleAdd,
-			disabled: selectedCount === 0 || currentMutation.isPending
+			disabled: add.selectedCount === 0 || add.isAdding
 		}}
 	>
 		{#snippet left()}
-			{#if selectedCount > 0}
-				<Button variant="ghost" size="small" active={showOnlySelected} onclick={toggleShowSelected}>
-					{selectedText}
+			{#if add.selectedCount > 0}
+				<Button
+					variant="ghost"
+					size="small"
+					active={add.showOnlySelected}
+					onclick={add.toggleShowSelected}
+				>
+					{footerText}
 				</Button>
 			{/if}
 		{/snippet}
@@ -533,20 +183,6 @@
 		flex: 1;
 		overflow-y: auto;
 		min-height: 0;
-	}
-
-	.results-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-		gap: $unit;
-		padding: $unit 0;
-	}
-
-	.results-list {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-half;
-		padding: $unit 0;
 	}
 
 	.loading-state,

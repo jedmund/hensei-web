@@ -17,7 +17,8 @@ export interface SearchFilterInput {
 	isExtraSlot: boolean
 }
 
-function nonEmpty(values: number[]): number[] | undefined {
+/** An empty selection becomes undefined so it stays out of the query key. */
+export function nonEmpty<T>(values: T[]): T[] | undefined {
 	return values.length > 0 ? values : undefined
 }
 
