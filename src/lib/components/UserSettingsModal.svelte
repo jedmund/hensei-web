@@ -12,17 +12,8 @@
 	import AppearanceSettings from './settings/AppearanceSettings.svelte'
 	import PrivacySettings from './settings/PrivacySettings.svelte'
 	import ConfirmDialog from './ui/ConfirmDialog.svelte'
-	import { users } from '$lib/api/resources/users'
+	import { UserSettingsState } from './settings/userSettingsState.svelte'
 	import type { UserCookie } from '$lib/types/UserCookie'
-	import { invalidateAll } from '$app/navigation'
-	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
-	import { crewQueries } from '$lib/api/queries/crew.queries'
-	import { userAdapter } from '$lib/api/adapters/user.adapter'
-	import { themeStore, type ThemePreference } from '$lib/stores/theme.svelte'
-	import { untrack } from 'svelte'
-	import { localizeHref, deLocalizeHref, toLocale } from '$lib/paraglide/runtime'
-	import { updateSimplePortraits } from '$lib/stores/simplePortraits.svelte'
-	import { updateDefaultRepView } from '$lib/stores/defaultRepView.svelte'
 	import type { SettingsReturn } from '$lib/auth/socialResult'
 
 	interface Props {
@@ -49,131 +40,25 @@
 		socialResult = null
 	}: Props = $props()
 
-	const queryClient = useQueryClient()
+	const form = new UserSettingsState({
+		open: () => open,
+		username: () => username,
+		userId: () => userId,
+		user: () => user,
+		close: handleClose
+	})
 
 	// Active section for navigation
 	let activeSection = $state<string>('profile')
 
-	// Form state - Account section (initialized empty, populated from API)
-	let formUsername = $state(untrack(() => username))
-	let formDisplayName = $state('')
-	let formEmail = $state('')
-	let emailVerified = $state(false)
-	let hasPassword = $state(true)
-	let passwordPromptDismissed = $state(false)
-	let currentPassword = $state('')
-	let newPassword = $state('')
-	let confirmPassword = $state('')
-	let bahamut = $derived(user.bahamut ?? false) // Client-side preference, kept in cookie
-
-	// Form state - Profile section (initialized with defaults, populated from API)
-	let picture = $state('')
-	let element = $state<ElementType>('wind')
-	let description = $state('')
-	let granblueId = $state('')
-	let wikiProfile = $state('')
-	let youtube = $state('')
-	let gender = $state(0)
-	let language = $state('en')
-	let theme = $state('system')
-
-	// Form state - Privacy section (initialized with defaults, populated from API)
-	let collectionPrivacy = $state(1) // 1 = Everyone (1-based to avoid JS falsy 0)
-	let showCrewGamertag = $state(false)
-	let importWeapons = $state(true)
-	let defaultImportVisibility = $state(1)
-	let simplePortraits = $state(false)
-	let defaultRepView = $state('weapons')
-	let timezone = $state(Intl.DateTimeFormat().resolvedOptions().timeZone)
-
-	// Track whether form has been initialized from API
-	let formInitialized = $state(false)
-
-	// Store original values from API for comparison on save
-	let originalLanguage = $state('')
-	let originalTheme = $state('')
-
-	let saving = $state(false)
-	let usernameValid = $state(true)
-	let usernameConfirmOpen = $state(false)
-	let error = $state<string | null>(null)
 	let contentElement: HTMLElement | undefined = $state()
 	let isScrolledToBottom = $state(true)
 	let isScrolledFromTop = $state(false)
-
-	// Fetch current user data from API
-	const currentUserQuery = createQuery(() => ({
-		queryKey: ['currentUser', 'settings'],
-		queryFn: () => userAdapter.getCurrentUser(),
-		enabled: open, // Only fetch when modal is open
-		staleTime: 0 // Always refetch when modal opens to ensure fresh data
-	}))
-
-	// Fetch current user's crew (for showing gamertag toggle)
-	const myCrewQuery = createQuery(() => ({
-		...crewQueries.myCrew(),
-		enabled: open // Only fetch when modal is open
-	}))
-
-	const isInCrew = $derived(!!myCrewQuery.data)
-	const crewGamertag = $derived(myCrewQuery.data?.gamertag ?? undefined)
-	const isLoading = $derived(currentUserQuery.isPending && !formInitialized)
-
-	// Populate form state when API returns data
-	$effect(() => {
-		if (currentUserQuery.data && !formInitialized) {
-			const data = currentUserQuery.data
-			// Account
-			formDisplayName = data.displayName ?? ''
-			formEmail = data.email ?? ''
-			emailVerified = data.emailVerified ?? false
-			hasPassword = data.hasPassword ?? true
-			passwordPromptDismissed = data.passwordPromptDismissed ?? false
-			// Profile
-			picture = data.avatar?.picture ?? ''
-			element = (data.avatar?.element as ElementType) ?? 'wind'
-			description = data.description ?? ''
-			granblueId = data.granblueId ?? ''
-			wikiProfile = data.wikiProfile ?? ''
-			youtube = data.youtube ?? ''
-			gender = data.gender ?? 0
-			language = data.language ?? 'en'
-			theme = data.theme ?? 'system'
-			// Privacy
-			collectionPrivacy = data.collectionPrivacy ?? 1
-			showCrewGamertag = data.showCrewGamertag ?? false
-			importWeapons = data.importWeapons ?? true
-			defaultImportVisibility = data.defaultImportVisibility ?? 1
-			simplePortraits = data.simplePortraits ?? false
-			defaultRepView = data.defaultRepView ?? 'weapons'
-			timezone = data.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
-			// Store original values for comparison
-			originalLanguage = data.language ?? 'en'
-			originalTheme = data.theme ?? 'system'
-			formInitialized = true
-		}
-	})
-
-	// Reset form initialized state when modal closes
-	$effect(() => {
-		if (!open) {
-			formInitialized = false
-		}
-	})
 
 	// Jump to the requested section when the modal is opened with one
 	$effect(() => {
 		if (open && initialSection) activeSection = initialSection
 	})
-
-	function handlePasswordPromptDismissed() {
-		passwordPromptDismissed = true
-		queryClient.setQueryData(
-			['currentUser', 'settings'],
-			(oldData: Record<string, unknown> | undefined) =>
-				oldData ? { ...oldData, passwordPromptDismissed: true } : oldData
-		)
-	}
 
 	// Handle section change from segmented control
 	function handleSectionChange(value: string) {
@@ -205,135 +90,6 @@
 		}
 	})
 
-	// Check if username changed before saving
-	function handleSaveClick() {
-		if (formUsername !== username) {
-			usernameConfirmOpen = true
-		} else {
-			handleSave()
-		}
-	}
-
-	// Handle form submission
-	async function handleSave() {
-		usernameConfirmOpen = false
-		error = null
-		saving = true
-
-		try {
-			// Prepare the update data
-			const updateData: Parameters<typeof users.update>[1] = {
-				username: formUsername,
-				displayName: formDisplayName || undefined,
-				description: description || undefined,
-				picture,
-				element,
-				gender,
-				language,
-				theme,
-				granblueId: granblueId || undefined,
-				wikiProfile: wikiProfile || undefined,
-				youtube: youtube || undefined,
-				showCrewGamertag,
-				collectionPrivacy,
-				importWeapons,
-				defaultImportVisibility,
-				simplePortraits,
-				defaultRepView,
-				timezone
-			}
-
-			// Call API to update user settings
-			const response = await users.update(userId, updateData)
-
-			// Update the user cookie
-			const updatedUser: UserCookie = {
-				picture: response.avatar.picture,
-				element: response.avatar.element,
-				language: response.language,
-				gender: response.gender,
-				theme: response.theme,
-				bahamut,
-				granblueId: response.granblueId,
-				wikiProfile: response.wikiProfile,
-				youtube: response.youtube,
-				showCrewGamertag: response.showCrewGamertag,
-				collectionPrivacy: response.collectionPrivacy,
-				importWeapons: response.importWeapons,
-				defaultImportVisibility: response.defaultImportVisibility,
-				simplePortraits: response.simplePortraits,
-				defaultRepView: response.defaultRepView
-			}
-
-			// Make a request to update the cookie server-side
-			// Include username so the account cookie gets updated too
-			await fetch('/api/settings', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ ...updatedUser, username: response.username })
-			})
-
-			// Update the TanStack Query cache so reopening the modal shows the saved values
-			queryClient.setQueryData(
-				['currentUser', 'settings'],
-				(oldData: Record<string, unknown> | undefined) =>
-					oldData
-						? {
-								...oldData,
-								avatar: { ...(oldData.avatar as Record<string, unknown>), picture, element },
-								description,
-								granblueId,
-								wikiProfile,
-								youtube,
-								gender,
-								language,
-								theme,
-								collectionPrivacy,
-								showCrewGamertag,
-								importWeapons,
-								defaultImportVisibility,
-								simplePortraits,
-								defaultRepView,
-								timezone
-							}
-						: oldData
-			)
-
-			// Apply theme change immediately without reload
-			if (originalTheme !== theme) {
-				themeStore.setTheme(theme as ThemePreference)
-			}
-
-			// Update simple portraits context reactively
-			updateSimplePortraits(response.simplePortraits ?? false)
-
-			// Update default rep view context reactively
-			updateDefaultRepView(response.defaultRepView ?? 'weapons')
-
-			// If language or bahamut mode changed, navigate to the re-localized URL
-			if (originalLanguage !== language || user.bahamut !== bahamut) {
-				await invalidateAll()
-				const basePath = deLocalizeHref(
-					window.location.pathname + window.location.search + window.location.hash
-				)
-				window.location.href = localizeHref(basePath, { locale: toLocale(language) })
-			} else {
-				// For other changes (element, picture, gender, theme), invalidate to refresh layout data
-				await invalidateAll()
-			}
-
-			// Close the modal
-			handleClose()
-		} catch (err) {
-			console.error('Failed to update settings:', err)
-			error = m.settings_save_error()
-		} finally {
-			saving = false
-		}
-	}
-
 	function handleClose() {
 		open = false
 		onOpenChange?.(false)
@@ -352,7 +108,7 @@
 					onValueChange={handleSectionChange}
 					variant="background"
 					size="small"
-					{element}
+					element={form.element}
 					grow
 				>
 					<Segment value="profile">{m.settings_nav_profile()}</Segment>
@@ -363,87 +119,87 @@
 			</div>
 
 			<div class="settings-content" bind:this={contentElement} onscroll={checkScrollPosition}>
-				{#if error}
-					<div class="error-message">{error}</div>
+				{#if form.error}
+					<div class="error-message">{form.error}</div>
 				{/if}
-				{#if isLoading}
+				{#if form.isLoading}
 					<div class="loading-state">
 						<div class="spinner"></div>
 						<span>{m.settings_loading()}</span>
 					</div>
 				{:else if activeSection === 'profile'}
 					<ProfileSettings
-						{picture}
-						{element}
+						picture={form.picture}
+						element={form.element}
 						{username}
-						displayName={formDisplayName}
-						{description}
-						{granblueId}
-						{wikiProfile}
-						{youtube}
-						{gender}
-						onPictureChange={(v) => (picture = v)}
-						onDisplayNameChange={(v) => (formDisplayName = v)}
-						onDescriptionChange={(v) => (description = v)}
-						onGranblueIdChange={(v) => (granblueId = v)}
-						onWikiProfileChange={(v) => (wikiProfile = v)}
-						onYoutubeChange={(v) => (youtube = v)}
-						onGenderChange={(v) => (gender = v)}
+						displayName={form.displayName}
+						description={form.description}
+						granblueId={form.granblueId}
+						wikiProfile={form.wikiProfile}
+						youtube={form.youtube}
+						gender={form.gender}
+						onPictureChange={(v) => (form.picture = v)}
+						onDisplayNameChange={(v) => (form.displayName = v)}
+						onDescriptionChange={(v) => (form.description = v)}
+						onGranblueIdChange={(v) => (form.granblueId = v)}
+						onWikiProfileChange={(v) => (form.wikiProfile = v)}
+						onYoutubeChange={(v) => (form.youtube = v)}
+						onGenderChange={(v) => (form.gender = v)}
 					/>
 				{:else if activeSection === 'appearance'}
 					<AppearanceSettings
-						{element}
-						{theme}
-						{language}
-						{timezone}
-						{defaultRepView}
-						{simplePortraits}
-						onElementChange={(v) => (element = v as ElementType)}
-						onThemeChange={(v) => (theme = v)}
-						onLanguageChange={(v) => (language = v)}
-						onTimezoneChange={(v) => (timezone = v)}
-						onDefaultRepViewChange={(v) => (defaultRepView = v)}
-						onSimplePortraitsChange={(v) => (simplePortraits = v)}
+						element={form.element}
+						theme={form.theme}
+						language={form.language}
+						timezone={form.timezone}
+						defaultRepView={form.defaultRepView}
+						simplePortraits={form.simplePortraits}
+						onElementChange={(v) => (form.element = v as ElementType)}
+						onThemeChange={(v) => (form.theme = v)}
+						onLanguageChange={(v) => (form.language = v)}
+						onTimezoneChange={(v) => (form.timezone = v)}
+						onDefaultRepViewChange={(v) => (form.defaultRepView = v)}
+						onSimplePortraitsChange={(v) => (form.simplePortraits = v)}
 					/>
 				{:else if activeSection === 'account'}
 					<AccountSettings
-						username={formUsername}
-						email={formEmail}
-						{emailVerified}
-						{bahamut}
+						username={form.formUsername}
+						email={form.email}
+						emailVerified={form.emailVerified}
+						bahamut={form.bahamut}
 						{role}
-						{element}
-						{currentPassword}
-						{newPassword}
-						{confirmPassword}
-						onUsernameChange={(v) => (formUsername = v)}
-						onEmailChange={(v) => (formEmail = v)}
-						onBahamutChange={(v) => (bahamut = v)}
-						onUsernameValidChange={(v) => (usernameValid = v)}
-						onCurrentPasswordChange={(v) => (currentPassword = v)}
-						onNewPasswordChange={(v) => (newPassword = v)}
-						onConfirmPasswordChange={(v) => (confirmPassword = v)}
-						{hasPassword}
-						{passwordPromptDismissed}
-						onPasswordPromptDismissed={handlePasswordPromptDismissed}
+						element={form.element}
+						currentPassword={form.currentPassword}
+						newPassword={form.newPassword}
+						confirmPassword={form.confirmPassword}
+						onUsernameChange={(v) => (form.formUsername = v)}
+						onEmailChange={(v) => (form.email = v)}
+						onBahamutChange={(v) => (form.bahamut = v)}
+						onUsernameValidChange={(v) => (form.usernameValid = v)}
+						onCurrentPasswordChange={(v) => (form.currentPassword = v)}
+						onNewPasswordChange={(v) => (form.newPassword = v)}
+						onConfirmPasswordChange={(v) => (form.confirmPassword = v)}
+						hasPassword={form.hasPassword}
+						passwordPromptDismissed={form.passwordPromptDismissed}
+						onPasswordPromptDismissed={form.dismissPasswordPrompt}
 						{socialResult}
 					/>
 				{:else if activeSection === 'privacy'}
 					<PrivacySettings
-						{collectionPrivacy}
-						{showCrewGamertag}
-						{importWeapons}
-						{defaultImportVisibility}
-						{isInCrew}
-						{crewGamertag}
-						{element}
+						collectionPrivacy={form.collectionPrivacy}
+						showCrewGamertag={form.showCrewGamertag}
+						importWeapons={form.importWeapons}
+						defaultImportVisibility={form.defaultImportVisibility}
+						isInCrew={form.isInCrew}
+						crewGamertag={form.crewGamertag}
+						element={form.element}
 						onCollectionPrivacyChange={(v) => {
-							if (v !== undefined) collectionPrivacy = v
+							if (v !== undefined) form.collectionPrivacy = v
 						}}
-						onShowCrewGamertagChange={(v) => (showCrewGamertag = v)}
-						onImportWeaponsChange={(v) => (importWeapons = v)}
+						onShowCrewGamertagChange={(v) => (form.showCrewGamertag = v)}
+						onImportWeaponsChange={(v) => (form.importWeapons = v)}
 						onDefaultImportVisibilityChange={(v) => {
-							if (v !== undefined) defaultImportVisibility = v
+							if (v !== undefined) form.defaultImportVisibility = v
 						}}
 					/>
 				{/if}
@@ -453,20 +209,20 @@
 
 	<ModalFooter
 		onCancel={handleClose}
-		cancelDisabled={saving}
+		cancelDisabled={form.saving}
 		primaryAction={{
-			label: saving ? m.settings_saving() : m.settings_save(),
-			onclick: handleSaveClick,
-			disabled: saving || isLoading || !usernameValid
+			label: form.saving ? m.settings_saving() : m.settings_save(),
+			onclick: form.requestSave,
+			disabled: form.saving || form.isLoading || !form.usernameValid
 		}}
 		showShadow={!isScrolledToBottom}
 	/>
 	<ConfirmDialog
-		bind:open={usernameConfirmOpen}
+		bind:open={form.usernameConfirmOpen}
 		title={m.settings_username_confirm_title()}
 		message={m.settings_username_confirm_message()}
 		confirmLabel={m.settings_username_confirm_action()}
-		onconfirm={handleSave}
+		onconfirm={form.save}
 	/>
 </Dialog>
 
