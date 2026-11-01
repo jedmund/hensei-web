@@ -34,7 +34,7 @@ export const ROW_HEIGHTS: Record<RowHeight, number> = {
 	image: 72
 }
 
-interface ColumnBase<T> {
+export interface ColumnBase<T> {
 	/** Stable id. Also the URL sort key and, by default, the API sort field */
 	id: string
 	/** Header text. Pass a Paraglide message function so it follows the locale */
