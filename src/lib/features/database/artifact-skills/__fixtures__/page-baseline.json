@@ -1,0 +1,28 @@
+{
+	"captured": "2026-11-01, from routes/(app)/database/artifact-skills/+page.svelte and [id]/+page.svelte before they were deleted",
+	"list": {
+		"groups": ["Group I — Slots 1 & 2", "Group II — Slot 3", "Group III — Slot 4"],
+		"sortWithinGroup": "modifier",
+		"columns": ["Mod", "Display Name", "Game Name", "Polarity", "Base Values"],
+		"search": ["name.en", "name.ja", "gameName.en", "gameName.ja", "modifier", "skillGroup"],
+		"rowLink": "/database/artifact-skills/{id}"
+	},
+	"edit": [
+		{ "title": "Display Names", "labels": ["Name (EN)", "Name (JP)"] },
+		{
+			"title": "Game Names (for Import Matching)",
+			"labels": ["Game Name (EN)", "Game Name (JP)"]
+		},
+		{
+			"title": "Skill Properties",
+			"labels": ["Skill Group", "Modifier", "Polarity", "Growth"]
+		},
+		{
+			"title": "Base Values (Quality 1-5)",
+			"labels": ["Quality 1", "Quality 2", "Quality 3", "Quality 4", "Quality 5"]
+		},
+		{ "title": "Suffix", "labels": ["Suffix (EN)", "Suffix (JP)"] }
+	],
+	"groupOptions": ["Group I (Slots 1 & 2)", "Group II (Slot 3)", "Group III (Slot 4)"],
+	"polarityOptions": ["Positive", "Negative"]
+}
