@@ -14,7 +14,9 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { escapeHtml } from '$lib/utils/safeHtml'
 	import { formatDateJST } from '$lib/utils/date'
-	import { getCharacterImage, getSummonImage, getWeaponImage } from '$lib/utils/images'
+	import { getCharacterImage } from '$lib/utils/images/characters'
+	import { getWeaponImage } from '$lib/utils/images/weapons'
+	import { getSummonImage } from '$lib/utils/images/summons'
 	import { galleryPath, newTeamPath } from '$lib/utils/browseRoutes'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import type { HomeItemChange, HomeNewItem } from '$lib/types/api/home'
@@ -29,12 +31,9 @@
 	let { items, sectionTitle }: Props = $props()
 
 	let selectedId = $state<string | null>(null)
-	// Opens on the first item someone has made a team with
-	const selected = $derived(
-		items.find((i) => i.item.id === selectedId) ??
-			items.find((i) => i.parties.length > 0) ??
-			items[0]
-	)
+	// Opens on the newest item (the API lists them newest first), even before
+	// anyone has made a team with it
+	const selected = $derived(items.find((i) => i.item.id === selectedId) ?? items[0])
 
 	const CHANGE_LABELS: Record<HomeItemChange, () => string> = {
 		release: m.home_item_change_release,

@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { createQuery, queryOptions } from '@tanstack/svelte-query'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { bulletAdapter } from '$lib/api/adapters/bullet.adapter'
 	import type { Bullet } from '$lib/types/api/entities'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { localizedName } from '$lib/utils/locale'
-	import { getBulletImage } from '$lib/utils/images'
+	import { getBulletImage } from '$lib/utils/images/equipment'
 
 	interface Props {
 		/** The bullet type for this slot (1=Parabellum, 2=Rifle, 3=Cartridge, 4=Aetherial) */
@@ -21,7 +21,7 @@
 	const bulletsQuery = createQuery(() =>
 		queryOptions({
 			queryKey: ['bullets', bulletType] as const,
-			queryFn: () => entityAdapter.getBullets(bulletType),
+			queryFn: () => bulletAdapter.getBullets(bulletType),
 			staleTime: 1000 * 60 * 60,
 			gcTime: 1000 * 60 * 60 * 24
 		})

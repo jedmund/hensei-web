@@ -107,6 +107,7 @@
 		"@tiptap/suggestion": "^3.31.4",
 		"bits-ui": "^2.19.5",
 		"fluid-dnd": "^2.6.3",
+		"isbot": "5.2.2",
 		"katex": "^0.19.0",
 		"lowlight": "^3.3.0",
 		"modern-normalize": "^3.0.1",

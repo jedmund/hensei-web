@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { seriesAdapter } from '$lib/api/adapters/series.adapter'
 	import { withInitialData } from '$lib/query/ssr'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -110,7 +110,7 @@
 				num_weapon_keys: editData.numWeaponKeys
 			}
 
-			await entityAdapter.updateWeaponSeries(series.id, payload)
+			await seriesAdapter.updateWeaponSeries(series.id, payload)
 
 			// Invalidate cache
 			await queryClient.invalidateQueries({

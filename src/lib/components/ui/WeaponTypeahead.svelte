@@ -4,11 +4,8 @@
 	import { Combobox } from 'bits-ui'
 	import Icon from '../Icon.svelte'
 	import { searchAdapter, type SearchResult } from '$lib/api/adapters/search.adapter'
-	import {
-		getWeaponGridImage,
-		getWeaponFallbackImage,
-		handleImageFallback
-	} from '$lib/utils/images'
+	import { handleImageFallback } from '$lib/utils/images/core'
+	import { getWeaponGridImage, getWeaponFallbackImage } from '$lib/utils/images/weapons'
 	import { localizedName, appLocale } from '$lib/utils/locale'
 
 	interface WeaponOption {

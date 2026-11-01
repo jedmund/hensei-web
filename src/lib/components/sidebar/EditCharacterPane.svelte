@@ -15,7 +15,8 @@
 	import NotesEditSection from './notes/NotesEditSection.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
-	import { useSyncGridCharacter, useSwitchCharacterStyle } from '$lib/api/mutations/grid.mutations'
+	import { useSyncGridCharacter } from '$lib/api/mutations/gridSync.mutations'
+	import { useSwitchCharacterStyle } from '$lib/api/mutations/gridCharacter.mutations'
 	import Icon from '$lib/components/Icon.svelte'
 	import { getElementKey } from '$lib/utils/element'
 	import { useEditPaneHeader } from './useEditPaneHeader.svelte'
@@ -154,7 +155,7 @@
 	{#if isLinkedToCollection && isOutOfSync}
 		<div class="sync-banner">
 			<div class="sync-message">
-				<Icon name="refresh-cw" size={14} />
+				<Icon name="refresh" size={14} />
 				<span>{m.details_collection_out_of_sync()}</span>
 			</div>
 			<button class="sync-button" onclick={handleSync} disabled={isSyncing}>

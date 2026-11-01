@@ -5,7 +5,8 @@
 	 * for editors.
 	 */
 	import Icon from '$lib/components/Icon.svelte'
-	import { getSummonImage, getWeaponImage } from '$lib/utils/images'
+	import { getWeaponImage } from '$lib/utils/images/weapons'
+	import { getSummonImage } from '$lib/utils/images/summons'
 	import { localizedName } from '$lib/utils/locale'
 	import type { GridSummon, GridWeapon } from '$lib/types/api/party'
 	import PriorityNumber from './PriorityNumber.svelte'

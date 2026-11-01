@@ -1,14 +1,9 @@
 <script lang="ts">
 	import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
-	import {
-		getCharacterDetailImage,
-		getWeaponBaseImage,
-		getSummonDetailImage,
-		getCharacterPose,
-		getSummonTransformation,
-		getWeaponTransformation,
-		getBasePath
-	} from '$lib/utils/images'
+	import { getBasePath } from '$lib/utils/images/core'
+	import { getCharacterDetailImage, getCharacterPose } from '$lib/utils/images/characters'
+	import { getWeaponBaseImage, getWeaponTransformation } from '$lib/utils/images/weapons'
+	import { getSummonDetailImage, getSummonTransformation } from '$lib/utils/images/summons'
 	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import { getElementKey } from '$lib/utils/element'

@@ -9,6 +9,8 @@ export interface FeaturedParty {
 	eventId: string | null
 	position: number
 	note: LocalizedName
+	/** General picks: when they leave Home. Null for event picks, which follow their event. */
+	expiresAt?: string | null
 	party: Party
 }
 

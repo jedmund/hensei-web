@@ -7,11 +7,9 @@ import { sidebar } from '$lib/stores/sidebar.svelte'
 import { isConflictResponse, createConflictData, type ConflictData } from '$lib/types/api/conflict'
 import { toast } from 'svelte-sonner'
 import { localizedName } from '$lib/utils/locale'
-import {
-	getCharacterImage,
-	getWeaponImage,
-	getSummonImage
-} from '$lib/features/database/detail/image'
+import { getCharacterImage } from '$lib/utils/images/characters'
+import { getWeaponImage } from '$lib/utils/images/weapons'
+import { getSummonImage } from '$lib/utils/images/summons'
 import SelectionToast from '$lib/components/ui/SelectionToast.svelte'
 import * as m from '$lib/paraglide/messages'
 
@@ -192,3 +190,5 @@ function findItemAtSlot(party: Party, gridType: GridType, position: number): Nam
 	const gc = party.characters.find((c) => c.position === position)
 	return gc?.character
 }
+
+export type ItemAddition = ReturnType<typeof useItemAddition>

@@ -241,3 +241,5 @@ export function useJobHandlers(opts: JobHandlerOptions) {
 		}
 	}
 }
+
+export type JobHandlers = ReturnType<typeof useJobHandlers>

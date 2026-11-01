@@ -10,7 +10,9 @@
 	import ModalBody from '../../ui/ModalBody.svelte'
 	import ModalFooter from '../../ui/ModalFooter.svelte'
 	import SyncFieldDiff from './SyncFieldDiff.svelte'
-	import { getCharacterImage, getWeaponImage, getSummonImage } from '$lib/utils/images'
+	import { getCharacterImage } from '$lib/utils/images/characters'
+	import { getWeaponImage } from '$lib/utils/images/weapons'
+	import { getSummonImage } from '$lib/utils/images/summons'
 	import * as m from '$lib/paraglide/messages'
 
 	type GridItem = GridCharacter | GridWeapon | GridSummon

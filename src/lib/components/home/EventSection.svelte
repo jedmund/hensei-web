@@ -5,7 +5,8 @@
 	 * selected raid's teams and a link to the rest of them in the Gallery.
 	 */
 	import { MediaQuery } from 'svelte/reactivity'
-	import { getHostedImageUrl, getRaidImage } from '$lib/utils/images'
+	import { getHostedImageUrl } from '$lib/utils/images/core'
+	import { getRaidImage } from '$lib/utils/images/raids'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
@@ -19,7 +20,7 @@
 	import PinnedCardHeader from '$lib/components/home/PinnedCardHeader.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import { formatDateJST } from '$lib/utils/date'
-	import { countdown, exploreQuery, raidsWithParties } from '$lib/utils/home'
+	import { countdownLabel, exploreQuery, raidsWithParties } from '$lib/utils/home'
 	import { galleryPath } from '$lib/utils/browseRoutes'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import type { GameEvent } from '$lib/types/api/event'
@@ -74,16 +75,9 @@
 		return () => clearInterval(timer)
 	})
 
-	const left = $derived(countdown(variant === 'upcoming' ? event.startsAt : event.endsAt, now))
-	const duration = $derived.by(() => {
-		if (!left) return ''
-		const parts: string[] = []
-		if (left.days > 0) parts.push(m.home_duration_days({ count: left.days }))
-		if (left.hours > 0) parts.push(m.home_duration_hours({ count: left.hours }))
-		if (left.minutes > 0 || parts.length === 0)
-			parts.push(m.home_duration_minutes({ count: left.minutes }))
-		return parts.join(' ')
-	})
+	const duration = $derived(
+		countdownLabel(variant === 'upcoming' ? event.startsAt : event.endsAt, now)
+	)
 	const timing = $derived.by(() => {
 		if (!duration) return ''
 		if (variant === 'current') return m.home_ends_in({ duration })

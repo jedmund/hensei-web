@@ -42,6 +42,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 	let deleting = $state(false)
 	let wikiExportOpen = $state(false)
 	let wikiExportText = $state('')
+	let featureDialogOpen = $state(false)
 
 	async function updatePartyDetails(updates: Omit<UpdatePartyParams, 'id' | 'shortcode'>) {
 		if (!opts.canEdit()) return
@@ -367,6 +368,12 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		},
 		get wikiExportText() {
 			return wikiExportText
+		},
+		get featureDialogOpen() {
+			return featureDialogOpen
+		},
+		set featureDialogOpen(v: boolean) {
+			featureDialogOpen = v
 		},
 		get isSyncingAll() {
 			return opts.mutations.grid.syncAllItems.isPending

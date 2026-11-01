@@ -9,7 +9,7 @@
 	// TanStack Query
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { characterAdapter } from '$lib/api/adapters/character.adapter'
 	import { withInitialData } from '$lib/query/ssr'
 
 	// Components
@@ -22,7 +22,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
-	import { getCharacterImage } from '$lib/utils/images'
+	import { getCharacterImage } from '$lib/utils/images/characters'
 	import { getElementLabel } from '$lib/utils/element'
 	import { normalizeCharacterProgression } from '$lib/utils/uncap'
 	import {
@@ -277,7 +277,7 @@
 				kamigame: editData.kamigame || undefined
 			}
 
-			await entityAdapter.updateCharacter(character.id, payload)
+			await characterAdapter.updateCharacter(character.id, payload)
 
 			// Invalidate TanStack Query cache and force immediate refetch
 			await queryClient.invalidateQueries({

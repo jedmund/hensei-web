@@ -2,7 +2,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import type { JobSkill } from '$lib/types/api/entities'
 	import { getSkillCategoryColor } from '$lib/utils/jobUtils'
-	import { getJobSkillIcon } from '$lib/utils/images'
+	import { getJobSkillIcon } from '$lib/utils/images/icons'
 	import { localizedName } from '$lib/utils/locale'
 	import { getElementTypeKey } from '$lib/utils/element'
 	import Icon from '$lib/components/Icon.svelte'

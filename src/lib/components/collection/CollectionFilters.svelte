@@ -1,26 +1,41 @@
 <script lang="ts">
 	import { getWeaponProficiencyOptions } from '$lib/utils/proficiency'
 	import * as m from '$lib/paraglide/messages'
-	import { getElementColor, getElementOptions } from '$lib/utils/element'
-	import { CHARACTER_SEASON_NAMES } from '$lib/types/enums'
-	import { RACE_LABELS, getRaceLabel } from '$lib/utils/race'
-	import { GENDER_LABELS } from '$lib/utils/gender'
 	import type { CollectionSortKey } from '$lib/types/api/collection'
+	import type {
+		CollectionFilterConfig,
+		CollectionFilterKey,
+		CollectionFilterState
+	} from '$lib/types/filter'
+	import type { ElementType } from '$lib/utils/element'
+	import {
+		COLLECTION_FILTER_KEYS,
+		GENDER_OPTIONS,
+		RARITY_OPTIONS,
+		SEASON_OPTIONS,
+		countSelectedValues,
+		emptyCollectionFilterState,
+		getCollectionSortOptions,
+		getElementFilterOptions,
+		getRaceFilterOptions,
+		resolveFilterVisibility,
+		seriesToOptions,
+		splitFilterConfigs,
+		type CollectionEntityType,
+		type CollectionFilterOption,
+		type CollectionFilterVisibility
+	} from '$lib/utils/collectionFilterOptions'
 	import Button from '$lib/components/ui/Button.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
-	import { createQuery, queryOptions } from '@tanstack/svelte-query'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
-	import { localizedName } from '$lib/utils/locale'
-	import { DropdownMenu } from 'bits-ui'
-	import Icon from '$lib/components/Icon.svelte'
+	import { createQuery } from '@tanstack/svelte-query'
+	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import CollectionFilterSheet from './CollectionFilterSheet.svelte'
-
-	type EntityType = 'character' | 'weapon' | 'summon'
+	import CollectionMoreFiltersMenu from './CollectionMoreFiltersMenu.svelte'
 
 	interface Props {
 		/** Entity type to determine which filters to show */
-		entityType?: EntityType
+		entityType?: CollectionEntityType
 		elementFilters?: number[]
 		rarityFilters?: number[]
 		seasonFilters?: number[]
@@ -33,19 +48,11 @@
 		onFiltersChange?: (filters: CollectionFilterState) => void
 		onSortChange?: (sort: CollectionSortKey) => void
 		/** Which filter groups to show (overrides entityType defaults) */
-		showFilters?: {
-			element?: boolean
-			rarity?: boolean
-			season?: boolean
-			series?: boolean
-			race?: boolean
-			proficiency?: boolean
-			gender?: boolean
-		}
+		showFilters?: CollectionFilterVisibility
 		/** Whether to show the sort dropdown */
 		showSort?: boolean
 		/** Element color theme for active toggle state */
-		element?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+		element?: ElementType
 		/** Whether to show contained background styling (default: true) */
 		contained?: boolean
 		/** Whether to show the search input (default: true) */
@@ -56,48 +63,6 @@
 		showUnowned?: boolean
 		/** Whether unowned (missing) mode is active */
 		unowned?: boolean
-	}
-
-	export interface CollectionFilterState {
-		element: number[]
-		rarity: number[]
-		season: number[]
-		/** Series filters - number[] for characters, string[] for weapons (UUIDs) */
-		series: (number | string)[]
-		race: number[]
-		proficiency: number[]
-		gender: number[]
-	}
-
-	// Default filter visibility based on entity type
-	const defaultFiltersByEntity: Record<EntityType, Props['showFilters']> = {
-		character: {
-			element: true,
-			rarity: true,
-			season: true,
-			series: true,
-			race: true,
-			proficiency: true,
-			gender: true
-		},
-		weapon: {
-			element: true,
-			rarity: true,
-			season: false,
-			series: true, // Weapon series
-			race: false,
-			proficiency: true, // Weapon type
-			gender: false
-		},
-		summon: {
-			element: true,
-			rarity: true,
-			season: false,
-			series: true,
-			race: false,
-			proficiency: false,
-			gender: false
-		}
 	}
 
 	let {
@@ -122,168 +87,63 @@
 		unowned = $bindable(false)
 	}: Props = $props()
 
-	// Compute effective filter visibility (explicit showFilters overrides entityType defaults)
-	const effectiveShowFilters = $derived({
-		...defaultFiltersByEntity[entityType],
-		...showFilters
-	})
+	const effectiveShowFilters = $derived(resolveFilterVisibility(entityType, showFilters))
+	const sortOptions = $derived(getCollectionSortOptions(entityType))
 
-	// Sort options (exclude proficiency for summons since they don't have weapon types)
-	const sortOptions = $derived([
-		{ value: 'name_asc', label: m.sort_name_asc() },
-		{ value: 'name_desc', label: m.sort_name_desc() },
-		{ value: 'element_asc', label: m.sort_element_asc() },
-		{ value: 'element_desc', label: m.sort_element_desc() },
-		...(entityType !== 'summon'
-			? [
-					{ value: 'proficiency_asc', label: m.sort_proficiency_asc() },
-					{ value: 'proficiency_desc', label: m.sort_proficiency_desc() }
-				]
-			: []),
-		{ value: 'release_date_asc', label: m.sort_release_date_oldest() },
-		{ value: 'release_date_desc', label: m.sort_release_date_newest() }
-	] as { value: CollectionSortKey; label: string }[])
-
-	// Constants
-	const elements = getElementOptions().map((opt) => ({
-		...opt,
-		color: getElementColor(opt.value)
-	}))
-
-	const rarities = [
-		{ value: 1, label: 'R' },
-		{ value: 2, label: 'SR' },
-		{ value: 3, label: 'SSR' }
-	]
-
+	// Static option lists
+	const elements = getElementFilterOptions()
 	const proficiencies = getWeaponProficiencyOptions()
+	const races = getRaceFilterOptions()
 
-	// Fetch weapon series from API (only when entityType is weapon)
-	const weaponSeriesQuery = createQuery(() =>
-		queryOptions({
-			queryKey: ['weaponSeries', 'list'] as const,
-			queryFn: () => entityAdapter.getWeaponSeriesList(),
-			enabled: entityType === 'weapon',
-			staleTime: 1000 * 60 * 60, // 1 hour
-			gcTime: 1000 * 60 * 60 * 24 // 24 hours
-		})
-	)
-
-	// Fetch character series from API (only when entityType is character)
-	const characterSeriesQuery = createQuery(() =>
-		queryOptions({
-			queryKey: ['characterSeries', 'list'] as const,
-			queryFn: () => entityAdapter.getCharacterSeriesList(),
-			enabled: entityType === 'character',
-			staleTime: 1000 * 60 * 60,
-			gcTime: 1000 * 60 * 60 * 24
-		})
-	)
-
-	// Fetch summon series from API (only when entityType is summon)
-	const summonSeriesQuery = createQuery(() =>
-		queryOptions({
-			queryKey: ['summonSeries', 'list'] as const,
-			queryFn: () => entityAdapter.getSummonSeriesList(),
-			enabled: entityType === 'summon',
-			staleTime: 1000 * 60 * 60,
-			gcTime: 1000 * 60 * 60 * 24
-		})
-	)
-
-	// Convert record maps to arrays for iteration
-	const seasons = Object.entries(CHARACTER_SEASON_NAMES).map(([value, label]) => ({
-		value: Number(value),
-		label
+	// Series lists from the API, fetched only for the current entity type
+	const weaponSeriesQuery = createQuery(() => ({
+		...entityQueries.weaponSeriesList(),
+		enabled: entityType === 'weapon'
+	}))
+	const characterSeriesQuery = createQuery(() => ({
+		...entityQueries.characterSeriesList(),
+		enabled: entityType === 'character'
+	}))
+	const summonSeriesQuery = createQuery(() => ({
+		...entityQueries.summonSeriesList(),
+		enabled: entityType === 'summon'
 	}))
 
-	// Build series options based on entity type
-	// All entity types use API-fetched series with string (UUID) IDs
-	const seriesOptions = $derived.by(() => {
-		if (entityType === 'character' && characterSeriesQuery.data) {
-			return characterSeriesQuery.data
-				.sort((a, b) => a.order - b.order)
-				.map((s) => ({
-					value: s.id,
-					label: localizedName(s.name)
-				}))
-		}
-		if (entityType === 'weapon' && weaponSeriesQuery.data) {
-			return weaponSeriesQuery.data
-				.sort((a, b) => a.order - b.order)
-				.map((s) => ({
-					value: s.id,
-					label: localizedName(s.name)
-				}))
-		}
-		if (entityType === 'summon' && summonSeriesQuery.data) {
-			return summonSeriesQuery.data
-				.sort((a, b) => a.order - b.order)
-				.map((s) => ({
-					value: s.id,
-					label: localizedName(s.name)
-				}))
-		}
-		return []
+	const seriesOptions = $derived(
+		seriesToOptions(
+			entityType === 'character'
+				? characterSeriesQuery.data
+				: entityType === 'weapon'
+					? weaponSeriesQuery.data
+					: summonSeriesQuery.data
+		)
+	)
+
+	// Current values, keyed like CollectionFilterState
+	const filterState = $derived<CollectionFilterState>({
+		element: elementFilters,
+		rarity: rarityFilters,
+		season: seasonFilters,
+		series: seriesFilters,
+		race: raceFilters,
+		proficiency: proficiencyFilters,
+		gender: genderFilters
 	})
 
-	const races = Object.keys(RACE_LABELS).map((value) => ({
-		value: Number(value),
-		label: getRaceLabel(Number(value))
-	}))
-
-	const genders = Object.entries(GENDER_LABELS)
-		.filter(([value]) => Number(value) !== 0) // Exclude Unknown
-		.map(([value, label]) => ({
-			value: Number(value),
-			label
-		}))
-
-	function emitChange() {
-		onFiltersChange?.({
-			element: elementFilters,
-			rarity: rarityFilters,
-			season: seasonFilters,
-			series: seriesFilters,
-			race: raceFilters,
-			proficiency: proficiencyFilters,
-			gender: genderFilters
-		})
+	function assignFilters(next: CollectionFilterState) {
+		elementFilters = next.element
+		rarityFilters = next.rarity
+		seasonFilters = next.season
+		seriesFilters = next.series
+		raceFilters = next.race
+		proficiencyFilters = next.proficiency
+		genderFilters = next.gender
 	}
 
-	function handleElementChange(value: number[]) {
-		elementFilters = value
-		emitChange()
-	}
-
-	function handleRarityChange(value: number[]) {
-		rarityFilters = value
-		emitChange()
-	}
-
-	function handleSeasonChange(value: number[]) {
-		seasonFilters = value
-		emitChange()
-	}
-
-	function handleSeriesChange(value: (number | string)[]) {
-		seriesFilters = value
-		emitChange()
-	}
-
-	function handleRaceChange(value: number[]) {
-		raceFilters = value
-		emitChange()
-	}
-
-	function handleProficiencyChange(value: number[]) {
-		proficiencyFilters = value
-		emitChange()
-	}
-
-	function handleGenderChange(value: number[]) {
-		genderFilters = value
-		emitChange()
+	function setFilter(key: CollectionFilterKey, value: (number | string)[]) {
+		const next = { ...filterState, [key]: value } as CollectionFilterState
+		assignFilters(next)
+		onFiltersChange?.(next)
 	}
 
 	function handleSortChange(value: CollectionSortKey | undefined) {
@@ -294,38 +154,21 @@
 	}
 
 	function clearAll() {
-		elementFilters = []
-		rarityFilters = []
-		seasonFilters = []
-		seriesFilters = []
-		raceFilters = []
-		proficiencyFilters = []
-		genderFilters = []
+		const next = emptyCollectionFilterState()
+		assignFilters(next)
 		searchQuery = ''
 		searchExpanded = false
 		unowned = false
-		emitChange()
+		onFiltersChange?.(next)
 	}
 
 	const hasActiveFilters = $derived(
-		elementFilters.length > 0 ||
-			rarityFilters.length > 0 ||
-			seasonFilters.length > 0 ||
-			seriesFilters.length > 0 ||
-			raceFilters.length > 0 ||
-			proficiencyFilters.length > 0 ||
-			genderFilters.length > 0 ||
-			searchQuery.length > 0 ||
-			unowned
+		Object.values(filterState).some((v) => v.length > 0) || searchQuery.length > 0 || unowned
 	)
 
 	// Search expansion state
 	let searchExpanded = $state(false)
 	let searchInputEl = $state<HTMLInputElement>()
-
-	function expandSearch() {
-		searchExpanded = true
-	}
 
 	function collapseSearch() {
 		if (searchQuery.length === 0) {
@@ -340,98 +183,43 @@
 		}
 	})
 
-	// Overflow detection state
-	type FilterKey = 'element' | 'rarity' | 'season' | 'series' | 'race' | 'proficiency' | 'gender'
+	const optionsByKey = $derived<Record<CollectionFilterKey, CollectionFilterOption[]>>({
+		element: elements,
+		rarity: RARITY_OPTIONS,
+		season: SEASON_OPTIONS,
+		series: seriesOptions,
+		race: races,
+		proficiency: proficiencies,
+		gender: GENDER_OPTIONS
+	})
 
-	interface FilterConfig {
-		key: FilterKey
-		options: { value: number | string; label: string; color?: string }[]
-		value: (number | string)[]
-		onChange: (value: (number | string)[]) => void
-		placeholder: string
-	}
+	const placeholders = $derived<Record<CollectionFilterKey, string>>({
+		element: m.filter_element(),
+		rarity: m.filter_rarity(),
+		season: m.filter_season(),
+		series: m.filter_series(),
+		race: m.filter_race(),
+		proficiency: m.filter_proficiency(),
+		gender: m.filter_gender()
+	})
 
-	// Maximum number of filters visible in the main row before overflow into "More"
-	const MAX_VISIBLE_FILTERS = 3
+	const filterConfigs = $derived<CollectionFilterConfig[]>(
+		COLLECTION_FILTER_KEYS.map((key) => ({
+			key,
+			options: optionsByKey[key],
+			value: filterState[key],
+			onChange: (v) => setFilter(key, v),
+			placeholder: placeholders[key]
+		}))
+	)
 
-	// Unified filter configuration
-	const filterConfigs = $derived<FilterConfig[]>([
-		{
-			key: 'element',
-			options: elements,
-			value: elementFilters,
-			onChange: (v) => handleElementChange(v as number[]),
-			placeholder: m.filter_element()
-		},
-		{
-			key: 'rarity',
-			options: rarities,
-			value: rarityFilters,
-			onChange: (v) => handleRarityChange(v as number[]),
-			placeholder: m.filter_rarity()
-		},
-		{
-			key: 'season',
-			options: seasons,
-			value: seasonFilters,
-			onChange: (v) => handleSeasonChange(v as number[]),
-			placeholder: m.filter_season()
-		},
-		{
-			key: 'series',
-			options: seriesOptions,
-			value: seriesFilters,
-			onChange: (v) => handleSeriesChange(v),
-			placeholder: m.filter_series()
-		},
-		{
-			key: 'race',
-			options: races,
-			value: raceFilters,
-			onChange: (v) => handleRaceChange(v as number[]),
-			placeholder: m.filter_race()
-		},
-		{
-			key: 'proficiency',
-			options: proficiencies,
-			value: proficiencyFilters,
-			onChange: (v) => handleProficiencyChange(v as number[]),
-			placeholder: m.filter_proficiency()
-		},
-		{
-			key: 'gender',
-			options: genders,
-			value: genderFilters,
-			onChange: (v) => handleGenderChange(v as number[]),
-			placeholder: m.filter_gender()
-		}
-	])
-
-	// Active filters based on visibility settings
-	const activeFilters = $derived(filterConfigs.filter((f) => effectiveShowFilters[f.key]))
-
-	// Filters visible in the main row (first N filters)
-	const visibleFilters = $derived(activeFilters.slice(0, MAX_VISIBLE_FILTERS))
-
-	// Filters in the "More" dropdown (everything after the first N)
-	const moreFilters = $derived(activeFilters.slice(MAX_VISIBLE_FILTERS))
-
-	const showMoreButton = $derived(moreFilters.length > 0)
+	// Visible groups: the first few inline, the rest under "More"
+	const split = $derived(splitFilterConfigs(filterConfigs, effectiveShowFilters))
 
 	// Mobile filter sheet
 	let filterSheetOpen = $state(false)
 
-	const activeFilterCount = $derived(activeFilters.reduce((sum, f) => sum + f.value.length, 0))
-
-	// Toggle function for submenu multi-select behavior
-	function toggleFilterValue(filter: FilterConfig, value: number | string) {
-		const currentValues = filter.value
-		const newValues = currentValues.includes(value)
-			? currentValues.filter((v) => v !== value)
-			: [...currentValues, value]
-
-		filter.onChange(newValues)
-	}
+	const activeFilterCount = $derived(countSelectedValues(split.active))
 </script>
 
 <div
@@ -457,7 +245,13 @@
 					}}
 				/>
 			{:else}
-				<Button variant="ghost" size="small" iconOnly icon="search" onclick={expandSearch} />
+				<Button
+					variant="ghost"
+					size="small"
+					iconOnly
+					icon="search"
+					onclick={() => (searchExpanded = true)}
+				/>
 			{/if}
 		{/if}
 
@@ -495,7 +289,7 @@
 
 		<!-- Desktop: inline filter pills -->
 		<div class="desktop-filters">
-			{#each visibleFilters as filter (filter.key)}
+			{#each split.visible as filter (filter.key)}
 				<MultiSelect
 					options={filter.options}
 					value={filter.value}
@@ -505,55 +299,8 @@
 				/>
 			{/each}
 
-			{#if showMoreButton}
-				<DropdownMenu.Root>
-					<DropdownMenu.Trigger class="more-trigger">
-						<span>{m.filter_more()}</span>
-						<Icon name="chevron-down-small" size={14} />
-					</DropdownMenu.Trigger>
-
-					<DropdownMenu.Portal>
-						<DropdownMenu.Content
-							class="more-menu-content"
-							side="bottom"
-							align="start"
-							sideOffset={4}
-						>
-							{#each moreFilters as filter (filter.key)}
-								<DropdownMenu.Sub>
-									<DropdownMenu.SubTrigger class="more-menu-subtrigger">
-										<span class="submenu-label">{filter.placeholder}</span>
-										{#if filter.value.length > 0}
-											<span class="selection-badge">{filter.value.length}</span>
-										{/if}
-										<Icon name="chevron-right-small" size={14} class="submenu-chevron" />
-									</DropdownMenu.SubTrigger>
-
-									<DropdownMenu.SubContent class="submenu-content">
-										{#each filter.options as option (option.value)}
-											{@const isSelected = filter.value.includes(option.value)}
-											<DropdownMenu.Item
-												class="submenu-item {isSelected ? 'selected' : ''}"
-												onSelect={(e) => {
-													e.preventDefault()
-													toggleFilterValue(filter, option.value)
-												}}
-											>
-												{#if option.color}
-													<span class="color-dot" style="background: {option.color}"></span>
-												{/if}
-												<span class="item-label" class:selected={isSelected}>{option.label}</span>
-												{#if isSelected}
-													<Icon name="check" size={14} class="check-icon" />
-												{/if}
-											</DropdownMenu.Item>
-										{/each}
-									</DropdownMenu.SubContent>
-								</DropdownMenu.Sub>
-							{/each}
-						</DropdownMenu.Content>
-					</DropdownMenu.Portal>
-				</DropdownMenu.Root>
+			{#if split.more.length > 0}
+				<CollectionMoreFiltersMenu filters={split.more} />
 			{/if}
 		</div>
 
@@ -580,9 +327,9 @@
 
 <CollectionFilterSheet
 	bind:open={filterSheetOpen}
-	filters={activeFilters}
+	filters={split.active}
 	onClear={clearAll}
-	element={element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined}
+	{element}
 />
 
 <style lang="scss">
@@ -736,155 +483,5 @@
 	:global([data-button-root].clear-btn) {
 		padding: 6px 12px;
 		min-height: 26px;
-	}
-
-	// More button trigger - matches MultiSelect trigger styling
-	:global(.more-trigger) {
-		all: unset;
-		box-sizing: border-box;
-		-webkit-font-smoothing: antialiased;
-		display: inline-flex;
-		align-items: center;
-		gap: $unit-half;
-		padding: $unit-half $unit;
-		font-size: $font-small;
-		font-family: var(--font-family);
-		min-height: $unit-3x;
-		color: var(--text-secondary);
-		background-color: var(--input-bg);
-		border-radius: $input-corner;
-		border: 1px solid transparent;
-		cursor: pointer;
-		transition:
-			background-color 0.15s ease,
-			border-color 0.15s ease;
-
-		&:hover {
-			background-color: var(--input-bg-hover);
-		}
-
-		&:focus-visible {
-			outline: 2px solid $blue;
-			outline-offset: 2px;
-		}
-
-		:global(svg) {
-			flex-shrink: 0;
-			color: var(--text-secondary);
-		}
-	}
-
-	// More dropdown content
-	:global(.more-menu-content) {
-		background: var(--dialog-bg);
-		border-radius: $card-corner;
-		border: 1px solid rgba(0, 0, 0, 0.1);
-		box-shadow: var(--shadow-lg);
-		padding: $unit-half;
-		min-width: calc($unit * 18);
-		z-index: $z-modal + 1;
-		animation: fadeIn 0.15s ease-out;
-
-		@keyframes fadeIn {
-			from {
-				opacity: 0;
-				transform: translateY(-4px);
-			}
-			to {
-				opacity: 1;
-				transform: translateY(0);
-			}
-		}
-	}
-
-	// Submenu trigger
-	:global(.more-menu-subtrigger) {
-		display: flex;
-		align-items: center;
-		gap: $unit;
-		padding: $unit calc($unit * 1.5);
-		border-radius: $item-corner-small;
-		cursor: pointer;
-		font-size: $font-small;
-		color: var(--text-primary);
-		transition: background-color 0.1s ease;
-
-		&:hover,
-		&[data-highlighted] {
-			background: var(--option-bg-hover);
-		}
-
-		.submenu-label {
-			flex: 1;
-		}
-
-		.selection-badge {
-			background: var(--accent-color, #{$blue});
-			color: white;
-			font-size: 11px;
-			font-weight: $medium;
-			padding: 2px 6px;
-			border-radius: $full-corner;
-			min-width: 18px;
-			text-align: center;
-		}
-
-		:global(.submenu-chevron) {
-			color: var(--text-tertiary);
-			margin-left: auto;
-		}
-	}
-
-	// Submenu content
-	:global(.submenu-content) {
-		background: var(--dialog-bg);
-		border-radius: $card-corner;
-		border: 1px solid rgba(0, 0, 0, 0.1);
-		box-shadow: var(--shadow-lg);
-		padding: $unit-half;
-		min-width: calc($unit * 16);
-		max-height: 280px;
-		overflow: auto;
-		z-index: $z-modal + 2;
-	}
-
-	// Submenu items
-	:global(.submenu-item) {
-		display: flex;
-		align-items: center;
-		gap: $unit;
-		padding: $unit calc($unit * 1.5);
-		border-radius: $item-corner-small;
-		cursor: pointer;
-		font-size: $font-small;
-		color: var(--text-primary);
-		transition: background-color 0.1s ease;
-
-		&:hover,
-		&[data-highlighted] {
-			background: var(--option-bg-hover);
-		}
-
-		&.selected {
-			.item-label {
-				font-weight: $medium;
-			}
-		}
-
-		.color-dot {
-			width: 8px;
-			height: 8px;
-			border-radius: 50%;
-			flex-shrink: 0;
-		}
-
-		.item-label {
-			flex: 1;
-		}
-
-		:global(.check-icon) {
-			color: var(--accent-color);
-			margin-left: auto;
-		}
 	}
 </style>

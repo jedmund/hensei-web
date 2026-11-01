@@ -7,7 +7,7 @@
  */
 
 import { queryOptions } from '@tanstack/svelte-query'
-import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+import { bulletAdapter } from '$lib/api/adapters/bullet.adapter'
 import type { Bullet } from '$lib/types/api/entities'
 
 /** Query key factory for bullets */
@@ -22,7 +22,7 @@ export const bulletQueries = {
 	list: (bulletType?: number) =>
 		queryOptions({
 			queryKey: bulletType !== undefined ? bulletKeys.byType(bulletType) : bulletKeys.all,
-			queryFn: () => entityAdapter.getBullets(bulletType),
+			queryFn: () => bulletAdapter.getBullets(bulletType),
 			staleTime: 1000 * 60 * 60,
 			gcTime: 1000 * 60 * 60 * 24
 		}),
@@ -32,7 +32,7 @@ export const bulletQueries = {
 		queryOptions({
 			queryKey: bulletKeys.byId(id),
 			queryFn: async () => {
-				const bullets = await entityAdapter.getBullets()
+				const bullets = await bulletAdapter.getBullets()
 				return bullets.find((b: Bullet) => b.id === id || b.granblueId === id) ?? null
 			},
 			enabled: !!id,

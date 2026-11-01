@@ -5,7 +5,7 @@
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { animationFileUrl, RESULT_IMAGES } from '$lib/gacha-animation/assets'
 	import { gachaItemFallbackImage, gachaItemName, gachaItemResultImage } from '$lib/utils/gacha'
-	import { getGenericPlaceholder } from '$lib/utils/images'
+	import { getGenericPlaceholder } from '$lib/utils/images/core'
 	import type { Moon } from '$lib/gacha-animation/moons'
 	import type { CatalogueItem } from '$lib/types/gacha'
 

@@ -39,7 +39,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import { appLocale, localizedName } from '$lib/utils/locale'
 	import { stickerImageUrl } from '$lib/utils/stickers'
-	import { getHostedImageUrl } from '$lib/utils/images'
+	import { getHostedImageUrl } from '$lib/utils/images/core'
 	import type { Sticker } from '$lib/types/api/sticker'
 
 	interface Props {

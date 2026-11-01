@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isCurator } from '$lib/auth/roles'
 	import { onMount, onDestroy, untrack } from 'svelte'
 	import { setPartyContext } from '$lib/types/party-context'
 	import { pushState } from '$app/navigation'
@@ -13,6 +14,7 @@
 	import { useJobHandlers } from '$lib/composables/job-handlers.svelte'
 	import { usePartyDragDrop } from '$lib/composables/party-drag-drop.svelte'
 	import { useItemAddition } from '$lib/composables/item-addition.svelte'
+	import { useSolomonisRaid } from '$lib/composables/solomonis-raid.svelte'
 	import { setDragDropContext } from '$lib/composables/drag-drop.svelte'
 
 	// Utilities
@@ -20,18 +22,7 @@
 	import { getEditKey, computeEditability } from '$lib/utils/editKeys'
 	import { localizedName } from '$lib/utils/locale'
 
-	import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
-	import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
-	import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
-	import {
-		openSearchSidebar,
-		openGuidebookSearchSidebar
-	} from '$lib/features/search/openSearchSidebar.svelte'
-	import {
-		useUpdatePartyGuidebook,
-		useRemovePartyGuidebook
-	} from '$lib/api/mutations/guidebook.mutations'
-	import type { Guidebook } from '$lib/types/api/entities'
+	import { openSearchSidebar } from '$lib/features/search/openSearchSidebar.svelte'
 	import PartySegmentedControl from '$lib/components/party/PartySegmentedControl.svelte'
 	import { GridType } from '$lib/types/enums'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -40,35 +31,12 @@
 	import StickerPicker from '$lib/components/stickers/StickerPicker.svelte'
 	import { setStickerStage } from '$lib/components/stickers/stickerStage.svelte'
 	import { canShowStickerPicker } from '$lib/utils/stickers'
-	import { DropdownMenu } from 'bits-ui'
-	import JobSection from '$lib/components/job/JobSection.svelte'
-	import { Gender } from '$lib/utils/jobUtils'
 	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
-	import ConflictDialog from '$lib/components/dialogs/ConflictDialog.svelte'
-	import DeleteTeamDialog from '$lib/components/dialogs/DeleteTeamDialog.svelte'
-	import DuplicateCollectionDialog from '$lib/components/dialogs/DuplicateCollectionDialog.svelte'
-	import PickPlaylistPane from '$lib/components/sidebar/PickPlaylistPane.svelte'
-	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import Notice from '$lib/components/ui/Notice.svelte'
-	import DismissibleNotice from '$lib/components/ui/DismissibleNotice.svelte'
-	import { openCalculatorPane } from '$lib/features/party/openCalculatorPane'
-	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
-	import WikiTextDialog from '$lib/components/party/WikiTextDialog.svelte'
-	import WikiImportReview from '$lib/components/party/WikiImportReview.svelte'
-	import { openEditSolomonisPane } from '$lib/components/solomonis/party/openSolomonisPanes'
-	import {
-		isSolomonisParty,
-		solomonisRaidTransition,
-		type SolomonisRaidTransition
-	} from '$lib/components/solomonis/party/solomonisParty'
-	import {
-		useUpdatePartyBlessings,
-		useUpdateSolomonisExpedition
-	} from '$lib/api/mutations/solomonis.mutations'
-	import type { RaidFull } from '$lib/types/api/raid'
+	import PartyDialogs from '$lib/components/party/PartyDialogs.svelte'
+	import PartyHeaderMenu from '$lib/components/party/PartyHeaderMenu.svelte'
+	import PartyNotices from '$lib/components/party/PartyNotices.svelte'
+	import PartyGrids from '$lib/components/party/PartyGrids.svelte'
 	import * as m from '$lib/paraglide/messages'
-	import { goto } from '$app/navigation'
-	import { localizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {
 		party?: Party
@@ -82,6 +50,8 @@
 		initialCollectionSourceUsername?: string
 		/** When true, the difficulty tier chip becomes a link to the editor preview */
 		isEditor?: boolean
+		/** The viewer's account role; curators can feature the team */
+		role?: number | null | undefined
 	}
 
 	let {
@@ -94,7 +64,8 @@
 		isNew = false,
 		ensurePartyExists,
 		initialCollectionSourceUsername,
-		isEditor = false
+		isEditor = false,
+		role
 	}: Props = $props()
 
 	// Default empty party
@@ -170,13 +141,14 @@
 		onDetailsUpdated: () => {
 			if (isNew && party.id === 'new') hasEditedInfo = true
 		},
-		handleRaidChange: (raid) => {
-			// The settings pane closes right after saving; open our pane after it.
-			const transition = solomonisRaidTransition(isSolomonis, raid)
-			if (transition === 'none') return false
-			setTimeout(() => startSolomonisRaidTransition(transition, raid?.id ?? null))
-			return true
-		}
+		handleRaidChange: (raid) => solomonisRaid.handleRaidChange(raid)
+	})
+
+	// --- Evoking Solomonis ---
+	const solomonisRaid = useSolomonisRaid({
+		getParty: () => party,
+		updateRaid: (raidId) => actions.updatePartyDetails({ raidId }),
+		ensurePartyExists: ensurePartyExistsFn
 	})
 
 	// New teams can be filled from a gbf.wiki TeamSpread paste
@@ -243,84 +215,7 @@
 		ensurePartyExists: ensurePartyExistsFn
 	})
 
-	// --- Evoking Solomonis ---
-	const isSolomonis = $derived(isSolomonisParty(party))
-	const solomonisMutations = {
-		expedition: useUpdateSolomonisExpedition(),
-		blessings: useUpdatePartyBlessings(() => party.id)
-	}
-	let leaveSolomonisOpen = $state(false)
-	let pendingLeaveSolomonisRaidId = $state<string | null>(null)
-
-	/** Raid tile and settings pane: entering or leaving Solomonis goes through us (D12). */
-	function startSolomonisRaidTransition(
-		transition: SolomonisRaidTransition,
-		raidId: string | null
-	) {
-		if (transition === 'enter') {
-			openEditSolomonisPane(party, solomonisMutations, ensurePartyExistsFn)
-		} else if (transition === 'leave') {
-			pendingLeaveSolomonisRaidId = raidId
-			leaveSolomonisOpen = true
-		}
-	}
-
-	async function handleRaidSelect(raid: RaidFull | null) {
-		const transition = solomonisRaidTransition(isSolomonis, raid)
-		if (transition !== 'none') {
-			startSolomonisRaidTransition(transition, raid?.id ?? null)
-			return
-		}
-		await actions.updatePartyDetails({ raidId: raid?.id ?? null })
-	}
-
-	async function confirmLeaveSolomonis() {
-		leaveSolomonisOpen = false
-		await actions.updatePartyDetails({ raidId: pendingLeaveSolomonisRaidId })
-	}
-
-	// --- Guidebook mutations ---
-	const updateGuidebook = useUpdatePartyGuidebook()
-	const removeGuidebook = useRemovePartyGuidebook()
-
-	function handleClickGuidebookSlot(position: number) {
-		if (!canEdit()) return
-		openGuidebookSearchSidebar({
-			position,
-			onSelect: (result) => {
-				const guidebook: Guidebook = {
-					id: result.id,
-					granblueId: Number(result.granblueId),
-					name: result.name as { en: string; ja: string },
-					slug: ''
-				}
-				updateGuidebook.mutate({
-					partyId: party.id,
-					shortcode: party.shortcode,
-					guidebookId: result.id,
-					guidebook,
-					position: position as 1 | 2 | 3
-				})
-			}
-		})
-	}
-
-	function handleRemoveGuidebook(position: number) {
-		if (!canEdit()) return
-		removeGuidebook.mutate({
-			partyId: party.id,
-			shortcode: party.shortcode,
-			position: position as 1 | 2 | 3
-		})
-	}
-
 	// --- Derived values ---
-	const mainWeapon = $derived((party?.weapons ?? []).find((w) => w?.mainhand || w?.position === -1))
-	const mainWeaponElement = $derived(mainWeapon?.element ?? mainWeapon?.weapon?.element)
-	const partyElement = $derived(party?.element)
-	// Convert user gender (1=Male, 2=Female) to image gender suffix (0=Gran, 1=Djeeta)
-	const characterGender = $derived(party.user?.gender === 2 ? 1 : 0)
-
 	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	const userElement = $derived(party.user?.avatar?.element as ElementType | undefined)
 
@@ -329,13 +224,6 @@
 		const hasLinkedCharacters = (party?.characters ?? []).some((c) => c?.collectionCharacterId)
 		const hasLinkedSummons = (party?.summons ?? []).some((s) => s?.collectionSummonId)
 		return hasLinkedWeapons || hasLinkedCharacters || hasLinkedSummons
-	})
-
-	const hasOrphanedItems = $derived.by(() => {
-		const hasOrphanedWeapons = (party?.weapons ?? []).some((w) => w?.orphaned)
-		const hasOrphanedCharacters = (party?.characters ?? []).some((c) => c?.orphaned)
-		const hasOrphanedSummons = (party?.summons ?? []).some((s) => s?.orphaned)
-		return hasOrphanedWeapons || hasOrphanedCharacters || hasOrphanedSummons
 	})
 
 	// --- Collection viewer switcher ---
@@ -362,42 +250,6 @@
 		activeCollectionUser = target
 		partyStore.setActiveCollectionUser(target)
 	}
-
-	// Derive collection item maps from embedded data (granblueId → items with levels)
-	type CollectionEntry = { uncapLevel: number; transcendenceStep: number }
-	const collectionWeaponItems = $derived(
-		activeCollection
-			? activeCollection.weapons.reduce((map, w) => {
-					const gid = String(w.weapon.granblueId)
-					const arr = map.get(gid) ?? []
-					arr.push({ uncapLevel: w.uncapLevel ?? 0, transcendenceStep: w.transcendenceStep ?? 0 })
-					map.set(gid, arr)
-					return map
-				}, new Map<string, CollectionEntry[]>())
-			: undefined
-	)
-	const collectionCharacterItems = $derived(
-		activeCollection
-			? activeCollection.characters.reduce((map, c) => {
-					const gid = String(c.character.granblueId)
-					const arr = map.get(gid) ?? []
-					arr.push({ uncapLevel: c.uncapLevel ?? 0, transcendenceStep: c.transcendenceStep ?? 0 })
-					map.set(gid, arr)
-					return map
-				}, new Map<string, CollectionEntry[]>())
-			: undefined
-	)
-	const collectionSummonItems = $derived(
-		activeCollection
-			? activeCollection.summons.reduce((map, s) => {
-					const gid = String(s.summon.granblueId)
-					const arr = map.get(gid) ?? []
-					arr.push({ uncapLevel: s.uncapLevel ?? 0, transcendenceStep: s.transcendenceStep ?? 0 })
-					map.set(gid, arr)
-					return map
-				}, new Map<string, CollectionEntry[]>())
-			: undefined
-	)
 
 	// --- Tab management ---
 	function handleTabChange(tab: GridType) {
@@ -525,7 +377,7 @@
 				onOpenDescription={actions.openDescriptionPanel}
 				onEditDescription={actions.editDescriptionPanel}
 				onOpenEdit={actions.openSettingsPanel}
-				onRaidSelect={handleRaidSelect}
+				onRaidSelect={solomonisRaid.handleRaidSelect}
 				{authUser}
 				{activeCollectionUser}
 				onSwitchCollectionUser={handleSwitchCollectionUser}
@@ -549,111 +401,19 @@
 					{/if}
 				{/snippet}
 				{#snippet menu()}
-					<DropdownMenu.Root>
-						<DropdownMenu.Trigger>
-							{#snippet child({ props })}
-								<Tooltip content={m.party_see_more()}>
-									<Button
-										{...props}
-										variant="ghost"
-										size="small"
-										iconOnly
-										icon="ellipsis"
-										aria-label={m.party_see_more()}
-									/>
-								</Tooltip>
-							{/snippet}
-						</DropdownMenu.Trigger>
-
-						<DropdownMenu.Portal>
-							<DropdownMenu.Content class="dropdown-menu" sideOffset={6} align="end">
-								{#if isNew}
-									<DropdownMenu.Item class="dropdown-menu-item" onSelect={wikiImport.start}>
-										{m.party_import_wiki()}
-									</DropdownMenu.Item>
-								{:else}
-									{#if canEdit() && hasCollectionLinks}
-										<DropdownMenu.Item
-											class="dropdown-menu-item"
-											onSelect={actions.syncFromCollection}
-											disabled={actions.loading || actions.isSyncingAll}
-										>
-											{actions.isSyncingAll ? m.party_syncing() : m.party_sync_collection()}
-										</DropdownMenu.Item>
-										<DropdownMenu.Separator class="dropdown-menu-separator" />
-									{/if}
-
-									{#if party.sourceParty?.shortcode}
-										<DropdownMenu.Item
-											class="dropdown-menu-item"
-											onSelect={() => goto(localizeHref(`/teams/${party.sourceParty?.shortcode}`))}
-										>
-											{m.party_view_original()}
-										</DropdownMenu.Item>
-									{/if}
-
-									{#if authUserId}
-										<DropdownMenu.Item
-											class="dropdown-menu-item"
-											onSelect={actions.toggleFavorite}
-											disabled={actions.loading}
-										>
-											{party.favorited ? m.party_remove_favorite() : m.party_add_favorite()}
-										</DropdownMenu.Item>
-									{/if}
-
-									{#if party.user?.id === authUserId && authUsername}
-										<DropdownMenu.Item
-											class="dropdown-menu-item"
-											onSelect={() => {
-												sidebar.openWithComponent(
-													m.playlist_add_to(),
-													PickPlaylistPane,
-													{ partyId: party.id, username: authUsername },
-													{ scrollable: false }
-												)
-											}}
-											disabled={actions.loading}
-										>
-											{m.playlist_add_to()}
-										</DropdownMenu.Item>
-									{/if}
-
-									{#if authUserId || party.sourceParty?.shortcode}
-										<DropdownMenu.Separator class="dropdown-menu-separator" />
-									{/if}
-									<DropdownMenu.Item class="dropdown-menu-item" onSelect={actions.openWikiExport}>
-										{m.party_export_wiki()}
-									</DropdownMenu.Item>
-
-									{#if party.user?.id === authUserId}
-										<DropdownMenu.Separator class="dropdown-menu-separator" />
-										<DropdownMenu.Item
-											class="dropdown-menu-item danger"
-											onSelect={() => (actions.deleteDialogOpen = true)}
-											disabled={actions.loading}
-										>
-											{m.party_delete()}
-										</DropdownMenu.Item>
-									{/if}
-								{/if}
-							</DropdownMenu.Content>
-						</DropdownMenu.Portal>
-					</DropdownMenu.Root>
+					<PartyHeaderMenu
+						{actions}
+						{wikiImport}
+						{isNew}
+						{authUserId}
+						{authUsername}
+						{hasCollectionLinks}
+						canFeature={isCurator(role)}
+					/>
 				{/snippet}
 			</PartyInfoGrid>
 
-			{#if hasEditedInfo && isNew && party.id === 'new'}
-				<Notice variant="blue">
-					{m.party_unsaved_notice()}
-				</Notice>
-			{/if}
-
-			{#if hasOrphanedItems}
-				<Notice variant="yellow">
-					{m.party_orphan_warning()}
-				</Notice>
-			{/if}
+			<PartyNotices {hasEditedInfo} {isNew} />
 
 			<PartySegmentedControl
 				selectedTab={activeTab}
@@ -668,195 +428,18 @@
 				</div>
 			{/if}
 
-			<div class="party-content">
-				<svelte:boundary
-					onerror={(e) => {
-						if (import.meta.env.DEV) console.error('Grid render error:', e)
-					}}
-				>
-					{#if activeTab === GridType.Weapon}
-						<div class="tab-content">
-							{#if party.shortcode}
-								<DismissibleNotice
-									id="weapon-calculator"
-									variant="yellow"
-									badge={m.notice_new()}
-									class="calculator-notice"
-								>
-									{m.weapon_calculator_notice()}
-									{#snippet action()}
-										<Button variant="ghost" size="small" onclick={() => openCalculatorPane(party)}>
-											{m.calculator_open_short()}
-										</Button>
-									{/snippet}
-								</DismissibleNotice>
-							{/if}
-							<WeaponGrid
-								weapons={party.weapons}
-								raidExtra={party.raid?.extra}
-								showGuidebooks={party.raid?.group?.guidebooks && !isSolomonis}
-								guidebooks={party.guidebooks}
-								canEdit={canEdit()}
-								onClickGuidebookSlot={handleClickGuidebookSlot}
-								onRemoveGuidebook={handleRemoveGuidebook}
-								{collectionWeaponItems}
-							/>
-						</div>
-					{:else if activeTab === GridType.Summon}
-						<SummonGrid summons={party.summons} {collectionSummonItems} />
-					{:else}
-						<div class="tab-content">
-							{#if canEdit() && !party.fullAuto}
-								<DismissibleNotice id="full-auto-skills" variant="yellow" badge={m.notice_new()}>
-									{m.full_auto_skills_notice()}
-									{#snippet action()}
-										<Button variant="ghost" size="small" onclick={actions.openSettingsPanel}>
-											{m.full_auto_skills_notice_action()}
-										</Button>
-									{/snippet}
-								</DismissibleNotice>
-							{/if}
-							<JobSection
-								job={party.job}
-								jobSkills={party.jobSkills}
-								fullAutoSkills={party.fullAutoSkills}
-								fullAuto={party.fullAuto}
-								accessory={party.accessory}
-								canEdit={canEdit()}
-								gender={party.user?.gender ?? Gender.Gran}
-								element={mainWeaponElement}
-								onSelectJob={jobHandlers.handleSelectJob}
-								onSelectSkill={jobHandlers.handleSelectJobSkill}
-								onRemoveSkill={jobHandlers.handleRemoveJobSkill}
-								onToggleSkillFa={jobHandlers.handleToggleJobSkillFa}
-								onSelectAccessory={jobHandlers.handleSelectAccessory}
-							/>
-							<CharacterGrid
-								characters={party.characters}
-								{mainWeaponElement}
-								{partyElement}
-								gender={characterGender}
-								unlimited={party?.raid?.group?.unlimited}
-								{collectionCharacterItems}
-							/>
-						</div>
-					{/if}
-					<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
-					{#snippet failed(error, reset)}
-						<div class="grid-error" role="alert">
-							<p>{m.party_grid_error()}</p>
-							<button onclick={reset}>{m.retry()}</button>
-						</div>
-					{/snippet}
-				</svelte:boundary>
-			</div>
+			<PartyGrids
+				{activeTab}
+				{activeCollection}
+				isSolomonis={solomonisRaid.isSolomonis}
+				{jobHandlers}
+				onOpenSettings={actions.openSettingsPanel}
+			/>
 		</section>
 	</div>
 </div>
 
-<!-- Delete Confirmation Dialog -->
-<DeleteTeamDialog
-	bind:open={actions.deleteDialogOpen}
-	partyName={party.name || m.party_untitled()}
-	deleting={actions.deleting}
-	onDelete={actions.deleteParty}
-	onCancel={() => (actions.deleteDialogOpen = false)}
-/>
-
-<WikiTextDialog
-	bind:open={actions.wikiExportOpen}
-	title={m.party_export_wiki()}
-	description={m.party_export_wiki_description()}
-	notice={m.party_export_wiki_notice()}
-	details={[
-		m.party_export_wiki_lost_rings(),
-		m.party_export_wiki_lost_earrings(),
-		m.party_export_wiki_lost_artifacts(),
-		m.party_export_wiki_lost_ax(),
-		m.party_export_wiki_lost_befoulments(),
-		m.party_export_wiki_lost_awakening_levels(),
-		m.party_export_wiki_lost_masteries(),
-		m.party_export_wiki_lost_bullets(),
-		m.party_export_wiki_lost_keys(),
-		m.party_export_wiki_lost_details()
-	]}
-	value={actions.wikiExportText}
-	readonly
-	primaryAction={{ label: m.code_copy(), onclick: actions.copyWikiExport }}
-/>
-
-<WikiTextDialog
-	bind:open={wikiImport.open}
-	title={m.party_import_wiki()}
-	description={m.party_import_wiki_description()}
-	notice={m.party_import_wiki_notice()}
-	details={[
-		m.party_import_wiki_missing_bullets(),
-		m.party_import_wiki_missing_rings(),
-		m.party_import_wiki_missing_ax(),
-		m.party_import_wiki_missing_befoulments(),
-		m.party_export_wiki_lost_awakening_levels(),
-		m.party_export_wiki_lost_masteries(),
-		m.party_export_wiki_lost_earrings(),
-		m.party_export_wiki_lost_artifacts(),
-		m.party_import_wiki_missing_substitutes(),
-		m.party_import_wiki_missing_uncaps()
-	]}
-	bind:value={wikiImport.text}
-	placeholder={m.party_import_wiki_placeholder()}
-	busy={wikiImport.busy}
-	primaryAction={{
-		label: wikiImport.report ? m.party_import_wiki_create() : m.party_import_wiki_action(),
-		onclick: wikiImport.submit,
-		disabled: wikiImport.busy || !wikiImport.text.trim() || wikiImport.report?.matched.length === 0
-	}}
->
-	{#snippet review()}
-		{#if wikiImport.report}
-			<WikiImportReview
-				report={wikiImport.report}
-				notes={wikiImport.notes}
-				request={wikiImport.request}
-			/>
-		{/if}
-	{/snippet}
-</WikiTextDialog>
-
-<!-- Importing makes a separate team; the one on screen is left as is -->
-<ConfirmDialog
-	bind:open={wikiImport.confirmOpen}
-	title={m.party_import_wiki_confirm_title()}
-	message={m.party_import_wiki_confirm_message()}
-	confirmLabel={m.party_import_wiki_confirm()}
-	confirmVariant="primary"
-	onconfirm={wikiImport.confirmStart}
-/>
-
-<!-- Leaving Evoking Solomonis deletes its data -->
-<ConfirmDialog
-	bind:open={leaveSolomonisOpen}
-	title={m.solomonis_web_party_leave_title()}
-	message={m.solomonis_web_party_leave_message()}
-	confirmLabel={m.solomonis_web_party_leave_confirm()}
-	onconfirm={confirmLeaveSolomonis}
-/>
-
-<!-- Conflict Resolution Dialog -->
-<ConflictDialog
-	bind:open={itemAddition.conflictDialogOpen}
-	conflict={itemAddition.conflictData}
-	partyId={party.id}
-	partyShortcode={party.shortcode}
-	onResolve={itemAddition.resolveConflict}
-	onCancel={itemAddition.cancelConflict}
-/>
-
-<!-- Duplicate Collection Warning Dialog (drag-triggered) -->
-<DuplicateCollectionDialog
-	open={!!partyDragDrop.pendingDuplicate}
-	onConfirm={partyDragDrop.confirmDuplicate}
-	onCancel={partyDragDrop.cancelDuplicate}
-/>
+<PartyDialogs {actions} {wikiImport} {itemAddition} {partyDragDrop} {solomonisRaid} {role} />
 
 <style lang="scss">
 	@use '$src/themes/typography' as *;
@@ -893,19 +476,5 @@
 		color: $error;
 		margin-bottom: $unit;
 		font-size: $font-small;
-	}
-
-	.party-content {
-		min-height: 400px;
-	}
-
-	.tab-content {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-2x;
-
-		:global(.calculator-notice) {
-			margin-bottom: $unit;
-		}
 	}
 </style>

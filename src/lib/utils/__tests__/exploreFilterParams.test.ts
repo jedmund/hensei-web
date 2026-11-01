@@ -9,13 +9,15 @@ import {
 	urlParamsToExploreFilterParams
 } from '../exploreFilterParams'
 
-// Mock entity adapter for resolveEntityFilters tests
-vi.mock('$lib/api/adapters/entity.adapter', () => ({
-	entityAdapter: {
-		getCharacter: vi.fn(),
-		getWeapon: vi.fn(),
-		getSummon: vi.fn()
-	}
+// Mock the character, weapon and summon adapters for resolveEntityFilters tests
+vi.mock('$lib/api/adapters/character.adapter', () => ({
+	characterAdapter: { getCharacter: vi.fn() }
+}))
+vi.mock('$lib/api/adapters/weapon.adapter', () => ({
+	weaponAdapter: { getWeapon: vi.fn() }
+}))
+vi.mock('$lib/api/adapters/summon.adapter', () => ({
+	summonAdapter: { getSummon: vi.fn() }
 }))
 
 const mockRaid: RaidFull = {
@@ -392,13 +394,13 @@ describe('roundtrip', () => {
 
 describe('resolveEntityFilters', () => {
 	it('resolves character entities', async () => {
-		const { entityAdapter } = await import('$lib/api/adapters/entity.adapter')
-		vi.mocked(entityAdapter.getCharacter).mockResolvedValue({
+		const { characterAdapter } = await import('$lib/api/adapters/character.adapter')
+		vi.mocked(characterAdapter.getCharacter).mockResolvedValue({
 			id: 'char-uuid',
 			granblueId: '3040000000',
 			name: { en: 'Narmaya', ja: 'ナルメア' },
 			element: 5
-		} as Awaited<ReturnType<typeof entityAdapter.getCharacter>>)
+		} as Awaited<ReturnType<typeof characterAdapter.getCharacter>>)
 
 		const result = await resolveEntityFilters([
 			{ granblueId: '3040000000', type: 'character', mode: 'include' }
@@ -414,8 +416,8 @@ describe('resolveEntityFilters', () => {
 	})
 
 	it('silently drops failed resolutions', async () => {
-		const { entityAdapter } = await import('$lib/api/adapters/entity.adapter')
-		vi.mocked(entityAdapter.getCharacter).mockRejectedValue(new Error('Not found'))
+		const { characterAdapter } = await import('$lib/api/adapters/character.adapter')
+		vi.mocked(characterAdapter.getCharacter).mockRejectedValue(new Error('Not found'))
 
 		const result = await resolveEntityFilters([
 			{ granblueId: '9999999999', type: 'character', mode: 'include' }
@@ -425,20 +427,20 @@ describe('resolveEntityFilters', () => {
 	})
 
 	it('passes options through to adapter methods', async () => {
-		const { entityAdapter } = await import('$lib/api/adapters/entity.adapter')
+		const { weaponAdapter } = await import('$lib/api/adapters/weapon.adapter')
 		const mockFetch = vi.fn()
-		vi.mocked(entityAdapter.getWeapon).mockResolvedValue({
+		vi.mocked(weaponAdapter.getWeapon).mockResolvedValue({
 			id: 'wpn-uuid',
 			granblueId: '1040000000',
 			name: { en: 'AK-4A', ja: 'AK-4A' },
 			element: 3
-		} as Awaited<ReturnType<typeof entityAdapter.getWeapon>>)
+		} as Awaited<ReturnType<typeof weaponAdapter.getWeapon>>)
 
 		await resolveEntityFilters([{ granblueId: '1040000000', type: 'weapon', mode: 'include' }], {
 			fetch: mockFetch as unknown as typeof globalThis.fetch
 		})
 
-		expect(entityAdapter.getWeapon).toHaveBeenCalledWith('1040000000', {
+		expect(weaponAdapter.getWeapon).toHaveBeenCalledWith('1040000000', {
 			fetch: mockFetch
 		})
 	})
@@ -473,13 +475,13 @@ describe('urlParamsToExploreFilterParams', () => {
 	})
 
 	it('resolves entity filters when fetch is provided', async () => {
-		const { entityAdapter } = await import('$lib/api/adapters/entity.adapter')
-		vi.mocked(entityAdapter.getCharacter).mockResolvedValue({
+		const { characterAdapter } = await import('$lib/api/adapters/character.adapter')
+		vi.mocked(characterAdapter.getCharacter).mockResolvedValue({
 			id: 'char-uuid',
 			granblueId: '3040000000',
 			name: { en: 'Narmaya', ja: 'ナルメア' },
 			element: 5
-		} as Awaited<ReturnType<typeof entityAdapter.getCharacter>>)
+		} as Awaited<ReturnType<typeof characterAdapter.getCharacter>>)
 
 		const mockFetch = vi.fn()
 		const result = await urlParamsToExploreFilterParams(
@@ -538,7 +540,7 @@ describe('difficulty filter (multi-select)', () => {
 
 	it('seeds the pill label with the slug as a placeholder (hydrated client-side)', () => {
 		// The deserialize path runs before the tier list is loaded, so labels start
-		// as the slug. ExploreFilters.svelte patches them when the query resolves.
+		// as the slug. ExploreFilterSearch relabels them (relabelFilters) when the query resolves.
 		const { filters } = deserializeExploreFilters(new URLSearchParams('difficulty=casual'))
 		const diff = filters.find((f) => f.kind === 'difficulty')!
 		expect(diff.label).toBe(diff.value)
@@ -576,29 +578,37 @@ describe('difficulty filter (multi-select)', () => {
 })
 
 describe('sticker label and sort params', () => {
-	it('round-trips label and sort', () => {
+	it('round-trips label and the Rising sort', () => {
 		const filters: FilterItem[] = [
-			{ kind: 'label', value: 'full-auto', label: 'Full-auto friendly' },
-			{ kind: 'sort', value: 'participation', label: 'Recommended' }
+			{ kind: 'label', value: 'full-auto', label: 'Full-auto friendly' }
 		]
-		const params = serializeExploreFilters(filters)
+		const params = serializeExploreFilters(filters, { sort: 'rising' })
 		expect(params.get('label')).toBe('full-auto')
-		expect(params.get('sort')).toBe('participation')
+		expect(params.get('sort')).toBe('rising')
 
-		const { filters: parsed } = deserializeExploreFilters(params)
+		const { filters: parsed, sort } = deserializeExploreFilters(params)
 		expect(parsed.find((f) => f.kind === 'label')?.value).toBe('full-auto')
-		expect(parsed.find((f) => f.kind === 'sort')?.value).toBe('participation')
+		expect(sort).toBe('rising')
 	})
 
-	it('ignores unknown sort values', () => {
-		const { filters } = deserializeExploreFilters(new URLSearchParams('sort=evil'))
-		expect(filters.find((f) => f.kind === 'sort')).toBeUndefined()
+	it('leaves most recent, the default, out of the URL', () => {
+		expect(serializeExploreFilters([], { sort: 'recent' }).has('sort')).toBe(false)
+	})
+
+	it('reads the old ?sort=participation as Rising', () => {
+		expect(deserializeExploreFilters(new URLSearchParams('sort=participation')).sort).toBe('rising')
+	})
+
+	it('treats unknown sort values as most recent', () => {
+		expect(deserializeExploreFilters(new URLSearchParams('sort=evil')).sort).toBe('recent')
 	})
 
 	it('counts label and sort as explore filters and maps them to API params', async () => {
-		const params = new URLSearchParams('label=fast&sort=participation')
-		expect(urlHasExploreFilters(params)).toBe(true)
-		const { apiParams } = await urlParamsToExploreFilterParams(params)
-		expect(apiParams).toMatchObject({ label: 'fast', sort: 'participation' })
+		for (const sort of ['rising', 'participation']) {
+			const params = new URLSearchParams(`label=fast&sort=${sort}`)
+			expect(urlHasExploreFilters(params)).toBe(true)
+			const { apiParams } = await urlParamsToExploreFilterParams(params)
+			expect(apiParams).toMatchObject({ label: 'fast', sort: 'rising' })
+		}
 	})
 })

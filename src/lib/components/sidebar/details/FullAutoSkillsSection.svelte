@@ -3,7 +3,7 @@
 	import DetailsSection from './DetailsSection.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import { getAbilitySlots } from '$lib/utils/fullAutoSkills'
-	import { useUpdateGridCharacter } from '$lib/api/mutations/grid.mutations'
+	import { useUpdateGridCharacter } from '$lib/api/mutations/gridCharacter.mutations'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import { getElementTypeKey } from '$lib/utils/element'
 	import * as m from '$lib/paraglide/messages'

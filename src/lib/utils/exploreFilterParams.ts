@@ -8,11 +8,12 @@ import {
 	getRecencyLabel,
 	getPartyLabel,
 	getBoostLabel,
-	getSideLabel,
-	getSortLabel
+	getSideLabel
 } from '$lib/utils/exploreFilterOptions'
 import { filterItemsToParams } from '$lib/utils/filterConversion'
-import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+import { characterAdapter } from '$lib/api/adapters/character.adapter'
+import { summonAdapter } from '$lib/api/adapters/summon.adapter'
+import { weaponAdapter } from '$lib/api/adapters/weapon.adapter'
 import { localizedName } from '$lib/utils/locale'
 
 // All recognized explore filter param keys
@@ -50,10 +51,20 @@ export interface EntityRef {
 	mode: 'include' | 'exclude'
 }
 
+/** Gallery order: Rising (Home's Rising card) or most recent, the default */
+export type ExploreSort = 'rising' | 'recent'
+
+/** `?sort=rising`; `participation` is its old name, kept for old links */
+export function parseExploreSort(value: string | null | undefined): ExploreSort {
+	const sort = value?.trim()
+	return sort === 'rising' || sort === 'participation' ? 'rising' : 'recent'
+}
+
 export interface DeserializedExploreFilters {
 	filters: FilterItem[]
 	entityRefs: EntityRef[]
 	collectionFilter: boolean
+	sort: ExploreSort
 }
 
 /**
@@ -62,7 +73,8 @@ export interface DeserializedExploreFilters {
 export function urlHasExploreFilters(params: URLSearchParams): boolean {
 	// `sort` only counts for values explore knows (e.g. not the old ?sort=recent)
 	return (
-		EXPLORE_FILTER_KEYS.some((key) => params.has(key)) || params.get('sort') === 'participation'
+		EXPLORE_FILTER_KEYS.some((key) => params.has(key)) ||
+		parseExploreSort(params.get('sort')) === 'rising'
 	)
 }
 
@@ -71,7 +83,7 @@ export function urlHasExploreFilters(params: URLSearchParams): boolean {
  */
 export function serializeExploreFilters(
 	filters: FilterItem[],
-	opts?: { collectionFilter?: boolean; raids?: RaidFull[] }
+	opts?: { collectionFilter?: boolean; sort?: ExploreSort; raids?: RaidFull[] }
 ): URLSearchParams {
 	const params = new URLSearchParams()
 
@@ -119,9 +131,8 @@ export function serializeExploreFilters(
 	const label = filters.find((f) => f.kind === 'label')
 	if (label) params.set('label', label.value as string)
 
-	// Sort — e.g. participation
-	const sort = filters.find((f) => f.kind === 'sort')
-	if (sort) params.set('sort', sort.value as string)
+	// Sort — only when not the default
+	if (opts?.sort === 'rising') params.set('sort', 'rising')
 
 	// Entity include/exclude — type:granblueId format
 	const entities = filters.filter((f): f is FilterItem & { kind: 'entity' } => f.kind === 'entity')
@@ -242,12 +253,6 @@ export function deserializeExploreFilters(
 		filters.push({ kind: 'label', value: labelParam, label: labelParam })
 	}
 
-	// Sort (only known values)
-	const sortParam = params.get('sort')?.trim()
-	if (sortParam === 'participation') {
-		filters.push({ kind: 'sort', value: sortParam, label: getSortLabel(sortParam) })
-	}
-
 	// Entity refs (need async resolution)
 	const entityRefs: EntityRef[] = []
 
@@ -272,7 +277,7 @@ export function deserializeExploreFilters(
 	// Collection
 	const collectionFilter = params.get('collection') === '1'
 
-	return { filters, entityRefs, collectionFilter }
+	return { filters, entityRefs, collectionFilter, sort: parseExploreSort(params.get('sort')) }
 }
 
 /**
@@ -287,10 +292,10 @@ export async function resolveEntityFilters(
 		refs.map(async (ref): Promise<FilterItem> => {
 			const entity =
 				ref.type === 'character'
-					? await entityAdapter.getCharacter(ref.granblueId, options)
+					? await characterAdapter.getCharacter(ref.granblueId, options)
 					: ref.type === 'weapon'
-						? await entityAdapter.getWeapon(ref.granblueId, options)
-						: await entityAdapter.getSummon(ref.granblueId, options)
+						? await weaponAdapter.getWeapon(ref.granblueId, options)
+						: await summonAdapter.getSummon(ref.granblueId, options)
 			const label = localizedName(entity.name) ?? ref.granblueId
 			return {
 				kind: 'entity',
@@ -323,8 +328,9 @@ export async function urlParamsToExploreFilterParams(
 	filterItems: FilterItem[]
 	apiParams: ExploreFilterParams
 	collectionFilter: boolean
+	sort: ExploreSort
 }> {
-	const { filters, entityRefs, collectionFilter } = deserializeExploreFilters(params)
+	const { filters, entityRefs, collectionFilter, sort } = deserializeExploreFilters(params)
 
 	// Resolve entity refs SSR-side when fetch is available
 	let entityFilters: FilterItem[] = []
@@ -334,5 +340,6 @@ export async function urlParamsToExploreFilterParams(
 
 	const allFilters = [...filters, ...entityFilters]
 	const apiParams = filterItemsToParams(allFilters)
-	return { filterItems: allFilters, apiParams, collectionFilter }
+	if (sort === 'rising') apiParams.sort = 'rising'
+	return { filterItems: allFilters, apiParams, collectionFilter, sort }
 }

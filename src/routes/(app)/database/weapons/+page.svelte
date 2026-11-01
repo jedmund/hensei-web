@@ -5,7 +5,7 @@
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { weaponSkillAdapter } from '$lib/api/adapters/weaponSkill.adapter'
 	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
@@ -22,7 +22,7 @@
 	import DateCell from '$lib/components/database/cells/DateCell.svelte'
 	import AwakeningModal from '$lib/features/database/weapons/AwakeningModal.svelte'
 	import { getRarityLabel } from '$lib/utils/rarity'
-	import { getBasePath } from '$lib/utils/images'
+	import { getBasePath } from '$lib/utils/images/core'
 	import { localizedName } from '$lib/utils/locale'
 	import { getBoostTypeLabel } from '$lib/utils/boostType'
 	import type { Awakening } from '$lib/types/api/entities'
@@ -105,7 +105,7 @@
 	// Query for weapon skill families (client-side filtered — not paginated like the main grid)
 	const weaponSkillFamiliesQuery = createQuery(() => ({
 		queryKey: ['weaponSkillFamilies'],
-		queryFn: () => entityAdapter.getWeaponSkillFamilies(),
+		queryFn: () => weaponSkillAdapter.getWeaponSkillFamilies(),
 		enabled: viewMode === 'skills'
 	}))
 

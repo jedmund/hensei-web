@@ -4,7 +4,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime.js'
 	import asteriskIcon from '$src/assets/icons/required-asterisk.svg?raw'
-	import { getSummonImage, getSummonTransformation } from '$lib/utils/images'
+	import { getSummonImage, getSummonTransformation } from '$lib/utils/images/summons'
 	import { seriesHasUlbArt } from '$lib/utils/summonSeries'
 	import type { SupportSummon, SupportSummonSection } from '$lib/types/api/supportSummon'
 

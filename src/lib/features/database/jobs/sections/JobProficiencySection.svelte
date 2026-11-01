@@ -3,7 +3,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
-	import { getProficiencyLabelImage } from '$lib/utils/images'
+	import { getProficiencyLabelImage } from '$lib/utils/images/icons'
 	import { formatJobProficiency } from '$lib/utils/jobUtils'
 	import { getProficiencyOptions } from '$lib/utils/proficiency'
 

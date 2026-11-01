@@ -1,12 +1,12 @@
 import type { PageServerLoad } from './$types'
-import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+import { bulletAdapter } from '$lib/api/adapters/bullet.adapter'
 import { error } from '@sveltejs/kit'
 
 export const load: PageServerLoad = async ({ params, parent }) => {
 	try {
 		const parentData = await parent()
 
-		const bullet = await entityAdapter.getBulletById(params.granblueId)
+		const bullet = await bulletAdapter.getBulletById(params.granblueId)
 
 		if (!bullet) {
 			throw error(404, 'Bullet not found')

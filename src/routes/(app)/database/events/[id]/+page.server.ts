@@ -1,12 +1,12 @@
 import type { PageServerLoad } from './$types'
 import { eventAdapter } from '$lib/api/adapters/event.adapter'
 import { error, isHttpError, isRedirect } from '@sveltejs/kit'
-import { requireEditor } from '$lib/auth/requireEditor'
+import { requireCurator } from '$lib/auth/requireEditor'
 
 export const load: PageServerLoad = async ({ params, parent, fetch }) => {
 	try {
 		const parentData = await parent()
-		requireEditor(parentData, '/database/events')
+		requireCurator(parentData, '/database/events')
 		const event = await eventAdapter.getEvent(params.id, { fetch })
 		return { event, role: parentData.role }
 	} catch (err) {

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { weaponSkillAdapter } from '$lib/api/adapters/weaponSkill.adapter'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
 	import { titleCase } from '$lib/utils/textCase'
-	import { getWeaponImage } from '$lib/utils/images'
+	import { getWeaponImage } from '$lib/utils/images/weapons'
 	import type { FamilyVersion, WeaponSkillFamily } from '$lib/types/api/weaponSkillFamily'
 
 	interface Props {
@@ -82,14 +82,14 @@
 		error = null
 		notice = null
 		try {
-			await entityAdapter.updateWeaponSkillVersion(version.id, {
+			await weaponSkillAdapter.updateWeaponSkillVersion(version.id, {
 				series_override: buf.seriesOverride || null,
 				size_override: buf.sizeOverride || null,
 				main_hand_only: buf.mainHandOnly
 			})
 			// Labels live on the shared skill row — only touch when actually changed.
 			if (buf.nameEn !== (version.name?.en ?? '') || buf.nameJp !== (version.name?.ja ?? '')) {
-				const result = await entityAdapter.updateSkillLabels(version.skillId, {
+				const result = await weaponSkillAdapter.updateSkillLabels(version.skillId, {
 					name_en: buf.nameEn,
 					name_jp: buf.nameJp
 				})

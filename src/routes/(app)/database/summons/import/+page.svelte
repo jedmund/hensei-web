@@ -3,9 +3,10 @@
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { entityAdapter, type ParsedSummonData } from '$lib/api/adapters/entity.adapter'
+	import { summonAdapter, type ParsedSummonData } from '$lib/api/adapters/summon.adapter'
 	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'
-	import { getGameCdnSummonImage, getPlaceholderImage } from '$lib/utils/images'
+	import { getPlaceholderImage } from '$lib/utils/images/core'
+	import { getGameCdnSummonImage } from '$lib/utils/images/cdn'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,
@@ -201,7 +202,7 @@
 			const finalPages = wikiResults.map((r) => r.wikiPage)
 
 			// Step 2: Send to API for parsing (with pre-fetched wiki data)
-			const response = await entityAdapter.batchPreviewSummons(finalPages, wikiData)
+			const response = await summonAdapter.batchPreviewSummons(finalPages, wikiData)
 
 			// Update entities with results
 			entities.clear()
@@ -283,9 +284,9 @@
 				wiki_raw: wikiRawByPage[selectedWikiPage] || undefined
 			}
 
-			const newSummon = await entityAdapter.createSummon(payload)
+			const newSummon = await summonAdapter.createSummon(payload)
 			// Trigger image download in background (don't await - it queues a job)
-			entityAdapter.downloadSummonImages(newSummon.id).catch(console.error)
+			summonAdapter.downloadSummonImages(newSummon.id).catch(console.error)
 			savedEntities.add(selectedWikiPage)
 			savedEntities = new SvelteSet(savedEntities)
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
 	import { localizedName } from '$lib/utils/locale'
-	import { getArtifactImage } from '$lib/utils/images'
+	import { getArtifactImage } from '$lib/utils/images/equipment'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 

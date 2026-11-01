@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { CollectionWeapon } from '$lib/types/api/collection'
+	import { handleImageFallback } from '$lib/utils/images/core'
 	import {
 		getWeaponImage,
 		getWeaponTransformation,
-		getWeaponFallbackImage,
-		handleImageFallback
-	} from '$lib/utils/images'
+		getWeaponFallbackImage
+	} from '$lib/utils/images/weapons'
 	import { getAwakeningImage } from '$lib/utils/modifiers'
 	import { seriesHasTranscendenceArt } from '$lib/utils/weaponSeries'
 	import { localizedName } from '$lib/utils/locale'

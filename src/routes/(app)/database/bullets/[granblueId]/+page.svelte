@@ -10,7 +10,7 @@
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
-	import { getBulletImage } from '$lib/utils/images'
+	import { getBulletImage } from '$lib/utils/images/equipment'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import type { PageData } from './$types'
 

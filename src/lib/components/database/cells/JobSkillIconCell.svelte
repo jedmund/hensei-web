@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Cell } from 'wx-svelte-grid'
-	import { getJobSkillIcon } from '$lib/utils/images'
+	import { getJobSkillIcon } from '$lib/utils/images/icons'
 
 	const { row }: Cell = $props()
 </script>

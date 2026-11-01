@@ -16,14 +16,6 @@
 			description: m.about_roadmap_item_embeds_desc
 		},
 		{
-			title: m.about_roadmap_item_feedback_title,
-			description: m.about_roadmap_item_feedback_desc
-		},
-		{
-			title: m.about_roadmap_item_substitutions_title,
-			description: m.about_roadmap_item_substitutions_desc
-		},
-		{
 			title: m.about_roadmap_item_calculator_title,
 			description: m.about_roadmap_item_calculator_desc
 		},

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { getBasePath } from '$lib/utils/images'
+import { getBasePath } from '$lib/utils/images/core'
 import type { UnifiedSearchResult } from '$lib/api/adapters/search.adapter'
 import type { CharacterSkillVersion } from '$lib/types/api/entities'
 import { entityResultToSuggestion, skillToSuggestion } from '../normalize'

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Cell } from 'wx-svelte-grid'
-	import { getRaidImage, getRaidCdnImage } from '$lib/utils/images'
+	import { getRaidImage, getRaidCdnImage } from '$lib/utils/images/raids'
 
 	const { row }: Cell = $props()
 

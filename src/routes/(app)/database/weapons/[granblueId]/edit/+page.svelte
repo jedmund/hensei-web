@@ -6,7 +6,7 @@
 	// TanStack Query
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { weaponAdapter } from '$lib/api/adapters/weapon.adapter'
 	import { withInitialData } from '$lib/query/ssr'
 
 	// Components
@@ -23,7 +23,7 @@
 	import TagInput from '$lib/components/ui/TagInput.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
-	import { getWeaponGridImage, getWeaponFallbackImage } from '$lib/utils/images'
+	import { getWeaponGridImage, getWeaponFallbackImage } from '$lib/utils/images/weapons'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,
@@ -241,7 +241,7 @@
 				bullet_slots: editData.bulletSlots
 			}
 
-			await entityAdapter.updateWeapon(weapon.id, payload)
+			await weaponAdapter.updateWeapon(weapon.id, payload)
 
 			// Invalidate TanStack Query cache and force immediate refetch
 			await queryClient.invalidateQueries({

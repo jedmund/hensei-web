@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { weaponSkillAdapter } from '$lib/api/adapters/weaponSkill.adapter'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
@@ -62,7 +62,7 @@
 		error = null
 		try {
 			const num = (v: string) => (v === '' ? null : Number(v))
-			await entityAdapter.updateWeaponSkillDatum(row.id, {
+			await weaponSkillAdapter.updateWeaponSkillDatum(row.id, {
 				sl1: num(buf.sl1 ?? ''),
 				sl10: num(buf.sl10 ?? ''),
 				sl15: num(buf.sl15 ?? ''),
@@ -84,7 +84,7 @@
 	async function deleteRow(row: WeaponSkillDatumRow) {
 		error = null
 		try {
-			await onDelete((force) => entityAdapter.deleteWeaponSkillDatum(row.id, force))
+			await onDelete((force) => weaponSkillAdapter.deleteWeaponSkillDatum(row.id, force))
 		} catch (err) {
 			error = err instanceof Error ? err.message : 'Failed to delete'
 		}

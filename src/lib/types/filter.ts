@@ -23,8 +23,6 @@ export type FilterItem =
 	| { kind: 'evoker'; value: string; label: string; pinned?: boolean }
 	/** Sticker label, by slug; the label text is the sticker's meaning */
 	| { kind: 'label'; value: string; label: string; pinned?: boolean }
-	/** List order; 'participation' is the Recommended sort */
-	| { kind: 'sort'; value: string; label: string; pinned?: boolean }
 
 export interface FilterOption {
 	kind: FilterItem['kind']
@@ -42,4 +40,27 @@ export interface PlaceholderSuggestion {
 	label: string
 	category: string
 	option?: FilterOption
+}
+
+/** Selected values per Collection filter group */
+export interface CollectionFilterState {
+	element: number[]
+	rarity: number[]
+	season: number[]
+	/** Series filters - number[] for characters, string[] for weapons (UUIDs) */
+	series: (number | string)[]
+	race: number[]
+	proficiency: number[]
+	gender: number[]
+}
+
+export type CollectionFilterKey = keyof CollectionFilterState
+
+/** One Collection filter group as rendered by the inline pickers, More menu and mobile sheet */
+export interface CollectionFilterConfig {
+	key: CollectionFilterKey
+	options: { value: number | string; label: string; color?: string }[]
+	value: (number | string)[]
+	onChange: (value: (number | string)[]) => void
+	placeholder: string
 }

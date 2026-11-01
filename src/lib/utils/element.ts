@@ -1,4 +1,4 @@
-import { getBasePath } from '$lib/utils/images'
+import { getBasePath } from '$lib/utils/images/core'
 import * as m from '$lib/paraglide/messages'
 
 interface ElementData {

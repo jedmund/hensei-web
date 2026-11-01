@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Party, GridWeapon, GridCharacter } from '$lib/types/api/party'
-	import { getCharacterImageWithPose } from '$lib/utils/images'
+	import { getCharacterImageWithPose } from '$lib/utils/images/characters'
 	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	interface Props {
 		party?: Party

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { CollectionWeapon } from '$lib/types/api/collection'
-	import { getWeaponImage, getWeaponFallbackImage, handleImageFallback } from '$lib/utils/images'
+	import { handleImageFallback } from '$lib/utils/images/core'
+	import { getWeaponImage, getWeaponFallbackImage } from '$lib/utils/images/weapons'
 	import { localizedName } from '$lib/utils/locale'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'

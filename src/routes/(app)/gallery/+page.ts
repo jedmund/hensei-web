@@ -4,7 +4,8 @@ import { error } from '@sveltejs/kit'
 import { partyAdapter } from '$lib/api/adapters/party.adapter'
 import {
 	urlHasExploreFilters,
-	urlParamsToExploreFilterParams
+	urlParamsToExploreFilterParams,
+	type ExploreSort
 } from '$lib/utils/exploreFilterParams'
 
 export const load: PageLoad = async ({ url, depends, fetch }) => {
@@ -15,15 +16,17 @@ export const load: PageLoad = async ({ url, depends, fetch }) => {
 
 	let initialFilterItems: FilterItem[] = []
 	let initialCollectionFilter = false
+	let initialSort: ExploreSort = 'recent'
 	const listParams: Record<string, unknown> = { page }
 
 	if (urlHasExploreFilters(url.searchParams)) {
-		const { filterItems, apiParams, collectionFilter } = await urlParamsToExploreFilterParams(
+		const { filterItems, apiParams, collectionFilter, sort } = await urlParamsToExploreFilterParams(
 			url.searchParams,
 			{ fetch }
 		)
 		initialFilterItems = filterItems
 		initialCollectionFilter = collectionFilter
+		initialSort = sort
 		Object.assign(listParams, apiParams)
 		if (collectionFilter) listParams.collectionFilter = true
 	}
@@ -38,7 +41,8 @@ export const load: PageLoad = async ({ url, depends, fetch }) => {
 			totalPages: response.totalPages,
 			perPage: response.perPage || 20,
 			initialFilterItems,
-			initialCollectionFilter
+			initialCollectionFilter,
+			initialSort
 		}
 	} catch (e: unknown) {
 		const err = e as Record<string, unknown>

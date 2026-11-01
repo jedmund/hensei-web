@@ -24,11 +24,10 @@
 	import type { ConflictData } from '$lib/types/api/conflict'
 	import type { GridCharacter, GridWeapon } from '$lib/types/api/party'
 	import type { Character, Weapon } from '$lib/types/api/entities'
-	import {
-		useResolveCharacterConflict,
-		useResolveWeaponConflict
-	} from '$lib/api/mutations/grid.mutations'
-	import { getCharacterImageWithPose, getWeaponImage } from '$lib/utils/images'
+	import { useResolveCharacterConflict } from '$lib/api/mutations/gridCharacter.mutations'
+	import { useResolveWeaponConflict } from '$lib/api/mutations/gridWeapon.mutations'
+	import { getCharacterImageWithPose } from '$lib/utils/images/characters'
+	import { getWeaponImage } from '$lib/utils/images/weapons'
 	import { isOpusDraconicSeries, getSeriesDisplayName } from '$lib/utils/weaponSeries'
 	import { getLocale } from '$lib/paraglide/runtime.js'
 	import * as m from '$lib/paraglide/messages'

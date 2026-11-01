@@ -36,7 +36,9 @@
 </script>
 
 <div class="dropdown">
-	<ul class="results" role="listbox" bind:this={listEl}>
+	<!-- Keep focus in the search input when an option is clicked, so the
+	     keyboard (Escape, arrows, Backspace) keeps working after a pick -->
+	<ul class="results" role="listbox" bind:this={listEl} onmousedown={(e) => e.preventDefault()}>
 		{#if !inputValue.trim()}
 			{#each placeholderSuggestions as suggestion, i (suggestion.label)}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->

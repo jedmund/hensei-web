@@ -6,14 +6,14 @@
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { partyQueries, partyKeys } from '$lib/api/queries/party.queries'
 	import { useCreateParty } from '$lib/api/mutations/party.mutations'
-	import {
-		useCreateGridCharacter,
-		useCreateGridSummon,
-		useCreateGridWeapon
-	} from '$lib/api/mutations/grid.mutations'
+	import { useCreateGridCharacter } from '$lib/api/mutations/gridCharacter.mutations'
+	import { useCreateGridSummon } from '$lib/api/mutations/gridSummon.mutations'
+	import { useCreateGridWeapon } from '$lib/api/mutations/gridWeapon.mutations'
 	import { parseNewTeamStart } from '$lib/utils/browseRoutes'
 	import { extractErrorMessage } from '$lib/utils/errors'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { characterAdapter } from '$lib/api/adapters/character.adapter'
+	import { summonAdapter } from '$lib/api/adapters/summon.adapter'
+	import { weaponAdapter } from '$lib/api/adapters/weapon.adapter'
 	import { raidAdapter } from '$lib/api/adapters/raid.adapter'
 	import { getMaxUncapLevel, getSummonMaxUncapLevel } from '$lib/utils/uncap'
 	import { toast } from 'svelte-sonner'
@@ -131,7 +131,7 @@
 			// The entity endpoints return the same records as a team's grid, with
 			// looser types
 			if (start.add?.type === 'character') {
-				const character = (await entityAdapter.getCharacter(
+				const character = (await characterAdapter.getCharacter(
 					start.add.id
 				)) as GridCharacter['character']
 				const { flb = false, ulb = false, transcendence = false } = character.uncap ?? {}
@@ -139,7 +139,7 @@
 				const uncapLevel = getMaxUncapLevel(special, flb, special ? ulb : transcendence)
 				startCharacter = { id: 'start', position: 0, character, uncapLevel }
 			} else if (start.add?.type === 'weapon') {
-				const weapon = (await entityAdapter.getWeapon(start.add.id)) as GridWeapon['weapon']
+				const weapon = (await weaponAdapter.getWeapon(start.add.id)) as GridWeapon['weapon']
 				startWeapon = {
 					id: 'start',
 					position: 0,
@@ -148,7 +148,7 @@
 					uncapLevel: getSummonMaxUncapLevel({ uncap: weapon.uncap ?? {} })
 				}
 			} else if (start.add?.type === 'summon') {
-				const summon = (await entityAdapter.getSummon(start.add.id)) as GridSummon['summon']
+				const summon = (await summonAdapter.getSummon(start.add.id)) as GridSummon['summon']
 				startSummon = {
 					id: 'start',
 					position: 0,
@@ -172,7 +172,12 @@
 	{party}
 	canEdit={true}
 	authUserId={data.account?.userId}
-	isNew={true}
+	authUsername={data.account?.username}
+	authUserAvatar={data.currentUser
+		? { picture: data.currentUser.picture, element: data.currentUser.element }
+		: undefined}
+	isEditor={(data.account?.role ?? 0) >= 7}
+	isNew={!shortcode}
 	{ensurePartyExists}
 	initialCollectionSourceUsername={collectionSourceUsername ?? undefined}
 />

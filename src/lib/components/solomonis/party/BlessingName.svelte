@@ -1,6 +1,6 @@
 <script lang="ts">
 	/** A blessing's round icon and name, with an optional subtitle, for list rows. */
-	import { getBlessingImage } from '$lib/utils/images'
+	import { getBlessingImage } from '$lib/utils/images/solomonis'
 
 	interface Props {
 		slug: string

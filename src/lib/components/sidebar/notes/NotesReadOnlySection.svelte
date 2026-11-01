@@ -25,13 +25,10 @@
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import DescriptionView from './DescriptionView.svelte'
 	import { localizedName } from '$lib/utils/locale'
-	import {
-		getCharacterImage,
-		getWeaponImage,
-		getSummonImage,
-		getPlaceholder
-	} from '$lib/features/database/detail/image'
-	import { getWeaponFallbackImage, handleImageFallback, STYLE_SWAP_POSE } from '$lib/utils/images'
+	import { getSummonImage } from '$lib/utils/images/summons'
+	import { handleImageFallback, getPlaceholderImage } from '$lib/utils/images/core'
+	import { STYLE_SWAP_POSE, getCharacterImage } from '$lib/utils/images/characters'
+	import { getWeaponFallbackImage, getWeaponImage } from '$lib/utils/images/weapons'
 	import * as m from '$lib/paraglide/messages'
 
 	interface Props {
@@ -105,7 +102,7 @@
 		if (sub.gridSummon?.summon) {
 			return getSummonImage(sub.gridSummon.summon.granblueId, 'square')
 		}
-		return getPlaceholder(type, 'square')
+		return getPlaceholderImage(type, 'square')
 	}
 
 	function getSubstituteFallbackImage(sub: Substitution): string | undefined {

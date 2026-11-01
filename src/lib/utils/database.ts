@@ -1,4 +1,6 @@
-import { getCharacterImage, getWeaponImage, getSummonImage } from './images'
+import { getCharacterImage } from '$lib/utils/images/characters'
+import { getWeaponImage } from '$lib/utils/images/weapons'
+import { getSummonImage } from '$lib/utils/images/summons'
 
 export function getCharacterImageUrl(gbid?: string | number): string {
 	// Use local square images for database tables

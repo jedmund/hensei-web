@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isEditor } from '$lib/auth/roles'
 	import type { PageData } from './$types'
 	import Party from '$lib/components/party/Party.svelte'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -43,6 +44,16 @@
 		enabled: !!data.party?.shortcode
 	}))
 
+	// Report one view per team opened, once the page is in the browser (so
+	// hover preloads don't count). Owners are skipped here and by the API.
+	let reportedViewOf: string | null = null
+	$effect(() => {
+		const id = data.party?.id
+		if (!id || data.canEdit || reportedViewOf === id) return
+		reportedViewOf = id
+		fetch(`/api/teams/${id}/view`, { method: 'POST', keepalive: true }).catch(() => {})
+	})
+
 	// Use query data if available, fall back to server data
 	// This allows the query to refetch and update the UI automatically
 	const party = $derived(partyQuery.data ?? data.party)
@@ -76,7 +87,8 @@
 		authUserAvatar={data.currentUser
 			? { picture: data.currentUser.picture, element: data.currentUser.element }
 			: undefined}
-		isEditor={(data.account?.role ?? 0) >= 7}
+		isEditor={isEditor(data.account?.role)}
+		role={data.account?.role}
 		{initialTab}
 	/>
 {:else}

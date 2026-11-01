@@ -17,12 +17,12 @@
 	import type { FilterSet } from '$lib/types/FilterSet'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import CollectionFilterButton from '$lib/components/explore/CollectionFilterButton.svelte'
+	import ExploreSortMenu from '$lib/components/explore/ExploreSortMenu.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { serializeExploreFilters } from '$lib/utils/exploreFilterParams'
+	import { serializeExploreFilters, type ExploreSort } from '$lib/utils/exploreFilterParams'
 	import { localizedName } from '$lib/utils/locale'
 	import { MediaQuery } from 'svelte/reactivity'
 
@@ -41,6 +41,7 @@
 	let advancedFilters = $state<FilterSet>({ ...defaultFilterSet })
 	let settingsOpen = $state(false)
 	let collectionFilterActive = $state(data.initialCollectionFilter ?? false)
+	let sort = $state<ExploreSort>(data.initialSort ?? 'recent')
 
 	// Snapshot the SSR-equivalent filterParams at init time.
 	// advancedFilters is still defaultFilterSet (cookies not yet loaded),
@@ -48,6 +49,7 @@
 	const ssrFilterParams: ExploreFilterParams = (() => {
 		const params = filterItemsToParams(data.initialFilterItems ?? [])
 		if (data.initialCollectionFilter) params.collectionFilter = true
+		if (data.initialSort === 'rising') params.sort = 'rising'
 		return params
 	})()
 
@@ -114,6 +116,7 @@
 		if (!urlInitialized) return
 		const params = serializeExploreFilters(filterItems, {
 			collectionFilter: collectionFilterActive,
+			sort,
 			raids: allRaids
 		})
 		const search = params.toString()
@@ -138,6 +141,8 @@
 
 		// Collection filter
 		if (collectionFilterActive) params.collectionFilter = true
+
+		if (sort === 'rising') params.sort = 'rising'
 
 		return params
 	})
@@ -246,6 +251,8 @@
 			bind:filters={filterItems}
 			onFiltersChange={handleFiltersChange}
 			{allRaids}
+			{sort}
+			onSortChange={(value) => (sort = value)}
 			bind:collectionFilterActive
 			onCollectionFilterChange={(active) => (collectionFilterActive = active)}
 			onAdvancedFiltersOpen={() => (settingsOpen = true)}
@@ -255,18 +262,15 @@
 		/>
 		{#if !isMobile.current}
 			<div class="filters-actions">
-				{#if isAuthenticated}
-					<CollectionFilterButton
-						active={collectionFilterActive}
-						element={currentUser?.element as
-							'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined}
-						onclick={() => (collectionFilterActive = !collectionFilterActive)}
-						aria-label={m.explore_collection_aria()}
-						aria-pressed={collectionFilterActive}
-					>
-						{m.explore_collection_only()}
-					</CollectionFilterButton>
-				{/if}
+				<ExploreSortMenu
+					{sort}
+					onSortChange={(value) => (sort = value)}
+					{collectionFilterActive}
+					onCollectionFilterChange={(active) => (collectionFilterActive = active)}
+					showCollectionFilter={isAuthenticated}
+					element={currentUser?.element as
+						'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined}
+				/>
 				<Tooltip content={advancedFilterTooltip} disabled={advancedFilterCount === 0}>
 					{#if advancedFilterCount > 0}
 						<Button

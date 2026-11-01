@@ -31,7 +31,7 @@
 		useSyncGridCharacterToCollection,
 		useSyncGridWeaponToCollection,
 		useSyncGridSummonToCollection
-	} from '$lib/api/mutations/grid.mutations'
+	} from '$lib/api/mutations/gridSync.mutations'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'

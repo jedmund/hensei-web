@@ -1,17 +1,17 @@
 /**
- * Tests for GridAdapter
+ * Tests for GridWeaponAdapter
  *
- * These tests verify grid item CRUD operations, position management,
+ * These tests verify grid weapon CRUD operations, position management,
  * uncap updates, and conflict resolution functionality.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { GridAdapter } from '../grid.adapter'
-import type { GridWeapon, GridCharacter, GridSummon } from '../grid.adapter'
-import type { Weapon, Character, Summon } from '$lib/types/api/entities'
+import { GridWeaponAdapter } from '../gridWeapon.adapter'
+import type { GridWeapon } from '$lib/types/api/party'
+import type { Weapon } from '$lib/types/api/entities'
 
-describe('GridAdapter', () => {
-	let adapter: GridAdapter
+describe('GridWeaponAdapter', () => {
+	let adapter: GridWeaponAdapter
 	let originalFetch: typeof global.fetch
 
 	const mockWeapon: Weapon = {
@@ -40,38 +40,6 @@ describe('GridAdapter', () => {
 		atk: { minAtk: 200, maxAtk: 1000, maxAtkFlb: 1200, maxAtkUlb: 1400 }
 	}
 
-	const mockCharacter: Character = {
-		id: 'char-1',
-		granblueId: '3040001',
-		name: { en: 'Test Character', ja: 'テストキャラ' },
-		rarity: 5,
-		element: 1,
-		maxLevel: 100,
-		uncap: { flb: true, transcendence: true },
-		special: false,
-		recruits: null,
-		gender: 0,
-		race: { race1: 1, race2: 0 },
-		proficiency: [1],
-		styleSwap: false,
-		hp: { minHp: 150, maxHp: 750, maxHpFlb: 900 },
-		atk: { minAtk: 250, maxAtk: 1250, maxAtkFlb: 1500 }
-	}
-
-	const mockSummon: Summon = {
-		id: 'summon-1',
-		granblueId: '2040001',
-		name: { en: 'Test Summon', ja: 'テスト召喚石' },
-		rarity: 5,
-		element: 1,
-		maxLevel: 150,
-		uncap: { flb: true, ulb: true, transcendence: false },
-		subaura: false,
-		limit: false,
-		hp: { minHp: 100, maxHp: 500, maxHpFlb: 600, maxHpUlb: 700 },
-		atk: { minAtk: 200, maxAtk: 1000, maxAtkFlb: 1200, maxAtkUlb: 1400 }
-	}
-
 	const mockGridWeapon: GridWeapon = {
 		id: 'gw-1',
 		position: 1,
@@ -81,26 +49,9 @@ describe('GridAdapter', () => {
 		weapon: mockWeapon
 	}
 
-	const mockGridCharacter: GridCharacter = {
-		id: 'gc-1',
-		position: 1,
-		uncapLevel: 5,
-		transcendenceStep: 1,
-		character: mockCharacter
-	}
-
-	const mockGridSummon: GridSummon = {
-		id: 'gs-1',
-		position: 1,
-		quickSummon: true,
-		uncapLevel: 5,
-		transcendenceStep: 2,
-		summon: mockSummon
-	}
-
 	beforeEach(() => {
 		originalFetch = global.fetch
-		adapter = new GridAdapter({ baseURL: 'https://api.example.com' })
+		adapter = new GridWeaponAdapter({ baseURL: 'https://api.example.com' })
 	})
 
 	afterEach(() => {
@@ -305,218 +256,6 @@ describe('GridAdapter', () => {
 					})
 				})
 			)
-		})
-	})
-
-	describe('character operations', () => {
-		it('should create a grid character', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ gridCharacter: mockGridCharacter })
-			})
-
-			const result = await adapter.createCharacter({
-				partyId: 'party-1',
-				characterId: 'char-1',
-				position: 1
-			})
-
-			expect(result).toEqual(mockGridCharacter)
-			expect(global.fetch).toHaveBeenCalledWith(
-				'https://api.example.com/grid_characters',
-				expect.objectContaining({
-					method: 'POST',
-					body: JSON.stringify({
-						character: {
-							party_id: 'party-1',
-							character_id: 'char-1',
-							position: 1
-						}
-					})
-				})
-			)
-		})
-
-		it('should update character position', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ gridCharacter: { ...mockGridCharacter, position: 2 } })
-			})
-
-			const result = await adapter.updateCharacterPosition({
-				partyId: 'party-1',
-				id: 'gc-1',
-				position: 2
-			})
-
-			expect(result.position).toBe(2)
-			expect(global.fetch).toHaveBeenCalledWith(
-				'https://api.example.com/parties/party-1/grid_characters/gc-1/position',
-				expect.objectContaining({
-					method: 'PUT',
-					body: JSON.stringify({ position: 2 })
-				})
-			)
-		})
-
-		it('should swap character positions', async () => {
-			const mockResponse = {
-				source: mockGridCharacter,
-				target: { ...mockGridCharacter, id: 'gc-2', position: 2 }
-			}
-
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => mockResponse
-			})
-
-			const result = await adapter.swapCharacters({
-				partyId: 'party-1',
-				sourceId: 'gc-1',
-				targetId: 'gc-2'
-			})
-
-			expect(result).toEqual(mockResponse)
-			expect(global.fetch).toHaveBeenCalledWith(
-				'https://api.example.com/parties/party-1/grid_characters/swap',
-				expect.objectContaining({
-					method: 'POST',
-					body: JSON.stringify({
-						source_id: 'gc-1',
-						target_id: 'gc-2'
-					})
-				})
-			)
-		})
-	})
-
-	describe('summon operations', () => {
-		it('should create a grid summon', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ gridSummon: mockGridSummon })
-			})
-
-			const result = await adapter.createSummon({
-				partyId: 'party-1',
-				summonId: 'summon-1',
-				position: 1,
-				quickSummon: true
-			})
-
-			expect(result).toEqual(mockGridSummon)
-			expect(global.fetch).toHaveBeenCalledWith(
-				'https://api.example.com/grid_summons',
-				expect.objectContaining({
-					method: 'POST',
-					body: JSON.stringify({
-						summon: {
-							party_id: 'party-1',
-							summon_id: 'summon-1',
-							position: 1,
-							quick_summon: true
-						}
-					})
-				})
-			)
-		})
-
-		it('should update quick summon', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ ...mockGridSummon, quickSummon: false })
-			})
-
-			const result = await adapter.updateQuickSummon({
-				id: 'gs-1',
-				partyId: 'party-1',
-				quickSummon: false
-			})
-
-			expect(result.quickSummon).toBe(false)
-			expect(global.fetch).toHaveBeenCalledWith(
-				'https://api.example.com/grid_summons/update_quick_summon',
-				expect.objectContaining({
-					method: 'POST',
-					body: JSON.stringify({
-						summon: {
-							id: 'gs-1',
-							party_id: 'party-1',
-							quick_summon: false
-						}
-					})
-				})
-			)
-		})
-
-		it('should update summon position', async () => {
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => ({ gridSummon: { ...mockGridSummon, position: 2 } })
-			})
-
-			const result = await adapter.updateSummonPosition({
-				partyId: 'party-1',
-				id: 'gs-1',
-				position: 2
-			})
-
-			expect(result.position).toBe(2)
-			expect(global.fetch).toHaveBeenCalledWith(
-				'https://api.example.com/parties/party-1/grid_summons/gs-1/position',
-				expect.objectContaining({
-					method: 'PUT',
-					body: JSON.stringify({ position: 2 })
-				})
-			)
-		})
-
-		it('should swap summon positions', async () => {
-			const mockResponse = {
-				source: mockGridSummon,
-				target: { ...mockGridSummon, id: 'gs-2', position: 2 }
-			}
-
-			global.fetch = vi.fn().mockResolvedValue({
-				ok: true,
-				json: async () => mockResponse
-			})
-
-			const result = await adapter.swapSummons({
-				partyId: 'party-1',
-				sourceId: 'gs-1',
-				targetId: 'gs-2'
-			})
-
-			expect(result).toEqual(mockResponse)
-			expect(global.fetch).toHaveBeenCalledWith(
-				'https://api.example.com/parties/party-1/grid_summons/swap',
-				expect.objectContaining({
-					method: 'POST',
-					body: JSON.stringify({
-						source_id: 'gs-1',
-						target_id: 'gs-2'
-					})
-				})
-			)
-		})
-	})
-
-	describe('cache management', () => {
-		it('should clear grid cache', () => {
-			const clearCacheSpy = vi.spyOn(adapter, 'clearCache')
-
-			adapter.clearGridCache('party-1')
-
-			expect(clearCacheSpy).toHaveBeenCalledWith('/parties/party-1/grid')
-		})
-
-		it('should clear all grid caches', () => {
-			const clearCacheSpy = vi.spyOn(adapter, 'clearCache')
-
-			adapter.clearGridCache()
-
-			expect(clearCacheSpy).toHaveBeenCalledWith('/grid')
 		})
 	})
 

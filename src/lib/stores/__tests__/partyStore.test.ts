@@ -1,15 +1,21 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 
-vi.mock('$lib/api/adapters/grid.adapter', () => ({
-	gridAdapter: {
-		updateCharacter: vi.fn(),
+vi.mock('$lib/api/adapters/gridCharacter.adapter', () => ({
+	gridCharacterAdapter: {
+		updateCharacter: vi.fn()
+	}
+}))
+
+vi.mock('$lib/api/adapters/gridWeapon.adapter', () => ({
+	gridWeaponAdapter: {
 		updateWeapon: vi.fn()
 	}
 }))
 
 const { partyStore } = await import('../partyStore.svelte')
-const { gridAdapter } = await import('$lib/api/adapters/grid.adapter')
+const { gridCharacterAdapter } = await import('$lib/api/adapters/gridCharacter.adapter')
+const { gridWeaponAdapter } = await import('$lib/api/adapters/gridWeapon.adapter')
 
 // ============================================================================
 // Helpers
@@ -142,12 +148,12 @@ describe('updateCharacter', () => {
 	it('optimistically updates then applies server response', async () => {
 		partyStore.setParty(makeParty())
 		const serverResponse = { ...makeCharacter('c-1', 0), uncapLevel: 5 }
-		vi.mocked(gridAdapter.updateCharacter).mockResolvedValue(serverResponse)
+		vi.mocked(gridCharacterAdapter.updateCharacter).mockResolvedValue(serverResponse)
 
 		const result = await partyStore.updateCharacter('c-1', { uncapLevel: 5 })
 
 		expect(result.uncapLevel).toBe(5)
-		expect(gridAdapter.updateCharacter).toHaveBeenCalledWith('c-1', { uncapLevel: 5 })
+		expect(gridCharacterAdapter.updateCharacter).toHaveBeenCalledWith('c-1', { uncapLevel: 5 })
 		expect(partyStore.getCharacter('c-1')?.uncapLevel).toBe(5)
 	})
 })
@@ -156,11 +162,11 @@ describe('updateWeapon', () => {
 	it('optimistically updates then applies server response', async () => {
 		partyStore.setParty(makeParty())
 		const serverResponse = { ...makeWeapon('w-1', 0), element: 3 }
-		vi.mocked(gridAdapter.updateWeapon).mockResolvedValue(serverResponse)
+		vi.mocked(gridWeaponAdapter.updateWeapon).mockResolvedValue(serverResponse)
 
 		const result = await partyStore.updateWeapon('w-1', { element: 3 })
 
 		expect(result.element).toBe(3)
-		expect(gridAdapter.updateWeapon).toHaveBeenCalledWith('w-1', { element: 3 })
+		expect(gridWeaponAdapter.updateWeapon).toHaveBeenCalledWith('w-1', { element: 3 })
 	})
 })

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { JobSkill } from '$lib/types/api/entities'
-	import { getJobSkillIcon } from '$lib/utils/images'
+	import { getJobSkillIcon } from '$lib/utils/images/icons'
 	import { localizedName } from '$lib/utils/locale'
 	import * as m from '$lib/paraglide/messages'
 

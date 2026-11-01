@@ -6,7 +6,7 @@
 	 * quantity support (users can own multiple copies).
 	 */
 	import { localizedName } from '$lib/utils/locale'
-	import { getSummonImage } from '$lib/utils/images'
+	import { getSummonImage } from '$lib/utils/images/summons'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import QuantityCounter from './QuantityCounter.svelte'
 	import type { SearchPageResult } from '$lib/api/queries/search.queries'

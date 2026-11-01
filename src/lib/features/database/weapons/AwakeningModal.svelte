@@ -12,7 +12,7 @@
 		useDeleteAwakening,
 		useUploadAwakeningImage
 	} from '$lib/api/mutations/awakening.mutations'
-	import { getBasePath } from '$lib/utils/images'
+	import { getBasePath } from '$lib/utils/images/core'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 
