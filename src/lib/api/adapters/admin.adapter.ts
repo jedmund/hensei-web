@@ -43,10 +43,13 @@ export class AdminAdapter extends BaseAdapter {
 		params: AdminListParams,
 		options?: RequestOptions
 	): Promise<AdminListResponse<T>> {
-		const response = await this.request<Partial<AdminListResponse<T>>>(`/admin/${resource}`, {
-			...options,
-			query: toAdminListQuery(params)
-		})
+		const response = await this.request<Partial<AdminListResponse<T>>>(
+			`/admin/${resource.replaceAll('-', '_')}`,
+			{
+				...options,
+				query: toAdminListQuery(params)
+			}
+		)
 		const meta = response.meta
 		return {
 			results: response.results ?? [],

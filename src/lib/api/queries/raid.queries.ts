@@ -54,6 +54,21 @@ export const raidQueries = {
 			enabled: !!slug,
 			staleTime: 1000 * 60 * 60, // 1 hour
 			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+		}),
+
+	/**
+	 * Single raid group, with its raids
+	 *
+	 * @param id - Raid group id
+	 * @returns Query options for fetching a single raid group
+	 */
+	group: (id: string) =>
+		queryOptions({
+			queryKey: ['raids', 'groups', id] as const,
+			queryFn: () => raidAdapter.getGroupById(id),
+			enabled: !!id,
+			staleTime: 1000 * 60 * 60, // 1 hour
+			gcTime: 1000 * 60 * 60 * 24 // 24 hours
 		})
 }
 
@@ -63,5 +78,6 @@ export const raidQueries = {
 export const raidKeys = {
 	all: ['raids'] as const,
 	groups: () => [...raidKeys.all, 'groups'] as const,
+	group: (id: string) => [...raidKeys.groups(), id] as const,
 	detail: (slug: string) => [...raidKeys.all, slug] as const
 }

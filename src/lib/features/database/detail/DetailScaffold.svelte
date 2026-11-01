@@ -6,7 +6,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import type { Snippet } from 'svelte'
 
-	export type DetailTab = 'info' | 'skills' | 'images' | 'raw'
+	export type DetailTab = 'info' | 'skills' | 'images' | 'raw' | 'picks'
 
 	export type DetailEntityType = 'character' | 'summon' | 'weapon' | 'job' | 'raid' | 'accessory'
 

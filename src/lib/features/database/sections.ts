@@ -9,8 +9,11 @@
  * separate page, so each record set has one list UI.
  */
 import { m } from '$lib/paraglide/messages'
-import { ADMIN_ROLE, CURATOR_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
+import { ADMIN_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
 import { charactersSection } from './characters/section'
+import { eventsSection } from './events/section'
+import { raidGroupsSection } from './raid-groups/section'
+import { raidsSection } from './raids/section'
 import { weaponsSection } from './weapons/section'
 
 export type SectionGroupId = 'catalogue' | 'battles' | 'site' | 'admin'
@@ -54,6 +57,14 @@ export interface ResourceSection {
 	entity?: () => string
 	/** "New" menu items; an href without a leading slash is relative to the resource's path */
 	actions?: SectionAction[][]
+	/** Nests the resource under another section in the sidebar (e.g. raid groups under raids) */
+	parent?: string
+	/**
+	 * Lowest role that sees the section and opens the resource's list and
+	 * detail pages (see `resourceMinRole`). Defaults to editor; the edit and
+	 * new pages are editor-only whatever this says.
+	 */
+	minRole?: number
 	/** Sub-sections that are `?view=` tabs on the resource's list */
 	views?: Array<Pick<DatabaseSection, 'id' | 'label' | 'view' | 'matches'>>
 }
@@ -148,35 +159,9 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 	},
 
 	// Battles & events
-	{
-		id: 'raids',
-		label: () => m.nav_raids(),
-		path: '/database/raids',
-		group: 'battles',
-		entity: () => m.type_raid(),
-		actions: [
-			[
-				{ label: () => m.nav_new_raid(), href: '/database/raids/new' },
-				{ label: () => m.nav_new_raid_group(), href: '/database/raid-groups/new' }
-			]
-		]
-	},
-	{
-		id: 'raid-groups',
-		label: () => m.db_nav_groups(),
-		path: '/database/raids',
-		view: 'groups',
-		group: 'battles',
-		parent: 'raids',
-		matches: ['/database/raid-groups']
-	},
-	{
-		id: 'events',
-		label: () => m.nav_events(),
-		path: '/database/events',
-		group: 'battles',
-		minRole: CURATOR_ROLE
-	},
+	...resourceSections('raids', raidsSection),
+	...resourceSections('raid-groups', raidGroupsSection),
+	...resourceSections('events', eventsSection),
 
 	// Site
 	{
@@ -224,6 +209,15 @@ export function resourceSections(name: string, section: ResourceSection): Databa
 		},
 		...views.map((view) => ({ ...view, path, group: section.group, parent: name }))
 	]
+}
+
+/**
+ * The lowest role that opens a resource's list and detail pages: its
+ * section's `minRole`, else editor. Read from the sections, not the
+ * definitions, so the database layout's role gate stays light.
+ */
+export function resourceMinRole(name: string): number {
+	return sectionById(name)?.minRole ?? EDITOR_ROLE
 }
 
 export function sectionHref(section: DatabaseSection): string {

@@ -6,6 +6,8 @@
 import type { Component } from 'svelte'
 import CharacterRelatedUnits from '$lib/features/database/characters/detail/CharacterRelatedUnits.svelte'
 import CharacterUncap from '$lib/features/database/characters/detail/CharacterUncap.svelte'
+import EventRaids from '$lib/features/database/events/detail/EventRaids.svelte'
+import RaidGroupRaids from '$lib/features/database/raid-groups/detail/RaidGroupRaids.svelte'
 import BulletSlots from '$lib/features/database/weapons/detail/BulletSlots.svelte'
 import ElementVariantIds from '$lib/features/database/weapons/detail/ElementVariantIds.svelte'
 import WeaponAwakenings from '$lib/features/database/weapons/detail/WeaponAwakenings.svelte'
@@ -22,5 +24,7 @@ export const DETAIL_COMPONENTS: Record<ComponentName, Component<{ record: any }>
 	elementVariantIds: ElementVariantIds,
 	bulletSlots: BulletSlots,
 	characterUncap: CharacterUncap,
-	characterRelated: CharacterRelatedUnits
+	characterRelated: CharacterRelatedUnits,
+	raidGroupRaids: RaidGroupRaids,
+	eventRaids: EventRaids
 }

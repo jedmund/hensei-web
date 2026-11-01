@@ -1,0 +1,224 @@
+{
+	"search": ["name_en", "name_jp"],
+	"filters": {
+		"kind": {
+			"type": "string",
+			"facet": true,
+			"list": true,
+			"range": false
+		},
+		"series": {
+			"type": "string",
+			"facet": true,
+			"list": true,
+			"range": false
+		},
+		"status": {
+			"type": "string",
+			"facet": true,
+			"list": true,
+			"range": false
+		},
+		"element": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"event_number": {
+			"type": "integer",
+			"facet": false,
+			"list": true,
+			"range": true
+		},
+		"starts_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		},
+		"ends_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		},
+		"created_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		},
+		"updated_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		}
+	},
+	"flags": [],
+	"sorts": [
+		"name_en",
+		"name_jp",
+		"kind",
+		"event_number",
+		"starts_at",
+		"ends_at",
+		"updated_at",
+		"created_at"
+	],
+	"default_sort": ["-starts_at"],
+	"fields": [
+		"id",
+		"name_en",
+		"name_jp",
+		"kind",
+		"series",
+		"status",
+		"event_number",
+		"starts_at",
+		"ends_at",
+		"image_key",
+		"created_at",
+		"updated_at",
+		"element",
+		"raid_count"
+	],
+	"default_fields": [
+		"id",
+		"name_en",
+		"name_jp",
+		"kind",
+		"element",
+		"event_number",
+		"starts_at",
+		"ends_at",
+		"raid_count"
+	],
+	"writable": {
+		"name_en": "scalar",
+		"name_jp": "scalar",
+		"kind": "scalar",
+		"series": "scalar",
+		"element": "scalar",
+		"starts_at": "scalar",
+		"ends_at": "scalar",
+		"event_number": "scalar",
+		"raid_ids": "array"
+	},
+	"enums": {
+		"kind": {
+			"story_event": 0,
+			"rerun": 1,
+			"collab": 2,
+			"unite_and_fight": 3,
+			"dread_barrage": 4,
+			"farming": 5,
+			"alchemy": 6,
+			"other": 7
+		},
+		"series": {
+			"unite_and_fight": "unite_and_fight",
+			"dread_barrage": "dread_barrage",
+			"rise_of_the_beasts": "rise_of_the_beasts",
+			"records_of_the_ten": "records_of_the_ten"
+		},
+		"status": {
+			"draft": 0,
+			"approved": 1,
+			"hidden": 2
+		},
+		"element": {
+			"Null": 0,
+			"Fire": 1,
+			"Water": 2,
+			"Earth": 3,
+			"Wind": 4,
+			"Light": 5,
+			"Dark": 6
+		}
+	},
+	"validators": {
+		"kind": [
+			{
+				"kind": "inclusion",
+				"in": [
+					"story_event",
+					"rerun",
+					"collab",
+					"unite_and_fight",
+					"dread_barrage",
+					"farming",
+					"alchemy",
+					"other"
+				]
+			}
+		],
+		"status": [
+			{
+				"kind": "inclusion",
+				"in": ["draft", "approved", "hidden"]
+			}
+		],
+		"element": [
+			{
+				"kind": "inclusion",
+				"in": ["Null", "Fire", "Water", "Earth", "Wind", "Light", "Dark"],
+				"allow_nil": true
+			},
+			{
+				"kind": "presence",
+				"conditional": true
+			}
+		],
+		"name_en": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "length",
+				"maximum": 255
+			}
+		],
+		"name_jp": [
+			{
+				"kind": "length",
+				"maximum": 255
+			}
+		],
+		"starts_at": [
+			{
+				"kind": "presence"
+			}
+		],
+		"ends_at": [
+			{
+				"kind": "presence"
+			}
+		],
+		"series": [
+			{
+				"kind": "inclusion",
+				"in": ["unite_and_fight", "dread_barrage", "rise_of_the_beasts", "records_of_the_ten"],
+				"allow_nil": true
+			}
+		],
+		"event_number": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than": 0,
+				"allow_nil": true
+			},
+			{
+				"kind": "uniqueness",
+				"conditional": true,
+				"allow_nil": true
+			},
+			{
+				"kind": "presence",
+				"conditional": true
+			}
+		]
+	}
+}

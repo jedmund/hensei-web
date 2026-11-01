@@ -1,0 +1,161 @@
+{
+	"search": ["name_en", "name_jp"],
+	"filters": {
+		"section": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"difficulty": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"hl": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"extra": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"guidebooks": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"unlimited": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"support_summon": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"created_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		},
+		"updated_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		}
+	},
+	"flags": [],
+	"sorts": ["name_en", "name_jp", "section", "order", "difficulty", "updated_at", "created_at"],
+	"default_sort": ["section", "order"],
+	"fields": [
+		"id",
+		"name_en",
+		"name_jp",
+		"section",
+		"order",
+		"difficulty",
+		"hl",
+		"extra",
+		"guidebooks",
+		"unlimited",
+		"support_summon",
+		"content_mode",
+		"created_at",
+		"updated_at",
+		"raid_count",
+		"player_counts"
+	],
+	"default_fields": [
+		"id",
+		"name_en",
+		"name_jp",
+		"section",
+		"order",
+		"difficulty",
+		"hl",
+		"extra",
+		"guidebooks",
+		"unlimited",
+		"support_summon",
+		"raid_count",
+		"player_counts"
+	],
+	"writable": {
+		"name_en": "scalar",
+		"name_jp": "scalar",
+		"difficulty": "scalar",
+		"order": "scalar",
+		"section": "scalar",
+		"extra": "scalar",
+		"hl": "scalar",
+		"guidebooks": "scalar",
+		"unlimited": "scalar",
+		"support_summon": "scalar"
+	},
+	"enums": {
+		"section": {
+			"farming": 0,
+			"raid": 1,
+			"event": 2,
+			"solo": 3
+		}
+	},
+	"validators": {
+		"name_en": [
+			{
+				"kind": "presence"
+			}
+		],
+		"name_jp": [
+			{
+				"kind": "presence"
+			}
+		],
+		"order": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0
+			}
+		],
+		"section": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "inclusion",
+				"in": [0, 1, 2, 3]
+			}
+		],
+		"difficulty": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"content_mode": [
+			{
+				"kind": "inclusion",
+				"in": ["solomonis"],
+				"allow_nil": true
+			}
+		]
+	}
+}

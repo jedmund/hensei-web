@@ -27,7 +27,13 @@
  * - Unknown filter, sort, field or facet → 422 { error }.
  */
 
-export type AdminResource = 'weapons' | 'characters' | 'summons'
+import type { ResourceName } from '$lib/features/database/schema/names'
+
+/**
+ * Route segments: the registered resources, and summons (not yet migrated).
+ * The API path is the segment in snake_case (`raid-groups` → `/admin/raid_groups`)
+ */
+export type AdminResource = ResourceName | 'summons'
 
 export type AdminFilterValue = string[] | boolean | { gte?: string; lte?: string }
 
@@ -132,4 +138,81 @@ export interface AdminCharacterRow {
 	series?: AdminCharacterSeriesRef[]
 	skillCount?: number
 	createdAt?: string
+}
+
+/** A raid's group, as `GET /admin/raids` returns it in `group` */
+export interface AdminRaidGroupRef {
+	id: string
+	nameEn: string | null
+	nameJp: string | null
+	section: number
+	order: number
+}
+
+/**
+ * Raid row from `GET /admin/raids`. The default order is the raid's group
+ * (section, then order), then element, then level.
+ */
+export interface AdminRaidRow {
+	id: string
+	slug: string
+	nameEn: string | null
+	nameJp: string | null
+	level: number | null
+	element: number | null
+	playerCount: number
+	group: AdminRaidGroupRef | null
+	updatedAt: string
+	// Not in the default list: request via `fields`
+	extra?: boolean | null
+	enemyId?: number | null
+	summonId?: number | null
+	questId?: number | null
+	releasedAt?: string | null
+	groupId?: string
+	createdAt?: string
+}
+
+/** Raid group row from `GET /admin/raid_groups` */
+export interface AdminRaidGroupRow {
+	id: string
+	nameEn: string
+	nameJp: string
+	section: number
+	order: number
+	difficulty: number | null
+	hl: boolean
+	extra: boolean
+	guidebooks: boolean
+	unlimited: boolean
+	supportSummon: boolean
+	raidCount: number
+	/** Distinct player counts of its raids, ascending */
+	playerCounts: number[]
+	// Not in the default list: request via `fields`
+	contentMode?: string | null
+	createdAt?: string
+	updatedAt?: string
+}
+
+/**
+ * Event row from `GET /admin/events` (curators and editors). Kinds, series
+ * and statuses are names; the element is the boss's, as an integer.
+ */
+export interface AdminEventRow {
+	id: string
+	nameEn: string
+	nameJp: string | null
+	kind: string
+	element: number | null
+	eventNumber: number | null
+	startsAt: string
+	endsAt: string
+	raidCount: number
+	// Not in the default list: request via `fields`
+	series?: string | null
+	status?: string
+	imageKey?: string | null
+	createdAt?: string
+	updatedAt?: string
 }

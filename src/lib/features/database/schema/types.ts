@@ -50,13 +50,15 @@ export type ComponentName =
 	| 'bulletSlots'
 	| 'characterUncap'
 	| 'characterRelated'
+	| 'raidGroupRaids'
+	| 'eventRaids'
 
 /**
  * Form inputs the edit and create forms resolve by name, for values no
  * built-in input edits (or, on a read-only field, a live preview)
  */
 export type InputName =
-	'uncapIndicator' | 'weaponAwakenings' | 'elementVariantIds' | 'characterUncap'
+	'uncapIndicator' | 'weaponAwakenings' | 'elementVariantIds' | 'characterUncap' | 'eventRaids'
 
 /**
  * How an empty value ('', null, undefined, [] or {}) is sent:
@@ -72,7 +74,14 @@ export interface EnumOption {
 
 /** Records a reference points at */
 export type ReferenceResource =
-	'character' | 'weapon' | 'weaponSeries' | 'weaponSeriesVariant' | 'awakening' | 'characterSeries'
+	| 'character'
+	| 'weapon'
+	| 'weaponSeries'
+	| 'weaponSeriesVariant'
+	| 'awakening'
+	| 'characterSeries'
+	| 'raidGroup'
+	| 'raid'
 
 /** Column options. The column id is the field key, the header its label */
 export type ListOptions<Row> = Partial<Omit<ColumnBase<Row>, 'id' | 'header'>> & {
@@ -279,6 +288,11 @@ export interface ListDef<Row> {
 	rowHeight?: RowHeight
 	/** Keep the first column in place while scrolling sideways */
 	pinFirstColumn?: boolean
+	/**
+	 * Old `?view=` values of this list and the pages that replaced them, e.g.
+	 * `{ groups: '/database/raid-groups' }`: the list redirects there
+	 */
+	movedViews?: Record<string, string>
 }
 
 /**
@@ -314,8 +328,8 @@ type Lazy<Props extends Record<string, unknown>> = () => Promise<{ default: Comp
 /**
  * Hand-written screens that replace the generated ones. The detail and the
  * panel are generated when a resource has a `record`, the edit page when it
- * can also `save.update`, and the new page when it can `save.create`. There's
- * no generated list screen yet (the list renders `ResourceTable`), and the
+ * can also `save.update`, and the new page when it can `save.create`. The
+ * list is always generated (`ResourceTable` under the page title), and the
  * generic routes 404 any other screen the resource doesn't have.
  */
 export interface Screens<Full> {
@@ -339,6 +353,8 @@ export type ScreenComponent<K extends ScreenKind, Full = unknown> = Awaited<
 export interface RecordTabProps<Full> {
 	record: Full
 	canEdit: boolean
+	/** The viewer's role, for tabs with rules of their own (staff picks) */
+	role: number
 	/** Reloads the record (e.g. after a re-parse changed it) */
 	refetch: () => void
 }

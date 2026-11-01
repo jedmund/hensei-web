@@ -43,3 +43,11 @@ export function getRaidSectionLabel(section: number | string | null | undefined)
 			return '-'
 	}
 }
+
+/** Orders raid groups as the raid list does: by section, then by order within it */
+export function compareRaidGroups(
+	a: { section: number | string; order: number },
+	b: { section: number | string; order: number }
+): number {
+	return Number(a.section) - Number(b.section) || a.order - b.order
+}
