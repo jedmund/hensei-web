@@ -3,7 +3,7 @@
 	 * Compact rich-text editor for the Role tab's substitution note.
 	 *
 	 * Wraps the headless `EdraEditor` (Tiptap) with the same toolbar styling as
-	 * `EditDescriptionPane` but trimmed to the formats that make sense in a
+	 * `DescriptionToolbar` but trimmed to the formats that make sense in a
 	 * sidebar field: bold / italic / underline / strikethrough / bullet list /
 	 * ordered list. `@`-mentions come for free via the `EntityMention`
 	 * extension that `EdraEditor` already loads.
