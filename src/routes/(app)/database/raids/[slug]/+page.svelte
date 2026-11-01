@@ -220,6 +220,7 @@
 							<DetailItem label="Extra" value={raid.extra ? 'Yes' : 'No'} />
 							<DetailItem label="Guidebooks" value={raid.group.guidebooks ? 'Yes' : 'No'} />
 						{/if}
+						<DetailItem label="Trackable" value={raid.trackable ? 'Yes' : 'No'} />
 					</DetailsContainer>
 				</section>
 			{:else if currentTab === 'images'}

@@ -42,6 +42,17 @@ export const raidQueries = {
 		}),
 
 	/**
+	 * Raids crew members can record their elements for
+	 */
+	trackable: () =>
+		queryOptions({
+			queryKey: ['raids', 'list', { trackable: true }] as const,
+			queryFn: () => raidAdapter.getAll({ trackable: true }),
+			staleTime: 1000 * 60 * 60, // 1 hour
+			gcTime: 1000 * 60 * 60 * 24 // 24 hours
+		}),
+
+	/**
 	 * Single raid by slug
 	 *
 	 * @param slug - Raid slug

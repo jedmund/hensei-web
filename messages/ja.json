@@ -2401,5 +2401,8 @@
 	"event_kind_alchemy": "錬金イベント",
 	"event_kind_other": "その他",
 	"db_events_element_required": "古戦場とドレッドバラージュでは必須",
-	"page_desc_home_events": "開催中のイベントで使える編成をチェック"
+	"page_desc_home_events": "開催中のイベントで使える編成をチェック",
+	"crew_raid_elements": "マルチバトルの属性",
+	"crew_raid_elements_empty": "マルチバトルの属性が未設定です",
+	"crew_raid_elements_save_failed": "属性を保存できませんでした"
 }

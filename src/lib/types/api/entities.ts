@@ -447,6 +447,7 @@ export interface Raid {
 	enemyId?: number
 	summonId?: number
 	questId?: number
+	trackable?: boolean
 	group?: RaidGroup
 }
 

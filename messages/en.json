@@ -2612,5 +2612,8 @@
 	"event_kind_alchemy": "Alchemy",
 	"event_kind_other": "Other",
 	"db_events_element_required": "Required for Unite and Fight and Dread Barrage",
-	"page_desc_home_events": "Teams for the events running in Granblue Fantasy right now"
+	"page_desc_home_events": "Teams for the events running in Granblue Fantasy right now",
+	"crew_raid_elements": "Raid elements",
+	"crew_raid_elements_empty": "No raid elements yet",
+	"crew_raid_elements_save_failed": "Couldn't save your raid elements"
 }
