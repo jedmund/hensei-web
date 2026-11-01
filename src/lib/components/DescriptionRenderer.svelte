@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { computePosition, flip, shift, offset } from '@floating-ui/dom'
 	import MentionTooltip from '$lib/components/ui/MentionTooltip.svelte'
-	import type { MentionToken } from './edra/extensions/entity-mention/mentions/index.js'
 	import { parseDescription } from '$lib/utils/descriptionHtml'
+	import { useMentionTooltip } from '$lib/composables/mention-tooltip.svelte'
 
 	interface Props {
 		content?: string
@@ -12,73 +11,16 @@
 
 	let { content, truncate = false, maxLines = 3 }: Props = $props()
 
-	// Tooltip state
-	let tooltipEntity: MentionToken | null = $state(null)
-	let tooltipVisible = $state(false)
-	let tooltipEl: HTMLDivElement | null = $state(null)
 	let containerEl: HTMLDivElement | null = $state(null)
 
 	const parsed = $derived(parseDescription(content, truncate))
 	const parsedHTML = $derived(parsed.html)
 	const mentionEntities = $derived(parsed.entities)
 
-	// Suppress tooltips while selecting text
-	let isSelecting = $state(false)
-
-	function handleMouseDown() {
-		isSelecting = true
-		tooltipVisible = false
-		tooltipEntity = null
-	}
-
-	function handleMouseUp() {
-		// Small delay so tooltip doesn't flash immediately after selection ends
-		setTimeout(() => {
-			isSelecting = false
-		}, 100)
-	}
-
-	// Tooltip hover handlers
-	function handleMentionEnter(event: MouseEvent) {
-		if (isSelecting) return
-		const target = (event.target as HTMLElement).closest?.('.mention[data-mention-index]')
-		if (!target) return
-
-		const index = Number((target as HTMLElement).dataset.mentionIndex)
-		const entity = mentionEntities.get(index)
-		if (!entity) return
-
-		tooltipEntity = entity
-		tooltipVisible = true
-
-		// Position tooltip using Floating UI
-		requestAnimationFrame(() => {
-			if (!tooltipEl) return
-			computePosition(target as HTMLElement, tooltipEl, {
-				placement: 'top',
-				middleware: [offset(8), flip(), shift({ padding: 8 })]
-			}).then(({ x, y }) => {
-				if (tooltipEl) {
-					tooltipEl.style.left = `${x}px`
-					tooltipEl.style.top = `${y}px`
-				}
-			})
-		})
-	}
-
-	function handleMentionLeave(event: MouseEvent) {
-		const related = event.relatedTarget as HTMLElement | null
-		if (related?.closest?.('.mention-tooltip-wrapper')) return
-		tooltipVisible = false
-		tooltipEntity = null
-	}
-
-	function handleTooltipLeave(event: MouseEvent) {
-		const related = event.relatedTarget as HTMLElement | null
-		if (related?.closest?.('.mention[data-mention-index]')) return
-		tooltipVisible = false
-		tooltipEntity = null
-	}
+	const tooltip = useMentionTooltip({
+		selector: '.mention[data-mention-index]',
+		resolve: (target) => mentionEntities.get(Number(target.dataset.mentionIndex)) ?? null
+	})
 </script>
 
 <!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -87,20 +29,24 @@
 	class:truncate
 	style={truncate ? `--max-lines: ${maxLines}` : ''}
 	bind:this={containerEl}
-	onmousedown={handleMouseDown}
-	onmouseup={handleMouseUp}
-	onmouseenter={handleMentionEnter}
-	onmouseover={handleMentionEnter}
-	onmouseleave={handleMentionLeave}
+	onmousedown={tooltip.handleMouseDown}
+	onmouseup={tooltip.handleMouseUp}
+	onmouseenter={tooltip.handleMentionEnter}
+	onmouseover={tooltip.handleMentionEnter}
+	onmouseleave={tooltip.handleMentionLeave}
 >
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html parsedHTML}
 </div>
 
-{#if tooltipEntity}
+{#if tooltip.entity}
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="mention-tooltip-wrapper" bind:this={tooltipEl} onmouseleave={handleTooltipLeave}>
-		<MentionTooltip entity={tooltipEntity} visible={tooltipVisible} />
+	<div
+		class="mention-tooltip-wrapper"
+		bind:this={tooltip.el}
+		onmouseleave={tooltip.handleTooltipLeave}
+	>
+		<MentionTooltip entity={tooltip.entity} visible={tooltip.visible} />
 	</div>
 {/if}
 
