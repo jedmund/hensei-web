@@ -13,7 +13,7 @@ import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party
 import { canCharacterBeModified } from '$lib/utils/modificationDetector'
 import * as m from '$lib/paraglide/messages'
 
-interface DetailsSidebarOptions {
+export interface DetailsSidebarOptions {
 	type: 'weapon' | 'character' | 'summon'
 	item: GridCharacter | GridWeapon | GridSummon
 	onSaveWeapon?: (id: string, updates: Partial<GridWeapon>) => Promise<void>

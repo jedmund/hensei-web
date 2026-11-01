@@ -1,14 +1,9 @@
 <script lang="ts">
 	import type { GridCharacter } from '$lib/types/api/party'
 	import { usePartyContext } from '$lib/types/party-context'
-	import { page } from '$app/stores'
 	import Icon from '$lib/components/Icon.svelte'
-	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
-	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
-	import RemoveUnitDialog from './RemoveUnitDialog.svelte'
-	import SubstituteCountBadge from './SubstituteCountBadge.svelte'
-	import BookmarkOverlay from './BookmarkOverlay.svelte'
-	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
+	import UnitFrame from './UnitFrame.svelte'
+	import OrphanedBadge from './OrphanedBadge.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import RichTooltip from '$lib/components/ui/RichTooltip.svelte'
@@ -16,21 +11,16 @@
 	import { getPlaceholderImage } from '$lib/utils/images/core'
 	import { getCharacterImageWithPose } from '$lib/utils/images/characters'
 	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
-	import {
-		openDetailsSidebar,
-		openCharacterEditSidebar
-	} from '$lib/features/details/openDetailsSidebar.svelte'
+	import { openCharacterEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { canCharacterBeModified } from '$lib/utils/modificationDetector'
-	import { canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName } from '$lib/utils/element'
-	import { GridType } from '$lib/types/enums'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 	import perpetuityEmpty from '$src/assets/icons/perpetuity/empty.svg'
 	import * as m from '$lib/paraglide/messages'
-	import { localizedName } from '$lib/utils/locale'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { useUnitActions } from './useUnitActions.svelte'
+
 	interface Props {
 		item?: GridCharacter | undefined
 		position: number
@@ -53,14 +43,19 @@
 
 	const ctx = usePartyContext()
 	const simplePortraits = getSimplePortraits()
+	async function saveCharacter(id: string, updates: Partial<GridCharacter>) {
+		const party = ctx.getParty()
+		await ctx.services.gridService.updateCharacter(party.id, id, updates)
+	}
+
 	const actions = useUnitActions({
 		type: 'character',
 		ctx,
 		item: () => item,
 		position: () => position,
-		entity: () => item?.character
+		entity: () => item?.character,
+		details: { onSaveCharacter: saveCharacter }
 	})
-	const { remove, replace } = actions
 
 	// Use $derived to ensure consistent computation between server and client
 	let imageUrl = $derived.by(() => {
@@ -84,13 +79,6 @@
 		)
 	})
 
-	let isActive = $derived(actions.isActive)
-
-	// Check if this empty slot is currently selected for adding an item
-	let isEmptySelected = $derived(
-		!item && ctx?.getSelectedSlot?.() === position && ctx?.getActiveTab?.() === GridType.Character
-	)
-
 	// Determine element class for focus ring
 	let elementClass = $derived(
 		getElementClassName(item?.character?.element || mainWeaponElement || partyElement)
@@ -98,39 +86,10 @@
 
 	let canEditItem = $derived(canCharacterBeModified(item))
 
-	function getSaveCallback() {
-		return async (id: string, updates: Partial<GridCharacter>) => {
-			const party = ctx.getParty()
-			await ctx.services.gridService.updateCharacter(party.id, id, updates)
-		}
-	}
-
-	function viewDetails() {
-		if (!item) return
-		const party = ctx.getParty()
-		openDetailsSidebar({
-			type: 'character',
-			item,
-			onSaveCharacter: getSaveCallback(),
-			isOwner: ctx?.canEdit() ?? false,
-			onReplace: ctx?.canEdit() ? replace : undefined,
-			onRemove: ctx?.canEdit() ? remove : undefined,
-			partyId: party?.id,
-			partyShortcode: party?.shortcode
-		})
-	}
-
 	function editItem() {
 		if (!item) return
-		const party = ctx.getParty()
-		openCharacterEditSidebar(item, getSaveCallback(), {
-			partyId: party?.id,
-			partyShortcode: party?.shortcode
-		})
+		openCharacterEditSidebar(item, saveCharacter, actions.partyRefs())
 	}
-
-	// Check if user can view database (role >= 7)
-	let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
 
 	// Check if character has a style swap variant available
 	let hasStyleVariant = $derived.by(() => {
@@ -205,176 +164,76 @@
 	}
 </script>
 
-<div
-	class="unit {elementClass}"
-	class:empty={!item}
-	class:is-active={isActive}
-	class:orphaned={item?.orphaned}
+<UnitFrame
+	type="character"
+	{item}
+	entity={item?.character}
+	{position}
+	{actions}
+	{elementClass}
+	accentElement={item?.character?.element ?? mainWeaponElement ?? partyElement}
+	{imageUrl}
+	placeholderImage={getPlaceholderImage('character', 'grid')}
+	selected={!item && actions.isSelected}
+	{notInCollection}
+	{inCollection}
+	onEdit={canEditItem ? editItem : undefined}
+	uncap={{
+		special: item?.character?.special,
+		maxTranscendenceStage: item?.character?.uncap?.maxTranscendenceStage
+	}}
+	rekeyUncap
+	frameClass="character cell"
 >
-	{#if item}
-		<UnitMenuContainer showGearButton={true} gearPosition="top-right">
-			{#snippet trigger()}
-				<div
-					class="focus-ring-wrapper {elementClass}"
-					class:is-active={isActive}
-					class:editable={ctx?.canEdit()}
-				>
-					{#key item?.id ?? position}
-						<div
-							class="frame character cell {elementClass}"
-							class:editable={ctx?.canEdit()}
-							class:is-active={isActive}
-							class:not-in-collection={notInCollection}
-							role="button"
-							tabindex="0"
-							onclick={() => viewDetails()}
-							onkeydown={(e) => {
-								if (e.key === 'Enter' || e.key === ' ') {
-									e.preventDefault()
-									viewDetails()
-								}
-							}}
-						>
-							{#if ctx?.canEdit()}
-								<button
-									class="perpetuity"
-									class:active={item.perpetuity}
-									onclick={togglePerpetuity}
-									title={item.perpetuity
-										? m.tooltip_remove_perpetuity_ring()
-										: m.tooltip_add_perpetuity_ring()}
-								>
-									<img
-										class="perpetuity-icon filled"
-										src={perpetuityFilled}
-										alt={m.label_perpetuity_ring()}
-									/>
-									<img
-										class="perpetuity-icon empty"
-										src={perpetuityEmpty}
-										alt={m.tooltip_add_perpetuity_ring()}
-									/>
-								</button>
-							{:else if item.perpetuity}
-								<img
-									class="perpetuity static"
-									src={perpetuityFilled}
-									alt={m.label_perpetuity_ring()}
-									title={m.label_perpetuity_ring()}
-								/>
-							{/if}
-							{#if item?.orphaned}
-								<div class="orphaned-badge" title={m.tooltip_not_in_collection()}>
-									<Icon name="alertTriangle" size={16} />
-								</div>
-							{/if}
-							{#if hasStyleVariant && ctx?.canEdit()}
-								<span class="style-switch-wrapper">
-									<Tooltip content="Swap styles">
-										<button class="style-switch" onclick={switchStyle}>
-											<Icon name="swap" size={14} />
-										</button>
-									</Tooltip>
-								</span>
-							{/if}
-							{#if imageUrl}
-								<img
-									class="image {elementClass}"
-									class:placeholder={!item?.character?.granblueId}
-									class:not-in-collection={notInCollection}
-									alt={localizedName(item?.character?.name)}
-									src={imageUrl}
-								/>
-							{/if}
-						</div>
-					{/key}
-					{#if inCollection}
-						<BookmarkOverlay
-							element={item?.character?.element ?? mainWeaponElement ?? partyElement}
-						/>
-					{/if}
-				</div>
-			{/snippet}
-
-			{#snippet menu(variant: 'context' | 'dropdown')}
-				<MenuItems
-					{variant}
-					onEdit={canEditItem ? editItem : undefined}
-					onViewDetails={viewDetails}
-					onViewInDatabase={canViewDatabase ? actions.viewInDatabase : undefined}
-					onViewTeams={actions.viewTeams}
-					onAddToTeamsView={actions.isTeamsPaneOpen ? actions.addToTeamsView : undefined}
-					onReplace={ctx?.canEdit() ? replace : undefined}
-					onRemove={ctx?.canEdit() ? remove : undefined}
-					canEdit={ctx?.canEdit()}
-					editLabel={m.context_edit({ type: m.type_character() })}
-					viewDetailsLabel={m.context_view_details()}
-					viewInDatabaseLabel={m.context_view_in_database()}
-					viewTeamsLabel={m.context_view_teams_character()}
-					addToTeamsViewLabel={m.context_add_to_teams_view()}
-					replaceLabel={m.context_replace({ type: m.type_character() })}
-					removeLabel={m.context_remove()}
-				/>
-			{/snippet}
-		</UnitMenuContainer>
-	{:else}
-		{#key `empty-${position}`}
-			<div
-				class="frame character cell"
-				class:editable={ctx?.canEdit()}
-				class:is-selected={isEmptySelected}
-				role="button"
-				tabindex="0"
-				onclick={() =>
-					ctx?.canEdit() &&
-					ctx?.openPicker &&
-					ctx.openPicker({ type: 'character', position, item })}
-				onkeydown={(e) => {
-					if (e.key === 'Enter' || e.key === ' ') {
-						e.preventDefault()
-						if (ctx?.canEdit() && ctx?.openPicker)
-							ctx.openPicker({ type: 'character', position, item })
-					}
-				}}
+	{#snippet badges()}
+		{#if item && ctx?.canEdit()}
+			<button
+				class="perpetuity"
+				class:active={item.perpetuity}
+				onclick={togglePerpetuity}
+				title={item.perpetuity
+					? m.tooltip_remove_perpetuity_ring()
+					: m.tooltip_add_perpetuity_ring()}
 			>
-				<img class="image placeholder" alt="" src={getPlaceholderImage('character', 'grid')} />
-				{#if ctx?.canEdit()}
-					<span class="icon">
-						<Icon name="plus" size={24} />
-					</span>
-				{/if}
-			</div>
-		{/key}
-	{/if}
-	{#key item?.id}
-		{#if item}
-			<UncapIndicator
-				type="character"
-				uncapLevel={item.uncapLevel}
-				transcendenceStage={item.transcendenceStep}
-				special={item.character?.special}
-				flb={item.character?.uncap?.flb}
-				ulb={item.character?.uncap?.ulb}
-				transcendence={item.character?.uncap?.transcendence}
-				maxTranscendenceStage={item.character?.uncap?.maxTranscendenceStage}
-				editable={ctx?.canEdit()}
-				updateUncap={actions.updateUncap}
-				updateTranscendence={actions.updateTranscendence}
+				<img
+					class="perpetuity-icon filled"
+					src={perpetuityFilled}
+					alt={m.label_perpetuity_ring()}
+				/>
+				<img
+					class="perpetuity-icon empty"
+					src={perpetuityEmpty}
+					alt={m.tooltip_add_perpetuity_ring()}
+				/>
+			</button>
+		{:else if item?.perpetuity}
+			<img
+				class="perpetuity static"
+				src={perpetuityFilled}
+				alt={m.label_perpetuity_ring()}
+				title={m.label_perpetuity_ring()}
 			/>
 		{/if}
-	{/key}
-	<div class="name" class:not-in-collection={notInCollection}>
-		<span class="name-text">{item ? localizedName(item?.character?.name) : ''}</span>
+		{#if item?.orphaned}
+			<OrphanedBadge />
+		{/if}
+		{#if hasStyleVariant && ctx?.canEdit()}
+			<span class="style-switch-wrapper">
+				<Tooltip content="Swap styles">
+					<button class="style-switch" onclick={switchStyle}>
+						<Icon name="swap" size={14} />
+					</button>
+				</Tooltip>
+			</span>
+		{/if}
+	{/snippet}
+
+	{#snippet nameExtras()}
 		{#if item?.artifact}
 			<Icon name="gem" size={12} class="artifact-indicator" />
 		{/if}
-		{#if item}
-			<SubstituteCountBadge
-				count={item.substitutions?.length ?? 0}
-				element={item.character?.element ?? mainWeaponElement ?? partyElement}
-			/>
-		{/if}
-	</div>
+	{/snippet}
+
 	{#if item?.character}
 		<CharacterTags character={item.character} />
 	{/if}
@@ -412,7 +271,7 @@
 			{/each}
 		</div>
 	{/if}
-</div>
+</UnitFrame>
 
 {#snippet FaSkillIcon(iconUrl: string | null, name: string)}
 	{#if iconUrl}
@@ -428,39 +287,11 @@
 	{/if}
 {/snippet}
 
-<RemoveUnitDialog
-	bind:open={actions.removeConfirmOpen}
-	type="character"
-	name={item?.character ? localizedName(item.character.name) : null}
-	onConfirm={actions.removeAction.run}
-/>
-
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/rep' as rep;
 	@use '$src/themes/unit' as unit;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/effects' as effects;
-
-	@include unit.unit-root;
-	@include unit.unit-slot;
-
-	.focus-ring-wrapper.editable:hover {
-		transform: scale(1.05);
-	}
-
-	.frame.character.cell {
-		@include rep.aspect(rep.$char-cell-w, rep.$char-cell-h);
-	}
-
-	.image {
-		border-radius: layout.$input-corner;
-	}
-
-	.name :global(.artifact-indicator) {
-		color: var(--extra-purple-text);
-		flex-shrink: 0;
-	}
 
 	.fa-skills {
 		display: flex;
@@ -565,8 +396,4 @@
 			box-shadow: var(--shadow-md);
 		}
 	}
-
-	@include unit.unit-shared-styles;
-
-	@include unit.unit-orphaned-badge;
 </style>
