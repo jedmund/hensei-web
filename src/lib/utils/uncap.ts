@@ -2,6 +2,8 @@
  * Utility functions for character uncap calculations
  */
 
+import type { GridCharacter, GridSummon, GridWeapon } from '$lib/types/api/party'
+
 export interface UncapData {
 	flb?: boolean
 	ulb?: boolean
@@ -143,5 +145,38 @@ export function getDefaultMaxUncapLevel(type: 'character' | 'weapon' | 'summon')
 			return 3
 		default:
 			return 3
+	}
+}
+
+export interface GridItemUncapCaps {
+	flb: boolean | undefined
+	ulb: boolean | undefined
+	transcendence: boolean
+	maxTranscendenceStage: number
+}
+
+/**
+ * Uncap capabilities of a grid item's underlying entity, for the uncap
+ * indicator and transcendence star. Characters go through
+ * normalizeCharacterUncap; weapons and summons transcend to stage 5.
+ */
+export function getGridItemUncapCaps(
+	type: 'character' | 'weapon' | 'summon',
+	item: GridCharacter | GridWeapon | GridSummon
+): GridItemUncapCaps {
+	if (type === 'character') {
+		const character = (item as GridCharacter).character
+		return normalizeCharacterUncap({
+			special: !!character?.special,
+			uncap: character?.uncap ?? { flb: false }
+		})
+	}
+	const uncap =
+		type === 'weapon' ? (item as GridWeapon).weapon?.uncap : (item as GridSummon).summon?.uncap
+	return {
+		flb: uncap?.flb,
+		ulb: uncap?.ulb,
+		transcendence: uncap?.transcendence ?? false,
+		maxTranscendenceStage: 5
 	}
 }
