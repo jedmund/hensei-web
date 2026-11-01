@@ -10,7 +10,6 @@ import {
 	type EventKind,
 	type EventSeries,
 	type EventPayload,
-	type EventStatus,
 	type GameEvent
 } from '$lib/types/api/event'
 import type { RaidFull } from '$lib/types/api/raid'
@@ -25,12 +24,6 @@ const KIND_LABELS: Record<EventKind, () => string> = {
 	farming: m.event_kind_farming,
 	alchemy: m.event_kind_alchemy,
 	other: m.event_kind_other
-}
-
-const STATUS_LABELS: Record<EventStatus, () => string> = {
-	draft: m.event_status_draft,
-	approved: m.event_status_approved,
-	hidden: m.event_status_hidden
 }
 
 const SERIES_LABELS: Record<EventSeries, () => string> = {
@@ -50,10 +43,6 @@ export function eventSeriesOptions(): { value: string; label: string }[] {
 
 export function eventKindLabel(kind: EventKind): string {
 	return KIND_LABELS[kind]?.() ?? kind
-}
-
-export function eventStatusLabel(status: EventStatus): string {
-	return STATUS_LABELS[status]?.() ?? status
 }
 
 export function eventKindOptions(): { value: EventKind; label: string }[] {

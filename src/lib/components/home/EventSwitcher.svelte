@@ -6,8 +6,8 @@
 	import * as m from '$lib/paraglide/messages'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import EventThumbnailImage from '$lib/components/home/EventThumbnailImage.svelte'
 	import type { ComponentProps } from 'svelte'
-	import { SvelteSet } from 'svelte/reactivity'
 
 	export interface EventSwitcherItem {
 		id: string
@@ -33,9 +33,6 @@
 	}
 
 	let { items, selected, onSelect, shape = 'wide', label = m.home_events_aria() }: Props = $props()
-
-	// Images that failed to load show the name instead
-	const failed = new SvelteSet<string>()
 
 	// Fade the edges that have more thumbnails past them, so the row reads as
 	// scrollable
@@ -77,11 +74,7 @@
 				aria-pressed={item.id === selected}
 				onclick={() => onSelect(item.id)}
 			>
-				{#if item.imageUrl && !failed.has(item.id)}
-					<img src={item.imageUrl} alt="" loading="lazy" onerror={() => failed.add(item.id)} />
-				{:else}
-					<span class="name">{item.label}</span>
-				{/if}
+				<EventThumbnailImage imageUrl={item.imageUrl} label={item.label} />
 			</button>
 		{/snippet}
 		{#if item.tooltip}
@@ -169,13 +162,6 @@
 			outline-color: var(--accent-blue);
 		}
 
-		img {
-			display: block;
-			width: 100%;
-			height: 100%;
-			object-fit: cover;
-		}
-
 		@media (max-width: 768px) {
 			width: 110px;
 		}
@@ -195,18 +181,5 @@
 		flex-direction: column;
 		align-items: center;
 		gap: $unit-half;
-	}
-
-	.name {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		height: 100%;
-		padding: $unit-half;
-		font-size: $font-small;
-		font-weight: $medium;
-		color: var(--text-secondary);
-		line-height: 1.2;
-		text-align: center;
 	}
 </style>

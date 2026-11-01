@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isCurator } from '$lib/auth/roles'
 	import { HOME_LAUNCHED, HOME_PATH, GALLERY_PATH, isHomePath } from '$lib/utils/browseRoutes'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { m } from '$lib/paraglide/messages'
@@ -193,7 +194,7 @@
 
 <nav aria-label="Global" class={elementClass}>
 	{#if isDatabaseRoute}
-		<DatabaseNavigation {userElement} />
+		<DatabaseNavigation {userElement} {role} />
 	{:else}
 		<button class="mobile-nav-trigger" onclick={() => (sheetOpen = true)}>
 			<span class="trigger-label">{currentPageLabel}</span>
@@ -255,7 +256,7 @@
 				<li><a href={aboutHref}>{m.nav_about()}</a></li>
 				<li><a href={gachaHref}>{m.nav_gacha()}</a></li>
 				<li><a href={extensionHref}>{m.nav_extension()}</a></li>
-				{#if role !== null && role >= 7}
+				{#if isCurator(role)}
 					<li><a href={databaseHref}>{m.nav_database()}</a></li>
 				{/if}
 			</ul>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { isCurator } from '$lib/auth/roles'
 	import { onMount, onDestroy, untrack } from 'svelte'
 	import { setPartyContext } from '$lib/types/party-context'
 	import { pushState } from '$app/navigation'
@@ -49,6 +50,8 @@
 		initialCollectionSourceUsername?: string
 		/** When true, the difficulty tier chip becomes a link to the editor preview */
 		isEditor?: boolean
+		/** The viewer's account role; curators can feature the team */
+		role?: number | null | undefined
 	}
 
 	let {
@@ -61,7 +64,8 @@
 		isNew = false,
 		ensurePartyExists,
 		initialCollectionSourceUsername,
-		isEditor = false
+		isEditor = false,
+		role
 	}: Props = $props()
 
 	// Default empty party
@@ -404,6 +408,7 @@
 						{authUserId}
 						{authUsername}
 						{hasCollectionLinks}
+						canFeature={isCurator(role)}
 					/>
 				{/snippet}
 			</PartyInfoGrid>
@@ -434,7 +439,7 @@
 	</div>
 </div>
 
-<PartyDialogs {actions} {wikiImport} {itemAddition} {partyDragDrop} {solomonisRaid} />
+<PartyDialogs {actions} {wikiImport} {itemAddition} {partyDragDrop} {solomonisRaid} {role} />
 
 <style lang="scss">
 	@use '$src/themes/typography' as *;

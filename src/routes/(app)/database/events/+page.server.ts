@@ -1,14 +1,14 @@
 import type { PageServerLoad } from './$types'
 import { eventAdapter } from '$lib/api/adapters/event.adapter'
 import { error, isHttpError, isRedirect } from '@sveltejs/kit'
-import { requireEditor } from '$lib/auth/requireEditor'
+import { requireCurator } from '$lib/auth/requireEditor'
 
-// Drafts first: synced events wait here for review
+// Every event; statuses aren't shown in the Database
 export const load: PageServerLoad = async ({ parent, fetch }) => {
 	try {
 		const parentData = await parent()
-		requireEditor(parentData, '/database')
-		const events = await eventAdapter.listEvents({ status: 'draft' }, { fetch })
+		requireCurator(parentData, '/database')
+		const events = await eventAdapter.listEvents({ status: 'all' }, { fetch })
 		return { events, role: parentData.role }
 	} catch (err) {
 		if (isHttpError(err) || isRedirect(err)) throw err
