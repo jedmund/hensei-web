@@ -65,6 +65,7 @@ export type InputName =
 	| 'weaponSeriesVariants'
 	| 'awakeningImage'
 	| 'eventRaids'
+	| 'roleIcon'
 
 /**
  * How an empty value ('', null, undefined, [] or {}) is sent:
@@ -271,6 +272,27 @@ export interface ToggleGroupDef {
 	toggles: Array<string | { key: string; label: Message }>
 }
 
+/**
+ * A short hand-ordered list (roles, stickers): every row on one page in its
+ * stored order, reordered by drag or keyboard, instead of the paged table.
+ * The list's `columns` and `filters` are unused (pass `[]`); it requests
+ * `baseFields` sorted by `defaultSort`, so put tie-breaks there.
+ */
+export interface OrderedListDef<Row> {
+	/** The field rows are ordered by, ascending; `defaultSort` starts with it */
+	field: string
+	/** Saves a new order: every row, in its new order. The resource shapes the body (pairs or ids) */
+	reorder: (rows: Row[]) => Promise<unknown>
+	/** Rows drawn dimmed with an Inactive badge */
+	inactive?: (row: Row) => boolean
+	/** The thumbnail before the title, drawn by this component (like a list `cell`) */
+	thumbnail?: Component<{ row: Row }>
+	/** Lines under the title (e.g. the other locale's name, a slug); empty ones are skipped */
+	subtitle?: (row: Row) => Array<string | null | undefined>
+	/** Other queries a reorder makes stale, beyond the admin list */
+	invalidates?: () => readonly (readonly unknown[])[]
+}
+
 export interface ListDef<Row> {
 	/** Accessible name for the table */
 	label: Message
@@ -305,6 +327,8 @@ export interface ListDef<Row> {
 	 * `{ groups: '/database/raid-groups' }`: the list redirects there
 	 */
 	movedViews?: Record<string, string>
+	/** Show every row in its stored order, reorderable, instead of the paged table */
+	ordered?: OrderedListDef<Row>
 }
 
 /**
@@ -340,7 +364,8 @@ type Lazy<Props extends Record<string, unknown>> = () => Promise<{ default: Comp
 
 /**
  * Hand-written screens that replace the generated ones. The list is always
- * generated (`ResourceTable` under the list's page title); the detail and the
+ * generated (`ResourceTable` under the list's page title, or the ordered list
+ * when `list.ordered` is set); the detail and the
  * panel when a resource has a `record`, the edit page when it can also
  * `save.update`, and the new page when it can `save.create`. The generic
  * routes 404 any other screen the resource doesn't have.

@@ -2954,5 +2954,13 @@
 	"db_events_label": "Events",
 	"db_events_entity": "events",
 	"db_events_error_ends_before_start": "Must be after the start",
-	"db_events_banner_uploaded": "Banner uploaded"
+	"db_events_banner_uploaded": "Banner uploaded",
+	"db_ordered_hint": "行をドラッグするか、ハンドルにフォーカスしてSpaceキーを押すと並び替えできます。",
+	"db_ordered_move": "{name}を移動",
+	"db_ordered_grabbed": "{name}を選択しました（{total}件中{position}番目）。矢印キーで移動、Spaceで確定、Escapeで取り消します。",
+	"db_ordered_moved": "{name}を{total}件中{position}番目に移動しました。",
+	"db_ordered_dropped": "{name}を{total}件中{position}番目に配置しました。",
+	"db_ordered_cancelled": "移動を取り消しました。{name}は{total}件中{position}番目です。",
+	"db_ordered_inactive": "無効",
+	"db_ordered_reorder_failed": "並び順を保存できませんでした。"
 }

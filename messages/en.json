@@ -3165,5 +3165,13 @@
 	"db_events_label": "Events",
 	"db_events_entity": "events",
 	"db_events_error_ends_before_start": "Must be after the start",
-	"db_events_banner_uploaded": "Banner uploaded"
+	"db_events_banner_uploaded": "Banner uploaded",
+	"db_ordered_hint": "Drag a row, or focus its handle and press Space, to change the order.",
+	"db_ordered_move": "Move {name}",
+	"db_ordered_grabbed": "{name} picked up, position {position} of {total}. Use the arrow keys to move it, Space to drop it, Escape to cancel.",
+	"db_ordered_moved": "{name} moved to position {position} of {total}.",
+	"db_ordered_dropped": "{name} dropped at position {position} of {total}.",
+	"db_ordered_cancelled": "Move cancelled. {name} is back at position {position} of {total}.",
+	"db_ordered_inactive": "Inactive",
+	"db_ordered_reorder_failed": "Couldn't save the new order."
 }

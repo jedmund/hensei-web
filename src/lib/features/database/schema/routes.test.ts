@@ -161,6 +161,15 @@ describe('loadScreen', () => {
 		expect(await loadScreen('summons', 'list')).toBe(generated)
 	})
 
+	it('generates the ordered list, detail, edit and new pages for an ordered resource', async () => {
+		const { default: orderedList } = await import('./ResourceOrderedListScreen.svelte')
+		expect(await loadScreen('character-roles', 'list')).toBe(orderedList)
+		const { default: edit } = await import('./ResourceEditScreen.svelte')
+		expect(await loadScreen('character-roles', 'edit')).toBe(edit)
+		const { default: create } = await import('./ResourceNewScreen.svelte')
+		expect(await loadScreen('character-roles', 'new')).toBe(create)
+	})
+
 	it('404s an unregistered resource', async () => {
 		await expect(loadScreen('widgets', 'list')).rejects.toMatchObject({ status: 404 })
 	})
