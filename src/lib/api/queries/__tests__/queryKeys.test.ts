@@ -341,7 +341,6 @@ describe('gwKeys', () => {
 	it('produces correct key arrays', () => {
 		expect(gwKeys.all).toEqual(['gw'])
 		expect(gwKeys.events()).toEqual(['gw', 'events'])
-		expect(gwKeys.event('e-1')).toEqual(['gw', 'events', 'e-1'])
 		expect(gwKeys.participationsAll()).toEqual(['gw', 'participations'])
 		expect(gwKeys.participation('p-1')).toEqual(['gw', 'participations', 'p-1'])
 		expect(gwKeys.memberGwScores('m-1')).toEqual(['crew', 'member', 'm-1', 'gw_scores'])
@@ -357,10 +356,6 @@ describe('gwKeys', () => {
 
 	it('events key matches query queryKey', () => {
 		expect(gwKeys.events()).toEqual(gwQueries.events().queryKey)
-	})
-
-	it('event key matches query queryKey', () => {
-		expect(gwKeys.event('e-1')).toEqual(gwQueries.event('e-1').queryKey)
 	})
 
 	it('participation key matches query queryKey', () => {

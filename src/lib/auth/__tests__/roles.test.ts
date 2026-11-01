@@ -32,7 +32,7 @@ describe('requiredDatabaseRole', () => {
 
 	it('keeps every other Database route editor-only', () => {
 		expect(requiredDatabaseRole('/(app)/database/weapons')).toBe(EDITOR_ROLE)
-		expect(requiredDatabaseRole('/(app)/database/gw-events')).toBe(EDITOR_ROLE)
+		expect(requiredDatabaseRole('/(app)/database/raids')).toBe(EDITOR_ROLE)
 		expect(requiredDatabaseRole('/(app)/database/events-archive')).toBe(EDITOR_ROLE)
 		expect(requiredDatabaseRole('/(app)/database/artifact-skills/[id]')).toBe(EDITOR_ROLE)
 		expect(requiredDatabaseRole(null)).toBe(EDITOR_ROLE)

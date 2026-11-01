@@ -13,38 +13,12 @@ import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svel
 import { gwAdapter } from '$lib/api/adapters/gw.adapter'
 import { gwKeys } from '$lib/api/queries/gw.queries'
 import type {
-	CreateGwEventInput,
-	UpdateGwEventInput,
 	UpdateParticipationRankingInput,
 	CreateCrewScoreInput,
 	UpdateCrewScoreInput,
 	CreateIndividualScoreInput,
 	BatchIndividualScoresInput
 } from '$lib/types/api/gw'
-
-// ============================================================================
-// Options Factories — Events (Admin)
-// ============================================================================
-
-export function createGwEventOptions(queryClient: QueryClient) {
-	return {
-		mutationFn: (input: CreateGwEventInput) => gwAdapter.createEvent(input),
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: gwKeys.events() })
-		}
-	}
-}
-
-export function updateGwEventOptions(queryClient: QueryClient) {
-	return {
-		mutationFn: ({ eventId, input }: { eventId: string; input: UpdateGwEventInput }) =>
-			gwAdapter.updateEvent(eventId, input),
-		onSuccess: (_data: unknown, { eventId }: { eventId: string; input: UpdateGwEventInput }) => {
-			queryClient.invalidateQueries({ queryKey: gwKeys.events() })
-			queryClient.invalidateQueries({ queryKey: gwKeys.event(eventId) })
-		}
-	}
-}
 
 // ============================================================================
 // Options Factories — Participation
@@ -198,16 +172,6 @@ export function deleteIndividualScoreOptions(queryClient: QueryClient) {
 // ============================================================================
 // Hooks (thin wrappers for component use)
 // ============================================================================
-
-export function useCreateGwEvent() {
-	const queryClient = useQueryClient()
-	return createMutation(() => createGwEventOptions(queryClient))
-}
-
-export function useUpdateGwEvent() {
-	const queryClient = useQueryClient()
-	return createMutation(() => updateGwEventOptions(queryClient))
-}
 
 export function useJoinGwEvent() {
 	const queryClient = useQueryClient()
