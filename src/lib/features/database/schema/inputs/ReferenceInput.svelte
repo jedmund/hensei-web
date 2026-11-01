@@ -37,8 +37,11 @@
 	}))
 
 	const options = $derived.by(() => {
+		// No select until the list loads: one without the current series could
+		// write it back as blank
 		if (resource === 'weaponSeries') {
-			const series = seriesListQuery.data ?? []
+			const series = seriesListQuery.data
+			if (!series) return []
 			return [none, ...series.map((s) => ({ value: s.id, label: localizedName(s.name) }))]
 		}
 		if (resource === 'weaponSeriesVariant') {
