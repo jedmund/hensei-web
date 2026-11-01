@@ -1,11 +1,12 @@
 <script lang="ts">
+	// The summon's main and sub auras by uncap tier, as parsed from the wiki
+	import type { Summon } from '$lib/api/adapters/summon.adapter'
+	import type { RecordTabProps } from '$lib/features/database/schema/types'
 	import type { SummonAura } from '$lib/types/api/entities'
 
-	interface Props {
-		auras: SummonAura[]
-	}
+	let { record }: RecordTabProps<Summon> = $props()
 
-	let { auras }: Props = $props()
+	const auras = $derived(record.summonAuras ?? [])
 
 	const mainAuras = $derived(auras.filter((a) => a.slot === 'main'))
 	const subAuras = $derived(auras.filter((a) => a.slot === 'sub'))

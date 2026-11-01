@@ -64,6 +64,10 @@ describe('generic database routes', () => {
 		expect(routeFor('/database/characters/3040001000')).toBe(`${generic}/[id]`)
 		expect(routeFor('/database/characters/3040001000/edit')).toBe(`${generic}/[id]/edit`)
 		expect(routeFor('/database/characters/new')).toBe(`${generic}/new`)
+		expect(routeFor('/database/summons')).toBe(generic)
+		expect(routeFor('/database/summons/2040001000')).toBe(`${generic}/[id]`)
+		expect(routeFor('/database/summons/2040001000/edit')).toBe(`${generic}/[id]/edit`)
+		expect(routeFor('/database/summons/new')).toBe(`${generic}/new`)
 	})
 
 	it('leave bespoke routes in charge', () => {
@@ -76,7 +80,7 @@ describe('generic database routes', () => {
 		expect(routeFor('/database/characters/3040001000/style/edit')).toBe(
 			'/(app)/database/characters/[granblueId]/style/edit'
 		)
-		expect(routeFor('/database/summons/2040001000')).toBe('/(app)/database/summons/[granblueId]')
+		expect(routeFor('/database/summons/import')).toBe('/(app)/database/summons/import')
 		expect(routeFor('/database/series/weapons/new')).toBe('/(app)/database/series/weapons/new')
 		expect(routeFor('/database/events')).toBe('/(app)/database/events')
 	})
@@ -114,6 +118,13 @@ describe('loadScreen', () => {
 
 	it('overrides nothing for weapons but the list', () => {
 		expect(Object.keys(weaponsResource.screens ?? {})).toEqual(['list'])
+	})
+
+	it('generates the list for a resource with no list override', async () => {
+		const { summonsResource } = await import('$lib/features/database/summons/resource')
+		const { default: generated } = await import('./ResourceListScreen.svelte')
+		expect(summonsResource.screens?.list).toBeUndefined()
+		expect(await loadScreen('summons', 'list')).toBe(generated)
 	})
 
 	it('404s an unregistered resource', async () => {

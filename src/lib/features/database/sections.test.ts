@@ -130,4 +130,20 @@ describe('resourceSections', () => {
 			}
 		])
 	})
+
+	it('keeps the summons entry as it was written by hand', () => {
+		expect(shown(sectionById('summons')!)).toEqual({
+			id: 'summons',
+			label: 'fn:Summons',
+			path: '/database/summons',
+			group: 'catalogue',
+			entity: 'fn:summon',
+			actions: [
+				[
+					{ label: 'fn:Single summon', href: '/database/summons/new' },
+					{ label: 'fn:Multiple summons', href: '/database/summons/import' }
+				]
+			]
+		})
+	})
 })

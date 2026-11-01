@@ -10,7 +10,6 @@ import { DATABASE_SECTIONS, delocalize } from './sections'
 const RECORD_KEYS = [
 	'record',
 	'character',
-	'summon',
 	'job',
 	'bullet',
 	'skill',

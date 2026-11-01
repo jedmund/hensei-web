@@ -2,7 +2,6 @@
 	import { Grid, HeaderMenu } from 'wx-svelte-grid'
 	import type { IColumn, IRow } from 'wx-svelte-grid'
 	import { DatabaseProvider } from '$lib/providers/DatabaseProvider'
-	import CollectionFilters from '$lib/components/collection/CollectionFilters.svelte'
 	import { onMount, onDestroy, tick, untrack } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
@@ -35,7 +34,7 @@
 	import type { Snippet } from 'svelte'
 
 	interface Props {
-		resource: 'summons' | 'jobs'
+		resource: 'jobs'
 		columns: IColumn[]
 		pageSize?: number
 		leftActions?: Snippet
@@ -50,17 +49,12 @@
 		headerActions
 	}: Props = $props()
 
-	// Derive entity type from resource
-	const entityType = $derived(resource === 'summons' ? 'summon' : 'job')
-
-	const supportsCollectionFilters = $derived(resource !== 'jobs')
-
 	// Create provider
 	const provider = $derived(new DatabaseProvider({ resource, pageSize: initialPageSize }))
 
 	// --- Composables ---
 
-	const filters = $derived(new DatabaseFilters(entityType, provider, (pg) => loadData(pg)))
+	const filters = $derived(new DatabaseFilters(provider))
 
 	const search = $derived(new DatabaseSearch(provider, (pg) => loadData(pg)))
 
@@ -417,14 +411,9 @@
 <div class="list-layout">
 	<div class="grid">
 		<DatabaseGridControls
-			hasActiveFilters={filters.hasActiveFilters}
-			filterCount={filters.filterCount}
 			{hasCustomColumns}
-			selectedElement={filters.selectedElement}
-			{supportsCollectionFilters}
 			{leftActions}
 			{headerActions}
-			onToggleFilters={() => (filters.showFilters = !filters.showFilters)}
 			onResetColumns={resetColumns}
 		>
 			{#snippet rightActions()}
@@ -439,23 +428,6 @@
 				/>
 			{/snippet}
 		</DatabaseGridControls>
-
-		{#if filters.showFilters && supportsCollectionFilters}
-			<div class="filters-row">
-				<CollectionFilters
-					entityType="summon"
-					bind:elementFilters={filters.elementFilters}
-					bind:rarityFilters={filters.rarityFilters}
-					bind:seriesFilters={filters.seriesFilters}
-					bind:proficiencyFilters={filters.proficiencyFilters}
-					bind:seasonFilters={filters.seasonFilters}
-					onFiltersChange={(f) => filters.handleFiltersChange(f)}
-					showSort={false}
-					showSearch={false}
-					contained={false}
-				/>
-			</div>
-		{/if}
 
 		<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions (rows are reachable from the grid's own keyboard navigation) -->
 		<div
@@ -520,24 +492,6 @@
 		border-radius: layout.$page-corner;
 		box-shadow: effects.$page-elevation;
 		overflow: hidden;
-
-		.filters-row {
-			display: flex;
-			align-items: center;
-			padding: 0 spacing.$unit spacing.$unit spacing.$unit;
-			border-bottom: 1px solid var(--border-subtle);
-			background: var(--card-bg);
-
-			:global(.filters-container) {
-				flex: 1;
-				min-width: 0;
-
-				:global([data-select-trigger]) {
-					padding-top: 7px;
-					padding-bottom: 7px;
-				}
-			}
-		}
 
 		.grid-wrapper {
 			position: relative;
