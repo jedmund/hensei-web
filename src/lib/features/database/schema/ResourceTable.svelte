@@ -22,7 +22,7 @@
 	import { readOpen, recordPath, withOpen } from '$lib/features/database/panel/panelUrl'
 	import { ResultSet, setResultSet } from '$lib/features/database/resultSet.svelte'
 	import { storeListUrl } from '$lib/utils/listNavigation'
-	import { columnsFor, filterQueries, filtersFor, titleFor } from './columns'
+	import { columnsFor, elementFor, filterQueries, filtersFor, titleFor } from './columns'
 	import type { ResourceName } from './names'
 	import { RESOURCES } from './registry'
 
@@ -51,6 +51,7 @@
 	const filters = filtersFor(def, filterData)
 	const columns = columnsFor(def)
 	const rowTitle = titleFor(def)
+	const rowElement = elementFor(def)
 
 	const url = createTableUrl({ filters: filterSpecs(filters), defaultSort: list.defaultSort })
 
@@ -58,7 +59,8 @@
 		url,
 		resource: name,
 		columns,
-		fields: list.baseFields,
+		// The element colours the open row whichever columns are visible
+		fields: list.element ? [...list.baseFields, list.element] : list.baseFields,
 		facets: facetKeys(filters)
 	})
 
@@ -90,6 +92,7 @@
 			rowId={catalogueRowId}
 			{rowHref}
 			{rowTitle}
+			{rowElement}
 			onRowActivate={handleRowActivate}
 			selectedId={openId}
 			storageKey={name}

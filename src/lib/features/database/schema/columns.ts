@@ -89,6 +89,15 @@ export function titleFor<Row, Full>(def: ResourceDef<Row, Full>): (row: Row) => 
 	return (row) => String(prop(row, field.key) ?? '')
 }
 
+/** A row's element id, from the `list.element` field */
+export function elementFor<Row, Full>(
+	def: ResourceDef<Row, Full>
+): ((row: Row) => number | null) | undefined {
+	const key = def.list.element
+	if (!key) return undefined
+	return (row) => (prop(row, key) as number | null | undefined) ?? null
+}
+
 function optionLabel(options: EnumOption[], value: unknown): string | null {
 	const option = options.find((o) => o.value === value)
 	return option ? labelText(option.label) : null

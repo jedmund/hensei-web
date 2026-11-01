@@ -133,6 +133,16 @@ describe('DataTable', () => {
 		expect(rows.map((row) => row.getAttribute('aria-current'))).toEqual([null, 'true'])
 	})
 
+	it("colours the open row with its item's element, and leaves rows without one alone", () => {
+		const elements: Record<string, number | null> = { s1: 0, s2: 6 }
+		render(data, { selectedId: 's2', rowElement: (s: Series) => elements[s.id] })
+		const [nullRow, darkRow] = [...document.querySelectorAll<HTMLElement>('tbody tr')]
+		expect(darkRow!.getAttribute('aria-current')).toBe('true')
+		expect(darkRow!.style.getPropertyValue('--row-accent')).toBe('var(--dark-button-bg)')
+		expect(nullRow!.style.getPropertyValue('--row-accent')).toBe('')
+		expect(nullRow!.getAttribute('style') ?? '').not.toContain('--row-accent')
+	})
+
 	it('keeps the ResultSet in display order', () => {
 		const resultSet = new ResultSet()
 		render(data, { resultSet })

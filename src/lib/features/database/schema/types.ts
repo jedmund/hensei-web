@@ -248,6 +248,8 @@ export interface ListDef<Row> {
 	empty: Message
 	/** The field that titles a row: the panel header before the record loads */
 	title: string
+	/** The field holding a row's element id, which colours the open row's bar */
+	element?: string
 	/** Field keys, or a literal column for things that aren't fields (the thumbnail) */
 	columns: Array<string | DataTableColumn<Row>>
 	/** Field keys with a `multi` or `recent` filter, or toggle groups */

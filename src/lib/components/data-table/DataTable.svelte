@@ -28,6 +28,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import EmptyState from '$lib/components/ui/EmptyState.svelte'
 	import Icon from '$lib/components/Icon.svelte'
+	import { getElementTypeKey } from '$lib/utils/element'
 	import { getResultSet, type ResultSet } from '$lib/features/database/resultSet.svelte'
 	import DataTableCell from './DataTableCell.svelte'
 	import DataTableFilters from './DataTableFilters.svelte'
@@ -73,6 +74,11 @@
 		/** Id of the row shown elsewhere (e.g. open in the record panel); marked aria-current */
 		selectedId?: string | null | undefined
 		/**
+		 * The row item's element id: the open row's bar takes its colour. Rows
+		 * without one (or Null, 0) keep the default accent.
+		 */
+		rowElement?: (row: T) => number | null | undefined
+		/**
 		 * Filter controls, shown under the toolbar behind a Filters button. Declare
 		 * the same config on the table URL: `createTableUrl({ filters: filterSpecs(config) })`.
 		 */
@@ -105,6 +111,7 @@
 		onRowActivate,
 		resultSet: resultSetProp,
 		selectedId = null,
+		rowElement,
 		filters,
 		storageKey,
 		rowHeight: initialRowHeight = 'default',
@@ -346,6 +353,12 @@
 		link.scrollIntoView({ block: 'nearest' })
 	}
 
+	/** The row's own accent, from its item's element */
+	function rowAccent(row: T): string | undefined {
+		const key = getElementTypeKey(rowElement?.(row) ?? undefined)
+		return key ? `var(--${key}-button-bg)` : undefined
+	}
+
 	function handleScroll() {
 		if (scrollEl) scrolledX = scrollEl.scrollLeft > 0
 	}
@@ -496,7 +509,10 @@
 						{/if}
 						{#each renderedRows as row (row.id)}
 							{@const original = row.original}
-							<tr aria-current={selectedId !== null && row.id === selectedId ? 'true' : undefined}>
+							<tr
+								aria-current={selectedId !== null && row.id === selectedId ? 'true' : undefined}
+								style:--row-accent={rowAccent(original)}
+							>
 								{#each visibleColumns as column (column.id)}
 									<td
 										class="align-{column.align ?? 'start'} type-{column.type}"
@@ -693,7 +709,8 @@
 	}
 
 	tbody tr[aria-current] td:first-child {
-		box-shadow: inset 3px 0 0 var(--database-accent, var(--text-primary));
+		// The item's element, else the user's
+		box-shadow: inset 3px 0 0 var(--row-accent, var(--database-accent, var(--text-primary)));
 	}
 
 	tbody tr:has(.row-link:focus-visible) {
