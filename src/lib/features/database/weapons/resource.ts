@@ -59,15 +59,17 @@ const EXTRA_PREREQUISITES: Record<number, string> = {
 	6: 'Transcendence'
 }
 
-/** Max level before any uncap, by rarity (R, SR, SSR) */
-const BASE_LEVEL: Record<number, number> = { 1: 50, 2: 75, 3: 100 }
-
-/** The standard max level and max skill level for a rarity and uncap state */
+/**
+ * The standard max level and max skill level for a rarity and uncap state:
+ * R 50/10; SR 75/10, FLB 150/15; SSR 100/10, FLB 150/15, ULB 200/20,
+ * transcendence 250/25. The API's caps_mismatch flag uses the same table.
+ */
 function levelCaps(v: Values): { max_level: number; max_skill_level: number } {
-	if (transcendence(v)) return { max_level: 250, max_skill_level: 25 }
-	if (ulb(v)) return { max_level: 200, max_skill_level: 20 }
+	if (v.rarity === 1) return { max_level: 50, max_skill_level: 10 }
+	if (v.rarity !== 2 && transcendence(v)) return { max_level: 250, max_skill_level: 25 }
+	if (v.rarity !== 2 && ulb(v)) return { max_level: 200, max_skill_level: 20 }
 	if (flb(v)) return { max_level: 150, max_skill_level: 15 }
-	return { max_level: BASE_LEVEL[v.rarity as number] ?? 100, max_skill_level: 10 }
+	return { max_level: v.rarity === 2 ? 75 : 100, max_skill_level: 10 }
 }
 
 /** Uncaps stack: each needs the one before it, so ticking or unticking one carries the rest */

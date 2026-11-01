@@ -939,6 +939,15 @@ describe('weapons resource: derive', () => {
 			max_level: 150,
 			max_skill_level: 15
 		})
+		// The table stops at SR FLB and at R, as the API's caps_mismatch flag does
+		expect(change({ ...none, rarity: 2 }, 'ulb', true)).toMatchObject({
+			max_level: 150,
+			max_skill_level: 15
+		})
+		expect(change({ ...none, rarity: 1 }, 'flb', true)).toMatchObject({
+			max_level: 50,
+			max_skill_level: 10
+		})
 	})
 
 	it('keeps the stored caps on load and when anything but an uncap changes (GBF-158)', () => {
