@@ -2,8 +2,7 @@ import type { CollectionFilterState } from '$lib/types/filter'
 import { parseFiltersFromUrl, buildUrlFromFilters, ELEMENT_TO_PARAM } from '$lib/utils/filterParams'
 import type { DatabaseProvider } from '$lib/providers/DatabaseProvider'
 
-export type EntityType = 'character' | 'summon' | 'job'
-export type ResourceType = 'characters' | 'summons' | 'jobs'
+export type EntityType = 'summon' | 'job'
 
 export class DatabaseFilters {
 	elementFilters = $state<number[]>([])
@@ -13,7 +12,6 @@ export class DatabaseFilters {
 	seasonFilters = $state<number[]>([])
 	showFilters = $state(false)
 
-	#resource: ResourceType
 	#entityType: EntityType
 	#provider: DatabaseProvider
 	#onReload: (page: number) => void
@@ -48,12 +46,10 @@ export class DatabaseFilters {
 	})
 
 	constructor(
-		resource: ResourceType,
 		entityType: EntityType,
 		provider: DatabaseProvider,
 		onReload: (page: number) => void
 	) {
-		this.#resource = resource
 		this.#entityType = entityType
 		this.#provider = provider
 		this.#onReload = onReload
@@ -68,11 +64,7 @@ export class DatabaseFilters {
 			rarity: filters.rarity.length > 0 ? filters.rarity : undefined,
 			series: seriesAsStrings,
 			proficiency1: filters.proficiency.length > 0 ? filters.proficiency : undefined,
-			season: filters.season.length > 0 ? filters.season : undefined,
-			characterSeries:
-				this.#resource === 'characters' && filters.series.length > 0
-					? filters.series.filter((s): s is number => typeof s === 'number')
-					: undefined
+			season: filters.season.length > 0 ? filters.season : undefined
 		})
 		this.#onReload(1)
 	}
@@ -123,11 +115,7 @@ export class DatabaseFilters {
 				rarity: parsed.rarity.length > 0 ? parsed.rarity : undefined,
 				series: seriesAsStrings,
 				proficiency1: parsed.proficiency.length > 0 ? parsed.proficiency : undefined,
-				season: parsed.season.length > 0 ? parsed.season : undefined,
-				characterSeries:
-					this.#resource === 'characters' && parsed.series.length > 0
-						? parsed.series.filter((s): s is number => typeof s === 'number')
-						: undefined
+				season: parsed.season.length > 0 ? parsed.season : undefined
 			})
 			this.showFilters = true
 		}

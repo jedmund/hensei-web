@@ -79,6 +79,8 @@ function kindSchema<Row, Full>(field: Field<Row, Full>): z.ZodType {
 			if (field.max !== undefined) number = number.max(field.max)
 			return field.required ? number : number.nullable()
 		}
+		case 'numberList':
+			return z.array(z.number().int())
 		case 'boolean':
 			return z.boolean()
 		case 'date':

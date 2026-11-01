@@ -1,0 +1,534 @@
+{
+	"search": ["name_en", "name_jp", "granblue_id"],
+	"filters": {
+		"element": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"rarity": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"season": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"gender": {
+			"type": "integer",
+			"facet": false,
+			"list": true,
+			"range": true
+		},
+		"proficiency": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"series": {
+			"type": "uuid",
+			"facet": true,
+			"list": true,
+			"range": false,
+			"reference": "character_series"
+		},
+		"release_date": {
+			"type": "date",
+			"facet": false,
+			"list": true,
+			"range": true
+		},
+		"flb_date": {
+			"type": "date",
+			"facet": false,
+			"list": true,
+			"range": true
+		},
+		"ulb_date": {
+			"type": "date",
+			"facet": false,
+			"list": true,
+			"range": true
+		},
+		"transcendence_date": {
+			"type": "date",
+			"facet": false,
+			"list": true,
+			"range": true
+		},
+		"latest_date": {
+			"type": "date",
+			"facet": false,
+			"list": true,
+			"range": true
+		},
+		"created_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		},
+		"updated_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		},
+		"special": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"style_swap": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"flb": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"ulb": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"transcendence": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		}
+	},
+	"flags": ["missing_name_jp", "no_skills"],
+	"sorts": [
+		"name_en",
+		"name_jp",
+		"granblue_id",
+		"rarity",
+		"element",
+		"season",
+		"release_date",
+		"flb_date",
+		"ulb_date",
+		"transcendence_date",
+		"latest_date",
+		"updated_at",
+		"created_at"
+	],
+	"default_sort": ["-latest_date", "name_en"],
+	"fields": [
+		"id",
+		"granblue_id",
+		"name_en",
+		"name_jp",
+		"element",
+		"rarity",
+		"proficiency1",
+		"proficiency2",
+		"gender",
+		"race1",
+		"race2",
+		"season",
+		"special",
+		"style_swap",
+		"style_name_en",
+		"style_name_jp",
+		"flb",
+		"ulb",
+		"transcendence",
+		"max_transcendence_stage",
+		"release_date",
+		"flb_date",
+		"ulb_date",
+		"transcendence_date",
+		"latest_date",
+		"min_hp",
+		"max_hp",
+		"max_hp_flb",
+		"max_hp_ulb",
+		"max_hp_transcendence",
+		"min_atk",
+		"max_atk",
+		"max_atk_flb",
+		"max_atk_ulb",
+		"max_atk_transcendence",
+		"base_da",
+		"base_ta",
+		"ougi_ratio",
+		"ougi_ratio_flb",
+		"wiki_en",
+		"wiki_ja",
+		"gamewith",
+		"kamigame",
+		"nicknames_en",
+		"nicknames_jp",
+		"created_at",
+		"updated_at",
+		"series",
+		"skill_count"
+	],
+	"default_fields": [
+		"id",
+		"granblue_id",
+		"name_en",
+		"name_jp",
+		"element",
+		"rarity",
+		"proficiency1",
+		"proficiency2",
+		"style_swap",
+		"release_date",
+		"latest_date",
+		"updated_at"
+	],
+	"writable": {
+		"granblue_id": "scalar",
+		"name_en": "scalar",
+		"name_jp": "scalar",
+		"rarity": "scalar",
+		"element": "scalar",
+		"proficiency1": "scalar",
+		"proficiency2": "scalar",
+		"gender": "scalar",
+		"race1": "scalar",
+		"race2": "scalar",
+		"flb": "scalar",
+		"ulb": "scalar",
+		"transcendence": "scalar",
+		"max_transcendence_stage": "scalar",
+		"special": "scalar",
+		"season": "scalar",
+		"style_swap": "scalar",
+		"gender_variants": "scalar",
+		"style_name_en": "scalar",
+		"style_name_jp": "scalar",
+		"min_hp": "scalar",
+		"max_hp": "scalar",
+		"max_hp_flb": "scalar",
+		"max_hp_ulb": "scalar",
+		"max_hp_transcendence": "scalar",
+		"min_atk": "scalar",
+		"max_atk": "scalar",
+		"max_atk_flb": "scalar",
+		"max_atk_ulb": "scalar",
+		"max_atk_transcendence": "scalar",
+		"base_da": "scalar",
+		"base_ta": "scalar",
+		"ougi_ratio": "scalar",
+		"ougi_ratio_flb": "scalar",
+		"release_date": "scalar",
+		"flb_date": "scalar",
+		"ulb_date": "scalar",
+		"transcendence_date": "scalar",
+		"wiki_en": "scalar",
+		"wiki_ja": "scalar",
+		"wiki_raw": "scalar",
+		"gamewith": "scalar",
+		"kamigame": "scalar",
+		"nicknames_en": "array",
+		"nicknames_jp": "array",
+		"character_id": "array",
+		"series": "array"
+	},
+	"enums": {
+		"element": {
+			"Null": 0,
+			"Fire": 1,
+			"Water": 2,
+			"Earth": 3,
+			"Wind": 4,
+			"Light": 5,
+			"Dark": 6
+		},
+		"rarity": {
+			"R": 1,
+			"SR": 2,
+			"SSR": 3
+		},
+		"gender": {
+			"Unknown": 0,
+			"Male": 1,
+			"Female": 2,
+			"Male/Female": 3
+		},
+		"season": {
+			"Valentine": 1,
+			"Formal": 2,
+			"Summer": 3,
+			"Halloween": 4,
+			"Holiday": 5
+		},
+		"proficiency": {
+			"Sabre": 1,
+			"Dagger": 2,
+			"Spear": 3,
+			"Axe": 4,
+			"Staff": 5,
+			"Gun": 6,
+			"Melee": 7,
+			"Bow": 8,
+			"Harp": 9,
+			"Katana": 10
+		},
+		"proficiency1": {
+			"Sabre": 1,
+			"Dagger": 2,
+			"Spear": 3,
+			"Axe": 4,
+			"Staff": 5,
+			"Gun": 6,
+			"Melee": 7,
+			"Bow": 8,
+			"Harp": 9,
+			"Katana": 10
+		},
+		"proficiency2": {
+			"None": 0,
+			"Sabre": 1,
+			"Dagger": 2,
+			"Spear": 3,
+			"Axe": 4,
+			"Staff": 5,
+			"Gun": 6,
+			"Melee": 7,
+			"Bow": 8,
+			"Harp": 9,
+			"Katana": 10
+		},
+		"race1": {
+			"Human": 1,
+			"Erune": 2,
+			"Draph": 3,
+			"Harvin": 4,
+			"Other": 5,
+			"Primal": 6,
+			"Geonoid": 7,
+			"Levleath": 8,
+			"Grokkle": 9,
+			"Wolvir": 10
+		},
+		"race2": {
+			"Human": 1,
+			"Erune": 2,
+			"Draph": 3,
+			"Harvin": 4,
+			"Other": 5,
+			"Primal": 6,
+			"Geonoid": 7,
+			"Levleath": 8,
+			"Grokkle": 9,
+			"Wolvir": 10
+		}
+	},
+	"validators": {
+		"granblue_id": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "format",
+				"pattern": "^\\d{10}$",
+				"flags": ""
+			},
+			{
+				"kind": "uniqueness"
+			}
+		],
+		"name_en": [
+			{
+				"kind": "presence"
+			}
+		],
+		"rarity": [
+			{
+				"kind": "inclusion",
+				"in": [1, 2, 3]
+			}
+		],
+		"element": [
+			{
+				"kind": "inclusion",
+				"in": [0, 1, 2, 3, 4, 5, 6]
+			}
+		],
+		"gender": [
+			{
+				"kind": "inclusion",
+				"in": [0, 1, 2, 3]
+			}
+		],
+		"proficiency1": [
+			{
+				"kind": "inclusion",
+				"in": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+			}
+		],
+		"proficiency2": [
+			{
+				"kind": "inclusion",
+				"in": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+				"allow_nil": true
+			}
+		],
+		"race1": [
+			{
+				"kind": "inclusion",
+				"in": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+				"allow_nil": true
+			}
+		],
+		"race2": [
+			{
+				"kind": "inclusion",
+				"in": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+				"allow_nil": true
+			}
+		],
+		"min_hp": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_hp": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_hp_flb": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_hp_ulb": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_hp_transcendence": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"min_atk": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_atk": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_atk_flb": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_atk_ulb": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_atk_transcendence": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"base_da": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"base_ta": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"ougi_ratio": [
+			{
+				"kind": "numericality",
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"ougi_ratio_flb": [
+			{
+				"kind": "numericality",
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"season": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"allow_nil": true
+			},
+			{
+				"kind": "inclusion",
+				"in": [1, 2, 3, 4, 5],
+				"allow_nil": true
+			}
+		],
+		"max_transcendence_stage": [
+			{
+				"kind": "numericality",
+				"only_integer": true
+			},
+			{
+				"kind": "inclusion",
+				"minimum": 0,
+				"maximum": 5,
+				"exclude_end": false
+			}
+		]
+	}
+}

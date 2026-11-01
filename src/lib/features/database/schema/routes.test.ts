@@ -60,14 +60,21 @@ describe('generic database routes', () => {
 		expect(routeFor('/database/weapons/1040001000')).toBe(`${generic}/[id]`)
 		expect(routeFor('/database/weapons/1040001000/edit')).toBe(`${generic}/[id]/edit`)
 		expect(routeFor('/database/weapons/new')).toBe(`${generic}/new`)
+		expect(routeFor('/database/characters')).toBe(generic)
+		expect(routeFor('/database/characters/3040001000')).toBe(`${generic}/[id]`)
+		expect(routeFor('/database/characters/3040001000/edit')).toBe(`${generic}/[id]/edit`)
+		expect(routeFor('/database/characters/new')).toBe(`${generic}/new`)
 	})
 
 	it('leave bespoke routes in charge', () => {
 		expect(routeFor('/database/weapons/import')).toBe('/(app)/database/weapons/import')
 		expect(routeFor('/database/weapon-skills/ATK')).toBe('/(app)/database/weapon-skills/[modifier]')
-		expect(routeFor('/database/characters')).toBe('/(app)/database/characters')
+		expect(routeFor('/database/characters/import')).toBe('/(app)/database/characters/import')
 		expect(routeFor('/database/characters/3040001000/style')).toBe(
 			'/(app)/database/characters/[granblueId]/style'
+		)
+		expect(routeFor('/database/characters/3040001000/style/edit')).toBe(
+			'/(app)/database/characters/[granblueId]/style/edit'
 		)
 		expect(routeFor('/database/summons/2040001000')).toBe('/(app)/database/summons/[granblueId]')
 		expect(routeFor('/database/series/weapons/new')).toBe('/(app)/database/series/weapons/new')

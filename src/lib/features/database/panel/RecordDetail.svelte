@@ -4,7 +4,6 @@
 	import { resourceDef } from '$lib/features/database/schema/registry'
 	import SummonDetail from '$lib/features/database/summons/SummonDetail.svelte'
 	import JobDetail from '$lib/features/database/jobs/JobDetail.svelte'
-	import CharacterDetail from '$lib/features/database/characters/CharacterDetail.svelte'
 	import CharacterStyleDetail from '$lib/features/database/characters/CharacterStyleDetail.svelte'
 	import { parseRecordId, type PanelResource } from './panelUrl'
 
@@ -20,9 +19,11 @@
 
 	const record = $derived(parseRecordId(id))
 
-	// Registered resources use their panel override, else the generated detail
-	// (each loaded on the first open, then cached)
-	const def = $derived(resourceDef(resource))
+	// Style shifts (`<id>-style`) keep their own detail. Other registered
+	// resources use their panel override, else the generated detail (each
+	// loaded on the first open, then cached)
+	const style = $derived(resource === 'characters' && record.styleSwap)
+	const def = $derived(style ? undefined : resourceDef(resource))
 	const panel = $derived(def?.screens?.panel?.())
 	const generated = $derived(
 		!panel && def?.record ? import('$lib/features/database/schema/ResourceDetail.svelte') : null
@@ -30,7 +31,9 @@
 </script>
 
 {#key id}
-	{#if panel}
+	{#if style}
+		<CharacterStyleDetail granblueId={record.granblueId} {role} {tab} {onTabChange} />
+	{:else if panel}
 		{#await panel then { default: Panel }}
 			<Panel granblueId={record.granblueId} {role} {tab} {onTabChange} />
 		{/await}
@@ -42,9 +45,5 @@
 		<SummonDetail granblueId={record.granblueId} {role} {tab} {onTabChange} />
 	{:else if resource === 'jobs'}
 		<JobDetail granblueId={record.granblueId} {role} {tab} {onTabChange} />
-	{:else if record.styleSwap}
-		<CharacterStyleDetail granblueId={record.granblueId} {role} {tab} {onTabChange} />
-	{:else}
-		<CharacterDetail granblueId={record.granblueId} {role} {tab} {onTabChange} />
 	{/if}
 {/key}

@@ -88,3 +88,48 @@ export interface AdminWeaponRow {
 	limit?: boolean
 	createdAt?: string
 }
+
+/** A character series as the admin character list sends it */
+export interface AdminCharacterSeriesRef {
+	id: string
+	slug: string
+	nameEn: string | null
+	nameJp: string | null
+}
+
+/**
+ * Default `fields` of an admin character row, camelCased. Rows are flat; a
+ * style shift shares its base character's granblueId.
+ */
+export interface AdminCharacterRow {
+	id: string
+	granblueId: string
+	nameEn: string | null
+	nameJp: string | null
+	element: number | null
+	rarity: number | null
+	proficiency1: number | null
+	proficiency2: number | null
+	styleSwap: boolean
+	releaseDate: string | null
+	/** Newest of the release and uncap dates */
+	latestDate: string | null
+	updatedAt: string
+	// Not in the default list: request via `fields`
+	gender?: number | null
+	race1?: number | null
+	race2?: number | null
+	season?: number | null
+	special?: boolean
+	flb?: boolean
+	ulb?: boolean
+	transcendence?: boolean
+	maxTranscendenceStage?: number
+	flbDate?: string | null
+	ulbDate?: string | null
+	transcendenceDate?: string | null
+	/** In series order */
+	series?: AdminCharacterSeriesRef[]
+	skillCount?: number
+	createdAt?: string
+}

@@ -70,6 +70,8 @@
 			<Custom {record} />
 		{:else if field.kind === 'code'}
 			<CopyableText value={String(value)} />
+		{:else if field.kind === 'numberList'}
+			<CopyableText value={(value as number[]).join(', ')} />
 		{:else if field.kind === 'link'}
 			<Button
 				href={field.href(String(value), values) ?? undefined}
@@ -91,6 +93,8 @@
 			<AssociatedEntityLink type="character" entity={ref}>
 				<CharacterTags character={ref} />
 			</AssociatedEntityLink>
+		{:else if field.kind === 'reference' && field.resource === 'weapon'}
+			<AssociatedEntityLink type="weapon" entity={ref} />
 		{/if}
 	</DetailItem>
 {/if}

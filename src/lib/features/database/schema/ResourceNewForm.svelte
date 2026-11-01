@@ -14,6 +14,7 @@
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import { UnsavedChangesGuard } from '$lib/features/database/detail/unsavedChanges.svelte'
 	import UnsavedChangesDialog from '$lib/features/database/detail/UnsavedChangesDialog.svelte'
+	import { recordHref } from './detail'
 	import { formSections } from './form'
 	import { formElement } from './inputs/options'
 	import { createRecordForm } from './recordForm.svelte'
@@ -40,7 +41,7 @@
 			return
 		}
 		unsaved.release()
-		goto(`/database/${def.name}/${recordDef.routeId(saved)}`)
+		goto(recordHref(def, saved))
 	}
 </script>
 

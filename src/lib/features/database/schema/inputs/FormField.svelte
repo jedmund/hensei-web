@@ -8,8 +8,10 @@
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import { INPUT_COMPONENTS } from '../inputComponents'
+	import NumberListInput from './NumberListInput.svelte'
 	import OrderedEnumListInput from './OrderedEnumListInput.svelte'
 	import ReferenceInput from './ReferenceInput.svelte'
+	import ReferenceListInput from './ReferenceListInput.svelte'
 	import { optionsFor } from './options'
 	import type { InputProps } from './types'
 
@@ -149,6 +151,10 @@
 			contained
 		/>
 	</DetailItem>
+{:else if field.kind === 'numberList'}
+	<NumberListInput {...props} />
 {:else if field.kind === 'reference'}
 	<ReferenceInput {...props} />
+{:else if field.kind === 'referenceList'}
+	<ReferenceListInput {...props} />
 {/if}
