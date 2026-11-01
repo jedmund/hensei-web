@@ -159,7 +159,8 @@
 // A filled/empty icon toggle (perpetuity ring, quick summon). The button
 // shows its empty icon on slot hover and swaps icons on its own hover; the
 // read-only `.static` image only appears when the toggle is on. Position
-// and size stay in the component.
+// and size stay in the component. The focus ring belongs to UnitFrame, so
+// its hover is matched globally.
 @mixin unit-toggle-badge($name) {
 	.#{$name} {
 		position: absolute;
@@ -186,7 +187,7 @@
 		}
 	}
 
-	.focus-ring-wrapper:hover .#{$name}:not(.active) {
+	:global(.focus-ring-wrapper:hover) .#{$name}:not(.active) {
 		display: block;
 	}
 
