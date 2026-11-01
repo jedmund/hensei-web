@@ -312,6 +312,8 @@ export const charactersResource = defineResource<AdminCharacterRow, Character>({
 				type: 'proficiency',
 				value: (c) => [c.proficiency1, c.proficiency2],
 				sortable: false,
+				// Room for two badges: characters can have a second proficiency
+				width: '168px',
 				fields: ['proficiency1', 'proficiency2']
 			},
 			filter: { kind: 'multi', options: weaponProficiencyFilterOptions, facet: true }
