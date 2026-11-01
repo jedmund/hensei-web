@@ -322,10 +322,6 @@
 			cursor: not-allowed;
 		}
 
-		&[data-placeholder='true'] .text {
-			color: var(--text-tertiary);
-		}
-
 		.text {
 			flex: 1;
 			text-align: left;
@@ -438,16 +434,6 @@
 			background-color: var(--option-bg-hover);
 		}
 
-		&[data-disabled] {
-			color: var(--text-tertiary);
-			cursor: not-allowed;
-			opacity: 0.5;
-		}
-
-		&[data-selected] {
-			font-weight: $medium;
-		}
-
 		.text-stack {
 			flex: 1;
 			min-width: 0;
@@ -498,6 +484,22 @@
 	}
 
 	// Highlighted state (separate global selector for typeahead)
+	// bits-ui sets these data attributes, so the whole compound selector has to
+	// be global or Svelte prunes the rule as unused
+	:global([data-select-trigger].select[data-placeholder='true']) .text {
+		color: var(--text-tertiary);
+	}
+
+	:global([data-select-item].item[data-disabled]) {
+		color: var(--text-tertiary);
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
+
+	:global([data-select-item].item[data-selected]) {
+		font-weight: $medium;
+	}
+
 	:global([data-select-item].item[data-highlighted]) {
 		background-color: var(--option-bg-hover);
 	}
