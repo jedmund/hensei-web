@@ -13,14 +13,15 @@ function definition(resource: string): AnyResourceDef {
 }
 
 /**
- * Generated screens, for resources with no override. The detail needs a
- * `record`, the edit page a `record` it can `save.update`, the new page one
- * it can `save.create`
+ * Generated screens, for resources with no override. Every resource has a
+ * list; the detail needs a `record`, the edit page a `record` it can
+ * `save.update`, the new page one it can `save.create`
  */
 function generated(
 	def: AnyResourceDef,
 	kind: ScreenKind
 ): (() => Promise<{ default: unknown }>) | undefined {
+	if (kind === 'list') return () => import('./ResourceListScreen.svelte')
 	if (kind === 'detail' && def.record) return () => import('./ResourceDetailScreen.svelte')
 	if (kind === 'edit' && def.record && def.save?.update) {
 		return () => import('./ResourceEditScreen.svelte')

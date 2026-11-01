@@ -3,28 +3,18 @@
 	import type { Snippet } from 'svelte'
 
 	interface Props {
-		hasActiveFilters: boolean
-		filterCount: number
 		hasCustomColumns?: boolean
-		selectedElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
-		supportsCollectionFilters: boolean
 		leftActions?: Snippet
 		headerActions?: Snippet
 		rightActions?: Snippet
-		onToggleFilters: () => void
 		onResetColumns?: () => void
 	}
 
 	const {
-		hasActiveFilters,
-		filterCount,
 		hasCustomColumns = false,
-		selectedElement,
-		supportsCollectionFilters,
 		leftActions,
 		headerActions,
 		rightActions,
-		onToggleFilters,
 		onResetColumns
 	}: Props = $props()
 </script>
@@ -39,22 +29,6 @@
 			<Button variant="ghost" size="small" onclick={onResetColumns}>Reset columns</Button>
 		{/if}
 
-		{#if supportsCollectionFilters}
-			<Button
-				variant="ghost"
-				size="small"
-				onclick={onToggleFilters}
-				class="filter-toggle {hasActiveFilters ? 'has-active' : ''}"
-			>
-				Filters
-				{#if hasActiveFilters}
-					<span class="filter-count {selectedElement ?? ''}">
-						{filterCount}
-					</span>
-				{/if}
-			</Button>
-		{/if}
-
 		{#if headerActions}
 			{@render headerActions()}
 		{/if}
@@ -67,8 +41,6 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/layout' as layout;
-	@use '$src/themes/typography' as typography;
 
 	.controls {
 		display: flex;
@@ -83,52 +55,6 @@
 			align-items: center;
 			gap: spacing.$unit;
 			margin-left: auto;
-
-			:global(.filter-toggle) {
-				gap: spacing.$unit-half;
-
-				:global(svg) {
-					transition: transform 0.15s ease;
-				}
-
-				&:global(.has-active) {
-					color: var(--accent-color);
-				}
-			}
-
-			.filter-count {
-				display: inline-flex;
-				align-items: center;
-				justify-content: center;
-				min-width: 18px;
-				height: 18px;
-				margin-left: spacing.$unit;
-				padding: 0 spacing.$unit-half;
-				background: var(--accent-color);
-				color: white;
-				font-size: 11px;
-				font-weight: typography.$medium;
-				border-radius: 9px;
-
-				&:global(.wind) {
-					background: var(--wind-button-bg);
-				}
-				&:global(.fire) {
-					background: var(--fire-button-bg);
-				}
-				&:global(.water) {
-					background: var(--water-button-bg);
-				}
-				&:global(.earth) {
-					background: var(--earth-button-bg);
-				}
-				&:global(.dark) {
-					background: var(--dark-button-bg);
-				}
-				&:global(.light) {
-					background: var(--light-button-bg);
-				}
-			}
 		}
 	}
 </style>

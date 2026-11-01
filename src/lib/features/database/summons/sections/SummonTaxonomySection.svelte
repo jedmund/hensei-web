@@ -1,22 +1,18 @@
 <script lang="ts">
+	// Import form: element and series
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
-	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import { localizedName } from '$lib/utils/locale'
-	import type { SummonSeriesRef } from '$lib/types/api/summonSeries'
 
 	interface Props {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
-		summon: any
-		editMode?: boolean
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic edit data shape
-		editData?: any
+		editData: any
 	}
 
-	let { summon, editMode = false, editData = $bindable() }: Props = $props()
+	let { editData = $bindable() }: Props = $props()
 
 	// Fetch summon series list from API
 	const summonSeriesQuery = createQuery(() => entityQueries.summonSeriesList())
@@ -32,30 +28,17 @@
 			}))
 		]
 	})
-
-	// Format series label for display mode
-	function formatSeriesLabel(series: SummonSeriesRef | null | undefined): string {
-		if (!series) return '—'
-		return localizedName(series.name)
-	}
 </script>
 
 <DetailsContainer title="Details">
-	{#if editMode}
-		<DetailItem label="Element" editable={true}>
-			<ElementPicker bind:value={editData.element} includeAny mode="dropdown" contained />
-		</DetailItem>
-		<DetailItem
-			label="Series"
-			bind:value={editData.series}
-			editable={true}
-			type="select"
-			options={seriesOptions}
-		/>
-	{:else}
-		<DetailItem label="Element">
-			<ElementLabel element={summon.element} size="medium" />
-		</DetailItem>
-		<DetailItem label="Series" value={formatSeriesLabel(summon.series)} />
-	{/if}
+	<DetailItem label="Element" editable={true}>
+		<ElementPicker bind:value={editData.element} mode="dropdown" contained />
+	</DetailItem>
+	<DetailItem
+		label="Series"
+		bind:value={editData.series}
+		editable={true}
+		type="select"
+		options={seriesOptions}
+	/>
 </DetailsContainer>

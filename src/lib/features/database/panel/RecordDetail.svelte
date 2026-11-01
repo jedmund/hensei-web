@@ -2,7 +2,6 @@
 	// The detail body for a panel record: the same components the full pages render.
 	import type { DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
 	import { resourceDef } from '$lib/features/database/schema/registry'
-	import SummonDetail from '$lib/features/database/summons/SummonDetail.svelte'
 	import JobDetail from '$lib/features/database/jobs/JobDetail.svelte'
 	import CharacterStyleDetail from '$lib/features/database/characters/CharacterStyleDetail.svelte'
 	import { parseRecordId, type PanelResource } from './panelUrl'
@@ -41,8 +40,6 @@
 		{#await generated then { default: ResourceDetail }}
 			<ResourceDetail {def} granblueId={record.granblueId} {role} {tab} {onTabChange} />
 		{/await}
-	{:else if resource === 'summons'}
-		<SummonDetail granblueId={record.granblueId} {role} {tab} {onTabChange} />
 	{:else if resource === 'jobs'}
 		<JobDetail granblueId={record.granblueId} {role} {tab} {onTabChange} />
 	{/if}

@@ -11,6 +11,7 @@
 import { m } from '$lib/paraglide/messages'
 import { ADMIN_ROLE, CURATOR_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
 import { charactersSection } from './characters/section'
+import { summonsSection } from './summons/section'
 import { weaponsSection } from './weapons/section'
 
 export type SectionGroupId = 'catalogue' | 'battles' | 'site' | 'admin'
@@ -88,25 +89,7 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 		parent: 'characters'
 	},
 	...resourceSections('weapons', weaponsSection),
-	{
-		id: 'summons',
-		label: () => m.nav_summons(),
-		path: '/database/summons',
-		group: 'catalogue',
-		entity: () => m.type_summon(),
-		actions: [
-			[
-				{
-					label: () => m.nav_new_single({ entity: m.type_summon() }),
-					href: '/database/summons/new'
-				},
-				{
-					label: () => m.nav_new_multiple({ entity: m.type_summon() }),
-					href: '/database/summons/import'
-				}
-			]
-		]
-	},
+	...resourceSections('summons', summonsSection),
 	{
 		id: 'jobs',
 		label: () => m.nav_jobs(),

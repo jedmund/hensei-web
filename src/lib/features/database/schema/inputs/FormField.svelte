@@ -118,7 +118,12 @@
 	/>
 {:else if field.kind === 'enum' && field.list?.type === 'element'}
 	<DetailItem {label} {sublabel} {error} editable>
-		<ElementPicker bind:value={() => value as number, set} includeAny mode="dropdown" contained />
+		<ElementPicker
+			bind:value={() => value as number, set}
+			includeAny={options.some((o) => o.value === 0)}
+			mode="dropdown"
+			contained
+		/>
 	</DetailItem>
 {:else if field.kind === 'enum'}
 	<DetailItem
