@@ -5,24 +5,21 @@
 	import { crewAdapter } from '$lib/api/adapters/crew.adapter'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
-	import { getCharacterImage } from '$lib/utils/images/characters'
-	import { getWeaponImage } from '$lib/utils/images/weapons'
-	import { getSummonImage } from '$lib/utils/images/summons'
+	import { ELEMENT_DISPLAY_ORDER } from '$lib/utils/element'
 	import {
-		ELEMENT_DISPLAY_ORDER,
-		getElementClass,
-		getElementImage,
-		getElementLabel
-	} from '$lib/utils/element'
+		addRosterItem,
+		removeRosterItem,
+		toSelectedItems,
+		type RosterItemType
+	} from '$lib/features/crew/rosterItems'
 	import type { CrewRoster, EnrichedRosterItem, RosterItemRef } from '$lib/types/api/crew'
-	import Icon from '$lib/components/Icon.svelte'
-	import RichTooltip from '$lib/components/ui/RichTooltip.svelte'
-	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
+	import CrewPage from '$lib/components/crew/CrewPage.svelte'
 	import CrewTabs from '$lib/components/crew/CrewTabs.svelte'
-	import RosterRow from '$lib/components/crew/RosterRow.svelte'
 	import RosterSearch from '$lib/components/crew/RosterSearch.svelte'
 	import type { RosterSearchResult } from '$lib/components/crew/RosterSearch.svelte'
+	import RosterElementTabs from '$lib/components/crew/roster/RosterElementTabs.svelte'
+	import RosterGrid from '$lib/components/crew/roster/RosterGrid.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 	import { toast } from 'svelte-sonner'
@@ -33,19 +30,6 @@
 	}
 
 	let { data }: Props = $props()
-
-	// Item type for roster
-	type ItemType = 'Character' | 'Weapon' | 'Summon'
-
-	// Selected item with metadata (local UI state enriched beyond what's persisted)
-	interface SelectedItem {
-		id: string
-		granblueId: string
-		name: string
-		type: ItemType
-		element?: number
-		season?: number | null
-	}
 
 	// State — default to first element in display order (Fire)
 	let activeElement = $state<number>(ELEMENT_DISPLAY_ORDER[0])
@@ -85,16 +69,7 @@
 	const enrichedItems = $derived<EnrichedRosterItem[]>(rosterDetail?.items ?? [])
 
 	// Build selectedItems from the enriched API data
-	const selectedItems = $derived<SelectedItem[]>(
-		enrichedItems.map((item) => ({
-			id: item.id,
-			granblueId: item.granblueId,
-			name: item.name,
-			type: item.type,
-			element: item.element,
-			season: item.season
-		}))
-	)
+	const selectedItems = $derived(toSelectedItems(enrichedItems))
 
 	// Show error toast on query failure
 	$effect(() => {
@@ -135,11 +110,10 @@
 
 	function handleSelect(result: RosterSearchResult) {
 		if (!activeRoster) return
-		if (activeRoster.items.some((item) => item.id === result.id && item.type === result.type))
-			return
+		const newItems = addRosterItem(activeRoster.items, result)
+		if (!newItems) return
 
 		const rosterId = activeRoster.id
-		const newItems: RosterItemRef[] = [...activeRoster.items, { id: result.id, type: result.type }]
 
 		// Optimistically update the rosters list cache
 		queryClient.setQueryData(crewKeys.crewRosters(), (old: CrewRoster[] | undefined) =>
@@ -149,11 +123,11 @@
 		saveRoster(rosterId, newItems)
 	}
 
-	function removeItem(id: string, type: ItemType) {
+	function removeItem(id: string, type: RosterItemType) {
 		if (!activeRoster) return
 
 		const rosterId = activeRoster.id
-		const newItems = activeRoster.items.filter((item) => !(item.id === id && item.type === type))
+		const newItems = removeRosterItem(activeRoster.items, id, type)
 
 		// Optimistically update the rosters list cache
 		queryClient.setQueryData(crewKeys.crewRosters(), (old: CrewRoster[] | undefined) =>
@@ -161,17 +135,6 @@
 		)
 
 		saveRoster(rosterId, newItems)
-	}
-
-	function getItemImage(item: SelectedItem): string {
-		switch (item.type) {
-			case 'Character':
-				return getCharacterImage(item.granblueId, 'square', '01')
-			case 'Weapon':
-				return getWeaponImage(item.granblueId, 'square')
-			case 'Summon':
-				return getSummonImage(item.granblueId, 'square')
-		}
 	}
 </script>
 
@@ -179,117 +142,52 @@
 	<title>{m.page_title_crew_roster()}</title>
 </svelte:head>
 
-<div class="page">
-	<div class="card">
-		<CrewHeader
-			title={crewStore.crew?.name ?? ''}
-			subtitle={crewStore.crew?.gamertag ?? undefined}
-			description={crewStore.crew?.description ?? undefined}
-		/>
+<CrewPage overflow="visible">
+	<CrewHeader
+		title={crewStore.crew?.name ?? ''}
+		subtitle={crewStore.crew?.gamertag ?? undefined}
+		description={crewStore.crew?.description ?? undefined}
+	/>
 
-		<CrewTabs userElement={data.currentUser?.element} />
+	<CrewTabs userElement={data.currentUser?.element} />
 
-		<div class="roster-content">
-			<!-- Element tabs -->
-			<div class="element-tabs">
-				{#each ELEMENT_DISPLAY_ORDER as element (element)}
-					<button
-						class="element-tab {getElementClass(element)}"
-						class:active={activeElement === element}
-						onclick={() => (activeElement = element)}
-					>
-						<img
-							src={getElementImage(element)}
-							alt={getElementLabel(element)}
-							class="element-icon"
-						/>
-						{getElementLabel(element)}
-					</button>
-				{/each}
-			</div>
-			{#if isSaving}
-				<span class="save-indicator">{m.crew_roster_saving()}</span>
+	<div class="roster-content">
+		<RosterElementTabs value={activeElement} onChange={(element) => (activeElement = element)} />
+		{#if isSaving}
+			<span class="save-indicator">{m.crew_roster_saving()}</span>
+		{/if}
+
+		{#if crewStore.isOfficer}
+			<RosterSearch onSelect={handleSelect} />
+		{/if}
+
+		<!-- Roster Grid -->
+		<div class="roster-section">
+			{#if rostersQuery.isLoading}
+				<div class="roster-message">{m.crew_roster_loading()}</div>
+			{:else if !activeRoster}
+				<div class="roster-message">{m.crew_roster_no_members()}</div>
+			{:else if activeRoster.items.length === 0}
+				<div class="roster-message">{m.crew_roster_empty_items()}</div>
+			{:else if isLoadingRoster}
+				<div class="roster-message">{m.crew_roster_loading()}</div>
+			{:else if rosterMembers.length > 0}
+				<RosterGrid
+					items={selectedItems}
+					members={rosterMembers}
+					canEdit={crewStore.isOfficer}
+					onRemove={removeItem}
+				/>
+			{:else}
+				<div class="roster-message">{m.crew_roster_no_members()}</div>
 			{/if}
-
-			{#if crewStore.isOfficer}
-				<RosterSearch onSelect={handleSelect} />
-			{/if}
-
-			<!-- Roster Grid -->
-			<div class="roster-section">
-				{#if rostersQuery.isLoading}
-					<div class="loading-roster">{m.crew_roster_loading()}</div>
-				{:else if !activeRoster}
-					<div class="empty-roster">{m.crew_roster_no_members()}</div>
-				{:else if activeRoster.items.length === 0}
-					<div class="empty-roster">{m.crew_roster_empty_items()}</div>
-				{:else if isLoadingRoster}
-					<div class="loading-roster">{m.crew_roster_loading()}</div>
-				{:else if rosterMembers.length > 0}
-					<div class="roster-grid">
-						<div class="roster-header">
-							<div class="member-col"></div>
-							{#each selectedItems as item (item.id + item.type)}
-								<div class="item-col">
-									<RichTooltip>
-										{#snippet content()}
-											<div class="tooltip-content">
-												<span class="item-name">{item.name}</span>
-												{#if item.type === 'Character'}
-													<CharacterTags
-														character={{
-															element: item.element,
-															season: item.season
-														}}
-													/>
-												{/if}
-											</div>
-										{/snippet}
-										<div class="header-item-wrapper">
-											<img src={getItemImage(item)} alt={item.name} class="header-item-image" />
-											{#if crewStore.isOfficer}
-												<button
-													class="remove-item-btn"
-													onclick={() => removeItem(item.id, item.type)}
-													aria-label={m.crew_roster_remove_aria({ name: item.name })}
-												>
-													<Icon name="close" size={12} />
-												</button>
-											{/if}
-										</div>
-									</RichTooltip>
-								</div>
-							{/each}
-						</div>
-						<div class="roster-body">
-							{#each rosterMembers as member (member.userId)}
-								<RosterRow {member} {selectedItems} />
-							{/each}
-						</div>
-					</div>
-				{:else}
-					<div class="empty-roster">{m.crew_roster_no_members()}</div>
-				{/if}
-			</div>
 		</div>
 	</div>
-</div>
+</CrewPage>
 
 <style lang="scss">
-	@use '$src/themes/effects' as effects;
-	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
-
-	.page {
-		margin: 0 auto;
-		max-width: var(--main-max-width);
-	}
-
-	.card {
-		@include layout.page-surface;
-		overflow: visible;
-	}
 
 	.roster-content {
 		padding: 0 spacing.$unit-2x spacing.$unit-2x;
@@ -298,185 +196,13 @@
 		gap: spacing.$unit-2x;
 	}
 
-	.element-tabs {
-		display: flex;
-		gap: spacing.$unit-half;
-		align-items: center;
-	}
-
-	.element-tab {
-		flex: 1;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: spacing.$unit-half;
-		padding: spacing.$unit spacing.$unit;
-		border: none;
-		border-radius: layout.$item-corner;
-		background: var(--pill-bg);
-		color: var(--text-primary);
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-		cursor: pointer;
-		transition:
-			background-color 0.15s,
-			color 0.15s;
-
-		&.element-fire {
-			&.active {
-				background: var(--fire-nav-selected-bg);
-				color: var(--fire-nav-selected-text);
-			}
-			&:hover:not(.active) {
-				background: var(--fire-nav-selected-bg);
-				color: var(--fire-nav-selected-text);
-			}
-		}
-		&.element-water {
-			&.active {
-				background: var(--water-nav-selected-bg);
-				color: var(--water-nav-selected-text);
-			}
-			&:hover:not(.active) {
-				background: var(--water-nav-selected-bg);
-				color: var(--water-nav-selected-text);
-			}
-		}
-		&.element-earth {
-			&.active {
-				background: var(--earth-nav-selected-bg);
-				color: var(--earth-nav-selected-text);
-			}
-			&:hover:not(.active) {
-				background: var(--earth-nav-selected-bg);
-				color: var(--earth-nav-selected-text);
-			}
-		}
-		&.element-wind {
-			&.active {
-				background: var(--wind-nav-selected-bg);
-				color: var(--wind-nav-selected-text);
-			}
-			&:hover:not(.active) {
-				background: var(--wind-nav-selected-bg);
-				color: var(--wind-nav-selected-text);
-			}
-		}
-		&.element-dark {
-			&.active {
-				background: var(--dark-nav-selected-bg);
-				color: var(--dark-nav-selected-text);
-			}
-			&:hover:not(.active) {
-				background: var(--dark-nav-selected-bg);
-				color: var(--dark-nav-selected-text);
-			}
-		}
-		&.element-light {
-			&.active {
-				background: var(--light-nav-selected-bg);
-				color: var(--light-nav-selected-text);
-			}
-			&:hover:not(.active) {
-				background: var(--light-nav-selected-bg);
-				color: var(--light-nav-selected-text);
-			}
-		}
-	}
-
-	.element-icon {
-		width: 16px;
-		height: 16px;
-	}
-
 	.save-indicator {
 		font-size: typography.$font-small;
 		color: var(--text-tertiary);
 	}
 
-	.roster-grid {
-		overflow-x: auto;
-		font-size: typography.$font-regular;
-	}
-
-	.roster-header {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit;
-		padding: spacing.$unit spacing.$unit-2x spacing.$unit 0;
-	}
-
-	.item-col {
-		width: 70px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		flex-shrink: 0;
-	}
-
-	.header-item-wrapper {
-		position: relative;
-	}
-
-	.tooltip-content {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-half;
-	}
-
-	.item-name {
-		font-weight: typography.$medium;
-	}
-
-	.header-item-image {
-		width: 60px;
-		height: 60px;
-		object-fit: cover;
-		border-radius: layout.$item-corner-small;
-	}
-
-	.remove-item-btn {
-		position: absolute;
-		top: -8px;
-		right: -8px;
-		width: 24px;
-		height: 24px;
-		border-radius: 50%;
-		border: none;
-		background: var(--pill-bg);
-		color: var(--text-primary);
-		cursor: pointer;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		opacity: 0;
-		transition:
-			opacity 0.15s,
-			background-color 0.15s,
-			color 0.15s;
-
-		&:hover {
-			background: var(--color-red, #dc2626);
-			color: white;
-		}
-	}
-
-	.item-col:hover .remove-item-btn {
-		opacity: 1;
-	}
-
-	.member-col {
-		flex: 1;
-		min-width: 150px;
-		position: sticky;
-		left: 0;
-		padding-left: spacing.$unit-2x;
-		background: var(--card-bg);
-		z-index: effects.$z-raised;
-	}
-
-	.loading-roster,
-	.empty-roster {
+	// Loading and empty messages in place of the grid
+	.roster-message {
 		padding: spacing.$unit-3x;
 		text-align: center;
 		color: var(--text-secondary);
