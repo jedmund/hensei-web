@@ -6,22 +6,10 @@
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import { weaponSkillAdapter } from '$lib/api/adapters/weaponSkill.adapter'
-	import DatabaseGridWithProvider from '$lib/components/database/DatabaseGridWithProvider.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import type { IColumn } from 'wx-svelte-grid'
-	import WeaponImageCell from '$lib/components/database/cells/WeaponImageCell.svelte'
-	import ElementCell from '$lib/components/database/cells/ElementCell.svelte'
-	import ProficiencyCell from '$lib/components/database/cells/ProficiencyCell.svelte'
-	import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svelte'
-	import LastUpdatedCell from '$lib/components/database/cells/LastUpdatedCell.svelte'
-	import BooleanCell from '$lib/components/database/cells/BooleanCell.svelte'
-	import BaseWeaponCell from '$lib/components/database/cells/BaseWeaponCell.svelte'
-	import RecruitsCell from '$lib/components/database/cells/RecruitsCell.svelte'
-	import DateCell from '$lib/components/database/cells/DateCell.svelte'
 	import AwakeningModal from '$lib/features/database/weapons/AwakeningModal.svelte'
-	import { getRarityLabel } from '$lib/utils/rarity'
 	import { getBasePath } from '$lib/utils/images/core'
 	import { localizedName } from '$lib/utils/locale'
 	import { getBoostTypeLabel } from '$lib/utils/boostType'
@@ -33,13 +21,11 @@
 	import { createStaticSource } from '$lib/components/data-table/staticSource.svelte'
 	import type { DataTableColumn, FlagValue } from '$lib/components/data-table/types'
 	import type { WeaponSeries } from '$lib/types/api/weaponSeries'
+	import WeaponsTable from '$lib/features/database/weapons/WeaponsTable.svelte'
+	import { ResultSet, setResultSet } from '$lib/features/database/resultSet.svelte'
 
-	const extraPrerequisiteLabels: Record<number, string> = {
-		3: 'MLB',
-		4: 'FLB',
-		5: 'ULB',
-		6: 'Transcendence'
-	}
+	// The weapons list keeps it in step with its rows; the record panel reads it for j/k
+	setResultSet(new ResultSet())
 
 	type ViewMode = 'weapons' | 'series' | 'awakenings' | 'skills'
 
@@ -195,217 +181,22 @@
 	function handleSkillFamilyClick(family: WeaponSkillFamilySummary) {
 		goto(`/database/weapon-skills/${encodeURIComponent(family.modifier)}`)
 	}
-
-	// Column configuration for weapons
-	const columns: IColumn[] = [
-		{
-			id: 'granblueId',
-			header: '',
-			width: 80,
-			cell: WeaponImageCell
-		},
-		{
-			id: 'name',
-			header: 'Name',
-			width: 180,
-			flexgrow: 1,
-			sort: true,
-			template: (nameObj: unknown) => {
-				// nameObj is the name property itself, not the full item
-				if (!nameObj) return '—'
-				if (typeof nameObj === 'string') return nameObj
-				// Handle {en: "...", ja: "..."} structure
-				const obj = nameObj as Record<string, string>
-				return obj.en || obj.ja || '—'
-			}
-		},
-		{
-			id: 'rarity',
-			header: 'Rarity',
-			width: 80,
-			sort: true,
-			template: (rarity: unknown) => getRarityLabel(rarity as number)
-		},
-		{
-			id: 'element',
-			header: 'Element',
-			width: 56,
-			sort: true,
-			cell: ElementCell
-		},
-		{
-			id: 'proficiency',
-			header: 'Prof.',
-			width: 56,
-			sort: true,
-			cell: ProficiencyCell
-		},
-		{
-			id: 'uncap',
-			header: 'Uncap',
-			width: 160,
-			cell: WeaponUncapCell
-		},
-		{
-			id: 'last_updated',
-			header: 'Last Updated',
-			width: 120,
-			sort: true,
-			cell: LastUpdatedCell
-		},
-		{
-			id: 'flb',
-			header: 'FLB',
-			width: 70,
-			hidden: true,
-			cell: BooleanCell,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
-			getter: (row: any) => row.uncap?.flb
-		},
-		{
-			id: 'ulb',
-			header: 'ULB',
-			width: 70,
-			hidden: true,
-			cell: BooleanCell,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
-			getter: (row: any) => row.uncap?.ulb
-		},
-		{
-			id: 'transcendence',
-			header: 'Transcendence',
-			width: 120,
-			hidden: true,
-			cell: BooleanCell,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
-			getter: (row: any) => row.uncap?.transcendence
-		},
-		{
-			id: 'maxLevel',
-			header: 'Max Level',
-			width: 90,
-			hidden: true
-		},
-		{
-			id: 'maxSkillLevel',
-			header: 'Max Skill Lv',
-			width: 100,
-			hidden: true
-		},
-		{
-			id: 'maxAwakeningLevel',
-			header: 'Max Awaken Lv',
-			width: 110,
-			hidden: true
-		},
-		{
-			id: 'maxExorcismLevel',
-			header: 'Max Exorcism Lv',
-			width: 120,
-			hidden: true
-		},
-		{
-			id: 'extra',
-			header: 'Extra',
-			width: 70,
-			hidden: true,
-			cell: BooleanCell,
-			yesClass: 'extra'
-		},
-		{
-			id: 'extraPrerequisite',
-			header: 'Extra Prereq.',
-			width: 110,
-			hidden: true,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
-			getter: (row: any) => row.uncap?.extraPrerequisite,
-			template: (value: unknown) => {
-				if (value == null) return '—'
-				return extraPrerequisiteLabels[value as number] ?? '—'
-			}
-		},
-		{
-			id: 'limit',
-			header: 'Limit',
-			width: 70,
-			hidden: true,
-			cell: BooleanCell
-		},
-		{
-			id: 'forgeOrder',
-			header: 'Forge Order',
-			width: 100,
-			hidden: true
-		},
-		{
-			id: 'forgedFrom',
-			header: 'Base Weapon',
-			width: 200,
-			hidden: true,
-			cell: BaseWeaponCell
-		},
-		{
-			id: 'recruits',
-			header: 'Recruits',
-			width: 200,
-			hidden: true,
-			cell: RecruitsCell
-		},
-		{
-			id: 'releaseDate',
-			header: 'Release Date',
-			width: 110,
-			hidden: true,
-			cell: DateCell
-		},
-		{
-			id: 'flbDate',
-			header: 'FLB Date',
-			width: 110,
-			hidden: true,
-			cell: DateCell
-		},
-		{
-			id: 'ulbDate',
-			header: 'ULB Date',
-			width: 110,
-			hidden: true,
-			cell: DateCell
-		},
-		{
-			id: 'transcendenceDate',
-			header: 'Transcend Date',
-			width: 110,
-			hidden: true,
-			cell: DateCell
-		},
-		{
-			id: 'hasVariants',
-			header: 'Has Variants',
-			width: 100,
-			hidden: true,
-			cell: BooleanCell,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid untyped callback
-			getter: (row: any) =>
-				row.elementVariantIds != null && Object.keys(row.elementVariantIds).length > 0
-		}
-	]
 </script>
 
 <PageMeta title={m.page_title_db_weapons()} description={m.page_desc_home()} />
 
+{#snippet viewTabs()}
+	<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
+		<Segment value="weapons">{m.nav_weapons()}</Segment>
+		<Segment value="series">{m.db_nav_series()}</Segment>
+		<Segment value="awakenings">{m.db_nav_awakenings()}</Segment>
+		<Segment value="skills">{m.db_nav_skills()}</Segment>
+	</SegmentedControl>
+{/snippet}
+
 <div class="database-page">
 	{#if viewMode === 'weapons'}
-		<DatabaseGridWithProvider resource="weapons" {columns} pageSize={20}>
-			{#snippet leftActions()}
-				<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
-					<Segment value="weapons">Weapons</Segment>
-					<Segment value="series">Series</Segment>
-					<Segment value="awakenings">Awakenings</Segment>
-					<Segment value="skills">Skills</Segment>
-				</SegmentedControl>
-			{/snippet}
-		</DatabaseGridWithProvider>
+		<WeaponsTable toolbar={viewTabs} />
 	{:else if viewMode === 'series'}
 		<DataTable
 			columns={seriesColumns}
@@ -418,24 +209,14 @@
 			emptyMessage={m.db_weapon_series_empty()}
 		>
 			{#snippet toolbar()}
-				<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
-					<Segment value="weapons">Weapons</Segment>
-					<Segment value="series">Series</Segment>
-					<Segment value="awakenings">Awakenings</Segment>
-					<Segment value="skills">Skills</Segment>
-				</SegmentedControl>
+				{@render viewTabs()}
 			{/snippet}
 		</DataTable>
 	{:else if viewMode === 'awakenings'}
 		<!-- Awakenings view -->
 		<div class="grid-container">
 			<div class="controls">
-				<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
-					<Segment value="weapons">Weapons</Segment>
-					<Segment value="series">Series</Segment>
-					<Segment value="awakenings">Awakenings</Segment>
-					<Segment value="skills">Skills</Segment>
-				</SegmentedControl>
+				{@render viewTabs()}
 				<div class="controls-right">
 					<Button variant="primary" size="small" onclick={handleAddAwakening}>Add</Button>
 				</div>
@@ -496,12 +277,7 @@
 		<!-- Weapon Skills view -->
 		<div class="grid-container">
 			<div class="controls">
-				<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
-					<Segment value="weapons">Weapons</Segment>
-					<Segment value="series">Series</Segment>
-					<Segment value="awakenings">Awakenings</Segment>
-					<Segment value="skills">Skills</Segment>
-				</SegmentedControl>
+				{@render viewTabs()}
 				<div class="controls-right">
 					<input
 						type="text"
