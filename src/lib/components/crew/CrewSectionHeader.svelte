@@ -12,8 +12,9 @@
 
 <div class="section-header" class:rule-top={rule === 'top'}>
 	<span class="section-title"
-		>{title}{#if count !== undefined}
-			<span class="count">{count}</span>{/if}</span
+		>{title}{count !== undefined ? ' ' : ''}{#if count !== undefined}<span class="count"
+				>{count}</span
+			>{/if}</span
 	>
 </div>
 
