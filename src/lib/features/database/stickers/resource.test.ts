@@ -5,7 +5,7 @@
  * format, the edit payload also carries the (unchanged) slug, and images are
  * uploaded from the edit form rather than chosen before creating.
  */
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import {
 	formSections,
 	fromRecord,
@@ -15,10 +15,9 @@ import {
 import { detailLayout } from '$lib/features/database/schema/detail'
 import { buildZod, issueErrors } from '$lib/features/database/schema/validation'
 import type { AdminStickerRow } from '$lib/types/api/admin'
-import type { Sticker } from '$lib/types/api/sticker'
-import { stickersResource as def } from './resource'
+import { stickersResource as def, type StickerRecord } from './resource'
 
-const thanks: Sticker = {
+const thanks: StickerRecord = {
 	id: '572fd30c-83f0-4264-9542-cc1e8892d16e',
 	slug: 'stamp-9',
 	meaning: { en: 'Thanks!', ja: 'ありがとう' },
@@ -26,7 +25,8 @@ const thanks: Sticker = {
 	imageUrlJa: 'icons/stickers/stamp9.ja.png?v=1',
 	position: 0,
 	active: true,
-	deletable: false
+	deletable: false,
+	name: { en: 'Thanks!', ja: 'ありがとう' }
 }
 
 const keys = (mode: 'edit' | 'create') =>
@@ -95,12 +95,18 @@ describe('stickers resource: forms', () => {
 })
 
 describe('stickers resource: detail, list and delete', () => {
-	it('shows the images, then the details', () => {
+	it('shows the images with the details', () => {
 		const { blocks } = detailLayout(def, thanks)
 		expect(blocks.map((b) => [b.section.id, b.rows.map((r) => r.field.key)])).toEqual([
-			['images', ['images']],
-			['details', ['meaning', 'slug', 'active', 'position']]
+			['details', ['images', 'meaning', 'slug', 'active', 'position']]
 		])
+	})
+
+	it('names the record by its meaning, for the header and breadcrumb', async () => {
+		const { stickerAdapter } = await import('$lib/api/adapters/sticker.adapter')
+		const spy = vi.spyOn(stickerAdapter, 'getSticker').mockResolvedValueOnce(thanks)
+		expect((await def.record!.fetch('stamp-9')).name).toEqual(thanks.meaning)
+		spy.mockRestore()
 	})
 
 	it('addresses rows and records by slug, in picker order', () => {

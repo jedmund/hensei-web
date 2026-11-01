@@ -5,15 +5,17 @@
  * stickers or upload their own, and retire them with `active`. A sticker
  * someone has given can't be deleted.
  */
+import { queryOptions } from '@tanstack/svelte-query'
 import { z } from 'zod'
 import * as m from '$lib/paraglide/messages'
 import { stickerAdapter } from '$lib/api/adapters/sticker.adapter'
-import { stickerKeys, stickerQueries } from '$lib/api/queries/sticker.queries'
+import { stickerKeys } from '$lib/api/queries/sticker.queries'
 import { SLUG } from '$lib/features/database/schema/sluggedFields'
 import { defineResource } from '$lib/features/database/schema/types'
 import StickerThumbnail from '$lib/features/database/stickers/StickerThumbnail.svelte'
 import { stickersSection } from '$lib/features/database/stickers/section'
 import type { AdminStickerRow } from '$lib/types/api/admin'
+import type { LocalizedName } from '$lib/types/api/entities'
 import type { Sticker, StickerPayload } from '$lib/types/api/sticker'
 import { getHostedImageUrl } from '$lib/utils/images/core'
 import { appLocale } from '$lib/utils/locale'
@@ -21,7 +23,15 @@ import { stickerImageUrl } from '$lib/utils/stickers'
 
 const required = () => m.db_field_required()
 
-export const stickersResource = defineResource<AdminStickerRow, Sticker>({
+/**
+ * A sticker as the detail and edit pages hold it: its meaning doubles as its
+ * name, which the page header and the breadcrumb show
+ */
+export type StickerRecord = Sticker & { name: LocalizedName }
+
+const asRecord = (sticker: Sticker): StickerRecord => ({ ...sticker, name: sticker.meaning })
+
+export const stickersResource = defineResource<AdminStickerRow, StickerRecord>({
 	name: 'stickers',
 	fields: [
 		{
@@ -110,11 +120,10 @@ export const stickersResource = defineResource<AdminStickerRow, Sticker>({
 
 	layout: {
 		detail: [
-			{ id: 'images', title: m.db_stickers_section_image, fields: ['images'] },
 			{
 				id: 'details',
 				title: m.db_stickers_section_details,
-				fields: ['meaning', 'slug', 'active', 'position']
+				fields: ['images', 'meaning', 'slug', 'active', 'position']
 			}
 		],
 		edit: [
@@ -129,8 +138,12 @@ export const stickersResource = defineResource<AdminStickerRow, Sticker>({
 	},
 
 	record: {
-		fetch: (slug) => stickerAdapter.getSticker(slug),
-		query: (slug) => stickerQueries.detail(slug),
+		fetch: (slug, options) => stickerAdapter.getSticker(slug, options).then(asRecord),
+		query: (slug) =>
+			queryOptions({
+				queryKey: stickerKeys.detail(slug),
+				queryFn: () => stickerAdapter.getSticker(slug).then(asRecord)
+			}),
 		routeId: (s) => s.slug,
 		noun: m.db_stickers_type,
 		image: (s) => getHostedImageUrl(stickerImageUrl(s, appLocale())) ?? ''
@@ -139,8 +152,11 @@ export const stickersResource = defineResource<AdminStickerRow, Sticker>({
 	save: {
 		// Payload keys are the strong params by construction (see contract.test.ts)
 		update: (s, payload) =>
-			stickerAdapter.updateSticker(s.id, payload as unknown as Partial<StickerPayload>),
-		create: (payload) => stickerAdapter.createSticker(payload as unknown as StickerPayload),
+			stickerAdapter
+				.updateSticker(s.id, payload as unknown as Partial<StickerPayload>)
+				.then(asRecord),
+		create: (payload) =>
+			stickerAdapter.createSticker(payload as unknown as StickerPayload).then(asRecord),
 		destroy: (s) => stickerAdapter.deleteSticker(s.id),
 		canDestroy: (s) => s.deletable !== false || m.db_stickers_delete_hint,
 		// The picker, the labels and the team pages read the public catalogue

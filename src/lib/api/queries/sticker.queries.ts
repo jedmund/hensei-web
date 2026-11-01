@@ -24,13 +24,6 @@ export const stickerQueries = {
 			gcTime: 1000 * 60 * 60
 		}),
 
-	/** One sticker by slug or id (the database editor's detail) */
-	detail: (idOrSlug: string) =>
-		queryOptions({
-			queryKey: stickerKeys.detail(idOrSlug),
-			queryFn: () => stickerAdapter.getSticker(idOrSlug)
-		}),
-
 	/** The game's own stickers, for editors making stickers */
 	library: () =>
 		queryOptions({
