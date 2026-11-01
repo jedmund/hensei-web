@@ -15,7 +15,7 @@ export const CSP_REPORT_PATH = '/api/csp-report'
 /** @type {CspMode[]} */
 export const CSP_MODES = ['off', 'report-only', 'enforce']
 
-// Game CDN for item and enemy images (src/lib/utils/images.ts).
+// Game CDN for item and enemy images (src/lib/utils/images/cdn.ts, raids.ts).
 const GAME_IMAGE_HOSTS = [
 	'https://prd-game-a-granbluefantasy.akamaized.net',
 	'https://prd-game-a1-granbluefantasy.akamaized.net'

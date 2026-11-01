@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { CollectionCharacter } from '$lib/types/api/collection'
 	import { localizedName } from '$lib/utils/locale'
-	import { getCharacterImageWithPose } from '$lib/utils/images'
+	import { getCharacterImageWithPose } from '$lib/utils/images/characters'
 	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'

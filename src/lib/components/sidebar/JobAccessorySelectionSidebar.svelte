@@ -4,7 +4,7 @@
 	import type { Job, JobAccessory } from '$lib/types/api/entities'
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import { jobQueries } from '$lib/api/queries/job.queries'
-	import { getAccessoryImage } from '$lib/utils/images'
+	import { getAccessoryImage } from '$lib/utils/images/equipment'
 	import { localizedName } from '$lib/utils/locale'
 	import SelectionSidebarLayout from './SelectionSidebarLayout.svelte'
 	import Icon from '../Icon.svelte'

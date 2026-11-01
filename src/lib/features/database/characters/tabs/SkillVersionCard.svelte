@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { CharacterSkillVersion, DescriptionSegment } from '$lib/types/api/entities'
-	import { getCharacterSkillIcon } from '$lib/utils/images'
+	import { getCharacterSkillIcon } from '$lib/utils/images/icons'
 	import { appLocale, localizedName } from '$lib/utils/locale'
 	import SkillCard from '$lib/components/skills/SkillCard.svelte'
 	import * as m from '$lib/paraglide/messages'

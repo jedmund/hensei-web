@@ -4,7 +4,7 @@
 
 import type { Awakening, WeaponKey } from '$lib/types/api/entities'
 import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'
-import { BUCKET, getBasePath, renumberedImage } from '$lib/utils/images'
+import { BUCKET, getBasePath, renumberedImage } from '$lib/utils/images/core'
 import { localizedName } from '$lib/utils/locale'
 
 /**

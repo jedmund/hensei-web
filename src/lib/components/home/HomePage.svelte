@@ -20,7 +20,8 @@
 	import { exploreQuery } from '$lib/utils/home'
 	import { GALLERY_PATH, galleryPath } from '$lib/utils/browseRoutes'
 	import { localizedName } from '$lib/utils/locale'
-	import { getHostedImageUrl, getRaidImage } from '$lib/utils/images'
+	import { getHostedImageUrl } from '$lib/utils/images/core'
+	import { getRaidImage } from '$lib/utils/images/raids'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import * as m from '$lib/paraglide/messages'
 

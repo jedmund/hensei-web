@@ -12,7 +12,7 @@
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import { skillHighlight } from '$lib/stores/skillHighlight.svelte'
-	import { getWeaponSkillIcon } from '$lib/utils/images'
+	import { getWeaponSkillIcon } from '$lib/utils/images/icons'
 	import { getLocale } from '$lib/paraglide/runtime.js'
 	import { localizedName } from '$lib/utils/locale'
 	import { getElementFromKey, getElementKey, getElementTypeKey } from '$lib/utils/element'

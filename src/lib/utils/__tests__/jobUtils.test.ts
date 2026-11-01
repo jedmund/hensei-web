@@ -25,7 +25,7 @@ vi.mock('$lib/api/adapters/config', () => ({
 	getImageBaseUrl: vi.fn(() => '')
 }))
 
-vi.mock('../images', () => ({
+vi.mock('$lib/utils/images/core', () => ({
 	getGenericPlaceholder: vi.fn(() => '/images/app/placeholders/placeholder-weapon-grid.png')
 }))
 

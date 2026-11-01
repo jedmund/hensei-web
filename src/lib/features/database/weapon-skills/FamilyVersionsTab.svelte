@@ -5,7 +5,7 @@
 	import Select from '$lib/components/ui/Select.svelte'
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
 	import { titleCase } from '$lib/utils/textCase'
-	import { getWeaponImage } from '$lib/utils/images'
+	import { getWeaponImage } from '$lib/utils/images/weapons'
 	import type { FamilyVersion, WeaponSkillFamily } from '$lib/types/api/weaponSkillFamily'
 
 	interface Props {

@@ -6,7 +6,7 @@
  */
 
 import { error } from '@sveltejs/kit'
-import { getBasePath } from '$lib/utils/images'
+import { getBasePath } from '$lib/utils/images/core'
 import { ANIMATION_FILES, ANIMATION_PREFIX } from '$lib/gacha-animation/assets'
 import type { RequestHandler } from './$types'
 

@@ -15,7 +15,7 @@
 	import SkillTypeBadge from '$lib/components/database/SkillTypeBadge.svelte'
 	import AssociatedEntityLink from '$lib/components/database/AssociatedEntityLink.svelte'
 
-	import { getJobSkillIcon } from '$lib/utils/images'
+	import { getJobSkillIcon } from '$lib/utils/images/icons'
 	import { getSkillColorName } from '$lib/utils/jobUtils'
 	import { localizeHref } from '$lib/paraglide/runtime'
 

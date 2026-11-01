@@ -5,7 +5,7 @@
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import Button from './Button.svelte'
 	import { getJobTierName } from '$lib/utils/jobUtils'
-	import { getPlaceholderImage, getBasePath } from '$lib/utils/images'
+	import { getPlaceholderImage, getBasePath } from '$lib/utils/images/core'
 	import { localizedName } from '$lib/utils/locale'
 	import { getElementKey } from '$lib/utils/element'
 

@@ -19,7 +19,7 @@
 	import FamilyEffectsTab from '$lib/features/database/weapon-skills/FamilyEffectsTab.svelte'
 	import FamilyVersionsTab from '$lib/features/database/weapon-skills/FamilyVersionsTab.svelte'
 	import FamilyKeysTab from '$lib/features/database/weapon-skills/FamilyKeysTab.svelte'
-	import { getWeaponImage } from '$lib/utils/images'
+	import { getWeaponImage } from '$lib/utils/images/weapons'
 	import { localizedName } from '$lib/utils/locale'
 	import { getBoostTypeLabel } from '$lib/utils/boostType'
 	import { titleCase } from '$lib/utils/textCase'

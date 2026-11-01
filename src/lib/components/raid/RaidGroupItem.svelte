@@ -6,7 +6,7 @@
 	 * Each raid shows an icon, name, level, and selected state.
 	 */
 	import type { RaidGroupFull, RaidFull } from '$lib/types/api/raid'
-	import { getRaidImage } from '$lib/utils/images'
+	import { getRaidImage } from '$lib/utils/images/raids'
 	import Icon from '$lib/components/Icon.svelte'
 	import { localizedName } from '$lib/utils/locale'
 

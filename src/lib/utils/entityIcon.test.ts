@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 
-vi.mock('$lib/utils/images', () => ({
+vi.mock('$lib/utils/images/core', () => ({
 	getBasePath: () => 'https://cdn.example.com'
 }))
 
@@ -32,7 +32,7 @@ describe('buildEntityIconUrl', () => {
 describe('buildEntityIconUrl with trailing-slash base', () => {
 	it('does not produce a double slash', async () => {
 		vi.resetModules()
-		vi.doMock('$lib/utils/images', () => ({
+		vi.doMock('$lib/utils/images/core', () => ({
 			getBasePath: () => 'https://cdn.example.com/'
 		}))
 		const { buildEntityIconUrl: fresh } = await import('./entityIcon')

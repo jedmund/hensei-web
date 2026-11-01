@@ -20,7 +20,7 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import TranscendenceStar from '$lib/components/uncap/TranscendenceStar.svelte'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
-	import { getBulletImage } from '$lib/utils/images'
+	import { getBulletImage } from '$lib/utils/images/equipment'
 	import { localizedName } from '$lib/utils/locale'
 	import { getElementTypeKey } from '$lib/utils/element'
 	import { useUpdateGridWeapon } from '$lib/api/mutations/gridWeapon.mutations'

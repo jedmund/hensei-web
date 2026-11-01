@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { localizedName } from '$lib/utils/locale'
-	import { getCharacterImage } from '$lib/utils/images'
+	import { getCharacterImage } from '$lib/utils/images/characters'
 	import Icon from '$lib/components/Icon.svelte'
 	import type { SearchPageResult } from '$lib/api/queries/search.queries'
 

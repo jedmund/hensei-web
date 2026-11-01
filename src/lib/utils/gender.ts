@@ -2,7 +2,7 @@
  * Gender mapping utilities for Granblue Fantasy
  */
 
-import { getBasePath } from '$lib/utils/images'
+import { getBasePath } from '$lib/utils/images/core'
 import * as m from '$lib/paraglide/messages'
 
 export const GENDER_LABELS: Record<number, string> = {

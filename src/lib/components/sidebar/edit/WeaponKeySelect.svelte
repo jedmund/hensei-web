@@ -7,7 +7,7 @@
 	import { queryOptions } from '@tanstack/svelte-query'
 	import { localizedName } from '$lib/utils/locale'
 	import { getLocale } from '$lib/paraglide/runtime'
-	import { getWeaponKeyImage } from '$lib/utils/images'
+	import { getWeaponKeyImage } from '$lib/utils/images/weapons'
 
 	interface Props {
 		/** The weapon series slug (determines which keys are available) */

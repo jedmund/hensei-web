@@ -11,7 +11,8 @@
 	import BookmarkOverlay from './BookmarkOverlay.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { getSummonImage } from '$lib/features/database/detail/image'
-	import { getPlaceholderImage, getSummonTransformation } from '$lib/utils/images'
+	import { getPlaceholderImage } from '$lib/utils/images/core'
+	import { getSummonTransformation } from '$lib/utils/images/summons'
 	import { seriesHasUlbArt } from '$lib/utils/summonSeries'
 	import {
 		openDetailsSidebar,

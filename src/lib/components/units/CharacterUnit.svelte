@@ -14,7 +14,8 @@
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import RichTooltip from '$lib/components/ui/RichTooltip.svelte'
 	import { getAbilitySlots } from '$lib/utils/fullAutoSkills'
-	import { getCharacterImageWithPose, getPlaceholderImage } from '$lib/utils/images'
+	import { getPlaceholderImage } from '$lib/utils/images/core'
+	import { getCharacterImageWithPose } from '$lib/utils/images/characters'
 	import { getSimplePortraits } from '$lib/stores/simplePortraits.svelte'
 	import {
 		openDetailsSidebar,

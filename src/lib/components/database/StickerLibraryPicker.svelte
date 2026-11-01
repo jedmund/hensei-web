@@ -10,7 +10,7 @@
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import SlidingPages from '$lib/components/ui/SlidingPages.svelte'
 	import { stickerQueries } from '$lib/api/queries/sticker.queries'
-	import { getHostedImageUrl } from '$lib/utils/images'
+	import { getHostedImageUrl } from '$lib/utils/images/core'
 	import { appLocale } from '$lib/utils/locale'
 	import { stickerImageUrl } from '$lib/utils/stickers'
 	import * as m from '$lib/paraglide/messages'

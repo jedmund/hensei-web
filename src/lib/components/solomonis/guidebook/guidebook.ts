@@ -12,7 +12,7 @@ import type {
 	GuidebookEntryInput,
 	PartialLocalizedName
 } from '$lib/types/api/solomonis'
-import { getGuideEffectIcon } from '$lib/utils/images'
+import { getGuideEffectIcon } from '$lib/utils/images/solomonis'
 
 export type GuidebookLocale = 'en' | 'ja'
 

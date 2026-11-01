@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { CollectionSummon } from '$lib/types/api/collection'
 	import { localizedName } from '$lib/utils/locale'
-	import { getSummonImage, getSummonTransformation } from '$lib/utils/images'
+	import { getSummonImage, getSummonTransformation } from '$lib/utils/images/summons'
 	import { seriesHasUlbArt } from '$lib/utils/summonSeries'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'

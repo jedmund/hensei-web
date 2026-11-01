@@ -22,7 +22,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
-	import { getCharacterImage } from '$lib/utils/images'
+	import { getCharacterImage } from '$lib/utils/images/characters'
 	import { getElementLabel } from '$lib/utils/element'
 	import { normalizeCharacterProgression } from '$lib/utils/uncap'
 	import {

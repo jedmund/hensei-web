@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { localizedName } from '$lib/utils/locale'
-	import { getCharacterImage } from '$lib/utils/images'
+	import { getCharacterImage } from '$lib/utils/images/characters'
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'

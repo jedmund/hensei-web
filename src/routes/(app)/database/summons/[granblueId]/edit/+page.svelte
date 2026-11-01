@@ -18,7 +18,7 @@
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
-	import { getSummonImage } from '$lib/utils/images'
+	import { getSummonImage } from '$lib/utils/images/summons'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,

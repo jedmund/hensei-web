@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Playlist } from '$lib/types/api/playlist'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { getRaidImage } from '$lib/utils/images'
+	import { getRaidImage } from '$lib/utils/images/raids'
 	import Icon from '$lib/components/Icon.svelte'
 	import * as m from '$lib/paraglide/messages'
 

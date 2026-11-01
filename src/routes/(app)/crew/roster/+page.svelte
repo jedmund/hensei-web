@@ -5,7 +5,9 @@
 	import { crewAdapter } from '$lib/api/adapters/crew.adapter'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
-	import { getCharacterImage, getWeaponImage, getSummonImage } from '$lib/utils/images'
+	import { getCharacterImage } from '$lib/utils/images/characters'
+	import { getWeaponImage } from '$lib/utils/images/weapons'
+	import { getSummonImage } from '$lib/utils/images/summons'
 	import {
 		ELEMENT_DISPLAY_ORDER,
 		getElementClass,

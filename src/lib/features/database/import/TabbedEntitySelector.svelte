@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Icon from '$lib/components/Icon.svelte'
-	import { getPlaceholderImage } from '$lib/utils/images'
+	import { getPlaceholderImage } from '$lib/utils/images/core'
 
 	export interface EntityTab {
 		wikiPage: string

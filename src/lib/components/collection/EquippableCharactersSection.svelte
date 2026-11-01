@@ -3,7 +3,7 @@
 	import { createQuery } from '@tanstack/svelte-query'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
 	import { localizedName } from '$lib/utils/locale'
-	import { getCharacterImage, getCharacterPose } from '$lib/utils/images'
+	import { getCharacterImage, getCharacterPose } from '$lib/utils/images/characters'
 	import RichTooltip from '$lib/components/ui/RichTooltip.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'

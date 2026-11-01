@@ -1,4 +1,5 @@
-import { getBasePath, getCharacterSkillIcon } from '$lib/utils/images'
+import { getBasePath } from '$lib/utils/images/core'
+import { getCharacterSkillIcon } from '$lib/utils/images/icons'
 import { localizedName } from '$lib/utils/locale'
 import { getElementKey } from '$lib/utils/element'
 import type { MentionToken } from './types'
