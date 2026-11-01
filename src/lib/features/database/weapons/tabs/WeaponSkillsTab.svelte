@@ -15,11 +15,12 @@
 
 	let isBuilding = $state(false)
 
-	// The same re-parse as the Raw Data tab
+	// The Raw Data tab's re-parse, fetching the wiki page first: weapons that were never
+	// built usually have no stored wikitext yet, and the build reads from it
 	async function build() {
 		isBuilding = true
 		try {
-			await weaponAdapter.reparseWeapon(record.id)
+			await weaponAdapter.reparseWeapon(record.id, true)
 			toast.success(m.weapon_skills_build_done())
 			refetch()
 		} catch (err) {

@@ -200,7 +200,7 @@ describe('ResourceDetail: Skills empty states', () => {
 			.mockResolvedValue(detailRecords.plain as Weapon)
 		render('plain', { tab: 'skills' })
 		buildButton()!.click()
-		await vi.waitFor(() => expect(reparse).toHaveBeenCalledWith('w-plain'))
+		await vi.waitFor(() => expect(reparse).toHaveBeenCalledWith('w-plain', true))
 	})
 })
 
