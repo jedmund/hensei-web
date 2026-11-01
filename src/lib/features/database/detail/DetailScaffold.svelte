@@ -8,8 +8,10 @@
 
 	export type DetailTab = 'info' | 'skills' | 'images' | 'raw'
 
+	export type DetailEntityType = 'character' | 'summon' | 'weapon' | 'job' | 'raid' | 'accessory'
+
 	interface Props {
-		type: 'character' | 'summon' | 'weapon' | 'job' | 'raid' | 'accessory'
+		type: DetailEntityType
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
 		item: any
 		image: string
@@ -32,6 +34,8 @@
 		skillsLabel?: string
 		/** Show the Raw Data tab (editor-only for characters, weapons and summons) */
 		showRaw?: boolean
+		/** The tabs after Info, replacing Skills/Images/Raw Data and their flags */
+		tabs?: Array<{ value: DetailTab; label: string }>
 		// Image download handlers
 		onDownloadAllImages?: (force: boolean) => Promise<void>
 		onDownloadSize?: (size: string) => Promise<void>
@@ -57,6 +61,7 @@
 		showSkills = false,
 		skillsLabel = 'Skills',
 		showRaw = true,
+		tabs,
 		onDownloadAllImages,
 		onDownloadSize,
 		availableSizes = [],
@@ -121,12 +126,18 @@
 				size="small"
 			>
 				<Segment value="info">Info</Segment>
-				{#if showSkills}
-					<Segment value="skills">{skillsLabel}</Segment>
-				{/if}
-				<Segment value="images">Images</Segment>
-				{#if showRaw}
-					<Segment value="raw">Raw Data</Segment>
+				{#if tabs}
+					{#each tabs as tab (tab.value)}
+						<Segment value={tab.value}>{tab.label}</Segment>
+					{/each}
+				{:else}
+					{#if showSkills}
+						<Segment value="skills">{skillsLabel}</Segment>
+					{/if}
+					<Segment value="images">Images</Segment>
+					{#if showRaw}
+						<Segment value="raw">Raw Data</Segment>
+					{/if}
 				{/if}
 			</SegmentedControl>
 

@@ -12,15 +12,26 @@ function definition(resource: string): AnyResourceDef {
 	return def
 }
 
+/** Generated screens, for resources with no override. The detail needs a `record` */
+function generated(
+	def: AnyResourceDef,
+	kind: ScreenKind
+): (() => Promise<{ default: unknown }>) | undefined {
+	if (kind === 'detail' && def.record) return () => import('./ResourceDetailScreen.svelte')
+	return undefined
+}
+
 /**
- * The screen component for a route. Resolved in the universal load so it
- * server-renders; each screen is its own chunk.
+ * The screen component for a route: the resource's override, else the
+ * generated one. Resolved in the universal load so it server-renders; each
+ * screen is its own chunk.
  */
 export async function loadScreen<K extends ScreenKind>(
 	resource: string,
 	kind: K
 ): Promise<ScreenComponent<K>> {
-	const screen = definition(resource).screens?.[kind]
+	const def = definition(resource)
+	const screen = def.screens?.[kind] ?? generated(def, kind)
 	if (!screen) error(404, 'Not found')
 	return (await screen()).default as ScreenComponent<K>
 }

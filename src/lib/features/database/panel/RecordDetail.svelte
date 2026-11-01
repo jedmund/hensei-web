@@ -20,14 +20,23 @@
 
 	const record = $derived(parseRecordId(id))
 
-	// Registered resources bring their own panel body (cached after the first open)
-	const panel = $derived(resourceDef(resource)?.screens?.panel?.())
+	// Registered resources use their panel override, else the generated detail
+	// (each loaded on the first open, then cached)
+	const def = $derived(resourceDef(resource))
+	const panel = $derived(def?.screens?.panel?.())
+	const generated = $derived(
+		!panel && def?.record ? import('$lib/features/database/schema/ResourceDetail.svelte') : null
+	)
 </script>
 
 {#key id}
 	{#if panel}
 		{#await panel then { default: Panel }}
 			<Panel granblueId={record.granblueId} {role} {tab} {onTabChange} />
+		{/await}
+	{:else if def && generated}
+		{#await generated then { default: ResourceDetail }}
+			<ResourceDetail {def} granblueId={record.granblueId} {role} {tab} {onTabChange} />
 		{/await}
 	{:else if resource === 'summons'}
 		<SummonDetail granblueId={record.granblueId} {role} {tab} {onTabChange} />

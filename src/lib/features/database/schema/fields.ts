@@ -11,6 +11,11 @@ export function prop(source: unknown, key: string): unknown {
 	return (source as Record<string, unknown> | null | undefined)?.[camelKey(key)]
 }
 
+/** What a field's `read` returns for the full record */
+export function readField<Row, Full>(field: Field<Row, Full>, record: Full): unknown {
+	return field.read ? field.read(record) : prop(record, field.key)
+}
+
 export function fieldFor<Row, Full>(def: ResourceDef<Row, Full>, key: string): Field<Row, Full> {
 	const field = def.fields.find((f) => f.key === key)
 	if (!field) throw new Error(`${def.name}: no field "${key}"`)

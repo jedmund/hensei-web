@@ -23,7 +23,10 @@ import type {
 } from '$lib/components/data-table/types'
 import type { FilterOption, RecentPreset } from '$lib/components/data-table/filters'
 import type { SortSpec } from '$lib/components/data-table/urlState'
-import type { DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
+import type {
+	DetailEntityType,
+	DetailTab
+} from '$lib/features/database/detail/DetailScaffold.svelte'
 
 /** A Paraglide message function, so labels follow the locale */
 export type Message = () => string
@@ -104,6 +107,20 @@ export interface WriteOptions {
 	value?: (value: unknown, values: Values) => unknown
 }
 
+/** How a field shows in the detail view, where it differs from the forms */
+export interface DetailOptions<Full> {
+	/** Replaces `when` in the detail (e.g. dates shown whatever the uncap state) */
+	when?: (values: Values) => boolean
+	/** Leave the row out when there's no value, instead of showing a dash */
+	hideWhenEmpty?: boolean
+	/** What an empty value shows. Defaults to a dash */
+	empty?: string | Message
+	/** The value to show, when it isn't what `read` returns (e.g. a name for an id) */
+	value?: (record: Full) => unknown
+	/** Show the sublabel here too. Defaults to true; some hints are only for editing */
+	sublabel?: boolean
+}
+
 export interface FieldRender<Row> {
 	/**
 	 * The list cell, drawn by this component (a `component` column). Unlike
@@ -137,6 +154,8 @@ interface FieldBase<Row, Full> {
 	form?: false | FormOptions
 	/** Shown, validated and sent only while this holds */
 	when?: (values: Values) => boolean
+	/** Detail view options; `false` keeps the field out of the detail (form-only) */
+	detail?: false | DetailOptions<Full>
 	/** Extra rules the value must also pass */
 	validate?: z.ZodType
 	render?: FieldRender<Row>
@@ -188,14 +207,14 @@ export type Field<Row = unknown, Full = unknown> = FieldBase<Row, Full> &
 
 export type FieldKind = Field['kind']
 
+/** A titled group of fields. It shows while any of its fields shows */
 export interface Section {
 	id: string
 	title: Message
 	/** Field keys in display order */
 	fields: string[]
-	/** Draws the whole section, owning the listed fields */
+	/** Draws the section's body, owning the listed fields */
 	component?: ComponentName
-	when?: (values: Values) => boolean
 }
 
 /** Booleans (field keys) and API-only flags shown as one toggles menu */
@@ -239,6 +258,8 @@ export type RefineRule = (values: Values, issue: (key: string, message: string) 
 export interface RecordScreenData<Full> {
 	record: Full
 	role: number
+	/** The route's resource name */
+	resource: string
 }
 
 /** The panel body: the detail view without the page around it */
@@ -254,9 +275,10 @@ export type RecordBodyProps = {
 type Lazy<Props extends Record<string, unknown>> = () => Promise<{ default: Component<Props> }>
 
 /**
- * Hand-written screens that replace the generated ones. Until the generated
- * screens land (phases 4–7) a registered resource renders only these; the
- * generic routes 404 a screen the resource doesn't have.
+ * Hand-written screens that replace the generated ones. The detail and the
+ * panel are generated when a resource has a `record`; until the generated
+ * forms land (phases 6–7) the generic routes 404 any other screen the
+ * resource doesn't have.
  */
 export interface Screens<Full> {
 	/** The list takes no props: it reads its state from the URL */
@@ -275,12 +297,45 @@ export type ScreenComponent<K extends ScreenKind, Full = unknown> = Awaited<
 	ReturnType<NonNullable<Screens<Full>[K]>>
 >['default']
 
+/** What a record tab component receives */
+export interface RecordTabProps<Full> {
+	record: Full
+	canEdit: boolean
+	/** Reloads the record (e.g. after a re-parse changed it) */
+	refetch: () => void
+}
+
+/** A detail tab after Info. Referenced directly, like list cells */
+export interface RecordTab<Full> {
+	id: Exclude<DetailTab, 'info'>
+	label: Message
+	component: Component<RecordTabProps<Full>>
+	/** Shown only while this holds */
+	when?: (record: Full) => boolean
+	/** Only editors see it */
+	editorOnly?: boolean
+}
+
 export interface RecordDef<Full> {
 	/**
 	 * The full record the detail and edit pages load, by route id. Rejects with
 	 * an error carrying `status: 404` when there's no such record.
 	 */
 	fetch: (id: string) => Promise<Full>
+	/** The same record as a query, so the panel and the page share its cache */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	query: (id: string) => CreateQueryOptions<Full, any, Full, any>
+	/** Singular noun for the page header, e.g. "Weapon" */
+	noun: Message
+	/** Header kind: picks the placeholder image and the labels under the name */
+	type: DetailEntityType
+	image: (record: Full) => string
+	/** Tried before the placeholder when `image` fails to load */
+	fallbackImage?: (record: Full) => string | undefined
+	/** The record's element, which colours its buttons */
+	element?: (record: Full) => number | null | undefined
+	/** Tabs after Info, in order */
+	tabs?: RecordTab<Full>[]
 }
 
 export interface ResourceDef<Row = unknown, Full = unknown> {

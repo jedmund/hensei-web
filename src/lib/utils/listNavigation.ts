@@ -29,7 +29,7 @@ export function storeListUrl(
 /**
  * Get the stored list URL for a resource, or return the base path as fallback
  */
-export function getListUrl(resource: 'characters' | 'weapons' | 'summons'): string {
+export function getListUrl(resource: string): string {
 	const basePath = `/database/${resource}`
 
 	try {
