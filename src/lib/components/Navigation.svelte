@@ -445,7 +445,6 @@
 
 <style lang="scss">
 	@use '$src/themes/dropdown' as dropdown;
-	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/navigation' as navigation;
 	@use '$src/themes/spacing' as spacing;
@@ -585,26 +584,6 @@
 		gap: spacing.$unit;
 	}
 
-	// Style the nav buttons to match link dimensions
-	:global(.nav-item-button) {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: spacing.$unit (spacing.$unit * 1.5);
-		border-radius: layout.$full-corner;
-		background-color: transparent;
-		color: var(--menu-text);
-		border: none;
-		cursor: pointer;
-		font-family: var(--font-family);
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-
-		&:hover {
-			background-color: var(--menu-bg-item-hover);
-		}
-	}
-
 	// Style the dropdown trigger
 	:global(.nav-more-trigger) {
 		display: flex;
@@ -661,7 +640,6 @@
 		min-width: 0;
 	}
 
-	// Notification pulse animation for the more trigger
 	@keyframes notification-pulse {
 		0%,
 		100% {
@@ -669,29 +647,6 @@
 		}
 		50% {
 			opacity: 0.6;
-		}
-	}
-
-	:global(.nav-more-trigger.has-notification) {
-		animation: notification-pulse 2s ease-in-out infinite;
-		background-color: var(--button-primary-bg);
-		color: white;
-		padding: spacing.$unit calc(spacing.$unit + 3px);
-
-		&:hover {
-			animation: none;
-			background-color: var(--button-primary-bg-hover);
-		}
-	}
-
-	// Element-specific notification colors
-	@each $el in $elements {
-		:global(.nav-more-trigger.has-notification.#{$el}) {
-			background-color: var(--#{$el}-button-bg);
-			color: if($el == light, black, white);
-			&:hover {
-				background-color: var(--#{$el}-button-bg-hover);
-			}
 		}
 	}
 
