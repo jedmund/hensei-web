@@ -690,14 +690,22 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 	save: {
 		// Payload keys are the strong params by construction (see contract.test.ts)
 		update: (w, payload) =>
-			weaponAdapter.updateWeapon(w.id, payload as Partial<CreateWeaponPayload>)
+			weaponAdapter.updateWeapon(w.id, payload as Partial<CreateWeaponPayload>),
+		create: (payload) => weaponAdapter.createWeapon(payload as unknown as CreateWeaponPayload),
+		asyncValidate: {
+			granblue_id: async (id) => {
+				const result = await weaponAdapter.validateWeaponGranblueId(id as string)
+				return result.existsInDb ? m.db_weapons_field_granblue_id_exists() : null
+			}
+		},
+		// Queues a job; the new weapon's page doesn't wait for it
+		afterCreate: (w) => weaponAdapter.downloadWeaponImages(w.id)
 	},
 
-	// Today's screens until the generated ones replace them (phase 7). The
-	// list screen renders the generated list for weapons and keeps the Series,
-	// Awakenings and Skills views by hand (they move in GBF-143)
+	// The list screen renders the generated list and keeps the Series,
+	// Awakenings and Skills views by hand, until series and awakenings become
+	// resources of their own (GBF-143)
 	screens: {
-		list: () => import('$lib/features/database/weapons/screens/WeaponsListScreen.svelte'),
-		new: () => import('$lib/features/database/weapons/screens/WeaponNewScreen.svelte')
+		list: () => import('$lib/features/database/weapons/screens/WeaponsListScreen.svelte')
 	}
 })
