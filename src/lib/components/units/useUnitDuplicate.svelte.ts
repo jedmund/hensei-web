@@ -33,6 +33,8 @@ interface UseUnitDuplicateArgs {
 // Sub slots a duplicate can land in: weapons 0-8, summons 0-3
 const SUB_SLOT_COUNT = { weapon: 9, summon: 4 } as const
 
+export type UnitDuplicate = ReturnType<typeof useUnitDuplicate>
+
 export function useUnitDuplicate(args: UseUnitDuplicateArgs) {
 	const { type, ctx } = args
 	const slotCount = SUB_SLOT_COUNT[type]
