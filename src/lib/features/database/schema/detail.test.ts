@@ -121,7 +121,8 @@ describe('detailLayout for weapons', () => {
 			nicknames: ['nicknames'],
 			// Every date, uncapped or not
 			dates: ['release_date', 'flb_date', 'ulb_date', 'transcendence_date'],
-			links: ['wiki_en', 'wiki_ja', 'gamewith', 'kamigame']
+			// Empty links are hidden
+			links: ['wiki_en']
 		})
 	})
 

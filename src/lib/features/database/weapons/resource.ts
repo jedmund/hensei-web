@@ -429,6 +429,7 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			label: m.db_weapons_field_wiki_en,
 			read: (w) => w.wiki?.en,
 			href: (v) => buildWikiEnUrl(v),
+			detail: { hideWhenEmpty: true },
 			form: { placeholder: m.db_weapons_hint_wiki_en, width: '480px' }
 		},
 		{
@@ -437,6 +438,7 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			label: m.db_weapons_field_wiki_ja,
 			read: (w) => w.wiki?.ja,
 			href: (v) => buildWikiJaUrl(v, 'weapon'),
+			detail: { hideWhenEmpty: true },
 			form: { placeholder: m.db_weapons_hint_wiki_ja, width: '480px' }
 		},
 		{
@@ -444,6 +446,7 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			kind: 'link',
 			label: m.details_link_gamewith,
 			href: (v) => buildGamewithUrl(v),
+			detail: { hideWhenEmpty: true },
 			form: { placeholder: m.db_weapons_hint_gamewith, width: '480px' }
 		},
 		{
@@ -451,6 +454,7 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			kind: 'link',
 			label: m.details_link_kamigame,
 			href: (v, values) => buildKamigameUrl(v, 'weapon', values.rarity as number | undefined),
+			detail: { hideWhenEmpty: true },
 			form: { placeholder: m.db_weapons_hint_kamigame, width: '480px' }
 		},
 		// Create only: the legacy series param. No input sets it, so it's never sent

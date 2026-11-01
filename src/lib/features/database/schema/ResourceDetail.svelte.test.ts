@@ -41,6 +41,7 @@ vi.mock('@tanstack/svelte-query', async (importOriginal) => {
 	}
 })
 
+import type { Weapon } from '$lib/api/adapters/weapon.adapter'
 import { weaponsResource } from '$lib/features/database/weapons/resource'
 import { detailRecords } from '$lib/features/database/weapons/__fixtures__/detailRecords'
 import baseline from '$lib/features/database/weapons/__fixtures__/detail-baseline.json'
@@ -62,10 +63,13 @@ function lines(el: Element | null): string[] {
 let mounted: ReturnType<typeof mount> | null = null
 let target: HTMLElement
 
-function render(name: keyof typeof detailRecords, props: { role?: number; tab?: string } = {}) {
+function render(
+	name: keyof typeof detailRecords,
+	props: { role?: number; tab?: string; record?: Partial<Weapon> } = {}
+) {
 	target = document.createElement('div')
 	document.body.appendChild(target)
-	const record = detailRecords[name]
+	const record = { ...detailRecords[name], ...props.record }
 	mounted = mount(ResourceDetail, {
 		target,
 		props: {
@@ -83,6 +87,20 @@ function render(name: keyof typeof detailRecords, props: { role?: number; tab?: 
 const tabLabels = () =>
 	[...target.querySelectorAll('[role="radio"], button')].map((b) => b.textContent?.trim())
 
+/**
+ * The baseline as the generated detail draws it on purpose: empty link rows
+ * are hidden rather than showing a dash, and with none left the Links
+ * section goes too. Links is the last section.
+ */
+function expectedInfo(name: keyof typeof baseline): string[] {
+	// The definition labels the GameWith link with the site's own spelling
+	const info = baseline[name].info.map((l) => (l === 'Gamewith' ? 'GameWith' : l))
+	const at = info.indexOf('Links')
+	// Label and value pairs, kept unless the value is a dash
+	const links = info.slice(at + 1).filter((l, i, rest) => rest[i - (i % 2) + 1] !== '—')
+	return [...info.slice(0, at), ...(links.length ? ['Links', ...links] : [])]
+}
+
 afterEach(() => {
 	if (mounted) unmount(mounted)
 	mounted = null
@@ -94,9 +112,7 @@ describe('ResourceDetail: the Info tab matches the hand-written detail', () => {
 	for (const name of Object.keys(baseline) as Array<keyof typeof baseline>) {
 		it(name, () => {
 			render(name)
-			// The definition labels the GameWith link with the site's own spelling
-			const expected = baseline[name].info.map((l) => (l === 'Gamewith' ? 'GameWith' : l))
-			expect(lines(target.querySelector('.details'))).toEqual(expected)
+			expect(lines(target.querySelector('.details'))).toEqual(expectedInfo(name))
 		})
 	}
 
@@ -116,6 +132,19 @@ describe('ResourceDetail: the Info tab matches the hand-written detail', () => {
 		expect(target.querySelector('a[href*="/database/characters/3030158000"]')).not.toBeNull()
 		const open = target.querySelector<HTMLAnchorElement>('a[target="_blank"]')
 		expect(open?.href).toContain('Kilij')
+	})
+})
+
+describe('ResourceDetail: links', () => {
+	it('hides empty link rows', () => {
+		render('plain')
+		const info = lines(target.querySelector('.details'))
+		expect(info.slice(info.indexOf('Links'))).toEqual(['Links', 'Wiki (EN)', 'Open'])
+	})
+
+	it('drops the Links section when every link is empty', () => {
+		render('plain', { record: { wiki: {} } })
+		expect(lines(target.querySelector('.details'))).not.toContain('Links')
 	})
 })
 
