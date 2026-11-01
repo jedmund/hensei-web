@@ -544,15 +544,20 @@ describe('characters resource: validation', () => {
 		expect(
 			errors({
 				...loaded,
-				granblue_id: '3030093000-1',
+				granblue_id: '303009300',
 				name: { en: ' ', ja: '' },
 				proficiency1: null
 			})
 		).toMatchObject({
-			granblue_id: 'Granblue ID must be exactly 10 digits',
+			granblue_id: 'Granblue ID must be 10 digits, optionally with a form suffix like -1',
 			'name.en': 'Required',
 			proficiency1: 'Choose one of the options'
 		})
+	})
+
+	it("accepts a form suffix on the Granblue ID (Malinda's forms)", () => {
+		expect(errors({ ...loaded, granblue_id: '3030093000-1' })).toEqual({})
+		expect(errors({ ...loaded, granblue_id: '3030093000-' })).toHaveProperty('granblue_id')
 	})
 
 	it('takes decimal charge attack ratios and whole-number stats and IDs', () => {

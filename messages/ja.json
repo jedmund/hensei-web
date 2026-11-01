@@ -2587,7 +2587,7 @@
 	"db_characters_field_name_jp": "Name (JP)",
 	"db_characters_col_rarity": "Rarity",
 	"db_characters_field_granblue_id": "Granblue ID",
-	"db_characters_field_granblue_id_invalid": "Granblue ID must be exactly 10 digits",
+	"db_characters_field_granblue_id_invalid": "Granblue ID must be 10 digits, optionally with a form suffix like -1",
 	"db_characters_field_granblue_id_exists": "A character with this Granblue ID already exists",
 	"db_characters_field_granblue_id_no_images": "No images found for this Granblue ID",
 	"db_characters_field_character_id": "Character ID",

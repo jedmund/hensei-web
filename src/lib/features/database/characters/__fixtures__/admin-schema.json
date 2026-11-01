@@ -339,7 +339,7 @@
 			},
 			{
 				"kind": "format",
-				"pattern": "^\\d{10}$",
+				"pattern": "^\\d{10}(?:-\\d+)?$",
 				"flags": ""
 			},
 			{

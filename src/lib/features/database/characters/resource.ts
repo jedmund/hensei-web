@@ -42,7 +42,9 @@ import { getRarityOptions } from '$lib/utils/rarity'
 import type { AdminCharacterRow } from '$lib/types/api/admin'
 import type { CharacterSeries } from '$lib/types/api/characterSeries'
 
-const GRANBLUE_ID = /^\d{10}$/
+// Ten digits, plus an optional -N for units with switchable forms that share one game id
+// (Malinda's forms are 3030093000-1/-2/-3); matches the API's Character::GRANBLUE_ID_FORMAT
+const GRANBLUE_ID = /^\d{10}(?:-\d+)?$/
 
 const UNCAPS = ['flb', 'ulb', 'transcendence']
 
