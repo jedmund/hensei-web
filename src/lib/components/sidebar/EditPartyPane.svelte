@@ -6,62 +6,28 @@
 	 * editing for battle settings, clear time, metrics, video URL, and raid.
 	 */
 	import * as m from '$lib/paraglide/messages'
-	import DetailsSection from './details/DetailsSection.svelte'
-	import DetailRow from './details/DetailRow.svelte'
-	import Input from '$lib/components/ui/Input.svelte'
 	import BattleSettingsSection from '$lib/components/party/edit/BattleSettingsSection.svelte'
-	import ClearTimeInput from '$lib/components/party/edit/ClearTimeInput.svelte'
-	import YouTubeUrlInput from '$lib/components/party/edit/YouTubeUrlInput.svelte'
-	import MetricField from '$lib/components/party/edit/MetricField.svelte'
+	import PartyDetailsFields from '$lib/components/party/edit/PartyDetailsFields.svelte'
+	import PartyVisibilitySection from '$lib/components/party/edit/PartyVisibilitySection.svelte'
+	import PartyPerformanceSection from '$lib/components/party/edit/PartyPerformanceSection.svelte'
 	import EditRaidPane from '$lib/components/sidebar/EditRaidPane.svelte'
 	import EditDescriptionPane from '$lib/components/sidebar/EditDescriptionPane.svelte'
 	import SolomonisDetailsPane from '$lib/components/solomonis/party/SolomonisDetailsPane.svelte'
-	import PrivacySelector from '$lib/components/party/edit/PrivacySelector.svelte'
-	import Switch from '$lib/components/ui/switch/Switch.svelte'
+	import StickerBreakdownSection from '$lib/components/stickers/StickerBreakdownSection.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { page } from '$app/stores'
 	import { usePaneStack } from '$lib/stores/paneStack.svelte'
-	import { createQuery } from '@tanstack/svelte-query'
-	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { untrack } from 'svelte'
-	import { getElementKey } from '$lib/utils/element'
+	import {
+		partyEditValuesChanged,
+		raidFullToRaid,
+		type PartyEditValues,
+		type SolomonisDetailsLink
+	} from '$lib/features/party/partyEditValues'
 	import type { Raid } from '$lib/types/api/entities'
-	import type { Party } from '$lib/types/api/party'
 	import type { RaidFull } from '$lib/types/api/raid'
 	import type { PartyVisibility } from '$lib/types/visibility'
-	import Icon from '$lib/components/Icon.svelte'
-	import { localizedName } from '$lib/utils/locale'
-	import { descriptionPreview } from '$lib/utils/descriptionPreview'
-	import StickerBreakdownSection from '$lib/components/stickers/StickerBreakdownSection.svelte'
 	import type { StickerBreakdownEntry } from '$lib/types/api/sticker'
-
-	export interface PartyEditValues {
-		name: string
-		description: string | null
-		visibility: PartyVisibility
-		sharedWithCrew: boolean
-		fullAuto: boolean
-		solo: boolean
-		autoGuard: boolean
-		autoSummon: boolean
-		chargeAttack: boolean
-		clearTime: number | null
-		buttonCount: number | null
-		chainCount: number | null
-		summonCount: number | null
-		videoUrl: string | null
-		raid: Raid | null
-		raidId: string | null
-	}
-
-	/** The Evoking Solomonis row under Raid */
-	export interface SolomonisDetailsLink {
-		label: string
-		/** e.g. "Nier · Pledge 3" */
-		summary: string
-		getParty: () => Party
-		canEdit: boolean
-	}
 
 	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -100,13 +66,6 @@
 	// Get the pane stack for pushing EditRaidPane
 	const paneStack = usePaneStack()
 
-	// Query user's crew membership to show/hide share toggle
-	const myCrewQuery = createQuery(() => ({
-		...crewQueries.myCrew(),
-		staleTime: 5 * 60 * 1000 // Cache for 5 minutes
-	}))
-	const isInCrew = $derived(myCrewQuery.data != null)
-
 	// Snapshot initial values at mount time to avoid proxy/reactivity issues.
 	// Props passed through PaneStack's $state are wrapped in deep reactive proxies.
 	// Reading initialValues.xxx in $derived creates tracking dependencies on the proxy,
@@ -132,28 +91,8 @@
 	let raidId = $state<string | null>(initial.raidId)
 	let description = $state(initial.description)
 
-	// Check if any values have changed (compared against snapshot, not proxy)
-	const hasChanges = $derived(
-		name !== initial.name ||
-			visibility !== initial.visibility ||
-			sharedWithCrew !== initial.sharedWithCrew ||
-			fullAuto !== initial.fullAuto ||
-			solo !== initial.solo ||
-			autoGuard !== initial.autoGuard ||
-			autoSummon !== initial.autoSummon ||
-			chargeAttack !== initial.chargeAttack ||
-			clearTime !== initial.clearTime ||
-			buttonCount !== initial.buttonCount ||
-			chainCount !== initial.chainCount ||
-			summonCount !== initial.summonCount ||
-			videoUrl !== initial.videoUrl ||
-			raidId !== initial.raidId ||
-			description !== initial.description
-	)
-
-	// Expose save function for sidebar action button
-	export function save() {
-		const values: PartyEditValues = {
+	function currentValues(): PartyEditValues {
+		return {
 			name,
 			description,
 			visibility,
@@ -171,7 +110,14 @@
 			raid,
 			raidId
 		}
-		onSave?.(values)
+	}
+
+	// Check if any values have changed (compared against snapshot, not proxy)
+	const hasChanges = $derived(partyEditValuesChanged(initial, currentValues()))
+
+	// Expose save function for sidebar action button
+	export function save() {
+		onSave?.(currentValues())
 		sidebar.close()
 	}
 
@@ -211,11 +157,6 @@
 		else chargeAttack = value
 	}
 
-	function getRaidName(r: Raid | null): string {
-		if (!r) return ''
-		return localizedName(r.name)
-	}
-
 	function openRaidPane() {
 		paneStack.push({
 			id: 'edit-raid',
@@ -229,37 +170,9 @@
 		})
 	}
 
-	function getRaidElementClass(r: Raid | null): string {
-		if (!r) return ''
-		return getElementKey(r.element)
-	}
-
 	function handleRaidSelected(selectedRaid: RaidFull | null) {
 		if (selectedRaid) {
-			// Convert RaidFull to Raid (they have compatible structures)
-			raid = {
-				id: selectedRaid.id,
-				slug: selectedRaid.slug,
-				name: selectedRaid.name,
-				level: selectedRaid.level,
-				element: selectedRaid.element,
-				group: selectedRaid.group
-					? {
-							id: selectedRaid.group.id,
-							name: selectedRaid.group.name,
-							section: String(selectedRaid.group.section),
-							order: selectedRaid.group.order,
-							difficulty: selectedRaid.group.difficulty,
-							hl: selectedRaid.group.hl,
-							extra: selectedRaid.group.extra,
-							guidebooks: selectedRaid.group.guidebooks,
-							unlimited: selectedRaid.group.unlimited,
-							supportSummon: selectedRaid.group.supportSummon ?? true,
-							contentMode: selectedRaid.group.contentMode ?? null
-						}
-					: undefined,
-				extra: selectedRaid.extra
-			}
+			raid = raidFullToRaid(selectedRaid)
 			raidId = selectedRaid.id
 		} else {
 			raid = null
@@ -267,8 +180,6 @@
 		}
 		paneStack.pop()
 	}
-
-	const descriptionPreviewText = $derived(descriptionPreview(description).text || null)
 
 	// Only while the raid is still the Solomonis zone the party was opened with
 	const showSolomonisDetails = $derived(!!solomonisDetails && raidId === initial.raidId)
@@ -306,65 +217,20 @@
 </script>
 
 <div class="party-edit-sidebar">
-	<div class="top-section">
-		<h3>{m.party_details()}</h3>
-		<div class="top-fields">
-			<Input
-				label={m.party_edit_title_label()}
-				bind:value={name}
-				placeholder={m.sidebar_party_title_placeholder()}
-				contained
-				fullWidth
-			/>
-			<YouTubeUrlInput label={m.party_edit_video_label()} bind:value={videoUrl} contained />
-			<div class="raid-field">
-				<span class="raid-label">{m.party_raid()}</span>
-				<button
-					type="button"
-					class="raid-select-button {getRaidElementClass(raid)}"
-					onclick={openRaidPane}
-				>
-					{#if raid}
-						<span class="raid-name">{getRaidName(raid)}</span>
-					{:else}
-						<span class="placeholder">{m.party_select_raid()}</span>
-					{/if}
-					<Icon name="chevron-right" size={16} class="chevron-icon" />
-				</button>
-			</div>
-			{#if showSolomonisDetails && solomonisDetails}
-				<div class="raid-field">
-					<span class="raid-label">{solomonisDetails.label}</span>
-					<button type="button" class="raid-select-button" onclick={openSolomonisDetailsPane}>
-						<span class="raid-name">{solomonisDetails.summary}</span>
-						<Icon name="chevron-right" size={16} class="chevron-icon" />
-					</button>
-				</div>
-			{/if}
-			<div class="description-field">
-				<span class="description-label">{m.party_description()}</span>
-				<button type="button" class="description-button" onclick={openDescriptionPane}>
-					{#if descriptionPreviewText}
-						<span class="description-preview">{descriptionPreviewText}</span>
-					{:else}
-						<span class="description-placeholder">{m.sidebar_add_description()}</span>
-					{/if}
-					<Icon name="chevron-right" size={16} class="description-chevron" />
-				</button>
-			</div>
-		</div>
-	</div>
+	<PartyDetailsFields
+		bind:name
+		bind:videoUrl
+		{raid}
+		{description}
+		solomonisDetails={showSolomonisDetails ? solomonisDetails : undefined}
+		onRaidClick={openRaidPane}
+		onSolomonisClick={openSolomonisDetailsPane}
+		onDescriptionClick={openDescriptionPane}
+	/>
 
 	<hr class="divider" />
 
-	<DetailsSection title={m.visibility_label()}>
-		<PrivacySelector bind:value={visibility} {element} showLabel={false} />
-		{#if isInCrew}
-			<DetailRow label={m.party_edit_share_crew()} compact>
-				<Switch bind:checked={sharedWithCrew} size="small" {element} />
-			</DetailRow>
-		{/if}
-	</DetailsSection>
+	<PartyVisibilitySection bind:visibility bind:sharedWithCrew {element} />
 
 	<hr class="divider" />
 
@@ -380,20 +246,7 @@
 
 	<hr class="divider" />
 
-	<DetailsSection title={m.section_performance()}>
-		<DetailRow label={m.party_edit_clear_time()} compact>
-			<ClearTimeInput bind:value={clearTime} contained />
-		</DetailRow>
-		<DetailRow label={m.party_edit_button_count()} compact>
-			<MetricField bind:value={buttonCount} label="B" contained />
-		</DetailRow>
-		<DetailRow label={m.party_edit_chain_count()} compact>
-			<MetricField bind:value={chainCount} label="C" contained />
-		</DetailRow>
-		<DetailRow label={m.party_edit_summon_count()} compact>
-			<MetricField bind:value={summonCount} label="S" contained />
-		</DetailRow>
-	</DetailsSection>
+	<PartyPerformanceSection bind:clearTime bind:buttonCount bind:chainCount bind:summonCount />
 
 	{#if stickerBreakdown}
 		<hr class="divider" />
@@ -403,10 +256,6 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
-	@use '$src/themes/typography' as *;
-	@use '$src/themes/layout' as *;
-	@use '$src/themes/effects' as *;
-	@use '$src/themes/colors' as *;
 
 	.party-edit-sidebar {
 		display: flex;
@@ -415,214 +264,9 @@
 		padding-bottom: $unit-2x;
 	}
 
-	.top-section {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-2x;
-		padding: 0 $unit;
-
-		h3 {
-			margin: 0;
-			font-size: $font-name;
-			font-weight: $medium;
-			color: var(--text-primary);
-			padding: 0 $unit;
-		}
-	}
-
-	.top-fields {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-3x;
-		padding: 0 $unit;
-
-		// Override Input label styling to match DetailRow
-		:global(.label) {
-			color: var(--text-secondary) !important;
-			font-size: $font-regular !important;
-			font-weight: normal !important;
-		}
-	}
-
 	.divider {
 		border: none;
 		border-top: 1px solid var(--border-subtle);
 		margin: 0;
-	}
-
-	.raid-field {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-half;
-
-		&:hover .raid-label {
-			color: var(--text-primary);
-		}
-	}
-
-	.raid-label {
-		font-size: $font-regular;
-		color: var(--text-secondary);
-	}
-
-	.raid-select-button {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		width: 100%;
-		padding: 0;
-		background: none;
-		border: none;
-		cursor: pointer;
-		text-align: left;
-
-		&:hover .raid-name {
-			color: var(--text-primary);
-		}
-
-		&:hover .placeholder {
-			color: var(--text-secondary);
-		}
-
-		&:hover :global(.chevron-icon) {
-			color: var(--icon-secondary-hover);
-		}
-	}
-
-	.raid-name {
-		font-size: $font-regular;
-		font-weight: $medium;
-		color: var(--text-secondary);
-	}
-
-	.placeholder {
-		font-size: $font-regular;
-		color: var(--text-tertiary);
-	}
-
-	:global(.chevron-icon) {
-		color: var(--icon-secondary);
-		flex-shrink: 0;
-	}
-
-	.description-field {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-half;
-
-		&:hover .description-label {
-			color: var(--text-primary);
-		}
-	}
-
-	.description-label {
-		font-size: $font-regular;
-		color: var(--text-secondary);
-	}
-
-	.description-button {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		width: 100%;
-		padding: 0;
-		background: none;
-		border: none;
-		cursor: pointer;
-		text-align: left;
-
-		&:hover .description-preview {
-			color: var(--text-primary);
-		}
-
-		&:hover .description-placeholder {
-			color: var(--text-secondary);
-		}
-
-		&:hover :global(.description-chevron) {
-			color: var(--icon-secondary-hover);
-		}
-	}
-
-	.description-preview {
-		font-size: $font-regular;
-		color: var(--text-secondary);
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	.description-placeholder {
-		font-size: $font-regular;
-		color: var(--text-tertiary);
-	}
-
-	:global(.description-chevron) {
-		color: var(--icon-secondary);
-		flex-shrink: 0;
-	}
-
-	// Element-specific colors when raid is selected
-	.raid-select-button {
-		&.wind {
-			.raid-name,
-			:global(.chevron-icon) {
-				color: $wind-text-30;
-			}
-			&:hover .raid-name,
-			&:hover :global(.chevron-icon) {
-				color: $wind-text-20;
-			}
-		}
-		&.fire {
-			.raid-name,
-			:global(.chevron-icon) {
-				color: $fire-text-30;
-			}
-			&:hover .raid-name,
-			&:hover :global(.chevron-icon) {
-				color: $fire-text-20;
-			}
-		}
-		&.water {
-			.raid-name,
-			:global(.chevron-icon) {
-				color: $water-text-30;
-			}
-			&:hover .raid-name,
-			&:hover :global(.chevron-icon) {
-				color: $water-text-20;
-			}
-		}
-		&.earth {
-			.raid-name,
-			:global(.chevron-icon) {
-				color: $earth-text-30;
-			}
-			&:hover .raid-name,
-			&:hover :global(.chevron-icon) {
-				color: $earth-text-20;
-			}
-		}
-		&.dark {
-			.raid-name,
-			:global(.chevron-icon) {
-				color: $dark-text-30;
-			}
-			&:hover .raid-name,
-			&:hover :global(.chevron-icon) {
-				color: $dark-text-20;
-			}
-		}
-		&.light {
-			.raid-name,
-			:global(.chevron-icon) {
-				color: $light-text-30;
-			}
-			&:hover .raid-name,
-			&:hover :global(.chevron-icon) {
-				color: $light-text-20;
-			}
-		}
 	}
 </style>

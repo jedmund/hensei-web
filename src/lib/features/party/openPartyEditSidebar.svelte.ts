@@ -1,8 +1,6 @@
 import { sidebar } from '$lib/stores/sidebar.svelte'
-import EditPartyPane, {
-	type PartyEditValues,
-	type SolomonisDetailsLink
-} from '$lib/components/sidebar/EditPartyPane.svelte'
+import EditPartyPane from '$lib/components/sidebar/EditPartyPane.svelte'
+import type { PartyEditValues, SolomonisDetailsLink } from './partyEditValues'
 
 import type { StickerBreakdownEntry } from '$lib/types/api/sticker'
 
@@ -43,5 +41,3 @@ export function openPartyEditSidebar(options: PartyEditSidebarOptions) {
 export function closePartyEditSidebar() {
 	sidebar.close()
 }
-
-export type { PartyEditValues }
