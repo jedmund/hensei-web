@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { ResultSet } from '$lib/features/database/resultSet.svelte'
-import { characterRowHref, characterRowId, syncResultSet, toResultItems } from './resultSync'
+import { characterRowId, syncResultSet, toResultItems } from './resultSync'
 
 interface Row {
 	granblueId: string
@@ -81,12 +81,10 @@ describe('loadPage sync', () => {
 })
 
 describe('character ids', () => {
-	it('gives style-swap characters their own id and URL', () => {
+	it('gives style-swap characters their own id', () => {
 		const base = { granblueId: '3040001000', styleSwap: false }
 		const style = { granblueId: '3040001000', styleSwap: true }
 		expect(characterRowId(base)).toBe('3040001000')
-		expect(characterRowHref(base)).toBe('/database/characters/3040001000')
 		expect(characterRowId(style)).toBe('3040001000-style')
-		expect(characterRowHref(style)).toBe('/database/characters/3040001000/style')
 	})
 })
