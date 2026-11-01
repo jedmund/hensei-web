@@ -114,7 +114,7 @@ export interface DetailOptions<Full> {
 	/** Leave the row out when there's no value, instead of showing a dash */
 	hideWhenEmpty?: boolean
 	/** What an empty value shows. Defaults to a dash */
-	empty?: string
+	empty?: string | Message
 	/** The value to show, when it isn't what `read` returns (e.g. a name for an id) */
 	value?: (record: Full) => unknown
 	/** Show the sublabel here too. Defaults to true; some hints are only for editing */

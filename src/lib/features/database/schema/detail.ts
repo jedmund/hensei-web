@@ -61,7 +61,8 @@ export function detailLayout<Row, Full>(
 
 /** What an empty value shows */
 export function emptyText<Row, Full>(field: Field<Row, Full>): string {
-	return detailOptions(field).empty ?? '—'
+	const empty = detailOptions(field).empty
+	return typeof empty === 'function' ? empty() : (empty ?? '—')
 }
 
 function optionLabel(options: EnumOption[], value: unknown): string | undefined {

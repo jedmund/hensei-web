@@ -89,16 +89,14 @@ const tabLabels = () =>
 
 /**
  * The baseline as the generated detail draws it on purpose: empty link rows
- * are hidden rather than showing a dash, and with none left the Links
- * section goes too. Links is the last section.
+ * read N/A rather than a dash. Links is the last section.
  */
 function expectedInfo(name: keyof typeof baseline): string[] {
 	// The definition labels the GameWith link with the site's own spelling
 	const info = baseline[name].info.map((l) => (l === 'Gamewith' ? 'GameWith' : l))
 	const at = info.indexOf('Links')
-	// Label and value pairs, kept unless the value is a dash
-	const links = info.slice(at + 1).filter((l, i, rest) => rest[i - (i % 2) + 1] !== '—')
-	return [...info.slice(0, at), ...(links.length ? ['Links', ...links] : [])]
+	const links = info.slice(at).map((l) => (l === '—' ? 'N/A' : l))
+	return [...info.slice(0, at), ...links]
 }
 
 afterEach(() => {
@@ -137,15 +135,20 @@ describe('ResourceDetail: the Info tab matches the hand-written detail', () => {
 })
 
 describe('ResourceDetail: links', () => {
-	it('hides empty link rows', () => {
+	it('shows N/A for empty links', () => {
 		render('plain')
 		const info = lines(target.querySelector('.details'))
-		expect(info.slice(info.indexOf('Links'))).toEqual(['Links', 'Wiki (EN)', 'Open'])
-	})
-
-	it('drops the Links section when every link is empty', () => {
-		render('plain', { record: { wiki: {} } })
-		expect(lines(target.querySelector('.details'))).not.toContain('Links')
+		expect(info.slice(info.indexOf('Links'))).toEqual([
+			'Links',
+			'Wiki (EN)',
+			'Open',
+			'Wiki (JP)',
+			'N/A',
+			'GameWith',
+			'N/A',
+			'Kamigame',
+			'N/A'
+		])
 	})
 })
 

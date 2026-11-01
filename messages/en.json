@@ -2767,6 +2767,7 @@
 	"db_detail_tab_images": "Images",
 	"db_detail_tab_raw": "Raw Data",
 	"db_detail_open": "Open",
+	"db_detail_not_available": "N/A",
 	"db_detail_back": "Back",
 	"db_detail_not_found_title": "{noun} Not Found",
 	"db_detail_not_found_message": "The record you're looking for could not be found.",
