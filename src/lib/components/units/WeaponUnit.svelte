@@ -486,28 +486,19 @@
 
 <style lang="scss">
 	@use '$src/themes/colors' as colors;
-	@use '$src/themes/typography' as typography;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/rep' as rep;
 	@use '$src/themes/effects' as effects;
 	@use '$src/themes/unit' as unit;
 
+	@include unit.unit-root;
+
 	.unit {
-		position: relative;
 		transition: opacity 150ms ease;
 
 		&.skill-dimmed {
 			opacity: 0.3;
-		}
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: spacing.$unit;
-
-		&.empty .name {
-			display: none;
 		}
 
 		&.extra {
@@ -529,20 +520,9 @@
 		}
 	}
 
+	@include unit.unit-slot;
+
 	.focus-ring-wrapper {
-		position: relative;
-		display: block;
-		transition: transform 0.2s ease-in-out;
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			border-radius: layout.$input-corner;
-			pointer-events: none;
-			z-index: effects.$z-sticky;
-		}
-
 		&.editable:hover {
 			transform: layout.$scale-wide;
 		}
@@ -553,41 +533,7 @@
 	}
 
 	.frame {
-		position: relative;
-		width: 100%;
 		overflow: hidden;
-		border-radius: layout.$input-corner;
-		background: var(--card-bg, #f5f5f5);
-		transition: opacity 0.2s ease-in-out;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		cursor: pointer;
-
-		&.editable:hover {
-			opacity: 0.95;
-			box-shadow: var(--shadow-sm);
-		}
-
-		// Slot selection - subtle dark pulsing glow (works for both empty and filled)
-		&.is-selected,
-		&.is-active {
-			animation: pulse-slot-shadow 2s ease-in-out infinite;
-		}
-	}
-
-	@keyframes pulse-slot-shadow {
-		0%,
-		100% {
-			box-shadow:
-				0 0 0 1px rgba(0, 0, 0, 0.12),
-				0 0 4px 2px rgba(0, 0, 0, 0.06);
-		}
-		50% {
-			box-shadow:
-				0 0 0 1px rgba(0, 0, 0, 0.24),
-				0 0 8px 4px rgba(0, 0, 0, 0.12);
-		}
 	}
 
 	.frame.weapon.main {
@@ -596,54 +542,6 @@
 
 	.frame.weapon.cell {
 		@include rep.aspect(rep.$weapon-cell-w, rep.$weapon-cell-h);
-	}
-
-	.image {
-		position: relative;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		display: block;
-		z-index: effects.$z-badge;
-
-		&.placeholder {
-			opacity: 0;
-		}
-
-		&.not-in-collection {
-			opacity: 0.7;
-		}
-	}
-
-	.frame.not-in-collection::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		border: 2px solid colors.$error;
-		box-shadow: inset 0px 0px 4px colors.$error;
-		border-radius: inherit;
-		z-index: effects.$z-badge;
-		pointer-events: none;
-	}
-
-	.icon {
-		position: absolute;
-		z-index: effects.$z-raised;
-		color: var(--icon-secondary, #999);
-		transition: color 0.2s ease-in-out;
-	}
-
-	.frame.editable:hover .icon {
-		color: var(--icon-secondary-hover, #666);
-	}
-
-	.name {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: spacing.$unit-half;
-		font-size: typography.$font-small;
-		color: var(--text-secondary);
 	}
 
 	// Weapons render the awakening icon at the top-left of the frame, which
@@ -655,12 +553,6 @@
 		margin-left: -6px;
 	}
 
-	.name-text {
-		min-width: 0;
-		text-align: center;
-		overflow-wrap: anywhere;
-	}
-
 	.modifiers {
 		position: absolute;
 		width: 100%;
@@ -668,23 +560,7 @@
 		z-index: effects.$z-sticky;
 		pointer-events: none;
 
-		.orphaned-badge {
-			position: absolute;
-			top: 4px;
-			right: 4px;
-			width: 24px;
-			height: 24px;
-			background: colors.$error;
-			border-radius: 50%;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			color: white;
-			z-index: effects.$z-sticky;
-			pointer-events: auto;
-			cursor: help;
-			box-shadow: var(--shadow-sm);
-		}
+		@include unit.unit-orphaned-badge;
 
 		.awakening {
 			position: absolute;

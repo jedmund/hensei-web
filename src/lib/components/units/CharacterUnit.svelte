@@ -499,81 +499,17 @@
 />
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
 	@use '$src/themes/rep' as rep;
 	@use '$src/themes/unit' as unit;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/effects' as effects;
 
-	.unit {
-		position: relative;
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: spacing.$unit;
+	@include unit.unit-root;
+	@include unit.unit-slot;
 
-		&.empty .name {
-			display: none;
-		}
-	}
-
-	.focus-ring-wrapper {
-		position: relative;
-		display: block;
-		transition: transform 0.2s ease-in-out;
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			border-radius: layout.$input-corner;
-			pointer-events: none;
-			z-index: effects.$z-sticky;
-		}
-
-		&.editable:hover {
-			transform: scale(1.05);
-		}
-	}
-
-	.frame {
-		position: relative;
-		width: 100%;
-		border-radius: layout.$input-corner;
-		background: var(--card-bg, #f5f5f5);
-		transition: opacity 0.2s ease-in-out;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		cursor: pointer;
-
-		&.editable:hover {
-			opacity: 0.95;
-			box-shadow: var(--shadow-sm);
-		}
-
-		// Slot selection - subtle dark pulsing glow (works for both empty and filled)
-		&.is-selected,
-		&.is-active {
-			animation: pulse-slot-shadow 2s ease-in-out infinite;
-		}
-	}
-
-	@keyframes pulse-slot-shadow {
-		0%,
-		100% {
-			box-shadow:
-				0 0 0 1px rgba(0, 0, 0, 0.12),
-				0 0 4px 2px rgba(0, 0, 0, 0.06);
-		}
-		50% {
-			box-shadow:
-				0 0 0 1px rgba(0, 0, 0, 0.24),
-				0 0 8px 4px rgba(0, 0, 0, 0.12);
-		}
+	.focus-ring-wrapper.editable:hover {
+		transform: scale(1.05);
 	}
 
 	.frame.character.cell {
@@ -581,66 +517,12 @@
 	}
 
 	.image {
-		position: relative;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		display: block;
-		z-index: effects.$z-badge;
 		border-radius: layout.$input-corner;
-
-		&.placeholder {
-			opacity: 0;
-		}
-
-		&.not-in-collection {
-			opacity: 0.7;
-		}
 	}
 
-	.frame.not-in-collection::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		border: 2px solid colors.$error;
-		box-shadow: inset 0px 0px 4px colors.$error;
-		border-radius: inherit;
-		z-index: effects.$z-badge;
-		pointer-events: none;
-	}
-
-	.icon {
-		position: absolute;
-		z-index: effects.$z-raised;
-		color: var(--icon-secondary, #999);
-		transition: color 0.2s ease-in-out;
-	}
-
-	.frame.editable:hover .icon {
-		color: var(--icon-secondary-hover, #666);
-	}
-
-	.name {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: spacing.$unit-half;
-		font-size: typography.$font-small;
-		color: var(--text-secondary);
-
-		:global(.artifact-indicator) {
-			color: var(--extra-purple-text);
-			flex-shrink: 0;
-		}
-	}
-
-	.name-text {
-		// min-width: 0 lets the text item shrink under content size so long
-		// names wrap inside the span instead of forcing the bookmark/badge
-		// onto their own flex line.
-		min-width: 0;
-		text-align: center;
-		overflow-wrap: anywhere;
+	.name :global(.artifact-indicator) {
+		color: var(--extra-purple-text);
+		flex-shrink: 0;
 	}
 
 	.fa-skills {
@@ -709,81 +591,13 @@
 	}
 
 	.perpetuity {
-		position: absolute;
-		z-index: effects.$z-tooltip;
 		top: calc(spacing.$unit * -1);
 		right: 44px;
 		width: spacing.$unit-4x;
 		height: spacing.$unit-4x;
-		padding: 0;
-		border: none;
-		background: transparent;
-		cursor: pointer;
-		transition: transform 0.2s ease;
-
-		&:not(.active):not(.static) {
-			display: none;
-		}
-
-		&:hover {
-			transform: scale(1.1);
-		}
-
-		&.static {
-			cursor: default;
-			&:hover {
-				transform: none;
-			}
-		}
 	}
 
-	.focus-ring-wrapper:hover .perpetuity:not(.active) {
-		display: block;
-	}
-
-	.perpetuity-icon {
-		width: 100%;
-		height: 100%;
-		display: block;
-
-		&.filled {
-			display: none;
-		}
-
-		&.empty {
-			display: block;
-		}
-	}
-
-	.perpetuity.active {
-		.perpetuity-icon.filled {
-			display: block;
-		}
-
-		.perpetuity-icon.empty {
-			display: none;
-		}
-
-		&:hover {
-			.perpetuity-icon.filled {
-				display: none;
-			}
-
-			.perpetuity-icon.empty {
-				display: block;
-			}
-		}
-	}
-
-	.perpetuity:not(.active):hover {
-		.perpetuity-icon.filled {
-			display: block;
-		}
-
-		.perpetuity-icon.empty {
-			display: none;
-		}
-	}
+	@include unit.unit-toggle-badge(perpetuity);
 
 	.style-switch-wrapper {
 		position: absolute;
@@ -817,21 +631,5 @@
 
 	@include unit.unit-shared-styles;
 
-	.orphaned-badge {
-		position: absolute;
-		top: 4px;
-		right: 4px;
-		width: 24px;
-		height: 24px;
-		background: colors.$error;
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		color: white;
-		z-index: effects.$z-sticky;
-		pointer-events: auto;
-		cursor: help;
-		box-shadow: var(--shadow-sm);
-	}
+	@include unit.unit-orphaned-badge;
 </style>
