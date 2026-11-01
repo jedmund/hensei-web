@@ -6,13 +6,10 @@
 	import * as m from '$lib/paraglide/messages'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
-	import {
-		getCharacterImage,
-		getSummonImage,
-		getWeaponFallbackImage,
-		getWeaponImage,
-		handleImageFallback
-	} from '$lib/utils/images'
+	import { getCharacterImage } from '$lib/utils/images/characters'
+	import { handleImageFallback } from '$lib/utils/images/core'
+	import { getSummonImage } from '$lib/utils/images/summons'
+	import { getWeaponFallbackImage, getWeaponImage } from '$lib/utils/images/weapons'
 	import { formatDate, primaryName, secondaryName } from './format'
 	import type { DataTableColumn, ImageSource } from './types'
 
