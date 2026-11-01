@@ -15,6 +15,7 @@
 		sectionForUrl,
 		sectionHref
 	} from '$lib/features/database/sections'
+	import { isEditor } from '$lib/auth/roles'
 
 	interface Props {
 		role: number
@@ -43,14 +44,16 @@
 		<SlidingSelection {host} selector=".item.selected" {trigger} class="indicator" />
 	{/if}
 
-	<a
-		href={localizeHref('/database')}
-		class="item"
-		class:selected={onOverview}
-		aria-current={onOverview ? 'page' : undefined}
-	>
-		{m.db_nav_overview()}
-	</a>
+	{#if isEditor(role)}
+		<a
+			href={localizeHref('/database')}
+			class="item"
+			class:selected={onOverview}
+			aria-current={onOverview ? 'page' : undefined}
+		>
+			{m.db_nav_overview()}
+		</a>
+	{/if}
 
 	{#each groups as group (group.id)}
 		<section class="group">

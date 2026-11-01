@@ -50,30 +50,6 @@ export function useUpdateEvent() {
 	return createMutation(() => updateEventOptions(queryClient))
 }
 
-export function approveEventOptions(queryClient: QueryClient) {
-	return {
-		mutationFn: (id: string) => eventAdapter.approveEvent(id),
-		onSuccess: (event: GameEvent) => storeEvent(queryClient, event)
-	}
-}
-
-export function useApproveEvent() {
-	const queryClient = useQueryClient()
-	return createMutation(() => approveEventOptions(queryClient))
-}
-
-export function hideEventOptions(queryClient: QueryClient) {
-	return {
-		mutationFn: (id: string) => eventAdapter.hideEvent(id),
-		onSuccess: (event: GameEvent) => storeEvent(queryClient, event)
-	}
-}
-
-export function useHideEvent() {
-	const queryClient = useQueryClient()
-	return createMutation(() => hideEventOptions(queryClient))
-}
-
 export function uploadEventImageOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ id, file }: { id: string; file: File }) =>
@@ -103,8 +79,9 @@ export function useRunEventSync() {
 // Staff picks
 // ============================================================================
 
-function invalidatePicks(queryClient: QueryClient, eventId: string | null | undefined) {
-	if (eventId) queryClient.invalidateQueries({ queryKey: eventKeys.staffPicks(eventId) })
+// Every pick list (per event and per team) and Home, which shows them
+function invalidatePicks(queryClient: QueryClient) {
+	queryClient.invalidateQueries({ queryKey: eventKeys.staffPicksAll() })
 	queryClient.invalidateQueries({ queryKey: homeKeys.all })
 }
 
@@ -112,8 +89,7 @@ export function createStaffPickOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (payload: FeaturedPartyPayload) =>
 			featuredPartyAdapter.createFeaturedParty(payload),
-		onSuccess: (_data: unknown, payload: FeaturedPartyPayload) =>
-			invalidatePicks(queryClient, payload.eventId)
+		onSuccess: () => invalidatePicks(queryClient)
 	}
 }
 
@@ -132,8 +108,7 @@ export function updateStaffPickOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ id, payload }: UpdateStaffPickVars) =>
 			featuredPartyAdapter.updateFeaturedParty(id, payload),
-		onSuccess: (_data: unknown, { eventId }: UpdateStaffPickVars) =>
-			invalidatePicks(queryClient, eventId)
+		onSuccess: () => invalidatePicks(queryClient)
 	}
 }
 
@@ -146,8 +121,7 @@ export function deleteStaffPickOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ id }: { id: string; eventId: string | null }) =>
 			featuredPartyAdapter.deleteFeaturedParty(id),
-		onSuccess: (_data: unknown, { eventId }: { id: string; eventId: string | null }) =>
-			invalidatePicks(queryClient, eventId)
+		onSuccess: () => invalidatePicks(queryClient)
 	}
 }
 

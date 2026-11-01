@@ -8,28 +8,29 @@
 
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
-	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
 
 	import { eventQueries } from '$lib/api/queries/event.queries'
 	import { useRunEventSync } from '$lib/api/mutations/event.mutations'
-	import { eventKindLabel, eventStatusLabel } from '$lib/utils/eventLabels'
+	import { eventKindLabel } from '$lib/utils/eventLabels'
 	import { formatJstDateTime } from '$lib/utils/jstDateTime'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { localizedName } from '$lib/utils/locale'
 	import { localizeHref } from '$lib/paraglide/runtime'
+	import { isEditor } from '$lib/auth/roles'
 
-	import type { EventStatus, GameEvent } from '$lib/types/api/event'
+	import type { GameEvent } from '$lib/types/api/event'
 	import type { PageData } from './$types'
 
 	let { data }: { data: PageData } = $props()
 
-	let status = $state<EventStatus | 'all'>('draft')
+	// Curators can read events but not create them
+	const canEdit = $derived(isEditor(data.role))
 
+	// Every event; statuses are internal (the schedule sync's drafts)
 	const eventsQuery = createQuery(() => ({
-		...eventQueries.list({ status }),
-		initialData: status === 'draft' ? data.events : undefined
+		...eventQueries.list({ status: 'all' }),
+		initialData: data.events
 	}))
 
 	const events = $derived(
@@ -54,26 +55,15 @@
 
 <div class="page">
 	<DatabasePageHeader title={m.nav_events()}>
-		{#snippet leftAction()}
-			<SegmentedControl
-				value={status}
-				onValueChange={(v) => (status = v as EventStatus | 'all')}
-				size="xsmall"
-				variant="background"
-			>
-				<Segment value="draft">{eventStatusLabel('draft')}</Segment>
-				<Segment value="approved">{eventStatusLabel('approved')}</Segment>
-				<Segment value="hidden">{eventStatusLabel('hidden')}</Segment>
-				<Segment value="all">{m.db_events_status_all()}</Segment>
-			</SegmentedControl>
-		{/snippet}
 		{#snippet rightAction()}
-			<Button variant="secondary" size="small" onclick={runSync} disabled={syncMut.isPending}>
-				{m.db_events_run_sync()}
-			</Button>
-			<Button variant="primary" size="small" href={localizeHref('/database/events/new')}>
-				{m.db_events_new()}
-			</Button>
+			{#if canEdit}
+				<Button variant="secondary" size="small" onclick={runSync} disabled={syncMut.isPending}>
+					{m.db_events_run_sync()}
+				</Button>
+				<Button variant="primary" size="small" href={localizeHref('/database/events/new')}>
+					{m.db_events_new()}
+				</Button>
+			{/if}
 		{/snippet}
 	</DatabasePageHeader>
 
@@ -86,13 +76,12 @@
 					<th>{m.db_events_col_element()}</th>
 					<th>{m.db_events_col_dates()}</th>
 					<th>{m.db_events_col_raids()}</th>
-					<th>{m.db_events_col_status()}</th>
 				</tr>
 			</thead>
 			<tbody>
 				{#if events.length === 0 && !eventsQuery.isLoading}
 					<tr>
-						<td colspan="6" class="empty-state">{m.db_events_empty()}</td>
+						<td colspan="5" class="empty-state">{m.db_events_empty()}</td>
 					</tr>
 				{:else}
 					{#each events as event (event.id)}
@@ -112,7 +101,6 @@
 								{formatJstDateTime(event.startsAt)} – {formatJstDateTime(event.endsAt)} JST
 							</td>
 							<td>{event.raids?.length ?? 0}</td>
-							<td>{eventStatusLabel(event.status)}</td>
 						</tr>
 					{/each}
 				{/if}
