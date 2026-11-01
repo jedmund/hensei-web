@@ -245,6 +245,24 @@
 	@use '$src/themes/mixins' as *;
 	@use '$src/themes/effects' as *;
 
+	// Color dot / image thumbnail shown in the trigger and in each option
+	@mixin swatch {
+		.image {
+			width: $unit-3x;
+			height: $unit-3x;
+			flex-shrink: 0;
+			border-radius: $full-corner;
+			object-fit: cover;
+		}
+
+		.color-dot {
+			width: 10px;
+			height: 10px;
+			border-radius: 50%;
+			flex-shrink: 0;
+		}
+	}
+
 	// Fieldset wrapper (matching Input component)
 	.fieldset {
 		display: flex;
@@ -317,20 +335,7 @@
 			color: var(--text-primary);
 		}
 
-		.image {
-			width: $unit-3x;
-			height: $unit-3x;
-			flex-shrink: 0;
-			border-radius: $full-corner;
-			object-fit: cover;
-		}
-
-		.color-dot {
-			width: 10px;
-			height: 10px;
-			border-radius: 50%;
-			flex-shrink: 0;
-		}
+		@include swatch;
 
 		:global(.chevron) {
 			flex-shrink: 0;
@@ -484,20 +489,7 @@
 			right: $unit-2x;
 		}
 
-		.image {
-			width: $unit-3x;
-			height: $unit-3x;
-			flex-shrink: 0;
-			border-radius: $full-corner;
-			object-fit: cover;
-		}
-
-		.color-dot {
-			width: 10px;
-			height: 10px;
-			border-radius: 50%;
-			flex-shrink: 0;
-		}
+		@include swatch;
 
 		:global(.indicator) {
 			margin-left: auto;
