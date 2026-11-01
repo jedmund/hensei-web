@@ -11,6 +11,23 @@
 	import { storeListUrl } from '$lib/utils/listNavigation'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { MediaQuery } from 'svelte/reactivity'
+	import { getLocale, localizeHref } from '$lib/paraglide/runtime'
+	import { ResultSet, setResultSet } from '$lib/features/database/resultSet.svelte'
+	import RecordPanel from '$lib/features/database/panel/RecordPanel.svelte'
+	import {
+		openInPanel,
+		opensInPanel,
+		PANEL_MIN_QUERY
+	} from '$lib/features/database/panel/openInPanel'
+	import {
+		OPEN_PARAM,
+		preserveParams,
+		readOpen,
+		recordId,
+		recordPath,
+		withOpen
+	} from '$lib/features/database/panel/panelUrl'
 
 	import { DatabaseFilters } from './useDatabaseFilters.svelte'
 	import { DatabaseSearch } from './useDatabaseSearch.svelte'
@@ -82,6 +99,41 @@
 		search.handleSearch(search.searchTerm)
 	})
 
+	// --- Record panel ---
+
+	// The rows in display order, for the record panel's j/k (GBF-140)
+	const resultSet = setResultSet(new ResultSet())
+	resultSet.loadPage = (pg) => loadData(pg)
+	const panelFits = new MediaQuery(PANEL_MIN_QUERY)
+
+	function rowRecordId(row: IRow): string {
+		return recordId(String(row.granblueId), resource === 'characters' && !!row.styleSwap)
+	}
+
+	function rowTitle(row: IRow): string | undefined {
+		if (typeof row.displayName === 'string') return row.displayName
+		if (typeof row.name === 'string') return row.name
+		// Search results carry a localized name object ({ en, ja })
+		const name = row.name as { en?: string; ja?: string } | undefined
+		if (name && typeof name === 'object') {
+			return (getLocale() === 'ja' ? (name.ja ?? name.en) : (name.en ?? name.ja)) || undefined
+		}
+		return undefined
+	}
+
+	// Called synchronously at the end of each load, so ResultSet.next()/prev()
+	// see the new page as soon as loadPage resolves
+	function syncResultSet() {
+		resultSet.items = data
+			.filter((row) => row.granblueId)
+			.map((row) => {
+				const id = rowRecordId(row)
+				return { id, href: recordPath(resource, id), title: rowTitle(row) }
+			})
+		resultSet.page = currentPage
+		resultSet.totalPages = totalPages
+	}
+
 	// --- Data loading ---
 
 	let data = $state<IRow[]>([])
@@ -117,10 +169,21 @@
 					pageSize = meta.pageSize
 				}
 			}
+			syncResultSet()
 
 			if (updateUrlParam) {
-				const url = filters.buildUrlParams(search.searchTerm, pageNum, $page.url.pathname)
-				goto(url, { replaceState: true, noScroll: true, keepFocus: true })
+				// Keep the open record (?open=) across list URL rebuilds
+				const url = preserveParams(
+					filters.buildUrlParams(search.searchTerm, pageNum, $page.url.pathname),
+					$page.url,
+					[OPEN_PARAM]
+				)
+				await goto(url, {
+					replaceState: true,
+					noScroll: true,
+					keepFocus: true,
+					state: $page.state
+				})
 			}
 		} catch (error) {
 			console.error('Failed to load data:', error)
@@ -282,19 +345,61 @@
 			return false
 		})
 
-		// Row click navigation
-		api.on('select-row', (ev: Record<string, unknown>) => {
-			const rowId = ev.id
-			if (rowId) {
-				const rowData = data.find((item) => item.id === rowId)
-				if (rowData && rowData.granblueId) {
-					storeListUrl($page.url.href, resource)
-					const styleSuffix = resource === 'characters' && rowData.styleSwap ? '/style' : ''
-					goto(`/database/${resource}/${rowData.granblueId}${styleSuffix}`)
-				}
+		// Row clicks are handled on the wrapper (handleRowClick): select-row
+		// carries no modifier keys and doesn't fire for an already-selected row
+	}
+
+	// --- Row clicks ---
+
+	function rowFromEvent(event: MouseEvent): IRow | undefined {
+		const target = event.target as Element | null
+		if (!target || typeof target.closest !== 'function') return undefined
+		// Controls inside cells keep their own behaviour
+		if (target.closest('a, button, input, select, textarea, label')) return undefined
+		const rowEl = target.closest('.wx-row[data-id]')
+		if (!rowEl) return undefined
+		// wx-svelte-grid prefixes string ids with ":"
+		const raw = rowEl.getAttribute('data-id') ?? ''
+		const id = raw.startsWith(':') ? raw.slice(1) : raw
+		return data.find((row) => String(row.id) === id)
+	}
+
+	function handleRowClick(event: MouseEvent) {
+		const row = rowFromEvent(event)
+		if (!row?.granblueId) return
+
+		const id = rowRecordId(row)
+		const href = localizeHref(recordPath(resource, id))
+		// The full page's Back returns to the list, without the panel
+		storeListUrl(withOpen($page.url, null).href, resource)
+
+		if (opensInPanel(event, panelFits.current)) {
+			openInPanel($page.url, id, $page.state)
+		} else if (opensInPanel(event, true)) {
+			// Plain click on a phone: the full page
+			goto(href)
+		} else {
+			// ⌘/Ctrl/Shift-click and middle-click: a new tab
+			event.preventDefault()
+			window.open(href, '_blank', 'noopener')
+		}
+	}
+
+	// Highlight the open record's row as j/k step through the results
+	$effect(() => {
+		const openId = readOpen($page.url)
+		if (!api || !openId) return
+		const row = data.find((r) => r.granblueId && rowRecordId(r) === openId)
+		if (!row) return
+		// After the grid has taken the new rows
+		tick().then(() => {
+			try {
+				api.exec('select-row', { id: row.id })
+			} catch {
+				// Highlight only
 			}
 		})
-	}
+	})
 
 	// --- Pagination ---
 
@@ -377,88 +482,100 @@
 	<link rel="stylesheet" href="https://cdn.svar.dev/fonts/wxi/wx-icons.css" />
 </svelte:head>
 
-<div class="grid">
-	<DatabaseGridControls
-		hasActiveFilters={filters.hasActiveFilters}
-		filterCount={filters.filterCount}
-		{hasCustomColumns}
-		selectedElement={filters.selectedElement}
-		{supportsCollectionFilters}
-		{leftActions}
-		{headerActions}
-		onToggleFilters={() => (filters.showFilters = !filters.showFilters)}
-		onResetColumns={resetColumns}
-	>
-		{#snippet rightActions()}
-			<input
-				type="text"
-				class="search-input"
-				placeholder="Search..."
-				value={search.searchTerm}
-				oninput={(e) => {
-					search.searchTerm = e.currentTarget.value
-				}}
-			/>
-			<Button
-				variant="ghost"
-				size="small"
-				iconOnly
-				icon={expanded ? 'collapse' : 'expand'}
-				onclick={toggleExpanded}
-			/>
-		{/snippet}
-	</DatabaseGridControls>
+<div class="list-layout">
+	<div class="grid">
+		<DatabaseGridControls
+			hasActiveFilters={filters.hasActiveFilters}
+			filterCount={filters.filterCount}
+			{hasCustomColumns}
+			selectedElement={filters.selectedElement}
+			{supportsCollectionFilters}
+			{leftActions}
+			{headerActions}
+			onToggleFilters={() => (filters.showFilters = !filters.showFilters)}
+			onResetColumns={resetColumns}
+		>
+			{#snippet rightActions()}
+				<input
+					type="text"
+					class="search-input"
+					placeholder="Search..."
+					value={search.searchTerm}
+					oninput={(e) => {
+						search.searchTerm = e.currentTarget.value
+					}}
+				/>
+				<Button
+					variant="ghost"
+					size="small"
+					iconOnly
+					icon={expanded ? 'collapse' : 'expand'}
+					onclick={toggleExpanded}
+				/>
+			{/snippet}
+		</DatabaseGridControls>
 
-	{#if filters.showFilters && supportsCollectionFilters}
-		<div class="filters-row">
-			<CollectionFilters
-				entityType={resource === 'characters'
-					? 'character'
-					: resource === 'summons'
-						? 'summon'
-						: 'weapon'}
-				bind:elementFilters={filters.elementFilters}
-				bind:rarityFilters={filters.rarityFilters}
-				bind:seriesFilters={filters.seriesFilters}
-				bind:proficiencyFilters={filters.proficiencyFilters}
-				bind:seasonFilters={filters.seasonFilters}
-				onFiltersChange={(f) => filters.handleFiltersChange(f)}
-				showSort={false}
-				showSearch={false}
-				contained={false}
-			/>
-		</div>
-	{/if}
-
-	<div class="grid-wrapper" class:loading class:scrolled={isScrolled} bind:this={gridWrapperEl}>
-		{#if loading}
-			<div class="loading-overlay">
-				<div class="loading-spinner">Loading...</div>
+		{#if filters.showFilters && supportsCollectionFilters}
+			<div class="filters-row">
+				<CollectionFilters
+					entityType={resource === 'characters'
+						? 'character'
+						: resource === 'summons'
+							? 'summon'
+							: 'weapon'}
+					bind:elementFilters={filters.elementFilters}
+					bind:rarityFilters={filters.rarityFilters}
+					bind:seriesFilters={filters.seriesFilters}
+					bind:proficiencyFilters={filters.proficiencyFilters}
+					bind:seasonFilters={filters.seasonFilters}
+					onFiltersChange={(f) => filters.handleFiltersChange(f)}
+					showSort={false}
+					showSearch={false}
+					contained={false}
+				/>
 			</div>
 		{/if}
 
-		<HeaderMenu api={gridRef}>
-			<Grid
-				bind:this={gridRef}
-				{data}
-				{columns}
-				{init}
-				sizes={{ rowHeight: 80 }}
-				split={{ left: 2 }}
-				class="database-grid-theme"
-			/>
-		</HeaderMenu>
+		<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions (rows are reachable from the grid's own keyboard navigation) -->
+		<div
+			class="grid-wrapper"
+			class:loading
+			class:scrolled={isScrolled}
+			bind:this={gridWrapperEl}
+			onclick={handleRowClick}
+			onauxclick={(e) => e.button === 1 && handleRowClick(e)}
+		>
+			{#if loading}
+				<div class="loading-overlay">
+					<div class="loading-spinner">Loading...</div>
+				</div>
+			{/if}
+
+			<HeaderMenu api={gridRef}>
+				<Grid
+					bind:this={gridRef}
+					{data}
+					{columns}
+					{init}
+					sizes={{ rowHeight: 80 }}
+					split={{ left: 2 }}
+					class="database-grid-theme"
+				/>
+			</HeaderMenu>
+		</div>
+
+		<DatabaseGridFooter
+			{currentPage}
+			{totalPages}
+			{total}
+			{startItem}
+			{endItem}
+			onPrevPage={handlePrevPage}
+			onNextPage={handleNextPage}
+		/>
 	</div>
 
-	<DatabaseGridFooter
-		{currentPage}
-		{totalPages}
-		{total}
-		{startItem}
-		{endItem}
-		onPrevPage={handlePrevPage}
-		onNextPage={handleNextPage}
-	/>
+	<RecordPanel {resource} />
 </div>
 
 <style lang="scss">
@@ -468,8 +585,15 @@
 	@use '$src/themes/typography' as typography;
 	@use './database-grid.scss';
 
-	.grid {
+	.list-layout {
+		display: flex;
+		align-items: flex-start;
 		width: 100%;
+	}
+
+	.grid {
+		flex: 1;
+		min-width: 0;
 		background: var(--card-bg);
 		border: 0.5px solid rgba(0, 0, 0, 0.18);
 		border-radius: layout.$page-corner;

@@ -1,6 +1,8 @@
 <script lang="ts">
 	// SvelteKit imports
 	import { goto } from '$app/navigation'
+	import { UnsavedChangesGuard } from '$lib/features/database/detail/unsavedChanges.svelte'
+	import UnsavedChangesDialog from '$lib/features/database/detail/UnsavedChangesDialog.svelte'
 
 	// Page metadata
 	import PageMeta from '$lib/components/PageMeta.svelte'
@@ -124,6 +126,9 @@
 		kamigame: ''
 	})
 
+	// Ask before leaving with unsaved edits
+	const unsaved = new UnsavedChangesGuard(() => editData)
+
 	// Extract series UUIDs from character data (handles both CharacterSeriesRef[] and legacy formats)
 	function seriesAsUUIDs(series: unknown): string[] {
 		if (!Array.isArray(series) || series.length === 0) return []
@@ -202,6 +207,7 @@
 				gamewith: character.gamewith || '',
 				kamigame: character.kamigame || ''
 			}
+			unsaved.reset()
 		}
 	})
 
@@ -286,6 +292,7 @@
 			})
 
 			// Navigate back to detail page
+			unsaved.release()
 			goto(`/database/characters/${character.granblueId}`)
 		} catch (error) {
 			saveError = 'Failed to save changes. Please try again.'
@@ -444,6 +451,8 @@
 		/>
 	{/if}
 </div>
+
+<UnsavedChangesDialog guard={unsaved} />
 
 <style lang="scss">
 	@use '$src/themes/database' as database;

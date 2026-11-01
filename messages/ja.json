@@ -2451,5 +2451,13 @@
 	"db_weapon_series_flag_keys": "武器スキル",
 	"db_weapon_series_flag_awaken": "覚醒",
 	"db_weapon_series_flag_ax": "EXスキル",
-	"db_weapon_series_empty": "武器シリーズが見つかりません"
+	"db_weapon_series_empty": "武器シリーズが見つかりません",
+	"db_panel_label": "詳細",
+	"db_panel_previous": "前へ (K)",
+	"db_panel_next": "次へ (J)",
+	"db_panel_close": "閉じる (Esc)",
+	"db_panel_edit": "編集 (E)",
+	"db_panel_open_full": "詳細ページを開く",
+	"db_panel_position": "{count}件中{index}件目",
+	"db_panel_page": "{page}/{total}ページ"
 }
