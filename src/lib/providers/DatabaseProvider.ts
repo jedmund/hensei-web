@@ -5,13 +5,13 @@ import type { SearchFilters } from '$lib/api/adapters/types'
 import { localizedName } from '$lib/utils/locale'
 
 interface DatabaseProviderOptions {
-	resource: 'weapons' | 'summons' | 'jobs'
+	resource: 'weapons' | 'summons'
 	pageSize?: number
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- RestDataProvider generic requires any for compatibility
 export class DatabaseProvider extends RestDataProvider<any> {
-	private resource: 'weapons' | 'summons' | 'jobs'
+	private resource: 'weapons' | 'summons'
 	private pageSize: number
 	private currentPage: number = 1
 	private totalCount: number = 0
@@ -62,9 +62,6 @@ export class DatabaseProvider extends RestDataProvider<any> {
 					break
 				case 'summons':
 					result = await searchAdapter.searchSummons(searchParams)
-					break
-				case 'jobs':
-					result = await searchAdapter.searchJobs(searchParams)
 					break
 				default:
 					throw new Error(`Unknown resource type: ${this.resource}`)

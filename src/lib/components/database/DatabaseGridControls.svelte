@@ -7,7 +7,6 @@
 		filterCount: number
 		hasCustomColumns?: boolean
 		selectedElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
-		supportsCollectionFilters: boolean
 		leftActions?: Snippet
 		headerActions?: Snippet
 		rightActions?: Snippet
@@ -20,7 +19,6 @@
 		filterCount,
 		hasCustomColumns = false,
 		selectedElement,
-		supportsCollectionFilters,
 		leftActions,
 		headerActions,
 		rightActions,
@@ -39,21 +37,19 @@
 			<Button variant="ghost" size="small" onclick={onResetColumns}>Reset columns</Button>
 		{/if}
 
-		{#if supportsCollectionFilters}
-			<Button
-				variant="ghost"
-				size="small"
-				onclick={onToggleFilters}
-				class="filter-toggle {hasActiveFilters ? 'has-active' : ''}"
-			>
-				Filters
-				{#if hasActiveFilters}
-					<span class="filter-count {selectedElement ?? ''}">
-						{filterCount}
-					</span>
-				{/if}
-			</Button>
-		{/if}
+		<Button
+			variant="ghost"
+			size="small"
+			onclick={onToggleFilters}
+			class="filter-toggle {hasActiveFilters ? 'has-active' : ''}"
+		>
+			Filters
+			{#if hasActiveFilters}
+				<span class="filter-count {selectedElement ?? ''}">
+					{filterCount}
+				</span>
+			{/if}
+		</Button>
 
 		{#if headerActions}
 			{@render headerActions()}

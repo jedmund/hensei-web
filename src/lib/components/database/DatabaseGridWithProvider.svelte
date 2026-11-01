@@ -35,7 +35,7 @@
 	import type { Snippet } from 'svelte'
 
 	interface Props {
-		resource: 'summons' | 'jobs'
+		resource: 'summons'
 		columns: IColumn[]
 		pageSize?: number
 		leftActions?: Snippet
@@ -50,17 +50,12 @@
 		headerActions
 	}: Props = $props()
 
-	// Derive entity type from resource
-	const entityType = $derived(resource === 'summons' ? 'summon' : 'job')
-
-	const supportsCollectionFilters = $derived(resource !== 'jobs')
-
 	// Create provider
 	const provider = $derived(new DatabaseProvider({ resource, pageSize: initialPageSize }))
 
 	// --- Composables ---
 
-	const filters = $derived(new DatabaseFilters(entityType, provider, (pg) => loadData(pg)))
+	const filters = $derived(new DatabaseFilters('summon', provider, (pg) => loadData(pg)))
 
 	const search = $derived(new DatabaseSearch(provider, (pg) => loadData(pg)))
 
@@ -421,7 +416,6 @@
 			filterCount={filters.filterCount}
 			{hasCustomColumns}
 			selectedElement={filters.selectedElement}
-			{supportsCollectionFilters}
 			{leftActions}
 			{headerActions}
 			onToggleFilters={() => (filters.showFilters = !filters.showFilters)}
@@ -440,7 +434,7 @@
 			{/snippet}
 		</DatabaseGridControls>
 
-		{#if filters.showFilters && supportsCollectionFilters}
+		{#if filters.showFilters}
 			<div class="filters-row">
 				<CollectionFilters
 					entityType="summon"

@@ -2,7 +2,7 @@ import type { CollectionFilterState } from '$lib/types/filter'
 import { parseFiltersFromUrl, buildUrlFromFilters, ELEMENT_TO_PARAM } from '$lib/utils/filterParams'
 import type { DatabaseProvider } from '$lib/providers/DatabaseProvider'
 
-export type EntityType = 'summon' | 'job'
+export type EntityType = 'summon'
 
 export class DatabaseFilters {
 	elementFilters = $state<number[]>([])
