@@ -1,7 +1,5 @@
 <script lang="ts" generics="T extends string | number">
-	import type { Snippet } from 'svelte'
-	import { Select as SelectPrimitive } from 'bits-ui'
-	import { Label } from 'bits-ui'
+	import { Label, Select as SelectPrimitive } from 'bits-ui'
 	import Icon from '../Icon.svelte'
 
 	interface Option {
@@ -43,8 +41,6 @@
 		required?: boolean
 		portal?: boolean
 		class?: string
-		/** Custom snippet for rendering suffix area - receives the option */
-		suffixSnippet?: Snippet<[Option]>
 		/** Extra width (in px) added to the dropdown content beyond the trigger width */
 		contentWidthOffset?: number
 	}
@@ -64,7 +60,6 @@
 		required = false,
 		portal = false,
 		class: className = '',
-		suffixSnippet, // eslint-disable-line @typescript-eslint/no-unused-vars
 		contentWidthOffset
 	}: Props = $props()
 
@@ -124,171 +119,72 @@
 	}
 </script>
 
-{#if hasWrapper}
-	<fieldset class={fieldsetClasses}>
-		{#if label}
-			<Label.Root class="label" for={crypto.randomUUID()}>
-				{label}
-				{#if required}
-					<span class="required">*</span>
-				{/if}
-			</Label.Root>
-		{/if}
+{#snippet swatch(option: Option)}
+	{#if option.color}
+		<span class="color-dot" style="background-color: {option.color}"></span>
+	{:else if option.image}
+		<img
+			src={option.image}
+			alt={option.label}
+			class="image"
+			style={option.imageBackground ? `background-color: ${option.imageBackground}` : ''}
+		/>
+	{/if}
+{/snippet}
 
-		<SelectPrimitive.Root
-			type="single"
-			bind:value={internalValue}
-			onValueChange={handleValueChange}
-			{disabled}
-			items={stringOptions}
-		>
-			<SelectPrimitive.Trigger
-				class={selectClasses}
-				data-placeholder={selected === undefined}
-				aria-label={ariaLabel}
-			>
-				{#if selected?.color}
-					<span class="color-dot" style="background-color: {selected.color}"></span>
-				{:else if selected?.image}
-					<img
-						src={selected.image}
-						alt={selected.label}
-						class="image"
-						style={selected.imageBackground ? `background-color: ${selected.imageBackground}` : ''}
-					/>
-				{/if}
-				<span class="text"
-					>{selected !== undefined ? (selected.triggerLabel ?? selected.label) : placeholder}</span
-				>
-				<Icon name="chevron-down-small" size={14} class="chevron" />
-			</SelectPrimitive.Trigger>
-
-			{#if portal}
-				<SelectPrimitive.Portal>
-					<SelectPrimitive.Content
-						class="content"
-						style={contentWidthOffset
-							? `--content-width-offset: ${contentWidthOffset}px`
-							: undefined}
-					>
-						<SelectPrimitive.Viewport>
-							{#each optionGroups as group (group.key)}
-								<SelectPrimitive.Group>
-									{#if group.heading}
-										<SelectPrimitive.GroupHeading class="group-heading">
-											{group.heading}
-										</SelectPrimitive.GroupHeading>
-									{/if}
-									{#each group.options as option (option.value)}
-										<SelectPrimitive.Item
-											value={String(option.value)}
-											{...option.disabled !== undefined ? { disabled: option.disabled } : {}}
-											class="item"
-											style={option.indicatorColor
-												? `--option-color: ${option.indicatorColor}`
-												: option.color
-													? `--option-color: ${option.color}`
-													: ''}
-										>
-											{#snippet children({ selected })}
-												{#if option.color}
-													<span class="color-dot" style="background-color: {option.color}"></span>
-												{:else if option.image}
-													<img
-														src={option.image}
-														alt={option.label}
-														class="image"
-														style={option.imageBackground
-															? `background-color: ${option.imageBackground}`
-															: ''}
-													/>
-												{/if}
-												{#if option.subtitle}
-													<span class="text-stack">
-														<span class="text" class:muted={option.muted}>{option.label}</span>
-														<span class="subtitle">{option.subtitle}</span>
-													</span>
-												{:else}
-													<span class="text" class:muted={option.muted}>{option.label}</span>
-												{/if}
-												{#if option.suffix}
-													<span class="suffix">{option.suffix}</span>
-												{/if}
-												{#if selected}
-													<span class="indicator">
-														<Icon name="check" size={14} />
-													</span>
-												{/if}
-											{/snippet}
-										</SelectPrimitive.Item>
-									{/each}
-								</SelectPrimitive.Group>
-							{/each}
-						</SelectPrimitive.Viewport>
-					</SelectPrimitive.Content>
-				</SelectPrimitive.Portal>
-			{:else}
-				<SelectPrimitive.Content
-					class="content"
-					style={contentWidthOffset ? `--content-width-offset: ${contentWidthOffset}px` : undefined}
-				>
-					<SelectPrimitive.Viewport>
-						{#each optionGroups as group (group.key)}
-							<SelectPrimitive.Group>
-								{#if group.heading}
-									<SelectPrimitive.GroupHeading class="group-heading">
-										{group.heading}
-									</SelectPrimitive.GroupHeading>
+{#snippet content()}
+	<SelectPrimitive.Content
+		class="content"
+		style={contentWidthOffset ? `--content-width-offset: ${contentWidthOffset}px` : undefined}
+	>
+		<SelectPrimitive.Viewport>
+			{#each optionGroups as group (group.key)}
+				<SelectPrimitive.Group>
+					{#if group.heading}
+						<SelectPrimitive.GroupHeading class="group-heading">
+							{group.heading}
+						</SelectPrimitive.GroupHeading>
+					{/if}
+					{#each group.options as option (option.value)}
+						<SelectPrimitive.Item
+							value={String(option.value)}
+							label={option.label}
+							disabled={option.disabled}
+							class="item"
+							style={option.indicatorColor
+								? `--option-color: ${option.indicatorColor}`
+								: option.color
+									? `--option-color: ${option.color}`
+									: ''}
+						>
+							{#snippet children({ selected })}
+								{@render swatch(option)}
+								{#if option.subtitle}
+									<span class="text-stack">
+										<span class="text" class:muted={option.muted}>{option.label}</span>
+										<span class="subtitle">{option.subtitle}</span>
+									</span>
+								{:else}
+									<span class="text" class:muted={option.muted}>{option.label}</span>
 								{/if}
-								{#each group.options as option (option.value)}
-									<SelectPrimitive.Item
-										value={String(option.value)}
-										label={option.label}
-										disabled={option.disabled}
-										class="item"
-										style={option.indicatorColor
-											? `--option-color: ${option.indicatorColor}`
-											: option.color
-												? `--option-color: ${option.color}`
-												: ''}
-									>
-										{#snippet children({ selected })}
-											{#if option.color}
-												<span class="color-dot" style="background-color: {option.color}"></span>
-											{:else if option.image}
-												<img
-													src={option.image}
-													alt={option.label}
-													class="image"
-													style={option.imageBackground
-														? `background-color: ${option.imageBackground}`
-														: ''}
-												/>
-											{/if}
-											<span class="text" class:muted={option.muted}>{option.label}</span>
-											{#if option.suffix}
-												<span class="suffix">{option.suffix}</span>
-											{/if}
-											{#if selected}
-												<span class="indicator">
-													<Icon name="check" size={14} />
-												</span>
-											{/if}
-										{/snippet}
-									</SelectPrimitive.Item>
-								{/each}
-							</SelectPrimitive.Group>
-						{/each}
-					</SelectPrimitive.Viewport>
-				</SelectPrimitive.Content>
-			{/if}
-		</SelectPrimitive.Root>
+								{#if option.suffix}
+									<span class="suffix">{option.suffix}</span>
+								{/if}
+								{#if selected}
+									<span class="indicator">
+										<Icon name="check" size={14} />
+									</span>
+								{/if}
+							{/snippet}
+						</SelectPrimitive.Item>
+					{/each}
+				</SelectPrimitive.Group>
+			{/each}
+		</SelectPrimitive.Viewport>
+	</SelectPrimitive.Content>
+{/snippet}
 
-		{#if error}
-			<span class="error">{error}</span>
-		{/if}
-	</fieldset>
-{:else}
+{#snippet select()}
 	<SelectPrimitive.Root
 		type="single"
 		bind:value={internalValue}
@@ -301,15 +197,8 @@
 			data-placeholder={selected === undefined}
 			aria-label={ariaLabel}
 		>
-			{#if selected?.color}
-				<span class="color-dot" style="background-color: {selected.color}"></span>
-			{:else if selected?.image}
-				<img
-					src={selected.image}
-					alt={selected.label}
-					class="image"
-					style={selected.imageBackground ? `background-color: ${selected.imageBackground}` : ''}
-				/>
+			{#if selected}
+				{@render swatch(selected)}
 			{/if}
 			<span class="text"
 				>{selected !== undefined ? (selected.triggerLabel ?? selected.label) : placeholder}</span
@@ -319,122 +208,33 @@
 
 		{#if portal}
 			<SelectPrimitive.Portal>
-				<SelectPrimitive.Content
-					class="content"
-					style={contentWidthOffset ? `--content-width-offset: ${contentWidthOffset}px` : undefined}
-				>
-					<SelectPrimitive.Viewport>
-						{#each optionGroups as group (group.key)}
-							<SelectPrimitive.Group>
-								{#if group.heading}
-									<SelectPrimitive.GroupHeading class="group-heading">
-										{group.heading}
-									</SelectPrimitive.GroupHeading>
-								{/if}
-								{#each group.options as option (option.value)}
-									<SelectPrimitive.Item
-										value={String(option.value)}
-										label={option.label}
-										disabled={option.disabled}
-										class="item"
-										style={option.indicatorColor
-											? `--option-color: ${option.indicatorColor}`
-											: option.color
-												? `--option-color: ${option.color}`
-												: ''}
-									>
-										{#snippet children({ selected })}
-											{#if option.color}
-												<span class="color-dot" style="background-color: {option.color}"></span>
-											{:else if option.image}
-												<img
-													src={option.image}
-													alt={option.label}
-													class="image"
-													style={option.imageBackground
-														? `background-color: ${option.imageBackground}`
-														: ''}
-												/>
-											{/if}
-											{#if option.subtitle}
-												<span class="text-stack">
-													<span class="text" class:muted={option.muted}>{option.label}</span>
-													<span class="subtitle">{option.subtitle}</span>
-												</span>
-											{:else}
-												<span class="text" class:muted={option.muted}>{option.label}</span>
-											{/if}
-											{#if option.suffix}
-												<span class="suffix">{option.suffix}</span>
-											{/if}
-											{#if selected}
-												<span class="indicator">
-													<Icon name="check" size={14} />
-												</span>
-											{/if}
-										{/snippet}
-									</SelectPrimitive.Item>
-								{/each}
-							</SelectPrimitive.Group>
-						{/each}
-					</SelectPrimitive.Viewport>
-				</SelectPrimitive.Content>
+				{@render content()}
 			</SelectPrimitive.Portal>
 		{:else}
-			<SelectPrimitive.Content
-				class="content"
-				style={contentWidthOffset ? `--content-width-offset: ${contentWidthOffset}px` : undefined}
-			>
-				<SelectPrimitive.Viewport>
-					{#each optionGroups as group (group.key)}
-						<SelectPrimitive.Group>
-							{#if group.heading}
-								<SelectPrimitive.GroupHeading class="group-heading">
-									{group.heading}
-								</SelectPrimitive.GroupHeading>
-							{/if}
-							{#each group.options as option (option.value)}
-								<SelectPrimitive.Item
-									value={String(option.value)}
-									{...option.disabled !== undefined ? { disabled: option.disabled } : {}}
-									class="item"
-									style={option.indicatorColor
-										? `--option-color: ${option.indicatorColor}`
-										: option.color
-											? `--option-color: ${option.color}`
-											: ''}
-								>
-									{#snippet children({ selected })}
-										{#if option.color}
-											<span class="color-dot" style="background-color: {option.color}"></span>
-										{:else if option.image}
-											<img src={option.image} alt={option.label} class="image" />
-										{/if}
-										{#if option.subtitle}
-											<span class="text-stack">
-												<span class="text" class:muted={option.muted}>{option.label}</span>
-												<span class="subtitle">{option.subtitle}</span>
-											</span>
-										{:else}
-											<span class="text" class:muted={option.muted}>{option.label}</span>
-										{/if}
-										{#if option.suffix}
-											<span class="suffix">{option.suffix}</span>
-										{/if}
-										{#if selected}
-											<span class="indicator">
-												<Icon name="check" size={14} />
-											</span>
-										{/if}
-									{/snippet}
-								</SelectPrimitive.Item>
-							{/each}
-						</SelectPrimitive.Group>
-					{/each}
-				</SelectPrimitive.Viewport>
-			</SelectPrimitive.Content>
+			{@render content()}
 		{/if}
 	</SelectPrimitive.Root>
+{/snippet}
+
+{#if hasWrapper}
+	<fieldset class={fieldsetClasses}>
+		{#if label}
+			<Label.Root class="label" for={crypto.randomUUID()}>
+				{label}
+				{#if required}
+					<span class="required">*</span>
+				{/if}
+			</Label.Root>
+		{/if}
+
+		{@render select()}
+
+		{#if error}
+			<span class="error">{error}</span>
+		{/if}
+	</fieldset>
+{:else}
+	{@render select()}
 {/if}
 
 <style lang="scss">
