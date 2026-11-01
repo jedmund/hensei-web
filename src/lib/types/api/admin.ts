@@ -38,7 +38,7 @@ export interface AdminListParams {
 	sort?: string
 	/** Keyed by API filter name (snake_case), e.g. `release_date` */
 	filters?: Record<string, AdminFilterValue>
-	/** Extra fields beyond the default list; `id` is always included */
+	/** Replaces the default field list (name every field you need); `id` is always included */
 	fields?: string[]
 	facets?: string[]
 }
@@ -71,7 +71,7 @@ export interface AdminWeaponRow {
 	seriesSlug: string | null
 	releaseDate: string | null
 	updatedAt: string
-	// Opt-in extras via `fields`
+	// Not in the default list: request via `fields`
 	seriesNameEn?: string | null
 	seriesNameJp?: string | null
 	skillCount?: number
