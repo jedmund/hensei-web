@@ -1,33 +1,27 @@
 <script lang="ts">
+	import type { ComponentProps } from 'svelte'
 	import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 	import DetailsSection from './DetailsSection.svelte'
 	import FullAutoSkillsSection from './FullAutoSkillsSection.svelte'
 	import DetailRow from './DetailRow.svelte'
 	import AwakeningDisplay from '../modifications/AwakeningDisplay.svelte'
 	import MasteryDisplay from '../modifications/MasteryDisplay.svelte'
-	import WeaponKeysList from '../modifications/WeaponKeysList.svelte'
 	import ArtifactSummary from '../modifications/ArtifactSummary.svelte'
 	import NotesReadOnlySection from '../notes/NotesReadOnlySection.svelte'
 	import EmptySectionPlaceholder from './EmptySectionPlaceholder.svelte'
+	import UncapSection from './UncapSection.svelte'
+	import WeaponElementSection from './WeaponElementSection.svelte'
+	import WeaponKeysSection from './WeaponKeysSection.svelte'
 	import { openCharacterEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
 	import { getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
-	import { seriesHasWeaponKeys, getSeriesSlug } from '$lib/utils/weaponSeries'
-	import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
-	import WeaponKeySelect from '$lib/components/sidebar/edit/WeaponKeySelect.svelte'
-	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
-	import ElementPickerSegmented from '$lib/components/ui/element-picker/ElementPickerSegmented.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
-	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
-	import TranscendenceStar from '$lib/components/uncap/TranscendenceStar.svelte'
+	import { seriesHasWeaponKeys } from '$lib/utils/weaponSeries'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
 	import { getBulletImage } from '$lib/utils/images/equipment'
 	import { localizedName } from '$lib/utils/locale'
 	import { getElementTypeKey } from '$lib/utils/element'
-	import { useUpdateGridWeapon } from '$lib/api/mutations/gridWeapon.mutations'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import SyncMenuButton from './SyncMenuButton.svelte'
 	import { hasField, hasAnyField, type OutOfSyncFields } from '$lib/utils/outOfSync'
-	import { normalizeCharacterUncap } from '$lib/utils/uncap'
 	import * as m from '$lib/paraglide/messages'
 
 	type ElementColor = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
@@ -71,13 +65,6 @@
 		onSyncToCollection
 	}: Props = $props()
 
-	const updateWeaponMutation = useUpdateGridWeapon()
-	let showElementPicker = $state(false)
-	let showWeaponKeyEditor = $state(false)
-	let editKey1 = $state<string | undefined>(undefined)
-	let editKey2 = $state<string | undefined>(undefined)
-	let editKey3 = $state<string | undefined>(undefined)
-
 	// Use the weapon's effective element (grid override or base) for button color
 	const weaponElement = $derived.by(() => {
 		if (type !== 'weapon') return undefined
@@ -85,49 +72,6 @@
 		const el = weapon.element || weapon.weapon?.element
 		return getElementTypeKey(el)
 	})
-
-	function handleElementChange(value: number | number[]) {
-		const element = typeof value === 'number' ? value : value[0]
-		if (element === undefined) return
-
-		const weapon = item as GridWeapon
-		const shortcode = partyStore.party?.shortcode
-		if (!weapon.id || !shortcode) return
-
-		updateWeaponMutation.mutate({
-			id: weapon.id,
-			partyShortcode: shortcode,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial update only needs element field
-			updates: { element } as any
-		})
-		showElementPicker = false
-	}
-
-	// Weapon key editing
-	const seriesSlug = $derived(getSeriesSlug((item as GridWeapon).weapon?.series))
-	const keySlotCount = $derived.by(() => {
-		const series = (item as GridWeapon).weapon?.series
-		return isWeaponSeriesRef(series) ? (series.numWeaponKeys ?? 0) : 0
-	})
-
-	function handleWeaponKeySave() {
-		const weapon = item as GridWeapon
-		const shortcode = partyStore.party?.shortcode
-		if (!weapon.id || !shortcode) return
-
-		const updates: Record<string, unknown> = {}
-		if (editKey1 !== undefined) updates.weaponKey1Id = editKey1
-		if (editKey2 !== undefined) updates.weaponKey2Id = editKey2
-		if (editKey3 !== undefined) updates.weaponKey3Id = editKey3
-
-		updateWeaponMutation.mutate({
-			id: weapon.id,
-			partyShortcode: shortcode,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial update only needs key fields
-			updates: updates as any
-		})
-		showWeaponKeyEditor = false
-	}
 
 	function openCharacterEdit(tab: 'stats' | 'notes') {
 		if (type !== 'character') return
@@ -158,6 +102,15 @@
 			onSyncFromCollection: () => onSyncFromCollection?.(fields),
 			onSyncToCollection: () => onSyncToCollection?.(label, fields)
 		}
+	}
+
+	// Sync button props for an extracted section, or undefined when it's in sync.
+	function sectionSync(
+		outOfSync: boolean,
+		label: string,
+		fields: readonly string[]
+	): ComponentProps<typeof SyncMenuButton> | undefined {
+		return outOfSync ? { ...syncBase, ...sectionCallbacks(label, [...fields]) } : undefined
 	}
 
 	// Section-key constants. Used both to test "is this section drifting?" and
@@ -191,35 +144,6 @@
 	const axSectionOOS = $derived(hasAnyField(outOfSyncFields, AX_KEYS))
 	const bulletKeys = $derived((outOfSyncFields ?? []).filter((key) => key.startsWith('bullets.')))
 	const bulletsSectionOOS = $derived(bulletKeys.length > 0)
-
-	// Get uncap capabilities from item data based on type
-	let uncapCaps = $derived.by(() => {
-		if (type === 'character') {
-			const char = item as GridCharacter
-			return normalizeCharacterUncap({
-				special: !!char.character?.special,
-				uncap: char.character?.uncap ?? { flb: false }
-			})
-		} else if (type === 'weapon') {
-			const weapon = item as GridWeapon
-			const uncap = weapon.weapon?.uncap
-			return {
-				flb: uncap?.flb,
-				ulb: uncap?.ulb,
-				transcendence: uncap?.transcendence,
-				maxTranscendenceStage: 5
-			}
-		} else {
-			const summon = item as GridSummon
-			const uncap = summon.summon?.uncap
-			return {
-				flb: uncap?.flb,
-				ulb: uncap?.ulb,
-				transcendence: uncap?.transcendence,
-				maxTranscendenceStage: 5
-			}
-		}
-	})
 </script>
 
 <div class="team-view">
@@ -229,42 +153,13 @@
 
 	<NotesReadOnlySection {type} {item} {isPartyOwner} mode="filled" />
 
-	<DetailsSection title={m.details_uncap_transcendence()}>
-		{#snippet action()}
-			{#if uncapSectionOOS}
-				<SyncMenuButton
-					{...syncBase}
-					{...sectionCallbacks(m.details_uncap_transcendence(), [...UNCAP_KEYS])}
-				/>
-			{/if}
-		{/snippet}
-		<DetailRow label={m.details_max_uncap_level()}>
-			<UncapIndicator
-				{type}
-				uncapLevel={gridUncapLevel}
-				transcendenceStage={gridTranscendence}
-				flb={uncapCaps?.flb}
-				ulb={uncapCaps?.ulb}
-				transcendence={uncapCaps?.transcendence}
-				maxTranscendenceStage={uncapCaps?.maxTranscendenceStage}
-				hideTranscendence
-			/>
-		</DetailRow>
-		{#if uncapCaps?.transcendence}
-			<DetailRow label={m.details_transcended_to()}>
-				<span class="transcendence-row">
-					<TranscendenceStar
-						stage={gridTranscendence ?? 0}
-						{type}
-						maxStage={uncapCaps.maxTranscendenceStage}
-					/>
-					<span class="transcendence-level"
-						>{m.details_transcendence_level({ level: String(gridTranscendence ?? 0) })}</span
-					>
-				</span>
-			</DetailRow>
-		{/if}
-	</DetailsSection>
+	<UncapSection
+		{type}
+		{item}
+		{gridUncapLevel}
+		{gridTranscendence}
+		sync={sectionSync(uncapSectionOOS, m.details_uncap_transcendence(), UNCAP_KEYS)}
+	/>
 
 	{#if type === 'character'}
 		{@const char = item as GridCharacter}
@@ -348,115 +243,26 @@
 		{/if}
 
 		{#if weapon.weapon?.element === 0}
-			<DetailsSection
-				title={m.details_element()}
-				empty={!weapon.element && !showElementPicker}
-				emptyMessage={m.details_element_not_set()}
-			>
-				{#snippet action()}
-					<div class="section-actions">
-						{#if elementSectionOOS}
-							<SyncMenuButton
-								{...syncBase}
-								{...sectionCallbacks(m.details_element(), [...ELEMENT_KEYS])}
-							/>
-						{/if}
-						{#if isPartyOwner}
-							<Button
-								variant="element-ghost"
-								size="small"
-								element={weaponElement}
-								onclick={() => (showElementPicker = !showElementPicker)}
-							>
-								{showElementPicker ? m.action_done() : m.action_change()}
-							</Button>
-						{/if}
-					</div>
-				{/snippet}
-				{#if showElementPicker}
-					<ElementPickerSegmented
-						value={weapon.element || undefined}
-						onValueChange={handleElementChange}
-						contained
-						class="element-picker-full"
-					/>
-				{:else}
-					<DetailRow label={m.details_weapon_element()}>
-						<ElementLabel element={weapon.element} size="medium" />
-					</DetailRow>
-				{/if}
-			</DetailsSection>
+			<WeaponElementSection
+				{weapon}
+				{isPartyOwner}
+				buttonElement={weaponElement}
+				sync={sectionSync(elementSectionOOS, m.details_element(), ELEMENT_KEYS)}
+			/>
 		{/if}
 
 		{#if seriesHasWeaponKeys(weapon.weapon?.series)}
-			<DetailsSection
-				title={getWeaponKeyTitle(weapon.weapon?.series)}
-				empty={!modificationStatus.hasWeaponKeys && !showWeaponKeyEditor}
-				emptyMessage={m.details_weapon_keys_not_set()}
-			>
-				{#snippet action()}
-					<div class="section-actions">
-						{#if weaponKeysSectionOOS}
-							<SyncMenuButton
-								{...syncBase}
-								{...sectionCallbacks(getWeaponKeyTitle(weapon.weapon?.series), [
-									...WEAPON_KEY_KEYS
-								])}
-							/>
-						{/if}
-						{#if isPartyOwner}
-							<Button
-								variant="element-ghost"
-								size="small"
-								element={weaponElement}
-								onclick={() => {
-									if (showWeaponKeyEditor) {
-										handleWeaponKeySave()
-									} else {
-										const weapon = item as GridWeapon
-										editKey1 = weapon.weaponKeys?.find((k) => k.slot === 0)?.id
-										editKey2 = weapon.weaponKeys?.find((k) => k.slot === 1)?.id
-										editKey3 = weapon.weaponKeys?.find((k) => k.slot === 2)?.id
-										showWeaponKeyEditor = true
-									}
-								}}
-							>
-								{showWeaponKeyEditor ? m.action_save() : m.action_change()}
-							</Button>
-						{/if}
-					</div>
-				{/snippet}
-				{#if showWeaponKeyEditor}
-					<div class="key-selects">
-						{#if keySlotCount >= 1}
-							<WeaponKeySelect
-								{seriesSlug}
-								slot={0}
-								bind:value={editKey1}
-								transcendenceStep={weapon.transcendenceStep ?? 0}
-							/>
-						{/if}
-						{#if keySlotCount >= 2}
-							<WeaponKeySelect
-								{seriesSlug}
-								slot={1}
-								bind:value={editKey2}
-								transcendenceStep={weapon.transcendenceStep ?? 0}
-							/>
-						{/if}
-						{#if keySlotCount >= 3}
-							<WeaponKeySelect
-								{seriesSlug}
-								slot={2}
-								bind:value={editKey3}
-								transcendenceStep={weapon.transcendenceStep ?? 0}
-							/>
-						{/if}
-					</div>
-				{:else}
-					<WeaponKeysList weaponKeys={weapon.weaponKeys} weaponData={weapon.weapon} layout="list" />
-				{/if}
-			</DetailsSection>
+			<WeaponKeysSection
+				{weapon}
+				hasWeaponKeys={!!modificationStatus.hasWeaponKeys}
+				{isPartyOwner}
+				buttonElement={weaponElement}
+				sync={sectionSync(
+					weaponKeysSectionOOS,
+					getWeaponKeyTitle(weapon.weapon?.series),
+					WEAPON_KEY_KEYS
+				)}
+			/>
 		{/if}
 
 		{#if modificationStatus.hasAxSkills && weapon.ax?.length}
@@ -576,40 +382,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-3x;
-	}
-
-	:global(.element-picker-full) {
-		width: 100%;
-		display: flex;
-
-		:global(.element-group) {
-			width: 100%;
-			justify-content: space-between;
-		}
-	}
-
-	.key-selects {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit;
-	}
-
-	.section-actions {
-		display: flex;
-		align-items: center;
-		gap: spacing.$unit-half;
-	}
-
-	.transcendence-row {
-		display: inline-flex;
-		align-items: center;
-		gap: spacing.$unit;
-	}
-
-	.transcendence-level {
-		font-size: typography.$font-regular;
-		color: var(--text-primary);
-		font-weight: typography.$medium;
 	}
 
 	.bullet-value {
