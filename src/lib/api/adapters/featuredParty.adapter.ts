@@ -1,7 +1,8 @@
 /**
  * Featured Party Adapter
  *
- * Staff picks: editor-chosen teams, optionally tied to an event.
+ * Staff picks: teams chosen by curators and editors, optionally tied to an
+ * event.
  *
  * @module adapters/featuredParty
  */
@@ -15,18 +16,19 @@ const BASE = '/featured_parties'
 
 export class FeaturedPartyAdapter extends BaseAdapter {
 	/**
-	 * Lists staff picks for an event.
-	 *
-	 * Not in the first-pass contract, which only defines writes. This assumes
-	 * `GET /featured_parties?event_id=` returns `{ featured_parties: [...] }`.
+	 * Lists staff picks, ordered by position: all of them, one event's
+	 * (`eventId`), one team's (`partyId`), or both filters together.
 	 */
 	async listFeaturedParties(
-		params: { eventId?: string } = {},
+		params: { eventId?: string | undefined; partyId?: string | undefined } = {},
 		options?: RequestOptions
 	): Promise<FeaturedParty[]> {
+		const query: Record<string, string> = {}
+		if (params.eventId) query.eventId = params.eventId
+		if (params.partyId) query.partyId = params.partyId
 		const response = await this.request<{ featuredParties: FeaturedParty[] }>(BASE, {
 			...options,
-			query: params.eventId ? { eventId: params.eventId } : undefined
+			query: Object.keys(query).length > 0 ? query : undefined
 		})
 		return response.featuredParties
 	}

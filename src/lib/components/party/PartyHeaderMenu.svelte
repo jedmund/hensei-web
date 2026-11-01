@@ -10,6 +10,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
+	import { PartyVisibility } from '$lib/types/visibility'
 
 	/** The "see more" menu in the party header. */
 	interface Props {
@@ -19,12 +20,24 @@
 		authUserId?: string | undefined
 		authUsername?: string | undefined
 		hasCollectionLinks: boolean
+		/** The viewer is a curator */
+		canFeature?: boolean | undefined
 	}
 
-	let { actions, wikiImport, isNew, authUserId, authUsername, hasCollectionLinks }: Props = $props()
+	let {
+		actions,
+		wikiImport,
+		isNew,
+		authUserId,
+		authUsername,
+		hasCollectionLinks,
+		canFeature = false
+	}: Props = $props()
 
 	const ctx = usePartyContext()
 	const party = $derived(ctx.getParty())
+	// Only public teams can be staff picks
+	const showFeature = $derived(canFeature && party.visibility === PartyVisibility.PUBLIC)
 </script>
 
 <DropdownMenu.Root>
@@ -103,6 +116,14 @@
 				<DropdownMenu.Item class="dropdown-menu-item" onSelect={actions.openWikiExport}>
 					{m.party_export_wiki()}
 				</DropdownMenu.Item>
+				{#if showFeature}
+					<DropdownMenu.Item
+						class="dropdown-menu-item"
+						onSelect={() => (actions.featureDialogOpen = true)}
+					>
+						{m.feature_team()}
+					</DropdownMenu.Item>
+				{/if}
 
 				{#if party.user?.id === authUserId}
 					<DropdownMenu.Separator class="dropdown-menu-separator" />
