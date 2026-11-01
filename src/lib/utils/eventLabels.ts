@@ -99,7 +99,8 @@ export function eventKindNeedsElement(kind: EventKind): boolean {
 
 /**
  * Builds the API payload, or null when it isn't valid yet: no English name,
- * times missing or out of order, or a required element missing.
+ * times missing or out of order, a required element missing, or a Unite and
+ * Fight without its number (crews look Guild Wars up by number).
  */
 export function formToEventPayload(form: EventFormState): EventPayload | null {
 	const startsAt = jstInputToIso(form.startsAt)
@@ -107,6 +108,7 @@ export function formToEventPayload(form: EventFormState): EventPayload | null {
 	if (!startsAt || !endsAt || Date.parse(endsAt) <= Date.parse(startsAt)) return null
 	if (!form.nameEn.trim()) return null
 	if (ELEMENT_REQUIRED_KINDS.includes(form.kind) && form.element <= 0) return null
+	if (form.kind === 'unite_and_fight' && form.eventNumber <= 0) return null
 	return {
 		nameEn: form.nameEn.trim(),
 		nameJp: form.nameJp.trim(),
@@ -116,7 +118,6 @@ export function formToEventPayload(form: EventFormState): EventPayload | null {
 		startsAt,
 		endsAt,
 		raidIds: form.raids.map((r) => r.id),
-		eventNumber:
-			form.kind === 'unite_and_fight' && form.eventNumber > 0 ? Math.trunc(form.eventNumber) : null
+		eventNumber: form.kind === 'unite_and_fight' ? Math.trunc(form.eventNumber) : null
 	}
 }

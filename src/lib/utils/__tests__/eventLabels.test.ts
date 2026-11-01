@@ -43,7 +43,9 @@ describe('event form conversion', () => {
 
 	it('sends the Unite and Fight number only for that kind', () => {
 		expect(eventToForm({ ...event, eventNumber: null }).eventNumber).toBe(0)
-		expect(formToEventPayload({ ...eventToForm(event), eventNumber: 0 })?.eventNumber).toBeNull()
+		expect(formToEventPayload(eventToForm(event))?.eventNumber).toBe(80)
+		// A Unite and Fight needs its number: crews look Guild Wars up by it
+		expect(formToEventPayload({ ...eventToForm(event), eventNumber: 0 })).toBeNull()
 		const story = { ...eventToForm(event), kind: 'story_event' as const }
 		expect(formToEventPayload(story)?.eventNumber).toBeNull()
 	})
