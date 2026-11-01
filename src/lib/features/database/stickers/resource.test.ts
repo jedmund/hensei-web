@@ -109,6 +109,21 @@ describe('stickers resource: detail, list and delete', () => {
 		spy.mockRestore()
 	})
 
+	it('is an ordered list: by position, inactive rows dimmed, reordered by id', async () => {
+		const ordered = def.list.ordered!
+		expect(ordered.field).toBe('position')
+		expect(ordered.inactive!({ active: false } as AdminStickerRow)).toBe(true)
+		expect(ordered.inactive!({ active: true } as AdminStickerRow)).toBe(false)
+		expect(
+			ordered.subtitle!({ meaningJp: 'ありがとう', slug: 'stamp-9' } as AdminStickerRow)
+		).toEqual(['ありがとう', 'stamp-9'])
+		const { stickerAdapter } = await import('$lib/api/adapters/sticker.adapter')
+		const spy = vi.spyOn(stickerAdapter, 'reorderStickers').mockResolvedValueOnce([])
+		await ordered.reorder([{ id: 'b' }, { id: 'a' }] as AdminStickerRow[])
+		expect(spy).toHaveBeenCalledWith(['b', 'a'])
+		spy.mockRestore()
+	})
+
 	it('addresses rows and records by slug, in picker order', () => {
 		expect(def.list.rowId!({ slug: 'stamp-9' } as AdminStickerRow)).toBe('stamp-9')
 		expect(def.record!.routeId(thanks)).toBe('stamp-9')

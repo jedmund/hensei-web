@@ -42,15 +42,7 @@ export const stickersResource = defineResource<AdminStickerRow, StickerRecord>({
 			write: false,
 			// Uploads need the saved sticker; the create form picks from the game's
 			form: { create: false },
-			render: { cell: StickerThumbnail, detail: 'stickerImages', input: 'stickerImages' },
-			list: {
-				header: () => '',
-				sortable: false,
-				hideable: false,
-				width: '60px',
-				align: 'center',
-				fields: ['image_url', 'image_url_ja']
-			}
+			render: { detail: 'stickerImages', input: 'stickerImages' }
 		},
 		{
 			key: 'library_id',
@@ -71,8 +63,7 @@ export const stickersResource = defineResource<AdminStickerRow, StickerRecord>({
 			// The picker shows the meaning in the viewer's language, so both are needed
 			validate: z.object({
 				ja: z.string().refine((v) => v.trim() !== '', { error: required })
-			}),
-			list: { primary: true, minWidth: '200px' }
+			})
 		},
 		{
 			key: 'slug',
@@ -82,15 +73,13 @@ export const stickersResource = defineResource<AdminStickerRow, StickerRecord>({
 			validate: z.string().regex(SLUG, { error: () => m.db_field_slug_invalid() }),
 			form: { placeholder: m.db_field_slug_placeholder, width: '240px' },
 			// Fixed once created: it names the image files
-			render: { input: 'stickerSlug' },
-			list: { minWidth: '150px' }
+			render: { input: 'stickerSlug' }
 		},
 		{
 			key: 'active',
 			kind: 'boolean',
 			label: m.db_stickers_field_active,
-			default: true,
-			list: { width: '80px', sortable: false }
+			default: true
 		},
 		{
 			key: 'position',
@@ -98,8 +87,7 @@ export const stickersResource = defineResource<AdminStickerRow, StickerRecord>({
 			label: m.db_stickers_field_position,
 			int: true,
 			// Set by dragging the list
-			write: false,
-			list: { width: '80px', align: 'center' }
+			write: false
 		}
 	],
 
@@ -109,13 +97,24 @@ export const stickersResource = defineResource<AdminStickerRow, StickerRecord>({
 		empty: m.db_stickers_empty,
 		title: 'meaning',
 		rowId: (s) => s.slug,
-		columns: ['images', 'meaning', 'slug', 'active', 'position'],
+		columns: [],
 		filters: [],
 		baseFields: ['slug', 'meaning_en', 'meaning_jp', 'image_url', 'image_url_ja', 'active'],
+		// Most stickers share a position until the list is first dragged
 		defaultSort: [
 			{ id: 'position', desc: false },
 			{ id: 'created_at', desc: false }
-		]
+		],
+		// The picker's order, set by dragging; retired stickers stay in place, dimmed
+		ordered: {
+			field: 'position',
+			reorder: (rows) => stickerAdapter.reorderStickers(rows.map((r) => r.id)),
+			inactive: (r) => !r.active,
+			thumbnail: StickerThumbnail,
+			subtitle: (r) => [r.meaningJp, r.slug],
+			// The picker, the labels and the team pages read the public catalogue
+			invalidates: () => [stickerKeys.all]
+		}
 	},
 
 	layout: {
