@@ -6,9 +6,9 @@
 import { m } from '$lib/paraglide/messages'
 import { DATABASE_SECTIONS, delocalize } from './sections'
 
-/** Keys detail-page loads return their record under */
+/** Keys detail-page loads return their record under (`record` for registered resources) */
 const RECORD_KEYS = [
-	'weapon',
+	'record',
 	'character',
 	'summon',
 	'job',

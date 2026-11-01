@@ -21,9 +21,10 @@
 	import { getListUrl } from '$lib/utils/listNavigation'
 
 	// Types
-	import type { PageData } from './$types'
+	import type { RecordScreenData } from '$lib/features/database/schema/types'
+	import type { Weapon } from '$lib/api/adapters/weapon.adapter'
 
-	let { data }: { data: PageData } = $props()
+	let { data }: { data: RecordScreenData<Weapon> } = $props()
 
 	function handleTabChange(tab: DetailTab) {
 		const url = new URL($page.url)
@@ -37,8 +38,8 @@
 
 	// Same query as the detail body (shared cache), for the header and title
 	const weaponQuery = createQuery(() => ({
-		...entityQueries.weapon(data.weapon?.granblueId ?? ''),
-		...withInitialData(data.weapon)
+		...entityQueries.weapon(data.record?.granblueId ?? ''),
+		...withInitialData(data.record)
 	}))
 
 	const weapon = $derived(weaponQuery.data)
@@ -78,8 +79,8 @@
 	</DatabasePageHeader>
 
 	<WeaponDetail
-		granblueId={data.weapon?.granblueId ?? ''}
-		initialData={data.weapon}
+		granblueId={data.record?.granblueId ?? ''}
+		initialData={data.record}
 		role={data.role || 0}
 		tab={$page.url.searchParams.get('tab')}
 		onTabChange={handleTabChange}

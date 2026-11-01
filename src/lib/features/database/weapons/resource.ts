@@ -589,5 +589,21 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 		(v, changed) => (changed === null || UNCAPS.includes(changed) ? levelCaps(v) : undefined),
 		// A variant belongs to its series
 		(_, changed) => (changed === 'series' ? { weapon_series_variant_id: null } : undefined)
-	]
+	],
+
+	record: {
+		fetch: async (id) => {
+			const { weaponAdapter } = await import('$lib/api/adapters/weapon.adapter')
+			return weaponAdapter.getWeapon(id)
+		}
+	},
+
+	// Today's screens until the generated ones replace them (phases 4–7)
+	screens: {
+		list: () => import('$lib/features/database/weapons/screens/WeaponsListScreen.svelte'),
+		detail: () => import('$lib/features/database/weapons/screens/WeaponDetailScreen.svelte'),
+		edit: () => import('$lib/features/database/weapons/screens/WeaponEditScreen.svelte'),
+		new: () => import('$lib/features/database/weapons/screens/WeaponNewScreen.svelte'),
+		panel: () => import('$lib/features/database/weapons/WeaponDetail.svelte')
+	}
 })

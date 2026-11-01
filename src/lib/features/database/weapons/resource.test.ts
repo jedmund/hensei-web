@@ -152,7 +152,7 @@ function legacyLevelCaps(d: { flb: boolean; ulb: boolean; transcendence: boolean
 	return { maxLevel: 100, maxSkillLevel: 10 }
 }
 
-/** weapons/[granblueId]/edit/+page.svelte: the load $effect */
+/** weapons/screens/WeaponEditScreen.svelte: the load $effect */
 function legacyEditData(weapon: Weapon) {
 	const editData = {
 		name: weapon.name?.en || '',
@@ -203,7 +203,7 @@ function legacyEditData(weapon: Weapon) {
 	return { ...editData, ...legacyLevelCaps(editData) }
 }
 
-/** weapons/[granblueId]/edit/+page.svelte: saveChanges */
+/** weapons/screens/WeaponEditScreen.svelte: saveChanges */
 function legacyEditPayload(editData: ReturnType<typeof legacyEditData>) {
 	return {
 		name_en: editData.name,

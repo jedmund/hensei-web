@@ -37,6 +37,17 @@ describe('requiredDatabaseRole', () => {
 		expect(requiredDatabaseRole('/(app)/database/artifact-skills/[id]')).toBe(EDITOR_ROLE)
 		expect(requiredDatabaseRole(null)).toBe(EDITOR_ROLE)
 	})
+
+	it('keeps the generic resource routes editor-only', () => {
+		for (const id of [
+			'/(app)/database/[resource=resource]',
+			'/(app)/database/[resource=resource]/[id]',
+			'/(app)/database/[resource=resource]/[id]/edit',
+			'/(app)/database/[resource=resource]/new'
+		]) {
+			expect(requiredDatabaseRole(id), id).toBe(EDITOR_ROLE)
+		}
+	})
 })
 
 describe('canEditStaffPicks', () => {
