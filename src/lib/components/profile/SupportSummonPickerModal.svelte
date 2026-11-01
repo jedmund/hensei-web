@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createInfiniteQuery, keepPreviousData, useQueryClient } from '@tanstack/svelte-query'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
-	import { getSummonImage } from '$lib/utils/images'
+	import { getSummonImage } from '$lib/utils/images/summons'
 	import {
 		ELEMENT_DISPLAY_ORDER,
 		getElementFromKey,

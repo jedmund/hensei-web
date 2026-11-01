@@ -2,7 +2,6 @@
 	import type { GridSummon } from '$lib/types/api/party'
 	import { usePartyContext } from '$lib/types/party-context'
 	import { page } from '$app/stores'
-	import { goto } from '$app/navigation'
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
@@ -10,25 +9,23 @@
 	import SubstituteCountBadge from './SubstituteCountBadge.svelte'
 	import BookmarkOverlay from './BookmarkOverlay.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
-	import { getSummonImage } from '$lib/features/database/detail/image'
-	import { getPlaceholderImage, getSummonTransformation } from '$lib/utils/images'
+	import { getPlaceholderImage } from '$lib/utils/images/core'
+	import { getSummonTransformation, getSummonImage } from '$lib/utils/images/summons'
 	import { seriesHasUlbArt } from '$lib/utils/summonSeries'
 	import {
 		openDetailsSidebar,
 		openSummonEditSidebar
 	} from '$lib/features/details/openDetailsSidebar.svelte'
-	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
+	import { canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName } from '$lib/utils/element'
-	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
 	import { GridType } from '$lib/types/enums'
 	import * as m from '$lib/paraglide/messages'
 	import { localizedName } from '$lib/utils/locale'
 	import DuplicateCollectionDialog from '$lib/components/dialogs/DuplicateCollectionDialog.svelte'
-	import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
-	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
+	import { useUnitActions } from './useUnitActions.svelte'
+	import { useUnitDuplicate } from './useUnitDuplicate.svelte'
 	import quickSummonFilled from '$src/assets/icons/quick-summon/filled.svg'
 	import quickSummonEmpty from '$src/assets/icons/quick-summon/empty.svg'
 	import SealOverlay from '$lib/components/solomonis/grid/SealOverlay.svelte'
@@ -64,6 +61,21 @@
 	}: Props = $props()
 
 	const ctx = usePartyContext()
+	const actions = useUnitActions({
+		type: 'summon',
+		ctx,
+		item: () => item,
+		position: () => position,
+		entity: () => item?.summon
+	})
+	const { remove, replace } = actions
+	const duplicate = useUnitDuplicate({
+		type: 'summon',
+		ctx,
+		item: () => item,
+		allowed: () => position !== 6,
+		linkedToCollection: () => !!item?.collectionSummonId
+	})
 
 	// Evoking Solomonis: seal state (no support summon in the mode)
 	let seal = $derived.by(() => {
@@ -99,8 +111,7 @@
 		return getSummonImage(item?.summon?.granblueId, variant, transformation)
 	})
 
-	// Check if this item is currently active in the sidebar
-	let isActive = $derived(item?.id && sidebar.activeItemId === String(item.id))
+	let isActive = $derived(actions.isActive)
 
 	// Check if this slot is currently selected for adding/replacing an item
 	let isSelected = $derived(
@@ -109,20 +120,6 @@
 
 	// Determine element class for focus ring
 	let elementClass = $derived(getElementClassName(item?.summon?.element))
-
-	let removeConfirmOpen = $state(false)
-
-	function remove() {
-		if (!item?.id) return
-		removeConfirmOpen = true
-	}
-
-	const removeAction = useAsyncAction(async () => {
-		if (!item?.id) return
-		const party = ctx.getParty()
-		const editKey = ctx.getEditKey()
-		await ctx.services.gridService.removeSummon(party.id, item.id, editKey || undefined)
-	}, 'Failed to remove summon')
 
 	function viewDetails() {
 		if (!item) return
@@ -147,55 +144,6 @@
 		})
 	}
 
-	function replace() {
-		if (ctx?.openPicker) {
-			ctx.openPicker({ type: 'summon', position, item })
-		}
-	}
-
-	function viewInDatabase() {
-		if (!item?.summon?.granblueId) return
-		goto(getDatabaseUrl('summon', item.summon.granblueId))
-	}
-
-	// Duplicate: find the first empty sub-summon slot (0-3)
-	let firstEmptySlot = $derived.by(() => {
-		const party = ctx.getParty()
-		const occupied = new Set(
-			party.summons?.filter((s) => s.position >= 0 && s.position < 4).map((s) => s.position) ?? []
-		)
-		for (let i = 0; i < 4; i++) {
-			if (!occupied.has(i)) return i
-		}
-		return undefined
-	})
-
-	let canDuplicate = $derived(!!item && position !== 6 && firstEmptySlot !== undefined)
-
-	let duplicateCollectionDialogOpen = $state(false)
-
-	function duplicate() {
-		if (!item?.id || firstEmptySlot === undefined) return
-		if (item.collectionSummonId) {
-			duplicateCollectionDialogOpen = true
-			return
-		}
-		void duplicateAction.run()
-	}
-
-	const duplicateAction = useAsyncAction(async () => {
-		if (!item?.id || firstEmptySlot === undefined) return
-		await ctx.services.gridService.duplicateSummon(item.id, firstEmptySlot)
-		const nextSlot = findNextEmptySlot(ctx.getParty(), GridType.Summon, firstEmptySlot)
-		if (nextSlot !== SLOT_NOT_FOUND) {
-			ctx.setSelectedSlot?.(nextSlot)
-		}
-	}, 'Failed to duplicate summon')
-
-	// `executeDuplicate` is referenced by the DuplicateCollectionDialog's confirm
-	// callback when the user opts to keep their collection record.
-	const executeDuplicate = () => duplicateAction.run()
-
 	// Quick summon badge — visible on main and grid positions, not friend or subaura
 	let showQuickSummon = $derived(item && position !== undefined && position < 4)
 
@@ -212,19 +160,6 @@
 
 	// Check if user can view database (role >= 7)
 	let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
-
-	// Teams pane state
-	let isTeamsPaneOpen = $derived(collectionTeamsPane.isOpen)
-
-	function viewTeamsWithSummon() {
-		if (!item?.summon) return
-		collectionTeamsPane.openTeamsPaneForEntity(item.summon, 'summon')
-	}
-
-	function addSummonToTeamsView() {
-		if (!item?.summon) return
-		collectionTeamsPane.addEntityToTeamsView(item.summon, 'summon')
-	}
 </script>
 
 <div
@@ -318,13 +253,13 @@
 				<MenuItems
 					{variant}
 					onViewDetails={viewDetails}
-					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
-					onViewTeams={viewTeamsWithSummon}
-					onAddToTeamsView={isTeamsPaneOpen ? addSummonToTeamsView : undefined}
+					onViewInDatabase={canViewDatabase ? actions.viewInDatabase : undefined}
+					onViewTeams={actions.viewTeams}
+					onAddToTeamsView={actions.isTeamsPaneOpen ? actions.addToTeamsView : undefined}
 					onEdit={ctx?.canEdit() ? editItem : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
-					onDuplicate={ctx?.canEdit() ? duplicate : undefined}
-					duplicateDisabled={!canDuplicate || duplicateAction.busy}
+					onDuplicate={ctx?.canEdit() ? duplicate.duplicate : undefined}
+					duplicateDisabled={!duplicate.canDuplicate || duplicate.busy}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
 					editLabel={m.context_edit({ type: m.type_summon() })}
@@ -400,38 +335,8 @@
 			ulb={item.summon?.uncap?.ulb}
 			transcendence={item.summon?.uncap?.transcendence}
 			editable={ctx?.canEdit()}
-			updateUncap={async (level) => {
-				if (!item?.id || !ctx) return
-				try {
-					const editKey = ctx.getEditKey()
-					await ctx.services.gridService.updateSummonUncap(
-						item.id,
-						level,
-						undefined,
-						editKey || undefined
-					)
-				} catch (err) {
-					console.error('Failed to update summon uncap:', err)
-					toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
-				}
-			}}
-			updateTranscendence={async (stage) => {
-				if (!item?.id || !ctx) return
-				try {
-					const editKey = ctx.getEditKey()
-					// When setting transcendence > 0, also set uncap to max (6)
-					const maxUncap = stage > 0 ? 6 : undefined
-					await ctx.services.gridService.updateSummonUncap(
-						item.id,
-						maxUncap,
-						stage,
-						editKey || undefined
-					)
-				} catch (err) {
-					console.error('Failed to update summon transcendence:', err)
-					toast.error(extractErrorMessage(err, 'Failed to update transcendence'))
-				}
-			}}
+			updateUncap={actions.updateUncap}
+			updateTranscendence={actions.updateTranscendence}
 		/>
 	{/if}
 	<div class="name" class:not-in-collection={notInCollection}>
@@ -446,104 +351,41 @@
 </div>
 
 <DuplicateCollectionDialog
-	bind:open={duplicateCollectionDialogOpen}
+	bind:open={duplicate.dialogOpen}
 	onConfirm={async () => {
-		duplicateCollectionDialogOpen = false
-		await executeDuplicate()
+		duplicate.dialogOpen = false
+		await duplicate.run()
 	}}
 	onCancel={() => {
-		duplicateCollectionDialogOpen = false
+		duplicate.dialogOpen = false
 	}}
 />
 
 <RemoveUnitDialog
-	bind:open={removeConfirmOpen}
+	bind:open={actions.removeConfirmOpen}
 	type="summon"
 	name={item?.summon ? localizedName(item.summon.name) : null}
-	onConfirm={removeAction.run}
+	onConfirm={actions.removeAction.run}
 />
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
-	@use '$src/themes/typography' as typography;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/rep' as rep;
-	@use '$src/themes/layout' as layout;
-	@use '$src/themes/effects' as effects;
 	@use '$src/themes/unit' as unit;
 
-	.unit {
-		position: relative;
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: spacing.$unit;
+	@include unit.unit-root;
+	@include unit.unit-slot;
 
-		&.empty .name {
-			display: none;
-		}
-	}
-
-	.focus-ring-wrapper {
-		position: relative;
-		display: block;
-		transition: transform 0.2s ease-in-out;
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			border-radius: layout.$input-corner;
-			pointer-events: none;
-			z-index: effects.$z-sticky;
-		}
-
-		&.editable:hover {
-			transform: scale(1.05);
-		}
+	.focus-ring-wrapper.editable:hover {
+		transform: scale(1.05);
 	}
 
 	.frame {
-		position: relative;
-		width: 100%;
 		overflow: hidden;
-		border-radius: layout.$input-corner;
-		background: var(--card-bg, #f5f5f5);
-		transition: opacity 0.2s ease-in-out;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		cursor: pointer;
-
-		&.editable:hover {
-			opacity: 0.95;
-			box-shadow: var(--shadow-sm);
-		}
 
 		&.disabled {
 			opacity: 0.4;
 			cursor: default;
-		}
-
-		// Slot selection - subtle dark pulsing glow (works for both empty and filled)
-		&.is-selected,
-		&.is-active {
-			animation: pulse-slot-shadow 2s ease-in-out infinite;
-		}
-	}
-
-	@keyframes pulse-slot-shadow {
-		0%,
-		100% {
-			box-shadow:
-				0 0 0 1px rgba(0, 0, 0, 0.12),
-				0 0 4px 2px rgba(0, 0, 0, 0.06);
-		}
-		50% {
-			box-shadow:
-				0 0 0 1px rgba(0, 0, 0, 0.24),
-				0 0 8px 4px rgba(0, 0, 0, 0.12);
 		}
 	}
 
@@ -556,159 +398,21 @@
 		@include rep.aspect(rep.$summon-cell-w, rep.$summon-cell-h);
 	}
 
-	.image {
-		position: relative;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		display: block;
-		z-index: effects.$z-badge;
-
-		&.placeholder {
-			opacity: 0;
-		}
-
-		&.not-in-collection {
-			opacity: 0.7;
-		}
-	}
-
-	.frame.not-in-collection::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		border: 2px solid colors.$error;
-		box-shadow: inset 0px 0px 4px colors.$error;
-		border-radius: inherit;
-		z-index: effects.$z-badge;
-		pointer-events: none;
-	}
-
-	.icon {
-		position: absolute;
-		z-index: effects.$z-raised;
-		color: var(--icon-secondary, #999);
-		transition: color 0.2s ease-in-out;
-	}
-
-	.frame.editable:hover .icon {
-		color: var(--icon-secondary-hover, #666);
-	}
-
-	.name {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: spacing.$unit-half;
-		font-size: typography.$font-small;
-		color: var(--text-secondary);
-	}
-
-	.name-text {
-		min-width: 0;
-		text-align: center;
-		overflow-wrap: anywhere;
-	}
-
-	.orphaned-badge {
-		position: absolute;
-		top: 4px;
-		right: 4px;
-		width: 24px;
-		height: 24px;
-		background: colors.$error;
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		color: white;
-		z-index: effects.$z-sticky;
-		pointer-events: auto;
-		cursor: help;
-		box-shadow: var(--shadow-sm);
-	}
+	@include unit.unit-orphaned-badge;
 
 	.quick-summon {
-		position: absolute;
-		z-index: effects.$z-tooltip;
 		top: -2%;
 		right: 28%;
 		width: spacing.$unit-5x;
 		height: spacing.$unit-5x;
-		padding: 0;
-		border: none;
-		background: transparent;
-		cursor: pointer;
-		transition: transform 0.2s ease;
-
-		&:not(.active):not(.static) {
-			display: none;
-		}
-
-		&:hover {
-			transform: scale(1.1);
-		}
 
 		&.main {
 			width: spacing.$unit-6x;
 			height: spacing.$unit-6x;
 		}
-
-		&.static {
-			cursor: default;
-			&:hover {
-				transform: none;
-			}
-		}
 	}
 
-	.focus-ring-wrapper:hover .quick-summon:not(.active) {
-		display: block;
-	}
-
-	.quick-summon-icon {
-		width: 100%;
-		height: 100%;
-		display: block;
-
-		&.filled {
-			display: none;
-		}
-
-		&.empty {
-			display: block;
-		}
-	}
-
-	.quick-summon.active {
-		.quick-summon-icon.filled {
-			display: block;
-		}
-
-		.quick-summon-icon.empty {
-			display: none;
-		}
-
-		&:hover {
-			.quick-summon-icon.filled {
-				display: none;
-			}
-
-			.quick-summon-icon.empty {
-				display: block;
-			}
-		}
-	}
-
-	.quick-summon:not(.active):hover {
-		.quick-summon-icon.filled {
-			display: block;
-		}
-
-		.quick-summon-icon.empty {
-			display: none;
-		}
-	}
+	@include unit.unit-toggle-badge(quick-summon);
 
 	@include unit.unit-shared-styles;
 

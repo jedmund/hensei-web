@@ -1,14 +1,10 @@
 <script lang="ts">
 	import { getWeaponProficiencyOptions } from '$lib/utils/proficiency'
 	import { searchAdapter, type SearchResult } from '$lib/api/adapters'
-	import {
-		getCharacterImage,
-		getWeaponImage,
-		getSummonImage,
-		getPlaceholderImage,
-		getWeaponFallbackImage,
-		handleImageFallback
-	} from '$lib/utils/images'
+	import { getPlaceholderImage, handleImageFallback } from '$lib/utils/images/core'
+	import { getCharacterImage } from '$lib/utils/images/characters'
+	import { getWeaponImage, getWeaponFallbackImage } from '$lib/utils/images/weapons'
+	import { getSummonImage } from '$lib/utils/images/summons'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { getElementColor, getElementOptions } from '$lib/utils/element'

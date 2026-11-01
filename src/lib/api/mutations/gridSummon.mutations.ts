@@ -9,11 +9,10 @@
 
 import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svelte-query'
 import {
-	gridAdapter,
-	type CreateGridSummonParams,
-	type UpdateUncapParams,
-	type SwapPositionsParams
-} from '$lib/api/adapters/grid.adapter'
+	gridSummonAdapter,
+	type CreateGridSummonParams
+} from '$lib/api/adapters/gridSummon.adapter'
+import type { UpdateUncapParams, SwapPositionsParams } from '$lib/api/adapters/grid.shared'
 import type { GridSummon } from '$lib/types/api/party'
 import {
 	applyGridUncap,
@@ -33,7 +32,7 @@ type QuickSummonVars = DeleteGridItemVars & { quickSummon: boolean }
 export function createGridSummonOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ partyShortcode, ...rest }: CreateVars) =>
-			gridAdapter.createSummon(rest, editKeyHeaders(partyShortcode)),
+			gridSummonAdapter.createSummon(rest, editKeyHeaders(partyShortcode)),
 		// Clear the slot being filled; main and friend summons have their own slots.
 		...optimisticGridList(
 			queryClient,
@@ -47,7 +46,7 @@ export function createGridSummonOptions(queryClient: QueryClient) {
 export function updateGridSummonOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: ({ id, partyShortcode, updates }: UpdateVars) =>
-			gridAdapter.updateSummon(id, updates, editKeyHeaders(partyShortcode)),
+			gridSummonAdapter.updateSummon(id, updates, editKeyHeaders(partyShortcode)),
 		...optimisticGridList(queryClient, 'summons', (summons, { id, updates }: UpdateVars) =>
 			applyNotesSyncedUpdate(summons, id, updates, (s) => s.summon?.granblueId)
 		)
@@ -57,7 +56,7 @@ export function updateGridSummonOptions(queryClient: QueryClient) {
 export function deleteGridSummonOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: DeleteGridItemVars) =>
-			gridAdapter.deleteSummon(
+			gridSummonAdapter.deleteSummon(
 				{ id: params.id, partyId: params.partyId, position: params.position },
 				editKeyHeaders(params.partyShortcode)
 			),
@@ -71,7 +70,7 @@ export function updateSummonUncapOptions(queryClient: QueryClient) {
 	type Vars = UpdateUncapParams & { partyShortcode: string }
 	return {
 		mutationFn: (params: Vars) =>
-			gridAdapter.updateSummonUncap(params, editKeyHeaders(params.partyShortcode)),
+			gridSummonAdapter.updateSummonUncap(params, editKeyHeaders(params.partyShortcode)),
 		...optimisticGridList(queryClient, 'summons', (summons, vars: Vars) =>
 			applyGridUncap(summons, vars)
 		)
@@ -81,7 +80,7 @@ export function updateSummonUncapOptions(queryClient: QueryClient) {
 export function updateQuickSummonOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: QuickSummonVars) =>
-			gridAdapter.updateQuickSummon(
+			gridSummonAdapter.updateQuickSummon(
 				{
 					id: params.id,
 					partyId: params.partyId,
@@ -102,7 +101,7 @@ export function updateQuickSummonOptions(queryClient: QueryClient) {
 export function swapSummonsOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: SwapPositionsParams & { partyShortcode: string }) =>
-			gridAdapter.swapSummons(params, editKeyHeaders(params.partyShortcode)),
+			gridSummonAdapter.swapSummons(params, editKeyHeaders(params.partyShortcode)),
 		...invalidatePartyOnSuccess(queryClient)
 	}
 }
@@ -110,7 +109,7 @@ export function swapSummonsOptions(queryClient: QueryClient) {
 export function duplicateGridSummonOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (params: { id: string; partyShortcode: string; position: number }) =>
-			gridAdapter.duplicateSummon(
+			gridSummonAdapter.duplicateSummon(
 				{ id: params.id, position: params.position },
 				editKeyHeaders(params.partyShortcode)
 			),

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Cell } from 'wx-svelte-grid'
-	import { getCharacterImage } from '$lib/features/database/detail/image'
+	import { getCharacterImage } from '$lib/utils/images/characters'
 
 	const { row }: Cell = $props()
 </script>

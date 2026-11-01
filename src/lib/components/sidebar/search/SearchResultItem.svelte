@@ -5,13 +5,10 @@
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import CollectionBadge from '$lib/components/CollectionBadge.svelte'
-	import {
-		getCharacterImage,
-		getWeaponImage,
-		getSummonImage,
-		getPlaceholder
-	} from '$lib/features/database/detail/image'
-	import { getWeaponFallbackImage, handleImageFallback, STYLE_SWAP_POSE } from '$lib/utils/images'
+	import { getSummonImage } from '$lib/utils/images/summons'
+	import { handleImageFallback, getPlaceholderImage } from '$lib/utils/images/core'
+	import { STYLE_SWAP_POSE, getCharacterImage } from '$lib/utils/images/characters'
+	import { getWeaponFallbackImage, getWeaponImage } from '$lib/utils/images/weapons'
 	import type { AddItemResult } from '$lib/types/api/search'
 
 	interface Props {
@@ -46,7 +43,7 @@
 
 	function getImageUrl(result: AddItemResult): string {
 		const id = result.granblueId
-		if (!id) return getPlaceholder(type, 'square')
+		if (!id) return getPlaceholderImage(type, 'square')
 
 		switch (type) {
 			case 'character':

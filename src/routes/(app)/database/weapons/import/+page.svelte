@@ -4,7 +4,8 @@
 	import { goto } from '$app/navigation'
 	import { weaponAdapter, type ParsedWeaponData } from '$lib/api/adapters/weapon.adapter'
 	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'
-	import { getGameCdnWeaponImage, getPlaceholderImage } from '$lib/utils/images'
+	import { getPlaceholderImage } from '$lib/utils/images/core'
+	import { getGameCdnWeaponImage } from '$lib/utils/images/cdn'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,

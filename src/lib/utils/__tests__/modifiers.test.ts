@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 
-vi.mock('$lib/utils/images', () => ({
+vi.mock('$lib/utils/images/core', () => ({
 	BUCKET: { weaponKeys: 'weapons/keys' },
 	getBasePath: vi.fn(() => '/images'),
 	renumberedImage: (url: string) => `${url}?ids=game`

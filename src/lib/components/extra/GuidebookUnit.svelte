@@ -2,7 +2,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
-	import { getGuidebookImage } from '$lib/utils/images'
+	import { getGuidebookImage } from '$lib/utils/images/equipment'
 	import { localizedName } from '$lib/utils/locale'
 	import type { Guidebook } from '$lib/types/api/entities'
 	import * as m from '$lib/paraglide/messages'

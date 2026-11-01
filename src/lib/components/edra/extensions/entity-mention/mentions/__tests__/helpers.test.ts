@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { getBasePath } from '$lib/utils/images'
+import { getBasePath } from '$lib/utils/images/core'
 import {
 	elementSlug,
 	squareImageUrl,

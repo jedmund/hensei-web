@@ -5,7 +5,7 @@
 	import { BULLET_TYPES } from '$lib/types/api/entities'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { localizedName } from '$lib/utils/locale'
-	import { getBulletImage } from '$lib/utils/images'
+	import { getBulletImage } from '$lib/utils/images/equipment'
 
 	interface Props {
 		/** The bullet type for this slot (1=Parabellum, 2=Rifle, 3=Cartridge, 4=Aetherial) */

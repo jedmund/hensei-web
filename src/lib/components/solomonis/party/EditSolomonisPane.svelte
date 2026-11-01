@@ -21,7 +21,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { finishSolomonisPane, type SolomonisPaneChanges } from './openSolomonisPanes'
 	import { solomonisQueries } from '$lib/api/queries/solomonis.queries'
-	import { getCharacterImage } from '$lib/utils/images'
+	import { getCharacterImage } from '$lib/utils/images/characters'
 	import { appLocale } from '$lib/utils/locale'
 	import type { Party } from '$lib/types/api/party'
 	import type { SolomonisOutcome } from '$lib/types/api/solomonis'

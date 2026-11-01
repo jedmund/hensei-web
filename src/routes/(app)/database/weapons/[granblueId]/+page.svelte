@@ -38,7 +38,7 @@
 		getWeaponImage as getWeaponImageUrl,
 		getWeaponTransformationStages,
 		getWeaponFallbackImage
-	} from '$lib/utils/images'
+	} from '$lib/utils/images/weapons'
 	import { getElementLabel, ELEMENT_DISPLAY_ORDER } from '$lib/utils/element'
 	import { seriesHasTranscendenceArt } from '$lib/utils/weaponSeries'
 	import {

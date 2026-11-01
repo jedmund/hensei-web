@@ -2,7 +2,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import LinkItem from '$lib/components/about/LinkItem.svelte'
 	import * as m from '$lib/paraglide/messages'
-	import { getBasePath } from '$lib/utils/images'
+	import { getBasePath } from '$lib/utils/images/core'
 	import { localizeHref } from '$lib/paraglide/runtime.js'
 </script>
 

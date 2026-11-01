@@ -13,7 +13,7 @@
 	import EditRaidPane from '$lib/components/sidebar/EditRaidPane.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { localizedName } from '$lib/utils/locale'
-	import { getRaidImage } from '$lib/utils/images'
+	import { getRaidImage } from '$lib/utils/images/raids'
 	import {
 		eventKindLabel,
 		eventKindNeedsElement,

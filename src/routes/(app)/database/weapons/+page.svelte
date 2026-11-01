@@ -22,7 +22,7 @@
 	import DateCell from '$lib/components/database/cells/DateCell.svelte'
 	import AwakeningModal from '$lib/features/database/weapons/AwakeningModal.svelte'
 	import { getRarityLabel } from '$lib/utils/rarity'
-	import { getBasePath } from '$lib/utils/images'
+	import { getBasePath } from '$lib/utils/images/core'
 	import { localizedName } from '$lib/utils/locale'
 	import { getBoostTypeLabel } from '$lib/utils/boostType'
 	import type { Awakening } from '$lib/types/api/entities'

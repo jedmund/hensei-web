@@ -1,14 +1,15 @@
+import { getCharacterDetailImage, getCharacterImage } from '$lib/utils/images/characters'
 import {
-	getCharacterDetailImage,
-	getCharacterImage,
-	getSummonDetailImage,
-	getSummonGachaImage,
-	getSummonImage,
 	getWeaponBaseImage,
 	getWeaponGachaImage,
 	getWeaponGridImage,
 	getWeaponImage
-} from '$lib/utils/images'
+} from '$lib/utils/images/weapons'
+import {
+	getSummonDetailImage,
+	getSummonGachaImage,
+	getSummonImage
+} from '$lib/utils/images/summons'
 import type { CatalogueItem } from '$lib/types/gacha'
 
 export type GachaItemKind = 'character' | 'weapon' | 'summon'

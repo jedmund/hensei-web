@@ -3,7 +3,7 @@
 	 * TraversalRow - one kind of space in TraversalSection: its icon, name
 	 * and how many times the expedition reached it.
 	 */
-	import { getSolomonisSpaceIcon } from '$lib/utils/images'
+	import { getSolomonisSpaceIcon } from '$lib/utils/images/solomonis'
 	import type { SpaceStatKey } from './solomonisParty'
 
 	interface Props {

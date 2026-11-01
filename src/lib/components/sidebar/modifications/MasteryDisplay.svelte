@@ -2,7 +2,7 @@
 	import type { GridCharacter } from '$lib/types/api/party'
 	import { formatRingStat, formatEarringStat } from '$lib/utils/modificationFormatters'
 	import { getRingStat, getElementalizedEarringStat } from '$lib/utils/masteryUtils'
-	import { getMasteryImage } from '$lib/utils/images'
+	import { getMasteryImage } from '$lib/utils/images/icons'
 	import { getLocale } from '$lib/paraglide/runtime.js'
 
 	interface Props {

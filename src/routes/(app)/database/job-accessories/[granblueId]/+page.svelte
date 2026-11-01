@@ -28,7 +28,7 @@
 
 	// Utils
 	import { getAccessoryTypeName } from '$lib/utils/jobAccessoryUtils'
-	import { getAccessoryImage } from '$lib/utils/images'
+	import { getAccessoryImage } from '$lib/utils/images/equipment'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { getRarityLabel } from '$lib/utils/rarity'
 

@@ -14,7 +14,7 @@ import {
 	CHARACTER_SERIES_TO_PARAM,
 	PARAM_TO_CHARACTER_SERIES
 } from '../filterParams'
-import type { CollectionFilterState } from '$lib/components/collection/CollectionFilters.svelte'
+import type { CollectionFilterState } from '$lib/types/filter'
 import type { WeaponSeries } from '$lib/types/api/weaponSeries'
 
 function emptyFilters(): CollectionFilterState {

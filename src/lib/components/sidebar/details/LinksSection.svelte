@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Icon from '$lib/components/Icon.svelte'
-	import { getProfileIcon } from '$lib/utils/images'
+	import { getProfileIcon } from '$lib/utils/images/icons'
 	import {
 		buildWikiEnUrl,
 		buildWikiJaUrl,

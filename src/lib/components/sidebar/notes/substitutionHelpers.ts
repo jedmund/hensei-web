@@ -1,12 +1,9 @@
 import type { Substitution } from '$lib/types/api/party'
 import { localizedName } from '$lib/utils/locale'
-import {
-	getCharacterImage,
-	getWeaponImage,
-	getSummonImage,
-	getPlaceholder
-} from '$lib/features/database/detail/image'
-import { getWeaponFallbackImage, STYLE_SWAP_POSE } from '$lib/utils/images'
+import { getSummonImage } from '$lib/utils/images/summons'
+import { getPlaceholderImage } from '$lib/utils/images/core'
+import { STYLE_SWAP_POSE, getCharacterImage } from '$lib/utils/images/characters'
+import { getWeaponFallbackImage, getWeaponImage } from '$lib/utils/images/weapons'
 
 export type GridItemType = 'character' | 'weapon' | 'summon'
 
@@ -35,7 +32,7 @@ export function getSubstituteImage(sub: Substitution, type: GridItemType): strin
 	if (sub.gridSummon?.summon) {
 		return getSummonImage(sub.gridSummon.summon.granblueId, 'square')
 	}
-	return getPlaceholder(type, 'square')
+	return getPlaceholderImage(type, 'square')
 }
 
 export function getSubstituteElement(sub: Substitution): number | undefined {

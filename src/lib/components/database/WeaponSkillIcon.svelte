@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { SvelteSet } from 'svelte/reactivity'
-	import { getWeaponSkillIcon } from '$lib/utils/images'
+	import { getWeaponSkillIcon } from '$lib/utils/images/icons'
 	import { appLocale } from '$lib/utils/locale'
 
 	interface Props {

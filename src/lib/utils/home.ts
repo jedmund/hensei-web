@@ -5,7 +5,8 @@
 import type { GameEvent } from '$lib/types/api/event'
 import type { HomeRaidSection } from '$lib/types/api/home'
 import { ELEMENT_TO_PARAM } from '$lib/utils/filterParams'
-import { getHostedImageUrl, getRaidImage } from '$lib/utils/images'
+import { getHostedImageUrl } from '$lib/utils/images/core'
+import { getRaidImage } from '$lib/utils/images/raids'
 import * as m from '$lib/paraglide/messages'
 
 const MINUTE_MS = 60 * 1000

@@ -5,7 +5,7 @@
  * and functions to parse/build filter URLs.
  */
 
-import type { CollectionFilterState } from '$lib/components/collection/CollectionFilters.svelte'
+import type { CollectionFilterState } from '$lib/types/filter'
 import type { WeaponSeries } from '$lib/types/api/weaponSeries'
 import { getElementKey, ELEMENTS } from '$lib/utils/element'
 import { PROFICIENCY_DISPLAY_ORDER, getProficiencyKey } from '$lib/utils/proficiency'

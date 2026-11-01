@@ -1,12 +1,9 @@
 <script lang="ts">
-	import {
-		getCharacterImage,
-		getWeaponImage,
-		getSummonImage,
-		getRaidImage,
-		getAccessoryImage,
-		STYLE_SWAP_POSE
-	} from '$lib/utils/images'
+	import { getCharacterImage, STYLE_SWAP_POSE } from '$lib/utils/images/characters'
+	import { getWeaponImage } from '$lib/utils/images/weapons'
+	import { getSummonImage } from '$lib/utils/images/summons'
+	import { getAccessoryImage } from '$lib/utils/images/equipment'
+	import { getRaidImage } from '$lib/utils/images/raids'
 	import { getJobWideImageUrl } from '$lib/utils/jobUtils'
 
 	interface Props {

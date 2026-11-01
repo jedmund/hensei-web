@@ -172,7 +172,12 @@
 	{party}
 	canEdit={true}
 	authUserId={data.account?.userId}
-	isNew={true}
+	authUsername={data.account?.username}
+	authUserAvatar={data.currentUser
+		? { picture: data.currentUser.picture, element: data.currentUser.element }
+		: undefined}
+	isEditor={(data.account?.role ?? 0) >= 7}
+	isNew={!shortcode}
 	{ensurePartyExists}
 	initialCollectionSourceUsername={collectionSourceUsername ?? undefined}
 />

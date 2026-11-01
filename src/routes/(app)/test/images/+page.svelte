@@ -1,11 +1,7 @@
 <script lang="ts">
 	import { ELEMENTS, ELEMENT_DISPLAY_ORDER } from '$lib/utils/element'
-	import {
-		getImageUrl,
-		getCharacterPose,
-		type ResourceType,
-		type ImageVariant
-	} from '$lib/utils/images'
+	import { getImageUrl, type ResourceType, type ImageVariant } from '$lib/utils/images/core'
+	import { getCharacterPose } from '$lib/utils/images/characters'
 
 	// State for selections
 	let resourceType: ResourceType = $state('character')

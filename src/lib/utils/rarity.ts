@@ -1,4 +1,4 @@
-import { getBasePath } from '$lib/utils/images'
+import { getBasePath } from '$lib/utils/images/core'
 
 export const RARITY_LABELS: Record<number, string> = {
 	1: 'R',

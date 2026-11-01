@@ -7,9 +7,8 @@
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
 	import { collectionQueries } from '$lib/api/queries/collection.queries'
-	import CollectionFilters, {
-		type CollectionFilterState
-	} from '$lib/components/collection/CollectionFilters.svelte'
+	import CollectionFilters from '$lib/components/collection/CollectionFilters.svelte'
+	import type { CollectionFilterState } from '$lib/types/filter'
 	import CollectionCharacterPane from '$lib/components/collection/CollectionCharacterPane.svelte'
 	import { useUpdateCollectionCharacter } from '$lib/api/mutations/collection.mutations'
 	import CollectionCharacterCard from '$lib/components/collection/CollectionCharacterCard.svelte'

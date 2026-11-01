@@ -1,5 +1,6 @@
 import type { Party, GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
-import { gridAdapter } from '$lib/api/adapters/grid.adapter'
+import { gridCharacterAdapter } from '$lib/api/adapters/gridCharacter.adapter'
+import { gridWeaponAdapter } from '$lib/api/adapters/gridWeapon.adapter'
 
 /**
  * Global party store for reactive access to party data
@@ -94,7 +95,7 @@ class PartyStore {
 		}
 
 		// Call API
-		const updated = await gridAdapter.updateCharacter(id, updates)
+		const updated = await gridCharacterAdapter.updateCharacter(id, updates)
 
 		// Update with server response
 		if (this.party?.characters) {
@@ -122,7 +123,7 @@ class PartyStore {
 		}
 
 		// Call API
-		const updated = await gridAdapter.updateWeapon(id, updates)
+		const updated = await gridWeaponAdapter.updateWeapon(id, updates)
 
 		// Update with server response
 		if (this.party?.weapons) {
