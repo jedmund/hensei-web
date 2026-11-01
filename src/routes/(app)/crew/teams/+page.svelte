@@ -5,6 +5,7 @@
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
+	import CrewPage from '$lib/components/crew/CrewPage.svelte'
 	import CrewTabs from '$lib/components/crew/CrewTabs.svelte'
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
 	import Icon from '$lib/components/Icon.svelte'
@@ -45,85 +46,72 @@
 	<title>{m.page_title_crew_teams()}</title>
 </svelte:head>
 
-<div class="page">
-	<div class="card">
-		<CrewHeader
-			title={crewStore.crew?.name ?? ''}
-			subtitle={crewStore.crew?.gamertag ?? undefined}
-			description={crewStore.crew?.description ?? undefined}
-		/>
+<CrewPage>
+	<CrewHeader
+		title={crewStore.crew?.name ?? ''}
+		subtitle={crewStore.crew?.gamertag ?? undefined}
+		description={crewStore.crew?.description ?? undefined}
+	/>
 
-		<CrewTabs userElement={data.currentUser?.element} />
+	<CrewTabs userElement={data.currentUser?.element} />
 
-		<div class="content">
-			{#if !crewStore.isInCrew}
-				<div class="empty-state">
-					<Icon name="users" size={32} />
-					<p>{m.crew_teams_not_in_crew()}</p>
-				</div>
-			{:else if sharedPartiesQuery.isLoading}
-				<div class="loading-state">
-					<Icon name="loader-2" size={32} class="spin" />
-					<p>{m.crew_teams_loading()}</p>
-				</div>
-			{:else if sharedPartiesQuery.isError}
-				<div class="error-state">
-					<Icon name="alert-circle" size={32} />
-					<p>
-						{m.crew_teams_load_error({
-							error: sharedPartiesQuery.error?.message || m.crew_teams_unknown_error()
-						})}
-					</p>
-					<Button size="small" onclick={() => sharedPartiesQuery.refetch()}>{m.retry()}</Button>
-				</div>
-			{:else if isEmpty}
-				<div class="empty-state">
-					<Icon name="share-2" size={32} />
-					<p>{m.crew_teams_empty()}</p>
-					<span class="hint">{m.crew_teams_empty_hint()}</span>
-				</div>
-			{:else}
-				<div class="teams-grid">
-					<ExploreGrid {items} />
+	<div class="content">
+		{#if !crewStore.isInCrew}
+			<div class="empty-state">
+				<Icon name="users" size={32} />
+				<p>{m.crew_teams_not_in_crew()}</p>
+			</div>
+		{:else if sharedPartiesQuery.isLoading}
+			<div class="loading-state">
+				<Icon name="loader-2" size={32} class="spin" />
+				<p>{m.crew_teams_loading()}</p>
+			</div>
+		{:else if sharedPartiesQuery.isError}
+			<div class="error-state">
+				<Icon name="alert-circle" size={32} />
+				<p>
+					{m.crew_teams_load_error({
+						error: sharedPartiesQuery.error?.message || m.crew_teams_unknown_error()
+					})}
+				</p>
+				<Button size="small" onclick={() => sharedPartiesQuery.refetch()}>{m.retry()}</Button>
+			</div>
+		{:else if isEmpty}
+			<div class="empty-state">
+				<Icon name="share-2" size={32} />
+				<p>{m.crew_teams_empty()}</p>
+				<span class="hint">{m.crew_teams_empty_hint()}</span>
+			</div>
+		{:else}
+			<div class="teams-grid">
+				<ExploreGrid {items} />
 
-					<div
-						class="load-more-sentinel"
-						bind:this={sentinelEl}
-						class:hidden={!sharedPartiesQuery.hasNextPage}
-					></div>
+				<div
+					class="load-more-sentinel"
+					bind:this={sentinelEl}
+					class:hidden={!sharedPartiesQuery.hasNextPage}
+				></div>
 
-					{#if sharedPartiesQuery.isFetchingNextPage}
-						<div class="loading-more">
-							<Icon name="loader-2" size={20} class="spin" />
-							<span>{m.crew_teams_loading_more()}</span>
-						</div>
-					{/if}
+				{#if sharedPartiesQuery.isFetchingNextPage}
+					<div class="loading-more">
+						<Icon name="loader-2" size={20} class="spin" />
+						<span>{m.crew_teams_loading_more()}</span>
+					</div>
+				{/if}
 
-					{#if !sharedPartiesQuery.hasNextPage && items.length > 0}
-						<div class="end-message">
-							<p>{m.crew_teams_end()}</p>
-						</div>
-					{/if}
-				</div>
-			{/if}
-		</div>
+				{#if !sharedPartiesQuery.hasNextPage && items.length > 0}
+					<div class="end-message">
+						<p>{m.crew_teams_end()}</p>
+					</div>
+				{/if}
+			</div>
+		{/if}
 	</div>
-</div>
+</CrewPage>
 
 <style lang="scss">
-	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
-
-	.page {
-		margin: 0 auto;
-		max-width: var(--main-max-width);
-	}
-
-	.card {
-		@include layout.page-surface;
-		overflow: hidden;
-	}
 
 	.content {
 		padding: spacing.$unit-2x;
