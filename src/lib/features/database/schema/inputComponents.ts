@@ -4,6 +4,7 @@
  */
 import type { Component } from 'svelte'
 import CharacterUncapInput from '$lib/features/database/characters/inputs/CharacterUncapInput.svelte'
+import EventRaidsInput from '$lib/features/database/events/inputs/EventRaidsInput.svelte'
 import ElementVariantIdsInput from '$lib/features/database/weapons/inputs/ElementVariantIdsInput.svelte'
 import WeaponAwakeningsInput from '$lib/features/database/weapons/inputs/WeaponAwakeningsInput.svelte'
 import WeaponUncapInput from '$lib/features/database/weapons/inputs/WeaponUncapInput.svelte'
@@ -14,5 +15,6 @@ export const INPUT_COMPONENTS: Record<InputName, Component<InputProps>> = {
 	uncapIndicator: WeaponUncapInput,
 	weaponAwakenings: WeaponAwakeningsInput,
 	elementVariantIds: ElementVariantIdsInput,
-	characterUncap: CharacterUncapInput
+	characterUncap: CharacterUncapInput,
+	eventRaids: EventRaidsInput
 }

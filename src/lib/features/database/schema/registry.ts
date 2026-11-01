@@ -3,6 +3,9 @@
  * routes (GBF-142 phase 3) match only these names.
  */
 import { charactersResource } from '$lib/features/database/characters/resource'
+import { eventsResource } from '$lib/features/database/events/resource'
+import { raidGroupsResource } from '$lib/features/database/raid-groups/resource'
+import { raidsResource } from '$lib/features/database/raids/resource'
 import { summonsResource } from '$lib/features/database/summons/resource'
 import { weaponsResource } from '$lib/features/database/weapons/resource'
 import { isResourceName, type ResourceName } from './names'
@@ -16,7 +19,10 @@ export type AnyResourceDef = ResourceDef<any, any>
 export const RESOURCES: Record<ResourceName, AnyResourceDef> = {
 	weapons: weaponsResource,
 	characters: charactersResource,
-	summons: summonsResource
+	summons: summonsResource,
+	raids: raidsResource,
+	'raid-groups': raidGroupsResource,
+	events: eventsResource
 }
 
 export function resourceDef(name: string): AnyResourceDef | undefined {

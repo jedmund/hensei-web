@@ -14,7 +14,10 @@
 	const def = $derived(resourceDef(name)!)
 </script>
 
-<PageMeta title={(def.list.pageTitle ?? def.list.label)()} description={m.page_desc_home()} />
+<PageMeta
+	title={def.list.pageTitle?.() ?? m.page_title_db_entity({ name: def.list.label() })}
+	description={m.page_desc_home()}
+/>
 
 {#if isResourceName(name)}
 	{#key name}

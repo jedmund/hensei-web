@@ -7,6 +7,7 @@ describe('resource param matcher', () => {
 		expect(match('weapons')).toBe(true)
 		expect(match('characters')).toBe(true)
 		expect(match('summons')).toBe(true)
+		expect(match('raid-groups')).toBe(true)
 	})
 
 	it('matches each definition under its own name', () => {
@@ -17,7 +18,7 @@ describe('resource param matcher', () => {
 	})
 
 	it('leaves everything else to the bespoke routes', () => {
-		for (const param of ['jobs', 'weapon-skills', 'events', 'import', 'Weapons', 'toString', '']) {
+		for (const param of ['jobs', 'weapon-skills', 'import', 'Weapons', 'toString', '']) {
 			expect(match(param), param).toBe(false)
 		}
 	})

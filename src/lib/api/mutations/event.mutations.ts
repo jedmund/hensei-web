@@ -1,8 +1,8 @@
 /**
  * Event Mutation Configurations (editors)
  *
- * Event CRUD, approve/hide, banner upload, the schedule sync trigger and
- * staff picks.
+ * Banner upload, the schedule sync trigger and staff picks. Events
+ * themselves save through the database's events definition.
  *
  * @module api/mutations/event
  */
@@ -12,42 +12,11 @@ import { eventAdapter } from '$lib/api/adapters/event.adapter'
 import { featuredPartyAdapter } from '$lib/api/adapters/featuredParty.adapter'
 import { eventKeys } from '$lib/api/queries/event.queries'
 import { homeKeys } from '$lib/api/queries/home.queries'
-import type { EventPayload, GameEvent } from '$lib/types/api/event'
 import type { FeaturedPartyPayload } from '$lib/types/api/featuredParty'
 
 function invalidateEvents(queryClient: QueryClient) {
 	queryClient.invalidateQueries({ queryKey: eventKeys.all })
 	queryClient.invalidateQueries({ queryKey: homeKeys.all })
-}
-
-function storeEvent(queryClient: QueryClient, event: GameEvent | undefined) {
-	if (event?.id) queryClient.setQueryData(eventKeys.detail(event.id), event)
-	invalidateEvents(queryClient)
-}
-
-export function createEventOptions(queryClient: QueryClient) {
-	return {
-		mutationFn: (payload: EventPayload) => eventAdapter.createEvent(payload),
-		onSuccess: (event: GameEvent) => storeEvent(queryClient, event)
-	}
-}
-
-export function useCreateEvent() {
-	const queryClient = useQueryClient()
-	return createMutation(() => createEventOptions(queryClient))
-}
-
-export function updateEventOptions(queryClient: QueryClient) {
-	return {
-		mutationFn: ({ id, payload }: { id: string; payload: Partial<EventPayload> }) =>
-			eventAdapter.updateEvent(id, payload),
-		onSuccess: (event: GameEvent) => storeEvent(queryClient, event)
-	}
-}
-
-export function useUpdateEvent() {
-	const queryClient = useQueryClient()
-	return createMutation(() => updateEventOptions(queryClient))
 }
 
 export function uploadEventImageOptions(queryClient: QueryClient) {

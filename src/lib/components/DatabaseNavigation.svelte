@@ -13,6 +13,7 @@
 	import DatabaseSectionList from './database/DatabaseSectionList.svelte'
 	import { DropdownMenu } from 'bits-ui'
 	import { rootOf, sectionForUrl, sectionHref } from '$lib/features/database/sections'
+	import { isEditor } from '$lib/auth/roles'
 	import { modeLabel, recordTitle } from '$lib/features/database/breadcrumb'
 	import { openRecord } from '$lib/features/database/panel/openRecord.svelte'
 
@@ -110,7 +111,8 @@
 	</nav>
 </div>
 
-{#if newLabel && newActions.length > 0}
+<!-- Curators read Events but can't create anything -->
+{#if newLabel && newActions.length > 0 && isEditor(role)}
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger class="new-item-trigger {userElement ?? ''}">
 			<Icon name="plus" size={14} />

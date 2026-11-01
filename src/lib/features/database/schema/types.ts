@@ -50,13 +50,15 @@ export type ComponentName =
 	| 'bulletSlots'
 	| 'characterUncap'
 	| 'characterRelated'
+	| 'raidGroupRaids'
+	| 'eventRaids'
 
 /**
  * Form inputs the edit and create forms resolve by name, for values no
  * built-in input edits (or, on a read-only field, a live preview)
  */
 export type InputName =
-	'uncapIndicator' | 'weaponAwakenings' | 'elementVariantIds' | 'characterUncap'
+	'uncapIndicator' | 'weaponAwakenings' | 'elementVariantIds' | 'characterUncap' | 'eventRaids'
 
 /**
  * How an empty value ('', null, undefined, [] or {}) is sent:
@@ -79,6 +81,8 @@ export type ReferenceResource =
 	| 'awakening'
 	| 'characterSeries'
 	| 'summonSeries'
+	| 'raidGroup'
+	| 'raid'
 
 /** Column options. The column id is the field key, the header its label */
 export type ListOptions<Row> = Partial<Omit<ColumnBase<Row>, 'id' | 'header'>> & {
@@ -287,6 +291,11 @@ export interface ListDef<Row> {
 	rowHeight?: RowHeight
 	/** Keep the first column in place while scrolling sideways */
 	pinFirstColumn?: boolean
+	/**
+	 * Old `?view=` values of this list and the pages that replaced them, e.g.
+	 * `{ groups: '/database/raid-groups' }`: the list redirects there
+	 */
+	movedViews?: Record<string, string>
 }
 
 /**
@@ -347,6 +356,8 @@ export type ScreenComponent<K extends ScreenKind, Full = unknown> = Awaited<
 export interface RecordTabProps<Full> {
 	record: Full
 	canEdit: boolean
+	/** The viewer's role, for tabs with rules of their own (staff picks) */
+	role: number
 	/** Reloads the record (e.g. after a re-parse changed it) */
 	refetch: () => void
 }
@@ -384,6 +395,11 @@ export interface SaveDef<Full> {
 	asyncValidate?: Record<string, (value: unknown, values: Values) => Promise<string | null>>
 	/** Runs after a create, without holding up the form (e.g. queueing image downloads) */
 	afterCreate?: (record: Full) => Promise<unknown>
+	/**
+	 * Other queries a save makes stale, beyond the record and the admin list
+	 * (e.g. Home, which shows events)
+	 */
+	invalidates?: () => readonly (readonly unknown[])[]
 }
 
 export interface RecordDef<Full> {

@@ -1,0 +1,61 @@
+{
+	"full": {
+		"id": "g-six-dragons",
+		"info": [
+			"Group Details",
+			"Name (EN)",
+			"Six-Dragons",
+			"Name (JA)",
+			"六竜",
+			"Section",
+			"Raid",
+			"Order",
+			"7",
+			"Difficulty",
+			"8",
+			"Flags",
+			"HL",
+			"Yes",
+			"Extra",
+			"No",
+			"Guidebooks",
+			"Yes",
+			"Unlimited",
+			"Yes",
+			"Support summon",
+			"Yes",
+			"Member Raids (2)",
+			"Wilnas",
+			"Lv. 200",
+			"Wamdus",
+			"Lv. —"
+		]
+	},
+	"empty": {
+		"id": "g-farming",
+		"info": [
+			"Group Details",
+			"Name (EN)",
+			"Farming",
+			"Name (JA)",
+			"周回",
+			"Section",
+			"Farming",
+			"Order",
+			"0",
+			"Difficulty",
+			"—",
+			"Flags",
+			"HL",
+			"No",
+			"Extra",
+			"No",
+			"Guidebooks",
+			"No",
+			"Unlimited",
+			"No",
+			"Support summon",
+			"No"
+		]
+	}
+}

@@ -6,7 +6,7 @@ import { match as resource } from '../../../../params/resource'
 import { match as socialProvider } from '../../../../params/socialProvider'
 import { match as tab } from '../../../../params/tab'
 import { weaponsResource } from '$lib/features/database/weapons/resource'
-import { loadRecord, loadScreen } from './routes'
+import { loadRecord, loadScreen, redirectMovedView } from './routes'
 
 const getWeapon = vi.hoisted(() => vi.fn())
 vi.mock('$lib/api/adapters/weapon.adapter', () => ({ weaponAdapter: { getWeapon } }))
@@ -68,6 +68,15 @@ describe('generic database routes', () => {
 		expect(routeFor('/database/summons/2040001000')).toBe(`${generic}/[id]`)
 		expect(routeFor('/database/summons/2040001000/edit')).toBe(`${generic}/[id]/edit`)
 		expect(routeFor('/database/summons/new')).toBe(`${generic}/new`)
+		expect(routeFor('/database/raids')).toBe(generic)
+		expect(routeFor('/database/raids/lucilius-hard')).toBe(`${generic}/[id]`)
+		expect(routeFor('/database/raids/lucilius-hard/edit')).toBe(`${generic}/[id]/edit`)
+		expect(routeFor('/database/raids/new')).toBe(`${generic}/new`)
+		expect(routeFor('/database/raid-groups/0b6f2c4e')).toBe(`${generic}/[id]`)
+		expect(routeFor('/database/raid-groups/new')).toBe(`${generic}/new`)
+		expect(routeFor('/database/events')).toBe(generic)
+		expect(routeFor('/database/events/0b6f2c4e')).toBe(`${generic}/[id]`)
+		expect(routeFor('/database/events/new')).toBe(`${generic}/new`)
 	})
 
 	it('leave bespoke routes in charge', () => {
@@ -82,7 +91,6 @@ describe('generic database routes', () => {
 		)
 		expect(routeFor('/database/summons/import')).toBe('/(app)/database/summons/import')
 		expect(routeFor('/database/series/weapons/new')).toBe('/(app)/database/series/weapons/new')
-		expect(routeFor('/database/events')).toBe('/(app)/database/events')
 	})
 
 	it('match nothing for an unregistered resource', () => {
@@ -148,5 +156,21 @@ describe('loadRecord', () => {
 		vi.spyOn(console, 'error').mockImplementationOnce(() => {})
 		getWeapon.mockRejectedValueOnce(new Error('down'))
 		await expect(loadRecord('weapons', '1')).rejects.toMatchObject({ status: 500 })
+	})
+})
+
+describe('redirectMovedView', () => {
+	const url = (path: string) => new URL(path, 'http://localhost')
+
+	it("sends a list's old ?view= tab to the resource that replaced it", () => {
+		expect(() => redirectMovedView('raids', url('/database/raids?view=groups'))).toThrow(
+			expect.objectContaining({ status: 301, location: '/database/raid-groups' })
+		)
+	})
+
+	it('leaves other views and lists alone', () => {
+		expect(() => redirectMovedView('raids', url('/database/raids'))).not.toThrow()
+		expect(() => redirectMovedView('raids', url('/database/raids?view=other'))).not.toThrow()
+		expect(() => redirectMovedView('weapons', url('/database/weapons?view=series'))).not.toThrow()
 	})
 })

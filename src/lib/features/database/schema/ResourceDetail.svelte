@@ -73,7 +73,7 @@
 	>
 		{#if activeTab}
 			{@const Tab = activeTab.component}
-			<Tab {record} {canEdit} refetch={() => query.refetch()} />
+			<Tab {record} {canEdit} {role} refetch={() => query.refetch()} />
 		{:else}
 			<section class="details">
 				{#each layout.blocks as { section, rows } (section.id)}

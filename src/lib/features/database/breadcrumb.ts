@@ -15,8 +15,7 @@ const RECORD_KEYS = [
 	'skill',
 	'accessory',
 	'roleRecord',
-	'series',
-	'event'
+	'series'
 ] as const
 
 type NameLike = string | { en?: string | null; ja?: string | null } | null | undefined
