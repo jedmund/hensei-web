@@ -399,64 +399,18 @@
 		height: calc($unit * 6.5);
 	}
 
+	$elements: wind, fire, water, earth, dark, light;
+
 	// Element colors - when elementStyle is true, use the new button-specific variables
-	:global([data-button-root].element-styled.wind) {
-		background: var(--wind-button-bg);
-		color: white;
-
-		&:hover:not(:disabled) {
-			background: var(--wind-button-bg-hover);
+	@each $el in $elements {
+		:global([data-button-root].element-styled.#{$el}) {
+			background: var(--#{$el}-button-bg);
 			color: white;
-		}
-	}
 
-	:global([data-button-root].element-styled.fire) {
-		background: var(--fire-button-bg);
-		color: white;
-
-		&:hover:not(:disabled) {
-			background: var(--fire-button-bg-hover);
-			color: white;
-		}
-	}
-
-	:global([data-button-root].element-styled.water) {
-		background: var(--water-button-bg);
-		color: white;
-
-		&:hover:not(:disabled) {
-			background: var(--water-button-bg-hover);
-			color: white;
-		}
-	}
-
-	:global([data-button-root].element-styled.earth) {
-		background: var(--earth-button-bg);
-		color: white;
-
-		&:hover:not(:disabled) {
-			background: var(--earth-button-bg-hover);
-			color: white;
-		}
-	}
-
-	:global([data-button-root].element-styled.dark) {
-		background: var(--dark-button-bg);
-		color: white;
-
-		&:hover:not(:disabled) {
-			background: var(--dark-button-bg-hover);
-			color: white;
-		}
-	}
-
-	:global([data-button-root].element-styled.light) {
-		background: var(--light-button-bg);
-		color: white;
-
-		&:hover:not(:disabled) {
-			background: var(--light-button-bg-hover);
-			color: white;
+			&:hover:not(:disabled) {
+				background: var(--#{$el}-button-bg-hover);
+				color: white;
+			}
 		}
 	}
 
@@ -470,112 +424,33 @@
 		}
 	}
 
-	:global([data-button-root].element-ghost.wind) {
-		color: var(--wind-ghost-text);
-		&:hover:not(:disabled) {
-			background-color: var(--wind-nav-selected-bg);
-			color: var(--wind-nav-selected-text);
+	@each $el in $elements {
+		:global([data-button-root].element-ghost.#{$el}) {
+			color: var(--#{$el}-ghost-text);
+			&:hover:not(:disabled) {
+				background-color: var(--#{$el}-nav-selected-bg);
+				color: var(--#{$el}-nav-selected-text);
+			}
 		}
 	}
 
-	:global([data-button-root].element-ghost.fire) {
-		color: var(--fire-ghost-text);
-		&:hover:not(:disabled) {
-			background-color: var(--fire-nav-selected-bg);
-			color: var(--fire-nav-selected-text);
+	// Keep non-styled element classes for backward compatibility.
+	// Only wind also skips .ghost (ghost + element class reaches here via
+	// CollectionFilterButton); kept as-is so the other elements render unchanged.
+	@each $el in $elements {
+		$not-ghost: '';
+		@if $el == wind {
+			$not-ghost: ':not(.ghost)';
 		}
-	}
 
-	:global([data-button-root].element-ghost.water) {
-		color: var(--water-ghost-text);
-		&:hover:not(:disabled) {
-			background-color: var(--water-nav-selected-bg);
-			color: var(--water-nav-selected-text);
-		}
-	}
+		:global([data-button-root].#{$el}:not(.element-styled):not(.element-ghost)#{$not-ghost}) {
+			background: var(--#{$el}-nav-selected-bg);
+			color: var(--#{$el}-ghost-text);
 
-	:global([data-button-root].element-ghost.earth) {
-		color: var(--earth-ghost-text);
-		&:hover:not(:disabled) {
-			background-color: var(--earth-nav-selected-bg);
-			color: var(--earth-nav-selected-text);
-		}
-	}
-
-	:global([data-button-root].element-ghost.dark) {
-		color: var(--dark-ghost-text);
-		&:hover:not(:disabled) {
-			background-color: var(--dark-nav-selected-bg);
-			color: var(--dark-nav-selected-text);
-		}
-	}
-
-	:global([data-button-root].element-ghost.light) {
-		color: var(--light-ghost-text);
-		&:hover:not(:disabled) {
-			background-color: var(--light-nav-selected-bg);
-			color: var(--light-nav-selected-text);
-		}
-	}
-
-	// Keep non-styled element classes for backward compatibility
-	:global([data-button-root].wind:not(.element-styled):not(.element-ghost):not(.ghost)) {
-		background: var(--wind-nav-selected-bg);
-		color: var(--wind-ghost-text);
-
-		&:hover:not(:disabled) {
-			background: var(--wind-button-hover-bg);
-			color: var(--wind-button-hover-text);
-		}
-	}
-
-	:global([data-button-root].fire:not(.element-styled):not(.element-ghost)) {
-		background: var(--fire-nav-selected-bg);
-		color: var(--fire-ghost-text);
-
-		&:hover:not(:disabled) {
-			background: var(--fire-button-hover-bg);
-			color: var(--fire-button-hover-text);
-		}
-	}
-
-	:global([data-button-root].water:not(.element-styled):not(.element-ghost)) {
-		background: var(--water-nav-selected-bg);
-		color: var(--water-ghost-text);
-
-		&:hover:not(:disabled) {
-			background: var(--water-button-hover-bg);
-			color: var(--water-button-hover-text);
-		}
-	}
-
-	:global([data-button-root].earth:not(.element-styled):not(.element-ghost)) {
-		background: var(--earth-nav-selected-bg);
-		color: var(--earth-ghost-text);
-
-		&:hover:not(:disabled) {
-			background: var(--earth-button-hover-bg);
-			color: var(--earth-button-hover-text);
-		}
-	}
-
-	:global([data-button-root].dark:not(.element-styled):not(.element-ghost)) {
-		background: var(--dark-nav-selected-bg);
-		color: var(--dark-ghost-text);
-
-		&:hover:not(:disabled) {
-			background: var(--dark-button-hover-bg);
-			color: var(--dark-button-hover-text);
-		}
-	}
-
-	:global([data-button-root].light:not(.element-styled):not(.element-ghost)) {
-		background: var(--light-nav-selected-bg);
-		color: var(--light-ghost-text);
-
-		&:hover:not(:disabled) {
-			background: var(--light-button-hover-bg);
-			color: var(--light-button-hover-text);
+			&:hover:not(:disabled) {
+				background: var(--#{$el}-button-hover-bg);
+				color: var(--#{$el}-button-hover-text);
+			}
 		}
 	}
 </style>
