@@ -149,7 +149,9 @@ describe('ResourceTable', () => {
 		expect(resource).toBe('weapons')
 		expect(params.sort).toBe('-latest_date,name_en')
 		expect(params.facets).toEqual(['element', 'rarity', 'proficiency', 'series'])
-		expect(params.fields).toEqual(expect.arrayContaining(['granblue_id', 'flb', 'series_name_en']))
+		expect(params.fields).toEqual(
+			expect.arrayContaining(['granblue_id', 'element', 'flb', 'series_name_en'])
+		)
 		expect(params.fields).not.toContain('flb_date')
 	})
 

@@ -519,6 +519,7 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 		entity: m.collection_entity_weapons,
 		empty: m.db_weapons_empty,
 		title: 'name',
+		element: 'element',
 		rowHeight: 'image',
 		pinFirstColumn: true,
 		columns: [
