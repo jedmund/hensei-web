@@ -233,12 +233,6 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 		group: 'battles',
 		minRole: CURATOR_ROLE
 	},
-	{
-		id: 'gw-events',
-		label: () => m.nav_unite_and_fight(),
-		path: '/database/gw-events',
-		group: 'battles'
-	},
 
 	// Site
 	{

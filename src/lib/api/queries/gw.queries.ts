@@ -21,9 +21,6 @@ import { gwAdapter } from '$lib/api/adapters/gw.adapter'
  * // All GW events
  * const events = createQuery(() => gwQueries.events())
  *
- * // Single event
- * const event = createQuery(() => gwQueries.event(eventId))
- *
  * // Crew's participations
  * const participations = createQuery(() => gwQueries.participations())
  *
@@ -40,20 +37,6 @@ export const gwQueries = {
 			queryKey: ['gw', 'events'] as const,
 			queryFn: () => gwAdapter.getEvents(),
 			staleTime: 1000 * 60 * 10, // 10 minutes - events don't change often
-			gcTime: 1000 * 60 * 60 // 1 hour
-		}),
-
-	/**
-	 * Single GW event query options
-	 *
-	 * @param eventId - Event ID
-	 */
-	event: (eventId: string) =>
-		queryOptions({
-			queryKey: ['gw', 'events', eventId] as const,
-			queryFn: () => gwAdapter.getEvent(eventId),
-			enabled: !!eventId,
-			staleTime: 1000 * 60 * 10, // 10 minutes
 			gcTime: 1000 * 60 * 60 // 1 hour
 		}),
 
@@ -145,7 +128,6 @@ export const gwQueries = {
 export const gwKeys = {
 	all: ['gw'] as const,
 	events: () => [...gwKeys.all, 'events'] as const,
-	event: (eventId: string) => [...gwKeys.all, 'events', eventId] as const,
 	participationsAll: () => [...gwKeys.all, 'participations'] as const,
 	participation: (participationId: string) =>
 		[...gwKeys.all, 'participations', participationId] as const,

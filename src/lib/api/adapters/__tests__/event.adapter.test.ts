@@ -67,7 +67,8 @@ describe('EventAdapter', () => {
 			element: ElementId.Water,
 			startsAt: '2026-10-20T10:00:00.000Z',
 			endsAt: '2026-10-27T14:59:00.000Z',
-			raidIds: ['r1']
+			raidIds: ['r1'],
+			eventNumber: 80
 		})
 
 		const [url, init] = calls()[0]!
@@ -82,7 +83,8 @@ describe('EventAdapter', () => {
 				element: ElementId.Water,
 				starts_at: '2026-10-20T10:00:00.000Z',
 				ends_at: '2026-10-27T14:59:00.000Z',
-				raid_ids: ['r1']
+				raid_ids: ['r1'],
+				event_number: 80
 			}
 		})
 	})

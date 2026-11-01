@@ -126,7 +126,7 @@
 
 	{#if view === 'details'}
 		<section class="details">
-			<EventFormFields bind:values eventNumber={event.eventNumber} readonly={!canEdit} />
+			<EventFormFields bind:values readonly={!canEdit} />
 
 			{#if canEdit}
 				<DetailsContainer title={m.db_events_section_image()}>

@@ -3,7 +3,6 @@ import { GwAdapter } from '../gw.adapter'
 import { API, EXPECTED } from './fixtures/gw.fixtures'
 import { mockApiResponse } from './fixtures/helpers'
 import type {
-	CreateGwEventInput,
 	CreateIndividualScoreInput,
 	BatchIndividualScoresInput,
 	CreateCrewScoreInput
@@ -30,26 +29,6 @@ describe('GwAdapter', () => {
 			const result = await adapter.getEvents()
 
 			expect(result).toEqual(EXPECTED.getEvents)
-		})
-
-		it('should unwrap gwEvent from getEvent response', async () => {
-			global.fetch = mockApiResponse(API.getEvent)
-
-			const result = await adapter.getEvent('gw-1')
-
-			expect(result).toEqual(EXPECTED.getEvent)
-		})
-
-		it('should wrap body in gw_event for createEvent', async () => {
-			global.fetch = mockApiResponse(API.createEvent)
-			const clearSpy = // eslint-disable-next-line @typescript-eslint/no-explicit-any
-				vi.spyOn(adapter as any, 'clearCache')
-
-			await adapter.createEvent({ event_number: 79 } as unknown as CreateGwEventInput)
-
-			const body = JSON.parse(vi.mocked(global.fetch).mock.calls[0]![1]!.body as string)
-			expect(body.gw_event).toBeDefined()
-			expect(clearSpy).toHaveBeenCalledWith('/gw_events')
 		})
 	})
 

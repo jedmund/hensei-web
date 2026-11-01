@@ -1,7 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
-	createGwEventOptions,
-	updateGwEventOptions,
 	joinGwEventOptions,
 	updateParticipationRankingOptions,
 	addCrewScoreOptions,
@@ -39,35 +37,6 @@ let queryClient: QueryClient
 
 beforeEach(() => {
 	queryClient = createTestQueryClient()
-})
-
-// ============================================================================
-// Event Mutations
-// ============================================================================
-
-describe('createGwEventOptions', () => {
-	it('invalidates events list on success', () => {
-		const spy = vi.spyOn(queryClient, 'invalidateQueries')
-		const opts = createGwEventOptions(queryClient)
-
-		opts.onSuccess()
-
-		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
-		expect(keys).toContainEqual(gwKeys.events())
-	})
-})
-
-describe('updateGwEventOptions', () => {
-	it('invalidates events list and specific event on success', () => {
-		const spy = vi.spyOn(queryClient, 'invalidateQueries')
-		const opts = updateGwEventOptions(queryClient)
-
-		opts.onSuccess(undefined, { eventId: 'gw-1', input: {} as unknown as Record<string, unknown> })
-
-		const keys = spy.mock.calls.map((c) => c[0]!.queryKey)
-		expect(keys).toContainEqual(gwKeys.events())
-		expect(keys).toContainEqual(gwKeys.event('gw-1'))
-	})
 })
 
 // ============================================================================

@@ -85,20 +85,6 @@ export interface GwIndividualScore {
 
 // Input types for mutations
 
-export interface CreateGwEventInput {
-	element: number
-	startDate: string
-	endDate: string
-	eventNumber: number
-}
-
-export interface UpdateGwEventInput {
-	element?: number
-	startDate?: string
-	endDate?: string
-	eventNumber?: number
-}
-
 export interface UpdateParticipationRankingInput {
 	preliminaryRanking?: number
 	finalRanking?: number

@@ -6,8 +6,6 @@ import type {
 	CrewGwParticipation,
 	GwCrewScore,
 	GwIndividualScore,
-	CreateGwEventInput,
-	UpdateGwEventInput,
 	UpdateParticipationRankingInput,
 	CreateCrewScoreInput,
 	UpdateCrewScoreInput,
@@ -29,45 +27,6 @@ export class GwAdapter extends BaseAdapter {
 	async getEvents(options?: RequestOptions): Promise<GwEvent[]> {
 		const response = await this.request<{ gwEvents: GwEvent[] }>('/gw_events', options)
 		return response.gwEvents
-	}
-
-	/**
-	 * Get a single GW event
-	 */
-	async getEvent(eventId: string, options?: RequestOptions): Promise<GwEvent> {
-		const response = await this.request<{ gwEvent: GwEvent }>(`/gw_events/${eventId}`, options)
-		return response.gwEvent
-	}
-
-	/**
-	 * Create a GW event (admin only)
-	 */
-	async createEvent(input: CreateGwEventInput, options?: RequestOptions): Promise<GwEvent> {
-		const response = await this.request<{ gwEvent: GwEvent }>('/gw_events', {
-			...options,
-			method: 'POST',
-			body: JSON.stringify({ gw_event: input })
-		})
-		this.clearCache('/gw_events')
-		return response.gwEvent
-	}
-
-	/**
-	 * Update a GW event (admin only)
-	 */
-	async updateEvent(
-		eventId: string,
-		input: UpdateGwEventInput,
-		options?: RequestOptions
-	): Promise<GwEvent> {
-		const response = await this.request<{ gwEvent: GwEvent }>(`/gw_events/${eventId}`, {
-			...options,
-			method: 'PUT',
-			body: JSON.stringify({ gw_event: input })
-		})
-		this.clearCache('/gw_events')
-		this.clearCache(`/gw_events/${eventId}`)
-		return response.gwEvent
 	}
 
 	// ==================== Participation Operations ====================

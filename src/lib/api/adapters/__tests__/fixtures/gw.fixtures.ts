@@ -10,12 +10,6 @@ export const API = {
 	getEvents: {
 		gw_events: [{ id: 'gw-1', event_number: 78 }]
 	},
-	getEvent: {
-		gw_event: { id: 'gw-1', event_number: 78 }
-	},
-	createEvent: {
-		gw_event: { id: 'gw-new' }
-	},
 	getEventWithParticipation: {
 		gw_event: { id: 'gw-1' },
 		crew_gw_participation: { id: 'part-1' },
@@ -47,8 +41,6 @@ export const API = {
 // What the adapter returns to callers
 export const EXPECTED = {
 	getEvents: [{ id: 'gw-1', eventNumber: 78 }],
-	getEvent: { id: 'gw-1', eventNumber: 78 },
-	createEvent: { id: 'gw-new' },
 	getEventWithParticipation: {
 		gwEvent: { id: 'gw-1' },
 		participation: { id: 'part-1' },
