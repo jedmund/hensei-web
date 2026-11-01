@@ -91,7 +91,12 @@
 									{localizedName(event.name)}
 								</a>
 							</td>
-							<td>{eventKindLabel(event.kind)}</td>
+							<td>
+								{eventKindLabel(event.kind)}
+								{#if event.kind === 'unite_and_fight' && event.eventNumber}
+									<span class="number">#{event.eventNumber}</span>
+								{/if}
+							</td>
 							<td>
 								{#if event.element}
 									<ElementBadge element={event.element} />
@@ -160,6 +165,10 @@
 		color: var(--text-primary);
 		font-weight: typography.$medium;
 		text-decoration: none;
+	}
+
+	.number {
+		color: var(--text-secondary);
 	}
 
 	.dates {

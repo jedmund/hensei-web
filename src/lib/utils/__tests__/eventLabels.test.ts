@@ -14,7 +14,8 @@ describe('event form conversion', () => {
 		endsAt: '2026-10-27T14:59:00Z',
 		status: 'draft',
 		imageUrl: null,
-		raids: [{ id: 'r1' } as never]
+		raids: [{ id: 'r1' } as never],
+		eventNumber: 80
 	}
 
 	it('loads an event as JST form values', () => {
@@ -35,8 +36,16 @@ describe('event form conversion', () => {
 			element: 3,
 			startsAt: '2026-10-20T10:00:00.000Z',
 			endsAt: '2026-10-27T14:59:00.000Z',
-			raidIds: ['r1']
+			raidIds: ['r1'],
+			eventNumber: 80
 		})
+	})
+
+	it('sends the Unite and Fight number only for that kind', () => {
+		expect(eventToForm({ ...event, eventNumber: null }).eventNumber).toBe(0)
+		expect(formToEventPayload({ ...eventToForm(event), eventNumber: 0 })?.eventNumber).toBeNull()
+		const story = { ...eventToForm(event), kind: 'story_event' as const }
+		expect(formToEventPayload(story)?.eventNumber).toBeNull()
 	})
 
 	it('sends no series when none is picked', () => {

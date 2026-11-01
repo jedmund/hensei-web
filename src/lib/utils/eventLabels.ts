@@ -60,6 +60,8 @@ export interface EventFormState {
 	startsAt: string
 	endsAt: string
 	raids: RaidFull[]
+	/** Unite and Fight number; 0 for none */
+	eventNumber: number
 }
 
 export function emptyEventForm(): EventFormState {
@@ -71,7 +73,8 @@ export function emptyEventForm(): EventFormState {
 		element: 0,
 		startsAt: '',
 		endsAt: '',
-		raids: []
+		raids: [],
+		eventNumber: 0
 	}
 }
 
@@ -84,7 +87,8 @@ export function eventToForm(event: GameEvent): EventFormState {
 		element: event.element ?? 0,
 		startsAt: isoToJstInput(event.startsAt),
 		endsAt: isoToJstInput(event.endsAt),
-		raids: [...(event.raids ?? [])]
+		raids: [...(event.raids ?? [])],
+		eventNumber: event.eventNumber ?? 0
 	}
 }
 
@@ -111,6 +115,8 @@ export function formToEventPayload(form: EventFormState): EventPayload | null {
 		element: form.element > 0 ? form.element : null,
 		startsAt,
 		endsAt,
-		raidIds: form.raids.map((r) => r.id)
+		raidIds: form.raids.map((r) => r.id),
+		eventNumber:
+			form.kind === 'unite_and_fight' && form.eventNumber > 0 ? Math.trunc(form.eventNumber) : null
 	}
 }

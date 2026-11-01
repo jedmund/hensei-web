@@ -66,6 +66,8 @@ export interface EventPayload {
 	startsAt: string
 	endsAt: string
 	raidIds: string[]
+	/** Unite and Fight number; null for other kinds */
+	eventNumber: number | null
 }
 
 export interface ListEventsParams {

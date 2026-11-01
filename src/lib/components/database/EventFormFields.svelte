@@ -1,7 +1,8 @@
 <script lang="ts">
 	/**
 	 * Shared fields for the event new + review pages: names, kind, element,
-	 * JST start and end times, and raid links (picked with the raid pane).
+	 * the Unite and Fight number, JST start and end times, and raid links
+	 * (picked with the raid pane).
 	 * `readonly` shows the same fields as text, for curators.
 	 */
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
@@ -26,13 +27,11 @@
 
 	interface Props {
 		values: EventFormState
-		/** Unite and Fight number, read-only (comes from the sync) */
-		eventNumber?: number | null | undefined
 		/** Show the values without controls */
 		readonly?: boolean | undefined
 	}
 
-	let { values = $bindable(), eventNumber, readonly = false }: Props = $props()
+	let { values = $bindable(), readonly = false }: Props = $props()
 
 	const kindOptions = $derived(eventKindOptions())
 	const seriesOptions = $derived(eventSeriesOptions())
@@ -112,8 +111,18 @@
 			<ElementPicker bind:value={values.element} mode="dropdown" includeAny contained />
 		</DetailItem>
 	{/if}
-	{#if values.kind === 'unite_and_fight' && eventNumber}
-		<DetailItem label={m.db_events_field_number()} value={eventNumber} />
+	{#if values.kind === 'unite_and_fight'}
+		{#if readonly}
+			<DetailItem label={m.db_events_field_number()} value={values.eventNumber || '—'} />
+		{:else}
+			<DetailItem
+				label={m.db_events_field_number()}
+				bind:value={values.eventNumber}
+				editable={true}
+				type="number"
+				min={1}
+			/>
+		{/if}
 	{/if}
 	{#if readonly}
 		<DetailItem
