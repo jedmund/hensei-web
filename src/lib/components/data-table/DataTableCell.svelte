@@ -74,7 +74,13 @@
 {:else if column.type === 'element'}
 	{#if typeof value === 'number'}<ElementLabel element={value} size="small" />{/if}
 {:else if column.type === 'proficiency'}
-	{#if typeof value === 'number'}<ProficiencyLabel proficiency={value} size="small" />{/if}
+	<!-- One proficiency, or a list (characters have up to two) -->
+	{@const proficiencies = [value].flat().filter((p): p is number => typeof p === 'number' && p > 0)}
+	<span class="proficiencies">
+		{#each proficiencies as proficiency, i (i)}
+			<ProficiencyLabel {proficiency} size="small" />
+		{/each}
+	</span>
 {:else if column.type === 'flags'}
 	{#if flags.length > 0}
 		<span class="flags">
@@ -104,6 +110,12 @@
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+
+	.proficiencies {
+		display: inline-flex;
+		align-items: center;
+		gap: spacing.$unit-half;
+	}
 
 	.thumb {
 		display: block;

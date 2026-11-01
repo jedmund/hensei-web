@@ -43,13 +43,20 @@ export type FormMode = 'create' | 'edit'
  * the detail and form renderers (phases 5–6) map each name to a component.
  */
 export type ComponentName =
-	'uncapIndicator' | 'weaponAwakenings' | 'weaponForge' | 'elementVariantIds' | 'bulletSlots'
+	| 'uncapIndicator'
+	| 'weaponAwakenings'
+	| 'weaponForge'
+	| 'elementVariantIds'
+	| 'bulletSlots'
+	| 'characterUncap'
+	| 'characterRelated'
 
 /**
  * Form inputs the edit and create forms resolve by name, for values no
  * built-in input edits (or, on a read-only field, a live preview)
  */
-export type InputName = 'uncapIndicator' | 'weaponAwakenings' | 'elementVariantIds'
+export type InputName =
+	'uncapIndicator' | 'weaponAwakenings' | 'elementVariantIds' | 'characterUncap'
 
 /**
  * How an empty value ('', null, undefined, [] or {}) is sent:
@@ -65,7 +72,7 @@ export interface EnumOption {
 
 /** Records a reference points at */
 export type ReferenceResource =
-	'character' | 'weapon' | 'weaponSeries' | 'weaponSeriesVariant' | 'awakening'
+	'character' | 'weapon' | 'weaponSeries' | 'weaponSeriesVariant' | 'awakening' | 'characterSeries'
 
 /** Column options. The column id is the field key, the header its label */
 export type ListOptions<Row> = Partial<Omit<ColumnBase<Row>, 'id' | 'header'>> & {
@@ -195,6 +202,8 @@ export type Field<Row = unknown, Full = unknown> = FieldBase<Row, Full> &
 				of?: 'text' | 'tags'
 		  }
 		| { kind: 'number'; int?: boolean; min?: number; max?: number }
+		/** Whole numbers, edited as a comma-separated list (e.g. a unit's character IDs) */
+		| { kind: 'numberList' }
 		| { kind: 'boolean' }
 		| { kind: 'date' }
 		| { kind: 'datetime' }
@@ -231,6 +240,11 @@ export interface Section {
 	fields: string[]
 	/** Draws the section's body, owning the listed fields */
 	component?: ComponentName
+	/**
+	 * `false`: the component draws its own titled container, so it can leave
+	 * the section out when it has nothing to show (e.g. data it loads itself)
+	 */
+	container?: false
 }
 
 /** Booleans (field keys) and API-only flags shown as one toggles menu */
@@ -250,6 +264,11 @@ export interface ListDef<Row> {
 	title: string
 	/** The field holding a row's element id, which colours the open row's bar */
 	element?: string
+	/**
+	 * A row's id: its panel id and URL (see `recordPath`). Defaults to the
+	 * Granblue ID; style shifts share theirs, so characters need their own
+	 */
+	rowId?: (row: Row) => string
 	/** Field keys, or a literal column for things that aren't fields (the thumbnail) */
 	columns: Array<string | DataTableColumn<Row>>
 	/** Field keys with a `multi` or `recent` filter, or toggle groups */
@@ -370,6 +389,11 @@ export interface RecordDef<Full> {
 	query: (id: string) => CreateQueryOptions<Full, any, Full, any>
 	/** The record's route id (what `fetch` takes), e.g. its Granblue ID */
 	routeId: (record: Full) => string
+	/**
+	 * The record's page, when it isn't `/database/<name>/<routeId>` (e.g. a
+	 * style shift's own page): where saving the forms goes
+	 */
+	path?: (record: Full) => string
 	/** Singular noun for the page header, e.g. "Weapon" */
 	noun: Message
 	/** Header kind: picks the placeholder image and the labels under the name */

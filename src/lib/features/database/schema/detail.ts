@@ -8,7 +8,15 @@ import { getSeriesDisplayName } from '$lib/utils/weaponSeries'
 import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 import { fieldFor, readField } from './fields'
 import { isEmpty, recordValues } from './form'
-import type { DetailOptions, EnumOption, Field, ResourceDef, Section, Values } from './types'
+import type {
+	DetailOptions,
+	EnumOption,
+	Field,
+	ReferenceResource,
+	ResourceDef,
+	Section,
+	Values
+} from './types'
 
 export interface DetailRow<Row = unknown, Full = unknown> {
 	field: Field<Row, Full>
@@ -70,6 +78,9 @@ function optionLabel(options: EnumOption[], value: unknown): string | undefined 
 	return typeof label === 'function' ? label() : label
 }
 
+/** References that draw as a link to the record */
+const LINKED: ReferenceResource[] = ['character', 'weapon']
+
 /** A reference's display name */
 function referenceName<Row, Full>(field: Field<Row, Full>, ref: unknown): string | undefined {
 	if (typeof ref === 'string') return ref || undefined
@@ -112,11 +123,12 @@ export function detailText<Row, Full>(field: Field<Row, Full>, value: unknown): 
 		case 'code':
 		case 'link':
 		case 'tags':
+		case 'numberList':
 			return isEmpty(value) ? empty : null
 		case 'reference':
 			if (isEmpty(value)) return empty
-			// Characters draw as a link with their tags
-			if (field.resource === 'character' && typeof value === 'object') return null
+			// Characters and weapons draw as a link (characters with their tags)
+			if (LINKED.includes(field.resource) && typeof value === 'object') return null
 			return referenceName(field, value) ?? empty
 		case 'referenceList': {
 			const names = Array.isArray(value)
@@ -141,4 +153,10 @@ export function recordTitle<Row, Full>(
 	if (typeof value === 'string') return value || undefined
 	const pair = value as { en?: string; ja?: string } | null | undefined
 	return pair?.en || pair?.ja || undefined
+}
+
+/** The record's page: where saving its forms goes */
+export function recordHref<Row, Full>(def: ResourceDef<Row, Full>, record: Full): string {
+	const recordDef = def.record!
+	return recordDef.path?.(record) ?? `/database/${def.name}/${recordDef.routeId(record)}`
 }

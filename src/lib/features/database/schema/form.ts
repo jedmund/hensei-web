@@ -25,6 +25,7 @@ function emptyValue(kind: FieldKind): unknown {
 		case 'boolean':
 			return false
 		case 'enumList':
+		case 'numberList':
 		case 'tags':
 		case 'referenceList':
 			return []
@@ -114,7 +115,7 @@ export function isEmpty(value: unknown): boolean {
 }
 
 /** Lists and booleans send their empty value; anything else blank is null */
-const KEEP_WHEN_EMPTY: FieldKind[] = ['boolean', 'enumList', 'tags', 'referenceList']
+const KEEP_WHEN_EMPTY: FieldKind[] = ['boolean', 'enumList', 'numberList', 'tags', 'referenceList']
 
 function emptyPolicy<Row, Full>(field: Field<Row, Full>): EmptyPolicy {
 	if (field.empty) return field.empty

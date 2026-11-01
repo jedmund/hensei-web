@@ -20,15 +20,11 @@ export function catalogueRowId(row: { granblueId: string }): string {
 
 /**
  * Characters: style-swap variants share their base character's granblueId,
- * so they get their own id and URL (convention shared with the record panel).
+ * so they get their own id (the record panel's convention; `recordPath`
+ * turns it into the style page's URL).
  */
 export function characterRowId(row: { granblueId: string; styleSwap?: boolean | null }): string {
 	return row.styleSwap ? `${row.granblueId}-style` : row.granblueId
-}
-
-export function characterRowHref(row: { granblueId: string; styleSwap?: boolean | null }): string {
-	const base = `/database/characters/${row.granblueId}`
-	return row.styleSwap ? `${base}/style` : base
 }
 
 export function toResultItems<T>(rows: T[], accessors: RowAccessors<T>): ResultItem[] {

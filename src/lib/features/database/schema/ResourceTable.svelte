@@ -4,7 +4,7 @@
   the ResultSet the panel steps through with j/k.
 -->
 <script lang="ts">
-	import { untrack } from 'svelte'
+	import { untrack, type Snippet } from 'svelte'
 	import { MediaQuery } from 'svelte/reactivity'
 	import { page } from '$app/state'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -31,6 +31,8 @@
 
 	interface Props {
 		resource: ResourceName
+		/** Extra toolbar controls after the built-in ones (e.g. a list screen's actions menu) */
+		toolbarEnd?: Snippet
 	}
 
 	const props: Props = $props()
@@ -51,6 +53,7 @@
 	const filters = filtersFor(def, filterData)
 	const columns = columnsFor(def)
 	const rowTitle = titleFor(def)
+	const rowId: (row: Row) => string = list.rowId ?? catalogueRowId
 	const rowElement = elementFor(def)
 
 	const url = createTableUrl({ filters: filterSpecs(filters), defaultSort: list.defaultSort })
@@ -70,7 +73,7 @@
 	const openId = $derived(readOpen(page.url))
 
 	function rowHref(row: Row): string {
-		return recordPath(name, catalogueRowId(row))
+		return recordPath(name, rowId(row))
 	}
 
 	// Rows are links: ⌘/ctrl/shift/middle-click and phones follow them
@@ -79,7 +82,7 @@
 		storeListUrl(withOpen(page.url, null).href, name)
 		if (!opensInPanel(event, panelFits.current)) return
 		event.preventDefault()
-		void openInPanel(page.url, catalogueRowId(row), page.state)
+		void openInPanel(page.url, rowId(row), page.state)
 	}
 </script>
 
@@ -89,7 +92,7 @@
 			{columns}
 			{source}
 			{filters}
-			rowId={catalogueRowId}
+			{rowId}
 			{rowHref}
 			{rowTitle}
 			{rowElement}
@@ -101,6 +104,7 @@
 			label={list.label()}
 			searchEntity={list.entity()}
 			emptyMessage={list.empty()}
+			toolbarEnd={props.toolbarEnd}
 		/>
 	</div>
 

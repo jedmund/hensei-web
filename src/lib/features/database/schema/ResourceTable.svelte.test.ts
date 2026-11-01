@@ -75,8 +75,8 @@ const seriesList = vi.spyOn(seriesAdapter, 'getWeaponSeriesList')
 
 let component: ReturnType<typeof mount> | undefined
 
-async function render() {
-	component = mount(ResourceTable, { target: document.body, props: { resource: 'weapons' } })
+async function render(resource: 'weapons' | 'characters' = 'weapons') {
+	component = mount(ResourceTable, { target: document.body, props: { resource } })
 	// Let the queries resolve and render
 	for (let i = 0; i < 5; i++) {
 		await tick()
@@ -164,5 +164,27 @@ describe('ResourceTable', () => {
 	it("loads the series filter's options", async () => {
 		await render()
 		expect(seriesList).toHaveBeenCalledTimes(1)
+	})
+
+	it("links style shifts to their own page, by the definition's row id", async () => {
+		const character = { granblueId: '3040088000', nameEn: 'Yngwie', nameJp: null, element: 3 }
+		list.mockResolvedValue({
+			results: [
+				{ ...character, id: 'c1', styleSwap: false },
+				{ ...character, id: 'c2', styleSwap: true }
+			],
+			meta: { total: 2, page: 1, per: 25, totalPages: 1 },
+			facets: {}
+		})
+		vi.spyOn(seriesAdapter, 'getCharacterSeriesList').mockResolvedValue([])
+		await render('characters')
+
+		const links = [...document.querySelectorAll<HTMLAnchorElement>('tbody a.row-link')]
+		expect(links.map((a) => a.getAttribute('href'))).toEqual([
+			'/database/characters/3040088000',
+			'/database/characters/3040088000/style'
+		])
+		const [, params] = list.mock.calls.at(-1)! as [string, AdminListParams]
+		expect(params.fields).toEqual(expect.arrayContaining(['style_swap', 'element']))
 	})
 })

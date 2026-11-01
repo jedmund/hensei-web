@@ -4,6 +4,8 @@
  * full record.
  */
 import type { Component } from 'svelte'
+import CharacterRelatedUnits from '$lib/features/database/characters/detail/CharacterRelatedUnits.svelte'
+import CharacterUncap from '$lib/features/database/characters/detail/CharacterUncap.svelte'
 import BulletSlots from '$lib/features/database/weapons/detail/BulletSlots.svelte'
 import ElementVariantIds from '$lib/features/database/weapons/detail/ElementVariantIds.svelte'
 import WeaponAwakenings from '$lib/features/database/weapons/detail/WeaponAwakenings.svelte'
@@ -18,5 +20,7 @@ export const DETAIL_COMPONENTS: Record<ComponentName, Component<{ record: any }>
 	weaponAwakenings: WeaponAwakenings,
 	weaponForge: WeaponForge,
 	elementVariantIds: ElementVariantIds,
-	bulletSlots: BulletSlots
+	bulletSlots: BulletSlots,
+	characterUncap: CharacterUncap,
+	characterRelated: CharacterRelatedUnits
 }

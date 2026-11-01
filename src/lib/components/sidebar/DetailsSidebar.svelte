@@ -415,7 +415,7 @@
 		{#if type === 'weapon'}
 			<WeaponSkillList skills={(item as GridWeapon).weapon.weaponSkills ?? []} />
 		{:else if type === 'character'}
-			<CharacterSkillsTab character={(item as GridCharacter).character} />
+			<CharacterSkillsTab record={(item as GridCharacter).character} />
 		{/if}
 	{:else}
 		<TeamView

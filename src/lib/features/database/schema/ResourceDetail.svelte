@@ -77,22 +77,27 @@
 		{:else}
 			<section class="details">
 				{#each layout.blocks as { section, rows } (section.id)}
-					<DetailsContainer title={section.title()}>
-						{#if section.component}
-							{@const Body = DETAIL_COMPONENTS[section.component]}
-							<Body {record} />
-						{:else}
-							{#each rows as row (row.field.key)}
-								<DetailField
-									field={row.field}
-									value={row.value}
-									{record}
-									values={layout.values}
-									{element}
-								/>
-							{/each}
-						{/if}
-					</DetailsContainer>
+					{#if section.component && section.container === false}
+						{@const Body = DETAIL_COMPONENTS[section.component]}
+						<Body {record} />
+					{:else}
+						<DetailsContainer title={section.title()}>
+							{#if section.component}
+								{@const Body = DETAIL_COMPONENTS[section.component]}
+								<Body {record} />
+							{:else}
+								{#each rows as row (row.field.key)}
+									<DetailField
+										field={row.field}
+										value={row.value}
+										{record}
+										values={layout.values}
+										{element}
+									/>
+								{/each}
+							{/if}
+						</DetailsContainer>
+					{/if}
 				{/each}
 			</section>
 		{/if}

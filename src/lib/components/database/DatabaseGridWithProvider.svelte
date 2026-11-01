@@ -35,7 +35,7 @@
 	import type { Snippet } from 'svelte'
 
 	interface Props {
-		resource: 'characters' | 'summons' | 'jobs'
+		resource: 'summons' | 'jobs'
 		columns: IColumn[]
 		pageSize?: number
 		leftActions?: Snippet
@@ -51,9 +51,7 @@
 	}: Props = $props()
 
 	// Derive entity type from resource
-	const entityType = $derived(
-		resource === 'characters' ? 'character' : resource === 'summons' ? 'summon' : 'job'
-	)
+	const entityType = $derived(resource === 'summons' ? 'summon' : 'job')
 
 	const supportsCollectionFilters = $derived(resource !== 'jobs')
 
@@ -62,9 +60,7 @@
 
 	// --- Composables ---
 
-	const filters = $derived(
-		new DatabaseFilters(resource, entityType, provider, (pg) => loadData(pg))
-	)
+	const filters = $derived(new DatabaseFilters(entityType, provider, (pg) => loadData(pg)))
 
 	const search = $derived(new DatabaseSearch(provider, (pg) => loadData(pg)))
 
@@ -81,7 +77,7 @@
 	const panelFits = new MediaQuery(PANEL_MIN_QUERY)
 
 	function rowRecordId(row: IRow): string {
-		return recordId(String(row.granblueId), resource === 'characters' && !!row.styleSwap)
+		return recordId(String(row.granblueId))
 	}
 
 	function rowTitle(row: IRow): string | undefined {
@@ -447,7 +443,7 @@
 		{#if filters.showFilters && supportsCollectionFilters}
 			<div class="filters-row">
 				<CollectionFilters
-					entityType={resource === 'characters' ? 'character' : 'summon'}
+					entityType="summon"
 					bind:elementFilters={filters.elementFilters}
 					bind:rarityFilters={filters.rarityFilters}
 					bind:seriesFilters={filters.seriesFilters}

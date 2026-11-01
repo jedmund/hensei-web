@@ -10,6 +10,7 @@
  */
 import { m } from '$lib/paraglide/messages'
 import { ADMIN_ROLE, CURATOR_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
+import { charactersSection } from './characters/section'
 import { weaponsSection } from './weapons/section'
 
 export type SectionGroupId = 'catalogue' | 'battles' | 'site' | 'admin'
@@ -71,35 +72,7 @@ export const SECTION_GROUPS: SectionGroup[] = [
 
 export const DATABASE_SECTIONS: DatabaseSection[] = [
 	// Catalogue
-	{
-		id: 'characters',
-		label: () => m.nav_characters(),
-		path: '/database/characters',
-		group: 'catalogue',
-		entity: () => m.type_character(),
-		actions: [
-			[
-				{
-					label: () => m.nav_new_single({ entity: m.type_character() }),
-					href: '/database/characters/new'
-				},
-				{
-					label: () => m.nav_new_multiple({ entity: m.type_character() }),
-					href: '/database/characters/import'
-				}
-			],
-			[{ label: () => m.nav_new_character_series(), href: '/database/series/characters/new' }]
-		]
-	},
-	{
-		id: 'character-series',
-		label: () => m.db_nav_series(),
-		path: '/database/characters',
-		view: 'series',
-		group: 'catalogue',
-		parent: 'characters',
-		matches: ['/database/series/characters']
-	},
+	...resourceSections('characters', charactersSection),
 	{
 		id: 'artifact-skills',
 		label: () => m.nav_artifact_skills(),

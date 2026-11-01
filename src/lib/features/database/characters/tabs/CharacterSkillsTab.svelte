@@ -9,14 +9,15 @@
 	import * as m from '$lib/paraglide/messages'
 
 	// Only the skill graph is needed; typed structurally so either Character shape
-	// (entities vs adapter) is accepted without coupling to the full entity.
+	// (entities vs adapter) is accepted without coupling to the full entity. Also
+	// a database record tab, so it takes the record as `record`
 	interface Props {
-		character: { skills?: CharacterSkill[]; skillLinks?: CharacterSkillLink[] }
+		record: { skills?: CharacterSkill[]; skillLinks?: CharacterSkillLink[] }
 	}
 
-	let { character }: Props = $props()
+	let { record }: Props = $props()
 
-	const skills = $derived(character.skills ?? [])
+	const skills = $derived(record.skills ?? [])
 
 	const groups = [
 		{ kind: 'ability', title: m.character_skills_group_ability },
@@ -76,7 +77,7 @@
 	// Relation label for a version that is the target of a link (precise), used
 	// when present; otherwise we fall back to the version's own role.
 	function relationLabelFor(versionId: string): string | undefined {
-		const link = (character.skillLinks ?? []).find((edge) => edge.to === versionId)
+		const link = (record.skillLinks ?? []).find((edge) => edge.to === versionId)
 		return link ? RELATION_LABEL[link.relation]?.() : undefined
 	}
 

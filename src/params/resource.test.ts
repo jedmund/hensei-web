@@ -5,6 +5,7 @@ import { match } from './resource'
 describe('resource param matcher', () => {
 	it('matches registered resources', () => {
 		expect(match('weapons')).toBe(true)
+		expect(match('characters')).toBe(true)
 	})
 
 	it('matches each definition under its own name', () => {
@@ -16,7 +17,6 @@ describe('resource param matcher', () => {
 
 	it('leaves everything else to the bespoke routes', () => {
 		for (const param of [
-			'characters',
 			'summons',
 			'weapon-skills',
 			'events',
