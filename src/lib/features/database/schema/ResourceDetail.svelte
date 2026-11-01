@@ -27,13 +27,13 @@
 		initialData?: unknown
 	}
 
-	let { def, granblueId, initialData, role, tab, onTabChange }: Props = $props()
+	let { def, id, initialData, role, tab, onTabChange }: Props = $props()
 
 	// Only resources with a `record` get a generated detail
 	const recordDef = $derived(def.record!)
 
 	const query = createQuery(() => ({
-		...recordDef.query(granblueId),
+		...recordDef.query(id),
 		...(initialData ? withInitialData(initialData) : {})
 	}))
 
@@ -65,15 +65,16 @@
 	<DetailScaffold
 		type={recordDef.type}
 		item={record}
-		image={recordDef.image(record)}
+		image={recordDef.image?.(record)}
 		fallbackImage={recordDef.fallbackImage?.(record)}
 		{currentTab}
 		{onTabChange}
+		showTabs={tabs.length > 0}
 		tabs={tabs.map((t) => ({ value: t.id, label: t.label() }))}
 	>
 		{#if activeTab}
 			{@const Tab = activeTab.component}
-			<Tab {record} {canEdit} refetch={() => query.refetch()} />
+			<Tab {record} {canEdit} {role} refetch={() => query.refetch()} />
 		{:else}
 			<section class="details">
 				{#each layout.blocks as { section, rows } (section.id)}

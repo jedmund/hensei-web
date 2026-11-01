@@ -1,0 +1,85 @@
+{
+	"search": ["name_en", "name_jp", "slug"],
+	"filters": {
+		"object_type": {
+			"type": "string",
+			"facet": true,
+			"list": true,
+			"range": false
+		},
+		"updated_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		}
+	},
+	"flags": [],
+	"sorts": ["object_type", "order", "name_en", "name_jp", "slug", "updated_at", "created_at"],
+	"default_sort": ["object_type", "order"],
+	"fields": [
+		"id",
+		"slug",
+		"name_en",
+		"name_jp",
+		"object_type",
+		"order",
+		"created_at",
+		"updated_at"
+	],
+	"default_fields": ["id", "slug", "name_en", "name_jp", "object_type", "order", "updated_at"],
+	"writable": {
+		"name_en": "scalar",
+		"name_jp": "scalar",
+		"slug": "scalar",
+		"object_type": "scalar",
+		"order": "scalar"
+	},
+	"enums": {
+		"object_type": {
+			"Character": "Character",
+			"Weapon": "Weapon"
+		}
+	},
+	"validators": {
+		"slug": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "uniqueness"
+			},
+			{
+				"kind": "format",
+				"pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+				"flags": ""
+			},
+			{
+				"kind": "length",
+				"maximum": 64
+			}
+		],
+		"name_en": [
+			{
+				"kind": "presence"
+			}
+		],
+		"name_jp": [
+			{
+				"kind": "presence"
+			}
+		],
+		"object_type": [
+			{
+				"kind": "inclusion",
+				"in": ["Character", "Weapon"]
+			}
+		],
+		"order": [
+			{
+				"kind": "numericality",
+				"only_integer": true
+			}
+		]
+	}
+}

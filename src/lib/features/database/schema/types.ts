@@ -48,13 +48,23 @@ export type ComponentName =
 	| 'bulletSlots'
 	| 'characterUncap'
 	| 'characterRelated'
+	| 'weaponSeriesVariants'
+	| 'awakeningImage'
+	| 'raidGroupRaids'
+	| 'eventRaids'
 
 /**
  * Form inputs the edit and create forms resolve by name, for values no
  * built-in input edits (or, on a read-only field, a live preview)
  */
 export type InputName =
-	'uncapIndicator' | 'weaponAwakenings' | 'elementVariantIds' | 'characterUncap'
+	| 'uncapIndicator'
+	| 'weaponAwakenings'
+	| 'elementVariantIds'
+	| 'characterUncap'
+	| 'weaponSeriesVariants'
+	| 'awakeningImage'
+	| 'eventRaids'
 
 /**
  * How an empty value ('', null, undefined, [] or {}) is sent:
@@ -76,6 +86,9 @@ export type ReferenceResource =
 	| 'weaponSeriesVariant'
 	| 'awakening'
 	| 'characterSeries'
+	| 'summonSeries'
+	| 'raidGroup'
+	| 'raid'
 	| 'job'
 
 /** Column options. The column id is the field key, the header its label */
@@ -271,8 +284,10 @@ export interface ListDef<Row> {
 	/** The field holding a row's element id, which colours the open row's bar */
 	element?: string
 	/**
-	 * A row's id: its panel id and URL (see `recordPath`). Defaults to the
-	 * Granblue ID; style shifts share theirs, so characters need their own
+	 * A row's id: its panel id and URL (see `recordPath`), the same id the
+	 * record's `routeId` gives. Defaults to the Granblue ID; style shifts share
+	 * theirs, so characters need their own, and records without one use their
+	 * slug
 	 */
 	rowId?: (row: Row) => string
 	/** Field keys, or a literal column for things that aren't fields (the thumbnail) */
@@ -285,6 +300,11 @@ export interface ListDef<Row> {
 	rowHeight?: RowHeight
 	/** Keep the first column in place while scrolling sideways */
 	pinFirstColumn?: boolean
+	/**
+	 * Old `?view=` values of this list and the pages that replaced them, e.g.
+	 * `{ groups: '/database/raid-groups' }`: the list redirects there
+	 */
+	movedViews?: Record<string, string>
 }
 
 /**
@@ -307,7 +327,8 @@ export interface RecordScreenData<Full> {
 
 /** The panel body: the detail view without the page around it */
 export type RecordBodyProps = {
-	granblueId: string
+	/** The record's route id (its `routeId`): a Granblue ID, or a slug */
+	id: string
 	role: number
 	/** Requested detail tab (local state in the panel) */
 	tab: string | null
@@ -345,6 +366,8 @@ export type ScreenComponent<K extends ScreenKind, Full = unknown> = Awaited<
 export interface RecordTabProps<Full> {
 	record: Full
 	canEdit: boolean
+	/** The viewer's role, for tabs with rules of their own (staff picks) */
+	role: number
 	/** Reloads the record (e.g. after a re-parse changed it) */
 	refetch: () => void
 }
@@ -382,6 +405,11 @@ export interface SaveDef<Full> {
 	asyncValidate?: Record<string, (value: unknown, values: Values) => Promise<string | null>>
 	/** Runs after a create, without holding up the form (e.g. queueing image downloads) */
 	afterCreate?: (record: Full) => Promise<unknown>
+	/**
+	 * Other queries a save makes stale, beyond the record and the admin list
+	 * (e.g. Home, which shows events, or the series lists other pages' filters read)
+	 */
+	invalidates?: () => readonly (readonly unknown[])[]
 }
 
 export interface RecordDef<Full> {
@@ -403,8 +431,9 @@ export interface RecordDef<Full> {
 	/** Singular noun for the page header, e.g. "Weapon" */
 	noun: Message
 	/** Header kind: picks the placeholder image and the labels under the name */
-	type: DetailEntityType
-	image: (record: Full) => string
+	type?: DetailEntityType
+	/** The header image. Without one the header shows only the name */
+	image?: (record: Full) => string
 	/** Tried before the placeholder when `image` fails to load */
 	fallbackImage?: (record: Full) => string | undefined
 	/** The record's element, which colours its buttons */

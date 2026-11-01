@@ -31,16 +31,6 @@ export interface CharacterSeries {
 }
 
 /**
- * Input type for character series form (client-side)
- */
-export interface CharacterSeriesInput {
-	name_en: string
-	name_jp: string
-	slug: string
-	order: number
-}
-
-/**
  * Payload for creating a new character series (editor only)
  */
 export interface CreateCharacterSeriesPayload {

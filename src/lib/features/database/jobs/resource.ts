@@ -189,6 +189,7 @@ export const jobsResource = defineResource<AdminJobRow, Job>({
 		title: 'name',
 		rowId: (j) => j.id,
 		pinFirstColumn: true,
+		movedViews: { skills: '/database/job-skills', accessories: '/database/job-accessories' },
 		columns: [
 			{
 				id: 'icon',

@@ -2,7 +2,8 @@
  * Loads for the generic `/database/[resource=resource]` routes: each
  * dispatches to the resource's definition, so the routes name no resource.
  */
-import { error } from '@sveltejs/kit'
+import { error, redirect } from '@sveltejs/kit'
+import { localizeHref } from '$lib/paraglide/runtime'
 import { resourceDef, type AnyResourceDef } from './registry'
 import type { ScreenComponent, ScreenKind } from './types'
 
@@ -70,4 +71,14 @@ export async function loadRecord(resource: string, id: string): Promise<{ record
 		console.error(`Failed to load ${resource} ${id}:`, err)
 		error(500, 'Failed to load record')
 	}
+}
+
+/**
+ * Sends an old `?view=` sub-section URL to the resource that replaced it
+ * (`list.movedViews`), e.g. `/database/raids?view=groups` → `/database/raid-groups`
+ */
+export function redirectMovedView(resource: string, url: URL): void {
+	const view = url.searchParams.get('view')
+	const target = view ? definition(resource).list.movedViews?.[view] : undefined
+	if (target) redirect(301, localizeHref(target))
 }

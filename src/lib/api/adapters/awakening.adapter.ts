@@ -47,7 +47,7 @@ export class AwakeningAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Gets a single awakening by ID
+	 * Gets a single awakening by ID or slug
 	 */
 	async getAwakening(id: string): Promise<Awakening> {
 		return this.request<Awakening>(`/awakenings/${id}`, {
@@ -74,16 +74,6 @@ export class AwakeningAdapter extends BaseAdapter {
 		return this.request<Awakening>(`/awakenings/${id}`, {
 			method: 'PATCH',
 			body: { awakening: payload }
-		})
-	}
-
-	/**
-	 * Deletes an awakening
-	 * Requires editor role (>= 7)
-	 */
-	async deleteAwakening(id: string): Promise<void> {
-		await this.request<void>(`/awakenings/${id}`, {
-			method: 'DELETE'
 		})
 	}
 

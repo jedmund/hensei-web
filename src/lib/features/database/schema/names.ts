@@ -7,6 +7,13 @@
 export const RESOURCE_NAMES = [
 	'weapons',
 	'characters',
+	'summons',
+	'raids',
+	'raid-groups',
+	'events',
+	'weapon-series',
+	'character-series',
+	'awakenings',
 	'jobs',
 	'job-skills',
 	'job-accessories'

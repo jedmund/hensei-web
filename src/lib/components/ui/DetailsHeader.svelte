@@ -17,10 +17,10 @@
 
 	// Props
 	interface Props {
-		type: DetailEntityType
+		type?: DetailEntityType
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
 		item: any // The character/summon/weapon/job object
-		image: string
+		image?: string // Without one, only the name shows (e.g. a series)
 		fallbackImage?: string // Intermediate fallback before placeholder (e.g., weapon without element suffix)
 		editUrl?: string // URL to navigate to for editing (view mode)
 		showEdit?: boolean // Whether to show the edit button
@@ -58,41 +58,45 @@
 
 <header class="container">
 	<div class="left">
-		<div
-			class="image"
-			class:job={type === 'job'}
-			class:skill={type === 'jobSkill'}
-			class:accessory={type === 'accessory'}
-		>
-			<!-- A fresh element per image, so the fallback steps start over (e.g. j/k in the panel) -->
-			{#key image}
-				<img
-					src={image}
-					alt={getDisplayName(name)}
-					onerror={(e) => {
-						const img = e.currentTarget as HTMLImageElement
-						// Each step runs once. Comparing img.src (absolute) with a relative
-						// fallback never matched, so a missing fallback retried forever.
-						if (img.dataset.fallback === 'placeholder') return
-						if (fallbackImage && !img.dataset.fallback) {
-							img.dataset.fallback = 'image'
-							img.src = fallbackImage
-							return
-						}
-						img.dataset.fallback = 'placeholder'
-						const placeholder =
-							type === 'job' || type === 'jobSkill'
-								? `${getBasePath()}/app/placeholders/placeholder-job.png`
-								: type === 'raid'
-									? `${getBasePath()}/app/placeholders/placeholder-raid-thumbnail.png`
-									: type === 'accessory'
-										? `${getBasePath()}/app/placeholders/placeholder-weapon-grid.png`
-										: getPlaceholderImage(type, 'grid')
-						img.src = placeholder
-					}}
-				/>
-			{/key}
-		</div>
+		{#if image}
+			<div
+				class="image"
+				class:job={type === 'job'}
+				class:skill={type === 'jobSkill'}
+				class:accessory={type === 'accessory'}
+			>
+				<!-- A fresh element per image, so the fallback steps start over (e.g. j/k in the panel) -->
+				{#key image}
+					<img
+						src={image}
+						alt={getDisplayName(name)}
+						onerror={(e) => {
+							const img = e.currentTarget as HTMLImageElement
+							// Each step runs once. Comparing img.src (absolute) with a relative
+							// fallback never matched, so a missing fallback retried forever.
+							if (img.dataset.fallback === 'placeholder') return
+							if (fallbackImage && !img.dataset.fallback) {
+								img.dataset.fallback = 'image'
+								img.src = fallbackImage
+								return
+							}
+							img.dataset.fallback = 'placeholder'
+							const placeholder =
+								type === 'job' || type === 'jobSkill'
+									? `${getBasePath()}/app/placeholders/placeholder-job.png`
+									: type === 'raid'
+										? `${getBasePath()}/app/placeholders/placeholder-raid-thumbnail.png`
+										: type === 'accessory'
+											? `${getBasePath()}/app/placeholders/placeholder-weapon-grid.png`
+											: type
+												? getPlaceholderImage(type, 'grid')
+												: ''
+							img.src = placeholder
+						}}
+					/>
+				{/key}
+			</div>
+		{/if}
 
 		<div class="info">
 			<h2>{getDisplayName(name)}</h2>

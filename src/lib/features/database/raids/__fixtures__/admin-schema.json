@@ -1,0 +1,198 @@
+{
+	"search": ["name_en", "name_jp", "slug"],
+	"filters": {
+		"element": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"group": {
+			"type": "uuid",
+			"facet": true,
+			"list": true,
+			"range": false
+		},
+		"player_count": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"level": {
+			"type": "integer",
+			"facet": false,
+			"list": true,
+			"range": true
+		},
+		"released_at": {
+			"type": "date",
+			"facet": false,
+			"list": true,
+			"range": true
+		},
+		"created_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		},
+		"updated_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		}
+	},
+	"flags": ["hl", "extra"],
+	"sorts": [
+		"name_en",
+		"name_jp",
+		"slug",
+		"level",
+		"element",
+		"player_count",
+		"released_at",
+		"updated_at",
+		"created_at",
+		"group_section",
+		"group_order"
+	],
+	"default_sort": ["group_section", "group_order", "element", "level"],
+	"fields": [
+		"id",
+		"slug",
+		"name_en",
+		"name_jp",
+		"level",
+		"element",
+		"player_count",
+		"extra",
+		"enemy_id",
+		"summon_id",
+		"quest_id",
+		"released_at",
+		"group_id",
+		"created_at",
+		"updated_at",
+		"group"
+	],
+	"default_fields": [
+		"id",
+		"slug",
+		"name_en",
+		"name_jp",
+		"level",
+		"element",
+		"player_count",
+		"group",
+		"updated_at"
+	],
+	"writable": {
+		"name_en": "scalar",
+		"name_jp": "scalar",
+		"level": "scalar",
+		"element": "scalar",
+		"slug": "scalar",
+		"group_id": "scalar",
+		"enemy_id": "scalar",
+		"summon_id": "scalar",
+		"quest_id": "scalar",
+		"extra": "scalar",
+		"player_count": "scalar",
+		"released_at": "scalar"
+	},
+	"enums": {
+		"element": {
+			"Null": 0,
+			"Fire": 1,
+			"Water": 2,
+			"Earth": 3,
+			"Wind": 4,
+			"Light": 5,
+			"Dark": 6
+		},
+		"player_count": {
+			"solo": 1,
+			"six": 6,
+			"eighteen": 18,
+			"thirty": 30
+		}
+	},
+	"validators": {
+		"group": [
+			{
+				"kind": "presence"
+			}
+		],
+		"name_en": [
+			{
+				"kind": "presence"
+			}
+		],
+		"slug": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "uniqueness"
+			},
+			{
+				"kind": "format",
+				"pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+				"flags": "",
+				"allow_blank": true
+			}
+		],
+		"group_id": [
+			{
+				"kind": "presence"
+			}
+		],
+		"element": [
+			{
+				"kind": "inclusion",
+				"in": [0, 1, 2, 3, 4, 5, 6],
+				"allow_nil": true
+			}
+		],
+		"level": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"player_count": [
+			{
+				"kind": "inclusion",
+				"in": [1, 6, 18, 30]
+			}
+		],
+		"enemy_id": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than": 0,
+				"allow_nil": true
+			}
+		],
+		"summon_id": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than": 0,
+				"allow_nil": true
+			}
+		],
+		"quest_id": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than": 0,
+				"allow_nil": true
+			}
+		]
+	}
+}

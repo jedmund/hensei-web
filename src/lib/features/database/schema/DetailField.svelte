@@ -9,6 +9,8 @@
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import AssociatedEntityLink from '$lib/components/database/AssociatedEntityLink.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
+	import { localizeHref } from '$lib/paraglide/runtime'
+	import { localizedName } from '$lib/utils/locale'
 	import { detailOptions, detailText, emptyText } from './detail'
 	import { DETAIL_COMPONENTS } from './detailComponents'
 	import type { Field, Values } from './types'
@@ -97,6 +99,15 @@
 			<AssociatedEntityLink type="weapon" entity={ref} />
 		{:else if field.kind === 'reference' && field.resource === 'job'}
 			<AssociatedEntityLink type="job" entity={ref} />
+		{:else if field.kind === 'reference' && field.resource === 'raidGroup'}
+			<Button
+				href={localizeHref(`/database/raid-groups/${ref.id}`)}
+				variant="ghost"
+				size="small"
+				rightIcon="chevron-right-small"
+			>
+				{localizedName(ref.name)}
+			</Button>
 		{/if}
 	</DetailItem>
 {/if}

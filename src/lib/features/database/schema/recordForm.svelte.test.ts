@@ -167,6 +167,19 @@ describe('createRecordForm', () => {
 			['admin', 'weapons', 'list']
 		])
 	})
+
+	it("also refreshes the queries the definition's save names", async () => {
+		update.mockResolvedValue(weapon)
+		const form = createRecordForm(
+			{ ...def, save: { update, invalidates: () => [['home'], ['events', 'list']] } },
+			weapon
+		)
+		await form.save()
+		const keys = client.invalidateQueries.mock.calls.map(
+			(call) => (call as unknown as [{ queryKey: unknown[] }])[0].queryKey
+		)
+		expect(keys).toEqual(expect.arrayContaining([['home'], ['events', 'list']]))
+	})
 })
 
 describe('createRecordForm without a record (create)', () => {

@@ -24,28 +24,30 @@ describe('isCurator / isEditor', () => {
 })
 
 describe('requiredDatabaseRole', () => {
-	it('lets curators reach the Database root and the Events pages', () => {
+	const generic = [
+		'/(app)/database/[resource=resource]',
+		'/(app)/database/[resource=resource]/[id]',
+		'/(app)/database/[resource=resource]/[id]/edit',
+		'/(app)/database/[resource=resource]/new'
+	]
+
+	it('lets curators reach the Database root', () => {
 		expect(requiredDatabaseRole('/(app)/database')).toBe(CURATOR_ROLE)
-		expect(requiredDatabaseRole('/(app)/database/events')).toBe(CURATOR_ROLE)
-		expect(requiredDatabaseRole('/(app)/database/events/[id]')).toBe(CURATOR_ROLE)
 	})
 
-	it('keeps every other Database route editor-only', () => {
-		expect(requiredDatabaseRole('/(app)/database/weapons')).toBe(EDITOR_ROLE)
-		expect(requiredDatabaseRole('/(app)/database/raids')).toBe(EDITOR_ROLE)
-		expect(requiredDatabaseRole('/(app)/database/events-archive')).toBe(EDITOR_ROLE)
+	it('keeps every bespoke Database route editor-only', () => {
+		expect(requiredDatabaseRole('/(app)/database/summons')).toBe(EDITOR_ROLE)
+		expect(requiredDatabaseRole('/(app)/database/weapons/import')).toBe(EDITOR_ROLE)
 		expect(requiredDatabaseRole('/(app)/database/artifact-skills/[id]')).toBe(EDITOR_ROLE)
 		expect(requiredDatabaseRole(null)).toBe(EDITOR_ROLE)
+		// A resource role never opens a bespoke route
+		expect(requiredDatabaseRole('/(app)/database/summons', CURATOR_ROLE)).toBe(EDITOR_ROLE)
 	})
 
-	it('keeps the generic resource routes editor-only', () => {
-		for (const id of [
-			'/(app)/database/[resource=resource]',
-			'/(app)/database/[resource=resource]/[id]',
-			'/(app)/database/[resource=resource]/[id]/edit',
-			'/(app)/database/[resource=resource]/new'
-		]) {
+	it("gates the generic resource routes on the resource's role, editor by default", () => {
+		for (const id of generic) {
 			expect(requiredDatabaseRole(id), id).toBe(EDITOR_ROLE)
+			expect(requiredDatabaseRole(id, CURATOR_ROLE), id).toBe(CURATOR_ROLE)
 		}
 	})
 })

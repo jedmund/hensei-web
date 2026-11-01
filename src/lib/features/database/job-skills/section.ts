@@ -9,6 +9,5 @@ import type { ResourceSection } from '$lib/features/database/sections'
 export const jobSkillsSection: ResourceSection = {
 	label: () => m.db_nav_skills(),
 	group: 'catalogue',
-	parent: 'jobs',
-	legacyView: 'skills'
+	parent: 'jobs'
 }

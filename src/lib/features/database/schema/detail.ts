@@ -79,7 +79,7 @@ function optionLabel(options: EnumOption[], value: unknown): string | undefined 
 }
 
 /** References that draw as a link to the record */
-const LINKED: ReferenceResource[] = ['character', 'weapon', 'job']
+const LINKED: ReferenceResource[] = ['character', 'weapon', 'raidGroup', 'job']
 
 /** A reference's display name */
 function referenceName<Row, Full>(field: Field<Row, Full>, ref: unknown): string | undefined {
@@ -110,8 +110,9 @@ export function detailText<Row, Full>(field: Field<Row, Full>, value: unknown): 
 		case 'boolean':
 			return value ? m.data_table_yes() : m.data_table_no()
 		case 'enum':
-			// Elements and proficiencies show the label their column shows
-			if (field.list?.type === 'element' || field.list?.type === 'proficiency') return null
+			// Elements and proficiencies show the label their column shows; no element is a dash
+			if (field.list?.type === 'element') return isEmpty(value) ? empty : null
+			if (field.list?.type === 'proficiency') return null
 			return optionLabel(field.options(), value) ?? empty
 		case 'enumList': {
 			const options = field.options()
@@ -127,7 +128,7 @@ export function detailText<Row, Full>(field: Field<Row, Full>, value: unknown): 
 			return isEmpty(value) ? empty : null
 		case 'reference':
 			if (isEmpty(value)) return empty
-			// Characters, weapons and jobs draw as a link (characters with their tags)
+			// Characters, weapons, raid groups and jobs draw as a link (characters with their tags)
 			if (LINKED.includes(field.resource) && typeof value === 'object') return null
 			return referenceName(field, value) ?? empty
 		case 'referenceList': {

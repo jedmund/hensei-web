@@ -73,7 +73,7 @@
 
 	<ResourceDetail
 		{def}
-		granblueId={id}
+		{id}
 		initialData={data.record}
 		role={data.role || 0}
 		tab={page.url.searchParams.get('tab')}

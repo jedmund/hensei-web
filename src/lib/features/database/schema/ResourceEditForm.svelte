@@ -74,7 +74,7 @@
 	<DetailScaffold
 		type={recordDef.type}
 		item={record}
-		image={recordDef.image(record)}
+		image={recordDef.image?.(record)}
 		fallbackImage={recordDef.fallbackImage?.(record)}
 		editMode
 	>

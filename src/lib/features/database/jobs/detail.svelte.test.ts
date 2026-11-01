@@ -76,7 +76,7 @@ function render(def: AnyResourceDef, record: { id: string }, props: { tab?: stri
 		target,
 		props: {
 			def,
-			granblueId: def.record!.routeId(record),
+			id: def.record!.routeId(record),
 			initialData: record,
 			role: 7,
 			tab: props.tab ?? null,

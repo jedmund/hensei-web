@@ -70,7 +70,7 @@ function render(name: keyof typeof detailRecords, props: { role?: number; tab?: 
 		target,
 		props: {
 			def: charactersResource,
-			granblueId: record.granblueId,
+			id: record.granblueId,
 			initialData: record,
 			role: props.role ?? 7,
 			tab: props.tab ?? null,

@@ -1,0 +1,369 @@
+{
+	"search": ["name_en", "name_jp", "granblue_id"],
+	"filters": {
+		"element": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"rarity": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"series": {
+			"type": "uuid",
+			"facet": true,
+			"list": true,
+			"range": false,
+			"reference": "summon_series"
+		},
+		"release_date": {
+			"type": "date",
+			"facet": false,
+			"list": true,
+			"range": true
+		},
+		"flb_date": {
+			"type": "date",
+			"facet": false,
+			"list": true,
+			"range": true
+		},
+		"ulb_date": {
+			"type": "date",
+			"facet": false,
+			"list": true,
+			"range": true
+		},
+		"transcendence_date": {
+			"type": "date",
+			"facet": false,
+			"list": true,
+			"range": true
+		},
+		"latest_date": {
+			"type": "date",
+			"facet": false,
+			"list": true,
+			"range": true
+		},
+		"created_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		},
+		"updated_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		},
+		"flb": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"ulb": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"transcendence": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"subaura": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"limit": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"support_eligible": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		}
+	},
+	"flags": ["missing_name_jp", "no_auras", "caps_mismatch"],
+	"sorts": [
+		"name_en",
+		"name_jp",
+		"granblue_id",
+		"rarity",
+		"element",
+		"max_level",
+		"release_date",
+		"flb_date",
+		"ulb_date",
+		"transcendence_date",
+		"latest_date",
+		"updated_at",
+		"created_at"
+	],
+	"default_sort": ["-latest_date", "name_en"],
+	"fields": [
+		"id",
+		"granblue_id",
+		"name_en",
+		"name_jp",
+		"element",
+		"rarity",
+		"flb",
+		"ulb",
+		"transcendence",
+		"subaura",
+		"limit",
+		"support_eligible",
+		"max_level",
+		"release_date",
+		"flb_date",
+		"ulb_date",
+		"transcendence_date",
+		"latest_date",
+		"min_hp",
+		"max_hp",
+		"max_hp_flb",
+		"max_hp_ulb",
+		"max_hp_xlb",
+		"min_atk",
+		"max_atk",
+		"max_atk_flb",
+		"max_atk_ulb",
+		"max_atk_xlb",
+		"promotions",
+		"wiki_en",
+		"wiki_ja",
+		"gamewith",
+		"kamigame",
+		"nicknames_en",
+		"nicknames_jp",
+		"created_at",
+		"updated_at",
+		"series_id",
+		"series_slug",
+		"series_name_en",
+		"series_name_jp",
+		"aura_count"
+	],
+	"default_fields": [
+		"id",
+		"granblue_id",
+		"name_en",
+		"name_jp",
+		"element",
+		"rarity",
+		"series_id",
+		"series_slug",
+		"release_date",
+		"latest_date",
+		"updated_at"
+	],
+	"writable": {
+		"granblue_id": "scalar",
+		"name_en": "scalar",
+		"name_jp": "scalar",
+		"summon_id": "scalar",
+		"rarity": "scalar",
+		"element": "scalar",
+		"series": "scalar",
+		"flb": "scalar",
+		"ulb": "scalar",
+		"transcendence": "scalar",
+		"subaura": "scalar",
+		"limit": "scalar",
+		"min_hp": "scalar",
+		"max_hp": "scalar",
+		"max_hp_flb": "scalar",
+		"max_hp_ulb": "scalar",
+		"max_hp_xlb": "scalar",
+		"min_atk": "scalar",
+		"max_atk": "scalar",
+		"max_atk_flb": "scalar",
+		"max_atk_ulb": "scalar",
+		"max_atk_xlb": "scalar",
+		"max_level": "scalar",
+		"release_date": "scalar",
+		"flb_date": "scalar",
+		"ulb_date": "scalar",
+		"transcendence_date": "scalar",
+		"wiki_en": "scalar",
+		"wiki_ja": "scalar",
+		"wiki_raw": "scalar",
+		"gamewith": "scalar",
+		"kamigame": "scalar",
+		"nicknames_en": "array",
+		"nicknames_jp": "array",
+		"promotions": "array"
+	},
+	"enums": {
+		"element": {
+			"Fire": 1,
+			"Water": 2,
+			"Earth": 3,
+			"Wind": 4,
+			"Light": 5,
+			"Dark": 6
+		},
+		"rarity": {
+			"R": 1,
+			"SR": 2,
+			"SSR": 3
+		},
+		"promotions": {
+			"Premium": 1,
+			"Classic": 2,
+			"ClassicII": 3,
+			"Flash": 4,
+			"Legend": 5,
+			"Valentine": 6,
+			"Summer": 7,
+			"Halloween": 8,
+			"Holiday": 9,
+			"Collab": 10,
+			"Formal": 11,
+			"ClassicIII": 12
+		}
+	},
+	"validators": {
+		"granblue_id": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "format",
+				"pattern": "^\\d{10}$",
+				"flags": ""
+			},
+			{
+				"kind": "uniqueness"
+			}
+		],
+		"name_en": [
+			{
+				"kind": "presence"
+			}
+		],
+		"rarity": [
+			{
+				"kind": "inclusion",
+				"in": [1, 2, 3]
+			}
+		],
+		"element": [
+			{
+				"kind": "inclusion",
+				"in": [1, 2, 3, 4, 5, 6]
+			}
+		],
+		"min_hp": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_hp": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_hp_flb": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_hp_ulb": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_hp_xlb": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"min_atk": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_atk": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_atk_flb": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_atk_ulb": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_atk_xlb": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_level": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 1
+			}
+		],
+		"summon_id": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		]
+	}
+}

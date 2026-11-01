@@ -17,7 +17,7 @@ export interface AdminSchema {
 	sorts: string[]
 	fields: string[]
 	writable: Record<string, string>
-	/** Value maps: numbers, or strings (e.g. job rows) */
+	/** `{ name: value }` per enum; values are integers, or names for string-valued enums */
 	enums: Record<string, Record<string, number | string>>
 }
 
@@ -75,10 +75,15 @@ export function describeContract(def: AnyResourceDef, api: AdminSchema) {
 				if (field.kind !== 'enum' && field.kind !== 'enumList') return []
 				const published = api.enums[field.key]
 				if (!published) return []
-				const allowed = new Set(Object.values(published).map(String))
+				// Integer options match the published values; string options (e.g. an
+				// event's kind, sent by name) match a published name or value
+				const values = new Set(Object.values(published).map(String))
+				const names = new Set(Object.keys(published))
+				const allowed = (value: number | string) =>
+					values.has(String(value)) || (typeof value === 'string' && names.has(value))
 				return field
 					.options()
-					.filter((option) => !allowed.has(String(option.value)))
+					.filter((option) => !allowed(option.value))
 					.map((option) => `${field.key}=${option.value}`)
 			})
 			expect(mismatched).toEqual([])
