@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { CrewInvitation } from '$lib/types/api/crew'
 	import { formatDate } from '$lib/utils/date'
+	import { isInvitationExpired } from '$lib/features/crew/memberList'
 	import { useSendInvitation } from '$lib/api/mutations/crew.mutations'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { toast } from 'svelte-sonner'
@@ -18,7 +19,7 @@
 
 	let { invitation, crewId }: Props = $props()
 
-	const expired = $derived(new Date(invitation.expiresAt) < new Date())
+	const expired = $derived(isInvitationExpired(invitation.expiresAt))
 	const username = $derived(invitation.user?.username ?? '')
 
 	const sendInvitationMutation = useSendInvitation()
