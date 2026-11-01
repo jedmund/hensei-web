@@ -15,7 +15,7 @@ import type { ResourceName } from '$lib/features/database/schema/names'
 export const OPEN_PARAM = 'open'
 
 /** Resources whose records can open in the panel: the registered ones, and those not yet migrated */
-export type PanelResource = ResourceName | 'summons' | 'jobs'
+export type PanelResource = ResourceName | 'summons'
 
 const STYLE_SUFFIX = '-style'
 

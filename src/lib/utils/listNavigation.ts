@@ -4,20 +4,19 @@
  * can return to the filtered list
  */
 
+import type { PanelResource } from '$lib/features/database/panel/panelUrl'
+
 const STORAGE_KEY = 'database_list_url'
 
 interface StoredListUrl {
 	url: string
-	resource: 'characters' | 'weapons' | 'summons' | 'jobs'
+	resource: PanelResource
 }
 
 /**
  * Store the current list URL before navigating to a detail page
  */
-export function storeListUrl(
-	url: string,
-	resource: 'characters' | 'weapons' | 'summons' | 'jobs'
-): void {
+export function storeListUrl(url: string, resource: PanelResource): void {
 	try {
 		const data: StoredListUrl = { url, resource }
 		sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data))

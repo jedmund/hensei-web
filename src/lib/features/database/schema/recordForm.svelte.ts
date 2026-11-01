@@ -56,13 +56,13 @@ export class RecordForm<Row = unknown, Full = unknown> {
 	readonly #timers: Record<string, ReturnType<typeof setTimeout>> = {}
 	readonly #checks: Record<string, Promise<void>> = {}
 
-	/** Edits `record`, or creates a record when it's null */
-	constructor(def: ResourceDef<Row, Full>, record: Full | null) {
+	/** Edits `record`, or creates a record when it's null (starting from `prefill`) */
+	constructor(def: ResourceDef<Row, Full>, record: Full | null, prefill: Values = {}) {
 		this.#def = def
 		this.#record = record
 		this.mode = record === null ? 'create' : 'edit'
 		this.#schema = buildZod(def, this.mode)
-		this.values = record === null ? initialValues(def) : fromRecord(def, record)
+		this.values = record === null ? initialValues(def, prefill) : fromRecord(def, record)
 	}
 
 	/** Sets a field's value and applies the derived values that follow from it */
@@ -199,7 +199,8 @@ export class RecordForm<Row = unknown, Full = unknown> {
 /** The edit form for a record, values loaded and derived; with no record, the create form */
 export function createRecordForm<Row, Full>(
 	def: ResourceDef<Row, Full>,
-	record: Full | null = null
+	record: Full | null = null,
+	prefill: Values = {}
 ): RecordForm<Row, Full> {
-	return new RecordForm(def, record)
+	return new RecordForm(def, record, prefill)
 }

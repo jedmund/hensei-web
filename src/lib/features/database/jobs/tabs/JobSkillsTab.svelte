@@ -11,16 +11,18 @@
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import SkillRow from './SkillRow.svelte'
 
-	interface Props {
-		job: Job
-		canEdit?: boolean
-	}
+	import type { RecordTabProps } from '$lib/features/database/schema/types'
 
-	let { job, canEdit = false }: Props = $props()
+	let { record: job, canEdit }: RecordTabProps<Job> = $props()
 
 	const queryClient = useQueryClient()
 
-	const skillsQuery = createQuery(() => jobQueries.skillsByJob(job.granblueId))
+	// By id: a Class I job and its Class II successor share a granblueId. Refetched
+	// on each visit, as skills are saved on their own pages
+	const skillsQuery = createQuery(() => ({
+		...jobQueries.skillsByJob(job.id),
+		refetchOnMount: 'always' as const
+	}))
 
 	// Delete dialog state
 	let deleteDialogOpen = $state(false)
@@ -72,8 +74,8 @@
 
 		isDeleting = true
 		try {
-			await jobAdapter.deleteSkill(job.granblueId, skillToDelete.id)
-			await queryClient.invalidateQueries({ queryKey: jobKeys.skills(job.granblueId) })
+			await jobAdapter.deleteSkill(skillToDelete.id)
+			await queryClient.invalidateQueries({ queryKey: jobKeys.skills(job.id) })
 			deleteDialogOpen = false
 			skillToDelete = undefined
 		} catch (error) {
@@ -97,7 +99,7 @@
 					variant="secondary"
 					size="small"
 					fullWidth
-					href={localizeHref(`/database/job-skills/new?job=${job.granblueId}`)}>Add Skill</Button
+					href={localizeHref(`/database/job-skills/new?job=${job.id}`)}>Add Skill</Button
 				>
 			{/if}
 		</div>
@@ -121,7 +123,7 @@
 					variant="secondary"
 					size="small"
 					fullWidth
-					href={localizeHref(`/database/job-skills/new?job=${job.granblueId}`)}>Add Skill</Button
+					href={localizeHref(`/database/job-skills/new?job=${job.id}`)}>Add Skill</Button
 				>
 			</div>
 		{/if}

@@ -11,10 +11,7 @@ const RECORD_KEYS = [
 	'record',
 	'character',
 	'summon',
-	'job',
 	'bullet',
-	'skill',
-	'accessory',
 	'roleRecord',
 	'series',
 	'event'

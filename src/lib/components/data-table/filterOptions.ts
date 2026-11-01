@@ -16,6 +16,8 @@ import {
 } from '$lib/utils/proficiency'
 import { RARITY_LABELS, getRarityImage } from '$lib/utils/rarity'
 import { localizedName } from '$lib/utils/locale'
+import { jobOptionLabel, sortJobs } from '$lib/utils/jobUtils'
+import type { Job } from '$lib/types/api/entities'
 import type { FilterOption } from './filters'
 
 /** Facet and filter value for records without a value (API: NULL) */
@@ -70,4 +72,9 @@ export function seriesFilterOptions(
 		.map((s) => ({ value: s.slug || s.id, label: () => localizedName(s.name), facetKey: s.id }))
 	if (noneLabel) options.push({ value: NONE_VALUE, label: noneLabel })
 	return options
+}
+
+/** Jobs in tier order, by id (the API filters and counts by job id) */
+export function jobFilterOptions(jobs: Job[] | undefined): FilterOption[] {
+	return sortJobs(jobs ?? []).map((job) => ({ value: job.id, label: () => jobOptionLabel(job) }))
 }

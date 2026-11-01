@@ -1,3 +1,9 @@
+<script lang="ts" module>
+	/** What a detail header shows: picks the placeholder, the image size and the labels under the name */
+	export type DetailEntityType =
+		'character' | 'summon' | 'weapon' | 'job' | 'jobSkill' | 'raid' | 'accessory'
+</script>
+
 <script lang="ts">
 	// Components
 	import * as m from '$lib/paraglide/messages'
@@ -11,7 +17,7 @@
 
 	// Props
 	interface Props {
-		type: 'character' | 'summon' | 'weapon' | 'job' | 'raid' | 'accessory'
+		type: DetailEntityType
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic entity shape from API
 		item: any // The character/summon/weapon/job object
 		image: string
@@ -52,7 +58,12 @@
 
 <header class="container">
 	<div class="left">
-		<div class="image" class:job={type === 'job'} class:accessory={type === 'accessory'}>
+		<div
+			class="image"
+			class:job={type === 'job'}
+			class:skill={type === 'jobSkill'}
+			class:accessory={type === 'accessory'}
+		>
 			<!-- A fresh element per image, so the fallback steps start over (e.g. j/k in the panel) -->
 			{#key image}
 				<img
@@ -70,7 +81,7 @@
 						}
 						img.dataset.fallback = 'placeholder'
 						const placeholder =
-							type === 'job'
+							type === 'job' || type === 'jobSkill'
 								? `${getBasePath()}/app/placeholders/placeholder-job.png`
 								: type === 'raid'
 									? `${getBasePath()}/app/placeholders/placeholder-raid-thumbnail.png`
@@ -167,6 +178,11 @@
 
 			&.job img {
 				width: 32px;
+				height: auto;
+			}
+
+			&.skill img {
+				width: 48px;
 				height: auto;
 			}
 

@@ -95,6 +95,8 @@
 			</AssociatedEntityLink>
 		{:else if field.kind === 'reference' && field.resource === 'weapon'}
 			<AssociatedEntityLink type="weapon" entity={ref} />
+		{:else if field.kind === 'reference' && field.resource === 'job'}
+			<AssociatedEntityLink type="job" entity={ref} />
 		{/if}
 	</DetailItem>
 {/if}

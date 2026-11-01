@@ -1,0 +1,163 @@
+{
+	"search": ["name_en", "name_jp", "slug"],
+	"filters": {
+		"job": {
+			"type": "uuid",
+			"facet": true,
+			"list": true,
+			"range": false
+		},
+		"color": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"created_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		},
+		"updated_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		},
+		"main": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"sub": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"emp": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"base": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		}
+	},
+	"flags": [],
+	"sorts": ["name_en", "name_jp", "slug", "color", "order", "updated_at", "created_at"],
+	"default_sort": ["name_en"],
+	"fields": [
+		"id",
+		"name_en",
+		"name_jp",
+		"slug",
+		"color",
+		"main",
+		"sub",
+		"emp",
+		"base",
+		"order",
+		"image_id",
+		"action_id",
+		"job_id",
+		"created_at",
+		"updated_at",
+		"job"
+	],
+	"default_fields": [
+		"id",
+		"name_en",
+		"name_jp",
+		"slug",
+		"color",
+		"main",
+		"sub",
+		"emp",
+		"base",
+		"order",
+		"job",
+		"updated_at"
+	],
+	"writable": {
+		"job_id": "scalar",
+		"name_en": "scalar",
+		"name_jp": "scalar",
+		"slug": "scalar",
+		"color": "scalar",
+		"main": "scalar",
+		"sub": "scalar",
+		"emp": "scalar",
+		"base": "scalar",
+		"order": "scalar",
+		"image_id": "scalar",
+		"action_id": "scalar"
+	},
+	"enums": {
+		"color": {
+			"Yellow": 0,
+			"Blue": 1,
+			"Red": 2,
+			"Green": 3,
+			"Purple": 4
+		}
+	},
+	"validators": {
+		"job": [
+			{
+				"kind": "presence"
+			}
+		],
+		"name_en": [
+			{
+				"kind": "presence"
+			}
+		],
+		"name_jp": [
+			{
+				"kind": "presence"
+			}
+		],
+		"slug": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "format",
+				"pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+				"flags": ""
+			},
+			{
+				"kind": "uniqueness"
+			}
+		],
+		"color": [
+			{
+				"kind": "inclusion",
+				"in": [0, 1, 2, 3, 4]
+			}
+		],
+		"order": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"action_id": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than": 0,
+				"allow_nil": true
+			}
+		]
+	}
+}

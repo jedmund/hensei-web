@@ -1,0 +1,46 @@
+{
+	"shield": {
+		"id": "a-obelisk",
+		"info": [
+			"Metadata",
+			"Name (EN)",
+			"Obelisk",
+			"Name (JP)",
+			"オベリスク",
+			"Rarity",
+			"SSR",
+			"Granblue ID",
+			"4013",
+			"Classification",
+			"Accessory Type",
+			"Shield",
+			"Release Date",
+			"2022-01-25",
+			"Associated Job",
+			"Job",
+			"Paladin"
+		]
+	},
+	"manatura": {
+		"id": "a-schalk",
+		"info": [
+			"Metadata",
+			"Name (EN)",
+			"Schalk",
+			"Name (JP)",
+			"シャルク",
+			"Rarity",
+			"R",
+			"Granblue ID",
+			"2",
+			"Classification",
+			"Accessory Type",
+			"Manatura",
+			"Release Date",
+			"—",
+			"Associated Job",
+			"Job",
+			"Wizard Origin"
+		]
+	}
+}

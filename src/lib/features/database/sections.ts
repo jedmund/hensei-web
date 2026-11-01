@@ -11,6 +11,9 @@
 import { m } from '$lib/paraglide/messages'
 import { ADMIN_ROLE, CURATOR_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
 import { charactersSection } from './characters/section'
+import { jobAccessoriesSection } from './job-accessories/section'
+import { jobSkillsSection } from './job-skills/section'
+import { jobsSection } from './jobs/section'
 import { weaponsSection } from './weapons/section'
 
 export type SectionGroupId = 'catalogue' | 'battles' | 'site' | 'admin'
@@ -30,6 +33,8 @@ export interface DatabaseSection {
 	parent?: string
 	/** `?view=` value on the parent's list page */
 	view?: string
+	/** The `?view=` tab on the parent's list this section used to be; that URL redirects here */
+	legacyView?: string
 	description?: () => string
 	/** Other route prefixes that belong to this section (detail pages etc.) */
 	matches?: string[]
@@ -54,6 +59,10 @@ export interface ResourceSection {
 	entity?: () => string
 	/** "New" menu items; an href without a leading slash is relative to the resource's path */
 	actions?: SectionAction[][]
+	/** Nests the resource under another section, which lends it its "New" menu */
+	parent?: string
+	/** The `?view=` tab on the parent's list the resource used to be; that URL redirects here */
+	legacyView?: string
 	/** Sub-sections that are `?view=` tabs on the resource's list */
 	views?: Array<Pick<DatabaseSection, 'id' | 'label' | 'view' | 'matches'>>
 }
@@ -107,38 +116,9 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 			]
 		]
 	},
-	{
-		id: 'jobs',
-		label: () => m.nav_jobs(),
-		path: '/database/jobs',
-		group: 'catalogue',
-		entity: () => m.type_job(),
-		actions: [
-			[
-				{ label: () => m.nav_new_job(), href: '/database/jobs/new' },
-				{ label: () => m.nav_new_job_skill(), href: '/database/job-skills/new' },
-				{ label: () => m.nav_new_job_accessory(), href: '/database/job-accessories/new' }
-			]
-		]
-	},
-	{
-		id: 'job-skills',
-		label: () => m.db_nav_skills(),
-		path: '/database/jobs',
-		view: 'skills',
-		group: 'catalogue',
-		parent: 'jobs',
-		matches: ['/database/job-skills']
-	},
-	{
-		id: 'job-accessories',
-		label: () => m.db_nav_accessories(),
-		path: '/database/jobs',
-		view: 'accessories',
-		group: 'catalogue',
-		parent: 'jobs',
-		matches: ['/database/job-accessories']
-	},
+	...resourceSections('jobs', jobsSection),
+	...resourceSections('job-skills', jobSkillsSection),
+	...resourceSections('job-accessories', jobAccessoriesSection),
 	{
 		id: 'bullets',
 		label: () => m.nav_bullets(),
@@ -224,6 +204,12 @@ export function resourceSections(name: string, section: ResourceSection): Databa
 		},
 		...views.map((view) => ({ ...view, path, group: section.group, parent: name }))
 	]
+}
+
+/** The section a parent list's old `?view=` tab moved to, if any (its URL redirects there) */
+export function movedView(parent: string, view: string | null): DatabaseSection | undefined {
+	if (!view) return undefined
+	return DATABASE_SECTIONS.find((s) => s.parent === parent && s.legacyView === view)
 }
 
 export function sectionHref(section: DatabaseSection): string {

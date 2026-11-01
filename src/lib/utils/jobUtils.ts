@@ -135,6 +135,18 @@ export function getJobTierOrder(row: string | number): number {
 	return tierOrder[rowStr] || 99
 }
 
+/** Jobs in tier order (Class I first, Origin last), then their order within the row */
+export function sortJobs<T extends Pick<Job, 'row' | 'order'>>(jobs: readonly T[]): T[] {
+	return [...jobs].sort(
+		(a, b) => getJobTierOrder(a.row) - getJobTierOrder(b.row) || (a.order ?? 0) - (b.order ?? 0)
+	)
+}
+
+/** A job's name with its tier, e.g. "Warrior (Class II)": Class I and II jobs share a Granblue ID */
+export function jobOptionLabel(job: Pick<Job, 'name' | 'row'>): string {
+	return `${localizedName(job.name)} (${getJobTierName(job.row)})`
+}
+
 /**
  * Check if a job supports accessories
  */

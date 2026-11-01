@@ -3,7 +3,9 @@ import { CURATOR_ROLE } from '$lib/auth/roles'
 import { weaponsResource } from './weapons/resource'
 import {
 	DATABASE_SECTIONS,
+	childrenOf,
 	groupedSections,
+	movedView,
 	resourceSections,
 	rootOf,
 	sectionById,
@@ -22,7 +24,6 @@ describe('sectionForUrl', () => {
 	it('selects sub-sections by ?view=', () => {
 		expect(at('/database/weapons?view=series')).toBe('weapon-series')
 		expect(at('/database/weapons?view=skills')).toBe('weapon-skills')
-		expect(at('/database/jobs?view=skills')).toBe('job-skills')
 		expect(at('/database/raids?view=groups')).toBe('raid-groups')
 	})
 
@@ -31,6 +32,8 @@ describe('sectionForUrl', () => {
 		expect(at('/database/series/weapons/dark-opus')).toBe('weapon-series')
 		expect(at('/database/weapon-skills/atk')).toBe('weapon-skills')
 		expect(at('/database/job-accessories/123')).toBe('job-accessories')
+		expect(at('/database/job-skills')).toBe('job-skills')
+		expect(at('/database/jobs/abc/edit')).toBe('jobs')
 		expect(at('/database/raid-groups/abc/edit')).toBe('raid-groups')
 	})
 
@@ -129,5 +132,30 @@ describe('resourceSections', () => {
 				matches: ['/database/weapon-skills']
 			}
 		])
+	})
+
+	it('nests job skills and accessories under Jobs, at their own paths', () => {
+		expect(childrenOf('jobs', 7).map((s) => [s.id, s.path, s.view])).toEqual([
+			['job-skills', '/database/job-skills', undefined],
+			['job-accessories', '/database/job-accessories', undefined],
+			['bullets', '/database/bullets', undefined]
+		])
+		// They share the Jobs "New" menu
+		expect(rootOf(sectionById('job-skills')!)?.id).toBe('jobs')
+		expect(sectionById('jobs')!.actions![0]!.map((a) => a.href)).toEqual([
+			'/database/jobs/new',
+			'/database/job-skills/new',
+			'/database/job-accessories/new'
+		])
+	})
+})
+
+describe('movedView', () => {
+	it("finds the section a list's old ?view= tab became", () => {
+		expect(movedView('jobs', 'skills')?.path).toBe('/database/job-skills')
+		expect(movedView('jobs', 'accessories')?.path).toBe('/database/job-accessories')
+		expect(movedView('jobs', null)).toBeUndefined()
+		// Tabs that are still tabs stay put
+		expect(movedView('weapons', 'series')).toBeUndefined()
 	})
 })

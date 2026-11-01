@@ -64,6 +64,12 @@ describe('generic database routes', () => {
 		expect(routeFor('/database/characters/3040001000')).toBe(`${generic}/[id]`)
 		expect(routeFor('/database/characters/3040001000/edit')).toBe(`${generic}/[id]/edit`)
 		expect(routeFor('/database/characters/new')).toBe(`${generic}/new`)
+		for (const name of ['jobs', 'job-skills', 'job-accessories']) {
+			expect(routeFor(`/database/${name}`)).toBe(generic)
+			expect(routeFor(`/database/${name}/abc`)).toBe(`${generic}/[id]`)
+			expect(routeFor(`/database/${name}/abc/edit`)).toBe(`${generic}/[id]/edit`)
+			expect(routeFor(`/database/${name}/new`)).toBe(`${generic}/new`)
+		}
 	})
 
 	it('leave bespoke routes in charge', () => {
@@ -79,6 +85,7 @@ describe('generic database routes', () => {
 		expect(routeFor('/database/summons/2040001000')).toBe('/(app)/database/summons/[granblueId]')
 		expect(routeFor('/database/series/weapons/new')).toBe('/(app)/database/series/weapons/new')
 		expect(routeFor('/database/events')).toBe('/(app)/database/events')
+		expect(routeFor('/database/bullets/1')).toBe('/(app)/database/bullets/[granblueId]')
 	})
 
 	it('match nothing for an unregistered resource', () => {

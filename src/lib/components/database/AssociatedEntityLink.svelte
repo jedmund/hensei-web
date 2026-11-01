@@ -10,13 +10,15 @@
 
 	interface Props {
 		type: EntityType
-		entity: { granblueId: string; name: { en: string; ja: string } }
+		entity: { id?: string; granblueId: string; name: { en: string; ja: string } }
 		children?: Snippet
 	}
 
 	let { type, entity, children }: Props = $props()
 
-	const href = $derived(localizeHref(`/database/${type}s/${entity.granblueId}`))
+	// A Class I job and its Class II successor share a granblueId, so jobs go by id
+	const routeId = $derived(type === 'job' ? (entity.id ?? entity.granblueId) : entity.granblueId)
+	const href = $derived(localizeHref(`/database/${type}s/${routeId}`))
 
 	function getImageUrl(): string {
 		switch (type) {

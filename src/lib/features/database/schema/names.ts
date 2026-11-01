@@ -4,7 +4,13 @@
  * mustn't import the definitions (zod, field options). The registry's type
  * keeps this list and the definitions in step.
  */
-export const RESOURCE_NAMES = ['weapons', 'characters'] as const
+export const RESOURCE_NAMES = [
+	'weapons',
+	'characters',
+	'jobs',
+	'job-skills',
+	'job-accessories'
+] as const
 
 export type ResourceName = (typeof RESOURCE_NAMES)[number]
 

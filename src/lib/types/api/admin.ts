@@ -27,7 +27,10 @@
  * - Unknown filter, sort, field or facet → 422 { error }.
  */
 
-export type AdminResource = 'weapons' | 'characters' | 'summons'
+import type { ResourceName } from '$lib/features/database/schema/names'
+
+/** Registered resources' route names, and summons (still on its own list) */
+export type AdminResource = ResourceName | 'summons'
 
 export type AdminFilterValue = string[] | boolean | { gte?: string; lte?: string }
 
@@ -131,5 +134,73 @@ export interface AdminCharacterRow {
 	/** In series order */
 	series?: AdminCharacterSeriesRef[]
 	skillCount?: number
+	createdAt?: string
+}
+
+/** Default `fields` of an admin job row, camelCased. Class I and II jobs share a granblueId */
+export interface AdminJobRow {
+	id: string
+	granblueId: string
+	nameEn: string | null
+	nameJp: string | null
+	/** 1-5, ex1, ex2 or o1 */
+	row: string
+	order: number | null
+	proficiency1: number | null
+	proficiency2: number | null
+	updatedAt: string
+	// Not in the default list: request via `fields`
+	masterLevel?: boolean
+	ultimateMastery?: boolean
+	auxWeapon?: boolean
+	accessory?: boolean
+	accessoryType?: number
+	baseJobId?: string | null
+	skillCount?: number
+	createdAt?: string
+}
+
+/** A job as the admin job skill and accessory lists send it */
+export interface AdminJobRef {
+	id: string
+	granblueId: string
+	nameEn: string | null
+	nameJp: string | null
+}
+
+/** Default `fields` of an admin job skill row, camelCased */
+export interface AdminJobSkillRow {
+	id: string
+	nameEn: string | null
+	nameJp: string | null
+	slug: string
+	color: number
+	main: boolean
+	sub: boolean
+	emp: boolean
+	base: boolean
+	order: number | null
+	job: AdminJobRef | null
+	updatedAt: string
+	// Not in the default list: request via `fields`
+	imageId?: string | null
+	actionId?: number | null
+	jobId?: string
+	createdAt?: string
+}
+
+/** Default `fields` of an admin job accessory row, camelCased */
+export interface AdminJobAccessoryRow {
+	id: string
+	granblueId: string
+	nameEn: string | null
+	nameJp: string | null
+	accessoryType: number
+	rarity: number | null
+	job: AdminJobRef | null
+	releaseDate: string | null
+	updatedAt: string
+	// Not in the default list: request via `fields`
+	jobId?: string
 	createdAt?: string
 }

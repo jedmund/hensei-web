@@ -1,10 +1,12 @@
 <script lang="ts">
 	// A reference's input, by the resource it points at: a typeahead for
-	// characters and weapons, a select for weapon series, and a select of the
-	// chosen series' variants (no row when it has none)
+	// characters and weapons, a select for weapon series and jobs, and a select
+	// of the chosen series' variants (no row when it has none)
 	import { createQuery } from '@tanstack/svelte-query'
 	import * as m from '$lib/paraglide/messages'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
+	import { jobQueries } from '$lib/api/queries/job.queries'
+	import { jobOptionLabel, sortJobs } from '$lib/utils/jobUtils'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import CharacterTypeahead from '$lib/components/ui/CharacterTypeahead.svelte'
 	import WeaponTypeahead from '$lib/components/ui/WeaponTypeahead.svelte'
@@ -29,6 +31,8 @@
 		enabled: resource === 'weaponSeries'
 	}))
 
+	const jobsQuery = createQuery(() => ({ ...jobQueries.list(), enabled: resource === 'job' }))
+
 	// A variant belongs to the series picked on the same form
 	const seriesId = $derived((form.values.series as string | null) ?? '')
 	const seriesQuery = createQuery(() => ({
@@ -43,6 +47,11 @@
 			const series = seriesListQuery.data
 			if (!series) return []
 			return [none, ...series.map((s) => ({ value: s.id, label: localizedName(s.name) }))]
+		}
+		if (resource === 'job') {
+			const jobs = jobsQuery.data
+			if (!jobs) return []
+			return [none, ...sortJobs(jobs).map((j) => ({ value: j.id, label: jobOptionLabel(j) }))]
 		}
 		if (resource === 'weaponSeriesVariant') {
 			const variants = seriesQuery.data?.variants ?? []
