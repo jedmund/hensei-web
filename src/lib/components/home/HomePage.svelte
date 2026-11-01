@@ -17,11 +17,9 @@
 	import NewBattlesSection from '$lib/components/home/NewBattlesSection.svelte'
 	import HomeCard from '$lib/components/home/HomeCard.svelte'
 	import { homeQueries } from '$lib/api/queries/home.queries'
-	import { exploreQuery } from '$lib/utils/home'
+	import { eventThumbnailUrl, exploreQuery } from '$lib/utils/home'
 	import { GALLERY_PATH, galleryPath } from '$lib/utils/browseRoutes'
 	import { localizedName } from '$lib/utils/locale'
-	import { getHostedImageUrl } from '$lib/utils/images/core'
-	import { getRaidImage } from '$lib/utils/images/raids'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import * as m from '$lib/paraglide/messages'
 
@@ -58,12 +56,11 @@
 	)
 	const switcherItems = $derived(
 		events.map(({ entry }) => {
-			const slug = entry.raids[0]?.raid.slug ?? entry.event.raids[0]?.slug
+			const slug = entry.raids[0]?.raid.slug
 			return {
 				id: entry.event.id,
 				label: localizedName(entry.event.name),
-				imageUrl:
-					getHostedImageUrl(entry.event.imageUrl) ?? (slug ? getRaidImage(slug, 'thumbnail') : null)
+				imageUrl: eventThumbnailUrl(entry.event, slug)
 			}
 		})
 	)

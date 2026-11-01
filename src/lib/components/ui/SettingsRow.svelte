@@ -55,7 +55,7 @@
 			align-items: center;
 			justify-content: center;
 			flex-shrink: 0;
-			width: spacing.$unit-4x;
+			min-width: spacing.$unit-4x;
 			color: var(--text-primary);
 		}
 

@@ -18,16 +18,17 @@
 
 	interface Props {
 		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
+		role?: number | null | undefined
 	}
 
-	let { userElement }: Props = $props()
+	let { userElement, role: accountRole }: Props = $props()
 
 	let sheetOpen = $state(false)
 	afterNavigate(() => (sheetOpen = false))
 
 	const galleryHref = $derived(localizeHref('/'))
 	const databaseHref = $derived(localizeHref('/database'))
-	const role = $derived((page.data as { role?: number }).role ?? 0)
+	const role = $derived(accountRole ?? 0)
 
 	const current = $derived(sectionForUrl(page.url))
 	const root = $derived(rootOf(current))

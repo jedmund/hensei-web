@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { CURATOR_ROLE } from '$lib/auth/roles'
 import { groupedSections, rootOf, sectionForUrl } from './sections'
 
 const at = (path: string) => sectionForUrl(new URL(path, 'http://localhost'))?.id ?? null
@@ -42,5 +43,10 @@ describe('groupedSections', () => {
 		const ids = groupedSections(7).flatMap((g) => g.sections.map((s) => s.id))
 		expect(ids).not.toContain('users')
 		expect(ids).toContain('weapons')
+	})
+
+	it('shows curators only Events', () => {
+		const ids = groupedSections(CURATOR_ROLE).flatMap((g) => g.sections.map((s) => s.id))
+		expect(ids).toEqual(['events'])
 	})
 })

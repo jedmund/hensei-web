@@ -1,4 +1,5 @@
 import { redirect } from '@sveltejs/kit'
+import { isCurator } from '$lib/auth/roles'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -8,7 +9,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	}
 
 	const role = locals.session.account?.role ?? 0
-	if (role < 7) {
+	if (!isCurator(role)) {
 		throw redirect(302, '/')
 	}
 
