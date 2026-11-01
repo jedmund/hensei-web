@@ -136,6 +136,10 @@ describe('events resource: payload', () => {
 		expect(payload.event_number).toBeNull()
 	})
 
+	it('refreshes the event lists and Home after a save, as the old pages did', () => {
+		expect(def.save?.invalidates?.()).toEqual([['events', 'list'], ['home']])
+	})
+
 	it('starts a new event as a story event with nothing linked', () => {
 		const values = initialValues(def)
 		expect(values).toMatchObject({ kind: 'story_event', raids: [] })

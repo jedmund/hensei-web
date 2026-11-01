@@ -392,6 +392,11 @@ export interface SaveDef<Full> {
 	asyncValidate?: Record<string, (value: unknown, values: Values) => Promise<string | null>>
 	/** Runs after a create, without holding up the form (e.g. queueing image downloads) */
 	afterCreate?: (record: Full) => Promise<unknown>
+	/**
+	 * Other queries a save makes stale, beyond the record and the admin list
+	 * (e.g. Home, which shows events)
+	 */
+	invalidates?: () => readonly (readonly unknown[])[]
 }
 
 export interface RecordDef<Full> {

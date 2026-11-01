@@ -7,7 +7,8 @@
  */
 import * as m from '$lib/paraglide/messages'
 import { eventAdapter } from '$lib/api/adapters/event.adapter'
-import { eventQueries } from '$lib/api/queries/event.queries'
+import { eventKeys, eventQueries } from '$lib/api/queries/event.queries'
+import { homeKeys } from '$lib/api/queries/home.queries'
 import { elementFilterOptions } from '$lib/components/data-table/filterOptions'
 import { eventsSection } from '$lib/features/database/events/section'
 import EventBannerTab from '$lib/features/database/events/tabs/EventBannerTab.svelte'
@@ -227,7 +228,9 @@ export const eventsResource = defineResource<AdminEventRow, GameEvent>({
 	save: {
 		// Payload keys are the strong params by construction (see contract.test.ts)
 		update: (e, payload) => eventAdapter.updateEvent(e.id, payload as Partial<EventPayload>),
-		create: (payload) => eventAdapter.createEvent(payload as unknown as EventPayload)
+		create: (payload) => eventAdapter.createEvent(payload as unknown as EventPayload),
+		// The schedule's lists and Home show events too
+		invalidates: () => [eventKeys.lists(), homeKeys.all]
 	},
 
 	section: eventsSection,
