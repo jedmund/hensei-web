@@ -2,6 +2,7 @@
  * Every resource with a schema definition, by route segment. The generic
  * routes (GBF-142 phase 3) match only these names.
  */
+import { artifactSkillsResource } from '$lib/features/database/artifact-skills/resource'
 import { awakeningsResource } from '$lib/features/database/awakenings/resource'
 import { characterSeriesResource } from '$lib/features/database/character-series/resource'
 import { charactersResource } from '$lib/features/database/characters/resource'
@@ -34,7 +35,8 @@ export const RESOURCES: Record<ResourceName, AnyResourceDef> = {
 	awakenings: awakeningsResource,
 	jobs: jobsResource,
 	'job-skills': jobSkillsResource,
-	'job-accessories': jobAccessoriesResource
+	'job-accessories': jobAccessoriesResource,
+	'artifact-skills': artifactSkillsResource
 }
 
 export function resourceDef(name: string): AnyResourceDef | undefined {

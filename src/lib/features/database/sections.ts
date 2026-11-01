@@ -10,6 +10,7 @@
  */
 import { m } from '$lib/paraglide/messages'
 import { ADMIN_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
+import { artifactSkillsSection } from './artifact-skills/section'
 import { awakeningsSection } from './awakenings/section'
 import { characterSeriesSection } from './character-series/section'
 import { charactersSection } from './characters/section'
@@ -94,13 +95,7 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 	// Catalogue
 	...resourceSections('characters', charactersSection),
 	...resourceSections('character-series', characterSeriesSection),
-	{
-		id: 'artifact-skills',
-		label: () => m.nav_artifact_skills(),
-		path: '/database/artifact-skills',
-		group: 'catalogue',
-		parent: 'characters'
-	},
+	...resourceSections('artifact-skills', artifactSkillsSection),
 	{
 		id: 'roles',
 		label: () => m.nav_roles(),
