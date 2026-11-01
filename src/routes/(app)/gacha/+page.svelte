@@ -247,8 +247,6 @@
 	@use '$src/themes/colors' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
-	@use '$src/themes/effects' as *;
-	@use '$src/themes/mixins' as *;
 
 	.gacha-page {
 		max-width: var(--main-max-width);
@@ -259,15 +257,7 @@
 	}
 
 	.card {
-		background: var(--card-bg);
-		color: var(--text-primary);
-		border: $card-border;
-		border-radius: $page-corner;
-		box-shadow: $page-elevation;
-		padding: $unit-3x;
-		display: flex;
-		flex-direction: column;
-		gap: $unit-3x;
+		@include page-card;
 	}
 
 	.card-head {

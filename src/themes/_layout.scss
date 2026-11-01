@@ -1,4 +1,5 @@
 @use 'spacing';
+@use 'effects';
 
 // Navigation and header heights
 $nav-height: 81px; // Matches actual navigation height with avatar
@@ -18,3 +19,16 @@ $item-corner-small: spacing.$unit-half;
 
 $bubble-menu-corner: spacing.$unit;
 $bubble-menu-item-corner: spacing.$unit-half * 1.5;
+
+// A card on the page's background, stacking its sections
+@mixin page-card {
+	background: var(--card-bg);
+	color: var(--text-primary);
+	border: effects.$card-border;
+	border-radius: $page-corner;
+	box-shadow: effects.$page-elevation;
+	padding: spacing.$unit-3x;
+	display: flex;
+	flex-direction: column;
+	gap: spacing.$unit-3x;
+}
