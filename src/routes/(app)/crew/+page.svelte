@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query'
+	import { page } from '$app/state'
+	import { replaceState } from '$app/navigation'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { gwAdapter } from '$lib/api/adapters/gw.adapter'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
@@ -53,6 +55,50 @@
 	// Modal state
 	let createModalOpen = $state(false)
 	let settingsModalOpen = $state(false)
+
+	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
+	const userElement = $derived(data.currentUser?.element as ElementName | undefined)
+
+	// `?settings` (what /crew/settings redirects to) opens the settings dialog
+	// once the crew has loaded. The URL carries the flag while it's open, so
+	// it can be shared or reloaded.
+	const SETTINGS_PARAM = 'settings'
+
+	function setSettingsParam(on: boolean) {
+		// The address bar, not page.url, which shallow replaceState doesn't update
+		const url = new URL(window.location.href)
+		if (url.searchParams.has(SETTINGS_PARAM) === on) return
+		if (on) url.searchParams.set(SETTINGS_PARAM, '')
+		else url.searchParams.delete(SETTINGS_PARAM)
+		replaceState(url.pathname + url.search.replace(/=(?=&|$)/g, ''), page.state)
+	}
+
+	// Not reactive: only used to spot the open → closed transition
+	let settingsWasOpen = false
+
+	$effect(() => {
+		const wantsSettings = page.url.searchParams.has(SETTINGS_PARAM)
+		const isOpen = settingsModalOpen
+		if (crewQuery.isLoading) return
+
+		if (isOpen) {
+			settingsWasOpen = true
+		} else if (settingsWasOpen) {
+			// Just closed, however it was closed
+			settingsWasOpen = false
+			setSettingsParam(false)
+		} else if (wantsSettings) {
+			// Wait for the layout to copy the crew into crewStore (a tick after
+			// the query) before opening; drop the flag if there's no crew
+			if (!crewQuery.data) setSettingsParam(false)
+			else if (crewStore.isInCrew) settingsModalOpen = true
+		}
+	})
+
+	function openSettings() {
+		settingsModalOpen = true
+		setSettingsParam(true)
+	}
 </script>
 
 <svelte:head>
@@ -85,11 +131,9 @@
 					{#if crewStore.crew?.granblueCrewId}
 						<CrewGameLink granblueCrewId={crewStore.crew.granblueCrewId} />
 					{/if}
-					{#if crewStore.isOfficer}
-						<Button variant="secondary" size="small" onclick={() => (settingsModalOpen = true)}
-							>{m.crew_settings_title()}</Button
-						>
-					{/if}
+					<Button variant="secondary" size="small" onclick={openSettings}
+						>{m.crew_settings_title()}</Button
+					>
 				{/snippet}
 			</CrewHeader>
 
@@ -108,7 +152,7 @@
 
 <CreateCrewDialog bind:open={createModalOpen} />
 
-<CrewSettingsDialog bind:open={settingsModalOpen} />
+<CrewSettingsDialog bind:open={settingsModalOpen} element={userElement} />
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
