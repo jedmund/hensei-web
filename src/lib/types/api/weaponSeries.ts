@@ -70,22 +70,6 @@ export interface WeaponSeries {
 }
 
 /**
- * Input type for weapon series form (client-side)
- */
-export interface WeaponSeriesInput {
-	name_en: string
-	name_jp: string
-	slug: string
-	order: number
-	extra: boolean
-	element_changeable: boolean
-	has_weapon_keys: boolean
-	has_awakening: boolean
-	augment_type: AugmentType
-	num_weapon_keys: number | null
-}
-
-/**
  * Payload for creating a new weapon series (editor only)
  */
 export interface CreateWeaponSeriesPayload {

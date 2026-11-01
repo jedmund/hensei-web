@@ -3,7 +3,9 @@
  * named by a field's `render.input`.
  */
 import type { Component } from 'svelte'
+import AwakeningImageInput from '$lib/features/database/awakenings/inputs/AwakeningImageInput.svelte'
 import CharacterUncapInput from '$lib/features/database/characters/inputs/CharacterUncapInput.svelte'
+import WeaponSeriesVariantsInput from '$lib/features/database/weapon-series/inputs/WeaponSeriesVariantsInput.svelte'
 import ElementVariantIdsInput from '$lib/features/database/weapons/inputs/ElementVariantIdsInput.svelte'
 import WeaponAwakeningsInput from '$lib/features/database/weapons/inputs/WeaponAwakeningsInput.svelte'
 import WeaponUncapInput from '$lib/features/database/weapons/inputs/WeaponUncapInput.svelte'
@@ -14,5 +16,7 @@ export const INPUT_COMPONENTS: Record<InputName, Component<InputProps>> = {
 	uncapIndicator: WeaponUncapInput,
 	weaponAwakenings: WeaponAwakeningsInput,
 	elementVariantIds: ElementVariantIdsInput,
-	characterUncap: CharacterUncapInput
+	characterUncap: CharacterUncapInput,
+	weaponSeriesVariants: WeaponSeriesVariantsInput,
+	awakeningImage: AwakeningImageInput
 }

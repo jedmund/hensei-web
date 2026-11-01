@@ -16,7 +16,6 @@ const RECORD_KEYS = [
 	'skill',
 	'accessory',
 	'roleRecord',
-	'series',
 	'event'
 ] as const
 

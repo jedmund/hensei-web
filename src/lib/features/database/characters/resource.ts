@@ -608,7 +608,8 @@ export const charactersResource = defineResource<AdminCharacterRow, Character>({
 		defaultSort: [
 			{ id: 'latest_date', desc: true },
 			{ id: 'name', desc: false }
-		]
+		],
+		movedViews: { series: 'character-series' }
 	},
 
 	// The detail Info tab's order; edit and create use it too. A section shows
@@ -743,8 +744,7 @@ export const charactersResource = defineResource<AdminCharacterRow, Character>({
 
 	section: charactersSection,
 
-	// The list screen renders the generated list with the batch refresh action,
-	// and keeps the Series view by hand until series become a resource (GBF-143)
+	// The list screen renders the generated list with the batch refresh action
 	screens: {
 		list: () => import('$lib/features/database/characters/screens/CharactersListScreen.svelte')
 	}

@@ -574,7 +574,8 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 		defaultSort: [
 			{ id: 'latest_date', desc: true },
 			{ id: 'name', desc: false }
-		]
+		],
+		movedViews: { series: 'weapon-series', awakenings: 'awakenings' }
 	},
 
 	// The detail Info tab's order; edit and create use it too. A section shows
@@ -706,9 +707,8 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 
 	section: weaponsSection,
 
-	// The list screen renders the generated list and keeps the Series,
-	// Awakenings and Skills views by hand, until series and awakenings become
-	// resources of their own (GBF-143)
+	// The list screen renders the generated list and keeps the Skills view,
+	// which leads into weapon-skill curation
 	screens: {
 		list: () => import('$lib/features/database/weapons/screens/WeaponsListScreen.svelte')
 	}

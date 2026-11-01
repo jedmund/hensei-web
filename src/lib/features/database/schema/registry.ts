@@ -2,7 +2,10 @@
  * Every resource with a schema definition, by route segment. The generic
  * routes (GBF-142 phase 3) match only these names.
  */
+import { awakeningsResource } from '$lib/features/database/awakenings/resource'
+import { characterSeriesResource } from '$lib/features/database/character-series/resource'
 import { charactersResource } from '$lib/features/database/characters/resource'
+import { weaponSeriesResource } from '$lib/features/database/weapon-series/resource'
 import { weaponsResource } from '$lib/features/database/weapons/resource'
 import { isResourceName, type ResourceName } from './names'
 import type { ResourceDef } from './types'
@@ -14,7 +17,10 @@ export type AnyResourceDef = ResourceDef<any, any>
 /** Keyed by `def.name`; the type requires exactly the names in `RESOURCE_NAMES` */
 export const RESOURCES: Record<ResourceName, AnyResourceDef> = {
 	weapons: weaponsResource,
-	characters: charactersResource
+	characters: charactersResource,
+	'weapon-series': weaponSeriesResource,
+	'character-series': characterSeriesResource,
+	awakenings: awakeningsResource
 }
 
 export function resourceDef(name: string): AnyResourceDef | undefined {

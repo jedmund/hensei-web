@@ -50,13 +50,20 @@ export type ComponentName =
 	| 'bulletSlots'
 	| 'characterUncap'
 	| 'characterRelated'
+	| 'weaponSeriesVariants'
+	| 'awakeningImage'
 
 /**
  * Form inputs the edit and create forms resolve by name, for values no
  * built-in input edits (or, on a read-only field, a live preview)
  */
 export type InputName =
-	'uncapIndicator' | 'weaponAwakenings' | 'elementVariantIds' | 'characterUncap'
+	| 'uncapIndicator'
+	| 'weaponAwakenings'
+	| 'elementVariantIds'
+	| 'characterUncap'
+	| 'weaponSeriesVariants'
+	| 'awakeningImage'
 
 /**
  * How an empty value ('', null, undefined, [] or {}) is sent:

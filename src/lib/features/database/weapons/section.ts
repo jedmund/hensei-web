@@ -15,17 +15,14 @@ export const weaponsSection: ResourceSection = {
 			{ label: () => m.nav_new_single({ entity: m.type_weapon() }), href: 'new' },
 			{ label: () => m.nav_new_multiple({ entity: m.type_weapon() }), href: 'import' }
 		],
-		[{ label: () => m.nav_new_weapon_series(), href: '/database/series/weapons/new' }]
+		[
+			{ label: () => m.nav_new_weapon_series(), href: '/database/weapon-series/new' },
+			{ label: () => m.nav_new_awakening(), href: '/database/awakenings/new' }
+		]
 	],
-	// Until series and awakenings become resources of their own (GBF-143)
+	// Series and awakenings are resources of their own, nested here
+	// (DATABASE_SECTIONS); skills lead into weapon-skill curation
 	views: [
-		{
-			id: 'weapon-series',
-			label: () => m.db_nav_series(),
-			view: 'series',
-			matches: ['/database/series/weapons']
-		},
-		{ id: 'awakenings', label: () => m.db_nav_awakenings(), view: 'awakenings' },
 		{
 			id: 'weapon-skills',
 			label: () => m.db_nav_skills(),

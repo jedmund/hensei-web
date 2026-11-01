@@ -27,7 +27,10 @@
  * - Unknown filter, sort, field or facet → 422 { error }.
  */
 
-export type AdminResource = 'weapons' | 'characters' | 'summons'
+import type { AugmentType } from './weaponStatModifier'
+
+export type AdminResource =
+	'weapons' | 'characters' | 'summons' | 'weapon-series' | 'character-series' | 'awakenings'
 
 export type AdminFilterValue = string[] | boolean | { gte?: string; lte?: string }
 
@@ -132,4 +135,34 @@ export interface AdminCharacterRow {
 	series?: AdminCharacterSeriesRef[]
 	skillCount?: number
 	createdAt?: string
+}
+
+/** Admin rows of slug-keyed resources (series, awakenings), camelCased */
+interface AdminSluggedRow {
+	id: string
+	slug: string
+	nameEn: string
+	nameJp: string
+	order: number
+	// Not in the default list: request via `fields`
+	createdAt?: string
+	updatedAt?: string
+}
+
+export interface AdminWeaponSeriesRow extends AdminSluggedRow {
+	extra?: boolean
+	elementChangeable?: boolean
+	hasWeaponKeys?: boolean
+	hasAwakening?: boolean
+	augmentType?: AugmentType
+	numWeaponKeys?: number | null
+	weaponCount?: number
+}
+
+export interface AdminCharacterSeriesRow extends AdminSluggedRow {
+	characterCount?: number
+}
+
+export interface AdminAwakeningRow extends AdminSluggedRow {
+	objectType: string
 }

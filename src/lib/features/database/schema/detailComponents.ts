@@ -5,7 +5,9 @@
  */
 import type { Component } from 'svelte'
 import CharacterRelatedUnits from '$lib/features/database/characters/detail/CharacterRelatedUnits.svelte'
+import AwakeningImage from '$lib/features/database/awakenings/detail/AwakeningImage.svelte'
 import CharacterUncap from '$lib/features/database/characters/detail/CharacterUncap.svelte'
+import WeaponSeriesVariants from '$lib/features/database/weapon-series/detail/WeaponSeriesVariants.svelte'
 import BulletSlots from '$lib/features/database/weapons/detail/BulletSlots.svelte'
 import ElementVariantIds from '$lib/features/database/weapons/detail/ElementVariantIds.svelte'
 import WeaponAwakenings from '$lib/features/database/weapons/detail/WeaponAwakenings.svelte'
@@ -22,5 +24,7 @@ export const DETAIL_COMPONENTS: Record<ComponentName, Component<{ record: any }>
 	elementVariantIds: ElementVariantIds,
 	bulletSlots: BulletSlots,
 	characterUncap: CharacterUncap,
-	characterRelated: CharacterRelatedUnits
+	characterRelated: CharacterRelatedUnits,
+	weaponSeriesVariants: WeaponSeriesVariants,
+	awakeningImage: AwakeningImage
 }
