@@ -863,7 +863,7 @@
 	"crew_leave_desc": "騎空団を脱退します。再参加にはスカウトが必要です。",
 	"crew_leave_must_transfer": "団長は騎空団を脱退する前に所有権を移譲する必要があります。",
 	"crew_leave_confirm": "{name}を脱退しますか？再参加にはスカウトが必要です。",
-	"crew_transfer_no_members": "移譲先の団員がいません。他に団員が必要です。",
+	"crew_transfer_no_members": "団長を移譲できるのは副団長のみです。先に団員を副団長に昇格してください。",
 	"crew_bulk_phantom_title": "幻団員を追加",
 	"crew_bulk_phantom_desc": "アカウントのない団員の貢献度を記録するための幻団員です",
 	"crew_bulk_name": "名前",

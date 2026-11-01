@@ -22,14 +22,16 @@
 
 	const leaveCrewMutation = useLeaveCrew()
 
-	// Members a captain can hand the crew to: everyone active except themselves
+	// Members a captain can hand the crew to: active vice captains, the same
+	// rule as the members page's "Make captain"
 	const membersQuery = createQuery(() => ({
 		...crewQueries.members('active'),
 		enabled: crewStore.isCaptain
 	}))
 	const transferCandidates = $derived(
-		membersQuery.data?.members.filter((member) => member.role !== 'captain' && !member.retired) ??
-			[]
+		membersQuery.data?.members.filter(
+			(member) => member.role === 'vice_captain' && !member.retired
+		) ?? []
 	)
 	const transferOptions = $derived(
 		transferCandidates.flatMap((member) =>
