@@ -1,7 +1,7 @@
 <script lang="ts">
 	// The detail body for a panel record: the same components the full pages render.
 	import type { DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
-	import WeaponDetail from '$lib/features/database/weapons/WeaponDetail.svelte'
+	import { resourceDef } from '$lib/features/database/schema/registry'
 	import SummonDetail from '$lib/features/database/summons/SummonDetail.svelte'
 	import JobDetail from '$lib/features/database/jobs/JobDetail.svelte'
 	import CharacterDetail from '$lib/features/database/characters/CharacterDetail.svelte'
@@ -19,11 +19,16 @@
 	const { resource, id, role, tab, onTabChange }: Props = $props()
 
 	const record = $derived(parseRecordId(id))
+
+	// Registered resources bring their own panel body (cached after the first open)
+	const panel = $derived(resourceDef(resource)?.screens?.panel?.())
 </script>
 
 {#key id}
-	{#if resource === 'weapons'}
-		<WeaponDetail granblueId={record.granblueId} {role} {tab} {onTabChange} />
+	{#if panel}
+		{#await panel then { default: Panel }}
+			<Panel granblueId={record.granblueId} {role} {tab} {onTabChange} />
+		{/await}
 	{:else if resource === 'summons'}
 		<SummonDetail granblueId={record.granblueId} {role} {tab} {onTabChange} />
 	{:else if resource === 'jobs'}
