@@ -1,0 +1,35 @@
+{
+	"grand": {
+		"slug": "grand",
+		"info": [
+			"Basic Info",
+			"Name (EN)",
+			"Grand",
+			"Name (JA)",
+			"リミテッド",
+			"Slug",
+			"grand",
+			"Order",
+			"1",
+			"Statistics",
+			"Character Count",
+			"72"
+		]
+	},
+	"empty": {
+		"slug": "formal",
+		"info": [
+			"Basic Info",
+			"Name (EN)",
+			"Formal",
+			"Name (JA)",
+			"Slug",
+			"formal",
+			"Order",
+			"15",
+			"Statistics",
+			"Character Count",
+			"0"
+		]
+	}
+}

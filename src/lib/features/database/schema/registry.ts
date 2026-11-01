@@ -2,7 +2,10 @@
  * Every resource with a schema definition, by route segment. The generic
  * routes (GBF-142 phase 3) match only these names.
  */
+import { awakeningsResource } from '$lib/features/database/awakenings/resource'
+import { characterSeriesResource } from '$lib/features/database/character-series/resource'
 import { charactersResource } from '$lib/features/database/characters/resource'
+import { weaponSeriesResource } from '$lib/features/database/weapon-series/resource'
 import { eventsResource } from '$lib/features/database/events/resource'
 import { raidGroupsResource } from '$lib/features/database/raid-groups/resource'
 import { raidsResource } from '$lib/features/database/raids/resource'
@@ -22,7 +25,10 @@ export const RESOURCES: Record<ResourceName, AnyResourceDef> = {
 	summons: summonsResource,
 	raids: raidsResource,
 	'raid-groups': raidGroupsResource,
-	events: eventsResource
+	events: eventsResource,
+	'weapon-series': weaponSeriesResource,
+	'character-series': characterSeriesResource,
+	awakenings: awakeningsResource
 }
 
 export function resourceDef(name: string): AnyResourceDef | undefined {

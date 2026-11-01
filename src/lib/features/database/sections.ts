@@ -4,17 +4,20 @@
  * The sidebar, the mobile section sheet, the breadcrumb, the overview and
  * the "New" menu all read from this list. Adding a section is one entry.
  *
- * Sub-sections that already exist as view tabs on their parent's list page
- * (e.g. Weapons → Series) link to `parent?view=<view>` rather than to a
- * separate page, so each record set has one list UI.
+ * Sub-sections are either resources of their own nested under another
+ * (Weapons → Series links to `/database/weapon-series`), or view tabs on
+ * their parent's list page (Weapons → Skills links to `weapons?view=skills`).
  */
 import { m } from '$lib/paraglide/messages'
 import { ADMIN_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
+import { awakeningsSection } from './awakenings/section'
+import { characterSeriesSection } from './character-series/section'
 import { charactersSection } from './characters/section'
 import { eventsSection } from './events/section'
 import { raidGroupsSection } from './raid-groups/section'
 import { raidsSection } from './raids/section'
 import { summonsSection } from './summons/section'
+import { weaponSeriesSection } from './weapon-series/section'
 import { weaponsSection } from './weapons/section'
 
 export type SectionGroupId = 'catalogue' | 'battles' | 'site' | 'admin'
@@ -85,6 +88,7 @@ export const SECTION_GROUPS: SectionGroup[] = [
 export const DATABASE_SECTIONS: DatabaseSection[] = [
 	// Catalogue
 	...resourceSections('characters', charactersSection),
+	...resourceSections('character-series', characterSeriesSection),
 	{
 		id: 'artifact-skills',
 		label: () => m.nav_artifact_skills(),
@@ -100,6 +104,8 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 		parent: 'characters'
 	},
 	...resourceSections('weapons', weaponsSection),
+	...resourceSections('weapon-series', weaponSeriesSection),
+	...resourceSections('awakenings', awakeningsSection),
 	...resourceSections('summons', summonsSection),
 	{
 		id: 'jobs',
@@ -172,9 +178,10 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 ]
 
 /**
- * A schema resource's section, followed by its `?view=` sub-sections. Takes
- * the definition's name and section, not the definition: this list is in
- * every page's bundle, and definitions aren't.
+ * A schema resource's section, followed by its `?view=` sub-sections. A
+ * resource nested under another (`parent`) comes right after it in the list.
+ * Takes the definition's name and section, not the definition: this list is
+ * in every page's bundle, and definitions aren't.
  */
 export function resourceSections(name: string, section: ResourceSection): DatabaseSection[] {
 	const path = `/database/${name}`

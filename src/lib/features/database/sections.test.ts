@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { CURATOR_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
+import { awakeningsResource } from './awakenings/resource'
+import { weaponSeriesResource } from './weapon-series/resource'
 import { weaponsResource } from './weapons/resource'
 import {
 	DATABASE_SECTIONS,
@@ -22,14 +24,15 @@ describe('sectionForUrl', () => {
 	})
 
 	it('selects sub-sections by ?view=', () => {
-		expect(at('/database/weapons?view=series')).toBe('weapon-series')
 		expect(at('/database/weapons?view=skills')).toBe('weapon-skills')
 		expect(at('/database/jobs?view=skills')).toBe('job-skills')
 	})
 
 	it('maps record routes to their section', () => {
 		expect(at('/database/weapons/1040001000/edit')).toBe('weapons')
-		expect(at('/database/series/weapons/dark-opus')).toBe('weapon-series')
+		expect(at('/database/weapon-series/dark-opus')).toBe('weapon-series')
+		expect(at('/database/awakenings/weapon-atk/edit')).toBe('awakenings')
+		expect(at('/database/character-series/new')).toBe('character-series')
 		expect(at('/database/weapon-skills/atk')).toBe('weapon-skills')
 		expect(at('/database/job-accessories/123')).toBe('job-accessories')
 		expect(at('/database/raid-groups/abc/edit')).toBe('raid-groups')
@@ -42,8 +45,9 @@ describe('sectionForUrl', () => {
 
 describe('rootOf', () => {
 	it('resolves sub-sections to their parent', () => {
-		expect(rootOf(sectionForUrl(new URL('http://x/database/weapons?view=awakenings')))?.id).toBe(
-			'weapons'
+		expect(rootOf(sectionForUrl(new URL('http://x/database/awakenings')))?.id).toBe('weapons')
+		expect(rootOf(sectionForUrl(new URL('http://x/database/character-series')))?.id).toBe(
+			'characters'
 		)
 	})
 })
@@ -68,22 +72,28 @@ describe('resourceSections', () => {
 			JSON.stringify(section, (_, v) => (typeof v === 'function' ? `fn:${v()}` : v))
 		) as unknown
 
-	it("derives the weapons entries from the definition's section", () => {
-		const derived = resourceSections(weaponsResource.name, weaponsResource.section!)
+	it("derives the weapons entries from the definitions' sections", () => {
+		const derived = [
+			...resourceSections(weaponsResource.name, weaponsResource.section!),
+			...resourceSections(weaponSeriesResource.name, weaponSeriesResource.section!),
+			...resourceSections(awakeningsResource.name, awakeningsResource.section!)
+		]
 		const start = DATABASE_SECTIONS.findIndex((s) => s.id === 'weapons')
 		expect(DATABASE_SECTIONS.slice(start, start + derived.length).map(shown)).toEqual(
 			derived.map(shown)
 		)
 	})
 
-	it('keeps the weapons entries as they were written by hand', () => {
+	it('nests series and awakenings under Weapons, linking to their own lists', () => {
 		const ids = DATABASE_SECTIONS.map((s) => s.id)
+		expect(ids.slice(0, 4)).toEqual(['characters', 'character-series', 'artifact-skills', 'roles'])
+		expect(sectionById('character-series')?.path).toBe('/database/character-series')
 		expect(ids.slice(ids.indexOf('roles'), ids.indexOf('summons') + 1)).toEqual([
 			'roles',
 			'weapons',
+			'weapon-skills',
 			'weapon-series',
 			'awakenings',
-			'weapon-skills',
 			'summons'
 		])
 		expect(shown(sectionById('weapons')!)).toEqual({
@@ -97,7 +107,10 @@ describe('resourceSections', () => {
 					{ label: 'fn:Single weapon', href: '/database/weapons/new' },
 					{ label: 'fn:Multiple weapons', href: '/database/weapons/import' }
 				],
-				[{ label: 'fn:Weapon series', href: '/database/series/weapons/new' }]
+				[
+					{ label: 'fn:Weapon series', href: '/database/weapon-series/new' },
+					{ label: 'fn:Awakening', href: '/database/awakenings/new' }
+				]
 			]
 		})
 		expect(
@@ -105,18 +118,15 @@ describe('resourceSections', () => {
 		).toEqual([
 			{
 				id: 'weapon-series',
+				path: '/database/weapon-series',
 				label: 'fn:Series',
-				path: '/database/weapons',
-				view: 'series',
 				group: 'catalogue',
-				parent: 'weapons',
-				matches: ['/database/series/weapons']
+				parent: 'weapons'
 			},
 			{
 				id: 'awakenings',
+				path: '/database/awakenings',
 				label: 'fn:Awakenings',
-				path: '/database/weapons',
-				view: 'awakenings',
 				group: 'catalogue',
 				parent: 'weapons'
 			},

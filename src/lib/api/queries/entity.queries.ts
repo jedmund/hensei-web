@@ -227,6 +227,16 @@ export const entityQueries = {
 			gcTime: 1000 * 60 * 60 * 24
 		}),
 
+	/** One awakening by slug or id (the database editor's detail) */
+	awakening: (idOrSlug: string) =>
+		queryOptions({
+			queryKey: ['awakenings', 'detail', idOrSlug] as const,
+			queryFn: () => awakeningAdapter.getAwakening(idOrSlug),
+			enabled: !!idOrSlug,
+			staleTime: 1000 * 60 * 60,
+			gcTime: 1000 * 60 * 60 * 24
+		}),
+
 	/**
 	 * Series list query options dispatched by entity type
 	 */
@@ -283,6 +293,7 @@ export const entityKeys = {
 	axSkills: () => ['weaponStatModifiers', 'ax'] as const,
 	befoulments: () => ['weaponStatModifiers', 'befoulment'] as const,
 	awakenings: (objectType?: string) => ['awakenings', objectType ?? 'all'] as const,
+	awakening: (idOrSlug: string) => ['awakenings', 'detail', idOrSlug] as const,
 	allAwakenings: () => ['awakenings'] as const,
 	seriesListByType: (type: 'weapon' | 'character' | 'summon') => {
 		switch (type) {

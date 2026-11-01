@@ -51,14 +51,22 @@ describe('panel URL state', () => {
 	it('maps ids to full-page paths, including style swaps', () => {
 		expect(recordPath('weapons', '1040001000')).toBe('/database/weapons/1040001000')
 		expect(recordId('3040001000', true)).toBe('3040001000-style')
-		expect(parseRecordId('3040001000-style')).toEqual({
-			granblueId: '3040001000',
+		expect(parseRecordId('characters', '3040001000-style')).toEqual({
+			routeId: '3040001000',
 			styleSwap: true
 		})
 		expect(recordPath('characters', '3040001000-style')).toBe(
 			'/database/characters/3040001000/style'
 		)
 		expect(recordPath('characters', '3040001000')).toBe('/database/characters/3040001000')
+	})
+
+	it('reads the style suffix on character ids only, so slugs pass through', () => {
+		expect(parseRecordId('summons', 'new-style')).toEqual({
+			routeId: 'new-style',
+			styleSwap: false
+		})
+		expect(recordPath('summons', 'new-style')).toBe('/database/summons/new-style')
 	})
 })
 

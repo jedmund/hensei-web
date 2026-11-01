@@ -69,6 +69,11 @@ export function getAwakeningImage(
 	return `${getBasePath()}/${BUCKET.awakening}/${slug}.${extension}`
 }
 
+/** An awakening's icon by slug: character awakenings are JPG, the rest PNG */
+export function getAwakeningIcon(slug: string): string {
+	return getAwakeningImage(slug, slug.startsWith('character-') ? 'jpg' : 'png')
+}
+
 /**
  * Get a weapon skill icon URL for the given locale. The stem (e.g.
  * "skill_atk_4_4") is the resolved, internal-element-numbered name the API

@@ -1,0 +1,67 @@
+{
+	"search": ["name_en", "name_jp", "slug"],
+	"filters": {
+		"updated_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		}
+	},
+	"flags": [],
+	"sorts": ["order", "name_en", "name_jp", "slug", "updated_at", "created_at"],
+	"default_sort": ["order", "name_en"],
+	"fields": [
+		"id",
+		"slug",
+		"name_en",
+		"name_jp",
+		"order",
+		"created_at",
+		"updated_at",
+		"character_count"
+	],
+	"default_fields": ["id", "slug", "name_en", "name_jp", "order"],
+	"writable": {
+		"name_en": "scalar",
+		"name_jp": "scalar",
+		"slug": "scalar",
+		"order": "scalar"
+	},
+	"enums": {},
+	"validators": {
+		"slug": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "uniqueness"
+			},
+			{
+				"kind": "format",
+				"pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+				"flags": ""
+			},
+			{
+				"kind": "length",
+				"maximum": 64
+			}
+		],
+		"name_en": [
+			{
+				"kind": "presence"
+			}
+		],
+		"name_jp": [
+			{
+				"kind": "presence"
+			}
+		],
+		"order": [
+			{
+				"kind": "numericality",
+				"only_integer": true
+			}
+		]
+	}
+}

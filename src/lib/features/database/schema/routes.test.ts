@@ -79,6 +79,16 @@ describe('generic database routes', () => {
 		expect(routeFor('/database/events/new')).toBe(`${generic}/new`)
 	})
 
+	it('serve slug-keyed resources at their new URLs', () => {
+		const generic = '/(app)/database/[resource=resource]'
+		for (const name of ['weapon-series', 'character-series', 'awakenings']) {
+			expect(routeFor(`/database/${name}`)).toBe(generic)
+			expect(routeFor(`/database/${name}/some-slug`)).toBe(`${generic}/[id]`)
+			expect(routeFor(`/database/${name}/some-slug/edit`)).toBe(`${generic}/[id]/edit`)
+			expect(routeFor(`/database/${name}/new`)).toBe(`${generic}/new`)
+		}
+	})
+
 	it('leave bespoke routes in charge', () => {
 		expect(routeFor('/database/weapons/import')).toBe('/(app)/database/weapons/import')
 		expect(routeFor('/database/weapon-skills/ATK')).toBe('/(app)/database/weapon-skills/[modifier]')
@@ -90,7 +100,8 @@ describe('generic database routes', () => {
 			'/(app)/database/characters/[granblueId]/style/edit'
 		)
 		expect(routeFor('/database/summons/import')).toBe('/(app)/database/summons/import')
-		expect(routeFor('/database/series/weapons/new')).toBe('/(app)/database/series/weapons/new')
+		// The old series pages redirect from the server (a +server.ts, not a page)
+		expect(routeFor('/database/series/weapons/new') ?? '').not.toContain('[resource=resource]')
 	})
 
 	it('match nothing for an unregistered resource', () => {
@@ -140,6 +151,35 @@ describe('loadScreen', () => {
 	})
 })
 
+describe('redirectMovedView', () => {
+	const url = (path: string) => new URL(path, 'http://localhost')
+
+	it('sends the old Series and Awakenings tabs to their own lists', () => {
+		const moved = (path: string) => {
+			try {
+				redirectMovedView(path.split(/[/?]/)[2]!, url(path))
+			} catch (redirect) {
+				return redirect
+			}
+		}
+		expect(moved('/database/weapons?view=series')).toMatchObject({
+			status: 301,
+			location: '/database/weapon-series'
+		})
+		expect(moved('/database/weapons?view=awakenings')).toMatchObject({
+			location: '/database/awakenings'
+		})
+		expect(moved('/database/characters?view=series')).toMatchObject({
+			location: '/database/character-series'
+		})
+	})
+
+	it('leaves other views and plain lists alone', () => {
+		expect(() => redirectMovedView('weapons', url('/database/weapons?view=skills'))).not.toThrow()
+		expect(() => redirectMovedView('weapons', url('/database/weapons'))).not.toThrow()
+	})
+})
+
 describe('loadRecord', () => {
 	it("returns the resource's full record under `record`", async () => {
 		getWeapon.mockResolvedValueOnce({ granblueId: '1040001000' })
@@ -166,11 +206,14 @@ describe('redirectMovedView', () => {
 		expect(() => redirectMovedView('raids', url('/database/raids?view=groups'))).toThrow(
 			expect.objectContaining({ status: 301, location: '/database/raid-groups' })
 		)
+		expect(() => redirectMovedView('weapons', url('/database/weapons?view=series'))).toThrow(
+			expect.objectContaining({ status: 301, location: '/database/weapon-series' })
+		)
 	})
 
 	it('leaves other views and lists alone', () => {
 		expect(() => redirectMovedView('raids', url('/database/raids'))).not.toThrow()
 		expect(() => redirectMovedView('raids', url('/database/raids?view=other'))).not.toThrow()
-		expect(() => redirectMovedView('weapons', url('/database/weapons?view=series'))).not.toThrow()
+		expect(() => redirectMovedView('weapons', url('/database/weapons?view=skills'))).not.toThrow()
 	})
 })

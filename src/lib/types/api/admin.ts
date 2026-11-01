@@ -27,13 +27,14 @@
  * - Unknown filter, sort, field or facet → 422 { error }.
  */
 
+import type { AugmentType } from './weaponStatModifier'
 import type { ResourceName } from '$lib/features/database/schema/names'
 
 /**
- * Route segments: the registered resources, and summons (not yet migrated).
+ * Route segments: the registered resources.
  * The API path is the segment in snake_case (`raid-groups` → `/admin/raid_groups`)
  */
-export type AdminResource = ResourceName | 'summons'
+export type AdminResource = ResourceName
 
 export type AdminFilterValue = string[] | boolean | { gte?: string; lte?: string }
 
@@ -223,6 +224,36 @@ export interface AdminRaidGroupRow {
 	contentMode?: string | null
 	createdAt?: string
 	updatedAt?: string
+}
+
+/** Admin rows of slug-keyed resources (series, awakenings), camelCased */
+interface AdminSluggedRow {
+	id: string
+	slug: string
+	nameEn: string
+	nameJp: string
+	order: number
+	// Not in the default list: request via `fields`
+	createdAt?: string
+	updatedAt?: string
+}
+
+export interface AdminWeaponSeriesRow extends AdminSluggedRow {
+	extra?: boolean
+	elementChangeable?: boolean
+	hasWeaponKeys?: boolean
+	hasAwakening?: boolean
+	augmentType?: AugmentType
+	numWeaponKeys?: number | null
+	weaponCount?: number
+}
+
+export interface AdminCharacterSeriesRow extends AdminSluggedRow {
+	characterCount?: number
+}
+
+export interface AdminAwakeningRow extends AdminSluggedRow {
+	objectType: string
 }
 
 /**

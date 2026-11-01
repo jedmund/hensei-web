@@ -73,7 +73,7 @@ function render(record: GameEvent, props: { role?: number; tab?: string } = {}) 
 		target,
 		props: {
 			def: eventsResource,
-			granblueId: record.id,
+			id: record.id,
 			initialData: record,
 			role: props.role ?? 6,
 			tab: props.tab ?? null,

@@ -74,7 +74,7 @@ function render(
 		target,
 		props: {
 			def: weaponsResource,
-			granblueId: record.granblueId,
+			id: record.granblueId,
 			initialData: record,
 			role: props.role ?? 7,
 			tab: props.tab ?? null,

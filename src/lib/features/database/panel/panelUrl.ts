@@ -5,9 +5,12 @@
  * (`view`, filters, `page`, search), so a panel can be shared, reloaded and
  * closed with Back.
  *
- * Ids are granblueIds. Style-swap characters share their base character's
- * granblueId, so their id carries a `-style` suffix to stay unique in a
- * result set (`3040xxx000-style` → `/database/characters/3040xxx000/style`).
+ * Ids are each resource's route ids: granblueIds, or slugs for records
+ * without one (weapon series). Style-swap characters share their base
+ * character's granblueId, so their id carries a `-style` suffix to stay
+ * unique in a result set (`3040xxx000-style` →
+ * `/database/characters/3040xxx000/style`); only characters' ids are read
+ * that way, so a slug may end in `-style`.
  */
 
 import type { ResourceName } from '$lib/features/database/schema/names'
@@ -52,16 +55,19 @@ export function recordId(granblueId: string, styleSwap = false): string {
 	return styleSwap ? `${granblueId}${STYLE_SUFFIX}` : granblueId
 }
 
-export function parseRecordId(id: string): { granblueId: string; styleSwap: boolean } {
-	if (id.endsWith(STYLE_SUFFIX)) {
-		return { granblueId: id.slice(0, -STYLE_SUFFIX.length), styleSwap: true }
+/** A panel id as its route id, and whether it's a style shift (characters only) */
+export function parseRecordId(
+	resource: PanelResource,
+	id: string
+): { routeId: string; styleSwap: boolean } {
+	if (resource === 'characters' && id.endsWith(STYLE_SUFFIX)) {
+		return { routeId: id.slice(0, -STYLE_SUFFIX.length), styleSwap: true }
 	}
-	return { granblueId: id, styleSwap: false }
+	return { routeId: id, styleSwap: false }
 }
 
 /** Full-page path for a record (unlocalized). */
 export function recordPath(resource: PanelResource, id: string): string {
-	const { granblueId, styleSwap } = parseRecordId(id)
-	const style = resource === 'characters' && styleSwap ? '/style' : ''
-	return `/database/${resource}/${granblueId}${style}`
+	const { routeId, styleSwap } = parseRecordId(resource, id)
+	return `/database/${resource}/${routeId}${styleSwap ? '/style' : ''}`
 }

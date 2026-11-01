@@ -70,7 +70,7 @@ function render(def: AnyResourceDef, id: string, record: unknown, role = 7) {
 	document.body.appendChild(target)
 	mounted = mount(ResourceDetail, {
 		target,
-		props: { def, granblueId: id, initialData: record, role, tab: null, onTabChange: () => {} }
+		props: { def, id, initialData: record, role, tab: null, onTabChange: () => {} }
 	})
 	flushSync()
 }

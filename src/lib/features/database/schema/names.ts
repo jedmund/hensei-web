@@ -10,7 +10,10 @@ export const RESOURCE_NAMES = [
 	'summons',
 	'raids',
 	'raid-groups',
-	'events'
+	'events',
+	'weapon-series',
+	'character-series',
+	'awakenings'
 ] as const
 
 export type ResourceName = (typeof RESOURCE_NAMES)[number]

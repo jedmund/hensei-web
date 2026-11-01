@@ -3,6 +3,7 @@
  * dispatches to the resource's definition, so the routes name no resource.
  */
 import { error, redirect } from '@sveltejs/kit'
+import { localizeHref } from '$lib/paraglide/runtime'
 import { resourceDef, type AnyResourceDef } from './registry'
 import type { ScreenComponent, ScreenKind } from './types'
 
@@ -79,5 +80,5 @@ export async function loadRecord(resource: string, id: string): Promise<{ record
 export function redirectMovedView(resource: string, url: URL): void {
 	const view = url.searchParams.get('view')
 	const target = view ? definition(resource).list.movedViews?.[view] : undefined
-	if (target) redirect(301, target)
+	if (target) redirect(301, localizeHref(target))
 }

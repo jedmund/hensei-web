@@ -1,42 +1,25 @@
 <script lang="ts">
+	// The weapons list, and the Skills view (`?view=skills`) that leads into
+	// weapon-skill curation. Series and awakenings are resources of their own.
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { createQuery } from '@tanstack/svelte-query'
-	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import { weaponSkillAdapter } from '$lib/api/adapters/weaponSkill.adapter'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
-	import AwakeningModal from '$lib/features/database/weapons/AwakeningModal.svelte'
-	import { getBasePath } from '$lib/utils/images/core'
-	import { localizedName } from '$lib/utils/locale'
 	import { getBoostTypeLabel } from '$lib/utils/boostType'
-	import type { Awakening } from '$lib/types/api/entities'
 	import type { WeaponSkillFamilySummary } from '$lib/types/api/weaponSkillFamily'
 	import WeaponSkillIcon from '$lib/components/database/WeaponSkillIcon.svelte'
-	import DataTable from '$lib/components/data-table/DataTable.svelte'
-	import { createTableUrl } from '$lib/components/data-table/tableUrl.svelte'
-	import { createStaticSource } from '$lib/components/data-table/staticSource.svelte'
-	import type { DataTableColumn, FlagValue } from '$lib/components/data-table/types'
-	import type { WeaponSeries } from '$lib/types/api/weaponSeries'
 	import ResourceTable from '$lib/features/database/schema/ResourceTable.svelte'
 
-	type ViewMode = 'weapons' | 'series' | 'awakenings' | 'skills'
+	type ViewMode = 'weapons' | 'skills'
 
 	// View mode follows the URL (so sidebar links can switch views); assigning
 	// it from the segmented control overrides it until the URL catches up.
 	const initialView = $derived($page.url.searchParams.get('view') as ViewMode | null)
-	let viewMode = $derived<ViewMode>(
-		initialView === 'series'
-			? 'series'
-			: initialView === 'awakenings'
-				? 'awakenings'
-				: initialView === 'skills'
-					? 'skills'
-					: 'weapons'
-	)
+	let viewMode = $derived<ViewMode>(initialView === 'skills' ? 'skills' : 'weapons')
 
 	// Sync viewMode changes to URL
 	$effect(() => {
@@ -47,94 +30,6 @@
 			goto('/database/weapons', { replaceState: true, noScroll: true })
 		}
 	})
-
-	// Query for weapon series
-	const weaponSeriesQuery = createQuery(() => entityQueries.weaponSeriesList())
-
-	// Query for awakenings (weapon type)
-	const awakeningsQuery = createQuery(() => entityQueries.awakenings('Weapon'))
-
-	// Series view: DataTable over the full list, sorted and searched from the URL
-	function seriesFlags(series: WeaponSeries): FlagValue[] {
-		const flags: FlagValue[] = []
-		if (series.extra) flags.push({ label: m.db_weapon_series_flag_extra(), tone: 'extra' })
-		if (series.elementChangeable)
-			flags.push({ label: m.db_weapon_series_flag_element(), tone: 'element' })
-		if (series.hasWeaponKeys) flags.push({ label: m.db_weapon_series_flag_keys(), tone: 'keys' })
-		if (series.hasAwakening) flags.push({ label: m.db_weapon_series_flag_awaken(), tone: 'awaken' })
-		if (series.hasAxSkills) flags.push({ label: m.db_weapon_series_flag_ax(), tone: 'ax' })
-		return flags
-	}
-
-	const seriesColumns: DataTableColumn<WeaponSeries>[] = [
-		{
-			id: 'order',
-			header: m.db_weapon_series_col_order,
-			type: 'number',
-			value: (s) => s.order,
-			width: '80px',
-			align: 'center'
-		},
-		{
-			id: 'name',
-			header: m.db_weapon_series_col_name,
-			type: 'name',
-			name: (s) => s.name,
-			primary: true,
-			minWidth: '200px'
-		},
-		{
-			id: 'slug',
-			header: m.db_weapon_series_col_slug,
-			type: 'code',
-			value: (s) => s.slug,
-			searchable: true,
-			minWidth: '150px'
-		},
-		{
-			id: 'flags',
-			header: m.db_weapon_series_col_flags,
-			type: 'flags',
-			flags: seriesFlags,
-			minWidth: '200px'
-		}
-	]
-
-	const seriesUrl = createTableUrl({ defaultSort: [{ id: 'order', desc: false }] })
-	const seriesSource = createStaticSource({
-		url: seriesUrl,
-		columns: seriesColumns,
-		data: () => weaponSeriesQuery.data,
-		isPending: () => weaponSeriesQuery.isPending,
-		isFetching: () => weaponSeriesQuery.isFetching,
-		error: () => weaponSeriesQuery.error,
-		refetch: () => weaponSeriesQuery.refetch()
-	})
-
-	// Sorted awakenings
-	const sortedAwakenings = $derived.by(() => {
-		if (!awakeningsQuery.data) return []
-		return [...awakeningsQuery.data].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-	})
-
-	// Awakening modal state
-	let awakeningModalOpen = $state(false)
-	let editingAwakening = $state<Awakening | null>(null)
-
-	function handleAddAwakening() {
-		editingAwakening = null
-		awakeningModalOpen = true
-	}
-
-	function handleEditAwakening(awakening: Awakening) {
-		editingAwakening = awakening
-		awakeningModalOpen = true
-	}
-
-	function getAwakeningImageUrl(slug: string): string {
-		const ext = slug.startsWith('character-') ? 'jpg' : 'png'
-		return `${getBasePath()}/icons/awakening/${slug}.${ext}`
-	}
 
 	// Query for weapon skill families (client-side filtered — not paginated like the main grid)
 	const weaponSkillFamiliesQuery = createQuery(() => ({
@@ -184,8 +79,6 @@
 {#snippet viewTabs()}
 	<SegmentedControl bind:value={viewMode} size="xsmall" variant="background">
 		<Segment value="weapons">{m.nav_weapons()}</Segment>
-		<Segment value="series">{m.db_nav_series()}</Segment>
-		<Segment value="awakenings">{m.db_nav_awakenings()}</Segment>
 		<Segment value="skills">{m.db_nav_skills()}</Segment>
 	</SegmentedControl>
 {/snippet}
@@ -193,79 +86,6 @@
 <div class="database-page">
 	{#if viewMode === 'weapons'}
 		<ResourceTable resource="weapons" />
-	{:else if viewMode === 'series'}
-		<DataTable
-			columns={seriesColumns}
-			source={seriesSource}
-			rowId={(series) => series.id}
-			rowHref={(series) => `/database/series/weapons/${series.slug}`}
-			rowTitle={(series) => localizedName(series.name)}
-			storageKey="weapon-series"
-			label={m.nav_new_weapon_series()}
-			searchEntity={m.db_weapon_series_entity()}
-			emptyMessage={m.db_weapon_series_empty()}
-		/>
-	{:else if viewMode === 'awakenings'}
-		<!-- Awakenings view -->
-		<div class="grid-container">
-			<div class="controls">
-				{@render viewTabs()}
-				<div class="controls-right">
-					<Button variant="primary" size="small" onclick={handleAddAwakening}>Add</Button>
-				</div>
-			</div>
-
-			{#if awakeningsQuery.isPending}
-				<div class="loading-state">Loading awakenings...</div>
-			{:else if awakeningsQuery.error}
-				<div class="error-state">Failed to load awakenings</div>
-			{:else if sortedAwakenings.length > 0}
-				<div class="grid-wrapper">
-					<table class="series-table">
-						<thead>
-							<tr>
-								<th class="col-image">Image</th>
-								<th class="col-order">Order</th>
-								<th class="col-name">Name</th>
-								<th class="col-slug">Slug</th>
-								<th class="col-type">Type</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each sortedAwakenings as awakening (awakening.id)}
-								<tr onclick={() => handleEditAwakening(awakening)} class="clickable">
-									<td class="col-image">
-										{#if awakening.slug}
-											<img
-												src={getAwakeningImageUrl(awakening.slug)}
-												alt={localizedName(awakening.name)}
-												class="awakening-icon"
-											/>
-										{:else}
-											<span class="no-image">—</span>
-										{/if}
-									</td>
-									<td class="col-order">{awakening.order ?? '—'}</td>
-									<td class="col-name">{localizedName(awakening.name)}</td>
-									<td class="col-slug"><code>{awakening.slug}</code></td>
-									<td class="col-type">{awakening.objectType ?? '—'}</td>
-								</tr>
-							{/each}
-						</tbody>
-					</table>
-				</div>
-
-				<div class="grid-footer">
-					<div class="pagination-info">
-						{sortedAwakenings.length} awakenings
-					</div>
-				</div>
-			{:else}
-				<div class="empty-state">No awakenings found</div>
-			{/if}
-		</div>
-
-		<AwakeningModal bind:open={awakeningModalOpen} awakening={editingAwakening} />
 	{:else}
 		<!-- Weapon Skills view -->
 		<div class="grid-container">
@@ -483,24 +303,8 @@
 			}
 		}
 
-		.col-order {
-			width: 80px;
-			text-align: center;
-		}
-
 		.col-name {
 			min-width: 200px;
-		}
-
-		.col-slug {
-			min-width: 150px;
-
-			code {
-				font-size: typography.$font-small;
-				background: var(--bar-bg);
-				padding: 2px 6px;
-				border-radius: 3px;
-			}
 		}
 
 		.col-image {
@@ -508,20 +312,10 @@
 			text-align: center;
 		}
 
-		.col-type {
-			width: 100px;
-		}
-
 		.col-num {
 			text-align: right;
 			font-variant-numeric: tabular-nums;
 		}
-	}
-
-	.awakening-icon {
-		width: 28px;
-		height: 28px;
-		object-fit: contain;
 	}
 
 	.no-image {
