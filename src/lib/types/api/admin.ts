@@ -18,7 +18,8 @@
  * - Boolean filters: flb, ulb, transcendence, extra, limit, and the data-quality
  *   flags missing_name_jp, no_skills.
  * - Sort fields: name_en, name_jp, granblue_id, rarity, element, proficiency,
- *   release_date, updated_at, created_at. NULLS LAST. Default -updated_at,name_en.
+ *   release_date, flb_date, ulb_date, transcendence_date, latest_date, updated_at,
+ *   created_at. NULLS LAST. Default -latest_date,name_en.
  * - page/per: per defaults to 50, max 200; out-of-range values are clamped.
  *   total_pages is 0 when total is 0.
  * - Facets: element, rarity, proficiency, series (keyed by series UUID). Each
@@ -38,7 +39,7 @@ export interface AdminListParams {
 	sort?: string
 	/** Keyed by API filter name (snake_case), e.g. `release_date` */
 	filters?: Record<string, AdminFilterValue>
-	/** Extra fields beyond the default list; `id` is always included */
+	/** Replaces the default field list (name every field you need); `id` is always included */
 	fields?: string[]
 	facets?: string[]
 }
@@ -71,13 +72,18 @@ export interface AdminWeaponRow {
 	seriesSlug: string | null
 	releaseDate: string | null
 	updatedAt: string
-	// Opt-in extras via `fields`
+	// Not in the default list: request via `fields`
 	seriesNameEn?: string | null
 	seriesNameJp?: string | null
 	skillCount?: number
 	flb?: boolean
 	ulb?: boolean
 	transcendence?: boolean
+	flbDate?: string | null
+	ulbDate?: string | null
+	transcendenceDate?: string | null
+	/** Newest of the release and uncap dates */
+	latestDate?: string | null
 	extra?: boolean
 	limit?: boolean
 	createdAt?: string

@@ -10,7 +10,7 @@
   - Long static lists are virtualised with spacer rows, keeping a real <table>.
 -->
 <script lang="ts" generics="T extends object">
-	import { onMount, untrack, type Snippet } from 'svelte'
+	import { onMount, tick, untrack, type Snippet } from 'svelte'
 	import { get } from 'svelte/store'
 	import {
 		columnVisibilityFeature,
@@ -30,6 +30,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import { getResultSet, type ResultSet } from '$lib/features/database/resultSet.svelte'
 	import DataTableCell from './DataTableCell.svelte'
+	import DataTableFilters from './DataTableFilters.svelte'
 	import DataTablePagination from './DataTablePagination.svelte'
 	import DataTableToolbar from './DataTableToolbar.svelte'
 	import {
@@ -40,6 +41,7 @@
 		saveColumnVisibility,
 		saveRowHeight
 	} from './preferences'
+	import { activeFilterCount, type FilterConfig } from './filters'
 	import { syncResultSet } from './resultSync'
 	import { isSortable } from './staticQuery'
 	import {
@@ -49,7 +51,6 @@
 		type DataTableSource,
 		type RowHeight
 	} from './types'
-	import { DEFAULT_PER_OPTIONS } from './urlState'
 
 	interface Props {
 		columns: DataTableColumn<T>[]
@@ -69,12 +70,21 @@
 		onRowActivate?: (row: T, event: MouseEvent) => void
 		/** Defaults to the one provided with setResultSet() */
 		resultSet?: ResultSet | undefined
+		/** Id of the row shown elsewhere (e.g. open in the record panel); marked aria-current */
+		selectedId?: string | null | undefined
+		/**
+		 * Filter controls, shown under the toolbar behind a Filters button. Declare
+		 * the same config on the table URL: `createTableUrl({ filters: filterSpecs(config) })`.
+		 */
+		filters?: FilterConfig[] | undefined
 		/** localStorage key for column visibility and row height, e.g. 'weapons' */
 		storageKey: string
 		rowHeight?: RowHeight
 		/** Keep the first visible column in place while scrolling sideways */
 		pinFirstColumn?: boolean
 		searchable?: boolean
+		/** Lowercase plural noun for the search placeholder, e.g. "weapons" */
+		searchEntity?: string
 		/** Accessible name for the table */
 		label: string
 		emptyMessage?: string
@@ -82,9 +92,6 @@
 		virtualizeAfter?: number
 		/** Height of the scroll area when virtualising. Shorter lists scroll with the page. */
 		maxHeight?: string
-		perOptions?: number[]
-		/** Toolbar content before the search box, e.g. view tabs */
-		toolbar?: Snippet
 		/** Toolbar content after the columns menu, e.g. a "New" button */
 		toolbarEnd?: Snippet
 	}
@@ -97,16 +104,17 @@
 		rowTitle,
 		onRowActivate,
 		resultSet: resultSetProp,
+		selectedId = null,
+		filters,
 		storageKey,
 		rowHeight: initialRowHeight = 'default',
 		pinFirstColumn = false,
 		searchable = true,
+		searchEntity,
 		label,
 		emptyMessage,
 		virtualizeAfter = 100,
 		maxHeight = 'calc(100vh - 240px)',
-		perOptions = DEFAULT_PER_OPTIONS,
-		toolbar,
 		toolbarEnd
 	}: Props = $props()
 
@@ -136,6 +144,12 @@
 		rowHeight = next
 		saveRowHeight(storageKey, next)
 	}
+
+	// --- Filters ---------------------------------------------------------------
+
+	const filterCount = $derived(filters ? activeFilterCount(source.url.state.filters, filters) : 0)
+	// Open when the page loads with filters applied
+	let filtersOpen = $state(untrack(() => filterCount > 0))
 
 	// --- TanStack Table (manual mode) ----------------------------------------
 
@@ -272,10 +286,36 @@
 			? virtualItems.map((item) => rows[item.index]).filter((row) => row !== undefined)
 			: rows
 	)
+	// Keep the open row on screen as it moves (j/k in the panel, or a new page)
+	const selectedIndex = $derived(
+		selectedId === null ? -1 : rows.findIndex((row) => row.id === selectedId)
+	)
+	$effect(() => {
+		const index = selectedIndex
+		if (index === -1) return
+		untrack(() => {
+			if (virtualize) {
+				get(virtualizer).scrollToIndex(index, { align: 'auto' })
+				return
+			}
+			// Optional call: jsdom (component tests) has no scrollIntoView
+			void tick().then(() =>
+				scrollEl?.querySelector('tbody tr[aria-current]')?.scrollIntoView?.({ block: 'nearest' })
+			)
+		})
+	})
+
 	const topSpacer = $derived(virtualize && virtualItems[0] ? virtualItems[0].start - headHeight : 0)
 	const bottomSpacer = $derived(
 		virtualize && virtualItems.length > 0 ? totalSize - virtualItems.at(-1)!.end : 0
 	)
+
+	// Server sources request only the fields of the visible columns.
+	// Declared after onMount so the first report has the saved visibility.
+	$effect(() => {
+		const ids = visibleColumns.map((c) => c.id)
+		untrack(() => source.setVisibleColumns?.(ids))
+	})
 
 	// --- ResultSet --------------------------------------------------------------
 
@@ -310,17 +350,46 @@
 		if (scrollEl) scrolledX = scrollEl.scrollLeft > 0
 	}
 
-	function cellStyle(column: DataTableColumn<T>): string {
-		const parts: string[] = []
-		if (column.width) parts.push(`width: ${column.width}`)
-		if (column.minWidth) parts.push(`min-width: ${column.minWidth}`)
-		return parts.join('; ')
+	// The table lays out at fixed widths so columns don't jump as rows or sort
+	// indicators change. Every column but the primary one has a set width (its
+	// own, or one for its cell type); the primary column takes what's left.
+	const TYPE_WIDTHS: Record<DataTableColumn<T>['type'], string> = {
+		text: '140px',
+		number: '96px',
+		date: '128px',
+		boolean: '96px',
+		element: '88px',
+		proficiency: '104px',
+		code: '160px',
+		image: '96px',
+		name: '220px',
+		flags: '200px',
+		custom: '128px'
 	}
+
+	function columnWidth(column: DataTableColumn<T>): string | undefined {
+		if (column.id === primaryId) return undefined
+		return column.width ?? column.minWidth ?? TYPE_WIDTHS[column.type]
+	}
+
+	// Below this the table scrolls sideways instead of squeezing the primary column
+	const tableMinWidth = $derived.by(() => {
+		let total = 0
+		for (const column of visibleColumns) {
+			const width =
+				column.id === primaryId
+					? (column.minWidth ?? TYPE_WIDTHS[column.type])
+					: columnWidth(column)
+			total += width?.endsWith('px') ? parseFloat(width) : 0
+		}
+		return `${total}px`
+	})
 </script>
 
-<div class="data-table" style:--dt-row-height="{rowPx}px">
+<div class="data-table" data-row-height={rowHeight} style:--dt-row-height="{rowPx}px">
 	<DataTableToolbar
 		{searchable}
+		{searchEntity}
 		search={source.url.state.q}
 		onSearch={(q) => source.url.setSearch(q)}
 		columns={columnToggles}
@@ -329,9 +398,16 @@
 		onResetColumns={() => setVisibility(defaultVisibility(columns))}
 		{rowHeight}
 		onRowHeight={setRowHeight}
-		start={toolbar}
+		hasFilters={!!filters}
+		{filterCount}
+		{filtersOpen}
+		onToggleFilters={() => (filtersOpen = !filtersOpen)}
 		end={toolbarEnd}
 	/>
+
+	{#if filters && filtersOpen}
+		<DataTableFilters config={filters} url={source.url} facets={source.facets} />
+	{/if}
 
 	{#if source.error}
 		<div class="error" role="alert">
@@ -360,7 +436,12 @@
 			bind:this={scrollEl}
 			onscroll={handleScroll}
 		>
-			<table aria-label={label} aria-busy={source.isFetching}>
+			<table aria-label={label} aria-busy={source.isFetching} style:min-width={tableMinWidth}>
+				<colgroup>
+					{#each visibleColumns as column (column.id)}
+						<col style:width={columnWidth(column)} />
+					{/each}
+				</colgroup>
 				<thead bind:clientHeight={headHeight}>
 					<tr>
 						{#each visibleColumns as column (column.id)}
@@ -371,7 +452,6 @@
 								scope="col"
 								class="align-{column.align ?? 'start'}"
 								class:pinned={column.id === pinnedId}
-								style={cellStyle(column)}
 								aria-sort={ariaSort(column.id)}
 							>
 								{#if tableColumn?.getCanSort()}
@@ -416,13 +496,12 @@
 						{/if}
 						{#each renderedRows as row (row.id)}
 							{@const original = row.original}
-							<tr>
+							<tr aria-current={selectedId !== null && row.id === selectedId ? 'true' : undefined}>
 								{#each visibleColumns as column (column.id)}
 									<td
 										class="align-{column.align ?? 'start'} type-{column.type}"
 										class:pinned={column.id === pinnedId}
 										class:primary={column.id === primaryId}
-										style={cellStyle(column)}
 									>
 										{#if column.id === primaryId}
 											<a
@@ -463,9 +542,7 @@
 			per={source.per}
 			count={rows.length}
 			paginated={source.paginated}
-			{perOptions}
 			onPageChange={(page) => source.url.setPage(page)}
-			onPerChange={(per) => source.url.setPer(per)}
 		/>
 	{/if}
 </div>
@@ -483,6 +560,11 @@
 		border-radius: layout.$page-corner;
 		box-shadow: effects.$page-elevation;
 		overflow: hidden;
+
+		// Tall rows have room to separate the name lines
+		&[data-row-height='image'] {
+			--dt-name-gap: #{spacing.$unit-fourth};
+		}
 	}
 
 	.error {
@@ -505,6 +587,7 @@
 
 	table {
 		width: 100%;
+		table-layout: fixed;
 		border-collapse: separate;
 		border-spacing: 0;
 	}
@@ -594,6 +677,23 @@
 
 	tbody tr:not(.skeleton, .spacer):hover td {
 		background: var(--table-row-hover);
+	}
+
+	// Scrolled into view clear of the fixed top nav
+	tbody tr {
+		scroll-margin-top: calc(
+			#{layout.$nav-height} + var(--bahamut-offset, 0px) + #{spacing.$unit-2x}
+		);
+		scroll-margin-bottom: spacing.$unit-2x;
+	}
+
+	// The row open elsewhere (e.g. in the record panel)
+	tbody tr[aria-current] td {
+		background: var(--table-row-hover);
+	}
+
+	tbody tr[aria-current] td:first-child {
+		box-shadow: inset 3px 0 0 var(--database-accent, var(--text-primary));
 	}
 
 	tbody tr:has(.row-link:focus-visible) {

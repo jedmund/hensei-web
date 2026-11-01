@@ -61,14 +61,15 @@
 		}
 	})
 
-	// Move focus into the panel when it opens, so ↓/↑ step and Esc closes
-	let wasOpen = false
+	// Move focus into the panel whenever a record opens from outside it (a row
+	// click, even with the panel already open), so ↓/↑ step and Esc closes
 	$effect(() => {
-		const open = isOpen
-		if (open && !wasOpen) {
-			tick().then(() => panelEl?.focus({ preventScroll: true }))
-		}
-		wasOpen = open
+		if (!isOpen || !openId) return
+		void tick().then(() => {
+			if (panelEl && !panelEl.contains(document.activeElement)) {
+				panelEl.focus({ preventScroll: true })
+			}
+		})
 	})
 
 	// Treat the open record like a visited page: breadcrumb and "Recently opened"
@@ -174,18 +175,6 @@
 						onclick={() => step('next')}
 					/>
 				</Tooltip>
-				{#if position}
-					<span class="position" aria-live="polite">
-						{#if position.index !== null}
-							{m.db_panel_position({ index: position.index, count: position.count })}
-						{:else}
-							—
-						{/if}
-						{#if position.totalPages > 1}
-							· {m.db_panel_page({ page: position.page, total: position.totalPages })}
-						{/if}
-					</span>
-				{/if}
 			</div>
 
 			<div class="actions">
@@ -233,18 +222,17 @@
 	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
 
 	// Large screens: a column beside the list (the list narrows as it opens)
 	.record-panel {
 		--record-panel-width: 440px;
 
 		position: sticky;
-		top: spacing.$unit-2x;
+		top: 0; // the scroll container's top padding already clears the fixed nav
 		flex: 0 0 auto;
 		align-self: flex-start;
 		width: 0;
-		height: calc(100vh - #{spacing.$unit-4x});
+		height: calc(100vh - #{layout.$nav-height} - var(--bahamut-offset, 0px) - #{spacing.$unit-2x});
 		opacity: 0;
 		overflow: hidden;
 		transition:
@@ -307,8 +295,7 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: spacing.$unit;
-		padding: spacing.$unit spacing.$unit-2x;
-		border-bottom: 1px solid var(--border-subtle);
+		padding: spacing.$unit-2x;
 	}
 
 	.stepper,
@@ -316,14 +303,6 @@
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit-half;
-	}
-
-	.position {
-		margin-left: spacing.$unit;
-		font-size: typography.$font-small;
-		color: var(--text-secondary);
-		font-variant-numeric: tabular-nums;
-		white-space: nowrap;
 	}
 
 	.panel-body {

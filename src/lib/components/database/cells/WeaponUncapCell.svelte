@@ -2,7 +2,8 @@
 	import type { Cell } from 'wx-svelte-grid'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 
-	let { row }: Cell = $props()
+	// Only the row is read, so DataTable custom cells can render it too
+	let { row }: Pick<Cell, 'row'> = $props()
 
 	// For database view, show maximum possible uncap level
 	const uncap = $derived(row.uncap ?? {})

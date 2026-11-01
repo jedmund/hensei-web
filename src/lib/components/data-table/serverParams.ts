@@ -16,8 +16,16 @@ import { encodeSort, type FilterValue, type TableUrlState } from './urlState'
 
 export interface ServerParamsOptions<T> {
 	columns: DataTableColumn<T>[]
-	/** Sparse fieldset to request (`fields=`) */
+	/**
+	 * Sparse fieldset to request (`fields=`). The API replaces its default
+	 * list with these, so name every field the rows need.
+	 */
 	fields?: string[] | undefined
+	/**
+	 * Visible column ids. Columns that declare `fields` add theirs only while
+	 * visible; null or undefined means all columns.
+	 */
+	visibleColumnIds?: string[] | null | undefined
 	/** Facet counts to request (`facets=`) */
 	facets?: string[] | undefined
 }
@@ -32,6 +40,17 @@ function normalizeFilter(value: FilterValue): AdminFilterValue | null {
 	if (value.gte) range.gte = value.gte
 	if (value.lte) range.lte = value.lte
 	return range.gte || range.lte ? range : null
+}
+
+/** Base fields plus those of the visible columns, de-duplicated and sorted for a stable key */
+export function requestedFields<T>(options: ServerParamsOptions<T>): string[] {
+	const fields = new Set(options.fields ?? [])
+	const visible = options.visibleColumnIds ? new Set(options.visibleColumnIds) : null
+	for (const column of options.columns) {
+		if (!column.fields || (visible && !visible.has(column.id))) continue
+		for (const field of column.fields) fields.add(field)
+	}
+	return [...fields].sort()
 }
 
 export function buildListParams<T>(
@@ -57,7 +76,8 @@ export function buildListParams<T>(
 	}
 	if (Object.keys(filters).length > 0) params.filters = filters
 
-	if (options.fields && options.fields.length > 0) params.fields = [...options.fields]
+	const fields = requestedFields(options)
+	if (fields.length > 0) params.fields = fields
 	if (options.facets && options.facets.length > 0) params.facets = [...options.facets]
 
 	return params

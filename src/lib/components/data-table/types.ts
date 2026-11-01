@@ -64,6 +64,12 @@ interface ColumnBase<T> {
 	defaultHidden?: boolean
 	/** The row link lives in this cell. Defaults to the first visible column */
 	primary?: boolean
+	/**
+	 * API fields the column reads (server sources). When any column declares
+	 * fields, a server source requests only those of the visible columns,
+	 * plus its own base `fields`.
+	 */
+	fields?: string[]
 }
 
 export type BuiltInCellType =
@@ -127,6 +133,8 @@ export interface DataTableSource<T> {
 	 */
 	readonly loadPage: ((page: number) => Promise<LoadedPage<T>>) | null
 	refetch(): void
+	/** DataTable reports the visible column ids, so a server source can trim `fields` */
+	setVisibleColumns?(ids: string[]): void
 }
 
 export function columnHeader<T>(column: DataTableColumn<T>): string {
