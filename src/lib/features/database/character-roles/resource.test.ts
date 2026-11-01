@@ -100,6 +100,16 @@ describe('character roles resource: payload parity', () => {
 	})
 })
 
+describe('character roles resource: delete', () => {
+	it('deletes by id from the edit form, always allowed, as the edit page did', async () => {
+		const remove = vi.spyOn(roleAdapter, 'deleteRole').mockResolvedValue()
+		await def.save?.destroy?.(attacker)
+		expect(remove).toHaveBeenCalledWith(attacker.id)
+		expect(def.save?.canDestroy).toBeUndefined()
+		remove.mockRestore()
+	})
+})
+
 describe('character roles resource: layout and record', () => {
 	it('edits the names and the icon; creating takes the names only', () => {
 		const shape = (mode: 'edit' | 'create') =>

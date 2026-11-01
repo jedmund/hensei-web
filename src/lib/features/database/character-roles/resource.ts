@@ -97,6 +97,8 @@ export const characterRolesResource = defineResource<AdminCharacterRoleRow, Role
 			roleAdapter.updateRole(r.id, payload as Partial<RolePayload>).then(toRoleRecord),
 		create: (payload) =>
 			roleAdapter.createRole(payload as unknown as RolePayload).then(toRoleRecord),
+		// Removes the role from every character it tags, as the old edit page did
+		destroy: (r) => roleAdapter.deleteRole(r.id),
 		invalidates: () => [roleKeys.all]
 	},
 
