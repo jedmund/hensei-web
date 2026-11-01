@@ -2,14 +2,13 @@
 	import * as m from '$lib/paraglide/messages'
 	import { onMount, untrack } from 'svelte'
 	import type { Editor } from '@tiptap/core'
-	import { computePosition, flip, shift, offset } from '@floating-ui/dom'
 	import EdraEditor from '$lib/components/edra/headless/editor.svelte'
 	import DescriptionToolbar from './DescriptionToolbar.svelte'
 	import MentionTooltip from '$lib/components/ui/MentionTooltip.svelte'
-	import type { MentionToken } from '$lib/components/edra/extensions/entity-mention/mentions/index.js'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { usePaneStack } from '$lib/stores/paneStack.svelte'
 	import { descriptionToContent } from '$lib/utils/descriptionContent'
+	import { useMentionTooltip } from '$lib/composables/mention-tooltip.svelte'
 
 	interface Props {
 		paneId?: string
@@ -73,86 +72,32 @@
 		onSave(content)
 	}
 
-	// Mention tooltip state
-	let tooltipEntity: MentionToken | null = $state(null)
-	let tooltipVisible = $state(false)
-	let tooltipEl: HTMLDivElement | null = $state(null)
+	// Mention tooltip: resolve the entity from the ProseMirror node under the mention
+	const tooltip = useMentionTooltip({
+		selector: 'span[data-type="mention"]',
+		dismissOffMention: true,
+		resolve(target) {
+			if (!editor) return null
+			const pos = editor.view.posAtDOM(target, 0)
+			const node = editor.state.doc.nodeAt(pos)
+			if (!node || node.type.name !== 'mention') return null
 
-	// Suppress tooltips while selecting text
-	let isSelecting = $state(false)
+			const attrs = node.attrs.id
+			if (!attrs) return null
 
-	function handleMouseDown() {
-		isSelecting = true
-		tooltipVisible = false
-		tooltipEntity = null
-	}
-
-	function handleMouseUp() {
-		setTimeout(() => {
-			isSelecting = false
-		}, 100)
-	}
-
-	function handleMentionEnter(event: MouseEvent) {
-		if (!editor || isSelecting) return
-		const target = (event.target as HTMLElement).closest?.('span[data-type="mention"]')
-		if (!target) {
-			// Mouse is over the editor but not a mention — dismiss tooltip
-			if (tooltipVisible) {
-				tooltipVisible = false
-				tooltipEntity = null
+			return {
+				type: attrs.type ?? attrs.searchableType?.toLowerCase() ?? 'unknown',
+				granblue_id: attrs.granblue_id ?? '',
+				name: attrs.name ?? { en: 'Unknown', ja: 'Unknown' },
+				element: attrs.element,
+				proficiency: attrs.proficiency,
+				season: attrs.season,
+				series: attrs.series,
+				styleSwap: attrs.styleSwap,
+				skill: attrs.skill
 			}
-			return
 		}
-
-		// Resolve the ProseMirror position from the DOM element
-		const pos = editor.view.posAtDOM(target, 0)
-		const node = editor.state.doc.nodeAt(pos)
-		if (!node || node.type.name !== 'mention') return
-
-		const attrs = node.attrs.id
-		if (!attrs) return
-
-		tooltipEntity = {
-			type: attrs.type ?? attrs.searchableType?.toLowerCase() ?? 'unknown',
-			granblue_id: attrs.granblue_id ?? '',
-			name: attrs.name ?? { en: 'Unknown', ja: 'Unknown' },
-			element: attrs.element,
-			proficiency: attrs.proficiency,
-			season: attrs.season,
-			series: attrs.series,
-			styleSwap: attrs.styleSwap,
-			skill: attrs.skill
-		}
-		tooltipVisible = true
-
-		requestAnimationFrame(() => {
-			if (!tooltipEl) return
-			computePosition(target as HTMLElement, tooltipEl, {
-				placement: 'top',
-				middleware: [offset(8), flip(), shift({ padding: 8 })]
-			}).then(({ x, y }) => {
-				if (tooltipEl) {
-					tooltipEl.style.left = `${x}px`
-					tooltipEl.style.top = `${y}px`
-				}
-			})
-		})
-	}
-
-	function handleMentionLeave(event: MouseEvent) {
-		const related = event.relatedTarget as HTMLElement | null
-		if (related?.closest?.('.mention-tooltip-wrapper')) return
-		tooltipVisible = false
-		tooltipEntity = null
-	}
-
-	function handleTooltipLeave(event: MouseEvent) {
-		const related = event.relatedTarget as HTMLElement | null
-		if (related?.closest?.('span[data-type="mention"]')) return
-		tooltipVisible = false
-		tooltipEntity = null
-	}
+	})
 </script>
 
 <div class="edit-description-pane">
@@ -164,10 +109,10 @@
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		class="editor-container"
-		onmousedown={handleMouseDown}
-		onmouseup={handleMouseUp}
-		onmouseover={handleMentionEnter}
-		onmouseleave={handleMentionLeave}
+		onmousedown={tooltip.handleMouseDown}
+		onmouseup={tooltip.handleMouseUp}
+		onmouseover={tooltip.handleMentionEnter}
+		onmouseleave={tooltip.handleMentionLeave}
 	>
 		<EdraEditor
 			bind:editor
@@ -180,10 +125,14 @@
 	</div>
 </div>
 
-{#if tooltipEntity}
+{#if tooltip.entity}
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="mention-tooltip-wrapper" bind:this={tooltipEl} onmouseleave={handleTooltipLeave}>
-		<MentionTooltip entity={tooltipEntity} visible={tooltipVisible} />
+	<div
+		class="mention-tooltip-wrapper"
+		bind:this={tooltip.el}
+		onmouseleave={tooltip.handleTooltipLeave}
+	>
+		<MentionTooltip entity={tooltip.entity} visible={tooltip.visible} />
 	</div>
 {/if}
 
