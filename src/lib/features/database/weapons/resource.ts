@@ -482,15 +482,6 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			detail: { empty: m.db_detail_not_available },
 			form: { placeholder: m.db_weapons_hint_kamigame, width: '480px' }
 		},
-		// Create only: the legacy series param. No input sets it, so it's never sent
-		{
-			key: 'new_series',
-			kind: 'number',
-			label: m.db_weapons_field_new_series,
-			empty: 'omit',
-			write: { value: (v) => v || null },
-			form: { edit: false }
-		},
 		// List only
 		{
 			key: 'latest_date',

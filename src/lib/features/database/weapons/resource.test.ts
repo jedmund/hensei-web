@@ -475,7 +475,6 @@ function legacyNewData() {
 		element: 0,
 		proficiency: 0,
 		series: 0 as number | string,
-		newSeries: 0,
 		promotions: [] as number[],
 		minHp: 0,
 		maxHp: 0,
@@ -522,7 +521,6 @@ function legacyCreatePayload(editData: ReturnType<typeof legacyNewData>) {
 		element: editData.element,
 		proficiency: editData.proficiency,
 		series: editData.series || undefined,
-		new_series: editData.newSeries || undefined,
 		promotions: editData.promotions,
 		min_hp: editData.minHp,
 		max_hp: editData.maxHp,
@@ -762,7 +760,6 @@ describe('weapons resource: edit payload parity', () => {
 		// Read-only fields aren't form values
 		expect(values).not.toHaveProperty('uncap')
 		expect(values).not.toHaveProperty('forge_chain')
-		expect(values).not.toHaveProperty('new_series')
 	})
 })
 
