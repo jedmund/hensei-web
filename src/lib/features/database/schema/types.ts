@@ -12,10 +12,12 @@
  * Field keys are the snake_case admin field and strong-param names, so one
  * key names the column, the filter, the sort and the param.
  */
+import type { Component } from 'svelte'
 import type { z } from 'zod'
 import type { BuiltInCellType, ColumnBase, DataTableColumn } from '$lib/components/data-table/types'
 import type { FilterOption, RecentPreset } from '$lib/components/data-table/filters'
 import type { SortSpec } from '$lib/components/data-table/urlState'
+import type { DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
 
 /** A Paraglide message function, so labels follow the locale */
 export type Message = () => string
@@ -204,6 +206,55 @@ export type DeriveRule = (values: Values, changed: string | null) => Values | un
 /** Cross-field validation; report each problem against a field key */
 export type RefineRule = (values: Values, issue: (key: string, message: string) => void) => void
 
+/** Page data the record screens (full-page detail and edit) receive */
+export interface RecordScreenData<Full> {
+	record: Full
+	role: number
+}
+
+/** The panel body: the detail view without the page around it */
+export type RecordBodyProps = {
+	granblueId: string
+	role: number
+	/** Requested detail tab (local state in the panel) */
+	tab: string | null
+	onTabChange: (tab: DetailTab) => void
+}
+
+/** A screen component, imported only when its route or panel opens */
+type Lazy<Props extends Record<string, unknown>> = () => Promise<{ default: Component<Props> }>
+
+/**
+ * Hand-written screens that replace the generated ones. Until the generated
+ * screens land (phases 4–7) a registered resource renders only these; the
+ * generic routes 404 a screen the resource doesn't have.
+ */
+export interface Screens<Full> {
+	/** The list takes no props: it reads its state from the URL */
+	list?: Lazy<Record<string, never>>
+	detail?: Lazy<{ data: RecordScreenData<Full> }>
+	edit?: Lazy<{ data: RecordScreenData<Full> }>
+	new?: Lazy<Record<string, never>>
+	/** The record side panel's body */
+	panel?: Lazy<RecordBodyProps>
+}
+
+export type ScreenKind = keyof Screens<unknown>
+
+/** The component a screen kind resolves to */
+export type ScreenComponent<K extends ScreenKind, Full = unknown> = Awaited<
+	ReturnType<NonNullable<Screens<Full>[K]>>
+>['default']
+
+export interface RecordDef<Full> {
+	/**
+	 * The full record the detail and edit pages load, by route id. Rejects with
+	 * an error carrying `status: 404` when there's no such record. Import the
+	 * adapter lazily: the param matcher puts the registry in the app's entry.
+	 */
+	fetch: (id: string) => Promise<Full>
+}
+
 export interface ResourceDef<Row = unknown, Full = unknown> {
 	/** Route segment and admin resource, e.g. `weapons` */
 	name: string
@@ -218,6 +269,8 @@ export interface ResourceDef<Row = unknown, Full = unknown> {
 	}
 	derive?: DeriveRule[]
 	refine?: RefineRule
+	record?: RecordDef<Full>
+	screens?: Screens<Full>
 }
 
 /** Keeps the row and record types on a definition */
