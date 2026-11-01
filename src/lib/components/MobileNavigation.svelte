@@ -43,7 +43,7 @@
 	<BahamutBar currentUser={nav.currentUser} />
 {/if}
 
-<nav aria-label="Global" class={nav.elementClass}>
+<nav aria-label="Global" class={nav.elementClass} class:database-layout={nav.isDatabaseRoute}>
 	{#if nav.isDatabaseRoute}
 		<DatabaseNavigation userElement={nav.userElement} role={nav.role} />
 	{:else}
@@ -78,6 +78,11 @@
 
 		@media (max-width: 768px) {
 			padding: spacing.$unit;
+		}
+
+		// Line up with the database page's gutter
+		&.database-layout {
+			padding-inline: layout.$database-gutter-phone;
 		}
 	}
 

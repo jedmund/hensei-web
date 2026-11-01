@@ -78,6 +78,11 @@ ul {
 		// Wider layout for database pages
 		&.database-layout {
 			max-width: layout.$database-max-width;
+			padding-inline: layout.$database-gutter;
+
+			@media (max-width: 768px) {
+				padding-inline: layout.$database-gutter-phone;
+			}
 		}
 	}
 }
