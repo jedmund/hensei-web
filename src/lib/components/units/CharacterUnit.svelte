@@ -2,7 +2,6 @@
 	import type { GridCharacter } from '$lib/types/api/party'
 	import { usePartyContext } from '$lib/types/party-context'
 	import { page } from '$app/stores'
-	import { goto } from '$app/navigation'
 	import Icon from '$lib/components/Icon.svelte'
 	import UnitMenuContainer from '$lib/components/ui/menu/UnitMenuContainer.svelte'
 	import MenuItems from '$lib/components/ui/menu/MenuItems.svelte'
@@ -22,10 +21,8 @@
 		openCharacterEditSidebar
 	} from '$lib/features/details/openDetailsSidebar.svelte'
 	import { canCharacterBeModified } from '$lib/utils/modificationDetector'
-	import { getDatabaseUrl, canAccessDatabase } from '$lib/utils/database'
+	import { canAccessDatabase } from '$lib/utils/database'
 	import { getElementClassName } from '$lib/utils/element'
-	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
 	import { GridType } from '$lib/types/enums'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 	import perpetuityEmpty from '$src/assets/icons/perpetuity/empty.svg'
@@ -33,7 +30,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
-	import { useAsyncAction } from '$lib/utils/asyncAction.svelte'
+	import { useUnitActions } from './useUnitActions.svelte'
 	interface Props {
 		item?: GridCharacter | undefined
 		position: number
@@ -56,6 +53,14 @@
 
 	const ctx = usePartyContext()
 	const simplePortraits = getSimplePortraits()
+	const actions = useUnitActions({
+		type: 'character',
+		ctx,
+		item: () => item,
+		position: () => position,
+		entity: () => item?.character
+	})
+	const { remove, replace } = actions
 
 	// Use $derived to ensure consistent computation between server and client
 	let imageUrl = $derived.by(() => {
@@ -79,8 +84,7 @@
 		)
 	})
 
-	// Check if this item is currently active in the sidebar
-	let isActive = $derived(item?.id && sidebar.activeItemId === String(item.id))
+	let isActive = $derived(actions.isActive)
 
 	// Check if this empty slot is currently selected for adding an item
 	let isEmptySelected = $derived(
@@ -91,20 +95,6 @@
 	let elementClass = $derived(
 		getElementClassName(item?.character?.element || mainWeaponElement || partyElement)
 	)
-
-	let removeConfirmOpen = $state(false)
-
-	function remove() {
-		if (!item?.id) return
-		removeConfirmOpen = true
-	}
-
-	const removeAction = useAsyncAction(async () => {
-		if (!item?.id) return
-		const party = ctx.getParty()
-		const editKey = ctx.getEditKey()
-		await ctx.services.gridService.removeCharacter(party.id, item.id, editKey || undefined)
-	}, 'Failed to remove character')
 
 	let canEditItem = $derived(canCharacterBeModified(item))
 
@@ -139,32 +129,8 @@
 		})
 	}
 
-	function replace() {
-		if (ctx?.openPicker) {
-			ctx.openPicker({ type: 'character', position, item })
-		}
-	}
-
-	function viewInDatabase() {
-		if (!item?.character?.granblueId) return
-		goto(getDatabaseUrl('character', item.character.granblueId, item.character.styleSwap))
-	}
-
 	// Check if user can view database (role >= 7)
 	let canViewDatabase = $derived(canAccessDatabase($page.data.account?.role))
-
-	// Teams pane state
-	let isTeamsPaneOpen = $derived(collectionTeamsPane.isOpen)
-
-	function viewTeamsWithCharacter() {
-		if (!item?.character) return
-		collectionTeamsPane.openTeamsPaneForEntity(item.character, 'character')
-	}
-
-	function addCharacterToTeamsView() {
-		if (!item?.character) return
-		collectionTeamsPane.addEntityToTeamsView(item.character, 'character')
-	}
 
 	// Check if character has a style swap variant available
 	let hasStyleVariant = $derived.by(() => {
@@ -335,9 +301,9 @@
 					{variant}
 					onEdit={canEditItem ? editItem : undefined}
 					onViewDetails={viewDetails}
-					onViewInDatabase={canViewDatabase ? viewInDatabase : undefined}
-					onViewTeams={viewTeamsWithCharacter}
-					onAddToTeamsView={isTeamsPaneOpen ? addCharacterToTeamsView : undefined}
+					onViewInDatabase={canViewDatabase ? actions.viewInDatabase : undefined}
+					onViewTeams={actions.viewTeams}
+					onAddToTeamsView={actions.isTeamsPaneOpen ? actions.addToTeamsView : undefined}
 					onReplace={ctx?.canEdit() ? replace : undefined}
 					onRemove={ctx?.canEdit() ? remove : undefined}
 					canEdit={ctx?.canEdit()}
@@ -392,38 +358,8 @@
 				transcendence={item.character?.uncap?.transcendence}
 				maxTranscendenceStage={item.character?.uncap?.maxTranscendenceStage}
 				editable={ctx?.canEdit()}
-				updateUncap={async (level) => {
-					if (!item?.id || !ctx) return
-					try {
-						const editKey = ctx.getEditKey()
-						await ctx.services.gridService.updateCharacterUncap(
-							item.id,
-							level,
-							undefined,
-							editKey || undefined
-						)
-					} catch (err) {
-						console.error('Failed to update character uncap:', err)
-						toast.error(extractErrorMessage(err, 'Failed to update uncap level'))
-					}
-				}}
-				updateTranscendence={async (stage) => {
-					if (!item?.id || !ctx) return
-					try {
-						const editKey = ctx.getEditKey()
-						// When setting transcendence > 0, also set uncap to max (6)
-						const maxUncap = stage > 0 ? 6 : undefined
-						await ctx.services.gridService.updateCharacterUncap(
-							item.id,
-							maxUncap,
-							stage,
-							editKey || undefined
-						)
-					} catch (err) {
-						console.error('Failed to update character transcendence:', err)
-						toast.error(extractErrorMessage(err, 'Failed to update transcendence'))
-					}
-				}}
+				updateUncap={actions.updateUncap}
+				updateTranscendence={actions.updateTranscendence}
 			/>
 		{/if}
 	{/key}
@@ -493,88 +429,24 @@
 {/snippet}
 
 <RemoveUnitDialog
-	bind:open={removeConfirmOpen}
+	bind:open={actions.removeConfirmOpen}
 	type="character"
 	name={item?.character ? localizedName(item.character.name) : null}
-	onConfirm={removeAction.run}
+	onConfirm={actions.removeAction.run}
 />
 
 <style lang="scss">
-	@use '$src/themes/colors' as colors;
 	@use '$src/themes/spacing' as spacing;
-	@use '$src/themes/typography' as typography;
 	@use '$src/themes/rep' as rep;
 	@use '$src/themes/unit' as unit;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/effects' as effects;
 
-	.unit {
-		position: relative;
-		width: 100%;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: spacing.$unit;
+	@include unit.unit-root;
+	@include unit.unit-slot;
 
-		&.empty .name {
-			display: none;
-		}
-	}
-
-	.focus-ring-wrapper {
-		position: relative;
-		display: block;
-		transition: transform 0.2s ease-in-out;
-
-		&::before {
-			content: '';
-			position: absolute;
-			inset: 0;
-			border-radius: layout.$input-corner;
-			pointer-events: none;
-			z-index: effects.$z-sticky;
-		}
-
-		&.editable:hover {
-			transform: scale(1.05);
-		}
-	}
-
-	.frame {
-		position: relative;
-		width: 100%;
-		border-radius: layout.$input-corner;
-		background: var(--card-bg, #f5f5f5);
-		transition: opacity 0.2s ease-in-out;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		cursor: pointer;
-
-		&.editable:hover {
-			opacity: 0.95;
-			box-shadow: var(--shadow-sm);
-		}
-
-		// Slot selection - subtle dark pulsing glow (works for both empty and filled)
-		&.is-selected,
-		&.is-active {
-			animation: pulse-slot-shadow 2s ease-in-out infinite;
-		}
-	}
-
-	@keyframes pulse-slot-shadow {
-		0%,
-		100% {
-			box-shadow:
-				0 0 0 1px rgba(0, 0, 0, 0.12),
-				0 0 4px 2px rgba(0, 0, 0, 0.06);
-		}
-		50% {
-			box-shadow:
-				0 0 0 1px rgba(0, 0, 0, 0.24),
-				0 0 8px 4px rgba(0, 0, 0, 0.12);
-		}
+	.focus-ring-wrapper.editable:hover {
+		transform: scale(1.05);
 	}
 
 	.frame.character.cell {
@@ -582,66 +454,12 @@
 	}
 
 	.image {
-		position: relative;
-		width: 100%;
-		height: 100%;
-		object-fit: cover;
-		display: block;
-		z-index: effects.$z-badge;
 		border-radius: layout.$input-corner;
-
-		&.placeholder {
-			opacity: 0;
-		}
-
-		&.not-in-collection {
-			opacity: 0.7;
-		}
 	}
 
-	.frame.not-in-collection::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		border: 2px solid colors.$error;
-		box-shadow: inset 0px 0px 4px colors.$error;
-		border-radius: inherit;
-		z-index: effects.$z-badge;
-		pointer-events: none;
-	}
-
-	.icon {
-		position: absolute;
-		z-index: effects.$z-raised;
-		color: var(--icon-secondary, #999);
-		transition: color 0.2s ease-in-out;
-	}
-
-	.frame.editable:hover .icon {
-		color: var(--icon-secondary-hover, #666);
-	}
-
-	.name {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: spacing.$unit-half;
-		font-size: typography.$font-small;
-		color: var(--text-secondary);
-
-		:global(.artifact-indicator) {
-			color: var(--extra-purple-text);
-			flex-shrink: 0;
-		}
-	}
-
-	.name-text {
-		// min-width: 0 lets the text item shrink under content size so long
-		// names wrap inside the span instead of forcing the bookmark/badge
-		// onto their own flex line.
-		min-width: 0;
-		text-align: center;
-		overflow-wrap: anywhere;
+	.name :global(.artifact-indicator) {
+		color: var(--extra-purple-text);
+		flex-shrink: 0;
 	}
 
 	.fa-skills {
@@ -710,81 +528,13 @@
 	}
 
 	.perpetuity {
-		position: absolute;
-		z-index: effects.$z-tooltip;
 		top: calc(spacing.$unit * -1);
 		right: 44px;
 		width: spacing.$unit-4x;
 		height: spacing.$unit-4x;
-		padding: 0;
-		border: none;
-		background: transparent;
-		cursor: pointer;
-		transition: transform 0.2s ease;
-
-		&:not(.active):not(.static) {
-			display: none;
-		}
-
-		&:hover {
-			transform: scale(1.1);
-		}
-
-		&.static {
-			cursor: default;
-			&:hover {
-				transform: none;
-			}
-		}
 	}
 
-	.focus-ring-wrapper:hover .perpetuity:not(.active) {
-		display: block;
-	}
-
-	.perpetuity-icon {
-		width: 100%;
-		height: 100%;
-		display: block;
-
-		&.filled {
-			display: none;
-		}
-
-		&.empty {
-			display: block;
-		}
-	}
-
-	.perpetuity.active {
-		.perpetuity-icon.filled {
-			display: block;
-		}
-
-		.perpetuity-icon.empty {
-			display: none;
-		}
-
-		&:hover {
-			.perpetuity-icon.filled {
-				display: none;
-			}
-
-			.perpetuity-icon.empty {
-				display: block;
-			}
-		}
-	}
-
-	.perpetuity:not(.active):hover {
-		.perpetuity-icon.filled {
-			display: block;
-		}
-
-		.perpetuity-icon.empty {
-			display: none;
-		}
-	}
+	@include unit.unit-toggle-badge(perpetuity);
 
 	.style-switch-wrapper {
 		position: absolute;
@@ -818,21 +568,5 @@
 
 	@include unit.unit-shared-styles;
 
-	.orphaned-badge {
-		position: absolute;
-		top: 4px;
-		right: 4px;
-		width: 24px;
-		height: 24px;
-		background: colors.$error;
-		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		color: white;
-		z-index: effects.$z-sticky;
-		pointer-events: auto;
-		cursor: help;
-		box-shadow: var(--shadow-sm);
-	}
+	@include unit.unit-orphaned-badge;
 </style>
