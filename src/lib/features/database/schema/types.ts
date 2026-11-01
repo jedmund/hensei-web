@@ -89,9 +89,13 @@ export interface WriteOptions {
 	value?: (value: unknown, values: Values) => unknown
 }
 
-export interface FieldRender {
-	/** The list cell is a snippet the caller hands to `columnsFor` under the field key */
-	cell?: 'snippet'
+export interface FieldRender<Row> {
+	/**
+	 * The list cell, drawn by this component (a `component` column). Unlike
+	 * the detail and form renderers, a cell is referenced directly: it's typed
+	 * by the row, and only the list screens load definitions
+	 */
+	cell?: Component<{ row: Row }>
 	/** Detail display drawn by a named component */
 	detail?: ComponentName
 	/** Form input drawn by a named component */
@@ -120,7 +124,7 @@ interface FieldBase<Row, Full> {
 	when?: (values: Values) => boolean
 	/** Extra rules the value must also pass */
 	validate?: z.ZodType
-	render?: FieldRender
+	render?: FieldRender<Row>
 }
 
 export type Field<Row = unknown, Full = unknown> = FieldBase<Row, Full> &

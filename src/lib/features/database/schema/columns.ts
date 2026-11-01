@@ -1,7 +1,6 @@
 /**
  * List config from a resource definition: DataTable columns and filters.
  */
-import type { Snippet } from 'svelte'
 import { labelText, type FilterConfig, type FilterOption } from '$lib/components/data-table/filters'
 import type {
 	BuiltInCellType,
@@ -19,33 +18,20 @@ const CELL_TYPES: Partial<Record<FieldKind, BuiltInCellType>> = {
 	datetime: 'date'
 }
 
-/**
- * Columns in `list.columns` order. Fields drawn by a snippet
- * (`render.cell: 'snippet'`) take it from `cells`, keyed by field key:
- * snippets can only be created in components. Phase 4 replaces this with a
- * `component` cell type.
- */
-export function columnsFor<Row, Full>(
-	def: ResourceDef<Row, Full>,
-	cells: Record<string, Snippet<[Row]>> = {}
-): DataTableColumn<Row>[] {
+/** Columns in `list.columns` order */
+export function columnsFor<Row, Full>(def: ResourceDef<Row, Full>): DataTableColumn<Row>[] {
 	return def.list.columns.map((entry) =>
-		typeof entry === 'string' ? fieldColumn(fieldFor(def, entry), cells) : entry
+		typeof entry === 'string' ? fieldColumn(fieldFor(def, entry)) : entry
 	)
 }
 
-function fieldColumn<Row, Full>(
-	field: Field<Row, Full>,
-	cells: Record<string, Snippet<[Row]>>
-): DataTableColumn<Row> {
+function fieldColumn<Row, Full>(field: Field<Row, Full>): DataTableColumn<Row> {
 	const { header, type, ...options } = field.list ?? {}
 	const base = { id: field.key, header: header ?? field.label, fields: [field.key] }
 	const raw = (row: Row) => prop(row, field.key)
 
-	if (field.render?.cell === 'snippet') {
-		const cell = cells[field.key]
-		if (!cell) throw new Error(`columnsFor: no cell snippet for "${field.key}"`)
-		return { ...base, type: 'custom', cell, ...options }
+	if (field.render?.cell) {
+		return { ...base, type: 'component', component: field.render.cell, ...options }
 	}
 
 	if (field.kind === 'localized') {

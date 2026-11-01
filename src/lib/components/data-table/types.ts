@@ -1,4 +1,4 @@
-import type { Snippet } from 'svelte'
+import type { Component } from 'svelte'
 import type { TableUrl } from './tableUrl.svelte'
 
 /** Catalogue thumbnails, resolved from the row's `granblueId` */
@@ -92,8 +92,9 @@ export type DataTableColumn<T> =
 			flags: (row: T) => FlagValue[]
 	  })
 	| (ColumnBase<T> & {
-			type: 'custom'
-			cell: Snippet<[T]>
+			type: 'component'
+			/** Draws the cell from the row; a component, so `.ts` column configs can name it */
+			component: Component<{ row: T }>
 	  })
 
 export type Facets = Record<string, Record<string, number>>

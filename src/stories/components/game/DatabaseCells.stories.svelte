@@ -169,25 +169,25 @@
 			style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; align-items: center;"
 		>
 			<span style="width: 100px; font-size: 12px; color: #666;">MLB (3★):</span>
-			<WeaponUncapCell row={{ uncap: {}, rarity: 3 }} />
+			<WeaponUncapCell row={{}} />
 		</div>
 		<div
 			style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; align-items: center;"
 		>
 			<span style="width: 100px; font-size: 12px; color: #666;">FLB (4★):</span>
-			<WeaponUncapCell row={{ uncap: { flb: true }, rarity: 3 }} />
+			<WeaponUncapCell row={{ flb: true }} />
 		</div>
 		<div
 			style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; align-items: center;"
 		>
 			<span style="width: 100px; font-size: 12px; color: #666;">ULB (5★):</span>
-			<WeaponUncapCell row={{ uncap: { flb: true, ulb: true }, rarity: 3 }} />
+			<WeaponUncapCell row={{ flb: true, ulb: true }} />
 		</div>
 		<div
 			style="display: flex; gap: 16px; background: #f5f5f5; padding: 16px; border-radius: 8px; align-items: center;"
 		>
 			<span style="width: 100px; font-size: 12px; color: #666;">Transcendence:</span>
-			<WeaponUncapCell row={{ uncap: { flb: true, ulb: true, transcendence: true }, rarity: 3 }} />
+			<WeaponUncapCell row={{ flb: true, ulb: true, transcendence: true }} />
 		</div>
 	</div>
 </Story>

@@ -10,6 +10,7 @@ import {
 	seriesFilterOptions,
 	weaponProficiencyFilterOptions
 } from '$lib/components/data-table/filterOptions'
+import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svelte'
 import { defineResource, type EnumOption, type Values } from '$lib/features/database/schema/types'
 import { BULLET_TYPES } from '$lib/types/api/entities'
 import { PROMOTION_NAMES } from '$lib/types/enums'
@@ -137,7 +138,7 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			kind: 'custom',
 			label: m.db_weapons_col_uncap,
 			write: false,
-			render: { cell: 'snippet', detail: 'uncapIndicator' },
+			render: { cell: WeaponUncapCell, detail: 'uncapIndicator' },
 			list: { sortable: false, width: '144px', fields: UNCAPS }
 		},
 		{

@@ -14,7 +14,6 @@
 	import { createServerSource } from '$lib/components/data-table/serverSource.svelte'
 	import { catalogueRowId } from '$lib/components/data-table/resultSync'
 	import { facetKeys, filterSpecs } from '$lib/components/data-table/filters'
-	import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svelte'
 	import {
 		WEAPONS_BASE_FIELDS,
 		WEAPONS_DEFAULT_SORT,
@@ -35,7 +34,7 @@
 	const seriesQuery = createQuery(() => entityQueries.weaponSeriesList())
 
 	const filters = weaponsFilters(() => seriesQuery.data)
-	const columns = weaponsColumns(uncapCell)
+	const columns = weaponsColumns()
 
 	const url = createTableUrl({
 		filters: filterSpecs(filters),
@@ -72,15 +71,6 @@
 		void openInPanel(page.url, catalogueRowId(row), page.state)
 	}
 </script>
-
-{#snippet uncapCell(row: AdminWeaponRow)}
-	<WeaponUncapCell
-		row={{
-			id: row.id,
-			uncap: { flb: !!row.flb, ulb: !!row.ulb, transcendence: !!row.transcendence }
-		}}
-	/>
-{/snippet}
 
 <div class="list-layout">
 	<div class="list">

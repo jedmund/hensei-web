@@ -4,8 +4,8 @@
  * generated config against it; both go away when the list is generated
  * from the weapons resource (GBF-142 phase 4).
  */
-import type { Snippet } from 'svelte'
 import * as m from '$lib/paraglide/messages'
+import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svelte'
 import type { FilterConfig } from '$lib/components/data-table/filters'
 import {
 	elementFilterOptions,
@@ -99,9 +99,7 @@ export function weaponsFilters(series: () => WeaponSeries[] | undefined): Filter
 }
 
 // Column ids are the API sort fields, so the URL reads ?sort=-latest_date
-export function weaponsColumns(
-	uncapCell: Snippet<[AdminWeaponRow]>
-): DataTableColumn<AdminWeaponRow>[] {
+export function weaponsColumns(): DataTableColumn<AdminWeaponRow>[] {
 	return [
 		{
 			id: 'image',
@@ -151,8 +149,8 @@ export function weaponsColumns(
 		{
 			id: 'uncap',
 			header: m.db_weapons_col_uncap,
-			type: 'custom',
-			cell: uncapCell,
+			type: 'component',
+			component: WeaponUncapCell,
 			sortable: false,
 			width: '144px',
 			fields: ['flb', 'ulb', 'transcendence']

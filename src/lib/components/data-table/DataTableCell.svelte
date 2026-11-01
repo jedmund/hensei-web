@@ -50,8 +50,8 @@
 	const isEmptyValue = $derived(value === null || value === undefined || value === '')
 </script>
 
-{#if column.type === 'custom'}
-	{@render column.cell(row)}
+{#if column.type === 'component'}
+	<column.component {row} />
 {:else if column.type === 'image'}
 	{#if image}
 		<img

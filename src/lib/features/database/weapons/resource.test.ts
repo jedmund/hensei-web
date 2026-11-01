@@ -4,7 +4,6 @@
  * the edit and new pages' payloads (transcribed below).
  */
 import { describe, expect, it } from 'vitest'
-import type { Snippet } from 'svelte'
 import { labelText, resolveOptions, type FilterConfig } from '$lib/components/data-table/filters'
 import { columnHeader, type DataTableColumn } from '$lib/components/data-table/types'
 import { columnsFor, filtersFor } from '$lib/features/database/schema/columns'
@@ -100,8 +99,6 @@ function normalizeFilter(filter: FilterConfig) {
 	}
 }
 
-const uncapCell = (() => {}) as unknown as Snippet<[AdminWeaponRow]>
-
 const series = [
 	{ id: 'uuid-b', slug: 'opus', order: 2, name: { en: 'Opus', ja: 'オプス' } },
 	{ id: 'uuid-a', slug: 'cosmos', order: 1, name: { en: 'Cosmos', ja: 'コスモス' } }
@@ -109,8 +106,8 @@ const series = [
 
 describe('weapons resource: list parity with WeaponsTable', () => {
 	it('generates the same columns', () => {
-		const generated = columnsFor(weaponsResource, { uncap: uncapCell })
-		const today = weaponsColumns(uncapCell)
+		const generated = columnsFor(weaponsResource)
+		const today = weaponsColumns()
 		expect(generated.map((c) => c.id)).toEqual(today.map((c) => c.id))
 		expect(generated.map(normalizeColumn)).toEqual(today.map(normalizeColumn))
 	})
@@ -135,10 +132,6 @@ describe('weapons resource: list parity with WeaponsTable', () => {
 	it('keeps the base fields and default sort', () => {
 		expect(weaponsResource.list.baseFields).toEqual(WEAPONS_BASE_FIELDS)
 		expect(weaponsResource.list.defaultSort).toEqual(WEAPONS_DEFAULT_SORT)
-	})
-
-	it('needs the uncap snippet', () => {
-		expect(() => columnsFor(weaponsResource)).toThrow(/uncap/)
 	})
 })
 
