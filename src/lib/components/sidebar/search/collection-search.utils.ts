@@ -4,6 +4,8 @@ import type {
 	CollectionSummon
 } from '$lib/types/api/collection'
 import type { AddItemResult } from '$lib/types/api/search'
+import type { AccessibleCollectionMember } from '$lib/api/queries/crew.queries'
+import { getAvatarSrc } from '$lib/utils/avatar'
 
 /**
  * Extract the underlying entity from a collection item regardless of type
@@ -50,4 +52,89 @@ export function filterCollectionByQuery<
 		const nameJa = typeof name === 'string' ? '' : name?.ja || ''
 		return nameEn.toLowerCase().includes(lowerQuery) || nameJa.toLowerCase().includes(lowerQuery)
 	})
+}
+
+/** A user whose collection was linked from outside the crew (e.g. via a URL param) */
+export interface ExternalCollectionUser {
+	id: string
+	username: string
+	avatar?: { picture?: string } | undefined
+}
+
+export interface CollectionMemberOption {
+	value: string
+	label: string
+	image?: string | undefined
+	suffix?: string
+}
+
+export interface ResolvedMember {
+	label: string
+	image?: string | undefined
+}
+
+/**
+ * Options for the collection member dropdown: the signed-in user first (marked
+ * "You"), then the other crew members, then an external collection source if
+ * it isn't already listed.
+ */
+export function buildMemberOptions(
+	members: AccessibleCollectionMember[],
+	authUserId: string | undefined,
+	externalUser: ExternalCollectionUser | undefined
+): CollectionMemberOption[] {
+	const options: CollectionMemberOption[] = []
+
+	if (authUserId) {
+		const selfMember = members.find((m) => m.userId === authUserId)
+		options.push({
+			value: authUserId,
+			label: selfMember?.username ?? 'You',
+			image: selfMember ? getAvatarSrc(selfMember.avatarPicture) : undefined,
+			suffix: 'You'
+		})
+	}
+
+	for (const m of members) {
+		if (m.userId !== authUserId) {
+			options.push({
+				value: m.userId,
+				label: m.username,
+				image: getAvatarSrc(m.avatarPicture)
+			})
+		}
+	}
+
+	if (externalUser && !options.some((o) => o.value === externalUser.id)) {
+		options.push({
+			value: externalUser.id,
+			label: externalUser.username,
+			image: getAvatarSrc(externalUser.avatar?.picture)
+		})
+	}
+
+	return options
+}
+
+/** Name and avatar for a collection owner, looked up in the crew and the external user. */
+export function resolveMember(
+	userId: string | undefined,
+	members: AccessibleCollectionMember[],
+	authUserId: string | undefined,
+	externalUser: ExternalCollectionUser | undefined
+): ResolvedMember | undefined {
+	if (!userId) return undefined
+	if (userId === authUserId) {
+		const self = members.find((m) => m.userId === authUserId)
+		return {
+			label: self?.username ?? 'You',
+			image: self ? getAvatarSrc(self.avatarPicture) : undefined
+		}
+	}
+	const member = members.find((m) => m.userId === userId)
+	if (member) return { label: member.username, image: getAvatarSrc(member.avatarPicture) }
+	if (externalUser && externalUser.id === userId) {
+		return { label: externalUser.username, image: getAvatarSrc(externalUser.avatar?.picture) }
+	}
+	return undefined
 }
