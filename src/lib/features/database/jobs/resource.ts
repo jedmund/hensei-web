@@ -183,6 +183,7 @@ export const jobsResource = defineResource<AdminJobRow, Job>({
 
 	list: {
 		label: m.db_jobs_label,
+		pageTitle: m.page_title_db_jobs,
 		entity: m.db_jobs_entity,
 		empty: m.db_jobs_empty,
 		title: 'name',

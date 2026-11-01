@@ -119,6 +119,13 @@ describe('loadScreen', () => {
 		expect(await loadScreen('weapons', 'new')).toBe(generated)
 	})
 
+	it('generates the lists of the job resources, which have no list override', async () => {
+		const { default: generated } = await import('./ResourceListScreen.svelte')
+		for (const name of ['jobs', 'job-skills', 'job-accessories']) {
+			expect(await loadScreen(name, 'list')).toBe(generated)
+		}
+	})
+
 	it('overrides nothing for weapons but the list', () => {
 		expect(Object.keys(weaponsResource.screens ?? {})).toEqual(['list'])
 	})
