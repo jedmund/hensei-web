@@ -345,3 +345,16 @@ export interface AdminJobAccessoryRow {
 	jobId?: string
 	createdAt?: string
 }
+
+/** Default `fields` of an admin character role row, camelCased */
+export interface AdminCharacterRoleRow {
+	id: string
+	nameEn: string
+	nameJp: string | null
+	sortOrder: number | null
+	/** Versioned (`?v=`), like the public role JSON */
+	iconKey: string | null
+	// Not in the default list: request via `fields`
+	createdAt?: string
+	updatedAt?: string
+}

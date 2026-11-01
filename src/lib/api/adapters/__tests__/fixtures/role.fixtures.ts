@@ -34,8 +34,8 @@ export const EXPECTED = {
 } as const
 
 export const REQUEST = {
-	createPayload: { grid_character_role: { name_en: 'Healer', name_jp: 'ヒーラー' } },
-	updatePayload: { grid_character_role: { name_en: 'Buffer' } },
+	createPayload: { name_en: 'Healer', name_jp: 'ヒーラー' },
+	updatePayload: { name_en: 'Buffer' },
 	reorderPayload: {
 		roles: [
 			{ id: 'a', sort_order: 0 },

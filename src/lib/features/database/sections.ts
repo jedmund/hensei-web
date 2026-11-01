@@ -11,6 +11,7 @@
 import { m } from '$lib/paraglide/messages'
 import { ADMIN_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
 import { awakeningsSection } from './awakenings/section'
+import { characterRolesSection } from './character-roles/section'
 import { characterSeriesSection } from './character-series/section'
 import { charactersSection } from './characters/section'
 import { eventsSection } from './events/section'
@@ -101,13 +102,7 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 		group: 'catalogue',
 		parent: 'characters'
 	},
-	{
-		id: 'roles',
-		label: () => m.nav_roles(),
-		path: '/database/character-roles',
-		group: 'catalogue',
-		parent: 'characters'
-	},
+	...resourceSections('character-roles', characterRolesSection),
 	...resourceSections('weapons', weaponsSection),
 	...resourceSections('weapon-series', weaponSeriesSection),
 	...resourceSections('awakenings', awakeningsSection),

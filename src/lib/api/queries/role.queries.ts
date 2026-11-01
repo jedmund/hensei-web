@@ -15,13 +15,6 @@ export const roleQueries = {
 			queryKey: ['roles', 'all'] as const,
 			queryFn: () => roleAdapter.listRoles(),
 			staleTime: 1000 * 60 * 5
-		}),
-	byId: (id: string | undefined) =>
-		queryOptions({
-			queryKey: ['roles', 'detail', id] as const,
-			queryFn: () => roleAdapter.getRole(id as string),
-			enabled: !!id,
-			staleTime: 1000 * 60 * 5
 		})
 }
 

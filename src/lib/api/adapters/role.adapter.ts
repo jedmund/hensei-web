@@ -2,7 +2,8 @@
  * Role Adapter
  *
  * Editor-only CRUD for the character role catalog plus icon upload and bulk
- * reorder. The route surface lives at /api/v1/grid_character_roles.
+ * reorder. The route surface lives at /api/v1/grid_character_roles; writes
+ * take flat params (the API's PERMITTED list).
  *
  * @module adapters/role
  */
@@ -36,7 +37,7 @@ export class RoleAdapter extends BaseAdapter {
 	async createRole(payload: RolePayload, headers?: Record<string, string>): Promise<Role> {
 		return this.request<Role>(BASE, {
 			method: 'POST',
-			body: { grid_character_role: payload },
+			body: payload,
 			headers
 		})
 	}
@@ -48,7 +49,7 @@ export class RoleAdapter extends BaseAdapter {
 	): Promise<Role> {
 		return this.request<Role>(`${BASE}/${id}`, {
 			method: 'PUT',
-			body: { grid_character_role: payload },
+			body: payload,
 			headers
 		})
 	}
