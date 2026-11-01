@@ -295,7 +295,11 @@ const EXPECTED_FILTERS = [
 		kind: 'toggles',
 		id: 'quality',
 		label: 'Data quality',
-		toggles: [toggle('missing_name_jp', 'Missing JA name'), toggle('no_skills', 'No skills')]
+		toggles: [
+			toggle('missing_name_jp', 'Missing JA name'),
+			toggle('no_skills', 'No skills'),
+			toggle('caps_mismatch', "Caps don't match uncaps")
+		]
 	},
 	{
 		kind: 'recent',

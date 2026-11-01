@@ -568,7 +568,9 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 				label: m.db_weapons_filter_quality,
 				toggles: [
 					{ key: 'missing_name_jp', label: m.db_weapons_filter_missing_name_jp },
-					{ key: 'no_skills', label: m.db_weapons_filter_no_skills }
+					{ key: 'no_skills', label: m.db_weapons_filter_no_skills },
+					// Max level or skill level not the standard cap for the uncaps
+					{ key: 'caps_mismatch', label: m.db_weapons_filter_caps_mismatch }
 				]
 			},
 			'updated_at'

@@ -2490,6 +2490,7 @@
 	"db_weapons_filter_quality": "データ品質",
 	"db_weapons_filter_missing_name_jp": "日本語名なし",
 	"db_weapons_filter_no_skills": "スキルなし",
+	"db_weapons_filter_caps_mismatch": "Caps don't match uncaps",
 	"db_weapons_filter_updated": "最終編集",
 	"db_weapons_filter_updated_7": "過去7日間",
 	"db_weapons_filter_updated_30": "過去30日間",

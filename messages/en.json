@@ -2701,6 +2701,7 @@
 	"db_weapons_filter_quality": "Data quality",
 	"db_weapons_filter_missing_name_jp": "Missing JA name",
 	"db_weapons_filter_no_skills": "No skills",
+	"db_weapons_filter_caps_mismatch": "Caps don't match uncaps",
 	"db_weapons_filter_updated": "Last edited",
 	"db_weapons_filter_updated_7": "Last 7 days",
 	"db_weapons_filter_updated_30": "Last 30 days",
