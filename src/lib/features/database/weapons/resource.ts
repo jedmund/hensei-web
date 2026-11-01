@@ -21,7 +21,7 @@ import {
 	buildWikiJaUrl
 } from '$lib/utils/external-links'
 import { localizedName } from '$lib/utils/locale'
-import { getProficiencyOptions, ProficiencyId } from '$lib/utils/proficiency'
+import { getWeaponProficiencyOptions, ProficiencyId } from '$lib/utils/proficiency'
 import { getRarityOptions } from '$lib/utils/rarity'
 import type { Weapon } from '$lib/api/adapters/weapon.adapter'
 import type { AdminWeaponRow } from '$lib/types/api/admin'
@@ -185,8 +185,9 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			key: 'proficiency',
 			kind: 'enum',
 			label: m.db_weapons_col_proficiency,
-			options: getProficiencyOptions,
-			default: 0,
+			options: getWeaponProficiencyOptions,
+			// No default: weapons always have a proficiency, so new ones must pick one
+			default: null,
 			required: true,
 			list: { type: 'proficiency' },
 			filter: { kind: 'multi', options: weaponProficiencyFilterOptions, facet: true }

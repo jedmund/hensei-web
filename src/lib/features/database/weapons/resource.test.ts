@@ -555,7 +555,8 @@ describe('weapons resource: create payload parity', () => {
 		expect(initialValues(weaponsResource)).toMatchObject({
 			rarity: 3,
 			element: 0,
-			proficiency: 0,
+			// The new page defaults to 0 (None), which the API now rejects for weapons
+			proficiency: null,
 			max_level: 100,
 			max_skill_level: 10,
 			min_hp: 0,
@@ -630,7 +631,8 @@ describe('weapons resource: validation', () => {
 		const values = {
 			...initialValues(weaponsResource),
 			granblue_id: '1040914000',
-			name: { en: 'Fresh', ja: '' }
+			name: { en: 'Fresh', ja: '' },
+			proficiency: 1
 		}
 		expect(issues({ ...values, awakening_ids: 'nope' }, 'create')).toEqual([])
 		expect(issues({ ...values, awakening_ids: 'nope' }, 'edit')).toContain('awakening_ids')
