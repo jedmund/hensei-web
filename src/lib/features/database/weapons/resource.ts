@@ -20,6 +20,7 @@ import WeaponUncapCell from '$lib/components/database/cells/WeaponUncapCell.svel
 import WeaponImagesTab from '$lib/features/database/weapons/tabs/WeaponImagesTab.svelte'
 import WeaponRawDataTab from '$lib/features/database/weapons/tabs/WeaponRawDataTab.svelte'
 import WeaponSkillsTab from '$lib/features/database/weapons/tabs/WeaponSkillsTab.svelte'
+import { weaponsSection } from '$lib/features/database/weapons/section'
 import { defineResource, type EnumOption, type Values } from '$lib/features/database/schema/types'
 import { BULLET_TYPES } from '$lib/types/api/entities'
 import { PROMOTION_NAMES } from '$lib/types/enums'
@@ -701,6 +702,8 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 		// Queues a job; the new weapon's page doesn't wait for it
 		afterCreate: (w) => weaponAdapter.downloadWeaponImages(w.id)
 	},
+
+	section: weaponsSection,
 
 	// The list screen renders the generated list and keeps the Series,
 	// Awakenings and Skills views by hand, until series and awakenings become

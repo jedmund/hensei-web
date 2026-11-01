@@ -23,6 +23,7 @@ import type {
 } from '$lib/components/data-table/types'
 import type { FilterOption, RecentPreset } from '$lib/components/data-table/filters'
 import type { SortSpec } from '$lib/components/data-table/urlState'
+import type { ResourceSection } from '$lib/features/database/sections'
 import type {
 	DetailEntityType,
 	DetailTab
@@ -396,6 +397,8 @@ export interface ResourceDef<Row = unknown, Full = unknown> {
 	refine?: RefineRule
 	record?: RecordDef<Full>
 	save?: SaveDef<Full>
+	/** Its sidebar entry (see `resourceSections` in the database sections) */
+	section?: ResourceSection
 	screens?: Screens<Full>
 }
 

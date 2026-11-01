@@ -10,6 +10,7 @@
  */
 import { m } from '$lib/paraglide/messages'
 import { ADMIN_ROLE, CURATOR_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
+import { weaponsSection } from './weapons/section'
 
 export type SectionGroupId = 'catalogue' | 'battles' | 'site' | 'admin'
 
@@ -39,6 +40,21 @@ export interface DatabaseSection {
 	minRole?: number
 	/** Hidden until the feature exists */
 	hidden?: boolean
+}
+
+/**
+ * A schema resource's place in the sidebar (`ResourceDef.section`). Its id
+ * and path come from the resource's name; `resourceSections` expands it into
+ * the section and its sub-sections.
+ */
+export interface ResourceSection {
+	label: () => string
+	group: SectionGroupId
+	entity?: () => string
+	/** "New" menu items; an href without a leading slash is relative to the resource's path */
+	actions?: SectionAction[][]
+	/** Sub-sections that are `?view=` tabs on the resource's list */
+	views?: Array<Pick<DatabaseSection, 'id' | 'label' | 'view' | 'matches'>>
 }
 
 export interface SectionGroup {
@@ -98,52 +114,7 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 		group: 'catalogue',
 		parent: 'characters'
 	},
-	{
-		id: 'weapons',
-		label: () => m.nav_weapons(),
-		path: '/database/weapons',
-		group: 'catalogue',
-		entity: () => m.type_weapon(),
-		actions: [
-			[
-				{
-					label: () => m.nav_new_single({ entity: m.type_weapon() }),
-					href: '/database/weapons/new'
-				},
-				{
-					label: () => m.nav_new_multiple({ entity: m.type_weapon() }),
-					href: '/database/weapons/import'
-				}
-			],
-			[{ label: () => m.nav_new_weapon_series(), href: '/database/series/weapons/new' }]
-		]
-	},
-	{
-		id: 'weapon-series',
-		label: () => m.db_nav_series(),
-		path: '/database/weapons',
-		view: 'series',
-		group: 'catalogue',
-		parent: 'weapons',
-		matches: ['/database/series/weapons']
-	},
-	{
-		id: 'awakenings',
-		label: () => m.db_nav_awakenings(),
-		path: '/database/weapons',
-		view: 'awakenings',
-		group: 'catalogue',
-		parent: 'weapons'
-	},
-	{
-		id: 'weapon-skills',
-		label: () => m.db_nav_skills(),
-		path: '/database/weapons',
-		view: 'skills',
-		group: 'catalogue',
-		parent: 'weapons',
-		matches: ['/database/weapon-skills']
-	},
+	...resourceSections('weapons', weaponsSection),
 	{
 		id: 'summons',
 		label: () => m.nav_summons(),
@@ -258,6 +229,29 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 		hidden: true
 	}
 ]
+
+/**
+ * A schema resource's section, followed by its `?view=` sub-sections. Takes
+ * the definition's name and section, not the definition: this list is in
+ * every page's bundle, and definitions aren't.
+ */
+export function resourceSections(name: string, section: ResourceSection): DatabaseSection[] {
+	const path = `/database/${name}`
+	const { views = [], actions, ...rest } = section
+	return [
+		{
+			id: name,
+			path,
+			...rest,
+			...(actions && {
+				actions: actions.map((group) =>
+					group.map((a) => (a.href.startsWith('/') ? a : { ...a, href: `${path}/${a.href}` }))
+				)
+			})
+		},
+		...views.map((view) => ({ ...view, path, group: section.group, parent: name }))
+	]
+}
 
 export function sectionHref(section: DatabaseSection): string {
 	return section.view ? `${section.path}?view=${section.view}` : section.path
