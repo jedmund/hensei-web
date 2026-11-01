@@ -272,7 +272,7 @@
 		overflow-y: auto;
 	}
 
-	:global(.confirm-dialog) {
+	:global(.dialog-content.confirm-dialog) {
 		width: 380px;
 	}
 

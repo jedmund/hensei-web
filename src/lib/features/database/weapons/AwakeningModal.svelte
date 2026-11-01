@@ -253,7 +253,7 @@
 		padding-top: 0;
 	}
 
-	:global(.confirm-dialog) {
+	:global(.dialog-content.confirm-dialog) {
 		width: 380px;
 	}
 
