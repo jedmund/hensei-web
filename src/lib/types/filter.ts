@@ -41,3 +41,26 @@ export interface PlaceholderSuggestion {
 	category: string
 	option?: FilterOption
 }
+
+/** Selected values per Collection filter group */
+export interface CollectionFilterState {
+	element: number[]
+	rarity: number[]
+	season: number[]
+	/** Series filters - number[] for characters, string[] for weapons (UUIDs) */
+	series: (number | string)[]
+	race: number[]
+	proficiency: number[]
+	gender: number[]
+}
+
+export type CollectionFilterKey = keyof CollectionFilterState
+
+/** One Collection filter group as rendered by the inline pickers, More menu and mobile sheet */
+export interface CollectionFilterConfig {
+	key: CollectionFilterKey
+	options: { value: number | string; label: string; color?: string }[]
+	value: (number | string)[]
+	onChange: (value: (number | string)[]) => void
+	placeholder: string
+}
