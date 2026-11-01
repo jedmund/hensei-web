@@ -435,6 +435,18 @@ export interface SaveDef<Full> {
 	 * (e.g. Home, which shows events, or the series lists other pages' filters read)
 	 */
 	invalidates?: () => readonly (readonly unknown[])[]
+	/**
+	 * Deletes the record. With it, the edit form ends with a Delete button
+	 * (and a confirm); afterwards the record, the admin list and `invalidates`
+	 * go stale and the list opens. Rejects with the adapter error, whose
+	 * message is shown (e.g. a 422 saying the record is in use)
+	 */
+	destroy?: (record: Full) => Promise<unknown>
+	/**
+	 * Whether Delete is allowed (default true). `false`, or a message saying
+	 * why not (shown under the disabled button), disables it
+	 */
+	canDestroy?: (record: Full) => boolean | string | Message
 }
 
 export interface RecordDef<Full> {
