@@ -6,6 +6,7 @@
 	import { useCreateCrew } from '$lib/api/mutations/crew.mutations'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import { toCrewInput, validateCrewForm } from '$lib/features/crew/crewForm'
 	import * as m from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 
@@ -40,24 +41,8 @@
 
 	// Form validation
 	function validate(): boolean {
-		const newErrors: Record<string, string> = {}
-
-		if (!name.trim()) {
-			newErrors.name = m.crew_error_name_required()
-		} else if (name.length > 100) {
-			newErrors.name = m.crew_error_name_max()
-		}
-
-		if (gamertag && gamertag.length > 4) {
-			newErrors.gamertag = m.crew_error_gamertag_max()
-		}
-
-		if (description && description.length > 500) {
-			newErrors.description = m.crew_error_description_max()
-		}
-
-		errors = newErrors
-		return Object.keys(newErrors).length === 0
+		errors = validateCrewForm({ name, gamertag, description })
+		return Object.keys(errors).length === 0
 	}
 
 	// Form submission
@@ -67,12 +52,9 @@
 		if (!validate()) return
 
 		try {
-			const crew = await createCrewMutation.mutateAsync({
-				name: name.trim(),
-				gamertag: gamertag.trim() || undefined,
-				granblueCrewId: granblueCrewId.trim() || undefined,
-				description: description.trim() || undefined
-			})
+			const crew = await createCrewMutation.mutateAsync(
+				toCrewInput({ name, gamertag, granblueCrewId, description })
+			)
 
 			// Update the store
 			crewStore.setCrew(crew, crew.currentMembership ?? null)
