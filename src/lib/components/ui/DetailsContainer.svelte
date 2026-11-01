@@ -1,11 +1,23 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 
-	let { title, children }: { title: string; children: Snippet } = $props()
+	let {
+		title,
+		action,
+		children
+	}: {
+		title: string
+		/** Shown opposite the title, e.g. an Add button */
+		action?: Snippet | undefined
+		children: Snippet
+	} = $props()
 </script>
 
 <div class="container">
-	<h4>{title}</h4>
+	<header>
+		<h4>{title}</h4>
+		{@render action?.()}
+	</header>
 	<div class="details">
 		{@render children()}
 	</div>
@@ -25,6 +37,13 @@
 
 		&:last-child {
 			border-bottom: none;
+		}
+
+		header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: spacing.$unit;
 		}
 
 		h4 {

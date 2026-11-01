@@ -13,6 +13,7 @@
 	import EditRaidPane from '$lib/components/sidebar/EditRaidPane.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { localizedName } from '$lib/utils/locale'
+	import { getRaidImage } from '$lib/utils/images'
 	import {
 		eventKindLabel,
 		eventKindNeedsElement,
@@ -134,41 +135,34 @@
 </DetailsContainer>
 
 <DetailsContainer title={m.db_events_section_raids()}>
-	<div class="raids">
-		{#if values.raids.length === 0}
-			<p class="hint">{m.db_events_raids_empty()}</p>
-		{:else}
-			<ul class="raid-list">
-				{#each values.raids as raid (raid.id)}
-					<li>
-						<span>{localizedName(raid.name)}</span>
-						{#if !readonly}
-							<Button variant="ghost" size="small" onclick={() => removeRaid(raid.id)}>
-								{m.db_events_raid_remove()}
-							</Button>
-						{/if}
-					</li>
-				{/each}
-			</ul>
-		{/if}
+	{#snippet action()}
 		{#if !readonly}
 			<Button variant="secondary" size="small" onclick={addRaid}>{m.db_events_raid_add()}</Button>
 		{/if}
-	</div>
+	{/snippet}
+	{#if values.raids.length === 0}
+		<p class="hint">{m.db_events_raids_empty()}</p>
+	{:else}
+		<ul class="raid-list">
+			{#each values.raids as raid (raid.id)}
+				<li>
+					<img src={getRaidImage(raid.slug)} alt="" class="thumb" />
+					<span class="name">{localizedName(raid.name)}</span>
+					{#if !readonly}
+						<Button variant="ghost" size="small" onclick={() => removeRaid(raid.id)}>
+							{m.db_events_raid_remove()}
+						</Button>
+					{/if}
+				</li>
+			{/each}
+		</ul>
+	{/if}
 </DetailsContainer>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/typography' as typography;
-
-	.raids {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: spacing.$unit;
-		padding: spacing.$unit-2x;
-	}
 
 	.raid-list {
 		list-style: none;
@@ -182,11 +176,24 @@
 		li {
 			display: flex;
 			align-items: center;
-			justify-content: space-between;
+			gap: spacing.$unit;
 			padding: spacing.$unit-half spacing.$unit;
+			padding-left: spacing.$unit-half;
 			background: var(--input-bound-bg);
 			border-radius: layout.$item-corner;
+			color: var(--text-primary);
 		}
+	}
+
+	.thumb {
+		height: spacing.$unit * 5;
+		width: auto;
+		border-radius: layout.$item-corner-small;
+	}
+
+	.name {
+		flex: 1;
+		min-width: 0;
 	}
 
 	.hint {
