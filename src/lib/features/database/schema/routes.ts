@@ -12,13 +12,27 @@ function definition(resource: string): AnyResourceDef {
 	return def
 }
 
-/** Generated screens, for resources with no override. The detail needs a `record` */
+/**
+ * Generated screens, for resources with no override. The detail needs a
+ * `record`, the edit page a `record` it can `save.update`
+ */
 function generated(
 	def: AnyResourceDef,
 	kind: ScreenKind
 ): (() => Promise<{ default: unknown }>) | undefined {
 	if (kind === 'detail' && def.record) return () => import('./ResourceDetailScreen.svelte')
+	if (kind === 'edit' && def.record && def.save?.update) {
+		return () => import('./ResourceEditScreen.svelte')
+	}
 	return undefined
+}
+
+/** The resource's screen for a route, if it has one: its override, else the generated one */
+export function screenFor(
+	def: AnyResourceDef,
+	kind: ScreenKind
+): (() => Promise<{ default: unknown }>) | undefined {
+	return def.screens?.[kind] ?? generated(def, kind)
 }
 
 /**
@@ -31,7 +45,7 @@ export async function loadScreen<K extends ScreenKind>(
 	kind: K
 ): Promise<ScreenComponent<K>> {
 	const def = definition(resource)
-	const screen = def.screens?.[kind] ?? generated(def, kind)
+	const screen = screenFor(def, kind)
 	if (!screen) error(404, 'Not found')
 	return (await screen()).default as ScreenComponent<K>
 }

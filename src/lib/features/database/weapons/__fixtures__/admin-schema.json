@@ -105,7 +105,7 @@
 			"range": false
 		}
 	},
-	"flags": ["missing_name_jp", "no_skills"],
+	"flags": ["missing_name_jp", "no_skills", "caps_mismatch"],
 	"sorts": [
 		"name_en",
 		"name_jp",
@@ -332,14 +332,6 @@
 				"allow_nil": true
 			}
 		],
-		"max_awakening_level": [
-			{
-				"kind": "numericality",
-				"only_integer": true,
-				"greater_than_or_equal_to": 0,
-				"allow_nil": true
-			}
-		],
 		"max_exorcism_level": [
 			{
 				"kind": "numericality",
@@ -409,6 +401,14 @@
 				"kind": "numericality",
 				"only_integer": true,
 				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		],
+		"max_awakening_level": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 1,
 				"allow_nil": true
 			}
 		]

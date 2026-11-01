@@ -23,6 +23,7 @@ import {
 	initialValues,
 	toPayload
 } from '$lib/features/database/schema/form'
+import { isShown } from '$lib/features/database/schema/fields'
 import { buildZod } from '$lib/features/database/schema/validation'
 import type { Values } from '$lib/features/database/schema/types'
 import type { Weapon } from '$lib/api/adapters/weapon.adapter'
@@ -294,7 +295,11 @@ const EXPECTED_FILTERS = [
 		kind: 'toggles',
 		id: 'quality',
 		label: 'Data quality',
-		toggles: [toggle('missing_name_jp', 'Missing JA name'), toggle('no_skills', 'No skills')]
+		toggles: [
+			toggle('missing_name_jp', 'Missing JA name'),
+			toggle('no_skills', 'No skills'),
+			toggle('caps_mismatch', "Caps don't match uncaps")
+		]
 	},
 	{
 		kind: 'recent',
@@ -560,6 +565,43 @@ function omit(payload: Record<string, unknown>, ...keys: string[]) {
 	return Object.fromEntries(Object.entries(payload).filter(([key]) => !keys.includes(key)))
 }
 
+/** Blanks the old pages left out or sent as '' */
+const CLEARABLE = ['name_jp', 'series', 'recruits', 'wiki_en', 'wiki_ja', 'gamewith', 'kamigame']
+
+/**
+ * GBF-158: what the generated forms send differently from the old pages, as
+ * decided with the maintainer. Applied to a legacy payload, so the parity
+ * tests still pin every other key.
+ * - Blank `series`, `recruits` and `name_jp` send null instead of being left
+ *   out, so they can be cleared.
+ * - Every blank text, link, date or reference sends null: the links no
+ *   longer send ''.
+ * - The awakening switch: a weapon without an awakening level sends
+ *   `max_awakening_level: null` and no awakenings.
+ */
+function decided(payload: Record<string, unknown>) {
+	const out = { ...payload }
+	for (const key of CLEARABLE) if (out[key] === undefined || out[key] === '') out[key] = null
+	if (!out.max_awakening_level) {
+		out.max_awakening_level = null
+		if ('awakening_ids' in out) out.awakening_ids = []
+	}
+	return out
+}
+
+/**
+ * GBF-158: loading keeps the stored level caps; the old stats section
+ * overwrote them from the uncap state on load
+ */
+function storedCaps(weapon: Weapon) {
+	return { max_level: weapon.maxLevel || 100, max_skill_level: weapon.maxSkillLevel || 10 }
+}
+
+/** The edit page's payload for a weapon, with the decided changes */
+function expectedEdit(weapon: Weapon) {
+	return { ...decided(wire(legacyEditPayload(legacyEditData(weapon)))), ...storedCaps(weapon) }
+}
+
 const seriesRef = {
 	id: 'series-uuid',
 	slug: 'revans',
@@ -636,14 +678,14 @@ function schemaEditPayload(weapon: Weapon) {
 
 describe('weapons resource: edit payload parity', () => {
 	it('matches the edit page for a fully filled weapon', () => {
-		expect(wire(schemaEditPayload(fullWeapon))).toEqual(
-			wire(legacyEditPayload(legacyEditData(fullWeapon)))
-		)
+		expect(wire(schemaEditPayload(fullWeapon))).toEqual(expectedEdit(fullWeapon))
+		// Nothing filled in is affected by the decided changes
+		expect(expectedEdit(fullWeapon)).toEqual(wire(legacyEditPayload(legacyEditData(fullWeapon))))
 	})
 
-	it('matches the edit page for blank optional values', () => {
+	it('matches the edit page for blank optional values, with the decided changes', () => {
 		const payload = wire(schemaEditPayload(sparseWeapon))
-		expect(payload).toEqual(wire(legacyEditPayload(legacyEditData(sparseWeapon))))
+		expect(payload).toEqual(expectedEdit(sparseWeapon))
 		// The empty-value rules these exercise
 		expect(payload).toMatchObject({
 			flb_date: null,
@@ -655,15 +697,31 @@ describe('weapons resource: edit payload parity', () => {
 			max_awakening_level: null,
 			bullet_slots: [],
 			awakening_ids: [],
-			wiki_en: ''
+			// GBF-158: blanks are null, so these can be cleared
+			wiki_en: null,
+			series: null,
+			recruits: null,
+			name_jp: null
 		})
-		expect(payload).not.toHaveProperty('series')
-		expect(payload).not.toHaveProperty('recruits')
-		expect(payload).not.toHaveProperty('name_jp')
 	})
 
-	it('derives the level caps on load, as the stats section did', () => {
-		expect(schemaEditPayload(sparseWeapon)).toMatchObject({ max_level: 250, max_skill_level: 25 })
+	it('keeps the stored level caps on load (GBF-158)', () => {
+		// Fully uncapped, yet stored at 100: the old page sent 250 / 25
+		expect(schemaEditPayload(sparseWeapon)).toMatchObject({ max_level: 100, max_skill_level: 10 })
+	})
+
+	it('sends no awakening level or awakenings while awakening is off (GBF-158)', () => {
+		const values = applyDerive(
+			weaponsResource,
+			{ ...fromRecord(weaponsResource, fullWeapon), awakening: false },
+			'awakening'
+		)
+		expect(toPayload(weaponsResource, values, 'edit')).toMatchObject({
+			max_awakening_level: null,
+			awakening_ids: []
+		})
+		// The switch itself is never sent
+		expect(toPayload(weaponsResource, values, 'edit')).not.toHaveProperty('awakening')
 	})
 
 	it('leaves out fields hidden for a plain weapon, which the edit page sent unchanged', () => {
@@ -684,9 +742,7 @@ describe('weapons resource: edit payload parity', () => {
 			'element_variant_ids',
 			'bullet_slots'
 		]
-		expect(wire(schemaEditPayload(plain))).toEqual(
-			omit(wire(legacyEditPayload(legacyEditData(plain))), ...hidden)
-		)
+		expect(wire(schemaEditPayload(plain))).toEqual(omit(expectedEdit(plain), ...hidden))
 	})
 
 	it('reads the record into form values', () => {
@@ -699,7 +755,9 @@ describe('weapons resource: edit payload parity', () => {
 			forged_from: '1040911000',
 			awakening_ids: ['awk-atk', 'awk-def'],
 			limit: true,
-			extra_prerequisite: 4
+			extra_prerequisite: 4,
+			// Form-only: from the awakening level
+			awakening: true
 		})
 		// Read-only fields aren't form values
 		expect(values).not.toHaveProperty('uncap')
@@ -741,21 +799,21 @@ describe('weapons resource: create payload parity', () => {
 		return { values, legacy }
 	}
 
-	it('matches the new page', () => {
+	it('matches the new page, with the decided changes', () => {
 		const { values, legacy } = fill('3040001000')
 		const payload = wire(toPayload(weaponsResource, values, 'create'))
-		expect(payload).toEqual(wire(legacyCreatePayload(legacy)))
+		expect(payload).toEqual(decided(wire(legacyCreatePayload(legacy))))
 		expect(payload).not.toHaveProperty('awakening_ids')
 		expect(payload).not.toHaveProperty('weapon_series_variant_id')
 		expect(payload).not.toHaveProperty('element_variant_ids')
 		expect(payload).not.toHaveProperty('bullet_slots')
 	})
 
-	it('leaves out an empty recruit, which the new page sent as null', () => {
+	it('sends an empty recruit as null, as the new page did', () => {
 		const { values, legacy } = fill(null)
-		expect(wire(toPayload(weaponsResource, values, 'create'))).toEqual(
-			omit(wire(legacyCreatePayload(legacy)), 'recruits')
-		)
+		const payload = wire(toPayload(weaponsResource, values, 'create'))
+		expect(payload).toEqual(decided(wire(legacyCreatePayload(legacy))))
+		expect(payload.recruits).toBeNull()
 	})
 
 	it('starts from the new page defaults', () => {
@@ -794,6 +852,17 @@ describe('weapons resource: validation', () => {
 		expect(issues({ ...valid(), granblue_id: '104091200' })).toEqual(['granblue_id'])
 		expect(issues({ ...valid(), granblue_id: '10409120ab' })).toEqual(['granblue_id'])
 		expect(issues({ ...valid(), name: { en: ' ', ja: '' } })).toEqual(['name.en'])
+	})
+
+	it('requires an awakening level of at least 1 while awakening is on (GBF-158)', () => {
+		expect(issues({ ...valid(), max_awakening_level: null })).toEqual(['max_awakening_level'])
+		expect(issues({ ...valid(), max_awakening_level: 0 })).toEqual(['max_awakening_level'])
+		expect(issues({ ...valid(), awakening: false, max_awakening_level: null })).toEqual([])
+	})
+
+	it('requires the level caps, which the API never stores blank', () => {
+		expect(issues({ ...valid(), max_level: null })).toEqual(['max_level'])
+		expect(issues({ ...valid(), max_skill_level: null })).toEqual(['max_skill_level'])
 	})
 
 	it('checks integers and bounds', () => {
@@ -841,8 +910,9 @@ describe('weapons resource: validation', () => {
 			name: { en: 'Fresh', ja: '' },
 			proficiency: 1
 		}
-		expect(issues({ ...values, awakening_ids: 'nope' }, 'create')).toEqual([])
-		expect(issues({ ...values, awakening_ids: 'nope' }, 'edit')).toContain('awakening_ids')
+		const awakening = { awakening: true, max_awakening_level: 1, awakening_ids: 'nope' }
+		expect(issues({ ...values, ...awakening }, 'create')).toEqual([])
+		expect(issues({ ...values, ...awakening }, 'edit')).toContain('awakening_ids')
 	})
 })
 
@@ -851,19 +921,52 @@ describe('weapons resource: derive', () => {
 	const change = (values: Values, key: string, value: unknown) =>
 		applyDerive(weaponsResource, { ...values, [key]: value }, key)
 
-	it('sets level caps from the uncap state', () => {
-		const none = { flb: false, ulb: false, transcendence: false }
-		expect(applyDerive(weaponsResource, { ...base(), ...none }, null)).toMatchObject({
-			max_level: 100,
+	it('sets the standard level caps when an uncap changes, by rarity', () => {
+		const none = { ...base(), flb: false, ulb: false, transcendence: false }
+		expect(change(none, 'flb', true)).toMatchObject({ max_level: 150, max_skill_level: 15 })
+		expect(change(none, 'ulb', true)).toMatchObject({ max_level: 200, max_skill_level: 20 })
+		const flbOff = { ...base(), ulb: false, transcendence: false }
+		expect(change(flbOff, 'flb', false)).toMatchObject({ max_level: 100, max_skill_level: 10 })
+		expect(change({ ...flbOff, rarity: 2 }, 'flb', false)).toMatchObject({
+			max_level: 75,
 			max_skill_level: 10
 		})
-		expect(applyDerive(weaponsResource, { ...base(), ...none, flb: true }, null)).toMatchObject({
+		expect(change({ ...flbOff, rarity: 1 }, 'flb', false)).toMatchObject({
+			max_level: 50,
+			max_skill_level: 10
+		})
+		expect(change({ ...none, rarity: 2 }, 'flb', true)).toMatchObject({
 			max_level: 150,
 			max_skill_level: 15
 		})
-		expect(
-			applyDerive(weaponsResource, { ...base(), ...none, flb: true, ulb: true }, null)
-		).toMatchObject({ max_level: 200, max_skill_level: 20 })
+		// The table stops at SR FLB and at R, as the API's caps_mismatch flag does
+		expect(change({ ...none, rarity: 2 }, 'ulb', true)).toMatchObject({
+			max_level: 150,
+			max_skill_level: 15
+		})
+		expect(change({ ...none, rarity: 1 }, 'flb', true)).toMatchObject({
+			max_level: 50,
+			max_skill_level: 10
+		})
+	})
+
+	it('keeps the stored caps on load and when anything but an uncap changes (GBF-158)', () => {
+		const stored = { ...fullWeapon, maxLevel: 120, maxSkillLevel: 12 }
+		const loaded = fromRecord(weaponsResource, stored)
+		expect(loaded).toMatchObject({ max_level: 120, max_skill_level: 12 })
+		expect(change(loaded, 'rarity', 2)).toMatchObject({ max_level: 120, max_skill_level: 12 })
+	})
+
+	it('switches awakening from the stored level, and off clears what it hid (GBF-158)', () => {
+		expect(base().awakening).toBe(true)
+		expect(fromRecord(weaponsResource, sparseWeapon).awakening).toBe(false)
+		const off = change(base(), 'awakening', false)
+		expect(off).toMatchObject({ max_awakening_level: null, awakening_ids: [] })
+		const fields = weaponsResource.fields.filter((f) =>
+			['max_awakening_level', 'awakening_ids'].includes(f.key)
+		)
+		expect(fields.map((f) => isShown(f, off))).toEqual([false, false])
+		expect(fields.map((f) => isShown(f, base()))).toEqual([true, true])
 	})
 
 	it('keeps a cap the user typed', () => {

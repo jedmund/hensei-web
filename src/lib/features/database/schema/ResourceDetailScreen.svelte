@@ -14,6 +14,7 @@
 	import { getListUrl } from '$lib/utils/listNavigation'
 	import { recordTitle } from './detail'
 	import { resourceDef } from './registry'
+	import { screenFor } from './routes'
 	import ResourceDetail from './ResourceDetail.svelte'
 	import type { RecordScreenData } from './types'
 
@@ -39,8 +40,9 @@
 			record ? (recordDef.element?.(record) ?? undefined) : undefined
 		).toLowerCase() as ElementName | undefined
 	)
-	// Until the generated edit form lands (phase 6) only resources with an edit screen have one
-	const editUrl = $derived(canEdit && def.screens?.edit ? `/database/${def.name}/${id}/edit` : null)
+	const editUrl = $derived(
+		canEdit && screenFor(def, 'edit') ? `/database/${def.name}/${id}/edit` : null
+	)
 	const title = $derived((record && recordTitle(def, record)) || recordDef.noun())
 
 	function handleTabChange(tab: DetailTab) {

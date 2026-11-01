@@ -10,6 +10,7 @@
 import { describe, expect, it } from 'vitest'
 import { columnsFor, filtersFor } from '$lib/features/database/schema/columns'
 import { formFields } from '$lib/features/database/schema/fields'
+import { fromRecord, toPayload } from '$lib/features/database/schema/form'
 import type { Field, FormMode } from '$lib/features/database/schema/types'
 import { weaponsResource } from './resource'
 import api from './__fixtures__/admin-schema.json'
@@ -59,6 +60,14 @@ describe('weapons schema matches the API contract', () => {
 			field.write === false ? [] : writeKeys(field as AnyField)
 		)
 		expect(used.filter((key) => !writable.has(key))).toEqual([])
+	})
+
+	it('never writes form-only values (the awakening switch)', () => {
+		const sent = Object.keys(
+			toPayload(weaponsResource, fromRecord(weaponsResource, { granblueId: 'x' } as never), 'edit')
+		)
+		expect(sent).not.toContain('awakening')
+		expect(sent.filter((key) => !writable.has(key))).toEqual([])
 	})
 
 	it('offers only published enum values', () => {

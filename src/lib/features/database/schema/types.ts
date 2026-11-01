@@ -45,6 +45,12 @@ export type ComponentName =
 	'uncapIndicator' | 'weaponAwakenings' | 'weaponForge' | 'elementVariantIds' | 'bulletSlots'
 
 /**
+ * Form inputs the edit and create forms resolve by name, for values no
+ * built-in input edits (or, on a read-only field, a live preview)
+ */
+export type InputName = 'uncapIndicator' | 'weaponAwakenings' | 'elementVariantIds'
+
+/**
  * How an empty value ('', null, undefined, [] or {}) is sent:
  * `keep` sends it as is, `null` sends null, `omit` leaves the param out
  * (the server keeps its current value).
@@ -131,7 +137,7 @@ export interface FieldRender<Row> {
 	/** Detail display drawn by a named component */
 	detail?: ComponentName
 	/** Form input drawn by a named component */
-	input?: ComponentName
+	input?: InputName
 }
 
 interface FieldBase<Row, Full> {
@@ -143,17 +149,26 @@ interface FieldBase<Row, Full> {
 	read?: (record: Full) => unknown
 	/** A param rename, conversion, or `false` for read-only */
 	write?: false | string | WriteOptions
-	/** Defaults: `null` for dates, enums, numbers and references; `keep` otherwise */
+	/** Defaults to `keep` for booleans and lists (tags included), `null` otherwise */
 	empty?: EmptyPolicy
 	/** Initial create value, and the value when the record has none */
 	default?: unknown
 	required?: boolean
 	list?: ListOptions<Row>
 	filter?: FieldFilter
-	/** `false` keeps the field off both forms */
+	/**
+	 * `false` keeps the field off both forms. A read-only field (`write:
+	 * false`) is on them only when it sets this: a form-only value, like a toggle
+	 */
 	form?: false | FormOptions
 	/** Shown, validated and sent only while this holds */
 	when?: (values: Values) => boolean
+	/**
+	 * What's sent while `when` hides the field: `omit` (the default) leaves the
+	 * param out, `empty` sends an empty value under the `empty` policy (so
+	 * hiding the field clears it)
+	 */
+	whenHidden?: 'omit' | 'empty'
 	/** Detail view options; `false` keeps the field out of the detail (form-only) */
 	detail?: false | DetailOptions<Full>
 	/** Extra rules the value must also pass */
@@ -276,9 +291,9 @@ type Lazy<Props extends Record<string, unknown>> = () => Promise<{ default: Comp
 
 /**
  * Hand-written screens that replace the generated ones. The detail and the
- * panel are generated when a resource has a `record`; until the generated
- * forms land (phases 6–7) the generic routes 404 any other screen the
- * resource doesn't have.
+ * panel are generated when a resource has a `record`, and the edit page when
+ * it can also `save.update`; until the generated create form lands (phase 7)
+ * the generic routes 404 any other screen the resource doesn't have.
  */
 export interface Screens<Full> {
 	/** The list takes no props: it reads its state from the URL */
@@ -316,6 +331,15 @@ export interface RecordTab<Full> {
 	editorOnly?: boolean
 }
 
+/** How a resource's forms save */
+export interface SaveDef<Full> {
+	/**
+	 * Sends the edit form's payload for the record. Resolves with the saved
+	 * record; rejects with the adapter error (a 422 carries `errors` by param)
+	 */
+	update?: (record: Full, payload: Values) => Promise<Full>
+}
+
 export interface RecordDef<Full> {
 	/**
 	 * The full record the detail and edit pages load, by route id. Rejects with
@@ -325,6 +349,8 @@ export interface RecordDef<Full> {
 	/** The same record as a query, so the panel and the page share its cache */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	query: (id: string) => CreateQueryOptions<Full, any, Full, any>
+	/** The record's route id (what `fetch` takes), e.g. its Granblue ID */
+	routeId: (record: Full) => string
 	/** Singular noun for the page header, e.g. "Weapon" */
 	noun: Message
 	/** Header kind: picks the placeholder image and the labels under the name */
@@ -353,6 +379,7 @@ export interface ResourceDef<Row = unknown, Full = unknown> {
 	derive?: DeriveRule[]
 	refine?: RefineRule
 	record?: RecordDef<Full>
+	save?: SaveDef<Full>
 	screens?: Screens<Full>
 }
 

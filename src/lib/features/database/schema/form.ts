@@ -1,13 +1,14 @@
 /**
  * Form values from a full record, derived values, and the API payload.
  */
-import { formFields, isShown, readField } from './fields'
+import { fieldFor, formFields, isShown, onForm, readField } from './fields'
 import type {
 	EmptyPolicy,
 	Field,
 	FieldKind,
 	FormMode,
 	ResourceDef,
+	Section,
 	Values,
 	WriteOptions
 } from './types'
@@ -112,15 +113,42 @@ export function isEmpty(value: unknown): boolean {
 	return false
 }
 
-const NULL_WHEN_EMPTY: FieldKind[] = ['date', 'datetime', 'enum', 'number', 'reference', 'custom']
+/** Lists and booleans send their empty value; anything else blank is null */
+const KEEP_WHEN_EMPTY: FieldKind[] = ['boolean', 'enumList', 'tags', 'referenceList']
 
 function emptyPolicy<Row, Full>(field: Field<Row, Full>): EmptyPolicy {
-	return field.empty ?? (NULL_WHEN_EMPTY.includes(field.kind) ? 'null' : 'keep')
+	if (field.empty) return field.empty
+	if (field.kind === 'localized') return field.of === 'tags' ? 'keep' : 'null'
+	return KEEP_WHEN_EMPTY.includes(field.kind) ? 'keep' : 'null'
+}
+
+/** A form's sections, each with the fields it draws: form fields, and read-only previews */
+export interface FormSection<Row = unknown, Full = unknown> {
+	section: Section
+	fields: Field<Row, Full>[]
+}
+
+/**
+ * The form's layout for the mode (`create` falls back to `edit`, `edit` to
+ * `detail`). Whether each field shows still depends on the values (`when`).
+ */
+export function formSections<Row, Full>(
+	def: ResourceDef<Row, Full>,
+	mode: FormMode
+): FormSection<Row, Full>[] {
+	const { detail, edit = detail, create = edit } = def.layout
+	return (mode === 'edit' ? edit : create).flatMap((section) => {
+		const fields = section.fields
+			.map((key) => fieldFor(def, key))
+			.filter((field) => onForm(field, mode) || field.render?.input)
+		return fields.length ? [{ section, fields }] : []
+	})
 }
 
 /**
  * The API payload: shown, writable fields of the mode, under their param
- * names, with empty values handled by each field's `empty` policy.
+ * names, with empty values handled by each field's `empty` policy. A field
+ * `when` hides is left out, or sent empty if its `whenHidden` says so.
  */
 export function toPayload<Row, Full>(
 	def: ResourceDef<Row, Full>,
@@ -129,7 +157,9 @@ export function toPayload<Row, Full>(
 ): Values {
 	const payload: Values = {}
 	for (const field of formFields(def, mode)) {
-		if (!isShown(field, values)) continue
+		if (field.write === false) continue
+		const shown = isShown(field, values)
+		if (!shown && field.whenHidden !== 'empty') continue
 
 		const write: WriteOptions =
 			typeof field.write === 'string'
@@ -137,7 +167,8 @@ export function toPayload<Row, Full>(
 				: typeof field.write === 'object'
 					? field.write
 					: {}
-		const value = write.value ? write.value(values[field.key], values) : values[field.key]
+		const raw = shown ? values[field.key] : emptyValue(field.kind)
+		const value = write.value ? write.value(raw, values) : raw
 		const policy = emptyPolicy(field)
 		const set = (key: string, v: unknown) => {
 			if (!isEmpty(v)) payload[key] = v
@@ -146,7 +177,7 @@ export function toPayload<Row, Full>(
 		}
 
 		if (field.kind === 'localized') {
-			const pair = value as { en: unknown; ja: unknown }
+			const pair = (value ?? {}) as { en?: unknown; ja?: unknown }
 			set(field.keys.en, pair.en)
 			set(field.keys.ja, pair.ja)
 		} else {

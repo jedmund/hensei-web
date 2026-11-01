@@ -93,6 +93,12 @@ describe('loadScreen', () => {
 		expect(await loadScreen('weapons', 'detail')).toBe(generated)
 	})
 
+	it('generates the edit page for a resource with a record it can save', async () => {
+		const { default: generated } = await import('./ResourceEditScreen.svelte')
+		expect(weaponsResource.screens?.edit).toBeUndefined()
+		expect(await loadScreen('weapons', 'edit')).toBe(generated)
+	})
+
 	it('404s an unregistered resource', async () => {
 		await expect(loadScreen('widgets', 'list')).rejects.toMatchObject({ status: 404 })
 	})

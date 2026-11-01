@@ -9,8 +9,5 @@
 </script>
 
 {#each record.bulletSlots ?? [] as slotType, i (i)}
-	<DetailItem
-		label={m.db_weapons_field_bullet_slot({ n: i + 1 })}
-		value={BULLET_TYPES[slotType] ?? 'Unknown'}
-	/>
+	<DetailItem label={m.db_field_slot({ n: i + 1 })} value={BULLET_TYPES[slotType] ?? 'Unknown'} />
 {/each}

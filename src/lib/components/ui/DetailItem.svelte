@@ -28,7 +28,8 @@
 		linkUrl,
 		hasLinkButton = false,
 		min,
-		max
+		max,
+		error
 	}: {
 		label: string
 		/** Secondary label displayed below the main label */
@@ -52,6 +53,8 @@
 		min?: number
 		/** Maximum value for number inputs */
 		max?: number
+		/** A problem with the value, shown under the label */
+		error?: string | undefined
 	} = $props()
 
 	// For checkbox type, derive the checked state from value
@@ -81,6 +84,9 @@
 		<span class="label">{label}</span>
 		{#if sublabel}
 			<span class="sublabel">{sublabel}</span>
+		{/if}
+		{#if error}
+			<span class="error" role="alert">{error}</span>
 		{/if}
 	</div>
 	{#if editable}
@@ -146,6 +152,7 @@
 </div>
 
 <style lang="scss">
+	@use '$src/themes/colors' as colors;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
@@ -184,6 +191,12 @@
 		.sublabel {
 			font-size: typography.$font-small;
 			color: var(--text-tertiary);
+			font-weight: typography.$normal;
+		}
+
+		.error {
+			font-size: typography.$font-small;
+			color: colors.$error;
 			font-weight: typography.$normal;
 		}
 

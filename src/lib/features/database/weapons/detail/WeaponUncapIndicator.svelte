@@ -1,9 +1,9 @@
 <script lang="ts">
-	// The weapon's uncap stars in the detail's Uncap row
+	// The weapon's uncap stars in the detail's Uncap row (and the forms', from their values)
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import type { Weapon } from '$lib/api/adapters/weapon.adapter'
 
-	let { record }: { record: Weapon } = $props()
+	let { record }: { record: Pick<Weapon, 'uncap'> } = $props()
 
 	const flb = $derived(record.uncap?.flb ?? false)
 	const ulb = $derived(record.uncap?.ulb ?? false)
