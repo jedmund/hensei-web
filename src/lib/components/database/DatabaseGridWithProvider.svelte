@@ -6,8 +6,6 @@
 	import { onMount, onDestroy, tick, untrack } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
-	import { createQuery, queryOptions } from '@tanstack/svelte-query'
-	import { seriesAdapter } from '$lib/api/adapters/series.adapter'
 	import { storeListUrl } from '$lib/utils/listNavigation'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
@@ -33,12 +31,11 @@
 	import { DatabaseSearch } from './useDatabaseSearch.svelte'
 	import DatabaseGridControls from './DatabaseGridControls.svelte'
 	import DatabaseGridFooter from './DatabaseGridFooter.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 
 	import type { Snippet } from 'svelte'
 
 	interface Props {
-		resource: 'weapons' | 'characters' | 'summons' | 'jobs'
+		resource: 'characters' | 'summons' | 'jobs'
 		columns: IColumn[]
 		pageSize?: number
 		leftActions?: Snippet
@@ -55,13 +52,7 @@
 
 	// Derive entity type from resource
 	const entityType = $derived(
-		resource === 'characters'
-			? 'character'
-			: resource === 'summons'
-				? 'summon'
-				: resource === 'jobs'
-					? 'job'
-					: 'weapon'
+		resource === 'characters' ? 'character' : resource === 'summons' ? 'summon' : 'job'
 	)
 
 	const supportsCollectionFilters = $derived(resource !== 'jobs')
@@ -69,27 +60,10 @@
 	// Create provider
 	const provider = $derived(new DatabaseProvider({ resource, pageSize: initialPageSize }))
 
-	// Fetch weapon series list for URL slug mapping (only for weapons)
-	const weaponSeriesQuery = createQuery(() =>
-		queryOptions({
-			queryKey: ['weaponSeries', 'list'] as const,
-			queryFn: () => seriesAdapter.getWeaponSeriesList(),
-			enabled: resource === 'weapons',
-			staleTime: 1000 * 60 * 60,
-			gcTime: 1000 * 60 * 60 * 24
-		})
-	)
-
 	// --- Composables ---
 
 	const filters = $derived(
-		new DatabaseFilters(
-			resource,
-			entityType,
-			provider,
-			() => weaponSeriesQuery.data,
-			(pg) => loadData(pg)
-		)
+		new DatabaseFilters(resource, entityType, provider, (pg) => loadData(pg))
 	)
 
 	const search = $derived(new DatabaseSearch(provider, (pg) => loadData(pg)))
@@ -268,33 +242,6 @@
 		hasCustomColumns = false
 	}
 
-	// --- Expand mode ---
-
-	const EXPAND_STORAGE_KEY = $derived(`database-expanded-${resource}`)
-	let expanded = $state(false)
-
-	function toggleExpanded() {
-		expanded = !expanded
-		if (isBrowser) {
-			if (expanded) {
-				localStorage.setItem(EXPAND_STORAGE_KEY, 'true')
-			} else {
-				localStorage.removeItem(EXPAND_STORAGE_KEY)
-			}
-		}
-	}
-
-	$effect(() => {
-		if (expanded) {
-			document.documentElement.style.setProperty('--main-max-width', '90vw')
-		} else {
-			document.documentElement.style.removeProperty('--main-max-width')
-		}
-		return () => {
-			document.documentElement.style.removeProperty('--main-max-width')
-		}
-	})
-
 	// --- Grid init ---
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- wx-svelte-grid API doesn't export typed interfaces
@@ -417,7 +364,6 @@
 
 	function initializeFromUrl() {
 		if (urlInitialized) return
-		if (resource === 'weapons' && !weaponSeriesQuery.data) return
 
 		const startPage = filters.initializeFromUrl(
 			$page.url.searchParams,
@@ -434,18 +380,8 @@
 	}
 
 	onMount(() => {
-		expanded = localStorage.getItem(EXPAND_STORAGE_KEY) === 'true'
 		restoreColumnVisibility()
-
-		if (resource !== 'weapons') {
-			initializeFromUrl()
-		}
-	})
-
-	$effect(() => {
-		if (resource === 'weapons' && weaponSeriesQuery.data && !urlInitialized) {
-			initializeFromUrl()
-		}
+		initializeFromUrl()
 	})
 
 	// --- Scroll tracking for pinned column shadow ---
@@ -505,24 +441,13 @@
 						search.searchTerm = e.currentTarget.value
 					}}
 				/>
-				<Button
-					variant="ghost"
-					size="small"
-					iconOnly
-					icon={expanded ? 'collapse' : 'expand'}
-					onclick={toggleExpanded}
-				/>
 			{/snippet}
 		</DatabaseGridControls>
 
 		{#if filters.showFilters && supportsCollectionFilters}
 			<div class="filters-row">
 				<CollectionFilters
-					entityType={resource === 'characters'
-						? 'character'
-						: resource === 'summons'
-							? 'summon'
-							: 'weapon'}
+					entityType={resource === 'characters' ? 'character' : 'summon'}
 					bind:elementFilters={filters.elementFilters}
 					bind:rarityFilters={filters.rarityFilters}
 					bind:seriesFilters={filters.seriesFilters}

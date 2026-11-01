@@ -1,10 +1,9 @@
 import type { CollectionFilterState } from '$lib/types/filter'
 import { parseFiltersFromUrl, buildUrlFromFilters, ELEMENT_TO_PARAM } from '$lib/utils/filterParams'
 import type { DatabaseProvider } from '$lib/providers/DatabaseProvider'
-import type { WeaponSeries } from '$lib/types/api/weaponSeries'
 
-export type EntityType = 'weapon' | 'character' | 'summon' | 'job'
-export type ResourceType = 'weapons' | 'characters' | 'summons' | 'jobs'
+export type EntityType = 'character' | 'summon' | 'job'
+export type ResourceType = 'characters' | 'summons' | 'jobs'
 
 export class DatabaseFilters {
 	elementFilters = $state<number[]>([])
@@ -17,7 +16,6 @@ export class DatabaseFilters {
 	#resource: ResourceType
 	#entityType: EntityType
 	#provider: DatabaseProvider
-	#getWeaponSeriesData: () => WeaponSeries[] | undefined
 	#onReload: (page: number) => void
 
 	readonly hasActiveFilters = $derived(
@@ -53,13 +51,11 @@ export class DatabaseFilters {
 		resource: ResourceType,
 		entityType: EntityType,
 		provider: DatabaseProvider,
-		getWeaponSeriesData: () => WeaponSeries[] | undefined,
 		onReload: (page: number) => void
 	) {
 		this.#resource = resource
 		this.#entityType = entityType
 		this.#provider = provider
-		this.#getWeaponSeriesData = getWeaponSeriesData
 		this.#onReload = onReload
 	}
 
@@ -91,13 +87,7 @@ export class DatabaseFilters {
 			race: [],
 			gender: []
 		}
-		const params = buildUrlFromFilters(
-			filterState,
-			searchTerm,
-			pageNum,
-			this.#entityType,
-			this.#getWeaponSeriesData()
-		)
+		const params = buildUrlFromFilters(filterState, searchTerm, pageNum, this.#entityType)
 		const search = params.toString()
 		return search ? `${pathname}?${search}` : pathname
 	}
@@ -108,7 +98,7 @@ export class DatabaseFilters {
 		setSearchTerm: (term: string) => void,
 		setLastSearchTerm: (term: string) => void
 	): number {
-		const parsed = parseFiltersFromUrl(searchParams, this.#entityType, this.#getWeaponSeriesData())
+		const parsed = parseFiltersFromUrl(searchParams, this.#entityType)
 
 		this.elementFilters = parsed.element
 		this.rarityFilters = parsed.rarity

@@ -15,7 +15,6 @@ import {
 	PARAM_TO_CHARACTER_SERIES
 } from '../filterParams'
 import type { CollectionFilterState } from '$lib/types/filter'
-import type { WeaponSeries } from '$lib/types/api/weaponSeries'
 
 function emptyFilters(): CollectionFilterState {
 	return {
@@ -28,29 +27,6 @@ function emptyFilters(): CollectionFilterState {
 		gender: []
 	}
 }
-
-const MOCK_WEAPON_SERIES: WeaponSeries[] = [
-	{
-		id: 'ws-1',
-		slug: 'dark-opus',
-		name: { en: 'Dark Opus', ja: 'オプス' },
-		hasWeaponKeys: true,
-		hasAwakening: true,
-		augmentType: 'no_augment',
-		extra: false,
-		elementChangeable: false
-	},
-	{
-		id: 'ws-2',
-		slug: 'draconic',
-		name: { en: 'Draconic', ja: 'ドラゴニック' },
-		hasWeaponKeys: true,
-		hasAwakening: false,
-		augmentType: 'no_augment',
-		extra: false,
-		elementChangeable: false
-	}
-] as WeaponSeries[]
 
 // ============================================================================
 // Mapping Constants
@@ -143,18 +119,6 @@ describe('parseFiltersFromUrl', () => {
 		expect(result.series).toEqual([1, 2])
 	})
 
-	it('parses weapon series as UUIDs via slug lookup', () => {
-		const params = new URLSearchParams('series=dark-opus,draconic')
-		const result = parseFiltersFromUrl(params, 'weapon', MOCK_WEAPON_SERIES)
-		expect(result.series).toEqual(['ws-1', 'ws-2'])
-	})
-
-	it('ignores unknown weapon series slugs', () => {
-		const params = new URLSearchParams('series=nonexistent')
-		const result = parseFiltersFromUrl(params, 'weapon', MOCK_WEAPON_SERIES)
-		expect(result.series).toEqual([])
-	})
-
 	it('parses search query', () => {
 		const params = new URLSearchParams('q=Yuel')
 		const result = parseFiltersFromUrl(params, 'character')
@@ -221,15 +185,6 @@ describe('buildUrlFromFilters', () => {
 		const filters = { ...emptyFilters(), series: [1, 2] as (number | string)[] }
 		const params = buildUrlFromFilters(filters, '', 1, 'character')
 		expect(params.get('series')).toBe('grand,zodiac')
-	})
-
-	it('builds weapon series param via UUID lookup', () => {
-		const filters = {
-			...emptyFilters(),
-			series: ['ws-1', 'ws-2'] as (number | string)[]
-		}
-		const params = buildUrlFromFilters(filters, '', 1, 'weapon', MOCK_WEAPON_SERIES)
-		expect(params.get('series')).toBe('dark-opus,draconic')
 	})
 
 	it('includes search query', () => {

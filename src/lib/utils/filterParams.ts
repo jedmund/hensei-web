@@ -6,7 +6,6 @@
  */
 
 import type { CollectionFilterState } from '$lib/types/filter'
-import type { WeaponSeries } from '$lib/types/api/weaponSeries'
 import { getElementKey, ELEMENTS } from '$lib/utils/element'
 import { PROFICIENCY_DISPLAY_ORDER, getProficiencyKey } from '$lib/utils/proficiency'
 
@@ -148,13 +147,10 @@ export function parseParamArray<T>(
 
 /**
  * Parse URL search params into filter state
- *
- * For weapons, pass the weaponSeriesList to resolve slugs to UUIDs
  */
 export function parseFiltersFromUrl(
 	searchParams: URLSearchParams,
-	entityType: 'character' | 'weapon' | 'summon' | 'job',
-	weaponSeriesList?: WeaponSeries[]
+	entityType: 'character' | 'weapon' | 'summon' | 'job'
 ): ParsedFilters {
 	const element = parseParamArray(searchParams, 'element', PARAM_TO_ELEMENT)
 	const rarity = parseParamArray(searchParams, 'rarity', PARAM_TO_RARITY)
@@ -162,23 +158,14 @@ export function parseFiltersFromUrl(
 	const season =
 		entityType === 'character' ? parseParamArray(searchParams, 'season', PARAM_TO_SEASON) : []
 
-	// Parse series based on entity type
+	// Series: characters use the numeric series enum
 	let series: (number | string)[] = []
 	const seriesParam = searchParams.get('series')
-	if (seriesParam) {
-		const seriesSlugs = seriesParam.split(',').map((v) => v.trim().toLowerCase())
-
-		if (entityType === 'character') {
-			// Characters use numeric series enum
-			series = seriesSlugs
-				.map((slug) => PARAM_TO_CHARACTER_SERIES[slug])
-				.filter((v): v is number => v !== undefined)
-		} else if (entityType === 'weapon' && weaponSeriesList) {
-			// Weapons use UUIDs, need to look up by slug
-			series = seriesSlugs
-				.map((slug) => weaponSeriesList.find((ws) => ws.slug === slug)?.id)
-				.filter((id): id is string => id !== undefined)
-		}
+	if (seriesParam && entityType === 'character') {
+		series = seriesParam
+			.split(',')
+			.map((v) => PARAM_TO_CHARACTER_SERIES[v.trim().toLowerCase()])
+			.filter((v): v is number => v !== undefined)
 	}
 
 	// Parse search query
@@ -217,15 +204,12 @@ export function buildParamString<T extends string | number>(
 
 /**
  * Build URL search params from filter state
- *
- * For weapons, pass the weaponSeriesList to resolve UUIDs to slugs
  */
 export function buildUrlFromFilters(
 	filters: CollectionFilterState,
 	searchQuery: string,
 	page: number,
-	entityType: 'character' | 'weapon' | 'summon' | 'job',
-	weaponSeriesList?: WeaponSeries[]
+	entityType: 'character' | 'weapon' | 'summon' | 'job'
 ): URLSearchParams {
 	const params = new URLSearchParams()
 
@@ -250,24 +234,14 @@ export function buildUrlFromFilters(
 		if (seasonParam) params.set('season', seasonParam)
 	}
 
-	// Series
-	if (filters.series.length > 0) {
-		if (entityType === 'character') {
-			// Characters use numeric series, convert to slugs
-			const numericSeries = filters.series.filter((s): s is number => typeof s === 'number')
-			const seriesParam = buildParamString(
-				numericSeries,
-				CHARACTER_SERIES_TO_PARAM as Record<number, string>
-			)
-			if (seriesParam) params.set('series', seriesParam)
-		} else if (entityType === 'weapon' && weaponSeriesList) {
-			// Weapons use UUIDs, look up slugs
-			const slugs = filters.series
-				.filter((s): s is string => typeof s === 'string')
-				.map((uuid) => weaponSeriesList.find((ws) => ws.id === uuid)?.slug)
-				.filter((slug): slug is string => slug !== undefined)
-			if (slugs.length > 0) params.set('series', slugs.join(','))
-		}
+	// Series: characters use the numeric series enum, written as slugs
+	if (filters.series.length > 0 && entityType === 'character') {
+		const numericSeries = filters.series.filter((s): s is number => typeof s === 'number')
+		const seriesParam = buildParamString(
+			numericSeries,
+			CHARACTER_SERIES_TO_PARAM as Record<number, string>
+		)
+		if (seriesParam) params.set('series', seriesParam)
 	}
 
 	// Search query
