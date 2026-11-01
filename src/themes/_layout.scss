@@ -10,6 +10,9 @@ $database-max-width: 1400px;
 $database-sidebar-width: 208px;
 $database-sidebar-gap: spacing.$unit-3x;
 $database-sidebar-breakpoint: 1100px;
+// Space between the database page (content and top bar) and the window edges
+$database-gutter: spacing.$unit-3x;
+$database-gutter-phone: spacing.$unit-2x;
 // Tallest control in a database list toolbar (selects, search inputs)
 $database-control-height: 38px;
 

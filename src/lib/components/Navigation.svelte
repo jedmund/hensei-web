@@ -69,9 +69,12 @@
 		// content column starts so the bar never overlaps the sidebar
 		&.database-layout {
 			max-width: layout.$database-max-width;
+			padding-inline: layout.$database-gutter;
 
 			@media (min-width: layout.$database-sidebar-breakpoint) {
-				padding-left: calc(layout.$database-sidebar-width + layout.$database-sidebar-gap);
+				padding-left: calc(
+					layout.$database-gutter + layout.$database-sidebar-width + layout.$database-sidebar-gap
+				);
 			}
 		}
 
