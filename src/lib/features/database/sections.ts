@@ -14,6 +14,9 @@ import { awakeningsSection } from './awakenings/section'
 import { characterSeriesSection } from './character-series/section'
 import { charactersSection } from './characters/section'
 import { eventsSection } from './events/section'
+import { jobAccessoriesSection } from './job-accessories/section'
+import { jobSkillsSection } from './job-skills/section'
+import { jobsSection } from './jobs/section'
 import { raidGroupsSection } from './raid-groups/section'
 import { raidsSection } from './raids/section'
 import { summonsSection } from './summons/section'
@@ -37,6 +40,8 @@ export interface DatabaseSection {
 	parent?: string
 	/** `?view=` value on the parent's list page */
 	view?: string
+	/** The `?view=` tab on the parent's list this section used to be; that URL redirects here */
+	legacyView?: string
 	description?: () => string
 	/** Other route prefixes that belong to this section (detail pages etc.) */
 	matches?: string[]
@@ -107,38 +112,9 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 	...resourceSections('weapon-series', weaponSeriesSection),
 	...resourceSections('awakenings', awakeningsSection),
 	...resourceSections('summons', summonsSection),
-	{
-		id: 'jobs',
-		label: () => m.nav_jobs(),
-		path: '/database/jobs',
-		group: 'catalogue',
-		entity: () => m.type_job(),
-		actions: [
-			[
-				{ label: () => m.nav_new_job(), href: '/database/jobs/new' },
-				{ label: () => m.nav_new_job_skill(), href: '/database/job-skills/new' },
-				{ label: () => m.nav_new_job_accessory(), href: '/database/job-accessories/new' }
-			]
-		]
-	},
-	{
-		id: 'job-skills',
-		label: () => m.db_nav_skills(),
-		path: '/database/jobs',
-		view: 'skills',
-		group: 'catalogue',
-		parent: 'jobs',
-		matches: ['/database/job-skills']
-	},
-	{
-		id: 'job-accessories',
-		label: () => m.db_nav_accessories(),
-		path: '/database/jobs',
-		view: 'accessories',
-		group: 'catalogue',
-		parent: 'jobs',
-		matches: ['/database/job-accessories']
-	},
+	...resourceSections('jobs', jobsSection),
+	...resourceSections('job-skills', jobSkillsSection),
+	...resourceSections('job-accessories', jobAccessoriesSection),
 	{
 		id: 'bullets',
 		label: () => m.nav_bullets(),

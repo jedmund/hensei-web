@@ -29,6 +29,7 @@ export interface SearchJobSkillsParams {
  * Payload for creating/updating a job skill
  */
 export interface JobSkillPayload {
+	job_id: string
 	name_en: string
 	name_jp?: string
 	slug: string
@@ -158,17 +159,17 @@ export class JobAdapter extends BaseAdapter {
 
 	/**
 	 * Updates a job entity (database admin function)
-	 * @param granblueId The job's granblue_id
+	 * @param id The job's id (a Class I job and its Class II successor share a granblue_id)
 	 * @param data The fields to update
 	 */
-	async updateJob(granblueId: string, data: JobUpdatePayload): Promise<Job> {
-		const response = await this.request<Job>(`/jobs/${granblueId}`, {
+	async updateJob(id: string, data: JobUpdatePayload): Promise<Job> {
+		const response = await this.request<Job>(`/jobs/${id}`, {
 			method: 'PUT',
 			body: data
 		})
 		// Clear jobs cache to reflect the change
 		this.clearCache('/jobs')
-		this.clearCache(`/jobs/${granblueId}`)
+		this.clearCache(`/jobs/${id}`)
 		return response
 	}
 
@@ -217,14 +218,6 @@ export class JobAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Gets all available job skills (not filtered by job)
-	 * Useful for browsing all skills
-	 */
-	async getAllSkills(): Promise<JobSkill[]> {
-		return this.request<JobSkill[]>('/jobs/skills')
-	}
-
-	/**
 	 * Gets a single job skill by ID
 	 */
 	async getSkillById(id: string): Promise<JobSkill> {
@@ -240,61 +233,39 @@ export class JobAdapter extends BaseAdapter {
 	}
 
 	/**
-	 * Creates a new skill for a job
-	 * @param jobId The job's granblue_id
+	 * Creates a job skill (its job is `job_id`)
 	 * @param data The skill data
 	 */
-	async createSkill(jobId: string, data: JobSkillPayload): Promise<JobSkill> {
-		const response = await this.request<JobSkill>(`/jobs/${jobId}/skills`, {
-			method: 'POST',
-			body: data
-		})
-		this.clearCache(`/jobs/${jobId}/skills`)
-		return response
+	async createSkill(data: JobSkillPayload): Promise<JobSkill> {
+		return this.request<JobSkill>('/job_skills', { method: 'POST', body: data })
 	}
 
 	/**
-	 * Updates an existing job skill
-	 * @param jobId The job's granblue_id
+	 * Updates a job skill; a `job_id` moves it to another job
 	 * @param skillId The skill's ID
-	 * @param data The updated skill data
+	 * @param data The fields to update
 	 */
-	async updateSkill(jobId: string, skillId: string, data: JobSkillPayload): Promise<JobSkill> {
-		const response = await this.request<JobSkill>(`/jobs/${jobId}/skills/${skillId}`, {
-			method: 'PUT',
-			body: data
-		})
-		this.clearCache(`/jobs/${jobId}/skills`)
-		return response
+	async updateSkill(skillId: string, data: Partial<JobSkillPayload>): Promise<JobSkill> {
+		return this.request<JobSkill>(`/job_skills/${skillId}`, { method: 'PUT', body: data })
 	}
 
 	/**
 	 * Deletes a job skill
-	 * @param jobId The job's granblue_id
 	 * @param skillId The skill's ID
 	 */
-	async deleteSkill(jobId: string, skillId: string): Promise<void> {
-		await this.request(`/jobs/${jobId}/skills/${skillId}`, {
-			method: 'DELETE'
-		})
-		this.clearCache(`/jobs/${jobId}/skills`)
+	async deleteSkill(skillId: string): Promise<void> {
+		await this.request(`/job_skills/${skillId}`, { method: 'DELETE' })
 	}
 
 	/**
 	 * Downloads the image for a job skill
-	 * @param jobId The job's granblue_id
 	 * @param skillId The skill's ID
 	 * @returns Object with success status and filename
 	 */
-	async downloadSkillImage(
-		jobId: string,
-		skillId: string
-	): Promise<{ success: boolean; filename: string }> {
+	async downloadSkillImage(skillId: string): Promise<{ success: boolean; filename: string }> {
 		return this.request<{ success: boolean; filename: string }>(
-			`/jobs/${jobId}/skills/${skillId}/download_image`,
-			{
-				method: 'POST'
-			}
+			`/job_skills/${skillId}/download_image`,
+			{ method: 'POST' }
 		)
 	}
 
@@ -362,15 +333,6 @@ export class JobAdapter extends BaseAdapter {
 	// ============================================
 	// Job Accessory Methods (Database Management)
 	// ============================================
-
-	/**
-	 * Gets all job accessories
-	 * @param accessoryType Optional filter by type (1=Shield, 2=Manatura)
-	 */
-	async getAllAccessories(accessoryType?: number): Promise<JobAccessory[]> {
-		const params = accessoryType ? `?accessory_type=${accessoryType}` : ''
-		return this.request<JobAccessory[]>(`/job_accessories${params}`)
-	}
 
 	/**
 	 * Gets a single job accessory by ID or granblue_id

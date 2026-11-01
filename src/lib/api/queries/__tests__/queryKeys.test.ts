@@ -6,7 +6,7 @@ import { collectionKeys } from '../collection.queries'
 import { userKeys } from '../user.queries'
 import { artifactKeys } from '../artifact.queries'
 import { entityKeys } from '../entity.queries'
-import { jobKeys, jobAccessoryKeys } from '../job.queries'
+import { jobKeys } from '../job.queries'
 import { gwKeys } from '../gw.queries'
 import { raidKeys } from '../raid.queries'
 
@@ -281,7 +281,7 @@ describe('entityKeys', () => {
 })
 
 // ============================================================================
-// jobKeys + jobAccessoryKeys
+// jobKeys
 // ============================================================================
 
 describe('jobKeys', () => {
@@ -293,7 +293,6 @@ describe('jobKeys', () => {
 		expect(jobKeys.empSkills('j-1')).toEqual(['jobs', 'j-1', 'emp_skills'])
 		expect(jobKeys.skillsSearch('j-1')).toEqual(['jobs', 'j-1', 'skills', 'search', undefined])
 		expect(jobKeys.accessoriesForJob('j-1')).toEqual(['jobs', 'j-1', 'accessories'])
-		expect(jobKeys.allSkills()).toEqual(['jobs', 'skills', 'all'])
 	})
 
 	it('detail key matches byId queryKey', () => {
@@ -310,26 +309,6 @@ describe('jobKeys', () => {
 
 	it('accessoriesForJob key matches query queryKey', () => {
 		expect(jobKeys.accessoriesForJob('j-1')).toEqual(jobQueries.accessoriesForJob('j-1').queryKey)
-	})
-
-	it('allSkills key matches query queryKey', () => {
-		expect(jobKeys.allSkills()).toEqual(jobQueries.allSkills().queryKey)
-	})
-})
-
-describe('jobAccessoryKeys', () => {
-	it('produces correct key arrays', () => {
-		expect(jobAccessoryKeys.all).toEqual(['jobAccessories'])
-		expect(jobAccessoryKeys.lists(1)).toEqual(['jobAccessories', { accessoryType: 1 }])
-		expect(jobAccessoryKeys.detail('a-1')).toEqual(['jobAccessories', 'a-1'])
-	})
-
-	it('lists key matches accessoriesList queryKey', () => {
-		expect(jobAccessoryKeys.lists(2)).toEqual(jobQueries.accessoriesList(2).queryKey)
-	})
-
-	it('detail key matches accessoryById queryKey', () => {
-		expect(jobAccessoryKeys.detail('a-1')).toEqual(jobQueries.accessoryById('a-1').queryKey)
 	})
 })
 

@@ -7,6 +7,7 @@
 	 */
 	import { untrack } from 'svelte'
 	import { goto } from '$app/navigation'
+	import { page } from '$app/state'
 	import { toast } from 'svelte-sonner'
 	import * as m from '$lib/paraglide/messages'
 	import PageMeta from '$lib/components/PageMeta.svelte'
@@ -15,7 +16,7 @@
 	import { UnsavedChangesGuard } from '$lib/features/database/detail/unsavedChanges.svelte'
 	import UnsavedChangesDialog from '$lib/features/database/detail/UnsavedChangesDialog.svelte'
 	import { recordHref } from './detail'
-	import { formSections } from './form'
+	import { formSections, prefillFrom } from './form'
 	import { formElement } from './inputs/options'
 	import { createRecordForm } from './recordForm.svelte'
 	import type { AnyResourceDef } from './registry'
@@ -23,8 +24,9 @@
 
 	let { def }: { def: AnyResourceDef } = $props()
 
-	// The screen keys this component by resource, so the first definition is the only one
-	const form = untrack(() => createRecordForm(def))
+	// The screen keys this component by resource, so the first definition is the only one.
+	// A link may preset references (e.g. a job's "Add skill")
+	const form = untrack(() => createRecordForm(def, null, prefillFrom(def, page.url.searchParams)))
 	const sections = untrack(() => formSections(def, 'create'))
 	// After the defaults and derive, so only what the user enters counts
 	const unsaved = new UnsavedChangesGuard(() => form.values)

@@ -81,7 +81,14 @@ describe('generic database routes', () => {
 
 	it('serve slug-keyed resources at their new URLs', () => {
 		const generic = '/(app)/database/[resource=resource]'
-		for (const name of ['weapon-series', 'character-series', 'awakenings']) {
+		for (const name of [
+			'weapon-series',
+			'character-series',
+			'awakenings',
+			'jobs',
+			'job-skills',
+			'job-accessories'
+		]) {
 			expect(routeFor(`/database/${name}`)).toBe(generic)
 			expect(routeFor(`/database/${name}/some-slug`)).toBe(`${generic}/[id]`)
 			expect(routeFor(`/database/${name}/some-slug/edit`)).toBe(`${generic}/[id]/edit`)
@@ -102,6 +109,7 @@ describe('generic database routes', () => {
 		expect(routeFor('/database/summons/import')).toBe('/(app)/database/summons/import')
 		// The old series pages redirect from the server (a +server.ts, not a page)
 		expect(routeFor('/database/series/weapons/new') ?? '').not.toContain('[resource=resource]')
+		expect(routeFor('/database/bullets/1')).toBe('/(app)/database/bullets/[granblueId]')
 	})
 
 	it('match nothing for an unregistered resource', () => {
@@ -133,6 +141,13 @@ describe('loadScreen', () => {
 		const { default: generated } = await import('./ResourceNewScreen.svelte')
 		expect(weaponsResource.screens?.new).toBeUndefined()
 		expect(await loadScreen('weapons', 'new')).toBe(generated)
+	})
+
+	it('generates the lists of the job resources, which have no list override', async () => {
+		const { default: generated } = await import('./ResourceListScreen.svelte')
+		for (const name of ['jobs', 'job-skills', 'job-accessories']) {
+			expect(await loadScreen(name, 'list')).toBe(generated)
+		}
 	})
 
 	it('overrides nothing for weapons but the list', () => {

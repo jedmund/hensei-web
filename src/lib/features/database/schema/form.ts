@@ -100,11 +100,32 @@ export function fromRecord<Row, Full>(def: ResourceDef<Row, Full>, record: Full)
 	return applyDerive(def, readValues(formFields(def, 'edit'), record), null)
 }
 
-/** Create form values: defaults, with derived values applied */
-export function initialValues<Row, Full>(def: ResourceDef<Row, Full>): Values {
+/** Create form values: defaults (or `prefill`'s values), with derived values applied */
+export function initialValues<Row, Full>(
+	def: ResourceDef<Row, Full>,
+	prefill: Values = {}
+): Values {
 	const values: Values = {}
-	for (const field of formFields(def, 'create')) values[field.key] = initial(field)
+	for (const field of formFields(def, 'create')) {
+		values[field.key] = field.key in prefill ? prefill[field.key] : initial(field)
+	}
 	return applyDerive(def, values, null)
+}
+
+/**
+ * Create form values a link can preset: references named in the query
+ * string by field key (e.g. a job's "Add skill" link, `?job_id=<id>`)
+ */
+export function prefillFrom<Row, Full>(
+	def: ResourceDef<Row, Full>,
+	params: URLSearchParams
+): Values {
+	const values: Values = {}
+	for (const field of formFields(def, 'create')) {
+		const value = params.get(field.key)
+		if (field.kind === 'reference' && value) values[field.key] = value
+	}
+	return values
 }
 
 export function isEmpty(value: unknown): boolean {

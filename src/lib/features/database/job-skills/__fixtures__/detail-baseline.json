@@ -1,0 +1,79 @@
+{
+	"mainSub": {
+		"id": "s-rage",
+		"info": [
+			"Metadata",
+			"Name (EN)",
+			"Rage IV",
+			"Name (JP)",
+			"レイジIV",
+			"Slug",
+			"rage-iv",
+			"Image ID",
+			"2710_3",
+			"Action ID",
+			"203921",
+			"Classification",
+			"Skill Type",
+			"Main",
+			"Color",
+			"Red",
+			"Order",
+			"1",
+			"Associated Job",
+			"Job",
+			"Paladin"
+		]
+	},
+	"emp": {
+		"id": "s-armor-break",
+		"info": [
+			"Metadata",
+			"Name (EN)",
+			"Armor Break",
+			"Name (JP)",
+			"アーマーブレイク",
+			"Slug",
+			"armor-break",
+			"Image ID",
+			"—",
+			"Action ID",
+			"—",
+			"Classification",
+			"Skill Type",
+			"EMP",
+			"Color",
+			"Yellow",
+			"Order",
+			"7",
+			"Associated Job",
+			"Job",
+			"Fighter"
+		]
+	},
+	"unflagged": {
+		"id": "s-couteau-royal",
+		"info": [
+			"Metadata",
+			"Name (EN)",
+			"Couteau Royal",
+			"Name (JP)",
+			"Slug",
+			"couteau-royal",
+			"Image ID",
+			"—",
+			"Action ID",
+			"—",
+			"Classification",
+			"Skill Type",
+			"—",
+			"Color",
+			"Purple",
+			"Order",
+			"0",
+			"Associated Job",
+			"Job",
+			"Wizard Origin"
+		]
+	}
+}

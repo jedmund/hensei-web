@@ -2,7 +2,12 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 import { QueryClient } from '@tanstack/svelte-query'
 import { buildListParams, fetchListPage, requestedFields } from './serverParams'
 import { adminKeys, adminQueries } from '$lib/api/queries/admin.queries'
-import { AdminAdapter, adminAdapter, toAdminListQuery } from '$lib/api/adapters/admin.adapter'
+import {
+	AdminAdapter,
+	adminAdapter,
+	adminPath,
+	toAdminListQuery
+} from '$lib/api/adapters/admin.adapter'
 import { mockApiResponse } from '$lib/api/adapters/__tests__/fixtures/helpers'
 import type { DataTableColumn } from './types'
 import { defaultTableState, parseTableUrl, type TableUrlConfig } from './urlState'
@@ -169,6 +174,14 @@ describe('admin list query', () => {
 			fields: 'granblue_id,name_en',
 			facets: 'element,rarity'
 		})
+	})
+})
+
+describe('adminPath', () => {
+	it('maps kebab-case route names to the snake_case admin resources', () => {
+		expect(adminPath('weapons')).toBe('/admin/weapons')
+		expect(adminPath('job-skills')).toBe('/admin/job_skills')
+		expect(adminPath('job-accessories')).toBe('/admin/job_accessories')
 	})
 })
 

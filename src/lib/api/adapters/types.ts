@@ -216,22 +216,8 @@ export interface SearchFilters {
 	/** Filter by character gender */
 	gender?: number[] | undefined
 
-	// Job-specific filters
-
-	/** Filter by job row (1-5, ex, ex2, o1) */
-	row?: string[] | undefined
-
-	/** Filter by proficiency (for jobs - matches either proficiency1 or proficiency2) */
+	/** Filter by proficiency (matches either proficiency1 or proficiency2) */
 	proficiency?: number[] | undefined
-
-	/** Filter jobs with master level */
-	masterLevel?: boolean | undefined
-
-	/** Filter jobs with ultimate mastery */
-	ultimateMastery?: boolean | undefined
-
-	/** Filter jobs that support accessories */
-	accessory?: boolean | undefined
 
 	/** Custom filters for specific use cases */
 	[key: string]: string | number | boolean | string[] | number[] | undefined

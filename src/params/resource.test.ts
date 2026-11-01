@@ -18,7 +18,7 @@ describe('resource param matcher', () => {
 	})
 
 	it('leaves everything else to the bespoke routes', () => {
-		for (const param of ['jobs', 'weapon-skills', 'import', 'Weapons', 'toString', '']) {
+		for (const param of ['bullets', 'weapon-skills', 'import', 'Weapons', 'toString', '']) {
 			expect(match(param), param).toBe(false)
 		}
 	})

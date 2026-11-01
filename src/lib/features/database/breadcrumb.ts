@@ -7,17 +7,7 @@ import { m } from '$lib/paraglide/messages'
 import { DATABASE_SECTIONS, delocalize } from './sections'
 
 /** Keys detail-page loads return their record under (`record` for registered resources) */
-const RECORD_KEYS = [
-	'record',
-	'character',
-	'job',
-	'bullet',
-	'skill',
-	'accessory',
-	'roleRecord',
-	'event',
-	'series'
-] as const
+const RECORD_KEYS = ['record', 'character', 'bullet', 'roleRecord', 'event', 'series'] as const
 
 type NameLike = string | { en?: string | null; ja?: string | null } | null | undefined
 

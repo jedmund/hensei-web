@@ -10,11 +10,9 @@
 	import { localizedName } from '$lib/utils/locale'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 
-	interface Props {
-		job: Job
-	}
+	import type { RecordTabProps } from '$lib/features/database/schema/types'
 
-	let { job }: Props = $props()
+	let { record: job }: RecordTabProps<Job> = $props()
 
 	// Gender toggle state - use string value for SegmentedControl
 	let selectedGenderValue = $state<string>('gran')

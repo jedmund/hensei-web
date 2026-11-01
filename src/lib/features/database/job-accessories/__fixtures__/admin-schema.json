@@ -1,0 +1,140 @@
+{
+	"search": ["name_en", "name_jp", "granblue_id"],
+	"filters": {
+		"accessory_type": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"rarity": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"job": {
+			"type": "uuid",
+			"facet": true,
+			"list": true,
+			"range": false
+		},
+		"release_date": {
+			"type": "date",
+			"facet": false,
+			"list": true,
+			"range": true
+		},
+		"created_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		},
+		"updated_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		}
+	},
+	"flags": [],
+	"sorts": [
+		"name_en",
+		"name_jp",
+		"granblue_id",
+		"rarity",
+		"accessory_type",
+		"release_date",
+		"updated_at",
+		"created_at"
+	],
+	"default_sort": ["accessory_type", "granblue_id"],
+	"fields": [
+		"id",
+		"granblue_id",
+		"name_en",
+		"name_jp",
+		"accessory_type",
+		"rarity",
+		"release_date",
+		"job_id",
+		"created_at",
+		"updated_at",
+		"job"
+	],
+	"default_fields": [
+		"id",
+		"granblue_id",
+		"name_en",
+		"name_jp",
+		"accessory_type",
+		"rarity",
+		"job",
+		"release_date",
+		"updated_at"
+	],
+	"writable": {
+		"name_en": "scalar",
+		"name_jp": "scalar",
+		"granblue_id": "scalar",
+		"rarity": "scalar",
+		"release_date": "scalar",
+		"accessory_type": "scalar",
+		"job_id": "scalar"
+	},
+	"enums": {
+		"accessory_type": {
+			"Shield": 1,
+			"Manatura": 2
+		},
+		"rarity": {
+			"R": 1,
+			"SR": 2,
+			"SSR": 3
+		}
+	},
+	"validators": {
+		"job": [
+			{
+				"kind": "presence"
+			}
+		],
+		"granblue_id": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "format",
+				"pattern": "^\\d+$",
+				"flags": ""
+			},
+			{
+				"kind": "uniqueness"
+			}
+		],
+		"name_en": [
+			{
+				"kind": "presence"
+			}
+		],
+		"name_jp": [
+			{
+				"kind": "presence"
+			}
+		],
+		"accessory_type": [
+			{
+				"kind": "inclusion",
+				"in": [1, 2]
+			}
+		],
+		"rarity": [
+			{
+				"kind": "inclusion",
+				"in": [1, 2, 3],
+				"allow_nil": true
+			}
+		]
+	}
+}

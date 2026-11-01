@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { DropdownMenu } from 'bits-ui'
-	import DetailsHeader from '$lib/components/ui/DetailsHeader.svelte'
+	import DetailsHeader, { type DetailEntityType } from '$lib/components/ui/DetailsHeader.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import type { Snippet } from 'svelte'
 
 	export type DetailTab = 'info' | 'skills' | 'images' | 'raw' | 'picks'
-
-	export type DetailEntityType = 'character' | 'summon' | 'weapon' | 'job' | 'raid' | 'accessory'
 
 	interface Props {
 		/** Picks the placeholder image and the labels under the name */

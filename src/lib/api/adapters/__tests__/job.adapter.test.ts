@@ -187,26 +187,6 @@ describe('JobAdapter', () => {
 		})
 	})
 
-	describe('getAllAccessories', () => {
-		it('should include accessory_type query param when provided', async () => {
-			global.fetch = mockApiResponse([])
-
-			await adapter.getAllAccessories(1)
-
-			const url = vi.mocked(global.fetch).mock.calls[0]![0]
-			expect(url).toContain('/job_accessories?accessory_type=1')
-		})
-
-		it('should not include query param when type is omitted', async () => {
-			global.fetch = mockApiResponse([])
-
-			await adapter.getAllAccessories()
-
-			const url = vi.mocked(global.fetch).mock.calls[0]![0]
-			expect(url).toBe('https://api.example.com/job_accessories')
-		})
-	})
-
 	describe('cache clearing', () => {
 		it('should clear both job list and detail cache on updateJob', async () => {
 			global.fetch = mockApiResponse({ id: 'job-1' })

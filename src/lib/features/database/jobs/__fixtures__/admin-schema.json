@@ -1,0 +1,217 @@
+{
+	"search": ["name_en", "name_jp", "granblue_id"],
+	"filters": {
+		"row": {
+			"type": "string",
+			"facet": true,
+			"list": true,
+			"range": false
+		},
+		"proficiency": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"accessory_type": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"created_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		},
+		"updated_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		},
+		"master_level": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"ultimate_mastery": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"aux_weapon": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"accessory": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		}
+	},
+	"flags": ["no_skills"],
+	"sorts": ["name_en", "name_jp", "granblue_id", "row", "order", "updated_at", "created_at"],
+	"default_sort": ["row", "order"],
+	"fields": [
+		"id",
+		"granblue_id",
+		"name_en",
+		"name_jp",
+		"row",
+		"order",
+		"proficiency1",
+		"proficiency2",
+		"master_level",
+		"ultimate_mastery",
+		"aux_weapon",
+		"accessory",
+		"accessory_type",
+		"base_job_id",
+		"created_at",
+		"updated_at",
+		"skill_count"
+	],
+	"default_fields": [
+		"id",
+		"granblue_id",
+		"name_en",
+		"name_jp",
+		"row",
+		"order",
+		"proficiency1",
+		"proficiency2",
+		"updated_at"
+	],
+	"writable": {
+		"name_en": "scalar",
+		"name_jp": "scalar",
+		"granblue_id": "scalar",
+		"proficiency1": "scalar",
+		"proficiency2": "scalar",
+		"row": "scalar",
+		"order": "scalar",
+		"master_level": "scalar",
+		"ultimate_mastery": "scalar",
+		"aux_weapon": "scalar",
+		"accessory": "scalar",
+		"accessory_type": "scalar",
+		"base_job_id": "scalar"
+	},
+	"enums": {
+		"row": {
+			"Class I": "1",
+			"Class II": "2",
+			"Class III": "3",
+			"Class IV": "4",
+			"Class V": "5",
+			"Extra": "ex1",
+			"Extra II": "ex2",
+			"Origin": "o1"
+		},
+		"proficiency": {
+			"Sabre": 1,
+			"Dagger": 2,
+			"Spear": 3,
+			"Axe": 4,
+			"Staff": 5,
+			"Gun": 6,
+			"Melee": 7,
+			"Bow": 8,
+			"Harp": 9,
+			"Katana": 10
+		},
+		"proficiency1": {
+			"Sabre": 1,
+			"Dagger": 2,
+			"Spear": 3,
+			"Axe": 4,
+			"Staff": 5,
+			"Gun": 6,
+			"Melee": 7,
+			"Bow": 8,
+			"Harp": 9,
+			"Katana": 10
+		},
+		"proficiency2": {
+			"Sabre": 1,
+			"Dagger": 2,
+			"Spear": 3,
+			"Axe": 4,
+			"Staff": 5,
+			"Gun": 6,
+			"Melee": 7,
+			"Bow": 8,
+			"Harp": 9,
+			"Katana": 10
+		},
+		"accessory_type": {
+			"None": 0,
+			"Shield": 1,
+			"Manatura": 2
+		}
+	},
+	"validators": {
+		"granblue_id": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "format",
+				"pattern": "^\\d{6}$",
+				"flags": ""
+			},
+			{
+				"kind": "uniqueness"
+			}
+		],
+		"name_en": [
+			{
+				"kind": "presence"
+			}
+		],
+		"name_jp": [
+			{
+				"kind": "presence"
+			}
+		],
+		"row": [
+			{
+				"kind": "inclusion",
+				"in": ["1", "2", "3", "4", "5", "ex1", "ex2", "o1"]
+			}
+		],
+		"proficiency1": [
+			{
+				"kind": "inclusion",
+				"in": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+			}
+		],
+		"proficiency2": [
+			{
+				"kind": "inclusion",
+				"in": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+			}
+		],
+		"accessory_type": [
+			{
+				"kind": "inclusion",
+				"in": [0, 1, 2]
+			}
+		],
+		"order": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"allow_nil": true
+			}
+		]
+	}
+}

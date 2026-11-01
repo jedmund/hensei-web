@@ -149,19 +149,6 @@ export const jobQueries = {
 		}),
 
 	/**
-	 * All job skills query options (not filtered by job)
-	 *
-	 * @returns Query options for fetching all job skills
-	 */
-	allSkills: () =>
-		queryOptions({
-			queryKey: ['jobs', 'skills', 'all'] as const,
-			queryFn: () => jobAdapter.getAllSkills(),
-			staleTime: 1000 * 60 * 30, // 30 minutes
-			gcTime: 1000 * 60 * 60 // 1 hour
-		}),
-
-	/**
 	 * Single job skill query options
 	 */
 	skillById: (id: string) =>
@@ -176,20 +163,6 @@ export const jobQueries = {
 	// ============================================
 	// Job Accessory Database Queries
 	// ============================================
-
-	/**
-	 * All job accessories list query options
-	 *
-	 * @param accessoryType - Optional filter by type (1=Shield, 2=Manatura)
-	 * @returns Query options for fetching all job accessories
-	 */
-	accessoriesList: (accessoryType?: number) =>
-		queryOptions({
-			queryKey: ['jobAccessories', { accessoryType }] as const,
-			queryFn: () => jobAdapter.getAllAccessories(accessoryType),
-			staleTime: 1000 * 60 * 30, // 30 minutes
-			gcTime: 1000 * 60 * 60 // 1 hour
-		}),
 
 	/**
 	 * Single job accessory query options
@@ -232,23 +205,5 @@ export const jobKeys = {
 	empSkills: (jobId: string) => [...jobKeys.all, jobId, 'emp_skills'] as const,
 	skillsSearch: (jobId: string, params?: Omit<SearchJobSkillsParams, 'jobId' | 'page'>) =>
 		[...jobKeys.skills(jobId), 'search', params] as const,
-	accessoriesForJob: (jobId: string) => [...jobKeys.all, jobId, 'accessories'] as const,
-	allSkills: () => [...jobKeys.all, 'skills', 'all'] as const
-}
-
-/**
- * Job skill query key helpers for cache invalidation
- */
-export const jobSkillKeys = {
-	all: ['jobSkills'] as const,
-	detail: (id: string) => [...jobSkillKeys.all, id] as const
-}
-
-/**
- * Job accessory query key helpers for cache invalidation
- */
-export const jobAccessoryKeys = {
-	all: ['jobAccessories'] as const,
-	lists: (accessoryType?: number) => [...jobAccessoryKeys.all, { accessoryType }] as const,
-	detail: (id: string) => [...jobAccessoryKeys.all, id] as const
+	accessoriesForJob: (jobId: string) => [...jobKeys.all, jobId, 'accessories'] as const
 }

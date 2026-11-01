@@ -13,7 +13,10 @@ export const RESOURCE_NAMES = [
 	'events',
 	'weapon-series',
 	'character-series',
-	'awakenings'
+	'awakenings',
+	'jobs',
+	'job-skills',
+	'job-accessories'
 ] as const
 
 export type ResourceName = (typeof RESOURCE_NAMES)[number]

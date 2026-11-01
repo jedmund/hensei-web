@@ -79,7 +79,7 @@ function optionLabel(options: EnumOption[], value: unknown): string | undefined 
 }
 
 /** References that draw as a link to the record */
-const LINKED: ReferenceResource[] = ['character', 'weapon', 'raidGroup']
+const LINKED: ReferenceResource[] = ['character', 'weapon', 'raidGroup', 'job']
 
 /** A reference's display name */
 function referenceName<Row, Full>(field: Field<Row, Full>, ref: unknown): string | undefined {
@@ -128,7 +128,7 @@ export function detailText<Row, Full>(field: Field<Row, Full>, value: unknown): 
 			return isEmpty(value) ? empty : null
 		case 'reference':
 			if (isEmpty(value)) return empty
-			// Characters, weapons and raid groups draw as a link (characters with their tags)
+			// Characters, weapons, raid groups and jobs draw as a link (characters with their tags)
 			if (LINKED.includes(field.resource) && typeof value === 'object') return null
 			return referenceName(field, value) ?? empty
 		case 'referenceList': {

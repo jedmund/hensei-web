@@ -24,10 +24,8 @@ import type {
 import type { FilterOption, RecentPreset } from '$lib/components/data-table/filters'
 import type { SortSpec } from '$lib/components/data-table/urlState'
 import type { ResourceSection } from '$lib/features/database/sections'
-import type {
-	DetailEntityType,
-	DetailTab
-} from '$lib/features/database/detail/DetailScaffold.svelte'
+import type { DetailEntityType } from '$lib/components/ui/DetailsHeader.svelte'
+import type { DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
 
 /** A Paraglide message function, so labels follow the locale */
 export type Message = () => string
@@ -91,6 +89,7 @@ export type ReferenceResource =
 	| 'summonSeries'
 	| 'raidGroup'
 	| 'raid'
+	| 'job'
 
 /** Column options. The column id is the field key, the header its label */
 export type ListOptions<Row> = Partial<Omit<ColumnBase<Row>, 'id' | 'header'>> & {

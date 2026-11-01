@@ -37,19 +37,24 @@ export function toAdminListQuery(params: AdminListParams): Record<string, string
 	return query
 }
 
+/**
+ * The admin endpoint for a resource. Route segments are kebab-case
+ * (`job-skills`), Rails resources snake_case (`/admin/job_skills`).
+ */
+export function adminPath(resource: AdminResource): string {
+	return `/admin/${resource.replaceAll('-', '_')}`
+}
+
 export class AdminAdapter extends BaseAdapter {
 	async list<T>(
 		resource: AdminResource,
 		params: AdminListParams,
 		options?: RequestOptions
 	): Promise<AdminListResponse<T>> {
-		const response = await this.request<Partial<AdminListResponse<T>>>(
-			`/admin/${resource.replaceAll('-', '_')}`,
-			{
-				...options,
-				query: toAdminListQuery(params)
-			}
-		)
+		const response = await this.request<Partial<AdminListResponse<T>>>(adminPath(resource), {
+			...options,
+			query: toAdminListQuery(params)
+		})
 		const meta = response.meta
 		return {
 			results: response.results ?? [],

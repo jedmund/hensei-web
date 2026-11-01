@@ -5,6 +5,7 @@ import { weaponSeriesResource } from './weapon-series/resource'
 import { weaponsResource } from './weapons/resource'
 import {
 	DATABASE_SECTIONS,
+	childrenOf,
 	groupedSections,
 	resourceMinRole,
 	resourceSections,
@@ -25,7 +26,6 @@ describe('sectionForUrl', () => {
 
 	it('selects sub-sections by ?view=', () => {
 		expect(at('/database/weapons?view=skills')).toBe('weapon-skills')
-		expect(at('/database/jobs?view=skills')).toBe('job-skills')
 	})
 
 	it('maps record routes to their section', () => {
@@ -35,6 +35,8 @@ describe('sectionForUrl', () => {
 		expect(at('/database/character-series/new')).toBe('character-series')
 		expect(at('/database/weapon-skills/atk')).toBe('weapon-skills')
 		expect(at('/database/job-accessories/123')).toBe('job-accessories')
+		expect(at('/database/job-skills')).toBe('job-skills')
+		expect(at('/database/jobs/abc/edit')).toBe('jobs')
 		expect(at('/database/raid-groups/abc/edit')).toBe('raid-groups')
 	})
 
@@ -139,6 +141,21 @@ describe('resourceSections', () => {
 				parent: 'weapons',
 				matches: ['/database/weapon-skills']
 			}
+		])
+	})
+
+	it('nests job skills and accessories under Jobs, at their own paths', () => {
+		expect(childrenOf('jobs', 7).map((s) => [s.id, s.path, s.view])).toEqual([
+			['job-skills', '/database/job-skills', undefined],
+			['job-accessories', '/database/job-accessories', undefined],
+			['bullets', '/database/bullets', undefined]
+		])
+		// They share the Jobs "New" menu
+		expect(rootOf(sectionById('job-skills')!)?.id).toBe('jobs')
+		expect(sectionById('jobs')!.actions![0]!.map((a) => a.href)).toEqual([
+			'/database/jobs/new',
+			'/database/job-skills/new',
+			'/database/job-accessories/new'
 		])
 	})
 
