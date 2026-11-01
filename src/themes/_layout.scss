@@ -28,13 +28,19 @@ $item-corner-small: spacing.$unit-half;
 $bubble-menu-corner: spacing.$unit;
 $bubble-menu-item-corner: spacing.$unit-half * 1.5;
 
-// A card on the page's background, stacking its sections
-@mixin page-card {
+// The surface of a card on the page's background: fill, border, corners and
+// elevation, with no padding or layout
+@mixin page-surface {
 	background: var(--card-bg);
-	color: var(--text-primary);
 	border: effects.$card-border;
 	border-radius: $page-corner;
 	box-shadow: effects.$page-elevation;
+}
+
+// A card on the page's background, stacking its sections
+@mixin page-card {
+	@include page-surface;
+	color: var(--text-primary);
 	padding: spacing.$unit-3x;
 	display: flex;
 	flex-direction: column;

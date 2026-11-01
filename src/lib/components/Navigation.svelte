@@ -1,451 +1,53 @@
 <script lang="ts">
-	import { isCurator } from '$lib/auth/roles'
-	import { HOME_LAUNCHED, HOME_PATH, GALLERY_PATH, isHomePath } from '$lib/utils/browseRoutes'
-	import { localizeHref } from '$lib/paraglide/runtime'
 	import { m } from '$lib/paraglide/messages'
-	import { page } from '$app/stores'
-	import { goto } from '$app/navigation'
-	import { createQuery } from '@tanstack/svelte-query'
-	import { crewQueries } from '$lib/api/queries/crew.queries'
-	import Button from './ui/Button.svelte'
-	import Icon from './Icon.svelte'
-	import DropdownItem from './ui/dropdown/DropdownItem.svelte'
-	import NotificationBadge from './ui/NotificationBadge.svelte'
-	import { DropdownMenu } from 'bits-ui'
-	import type { UserCookie } from '$lib/types/UserCookie'
-	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
-	import UserSettingsModal from './UserSettingsModal.svelte'
-	import { useSettingsReturn } from './settings/settingsReturn.svelte'
-	import type { SettingsReturn } from '$lib/auth/socialResult'
-	import InvitationsModal from './crew/InvitationsModal.svelte'
 	import DatabaseNavigation from './DatabaseNavigation.svelte'
-	import { authStore } from '$lib/stores/auth.store.svelte'
-	import { invalidateAll } from '$app/navigation'
-	import { toast } from 'svelte-sonner'
-	import { extractErrorMessage } from '$lib/utils/errors'
-	import LanguageToggle from './LanguageToggle.svelte'
-	import ThemeToggle from './ThemeToggle.svelte'
-	import NavUserSearch from './navigation/NavUserSearch.svelte'
-	import SlidingSelection from './ui/SlidingSelection.svelte'
-	import { fly } from 'svelte/transition'
-	import { cubicOut } from 'svelte/easing'
-
-	const STATE_IN = { x: -12, duration: 200, easing: cubicOut, delay: 60 }
-	const STATE_OUT = { x: -12, duration: 140, easing: cubicOut }
-	const SEARCH_IN = { x: 12, duration: 200, easing: cubicOut, delay: 60 }
-	const SEARCH_OUT = { x: 12, duration: 140, easing: cubicOut }
+	import BahamutBar from './navigation/BahamutBar.svelte'
+	import NavMainLinks from './navigation/NavMainLinks.svelte'
+	import NavModals from './navigation/NavModals.svelte'
+	import NewTeamButton from './navigation/NewTeamButton.svelte'
+	import { NavigationState, type NavigationProps } from './navigation/navigationState.svelte'
 
 	// Props from layout data
-	const {
-		account,
-		currentUser,
-		isAuthenticated: isAuthProp
-	} = $props<{
-		account?: {
-			userId: string
-			username: string
-			role: number
-		} | null
-		currentUser?: UserCookie | null
-		isAuthenticated?: boolean
-	}>()
+	const props: NavigationProps = $props()
 
-	const username = $derived(account?.username ?? '')
-	// Use reactive authStore instead of static server prop for real-time auth state
-	const isAuth = $derived(authStore.isAuthenticated || (isAuthProp ?? false))
-	const role = $derived(account?.role ?? null)
-	// Element from UserCookie is already a string like "fire", "water", etc.
-	const userElement = $derived(
-		currentUser?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
-	)
-
-	// Bahamut mode state
-	const isBahamut = $derived(currentUser?.bahamut === true)
-
-	// Localized links
-	const homeHref = $derived(localizeHref(HOME_PATH))
-	const galleryHref = $derived(localizeHref(GALLERY_PATH))
-	const meHref = $derived(localizeHref('/me'))
-	const loginHref = $derived(localizeHref('/auth/login'))
-	const registerHref = $derived(localizeHref('/auth/register'))
-	const databaseHref = $derived(localizeHref('/database'))
-	const newTeamHref = $derived(localizeHref('/teams/new'))
-	const crewHref = $derived(localizeHref('/crew'))
-	const collectionHref = $derived(
-		isAuth ? localizeHref(`/${username}/collection`) : localizeHref('/collection')
-	)
-	const aboutHref = $derived(localizeHref('/about'))
-	const gachaHref = $derived(localizeHref('/gacha'))
-	const extensionHref = $derived(localizeHref('/extension'))
-
-	// Get the element class for styling
-	const elementClass = $derived(userElement ? `element-${userElement}` : '')
-
-	// Get the user's avatar URLs
-	const avatarSrc = $derived(getAvatarSrc(currentUser?.picture))
-	const avatarSrcSet = $derived(getAvatarSrcSet(currentUser?.picture))
-
-	// Database route detection
-	const isDatabaseRoute = $derived($page.url.pathname.startsWith(localizeHref('/database')))
-
-	// Function to check if a nav item is selected
-	function isNavSelected(href: string): boolean {
-		const path = $page.url.pathname
-
-		// Every path starts with the home path, so Home only matches exactly
-		if (href === homeHref) return isHomePath(path, homeHref)
-
-		// Exact match or starts with href + /
-		return path === href || path.startsWith(href + '/')
-	}
-
-	// Check if the user profile link is selected (includes sub-routes like /favorites, /collection)
-	const userProfilePath = $derived(localizeHref(`/${username}`))
-	const isProfileSelected = $derived(
-		isAuth &&
-			($page.url.pathname === meHref ||
-				$page.url.pathname === userProfilePath ||
-				$page.url.pathname.startsWith(userProfilePath + '/'))
-	)
-
-	// Settings modal state
-	let settingsModalOpen = $state(false)
-	let settingsSection = $state<string | undefined>(undefined)
-	let socialResult = $state<SettingsReturn | null>(null)
-
-	useSettingsReturn(
-		() => isAuth,
-		(result) => {
-			socialResult = result
-			settingsSection = 'account'
-			settingsModalOpen = true
-		}
-	)
-
-	function handleSettingsOpenChange(open: boolean) {
-		settingsModalOpen = open
-		if (!open) {
-			socialResult = null
-			settingsSection = undefined
-		}
-	}
-
-	// User search state
-	let searchOpen = $state(false)
-	let authedPillEl = $state<HTMLUListElement | undefined>()
-	let publicPillEl = $state<HTMLUListElement | undefined>()
-	let pillLockedWidth = $state<number | null>(null)
-
-	function openSearch() {
-		const pill = isAuth ? authedPillEl : publicPillEl
-		if (pill) pillLockedWidth = pill.offsetWidth
-		searchOpen = true
-	}
-
-	function closeSearch() {
-		searchOpen = false
-		pillLockedWidth = null
-	}
-
-	// Host ref for the sliding selection indicator (tracks the .selected nav link)
-	let pillDefaultEl = $state<HTMLLIElement | undefined>()
-
-	// Invitations modal state
-	let invitationsModalOpen = $state(false)
-
-	// Query for the user's crew (to determine if phantom claims should be fetched)
-	const myCrewQuery = createQuery(() => ({
-		...crewQueries.myCrew(),
-		enabled: isAuth
-	}))
-
-	// Derived: whether the user is in a crew (from query, not store)
-	const isInCrew = $derived(myCrewQuery.data != null)
-
-	// Query for pending invitations (only when authenticated)
-	const pendingInvitationsQuery = createQuery(() => ({
-		...crewQueries.pendingInvitations(),
-		enabled: isAuth
-	}))
-
-	// Query for pending phantom claims (only when authenticated and in a crew)
-	const pendingPhantomClaimsQuery = createQuery(() => ({
-		...crewQueries.pendingPhantomClaims(),
-		enabled: isAuth && isInCrew
-	}))
-
-	// Derived counts
-	const pendingInvitationCount = $derived(pendingInvitationsQuery.data?.length ?? 0)
-	const pendingPhantomClaimCount = $derived(pendingPhantomClaimsQuery.data?.length ?? 0)
-	const totalNotificationCount = $derived(pendingInvitationCount + pendingPhantomClaimCount)
-
-	// Turn off Bahamut Mode
-	async function handleBahamutOff() {
-		if (!currentUser) return
-		const updatedUser = { ...currentUser, bahamut: false }
-		await fetch('/api/settings', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(updatedUser)
-		})
-		await invalidateAll()
-		window.location.reload()
-	}
-
-	// Handle logout
-	async function handleLogout() {
-		try {
-			const response = await fetch('/auth/logout', {
-				method: 'POST',
-				credentials: 'include'
-			})
-
-			if (response.ok) {
-				// Navigate to login page after successful logout
-				await goto('/auth/login')
-			}
-		} catch (error) {
-			console.error('Logout failed:', error)
-			toast.error(extractErrorMessage(error, 'Failed to log out'))
-		}
-	}
+	const nav = new NavigationState(() => props)
 </script>
 
-{#if isBahamut}
-	<button class="bahamut-bar" onclick={handleBahamutOff}>
-		{m.nav_bahamut_mode_on()}
-	</button>
+{#if nav.isBahamut && nav.currentUser}
+	<BahamutBar currentUser={nav.currentUser} />
 {/if}
 
-<nav aria-label="Global" class={elementClass} class:database-layout={isDatabaseRoute}>
-	{#if isDatabaseRoute}
-		<DatabaseNavigation {userElement} {role} />
-	{:else if isAuth}
-		<!-- Authenticated navigation -->
-		<div class="nav-links">
-			<ul
-				role="list"
-				bind:this={authedPillEl}
-				style={pillLockedWidth ? `min-width:${pillLockedWidth}px` : ''}
-			>
-				{#if searchOpen}
-					<li class="nav-search pill-state" in:fly={SEARCH_IN} out:fly={SEARCH_OUT}>
-						<NavUserSearch {userElement} onClose={closeSearch} />
-					</li>
-				{:else}
-					<li
-						class="pill-state pill-default"
-						bind:this={pillDefaultEl}
-						in:fly={STATE_IN}
-						out:fly={STATE_OUT}
-					>
-						<SlidingSelection host={pillDefaultEl} trigger={$page.url.pathname} />
-						{#if HOME_LAUNCHED}
-							<a href={homeHref} class:selected={isNavSelected(homeHref)}>{m.nav_home()}</a>
-						{/if}
-						<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
-						<a href={crewHref} class:selected={isNavSelected(crewHref)} class="crew-link">
-							{m.nav_crew()}
-							{#if totalNotificationCount > 0}
-								<span class="crew-notification-dot {userElement ?? ''}"></span>
-							{/if}
-						</a>
-						<a
-							href={meHref}
-							class:selected={isProfileSelected}
-							aria-label={m.nav_account_aria()}
-							class="profile-link"
-						>
-							{#if avatarSrc}
-								<img
-									src={avatarSrc}
-									srcset={avatarSrcSet}
-									alt={username}
-									class="user-avatar"
-									width="24"
-									height="24"
-								/>
-							{/if}
-							<span>{username}</span>
-						</a>
-						<button
-							type="button"
-							class="nav-search-trigger"
-							aria-label={m.nav_search_users_aria()}
-							onclick={openSearch}
-						>
-							<Icon name="search" size={16} />
-						</button>
-						<DropdownMenu.Root>
-							<DropdownMenu.Trigger class="nav-more-trigger">
-								<Icon name="ellipsis" size={14} />
-							</DropdownMenu.Trigger>
-
-							<DropdownMenu.Portal>
-								<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
-									<DropdownItem>
-										<a href={aboutHref}>{m.nav_about()}</a>
-									</DropdownItem>
-									<DropdownItem>
-										<a href={gachaHref}>{m.nav_gacha()}</a>
-									</DropdownItem>
-									<DropdownItem>
-										<a href={extensionHref}>{m.nav_extension()}</a>
-									</DropdownItem>
-									{#if isCurator(role)}
-										<DropdownItem>
-											<a href={databaseHref}>{m.nav_database()}</a>
-										</DropdownItem>
-									{/if}
-									<DropdownMenu.Separator class="dropdown-separator" />
-									<DropdownItem>
-										<button
-											class="dropdown-button-with-badge"
-											onclick={() => (invitationsModalOpen = true)}
-										>
-											<span>{m.nav_notifications()}</span>
-											{#if totalNotificationCount > 0}
-												<NotificationBadge
-													count={totalNotificationCount}
-													showCount
-													element={userElement}
-												/>
-											{/if}
-										</button>
-									</DropdownItem>
-									<DropdownMenu.Separator class="dropdown-separator" />
-									<LanguageToggle />
-									<ThemeToggle />
-									<DropdownItem>
-										<button onclick={() => (settingsModalOpen = true)}>
-											{m.nav_settings()}
-										</button>
-									</DropdownItem>
-									<DropdownMenu.Separator class="dropdown-separator" />
-									<DropdownItem>
-										<button onclick={handleLogout}>{m.nav_logout()}</button>
-									</DropdownItem>
-								</DropdownMenu.Content>
-							</DropdownMenu.Portal>
-						</DropdownMenu.Root>
-					</li>
-				{/if}
-			</ul>
-		</div>
+<nav aria-label="Global" class={nav.elementClass} class:database-layout={nav.isDatabaseRoute}>
+	{#if nav.isDatabaseRoute}
+		<DatabaseNavigation userElement={nav.userElement} role={nav.role} />
 	{:else}
-		<!-- Unauthenticated navigation -->
 		<div class="nav-links">
-			<ul
-				role="list"
-				bind:this={publicPillEl}
-				style={pillLockedWidth ? `min-width:${pillLockedWidth}px` : ''}
-			>
-				{#if searchOpen}
-					<li class="nav-search pill-state" in:fly={SEARCH_IN} out:fly={SEARCH_OUT}>
-						<NavUserSearch onClose={closeSearch} />
-					</li>
-				{:else}
-					<li
-						class="pill-state pill-default"
-						bind:this={pillDefaultEl}
-						in:fly={STATE_IN}
-						out:fly={STATE_OUT}
-					>
-						<SlidingSelection host={pillDefaultEl} trigger={$page.url.pathname} />
-						{#if HOME_LAUNCHED}
-							<a href={homeHref} class:selected={isNavSelected(homeHref)}>{m.nav_home()}</a>
-						{/if}
-						<a href={galleryHref} class:selected={isNavSelected(galleryHref)}>{m.nav_gallery()}</a>
-						<a href={crewHref} class:selected={isNavSelected(crewHref)}>{m.nav_crew()}</a>
-						<a href={collectionHref} class:selected={isNavSelected(collectionHref)}
-							>{m.nav_collection()}</a
-						>
-						<button
-							type="button"
-							class="nav-search-trigger"
-							aria-label={m.nav_search_users_aria()}
-							onclick={openSearch}
-						>
-							<Icon name="search" size={16} />
-						</button>
-						<DropdownMenu.Root>
-							<DropdownMenu.Trigger class="nav-more-trigger">
-								<Icon name="ellipsis" size={14} />
-							</DropdownMenu.Trigger>
+			<NavMainLinks {nav} />
 
-							<DropdownMenu.Portal>
-								<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
-									<DropdownItem>
-										<a href={aboutHref}>{m.nav_about()}</a>
-									</DropdownItem>
-									<DropdownItem>
-										<a href={gachaHref}>{m.nav_gacha()}</a>
-									</DropdownItem>
-									<DropdownItem>
-										<a href={extensionHref}>{m.nav_extension()}</a>
-									</DropdownItem>
-									<DropdownMenu.Separator class="dropdown-separator" />
-									<LanguageToggle />
-									<ThemeToggle />
-								</DropdownMenu.Content>
-							</DropdownMenu.Portal>
-						</DropdownMenu.Root>
+			{#if !nav.isAuth}
+				<ul role="list">
+					<li>
+						<a href={nav.hrefs.register} class:selected={nav.isNavSelected(nav.hrefs.register)}
+							>{m.nav_register()}</a
+						>
 					</li>
-				{/if}
-			</ul>
-
-			<ul role="list">
-				<li>
-					<a href={registerHref} class:selected={isNavSelected(registerHref)}>{m.nav_register()}</a>
-				</li>
-				<li>
-					<a href={loginHref} class:selected={isNavSelected(loginHref)}>{m.nav_login()}</a>
-				</li>
-			</ul>
+					<li>
+						<a href={nav.hrefs.login} class:selected={nav.isNavSelected(nav.hrefs.login)}
+							>{m.nav_login()}</a
+						>
+					</li>
+				</ul>
+			{/if}
 		</div>
 	{/if}
-	{#if !isDatabaseRoute}
-		<Button
-			icon="plus"
-			iconOnly
-			shape="circle"
-			variant={userElement ? 'primary' : 'subtle'}
-			{...userElement ? { element: userElement } : {}}
-			elementStyle={Boolean(userElement)}
-			class="new-team-button"
-			aria-label={m.nav_new_team()}
-			href={newTeamHref}
-		/>
+	{#if !nav.isDatabaseRoute}
+		<NewTeamButton userElement={nav.userElement} />
 	{/if}
 </nav>
 
-<!-- Settings Modal -->
-{#if isAuth && account && currentUser}
-	<UserSettingsModal
-		bind:open={settingsModalOpen}
-		onOpenChange={handleSettingsOpenChange}
-		{username}
-		userId={account.userId}
-		user={currentUser}
-		role={role ?? 0}
-		initialSection={settingsSection}
-		{socialResult}
-	/>
-{/if}
-
-<!-- Notifications Modal (invitations + phantom claims) -->
-{#if isAuth}
-	<InvitationsModal
-		bind:open={invitationsModalOpen}
-		invitations={pendingInvitationsQuery.data ?? []}
-		phantomClaims={pendingPhantomClaimsQuery.data ?? []}
-		isLoading={pendingInvitationsQuery.isLoading || pendingPhantomClaimsQuery.isLoading}
-	/>
-{/if}
+<NavModals {nav} />
 
 <style lang="scss">
-	@use '$src/themes/dropdown' as dropdown;
-	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/navigation' as navigation;
 	@use '$src/themes/spacing' as spacing;
@@ -478,6 +80,7 @@
 			padding: spacing.$unit;
 		}
 
+		// The signed-out Register / Log in pill
 		ul {
 			@include navigation.nav-pill-bar;
 
@@ -496,208 +99,10 @@
 			gap: spacing.$unit;
 			align-items: center;
 		}
-
-		// Stage the two pill states in a single grid cell so they can crossfade
-		// without pushing layout during the transition.
-		.nav-links > ul:has(> .pill-state) {
-			display: grid;
-			grid-template-columns: 1fr;
-			gap: 0;
-
-			> .pill-state {
-				grid-row: 1;
-				grid-column: 1;
-				display: flex;
-				align-items: stretch;
-				gap: spacing.$unit-quarter;
-				min-width: 0;
-			}
-
-			> .pill-state.nav-search {
-				gap: 0;
-			}
-		}
 	}
 
-	// Crew link with notification dot
-	.crew-link {
-		display: flex !important;
-		align-items: center;
-		gap: spacing.$unit-half;
-	}
-
-	.crew-notification-dot {
-		width: 6px;
-		height: 6px;
-		border-radius: 50%;
-		background: var(--button-primary-bg);
-		animation: notification-pulse 2s ease-in-out infinite;
-		flex-shrink: 0;
-	}
-
-	@each $el in $elements {
-		.crew-notification-dot.#{$el} {
-			background: var(--#{$el}-button-bg);
-		}
-	}
-
-	// Bahamut mode bar — full-width strip above the navigation
-	.bahamut-bar {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 100%;
-		padding: spacing.$unit;
-		background-color: #7c3aed;
-		color: white;
-		border: none;
-		cursor: pointer;
-		font-family: var(--font-family);
-		font-size: typography.$font-tiny;
-		font-weight: typography.$medium;
-		transition: background-color 0.2s ease;
-
-		&:hover {
-			background-color: #6d28d9;
-		}
-	}
-
-	// Profile link with avatar
-	.profile-link {
-		display: flex !important;
-		align-items: center;
-		gap: spacing.$unit-half;
-
-		.user-avatar {
-			width: 24px;
-			height: 24px;
-			border-radius: 50%;
-			object-fit: cover;
-		}
-	}
-
-	// Dropdown button with badge (for Invitations)
-	:global(.dropdown-button-with-badge) {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		width: 100%;
-		gap: spacing.$unit;
-	}
-
-	// Style the nav buttons to match link dimensions
-	:global(.nav-item-button) {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: spacing.$unit (spacing.$unit * 1.5);
-		border-radius: layout.$full-corner;
-		background-color: transparent;
-		color: var(--menu-text);
-		border: none;
-		cursor: pointer;
-		font-family: var(--font-family);
-		font-size: typography.$font-small;
-		font-weight: typography.$medium;
-
-		&:hover {
-			background-color: var(--menu-bg-item-hover);
-		}
-	}
-
-	// Style the dropdown trigger
-	:global(.nav-more-trigger) {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		align-self: stretch;
-		padding: spacing.$unit calc(spacing.$unit * 1.5 + 1px);
-		border-radius: layout.$full-corner;
-		background-color: transparent;
-		color: var(--menu-text);
-		border: none;
-		cursor: pointer;
-		transition: background-color 0.2s ease;
-		outline: none;
-
-		&:hover {
-			background-color: var(--menu-bg-item-hover);
-		}
-
-		&:focus-visible {
-			box-shadow: 0 0 0 2px var(--accent-blue-focus);
-		}
-	}
-
-	// Search trigger button — mirrors .nav-more-trigger
-	.nav-search-trigger {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		align-self: stretch;
-		padding: spacing.$unit calc(spacing.$unit * 1.5 + 1px);
-		border-radius: layout.$full-corner;
-		background-color: transparent;
-		color: var(--menu-text);
-		border: none;
-		cursor: pointer;
-		transition: background-color 0.2s ease;
-		outline: none;
-
-		&:hover {
-			background-color: var(--menu-bg-item-hover);
-		}
-
-		&:focus-visible {
-			box-shadow: 0 0 0 2px var(--accent-blue-focus);
-		}
-	}
-
-	// Search list-item: fills the pill so NavUserSearch can stretch
-	.nav-search {
-		flex: 1;
-		display: flex;
-		align-items: stretch;
-		min-width: 0;
-	}
-
-	// Notification pulse animation for the more trigger
-	@keyframes notification-pulse {
-		0%,
-		100% {
-			opacity: 1;
-		}
-		50% {
-			opacity: 0.6;
-		}
-	}
-
-	:global(.nav-more-trigger.has-notification) {
-		animation: notification-pulse 2s ease-in-out infinite;
-		background-color: var(--button-primary-bg);
-		color: white;
-		padding: spacing.$unit calc(spacing.$unit + 3px);
-
-		&:hover {
-			animation: none;
-			background-color: var(--button-primary-bg-hover);
-		}
-	}
-
-	// Element-specific notification colors
-	@each $el in $elements {
-		:global(.nav-more-trigger.has-notification.#{$el}) {
-			background-color: var(--#{$el}-button-bg);
-			color: if($el == light, black, white);
-			&:hover {
-				background-color: var(--#{$el}-button-bg-hover);
-			}
-		}
-	}
-
-	// Element-specific SELECTED states for navigation links.
-	// In `.pill-default` the background is rendered by <SlidingSelection> via the
-	// `--sliding-selection-bg` CSS variable; other pills keep the static painted background.
+	// Element-specific SELECTED states for the Register / Log in pill and the
+	// database navigation
 	@each $el in $elements {
 		nav.element-#{$el} {
 			ul a.selected {
@@ -707,42 +112,10 @@
 			}
 		}
 
-		nav.element-#{$el} .pill-default {
-			--sliding-selection-bg: var(--#{$el}-nav-selected-bg);
-
-			a.selected {
-				background-color: transparent;
-			}
-		}
-
 		:global(nav.element-#{$el} .database-nav a.selected) {
 			background-color: var(--#{$el}-nav-selected-bg);
 			color: var(--#{$el}-nav-selected-text);
 			font-weight: typography.$bold;
 		}
-	}
-
-	// `.pill-default` hosts the sliding indicator. It must establish a
-	// positioning context, and its selectable children must sit above the indicator.
-	.pill-default {
-		position: relative;
-
-		> a,
-		> button {
-			position: relative;
-			z-index: 1;
-		}
-
-		> a.selected {
-			background-color: transparent;
-		}
-	}
-
-	:global(.dropdown-content) {
-		@include dropdown.dropdown-content;
-	}
-
-	:global(.dropdown-separator) {
-		@include dropdown.dropdown-separator;
 	}
 </style>

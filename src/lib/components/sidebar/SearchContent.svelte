@@ -1,20 +1,8 @@
 <script lang="ts">
 	import { SvelteSet } from 'svelte/reactivity'
-	import { createInfiniteQuery, createQuery } from '@tanstack/svelte-query'
-	import { onDestroy } from 'svelte'
-	import { searchQueries, type SearchFilters } from '$lib/api/queries/search.queries'
-	import { collectionQueries } from '$lib/api/queries/collection.queries'
-	import { entityQueries } from '$lib/api/queries/entity.queries'
-	import { crewQueries } from '$lib/api/queries/crew.queries'
-	import { userQueries } from '$lib/api/queries/user.queries'
-	import { partyStore } from '$lib/stores/partyStore.svelte'
-	import { getAvatarSrc } from '$lib/utils/avatar'
-	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
-	import { localizedName } from '$lib/utils/locale'
-	import { getLocale } from '$lib/paraglide/runtime'
 	import * as m from '$lib/paraglide/messages'
 	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
-	import { mapCollectionToSearchResult } from './search/collection-search.utils'
+	import { SearchContentState } from './search/searchContentState.svelte'
 
 	import Button from '../ui/Button.svelte'
 	import Icon from '../Icon.svelte'
@@ -78,46 +66,17 @@
 		return excludedIdSet.has(item.id)
 	}
 
-	// Reactively derive collection source from party store (stays in sync after mutations)
-	const collectionSourceUserId = $derived(partyStore.party?.collectionSourceUserId)
-
-	// Search state (local UI state)
-	let searchQuery = $state('')
-	let debouncedSearchQuery = $state('')
-	let debounceTimer: ReturnType<typeof setTimeout> | undefined
-	let isComposing = $state(false)
-
-	// Filter state
-	let elementFilters = $state<number[]>([])
-	let rarityFilters = $state<number[]>([])
-	let proficiencyFilters = $state<number[]>([])
-	let seriesFilter = $state<string | undefined>(undefined)
-	let subauraFilter = $derived(isSubauraSlot)
-
-	// External user query for collection source from URL param
-	const externalUserQuery = createQuery(() => ({
-		...userQueries.info(initialCollectionSourceUsername ?? ''),
-		enabled: !!initialCollectionSourceUsername
-	}))
-
-	// Search mode state (only available when authUserId is provided)
-	// Default to 'collection' when a collection source is already set on the party
-	let searchMode = $derived<SearchMode>(
-		!isFriendSlot && (collectionSourceUserId || initialCollectionSourceUsername)
-			? 'collection'
-			: 'all'
-	)
-
-	// Crew member selection state (defaults to self; collectionSourceUserId is reactive via partyStore)
-	let selectedMemberId = $derived<string | undefined>(authUserId)
-	let unlinkDialogOpen = $state(false)
-
-	// When external user loads, set selectedMemberId to their userId
-	$effect(() => {
-		if (externalUserQuery.data && !collectionSourceUserId) {
-			selectedMemberId = externalUserQuery.data.id
-		}
+	const search = new SearchContentState({
+		type: () => type,
+		authUserId: () => authUserId,
+		requiredProficiencies: () => requiredProficiencies,
+		initialCollectionSourceUsername: () => initialCollectionSourceUsername,
+		isFriendSlot: () => isFriendSlot,
+		isSubauraSlot: () => isSubauraSlot,
+		isExtraSlot: () => isExtraSlot
 	})
+
+	let unlinkDialogOpen = $state(false)
 
 	// Filter visibility (open by default)
 	let filtersOpen = $state(true)
@@ -125,307 +84,10 @@
 	// Scroll shadow state
 	let resultsScrolled = $state(false)
 
-	// Refs
-	let sentinelEl = $state<HTMLElement>()
-
-	// IME composition handlers
-	function handleCompositionStart() {
-		isComposing = true
-	}
-
-	function handleCompositionEnd() {
-		// Safari fires compositionend before the final input event
-		setTimeout(() => {
-			isComposing = false
-		}, 50)
-	}
-
-	// Debounce search query changes (skip during IME composition)
-	$effect(() => {
-		const query = searchQuery
-
-		if (debounceTimer) {
-			clearTimeout(debounceTimer)
-		}
-
-		if (isComposing) return
-
-		debounceTimer = setTimeout(() => {
-			debouncedSearchQuery = query
-		}, 300)
-
-		return () => {
-			if (debounceTimer) {
-				clearTimeout(debounceTimer)
-			}
-		}
-	})
-
-	// --- Queries ---
-
-	// Series query - fetch list based on current type
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const seriesQuery = createQuery(() => entityQueries.seriesListByType(type) as any)
-
-	const seriesOptions = $derived.by(() => {
-		const data = seriesQuery.data as
-			Array<{ id: string; name: { en?: string; ja?: string } }> | undefined
-		if (!data) return []
-		return data.map((s) => ({
-			value: s.id,
-			label: localizedName(s.name)
-		}))
-	})
-
-	// Check if user is in a crew (crewStore is only populated on /crew routes, so query directly)
-	const myCrewQuery = createQuery(() => ({
-		...crewQueries.myCrew(),
-		enabled: !!authUserId
-	}))
-	const isInCrew = $derived(!!myCrewQuery.data)
-
-	// Crew members with accessible collections (for collection mode dropdown)
-	const crewMembersQuery = createQuery(() => ({
-		...crewQueries.accessibleCollectionMembers(),
-		enabled: isInCrew
-	}))
-
-	const memberOptions = $derived.by(() => {
-		const members = crewMembersQuery.data ?? []
-		const options: { value: string; label: string; image?: string; suffix?: string }[] = []
-
-		if (authUserId) {
-			const selfMember = members.find((m) => m.userId === authUserId)
-			options.push({
-				value: authUserId,
-				label: selfMember?.username ?? 'You',
-				image: selfMember ? getAvatarSrc(selfMember.avatarPicture) : undefined,
-				suffix: 'You'
-			})
-		}
-
-		for (const m of members) {
-			if (m.userId !== authUserId) {
-				options.push({
-					value: m.userId,
-					label: m.username,
-					image: getAvatarSrc(m.avatarPicture)
-				})
-			}
-		}
-
-		// Add external collection source user if not already in list
-		const externalUser = externalUserQuery.data
-		if (externalUser && !options.some((o) => o.value === externalUser.id)) {
-			options.push({
-				value: externalUser.id,
-				label: externalUser.username,
-				image: getAvatarSrc(externalUser.avatar?.picture)
-			})
-		}
-
-		return options
-	})
-
-	// --- Derived collection state ---
-
-	const collectionUserId = $derived.by(() => {
-		if (collectionSourceUserId) return collectionSourceUserId
-		if (searchMode !== 'collection') return authUserId
-		return selectedMemberId
-	})
-
-	const isCollectionLocked = $derived(!!collectionSourceUserId)
-
-	const showMemberSection = $derived(
-		searchMode === 'collection' &&
-			(isCollectionLocked || (isInCrew && memberOptions.length > 1) || !!externalUserQuery.data)
-	)
-
-	function resolveMember(
-		userId: string | undefined
-	): { label: string; image?: string } | undefined {
-		if (!userId) return undefined
-		const members = crewMembersQuery.data ?? []
-		if (userId === authUserId) {
-			const self = members.find((m) => m.userId === authUserId)
-			return {
-				label: self?.username ?? 'You',
-				image: self ? getAvatarSrc(self.avatarPicture) : undefined
-			}
-		}
-		const member = members.find((m) => m.userId === userId)
-		if (member) return { label: member.username, image: getAvatarSrc(member.avatarPicture) }
-		const ext = externalUserQuery.data
-		if (ext && ext.id === userId) {
-			return { label: ext.username, image: getAvatarSrc(ext.avatar?.picture) }
-		}
-		return undefined
-	}
-
-	const lockedMember = $derived(
-		resolveMember(collectionSourceUserId) ?? { label: m.search_linked_user(), image: undefined }
-	)
-
-	const selectedMemberName = $derived.by(() => {
-		if (!selectedMemberId || selectedMemberId === authUserId) return undefined
-		return resolveMember(selectedMemberId)?.label
-	})
-
-	// --- Filters ---
-
-	const effectiveProficiencies = $derived(
-		requiredProficiencies ?? (proficiencyFilters.length > 0 ? proficiencyFilters : undefined)
-	)
-
-	const filters = $derived<SearchFilters>({
-		element: elementFilters.length > 0 ? elementFilters : undefined,
-		rarity: rarityFilters.length > 0 ? rarityFilters : undefined,
-		proficiency:
-			type === 'weapon' || type === 'character'
-				? searchMode === 'collection'
-					? proficiencyFilters.length > 0
-						? proficiencyFilters
-						: undefined
-					: effectiveProficiencies
-				: undefined,
-		series: seriesFilter ? [seriesFilter] : undefined,
-		subaura: subauraFilter ? true : undefined,
-		extra: isExtraSlot ? true : undefined
-	})
-
-	// --- Search queries ---
-
-	const searchQueryResult = createInfiniteQuery(
-		() =>
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any -- polymorphic TanStack Query options
-			searchQueries.byType(type, debouncedSearchQuery, filters, getLocale() as 'en' | 'ja') as any
-	)
-
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const collectionQueryResult = createInfiniteQuery((): any => {
-		const userId = collectionUserId
-		if (!userId) {
-			return {
-				...collectionQueries.characters(userId ?? '', {}, false),
-				enabled: false
-			}
-		}
-
-		return {
-			...collectionQueries.byType(
-				type,
-				userId,
-				searchMode === 'collection'
-					? {
-							element: filters.element,
-							rarity: filters.rarity,
-							proficiency: filters.proficiency,
-							series: filters.series,
-							search: debouncedSearchQuery || undefined
-						}
-					: {}
-			),
-			enabled: true
-		}
-	})
-
-	// On the 'all' tab, search results never carry collectionId, so cross-
-	// reference against the user's collection (by catalog id) to mark items
-	// they already own. Skipped on the 'collection' tab — items there
-	// already have collectionId set.
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any -- query option types differ per type, but the result shape is identical (string[])
-	const ownedIdsQuery = createQuery((): any => {
-		const userId = authUserId
-		const enabled = !!userId && searchMode === 'all'
-		if (type === 'character') return collectionQueries.collectedCharacterIds(userId ?? '', enabled)
-		if (type === 'weapon') return collectionQueries.collectedWeaponIds(userId ?? '', enabled)
-		return collectionQueries.collectedSummonIds(userId ?? '', enabled)
-	})
-
-	const ownedIdSet = $derived(new SvelteSet<string>((ownedIdsQuery.data as string[]) ?? []))
-
-	// --- Results processing ---
-
-	const rawResults = $derived(
-		((searchQueryResult.data?.pages ?? []) as Array<{ results: AddItemResult[] }>).flatMap(
-			(page) => page.results
-		)
-	)
-
-	const rawCollectionResults = $derived(
-		((collectionQueryResult.data?.pages ?? []) as Array<{ results: unknown[] }>).flatMap(
-			(page) => page.results
-		)
-	)
-
-	const searchResults = $derived.by<AddItemResult[]>(() => {
-		if (searchMode === 'collection' && authUserId) {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			return (rawCollectionResults as any[]).map(mapCollectionToSearchResult)
-		}
-		const deduped = Array.from(new Map(rawResults.map((item) => [item.id, item])).values())
-		return deduped as AddItemResult[]
-	})
-
-	const activeQuery = $derived(
-		searchMode === 'collection' && authUserId ? collectionQueryResult : searchQueryResult
-	)
-
-	// --- "In team" tracking ---
-
-	const inTeamCollectionIds = $derived.by(() => {
-		const party = partyStore.party
-		if (!party) return new SvelteSet<string>()
-		const ids = new SvelteSet<string>()
-		for (const w of party.weapons ?? []) {
-			if (w.collectionWeaponId) ids.add(w.collectionWeaponId)
-		}
-		for (const c of party.characters ?? []) {
-			if (c.collectionCharacterId) ids.add(c.collectionCharacterId)
-		}
-		for (const s of party.summons ?? []) {
-			if (s.collectionSummonId) ids.add(s.collectionSummonId)
-		}
-		return ids
-	})
-
-	function isInTeam(item: AddItemResult): boolean {
-		if (!item.collectionId) return false
-		return inTeamCollectionIds.has(item.collectionId)
-	}
-
-	// --- Infinite scroll ---
-
-	const loader = useInfiniteLoader(
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- createInfiniteQuery result type doesn't match useInfiniteLoader generic exactly
-		() => activeQuery as any,
-		() => sentinelEl,
-		{ rootMargin: '200px' }
-	)
-
-	$effect(() => {
-		void searchMode
-		void filters
-		loader.reset()
-	})
-
-	onDestroy(() => loader.destroy())
-
-	// --- Computed states ---
-
-	const isEmpty = $derived(
-		searchResults.length === 0 && !activeQuery.isLoading && !activeQuery.isError
-	)
-
 	function handleItemClick(item: AddItemResult) {
-		if (canAddMore && !isInTeam(item) && !isExcluded(item)) {
+		if (canAddMore && !search.isInTeam(item) && !isExcluded(item)) {
 			onAddItems([item])
-			if (type !== 'weapon') {
-				searchQuery = ''
-				if (debounceTimer) clearTimeout(debounceTimer)
-				debouncedSearchQuery = ''
-			}
+			if (type !== 'weapon') search.clearQuery()
 		}
 	}
 </script>
@@ -435,8 +97,8 @@
 		{#if authUserId && !isFriendSlot}
 			<div class="mode-toggle">
 				<SegmentedControl
-					value={searchMode}
-					onValueChange={(v) => (searchMode = v as SearchMode)}
+					value={search.searchMode}
+					onValueChange={(v) => (search.searchMode = v as SearchMode)}
 					variant="background"
 					size="small"
 					element={userElement}
@@ -448,14 +110,14 @@
 			</div>
 		{/if}
 
-		{#if showMemberSection}
+		{#if search.showMemberSection}
 			<CollectionMemberSelector
-				isLocked={isCollectionLocked}
-				{lockedMember}
-				{memberOptions}
-				{selectedMemberId}
+				isLocked={search.isCollectionLocked}
+				lockedMember={search.lockedMember}
+				memberOptions={search.memberOptions}
+				selectedMemberId={search.selectedMemberId}
 				onMemberChange={(id) => {
-					selectedMemberId = id
+					search.selectedMemberId = id
 				}}
 				onUnlinkRequest={() => {
 					unlinkDialogOpen = true
@@ -465,44 +127,44 @@
 
 		<div class="search-section" class:filters-open={filtersOpen}>
 			<Input
-				bind:value={searchQuery}
+				bind:value={search.searchQuery}
 				type="text"
 				placeholder={m.search_placeholder()}
 				leftIcon="search"
 				contained
 				fullWidth
 				class="search-input"
-				oncompositionstart={handleCompositionStart}
-				oncompositionend={handleCompositionEnd}
+				oncompositionstart={search.handleCompositionStart}
+				oncompositionend={search.handleCompositionEnd}
 			/>
 		</div>
 
 		{#if filtersOpen}
 			<SearchFiltersPanel
 				{type}
-				{elementFilters}
-				{rarityFilters}
-				{proficiencyFilters}
-				{seriesFilter}
-				{seriesOptions}
+				elementFilters={search.elementFilters}
+				rarityFilters={search.rarityFilters}
+				proficiencyFilters={search.proficiencyFilters}
+				seriesFilter={search.seriesFilter}
+				seriesOptions={search.seriesOptions}
 				{requiredProficiencies}
 				{jobName}
-				{subauraFilter}
+				subauraFilter={search.subauraFilter}
 				subauraLocked={isSubauraSlot}
 				onElementChange={(v) => {
-					elementFilters = v
+					search.elementFilters = v
 				}}
 				onRarityChange={(v) => {
-					rarityFilters = v
+					search.rarityFilters = v
 				}}
 				onProficiencyChange={(v) => {
-					proficiencyFilters = v
+					search.proficiencyFilters = v
 				}}
 				onSeriesChange={(v) => {
-					seriesFilter = v
+					search.seriesFilter = v
 				}}
 				onSubauraChange={(v) => {
-					subauraFilter = v
+					search.subauraFilter = v
 				}}
 			/>
 		{/if}
@@ -529,22 +191,23 @@
 			resultsScrolled = e.currentTarget.scrollTop > 0
 		}}
 	>
-		{#if activeQuery.isLoading}
+		{#if search.activeQuery.isLoading}
 			<div class="loading">
 				<Icon name="loader-2" size={24} />
 				<span>{m.search_searching()}</span>
 			</div>
-		{:else if activeQuery.isError}
+		{:else if search.activeQuery.isError}
 			<div class="error-state">
 				<Icon name="alert-circle" size={24} />
-				<p>{activeQuery.error?.message || m.search_failed()}</p>
-				<Button size="small" onclick={() => activeQuery.refetch()}>{m.retry()}</Button>
+				<p>{search.activeQuery.error?.message || m.search_failed()}</p>
+				<Button size="small" onclick={() => search.activeQuery.refetch()}>{m.retry()}</Button>
 			</div>
-		{:else if searchResults.length > 0}
+		{:else if search.searchResults.length > 0}
 			<ul class="results-list">
-				{#each searchResults as item (item.collectionId || item.id)}
-					{@const inTeam = (searchMode === 'collection' && isInTeam(item)) || isExcluded(item)}
-					{@const fromCollection = !!item.collectionId || ownedIdSet.has(item.id)}
+				{#each search.searchResults as item (item.collectionId || item.id)}
+					{@const inTeam =
+						(search.searchMode === 'collection' && search.isInTeam(item)) || isExcluded(item)}
+					{@const fromCollection = !!item.collectionId || search.ownedIdSet.has(item.id)}
 					<SearchResultItem
 						{item}
 						{type}
@@ -558,27 +221,27 @@
 
 			<div
 				class="load-more-sentinel"
-				bind:this={sentinelEl}
-				class:hidden={!activeQuery.hasNextPage}
+				bind:this={search.sentinelEl}
+				class:hidden={!search.activeQuery.hasNextPage}
 			></div>
 
-			{#if activeQuery.isFetchingNextPage}
+			{#if search.activeQuery.isFetchingNextPage}
 				<div class="loading-more">
 					<Icon name="loader-2" size={20} />
 					<span>{m.search_loading_more()}</span>
 				</div>
 			{/if}
-		{:else if isEmpty}
+		{:else if search.isEmpty}
 			<div class="no-results">
-				{#if searchMode === 'collection'}
-					{#if searchQuery.length > 0}
+				{#if search.searchMode === 'collection'}
+					{#if search.searchQuery.length > 0}
 						{m.search_no_match()}
-					{:else if selectedMemberName}
-						{m.search_member_empty({ name: selectedMemberName })}
+					{:else if search.selectedMemberName}
+						{m.search_member_empty({ name: search.selectedMemberName })}
 					{:else}
 						{m.search_collection_empty()}
 					{/if}
-				{:else if searchQuery.length > 0}
+				{:else if search.searchQuery.length > 0}
 					{m.search_no_results()}
 				{:else}
 					{m.search_start_typing()}

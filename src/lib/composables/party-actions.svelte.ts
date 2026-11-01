@@ -4,10 +4,8 @@ import type { UpdatePartyParams } from '$lib/api/adapters/party.adapter'
 import { openDescriptionPane } from '$lib/features/description/openDescriptionPane.svelte'
 import EditDescriptionPane from '$lib/components/sidebar/EditDescriptionPane.svelte'
 import { sidebar } from '$lib/stores/sidebar.svelte'
-import {
-	openPartyEditSidebar,
-	type PartyEditValues
-} from '$lib/features/party/openPartyEditSidebar.svelte'
+import { openPartyEditSidebar } from '$lib/features/party/openPartyEditSidebar.svelte'
+import type { PartyEditValues } from '$lib/features/party/partyEditValues'
 import { toast } from 'svelte-sonner'
 import { extractErrorMessage } from '$lib/utils/errors'
 import FavoriteToast from '$lib/components/ui/FavoriteToast.svelte'

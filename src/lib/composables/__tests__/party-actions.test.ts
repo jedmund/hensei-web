@@ -16,7 +16,7 @@ import type { PartyMutations } from '../party-mutations.svelte'
 import type { Party } from '$lib/types/api/party'
 import type { Raid } from '$lib/types/api/entities'
 import { openPartyEditSidebar } from '$lib/features/party/openPartyEditSidebar.svelte'
-import type { PartyEditValues } from '$lib/features/party/openPartyEditSidebar.svelte'
+import type { PartyEditValues } from '$lib/features/party/partyEditValues'
 
 vi.mock('svelte-sonner', () => ({
 	toast: { error: vi.fn(), success: vi.fn() }

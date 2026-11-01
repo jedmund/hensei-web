@@ -4,7 +4,7 @@
 	import Icon from '../Icon.svelte'
 
 	interface Props extends Omit<HTMLInputAttributes, 'size'> {
-		variant?: 'default' | 'contained' | 'duration' | 'number' | 'range'
+		variant?: 'default' | 'contained' | 'number' | 'range'
 		contained?: boolean
 		size?: 'small' | 'medium' | 'large'
 		error?: string
@@ -15,11 +15,8 @@
 		onClear?: () => void
 		counter?: number
 		maxLength?: number
-		hidden?: boolean
 		fullWidth?: boolean
-		fullHeight?: boolean
 		alignRight?: boolean
-		accessory?: boolean
 		no1password?: boolean
 		validationState?: 'idle' | 'validating' | 'valid' | 'invalid'
 		handleBlur?: () => void
@@ -39,11 +36,8 @@
 		onClear,
 		counter,
 		maxLength,
-		hidden = false,
 		fullWidth = false,
-		fullHeight = false,
 		alignRight = false,
-		accessory = false,
 		value = $bindable(),
 		type = 'text',
 		placeholder,
@@ -76,7 +70,7 @@
 		counter !== undefined || (charsRemaining !== undefined && charsRemaining <= 5)
 	)
 	const hasWrapper = $derived(
-		accessory || leftIcon || rightIcon || clearable || maxLength !== undefined || validationIcon
+		leftIcon || rightIcon || clearable || maxLength !== undefined || validationIcon
 	)
 
 	function handleClear() {
@@ -92,7 +86,7 @@
 	}
 
 	const fieldsetClasses = $derived(
-		['fieldset', hidden && 'hidden', fullWidth && 'full', className].filter(Boolean).join(' ')
+		['fieldset', fullWidth && 'full', className].filter(Boolean).join(' ')
 	)
 
 	const inputClasses = $derived(
@@ -100,12 +94,9 @@
 			'input',
 			size,
 			(variant === 'contained' || contained) && 'contained',
-			variant === 'duration' && 'duration',
 			variant === 'number' && 'number',
 			variant === 'range' && 'range',
 			alignRight && 'alignRight',
-			fullHeight && 'fullHeight',
-			accessory && 'accessory',
 			hasWrapper && 'wrapper',
 			className
 		]
@@ -214,10 +205,6 @@
 			margin-bottom: 0;
 		}
 
-		&.hidden {
-			display: none;
-		}
-
 		&.full {
 			width: 100%;
 		}
@@ -258,11 +245,6 @@
 		width: 100%;
 		@include smooth-transition($duration-quick, background-color);
 
-		&.fullHeight {
-			height: 100%;
-		}
-
-		&.accessory,
 		&.wrapper {
 			align-items: center;
 			background: var(--input-bg);
@@ -302,6 +284,7 @@
 				color: var(--text-primary);
 				width: 100%;
 				font-family: inherit;
+				border: 2px solid transparent;
 				@include smooth-transition($duration-quick, border-color);
 			}
 
@@ -379,10 +362,6 @@
 					fill: currentColor;
 				}
 			}
-
-			input {
-				border: 2px solid transparent;
-			}
 		}
 
 		&[type='number']::-webkit-inner-spin-button {
@@ -403,24 +382,6 @@
 				&:hover:not(:has(input:disabled)) {
 					background-color: var(--input-bound-bg-hover);
 				}
-			}
-		}
-
-		&.duration {
-			background: transparent;
-			border: none;
-			padding: 0;
-			width: initial;
-			height: 100%;
-			padding: calc($unit-2x - 2px) 0;
-
-			&:hover {
-				background: transparent;
-			}
-
-			&:focus,
-			&:focus-visible {
-				border: none;
 			}
 		}
 
@@ -456,8 +417,7 @@
 				padding: $unit-half $unit;
 			}
 
-			&.wrapper input,
-			&.accessory input {
+			&.wrapper input {
 				padding: $unit-half $unit;
 				font-size: $font-small;
 			}
@@ -485,8 +445,7 @@
 				padding: $unit calc($unit * 1.5);
 			}
 
-			&.wrapper input,
-			&.accessory input {
+			&.wrapper input {
 				padding: $unit calc($unit * 1.5);
 				font-size: $font-regular;
 			}
@@ -514,8 +473,7 @@
 				padding: $unit-2x $unit-3x;
 			}
 
-			&.wrapper input,
-			&.accessory input {
+			&.wrapper input {
 				padding: $unit-2x $unit-3x;
 				font-size: $font-large;
 			}
@@ -561,23 +519,6 @@
 			}
 		}
 
-		&.duration {
-			background: transparent;
-			border: none;
-			padding: calc($unit-2x - 2px) 0;
-			width: initial;
-			height: 100%;
-
-			&:hover {
-				background: transparent;
-			}
-
-			&:focus,
-			&:focus-visible {
-				border: none;
-			}
-		}
-
 		&.number {
 			text-align: right;
 			width: $unit-8x;
@@ -590,10 +531,6 @@
 
 		&.alignRight {
 			text-align: right;
-		}
-
-		&.fullHeight {
-			height: 100%;
 		}
 
 		&:hover:not(:disabled):not(.contained) {
