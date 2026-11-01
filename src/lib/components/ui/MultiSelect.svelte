@@ -14,6 +14,8 @@
 		 * in a placeholder container that always renders (even if `image` is empty),
 		 * matching the visual treatment of catalog icons elsewhere in the app. */
 		imageBackground?: string
+		/** Muted number after the label, e.g. how many results the option matches */
+		count?: number
 	}
 
 	interface Props {
@@ -171,6 +173,9 @@
 							class:has-color={!!option.color && !option.image && !option.imageBackground}
 							class:selected>{option.label}</span
 						>
+						{#if option.count !== undefined}
+							<span class="count">{option.count.toLocaleString()}</span>
+						{/if}
 						<span class="indicator">
 							<Icon name="check" size={12} class="check-icon {selected ? 'visible' : ''}" />
 						</span>
@@ -429,6 +434,11 @@
 					margin-right: $unit;
 				}
 			}
+		}
+
+		.count {
+			color: var(--text-tertiary);
+			font-variant-numeric: tabular-nums;
 		}
 
 		:global(.indicator) {
