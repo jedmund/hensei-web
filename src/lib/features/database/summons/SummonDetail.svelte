@@ -4,7 +4,7 @@
 	// TanStack Query
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { summonAdapter } from '$lib/api/adapters/summon.adapter'
 	import { withInitialData } from '$lib/query/ssr'
 	import { fetchWikiPage } from '$lib/api/wiki'
 
@@ -23,7 +23,7 @@
 	import SummonAurasTab from '$lib/features/database/summons/tabs/SummonAurasTab.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
-	import { getSummonImage, getSummonTransformationStages } from '$lib/utils/images'
+	import { getSummonImage, getSummonTransformationStages } from '$lib/utils/images/summons'
 	import { seriesHasUlbArt } from '$lib/utils/summonSeries'
 	import { getElementLabel } from '$lib/utils/element'
 	import {
@@ -36,7 +36,7 @@
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 
 	// Types
-	import type { Summon } from '$lib/api/adapters/entity.adapter'
+	import type { Summon } from '$lib/api/adapters/summon.adapter'
 	import type { ImageItem } from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 
 	interface Props {
@@ -76,7 +76,7 @@
 		queryKey: ['summons', 'raw', summon?.id],
 		queryFn: async () => {
 			if (!summon?.id) return null
-			return entityAdapter.getSummonRawData(summon.id)
+			return summonAdapter.getSummonRawData(summon.id)
 		},
 		enabled: currentTab === 'raw' && !!summon?.id
 	}))
@@ -126,7 +126,7 @@
 		if (!summon?.id) return
 		// For summons, '01' means base (no transformation suffix)
 		const trans = transformation === '01' ? undefined : transformation
-		await entityAdapter.downloadSummonImage(summon.id, size, trans, force)
+		await summonAdapter.downloadSummonImage(summon.id, size, trans, force)
 	}
 
 	async function handleDownloadAllPose(pose: string, force: boolean) {
@@ -134,20 +134,20 @@
 		const trans = pose === '01' ? undefined : pose
 		// Download all sizes for this pose
 		for (const size of summonSizes) {
-			await entityAdapter.downloadSummonImage(summon.id, size, trans, force)
+			await summonAdapter.downloadSummonImage(summon.id, size, trans, force)
 		}
 	}
 
 	async function handleDownloadAllImages(force: boolean) {
 		if (!summon?.id) return
-		await entityAdapter.downloadSummonImages(summon.id, { force })
+		await summonAdapter.downloadSummonImages(summon.id, { force })
 	}
 
 	async function handleDownloadSize(size: string) {
 		if (!summon?.id) return
 		const stages = getSummonTransformationStages(summon.granblueId, seriesHasUlbArt(summon.series))
 		for (const stage of stages) {
-			await entityAdapter.downloadSummonImage(summon.id, size, stage.suffix, false)
+			await summonAdapter.downloadSummonImage(summon.id, size, stage.suffix, false)
 		}
 	}
 </script>
@@ -333,7 +333,7 @@
 				{canEdit}
 				onReparse={canEdit && summon?.id
 					? async (refetch) => {
-							await entityAdapter.reparseSummon(summon.id, refetch)
+							await summonAdapter.reparseSummon(summon.id, refetch)
 							summonQuery.refetch()
 							rawDataQuery.refetch()
 						}
@@ -346,7 +346,7 @@
 								throw new Error(wikiResult.error)
 							}
 							// Update the summon with the wiki_raw data
-							await entityAdapter.updateSummon(summon.id, { wiki_raw: wikiResult.wikiRaw })
+							await summonAdapter.updateSummon(summon.id, { wiki_raw: wikiResult.wikiRaw })
 							rawDataQuery.refetch()
 							return { wikiRaw: wikiResult.wikiRaw ?? null, gameRawEn: null, gameRawJp: null }
 						}

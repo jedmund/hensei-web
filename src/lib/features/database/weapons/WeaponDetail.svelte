@@ -4,7 +4,7 @@
 	// TanStack Query
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { weaponAdapter } from '$lib/api/adapters/weapon.adapter'
 	import { withInitialData } from '$lib/query/ssr'
 	import { fetchWikiPage } from '$lib/api/wiki'
 
@@ -32,7 +32,7 @@
 		getWeaponImage as getWeaponImageUrl,
 		getWeaponTransformationStages,
 		getWeaponFallbackImage
-	} from '$lib/utils/images'
+	} from '$lib/utils/images/weapons'
 	import { getElementLabel, ELEMENT_DISPLAY_ORDER } from '$lib/utils/element'
 	import { seriesHasTranscendenceArt } from '$lib/utils/weaponSeries'
 	import {
@@ -45,7 +45,7 @@
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 
 	// Types
-	import type { Weapon } from '$lib/api/adapters/entity.adapter'
+	import type { Weapon } from '$lib/api/adapters/weapon.adapter'
 	import type { ImageItem } from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 
 	interface Props {
@@ -85,7 +85,7 @@
 		queryKey: ['weapons', 'raw', weapon?.id],
 		queryFn: async () => {
 			if (!weapon?.id) return null
-			return entityAdapter.getWeaponRawData(weapon.id)
+			return weaponAdapter.getWeaponRawData(weapon.id)
 		},
 		enabled: currentTab === 'raw' && !!weapon?.id
 	}))
@@ -179,7 +179,7 @@
 		const maxAttempts = 60
 		for (let i = 0; i < maxAttempts; i++) {
 			await new Promise((r) => setTimeout(r, 2000))
-			const status = await entityAdapter.getWeaponDownloadStatus(weaponId)
+			const status = await weaponAdapter.getWeaponDownloadStatus(weaponId)
 
 			if (status.status === 'processing') {
 				const downloaded = status.imagesDownloaded ?? 0
@@ -203,7 +203,7 @@
 	async function batchDownload(weaponId: string, options: { force?: boolean; size?: string }) {
 		const toastId = toast.loading('Queuing download…')
 		try {
-			await entityAdapter.downloadWeaponImages(weaponId, options)
+			await weaponAdapter.downloadWeaponImages(weaponId, options)
 			toast.loading('Downloading images…', { id: toastId })
 			await pollDownloadStatus(weaponId, toastId)
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -224,7 +224,7 @@
 			await batchDownload(weapon.id, { force, size })
 		} else {
 			const trans = transformation === '01' ? undefined : transformation
-			await entityAdapter.downloadWeaponImage(weapon.id, size, trans, force)
+			await weaponAdapter.downloadWeaponImage(weapon.id, size, trans, force)
 			toast.success('Image downloaded')
 		}
 	}
@@ -237,7 +237,7 @@
 		} else {
 			const trans = pose === '01' ? undefined : pose
 			for (const size of weaponSizes) {
-				await entityAdapter.downloadWeaponImage(weapon.id, size, trans, force)
+				await weaponAdapter.downloadWeaponImage(weapon.id, size, trans, force)
 			}
 			toast.success('Images downloaded')
 		}
@@ -260,7 +260,7 @@
 			}
 
 			for (const trans of transformations) {
-				await entityAdapter.downloadWeaponImage(weapon.id, size, trans, false)
+				await weaponAdapter.downloadWeaponImage(weapon.id, size, trans, false)
 			}
 			toast.success('Images downloaded')
 		}
@@ -428,7 +428,7 @@
 				{canEdit}
 				onReparse={canEdit && weapon?.id
 					? async (refetch) => {
-							await entityAdapter.reparseWeapon(weapon.id, refetch)
+							await weaponAdapter.reparseWeapon(weapon.id, refetch)
 							weaponQuery.refetch()
 							rawDataQuery.refetch()
 						}
@@ -441,7 +441,7 @@
 								throw new Error(wikiResult.error)
 							}
 							// Update the weapon with the wiki_raw data
-							await entityAdapter.updateWeapon(weapon.id, { wiki_raw: wikiResult.wikiRaw })
+							await weaponAdapter.updateWeapon(weapon.id, { wiki_raw: wikiResult.wikiRaw })
 							rawDataQuery.refetch()
 							return { wikiRaw: wikiResult.wikiRaw ?? null, gameRawEn: null, gameRawJp: null }
 						}

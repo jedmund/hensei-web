@@ -4,7 +4,7 @@
 	// TanStack Query
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
-	import { entityAdapter } from '$lib/api/adapters/entity.adapter'
+	import { characterAdapter } from '$lib/api/adapters/character.adapter'
 	import { withInitialData } from '$lib/query/ssr'
 
 	// Components
@@ -21,7 +21,7 @@
 	import CharacterRefreshActions from '$lib/features/database/characters/refresh/CharacterRefreshActions.svelte'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
-	import { getCharacterImage } from '$lib/utils/images'
+	import { getCharacterImage } from '$lib/utils/images/characters'
 	import { getElementLabel } from '$lib/utils/element'
 	import {
 		buildWikiEnUrl,
@@ -36,7 +36,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 
 	// Types
-	import type { Character } from '$lib/api/adapters/entity.adapter'
+	import type { Character } from '$lib/api/adapters/character.adapter'
 	import type { ImageItem } from '$lib/features/database/detail/tabs/EntityImagesTab.svelte'
 
 	interface Props {
@@ -82,7 +82,7 @@
 		queryKey: ['characters', 'related', character?.id],
 		queryFn: async () => {
 			if (!character?.id) return []
-			return entityAdapter.getRelatedCharacters(character.id)
+			return characterAdapter.getRelatedCharacters(character.id)
 		},
 		enabled: !!character?.characterId
 	}))
@@ -92,7 +92,7 @@
 		queryKey: ['characters', 'raw', character?.id],
 		queryFn: async () => {
 			if (!character?.id) return null
-			return entityAdapter.getCharacterRawData(character.id)
+			return characterAdapter.getCharacterRawData(character.id)
 		},
 		enabled: currentTab === 'raw' && !!character?.id
 	}))
@@ -132,26 +132,26 @@
 		force: boolean
 	) {
 		if (!character?.id) return
-		await entityAdapter.downloadCharacterImage(character.id, size, transformation, force)
+		await characterAdapter.downloadCharacterImage(character.id, size, transformation, force)
 	}
 
 	async function handleDownloadAllPose(pose: string, force: boolean) {
 		if (!character?.id) return
 		for (const size of characterSizes) {
-			await entityAdapter.downloadCharacterImage(character.id, size, pose, force)
+			await characterAdapter.downloadCharacterImage(character.id, size, pose, force)
 		}
 	}
 
 	async function handleDownloadAllImages(force: boolean) {
 		if (!character?.id) return
-		await entityAdapter.downloadCharacterImages(character.id, { force })
+		await characterAdapter.downloadCharacterImages(character.id, { force })
 	}
 
 	async function handleDownloadSize(size: string) {
 		if (!character?.id) return
 		const poses = ['style']
 		for (const pose of poses) {
-			await entityAdapter.downloadCharacterImage(character.id, size, pose, false)
+			await characterAdapter.downloadCharacterImage(character.id, size, pose, false)
 		}
 	}
 </script>
