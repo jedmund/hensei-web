@@ -53,26 +53,34 @@
 <header class="container">
 	<div class="left">
 		<div class="image" class:job={type === 'job'} class:accessory={type === 'accessory'}>
-			<img
-				src={image}
-				alt={getDisplayName(name)}
-				onerror={(e) => {
-					const img = e.currentTarget as HTMLImageElement
-					if (fallbackImage && img.src !== fallbackImage) {
-						img.src = fallbackImage
-						return
-					}
-					const placeholder =
-						type === 'job'
-							? `${getBasePath()}/app/placeholders/placeholder-job.png`
-							: type === 'raid'
-								? `${getBasePath()}/app/placeholders/placeholder-raid-thumbnail.png`
-								: type === 'accessory'
-									? `${getBasePath()}/app/placeholders/placeholder-weapon-grid.png`
-									: getPlaceholderImage(type, 'grid')
-					img.src = placeholder
-				}}
-			/>
+			<!-- A fresh element per image, so the fallback steps start over (e.g. j/k in the panel) -->
+			{#key image}
+				<img
+					src={image}
+					alt={getDisplayName(name)}
+					onerror={(e) => {
+						const img = e.currentTarget as HTMLImageElement
+						// Each step runs once. Comparing img.src (absolute) with a relative
+						// fallback never matched, so a missing fallback retried forever.
+						if (img.dataset.fallback === 'placeholder') return
+						if (fallbackImage && !img.dataset.fallback) {
+							img.dataset.fallback = 'image'
+							img.src = fallbackImage
+							return
+						}
+						img.dataset.fallback = 'placeholder'
+						const placeholder =
+							type === 'job'
+								? `${getBasePath()}/app/placeholders/placeholder-job.png`
+								: type === 'raid'
+									? `${getBasePath()}/app/placeholders/placeholder-raid-thumbnail.png`
+									: type === 'accessory'
+										? `${getBasePath()}/app/placeholders/placeholder-weapon-grid.png`
+										: getPlaceholderImage(type, 'grid')
+						img.src = placeholder
+					}}
+				/>
+			{/key}
 		</div>
 
 		<div class="info">
