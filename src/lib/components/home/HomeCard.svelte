@@ -23,14 +23,10 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as *;
-	@use '$src/themes/effects' as effects;
 	@use '$src/themes/typography' as *;
 
 	.card {
-		background: var(--card-bg);
-		border: 0.5px solid rgba(0, 0, 0, 0.18);
-		border-radius: $page-corner;
-		box-shadow: effects.$page-elevation;
+		@include page-surface;
 		padding: $unit-2x $unit-2x calc($unit * 1.5);
 		display: grid;
 		// Content never widens the card past its column (long names, wide pickers)

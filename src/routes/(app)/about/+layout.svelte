@@ -101,7 +101,6 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/typography' as *;
-	@use '$src/themes/effects' as *;
 
 	.about-layout {
 		max-width: var(--main-max-width);
@@ -121,10 +120,7 @@
 	}
 
 	.about-card {
-		background: var(--card-bg);
-		border: 0.5px solid rgba(0, 0, 0, 0.18);
-		border-radius: $page-corner;
-		box-shadow: $page-elevation;
+		@include page-surface;
 		overflow: hidden;
 	}
 
