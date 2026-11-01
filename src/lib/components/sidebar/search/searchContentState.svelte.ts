@@ -3,12 +3,11 @@
  * its debounce, the filters, the All/Collection mode and collection owner, the
  * catalogue and collection queries, and infinite-scroll paging.
  *
- * Create it during component init: it registers queries, effects and an
- * onDestroy hook. Bind `sentinelEl` to the load-more sentinel.
+ * Create it during component init: it registers queries and effects, and
+ * tears the loader down with them. Bind `sentinelEl` to the load-more sentinel.
  */
 
 import { SvelteSet } from 'svelte/reactivity'
-import { onDestroy } from 'svelte'
 import {
 	createInfiniteQuery,
 	createQuery,
@@ -209,7 +208,8 @@ export class SearchContentState {
 			this.#loader.reset()
 		})
 
-		onDestroy(() => this.#loader.destroy())
+		// Stop the loader when the owning component (or effect root) is destroyed
+		$effect(() => () => this.#loader.destroy())
 	}
 
 	// --- IME composition ---
