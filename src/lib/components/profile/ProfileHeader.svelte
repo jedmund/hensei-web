@@ -325,10 +325,7 @@
 	@use '$src/themes/effects' as effects;
 
 	.header {
-		background: var(--card-bg);
-		border: 0.5px solid rgba(0, 0, 0, 0.18);
-		border-radius: $page-corner;
-		box-shadow: effects.$page-elevation;
+		@include page-surface;
 		overflow: hidden;
 	}
 

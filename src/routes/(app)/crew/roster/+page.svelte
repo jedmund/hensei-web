@@ -287,10 +287,7 @@
 	}
 
 	.card {
-		background: var(--card-bg);
-		border: 0.5px solid rgba(0, 0, 0, 0.18);
-		border-radius: layout.$page-corner;
-		box-shadow: effects.$page-elevation;
+		@include layout.page-surface;
 		overflow: visible;
 	}
 

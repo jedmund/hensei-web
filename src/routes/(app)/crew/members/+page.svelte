@@ -425,7 +425,6 @@
 {/if}
 
 <style lang="scss">
-	@use '$src/themes/effects' as effects;
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -436,10 +435,7 @@
 	}
 
 	.card {
-		background: var(--card-bg);
-		border: 0.5px solid rgba(0, 0, 0, 0.18);
-		border-radius: layout.$page-corner;
-		box-shadow: effects.$page-elevation;
+		@include layout.page-surface;
 		overflow: hidden;
 	}
 
