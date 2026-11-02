@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { afterNavigate } from '$app/navigation'
 	import { m } from '$lib/paraglide/messages'
 	import Icon from '../Icon.svelte'
 	import CrewNotificationDot from './CrewNotificationDot.svelte'
@@ -9,7 +8,7 @@
 
 	interface Props {
 		nav: NavigationState
-		/** The menu sheet; the bar stays visible while it's open */
+		/** The menu sheet, opened by the last tab */
 		sheetOpen: boolean
 	}
 
@@ -28,40 +27,9 @@
 		if (id === 'profile') return nav.isProfileSelected
 		return nav.isNavSelected(href)
 	}
-
-	// Hide on scroll: away while scrolling down, back when scrolling up, near
-	// the top or at the bottom. Small movements (and iOS rubber-banding past
-	// either end) are ignored.
-	const THRESHOLD = 8
-	const NEAR_TOP = 48
-	let scrolledAway = $state(false)
-	let lastY = 0
-
-	function onScroll() {
-		const max = document.documentElement.scrollHeight - window.innerHeight
-		const y = Math.min(Math.max(window.scrollY, 0), Math.max(max, 0))
-		const delta = y - lastY
-		if (y <= NEAR_TOP || y >= max - 2) {
-			scrolledAway = false
-			lastY = y
-			return
-		}
-		if (Math.abs(delta) < THRESHOLD) return
-		scrolledAway = delta > 0
-		lastY = y
-	}
-
-	afterNavigate(() => {
-		scrolledAway = false
-		lastY = window.scrollY
-	})
-
-	const hidden = $derived(scrolledAway && !sheetOpen)
 </script>
 
-<svelte:window onscroll={onScroll} />
-
-<nav class="tab-bar {nav.elementClass}" class:hidden aria-label="Global">
+<nav class="tab-bar {nav.elementClass}" aria-label="Global">
 	{#each links as link (link.id)}
 		{#if link.id === 'newTeam'}
 			<div class="tab new-team">
@@ -126,7 +94,9 @@
 	$elements: wind, fire, water, earth, dark, light;
 
 	// A floating glass capsule above the bottom edge (and Safari's own
-	// toolbar), icons only; the selected tab gets a pill behind it
+	// toolbar), icons only; the selected tab gets a pill behind it. It always
+	// stays put: moving it to the bottom edge (or past it) makes iOS Safari
+	// stop drawing the page under its collapsed toolbar.
 	.tab-bar {
 		position: fixed;
 		left: 50%;
@@ -149,19 +119,6 @@
 			0 8px 24px rgba(0, 0, 0, 0.12),
 			0 1px 3px rgba(0, 0, 0, 0.08);
 		transform: translateX(-50%);
-		transition: transform effects.$duration-slide ease-in-out;
-
-		// Slides fully below the screen edge
-		&.hidden {
-			transform: translate(
-				-50%,
-				calc(100% + var(--tab-bar-gap) + env(safe-area-inset-bottom, 0px))
-			);
-		}
-
-		@media (prefers-reduced-motion: reduce) {
-			transition: none;
-		}
 	}
 
 	.tab {
