@@ -201,8 +201,11 @@
 
 	:root {
 		--sidebar-width: 420px;
-		// The phone tab bar, without the home-indicator inset (see MobileTabBar)
-		--tab-bar-height: 56px;
+		// The phone tab bar (see MobileTabBar): the capsule, the gap below it,
+		// and the space both take, without the home-indicator inset
+		--tab-bar-pill: 56px;
+		--tab-bar-gap: 12px;
+		--tab-bar-height: calc(var(--tab-bar-pill) + var(--tab-bar-gap));
 	}
 
 	// The document scrolls, not an inner container (see the script)

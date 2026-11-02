@@ -69,7 +69,14 @@
 			</div>
 		{:else}
 			{@const selected = isSelected(link.id, link.href)}
-			<a href={link.href} class="tab" class:selected aria-current={selected ? 'page' : undefined}>
+			<a
+				href={link.href}
+				class="tab"
+				class:selected
+				aria-current={selected ? 'page' : undefined}
+				aria-label={link.label()}
+				title={link.label()}
+			>
 				{#if link.id === 'profile'}
 					{#if nav.avatarSrc}
 						<img
@@ -88,7 +95,6 @@
 				{:else}
 					<Icon name={ICONS[link.id]} size={22} />
 				{/if}
-				<span class="tab-label">{link.label()}</span>
 			</a>
 		{/if}
 	{/each}
@@ -98,6 +104,8 @@
 		class:selected={sheetOpen}
 		aria-haspopup="dialog"
 		aria-expanded={sheetOpen}
+		aria-label={m.nav_more()}
+		title={m.nav_more()}
 		onclick={() => (sheetOpen = true)}
 	>
 		<span class="more-icon">
@@ -106,7 +114,6 @@
 				<span class="more-dot"><CrewNotificationDot element={nav.userElement} /></span>
 			{/if}
 		</span>
-		<span class="tab-label">{m.nav_more()}</span>
 	</button>
 </nav>
 
@@ -118,25 +125,37 @@
 
 	$elements: wind, fire, water, earth, dark, light;
 
+	// A floating glass capsule above the bottom edge (and Safari's own
+	// toolbar), icons only; the selected tab gets a pill behind it
 	.tab-bar {
 		position: fixed;
-		left: 0;
-		right: 0;
-		bottom: 0;
+		left: 50%;
+		bottom: calc(var(--tab-bar-gap) + env(safe-area-inset-bottom, 0px));
 		z-index: effects.$z-sticky;
 		display: flex;
-		align-items: stretch;
-		justify-content: space-around;
-		height: calc(var(--tab-bar-height) + env(safe-area-inset-bottom, 0px));
-		padding: 0 spacing.$unit env(safe-area-inset-bottom, 0px);
-		background: color-mix(in srgb, var(--menu-bg) 88%, transparent);
-		backdrop-filter: blur(12px);
-		-webkit-backdrop-filter: blur(12px);
-		border-top: 1px solid var(--separator-bg);
+		align-items: center;
+		gap: spacing.$unit-half;
+		width: max-content;
+		max-width: calc(100% - #{spacing.$unit-4x});
+		height: var(--tab-bar-pill);
+		padding: spacing.$unit-half;
+		border-radius: layout.$full-corner;
+		background: color-mix(in srgb, var(--menu-bg) 72%, transparent);
+		backdrop-filter: blur(20px) saturate(180%);
+		-webkit-backdrop-filter: blur(20px) saturate(180%);
+		border: 1px solid color-mix(in srgb, var(--text-primary) 10%, transparent);
+		box-shadow:
+			0 8px 24px rgba(0, 0, 0, 0.12),
+			0 1px 3px rgba(0, 0, 0, 0.08);
+		transform: translateX(-50%);
 		transition: transform effects.$duration-slide ease-in-out;
 
+		// Slides fully below the screen edge
 		&.hidden {
-			transform: translateY(100%);
+			transform: translate(
+				-50%,
+				calc(100% + var(--tab-bar-gap) + env(safe-area-inset-bottom, 0px))
+			);
 		}
 
 		@media (prefers-reduced-motion: reduce) {
@@ -145,34 +164,35 @@
 	}
 
 	.tab {
-		flex: 1;
 		display: flex;
-		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		gap: 2px;
-		min-width: 0;
+		flex: 0 0 auto;
+		width: 56px;
+		height: 100%;
 		padding: 0;
-		background: none;
 		border: none;
+		border-radius: layout.$full-corner;
+		background: none;
 		color: var(--text-secondary);
-		font-family: var(--font-family);
 		text-decoration: none;
 		cursor: pointer;
 		-webkit-tap-highlight-color: transparent;
+		transition:
+			background-color effects.$duration-quick ease,
+			color effects.$duration-quick ease;
 
 		&.selected {
-			color: var(--text-primary);
+			background: var(--null-nav-selected-bg);
+			color: var(--null-nav-selected-text);
 		}
 	}
 
-	.tab-label {
-		font-size: typography.$font-tiny;
-		font-weight: typography.$medium;
-		max-width: 100%;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+	@each $el in $elements {
+		.tab-bar.element-#{$el} .tab.selected {
+			background: var(--#{$el}-nav-selected-bg);
+			color: var(--#{$el}-nav-selected-text);
+		}
 	}
 
 	.tab-avatar {
@@ -193,7 +213,7 @@
 	}
 
 	.tab.selected .tab-avatar {
-		box-shadow: 0 0 0 2px var(--text-primary);
+		box-shadow: 0 0 0 2px currentColor;
 	}
 
 	.more-icon {
@@ -210,5 +230,7 @@
 	// New team: the same round + button the top bar used to have
 	.tab.new-team {
 		cursor: default;
+		width: auto;
+		padding: 0 spacing.$unit-half;
 	}
 </style>
