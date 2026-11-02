@@ -224,18 +224,19 @@
 			:global(.weapon-typeahead),
 			:global(.date-picker-field) {
 				width: var(--custom-width, 240px);
-				max-width: 100%;
+				// A container can cap every input at one width (the record panel does)
+				max-width: var(--detail-input-max-width, 100%);
 			}
 
 			:global(.input.number) {
 				width: var(--custom-width, 120px);
-				max-width: 100%;
+				max-width: var(--detail-input-max-width, 100%);
 			}
 
 			// Input wraps its field in a fieldset, which browsers keep at min-content
 			:global(.fieldset) {
 				min-width: 0;
-				max-width: 100%;
+				max-width: var(--detail-input-max-width, 100%);
 			}
 
 			.link-button {

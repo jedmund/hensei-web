@@ -390,6 +390,10 @@
 	}
 
 	.panel-body {
+		// Wide inputs (480px links) would leave each row a different width here:
+		// every edit input is at most the standard 240px instead
+		--detail-input-max-width: 240px;
+
 		flex: 1;
 		min-height: 0;
 		overflow-y: auto;
