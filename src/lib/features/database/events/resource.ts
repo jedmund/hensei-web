@@ -5,6 +5,7 @@
  * picks (the Staff picks tab); editing needs an editor (see the section's
  * `minRole`). Times are edited and shown in JST, as the game announces them.
  */
+import { buildGamewithUrl, buildKamigameUrl, buildWikiEnUrl } from '$lib/utils/external-links'
 import * as m from '$lib/paraglide/messages'
 import { eventAdapter } from '$lib/api/adapters/event.adapter'
 import { eventKeys, eventQueries } from '$lib/api/queries/event.queries'
@@ -128,6 +129,29 @@ export const eventsResource = defineResource<AdminEventRow, GameEvent>({
 		},
 		jstTime('starts_at', m.db_events_field_starts_at, 'startsAt'),
 		jstTime('ends_at', m.db_events_field_ends_at, 'endsAt'),
+		// External pages, as units have them (no gbf-wiki.com link for events)
+		{
+			key: 'wiki_en',
+			kind: 'link',
+			label: m.db_events_field_wiki_en,
+			read: (e) => e.wikiEn,
+			href: (v) => buildWikiEnUrl(v),
+			form: { placeholder: m.db_events_hint_wiki_en, width: '480px' }
+		},
+		{
+			key: 'gamewith',
+			kind: 'link',
+			label: m.db_events_field_gamewith,
+			href: (v) => buildGamewithUrl(v),
+			form: { placeholder: m.db_events_hint_gamewith, width: '480px' }
+		},
+		{
+			key: 'kamigame',
+			kind: 'link',
+			label: m.db_events_field_kamigame,
+			href: (v) => buildKamigameUrl(v, 'event'),
+			form: { placeholder: m.db_events_hint_kamigame, width: '480px' }
+		},
 		// Linked raids, in order: picked with the raid pane
 		{
 			key: 'raids',
@@ -186,6 +210,11 @@ export const eventsResource = defineResource<AdminEventRow, GameEvent>({
 				id: 'details',
 				title: m.db_events_section_details,
 				fields: ['name', 'kind', 'series', 'element', 'event_number', 'starts_at', 'ends_at']
+			},
+			{
+				id: 'links',
+				title: m.db_events_section_links,
+				fields: ['wiki_en', 'gamewith', 'kamigame']
 			},
 			{
 				id: 'raids',

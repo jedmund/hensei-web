@@ -104,6 +104,9 @@
 		"starts_at": "scalar",
 		"ends_at": "scalar",
 		"event_number": "scalar",
+		"wiki_en": "scalar",
+		"gamewith": "scalar",
+		"kamigame": "scalar",
 		"raid_ids": "array"
 	},
 	"enums": {
@@ -178,6 +181,26 @@
 			{
 				"kind": "length",
 				"maximum": 255
+			}
+		],
+		"wiki_en": [
+			{
+				"kind": "length",
+				"maximum": 255
+			}
+		],
+		"kamigame": [
+			{
+				"kind": "length",
+				"maximum": 255
+			}
+		],
+		"gamewith": [
+			{
+				"kind": "format",
+				"pattern": "^\\d+$",
+				"flags": "",
+				"allow_blank": true
 			}
 		],
 		"name_jp": [

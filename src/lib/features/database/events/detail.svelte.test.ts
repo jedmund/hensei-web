@@ -105,6 +105,10 @@ function expectedInfo(name: keyof typeof baseline): string[] {
 	if (info[ja + 1] === 'Kind') info.splice(ja + 1, 0, '—')
 	const element = info.indexOf('Boss element')
 	if (info[element + 1] !== '—') info.splice(element + 1, 1)
+	// Links are new; the fixtures have none, so each reads N/A
+	const raids = info.indexOf('Raids')
+	const links = ['Links', 'Wiki (EN)', 'N/A', 'GameWith', 'N/A', 'Kamigame', 'N/A']
+	info.splice(raids === -1 ? info.length : raids, 0, ...links)
 	return info
 }
 

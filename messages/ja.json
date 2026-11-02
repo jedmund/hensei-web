@@ -2348,6 +2348,13 @@
 	"db_events_review_title": "イベントを編集",
 	"db_events_section_details": "詳細",
 	"db_events_section_raids": "クエスト",
+	"db_events_section_links": "リンク",
+	"db_events_field_wiki_en": "Wiki (EN)",
+	"db_events_field_gamewith": "GameWith",
+	"db_events_field_kamigame": "Kamigame",
+	"db_events_hint_wiki_en": "ページ名（例: Exo Diablo Crucible）",
+	"db_events_hint_gamewith": "記事ID（例: 412345）",
+	"db_events_hint_kamigame": "/グラブル/イベント/ 以降のパス（例: 天上劇団もぐら座/index）",
 	"db_events_section_image": "バナー",
 	"db_events_field_name_en": "名前（英語）",
 	"db_events_field_name_jp": "名前（日本語）",
@@ -3059,5 +3066,6 @@
 				"countPlural=other": "{count} families carry manual edits. Run these to snapshot them:"
 			}
 		}
-	]
+	],
+	"home_event_links": "イベントのリンク"
 }

@@ -2559,6 +2559,13 @@
 	"db_events_review_title": "Edit event",
 	"db_events_section_details": "Details",
 	"db_events_section_raids": "Raids",
+	"db_events_section_links": "Links",
+	"db_events_field_wiki_en": "Wiki (EN)",
+	"db_events_field_gamewith": "GameWith",
+	"db_events_field_kamigame": "Kamigame",
+	"db_events_hint_wiki_en": "Page name (e.g., Exo Diablo Crucible)",
+	"db_events_hint_gamewith": "Article ID (e.g., 412345)",
+	"db_events_hint_kamigame": "Path after /グラブル/イベント/ (e.g., 天上劇団もぐら座/index)",
 	"db_events_section_image": "Banner",
 	"db_events_field_name_en": "Name (English)",
 	"db_events_field_name_jp": "Name (Japanese)",
@@ -3270,5 +3277,6 @@
 				"countPlural=other": "{count} families carry manual edits. Run these to snapshot them:"
 			}
 		}
-	]
+	],
+	"home_event_links": "Event links"
 }

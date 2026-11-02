@@ -52,7 +52,8 @@ describe('detailText', () => {
 		for (const kind of ['code', 'link', 'tags'] as const) {
 			const f = field({ kind, href: () => null } as Partial<Field> & Pick<Field, 'kind'>)
 			expect(detailText(f, kind === 'tags' ? ['a'] : 'x')).toBeNull()
-			expect(detailText(f, kind === 'tags' ? [] : '')).toBe('—')
+			// Empty links read N/A (GBF-142); other empties a dash
+			expect(detailText(f, kind === 'tags' ? [] : '')).toBe(kind === 'link' ? 'N/A' : '—')
 		}
 	})
 

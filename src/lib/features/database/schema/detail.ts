@@ -67,10 +67,11 @@ export function detailLayout<Row, Full>(
 	return { values, blocks }
 }
 
-/** What an empty value shows */
+/** What an empty value shows: "N/A" for links (decided in GBF-142), else a dash */
 export function emptyText<Row, Full>(field: Field<Row, Full>): string {
 	const empty = detailOptions(field).empty
-	return typeof empty === 'function' ? empty() : (empty ?? '—')
+	if (typeof empty === 'function') return empty()
+	return empty ?? (field.kind === 'link' ? m.db_detail_not_available() : '—')
 }
 
 function optionLabel(options: EnumOption[], value: unknown): string | undefined {

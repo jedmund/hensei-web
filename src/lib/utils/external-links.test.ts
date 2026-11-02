@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildWikiJaUrl } from './external-links'
+import { buildKamigameUrl, buildWikiJaUrl } from './external-links'
 
 const base = 'https://gbf-wiki.com/?'
 const enc = (s: string) => encodeURIComponent(s).replace(/%20/g, '+')
@@ -45,5 +45,23 @@ describe('buildWikiJaUrl', () => {
 		expect(buildWikiJaUrl(undefined, 'weapon')).toBeNull()
 		expect(buildWikiJaUrl('  ', 'weapon')).toBeNull()
 		expect(buildWikiJaUrl('#anchor', 'weapon')).toBeNull()
+	})
+})
+
+describe('buildKamigameUrl for events', () => {
+	const path = (p: string) => p.split('/').map(encodeURIComponent).join('/')
+
+	it('keeps the folder of an event page and adds .html', () => {
+		expect(buildKamigameUrl('天上劇団もぐら座/index', 'event')).toBe(
+			`https://kamigame.jp${path('/グラブル/イベント/天上劇団もぐら座/index')}.html`
+		)
+		expect(buildKamigameUrl(' 決戦！星の古戦場/勲章 ', 'event')).toBe(
+			`https://kamigame.jp${path('/グラブル/イベント/決戦！星の古戦場/勲章')}.html`
+		)
+	})
+
+	it('builds nothing from a blank path', () => {
+		expect(buildKamigameUrl('', 'event')).toBeNull()
+		expect(buildKamigameUrl(null, 'event')).toBeNull()
 	})
 })
