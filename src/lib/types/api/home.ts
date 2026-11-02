@@ -47,7 +47,11 @@ export interface HomeNewItem {
 			styleSwap: boolean
 		}
 	}
-	parties: Party[]
+	recent?: Party[]
+	/** Rising order, then most recent */
+	trending?: Party[]
+	/** The single list older APIs return, in place of recent and trending */
+	parties?: Party[]
 }
 
 /** A battle released in the last 4 weeks, with its teams in two orders */
