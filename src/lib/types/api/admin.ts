@@ -274,6 +274,7 @@ export interface AdminEventRow {
 	// Not in the default list: request via `fields`
 	series?: string | null
 	status?: string
+	secondElement?: number | null
 	imageKey?: string | null
 	createdAt?: string
 	updatedAt?: string

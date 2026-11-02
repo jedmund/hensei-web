@@ -2342,6 +2342,7 @@
 	"db_events_col_name": "名前",
 	"db_events_col_kind": "種類",
 	"db_events_col_element": "属性",
+	"db_events_col_second_element": "2つ目の属性",
 	"db_events_col_dates": "開催期間",
 	"db_events_col_raids": "クエスト",
 	"db_events_empty": "イベントはありません。",
