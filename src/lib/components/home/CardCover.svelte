@@ -16,24 +16,60 @@
 		children?: Snippet
 		placeholder?: Snippet
 		frame?: ElementKeyResult
+		/**
+		 * Art pixels cropped off each side (x) and off the top and bottom (y).
+		 * The frame takes the shape of what's left, so nothing else is cut.
+		 */
+		trim?: { x: number; y: number }
 	}
 
-	let { src, children, placeholder, frame }: Props = $props()
+	let { src, children, placeholder, frame, trim }: Props = $props()
 
 	let failed = $state(false)
+	// The art's natural size, once loaded (battle banners are 588×256)
+	let natural = $state({ width: 588, height: 256 })
 	$effect(() => {
 		// A new image gets a fresh chance to load
 		void src
 		failed = false
 	})
+
+	// The art's visible size, and how far it overhangs the frame on each edge
+	const crop = $derived.by(() => {
+		if (!trim) return null
+		const width = Math.max(natural.width - trim.x * 2, 1)
+		const height = Math.max(natural.height - trim.y * 2, 1)
+		return {
+			aspectRatio: `${width} / ${height}`,
+			width: `${(natural.width / width) * 100}%`,
+			height: `${(natural.height / height) * 100}%`,
+			left: `${(-trim.x / width) * 100}%`,
+			top: `${(-trim.y / height) * 100}%`
+		}
+	})
 </script>
 
 <div
 	class="cover"
+	style:aspect-ratio={crop?.aspectRatio}
 	style:background={frame && src && !failed ? `var(--${frame}-cover-bg)` : undefined}
 >
 	{#if src && !failed}
-		<img {src} alt="" loading="lazy" onerror={() => (failed = true)} />
+		<img
+			{src}
+			alt=""
+			loading="lazy"
+			class:trimmed={crop}
+			style:width={crop?.width}
+			style:height={crop?.height}
+			style:left={crop?.left}
+			style:top={crop?.top}
+			onload={(e) => {
+				const img = e.currentTarget as HTMLImageElement
+				natural = { width: img.naturalWidth, height: img.naturalHeight }
+			}}
+			onerror={() => (failed = true)}
+		/>
 	{:else}
 		{@render placeholder?.()}
 	{/if}
@@ -58,6 +94,11 @@
 			width: 100%;
 			height: 100%;
 			object-fit: cover;
+
+			&.trimmed {
+				position: absolute;
+				max-width: none;
+			}
 		}
 	}
 </style>

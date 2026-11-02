@@ -2147,6 +2147,7 @@
 	"home_events": "開催予定のイベント",
 	"home_events_aria": "イベント",
 	"home_rising": "ライジング",
+	"home_rising_subtitle": "直近2週間で人気の編成",
 	"home_staff_picks": "スタッフのおすすめ",
 	"home_starts_in": "開始まで{duration}",
 	"home_ends_in": "終了まで{duration}",
