@@ -24,6 +24,8 @@
 	<div class="grid-container">
 		<WeaponRep weapons={[]} />
 	</div>
+	<!-- Where a GridRep shows its view switcher on hover, so the grids line up -->
+	<div class="indicators-space" aria-hidden="true"></div>
 </a>
 
 <style lang="scss">
@@ -95,5 +97,10 @@
 		align-self: end;
 		overflow: hidden;
 		opacity: 0.6;
+	}
+
+	// GridRep's .indicators height
+	.indicators-space {
+		height: spacing.$unit;
 	}
 </style>
