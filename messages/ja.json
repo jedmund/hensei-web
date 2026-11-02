@@ -2221,6 +2221,7 @@
 	"db_stickers_field_meaning": "Meaning",
 	"db_stickers_field_images": "Images",
 	"db_stickers_field_position": "Position",
+	"db_stickers_field_given_count": "送られた回数",
 	"db_stickers_image_uploaded": "Image uploaded",
 	"db_stickers_image_removed": "Japanese image removed",
 	"db_stickers_image_failed": "Couldn't update the image.",

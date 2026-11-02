@@ -88,6 +88,14 @@ export const stickersResource = defineResource<AdminStickerRow, StickerRecord>({
 			int: true,
 			// Set by dragging the list
 			write: false
+		},
+		{
+			// How many teams carry it; a given sticker can't be deleted
+			key: 'given_count',
+			kind: 'number',
+			label: m.db_stickers_field_given_count,
+			int: true,
+			write: false
 		}
 	],
 
@@ -122,7 +130,7 @@ export const stickersResource = defineResource<AdminStickerRow, StickerRecord>({
 			{
 				id: 'details',
 				title: m.db_stickers_section_details,
-				fields: ['images', 'meaning', 'slug', 'active', 'position']
+				fields: ['images', 'meaning', 'slug', 'active', 'position', 'given_count']
 			}
 		],
 		edit: [

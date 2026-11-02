@@ -95,10 +95,10 @@ describe('stickers resource: forms', () => {
 })
 
 describe('stickers resource: detail, list and delete', () => {
-	it('shows the images with the details', () => {
+	it('shows the images and the times given with the details', () => {
 		const { blocks } = detailLayout(def, thanks)
 		expect(blocks.map((b) => [b.section.id, b.rows.map((r) => r.field.key)])).toEqual([
-			['details', ['images', 'meaning', 'slug', 'active', 'position']]
+			['details', ['images', 'meaning', 'slug', 'active', 'position', 'given_count']]
 		])
 	})
 
