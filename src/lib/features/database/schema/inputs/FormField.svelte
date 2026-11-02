@@ -27,6 +27,8 @@
 	const formOptions = $derived(field.form || {})
 	const placeholder = $derived(formOptions.placeholder?.())
 	const width = $derived(formOptions.width)
+	// Fits a full date, time and AM/PM, plus the picker's icon
+	const DATETIME_WIDTH = '280px'
 	const options = $derived(optionsFor(field))
 	const Custom = $derived(field.render?.input ? INPUT_COMPONENTS[field.render.input] : null)
 
@@ -124,10 +126,14 @@
 		bind:value={() => text, set}
 	/>
 {:else if field.kind === 'datetime'}
-	<!-- A local date and time (YYYY-MM-DDTHH:mm); the definition converts its zone -->
-	<DetailItem {label} {sublabel} {error} editable>
-		<Input type="datetime-local" bind:value={() => text, set} contained />
-	</DetailItem>
+	<!-- A local date and time (YYYY-MM-DDTHH:mm); the definition converts its zone.
+	     Wider than the default, so the time and its AM/PM fit beside the date,
+	     and kept that wide where a container caps inputs (the record panel) -->
+	<div class="uncapped">
+		<DetailItem {label} {sublabel} {error} editable width={width ?? DATETIME_WIDTH}>
+			<Input type="datetime-local" bind:value={() => text, set} contained />
+		</DetailItem>
+	</div>
 {:else if field.kind === 'enum' && field.list?.type === 'element'}
 	<DetailItem {label} {sublabel} {error} editable>
 		<ElementPicker
@@ -175,3 +181,11 @@
 {:else if field.kind === 'referenceList'}
 	<ReferenceListInput {...props} />
 {/if}
+
+<style lang="scss">
+	// No box of its own: only lifts the container's input cap for what's inside
+	.uncapped {
+		display: contents;
+		--detail-input-max-width: 100%;
+	}
+</style>

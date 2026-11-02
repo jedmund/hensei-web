@@ -120,10 +120,16 @@ describe('generic database routes', () => {
 })
 
 describe('loadScreen', () => {
-	it('generates the weapons list, which has no override any more', async () => {
-		const { default: generated } = await import('./ResourceListScreen.svelte')
-		expect(await loadScreen('weapons', 'list')).toBe(generated)
-	})
+	// The first import of the list screen compiles its whole graph, which can
+	// outlast the default timeout on a busy machine
+	it(
+		'generates the weapons list, which has no override any more',
+		{ timeout: 30_000 },
+		async () => {
+			const { default: generated } = await import('./ResourceListScreen.svelte')
+			expect(await loadScreen('weapons', 'list')).toBe(generated)
+		}
+	)
 
 	it('generates the detail for a resource with a record and no override', async () => {
 		const { default: generated } = await import('./ResourceDetailScreen.svelte')
