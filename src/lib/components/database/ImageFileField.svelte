@@ -101,9 +101,15 @@
 			height: 64px;
 		}
 
+		// The empty box keeps a banner's shape; an image shows whole, at its own
+		// aspect ratio, rather than cropped to the box
 		&.banner {
 			width: 240px;
 			height: 80px;
+
+			&:has(img) {
+				height: auto;
+			}
 		}
 
 		img {
@@ -113,7 +119,8 @@
 		}
 
 		&.banner img {
-			object-fit: cover;
+			display: block;
+			height: auto;
 		}
 	}
 
