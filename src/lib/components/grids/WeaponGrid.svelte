@@ -201,7 +201,7 @@
 		.grid {
 			display: grid;
 			gap: $unit-3x;
-			grid-template-columns: 1.278fr 3fr;
+			grid-template-columns: minmax(0, 1.278fr) minmax(0, 3fr);
 			justify-items: center;
 			grid-template-areas: 'mainhand grid';
 			max-width: $grid-width;

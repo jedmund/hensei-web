@@ -461,7 +461,11 @@
 	}
 
 	.party-container {
-		width: 1200px;
+		// min-width: 0 lets the flex item shrink below its content's min-content
+		// width, so narrow phones don't push the page past the viewport.
+		width: 100%;
+		max-width: 1200px;
+		min-width: 0;
 		margin: 0 auto;
 		gap: $unit-2x;
 		display: flex;
