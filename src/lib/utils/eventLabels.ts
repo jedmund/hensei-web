@@ -14,7 +14,8 @@ const KIND_LABELS: Record<EventKind, () => string> = {
 	farming: m.event_kind_farming,
 	alchemy: m.event_kind_alchemy,
 	other: m.event_kind_other,
-	exo_crucible: m.event_kind_exo_crucible
+	exo_crucible: m.event_kind_exo_crucible,
+	records_of_the_ten: m.event_kind_records_of_the_ten
 }
 
 const SERIES_LABELS: Record<EventSeries, () => string> = {

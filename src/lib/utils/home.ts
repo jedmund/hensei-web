@@ -74,20 +74,31 @@ export function eventThumbnailUrl(
 }
 
 /**
+ * The elements players bring to an event: one, or two when it has a second
+ * boss element (Records of the Ten's Fire and Dark run). Empty without one.
+ */
+export function eventAdvantageElements(
+	event: Pick<GameEvent, 'advantageElement' | 'advantageElements'>
+): number[] {
+	if (event.advantageElements) return event.advantageElements
+	return event.advantageElement ? [event.advantageElement] : []
+}
+
+/**
  * Query string for a Gallery link from a home section. Only the raid, an
- * event element (Unite and Fight) and the sort carry over.
+ * event's elements (Unite and Fight) and the sort carry over.
  */
 export function exploreQuery(opts: {
 	raidSlug?: string | undefined
-	element?: number | null | undefined
+	elements?: number[] | undefined
 	sort?: 'rising' | undefined
 }): string {
 	const params = new URLSearchParams()
 	if (opts.raidSlug) params.set('raid', opts.raidSlug)
-	if (opts.element) {
-		const element = ELEMENT_TO_PARAM[opts.element]
-		if (element && element !== 'null') params.set('element', element)
-	}
+	const elements = (opts.elements ?? [])
+		.map((e) => ELEMENT_TO_PARAM[e])
+		.filter((e) => e && e !== 'null')
+	if (elements.length > 0) params.set('element', elements.join(','))
 	if (opts.sort) params.set('sort', opts.sort)
 	const query = params.toString()
 	return query ? `?${query}` : ''

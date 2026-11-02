@@ -21,7 +21,13 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { raidShortName } from '$lib/utils/raidName'
 	import { formatDateJST } from '$lib/utils/date'
-	import { countdownLabel, eventBanner, exploreQuery, raidsWithParties } from '$lib/utils/home'
+	import {
+		countdownLabel,
+		eventAdvantageElements,
+		eventBanner,
+		exploreQuery,
+		raidsWithParties
+	} from '$lib/utils/home'
 	import { galleryPath, newTeamPath } from '$lib/utils/browseRoutes'
 	import { escapeHtml } from '$lib/utils/safeHtml'
 	import EmptyTeams from '$lib/components/home/EmptyTeams.svelte'
@@ -74,6 +80,8 @@
 	const parties = $derived(selected?.parties.slice(0, maxCards) ?? [])
 
 	const title = $derived(localizedName(event.name))
+	// One element, or two for Records of the Ten's Fire and Dark run
+	const advantages = $derived(eventAdvantageElements(event))
 	// Ticks once a minute so the countdown stays current
 	let now = $state(Date.now())
 	$effect(() => {
@@ -107,7 +115,7 @@
 					galleryPath(
 						exploreQuery({
 							raidSlug: selected.raid.slug,
-							element: variant === 'current' ? event.advantageElement : null
+							elements: variant === 'current' ? advantages : undefined
 						})
 					)
 				)
@@ -141,15 +149,19 @@
 				<div class="links">
 					<EventLinksMenu {event} />
 				</div>
-				{#if event.advantageElement || timing}
+				{#if advantages.length > 0 || timing}
 					<div class="overlay">
-						{#if event.advantageElement}
-							<span
-								class="pill advantage"
-								style:--advantage-color="var(--{getElementKey(event.advantageElement)}-text)"
-								style:--advantage-bg="var(--{getElementKey(event.advantageElement)}-bg)"
-							>
-								{m.home_element_advantage({ element: getElementLabel(event.advantageElement) })}
+						{#if advantages.length > 0}
+							<span class="advantages">
+								{#each advantages as element (element)}
+									<span
+										class="pill advantage"
+										style:--advantage-color="var(--{getElementKey(element)}-text)"
+										style:--advantage-bg="var(--{getElementKey(element)}-bg)"
+									>
+										{m.home_element_advantage({ element: getElementLabel(element) })}
+									</span>
+								{/each}
 							</span>
 						{/if}
 						{#if timing}
@@ -174,9 +186,9 @@
 					<div class="heading">
 						<div class="title-row">
 							<h3 class="title" class:large={!compact}>{title}</h3>
-							{#if event.advantageElement}
-								<ElementLabel element={event.advantageElement} size="small" />
-							{/if}
+							{#each advantages as element (element)}
+								<ElementLabel {element} size="small" />
+							{/each}
 						</div>
 						{#if timing}
 							<Tooltip content={dateLabel}>
@@ -290,6 +302,12 @@
 			align-items: flex-start;
 			gap: $unit-half;
 		}
+	}
+
+	// Two pills for a two-element run, side by side
+	.advantages {
+		display: flex;
+		gap: $unit-half;
 	}
 
 	// Stays on the right even when there's no element

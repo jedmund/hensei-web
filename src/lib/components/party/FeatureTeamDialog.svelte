@@ -18,7 +18,12 @@
 	import { useCreateStaffPick, useDeleteStaffPick } from '$lib/api/mutations/event.mutations'
 	import { featuredPartyAdapter } from '$lib/api/adapters/featuredParty.adapter'
 	import { buildFeatureRows, nextPickPosition, type FeatureRow } from '$lib/utils/featurePicks'
-	import { countdownLabel, eventBanner, eventThumbnailUrl } from '$lib/utils/home'
+	import {
+		countdownLabel,
+		eventAdvantageElements,
+		eventBanner,
+		eventThumbnailUrl
+	} from '$lib/utils/home'
 	import { getElementLabel } from '$lib/utils/element'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { localizedName } from '$lib/utils/locale'
@@ -142,9 +147,10 @@
 		} else if (row.state === 'ended') {
 			parts.push(m.feature_ended())
 		} else if (row.event) {
-			if (row.event.advantageElement) {
+			const advantages = eventAdvantageElements(row.event)
+			if (advantages.length > 0) {
 				parts.push(
-					m.home_element_advantage({ element: getElementLabel(row.event.advantageElement) })
+					m.home_element_advantage({ element: advantages.map(getElementLabel).join(' / ') })
 				)
 			}
 			const duration = countdownLabel(

@@ -105,7 +105,7 @@ function legacyPayload(form: ReturnType<typeof legacyForm>) {
 
 /**
  * GBF-143: a blank Japanese name sends null (the old form sent ''). The links
- * are new: blank, they send null.
+ * and the second boss element are new: blank, they send null.
  */
 function decided(legacy: Record<string, unknown>) {
 	return {
@@ -113,7 +113,8 @@ function decided(legacy: Record<string, unknown>) {
 		name_jp: legacy.name_jp === '' ? null : legacy.name_jp,
 		wiki_en: null,
 		gamewith: null,
-		kamigame: null
+		kamigame: null,
+		second_element: null
 	}
 }
 
@@ -184,7 +185,7 @@ describe('events resource: validation', () => {
 	it.each(ELEMENT_REQUIRED_KINDS)('needs a boss element for %s', (kind) => {
 		const extra = kind === 'unite_and_fight' ? { event_number: 72 } : {}
 		expect(errors({ kind, ...extra }).element).toBe(
-			'Required for Unite and Fight and Dread Barrage'
+			'Required for Unite and Fight, Dread Barrage, Exo Crucible and Records of the Ten'
 		)
 		expect(errors({ kind, element: 2, ...extra })).toEqual({})
 	})

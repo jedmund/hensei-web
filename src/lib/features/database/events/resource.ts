@@ -115,6 +115,18 @@ export const eventsResource = defineResource<AdminEventRow, GameEvent>({
 			filter: { kind: 'multi', options: () => elementFilterOptions(), facet: true }
 		},
 		{
+			key: 'second_element',
+			kind: 'enum',
+			label: m.db_events_field_second_element,
+			sublabel: m.db_events_second_element_hint,
+			options: getElementOptions,
+			write: { value: (v) => v || null },
+			// Only alongside a first boss element
+			when: (v) => !!v.element,
+			whenHidden: 'empty',
+			detail: { sublabel: false, hideWhenEmpty: true }
+		},
+		{
 			key: 'event_number',
 			kind: 'number',
 			label: m.db_events_field_number,
@@ -209,7 +221,16 @@ export const eventsResource = defineResource<AdminEventRow, GameEvent>({
 			{
 				id: 'details',
 				title: m.db_events_section_details,
-				fields: ['name', 'kind', 'series', 'element', 'event_number', 'starts_at', 'ends_at']
+				fields: [
+					'name',
+					'kind',
+					'series',
+					'element',
+					'second_element',
+					'event_number',
+					'starts_at',
+					'ends_at'
+				]
 			},
 			{
 				id: 'links',
@@ -228,6 +249,9 @@ export const eventsResource = defineResource<AdminEventRow, GameEvent>({
 	// The API's rules: themed kinds need their boss element, and an event ends after it starts
 	refine: (v, issue) => {
 		if (needsElement(v) && !v.element) issue('element', m.db_events_element_required())
+		if (v.second_element && v.second_element === v.element) {
+			issue('second_element', m.db_events_error_second_element_same())
+		}
 		const starts = jstInputToIso(v.starts_at as string)
 		const ends = jstInputToIso(v.ends_at as string)
 		if (starts && ends && Date.parse(ends) <= Date.parse(starts)) {

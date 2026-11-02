@@ -13,7 +13,8 @@ export const EVENT_KINDS = [
 	'farming',
 	'alchemy',
 	'other',
-	'exo_crucible'
+	'exo_crucible',
+	'records_of_the_ten'
 ] as const
 
 /** Recurring events that share one banner across runs */
@@ -35,7 +36,8 @@ export type EventSeries = (typeof EVENT_SERIES)[number]
 export const ELEMENT_REQUIRED_KINDS: readonly EventKind[] = [
 	'unite_and_fight',
 	'dread_barrage',
-	'exo_crucible'
+	'exo_crucible',
+	'records_of_the_ten'
 ]
 export type EventKind = (typeof EVENT_KINDS)[number]
 
@@ -53,8 +55,15 @@ export interface GameEvent {
 	series?: EventSeries | null
 	/** The boss's element id (same values as a party's element), or null */
 	element: number | null
+	/**
+	 * A second boss element, or null: Records of the Ten's Fire and Dark run
+	 * has Wind and Light bosses
+	 */
+	secondElement?: number | null
 	/** The element players should bring against this boss, from the API; or null */
 	advantageElement?: number | null
+	/** Every element players can bring (two with a second boss element), from the API */
+	advantageElements?: number[]
 	/** ISO 8601 timestamps */
 	startsAt: string
 	endsAt: string
