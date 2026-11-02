@@ -331,6 +331,14 @@
 	}
 
 	.gridContainer {
+		// No fade-in for the card's images (they still stay hidden until they
+		// load). In iOS Safari an opacity animation moves each image onto its own
+		// layer, which is snapped to whole pixels, so the images shifted a few
+		// pixels as they faded in, and again on every view switch.
+		:global(img[data-fade='in']) {
+			animation: none;
+		}
+
 		/* Reserve a constant visual height for all reps; keeps card height stable */
 		aspect-ratio: calc(#{rep.$rep-body-ratio} / 1);
 		width: 100%;
