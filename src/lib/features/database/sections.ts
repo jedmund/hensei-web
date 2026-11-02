@@ -22,6 +22,7 @@ import { jobSkillsSection } from './job-skills/section'
 import { jobsSection } from './jobs/section'
 import { raidGroupsSection } from './raid-groups/section'
 import { raidsSection } from './raids/section'
+import { stickersSection } from './stickers/section'
 import { summonsSection } from './summons/section'
 import { weaponSeriesSection } from './weapon-series/section'
 import { weaponsSection } from './weapons/section'
@@ -120,12 +121,7 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 		path: '/database/difficulties',
 		group: 'site'
 	},
-	{
-		id: 'stickers',
-		label: () => m.nav_stickers(),
-		path: '/database/stickers',
-		group: 'site'
-	},
+	...resourceSections('stickers', stickersSection),
 
 	// Admin — hidden until the admin user API exists
 	{

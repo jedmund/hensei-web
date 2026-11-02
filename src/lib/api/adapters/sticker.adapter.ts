@@ -37,6 +37,11 @@ export class StickerAdapter extends BaseAdapter {
 		return response.stickers
 	}
 
+	/** One sticker by slug or id, with `deletable` (editors) */
+	async getSticker(idOrSlug: string, options?: RequestOptions): Promise<Sticker> {
+		return this.request<Sticker>(`${BASE}/${encodeURIComponent(idOrSlug)}`, options)
+	}
+
 	/** The game's own stickers, to make stickers from (editors) */
 	async listLibrary(options?: RequestOptions): Promise<LibrarySticker[]> {
 		const response = await this.request<{ library: LibrarySticker[] }>(`${BASE}/library`, options)

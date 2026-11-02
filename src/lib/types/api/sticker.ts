@@ -16,6 +16,8 @@ export interface Sticker {
 	active: boolean
 	/** Editors only: nobody has given it yet, so it can be deleted */
 	deletable?: boolean
+	/** Editors only: how many teams carry it */
+	givenCount?: number
 }
 
 /** Which of a sticker's images: the English one, or the Japanese one */

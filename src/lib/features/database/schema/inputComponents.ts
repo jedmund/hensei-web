@@ -12,6 +12,9 @@ import EventRaidsInput from '$lib/features/database/events/inputs/EventRaidsInpu
 import ElementVariantIdsInput from '$lib/features/database/weapons/inputs/ElementVariantIdsInput.svelte'
 import WeaponAwakeningsInput from '$lib/features/database/weapons/inputs/WeaponAwakeningsInput.svelte'
 import WeaponUncapInput from '$lib/features/database/weapons/inputs/WeaponUncapInput.svelte'
+import StickerImagesInput from '$lib/features/database/stickers/inputs/StickerImagesInput.svelte'
+import StickerLibraryInput from '$lib/features/database/stickers/inputs/StickerLibraryInput.svelte'
+import StickerSlugInput from '$lib/features/database/stickers/inputs/StickerSlugInput.svelte'
 import type { InputProps } from './inputs/types'
 import type { InputName } from './types'
 
@@ -23,6 +26,9 @@ export const INPUT_COMPONENTS: Record<InputName, Component<InputProps>> = {
 	weaponSeriesVariants: WeaponSeriesVariantsInput,
 	awakeningImage: AwakeningImageInput,
 	eventRaids: EventRaidsInput,
+	stickerImages: StickerImagesInput,
+	stickerLibrary: StickerLibraryInput,
+	stickerSlug: StickerSlugInput,
 	roleIcon: RoleIconInput,
 	artifactSkillBaseValues: ArtifactSkillBaseValuesInput
 }

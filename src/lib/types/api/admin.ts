@@ -347,6 +347,27 @@ export interface AdminJobAccessoryRow {
 	createdAt?: string
 }
 
+/**
+ * Sticker row from `GET /admin/stickers`, in picker order. Image paths are
+ * host-relative and versioned, as the catalogue serves them.
+ */
+export interface AdminStickerRow {
+	id: string
+	slug: string
+	meaningEn: string
+	meaningJp: string | null
+	imageUrl: string | null
+	imageUrlJa: string | null
+	position: number
+	active: boolean
+	// Not in the default list: request via `fields`
+	givenCount?: number
+	imageKey?: string | null
+	imageKeyJp?: string | null
+	createdAt?: string
+	updatedAt?: string
+}
+
 /** Default `fields` of an admin character role row, camelCased */
 export interface AdminCharacterRoleRow {
 	id: string

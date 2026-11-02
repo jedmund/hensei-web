@@ -18,6 +18,7 @@ export const RESOURCE_NAMES = [
 	'jobs',
 	'job-skills',
 	'job-accessories',
+	'stickers',
 	'artifact-skills',
 	'bullets'
 ] as const

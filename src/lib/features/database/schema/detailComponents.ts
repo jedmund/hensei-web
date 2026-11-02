@@ -15,6 +15,7 @@ import ElementVariantIds from '$lib/features/database/weapons/detail/ElementVari
 import WeaponAwakenings from '$lib/features/database/weapons/detail/WeaponAwakenings.svelte'
 import WeaponForge from '$lib/features/database/weapons/detail/WeaponForge.svelte'
 import WeaponUncapIndicator from '$lib/features/database/weapons/detail/WeaponUncapIndicator.svelte'
+import StickerImages from '$lib/features/database/stickers/detail/StickerImages.svelte'
 import type { ComponentName } from './types'
 
 // The registry boundary is untyped: each component reads its own record type
@@ -30,5 +31,6 @@ export const DETAIL_COMPONENTS: Record<ComponentName, Component<{ record: any }>
 	weaponSeriesVariants: WeaponSeriesVariants,
 	awakeningImage: AwakeningImage,
 	raidGroupRaids: RaidGroupRaids,
-	eventRaids: EventRaids
+	eventRaids: EventRaids,
+	stickerImages: StickerImages
 }

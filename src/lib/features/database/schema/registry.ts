@@ -17,6 +17,7 @@ import { raidGroupsResource } from '$lib/features/database/raid-groups/resource'
 import { raidsResource } from '$lib/features/database/raids/resource'
 import { summonsResource } from '$lib/features/database/summons/resource'
 import { weaponsResource } from '$lib/features/database/weapons/resource'
+import { stickersResource } from '$lib/features/database/stickers/resource'
 import { isResourceName, type ResourceName } from './names'
 import type { ResourceDef } from './types'
 
@@ -39,6 +40,7 @@ export const RESOURCES: Record<ResourceName, AnyResourceDef> = {
 	jobs: jobsResource,
 	'job-skills': jobSkillsResource,
 	'job-accessories': jobAccessoriesResource,
+	stickers: stickersResource,
 	'artifact-skills': artifactSkillsResource,
 	bullets: bulletsResource
 }
