@@ -197,13 +197,17 @@
 
 	:root {
 		--sidebar-width: 420px;
-		// The phone tab bar (see MobileTabBar): the capsule, the gap below it,
-		// and the space both take, without the home-indicator inset
+		// The phone tab bar (see MobileTabBar): the capsule's height, the minimum
+		// gap below it, its distance from the bottom edge, and the total space
+		// it takes.
 		--tab-bar-pill: 56px;
 		// Not much less: with the bar close to the bottom edge, iOS Safari stops
 		// drawing the page under its collapsed toolbar
 		--tab-bar-gap: 12px;
-		--tab-bar-height: calc(var(--tab-bar-pill) + var(--tab-bar-gap));
+		// The gap, or the home-indicator inset when that's larger. The inset is 0
+		// in Safari itself and only applies when opened from the Home Screen.
+		--tab-bar-bottom: max(var(--tab-bar-gap), env(safe-area-inset-bottom, 0px));
+		--tab-bar-height: calc(var(--tab-bar-pill) + var(--tab-bar-bottom));
 	}
 
 	// The document scrolls, not an inner container (see the script)
@@ -335,10 +339,7 @@
 					);
 
 					.main-content {
-						padding-bottom: max(
-							20vh,
-							calc(var(--tab-bar-height) + env(safe-area-inset-bottom, 0px) + #{spacing.$unit-4x})
-						);
+						padding-bottom: max(20vh, calc(var(--tab-bar-height) + #{spacing.$unit-4x}));
 					}
 
 					// The tab bar must not sit inside the fixed, top-anchored nav

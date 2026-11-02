@@ -108,7 +108,7 @@
 		left: 0;
 		right: 0;
 		margin-inline: auto;
-		bottom: calc(var(--tab-bar-gap) + env(safe-area-inset-bottom, 0px));
+		bottom: var(--tab-bar-bottom);
 		z-index: effects.$z-sticky;
 		display: flex;
 		align-items: center;
