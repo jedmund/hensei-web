@@ -28,7 +28,6 @@
 		max-height: calc(100dvh - #{layout.$nav-height} - var(--bahamut-offset, 0px));
 		overflow-y: auto;
 		padding-bottom: spacing.$unit-4x;
-		scrollbar-width: thin;
 	}
 
 	@media (max-width: calc(#{layout.$database-sidebar-breakpoint} - 1px)) {

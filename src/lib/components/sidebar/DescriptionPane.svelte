@@ -127,25 +127,7 @@
 	.content-section {
 		flex: 1;
 		overflow-y: auto;
-
-		// Custom scrollbar styling - on the outer container
-		&::-webkit-scrollbar {
-			width: 6px;
-		}
-
-		&::-webkit-scrollbar-track {
-			background: var(--button-bg);
-			border-radius: 3px;
-		}
-
-		&::-webkit-scrollbar-thumb {
-			background: var(--text-secondary);
-			border-radius: 3px;
-
-			&:hover {
-				background: var(--text-primary);
-			}
-		}
+		overscroll-behavior: contain;
 	}
 
 	.content-inner {

@@ -274,11 +274,6 @@
 		flex: 1;
 		overflow-y: auto;
 		padding: 0 spacing.$unit-3x;
-		scrollbar-width: none;
-
-		&::-webkit-scrollbar {
-			display: none;
-		}
 	}
 
 	.loading-state {
