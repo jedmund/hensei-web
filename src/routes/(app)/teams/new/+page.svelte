@@ -131,15 +131,15 @@
 			// The entity endpoints return the same records as a team's grid, with
 			// looser types
 			if (start.add?.type === 'character') {
-				const character = (await characterAdapter.getCharacter(
-					start.add.id
-				)) as GridCharacter['character']
+				const character = (await characterAdapter.getCharacter(start.add.granblueId, {
+					styleSwap: start.add.style ?? false
+				})) as GridCharacter['character']
 				const { flb = false, ulb = false, transcendence = false } = character.uncap ?? {}
 				const special = character.special ?? false
 				const uncapLevel = getMaxUncapLevel(special, flb, special ? ulb : transcendence)
 				startCharacter = { id: 'start', position: 0, character, uncapLevel }
 			} else if (start.add?.type === 'weapon') {
-				const weapon = (await weaponAdapter.getWeapon(start.add.id)) as GridWeapon['weapon']
+				const weapon = (await weaponAdapter.getWeapon(start.add.granblueId)) as GridWeapon['weapon']
 				startWeapon = {
 					id: 'start',
 					position: 0,
@@ -148,7 +148,7 @@
 					uncapLevel: getSummonMaxUncapLevel({ uncap: weapon.uncap ?? {} })
 				}
 			} else if (start.add?.type === 'summon') {
-				const summon = (await summonAdapter.getSummon(start.add.id)) as GridSummon['summon']
+				const summon = (await summonAdapter.getSummon(start.add.granblueId)) as GridSummon['summon']
 				startSummon = {
 					id: 'start',
 					position: 0,

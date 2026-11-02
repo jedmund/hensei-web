@@ -96,7 +96,15 @@
 	// A new team that starts with the item in its first slot
 	const newTeamHref = $derived(
 		selected
-			? localizeHref(newTeamPath({ add: { type: selected.item.type, id: selected.item.id } }))
+			? localizeHref(
+					newTeamPath({
+						add: {
+							type: selected.item.type,
+							granblueId: selected.item.granblueId,
+							style: selected.item.character?.styleSwap
+						}
+					})
+				)
 			: null
 	)
 </script>
