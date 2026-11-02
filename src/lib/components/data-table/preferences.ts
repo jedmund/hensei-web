@@ -1,8 +1,7 @@
 /**
- * Per-resource table preferences in localStorage. Column visibility uses
- * the same key and format as the wx-svelte-grid database grid
- * (`database-columns-<resource>` → `{ [columnId]: visible }`), so users keep
- * their columns when a list moves to DataTable.
+ * Per-resource table preferences in localStorage. Column visibility is kept
+ * under `database-columns-<resource>` as `{ [columnId]: visible }`, the key
+ * and format the old database grid used, so saved choices carried over.
  */
 import { ROW_HEIGHTS, type DataTableColumn, type RowHeight } from './types'
 

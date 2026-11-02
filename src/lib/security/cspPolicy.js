@@ -24,8 +24,6 @@ const GAME_IMAGE_HOSTS = [
 const YOUTUBE_THUMBNAIL_HOST = 'https://img.youtube.com'
 // Video embeds (dialog and descriptions) use the privacy-enhanced player.
 const YOUTUBE_EMBED_HOST = 'https://www.youtube-nocookie.com'
-// Icon stylesheet and font for the admin data grid.
-const SVAR_HOST = 'https://cdn.svar.dev'
 // Wiki lookups on the admin database pages (src/lib/api/wiki.ts).
 const WIKI_HOST = 'https://gbf.wiki'
 
@@ -81,7 +79,7 @@ export function buildCspDirectives({ apiUrl, imgUrl, sentryDsn }) {
 		// Inline styles are allowed on purpose: Svelte style bindings and
 		// transitions, echarts and Tiptap all set them. SvelteKit adds no style
 		// nonce while 'unsafe-inline' is present (a nonce would disable it).
-		'style-src': ['self', 'unsafe-inline', SVAR_HOST],
+		'style-src': ['self', 'unsafe-inline'],
 		'img-src': compact([
 			'self',
 			'data:',
@@ -92,7 +90,7 @@ export function buildCspDirectives({ apiUrl, imgUrl, sentryDsn }) {
 		]),
 		// data: for the small KaTeX fonts Vite inlines into the stylesheet. Inline
 		// fonts can't send data anywhere.
-		'font-src': compact(['self', 'data:', images, SVAR_HOST]),
+		'font-src': compact(['self', 'data:', images]),
 		// The /extension page's video comes from the image bucket.
 		'media-src': compact(['self', images]),
 		// YouTube titles go through /api/youtube/oembed, so YouTube isn't listed.
