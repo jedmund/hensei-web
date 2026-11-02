@@ -7,6 +7,7 @@
 	import EventSwitcher from '$lib/components/home/EventSwitcher.svelte'
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import NewTeamRep from '$lib/components/reps/NewTeamRep.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import HomeCard from '$lib/components/home/HomeCard.svelte'
 	import EmptyTeams from '$lib/components/home/EmptyTeams.svelte'
@@ -132,9 +133,6 @@
 					</div>
 					{#if parties.length > 0}
 						<div class="actions">
-							{#if newTeamHref}
-								<Button href={newTeamHref} size="small">{m.home_create_team()}</Button>
-							{/if}
 							<Select
 								options={orderOptions}
 								value={order}
@@ -156,7 +154,11 @@
 					href={newTeamHref}
 				/>
 			{:else}
-				<ExploreGrid items={parties} showRaid contained />
+				<ExploreGrid items={parties} showRaid contained>
+					{#snippet trailing()}
+						{#if newTeamHref}<NewTeamRep href={newTeamHref} />{/if}
+					{/snippet}
+				</ExploreGrid>
 			{/if}
 
 			{#if seeAllHref && parties.length > 0}
@@ -172,8 +174,8 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
 
-	// The heading on the left; Create a team and the team order on the right,
-	// which keep their size while the name wraps
+	// The heading on the left, the team order on the right (keeps its size
+	// while the name wraps)
 	.heading-row {
 		display: flex;
 		align-items: center;
