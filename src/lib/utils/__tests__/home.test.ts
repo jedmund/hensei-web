@@ -4,7 +4,8 @@ import {
 	countdownLabel,
 	eventThumbnailUrl,
 	exploreQuery,
-	raidsWithParties
+	raidsWithParties,
+	eventAdvantageElements
 } from '../home'
 import type { HomeRaidSection } from '$lib/types/api/home'
 import { ElementId } from '$lib/utils/element'
@@ -39,11 +40,27 @@ describe('raidsWithParties', () => {
 
 describe('exploreQuery', () => {
 	it('builds Gallery links with raid, element and sort', () => {
-		expect(exploreQuery({ raidSlug: 'nm200', element: ElementId.Earth })).toBe(
+		expect(exploreQuery({ raidSlug: 'nm200', elements: [ElementId.Earth] })).toBe(
 			'?raid=nm200&element=earth'
 		)
 		expect(exploreQuery({ sort: 'rising' })).toBe('?sort=rising')
-		expect(exploreQuery({ element: 0 })).toBe('')
+		expect(exploreQuery({ elements: [0] })).toBe('')
+	})
+
+	it('carries both elements of a two-element event', () => {
+		expect(
+			exploreQuery({ raidSlug: 'rott-nm150', elements: [ElementId.Fire, ElementId.Dark] })
+		).toBe(`?raid=rott-nm150&element=${encodeURIComponent('fire,dark')}`)
+	})
+})
+
+describe('eventAdvantageElements', () => {
+	it('prefers the list, then the single element', () => {
+		expect(
+			eventAdvantageElements({ advantageElement: ElementId.Fire, advantageElements: [1, 6] })
+		).toEqual([1, 6])
+		expect(eventAdvantageElements({ advantageElement: ElementId.Earth })).toEqual([ElementId.Earth])
+		expect(eventAdvantageElements({ advantageElement: null })).toEqual([])
 	})
 })
 

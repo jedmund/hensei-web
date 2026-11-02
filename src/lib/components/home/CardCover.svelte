@@ -89,19 +89,11 @@
 		align-items: center;
 		justify-content: center;
 		aspect-ratio: 640 / 300;
-		border-radius: $item-corner;
+		// A faint edge, so light art still separates from the card
+		border: 1px solid var(--border-faint);
+		border-radius: $page-corner;
 		overflow: hidden;
 		background: var(--background);
-
-		// A faint inner edge over the art, so light art still separates from the card
-		&::after {
-			content: '';
-			position: absolute;
-			inset: 0;
-			border-radius: inherit;
-			box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.02);
-			pointer-events: none;
-		}
 
 		img {
 			display: block;

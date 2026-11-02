@@ -13,11 +13,12 @@
 
 	interface Props {
 		group: RaidGroupFull
-		selectedRaidId?: string
+		/** Whether a raid shows as picked (one, or several in multi-select) */
+		isSelected?: (raid: RaidFull) => boolean
 		onSelect: (raid: RaidFull) => void
 	}
 
-	let { group, selectedRaidId, onSelect }: Props = $props()
+	let { group, isSelected = () => false, onSelect }: Props = $props()
 
 	// Sort raids by element, then by level as tiebreaker. Raids without a level
 	// go last: they're the open-ended ones, like Exo Crucible's Zenith Domain
@@ -49,11 +50,12 @@
 
 	<div class="raid-list">
 		{#each sortedRaids as raid (raid.id)}
-			{@const isSelected = raid.id === selectedRaidId}
+			{@const selected = isSelected(raid)}
 			<button
 				type="button"
 				class="raid-item"
-				class:selected={isSelected}
+				class:selected
+				aria-pressed={selected}
 				onclick={() => onSelect(raid)}
 			>
 				<img src={getRaidImage(raid.slug)} alt="" class="raid-icon" />
@@ -63,7 +65,7 @@
 						<span class="raid-level">Lv. {raid.level}</span>
 					{/if}
 				</div>
-				{#if isSelected}
+				{#if selected}
 					<Icon name="check" size={16} class="check-icon" />
 				{/if}
 			</button>
