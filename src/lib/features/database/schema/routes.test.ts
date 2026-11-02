@@ -89,7 +89,8 @@ describe('generic database routes', () => {
 			'awakenings',
 			'jobs',
 			'job-skills',
-			'job-accessories'
+			'job-accessories',
+			'bullets'
 		]) {
 			expect(routeFor(`/database/${name}`)).toBe(generic)
 			expect(routeFor(`/database/${name}/some-slug`)).toBe(`${generic}/[id]`)
@@ -111,7 +112,6 @@ describe('generic database routes', () => {
 		expect(routeFor('/database/summons/import')).toBe('/(app)/database/summons/import')
 		// The old series pages redirect from the server (a +server.ts, not a page)
 		expect(routeFor('/database/series/weapons/new') ?? '').not.toContain('[resource=resource]')
-		expect(routeFor('/database/bullets/1')).toBe('/(app)/database/bullets/[granblueId]')
 	})
 
 	it('match nothing for an unregistered resource', () => {

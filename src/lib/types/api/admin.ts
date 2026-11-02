@@ -27,6 +27,7 @@
  * - Unknown filter, sort, field or facet → 422 { error }.
  */
 
+import type { ArtifactSkillGroup, ArtifactSkillPolarity } from './artifact'
 import type { AugmentType } from './weaponStatModifier'
 import type { ResourceName } from '$lib/features/database/schema/names'
 
@@ -378,4 +379,45 @@ export interface AdminCharacterRoleRow {
 	// Not in the default list: request via `fields`
 	createdAt?: string
 	updatedAt?: string
+}
+
+/**
+ * Artifact skill row from `GET /admin/artifact_skills`, camelCased. Groups
+ * and polarities are names; the score category is its integer.
+ */
+export interface AdminArtifactSkillRow {
+	id: string
+	skillGroup: ArtifactSkillGroup
+	modifier: number
+	nameEn: string
+	nameJp: string
+	gameNameEn: string | null
+	gameNameJp: string | null
+	polarity: ArtifactSkillPolarity
+	baseValues: (number | null)[]
+	suffixEn: string | null
+	suffixJp: string | null
+	// Not in the default list: request via `fields`
+	growth?: number | null
+	scoreCategory?: number | null
+	createdAt?: string
+	updatedAt?: string
+}
+
+/** Default `fields` of an admin bullet row, camelCased */
+export interface AdminBulletRow {
+	id: string
+	granblueId: string
+	nameEn: string | null
+	nameJp: string | null
+	slug: string
+	bulletType: number
+	atk: number
+	hitsAll: boolean
+	order: number
+	effectEn: string | null
+	effectJp: string | null
+	updatedAt: string
+	// Not in the default list: request via `fields`
+	createdAt?: string
 }

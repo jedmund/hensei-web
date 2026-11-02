@@ -3,6 +3,7 @@
  * named by a field's `render.input`.
  */
 import type { Component } from 'svelte'
+import ArtifactSkillBaseValuesInput from '$lib/features/database/artifact-skills/inputs/ArtifactSkillBaseValuesInput.svelte'
 import AwakeningImageInput from '$lib/features/database/awakenings/inputs/AwakeningImageInput.svelte'
 import RoleIconInput from '$lib/features/database/character-roles/inputs/RoleIconInput.svelte'
 import CharacterUncapInput from '$lib/features/database/characters/inputs/CharacterUncapInput.svelte'
@@ -28,5 +29,6 @@ export const INPUT_COMPONENTS: Record<InputName, Component<InputProps>> = {
 	stickerImages: StickerImagesInput,
 	stickerLibrary: StickerLibraryInput,
 	stickerSlug: StickerSlugInput,
-	roleIcon: RoleIconInput
+	roleIcon: RoleIconInput,
+	artifactSkillBaseValues: ArtifactSkillBaseValuesInput
 }

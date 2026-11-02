@@ -1,0 +1,157 @@
+{
+	"search": ["name_en", "name_jp", "game_name_en", "game_name_jp"],
+	"filters": {
+		"skill_group": {
+			"type": "string",
+			"facet": true,
+			"list": true,
+			"range": false
+		},
+		"polarity": {
+			"type": "string",
+			"facet": true,
+			"list": true,
+			"range": false
+		},
+		"score_category": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"updated_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		}
+	},
+	"flags": [],
+	"sorts": [
+		"skill_group",
+		"modifier",
+		"name_en",
+		"name_jp",
+		"game_name_en",
+		"game_name_jp",
+		"polarity",
+		"score_category",
+		"growth",
+		"updated_at",
+		"created_at"
+	],
+	"default_sort": ["skill_group", "modifier"],
+	"fields": [
+		"id",
+		"skill_group",
+		"modifier",
+		"name_en",
+		"name_jp",
+		"game_name_en",
+		"game_name_jp",
+		"polarity",
+		"score_category",
+		"base_values",
+		"suffix_en",
+		"suffix_jp",
+		"created_at",
+		"updated_at",
+		"growth"
+	],
+	"default_fields": [
+		"id",
+		"skill_group",
+		"modifier",
+		"name_en",
+		"name_jp",
+		"game_name_en",
+		"game_name_jp",
+		"polarity",
+		"base_values",
+		"suffix_en",
+		"suffix_jp"
+	],
+	"writable": {
+		"name_en": "scalar",
+		"name_jp": "scalar",
+		"game_name_en": "scalar",
+		"game_name_jp": "scalar",
+		"suffix_en": "scalar",
+		"suffix_jp": "scalar",
+		"growth": "scalar",
+		"polarity": "scalar",
+		"base_values": "array"
+	},
+	"enums": {
+		"skill_group": {
+			"group_i": 1,
+			"group_ii": 2,
+			"group_iii": 3
+		},
+		"polarity": {
+			"positive": "positive",
+			"negative": "negative"
+		},
+		"score_category": {
+			"attack": 1,
+			"defense": 2,
+			"special": 3
+		}
+	},
+	"validators": {
+		"skill_group": [
+			{
+				"kind": "inclusion",
+				"in": ["group_i", "group_ii", "group_iii"]
+			},
+			{
+				"kind": "presence"
+			}
+		],
+		"polarity": [
+			{
+				"kind": "inclusion",
+				"in": ["positive", "negative"]
+			},
+			{
+				"kind": "presence"
+			}
+		],
+		"modifier": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "uniqueness"
+			},
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than": 0
+			}
+		],
+		"name_en": [
+			{
+				"kind": "presence"
+			}
+		],
+		"name_jp": [
+			{
+				"kind": "presence"
+			}
+		],
+		"growth": [
+			{
+				"kind": "numericality",
+				"allow_nil": true
+			}
+		],
+		"score_category": [
+			{
+				"kind": "inclusion",
+				"in": [1, 2, 3],
+				"allow_nil": true
+			}
+		]
+	}
+}

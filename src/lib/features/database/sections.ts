@@ -10,7 +10,9 @@
  */
 import { m } from '$lib/paraglide/messages'
 import { ADMIN_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
+import { artifactSkillsSection } from './artifact-skills/section'
 import { awakeningsSection } from './awakenings/section'
+import { bulletsSection } from './bullets/section'
 import { characterRolesSection } from './character-roles/section'
 import { characterSeriesSection } from './character-series/section'
 import { charactersSection } from './characters/section'
@@ -96,13 +98,7 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 	// Catalogue
 	...resourceSections('characters', charactersSection),
 	...resourceSections('character-series', characterSeriesSection),
-	{
-		id: 'artifact-skills',
-		label: () => m.nav_artifact_skills(),
-		path: '/database/artifact-skills',
-		group: 'catalogue',
-		parent: 'characters'
-	},
+	...resourceSections('artifact-skills', artifactSkillsSection),
 	...resourceSections('character-roles', characterRolesSection),
 	...resourceSections('weapons', weaponsSection),
 	...resourceSections('weapon-series', weaponSeriesSection),
@@ -111,13 +107,7 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 	...resourceSections('jobs', jobsSection),
 	...resourceSections('job-skills', jobSkillsSection),
 	...resourceSections('job-accessories', jobAccessoriesSection),
-	{
-		id: 'bullets',
-		label: () => m.nav_bullets(),
-		path: '/database/bullets',
-		group: 'catalogue',
-		parent: 'jobs'
-	},
+	...resourceSections('bullets', bulletsSection),
 
 	// Battles & events
 	...resourceSections('raids', raidsSection),

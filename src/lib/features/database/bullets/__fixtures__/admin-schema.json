@@ -1,0 +1,151 @@
+{
+	"search": ["name_en", "name_jp", "slug", "granblue_id"],
+	"filters": {
+		"bullet_type": {
+			"type": "integer",
+			"facet": true,
+			"list": true,
+			"range": true
+		},
+		"hits_all": {
+			"type": "boolean",
+			"facet": false,
+			"list": false,
+			"range": false
+		},
+		"created_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		},
+		"updated_at": {
+			"type": "datetime",
+			"facet": false,
+			"list": false,
+			"range": true
+		}
+	},
+	"flags": [],
+	"sorts": [
+		"name_en",
+		"name_jp",
+		"granblue_id",
+		"slug",
+		"bullet_type",
+		"atk",
+		"order",
+		"updated_at",
+		"created_at"
+	],
+	"default_sort": ["bullet_type", "order"],
+	"fields": [
+		"id",
+		"granblue_id",
+		"name_en",
+		"name_jp",
+		"slug",
+		"bullet_type",
+		"atk",
+		"hits_all",
+		"order",
+		"effect_en",
+		"effect_jp",
+		"created_at",
+		"updated_at"
+	],
+	"default_fields": [
+		"id",
+		"granblue_id",
+		"name_en",
+		"name_jp",
+		"slug",
+		"bullet_type",
+		"atk",
+		"hits_all",
+		"order",
+		"effect_en",
+		"effect_jp",
+		"updated_at"
+	],
+	"writable": {
+		"name_en": "scalar",
+		"name_jp": "scalar",
+		"effect_en": "scalar",
+		"effect_jp": "scalar",
+		"granblue_id": "scalar",
+		"slug": "scalar",
+		"bullet_type": "scalar",
+		"atk": "scalar",
+		"hits_all": "scalar",
+		"order": "scalar"
+	},
+	"enums": {
+		"bullet_type": {
+			"Parabellum": 1,
+			"Rifle": 2,
+			"Cartridge": 3,
+			"Aetherial": 4
+		}
+	},
+	"validators": {
+		"slug": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "uniqueness"
+			},
+			{
+				"kind": "format",
+				"pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+				"flags": ""
+			},
+			{
+				"kind": "length",
+				"maximum": 64
+			}
+		],
+		"granblue_id": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "format",
+				"pattern": "^\\d{5}$",
+				"flags": ""
+			},
+			{
+				"kind": "uniqueness"
+			}
+		],
+		"name_en": [
+			{
+				"kind": "presence"
+			}
+		],
+		"bullet_type": [
+			{
+				"kind": "presence"
+			},
+			{
+				"kind": "inclusion",
+				"in": [1, 2, 3, 4]
+			}
+		],
+		"atk": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0
+			}
+		],
+		"order": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0
+			}
+		]
+	}
+}
