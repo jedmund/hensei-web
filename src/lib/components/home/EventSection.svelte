@@ -221,20 +221,13 @@
 		{#if emptyMessage}
 			<p class="empty">{emptyMessage}</p>
 		{:else if selected && selected.parties.length === 0}
-			<!-- Upcoming events show last time's teams, so there's nothing to start yet -->
-			{#if variant === 'upcoming'}
-				<EmptyTeams
-					messageHtml={m.home_no_raid_teams({ raid: escapeHtml(raidShortName(selected.raid)) })}
-					href={null}
-				/>
-			{:else}
-				<EmptyTeams
-					messageHtml={m.home_no_battle_teams({
-						raid: escapeHtml(localizedName(selected.raid.name))
-					})}
-					href={newTeamHref}
-				/>
-			{/if}
+			<!-- Upcoming events show last time's teams, named by the raid's short name -->
+			<EmptyTeams
+				messageHtml={variant === 'upcoming'
+					? m.home_no_raid_teams({ raid: escapeHtml(raidShortName(selected.raid)) })
+					: m.home_no_battle_teams({ raid: escapeHtml(localizedName(selected.raid.name)) })}
+				href={newTeamHref}
+			/>
 		{:else if selected}
 			<ExploreGrid items={parties} showRaid={false} contained />
 			{#if seeAllHref && !(isMobile.current && tabs.length > 1)}
