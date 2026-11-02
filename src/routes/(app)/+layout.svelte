@@ -338,6 +338,13 @@
 				padding-bottom: 20vh; // Extra space at bottom for comfortable scrolling
 				z-index: $z-badge; // Ensure scrollbar is above blur background
 
+				// Database pages end at the list: their sticky record panel already
+				// stops this far above the window's bottom, so extra space only
+				// scrolls into nothing
+				&:has(> :global(.database-layout)) {
+					padding-bottom: spacing.$unit-2x;
+				}
+
 				// Use overlay scrollbars that auto-hide on macOS
 				overflow-y: overlay;
 
