@@ -14,6 +14,7 @@
 	import DetailScaffold from '$lib/features/database/detail/DetailScaffold.svelte'
 	import { UnsavedChangesGuard } from '$lib/features/database/detail/unsavedChanges.svelte'
 	import UnsavedChangesDialog from '$lib/features/database/detail/UnsavedChangesDialog.svelte'
+	import DeleteRecord from './DeleteRecord.svelte'
 	import { recordHref, recordTitle } from './detail'
 	import { formSections } from './form'
 	import { formElement } from './inputs/options'
@@ -53,6 +54,11 @@
 		unsaved.release()
 		goto(recordHref(def, saved))
 	}
+
+	function deleted() {
+		unsaved.release()
+		goto(`/database/${def.name}`)
+	}
 </script>
 
 <PageMeta title={m.page_title_db_edit({ name: title })} description={m.page_desc_home()} />
@@ -79,6 +85,9 @@
 		editMode
 	>
 		<ResourceFormSections {form} {sections} {record} {element} />
+		{#if def.save?.destroy}
+			<DeleteRecord {def} {record} {title} onDeleted={deleted} />
+		{/if}
 	</DetailScaffold>
 </div>
 
