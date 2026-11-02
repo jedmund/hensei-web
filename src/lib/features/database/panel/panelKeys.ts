@@ -2,7 +2,7 @@
  * Keyboard handling for the record panel. Pure so it can be unit tested.
  */
 
-export type PanelKeyAction = 'next' | 'prev' | 'close' | 'edit'
+export type PanelKeyAction = 'next' | 'prev' | 'close' | 'edit' | 'save' | 'cancel'
 
 const NON_TEXT_INPUT_TYPES = new Set([
 	'button',
@@ -34,6 +34,8 @@ export function isTextField(target: EventTarget | null): boolean {
 export interface PanelKeyContext {
 	/** Focus is inside the panel (arrows only step from there; in the list they scroll) */
 	focusInPanel: boolean
+	/** The panel shows the edit form: ⌘S saves, Esc stops editing, e does nothing */
+	editing?: boolean
 }
 
 type KeyEventLike = Pick<
@@ -53,7 +55,19 @@ export function panelKeyAction(
 	context: PanelKeyContext
 ): PanelKeyAction | null {
 	if (event.defaultPrevented || event.isComposing) return null
+	const editing = context.editing ?? false
+	// ⌘S / ctrl+S saves from anywhere in the form, text fields included
+	if (
+		editing &&
+		(event.metaKey || event.ctrlKey) &&
+		!event.altKey &&
+		event.key.toLowerCase() === 's'
+	) {
+		return 'save'
+	}
 	if (event.metaKey || event.ctrlKey || event.altKey) return null
+	// Esc stops editing even from a text field; it would only blur it otherwise
+	if (editing && event.key === 'Escape') return 'cancel'
 	if (isTextField(event.target)) return null
 
 	switch (event.key) {
@@ -62,7 +76,7 @@ export function panelKeyAction(
 		case 'k':
 			return event.shiftKey ? null : 'prev'
 		case 'e':
-			return event.shiftKey ? null : 'edit'
+			return event.shiftKey || editing ? null : 'edit'
 		case 'Escape':
 			return 'close'
 		case 'ArrowDown':

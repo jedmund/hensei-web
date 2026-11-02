@@ -2663,6 +2663,8 @@
 	"db_panel_next": "Next (J)",
 	"db_panel_close": "Close (Esc)",
 	"db_panel_edit": "Edit (E)",
+	"db_panel_cancel_edit": "Stop editing (Esc)",
+	"db_panel_save": "Save (⌘S)",
 	"db_panel_open_full": "Open full page",
 	"data_table_filter_selected": "{label} · {count}",
 	"data_table_filter_any_time": "Any time",

@@ -509,6 +509,12 @@ export interface ResourceDef<Row = unknown, Full = unknown> {
 	/** Its sidebar entry (see `resourceSections` in the database sections) */
 	section?: ResourceSection
 	screens?: Screens<Full>
+	/**
+	 * `false` keeps editing on the full page: the panel's Edit opens
+	 * `/<id>/edit` instead of the form in the panel (GBF-173). For forms whose
+	 * inputs need more room than the panel has.
+	 */
+	panelEdit?: false
 }
 
 /** Keeps the row and record types on a definition */

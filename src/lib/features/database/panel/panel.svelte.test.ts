@@ -1,6 +1,16 @@
 import { describe, expect, it } from 'vitest'
 import { ResultSet, type ResultItem } from '../resultSet.svelte'
-import { parseRecordId, preserveParams, readOpen, recordId, recordPath, withOpen } from './panelUrl'
+import {
+	parseRecordId,
+	preserveParams,
+	readEdit,
+	readOpen,
+	recordId,
+	recordPath,
+	withClosedPanel,
+	withEdit,
+	withOpen
+} from './panelUrl'
 import { panelPosition, stepRecord } from './panelNavigation'
 import { isTextField, panelKeyAction } from './panelKeys'
 import { opensInPanel } from './openInPanel'
@@ -32,6 +42,22 @@ describe('panel URL state', () => {
 		const closed = withOpen(replaced, null)
 		expect(closed.searchParams.has('open')).toBe(false)
 		expect(closed.search).toBe(base.search)
+	})
+
+	it('reads and sets ?edit=1 next to ?open=, keeping the list params', () => {
+		const opened = withOpen(base, '1040001000')
+		expect(readEdit(opened)).toBe(false)
+		const editing = withEdit(opened, true)
+		expect(readEdit(editing)).toBe(true)
+		expect(editing.searchParams.get('open')).toBe('1040001000')
+		expect(editing.searchParams.get('element')).toBe('fire')
+		expect(readEdit(new URL('https://x.test/a?open=1&edit=yes'))).toBe(false)
+		expect(withEdit(editing, false).search).toBe(opened.search)
+	})
+
+	it('closes the panel by dropping both ?open= and ?edit=', () => {
+		const editing = withEdit(withOpen(base, '1040001000'), true)
+		expect(withClosedPanel(editing).search).toBe(base.search)
 	})
 
 	it('carries open and view across a list URL rebuild', () => {
@@ -209,6 +235,31 @@ describe('panel keys', () => {
 			expect(panelKeyAction(key('ArrowDown', { target }), inside)).toBeNull()
 			expect(panelKeyAction(key('Escape', { target }), inside)).toBeNull()
 		}
+	})
+
+	describe('while editing', () => {
+		const editing = { focusInPanel: true, editing: true }
+		const input = () => document.createElement('input')
+
+		it('saves with ⌘S or ctrl+S, from text fields too', () => {
+			expect(panelKeyAction(key('s', { metaKey: true }), editing)).toBe('save')
+			expect(panelKeyAction(key('s', { ctrlKey: true, target: input() }), editing)).toBe('save')
+			expect(panelKeyAction(key('S', { metaKey: true, shiftKey: true }), editing)).toBe('save')
+			expect(panelKeyAction(key('s', { metaKey: true, altKey: true }), editing)).toBeNull()
+			// Not editing: ⌘S stays the browser's
+			expect(panelKeyAction(key('s', { metaKey: true }), inside)).toBeNull()
+		})
+
+		it('stops editing with Esc, from text fields too, instead of closing', () => {
+			expect(panelKeyAction(key('Escape'), editing)).toBe('cancel')
+			expect(panelKeyAction(key('Escape', { target: input() }), editing)).toBe('cancel')
+		})
+
+		it('ignores e, and keeps j/k out of text fields', () => {
+			expect(panelKeyAction(key('e'), editing)).toBeNull()
+			expect(panelKeyAction(key('j'), editing)).toBe('next')
+			expect(panelKeyAction(key('j', { target: input() }), editing)).toBeNull()
+		})
 	})
 
 	it('still handles keys on buttons and checkboxes', () => {
