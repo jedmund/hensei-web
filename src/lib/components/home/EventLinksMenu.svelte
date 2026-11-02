@@ -1,6 +1,6 @@
 <script lang="ts">
 	/**
-	 * A "…" button over an event's cover that opens its pages on other sites
+	 * A globe button over an event's cover that opens its pages on other sites
 	 * (gbf.wiki, GameWith, Kamigame). Shows nothing when the event has none.
 	 */
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
@@ -32,7 +32,7 @@
 				size="small"
 				shape="circular"
 				iconOnly
-				icon="ellipsis"
+				icon="globe"
 				aria-label={m.home_event_links()}
 			/>
 		{/snippet}
