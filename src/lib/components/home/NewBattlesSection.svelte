@@ -61,8 +61,9 @@
 		selected && selected.raid.playerCount > 1 ? getRaidImage(selected.raid.slug, 'banner') : null
 	)
 
+	// Only when the Gallery has teams beyond the ones shown here
 	const seeAllHref = $derived(
-		selected
+		selected && selected.hasMore !== false
 			? localizeHref(
 					galleryPath(
 						exploreQuery({
