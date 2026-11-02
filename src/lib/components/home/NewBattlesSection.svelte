@@ -132,6 +132,8 @@
 							onValueChange={(v) => (order = v ?? 'recent')}
 							size="small"
 							contained
+							align="end"
+							fitContent
 							ariaLabel={m.home_battle_sort_aria()}
 						/>
 					{/if}
