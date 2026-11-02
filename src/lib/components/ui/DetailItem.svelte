@@ -207,10 +207,12 @@
 		}
 
 		.edit-value {
-			flex: 1;
 			display: flex;
-			flex-grow: 0;
-			flex-shrink: 0;
+			// Sized by its input, shrinking only when the row is narrower than that
+			// (e.g. the record panel); inputs then fill what's left instead of
+			// overflowing. It gives up space well before the label does.
+			flex: 0 8 auto;
+			min-width: 0;
 			justify-content: flex-end;
 			align-items: center;
 			gap: spacing.$unit-half;
@@ -222,10 +224,18 @@
 			:global(.weapon-typeahead),
 			:global(.date-picker-field) {
 				width: var(--custom-width, 240px);
+				max-width: 100%;
 			}
 
 			:global(.input.number) {
 				width: var(--custom-width, 120px);
+				max-width: 100%;
+			}
+
+			// Input wraps its field in a fieldset, which browsers keep at min-content
+			:global(.fieldset) {
+				min-width: 0;
+				max-width: 100%;
 			}
 
 			.link-button {
