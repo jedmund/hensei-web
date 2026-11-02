@@ -12,11 +12,9 @@
 		card?: Snippet<[Party, number]>
 		/** Inside a card: outlined reps, tighter columns, and one column of at most 4 on narrow screens */
 		contained?: boolean
-		/** One more cell after the teams, e.g. a NewTeamRep */
-		trailing?: Snippet
 	}
 
-	let { items = [], showRaid = true, card, contained = false, trailing }: Props = $props()
+	let { items = [], showRaid = true, card, contained = false }: Props = $props()
 </script>
 
 {#if items.length === 0}
@@ -32,9 +30,6 @@
 				{/if}
 			</li>
 		{/each}
-		{#if trailing}
-			<li class="trailing">{@render trailing()}</li>
-		{/if}
 	</ul>
 {/if}
 
@@ -61,8 +56,7 @@
 			list-style: none;
 		}
 
-		// Inside a card on narrow screens: one column, at most 4 teams (plus the
-		// trailing cell)
+		// Inside a card on narrow screens: one column, at most 4 teams
 		&.contained {
 			gap: $unit-2x;
 
@@ -70,7 +64,7 @@
 				grid-template-columns: 1fr;
 				gap: $unit;
 
-				& > li:nth-child(n + 5):not(.trailing) {
+				& > li:nth-child(n + 5) {
 					display: none;
 				}
 			}

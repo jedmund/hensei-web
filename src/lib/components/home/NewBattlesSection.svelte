@@ -7,7 +7,7 @@
 	import EventSwitcher from '$lib/components/home/EventSwitcher.svelte'
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import NewTeamRep from '$lib/components/reps/NewTeamRep.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import HomeCard from '$lib/components/home/HomeCard.svelte'
 	import EmptyTeams from '$lib/components/home/EmptyTeams.svelte'
@@ -136,6 +136,17 @@
 								contained
 								ariaLabel={m.home_battle_sort_aria()}
 							/>
+							{#if newTeamHref}
+								<Tooltip content={m.home_create_team()}>
+									<Button
+										href={newTeamHref}
+										size="small"
+										iconOnly
+										icon="plus"
+										aria-label={m.home_create_team()}
+									/>
+								</Tooltip>
+							{/if}
 						</div>
 					{/if}
 				</div>
@@ -149,11 +160,7 @@
 					href={newTeamHref}
 				/>
 			{:else}
-				<ExploreGrid items={parties} showRaid={false} contained>
-					{#snippet trailing()}
-						{#if newTeamHref}<NewTeamRep href={newTeamHref} />{/if}
-					{/snippet}
-				</ExploreGrid>
+				<ExploreGrid items={parties} showRaid={false} contained />
 				{#if seeAllHref}
 					<Button href={seeAllHref} fullWidth>
 						<!-- Battle names are long; phones get the short label -->
@@ -186,8 +193,8 @@
 		text-align: center;
 	}
 
-	// The name and release date on the left, the team order on the right
-	// (keeps its size while the name wraps)
+	// The name and release date on the left; the team order and Create a team
+	// on the right, which keep their size while the name wraps
 	.heading-row {
 		display: flex;
 		align-items: center;
