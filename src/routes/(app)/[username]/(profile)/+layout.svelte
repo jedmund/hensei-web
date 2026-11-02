@@ -25,17 +25,14 @@
 	const viewerCrewRole = $derived(crewStore.membership?.role ?? null)
 	const viewerCrewId = $derived(crewStore.crew?.id ?? null)
 
-	// Lock app-shell scroll while the drawer is open. The scrollable element
-	// in (app)/+layout.svelte is `.main-content`; targeting body/html doesn't
-	// help because the shell sets the viewport to overflow:hidden.
+	// Lock page scroll while the drawer is open (the document is the scroller)
 	$effect(() => {
-		if (typeof document === 'undefined') return
-		const scroller = document.querySelector<HTMLElement>('.main-content')
-		if (!scroller) return
-		const previous = scroller.style.overflowY
-		if (expanded) scroller.style.overflowY = 'hidden'
+		if (typeof document === 'undefined' || !expanded) return
+		const root = document.documentElement
+		const previous = root.style.overflow
+		root.style.overflow = 'hidden'
 		return () => {
-			scroller.style.overflowY = previous
+			root.style.overflow = previous
 		}
 	})
 </script>

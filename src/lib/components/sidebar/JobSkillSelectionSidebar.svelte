@@ -253,7 +253,7 @@
 	.skill-selection-content {
 		display: flex;
 		flex-direction: column;
-		height: calc(100vh - 60px);
+		height: calc(100dvh - 60px);
 		overflow: hidden;
 	}
 

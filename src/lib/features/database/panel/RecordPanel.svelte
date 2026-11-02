@@ -312,11 +312,11 @@
 		--record-panel-width: 440px;
 
 		position: sticky;
-		top: 0; // the scroll container's top padding already clears the fixed nav
+		top: var(--content-top, 0px); // below the fixed nav (see (app)/+layout.svelte)
 		flex: 0 0 auto;
 		align-self: flex-start;
 		width: 0;
-		height: calc(100vh - #{layout.$nav-height} - var(--bahamut-offset, 0px) - #{spacing.$unit-2x});
+		height: calc(100dvh - #{layout.$nav-height} - var(--bahamut-offset, 0px) - #{spacing.$unit-2x});
 		opacity: 0;
 		overflow: hidden;
 		transition:

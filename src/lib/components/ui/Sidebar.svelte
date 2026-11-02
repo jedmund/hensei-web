@@ -39,7 +39,7 @@
 		position: fixed;
 		top: $unit-2x;
 		right: $unit-2x;
-		height: calc(100vh - #{$unit-2x} - #{$unit-2x}); // 100vh minus top and bottom insets
+		height: calc(100dvh - #{$unit-2x} - #{$unit-2x}); // 100dvh minus top and bottom insets
 		box-sizing: border-box;
 		// No background - individual panes have their own card styling
 		display: flex;

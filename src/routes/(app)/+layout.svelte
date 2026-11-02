@@ -7,7 +7,6 @@
 	import Sidebar from '$lib/components/ui/Sidebar.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { Tooltip } from 'bits-ui'
-	import { SvelteMap } from 'svelte/reactivity'
 	import { beforeNavigate, afterNavigate, goto } from '$app/navigation'
 	import { browser, dev } from '$app/environment'
 	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
@@ -18,7 +17,6 @@
 	import AccountDeletionBanner from '$lib/components/AccountDeletionBanner.svelte'
 	import { hasEditKeys, getAllEditKeys } from '$lib/utils/editKeys'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
-	import { readOpen } from '$lib/features/database/panel/panelUrl'
 	import type { LayoutData } from './$types'
 
 	const { data, children } = $props<{
@@ -64,30 +62,22 @@
 	// Bahamut mode bar affects layout positioning
 	const isBahamut = $derived(data?.currentUser?.bahamut === true)
 
-	// Reference to the scrolling container
-	let mainContent: HTMLElement | undefined
+	// The document scrolls (not an inner container), so the browser and
+	// SvelteKit handle scroll: the iOS toolbars collapse, a status-bar tap
+	// scrolls to top, and SvelteKit resets to the top on navigation and
+	// restores the position on back/forward.
 
-	// Track scroll state for gradient visibility
+	// Whether the page is scrolled, for the gradient behind the fixed nav
 	let isScrolled = $state(false)
 
-	// Handle scroll events to toggle gradient visibility
-	function handleScroll() {
-		if (mainContent) {
-			isScrolled = mainContent.scrollTop > 0
-		}
+	function updateScrolled() {
+		isScrolled = window.scrollY > 0
 	}
 
-	// Store scroll positions for each visited route
-	const scrollPositions = new SvelteMap<string, number>()
-
-	// Save scroll position before navigating away and close sidebar
-	beforeNavigate(({ from, to, cancel }) => {
+	// Close the sidebar when navigating, unless it has unsaved changes
+	beforeNavigate(({ to, cancel }) => {
 		// Let persistOnTabSwitch panes stay open during shallow navigation
 		if (sidebar.isOpen && sidebar.paneStack.currentPane?.persistOnTabSwitch) {
-			if (from && mainContent) {
-				const key = from.url.pathname + from.url.search
-				scrollPositions.set(key, mainContent.scrollTop)
-			}
 			return
 		}
 
@@ -102,76 +92,17 @@
 			return
 		}
 
-		// Close sidebar when navigating
 		sidebar.close()
-
-		// Save scroll position for the current route
-		if (from && mainContent) {
-			const key = from.url.pathname + from.url.search
-			scrollPositions.set(key, mainContent.scrollTop)
-		}
 	})
 
-	// Handle scroll restoration or reset after navigation
-	afterNavigate(({ from, to, type }) => {
-		if (!mainContent || !to) return
-
-		// The database record panel opens, steps and closes in place; the list
-		// keeps its own scroll (and scrolls the open row into view)
-		if (
-			from?.url.pathname === to.url.pathname &&
-			(readOpen(from.url) !== null || readOpen(to.url) !== null)
-		) {
-			return
-		}
-
-		// Use requestAnimationFrame to ensure DOM has updated
-		requestAnimationFrame(() => {
-			if (!mainContent) return
-			const key = to.url.pathname + to.url.search
-
-			// Only restore scroll for browser back/forward navigation
-			if (type === 'popstate' && scrollPositions.has(key)) {
-				// User clicked back/forward button - restore their position
-				mainContent.scrollTop = scrollPositions.get(key) || 0
-			} else {
-				// Any other navigation type (link, goto, enter, etc.) - go to top
-				mainContent.scrollTop = 0
-			}
-		})
+	// SvelteKit sets the scroll position after navigating (top, or the saved
+	// position on back/forward), which may not fire a scroll event
+	afterNavigate(() => {
+		requestAnimationFrame(updateScrolled)
 	})
-
-	// Optional: Export snapshot for session persistence
-	export const snapshot = {
-		capture: () => {
-			if (!mainContent) return { scroll: 0, positions: [] }
-			return {
-				scroll: mainContent.scrollTop,
-				positions: Array.from(scrollPositions.entries())
-			}
-		},
-		restore: (snapshotData: { scroll?: number; positions?: [string, number][] }) => {
-			if (!snapshotData || !mainContent) return
-
-			// Restore saved positions map
-			if (snapshotData.positions) {
-				scrollPositions.clear()
-				snapshotData.positions.forEach(([key, value]) => {
-					scrollPositions.set(key, value)
-				})
-			}
-
-			// Restore current scroll position after DOM is ready
-			if (browser) {
-				requestAnimationFrame(() => {
-					if (mainContent) mainContent.scrollTop = snapshotData.scroll || 0
-				})
-			}
-		}
-	}
 </script>
 
-<svelte:window onbeforeunload={handleBeforeUnload} />
+<svelte:window onbeforeunload={handleBeforeUnload} onscroll={updateScrolled} />
 
 {#if dev}
 	<SvelteQueryDevtools buttonPosition="bottom-left" />
@@ -195,7 +126,7 @@
 					/>
 				{/if}
 			</div>
-			<main class="main-content" bind:this={mainContent} onscroll={handleScroll}>
+			<main class="main-content">
 				{#if data?.account?.deletionScheduledAt}
 					<AccountDeletionBanner deletionScheduledAt={data.account.deletionScheduledAt} />
 				{/if}
@@ -261,13 +192,12 @@
 		--sidebar-width: 420px;
 	}
 
+	// The document scrolls, not an inner container (see the script)
 	.app-container {
 		display: flex;
 		flex-direction: column;
-		height: 100vh;
 		width: 100%;
 		position: relative;
-		overflow: hidden;
 
 		// Main pane with content
 		.main-pane {
@@ -275,9 +205,12 @@
 			display: flex;
 			flex-direction: column;
 			min-width: 0;
+			// Height of the fixed nav (and Bahamut bar). Content starts below it, and
+			// sticky elements stick at it: the page scrolls under the fixed nav
+			--content-top: calc(81px + var(--bahamut-offset, 0px));
+
 			transition: margin-right $duration-slide ease-in-out;
 			position: relative;
-			height: 100%;
 
 			// Blur background that shifts with main pane
 			.nav-blur-background {
@@ -326,17 +259,15 @@
 				pointer-events: auto;
 			}
 
-			// Main content area with independent scroll
+			// Main content area. `clip`, not `hidden`: hidden on one axis makes
+			// the element a scroll container again
 			.main-content {
 				flex: 1;
-				overflow-y: auto;
-				overflow-x: hidden;
+				overflow-x: clip;
 				position: relative;
-				padding-top: calc(
-					81px + var(--bahamut-offset, 0px)
-				); // Space for fixed nav + optional bahamut bar
+				padding-top: var(--content-top);
 				padding-bottom: 20vh; // Extra space at bottom for comfortable scrolling
-				z-index: $z-badge; // Ensure scrollbar is above blur background
+				z-index: $z-badge;
 
 				// Database pages end at the list: their sticky record panel already
 				// stops this far above the window's bottom, so extra space only
@@ -344,34 +275,6 @@
 				&:has(> :global(.database-layout)) {
 					padding-bottom: spacing.$unit-2x;
 				}
-
-				// Use overlay scrollbars that auto-hide on macOS
-				overflow-y: overlay;
-
-				// Thin, minimal scrollbar styling
-				&::-webkit-scrollbar {
-					width: 10px;
-				}
-
-				&::-webkit-scrollbar-track {
-					background: transparent;
-				}
-
-				&::-webkit-scrollbar-thumb {
-					background: rgba(0, 0, 0, 0.2);
-					border-radius: 10px;
-					border: 2px solid transparent;
-					background-clip: padding-box;
-
-					&:hover {
-						background: rgba(0, 0, 0, 0.4);
-						background-clip: padding-box;
-					}
-				}
-
-				// Firefox scrollbar styling
-				scrollbar-width: thin;
-				scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 			}
 		}
 
@@ -402,11 +305,7 @@
 	@media (max-width: 768px) {
 		.app-container {
 			.main-pane {
-				.main-content {
-					padding-top: calc(60px + var(--bahamut-offset, 0px));
-					// Improve mobile scrolling performance
-					-webkit-overflow-scrolling: touch;
-				}
+				--content-top: calc(60px + var(--bahamut-offset, 0px));
 			}
 
 			// Overlay backdrop when sidebar is open on mobile

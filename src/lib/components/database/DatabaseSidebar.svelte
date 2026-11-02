@@ -23,9 +23,9 @@
 		width: layout.$database-sidebar-width;
 		flex-shrink: 0;
 		position: sticky;
-		top: 0; // the scroll container's top padding already clears the fixed nav
+		top: var(--content-top, 0px); // below the fixed nav (see (app)/+layout.svelte)
 		align-self: flex-start;
-		max-height: calc(100vh - #{layout.$nav-height} - var(--bahamut-offset, 0px));
+		max-height: calc(100dvh - #{layout.$nav-height} - var(--bahamut-offset, 0px));
 		overflow-y: auto;
 		padding-bottom: spacing.$unit-4x;
 		scrollbar-width: thin;
