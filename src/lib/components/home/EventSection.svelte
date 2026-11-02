@@ -221,9 +221,12 @@
 		{#if emptyMessage}
 			<p class="empty">{emptyMessage}</p>
 		{:else if selected && selected.parties.length === 0}
-			<!-- Only upcoming events show last time's teams -->
+			<!-- Upcoming events show last time's teams, so there's nothing to start yet -->
 			{#if variant === 'upcoming'}
-				<p class="empty">{m.home_no_previous()}</p>
+				<EmptyTeams
+					messageHtml={m.home_no_raid_teams({ raid: escapeHtml(raidShortName(selected.raid)) })}
+					href={null}
+				/>
 			{:else}
 				<EmptyTeams
 					messageHtml={m.home_no_battle_teams({
