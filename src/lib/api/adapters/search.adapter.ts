@@ -28,10 +28,6 @@ export interface SearchParams {
 	per?: number
 	/** Search filters */
 	filters?: SearchFilters
-	/** Sort by column name */
-	sortBy?: string
-	/** Sort order */
-	sortOrder?: 'asc' | 'desc'
 }
 
 /**
@@ -233,14 +229,6 @@ export class SearchAdapter extends BaseAdapter {
 		// Only include exclude if provided
 		if (params.exclude?.length) {
 			body.exclude = params.exclude
-		}
-
-		// Include sort parameters if provided
-		if (params.sortBy) {
-			body.sort = params.sortBy
-		}
-		if (params.sortOrder) {
-			body.order = params.sortOrder
 		}
 
 		// Build filters based on what's allowed for this search type
