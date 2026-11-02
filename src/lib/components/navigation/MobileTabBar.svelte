@@ -9,7 +9,7 @@
 
 	interface Props {
 		nav: NavigationState
-		/** The "More" sheet; the bar stays visible while it's open */
+		/** The menu sheet; the bar stays visible while it's open */
 		sheetOpen: boolean
 	}
 
@@ -20,7 +20,7 @@
 	// Profile shows the avatar, or the username's initial without one
 	const ICONS: Record<Exclude<TabBarLinkId, 'profile'>, string> = {
 		home: 'home',
-		gallery: 'grid',
+		gallery: 'search',
 		newTeam: 'plus'
 	}
 
@@ -61,7 +61,7 @@
 
 <svelte:window onscroll={onScroll} />
 
-<nav class="tab-bar {nav.elementClass}" class:hidden aria-label={m.nav_menu_button()}>
+<nav class="tab-bar {nav.elementClass}" class:hidden aria-label="Global">
 	{#each links as link (link.id)}
 		{#if link.id === 'newTeam'}
 			<div class="tab new-team">
@@ -104,12 +104,12 @@
 		class:selected={sheetOpen}
 		aria-haspopup="dialog"
 		aria-expanded={sheetOpen}
-		aria-label={m.nav_more()}
-		title={m.nav_more()}
+		aria-label={m.nav_menu_button()}
+		title={m.nav_menu_button()}
 		onclick={() => (sheetOpen = true)}
 	>
 		<span class="more-icon">
-			<Icon name="ellipsis" size={22} />
+			<Icon name="menu" size={22} />
 			{#if nav.notificationCount > 0}
 				<span class="more-dot"><CrewNotificationDot element={nav.userElement} /></span>
 			{/if}

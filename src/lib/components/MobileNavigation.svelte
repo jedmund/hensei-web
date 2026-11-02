@@ -18,7 +18,7 @@
 {/if}
 
 <!-- Phones: the Database keeps its own top bar; everywhere else navigation is
-     the tab bar at the bottom, with everything else in its "More" sheet -->
+     the tab bar at the bottom, with everything else in its menu sheet -->
 {#if nav.isDatabaseRoute}
 	<nav aria-label="Global" class="database-layout {nav.elementClass}">
 		<DatabaseNavigation userElement={nav.userElement} role={nav.role} />

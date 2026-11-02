@@ -83,7 +83,7 @@ export function isDatabasePath(pathname: string, hrefs: NavHrefs): boolean {
 
 /**
  * The phone tab bar: Home, Gallery, New team in the middle, and the profile
- * when signed in. The "More" tab that opens the sheet comes after these.
+ * when signed in. The menu tab that opens the sheet comes after these.
  */
 export function tabBarLinks(
 	hrefs: NavHrefs,
@@ -101,7 +101,7 @@ export function tabBarLinks(
 }
 
 /**
- * Everything else, for the phone tab bar's "More" sheet: Crew, Collection
+ * Everything else, for the phone tab bar's menu sheet: Crew, Collection
  * (the signed-in user's own, under their profile) and the secondary links.
  */
 export function sheetLinks(

@@ -34,7 +34,7 @@
 	})
 </script>
 
-<!-- The phone tab bar's "More" sheet: everything that isn't a tab -->
+<!-- The phone tab bar's menu sheet: everything that isn't a tab -->
 <BottomSheet bind:open>
 	<div class="mobile-nav-sheet {nav.elementClass}">
 		{#if !nav.isAuth}
