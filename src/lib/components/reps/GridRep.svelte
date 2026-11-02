@@ -247,14 +247,16 @@
 		grid-template-rows: 1fr auto;
 		border: 1px solid transparent;
 		border-radius: layout.$card-corner;
-		background: var(--card-bg);
+		// Also the image covers' color (see .gridContainer)
+		--rep-bg: var(--card-bg);
+		background: var(--rep-bg);
 		overflow: hidden;
 
 		// Hover effects only where there's a real pointer: on touch screens
 		// a tap leaves :hover stuck on the card
 		@media (hover: hover) {
 			&:hover {
-				background: var(--grid-rep-hover);
+				--rep-bg: var(--grid-rep-hover);
 				box-shadow:
 					0 0 0 1px rgba(0, 0, 0, 0.1),
 					effects.$card-elevation;
@@ -331,12 +333,33 @@
 	}
 
 	.gridContainer {
-		// No fade-in for the card's images (they still stay hidden until they
-		// load). In iOS Safari an opacity animation moves each image onto its own
-		// layer, which is snapped to whole pixels, so the images shifted a few
-		// pixels as they faded in, and again on every view switch.
+		// The card's images don't fade in themselves: in iOS Safari an opacity
+		// animation moves an image onto its own layer, snapped to whole pixels,
+		// so the images shifted a few pixels as they faded in (and on every
+		// view switch). Instead each image appears at once under a cover in the
+		// card's background, and the cover fades out; a flat color moving by a
+		// pixel doesn't show. Every rep image sits directly in a slot wrapper.
 		:global(img[data-fade='in']) {
 			animation: none;
+		}
+
+		:global(*:has(> img[data-fade='in'])) {
+			position: relative;
+		}
+
+		:global(*:has(> img[data-fade='in'])::after) {
+			content: '';
+			position: absolute;
+			inset: 0;
+			pointer-events: none;
+			// Fades by color, not opacity: an opacity animation would put the
+			// slot (and its image) on a pixel-snapped layer again
+			background-color: transparent;
+			animation: rep-image-cover 0.2s ease;
+
+			@media (prefers-reduced-motion: reduce) {
+				animation: none;
+			}
 		}
 
 		/* Reserve a constant visual height for all reps; keeps card height stable */
@@ -583,6 +606,12 @@
 				padding-block: spacing.$unit;
 				margin-block: calc(-1 * #{spacing.$unit});
 			}
+		}
+	}
+
+	@keyframes rep-image-cover {
+		from {
+			background-color: var(--rep-bg);
 		}
 	}
 
