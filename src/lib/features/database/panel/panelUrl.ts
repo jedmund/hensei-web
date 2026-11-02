@@ -16,6 +16,8 @@
 import type { ResourceName } from '$lib/features/database/schema/names'
 
 export const OPEN_PARAM = 'open'
+/** `?edit=1` next to `?open=`: the panel shows the record's edit form (GBF-173) */
+export const EDIT_PARAM = 'edit'
 
 /** Resources whose records can open in the panel: the registered ones, and those not yet migrated */
 export type PanelResource = ResourceName
@@ -34,6 +36,24 @@ export function withOpen(url: URL, id: string | null): URL {
 	if (id) next.searchParams.set(OPEN_PARAM, id)
 	else next.searchParams.delete(OPEN_PARAM)
 	return next
+}
+
+/** Whether the open record is being edited in the panel. */
+export function readEdit(url: URL): boolean {
+	return url.searchParams.get(EDIT_PARAM) === '1'
+}
+
+/** A copy of `url` with `?edit=1` set or removed. Other params are kept. */
+export function withEdit(url: URL, editing: boolean): URL {
+	const next = new URL(url)
+	if (editing) next.searchParams.set(EDIT_PARAM, '1')
+	else next.searchParams.delete(EDIT_PARAM)
+	return next
+}
+
+/** A copy of `url` with the panel closed: no `?open=` and no `?edit=`. */
+export function withClosedPanel(url: URL): URL {
+	return withEdit(withOpen(url, null), false)
 }
 
 /** Path + query of a URL, for goto() on the same origin. */

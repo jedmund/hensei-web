@@ -6,6 +6,12 @@
 	 * (`setResultSet`). The open record is `?open=<id>`; j/k (and ↓/↑ with
 	 * focus in the panel) step through the ResultSet, Esc closes, e edits.
 	 * Open records with `openRecordInPanel()` so Back closes the panel.
+	 *
+	 * Editing happens in the panel (`?edit=1`, GBF-173) for editors on
+	 * resources with a generated form: ⌘S saves, Esc goes back to the detail,
+	 * and j/k keep editing the next record. Unsaved changes ask before any of
+	 * that. Style shifts and resources with `panelEdit: false` open the full
+	 * edit page instead.
 	 */
 	import { onDestroy, tick, untrack } from 'svelte'
 	import { MediaQuery } from 'svelte/reactivity'
@@ -13,6 +19,8 @@
 	import { page } from '$app/state'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { m } from '$lib/paraglide/messages'
+	import { EDITOR_ROLE } from '$lib/auth/roles'
+	import { resourceDef } from '$lib/features/database/schema/registry'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import type { DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
@@ -20,11 +28,22 @@
 	import { rootOf, sectionForUrl } from '../sections'
 	import { recentPages } from '../recent.svelte'
 	import RecordDetail from './RecordDetail.svelte'
+	import RecordEditForm from './RecordEditForm.svelte'
 	import { openRecord } from './openRecord.svelte'
 	import { panelKeyAction } from './panelKeys'
 	import { panelPosition, stepRecord, type StepDirection } from './panelNavigation'
 	import { PANEL_MIN_QUERY } from './openInPanel'
-	import { readOpen, recordPath, relativeHref, withOpen, type PanelResource } from './panelUrl'
+	import {
+		parseRecordId,
+		readEdit,
+		readOpen,
+		recordPath,
+		relativeHref,
+		withClosedPanel,
+		withEdit,
+		withOpen,
+		type PanelResource
+	} from './panelUrl'
 
 	interface Props {
 		resource: PanelResource
@@ -48,6 +67,22 @@
 	const item = $derived(shownId ? resultSet?.items.find((i) => i.id === shownId) : undefined)
 	const href = $derived(shownId ? (item?.href ?? recordPath(resource, shownId)) : null)
 	const position = $derived(openId && resultSet ? panelPosition(resultSet, openId) : null)
+
+	// Editing in the panel: editors, a generated form, and not a style shift
+	const def = $derived(resourceDef(resource))
+	const parsed = $derived(shownId ? parseRecordId(resource, shownId) : null)
+	const canEdit = $derived(role >= EDITOR_ROLE)
+	const editsInPanel = $derived(
+		canEdit &&
+			!!def?.record &&
+			!!def.save?.update &&
+			def.panelEdit !== false &&
+			!!parsed &&
+			!parsed.styleSwap
+	)
+	const editing = $derived(isOpen && editsInPanel && readEdit(page.url))
+	let editForm = $state<RecordEditForm | undefined>(undefined)
+	let saving = $state(false)
 
 	// Tab stays put while stepping, so reviewing images of 40 weapons stays on Images
 	let tab = $state<DetailTab>('info')
@@ -111,10 +146,10 @@
 	function close() {
 		// Back returns to the entry the panel was opened from, but only while the
 		// list hasn't paged or filtered since (the grid doesn't reload on Back)
-		if (page.state.recordPanel === relativeHref(withOpen(page.url, null))) {
+		if (page.state.recordPanel === relativeHref(withClosedPanel(page.url))) {
 			history.back()
 		} else {
-			goto(relativeHref(withOpen(page.url, null)), {
+			goto(relativeHref(withClosedPanel(page.url)), {
 				replaceState: true,
 				noScroll: true,
 				keepFocus: true
@@ -123,7 +158,30 @@
 	}
 
 	function edit() {
-		if (href && role >= 7) goto(localizeHref(`${href}/edit`))
+		if (!href || !canEdit) return
+		if (!editsInPanel) {
+			goto(localizeHref(`${href}/edit`))
+			return
+		}
+		// A history entry of its own, so Back leaves the form (asking first if dirty)
+		goto(relativeHref(withEdit(page.url, true)), {
+			noScroll: true,
+			keepFocus: true,
+			state: page.state
+		})
+	}
+
+	function stopEditing() {
+		goto(relativeHref(withEdit(page.url, false)), {
+			replaceState: true,
+			noScroll: true,
+			keepFocus: true,
+			state: page.state
+		})
+	}
+
+	function save() {
+		void editForm?.save()
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -131,12 +189,15 @@
 		// Leave keys to an open dialog (e.g. a confirmation inside the detail body)
 		if (document.querySelector('[role="dialog"][data-state="open"]')) return
 		const action = panelKeyAction(event, {
-			focusInPanel: !!panelEl && panelEl.contains(document.activeElement)
+			focusInPanel: !!panelEl && panelEl.contains(document.activeElement),
+			editing
 		})
 		if (!action) return
 		event.preventDefault()
 		if (action === 'next' || action === 'prev') step(action)
 		else if (action === 'close') close()
+		else if (action === 'save') save()
+		else if (action === 'cancel') stopEditing()
 		else edit()
 	}
 </script>
@@ -179,11 +240,26 @@
 
 			<div class="actions">
 				{#if href}
-					{#if role >= 7}
-						<Tooltip content={m.db_panel_edit()}>
-							<Button variant="ghost" size="small" href={localizeHref(`${href}/edit`)}>
-								{m.action_edit()}
+					{#if editing}
+						<Tooltip content={m.db_panel_cancel_edit()}>
+							<Button variant="ghost" size="small" onclick={stopEditing}>
+								{m.action_cancel()}
 							</Button>
+						</Tooltip>
+						<Tooltip content={m.db_panel_save()}>
+							<Button variant="primary" size="small" onclick={save} disabled={saving}>
+								{saving ? m.action_saving() : m.action_save()}
+							</Button>
+						</Tooltip>
+					{:else if canEdit}
+						<Tooltip content={m.db_panel_edit()}>
+							{#if editsInPanel}
+								<Button variant="ghost" size="small" onclick={edit}>{m.action_edit()}</Button>
+							{:else}
+								<Button variant="ghost" size="small" href={localizeHref(`${href}/edit`)}>
+									{m.action_edit()}
+								</Button>
+							{/if}
 						</Tooltip>
 					{/if}
 					<Tooltip content={m.db_panel_open_full()}>
@@ -211,7 +287,15 @@
 		</header>
 
 		<div class="panel-body">
-			{#if shownId}
+			{#if shownId && editing && def && parsed}
+				<RecordEditForm
+					bind:this={editForm}
+					onSavingChange={(value) => (saving = value)}
+					{def}
+					id={parsed.routeId}
+					onSaved={stopEditing}
+				/>
+			{:else if shownId}
 				<RecordDetail {resource} id={shownId} {role} {tab} onTabChange={(t) => (tab = t)} />
 			{/if}
 		</div>
@@ -306,6 +390,10 @@
 	}
 
 	.panel-body {
+		// Wide inputs (480px links) would leave each row a different width here:
+		// every edit input is at most the standard 240px instead
+		--detail-input-max-width: 240px;
+
 		flex: 1;
 		min-height: 0;
 		overflow-y: auto;

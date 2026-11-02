@@ -2452,6 +2452,8 @@
 	"db_panel_next": "次へ (J)",
 	"db_panel_close": "閉じる (Esc)",
 	"db_panel_edit": "編集 (E)",
+	"db_panel_cancel_edit": "編集をやめる (Esc)",
+	"db_panel_save": "保存 (⌘S)",
 	"db_panel_open_full": "詳細ページを開く",
 	"data_table_filter_selected": "{label} · {count}",
 	"data_table_filter_any_time": "すべての期間",
