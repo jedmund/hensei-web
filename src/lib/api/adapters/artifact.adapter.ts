@@ -17,6 +17,7 @@ import type {
 	Artifact,
 	ArtifactSkill,
 	ArtifactSkillGroup,
+	ArtifactSkillPolarity,
 	CollectionArtifact,
 	CollectionArtifactInput,
 	GridArtifact,
@@ -51,6 +52,25 @@ export interface CollectionArtifactListParams {
 	skill4?: number[]
 	sort?: string
 }
+
+/**
+ * What an editor may change on an artifact skill (the API's
+ * ArtifactSkillsController::PERMITTED). Groups and polarities by name; a
+ * blank game name or growth is null.
+ */
+export type ArtifactSkillPayload = Partial<{
+	skill_group: ArtifactSkillGroup
+	modifier: number
+	name_en: string
+	name_jp: string
+	game_name_en: string | null
+	game_name_jp: string | null
+	polarity: ArtifactSkillPolarity
+	base_values: number[]
+	growth: number | null
+	suffix_en: string
+	suffix_jp: string
+}>
 
 /**
  * Artifact adapter for managing artifacts and skills
@@ -125,22 +145,7 @@ export class ArtifactAdapter extends BaseAdapter {
 	/**
 	 * Updates an artifact skill
 	 */
-	async updateSkill(
-		id: string,
-		data: Partial<{
-			name_en: string
-			name_jp: string
-			game_name_en: string
-			game_name_jp: string
-			skill_group: number
-			modifier: number
-			polarity: string
-			base_values: (number | null)[]
-			growth: number
-			suffix_en: string
-			suffix_jp: string
-		}>
-	): Promise<ArtifactSkill> {
+	async updateSkill(id: string, data: ArtifactSkillPayload): Promise<ArtifactSkill> {
 		const response = await this.request<ArtifactSkill>(`/artifact_skills/${id}`, {
 			method: 'PATCH',
 			body: data

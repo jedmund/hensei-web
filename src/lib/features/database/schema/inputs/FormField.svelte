@@ -43,7 +43,12 @@
 	{#each ['en', 'ja'] as const as lang (lang)}
 		{@const setSide = (v: unknown) => form.set(key, { ...pair, [lang]: v ?? '' })}
 		{#if field.of === 'tags'}
-			<DetailItem label={field.labels[lang]()} error={form.errors[`${key}.${lang}`]} editable>
+			<DetailItem
+				label={field.labels[lang]()}
+				{sublabel}
+				error={form.errors[`${key}.${lang}`]}
+				editable
+			>
 				<TagInput
 					bind:value={() => (pair[lang] ?? []) as string[], setSide}
 					placeholder={m.db_field_add_tag()}
@@ -53,6 +58,7 @@
 		{:else}
 			<DetailItem
 				label={field.labels[lang]()}
+				{sublabel}
 				error={form.errors[`${key}.${lang}`]}
 				editable
 				type="text"
