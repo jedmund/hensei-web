@@ -148,6 +148,13 @@
 						box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 					}
 
+					// The art keeps its own proportions and is a little shorter than
+					// the slot, so a filled slot shows the card behind it, not a
+					// sliver of the gray placeholder above and below
+					&:not(.empty) {
+						background: none;
+					}
+
 					img {
 						border-radius: $item-corner-small;
 						display: block;

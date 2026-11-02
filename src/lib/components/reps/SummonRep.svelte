@@ -108,6 +108,13 @@
 			@include rep.aspect(rep.$summon-main-w, rep.$summon-main-h);
 			width: 100%;
 			align-self: center;
+			// Never taller than the row (and the sub-summon grid beside them);
+			// the art is cropped by a pixel or two rather than overhanging
+			max-height: 100%;
+
+			img {
+				object-fit: cover;
+			}
 		}
 
 		.summons {
@@ -119,8 +126,10 @@
 			margin: 0;
 			padding: 0;
 			list-style: none;
-			height: calc(100% - 6px);
-			align-self: center;
+			// The full height of the row, rows spread top to bottom, so the grid
+			// lines up with the main and friend summons beside it
+			height: 100%;
+			align-self: stretch;
 		}
 
 		.summon {
