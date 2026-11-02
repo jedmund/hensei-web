@@ -54,6 +54,16 @@
 		animation: sheet-fade-in $duration-quick ease-out;
 	}
 
+	// Closing: Bits UI keeps the sheet mounted until these animations end.
+	// (Separate :global() rules; nested under one, Svelte drops them as unused.)
+	:global(.sheet-overlay[data-state='closed']) {
+		animation: sheet-fade-out $duration-slide ease-in forwards;
+	}
+
+	:global(.sheet-content[data-state='closed']) {
+		animation: sheet-slide-down $duration-slide ease-in forwards;
+	}
+
 	:global(.sheet-content) {
 		position: fixed;
 		bottom: 0;
@@ -132,6 +142,18 @@
 		}
 		to {
 			opacity: 1;
+		}
+	}
+
+	@keyframes sheet-fade-out {
+		to {
+			opacity: 0;
+		}
+	}
+
+	@keyframes sheet-slide-down {
+		to {
+			transform: translateY(100%);
 		}
 	}
 
