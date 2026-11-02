@@ -69,8 +69,9 @@
 	)
 
 	// The Gallery's include filter: c:/w:/s: plus the granblue id
+	// Only when the Gallery has teams beyond the ones shown here
 	const seeAllHref = $derived(
-		selected
+		selected && selected.hasMore !== false
 			? localizeHref(galleryPath(`?inc=${selected.item.type[0]}:${selected.item.granblueId}`))
 			: null
 	)
