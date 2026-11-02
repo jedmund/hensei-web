@@ -26,7 +26,9 @@ const config = {
 	// for more information about preprocessors
 	preprocess: vitePreprocess(),
 	kit: {
-		adapter: adapter(),
+		// Cloudflare compresses responses on the way out, so gzipping and
+		// brotli-ing every asset at build time only slows deploys down
+		adapter: adapter({ precompress: false }),
 		csp,
 		// The origin check runs in hooks.server.ts (src/lib/server/csrf.ts)
 		// instead, so it can exempt Apple's cross-site form_post callback.
