@@ -89,6 +89,16 @@
 		overflow: hidden;
 		background: var(--background);
 
+		// A faint inner edge over the art, so light art still separates from the card
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			border-radius: inherit;
+			box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.02);
+			pointer-events: none;
+		}
+
 		img {
 			display: block;
 			width: 100%;

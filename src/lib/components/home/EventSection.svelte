@@ -18,6 +18,7 @@
 	import HomeCard from '$lib/components/home/HomeCard.svelte'
 	import CardCover from '$lib/components/home/CardCover.svelte'
 	import PinnedCardHeader from '$lib/components/home/PinnedCardHeader.svelte'
+	import EventLinksMenu from '$lib/components/home/EventLinksMenu.svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import { formatDateJST } from '$lib/utils/date'
 	import { countdownLabel, exploreQuery, raidsWithParties } from '$lib/utils/home'
@@ -130,6 +131,9 @@
 			<!-- The cover art names the event, so the title is only for screen readers -->
 			<h3 class="visually-hidden">{title}</h3>
 			<CardCover src={coverUrl}>
+				<div class="links">
+					<EventLinksMenu {event} />
+				</div>
 				{#if event.advantageElement || timing}
 					<div class="overlay">
 						{#if event.advantageElement}
@@ -235,6 +239,18 @@
 		> :global(:first-child) {
 			flex: 1;
 			min-width: 0;
+		}
+	}
+
+	// The event's pages on other sites, in the cover's top right corner
+	.links {
+		position: absolute;
+		top: $unit-2x;
+		right: $unit-2x;
+
+		@media (max-width: 768px) {
+			top: $unit;
+			right: $unit;
 		}
 	}
 
