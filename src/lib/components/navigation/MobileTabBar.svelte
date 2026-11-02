@@ -102,7 +102,7 @@
 	// stop drawing the page under its collapsed toolbar.
 	.tab-bar {
 		position: fixed;
-		// Centred with margins, not a transform. It must not sit inside a
+		// Centered with margins, not a transform. It must not sit inside a
 		// top-fixed container either (see (app)/+layout): iOS Safari moves it
 		// with its toolbar, and either made that movement choppy
 		left: 0;
@@ -128,29 +128,33 @@
 			0 1px 3px rgba(0, 0, 0, 0.08);
 	}
 
-	// Light catching the glass: a sheen from the top, a bright rim along the
-	// top edge and a faint darker one at the bottom
+	// Light catching the glass, from straight above: a sheen fading down from
+	// the top and a bright rim along the top edge
 	.glass {
 		position: absolute;
 		inset: 0;
 		border-radius: inherit;
 		pointer-events: none;
-		background:
-			radial-gradient(120% 90% at 50% -20%, rgba(255, 255, 255, 0.55), transparent 60%),
-			linear-gradient(to bottom, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0) 55%);
+		background: linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.45),
+			rgba(255, 255, 255, 0.12) 45%,
+			rgba(255, 255, 255, 0) 70%
+		);
 		box-shadow:
 			inset 0 1px 0 rgba(255, 255, 255, 0.85),
-			inset 0 -1px 0 rgba(0, 0, 0, 0.06),
 			inset 0 0 0 1px rgba(255, 255, 255, 0.25);
 	}
 
 	:global(html[data-theme='dark']) .glass {
-		background:
-			radial-gradient(120% 90% at 50% -20%, rgba(255, 255, 255, 0.16), transparent 60%),
-			linear-gradient(to bottom, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0) 55%);
+		background: linear-gradient(
+			180deg,
+			rgba(255, 255, 255, 0.14),
+			rgba(255, 255, 255, 0.04) 45%,
+			rgba(255, 255, 255, 0) 70%
+		);
 		box-shadow:
 			inset 0 1px 0 rgba(255, 255, 255, 0.22),
-			inset 0 -1px 0 rgba(0, 0, 0, 0.35),
 			inset 0 0 0 1px rgba(255, 255, 255, 0.06);
 	}
 
@@ -176,16 +180,29 @@
 			background-color effects.$duration-quick ease,
 			color effects.$duration-quick ease;
 
+		// The selected tab is a lens tinted with the user's element (neutral
+		// when signed out), and the icon takes the element's text color
 		&.selected {
-			background: var(--null-nav-selected-bg);
-			color: var(--null-nav-selected-text);
+			background: color-mix(in srgb, var(--text-primary) 6%, transparent);
+			box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42);
+			border: 0.5px solid rgba(0, 0, 0, 0.08);
+			color: var(--text-primary);
 		}
+	}
+
+	:global(html[data-theme='dark']) .tab.selected {
+		background: rgba(255, 255, 255, 0.12);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
 	}
 
 	@each $el in $elements {
 		.tab-bar.element-#{$el} .tab.selected {
-			background: var(--#{$el}-nav-selected-bg);
-			color: var(--#{$el}-nav-selected-text);
+			background: color-mix(in srgb, var(--#{$el}-button-bg) 10%, transparent);
+			color: var(--#{$el}-ghost-text);
+		}
+
+		:global(html[data-theme='dark']) .tab-bar.element-#{$el} .tab.selected {
+			background: color-mix(in srgb, var(--#{$el}-button-bg) 20%, transparent);
 		}
 	}
 
