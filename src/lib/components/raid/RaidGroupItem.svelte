@@ -19,12 +19,13 @@
 
 	let { group, selectedRaidId, onSelect }: Props = $props()
 
-	// Sort raids by element, then by level as tiebreaker
+	// Sort raids by element, then by level as tiebreaker. Raids without a level
+	// go last: they're the open-ended ones, like Exo Crucible's Zenith Domain
 	const sortedRaids = $derived(
 		[...group.raids].sort((a, b) => {
 			const elementDiff = (a.element ?? 0) - (b.element ?? 0)
 			if (elementDiff !== 0) return elementDiff
-			return (a.level ?? 0) - (b.level ?? 0)
+			return (a.level ?? Number.MAX_SAFE_INTEGER) - (b.level ?? Number.MAX_SAFE_INTEGER)
 		})
 	)
 
