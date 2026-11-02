@@ -110,7 +110,9 @@
 				<div class="section">
 					{#key selectedEvent.entry.event.id}
 						<EventSection
-							sectionTitle={m.home_events()}
+							sectionTitle={selectedEvent.variant === 'current'
+								? m.home_events_current()
+								: m.home_events_upcoming()}
 							event={selectedEvent.entry.event}
 							raids={selectedEvent.entry.raids}
 							variant={selectedEvent.variant}
