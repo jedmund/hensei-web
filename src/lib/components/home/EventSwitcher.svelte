@@ -14,6 +14,8 @@
 		/** Accessible name, e.g. the event's name */
 		label: string
 		imageUrl: string | null
+		/** Tried when `imageUrl` fails to load */
+		fallbackUrl?: string | null
 		/** Show `label` in a tooltip on hover */
 		tooltip?: boolean
 		/** Characters: tags shown under the name in the tooltip */
@@ -74,7 +76,11 @@
 				aria-pressed={item.id === selected}
 				onclick={() => onSelect(item.id)}
 			>
-				<EventThumbnailImage imageUrl={item.imageUrl} label={item.label} />
+				<EventThumbnailImage
+					imageUrl={item.imageUrl}
+					fallbackUrl={item.fallbackUrl}
+					label={item.label}
+				/>
 			</button>
 		{/snippet}
 		{#if item.tooltip}

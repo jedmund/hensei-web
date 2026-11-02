@@ -46,7 +46,14 @@ export function shownInDetail<Row, Full>(field: Field<Row, Full>, values: Values
 	if (field.detail === false) return false
 	const { when = field.when, hideWhenEmpty } = detailOptions(field)
 	if (when && !when(values)) return false
-	return !(hideWhenEmpty && isEmpty(values[field.key]))
+	if (!hideWhenEmpty) return true
+	const value = values[field.key]
+	// A localized pair is empty when both its sides are
+	const empty =
+		field.kind === 'localized' && value && typeof value === 'object'
+			? Object.values(value).every(isEmpty)
+			: isEmpty(value)
+	return !empty
 }
 
 export function detailLayout<Row, Full>(

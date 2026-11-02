@@ -15,6 +15,8 @@ import type { EventPayload, GameEvent, ListEventsParams } from '$lib/types/api/e
 
 const BASE = '/events'
 
+/** Which banner an upload replaces: the English art, or the Japanese art */
+export type BannerLanguage = 'en' | 'ja'
 export class EventAdapter extends BaseAdapter {
 	async listEvents(params: ListEventsParams = {}, options?: RequestOptions): Promise<GameEvent[]> {
 		const query: Record<string, string> = {}
@@ -59,10 +61,17 @@ export class EventAdapter extends BaseAdapter {
 	}
 
 	/** Uploads banner art as the multipart field `image` */
-	async uploadImage(id: string, file: Blob, filename?: string): Promise<GameEvent> {
+	/** Uploads the banner; `language: 'ja'` sets the Japanese one */
+	async uploadImage(
+		id: string,
+		file: Blob,
+		filename?: string,
+		language: BannerLanguage = 'en'
+	): Promise<GameEvent> {
 		const form = new FormData()
 		if (filename) form.append('image', file, filename)
 		else form.append('image', file)
+		if (language === 'ja') form.append('language', 'ja')
 		return this.request<GameEvent>(`${BASE}/${id}/upload_image`, {
 			method: 'POST',
 			body: form

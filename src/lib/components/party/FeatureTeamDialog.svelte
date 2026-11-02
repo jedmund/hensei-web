@@ -18,7 +18,7 @@
 	import { useCreateStaffPick, useDeleteStaffPick } from '$lib/api/mutations/event.mutations'
 	import { featuredPartyAdapter } from '$lib/api/adapters/featuredParty.adapter'
 	import { buildFeatureRows, nextPickPosition, type FeatureRow } from '$lib/utils/featurePicks'
-	import { countdownLabel, eventThumbnailUrl } from '$lib/utils/home'
+	import { countdownLabel, eventBanner, eventThumbnailUrl } from '$lib/utils/home'
 	import { getElementLabel } from '$lib/utils/element'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { localizedName } from '$lib/utils/locale'
@@ -225,6 +225,7 @@
 								{:else}
 									<EventThumbnailImage
 										imageUrl={row.event ? eventThumbnailUrl(row.event) : null}
+										fallbackUrl={row.event ? eventBanner(row.event).fallback : null}
 										label={rowTitle(row)}
 									/>
 								{/if}

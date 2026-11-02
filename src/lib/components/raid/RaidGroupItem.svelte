@@ -9,6 +9,7 @@
 	import { getRaidImage } from '$lib/utils/images/raids'
 	import Icon from '$lib/components/Icon.svelte'
 	import { localizedName } from '$lib/utils/locale'
+	import { raidShortName } from '$lib/utils/raidName'
 
 	interface Props {
 		group: RaidGroupFull
@@ -27,8 +28,9 @@
 		})
 	)
 
+	// Listed under the group's heading, so a short name is enough ("Lv200")
 	function getRaidName(raid: RaidFull): string {
-		return localizedName(raid.name)
+		return raidShortName(raid)
 	}
 
 	function getGroupName(group: RaidGroupFull): string {

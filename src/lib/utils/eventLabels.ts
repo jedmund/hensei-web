@@ -13,14 +13,21 @@ const KIND_LABELS: Record<EventKind, () => string> = {
 	dread_barrage: m.event_kind_dread_barrage,
 	farming: m.event_kind_farming,
 	alchemy: m.event_kind_alchemy,
-	other: m.event_kind_other
+	other: m.event_kind_other,
+	exo_crucible: m.event_kind_exo_crucible
 }
 
 const SERIES_LABELS: Record<EventSeries, () => string> = {
 	unite_and_fight: m.event_kind_unite_and_fight,
 	dread_barrage: m.event_kind_dread_barrage,
 	rise_of_the_beasts: m.event_series_rise_of_the_beasts,
-	records_of_the_ten: m.event_series_records_of_the_ten
+	records_of_the_ten: m.event_series_records_of_the_ten,
+	exo_ifrit_crucible: m.event_series_exo_ifrit_crucible,
+	exo_cocytus_crucible: m.event_series_exo_cocytus_crucible,
+	exo_vohu_manah_crucible: m.event_series_exo_vohu_manah_crucible,
+	exo_sagittarius_crucible: m.event_series_exo_sagittarius_crucible,
+	exo_corow_crucible: m.event_series_exo_corow_crucible,
+	exo_diablo_crucible: m.event_series_exo_diablo_crucible
 }
 
 /** Series options for a select, with "none" first */

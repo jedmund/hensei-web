@@ -12,7 +12,8 @@ export const EVENT_KINDS = [
 	'dread_barrage',
 	'farming',
 	'alchemy',
-	'other'
+	'other',
+	'exo_crucible'
 ] as const
 
 /** Recurring events that share one banner across runs */
@@ -20,12 +21,22 @@ export const EVENT_SERIES = [
 	'unite_and_fight',
 	'dread_barrage',
 	'rise_of_the_beasts',
-	'records_of_the_ten'
+	'records_of_the_ten',
+	'exo_ifrit_crucible',
+	'exo_cocytus_crucible',
+	'exo_vohu_manah_crucible',
+	'exo_sagittarius_crucible',
+	'exo_corow_crucible',
+	'exo_diablo_crucible'
 ] as const
 export type EventSeries = (typeof EVENT_SERIES)[number]
 
 /** Kinds whose boss element must be set */
-export const ELEMENT_REQUIRED_KINDS: readonly EventKind[] = ['unite_and_fight', 'dread_barrage']
+export const ELEMENT_REQUIRED_KINDS: readonly EventKind[] = [
+	'unite_and_fight',
+	'dread_barrage',
+	'exo_crucible'
+]
 export type EventKind = (typeof EVENT_KINDS)[number]
 
 export const EVENT_STATUSES = ['draft', 'approved', 'hidden'] as const
@@ -49,6 +60,11 @@ export interface GameEvent {
 	endsAt: string
 	status: EventStatus
 	imageUrl: string | null
+	/**
+	 * The Japanese banner: the event's own, else its series' (which may not
+	 * exist yet, so fall back to imageUrl when it doesn't load)
+	 */
+	imageUrlJa?: string | null
 	/** External pages: a gbf.wiki title, a GameWith article id, a Kamigame path under /グラブル/イベント/ */
 	wikiEn?: string | null
 	gamewith?: string | null

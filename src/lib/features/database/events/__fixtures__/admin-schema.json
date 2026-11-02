@@ -118,13 +118,20 @@
 			"dread_barrage": 4,
 			"farming": 5,
 			"alchemy": 6,
-			"other": 7
+			"other": 7,
+			"exo_crucible": 8
 		},
 		"series": {
 			"unite_and_fight": "unite_and_fight",
 			"dread_barrage": "dread_barrage",
 			"rise_of_the_beasts": "rise_of_the_beasts",
-			"records_of_the_ten": "records_of_the_ten"
+			"records_of_the_ten": "records_of_the_ten",
+			"exo_ifrit_crucible": "exo_ifrit_crucible",
+			"exo_cocytus_crucible": "exo_cocytus_crucible",
+			"exo_vohu_manah_crucible": "exo_vohu_manah_crucible",
+			"exo_sagittarius_crucible": "exo_sagittarius_crucible",
+			"exo_corow_crucible": "exo_corow_crucible",
+			"exo_diablo_crucible": "exo_diablo_crucible"
 		},
 		"status": {
 			"draft": 0,
@@ -153,7 +160,8 @@
 					"dread_barrage",
 					"farming",
 					"alchemy",
-					"other"
+					"other",
+					"exo_crucible"
 				]
 			}
 		],
@@ -222,7 +230,18 @@
 		"series": [
 			{
 				"kind": "inclusion",
-				"in": ["unite_and_fight", "dread_barrage", "rise_of_the_beasts", "records_of_the_ten"],
+				"in": [
+					"unite_and_fight",
+					"dread_barrage",
+					"rise_of_the_beasts",
+					"records_of_the_ten",
+					"exo_ifrit_crucible",
+					"exo_cocytus_crucible",
+					"exo_vohu_manah_crucible",
+					"exo_sagittarius_crucible",
+					"exo_corow_crucible",
+					"exo_diablo_crucible"
+				],
 				"allow_nil": true
 			}
 		],

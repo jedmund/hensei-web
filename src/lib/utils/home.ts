@@ -7,6 +7,7 @@ import type { HomeRaidSection } from '$lib/types/api/home'
 import { ELEMENT_TO_PARAM } from '$lib/utils/filterParams'
 import { getHostedImageUrl } from '$lib/utils/images/core'
 import { getRaidImage } from '$lib/utils/images/raids'
+import { appLocale } from '$lib/utils/locale'
 import * as m from '$lib/paraglide/messages'
 
 const MINUTE_MS = 60 * 1000
@@ -44,16 +45,32 @@ export function countdownLabel(target: string, now: number = Date.now()): string
 }
 
 /**
- * An event's thumbnail: its header image (the API falls back to its series'
- * image), else the art of its first raid. `raidSlug` overrides which raid.
- * Show the event's name when this is null or the image fails to load.
+ * An event's banner in the reader's language. Japanese readers get the
+ * Japanese banner (the English art has English text baked in) with the
+ * English one as `fallback`, since a series' Japanese banner may not exist
+ * yet; everyone else gets the English one and no fallback.
+ */
+export function eventBanner(event: Pick<GameEvent, 'imageUrl' | 'imageUrlJa'>): {
+	src: string | null
+	fallback: string | null
+} {
+	const english = getHostedImageUrl(event.imageUrl)
+	const japanese = appLocale() === 'ja' ? getHostedImageUrl(event.imageUrlJa) : null
+	return japanese ? { src: japanese, fallback: english } : { src: english, fallback: null }
+}
+
+/**
+ * An event's thumbnail: its banner in the reader's language (the API falls
+ * back to its series' banner), else the art of its first raid. `raidSlug`
+ * overrides which raid. Show the event's name when this is null or the image
+ * fails to load; `eventBanner(event).fallback` is the image to try first.
  */
 export function eventThumbnailUrl(
-	event: Pick<GameEvent, 'imageUrl' | 'raids'>,
+	event: Pick<GameEvent, 'imageUrl' | 'imageUrlJa' | 'raids'>,
 	raidSlug?: string | undefined
 ): string | null {
 	const slug = raidSlug ?? event.raids?.[0]?.slug
-	return getHostedImageUrl(event.imageUrl) ?? (slug ? getRaidImage(slug, 'thumbnail') : null)
+	return eventBanner(event).src ?? (slug ? getRaidImage(slug, 'thumbnail') : null)
 }
 
 /**
