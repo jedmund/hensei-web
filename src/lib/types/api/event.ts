@@ -49,6 +49,10 @@ export interface GameEvent {
 	endsAt: string
 	status: EventStatus
 	imageUrl: string | null
+	/** External pages: a gbf.wiki title, a GameWith article id, a Kamigame path under /グラブル/イベント/ */
+	wikiEn?: string | null
+	gamewith?: string | null
+	kamigame?: string | null
 	raids: RaidFull[]
 	// Editor-only fields
 	eventNumber?: number | null

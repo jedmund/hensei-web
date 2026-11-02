@@ -88,7 +88,13 @@ function expectedInfo(name: keyof typeof baseline): string[] {
 	const info = [...baseline[name].info]
 	const stage = info.indexOf('Maximum Transcendence Stage')
 	if (stage >= 0) info[stage + 1] = `Stage ${info[stage + 1]}`
-	return info
+	return linksAsNA(info)
+}
+
+/** Empty links read "N/A" now (the hand-written detail showed a dash) */
+function linksAsNA(info: string[]): string[] {
+	const links = new Set(['Wiki (EN)', 'Wiki (JP)', 'Gamewith', 'GameWith', 'Kamigame'])
+	return info.map((line, i) => (line === '—' && links.has(info[i - 1] ?? '') ? 'N/A' : line))
 }
 
 beforeEach(() => {

@@ -103,9 +103,18 @@ function legacyPayload(form: ReturnType<typeof legacyForm>) {
 	}
 }
 
-/** GBF-143: a blank Japanese name sends null (the old form sent '') */
+/**
+ * GBF-143: a blank Japanese name sends null (the old form sent ''). The links
+ * are new: blank, they send null.
+ */
 function decided(legacy: Record<string, unknown>) {
-	return { ...legacy, name_jp: legacy.name_jp === '' ? null : legacy.name_jp }
+	return {
+		...legacy,
+		name_jp: legacy.name_jp === '' ? null : legacy.name_jp,
+		wiki_en: null,
+		gamewith: null,
+		kamigame: null
+	}
 }
 
 describe('events resource: payload', () => {

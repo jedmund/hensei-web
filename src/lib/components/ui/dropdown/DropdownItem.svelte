@@ -5,18 +5,25 @@
 	type Props = {
 		children: Snippet
 		href?: string
+		/** Opens `href` in a new tab (another site) */
+		external?: boolean
 		class?: string
 		/** Called when the item is chosen (click or keyboard) */
 		onSelect?: () => void
 	}
 
-	const { children, href, class: className = '', onSelect }: Props = $props()
+	const { children, href, external = false, class: className = '', onSelect }: Props = $props()
 </script>
 
 {#if href}
 	<DropdownMenu.Item class="dropdown-item {className}">
 		{#snippet child({ props })}
-			<a {...props} {href}>
+			<a
+				{...props}
+				{href}
+				target={external ? '_blank' : undefined}
+				rel={external ? 'noopener noreferrer' : undefined}
+			>
 				{@render children()}
 			</a>
 		{/snippet}
@@ -82,8 +89,9 @@
 		}
 	}
 
-	// Separate global selector for link dropdown items
-	:global(.dropdown-item a) {
+	// Link items: a link inside the item, or the item itself rendered as a link (`href`)
+	:global(.dropdown-item a),
+	:global(a.dropdown-item) {
 		@include dropdown-item-base;
 
 		&:link,

@@ -13,10 +13,13 @@ const KAMIGAME_BASE = 'https://kamigame.jp'
 const KAMIGAME_PATHS = {
 	character: '/グラブル/キャラクター',
 	weapon: '/グラブル/武器',
-	summon: '/グラブル/召喚石'
+	summon: '/グラブル/召喚石',
+	event: '/グラブル/イベント'
 } as const
 
 export type EntityType = 'character' | 'weapon' | 'summon'
+/** What a Kamigame link can point at: units, and events */
+export type KamigameType = EntityType | 'event'
 
 /**
  * Build English wiki URL from page name
@@ -92,15 +95,23 @@ export function buildGamewithUrl(articleId: string | number | undefined | null):
  *
  * Summon input: "SSR/アグニス"
  * Summon output: "https://kamigame.jp/グラブル/召喚石/SSR/アグニス.html"
+ *
+ * Event input: "天上劇団もぐら座/index" (the path under イベント, without .html)
+ * Event output: "https://kamigame.jp/グラブル/イベント/天上劇団もぐら座/index.html"
  */
 export function buildKamigameUrl(
 	slug: string | undefined | null,
-	entityType: EntityType,
+	entityType: KamigameType,
 	rarity?: number
 ): string | null {
 	if (!slug?.trim()) return null
 
 	const basePath = KAMIGAME_PATHS[entityType]
+
+	if (entityType === 'event') {
+		// Event pages sit in folders (<event>/index.html), so the slashes stay
+		return `${KAMIGAME_BASE}${encodeURIPath(basePath)}/${encodeURIPath(slug.trim())}.html`
+	}
 
 	if (entityType === 'weapon' && rarity !== undefined) {
 		// Weapons: rarity is a separate path segment

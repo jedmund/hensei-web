@@ -87,7 +87,13 @@ function render(name: keyof typeof detailRecords, props: { role?: number; tab?: 
  */
 function expectedInfo(name: keyof typeof baseline): string[] {
 	const info = baseline[name].info
-	return info.slice(0, info.indexOf('Call Effect'))
+	return linksAsNA(info.slice(0, info.indexOf('Call Effect')))
+}
+
+/** Empty links read "N/A" now (the hand-written detail showed a dash) */
+function linksAsNA(info: string[]): string[] {
+	const links = new Set(['Wiki (EN)', 'Wiki (JP)', 'Gamewith', 'GameWith', 'Kamigame'])
+	return info.map((line, i) => (line === '—' && links.has(info[i - 1] ?? '') ? 'N/A' : line))
 }
 
 afterEach(() => {
