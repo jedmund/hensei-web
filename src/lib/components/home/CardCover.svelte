@@ -16,27 +16,46 @@
 		children?: Snippet
 		placeholder?: Snippet
 		frame?: ElementKeyResult
-		/** Banner pixels (of 300) cropped off the top and the bottom each */
+		/**
+		 * Art pixels cropped off the top and the bottom each. The frame then
+		 * takes the art's own width-to-height ratio minus those rows, so only
+		 * the top and bottom are cut.
+		 */
 		trim?: number
 	}
 
 	let { src, children, placeholder, frame, trim = 0 }: Props = $props()
 
 	let failed = $state(false)
+	// The art's natural size, once loaded (battle banners are 588×256)
+	let natural = $state({ width: 588, height: 256 })
 	$effect(() => {
 		// A new image gets a fresh chance to load
 		void src
 		failed = false
 	})
+
+	const aspectRatio = $derived(
+		trim ? `${natural.width} / ${Math.max(natural.height - trim * 2, 1)}` : undefined
+	)
 </script>
 
 <div
 	class="cover"
-	style:aspect-ratio={trim ? `640 / ${300 - trim * 2}` : undefined}
+	style:aspect-ratio={aspectRatio}
 	style:background={frame && src && !failed ? `var(--${frame}-cover-bg)` : undefined}
 >
 	{#if src && !failed}
-		<img {src} alt="" loading="lazy" onerror={() => (failed = true)} />
+		<img
+			{src}
+			alt=""
+			loading="lazy"
+			onload={(e) => {
+				const img = e.currentTarget as HTMLImageElement
+				natural = { width: img.naturalWidth, height: img.naturalHeight }
+			}}
+			onerror={() => (failed = true)}
+		/>
 	{:else}
 		{@render placeholder?.()}
 	{/if}
