@@ -93,13 +93,18 @@
 
 	$elements: wind, fire, water, earth, dark, light;
 
-	// A floating glass capsule above the bottom edge (and Safari's own
+	// A floating capsule above the bottom edge (and Safari's own
 	// toolbar), icons only; the selected tab gets a pill behind it. It always
 	// stays put: moving it to the bottom edge (or past it) makes iOS Safari
 	// stop drawing the page under its collapsed toolbar.
 	.tab-bar {
 		position: fixed;
-		left: 50%;
+		// Centred with margins and no transform or backdrop-filter: iOS Safari
+		// moves the bar as its toolbar collapses, and a blurred (or transformed)
+		// fixed layer makes that movement choppy
+		left: 0;
+		right: 0;
+		margin-inline: auto;
 		bottom: calc(var(--tab-bar-gap) + env(safe-area-inset-bottom, 0px));
 		z-index: effects.$z-sticky;
 		display: flex;
@@ -111,14 +116,11 @@
 		height: var(--tab-bar-pill);
 		padding: spacing.$unit-half;
 		border-radius: layout.$full-corner;
-		background: color-mix(in srgb, var(--menu-bg) 72%, transparent);
-		backdrop-filter: blur(20px) saturate(180%);
-		-webkit-backdrop-filter: blur(20px) saturate(180%);
+		background: color-mix(in srgb, var(--menu-bg) 96%, transparent);
 		border: 1px solid color-mix(in srgb, var(--text-primary) 10%, transparent);
 		box-shadow:
 			0 8px 24px rgba(0, 0, 0, 0.12),
 			0 1px 3px rgba(0, 0, 0, 0.08);
-		transform: translateX(-50%);
 	}
 
 	.tab {
