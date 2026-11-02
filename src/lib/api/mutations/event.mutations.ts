@@ -8,7 +8,7 @@
  */
 
 import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svelte-query'
-import { eventAdapter } from '$lib/api/adapters/event.adapter'
+import { eventAdapter, type BannerLanguage } from '$lib/api/adapters/event.adapter'
 import { featuredPartyAdapter } from '$lib/api/adapters/featuredParty.adapter'
 import { eventKeys } from '$lib/api/queries/event.queries'
 import { homeKeys } from '$lib/api/queries/home.queries'
@@ -21,8 +21,8 @@ function invalidateEvents(queryClient: QueryClient) {
 
 export function uploadEventImageOptions(queryClient: QueryClient) {
 	return {
-		mutationFn: ({ id, file }: { id: string; file: File }) =>
-			eventAdapter.uploadImage(id, file, file.name),
+		mutationFn: ({ id, file, language }: { id: string; file: File; language?: BannerLanguage }) =>
+			eventAdapter.uploadImage(id, file, file.name, language),
 		onSuccess: () => invalidateEvents(queryClient)
 	}
 }

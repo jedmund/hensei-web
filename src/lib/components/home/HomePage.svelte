@@ -17,7 +17,7 @@
 	import NewBattlesSection from '$lib/components/home/NewBattlesSection.svelte'
 	import HomeCard from '$lib/components/home/HomeCard.svelte'
 	import { homeQueries } from '$lib/api/queries/home.queries'
-	import { eventThumbnailUrl, exploreQuery } from '$lib/utils/home'
+	import { eventBanner, eventThumbnailUrl, exploreQuery } from '$lib/utils/home'
 	import { GALLERY_PATH, galleryPath } from '$lib/utils/browseRoutes'
 	import { localizedName } from '$lib/utils/locale'
 	import { localizeHref } from '$lib/paraglide/runtime'
@@ -60,7 +60,8 @@
 			return {
 				id: entry.event.id,
 				label: localizedName(entry.event.name),
-				imageUrl: eventThumbnailUrl(entry.event, slug)
+				imageUrl: eventThumbnailUrl(entry.event, slug),
+				fallbackUrl: eventBanner(entry.event).fallback
 			}
 		})
 	)

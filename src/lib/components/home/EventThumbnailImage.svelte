@@ -6,16 +6,21 @@
 	 */
 	interface Props {
 		imageUrl: string | null
+		/** Tried when `imageUrl` fails, e.g. the English banner behind a Japanese one */
+		fallbackUrl?: string | null
 		label: string
 	}
 
-	let { imageUrl, label }: Props = $props()
+	let { imageUrl, fallbackUrl = null, label }: Props = $props()
 
-	let failedUrl = $state<string | null>(null)
+	let failed = $state<string[]>([])
+	const shown = $derived(
+		[imageUrl, fallbackUrl].find((url) => url && !failed.includes(url)) ?? null
+	)
 </script>
 
-{#if imageUrl && failedUrl !== imageUrl}
-	<img src={imageUrl} alt="" loading="lazy" onerror={() => (failedUrl = imageUrl)} />
+{#if shown}
+	<img src={shown} alt="" loading="lazy" onerror={() => (failed = [...failed, shown])} />
 {:else}
 	<span class="name">{label}</span>
 {/if}

@@ -59,13 +59,17 @@
 		onSelect(file)
 	}
 
-	const shown = $derived(preview ?? getHostedImageUrl(currentUrl))
+	// An image that doesn't load (e.g. a series' Japanese banner that hasn't
+	// been made yet) leaves the empty box, as if there were none
+	let failedUrl = $state<string | null>(null)
+	const candidate = $derived(preview ?? getHostedImageUrl(currentUrl))
+	const shown = $derived(candidate && candidate !== failedUrl ? candidate : null)
 </script>
 
 <div class="image-field">
 	<div class="preview {variant}">
 		{#if shown}
-			<img src={shown} alt="" />
+			<img src={shown} alt="" onerror={() => (failedUrl = shown)} />
 		{/if}
 	</div>
 	<div class="actions">

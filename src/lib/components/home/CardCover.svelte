@@ -12,6 +12,8 @@
 
 	interface Props {
 		src: string | null | undefined
+		/** Tried when `src` fails to load, e.g. the English banner behind a Japanese one */
+		fallback?: string | null
 		/** Shown over the art, e.g. pills along the bottom */
 		children?: Snippet
 		placeholder?: Snippet
@@ -23,15 +25,17 @@
 		trim?: { x: number; y: number }
 	}
 
-	let { src, children, placeholder, frame, trim }: Props = $props()
+	let { src, fallback = null, children, placeholder, frame, trim }: Props = $props()
 
-	let failed = $state(false)
+	// Sources that failed to load; the first one that hasn't is shown
+	let failedSources = $state<string[]>([])
+	const shown = $derived([src, fallback].find((url) => url && !failedSources.includes(url)) ?? null)
 	// The art's natural size, once loaded (battle banners are 588×256)
 	let natural = $state({ width: 588, height: 256 })
 	$effect(() => {
 		// A new image gets a fresh chance to load
 		void src
-		failed = false
+		failedSources = []
 	})
 
 	// The art's visible size, and how far it overhangs the frame on each edge
@@ -52,11 +56,11 @@
 <div
 	class="cover"
 	style:aspect-ratio={crop?.aspectRatio}
-	style:background={frame && src && !failed ? `var(--${frame}-cover-bg)` : undefined}
+	style:background={frame && shown ? `var(--${frame}-cover-bg)` : undefined}
 >
-	{#if src && !failed}
+	{#if shown}
 		<img
-			{src}
+			src={shown}
 			alt=""
 			loading="lazy"
 			class:trimmed={crop}
@@ -68,7 +72,7 @@
 				const img = e.currentTarget as HTMLImageElement
 				natural = { width: img.naturalWidth, height: img.naturalHeight }
 			}}
-			onerror={() => (failed = true)}
+			onerror={() => (failedSources = [...failedSources, shown])}
 		/>
 	{:else}
 		{@render placeholder?.()}
