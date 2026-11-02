@@ -43,6 +43,10 @@
 		class?: string
 		/** Extra width (in px) added to the dropdown content beyond the trigger width */
 		contentWidthOffset?: number
+		/** Which edge of the trigger the dropdown lines up with */
+		align?: 'start' | 'center' | 'end'
+		/** Let the dropdown grow past the trigger so labels stay on one line */
+		fitContent?: boolean
 	}
 
 	let {
@@ -60,7 +64,9 @@
 		required = false,
 		portal = false,
 		class: className = '',
-		contentWidthOffset
+		contentWidthOffset,
+		align = 'start',
+		fitContent = false
 	}: Props = $props()
 
 	// Convert options to string values for Bits UI (which expects strings internally)
@@ -134,7 +140,8 @@
 
 {#snippet content()}
 	<SelectPrimitive.Content
-		class="content"
+		class={fitContent ? 'content fit' : 'content'}
+		{align}
 		style={contentWidthOffset ? `--content-width-offset: ${contentWidthOffset}px` : undefined}
 	>
 		<SelectPrimitive.Viewport>
@@ -397,6 +404,14 @@
 				opacity: 1;
 				transform: translateY(0);
 			}
+		}
+	}
+
+	:global([data-select-content].content.fit) {
+		max-width: none;
+
+		:global([data-select-item].item .text) {
+			white-space: nowrap;
 		}
 	}
 
