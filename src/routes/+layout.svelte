@@ -49,6 +49,14 @@
 </svelte:head>
 
 <QueryClientProvider client={data.queryClient}>
-	<Toaster position="bottom-right" richColors toastOptions={{ duration: 4000 }} />
+	<!-- On phones, toasts sit above the tab bar (see MobileTabBar) -->
+	<Toaster
+		position="bottom-right"
+		richColors
+		toastOptions={{ duration: 4000 }}
+		mobileOffset={{
+			bottom: 'calc(var(--tab-bar-height, 56px) + env(safe-area-inset-bottom, 0px) + 16px)'
+		}}
+	/>
 	{@render children?.()}
 </QueryClientProvider>

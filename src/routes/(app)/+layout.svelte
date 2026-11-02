@@ -18,6 +18,8 @@
 	import { hasEditKeys, getAllEditKeys } from '$lib/utils/editKeys'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import type { LayoutData } from './$types'
+	import { page } from '$app/state'
+	import { isDatabasePath, localizeNavHrefs } from '$lib/components/navigation/navLinks'
 
 	const { data, children } = $props<{
 		data: LayoutData & { [key: string]: unknown }
@@ -58,6 +60,11 @@
 
 	// Mobile detection
 	const isMobile = mobileQuery()
+
+	// Phones get the bottom tab bar instead of a top bar, except in the Database
+	const hasTabBar = $derived(
+		isMobile.current && !isDatabasePath(page.url.pathname, localizeNavHrefs())
+	)
 
 	// Bahamut mode bar affects layout positioning
 	const isBahamut = $derived(data?.currentUser?.bahamut === true)
@@ -105,11 +112,15 @@
 <svelte:window onbeforeunload={handleBeforeUnload} onscroll={updateScrolled} />
 
 {#if dev}
-	<SvelteQueryDevtools buttonPosition="bottom-left" />
+	<SvelteQueryDevtools buttonPosition="top-right" />
 {/if}
 <Tooltip.Provider>
 	<div class="app-container" class:sidebar-open={sidebar.isOpen}>
-		<div class="main-pane" style:--bahamut-offset={isBahamut ? '16px' : '0px'}>
+		<div
+			class="main-pane"
+			class:has-tab-bar={hasTabBar}
+			style:--bahamut-offset={isBahamut ? '16px' : '0px'}
+		>
 			<div class="nav-blur-background" class:scrolled={isScrolled}></div>
 			<div class="main-navigation">
 				{#if isMobile.current}
@@ -190,6 +201,8 @@
 
 	:root {
 		--sidebar-width: 420px;
+		// The phone tab bar, without the home-indicator inset (see MobileTabBar)
+		--tab-bar-height: 56px;
 	}
 
 	// The document scrolls, not an inner container (see the script)
@@ -305,7 +318,35 @@
 	@media (max-width: 768px) {
 		.app-container {
 			.main-pane {
-				--content-top: calc(60px + var(--bahamut-offset, 0px));
+				--content-top: calc(60px + env(safe-area-inset-top, 0px) + var(--bahamut-offset, 0px));
+
+				// The Database's top bar clears the status bar when opened from the
+				// Home Screen (the inset is 0 in Safari itself)
+				.main-navigation {
+					padding-top: env(safe-area-inset-top, 0px);
+				}
+
+				// No top bar: content starts below the status bar, and clears the
+				// tab bar at the bottom
+				&.has-tab-bar {
+					--content-top: calc(
+						env(safe-area-inset-top, 0px) + var(--bahamut-offset, 0px) + #{spacing.$unit-2x}
+					);
+
+					.main-content {
+						padding-bottom: max(
+							20vh,
+							calc(var(--tab-bar-height) + env(safe-area-inset-bottom, 0px) + #{spacing.$unit-4x})
+						);
+					}
+
+					// No top bar to sit behind. (In Safari the page starts below the
+					// status bar and the safe-area insets are 0; they only apply when the
+					// site is opened from the Home Screen.)
+					.nav-blur-background {
+						display: none;
+					}
+				}
 			}
 
 			// Overlay backdrop when sidebar is open on mobile
