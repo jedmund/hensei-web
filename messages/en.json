@@ -2084,6 +2084,7 @@
 	"gacha_remove": "Remove",
 	"gacha_show_rateups": "Show rate-ups",
 	"gacha_hide_rateups": "Hide rate-ups",
+	"gacha_rateups_count": "Rate-ups ({count})",
 	"gacha_run": "Draw",
 	"gacha_play_animation": "Play animation",
 	"gacha_animation": "Draw animation",

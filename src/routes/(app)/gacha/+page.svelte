@@ -63,6 +63,7 @@
 				variant="ghost"
 				size="small"
 				iconOnly
+				class="collapse-toggle"
 				icon={gacha.collapsed ? 'chevron-down' : 'chevron-up'}
 				aria-label={gacha.collapsed ? m.gacha_show_rateups() : m.gacha_hide_rateups()}
 				aria-expanded={!gacha.collapsed}
@@ -147,29 +148,6 @@
 					{/if}
 				</div>
 			{/if}
-
-			{#if !gacha.collapsed}
-				<div id="gacha-rateups" transition:slide={{ duration: 150 }}>
-					{#if gacha.fixedRates}
-						<GachaRateups ssrs={gacha.ssrs} rateups={gacha.bannerRateups} readonly>
-							{#snippet aside()}
-								{#if gacha.bannerLive}
-									<Tooltip content={m.gacha_banner_ends({ date: gacha.bannerEnds })}>
-										<span class="banner-countdown">
-											{m.gacha_banner_remaining({ time: gacha.bannerCountdown })}
-										</span>
-									</Tooltip>
-								{:else if gacha.banner}
-									<!-- Until the new banner's rates arrive, the last banner's stand in -->
-									<span class="banner-countdown">{m.gacha_banner_expired()}</span>
-								{/if}
-							{/snippet}
-						</GachaRateups>
-					{:else}
-						<GachaRateups ssrs={gacha.ssrs} bind:rateups={gacha.rateups} disabled={gacha.loading} />
-					{/if}
-				</div>
-			{/if}
 		</div>
 
 		{#if gacha.failure}
@@ -177,7 +155,7 @@
 		{/if}
 
 		<div class="actions">
-			{#if gacha.collapsed && gacha.shownRateups.length > 0}
+			{#if gacha.collapsed === true && gacha.shownRateups.length > 0}
 				<ul class="collapsed-rateups" aria-label={m.gacha_rates()}>
 					{#each gacha.shownRateups as rate (rate.identity)}
 						{@const item = gacha.itemFor(rate.identity)}
@@ -206,6 +184,48 @@
 				</Button>
 			</div>
 		</div>
+
+		<!-- On mobile the Draw button comes first; the list waits behind this -->
+		<div class="rateups-toggle">
+			<Button
+				variant="ghost"
+				size="small"
+				icon={gacha.collapsed === false ? 'chevron-up' : 'chevron-down'}
+				iconPosition="right"
+				aria-expanded={gacha.collapsed === false}
+				aria-controls="gacha-rateups"
+				type="button"
+				onclick={() => (gacha.collapsed = gacha.collapsed === false)}
+			>
+				{m.gacha_rateups_count({ count: gacha.shownRateups.length })}
+			</Button>
+		</div>
+		{#if gacha.collapsed !== true}
+			<div
+				id="gacha-rateups"
+				class:unset={gacha.collapsed === undefined}
+				transition:slide={{ duration: 150 }}
+			>
+				{#if gacha.fixedRates}
+					<GachaRateups ssrs={gacha.ssrs} rateups={gacha.bannerRateups} readonly>
+						{#snippet aside()}
+							{#if gacha.bannerLive}
+								<Tooltip content={m.gacha_banner_ends({ date: gacha.bannerEnds })}>
+									<span class="banner-countdown">
+										{m.gacha_banner_remaining({ time: gacha.bannerCountdown })}
+									</span>
+								</Tooltip>
+							{:else if gacha.banner}
+								<!-- Until the new banner's rates arrive, the last banner's stand in -->
+								<span class="banner-countdown">{m.gacha_banner_expired()}</span>
+							{/if}
+						{/snippet}
+					</GachaRateups>
+				{:else}
+					<GachaRateups ssrs={gacha.ssrs} bind:rateups={gacha.rateups} disabled={gacha.loading} />
+				{/if}
+			</div>
+		{/if}
 	</form>
 
 	{#if gacha.animation}
@@ -247,6 +267,7 @@
 	@use '$src/themes/colors' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
+	@use '$src/themes/mixins' as *;
 
 	.gacha-page {
 		max-width: var(--main-max-width);
@@ -353,6 +374,25 @@
 				width: 50px;
 				height: 50px;
 			}
+		}
+	}
+
+	.rateups-toggle {
+		display: none;
+	}
+
+	// Mobile: the Draw button sits right under the fields; the rate-ups, which
+	// can run to dozens of rows, fold behind a toggle until opened. Last, so it
+	// overrides the rules above
+	@include respond-to(tablet) {
+		.card-head :global(.collapse-toggle),
+		.collapsed-rateups,
+		#gacha-rateups.unset {
+			display: none;
+		}
+
+		.rateups-toggle {
+			display: flex;
 		}
 	}
 </style>
