@@ -559,6 +559,10 @@ $border--subtle--dark: $grey-30;
 $border--medium--light: $grey-80;
 $border--medium--dark: $grey-40;
 
+// Barely there: separates art from a background of the same tone
+$border--faint--light: rgba(0, 0, 0, 0.02);
+$border--faint--dark: rgba(255, 255, 255, 0.02);
+
 // Color Definitions: Text
 $text--primary--color--light: $grey-40;
 $text--primary--color--dark: $grey-90;

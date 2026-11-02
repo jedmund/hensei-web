@@ -254,6 +254,7 @@ $cover-element-tones: (
 	// Light - Borders
 	--border-subtle: #{colors.$border--subtle--light};
 	--border-medium: #{colors.$border--medium--light};
+	--border-faint: #{colors.$border--faint--light};
 
 	// Light - Text
 	--text-primary: #{colors.$text--primary--color--light};
@@ -787,6 +788,7 @@ html[data-theme='dark'] {
 	// Dark - Borders
 	--border-subtle: #{colors.$border--subtle--dark};
 	--border-medium: #{colors.$border--medium--dark};
+	--border-faint: #{colors.$border--faint--dark};
 
 	// Dark - Text
 	--text-primary: #{colors.$text--primary--color--dark};
