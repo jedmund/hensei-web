@@ -88,10 +88,19 @@ describe('resourceSections', () => {
 
 	it('nests series and awakenings under Weapons, linking to their own lists', () => {
 		const ids = DATABASE_SECTIONS.map((s) => s.id)
-		expect(ids.slice(0, 4)).toEqual(['characters', 'character-series', 'artifact-skills', 'roles'])
+		expect(ids.slice(0, 4)).toEqual([
+			'characters',
+			'character-series',
+			'artifact-skills',
+			'character-roles'
+		])
+		expect(sectionById('character-roles')).toMatchObject({
+			path: '/database/character-roles',
+			parent: 'characters'
+		})
 		expect(sectionById('character-series')?.path).toBe('/database/character-series')
-		expect(ids.slice(ids.indexOf('roles'), ids.indexOf('summons') + 1)).toEqual([
-			'roles',
+		expect(ids.slice(ids.indexOf('character-roles'), ids.indexOf('summons') + 1)).toEqual([
+			'character-roles',
 			'weapons',
 			'weapon-skills',
 			'weapon-series',

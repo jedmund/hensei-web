@@ -5,6 +5,7 @@
 import { artifactSkillsResource } from '$lib/features/database/artifact-skills/resource'
 import { bulletsResource } from '$lib/features/database/bullets/resource'
 import { awakeningsResource } from '$lib/features/database/awakenings/resource'
+import { characterRolesResource } from '$lib/features/database/character-roles/resource'
 import { characterSeriesResource } from '$lib/features/database/character-series/resource'
 import { charactersResource } from '$lib/features/database/characters/resource'
 import { jobAccessoriesResource } from '$lib/features/database/job-accessories/resource'
@@ -27,6 +28,7 @@ export type AnyResourceDef = ResourceDef<any, any>
 export const RESOURCES: Record<ResourceName, AnyResourceDef> = {
 	weapons: weaponsResource,
 	characters: charactersResource,
+	'character-roles': characterRolesResource,
 	summons: summonsResource,
 	raids: raidsResource,
 	'raid-groups': raidGroupsResource,

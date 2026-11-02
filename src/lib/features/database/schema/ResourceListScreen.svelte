@@ -3,8 +3,7 @@
 	// table belongs to one resource, so it starts over when the route moves to
 	// another
 	import { page } from '$app/state'
-	import * as m from '$lib/paraglide/messages'
-	import PageMeta from '$lib/components/PageMeta.svelte'
+	import ListPageMeta from './ListPageMeta.svelte'
 	import { isResourceName } from './names'
 	import { resourceDef } from './registry'
 	import ResourceTable from './ResourceTable.svelte'
@@ -14,10 +13,7 @@
 	const def = $derived(resourceDef(name)!)
 </script>
 
-<PageMeta
-	title={def.list.pageTitle?.() ?? m.page_title_db_entity({ name: def.list.label() })}
-	description={m.page_desc_home()}
-/>
+<ListPageMeta list={def.list} />
 
 {#if isResourceName(name)}
 	{#key name}

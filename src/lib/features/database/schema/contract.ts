@@ -54,6 +54,14 @@ export function describeContract(def: AnyResourceDef, api: AdminSchema) {
 			expect(used.filter((key) => !sorts.has(key))).toEqual([])
 		})
 
+		if (def.list.ordered) {
+			it('orders by published sorts, starting with the ordered field', () => {
+				const used = def.list.defaultSort.map((spec) => spec.id)
+				expect(used[0]).toBe(def.list.ordered!.field)
+				expect(used.filter((key) => !sorts.has(key))).toEqual([])
+			})
+		}
+
 		it('only requests published fields', () => {
 			const used = [
 				...def.list.baseFields,

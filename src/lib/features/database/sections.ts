@@ -13,6 +13,7 @@ import { ADMIN_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
 import { artifactSkillsSection } from './artifact-skills/section'
 import { awakeningsSection } from './awakenings/section'
 import { bulletsSection } from './bullets/section'
+import { characterRolesSection } from './character-roles/section'
 import { characterSeriesSection } from './character-series/section'
 import { charactersSection } from './characters/section'
 import { eventsSection } from './events/section'
@@ -97,13 +98,7 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 	...resourceSections('characters', charactersSection),
 	...resourceSections('character-series', characterSeriesSection),
 	...resourceSections('artifact-skills', artifactSkillsSection),
-	{
-		id: 'roles',
-		label: () => m.nav_roles(),
-		path: '/database/character-roles',
-		group: 'catalogue',
-		parent: 'characters'
-	},
+	...resourceSections('character-roles', characterRolesSection),
 	...resourceSections('weapons', weaponsSection),
 	...resourceSections('weapon-series', weaponSeriesSection),
 	...resourceSections('awakenings', awakeningsSection),

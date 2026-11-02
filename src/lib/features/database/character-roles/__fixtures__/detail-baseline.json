@@ -1,0 +1,14 @@
+{
+	"full": {
+		"id": "8bbd9870-a997-4ece-adf2-e845b39da9f7",
+		"info": ["Details", "Name (EN)", "Attacker", "Name (JP)", "アタッカー", "Sort order", "1"],
+		"header": ["Attacker"],
+		"icon": "/images/grid_character_roles/8bbd9870-a997-4ece-adf2-e845b39da9f7.png?v=1761955200"
+	},
+	"empty": {
+		"id": "85518f3e-ee24-4ba6-bc86-9b9bcf82eb0e",
+		"info": ["Details", "Name (EN)", "Healer", "Name (JP)", "—", "Sort order", "5"],
+		"header": ["Healer"],
+		"icon": null
+	}
+}

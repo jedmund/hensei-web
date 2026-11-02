@@ -36,7 +36,7 @@ describe('RoleAdapter', () => {
 		expect(result).toMatchObject(EXPECTED.role)
 	})
 
-	it('createRole POSTs the grid_character_role envelope', async () => {
+	it('createRole POSTs the flat params', async () => {
 		global.fetch = mockApiResponse(API.createdRole)
 
 		await adapter.createRole({ nameEn: 'Healer', nameJp: 'ヒーラー' }, { Authorization: 'x' })
@@ -47,7 +47,7 @@ describe('RoleAdapter', () => {
 		expect(init.headers).toMatchObject({ Authorization: 'x' })
 	})
 
-	it('updateRole PUTs the envelope', async () => {
+	it('updateRole PUTs the flat params', async () => {
 		global.fetch = mockApiResponse(API.createdRole)
 
 		await adapter.updateRole('role-uuid-new', { nameEn: 'Buffer' })

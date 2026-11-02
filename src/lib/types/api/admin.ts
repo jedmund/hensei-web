@@ -347,6 +347,19 @@ export interface AdminJobAccessoryRow {
 	createdAt?: string
 }
 
+/** Default `fields` of an admin character role row, camelCased */
+export interface AdminCharacterRoleRow {
+	id: string
+	nameEn: string
+	nameJp: string | null
+	sortOrder: number | null
+	/** Versioned (`?v=`), like the public role JSON */
+	iconKey: string | null
+	// Not in the default list: request via `fields`
+	createdAt?: string
+	updatedAt?: string
+}
+
 /**
  * Artifact skill row from `GET /admin/artifact_skills`, camelCased. Groups
  * and polarities are names; the score category is its integer.
