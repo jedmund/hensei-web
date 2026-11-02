@@ -22,7 +22,9 @@
 	import { raidShortName } from '$lib/utils/raidName'
 	import { formatDateJST } from '$lib/utils/date'
 	import { countdownLabel, eventBanner, exploreQuery, raidsWithParties } from '$lib/utils/home'
-	import { galleryPath } from '$lib/utils/browseRoutes'
+	import { galleryPath, newTeamPath } from '$lib/utils/browseRoutes'
+	import { escapeHtml } from '$lib/utils/safeHtml'
+	import EmptyTeams from '$lib/components/home/EmptyTeams.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import type { GameEvent } from '$lib/types/api/event'
 	import type { HomeRaidSection } from '$lib/types/api/home'
@@ -56,7 +58,10 @@
 
 	const isMobile = new MediaQuery('(max-width: 768px)')
 
-	const tabs = $derived(raidsWithParties(raids))
+	// Every raid gets a tab, teams or not, so the event's battles show before
+	// anyone has posted
+	const tabs = $derived(raids)
+	const hasTeams = $derived(raidsWithParties(raids).length > 0)
 	let selectedId = $state<string | null>(null)
 	// Opens on the raid with the most teams (the first, on a tie)
 	const busiest = $derived(
@@ -83,17 +88,17 @@
 		if (!duration) return ''
 		if (variant === 'current') return m.home_ends_in({ duration })
 		const starts = m.home_starts_in({ duration })
-		return tabs.length > 0 && hasPrevious ? `${starts} · ${m.home_from_last_time()}` : starts
+		return hasTeams && hasPrevious ? `${starts} · ${m.home_from_last_time()}` : starts
 	})
 	// Exact time in JST on hover
 	const dateLabel = $derived(formatDateJST(variant === 'upcoming' ? event.startsAt : event.endsAt))
 
-	const emptyMessage = $derived.by(() => {
-		if (raids.length === 0) return m.home_no_raids()
-		if (tabs.length > 0) return null
-		// Only upcoming events show last time's teams
-		return variant === 'upcoming' ? m.home_no_previous() : m.home_no_teams_event()
-	})
+	// Nothing to pick from: the card says so in place of the tabs
+	const emptyMessage = $derived(raids.length === 0 ? m.home_no_raids() : null)
+	// A new team with the selected raid already set
+	const newTeamHref = $derived(
+		selected ? localizeHref(newTeamPath({ raidSlug: selected.raid.slug })) : null
+	)
 
 	// Only when the Gallery has teams beyond the ones shown here
 	const seeAllHref = $derived(
@@ -114,7 +119,7 @@
 	)
 	// Upcoming and empty events get a compact title; a running event keeps its
 	// large title even without banner art
-	const compact = $derived(variant === 'upcoming' || emptyMessage !== null)
+	const compact = $derived(variant === 'upcoming' || !hasTeams)
 	// The event's header image (its own, or its series'), shown as a cover
 	// In the reader's language, falling back to English (see eventBanner)
 	const banner = $derived(eventBanner(event))
@@ -215,6 +220,18 @@
 
 		{#if emptyMessage}
 			<p class="empty">{emptyMessage}</p>
+		{:else if selected && selected.parties.length === 0}
+			<!-- Only upcoming events show last time's teams -->
+			{#if variant === 'upcoming'}
+				<p class="empty">{m.home_no_previous()}</p>
+			{:else}
+				<EmptyTeams
+					messageHtml={m.home_no_battle_teams({
+						raid: escapeHtml(localizedName(selected.raid.name))
+					})}
+					href={newTeamHref}
+				/>
+			{/if}
 		{:else if selected}
 			<ExploreGrid items={parties} showRaid={false} contained />
 			{#if seeAllHref && !(isMobile.current && tabs.length > 1)}
