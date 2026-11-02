@@ -66,6 +66,7 @@ export type InputName =
 	| 'awakeningImage'
 	| 'eventRaids'
 	| 'roleIcon'
+	| 'artifactSkillBaseValues'
 
 /**
  * How an empty value ('', null, undefined, [] or {}) is sent:

@@ -38,7 +38,7 @@ describe('requiredDatabaseRole', () => {
 	it('keeps every bespoke Database route editor-only', () => {
 		expect(requiredDatabaseRole('/(app)/database/summons')).toBe(EDITOR_ROLE)
 		expect(requiredDatabaseRole('/(app)/database/weapons/import')).toBe(EDITOR_ROLE)
-		expect(requiredDatabaseRole('/(app)/database/artifact-skills/[id]')).toBe(EDITOR_ROLE)
+		expect(requiredDatabaseRole('/(app)/database/weapon-skills/[modifier]')).toBe(EDITOR_ROLE)
 		expect(requiredDatabaseRole(null)).toBe(EDITOR_ROLE)
 		// A resource role never opens a bespoke route
 		expect(requiredDatabaseRole('/(app)/database/summons', CURATOR_ROLE)).toBe(EDITOR_ROLE)

@@ -15,7 +15,8 @@ export const jobsSection: ResourceSection = {
 		[
 			{ label: () => m.nav_new_job(), href: 'new' },
 			{ label: () => m.nav_new_job_skill(), href: '/database/job-skills/new' },
-			{ label: () => m.nav_new_job_accessory(), href: '/database/job-accessories/new' }
+			{ label: () => m.nav_new_job_accessory(), href: '/database/job-accessories/new' },
+			{ label: () => m.nav_new_bullet(), href: '/database/bullets/new' }
 		]
 	]
 }
