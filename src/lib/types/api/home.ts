@@ -49,7 +49,11 @@ export interface HomeNewItem {
 			styleSwap: boolean
 		}
 	}
-	parties: Party[]
+	recent?: Party[]
+	/** Rising order, then most recent */
+	trending?: Party[]
+	/** The single list older APIs return, in place of recent and trending */
+	parties?: Party[]
 	/** More teams qualify than are listed (absent from older APIs: assume so) */
 	hasMore?: boolean
 }

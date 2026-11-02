@@ -35,16 +35,23 @@ export const NEW_TEAM_PATH = '/teams/new'
 
 export type NewTeamItemType = 'character' | 'weapon' | 'summon'
 
-/** What a new team starts with: an item in its first slot and/or a raid */
+/**
+ * What a new team starts with: an item in its first slot (by granblue id;
+ * `style` picks a character's style-shifted version, which shares the id)
+ * and/or a raid
+ */
 export interface NewTeamStart {
-	add?: { type: NewTeamItemType; id: string } | undefined
+	add?: { type: NewTeamItemType; granblueId: string; style?: boolean | undefined } | undefined
 	raidSlug?: string | undefined
 }
 
 /** New team URL that starts the team with an item and/or a raid */
 export function newTeamPath(start: NewTeamStart = {}): string {
 	const params = new URLSearchParams()
-	if (start.add) params.set('add', `${start.add.type}:${start.add.id}`)
+	if (start.add) {
+		const { type, granblueId, style } = start.add
+		params.set('add', `${type}:${granblueId}${style ? ':style' : ''}`)
+	}
 	if (start.raidSlug) params.set('raid', start.raidSlug)
 	const query = params.toString()
 	return query ? `${NEW_TEAM_PATH}?${query}` : NEW_TEAM_PATH
@@ -53,9 +60,10 @@ export function newTeamPath(start: NewTeamStart = {}): string {
 /** Reads what `newTeamPath` put in the URL; anything malformed is ignored */
 export function parseNewTeamStart(params: URLSearchParams): NewTeamStart {
 	const start: NewTeamStart = {}
-	const [type, id] = (params.get('add') ?? '').split(':')
-	if ((type === 'character' || type === 'weapon' || type === 'summon') && id) {
-		start.add = { type, id }
+	const [type, granblueId, flag] = (params.get('add') ?? '').split(':')
+	if ((type === 'character' || type === 'weapon' || type === 'summon') && granblueId) {
+		start.add = { type, granblueId }
+		if (type === 'character' && flag === 'style') start.add.style = true
 	}
 	const raid = params.get('raid')
 	if (raid) start.raidSlug = raid
