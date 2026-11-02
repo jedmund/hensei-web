@@ -30,6 +30,9 @@
 </script>
 
 <nav class="tab-bar {nav.elementClass}" aria-label="Global">
+	<!-- Sheen and rim highlights; a child layer, so Safari's toolbar tinting
+	     ignores it -->
+	<span class="glass" aria-hidden="true"></span>
 	{#each links as link (link.id)}
 		{#if link.id === 'newTeam'}
 			<div class="tab new-team">
@@ -125,7 +128,36 @@
 			0 1px 3px rgba(0, 0, 0, 0.08);
 	}
 
+	// Light catching the glass: a sheen from the top, a bright rim along the
+	// top edge and a faint darker one at the bottom
+	.glass {
+		position: absolute;
+		inset: 0;
+		border-radius: inherit;
+		pointer-events: none;
+		background:
+			radial-gradient(120% 90% at 50% -20%, rgba(255, 255, 255, 0.55), transparent 60%),
+			linear-gradient(to bottom, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0) 55%);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.85),
+			inset 0 -1px 0 rgba(0, 0, 0, 0.06),
+			inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+	}
+
+	:global(html[data-theme='dark']) .glass {
+		background:
+			radial-gradient(120% 90% at 50% -20%, rgba(255, 255, 255, 0.16), transparent 60%),
+			linear-gradient(to bottom, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0) 55%);
+		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.22),
+			inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+			inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+	}
+
 	.tab {
+		// Above the glass layer
+		position: relative;
+		z-index: 1;
 		display: flex;
 		align-items: center;
 		justify-content: center;
