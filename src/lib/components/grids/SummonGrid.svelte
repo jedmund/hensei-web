@@ -191,7 +191,7 @@
 
 	.grid {
 		display: grid;
-		grid-template-columns: 1.17fr 2fr 1.17fr;
+		grid-template-columns: minmax(0, 1.17fr) minmax(0, 2fr) minmax(0, 1.17fr);
 		gap: $unit-3x;
 		justify-content: center;
 		align-items: stretch;
@@ -207,7 +207,7 @@
 		}
 
 		@media (max-width: 768px) {
-			grid-template-columns: 1.2fr 2fr;
+			grid-template-columns: minmax(0, 1.2fr) minmax(0, 2fr);
 		}
 
 		.summons {
