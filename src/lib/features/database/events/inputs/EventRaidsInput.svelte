@@ -1,6 +1,7 @@
 <script lang="ts">
 	// The event's raids on the forms: the value is their ids in order, picked
-	// with the raid pane. Raids already linked, and those picked here, are
+	// with the raid pane in multi-select (each click adds or removes a raid,
+	// added ones go last). Raids already linked, and those picked here, are
 	// kept by id so the list can show them.
 	import { untrack } from 'svelte'
 	import { SvelteMap } from 'svelte/reactivity'
@@ -23,20 +24,28 @@
 	const raids = $derived(ids.flatMap((id) => known.get(id) ?? []))
 	const error = $derived(form.error(field.key))
 
+	function toggle(raid: RaidFull | null) {
+		if (!raid) return
+		if (ids.includes(raid.id)) {
+			remove(raid.id)
+			return
+		}
+		known.set(raid.id, raid)
+		form.set(field.key, [...ids, raid.id])
+	}
+
 	function add() {
 		sidebar.openWithComponent(
-			m.pane_select_raid(),
+			m.pane_select_raids(),
 			EditRaidPane,
 			{
 				currentRaid: null,
-				onSelect: (raid: RaidFull | null) => {
-					sidebar.close()
-					if (!raid || ids.includes(raid.id)) return
-					known.set(raid.id, raid)
-					form.set(field.key, [...ids, raid.id])
-				}
+				multiple: true,
+				// Read live, so the pane's checks follow the form
+				isSelected: (raid: RaidFull) => ids.includes(raid.id),
+				onSelect: toggle
 			},
-			{ scrollable: true }
+			{ scrollable: true, onsave: () => sidebar.close(), saveLabel: m.action_done() }
 		)
 	}
 

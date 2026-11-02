@@ -4,6 +4,10 @@
 	 *
 	 * Allows users to browse and select a raid from organized groups.
 	 * Features section tabs (Raids/Events/Solo), search, and sort toggle.
+	 *
+	 * With `multiple`, every click toggles a raid through `onSelect` and the
+	 * pane stays open; `isSelected` (read live from the caller's state) marks
+	 * what's picked.
 	 */
 	import * as m from '$lib/paraglide/messages'
 	import type { RaidFull } from '$lib/types/api/raid'
@@ -20,11 +24,19 @@
 	interface Props {
 		/** Currently selected raid */
 		currentRaid?: Raid | null
-		/** Callback when a raid is selected */
+		/** Callback when a raid is selected; null when single-select unpicks it */
 		onSelect: (raid: RaidFull | null) => void
+		/** Pick several raids: clicks toggle, and the caller keeps the list */
+		multiple?: boolean
+		/** Multi-select: whether a raid is in the caller's list */
+		isSelected?: (raid: RaidFull) => boolean
 	}
 
-	let { currentRaid, onSelect }: Props = $props()
+	let { currentRaid, onSelect, multiple = false, isSelected }: Props = $props()
+
+	const selected = $derived(
+		multiple && isSelected ? isSelected : (raid: RaidFull) => raid.id === currentRaid?.id
+	)
 
 	// State
 	let searchQuery = $state('')
@@ -49,6 +61,11 @@
 	})
 
 	function handleRaidSelect(raid: RaidFull) {
+		// Multi-select: the caller adds or removes it
+		if (multiple) {
+			onSelect(raid)
+			return
+		}
 		// Toggle: clicking selected raid unselects it
 		if (raid.id === currentRaid?.id) {
 			onSelect(null)
@@ -98,7 +115,7 @@
 		{:else}
 			<RaidGroupList
 				groups={filteredGroups()}
-				selectedRaidId={currentRaid?.id}
+				isSelected={selected}
 				onSelect={handleRaidSelect}
 				{searchQuery}
 			/>

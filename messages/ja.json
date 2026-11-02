@@ -1484,6 +1484,7 @@
 	"visibility_context_playlist": "プレイリスト",
 	"visibility_playlist_note": "プレイリスト内のチームにはそれぞれの公開設定が適用されます。",
 	"pane_select_raid": "クエスト選択",
+	"pane_select_raids": "クエストを選択",
 	"pane_edit_description": "説明を編集",
 	"battle_label": "バトル",
 	"battle_on": "オン",
