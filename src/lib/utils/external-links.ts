@@ -14,7 +14,9 @@ const KAMIGAME_PATHS = {
 	character: '/グラブル/キャラクター',
 	weapon: '/グラブル/武器',
 	summon: '/グラブル/召喚石',
-	event: '/グラブル/イベント'
+	// Events sit under their own folders (イベント, 神滅戦, ...), so the stored path
+	// carries the folder
+	event: '/グラブル'
 } as const
 
 export type EntityType = 'character' | 'weapon' | 'summon'
@@ -96,7 +98,7 @@ export function buildGamewithUrl(articleId: string | number | undefined | null):
  * Summon input: "SSR/アグニス"
  * Summon output: "https://kamigame.jp/グラブル/召喚石/SSR/アグニス.html"
  *
- * Event input: "天上劇団もぐら座/index" (the path under イベント, without .html)
+ * Event input: "イベント/天上劇団もぐら座/index" (the path under グラブル, without .html)
  * Event output: "https://kamigame.jp/グラブル/イベント/天上劇団もぐら座/index.html"
  */
 export function buildKamigameUrl(

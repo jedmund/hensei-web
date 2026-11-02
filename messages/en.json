@@ -2564,7 +2564,7 @@
 	"db_events_field_kamigame": "Kamigame",
 	"db_events_hint_wiki_en": "Page name (e.g., Exo Diablo Crucible)",
 	"db_events_hint_gamewith": "Article ID (e.g., 412345)",
-	"db_events_hint_kamigame": "Path after /グラブル/イベント/ (e.g., 天上劇団もぐら座/index)",
+	"db_events_hint_kamigame": "Path after /グラブル/ (e.g., イベント/天上劇団もぐら座/index)",
 	"db_events_section_image": "Banner",
 	"db_events_field_name_en": "Name (English)",
 	"db_events_field_name_jp": "Name (Japanese)",
