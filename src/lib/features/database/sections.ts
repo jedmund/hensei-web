@@ -103,6 +103,14 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 	...resourceSections('weapons', weaponsSection),
 	...resourceSections('weapon-series', weaponSeriesSection),
 	...resourceSections('awakenings', awakeningsSection),
+	// Weapon-skill curation: bespoke pages, not a schema resource
+	{
+		id: 'weapon-skills',
+		label: () => m.db_nav_skills(),
+		path: '/database/weapon-skills',
+		group: 'catalogue',
+		parent: 'weapons'
+	},
 	...resourceSections('summons', summonsSection),
 	...resourceSections('jobs', jobsSection),
 	...resourceSections('job-skills', jobSkillsSection),

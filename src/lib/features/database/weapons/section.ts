@@ -19,15 +19,6 @@ export const weaponsSection: ResourceSection = {
 			{ label: () => m.nav_new_weapon_series(), href: '/database/weapon-series/new' },
 			{ label: () => m.nav_new_awakening(), href: '/database/awakenings/new' }
 		]
-	],
-	// Series and awakenings are resources of their own, nested here
-	// (DATABASE_SECTIONS); skills lead into weapon-skill curation
-	views: [
-		{
-			id: 'weapon-skills',
-			label: () => m.db_nav_skills(),
-			view: 'skills',
-			matches: ['/database/weapon-skills']
-		}
 	]
+	// Series, awakenings and skills are nested here in DATABASE_SECTIONS
 }
