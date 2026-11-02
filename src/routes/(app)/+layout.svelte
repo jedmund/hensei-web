@@ -8,8 +8,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { Tooltip } from 'bits-ui'
 	import { beforeNavigate, afterNavigate, goto } from '$app/navigation'
-	import { browser, dev } from '$app/environment'
-	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
+	import { browser } from '$app/environment'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
@@ -111,9 +110,6 @@
 
 <svelte:window onbeforeunload={handleBeforeUnload} onscroll={updateScrolled} />
 
-{#if dev}
-	<SvelteQueryDevtools buttonPosition="top-right" />
-{/if}
 <Tooltip.Provider>
 	<div class="app-container" class:sidebar-open={sidebar.isOpen}>
 		<div
