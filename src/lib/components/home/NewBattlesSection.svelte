@@ -126,14 +126,19 @@
 						{/if}
 					</div>
 					{#if selected.recent.length > 0}
-						<Select
-							options={orderOptions}
-							value={order}
-							onValueChange={(v) => (order = v ?? 'recent')}
-							size="small"
-							contained
-							ariaLabel={m.home_battle_sort_aria()}
-						/>
+						<div class="actions">
+							{#if newTeamHref}
+								<Button href={newTeamHref} size="small">{m.home_create_team()}</Button>
+							{/if}
+							<Select
+								options={orderOptions}
+								value={order}
+								onValueChange={(v) => (order = v ?? 'recent')}
+								size="small"
+								contained
+								ariaLabel={m.home_battle_sort_aria()}
+							/>
+						</div>
 					{/if}
 				</div>
 			</PinnedCardHeader>
@@ -179,22 +184,29 @@
 		text-align: center;
 	}
 
-	// The name and release date on the left, the team order on the right
+	// The name and release date on the left; Create a team and the team order
+	// on the right, which keep their size while the name wraps
 	.heading-row {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		// Too narrow for the name beside the buttons (phones): the buttons
+		// wrap under it
+		flex-wrap: wrap;
 		gap: $unit;
+	}
 
-		// The order picker keeps its size; the name wraps instead
-		> :global(:last-child:not(.heading)) {
-			flex: none;
-		}
+	.actions {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+		flex: none;
 	}
 
 	.heading {
 		display: grid;
 		gap: $unit-half;
+		flex: 1 1 14rem;
 		min-width: 0;
 	}
 

@@ -97,19 +97,24 @@
 					/>
 				{/if}
 
-				<div class="heading">
-					<div class="name-row">
-						<h3 class="title">{localizedName(selected.item.name)}</h3>
-						{#if selected.item.character}
-							<CharacterTags character={selected.item.character} />
-						{/if}
+				<div class="heading-row">
+					<div class="heading">
+						<div class="name-row">
+							<h3 class="title">{localizedName(selected.item.name)}</h3>
+							{#if selected.item.character}
+								<CharacterTags character={selected.item.character} />
+							{/if}
+						</div>
+						<div class="meta">
+							<span class="change">{CHANGE_LABELS[selected.item.change]()}</span>
+							<span class="date"
+								>{formatDateJST(selected.item.latestDate, { month: 'short', day: 'numeric' })}</span
+							>
+						</div>
 					</div>
-					<div class="meta">
-						<span class="change">{CHANGE_LABELS[selected.item.change]()}</span>
-						<span class="date"
-							>{formatDateJST(selected.item.latestDate, { month: 'short', day: 'numeric' })}</span
-						>
-					</div>
+					{#if newTeamHref && selected.parties.length > 0}
+						<Button href={newTeamHref} size="small">{m.home_create_team()}</Button>
+					{/if}
 				</div>
 			</PinnedCardHeader>
 
@@ -137,10 +142,28 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
 
+	// The heading on the left, Create a team on the right (keeps its size
+	// while the name wraps)
+	.heading-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		// Too narrow for the name beside the buttons (phones): the buttons
+		// wrap under it
+		flex-wrap: wrap;
+		gap: $unit;
+
+		> :global(a) {
+			flex: none;
+		}
+	}
+
 	// The name and its character tags, then what changed and when
 	.heading {
 		display: grid;
 		gap: $unit-half;
+		flex: 1 1 14rem;
+		min-width: 0;
 	}
 
 	.name-row,
