@@ -63,12 +63,14 @@ export const artifactSkillsResource = defineResource<AdminArtifactSkillRow, Arti
 			list: { minWidth: '200px' }
 		},
 		// Properties
+		// Group and modifier are the skill's identity: saved artifacts store
+		// their skills by that pair, so the editor shows them but never writes them
 		{
 			key: 'skill_group',
 			kind: 'enum',
 			label: m.db_artifact_skills_field_group,
 			options: groupOptions,
-			required: true,
+			write: false,
 			list: { width: '180px' },
 			filter: { kind: 'multi', facet: true }
 		},
@@ -77,8 +79,7 @@ export const artifactSkillsResource = defineResource<AdminArtifactSkillRow, Arti
 			kind: 'number',
 			label: m.db_artifact_skills_field_modifier,
 			int: true,
-			min: 1,
-			required: true,
+			write: false,
 			list: { width: '96px' }
 		},
 		{

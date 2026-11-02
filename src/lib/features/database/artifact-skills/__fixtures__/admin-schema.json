@@ -72,8 +72,6 @@
 		"suffix_jp"
 	],
 	"writable": {
-		"skill_group": "scalar",
-		"modifier": "scalar",
 		"name_en": "scalar",
 		"name_jp": "scalar",
 		"game_name_en": "scalar",

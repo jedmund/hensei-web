@@ -129,11 +129,15 @@ describe('artifact skills resource: edit form', () => {
 				return [f.label()]
 			})
 		}))
-		// Decided: the group label drops "Skill"; the dash is an en dash
-		const expected = baseline.edit.map((s) => ({
-			title: s.title.replace('1-5', '1–5'),
-			labels: s.labels.map((l) => (l === 'Skill Group' ? 'Group' : l))
-		}))
+		// Decided: group and modifier are fixed (saved artifacts store skills by
+		// that pair), so they leave the form; the dash is an en dash
+		const fixed = new Set(['Skill Group', 'Modifier'])
+		const expected = baseline.edit
+			.map((s) => ({
+				title: s.title.replace('1-5', '1–5'),
+				labels: s.labels.filter((l) => !fixed.has(l))
+			}))
+			.filter((s) => s.labels.length > 0)
 		expect(sections).toEqual(expected)
 	})
 
@@ -166,12 +170,15 @@ function legacyEdit(skill: ArtifactSkill) {
 	}
 }
 
-/** The decided changes: the group by name, and blanks sent as null so they clear */
+/**
+ * The decided changes: group and modifier are never sent (they're fixed), and
+ * blanks are sent as null so they clear
+ */
 function decided(skill: ArtifactSkill) {
-	const legacy = legacyEdit(skill)
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars -- dropped on purpose
+	const { skill_group, modifier, ...legacy } = legacyEdit(skill)
 	return {
 		...legacy,
-		skill_group: skill.skillGroup,
 		game_name_en: legacy.game_name_en ?? null,
 		game_name_jp: legacy.game_name_jp ?? null,
 		growth: legacy.growth ?? null
@@ -211,15 +218,16 @@ describe('artifact skills resource: validation', () => {
 		for (const skill of [atk, flurry, earrings]) expect(errors(fromRecord(def, skill))).toEqual({})
 	})
 
-	it('needs both names, a group, a polarity and a positive whole modifier', () => {
+	it('needs both names and a polarity', () => {
 		expect(Object.keys(errors({ ...base, name: { en: '', ja: '攻撃力' } }))).toEqual(['name.en'])
 		expect(Object.keys(errors({ ...base, name: { en: 'ATK', ja: ' ' } }))).toEqual(['name.ja'])
-		expect(Object.keys(errors({ ...base, skill_group: 'group_iv', polarity: null }))).toEqual([
-			'skill_group',
-			'polarity'
-		])
-		expect(Object.keys(errors({ ...base, modifier: 0 }))).toEqual(['modifier'])
-		expect(Object.keys(errors({ ...base, modifier: 1.5 }))).toEqual(['modifier'])
+		expect(Object.keys(errors({ ...base, polarity: null }))).toEqual(['polarity'])
+	})
+
+	it('never sends the group or modifier, which are fixed', () => {
+		const payload = editPayload(atk)
+		expect(payload).not.toHaveProperty('skill_group')
+		expect(payload).not.toHaveProperty('modifier')
 	})
 
 	it('reports a blank quality before a filled one, and more than five values', () => {
