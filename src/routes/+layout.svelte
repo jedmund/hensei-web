@@ -55,7 +55,7 @@
 		richColors
 		toastOptions={{ duration: 4000 }}
 		mobileOffset={{
-			bottom: 'calc(var(--tab-bar-height, 60px) + env(safe-area-inset-bottom, 0px) + 16px)'
+			bottom: 'calc(var(--tab-bar-height, 68px) + env(safe-area-inset-bottom, 0px) + 16px)'
 		}}
 	/>
 	{@render children?.()}

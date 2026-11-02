@@ -204,7 +204,9 @@
 		// The phone tab bar (see MobileTabBar): the capsule, the gap below it,
 		// and the space both take, without the home-indicator inset
 		--tab-bar-pill: 56px;
-		--tab-bar-gap: 4px;
+		// Not much less: with the bar close to the bottom edge, iOS Safari stops
+		// drawing the page under its collapsed toolbar
+		--tab-bar-gap: 12px;
 		--tab-bar-height: calc(var(--tab-bar-pill) + var(--tab-bar-gap));
 	}
 
