@@ -204,7 +204,7 @@
 		// The phone tab bar (see MobileTabBar): the capsule, the gap below it,
 		// and the space both take, without the home-indicator inset
 		--tab-bar-pill: 56px;
-		--tab-bar-gap: 12px;
+		--tab-bar-gap: 4px;
 		--tab-bar-height: calc(var(--tab-bar-pill) + var(--tab-bar-gap));
 	}
 
