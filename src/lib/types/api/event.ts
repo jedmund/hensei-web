@@ -65,7 +65,7 @@ export interface GameEvent {
 	 * exist yet, so fall back to imageUrl when it doesn't load)
 	 */
 	imageUrlJa?: string | null
-	/** External pages: a gbf.wiki title, a GameWith article id, a Kamigame path under /グラブル/イベント/ */
+	/** External pages: a gbf.wiki title, a GameWith article id, a Kamigame path under /グラブル/ */
 	wikiEn?: string | null
 	gamewith?: string | null
 	kamigame?: string | null

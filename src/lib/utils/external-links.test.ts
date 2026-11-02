@@ -52,11 +52,15 @@ describe('buildKamigameUrl for events', () => {
 	const path = (p: string) => p.split('/').map(encodeURIComponent).join('/')
 
 	it('keeps the folder of an event page and adds .html', () => {
-		expect(buildKamigameUrl('天上劇団もぐら座/index', 'event')).toBe(
+		expect(buildKamigameUrl('イベント/天上劇団もぐら座/index', 'event')).toBe(
 			`https://kamigame.jp${path('/グラブル/イベント/天上劇団もぐら座/index')}.html`
 		)
-		expect(buildKamigameUrl(' 決戦！星の古戦場/勲章 ', 'event')).toBe(
+		expect(buildKamigameUrl(' イベント/決戦！星の古戦場/勲章 ', 'event')).toBe(
 			`https://kamigame.jp${path('/グラブル/イベント/決戦！星の古戦場/勲章')}.html`
+		)
+		// Exo Crucible pages sit under 神滅戦, not イベント
+		expect(buildKamigameUrl('神滅戦/エクスディアボロス_index', 'event')).toBe(
+			`https://kamigame.jp${path('/グラブル/神滅戦/エクスディアボロス_index')}.html`
 		)
 	})
 
