@@ -4,7 +4,7 @@
 	 * header (cover or thumbnail, name, element, countdown, raid switcher), the
 	 * selected raid's teams and a link to the rest of them in the Gallery.
 	 */
-	import { MediaQuery } from 'svelte/reactivity'
+	import { mobileQuery } from '$lib/utils/viewport.svelte'
 	import { getRaidImage } from '$lib/utils/images/raids'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
@@ -62,7 +62,7 @@
 		sectionTitle
 	}: Props = $props()
 
-	const isMobile = new MediaQuery('(max-width: 768px)')
+	const isMobile = mobileQuery()
 
 	// Every raid gets a tab, teams or not, so the event's battles show before
 	// anyone has posted

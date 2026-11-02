@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages'
-	import { MediaQuery } from 'svelte/reactivity'
+	import { mobileQuery } from '$lib/utils/viewport.svelte'
 	import Select from '../Select.svelte'
 	import MultiSelect from '../MultiSelect.svelte'
 	import ProficiencyPickerSegmented from './ProficiencyPickerSegmented.svelte'
@@ -38,7 +38,7 @@
 	const segmentedSize = $derived(size === 'small' ? 'small' : 'regular')
 
 	// Responsive detection for auto mode
-	const isMobile = new MediaQuery('(max-width: 640px)')
+	const isMobile = mobileQuery('(max-width: 640px)')
 
 	// Determine if we should use dropdown mode
 	const shouldUseDropdown = $derived(mode === 'dropdown' || (mode === 'auto' && isMobile.current))

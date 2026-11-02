@@ -24,9 +24,9 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { serializeExploreFilters, type ExploreSort } from '$lib/utils/exploreFilterParams'
 	import { localizedName } from '$lib/utils/locale'
-	import { MediaQuery } from 'svelte/reactivity'
+	import { mobileQuery } from '$lib/utils/viewport.svelte'
 
-	const isMobile = new MediaQuery('(max-width: 768px)')
+	const isMobile = mobileQuery()
 
 	const { data } = $props() as { data: PageData }
 

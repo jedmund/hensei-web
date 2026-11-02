@@ -12,7 +12,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
 	import * as m from '$lib/paraglide/messages'
-	import { MediaQuery } from 'svelte/reactivity'
+	import { mobileQuery } from '$lib/utils/viewport.svelte'
 	import { characterSlotCount, getExpedition } from '$lib/components/solomonis/grid/seal'
 
 	interface Props {
@@ -24,7 +24,7 @@
 
 	let { selectedTab = GridType.Character, onTabChange, party, class: className }: Props = $props()
 
-	const isMobile = new MediaQuery('(max-width: 768px)')
+	const isMobile = mobileQuery()
 
 	// Derived values to ensure reactivity propagates through snippet boundaries
 	// When party updates from TanStack Query cache, these will trigger re-renders

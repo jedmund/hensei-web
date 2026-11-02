@@ -3,7 +3,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import Navigation from '$lib/components/Navigation.svelte'
 	import MobileNavigation from '$lib/components/MobileNavigation.svelte'
-	import { MediaQuery } from 'svelte/reactivity'
+	import { mobileQuery } from '$lib/utils/viewport.svelte'
 	import Sidebar from '$lib/components/ui/Sidebar.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { Tooltip } from 'bits-ui'
@@ -59,7 +59,7 @@
 	}
 
 	// Mobile detection
-	const isMobile = new MediaQuery('(max-width: 768px)')
+	const isMobile = mobileQuery()
 
 	// Bahamut mode bar affects layout positioning
 	const isBahamut = $derived(data?.currentUser?.bahamut === true)
