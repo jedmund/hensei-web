@@ -135,8 +135,9 @@
 		display: flex;
 		align-items: center;
 		gap: spacing.$unit-half;
-		width: max-content;
-		max-width: calc(100% - #{spacing.$unit-4x});
+		// Nearly the full width, so each tab gets a wide target
+		width: calc(100% - #{spacing.$unit-4x});
+		max-width: 480px;
 		height: var(--tab-bar-pill);
 		padding: spacing.$unit-half;
 		border-radius: layout.$full-corner;
@@ -167,8 +168,8 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		flex: 0 0 auto;
-		width: 56px;
+		flex: 1 1 0;
+		min-width: 0;
 		height: 100%;
 		padding: 0;
 		border: none;
@@ -230,7 +231,5 @@
 	// New team: the same round + button the top bar used to have
 	.tab.new-team {
 		cursor: default;
-		width: auto;
-		padding: 0 spacing.$unit-half;
 	}
 </style>
