@@ -313,6 +313,8 @@
 		cursor: pointer;
 		display: inline-flex;
 		font-family: var(--font-family);
+		// Matches Button
+		font-weight: $medium;
 		gap: $unit-half;
 		@include smooth-transition($duration-quick, background-color, border-color, box-shadow);
 
