@@ -7,14 +7,21 @@
 
 	interface Props {
 		title?: string
+		/** A short line under the title */
+		subtitle?: string
 		children: Snippet
 	}
 
-	let { title, children }: Props = $props()
+	let { title, subtitle, children }: Props = $props()
 </script>
 
 <div class="card">
-	{#if title}
+	{#if title && subtitle}
+		<header class="heading">
+			<h2 class="title">{title}</h2>
+			<p class="subtitle">{subtitle}</p>
+		</header>
+	{:else if title}
 		<h2 class="title">{title}</h2>
 	{/if}
 	{@render children()}
@@ -36,6 +43,18 @@
 		@media (max-width: 768px) {
 			padding: calc($unit * 1.5);
 		}
+	}
+
+	.heading {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-fourth;
+	}
+
+	.subtitle {
+		margin: 0;
+		font-size: $font-small;
+		color: var(--text-secondary);
 	}
 
 	.title {

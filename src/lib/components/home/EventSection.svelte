@@ -94,8 +94,9 @@
 		return variant === 'upcoming' ? m.home_no_previous() : m.home_no_teams_event()
 	})
 
+	// Only when the Gallery has teams beyond the ones shown here
 	const seeAllHref = $derived(
-		selected
+		selected && (selected.hasMore !== false || selected.parties.length > parties.length)
 			? localizeHref(
 					galleryPath(
 						exploreQuery({

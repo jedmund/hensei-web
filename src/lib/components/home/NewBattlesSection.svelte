@@ -7,6 +7,7 @@
 	import EventSwitcher from '$lib/components/home/EventSwitcher.svelte'
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import HomeCard from '$lib/components/home/HomeCard.svelte'
 	import EmptyTeams from '$lib/components/home/EmptyTeams.svelte'
@@ -61,8 +62,9 @@
 		selected && selected.raid.playerCount > 1 ? getRaidImage(selected.raid.slug, 'banner') : null
 	)
 
+	// Only when the Gallery has teams beyond the ones shown here
 	const seeAllHref = $derived(
-		selected
+		selected && selected.hasMore !== false
 			? localizeHref(
 					galleryPath(
 						exploreQuery({
@@ -83,7 +85,11 @@
 	<section class="new-battles">
 		<HomeCard title={sectionTitle}>
 			<!-- The banners fade out at the edges, into the battle's muted element tone -->
-			<CardCover src={bannerUrl} frame={getElementKey(selected.raid.element)}>
+			<CardCover
+				src={bannerUrl}
+				frame={getElementKey(selected.raid.element)}
+				trim={{ x: 16, y: 12 }}
+			>
 				{#snippet placeholder()}
 					<!-- The battle's thumbnail, or its name when there's none either -->
 					{#if thumbFailed.has(selected.raid.slug)}
@@ -126,14 +132,29 @@
 						{/if}
 					</div>
 					{#if selected.recent.length > 0}
-						<Select
-							options={orderOptions}
-							value={order}
-							onValueChange={(v) => (order = v ?? 'recent')}
-							size="small"
-							contained
-							ariaLabel={m.home_battle_sort_aria()}
-						/>
+						<div class="actions">
+							<Select
+								options={orderOptions}
+								value={order}
+								onValueChange={(v) => (order = v ?? 'recent')}
+								size="small"
+								contained
+								align="end"
+								fitContent
+								ariaLabel={m.home_battle_sort_aria()}
+							/>
+							{#if newTeamHref}
+								<Tooltip content={m.home_create_team()}>
+									<Button
+										href={newTeamHref}
+										size="small"
+										iconOnly
+										icon="plus"
+										aria-label={m.home_create_team()}
+									/>
+								</Tooltip>
+							{/if}
+						</div>
 					{/if}
 				</div>
 			</PinnedCardHeader>
@@ -179,22 +200,29 @@
 		text-align: center;
 	}
 
-	// The name and release date on the left, the team order on the right
+	// The name and release date on the left; the team order and Create a team
+	// on the right, which keep their size while the name wraps
 	.heading-row {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		// Too narrow for the name beside the buttons (phones): the buttons
+		// wrap under it
+		flex-wrap: wrap;
 		gap: $unit;
+	}
 
-		// The order picker keeps its size; the name wraps instead
-		> :global(:last-child:not(.heading)) {
-			flex: none;
-		}
+	.actions {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+		flex: none;
 	}
 
 	.heading {
 		display: grid;
 		gap: $unit-half;
+		flex: 1 1 14rem;
 		min-width: 0;
 	}
 

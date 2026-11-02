@@ -2331,6 +2331,7 @@
 	"home_events": "Upcoming events",
 	"home_events_aria": "Events",
 	"home_rising": "Rising",
+	"home_rising_subtitle": "Most popular teams from the last 2 weeks",
 	"home_staff_picks": "Staff picks",
 	"home_starts_in": "Starts in {duration}",
 	"home_ends_in": "Ends in {duration}",
@@ -2365,7 +2366,7 @@
 		}
 	],
 	"home_element_advantage": "{element} advantage",
-	"home_new_items": "New items",
+	"home_new_items": "Recently released",
 	"home_new_battles": "New battles",
 	"home_battle_sort_recent": "Most recent",
 	"home_battle_sort_trending": "Trending",

@@ -10,6 +10,8 @@ import type { RaidFull } from './raid'
 export interface HomeRaidSection {
 	raid: RaidFull
 	parties: Party[]
+	/** More teams qualify than are listed (absent from older APIs: assume so) */
+	hasMore?: boolean
 }
 
 export interface HomeCurrentEvent {
@@ -47,7 +49,13 @@ export interface HomeNewItem {
 			styleSwap: boolean
 		}
 	}
-	parties: Party[]
+	recent?: Party[]
+	/** Rising order, then most recent */
+	trending?: Party[]
+	/** The single list older APIs return, in place of recent and trending */
+	parties?: Party[]
+	/** More teams qualify than are listed (absent from older APIs: assume so) */
+	hasMore?: boolean
 }
 
 /** A battle released in the last 4 weeks, with its teams in two orders */
@@ -56,6 +64,8 @@ export interface HomeNewBattle {
 	recent: Party[]
 	/** Participation score first, then most recent */
 	trending: Party[]
+	/** More teams qualify than are listed (absent from older APIs: assume so) */
+	hasMore?: boolean
 }
 
 export interface HomeResponse {

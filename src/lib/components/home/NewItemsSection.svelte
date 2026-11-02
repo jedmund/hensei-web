@@ -7,6 +7,8 @@
 	import EventSwitcher from '$lib/components/home/EventSwitcher.svelte'
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
+	import Select from '$lib/components/ui/Select.svelte'
 	import HomeCard from '$lib/components/home/HomeCard.svelte'
 	import EmptyTeams from '$lib/components/home/EmptyTeams.svelte'
 	import PinnedCardHeader from '$lib/components/home/PinnedCardHeader.svelte'
@@ -34,6 +36,18 @@
 	// Opens on the newest item (the API lists them newest first), even before
 	// anyone has made a team with it
 	const selected = $derived(items.find((i) => i.item.id === selectedId) ?? items[0])
+
+	type Order = 'recent' | 'trending'
+	let order = $state<Order>('recent')
+	const orderOptions = $derived([
+		{ value: 'recent' as Order, label: m.home_battle_sort_recent() },
+		{ value: 'trending' as Order, label: m.home_battle_sort_trending() }
+	])
+	// Older APIs send one list (parties) in place of the two orders
+	function teamsOf(entry: HomeNewItem, by: Order) {
+		return entry[by] ?? entry.parties ?? []
+	}
+	const parties = $derived(selected ? teamsOf(selected, order) : [])
 
 	const CHANGE_LABELS: Record<HomeItemChange, () => string> = {
 		release: m.home_item_change_release,
@@ -64,20 +78,34 @@
 			imageUrl: itemImage(entry),
 			tooltip: true,
 			characterTags: entry.item.character,
-			muted: entry.parties.length === 0
+			muted: teamsOf(entry, 'recent').length === 0
 		}))
 	)
 
 	// The Gallery's include filter: c:/w:/s: plus the granblue id
+	// Only when the Gallery has teams beyond the ones shown here
 	const seeAllHref = $derived(
-		selected
-			? localizeHref(galleryPath(`?inc=${selected.item.type[0]}:${selected.item.granblueId}`))
+		selected && selected.hasMore !== false
+			? localizeHref(
+					galleryPath(
+						`?inc=${selected.item.type[0]}:${selected.item.granblueId}` +
+							(order === 'trending' ? '&sort=rising' : '')
+					)
+				)
 			: null
 	)
 	// A new team that starts with the item in its first slot
 	const newTeamHref = $derived(
 		selected
-			? localizeHref(newTeamPath({ add: { type: selected.item.type, id: selected.item.id } }))
+			? localizeHref(
+					newTeamPath({
+						add: {
+							type: selected.item.type,
+							granblueId: selected.item.granblueId,
+							style: selected.item.character?.styleSwap
+						}
+					})
+				)
 			: null
 	)
 </script>
@@ -97,23 +125,50 @@
 					/>
 				{/if}
 
-				<div class="heading">
-					<div class="name-row">
-						<h3 class="title">{localizedName(selected.item.name)}</h3>
-						{#if selected.item.character}
-							<CharacterTags character={selected.item.character} />
-						{/if}
+				<div class="heading-row">
+					<div class="heading">
+						<div class="name-row">
+							<h3 class="title">{localizedName(selected.item.name)}</h3>
+							{#if selected.item.character}
+								<CharacterTags character={selected.item.character} />
+							{/if}
+						</div>
+						<div class="meta">
+							<span class="change">{CHANGE_LABELS[selected.item.change]()}</span>
+							<span class="date"
+								>{formatDateJST(selected.item.latestDate, { month: 'short', day: 'numeric' })}</span
+							>
+						</div>
 					</div>
-					<div class="meta">
-						<span class="change">{CHANGE_LABELS[selected.item.change]()}</span>
-						<span class="date"
-							>{formatDateJST(selected.item.latestDate, { month: 'short', day: 'numeric' })}</span
-						>
-					</div>
+					{#if parties.length > 0}
+						<div class="actions">
+							<Select
+								options={orderOptions}
+								value={order}
+								onValueChange={(v) => (order = v ?? 'recent')}
+								size="small"
+								contained
+								align="end"
+								fitContent
+								ariaLabel={m.home_battle_sort_aria()}
+							/>
+							{#if newTeamHref}
+								<Tooltip content={m.home_create_team()}>
+									<Button
+										href={newTeamHref}
+										size="small"
+										iconOnly
+										icon="plus"
+										aria-label={m.home_create_team()}
+									/>
+								</Tooltip>
+							{/if}
+						</div>
+					{/if}
 				</div>
 			</PinnedCardHeader>
 
-			{#if selected.parties.length === 0}
+			{#if parties.length === 0}
 				<EmptyTeams
 					messageHtml={m.home_no_item_teams({
 						item: escapeHtml(localizedName(selected.item.name))
@@ -121,10 +176,10 @@
 					href={newTeamHref}
 				/>
 			{:else}
-				<ExploreGrid items={selected.parties} showRaid contained />
+				<ExploreGrid items={parties} showRaid contained />
 			{/if}
 
-			{#if seeAllHref && selected.parties.length > 0}
+			{#if seeAllHref && parties.length > 0}
 				<Button href={seeAllHref} fullWidth>
 					{m.home_see_all_item({ item: localizedName(selected.item.name) })}
 				</Button>
@@ -137,10 +192,31 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
 
+	// The heading on the left; the team order and Create a team on the right,
+	// which keep their size while the name wraps
+	.heading-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		// Too narrow for the name beside the buttons (phones): the buttons
+		// wrap under it
+		flex-wrap: wrap;
+		gap: $unit;
+	}
+
+	.actions {
+		display: flex;
+		align-items: center;
+		gap: $unit;
+		flex: none;
+	}
+
 	// The name and its character tags, then what changed and when
 	.heading {
 		display: grid;
 		gap: $unit-half;
+		flex: 1 1 14rem;
+		min-width: 0;
 	}
 
 	.name-row,
