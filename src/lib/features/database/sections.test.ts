@@ -24,8 +24,9 @@ describe('sectionForUrl', () => {
 		expect(at('/database/raid-groups')).toBe('raid-groups')
 	})
 
-	it('selects sub-sections by ?view=', () => {
-		expect(at('/database/weapons?view=skills')).toBe('weapon-skills')
+	it('matches the weapon skills list and its family pages', () => {
+		expect(at('/database/weapon-skills')).toBe('weapon-skills')
+		expect(at('/database/weapon-skills/ATK')).toBe('weapon-skills')
 	})
 
 	it('maps record routes to their section', () => {
@@ -102,9 +103,9 @@ describe('resourceSections', () => {
 		expect(ids.slice(ids.indexOf('character-roles'), ids.indexOf('summons') + 1)).toEqual([
 			'character-roles',
 			'weapons',
-			'weapon-skills',
 			'weapon-series',
 			'awakenings',
+			'weapon-skills',
 			'summons'
 		])
 		expect(shown(sectionById('weapons')!)).toEqual({
@@ -144,11 +145,9 @@ describe('resourceSections', () => {
 			{
 				id: 'weapon-skills',
 				label: 'fn:Skills',
-				path: '/database/weapons',
-				view: 'skills',
+				path: '/database/weapon-skills',
 				group: 'catalogue',
-				parent: 'weapons',
-				matches: ['/database/weapon-skills']
+				parent: 'weapons'
 			}
 		])
 	})

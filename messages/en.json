@@ -3239,5 +3239,33 @@
 	"db_artifact_skills_base_values_gap": "Fill in every quality before the last one",
 	"db_artifact_skills_field_suffix": "Suffix",
 	"db_artifact_skills_field_suffix_en": "Suffix (EN)",
-	"db_artifact_skills_field_suffix_jp": "Suffix (JP)"
+	"db_artifact_skills_field_suffix_jp": "Suffix (JP)",
+	"db_weapon_skills_label": "Weapon skills",
+	"db_weapon_skills_entity": "skill families",
+	"db_weapon_skills_empty": "No skill families found",
+	"db_weapon_skills_col_icon": "Icon",
+	"db_weapon_skills_col_family": "Family",
+	"db_weapon_skills_col_modifier": "Modifier",
+	"db_weapon_skills_col_boost_types": "Boost types",
+	"db_weapon_skills_col_series": "Series",
+	"db_weapon_skills_col_sizes": "Sizes",
+	"db_weapon_skills_col_weapons": "Weapons",
+	"db_weapon_skills_col_versions": "Versions",
+	"db_weapon_skills_col_edited": "Edits",
+	"db_weapon_skills_flag_edited": "Manually edited",
+	"db_weapon_skills_filter_flags": "Curation",
+	"db_weapon_skills_series_normal": "Normal",
+	"db_weapon_skills_series_omega": "Omega",
+	"db_weapon_skills_series_ex": "EX",
+	"db_weapon_skills_series_odious": "Odious",
+	"db_weapon_skills_export_reminder": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "{count} family carries manual edits. Run these to snapshot them:",
+				"countPlural=other": "{count} families carry manual edits. Run these to snapshot them:"
+			}
+		}
+	]
 }

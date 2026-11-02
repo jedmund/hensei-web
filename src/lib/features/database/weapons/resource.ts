@@ -510,6 +510,7 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 
 	list: {
 		label: m.db_weapons_label,
+		pageTitle: m.page_title_db_weapons,
 		entity: m.collection_entity_weapons,
 		empty: m.db_weapons_empty,
 		title: 'name',
@@ -569,7 +570,11 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 			{ id: 'latest_date', desc: true },
 			{ id: 'name', desc: false }
 		],
-		movedViews: { series: '/database/weapon-series', awakenings: '/database/awakenings' }
+		movedViews: {
+			series: '/database/weapon-series',
+			awakenings: '/database/awakenings',
+			skills: '/database/weapon-skills'
+		}
 	},
 
 	// The detail Info tab's order; edit and create use it too. A section shows
@@ -699,11 +704,5 @@ export const weaponsResource = defineResource<AdminWeaponRow, Weapon>({
 		afterCreate: (w) => weaponAdapter.downloadWeaponImages(w.id)
 	},
 
-	section: weaponsSection,
-
-	// The list screen renders the generated list and keeps the Skills view,
-	// which leads into weapon-skill curation
-	screens: {
-		list: () => import('$lib/features/database/weapons/screens/WeaponsListScreen.svelte')
-	}
+	section: weaponsSection
 })

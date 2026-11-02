@@ -120,11 +120,9 @@ describe('generic database routes', () => {
 })
 
 describe('loadScreen', () => {
-	it("resolves a resource's screen", async () => {
-		// Stand-in component: importing the real screen compiles its whole graph
-		const Screen = () => ({})
-		vi.spyOn(weaponsResource.screens!, 'list').mockResolvedValueOnce({ default: Screen })
-		expect(await loadScreen('weapons', 'list')).toBe(Screen)
+	it('generates the weapons list, which has no override any more', async () => {
+		const { default: generated } = await import('./ResourceListScreen.svelte')
+		expect(await loadScreen('weapons', 'list')).toBe(generated)
 	})
 
 	it('generates the detail for a resource with a record and no override', async () => {
@@ -152,8 +150,8 @@ describe('loadScreen', () => {
 		}
 	})
 
-	it('overrides nothing for weapons but the list', () => {
-		expect(Object.keys(weaponsResource.screens ?? {})).toEqual(['list'])
+	it('overrides no weapons screen', () => {
+		expect(Object.keys(weaponsResource.screens ?? {})).toEqual([])
 	})
 
 	it('generates the list for a resource with no list override', async () => {
@@ -195,13 +193,16 @@ describe('redirectMovedView', () => {
 		expect(moved('/database/weapons?view=awakenings')).toMatchObject({
 			location: '/database/awakenings'
 		})
+		expect(moved('/database/weapons?view=skills')).toMatchObject({
+			location: '/database/weapon-skills'
+		})
 		expect(moved('/database/characters?view=series')).toMatchObject({
 			location: '/database/character-series'
 		})
 	})
 
 	it('leaves other views and plain lists alone', () => {
-		expect(() => redirectMovedView('weapons', url('/database/weapons?view=skills'))).not.toThrow()
+		expect(() => redirectMovedView('weapons', url('/database/weapons?view=other'))).not.toThrow()
 		expect(() => redirectMovedView('weapons', url('/database/weapons'))).not.toThrow()
 	})
 })
@@ -247,6 +248,6 @@ describe('redirectMovedView', () => {
 	it('leaves other views and lists alone', () => {
 		expect(() => redirectMovedView('raids', url('/database/raids'))).not.toThrow()
 		expect(() => redirectMovedView('raids', url('/database/raids?view=other'))).not.toThrow()
-		expect(() => redirectMovedView('weapons', url('/database/weapons?view=skills'))).not.toThrow()
+		expect(() => redirectMovedView('weapons', url('/database/weapons?view=other'))).not.toThrow()
 	})
 })
