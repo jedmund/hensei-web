@@ -15,6 +15,8 @@ export interface RaidFull {
 	id: string
 	slug: string
 	name: LocalizedName
+	/** Where the group is already shown (Home's tabs, the raid picker), e.g. "Lv200"; null when unset */
+	shortName?: LocalizedName | null
 	level: number
 	element: number
 	playerCount: number

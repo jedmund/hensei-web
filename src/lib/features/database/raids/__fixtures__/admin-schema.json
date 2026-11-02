@@ -91,6 +91,8 @@
 	"writable": {
 		"name_en": "scalar",
 		"name_jp": "scalar",
+		"short_name_en": "scalar",
+		"short_name_jp": "scalar",
 		"level": "scalar",
 		"element": "scalar",
 		"slug": "scalar",
@@ -128,6 +130,18 @@
 		"name_en": [
 			{
 				"kind": "presence"
+			}
+		],
+		"short_name_en": [
+			{
+				"kind": "length",
+				"maximum": 64
+			}
+		],
+		"short_name_jp": [
+			{
+				"kind": "length",
+				"maximum": 64
 			}
 		],
 		"slug": [

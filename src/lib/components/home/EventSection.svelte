@@ -5,7 +5,6 @@
 	 * selected raid's teams and a link to the rest of them in the Gallery.
 	 */
 	import { MediaQuery } from 'svelte/reactivity'
-	import { getHostedImageUrl } from '$lib/utils/images/core'
 	import { getRaidImage } from '$lib/utils/images/raids'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
@@ -20,8 +19,9 @@
 	import PinnedCardHeader from '$lib/components/home/PinnedCardHeader.svelte'
 	import EventLinksMenu from '$lib/components/home/EventLinksMenu.svelte'
 	import { localizedName } from '$lib/utils/locale'
+	import { raidShortName } from '$lib/utils/raidName'
 	import { formatDateJST } from '$lib/utils/date'
-	import { countdownLabel, exploreQuery, raidsWithParties } from '$lib/utils/home'
+	import { countdownLabel, eventBanner, exploreQuery, raidsWithParties } from '$lib/utils/home'
 	import { galleryPath } from '$lib/utils/browseRoutes'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import type { GameEvent } from '$lib/types/api/event'
@@ -110,13 +110,15 @@
 	)
 
 	const raidOptions = $derived(
-		tabs.map((t) => ({ value: t.raid.id, label: localizedName(t.raid.name) }))
+		tabs.map((t) => ({ value: t.raid.id, label: raidShortName(t.raid) }))
 	)
 	// Upcoming and empty events get a compact title; a running event keeps its
 	// large title even without banner art
 	const compact = $derived(variant === 'upcoming' || emptyMessage !== null)
 	// The event's header image (its own, or its series'), shown as a cover
-	const coverUrl = $derived(getHostedImageUrl(event.imageUrl))
+	// In the reader's language, falling back to English (see eventBanner)
+	const banner = $derived(eventBanner(event))
+	const coverUrl = $derived(banner.src)
 	// Without a banner, the art of its first linked raid as a thumbnail
 	const thumbnailUrl = $derived.by(() => {
 		if (coverUrl) return null
@@ -130,7 +132,7 @@
 		{#if coverUrl}
 			<!-- The cover art names the event, so the title is only for screen readers -->
 			<h3 class="visually-hidden">{title}</h3>
-			<CardCover src={coverUrl}>
+			<CardCover src={coverUrl} fallback={banner.fallback}>
 				<div class="links">
 					<EventLinksMenu {event} />
 				</div>
@@ -204,7 +206,7 @@
 						grow
 					>
 						{#each tabs as tab (tab.raid.id)}
-							<Segment value={tab.raid.id}>{localizedName(tab.raid.name)}</Segment>
+							<Segment value={tab.raid.id}>{raidShortName(tab.raid)}</Segment>
 						{/each}
 					</SegmentedControl>
 				{/if}

@@ -145,11 +145,21 @@ function legacyPayload(e: ReturnType<typeof legacyEditData>) {
 
 /**
  * GBF-143: blanks send null, so they can be cleared. The old pages left out
- * a blank level and game ids, and sent a blank Japanese name as ''.
+ * a blank level and game ids, and sent a blank Japanese name as ''. The short
+ * names are new: blank, they send null.
  */
 function decided(legacy: Record<string, unknown>) {
 	const out = { ...legacy }
-	for (const key of ['level', 'enemy_id', 'summon_id', 'quest_id']) out[key] ??= null
+	for (const key of [
+		'level',
+		'enemy_id',
+		'summon_id',
+		'quest_id',
+		'short_name_en',
+		'short_name_jp'
+	]) {
+		out[key] ??= null
+	}
 	if (out.name_jp === '') out.name_jp = null
 	return out
 }

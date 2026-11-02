@@ -51,6 +51,18 @@ export const raidsResource = defineResource<AdminRaidRow, RaidFull>({
 			list: { primary: true, minWidth: '220px' }
 		},
 		{
+			// Where the group is already shown: Home's raid tabs and the raid picker
+			key: 'short_name',
+			kind: 'localized',
+			label: m.db_raids_field_short_name,
+			sublabel: m.db_raids_hint_short_name,
+			keys: { en: 'short_name_en', ja: 'short_name_jp' },
+			labels: { en: m.db_raids_field_short_name_en, ja: m.db_raids_field_short_name_ja },
+			read: (r) => r.shortName,
+			// Most raids have none
+			detail: { hideWhenEmpty: true }
+		},
+		{
 			key: 'slug',
 			kind: 'code',
 			label: m.db_raids_field_slug,
@@ -224,7 +236,7 @@ export const raidsResource = defineResource<AdminRaidRow, RaidFull>({
 			{
 				id: 'details',
 				title: m.db_raids_section_details,
-				fields: ['name', 'slug', 'level', 'player_count', 'element']
+				fields: ['name', 'short_name', 'slug', 'level', 'player_count', 'element']
 			},
 			{
 				id: 'ids',
