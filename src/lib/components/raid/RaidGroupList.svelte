@@ -11,12 +11,13 @@
 
 	interface Props {
 		groups: RaidGroupFull[]
-		selectedRaidId?: string
+		/** Whether a raid shows as picked */
+		isSelected?: (raid: RaidFull) => boolean
 		onSelect: (raid: RaidFull) => void
 		searchQuery?: string
 	}
 
-	let { groups, selectedRaidId, onSelect, searchQuery = '' }: Props = $props()
+	let { groups, isSelected, onSelect, searchQuery = '' }: Props = $props()
 
 	function getRaidName(raid: RaidFull): string {
 		if (typeof raid.name === 'string') return raid.name
@@ -63,7 +64,7 @@
 <div class="raid-group-list">
 	{#if hasResults}
 		{#each filteredGroups() as group (group.id)}
-			<RaidGroupItem {group} {selectedRaidId} {onSelect} />
+			<RaidGroupItem {group} {isSelected} {onSelect} />
 		{/each}
 	{:else}
 		<div class="empty-state">

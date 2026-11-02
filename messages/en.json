@@ -1574,6 +1574,7 @@
 	"visibility_context_playlist": "playlist",
 	"visibility_playlist_note": "Teams inside this playlist have their own privacy settings",
 	"pane_select_raid": "Select Raid",
+	"pane_select_raids": "Select raids",
 	"pane_edit_description": "Edit Description",
 	"battle_label": "Battle",
 	"battle_on": "On",
