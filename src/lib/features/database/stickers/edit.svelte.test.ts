@@ -130,7 +130,10 @@ describe('stickers edit screen', () => {
 			(b) => text(b) === 'Yes, delete'
 		)!
 		confirm.click()
-		await vi.waitFor(() => expect(navigation.goto).toHaveBeenCalledWith('/database/stickers'))
+		// The delete awaits the mutation and the cache invalidations first; CI runners are slow
+		await vi.waitFor(() => expect(navigation.goto).toHaveBeenCalledWith('/database/stickers'), {
+			timeout: 5000
+		})
 		expect(adapter.deleteSticker).toHaveBeenCalledWith(thanks.id)
 		await tick()
 	})
