@@ -86,7 +86,7 @@
 			<CardCover
 				src={bannerUrl}
 				frame={getElementKey(selected.raid.element)}
-				trim={{ x: 20, y: 12 }}
+				trim={{ x: 16, y: 12 }}
 			>
 				{#snippet placeholder()}
 					<!-- The battle's thumbnail, or its name when there's none either -->
