@@ -9,7 +9,7 @@
  * `/home` (for checking it in production) and the nav has no Home item.
  * Flip to true to launch.
  */
-export const HOME_LAUNCHED = false
+export const HOME_LAUNCHED = true
 
 export const HOME_PATH = HOME_LAUNCHED ? '/' : '/home'
 export const GALLERY_PATH = '/gallery'
