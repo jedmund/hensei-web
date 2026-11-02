@@ -155,7 +155,7 @@
 
 			{#if rising.length > 0}
 				<div class="section">
-					<HomeCard title={m.home_rising()}>
+					<HomeCard title={m.home_rising()} subtitle={m.home_rising_subtitle()}>
 						<ExploreGrid items={rising} contained />
 						<Button href={risingHref} fullWidth>{m.home_see_all()}</Button>
 					</HomeCard>
