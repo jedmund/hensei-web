@@ -14,7 +14,11 @@
 </script>
 
 {#if nav.isBahamut && nav.currentUser}
-	<BahamutBar currentUser={nav.currentUser} />
+	<!-- With the tab bar, the nav container has no box (see (app)/+layout), so
+	     the Bahamut bar pins itself to the top -->
+	<div class="bahamut-top" class:pinned={!nav.isDatabaseRoute}>
+		<BahamutBar currentUser={nav.currentUser} />
+	</div>
 {/if}
 
 <!-- Phones: the Database keeps its own top bar; everywhere else navigation is
@@ -32,8 +36,17 @@
 <NavModals {nav} />
 
 <style lang="scss">
+	@use '$src/themes/effects' as effects;
 	@use '$src/themes/layout' as layout;
 	@use '$src/themes/spacing' as spacing;
+
+	.bahamut-top.pinned {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		z-index: effects.$z-sticky;
+	}
 
 	nav {
 		display: flex;

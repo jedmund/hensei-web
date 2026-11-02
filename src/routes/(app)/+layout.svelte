@@ -341,6 +341,16 @@
 						);
 					}
 
+					// The tab bar must not sit inside the fixed, top-anchored nav
+					// container: iOS Safari moves bottom-anchored fixed boxes with its
+					// toolbar on the compositor, but one nested in a top-fixed layer
+					// lags behind (choppy). Without a box, the bar is fixed to the
+					// viewport on its own.
+					.main-navigation {
+						display: contents;
+						position: static;
+					}
+
 					// No top bar to sit behind. (In Safari the page starts below the
 					// status bar and the safe-area insets are 0; they only apply when the
 					// site is opened from the Home Screen.)
