@@ -83,7 +83,7 @@
 	<section class="new-battles">
 		<HomeCard title={sectionTitle}>
 			<!-- The banners fade out at the edges, into the battle's muted element tone -->
-			<CardCover src={bannerUrl} frame={getElementKey(selected.raid.element)}>
+			<CardCover src={bannerUrl} frame={getElementKey(selected.raid.element)} trim={40}>
 				{#snippet placeholder()}
 					<!-- The battle's thumbnail, or its name when there's none either -->
 					{#if thumbFailed.has(selected.raid.slug)}

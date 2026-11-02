@@ -16,9 +16,11 @@
 		children?: Snippet
 		placeholder?: Snippet
 		frame?: ElementKeyResult
+		/** Banner pixels (of 300) cropped off the top and the bottom each */
+		trim?: number
 	}
 
-	let { src, children, placeholder, frame }: Props = $props()
+	let { src, children, placeholder, frame, trim = 0 }: Props = $props()
 
 	let failed = $state(false)
 	$effect(() => {
@@ -30,6 +32,7 @@
 
 <div
 	class="cover"
+	style:aspect-ratio={trim ? `640 / ${300 - trim * 2}` : undefined}
 	style:background={frame && src && !failed ? `var(--${frame}-cover-bg)` : undefined}
 >
 	{#if src && !failed}
