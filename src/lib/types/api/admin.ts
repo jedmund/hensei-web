@@ -369,3 +369,21 @@ export interface AdminArtifactSkillRow {
 	createdAt?: string
 	updatedAt?: string
 }
+
+/** Default `fields` of an admin bullet row, camelCased */
+export interface AdminBulletRow {
+	id: string
+	granblueId: string
+	nameEn: string | null
+	nameJp: string | null
+	slug: string
+	bulletType: number
+	atk: number
+	hitsAll: boolean
+	order: number
+	effectEn: string | null
+	effectJp: string | null
+	updatedAt: string
+	// Not in the default list: request via `fields`
+	createdAt?: string
+}

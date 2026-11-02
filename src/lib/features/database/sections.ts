@@ -12,6 +12,7 @@ import { m } from '$lib/paraglide/messages'
 import { ADMIN_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
 import { artifactSkillsSection } from './artifact-skills/section'
 import { awakeningsSection } from './awakenings/section'
+import { bulletsSection } from './bullets/section'
 import { characterSeriesSection } from './character-series/section'
 import { charactersSection } from './characters/section'
 import { eventsSection } from './events/section'
@@ -110,13 +111,7 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 	...resourceSections('jobs', jobsSection),
 	...resourceSections('job-skills', jobSkillsSection),
 	...resourceSections('job-accessories', jobAccessoriesSection),
-	{
-		id: 'bullets',
-		label: () => m.nav_bullets(),
-		path: '/database/bullets',
-		group: 'catalogue',
-		parent: 'jobs'
-	},
+	...resourceSections('bullets', bulletsSection),
 
 	// Battles & events
 	...resourceSections('raids', raidsSection),
