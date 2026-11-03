@@ -8,11 +8,13 @@ import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 
 type KeySlotRules = Pick<WeaponSeriesRef, 'numWeaponKeys' | 'keySlotMinUncaps'>
 
-/** The key slots an editor should offer for a copy at this uncap level */
+/** Every key slot the weapon has, open or not */
+export function keySlots(series: KeySlotRules | undefined): number[] {
+	return Array.from({ length: series?.numWeaponKeys ?? 0 }, (_, slot) => slot)
+}
+
+/** The key slots a copy at this uncap level can fill */
 export function openKeySlots(series: KeySlotRules | undefined, uncapLevel: number): number[] {
-	const count = series?.numWeaponKeys ?? 0
 	const minUncaps = series?.keySlotMinUncaps ?? []
-	return Array.from({ length: count }, (_, slot) => slot).filter(
-		(slot) => uncapLevel >= (minUncaps[slot] ?? 0)
-	)
+	return keySlots(series).filter((slot) => uncapLevel >= (minUncaps[slot] ?? 0))
 }

@@ -20,9 +20,18 @@
 		onchange?: (key: WeaponKey | undefined) => void
 		/** Current transcendence step (for key validation) */
 		transcendenceStep?: number
+		/** The slot isn't open at the weapon's uncap */
+		disabled?: boolean
 	}
 
-	let { seriesSlug, slot, value = $bindable(), onchange, transcendenceStep = 0 }: Props = $props()
+	let {
+		seriesSlug,
+		slot,
+		value = $bindable(),
+		onchange,
+		transcendenceStep = 0,
+		disabled = false
+	}: Props = $props()
 
 	// Key type names based on series slug and slot (0-based indexing)
 	const KEY_TYPE_NAMES: Record<string, Record<number, { en: string; ja: string }>> = {
@@ -140,6 +149,7 @@
 			value={value ?? ''}
 			onValueChange={handleChange}
 			placeholder={m.weapon_key_select({ keyType: keyTypeName })}
+			{disabled}
 			size="medium"
 			fullWidth
 			contained

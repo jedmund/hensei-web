@@ -12,7 +12,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import { formatUncapLevel, getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
 	import { getSeriesSlug } from '$lib/utils/weaponSeries'
-	import { openKeySlots } from '$lib/utils/weaponKeySlots'
+	import { keySlots, openKeySlots } from '$lib/utils/weaponKeySlots'
 	import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
 	import { useUpdateGridWeapon } from '$lib/api/mutations/gridWeapon.mutations'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
@@ -44,6 +44,11 @@
 	const openSlots = $derived.by(() => {
 		const series = weapon.weapon?.series
 		return isWeaponSeriesRef(series) ? openKeySlots(series, weapon.uncapLevel ?? 0) : []
+	})
+	// Slots the uncap hasn't opened still show, disabled
+	const allSlots = $derived.by(() => {
+		const series = weapon.weapon?.series
+		return isWeaponSeriesRef(series) ? keySlots(series) : []
 	})
 
 	// A keyed weapon whose uncap opens none of its slots yet
@@ -123,28 +128,31 @@
 	{/snippet}
 	{#if showWeaponKeyEditor}
 		<div class="key-selects">
-			{#if openSlots.includes(0)}
+			{#if allSlots.includes(0)}
 				<WeaponKeySelect
 					{seriesSlug}
 					slot={0}
 					bind:value={editKey1}
 					transcendenceStep={weapon.transcendenceStep ?? 0}
+					disabled={!openSlots.includes(0)}
 				/>
 			{/if}
-			{#if openSlots.includes(1)}
+			{#if allSlots.includes(1)}
 				<WeaponKeySelect
 					{seriesSlug}
 					slot={1}
 					bind:value={editKey2}
 					transcendenceStep={weapon.transcendenceStep ?? 0}
+					disabled={!openSlots.includes(1)}
 				/>
 			{/if}
-			{#if openSlots.includes(2)}
+			{#if allSlots.includes(2)}
 				<WeaponKeySelect
 					{seriesSlug}
 					slot={2}
 					bind:value={editKey3}
 					transcendenceStep={weapon.transcendenceStep ?? 0}
+					disabled={!openSlots.includes(2)}
 				/>
 			{/if}
 		</div>

@@ -25,7 +25,7 @@
 	import BulletSelect from '$lib/components/sidebar/edit/BulletSelect.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { seriesHasWeaponKeys, seriesHasAwakening, getSeriesSlug } from '$lib/utils/weaponSeries'
-	import { openKeySlots } from '$lib/utils/weaponKeySlots'
+	import { keySlots, openKeySlots } from '$lib/utils/weaponKeySlots'
 	import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
 
 	export interface WeaponEditValues {
@@ -112,6 +112,8 @@
 	const hasWeaponKeys = $derived(seriesHasWeaponKeys(series))
 	// Slots the copy's uncap has opened (a Pendulum needs a 4★ Opus)
 	const openSlots = $derived(openKeySlots(series, uncapLevel))
+	// Slots the uncap hasn't opened still show, disabled
+	const allSlots = $derived(keySlots(series))
 
 	// Augment type from series determines AX skills vs befoulment
 	const augmentType = $derived(series?.augmentType ?? 'no_augment')
@@ -260,14 +262,32 @@
 		{#if hasWeaponKeys && openSlots.length > 0}
 			<DetailsSection title={m.details_weapon_keys()}>
 				<div class="section-content key-selects">
-					{#if openSlots.includes(0)}
-						<WeaponKeySelect {seriesSlug} slot={0} bind:value={weaponKey1} {transcendenceStep} />
+					{#if allSlots.includes(0)}
+						<WeaponKeySelect
+							{seriesSlug}
+							slot={0}
+							bind:value={weaponKey1}
+							{transcendenceStep}
+							disabled={!openSlots.includes(0)}
+						/>
 					{/if}
-					{#if openSlots.includes(1)}
-						<WeaponKeySelect {seriesSlug} slot={1} bind:value={weaponKey2} {transcendenceStep} />
+					{#if allSlots.includes(1)}
+						<WeaponKeySelect
+							{seriesSlug}
+							slot={1}
+							bind:value={weaponKey2}
+							{transcendenceStep}
+							disabled={!openSlots.includes(1)}
+						/>
 					{/if}
-					{#if openSlots.includes(2)}
-						<WeaponKeySelect {seriesSlug} slot={2} bind:value={weaponKey3} {transcendenceStep} />
+					{#if allSlots.includes(2)}
+						<WeaponKeySelect
+							{seriesSlug}
+							slot={2}
+							bind:value={weaponKey3}
+							{transcendenceStep}
+							disabled={!openSlots.includes(2)}
+						/>
 					{/if}
 				</div>
 			</DetailsSection>
