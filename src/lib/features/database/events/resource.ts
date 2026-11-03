@@ -124,7 +124,14 @@ export const eventsResource = defineResource<AdminEventRow, GameEvent>({
 			// Only alongside a first boss element
 			when: (v) => !!v.element,
 			whenHidden: 'empty',
-			detail: { sublabel: false, hideWhenEmpty: true }
+			detail: { sublabel: false, hideWhenEmpty: true },
+			// type 'element' also gives the form the element picker
+			list: {
+				header: m.db_events_col_second_element,
+				type: 'element',
+				sortable: false,
+				defaultHidden: true
+			}
 		},
 		{
 			key: 'event_number',
@@ -203,6 +210,7 @@ export const eventsResource = defineResource<AdminEventRow, GameEvent>({
 			'name',
 			'kind',
 			'element',
+			'second_element',
 			'starts_at',
 			'ends_at',
 			'raid_count',
