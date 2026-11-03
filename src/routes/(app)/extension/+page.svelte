@@ -10,6 +10,11 @@
 
 	let { data }: { data: PageData } = $props()
 
+	const CHROME_STORE_URL =
+		'https://chromewebstore.google.com/detail/granblueteam/cfgjckcpmohlnfcjnmeijffkghhfkbfn'
+	const GITHUB_DOWNLOAD_URL =
+		'https://github.com/jedmund/hensei-extractor/releases/latest/download/granblue-team-extension.zip'
+
 	const faqItems = [
 		{ value: 'how', title: () => m.ext_faq_how_title(), desc: () => m.ext_faq_desc() },
 		{ value: 'safe', title: () => m.ext_faq_safe_title(), desc: () => m.ext_faq_safe_desc() },
@@ -48,14 +53,10 @@
 			<source src="{getImageBaseUrl()}/images/media/extension.mp4" type="video/mp4" />
 		</video>
 		<p>{m.ext_description()}</p>
-		<a
-			href="https://github.com/jedmund/hensei-extractor/releases/latest/download/granblue-team-extension.zip"
-			class="download-link"
-		>
-			<Button size="large" element={userElement} elementStyle={!!userElement}>
-				{m.ext_download()}
-			</Button>
-		</a>
+		<Button href={CHROME_STORE_URL} size="large" element={userElement} elementStyle={!!userElement}>
+			{m.ext_install_chrome_store()}
+		</Button>
+		<a href={GITHUB_DOWNLOAD_URL} class="github-link">{m.ext_download_github()}</a>
 		{#if release}
 			<p class="version-info">
 				{m.ext_version({ version: release.version })} · {m.ext_published({ date: formattedDate })}
@@ -155,10 +156,14 @@
 		object-fit: cover;
 	}
 
-	.download-link {
-		display: inline-block;
-		text-decoration: none;
-		width: fit-content;
+	.github-link {
+		font-size: $font-small;
+		color: var(--text-secondary);
+		text-decoration: underline;
+
+		&:hover {
+			color: var(--text-primary);
+		}
 	}
 
 	.card p.version-info {
