@@ -279,7 +279,7 @@ export interface AdminEventRow {
 	updatedAt?: string
 }
 
-/** Default `fields` of an admin job row, camelCased. Class I and II jobs share a granblueId */
+/** Default `fields` of an admin job row, camelCased */
 export interface AdminJobRow {
 	id: string
 	granblueId: string

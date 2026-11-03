@@ -159,7 +159,7 @@ export class JobAdapter extends BaseAdapter {
 
 	/**
 	 * Updates a job entity (database admin function)
-	 * @param id The job's id (a Class I job and its Class II successor share a granblue_id)
+	 * @param id The job's id
 	 * @param data The fields to update
 	 */
 	async updateJob(id: string, data: JobUpdatePayload): Promise<Job> {

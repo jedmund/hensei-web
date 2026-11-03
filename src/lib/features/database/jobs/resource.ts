@@ -1,8 +1,7 @@
 /**
  * The jobs resource: every field the jobs list, detail, edit and new pages
- * show, described once (GBF-143). A Class I job and its Class II successor
- * share a Granblue ID (Fighter and Warrior are both 100001), so jobs are
- * listed, linked and saved by their id.
+ * show, described once (GBF-143). Jobs are listed, linked and saved by their
+ * id.
  */
 import { z } from 'zod'
 import * as m from '$lib/paraglide/messages'
