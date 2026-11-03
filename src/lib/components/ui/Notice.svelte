@@ -48,18 +48,22 @@
 	</div>
 	{#if action || onDismiss}
 		<div class="notice-actions">
-			{@render action?.()}
+			{#if action}
+				<div class="notice-action">{@render action()}</div>
+			{/if}
 			{#if onDismiss}
-				<Tooltip content={m.notice_dismiss()}>
-					<Button
-						variant="ghost"
-						size="small"
-						icon="close"
-						iconOnly
-						onclick={onDismiss}
-						aria-label={m.notice_dismiss()}
-					/>
-				</Tooltip>
+				<div class="notice-dismiss">
+					<Tooltip content={m.notice_dismiss()}>
+						<Button
+							variant="ghost"
+							size="small"
+							icon="close"
+							iconOnly
+							onclick={onDismiss}
+							aria-label={m.notice_dismiss()}
+						/>
+					</Tooltip>
+				</div>
 			{/if}
 		</div>
 	{/if}
@@ -119,9 +123,106 @@
 		gap: $unit-half;
 	}
 
+	.notice-action,
+	.notice-dismiss {
+		display: flex;
+	}
+
 	.notice-icon {
 		display: flex;
 		flex-shrink: 0;
+	}
+
+	// Phones: the badge goes above the text and the action below it, and the dismiss button stays at the end of the
+	// first row. A grid with margins rather than gaps, so a missing icon
+	// leaves no space.
+	@media (max-width: 768px) {
+		.notice {
+			display: grid;
+			grid-template-columns: auto minmax(0, 1fr) auto;
+			column-gap: 0;
+			row-gap: $unit;
+		}
+
+		// The icon and dismiss button sit by the first line of text
+		.notice-icon {
+			grid-column: 1;
+			grid-row: 1;
+			align-self: start;
+			margin-right: $unit;
+		}
+
+		.notice-text {
+			grid-column: 2;
+			grid-row: 1;
+		}
+
+		.notice-actions {
+			display: contents;
+		}
+
+		// The action runs the full width as an outlined button in the notice's
+		// own color (Button has no stroke variant, and the button comes from
+		// the caller's snippet, so it's styled here)
+		.notice-action {
+			grid-column: 2 / -1;
+			grid-row: 2;
+
+			:global([data-button-root]) {
+				width: 100%;
+				min-height: 44px;
+				justify-content: center;
+				background: transparent;
+				color: currentColor;
+				border: 1px solid color-mix(in srgb, currentColor 40%, transparent);
+			}
+
+			@media (hover: hover) {
+				:global([data-button-root]:hover:not(:disabled)) {
+					background: color-mix(in srgb, currentColor 10%, transparent);
+					color: currentColor;
+				}
+			}
+		}
+
+		.notice-dismiss {
+			grid-column: 3;
+			grid-row: 1;
+			align-self: start;
+			margin-left: $unit;
+			// Centers the 30px button on the first 24px line of text
+			margin-top: -3px;
+		}
+
+		// With a badge, it takes the first row (beside the dismiss button) and
+		// everything else moves down one
+		.notice:has(.notice-badge) {
+			.notice-badge {
+				grid-column: 2;
+				grid-row: 1;
+				justify-self: start;
+				align-self: center;
+			}
+
+			.notice-icon {
+				grid-row: 2;
+			}
+
+			// Nothing beside it now, so the text runs the full width
+			.notice-text {
+				grid-row: 2;
+				grid-column: 2 / -1;
+			}
+
+			.notice-action {
+				grid-row: 3;
+			}
+
+			.notice-dismiss {
+				align-self: center;
+				margin-top: 0;
+			}
+		}
 	}
 
 	// Fixed color variants
