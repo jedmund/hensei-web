@@ -201,9 +201,9 @@
 		// gap below it, its distance from the bottom edge, and the total space
 		// it takes.
 		--tab-bar-pill: 56px;
-		// Not much less: with the bar close to the bottom edge, iOS Safari stops
+		// No less than this: at 4px or closer to the bottom edge, iOS Safari stops
 		// drawing the page under its collapsed toolbar
-		--tab-bar-gap: 12px;
+		--tab-bar-gap: 5px;
 		// The gap, or the home-indicator inset when that's larger. The inset is 0
 		// in Safari itself and only applies when opened from the Home Screen.
 		--tab-bar-bottom: max(var(--tab-bar-gap), env(safe-area-inset-bottom, 0px));
