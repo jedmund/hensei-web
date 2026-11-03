@@ -1548,7 +1548,7 @@
 		}
 	],
 	"time_one_week_ago": "1 week ago",
-	"time_last_updated": "Last updated {time}",
+	"time_last_updated": "Updated {time}",
 	"section_general": "General",
 	"section_uncap_level": "Uncap Level",
 	"section_sharing": "Sharing",

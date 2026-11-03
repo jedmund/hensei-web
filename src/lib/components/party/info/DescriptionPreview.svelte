@@ -2,7 +2,8 @@
 	/**
 	 * A party description's first line, up to three lines, with "Read more"
 	 * when there's more (or it's cut off). Clicking opens the description;
-	 * with none yet, those who can edit are asked to write one.
+	 * with none yet, those who can edit are asked to write one. When the party
+	 * was updated sits beneath.
 	 */
 	import * as m from '$lib/paraglide/messages'
 	import { descriptionPreview } from '$lib/utils/descriptionPreview'
@@ -15,9 +16,11 @@
 		onOpen: () => void
 		/** Clicked instead of onOpen when there's no description to read */
 		onEdit?: (() => void) | undefined
+		/** "Updated …", under the text */
+		updated?: string | null | undefined
 	}
 
-	let { description, canEdit = false, element, onOpen, onEdit }: Props = $props()
+	let { description, canEdit = false, element, onOpen, onEdit, updated }: Props = $props()
 
 	const preview = $derived(descriptionPreview(description))
 
@@ -52,6 +55,9 @@
 			>{canEdit ? m.party_write_description() : m.party_no_description()}</span
 		>
 	{/if}
+	{#if updated}
+		<span class="updated">{updated}</span>
+	{/if}
 </button>
 
 <style lang="scss">
@@ -69,6 +75,8 @@
 		justify-content: flex-start;
 		align-items: flex-start;
 		display: flex;
+		flex-direction: column;
+		gap: calc($unit * 1.5);
 		cursor: pointer;
 		text-align: left;
 		color: inherit;
@@ -102,6 +110,11 @@
 	.read-more {
 		color: var(--text-tertiary);
 		font-weight: $medium;
+	}
+
+	.updated {
+		font-size: $font-small;
+		color: var(--text-tertiary);
 	}
 
 	.empty-state {

@@ -1,22 +1,21 @@
 <script lang="ts">
 	/**
-	 * The line under a party's name: who it's by (see partyByline), then its
-	 * visibility when not public and when it was last updated.
+	 * The line above a party's name: who it's by (see partyByline), then its
+	 * visibility when not public. When it was updated sits under the name
+	 * (DescriptionTile).
 	 */
 	import * as m from '$lib/paraglide/messages'
 	import AvatarPair from '$lib/components/ui/AvatarPair.svelte'
 	import UserAvatar from '$lib/components/ui/UserAvatar.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import { formatRelativeTime } from '$lib/utils/date'
 	import { PartyVisibility } from '$lib/types/visibility'
 	import { partyByline, type BylineParty, type BylineSegment } from './partyByline'
 
 	interface Props extends BylineParty {
 		visibility?: PartyVisibility | undefined
-		updatedAt?: string | undefined
 	}
 
-	let { user, sourceParty, collectionSourceUser, visibility, updatedAt }: Props = $props()
+	let { user, sourceParty, collectionSourceUser, visibility }: Props = $props()
 
 	const byline = $derived(partyByline({ user, sourceParty, collectionSourceUser }))
 	const visibilityLabel = $derived(
@@ -26,17 +25,11 @@
 				? m.visibility_private()
 				: null
 	)
-	const relativeTime = $derived(
-		updatedAt ? m.time_last_updated({ time: formatRelativeTime(updatedAt) }) : null
-	)
 </script>
 
 {#snippet meta()}
 	{#if visibilityLabel}
-		<span class="visibility-label">&nbsp;&middot;&nbsp;{visibilityLabel}</span>
-	{/if}
-	{#if relativeTime}
-		<span class="updated-time">&nbsp;&middot;&nbsp;{relativeTime}</span>
+		<span class="visibility-label">&middot;&nbsp;{visibilityLabel}</span>
 	{/if}
 {/snippet}
 
@@ -81,20 +74,33 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
 
+	// The flex gap sets off the " · " before the visibility. One line: when
+	// space runs short (beside the actions on a phone), the name keeps its
+	// room and the visibility trails off
 	.creator-line {
-		display: inline-flex;
+		display: flex;
 		align-items: center;
 		gap: $unit-half;
+		min-width: 0;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	.avatar-link,
+	.byline-text {
+		flex-shrink: 0;
 	}
 
 	.avatar-link {
 		display: inline-flex;
 	}
 
-	.updated-time,
 	.visibility-label {
 		font-size: $font-small;
 		color: var(--text-tertiary);
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.byline-text {
