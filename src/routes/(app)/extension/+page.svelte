@@ -2,23 +2,26 @@
 	import type { PageData } from './$types'
 	import { Accordion } from 'bits-ui'
 	import LinkItem from '$lib/components/about/LinkItem.svelte'
+	import Icon from '$lib/components/Icon.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import * as m from '$lib/paraglide/messages'
 	import { getImageBaseUrl } from '$lib/api/adapters/config'
 	import { getLocale } from '$lib/paraglide/runtime.js'
+	import chromeLogo from '$src/assets/logos/chrome.svg'
 
 	let { data }: { data: PageData } = $props()
+
+	const CHROME_STORE_URL =
+		'https://chromewebstore.google.com/detail/granblueteam/cfgjckcpmohlnfcjnmeijffkghhfkbfn'
+	const GITHUB_DOWNLOAD_URL =
+		'https://github.com/jedmund/hensei-extractor/releases/latest/download/granblue-team-extension.zip'
 
 	const faqItems = [
 		{ value: 'how', title: () => m.ext_faq_how_title(), desc: () => m.ext_faq_desc() },
 		{ value: 'safe', title: () => m.ext_faq_safe_title(), desc: () => m.ext_faq_safe_desc() },
 		{ value: 'ban', title: () => m.ext_faq_ban_title(), desc: () => m.ext_faq_ban_desc() },
-		{
-			value: 'install',
-			title: () => m.ext_faq_install_title(),
-			desc: () => m.ext_faq_install_desc()
-		},
+		{ value: 'install', title: () => m.ext_faq_install_title(), desc: () => '' },
 		{
 			value: 'debug',
 			title: () => m.ext_faq_debug_workaround_title(),
@@ -48,14 +51,10 @@
 			<source src="{getImageBaseUrl()}/images/media/extension.mp4" type="video/mp4" />
 		</video>
 		<p>{m.ext_description()}</p>
-		<a
-			href="https://github.com/jedmund/hensei-extractor/releases/latest/download/granblue-team-extension.zip"
-			class="download-link"
-		>
-			<Button size="large" element={userElement} elementStyle={!!userElement}>
-				{m.ext_download()}
-			</Button>
-		</a>
+		<Button href={CHROME_STORE_URL} size="large" element={userElement} elementStyle={!!userElement}>
+			{m.ext_install_chrome_store()}
+		</Button>
+		<a href={GITHUB_DOWNLOAD_URL} class="github-link">{m.ext_download_github()}</a>
 		{#if release}
 			<p class="version-info">
 				{m.ext_version({ version: release.version })} · {m.ext_published({ date: formattedDate })}
@@ -90,8 +89,29 @@
 						</Accordion.Trigger>
 					</Accordion.Header>
 					<Accordion.Content class="faq-content">
-						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-						<p class="faq-answer">{@html item.desc()}</p>
+						{#if item.value === 'install'}
+							<div class="faq-answer install-methods">
+								<div class="install-method">
+									<h3>
+										<img src={chromeLogo} alt="" class="install-logo" />
+										Chrome
+									</h3>
+									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+									<div>{@html m.ext_faq_install_store_desc()}</div>
+								</div>
+								<div class="install-method">
+									<h3>
+										<Icon name="github" size={20} />
+										GitHub
+									</h3>
+									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+									<div>{@html m.ext_faq_install_manual_desc()}</div>
+								</div>
+							</div>
+						{:else}
+							<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+							<p class="faq-answer">{@html item.desc()}</p>
+						{/if}
 						{#if item.value === 'safe'}
 							<LinkItem
 								title="hensei-extractor"
@@ -155,10 +175,14 @@
 		object-fit: cover;
 	}
 
-	.download-link {
-		display: inline-block;
-		text-decoration: none;
-		width: fit-content;
+	.github-link {
+		font-size: $font-small;
+		color: var(--text-secondary);
+		text-decoration: underline;
+
+		&:hover {
+			color: var(--text-primary);
+		}
 	}
 
 	.card p.version-info {
@@ -280,6 +304,32 @@
 		:global(li) {
 			line-height: 1.4;
 		}
+	}
+
+	.install-methods {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-3x;
+	}
+
+	.install-method {
+		display: flex;
+		flex-direction: column;
+		gap: $unit;
+
+		h3 {
+			display: flex;
+			align-items: center;
+			gap: $unit;
+			font-size: $font-medium;
+			font-weight: $bold;
+			margin: 0;
+		}
+	}
+
+	.install-logo {
+		width: 20px;
+		height: 20px;
 	}
 
 	@keyframes slideDown {
