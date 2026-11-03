@@ -72,7 +72,7 @@ export class ApiError extends Error implements AdapterError {
  * Error class for network-related failures
  */
 export class NetworkError extends ApiError {
-	constructor(message = 'Network request failed', details?: unknown) {
+	constructor(message: string = m.error_network(), details?: unknown) {
 		super('NETWORK_ERROR', 0, message, details)
 		this.name = 'NetworkError' as const
 	}
@@ -338,9 +338,10 @@ export function normalizeError(error: unknown): AdapterError {
 		return new CancelledError().toJSON()
 	}
 
-	// Network error
+	// Network error: the browser's own text ("Failed to fetch", "NetworkError when
+	// attempting to fetch resource.") isn't for people, so it stays in the details
 	if (name === 'NetworkError' || name === 'TypeError') {
-		return new NetworkError(message).toJSON()
+		return new NetworkError(undefined, error).toJSON()
 	}
 
 	// Timeout error
