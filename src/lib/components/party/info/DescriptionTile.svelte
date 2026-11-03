@@ -7,12 +7,13 @@
 	import PartySettings from './PartySettings.svelte'
 	import StickerArea from '$lib/components/stickers/StickerArea.svelte'
 	import { getElementTypeKey } from '$lib/utils/element'
+	import { formatRelativeTime } from '$lib/utils/date'
 	import type { AvatarUser } from '$lib/utils/avatar'
 	import type { Party } from '$lib/types/api/party'
 
 	/**
-	 * The top of a party page: its name and actions, who it's by, its
-	 * settings chips, and the start of its description.
+	 * The top of a party page: who it's by and its actions, its name, its
+	 * settings chips, and the start of its description with when it was updated.
 	 */
 	interface Props {
 		party: Party
@@ -54,13 +55,25 @@
 		stickerPicker,
 		canGiveSticker = false
 	}: Props = $props()
+
+	const updatedAt = $derived(party.lastUpdated ?? party.updatedAt)
+	const updated = $derived(
+		updatedAt ? m.time_last_updated({ time: formatRelativeTime(updatedAt) }) : null
+	)
 </script>
 
 <div class="description-tile" data-sticker-bounds>
-	<!-- Header: Title + Actions -->
+	<!-- Header: who it's by and the actions, then the title full width -->
 	<div class="tile-header-container">
 		<div class="tile-header">
-			<h1 class="party-name" class:empty={!party.name}>{party.name || m.party_untitled()}</h1>
+			<div class="byline">
+				<PartyByline
+					user={party.user}
+					sourceParty={party.sourceParty}
+					collectionSourceUser={party.collectionSourceUser}
+					visibility={party.visibility}
+				/>
+			</div>
 			<PartyActions
 				{authUser}
 				collectionSourceUser={party.collectionSourceUser}
@@ -76,13 +89,7 @@
 			/>
 		</div>
 
-		<PartyByline
-			user={party.user}
-			sourceParty={party.sourceParty}
-			collectionSourceUser={party.collectionSourceUser}
-			visibility={party.visibility}
-			updatedAt={party.lastUpdated ?? party.updatedAt}
-		/>
+		<h1 class="party-name" class:empty={!party.name}>{party.name || m.party_untitled()}</h1>
 	</div>
 
 	<PartySettings {party} {isEditor} />
@@ -93,6 +100,7 @@
 		element={party.user?.avatar?.element}
 		onOpen={onOpenDescription}
 		onEdit={onEditDescription}
+		{updated}
 	/>
 
 	<!-- Stickers the team has received, then the picker -->
@@ -124,7 +132,7 @@
 	.tile-header-container {
 		display: flex;
 		flex-direction: column;
-		gap: $unit-half;
+		gap: $unit;
 	}
 
 	.tile-header {
@@ -132,6 +140,11 @@
 		align-items: center;
 		justify-content: space-between;
 		gap: $unit;
+	}
+
+	.byline {
+		flex: 1;
+		min-width: 0;
 	}
 
 	.party-name {
@@ -147,6 +160,16 @@
 
 		&.empty {
 			color: var(--text-tertiary);
+		}
+
+		// Phones: up to two lines before the ellipsis
+		@media (max-width: 768px) {
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 2;
+			line-clamp: 2;
+			white-space: normal;
+			overflow-wrap: anywhere;
 		}
 	}
 

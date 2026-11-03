@@ -129,9 +129,26 @@
 			border-radius: $full-corner;
 		}
 
-		:global([data-button-root]:hover:not(:disabled)) {
-			background-color: var(--pill-hover-bg, var(--button-bg));
-			color: var(--pill-hover-text, var(--button-text-hover));
+		@media (hover: hover) {
+			:global([data-button-root]:hover:not(:disabled)) {
+				background-color: var(--pill-hover-bg, var(--button-bg));
+				color: var(--pill-hover-text, var(--button-text-hover));
+			}
+		}
+
+		// Phones: 44px circles, a comfortable tap target, with 16px icons.
+		// !important because Icon sets its size inline, and some of these
+		// buttons come from the page's snippets rather than this file.
+		@media (max-width: 768px) {
+			:global([data-button-root].iconOnly) {
+				width: 44px;
+				height: 44px;
+			}
+
+			:global([data-button-root].iconOnly .icon) {
+				width: 16px !important;
+				height: 16px !important;
+			}
 		}
 	}
 </style>

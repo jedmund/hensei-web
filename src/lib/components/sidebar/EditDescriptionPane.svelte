@@ -9,6 +9,7 @@
 	import { usePaneStack } from '$lib/stores/paneStack.svelte'
 	import { descriptionToContent } from '$lib/utils/descriptionContent'
 	import { useMentionTooltip } from '$lib/composables/mention-tooltip.svelte'
+	import { mobileQuery } from '$lib/utils/viewport.svelte'
 
 	interface Props {
 		paneId?: string
@@ -40,13 +41,20 @@
 		sidebar.setAction(save, m.action_save())
 	})
 
+	// Phones don't focus the editor on open: iOS scrolls the page and the
+	// sheet (still sliding up) to the caret at the end of the text, and won't
+	// show the keyboard for a focus outside a tap anyway
+	const isMobile = mobileQuery()
+
 	// Capture baseline JSON after TipTap normalizes content, then focus
 	$effect(() => {
 		if (editor) {
 			if (baselineJson === null) {
 				baselineJson = JSON.stringify(editor.getJSON())
 			}
-			editor.commands.focus('end')
+			if (!untrack(() => isMobile.current)) {
+				editor.commands.focus('end')
+			}
 		}
 	})
 
