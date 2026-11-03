@@ -92,8 +92,9 @@ export class GachaSimulator {
 	// while the settings still match
 	resultShare = $state('')
 	// The settings card's rate-ups fold away to a row of thumbnails, on their
-	// own when a draw starts
-	collapsed = $state(false)
+	// own when a draw starts. Until then it's unset, and the width decides in
+	// CSS: open on desktop, folded on mobile, where the list is long
+	collapsed = $state<boolean | undefined>(undefined)
 
 	// Draw animation: remembered per viewer; see `keepsLinkSettings`
 	readonly #reducedMotion = new MediaQuery('(prefers-reduced-motion: reduce)')

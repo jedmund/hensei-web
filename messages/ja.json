@@ -1958,6 +1958,7 @@
 	"gacha_remove": "削除",
 	"gacha_show_rateups": "個別確率を表示",
 	"gacha_hide_rateups": "個別確率を隠す",
+	"gacha_rateups_count": "個別確率（{count}）",
 	"gacha_run": "ガチャを引く",
 	"gacha_play_animation": "ガチャ演出",
 	"gacha_animation": "ガチャ演出",
