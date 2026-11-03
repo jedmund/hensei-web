@@ -178,7 +178,7 @@
 	@use '$src/themes/layout' as layout;
 
 	.weapon-key-select {
-		// A key's image is 32px (border-box, so its padding is inside)
+		// A key's image: 32px, plus its 4px padding a side
 		--key-image: 32px;
 		width: 100%;
 
@@ -190,9 +190,9 @@
 		}
 
 		// Without a key (none picked, or a locked slot) the trigger stays as tall
-		// as one with a key: the image, the medium padding and the 2px border
+		// as one with a key: the padded image, the medium padding and the 2px border
 		:global([data-select-trigger]) {
-			min-height: calc(var(--key-image) + spacing.$unit-2x + 4px);
+			min-height: calc(var(--key-image) + 8px + spacing.$unit-2x + 4px);
 		}
 	}
 
