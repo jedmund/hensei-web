@@ -10,7 +10,7 @@
 	import WeaponKeysList from '../modifications/WeaponKeysList.svelte'
 	import WeaponKeySelect from '$lib/components/sidebar/edit/WeaponKeySelect.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import { getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
+	import { formatUncapLevel, getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
 	import { getSeriesSlug } from '$lib/utils/weaponSeries'
 	import { openKeySlots } from '$lib/utils/weaponKeySlots'
 	import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
@@ -44,6 +44,12 @@
 	const openSlots = $derived.by(() => {
 		const series = weapon.weapon?.series
 		return isWeaponSeriesRef(series) ? openKeySlots(series, weapon.uncapLevel ?? 0) : []
+	})
+
+	// A keyed weapon whose uncap opens none of its slots yet
+	const keysLocked = $derived.by(() => {
+		const series = weapon.weapon?.series
+		return isWeaponSeriesRef(series) && (series.numWeaponKeys ?? 0) > 0 && openSlots.length === 0
 	})
 
 	function startEditing() {
@@ -82,7 +88,20 @@
 			{#if sync}
 				<SyncMenuButton {...sync} />
 			{/if}
-			{#if isPartyOwner && openSlots.length > 0}
+			{#if isPartyOwner && keysLocked}
+				<Button
+					variant="element-ghost"
+					size="small"
+					element={buttonElement}
+					leftIcon="lock"
+					disabled
+				>
+					{m.details_weapon_keys_locked({
+						keys: getWeaponKeyTitle(weapon.weapon?.series),
+						uncap: formatUncapLevel(weapon.uncapLevel)
+					})}
+				</Button>
+			{:else if isPartyOwner && openSlots.length > 0}
 				<Button
 					variant="element-ghost"
 					size="small"

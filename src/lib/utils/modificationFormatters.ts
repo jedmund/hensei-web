@@ -55,6 +55,8 @@ export function getWeaponKeyTitle(series?: WeaponSeriesRef | WeaponSeriesSummary
 			return m.details_weapon_key_ultima()
 		case 'astral':
 			return m.details_weapon_key_emblems()
+		case 'destroyer':
+			return m.details_weapon_key_anklets()
 		default:
 			return m.details_weapon_keys()
 	}

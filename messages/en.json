@@ -750,6 +750,8 @@
 	"details_weapon_key_telumas": "Telumas",
 	"details_weapon_key_ultima": "Ultima Keys",
 	"details_weapon_key_emblems": "Emblems",
+	"details_weapon_key_anklets": "Anklets",
+	"details_weapon_keys_locked": "{keys} aren't available at {uncap}",
 	"crew_tab_events": "Events",
 	"crew_tab_members": "Members",
 	"crew_tab_teams": "Teams",

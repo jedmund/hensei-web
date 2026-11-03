@@ -732,6 +732,8 @@
 	"details_weapon_key_telumas": "テルマ",
 	"details_weapon_key_ultima": "ガフスキー",
 	"details_weapon_key_emblems": "エンブレム",
+	"details_weapon_key_anklets": "アンクレット",
+	"details_weapon_keys_locked": "{uncap}では{keys}を装着できません",
 	"crew_tab_events": "イベント",
 	"crew_tab_members": "団員",
 	"crew_tab_teams": "編成",
