@@ -46,16 +46,22 @@
 
 	const updatedAt = $derived(party.lastUpdated ?? party.updatedAt)
 
+	type RepView = 'weapons' | 'summons' | 'characters'
+
 	const defaultRepView = getDefaultRepView()
 	// eslint-disable-next-line svelte/prefer-writable-derived -- $derived.writable not available in Svelte 5
-	let currentView: 'weapons' | 'summons' | 'characters' = $state(
-		defaultRepView.value as 'weapons' | 'summons' | 'characters'
-	)
+	let currentView: RepView = $state(defaultRepView.value as RepView)
 
 	// Sync when the user changes their default in settings
 	$effect(() => {
-		currentView = defaultRepView.value as 'weapons' | 'summons' | 'characters'
+		currentView = defaultRepView.value as RepView
 	})
+
+	const VIEWS: { view: RepView; label: () => string }[] = [
+		{ view: 'characters', label: () => m.nav_characters() },
+		{ view: 'weapons', label: () => m.nav_weapons() },
+		{ view: 'summons', label: () => m.nav_summons() }
+	]
 
 	let href = $derived(
 		hrefProp ??
@@ -85,7 +91,10 @@
 	class:outlined
 	role={disabled ? undefined : 'link'}
 	tabindex={disabled ? undefined : 0}
-	onmouseleave={() => (currentView = defaultRepView.value as 'weapons' | 'summons' | 'characters')}
+	onpointerleave={(e) => {
+		// Only a mouse leaving resets the view; on touch screens the pills switch it
+		if (e.pointerType === 'mouse') currentView = defaultRepView.value as RepView
+	}}
 >
 	<svelte:element
 		this={tag}
@@ -196,24 +205,26 @@
 		{#if footer}
 			<div class="footer">{@render footer()}</div>
 		{/if}
-		<ul class="indicators">
-			<li
-				class:active={currentView === 'characters'}
-				onmouseenter={() => (currentView = 'characters')}
-			>
-				<div class="indicator"></div>
-				<span class="sr-only">{m.nav_characters()}</span>
-			</li>
-			<li class:active={currentView === 'weapons'} onmouseenter={() => (currentView = 'weapons')}>
-				<div class="indicator"></div>
-				<span class="sr-only">{m.nav_weapons()}</span>
-			</li>
-			<li class:active={currentView === 'summons'} onmouseenter={() => (currentView = 'summons')}>
-				<div class="indicator"></div>
-				<span class="sr-only">{m.nav_summons()}</span>
-			</li>
-		</ul>
 	</svelte:element>
+	<!-- The view pills sit over the bottom of the card but outside its link, so
+	     they're real buttons: hover (or tap, on touch screens) switches the view
+	     without opening the team -->
+	<ul class="indicators">
+		{#each VIEWS as { view, label } (view)}
+			<li>
+				<button
+					type="button"
+					class:active={currentView === view}
+					aria-pressed={currentView === view}
+					aria-label={label()}
+					onmouseenter={() => (currentView = view)}
+					onclick={() => (currentView = view)}
+				>
+					<span class="indicator"></span>
+				</button>
+			</li>
+		{/each}
+	</ul>
 </div>
 
 <style lang="scss">
@@ -223,12 +234,55 @@
 	@use '$src/themes/rep' as rep;
 	@use '$src/themes/typography' as typography;
 
+	// The card: its box (background, border, corners) is here, around the
+	// team link and the view pills below it
 	.gridRep {
 		box-sizing: border-box;
 		min-width: 262px;
 		position: relative;
 		width: 100%;
+		height: 100%;
 		opacity: 1;
+		display: grid;
+		grid-template-rows: 1fr auto;
+		border: 1px solid transparent;
+		border-radius: layout.$card-corner;
+		// Also the image covers' color (see .gridContainer)
+		--rep-bg: var(--card-bg);
+		background: var(--rep-bg);
+		overflow: hidden;
+
+		// Hover effects only where there's a real pointer: on touch screens
+		// a tap leaves :hover stuck on the card
+		@media (hover: hover) {
+			&:hover {
+				--rep-bg: var(--grid-rep-hover);
+				box-shadow:
+					0 0 0 1px rgba(0, 0, 0, 0.1),
+					effects.$card-elevation;
+			}
+
+			&:hover .indicators {
+				opacity: 1;
+			}
+
+			&:hover .name-row :global(.sticker-labels) {
+				scale: 1;
+				filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.18))
+					drop-shadow(0 3px 6px rgba(0, 0, 0, 0.12));
+			}
+		}
+
+		// Keyboard focus on the link rings the whole card
+		&:has(.inner:focus-visible) {
+			outline: 2px solid var(--accent-blue-focus);
+			outline-offset: 2px;
+		}
+
+		// Keyboard focus anywhere in the card shows the pills (a tap doesn't)
+		&:has(:focus-visible) .indicators {
+			opacity: 1;
+		}
 
 		&.visible {
 			transition: opacity 0.3s ease-in-out;
@@ -253,34 +307,23 @@
 			}
 		}
 
+		// The team link: everything but the pills, with the card's padding on
+		// the top and sides so the whole card opens the team
 		.inner {
 			display: grid;
 			grid-template-rows: auto 1fr;
 			gap: spacing.$unit;
-			padding: spacing.$unit;
+			padding: spacing.$unit spacing.$unit 0;
 			text-decoration: none;
 			color: inherit;
-			width: 100%;
-			height: 100%;
-			border: 1px solid transparent;
-			border-radius: layout.$card-corner;
+			min-width: 0;
 			box-sizing: border-box;
-			background: var(--card-bg);
-			overflow: hidden;
 			user-select: none;
 
-			&:hover {
-				background: var(--grid-rep-hover);
-				box-shadow:
-					0 0 0 1px rgba(0, 0, 0, 0.1),
-					effects.$card-elevation;
+			&:focus-visible {
+				outline: none;
 			}
 
-			&:hover .indicators {
-				opacity: 1;
-			}
-
-			&:hover .name-row :global(.sticker-labels),
 			&:focus-visible .name-row :global(.sticker-labels) {
 				scale: 1;
 				filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, 0.18))
@@ -290,6 +333,35 @@
 	}
 
 	.gridContainer {
+		// The card's images don't fade in themselves: in iOS Safari an opacity
+		// animation moves an image onto its own layer, snapped to whole pixels,
+		// so the images shifted a few pixels as they faded in (and on every
+		// view switch). Instead each image appears at once under a cover in the
+		// card's background, and the cover fades out; a flat color moving by a
+		// pixel doesn't show. Every rep image sits directly in a slot wrapper.
+		:global(img[data-fade='in']) {
+			animation: none;
+		}
+
+		:global(*:has(> img[data-fade='in'])) {
+			position: relative;
+		}
+
+		:global(*:has(> img[data-fade='in'])::after) {
+			content: '';
+			position: absolute;
+			inset: 0;
+			pointer-events: none;
+			// Fades by color, not opacity: an opacity animation would put the
+			// slot (and its image) on a pixel-snapped layer again
+			background-color: transparent;
+			animation: rep-image-cover 0.2s ease;
+
+			@media (prefers-reduced-motion: reduce) {
+				animation: none;
+			}
+		}
+
 		/* Reserve a constant visual height for all reps; keeps card height stable */
 		aspect-ratio: calc(#{rep.$rep-body-ratio} / 1);
 		width: 100%;
@@ -310,9 +382,7 @@
 	.gridRep.outlined {
 		min-width: 0;
 
-		.inner {
-			border-color: var(--grid-border-color);
-		}
+		border-color: var(--grid-border-color);
 	}
 
 	.footer {
@@ -477,30 +547,71 @@
 		}
 	}
 
+	// The view pills, below the team link (see the markup)
 	.indicators {
 		display: flex;
 		flex-direction: row;
 		gap: spacing.$unit;
 		justify-content: center;
+		margin: 0;
+		padding: spacing.$unit;
 		opacity: 0;
 		list-style: none;
-		padding-left: 0;
 
 		li {
 			flex-grow: 1;
-			position: relative;
+			display: flex;
+		}
 
-			&:hover .indicator,
+		button {
+			flex: 1;
+			display: flex;
+			align-items: center;
+			padding: 0;
+			border: none;
+			background: none;
+			cursor: pointer;
+
 			&.active .indicator {
 				background-color: var(--text-secondary);
+			}
+
+			@media (hover: hover) {
+				&:hover .indicator {
+					background-color: var(--text-secondary);
+				}
+			}
+
+			&:focus-visible {
+				outline: 2px solid var(--accent-blue-focus);
+				outline-offset: 2px;
+				border-radius: spacing.$unit-half;
 			}
 		}
 
 		.indicator {
+			flex: 1;
 			transition: background-color 0.12s ease-in-out;
 			height: spacing.$unit;
 			border-radius: spacing.$unit-half;
 			background-color: var(--indicator-bg);
+		}
+
+		// Touch screens: always shown and quieter, tapped to switch the view.
+		// Each pill's hit area is taller than the pill itself.
+		@media (hover: none) {
+			opacity: 0.6;
+
+			button {
+				padding-block: spacing.$unit;
+				margin-block: calc(-1 * #{spacing.$unit});
+			}
+		}
+	}
+
+	@keyframes rep-image-cover {
+		from {
+			background-color: var(--rep-bg);
 		}
 	}
 

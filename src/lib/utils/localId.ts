@@ -1,3 +1,5 @@
+import { uuid } from '$lib/utils/uuid'
+
 /**
  * Local ID utilities for anonymous users
  */
@@ -13,7 +15,7 @@ export function getLocalId(): string {
 
 	let localId = localStorage.getItem('local_id')
 	if (!localId) {
-		localId = crypto.randomUUID()
+		localId = uuid()
 		localStorage.setItem('local_id', localId)
 	}
 	return localId

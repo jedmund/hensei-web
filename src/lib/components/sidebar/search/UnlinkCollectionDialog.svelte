@@ -13,7 +13,7 @@
 	let { open = $bindable(false), onConfirm }: Props = $props()
 </script>
 
-<Dialog bind:open>
+<Dialog bind:open alert>
 	<ModalHeader title={m.unlink_collection_title()} />
 	<ModalBody>
 		<p class="unlink-message">

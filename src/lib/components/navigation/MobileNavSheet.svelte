@@ -1,11 +1,14 @@
 <script lang="ts">
 	import { beforeNavigate } from '$app/navigation'
 	import { m } from '$lib/paraglide/messages'
+	import Icon from '../Icon.svelte'
 	import LanguageToggle from '../LanguageToggle.svelte'
 	import ThemeToggle from '../ThemeToggle.svelte'
 	import BottomSheet from '../ui/BottomSheet.svelte'
 	import NotificationBadge from '../ui/NotificationBadge.svelte'
 	import CrewNotificationDot from './CrewNotificationDot.svelte'
+	import NavUserSearch from './NavUserSearch.svelte'
+	import { sheetLinks } from './navLinks'
 	import { logout, type NavigationState } from './navigationState.svelte'
 
 	interface Props {
@@ -15,47 +18,60 @@
 
 	let { nav, open = $bindable(false) }: Props = $props()
 
+	// Home, Gallery, New team and the profile are tabs; the rest is here
+	const links = $derived(sheetLinks(nav.hrefs, nav.isAuth, nav.username, nav.role))
+
+	let searching = $state(false)
+
 	// Close sheet on navigation
 	beforeNavigate(() => {
 		open = false
 	})
+
+	// Each time the sheet opens it starts at the menu, not the search
+	$effect(() => {
+		if (!open) searching = false
+	})
 </script>
 
-<!-- The mobile menu: every link and account action, in a bottom sheet -->
+<!-- The phone tab bar's menu sheet: everything that isn't a tab -->
 <BottomSheet bind:open>
 	<div class="mobile-nav-sheet {nav.elementClass}">
+		{#if !nav.isAuth}
+			<ul class="sheet-nav-group" role="list">
+				<li><a href={nav.hrefs.login}>{m.nav_login()}</a></li>
+				<li><a href={nav.hrefs.register}>{m.nav_register()}</a></li>
+			</ul>
+			<hr class="sheet-separator" />
+		{/if}
+		<!-- Player search needs an account (the API requires one) -->
+		{#if nav.isAuth}
+			{#if searching}
+				<div class="sheet-search">
+					<NavUserSearch inline userElement={nav.userElement} onClose={() => (searching = false)} />
+				</div>
+			{:else}
+				<ul class="sheet-nav-group" role="list">
+					<li>
+						<button onclick={() => (searching = true)}>
+							<Icon name="search" size={16} />
+							{m.nav_search_users_aria()}
+						</button>
+					</li>
+				</ul>
+			{/if}
+			<hr class="sheet-separator" />
+		{/if}
 		<ul class="sheet-nav-group" role="list">
-			{#each nav.mainLinks as link (link.id)}
+			{#each links as link (link.id)}
 				<li>
-					{#if link.id === 'profile'}
-						<a href={link.href} class:selected={nav.isProfileSelected} class="profile-link">
-							<span>{nav.username}</span>
-							{#if nav.avatarSrc}
-								<img
-									src={nav.avatarSrc}
-									srcset={nav.avatarSrcSet}
-									alt={nav.username}
-									class="user-avatar"
-									width="24"
-									height="24"
-								/>
-							{/if}
-						</a>
-					{:else}
-						<a href={link.href} class:selected={nav.isNavSelected(link.href)}>
-							{link.label()}
-							{#if link.id === 'crew' && nav.notificationCount > 0}
-								<CrewNotificationDot element={nav.userElement} />
-							{/if}
-						</a>
-					{/if}
+					<a href={link.href} class:selected={nav.isNavSelected(link.href)}>
+						{link.label()}
+						{#if link.id === 'crew' && nav.notificationCount > 0}
+							<CrewNotificationDot element={nav.userElement} />
+						{/if}
+					</a>
 				</li>
-			{/each}
-		</ul>
-		<hr class="sheet-separator" />
-		<ul class="sheet-nav-group" role="list">
-			{#each nav.moreLinks as link (link.id)}
-				<li><a href={link.href}>{link.label()}</a></li>
 			{/each}
 		</ul>
 		<hr class="sheet-separator" />
@@ -96,15 +112,12 @@
 			<LanguageToggle />
 			<ThemeToggle />
 		</div>
-		<hr class="sheet-separator" />
-		<ul class="sheet-nav-group" role="list">
-			{#if nav.isAuth}
+		{#if nav.isAuth}
+			<hr class="sheet-separator" />
+			<ul class="sheet-nav-group" role="list">
 				<li><button onclick={logout}>{m.nav_logout()}</button></li>
-			{:else}
-				<li><a href={nav.hrefs.login}>{m.nav_login()}</a></li>
-				<li><a href={nav.hrefs.register}>{m.nav_register()}</a></li>
-			{/if}
-		</ul>
+			</ul>
+		{/if}
 	</div>
 </BottomSheet>
 
@@ -178,16 +191,8 @@
 		}
 	}
 
-	// Profile link with avatar on right
-	.profile-link {
-		justify-content: space-between;
-
-		.user-avatar {
-			width: 24px;
-			height: 24px;
-			border-radius: 50%;
-			object-fit: cover;
-		}
+	.sheet-search {
+		padding: spacing.$unit-half 0;
 	}
 
 	// Element-specific selected states in sheet

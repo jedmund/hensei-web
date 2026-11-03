@@ -12,9 +12,11 @@
 	interface Props {
 		userElement?: ElementName
 		onClose: () => void
+		/** In the phone sheet: results flow below the input instead of a dropdown */
+		inline?: boolean
 	}
 
-	const { userElement, onClose }: Props = $props()
+	const { userElement, onClose, inline = false }: Props = $props()
 
 	let inputEl = $state<HTMLInputElement | undefined>()
 	let rootEl = $state<HTMLDivElement | undefined>()
@@ -130,7 +132,7 @@
 	const elementClass = $derived(userElement ?? '')
 </script>
 
-<div class="nav-user-search {elementClass}" bind:this={rootEl}>
+<div class="nav-user-search {elementClass}" class:inline bind:this={rootEl}>
 	<div class="search-input">
 		<Icon name="search" size={16} />
 		<input
@@ -274,6 +276,23 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-quarter;
+	}
+
+	// Phone sheet: a full-width field (16px, so iOS doesn't zoom in on focus)
+	// with the results listed below it
+	.nav-user-search.inline {
+		flex-direction: column;
+
+		.search-input input {
+			font-size: typography.$font-regular;
+		}
+
+		.search-results {
+			position: static;
+			min-width: 0;
+			box-shadow: none;
+			margin-top: spacing.$unit-half;
+		}
 	}
 
 	.search-empty {

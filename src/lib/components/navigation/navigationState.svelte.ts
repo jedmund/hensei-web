@@ -12,7 +12,7 @@ import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 import { isHomePath } from '$lib/utils/browseRoutes'
 import { extractErrorMessage } from '$lib/utils/errors'
 import { useSettingsReturn } from '../settings/settingsReturn.svelte'
-import { localizeNavHrefs, mainNavLinks, moreNavLinks } from './navLinks'
+import { isDatabasePath, localizeNavHrefs, mainNavLinks, moreNavLinks } from './navLinks'
 
 export type NavElement = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -54,7 +54,7 @@ export class NavigationState {
 	readonly mainLinks = $derived(mainNavLinks(this.hrefs, this.isAuth, this.username))
 	readonly moreLinks = $derived(moreNavLinks(this.hrefs, this.isAuth ? this.role : null))
 
-	readonly isDatabaseRoute = $derived(page.url.pathname.startsWith(this.hrefs.database))
+	readonly isDatabaseRoute = $derived(isDatabasePath(page.url.pathname, this.hrefs))
 
 	// The profile link stays selected on its sub-routes (/favorites, /collection)
 	readonly isProfileSelected = $derived.by(() => {

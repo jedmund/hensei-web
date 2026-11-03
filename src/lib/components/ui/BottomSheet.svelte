@@ -54,6 +54,16 @@
 		animation: sheet-fade-in $duration-quick ease-out;
 	}
 
+	// Closing: Bits UI keeps the sheet mounted until these animations end.
+	// (Separate :global() rules; nested under one, Svelte drops them as unused.)
+	:global(.sheet-overlay[data-state='closed']) {
+		animation: sheet-fade-out $duration-slide ease-in forwards;
+	}
+
+	:global(.sheet-content[data-state='closed']) {
+		animation: sheet-slide-down $duration-slide ease-in forwards;
+	}
+
 	:global(.sheet-content) {
 		position: fixed;
 		bottom: 0;
@@ -63,7 +73,8 @@
 		color: var(--text-primary);
 		border-radius: $card-corner $card-corner 0 0;
 		box-shadow: var(--shadow-xl);
-		max-height: 85vh;
+		// As tall as the content needs, leaving 60px of the page at the top
+		max-height: calc(100dvh - 60px);
 		z-index: $z-modal + 1;
 		display: flex;
 		flex-direction: column;
@@ -132,6 +143,18 @@
 		}
 		to {
 			opacity: 1;
+		}
+	}
+
+	@keyframes sheet-fade-out {
+		to {
+			opacity: 0;
+		}
+	}
+
+	@keyframes sheet-slide-down {
+		to {
+			transform: translateY(100%);
 		}
 	}
 

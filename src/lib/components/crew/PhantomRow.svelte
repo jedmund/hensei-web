@@ -163,7 +163,7 @@
 </li>
 
 <!-- Delete Phantom Confirmation -->
-<Dialog bind:open={deleteDialogOpen}>
+<Dialog bind:open={deleteDialogOpen} alert>
 	<ModalHeader title={m.crew_delete_phantom_title()} />
 	<ModalBody>
 		<p class="confirm-message">

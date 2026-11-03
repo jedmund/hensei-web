@@ -61,7 +61,7 @@
 	</div>
 </li>
 
-<Dialog bind:open={reinviteDialogOpen}>
+<Dialog bind:open={reinviteDialogOpen} alert>
 	<ModalHeader title={m.crew_reinvite_title({ username })} />
 	<ModalBody>
 		<p class="confirm-message">{m.crew_reinvite_body({ username })}</p>

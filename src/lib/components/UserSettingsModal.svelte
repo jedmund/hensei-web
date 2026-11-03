@@ -96,7 +96,13 @@
 	}
 </script>
 
-<Dialog bind:open {...onOpenChange ? { onOpenChange } : {}} size="medium" hideClose>
+<Dialog
+	bind:open
+	{...onOpenChange ? { onOpenChange } : {}}
+	size="medium"
+	hideClose
+	class="settings-dialog"
+>
 	<ModalHeader title={m.settings_title()}>
 		<span class="header-username">@{username}</span>
 	</ModalHeader>
@@ -305,5 +311,12 @@
 		border: none;
 		padding: 0;
 		margin: 0;
+	}
+
+	// On phones, settings is a sheet that takes the full height (see Dialog)
+	@media (max-width: 768px) {
+		:global(.dialog-content.settings-dialog) {
+			height: calc(100dvh - 60px);
+		}
 	}
 </style>

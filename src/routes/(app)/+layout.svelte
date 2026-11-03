@@ -8,8 +8,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { Tooltip } from 'bits-ui'
 	import { beforeNavigate, afterNavigate, goto } from '$app/navigation'
-	import { browser, dev } from '$app/environment'
-	import { SvelteQueryDevtools } from '@tanstack/svelte-query-devtools'
+	import { browser } from '$app/environment'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
@@ -18,6 +17,8 @@
 	import { hasEditKeys, getAllEditKeys } from '$lib/utils/editKeys'
 	import { userAdapter } from '$lib/api/adapters/user.adapter'
 	import type { LayoutData } from './$types'
+	import { page } from '$app/state'
+	import { isDatabasePath, localizeNavHrefs } from '$lib/components/navigation/navLinks'
 
 	const { data, children } = $props<{
 		data: LayoutData & { [key: string]: unknown }
@@ -58,6 +59,11 @@
 
 	// Mobile detection
 	const isMobile = mobileQuery()
+
+	// Phones get the bottom tab bar instead of a top bar, except in the Database
+	const hasTabBar = $derived(
+		isMobile.current && !isDatabasePath(page.url.pathname, localizeNavHrefs())
+	)
 
 	// Bahamut mode bar affects layout positioning
 	const isBahamut = $derived(data?.currentUser?.bahamut === true)
@@ -104,12 +110,13 @@
 
 <svelte:window onbeforeunload={handleBeforeUnload} onscroll={updateScrolled} />
 
-{#if dev}
-	<SvelteQueryDevtools buttonPosition="bottom-left" />
-{/if}
 <Tooltip.Provider>
 	<div class="app-container" class:sidebar-open={sidebar.isOpen}>
-		<div class="main-pane" style:--bahamut-offset={isBahamut ? '16px' : '0px'}>
+		<div
+			class="main-pane"
+			class:has-tab-bar={hasTabBar}
+			style:--bahamut-offset={isBahamut ? '16px' : '0px'}
+		>
 			<div class="nav-blur-background" class:scrolled={isScrolled}></div>
 			<div class="main-navigation">
 				{#if isMobile.current}
@@ -190,6 +197,17 @@
 
 	:root {
 		--sidebar-width: 420px;
+		// The phone tab bar (see MobileTabBar): the capsule's height, the minimum
+		// gap below it, its distance from the bottom edge, and the total space
+		// it takes.
+		--tab-bar-pill: 56px;
+		// No less than this: at 4px or closer to the bottom edge, iOS Safari stops
+		// drawing the page under its collapsed toolbar
+		--tab-bar-gap: 5px;
+		// The gap, or the home-indicator inset when that's larger. The inset is 0
+		// in Safari itself and only applies when opened from the Home Screen.
+		--tab-bar-bottom: max(var(--tab-bar-gap), env(safe-area-inset-bottom, 0px));
+		--tab-bar-height: calc(var(--tab-bar-pill) + var(--tab-bar-bottom));
 	}
 
 	// The document scrolls, not an inner container (see the script)
@@ -305,7 +323,42 @@
 	@media (max-width: 768px) {
 		.app-container {
 			.main-pane {
-				--content-top: calc(60px + var(--bahamut-offset, 0px));
+				--content-top: calc(60px + env(safe-area-inset-top, 0px) + var(--bahamut-offset, 0px));
+
+				// The Database's top bar clears the status bar when opened from the
+				// Home Screen (the inset is 0 in Safari itself)
+				.main-navigation {
+					padding-top: env(safe-area-inset-top, 0px);
+				}
+
+				// No top bar: content starts below the status bar, and clears the
+				// tab bar at the bottom
+				&.has-tab-bar {
+					--content-top: calc(
+						env(safe-area-inset-top, 0px) + var(--bahamut-offset, 0px) + #{spacing.$unit-2x}
+					);
+
+					.main-content {
+						padding-bottom: max(20vh, calc(var(--tab-bar-height) + #{spacing.$unit-4x}));
+					}
+
+					// The tab bar must not sit inside the fixed, top-anchored nav
+					// container: iOS Safari moves bottom-anchored fixed boxes with its
+					// toolbar on the compositor, but one nested in a top-fixed layer
+					// lags behind (choppy). Without a box, the bar is fixed to the
+					// viewport on its own.
+					.main-navigation {
+						display: contents;
+						position: static;
+					}
+
+					// No top bar to sit behind. (In Safari the page starts below the
+					// status bar and the safe-area insets are 0; they only apply when the
+					// site is opened from the Home Screen.)
+					.nav-blur-background {
+						display: none;
+					}
+				}
 			}
 
 			// Overlay backdrop when sidebar is open on mobile

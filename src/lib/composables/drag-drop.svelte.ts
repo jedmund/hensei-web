@@ -1,4 +1,5 @@
 import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
+import { uuid } from '$lib/utils/uuid'
 
 export type GridItemType = 'character' | 'weapon' | 'summon'
 export type GridItem = GridCharacter | GridWeapon | GridSummon
@@ -283,7 +284,7 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 					!!targetItem
 				)
 				const operation: DragOperation = {
-					id: crypto.randomUUID(),
+					id: uuid(),
 					type: opType,
 					timestamp: Date.now(),
 					source: {

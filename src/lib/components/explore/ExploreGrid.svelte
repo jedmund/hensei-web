@@ -10,7 +10,7 @@
 		showRaid?: boolean
 		/** Custom card renderer, e.g. a GridRep with a footer */
 		card?: Snippet<[Party, number]>
-		/** Inside a card: outlined reps, tighter columns, and one column of at most 4 on narrow screens */
+		/** Inside a card: outlined reps and tighter columns; a swipeable carousel on phones */
 		contained?: boolean
 	}
 
@@ -56,16 +56,36 @@
 			list-style: none;
 		}
 
-		// Inside a card on narrow screens: one column, at most 4 teams
+		// Inside a card on phones: a row of teams that swipes sideways and snaps
+		// one team at a time to the center, with its neighbors peeking in. It bleeds to the
+		// card's edges (the Home card's padding) so the peek isn't clipped.
 		&.contained {
 			gap: $unit-2x;
 
 			@include respond-to(tablet) {
-				grid-template-columns: 1fr;
-				gap: $unit;
+				$card-padding: calc($unit * 1.5);
 
-				& > li:nth-child(n + 5) {
+				grid-template-columns: none;
+				grid-auto-flow: column;
+				grid-auto-columns: min(88%, 360px);
+				gap: $unit;
+				margin-inline: calc(-1 * #{$card-padding});
+				padding-inline: $card-padding;
+				scroll-padding-inline: $card-padding;
+				overflow-x: auto;
+				overscroll-behavior-x: contain;
+				scroll-snap-type: x mandatory;
+				// A deliberate exception to the browser's scrollbar: the peek shows
+				// it scrolls
+				scrollbar-width: none;
+
+				&::-webkit-scrollbar {
 					display: none;
+				}
+
+				// Cards snap to the center (the first and last stay at the edges)
+				& > li {
+					scroll-snap-align: center;
 				}
 			}
 		}
