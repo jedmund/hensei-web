@@ -6,9 +6,9 @@
 	import Select from '$lib/components/ui/Select.svelte'
 	import { queryOptions } from '@tanstack/svelte-query'
 	import { localizedName } from '$lib/utils/locale'
-	import { getLocale } from '$lib/paraglide/runtime'
 	import { getWeaponKeyImage } from '$lib/utils/images/weapons'
 	import { formatUncapLevel } from '$lib/utils/modificationFormatters'
+	import { weaponKeyTypeName } from '$lib/utils/weaponKeySlots'
 	import Icon from '$lib/components/Icon.svelte'
 
 	interface Props {
@@ -38,40 +38,6 @@
 		uncapLevel = 0
 	}: Props = $props()
 
-	// Key type names based on series slug and slot (0-based indexing)
-	const KEY_TYPE_NAMES: Record<string, Record<number, { en: string; ja: string }>> = {
-		// Dark Opus
-		'dark-opus': {
-			0: { en: 'Pendulum', ja: 'ペンデュラム' },
-			1: { en: 'Pendulum/Chain', ja: 'ペンデュラム/チェイン' }
-		},
-		// Draconic
-		draconic: {
-			0: { en: 'Teluma', ja: 'テルマ' },
-			1: { en: 'Teluma', ja: 'テルマ' }
-		},
-		// Draconic Providence
-		'draconic-providence': {
-			0: { en: 'Teluma', ja: 'テルマ' },
-			1: { en: 'Teluma', ja: 'テルマ' }
-		},
-		// Ultima
-		ultima: {
-			0: { en: 'Gauph Key', ja: 'ガフスキー' },
-			1: { en: 'Ultima Key', ja: 'ガフスキーΩ' },
-			2: { en: 'Gate of Omnipotence', ja: 'ガフスキー' }
-		},
-		// Destroyer
-		destroyer: {
-			0: { en: 'Anklet', ja: 'アンクレット' }
-		},
-		// Superlative
-		superlative: {
-			0: { en: 'Teluma', ja: 'テルマ' },
-			1: { en: 'Teluma', ja: 'テルマ' }
-		}
-	}
-
 	// Fetch weapon keys for this series slug and slot
 	const weaponKeysQuery = createQuery(() =>
 		queryOptions({
@@ -86,12 +52,7 @@
 		})
 	)
 
-	// Get the key type name for this series/slot
-	const keyTypeName = $derived(
-		seriesSlug
-			? (KEY_TYPE_NAMES[seriesSlug]?.[slot]?.[getLocale() === 'ja' ? 'ja' : 'en'] ?? 'Key')
-			: 'Key'
-	)
+	const keyTypeName = $derived(weaponKeyTypeName(seriesSlug, slot))
 
 	// Group and sort weapon keys
 	const groupedOptions = $derived.by(() => {

@@ -15,6 +15,7 @@
 	import LinksSection from './details/LinksSection.svelte'
 	import TeamView from './details/TeamView.svelte'
 	import WeaponSkillList from '$lib/components/weapon/WeaponSkillList.svelte'
+	import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
 	import CharacterSkillsTab from '$lib/features/database/characters/tabs/CharacterSkillsTab.svelte'
 	import OutOfSyncBanner from './details/OutOfSyncBanner.svelte'
 	import SyncToCollectionDialog from './details/SyncToCollectionDialog.svelte'
@@ -413,7 +414,13 @@
 		</div>
 	{:else if selectedView === 'skills'}
 		{#if type === 'weapon'}
-			<WeaponSkillList skills={(item as GridWeapon).weapon.weaponSkills ?? []} />
+			{@const gridWeapon = item as GridWeapon}
+			<WeaponSkillList
+				skills={gridWeapon.weapon.weaponSkills ?? []}
+				series={isWeaponSeriesRef(gridWeapon.weapon.series) ? gridWeapon.weapon.series : undefined}
+				weaponKeys={gridWeapon.weaponKeys}
+				uncapLevel={gridUncapLevel ?? undefined}
+			/>
 		{:else if type === 'character'}
 			<CharacterSkillsTab record={(item as GridCharacter).character} />
 		{/if}

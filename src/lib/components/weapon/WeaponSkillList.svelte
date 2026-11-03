@@ -5,13 +5,36 @@
 	import SkillCard from '$lib/components/skills/SkillCard.svelte'
 	import SkillGroup from '$lib/components/skills/SkillGroup.svelte'
 	import { resolvedClassification } from '$lib/utils/weaponSkillClassification'
-	import type { WeaponSkill, WeaponSkillVersion } from '$lib/types/api/entities'
+	import type { WeaponKey, WeaponSkill, WeaponSkillVersion } from '$lib/types/api/entities'
+	import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
+	import { getWeaponKeyImage } from '$lib/utils/images/weapons'
+	import { formatUncapLevel } from '$lib/utils/modificationFormatters'
+	import { keySlotForSkill, openKeySlots, weaponKeyTypeName } from '$lib/utils/weaponKeySlots'
 
 	interface Props {
 		skills: WeaponSkill[] | undefined
+		/** A team's copy: the skills its keys fill show the key (or why there's none) */
+		series?: WeaponSeriesRef | undefined
+		weaponKeys?: WeaponKey[] | undefined
+		uncapLevel?: number | undefined
 	}
 
-	let { skills }: Props = $props()
+	let { skills, series, weaponKeys, uncapLevel }: Props = $props()
+
+	const openSlots = $derived(openKeySlots(series, uncapLevel ?? 0))
+
+	// The key slot that fills this skill, with its key; none without a copy
+	function keyFor(position: number) {
+		if (!series || uncapLevel === undefined) return undefined
+		const slot = keySlotForSkill(series.slug, position)
+		if (slot === undefined || slot >= (series.numWeaponKeys ?? 0)) return undefined
+		return {
+			slot,
+			key: weaponKeys?.find((k) => k.slot === slot),
+			open: openSlots.includes(slot),
+			keyType: weaponKeyTypeName(series.slug, slot)
+		}
+	}
 
 	const locale = $derived(appLocale())
 	const slots = $derived([...(skills ?? [])].sort((a, b) => a.position - b.position))
@@ -78,10 +101,27 @@
 				{#each upgrades as version (version.ordinal)}
 					{@render card(version, true)}
 				{/each}
+				{@render keyCard(keyFor(slot.position))}
 			</div>
 		</SkillGroup>
 	{/if}
 {/each}
+
+{#snippet keyCard(keySlot: ReturnType<typeof keyFor>)}
+	{#if keySlot}
+		{@const { key, open, keyType } = keySlot}
+		<SkillCard
+			name={key
+				? localizedName(key.name)
+				: open
+					? m.weapon_key_none({ keyType })
+					: m.weapon_key_locked({ keyType, uncap: formatUncapLevel(uncapLevel) })}
+			iconUrl={key ? getWeaponKeyImage(key.slug) : undefined}
+			relationLabel={keyType}
+			linked
+		/>
+	{/if}
+{/snippet}
 
 {#snippet card(version: WeaponSkillVersion, linked: boolean)}
 	{@const parts = metaParts(version)}
