@@ -2382,7 +2382,6 @@
 	"home_see_all_item": "See all teams with {item}",
 	"home_no_item_teams": "There are no teams with <b>{item}</b> yet",
 	"home_create_team": "Create a team",
-	"home_from_last_time": "teams from last time",
 	"home_no_raids": "There are no raids for this event",
 	"home_no_raid_teams": "There are no <b>{raid}</b> teams yet",
 	"home_see_all": "See all",

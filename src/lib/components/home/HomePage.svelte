@@ -116,8 +116,6 @@
 							event={selectedEvent.entry.event}
 							raids={selectedEvent.entry.raids}
 							variant={selectedEvent.variant}
-							hasPrevious={'previousEvent' in selectedEvent.entry &&
-								selectedEvent.entry.previousEvent !== null}
 							maxCards={6}
 						>
 							{#snippet switcher()}

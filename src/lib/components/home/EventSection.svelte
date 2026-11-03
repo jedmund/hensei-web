@@ -42,8 +42,6 @@
 		raids: HomeRaidSection[]
 		/** Upcoming events show last time's teams */
 		variant?: 'current' | 'upcoming'
-		/** Upcoming only: whether there was a previous run */
-		hasPrevious?: boolean
 		/** Most teams to show (in-card grids show at most 4 on mobile) */
 		maxCards?: number
 		/** Rendered under the cover, e.g. thumbnails to switch events */
@@ -52,15 +50,7 @@
 		sectionTitle?: string
 	}
 
-	let {
-		event,
-		raids,
-		variant = 'current',
-		hasPrevious = true,
-		maxCards = 3,
-		switcher,
-		sectionTitle
-	}: Props = $props()
+	let { event, raids, variant = 'current', maxCards = 3, switcher, sectionTitle }: Props = $props()
 
 	const isMobile = mobileQuery()
 
@@ -95,8 +85,7 @@
 	const timing = $derived.by(() => {
 		if (!duration) return ''
 		if (variant === 'current') return m.home_ends_in({ duration })
-		const starts = m.home_starts_in({ duration })
-		return hasTeams && hasPrevious ? `${starts} · ${m.home_from_last_time()}` : starts
+		return m.home_starts_in({ duration })
 	})
 	// Exact time in JST on hover
 	const dateLabel = $derived(formatDateJST(variant === 'upcoming' ? event.startsAt : event.endsAt))
