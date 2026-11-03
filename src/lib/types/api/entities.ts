@@ -497,6 +497,8 @@ export interface WeaponKey {
 	slot: number
 	group: number
 	order: number
+	/** On a team's copy: the skill the key gives that weapon, then its upgrades */
+	skillVersions?: WeaponSkillVersion[]
 }
 
 // Bullet entity for gun-proficiency weapons

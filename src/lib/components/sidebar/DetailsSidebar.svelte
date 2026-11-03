@@ -96,6 +96,13 @@
 
 	// Track selected view - updated reactively based on modifiability
 	let selectedView = $state<'canonical' | 'user' | 'skills'>('user')
+	// The key slot whose skill the Skills tab scrolls to (a key clicked in This Team)
+	let focusKeySlot = $state<number | undefined>(undefined)
+
+	function showKeySkill(slot: number) {
+		focusKeySlot = slot
+		selectedView = 'skills'
+	}
 
 	// Track the item ID to detect when switching to a different item
 	let currentItemId = $state<string | undefined>(undefined)
@@ -420,6 +427,7 @@
 				series={isWeaponSeriesRef(gridWeapon.weapon.series) ? gridWeapon.weapon.series : undefined}
 				weaponKeys={gridWeapon.weaponKeys}
 				uncapLevel={gridUncapLevel ?? undefined}
+				{focusKeySlot}
 			/>
 		{:else if type === 'character'}
 			<CharacterSkillsTab record={(item as GridCharacter).character} />
@@ -440,6 +448,7 @@
 			syncElement={buttonElement}
 			onSyncFromCollection={(fields) => handleSync(fields)}
 			onSyncToCollection={(scope, fields) => openPushDialog(scope, fields)}
+			onShowKeySkill={showKeySkill}
 		/>
 	{/if}
 </div>

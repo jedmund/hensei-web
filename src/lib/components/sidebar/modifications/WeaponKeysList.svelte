@@ -5,6 +5,9 @@
 	import { localizedName } from '$lib/utils/locale'
 	import type { WeaponSeriesRef, WeaponSeriesSummary } from '$lib/types/api/weaponSeries'
 	import * as m from '$lib/paraglide/messages'
+	import { activeKeySkill } from '$lib/utils/weaponKeySlots'
+	import SkillDescription from '$lib/components/weapon/SkillDescription.svelte'
+	import { appLocale } from '$lib/utils/locale'
 
 	interface Props {
 		weaponKeys?: WeaponKey[]
@@ -15,9 +18,34 @@
 			name?: LocalizedName
 		}
 		layout?: 'list' | 'grid'
+		/** Makes each key a button (the details pane opens its skill in the Skills tab) */
+		onSelect?: ((key: WeaponKey) => void) | undefined
+		/** The copy's uncap and transcendence: each key shows its skill at that tier */
+		uncapLevel?: number | undefined
+		transcendenceStep?: number | undefined
 	}
 
-	let { weaponKeys, weaponData, layout = 'list' }: Props = $props()
+	let {
+		weaponKeys,
+		weaponData,
+		layout = 'list',
+		onSelect,
+		uncapLevel,
+		transcendenceStep
+	}: Props = $props()
+
+	const locale = $derived(appLocale())
+
+	function skillFor(key: WeaponKey) {
+		if (uncapLevel === undefined) return undefined
+		const version = activeKeySkill(key.skillVersions, uncapLevel, transcendenceStep ?? 0)
+		if (!version) return undefined
+		const segments = version.descriptionSegments
+		return {
+			segments: segments?.[locale]?.length ? segments[locale] : (segments?.en ?? undefined),
+			raw: version.description?.[locale]?.trim() || version.description?.en?.trim() || undefined
+		}
+	}
 
 	const proficiency = $derived(
 		Array.isArray(weaponData?.proficiency) ? weaponData?.proficiency[0] : weaponData?.proficiency
@@ -29,32 +57,39 @@
 		if (name !== '—') return name
 		return key.slug || m.details_weapon_key_fallback()
 	}
-
-	function getSlotLabel(slot: number): string {
-		return m.details_skill_slot({ slot: String(slot + 1) })
-	}
 </script>
 
 {#if weaponKeys && weaponKeys.length > 0}
 	<div class="weapon-keys-list {layout}">
 		{#each weaponKeys as key, index (index)}
 			{@const imageData = keyImages[index]}
-			<div class="weapon-key-item">
-				{#if imageData}
-					<img src={imageData.url} alt={imageData.alt} class="weapon-key-icon" />
-				{/if}
-				<div class="weapon-key-info">
-					<span class="slot-label">
-						{getSlotLabel(key.slot)}
-					</span>
-					<span class="key-name">
-						{getKeyDescription(key)}
-					</span>
+			{#if onSelect}
+				<button type="button" class="weapon-key-item selectable" onclick={() => onSelect(key)}>
+					{@render item(key, imageData)}
+				</button>
+			{:else}
+				<div class="weapon-key-item">
+					{@render item(key, imageData)}
 				</div>
-			</div>
+			{/if}
 		{/each}
 	</div>
 {/if}
+
+{#snippet item(key: WeaponKey, imageData: (typeof keyImages)[number] | undefined)}
+	{#if imageData}
+		<img src={imageData.url} alt={imageData.alt} class="weapon-key-icon" />
+	{/if}
+	{@const skill = skillFor(key)}
+	<div class="weapon-key-info">
+		<span class="key-name">
+			{getKeyDescription(key)}
+		</span>
+		{#if skill}
+			<SkillDescription segments={skill.segments} raw={skill.raw} class="skill-effect" />
+		{/if}
+	</div>
+{/snippet}
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
@@ -77,14 +112,36 @@
 		.weapon-key-item {
 			display: flex;
 			gap: spacing.$unit-2x;
-			align-items: center;
+			// The key's skill can run to a few lines; the icon stays at the top
+			align-items: flex-start;
 			padding: spacing.$unit;
 			background: var(--unit-bg);
-			border-radius: layout.$item-corner-small;
+			border-radius: layout.$item-corner;
 			transition: background 0.2s ease;
 
 			&:hover {
 				background: var(--placeholder-bg);
+			}
+
+			&.selectable {
+				all: unset;
+				box-sizing: border-box;
+				display: flex;
+				gap: spacing.$unit-2x;
+				align-items: flex-start;
+				padding: spacing.$unit;
+				background: var(--unit-bg);
+				border-radius: layout.$item-corner;
+				cursor: pointer;
+				transition: background 0.2s ease;
+
+				&:hover {
+					background: var(--placeholder-bg);
+				}
+
+				&:focus-visible {
+					outline: 2px solid var(--accent-blue);
+				}
 			}
 
 			.weapon-key-icon {
@@ -99,11 +156,9 @@
 				flex-direction: column;
 				gap: spacing.$unit-fourth;
 
-				.slot-label {
-					font-size: typography.$font-tiny;
-					color: var(--text-tertiary);
-					text-transform: uppercase;
-					letter-spacing: 0.3px;
+				:global(.skill-effect) {
+					font-size: typography.$font-small;
+					color: var(--text-secondary);
 				}
 
 				.key-name {

@@ -109,6 +109,54 @@ describe('WeaponSkillList with keys', () => {
 		expect(out[2]).toEqual(['Skill 3', 'Guiding Gospel', '↳ Pendulum/Chain', 'No Pendulum/Chain'])
 	})
 
+	it("shows the skill a key gives this weapon, with its upgrades, under the key's name", () => {
+		const alpha = {
+			...key(0, 'pendulum-alpha', 'α Pendulum'),
+			skillVersions: [
+				{
+					...version('α Revelation'),
+					description: { en: '10% boost to normal attack DMG cap', ja: '' }
+				},
+				{ ...version('α Revelation Ruber'), ordinal: 1, transcendenceStage: 1, unlockLevel: 210 }
+			]
+		}
+		const { body } = render(WeaponSkillList, {
+			props: {
+				skills: opus,
+				series: series('dark-opus', 2, [4, 5]),
+				weaponKeys: [alpha],
+				uncapLevel: 5
+			}
+		})
+		expect(body).toContain('10% boost to normal attack DMG cap')
+		const out = groups({
+			skills: opus,
+			series: series('dark-opus', 2, [4, 5]),
+			weaponKeys: [alpha],
+			uncapLevel: 5
+		})
+		expect(out[1]).toEqual([
+			'Skill 2',
+			'Guiding Revelation',
+			'↳ α Pendulum',
+			'α Revelation',
+			'↳ T1 · Lv 210',
+			'α Revelation Ruber'
+		])
+	})
+
+	it("marks the skill a key fills, so This Team's key can scroll to it", () => {
+		const { body } = render(WeaponSkillList, {
+			props: {
+				skills: opus,
+				series: series('dark-opus', 2, [4, 5]),
+				weaponKeys: [key(0, 'pendulum-alpha', 'α Pendulum')],
+				uncapLevel: 5
+			}
+		})
+		expect(body.match(/data-key-slot="(\d)"/g)).toEqual(['data-key-slot="0"', 'data-key-slot="1"'])
+	})
+
 	it('leaves a slot the uncap has locked alone', () => {
 		const out = groups({ skills: opus, series: series('dark-opus', 2, [4, 5]), uncapLevel: 4 })
 		expect(out[2]).toEqual(['Skill 3', 'Guiding Gospel'])

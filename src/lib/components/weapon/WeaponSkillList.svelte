@@ -16,9 +16,20 @@
 		series?: WeaponSeriesRef | undefined
 		weaponKeys?: WeaponKey[] | undefined
 		uncapLevel?: number | undefined
+		/** Scrolls this key slot's skill into view */
+		focusKeySlot?: number | undefined
 	}
 
-	let { skills, series, weaponKeys, uncapLevel }: Props = $props()
+	let { skills, series, weaponKeys, uncapLevel, focusKeySlot }: Props = $props()
+
+	let root = $state<HTMLElement | undefined>(undefined)
+	$effect(() => {
+		if (focusKeySlot === undefined || !root) return
+		root
+			.querySelector(`[data-key-slot="${focusKeySlot}"]`)
+			?.closest('section')
+			?.scrollIntoView({ block: 'start', behavior: 'smooth' })
+	})
 
 	const openSlots = $derived(openKeySlots(series, uncapLevel ?? 0))
 
@@ -91,31 +102,55 @@
 	}
 </script>
 
-{#each slots as slot (slot.position)}
-	{@const [first, ...upgrades] = versions(slot)}
-	{#if first}
-		<SkillGroup title={m.weapon_skills_slot({ n: slot.position + 1 })}>
-			<div class="skill-slot">
-				{@render card(first, false)}
-				{#each upgrades as version (version.ordinal)}
-					{@render card(version, true)}
-				{/each}
-				{@render keyCard(keyFor(slot.position))}
-			</div>
-		</SkillGroup>
-	{/if}
-{/each}
+<div class="weapon-skill-list" bind:this={root}>
+	{#each slots as slot (slot.position)}
+		{@const [first, ...upgrades] = versions(slot)}
+		{#if first}
+			<SkillGroup title={m.weapon_skills_slot({ n: slot.position + 1 })}>
+				<div class="skill-slot" data-key-slot={keyFor(slot.position)?.slot}>
+					{@render card(first, false)}
+					{#each upgrades as version (version.ordinal)}
+						{@render card(version, true)}
+					{/each}
+					{@render keyCard(keyFor(slot.position))}
+				</div>
+			</SkillGroup>
+		{/if}
+	{/each}
+</div>
 
 {#snippet keyCard(keySlot: ReturnType<typeof keyFor>)}
 	{#if keySlot}
 		{@const { key, keyType } = keySlot}
-		<SkillCard
-			name={key ? localizedName(key.name) : m.weapon_key_none({ keyType })}
-			iconUrl={key ? getWeaponKeyImage(key.slug) : undefined}
-			relationLabel={keyType}
-			linked
-		/>
+		{@const [first, ...upgrades] = [...(key?.skillVersions ?? [])].sort(
+			(a, b) => a.ordinal - b.ordinal
+		)}
+		{#if key && first}
+			<!-- The skill the key gives this weapon, under the key's name, then its upgrades -->
+			{@render keySkill(first, localizedName(key.name))}
+			{#each upgrades as version (version.ordinal)}
+				{@render keySkill(version, unlockParts(version).join(' · '))}
+			{/each}
+		{:else}
+			<SkillCard
+				name={key ? localizedName(key.name) : m.weapon_key_none({ keyType })}
+				iconUrl={key ? getWeaponKeyImage(key.slug) : undefined}
+				relationLabel={keyType}
+				linked
+			/>
+		{/if}
 	{/if}
+{/snippet}
+
+{#snippet keySkill(version: WeaponSkillVersion, relationLabel: string)}
+	<SkillCard
+		name={localizedName(version.name)}
+		iconUrl={getWeaponSkillIcon(version.iconStem, locale)}
+		segments={segmentsFor(version)}
+		raw={rawFor(version)}
+		{relationLabel}
+		linked
+	/>
 {/snippet}
 
 {#snippet card(version: WeaponSkillVersion, linked: boolean)}
