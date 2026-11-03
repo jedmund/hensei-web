@@ -19,6 +19,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import type { SkillBoostLine } from '$lib/types/api/skillBoosts'
+	import { formatBoostNumber, formatBoostValue } from '$lib/utils/skillBoostFormat'
 
 	interface Props {
 		shortcode: string
@@ -86,13 +87,6 @@
 	/** Currently expanded line ("key-series"), if any */
 	let expanded = $state<string | null>(null)
 
-	/** Format a breakdown number: trim trailing zeros, supplements as +N */
-	function formatValue(value: number): string {
-		if (Math.abs(value) >= 1000) return `+${value.toLocaleString()}`
-		const rounded = Math.round(value * 100) / 100
-		return `${rounded}%`
-	}
-
 	// Skills the game counts in Estimated DMG without a panel line come back in a
 	// "hidden" group; they're listed apart, below the panel's own lines.
 	const panelLines = $derived(boosts ? boosts.lines.filter((line) => line.group !== 'hidden') : [])
@@ -126,10 +120,12 @@
 			<SkillLabel slug={line.labelSlug} label={line.label} />
 			{#if hidden}
 				<Tooltip content={m.calculator_hidden_stat_tooltip()}>
-					<span class="value hidden">{line.display}</span>
+					<span class="value hidden">{formatBoostValue(line.value, line.flat)}</span>
 				</Tooltip>
 			{:else}
-				<span class="value" class:capped={line.capped}>{line.display}</span>
+				<span class="value" class:capped={line.capped}
+					>{formatBoostValue(line.value, line.flat)}</span
+				>
 			{/if}
 		</button>
 		{#if expanded === lineKey && line.breakdown.length > 0}
@@ -152,9 +148,13 @@
 						</span>
 						<span class="entry-value">
 							{#if entry.base != null && entry.multiplier != null}
-								<span class="entry-math">{formatValue(entry.base)} × {entry.multiplier}</span>
+								<span class="entry-math"
+									>{formatBoostValue(entry.base, line.flat)} × {formatBoostNumber(
+										entry.multiplier
+									)}</span
+								>
 							{/if}
-							{formatValue(entry.value)}
+							{formatBoostValue(entry.value, line.flat)}
 						</span>
 					</li>
 				{/each}
@@ -267,7 +267,7 @@
 					{#each enhancementRows as row (row.key)}
 						<li class="row">
 							<span class="name">{row.label}</span>
-							<span class="value">{row.value}%</span>
+							<span class="value">{formatBoostValue(row.value)}</span>
 						</li>
 					{/each}
 				</ul>
