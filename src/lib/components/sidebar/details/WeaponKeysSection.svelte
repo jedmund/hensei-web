@@ -40,14 +40,11 @@
 	let editKey3 = $state<string | undefined>(undefined)
 
 	const seriesSlug = $derived(getSeriesSlug(weapon.weapon?.series))
-	const keySlotCount = $derived.by(() => {
-		const series = weapon.weapon?.series
-		return isWeaponSeriesRef(series) ? (series.numWeaponKeys ?? 0) : 0
-	})
 	// Only slots this copy's uncap has opened (a Pendulum needs a 4★ Opus)
-	const openSlots = $derived(
-		openKeySlots(seriesSlug, keySlotCount, weapon.uncapLevel ?? 0, weapon.weapon?.uncap?.ulb)
-	)
+	const openSlots = $derived.by(() => {
+		const series = weapon.weapon?.series
+		return isWeaponSeriesRef(series) ? openKeySlots(series, weapon.uncapLevel ?? 0) : []
+	})
 
 	function startEditing() {
 		editKey1 = weapon.weaponKeys?.find((k) => k.slot === 0)?.id

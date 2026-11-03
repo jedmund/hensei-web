@@ -38,6 +38,7 @@ describe('weapon series resource: list', () => {
 			['has_weapon_keys', 'Has Weapon Keys', true],
 			['has_awakening', 'Has Awakening', true],
 			['num_weapon_keys', 'Weapon Key Slots', true],
+			['key_slot_min_uncaps', 'Key Slot Unlocks', true],
 			['augment_type', 'Augment Type', true],
 			['weapon_count', 'Weapon Count', true],
 			['updated_at', 'Last edited', true]
@@ -90,7 +91,14 @@ function oldEditPayload(series: WeaponSeries): Values {
 		has_weapon_keys: series.hasWeaponKeys || false,
 		has_awakening: series.hasAwakening || false,
 		augment_type: series.augmentType || 'no_augment',
-		num_weapon_keys: series.numWeaponKeys ?? null
+		num_weapon_keys: series.numWeaponKeys ?? null,
+		// New with GBF-209: one unlock uncap per key slot
+		key_slot_min_uncaps: series.hasWeaponKeys
+			? Array.from(
+					{ length: series.numWeaponKeys ?? 0 },
+					(_, slot) => series.keySlotMinUncaps?.[slot] ?? 0
+				)
+			: []
 	}
 }
 
@@ -99,6 +107,7 @@ describe('weapon series resource: edit payload parity', () => {
 
 	it('matches the edit page', () => {
 		expect(payload(keyed)).toEqual(oldEditPayload(keyed))
+		expect(payload(keyed).key_slot_min_uncaps).toEqual([4, 5])
 		expect(payload(variants)).toEqual(oldEditPayload(variants))
 	})
 
@@ -106,6 +115,7 @@ describe('weapon series resource: edit payload parity', () => {
 		expect(payload(plain)).toEqual({ ...oldEditPayload(plain), name_jp: null })
 		const values = { ...fromRecord(def, keyed), has_weapon_keys: false }
 		expect(toPayload(def, values, 'edit').num_weapon_keys).toBeNull()
+		expect(toPayload(def, values, 'edit').key_slot_min_uncaps).toEqual([])
 	})
 
 	it('goes to the series page by its new slug after a save', () => {
@@ -131,7 +141,8 @@ describe('weapon series resource: create payload parity', () => {
 			has_weapon_keys: false,
 			has_awakening: false,
 			augment_type: 'no_augment',
-			num_weapon_keys: null
+			num_weapon_keys: null,
+			key_slot_min_uncaps: []
 		})
 	})
 

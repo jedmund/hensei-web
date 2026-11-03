@@ -246,6 +246,7 @@ export interface AdminWeaponSeriesRow extends AdminSluggedRow {
 	hasAwakening?: boolean
 	augmentType?: AugmentType
 	numWeaponKeys?: number | null
+	keySlotMinUncaps?: number[]
 	weaponCount?: number
 }
 

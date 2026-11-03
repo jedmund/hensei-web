@@ -71,6 +71,7 @@ export type InputName =
 	| 'stickerSlug'
 	| 'roleIcon'
 	| 'artifactSkillBaseValues'
+	| 'keySlotMinUncaps'
 
 /**
  * How an empty value ('', null, undefined, [] or {}) is sent:

@@ -53,6 +53,7 @@
 		"has_awakening",
 		"augment_type",
 		"num_weapon_keys",
+		"key_slot_min_uncaps",
 		"created_at",
 		"updated_at",
 		"weapon_count"
@@ -68,7 +69,8 @@
 		"has_weapon_keys": "scalar",
 		"has_awakening": "scalar",
 		"augment_type": "scalar",
-		"num_weapon_keys": "scalar"
+		"num_weapon_keys": "scalar",
+		"key_slot_min_uncaps": "array"
 	},
 	"enums": {
 		"augment_type": {

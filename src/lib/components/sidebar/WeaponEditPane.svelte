@@ -25,7 +25,7 @@
 	import BulletSelect from '$lib/components/sidebar/edit/BulletSelect.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { seriesHasWeaponKeys, seriesHasAwakening, getSeriesSlug } from '$lib/utils/weaponSeries'
-	import { isKeySlotUnlocked, openKeySlots } from '$lib/utils/weaponKeySlots'
+	import { openKeySlots } from '$lib/utils/weaponKeySlots'
 	import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
 
 	export interface WeaponEditValues {
@@ -110,13 +110,8 @@
 
 	// Check if series has weapon keys using the utility (handles both formats)
 	const hasWeaponKeys = $derived(seriesHasWeaponKeys(series))
-	const keySlotCount = $derived(series?.numWeaponKeys ?? 0)
 	// Slots the copy's uncap has opened (a Pendulum needs a 4★ Opus)
-	const slotUnlocked = (slot: number) =>
-		isKeySlotUnlocked(seriesSlug, slot, uncapLevel, weaponData?.uncap?.ulb)
-	const openSlots = $derived(
-		openKeySlots(seriesSlug, keySlotCount, uncapLevel, weaponData?.uncap?.ulb)
-	)
+	const openSlots = $derived(openKeySlots(series, uncapLevel))
 
 	// Augment type from series determines AX skills vs befoulment
 	const augmentType = $derived(series?.augmentType ?? 'no_augment')
@@ -137,9 +132,10 @@
 		// Transcendence requires uncap level 5; the API rejects a leftover stage.
 		if (newLevel < 5) transcendenceStep = 0
 		// Keys can't stay in slots a lower uncap closes; the API drops them too.
-		if (!slotUnlocked(0)) weaponKey1 = undefined
-		if (!slotUnlocked(1)) weaponKey2 = undefined
-		if (!slotUnlocked(2)) weaponKey3 = undefined
+		const open = openKeySlots(series, newLevel)
+		if (!open.includes(0)) weaponKey1 = undefined
+		if (!open.includes(1)) weaponKey2 = undefined
+		if (!open.includes(2)) weaponKey3 = undefined
 	}
 
 	function handleTranscendenceUpdate(newStage: number) {
@@ -161,7 +157,7 @@
 	// A selected key, or null when the uncap locked the slot of a saved one
 	function keyUpdate(selected: string | undefined, saved: string | undefined, slot: number) {
 		if (selected) return selected
-		return saved && !slotUnlocked(slot) ? null : undefined
+		return saved && !openSlots.includes(slot) ? null : undefined
 	}
 
 	// Export save function so parent can call it from header button

@@ -38,6 +38,8 @@ export interface WeaponSeriesRef {
 	elementChangeable: boolean
 	/** Number of weapon key slots this series supports (null if no keys) */
 	numWeaponKeys: number | null
+	/** Per key slot (index = slot), the uncap a copy needs before a key goes there */
+	keySlotMinUncaps?: number[]
 	/** Variant ID if this weapon has a variant override */
 	weaponSeriesVariantId?: string | null
 	/** Variant name if this weapon has a variant override */
@@ -62,6 +64,8 @@ export interface WeaponSeries {
 	augmentType: AugmentType
 	/** Number of weapon key slots this series supports (null if no keys) */
 	numWeaponKeys: number | null
+	/** Per key slot (index = slot), the uncap a copy needs before a key goes there */
+	keySlotMinUncaps?: number[]
 	/** Whether this series supports AX skills (derived from augmentType) */
 	hasAxSkills?: boolean
 	// Only included in :full view (show endpoint)
@@ -83,6 +87,7 @@ export interface CreateWeaponSeriesPayload {
 	has_awakening?: boolean
 	augment_type?: AugmentType
 	num_weapon_keys?: number | null
+	key_slot_min_uncaps?: number[]
 }
 
 /**
@@ -99,6 +104,7 @@ export interface UpdateWeaponSeriesPayload {
 	has_awakening?: boolean
 	augment_type?: AugmentType
 	num_weapon_keys?: number | null
+	key_slot_min_uncaps?: number[]
 }
 
 /**

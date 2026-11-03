@@ -19,6 +19,7 @@ export const detailRecords = {
 		hasAwakening: true,
 		augmentType: 'ax',
 		numWeaponKeys: 2,
+		keySlotMinUncaps: [4, 5],
 		weaponCount: 36,
 		variants: []
 	},

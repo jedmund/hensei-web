@@ -1,32 +1,23 @@
 import { describe, expect, it } from 'vitest'
-import { isKeySlotUnlocked } from '../weaponKeySlots'
+import { openKeySlots } from '../weaponKeySlots'
 
-const slots = (series: string, uncap: number, ulb = true) =>
-	[0, 1, 2].map((slot) => isKeySlotUnlocked(series, slot, uncap, ulb))
+describe('openKeySlots', () => {
+	const opus = { numWeaponKeys: 2, keySlotMinUncaps: [4, 5] }
 
-describe('isKeySlotUnlocked', () => {
-	it('opens Dark Opus and Draconic skills 2 and 3 at 4★ and 5★', () => {
-		for (const series of ['dark-opus', 'draconic']) {
-			expect(slots(series, 3).slice(0, 2)).toEqual([false, false])
-			expect(slots(series, 4).slice(0, 2)).toEqual([true, false])
-			expect(slots(series, 5).slice(0, 2)).toEqual([true, true])
-		}
+	it("opens each slot at its series' minimum uncap", () => {
+		expect(openKeySlots(opus, 3)).toEqual([])
+		expect(openKeySlots(opus, 4)).toEqual([0])
+		expect(openKeySlots(opus, 5)).toEqual([0, 1])
 	})
 
-	it('opens both Provenance skills at 5★ and the Destroyer anklet at 4★', () => {
-		expect(slots('draconic-providence', 4).slice(0, 2)).toEqual([false, false])
-		expect(slots('draconic-providence', 5).slice(0, 2)).toEqual([true, true])
-		expect(isKeySlotUnlocked('destroyer', 0, 3, true)).toBe(false)
-		expect(isKeySlotUnlocked('destroyer', 0, 4, true)).toBe(true)
+	it('offers only as many slots as the weapon has (an Atma variant has one)', () => {
+		const atma = { numWeaponKeys: 1, keySlotMinUncaps: [0, 0, 5] }
+		expect(openKeySlots(atma, 3)).toEqual([0])
 	})
 
-	it('gives Atma weapons only the Gauph slot and opens Gate of Omnipotence at 5★', () => {
-		expect(slots('ultima', 3, false)).toEqual([true, false, false])
-		expect(slots('ultima', 4)).toEqual([true, true, false])
-		expect(slots('ultima', 5)).toEqual([true, true, true])
-	})
-
-	it('leaves other series unrestricted', () => {
-		expect(slots('superlative', 0)).toEqual([true, true, true])
+	it('treats slots without a rule as open and no series as no slots', () => {
+		expect(openKeySlots({ numWeaponKeys: 3, keySlotMinUncaps: [0, 0, 5] }, 4)).toEqual([0, 1])
+		expect(openKeySlots({ numWeaponKeys: 2, keySlotMinUncaps: [] }, 0)).toEqual([0, 1])
+		expect(openKeySlots(undefined, 5)).toEqual([])
 	})
 })
