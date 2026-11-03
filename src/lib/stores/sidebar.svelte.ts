@@ -5,6 +5,7 @@ import {
 	type OverflowMenuItem,
 	type ElementType
 } from '$lib/stores/paneStack.svelte'
+import { uuid } from '$lib/utils/uuid'
 
 // Standard sidebar width
 export const SIDEBAR_WIDTH = '420px'
@@ -84,7 +85,7 @@ class SidebarStore {
 
 		// Build the pane config
 		const paneConfig: PaneConfig = {
-			id: crypto.randomUUID(),
+			id: uuid(),
 			title,
 			image: opts.image,
 			component,

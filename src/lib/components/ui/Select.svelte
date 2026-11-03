@@ -1,5 +1,6 @@
 <script lang="ts" generics="T extends string | number">
 	import { Label, Select as SelectPrimitive } from 'bits-ui'
+	import { uuid } from '$lib/utils/uuid'
 	import Icon from '../Icon.svelte'
 
 	interface Option {
@@ -226,7 +227,7 @@
 {#if hasWrapper}
 	<fieldset class={fieldsetClasses}>
 		{#if label}
-			<Label.Root class="label" for={crypto.randomUUID()}>
+			<Label.Root class="label" for={uuid()}>
 				{label}
 				{#if required}
 					<span class="required">*</span>

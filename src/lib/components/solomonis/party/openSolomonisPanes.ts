@@ -16,6 +16,7 @@ import type {
 import EditSolomonisPane from './EditSolomonisPane.svelte'
 import SolomonisDetailsPane from './SolomonisDetailsPane.svelte'
 import { solomonisErrorMessage } from './solomonisParty'
+import { uuid } from '$lib/utils/uuid'
 
 /**
  * Shows a Solomonis pane: on top of the open sidebar (so Back returns to,
@@ -29,7 +30,7 @@ export function showSolomonisPane(
 	props: Record<string, any>
 ) {
 	if (sidebar.state.open && !sidebar.paneStack.isEmpty) {
-		sidebar.push({ id: crypto.randomUUID(), title, component, props, scrollable: true })
+		sidebar.push({ id: uuid(), title, component, props, scrollable: true })
 	} else {
 		sidebar.openWithComponent(title, component, props)
 	}
