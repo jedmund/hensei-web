@@ -142,7 +142,7 @@ export function sortJobs<T extends Pick<Job, 'row' | 'order'>>(jobs: readonly T[
 	)
 }
 
-/** A job's name with its tier, e.g. "Warrior (Class II)": Class I and II jobs share a Granblue ID */
+/** A job's name with its tier, e.g. "Warrior (Class II)" */
 export function jobOptionLabel(job: Pick<Job, 'name' | 'row'>): string {
 	return `${localizedName(job.name)} (${getJobTierName(job.row)})`
 }

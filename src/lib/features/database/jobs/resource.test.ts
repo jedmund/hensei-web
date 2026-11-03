@@ -88,7 +88,7 @@ describe('jobs resource: list', () => {
 		])
 	})
 
-	it('identifies rows by id: Class I and II jobs share a Granblue ID', () => {
+	it('identifies rows by id', () => {
 		expect(def.list.rowId!(row)).toBe('j-paladin')
 		expect(recordHref(def, fighter)).toBe('/database/jobs/j-fighter')
 	})

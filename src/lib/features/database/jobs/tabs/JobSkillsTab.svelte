@@ -17,8 +17,7 @@
 
 	const queryClient = useQueryClient()
 
-	// By id: a Class I job and its Class II successor share a granblueId. Refetched
-	// on each visit, as skills are saved on their own pages
+	// Refetched on each visit, as skills are saved on their own pages
 	const skillsQuery = createQuery(() => ({
 		...jobQueries.skillsByJob(job.id),
 		refetchOnMount: 'always' as const

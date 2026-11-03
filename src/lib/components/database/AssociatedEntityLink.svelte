@@ -16,7 +16,7 @@
 
 	let { type, entity, children }: Props = $props()
 
-	// A Class I job and its Class II successor share a granblueId, so jobs go by id
+	// Jobs link by id; the rest by granblueId
 	const routeId = $derived(type === 'job' ? (entity.id ?? entity.granblueId) : entity.granblueId)
 	const href = $derived(localizeHref(`/database/${type}s/${routeId}`))
 
