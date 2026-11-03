@@ -59,7 +59,7 @@
 	})
 </script>
 
-<Dialog bind:open>
+<Dialog bind:open alert>
 	<ModalHeader title={m.crew_confirm_claim_title()} />
 
 	<ModalBody>

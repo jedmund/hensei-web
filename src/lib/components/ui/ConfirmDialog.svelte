@@ -45,7 +45,7 @@
 	}
 </script>
 
-<Dialog bind:open hideClose>
+<Dialog bind:open hideClose alert>
 	<div class="confirm-dialog">
 		<h3 class="title">{title}</h3>
 		{#if message}

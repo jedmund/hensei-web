@@ -16,7 +16,7 @@
 	let { open = $bindable(), partyName, deleting = false, onDelete, onCancel }: Props = $props()
 </script>
 
-<Dialog bind:open>
+<Dialog bind:open alert>
 	<ModalHeader title="Delete {partyName}?" />
 	<ModalBody>
 		<p class="message">{m.delete_team_confirm()}</p>

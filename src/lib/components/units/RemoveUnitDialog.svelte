@@ -36,7 +36,7 @@
 	}
 </script>
 
-<Dialog bind:open size="small">
+<Dialog bind:open size="small" alert>
 	<ModalHeader title={m.remove_unit_confirm_title({ type: typeLabel })} />
 	<ModalBody>
 		<p>

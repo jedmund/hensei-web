@@ -14,7 +14,7 @@
 	let { open = $bindable(), onConfirm, onCancel }: Props = $props()
 </script>
 
-<Dialog bind:open>
+<Dialog bind:open alert>
 	<ModalHeader title={m.duplicate_collection_title()} />
 	<ModalBody>
 		<p class="message">

@@ -33,7 +33,7 @@
 	const itemLabel = $derived(entityNameMap[entityType] ?? entityType)
 </script>
 
-<Dialog bind:open>
+<Dialog bind:open alert>
 	<ModalHeader title={m.collection_bulk_delete_title({ count, type: itemLabel })} />
 	<ModalBody>
 		<p class="message">

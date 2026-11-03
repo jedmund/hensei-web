@@ -73,7 +73,8 @@
 		color: var(--text-primary);
 		border-radius: $card-corner $card-corner 0 0;
 		box-shadow: var(--shadow-xl);
-		max-height: 85vh;
+		// As tall as the content needs, leaving 60px of the page at the top
+		max-height: calc(100dvh - 60px);
 		z-index: $z-modal + 1;
 		display: flex;
 		flex-direction: column;

@@ -82,13 +82,27 @@
 			}
 		}
 
-		// Mobile styles - overlay approach
+		// Phones: a sheet docked to the bottom that slides up, like BottomSheet
 		@media (max-width: 768px) {
 			z-index: $z-modal;
-			width: 90vw !important;
-			max-width: 400px;
-			box-shadow: var(--shadow-md);
-			// Mobile already uses transform, no additional changes needed
+			top: auto;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			width: 100% !important;
+			// Leaves 60px of the page at the top
+			height: calc(100dvh - 60px);
+			transform: translateY(100%);
+			opacity: 1;
+
+			&.open {
+				transform: translateY(0);
+			}
+
+			.sidebar-content {
+				border-radius: $page-corner $page-corner 0 0;
+				padding-bottom: env(safe-area-inset-bottom, 0px);
+			}
 		}
 	}
 </style>

@@ -199,6 +199,11 @@
 		// Each pane is its own card
 		background: var(--sidebar-bg);
 		border-radius: $page-corner;
+
+		// Phones: the stack is a sheet docked to the bottom (see Sidebar)
+		@media (max-width: 768px) {
+			border-radius: $page-corner $page-corner 0 0;
+		}
 		box-shadow: $page-elevation;
 		border: 1px solid rgba(0, 0, 0, 0.14);
 		overflow: hidden;

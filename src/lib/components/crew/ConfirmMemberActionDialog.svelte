@@ -87,7 +87,7 @@
 	}
 </script>
 
-<Dialog bind:open onOpenChange={handleOpenChange}>
+<Dialog bind:open onOpenChange={handleOpenChange} alert>
 	<ModalHeader {title} />
 
 	<ModalBody>

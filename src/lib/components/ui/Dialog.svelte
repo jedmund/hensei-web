@@ -9,6 +9,9 @@
 		onOpenChange?: (open: boolean) => void
 		size?: DialogSize
 		hideClose?: boolean
+		/** An alert (confirmations): stays a centered modal on phones, where
+		 * other dialogs become bottom sheets */
+		alert?: boolean
 		/** Extra class appended to the dialog content — for caller-specific
 		 * tweaks like height caps. */
 		class?: string
@@ -26,6 +29,7 @@
 		onOpenChange,
 		size = 'default',
 		hideClose = false,
+		alert = false,
 		class: className = '',
 		overlayClass = '',
 		onEscapeKeydown,
@@ -53,7 +57,7 @@
 	<DialogBase.Portal>
 		<DialogBase.Overlay class="dialog-overlay {overlayClass}" />
 		<DialogBase.Content
-			class="dialog-content {sizeClass} {className}"
+			class="dialog-content {sizeClass} {alert ? 'dialog-alert' : ''} {className}"
 			{onEscapeKeydown}
 			{onInteractOutside}
 		>
@@ -162,6 +166,69 @@
 		max-width: 1400px;
 		height: 85vh;
 		max-height: 85vh;
+	}
+
+	// Phones: every dialog but an alert is a sheet docked to the bottom, like
+	// BottomSheet, whatever its size. (Separate :global() rules so Svelte
+	// keeps them.)
+	@media (max-width: 768px) {
+		:global(.dialog-content:not(.dialog-alert)),
+		:global(.dialog-content-small:not(.dialog-alert)),
+		:global(.dialog-content-medium:not(.dialog-alert)),
+		:global(.dialog-content-large:not(.dialog-alert)) {
+			top: auto;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			max-width: none;
+			height: auto;
+			// As tall as the content needs, leaving 60px of the page at the top
+			max-height: calc(100dvh - 60px);
+			transform: none;
+			border-radius: $card-corner $card-corner 0 0;
+			padding-bottom: env(safe-area-inset-bottom, 0px);
+			animation: sheet-up $duration-slide ease-out;
+		}
+
+		// The large dialogs (collections) always take the full height
+		:global(.dialog-content-large:not(.dialog-alert)) {
+			height: calc(100dvh - 60px);
+		}
+
+		// Bits UI keeps the dialog mounted until these end
+		:global(.dialog-content[data-state='closed']:not(.dialog-alert)) {
+			animation: sheet-down $duration-slide ease-in forwards;
+		}
+
+		:global(.dialog-overlay[data-state='closed']) {
+			animation: fade-out $duration-slide ease-in forwards;
+		}
+
+		// A dialog opened over another: the one behind shrinks a little,
+		// from the top, instead of from its center
+		:global(.dialog-content[data-nested-open]:not(.dialog-alert)) {
+			transform: scale(calc(1 - var(--bits-dialog-nested-count) * 0.04));
+			transform-origin: top center;
+		}
+	}
+
+	@keyframes sheet-up {
+		from {
+			transform: translateY(100%);
+		}
+	}
+
+	@keyframes sheet-down {
+		to {
+			transform: translateY(100%);
+		}
+	}
+
+	@keyframes fade-out {
+		to {
+			opacity: 0;
+		}
 	}
 
 	@keyframes fade-in {
