@@ -171,6 +171,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit;
+		// Lines up with the section title, as the other sections' rows do
+		padding: 0 spacing.$unit;
 	}
 
 	.section-actions {
