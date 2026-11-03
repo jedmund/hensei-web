@@ -5,7 +5,7 @@
 	 * scrolls away, styled as the top of a card while stuck.
 	 */
 	import type { Snippet } from 'svelte'
-	import { MediaQuery } from 'svelte/reactivity'
+	import { mobileQuery } from '$lib/utils/viewport.svelte'
 
 	interface Props {
 		children: Snippet
@@ -13,7 +13,7 @@
 
 	let { children }: Props = $props()
 
-	const isMobile = new MediaQuery('(max-width: 768px)')
+	const isMobile = mobileQuery()
 
 	let header = $state<HTMLElement>()
 	let stuck = $state(false)

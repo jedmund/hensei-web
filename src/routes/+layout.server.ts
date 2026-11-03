@@ -1,7 +1,8 @@
 import type { LayoutServerLoad } from './$types'
 import { STICKERS_FOLDED_COOKIE } from '$lib/stores/stickersFolded.svelte'
+import { isMobileRequest } from '$lib/utils/device'
 
-export const load: LayoutServerLoad = async ({ locals, cookies }) => {
+export const load: LayoutServerLoad = async ({ locals, cookies, request }) => {
 	const account = locals.session.account
 		? {
 				userId: locals.session.account.userId,
@@ -26,6 +27,8 @@ export const load: LayoutServerLoad = async ({ locals, cookies }) => {
 		currentUser,
 		themePreference,
 		stickersFolded,
+		// Server-side value for phone-width media queries (utils/viewport)
+		isMobileHint: isMobileRequest(request.headers),
 		auth: locals.auth
 	}
 }

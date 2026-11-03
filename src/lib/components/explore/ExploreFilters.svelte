@@ -11,7 +11,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import type { ElementType } from '$lib/utils/element'
 	import type { ExploreSort } from '$lib/utils/exploreFilterParams'
-	import { MediaQuery } from 'svelte/reactivity'
+	import { mobileQuery } from '$lib/utils/viewport.svelte'
 
 	interface Props {
 		filters: FilterItem[]
@@ -52,7 +52,7 @@
 		isAuthenticated = false
 	}: Props = $props()
 
-	const isMobile = new MediaQuery('(max-width: 768px)')
+	const isMobile = mobileQuery()
 
 	const search = new ExploreFilterSearch({
 		getFilters: () => filters,

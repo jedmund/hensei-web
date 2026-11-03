@@ -23,7 +23,8 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import type { HomeNewBattle } from '$lib/types/api/home'
 	import * as m from '$lib/paraglide/messages'
-	import { MediaQuery, SvelteSet } from 'svelte/reactivity'
+	import { SvelteSet } from 'svelte/reactivity'
+	import { mobileQuery } from '$lib/utils/viewport.svelte'
 
 	interface Props {
 		battles: HomeNewBattle[]
@@ -55,7 +56,7 @@
 	)
 
 	const thumbFailed = new SvelteSet<string>()
-	const isMobile = new MediaQuery('(max-width: 768px)')
+	const isMobile = mobileQuery()
 
 	// Solo fights have no banner art, so they get the placeholder
 	const bannerUrl = $derived(

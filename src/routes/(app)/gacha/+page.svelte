@@ -16,14 +16,14 @@
 	import * as m from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { slide } from 'svelte/transition'
-	import { MediaQuery } from 'svelte/reactivity'
+	import { mobileQuery } from '$lib/utils/viewport.svelte'
 	import { gachaItemName, gachaItemThumbnail } from '$lib/utils/gacha'
 	import type { CatalogueItem } from '$lib/types/gacha'
 
 	let { data } = $props()
 
 	const gacha = new GachaSimulator()
-	const isMobile = new MediaQuery('(max-width: 768px)')
+	const isMobile = mobileQuery()
 	const name = (item: CatalogueItem) => gachaItemName(item, getLocale())
 </script>
 
