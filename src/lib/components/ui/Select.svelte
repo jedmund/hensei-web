@@ -300,6 +300,13 @@
 		}
 	}
 
+	// Its own global rule: nested under the global trigger, `.disabled` would get
+	// the scope class, which the bits-ui trigger doesn't have
+	:global([data-select-trigger].select.disabled) {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
 	// Select trigger styling - base styles
 	:global([data-select-trigger].select) {
 		all: unset;
@@ -325,12 +332,6 @@
 
 		&:focus-visible {
 			@include focus-ring($blue);
-		}
-
-		// Global: bits-ui renders the trigger, so it has no scope class
-		&:global(.disabled) {
-			opacity: 0.5;
-			cursor: not-allowed;
 		}
 
 		.text {
