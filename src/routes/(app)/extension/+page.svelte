@@ -2,6 +2,7 @@
 	import type { PageData } from './$types'
 	import { Accordion } from 'bits-ui'
 	import LinkItem from '$lib/components/about/LinkItem.svelte'
+	import Icon from '$lib/components/Icon.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import * as m from '$lib/paraglide/messages'
@@ -20,11 +21,7 @@
 		{ value: 'how', title: () => m.ext_faq_how_title(), desc: () => m.ext_faq_desc() },
 		{ value: 'safe', title: () => m.ext_faq_safe_title(), desc: () => m.ext_faq_safe_desc() },
 		{ value: 'ban', title: () => m.ext_faq_ban_title(), desc: () => m.ext_faq_ban_desc() },
-		{
-			value: 'install',
-			title: () => m.ext_faq_install_title(),
-			desc: () => m.ext_faq_install_desc()
-		},
+		{ value: 'install', title: () => m.ext_faq_install_title(), desc: () => '' },
 		{
 			value: 'debug',
 			title: () => m.ext_faq_debug_workaround_title(),
@@ -55,9 +52,6 @@
 		</video>
 		<p>{m.ext_description()}</p>
 		<Button href={CHROME_STORE_URL} size="large" element={userElement} elementStyle={!!userElement}>
-			{#snippet leftAccessory()}
-				<img src={chromeLogo} alt="" class="chrome-logo" />
-			{/snippet}
 			{m.ext_install_chrome_store()}
 		</Button>
 		<a href={GITHUB_DOWNLOAD_URL} class="github-link">{m.ext_download_github()}</a>
@@ -95,8 +89,29 @@
 						</Accordion.Trigger>
 					</Accordion.Header>
 					<Accordion.Content class="faq-content">
-						<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-						<p class="faq-answer">{@html item.desc()}</p>
+						{#if item.value === 'install'}
+							<div class="faq-answer install-methods">
+								<div class="install-method">
+									<h3>
+										<img src={chromeLogo} alt="" class="install-logo" />
+										Chrome
+									</h3>
+									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+									<div>{@html m.ext_faq_install_store_desc()}</div>
+								</div>
+								<div class="install-method">
+									<h3>
+										<Icon name="github" size={20} />
+										GitHub
+									</h3>
+									<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+									<div>{@html m.ext_faq_install_manual_desc()}</div>
+								</div>
+							</div>
+						{:else}
+							<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+							<p class="faq-answer">{@html item.desc()}</p>
+						{/if}
 						{#if item.value === 'safe'}
 							<LinkItem
 								title="hensei-extractor"
@@ -158,12 +173,6 @@
 		aspect-ratio: 16 / 9;
 		border-radius: $card-corner;
 		object-fit: cover;
-	}
-
-	.chrome-logo {
-		width: 20px;
-		height: 20px;
-		display: block;
 	}
 
 	.github-link {
@@ -295,6 +304,32 @@
 		:global(li) {
 			line-height: 1.4;
 		}
+	}
+
+	.install-methods {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-3x;
+	}
+
+	.install-method {
+		display: flex;
+		flex-direction: column;
+		gap: $unit;
+
+		h3 {
+			display: flex;
+			align-items: center;
+			gap: $unit;
+			font-size: $font-medium;
+			font-weight: $bold;
+			margin: 0;
+		}
+	}
+
+	.install-logo {
+		width: 20px;
+		height: 20px;
 	}
 
 	@keyframes slideDown {
