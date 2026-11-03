@@ -15,6 +15,7 @@ import ElementVariantIds from '$lib/features/database/weapons/detail/ElementVari
 import WeaponAwakenings from '$lib/features/database/weapons/detail/WeaponAwakenings.svelte'
 import WeaponForge from '$lib/features/database/weapons/detail/WeaponForge.svelte'
 import WeaponUncapIndicator from '$lib/features/database/weapons/detail/WeaponUncapIndicator.svelte'
+import KeySlotMinUncaps from '$lib/features/database/weapon-series/detail/KeySlotMinUncaps.svelte'
 import StickerImages from '$lib/features/database/stickers/detail/StickerImages.svelte'
 import type { ComponentName } from './types'
 
@@ -32,5 +33,6 @@ export const DETAIL_COMPONENTS: Record<ComponentName, Component<{ record: any }>
 	awakeningImage: AwakeningImage,
 	raidGroupRaids: RaidGroupRaids,
 	eventRaids: EventRaids,
-	stickerImages: StickerImages
+	stickerImages: StickerImages,
+	keySlotMinUncaps: KeySlotMinUncaps
 }

@@ -6,8 +6,10 @@
 	import Select from '$lib/components/ui/Select.svelte'
 	import { queryOptions } from '@tanstack/svelte-query'
 	import { localizedName } from '$lib/utils/locale'
-	import { getLocale } from '$lib/paraglide/runtime'
 	import { getWeaponKeyImage } from '$lib/utils/images/weapons'
+	import { formatUncapLevel } from '$lib/utils/modificationFormatters'
+	import { weaponKeyTypeName } from '$lib/utils/weaponKeySlots'
+	import Icon from '$lib/components/Icon.svelte'
 
 	interface Props {
 		/** The weapon series slug (determines which keys are available) */
@@ -20,39 +22,21 @@
 		onchange?: (key: WeaponKey | undefined) => void
 		/** Current transcendence step (for key validation) */
 		transcendenceStep?: number
+		/** The slot isn't open at the weapon's uncap */
+		disabled?: boolean
+		/** The weapon's uncap, for the locked slot's message */
+		uncapLevel?: number
 	}
 
-	let { seriesSlug, slot, value = $bindable(), onchange, transcendenceStep = 0 }: Props = $props()
-
-	// Key type names based on series slug and slot (0-based indexing)
-	const KEY_TYPE_NAMES: Record<string, Record<number, { en: string; ja: string }>> = {
-		// Dark Opus
-		'dark-opus': {
-			0: { en: 'Pendulum', ja: 'ペンデュラム' },
-			1: { en: 'Pendulum/Chain', ja: 'ペンデュラム/チェイン' }
-		},
-		// Draconic
-		draconic: {
-			0: { en: 'Teluma', ja: 'テルマ' },
-			1: { en: 'Teluma', ja: 'テルマ' }
-		},
-		// Draconic Providence
-		'draconic-providence': {
-			0: { en: 'Teluma', ja: 'テルマ' },
-			1: { en: 'Teluma', ja: 'テルマ' }
-		},
-		// Ultima
-		ultima: {
-			0: { en: 'Gauph Key', ja: 'ガフスキー' },
-			1: { en: 'Ultima Key', ja: 'ガフスキーΩ' },
-			2: { en: 'Gate of Omnipotence', ja: 'ガフスキー' }
-		},
-		// Superlative
-		superlative: {
-			0: { en: 'Teluma', ja: 'テルマ' },
-			1: { en: 'Teluma', ja: 'テルマ' }
-		}
-	}
+	let {
+		seriesSlug,
+		slot,
+		value = $bindable(),
+		onchange,
+		transcendenceStep = 0,
+		disabled = false,
+		uncapLevel = 0
+	}: Props = $props()
 
 	// Fetch weapon keys for this series slug and slot
 	const weaponKeysQuery = createQuery(() =>
@@ -68,12 +52,7 @@
 		})
 	)
 
-	// Get the key type name for this series/slot
-	const keyTypeName = $derived(
-		seriesSlug
-			? (KEY_TYPE_NAMES[seriesSlug]?.[slot]?.[getLocale() === 'ja' ? 'ja' : 'en'] ?? 'Key')
-			: 'Key'
-	)
+	const keyTypeName = $derived(weaponKeyTypeName(seriesSlug, slot))
 
 	// Group and sort weapon keys
 	const groupedOptions = $derived.by(() => {
@@ -140,10 +119,17 @@
 			value={value ?? ''}
 			onValueChange={handleChange}
 			placeholder={m.weapon_key_select({ keyType: keyTypeName })}
+			{disabled}
 			size="medium"
 			fullWidth
 			contained
 		/>
+		{#if disabled}
+			<p class="locked">
+				<Icon name="lock" size={14} />
+				{m.weapon_key_locked({ keyType: keyTypeName, uncap: formatUncapLevel(uncapLevel) })}
+			</p>
+		{/if}
 	{/if}
 </div>
 
@@ -153,14 +139,32 @@
 	@use '$src/themes/layout' as layout;
 
 	.weapon-key-select {
+		// A key's image: 32px, plus its 4px padding a side
+		--key-image: 32px;
 		width: 100%;
 
 		:global(.image) {
-			width: 32px !important;
-			height: 32px !important;
+			width: var(--key-image) !important;
+			height: var(--key-image) !important;
 			border-radius: layout.$item-corner-small !important;
 			padding: 4px;
 		}
+
+		// Without a key (none picked, or a locked slot) the trigger stays as tall
+		// as one with a key: the padded image, the medium padding and the 2px border
+		:global([data-select-trigger]) {
+			min-height: calc(var(--key-image) + 8px + spacing.$unit-2x + 4px);
+		}
+	}
+
+	.locked {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit-half;
+		margin: spacing.$unit-half 0 0;
+		padding: 0 spacing.$unit;
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
 	}
 
 	.loading,

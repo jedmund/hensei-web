@@ -86,12 +86,20 @@ afterEach(() => {
 })
 
 /** The baseline with the deliberate differences applied */
-function expected(info: string[], record: { name: { ja: string }; numWeaponKeys?: number | null }) {
+function expected(
+	info: string[],
+	record: { name: { ja: string }; numWeaponKeys?: number | null; keySlotMinUncaps?: number[] }
+) {
 	const out = [...info]
 	if (!record.name.ja) out.splice(out.indexOf('Name (JA)') + 1, 0, '—')
 	const keys = out.indexOf('Has Weapon Keys')
 	if (keys >= 0 && out[keys + 1] === 'Yes') {
 		out.splice(keys + 2, 0, 'Weapon Key Slots', String(record.numWeaponKeys ?? '—'))
+		// GBF-209: each slot's unlock uncap (drawn as stars), when the series has any
+		const unlocks = record.keySlotMinUncaps ?? []
+		if (unlocks.length) {
+			out.splice(keys + 4, 0, 'Key Slot Unlocks', ...unlocks.map((_, i) => `Key Slot ${i + 1}`))
+		}
 	}
 	return out
 }

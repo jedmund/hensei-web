@@ -10,8 +10,9 @@
 	import WeaponKeysList from '../modifications/WeaponKeysList.svelte'
 	import WeaponKeySelect from '$lib/components/sidebar/edit/WeaponKeySelect.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import { getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
+	import { formatUncapLevel, getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
 	import { getSeriesSlug } from '$lib/utils/weaponSeries'
+	import { keySlots, openKeySlots } from '$lib/utils/weaponKeySlots'
 	import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
 	import { useUpdateGridWeapon } from '$lib/api/mutations/gridWeapon.mutations'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
@@ -39,9 +40,21 @@
 	let editKey3 = $state<string | undefined>(undefined)
 
 	const seriesSlug = $derived(getSeriesSlug(weapon.weapon?.series))
-	const keySlotCount = $derived.by(() => {
+	// Only slots this copy's uncap has opened (a Pendulum needs a 4★ Opus)
+	const openSlots = $derived.by(() => {
 		const series = weapon.weapon?.series
-		return isWeaponSeriesRef(series) ? (series.numWeaponKeys ?? 0) : 0
+		return isWeaponSeriesRef(series) ? openKeySlots(series, weapon.uncapLevel ?? 0) : []
+	})
+	// Slots the uncap hasn't opened still show, disabled
+	const allSlots = $derived.by(() => {
+		const series = weapon.weapon?.series
+		return isWeaponSeriesRef(series) ? keySlots(series) : []
+	})
+
+	// A keyed weapon whose uncap opens none of its slots yet
+	const keysLocked = $derived.by(() => {
+		const series = weapon.weapon?.series
+		return isWeaponSeriesRef(series) && (series.numWeaponKeys ?? 0) > 0 && openSlots.length === 0
 	})
 
 	function startEditing() {
@@ -73,14 +86,29 @@
 <DetailsSection
 	title={getWeaponKeyTitle(weapon.weapon?.series)}
 	empty={!hasWeaponKeys && !showWeaponKeyEditor}
-	emptyMessage={m.details_weapon_keys_not_set()}
+	emptyMessage={keysLocked
+		? m.details_weapon_keys_locked({
+				keys: getWeaponKeyTitle(weapon.weapon?.series),
+				uncap: formatUncapLevel(weapon.uncapLevel)
+			})
+		: m.details_weapon_keys_not_set()}
 >
 	{#snippet action()}
 		<div class="section-actions">
 			{#if sync}
 				<SyncMenuButton {...sync} />
 			{/if}
-			{#if isPartyOwner}
+			{#if isPartyOwner && keysLocked}
+				<Button
+					variant="element-ghost"
+					size="small"
+					element={buttonElement}
+					leftIcon="lock"
+					disabled
+				>
+					{m.action_change()}
+				</Button>
+			{:else if isPartyOwner && openSlots.length > 0}
 				<Button
 					variant="element-ghost"
 					size="small"
@@ -100,28 +128,34 @@
 	{/snippet}
 	{#if showWeaponKeyEditor}
 		<div class="key-selects">
-			{#if keySlotCount >= 1}
+			{#if allSlots.includes(0)}
 				<WeaponKeySelect
 					{seriesSlug}
 					slot={0}
 					bind:value={editKey1}
 					transcendenceStep={weapon.transcendenceStep ?? 0}
+					disabled={!openSlots.includes(0)}
+					uncapLevel={weapon.uncapLevel ?? 0}
 				/>
 			{/if}
-			{#if keySlotCount >= 2}
+			{#if allSlots.includes(1)}
 				<WeaponKeySelect
 					{seriesSlug}
 					slot={1}
 					bind:value={editKey2}
 					transcendenceStep={weapon.transcendenceStep ?? 0}
+					disabled={!openSlots.includes(1)}
+					uncapLevel={weapon.uncapLevel ?? 0}
 				/>
 			{/if}
-			{#if keySlotCount >= 3}
+			{#if allSlots.includes(2)}
 				<WeaponKeySelect
 					{seriesSlug}
 					slot={2}
 					bind:value={editKey3}
 					transcendenceStep={weapon.transcendenceStep ?? 0}
+					disabled={!openSlots.includes(2)}
+					uncapLevel={weapon.uncapLevel ?? 0}
 				/>
 			{/if}
 		</div>
@@ -137,6 +171,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit;
+		// Lines up with the section title, as the other sections' rows do
+		padding: 0 spacing.$unit;
 	}
 
 	.section-actions {

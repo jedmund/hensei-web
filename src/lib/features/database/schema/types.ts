@@ -53,6 +53,7 @@ export type ComponentName =
 	| 'raidGroupRaids'
 	| 'eventRaids'
 	| 'stickerImages'
+	| 'keySlotMinUncaps'
 
 /**
  * Form inputs the edit and create forms resolve by name, for values no
@@ -71,6 +72,7 @@ export type InputName =
 	| 'stickerSlug'
 	| 'roleIcon'
 	| 'artifactSkillBaseValues'
+	| 'keySlotMinUncaps'
 
 /**
  * How an empty value ('', null, undefined, [] or {}) is sent:

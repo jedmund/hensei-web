@@ -5,13 +5,35 @@
 	import SkillCard from '$lib/components/skills/SkillCard.svelte'
 	import SkillGroup from '$lib/components/skills/SkillGroup.svelte'
 	import { resolvedClassification } from '$lib/utils/weaponSkillClassification'
-	import type { WeaponSkill, WeaponSkillVersion } from '$lib/types/api/entities'
+	import type { WeaponKey, WeaponSkill, WeaponSkillVersion } from '$lib/types/api/entities'
+	import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
+	import { getWeaponKeyImage } from '$lib/utils/images/weapons'
+	import { keySlotForSkill, openKeySlots, weaponKeyTypeName } from '$lib/utils/weaponKeySlots'
 
 	interface Props {
 		skills: WeaponSkill[] | undefined
+		/** A team's copy: the skills its keys fill show the key (or why there's none) */
+		series?: WeaponSeriesRef | undefined
+		weaponKeys?: WeaponKey[] | undefined
+		uncapLevel?: number | undefined
 	}
 
-	let { skills }: Props = $props()
+	let { skills, series, weaponKeys, uncapLevel }: Props = $props()
+
+	const openSlots = $derived(openKeySlots(series, uncapLevel ?? 0))
+
+	// The open key slot that fills this skill, with its key; none without a copy
+	function keyFor(position: number) {
+		if (!series || uncapLevel === undefined) return undefined
+		const slot = keySlotForSkill(series.slug, position)
+		// A slot the uncap hasn't opened shows nothing here (the editors say why)
+		if (slot === undefined || !openSlots.includes(slot)) return undefined
+		return {
+			slot,
+			key: weaponKeys?.find((k) => k.slot === slot),
+			keyType: weaponKeyTypeName(series.slug, slot)
+		}
+	}
 
 	const locale = $derived(appLocale())
 	const slots = $derived([...(skills ?? [])].sort((a, b) => a.position - b.position))
@@ -78,10 +100,23 @@
 				{#each upgrades as version (version.ordinal)}
 					{@render card(version, true)}
 				{/each}
+				{@render keyCard(keyFor(slot.position))}
 			</div>
 		</SkillGroup>
 	{/if}
 {/each}
+
+{#snippet keyCard(keySlot: ReturnType<typeof keyFor>)}
+	{#if keySlot}
+		{@const { key, keyType } = keySlot}
+		<SkillCard
+			name={key ? localizedName(key.name) : m.weapon_key_none({ keyType })}
+			iconUrl={key ? getWeaponKeyImage(key.slug) : undefined}
+			relationLabel={keyType}
+			linked
+		/>
+	{/if}
+{/snippet}
 
 {#snippet card(version: WeaponSkillVersion, linked: boolean)}
 	{@const parts = metaParts(version)}

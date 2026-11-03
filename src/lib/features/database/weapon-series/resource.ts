@@ -17,6 +17,11 @@ import type {
 	WeaponSeries
 } from '$lib/types/api/weaponSeries'
 import { AUGMENT_TYPE_LABELS } from '$lib/utils/augmentType'
+import {
+	formatKeySlotMinUncaps,
+	keySlotMinUncapsForSave,
+	keySlotMinUncapsSchema
+} from '$lib/features/database/weapon-series/keySlotMinUncaps'
 
 const FLAGS = ['extra', 'element_changeable', 'has_weapon_keys', 'has_awakening'] as const
 
@@ -80,6 +85,27 @@ export const weaponSeriesResource = defineResource<AdminWeaponSeriesRow, WeaponS
 			whenHidden: 'empty',
 			detail: { sublabel: false },
 			list: { defaultHidden: true, sortable: false }
+		},
+		// Per key slot, the uncap a copy needs (a Pendulum needs a 4★ Opus)
+		{
+			key: 'key_slot_min_uncaps',
+			kind: 'custom',
+			label: m.db_weapon_series_field_key_slot_min_uncaps,
+			sublabel: m.db_weapon_series_hint_key_slot_min_uncaps,
+			default: [],
+			// An empty list is a valid value (the column can't be null)
+			empty: 'keep',
+			when: hasKeys,
+			whenHidden: 'empty',
+			write: { value: keySlotMinUncapsForSave },
+			validate: keySlotMinUncapsSchema,
+			render: { detail: 'keySlotMinUncaps', input: 'keySlotMinUncaps' },
+			detail: { sublabel: false, hideWhenEmpty: true },
+			list: {
+				value: (s) => formatKeySlotMinUncaps(s.keySlotMinUncaps),
+				defaultHidden: true,
+				sortable: false
+			}
 		},
 		{
 			...flag,
@@ -146,6 +172,7 @@ export const weaponSeriesResource = defineResource<AdminWeaponSeriesRow, WeaponS
 			},
 			...FLAGS,
 			'num_weapon_keys',
+			'key_slot_min_uncaps',
 			'augment_type',
 			'weapon_count',
 			'updated_at'
@@ -169,6 +196,7 @@ export const weaponSeriesResource = defineResource<AdminWeaponSeriesRow, WeaponS
 					'element_changeable',
 					'has_weapon_keys',
 					'num_weapon_keys',
+					'key_slot_min_uncaps',
 					'has_awakening',
 					'augment_type'
 				]

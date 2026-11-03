@@ -125,6 +125,10 @@ describe('getWeaponKeyTitle', () => {
 		expect(getWeaponKeyTitle(makeSeries('astral'))).toBe('Emblems')
 	})
 
+	it('returns Anklets for destroyer', () => {
+		expect(getWeaponKeyTitle(makeSeries('destroyer'))).toBe('Anklets')
+	})
+
 	it('returns generic Weapon Keys for unknown series', () => {
 		expect(getWeaponKeyTitle(makeSeries('unknown'))).toBe('Weapon Keys')
 	})
