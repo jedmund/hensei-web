@@ -12,6 +12,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import { getWeaponKeyTitle } from '$lib/utils/modificationFormatters'
 	import { getSeriesSlug } from '$lib/utils/weaponSeries'
+	import { openKeySlots } from '$lib/utils/weaponKeySlots'
 	import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
 	import { useUpdateGridWeapon } from '$lib/api/mutations/gridWeapon.mutations'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
@@ -43,6 +44,10 @@
 		const series = weapon.weapon?.series
 		return isWeaponSeriesRef(series) ? (series.numWeaponKeys ?? 0) : 0
 	})
+	// Only slots this copy's uncap has opened (a Pendulum needs a 4★ Opus)
+	const openSlots = $derived(
+		openKeySlots(seriesSlug, keySlotCount, weapon.uncapLevel ?? 0, weapon.weapon?.uncap?.ulb)
+	)
 
 	function startEditing() {
 		editKey1 = weapon.weaponKeys?.find((k) => k.slot === 0)?.id
@@ -80,7 +85,7 @@
 			{#if sync}
 				<SyncMenuButton {...sync} />
 			{/if}
-			{#if isPartyOwner}
+			{#if isPartyOwner && openSlots.length > 0}
 				<Button
 					variant="element-ghost"
 					size="small"
@@ -100,7 +105,7 @@
 	{/snippet}
 	{#if showWeaponKeyEditor}
 		<div class="key-selects">
-			{#if keySlotCount >= 1}
+			{#if openSlots.includes(0)}
 				<WeaponKeySelect
 					{seriesSlug}
 					slot={0}
@@ -108,7 +113,7 @@
 					transcendenceStep={weapon.transcendenceStep ?? 0}
 				/>
 			{/if}
-			{#if keySlotCount >= 2}
+			{#if openSlots.includes(1)}
 				<WeaponKeySelect
 					{seriesSlug}
 					slot={1}
@@ -116,7 +121,7 @@
 					transcendenceStep={weapon.transcendenceStep ?? 0}
 				/>
 			{/if}
-			{#if keySlotCount >= 3}
+			{#if openSlots.includes(2)}
 				<WeaponKeySelect
 					{seriesSlug}
 					slot={2}

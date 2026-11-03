@@ -25,6 +25,7 @@
 	import BulletSelect from '$lib/components/sidebar/edit/BulletSelect.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import { seriesHasWeaponKeys, seriesHasAwakening, getSeriesSlug } from '$lib/utils/weaponSeries'
+	import { isKeySlotUnlocked, openKeySlots } from '$lib/utils/weaponKeySlots'
 	import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
 
 	export interface WeaponEditValues {
@@ -47,9 +48,10 @@
 		uncapLevel?: number
 		transcendenceStep?: number
 		element?: number
-		weaponKey1Id?: string
-		weaponKey2Id?: string
-		weaponKey3Id?: string
+		/** null clears a key the new uncap level locks */
+		weaponKey1Id?: string | null
+		weaponKey2Id?: string | null
+		weaponKey3Id?: string | null
 		weaponKey4Id?: string
 		awakening?: {
 			id: string
@@ -109,6 +111,12 @@
 	// Check if series has weapon keys using the utility (handles both formats)
 	const hasWeaponKeys = $derived(seriesHasWeaponKeys(series))
 	const keySlotCount = $derived(series?.numWeaponKeys ?? 0)
+	// Slots the copy's uncap has opened (a Pendulum needs a 4★ Opus)
+	const slotUnlocked = (slot: number) =>
+		isKeySlotUnlocked(seriesSlug, slot, uncapLevel, weaponData?.uncap?.ulb)
+	const openSlots = $derived(
+		openKeySlots(seriesSlug, keySlotCount, uncapLevel, weaponData?.uncap?.ulb)
+	)
 
 	// Augment type from series determines AX skills vs befoulment
 	const augmentType = $derived(series?.augmentType ?? 'no_augment')
@@ -128,6 +136,10 @@
 		uncapLevel = newLevel
 		// Transcendence requires uncap level 5; the API rejects a leftover stage.
 		if (newLevel < 5) transcendenceStep = 0
+		// Keys can't stay in slots a lower uncap closes; the API drops them too.
+		if (!slotUnlocked(0)) weaponKey1 = undefined
+		if (!slotUnlocked(1)) weaponKey2 = undefined
+		if (!slotUnlocked(2)) weaponKey3 = undefined
 	}
 
 	function handleTranscendenceUpdate(newStage: number) {
@@ -146,6 +158,12 @@
 		return false
 	}
 
+	// A selected key, or null when the uncap locked the slot of a saved one
+	function keyUpdate(selected: string | undefined, saved: string | undefined, slot: number) {
+		if (selected) return selected
+		return saved && !slotUnlocked(slot) ? null : undefined
+	}
+
 	// Export save function so parent can call it from header button
 	export function save() {
 		const updates: WeaponEditUpdates = {
@@ -160,9 +178,12 @@
 
 		// Weapon keys
 		if (hasWeaponKeys) {
-			if (weaponKey1) updates.weaponKey1Id = weaponKey1
-			if (weaponKey2) updates.weaponKey2Id = weaponKey2
-			if (weaponKey3) updates.weaponKey3Id = weaponKey3
+			const key1 = keyUpdate(weaponKey1, currentValues.weaponKey1Id, 0)
+			const key2 = keyUpdate(weaponKey2, currentValues.weaponKey2Id, 1)
+			const key3 = keyUpdate(weaponKey3, currentValues.weaponKey3Id, 2)
+			if (key1 !== undefined) updates.weaponKey1Id = key1
+			if (key2 !== undefined) updates.weaponKey2Id = key2
+			if (key3 !== undefined) updates.weaponKey3Id = key3
 		}
 
 		// Awakening
@@ -240,16 +261,16 @@
 			</DetailsSection>
 		{/if}
 
-		{#if hasWeaponKeys}
+		{#if hasWeaponKeys && openSlots.length > 0}
 			<DetailsSection title={m.details_weapon_keys()}>
 				<div class="section-content key-selects">
-					{#if keySlotCount >= 1}
+					{#if openSlots.includes(0)}
 						<WeaponKeySelect {seriesSlug} slot={0} bind:value={weaponKey1} {transcendenceStep} />
 					{/if}
-					{#if keySlotCount >= 2}
+					{#if openSlots.includes(1)}
 						<WeaponKeySelect {seriesSlug} slot={1} bind:value={weaponKey2} {transcendenceStep} />
 					{/if}
-					{#if keySlotCount >= 3}
+					{#if openSlots.includes(2)}
 						<WeaponKeySelect {seriesSlug} slot={2} bind:value={weaponKey3} {transcendenceStep} />
 					{/if}
 				</div>
