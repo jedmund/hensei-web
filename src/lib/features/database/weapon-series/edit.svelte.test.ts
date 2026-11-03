@@ -69,13 +69,16 @@ function render(record: (typeof detailRecords)[keyof typeof detailRecords]) {
 }
 
 const text = (el: Element) => el.textContent?.trim() ?? ''
+const slotItems = () =>
+	[...target.querySelectorAll('.detail-item')].filter((item) =>
+		/^Key Slot \d$/.test(text(item.querySelector('.label')!))
+	)
+/** Each slot's label and its filled stars */
 const slotInputs = () =>
-	[...target.querySelectorAll('.detail-item')]
-		.filter((item) => /^Key Slot \d Uncap$/.test(text(item.querySelector('.label')!)))
-		.map((item) => [
-			text(item.querySelector('.label')!),
-			item.querySelector<HTMLInputElement>('input')?.value
-		])
+	slotItems().map((item) => [
+		text(item.querySelector('.label')!),
+		item.querySelectorAll('.star:not(.empty)').length
+	])
 
 afterEach(() => {
 	if (mounted) unmount(mounted)
@@ -86,12 +89,29 @@ afterEach(() => {
 
 // GBF-209: editors set the uncap each key slot needs
 describe('weapon series edit: key slot unlocks', () => {
-	it("shows one input per key slot with the series' levels", () => {
+	it("shows each key slot's level as uncap stars", () => {
 		render(detailRecords.keyed)
 		expect(target.textContent).toContain('needs before a key can go in it')
 		expect(slotInputs()).toEqual([
-			['Key Slot 1 Uncap', '4'],
-			['Key Slot 2 Uncap', '5']
+			['Key Slot 1', 4],
+			['Key Slot 2', 5]
+		])
+	})
+
+	it('sets a slot by clicking its stars, down to none', () => {
+		render(detailRecords.keyed)
+		const stars = () => slotItems()[0]!.querySelectorAll<HTMLButtonElement>('.star button')
+		stars()[1]!.click()
+		flushSync()
+		expect(slotInputs()[0]).toEqual(['Key Slot 1', 1])
+		stars()[0]!.click()
+		flushSync()
+		expect(slotInputs()[0]).toEqual(['Key Slot 1', 0])
+		stars()[4]!.click()
+		flushSync()
+		expect(slotInputs()).toEqual([
+			['Key Slot 1', 5],
+			['Key Slot 2', 5]
 		])
 	})
 

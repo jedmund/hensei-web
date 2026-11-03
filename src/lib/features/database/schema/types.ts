@@ -53,6 +53,7 @@ export type ComponentName =
 	| 'raidGroupRaids'
 	| 'eventRaids'
 	| 'stickerImages'
+	| 'keySlotMinUncaps'
 
 /**
  * Form inputs the edit and create forms resolve by name, for values no

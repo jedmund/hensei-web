@@ -99,12 +99,8 @@ export const weaponSeriesResource = defineResource<AdminWeaponSeriesRow, WeaponS
 			whenHidden: 'empty',
 			write: { value: keySlotMinUncapsForSave },
 			validate: keySlotMinUncapsSchema,
-			render: { input: 'keySlotMinUncaps' },
-			detail: {
-				sublabel: false,
-				hideWhenEmpty: true,
-				value: (s) => formatKeySlotMinUncaps(s.keySlotMinUncaps)
-			},
+			render: { detail: 'keySlotMinUncaps', input: 'keySlotMinUncaps' },
+			detail: { sublabel: false, hideWhenEmpty: true },
 			list: {
 				value: (s) => formatKeySlotMinUncaps(s.keySlotMinUncaps),
 				defaultHidden: true,

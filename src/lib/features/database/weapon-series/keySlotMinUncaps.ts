@@ -5,7 +5,8 @@
 import { z } from 'zod'
 import type { Values } from '$lib/features/database/schema/types'
 
-export const MAX_UNCAP = 6
+/** The stars the editor offers: 3 base, FLB and ULB */
+export const MAX_UNCAP = 5
 
 /** How many slots the form's series has */
 export function keySlotCount(values: Values): number {
