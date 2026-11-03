@@ -7,6 +7,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import { getImageBaseUrl } from '$lib/api/adapters/config'
 	import { getLocale } from '$lib/paraglide/runtime.js'
+	import chromeLogo from '$src/assets/logos/chrome.svg'
 
 	let { data }: { data: PageData } = $props()
 
@@ -54,6 +55,9 @@
 		</video>
 		<p>{m.ext_description()}</p>
 		<Button href={CHROME_STORE_URL} size="large" element={userElement} elementStyle={!!userElement}>
+			{#snippet leftAccessory()}
+				<img src={chromeLogo} alt="" class="chrome-logo" />
+			{/snippet}
 			{m.ext_install_chrome_store()}
 		</Button>
 		<a href={GITHUB_DOWNLOAD_URL} class="github-link">{m.ext_download_github()}</a>
@@ -154,6 +158,12 @@
 		aspect-ratio: 16 / 9;
 		border-radius: $card-corner;
 		object-fit: cover;
+	}
+
+	.chrome-logo {
+		width: 20px;
+		height: 20px;
+		display: block;
 	}
 
 	.github-link {
