@@ -8,6 +8,8 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { getWeaponKeyImage } from '$lib/utils/images/weapons'
+	import { formatUncapLevel } from '$lib/utils/modificationFormatters'
+	import Icon from '$lib/components/Icon.svelte'
 
 	interface Props {
 		/** The weapon series slug (determines which keys are available) */
@@ -22,6 +24,8 @@
 		transcendenceStep?: number
 		/** The slot isn't open at the weapon's uncap */
 		disabled?: boolean
+		/** The weapon's uncap, for the locked slot's message */
+		uncapLevel?: number
 	}
 
 	let {
@@ -30,7 +34,8 @@
 		value = $bindable(),
 		onchange,
 		transcendenceStep = 0,
-		disabled = false
+		disabled = false,
+		uncapLevel = 0
 	}: Props = $props()
 
 	// Key type names based on series slug and slot (0-based indexing)
@@ -55,6 +60,10 @@
 			0: { en: 'Gauph Key', ja: 'ガフスキー' },
 			1: { en: 'Ultima Key', ja: 'ガフスキーΩ' },
 			2: { en: 'Gate of Omnipotence', ja: 'ガフスキー' }
+		},
+		// Destroyer
+		destroyer: {
+			0: { en: 'Anklet', ja: 'アンクレット' }
 		},
 		// Superlative
 		superlative: {
@@ -154,6 +163,12 @@
 			fullWidth
 			contained
 		/>
+		{#if disabled}
+			<p class="locked">
+				<Icon name="lock" size={14} />
+				{m.weapon_key_locked({ keyType: keyTypeName, uncap: formatUncapLevel(uncapLevel) })}
+			</p>
+		{/if}
 	{/if}
 </div>
 
@@ -171,6 +186,16 @@
 			border-radius: layout.$item-corner-small !important;
 			padding: 4px;
 		}
+	}
+
+	.locked {
+		display: flex;
+		align-items: center;
+		gap: spacing.$unit-half;
+		margin: spacing.$unit-half 0 0;
+		padding: 0 spacing.$unit;
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
 	}
 
 	.loading,

@@ -269,6 +269,7 @@
 							bind:value={weaponKey1}
 							{transcendenceStep}
 							disabled={!openSlots.includes(0)}
+							{uncapLevel}
 						/>
 					{/if}
 					{#if allSlots.includes(1)}
@@ -278,6 +279,7 @@
 							bind:value={weaponKey2}
 							{transcendenceStep}
 							disabled={!openSlots.includes(1)}
+							{uncapLevel}
 						/>
 					{/if}
 					{#if allSlots.includes(2)}
@@ -287,6 +289,7 @@
 							bind:value={weaponKey3}
 							{transcendenceStep}
 							disabled={!openSlots.includes(2)}
+							{uncapLevel}
 						/>
 					{/if}
 				</div>

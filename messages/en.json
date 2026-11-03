@@ -1644,6 +1644,7 @@
 	"befoulment_strength": "Strength",
 	"weapon_key_none": "No {keyType}",
 	"weapon_key_select": "Select {keyType}",
+	"weapon_key_locked": "{keyType} isn't available at {uncap}",
 	"placeholder_select_earring": "Select earring",
 	"transcendence_stage": "Stage {step}",
 	"search_linked_user": "Linked user",

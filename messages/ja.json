@@ -1554,6 +1554,7 @@
 	"befoulment_strength": "効果量",
 	"weapon_key_none": "{keyType}なし",
 	"weapon_key_select": "{keyType}を選択",
+	"weapon_key_locked": "{uncap}では{keyType}を装着できません",
 	"placeholder_select_earring": "耳飾りを選択",
 	"transcendence_stage": "段階{step}",
 	"search_linked_user": "リンクユーザー",

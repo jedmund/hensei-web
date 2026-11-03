@@ -135,6 +135,7 @@
 					bind:value={editKey1}
 					transcendenceStep={weapon.transcendenceStep ?? 0}
 					disabled={!openSlots.includes(0)}
+					uncapLevel={weapon.uncapLevel ?? 0}
 				/>
 			{/if}
 			{#if allSlots.includes(1)}
@@ -144,6 +145,7 @@
 					bind:value={editKey2}
 					transcendenceStep={weapon.transcendenceStep ?? 0}
 					disabled={!openSlots.includes(1)}
+					uncapLevel={weapon.uncapLevel ?? 0}
 				/>
 			{/if}
 			{#if allSlots.includes(2)}
@@ -153,6 +155,7 @@
 					bind:value={editKey3}
 					transcendenceStep={weapon.transcendenceStep ?? 0}
 					disabled={!openSlots.includes(2)}
+					uncapLevel={weapon.uncapLevel ?? 0}
 				/>
 			{/if}
 		</div>

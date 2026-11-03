@@ -327,7 +327,8 @@
 			@include focus-ring($blue);
 		}
 
-		&.disabled {
+		// Global: bits-ui renders the trigger, so it has no scope class
+		&:global(.disabled) {
 			opacity: 0.5;
 			cursor: not-allowed;
 		}
