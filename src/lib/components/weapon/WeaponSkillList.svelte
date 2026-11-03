@@ -109,13 +109,35 @@
 {#snippet keyCard(keySlot: ReturnType<typeof keyFor>)}
 	{#if keySlot}
 		{@const { key, keyType } = keySlot}
-		<SkillCard
-			name={key ? localizedName(key.name) : m.weapon_key_none({ keyType })}
-			iconUrl={key ? getWeaponKeyImage(key.slug) : undefined}
-			relationLabel={keyType}
-			linked
-		/>
+		{@const [first, ...upgrades] = [...(key?.skillVersions ?? [])].sort(
+			(a, b) => a.ordinal - b.ordinal
+		)}
+		{#if key && first}
+			<!-- The skill the key gives this weapon, under the key's name, then its upgrades -->
+			{@render keySkill(first, localizedName(key.name))}
+			{#each upgrades as version (version.ordinal)}
+				{@render keySkill(version, unlockParts(version).join(' · '))}
+			{/each}
+		{:else}
+			<SkillCard
+				name={key ? localizedName(key.name) : m.weapon_key_none({ keyType })}
+				iconUrl={key ? getWeaponKeyImage(key.slug) : undefined}
+				relationLabel={keyType}
+				linked
+			/>
+		{/if}
 	{/if}
+{/snippet}
+
+{#snippet keySkill(version: WeaponSkillVersion, relationLabel: string)}
+	<SkillCard
+		name={localizedName(version.name)}
+		iconUrl={getWeaponSkillIcon(version.iconStem, locale)}
+		segments={segmentsFor(version)}
+		raw={rawFor(version)}
+		{relationLabel}
+		linked
+	/>
 {/snippet}
 
 {#snippet card(version: WeaponSkillVersion, linked: boolean)}
