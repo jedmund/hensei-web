@@ -8,7 +8,6 @@
 	import type { WeaponKey, WeaponSkill, WeaponSkillVersion } from '$lib/types/api/entities'
 	import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 	import { getWeaponKeyImage } from '$lib/utils/images/weapons'
-	import { formatUncapLevel } from '$lib/utils/modificationFormatters'
 	import { keySlotForSkill, openKeySlots, weaponKeyTypeName } from '$lib/utils/weaponKeySlots'
 
 	interface Props {
@@ -23,15 +22,15 @@
 
 	const openSlots = $derived(openKeySlots(series, uncapLevel ?? 0))
 
-	// The key slot that fills this skill, with its key; none without a copy
+	// The open key slot that fills this skill, with its key; none without a copy
 	function keyFor(position: number) {
 		if (!series || uncapLevel === undefined) return undefined
 		const slot = keySlotForSkill(series.slug, position)
-		if (slot === undefined || slot >= (series.numWeaponKeys ?? 0)) return undefined
+		// A slot the uncap hasn't opened shows nothing here (the editors say why)
+		if (slot === undefined || !openSlots.includes(slot)) return undefined
 		return {
 			slot,
 			key: weaponKeys?.find((k) => k.slot === slot),
-			open: openSlots.includes(slot),
 			keyType: weaponKeyTypeName(series.slug, slot)
 		}
 	}
@@ -109,13 +108,9 @@
 
 {#snippet keyCard(keySlot: ReturnType<typeof keyFor>)}
 	{#if keySlot}
-		{@const { key, open, keyType } = keySlot}
+		{@const { key, keyType } = keySlot}
 		<SkillCard
-			name={key
-				? localizedName(key.name)
-				: open
-					? m.weapon_key_none({ keyType })
-					: m.weapon_key_locked({ keyType, uncap: formatUncapLevel(uncapLevel) })}
+			name={key ? localizedName(key.name) : m.weapon_key_none({ keyType })}
 			iconUrl={key ? getWeaponKeyImage(key.slug) : undefined}
 			relationLabel={keyType}
 			linked

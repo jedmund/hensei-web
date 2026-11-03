@@ -109,9 +109,9 @@ describe('WeaponSkillList with keys', () => {
 		expect(out[2]).toEqual(['Skill 3', 'Guiding Gospel', '↳ Pendulum/Chain', 'No Pendulum/Chain'])
 	})
 
-	it('says when the uncap has locked a key slot', () => {
+	it('leaves a slot the uncap has locked alone', () => {
 		const out = groups({ skills: opus, series: series('dark-opus', 2, [4, 5]), uncapLevel: 4 })
-		expect(out[2]).toContain("Pendulum/Chain isn't available at 4★")
+		expect(out[2]).toEqual(['Skill 3', 'Guiding Gospel'])
 	})
 
 	it("puts an Ultima's first key under its own skill and an Anklet under Cycle of Strife", () => {
