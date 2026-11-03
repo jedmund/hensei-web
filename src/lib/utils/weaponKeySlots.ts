@@ -82,3 +82,11 @@ export function keySlotForSkill(
 	const slot = seriesSlug ? KEY_SLOT_SKILL_POSITIONS[seriesSlug]?.indexOf(position) : -1
 	return slot === undefined || slot < 0 ? undefined : slot
 }
+
+/** The skill position a key slot fills, if known */
+export function skillPositionForKeySlot(
+	seriesSlug: string | undefined,
+	slot: number
+): number | undefined {
+	return seriesSlug ? KEY_SLOT_SKILL_POSITIONS[seriesSlug]?.[slot] : undefined
+}

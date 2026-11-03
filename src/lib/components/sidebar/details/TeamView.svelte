@@ -46,6 +46,8 @@
 		/** Called with a localized scope label + field keys so the parent can
 		 * open the push-confirm dialog and target the right fields. */
 		onSyncToCollection?: (scope: string, fields: string[]) => void
+		/** Opens a key's skill in the Skills tab */
+		onShowKeySkill?: ((slot: number) => void) | undefined
 	}
 
 	let {
@@ -62,7 +64,8 @@
 		isSyncingToCollection = false,
 		syncElement,
 		onSyncFromCollection,
-		onSyncToCollection
+		onSyncToCollection,
+		onShowKeySkill
 	}: Props = $props()
 
 	// Use the weapon's effective element (grid override or base) for button color
@@ -257,6 +260,7 @@
 				hasWeaponKeys={!!modificationStatus.hasWeaponKeys}
 				{isPartyOwner}
 				buttonElement={weaponElement}
+				{onShowKeySkill}
 				sync={sectionSync(
 					weaponKeysSectionOOS,
 					getWeaponKeyTitle(weapon.weapon?.series),

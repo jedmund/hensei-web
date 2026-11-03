@@ -16,9 +16,20 @@
 		series?: WeaponSeriesRef | undefined
 		weaponKeys?: WeaponKey[] | undefined
 		uncapLevel?: number | undefined
+		/** Scrolls this key slot's skill into view */
+		focusKeySlot?: number | undefined
 	}
 
-	let { skills, series, weaponKeys, uncapLevel }: Props = $props()
+	let { skills, series, weaponKeys, uncapLevel, focusKeySlot }: Props = $props()
+
+	let root = $state<HTMLElement | undefined>(undefined)
+	$effect(() => {
+		if (focusKeySlot === undefined || !root) return
+		root
+			.querySelector(`[data-key-slot="${focusKeySlot}"]`)
+			?.closest('section')
+			?.scrollIntoView({ block: 'start', behavior: 'smooth' })
+	})
 
 	const openSlots = $derived(openKeySlots(series, uncapLevel ?? 0))
 
@@ -91,20 +102,22 @@
 	}
 </script>
 
-{#each slots as slot (slot.position)}
-	{@const [first, ...upgrades] = versions(slot)}
-	{#if first}
-		<SkillGroup title={m.weapon_skills_slot({ n: slot.position + 1 })}>
-			<div class="skill-slot">
-				{@render card(first, false)}
-				{#each upgrades as version (version.ordinal)}
-					{@render card(version, true)}
-				{/each}
-				{@render keyCard(keyFor(slot.position))}
-			</div>
-		</SkillGroup>
-	{/if}
-{/each}
+<div class="weapon-skill-list" bind:this={root}>
+	{#each slots as slot (slot.position)}
+		{@const [first, ...upgrades] = versions(slot)}
+		{#if first}
+			<SkillGroup title={m.weapon_skills_slot({ n: slot.position + 1 })}>
+				<div class="skill-slot" data-key-slot={keyFor(slot.position)?.slot}>
+					{@render card(first, false)}
+					{#each upgrades as version (version.ordinal)}
+						{@render card(version, true)}
+					{/each}
+					{@render keyCard(keyFor(slot.position))}
+				</div>
+			</SkillGroup>
+		{/if}
+	{/each}
+</div>
 
 {#snippet keyCard(keySlot: ReturnType<typeof keyFor>)}
 	{#if keySlot}

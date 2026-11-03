@@ -29,9 +29,11 @@
 		buttonElement: ElementColor | undefined
 		/** Section sync button props; omit when the section is in sync */
 		sync?: ComponentProps<typeof SyncMenuButton> | undefined
+		/** Opens the key's skill in the Skills tab */
+		onShowKeySkill?: ((slot: number) => void) | undefined
 	}
 
-	let { weapon, hasWeaponKeys, isPartyOwner, buttonElement, sync }: Props = $props()
+	let { weapon, hasWeaponKeys, isPartyOwner, buttonElement, sync, onShowKeySkill }: Props = $props()
 
 	const updateWeaponMutation = useUpdateGridWeapon()
 	let showWeaponKeyEditor = $state(false)
@@ -160,7 +162,12 @@
 			{/if}
 		</div>
 	{:else}
-		<WeaponKeysList weaponKeys={weapon.weaponKeys} weaponData={weapon.weapon} layout="list" />
+		<WeaponKeysList
+			weaponKeys={weapon.weaponKeys}
+			weaponData={weapon.weapon}
+			layout="list"
+			onSelect={onShowKeySkill ? (key) => onShowKeySkill(key.slot) : undefined}
+		/>
 	{/if}
 </DetailsSection>
 

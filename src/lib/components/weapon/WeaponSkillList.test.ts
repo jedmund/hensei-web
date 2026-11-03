@@ -145,6 +145,18 @@ describe('WeaponSkillList with keys', () => {
 		])
 	})
 
+	it("marks the skill a key fills, so This Team's key can scroll to it", () => {
+		const { body } = render(WeaponSkillList, {
+			props: {
+				skills: opus,
+				series: series('dark-opus', 2, [4, 5]),
+				weaponKeys: [key(0, 'pendulum-alpha', 'α Pendulum')],
+				uncapLevel: 5
+			}
+		})
+		expect(body.match(/data-key-slot="(\d)"/g)).toEqual(['data-key-slot="0"', 'data-key-slot="1"'])
+	})
+
 	it('leaves a slot the uncap has locked alone', () => {
 		const out = groups({ skills: opus, series: series('dark-opus', 2, [4, 5]), uncapLevel: 4 })
 		expect(out[2]).toEqual(['Skill 3', 'Guiding Gospel'])

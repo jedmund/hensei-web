@@ -5,6 +5,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import type { WeaponSeriesRef, WeaponSeriesSummary } from '$lib/types/api/weaponSeries'
 	import * as m from '$lib/paraglide/messages'
+	import { skillPositionForKeySlot } from '$lib/utils/weaponKeySlots'
 
 	interface Props {
 		weaponKeys?: WeaponKey[]
@@ -15,9 +16,11 @@
 			name?: LocalizedName
 		}
 		layout?: 'list' | 'grid'
+		/** Makes each key a button (the details pane opens its skill in the Skills tab) */
+		onSelect?: ((key: WeaponKey) => void) | undefined
 	}
 
-	let { weaponKeys, weaponData, layout = 'list' }: Props = $props()
+	let { weaponKeys, weaponData, layout = 'list', onSelect }: Props = $props()
 
 	const proficiency = $derived(
 		Array.isArray(weaponData?.proficiency) ? weaponData?.proficiency[0] : weaponData?.proficiency
@@ -30,8 +33,10 @@
 		return key.slug || m.details_weapon_key_fallback()
 	}
 
+	// The weapon skill the key fills (an Opus's first Pendulum is its Skill 2)
 	function getSlotLabel(slot: number): string {
-		return m.details_skill_slot({ slot: String(slot + 1) })
+		const position = skillPositionForKeySlot(weaponData?.series?.slug, slot) ?? slot
+		return m.details_skill_slot({ slot: String(position + 1) })
 	}
 </script>
 
@@ -39,22 +44,32 @@
 	<div class="weapon-keys-list {layout}">
 		{#each weaponKeys as key, index (index)}
 			{@const imageData = keyImages[index]}
-			<div class="weapon-key-item">
-				{#if imageData}
-					<img src={imageData.url} alt={imageData.alt} class="weapon-key-icon" />
-				{/if}
-				<div class="weapon-key-info">
-					<span class="slot-label">
-						{getSlotLabel(key.slot)}
-					</span>
-					<span class="key-name">
-						{getKeyDescription(key)}
-					</span>
+			{#if onSelect}
+				<button type="button" class="weapon-key-item selectable" onclick={() => onSelect(key)}>
+					{@render item(key, imageData)}
+				</button>
+			{:else}
+				<div class="weapon-key-item">
+					{@render item(key, imageData)}
 				</div>
-			</div>
+			{/if}
 		{/each}
 	</div>
 {/if}
+
+{#snippet item(key: WeaponKey, imageData: (typeof keyImages)[number] | undefined)}
+	{#if imageData}
+		<img src={imageData.url} alt={imageData.alt} class="weapon-key-icon" />
+	{/if}
+	<div class="weapon-key-info">
+		<span class="slot-label">
+			{getSlotLabel(key.slot)}
+		</span>
+		<span class="key-name">
+			{getKeyDescription(key)}
+		</span>
+	</div>
+{/snippet}
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
@@ -85,6 +100,27 @@
 
 			&:hover {
 				background: var(--placeholder-bg);
+			}
+
+			&.selectable {
+				all: unset;
+				box-sizing: border-box;
+				display: flex;
+				gap: spacing.$unit-2x;
+				align-items: center;
+				padding: spacing.$unit;
+				background: var(--unit-bg);
+				border-radius: layout.$item-corner-small;
+				cursor: pointer;
+				transition: background 0.2s ease;
+
+				&:hover {
+					background: var(--placeholder-bg);
+				}
+
+				&:focus-visible {
+					outline: 2px solid var(--accent-blue);
+				}
 			}
 
 			.weapon-key-icon {
