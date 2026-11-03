@@ -39,6 +39,16 @@ export const hasFixedRates = (mode: string) => mode === CURRENT_BANNER
 export const onePurchase = (unit: GachaShare['purchase']) => (unit === 'ten' ? '10' : '1')
 
 /**
+ * A banner's SSR rate-ups. The game also flags SR and R items as rate-ups on
+ * some banners; the simulator draws with the banner's own rates either way,
+ * so the list only shows the SSRs, as a custom pool's rate-ups do.
+ */
+export function bannerSsrRateups(rateups: Rateup[], items: CatalogueItem[]): Rateup[] {
+	const ssrs = new Set(items.filter((item) => item.rarity === 3).map((item) => item.identity))
+	return rateups.filter((rate) => ssrs.has(rate.identity))
+}
+
+/**
  * The current banner's season: the one whose limited items (in that
  * season's draws but not Premium) it has most of
  */

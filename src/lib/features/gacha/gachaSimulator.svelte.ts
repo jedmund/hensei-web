@@ -45,6 +45,7 @@ import {
 	bannerCountdownParts,
 	bannerEndTime,
 	bannerSeason,
+	bannerSsrRateups,
 	catalogueSettings,
 	hasFixedRates,
 	isClassic,
@@ -119,7 +120,7 @@ export class GachaSimulator {
 
 	readonly classic = $derived(isClassic(this.mode))
 	readonly fixedRates = $derived(hasFixedRates(this.mode))
-	readonly bannerRateups = $derived(this.banner?.rateups ?? [])
+	readonly bannerRateups = $derived(bannerSsrRateups(this.banner?.rateups ?? [], this.items))
 	// The current banner's season, shown in the locked season field
 	readonly bannerSeason = $derived(this.fixedRates ? bannerSeason(this.items) : '')
 	readonly shownRateups = $derived(this.fixedRates ? this.bannerRateups : this.rateups)
