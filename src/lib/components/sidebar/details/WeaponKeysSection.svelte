@@ -81,7 +81,12 @@
 <DetailsSection
 	title={getWeaponKeyTitle(weapon.weapon?.series)}
 	empty={!hasWeaponKeys && !showWeaponKeyEditor}
-	emptyMessage={m.details_weapon_keys_not_set()}
+	emptyMessage={keysLocked
+		? m.details_weapon_keys_locked({
+				keys: getWeaponKeyTitle(weapon.weapon?.series),
+				uncap: formatUncapLevel(weapon.uncapLevel)
+			})
+		: m.details_weapon_keys_not_set()}
 >
 	{#snippet action()}
 		<div class="section-actions">
@@ -96,10 +101,7 @@
 					leftIcon="lock"
 					disabled
 				>
-					{m.details_weapon_keys_locked({
-						keys: getWeaponKeyTitle(weapon.weapon?.series),
-						uncap: formatUncapLevel(weapon.uncapLevel)
-					})}
+					{m.action_change()}
 				</Button>
 			{:else if isPartyOwner && openSlots.length > 0}
 				<Button
