@@ -173,7 +173,9 @@
 	}
 
 	.row-1 {
-		grid-template-columns: 1fr;
+		// minmax(0, ...) so a wide child (the phone pill row, which scrolls)
+		// can't stretch the card past the screen
+		grid-template-columns: minmax(0, 1fr);
 	}
 
 	.row-2 {

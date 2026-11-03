@@ -88,6 +88,27 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: $unit;
+
+		// Phones: one row that scrolls sideways, running to the card's edges
+		// (it bleeds through the description card's padding)
+		@media (max-width: 768px) {
+			flex-wrap: nowrap;
+			overflow-x: auto;
+			overscroll-behavior-x: contain;
+			margin-inline: -$unit-2x;
+			padding-inline: $unit-2x;
+			scroll-padding-inline: $unit-2x;
+			// A swipeable rail: no scrollbar under the pills
+			scrollbar-width: none;
+
+			&::-webkit-scrollbar {
+				display: none;
+			}
+
+			> :global(*) {
+				flex-shrink: 0;
+			}
+		}
 	}
 
 	.token {
@@ -99,6 +120,7 @@
 		font-weight: $bold;
 		line-height: 1;
 		text-align: center;
+		white-space: nowrap;
 		user-select: none;
 		background: var(--input-bg);
 
