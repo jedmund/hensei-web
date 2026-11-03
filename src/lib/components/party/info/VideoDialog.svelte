@@ -13,7 +13,7 @@
 	const embedUrl = $derived(`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1`)
 </script>
 
-<Dialog bind:open size="medium">
+<Dialog bind:open size="medium" class="video-dialog-content" overlayClass="video-dialog-overlay">
 	<div class="video-dialog">
 		<div class="embed-container">
 			<iframe
@@ -35,16 +35,21 @@
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/typography' as *;
 
-	:global(.dialog-overlay) {
-		background: rgba(0, 0, 0, 0.8) !important;
+	// Scoped to this dialog: unscoped, these applied to every dialog in the
+	// app once a team page had loaded this one
+	:global(.dialog-overlay.video-dialog-overlay) {
+		background: rgba(0, 0, 0, 0.8);
 	}
 
-	:global(.dialog-content) {
-		border-radius: $page-corner !important;
+	// Phones keep the sheet's own corners (see Dialog)
+	@media (min-width: 769px) {
+		:global(.dialog-content.video-dialog-content) {
+			border-radius: $page-corner;
+		}
 	}
 
-	:global(.dialog-close:hover) {
-		background: var(--dialog-bg) !important;
+	:global(.video-dialog-content .dialog-close:hover) {
+		background: var(--dialog-bg);
 	}
 
 	.video-dialog {
