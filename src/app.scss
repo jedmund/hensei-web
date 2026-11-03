@@ -26,9 +26,7 @@ body {
 	box-sizing: border-box;
 	font-family: var(--font-family);
 	font-size: typography.$font-small;
-	height: 100%;
 	margin: 0;
-	overflow: hidden; // Prevent body scroll since we handle scrolling in layout
 
 	&.no-scroll {
 		overflow: hidden;

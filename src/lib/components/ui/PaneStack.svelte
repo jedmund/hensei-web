@@ -279,38 +279,8 @@
 		.pane.scrollable & {
 			overflow-y: auto;
 			overflow-x: hidden;
+			overscroll-behavior: contain;
 			scroll-behavior: smooth;
-			overflow-y: overlay;
-
-			// Thin, minimal scrollbar styling
-			&::-webkit-scrollbar {
-				width: 10px;
-			}
-
-			&::-webkit-scrollbar-track {
-				background: transparent;
-			}
-
-			&::-webkit-scrollbar-thumb {
-				background: rgba(0, 0, 0, 0.2);
-				border-radius: 10px;
-				border: 2px solid transparent;
-				background-clip: padding-box;
-
-				&:hover {
-					background: rgba(0, 0, 0, 0.4);
-					background-clip: padding-box;
-				}
-			}
-
-			// Firefox scrollbar styling
-			scrollbar-width: thin;
-			scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-
-			// Improve mobile scrolling performance
-			@media (max-width: 768px) {
-				-webkit-overflow-scrolling: touch;
-			}
 		}
 	}
 

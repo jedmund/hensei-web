@@ -23,21 +23,14 @@
 			stuck = false
 			return
 		}
-		let scroller = el.parentElement
-		while (scroller && !/(auto|scroll|overlay)/.test(getComputedStyle(scroller).overflowY)) {
-			scroller = scroller.parentElement
-		}
-		if (!scroller) return
-		const container = scroller
+		// The document scrolls; stuck once the header reaches its sticky top
 		const update = () => {
-			// Sticky top is 0 inside the container's padding, which clears the navigation
-			const line =
-				container.getBoundingClientRect().top + parseFloat(getComputedStyle(container).paddingTop)
+			const line = parseFloat(getComputedStyle(el).top) || 0
 			stuck = el.getBoundingClientRect().top <= line + 0.5
 		}
 		update()
-		container.addEventListener('scroll', update, { passive: true })
-		return () => container.removeEventListener('scroll', update)
+		window.addEventListener('scroll', update, { passive: true })
+		return () => window.removeEventListener('scroll', update)
 	})
 </script>
 
@@ -57,11 +50,11 @@
 			display: none;
 		}
 
-		// The scroll container's top padding already clears the navigation, so
-		// it sticks at 0. It spans the card's padding so teams slide under it.
+		// Sticks just below the fixed navigation (see (app)/+layout.svelte). It
+		// spans the card's padding so teams slide under it.
 		@media (max-width: 768px) {
 			position: sticky;
-			top: 0;
+			top: var(--content-top, 0px);
 			z-index: 2;
 			margin: 0 calc($unit * -1.5);
 			padding: $unit calc($unit * 1.5);

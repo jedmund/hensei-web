@@ -19,6 +19,9 @@ $cover-element-tones: (
 );
 
 :root {
+	// Native scrollbars and form controls follow the theme
+	color-scheme: light;
+
 	--font-family: 'AGrot', system-ui, sans-serif;
 
 	// Spacing variables
@@ -574,6 +577,7 @@ $cover-element-tones: (
 }
 
 html[data-theme='dark'] {
+	color-scheme: dark;
 	--background: #{colors.$page--bg--dark};
 	--background-rgb: 25, 25, 25; // RGB values for grey-15
 	--page-hover: #{colors.$page--hover--dark};

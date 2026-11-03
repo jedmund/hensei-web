@@ -121,7 +121,7 @@
 		label,
 		emptyMessage,
 		virtualizeAfter = 100,
-		maxHeight = 'calc(100vh - 240px)',
+		maxHeight = 'calc(100dvh - 240px)',
 		toolbarEnd
 	}: Props = $props()
 

@@ -46,7 +46,6 @@
 	const data = updatesData as UpdateYear[]
 
 	let selectedYear = $state(data[0]?.year ?? 2024)
-	let topEl: HTMLDivElement | undefined
 
 	let filter = $state<UpdateFilter>('all')
 
@@ -94,15 +93,14 @@
 		filter = value ?? 'all'
 	}
 
-	// The app layout scrolls inside .main-content, not the window
 	function scrollToTop() {
-		topEl?.closest('.main-content')?.scrollTo({ top: 0, behavior: 'smooth' })
+		window.scrollTo({ top: 0, behavior: 'smooth' })
 	}
 </script>
 
 <PageMeta title={m.page_title_updates()} description={m.page_desc_updates()} />
 
-<div class="updates" bind:this={topEl}>
+<div class="updates">
 	<div class="controls">
 		<div class="year-selector">
 			{#each years as year (year)}
