@@ -14,10 +14,12 @@ export interface SkillBoostLine {
 	labelSlug: string | null
 	/** Game panel group: attack | hp | defense | special | overskill | ax | other, or hidden for a skill the game counts in Estimated DMG without a panel line */
 	group: string
-	/** Numeric value (percent, or flat count for supplements) */
+	/** Numeric value at the game's 4-decimal precision (percent, or flat count for supplements) */
 	value: number
-	/** Preformatted display string (e.g. "756.8%", "+100,000") */
+	/** Preformatted display string at full precision (e.g. "756.8123%", "+100,000") */
 	display: string
+	/** True for flat counts (supplements, fixed HP); false for percents */
+	flat: boolean
 	/** True when the value sits at its in-game display cap */
 	capped: boolean
 	/** Grid weapon ids contributing to this line (for grid highlighting) */
