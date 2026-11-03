@@ -42,7 +42,6 @@
 		if (!version) return undefined
 		const segments = version.descriptionSegments
 		return {
-			name: localizedName(version.name),
 			segments: segments?.[locale]?.length ? segments[locale] : (segments?.en ?? undefined),
 			raw: version.description?.[locale]?.trim() || version.description?.en?.trim() || undefined
 		}
@@ -87,7 +86,6 @@
 			{getKeyDescription(key)}
 		</span>
 		{#if skill}
-			<span class="skill-name">{skill.name}</span>
 			<SkillDescription segments={skill.segments} raw={skill.raw} class="skill-effect" />
 		{/if}
 	</div>
@@ -157,12 +155,6 @@
 				display: flex;
 				flex-direction: column;
 				gap: spacing.$unit-fourth;
-
-				.skill-name {
-					font-size: typography.$font-small;
-					color: var(--text-secondary);
-					font-weight: typography.$medium;
-				}
 
 				:global(.skill-effect) {
 					font-size: typography.$font-small;

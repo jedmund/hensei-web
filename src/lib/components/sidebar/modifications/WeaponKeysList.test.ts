@@ -39,6 +39,8 @@ describe('WeaponKeysList', () => {
 		expect(at(2)).not.toContain('Ruber II')
 		expect(at(5)).toContain('α Revelation Ruber II text')
 		expect(at(0)).not.toContain('Skill 1')
+		// The effect only: the skill's name would repeat the key's
+		expect(at(0)).not.toContain('>α Revelation<')
 	})
 
 	it('is a button only when the key can be opened', () => {
