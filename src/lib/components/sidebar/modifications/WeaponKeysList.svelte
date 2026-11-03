@@ -5,7 +5,9 @@
 	import { localizedName } from '$lib/utils/locale'
 	import type { WeaponSeriesRef, WeaponSeriesSummary } from '$lib/types/api/weaponSeries'
 	import * as m from '$lib/paraglide/messages'
-	import { skillPositionForKeySlot } from '$lib/utils/weaponKeySlots'
+	import { activeKeySkill } from '$lib/utils/weaponKeySlots'
+	import SkillDescription from '$lib/components/weapon/SkillDescription.svelte'
+	import { appLocale } from '$lib/utils/locale'
 
 	interface Props {
 		weaponKeys?: WeaponKey[]
@@ -18,9 +20,33 @@
 		layout?: 'list' | 'grid'
 		/** Makes each key a button (the details pane opens its skill in the Skills tab) */
 		onSelect?: ((key: WeaponKey) => void) | undefined
+		/** The copy's uncap and transcendence: each key shows its skill at that tier */
+		uncapLevel?: number | undefined
+		transcendenceStep?: number | undefined
 	}
 
-	let { weaponKeys, weaponData, layout = 'list', onSelect }: Props = $props()
+	let {
+		weaponKeys,
+		weaponData,
+		layout = 'list',
+		onSelect,
+		uncapLevel,
+		transcendenceStep
+	}: Props = $props()
+
+	const locale = $derived(appLocale())
+
+	function skillFor(key: WeaponKey) {
+		if (uncapLevel === undefined) return undefined
+		const version = activeKeySkill(key.skillVersions, uncapLevel, transcendenceStep ?? 0)
+		if (!version) return undefined
+		const segments = version.descriptionSegments
+		return {
+			name: localizedName(version.name),
+			segments: segments?.[locale]?.length ? segments[locale] : (segments?.en ?? undefined),
+			raw: version.description?.[locale]?.trim() || version.description?.en?.trim() || undefined
+		}
+	}
 
 	const proficiency = $derived(
 		Array.isArray(weaponData?.proficiency) ? weaponData?.proficiency[0] : weaponData?.proficiency
@@ -31,12 +57,6 @@
 		const name = localizedName(key.name)
 		if (name !== '—') return name
 		return key.slug || m.details_weapon_key_fallback()
-	}
-
-	// The weapon skill the key fills (an Opus's first Pendulum is its Skill 2)
-	function getSlotLabel(slot: number): string {
-		const position = skillPositionForKeySlot(weaponData?.series?.slug, slot) ?? slot
-		return m.details_skill_slot({ slot: String(position + 1) })
 	}
 </script>
 
@@ -61,13 +81,15 @@
 	{#if imageData}
 		<img src={imageData.url} alt={imageData.alt} class="weapon-key-icon" />
 	{/if}
+	{@const skill = skillFor(key)}
 	<div class="weapon-key-info">
-		<span class="slot-label">
-			{getSlotLabel(key.slot)}
-		</span>
 		<span class="key-name">
 			{getKeyDescription(key)}
 		</span>
+		{#if skill}
+			<span class="skill-name">{skill.name}</span>
+			<SkillDescription segments={skill.segments} raw={skill.raw} class="skill-effect" />
+		{/if}
 	</div>
 {/snippet}
 
@@ -92,7 +114,8 @@
 		.weapon-key-item {
 			display: flex;
 			gap: spacing.$unit-2x;
-			align-items: center;
+			// The key's skill can run to a few lines; the icon stays at the top
+			align-items: flex-start;
 			padding: spacing.$unit;
 			background: var(--unit-bg);
 			border-radius: layout.$item-corner-small;
@@ -107,7 +130,7 @@
 				box-sizing: border-box;
 				display: flex;
 				gap: spacing.$unit-2x;
-				align-items: center;
+				align-items: flex-start;
 				padding: spacing.$unit;
 				background: var(--unit-bg);
 				border-radius: layout.$item-corner-small;
@@ -135,11 +158,15 @@
 				flex-direction: column;
 				gap: spacing.$unit-fourth;
 
-				.slot-label {
-					font-size: typography.$font-tiny;
-					color: var(--text-tertiary);
-					text-transform: uppercase;
-					letter-spacing: 0.3px;
+				.skill-name {
+					font-size: typography.$font-small;
+					color: var(--text-secondary);
+					font-weight: typography.$medium;
+				}
+
+				:global(.skill-effect) {
+					font-size: typography.$font-small;
+					color: var(--text-secondary);
 				}
 
 				.key-name {

@@ -15,11 +15,30 @@ const alpha: WeaponKey = {
 }
 
 describe('WeaponKeysList', () => {
-	it('labels a key with the skill it fills (an Opus Pendulum is Skill 2)', () => {
-		const { body } = render(WeaponKeysList, {
-			props: { weaponKeys: [alpha], weaponData: { series: { id: 's', slug: 'dark-opus' } } }
+	it("shows the key's skill at the copy's uncap and transcendence", () => {
+		const version = (name: string, ordinal: number, transcendenceStage: number) => ({
+			name: { en: name, ja: '' },
+			description: { en: `${name} text`, ja: '' },
+			ordinal,
+			minUncap: transcendenceStage ? 5 : 3,
+			transcendenceStage
 		})
-		expect(body).toContain('Skill 2')
+		const key = {
+			...alpha,
+			skillVersions: [
+				version('α Revelation', 0, 0),
+				version('α Revelation Ruber', 1, 1),
+				version('α Revelation Ruber II', 2, 4)
+			]
+		}
+		const at = (transcendenceStep: number) =>
+			render(WeaponKeysList, { props: { weaponKeys: [key], uncapLevel: 5, transcendenceStep } })
+				.body
+		expect(at(0)).toContain('α Revelation text')
+		expect(at(2)).toContain('α Revelation Ruber text')
+		expect(at(2)).not.toContain('Ruber II')
+		expect(at(5)).toContain('α Revelation Ruber II text')
+		expect(at(0)).not.toContain('Skill 1')
 	})
 
 	it('is a button only when the key can be opened', () => {

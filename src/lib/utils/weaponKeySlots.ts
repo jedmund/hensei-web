@@ -5,6 +5,7 @@
  * (a variant can lower it) and, per slot, the uncap a copy needs.
  */
 import { getLocale } from '$lib/paraglide/runtime'
+import type { WeaponSkillVersion } from '$lib/types/api/entities'
 import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 
 type KeySlotRules = Pick<WeaponSeriesRef, 'numWeaponKeys' | 'keySlotMinUncaps'>
@@ -83,10 +84,19 @@ export function keySlotForSkill(
 	return slot === undefined || slot < 0 ? undefined : slot
 }
 
-/** The skill position a key slot fills, if known */
-export function skillPositionForKeySlot(
-	seriesSlug: string | undefined,
-	slot: number
-): number | undefined {
-	return seriesSlug ? KEY_SLOT_SKILL_POSITIONS[seriesSlug]?.[slot] : undefined
+/**
+ * The version of a key's skill a copy has: the last its uncap and transcendence reach
+ * (α Revelation Ruber from T1). Assumes the copy is at its uncap's level cap.
+ */
+export function activeKeySkill(
+	versions: WeaponSkillVersion[] | undefined,
+	uncapLevel: number,
+	transcendenceStep: number
+): WeaponSkillVersion | undefined {
+	return [...(versions ?? [])]
+		.sort((a, b) => a.ordinal - b.ordinal)
+		.filter(
+			(v) => uncapLevel >= (v.minUncap ?? 0) && transcendenceStep >= (v.transcendenceStage ?? 0)
+		)
+		.at(-1)
 }

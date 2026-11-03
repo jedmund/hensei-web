@@ -166,6 +166,8 @@
 			weaponKeys={weapon.weaponKeys}
 			weaponData={weapon.weapon}
 			layout="list"
+			uncapLevel={weapon.uncapLevel ?? 0}
+			transcendenceStep={weapon.transcendenceStep ?? 0}
 			onSelect={onShowKeySkill ? (key) => onShowKeySkill(key.slot) : undefined}
 		/>
 	{/if}
