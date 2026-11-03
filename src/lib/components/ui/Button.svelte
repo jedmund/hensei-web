@@ -222,13 +222,16 @@
 		color: inherit;
 	}
 
-	// Variants
+	// Variants. Hover styles apply only with a real pointer (hover: hover),
+	// so taps on phones and iPads don't leave buttons looking hovered.
 	:global([data-button-root].primary) {
 		background-color: var(--button-contained-bg);
 		color: var(--button-text);
 
-		&:hover:not(:disabled) {
-			background-color: var(--button-contained-bg-hover);
+		@media (hover: hover) {
+			&:hover:not(:disabled) {
+				background-color: var(--button-contained-bg-hover);
+			}
 		}
 	}
 
@@ -237,9 +240,11 @@
 		color: var(--button-text);
 		// border: 1px solid $grey-70;
 
-		&:hover:not(:disabled) {
-			background-color: var(--button-bg-hover);
-			color: var(--button-text-hover);
+		@media (hover: hover) {
+			&:hover:not(:disabled) {
+				background-color: var(--button-bg-hover);
+				color: var(--button-text-hover);
+			}
 		}
 	}
 
@@ -248,9 +253,11 @@
 		background-color: transparent;
 		color: var(--ghost-text, var(--text-secondary));
 
-		&:hover:not(:disabled) {
-			background-color: var(--ghost-hover-bg);
-			color: var(--ghost-text, var(--text-primary));
+		@media (hover: hover) {
+			&:hover:not(:disabled) {
+				background-color: var(--ghost-hover-bg);
+				color: var(--ghost-text, var(--text-primary));
+			}
 		}
 	}
 
@@ -260,9 +267,11 @@
 		color: var(--text-primary);
 		border: 1px solid var(--button-bg);
 
-		&:hover:not(:disabled) {
-			background-color: var(--button-bg-hover);
-			border-color: var(--button-bg-hover);
+		@media (hover: hover) {
+			&:hover:not(:disabled) {
+				background-color: var(--button-bg-hover);
+				border-color: var(--button-bg-hover);
+			}
 		}
 
 		&:focus-visible {
@@ -277,9 +286,11 @@
 		min-height: auto;
 		border: none;
 
-		&:hover:not(:disabled) {
-			color: var(--accent-blue-focus);
-			text-decoration: underline;
+		@media (hover: hover) {
+			&:hover:not(:disabled) {
+				color: var(--accent-blue-focus);
+				text-decoration: underline;
+			}
 		}
 	}
 
@@ -287,8 +298,10 @@
 		background: $error;
 		color: white;
 
-		&:hover:not(:disabled) {
-			background: color.adjust($error, $lightness: -15%);
+		@media (hover: hover) {
+			&:hover:not(:disabled) {
+				background: color.adjust($error, $lightness: -15%);
+			}
 		}
 	}
 
@@ -296,8 +309,10 @@
 		background: transparent;
 		color: $error;
 
-		&:hover:not(:disabled) {
-			background: $error--bg--light;
+		@media (hover: hover) {
+			&:hover:not(:disabled) {
+				background: $error--bg--light;
+			}
 		}
 	}
 
@@ -305,8 +320,10 @@
 		background-color: var(--notice-button-bg);
 		color: var(--notice-button-text);
 
-		&:hover:not(:disabled) {
-			background-color: var(--notice-button-bg-hover);
+		@media (hover: hover) {
+			&:hover:not(:disabled) {
+				background-color: var(--notice-button-bg-hover);
+			}
 		}
 	}
 
@@ -350,8 +367,10 @@
 		background: var(--button-contained-bg);
 		color: var(--button-contained-text, var(--button-text));
 
-		&:hover:not(:disabled) {
-			background: var(--button-contained-bg-hover);
+		@media (hover: hover) {
+			&:hover:not(:disabled) {
+				background: var(--button-contained-bg-hover);
+			}
 		}
 	}
 
@@ -397,9 +416,11 @@
 			background: var(--#{$el}-button-bg);
 			color: white;
 
-			&:hover:not(:disabled) {
-				background: var(--#{$el}-button-bg-hover);
-				color: white;
+			@media (hover: hover) {
+				&:hover:not(:disabled) {
+					background: var(--#{$el}-button-bg-hover);
+					color: white;
+				}
 			}
 		}
 	}
@@ -408,18 +429,22 @@
 	:global([data-button-root].element-ghost) {
 		background-color: transparent;
 
-		&:hover:not(:disabled) {
-			background-color: var(--button-bg);
-			color: var(--button-text-hover);
+		@media (hover: hover) {
+			&:hover:not(:disabled) {
+				background-color: var(--button-bg);
+				color: var(--button-text-hover);
+			}
 		}
 	}
 
 	@each $el in $elements {
 		:global([data-button-root].element-ghost.#{$el}) {
 			color: var(--#{$el}-ghost-text);
-			&:hover:not(:disabled) {
-				background-color: var(--#{$el}-nav-selected-bg);
-				color: var(--#{$el}-nav-selected-text);
+			@media (hover: hover) {
+				&:hover:not(:disabled) {
+					background-color: var(--#{$el}-nav-selected-bg);
+					color: var(--#{$el}-nav-selected-text);
+				}
 			}
 		}
 	}
@@ -437,9 +462,11 @@
 			background: var(--#{$el}-nav-selected-bg);
 			color: var(--#{$el}-ghost-text);
 
-			&:hover:not(:disabled) {
-				background: var(--#{$el}-button-hover-bg);
-				color: var(--#{$el}-button-hover-text);
+			@media (hover: hover) {
+				&:hover:not(:disabled) {
+					background: var(--#{$el}-button-hover-bg);
+					color: var(--#{$el}-button-hover-text);
+				}
 			}
 		}
 	}

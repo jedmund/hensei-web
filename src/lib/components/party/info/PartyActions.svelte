@@ -129,9 +129,11 @@
 			border-radius: $full-corner;
 		}
 
-		:global([data-button-root]:hover:not(:disabled)) {
-			background-color: var(--pill-hover-bg, var(--button-bg));
-			color: var(--pill-hover-text, var(--button-text-hover));
+		@media (hover: hover) {
+			:global([data-button-root]:hover:not(:disabled)) {
+				background-color: var(--pill-hover-bg, var(--button-bg));
+				color: var(--pill-hover-text, var(--button-text-hover));
+			}
 		}
 
 		// Phones: 44px circles, a comfortable tap target, with 16px icons.
