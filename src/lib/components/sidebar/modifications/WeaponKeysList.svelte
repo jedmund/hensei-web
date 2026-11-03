@@ -116,7 +116,7 @@
 			align-items: flex-start;
 			padding: spacing.$unit;
 			background: var(--unit-bg);
-			border-radius: layout.$item-corner-small;
+			border-radius: layout.$item-corner;
 			transition: background 0.2s ease;
 
 			&:hover {
@@ -131,7 +131,7 @@
 				align-items: flex-start;
 				padding: spacing.$unit;
 				background: var(--unit-bg);
-				border-radius: layout.$item-corner-small;
+				border-radius: layout.$item-corner;
 				cursor: pointer;
 				transition: background 0.2s ease;
 
