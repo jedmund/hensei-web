@@ -32,13 +32,17 @@
 	let boosts = $state<SkillBoosts | null>(null)
 	let error = $state(false)
 	let loading = $state(true)
+	/** A recalculation after the first load is in flight */
+	let recalculating = $state(false)
 
 	// Battle-state conditions (the game's "Calculator Conditions"). The foe element
 	// initializes from the server's advantaged-foe default on first load.
 	// HP runs 1%, then 5% steps (1, 5, 10, … 100): slider stop 0 → 1%, stop n → n×5.
-	let hpStop = $state(20)
+	const INITIAL_HP_STOP = 20
+	const INITIAL_TURN = 1
+	let hpStop = $state(INITIAL_HP_STOP)
 	let allyMaxHp = $state<number | undefined>(undefined)
-	let turn = $state(1)
+	let turn = $state(INITIAL_TURN)
 	let foeElement = $state<string | undefined>(undefined)
 	let arcarum = $state(false)
 
@@ -51,6 +55,7 @@
 	let requestId = 0
 	async function refetch() {
 		const id = ++requestId
+		if (!loading) recalculating = true
 		try {
 			const result = await partyAdapter.getSkillBoosts(shortcode, {
 				hpPercent,
@@ -68,7 +73,10 @@
 		} catch {
 			if (id === requestId) error = true
 		} finally {
-			if (id === requestId) loading = false
+			if (id === requestId) {
+				loading = false
+				recalculating = false
+			}
 		}
 	}
 
@@ -76,6 +84,25 @@
 		if (allyMaxHp != null) {
 			allyMaxHp = Number.isFinite(allyMaxHp) ? Math.min(999_999, Math.max(0, allyMaxHp)) : undefined
 		}
+		refetch()
+	}
+
+	// Sliders update their label while dragging but only recalculate on release,
+	// and skip the request when the value lands where it started.
+	let committedHpStop = INITIAL_HP_STOP
+	let committedTurn = INITIAL_TURN
+
+	function commitHp(v: number) {
+		if (v === committedHpStop) return
+		committedHpStop = v
+		hpStop = v
+		refetch()
+	}
+
+	function commitTurn(v: number) {
+		if (v === committedTurn) return
+		committedTurn = v
+		turn = v
 		refetch()
 	}
 
@@ -163,7 +190,15 @@
 	</li>
 {/snippet}
 
-<div class="calculator-pane">
+{#snippet recalculatingIndicator()}
+	{#if recalculating}
+		<span class="recalculating" role="status" aria-label={m.calculator_recalculating()}>
+			<Icon name="loader-2" size={16} />
+		</span>
+	{/if}
+{/snippet}
+
+<div class="calculator-pane" aria-busy={loading || recalculating}>
 	{#if loading}
 		<div class="loading-state" role="status" aria-label={m.calculator_loading()}>
 			<Icon name="loader-2" size={24} />
@@ -188,10 +223,8 @@
 						max={20}
 						step={1}
 						element={partyElement}
-						onValueChange={(v) => {
-							hpStop = v
-							refetch()
-						}}
+						onValueChange={(v) => (hpStop = v)}
+						onValueCommit={commitHp}
 					/>
 				</div>
 				<div class="filter-group">
@@ -219,10 +252,8 @@
 						max={20}
 						step={1}
 						element={partyElement}
-						onValueChange={(v) => {
-							turn = v
-							refetch()
-						}}
+						onValueChange={(v) => (turn = v)}
+						onValueCommit={commitTurn}
 					/>
 				</div>
 				<div class="filter-group">
@@ -263,7 +294,7 @@
 
 		{#if enhancementRows.length > 0}
 			<DetailsSection title={m.calculator_enhancements()}>
-				<ul class="rows">
+				<ul class="rows" class:stale={recalculating}>
 					{#each enhancementRows as row (row.key)}
 						<li class="row">
 							<span class="name">{row.label}</span>
@@ -278,8 +309,9 @@
 			title={m.pane_skill_boosts()}
 			empty={panelLines.length === 0}
 			emptyMessage={m.calculator_empty()}
+			action={recalculatingIndicator}
 		>
-			<ul class="rows">
+			<ul class="rows" class:stale={recalculating}>
 				{#each panelLines as line (`${line.key}-${line.series ?? ''}`)}
 					{@render lineRow(line, false)}
 				{/each}
@@ -288,7 +320,7 @@
 
 		{#if hiddenLines.length > 0}
 			<DetailsSection title={m.calculator_hidden_stats()}>
-				<ul class="rows">
+				<ul class="rows" class:stale={recalculating}>
 					{#each hiddenLines as line (`${line.key}-${line.series ?? ''}`)}
 						{@render lineRow(line, true)}
 					{/each}
@@ -317,6 +349,15 @@
 		align-items: center;
 		justify-content: center;
 		flex: 1;
+		color: var(--text-tertiary);
+
+		:global(svg) {
+			animation: spin 1s linear infinite;
+		}
+	}
+
+	.recalculating {
+		display: inline-flex;
 		color: var(--text-tertiary);
 
 		:global(svg) {
@@ -373,6 +414,11 @@
 		padding: 0;
 		display: flex;
 		flex-direction: column;
+		@include smooth-transition($duration-quick, opacity);
+
+		&.stale {
+			opacity: 0.5;
+		}
 	}
 
 	.row-group {
