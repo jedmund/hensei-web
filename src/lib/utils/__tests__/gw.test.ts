@@ -7,7 +7,8 @@ import {
 	toCrewBattleChartData,
 	toMultiPlayerChartData,
 	toCrewHistoryChartData,
-	toPlayerHistoryChartData
+	toPlayerHistoryChartData,
+	gwTeamElement
 } from '../gw'
 import { getElementKey, getElementColor } from '../element'
 import type { GwIndividualScore, GwCrewScore, GwEvent, EventScoreSummary } from '$lib/types/api/gw'
@@ -384,5 +385,19 @@ describe('toPlayerHistoryChartData', () => {
 		const result = toPlayerHistoryChartData(eventScores, formatDate)
 		expect(result[0]!.eventNumber).toBe(72)
 		expect(result[1]!.eventNumber).toBe(74)
+	})
+})
+
+describe('gwTeamElement', () => {
+	it('shows the element crews bring, not the boss element', () => {
+		// Light bosses: a Dark Guild War
+		expect(gwTeamElement({ element: 5, advantageElement: 6 })).toBe(6)
+		// Dark bosses: a Light Guild War
+		expect(gwTeamElement({ element: 6, advantageElement: 5 })).toBe(5)
+	})
+
+	it('falls back to the boss element when no advantage element is sent', () => {
+		expect(gwTeamElement({ element: 2 })).toBe(2)
+		expect(gwTeamElement({ element: 2, advantageElement: null })).toBe(2)
 	})
 })

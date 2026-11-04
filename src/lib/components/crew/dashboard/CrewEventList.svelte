@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { formatDateJST } from '$lib/utils/date'
-	import { formatScore, toCrewHistoryChartData } from '$lib/utils/gw'
+	import { formatScore, gwTeamElement, toCrewHistoryChartData } from '$lib/utils/gw'
 	import { formatEventStatus } from '$lib/features/crew/eventStatus'
 	import type { GwEvent } from '$lib/types/api/gw'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
@@ -43,7 +43,7 @@
 				>
 					<div class="event-info">
 						<span class="event-number">{event.eventNumber}</span>
-						<ElementBadge element={event.element} />
+						<ElementBadge element={gwTeamElement(event)} />
 					</div>
 					<span class="event-dates">
 						{formatDateJST(event.startDate)} – {formatDateJST(event.endDate)}

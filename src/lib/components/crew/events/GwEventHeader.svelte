@@ -2,6 +2,7 @@
 	import * as m from '$lib/paraglide/messages'
 	import Button from '$lib/components/ui/Button.svelte'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
+	import { gwTeamElement } from '$lib/utils/gw'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import CrewHeader from '$lib/components/crew/CrewHeader.svelte'
@@ -24,7 +25,7 @@
 <CrewHeader title="GW #{gwEvent.eventNumber}" backHref="/crew">
 	{#snippet belowTitle()}
 		<div class="event-meta">
-			<ElementBadge element={gwEvent.element} />
+			<ElementBadge element={gwTeamElement(gwEvent)} />
 			<span class="event-dates">
 				{formatDateJST(gwEvent.startDate)} – {formatDateJST(gwEvent.endDate)}
 			</span>

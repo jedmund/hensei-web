@@ -12,6 +12,14 @@ import {
 	type EventScoreSummary
 } from '$lib/types/api/gw'
 
+/**
+ * The element a Guild War is known by: the one crews bring against the boss.
+ * Falls back to the boss element if the API didn't send an advantage element.
+ */
+export function gwTeamElement(event: Pick<GwEvent, 'element' | 'advantageElement'>): number {
+	return event.advantageElement ?? event.element
+}
+
 // ============================================================================
 // Chart Data Types
 // ============================================================================

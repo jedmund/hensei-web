@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
-	import { formatScore } from '$lib/utils/gw'
+	import { formatScore, gwTeamElement } from '$lib/utils/gw'
 	import type { EventScoreSummary } from '$lib/types/api/gw'
 
 	interface Props {
@@ -18,7 +18,7 @@
 	>
 		<div class="event-info">
 			<span class="event-number">GW #{eventScore.gwEvent.eventNumber}</span>
-			<ElementBadge element={eventScore.gwEvent.element} />
+			<ElementBadge element={gwTeamElement(eventScore.gwEvent)} />
 		</div>
 		<span class="event-score">{formatScore(eventScore.totalScore ?? 0)}</span>
 	</button>
