@@ -1965,6 +1965,7 @@
 	"calculator_enhancements": "Weapon Skill Enhancements",
 	"calculator_empty": "No weapon skill boosts to show.",
 	"calculator_loading": "Loading weapon skill boosts",
+	"calculator_recalculating": "Recalculating",
 	"calculator_error": "Couldn't load skill boosts.",
 	"calculator_enh_optimus": "Optimus",
 	"calculator_enh_omega": "Omega",

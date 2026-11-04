@@ -6,6 +6,8 @@
 		value?: number
 		/** Callback when value changes */
 		onValueChange?: (value: number) => void
+		/** Callback when the user finishes changing the value (pointer up or key press) */
+		onValueCommit?: (value: number) => void
 		/** Minimum value */
 		min?: number
 		/** Maximum value */
@@ -23,6 +25,7 @@
 	const {
 		value = 0,
 		onValueChange,
+		onValueCommit,
 		min = 0,
 		max = 100,
 		step = 1,
@@ -36,6 +39,7 @@
 	type="single"
 	{value}
 	{onValueChange}
+	{onValueCommit}
 	{min}
 	{max}
 	{step}
