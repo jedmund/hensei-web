@@ -4,6 +4,7 @@ import { sentrySvelteKit } from '@sentry/sveltekit/vite'
 import { sveltekit } from '@sveltejs/kit/vite'
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
+import { hoverMedia } from './src/lib/build/hoverMedia'
 
 export default defineConfig({
 	define: {
@@ -16,6 +17,10 @@ export default defineConfig({
 		}
 	},
 	css: {
+		postcss: {
+			// Hover styles only with a real pointer, not on phones and iPads
+			plugins: [hoverMedia()]
+		},
 		preprocessorOptions: {
 			scss: {
 				// Modern compiler API for better Sass compatibility
