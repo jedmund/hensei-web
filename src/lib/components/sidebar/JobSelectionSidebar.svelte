@@ -124,15 +124,20 @@
 		return filterJobsStrictly(jobs, { row: rowFilter })
 	})
 
+	// Keep the locally filtered list up until the search answers, so it doesn't blink
+	const showSearchResults = $derived(
+		searching && (searchResultsQuery.data !== undefined || searchResultsQuery.isError)
+	)
+
 	const filteredJobs = $derived(
 		groupJobsByTier(
-			searching
+			showSearchResults
 				? (searchResultsQuery.data?.pages.flatMap((page) => page.results) ?? [])
 				: browsedJobs
 		)
 	)
 
-	const activeQuery = $derived(searching ? searchResultsQuery : jobsQuery)
+	const activeQuery = $derived(showSearchResults ? searchResultsQuery : jobsQuery)
 
 	function handleSelectJob(job: Job) {
 		onSelectJob?.(job)
@@ -184,7 +189,7 @@
 					</div>
 				{/each}
 
-				{#if searching}
+				{#if showSearchResults}
 					<div
 						class="load-more-sentinel"
 						bind:this={sentinelEl}
