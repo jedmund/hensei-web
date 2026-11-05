@@ -4,6 +4,8 @@
 	interface Props {
 		title: string
 		subtitle?: string
+		/** Shown in place of the subtitle while the control's value isn't valid */
+		error?: string | undefined
 		/** Optional leading icon, shown to the left of the title and subtitle. */
 		icon?: Snippet
 		control: Snippet
@@ -11,7 +13,7 @@
 		compact?: boolean
 	}
 
-	let { title, subtitle, icon, control, compact = false }: Props = $props()
+	let { title, subtitle, error, icon, control, compact = false }: Props = $props()
 </script>
 
 <div class="settings-row">
@@ -23,7 +25,9 @@
 		{/if}
 		<div class="text">
 			<span class="title">{title}</span>
-			{#if subtitle}
+			{#if error}
+				<p class="subtitle error" role="alert">{error}</p>
+			{:else if subtitle}
 				<p class="subtitle">{subtitle}</p>
 			{/if}
 		</div>
@@ -73,12 +77,17 @@
 				margin: 0;
 				font-size: typography.$font-small;
 				color: var(--text-secondary);
+
+				&.error {
+					color: var(--danger);
+				}
 			}
 		}
 
 		.control {
 			flex-shrink: 0;
-			width: 200px;
+			// Room for a URL or an ID, while leaving the text at least half the row
+			width: min(280px, 50%);
 			display: flex;
 			justify-content: flex-end;
 

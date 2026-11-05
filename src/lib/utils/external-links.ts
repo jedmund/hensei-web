@@ -192,6 +192,15 @@ export function youtubeChannel(typed: string | undefined | null): string | null 
 	return new RegExp(`^${YOUTUBE_HANDLE}$`).test(handle) ? `@${handle}` : false
 }
 
+/**
+ * What the YouTube field shows while typing: a pasted or typed channel URL
+ * becomes its handle; anything else is left as typed
+ */
+export function youtubeFieldValue(typed: string): string {
+	if (!YOUTUBE_URL_PREFIX.test(typed.trim())) return typed
+	return youtubeChannel(typed) || typed
+}
+
 /** A YouTube channel's page, from its stored value (or anything youtubeChannel reads) */
 export function buildYoutubeChannelUrl(value: string | undefined | null): string | null {
 	const channel = youtubeChannel(value)

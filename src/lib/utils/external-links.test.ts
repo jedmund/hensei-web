@@ -4,6 +4,7 @@ import {
 	buildWikiProfileUrl,
 	buildYoutubeChannelUrl,
 	youtubeChannel,
+	youtubeFieldValue,
 	buildKamigameUrl,
 	buildWikiJaUrl
 } from './external-links'
@@ -87,6 +88,14 @@ describe('profile links', () => {
 		expect(buildYoutubeChannelUrl('dy_dk')).toBe('https://www.youtube.com/@dy_dk')
 		expect(buildYoutubeChannelUrl('channel/UCjH35rEofoTkw81IrDukb5w')).toBe(
 			'https://www.youtube.com/channel/UCjH35rEofoTkw81IrDukb5w'
+		)
+	})
+
+	it('shows a pasted channel URL in the field as its handle', () => {
+		expect(youtubeFieldValue('https://www.youtube.com/@profile')).toBe('@profile')
+		expect(youtubeFieldValue('dy_dk')).toBe('dy_dk')
+		expect(youtubeFieldValue('https://www.youtube.com/watch?v=abc')).toBe(
+			'https://www.youtube.com/watch?v=abc'
 		)
 	})
 

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { youtubeFieldValue } from '$lib/utils/external-links'
 	import { granblueIdValid, youtubeValid } from './settings-form.utils'
 	import * as m from '$lib/paraglide/messages'
 	import Select from '../ui/Select.svelte'
@@ -91,7 +92,10 @@
 		if (localWikiProfile !== wikiProfile) onWikiProfileChange(localWikiProfile)
 	})
 	$effect(() => {
-		if (localYoutube !== youtube) onYoutubeChange(localYoutube)
+		// A pasted or typed channel URL shows as just its handle
+		const cleaned = youtubeFieldValue(localYoutube)
+		if (cleaned !== localYoutube) localYoutube = cleaned
+		else if (localYoutube !== youtube) onYoutubeChange(localYoutube)
 	})
 	$effect(() => {
 		if (localGender !== gender) onGenderChange(localGender)
@@ -152,13 +156,16 @@
 		<!-- Elsewhere -->
 		<h3 class="section-header">{m.settings_section_elsewhere()}</h3>
 
-		<SettingsRow title={m.settings_granblue_id()} subtitle={m.settings_granblue_id_subtitle()}>
+		<SettingsRow
+			title={m.settings_granblue_id()}
+			subtitle={m.settings_granblue_id_subtitle()}
+			error={granblueIdValid(localGranblueId) ? undefined : m.settings_granblue_id_invalid()}
+		>
 			{#snippet control()}
 				<Input
 					bind:value={localGranblueId}
 					placeholder={m.settings_granblue_id_placeholder()}
 					inputmode="numeric"
-					error={granblueIdValid(localGranblueId) ? undefined : m.settings_granblue_id_invalid()}
 					contained
 				/>
 			{/snippet}
@@ -174,14 +181,13 @@
 			{/snippet}
 		</SettingsRow>
 
-		<SettingsRow title={m.settings_youtube()} subtitle={m.settings_youtube_subtitle()}>
+		<SettingsRow
+			title={m.settings_youtube()}
+			subtitle={m.settings_youtube_subtitle()}
+			error={youtubeValid(localYoutube) ? undefined : m.settings_youtube_invalid()}
+		>
 			{#snippet control()}
-				<Input
-					bind:value={localYoutube}
-					placeholder={m.settings_youtube_placeholder()}
-					error={youtubeValid(localYoutube) ? undefined : m.settings_youtube_invalid()}
-					contained
-				/>
+				<Input bind:value={localYoutube} placeholder={m.settings_youtube_placeholder()} contained />
 			{/snippet}
 		</SettingsRow>
 	</div>
