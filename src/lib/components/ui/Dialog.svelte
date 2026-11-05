@@ -137,7 +137,8 @@
 		color: var(--text-secondary);
 		cursor: pointer;
 		border-radius: $item-corner-small;
-		z-index: $z-raised;
+		// Above ModalHeader, which raises itself for its scroll shadow
+		z-index: $z-sticky;
 		@include smooth-transition($duration-standard, all);
 
 		&:hover {
