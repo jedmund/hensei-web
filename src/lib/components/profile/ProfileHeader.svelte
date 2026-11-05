@@ -1,4 +1,9 @@
 <script lang="ts">
+	import {
+		buildGranblueProfileUrl,
+		buildWikiProfileUrl,
+		buildYoutubeChannelUrl
+	} from '$lib/utils/external-links'
 	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { goto } from '$app/navigation'
@@ -79,20 +84,10 @@
 		supportSummons = []
 	}: Props = $props()
 
-	// GBF profile URL - shown if user has filled in their Granblue ID
-	const gbfProfileUrl = $derived(
-		granblueId ? `https://game.granbluefantasy.jp/#profile/${granblueId}` : null
-	)
-
-	// Wiki profile URL - shown if user has filled in their wiki username
-	const wikiProfileUrl = $derived(
-		wikiProfile ? `https://gbf.wiki/User:${encodeURIComponent(wikiProfile)}` : null
-	)
-
-	// YouTube channel URL - shown if user has filled in their YouTube handle
-	const youtubeUrl = $derived(
-		youtube ? `https://www.youtube.com/@${youtube.replace(/^@/, '')}` : null
-	)
+	// Each link shows if the user has filled in that account
+	const gbfProfileUrl = $derived(buildGranblueProfileUrl(granblueId))
+	const wikiProfileUrl = $derived(buildWikiProfileUrl(wikiProfile))
+	const youtubeUrl = $derived(buildYoutubeChannelUrl(youtube))
 
 	const hasLinks = $derived(!!(gbfProfileUrl || wikiProfileUrl || youtubeUrl))
 	const hasBody = $derived(!!description || hasLinks)

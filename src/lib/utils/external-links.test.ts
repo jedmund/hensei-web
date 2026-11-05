@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { buildKamigameUrl, buildWikiJaUrl } from './external-links'
+import {
+	buildGranblueProfileUrl,
+	buildWikiProfileUrl,
+	buildYoutubeChannelUrl,
+	buildKamigameUrl,
+	buildWikiJaUrl
+} from './external-links'
 
 const base = 'https://gbf-wiki.com/?'
 const enc = (s: string) => encodeURIComponent(s).replace(/%20/g, '+')
@@ -67,5 +73,24 @@ describe('buildKamigameUrl for events', () => {
 	it('builds nothing from a blank path', () => {
 		expect(buildKamigameUrl('', 'event')).toBeNull()
 		expect(buildKamigameUrl(null, 'event')).toBeNull()
+	})
+})
+
+describe('profile links', () => {
+	it('builds the in-game profile, wiki user page and YouTube channel', () => {
+		expect(buildGranblueProfileUrl(12345678)).toBe(
+			'https://game.granbluefantasy.jp/#profile/12345678'
+		)
+		expect(buildWikiProfileUrl('Some User')).toBe('https://gbf.wiki/User:Some%20User')
+		expect(buildYoutubeChannelUrl('@matcha_soba')).toBe('https://www.youtube.com/@matcha_soba')
+		expect(buildYoutubeChannelUrl('dy_dk')).toBe('https://www.youtube.com/@dy_dk')
+	})
+
+	it('gives null for an empty account', () => {
+		expect([
+			buildGranblueProfileUrl(null),
+			buildWikiProfileUrl(''),
+			buildYoutubeChannelUrl(undefined)
+		]).toEqual([null, null, null])
 	})
 })

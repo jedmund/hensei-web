@@ -150,3 +150,23 @@ function encodeURIPath(path: string): string {
 		.map((segment) => encodeURIComponent(segment))
 		.join('/')
 }
+
+/** A player's in-game profile, from their Granblue ID */
+export function buildGranblueProfileUrl(
+	granblueId: string | number | undefined | null
+): string | null {
+	if (granblueId === undefined || granblueId === null || granblueId === '') return null
+	return `https://game.granbluefantasy.jp/#profile/${granblueId}`
+}
+
+/** A gbf.wiki user page, from the wiki username */
+export function buildWikiProfileUrl(wikiProfile: string | undefined | null): string | null {
+	if (!wikiProfile) return null
+	return `https://gbf.wiki/User:${encodeURIComponent(wikiProfile)}`
+}
+
+/** A YouTube channel, from its handle (with or without the @) */
+export function buildYoutubeChannelUrl(handle: string | undefined | null): string | null {
+	if (!handle) return null
+	return `https://www.youtube.com/@${handle.replace(/^@/, '')}`
+}
