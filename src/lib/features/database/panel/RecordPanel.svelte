@@ -22,6 +22,7 @@
 	import { EDITOR_ROLE } from '$lib/auth/roles'
 	import { resourceDef } from '$lib/features/database/schema/registry'
 	import { screenFor } from '$lib/features/database/schema/routes'
+	import PublicPageButton from '$lib/features/database/schema/PublicPageButton.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import type { DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
@@ -242,6 +243,9 @@
 
 			<div class="actions">
 				{#if href}
+					{#if !editing}
+						<PublicPageButton {def} routeId={parsed?.routeId ?? null} />
+					{/if}
 					{#if editing}
 						<Tooltip content={m.db_panel_cancel_edit()}>
 							<Button variant="ghost" size="small" onclick={stopEditing}>

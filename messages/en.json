@@ -2457,6 +2457,7 @@
 	"db_users_type": "User",
 	"db_users_entity": "users",
 	"db_users_empty": "No users found",
+	"db_users_visit_profile": "Visit profile",
 	"db_users_field_username": "Username",
 	"db_users_field_display_name": "Display name",
 	"db_users_field_email": "Email",

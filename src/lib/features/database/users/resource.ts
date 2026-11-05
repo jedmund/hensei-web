@@ -309,7 +309,11 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 				queryFn: () => adminAdapter.getUser(id).then(asUserRecord)
 			}),
 		routeId: (u) => u.id,
-		noun: m.db_users_type
+		noun: m.db_users_type,
+		publicPage: {
+			href: (u) => `/${encodeURIComponent(u.username)}`,
+			label: m.db_users_visit_profile
+		}
 	},
 
 	section: usersSection

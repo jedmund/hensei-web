@@ -2246,6 +2246,7 @@
 	"db_users_type": "ユーザー",
 	"db_users_entity": "ユーザー",
 	"db_users_empty": "ユーザーが見つかりません",
+	"db_users_visit_profile": "プロフィールを見る",
 	"db_users_field_username": "ユーザー名",
 	"db_users_field_display_name": "表示名",
 	"db_users_field_email": "メールアドレス",
