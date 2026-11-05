@@ -3,6 +3,7 @@ import {
 	CURATOR_ROLE,
 	EDITOR_ROLE,
 	canEditStaffPicks,
+	canUseFeature,
 	isCurator,
 	isEditor,
 	requiredDatabaseRole
@@ -20,6 +21,20 @@ describe('isCurator / isEditor', () => {
 			true
 		])
 		expect([null, 1, 6, 7, 9].map(isEditor)).toEqual([false, false, false, true, true])
+	})
+})
+
+describe('canUseFeature', () => {
+	it('limits the wiki export to curators and up', () => {
+		expect([null, undefined, 0, 1, 6, 7, 9].map((r) => canUseFeature('wikiExport', r))).toEqual([
+			false,
+			false,
+			false,
+			false,
+			true,
+			true,
+			true
+		])
 	})
 })
 

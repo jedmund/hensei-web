@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isCurator } from '$lib/auth/roles'
+	import { canUseFeature, isCurator } from '$lib/auth/roles'
 	import { onMount, onDestroy, untrack } from 'svelte'
 	import { setPartyContext } from '$lib/types/party-context'
 	import { pushState } from '$app/navigation'
@@ -409,6 +409,7 @@
 						{authUsername}
 						{hasCollectionLinks}
 						canFeature={isCurator(role)}
+						canExportWiki={canUseFeature('wikiExport', role)}
 					/>
 				{/snippet}
 			</PartyInfoGrid>
