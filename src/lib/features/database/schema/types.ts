@@ -54,6 +54,8 @@ export type ComponentName =
 	| 'eventRaids'
 	| 'stickerImages'
 	| 'keySlotMinUncaps'
+	| 'userRole'
+	| 'userHistory'
 
 /**
  * Form inputs the edit and create forms resolve by name, for values no

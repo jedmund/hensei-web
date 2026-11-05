@@ -9,7 +9,7 @@
  * their parent's list page (Weapons → Skills links to `weapons?view=skills`).
  */
 import { m } from '$lib/paraglide/messages'
-import { ADMIN_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
+import { EDITOR_ROLE } from '$lib/auth/roles'
 import { artifactSkillsSection } from './artifact-skills/section'
 import { awakeningsSection } from './awakenings/section'
 import { bulletsSection } from './bullets/section'
@@ -22,6 +22,7 @@ import { jobSkillsSection } from './job-skills/section'
 import { jobsSection } from './jobs/section'
 import { raidGroupsSection } from './raid-groups/section'
 import { raidsSection } from './raids/section'
+import { usersSection } from '$lib/features/database/users/section'
 import { stickersSection } from './stickers/section'
 import { summonsSection } from './summons/section'
 import { weaponSeriesSection } from './weapon-series/section'
@@ -131,15 +132,7 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 	},
 	...resourceSections('stickers', stickersSection),
 
-	// Admin — hidden until the admin user API exists
-	{
-		id: 'users',
-		label: () => 'Users',
-		path: '/database/users',
-		group: 'admin',
-		minRole: ADMIN_ROLE,
-		hidden: true
-	}
+	...resourceSections('users', usersSection)
 ]
 
 /**

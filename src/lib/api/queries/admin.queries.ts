@@ -14,7 +14,8 @@ export const adminKeys = {
 	resource: (resource: AdminResource) => [...adminKeys.all, resource] as const,
 	lists: (resource: AdminResource) => [...adminKeys.resource(resource), 'list'] as const,
 	list: (resource: AdminResource, params: AdminListParams) =>
-		[...adminKeys.lists(resource), params] as const
+		[...adminKeys.lists(resource), params] as const,
+	user: (id: string) => [...adminKeys.resource('users'), 'detail', id] as const
 }
 
 export const adminQueries = {

@@ -20,7 +20,8 @@ export const RESOURCE_NAMES = [
 	'job-accessories',
 	'stickers',
 	'artifact-skills',
-	'bullets'
+	'bullets',
+	'users'
 ] as const
 
 export type ResourceName = (typeof RESOURCE_NAMES)[number]

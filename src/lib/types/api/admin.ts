@@ -422,3 +422,33 @@ export interface AdminBulletRow {
 	// Not in the default list: request via `fields`
 	createdAt?: string
 }
+
+/** User row from `GET /admin/users` (admins only) */
+export interface AdminUserRow {
+	id: string
+	username: string
+	displayName: string | null
+	email: string
+	role: number
+	createdAt: string
+	deletionScheduledAt: string | null
+}
+
+/** One logged change to a user's access, newest first */
+export interface AdminUserAccessChange {
+	id: string
+	kind: 'role'
+	fromRole: number | null
+	toRole: number | null
+	/** The admin who made it; null once their account is deleted */
+	actor: { id: string; username: string } | null
+	createdAt: string
+}
+
+/** `GET /admin/users/:id` (and the role update's response) */
+export interface AdminUserDetail extends AdminUserRow {
+	emailVerified: boolean
+	avatar: { picture: string; element: string }
+	partyCount: number
+	history: AdminUserAccessChange[]
+}
