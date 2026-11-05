@@ -32,10 +32,12 @@ describe('usersResource', () => {
 		expect(columnsFor(def).map((c) => c.id)).toEqual([
 			'username',
 			'display_name',
-			'email',
 			'role',
 			'created_at',
-			'deletion_scheduled_at'
+			'deletion_scheduled_at',
+			'granblue_id',
+			'youtube',
+			'wiki_profile'
 		])
 		expect(def.list.defaultSort).toEqual([{ id: 'created_at', desc: true }])
 		expect(facetKeys(filtersFor(def))).toEqual(['role'])

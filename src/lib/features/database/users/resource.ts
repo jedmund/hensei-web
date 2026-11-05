@@ -13,6 +13,11 @@ import { usersSection } from '$lib/features/database/users/section'
 import { roleOptions } from '$lib/features/database/users/roles'
 import type { AdminUserDetail, AdminUserRow } from '$lib/types/api/admin'
 import { formatDateTime } from '$lib/utils/date'
+import {
+	buildGranblueProfileUrl,
+	buildWikiProfileUrl,
+	buildYoutubeChannelUrl
+} from '$lib/utils/external-links'
 
 const dateTime = (value: string | null | undefined) => (value ? formatDateTime(value) : null)
 
@@ -35,13 +40,8 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 			write: false,
 			list: { sortable: false }
 		},
-		{
-			key: 'email',
-			kind: 'text',
-			label: m.db_users_field_email,
-			write: false,
-			list: { sortable: false }
-		},
+		// Searchable from the list, but shown in the detail only
+		{ key: 'email', kind: 'text', label: m.db_users_field_email, write: false },
 		{
 			key: 'email_verified',
 			kind: 'boolean',
@@ -62,6 +62,33 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 			label: m.db_users_field_created_at,
 			write: false,
 			detail: { value: (u) => dateTime(u.createdAt) }
+		},
+		// Accounts linked on the profile: columns to turn on, and filters
+		{
+			key: 'granblue_id',
+			kind: 'link',
+			label: m.db_users_field_granblue_id,
+			read: (u) =>
+				u.granblueId === null || u.granblueId === undefined ? null : String(u.granblueId),
+			href: (v) => buildGranblueProfileUrl(v),
+			write: false,
+			list: { defaultHidden: true, sortable: false }
+		},
+		{
+			key: 'youtube',
+			kind: 'link',
+			label: m.db_users_field_youtube,
+			href: (v) => buildYoutubeChannelUrl(v),
+			write: false,
+			list: { defaultHidden: true, sortable: false }
+		},
+		{
+			key: 'wiki_profile',
+			kind: 'link',
+			label: m.db_users_field_wiki_profile,
+			href: (v) => buildWikiProfileUrl(v),
+			write: false,
+			list: { defaultHidden: true, sortable: false }
 		},
 		{
 			key: 'party_count',
@@ -94,13 +121,31 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 		empty: m.db_users_empty,
 		title: 'username',
 		rowId: (u) => u.id,
-		columns: ['username', 'display_name', 'email', 'role', 'created_at', 'deletion_scheduled_at'],
+		columns: [
+			'username',
+			'display_name',
+			'role',
+			'created_at',
+			'deletion_scheduled_at',
+			'granblue_id',
+			'youtube',
+			'wiki_profile'
+		],
 		filters: [
 			'role',
 			{
 				id: 'status',
 				label: m.db_users_filter_status,
 				toggles: [{ key: 'deletion_scheduled', label: m.db_users_filter_deletion_scheduled }]
+			},
+			{
+				id: 'linked',
+				label: m.db_users_filter_linked,
+				toggles: [
+					{ key: 'has_granblue_id', label: m.db_users_field_granblue_id },
+					{ key: 'has_youtube', label: m.db_users_field_youtube },
+					{ key: 'has_wiki_profile', label: m.db_users_field_wiki_profile }
+				]
 			}
 		],
 		baseFields: ['username', 'display_name', 'role'],
@@ -117,6 +162,9 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 					'display_name',
 					'email',
 					'email_verified',
+					'granblue_id',
+					'youtube',
+					'wiki_profile',
 					'created_at',
 					'party_count',
 					'deletion_scheduled_at'

@@ -423,15 +423,18 @@ export interface AdminBulletRow {
 	createdAt?: string
 }
 
-/** User row from `GET /admin/users` (admins only) */
+/** User row from `GET /admin/users` (admins only); email is in the detail only */
 export interface AdminUserRow {
 	id: string
 	username: string
 	displayName: string | null
-	email: string
 	role: number
 	createdAt: string
 	deletionScheduledAt: string | null
+	// Linked accounts: not in the default list, requested via `fields`
+	granblueId?: number | null
+	youtube?: string | null
+	wikiProfile?: string | null
 }
 
 /** One logged change to a user's access, newest first */
@@ -447,6 +450,7 @@ export interface AdminUserAccessChange {
 
 /** `GET /admin/users/:id` (and the role update's response) */
 export interface AdminUserDetail extends AdminUserRow {
+	email: string
 	emailVerified: boolean
 	avatar: { picture: string; element: string }
 	partyCount: number
