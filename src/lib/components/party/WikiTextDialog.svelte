@@ -16,15 +16,24 @@
 		open: boolean
 		title: string
 		description: string
-		/** What the conversion loses or leaves to fill in */
-		notice: string
+		/** What the conversion loses or leaves to fill in; text, or rich content */
+		notice: string | Snippet
+		/** Full-width content at the bottom of the notice, e.g. a control */
+		noticeFooter?: Snippet | undefined
 		/** The full list behind the notice, shown under "Learn more" */
 		details?: string[]
+		/**
+		 * Blurs the markup, from 0 (clear) to 1 (unreadable), and keeps it from
+		 * being selected or copied while above 0
+		 */
+		obscured?: number
 		/** The markup; editable unless readonly */
 		value: string
 		readonly?: boolean
 		placeholder?: string
-		primaryAction: { label: string; onclick: () => void; disabled?: boolean }
+		primaryAction: { label: string; onclick: () => void; disabled?: boolean; pop?: boolean }
+		/** Colors the primary button with this element */
+		primaryElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 		/** Shown under the markup, e.g. what an import found */
 		review?: Snippet
 		/** Locks the markup and Cancel while a request is in flight */
@@ -36,25 +45,34 @@
 		title,
 		description,
 		notice,
+		noticeFooter,
+		obscured = 0,
 		details = [],
 		value = $bindable(''),
 		readonly = false,
 		placeholder,
 		primaryAction,
+		primaryElement,
 		review,
 		busy = false
 	}: Props = $props()
 
 	let expanded = $state(false)
+
+	const MAX_BLUR = 6
 </script>
 
 <Dialog bind:open size="medium">
 	<ModalHeader {title} descriptionText={description} />
 	<ModalBody>
 		<div class="content">
-			<Notice variant="yellow">
+			<Notice variant="yellow" footer={noticeFooter}>
 				<p>
-					{notice}
+					{#if typeof notice === 'string'}
+						{notice}
+					{:else}
+						{@render notice()}
+					{/if}
 					{#if details.length > 0}
 						<button
 							type="button"
@@ -76,6 +94,8 @@
 			</Notice>
 			<textarea
 				class="markup"
+				style:filter={obscured > 0 ? `blur(${obscured * MAX_BLUR}px)` : undefined}
+				inert={obscured > 0}
 				bind:value
 				readonly={readonly || busy}
 				{placeholder}
@@ -86,7 +106,12 @@
 			{@render review?.()}
 		</div>
 	</ModalBody>
-	<ModalFooter onCancel={() => (open = false)} cancelDisabled={busy} {primaryAction} />
+	<ModalFooter
+		onCancel={() => (open = false)}
+		cancelDisabled={busy}
+		{primaryAction}
+		userElement={primaryElement}
+	/>
 </Dialog>
 
 <style lang="scss">
@@ -128,6 +153,11 @@
 		background: var(--input-bound-bg);
 		color: var(--text-primary);
 		resize: vertical;
+		transition: filter 0.15s ease-out;
+
+		@media (prefers-reduced-motion: reduce) {
+			transition: none;
+		}
 		box-sizing: border-box;
 		white-space: pre;
 		overflow-x: auto;

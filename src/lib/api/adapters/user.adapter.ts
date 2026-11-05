@@ -38,6 +38,7 @@ interface ApiUserResponse {
 	emailVerified?: boolean // Only included in settings view
 	hasPassword?: boolean // Only included in settings view
 	passwordPromptDismissed?: boolean // Only included in settings view
+	wikiExportGuidelinesAccepted?: boolean // Only included in settings view
 	avatar: {
 		picture: string
 		element: string
@@ -88,6 +89,8 @@ export interface UserSettings extends UserInfo {
 	/** False for accounts created with a provider that haven't set a password. */
 	hasPassword: boolean
 	passwordPromptDismissed: boolean
+	/** Accepted the notice on the gbf.wiki export; asked once per account */
+	wikiExportGuidelinesAccepted: boolean
 }
 
 /** A provider linked to the current user (`GET /users/me/identities`). */
@@ -160,7 +163,8 @@ function transformSettingsResponse(
 		hasStoredEditKeys: apiUser.hasStoredEditKeys ?? false,
 		// Default to "has a password" so the banner never shows on missing data
 		hasPassword: apiUser.hasPassword ?? true,
-		passwordPromptDismissed: apiUser.passwordPromptDismissed ?? false
+		passwordPromptDismissed: apiUser.passwordPromptDismissed ?? false,
+		wikiExportGuidelinesAccepted: apiUser.wikiExportGuidelinesAccepted ?? false
 	}
 }
 
@@ -396,6 +400,17 @@ export class UserAdapter extends BaseAdapter {
 		await this.request<unknown>('/users/me', {
 			method: 'PUT',
 			body: { user: { passwordPromptDismissed: true } }
+		})
+		this.clearCache('/users/me')
+	}
+
+	/**
+	 * Record that the user accepted the gbf.wiki export notice, for good
+	 */
+	async acceptWikiExportGuidelines(): Promise<void> {
+		await this.request<unknown>('/users/me', {
+			method: 'PUT',
+			body: { user: { wikiExportGuidelinesAccepted: true } }
 		})
 		this.clearCache('/users/me')
 	}

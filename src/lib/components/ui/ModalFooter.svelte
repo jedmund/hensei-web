@@ -8,6 +8,8 @@
 		onclick: () => void
 		destructive?: boolean
 		disabled?: boolean
+		/** Pops once when this turns on, to draw the eye, e.g. once it's unlocked */
+		pop?: boolean
 	}
 
 	interface Props {
@@ -47,6 +49,7 @@
 				size="small"
 				element={primaryAction.destructive ? undefined : userElement}
 				elementStyle={!primaryAction.destructive && !!userElement}
+				class={primaryAction.pop ? 'pop' : ''}
 			>
 				{primaryAction.label}
 			</Button>
@@ -83,5 +86,25 @@
 		display: flex;
 		gap: spacing.$unit;
 		margin-left: auto;
+
+		:global(.pop) {
+			animation: pop 0.45s cubic-bezier(0.3, 1.5, 0.5, 1);
+
+			@media (prefers-reduced-motion: reduce) {
+				animation: none;
+			}
+		}
+	}
+
+	@keyframes pop {
+		0% {
+			transform: scale(1);
+		}
+		40% {
+			transform: scale(1.18);
+		}
+		100% {
+			transform: scale(1);
+		}
 	}
 </style>

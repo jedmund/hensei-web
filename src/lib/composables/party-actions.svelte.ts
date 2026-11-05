@@ -13,6 +13,7 @@ import * as m from '$lib/paraglide/messages'
 import { isFullExpedition, solomonisName } from '$lib/components/solomonis/party/solomonisParty'
 import { appLocale } from '$lib/utils/locale'
 import { partyToWikiText } from '$lib/utils/wikiExport'
+import { userAdapter } from '$lib/api/adapters/user.adapter'
 
 type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 
@@ -40,6 +41,16 @@ export function usePartyActions(opts: PartyActionsOptions) {
 	let deleting = $state(false)
 	let wikiExportOpen = $state(false)
 	let wikiExportText = $state('')
+	// Whether the account accepted the export notice; null while loading
+	let wikiExportAccepted = $state<boolean | null>(null)
+	// Whether the notice asks for acceptance in this dialog. Stays on after
+	// sliding, so the slider shows that it went through.
+	let wikiExportAsks = $state(false)
+	// How far the acceptance slider is, 0 to 1; the markup unblurs with it
+	let wikiExportSlide = $state(0)
+	// Accepting needs the Manual of Style opened first, in this dialog
+	let wikiExportGuideOpened = $state(false)
+	let wikiExportGuideMissed = $state(false)
 	let featureDialogOpen = $state(false)
 
 	async function updatePartyDetails(updates: Omit<UpdatePartyParams, 'id' | 'shortcode'>) {
@@ -327,6 +338,44 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		const url = `${window.location.origin}/teams/${party.shortcode}`
 		wikiExportText = partyToWikiText(party, { url })
 		wikiExportOpen = true
+		wikiExportGuideOpened = false
+		wikiExportSlide = 0
+		wikiExportGuideMissed = false
+		if (wikiExportAccepted) {
+			wikiExportAsks = false
+			return
+		}
+		// Logged out: nothing to look up or save, so they accept once per visit
+		if (!opts.getAuthUserId()) {
+			wikiExportAccepted = false
+			wikiExportAsks = true
+			return
+		}
+		wikiExportAccepted = null
+		userAdapter
+			.getCurrentUser()
+			.then((settings) => (wikiExportAccepted = settings.wikiExportGuidelinesAccepted))
+			.catch(() => (wikiExportAccepted = false))
+			.finally(() => (wikiExportAsks = !wikiExportAccepted))
+	}
+
+	function openWikiExportGuide() {
+		wikiExportGuideOpened = true
+		wikiExportGuideMissed = false
+	}
+
+	/** False (the slider springs back) until the Manual of Style was opened */
+	function acceptWikiExportGuidelines(): boolean {
+		if (!wikiExportGuideOpened) {
+			wikiExportGuideMissed = true
+			return false
+		}
+		wikiExportAccepted = true
+		if (!opts.getAuthUserId()) return true
+		userAdapter.acceptWikiExportGuidelines().catch(() => {
+			toast.error(m.toast_failed_save_wiki_export_acceptance())
+		})
+		return true
 	}
 
 	async function copyWikiExport() {
@@ -367,6 +416,27 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		get wikiExportText() {
 			return wikiExportText
 		},
+		get wikiExportAccepted() {
+			return wikiExportAccepted === true
+		},
+		get wikiExportAsks() {
+			return wikiExportAsks
+		},
+		/** The team owner's element, for coloring Copy once it's unlocked */
+		get wikiExportElement() {
+			return opts.getUserElement()
+		},
+		get wikiExportSlide() {
+			return wikiExportSlide
+		},
+		set wikiExportSlide(v: number) {
+			wikiExportSlide = v
+		},
+		get wikiExportGuideMissed() {
+			return wikiExportGuideMissed
+		},
+		openWikiExportGuide,
+		acceptWikiExportGuidelines,
 		get featureDialogOpen() {
 			return featureDialogOpen
 		},

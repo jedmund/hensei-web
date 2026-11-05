@@ -25,16 +25,8 @@ describe('isCurator / isEditor', () => {
 })
 
 describe('canUseFeature', () => {
-	it('limits the wiki export to curators and up', () => {
-		expect([null, undefined, 0, 1, 6, 7, 9].map((r) => canUseFeature('wikiExport', r))).toEqual([
-			false,
-			false,
-			false,
-			false,
-			true,
-			true,
-			true
-		])
+	it('opens the wiki export to everyone', () => {
+		expect([null, undefined, 0, 1, 6, 7, 9].every((r) => canUseFeature('wikiExport', r))).toBe(true)
 	})
 })
 

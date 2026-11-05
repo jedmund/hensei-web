@@ -17,6 +17,11 @@
 		action?: Snippet
 		/** Shows a dismiss (X) button when set. */
 		onDismiss?: () => void
+		/**
+		 * Full-width content under the message, e.g. a control. Kept outside the
+		 * status region so screen readers don't announce it as part of the text.
+		 */
+		footer?: Snippet
 		class?: string
 	}
 
@@ -27,6 +32,7 @@
 		children,
 		action,
 		onDismiss,
+		footer,
 		class: className = ''
 	}: Props = $props()
 
@@ -34,7 +40,7 @@
 	const isElement = $derived(elementVariants.includes(variant))
 </script>
 
-<div class="notice {variant} {className}" class:element={isElement} role="status">
+{#snippet message()}
 	{#if icon}
 		<span class="notice-icon">
 			{@render icon()}
@@ -67,7 +73,22 @@
 			{/if}
 		</div>
 	{/if}
-</div>
+{/snippet}
+
+{#if footer}
+	<div class="notice with-footer {variant} {className}" class:element={isElement}>
+		<div class="notice-message" role="status">
+			{@render message()}
+		</div>
+		<div class="notice-footer">
+			{@render footer()}
+		</div>
+	</div>
+{:else}
+	<div class="notice {variant} {className}" class:element={isElement} role="status">
+		{@render message()}
+	</div>
+{/if}
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
@@ -82,6 +103,18 @@
 		padding: $unit-2x;
 		border-radius: $card-corner;
 		font-size: $font-small;
+	}
+
+	.with-footer {
+		flex-direction: column;
+		align-items: stretch;
+		gap: $unit-2x;
+	}
+
+	.notice-message {
+		display: flex;
+		align-items: center;
+		gap: $unit;
 	}
 
 	.notice-text {
@@ -136,8 +169,10 @@
 	// Phones: the badge goes above the text and the action below it, and the dismiss button stays at the end of the
 	// first row. A grid with margins rather than gaps, so a missing icon
 	// leaves no space.
+	// With a footer, the grid is the message row; the footer stays below it.
 	@media (max-width: 768px) {
-		.notice {
+		.notice:not(.with-footer),
+		.notice-message {
 			display: grid;
 			grid-template-columns: auto minmax(0, 1fr) auto;
 			column-gap: 0;
