@@ -30,7 +30,7 @@
 		{ value: '3', label: m.job_tier_class_3(), shortLabel: 'III' },
 		{ value: '4', label: m.job_tier_class_4(), shortLabel: 'IV' },
 		{ value: '5', label: m.job_tier_class_5(), shortLabel: 'V' },
-		{ value: 'ex', label: m.job_tier_ex(), shortLabel: 'EXI' },
+		{ value: 'ex1', label: m.job_tier_ex(), shortLabel: 'EXI' },
 		{ value: 'ex2', label: m.job_tier_ex2(), shortLabel: 'EXII' },
 		{ value: 'o1', label: m.job_tier_origin_1(), shortLabel: 'OI' }
 	]

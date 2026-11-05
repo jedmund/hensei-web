@@ -317,17 +317,3 @@ export function validateSkillConfiguration(
  * Proficiency options for job forms
  */
 export const PROFICIENCIES = getProficiencyOptions()
-
-/**
- * Row options for job forms
- */
-export const ROWS = [
-	{ value: '1', label: m.job_tier_class_1() },
-	{ value: '2', label: m.job_tier_class_2() },
-	{ value: '3', label: m.job_tier_class_3() },
-	{ value: '4', label: m.job_tier_class_4() },
-	{ value: '5', label: m.job_tier_class_5() },
-	{ value: 'ex', label: m.job_tier_ex() },
-	{ value: 'ex2', label: m.job_tier_ex2() },
-	{ value: 'o1', label: m.job_tier_origin_1() }
-]
