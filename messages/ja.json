@@ -2256,6 +2256,8 @@
 	"db_users_field_youtube": "YouTube",
 	"db_users_field_wiki_profile": "Wikiユーザー名",
 	"db_users_filter_linked": "連携アカウント",
+	"db_users_field_last_seen_at": "最終アクセス",
+	"db_users_never_seen": "記録なし",
 	"db_users_field_party_count": "編成数",
 	"db_users_field_deletion_scheduled_at": "削除予定日",
 	"db_users_section_account": "アカウント",

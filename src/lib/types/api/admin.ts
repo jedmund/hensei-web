@@ -430,6 +430,8 @@ export interface AdminUserRow {
 	displayName: string | null
 	role: number
 	createdAt: string
+	/** Last signed-in request, to within a few minutes; null if not seen since it was added */
+	lastSeenAt: string | null
 	deletionScheduledAt: string | null
 	// Linked accounts: not in the default list, requested via `fields`
 	granblueId?: number | null

@@ -2467,6 +2467,8 @@
 	"db_users_field_youtube": "YouTube",
 	"db_users_field_wiki_profile": "Wiki username",
 	"db_users_filter_linked": "Linked accounts",
+	"db_users_field_last_seen_at": "Last seen",
+	"db_users_never_seen": "Not yet",
 	"db_users_field_party_count": "Teams",
 	"db_users_field_deletion_scheduled_at": "Deletion scheduled",
 	"db_users_section_account": "Account",

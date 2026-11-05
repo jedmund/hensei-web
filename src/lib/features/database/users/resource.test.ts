@@ -15,6 +15,7 @@ const user = asUserRecord({
 	role: 1,
 	avatar: { picture: 'gran', element: 'fire' },
 	createdAt: '2026-01-02T03:04:05Z',
+	lastSeenAt: null,
 	deletionScheduledAt: null,
 	partyCount: 3,
 	history: []
@@ -34,6 +35,7 @@ describe('usersResource', () => {
 			'display_name',
 			'role',
 			'created_at',
+			'last_seen_at',
 			'deletion_scheduled_at',
 			'granblue_id',
 			'youtube',

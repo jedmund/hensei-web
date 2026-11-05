@@ -91,6 +91,14 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 			list: { defaultHidden: true, sortable: false }
 		},
 		{
+			// Signed-in activity, to within a few minutes
+			key: 'last_seen_at',
+			kind: 'datetime',
+			label: m.db_users_field_last_seen_at,
+			write: false,
+			detail: { value: (u) => dateTime(u.lastSeenAt), empty: m.db_users_never_seen }
+		},
+		{
 			key: 'party_count',
 			kind: 'number',
 			label: m.db_users_field_party_count,
@@ -126,6 +134,7 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 			'display_name',
 			'role',
 			'created_at',
+			'last_seen_at',
 			'deletion_scheduled_at',
 			'granblue_id',
 			'youtube',
@@ -166,6 +175,7 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 					'youtube',
 					'wiki_profile',
 					'created_at',
+					'last_seen_at',
 					'party_count',
 					'deletion_scheduled_at'
 				]
