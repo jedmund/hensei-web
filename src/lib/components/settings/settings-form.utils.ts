@@ -4,7 +4,7 @@
  * and deciding which side effects a save needs.
  */
 
-import { youtubeChannel } from '$lib/utils/external-links'
+import { wikiProfileName, youtubeChannel } from '$lib/utils/external-links'
 import type { UserSettings } from '$lib/api/adapters/user.adapter'
 import type { UserResponse, UserUpdateParams } from '$lib/api/resources/users'
 import type { UserCookie } from '$lib/types/UserCookie'
@@ -100,6 +100,11 @@ export function originalsFromUser(data: UserSettings): SettingsOriginals {
 export function granblueIdValid(value: string): boolean {
 	const id = value.trim()
 	return id === '' || (/^\d+$/.test(id) && Number(id) >= 100)
+}
+
+/** A wiki value the API accepts: blank, a gbf.wiki username, or the user page's URL */
+export function wikiProfileValid(value: string): boolean {
+	return wikiProfileName(value) !== false
 }
 
 /** A YouTube value the API accepts: blank, a channel handle, or the channel's URL */

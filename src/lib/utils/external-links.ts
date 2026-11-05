@@ -160,9 +160,49 @@ export function buildGranblueProfileUrl(
 }
 
 /** A gbf.wiki user page, from the wiki username */
+const WIKI_USERNAME = /^[^#<>[\]|{}/:@\n]{1,85}$/
+const WIKI_URL_PREFIX = /^(?:https?:\/\/)?(?:www\.)?gbf\.wiki\//i
+
+/**
+ * A gbf.wiki username as the API stores it: the name only. Takes the name,
+ * "User:Name", or the user page's URL (including index.php?title=). Mirrors
+ * WikiProfile in hensei-api. Returns null for a blank value and false for
+ * one that isn't a username (another page, or characters MediaWiki forbids).
+ */
+export function wikiProfileName(typed: string | undefined | null): string | null | false {
+	const value = (typed ?? '').trim()
+	if (!value) return null
+	let name = value
+	if (WIKI_URL_PREFIX.test(value)) {
+		const rest = value.replace(WIKI_URL_PREFIX, '')
+		const title = rest.startsWith('index.php')
+			? new URLSearchParams(rest.split('?')[1] ?? '').get('title')
+			: safeDecode(rest.split(/[?#]/)[0] ?? '')
+		if (!title || !/^User:/i.test(title)) return false
+		name = title.replace(/\/$/, '')
+	}
+	name = name.replace(/^User:/i, '').trim()
+	return WIKI_USERNAME.test(name) ? name : false
+}
+
+function safeDecode(value: string): string {
+	try {
+		return decodeURIComponent(value)
+	} catch {
+		return value
+	}
+}
+
+/** What the wiki field shows while typing: a pasted user page URL becomes its username */
+export function wikiFieldValue(typed: string): string {
+	if (!WIKI_URL_PREFIX.test(typed.trim()) && !/^User:/i.test(typed.trim())) return typed
+	return wikiProfileName(typed) || typed
+}
+
+/** A gbf.wiki user page, from the stored username (or anything wikiProfileName reads) */
 export function buildWikiProfileUrl(wikiProfile: string | undefined | null): string | null {
-	if (!wikiProfile) return null
-	return `https://gbf.wiki/User:${encodeURIComponent(wikiProfile)}`
+	const name = wikiProfileName(wikiProfile)
+	return name ? `https://gbf.wiki/User:${encodeURIComponent(name)}` : null
 }
 
 const YOUTUBE_HANDLE = '[A-Za-z0-9._-]{1,100}'

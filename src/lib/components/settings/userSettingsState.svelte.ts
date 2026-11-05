@@ -33,6 +33,7 @@ import {
 	type SettingsFormValues,
 	type SettingsSaveValues,
 	granblueIdValid,
+	wikiProfileValid,
 	youtubeValid
 } from './settings-form.utils'
 
@@ -93,9 +94,11 @@ export class UserSettingsState implements SettingsFormValues {
 
 	saving = $state(false)
 	usernameValid = $state(true)
-	/** Granblue ID and YouTube are blank or in a form the API accepts */
+	/** Granblue ID, wiki username and YouTube are blank or in a form the API accepts */
 	readonly linkedAccountsValid = $derived(
-		granblueIdValid(this.granblueId) && youtubeValid(this.youtube)
+		granblueIdValid(this.granblueId) &&
+			wikiProfileValid(this.wikiProfile) &&
+			youtubeValid(this.youtube)
 	)
 	usernameConfirmOpen = $state(false)
 	error = $state<string | null>(null)

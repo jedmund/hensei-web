@@ -5,6 +5,8 @@ import {
 	buildYoutubeChannelUrl,
 	youtubeChannel,
 	youtubeFieldValue,
+	wikiFieldValue,
+	wikiProfileName,
 	buildKamigameUrl,
 	buildWikiJaUrl
 } from './external-links'
@@ -89,6 +91,19 @@ describe('profile links', () => {
 		expect(buildYoutubeChannelUrl('channel/UCjH35rEofoTkw81IrDukb5w')).toBe(
 			'https://www.youtube.com/channel/UCjH35rEofoTkw81IrDukb5w'
 		)
+	})
+
+	it('reads a pasted wiki user page as the username', () => {
+		expect(wikiProfileName('https://gbf.wiki/User:ItsJustSly')).toBe('ItsJustSly')
+		expect(wikiProfileName('User:Fangzsx')).toBe('Fangzsx')
+		expect(wikiProfileName('gbf.wiki/User:Some%20One')).toBe('Some One')
+		expect(wikiProfileName('https://gbf.wiki/index.php?title=User:Eden&action=edit')).toBe('Eden')
+		expect(wikiProfileName('https://gbf.wiki/Siero')).toBe(false)
+		expect(wikiProfileName('https://gbf.wiki/User:Eden/Teams')).toBe(false)
+		expect(wikiProfileName(' ')).toBeNull()
+		expect(buildWikiProfileUrl('https://gbf.wiki/User:Eden')).toBe('https://gbf.wiki/User:Eden')
+		expect(wikiFieldValue('https://gbf.wiki/User:Eden')).toBe('Eden')
+		expect(wikiFieldValue('DY_DK')).toBe('DY_DK')
 	})
 
 	it('shows a pasted channel URL in the field as its handle', () => {

@@ -1163,6 +1163,7 @@
 	"settings_wiki_profile": "Wikiユーザー名",
 	"settings_wiki_profile_subtitle": "gbf.wikiでのユーザー名",
 	"settings_wiki_profile_placeholder": "ユーザー名を入力",
+	"settings_wiki_profile_invalid": "gbf.wikiのユーザー名かユーザーページのURLを入力してください",
 	"settings_youtube": "YouTube",
 	"settings_youtube_subtitle": "YouTubeチャンネルのハンドルまたはURL",
 	"settings_youtube_placeholder": "ハンドルを入力",

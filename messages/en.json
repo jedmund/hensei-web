@@ -1199,6 +1199,7 @@
 	"settings_wiki_profile": "Wiki Profile",
 	"settings_wiki_profile_subtitle": "Your gbf.wiki username",
 	"settings_wiki_profile_placeholder": "Enter username",
+	"settings_wiki_profile_invalid": "Enter your gbf.wiki username or user page URL",
 	"settings_youtube": "YouTube",
 	"settings_youtube_subtitle": "Your YouTube channel handle or URL",
 	"settings_youtube_placeholder": "Enter handle",

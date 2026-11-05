@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { youtubeFieldValue } from '$lib/utils/external-links'
-	import { granblueIdValid, youtubeValid } from './settings-form.utils'
+	import { wikiFieldValue, youtubeFieldValue } from '$lib/utils/external-links'
+	import { granblueIdValid, wikiProfileValid, youtubeValid } from './settings-form.utils'
 	import * as m from '$lib/paraglide/messages'
 	import Select from '../ui/Select.svelte'
 	import Input from '../ui/Input.svelte'
@@ -89,7 +89,10 @@
 		if (localGranblueId !== granblueId) onGranblueIdChange(localGranblueId)
 	})
 	$effect(() => {
-		if (localWikiProfile !== wikiProfile) onWikiProfileChange(localWikiProfile)
+		// A pasted user page URL shows as just the username
+		const cleaned = wikiFieldValue(localWikiProfile)
+		if (cleaned !== localWikiProfile) localWikiProfile = cleaned
+		else if (localWikiProfile !== wikiProfile) onWikiProfileChange(localWikiProfile)
 	})
 	$effect(() => {
 		// A pasted or typed channel URL shows as just its handle
@@ -171,7 +174,11 @@
 			{/snippet}
 		</SettingsRow>
 
-		<SettingsRow title={m.settings_wiki_profile()} subtitle={m.settings_wiki_profile_subtitle()}>
+		<SettingsRow
+			title={m.settings_wiki_profile()}
+			subtitle={m.settings_wiki_profile_subtitle()}
+			error={wikiProfileValid(localWikiProfile) ? undefined : m.settings_wiki_profile_invalid()}
+		>
 			{#snippet control()}
 				<Input
 					bind:value={localWikiProfile}
