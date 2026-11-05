@@ -18,6 +18,10 @@ const user = asUserRecord({
 	lastSeenAt: null,
 	deletionScheduledAt: null,
 	partyCount: 3,
+	crew: null,
+	favoritesCount: 0,
+	favoritedCount: 0,
+	collection: { characters: 0, weapons: 0, summons: 0, artifacts: 0, jobAccessories: 0 },
 	history: []
 })
 
@@ -52,9 +56,15 @@ describe('usersResource', () => {
 
 	it('leaves out the deletion date and the empty history box when there is none', () => {
 		const blocks = detailLayout(def, user).blocks
-		const account = blocks.find((b) => b.section.id === 'account')!
-		expect(account.rows.map((r) => r.field.key)).not.toContain('deletion_scheduled_at')
-		expect(blocks.map((b) => b.section.id)).toEqual(['account', 'role', 'history'])
+		const profile = blocks.find((b) => b.section.id === 'profile')!
+		expect(profile.rows.map((r) => r.field.key)).not.toContain('deletion_scheduled_at')
+		expect(blocks.map((b) => b.section.id)).toEqual([
+			'profile',
+			'linked',
+			'details',
+			'role',
+			'history'
+		])
 	})
 
 	it('names the roles, and shows the number for one it does not know', () => {

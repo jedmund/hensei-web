@@ -8,7 +8,7 @@ import { queryOptions } from '@tanstack/svelte-query'
 import * as m from '$lib/paraglide/messages'
 import { adminAdapter } from '$lib/api/adapters/admin.adapter'
 import { adminKeys } from '$lib/api/queries/admin.queries'
-import { defineResource } from '$lib/features/database/schema/types'
+import { defineResource, type Field } from '$lib/features/database/schema/types'
 import { usersSection } from '$lib/features/database/users/section'
 import { roleOptions } from '$lib/features/database/users/roles'
 import type { AdminUserDetail, AdminUserRow } from '$lib/types/api/admin'
@@ -20,6 +20,21 @@ import {
 } from '$lib/utils/external-links'
 
 const dateTime = (value: string | null | undefined) => (value ? formatDateTime(value) : null)
+
+const CREW_ROLE_LABELS = {
+	member: m.crew_role_member,
+	vice_captain: m.crew_role_vice_captain,
+	captain: m.crew_role_captain
+}
+
+/** Collection kinds counted in the detail, with their row labels */
+const COLLECTION_KINDS = [
+	['characters', m.db_users_field_collection_characters],
+	['weapons', m.db_users_field_collection_weapons],
+	['summons', m.db_users_field_collection_summons],
+	['artifacts', m.db_users_field_collection_artifacts],
+	['jobAccessories', m.db_users_field_collection_job_accessories]
+] as const
 
 /** A user as the detail holds it: `name` titles the page and the breadcrumb */
 export type UserRecord = AdminUserDetail & { name: string }
@@ -71,6 +86,7 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 			read: (u) =>
 				u.granblueId === null || u.granblueId === undefined ? null : String(u.granblueId),
 			href: (v) => buildGranblueProfileUrl(v),
+			showValue: true,
 			write: false,
 			list: { defaultHidden: true, sortable: false }
 		},
@@ -79,6 +95,7 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 			kind: 'link',
 			label: m.db_users_field_youtube,
 			href: (v) => buildYoutubeChannelUrl(v),
+			showValue: true,
 			write: false,
 			list: { defaultHidden: true, sortable: false }
 		},
@@ -87,6 +104,7 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 			kind: 'link',
 			label: m.db_users_field_wiki_profile,
 			href: (v) => buildWikiProfileUrl(v),
+			showValue: true,
 			write: false,
 			list: { defaultHidden: true, sortable: false }
 		},
@@ -98,6 +116,7 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 			write: false,
 			detail: { value: (u) => dateTime(u.lastSeenAt), empty: m.db_users_never_seen }
 		},
+		// Account details: what the user has made and joined (counts only)
 		{
 			key: 'party_count',
 			kind: 'number',
@@ -105,6 +124,36 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 			int: true,
 			write: false
 		},
+		{
+			key: 'crew',
+			kind: 'text',
+			label: m.db_users_field_crew,
+			read: (u) => (u.crew ? `${u.crew.name} (${CREW_ROLE_LABELS[u.crew.role]()})` : null),
+			write: false,
+			detail: { empty: m.db_detail_not_available }
+		},
+		{
+			key: 'favorites_count',
+			kind: 'number',
+			label: m.db_users_field_favorites_count,
+			int: true,
+			write: false
+		},
+		{
+			key: 'favorited_count',
+			kind: 'number',
+			label: m.db_users_field_favorited_count,
+			int: true,
+			write: false
+		},
+		...COLLECTION_KINDS.map(([kind, label]): Field<AdminUserRow, UserRecord> => ({
+			key: `collection_${kind}`,
+			kind: 'number',
+			label,
+			int: true,
+			read: (u) => u.collection[kind],
+			write: false
+		})),
 		{
 			key: 'deletion_scheduled_at',
 			kind: 'datetime',
@@ -164,20 +213,32 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 	layout: {
 		detail: [
 			{
-				id: 'account',
-				title: m.db_users_section_account,
+				id: 'profile',
+				title: m.db_users_section_profile,
 				fields: [
 					'username',
 					'display_name',
 					'email',
 					'email_verified',
-					'granblue_id',
-					'youtube',
-					'wiki_profile',
 					'created_at',
 					'last_seen_at',
-					'party_count',
 					'deletion_scheduled_at'
+				]
+			},
+			{
+				id: 'linked',
+				title: m.db_users_filter_linked,
+				fields: ['granblue_id', 'youtube', 'wiki_profile']
+			},
+			{
+				id: 'details',
+				title: m.db_users_section_details,
+				fields: [
+					'party_count',
+					'crew',
+					'favorites_count',
+					'favorited_count',
+					...COLLECTION_KINDS.map(([kind]) => `collection_${kind}`)
 				]
 			},
 			{

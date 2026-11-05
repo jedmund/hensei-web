@@ -456,5 +456,16 @@ export interface AdminUserDetail extends AdminUserRow {
 	emailVerified: boolean
 	avatar: { picture: string; element: string }
 	partyCount: number
+	crew: { id: string; name: string; role: 'member' | 'vice_captain' | 'captain' } | null
+	/** Teams this user favorited, and favorites their own teams received */
+	favoritesCount: number
+	favoritedCount: number
+	collection: {
+		characters: number
+		weapons: number
+		summons: number
+		artifacts: number
+		jobAccessories: number
+	}
 	history: AdminUserAccessChange[]
 }

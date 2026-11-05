@@ -218,6 +218,8 @@ export type Field<Row = unknown, Full = unknown> = FieldBase<Row, Full> &
 				kind: 'link'
 				/** The Open button's URL */
 				href: (value: string, values: Values) => string | null
+				/** The button shows the value (e.g. a handle) instead of "Open" */
+				showValue?: boolean
 		  }
 		| { kind: 'code' }
 		| {
