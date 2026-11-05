@@ -24,11 +24,11 @@ export function isEditor(role: Role): boolean {
  * Features locked behind a role. Gate UI with `canUseFeature('name', role)`
  * instead of comparing role numbers, so a lock can move or lift in one place.
  *
- * - wikiExport: gbf.wiki TeamSpread export. Curators only while we agree
- *   submission standards with the wiki.
+ * - wikiExport: gbf.wiki TeamSpread export. Open to everyone, logged out
+ *   included; users accept the wiki-guidelines notice before copying.
  */
 export const FEATURE_ROLES = {
-	wikiExport: CURATOR_ROLE
+	wikiExport: 0
 } as const satisfies Record<string, number>
 
 export type LockedFeature = keyof typeof FEATURE_ROLES

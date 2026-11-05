@@ -345,6 +345,12 @@ export function usePartyActions(opts: PartyActionsOptions) {
 			wikiExportAsks = false
 			return
 		}
+		// Logged out: nothing to look up or save, so they accept once per visit
+		if (!opts.getAuthUserId()) {
+			wikiExportAccepted = false
+			wikiExportAsks = true
+			return
+		}
 		wikiExportAccepted = null
 		userAdapter
 			.getCurrentUser()
@@ -365,6 +371,7 @@ export function usePartyActions(opts: PartyActionsOptions) {
 			return false
 		}
 		wikiExportAccepted = true
+		if (!opts.getAuthUserId()) return true
 		userAdapter.acceptWikiExportGuidelines().catch(() => {
 			toast.error(m.toast_failed_save_wiki_export_acceptance())
 		})
