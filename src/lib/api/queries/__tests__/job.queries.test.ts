@@ -1,7 +1,14 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { jobQueries } from '../job.queries'
+import type { QueryFunction } from '@tanstack/svelte-query'
+import { jobQueries, type JobSearchPageResult } from '../job.queries'
 import { jobAdapter } from '$lib/api/adapters/job.adapter'
 import type { Job } from '$lib/types/api/entities'
+
+/** Runs a search page's queryFn (the factory always provides one) */
+function fetchPage(options: { queryFn?: unknown }, pageParam: number) {
+	const fn = options.queryFn as QueryFunction<JobSearchPageResult, never[], number>
+	return fn({ pageParam } as never)
+}
 
 const job = (id: string, row: string, proficiency: [number, number]) =>
 	({ id, row, proficiency }) as unknown as Job
@@ -16,8 +23,7 @@ describe('jobQueries.search', () => {
 			.spyOn(jobAdapter, 'searchJobs')
 			.mockResolvedValue({ results: [], page: 2, total: 0, totalPages: 3 })
 
-		const options = jobQueries.search('ber', { row: ['4'] }, 'ja')
-		const page = await options.queryFn!({ pageParam: 2 } as never)
+		const page = await fetchPage(jobQueries.search('ber', { row: ['4'] }, 'ja'), 2)
 
 		expect(spy).toHaveBeenCalledWith({
 			query: 'ber',
@@ -37,8 +43,7 @@ describe('jobQueries.search', () => {
 			totalPages: 1
 		})
 
-		const options = jobQueries.search('', { row: ['4'], proficiency: [1] })
-		const page = await options.queryFn!({ pageParam: 1 } as never)
+		const page = await fetchPage(jobQueries.search('', { row: ['4'], proficiency: [1] }), 1)
 
 		expect(page.results.map((j) => j.id)).toEqual(['in-row'])
 	})
