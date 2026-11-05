@@ -26,6 +26,38 @@ export interface SearchJobSkillsParams {
 }
 
 /**
+ * Filters for the job search. Both match server-side, but a proficiency also
+ * matches a job's second slot regardless of the row (see job.queries.ts).
+ */
+export interface JobSearchFilters {
+	/** Stored job rows, e.g. '4', 'ex1', 'o1' */
+	row?: string[]
+	/** Proficiency ids, matched against either slot */
+	proficiency?: number[]
+}
+
+/**
+ * Parameters for searching jobs
+ */
+export interface SearchJobsParams {
+	query?: string
+	locale?: 'en' | 'ja'
+	page?: number
+	per?: number
+	filters?: JobSearchFilters
+}
+
+/**
+ * Job search response
+ */
+export interface JobSearchResponse {
+	results: Job[]
+	page: number
+	total: number
+	totalPages: number
+}
+
+/**
  * Payload for creating/updating a job skill
  */
 export interface JobSkillPayload {
@@ -214,6 +246,40 @@ export class JobAdapter extends BaseAdapter {
 						totalPages: response.meta.totalPages ?? 1
 					}
 				: undefined
+		}
+	}
+
+	/**
+	 * Searches jobs by name in the given locale, with row and proficiency filters.
+	 * Empty filters are left out; the page size goes in the X-Per-Page header.
+	 */
+	async searchJobs(params: SearchJobsParams = {}): Promise<JobSearchResponse> {
+		const page = params.page || 1
+		const filters: JobSearchFilters = {}
+		if (params.filters?.row?.length) filters.row = params.filters.row
+		if (params.filters?.proficiency?.length) filters.proficiency = params.filters.proficiency
+
+		const search: Record<string, unknown> = {
+			query: params.query?.trim() || '',
+			locale: params.locale || 'en',
+			page
+		}
+		if (Object.keys(filters).length > 0) search.filters = filters
+
+		const response = await this.request<{
+			results: Job[]
+			meta?: { count?: number; totalPages?: number }
+		}>('/search/jobs', {
+			method: 'POST',
+			body: { search },
+			headers: params.per ? { 'X-Per-Page': String(params.per) } : undefined
+		})
+
+		return {
+			results: response.results,
+			page,
+			total: response.meta?.count ?? 0,
+			totalPages: response.meta?.totalPages ?? 1
 		}
 	}
 

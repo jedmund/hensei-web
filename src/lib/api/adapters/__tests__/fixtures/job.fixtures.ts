@@ -17,6 +17,21 @@ export const API = {
 	},
 	searchSkillsNoMeta: {
 		results: []
+	},
+	searchJobs: {
+		results: [
+			{
+				id: 'job-1',
+				granblue_id: '140001',
+				name: { en: 'Berserker', ja: 'ベルセルク' },
+				row: '4',
+				order: 1,
+				proficiency: [1, 4],
+				master_level: true,
+				ultimate_mastery: false
+			}
+		],
+		meta: { count: 51, total_pages: 2, per_page: 50 }
 	}
 }
 
@@ -42,5 +57,22 @@ export const EXPECTED = {
 		page: 1,
 		totalPages: 1,
 		meta: undefined
+	},
+	searchJobs: {
+		results: [
+			{
+				id: 'job-1',
+				granblueId: '140001',
+				name: { en: 'Berserker', ja: 'ベルセルク' },
+				row: '4',
+				order: 1,
+				proficiency: [1, 4],
+				masterLevel: true,
+				ultimateMastery: false
+			}
+		],
+		page: 2,
+		total: 51,
+		totalPages: 2
 	}
 }

@@ -100,6 +100,65 @@ describe('JobAdapter', () => {
 		})
 	})
 
+	describe('searchJobs', () => {
+		it('should send the query, locale, page and filters under search', async () => {
+			global.fetch = mockApiResponse(API.searchJobs)
+
+			await adapter.searchJobs({
+				query: ' berserk ',
+				locale: 'ja',
+				page: 2,
+				per: 50,
+				filters: { row: ['4', 'ex1'], proficiency: [1] }
+			})
+
+			expect(global.fetch).toHaveBeenCalledWith(
+				'https://api.example.com/search/jobs',
+				expect.objectContaining({
+					method: 'POST',
+					body: JSON.stringify({
+						search: {
+							query: 'berserk',
+							locale: 'ja',
+							page: 2,
+							filters: { row: ['4', 'ex1'], proficiency: [1] }
+						}
+					}),
+					headers: expect.objectContaining({ 'X-Per-Page': '50' })
+				})
+			)
+		})
+
+		it('should use defaults and leave out empty filters', async () => {
+			global.fetch = mockApiResponse({ results: [], meta: {} })
+
+			await adapter.searchJobs({ filters: { row: [], proficiency: [] } })
+
+			expect(global.fetch).toHaveBeenCalledWith(
+				'https://api.example.com/search/jobs',
+				expect.objectContaining({
+					body: JSON.stringify({ search: { query: '', locale: 'en', page: 1 } })
+				})
+			)
+		})
+
+		it('should return camelCased jobs with paging from meta', async () => {
+			global.fetch = mockApiResponse(API.searchJobs)
+
+			const result = await adapter.searchJobs({ query: 'berserk', page: 2 })
+
+			expect(result).toEqual(EXPECTED.searchJobs)
+		})
+
+		it('should fall back when meta is missing', async () => {
+			global.fetch = mockApiResponse({ results: [] })
+
+			const result = await adapter.searchJobs()
+
+			expect(result).toEqual({ results: [], page: 1, total: 0, totalPages: 1 })
+		})
+	})
+
 	describe('updatePartyJobSkills', () => {
 		it('should map slots 0 and 2 to skill1_id and skill3_id', async () => {
 			global.fetch = mockApiResponse({})
