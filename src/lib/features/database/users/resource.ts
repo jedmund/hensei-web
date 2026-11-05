@@ -11,7 +11,7 @@ import { adminKeys } from '$lib/api/queries/admin.queries'
 import { defineResource, type Field } from '$lib/features/database/schema/types'
 import { usersSection } from '$lib/features/database/users/section'
 import { roleOptions } from '$lib/features/database/users/roles'
-import type { AdminUserDetail, AdminUserRow } from '$lib/types/api/admin'
+import type { AdminUserCrew, AdminUserDetail, AdminUserRow } from '$lib/types/api/admin'
 import { formatDateTime } from '$lib/utils/date'
 import {
 	buildGranblueProfileUrl,
@@ -27,14 +27,27 @@ const CREW_ROLE_LABELS = {
 	captain: m.crew_role_captain
 }
 
-/** Collection kinds counted in the detail, with their row labels */
+/**
+ * Collection kinds counted per user: the field key (the list's column and
+ * sort), the detail's key under `collection`, and the label
+ */
 const COLLECTION_KINDS = [
-	['characters', m.db_users_field_collection_characters],
-	['weapons', m.db_users_field_collection_weapons],
-	['summons', m.db_users_field_collection_summons],
-	['artifacts', m.db_users_field_collection_artifacts],
-	['jobAccessories', m.db_users_field_collection_job_accessories]
+	['collection_characters', 'characters', m.db_users_field_collection_characters],
+	['collection_weapons', 'weapons', m.db_users_field_collection_weapons],
+	['collection_summons', 'summons', m.db_users_field_collection_summons],
+	['collection_artifacts', 'artifacts', m.db_users_field_collection_artifacts],
+	['collection_job_accessories', 'jobAccessories', m.db_users_field_collection_job_accessories]
 ] as const
+
+/** Count columns: off until turned on in Columns */
+const COUNT_COLUMN = { defaultHidden: true } as const
+
+const crewsQuery = () =>
+	queryOptions({
+		queryKey: adminKeys.userCrews(),
+		queryFn: () => adminAdapter.listUserCrews(),
+		staleTime: 1000 * 60 * 5
+	})
 
 /** A user as the detail holds it: `name` titles the page and the breadcrumb */
 export type UserRecord = AdminUserDetail & { name: string }
@@ -116,13 +129,22 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 			write: false,
 			detail: { value: (u) => dateTime(u.lastSeenAt), empty: m.db_users_never_seen }
 		},
-		// Account details: what the user has made and joined (counts only)
+		// What the user has made and joined (counts only)
 		{
 			key: 'party_count',
 			kind: 'number',
 			label: m.db_users_field_party_count,
 			int: true,
-			write: false
+			write: false,
+			list: COUNT_COLUMN
+		},
+		{
+			key: 'playlist_count',
+			kind: 'number',
+			label: m.db_users_field_playlist_count,
+			int: true,
+			write: false,
+			list: COUNT_COLUMN
 		},
 		{
 			key: 'crew',
@@ -130,29 +152,44 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 			label: m.db_users_field_crew,
 			read: (u) => (u.crew ? `${u.crew.name} (${CREW_ROLE_LABELS[u.crew.role]()})` : null),
 			write: false,
-			detail: { empty: m.db_detail_not_available }
+			detail: { empty: m.db_detail_not_available },
+			filter: {
+				kind: 'multi',
+				query: crewsQuery,
+				options: (crews) => [
+					{ value: 'none', label: m.db_users_filter_no_crew() },
+					...((crews as AdminUserCrew[] | undefined) ?? []).map((c) => ({
+						value: c.id,
+						label: c.name
+					}))
+				],
+				facet: true
+			}
 		},
 		{
 			key: 'favorites_count',
 			kind: 'number',
 			label: m.db_users_field_favorites_count,
 			int: true,
-			write: false
+			write: false,
+			list: COUNT_COLUMN
 		},
 		{
 			key: 'favorited_count',
 			kind: 'number',
 			label: m.db_users_field_favorited_count,
 			int: true,
-			write: false
+			write: false,
+			list: COUNT_COLUMN
 		},
-		...COLLECTION_KINDS.map(([kind, label]): Field<AdminUserRow, UserRecord> => ({
-			key: `collection_${kind}`,
+		...COLLECTION_KINDS.map(([key, kind, label]): Field<AdminUserRow, UserRecord> => ({
+			key,
 			kind: 'number',
 			label,
 			int: true,
 			read: (u) => u.collection[kind],
-			write: false
+			write: false,
+			list: COUNT_COLUMN
 		})),
 		{
 			key: 'deletion_scheduled_at',
@@ -187,10 +224,16 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 			'deletion_scheduled_at',
 			'granblue_id',
 			'youtube',
-			'wiki_profile'
+			'wiki_profile',
+			'party_count',
+			'playlist_count',
+			'favorites_count',
+			'favorited_count',
+			...COLLECTION_KINDS.map(([key]) => key)
 		],
 		filters: [
 			'role',
+			'crew',
 			{
 				id: 'status',
 				label: m.db_users_filter_status,
@@ -226,20 +269,19 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 				]
 			},
 			{
+				id: 'team',
+				title: m.db_users_section_team,
+				fields: ['party_count', 'playlist_count', 'crew', 'favorites_count', 'favorited_count']
+			},
+			{
+				id: 'collection',
+				title: m.db_users_section_collection,
+				fields: COLLECTION_KINDS.map(([key]) => key)
+			},
+			{
 				id: 'linked',
 				title: m.db_users_filter_linked,
 				fields: ['granblue_id', 'youtube', 'wiki_profile']
-			},
-			{
-				id: 'details',
-				title: m.db_users_section_details,
-				fields: [
-					'party_count',
-					'crew',
-					'favorites_count',
-					'favorited_count',
-					...COLLECTION_KINDS.map(([kind]) => `collection_${kind}`)
-				]
 			},
 			{
 				id: 'role',

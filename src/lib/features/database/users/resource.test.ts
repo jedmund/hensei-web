@@ -18,6 +18,7 @@ const user = asUserRecord({
 	lastSeenAt: null,
 	deletionScheduledAt: null,
 	partyCount: 3,
+	playlistCount: 1,
 	crew: null,
 	favoritesCount: 0,
 	favoritedCount: 0,
@@ -43,10 +44,19 @@ describe('usersResource', () => {
 			'deletion_scheduled_at',
 			'granblue_id',
 			'youtube',
-			'wiki_profile'
+			'wiki_profile',
+			'party_count',
+			'playlist_count',
+			'favorites_count',
+			'favorited_count',
+			'collection_characters',
+			'collection_weapons',
+			'collection_summons',
+			'collection_artifacts',
+			'collection_job_accessories'
 		])
 		expect(def.list.defaultSort).toEqual([{ id: 'created_at', desc: true }])
-		expect(facetKeys(filtersFor(def))).toEqual(['role'])
+		expect(facetKeys(filtersFor(def))).toEqual(['role', 'crew'])
 	})
 
 	it('titles the record with the display name, else the username', () => {
@@ -60,8 +70,9 @@ describe('usersResource', () => {
 		expect(profile.rows.map((r) => r.field.key)).not.toContain('deletion_scheduled_at')
 		expect(blocks.map((b) => b.section.id)).toEqual([
 			'profile',
+			'team',
+			'collection',
 			'linked',
-			'details',
 			'role',
 			'history'
 		])

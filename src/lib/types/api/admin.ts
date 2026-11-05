@@ -433,10 +433,25 @@ export interface AdminUserRow {
 	/** Last signed-in request, to within a few minutes; null if not seen since it was added */
 	lastSeenAt: string | null
 	deletionScheduledAt: string | null
-	// Linked accounts: not in the default list, requested via `fields`
+	// Linked accounts and counts: not in the default list, requested via `fields`
 	granblueId?: number | null
 	youtube?: string | null
 	wikiProfile?: string | null
+	partyCount?: number
+	playlistCount?: number
+	favoritesCount?: number
+	favoritedCount?: number
+	collectionCharacters?: number
+	collectionWeapons?: number
+	collectionSummons?: number
+	collectionArtifacts?: number
+	collectionJobAccessories?: number
+}
+
+/** A crew, for the Users list's Crew filter (`GET /admin/users/crews`) */
+export interface AdminUserCrew {
+	id: string
+	name: string
 }
 
 /** One logged change to a user's access, newest first */
@@ -456,6 +471,7 @@ export interface AdminUserDetail extends AdminUserRow {
 	emailVerified: boolean
 	avatar: { picture: string; element: string }
 	partyCount: number
+	playlistCount: number
 	crew: { id: string; name: string; role: 'member' | 'vice_captain' | 'captain' } | null
 	/** Teams this user favorited, and favorites their own teams received */
 	favoritesCount: number

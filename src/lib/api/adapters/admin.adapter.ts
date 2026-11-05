@@ -14,6 +14,7 @@ import type {
 	AdminListParams,
 	AdminListResponse,
 	AdminResource,
+	AdminUserCrew,
 	AdminUserDetail
 } from '$lib/types/api/admin'
 
@@ -80,6 +81,11 @@ export class AdminAdapter extends BaseAdapter {
 	/** A user's profile, role and access history (admins only) */
 	getUser(id: string, options?: RequestOptions): Promise<AdminUserDetail> {
 		return this.request<AdminUserDetail>(`/admin/users/${encodeURIComponent(id)}`, options)
+	}
+
+	/** Every crew, for the Users list's Crew filter (admins only) */
+	listUserCrews(options?: RequestOptions): Promise<AdminUserCrew[]> {
+		return this.request<AdminUserCrew[]>('/admin/users/crews', options)
 	}
 
 	/** Sets a user's role (user, curator or editor); resolves with the updated user */
