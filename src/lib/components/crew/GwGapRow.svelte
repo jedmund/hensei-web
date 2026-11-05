@@ -1,5 +1,6 @@
 <script lang="ts">
 	import ElementBadge from '$lib/components/ui/ElementBadge.svelte'
+	import { gwTeamElement } from '$lib/utils/gw'
 	import type { EventScoreSummary } from '$lib/types/api/gw'
 
 	interface Props {
@@ -17,7 +18,7 @@
 	<button class="gap-button" {onclick}>
 		<div class="gap-info">
 			<span class="event-number">GW #{eventScore.gwEvent.eventNumber}</span>
-			<ElementBadge element={eventScore.gwEvent.element} />
+			<ElementBadge element={gwTeamElement(eventScore.gwEvent)} />
 		</div>
 		<span class="gap-indicator">{label}</span>
 	</button>
