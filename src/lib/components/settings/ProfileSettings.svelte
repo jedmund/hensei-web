@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { granblueIdValid, youtubeValid } from './settings-form.utils'
 	import * as m from '$lib/paraglide/messages'
 	import Select from '../ui/Select.svelte'
 	import Input from '../ui/Input.svelte'
@@ -156,6 +157,8 @@
 				<Input
 					bind:value={localGranblueId}
 					placeholder={m.settings_granblue_id_placeholder()}
+					inputmode="numeric"
+					error={granblueIdValid(localGranblueId) ? undefined : m.settings_granblue_id_invalid()}
 					contained
 				/>
 			{/snippet}
@@ -173,7 +176,12 @@
 
 		<SettingsRow title={m.settings_youtube()} subtitle={m.settings_youtube_subtitle()}>
 			{#snippet control()}
-				<Input bind:value={localYoutube} placeholder={m.settings_youtube_placeholder()} contained />
+				<Input
+					bind:value={localYoutube}
+					placeholder={m.settings_youtube_placeholder()}
+					error={youtubeValid(localYoutube) ? undefined : m.settings_youtube_invalid()}
+					contained
+				/>
 			{/snippet}
 		</SettingsRow>
 	</div>

@@ -31,7 +31,9 @@ import {
 	patchPasswordPromptDismissed,
 	saveEffects,
 	type SettingsFormValues,
-	type SettingsSaveValues
+	type SettingsSaveValues,
+	granblueIdValid,
+	youtubeValid
 } from './settings-form.utils'
 
 export interface UserSettingsOptions {
@@ -91,6 +93,10 @@ export class UserSettingsState implements SettingsFormValues {
 
 	saving = $state(false)
 	usernameValid = $state(true)
+	/** Granblue ID and YouTube are blank or in a form the API accepts */
+	readonly linkedAccountsValid = $derived(
+		granblueIdValid(this.granblueId) && youtubeValid(this.youtube)
+	)
 	usernameConfirmOpen = $state(false)
 	error = $state<string | null>(null)
 
@@ -198,8 +204,15 @@ export class UserSettingsState implements SettingsFormValues {
 				body: JSON.stringify({ ...updatedUser, username: response.username })
 			})
 
-			// Read the form again: the rest of the save uses its current values
-			const values = this.#saveValues()
+			// Read the form again: the rest of the save uses its current values,
+			// with the linked accounts as the API stored them (e.g. a pasted
+			// YouTube URL becomes its @handle)
+			const values = {
+				...this.#saveValues(),
+				granblueId: response.granblueId ? String(response.granblueId) : '',
+				wikiProfile: response.wikiProfile ?? '',
+				youtube: response.youtube ?? ''
+			}
 
 			// Update the cache so reopening the modal shows the saved values
 			this.#queryClient.setQueryData(SETTINGS_USER_QUERY_KEY, (oldData) =>

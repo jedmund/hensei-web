@@ -165,8 +165,36 @@ export function buildWikiProfileUrl(wikiProfile: string | undefined | null): str
 	return `https://gbf.wiki/User:${encodeURIComponent(wikiProfile)}`
 }
 
-/** A YouTube channel, from its handle (with or without the @) */
-export function buildYoutubeChannelUrl(handle: string | undefined | null): string | null {
-	if (!handle) return null
-	return `https://www.youtube.com/@${handle.replace(/^@/, '')}`
+const YOUTUBE_HANDLE = '[A-Za-z0-9._-]{1,100}'
+const YOUTUBE_CHANNEL_ID = 'UC[A-Za-z0-9_-]{22}'
+const YOUTUBE_URL_PREFIX = /^(?:https?:\/\/)?(?:(?:www|m)\.)?youtube\.com\//i
+
+/**
+ * A YouTube channel as the API stores it: "@handle", or "channel/UC…" for a
+ * channel linked by its ID. Takes a handle with or without the @, or the
+ * channel's URL. Mirrors YoutubeChannel in hensei-api. Returns null for a
+ * blank value and false for one that isn't a channel.
+ */
+export function youtubeChannel(typed: string | undefined | null): string | null | false {
+	const value = (typed ?? '').trim()
+	if (!value) return null
+	if (YOUTUBE_URL_PREFIX.test(value)) {
+		const path = value.replace(YOUTUBE_URL_PREFIX, '').split(/[?#]/)[0] ?? ''
+		const handle = path.match(new RegExp(`^@(${YOUTUBE_HANDLE})(?:/|$)`))
+		if (handle) return `@${handle[1]}`
+		const channel = path.match(new RegExp(`^channel/(${YOUTUBE_CHANNEL_ID})(?:/|$)`))
+		if (channel) return `channel/${channel[1]}`
+		return false
+	}
+	// Already stored by its channel ID
+	if (new RegExp(`^channel/${YOUTUBE_CHANNEL_ID}$`).test(value)) return value
+	const handle = value.replace(/^@/, '')
+	return new RegExp(`^${YOUTUBE_HANDLE}$`).test(handle) ? `@${handle}` : false
+}
+
+/** A YouTube channel's page, from its stored value (or anything youtubeChannel reads) */
+export function buildYoutubeChannelUrl(value: string | undefined | null): string | null {
+	const channel = youtubeChannel(value)
+	// "@handle" and "channel/UC…" are both paths on youtube.com
+	return channel ? `https://www.youtube.com/${channel}` : null
 }

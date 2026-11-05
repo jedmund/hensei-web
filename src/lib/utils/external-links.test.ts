@@ -3,6 +3,7 @@ import {
 	buildGranblueProfileUrl,
 	buildWikiProfileUrl,
 	buildYoutubeChannelUrl,
+	youtubeChannel,
 	buildKamigameUrl,
 	buildWikiJaUrl
 } from './external-links'
@@ -84,6 +85,18 @@ describe('profile links', () => {
 		expect(buildWikiProfileUrl('Some User')).toBe('https://gbf.wiki/User:Some%20User')
 		expect(buildYoutubeChannelUrl('@matcha_soba')).toBe('https://www.youtube.com/@matcha_soba')
 		expect(buildYoutubeChannelUrl('dy_dk')).toBe('https://www.youtube.com/@dy_dk')
+		expect(buildYoutubeChannelUrl('channel/UCjH35rEofoTkw81IrDukb5w')).toBe(
+			'https://www.youtube.com/channel/UCjH35rEofoTkw81IrDukb5w'
+		)
+	})
+
+	it('reads a pasted channel URL instead of nesting it', () => {
+		expect(buildYoutubeChannelUrl('https://www.youtube.com/@profile')).toBe(
+			'https://www.youtube.com/@profile'
+		)
+		expect(youtubeChannel('https://m.youtube.com/@some.one/videos?si=x')).toBe('@some.one')
+		expect(youtubeChannel('https://www.youtube.com/watch?v=abc')).toBe(false)
+		expect(youtubeChannel('  ')).toBeNull()
 	})
 
 	it('gives null for an empty account', () => {
