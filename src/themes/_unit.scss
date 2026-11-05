@@ -62,24 +62,30 @@
 			display: none;
 		}
 
-		&:hover {
-			.#{$name}-icon.filled {
-				display: none;
-			}
+		// Hovering previews the other state. Only with a real pointer: after
+		// a tap, a stuck hover would show the state the tap just left.
+		@media (hover: hover) {
+			&:hover {
+				.#{$name}-icon.filled {
+					display: none;
+				}
 
-			.#{$name}-icon.empty {
-				display: block;
+				.#{$name}-icon.empty {
+					display: block;
+				}
 			}
 		}
 	}
 
-	.#{$name}:not(.active):hover {
-		.#{$name}-icon.filled {
-			display: block;
-		}
+	@media (hover: hover) {
+		.#{$name}:not(.active):hover {
+			.#{$name}-icon.filled {
+				display: block;
+			}
 
-		.#{$name}-icon.empty {
-			display: none;
+			.#{$name}-icon.empty {
+				display: none;
+			}
 		}
 	}
 }
