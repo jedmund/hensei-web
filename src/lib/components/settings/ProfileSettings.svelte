@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { wikiFieldValue, youtubeFieldValue } from '$lib/utils/external-links'
+	import { granblueIdValid, wikiProfileValid, youtubeValid } from './settings-form.utils'
 	import * as m from '$lib/paraglide/messages'
 	import Select from '../ui/Select.svelte'
 	import Input from '../ui/Input.svelte'
@@ -87,10 +89,16 @@
 		if (localGranblueId !== granblueId) onGranblueIdChange(localGranblueId)
 	})
 	$effect(() => {
-		if (localWikiProfile !== wikiProfile) onWikiProfileChange(localWikiProfile)
+		// A pasted user page URL shows as just the username
+		const cleaned = wikiFieldValue(localWikiProfile)
+		if (cleaned !== localWikiProfile) localWikiProfile = cleaned
+		else if (localWikiProfile !== wikiProfile) onWikiProfileChange(localWikiProfile)
 	})
 	$effect(() => {
-		if (localYoutube !== youtube) onYoutubeChange(localYoutube)
+		// A pasted or typed channel URL shows as just its handle
+		const cleaned = youtubeFieldValue(localYoutube)
+		if (cleaned !== localYoutube) localYoutube = cleaned
+		else if (localYoutube !== youtube) onYoutubeChange(localYoutube)
 	})
 	$effect(() => {
 		if (localGender !== gender) onGenderChange(localGender)
@@ -151,17 +159,26 @@
 		<!-- Elsewhere -->
 		<h3 class="section-header">{m.settings_section_elsewhere()}</h3>
 
-		<SettingsRow title={m.settings_granblue_id()} subtitle={m.settings_granblue_id_subtitle()}>
+		<SettingsRow
+			title={m.settings_granblue_id()}
+			subtitle={m.settings_granblue_id_subtitle()}
+			error={granblueIdValid(localGranblueId) ? undefined : m.settings_granblue_id_invalid()}
+		>
 			{#snippet control()}
 				<Input
 					bind:value={localGranblueId}
 					placeholder={m.settings_granblue_id_placeholder()}
+					inputmode="numeric"
 					contained
 				/>
 			{/snippet}
 		</SettingsRow>
 
-		<SettingsRow title={m.settings_wiki_profile()} subtitle={m.settings_wiki_profile_subtitle()}>
+		<SettingsRow
+			title={m.settings_wiki_profile()}
+			subtitle={m.settings_wiki_profile_subtitle()}
+			error={wikiProfileValid(localWikiProfile) ? undefined : m.settings_wiki_profile_invalid()}
+		>
 			{#snippet control()}
 				<Input
 					bind:value={localWikiProfile}
@@ -171,7 +188,11 @@
 			{/snippet}
 		</SettingsRow>
 
-		<SettingsRow title={m.settings_youtube()} subtitle={m.settings_youtube_subtitle()}>
+		<SettingsRow
+			title={m.settings_youtube()}
+			subtitle={m.settings_youtube_subtitle()}
+			error={youtubeValid(localYoutube) ? undefined : m.settings_youtube_invalid()}
+		>
 			{#snippet control()}
 				<Input bind:value={localYoutube} placeholder={m.settings_youtube_placeholder()} contained />
 			{/snippet}

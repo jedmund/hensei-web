@@ -150,3 +150,100 @@ function encodeURIPath(path: string): string {
 		.map((segment) => encodeURIComponent(segment))
 		.join('/')
 }
+
+/** A player's in-game profile, from their Granblue ID */
+export function buildGranblueProfileUrl(
+	granblueId: string | number | undefined | null
+): string | null {
+	if (granblueId === undefined || granblueId === null || granblueId === '') return null
+	return `https://game.granbluefantasy.jp/#profile/${granblueId}`
+}
+
+/** A gbf.wiki user page, from the wiki username */
+const WIKI_USERNAME = /^[^#<>[\]|{}/:@\n]{1,85}$/
+const WIKI_URL_PREFIX = /^(?:https?:\/\/)?(?:www\.)?gbf\.wiki\//i
+
+/**
+ * A gbf.wiki username as the API stores it: the name only. Takes the name,
+ * "User:Name", or the user page's URL (including index.php?title=). Mirrors
+ * WikiProfile in hensei-api. Returns null for a blank value and false for
+ * one that isn't a username (another page, or characters MediaWiki forbids).
+ */
+export function wikiProfileName(typed: string | undefined | null): string | null | false {
+	const value = (typed ?? '').trim()
+	if (!value) return null
+	let name = value
+	if (WIKI_URL_PREFIX.test(value)) {
+		const rest = value.replace(WIKI_URL_PREFIX, '')
+		const title = rest.startsWith('index.php')
+			? new URLSearchParams(rest.split('?')[1] ?? '').get('title')
+			: safeDecode(rest.split(/[?#]/)[0] ?? '')
+		if (!title || !/^User:/i.test(title)) return false
+		name = title.replace(/\/$/, '')
+	}
+	name = name.replace(/^User:/i, '').trim()
+	return WIKI_USERNAME.test(name) ? name : false
+}
+
+function safeDecode(value: string): string {
+	try {
+		return decodeURIComponent(value)
+	} catch {
+		return value
+	}
+}
+
+/** What the wiki field shows while typing: a pasted user page URL becomes its username */
+export function wikiFieldValue(typed: string): string {
+	if (!WIKI_URL_PREFIX.test(typed.trim()) && !/^User:/i.test(typed.trim())) return typed
+	return wikiProfileName(typed) || typed
+}
+
+/** A gbf.wiki user page, from the stored username (or anything wikiProfileName reads) */
+export function buildWikiProfileUrl(wikiProfile: string | undefined | null): string | null {
+	const name = wikiProfileName(wikiProfile)
+	return name ? `https://gbf.wiki/User:${encodeURIComponent(name)}` : null
+}
+
+const YOUTUBE_HANDLE = '[A-Za-z0-9._-]{1,100}'
+const YOUTUBE_CHANNEL_ID = 'UC[A-Za-z0-9_-]{22}'
+const YOUTUBE_URL_PREFIX = /^(?:https?:\/\/)?(?:(?:www|m)\.)?youtube\.com\//i
+
+/**
+ * A YouTube channel as the API stores it: "@handle", or "channel/UC…" for a
+ * channel linked by its ID. Takes a handle with or without the @, or the
+ * channel's URL. Mirrors YoutubeChannel in hensei-api. Returns null for a
+ * blank value and false for one that isn't a channel.
+ */
+export function youtubeChannel(typed: string | undefined | null): string | null | false {
+	const value = (typed ?? '').trim()
+	if (!value) return null
+	if (YOUTUBE_URL_PREFIX.test(value)) {
+		const path = value.replace(YOUTUBE_URL_PREFIX, '').split(/[?#]/)[0] ?? ''
+		const handle = path.match(new RegExp(`^@(${YOUTUBE_HANDLE})(?:/|$)`))
+		if (handle) return `@${handle[1]}`
+		const channel = path.match(new RegExp(`^channel/(${YOUTUBE_CHANNEL_ID})(?:/|$)`))
+		if (channel) return `channel/${channel[1]}`
+		return false
+	}
+	// Already stored by its channel ID
+	if (new RegExp(`^channel/${YOUTUBE_CHANNEL_ID}$`).test(value)) return value
+	const handle = value.replace(/^@/, '')
+	return new RegExp(`^${YOUTUBE_HANDLE}$`).test(handle) ? `@${handle}` : false
+}
+
+/**
+ * What the YouTube field shows while typing: a pasted or typed channel URL
+ * becomes its handle; anything else is left as typed
+ */
+export function youtubeFieldValue(typed: string): string {
+	if (!YOUTUBE_URL_PREFIX.test(typed.trim())) return typed
+	return youtubeChannel(typed) || typed
+}
+
+/** A YouTube channel's page, from its stored value (or anything youtubeChannel reads) */
+export function buildYoutubeChannelUrl(value: string | undefined | null): string | null {
+	const channel = youtubeChannel(value)
+	// "@handle" and "channel/UC…" are both paths on youtube.com
+	return channel ? `https://www.youtube.com/${channel}` : null
+}

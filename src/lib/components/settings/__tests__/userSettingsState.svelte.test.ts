@@ -163,7 +163,11 @@ beforeEach(() => {
 			theme: params.theme,
 			role: 1,
 			simplePortraits: params.simplePortraits,
-			defaultRepView: params.defaultRepView
+			defaultRepView: params.defaultRepView,
+			// The API stores a YouTube handle with its @
+			granblueId: params.granblueId || undefined,
+			wikiProfile: params.wikiProfile || undefined,
+			youtube: params.youtube ? `@${String(params.youtube).replace(/^@/, '')}` : undefined
 		}
 	})
 	mocks.fetch.mockImplementation(async () => {
@@ -295,9 +299,10 @@ describe('UserSettingsState', () => {
 				gender: 0,
 				language: 'en',
 				theme: 'system',
-				granblueId: undefined,
-				wikiProfile: undefined,
-				youtube: undefined,
+				// Sent empty so a cleared account is cleared
+				granblueId: '',
+				wikiProfile: '',
+				youtube: '',
 				showCrewGamertag: false,
 				collectionPrivacy: 1,
 				importWeapons: true,
@@ -331,7 +336,7 @@ describe('UserSettingsState', () => {
 			expect(state.error).toBeNull()
 		})
 
-		it('patches the cached user with the saved values', async () => {
+		it('patches the cached user with the saved values, as the API stored them', async () => {
 			const { state } = createLoaded()
 			state.youtube = 'tube'
 			await state.save()
@@ -339,8 +344,20 @@ describe('UserSettingsState', () => {
 			expect(key).toEqual(['currentUser', 'settings'])
 			expect(updater({ avatar: { picture: 'old' } })).toMatchObject({
 				avatar: { picture: 'pic', element: 'fire' },
-				youtube: 'tube'
+				youtube: '@tube'
 			})
+		})
+
+		it('tells the form when a linked account is not valid', () => {
+			const { state } = createLoaded()
+			expect(state.linkedAccountsValid).toBe(true)
+			state.granblueId = '0'
+			expect(state.linkedAccountsValid).toBe(false)
+			state.granblueId = '12345678'
+			state.youtube = 'https://www.youtube.com/watch?v=abc'
+			expect(state.linkedAccountsValid).toBe(false)
+			state.youtube = 'https://www.youtube.com/@someone'
+			expect(state.linkedAccountsValid).toBe(true)
 		})
 
 		it('applies a changed theme', async () => {

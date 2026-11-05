@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest'
-import { buildKamigameUrl, buildWikiJaUrl } from './external-links'
+import {
+	buildGranblueProfileUrl,
+	buildWikiProfileUrl,
+	buildYoutubeChannelUrl,
+	youtubeChannel,
+	youtubeFieldValue,
+	wikiFieldValue,
+	wikiProfileName,
+	buildKamigameUrl,
+	buildWikiJaUrl
+} from './external-links'
 
 const base = 'https://gbf-wiki.com/?'
 const enc = (s: string) => encodeURIComponent(s).replace(/%20/g, '+')
@@ -67,5 +77,57 @@ describe('buildKamigameUrl for events', () => {
 	it('builds nothing from a blank path', () => {
 		expect(buildKamigameUrl('', 'event')).toBeNull()
 		expect(buildKamigameUrl(null, 'event')).toBeNull()
+	})
+})
+
+describe('profile links', () => {
+	it('builds the in-game profile, wiki user page and YouTube channel', () => {
+		expect(buildGranblueProfileUrl(12345678)).toBe(
+			'https://game.granbluefantasy.jp/#profile/12345678'
+		)
+		expect(buildWikiProfileUrl('Some User')).toBe('https://gbf.wiki/User:Some%20User')
+		expect(buildYoutubeChannelUrl('@matcha_soba')).toBe('https://www.youtube.com/@matcha_soba')
+		expect(buildYoutubeChannelUrl('dy_dk')).toBe('https://www.youtube.com/@dy_dk')
+		expect(buildYoutubeChannelUrl('channel/UCjH35rEofoTkw81IrDukb5w')).toBe(
+			'https://www.youtube.com/channel/UCjH35rEofoTkw81IrDukb5w'
+		)
+	})
+
+	it('reads a pasted wiki user page as the username', () => {
+		expect(wikiProfileName('https://gbf.wiki/User:ItsJustSly')).toBe('ItsJustSly')
+		expect(wikiProfileName('User:Fangzsx')).toBe('Fangzsx')
+		expect(wikiProfileName('gbf.wiki/User:Some%20One')).toBe('Some One')
+		expect(wikiProfileName('https://gbf.wiki/index.php?title=User:Eden&action=edit')).toBe('Eden')
+		expect(wikiProfileName('https://gbf.wiki/Siero')).toBe(false)
+		expect(wikiProfileName('https://gbf.wiki/User:Eden/Teams')).toBe(false)
+		expect(wikiProfileName(' ')).toBeNull()
+		expect(buildWikiProfileUrl('https://gbf.wiki/User:Eden')).toBe('https://gbf.wiki/User:Eden')
+		expect(wikiFieldValue('https://gbf.wiki/User:Eden')).toBe('Eden')
+		expect(wikiFieldValue('DY_DK')).toBe('DY_DK')
+	})
+
+	it('shows a pasted channel URL in the field as its handle', () => {
+		expect(youtubeFieldValue('https://www.youtube.com/@profile')).toBe('@profile')
+		expect(youtubeFieldValue('dy_dk')).toBe('dy_dk')
+		expect(youtubeFieldValue('https://www.youtube.com/watch?v=abc')).toBe(
+			'https://www.youtube.com/watch?v=abc'
+		)
+	})
+
+	it('reads a pasted channel URL instead of nesting it', () => {
+		expect(buildYoutubeChannelUrl('https://www.youtube.com/@profile')).toBe(
+			'https://www.youtube.com/@profile'
+		)
+		expect(youtubeChannel('https://m.youtube.com/@some.one/videos?si=x')).toBe('@some.one')
+		expect(youtubeChannel('https://www.youtube.com/watch?v=abc')).toBe(false)
+		expect(youtubeChannel('  ')).toBeNull()
+	})
+
+	it('gives null for an empty account', () => {
+		expect([
+			buildGranblueProfileUrl(null),
+			buildWikiProfileUrl(''),
+			buildYoutubeChannelUrl(undefined)
+		]).toEqual([null, null, null])
 	})
 })

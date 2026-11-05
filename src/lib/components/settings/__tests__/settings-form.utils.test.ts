@@ -3,6 +3,8 @@ import type { UserSettings } from '$lib/api/adapters/user.adapter'
 import type { UserResponse } from '$lib/api/resources/users'
 import {
 	buildUpdateParams,
+	granblueIdValid,
+	youtubeValid,
 	buildUserCookie,
 	formValuesFromUser,
 	needsUsernameConfirm,
@@ -171,7 +173,7 @@ describe('buildUpdateParams', () => {
 		})
 	})
 
-	it('omits empty optional text fields but keeps an empty picture', () => {
+	it('omits empty optional text fields but sends empty linked accounts and picture', () => {
 		const params = buildUpdateParams(
 			saveValues({
 				displayName: '',
@@ -184,10 +186,25 @@ describe('buildUpdateParams', () => {
 		)
 		expect(params.displayName).toBeUndefined()
 		expect(params.description).toBeUndefined()
-		expect(params.granblueId).toBeUndefined()
-		expect(params.wikiProfile).toBeUndefined()
-		expect(params.youtube).toBeUndefined()
+		// Sent empty so a cleared account is cleared
+		expect(params.granblueId).toBe('')
+		expect(params.wikiProfile).toBe('')
+		expect(params.youtube).toBe('')
 		expect(params.picture).toBe('')
+	})
+})
+
+describe('linked account checks', () => {
+	it('takes a Granblue ID of three digits or more, or none', () => {
+		expect(['', ' ', '100', '12345678'].every(granblueIdValid)).toBe(true)
+		expect(['0', '7', '99', '007', '12a', '-123'].some(granblueIdValid)).toBe(false)
+	})
+
+	it('takes a YouTube handle or channel URL, or none', () => {
+		expect(
+			['', 'dy_dk', '@matcha_soba', 'https://www.youtube.com/@SlyIIBoT'].every(youtubeValid)
+		).toBe(true)
+		expect(['https://youtube.com/watch?v=abc', 'two words'].some(youtubeValid)).toBe(false)
 	})
 })
 

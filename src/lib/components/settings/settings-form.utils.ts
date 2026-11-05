@@ -4,6 +4,7 @@
  * and deciding which side effects a save needs.
  */
 
+import { wikiProfileName, youtubeChannel } from '$lib/utils/external-links'
 import type { UserSettings } from '$lib/api/adapters/user.adapter'
 import type { UserResponse, UserUpdateParams } from '$lib/api/resources/users'
 import type { UserCookie } from '$lib/types/UserCookie'
@@ -95,7 +96,26 @@ export function originalsFromUser(data: UserSettings): SettingsOriginals {
 	}
 }
 
-/** Build the `users.update` params. Empty optional text fields are omitted. */
+/** A Granblue ID the API accepts: blank (none), or a number of three digits or more */
+export function granblueIdValid(value: string): boolean {
+	const id = value.trim()
+	return id === '' || (/^\d+$/.test(id) && Number(id) >= 100)
+}
+
+/** A wiki value the API accepts: blank, a gbf.wiki username, or the user page's URL */
+export function wikiProfileValid(value: string): boolean {
+	return wikiProfileName(value) !== false
+}
+
+/** A YouTube value the API accepts: blank, a channel handle, or the channel's URL */
+export function youtubeValid(value: string): boolean {
+	return youtubeChannel(value) !== false
+}
+
+/**
+ * Build the `users.update` params. Empty optional text fields are omitted,
+ * except the linked accounts, which are sent empty so they can be cleared.
+ */
 export function buildUpdateParams(values: SettingsSaveValues): UserUpdateParams {
 	return {
 		username: values.username,
@@ -106,9 +126,9 @@ export function buildUpdateParams(values: SettingsSaveValues): UserUpdateParams 
 		gender: values.gender,
 		language: values.language,
 		theme: values.theme,
-		granblueId: values.granblueId || undefined,
-		wikiProfile: values.wikiProfile || undefined,
-		youtube: values.youtube || undefined,
+		granblueId: values.granblueId.trim(),
+		wikiProfile: values.wikiProfile.trim(),
+		youtube: values.youtube.trim(),
 		showCrewGamertag: values.showCrewGamertag,
 		collectionPrivacy: values.collectionPrivacy,
 		importWeapons: values.importWeapons,

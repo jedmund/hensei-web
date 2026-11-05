@@ -219,7 +219,7 @@
 		primaryAction={{
 			label: form.saving ? m.settings_saving() : m.settings_save(),
 			onclick: form.requestSave,
-			disabled: form.saving || form.isLoading || !form.usernameValid
+			disabled: form.saving || form.isLoading || !form.usernameValid || !form.linkedAccountsValid
 		}}
 		showShadow={!isScrolledToBottom}
 	/>
