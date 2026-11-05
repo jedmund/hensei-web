@@ -31,7 +31,9 @@
 		value: string
 		readonly?: boolean
 		placeholder?: string
-		primaryAction: { label: string; onclick: () => void; disabled?: boolean }
+		primaryAction: { label: string; onclick: () => void; disabled?: boolean; pop?: boolean }
+		/** Colors the primary button with this element */
+		primaryElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 		/** Shown under the markup, e.g. what an import found */
 		review?: Snippet
 		/** Locks the markup and Cancel while a request is in flight */
@@ -50,6 +52,7 @@
 		readonly = false,
 		placeholder,
 		primaryAction,
+		primaryElement,
 		review,
 		busy = false
 	}: Props = $props()
@@ -103,7 +106,12 @@
 			{@render review?.()}
 		</div>
 	</ModalBody>
-	<ModalFooter onCancel={() => (open = false)} cancelDisabled={busy} {primaryAction} />
+	<ModalFooter
+		onCancel={() => (open = false)}
+		cancelDisabled={busy}
+		{primaryAction}
+		userElement={primaryElement}
+	/>
 </Dialog>
 
 <style lang="scss">

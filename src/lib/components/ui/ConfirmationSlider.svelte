@@ -8,8 +8,16 @@
 	import Icon from '$lib/components/Icon.svelte'
 
 	interface Props {
-		/** Shown in the rail, e.g. "I understand" */
+		/** Shown in the rail at rest, e.g. "I understand"; also its accessible name */
 		label: string
+		/**
+		 * Encouragement as the handle moves: the first ones are spread evenly
+		 * over the slide, and the last one shows once confirmed. Without these
+		 * the rail always shows `label`.
+		 */
+		progressLabels?: string[]
+		/** Shown for a few seconds after onConfirm refuses, then back to `label` */
+		refusedLabel?: string
 		/** Set once the handle reaches the end; stays set */
 		confirmed?: boolean
 		/**
@@ -24,6 +32,8 @@
 
 	let {
 		label,
+		progressLabels = [],
+		refusedLabel,
 		confirmed = $bindable(false),
 		onConfirm,
 		disabled = false,
@@ -33,6 +43,8 @@
 	/** How far along the rail the handle must be let go to confirm */
 	const THRESHOLD = 0.9
 	const KEY_STEP = 0.25
+	/** How long `refusedLabel` shows, in ms */
+	const REFUSED_FOR = 3000
 
 	let dragging = $state(false)
 	let rail: HTMLDivElement | undefined = $state()
@@ -42,11 +54,46 @@
 	let travel = 1
 	const shown = $derived(confirmed ? 1 : progress)
 	const locked = $derived(disabled || confirmed)
+	let refused = $state(false)
+	let refusedTimer: ReturnType<typeof setTimeout> | undefined
+
+	// Shakes the rail on a refused confirm; restarted by toggling off a frame
+	let shaking = $state(false)
+
+	function shake() {
+		shaking = false
+		requestAnimationFrame(() => (shaking = true))
+	}
+
+	function showRefused() {
+		shake()
+		clearTimeout(refusedTimer)
+		refused = true
+		refusedTimer = setTimeout(() => (refused = false), REFUSED_FOR)
+	}
+
+	/** A new attempt ends the disappointment early */
+	function clearRefused() {
+		clearTimeout(refusedTimer)
+		refused = false
+	}
+
+	$effect(() => () => clearTimeout(refusedTimer))
+
+	const railLabel = $derived.by(() => {
+		const steps = progressLabels.slice(0, -1)
+		const done = progressLabels.at(-1)
+		if (confirmed) return done ?? label
+		if (shown === 0 && refused && refusedLabel) return refusedLabel
+		if (shown === 0 || steps.length === 0) return label
+		return steps[Math.min(Math.floor(shown * steps.length), steps.length - 1)] ?? label
+	})
 
 	function confirm() {
 		if (confirmed) return
 		if (onConfirm?.() === false) {
 			progress = 0
+			showRefused()
 			return
 		}
 		progress = 1
@@ -57,6 +104,7 @@
 		if (locked || e.button !== 0) return
 		const handle = e.currentTarget as HTMLElement
 		handle.setPointerCapture(e.pointerId)
+		clearRefused()
 		// The handle sits the same distance from the top as from either end
 		const inset = handle.offsetTop
 		travel = Math.max((rail?.clientWidth ?? 0) - handle.offsetWidth - inset * 2, 1)
@@ -83,6 +131,7 @@
 		switch (e.key) {
 			case 'ArrowRight':
 			case 'ArrowUp':
+				clearRefused()
 				progress = Math.min(progress + KEY_STEP, 1)
 				if (progress >= 1) confirm()
 				break
@@ -108,19 +157,24 @@
 <div
 	class="confirmation-slider"
 	class:dragging
+	class:shaking
+	onanimationend={(e) => {
+		if (e.animationName.includes('shake')) shaking = false
+	}}
 	class:confirmed
 	class:disabled
 	style:--progress={shown}
 	bind:this={rail}
 >
-	<span class="label" style:opacity={confirmed ? 1 : Math.max(1 - shown * 1.6, 0)}>
-		<span class="label-text">{label}</span>
+	<span class="label">
+		<span class="label-text">{railLabel}</span>
 	</span>
 	<div
 		class="handle"
 		role="slider"
 		tabindex={locked ? -1 : 0}
 		aria-label={label}
+		aria-valuetext={railLabel}
 		aria-valuemin={0}
 		aria-valuemax={100}
 		aria-valuenow={Math.round(shown * 100)}
@@ -152,6 +206,7 @@
 		background: color-mix(in srgb, currentColor 16%, transparent);
 		user-select: none;
 		-webkit-user-select: none;
+		container-type: inline-size;
 
 		&.disabled {
 			opacity: 0.5;
@@ -169,8 +224,17 @@
 		padding: 0 calc(#{$handle-width} + #{$inset * 2});
 		font-size: $font-regular;
 		font-weight: $bold;
+		line-height: 1.2;
+		text-align: center;
 		letter-spacing: 0.02em;
 		pointer-events: none;
+	}
+
+	// Long labels on narrow rails (phones) wrap to two smaller lines
+	@container (max-width: 400px) {
+		.label {
+			font-size: $font-small;
+		}
 	}
 
 	// A soft iridescent sheen sweeping left to right: where to slide
@@ -204,6 +268,33 @@
 		animation: none;
 		background-image: none;
 		-webkit-text-fill-color: currentColor;
+	}
+
+	.shaking {
+		animation: shake 0.4s ease-in-out;
+
+		@media (prefers-reduced-motion: reduce) {
+			animation: none;
+		}
+	}
+
+	@keyframes shake {
+		0%,
+		100% {
+			transform: translateX(0);
+		}
+		20% {
+			transform: translateX(-8px);
+		}
+		40% {
+			transform: translateX(7px);
+		}
+		60% {
+			transform: translateX(-5px);
+		}
+		80% {
+			transform: translateX(3px);
+		}
 	}
 
 	@keyframes sheen {

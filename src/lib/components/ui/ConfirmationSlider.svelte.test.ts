@@ -76,6 +76,56 @@ describe('ConfirmationSlider', () => {
 		expect(onConfirm).toHaveBeenCalledTimes(2)
 	})
 
+	it('steps through the progress labels as it moves', () => {
+		const { press } = setup({ progressLabels: ['Keep going', 'Almost there', 'Thanks!'] })
+		const text = () => document.querySelector('.label-text')?.textContent
+		expect(text()).toBe('I understand')
+		press('ArrowRight')
+		expect(text()).toBe('Keep going')
+		press('ArrowRight')
+		expect(text()).toBe('Almost there')
+		press('ArrowRight')
+		expect(text()).toBe('Almost there')
+		press('ArrowRight')
+		expect(text()).toBe('Thanks!')
+	})
+
+	it('goes back to the resting label when a confirm is refused', () => {
+		const { press } = setup({
+			onConfirm: () => false,
+			progressLabels: ['Keep going', 'Almost there', 'Thanks!']
+		})
+		press('ArrowRight')
+		press('Enter')
+		expect(document.querySelector('.label-text')?.textContent).toBe('I understand')
+	})
+
+	it('shows the refused label for 3 seconds after a refused confirm', () => {
+		vi.useFakeTimers()
+		try {
+			const { press } = setup({ onConfirm: () => false, refusedLabel: 'Aww' })
+			const text = () => document.querySelector('.label-text')?.textContent
+			press('Enter')
+			expect(text()).toBe('Aww')
+			vi.advanceTimersByTime(2900)
+			flushSync()
+			expect(text()).toBe('Aww')
+			vi.advanceTimersByTime(200)
+			flushSync()
+			expect(text()).toBe('I understand')
+		} finally {
+			vi.useRealTimers()
+		}
+	})
+
+	it('drops the refused label when the user tries again', () => {
+		const { press } = setup({ onConfirm: () => false, refusedLabel: 'Aww' })
+		press('Enter')
+		press('ArrowRight')
+		press('Home')
+		expect(document.querySelector('.label-text')?.textContent).toBe('I understand')
+	})
+
 	it('ignores keys when disabled', () => {
 		const { onConfirm, press } = setup({ disabled: true })
 		press('Enter')

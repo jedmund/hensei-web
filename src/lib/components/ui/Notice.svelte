@@ -169,8 +169,10 @@
 	// Phones: the badge goes above the text and the action below it, and the dismiss button stays at the end of the
 	// first row. A grid with margins rather than gaps, so a missing icon
 	// leaves no space.
+	// With a footer, the grid is the message row; the footer stays below it.
 	@media (max-width: 768px) {
-		.notice {
+		.notice:not(.with-footer),
+		.notice-message {
 			display: grid;
 			grid-template-columns: auto minmax(0, 1fr) auto;
 			column-gap: 0;

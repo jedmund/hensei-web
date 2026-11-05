@@ -63,6 +63,12 @@
 {#snippet exportSlider()}
 	<ConfirmationSlider
 		label={m.party_export_wiki_understand()}
+		progressLabels={[
+			m.party_export_wiki_understand_keep_going(),
+			m.party_export_wiki_understand_almost(),
+			m.party_export_wiki_understand_done()
+		]}
+		refusedLabel={m.party_export_wiki_understand_refused()}
 		confirmed={actions.wikiExportAccepted}
 		onConfirm={actions.acceptWikiExportGuidelines}
 		bind:progress={actions.wikiExportSlide}
@@ -81,8 +87,11 @@
 	primaryAction={{
 		label: m.code_copy(),
 		onclick: actions.copyWikiExport,
-		disabled: !actions.wikiExportAccepted
+		disabled: !actions.wikiExportAccepted,
+		// Pops once the slide goes through
+		pop: actions.wikiExportAsks && actions.wikiExportAccepted
 	}}
+	primaryElement={actions.wikiExportAccepted ? (actions.wikiExportElement ?? 'wind') : undefined}
 />
 
 <WikiTextDialog

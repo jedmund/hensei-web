@@ -422,6 +422,10 @@ export function usePartyActions(opts: PartyActionsOptions) {
 		get wikiExportAsks() {
 			return wikiExportAsks
 		},
+		/** The team owner's element, for coloring Copy once it's unlocked */
+		get wikiExportElement() {
+			return opts.getUserElement()
+		},
 		get wikiExportSlide() {
 			return wikiExportSlide
 		},
