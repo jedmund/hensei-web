@@ -21,6 +21,23 @@ export function isEditor(role: Role): boolean {
 }
 
 /**
+ * Features locked behind a role. Gate UI with `canUseFeature('name', role)`
+ * instead of comparing role numbers, so a lock can move or lift in one place.
+ *
+ * - wikiExport: gbf.wiki TeamSpread export. Curators only while we agree
+ *   submission standards with the wiki.
+ */
+export const FEATURE_ROLES = {
+	wikiExport: CURATOR_ROLE
+} as const satisfies Record<string, number>
+
+export type LockedFeature = keyof typeof FEATURE_ROLES
+
+export function canUseFeature(feature: LockedFeature, role: Role): boolean {
+	return (role ?? 0) >= FEATURE_ROLES[feature]
+}
+
+/**
  * The role a Database route needs, from its SvelteKit route id. Curators get
  * the Database root (which sends them to Events); the generic resource routes
  * need `resourceRole`, the resource's own minimum (`resourceMinRole` in the
