@@ -187,7 +187,6 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 			toast.error(extractErrorMessage(err, m.toast_drag_failed()))
 		} finally {
 			loading = false
-			dragContext.clearQueue()
 		}
 	}
 

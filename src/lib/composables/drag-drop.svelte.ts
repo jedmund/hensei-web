@@ -40,8 +40,6 @@ export interface DragOperation {
 		itemId?: string | undefined
 		type?: GridItemType | undefined
 	}
-	status: 'pending' | 'synced' | 'failed'
-	retryCount: number
 }
 
 export interface PendingDragData {
@@ -66,7 +64,6 @@ export interface DragDropState {
 	hoveredOver: DropTarget | null
 	validDrop: boolean
 	dragPreview: HTMLElement | null
-	operationQueue: DragOperation[]
 	lastError: Error | null
 	touchState: TouchState
 }
@@ -92,7 +89,6 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		hoveredOver: null,
 		validDrop: false,
 		dragPreview: null,
-		operationQueue: [],
 		lastError: null,
 		touchState: {
 			touchStartPos: null,
@@ -300,13 +296,8 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 						position: state.hoveredOver.position,
 						itemId: targetItem?.id,
 						type: state.hoveredOver.type
-					},
-					status: 'pending',
-					retryCount: 0
+					}
 				}
-
-				state.operationQueue.push(operation)
-				if (import.meta.env.DEV) console.log('📝 Operation queued:', operation)
 
 				handlers.onLocalUpdate?.(operation)
 			}
@@ -422,14 +413,6 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		}
 	}
 
-	function getQueuedOperations() {
-		return state.operationQueue.filter((op) => op.status === 'pending')
-	}
-
-	function clearQueue() {
-		state.operationQueue = []
-	}
-
 	return {
 		get state() {
 			return state
@@ -442,9 +425,7 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		handlePointerDown,
 		handlePointerMove,
 		handlePointerUp,
-		updateDragPreviewPosition,
-		getQueuedOperations,
-		clearQueue
+		updateDragPreviewPosition
 	}
 }
 
