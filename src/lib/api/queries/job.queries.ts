@@ -8,8 +8,13 @@
  */
 
 import { queryOptions, infiniteQueryOptions } from '@tanstack/svelte-query'
-import { jobAdapter, type SearchJobSkillsParams } from '$lib/api/adapters/job.adapter'
-import type { JobSkill } from '$lib/types/api/entities'
+import {
+	jobAdapter,
+	type JobSearchFilters,
+	type SearchJobSkillsParams
+} from '$lib/api/adapters/job.adapter'
+import type { Job, JobSkill } from '$lib/types/api/entities'
+import { filterJobsStrictly } from '$lib/utils/jobUtils'
 
 /**
  * Standard page result format for job skill infinite queries
@@ -20,6 +25,18 @@ export interface JobSkillPageResult {
 	totalPages: number
 	total: number
 }
+
+/**
+ * Page result format for job search infinite queries
+ */
+export interface JobSearchPageResult {
+	results: Job[]
+	page: number
+	totalPages: number
+}
+
+/** Jobs per search page (the API's maximum) */
+const JOB_SEARCH_PER_PAGE = 50
 
 /**
  * Job query options factory
@@ -51,6 +68,42 @@ export const jobQueries = {
 			queryFn: () => jobAdapter.getAll(),
 			staleTime: 1000 * 60 * 30, // 30 minutes - jobs rarely change
 			gcTime: 1000 * 60 * 60 // 1 hour
+		}),
+
+	/**
+	 * Job search infinite query options
+	 *
+	 * Searches job names in the locale. The API matches a job's second
+	 * proficiency outside the row filter, so each page is filtered again here
+	 * to keep rows strict.
+	 *
+	 * @param query - Search text (the API ignores fewer than two characters)
+	 * @param filters - Optional row and proficiency filters
+	 * @param locale - Locale to search names in (default: 'en')
+	 * @returns Infinite query options for searching jobs
+	 */
+	search: (query: string, filters?: JobSearchFilters, locale: 'en' | 'ja' = 'en') =>
+		infiniteQueryOptions({
+			queryKey: ['search', 'jobs', query, filters, locale] as const,
+			queryFn: async ({ pageParam }): Promise<JobSearchPageResult> => {
+				const response = await jobAdapter.searchJobs({
+					query,
+					filters,
+					locale,
+					page: pageParam,
+					per: JOB_SEARCH_PER_PAGE
+				})
+				return {
+					results: filterJobsStrictly(response.results, filters ?? {}),
+					page: response.page,
+					totalPages: response.totalPages
+				}
+			},
+			initialPageParam: 1,
+			getNextPageParam: (lastPage) =>
+				lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
+			staleTime: 1000 * 60 * 5, // 5 minutes
+			gcTime: 1000 * 60 * 30 // 30 minutes
 		}),
 
 	/**
@@ -205,5 +258,7 @@ export const jobKeys = {
 	empSkills: (jobId: string) => [...jobKeys.all, jobId, 'emp_skills'] as const,
 	skillsSearch: (jobId: string, params?: Omit<SearchJobSkillsParams, 'jobId' | 'page'>) =>
 		[...jobKeys.skills(jobId), 'search', params] as const,
-	accessoriesForJob: (jobId: string) => [...jobKeys.all, jobId, 'accessories'] as const
+	accessoriesForJob: (jobId: string) => [...jobKeys.all, jobId, 'accessories'] as const,
+	search: (query: string, filters?: JobSearchFilters, locale: 'en' | 'ja' = 'en') =>
+		['search', 'jobs', query, filters, locale] as const
 }

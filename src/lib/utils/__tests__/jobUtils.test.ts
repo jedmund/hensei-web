@@ -16,7 +16,10 @@ import {
 	formatJobProficiency,
 	isAdvancedJob,
 	countSkillsByType,
-	validateSkillConfiguration
+	validateSkillConfiguration,
+	groupJobsByTier,
+	isJobSearchQuery,
+	filterJobsStrictly
 } from '../jobUtils'
 import type { Job, JobSkill } from '$lib/types/api/entities'
 import type { JobSkillList } from '$lib/types/api/party'
@@ -412,5 +415,71 @@ describe('validateSkillConfiguration', () => {
 		}
 		const result = validateSkillConfiguration(job, skills)
 		expect(result.valid).toBe(true)
+	})
+})
+
+describe('groupJobsByTier', () => {
+	it('groups jobs under tier names in tier order, then row order', () => {
+		const jobs = [
+			{ id: 'o', row: 'o1', order: 1 },
+			{ id: 'b', row: '4', order: 2 },
+			{ id: 'a', row: '4', order: 1 },
+			{ id: 'x', row: 'ex1', order: 1 }
+		] as unknown as Job[]
+
+		const grouped = groupJobsByTier(jobs)
+
+		expect(Object.keys(grouped)).toEqual([
+			getJobTierName('4'),
+			getJobTierName('ex1'),
+			getJobTierName('o1')
+		])
+		expect(grouped[getJobTierName('4')]!.map((j) => j.id)).toEqual(['a', 'b'])
+	})
+
+	it('returns no groups for no jobs', () => {
+		expect(groupJobsByTier([])).toEqual({})
+	})
+})
+
+describe('isJobSearchQuery', () => {
+	it('needs at least two characters after trimming', () => {
+		expect(isJobSearchQuery('')).toBe(false)
+		expect(isJobSearchQuery(' a ')).toBe(false)
+		expect(isJobSearchQuery('ab')).toBe(true)
+		expect(isJobSearchQuery('剣聖')).toBe(true)
+	})
+})
+
+describe('filterJobsStrictly', () => {
+	const jobs = [
+		{ id: 'row4-sabre', row: '4', proficiency: [1, 4] },
+		{ id: 'row5-dagger', row: '5', proficiency: [2, 1] },
+		{ id: 'ex1-staff', row: 'ex1', proficiency: [6, 3] }
+	] as unknown as Job[]
+	const ids = (list: Job[]) => list.map((j) => j.id)
+
+	it('keeps everything without filters', () => {
+		expect(ids(filterJobsStrictly(jobs, {}))).toEqual(ids(jobs))
+		expect(ids(filterJobsStrictly(jobs, { row: [], proficiency: [] }))).toEqual(ids(jobs))
+	})
+
+	it('filters by row', () => {
+		expect(ids(filterJobsStrictly(jobs, { row: ['4', 'ex1'] }))).toEqual([
+			'row4-sabre',
+			'ex1-staff'
+		])
+	})
+
+	it('matches a proficiency in either slot', () => {
+		expect(ids(filterJobsStrictly(jobs, { proficiency: [1] }))).toEqual([
+			'row4-sabre',
+			'row5-dagger'
+		])
+	})
+
+	it('keeps rows strict when a second-slot proficiency matches outside them', () => {
+		// The API returns row5-dagger here: its second slot matches outside the row filter
+		expect(ids(filterJobsStrictly(jobs, { row: ['4'], proficiency: [1] }))).toEqual(['row4-sabre'])
 	})
 })

@@ -293,6 +293,19 @@ describe('jobKeys', () => {
 		expect(jobKeys.empSkills('j-1')).toEqual(['jobs', 'j-1', 'emp_skills'])
 		expect(jobKeys.skillsSearch('j-1')).toEqual(['jobs', 'j-1', 'skills', 'search', undefined])
 		expect(jobKeys.accessoriesForJob('j-1')).toEqual(['jobs', 'j-1', 'accessories'])
+		expect(jobKeys.search('ber', { row: ['4'] }, 'ja')).toEqual([
+			'search',
+			'jobs',
+			'ber',
+			{ row: ['4'] },
+			'ja'
+		])
+	})
+
+	it('search key matches search queryKey', () => {
+		expect(jobKeys.search('ber', { row: ['4'] }, 'ja')).toEqual(
+			jobQueries.search('ber', { row: ['4'] }, 'ja').queryKey
+		)
 	})
 
 	it('detail key matches byId queryKey', () => {

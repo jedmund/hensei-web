@@ -142,6 +142,45 @@ export function sortJobs<T extends Pick<Job, 'row' | 'order'>>(jobs: readonly T[
 	)
 }
 
+/** Jobs grouped under their tier's name, in tier order and then row order */
+export function groupJobsByTier<T extends Pick<Job, 'row' | 'order'>>(
+	jobs: readonly T[]
+): Record<string, T[]> {
+	const grouped: Record<string, T[]> = {}
+	for (const job of sortJobs(jobs)) {
+		const tierName = getJobTierName(job.row)
+		;(grouped[tierName] ??= []).push(job)
+	}
+	return grouped
+}
+
+/** The API's shortest text search; anything shorter is ignored server-side */
+export const JOB_SEARCH_MIN_LENGTH = 2
+
+/** Whether a query is long enough for the job search endpoint */
+export function isJobSearchQuery(query: string): boolean {
+	return query.trim().length >= JOB_SEARCH_MIN_LENGTH
+}
+
+/**
+ * Keeps the jobs in one of the rows and with one of the proficiencies in
+ * either slot. An empty list doesn't filter. The search API matches a second
+ * proficiency slot outside the row filter, so its results go through this to
+ * keep rows strict.
+ */
+export function filterJobsStrictly<T extends Pick<Job, 'row' | 'proficiency'>>(
+	jobs: readonly T[],
+	filters: { row?: readonly string[]; proficiency?: readonly number[] }
+): T[] {
+	const rows = filters.row ?? []
+	const proficiencies = filters.proficiency ?? []
+	return jobs.filter(
+		(job) =>
+			(rows.length === 0 || rows.includes(String(job.row).toLowerCase())) &&
+			(proficiencies.length === 0 || job.proficiency.some((p) => proficiencies.includes(p)))
+	)
+}
+
 /** A job's name with its tier, e.g. "Warrior (Class II)" */
 export function jobOptionLabel(job: Pick<Job, 'name' | 'row'>): string {
 	return `${localizedName(job.name)} (${getJobTierName(job.row)})`
