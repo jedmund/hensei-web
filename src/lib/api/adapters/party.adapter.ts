@@ -116,43 +116,6 @@ export interface ListRaidPartiesParams {
 }
 
 /**
- * Grid operation for batch updates
- */
-export interface GridOperation {
-	type: 'move' | 'swap' | 'remove'
-	entity: 'weapon' | 'character' | 'summon'
-	id?: string
-	sourceId?: string
-	targetId?: string
-	position?: number
-	container?: string
-}
-
-/**
- * Options for grid update operation
- */
-export interface GridUpdateOptions {
-	maintainCharacterSequence?: boolean
-	validateBeforeExecute?: boolean
-}
-
-/**
- * Response from grid update operation
- */
-export interface GridUpdateResponse {
-	party: Party
-	operationsApplied: number
-	changes: Array<{
-		entity: string
-		id: string
-		action: string
-		from?: number
-		to?: number
-		with?: string
-	}>
-}
-
-/**
  * Party adapter for managing parties and their grids
  */
 export class PartyAdapter extends BaseAdapter {
@@ -309,24 +272,6 @@ export class PartyAdapter extends BaseAdapter {
 		})
 
 		return this.toPaginatedResponse(response.results, response.meta, params.page || 1)
-	}
-
-	/**
-	 * Performs atomic batch grid updates
-	 * Supports move, swap, and remove operations on grid items
-	 */
-	async gridUpdate(
-		shortcode: string,
-		operations: GridOperation[],
-		options?: GridUpdateOptions
-	): Promise<GridUpdateResponse> {
-		return this.request(`/parties/${shortcode}/grid_update`, {
-			method: 'POST',
-			body: {
-				operations,
-				options
-			}
-		})
 	}
 
 	/**
