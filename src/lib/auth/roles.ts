@@ -20,6 +20,10 @@ export function isEditor(role: Role): boolean {
 	return (role ?? 0) >= EDITOR_ROLE
 }
 
+export function isAdmin(role: Role): boolean {
+	return (role ?? 0) >= ADMIN_ROLE
+}
+
 /**
  * Features locked behind a role. Gate UI with `canUseFeature('name', role)`
  * instead of comparing role numbers, so a lock can move or lift in one place.

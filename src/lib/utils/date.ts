@@ -38,6 +38,13 @@ export function formatDate(
 }
 
 /**
+ * Format a timestamp as a local date and time, e.g. "Nov 5, 2026, 4:31 AM"
+ */
+export function formatDateTime(dateString: string): string {
+	return new Date(dateString).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+}
+
+/**
  * Format a date string with long month format in JST (e.g., "June 21, 2025")
  */
 export function formatDateLongJST(dateString: string): string {

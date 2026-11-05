@@ -83,7 +83,7 @@
 				size="small"
 				rightIcon="link"
 			>
-				{m.db_detail_open()}
+				{field.showValue ? String(value) : m.db_detail_open()}
 			</Button>
 		{:else if field.kind === 'tags'}
 			{@render chips(value)}

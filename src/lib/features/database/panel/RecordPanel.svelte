@@ -21,6 +21,8 @@
 	import { m } from '$lib/paraglide/messages'
 	import { EDITOR_ROLE } from '$lib/auth/roles'
 	import { resourceDef } from '$lib/features/database/schema/registry'
+	import { screenFor } from '$lib/features/database/schema/routes'
+	import PublicPageButton from '$lib/features/database/schema/PublicPageButton.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import type { DetailTab } from '$lib/features/database/detail/DetailScaffold.svelte'
@@ -71,7 +73,8 @@
 	// Editing in the panel: editors, a generated form, and not a style shift
 	const def = $derived(resourceDef(resource))
 	const parsed = $derived(shownId ? parseRecordId(resource, shownId) : null)
-	const canEdit = $derived(role >= EDITOR_ROLE)
+	// Read-only resources (users) have no edit screen to offer
+	const canEdit = $derived(role >= EDITOR_ROLE && !!def && !!screenFor(def, 'edit'))
 	const editsInPanel = $derived(
 		canEdit &&
 			!!def?.record &&
@@ -240,6 +243,9 @@
 
 			<div class="actions">
 				{#if href}
+					{#if !editing}
+						<PublicPageButton {def} routeId={parsed?.routeId ?? null} />
+					{/if}
 					{#if editing}
 						<Tooltip content={m.db_panel_cancel_edit()}>
 							<Button variant="ghost" size="small" onclick={stopEditing}>

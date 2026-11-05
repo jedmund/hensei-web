@@ -422,3 +422,66 @@ export interface AdminBulletRow {
 	// Not in the default list: request via `fields`
 	createdAt?: string
 }
+
+/** User row from `GET /admin/users` (admins only); email is in the detail only */
+export interface AdminUserRow {
+	id: string
+	username: string
+	displayName: string | null
+	role: number
+	createdAt: string
+	/** Last signed-in request, to within a few minutes; null if not seen since it was added */
+	lastSeenAt: string | null
+	deletionScheduledAt: string | null
+	// Linked accounts and counts: not in the default list, requested via `fields`
+	granblueId?: number | null
+	youtube?: string | null
+	wikiProfile?: string | null
+	partyCount?: number
+	playlistCount?: number
+	favoritesCount?: number
+	favoritedCount?: number
+	collectionCharacters?: number
+	collectionWeapons?: number
+	collectionSummons?: number
+	collectionArtifacts?: number
+	collectionJobAccessories?: number
+}
+
+/** A crew, for the Users list's Crew filter (`GET /admin/users/crews`) */
+export interface AdminUserCrew {
+	id: string
+	name: string
+}
+
+/** One logged change to a user's access, newest first */
+export interface AdminUserAccessChange {
+	id: string
+	kind: 'role'
+	fromRole: number | null
+	toRole: number | null
+	/** The admin who made it; null once their account is deleted */
+	actor: { id: string; username: string } | null
+	createdAt: string
+}
+
+/** `GET /admin/users/:id` (and the role update's response) */
+export interface AdminUserDetail extends AdminUserRow {
+	email: string
+	emailVerified: boolean
+	avatar: { picture: string; element: string }
+	partyCount: number
+	playlistCount: number
+	crew: { id: string; name: string; role: 'member' | 'vice_captain' | 'captain' } | null
+	/** Teams this user favorited, and favorites their own teams received */
+	favoritesCount: number
+	favoritedCount: number
+	collection: {
+		characters: number
+		weapons: number
+		summons: number
+		artifacts: number
+		jobAccessories: number
+	}
+	history: AdminUserAccessChange[]
+}

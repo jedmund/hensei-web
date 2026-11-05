@@ -54,6 +54,8 @@ export type ComponentName =
 	| 'eventRaids'
 	| 'stickerImages'
 	| 'keySlotMinUncaps'
+	| 'userRole'
+	| 'userHistory'
 
 /**
  * Form inputs the edit and create forms resolve by name, for values no
@@ -216,6 +218,8 @@ export type Field<Row = unknown, Full = unknown> = FieldBase<Row, Full> &
 				kind: 'link'
 				/** The Open button's URL */
 				href: (value: string, values: Values) => string | null
+				/** The button shows the value (e.g. a handle) instead of "Open" */
+				showValue?: boolean
 		  }
 		| { kind: 'code' }
 		| {
@@ -480,6 +484,11 @@ export interface RecordDef<Full> {
 	path?: (record: Full) => string
 	/** Singular noun for the page header, e.g. "Weapon" */
 	noun: Message
+	/**
+	 * The record's page on the site, outside the Database (e.g. a user's
+	 * profile). The detail page's and the panel's headers link to it.
+	 */
+	publicPage?: { href: (record: Full) => string; label: Message }
 	/** Header kind: picks the placeholder image and the labels under the name */
 	type?: DetailEntityType
 	/** The header image. Without one the header shows only the name */

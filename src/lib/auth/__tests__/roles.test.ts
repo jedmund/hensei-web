@@ -4,6 +4,7 @@ import {
 	EDITOR_ROLE,
 	canEditStaffPicks,
 	canUseFeature,
+	isAdmin,
 	isCurator,
 	isEditor,
 	requiredDatabaseRole
@@ -21,6 +22,12 @@ describe('isCurator / isEditor', () => {
 			true
 		])
 		expect([null, 1, 6, 7, 9].map(isEditor)).toEqual([false, false, false, true, true])
+	})
+})
+
+describe('isAdmin', () => {
+	it('is true for admins only', () => {
+		expect([null, 1, 6, 7, 9].map(isAdmin)).toEqual([false, false, false, false, true])
 	})
 })
 

@@ -10,7 +10,13 @@
 import { BaseAdapter } from './base.adapter'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { RequestOptions } from './types'
-import type { AdminListParams, AdminListResponse, AdminResource } from '$lib/types/api/admin'
+import type {
+	AdminListParams,
+	AdminListResponse,
+	AdminResource,
+	AdminUserCrew,
+	AdminUserDetail
+} from '$lib/types/api/admin'
 
 /**
  * Flattens list params into the API's bracketed query keys. Keys are already
@@ -70,6 +76,24 @@ export class AdminAdapter extends BaseAdapter {
 
 	listWeapons<T>(params: AdminListParams, options?: RequestOptions) {
 		return this.list<T>('weapons', params, options)
+	}
+
+	/** A user's profile, role and access history (admins only) */
+	getUser(id: string, options?: RequestOptions): Promise<AdminUserDetail> {
+		return this.request<AdminUserDetail>(`/admin/users/${encodeURIComponent(id)}`, options)
+	}
+
+	/** Every crew, for the Users list's Crew filter (admins only) */
+	listUserCrews(options?: RequestOptions): Promise<AdminUserCrew[]> {
+		return this.request<AdminUserCrew[]>('/admin/users/crews', options)
+	}
+
+	/** Sets a user's role (user, curator or editor); resolves with the updated user */
+	updateUserRole(id: string, role: number): Promise<AdminUserDetail> {
+		return this.request<AdminUserDetail>(`/admin/users/${encodeURIComponent(id)}/role`, {
+			method: 'PATCH',
+			body: { role }
+		})
 	}
 }
 

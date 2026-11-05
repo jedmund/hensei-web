@@ -17,6 +17,8 @@ import WeaponForge from '$lib/features/database/weapons/detail/WeaponForge.svelt
 import WeaponUncapIndicator from '$lib/features/database/weapons/detail/WeaponUncapIndicator.svelte'
 import KeySlotMinUncaps from '$lib/features/database/weapon-series/detail/KeySlotMinUncaps.svelte'
 import StickerImages from '$lib/features/database/stickers/detail/StickerImages.svelte'
+import UserRole from '$lib/features/database/users/detail/UserRole.svelte'
+import UserHistory from '$lib/features/database/users/detail/UserHistory.svelte'
 import type { ComponentName } from './types'
 
 // The registry boundary is untyped: each component reads its own record type
@@ -34,5 +36,7 @@ export const DETAIL_COMPONENTS: Record<ComponentName, Component<{ record: any }>
 	raidGroupRaids: RaidGroupRaids,
 	eventRaids: EventRaids,
 	stickerImages: StickerImages,
-	keySlotMinUncaps: KeySlotMinUncaps
+	keySlotMinUncaps: KeySlotMinUncaps,
+	userRole: UserRole,
+	userHistory: UserHistory
 }

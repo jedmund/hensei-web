@@ -6,7 +6,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime.js'
 
 	// Bump this whenever the policy changes in a way users should know about.
-	const EFFECTIVE_DATE = '2026-10-02'
+	const EFFECTIVE_DATE = '2026-11-05'
 	const CONTACT = 'privacy@granblue.team'
 </script>
 
@@ -117,6 +117,10 @@
 			<li>
 				<strong>Extension version:</strong> when the Extension talks to our API, we record which version
 				you're running so we can tell you about updates.
+			</li>
+			<li>
+				<strong>Last activity:</strong> while you're signed in, we record when you last used the Service,
+				to within a few minutes. We keep only the most recent time, not a history of your visits.
 			</li>
 		</ul>
 	</LegalSection>
@@ -302,6 +306,10 @@
 				notices. We don't send marketing email;
 			</li>
 			<li>prevent abuse, enforce rate limits, and keep the Service secure;</li>
+			<li>
+				administer accounts, for example seeing when an account was last active when we handle a
+				support request, a report of abuse, or a change to someone's role;
+			</li>
 			<li>diagnose errors and improve performance; and</li>
 			<li>
 				comply with legal obligations and enforce our <a href={localizeHref('/about/terms')}
@@ -317,8 +325,8 @@
 		<ul>
 			<li><strong>Contract:</strong> to provide the account and features you asked for.</li>
 			<li>
-				<strong>Legitimate interests:</strong> to secure the Service, prevent abuse, fix errors, and support
-				crew features, balanced against your rights.
+				<strong>Legitimate interests:</strong> to secure the Service, prevent abuse, administer accounts,
+				fix errors, and support crew features, balanced against your rights.
 			</li>
 			<li>
 				<strong>Consent:</strong> where you choose to sign in with a third-party provider or embed third-party

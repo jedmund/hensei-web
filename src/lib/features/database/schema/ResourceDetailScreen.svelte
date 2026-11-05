@@ -14,6 +14,7 @@
 	import { getListUrl } from '$lib/utils/listNavigation'
 	import { recordTitle } from './detail'
 	import { resourceDef } from './registry'
+	import PublicPageButton from './PublicPageButton.svelte'
 	import { screenFor } from './routes'
 	import ResourceDetail from './ResourceDetail.svelte'
 	import type { RecordScreenData } from './types'
@@ -63,6 +64,7 @@
 			</Button>
 		{/snippet}
 		{#snippet rightAction()}
+			<PublicPageButton {def} routeId={id} />
 			{#if editUrl}
 				<Button variant="element-ghost" {element} size="small" href={editUrl}>
 					{m.action_edit()}

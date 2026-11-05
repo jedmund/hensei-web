@@ -62,6 +62,12 @@ describe('groupedSections', () => {
 		expect(ids).toContain('weapons')
 	})
 
+	it('shows Users to admins only', () => {
+		const ids = groupedSections(9).flatMap((g) => g.sections.map((s) => s.id))
+		expect(ids).toContain('users')
+		expect(resourceMinRole('users')).toBe(9)
+	})
+
 	it('shows curators only Events', () => {
 		const ids = groupedSections(CURATOR_ROLE).flatMap((g) => g.sections.map((s) => s.id))
 		expect(ids).toEqual(['events'])
