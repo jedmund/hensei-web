@@ -1,16 +1,20 @@
 <script lang="ts">
-	// The user's role, and the control admins change it with (user, curator or
-	// editor). Admins are made in the console, and nobody changes their own
-	// role here. Each change asks first, then updates the record in place.
+	// The user's role, with a "…" menu in the section's header to change it
+	// (user, curator or editor). Admins are made in the console, and nobody
+	// changes their own role here. Each change asks first, then updates the
+	// record in place. Draws its own container (the section's `container: false`).
 	import { useQueryClient } from '@tanstack/svelte-query'
 	import { toast } from 'svelte-sonner'
 	import { page } from '$app/state'
 	import * as m from '$lib/paraglide/messages'
 	import { adminAdapter } from '$lib/api/adapters/admin.adapter'
 	import { adminKeys } from '$lib/api/queries/admin.queries'
+	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
+	import Button from '$lib/components/ui/Button.svelte'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
-	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
-	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import DetailItem from '$lib/components/ui/DetailItem.svelte'
+	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
+	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import { isAdmin } from '$lib/auth/roles'
 	import { ASSIGNABLE_ROLES, roleLabel } from '$lib/features/database/users/roles'
 	import { asUserRecord, type UserRecord } from '$lib/features/database/users/resource'
@@ -26,16 +30,14 @@
 	const isSelf = $derived(viewerId === record.id)
 	const targetIsAdmin = $derived(isAdmin(record.role))
 
-	// What the control shows: the saved role, or the one being confirmed
-	let shown = $derived(String(record.role))
+	const canChange = $derived(!isSelf && !targetIsAdmin)
+	const choices = $derived(ASSIGNABLE_ROLES.filter((role) => role !== record.role))
 
 	let pending = $state<number | null>(null)
 	let confirming = $state(false)
 	let saving = $state(false)
 
-	function choose(value: string) {
-		const role = Number(value)
-		if (role === record.role) return
+	function choose(role: number) {
 		pending = role
 		confirming = true
 	}
@@ -43,7 +45,6 @@
 	function cancel() {
 		confirming = false
 		pending = null
-		shown = String(record.role)
 	}
 
 	async function save() {
@@ -65,21 +66,37 @@
 	}
 </script>
 
-<div class="role">
-	{#if targetIsAdmin}
-		<p class="current">{roleLabel(record.role)}</p>
-		<p class="hint">{m.db_users_role_admin_hint()}</p>
-	{:else}
-		<SegmentedControl bind:value={shown} onValueChange={choose} size="small">
-			{#each ASSIGNABLE_ROLES as role (role)}
-				<Segment value={String(role)} disabled={isSelf || saving}>{roleLabel(role)}</Segment>
+{#snippet menu()}
+	<DropdownMenu align="end">
+		{#snippet trigger({ props })}
+			<Button
+				variant="ghost"
+				size="small"
+				iconOnly
+				icon="ellipsis"
+				aria-label={m.db_users_role_menu()}
+				disabled={saving}
+				{...props}
+			/>
+		{/snippet}
+		{#snippet menu()}
+			{#each choices as role (role)}
+				<DropdownMenuBase.Item class="dropdown-menu-item" onclick={() => choose(role)}>
+					{m.db_users_role_make({ role: roleLabel(role) })}
+				</DropdownMenuBase.Item>
 			{/each}
-		</SegmentedControl>
-		{#if isSelf}
-			<p class="hint">{m.db_users_role_self_hint()}</p>
-		{/if}
+		{/snippet}
+	</DropdownMenu>
+{/snippet}
+
+<DetailsContainer title={m.db_users_section_role()} action={canChange ? menu : undefined}>
+	<DetailItem label={m.db_users_field_role()} value={roleLabel(record.role)} />
+	{#if targetIsAdmin}
+		<p class="hint">{m.db_users_role_admin_hint()}</p>
+	{:else if isSelf}
+		<p class="hint">{m.db_users_role_self_hint()}</p>
 	{/if}
-</div>
+</DetailsContainer>
 
 <ConfirmDialog
 	bind:open={confirming}
@@ -96,21 +113,7 @@
 />
 
 <style lang="scss">
-	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
-
-	.role {
-		display: flex;
-		flex-direction: column;
-		align-items: flex-start;
-		gap: spacing.$unit;
-		width: 100%;
-	}
-
-	.current {
-		margin: 0;
-		font-weight: typography.$bold;
-	}
 
 	.hint {
 		margin: 0;

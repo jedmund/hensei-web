@@ -180,7 +180,13 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 					'deletion_scheduled_at'
 				]
 			},
-			{ id: 'role', title: m.db_users_section_role, fields: ['role'], component: 'userRole' },
+			{
+				id: 'role',
+				title: m.db_users_section_role,
+				fields: ['role'],
+				component: 'userRole',
+				container: false
+			},
 			{
 				id: 'history',
 				title: m.db_users_section_history,
