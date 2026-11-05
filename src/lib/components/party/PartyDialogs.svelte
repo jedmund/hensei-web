@@ -12,6 +12,7 @@
 	import WikiTextDialog from '$lib/components/party/WikiTextDialog.svelte'
 	import WikiImportReview from '$lib/components/party/WikiImportReview.svelte'
 	import FeatureTeamDialog from '$lib/components/party/FeatureTeamDialog.svelte'
+	import ConfirmationSlider from '$lib/components/ui/ConfirmationSlider.svelte'
 	import * as m from '$lib/paraglide/messages'
 
 	/**
@@ -32,6 +33,8 @@
 
 	const ctx = usePartyContext()
 	const party = $derived(ctx.getParty())
+
+	const WIKI_MANUAL_OF_STYLE = 'https://gbf.wiki/Meta:Advanced_Grids/Manual_of_Style'
 </script>
 
 <!-- Delete Confirmation Dialog -->
@@ -43,26 +46,43 @@
 	onCancel={() => (actions.deleteDialogOpen = false)}
 />
 
+{#snippet exportNotice()}
+	{m.party_export_wiki_responsibility_before()}<a
+		class="notice-link"
+		href={WIKI_MANUAL_OF_STYLE}
+		target="_blank"
+		rel="noopener noreferrer"
+		onclick={actions.openWikiExportGuide}
+		onauxclick={actions.openWikiExportGuide}>{m.party_export_wiki_responsibility_link()}</a
+	>{m.party_export_wiki_responsibility_after()}
+	{#if actions.wikiExportGuideMissed}
+		<span class="notice-error" role="alert">{m.party_export_wiki_guide_required()}</span>
+	{/if}
+{/snippet}
+
+{#snippet exportSlider()}
+	<ConfirmationSlider
+		label={m.party_export_wiki_understand()}
+		confirmed={actions.wikiExportAccepted}
+		onConfirm={actions.acceptWikiExportGuidelines}
+		bind:progress={actions.wikiExportSlide}
+	/>
+{/snippet}
+
 <WikiTextDialog
 	bind:open={actions.wikiExportOpen}
 	title={m.party_export_wiki()}
 	description={m.party_export_wiki_description()}
-	notice={m.party_export_wiki_notice()}
-	details={[
-		m.party_export_wiki_lost_rings(),
-		m.party_export_wiki_lost_earrings(),
-		m.party_export_wiki_lost_artifacts(),
-		m.party_export_wiki_lost_ax(),
-		m.party_export_wiki_lost_befoulments(),
-		m.party_export_wiki_lost_awakening_levels(),
-		m.party_export_wiki_lost_masteries(),
-		m.party_export_wiki_lost_bullets(),
-		m.party_export_wiki_lost_keys(),
-		m.party_export_wiki_lost_details()
-	]}
+	notice={exportNotice}
+	noticeFooter={actions.wikiExportAsks ? exportSlider : undefined}
+	obscured={actions.wikiExportAccepted ? 0 : 1 - actions.wikiExportSlide}
 	value={actions.wikiExportText}
 	readonly
-	primaryAction={{ label: m.code_copy(), onclick: actions.copyWikiExport }}
+	primaryAction={{
+		label: m.code_copy(),
+		onclick: actions.copyWikiExport,
+		disabled: !actions.wikiExportAccepted
+	}}
 />
 
 <WikiTextDialog
@@ -139,3 +159,22 @@
 	onConfirm={partyDragDrop.confirmDuplicate}
 	onCancel={partyDragDrop.cancelDuplicate}
 />
+
+<style lang="scss">
+	@use '$src/themes/spacing' as *;
+	@use '$src/themes/typography' as *;
+
+	.notice-link {
+		color: inherit;
+		font-weight: $medium;
+		text-decoration: underline;
+	}
+
+	// Under the notice text, in the notice's own block
+	.notice-error {
+		display: block;
+		margin-top: $unit;
+		font-weight: $medium;
+		color: var(--danger);
+	}
+</style>

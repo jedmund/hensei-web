@@ -39,6 +39,7 @@ function apiUser(overrides: Partial<UserSettings> = {}): UserSettings {
 		emailVerified: true,
 		hasPassword: false,
 		passwordPromptDismissed: true,
+		wikiExportGuidelinesAccepted: false,
 		...overrides
 	}
 }
