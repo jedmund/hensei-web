@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { GridCharacter } from '$lib/types/api/party'
 	import { formatRingStat, formatEarringStat } from '$lib/utils/modificationFormatters'
-	import { getRingStat, getElementalizedEarringStat } from '$lib/utils/masteryUtils'
+	import { getRingStat, getEarringStat, getElementalizedEarringStat } from '$lib/utils/masteryUtils'
 	import { getMasteryImage } from '$lib/utils/images/icons'
 	import { getLocale } from '$lib/paraglide/runtime.js'
 
@@ -41,6 +41,12 @@
 
 		return getMasteryImage(stat.slug)
 	}
+
+	// A value is maxed when it reaches the highest strength the stat can roll.
+	function isMaxValue(type: 'ring' | 'earring', modifier: number, strength: number): boolean {
+		const stat = type === 'ring' ? getRingStat(modifier) : getEarringStat(modifier)
+		return stat !== undefined && strength >= stat.maxValue
+	}
 </script>
 
 {#if filledRings.length > 0}
@@ -64,7 +70,10 @@
 							<strong class="mastery-label">
 								{formatRingStat(ring.modifier, ring.strength, locale).split('+')[0]?.trim() ?? ''}
 							</strong>
-							<span class="mastery-value">
+							<span
+								class="mastery-value"
+								class:max={isMaxValue('ring', ring.modifier, ring.strength)}
+							>
 								+{ring.strength}{getRingStat(ring.modifier)?.suffix || ''}
 							</span>
 						{:else}
@@ -80,7 +89,7 @@
 {#if earring}
 	<div class="mastery-display earring {variant}">
 		<ul class="mastery-list">
-			<li class="mastery-item enhanced">
+			<li class="mastery-item">
 				{#if showIcons}
 					{@const iconUrl = getMasteryIcon('earring', earring.modifier)}
 					{#if iconUrl}
@@ -100,7 +109,10 @@
 								.split('+')[0]
 								?.trim() ?? ''}
 						</strong>
-						<span class="mastery-value enhanced">
+						<span
+							class="mastery-value"
+							class:max={isMaxValue('earring', earring.modifier, earring.strength)}
+						>
 							+{earring.strength}{getElementalizedEarringStat(
 								earring.modifier,
 								characterElement,
@@ -149,11 +161,6 @@
 		padding: calc(spacing.$unit * 0.75);
 		background: var(--unit-bg);
 		border-radius: layout.$item-corner-small;
-
-		&.enhanced {
-			background: linear-gradient(135deg, var(--unit-bg), rgba($mastery-gold, 0.1));
-			border: 1px solid rgba($mastery-gold, 0.2);
-		}
 	}
 
 	.mastery-icon {
@@ -185,7 +192,7 @@
 		font-weight: typography.$normal;
 		color: var(--text-secondary);
 
-		&.enhanced {
+		&.max {
 			color: $mastery-gold;
 			font-weight: typography.$medium;
 		}
