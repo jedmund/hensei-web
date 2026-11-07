@@ -2183,6 +2183,8 @@
 	"home_see_all_item": "{item}を使った編成をすべて見る",
 	"home_no_item_teams": "<b>{item}</b>を使った編成はまだありません",
 	"home_create_team": "編成を作成",
+	"home_create_team_with": "{item}を使った編成を作成",
+	"home_create_team_for": "{raid}の編成を作成",
 	"home_no_raids": "このイベントにはクエストがありません",
 	"home_no_raid_teams": "<b>{raid}</b>の編成はまだありません",
 	"home_see_all": "すべて見る",

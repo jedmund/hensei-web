@@ -97,6 +97,10 @@
 		selected ? localizeHref(newTeamPath({ raidSlug: selected.raid.slug })) : null
 	)
 
+	const createTeamLabel = $derived(
+		selected ? m.home_create_team_for({ raid: localizedName(selected.raid.name) }) : null
+	)
+
 	// Only when the Gallery has teams beyond the ones shown here
 	const seeAllHref = $derived(
 		selected && (selected.hasMore !== false || selected.parties.length > parties.length)
@@ -204,17 +208,31 @@
 						{/if}
 					</div>
 				{:else}
-					<SegmentedControl
-						value={selected?.raid.id}
-						onValueChange={(v) => (selectedId = v)}
-						variant="background"
-						size="small"
-						grow
-					>
-						{#each tabs as tab (tab.raid.id)}
-							<Segment value={tab.raid.id}>{raidShortName(tab.raid)}</Segment>
-						{/each}
-					</SegmentedControl>
+					<!-- The raid tabs, then a new team for the selected raid -->
+					<div class="raid-row tabs">
+						<SegmentedControl
+							value={selected?.raid.id}
+							onValueChange={(v) => (selectedId = v)}
+							variant="background"
+							size="small"
+							grow
+						>
+							{#each tabs as tab (tab.raid.id)}
+								<Segment value={tab.raid.id}>{raidShortName(tab.raid)}</Segment>
+							{/each}
+						</SegmentedControl>
+						{#if newTeamHref && createTeamLabel}
+							<Tooltip content={createTeamLabel}>
+								<Button
+									href={newTeamHref}
+									size="small"
+									iconOnly
+									icon="plus"
+									aria-label={createTeamLabel}
+								/>
+							</Tooltip>
+						{/if}
+					</div>
 				{/if}
 			{/if}
 		</PinnedCardHeader>
@@ -245,7 +263,8 @@
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/typography' as *;
 
-	// Raid picker and its "See all" link, side by side on mobile
+	// Raid picker and its "See all" link, side by side on mobile; on desktop,
+	// the raid tabs and their + button
 	.raid-row {
 		display: flex;
 		align-items: stretch;
@@ -255,6 +274,11 @@
 		> :global(:first-child) {
 			flex: 1;
 			min-width: 0;
+		}
+
+		// The + keeps its own height beside the tabs
+		&.tabs {
+			align-items: center;
 		}
 	}
 

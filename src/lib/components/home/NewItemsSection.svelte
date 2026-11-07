@@ -108,6 +108,9 @@
 				)
 			: null
 	)
+	const createTeamLabel = $derived(
+		m.home_create_team_with({ item: localizedName(selected?.item.name) })
+	)
 </script>
 
 {#if selected}
@@ -153,13 +156,13 @@
 								ariaLabel={m.home_battle_sort_aria()}
 							/>
 							{#if newTeamHref}
-								<Tooltip content={m.home_create_team()}>
+								<Tooltip content={createTeamLabel}>
 									<Button
 										href={newTeamHref}
 										size="small"
 										iconOnly
 										icon="plus"
-										aria-label={m.home_create_team()}
+										aria-label={createTeamLabel}
 									/>
 								</Tooltip>
 							{/if}
