@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { GridCharacter } from '$lib/types/api/party'
 	import { formatRingStat, formatEarringStat } from '$lib/utils/modificationFormatters'
-	import { getRingStat, getElementalizedEarringStat } from '$lib/utils/masteryUtils'
+	import { getRingStat, getEarringStat, getElementalizedEarringStat } from '$lib/utils/masteryUtils'
 	import { getMasteryImage } from '$lib/utils/images/icons'
 	import { getLocale } from '$lib/paraglide/runtime.js'
 
@@ -41,6 +41,12 @@
 
 		return getMasteryImage(stat.slug)
 	}
+
+	// A value is maxed when it reaches the highest strength the stat can roll.
+	function isMaxValue(type: 'ring' | 'earring', modifier: number, strength: number): boolean {
+		const stat = type === 'ring' ? getRingStat(modifier) : getEarringStat(modifier)
+		return stat !== undefined && strength >= stat.maxValue
+	}
 </script>
 
 {#if filledRings.length > 0}
@@ -64,7 +70,10 @@
 							<strong class="mastery-label">
 								{formatRingStat(ring.modifier, ring.strength, locale).split('+')[0]?.trim() ?? ''}
 							</strong>
-							<span class="mastery-value">
+							<span
+								class="mastery-value"
+								class:max={isMaxValue('ring', ring.modifier, ring.strength)}
+							>
 								+{ring.strength}{getRingStat(ring.modifier)?.suffix || ''}
 							</span>
 						{:else}
@@ -100,7 +109,10 @@
 								.split('+')[0]
 								?.trim() ?? ''}
 						</strong>
-						<span class="mastery-value">
+						<span
+							class="mastery-value"
+							class:max={isMaxValue('earring', earring.modifier, earring.strength)}
+						>
 							+{earring.strength}{getElementalizedEarringStat(
 								earring.modifier,
 								characterElement,
@@ -120,6 +132,8 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
+
+	$mastery-gold: #d4af37;
 
 	.mastery-display {
 		&.detailed {
@@ -177,6 +191,11 @@
 	.mastery-value {
 		font-weight: typography.$normal;
 		color: var(--text-secondary);
+
+		&.max {
+			color: $mastery-gold;
+			font-weight: typography.$medium;
+		}
 	}
 
 	// Compact variant styles
