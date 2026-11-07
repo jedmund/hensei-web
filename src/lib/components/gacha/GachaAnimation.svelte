@@ -235,11 +235,14 @@
 
 	function start(target: HTMLCanvasElement) {
 		let ticker: { removeEventListener: (type: string, fn: unknown) => void } | undefined
+		// Skip or Draw Again can remove this canvas while the runtime is still
+		// loading; a stage started after that would tick a dead canvas forever
+		let disposed = false
 		target.addEventListener('playEnd', onPlayEnd)
 
 		Promise.all([loadGameRuntime(getLocale()), loadCards()])
 			.then(([game, cards]) => {
-				if (finished) return
+				if (finished || disposed) return
 				runtime = game
 				const { createjs, images } = game
 				const blank = blankImage()
@@ -267,10 +270,11 @@
 			})
 			.catch((err) => {
 				console.error('Gacha animation failed to load', err)
-				finish()
+				if (!disposed) finish()
 			})
 
 		return () => {
+			disposed = true
 			target.removeEventListener('playEnd', onPlayEnd)
 			ticker?.removeEventListener('tick', stage)
 			ticker?.removeEventListener('tick', onTick)
