@@ -80,7 +80,7 @@
 {#if earring}
 	<div class="mastery-display earring {variant}">
 		<ul class="mastery-list">
-			<li class="mastery-item enhanced">
+			<li class="mastery-item">
 				{#if showIcons}
 					{@const iconUrl = getMasteryIcon('earring', earring.modifier)}
 					{#if iconUrl}
@@ -100,7 +100,7 @@
 								.split('+')[0]
 								?.trim() ?? ''}
 						</strong>
-						<span class="mastery-value enhanced">
+						<span class="mastery-value">
 							+{earring.strength}{getElementalizedEarringStat(
 								earring.modifier,
 								characterElement,
@@ -120,8 +120,6 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
-
-	$mastery-gold: #d4af37;
 
 	.mastery-display {
 		&.detailed {
@@ -149,11 +147,6 @@
 		padding: calc(spacing.$unit * 0.75);
 		background: var(--unit-bg);
 		border-radius: layout.$item-corner-small;
-
-		&.enhanced {
-			background: linear-gradient(135deg, var(--unit-bg), rgba($mastery-gold, 0.1));
-			border: 1px solid rgba($mastery-gold, 0.2);
-		}
 	}
 
 	.mastery-icon {
@@ -184,11 +177,6 @@
 	.mastery-value {
 		font-weight: typography.$normal;
 		color: var(--text-secondary);
-
-		&.enhanced {
-			color: $mastery-gold;
-			font-weight: typography.$medium;
-		}
 	}
 
 	// Compact variant styles
