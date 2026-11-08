@@ -31,20 +31,25 @@ if (env.PUBLIC_SENTRY_DSN) {
 }
 
 // After a deploy, a tab still running the old build asks for chunks that no
-// longer exist. Reload once to pick up the new build instead of failing the
-// navigation. The timestamp guard stops a reload loop if the chunk is really
-// missing.
+// longer exist, and a flaky connection can drop one. Reload once to pick up
+// the new build. The timestamp guard stops a reload loop if the chunk is
+// really missing.
+//
+// The event isn't cancelled: cancelling makes the failed import resolve to
+// undefined, and SvelteKit then crashes reading the missing route module
+// before the reload lands. Left alone, the import rejects with a chunk error
+// that SvelteKit handles (a full navigation when there's a new build) and
+// Sentry ignores (see SENTRY_IGNORE_ERRORS).
 const RELOAD_KEY = 'hensei:chunk-reload-at'
-window.addEventListener('vite:preloadError', (event) => {
+window.addEventListener('vite:preloadError', () => {
 	try {
 		const last = Number(sessionStorage.getItem(RELOAD_KEY) ?? 0)
 		if (Date.now() - last < 10_000) return
 		sessionStorage.setItem(RELOAD_KEY, String(Date.now()))
 	} catch {
-		// Without storage there's no loop guard, so let the error surface.
+		// Without storage there's no loop guard, so don't reload.
 		return
 	}
-	event.preventDefault()
 	window.location.reload()
 })
 
