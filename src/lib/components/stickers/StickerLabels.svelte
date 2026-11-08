@@ -1,8 +1,7 @@
 <script lang="ts">
 	/**
-	 * The stickers a team is known for, with no counts. The viewer's own
-	 * sticker gets a ring when it's one of them. Slugs missing from the
-	 * catalogue (retired stickers) aren't shown.
+	 * The stickers a team is known for, with no counts. Slugs missing from
+	 * the catalogue (retired stickers) aren't shown.
 	 */
 	import { createQuery } from '@tanstack/svelte-query'
 	import { stickerQueries } from '$lib/api/queries/sticker.queries'
@@ -12,12 +11,11 @@
 
 	interface Props {
 		labels?: string[] | undefined
-		mySticker?: string | null | undefined
 		size?: number
 		effects?: StickerEffect[]
 	}
 
-	let { labels, mySticker, size = 20, effects = [] }: Props = $props()
+	let { labels, size = 20, effects = [] }: Props = $props()
 
 	const slugs = $derived(labels ?? [])
 	const stickersQuery = createQuery(() => ({
@@ -41,12 +39,7 @@
 	>
 		{#each shown as entry (entry.slug)}
 			<span role="listitem">
-				<StickerImage
-					sticker={entry.sticker}
-					{size}
-					highlighted={entry.slug === mySticker}
-					{effects}
-				/>
+				<StickerImage sticker={entry.sticker} {size} {effects} />
 			</span>
 		{/each}
 	</span>

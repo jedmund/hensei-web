@@ -47,22 +47,13 @@
 		/** Alt text when the sticker isn't in the catalogue */
 		slug?: string
 		size?: number
-		/** The viewer's own sticker */
-		highlighted?: boolean
 		effects?: StickerEffect[]
 		/** An angle it was placed at; it replaces the tilt (whoever placed
 		 * it turns it, so it isn't applied here) */
 		rotation?: number | null
 	}
 
-	let {
-		sticker,
-		slug = '',
-		size = 24,
-		highlighted = false,
-		effects = [],
-		rotation = null
-	}: Props = $props()
+	let { sticker, slug = '', size = 24, effects = [], rotation = null }: Props = $props()
 
 	const meaning = $derived(sticker ? localizedName(sticker.meaning) : slug)
 	const src = $derived(getHostedImageUrl(stickerImageUrl(sticker, appLocale())))
@@ -72,7 +63,6 @@
 
 <span
 	class="sticker"
-	class:highlighted
 	class:die-cut={has('die-cut')}
 	class:shadow={has('shadow')}
 	class:lift={has('lift')}
@@ -108,12 +98,6 @@
 		transition:
 			transform 0.18s ease,
 			filter 0.18s ease;
-
-		// Die-cut stickers get no ring: it would sit as a circle behind the art
-		&.highlighted:not(.die-cut) {
-			box-shadow: 0 0 0 1px var(--accent-yellow);
-			border-radius: 50%;
-		}
 
 		img {
 			width: 100%;
