@@ -43,7 +43,8 @@ export const SENTRY_IGNORE_ERRORS: (string | RegExp)[] = [
 	"Can't find variable: require",
 	'require is not defined',
 	// A tab still running the previous deploy requests chunks that no longer
-	// exist. The client reloads on vite:preloadError (hooks.client.ts).
+	// exist, or a flaky connection drops one. The client reloads on
+	// vite:preloadError (hooks.client.ts).
 	'Importing a module script failed.',
 	'error loading dynamically imported module',
 	'Failed to fetch dynamically imported module',
