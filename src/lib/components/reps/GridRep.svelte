@@ -108,7 +108,7 @@
 					{@render indicator()}
 				{/if}
 				<h2 class:empty={!party.name}>{party.name || m.grid_untitled()}</h2>
-				<StickerLabels labels={party.labels} mySticker={party.mySticker} size={32} />
+				<StickerLabels labels={party.labels} size={32} />
 			</div>
 			{#if showUser}
 				{#if party.user}
