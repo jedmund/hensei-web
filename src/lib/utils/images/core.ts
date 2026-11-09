@@ -30,6 +30,7 @@ export const BUCKET = {
 	rarity: 'icons/rarity',
 	awakening: 'icons/awakening',
 	weaponSkills: 'icons/weapon-skills',
+	weaponSeries: 'icons/weapon-series',
 	weaponKeys: 'weapons/keys',
 	skillLabels: 'icons/skill-labels',
 	mastery: 'icons/mastery',

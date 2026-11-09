@@ -117,6 +117,13 @@ export function getMasteryImage(slug: string | undefined): string {
 	return renumberedImage(`${getBasePath()}/${BUCKET.mastery}/${slug}.png`)
 }
 
+/**
+ * Get weapon series icon URL, the game's series filter icon stored by series slug
+ */
+export function getWeaponSeriesIcon(slug: string): string {
+	return `${getBasePath()}/${BUCKET.weaponSeries}/${slug}.png`
+}
+
 // ===== Label Images =====
 
 /**

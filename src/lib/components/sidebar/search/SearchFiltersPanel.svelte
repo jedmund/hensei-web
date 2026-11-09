@@ -7,6 +7,7 @@
 	import Tooltip from '../../ui/Tooltip.svelte'
 	import { getProficiencyLabel } from '$lib/utils/proficiency'
 	import * as m from '$lib/paraglide/messages'
+	import type { CollectionFilterOption } from '$lib/types/filter'
 
 	interface Props {
 		type: 'weapon' | 'character' | 'summon'
@@ -14,7 +15,7 @@
 		rarityFilters: number[]
 		proficiencyFilters: number[]
 		seriesFilter: string | undefined
-		seriesOptions: { value: string; label: string }[]
+		seriesOptions: (Omit<CollectionFilterOption, 'value'> & { value: string })[]
 		requiredProficiencies?: number[]
 		/** Localized job name for the proficiency lock tooltip */
 		jobName?: string

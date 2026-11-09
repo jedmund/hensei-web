@@ -23,6 +23,7 @@ import type { UserInfo } from '$lib/api/adapters/user.adapter'
 import { partyStore } from '$lib/stores/partyStore.svelte'
 import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 import { localizedName } from '$lib/utils/locale'
+import { weaponSeriesImage } from '$lib/utils/collectionFilterOptions'
 import { getLocale } from '$lib/paraglide/runtime'
 import * as m from '$lib/paraglide/messages'
 import type { AddItemResult, SearchMode } from '$lib/types/api/search'
@@ -235,11 +236,13 @@ export class SearchContentState {
 
 	readonly seriesOptions = $derived.by(() => {
 		const data = this.#seriesQuery.data as
-			Array<{ id: string; name: { en?: string; ja?: string } }> | undefined
+			Array<{ id: string; slug: string; name: { en?: string; ja?: string } }> | undefined
 		if (!data) return []
+		const isWeapon = this.#opts.type() === 'weapon'
 		return data.map((s) => ({
 			value: s.id,
-			label: localizedName(s.name)
+			label: localizedName(s.name),
+			...(isWeapon ? weaponSeriesImage(s.slug) : {})
 		}))
 	})
 

@@ -14,6 +14,8 @@
 		 * in a placeholder container that always renders (even if `image` is empty),
 		 * matching the visual treatment of catalog icons elsewhere in the app. */
 		imageBackground?: string
+		/** Makes the imageBackground container a circle */
+		imageRound?: boolean
 		/** Muted number after the label, e.g. how many results the option matches */
 		count?: number
 	}
@@ -126,6 +128,7 @@
 			{#if firstSelectedOption?.imageBackground}
 				<span
 					class="trigger-image-container"
+					class:round={firstSelectedOption.imageRound}
 					style="background-color: {firstSelectedOption.imageBackground}"
 				>
 					{#if firstSelectedOption.image}
@@ -160,7 +163,11 @@
 				>
 					{#snippet children({ selected })}
 						{#if option.imageBackground}
-							<span class="item-image-container" style="background-color: {option.imageBackground}">
+							<span
+								class="item-image-container"
+								class:round={option.imageRound}
+								style="background-color: {option.imageBackground}"
+							>
 								{#if option.image}
 									<img src={option.image} alt="" />
 								{/if}
@@ -278,6 +285,10 @@
 				width: 100%;
 				height: 100%;
 				object-fit: contain;
+			}
+
+			&.round {
+				border-radius: 50%;
 			}
 		}
 
@@ -402,6 +413,10 @@
 				width: 100%;
 				height: 100%;
 				object-fit: contain;
+			}
+
+			&.round {
+				border-radius: 50%;
 			}
 		}
 
