@@ -14,7 +14,6 @@ interface CharacterFilters {
 	race: number[]
 	proficiency: number[]
 	gender: number[]
-	sort: CollectionSortKey
 }
 
 interface WeaponFilters {
@@ -22,14 +21,12 @@ interface WeaponFilters {
 	rarity: number[]
 	proficiency: number[]
 	series: (number | string)[]
-	sort: CollectionSortKey
 }
 
 interface SummonFilters {
 	element: number[]
 	rarity: number[]
 	series: (number | string)[]
-	sort: CollectionSortKey
 }
 
 interface ArtifactFilters {
@@ -50,6 +47,12 @@ type EntityFilters = {
 	artifacts: ArtifactFilters
 }
 
+/** Sort shared by the Characters, Weapons and Summons tabs when none has been chosen */
+export const DEFAULT_ITEM_SORT: CollectionSortKey = 'release_date_desc'
+
+// Saved tab filters from before the sort was shared may still carry a `sort` field; it is ignored
+const ITEM_SORT_STORAGE_KEY = `${STORAGE_KEY_PREFIX}-item-sort`
+
 export const COLLECTION_FILTER_DEFAULTS: EntityFilters = {
 	characters: {
 		element: [],
@@ -57,11 +60,10 @@ export const COLLECTION_FILTER_DEFAULTS: EntityFilters = {
 		series: [],
 		race: [],
 		proficiency: [],
-		gender: [],
-		sort: 'name_asc'
+		gender: []
 	},
-	weapons: { element: [], rarity: [3], proficiency: [], series: [], sort: 'name_asc' },
-	summons: { element: [], rarity: [3], series: [], sort: 'name_asc' },
+	weapons: { element: [], rarity: [3], proficiency: [], series: [] },
+	summons: { element: [], rarity: [3], series: [] },
 	artifacts: {
 		element: [],
 		proficiency: [],
@@ -79,6 +81,9 @@ class CollectionFiltersStore {
 	#weapons = $state<WeaponFilters>({ ...COLLECTION_FILTER_DEFAULTS.weapons })
 	#summons = $state<SummonFilters>({ ...COLLECTION_FILTER_DEFAULTS.summons })
 	#artifacts = $state<ArtifactFilters>({ ...COLLECTION_FILTER_DEFAULTS.artifacts })
+	#itemSort = $state<CollectionSortKey>(DEFAULT_ITEM_SORT)
+	// Kept in memory only, so browsing another user's collection never changes the viewer's own sort
+	#visitorItemSort = $state<CollectionSortKey>(DEFAULT_ITEM_SORT)
 	#initialized = false
 
 	constructor() {
@@ -101,6 +106,13 @@ class CollectionFiltersStore {
 		this.#weapons = this.#load('weapons', COLLECTION_FILTER_DEFAULTS.weapons)
 		this.#summons = this.#load('summons', COLLECTION_FILTER_DEFAULTS.summons)
 		this.#artifacts = this.#load('artifacts', COLLECTION_FILTER_DEFAULTS.artifacts)
+
+		try {
+			const storedSort = localStorage.getItem(ITEM_SORT_STORAGE_KEY)
+			if (storedSort) this.#itemSort = storedSort as CollectionSortKey
+		} catch {
+			// Storage unavailable
+		}
 	}
 
 	#load<K extends keyof EntityFilters>(key: K, defaults: EntityFilters[K]): EntityFilters[K] {
@@ -149,6 +161,25 @@ class CollectionFiltersStore {
 	get artifacts(): ArtifactFilters {
 		this.#ensureInit()
 		return this.#artifacts
+	}
+
+	/** The sort shared by the Characters, Weapons and Summons tabs */
+	getItemSort(isOwner: boolean): CollectionSortKey {
+		this.#ensureInit()
+		return isOwner ? this.#itemSort : this.#visitorItemSort
+	}
+
+	setItemSort(isOwner: boolean, sort: CollectionSortKey) {
+		if (!isOwner) {
+			this.#visitorItemSort = sort
+			return
+		}
+		this.#itemSort = sort
+		try {
+			localStorage.setItem(ITEM_SORT_STORAGE_KEY, sort)
+		} catch {
+			// Storage unavailable or full
+		}
 	}
 
 	setCharacters(filters: Partial<CharacterFilters>) {

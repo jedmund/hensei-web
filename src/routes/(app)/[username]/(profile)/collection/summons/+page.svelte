@@ -20,10 +20,12 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import {
 		collectionFilters,
-		COLLECTION_FILTER_DEFAULTS
+		COLLECTION_FILTER_DEFAULTS,
+		DEFAULT_ITEM_SORT
 	} from '$lib/stores/collectionFilters.svelte'
 	import { collectionTeamsPane } from '$lib/stores/collectionTeamsPane.svelte'
 	import { viewMode } from '$lib/stores/viewMode.svelte'
+	import { getCollectionSortOptions } from '$lib/utils/collectionFilterOptions'
 	import { LOADED_IDS_KEY, type LoadedIdsContext } from '$lib/stores/selectionMode.svelte'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { localizedName } from '$lib/utils/locale'
@@ -49,8 +51,14 @@
 	let searchQuery = $state('')
 	let unowned = $state(false)
 
-	// Sort state
-	let sortBy = $state<CollectionSortKey>(initialFilters.sort)
+	// Sort state, shared with the Characters and Weapons tabs. Summons have no proficiency, so a
+	// shared proficiency sort shows the default here and stays saved for the other tabs.
+	const sharedSort = $derived(collectionFilters.getItemSort(data.isOwner))
+	const sortBy = $derived(
+		getCollectionSortOptions('summon').some((option) => option.value === sharedSort)
+			? sharedSort
+			: DEFAULT_ITEM_SORT
+	)
 
 	// Sentinel for infinite scroll
 	let sentinelEl = $state<HTMLElement>()
@@ -114,13 +122,12 @@
 		seriesFilters = filters.series
 	}
 
-	// Persist filter and sort state — owners only (don't pollute viewer's saved state on others' pages)
+	// Persist filter state — owners only (don't pollute viewer's saved state on others' pages)
 	$effect(() => {
 		const filters = {
 			element: elementFilters,
 			rarity: rarityFilters,
-			series: seriesFilters,
-			sort: sortBy
+			series: seriesFilters
 		}
 		if (!data.isOwner) return
 		untrack(() => collectionFilters.setSummons(filters))
@@ -180,7 +187,9 @@
 			bind:rarityFilters
 			bind:seriesFilters
 			bind:searchQuery
-			bind:sortBy
+			bind:sortBy={
+				() => sortBy, (sort: CollectionSortKey) => collectionFilters.setItemSort(data.isOwner, sort)
+			}
 			bind:unowned
 			onFiltersChange={handleFiltersChange}
 			showUnowned
