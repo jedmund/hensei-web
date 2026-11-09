@@ -56,12 +56,12 @@
 	let sortBy = $state<CollectionSortKey>(initialFilters.sort)
 
 	const sortOptions: { value: CollectionSortKey; label: string }[] = [
-		{ value: 'score_desc', label: 'Score ↓' },
-		{ value: 'score_asc', label: 'Score ↑' },
-		{ value: 'name_asc', label: 'Name A → Z' },
-		{ value: 'name_desc', label: 'Name Z → A' },
-		{ value: 'element_asc', label: 'Element ↑' },
-		{ value: 'element_desc', label: 'Element ↓' }
+		{ value: 'score_desc', label: m.sort_score_desc() },
+		{ value: 'score_asc', label: m.sort_score_asc() },
+		{ value: 'name_asc', label: m.sort_name_asc() },
+		{ value: 'name_desc', label: m.sort_name_desc() },
+		{ value: 'element_asc', label: m.sort_element_asc() },
+		{ value: 'element_desc', label: m.sort_element_desc() }
 	]
 
 	// Element options for MultiSelect

@@ -1,5 +1,6 @@
 import { getBasePath } from '$lib/utils/images/core'
 import * as m from '$lib/paraglide/messages'
+import { getLocale } from '$lib/paraglide/runtime'
 
 interface ElementData {
 	en: string
@@ -90,9 +91,11 @@ export function getElementIcon(element?: number): string {
 	if (element === undefined || element === null) return ''
 	const key = ELEMENT_KEYS[element]
 	if (!key) return ''
+	// The game has no Japanese version of the Any tag
 	if (key === 'Null') return `${getBasePath()}/labels/element/Label_Element_Any.png`
 	const capitalizedKey = key.charAt(0).toUpperCase() + key.slice(1)
-	return `${getBasePath()}/labels/element/Label_Element_${capitalizedKey}.png`
+	const directory = getLocale() === 'ja' ? 'element/ja' : 'element'
+	return `${getBasePath()}/labels/${directory}/Label_Element_${capitalizedKey}.png`
 }
 
 export type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'

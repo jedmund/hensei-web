@@ -1,5 +1,6 @@
 import { getBasePath } from '$lib/utils/images/core'
 import * as m from '$lib/paraglide/messages'
+import { getLocale } from '$lib/paraglide/runtime'
 
 /** Proficiency ids, matching the game's own numbering */
 export const ProficiencyId = {
@@ -65,7 +66,8 @@ export function getProficiencyIcon(proficiency: number): string {
 	const key = PROFICIENCY_KEYS[proficiency]
 	if (!key || key === 'None') return ''
 	const capitalizedKey = key.charAt(0).toUpperCase() + key.slice(1)
-	return `${getBasePath()}/labels/proficiency/Label_Weapon_${capitalizedKey}.png`
+	const directory = getLocale() === 'ja' ? 'proficiency/ja' : 'proficiency'
+	return `${getBasePath()}/labels/${directory}/Label_Weapon_${capitalizedKey}.png`
 }
 
 export function getProficiencyOptions() {
