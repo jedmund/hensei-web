@@ -1334,6 +1334,8 @@
 	"sort_proficiency_desc": "Proficiency ↓",
 	"sort_release_date_newest": "Release Date ↓",
 	"sort_release_date_oldest": "Release Date ↑",
+	"sort_score_desc": "Score ↓",
+	"sort_score_asc": "Score ↑",
 	"filter_element": "Element",
 	"filter_rarity": "Rarity",
 	"filter_season": "Season",
