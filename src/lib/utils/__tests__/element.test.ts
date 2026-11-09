@@ -4,6 +4,12 @@ vi.mock('$lib/utils/images/core', () => ({
 	getBasePath: vi.fn(() => '/images')
 }))
 
+const { getLocale } = vi.hoisted(() => ({ getLocale: vi.fn(() => 'en') }))
+vi.mock('$lib/paraglide/runtime', async (importOriginal) => ({
+	...(await importOriginal<typeof import('$lib/paraglide/runtime')>()),
+	getLocale
+}))
+
 import {
 	ELEMENTS,
 	ELEMENT_DISPLAY_ORDER,
@@ -78,6 +84,17 @@ describe('getElementClass', () => {
 describe('getElementIcon', () => {
 	it('returns label image path for valid element', () => {
 		expect(getElementIcon(1)).toBe('/images/labels/element/Label_Element_Fire.png')
+	})
+
+	it('uses the Japanese tag under the Japanese locale', () => {
+		getLocale.mockReturnValueOnce('ja')
+		expect(getElementIcon(1)).toBe('/images/labels/element/ja/Label_Element_Fire.png')
+	})
+
+	it('keeps the Any tag in English under the Japanese locale', () => {
+		getLocale.mockReturnValue('ja')
+		expect(getElementIcon(0)).toBe('/images/labels/element/Label_Element_Any.png')
+		getLocale.mockReturnValue('en')
 	})
 
 	it('returns empty for undefined', () => {
