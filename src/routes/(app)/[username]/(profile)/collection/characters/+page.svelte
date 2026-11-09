@@ -52,8 +52,8 @@
 	let searchQuery = $state('')
 	let unowned = $state(false)
 
-	// Sort state
-	let sortBy = $state<CollectionSortKey>(initialFilters.sort)
+	// Sort state, shared with the other item tabs
+	const sortBy = $derived(collectionFilters.getItemSort(data.isOwner))
 
 	// Sentinel for infinite scroll
 	let sentinelEl = $state<HTMLElement>()
@@ -123,7 +123,7 @@
 		genderFilters = filters.gender
 	}
 
-	// Persist filter and sort state — owners only (don't pollute viewer's saved state on others' pages)
+	// Persist filter state — owners only (don't pollute viewer's saved state on others' pages)
 	$effect(() => {
 		const filters = {
 			element: elementFilters,
@@ -131,8 +131,7 @@
 			series: seriesFilters,
 			race: raceFilters,
 			proficiency: proficiencyFilters,
-			gender: genderFilters,
-			sort: sortBy
+			gender: genderFilters
 		}
 		if (!data.isOwner) return
 		untrack(() => collectionFilters.setCharacters(filters))
@@ -194,7 +193,9 @@
 			bind:proficiencyFilters
 			bind:genderFilters
 			bind:searchQuery
-			bind:sortBy
+			bind:sortBy={
+				() => sortBy, (sort: CollectionSortKey) => collectionFilters.setItemSort(data.isOwner, sort)
+			}
 			bind:unowned
 			onFiltersChange={handleFiltersChange}
 			showFilters={{
