@@ -5,6 +5,7 @@
 	import type {
 		CollectionFilterConfig,
 		CollectionFilterKey,
+		CollectionFilterOption,
 		CollectionFilterState
 	} from '$lib/types/filter'
 	import type { ElementType } from '$lib/utils/element'
@@ -20,9 +21,9 @@
 		getRaceFilterOptions,
 		resolveFilterVisibility,
 		seriesToOptions,
+		weaponSeriesToOptions,
 		splitFilterConfigs,
 		type CollectionEntityType,
-		type CollectionFilterOption,
 		type CollectionFilterVisibility
 	} from '$lib/utils/collectionFilterOptions'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -110,13 +111,11 @@
 	}))
 
 	const seriesOptions = $derived(
-		seriesToOptions(
-			entityType === 'character'
-				? characterSeriesQuery.data
-				: entityType === 'weapon'
-					? weaponSeriesQuery.data
-					: summonSeriesQuery.data
-		)
+		entityType === 'weapon'
+			? weaponSeriesToOptions(weaponSeriesQuery.data)
+			: seriesToOptions(
+					entityType === 'character' ? characterSeriesQuery.data : summonSeriesQuery.data
+				)
 	)
 
 	// Current values, keyed like CollectionFilterState

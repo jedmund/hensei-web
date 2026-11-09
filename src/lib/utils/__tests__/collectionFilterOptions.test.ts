@@ -9,7 +9,9 @@ import {
 	resolveFilterVisibility,
 	seriesToOptions,
 	splitFilterConfigs,
-	toggleFilterValue
+	toggleFilterValue,
+	weaponSeriesImage,
+	weaponSeriesToOptions
 } from '../collectionFilterOptions'
 import type { CollectionFilterConfig, CollectionFilterKey } from '$lib/types/filter'
 
@@ -92,6 +94,42 @@ describe('seriesToOptions', () => {
 		const options = seriesToOptions(series)
 		expect(options.map((o) => o.value)).toEqual(['a', 'b'])
 		expect(series.map((s) => s.id)).toEqual(['b', 'a'])
+	})
+})
+
+describe('weaponSeriesImage', () => {
+	it('returns the icon for a series that has one', () => {
+		expect(weaponSeriesImage('grand').image).toMatch(/\/icons\/weapon-series\/grand\.png$/)
+	})
+
+	it('returns a round placeholder for a series without one', () => {
+		expect(weaponSeriesImage('gacha')).toEqual({
+			imageBackground: 'var(--placeholder-bg)',
+			imageRound: true
+		})
+	})
+})
+
+describe('weaponSeriesToOptions', () => {
+	const series = (slug: string, order: number) => ({
+		id: slug,
+		slug,
+		order,
+		name: { en: slug, ja: slug }
+	})
+
+	it('uses the icon stored under the series slug', () => {
+		const [option] = weaponSeriesToOptions([series('draconic-providence', 1)])
+		expect(option?.image).toMatch(/\/icons\/weapon-series\/draconic-providence\.png$/)
+		expect(option?.imageBackground).toBeUndefined()
+	})
+
+	it('gives Gacha and Event a grey circle instead of an icon', () => {
+		for (const option of weaponSeriesToOptions([series('gacha', 1), series('event', 2)])) {
+			expect(option.image).toBeUndefined()
+			expect(option.imageBackground).toBe('var(--placeholder-bg)')
+			expect(option.imageRound).toBe(true)
+		}
 	})
 })
 

@@ -12,6 +12,10 @@
 		image?: string
 		/** CSS background color behind the image thumbnail */
 		imageBackground?: string
+		/** Shows imageBackground as a circle when there is no image */
+		imageRound?: boolean
+		/** Shows the whole image instead of cropping it to a circle */
+		imageUncropped?: boolean
 		/** CSS color for a colored dot indicator */
 		color?: string
 		/** CSS color applied only to the check indicator, without rendering a color dot */
@@ -134,8 +138,11 @@
 			src={option.image}
 			alt={option.label}
 			class="image"
+			class:uncropped={option.imageUncropped}
 			style={option.imageBackground ? `background-color: ${option.imageBackground}` : ''}
 		/>
+	{:else if option.imageRound && option.imageBackground}
+		<span class="image" style="background-color: {option.imageBackground}"></span>
 	{/if}
 {/snippet}
 
@@ -261,6 +268,11 @@
 			flex-shrink: 0;
 			border-radius: $full-corner;
 			object-fit: cover;
+
+			&.uncropped {
+				border-radius: 0;
+				object-fit: contain;
+			}
 		}
 
 		.color-dot {

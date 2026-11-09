@@ -56,10 +56,21 @@ export interface CollectionFilterState {
 
 export type CollectionFilterKey = keyof CollectionFilterState
 
+/** One choice in a Collection filter group */
+export interface CollectionFilterOption {
+	value: number | string
+	label: string
+	color?: string
+	image?: string
+	imageBackground?: string
+	imageRound?: boolean
+	imageUncropped?: boolean
+}
+
 /** One Collection filter group as rendered by the inline pickers, More menu and mobile sheet */
 export interface CollectionFilterConfig {
 	key: CollectionFilterKey
-	options: { value: number | string; label: string; color?: string }[]
+	options: CollectionFilterOption[]
 	value: (number | string)[]
 	onChange: (value: (number | string)[]) => void
 	placeholder: string

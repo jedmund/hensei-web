@@ -9,10 +9,12 @@ import type { CollectionSortKey } from '$lib/types/api/collection'
 import type {
 	CollectionFilterConfig,
 	CollectionFilterKey,
+	CollectionFilterOption,
 	CollectionFilterState
 } from '$lib/types/filter'
 import { CHARACTER_SEASON_NAMES } from '$lib/types/enums'
 import { getElementColor, getElementOptions } from '$lib/utils/element'
+import { getWeaponSeriesIcon } from '$lib/utils/images/icons'
 import { GENDER_LABELS } from '$lib/utils/gender'
 import { localizedName } from '$lib/utils/locale'
 import { RACE_LABELS, getRaceLabel } from '$lib/utils/race'
@@ -20,12 +22,6 @@ import { RACE_LABELS, getRaceLabel } from '$lib/utils/race'
 export type CollectionEntityType = 'character' | 'weapon' | 'summon'
 
 export type CollectionFilterVisibility = Partial<Record<CollectionFilterKey, boolean>>
-
-export interface CollectionFilterOption {
-	value: number | string
-	label: string
-	color?: string
-}
 
 /** Display order of the filter groups */
 export const COLLECTION_FILTER_KEYS: CollectionFilterKey[] = [
@@ -130,14 +126,40 @@ export const GENDER_OPTIONS: CollectionFilterOption[] = Object.entries(GENDER_LA
 	.filter(([value]) => Number(value) !== 0)
 	.map(([value, label]) => ({ value: Number(value), label }))
 
+interface SeriesListItem {
+	id: string
+	order: number
+	name: { en: string; ja: string }
+}
+
 /** Series list from the API, in display order */
-export function seriesToOptions(
-	series: { id: string; order: number; name: { en: string; ja: string } }[] | undefined
+export function seriesToOptions<T extends SeriesListItem>(
+	series: T[] | undefined,
+	decorate?: (series: T) => Partial<CollectionFilterOption>
 ): CollectionFilterOption[] {
 	if (!series) return []
 	return [...series]
 		.sort((a, b) => a.order - b.order)
-		.map((s) => ({ value: s.id, label: localizedName(s.name) }))
+		.map((s) => ({ value: s.id, label: localizedName(s.name), ...decorate?.(s) }))
+}
+
+// The game's series filter has no icon for these
+const WEAPON_SERIES_WITHOUT_ICON = new Set(['gacha', 'event'])
+
+/** A weapon series option's icon, or a grey circle for series that have none */
+export function weaponSeriesImage(
+	slug: string
+): Pick<CollectionFilterOption, 'image' | 'imageBackground' | 'imageRound' | 'imageUncropped'> {
+	return WEAPON_SERIES_WITHOUT_ICON.has(slug)
+		? { imageBackground: 'var(--placeholder-bg)', imageRound: true }
+		: { image: getWeaponSeriesIcon(slug), imageUncropped: true }
+}
+
+/** Weapon series with their icons */
+export function weaponSeriesToOptions(
+	series: (SeriesListItem & { slug: string })[] | undefined
+): CollectionFilterOption[] {
+	return seriesToOptions(series, ({ slug }) => weaponSeriesImage(slug))
 }
 
 /** Adds the value if absent, removes it if present */
