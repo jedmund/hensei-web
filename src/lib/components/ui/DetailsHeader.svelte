@@ -1,7 +1,7 @@
 <script lang="ts" module>
 	/** What a detail header shows: picks the placeholder, the image size and the labels under the name */
 	export type DetailEntityType =
-		'character' | 'summon' | 'weapon' | 'job' | 'jobSkill' | 'raid' | 'accessory'
+		'character' | 'summon' | 'weapon' | 'job' | 'jobSkill' | 'raid' | 'accessory' | 'series'
 </script>
 
 <script lang="ts">
@@ -50,6 +50,9 @@
 	// Get element name for button styling
 	const elementName = $derived(element ? getElementKey(element) : undefined)
 
+	// An image that failed with no placeholder to fall back to (a series without its icon)
+	let failedImage = $state<string>()
+
 	// Helper function to get display name
 	function getDisplayName(nameObj: string | { en?: string; ja?: string }): string {
 		return localizedName(nameObj)
@@ -58,12 +61,13 @@
 
 <header class="container">
 	<div class="left">
-		{#if image}
+		{#if image && failedImage !== image}
 			<div
 				class="image"
 				class:job={type === 'job'}
 				class:skill={type === 'jobSkill'}
 				class:accessory={type === 'accessory'}
+				class:series={type === 'series'}
 			>
 				<!-- A fresh element per image, so the fallback steps start over (e.g. j/k in the panel) -->
 				{#key image}
@@ -88,10 +92,11 @@
 										? `${getBasePath()}/app/placeholders/placeholder-raid-thumbnail.png`
 										: type === 'accessory'
 											? `${getBasePath()}/app/placeholders/placeholder-weapon-grid.png`
-											: type
+											: type && type !== 'series'
 												? getPlaceholderImage(type, 'grid')
 												: ''
-							img.src = placeholder
+							if (placeholder) img.src = placeholder
+							else failedImage = image
 						}}
 					/>
 				{/key}
@@ -193,6 +198,13 @@
 			&.accessory img {
 				width: 96px;
 				height: auto;
+			}
+
+			// The game's series icons are 54px; don't scale them up
+			&.series img {
+				width: 54px;
+				height: auto;
+				border-radius: 0;
 			}
 		}
 

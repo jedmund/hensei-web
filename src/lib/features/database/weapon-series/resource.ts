@@ -7,6 +7,7 @@ import * as m from '$lib/paraglide/messages'
 import { seriesAdapter } from '$lib/api/adapters/series.adapter'
 import { entityKeys, entityQueries } from '$lib/api/queries/entity.queries'
 import type { FlagValue } from '$lib/components/data-table/types'
+import { seriesIconColumn, weaponSeriesIcon } from '$lib/features/database/schema/seriesIcon'
 import { sluggedFields } from '$lib/features/database/schema/sluggedFields'
 import { defineResource, type EnumOption, type Values } from '$lib/features/database/schema/types'
 import { weaponSeriesSection } from '$lib/features/database/weapon-series/section'
@@ -158,6 +159,7 @@ export const weaponSeriesResource = defineResource<AdminWeaponSeriesRow, WeaponS
 		title: 'name',
 		rowId: (s) => s.slug,
 		columns: [
+			seriesIconColumn(weaponSeriesIcon),
 			'order',
 			'name',
 			'slug',
@@ -215,7 +217,9 @@ export const weaponSeriesResource = defineResource<AdminWeaponSeriesRow, WeaponS
 		fetch: (slug) => seriesAdapter.getWeaponSeries(slug),
 		query: (slug) => entityQueries.weaponSeries(slug),
 		routeId: (s) => s.slug,
-		noun: m.db_weapon_series_noun
+		noun: m.db_weapon_series_noun,
+		type: 'series',
+		image: (s) => weaponSeriesIcon(s.slug)
 	},
 
 	save: {

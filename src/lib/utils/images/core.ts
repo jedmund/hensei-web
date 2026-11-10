@@ -31,6 +31,7 @@ export const BUCKET = {
 	awakening: 'icons/awakening',
 	weaponSkills: 'icons/weapon-skills',
 	weaponSeries: 'icons/weapon-series',
+	summonSeries: 'icons/summon-series',
 	weaponKeys: 'weapons/keys',
 	skillLabels: 'icons/skill-labels',
 	mastery: 'icons/mastery',
