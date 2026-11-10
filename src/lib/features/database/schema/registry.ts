@@ -15,6 +15,7 @@ import { weaponSeriesResource } from '$lib/features/database/weapon-series/resou
 import { eventsResource } from '$lib/features/database/events/resource'
 import { raidGroupsResource } from '$lib/features/database/raid-groups/resource'
 import { raidsResource } from '$lib/features/database/raids/resource'
+import { summonSeriesResource } from '$lib/features/database/summon-series/resource'
 import { summonsResource } from '$lib/features/database/summons/resource'
 import { weaponsResource } from '$lib/features/database/weapons/resource'
 import { stickersResource } from '$lib/features/database/stickers/resource'
@@ -37,6 +38,7 @@ export const RESOURCES: Record<ResourceName, AnyResourceDef> = {
 	events: eventsResource,
 	'weapon-series': weaponSeriesResource,
 	'character-series': characterSeriesResource,
+	'summon-series': summonSeriesResource,
 	awakenings: awakeningsResource,
 	jobs: jobsResource,
 	'job-skills': jobSkillsResource,

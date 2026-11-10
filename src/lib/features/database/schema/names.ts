@@ -14,6 +14,7 @@ export const RESOURCE_NAMES = [
 	'events',
 	'weapon-series',
 	'character-series',
+	'summon-series',
 	'awakenings',
 	'jobs',
 	'job-skills',

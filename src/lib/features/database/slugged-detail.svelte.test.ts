@@ -1,6 +1,6 @@
 /**
- * The generated details of the slug-keyed resources (weapon series,
- * character series, awakenings). The series' Info tabs must match the text
+ * The generated details of the slug-keyed resources (weapon, character and
+ * summon series, awakenings). The series' Info tabs must match the text
  * the hand-written series pages drew (each resource's detail-baseline.json),
  * with two deliberate differences: a weapon series with keys shows its key
  * slots, and a blank Japanese name shows a dash rather than nothing.
@@ -47,6 +47,7 @@ import ResourceDetail from '$lib/features/database/schema/ResourceDetail.svelte'
 import type { AnyResourceDef } from '$lib/features/database/schema/registry'
 import { awakeningsResource } from './awakenings/resource'
 import { characterSeriesResource } from './character-series/resource'
+import { summonSeriesResource } from './summon-series/resource'
 import { weaponSeriesResource } from './weapon-series/resource'
 import { detailRecords as characterSeries } from './character-series/__fixtures__/detailRecords'
 import characterBaseline from './character-series/__fixtures__/detail-baseline.json'
@@ -115,9 +116,11 @@ describe('weapon series detail: the Info tab matches the hand-written page', () 
 		})
 	}
 
-	it('has no image and no tabs, as the page had none', () => {
+	it('shows the series icon, and no tabs, as the page had none', () => {
 		render(weaponSeriesResource, weaponSeries.keyed)
-		expect(target.querySelector('.image img')).toBeNull()
+		expect(target.querySelector('.image.series img')?.getAttribute('src')).toMatch(
+			/\/icons\/weapon-series\/dark-opus\.png$/
+		)
 		expect(target.querySelector('[role="radio"]')).toBeNull()
 		expect(target.querySelector('h2')?.textContent).toBe('Dark Opus')
 	})
@@ -162,5 +165,44 @@ describe('awakening detail', () => {
 		expect(target.querySelector('.details img')?.getAttribute('src')).toMatch(
 			/icons\/awakening\/character-multi\.jpg$/
 		)
+	})
+})
+
+describe('summon series detail', () => {
+	const magna = {
+		id: 'ss-magna',
+		name: { en: 'Magna', ja: 'マグナ' },
+		slug: 'magna',
+		order: 3,
+		summonCount: 6
+	}
+
+	it('shows the names, slug, order and summon count under the series icon', () => {
+		render(summonSeriesResource, magna)
+		expect(lines(target.querySelector('.details'))).toEqual([
+			'Basic Info',
+			'Name (EN)',
+			'Magna',
+			'Name (JA)',
+			'マグナ',
+			'Slug',
+			'magna',
+			'Order',
+			'3',
+			'Statistics',
+			'Summon Count',
+			'6'
+		])
+		expect(target.querySelector('.image.series img')?.getAttribute('src')).toMatch(
+			/\/icons\/summon-series\/magna\.png$/
+		)
+	})
+
+	it('drops an icon that fails to load, rather than draw a broken image', () => {
+		render(summonSeriesResource, magna)
+		target.querySelector('.image.series img')?.dispatchEvent(new Event('error'))
+		flushSync()
+		expect(target.querySelector('.image')).toBeNull()
+		expect(target.querySelector('h2')?.textContent).toBe('Magna')
 	})
 })
