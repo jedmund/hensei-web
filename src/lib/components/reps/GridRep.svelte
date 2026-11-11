@@ -11,7 +11,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
-	import { getAvatarSrc } from '$lib/utils/avatar'
+	import { avatarBackground, getAvatarSrc } from '$lib/utils/avatar'
 	import { getDefaultRepView } from '$lib/stores/defaultRepView.svelte'
 	import * as m from '$lib/paraglide/messages'
 
@@ -118,6 +118,7 @@
 								<img
 									class="user-avatar"
 									src={getAvatarSrc(party.user.avatar.picture)}
+									style:background-color={avatarBackground(party.user.avatar.element)}
 									alt=""
 									width="20"
 									height="20"

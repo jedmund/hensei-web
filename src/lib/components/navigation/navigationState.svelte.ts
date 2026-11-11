@@ -8,7 +8,7 @@ import type { CrewInvitation, PhantomPlayer } from '$lib/types/api/crew'
 import { localizeHref } from '$lib/paraglide/runtime'
 import { authStore } from '$lib/stores/auth.store.svelte'
 import type { UserCookie } from '$lib/types/UserCookie'
-import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
+import { avatarBackground, getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 import { isHomePath } from '$lib/utils/browseRoutes'
 import { extractErrorMessage } from '$lib/utils/errors'
 import { useSettingsReturn } from '../settings/settingsReturn.svelte'
@@ -49,6 +49,7 @@ export class NavigationState {
 
 	readonly avatarSrc = $derived(getAvatarSrc(this.currentUser?.picture))
 	readonly avatarSrcSet = $derived(getAvatarSrcSet(this.currentUser?.picture))
+	readonly avatarBg = $derived(avatarBackground(this.userElement))
 
 	readonly hrefs = $derived(localizeNavHrefs())
 	readonly mainLinks = $derived(mainNavLinks(this.hrefs, this.isAuth, this.username))

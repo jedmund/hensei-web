@@ -54,6 +54,7 @@
 							class="tab-avatar"
 							src={nav.avatarSrc}
 							srcset={nav.avatarSrcSet}
+							style:background-color={nav.avatarBg}
 							alt=""
 							width="24"
 							height="24"

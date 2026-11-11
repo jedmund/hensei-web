@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getAvatarSrc, type AvatarUser } from '$lib/utils/avatar'
+	import { avatarBackground, getAvatarSrc, type AvatarUser } from '$lib/utils/avatar'
 
 	interface Props {
 		back: AvatarUser
@@ -16,7 +16,10 @@
 
 <div class="avatar-pair" style:width="{offset + size}px" style:height="{size}px">
 	<div
-		class="avatar-slot back {back.avatar?.element || ''}"
+		class="avatar-slot back"
+		style:background-color={back.avatar?.picture
+			? avatarBackground(back.avatar.element)
+			: undefined}
 		style:width="{size}px"
 		style:height="{size}px"
 	>
@@ -27,7 +30,10 @@
 		{/if}
 	</div>
 	<div
-		class="avatar-slot front {front.avatar?.element || ''}"
+		class="avatar-slot front"
+		style:background-color={front.avatar?.picture
+			? avatarBackground(front.avatar.element)
+			: undefined}
 		style:width="{size}px"
 		style:height="{size}px"
 		style:left="{offset}px"

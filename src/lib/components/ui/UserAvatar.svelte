@@ -1,10 +1,15 @@
 <script lang="ts">
 	/**
 	 * A user's avatar: their picture in a circle, or an empty circle without
-	 * one. Classed with their avatar's element. Containers can set
+	 * one, on their element's color. Containers can set
 	 * --avatar-placeholder-bg for the empty circle.
 	 */
-	import { getAvatarSrc, getAvatarSrcSet, type AvatarUser } from '$lib/utils/avatar'
+	import {
+		avatarBackground,
+		getAvatarSrc,
+		getAvatarSrcSet,
+		type AvatarUser
+	} from '$lib/utils/avatar'
 
 	interface Props {
 		user: AvatarUser
@@ -14,7 +19,11 @@
 	let { user, size = 24 }: Props = $props()
 </script>
 
-<div class="avatar-wrapper {user.avatar?.element || ''}" style:--avatar-size="{size}px">
+<div
+	class="avatar-wrapper"
+	style:--avatar-size="{size}px"
+	style:background-color={user.avatar?.picture ? avatarBackground(user.avatar.element) : undefined}
+>
 	{#if user.avatar?.picture}
 		<img
 			class="avatar"
