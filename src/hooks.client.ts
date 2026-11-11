@@ -1,3 +1,4 @@
+import '$lib/utils/polyfills'
 import { env } from '$env/dynamic/public'
 import { handleErrorWithSentry, init } from '@sentry/sveltekit'
 import { z } from 'zod'
