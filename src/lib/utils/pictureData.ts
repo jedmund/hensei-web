@@ -5,6 +5,8 @@ export interface Picture {
 	}
 	filename: string
 	element: 'fire' | 'water' | 'earth' | 'wind' | 'light' | 'dark'
+	/** Account id of the one user it was drawn for: only they see and can pick it (the API enforces this too) */
+	ownerId?: string
 }
 
 export const pictureData: Picture[] = [
@@ -319,5 +321,28 @@ export const pictureData: Picture[] = [
 		},
 		filename: 'zeta',
 		element: 'fire'
+	},
+	{
+		name: { en: 'umikin', ja: 'umikin' },
+		filename: 'custom_umikin',
+		element: 'light',
+		ownerId: '03e72999-a939-4b10-b23f-ee5b26ce4bc6' // umikin
+	},
+	{
+		name: { en: 'reverie', ja: 'reverie' },
+		filename: 'custom_reverie',
+		element: 'earth',
+		ownerId: 'f255037f-7483-4971-9274-89aea82a803e' // reverie
+	},
+	{
+		name: { en: 'jedmund', ja: 'jedmund' },
+		filename: 'custom_jedmund',
+		element: 'fire',
+		ownerId: '9c585fd6-ba4d-4983-afae-4f8d9190fc98' // jedmund
 	}
 ]
+
+/** The pictures a user can choose from: every shared one plus any drawn for them */
+export function picturesFor(userId: string | undefined): Picture[] {
+	return pictureData.filter((p) => !p.ownerId || p.ownerId === userId)
+}
