@@ -138,6 +138,7 @@
 						picture={form.picture}
 						element={form.element}
 						{username}
+						{userId}
 						displayName={form.displayName}
 						description={form.description}
 						granblueId={form.granblueId}

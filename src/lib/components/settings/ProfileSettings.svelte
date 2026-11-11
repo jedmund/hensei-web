@@ -5,7 +5,7 @@
 	import Select from '../ui/Select.svelte'
 	import Input from '../ui/Input.svelte'
 	import SettingsRow from '../ui/SettingsRow.svelte'
-	import { pictureData } from '$lib/utils/pictureData'
+	import { picturesFor } from '$lib/utils/pictureData'
 	import { localizedName } from '$lib/utils/locale'
 	import { getAvatarSrc } from '$lib/utils/avatar'
 
@@ -13,6 +13,7 @@
 		picture: string
 		element: string
 		username: string
+		userId: string
 		displayName: string
 		description: string
 		granblueId: string
@@ -32,6 +33,7 @@
 		picture,
 		element,
 		username,
+		userId,
 		displayName,
 		description,
 		granblueId,
@@ -51,7 +53,7 @@
 	const elementBgVar = $derived(`var(--${element}-portrait-bg)`)
 
 	const pictureOptions = $derived(
-		pictureData
+		picturesFor(userId)
 			.sort((a, b) => localizedName(a.name).localeCompare(localizedName(b.name)))
 			.map((p) => ({
 				value: p.filename,
