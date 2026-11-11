@@ -49,3 +49,14 @@ export function getAvatarSrcSet(avatarFile: string | undefined | null): string {
 	const src = `${basePath}/${ensurePng(avatarFile)}`
 	return `${src} 1x, ${basePath}/${to2x(avatarFile)} 2x`
 }
+
+const AVATAR_ELEMENTS = new Set(['wind', 'fire', 'water', 'earth', 'dark', 'light'])
+
+/**
+ * The color behind an avatar: its owner's element, which shows through the
+ * picture's transparent edges. Undefined without an element, so the avatar
+ * keeps its container's own background.
+ */
+export function avatarBackground(element: string | undefined | null): string | undefined {
+	return element && AVATAR_ELEMENTS.has(element) ? `var(--${element}-portrait-bg)` : undefined
+}

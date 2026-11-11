@@ -4,7 +4,7 @@
 		buildWikiProfileUrl,
 		buildYoutubeChannelUrl
 	} from '$lib/utils/external-links'
-	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
+	import { avatarBackground, getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { goto } from '$app/navigation'
 	import { DropdownMenu } from 'bits-ui'
@@ -156,6 +156,7 @@
 					alt={`Avatar of ${username}`}
 					src={avatarSrc}
 					srcset={avatarSrcSet}
+					style:background-color={avatarBackground(element)}
 					width="56"
 					height="56"
 				/>

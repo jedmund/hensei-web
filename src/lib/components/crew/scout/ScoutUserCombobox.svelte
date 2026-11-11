@@ -41,7 +41,7 @@
 				{#each search.searchResults as user (user.id)}
 					<Combobox.Item value={user.id} label={user.username} class="combobox-item">
 						{#snippet children({ selected })}
-							<ScoutAvatar picture={user.avatar?.picture} alt="" />
+							<ScoutAvatar picture={user.avatar?.picture} element={user.avatar?.element} alt="" />
 							<span class="item-label">{user.username}</span>
 							{#if selected}
 								<span class="item-check">

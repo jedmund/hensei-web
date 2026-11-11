@@ -66,6 +66,7 @@
 							<img
 								src={nav.avatarSrc}
 								srcset={nav.avatarSrcSet}
+								style:background-color={nav.avatarBg}
 								alt={nav.username}
 								class="user-avatar"
 								width="24"

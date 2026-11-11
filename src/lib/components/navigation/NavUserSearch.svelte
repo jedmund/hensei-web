@@ -4,7 +4,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { m } from '$lib/paraglide/messages'
 	import { userAdapter, type UserInfo } from '$lib/api/adapters/user.adapter'
-	import { getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
+	import { avatarBackground, getAvatarSrc, getAvatarSrcSet } from '$lib/utils/avatar'
 	import Icon from '../Icon.svelte'
 
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
@@ -177,6 +177,7 @@
 							<img
 								src={getAvatarSrc(user.avatar.picture)}
 								srcset={getAvatarSrcSet(user.avatar.picture)}
+								style:background-color={avatarBackground(user.avatar.element)}
 								alt=""
 								class="result-avatar"
 								width="24"

@@ -12,7 +12,7 @@
 </script>
 
 <div class="selected-user">
-	<ScoutAvatar picture={user.avatar?.picture} alt={user.username} />
+	<ScoutAvatar picture={user.avatar?.picture} element={user.avatar?.element} alt={user.username} />
 	<span class="selected-username">{user.username}</span>
 	<button type="button" class="clear-button" onclick={onClear}>
 		<Icon name="close" size={14} />
