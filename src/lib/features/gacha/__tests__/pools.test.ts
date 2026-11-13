@@ -3,6 +3,7 @@ import {
 	bannerCountdownParts,
 	bannerEndTime,
 	bannerSeason,
+	bannerSsrRateups,
 	catalogueSettings,
 	hasFixedRates,
 	isClassic,
@@ -119,5 +120,32 @@ describe('banner time', () => {
 	it('shows the banner’s last minute in Japan time', () => {
 		// 19:00 JST ends at 18:59
 		expect(bannerEndTime('2026-10-31T10:00:00Z', 'en-US')).toMatch(/^Oct 31, 6:59\sPM$/)
+	})
+})
+
+describe('bannerSsrRateups', () => {
+	const catalogued = (identity: string, rarity: number) => ({ identity, rarity }) as CatalogueItem
+	const items = [
+		catalogued('Weapon:ssr', 3),
+		catalogued('Summon:ssr', 3),
+		catalogued('Weapon:sr', 2),
+		catalogued('Summon:r', 1)
+	]
+
+	it("keeps the SSR rate-ups, in the banner's order", () => {
+		const rateups = [
+			{ identity: 'Summon:ssr', percent: '0.03' },
+			{ identity: 'Weapon:sr', percent: '0.19' },
+			{ identity: 'Weapon:ssr', percent: '0.044' },
+			{ identity: 'Summon:r', percent: '2.999' }
+		]
+		expect(bannerSsrRateups(rateups, items)).toEqual([
+			{ identity: 'Summon:ssr', percent: '0.03' },
+			{ identity: 'Weapon:ssr', percent: '0.044' }
+		])
+	})
+
+	it('drops rate-ups missing from the catalogue', () => {
+		expect(bannerSsrRateups([{ identity: 'Weapon:gone', percent: '0.5' }], items)).toEqual([])
 	})
 })
