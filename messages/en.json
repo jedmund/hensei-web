@@ -2621,6 +2621,7 @@
 	"db_events_col_name": "Name",
 	"db_events_col_kind": "Kind",
 	"db_events_col_element": "Element",
+	"db_events_col_second_element": "Second element",
 	"db_events_col_dates": "Dates",
 	"db_events_col_raids": "Raids",
 	"db_events_empty": "No events here.",
