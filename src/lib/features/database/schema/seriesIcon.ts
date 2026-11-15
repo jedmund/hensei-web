@@ -1,7 +1,7 @@
 /**
  * The series icon in a series resource's list and detail header. Series
- * without an icon (Gacha and Event weapons, summon series until their icons
- * are uploaded) show none.
+ * without an icon (Gacha and Event weapons) show none, and an icon that
+ * fails to load hides itself.
  */
 import type { DataTableColumn } from '$lib/components/data-table/types'
 import {
@@ -16,7 +16,6 @@ export type SeriesIcon = (slug: string) => string | undefined
 export const weaponSeriesIcon: SeriesIcon = (slug) =>
 	hasWeaponSeriesIcon(slug) ? getWeaponSeriesIcon(slug) : undefined
 
-/** Summon series icons aren't all uploaded yet; a missing one hides itself */
 export const summonSeriesIcon: SeriesIcon = (slug) => getSummonSeriesIcon(slug)
 
 /** The list's leading icon column */
@@ -33,7 +32,7 @@ export function seriesIconColumn<Row extends { slug: string }>(
 		},
 		sortable: false,
 		hideable: false,
-		width: '64px',
-		minWidth: '64px'
+		width: '88px',
+		minWidth: '88px'
 	}
 }

@@ -200,10 +200,11 @@
 				height: auto;
 			}
 
-			// The game's series icons are 54px; don't scale them up
+			// The game's series icons are 54px tall (weapon 54 wide, summon 72);
+			// don't scale them
 			&.series img {
-				width: 54px;
-				height: auto;
+				width: auto;
+				height: 54px;
 				border-radius: 0;
 			}
 		}
