@@ -357,6 +357,8 @@ export interface Summon {
 	subaura?: boolean
 	/** Structured per-tier auras parsed from the wiki (the calculator's source) */
 	summonAuras?: SummonAura[]
+	/** The aura's name ("Zephyrus's Aura" / ゼピュロスの加護); one for the main and sub aura */
+	auraName?: { en?: string | null; ja?: string | null } | null
 	limit?: boolean
 	/** Whether this summon can be set as a support (friend) summon. Defaults
 	 * to true server-side; only certain summons are explicitly excluded. */

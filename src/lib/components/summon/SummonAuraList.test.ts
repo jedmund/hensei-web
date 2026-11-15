@@ -28,6 +28,7 @@ const summon = {
 	rarity: 3,
 	element: 1,
 	uncap: { flb: true, ulb: true, transcendence: true },
+	auraName: { en: "Zephyrus's Aura", ja: 'ゼピュロスの加護' },
 	summonAuras: [
 		aura('m0', 'main', 0, 0, 'Main base 80%'),
 		aura('m5', 'main', 5, 0, 'Main ULB 150%'),
@@ -60,5 +61,11 @@ describe('SummonAuraList', () => {
 		})
 		expect(body).toContain('Sub stage 1 10%')
 		expect(body.match(/Show all variants/g)?.length).toBe(1)
+	})
+
+	it('shows the aura name above the groups, and nothing without one', () => {
+		expect(render(SummonAuraList, { props: { summon } }).body).toContain("Zephyrus's Aura")
+		const unnamed = { ...summon, auraName: null } as unknown as Summon
+		expect(render(SummonAuraList, { props: { summon: unnamed } }).body).not.toContain('aura-name')
 	})
 })

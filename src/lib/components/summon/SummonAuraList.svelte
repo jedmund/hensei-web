@@ -5,6 +5,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import SummonAuraText from '$lib/components/sidebar/details/SummonAuraText.svelte'
 	import { SvelteSet } from 'svelte/reactivity'
+	import { localizedName } from '$lib/utils/locale'
 	import type { Summon, SummonAura } from '$lib/types/api/entities'
 
 	interface Props {
@@ -54,6 +55,13 @@
 		else expanded.add(slot)
 	}
 
+	// The aura's name in the app's language, else the other one; none when neither is known
+	const auraName = $derived.by(() => {
+		const name = summon.auraName
+		if (!name?.en && !name?.ja) return undefined
+		return localizedName({ en: name.en ?? undefined, ja: name.ja ?? undefined })
+	})
+
 	// A transcended tier fills every uncap star; its stage fills the transcendence star
 	function uncapFor(aura: SummonAura): number {
 		return aura.transcendenceStage > 0 ? 6 : aura.uncapLevel
@@ -61,6 +69,9 @@
 </script>
 
 <div class="summon-aura-list">
+	{#if auraName}
+		<h3 class="aura-name">{auraName}</h3>
+	{/if}
 	{#each groups as group (group.slot)}
 		{@const shown = group.current && !expanded.has(group.slot) ? [group.current] : group.tiers}
 		<SkillGroup title={group.title}>
@@ -97,6 +108,15 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
+
+	// The aura's name above the Main / Sub Aura groups, like the game's summon detail
+	.aura-name {
+		margin: 0;
+		padding: spacing.$unit-2x spacing.$unit-2x 0;
+		font-size: typography.$font-regular;
+		font-weight: typography.$medium;
+		color: var(--text-primary);
+	}
 
 	// One card per aura, a row per tier: the tier's uncap stars above its text
 	.aura-table {
