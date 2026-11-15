@@ -18,22 +18,6 @@
 	}
 </script>
 
-{#if type === 'summon' && itemData?.summonAuras && itemData.summonAuras.length > 0}
-	<div class="details-section">
-		<h3>{m.details_auras()}</h3>
-		<div class="auras-list">
-			{#each itemData.summonAuras as aura (aura.id)}
-				<div class="aura-item">
-					<h4>{displayName(aura) || m.details_unknown_aura()}</h4>
-					{#if aura.description}
-						<p>{aura.description}</p>
-					{/if}
-				</div>
-			{/each}
-		</div>
-	</div>
-{/if}
-
 {#if type === 'weapon' && itemData?.weaponKeys && itemData.weaponKeys.length > 0}
 	<div class="details-section">
 		<h3>{m.details_weapon_keys()}</h3>
@@ -73,32 +57,6 @@
 			text-transform: uppercase;
 			letter-spacing: 0.5px;
 		}
-
-		h4 {
-			font-size: typography.$font-regular;
-			font-weight: typography.$medium;
-			color: var(--text-primary);
-			margin: 0 0 calc(spacing.$unit * 0.5) 0;
-		}
-
-		p {
-			font-size: typography.$font-small;
-			color: var(--text-secondary);
-			line-height: 1.5;
-			margin: 0;
-		}
-	}
-
-	.auras-list {
-		display: flex;
-		flex-direction: column;
-		gap: spacing.$unit-2x;
-	}
-
-	.aura-item {
-		padding: spacing.$unit;
-		background: var(--page-hover);
-		border-radius: layout.$item-corner-small;
 	}
 
 	.keys-list {

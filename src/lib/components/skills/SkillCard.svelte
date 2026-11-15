@@ -74,6 +74,8 @@
 </div>
 
 <style lang="scss">
+	// Sizes are variables so a narrow container (the details pane) can step them down;
+	// the defaults suit the database pages.
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 	@use '$src/themes/layout' as layout;
@@ -90,7 +92,7 @@
 	}
 
 	.relation {
-		font-size: typography.$font-small;
+		font-size: var(--skill-card-meta-size, #{typography.$font-small});
 		font-weight: typography.$medium;
 		color: var(--text-secondary);
 		padding: spacing.$unit-half 0;
@@ -99,7 +101,7 @@
 	.body {
 		display: flex;
 		gap: spacing.$unit * 1.5;
-		padding: spacing.$unit;
+		padding: var(--skill-card-padding, #{spacing.$unit});
 	}
 
 	.icon {
@@ -150,7 +152,7 @@
 	}
 
 	.name {
-		font-size: typography.$font-medium;
+		font-size: var(--skill-card-name-size, #{typography.$font-medium});
 		font-weight: typography.$medium;
 		color: var(--text-primary);
 	}
@@ -166,7 +168,7 @@
 	}
 
 	.description {
-		font-size: typography.$font-regular;
+		font-size: var(--skill-card-text-size, #{typography.$font-regular});
 		line-height: 1.5;
 		color: var(--text-primary);
 	}
@@ -175,7 +177,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: spacing.$unit;
-		font-size: typography.$font-small;
+		font-size: var(--skill-card-meta-size, #{typography.$font-small});
 		color: var(--text-secondary);
 	}
 </style>

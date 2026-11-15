@@ -3,6 +3,8 @@
 	import type { Summon } from '$lib/api/adapters/summon.adapter'
 	import type { RecordTabProps } from '$lib/features/database/schema/types'
 	import type { SummonAura } from '$lib/types/api/entities'
+	import { summonAuraTierLabel as tierLabel } from '$lib/utils/summonAura'
+	import SummonAuraText from '$lib/components/sidebar/details/SummonAuraText.svelte'
 
 	let { record }: RecordTabProps<Summon> = $props()
 
@@ -10,23 +12,6 @@
 
 	const mainAuras = $derived(auras.filter((a) => a.slot === 'main'))
 	const subAuras = $derived(auras.filter((a) => a.slot === 'sub'))
-
-	/** "MLB" / "FLB" / "ULB" / "Lv N" transcendence tier badge, matching WeaponSkillList's idiom */
-	function tierLabel(aura: SummonAura): string {
-		if (aura.transcendenceStage > 0) return `Trans. ${aura.transcendenceStage}`
-		switch (aura.uncapLevel) {
-			case 0:
-				return 'Base'
-			case 3:
-				return 'MLB'
-			case 4:
-				return 'FLB'
-			case 5:
-				return 'ULB'
-			default:
-				return `${aura.uncapLevel}★`
-		}
-	}
 
 	function formatValue(aura: SummonAura): string {
 		if (aura.value == null) return '—'
@@ -70,7 +55,7 @@
 							</td>
 							<td class="value">{formatValue(aura)}</td>
 							<td class="description">
-								{aura.description?.en ?? '—'}
+								<SummonAuraText {aura} />
 								{#if aura.condition}
 									<span class="condition">({aura.condition})</span>
 								{/if}

@@ -15,6 +15,7 @@
 	import LinksSection from './details/LinksSection.svelte'
 	import TeamView from './details/TeamView.svelte'
 	import WeaponSkillList from '$lib/components/weapon/WeaponSkillList.svelte'
+	import SummonAuraList from '$lib/components/summon/SummonAuraList.svelte'
 	import { isWeaponSeriesRef } from '$lib/types/api/weaponSeries'
 	import CharacterSkillsTab from '$lib/features/database/characters/tabs/CharacterSkillsTab.svelte'
 	import OutOfSyncBanner from './details/OutOfSyncBanner.svelte'
@@ -91,6 +92,8 @@
 			return m.details_tab_skills()
 		if (type === 'character' && (item as GridCharacter).character?.skills?.length)
 			return m.character_skills_tab()
+		if (type === 'summon' && (item as GridSummon).summon?.summonAuras?.length)
+			return m.details_auras()
 		return undefined
 	})
 
@@ -420,18 +423,29 @@
 			<SkillsSection {type} {itemData} />
 		</div>
 	{:else if selectedView === 'skills'}
-		{#if type === 'weapon'}
-			{@const gridWeapon = item as GridWeapon}
-			<WeaponSkillList
-				skills={gridWeapon.weapon.weaponSkills ?? []}
-				series={isWeaponSeriesRef(gridWeapon.weapon.series) ? gridWeapon.weapon.series : undefined}
-				weaponKeys={gridWeapon.weaponKeys}
-				uncapLevel={gridUncapLevel ?? undefined}
-				{focusKeySlot}
-			/>
-		{:else if type === 'character'}
-			<CharacterSkillsTab record={(item as GridCharacter).character} />
-		{/if}
+		<div class="skills-view">
+			{#if type === 'weapon'}
+				{@const gridWeapon = item as GridWeapon}
+				<WeaponSkillList
+					skills={gridWeapon.weapon.weaponSkills ?? []}
+					series={isWeaponSeriesRef(gridWeapon.weapon.series)
+						? gridWeapon.weapon.series
+						: undefined}
+					weaponKeys={gridWeapon.weaponKeys}
+					uncapLevel={gridUncapLevel ?? undefined}
+					transcendenceStep={gridTranscendence ?? undefined}
+					{focusKeySlot}
+				/>
+			{:else if type === 'character'}
+				<CharacterSkillsTab record={(item as GridCharacter).character} />
+			{:else if type === 'summon'}
+				<SummonAuraList
+					summon={(item as GridSummon).summon}
+					uncapLevel={gridUncapLevel ?? undefined}
+					transcendenceStep={gridTranscendence ?? undefined}
+				/>
+			{/if}
+		</div>
 	{:else}
 		<TeamView
 			{type}
@@ -455,6 +469,7 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
+	@use '$src/themes/typography' as typography;
 
 	.details-sidebar {
 		padding: 0 0 spacing.$unit-2x;
@@ -462,6 +477,15 @@
 		display: flex;
 		flex-direction: column;
 		gap: spacing.$unit-2x;
+	}
+
+	// Skill and aura cards at the pane's text sizes, one step below the database pages'
+	.skills-view {
+		--skill-card-name-size: #{typography.$font-regular};
+		--skill-card-text-size: #{typography.$font-small};
+		--skill-card-meta-size: #{typography.$font-tiny};
+		// No inset: the cards sit on the pane, lined up with their slot titles
+		--skill-card-padding: 0;
 	}
 
 	.canonical-view {
