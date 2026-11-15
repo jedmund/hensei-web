@@ -37,6 +37,9 @@ export const SENTRY_IGNORE_ERRORS: (string | RegExp)[] = [
 	'NetworkError when attempting to fetch resource.',
 	'Failed to fetch',
 	'Load failed',
+	// Chrome, when a connection drops while a response body is read. Exact,
+	// since strings match anywhere in a message.
+	/^network error$/,
 	'AbortError',
 	'The operation was aborted.',
 	// Injected by browser extensions / third-party scripts, not our bundle
