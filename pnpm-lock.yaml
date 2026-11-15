@@ -203,6 +203,9 @@ importers:
       echarts:
         specifier: ^6.1.0
         version: 6.1.0
+      es-module-lexer:
+        specifier: 2.3.2
+        version: 2.3.2
       eslint:
         specifier: ^10.13.0
         version: 10.13.0(jiti@2.7.0)

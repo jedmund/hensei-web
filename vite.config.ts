@@ -5,6 +5,7 @@ import { sveltekit } from '@sveltejs/kit/vite'
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
 import { hoverMedia } from './src/lib/build/hoverMedia'
+import { paraglideExplicitIndex } from './src/lib/build/paraglideExplicitIndex'
 
 export default defineConfig({
 	define: {
@@ -59,7 +60,9 @@ export default defineConfig({
 			outdir: './src/lib/paraglide',
 			// Cookie first so explicit user choice wins over browser preference
 			strategy: ['cookie', 'url', 'preferredLanguage', 'baseLocale']
-		})
+		}),
+		// Keeps the message index cheap for Rollup to resolve (GBF-264)
+		paraglideExplicitIndex()
 	],
 	test: {
 		expect: { requireAssertions: true },

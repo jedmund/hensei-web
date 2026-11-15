@@ -43,6 +43,7 @@
 		"@vitest/browser": "^4.1.11",
 		"@vitest/browser-playwright": "^4.1.11",
 		"echarts": "^6.1.0",
+		"es-module-lexer": "2.3.2",
 		"eslint": "^10.13.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-storybook": "^10.6.2",
