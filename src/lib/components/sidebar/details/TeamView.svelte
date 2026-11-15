@@ -11,6 +11,7 @@
 	import EmptySectionPlaceholder from './EmptySectionPlaceholder.svelte'
 	import UncapSection from './UncapSection.svelte'
 	import SummonAuraText from './SummonAuraText.svelte'
+	import AuraScaling from './AuraScaling.svelte'
 	import WeaponElementSection from './WeaponElementSection.svelte'
 	import WeaponKeysSection from './WeaponKeysSection.svelte'
 	import { openCharacterEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
@@ -357,6 +358,9 @@
 			>
 				<div class="team-aura">
 					<SummonAuraText aura={summon.activeAura} />
+					{#if summon.activeAuraScaling}
+						<AuraScaling scaling={summon.activeAuraScaling} />
+					{/if}
 				</div>
 			</DetailsSection>
 		{/if}

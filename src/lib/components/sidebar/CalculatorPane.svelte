@@ -23,6 +23,7 @@
 	import type { SummonAura } from '$lib/types/api/entities'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import SummonAuraText from './details/SummonAuraText.svelte'
+	import AuraScaling from './details/AuraScaling.svelte'
 	import { getSummonImage, getSummonTransformation } from '$lib/utils/images/summons'
 	import { seriesHasUlbArt } from '$lib/utils/summonSeries'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
@@ -278,6 +279,9 @@
 							<span class="aura-name">{localizedName(summon.summon.name)}</span>
 							<span class="aura-role">{row.roles.join(' · ')}</span>
 							<SummonAuraText aura={row.aura} class="aura-text" />
+							{#if summon.activeAuraScaling}
+								<AuraScaling scaling={summon.activeAuraScaling} />
+							{/if}
 						</div>
 					</li>
 				{/each}

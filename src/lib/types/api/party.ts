@@ -173,6 +173,9 @@ export interface GridSummon {
 	/** The aura this summon gives the team at its uncap and transcendence: the main and
 	 * friend summons' main aura, every other slot's sub aura. Null when it has none. */
 	activeAura?: SummonAura | null
+	/** Grand Order: the main allies' distinct weapon specialties and the Normal ATK boost the
+	 * active aura gives at that count (null when the tier states no per-group amount) */
+	activeAuraScaling?: { weaponGroups: number; value: number | null } | null
 	/** Reference to the source collection summon if linked */
 	collectionSummonId?: string
 	/** Whether the grid item is out of sync with its collection source */

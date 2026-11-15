@@ -658,6 +658,8 @@
 	"aura_role_main": "メイン",
 	"aura_role_sub": "サブ",
 	"aura_tier_mlb": "3凸",
+	"aura_weapon_groups": "得意武器{count}種類",
+	"aura_weapon_groups_value": "得意武器{count}種類: 攻撃力{value}%UP",
 	"details_weapon_keys": "武器スキル",
 	"details_slot": "スロット{slot}",
 	"details_skill_slot": "アビリティ{slot}",
