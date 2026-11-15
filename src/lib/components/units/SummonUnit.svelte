@@ -2,6 +2,7 @@
 	import type { GridSummon } from '$lib/types/api/party'
 	import { usePartyContext } from '$lib/types/party-context'
 	import UnitFrame from './UnitFrame.svelte'
+	import { skillHighlight } from '$lib/stores/skillHighlight.svelte'
 	import OrphanedBadge from './OrphanedBadge.svelte'
 	import { getPlaceholderImage } from '$lib/utils/images/core'
 	import { getSummonTransformation, getSummonImage } from '$lib/utils/images/summons'
@@ -100,10 +101,16 @@
 			toast.error(extractErrorMessage(err, 'Failed to update quick summon'))
 		}
 	}
+
+	// Dims while an aura from another summon is hovered in the CalculatorPane
+	const auraDimmed = $derived(
+		skillHighlight.summonActive && !skillHighlight.summonContributes(item?.id)
+	)
 </script>
 
 <UnitFrame
 	type="summon"
+	rootClass={{ 'skill-dimmed': auraDimmed }}
 	{item}
 	entity={item?.summon}
 	{position}

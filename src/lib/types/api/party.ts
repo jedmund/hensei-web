@@ -5,6 +5,7 @@ import type {
 	Weapon,
 	Character,
 	Summon,
+	SummonAura,
 	Job,
 	JobSkill,
 	JobAccessory,
@@ -169,6 +170,9 @@ export interface GridSummon {
 	uncapLevel?: number
 	transcendenceStep?: number
 	summon: Summon // Named properly, not "object"
+	/** The aura this summon gives the team at its uncap and transcendence: the main and
+	 * friend summons' main aura, every other slot's sub aura. Null when it has none. */
+	activeAura?: SummonAura | null
 	/** Reference to the source collection summon if linked */
 	collectionSummonId?: string
 	/** Whether the grid item is out of sync with its collection source */

@@ -19,6 +19,14 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import type { SkillBoostLine } from '$lib/types/api/skillBoosts'
+	import type { GridSummon } from '$lib/types/api/party'
+	import type { SummonAura } from '$lib/types/api/entities'
+	import { partyStore } from '$lib/stores/partyStore.svelte'
+	import SummonAuraText from './details/SummonAuraText.svelte'
+	import { getSummonImage, getSummonTransformation } from '$lib/utils/images/summons'
+	import { seriesHasUlbArt } from '$lib/utils/summonSeries'
+	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
+	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import { formatBoostNumber, formatBoostValue } from '$lib/utils/skillBoostFormat'
 
 	interface Props {
@@ -119,6 +127,48 @@
 	const panelLines = $derived(boosts ? boosts.lines.filter((line) => line.group !== 'hidden') : [])
 	const hiddenLines = $derived(boosts ? boosts.lines.filter((line) => line.group === 'hidden') : [])
 
+	// The auras the team's summons give, as the game applies them: the main and friend
+	// summons' main aura, every other slot's sub aura (each grid summon's activeAura).
+	function auraRole(summon: GridSummon): string {
+		if (summon.main) return m.aura_role_main()
+		if (summon.friend) return m.summon_friend_label()
+		return m.aura_role_sub()
+	}
+	let activeTab = $state<'skills' | 'auras'>('skills')
+	// The summon's square art, at the transformation its uncap shows (as SummonUnit does)
+	function auraImage(summon: GridSummon): string {
+		const transformation = getSummonTransformation(
+			summon.summon.granblueId,
+			summon.uncapLevel,
+			summon.transcendenceStep,
+			seriesHasUlbArt(summon.summon.series)
+		)
+		return getSummonImage(summon.summon.granblueId, 'square', transformation)
+	}
+	// One row per distinct aura: summons giving the very same aura tier (a main and friend
+	// copy at the same uncap, or the same summon in two sub slots) share a row, listing
+	// each of their slots once. Main, then friend, then subs by position.
+	type AuraRow = { aura: SummonAura; summons: GridSummon[]; roles: string[] }
+	const auraRows = $derived.by(() => {
+		const rank = (s: GridSummon) => (s.main ? 0 : s.friend ? 1 : 2)
+		const sorted = (partyStore.party?.summons ?? [])
+			.filter((summon) => summon.activeAura)
+			.toSorted((a, b) => rank(a) - rank(b) || a.position - b.position)
+		const rows: AuraRow[] = []
+		for (const summon of sorted) {
+			const aura = summon.activeAura as SummonAura
+			let row = rows.find((r) => r.aura.id === aura.id)
+			if (!row) {
+				row = { aura, summons: [], roles: [] }
+				rows.push(row)
+			}
+			row.summons.push(summon)
+			const role = auraRole(summon)
+			if (!row.roles.includes(role)) row.roles.push(role)
+		}
+		return rows
+	})
+
 	const enhancementRows = $derived(
 		boosts
 			? [
@@ -199,7 +249,41 @@
 {/snippet}
 
 <div class="calculator-pane" aria-busy={loading || recalculating}>
-	{#if loading}
+	{#if auraRows.length > 0}
+		<div class="tabs">
+			<SegmentedControl bind:value={activeTab} variant="background" size="small" grow>
+				<Segment value="skills">{m.calculator_tab_skills()}</Segment>
+				<Segment value="auras">{m.details_auras()}</Segment>
+			</SegmentedControl>
+		</div>
+	{/if}
+
+	{#if activeTab === 'auras' && auraRows.length > 0}
+		<DetailsSection title={m.details_auras()}>
+			<ul class="rows">
+				{#each auraRows as row (row.aura.id)}
+					{@const summon = row.summons[0] as GridSummon}
+					<li
+						class="aura-row"
+						onmouseenter={() => skillHighlight.setSummons(row.summons.map((s) => s.id))}
+						onmouseleave={() => skillHighlight.clear()}
+					>
+						<img
+							class="aura-image"
+							src={auraImage(summon)}
+							alt={localizedName(summon.summon.name)}
+							loading="lazy"
+						/>
+						<div class="aura-info">
+							<span class="aura-name">{localizedName(summon.summon.name)}</span>
+							<span class="aura-role">{row.roles.join(' · ')}</span>
+							<SummonAuraText aura={row.aura} class="aura-text" />
+						</div>
+					</li>
+				{/each}
+			</ul>
+		</DetailsSection>
+	{:else if loading}
 		<div class="loading-state" role="status" aria-label={m.calculator_loading()}>
 			<Icon name="loader-2" size={24} />
 		</div>
@@ -424,6 +508,55 @@
 	.row-group {
 		display: flex;
 		flex-direction: column;
+	}
+
+	.tabs {
+		padding: 0 $unit-2x;
+	}
+
+	// The summon's square art, then its name, slot and aura
+	.aura-row {
+		display: flex;
+		align-items: flex-start;
+		gap: $unit * 1.5;
+		padding: $unit;
+		border-radius: $item-corner;
+		@include smooth-transition($duration-quick, background-color);
+
+		// Hovering highlights the summon the aura comes from (skillHighlight)
+		&:hover {
+			background: var(--button-bg);
+		}
+	}
+
+	.aura-image {
+		flex: 0 0 auto;
+		width: $unit-5x;
+		height: $unit-5x;
+		border-radius: $item-corner-small;
+		object-fit: cover;
+	}
+
+	.aura-info {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+	}
+
+	.aura-name {
+		font-weight: $medium;
+	}
+
+	.aura-role {
+		color: var(--text-tertiary);
+		font-size: $font-small;
+		margin-top: $unit-half;
+		margin-bottom: $unit-half;
+	}
+
+	.aura-row :global(.aura-text) {
+		color: var(--text-secondary);
+		font-size: $font-small;
 	}
 
 	.row {
