@@ -334,6 +334,8 @@ export interface SummonAura {
 	target: string
 	element?: string | null
 	value?: number | null
+	/** The aura's stated cap ("(Max: 200%)"); value is then the amount per step */
+	maxValue?: number | null
 	uncapLevel: number
 	transcendenceStage: number
 	condition?: string | null
