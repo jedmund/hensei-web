@@ -339,8 +339,9 @@
 		}
 	}
 
-	// Weapons fade out when a highlighted skill doesn't come from them
-	.unit:has(.frame.weapon) {
+	// Weapons and summons fade out when a highlighted skill or aura doesn't come from them
+	.unit:has(.frame.weapon),
+	.unit:has(.frame.summon) {
 		transition: opacity 150ms ease;
 	}
 

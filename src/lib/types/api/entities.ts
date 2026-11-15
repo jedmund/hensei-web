@@ -338,6 +338,8 @@ export interface SummonAura {
 	transcendenceStage: number
 	condition?: string | null
 	description: { en?: string | null; ja?: string | null }
+	/** Display text: English wikitext rendered by the API; Japanese as built (plain) */
+	descriptionSegments?: { en?: DescriptionSegment[]; ja?: DescriptionSegment[] } | null
 }
 
 export interface Summon {

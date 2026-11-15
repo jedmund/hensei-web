@@ -10,6 +10,7 @@
 	import NotesReadOnlySection from '../notes/NotesReadOnlySection.svelte'
 	import EmptySectionPlaceholder from './EmptySectionPlaceholder.svelte'
 	import UncapSection from './UncapSection.svelte'
+	import SummonAuraText from './SummonAuraText.svelte'
 	import WeaponElementSection from './WeaponElementSection.svelte'
 	import WeaponKeysSection from './WeaponKeysSection.svelte'
 	import { openCharacterEditSidebar } from '$lib/features/details/openDetailsSidebar.svelte'
@@ -349,6 +350,16 @@
 				{/if}
 			</DetailsSection>
 		{/if}
+
+		{#if summon.activeAura}
+			<DetailsSection
+				title={summon.activeAura.slot === 'main' ? m.details_main_aura() : m.details_sub_aura()}
+			>
+				<div class="team-aura">
+					<SummonAuraText aura={summon.activeAura} />
+				</div>
+			</DetailsSection>
+		{/if}
 	{/if}
 
 	{#if isPartyOwner && type === 'character'}
@@ -381,6 +392,11 @@
 <style lang="scss">
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
+
+	// Inset like a DetailRow, so the aura lines up with the rows above it.
+	.team-aura {
+		padding: calc(spacing.$unit * 1.5) spacing.$unit;
+	}
 
 	.team-view {
 		display: flex;

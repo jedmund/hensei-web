@@ -109,7 +109,7 @@ describe('WeaponSkillList with keys', () => {
 		expect(out[2]).toEqual(['Skill 3', 'Guiding Gospel', '↳ Pendulum/Chain', 'No Pendulum/Chain'])
 	})
 
-	it("shows the skill a key gives this weapon, with its upgrades, under the key's name", () => {
+	describe("a key's skill and its upgrades", () => {
 		const alpha = {
 			...key(0, 'pendulum-alpha', 'α Pendulum'),
 			skillVersions: [
@@ -120,29 +120,34 @@ describe('WeaponSkillList with keys', () => {
 				{ ...version('α Revelation Ruber'), ordinal: 1, transcendenceStage: 1, unlockLevel: 210 }
 			]
 		}
-		const { body } = render(WeaponSkillList, {
-			props: {
-				skills: opus,
-				series: series('dark-opus', 2, [4, 5]),
-				weaponKeys: [alpha],
-				uncapLevel: 5
-			}
-		})
-		expect(body).toContain('10% boost to normal attack DMG cap')
-		const out = groups({
+		const props = (transcendenceStep: number) => ({
 			skills: opus,
 			series: series('dark-opus', 2, [4, 5]),
 			weaponKeys: [alpha],
-			uncapLevel: 5
+			uncapLevel: 5,
+			transcendenceStep
 		})
-		expect(out[1]).toEqual([
-			'Skill 2',
-			'Guiding Revelation',
-			'↳ α Pendulum',
-			'α Revelation',
-			'↳ T1 · Lv 210',
-			'α Revelation Ruber'
-		])
+
+		it("shows only the version this copy has unlocked, under the key's name", () => {
+			const { body } = render(WeaponSkillList, { props: props(0) })
+			expect(body).toContain('10% boost to normal attack DMG cap')
+			expect(body).toContain('Show all variants')
+			expect(groups(props(0))[1]).toEqual([
+				'Skill 2',
+				'Guiding Revelation',
+				'↳ α Pendulum',
+				'α Revelation'
+			])
+		})
+
+		it('shows the upgrade once the copy has transcended to it', () => {
+			expect(groups(props(1))[1]).toEqual([
+				'Skill 2',
+				'Guiding Revelation',
+				'↳ α Pendulum',
+				'α Revelation Ruber'
+			])
+		})
 	})
 
 	it("marks the skill a key fills, so This Team's key can scroll to it", () => {

@@ -9,6 +9,8 @@
 	import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'
 	import { getWeaponKeyImage } from '$lib/utils/images/weapons'
 	import { keySlotForSkill, openKeySlots, weaponKeyTypeName } from '$lib/utils/weaponKeySlots'
+	import Button from '$lib/components/ui/Button.svelte'
+	import { SvelteSet } from 'svelte/reactivity'
 
 	interface Props {
 		skills: WeaponSkill[] | undefined
@@ -16,11 +18,13 @@
 		series?: WeaponSeriesRef | undefined
 		weaponKeys?: WeaponKey[] | undefined
 		uncapLevel?: number | undefined
+		/** A team's copy: its transcendence step, for the version it has unlocked */
+		transcendenceStep?: number | undefined
 		/** Scrolls this key slot's skill into view */
 		focusKeySlot?: number | undefined
 	}
 
-	let { skills, series, weaponKeys, uncapLevel, focusKeySlot }: Props = $props()
+	let { skills, series, weaponKeys, uncapLevel, transcendenceStep, focusKeySlot }: Props = $props()
 
 	let root = $state<HTMLElement | undefined>(undefined)
 	$effect(() => {
@@ -51,6 +55,26 @@
 
 	function versions(slot: WeaponSkill): WeaponSkillVersion[] {
 		return [...(slot.versions ?? [])].sort((a, b) => a.ordinal - b.ordinal)
+	}
+
+	// A team's copy: the version of a slot's skill, or of its key's skill, that it has
+	// unlocked (the last one its uncap and transcendence reach). Such a list shows only that
+	// version until expanded; one-version lists, and the database pages (no copy), show all.
+	function activeOrdinal(slotVersions: WeaponSkillVersion[]): number | undefined {
+		if (uncapLevel === undefined || slotVersions.length < 2) return undefined
+		const reached = slotVersions.filter(
+			(version) =>
+				(version.minUncap ?? 0) <= uncapLevel &&
+				(version.transcendenceStage ?? 0) <= (transcendenceStep ?? 0)
+		)
+		return reached.at(-1)?.ordinal
+	}
+
+	// Expanded variant lists: a slot's skill ("skill-<position>") or its key ("key-<slot>")
+	const expanded = new SvelteSet<string>()
+	function toggleVariants(id: string) {
+		if (expanded.has(id)) expanded.delete(id)
+		else expanded.add(id)
 	}
 
 	// Tier label derived from uncap stars + transcendence stage.
@@ -105,13 +129,22 @@
 <div class="weapon-skill-list" bind:this={root}>
 	{#each slots as slot (slot.position)}
 		{@const [first, ...upgrades] = versions(slot)}
+		{@const active = activeOrdinal(versions(slot))}
+		{@const current = versions(slot).find((version) => version.ordinal === active)}
 		{#if first}
 			<SkillGroup title={m.weapon_skills_slot({ n: slot.position + 1 })}>
 				<div class="skill-slot" data-key-slot={keyFor(slot.position)?.slot}>
-					{@render card(first, false)}
-					{#each upgrades as version (version.ordinal)}
-						{@render card(version, true)}
-					{/each}
+					{#if current && !expanded.has(`skill-${slot.position}`)}
+						{@render card(current, false)}
+					{:else}
+						{@render card(first, false)}
+						{#each upgrades as version (version.ordinal)}
+							{@render card(version, true)}
+						{/each}
+					{/if}
+					{#if current}
+						{@render variantsToggle(`skill-${slot.position}`)}
+					{/if}
 					{@render keyCard(keyFor(slot.position))}
 				</div>
 			</SkillGroup>
@@ -122,15 +155,24 @@
 {#snippet keyCard(keySlot: ReturnType<typeof keyFor>)}
 	{#if keySlot}
 		{@const { key, keyType } = keySlot}
-		{@const [first, ...upgrades] = [...(key?.skillVersions ?? [])].sort(
-			(a, b) => a.ordinal - b.ordinal
-		)}
+		{@const keyVersions = [...(key?.skillVersions ?? [])].sort((a, b) => a.ordinal - b.ordinal)}
+		{@const [first, ...upgrades] = keyVersions}
+		{@const toggleId = `key-${keySlot.slot}`}
+		{@const current = keyVersions.find((version) => version.ordinal === activeOrdinal(keyVersions))}
 		{#if key && first}
-			<!-- The skill the key gives this weapon, under the key's name, then its upgrades -->
-			{@render keySkill(first, localizedName(key.name))}
-			{#each upgrades as version (version.ordinal)}
-				{@render keySkill(version, unlockParts(version).join(' · '))}
-			{/each}
+			<!-- The skill the key gives this weapon, under the key's name, then its upgrades; a
+			     team's copy shows only the version it has unlocked until expanded -->
+			{#if current && !expanded.has(toggleId)}
+				{@render keySkill(current, localizedName(key.name))}
+			{:else}
+				{@render keySkill(first, localizedName(key.name))}
+				{#each upgrades as version (version.ordinal)}
+					{@render keySkill(version, unlockParts(version).join(' · '))}
+				{/each}
+			{/if}
+			{#if current}
+				{@render variantsToggle(toggleId)}
+			{/if}
 		{:else}
 			<SkillCard
 				name={key ? localizedName(key.name) : m.weapon_key_none({ keyType })}
@@ -153,6 +195,14 @@
 	/>
 {/snippet}
 
+{#snippet variantsToggle(id: string)}
+	<div class="variants-toggle">
+		<Button variant="ghost" size="small" onclick={() => toggleVariants(id)}>
+			{expanded.has(id) ? m.skill_variants_hide() : m.skill_variants_show()}
+		</Button>
+	</div>
+{/snippet}
+
 {#snippet card(version: WeaponSkillVersion, linked: boolean)}
 	{@const parts = metaParts(version)}
 	<SkillCard
@@ -169,3 +219,10 @@
 		<span>{parts.join(' · ')}</span>
 	{/snippet}
 {/snippet}
+
+<style lang="scss">
+	// The Show/Hide all variants button, under the slot's skill
+	.variants-toggle {
+		display: flex;
+	}
+</style>
