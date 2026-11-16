@@ -11,7 +11,8 @@
 	import { SvelteSet } from 'svelte/reactivity'
 	import { sectionById } from '$lib/features/database/sections'
 	import { recentPages } from '$lib/features/database/recent.svelte'
-	import { recentImage } from '$lib/features/database/recentImage'
+	import { recentImage, recentUserId } from '$lib/features/database/recentImage'
+	import RecentUserAvatar from '$lib/features/database/RecentUserAvatar.svelte'
 
 	// Images that failed to load show the neutral tile instead
 	const brokenImages = new SvelteSet<string>()
@@ -168,9 +169,12 @@
 			<ul class="recent" role="list">
 				{#each recentPages.list as r (r.path)}
 					{@const image = recentImage(r.path)}
+					{@const userId = recentUserId(r.path)}
 					<li>
 						<a href={r.path}>
-							{#if image && !brokenImages.has(r.path)}
+							{#if userId}
+								<RecentUserAvatar {userId} size={40} />
+							{:else if image && !brokenImages.has(r.path)}
 								<img
 									class="thumb"
 									src={image}

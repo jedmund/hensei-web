@@ -17,7 +17,7 @@
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import { isAdmin } from '$lib/auth/roles'
 	import { ASSIGNABLE_ROLES, roleLabel } from '$lib/features/database/users/roles'
-	import { asUserRecord, type UserRecord } from '$lib/features/database/users/resource'
+	import { asUserRecord, type UserRecord } from '$lib/features/database/users/record'
 	import { extractErrorMessage } from '$lib/utils/errors'
 
 	let { record }: { record: UserRecord } = $props()

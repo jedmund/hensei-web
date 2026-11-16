@@ -3,7 +3,8 @@ import { facetKeys } from '$lib/components/data-table/filters'
 import { columnsFor, filtersFor } from '$lib/features/database/schema/columns'
 import { detailLayout } from '$lib/features/database/schema/detail'
 import { screenFor } from '$lib/features/database/schema/routes'
-import { asUserRecord, usersResource as def } from './resource'
+import { asUserRecord } from './record'
+import { usersResource as def } from './resource'
 import { roleLabel } from './roles'
 
 const user = asUserRecord({

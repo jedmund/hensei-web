@@ -10,8 +10,9 @@ import { adminAdapter } from '$lib/api/adapters/admin.adapter'
 import { adminKeys } from '$lib/api/queries/admin.queries'
 import { defineResource, type Field } from '$lib/features/database/schema/types'
 import { usersSection } from '$lib/features/database/users/section'
+import { asUserRecord, userRecordQuery, type UserRecord } from '$lib/features/database/users/record'
 import { roleOptions } from '$lib/features/database/users/roles'
-import type { AdminUserCrew, AdminUserDetail, AdminUserRow } from '$lib/types/api/admin'
+import type { AdminUserCrew, AdminUserRow } from '$lib/types/api/admin'
 import { formatDateTime } from '$lib/utils/date'
 import {
 	buildGranblueProfileUrl,
@@ -48,14 +49,6 @@ const crewsQuery = () =>
 		queryFn: () => adminAdapter.listUserCrews(),
 		staleTime: 1000 * 60 * 5
 	})
-
-/** A user as the detail holds it: `name` titles the page and the breadcrumb */
-export type UserRecord = AdminUserDetail & { name: string }
-
-export const asUserRecord = (user: AdminUserDetail): UserRecord => ({
-	...user,
-	name: user.displayName || user.username
-})
 
 export const usersResource = defineResource<AdminUserRow, UserRecord>({
 	name: 'users',
@@ -303,11 +296,7 @@ export const usersResource = defineResource<AdminUserRow, UserRecord>({
 
 	record: {
 		fetch: (id, options) => adminAdapter.getUser(id, options).then(asUserRecord),
-		query: (id) =>
-			queryOptions({
-				queryKey: adminKeys.user(id),
-				queryFn: () => adminAdapter.getUser(id).then(asUserRecord)
-			}),
+		query: userRecordQuery,
 		routeId: (u) => u.id,
 		noun: m.db_users_type,
 		publicPage: {
