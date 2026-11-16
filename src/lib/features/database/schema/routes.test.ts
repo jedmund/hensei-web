@@ -86,6 +86,7 @@ describe('generic database routes', () => {
 		for (const name of [
 			'weapon-series',
 			'character-series',
+			'summon-series',
 			'awakenings',
 			'jobs',
 			'job-skills',

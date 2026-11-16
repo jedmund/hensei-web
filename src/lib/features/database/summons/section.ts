@@ -14,6 +14,8 @@ export const summonsSection: ResourceSection = {
 		[
 			{ label: () => m.nav_new_single({ entity: m.type_summon() }), href: 'new' },
 			{ label: () => m.nav_new_multiple({ entity: m.type_summon() }), href: 'import' }
-		]
+		],
+		[{ label: () => m.nav_new_summon_series(), href: '/database/summon-series/new' }]
 	]
+	// Summon series are nested here in DATABASE_SECTIONS
 }

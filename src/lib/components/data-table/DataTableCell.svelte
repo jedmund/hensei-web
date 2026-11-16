@@ -54,13 +54,26 @@
 	<column.component {row} />
 {:else if column.type === 'image'}
 	{#if image}
-		<img
-			class="thumb"
-			src={image.src}
-			alt={image.alt ?? ''}
-			loading="lazy"
-			onerror={(e) => handleImageFallback(e, image.fallback)}
-		/>
+		<!-- A fresh element per image, so a hidden one doesn't stay hidden when the row changes -->
+		{#key image.src}
+			<img
+				class="thumb"
+				src={image.src}
+				alt={image.alt ?? ''}
+				loading="lazy"
+				onerror={(e) => {
+					const img = e.currentTarget as HTMLImageElement
+					// Hide a missing image rather than draw the broken-image icon
+					if (image.fallback && !img.dataset.fallback) {
+						img.dataset.fallback = 'tried'
+						handleImageFallback(e, image.fallback)
+					} else {
+						// .thumb sets display, so the hidden attribute wouldn't apply
+						img.style.visibility = 'hidden'
+					}
+				}}
+			/>
+		{/key}
 	{/if}
 {:else if column.type === 'name'}
 	<span class="name">

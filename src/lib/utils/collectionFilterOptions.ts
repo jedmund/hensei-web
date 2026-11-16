@@ -14,7 +14,7 @@ import type {
 } from '$lib/types/filter'
 import { CHARACTER_SEASON_NAMES } from '$lib/types/enums'
 import { getElementColor, getElementOptions } from '$lib/utils/element'
-import { getWeaponSeriesIcon } from '$lib/utils/images/icons'
+import { getWeaponSeriesIcon, hasWeaponSeriesIcon } from '$lib/utils/images/icons'
 import { GENDER_LABELS } from '$lib/utils/gender'
 import { localizedName } from '$lib/utils/locale'
 import { RACE_LABELS, getRaceLabel } from '$lib/utils/race'
@@ -143,16 +143,13 @@ export function seriesToOptions<T extends SeriesListItem>(
 		.map((s) => ({ value: s.id, label: localizedName(s.name), ...decorate?.(s) }))
 }
 
-// The game's series filter has no icon for these
-const WEAPON_SERIES_WITHOUT_ICON = new Set(['gacha', 'event'])
-
 /** A weapon series option's icon, or a grey circle for series that have none */
 export function weaponSeriesImage(
 	slug: string
 ): Pick<CollectionFilterOption, 'image' | 'imageBackground' | 'imageRound' | 'imageUncropped'> {
-	return WEAPON_SERIES_WITHOUT_ICON.has(slug)
-		? { imageBackground: 'var(--placeholder-bg)', imageRound: true }
-		: { image: getWeaponSeriesIcon(slug), imageUncropped: true }
+	return hasWeaponSeriesIcon(slug)
+		? { image: getWeaponSeriesIcon(slug), imageUncropped: true }
+		: { imageBackground: 'var(--placeholder-bg)', imageRound: true }
 }
 
 /** Weapon series with their icons */

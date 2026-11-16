@@ -175,7 +175,7 @@ describe('resourceSections', () => {
 		expect(rootOf(sectionById('bullets')!)?.id).toBe('jobs')
 	})
 
-	it('keeps the summons entry as it was written by hand', () => {
+	it('nests series under Summons, sharing its "New" menu', () => {
 		expect(shown(sectionById('summons')!)).toEqual({
 			id: 'summons',
 			label: 'fn:Summons',
@@ -186,9 +186,22 @@ describe('resourceSections', () => {
 				[
 					{ label: 'fn:Single summon', href: '/database/summons/new' },
 					{ label: 'fn:Multiple summons', href: '/database/summons/import' }
-				]
+				],
+				[{ label: 'fn:Summon series', href: '/database/summon-series/new' }]
 			]
 		})
+		expect(shown(sectionById('summon-series')!)).toEqual({
+			id: 'summon-series',
+			path: '/database/summon-series',
+			label: 'fn:Series',
+			group: 'catalogue',
+			parent: 'summons'
+		})
+		const ids = DATABASE_SECTIONS.map((s) => s.id)
+		expect(ids[ids.indexOf('summons') + 1]).toBe('summon-series')
+		expect(rootOf(sectionForUrl(new URL('http://x/database/summon-series/magna')))?.id).toBe(
+			'summons'
+		)
 	})
 })
 

@@ -117,11 +117,26 @@ export function getMasteryImage(slug: string | undefined): string {
 	return renumberedImage(`${getBasePath()}/${BUCKET.mastery}/${slug}.png`)
 }
 
+// The game's weapon series filter has no icon for these
+const WEAPON_SERIES_WITHOUT_ICON = new Set(['gacha', 'event'])
+
+/** Whether the game has a series filter icon for this weapon series */
+export function hasWeaponSeriesIcon(slug: string): boolean {
+	return !WEAPON_SERIES_WITHOUT_ICON.has(slug)
+}
+
 /**
  * Get weapon series icon URL, the game's series filter icon stored by series slug
  */
 export function getWeaponSeriesIcon(slug: string): string {
 	return `${getBasePath()}/${BUCKET.weaponSeries}/${slug}.png`
+}
+
+/**
+ * Get summon series icon URL, stored by series slug like the weapon series icons
+ */
+export function getSummonSeriesIcon(slug: string): string {
+	return `${getBasePath()}/${BUCKET.summonSeries}/${slug}.png`
 }
 
 // ===== Label Images =====

@@ -24,6 +24,7 @@ import { raidGroupsSection } from './raid-groups/section'
 import { raidsSection } from './raids/section'
 import { usersSection } from '$lib/features/database/users/section'
 import { stickersSection } from './stickers/section'
+import { summonSeriesSection } from './summon-series/section'
 import { summonsSection } from './summons/section'
 import { weaponSeriesSection } from './weapon-series/section'
 import { weaponsSection } from './weapons/section'
@@ -113,6 +114,7 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 		parent: 'weapons'
 	},
 	...resourceSections('summons', summonsSection),
+	...resourceSections('summon-series', summonSeriesSection),
 	...resourceSections('jobs', jobsSection),
 	...resourceSections('job-skills', jobSkillsSection),
 	...resourceSections('job-accessories', jobAccessoriesSection),

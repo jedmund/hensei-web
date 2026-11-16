@@ -492,7 +492,7 @@ export interface RecordDef<Full> {
 	/** Header kind: picks the placeholder image and the labels under the name */
 	type?: DetailEntityType
 	/** The header image. Without one the header shows only the name */
-	image?: (record: Full) => string
+	image?: (record: Full) => string | undefined
 	/** Tried before the placeholder when `image` fails to load */
 	fallbackImage?: (record: Full) => string | undefined
 	/** The record's element, which colours its buttons */

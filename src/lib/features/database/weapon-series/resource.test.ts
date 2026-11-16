@@ -27,8 +27,9 @@ describe('weapon series resource: list', () => {
 	const columns = columnsFor(def)
 	const column = (id: string) => columns.find((c) => c.id === id)!
 
-	it("keeps the Series view's columns, the rest hidden", () => {
+	it("keeps the Series view's columns after the icon, the rest hidden", () => {
 		expect(columns.map((c) => [c.id, columnHeader(c), c.defaultHidden ?? false])).toEqual([
+			['icon', '', false],
 			['order', 'Order', false],
 			['name', 'Name', false],
 			['slug', 'Slug', false],
@@ -47,6 +48,19 @@ describe('weapon series resource: list', () => {
 		expect(column('name')).toMatchObject({ type: 'name', primary: true, minWidth: '200px' })
 		expect(column('slug')).toMatchObject({ type: 'code', minWidth: '150px' })
 		expect(column('flags')).toMatchObject({ type: 'flags', minWidth: '200px' })
+	})
+
+	it("draws the game's series icon, and none for series without one", () => {
+		const icon = column('icon')
+		const image = (slug: string) =>
+			icon.type === 'image' && typeof icon.image === 'function'
+				? icon.image({ slug } as Parameters<typeof icon.image>[0])
+				: undefined
+		expect(image('dark-opus')).toEqual({
+			src: expect.stringMatching(/\/icons\/weapon-series\/dark-opus\.png$/)
+		})
+		expect(image('gacha')).toBeNull()
+		expect(image('event')).toBeNull()
 	})
 
 	it('draws the flags the Series view drew, now with AX and befoulment from the augment type', () => {

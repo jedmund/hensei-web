@@ -254,6 +254,10 @@ export interface AdminCharacterSeriesRow extends AdminSluggedRow {
 	characterCount?: number
 }
 
+export interface AdminSummonSeriesRow extends AdminSluggedRow {
+	summonCount?: number
+}
+
 export interface AdminAwakeningRow extends AdminSluggedRow {
 	objectType: string
 }
