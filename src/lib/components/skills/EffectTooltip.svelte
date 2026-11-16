@@ -3,7 +3,7 @@
 	import type { CharacterSkillEffect } from '$lib/types/api/entities'
 	import { effectStatusName } from '$lib/utils/skillEffects'
 	import { appLocale } from '$lib/utils/locale'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		/** The skill effect a status mention in a description produced */

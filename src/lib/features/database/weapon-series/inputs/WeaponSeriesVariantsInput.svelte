@@ -3,7 +3,7 @@
 	// its own (variants have their own endpoint), so the list reads the series
 	// query the dialog refreshes rather than the form's values
 	import { createQuery } from '@tanstack/svelte-query'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import { withInitialData } from '$lib/query/ssr'
 	import Button from '$lib/components/ui/Button.svelte'

@@ -8,7 +8,7 @@
 	 *
 	 * The "My Collection" tab includes an edit mode using CharacterEditPane.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { onMount, untrack } from 'svelte'
 	import type { CollectionCharacter, ExtendedMastery } from '$lib/types/api/collection'
 	import type { GridCharacter } from '$lib/types/api/party'

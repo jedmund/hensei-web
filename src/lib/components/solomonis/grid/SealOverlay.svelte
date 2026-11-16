@@ -11,7 +11,7 @@
 	 */
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import PriorityNumber from './PriorityNumber.svelte'
 	import type { SlotSeal } from './seal'
 	import { sealOverlays } from './sealOverlays.svelte'

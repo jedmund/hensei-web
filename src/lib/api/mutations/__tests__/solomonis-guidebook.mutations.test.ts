@@ -9,7 +9,7 @@ import { addEffect, removeEntry } from '$lib/components/solomonis/guidebook/guid
 import { partyKeys } from '$lib/api/queries/party.queries'
 import type { Party } from '$lib/types/api/party'
 import { toast } from 'svelte-sonner'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 vi.mock('$lib/api/adapters/solomonis-guidebook.adapter', () => ({
 	solomonisGuidebookAdapter: {

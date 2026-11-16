@@ -2,7 +2,7 @@
 	/**
 	 * PartyPerformanceSection - Clear time and button/chain/summon counts
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import ClearTimeInput from '$lib/components/party/edit/ClearTimeInput.svelte'

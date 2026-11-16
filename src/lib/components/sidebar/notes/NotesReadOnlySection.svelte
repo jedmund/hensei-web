@@ -29,7 +29,7 @@
 	import { handleImageFallback, getPlaceholderImage } from '$lib/utils/images/core'
 	import { STYLE_SWAP_POSE, getCharacterImage } from '$lib/utils/images/characters'
 	import { getWeaponFallbackImage, getWeaponImage } from '$lib/utils/images/weapons'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'

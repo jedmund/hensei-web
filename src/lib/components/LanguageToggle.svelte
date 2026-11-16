@@ -2,7 +2,7 @@
 	import { getLocale, localizeHref, deLocalizeHref } from '$lib/paraglide/runtime.js'
 	import { invalidateAll } from '$app/navigation'
 	import { Switch as SwitchPrimitive } from 'bits-ui'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { authStore } from '$lib/stores/auth.store.svelte'
 	import { syncLanguage } from '$lib/services/settings-sync'
 	import { page } from '$app/stores'

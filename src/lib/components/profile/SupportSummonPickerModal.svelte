@@ -16,7 +16,7 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { CollectionSummon } from '$lib/types/api/collection'
 	import type { SupportSummonSection } from '$lib/types/api/supportSummon'
 

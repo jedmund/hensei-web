@@ -4,7 +4,7 @@
 	import type { LocalizedName } from '$lib/types/api/entities'
 	import { localizedName } from '$lib/utils/locale'
 	import type { WeaponSeriesRef, WeaponSeriesSummary } from '$lib/types/api/weaponSeries'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { activeKeySkill } from '$lib/utils/weaponKeySlots'
 	import SkillDescription from '$lib/components/weapon/SkillDescription.svelte'
 	import { appLocale } from '$lib/utils/locale'

@@ -8,7 +8,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import { buildGamewithUrl, buildKamigameUrl, buildWikiEnUrl } from '$lib/utils/external-links'
 	import type { GameEvent } from '$lib/types/api/event'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	let { event }: { event: Pick<GameEvent, 'wikiEn' | 'gamewith' | 'kamigame'> } = $props()
 

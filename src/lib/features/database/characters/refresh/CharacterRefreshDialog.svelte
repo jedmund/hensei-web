@@ -1,7 +1,7 @@
 <!-- Refresh one character from the wiki: preview what changes, then apply exactly that -->
 <script lang="ts">
 	import { untrack } from 'svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { CrewMembersResponse, MemberFilter } from '$lib/types/api/crew'
 	import { splitMemberSections } from '$lib/features/crew/memberList'
 	import CrewSectionHeader from '$lib/components/crew/CrewSectionHeader.svelte'

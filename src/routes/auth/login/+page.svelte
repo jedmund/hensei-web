@@ -7,7 +7,7 @@
 	import SocialLoginButtons from '$lib/components/auth/SocialLoginButtons.svelte'
 	import type { SocialProvider } from '$lib/auth/socialProviders'
 	import type { SocialErrorCode } from '$lib/auth/socialResult'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {

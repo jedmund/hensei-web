@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Navigation from '$lib/components/Navigation.svelte'
 	import MobileNavigation from '$lib/components/MobileNavigation.svelte'
 	import { mobileQuery } from '$lib/utils/viewport.svelte'

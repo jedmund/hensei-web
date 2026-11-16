@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DisclosureRow from '$lib/components/ui/DisclosureRow.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { localizedName } from '$lib/utils/locale'

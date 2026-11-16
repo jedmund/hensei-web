@@ -1,6 +1,6 @@
 <script lang="ts">
 	import PageMeta from '$lib/components/PageMeta.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
 	import { weaponAdapter, type ParsedWeaponData } from '$lib/api/adapters/weapon.adapter'
 	import { fetchWikiPages, buildWikiDataMap } from '$lib/api/wiki'

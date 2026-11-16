@@ -1,7 +1,7 @@
 import type { AugmentSkill } from '$lib/types/api/weaponStatModifier'
 import { getRingStat, getEarringStat, getElementalizedEarringStat } from './masteryUtils'
 import type { WeaponSeriesRef, WeaponSeriesSummary } from '$lib/types/api/weaponSeries'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 export function formatRingStat(
 	modifier: number,

@@ -42,7 +42,7 @@
 	import { useStickerStage } from './stickerStage.svelte'
 	import type { StickerPlacement } from '$lib/types/api/party'
 	import type { StickerDrop } from './stickerDrag.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		/**

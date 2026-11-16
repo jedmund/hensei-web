@@ -5,7 +5,7 @@
 	 * positions it (relative) and decides when it shows.
 	 */
 	import Icon from '$lib/components/Icon.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		onclick: () => void

@@ -3,7 +3,7 @@
 	import { aetherialMastery, type ItemSkill } from '$lib/data/overMastery'
 	import { getElementalizedEarringStat } from '$lib/utils/masteryUtils'
 	import { localizedName } from '$lib/utils/locale'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface ExtendedMastery {
 		modifier: number

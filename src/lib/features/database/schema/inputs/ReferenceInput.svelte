@@ -4,7 +4,7 @@
 	// groups and jobs, and a select of the chosen weapon series' variants (no row
 	// when it has none)
 	import { createQuery } from '@tanstack/svelte-query'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import { jobQueries } from '$lib/api/queries/job.queries'
 	import { raidQueries } from '$lib/api/queries/raid.queries'

@@ -16,7 +16,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import EmptyState from '$lib/components/ui/EmptyState.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	const { data }: { data: PageData } = $props()
 	const isOwner = $derived(data.isOwner || false)

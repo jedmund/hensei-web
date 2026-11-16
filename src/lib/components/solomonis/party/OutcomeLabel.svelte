@@ -3,7 +3,7 @@
 	 * OutcomeLabel - an expedition's outcome: Cleared in green, the miasma
 	 * stages in Arcarum purple, Not set muted.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { SolomonisOutcome } from '$lib/types/api/solomonis'
 
 	interface Props {

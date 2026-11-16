@@ -36,7 +36,7 @@
 	import PartyHeaderMenu from '$lib/components/party/PartyHeaderMenu.svelte'
 	import PartyNotices from '$lib/components/party/PartyNotices.svelte'
 	import PartyGrids from '$lib/components/party/PartyGrids.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		party?: Party

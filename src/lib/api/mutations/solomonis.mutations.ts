@@ -13,7 +13,7 @@ import type { Party } from '$lib/types/api/party'
 import type { SolomonisExpeditionInput } from '$lib/types/api/solomonis'
 import { getEditKey } from '$lib/utils/editKeys'
 import { solomonisErrorMessage } from '$lib/components/solomonis/party/solomonisParty'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { hasQueuedSave, serialSaveKey, serialSaveScope } from './serialSaves'
 
 function editKeyHeaders(shortcode: string): Record<string, string> | undefined {

@@ -25,7 +25,7 @@
 	import { authStore } from '$lib/stores/auth.store.svelte'
 	import { getEditKey } from '$lib/utils/editKeys'
 	import { localizedName } from '$lib/utils/locale'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import {
 		useSyncGridCharacter,
 		useSyncGridWeapon,

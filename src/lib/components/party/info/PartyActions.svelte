@@ -4,7 +4,7 @@
 	 * uses someone else's), Edit for those who can, the calculator, and the
 	 * page's menu.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { Snippet } from 'svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'

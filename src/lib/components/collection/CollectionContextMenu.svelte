@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { ContextMenu } from 'bits-ui'
 	import type { Snippet } from 'svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		itemType: 'character' | 'weapon' | 'summon'

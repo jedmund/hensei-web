@@ -7,7 +7,7 @@
  */
 import { queryOptions } from '@tanstack/svelte-query'
 import { z } from 'zod'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { stickerAdapter } from '$lib/api/adapters/sticker.adapter'
 import { stickerKeys } from '$lib/api/queries/sticker.queries'
 import { SLUG } from '$lib/features/database/schema/sluggedFields'

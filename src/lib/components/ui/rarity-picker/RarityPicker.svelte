@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { mobileQuery } from '$lib/utils/viewport.svelte'
 	import Select from '../Select.svelte'
 	import MultiSelect from '../MultiSelect.svelte'

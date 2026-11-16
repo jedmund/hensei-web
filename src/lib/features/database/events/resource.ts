@@ -6,7 +6,7 @@
  * `minRole`). Times are edited and shown in JST, as the game announces them.
  */
 import { buildGamewithUrl, buildKamigameUrl, buildWikiEnUrl } from '$lib/utils/external-links'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { eventAdapter } from '$lib/api/adapters/event.adapter'
 import { eventKeys, eventQueries } from '$lib/api/queries/event.queries'
 import { homeKeys } from '$lib/api/queries/home.queries'

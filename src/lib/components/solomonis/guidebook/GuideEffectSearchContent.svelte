@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query'
 	import { solomonisGuidebookQueries } from '$lib/api/queries/solomonis-guidebook.queries'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { GuideEffect, GuidebookEntry } from '$lib/types/api/solomonis'
 
 	import Icon from '$lib/components/Icon.svelte'

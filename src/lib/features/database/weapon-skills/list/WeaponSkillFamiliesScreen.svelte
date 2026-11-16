@@ -3,7 +3,7 @@
 	// (`/database/weapon-skills/<modifier>`). All families come in one request,
 	// so the table searches, filters and sorts on the client.
 	import { createQuery } from '@tanstack/svelte-query'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import DataTable from '$lib/components/data-table/DataTable.svelte'
 	import { createTableUrl } from '$lib/components/data-table/tableUrl.svelte'

@@ -3,7 +3,7 @@
  * by, described once (GBF-143). Nested under Raids in the sidebar; it used to
  * be the raids list's `?view=groups` tab. A group's route id is its id.
  */
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { raidAdapter } from '$lib/api/adapters/raid.adapter'
 import { raidQueries } from '$lib/api/queries/raid.queries'
 import type { FlagValue } from '$lib/components/data-table/types'

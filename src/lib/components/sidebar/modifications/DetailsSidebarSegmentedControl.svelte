@@ -1,7 +1,7 @@
 <script lang="ts">
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	type DetailsSidebarView = 'canonical' | 'user' | 'skills'
 

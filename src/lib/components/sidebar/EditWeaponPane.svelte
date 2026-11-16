@@ -5,7 +5,7 @@
 	 * Uses the shared WeaponEditPane for edit controls.
 	 * Handles GridWeapon-specific data transformation and mutations.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { GridWeapon } from '$lib/types/api/party'
 	import ItemHeader from './details/ItemHeader.svelte'
 	import WeaponEditPane, {

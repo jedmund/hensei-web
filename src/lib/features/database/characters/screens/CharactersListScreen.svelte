@@ -2,7 +2,7 @@
 	// The characters list: the generated list with the batch refresh action for editors
 	import { page } from '$app/state'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'

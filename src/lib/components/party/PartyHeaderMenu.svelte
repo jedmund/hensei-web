@@ -8,7 +8,7 @@
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import PickPlaylistPane from '$lib/components/sidebar/PickPlaylistPane.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { PartyVisibility } from '$lib/types/visibility'
 

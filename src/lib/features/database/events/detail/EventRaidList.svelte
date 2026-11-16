@@ -1,7 +1,7 @@
 <script lang="ts">
 	// An event's raids in order, each with its thumbnail; a remove button on
 	// each when `onRemove` is given (the forms)
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { getRaidImage } from '$lib/utils/images/raids'
 	import { localizedName } from '$lib/utils/locale'

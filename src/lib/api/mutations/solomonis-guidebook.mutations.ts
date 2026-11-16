@@ -19,7 +19,7 @@ import type { Party } from '$lib/types/api/party'
 import type { GuidebookEntry, SolomonisExpedition } from '$lib/types/api/solomonis'
 import { getEditKey } from '$lib/utils/editKeys'
 import { extractErrorMessage } from '$lib/utils/errors'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { hasQueuedSave, serialSaveKey, serialSaveScope } from './serialSaves'
 
 function editKeyHeaders(shortcode: string): Record<string, string> | undefined {

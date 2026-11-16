@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import SummonUnit from '$lib/components/units/SummonUnit.svelte'
 	import type { GridSummon } from '$lib/types/api/party'
 

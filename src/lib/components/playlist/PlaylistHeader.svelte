@@ -7,7 +7,7 @@
 	import PlaylistDescriptionTile from './PlaylistDescriptionTile.svelte'
 	import EditPlaylistDialog from './EditPlaylistDialog.svelte'
 	import VideoTile from '$lib/components/party/info/VideoTile.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		playlist: Playlist

@@ -6,7 +6,7 @@
 	 */
 	import { SvelteSet } from 'svelte/reactivity'
 	import Notice from '$lib/components/ui/Notice.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type {
 		WikiImportMatch,
 		WikiImportReport,

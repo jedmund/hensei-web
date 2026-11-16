@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Editor, Range as TiptapRange } from '@tiptap/core'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import ArrowLeft from '@lucide/svelte/icons/arrow-left'
 	import ArrowRight from '@lucide/svelte/icons/arrow-right'
 	import CaseSensitive from '@lucide/svelte/icons/case-sensitive'

@@ -11,7 +11,7 @@
 	import Trash from '@lucide/svelte/icons/trash'
 	import Captions from '@lucide/svelte/icons/captions'
 
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { duplicateContent } from '../../utils.js'
 
 	interface MediaExtendedProps extends NodeViewProps {

@@ -3,7 +3,7 @@
  * source. Families come from one request (`GET /weapon_skill_families`), so
  * search, filters and sorting run on the client.
  */
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import type { DataTableColumn, FlagValue } from '$lib/components/data-table/types'
 import type { FilterConfig } from '$lib/components/data-table/filters'
 import type { StaticFilterFn } from '$lib/components/data-table/staticQuery'

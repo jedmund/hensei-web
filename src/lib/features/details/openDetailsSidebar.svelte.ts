@@ -11,7 +11,7 @@ import EditCharacterPane from '$lib/components/sidebar/EditCharacterPane.svelte'
 import EditSummonPane from '$lib/components/sidebar/EditSummonPane.svelte'
 import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 import { canCharacterBeModified } from '$lib/utils/modificationDetector'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 export interface DetailsSidebarOptions {
 	type: 'weapon' | 'character' | 'summon'

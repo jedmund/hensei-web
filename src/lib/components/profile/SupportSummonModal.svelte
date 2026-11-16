@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'

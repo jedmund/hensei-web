@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation'
 	import { toast } from 'svelte-sonner'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Notice from '$lib/components/ui/Notice.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'

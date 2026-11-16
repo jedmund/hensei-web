@@ -13,7 +13,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import { useUpdateGridWeapon } from '$lib/api/mutations/gridWeapon.mutations'
 	import { partyStore } from '$lib/stores/partyStore.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	type ElementColor = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 

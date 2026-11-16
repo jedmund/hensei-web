@@ -23,7 +23,7 @@
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { useUpdateUnsealPriority } from '$lib/api/mutations/solomonis-grid.mutations'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import {
 		entryKey,
 		PRIORITY_TYPES,

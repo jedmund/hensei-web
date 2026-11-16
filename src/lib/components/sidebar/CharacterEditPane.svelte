@@ -14,7 +14,7 @@
 	 *
 	 * The caller is responsible for handling the save action with their specific mutation.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { Character, Awakening } from '$lib/types/api/entities'
 	import type { ExtendedMastery } from '$lib/types/api/collection'
 	import { getElementTypeKey } from '$lib/utils/element'

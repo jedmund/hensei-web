@@ -3,7 +3,7 @@
  * bounds and `validate`, plus the resource's cross-field `refine`.
  */
 import { z } from 'zod'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { formFields, isShown } from './fields'
 import type { EnumOption, Field, FormMode, ResourceDef, Values } from './types'
 

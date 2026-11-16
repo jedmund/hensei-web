@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Select from '../../ui/Select.svelte'
 	import Icon from '../../Icon.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface MemberOption {
 		value: string

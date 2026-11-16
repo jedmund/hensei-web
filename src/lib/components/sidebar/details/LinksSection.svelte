@@ -9,7 +9,7 @@
 		type EntityType
 	} from '$lib/utils/external-links'
 	import { getLocale } from '$lib/paraglide/runtime.js'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		type: EntityType

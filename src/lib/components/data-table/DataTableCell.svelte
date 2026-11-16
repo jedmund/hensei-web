@@ -3,7 +3,7 @@
   by DataTable around this content, so cells never navigate themselves.
 -->
 <script lang="ts" generics="T">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import { getCharacterImage } from '$lib/utils/images/characters'

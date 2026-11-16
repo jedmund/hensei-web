@@ -4,7 +4,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import GachaResultScreen from '$lib/components/gacha/GachaResultScreen.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { untrack } from 'svelte'
 	import { gachaItemCardFallbackImage, gachaItemCardImage } from '$lib/utils/gacha'

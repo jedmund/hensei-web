@@ -2,7 +2,7 @@
  * Localized labels and select options for event kinds and series.
  */
 
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { EVENT_KINDS, EVENT_SERIES, type EventKind, type EventSeries } from '$lib/types/api/event'
 
 const KIND_LABELS: Record<EventKind, () => string> = {

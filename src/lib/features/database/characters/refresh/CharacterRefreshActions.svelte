@@ -2,7 +2,7 @@
 <script lang="ts">
 	import { toast } from 'svelte-sonner'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import CharacterRefreshDialog from './CharacterRefreshDialog.svelte'

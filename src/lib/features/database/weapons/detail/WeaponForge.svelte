@@ -1,6 +1,6 @@
 <script lang="ts">
 	// The forge chain the weapon belongs to, or the weapon it's forged from
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import { getWeaponImage } from '$lib/utils/images/weapons'

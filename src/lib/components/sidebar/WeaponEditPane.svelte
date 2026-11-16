@@ -12,7 +12,7 @@
 	 */
 	import { ProficiencyId } from '$lib/utils/proficiency'
 	import { SvelteMap } from 'svelte/reactivity'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { Weapon, Awakening, Bullet, BulletLoadout } from '$lib/types/api/entities'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
 	import type { AugmentSkill, Befoulment } from '$lib/types/api/weaponStatModifier'

@@ -2,7 +2,7 @@
  * The detail view's layout and plain-text values, from a definition and a
  * full record. The detail components draw what this returns.
  */
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { localizedName } from '$lib/utils/locale'
 import { getSeriesDisplayName } from '$lib/utils/weaponSeries'
 import type { WeaponSeriesRef } from '$lib/types/api/weaponSeries'

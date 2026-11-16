@@ -11,7 +11,7 @@
 	import SearchContent from '$lib/components/sidebar/SearchContent.svelte'
 	import SubstitutionRow from './SubstitutionRow.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { AddItemResult } from '$lib/types/api/search'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'

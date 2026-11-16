@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { SvelteMap } from 'svelte/reactivity'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { weaponAdapter, type WeaponKey } from '$lib/api/adapters/weapon.adapter'
 	import Select from '$lib/components/ui/Select.svelte'

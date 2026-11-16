@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getElementKey } from '$lib/utils/element'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { Job } from '$lib/types/api/entities'
 	import { getJobFullImageUrl, getJobIconUrl, Gender } from '$lib/utils/jobUtils'
 	import { localizedName } from '$lib/utils/locale'

@@ -2,7 +2,7 @@
  * The character series resource (GBF-143): list, detail, edit and new from
  * one description. Series are keyed by slug.
  */
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { seriesAdapter } from '$lib/api/adapters/series.adapter'
 import { entityKeys, entityQueries } from '$lib/api/queries/entity.queries'
 import { characterSeriesSection } from '$lib/features/database/character-series/section'

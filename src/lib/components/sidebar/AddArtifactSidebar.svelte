@@ -9,7 +9,7 @@
 	 * 4. Configure level, nickname
 	 * 5. Configure skills (for standard artifacts only, uses pane stack)
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { onMount, untrack } from 'svelte'
 	import type {
 		ArtifactSkill,

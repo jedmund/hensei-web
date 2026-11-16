@@ -10,7 +10,7 @@
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { toast } from 'svelte-sonner'
 	import GripVertical from '@lucide/svelte/icons/grip-vertical'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { adminKeys, adminQueries } from '$lib/api/queries/admin.queries'
 	import { catalogueRowId, toResultItems } from '$lib/components/data-table/resultSync'

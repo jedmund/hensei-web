@@ -6,7 +6,7 @@
 	 * Raid, Solomonis and description open their own panes; the parent owns
 	 * those panes and passes the open handlers in.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Input from '$lib/components/ui/Input.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import YouTubeUrlInput from '$lib/components/party/edit/YouTubeUrlInput.svelte'

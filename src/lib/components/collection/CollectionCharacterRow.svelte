@@ -8,7 +8,7 @@
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		character: CollectionCharacter

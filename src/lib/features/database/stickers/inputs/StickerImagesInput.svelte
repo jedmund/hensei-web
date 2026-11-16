@@ -6,7 +6,7 @@
 	import { untrack } from 'svelte'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { toast } from 'svelte-sonner'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { stickerAdapter } from '$lib/api/adapters/sticker.adapter'
 	import { adminKeys } from '$lib/api/queries/admin.queries'
 	import { stickerKeys, stickerQueries } from '$lib/api/queries/sticker.queries'

@@ -3,7 +3,7 @@
 	// Curators read it too (the events section's `minRole`).
 	import { page } from '$app/state'
 	import { toast } from 'svelte-sonner'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { useRunEventSync } from '$lib/api/mutations/event.mutations'

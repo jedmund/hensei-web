@@ -6,7 +6,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Icon from '$lib/components/Icon.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		roles: Role[]

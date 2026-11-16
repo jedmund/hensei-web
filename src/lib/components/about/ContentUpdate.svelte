@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ChangelogUnit from './ChangelogUnit.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import updateNames from '$lib/data/updateNames.json'
 

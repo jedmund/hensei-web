@@ -4,7 +4,7 @@
  * poll.
  */
 
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import type { GachaOperation } from '$lib/utils/gachaShare'
 import type { GachaResult } from '$lib/types/gacha'
 import type { SimulationPayload } from './pools'

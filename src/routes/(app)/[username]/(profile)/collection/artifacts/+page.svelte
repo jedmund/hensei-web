@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { ELEMENT_DISPLAY_ORDER, getElementLabel } from '$lib/utils/element'
 	import { getWeaponProficiencyOptions } from '$lib/utils/proficiency'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
 	import { getContext, onDestroy, untrack } from 'svelte'

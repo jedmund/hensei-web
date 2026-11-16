@@ -6,7 +6,7 @@
 		getElementKey,
 		getElementLabel
 	} from '$lib/utils/element'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import {
 		SUPPORT_SUMMON_SECTION_LIMITS,
 		type SupportSummon,

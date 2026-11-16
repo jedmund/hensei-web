@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { toMultiPlayerChartData } from '$lib/utils/gw'
 	import type { GwIndividualScore } from '$lib/types/api/gw'
 	import type { PlayerScore } from '$lib/features/crew/playerScores'

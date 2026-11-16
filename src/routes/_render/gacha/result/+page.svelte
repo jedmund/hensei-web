@@ -1,6 +1,6 @@
 <script lang="ts">
 	import GachaResults from '$lib/components/gacha/GachaResults.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	let { data } = $props()
 

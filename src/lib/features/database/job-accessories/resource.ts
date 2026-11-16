@@ -4,7 +4,7 @@
  * (GBF-143). The job is picked on the form: two jobs take each type.
  */
 import { z } from 'zod'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { jobAdapter, type JobAccessoryPayload } from '$lib/api/adapters/job.adapter'
 import { jobQueries } from '$lib/api/queries/job.queries'
 import { jobFilterOptions, rarityFilterOptions } from '$lib/components/data-table/filterOptions'

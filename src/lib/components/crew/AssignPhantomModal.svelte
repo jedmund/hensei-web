@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import { useAssignPhantom } from '$lib/api/mutations/crew.mutations'

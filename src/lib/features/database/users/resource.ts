@@ -5,7 +5,7 @@
  * own endpoint. Every change is logged and shown under History.
  */
 import { queryOptions } from '@tanstack/svelte-query'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { adminAdapter } from '$lib/api/adapters/admin.adapter'
 import { adminKeys } from '$lib/api/queries/admin.queries'
 import { defineResource, type Field } from '$lib/features/database/schema/types'

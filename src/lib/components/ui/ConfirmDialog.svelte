@@ -2,7 +2,7 @@
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import type { Snippet } from 'svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		open: boolean
@@ -25,8 +25,8 @@
 		open = $bindable(false),
 		title,
 		message,
-		confirmLabel = m.action_confirm_delete(),
-		cancelLabel = m.action_cancel(),
+		confirmLabel,
+		cancelLabel,
 		loading = false,
 		confirmVariant = 'destructive',
 		confirmDisabled = false,
@@ -54,7 +54,7 @@
 		{@render children?.()}
 		<div class="actions">
 			<Button variant="ghost" size="small" onclick={handleCancel} disabled={loading}>
-				{cancelLabel}
+				{cancelLabel ?? m.action_cancel()}
 			</Button>
 			<Button
 				variant={confirmVariant}
@@ -63,7 +63,7 @@
 				{loading}
 				disabled={confirmDisabled || loading}
 			>
-				{confirmLabel}
+				{confirmLabel ?? m.action_confirm_delete()}
 			</Button>
 		</div>
 	</div>

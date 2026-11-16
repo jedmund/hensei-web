@@ -32,7 +32,8 @@ vi.mock('$app/navigation', () => ({
 }))
 
 // Mock Paraglide runtime — deLocalizeHref strips locale prefix, localizeHref adds it
-vi.mock('$lib/paraglide/runtime', () => ({
+vi.mock('$lib/paraglide/runtime', async (importOriginal) => ({
+	...(await importOriginal<typeof import('$lib/paraglide/runtime')>()),
 	deLocalizeHref: (href: string) => href.replace(/^\/ja/, '') || '/',
 	localizeHref: (href: string, opts?: { locale?: string }) =>
 		opts?.locale === 'ja' ? `/ja${href}` : href,

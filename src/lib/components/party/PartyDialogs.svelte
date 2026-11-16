@@ -13,7 +13,7 @@
 	import WikiImportReview from '$lib/components/party/WikiImportReview.svelte'
 	import FeatureTeamDialog from '$lib/components/party/FeatureTeamDialog.svelte'
 	import ConfirmationSlider from '$lib/components/ui/ConfirmationSlider.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	/**
 	 * The party page's dialogs. Their open state lives in the composables that

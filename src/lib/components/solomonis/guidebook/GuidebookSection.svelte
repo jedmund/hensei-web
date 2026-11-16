@@ -7,7 +7,7 @@
 		solomonisExpedition,
 		useReplaceGuidebook
 	} from '$lib/api/mutations/solomonis-guidebook.mutations'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { Party } from '$lib/types/api/party'
 	import type { GuideEffect, GuidebookEntry } from '$lib/types/api/solomonis'
 	import Button from '$lib/components/ui/Button.svelte'

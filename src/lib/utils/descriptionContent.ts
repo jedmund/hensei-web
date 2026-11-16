@@ -5,7 +5,7 @@
  * only covers what the editor needs.
  */
 import type { Content } from '@tiptap/core'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import type { Description } from '$lib/types/api/party'
 
 /**

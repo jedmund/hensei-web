@@ -13,7 +13,7 @@
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
 	import { avatarBackground, getAvatarSrc } from '$lib/utils/avatar'
 	import { getDefaultRepView } from '$lib/stores/defaultRepView.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		party: Party

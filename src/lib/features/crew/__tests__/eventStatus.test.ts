@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { formatEventStatus } from '../eventStatus'
 
 const now = new Date('2026-11-01T12:00:00Z')

@@ -4,7 +4,7 @@
 	 * and name over the zone and pledge, with a note when the Evoker isn't in
 	 * the party's grid.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getCharacterImage } from '$lib/utils/images/characters'
 	import { appLocale } from '$lib/utils/locale'
 	import type { SolomonisExpedition } from '$lib/types/api/solomonis'

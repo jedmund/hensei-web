@@ -32,7 +32,7 @@
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import type { MemberFilter, CrewMembership, PhantomPlayer } from '$lib/types/api/crew'
 	import type { PageData } from './$types'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		data: PageData

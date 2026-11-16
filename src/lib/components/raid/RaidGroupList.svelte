@@ -7,7 +7,7 @@
 	 */
 	import type { RaidGroupFull, RaidFull } from '$lib/types/api/raid'
 	import RaidGroupItem from './RaidGroupItem.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		groups: RaidGroupFull[]

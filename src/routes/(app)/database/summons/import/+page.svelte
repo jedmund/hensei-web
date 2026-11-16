@@ -1,6 +1,6 @@
 <script lang="ts">
 	import PageMeta from '$lib/components/PageMeta.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { summonAdapter, type ParsedSummonData } from '$lib/api/adapters/summon.adapter'

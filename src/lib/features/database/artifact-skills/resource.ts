@@ -6,7 +6,7 @@
  * grouped tables.
  */
 import { z } from 'zod'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { artifactAdapter, type ArtifactSkillPayload } from '$lib/api/adapters/artifact.adapter'
 import { artifactKeys, artifactQueries } from '$lib/api/queries/artifact.queries'
 import { artifactSkillsSection } from '$lib/features/database/artifact-skills/section'

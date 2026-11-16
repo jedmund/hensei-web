@@ -7,7 +7,7 @@
 	import { stickerQueries } from '$lib/api/queries/sticker.queries'
 	import { findSticker } from '$lib/utils/stickers'
 	import StickerImage, { type StickerEffect } from './StickerImage.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		labels?: string[] | undefined

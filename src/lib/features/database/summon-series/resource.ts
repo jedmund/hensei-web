@@ -3,7 +3,7 @@
  * description, like the weapon and character series. Series are keyed by
  * slug.
  */
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { seriesAdapter } from '$lib/api/adapters/series.adapter'
 import { entityKeys, entityQueries } from '$lib/api/queries/entity.queries'
 import { seriesIconColumn, summonSeriesIcon } from '$lib/features/database/schema/seriesIcon'

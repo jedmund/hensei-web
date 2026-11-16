@@ -3,7 +3,7 @@
 	 * BlessingEditSection - the edit pane's blessings: the loadout's cost
 	 * gauge over a level stepper per released blessing (0 = not equipped).
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import Stepper from '$lib/components/ui/Stepper.svelte'
 	import { appLocale } from '$lib/utils/locale'

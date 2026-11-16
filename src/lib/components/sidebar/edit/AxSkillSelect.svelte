@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import type { AugmentSkill, WeaponStatModifier } from '$lib/types/api/weaponStatModifier'
@@ -42,10 +42,14 @@
 	const secondaryStrength = $derived(currentSkills[1]?.strength ?? 0)
 
 	const selectedPrimary = $derived(
-		selectedPrimaryId ? (axQuery.data ?? []).find((m) => m.id === selectedPrimaryId) : undefined
+		selectedPrimaryId
+			? (axQuery.data ?? []).find((modifier) => modifier.id === selectedPrimaryId)
+			: undefined
 	)
 	const selectedSecondary = $derived(
-		selectedSecondaryId ? (axQuery.data ?? []).find((m) => m.id === selectedSecondaryId) : undefined
+		selectedSecondaryId
+			? (axQuery.data ?? []).find((modifier) => modifier.id === selectedSecondaryId)
+			: undefined
 	)
 
 	// EXP/Rupie primaries have no secondary skill (gbf.wiki/AX_Skills)
@@ -95,7 +99,9 @@
 	}
 
 	function handlePrimaryChange(value: string | undefined) {
-		const modifier = value ? (axQuery.data ?? []).find((m) => m.id === value) : undefined
+		const modifier = value
+			? (axQuery.data ?? []).find((modifier) => modifier.id === value)
+			: undefined
 		if (!modifier) {
 			currentSkills = []
 			return
@@ -125,7 +131,9 @@
 	}
 
 	function handleSecondaryChange(value: string | undefined) {
-		const modifier = value ? (axQuery.data ?? []).find((m) => m.id === value) : undefined
+		const modifier = value
+			? (axQuery.data ?? []).find((modifier) => modifier.id === value)
+			: undefined
 		const first = currentSkills[0]
 		if (!modifier) {
 			currentSkills = first ? [first] : []

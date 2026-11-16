@@ -2,7 +2,7 @@ import type { PartyMutations } from './party-mutations.svelte'
 import type { GridWeapon, GridSummon, GridCharacter } from '$lib/types/api/party'
 import { toast } from 'svelte-sonner'
 import { extractErrorMessage } from '$lib/utils/errors'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 export function useGridService(
 	mutations: PartyMutations,

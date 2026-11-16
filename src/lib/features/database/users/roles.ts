@@ -1,5 +1,5 @@
 /** Account roles as admins see and set them in the Users section */
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { ADMIN_ROLE, CURATOR_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
 import type { EnumOption } from '$lib/features/database/schema/types'
 

@@ -9,7 +9,7 @@
 		type SelectedRosterItem
 	} from '$lib/features/crew/rosterItems'
 	import type { RosterMember } from '$lib/types/api/crew'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		items: SelectedRosterItem[]

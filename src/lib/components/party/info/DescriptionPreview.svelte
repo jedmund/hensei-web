@@ -5,7 +5,7 @@
 	 * with none yet, those who can edit are asked to write one. When the party
 	 * was updated sits beneath.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { descriptionPreview } from '$lib/utils/descriptionPreview'
 
 	interface Props {

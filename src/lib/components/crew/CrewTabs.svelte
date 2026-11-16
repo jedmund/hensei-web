@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	type Element = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import BottomSheet from '$lib/components/ui/BottomSheet.svelte'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'

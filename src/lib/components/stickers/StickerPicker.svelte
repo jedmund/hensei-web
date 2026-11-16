@@ -24,7 +24,7 @@
 	import { canShowStickerPicker, pickerStickers } from '$lib/utils/stickers'
 	import { localizedName } from '$lib/utils/locale'
 	import type { Party, StickerPlacement } from '$lib/types/api/party'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		party: Pick<Party, 'id' | 'shortcode' | 'user' | 'visibility' | 'mySticker'>

@@ -10,7 +10,7 @@
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { difficultyAdapter } from '$lib/api/adapters/difficulty.adapter'
 	import { difficultyQueries } from '$lib/api/queries/difficulty.queries'
 	import { extractErrorMessage } from '$lib/utils/errors'

@@ -4,7 +4,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import type { Snippet } from 'svelte'
 	import type { EntityRawData } from '$lib/api/adapters/entity.shared'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { formatRelativeTime } from '$lib/utils/date'
 	import { getLocale } from '$lib/paraglide/runtime'
 

@@ -3,7 +3,7 @@
  * changed, grouped and named in plain words.
  */
 
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import type {
 	CharacterRefreshResult,
 	RefreshBatchItem,

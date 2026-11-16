@@ -8,7 +8,7 @@
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import type { FilterSet } from '$lib/types/FilterSet'
 	import { defaultFilterSet } from '$lib/utils/defaultFilters'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 

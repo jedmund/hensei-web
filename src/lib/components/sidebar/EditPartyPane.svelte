@@ -5,7 +5,7 @@
 	 * This pane is opened via openPartyEditSidebar() and provides
 	 * editing for battle settings, clear time, metrics, video URL, and raid.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import BattleSettingsSection from '$lib/components/party/edit/BattleSettingsSection.svelte'
 	import PartyDetailsFields from '$lib/components/party/edit/PartyDetailsFields.svelte'
 	import PartyVisibilitySection from '$lib/components/party/edit/PartyVisibilitySection.svelte'

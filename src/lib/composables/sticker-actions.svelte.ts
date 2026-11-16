@@ -7,7 +7,7 @@ import { toast } from 'svelte-sonner'
 import { useGiveSticker, useRemoveSticker } from '$lib/api/mutations/sticker.mutations'
 import { extractErrorMessage } from '$lib/utils/errors'
 import type { Party, StickerPlacement } from '$lib/types/api/party'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 interface StickerActionsOptions {
 	getParty: () => Pick<Party, 'id' | 'shortcode'>

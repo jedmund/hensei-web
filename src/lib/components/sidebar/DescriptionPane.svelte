@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { onMount } from 'svelte'
 	import DescriptionRenderer from '$lib/components/DescriptionRenderer.svelte'
 	import EditDescriptionPane from './EditDescriptionPane.svelte'

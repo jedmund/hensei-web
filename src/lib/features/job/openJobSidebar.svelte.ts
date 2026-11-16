@@ -5,7 +5,7 @@ import JobAccessorySelectionSidebar from '$lib/components/sidebar/JobAccessorySe
 import type { Job, JobSkill, JobAccessory } from '$lib/types/api/entities'
 import type { JobSkillList } from '$lib/types/api/party'
 import { getAccessoryTypeName } from '$lib/utils/jobAccessoryUtils'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 

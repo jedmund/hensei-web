@@ -5,7 +5,7 @@
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import { formatScore } from '$lib/utils/gw'
 	import type { PlayerScore } from '$lib/features/crew/playerScores'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		player: PlayerScore

@@ -4,7 +4,7 @@
 	 *
 	 * Displays toggles for Full Auto, Auto Guard, Auto Summon, and Charge Attack.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'

@@ -9,7 +9,7 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import { GW_ROUND_LABELS, type GwCrewScore, type GwRound } from '$lib/types/api/gw'
 	import { formatScore, parseScore } from '$lib/utils/gw'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		open: boolean

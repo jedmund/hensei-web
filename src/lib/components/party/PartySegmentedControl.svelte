@@ -11,7 +11,7 @@
 	import SummonRep from '$lib/components/reps/SummonRep.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { mobileQuery } from '$lib/utils/viewport.svelte'
 	import { characterSlotCount, getExpedition } from '$lib/components/solomonis/grid/seal'
 

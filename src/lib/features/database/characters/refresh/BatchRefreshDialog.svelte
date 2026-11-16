@@ -3,7 +3,7 @@
 	import { untrack } from 'svelte'
 	import { toast } from 'svelte-sonner'
 	import { useQueryClient } from '@tanstack/svelte-query'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'

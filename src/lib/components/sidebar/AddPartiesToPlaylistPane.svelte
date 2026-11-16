@@ -17,7 +17,7 @@
 	import GridRep from '$lib/components/reps/GridRep.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import Icon from '$lib/components/Icon.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		playlistId: string

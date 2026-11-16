@@ -3,7 +3,7 @@
  * description. Series are keyed by slug. Variants have their own endpoint:
  * the detail lists them and the edit form edits each in a dialog.
  */
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { seriesAdapter } from '$lib/api/adapters/series.adapter'
 import { entityKeys, entityQueries } from '$lib/api/queries/entity.queries'
 import type { FlagValue } from '$lib/components/data-table/types'

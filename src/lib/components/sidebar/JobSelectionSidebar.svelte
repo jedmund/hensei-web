@@ -8,7 +8,7 @@
 	import JobTierSelector from '../job/JobTierSelector.svelte'
 	import Input from '../ui/Input.svelte'
 	import SelectionSidebarLayout from './SelectionSidebarLayout.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 

@@ -16,7 +16,7 @@
 	import { getElementClassName } from '$lib/utils/element'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'
 	import perpetuityEmpty from '$src/assets/icons/perpetuity/empty.svg'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { useUnitActions } from './useUnitActions.svelte'

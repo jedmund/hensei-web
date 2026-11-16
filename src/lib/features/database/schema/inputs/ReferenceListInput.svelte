@@ -2,7 +2,7 @@
 	// A reference list's input, by the resource it points at: a multi-select
 	// of character series, in their display order
 	import { createQuery } from '@tanstack/svelte-query'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'

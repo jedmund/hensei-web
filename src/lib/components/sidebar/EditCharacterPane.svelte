@@ -5,7 +5,7 @@
 	 * Uses the shared CharacterEditPane for edit controls.
 	 * Handles GridCharacter-specific data transformation and mutations.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { GridCharacter } from '$lib/types/api/party'
 	import ItemHeader from './details/ItemHeader.svelte'
 	import CharacterEditPane, {

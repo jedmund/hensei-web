@@ -3,7 +3,7 @@
 	 * PartyVisibilitySection - Privacy level, plus the share-with-crew toggle
 	 * for crew members.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { crewQueries } from '$lib/api/queries/crew.queries'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'

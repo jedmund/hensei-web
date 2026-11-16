@@ -1,4 +1,4 @@
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 /** A party's battle settings and how it performed, as its info tile shows them */
 export interface PartySettingsValues {

@@ -7,7 +7,7 @@ import { partyKeys } from '$lib/api/queries/party.queries'
 import { transformResponse } from '$lib/api/schemas/transforms'
 import type { Party } from '$lib/types/api/party'
 import { toast } from 'svelte-sonner'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import buildJson from '$lib/components/solomonis/grid/__fixtures__/party-build.json'
 
 vi.mock('svelte-sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }))

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { entityQueries } from '$lib/api/queries/entity.queries'
 	import type { Befoulment, WeaponStatModifier } from '$lib/types/api/weaponStatModifier'
@@ -33,7 +33,7 @@
 	// Get selected modifier from query data
 	const selectedModifier = $derived(
 		selectedModifierId
-			? (befoulmentQuery.data ?? []).find((m) => m.id === selectedModifierId)
+			? (befoulmentQuery.data ?? []).find((modifier) => modifier.id === selectedModifierId)
 			: undefined
 	)
 
@@ -112,7 +112,9 @@
 	}
 
 	function handleModifierChange(value: string | undefined) {
-		const modifier = value ? (befoulmentQuery.data ?? []).find((m) => m.id === value) : undefined
+		const modifier = value
+			? (befoulmentQuery.data ?? []).find((modifier) => modifier.id === value)
+			: undefined
 		if (!modifier) {
 			currentBefoulment = null
 			return

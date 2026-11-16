@@ -5,7 +5,7 @@
 	 * tabs. The full page and the record side panel both render it.
 	 */
 	import { createQuery } from '@tanstack/svelte-query'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { withInitialData } from '$lib/query/ssr'
 	import DetailScaffold, {
 		type DetailTab

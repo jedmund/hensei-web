@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { browser } from '$app/environment'
 	import { goto } from '$app/navigation'
 	import { createQuery } from '@tanstack/svelte-query'

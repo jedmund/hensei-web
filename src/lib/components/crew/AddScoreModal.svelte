@@ -11,7 +11,7 @@
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
 	import { formatScore, parseScore } from '$lib/utils/gw'
 	import { GW_ROUND_LABELS, type GwRound, type GwIndividualScore } from '$lib/types/api/gw'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	// Simplified types matching the API response
 	interface MemberDuringEvent {
@@ -101,16 +101,16 @@
 		const outside: Array<{ value: string; label: string; suffix?: string }> = []
 
 		// Add members (skip those with scores)
-		for (const m of membersDuringEvent) {
-			if (m.user) {
-				const hasScore = playersWithScores.has(`member:${m.id}`)
+		for (const member of membersDuringEvent) {
+			if (member.user) {
+				const hasScore = playersWithScores.has(`member:${member.id}`)
 				if (hasScore) continue
 				const option = {
-					value: `member:${m.id}`,
-					label: m.user.username + (m.retired ? ' (Retired)' : ''),
-					suffix: m.activeDuringEvent ? undefined : 'Outside crew membership dates'
+					value: `member:${member.id}`,
+					label: member.user.username + (member.retired ? ' (Retired)' : ''),
+					suffix: member.activeDuringEvent ? undefined : 'Outside crew membership dates'
 				}
-				if (m.activeDuringEvent) active.push(option)
+				if (member.activeDuringEvent) active.push(option)
 				else outside.push(option)
 			}
 		}

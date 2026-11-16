@@ -25,7 +25,7 @@ import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 import { localizedName } from '$lib/utils/locale'
 import { weaponSeriesImage } from '$lib/utils/collectionFilterOptions'
 import { getLocale } from '$lib/paraglide/runtime'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import type { AddItemResult, SearchMode } from '$lib/types/api/search'
 import {
 	buildMemberOptions,

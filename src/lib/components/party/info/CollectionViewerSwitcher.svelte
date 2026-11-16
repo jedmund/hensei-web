@@ -3,7 +3,7 @@
 	 * Whose collection a party's items are shown against, when it uses someone
 	 * else's: the signed-in user's ("You") or the collection owner's.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Icon from '$lib/components/Icon.svelte'
 	import UserAvatar from '$lib/components/ui/UserAvatar.svelte'
 	import { DropdownMenu, Tooltip } from 'bits-ui'

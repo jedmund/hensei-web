@@ -2,7 +2,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import LegalDocument from '$lib/components/about/LegalDocument.svelte'
 	import LegalSection from '$lib/components/about/LegalSection.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime.js'
 
 	// Bump this whenever the policy changes in a way users should know about.

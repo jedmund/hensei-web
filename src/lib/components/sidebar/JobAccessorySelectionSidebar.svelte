@@ -8,7 +8,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import SelectionSidebarLayout from './SelectionSidebarLayout.svelte'
 	import Icon from '../Icon.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		job?: Job

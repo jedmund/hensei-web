@@ -24,7 +24,7 @@
 	import { getBoostTypeLabel } from '$lib/utils/boostType'
 	import { titleCase } from '$lib/utils/textCase'
 	import WeaponSkillIcon from '$lib/components/database/WeaponSkillIcon.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { DeleteImpact, PanelValidation } from '$lib/types/api/weaponSkillFamily'
 
 	let { data } = $props()
@@ -293,8 +293,10 @@
 						<div class="panel-result" class:ok={panel.ok}>
 							<strong>{panel.party}</strong>
 							{panel.ok ? 'ok' : ''}
-							{#each panel.mismatches as m (m.label)}
-								<span class="mismatch">{m.label}: {m.ours ?? '—'} vs {m.expected}</span>
+							{#each panel.mismatches as mismatch (mismatch.label)}
+								<span class="mismatch"
+									>{mismatch.label}: {mismatch.ours ?? '—'} vs {mismatch.expected}</span
+								>
 							{/each}
 						</div>
 					{/each}

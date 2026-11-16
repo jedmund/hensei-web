@@ -2,7 +2,7 @@
 	import type { PageData } from './$types'
 	import Party from '$lib/components/party/Party.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { createQuery, useQueryClient } from '@tanstack/svelte-query'
 	import { partyQueries, partyKeys } from '$lib/api/queries/party.queries'
 	import { useCreateParty } from '$lib/api/mutations/party.mutations'

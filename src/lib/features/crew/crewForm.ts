@@ -1,4 +1,4 @@
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import type { CreateCrewInput } from '$lib/types/api/crew'
 
 /** The editable details of a crew, as typed into a form */

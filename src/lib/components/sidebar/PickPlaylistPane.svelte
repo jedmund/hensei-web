@@ -17,7 +17,7 @@
 	import PlaylistRow from '$lib/components/playlist/PlaylistRow.svelte'
 	import FavoriteToast from '$lib/components/ui/FavoriteToast.svelte'
 	import Icon from '$lib/components/Icon.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		partyId: string

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { onMount, untrack } from 'svelte'
 	import type { Editor } from '@tiptap/core'
 	import EdraEditor from '$lib/components/edra/headless/editor.svelte'

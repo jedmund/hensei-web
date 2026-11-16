@@ -3,7 +3,7 @@
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { getRaidImage } from '$lib/utils/images/raids'
 	import Icon from '$lib/components/Icon.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		playlist: Playlist

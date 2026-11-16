@@ -1,7 +1,7 @@
 <script lang="ts">
 	// One number per quality tier. Blank qualities hold null in the form;
 	// the field trims trailing ones when it saves (see baseValues.ts)
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import type { InputProps } from '$lib/features/database/schema/inputs/types'
 	import { QUALITIES } from '../baseValues'

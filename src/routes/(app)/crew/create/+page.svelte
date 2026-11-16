@@ -7,7 +7,7 @@
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { toCrewInput, validateCrewForm } from '$lib/features/crew/crewForm'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 
 	interface Props {

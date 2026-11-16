@@ -6,7 +6,7 @@
 
 <script lang="ts">
 	// Components
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import Button from './Button.svelte'

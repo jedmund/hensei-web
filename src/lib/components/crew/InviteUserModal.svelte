@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { useSendInvitation } from '$lib/api/mutations/crew.mutations'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Dialog from '$lib/components/ui/Dialog.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'

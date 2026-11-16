@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import TranscendenceFragment from './TranscendenceFragment.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { Popover } from 'bits-ui'

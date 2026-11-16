@@ -1,6 +1,6 @@
 <script lang="ts">
 	// A weapon series' variants and the flags each overrides
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import VariantRow from '$lib/features/database/weapon-series/VariantRow.svelte'
 	import type { WeaponSeries } from '$lib/types/api/weaponSeries'
 

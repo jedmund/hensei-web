@@ -10,7 +10,7 @@
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
 	import { GW_ROUND_LABELS, type GwIndividualScore, type GwRound } from '$lib/types/api/gw'
 	import { formatScore, parseScore } from '$lib/utils/gw'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		open: boolean

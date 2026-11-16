@@ -4,7 +4,7 @@
 	 * line naming it, and a button to start a team with it already in place.
 	 */
 	import Button from '$lib/components/ui/Button.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		/** The message as HTML; names in it must already be escaped */

@@ -8,7 +8,7 @@
 	import { untrack } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { toast } from 'svelte-sonner'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DetailScaffold from '$lib/features/database/detail/DetailScaffold.svelte'
 	import { UnsavedChangesGuard } from '$lib/features/database/detail/unsavedChanges.svelte'
 	import UnsavedChangesDialog from '$lib/features/database/detail/UnsavedChangesDialog.svelte'

@@ -5,7 +5,7 @@
 	 * summons as a direct child, weapons inside their modifier layer.
 	 */
 	import Icon from '$lib/components/Icon.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 </script>
 
 <div class="orphaned-badge" title={m.tooltip_not_in_collection()}>

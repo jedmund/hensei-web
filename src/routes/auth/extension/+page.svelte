@@ -3,7 +3,7 @@
 	import AuthCard from '$lib/components/auth/AuthCard.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		data: {

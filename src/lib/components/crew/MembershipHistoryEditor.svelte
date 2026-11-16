@@ -2,7 +2,7 @@
 	import DatePicker from '$lib/components/ui/DatePicker.svelte'
 	import SettingsRow from '$lib/components/ui/SettingsRow.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	export interface EditableMembershipPeriod {
 		id: string

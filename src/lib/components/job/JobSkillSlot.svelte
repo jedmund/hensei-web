@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { JobSkill } from '$lib/types/api/entities'
 	import { getSkillCategoryColor } from '$lib/utils/jobUtils'
 	import { getJobSkillIcon } from '$lib/utils/images/icons'

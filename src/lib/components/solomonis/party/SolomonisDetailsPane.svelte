@@ -7,7 +7,7 @@
 	 * top of it.
 	 */
 	import { onMount } from 'svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import GuidebookSection from '$lib/components/solomonis/guidebook/GuidebookSection.svelte'
 	import EvokerHeader from './EvokerHeader.svelte'

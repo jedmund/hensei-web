@@ -8,7 +8,7 @@
 	 *
 	 * The "My Collection" tab includes an edit mode using WeaponEditPane.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { onMount, untrack } from 'svelte'
 	import { localizedName } from '$lib/utils/locale'
 	import type { CollectionWeapon } from '$lib/types/api/collection'

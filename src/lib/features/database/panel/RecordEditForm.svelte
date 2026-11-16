@@ -2,7 +2,7 @@
 	// Loads the open record and shows its edit form in the panel. The form
 	// starts over for each record (j/k keeps the panel in edit mode)
 	import { createQuery } from '@tanstack/svelte-query'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 	import type { AnyResourceDef } from '$lib/features/database/schema/registry'
 	import RecordEditBody from './RecordEditBody.svelte'

@@ -9,7 +9,7 @@
 	import { usePartyContext } from '$lib/types/party-context'
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		character: GridCharacter

@@ -1,6 +1,6 @@
 <script lang="ts">
 	// The detail's Key Slot Unlocks row: each slot's unlock uncap as stars
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import type { WeaponSeries } from '$lib/types/api/weaponSeries'
 

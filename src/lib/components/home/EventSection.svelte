@@ -35,7 +35,7 @@
 	import type { GameEvent } from '$lib/types/api/event'
 	import type { HomeRaidSection } from '$lib/types/api/home'
 	import type { Snippet } from 'svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		event: GameEvent

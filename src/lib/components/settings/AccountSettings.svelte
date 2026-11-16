@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Input from '../ui/Input.svelte'
 	import Button from '../ui/Button.svelte'
 	import Switch from '../ui/switch/Switch.svelte'
