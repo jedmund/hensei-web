@@ -36,7 +36,7 @@
 		"@storybook/addon-vitest": "^10.6.2",
 		"@storybook/sveltekit": "^10.6.2",
 		"@sveltejs/adapter-node": "^5.5.7",
-		"@sveltejs/kit": "^2.70.4",
+		"@sveltejs/kit": "^3.1.1",
 		"@sveltejs/vite-plugin-svelte": "^7.3.1",
 		"@tanstack/svelte-query-devtools": "^6.3.2",
 		"@types/node": "^22",
