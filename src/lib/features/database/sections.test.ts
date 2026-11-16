@@ -68,9 +68,9 @@ describe('groupedSections', () => {
 		expect(resourceMinRole('users')).toBe(9)
 	})
 
-	it('shows curators only Events', () => {
+	it('shows curators only Events and Refresh', () => {
 		const ids = groupedSections(CURATOR_ROLE).flatMap((g) => g.sections.map((s) => s.id))
-		expect(ids).toEqual(['events'])
+		expect(ids).toEqual(['events', 'refresh'])
 	})
 })
 

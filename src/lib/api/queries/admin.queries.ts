@@ -7,6 +7,7 @@
 
 import { keepPreviousData, queryOptions } from '@tanstack/svelte-query'
 import { adminAdapter } from '$lib/api/adapters/admin.adapter'
+import { refreshAdapter } from '$lib/api/adapters/refresh.adapter'
 import type { AdminListParams, AdminResource } from '$lib/types/api/admin'
 
 export const adminKeys = {
@@ -27,5 +28,17 @@ export const adminQueries = {
 			// Keep the current page on screen while the next one loads
 			placeholderData: keepPreviousData,
 			staleTime: 1000 * 30
+		})
+}
+
+export const refreshKeys = {
+	status: () => [...adminKeys.all, 'refreshes'] as const
+}
+
+export const refreshQueries = {
+	status: () =>
+		queryOptions({
+			queryKey: refreshKeys.status(),
+			queryFn: () => refreshAdapter.status()
 		})
 }

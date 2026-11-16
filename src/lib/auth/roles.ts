@@ -2,7 +2,8 @@
  * Account roles, from `account.role`. Each role can do everything the ones
  * below it can.
  *
- * - Curators feature teams (staff picks) and can read Database > Events.
+ * - Curators feature teams (staff picks), can read Database > Events and
+ *   use Database > Refresh.
  * - Editors manage the whole Database.
  */
 
@@ -43,7 +44,7 @@ export function canUseFeature(feature: LockedFeature, role: Role): boolean {
 
 /**
  * The role a Database route needs, from its SvelteKit route id. Curators get
- * the Database root (which sends them to Events); the generic resource routes
+ * the Database root (which sends them to Events) and Refresh; the generic resource routes
  * need `resourceRole`, the resource's own minimum (`resourceMinRole` in the
  * database sections: curators read Events); every other Database route stays
  * editor-only. Pages that write, like a resource's edit and new pages, still
@@ -53,7 +54,7 @@ export function requiredDatabaseRole(
 	routeId: string | null | undefined,
 	resourceRole: number = EDITOR_ROLE
 ): number {
-	if (routeId === '/(app)/database') return CURATOR_ROLE
+	if (routeId === '/(app)/database' || routeId === '/(app)/database/refresh') return CURATOR_ROLE
 	if (routeId?.startsWith('/(app)/database/[resource=resource]')) return resourceRole
 	return EDITOR_ROLE
 }
