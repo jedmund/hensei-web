@@ -11,6 +11,7 @@
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { refreshAdapter, type RefreshStatus } from '$lib/api/adapters/refresh.adapter'
 	import { refreshKeys, refreshQueries } from '$lib/api/queries/admin.queries'
+	import { homeKeys } from '$lib/api/queries/home.queries'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { formatRelativeTime } from '$lib/utils/date'
 
@@ -27,7 +28,11 @@
 
 	const homeMut = createMutation(() => ({
 		mutationFn: () => refreshAdapter.refreshHome(),
-		onSuccess: (next: RefreshStatus) => onRefreshed(next, m.db_refresh_home_done()),
+		onSuccess: (next: RefreshStatus) => {
+			// This tab's copy of Home too, so going there shows the rebuilt feed
+			queryClient.invalidateQueries({ queryKey: homeKeys.all })
+			onRefreshed(next, m.db_refresh_home_done())
+		},
 		onError
 	}))
 
