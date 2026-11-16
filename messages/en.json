@@ -3384,5 +3384,21 @@
 			}
 		}
 	],
-	"home_event_links": "Event links"
+	"home_event_links": "Event links",
+	"db_refresh_title": "Refresh",
+	"db_refresh_description": "Show changes on the site now instead of when its caches next expire.",
+	"db_refresh_home_title": "Home",
+	"db_refresh_home_subtitle": "Home is rebuilt every {minutes} minutes. Refresh it to show changes to events, staff picks and new items right away.",
+	"db_refresh_home_button": "Refresh Home",
+	"db_refresh_home_done": "Home will be rebuilt on its next visit",
+	"db_refresh_gacha_title": "Gacha rate-ups",
+	"db_refresh_gacha_subtitle": "Shows items just added to the Database in the banner's rate-ups, and asks the rates fetcher to read the game's banner again on its next hourly run.",
+	"db_refresh_gacha_button": "Refresh rate-ups",
+	"db_refresh_gacha_done": "Rate-ups refreshed. The game's banner will be read again within the hour.",
+	"db_refresh_banner": "Current banner: {name}, read from the game {fetched}",
+	"db_refresh_banner_unnamed": "Banner {id}",
+	"db_refresh_no_banner": "No banner has been read from the game yet",
+	"db_refresh_pending": "Re-fetch requested {requested}. Waiting for the fetcher.",
+	"db_refresh_error": "Couldn't refresh",
+	"db_refresh_load_error": "Couldn't load the refresh status"
 }

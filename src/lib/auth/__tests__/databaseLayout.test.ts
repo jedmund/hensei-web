@@ -1,6 +1,6 @@
 /**
  * The database layout is the role gate for every Database page: curators
- * reach the Events resource (and the root), editors everything.
+ * reach the Events resource, Refresh and the root, editors everything.
  */
 import { describe, expect, it } from 'vitest'
 import { load } from '../../../routes/(app)/database/+layout.server'
@@ -32,6 +32,11 @@ describe('database layout role gate', () => {
 	it('lets curators read Events, list and detail', async () => {
 		expect(await redirectOf(gate(6, GENERIC, 'events'))).toBeNull()
 		expect(await redirectOf(gate(6, `${GENERIC}/[id]`, 'events'))).toBeNull()
+	})
+
+	it('lets curators, and nobody below them, open Refresh', async () => {
+		expect(await redirectOf(gate(6, '/(app)/database/refresh'))).toBeNull()
+		expect(await redirectOf(gate(5, '/(app)/database/refresh'))).toBe('/')
 	})
 
 	it('keeps curators out of every other resource and bespoke page', async () => {

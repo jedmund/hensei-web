@@ -45,8 +45,9 @@ describe('requiredDatabaseRole', () => {
 		'/(app)/database/[resource=resource]/new'
 	]
 
-	it('lets curators reach the Database root', () => {
+	it('lets curators reach the Database root and Refresh', () => {
 		expect(requiredDatabaseRole('/(app)/database')).toBe(CURATOR_ROLE)
+		expect(requiredDatabaseRole('/(app)/database/refresh')).toBe(CURATOR_ROLE)
 	})
 
 	it('keeps every bespoke Database route editor-only', () => {

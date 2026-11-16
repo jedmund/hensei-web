@@ -9,7 +9,7 @@
  * their parent's list page (Weapons → Skills links to `weapons?view=skills`).
  */
 import { m } from '$lib/paraglide/messages'
-import { EDITOR_ROLE } from '$lib/auth/roles'
+import { CURATOR_ROLE, EDITOR_ROLE } from '$lib/auth/roles'
 import { artifactSkillsSection } from './artifact-skills/section'
 import { awakeningsSection } from './awakenings/section'
 import { bulletsSection } from './bullets/section'
@@ -55,7 +55,7 @@ export interface DatabaseSection {
 	entity?: () => string
 	/** "New" menu items, in separator-delimited groups. Children inherit their parent's menu. */
 	actions?: SectionAction[][]
-	/** Lowest role that sees the section. Defaults to editor; curators only see Events. */
+	/** Lowest role that sees the section. Defaults to editor; curators see Events and Refresh. */
 	minRole?: number
 	/** Hidden until the feature exists */
 	hidden?: boolean
@@ -133,6 +133,13 @@ export const DATABASE_SECTIONS: DatabaseSection[] = [
 		group: 'site'
 	},
 	...resourceSections('stickers', stickersSection),
+	{
+		id: 'refresh',
+		label: () => m.db_refresh_title(),
+		path: '/database/refresh',
+		group: 'site',
+		minRole: CURATOR_ROLE
+	},
 
 	...resourceSections('users', usersSection)
 ]

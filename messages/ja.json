@@ -3173,5 +3173,21 @@
 			}
 		}
 	],
-	"home_event_links": "イベントのリンク"
+	"home_event_links": "イベントのリンク",
+	"db_refresh_title": "更新",
+	"db_refresh_description": "キャッシュの期限を待たずに、変更をすぐにサイトに反映します。",
+	"db_refresh_home_title": "ホーム",
+	"db_refresh_home_subtitle": "ホームは{minutes}分ごとに再構築されます。イベント、スタッフのおすすめ、新着アイテムの変更をすぐに反映するには更新してください。",
+	"db_refresh_home_button": "ホームを更新",
+	"db_refresh_home_done": "次の表示でホームが再構築されます",
+	"db_refresh_gacha_title": "ガチャのピックアップ",
+	"db_refresh_gacha_subtitle": "データベースに追加したばかりのアイテムをピックアップに反映し、次回（1時間ごと）の取得でゲームのガチャ情報を再取得します。",
+	"db_refresh_gacha_button": "ピックアップを更新",
+	"db_refresh_gacha_done": "ピックアップを更新しました。1時間以内にゲームのガチャ情報を再取得します。",
+	"db_refresh_banner": "現在のガチャ：{name}（{fetched}に取得）",
+	"db_refresh_banner_unnamed": "ガチャ {id}",
+	"db_refresh_no_banner": "まだゲームからガチャ情報を取得していません",
+	"db_refresh_pending": "{requested}に再取得をリクエストしました。取得を待っています。",
+	"db_refresh_error": "更新できませんでした",
+	"db_refresh_load_error": "更新の状態を読み込めませんでした"
 }
