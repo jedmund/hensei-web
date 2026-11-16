@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { flushSync } from 'svelte'
 import type { UserSettings } from '$lib/api/adapters/user.adapter'
 import type { UserCookie } from '$lib/types/UserCookie'
+import { m } from '$lib/paraglide/messages'
 import { UserSettingsState, type UserSettingsOptions } from '../userSettingsState.svelte'
 
 const mocks = vi.hoisted(() => ({
@@ -55,8 +56,8 @@ vi.mock('$lib/stores/simplePortraits.svelte', () => ({
 vi.mock('$lib/stores/defaultRepView.svelte', () => ({
 	updateDefaultRepView: mocks.updateDefaultRepView
 }))
-vi.mock('$lib/paraglide/messages', () => ({ settings_save_error: () => 'save failed' }))
-vi.mock('$lib/paraglide/runtime', () => ({
+vi.mock('$lib/paraglide/runtime', async (importOriginal) => ({
+	...(await importOriginal<typeof import('$lib/paraglide/runtime')>()),
 	deLocalizeHref: (href: string) => `base:${href}`,
 	localizeHref: (href: string, opts: { locale?: string }) => `${opts.locale}:${href}`,
 	toLocale: (value: string) => value
@@ -392,7 +393,7 @@ describe('UserSettingsState', () => {
 			mocks.update.mockRejectedValueOnce(new Error('nope'))
 			const { state, close } = createLoaded()
 			await state.save()
-			expect(state.error).toBe('save failed')
+			expect(state.error).toBe(m.settings_save_error())
 			expect(state.saving).toBe(false)
 			expect(close).not.toHaveBeenCalled()
 			expect(mocks.fetch).not.toHaveBeenCalled()
