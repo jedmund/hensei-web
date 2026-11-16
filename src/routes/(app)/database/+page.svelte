@@ -1,6 +1,6 @@
 <script lang="ts">
-	// Database overview: item search, recently opened, and a
-	// compact map of the sections.
+	// Database overview: item search and recently opened records. The
+	// sidebar is the map of the sections.
 	import { goto } from '$app/navigation'
 	import { localizeHref, getLocale } from '$lib/paraglide/runtime'
 	import { m } from '$lib/paraglide/messages'
@@ -8,19 +8,13 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import { searchAdapter } from '$lib/api/adapters/search.adapter'
 	import type { UnifiedSearchResult } from '$lib/api/adapters/search.adapter'
-	import {
-		childrenOf,
-		groupedSections,
-		sectionById,
-		sectionHref
-	} from '$lib/features/database/sections'
+	import { SvelteSet } from 'svelte/reactivity'
+	import { sectionById } from '$lib/features/database/sections'
 	import { recentPages } from '$lib/features/database/recent.svelte'
-	import type { PageData } from './$types'
+	import { recentImage } from '$lib/features/database/recentImage'
 
-	let { data }: { data: PageData } = $props()
-
-	const role = $derived((data as { role?: number }).role ?? 0)
-	const groups = $derived(groupedSections(role))
+	// Images that failed to load show the neutral tile instead
+	const brokenImages = new SvelteSet<string>()
 
 	// --- Item search -------------------------------------------------------
 	let query = $state('')
@@ -173,11 +167,25 @@
 			</header>
 			<ul class="recent" role="list">
 				{#each recentPages.list as r (r.path)}
+					{@const image = recentImage(r.path)}
 					<li>
 						<a href={r.path}>
-							<span class="name">{r.title}</span>
-							<span class="meta">
-								{sectionById(r.sectionId)?.label() ?? ''} · {relativeTime(r.at)}
+							{#if image && !brokenImages.has(r.path)}
+								<img
+									class="thumb"
+									src={image}
+									alt=""
+									loading="lazy"
+									onerror={() => brokenImages.add(r.path)}
+								/>
+							{:else}
+								<span class="thumb" aria-hidden="true"></span>
+							{/if}
+							<span class="row-text">
+								<span class="name">{r.title}</span>
+								<span class="meta">
+									{sectionById(r.sectionId)?.label() ?? ''} · {relativeTime(r.at)}
+								</span>
 							</span>
 						</a>
 					</li>
@@ -185,35 +193,6 @@
 			</ul>
 		</section>
 	{/if}
-
-	<section>
-		<header class="section-head">
-			<h2>{m.db_nav_browse()}</h2>
-		</header>
-		<div class="browse">
-			{#each groups as group (group.id)}
-				<div class="browse-group">
-					<h3>{group.label()}</h3>
-					<ul role="list">
-						{#each group.sections as section (section.id)}
-							{@const children = childrenOf(section.id, role)}
-							<li>
-								<a href={localizeHref(sectionHref(section))}>
-									<span class="row-text">
-										<span class="name">{section.label()}</span>
-										{#if children.length > 0}
-											<span class="meta">{children.map((c) => c.label()).join(' · ')}</span>
-										{/if}
-									</span>
-									<Icon name="chevron-right-small" size={14} />
-								</a>
-							</li>
-						{/each}
-					</ul>
-				</div>
-			{/each}
-		</div>
-	</section>
 </div>
 
 <style lang="scss">
@@ -350,25 +329,41 @@
 
 	// --- Recently opened -----------------------------------------------------
 	.recent {
-		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-		gap: spacing.$unit;
+		display: flex;
+		flex-direction: column;
+		padding: spacing.$unit-half;
+		border-radius: layout.$page-corner;
+		background: var(--card-bg);
+		box-shadow: var(--shadow-sm);
 
 		a {
 			display: flex;
-			flex-direction: column;
-			gap: 2px;
-			padding: spacing.$unit spacing.$unit-2x;
-			border-radius: layout.$card-corner;
-			background: var(--card-bg);
-			box-shadow: var(--shadow-sm);
+			align-items: center;
+			gap: spacing.$unit-2x;
+			padding: spacing.$unit;
+			border-radius: layout.$item-corner;
 			text-decoration: none;
-			@include effects.smooth-transition(effects.$duration-quick, transform, box-shadow);
+			@include effects.smooth-transition(effects.$duration-quick, background-color);
 
 			&:hover {
-				transform: translateY(-1px);
-				box-shadow: var(--shadow-md, var(--shadow-sm));
+				background: var(--button-contained-bg-hover);
 			}
+		}
+
+		.thumb {
+			flex-shrink: 0;
+			width: 40px;
+			height: 40px;
+			border-radius: layout.$item-corner;
+			background: var(--button-contained-bg-hover);
+			object-fit: cover;
+		}
+
+		.row-text {
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			min-width: 0;
 		}
 	}
 
@@ -387,51 +382,5 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-	}
-
-	// --- Browse ---------------------------------------------------------------
-	.browse {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-		gap: spacing.$unit-2x;
-		align-items: start;
-	}
-
-	.browse-group {
-		padding: spacing.$unit;
-		border-radius: layout.$page-corner;
-		background: var(--card-bg);
-		box-shadow: var(--shadow-sm);
-
-		h3 {
-			margin: 0;
-			padding: spacing.$unit spacing.$unit spacing.$unit-half;
-			font-size: typography.$font-tiny;
-			font-weight: typography.$medium;
-			color: var(--text-tertiary);
-		}
-
-		a {
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			gap: spacing.$unit;
-			padding: spacing.$unit spacing.$unit;
-			border-radius: layout.$item-corner;
-			color: var(--text-tertiary);
-			text-decoration: none;
-			@include effects.smooth-transition(effects.$duration-quick, background-color);
-
-			&:hover {
-				background: var(--button-contained-bg-hover);
-			}
-		}
-
-		.row-text {
-			display: flex;
-			flex-direction: column;
-			gap: 2px;
-			min-width: 0;
-		}
 	}
 </style>

@@ -2724,7 +2724,6 @@
 	"db_nav_search_placeholder": "Find a character, weapon or summon…",
 	"db_nav_searching": "Searching…",
 	"db_nav_search_empty": "No items match “{query}”",
-	"db_nav_browse": "Browse",
 	"data_table_search": "Search",
 	"data_table_search_entity": "Search for {entity}…",
 	"data_table_search_label": "Search this list",
