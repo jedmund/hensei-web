@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { recentImage } from './recentImage'
+import { recentImage, recentUserId } from './recentImage'
 
 describe('recentImage', () => {
 	it('finds square art for records that route by game id', () => {
@@ -20,5 +20,14 @@ describe('recentImage', () => {
 		expect(recentImage('/database/raids/lucilius')).toBeNull()
 		expect(recentImage('/database/events/abc')).toBeNull()
 		expect(recentImage('/database/weapons')).toBeNull()
+	})
+})
+
+describe('recentUserId', () => {
+	it('finds the user a path opens, and nothing else', () => {
+		expect(recentUserId('/ja/database/users/0b2c')).toBe('0b2c')
+		expect(recentUserId('/database/users')).toBeNull()
+		expect(recentUserId('/database/weapons/1040001000')).toBeNull()
+		expect(recentImage('/database/users/0b2c')).toBeNull()
 	})
 })

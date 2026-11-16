@@ -12,7 +12,7 @@ export interface RecentPage {
 }
 
 const KEY = 'hensei:database:recent:v2'
-const LIMIT = 8
+const LIMIT = 12
 
 function load(): RecentPage[] {
 	if (!browser) return []

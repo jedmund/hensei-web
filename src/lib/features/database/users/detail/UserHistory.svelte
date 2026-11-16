@@ -5,7 +5,7 @@
 	import { m } from '$lib/paraglide/messages'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import { roleLabel } from '$lib/features/database/users/roles'
-	import type { UserRecord } from '$lib/features/database/users/resource'
+	import type { UserRecord } from '$lib/features/database/users/record'
 	import type { AdminUserAccessChange } from '$lib/types/api/admin'
 	import { formatDateTime } from '$lib/utils/date'
 
