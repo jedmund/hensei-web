@@ -9,7 +9,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import EditRaidPane from '$lib/components/sidebar/EditRaidPane.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { SolomonisExpedition } from '$lib/types/api/solomonis'
 	import { solomonisName } from '$lib/components/solomonis/party/solomonisParty'
 

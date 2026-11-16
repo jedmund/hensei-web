@@ -7,7 +7,7 @@
 	 */
 	import Button from '$lib/components/ui/Button.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import UnsealPriorityPane from './UnsealPriorityPane.svelte'
 	import { sealOverlays } from './sealOverlays.svelte'
 

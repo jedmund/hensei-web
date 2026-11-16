@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { localizedName, appLocale } from '$lib/utils/locale'
 	import { getWeaponSkillIcon } from '$lib/utils/images/icons'
 	import SkillCard from '$lib/components/skills/SkillCard.svelte'

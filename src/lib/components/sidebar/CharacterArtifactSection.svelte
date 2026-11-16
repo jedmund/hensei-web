@@ -12,7 +12,7 @@
 	import ArtifactSummary from './modifications/ArtifactSummary.svelte'
 	import DisclosureRow from '$lib/components/ui/DisclosureRow.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		/** Currently equipped artifact (if any) */

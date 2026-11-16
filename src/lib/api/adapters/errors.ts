@@ -8,7 +8,7 @@
  */
 
 import type { AdapterError } from './types'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 /**
  * Custom error class for adapter-specific errors
@@ -72,8 +72,8 @@ export class ApiError extends Error implements AdapterError {
  * Error class for network-related failures
  */
 export class NetworkError extends ApiError {
-	constructor(message: string = m.error_network(), details?: unknown) {
-		super('NETWORK_ERROR', 0, message, details)
+	constructor(message?: string, details?: unknown) {
+		super('NETWORK_ERROR', 0, message ?? m.error_network(), details)
 		this.name = 'NetworkError' as const
 	}
 }

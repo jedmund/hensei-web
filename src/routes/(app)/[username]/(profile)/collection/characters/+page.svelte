@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 	import type { CollectionCharacter, CollectionSortKey } from '$lib/types/api/collection'
 	import { getContext, onDestroy, untrack } from 'svelte'

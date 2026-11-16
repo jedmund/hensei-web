@@ -4,7 +4,7 @@
  * Helper functions for working with job accessories (Shields and Manatura).
  */
 
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 /**
  * Accessory type constants

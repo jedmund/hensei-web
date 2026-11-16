@@ -1,4 +1,4 @@
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import type { AvatarUser } from '$lib/utils/avatar'
 
 /** A run of byline text, linking somewhere when `href` is set (unlocalized) */

@@ -1,7 +1,7 @@
 <script lang="ts">
 	// An ordered enum list whose values may repeat (e.g. a gun's bullet slots):
 	// one select per slot, up to the field's `max`
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Select from '$lib/components/ui/Select.svelte'
 	import { optionsFor } from './options'
 	import type { InputProps } from './types'

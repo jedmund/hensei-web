@@ -20,7 +20,7 @@
  */
 import { untrack } from 'svelte'
 import { sidebar } from '$lib/stores/sidebar.svelte'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 

@@ -5,7 +5,7 @@
 	import UserLink from '$lib/components/ui/UserLink.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { formatRelativeTime } from '$lib/utils/date'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		title: string

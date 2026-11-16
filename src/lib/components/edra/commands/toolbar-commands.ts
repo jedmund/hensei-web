@@ -1,7 +1,7 @@
 import type { EdraToolBarCommands } from './types.js'
 import { isMac } from '../utils.js'
 import { linkDialogState } from '$lib/stores/linkDialog.svelte'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import Undo from '@lucide/svelte/icons/undo-2'
 import Redo from '@lucide/svelte/icons/redo-2'
 import Heading1 from '@lucide/svelte/icons/heading-1'

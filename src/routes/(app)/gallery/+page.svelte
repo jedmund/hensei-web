@@ -20,7 +20,7 @@
 	import ExploreSortMenu from '$lib/components/explore/ExploreSortMenu.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { serializeExploreFilters, type ExploreSort } from '$lib/utils/exploreFilterParams'
 	import { localizedName } from '$lib/utils/locale'

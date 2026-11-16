@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { onMount } from 'svelte'
 	import { onDestroy } from 'svelte'
 	import { partyAdapter } from '$lib/api/adapters/party.adapter'

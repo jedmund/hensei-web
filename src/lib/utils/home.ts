@@ -8,7 +8,7 @@ import { ELEMENT_TO_PARAM } from '$lib/utils/filterParams'
 import { getHostedImageUrl } from '$lib/utils/images/core'
 import { getRaidImage } from '$lib/utils/images/raids'
 import { appLocale } from '$lib/utils/locale'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 const MINUTE_MS = 60 * 1000
 

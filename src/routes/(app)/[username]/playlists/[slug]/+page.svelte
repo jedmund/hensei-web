@@ -10,7 +10,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	const { data }: { data: PageData } = $props()
 

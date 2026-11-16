@@ -1,6 +1,6 @@
 <script lang="ts">
 	import PageMeta from '$lib/components/PageMeta.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	const roadmapItems = [
 		{

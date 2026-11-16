@@ -4,7 +4,7 @@
 	import type { Party } from '$lib/types/api/party'
 	import type { UserCookie } from '$lib/types/UserCookie'
 	import GridRep from '$lib/components/reps/GridRep.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getLocale, localizeHref } from '$lib/paraglide/runtime'
 
 	const isJa = $derived(getLocale() === 'ja')

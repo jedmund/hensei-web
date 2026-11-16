@@ -5,7 +5,7 @@
 	 * unit. The text is drawn twice: once on the track, and once in white on
 	 * the fill, clipped to the fill's shape, so it reads on both.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		total: number

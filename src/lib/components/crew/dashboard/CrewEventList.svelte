@@ -9,7 +9,7 @@
 	import GwCrewHistoryChart from '$lib/components/charts/GwCrewHistoryChart.svelte'
 	import CrewSectionHeader from '$lib/components/crew/CrewSectionHeader.svelte'
 	import CrewStatusMessage from '$lib/components/crew/CrewStatusMessage.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		events: GwEvent[] | undefined

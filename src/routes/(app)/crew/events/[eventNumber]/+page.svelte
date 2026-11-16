@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { goto, replaceState } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { page } from '$app/stores'

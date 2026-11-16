@@ -3,7 +3,7 @@
 	import { SOCIAL_PROVIDER_LABELS } from '$lib/auth/socialProviders'
 	import Button from '$lib/components/ui/Button.svelte'
 	import ProviderLogo from './ProviderLogo.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {

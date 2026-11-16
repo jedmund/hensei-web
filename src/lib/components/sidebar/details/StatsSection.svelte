@@ -4,7 +4,7 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import { normalizeCharacterUncap } from '$lib/utils/uncap'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'

@@ -15,7 +15,7 @@
 
 	import SummonUnit from '$lib/components/units/SummonUnit.svelte'
 	import ExtraSummons from '$lib/components/extra/ExtraSummonsGrid.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import SealControls from '$lib/components/solomonis/grid/SealControls.svelte'
 	import { getExpedition } from '$lib/components/solomonis/grid/seal'
 

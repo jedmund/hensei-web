@@ -11,7 +11,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import ScoutSelectedUser from '$lib/components/crew/scout/ScoutSelectedUser.svelte'
 	import ScoutUserCombobox from '$lib/components/crew/scout/ScoutUserCombobox.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		open: boolean

@@ -6,7 +6,7 @@
 	} from '$lib/api/adapters/search.adapter'
 	import Input from '$lib/components/ui/Input.svelte'
 	import SearchOptionItem from '$lib/components/search/SearchOptionItem.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { toast } from 'svelte-sonner'
@@ -28,7 +28,7 @@
 		placeholder?: string
 	}
 
-	let { onSelect, placeholder = m.crew_roster_search() }: Props = $props()
+	let { onSelect, placeholder }: Props = $props()
 
 	let inputValue = $state('')
 	let dropdownOpen = $state(false)
@@ -157,7 +157,7 @@
 		bind:value={inputValue}
 		contained
 		fullWidth
-		{placeholder}
+		placeholder={placeholder ?? m.crew_roster_search()}
 		{handleFocus}
 		onkeydown={handleKeydown}
 		oncompositionstart={() => (isComposing = true)}

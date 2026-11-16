@@ -2,7 +2,7 @@
 	// Every change made to the user's access, newest first: who changed what,
 	// and when. Draws its own container (the section's `container: false`) so
 	// a user with no changes has no empty History box.
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import { roleLabel } from '$lib/features/database/users/roles'
 	import type { UserRecord } from '$lib/features/database/users/resource'

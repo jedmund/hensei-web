@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Dialog from './ui/Dialog.svelte'
 	import ModalHeader from './ui/ModalHeader.svelte'
 	import ModalBody from './ui/ModalBody.svelte'

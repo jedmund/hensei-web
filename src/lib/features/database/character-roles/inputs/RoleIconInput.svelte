@@ -4,7 +4,7 @@
 	// here and again by the API.
 	import { useQueryClient } from '@tanstack/svelte-query'
 	import { toast } from 'svelte-sonner'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { roleAdapter } from '$lib/api/adapters/role.adapter'
 	import { adminKeys } from '$lib/api/queries/admin.queries'
 	import { roleKeys } from '$lib/api/queries/role.queries'

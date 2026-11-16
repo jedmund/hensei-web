@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Icon from '$lib/components/Icon.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime.js'
 	import asteriskIcon from '$src/assets/icons/required-asterisk.svg?raw'
 	import { getSummonImage, getSummonTransformation } from '$lib/utils/images/summons'

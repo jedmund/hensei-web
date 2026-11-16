@@ -16,7 +16,7 @@
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import MembershipHistoryEditor from '$lib/components/crew/MembershipHistoryEditor.svelte'
 	import type { EditableMembershipPeriod } from '$lib/components/crew/MembershipHistoryEditor.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		member: CrewMembership | null
@@ -80,12 +80,12 @@
 		}
 	}
 
-	async function fetchHistory(m: CrewMembership) {
-		if (!crewStore.crew || !m.user?.id) return
+	async function fetchHistory(member: CrewMembership) {
+		if (!crewStore.crew || !member.user?.id) return
 
 		loadingHistory = true
 		try {
-			const history = await crewAdapter.getMembershipHistory(crewStore.crew.id, m.user.id)
+			const history = await crewAdapter.getMembershipHistory(crewStore.crew.id, member.user.id)
 			if (history.length > 1) {
 				membershipHistory = history.map((h) => ({
 					id: h.id,

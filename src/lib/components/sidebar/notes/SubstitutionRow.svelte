@@ -15,7 +15,7 @@
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import CollectionBadge from '$lib/components/CollectionBadge.svelte'
 	import Icon from '$lib/components/Icon.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		substitution: Substitution

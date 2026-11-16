@@ -4,7 +4,7 @@
  * list, so it uses the ordered list: drag or key a row to change the order
  * the party sidebar offers them in. The edit form uploads the icon.
  */
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { roleAdapter, type RolePayload } from '$lib/api/adapters/role.adapter'
 import { roleKeys } from '$lib/api/queries/role.queries'
 import RoleIconCell from '$lib/features/database/character-roles/cells/RoleIconCell.svelte'

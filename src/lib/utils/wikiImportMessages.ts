@@ -1,4 +1,4 @@
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import type {
 	WikiImportKind,
 	WikiImportRequest,

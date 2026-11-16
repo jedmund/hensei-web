@@ -13,7 +13,7 @@
 		type AddToCollectionEntityType
 	} from './add-to-collection.utils'
 	import { viewMode } from '$lib/stores/viewMode.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		userId: string

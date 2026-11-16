@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import SkillGroup from '$lib/components/skills/SkillGroup.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import Button from '$lib/components/ui/Button.svelte'

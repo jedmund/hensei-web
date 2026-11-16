@@ -5,7 +5,7 @@
 	import { beforeNavigate } from '$app/navigation'
 	import { crewStore } from '$lib/stores/crew.store.svelte'
 	import ProfileHeader from '$lib/components/profile/ProfileHeader.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props()
 

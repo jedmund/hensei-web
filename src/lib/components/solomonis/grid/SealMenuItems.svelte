@@ -8,7 +8,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import { usePartyContext } from '$lib/types/party-context'
 	import { useUpdateUnsealPriority } from '$lib/api/mutations/solomonis-grid.mutations'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { GridSummon, GridWeapon } from '$lib/types/api/party'
 	import {
 		entryKey,

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { DropdownMenu } from 'bits-ui'
 	import Icon from '$lib/components/Icon.svelte'
 	import type { CollectionFilterConfig } from '$lib/types/filter'

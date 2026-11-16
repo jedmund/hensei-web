@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getWeaponProficiencyOptions } from '$lib/utils/proficiency'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { CollectionSortKey } from '$lib/types/api/collection'
 	import type {
 		CollectionFilterConfig,

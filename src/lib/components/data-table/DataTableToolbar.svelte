@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import Icon from '$lib/components/Icon.svelte'

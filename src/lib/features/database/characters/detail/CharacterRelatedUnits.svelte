@@ -2,7 +2,7 @@
 	// The other units sharing the character's character ID (e.g. a unit's solo
 	// versions), as a titled section that shows only once some load
 	import { createQuery } from '@tanstack/svelte-query'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { characterAdapter, type Character } from '$lib/api/adapters/character.adapter'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'

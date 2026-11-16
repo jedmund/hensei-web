@@ -3,7 +3,7 @@
 	import { goto } from '$app/navigation'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 </script>
 
 <div class="sign-in">

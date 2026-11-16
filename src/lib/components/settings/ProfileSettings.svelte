@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { wikiFieldValue, youtubeFieldValue } from '$lib/utils/external-links'
 	import { granblueIdValid, wikiProfileValid, youtubeValid } from './settings-form.utils'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Select from '../ui/Select.svelte'
 	import Input from '../ui/Input.svelte'
 	import SettingsRow from '../ui/SettingsRow.svelte'

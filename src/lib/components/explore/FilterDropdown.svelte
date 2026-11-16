@@ -2,7 +2,7 @@
 	import type { FilterOption, PlaceholderSuggestion } from '$lib/types/filter'
 	import SearchOptionItem from '$lib/components/search/SearchOptionItem.svelte'
 	import { getElementImage } from '$lib/utils/element'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		inputValue: string

@@ -4,7 +4,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import GachaItemPicker from '$lib/components/gacha/GachaItemPicker.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { gachaItemName, gachaItemThumbnail } from '$lib/utils/gacha'
 	import type { CatalogueItem } from '$lib/types/gacha'

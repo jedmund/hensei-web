@@ -3,7 +3,7 @@
 	import { getCharacterSkillIcon } from '$lib/utils/images/icons'
 	import { appLocale, localizedName } from '$lib/utils/locale'
 	import SkillCard from '$lib/components/skills/SkillCard.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		version: CharacterSkillVersion

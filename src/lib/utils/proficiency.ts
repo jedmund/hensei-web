@@ -1,5 +1,5 @@
 import { getBasePath } from '$lib/utils/images/core'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { getLocale } from '$lib/paraglide/runtime'
 
 /** Proficiency ids, matching the game's own numbering */

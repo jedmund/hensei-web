@@ -5,7 +5,7 @@
 	import { Combobox } from 'bits-ui'
 	import SearchResultItem from '$lib/components/sidebar/search/SearchResultItem.svelte'
 	import type { AddItemResult } from '$lib/types/api/search'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { gachaItemKind, gachaItemName, type GachaItemKind } from '$lib/utils/gacha'
 	import type { CatalogueItem } from '$lib/types/gacha'

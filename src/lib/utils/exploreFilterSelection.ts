@@ -7,7 +7,7 @@
  * `exploreFilterParams.ts`.
  */
 
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import type { EntitySuggestion, UnifiedSearchResult } from '$lib/api/adapters/search.adapter'
 import type { RaidFull } from '$lib/types/api/raid'
 import type { FilterItem, FilterOption, PlaceholderSuggestion } from '$lib/types/filter'

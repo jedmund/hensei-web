@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { SvelteSet } from 'svelte/reactivity'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { AddItemResult, SearchMode } from '$lib/types/api/search'
 	import { SearchContentState } from './search/searchContentState.svelte'
 

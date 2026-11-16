@@ -3,7 +3,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import ScoutAvatar from '$lib/components/crew/scout/ScoutAvatar.svelte'
 	import type { ScoutUserSearch } from '$lib/features/crew/scoutUserSearch.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		search: ScoutUserSearch

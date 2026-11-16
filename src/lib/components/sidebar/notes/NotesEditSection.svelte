@@ -23,7 +23,7 @@
 	import RolesField from './RolesField.svelte'
 	import SubstitutionsField from './SubstitutionsField.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { partyStore } from '$lib/stores/partyStore.svelte'

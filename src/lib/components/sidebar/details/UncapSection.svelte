@@ -10,7 +10,7 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import TranscendenceStar from '$lib/components/uncap/TranscendenceStar.svelte'
 	import { getGridItemUncapCaps } from '$lib/utils/uncap'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		type: 'character' | 'weapon' | 'summon'

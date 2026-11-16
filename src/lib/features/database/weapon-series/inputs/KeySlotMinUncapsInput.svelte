@@ -1,7 +1,7 @@
 <script lang="ts">
 	// One row of uncap stars per key slot, as many as the series' Weapon Key Slots.
 	// No stars saves as 0 (always open; see keySlotMinUncaps.ts)
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import type { InputProps } from '$lib/features/database/schema/inputs/types'

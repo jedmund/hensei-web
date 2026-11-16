@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { untrack } from 'svelte'
 	import { NodeViewWrapper, NodeViewContent } from 'svelte-tiptap'
 	import type { NodeViewProps } from '@tiptap/core'

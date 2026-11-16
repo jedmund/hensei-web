@@ -1,7 +1,7 @@
 <script lang="ts">
 	// One field's row (two for a localized pair) in the detail's Info tab,
 	// drawn by its kind. Plain values go through `detailText`.
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import CopyableText from '$lib/components/ui/CopyableText.svelte'
 	import Button from '$lib/components/ui/Button.svelte'

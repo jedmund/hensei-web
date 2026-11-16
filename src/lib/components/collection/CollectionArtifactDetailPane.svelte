@@ -5,7 +5,7 @@
 	 * Shows artifact info in read-only mode. If user is owner,
 	 * provides Edit button in header to push edit pane onto stack.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getElementTypeKey } from '$lib/utils/element'
 	import { localizedName } from '$lib/utils/locale'
 	import { onMount, untrack } from 'svelte'

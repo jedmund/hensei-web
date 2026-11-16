@@ -1,7 +1,7 @@
 <!-- GachaResultScreen - The game's results screen, shown in the draw animation's dialog -->
 
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { animationFileUrl, RESULT_IMAGES } from '$lib/gacha-animation/assets'
 	import { gachaItemFallbackImage, gachaItemName, gachaItemResultImage } from '$lib/utils/gacha'

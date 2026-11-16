@@ -10,7 +10,7 @@ import {
 import { transformSkillsToArray } from '$lib/utils/jobSkills'
 import { toast } from 'svelte-sonner'
 import { extractErrorMessage } from '$lib/utils/errors'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 

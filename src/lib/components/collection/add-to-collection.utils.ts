@@ -7,7 +7,7 @@ import type {
 import type { CollectionFilterState } from '$lib/types/filter'
 import { nonEmpty } from '$lib/components/sidebar/search/search-filters.utils'
 import { normalizeCharacterUncap } from '$lib/utils/uncap'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 export type AddToCollectionEntityType = 'character' | 'weapon' | 'summon'
 export type AddToCollectionResult = SearchPageResult['results'][number]

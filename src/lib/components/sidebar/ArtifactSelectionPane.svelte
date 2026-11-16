@@ -6,7 +6,7 @@
 	 * - By element (match character's element)
 	 * - By proficiency (match character's proficiencies)
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { CollectionArtifact } from '$lib/types/api/artifact'
 	import type { Character } from '$lib/types/api/entities'
 	import { createInfiniteQuery } from '@tanstack/svelte-query'

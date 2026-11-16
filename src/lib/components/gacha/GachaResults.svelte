@@ -12,7 +12,7 @@
 	import GachaResultSummary from '$lib/components/gacha/GachaResultSummary.svelte'
 	import jpFlag from '$src/assets/flags/jp.png'
 	import usFlag from '$src/assets/flags/us.png'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { onMount } from 'svelte'
 	import { toast } from 'svelte-sonner'

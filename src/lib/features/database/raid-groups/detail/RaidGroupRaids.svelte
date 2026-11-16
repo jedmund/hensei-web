@@ -1,7 +1,7 @@
 <script lang="ts">
 	// The group's raids, each linking to its page; titled with their count.
 	// Draws its own container (the section's `container: false`).
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DetailsContainer from '$lib/components/ui/DetailsContainer.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import { localizedName } from '$lib/utils/locale'

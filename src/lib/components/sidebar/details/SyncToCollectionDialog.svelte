@@ -13,7 +13,7 @@
 	import { getCharacterImage } from '$lib/utils/images/characters'
 	import { getWeaponImage } from '$lib/utils/images/weapons'
 	import { getSummonImage } from '$lib/utils/images/summons'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	type GridItem = GridCharacter | GridWeapon | GridSummon
 	type CollectionItem = CollectionCharacter | CollectionWeapon | CollectionSummon

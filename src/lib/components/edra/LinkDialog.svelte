@@ -4,7 +4,7 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import { linkDialogState } from '$lib/stores/linkDialog.svelte'
 	import { isHttpUrl } from '$lib/utils/safeHtml'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	let url = $state('')
 	let linkText = $state('')

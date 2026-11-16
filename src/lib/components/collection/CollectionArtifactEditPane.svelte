@@ -5,7 +5,7 @@
 	 * Pushed onto pane stack from CollectionArtifactDetailPane.
 	 * Handles saving and deleting artifacts.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getElementTypeKey } from '$lib/utils/element'
 	import { onMount, untrack } from 'svelte'
 	import type { CollectionArtifact } from '$lib/types/api/artifact'

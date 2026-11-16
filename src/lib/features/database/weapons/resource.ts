@@ -3,7 +3,7 @@
  * pages show, described once (GBF-142).
  */
 import { z } from 'zod'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import {
 	weaponAdapter,
 	type CreateWeaponPayload,

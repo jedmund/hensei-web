@@ -3,7 +3,7 @@
   Reads and writes the table URL; facet counts come from the source.
 -->
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Button from '$lib/components/ui/Button.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Select from '$lib/components/ui/Select.svelte'

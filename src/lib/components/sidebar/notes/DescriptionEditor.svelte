@@ -19,7 +19,7 @@
 	import StrikeThrough from '@lucide/svelte/icons/strikethrough'
 	import List from '@lucide/svelte/icons/list'
 	import ListOrdered from '@lucide/svelte/icons/list-ordered'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { Description } from '$lib/types/api/party'
 	import { descriptionToContent } from '$lib/utils/descriptionContent'
 	import { untrack } from 'svelte'

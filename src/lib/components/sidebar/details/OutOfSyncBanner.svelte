@@ -1,6 +1,6 @@
 <script lang="ts">
 	import SyncMenuButton from './SyncMenuButton.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	type Element = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 

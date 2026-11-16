@@ -13,7 +13,7 @@
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import { GachaSimulator } from '$lib/features/gacha/gachaSimulator.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { slide } from 'svelte/transition'
 	import { mobileQuery } from '$lib/utils/viewport.svelte'

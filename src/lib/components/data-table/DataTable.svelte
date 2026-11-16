@@ -23,7 +23,7 @@
 		type ColumnVisibilityState as VisibilityState
 	} from '@tanstack/svelte-table'
 	import { createVirtualizer } from '@tanstack/svelte-virtual'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import Button from '$lib/components/ui/Button.svelte'
 	import EmptyState from '$lib/components/ui/EmptyState.svelte'

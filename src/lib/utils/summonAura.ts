@@ -1,4 +1,4 @@
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import type { SummonAura } from '$lib/types/api/entities'
 
 /** The tier an aura row belongs to: "Base", "MLB", "FLB", "ULB" or "T{n}" for a transcendence stage. */

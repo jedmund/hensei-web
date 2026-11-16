@@ -2,7 +2,7 @@
 	import WeaponUnit from '$lib/components/units/WeaponUnit.svelte'
 	import ExtraContainerItem from './ExtraContainerItem.svelte'
 	import type { GridWeapon } from '$lib/types/api/party'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		weapons?: GridWeapon[]

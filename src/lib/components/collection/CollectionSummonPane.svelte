@@ -8,7 +8,7 @@
 	 *
 	 * The "My Collection" tab includes an edit mode using SummonEditPane.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { onMount, untrack } from 'svelte'
 	import type { CollectionSummon } from '$lib/types/api/collection'
 	import type { GridSummon } from '$lib/types/api/party'

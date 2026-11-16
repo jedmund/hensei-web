@@ -17,7 +17,7 @@
 	import { Gender } from '$lib/utils/jobUtils'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DismissibleNotice from '$lib/components/ui/DismissibleNotice.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	/** The active tab's grid, with the notices and job section that go with it. */
 	interface Props {

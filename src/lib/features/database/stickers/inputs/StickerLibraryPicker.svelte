@@ -13,7 +13,7 @@
 	import { getHostedImageUrl } from '$lib/utils/images/core'
 	import { appLocale } from '$lib/utils/locale'
 	import { stickerImageUrl } from '$lib/utils/stickers'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { LibrarySticker } from '$lib/types/api/sticker'
 
 	interface Props {

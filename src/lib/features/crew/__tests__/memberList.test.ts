@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import type { CrewInvitation, CrewMembership, PhantomPlayer } from '$lib/types/api/crew'
 import {
 	countActiveMembers,

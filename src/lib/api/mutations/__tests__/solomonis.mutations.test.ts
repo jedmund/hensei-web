@@ -6,7 +6,7 @@ import type { QueryClient } from '@tanstack/svelte-query'
 import type { Party } from '$lib/types/api/party'
 import type { SolomonisExpedition } from '$lib/types/api/solomonis'
 import { toast } from 'svelte-sonner'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { BUILD_PARTY, RUN_PARTY } from '$lib/components/solomonis/party/__tests__/fixtures'
 
 vi.mock('svelte-sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } }))

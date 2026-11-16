@@ -3,7 +3,7 @@
 	 * GuideEffectFilters - the guidebook search's target, stackable and tag
 	 * filters. The tag filter shows only when the catalogue has tags.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Select from '$lib/components/ui/Select.svelte'
 	import MultiSelect from '$lib/components/ui/MultiSelect.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { usePartyContext } from '$lib/types/party-context'
 	import Notice from '$lib/components/ui/Notice.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	/** Status notices under the party header: unsaved changes and orphaned items. */
 	interface Props {

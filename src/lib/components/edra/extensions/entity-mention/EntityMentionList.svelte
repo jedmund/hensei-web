@@ -6,7 +6,7 @@
 	 * character skills when typing `@`. Rows are precomputed MentionSuggestions, so
 	 * this component only paints; per-type presentation lives in the mentions module.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import { descriptorFor, skillMentionSubheader } from './mentions/index.js'
 	import type { MentionSuggestion, MentionToken } from './mentions/index.js'

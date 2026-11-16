@@ -1,6 +1,6 @@
 /** Localized labels for guidebook enums. */
 
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import type { GuideEffectRarity } from '$lib/types/api/solomonis'
 import type { GuideEffectIconCategory, GuideEffectTargetFilter } from './guidebook'
 

@@ -2,7 +2,7 @@
 	import { ToggleGroup } from 'bits-ui'
 	import Tooltip from '../Tooltip.svelte'
 	import { getElementLabel, getElementImage, ELEMENT_DISPLAY_ORDER } from '$lib/utils/element'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		value?: number | number[]

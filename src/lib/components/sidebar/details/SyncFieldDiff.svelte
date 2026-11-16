@@ -9,7 +9,7 @@
 	import TranscendenceStar from '$lib/components/uncap/TranscendenceStar.svelte'
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
 	import Icon from '$lib/components/Icon.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { localizedName } from '$lib/utils/locale'
 	import { getGridItemUncapCaps } from '$lib/utils/uncap'
 

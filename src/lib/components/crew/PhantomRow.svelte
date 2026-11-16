@@ -16,7 +16,7 @@
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import type { PhantomPlayer } from '$lib/types/api/crew'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		phantom: PhantomPlayer

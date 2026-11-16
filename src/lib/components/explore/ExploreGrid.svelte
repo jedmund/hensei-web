@@ -2,7 +2,7 @@
 	import type { Snippet } from 'svelte'
 	import type { Party } from '$lib/types/api/party'
 	import GridRep from '$lib/components/reps/GridRep.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		items?: Party[]

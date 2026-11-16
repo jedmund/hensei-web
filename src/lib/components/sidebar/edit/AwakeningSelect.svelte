@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { Awakening } from '$lib/types/api/entities'
 	import { NO_AWAKENING } from '$lib/types/api/entities'
 	import Select from '$lib/components/ui/Select.svelte'

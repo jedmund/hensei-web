@@ -4,7 +4,7 @@
  * URL round-tripping of these filters lives in `filterParams.ts`.
  */
 
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import type { CollectionSortKey } from '$lib/types/api/collection'
 import type {
 	CollectionFilterConfig,

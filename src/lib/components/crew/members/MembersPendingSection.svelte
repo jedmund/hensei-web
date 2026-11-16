@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { CrewInvitation, PhantomPlayer } from '$lib/types/api/crew'
 	import CrewSectionHeader from '$lib/components/crew/CrewSectionHeader.svelte'
 	import CrewStatusMessage from '$lib/components/crew/CrewStatusMessage.svelte'

@@ -14,7 +14,7 @@
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import type { FeaturedParty } from '$lib/types/api/featuredParty'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		eventId: string

@@ -5,7 +5,7 @@
  * presets the job (`?job=<id>`).
  */
 import { z } from 'zod'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { jobAdapter, type JobSkillPayload } from '$lib/api/adapters/job.adapter'
 import { jobQueries } from '$lib/api/queries/job.queries'
 import { jobFilterOptions } from '$lib/components/data-table/filterOptions'

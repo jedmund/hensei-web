@@ -9,7 +9,7 @@
 
 import type { Rateup } from '$lib/components/gacha/GachaRateups.svelte'
 import { collectionAdapter } from '$lib/api/adapters/collection.adapter'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { getLocale } from '$lib/paraglide/runtime'
 import { onMount, untrack } from 'svelte'
 import { MediaQuery } from 'svelte/reactivity'

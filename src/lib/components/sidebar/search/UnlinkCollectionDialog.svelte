@@ -3,7 +3,7 @@
 	import ModalHeader from '../../ui/ModalHeader.svelte'
 	import ModalBody from '../../ui/ModalBody.svelte'
 	import ModalFooter from '../../ui/ModalFooter.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		open: boolean

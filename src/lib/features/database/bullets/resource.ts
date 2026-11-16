@@ -5,7 +5,7 @@
  * `/database/bullets/<granblue id>` links keep working.
  */
 import { z } from 'zod'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { bulletAdapter, type BulletPayload } from '$lib/api/adapters/bullet.adapter'
 import { bulletKeys, bulletQueries } from '$lib/api/queries/bullet.queries'
 import { bulletsSection } from '$lib/features/database/bullets/section'

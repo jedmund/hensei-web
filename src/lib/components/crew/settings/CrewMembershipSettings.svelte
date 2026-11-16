@@ -11,7 +11,7 @@
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import TransferCaptainDialog from '$lib/components/crew/TransferCaptainDialog.svelte'
 	import type { CrewMembership } from '$lib/types/api/crew'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		/** Called after the user has left the crew */

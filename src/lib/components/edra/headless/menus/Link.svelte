@@ -3,7 +3,7 @@
 	import BubbleMenu from '../../components/BubbleMenu.svelte'
 	import type { Editor } from '@tiptap/core'
 	import Button from '$lib/components/ui/Button.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import ExternalLink from '@lucide/svelte/icons/external-link'
 	import Copy from '@lucide/svelte/icons/copy'
 	import Trash from '@lucide/svelte/icons/trash'

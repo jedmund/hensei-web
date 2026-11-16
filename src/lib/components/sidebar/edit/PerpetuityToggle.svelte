@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Checkbox from '$lib/components/ui/checkbox/Checkbox.svelte'
 	import { untrack } from 'svelte'
 	import perpetuityFilled from '$src/assets/icons/perpetuity/filled.svg'

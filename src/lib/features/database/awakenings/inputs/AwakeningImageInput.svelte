@@ -4,7 +4,7 @@
 	// the rest a PNG; the API checks the format and size.
 	import { useQueryClient } from '@tanstack/svelte-query'
 	import { toast } from 'svelte-sonner'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { awakeningAdapter } from '$lib/api/adapters/awakening.adapter'
 	import { entityKeys } from '$lib/api/queries/entity.queries'
 	import Button from '$lib/components/ui/Button.svelte'

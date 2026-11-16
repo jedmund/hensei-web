@@ -3,7 +3,7 @@
 	 * A row of thumbnails that switches what a home card shows (an event, a
 	 * new item). Nothing advances on its own.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'
 	import EventThumbnailImage from '$lib/components/home/EventThumbnailImage.svelte'
@@ -34,7 +34,7 @@
 		label?: string
 	}
 
-	let { items, selected, onSelect, shape = 'wide', label = m.home_events_aria() }: Props = $props()
+	let { items, selected, onSelect, shape = 'wide', label }: Props = $props()
 
 	// Fade the edges that have more thumbnails past them, so the row reads as
 	// scrollable
@@ -60,7 +60,7 @@
 	class:more-before={moreBefore}
 	class:more-after={moreAfter}
 	role="group"
-	aria-label={label}
+	aria-label={label ?? m.home_events_aria()}
 	bind:this={row}
 	onscroll={updateEdges}
 >

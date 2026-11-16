@@ -43,7 +43,7 @@ vi.mock('@tanstack/svelte-query', async (importOriginal) => {
 	}
 })
 
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { adminAdapter } from '$lib/api/adapters/admin.adapter'
 import { seriesAdapter } from '$lib/api/adapters/series.adapter'
 import type { AdminListParams, AdminWeaponRow } from '$lib/types/api/admin'

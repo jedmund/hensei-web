@@ -4,7 +4,7 @@
 	import { goto } from '$app/navigation'
 	import { page } from '$app/state'
 	import { createQuery } from '@tanstack/svelte-query'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { withInitialData } from '$lib/query/ssr'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import Button from '$lib/components/ui/Button.svelte'

@@ -6,7 +6,7 @@
 	} from '$lib/types/api/entities'
 	import SkillVersionCard from './SkillVersionCard.svelte'
 	import SkillGroup from '$lib/components/skills/SkillGroup.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	// Only the skill graph is needed; typed structurally so either Character shape
 	// (entities vs adapter) is accepted without coupling to the full entity. Also

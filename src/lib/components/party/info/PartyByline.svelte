@@ -4,7 +4,7 @@
 	 * visibility when not public. When it was updated sits under the name
 	 * (DescriptionTile).
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import AvatarPair from '$lib/components/ui/AvatarPair.svelte'
 	import UserAvatar from '$lib/components/ui/UserAvatar.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'

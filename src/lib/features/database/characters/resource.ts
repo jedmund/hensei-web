@@ -5,7 +5,7 @@
  * suffix.
  */
 import { z } from 'zod'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import {
 	characterAdapter,
 	type Character,

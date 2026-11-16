@@ -17,7 +17,7 @@ import MathMatics from '@tiptap/extension-mathematics'
 import Youtube from '@tiptap/extension-youtube'
 import { EntityMention, createEntityMentionSuggestion } from './extensions/entity-mention/index.js'
 
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import AutoJoiner from 'tiptap-extension-auto-joiner'
 import 'katex/dist/katex.min.css'
 import { InlineMathReplacer } from './extensions/InlineMathReplacer.js'

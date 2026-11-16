@@ -15,7 +15,7 @@ import {
 	getProficiencyLabel,
 	getProficiencyOptions
 } from '$lib/utils/proficiency'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 /**
  * Gets the base path for images

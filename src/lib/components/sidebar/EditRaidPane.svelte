@@ -9,7 +9,7 @@
 	 * pane stays open; `isSelected` (read live from the caller's state) marks
 	 * what's picked.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { RaidFull } from '$lib/types/api/raid'
 	import type { Raid } from '$lib/types/api/entities'
 	import { createQuery } from '@tanstack/svelte-query'

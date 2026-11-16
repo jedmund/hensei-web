@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { toast } from 'svelte-sonner'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import WeaponSkillList from '$lib/components/weapon/WeaponSkillList.svelte'
 	import EmptyState from '$lib/components/ui/EmptyState.svelte'
 	import Button from '$lib/components/ui/Button.svelte'

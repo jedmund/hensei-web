@@ -3,7 +3,7 @@
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	type Element = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 

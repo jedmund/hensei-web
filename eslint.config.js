@@ -29,7 +29,17 @@ export default ts.config(
 			// see: https://typescript-eslint.io/troubleshooting/faqs/eslint/#i-get-errors-from-the-no-undef-rule-about-global-variables-not-being-defined-even-though-there-are-no-typescript-errors
 			'no-undef': 'off',
 			// No base path configured, so resolve() wrapping on navigation URLs is unnecessary
-			'svelte/no-navigation-without-resolve': 'off'
+			'svelte/no-navigation-without-resolve': 'off',
+			// Paraglide only turns `m.key` reads into direct message imports for
+			// `import { m }`; a namespace import loads every message
+			'no-restricted-syntax': [
+				'error',
+				{
+					selector:
+						'ImportDeclaration[source.value=/paraglide\\/messages(\\.js)?$/] > ImportNamespaceSpecifier',
+					message: "Import messages as `import { m } from '$lib/paraglide/messages'`."
+				}
+			]
 		}
 	},
 	{

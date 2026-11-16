@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Chart from './Chart.svelte'
 	import {
 		CHART_FONT_FAMILY,

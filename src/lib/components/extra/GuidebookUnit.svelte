@@ -5,7 +5,7 @@
 	import { getGuidebookImage } from '$lib/utils/images/equipment'
 	import { localizedName } from '$lib/utils/locale'
 	import type { Guidebook } from '$lib/types/api/entities'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		item: Guidebook | undefined

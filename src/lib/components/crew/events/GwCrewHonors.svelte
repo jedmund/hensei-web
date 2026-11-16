@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'

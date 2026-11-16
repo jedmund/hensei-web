@@ -1,7 +1,7 @@
 <script lang="ts">
 	import AuthCard from '$lib/components/auth/AuthCard.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
 	interface Props {

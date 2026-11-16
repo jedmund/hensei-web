@@ -8,7 +8,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { ElementType } from '$lib/utils/element'
 	import type { ExploreSort } from '$lib/utils/exploreFilterParams'
 	import { mobileQuery } from '$lib/utils/viewport.svelte'

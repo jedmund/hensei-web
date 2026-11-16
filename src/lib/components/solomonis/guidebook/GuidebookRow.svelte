@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { GuidebookEntry } from '$lib/types/api/solomonis'
 	import { appLocale } from '$lib/utils/locale'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import GuideEffectIcon from './GuideEffectIcon.svelte'
 	import { formatGuideEffectName } from './guidebook'
 

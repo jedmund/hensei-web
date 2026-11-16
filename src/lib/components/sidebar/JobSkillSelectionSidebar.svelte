@@ -14,7 +14,7 @@
 	import { toast } from 'svelte-sonner'
 	import { localizedName } from '$lib/utils/locale'
 	import SelectionToast from '../ui/SelectionToast.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		job?: Job

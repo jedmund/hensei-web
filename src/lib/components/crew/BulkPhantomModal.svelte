@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { untrack } from 'svelte'
 	import { useBulkCreatePhantoms } from '$lib/api/mutations/crew.mutations'
 	import Dialog from '$lib/components/ui/Dialog.svelte'

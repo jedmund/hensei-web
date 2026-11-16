@@ -3,7 +3,7 @@
  */
 
 import { getBasePath } from '$lib/utils/images/core'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 export const GENDER_LABELS: Record<number, string> = {
 	0: 'Unknown',

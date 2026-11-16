@@ -20,7 +20,7 @@
 	import type { RosterSearchResult } from '$lib/components/crew/RosterSearch.svelte'
 	import RosterElementTabs from '$lib/components/crew/roster/RosterElementTabs.svelte'
 	import RosterGrid from '$lib/components/crew/roster/RosterGrid.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'

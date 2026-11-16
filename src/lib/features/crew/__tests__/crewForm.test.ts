@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { toCrewInput, validateCrewForm } from '../crewForm'
 
 const valid = { name: 'Siero Knights', gamertag: 'SK', description: '' }

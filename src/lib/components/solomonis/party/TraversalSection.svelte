@@ -3,7 +3,7 @@
 	 * TraversalSection - how many of each kind of space an expedition
 	 * visited, laid out in two columns with the game's icons, as in its report.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import type { SolomonisStats } from '$lib/types/api/solomonis'
 	import TraversalRow from './TraversalRow.svelte'

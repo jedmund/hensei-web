@@ -6,7 +6,7 @@
 	import ProficiencyPicker from '../../ui/proficiency-picker/ProficiencyPicker.svelte'
 	import Tooltip from '../../ui/Tooltip.svelte'
 	import { getProficiencyLabel } from '$lib/utils/proficiency'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { CollectionFilterOption } from '$lib/types/filter'
 
 	interface Props {

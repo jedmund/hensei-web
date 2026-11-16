@@ -6,7 +6,7 @@
 	 */
 	import Icon from '$lib/components/Icon.svelte'
 	import { appLocale } from '$lib/utils/locale'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { GuideEffect } from '$lib/types/api/solomonis'
 	import GuideEffectIcon from './GuideEffectIcon.svelte'
 	import { formatGuideEffectName } from './guidebook'

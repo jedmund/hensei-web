@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { localizedName } from '$lib/utils/locale'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
 	import CharacterTags from '$lib/components/tags/CharacterTags.svelte'

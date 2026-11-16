@@ -4,7 +4,7 @@
  * id.
  */
 import { z } from 'zod'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { jobAdapter, type JobUpdatePayload } from '$lib/api/adapters/job.adapter'
 import { jobQueries } from '$lib/api/queries/job.queries'
 import { weaponProficiencyFilterOptions } from '$lib/components/data-table/filterOptions'

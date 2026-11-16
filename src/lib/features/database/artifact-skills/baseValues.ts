@@ -5,7 +5,7 @@
  * blanks are trimmed, and a blank before a value is an error.
  */
 import { z } from 'zod'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 export const QUALITIES = 5
 

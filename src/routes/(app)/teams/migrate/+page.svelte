@@ -11,7 +11,7 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { localizeHref } from '$lib/paraglide/runtime'
 
 	const isAuthenticated = $derived($page.data?.isAuthenticated)

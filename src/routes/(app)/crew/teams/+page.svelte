@@ -10,7 +10,7 @@
 	import ExploreGrid from '$lib/components/explore/ExploreGrid.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 
 	interface Props {

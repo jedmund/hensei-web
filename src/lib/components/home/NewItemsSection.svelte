@@ -22,7 +22,7 @@
 	import { galleryPath, newTeamPath } from '$lib/utils/browseRoutes'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import type { HomeItemChange, HomeNewItem } from '$lib/types/api/home'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		items: HomeNewItem[]

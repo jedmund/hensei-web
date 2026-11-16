@@ -6,7 +6,7 @@ import {
 	mentionHref
 } from '$lib/components/edra/extensions/entity-mention/mentions/index.js'
 import type { MentionToken } from '$lib/components/edra/extensions/entity-mention/mentions/index.js'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 /**
  * Renders stored Tiptap descriptions to HTML for `{@html}`.

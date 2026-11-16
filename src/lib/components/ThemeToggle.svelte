@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Switch as SwitchPrimitive } from 'bits-ui'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { themeStore } from '$lib/stores/theme.svelte'
 	import { authStore } from '$lib/stores/auth.store.svelte'
 	import { syncTheme } from '$lib/services/settings-sync'

@@ -2,7 +2,7 @@ import { browser } from '$app/environment'
 import type { Editor } from '@tiptap/core'
 import { Decoration, DecorationSet, type EditorView } from '@tiptap/pm/view'
 import { Node } from '@tiptap/pm/model'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 /**
  * Check if the current browser is in mac or not

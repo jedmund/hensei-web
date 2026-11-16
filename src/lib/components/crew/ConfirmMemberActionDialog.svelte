@@ -8,7 +8,7 @@
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	type MemberAction = 'remove' | 'promote' | 'demote'
 

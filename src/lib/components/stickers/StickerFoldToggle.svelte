@@ -1,7 +1,7 @@
 <script lang="ts">
 	/** The full-width chevron under the sticker area that folds it away */
 	import Button from '$lib/components/ui/Button.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		folded: boolean

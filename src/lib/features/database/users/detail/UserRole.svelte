@@ -6,7 +6,7 @@
 	import { useQueryClient } from '@tanstack/svelte-query'
 	import { toast } from 'svelte-sonner'
 	import { page } from '$app/state'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { adminAdapter } from '$lib/api/adapters/admin.adapter'
 	import { adminKeys } from '$lib/api/queries/admin.queries'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'

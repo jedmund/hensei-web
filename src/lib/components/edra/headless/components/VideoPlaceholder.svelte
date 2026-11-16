@@ -1,7 +1,7 @@
 <script lang="ts">
 	import MediaPlaceHolder from '../../components/MediaPlaceHolder.svelte'
 	import type { NodeViewProps } from '@tiptap/core'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	const { editor }: NodeViewProps = $props()
 	import Video from '@lucide/svelte/icons/video'

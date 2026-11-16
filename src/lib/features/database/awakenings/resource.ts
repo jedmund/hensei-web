@@ -2,7 +2,7 @@
  * The awakenings resource (GBF-143): weapon and character awakenings, keyed
  * by slug, which also names each one's icon. The edit form uploads the icon.
  */
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import {
 	awakeningAdapter,
 	type CreateAwakeningPayload,

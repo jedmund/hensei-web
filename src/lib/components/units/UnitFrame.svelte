@@ -28,7 +28,7 @@
 	import SubstituteCountBadge from './SubstituteCountBadge.svelte'
 	import BookmarkOverlay from './BookmarkOverlay.svelte'
 	import { canAccessDatabase } from '$lib/utils/database'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { localizedName } from '$lib/utils/locale'
 	import type { UnitActions, UnitType } from './useUnitActions.svelte'
 	import type { UnitDuplicate } from './useUnitDuplicate.svelte'

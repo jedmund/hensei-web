@@ -4,7 +4,7 @@
 	 * outcome, the turn count when a report brought one, and a link to the
 	 * unseal priority pane when the party has sealed items.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import type { SolomonisOutcome } from '$lib/types/api/solomonis'

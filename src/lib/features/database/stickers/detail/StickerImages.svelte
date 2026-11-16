@@ -1,6 +1,6 @@
 <script lang="ts">
 	// A sticker's English and Japanese images, side by side
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { Sticker } from '$lib/types/api/sticker'
 	import { getHostedImageUrl } from '$lib/utils/images/core'
 

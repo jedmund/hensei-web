@@ -2,7 +2,7 @@
  * Raid section mapping utilities
  */
 
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 
 export enum RaidSection {
 	Farming = 0,

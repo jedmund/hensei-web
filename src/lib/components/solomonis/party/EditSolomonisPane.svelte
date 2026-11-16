@@ -13,7 +13,7 @@
 	 */
 	import { untrack } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
 	import Stepper from '$lib/components/ui/Stepper.svelte'

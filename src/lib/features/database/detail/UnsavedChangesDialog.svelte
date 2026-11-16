@@ -1,6 +1,6 @@
 <script lang="ts">
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { UnsavedChangesGuard } from './unsavedChanges.svelte'
 
 	const { guard }: { guard: UnsavedChangesGuard } = $props()

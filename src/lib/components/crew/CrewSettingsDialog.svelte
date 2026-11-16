@@ -11,7 +11,7 @@
 	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
 	import CrewDetailsFields from '$lib/components/crew/form/CrewDetailsFields.svelte'
 	import CrewMembershipSettings from '$lib/components/crew/settings/CrewMembershipSettings.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	type Section = 'crew' | 'membership'
 	type ElementName = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'

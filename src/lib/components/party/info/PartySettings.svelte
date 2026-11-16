@@ -3,7 +3,7 @@
 	 * Chips under a party's name: its difficulty tier, whether it's solo, its
 	 * battle settings, and the performance figures that were recorded.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import type { PartyDifficulty } from '$lib/types/api/party'
 	import { battleSettings, performanceMetrics, type PartySettingsValues } from './partySettings'

@@ -5,7 +5,7 @@
 	 */
 	import { createQuery } from '@tanstack/svelte-query'
 	import { solomonisQueries } from '$lib/api/queries/solomonis.queries'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import LevelSegments from '$lib/components/ui/LevelSegments.svelte'
 	import { appLocale } from '$lib/utils/locale'

@@ -4,7 +4,7 @@
 	import { page } from '$app/stores'
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { setContext } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { sidebar } from '$lib/stores/sidebar.svelte'

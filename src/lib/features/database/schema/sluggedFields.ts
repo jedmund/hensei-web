@@ -5,7 +5,7 @@
  * are the slug.
  */
 import { z } from 'zod'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import type { Field } from './types'
 
 /** Lowercase words joined by single hyphens: the API's Slugged::FORMAT */

@@ -9,7 +9,7 @@
 import { untrack } from 'svelte'
 import { createQuery, useQueryClient, type QueryClient } from '@tanstack/svelte-query'
 import { invalidateAll } from '$app/navigation'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { localizeHref, deLocalizeHref, toLocale } from '$lib/paraglide/runtime'
 import { users } from '$lib/api/resources/users'
 import { crewQueries } from '$lib/api/queries/crew.queries'

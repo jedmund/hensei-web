@@ -6,7 +6,7 @@
 	 */
 	import { useQueryClient } from '@tanstack/svelte-query'
 	import { toast } from 'svelte-sonner'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { adminKeys } from '$lib/api/queries/admin.queries'
 	import Button from '$lib/components/ui/Button.svelte'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'

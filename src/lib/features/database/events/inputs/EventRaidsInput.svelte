@@ -5,7 +5,7 @@
 	// kept by id so the list can show them.
 	import { untrack } from 'svelte'
 	import { SvelteMap } from 'svelte/reactivity'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Button from '$lib/components/ui/Button.svelte'
 	import EditRaidPane from '$lib/components/sidebar/EditRaidPane.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'

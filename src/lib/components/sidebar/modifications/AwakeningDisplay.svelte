@@ -2,7 +2,7 @@
 	import { getAwakeningImage } from '$lib/utils/modifiers'
 	import type { Awakening } from '$lib/types/api/entities'
 	import { localizedName } from '$lib/utils/locale'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		awakening?:

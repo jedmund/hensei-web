@@ -3,7 +3,7 @@
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import ContentUpdate from '$lib/components/about/ContentUpdate.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import updatesData from '$lib/data/updates.json'
 
 	interface UpdateItems {

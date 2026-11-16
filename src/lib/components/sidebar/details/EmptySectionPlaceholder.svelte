@@ -6,7 +6,7 @@
 	 * specific tab.
 	 */
 	import Button from '$lib/components/ui/Button.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		/** Title-cased noun (e.g. "Over Mastery", "Roles") inserted into the CTA. */

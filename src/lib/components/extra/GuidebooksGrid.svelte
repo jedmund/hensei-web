@@ -2,7 +2,7 @@
 	import GuidebookUnit from '$lib/components/extra/GuidebookUnit.svelte'
 	import ExtraContainerItem from './ExtraContainerItem.svelte'
 	import type { GuidebookList } from '$lib/types/api/party'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		guidebooks?: GuidebookList

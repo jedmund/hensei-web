@@ -5,7 +5,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getImageBaseUrl } from '$lib/api/adapters/config'
 	import { getLocale } from '$lib/paraglide/runtime.js'
 	import chromeLogo from '$src/assets/logos/chrome.svg'

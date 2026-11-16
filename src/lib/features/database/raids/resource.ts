@@ -5,7 +5,7 @@
  * resource (`raid-groups`).
  */
 import { z } from 'zod'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { raidAdapter } from '$lib/api/adapters/raid.adapter'
 import { raidQueries } from '$lib/api/queries/raid.queries'
 import { elementFilterOptions } from '$lib/components/data-table/filterOptions'

@@ -3,7 +3,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { finishSolomonisPane } from '../party/openSolomonisPanes'
 	import { appLocale } from '$lib/utils/locale'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { GuidebookEntry } from '$lib/types/api/solomonis'
 	import Input from '$lib/components/ui/Input.svelte'
 	import SettingsRow from '$lib/components/ui/SettingsRow.svelte'

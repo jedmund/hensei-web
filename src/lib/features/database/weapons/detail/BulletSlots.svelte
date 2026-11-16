@@ -1,6 +1,6 @@
 <script lang="ts">
 	// A gun's bullet slots, in order
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import { BULLET_TYPES } from '$lib/types/api/entities'
 	import type { Weapon } from '$lib/api/adapters/weapon.adapter'

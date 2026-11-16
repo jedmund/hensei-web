@@ -1,6 +1,6 @@
 <!-- What a character refresh would change: wikitext, counts, skills by kind, icon fallbacks -->
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import Notice from '$lib/components/ui/Notice.svelte'
 	import type { CharacterRefreshResult } from '$lib/api/adapters/characterRefresh.adapter'
 	import {

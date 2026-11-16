@@ -2,7 +2,7 @@
 
 <script lang="ts">
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getElementKey } from '$lib/utils/element'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import {

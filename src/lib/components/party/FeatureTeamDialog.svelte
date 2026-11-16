@@ -28,7 +28,7 @@
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { localizedName } from '$lib/utils/locale'
 	import type { GameEvent } from '$lib/types/api/event'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		open: boolean

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Editor } from '@tiptap/core'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		editor: Editor

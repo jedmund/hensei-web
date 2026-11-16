@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import Button from '$lib/components/ui/Button.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 </script>
 
 <svelte:head>

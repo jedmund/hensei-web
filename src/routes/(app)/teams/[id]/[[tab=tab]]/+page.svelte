@@ -10,7 +10,7 @@
 	import NotFoundPlaceholder from '$lib/components/database/NotFoundPlaceholder.svelte'
 	import { getElementEmoji } from '$lib/utils/element'
 	import { getLocale, localizeHref } from '$lib/paraglide/runtime'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	let { data }: { data: PageData } = $props()
 

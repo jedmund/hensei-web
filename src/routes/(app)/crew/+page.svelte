@@ -16,7 +16,7 @@
 	import CrewEventList from '$lib/components/crew/dashboard/CrewEventList.svelte'
 	import CrewGameLink from '$lib/components/crew/dashboard/CrewGameLink.svelte'
 	import CrewIntro from '$lib/components/crew/dashboard/CrewIntro.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { PageData } from './$types'
 
 	interface Props {

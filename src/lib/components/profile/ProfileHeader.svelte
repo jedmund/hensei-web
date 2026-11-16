@@ -20,7 +20,7 @@
 	import type { CrewRole } from '$lib/types/api/crew'
 	import type { SupportSummon } from '$lib/types/api/supportSummon'
 	import { localizeHref } from '$lib/paraglide/runtime'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		username: string
@@ -108,7 +108,7 @@
 
 	const isInViewerCrew = $derived.by(() => {
 		if (!userId || !crewMembersQuery.data) return false
-		return crewMembersQuery.data.members.some((m) => m.user?.id === userId)
+		return crewMembersQuery.data.members.some((member) => member.user?.id === userId)
 	})
 
 	// Can invite if: viewer is crew officer AND target user is not in viewer's crew

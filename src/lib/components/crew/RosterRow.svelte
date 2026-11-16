@@ -2,7 +2,7 @@
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
 	import type { RosterMember, RosterItem } from '$lib/types/api/crew'
 	import type { RosterItemType, SelectedRosterItem } from '$lib/features/crew/rosterItems'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		member: RosterMember

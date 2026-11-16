@@ -11,7 +11,7 @@
 	import { findSticker } from '$lib/utils/stickers'
 	import { localizedName } from '$lib/utils/locale'
 	import type { StickerBreakdownEntry } from '$lib/types/api/sticker'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		breakdown: StickerBreakdownEntry[]

@@ -2,7 +2,7 @@
 	// One field's input (two for a localized pair), drawn by its kind with
 	// DetailItem's editable modes. Every change goes through `form.set`, so
 	// derived values follow.
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import DetailItem from '$lib/components/ui/DetailItem.svelte'
 	import TagInput from '$lib/components/ui/TagInput.svelte'
 	import Input from '$lib/components/ui/Input.svelte'

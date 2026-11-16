@@ -24,7 +24,7 @@
 	import { partyStore } from '$lib/stores/partyStore.svelte'
 	import SyncMenuButton from './SyncMenuButton.svelte'
 	import { hasField, hasAnyField, type OutOfSyncFields } from '$lib/utils/outOfSync'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	type ElementColor = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 

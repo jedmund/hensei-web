@@ -13,7 +13,7 @@ import { applyPriorities } from '$lib/components/solomonis/grid/seal'
 import type { Party } from '$lib/types/api/party'
 import type { UnsealPriorityItem } from '$lib/types/api/solomonis'
 import { extractErrorMessage } from '$lib/utils/errors'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { editKeyHeaders } from './gridShared'
 import { hasQueuedSave, serialSaveKey, serialSaveScope } from './serialSaves'
 

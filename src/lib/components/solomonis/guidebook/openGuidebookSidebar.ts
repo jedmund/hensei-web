@@ -5,7 +5,7 @@
  */
 
 import { showSolomonisPane } from '../party/openSolomonisPanes'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import type { GuideEffect, GuidebookEntry } from '$lib/types/api/solomonis'
 import GuideEffectSearchContent from './GuideEffectSearchContent.svelte'
 import GuideEffectEditPane from './GuideEffectEditPane.svelte'

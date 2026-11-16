@@ -6,7 +6,7 @@
 	import { localizedName } from '$lib/utils/locale'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { getGuidebookImage } from '$lib/utils/images/equipment'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { SearchResult } from '$lib/api/adapters/search.adapter'
 
 	import Icon from '../Icon.svelte'

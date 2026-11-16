@@ -8,7 +8,7 @@
 	import Input from '$lib/components/ui/Input.svelte'
 	import PrivacySelector from '$lib/components/party/edit/PrivacySelector.svelte'
 	import type { PartyVisibility } from '$lib/types/visibility'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { fetchYoutubeTitle } from '$lib/utils/youtube'
 
 	interface Props {

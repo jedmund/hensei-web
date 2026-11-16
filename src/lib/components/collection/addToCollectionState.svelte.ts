@@ -28,7 +28,7 @@ import {
 import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 import type { CollectionFilterState } from '$lib/types/filter'
 import { extractErrorMessage } from '$lib/utils/errors'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import {
 	buildAddToCollectionFilters,
 	buildCharacterInputs,

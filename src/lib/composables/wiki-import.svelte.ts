@@ -1,7 +1,7 @@
 import { goto } from '$app/navigation'
 import { toast } from 'svelte-sonner'
 import { localizeHref } from '$lib/paraglide/runtime'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import type { Party } from '$lib/types/api/party'
 import type { WikiImportReport, WikiImportRequest } from '$lib/types/api/wikiImport'
 import { wikiImportAdapter } from '$lib/api/adapters/wikiImport.adapter'

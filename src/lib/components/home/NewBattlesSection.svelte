@@ -22,7 +22,7 @@
 	import { galleryPath, newTeamPath } from '$lib/utils/browseRoutes'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import type { HomeNewBattle } from '$lib/types/api/home'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { SvelteSet } from 'svelte/reactivity'
 	import { mobileQuery } from '$lib/utils/viewport.svelte'
 

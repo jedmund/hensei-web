@@ -3,7 +3,7 @@ import type { PartyMutations } from './party-mutations.svelte'
 import type { Party, GridWeapon, GridSummon } from '$lib/types/api/party'
 import { toast } from 'svelte-sonner'
 import { extractErrorMessage } from '$lib/utils/errors'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { findNextEmptySlot, SLOT_NOT_FOUND } from '$lib/utils/gridHelpers'
 import { GridType } from '$lib/types/enums'
 

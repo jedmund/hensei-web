@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Input from '$lib/components/ui/Input.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		name: string

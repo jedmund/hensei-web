@@ -10,7 +10,7 @@
 	import ExploreFilters from '$lib/components/explore/ExploreFilters.svelte'
 	import GridRep from '$lib/components/reps/GridRep.svelte'
 	import Icon from '$lib/components/Icon.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getElementLabel } from '$lib/utils/element'
 	import { solomonisQueries } from '$lib/api/queries/solomonis.queries'
 	import { solomonisName } from '$lib/components/solomonis/party/solomonisParty'

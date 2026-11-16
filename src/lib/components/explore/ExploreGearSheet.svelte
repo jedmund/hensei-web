@@ -2,7 +2,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import BottomSheet from '$lib/components/ui/BottomSheet.svelte'
 	import Switch from '$lib/components/ui/switch/Switch.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { ElementType } from '$lib/utils/element'
 	import type { ExploreSort } from '$lib/utils/exploreFilterParams'
 

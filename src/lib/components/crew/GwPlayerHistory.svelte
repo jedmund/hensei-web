@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { formatScore, toPlayerHistoryChartData } from '$lib/utils/gw'
 	import { formatDateJST } from '$lib/utils/date'
 	import type { EventScoreSummary } from '$lib/types/api/gw'

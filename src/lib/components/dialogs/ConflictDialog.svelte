@@ -30,7 +30,7 @@
 	import { getWeaponImage } from '$lib/utils/images/weapons'
 	import { isOpusDraconicSeries, getSeriesDisplayName } from '$lib/utils/weaponSeries'
 	import { getLocale } from '$lib/paraglide/runtime.js'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { toast } from 'svelte-sonner'
 	import { extractErrorMessage } from '$lib/utils/errors'
 

@@ -5,7 +5,7 @@
  */
 import type { Component } from 'svelte'
 import { toast } from 'svelte-sonner'
-import * as m from '$lib/paraglide/messages'
+import { m } from '$lib/paraglide/messages'
 import { sidebar } from '$lib/stores/sidebar.svelte'
 import type { Party } from '$lib/types/api/party'
 import type { SolomonisExpeditionInput } from '$lib/types/api/solomonis'

@@ -2,7 +2,7 @@
 	import MasteryRow from './MasteryRow.svelte'
 	import { overMastery, type ItemSkill } from '$lib/data/overMastery'
 	import { localizedName } from '$lib/utils/locale'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface ExtendedMastery {
 		modifier: number

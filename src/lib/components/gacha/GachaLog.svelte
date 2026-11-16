@@ -5,7 +5,7 @@
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import GachaResults from '$lib/components/gacha/GachaResults.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { SvelteSet } from 'svelte/reactivity'
 	import { slide } from 'svelte/transition'

@@ -3,7 +3,7 @@
 	 * Formatting toolbar for the party description editor: text style
 	 * dropdown, bold / italic / underline / strikethrough, link and lists.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { Editor } from '@tiptap/core'
 	import { DropdownMenu as DropdownMenuBase } from 'bits-ui'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import InfoTile from './InfoTile.svelte'
 	import VideoDialog from './VideoDialog.svelte'
 	import Icon from '$lib/components/Icon.svelte'

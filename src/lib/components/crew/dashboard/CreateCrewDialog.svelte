@@ -7,7 +7,7 @@
 	import ModalBody from '$lib/components/ui/ModalBody.svelte'
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import CrewDetailsFields from '$lib/components/crew/form/CrewDetailsFields.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		open: boolean

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { ArtifactSkill } from '$lib/types/api/artifact'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { artifactQueries } from '$lib/api/queries/artifact.queries'

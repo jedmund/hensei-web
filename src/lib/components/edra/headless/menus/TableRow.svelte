@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { type Editor } from '@tiptap/core'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import ArrowDownFromLine from '@lucide/svelte/icons/arrow-down-from-line'
 	import ArrowUpFromLine from '@lucide/svelte/icons/arrow-up-from-line'
 	import Trash from '@lucide/svelte/icons/trash'

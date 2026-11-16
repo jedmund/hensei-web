@@ -9,7 +9,7 @@
 	import Icon from '$lib/components/Icon.svelte'
 	import CollectionFilterButton from '$lib/components/explore/CollectionFilterButton.svelte'
 	import type { ExploreSort } from '$lib/utils/exploreFilterParams'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
 		sort: ExploreSort

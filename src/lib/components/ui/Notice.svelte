@@ -2,7 +2,7 @@
 	import type { Snippet } from 'svelte'
 	import Button from './Button.svelte'
 	import Tooltip from './Tooltip.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 
 	type Variant =
 		'gray' | 'blue' | 'yellow' | 'red' | 'wind' | 'fire' | 'water' | 'earth' | 'light' | 'dark'

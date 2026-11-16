@@ -16,7 +16,7 @@
 	import ArtifactSkillRow from './ArtifactSkillRow.svelte'
 	import ArtifactModifierList from './ArtifactModifierList.svelte'
 	import ProficiencyLabel from '$lib/components/labels/ProficiencyLabel.svelte'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import { getElementColor, getElementKey, getElementOptions } from '$lib/utils/element'
 
 	interface Props {

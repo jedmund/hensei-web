@@ -9,7 +9,7 @@
 	import { goto } from '$app/navigation'
 	import { page } from '$app/state'
 	import { toast } from 'svelte-sonner'
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
 	import DatabasePageHeader from '$lib/components/database/DatabasePageHeader.svelte'

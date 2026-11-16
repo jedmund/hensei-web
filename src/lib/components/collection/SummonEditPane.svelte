@@ -8,7 +8,7 @@
 	 *
 	 * Summons are simpler than weapons/characters - they only track uncap and transcendence.
 	 */
-	import * as m from '$lib/paraglide/messages'
+	import { m } from '$lib/paraglide/messages'
 	import type { Summon } from '$lib/types/api/entities'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import UncapIndicator from '$lib/components/uncap/UncapIndicator.svelte'
