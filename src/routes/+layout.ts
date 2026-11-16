@@ -35,11 +35,13 @@ export const load: LayoutLoad = async ({ data, fetch }) => {
 	// Sticker labels show on team cards and the team page; with the catalogue
 	// already cached they render in SSR instead of after hydration. SvelteKit's
 	// fetch replays the server response during hydration, so the browser
-	// doesn't request it again. A failure (never retried, so it can't hold up
-	// the page) only means stickers load after hydration as before.
+	// doesn't request it again. A failure only means stickers load after
+	// hydration as before. Neither the query nor the adapter retries it: when
+	// the server's request fails, hydration makes it again, and the page's
+	// links do full page loads until hydration finishes.
 	await queryClient.prefetchQuery({
 		...stickerQueries.active(),
-		queryFn: () => stickerAdapter.listStickers({}, { fetch }),
+		queryFn: () => stickerAdapter.listStickers({}, { fetch, retries: 0 }),
 		retry: false
 	})
 
