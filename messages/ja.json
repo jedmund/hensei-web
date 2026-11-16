@@ -2513,7 +2513,6 @@
 	"db_nav_search_placeholder": "キャラ・武器・召喚石を検索…",
 	"db_nav_searching": "検索中…",
 	"db_nav_search_empty": "「{query}」に一致する項目はありません",
-	"db_nav_browse": "一覧",
 	"data_table_search": "検索",
 	"data_table_search_entity": "{entity}を検索…",
 	"data_table_search_label": "この一覧を検索",
