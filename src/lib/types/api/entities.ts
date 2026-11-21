@@ -469,12 +469,15 @@ export interface RaidGroup {
 	unlimited: boolean
 	/** False for single-player content (Arcarum) that takes no support summon */
 	supportSummon?: boolean
-	/** Special content mode; `solomonis` shows the Evoking Solomonis panel. */
+	/**
+	 * Special content mode: `solomonis` shows the Evoking Solomonis panel;
+	 * `unite_and_fight` hides Wonders that don't apply there (Crucible Seals).
+	 */
 	contentMode?: RaidGroupContentMode | null
 }
 
 /** Values of `raid_groups.content_mode`. */
-export type RaidGroupContentMode = 'solomonis'
+export type RaidGroupContentMode = 'solomonis' | 'unite_and_fight'
 
 // Awakening entity
 export interface Awakening {

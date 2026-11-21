@@ -21,6 +21,7 @@ import type { AugmentSkill, Befoulment } from './weaponStatModifier'
 import type { CollectionCharacter, CollectionWeapon, CollectionSummon } from './collection'
 import type { PartyShare } from './partyShare'
 import type { SealState, SolomonisExpedition, SolomonisSummary } from './solomonis'
+import type { OwnedWonder } from './wonder'
 import type { StickerBreakdownEntry } from './sticker'
 
 /** Embedded collection data for a single user, scoped to the party's items */
@@ -254,6 +255,8 @@ export interface Party {
 	shortcode: string
 	/** Full view: SolomonisExpedition. List views: SolomonisSummary. Null outside the mode. */
 	solomonis?: SolomonisExpedition | SolomonisSummary | null
+	/** Wonders snapshotted when the team was made (full view). Filter by element at display time. */
+	wonders?: OwnedWonder[]
 	name?: string
 	description?: string
 	fullAuto?: boolean

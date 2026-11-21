@@ -44,7 +44,8 @@ export const BUCKET = {
 	bullets: 'bullets',
 	raids: 'raids',
 	stickers: 'icons/stickers',
-	events: 'events'
+	events: 'events',
+	wonders: 'wonders'
 } as const
 
 /**
