@@ -8,7 +8,14 @@ vi.mock('$lib/paraglide/runtime', async (importOriginal) => ({
 	getLocale
 }))
 
-import { bonusLabel, bonusValueLabel, parseElementStat, statLabel, wonderText } from '../labels'
+import {
+	bonusLabel,
+	bonusValueLabel,
+	parseElementStat,
+	statLabel,
+	wonderSummary,
+	wonderText
+} from '../labels'
 
 const ELEMENTS = ['fire', 'water', 'earth', 'wind', 'light', 'dark']
 
@@ -89,5 +96,18 @@ describe('wonderText', () => {
 		expect(wonderText({ en: 'Ring of Death', ja: 'リング・オブ・デス' })).toBe('リング・オブ・デス')
 		expect(wonderText({ en: "Thief's Map", ja: null })).toBe("Thief's Map")
 		expect(wonderText(null)).toBe('—')
+	})
+})
+
+describe('wonderSummary', () => {
+	it('shows the level, the bonus, or nothing', () => {
+		expect(wonderSummary({ kind: 'leveled' }, { level: 20, bonuses: [] })).toBe('Lvl 20')
+		expect(
+			wonderSummary(
+				{ kind: 'scaling' },
+				{ level: null, bonuses: [{ stat: 'dmg_amplify', value: 4 }] }
+			)
+		).toBe('+4%')
+		expect(wonderSummary({ kind: 'fixed' }, { level: null, bonuses: [] })).toBeNull()
 	})
 })

@@ -17,6 +17,9 @@
 	import AddToCollectionModal from '$lib/components/collection/AddToCollectionModal.svelte'
 	import BulkDeleteConfirmModal from '$lib/components/collection/BulkDeleteConfirmModal.svelte'
 	import { openAddArtifactSidebar } from '$lib/features/collection/openAddArtifactSidebar'
+	import WonderImportDialog from '$lib/components/wonders/WonderImportDialog.svelte'
+	import { openAddCollectionWonderPane } from '$lib/components/wonders/openCollectionWonderPanes'
+	import { wonderQueries } from '$lib/api/queries/wonder.queries'
 	import {
 		createSelectionModeContext,
 		SELECTION_MODE_KEY,
@@ -76,6 +79,7 @@
 		if (path.includes('/weapons')) return 'weapons'
 		if (path.includes('/summons')) return 'summons'
 		if (path.includes('/artifacts')) return 'artifacts'
+		if (path.includes('/wonders')) return 'wonders'
 		return 'characters'
 	})
 
@@ -84,21 +88,42 @@
 		if (activeEntityType === 'weapons') return 'weapon'
 		if (activeEntityType === 'summons') return 'summon'
 		if (activeEntityType === 'artifacts') return undefined // Artifacts use sidebar instead
+		if (activeEntityType === 'wonders') return undefined // Wonders use the sidebar too
 		return 'character'
 	})
 
-	// Whether the current entity type supports the add modal (all except artifacts)
-	const supportsAddModal = $derived(activeEntityType !== 'artifacts')
+	// Whether the current entity type supports the add modal (characters, weapons, summons)
+	const supportsAddModal = $derived(modalEntityType !== undefined)
 
 	// Whether to show the add button for artifacts (uses sidebar instead of modal)
 	const isArtifacts = $derived(activeEntityType === 'artifacts')
+
+	// Wonders: added in the sidebar or imported from the game, removed one at
+	// a time (no bulk delete). The page shares these queries' cache.
+	const isWonders = $derived(activeEntityType === 'wonders')
+	const wonderCatalogueQuery = createQuery(() => ({
+		...wonderQueries.catalogue(),
+		enabled: isWonders && data.isOwner
+	}))
+	const ownedWondersQuery = createQuery(() => ({
+		...wonderQueries.collection(data.user?.id ?? ''),
+		enabled: isWonders && data.isOwner && !!data.user?.id
+	}))
+	let wonderImportOpen = $state(false)
+
+	function handleAddWonder() {
+		const catalogue = wonderCatalogueQuery.data
+		if (!catalogue) return
+		openAddCollectionWonderPane(catalogue, ownedWondersQuery.data ?? [])
+	}
 
 	// Localized entity names for parameterized messages
 	const entityNameMap = {
 		characters: m.collection_entity_characters(),
 		weapons: m.collection_entity_weapons(),
 		summons: m.collection_entity_summons(),
-		artifacts: m.collection_entity_artifacts()
+		artifacts: m.collection_entity_artifacts(),
+		wonders: m.collection_entity_wonders()
 	} as Record<string, string>
 
 	const addButtonText = $derived(
@@ -262,17 +287,35 @@
 									<button type="button" class="dropdown-menu-item" onclick={handleAddArtifact}>
 										{m.collection_add_artifact()}
 									</button>
+								{:else if isWonders}
+									<button
+										type="button"
+										class="dropdown-menu-item"
+										disabled={!wonderCatalogueQuery.data}
+										onclick={handleAddWonder}
+									>
+										{m.wonders_add_title()}
+									</button>
+									<button
+										type="button"
+										class="dropdown-menu-item"
+										onclick={() => (wonderImportOpen = true)}
+									>
+										{m.wonders_import_action()}
+									</button>
 								{/if}
-								<div class="dropdown-menu-separator"></div>
-								<button
-									type="button"
-									class="dropdown-menu-item danger"
-									onclick={handleEnterSelectionMode}
-								>
-									{m.collection_delete_type({
-										type: entityNameMap[activeEntityType] ?? activeEntityType
-									})}
-								</button>
+								{#if !isWonders}
+									<div class="dropdown-menu-separator"></div>
+									<button
+										type="button"
+										class="dropdown-menu-item danger"
+										onclick={handleEnterSelectionMode}
+									>
+										{m.collection_delete_type({
+											type: entityNameMap[activeEntityType] ?? activeEntityType
+										})}
+									</button>
+								{/if}
 							{/snippet}
 						</DropdownMenu>
 					{/if}
@@ -297,6 +340,10 @@
 			</svelte:boundary>
 		</div>
 	</div>
+{/if}
+
+{#if data.isOwner && isWonders}
+	<WonderImportDialog bind:open={wonderImportOpen} element={userElement} />
 {/if}
 
 {#if data.isOwner && modalEntityType}

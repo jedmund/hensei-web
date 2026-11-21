@@ -8,7 +8,14 @@
 import { m } from '$lib/paraglide/messages'
 import { getElementLabel } from '$lib/utils/element'
 import { appLocale } from '$lib/utils/locale'
-import type { WonderBonus, WonderStat, WonderStatElement, WonderText } from '$lib/types/api/wonder'
+import type {
+	OwnedWonder,
+	Wonder,
+	WonderBonus,
+	WonderStat,
+	WonderStatElement,
+	WonderText
+} from '$lib/types/api/wonder'
 import { formatBonusNumber } from './wonders'
 
 export const WONDER_STAT_ELEMENTS: Record<WonderStatElement, number> = {
@@ -87,4 +94,21 @@ export function bonusLabel(bonus: WonderBonus): { label: string; value: string }
 export function wonderText(text: WonderText | null | undefined): string {
 	if (!text) return '—'
 	return text[appLocale()] || text.en || text.ja || '—'
+}
+
+/**
+ * The short line under a Wonder's image: its level (Seals, Yupei) or its
+ * bonus (Symbolum). Fixed Wonders have none. Symbolum's count itself is
+ * never shown on a team, only the bonus it gives.
+ */
+export function wonderSummary(
+	wonder: Pick<Wonder, 'kind'>,
+	row: Pick<OwnedWonder, 'level' | 'bonuses'>
+): string | null {
+	if (wonder.kind === 'leveled' && row.level != null) return m.wonders_level({ level: row.level })
+	if (wonder.kind === 'scaling') {
+		const bonus = row.bonuses[0]
+		return bonus ? bonusValueLabel(bonus.value) : null
+	}
+	return null
 }

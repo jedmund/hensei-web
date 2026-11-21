@@ -293,3 +293,35 @@ export function sameSelection(
 		)
 	})
 }
+
+// ============================================================================
+// Import
+// ============================================================================
+
+export interface ParsedWondersPage {
+	data: unknown[]
+	/** Guessed from the category names; the API treats it as informational */
+	lang: 'en' | 'ja'
+}
+
+const JAPANESE = /[぀-ヿ一-鿿]/
+
+/**
+ * Reads pasted `/item/memorial_list/1` data: a top-level array of
+ * categories, each with an `item` list. Returns null for anything else.
+ */
+export function parseWondersPage(text: string): ParsedWondersPage | null {
+	let data: unknown
+	try {
+		data = JSON.parse(text.trim())
+	} catch {
+		return null
+	}
+	if (!Array.isArray(data) || data.length === 0) return null
+	const looksRight = data.every(
+		(c) => !!c && typeof c === 'object' && Array.isArray((c as { item?: unknown }).item)
+	)
+	if (!looksRight) return null
+	const names = data.map((c) => String((c as { name?: unknown }).name ?? '')).join('')
+	return { data, lang: JAPANESE.test(names) ? 'ja' : 'en' }
+}
