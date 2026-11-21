@@ -1,0 +1,1924 @@
+[
+	{
+		"category_id": "1",
+		"name": "第1部 蒼の少女",
+		"type": "1",
+		"item": [
+			{
+				"item_id": "1",
+				"image": "1",
+				"name": "ティアマトの朝凪",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "ティアマトに勝利した証。",
+				"number": "1",
+				"category_id": "1",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100001,
+						"comment": "Rankポイントが10%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "2",
+				"image": "2",
+				"name": "鉄巨人の刃金",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "鉄巨人に勝利した証。",
+				"number": "1",
+				"category_id": "1",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100002,
+						"comment": "キャラと装備の強化時の取得経験値が5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "3",
+				"image": "3",
+				"name": "リヴァイアサンの白露",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "リヴァイアサンに勝利した証。",
+				"number": "1",
+				"category_id": "1",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100003,
+						"comment": "強化大成功確率が2%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "4",
+				"image": "4",
+				"name": "ユグドラシルの碧葉",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "ユグドラシルに勝利した証。",
+				"number": "1",
+				"category_id": "1",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100004,
+						"comment": "EXPが5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "5",
+				"image": "5",
+				"name": "シュヴァリエの矜持",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "シュヴァリエに勝利した証。",
+				"number": "1",
+				"category_id": "1",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100005,
+						"comment": "クエスト時の取得ルピが5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "6",
+				"image": "6",
+				"name": "セレストの錨",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "セレストに勝利した証。",
+				"number": "1",
+				"category_id": "1",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100006,
+						"comment": "闇属性キャラと装備の強化時に取得経験値が5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "7",
+				"image": "7",
+				"name": "ミスラの歯車",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "ミスラに勝利した証。",
+				"number": "1",
+				"category_id": "1",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100007,
+						"comment": "カスタムptが50%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "8",
+				"image": "8",
+				"name": "秩序の天秤",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "モニカとリーシャに勝利した証。",
+				"number": "1",
+				"category_id": "1",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100008,
+						"comment": "風属性キャラと装備の強化時に取得経験値が5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "9",
+				"image": "9",
+				"name": "古代ゴーレムの魔力炉",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "旧王都メフォラシュに眠っていた歴史のある品。",
+				"number": "1",
+				"category_id": "1",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100009,
+						"comment": "土属性キャラと装備の強化時に取得経験値が5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "10",
+				"image": "10",
+				"name": "読み解けない紙片",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "星の民が書き記したと推測される、判読できないほど朽ちてしまった紙片。",
+				"number": "1",
+				"category_id": "1",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100010,
+						"comment": "属性強化スキルの取得経験値が5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "11",
+				"image": "11",
+				"name": "規律の灯火",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "アマルティア島を帝国から奪還した証。",
+				"number": "1",
+				"category_id": "1",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100011,
+						"comment": "火属性キャラと装備の強化時に取得経験値が5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "12",
+				"image": "12",
+				"name": "金露果",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "金露森林に稀に生る貴重な果物。",
+				"number": "1",
+				"category_id": "1",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100012,
+						"comment": "光属性キャラと装備の強化時に取得経験値が5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "13",
+				"image": "13",
+				"name": "マリスレッドリーフ",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "ユグドラシルをマリスから解放した証。",
+				"number": "1",
+				"category_id": "1",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100009,
+						"comment": "土属性キャラと装備の強化時に取得経験値が5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "14",
+				"image": "14",
+				"name": "虚空の花",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "アーカーシャに勝利した証。",
+				"number": "1",
+				"category_id": "1",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100014,
+						"comment": "レアモンスターの出現確率が上昇する。",
+						"set_flg": 1
+					}
+				]
+			}
+		],
+		"is_active": false
+	},
+	{
+		"category_id": "2",
+		"name": "第2部 暁の空",
+		"type": "1",
+		"item": [
+			{
+				"item_id": "15",
+				"image": "15",
+				"name": "エンゲージアトモスフィア",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "キクリに勝利した証。",
+				"number": "1",
+				"category_id": "2",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100015,
+						"comment": "サポート協力報酬が50%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "16",
+				"image": "16",
+				"name": "狂乱のメダリオン",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "フリーシアに勝利した証。",
+				"number": "1",
+				"category_id": "2",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100012,
+						"comment": "光属性キャラと装備の強化時に取得経験値が5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "17",
+				"image": "17",
+				"name": "銀鎧甲のゴージット",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "ディコトムスに勝利した証。",
+				"number": "1",
+				"category_id": "2",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100017,
+						"comment": "武器売却時の取得ルピが5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "18",
+				"image": "18",
+				"name": "翠玉の耳飾り",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "ラインハルザに勝利した証。",
+				"number": "1",
+				"category_id": "2",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100011,
+						"comment": "火属性キャラと装備の強化時に取得経験値が5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "19",
+				"image": "19",
+				"name": "畏敬の袈裟当て",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "ゼエンに勝利した証。",
+				"number": "1",
+				"category_id": "2",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100008,
+						"comment": "風属性キャラと装備の強化時に取得経験値が5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "20",
+				"image": "20",
+				"name": "アルカンシエルの花",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "ベスティエ島の奥深くに咲く幻の花。",
+				"number": "1",
+				"category_id": "2",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100029,
+						"comment": "水属性キャラと装備の強化時に取得経験値が5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "21",
+				"image": "21",
+				"name": "亡滅の宝冠",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "長い年月の間、シュテルケ島のかつての王城跡で雨風に晒されていたクラウン。<br>傷と錆でかつての華やかさは失われたが、散りばめられた宝石は未だ輝きを失ってはいない。",
+				"number": "1",
+				"category_id": "2",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100021,
+						"comment": "ナル・グランデ空域のレアモンスターの出現確率が大きく上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "22",
+				"image": "22",
+				"name": "神火の種火",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "星晶獣ヱビスが起こした神火のごく一部を保管したもの。<br>決して消える事のない炎は煌々と燃え盛る。",
+				"number": "1",
+				"category_id": "2",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100022,
+						"comment": "召喚石売却時の取得ルピが5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			}
+		],
+		"is_active": false
+	},
+	{
+		"category_id": "3",
+		"name": "第3部 星の旅人",
+		"type": "1",
+		"item": [
+			{
+				"item_id": "23",
+				"image": "23",
+				"name": "王立フィロス教導学校の卒業証書",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "王立フィロス教導学校を修業した証明書。<br>イスタバイオン王国の若者はこの証書を以て一人前とされ、適正のある職を割り当てられる。",
+				"number": "1",
+				"category_id": "3",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100006,
+						"comment": "闇属性キャラと装備の強化時に取得経験値が5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "24",
+				"image": "24",
+				"name": "群体神の仮面",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "戦いの最中、群体神アニマ・アニムス・コアから剥がれ落ちた仮面。<br>本体が消滅しても尚、通常の仮面とは異なる禍々しい力を感じる。",
+				"number": "1",
+				"category_id": "3",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100024,
+						"comment": "EXPが5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "25",
+				"image": "25",
+				"name": "蒼のスカーフ",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "巫女に託された蒼いスカーフ。<br>蒼の解放戦線のシンボルであり、帰属意識を保つ係留索でもある。",
+				"number": "1",
+				"category_id": "3",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100025,
+						"comment": "強化大成功確率が2%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "26",
+				"image": "26",
+				"name": "王の証",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "イスタバイオン王国にある<br>全ての空図の欠片を手にした者の証。<br>新たな王となり、かつ十全な器を備えた<br>者には、空図の欠片自身が望んだかの如く<br>集結するという。<br>この証を持つ者すなわち、全てを見通し、<br>幽世にあだなす者である。",
+				"number": "1",
+				"category_id": "3",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100026,
+						"comment": "強化時の取得経験値が5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "27",
+				"image": "27",
+				"name": "星晶獣シビュレ",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "真王の座を継いだ証のひとつ。<br>ある夫婦の誓いの証でもあったが、それを知る者は新たな王ただひとり。",
+				"number": "1",
+				"category_id": "3",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100027,
+						"comment": "サポート協力報酬が50%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "28",
+				"image": "28",
+				"name": "禍つ竜の毀角",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "幽世の竜が最期に残していったもの。<br>その望みがいかに正しくとも<br>互いに譲れぬ以上、<br>この結末は必然だった。",
+				"number": "1",
+				"category_id": "3",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 100028,
+						"comment": "闇属性キャラと装備の強化時に取得経験値が5%上昇する。",
+						"set_flg": 1
+					}
+				]
+			},
+			{
+				"item_id": "29",
+				"image": "29",
+				"name": "父からの手紙",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "旅の始まり、そしてひとつの旅の終わりに<br>受け取った手紙。<br>色褪せない憧れを胸に、旅は続いていく。",
+				"number": "1",
+				"category_id": "3",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 109007,
+						"comment": "ルリア、カタリナ、ラカム、イオ、オイゲン、ロゼッタのステータスが上昇する。",
+						"set_flg": 1
+					}
+				]
+			}
+		],
+		"is_active": false
+	},
+	{
+		"category_id": "4",
+		"name": "神滅の印章",
+		"type": "2",
+		"item": [
+			{
+				"item_id": "9009",
+				"image": "9009",
+				"name": "赫焔灯す菩薩の印章",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "赫焔灯す菩薩の御座を<br>簒奪する力を齎す神秘の紋章。",
+				"number": "1",
+				"category_id": "4",
+				"sort_id": "1",
+				"action_list": [],
+				"level": "20",
+				"exp": "438000",
+				"total_exp": 438000,
+				"effective_acquired_bonus": [
+					{
+						"name": "風属性ダメージ軽減",
+						"detail": "＋10％",
+						"image": "bonus_7"
+					},
+					{
+						"name": "防御力",
+						"detail": "＋12％",
+						"image": "bonus_2"
+					},
+					{
+						"name": "ダブルアタック確率",
+						"detail": "＋6％",
+						"image": "bonus_20"
+					},
+					{
+						"name": "回復上限",
+						"detail": "＋12％",
+						"image": "bonus_13"
+					},
+					{
+						"name": "弱体耐性",
+						"detail": "＋10％",
+						"image": "bonus_3"
+					},
+					{
+						"name": "トリプルアタック確率",
+						"detail": "＋7％",
+						"image": "bonus_21"
+					},
+					{
+						"name": "弱体成功率",
+						"detail": "＋5％",
+						"image": "bonus_4"
+					}
+				],
+				"max_level": 20,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "3",
+				"max_evolution": 3,
+				"evolution_info": {
+					"level": "20",
+					"evolution": "3",
+					"max_level": 20,
+					"max_evolution": 3,
+					"is_max_level": true,
+					"is_limited_level": true,
+					"use_item": [
+						{
+							"use_item_id": "10596",
+							"use_item_kind": "10",
+							"use_item_num": "12",
+							"use_item_name": "アルデンス・ラピス",
+							"has_num": 33,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10664",
+							"use_item_kind": "10",
+							"use_item_num": "8",
+							"use_item_name": "赫灼の精粋晶",
+							"has_num": 29,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10509",
+							"use_item_kind": "10",
+							"use_item_num": "20",
+							"use_item_name": "エクス・イフリートの真なるアニマ",
+							"has_num": 896,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10508",
+							"use_item_kind": "10",
+							"use_item_num": "70",
+							"use_item_name": "焔華座の花弁",
+							"has_num": 1709,
+							"has_item": true
+						}
+					],
+					"has_item": true,
+					"can_evolution": false,
+					"condition_text": [],
+					"next_evolution_max_level": 20
+				}
+			},
+			{
+				"item_id": "9008",
+				"image": "9008",
+				"name": "冥府座す獄帝の印章",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "冥府座す獄帝を<br>打ち砕く力を齎す神秘の紋章。",
+				"number": "1",
+				"category_id": "4",
+				"sort_id": "2",
+				"action_list": [],
+				"level": "20",
+				"exp": "438000",
+				"total_exp": 438000,
+				"effective_acquired_bonus": [
+					{
+						"name": "火属性ダメージ軽減",
+						"detail": "＋10％",
+						"image": "bonus_8"
+					},
+					{
+						"name": "防御力",
+						"detail": "＋12％",
+						"image": "bonus_2"
+					},
+					{
+						"name": "ダブルアタック確率",
+						"detail": "＋6％",
+						"image": "bonus_20"
+					},
+					{
+						"name": "回復上限",
+						"detail": "＋12％",
+						"image": "bonus_13"
+					},
+					{
+						"name": "弱体耐性",
+						"detail": "＋10％",
+						"image": "bonus_3"
+					},
+					{
+						"name": "トリプルアタック確率",
+						"detail": "＋7％",
+						"image": "bonus_21"
+					},
+					{
+						"name": "弱体成功率",
+						"detail": "＋5％",
+						"image": "bonus_4"
+					}
+				],
+				"max_level": 20,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "3",
+				"max_evolution": 3,
+				"evolution_info": {
+					"level": "20",
+					"evolution": "3",
+					"max_level": 20,
+					"max_evolution": 3,
+					"is_max_level": true,
+					"is_limited_level": true,
+					"use_item": [
+						{
+							"use_item_id": "10584",
+							"use_item_kind": "10",
+							"use_item_num": "12",
+							"use_item_name": "スティーリア・ラピス",
+							"has_num": 93,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10646",
+							"use_item_kind": "10",
+							"use_item_num": "8",
+							"use_item_name": "氷冥の精粋晶",
+							"has_num": 36,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10500",
+							"use_item_kind": "10",
+							"use_item_num": "20",
+							"use_item_name": "エクス・コキュートスの真なるアニマ",
+							"has_num": 487,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10499",
+							"use_item_kind": "10",
+							"use_item_num": "70",
+							"use_item_name": "赫氷角",
+							"has_num": 1032,
+							"has_item": true
+						}
+					],
+					"has_item": true,
+					"can_evolution": false,
+					"condition_text": [],
+					"next_evolution_max_level": 20
+				}
+			},
+			{
+				"item_id": "9007",
+				"image": "9007",
+				"name": "罪咎裁く善神の印章",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "罪咎裁く善神の裁定を<br>凌駕する力を齎す神秘の紋章。",
+				"number": "1",
+				"category_id": "4",
+				"sort_id": "3",
+				"action_list": [],
+				"level": "20",
+				"exp": "438000",
+				"total_exp": 438000,
+				"effective_acquired_bonus": [
+					{
+						"name": "水属性ダメージ軽減",
+						"detail": "＋10％",
+						"image": "bonus_9"
+					},
+					{
+						"name": "防御力",
+						"detail": "＋12％",
+						"image": "bonus_2"
+					},
+					{
+						"name": "ダブルアタック確率",
+						"detail": "＋6％",
+						"image": "bonus_20"
+					},
+					{
+						"name": "回復上限",
+						"detail": "＋12％",
+						"image": "bonus_13"
+					},
+					{
+						"name": "弱体耐性",
+						"detail": "＋10％",
+						"image": "bonus_3"
+					},
+					{
+						"name": "トリプルアタック確率",
+						"detail": "＋7％",
+						"image": "bonus_21"
+					},
+					{
+						"name": "弱体成功率",
+						"detail": "＋5％",
+						"image": "bonus_4"
+					}
+				],
+				"max_level": 20,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "3",
+				"max_evolution": 3,
+				"evolution_info": {
+					"level": "20",
+					"evolution": "3",
+					"max_level": 20,
+					"max_evolution": 3,
+					"is_max_level": true,
+					"is_limited_level": true,
+					"use_item": [
+						{
+							"use_item_id": "10548",
+							"use_item_kind": "10",
+							"use_item_num": "12",
+							"use_item_name": "アヴィトレート・ラピス",
+							"has_num": 38,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10635",
+							"use_item_kind": "10",
+							"use_item_num": "8",
+							"use_item_name": "金祇の精粋晶",
+							"has_num": 8,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10488",
+							"use_item_kind": "10",
+							"use_item_num": "20",
+							"use_item_name": "エクス・ウォフマナフの真なるアニマ",
+							"has_num": 425,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10487",
+							"use_item_kind": "10",
+							"use_item_num": "70",
+							"use_item_name": "裁考者の面具",
+							"has_num": 604,
+							"has_item": true
+						}
+					],
+					"has_item": true,
+					"can_evolution": false,
+					"condition_text": [],
+					"next_evolution_max_level": 20
+				}
+			},
+			{
+				"item_id": "9006",
+				"image": "9006",
+				"name": "天翔ける射手の印章",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "天翔ける疾風の射手の翼を<br>撃ち落とす力を齎す神秘の紋章。",
+				"number": "1",
+				"category_id": "4",
+				"sort_id": "4",
+				"action_list": [],
+				"level": "20",
+				"exp": "438000",
+				"total_exp": 438000,
+				"effective_acquired_bonus": [
+					{
+						"name": "土属性ダメージ軽減",
+						"detail": "＋10％",
+						"image": "bonus_10"
+					},
+					{
+						"name": "防御力",
+						"detail": "＋12％",
+						"image": "bonus_2"
+					},
+					{
+						"name": "ダブルアタック確率",
+						"detail": "＋6％",
+						"image": "bonus_20"
+					},
+					{
+						"name": "回復上限",
+						"detail": "＋12％",
+						"image": "bonus_13"
+					},
+					{
+						"name": "弱体耐性",
+						"detail": "＋10％",
+						"image": "bonus_3"
+					},
+					{
+						"name": "トリプルアタック確率",
+						"detail": "＋7％",
+						"image": "bonus_21"
+					},
+					{
+						"name": "弱体成功率",
+						"detail": "＋5％",
+						"image": "bonus_4"
+					}
+				],
+				"max_level": 20,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "3",
+				"max_evolution": 3,
+				"evolution_info": {
+					"level": "20",
+					"evolution": "3",
+					"max_level": 20,
+					"max_evolution": 3,
+					"is_max_level": true,
+					"is_limited_level": true,
+					"use_item": [
+						{
+							"use_item_id": "10554",
+							"use_item_kind": "10",
+							"use_item_num": "12",
+							"use_item_name": "エクイテス・ラピス",
+							"has_num": 44,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10625",
+							"use_item_kind": "10",
+							"use_item_num": "8",
+							"use_item_name": "星天の精粋晶",
+							"has_num": 40,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10480",
+							"use_item_kind": "10",
+							"use_item_num": "20",
+							"use_item_name": "エクス・サジタリウスの真なるアニマ",
+							"has_num": 328,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10479",
+							"use_item_kind": "10",
+							"use_item_num": "70",
+							"use_item_name": "人馬の鎧殻",
+							"has_num": 569,
+							"has_item": true
+						}
+					],
+					"has_item": true,
+					"can_evolution": false,
+					"condition_text": [],
+					"next_evolution_max_level": 20
+				}
+			},
+			{
+				"item_id": "9010",
+				"image": "9010",
+				"name": "燦輝祝く煌后の印章",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "燦輝祝く煌后の光を<br>超越する力を齎す神秘の紋章。",
+				"number": "1",
+				"category_id": "4",
+				"sort_id": "5",
+				"action_list": [],
+				"level": "20",
+				"exp": "438000",
+				"total_exp": 438000,
+				"effective_acquired_bonus": [
+					{
+						"name": "闇属性ダメージ軽減",
+						"detail": "＋10％",
+						"image": "bonus_12"
+					},
+					{
+						"name": "防御力",
+						"detail": "＋12％",
+						"image": "bonus_2"
+					},
+					{
+						"name": "ダブルアタック確率",
+						"detail": "＋6％",
+						"image": "bonus_20"
+					},
+					{
+						"name": "回復上限",
+						"detail": "＋12％",
+						"image": "bonus_13"
+					},
+					{
+						"name": "弱体耐性",
+						"detail": "＋10％",
+						"image": "bonus_3"
+					},
+					{
+						"name": "トリプルアタック確率",
+						"detail": "＋7％",
+						"image": "bonus_21"
+					},
+					{
+						"name": "弱体成功率",
+						"detail": "＋5％",
+						"image": "bonus_4"
+					}
+				],
+				"max_level": 20,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "3",
+				"max_evolution": 3,
+				"evolution_info": {
+					"level": "20",
+					"evolution": "3",
+					"max_level": 20,
+					"max_evolution": 3,
+					"is_max_level": true,
+					"is_limited_level": true,
+					"use_item": [
+						{
+							"use_item_id": "10590",
+							"use_item_kind": "10",
+							"use_item_num": "12",
+							"use_item_name": "ソラリス・ラピス",
+							"has_num": 37,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10680",
+							"use_item_kind": "10",
+							"use_item_num": "8",
+							"use_item_name": "燦輝の精粋晶",
+							"has_num": 24,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10522",
+							"use_item_kind": "10",
+							"use_item_num": "20",
+							"use_item_name": "エクス・コロゥの真なるアニマ",
+							"has_num": 143,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10521",
+							"use_item_kind": "10",
+							"use_item_num": "70",
+							"use_item_name": "煌后の冠片",
+							"has_num": 256,
+							"has_item": true
+						}
+					],
+					"has_item": true,
+					"can_evolution": false,
+					"condition_text": [],
+					"next_evolution_max_level": 20
+				}
+			},
+			{
+				"item_id": "9011",
+				"image": "9011",
+				"name": "暗翳禍つ悪鬼の印章",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "暗翳禍つ悪鬼の影を<br>封する力を齎す神秘の紋章。",
+				"number": "1",
+				"category_id": "4",
+				"sort_id": "6",
+				"action_list": [],
+				"level": "20",
+				"exp": "438000",
+				"total_exp": 438000,
+				"effective_acquired_bonus": [
+					{
+						"name": "光属性ダメージ軽減",
+						"detail": "＋10％",
+						"image": "bonus_11"
+					},
+					{
+						"name": "防御力",
+						"detail": "＋12％",
+						"image": "bonus_2"
+					},
+					{
+						"name": "ダブルアタック確率",
+						"detail": "＋6％",
+						"image": "bonus_20"
+					},
+					{
+						"name": "回復上限",
+						"detail": "＋12％",
+						"image": "bonus_13"
+					},
+					{
+						"name": "弱体耐性",
+						"detail": "＋10％",
+						"image": "bonus_3"
+					},
+					{
+						"name": "トリプルアタック確率",
+						"detail": "＋7％",
+						"image": "bonus_21"
+					},
+					{
+						"name": "弱体成功率",
+						"detail": "＋5％",
+						"image": "bonus_4"
+					}
+				],
+				"max_level": 20,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "3",
+				"max_evolution": 3,
+				"evolution_info": {
+					"level": "20",
+					"evolution": "3",
+					"max_level": 20,
+					"max_evolution": 3,
+					"is_max_level": true,
+					"is_limited_level": true,
+					"use_item": [
+						{
+							"use_item_id": "10612",
+							"use_item_kind": "10",
+							"use_item_num": "12",
+							"use_item_name": "テネブライ・ラピス",
+							"has_num": 71,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10686",
+							"use_item_kind": "10",
+							"use_item_num": "8",
+							"use_item_name": "懺禍の精粋晶",
+							"has_num": 27,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10543",
+							"use_item_kind": "10",
+							"use_item_num": "20",
+							"use_item_name": "エクス・ディアボロスの真なるアニマ",
+							"has_num": 239,
+							"has_item": true
+						},
+						{
+							"use_item_id": "10542",
+							"use_item_kind": "10",
+							"use_item_num": "70",
+							"use_item_name": "血染の鉤爪",
+							"has_num": 497,
+							"has_item": true
+						}
+					],
+					"has_item": true,
+					"can_evolution": false,
+					"condition_text": [],
+					"next_evolution_max_level": 20
+				}
+			}
+		],
+		"is_active": true
+	},
+	{
+		"category_id": "5",
+		"name": "その他",
+		"type": "2",
+		"item": [
+			{
+				"item_id": "9003",
+				"image": "9003",
+				"name": "十天光輝の楯",
+				"set_flg": "0",
+				"change_possible_at": null,
+				"comment": "十天衆を総べし者である事を<br>証明する認定楯。<br>曇りなき透明は対立や対照されることなく、<br>全てを静かに見守る姿勢であることを示す。",
+				"number": "1",
+				"category_id": "5",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 109003,
+						"comment": "バトル開始時に十天衆のステータスと奥義ゲージが上昇する。",
+						"set_flg": 0
+					}
+				],
+				"level": "1",
+				"exp": "0",
+				"total_exp": 0,
+				"max_level": 0,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "0",
+				"max_evolution": 0,
+				"evolution_info": []
+			},
+			{
+				"item_id": "9005",
+				"image": "9005",
+				"name": "エターナルプレミアムフライデー",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "プレミアムフライデーが永遠に続くように<br>という願いが込められた黄金の像。",
+				"number": "1",
+				"category_id": "5",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 109005,
+						"comment": "毎月最終金曜日の15時から<br>日曜日の24時までにログインすることで、<br>アイテムを受け取ることができる。",
+						"set_flg": 1
+					}
+				],
+				"level": "1",
+				"exp": "0",
+				"total_exp": 0,
+				"max_level": 0,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "0",
+				"max_evolution": 0,
+				"evolution_info": []
+			},
+			{
+				"item_id": "9012",
+				"image": "9012",
+				"name": "リーベル・イニティス",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "星は巡り、空は広がる。<br>其が語るは開闢の史。",
+				"number": "1",
+				"category_id": "5",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 109012,
+						"comment": "アイテムドロップ率が3％UPする。",
+						"set_flg": 1
+					}
+				],
+				"level": "1",
+				"exp": "0",
+				"total_exp": 0,
+				"max_level": 1,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "0",
+				"max_evolution": 0,
+				"evolution_info": []
+			},
+			{
+				"item_id": "9013",
+				"image": "9013",
+				"name": "シグナム・へレディス",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "その輝きは憧憬と畏怖の証。<br>戴冠者の行く末は、空のみぞ知る。",
+				"number": "1",
+				"category_id": "5",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 109009,
+						"comment": "全属性攻撃力が3％UPする。",
+						"set_flg": 1
+					}
+				],
+				"level": "1",
+				"exp": "0",
+				"total_exp": 0,
+				"max_level": 1,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "0",
+				"max_evolution": 0,
+				"evolution_info": []
+			},
+			{
+				"item_id": "9014",
+				"image": "9014",
+				"name": "オプリメル・フラゴル",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "六彩の圧を以て、抑えられし力の源。<br>その均衡は脆弱にして儚く、<br>触れし刹那に崩れゆく。",
+				"number": "1",
+				"category_id": "5",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 109010,
+						"comment": "全属性キャラのダメージ上限が3％UPする。",
+						"set_flg": 1
+					}
+				],
+				"level": "1",
+				"exp": "0",
+				"total_exp": 0,
+				"max_level": 1,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "0",
+				"max_evolution": 0,
+				"evolution_info": []
+			},
+			{
+				"item_id": "9015",
+				"image": "9015_10",
+				"name": "シンボルム・アミキティアエ",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "共に空を駆けし仲間たちに贈る徽章。<br>志を同じくする仲間に共鳴して、<br>その徽章の輝きは増していく。",
+				"number": "1",
+				"category_id": 5,
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 109011,
+						"comment": "全属性キャラの与ダメージがUPする。",
+						"set_flg": 1
+					}
+				],
+				"level": "1",
+				"exp": "0",
+				"total_exp": 0,
+				"max_level": 0,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "0",
+				"max_evolution": 0,
+				"evolution_info": [],
+				"effective_acquired_bonus": {
+					"current_bonus": {
+						"possession": 900,
+						"buff_kind": 110,
+						"ailment_id": "1950016001",
+						"value": 4,
+						"target_attribute": null,
+						"category_id": 7,
+						"is_max": false,
+						"bonus": 4,
+						"name": "与ダメージ",
+						"image": "bonus_1",
+						"detail": "＋4％",
+						"next_upgrade": 910
+					},
+					"memorial_current_bonus": [
+						{
+							"detail": "＋0.5％",
+							"name": "与ダメージ",
+							"image": "bonus_1",
+							"requirement_add_value": null,
+							"requirement_value": 300,
+							"is_open": true
+						},
+						{
+							"detail": "＋0.5％",
+							"name": "与ダメージ",
+							"image": "bonus_1",
+							"requirement_add_value": null,
+							"requirement_value": 600,
+							"is_open": true
+						},
+						{
+							"detail": "＋0.1％",
+							"name": "与ダメージ",
+							"image": "bonus_1",
+							"requirement_add_value": "10",
+							"requirement_value": 600,
+							"is_open": true
+						}
+					]
+				}
+			},
+			{
+				"item_id": "9016",
+				"image": "9016",
+				"name": "十二神将の御朱印帳",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "十二神将の祈りと祝福が込められた御朱印を収めている帳面。<br>注連縄を模した飾りは一切の不浄と煩悩を<br>打ち払い、歳神の象徴に彩られた檀紙から<br>漂う桜の香りは持つ者の心身を清める。",
+				"number": "1",
+				"category_id": "5",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 109006,
+						"comment": "バトル開始時に十二神将のステータスと奥義ゲージが上昇する。",
+						"set_flg": 1
+					}
+				],
+				"level": "1",
+				"exp": "0",
+				"total_exp": 0,
+				"max_level": 0,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "0",
+				"max_evolution": 0,
+				"evolution_info": []
+			},
+			{
+				"item_id": "9017",
+				"image": "9017",
+				"name": "三界の繋環",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "空と地と星。<br>手を取り合った三界の叡智の結晶。<br>消えゆく運命にあった星を空に繋ぎ止め、<br>刹那の安寧を齎す。",
+				"number": "1",
+				"category_id": "5",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 109008,
+						"comment": "チェインバーストの性能が5%UPする。",
+						"set_flg": 1
+					}
+				],
+				"level": "1",
+				"exp": "0",
+				"total_exp": 0,
+				"max_level": 0,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "0",
+				"max_evolution": 0,
+				"evolution_info": []
+			},
+			{
+				"item_id": "9018",
+				"image": "9018",
+				"name": "おもいでてちょう",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "摩訶不思議な力によって突然幼児の姿になってしまった仲間たちの成長を記録した手帳。<br>消し去りたいと考えている者や中身に興味を持つ者がいるため大事にしまっておこう。<br><font color=\"#ffa826\">※セットしても効果はありません</font>",
+				"number": "1",
+				"category_id": "5",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 109002,
+						"comment": "",
+						"set_flg": 1
+					}
+				],
+				"level": "1",
+				"exp": "0",
+				"total_exp": 0,
+				"max_level": 0,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "0",
+				"max_evolution": 0,
+				"evolution_info": []
+			}
+		],
+		"is_active": true
+	},
+	{
+		"category_id": "6",
+		"name": "四聖の玲瓏佩",
+		"type": "3",
+		"item": [
+			{
+				"item_id": "1001",
+				"image": "1001",
+				"name": "祝融の玲瓏佩",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "生命の結託と共存を促す<br>朱火の力が息づく佩び物。<br>南方に座す四象に呼応する。<br><br>火属性キャラに強化効果が適用される。",
+				"number": "1",
+				"category_id": "6",
+				"sort_id": "",
+				"action_list": [],
+				"level": "10",
+				"exp": "200000",
+				"total_exp": 200000,
+				"effective_acquired_bonus": [
+					{
+						"name": "火属性攻撃力",
+						"detail": "＋10％",
+						"image": "bonus_8"
+					},
+					{
+						"name": "防御力",
+						"detail": "＋10％",
+						"image": "bonus_2"
+					},
+					{
+						"name": "アビリティダメージ",
+						"detail": "＋5％",
+						"image": "bonus_18"
+					},
+					{
+						"name": "奥義ダメージ",
+						"detail": "＋5％",
+						"image": "bonus_19"
+					},
+					{
+						"name": "対風属性与ダメージ",
+						"detail": "＋5％",
+						"image": "bonus_1"
+					},
+					{
+						"name": "通常攻撃ダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_1"
+					},
+					{
+						"name": "アビリティダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_18"
+					},
+					{
+						"name": "奥義ダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_19"
+					}
+				],
+				"max_level": 10,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "0",
+				"max_evolution": 0,
+				"evolution_info": []
+			},
+			{
+				"item_id": "1002",
+				"image": "1002",
+				"name": "玄冥の玲瓏佩",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "邪気や殃禍を払い除ける<br>玄水の力が息づく佩び物。<br>北方に座す四象に呼応する。<br><br>水属性キャラに強化効果が適用される。",
+				"number": "1",
+				"category_id": "6",
+				"sort_id": "",
+				"action_list": [],
+				"level": "10",
+				"exp": "200000",
+				"total_exp": 200000,
+				"effective_acquired_bonus": [
+					{
+						"name": "水属性攻撃力",
+						"detail": "＋10％",
+						"image": "bonus_9"
+					},
+					{
+						"name": "防御力",
+						"detail": "＋10％",
+						"image": "bonus_2"
+					},
+					{
+						"name": "アビリティダメージ",
+						"detail": "＋5％",
+						"image": "bonus_18"
+					},
+					{
+						"name": "奥義ダメージ",
+						"detail": "＋5％",
+						"image": "bonus_19"
+					},
+					{
+						"name": "対火属性与ダメージ",
+						"detail": "＋5％",
+						"image": "bonus_1"
+					},
+					{
+						"name": "通常攻撃ダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_1"
+					},
+					{
+						"name": "アビリティダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_18"
+					},
+					{
+						"name": "奥義ダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_19"
+					}
+				],
+				"max_level": 10,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "0",
+				"max_evolution": 0,
+				"evolution_info": []
+			},
+			{
+				"item_id": "1003",
+				"image": "1003",
+				"name": "蓐収の玲瓏佩",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "山河や国家を形作る<br>白岩の力が息づく佩び物。<br>西方に座す四象に呼応する。<br><br>土属性キャラに強化効果が適用される。",
+				"number": "1",
+				"category_id": "6",
+				"sort_id": "",
+				"action_list": [],
+				"level": "10",
+				"exp": "200000",
+				"total_exp": 200000,
+				"effective_acquired_bonus": [
+					{
+						"name": "土属性攻撃力",
+						"detail": "＋10％",
+						"image": "bonus_10"
+					},
+					{
+						"name": "防御力",
+						"detail": "＋10％",
+						"image": "bonus_2"
+					},
+					{
+						"name": "アビリティダメージ",
+						"detail": "＋5％",
+						"image": "bonus_18"
+					},
+					{
+						"name": "奥義ダメージ",
+						"detail": "＋5％",
+						"image": "bonus_19"
+					},
+					{
+						"name": "対水属性与ダメージ",
+						"detail": "＋5％",
+						"image": "bonus_1"
+					},
+					{
+						"name": "通常攻撃ダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_1"
+					},
+					{
+						"name": "アビリティダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_18"
+					},
+					{
+						"name": "奥義ダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_19"
+					}
+				],
+				"max_level": 10,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "0",
+				"max_evolution": 0,
+				"evolution_info": []
+			},
+			{
+				"item_id": "1004",
+				"image": "1004",
+				"name": "句芒の玲瓏佩",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "鉱脈や水源を生み出す<br>青風の力が息づく佩び物。<br>東方に座す四象に呼応する。<br><br>風属性キャラに強化効果が適用される。",
+				"number": "1",
+				"category_id": "6",
+				"sort_id": "",
+				"action_list": [],
+				"level": "10",
+				"exp": "200000",
+				"total_exp": 200000,
+				"effective_acquired_bonus": [
+					{
+						"name": "風属性攻撃力",
+						"detail": "＋10％",
+						"image": "bonus_7"
+					},
+					{
+						"name": "防御力",
+						"detail": "＋10％",
+						"image": "bonus_2"
+					},
+					{
+						"name": "アビリティダメージ",
+						"detail": "＋5％",
+						"image": "bonus_18"
+					},
+					{
+						"name": "奥義ダメージ",
+						"detail": "＋5％",
+						"image": "bonus_19"
+					},
+					{
+						"name": "対土属性与ダメージ",
+						"detail": "＋5％",
+						"image": "bonus_1"
+					},
+					{
+						"name": "通常攻撃ダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_1"
+					},
+					{
+						"name": "アビリティダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_18"
+					},
+					{
+						"name": "奥義ダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_19"
+					}
+				],
+				"max_level": 10,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "0",
+				"max_evolution": 0,
+				"evolution_info": []
+			},
+			{
+				"item_id": "1005",
+				"image": "1005",
+				"name": "黄金の龍心",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "生命と祝福を授ける<br>燦光の力を秘めた高雅なる黄金。<br>中央に座す瑞獣に呼応する。<br><br>光属性キャラに強化効果が適用される。",
+				"number": "1",
+				"category_id": "6",
+				"sort_id": "",
+				"action_list": [],
+				"level": "10",
+				"exp": "200000",
+				"total_exp": 200000,
+				"effective_acquired_bonus": [
+					{
+						"name": "光属性攻撃力",
+						"detail": "＋10％",
+						"image": "bonus_11"
+					},
+					{
+						"name": "防御力",
+						"detail": "＋10％",
+						"image": "bonus_2"
+					},
+					{
+						"name": "アビリティダメージ",
+						"detail": "＋5％",
+						"image": "bonus_18"
+					},
+					{
+						"name": "奥義ダメージ",
+						"detail": "＋5％",
+						"image": "bonus_19"
+					},
+					{
+						"name": "対闇属性与ダメージ",
+						"detail": "＋5％",
+						"image": "bonus_1"
+					},
+					{
+						"name": "通常攻撃ダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_1"
+					},
+					{
+						"name": "アビリティダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_18"
+					},
+					{
+						"name": "奥義ダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_19"
+					}
+				],
+				"max_level": 10,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "0",
+				"max_evolution": 0,
+				"evolution_info": []
+			},
+			{
+				"item_id": "1006",
+				"image": "1006",
+				"name": "黒曜石の龍心",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "破滅と災厄を齎す<br>常闇の力を秘めた瑰麗なる宝石。<br>中央に座す瑞獣に呼応する。<br><br>闇属性キャラに強化効果が適用される。",
+				"number": "1",
+				"category_id": "6",
+				"sort_id": "",
+				"action_list": [],
+				"level": "10",
+				"exp": "200000",
+				"total_exp": 200000,
+				"effective_acquired_bonus": [
+					{
+						"name": "闇属性攻撃力",
+						"detail": "＋10％",
+						"image": "bonus_12"
+					},
+					{
+						"name": "防御力",
+						"detail": "＋10％",
+						"image": "bonus_2"
+					},
+					{
+						"name": "アビリティダメージ",
+						"detail": "＋5％",
+						"image": "bonus_18"
+					},
+					{
+						"name": "奥義ダメージ",
+						"detail": "＋5％",
+						"image": "bonus_19"
+					},
+					{
+						"name": "対光属性与ダメージ",
+						"detail": "＋5％",
+						"image": "bonus_1"
+					},
+					{
+						"name": "通常攻撃ダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_1"
+					},
+					{
+						"name": "アビリティダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_18"
+					},
+					{
+						"name": "奥義ダメージ上限",
+						"detail": "＋5％",
+						"image": "bonus_19"
+					}
+				],
+				"max_level": 10,
+				"is_level_max": true,
+				"is_limited_level": true,
+				"evolution": "0",
+				"max_evolution": 0,
+				"evolution_info": []
+			}
+		],
+		"is_active": false
+	},
+	{
+		"category_id": "8",
+		"name": "運命の契環",
+		"type": "2",
+		"item": [
+			{
+				"item_id": "2003",
+				"image": "2003",
+				"name": "リング・オブ・デス",
+				"set_flg": "1",
+				"change_possible_at": null,
+				"comment": "「理の沙」の力が結実し、具現化した指輪。<br>これは\"死\"を冠する星晶獣と契り、共に生を決意せし\"恋人\"の証。",
+				"number": "1",
+				"category_id": "8",
+				"sort_id": "",
+				"action_list": [
+					{
+						"action_no": 1,
+						"action_id": 200301,
+						"comment": "闇属性キャラのHPが30％UPする。",
+						"set_flg": 1
+					},
+					{
+						"action_no": 2,
+						"action_id": 200302,
+						"comment": "闇属性キャラが光属性の敵に与える与ダメージが10%UPする。",
+						"set_flg": 1
+					}
+				]
+			}
+		],
+		"is_active": true
+	}
+]

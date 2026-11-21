@@ -13,7 +13,7 @@
 
 import type { QueryClient } from '@tanstack/svelte-query'
 
-export type SerialSaveKind = 'guidebook' | 'blessings' | 'unseal-priority'
+export type SerialSaveKind = 'guidebook' | 'blessings' | 'unseal-priority' | 'wonders'
 
 /** The mutation key shared by every save of one kind. */
 export function serialSaveKey(kind: SerialSaveKind) {
