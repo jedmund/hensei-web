@@ -3249,6 +3249,5 @@
 	"wonders_party_add": "大事なものを追加",
 	"wonders_party_edit_title": "大事なものを編集",
 	"wonders_party_none_apply": "この編成に適用される大事なものはありません。",
-	"wonders_party_save_failed": "編成の大事なものを保存できませんでした",
-	"wonders_party_include": "{name}を使用"
+	"wonders_party_save_failed": "編成の大事なものを保存できませんでした"
 }
