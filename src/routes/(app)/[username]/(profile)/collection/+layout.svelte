@@ -141,6 +141,15 @@
 		goto(localizeHref(`/${username}/collection/${value}`))
 	}
 
+	// The owner's ⋯ menu holds plain buttons, so each one closes it
+	let actionsMenuOpen = $state(false)
+	function fromMenu(action: () => void) {
+		return () => {
+			actionsMenuOpen = false
+			action()
+		}
+	}
+
 	function handleAddArtifact() {
 		openAddArtifactSidebar()
 	}
@@ -273,7 +282,7 @@
 						/>
 					{/if}
 					{#if data.isOwner}
-						<DropdownMenu>
+						<DropdownMenu bind:open={actionsMenuOpen}>
 							{#snippet trigger({ props })}
 								<Button {...props} variant="ghost" size="small" iconOnly icon="ellipsis" />
 							{/snippet}
@@ -282,12 +291,16 @@
 									<button
 										type="button"
 										class="dropdown-menu-item"
-										onclick={() => (addModalOpen = true)}
+										onclick={fromMenu(() => (addModalOpen = true))}
 									>
 										{addButtonText}
 									</button>
 								{:else if isArtifacts}
-									<button type="button" class="dropdown-menu-item" onclick={handleAddArtifact}>
+									<button
+										type="button"
+										class="dropdown-menu-item"
+										onclick={fromMenu(handleAddArtifact)}
+									>
 										{m.collection_add_artifact()}
 									</button>
 								{:else if isWonders}
@@ -295,7 +308,7 @@
 										type="button"
 										class="dropdown-menu-item"
 										disabled={!wonderCatalogueQuery.data || !ownedWondersQuery.data}
-										onclick={handleAddWonder}
+										onclick={fromMenu(handleAddWonder)}
 									>
 										{m.wonders_add_title()}
 									</button>
@@ -305,7 +318,7 @@
 									<button
 										type="button"
 										class="dropdown-menu-item danger"
-										onclick={handleEnterSelectionMode}
+										onclick={fromMenu(handleEnterSelectionMode)}
 									>
 										{m.collection_delete_type({
 											type: entityNameMap[activeEntityType] ?? activeEntityType
