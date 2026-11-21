@@ -38,7 +38,7 @@ export function isUniteAndFightParty(party: PartyLike): boolean {
 
 /** What decides whether a Wonder shows on a team. */
 export interface WonderTeamContext {
-	/** The team's element; null or undefined shows every element */
+	/** The team's element; without one, only all-element Wonders show */
 	element?: number | null | undefined
 	uniteAndFight: boolean
 }
@@ -47,15 +47,28 @@ export function teamContext(party: PartyLike): WonderTeamContext {
 	return { element: party.element ?? null, uniteAndFight: isUniteAndFightParty(party) }
 }
 
+/** Hidden by the team's content mode: Seals on Unite and Fight teams. Silent, no note. */
+export function hiddenByContentMode(wonder: Wonder, context: WonderTeamContext): boolean {
+	return context.uniteAndFight && wonder.hiddenInUniteAndFight
+}
+
 /**
- * Whether a Wonder applies to a team: its element is null (every element)
- * or the team's, and it isn't hidden in Unite and Fight on a Unite and Fight
- * team. Element 0 is the Null element, not "all", so compare with null.
+ * Whether a team shows a Wonder: its element is null (every element) or the
+ * team's, and its content mode doesn't hide it. Element 0 is the Null
+ * element, not "every element", so compare with null.
  */
 export function appliesToTeam(wonder: Wonder, context: WonderTeamContext): boolean {
-	if (context.uniteAndFight && wonder.hiddenInUniteAndFight) return false
-	if (wonder.element == null || context.element == null) return true
-	return wonder.element === context.element
+	if (hiddenByContentMode(wonder, context)) return false
+	return wonder.element == null || wonder.element === context.element
+}
+
+/**
+ * Whether the edit pane offers a Wonder: battle-relevant and not hidden by
+ * the content mode. Every element is offered, since teams change element
+ * after they're made.
+ */
+export function editableOnTeam(wonder: Wonder, context: WonderTeamContext): boolean {
+	return wonder.battleRelevant && !hiddenByContentMode(wonder, context)
 }
 
 // ============================================================================

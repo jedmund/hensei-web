@@ -1,9 +1,10 @@
 <script lang="ts">
 	/**
 	 * EditWondersPane - a team's Wonders: a toggle per battle-relevant Wonder
-	 * that applies to the team (its element, and no Seals on Unite and
-	 * Fight), with the controls its kind has. Wonders the pane doesn't show
-	 * stay on the team as they were. Save hands the whole set to the opener.
+	 * (every element, since teams change element; no Seals on Unite and
+	 * Fight teams), with the controls its kind has. Wonders the pane doesn't
+	 * show stay on the team as they were. Save hands the whole set to the
+	 * opener.
 	 */
 	import { untrack } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
@@ -16,10 +17,10 @@
 	import { finishStackedPane } from '$lib/stores/stackedPanes'
 	import { wonderQueries } from '$lib/api/queries/wonder.queries'
 	import {
-		appliesToTeam,
 		compareCatalogueOrder,
 		computeBonuses,
 		defaultState,
+		editableOnTeam,
 		groupByCategory,
 		partyWondersPayload,
 		sameSelection,
@@ -50,7 +51,7 @@
 		const catalogue = catalogueQuery.data
 		if (!catalogue) return []
 		return catalogue.wonders
-			.filter((w) => w.battleRelevant && appliesToTeam(w, context))
+			.filter((w) => editableOnTeam(w, context))
 			.sort(compareCatalogueOrder(catalogue))
 	})
 	const groups = $derived(

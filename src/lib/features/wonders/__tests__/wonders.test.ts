@@ -3,6 +3,7 @@ import {
 	appliesToTeam,
 	computeBonuses,
 	defaultState,
+	editableOnTeam,
 	formatBonusNumber,
 	groupByCategory,
 	isUniteAndFightParty,
@@ -51,8 +52,9 @@ describe('appliesToTeam', () => {
 		expect(appliesToTeam(ringOfDeath, { element: 6, uniteAndFight: false })).toBe(true)
 	})
 
-	it('shows every element when the team has none', () => {
-		expect(appliesToTeam(waterSeal, { element: null, uniteAndFight: false })).toBe(true)
+	it('shows only all-element Wonders when the team has no element', () => {
+		expect(appliesToTeam(waterSeal, { element: null, uniteAndFight: false })).toBe(false)
+		expect(appliesToTeam(shield, { element: null, uniteAndFight: false })).toBe(true)
 	})
 
 	it('treats element 0 (Null) as an element, not as all', () => {
@@ -64,6 +66,21 @@ describe('appliesToTeam', () => {
 	it('hides Seals on Unite and Fight teams', () => {
 		expect(appliesToTeam(waterSeal, { element: 2, uniteAndFight: true })).toBe(false)
 		expect(appliesToTeam(shield, { element: 2, uniteAndFight: true })).toBe(true)
+	})
+})
+
+describe('editableOnTeam', () => {
+	it('offers battle-relevant Wonders of every element', () => {
+		const ctx = { element: 1, uniteAndFight: false }
+		expect(editableOnTeam(waterSeal, ctx)).toBe(true)
+		expect(editableOnTeam(ringOfDeath, ctx)).toBe(true)
+		expect(editableOnTeam(tiamat, ctx)).toBe(false)
+	})
+
+	it('leaves out Seals on Unite and Fight teams', () => {
+		const ctx = { element: 1, uniteAndFight: true }
+		expect(editableOnTeam(fireSeal, ctx)).toBe(false)
+		expect(editableOnTeam(symbolum, ctx)).toBe(true)
 	})
 })
 
