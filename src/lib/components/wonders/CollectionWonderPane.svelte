@@ -89,7 +89,8 @@
 					/>
 				{/if}
 				<DetailRow label={m.wonders_level_label()} value={row.level ?? '—'} />
-			{:else if wonder.kind === 'scaling'}
+			{:else if wonder.kind === 'scaling' && isOwner}
+				<!-- The count is the owner's; visitors see only the bonus it gives -->
 				<DetailRow label={m.wonders_recruited_label()} value={row.possession ?? '—'} />
 			{/if}
 		</div>

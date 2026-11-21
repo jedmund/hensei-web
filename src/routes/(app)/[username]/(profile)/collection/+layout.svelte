@@ -113,8 +113,10 @@
 
 	function handleAddWonder() {
 		const catalogue = wonderCatalogueQuery.data
-		if (!catalogue) return
-		openAddCollectionWonderPane(catalogue, ownedWondersQuery.data ?? [])
+		const owned = ownedWondersQuery.data
+		// Both, so Wonders already owned aren't offered again
+		if (!catalogue || !owned) return
+		openAddCollectionWonderPane(catalogue, owned)
 	}
 
 	// Localized entity names for parameterized messages
@@ -264,11 +266,14 @@
 				/>
 
 				<div class="nav-right">
-					<ViewModeToggle
-						value={viewMode.collectionView}
-						onValueChange={(mode) => viewMode.setCollectionView(mode)}
-						element={userElement}
-					/>
+					<!-- Wonders have one layout, grouped by category -->
+					{#if !isWonders}
+						<ViewModeToggle
+							value={viewMode.collectionView}
+							onValueChange={(mode) => viewMode.setCollectionView(mode)}
+							element={userElement}
+						/>
+					{/if}
 					{#if data.isOwner}
 						<DropdownMenu>
 							{#snippet trigger({ props })}
@@ -291,7 +296,7 @@
 									<button
 										type="button"
 										class="dropdown-menu-item"
-										disabled={!wonderCatalogueQuery.data}
+										disabled={!wonderCatalogueQuery.data || !ownedWondersQuery.data}
 										onclick={handleAddWonder}
 									>
 										{m.wonders_add_title()}
