@@ -8,7 +8,7 @@ import { wonderText } from '$lib/features/wonders/labels'
 import { getWonderImage } from '$lib/utils/images/wonders'
 import type { OwnedWonder, Wonder, WonderCatalogue } from '$lib/types/api/wonder'
 import CollectionWonderPane from './CollectionWonderPane.svelte'
-import CollectionWonderEditPane from './CollectionWonderEditPane.svelte'
+import AddCollectionWonderPane from './AddCollectionWonderPane.svelte'
 
 export function openCollectionWonderPane(
 	wonder: Wonder,
@@ -27,8 +27,8 @@ export function openCollectionWonderPane(
 export function openAddCollectionWonderPane(catalogue: WonderCatalogue, owned: OwnedWonder[]) {
 	sidebar.openWithComponent(
 		m.wonders_add_title(),
-		CollectionWonderEditPane,
-		{ catalogue, mode: { kind: 'add', ownedIds: owned.map((row) => row.wonderId) } },
+		AddCollectionWonderPane,
+		{ catalogue, ownedIds: owned.map((row) => row.wonderId) },
 		{ scrollable: true }
 	)
 }
