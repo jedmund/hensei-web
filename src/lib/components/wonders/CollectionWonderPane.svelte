@@ -8,6 +8,7 @@
 	import { toast } from 'svelte-sonner'
 	import { m } from '$lib/paraglide/messages'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
+	import Switch from '$lib/components/ui/switch/Switch.svelte'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import WonderImage from './WonderImage.svelte'
 	import WonderDetails from './WonderDetails.svelte'
@@ -74,10 +75,9 @@
 	<div class="overview">
 		<WonderImage image={row.image} alt={name} size={96} {inactive} />
 		<div class="status">
-			<DetailRow
-				label={m.wonders_active_label()}
-				value={inactive ? m.wonders_inactive() : m.wonders_active_label()}
-			/>
+			<DetailRow label={m.wonders_active_label()} compact>
+				<Switch checked={!inactive} disabled size="small" />
+			</DetailRow>
 			{#if wonder.kind === 'leveled'}
 				{#if maxEvolutionFor(wonder) > 0}
 					<DetailRow

@@ -3428,7 +3428,6 @@
 	"wonders_uncap_up": "Raise uncap",
 	"wonders_uncap_value": "{evolution} / {max}",
 	"wonders_active_label": "Active",
-	"wonders_inactive": "Inactive",
 	"wonders_recruited_label": "Recruited characters",
 	"wonders_recruited_hint": "Enter the count shown in game. Collab characters and characters still in the crate don't count.",
 	"wonders_effects_title": "Effects",
