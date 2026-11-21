@@ -22,7 +22,8 @@
 	import type { Party } from '$lib/types/api/party'
 	import UnsealPriorityPane from '$lib/components/solomonis/grid/UnsealPriorityPane.svelte'
 	import { PRIORITY_TYPES, priorityLists } from '$lib/components/solomonis/grid/seal'
-	import { openEditSolomonisPane, showSolomonisPane } from './openSolomonisPanes'
+	import { openEditSolomonisPane } from './openSolomonisPanes'
+	import { showStackedPane } from '$lib/stores/stackedPanes'
 	import {
 		hasStats,
 		isFullExpedition,
@@ -58,7 +59,7 @@
 	const anyRanked = $derived(PRIORITY_TYPES.some((type) => priority[type].ranked.length > 0))
 
 	function openPriorityPane() {
-		showSolomonisPane(m.solomonis_web_grid_priority_title(), UnsealPriorityPane, {
+		showStackedPane(m.solomonis_web_grid_priority_title(), UnsealPriorityPane, {
 			canEdit: canWrite
 		})
 	}
