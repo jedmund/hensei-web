@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { importCollectionWondersOptions, updatePartyWondersOptions } from '../wonder.mutations'
+import { updatePartyWondersOptions } from '../wonder.mutations'
 import { wonderAdapter } from '$lib/api/adapters/wonder.adapter'
-import { wonderKeys } from '$lib/api/queries/wonder.queries'
 import { createTestQueryClient, seedPartyCache, getCachedParty } from './helpers'
 import type { QueryClient } from '@tanstack/svelte-query'
 import type { Party } from '$lib/types/api/party'
@@ -11,8 +10,7 @@ vi.mock('svelte-sonner', () => ({ toast: { error: vi.fn(), success: vi.fn() } })
 
 vi.mock('$lib/api/adapters/wonder.adapter', () => ({
 	wonderAdapter: {
-		updatePartyWonders: vi.fn(),
-		importCollection: vi.fn()
+		updatePartyWonders: vi.fn()
 	}
 }))
 
@@ -63,25 +61,5 @@ describe('updatePartyWondersOptions', () => {
 		const cached = getCachedParty(queryClient, PARTY.shortcode)
 		expect(cached?.wonders).toEqual(saved)
 		expect(cached?.favorited).toBe(true)
-	})
-})
-
-describe('importCollectionWondersOptions', () => {
-	it('passes data and lang and refreshes the collection', async () => {
-		vi.mocked(wonderAdapter.importCollection).mockResolvedValue({
-			success: true,
-			created: 1,
-			updated: 0,
-			skipped: [],
-			warnings: []
-		})
-		const invalidate = vi.spyOn(queryClient, 'invalidateQueries')
-		const opts = importCollectionWondersOptions(queryClient)
-
-		await opts.mutationFn({ data: [{ category_id: '1' }], lang: 'en' })
-		opts.onSettled()
-
-		expect(wonderAdapter.importCollection).toHaveBeenCalledWith([{ category_id: '1' }], 'en')
-		expect(invalidate).toHaveBeenCalledWith({ queryKey: wonderKeys.collectionBase })
 	})
 })

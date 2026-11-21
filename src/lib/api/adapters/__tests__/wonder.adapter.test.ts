@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { WonderAdapter } from '../wonder.adapter'
 import { mockApiResponse } from './fixtures/helpers'
-import memorialList from './fixtures/wonders/memorial_list.ja.json'
 
 const BASE = 'https://api.example.com'
 
@@ -140,42 +139,6 @@ describe('WonderAdapter', () => {
 		await adapter.removeFromCollection('cw-1')
 
 		expect(lastCall()).toMatchObject({ url: `${BASE}/collection/wonders/cw-1`, method: 'DELETE' })
-	})
-
-	it('importCollection sends the raw capture unchanged', async () => {
-		global.fetch = mockApiResponse({
-			success: true,
-			created: 3,
-			updated: 10,
-			skipped: [{ granblue_id: '9999', name: 'Not In Catalogue', reason: 'unknown_wonder' }],
-			warnings: []
-		})
-
-		const result = await adapter.importCollection(memorialList, 'ja')
-
-		const call = lastCall()
-		expect(call.url).toBe(`${BASE}/collection/wonders/import`)
-		expect(call.method).toBe('POST')
-		expect(call.body).toEqual({ data: memorialList, lang: 'ja' })
-		expect(result.skipped[0]).toEqual({
-			granblueId: '9999',
-			name: 'Not In Catalogue',
-			reason: 'unknown_wonder'
-		})
-	})
-
-	it('importCollection leaves lang out when it is unknown', async () => {
-		global.fetch = mockApiResponse({
-			success: true,
-			created: 0,
-			updated: 0,
-			skipped: [],
-			warnings: []
-		})
-
-		await adapter.importCollection(memorialList)
-
-		expect(lastCall().body).toEqual({ data: memorialList })
 	})
 
 	it('updatePartyWonders replaces the set and passes the edit key', async () => {

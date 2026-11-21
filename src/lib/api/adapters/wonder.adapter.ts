@@ -1,8 +1,7 @@
 /**
  * Wonders Adapter
  *
- * The Wonder catalogue, a user's collected Wonders (with the game import)
- * and a party's snapshotted Wonders. Contract: GBF-282.
+ * The Wonder catalogue, a user's collected Wonders and a party's snapshotted Wonders. Contract: GBF-282.
  *
  * @module adapters/wonder
  */
@@ -15,8 +14,7 @@ import type {
 	CollectionWonderUpdate,
 	OwnedWonder,
 	PartyWonderInput,
-	WonderCatalogue,
-	WonderImportResult
+	WonderCatalogue
 } from '$lib/types/api/wonder'
 
 export class WonderAdapter extends BaseAdapter {
@@ -57,18 +55,6 @@ export class WonderAdapter extends BaseAdapter {
 	/** Removes one of the current user's Wonders. */
 	async removeFromCollection(id: string): Promise<void> {
 		return this.request<void>(`/collection/wonders/${id}`, { method: 'DELETE' })
-	}
-
-	/**
-	 * Imports the game's Wonders page (`/item/memorial_list/1`): the raw
-	 * response array, sent as is. Unknown Wonders come back in `skipped`.
-	 * @param lang - the game's language, when known
-	 */
-	async importCollection(data: unknown[], lang?: 'en' | 'ja'): Promise<WonderImportResult> {
-		return this.request<WonderImportResult>('/collection/wonders/import', {
-			method: 'POST',
-			body: lang ? { data, lang } : { data }
-		})
 	}
 
 	/**

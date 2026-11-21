@@ -130,18 +130,3 @@ export type CollectionWonderUpdate = Omit<CollectionWonderInput, 'wonderId'>
 export interface PartyWonderInput extends WonderState {
 	wonderId: string
 }
-
-export interface WonderImportSkipped {
-	granblueId: string
-	name: string
-	reason: string
-}
-
-/** `POST /collection/wonders/import` */
-export interface WonderImportResult {
-	success: boolean
-	created: number
-	updated: number
-	skipped: WonderImportSkipped[]
-	warnings: unknown[]
-}

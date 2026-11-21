@@ -17,7 +17,6 @@
 	import AddToCollectionModal from '$lib/components/collection/AddToCollectionModal.svelte'
 	import BulkDeleteConfirmModal from '$lib/components/collection/BulkDeleteConfirmModal.svelte'
 	import { openAddArtifactSidebar } from '$lib/features/collection/openAddArtifactSidebar'
-	import WonderImportDialog from '$lib/components/wonders/WonderImportDialog.svelte'
 	import { openAddCollectionWonderPane } from '$lib/components/wonders/openCollectionWonderPanes'
 	import { wonderQueries } from '$lib/api/queries/wonder.queries'
 	import {
@@ -98,7 +97,7 @@
 	// Whether to show the add button for artifacts (uses sidebar instead of modal)
 	const isArtifacts = $derived(activeEntityType === 'artifacts')
 
-	// Wonders: added in the sidebar or imported from the game, removed one at
+	// Wonders: added in the sidebar (or imported by the extension), removed one at
 	// a time (no bulk delete). The page shares these queries' cache.
 	const isWonders = $derived(activeEntityType === 'wonders')
 	const wonderCatalogueQuery = createQuery(() => ({
@@ -109,7 +108,6 @@
 		...wonderQueries.collection(data.user?.id ?? ''),
 		enabled: isWonders && data.isOwner && !!data.user?.id
 	}))
-	let wonderImportOpen = $state(false)
 
 	function handleAddWonder() {
 		const catalogue = wonderCatalogueQuery.data
@@ -301,13 +299,6 @@
 									>
 										{m.wonders_add_title()}
 									</button>
-									<button
-										type="button"
-										class="dropdown-menu-item"
-										onclick={() => (wonderImportOpen = true)}
-									>
-										{m.wonders_import_action()}
-									</button>
 								{/if}
 								{#if !isWonders}
 									<div class="dropdown-menu-separator"></div>
@@ -345,10 +336,6 @@
 			</svelte:boundary>
 		</div>
 	</div>
-{/if}
-
-{#if data.isOwner && isWonders}
-	<WonderImportDialog bind:open={wonderImportOpen} element={userElement} />
 {/if}
 
 {#if data.isOwner && modalEntityType}

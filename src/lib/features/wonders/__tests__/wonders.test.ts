@@ -10,7 +10,6 @@ import {
 	joinWonders,
 	maxLevelFor,
 	normalizeState,
-	parseWondersPage,
 	partyWondersPayload,
 	sameSelection,
 	selectionFromParty,
@@ -275,24 +274,5 @@ describe('partyWondersPayload', () => {
 		expect(Object.keys(selection)).toEqual([fireSeal.id, shield.id])
 		expect(sameSelection(selection, selectionFromParty(existing, editable))).toBe(true)
 		expect(partyWondersPayload(existing, editable, selection)).toHaveLength(3)
-	})
-})
-
-describe('parseWondersPage', () => {
-	it('reads a capture and guesses its language', async () => {
-		const ja = await import('$lib/api/adapters/__tests__/fixtures/wonders/memorial_list.ja.json')
-		const parsed = parseWondersPage(JSON.stringify(ja.default))
-		expect(parsed?.lang).toBe('ja')
-		expect(parsed?.data).toEqual(ja.default)
-
-		const en = [{ category_id: '1', name: 'Girl in Blue', item: [] }]
-		expect(parseWondersPage(JSON.stringify(en))?.lang).toBe('en')
-	})
-
-	it('rejects anything else', () => {
-		expect(parseWondersPage('')).toBeNull()
-		expect(parseWondersPage('{"item": []}')).toBeNull()
-		expect(parseWondersPage('[]')).toBeNull()
-		expect(parseWondersPage('[{"name": "x"}]')).toBeNull()
 	})
 })

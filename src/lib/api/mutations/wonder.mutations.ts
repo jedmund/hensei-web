@@ -53,18 +53,6 @@ export function removeCollectionWonderOptions(queryClient: QueryClient) {
 	}
 }
 
-export interface ImportWondersParams {
-	data: unknown[]
-	lang?: 'en' | 'ja'
-}
-
-export function importCollectionWondersOptions(queryClient: QueryClient) {
-	return {
-		mutationFn: ({ data, lang }: ImportWondersParams) => wonderAdapter.importCollection(data, lang),
-		onSettled: () => invalidateCollection(queryClient)
-	}
-}
-
 export function useAddCollectionWonder() {
 	const queryClient = useQueryClient()
 	return createMutation(() => addCollectionWonderOptions(queryClient))
@@ -78,11 +66,6 @@ export function useUpdateCollectionWonder() {
 export function useRemoveCollectionWonder() {
 	const queryClient = useQueryClient()
 	return createMutation(() => removeCollectionWonderOptions(queryClient))
-}
-
-export function useImportCollectionWonders() {
-	const queryClient = useQueryClient()
-	return createMutation(() => importCollectionWondersOptions(queryClient))
 }
 
 // ============================================================================
