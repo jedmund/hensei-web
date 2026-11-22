@@ -50,7 +50,8 @@
 	{/if}
 
 	{#each visible as { wonder, row } (row.id)}
-		{@const summary = wonderSummary(wonder, row)}
+		<!-- Symbolum's strength is already its bonus row; Seals and Yupei show their level -->
+		{@const summary = wonder.kind === 'scaling' ? null : wonderSummary(wonder, row)}
 		{@const effects = wonderEffectTexts(wonder)}
 		<section class="wonder">
 			<div class="wonder-header">
@@ -104,6 +105,7 @@
 	.wonder-name {
 		display: flex;
 		flex-direction: column;
+		gap: $unit-half;
 		min-width: 0;
 	}
 
