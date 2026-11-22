@@ -6,7 +6,6 @@
 	import DescriptionTile from './DescriptionTile.svelte'
 	import RaidTile from './RaidTile.svelte'
 	import VideoTile from './VideoTile.svelte'
-	import WondersTile from '$lib/components/wonders/WondersTile.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import PartiesPane from '$lib/components/sidebar/PartiesPane.svelte'
 	import { openCalculatorPane } from '$lib/features/party/openCalculatorPane'
@@ -157,9 +156,6 @@
 			{/if}
 		</div>
 	{/if}
-
-	<!-- Row 3: Wonders (renders nothing when none apply and the viewer can't edit) -->
-	<WondersTile {party} {canEdit} />
 </div>
 
 <style lang="scss">

@@ -13,6 +13,7 @@
 	import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
 	import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
 	import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
+	import WondersTile from '$lib/components/wonders/WondersTile.svelte'
 	import JobSection from '$lib/components/job/JobSection.svelte'
 	import { Gender } from '$lib/utils/jobUtils'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -143,6 +144,8 @@
 					onRemoveGuidebook={handleRemoveGuidebook}
 					{collectionWeaponItems}
 				/>
+				<!-- Renders nothing when no Wonder applies and the viewer can't edit -->
+				<WondersTile {party} canEdit={ctx.canEdit()} />
 			</div>
 		{:else if activeTab === GridType.Summon}
 			<SummonGrid summons={party.summons} {collectionSummonItems} />
