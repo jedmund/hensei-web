@@ -12,7 +12,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { wonderQueries } from '$lib/api/queries/wonder.queries'
 	import { visiblePartyWonders } from '$lib/features/wonders/wonders'
-	import { wonderSummary, wonderText } from '$lib/features/wonders/labels'
+	import { wonderEffectTexts, wonderSummary, wonderText } from '$lib/features/wonders/labels'
 	import { openEditWondersPane } from './openPartyWonderPanes'
 	import type { Party } from '$lib/types/api/party'
 
@@ -51,6 +51,7 @@
 
 	{#each visible as { wonder, row } (row.id)}
 		{@const summary = wonderSummary(wonder, row)}
+		{@const effects = wonderEffectTexts(wonder)}
 		<section class="wonder">
 			<div class="wonder-header">
 				<WonderImage image={row.image} size={56} />
@@ -59,9 +60,12 @@
 					{#if summary}
 						<span class="summary">{summary}</span>
 					{/if}
+					{#each effects as effect, i (i)}
+						<span class="effect">{effect}</span>
+					{/each}
 				</div>
 			</div>
-			<WonderDetails {wonder} bonuses={row.bonuses} showDescription={false} />
+			<WonderDetails {wonder} bonuses={row.bonuses} showDescription={false} showEffects={false} />
 		</section>
 	{/each}
 </div>
@@ -110,7 +114,8 @@
 		color: var(--text-primary);
 	}
 
-	.summary {
+	.summary,
+	.effect {
 		font-size: $font-small;
 		color: var(--text-secondary);
 	}

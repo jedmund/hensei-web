@@ -7,7 +7,7 @@
 	import { m } from '$lib/paraglide/messages'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import WonderBonusList from './WonderBonusList.svelte'
-	import { wonderText } from '$lib/features/wonders/labels'
+	import { wonderEffectTexts, wonderText } from '$lib/features/wonders/labels'
 	import type { Wonder, WonderBonus } from '$lib/types/api/wonder'
 
 	interface Props {
@@ -15,16 +15,13 @@
 		bonuses: WonderBonus[]
 		/** Leave out the flavor text (the team pane lists several Wonders) */
 		showDescription?: boolean
+		/** Leave out the Effects section (the team pane puts the effect under the name) */
+		showEffects?: boolean
 	}
 
-	let { wonder, bonuses, showDescription = true }: Props = $props()
+	let { wonder, bonuses, showDescription = true, showEffects = true }: Props = $props()
 
-	const effects = $derived(
-		[...wonder.effects]
-			.sort((a, b) => a.position - b.position)
-			.map((e) => wonderText(e.text))
-			.filter((text) => text !== '—')
-	)
+	const effects = $derived(showEffects ? wonderEffectTexts(wonder) : [])
 	const description = $derived(wonderText(wonder.description))
 </script>
 
