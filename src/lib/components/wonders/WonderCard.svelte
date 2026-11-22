@@ -66,6 +66,15 @@
 			transform: scale(0.97);
 		}
 
+		// The same hover scale as the other collection cards' images
+		:global(.wonder-image) {
+			transition: transform 0.2s ease;
+		}
+
+		&:hover :global(.wonder-image) {
+			transform: scale(1.05);
+		}
+
 		&.inactive .name,
 		&.inactive .summary {
 			color: var(--text-tertiary);
