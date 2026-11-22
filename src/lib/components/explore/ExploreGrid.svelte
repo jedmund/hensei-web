@@ -12,9 +12,19 @@
 		card?: Snippet<[Party, number]>
 		/** Inside a card: outlined reps and tighter columns; a swipeable carousel on phones */
 		contained?: boolean
+		/** Passed to each card: the clear time and button count pills */
+		showClearTime?: boolean
+		showButtonCount?: boolean
 	}
 
-	let { items = [], showRaid = true, card, contained = false }: Props = $props()
+	let {
+		items = [],
+		showRaid = true,
+		card,
+		contained = false,
+		showClearTime = false,
+		showButtonCount = false
+	}: Props = $props()
 </script>
 
 {#if items.length === 0}
@@ -26,7 +36,7 @@
 				{#if card}
 					{@render card(p, i)}
 				{:else}
-					<GridRep party={p} {showRaid} outlined={contained} />
+					<GridRep party={p} {showRaid} outlined={contained} {showClearTime} {showButtonCount} />
 				{/if}
 			</li>
 		{/each}

@@ -342,7 +342,7 @@
 		</div>
 	{:else}
 		<div class="explore-grid">
-			<ExploreGrid {items} />
+			<ExploreGrid {items} showClearTime showButtonCount />
 
 			<div
 				class="load-more-sentinel"
