@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { battleSettings, formatClearTime, performanceMetrics } from '../partySettings'
+import {
+	battleSettings,
+	formatButtonCount,
+	formatClearTime,
+	performanceMetrics
+} from '../partySettings'
 
 describe('battleSettings', () => {
 	it('lists every setting, with charge attack on unless turned off', () => {
@@ -37,5 +42,19 @@ describe('performanceMetrics', () => {
 				(metric) => metric.label
 			)
 		).toEqual(['1:30', '3B', '0C'])
+	})
+})
+
+describe('formatButtonCount', () => {
+	it('runs the recorded counts together, dropping zero chains and summons', () => {
+		expect(formatButtonCount({ buttonCount: 0, chainCount: 0, summonCount: 0 })).toBe('0B')
+		expect(formatButtonCount({ buttonCount: 0, summonCount: 1 })).toBe('0B1S')
+		expect(formatButtonCount({ buttonCount: 2, chainCount: 1, summonCount: null })).toBe('2B1C')
+		expect(formatButtonCount({ summonCount: 1 })).toBe('1S')
+	})
+
+	it('is null when no counts were recorded', () => {
+		expect(formatButtonCount({ clearTime: 21 })).toBeNull()
+		expect(formatButtonCount({ chainCount: 0, summonCount: 0 })).toBeNull()
 	})
 })

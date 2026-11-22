@@ -46,11 +46,24 @@ export function formatClearTime(seconds: number | null | undefined): string | nu
 	return `${minutes}:${(seconds % 60).toString().padStart(2, '0')}`
 }
 
+const count = (n: number | null | undefined, suffix: string) => (n == null ? null : `${n}${suffix}`)
+
+/** The recorded button, chain and summon counts run together, as players
+ * write them (0B1S). Zero chains or summons are left out; null when nothing
+ * was recorded */
+export function formatButtonCount(values: PartySettingsValues): string | null {
+	const nonzero = (n: number | null | undefined) => (n ? n : null)
+	const parts = [
+		count(values.buttonCount, 'B'),
+		count(nonzero(values.chainCount), 'C'),
+		count(nonzero(values.summonCount), 'S')
+	].filter((part) => part !== null)
+	return parts.length > 0 ? parts.join('') : null
+}
+
 /** The performance figures that were recorded: clear time, then button,
  * chain and summon counts */
 export function performanceMetrics(values: PartySettingsValues): Metric[] {
-	const count = (n: number | null | undefined, suffix: string) =>
-		n == null ? null : `${n}${suffix}`
 	const metrics: [string | null, string][] = [
 		[formatClearTime(values.clearTime), m.party_edit_clear_time()],
 		[count(values.buttonCount, 'B'), m.party_edit_button_count()],

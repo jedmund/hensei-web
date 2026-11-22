@@ -248,7 +248,13 @@
 				href={newTeamHref}
 			/>
 		{:else if selected}
-			<ExploreGrid items={parties} showRaid={false} contained />
+			<ExploreGrid
+				items={parties}
+				showRaid={false}
+				contained
+				showClearTime={variant === 'current'}
+				showButtonCount={variant === 'current'}
+			/>
 			{#if seeAllHref && !(isMobile.current && tabs.length > 1)}
 				<Button href={seeAllHref} fullWidth>
 					{m.home_see_all_raid({ raid: localizedName(selected.raid.name) })}

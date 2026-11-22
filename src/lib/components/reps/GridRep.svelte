@@ -13,6 +13,8 @@
 	import { getJobIconUrl } from '$lib/utils/jobUtils'
 	import { avatarBackground, getAvatarSrc } from '$lib/utils/avatar'
 	import { getDefaultRepView } from '$lib/stores/defaultRepView.svelte'
+	import { formatButtonCount, formatClearTime } from '$lib/components/party/info/partySettings'
+	import { RaidSection } from '$lib/utils/raidSection'
 	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
@@ -29,6 +31,10 @@
 		footer?: Snippet
 		/** For reps inside a card: a light stroke and no minimum width */
 		outlined?: boolean
+		/** Show the recorded clear time as a pill beside the battle settings (Event teams only) */
+		showClearTime?: boolean
+		/** Show the recorded button count (0B1S) as a pill beside the battle settings (Event teams only) */
+		showButtonCount?: boolean
 	}
 
 	let {
@@ -41,8 +47,16 @@
 		indicator,
 		showRaid = true,
 		footer,
-		outlined = false
+		outlined = false,
+		showClearTime = false,
+		showButtonCount = false
 	}: Props = $props()
+
+	// Clear times and button counts only mean something for event battles,
+	// not raids or solo content
+	const isEvent = $derived(Number(party.raid?.group?.section) === RaidSection.Event)
+	const clearTime = $derived(isEvent && showClearTime ? formatClearTime(party.clearTime) : null)
+	const buttonCount = $derived(isEvent && showButtonCount ? formatButtonCount(party) : null)
 
 	const updatedAt = $derived(party.lastUpdated ?? party.updatedAt)
 
@@ -168,6 +182,16 @@
 				</div>
 
 				<div class="pills">
+					{#if buttonCount}
+						<Tooltip content={m.party_edit_button_count()}>
+							<span class="pill metric">{buttonCount}</span>
+						</Tooltip>
+					{/if}
+					{#if clearTime}
+						<Tooltip content={m.party_edit_clear_time()}>
+							<span class="pill metric">{clearTime}</span>
+						</Tooltip>
+					{/if}
 					{#if party.chargeAttack}
 						<Tooltip content={m.filter_charge_attack()}>
 							<span class="pill chargeAttack">
@@ -520,7 +544,7 @@
 			flex-shrink: 0;
 			display: inline-flex;
 			align-items: center;
-			gap: spacing.$unit-fourth;
+			gap: calc(#{spacing.$unit-fourth} + 2px);
 
 			.pill {
 				display: inline-flex;
@@ -529,6 +553,16 @@
 				padding: 0 spacing.$unit-half;
 				border-radius: layout.$full-corner;
 				flex-shrink: 0;
+
+				&.metric {
+					background-color: var(--button-bg);
+					color: var(--text-secondary);
+					padding: 2px calc(#{spacing.$unit-half} + 2px);
+					font-size: typography.$font-small;
+					font-weight: typography.$bold;
+					font-variant-numeric: tabular-nums;
+					line-height: 16px;
+				}
 
 				&.chargeAttack {
 					background-color: var(--charge-attack-bg);
