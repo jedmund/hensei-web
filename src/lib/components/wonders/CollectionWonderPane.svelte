@@ -2,7 +2,7 @@
 	/**
 	 * CollectionWonderPane - one collected Wonder: whether it's active, its
 	 * uncap, level or recruited count, and what it does. Owners get Edit
-	 * (pushes CollectionWonderEditPane) and Remove in the overflow menu.
+	 * (pushes WonderSetupPane) and Remove in the overflow menu.
 	 */
 	import { onMount, untrack } from 'svelte'
 	import { toast } from 'svelte-sonner'
@@ -12,29 +12,32 @@
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import WonderImage from './WonderImage.svelte'
 	import WonderDetails from './WonderDetails.svelte'
-	import CollectionWonderEditPane from './CollectionWonderEditPane.svelte'
+	import WonderSetupPane from './WonderSetupPane.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import { useRemoveCollectionWonder } from '$lib/api/mutations/wonder.mutations'
+	import {
+		useRemoveCollectionWonder,
+		useUpdateCollectionWonder
+	} from '$lib/api/mutations/wonder.mutations'
 	import { maxEvolutionFor, symbolumRecruitsUntilNext } from '$lib/features/wonders/wonders'
 	import { wonderText } from '$lib/features/wonders/labels'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { getBasePath } from '$lib/utils/images/core'
-	import type { OwnedWonder, Wonder, WonderCatalogue } from '$lib/types/api/wonder'
+	import type { OwnedWonder, Wonder, WonderState } from '$lib/types/api/wonder'
 
 	interface Props {
 		paneId?: string
 		wonder: Wonder
 		row: OwnedWonder
-		catalogue: WonderCatalogue
 		isOwner: boolean
 	}
 
-	let { paneId, wonder, row: initialRow, catalogue, isOwner }: Props = $props()
+	let { paneId, wonder, row: initialRow, isOwner }: Props = $props()
 
 	let row = $state(untrack(() => initialRow))
 	let confirmOpen = $state(false)
 
 	const removeMutation = useRemoveCollectionWonder()
+	const updateMutation = useUpdateCollectionWonder()
 	const name = $derived(wonderText(wonder.name))
 	const inactive = $derived(row.active === false)
 
@@ -42,14 +45,20 @@
 		sidebar.push({
 			id: `wonder-edit-${row.id}`,
 			title: m.wonders_edit_title(),
-			component: CollectionWonderEditPane,
-			props: {
-				catalogue,
-				mode: { kind: 'edit', row },
-				onSaved: (saved: OwnedWonder) => (row = saved)
-			},
+			component: WonderSetupPane,
+			props: { wonder, row, onSubmit: save },
 			scrollable: true
 		})
+	}
+
+	async function save(state: WonderState, active: boolean) {
+		try {
+			row = await updateMutation.mutateAsync({ id: row.id, input: { active, ...state } })
+			toast.success(m.wonders_saved({ name }))
+			sidebar.pop()
+		} catch (err: unknown) {
+			toast.error(extractErrorMessage(err, m.wonders_save_failed()))
+		}
 	}
 
 	async function remove() {

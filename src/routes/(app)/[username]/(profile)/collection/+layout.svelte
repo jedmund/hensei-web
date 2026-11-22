@@ -19,6 +19,7 @@
 	import { openAddArtifactSidebar } from '$lib/features/collection/openAddArtifactSidebar'
 	import { openAddCollectionWonderPane } from '$lib/components/wonders/openCollectionWonderPanes'
 	import { wonderQueries } from '$lib/api/queries/wonder.queries'
+	import { useAddCollectionWonder } from '$lib/api/mutations/wonder.mutations'
 	import {
 		createSelectionModeContext,
 		SELECTION_MODE_KEY,
@@ -109,12 +110,14 @@
 		enabled: isWonders && data.isOwner && !!data.user?.id
 	}))
 
+	const addWonderMutation = useAddCollectionWonder()
+
 	function handleAddWonder() {
 		const catalogue = wonderCatalogueQuery.data
 		const owned = ownedWondersQuery.data
 		// Both, so Wonders already owned aren't offered again
 		if (!catalogue || !owned) return
-		openAddCollectionWonderPane(catalogue, owned)
+		openAddCollectionWonderPane(catalogue, owned, addWonderMutation)
 	}
 
 	// Localized entity names for parameterized messages
