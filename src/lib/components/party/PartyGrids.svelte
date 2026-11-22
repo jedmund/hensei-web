@@ -189,8 +189,8 @@
 		<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
 		{#snippet failed(error, reset)}
 			<div class="grid-error" role="alert">
-				<p>{m.party_grid_error()}</p>
-				<button onclick={reset}>{m.retry()}</button>
+				<p class="grid-error-message">{m.party_grid_error()}</p>
+				<Button variant="secondary" size="small" onclick={reset}>{m.retry()}</Button>
 			</div>
 		{/snippet}
 	</svelte:boundary>
@@ -198,6 +198,23 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/typography' as *;
+
+	.grid-error {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: $unit-2x;
+		padding: $unit-6x $unit-2x;
+		text-align: center;
+	}
+
+	.grid-error-message {
+		margin: 0;
+		font-size: $font-regular;
+		color: var(--text-secondary);
+	}
 
 	.party-content {
 		min-height: 400px;

@@ -85,6 +85,11 @@ describe('appliesToTeam', () => {
 		expect(appliesToTeam(shield, without)).toBe(true)
 	})
 
+	it('treats a cached catalogue entry without the list as no requirement', () => {
+		const stale = { ...shield, requiredCharacterIds: undefined } as unknown as typeof shield
+		expect(appliesToTeam(stale, teamContext({ element: 3 }))).toBe(true)
+	})
+
 	it('still offers character-specific Wonders in the edit pane', () => {
 		const eternals = { ...shield, battleRelevant: true, requiredCharacterIds: ['3040030000'] }
 		expect(editableOnTeam(eternals, teamContext({ element: 3 }))).toBe(true)

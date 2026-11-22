@@ -66,8 +66,10 @@ export function hiddenByContentMode(wonder: Wonder, context: WonderTeamContext):
 
 /** Whether a team has a character a character-specific Wonder boosts. Always true for the others. */
 export function hasRequiredCharacter(wonder: Wonder, context: WonderTeamContext): boolean {
-	if (wonder.requiredCharacterIds.length === 0) return true
-	return wonder.requiredCharacterIds.some((id) => context.characterIds?.has(id) ?? false)
+	// A catalogue cached from before the field existed has no list: no requirement
+	const required = wonder.requiredCharacterIds ?? []
+	if (required.length === 0) return true
+	return required.some((id) => context.characterIds?.has(id) ?? false)
 }
 
 /**
