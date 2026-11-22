@@ -79,9 +79,23 @@ export function hasRequiredCharacter(wonder: Wonder, context: WonderTeamContext)
  * "every element", so compare with null.
  */
 export function appliesToTeam(wonder: Wonder, context: WonderTeamContext): boolean {
-	if (hiddenByContentMode(wonder, context)) return false
-	if (!hasRequiredCharacter(wonder, context)) return false
-	return wonder.element == null || wonder.element === context.element
+	return !hiddenByContentMode(wonder, context) && teamHiddenReason(wonder, context) == null
+}
+
+/** Why a Wonder the edit pane offers doesn't show on the team. */
+export type TeamHiddenReason = 'element' | 'characters'
+
+/**
+ * Why the team leaves out a Wonder: it boosts another element, or none of
+ * the characters it boosts are in the grid. Null when it shows.
+ */
+export function teamHiddenReason(
+	wonder: Wonder,
+	context: WonderTeamContext
+): TeamHiddenReason | null {
+	if (wonder.element != null && wonder.element !== context.element) return 'element'
+	if (!hasRequiredCharacter(wonder, context)) return 'characters'
+	return null
 }
 
 /**

@@ -3432,6 +3432,8 @@
 	"wonders_bonuses_title": "Bonuses",
 	"wonders_show_bonuses": "Show bonuses",
 	"wonders_hide_bonuses": "Hide bonuses",
+	"wonders_hidden_element": "Hidden: Only applies to {element} teams",
+	"wonders_hidden_characters": "Hidden: None of the affected characters are on this team",
 	"wonders_description_title": "Description",
 	"wonders_add_title": "Add Wonder",
 	"wonders_edit_title": "Edit Wonder",

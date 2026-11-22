@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
 	teamContext,
+	teamHiddenReason,
 	appliesToTeam,
 	computeBonuses,
 	defaultState,
@@ -93,6 +94,15 @@ describe('appliesToTeam', () => {
 	it('still offers character-specific Wonders in the edit pane', () => {
 		const eternals = { ...shield, battleRelevant: true, requiredCharacterIds: ['3040030000'] }
 		expect(editableOnTeam(eternals, teamContext({ element: 3 }))).toBe(true)
+	})
+})
+
+describe('teamHiddenReason', () => {
+	it('names why the team leaves a Wonder out', () => {
+		const eternals = { ...shield, requiredCharacterIds: ['3040030000'] }
+		expect(teamHiddenReason(fireSeal, teamContext({ element: 2 }))).toBe('element')
+		expect(teamHiddenReason(eternals, teamContext({ element: 2 }))).toBe('characters')
+		expect(teamHiddenReason(fireSeal, teamContext({ element: 1 }))).toBeNull()
 	})
 })
 

@@ -3221,6 +3221,8 @@
 	"wonders_bonuses_title": "発動中の効果",
 	"wonders_show_bonuses": "発動中の効果を表示",
 	"wonders_hide_bonuses": "発動中の効果を隠す",
+	"wonders_hidden_element": "非表示：{element}属性の編成のみ対象",
+	"wonders_hidden_characters": "非表示：対象のキャラクターが編成にいません",
 	"wonders_description_title": "説明",
 	"wonders_add_title": "大事なものを追加",
 	"wonders_edit_title": "大事なものを編集",

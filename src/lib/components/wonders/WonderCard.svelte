@@ -19,10 +19,20 @@
 		showName?: boolean
 		/** Show a leveled Wonder's level as a badge on the image */
 		levelBadge?: boolean
+		/** Why the Wonder doesn't show on the team: dims the card and becomes its tooltip */
+		hiddenNote?: string | null
 		onclick?: () => void
 	}
 
-	let { wonder, row, size = 80, showName = true, levelBadge = false, onclick }: Props = $props()
+	let {
+		wonder,
+		row,
+		size = 80,
+		showName = true,
+		levelBadge = false,
+		hiddenNote = null,
+		onclick
+	}: Props = $props()
 
 	const name = $derived(wonderText(wonder.name))
 	const badge = $derived(
@@ -32,11 +42,11 @@
 	)
 	// The level moves into the badge; Symbolum's bonus stays below
 	const summary = $derived(badge ? null : wonderSummary(wonder, row))
-	const inactive = $derived(row.active === false)
+	const inactive = $derived(row.active === false || hiddenNote != null)
 </script>
 
-<!-- Without a visible name, hovering shows it -->
-<Tooltip content={name} disabled={showName}>
+<!-- Hovering shows why a dimmed Wonder is hidden, or the name when it isn't visible -->
+<Tooltip content={hiddenNote ?? name} disabled={showName && hiddenNote == null}>
 	<button
 		type="button"
 		class="wonder-card"

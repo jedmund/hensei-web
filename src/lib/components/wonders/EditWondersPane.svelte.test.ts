@@ -201,6 +201,31 @@ describe('EditWondersPane', () => {
 		expect(action(GRID).handler).toBeDefined()
 	})
 
+	it('dims Wonders the team page leaves out', () => {
+		const eternals = { ...shield, id: 'w-eternals', requiredCharacterIds: ['3040030000'] }
+		const root = render(
+			party({
+				wonders: [
+					owned(fireSeal, { level: 20, evolution: 3 }),
+					owned(shield),
+					{ ...owned(eternals), id: 'owned-eternals' }
+				]
+			})
+		)
+		// render() seeds the plain catalogue; add the Eternals Wonder to it
+		queries.client.setQueryData(wonderKeys.catalogue(), {
+			...catalogue,
+			wonders: [...catalogue.wonders, eternals]
+		})
+		flushSync()
+
+		const dimmed = [...root.querySelectorAll('.wonder-card')].map((c) =>
+			c.classList.contains('inactive')
+		)
+		// Fire Seal on a Water team, the Shield, the Eternals Wonder without Eternals
+		expect(dimmed).toEqual([true, false, true])
+	})
+
 	it('shows an empty state, and no sync for a team without an account', () => {
 		const root = render(party({ user: undefined }))
 

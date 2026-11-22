@@ -30,12 +30,14 @@
 		joinWonders,
 		partyWondersWith,
 		partyWondersWithout,
-		teamContext
+		teamContext,
+		teamHiddenReason
 	} from '$lib/features/wonders/wonders'
 	import { wonderText } from '$lib/features/wonders/labels'
 	import { uuid } from '$lib/utils/uuid'
 	import type { Party } from '$lib/types/api/party'
 	import type { OwnedWonder, PartyWonderInput, Wonder, WonderState } from '$lib/types/api/wonder'
+	import { getElementLabel } from '$lib/utils/element'
 
 	interface Props {
 		/** Pane ID injected by PaneStack */
@@ -52,6 +54,18 @@
 	const syncMutation = useSyncPartyWonders(() => party.id)
 
 	const context = $derived(teamContext(party))
+
+	/** Why the team page leaves a Wonder out, for its dimmed card's tooltip. */
+	function hiddenNote(wonder: Wonder): string | null {
+		switch (teamHiddenReason(wonder, context)) {
+			case 'element':
+				return m.wonders_hidden_element({ element: getElementLabel(wonder.element ?? undefined) })
+			case 'characters':
+				return m.wonders_hidden_characters()
+			default:
+				return null
+		}
+	}
 	const shown = $derived(
 		catalogueQuery.data
 			? joinWonders(party.wonders ?? [], catalogueQuery.data).filter((j) =>
@@ -200,6 +214,7 @@
 						{row}
 						size={104}
 						levelBadge
+						hiddenNote={hiddenNote(wonder)}
 						onclick={() => openWonder(wonder, row)}
 					/>
 				{/each}
