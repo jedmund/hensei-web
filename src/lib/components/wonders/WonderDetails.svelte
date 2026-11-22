@@ -54,12 +54,15 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
 
+	// No bullets or extra inset: lines up with the section title, like the
+	// description
 	.effects {
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
 		margin: 0;
-		padding: 0 $unit-2x 0 calc($unit-2x + $unit-2x);
+		padding: 0 $unit;
+		list-style: none;
 		font-size: $font-regular;
 		color: var(--text-primary);
 	}
