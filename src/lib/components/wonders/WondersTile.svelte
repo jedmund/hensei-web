@@ -58,7 +58,7 @@
 		{#if visible.length > 0}
 			<div class="wonder-row">
 				{#each visible as { wonder, row } (row.id)}
-					<WonderCard {wonder} {row} size={48} showName={false} onclick={openDetails} />
+					<WonderCard {wonder} {row} size={60} showName={false} onclick={openDetails} />
 				{/each}
 			</div>
 		{:else}

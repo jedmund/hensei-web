@@ -66,7 +66,7 @@
 		{@const effects = wonderEffectTexts(wonder)}
 		<section class="wonder">
 			<div class="wonder-header">
-				<WonderImage image={row.image} size={56} />
+				<WonderImage image={row.image} size={64} />
 				<div class="wonder-name">
 					<h3 class="name">{wonderText(wonder.name)}</h3>
 					{#if summary}

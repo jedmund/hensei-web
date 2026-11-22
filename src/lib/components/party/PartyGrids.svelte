@@ -145,7 +145,9 @@
 					{collectionWeaponItems}
 				/>
 				<!-- Renders nothing when no Wonder applies and the viewer can't edit -->
-				<WondersTile {party} canEdit={ctx.canEdit()} />
+				<div class="wonders-section">
+					<WondersTile {party} canEdit={ctx.canEdit()} />
+				</div>
 			</div>
 		{:else if activeTab === GridType.Summon}
 			<SummonGrid summons={party.summons} {collectionSummonItems} />
@@ -227,6 +229,11 @@
 
 		:global(.calculator-notice) {
 			margin-bottom: $unit;
+		}
+
+		// Set the Wonders card apart from the weapon grid above it
+		.wonders-section {
+			margin-top: $unit-2x;
 		}
 	}
 </style>
