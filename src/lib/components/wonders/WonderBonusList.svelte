@@ -24,7 +24,7 @@
 			{#snippet labelSlot()}
 				<span class="bonus-label">
 					{#if icon}
-						<img class="bonus-icon" src={getWonderBonusIcon(icon)} alt="" width="20" height="20" />
+						<img class="bonus-icon" src={getWonderBonusIcon(icon)} alt="" width="24" height="24" />
 					{/if}
 					{line.label}
 				</span>
@@ -48,8 +48,8 @@
 	}
 
 	.bonus-icon {
-		width: 20px;
-		height: 20px;
+		width: 24px;
+		height: 24px;
 		flex-shrink: 0;
 	}
 </style>
