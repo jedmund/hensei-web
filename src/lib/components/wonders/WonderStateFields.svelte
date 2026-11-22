@@ -4,7 +4,7 @@
 	 * (Seals; lowering the uncap caps the level), a level slider with a number
 	 * field (Seals and Yupei) and the recruited-character count (Symbolum).
 	 * Fixed Wonders have none.
-	 * Shared by the collection edit pane and the team's Wonders pane.
+	 * Used by WonderSetupPane, for the collection and a team's Wonders.
 	 */
 	import { m } from '$lib/paraglide/messages'
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'

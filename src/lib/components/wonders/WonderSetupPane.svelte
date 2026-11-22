@@ -6,8 +6,8 @@
 	 *
 	 * With a `row` it edits that row: the header action is Save, enabled once
 	 * something changes. Without one it sets up a new Wonder from its
-	 * defaults: the header action is Add, enabled at once, and leaving
-	 * unedited is never an unsaved change. The caller saves, toasts and
+	 * defaults: the header action is Add, enabled at once. Leaving unedited
+	 * is never an unsaved change. The caller saves, toasts and
 	 * navigates; `remove` adds a confirmed Remove to the overflow menu.
 	 */
 	import { onMount, untrack } from 'svelte'
@@ -94,9 +94,7 @@
 		untrack(() => {
 			if (paneId) {
 				sidebar.setActionForPane(paneId, enabled ? submit : undefined, actionLabel)
-				sidebar.paneStack.updatePaneById(paneId, {
-					hasUnsavedChanges: () => !!initialRow && edited
-				})
+				sidebar.paneStack.updatePaneById(paneId, { hasUnsavedChanges: () => edited })
 			} else {
 				sidebar.setAction(enabled ? submit : undefined, actionLabel)
 			}

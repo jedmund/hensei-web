@@ -1,8 +1,8 @@
 <script lang="ts">
 	/**
 	 * WonderCard - a Wonder's image with its name and level or bonus under
-	 * it, dimmed when inactive. Used on the profile (level as a badge on the
-	 * image, like artifact cards) and the team tile.
+	 * it, dimmed when inactive. Used on the profile and the team's edit pane
+	 * (level as a badge on the image, like artifact cards) and the team tile.
 	 */
 	import WonderImage from './WonderImage.svelte'
 	import { m } from '$lib/paraglide/messages'

@@ -306,12 +306,26 @@ describe('EditWondersPane', () => {
 		runAction(GRID)
 		const picker = mountPushed('picker')
 		clickCard("Zhurong's Yupei", picker)
-		mountPushed('setup')
+		const setup = mountPushed('setup')
 		expect(action('setup').label).toBe('Add')
+
+		// Backing out unedited doesn't warn; once edited it does
+		const unsaved = () => {
+			const call = sidebarMock.paneStack.updatePaneById.mock.calls
+				.filter((c) => c[0] === 'setup')
+				.at(-1)
+			return (call![1] as PaneConfig).hasUnsavedChanges!()
+		}
+		expect(unsaved()).toBe(false)
+		const input = setup.querySelector<HTMLInputElement>('input[type="number"]')!
+		input.value = '5'
+		input.dispatchEvent(new Event('change', { bubbles: true }))
+		flushSync()
+		expect(unsaved()).toBe(true)
 
 		runAction('setup')
 		await vi.waitFor(() => expect(sidebarMock.paneStack.popTo).toHaveBeenCalledWith(GRID))
-		expect(lastPut()).toEqual([{ wonderId: zhurong.id, level: 10, evolution: 0, possession: null }])
+		expect(lastPut()).toEqual([{ wonderId: zhurong.id, level: 5, evolution: 0, possession: null }])
 	})
 
 	it('syncs an empty team at once and writes the result into the party', async () => {
@@ -332,7 +346,7 @@ describe('EditWondersPane', () => {
 
 		clickButton('Sync from collection')
 		await vi.waitFor(() =>
-			expect(document.body.textContent).toContain('Sync Wonders from your collection?')
+			expect(document.body.textContent).toContain('Sync Wonders from the collection?')
 		)
 		expect(wonderAdapter.syncPartyWonders).not.toHaveBeenCalled()
 
