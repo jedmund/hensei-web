@@ -116,6 +116,7 @@ function wonder(overrides: Partial<Wonder> & Pick<Wonder, 'id' | 'granblueId' | 
 		maxEvolution: null,
 		battleRelevant: false,
 		hiddenInUniteAndFight: false,
+		requiredCharacterIds: [],
 		sortOrder: 1,
 		effects: [],
 		levelBonuses: [],

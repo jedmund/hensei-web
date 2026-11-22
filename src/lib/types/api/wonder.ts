@@ -75,6 +75,12 @@ export interface Wonder {
 	maxEvolution: number | null
 	battleRelevant: boolean
 	hiddenInUniteAndFight: boolean
+	/**
+	 * Granblue ids of the characters a character-specific Wonder boosts (the
+	 * Eternals, the Divine Generals, the story crew). Empty when it boosts
+	 * everyone. Teams show it only when one of these is in the grid.
+	 */
+	requiredCharacterIds: string[]
 	sortOrder: number
 	effects: WonderEffect[]
 	levelBonuses: WonderLevelBonus[]

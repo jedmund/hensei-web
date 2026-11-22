@@ -29,6 +29,7 @@ import type {
 interface PartyLike {
 	element?: number | null | undefined
 	raid?: { group?: { contentMode?: string | null } | null | undefined } | null | undefined
+	characters?: readonly { character?: { granblueId?: string | null } | null }[] | null | undefined
 }
 
 /** A team is Unite and Fight when its raid's group is. */
@@ -41,10 +42,21 @@ export interface WonderTeamContext {
 	/** The team's element; without one, only all-element Wonders show */
 	element?: number | null | undefined
 	uniteAndFight: boolean
+	/** Granblue ids of the team's characters; without them, character-specific Wonders don't show */
+	characterIds?: ReadonlySet<string> | undefined
 }
 
 export function teamContext(party: PartyLike): WonderTeamContext {
-	return { element: party.element ?? null, uniteAndFight: isUniteAndFightParty(party) }
+	const characterIds = new Set(
+		(party.characters ?? []).flatMap((gc) =>
+			gc.character?.granblueId ? [gc.character.granblueId] : []
+		)
+	)
+	return {
+		element: party.element ?? null,
+		uniteAndFight: isUniteAndFightParty(party),
+		characterIds
+	}
 }
 
 /** Hidden by the team's content mode: Seals on Unite and Fight teams. Silent, no note. */
@@ -52,13 +64,21 @@ export function hiddenByContentMode(wonder: Wonder, context: WonderTeamContext):
 	return context.uniteAndFight && wonder.hiddenInUniteAndFight
 }
 
+/** Whether a team has a character a character-specific Wonder boosts. Always true for the others. */
+export function hasRequiredCharacter(wonder: Wonder, context: WonderTeamContext): boolean {
+	if (wonder.requiredCharacterIds.length === 0) return true
+	return wonder.requiredCharacterIds.some((id) => context.characterIds?.has(id) ?? false)
+}
+
 /**
  * Whether a team shows a Wonder: its element is null (every element) or the
- * team's, and its content mode doesn't hide it. Element 0 is the Null
- * element, not "every element", so compare with null.
+ * team's, its content mode doesn't hide it, and a character-specific Wonder
+ * has one of its characters in the grid. Element 0 is the Null element, not
+ * "every element", so compare with null.
  */
 export function appliesToTeam(wonder: Wonder, context: WonderTeamContext): boolean {
 	if (hiddenByContentMode(wonder, context)) return false
+	if (!hasRequiredCharacter(wonder, context)) return false
 	return wonder.element == null || wonder.element === context.element
 }
 

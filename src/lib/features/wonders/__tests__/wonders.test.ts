@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
+	teamContext,
 	appliesToTeam,
 	computeBonuses,
 	defaultState,
@@ -65,6 +66,28 @@ describe('appliesToTeam', () => {
 	it('hides Seals on Unite and Fight teams', () => {
 		expect(appliesToTeam(waterSeal, { element: 2, uniteAndFight: true })).toBe(false)
 		expect(appliesToTeam(shield, { element: 2, uniteAndFight: true })).toBe(true)
+	})
+
+	it('shows a character-specific Wonder only with one of its characters in the grid', () => {
+		const eternals = { ...shield, requiredCharacterIds: ['3040030000', '3040451000'] }
+		const withSeofon = teamContext({
+			element: 3,
+			characters: [{ character: { granblueId: '3040451000' } }]
+		})
+		const without = teamContext({
+			element: 3,
+			characters: [{ character: { granblueId: '3040999000' } }]
+		})
+
+		expect(appliesToTeam(eternals, withSeofon)).toBe(true)
+		expect(appliesToTeam(eternals, without)).toBe(false)
+		expect(appliesToTeam(eternals, { element: 3, uniteAndFight: false })).toBe(false)
+		expect(appliesToTeam(shield, without)).toBe(true)
+	})
+
+	it('still offers character-specific Wonders in the edit pane', () => {
+		const eternals = { ...shield, battleRelevant: true, requiredCharacterIds: ['3040030000'] }
+		expect(editableOnTeam(eternals, teamContext({ element: 3 }))).toBe(true)
 	})
 })
 
