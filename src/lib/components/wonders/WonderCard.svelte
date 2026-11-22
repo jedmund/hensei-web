@@ -7,6 +7,7 @@
 	import WonderImage from './WonderImage.svelte'
 	import { m } from '$lib/paraglide/messages'
 	import { wonderSummary, wonderText } from '$lib/features/wonders/labels'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import type { OwnedWonder, Wonder } from '$lib/types/api/wonder'
 
 	interface Props {
@@ -34,27 +35,29 @@
 	const inactive = $derived(row.active === false)
 </script>
 
-<button
-	type="button"
-	class="wonder-card"
-	class:inactive
-	style:--wonder-card-width={`${size}px`}
-	title={showName ? undefined : name}
-	{onclick}
->
-	<span class="image">
-		<WonderImage image={row.image} alt={showName ? '' : name} {size} {inactive} />
-		{#if badge}
-			<span class="level-badge">{badge}</span>
+<!-- Without a visible name, hovering shows it -->
+<Tooltip content={name} disabled={showName}>
+	<button
+		type="button"
+		class="wonder-card"
+		class:inactive
+		style:--wonder-card-width={`${size}px`}
+		{onclick}
+	>
+		<span class="image">
+			<WonderImage image={row.image} alt={showName ? '' : name} {size} {inactive} />
+			{#if badge}
+				<span class="level-badge">{badge}</span>
+			{/if}
+		</span>
+		{#if showName}
+			<span class="name">{name}</span>
 		{/if}
-	</span>
-	{#if showName}
-		<span class="name">{name}</span>
-	{/if}
-	{#if summary}
-		<span class="summary">{summary}</span>
-	{/if}
-</button>
+		{#if summary}
+			<span class="summary">{summary}</span>
+		{/if}
+	</button>
+</Tooltip>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;

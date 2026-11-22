@@ -55,6 +55,7 @@ vi.mock('$lib/api/adapters/wonder.adapter', () => ({
 }))
 
 import EditWondersPane from './EditWondersPane.svelte'
+import TooltipProviderTestHarness from './TooltipProviderTestHarness.svelte'
 import { wonderAdapter } from '$lib/api/adapters/wonder.adapter'
 import { wonderKeys } from '$lib/api/queries/wonder.queries'
 import { partyKeys } from '$lib/api/queries/party.queries'
@@ -108,7 +109,10 @@ function cachedParty(): Party {
 function mountPane(component: Component<any>, props: Record<string, unknown>) {
 	const target = document.createElement('div')
 	document.body.appendChild(target)
-	mounted.push(mount(component, { target, props }))
+	// Wonder cards show their name in a tooltip, which needs the layout's provider
+	mounted.push(
+		mount(TooltipProviderTestHarness, { target, props: { component, paneProps: props } })
+	)
 	flushSync()
 	return target
 }
