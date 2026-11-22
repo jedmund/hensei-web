@@ -69,7 +69,7 @@ describe('WonderAdapter', () => {
 
 		const result = await adapter.getCatalogue()
 
-		expect(lastCall().url).toBe(`${BASE}/wonders`)
+		expect(lastCall().url).toBe(`${BASE}/wonders?v=2`)
 		expect(result.categories[0]).toMatchObject({ granblueId: '4', categoryType: 2, sortOrder: 4 })
 		expect(result.wonders[0]).toMatchObject({
 			categoryId: 'c4',

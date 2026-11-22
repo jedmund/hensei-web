@@ -17,6 +17,14 @@ import type {
 	WonderCatalogue
 } from '$lib/types/api/wonder'
 
+/**
+ * The catalogue's shape version, sent as `?v=`. `GET /wonders` is publicly
+ * cached for an hour, so browsers keep a catalogue from before a new field;
+ * bump this whenever the catalogue gains a field the app relies on, and the
+ * new URL skips the stale copy. 2: requiredCharacterIds.
+ */
+export const WONDER_CATALOGUE_VERSION = 2
+
 export class WonderAdapter extends BaseAdapter {
 	constructor(options?: AdapterOptions) {
 		super(options)
@@ -24,7 +32,7 @@ export class WonderAdapter extends BaseAdapter {
 
 	/** `GET /wonders`: categories and Wonders with effects, level bonuses and caps. Public. */
 	async getCatalogue(options?: RequestOptions): Promise<WonderCatalogue> {
-		return this.request<WonderCatalogue>('/wonders', options)
+		return this.request<WonderCatalogue>(`/wonders?v=${WONDER_CATALOGUE_VERSION}`, options)
 	}
 
 	/** A user's Wonders. Privacy is enforced server-side (403 when not viewable). */
