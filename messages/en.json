@@ -3430,6 +3430,8 @@
 	"wonders_recruited_hint": "Enter the count shown in game. Collab characters and characters still in the crate don't count.",
 	"wonders_effects_title": "Effects",
 	"wonders_bonuses_title": "Bonuses",
+	"wonders_show_bonuses": "Show bonuses",
+	"wonders_hide_bonuses": "Hide bonuses",
 	"wonders_description_title": "Description",
 	"wonders_add_title": "Add Wonder",
 	"wonders_edit_title": "Edit Wonder",

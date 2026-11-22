@@ -1,14 +1,18 @@
 <script lang="ts">
 	/**
 	 * PartyWondersPane - a team's Wonders that apply to it, each with its
-	 * level or bonus, its computed bonuses and its effects. Editors get Edit,
-	 * which pushes EditWondersPane on top.
+	 * level and effect under its name. A chevron shows or hides a Wonder's
+	 * bonus rows (collapsed by default). Editors get Edit, which pushes
+	 * EditWondersPane on top.
 	 */
 	import { onMount } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
 	import { m } from '$lib/paraglide/messages'
 	import WonderImage from './WonderImage.svelte'
-	import WonderDetails from './WonderDetails.svelte'
+	import WonderBonusList from './WonderBonusList.svelte'
+	import Button from '$lib/components/ui/Button.svelte'
+	import Icon from '$lib/components/Icon.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { wonderQueries } from '$lib/api/queries/wonder.queries'
 	import { visiblePartyWonders } from '$lib/features/wonders/wonders'
@@ -32,6 +36,13 @@
 		catalogueQuery.data ? visiblePartyWonders(party, catalogueQuery.data) : []
 	)
 	const canWrite = $derived(canEdit && party.id !== 'new')
+
+	// Which Wonders have their bonus rows open; all start collapsed
+	let expanded = $state<Record<string, boolean>>({})
+
+	function toggleBonuses(id: string) {
+		expanded = { ...expanded, [id]: !expanded[id] }
+	}
 
 	function openEdit() {
 		openEditWondersPane(getParty)
@@ -65,8 +76,28 @@
 						<span class="effect">{effect}</span>
 					{/each}
 				</div>
+				{#if row.bonuses.length > 0}
+					{@const open = !!expanded[row.id]}
+					{@const label = open ? m.wonders_hide_bonuses() : m.wonders_show_bonuses()}
+					<Tooltip content={label}>
+						<Button
+							variant="ghost"
+							size="small"
+							iconOnly
+							aria-label={label}
+							aria-expanded={open}
+							onclick={() => toggleBonuses(row.id)}
+						>
+							<Icon name={open ? 'chevron-up' : 'chevron-down'} size={14} />
+						</Button>
+					</Tooltip>
+				{/if}
 			</div>
-			<WonderDetails {wonder} bonuses={row.bonuses} showDescription={false} showEffects={false} />
+			{#if expanded[row.id] && row.bonuses.length > 0}
+				<div class="bonuses">
+					<WonderBonusList bonuses={row.bonuses} />
+				</div>
+			{/if}
 		</section>
 	{/each}
 </div>
@@ -103,6 +134,7 @@
 	}
 
 	.wonder-name {
+		flex: 1;
 		display: flex;
 		flex-direction: column;
 		gap: $unit-half;
@@ -114,6 +146,11 @@
 		font-size: $font-regular;
 		font-weight: $medium;
 		color: var(--text-primary);
+	}
+
+	// The inset DetailsSection gave the rows when they had a heading
+	.bonuses {
+		padding: 0 $unit;
 	}
 
 	.summary,

@@ -13,19 +13,15 @@
 	interface Props {
 		wonder: Wonder
 		bonuses: WonderBonus[]
-		/** Leave out the flavor text (the team pane lists several Wonders) */
-		showDescription?: boolean
-		/** Leave out the Effects section (the team pane puts the effect under the name) */
-		showEffects?: boolean
 	}
 
-	let { wonder, bonuses, showDescription = true, showEffects = true }: Props = $props()
+	let { wonder, bonuses }: Props = $props()
 
-	const effects = $derived(showEffects ? wonderEffectTexts(wonder) : [])
+	const effects = $derived(wonderEffectTexts(wonder))
 	const description = $derived(wonderText(wonder.description))
 </script>
 
-{#if showDescription && description !== '—'}
+{#if description !== '—'}
 	<DetailsSection title={m.wonders_description_title()}>
 		<p class="description">{description}</p>
 	</DetailsSection>
