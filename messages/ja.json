@@ -3234,6 +3234,9 @@
 	"wonders_party_none": "この編成には大事なものがありません",
 	"wonders_party_add": "大事なものを追加",
 	"wonders_party_edit_title": "大事なものを編集",
-	"wonders_party_none_apply": "この編成に適用される大事なものはありません。",
-	"wonders_party_save_failed": "編成の大事なものを保存できませんでした"
+	"wonders_party_save_failed": "編成の大事なものを保存できませんでした",
+	"wonders_party_all_added": "この編成に追加できる大事なものはすべて追加済みです。",
+	"wonders_party_sync_confirm_title": "コレクションから大事なものを同期しますか？",
+	"wonders_party_sync_confirm_body": "この編成の大事なものを、現在のコレクションの大事なものに置き換えます。",
+	"wonders_party_synced": "コレクションから編成の大事なものを同期しました"
 }

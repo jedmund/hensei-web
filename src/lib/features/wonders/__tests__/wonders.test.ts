@@ -10,9 +10,8 @@ import {
 	joinWonders,
 	maxLevelFor,
 	normalizeState,
-	partyWondersPayload,
-	sameSelection,
-	selectionFromParty,
+	partyWondersWith,
+	partyWondersWithout,
 	symbolumBonus,
 	symbolumRecruitsUntilNext,
 	visiblePartyWonders,
@@ -261,38 +260,34 @@ describe('wonderImageName', () => {
 	})
 })
 
-describe('partyWondersPayload', () => {
-	const existing = [
-		owned(waterSeal, { level: 20, evolution: 3 }),
-		owned(fireSeal, { level: 18, evolution: 2 }),
-		owned(shield)
-	]
+describe('partyWondersWith', () => {
+	const existing = [owned(waterSeal, { level: 20, evolution: 3 }), owned(shield)]
 
-	it('keeps Wonders the pane does not show (Seals on a Unite and Fight team)', () => {
-		const editable = [shield, symbolum, zhurong]
-		const selection = {
-			[symbolum.id]: { level: null, evolution: null, possession: 650 }
-		}
-
-		expect(partyWondersPayload(existing, editable, selection)).toEqual([
-			{ wonderId: waterSeal.id, level: 20, evolution: 3, possession: null },
-			{ wonderId: fireSeal.id, level: 18, evolution: 2, possession: null },
-			{ wonderId: symbolum.id, level: null, evolution: null, possession: 650 }
+	it('replaces the Wonder in place and keeps the rest', () => {
+		expect(
+			partyWondersWith(existing, waterSeal, { level: 20, evolution: 0, possession: 5 })
+		).toEqual([
+			{ wonderId: waterSeal.id, level: 10, evolution: 0, possession: null },
+			{ wonderId: shield.id, level: null, evolution: null, possession: null }
 		])
 	})
 
-	it('normalizes edited rows', () => {
-		const payload = partyWondersPayload([], [waterSeal], {
-			[waterSeal.id]: { level: 20, evolution: 0, possession: 5 }
-		})
-		expect(payload).toEqual([{ wonderId: waterSeal.id, level: 10, evolution: 0, possession: null }])
+	it('adds a Wonder the team does not have at the end', () => {
+		expect(
+			partyWondersWith(existing, symbolum, { level: null, evolution: null, possession: 650 })
+		).toEqual([
+			{ wonderId: waterSeal.id, level: 20, evolution: 3, possession: null },
+			{ wonderId: shield.id, level: null, evolution: null, possession: null },
+			{ wonderId: symbolum.id, level: null, evolution: null, possession: 650 }
+		])
 	})
+})
 
-	it('round-trips through the starting selection unchanged', () => {
-		const editable = [fireSeal, shield, zhurong]
-		const selection = selectionFromParty(existing, editable)
-		expect(Object.keys(selection)).toEqual([fireSeal.id, shield.id])
-		expect(sameSelection(selection, selectionFromParty(existing, editable))).toBe(true)
-		expect(partyWondersPayload(existing, editable, selection)).toHaveLength(3)
+describe('partyWondersWithout', () => {
+	it('drops only that Wonder', () => {
+		const existing = [owned(waterSeal, { level: 20, evolution: 3 }), owned(shield)]
+		expect(partyWondersWithout(existing, shield.id)).toEqual([
+			{ wonderId: waterSeal.id, level: 20, evolution: 3, possession: null }
+		])
 	})
 })

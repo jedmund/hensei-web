@@ -7,7 +7,7 @@
  * - level caps from Seal evolution;
  * - the state a Wonder's kind allows, and its bonuses and image before the
  *   API has computed them (forms preview unsaved changes);
- * - the whole-set payload for `PUT /parties/:id/wonders`.
+ * - the whole-set payloads for `PUT /parties/:id/wonders`.
  *
  * @module features/wonders
  */
@@ -261,60 +261,36 @@ export function wonderImageName(
 // ============================================================================
 
 /**
- * The whole set for `PUT /parties/:id/wonders`. The pane edits only the
- * Wonders that apply to the team; the rest (another element's, or Seals on
- * a Unite and Fight team) are kept as they were, since the snapshot keeps
- * them and the endpoint replaces the set.
- *
- * @param existing - the party's current Wonders
- * @param editable - ids of the Wonders the pane shows
- * @param selection - the pane's turned-on Wonders, by Wonder id
+ * The whole set for `PUT /parties/:id/wonders` after setting one Wonder's
+ * state: its row is replaced (or added, at the end), and every other row is
+ * kept as it was, including the ones the edit pane doesn't show (Seals on a
+ * Unite and Fight team), since the endpoint replaces the set.
  */
-export function partyWondersPayload(
+export function partyWondersWith(
 	existing: readonly OwnedWonder[],
-	editable: readonly Wonder[],
-	selection: Readonly<Record<string, WonderState>>
+	wonder: Wonder,
+	state: WonderState
 ): PartyWonderInput[] {
-	const editableIds = new Set(editable.map((w) => w.id))
-	const kept = existing
-		.filter((row) => !editableIds.has(row.wonderId))
-		.map((row) => ({
-			wonderId: row.wonderId,
-			level: row.level,
-			evolution: row.evolution,
-			possession: row.possession
-		}))
-	const edited = editable
-		.filter((wonder) => selection[wonder.id])
-		.map((wonder) => ({ wonderId: wonder.id, ...normalizeState(wonder, selection[wonder.id]!) }))
-	return [...kept, ...edited]
+	const row = { wonderId: wonder.id, ...normalizeState(wonder, state) }
+	const kept = existing.map(partyWonderInput)
+	const index = kept.findIndex((input) => input.wonderId === wonder.id)
+	if (index === -1) return [...kept, row]
+	return kept.map((input, i) => (i === index ? row : input))
 }
 
-/** The pane's starting selection: the party's Wonders among those it shows. */
-export function selectionFromParty(
+/** The whole set for `PUT /parties/:id/wonders` without one Wonder; the rest are kept. */
+export function partyWondersWithout(
 	existing: readonly OwnedWonder[],
-	editable: readonly Wonder[]
-): Record<string, WonderState> {
-	const rows = new Map(existing.map((row) => [row.wonderId, row]))
-	const selection: Record<string, WonderState> = {}
-	for (const wonder of editable) {
-		const row = rows.get(wonder.id)
-		if (row) selection[wonder.id] = stateOf(wonder, row)
-	}
-	return selection
+	wonderId: string
+): PartyWonderInput[] {
+	return existing.filter((row) => row.wonderId !== wonderId).map(partyWonderInput)
 }
 
-export function sameSelection(
-	a: Readonly<Record<string, WonderState>>,
-	b: Readonly<Record<string, WonderState>>
-): boolean {
-	const keys = Object.keys(a)
-	if (keys.length !== Object.keys(b).length) return false
-	return keys.every((key) => {
-		const x = a[key]
-		const y = b[key]
-		return (
-			!!y && x!.level === y.level && x!.evolution === y.evolution && x!.possession === y.possession
-		)
-	})
+function partyWonderInput(row: OwnedWonder): PartyWonderInput {
+	return {
+		wonderId: row.wonderId,
+		level: row.level,
+		evolution: row.evolution,
+		possession: row.possession
+	}
 }

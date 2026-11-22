@@ -11,7 +11,6 @@
 	import WonderDetails from './WonderDetails.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { wonderQueries } from '$lib/api/queries/wonder.queries'
-	import { useUpdatePartyWonders } from '$lib/api/mutations/wonder.mutations'
 	import { visiblePartyWonders } from '$lib/features/wonders/wonders'
 	import { wonderSummary, wonderText } from '$lib/features/wonders/labels'
 	import { openEditWondersPane } from './openPartyWonderPanes'
@@ -28,7 +27,6 @@
 
 	const party = $derived(getParty())
 	const catalogueQuery = createQuery(() => wonderQueries.catalogue())
-	const mutation = useUpdatePartyWonders(() => party.id)
 
 	const visible = $derived(
 		catalogueQuery.data ? visiblePartyWonders(party, catalogueQuery.data) : []
@@ -36,7 +34,7 @@
 	const canWrite = $derived(canEdit && party.id !== 'new')
 
 	function openEdit() {
-		openEditWondersPane(party, mutation)
+		openEditWondersPane(getParty)
 	}
 
 	onMount(() => {

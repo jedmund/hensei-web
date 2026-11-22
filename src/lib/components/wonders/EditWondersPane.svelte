@@ -1,152 +1,223 @@
 <script lang="ts">
 	/**
-	 * EditWondersPane - a team's Wonders: a toggle per battle-relevant Wonder
-	 * (every element, since teams change element; no Seals on Unite and
-	 * Fight teams), with the controls its kind has. Wonders the pane doesn't
-	 * show stay on the team as they were. Save hands the whole set to the
-	 * opener.
+	 * EditWondersPane - a team's Wonders, laid out like the profile's
+	 * collection: every battle-relevant Wonder on the team, of any element
+	 * (teams change element), with no Seals on Unite and Fight teams.
+	 *
+	 * - Sync from collection replaces the set with the account's collection.
+	 * - Tapping a Wonder pushes WonderSetupPane to edit or remove it.
+	 * - Add pushes WonderPickerPane with the Wonders the team doesn't have.
+	 *
+	 * Each change sends the whole set, keeping the Wonders this pane doesn't
+	 * show, then returns here.
 	 */
 	import { untrack } from 'svelte'
 	import { createQuery } from '@tanstack/svelte-query'
+	import { toast } from 'svelte-sonner'
 	import { m } from '$lib/paraglide/messages'
+	import Button from '$lib/components/ui/Button.svelte'
+	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
-	import Switch from '$lib/components/ui/switch/Switch.svelte'
-	import WonderImage from './WonderImage.svelte'
-	import WonderStateFields from './WonderStateFields.svelte'
+	import WonderCard from './WonderCard.svelte'
+	import WonderPickerPane from './WonderPickerPane.svelte'
+	import WonderSetupPane from './WonderSetupPane.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import { finishStackedPane } from '$lib/stores/stackedPanes'
 	import { wonderQueries } from '$lib/api/queries/wonder.queries'
+	import { useSyncPartyWonders, useUpdatePartyWonders } from '$lib/api/mutations/wonder.mutations'
 	import {
-		compareCatalogueOrder,
-		computeBonuses,
-		defaultState,
 		editableOnTeam,
 		groupByCategory,
-		partyWondersPayload,
-		sameSelection,
-		selectionFromParty,
-		teamContext,
-		wonderImageName
+		joinWonders,
+		partyWondersWith,
+		partyWondersWithout,
+		teamContext
 	} from '$lib/features/wonders/wonders'
-	import { wonderSummary, wonderText } from '$lib/features/wonders/labels'
+	import { wonderText } from '$lib/features/wonders/labels'
+	import { uuid } from '$lib/utils/uuid'
 	import type { Party } from '$lib/types/api/party'
-	import type { PartyWonderInput, Wonder, WonderState } from '$lib/types/api/wonder'
+	import type { OwnedWonder, PartyWonderInput, Wonder, WonderState } from '$lib/types/api/wonder'
 
 	interface Props {
 		/** Pane ID injected by PaneStack */
 		paneId?: string
-		party: Party
-		onSave: (wonders: PartyWonderInput[]) => void
+		/** Reads the party page's party, so the pane follows each save. */
+		getParty: () => Party
 	}
 
-	let { paneId, party, onSave }: Props = $props()
+	let { paneId, getParty }: Props = $props()
 
+	const party = $derived(getParty())
 	const catalogueQuery = createQuery(() => wonderQueries.catalogue())
+	const updateMutation = useUpdatePartyWonders(() => party.id)
+	const syncMutation = useSyncPartyWonders(() => party.id)
 
-	const initialParty = untrack(() => $state.snapshot(party)) as Party
-	const existing = initialParty.wonders ?? []
-	const context = teamContext(initialParty)
-
-	const editable = $derived.by((): Wonder[] => {
-		const catalogue = catalogueQuery.data
-		if (!catalogue) return []
-		return catalogue.wonders
-			.filter((w) => editableOnTeam(w, context))
-			.sort(compareCatalogueOrder(catalogue))
-	})
-	const groups = $derived(
-		catalogueQuery.data ? groupByCategory(editable, (w) => w, catalogueQuery.data) : []
+	const context = $derived(teamContext(party))
+	const shown = $derived(
+		catalogueQuery.data
+			? joinWonders(party.wonders ?? [], catalogueQuery.data).filter((j) =>
+					editableOnTeam(j.wonder, context)
+				)
+			: []
 	)
+	const groups = $derived(
+		catalogueQuery.data ? groupByCategory(shown, (j) => j.wonder, catalogueQuery.data) : []
+	)
+	// Each write sends the whole set, built from the cached party: wait for
+	// one to land before starting the next
+	const busy = $derived(updateMutation.isPending || syncMutation.isPending)
+	// Syncing needs an account whose collection to read
+	const canSync = $derived(!!party.user)
 
-	let initialSelection = $state<Record<string, WonderState> | null>(null)
-	let selection = $state<Record<string, WonderState>>({})
+	let syncConfirmOpen = $state(false)
 
-	// Start from the team's Wonders once the catalogue is in.
-	$effect(() => {
-		if (initialSelection || editable.length === 0) return
-		untrack(() => {
-			initialSelection = selectionFromParty(existing, editable)
-			selection = { ...initialSelection }
+	/** Sends the set; true once saved. The mutation toasts its own errors. */
+	async function write(wonders: PartyWonderInput[]): Promise<boolean> {
+		const current = getParty()
+		try {
+			await updateMutation.mutateAsync({
+				partyId: current.id,
+				shortcode: current.shortcode,
+				wonders
+			})
+			return true
+		} catch {
+			return false
+		}
+	}
+
+	function backHere() {
+		if (paneId) sidebar.paneStack.popTo(paneId)
+	}
+
+	function openWonder(wonder: Wonder, row: OwnedWonder) {
+		if (busy) return
+		const name = wonderText(wonder.name)
+		sidebar.push({
+			id: uuid(),
+			title: name,
+			component: WonderSetupPane,
+			props: {
+				wonder,
+				row,
+				showActive: false,
+				onSubmit: async (state: WonderState) => {
+					if (!(await write(partyWondersWith(getParty().wonders ?? [], wonder, state)))) return
+					toast.success(m.wonders_saved({ name }))
+					backHere()
+				},
+				remove: {
+					label: m.context_remove(),
+					message: m.remove_unit_confirm_body({ name }),
+					onRemove: async () => {
+						if (!(await write(partyWondersWithout(getParty().wonders ?? [], wonder.id)))) return
+						toast.success(m.wonders_removed({ name }))
+						backHere()
+					}
+				}
+			},
+			scrollable: true
 		})
-	})
-
-	function toggle(wonder: Wonder, on: boolean) {
-		if (on === !!selection[wonder.id]) return
-		const next = { ...selection }
-		if (on) next[wonder.id] = defaultState(wonder)
-		else delete next[wonder.id]
-		selection = next
 	}
 
-	function setState(wonder: Wonder, state: WonderState) {
-		selection = { ...selection, [wonder.id]: state }
+	function openAdd() {
+		const catalogue = catalogueQuery.data
+		if (!catalogue || busy) return
+		const onTeam = new Set((party.wonders ?? []).map((row) => row.wonderId))
+		sidebar.push({
+			id: uuid(),
+			title: m.wonders_add_title(),
+			component: WonderPickerPane,
+			props: {
+				catalogue,
+				candidates: catalogue.wonders.filter(
+					(w) => editableOnTeam(w, context) && !onTeam.has(w.id)
+				),
+				emptyMessage: m.wonders_party_all_added(),
+				showActive: false,
+				onAdd: async (wonder: Wonder, state: WonderState) => {
+					if (!(await write(partyWondersWith(getParty().wonders ?? [], wonder, state)))) return
+					toast.success(m.wonders_added({ name: wonderText(wonder.name) }))
+					backHere()
+				}
+			},
+			scrollable: true
+		})
 	}
 
-	const changed = $derived(!!initialSelection && !sameSelection(selection, initialSelection))
+	/** Replacing Wonders the team has needs a confirmation first. */
+	function requestSync() {
+		if (busy) return
+		if ((party.wonders ?? []).length > 0) syncConfirmOpen = true
+		else void sync()
+	}
 
-	function save() {
-		if (!changed) return
-		onSave(partyWondersPayload(existing, editable, selection))
-		finishStackedPane()
+	async function sync() {
+		const current = getParty()
+		try {
+			await syncMutation.mutateAsync({ partyId: current.id, shortcode: current.shortcode })
+			toast.success(m.wonders_party_synced())
+		} catch {
+			// The mutation toasts the API's error
+		} finally {
+			syncConfirmOpen = false
+		}
 	}
 
 	$effect(() => {
-		const enabled = changed
+		const enabled = !!catalogueQuery.data && !busy
 		untrack(() => {
-			if (paneId) {
-				sidebar.setActionForPane(paneId, enabled ? save : undefined, m.action_save())
-				sidebar.paneStack.updatePaneById(paneId, { hasUnsavedChanges: () => changed })
-			} else {
-				sidebar.setAction(enabled ? save : undefined, m.action_save())
-			}
+			if (paneId) sidebar.setActionForPane(paneId, enabled ? openAdd : undefined, m.action_add())
+			else sidebar.setAction(enabled ? openAdd : undefined, m.action_add())
 		})
 	})
 </script>
 
 <div class="wonders-edit">
+	{#if canSync}
+		<div class="sync">
+			<Button
+				variant="secondary"
+				size="small"
+				leftIcon="refresh"
+				disabled={busy}
+				onclick={requestSync}
+			>
+				{syncMutation.isPending ? m.party_syncing() : m.party_sync_collection()}
+			</Button>
+		</div>
+	{/if}
+
 	{#if catalogueQuery.data && groups.length === 0}
-		<p class="hint">{m.wonders_party_none_apply()}</p>
+		<p class="empty-state">{m.wonders_party_none()}</p>
 	{/if}
 
 	{#each groups as group (group.category.id)}
 		<DetailsSection title={wonderText(group.category.name)}>
-			<ul class="wonder-list">
-				{#each group.items as wonder (wonder.id)}
-					{@const state = selection[wonder.id]}
-					{@const name = wonderText(wonder.name)}
-					<li class="wonder-row" class:off={!state}>
-						<!-- The label names the switch and makes the whole row a target -->
-						<label class="wonder-header">
-							<WonderImage
-								image={wonderImageName(wonder, state ?? defaultState(wonder))}
-								size={48}
-								inactive={!state}
-							/>
-							<div class="wonder-name">
-								<span class="name">{name}</span>
-								{#if state}
-									{@const summary = wonderSummary(wonder, {
-										level: state.level,
-										bonuses: computeBonuses(wonder, state)
-									})}
-									{#if summary}
-										<span class="summary">{summary}</span>
-									{/if}
-								{/if}
-							</div>
-							<Switch checked={!!state} onCheckedChange={(on) => toggle(wonder, on)} size="small" />
-						</label>
-						{#if state}
-							<div class="wonder-fields">
-								<WonderStateFields {wonder} {state} onChange={(s) => setState(wonder, s)} />
-							</div>
-						{/if}
-					</li>
+			<div class="wonder-grid">
+				{#each group.items as { wonder, row } (row.id)}
+					<WonderCard
+						{wonder}
+						{row}
+						size={104}
+						levelBadge
+						onclick={() => openWonder(wonder, row)}
+					/>
 				{/each}
-			</ul>
+			</div>
 		</DetailsSection>
 	{/each}
 </div>
+
+{#if canSync}
+	<ConfirmDialog
+		bind:open={syncConfirmOpen}
+		title={m.wonders_party_sync_confirm_title()}
+		message={m.wonders_party_sync_confirm_body()}
+		confirmLabel={m.party_sync_collection()}
+		loading={syncMutation.isPending}
+		onconfirm={sync}
+	/>
+{/if}
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
@@ -159,61 +230,24 @@
 		padding: $unit-2x 0;
 	}
 
-	.hint {
+	.sync {
+		display: flex;
+		padding: 0 $unit-2x;
+	}
+
+	.empty-state {
 		margin: 0;
 		padding: 0 $unit-2x;
 		font-size: $font-regular;
 		color: var(--text-tertiary);
 	}
 
-	.wonder-list {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-2x;
-		margin: 0;
+	// The profile's Wonder grid, sized for the sidebar
+	.wonder-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+		gap: $unit-2x $unit;
+		justify-items: center;
 		padding: 0 $unit;
-		list-style: none;
-	}
-
-	.wonder-row {
-		display: flex;
-		flex-direction: column;
-		gap: $unit;
-	}
-
-	.wonder-header {
-		display: flex;
-		align-items: center;
-		gap: calc($unit * 1.5);
-		padding: 0 $unit;
-		cursor: pointer;
-	}
-
-	.wonder-name {
-		flex: 1;
-		min-width: 0;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.name {
-		font-size: $font-regular;
-		font-weight: $medium;
-		color: var(--text-primary);
-	}
-
-	.off .name {
-		color: var(--text-secondary);
-	}
-
-	.summary {
-		font-size: $font-small;
-		color: var(--text-secondary);
-	}
-
-	.wonder-fields {
-		display: flex;
-		flex-direction: column;
-		gap: $unit;
 	}
 </style>
