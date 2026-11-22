@@ -82,7 +82,7 @@ describe('updateBlessingsOptions', () => {
 describe('updateBlessingsOptions, saves in a row', () => {
 	it('is scoped to the party', () => {
 		expect(updateBlessingsOptions(queryClient, BUILD_PARTY.id).scope).toEqual({
-			id: `solomonis-blessings-${BUILD_PARTY.id}`
+			id: `party-list-save-blessings-${BUILD_PARTY.id}`
 		})
 	})
 

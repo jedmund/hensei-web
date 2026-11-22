@@ -149,7 +149,7 @@ describe('replaceGuidebookOptions, saves in a row', () => {
 
 	it('is scoped to the party', () => {
 		expect(replaceGuidebookOptions(queryClient, RUN_PARTY.id).scope).toEqual({
-			id: `solomonis-guidebook-${RUN_PARTY.id}`
+			id: `party-list-save-guidebook-${RUN_PARTY.id}`
 		})
 	})
 

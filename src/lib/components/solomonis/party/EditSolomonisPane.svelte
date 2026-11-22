@@ -19,7 +19,8 @@
 	import Stepper from '$lib/components/ui/Stepper.svelte'
 	import BlessingEditSection from './BlessingEditSection.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import { finishSolomonisPane, type SolomonisPaneChanges } from './openSolomonisPanes'
+	import type { SolomonisPaneChanges } from './openSolomonisPanes'
+	import { finishStackedPane } from '$lib/stores/stackedPanes'
 	import { solomonisQueries } from '$lib/api/queries/solomonis.queries'
 	import { getCharacterImage } from '$lib/utils/images/characters'
 	import { appLocale } from '$lib/utils/locale'
@@ -117,7 +118,7 @@
 			expedition: expeditionChanged ? input : null,
 			blessingLevelIds: blessingsChanged ? selectionToLevelIds(catalogue, selection) : null
 		})
-		finishSolomonisPane()
+		finishStackedPane()
 	}
 
 	$effect(() => {

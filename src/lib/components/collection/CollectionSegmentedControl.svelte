@@ -28,7 +28,8 @@
 		{
 			value: 'artifacts',
 			label: formatLabel(m.collection_tab_artifacts(), counts?.artifacts)
-		}
+		},
+		{ value: 'wonders', label: m.collection_tab_wonders() }
 	])
 </script>
 
@@ -64,6 +65,8 @@
 				<span class="count">{counts.artifacts}</span>
 			{/if}
 		</Segment>
+		<!-- No count: the counts endpoint doesn't cover Wonders -->
+		<Segment value="wonders">{m.collection_tab_wonders()}</Segment>
 	</SegmentedControl>
 </div>
 

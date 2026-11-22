@@ -73,7 +73,7 @@ describe('updateUnsealPriorityOptions', () => {
 describe('updateUnsealPriorityOptions, saves in a row', () => {
 	it('is scoped to the party', () => {
 		expect(updateUnsealPriorityOptions(queryClient, party.id).scope).toEqual({
-			id: `solomonis-unseal-priority-${party.id}`
+			id: `party-list-save-unseal-priority-${party.id}`
 		})
 	})
 
