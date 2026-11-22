@@ -57,6 +57,7 @@
 						<WonderCard
 							wonder={item.wonder}
 							row={item.row}
+							size={104}
 							onclick={() =>
 								openCollectionWonderPane(item.wonder, item.row, catalogueQuery.data!, data.isOwner)}
 						/>
@@ -93,12 +94,12 @@
 
 	.wonder-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
 		gap: $unit-3x $unit-2x;
 		justify-items: center;
 
 		@media (max-width: 600px) {
-			grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+			grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
 			gap: $unit-2x $unit;
 		}
 	}
