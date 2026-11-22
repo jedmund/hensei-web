@@ -36,7 +36,8 @@
 		width: var(--wonder-size);
 		height: var(--wonder-size);
 		flex-shrink: 0;
-		border-radius: $item-corner;
+		// The art has its own frame, so only soften the corners
+		border-radius: $item-corner-small;
 		background: var(--button-bg);
 		object-fit: cover;
 
