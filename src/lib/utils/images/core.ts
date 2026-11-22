@@ -45,7 +45,8 @@ export const BUCKET = {
 	raids: 'raids',
 	stickers: 'icons/stickers',
 	events: 'events',
-	wonders: 'wonders'
+	wonders: 'wonders/square',
+	wonderBonuses: 'wonders/bonuses'
 } as const
 
 /**

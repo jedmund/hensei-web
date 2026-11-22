@@ -70,6 +70,44 @@ export function parseElementStat(
 	return { family, element }
 }
 
+// The game's bonus icon ids (`effective_acquired_bonus[].image`), matched to
+// in-game screenshots of every Seal and Yupei. An element's resistance and
+// ATK share one icon; caps share their stat's icon.
+const ELEMENT_BONUS_ICONS: Record<WonderStatElement, string> = {
+	wind: 'bonus_7',
+	fire: 'bonus_8',
+	water: 'bonus_9',
+	earth: 'bonus_10',
+	light: 'bonus_11',
+	dark: 'bonus_12'
+}
+
+const PLAIN_BONUS_ICONS: Record<PlainStat, string> = {
+	def: 'bonus_2',
+	debuff_resistance: 'bonus_3',
+	debuff_success_rate: 'bonus_4',
+	healing_cap: 'bonus_13',
+	double_attack_rate: 'bonus_20',
+	triple_attack_rate: 'bonus_21',
+	skill_dmg: 'bonus_18',
+	skill_dmg_cap: 'bonus_18',
+	ca_dmg: 'bonus_19',
+	ca_dmg_cap: 'bonus_19',
+	na_dmg_cap: 'bonus_1',
+	dmg_amplify: 'bonus_1'
+}
+
+/** A stat's game icon id, or null for a stat we don't know. */
+export function bonusIcon(stat: string): string | null {
+	const elemental = parseElementStat(stat)
+	if (elemental) {
+		return elemental.family === 'dmg_amplify_vs'
+			? 'bonus_1'
+			: ELEMENT_BONUS_ICONS[elemental.element]
+	}
+	return PLAIN_BONUS_ICONS[stat as PlainStat] ?? null
+}
+
 /** A stat's display name. Unknown keys show as they are. */
 export function statLabel(stat: string): string {
 	const elemental = parseElementStat(stat)

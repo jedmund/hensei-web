@@ -1,10 +1,12 @@
 <script lang="ts">
 	/**
-	 * WonderBonusList - a Wonder's bonuses as label/value rows: the summed
-	 * level bonuses of a Seal or Yupei, or Symbolum's DMG Amplify.
+	 * WonderBonusList - a Wonder's bonuses as label/value rows, each with the
+	 * game's bonus icon where we have it: the summed level bonuses of a Seal
+	 * or Yupei, or Symbolum's DMG Amplify.
 	 */
 	import DetailRow from '$lib/components/sidebar/details/DetailRow.svelte'
-	import { bonusLabel } from '$lib/features/wonders/labels'
+	import { bonusIcon, bonusLabel } from '$lib/features/wonders/labels'
+	import { getWonderBonusIcon } from '$lib/utils/images/wonders'
 	import type { WonderBonus } from '$lib/types/api/wonder'
 
 	interface Props {
@@ -17,13 +19,37 @@
 <div class="bonus-list">
 	{#each bonuses as bonus (bonus.stat)}
 		{@const line = bonusLabel(bonus)}
-		<DetailRow label={line.label} value={line.value} />
+		{@const icon = bonusIcon(bonus.stat)}
+		<DetailRow label={line.label} value={line.value}>
+			{#snippet labelSlot()}
+				<span class="bonus-label">
+					{#if icon}
+						<img class="bonus-icon" src={getWonderBonusIcon(icon)} alt="" width="20" height="20" />
+					{/if}
+					{line.label}
+				</span>
+			{/snippet}
+		</DetailRow>
 	{/each}
 </div>
 
 <style lang="scss">
+	@use '$src/themes/spacing' as *;
+
 	.bonus-list {
 		display: flex;
 		flex-direction: column;
+	}
+
+	.bonus-label {
+		display: inline-flex;
+		align-items: center;
+		gap: $unit;
+	}
+
+	.bonus-icon {
+		width: 20px;
+		height: 20px;
+		flex-shrink: 0;
 	}
 </style>

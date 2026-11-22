@@ -9,6 +9,7 @@ vi.mock('$lib/paraglide/runtime', async (importOriginal) => ({
 }))
 
 import {
+	bonusIcon,
 	bonusLabel,
 	bonusValueLabel,
 	parseElementStat,
@@ -75,6 +76,57 @@ describe('stat copy', () => {
 	it('shows unknown stats as they are', () => {
 		expect(statLabel('mystery_stat')).toBe('mystery_stat')
 		expect(parseElementStat('null_resistance')).toBeNull()
+	})
+})
+
+describe('bonus icons', () => {
+	it("uses the game's icons from the Seal and Yupei captures", () => {
+		// Seal of the Underworld Emperor and Zhurong's Yupei, in capture order
+		expect(
+			[
+				'fire_resistance',
+				'def',
+				'double_attack_rate',
+				'healing_cap',
+				'debuff_resistance',
+				'triple_attack_rate',
+				'debuff_success_rate'
+			].map(bonusIcon)
+		).toEqual(['bonus_8', 'bonus_2', 'bonus_20', 'bonus_13', 'bonus_3', 'bonus_21', 'bonus_4'])
+		expect(
+			[
+				'fire_atk',
+				'def',
+				'skill_dmg',
+				'ca_dmg',
+				'dmg_amplify_vs_wind',
+				'na_dmg_cap',
+				'skill_dmg_cap',
+				'ca_dmg_cap'
+			].map(bonusIcon)
+		).toEqual([
+			'bonus_8',
+			'bonus_2',
+			'bonus_18',
+			'bonus_19',
+			'bonus_1',
+			'bonus_1',
+			'bonus_18',
+			'bonus_19'
+		])
+		expect(bonusIcon('dmg_amplify')).toBe('bonus_1')
+	})
+
+	it('gives each element its own icon', () => {
+		expect(ELEMENTS.map((el) => bonusIcon(`${el}_resistance`))).toEqual([
+			'bonus_8',
+			'bonus_9',
+			'bonus_10',
+			'bonus_7',
+			'bonus_11',
+			'bonus_12'
+		])
+		expect(bonusIcon('unknown_stat')).toBeNull()
 	})
 })
 
