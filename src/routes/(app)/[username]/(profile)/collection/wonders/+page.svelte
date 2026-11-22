@@ -58,6 +58,7 @@
 							wonder={item.wonder}
 							row={item.row}
 							size={104}
+							levelBadge
 							onclick={() =>
 								openCollectionWonderPane(item.wonder, item.row, catalogueQuery.data!, data.isOwner)}
 						/>
