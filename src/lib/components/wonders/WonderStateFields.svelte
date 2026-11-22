@@ -116,7 +116,10 @@
 	</DetailRow>
 	{@const untilNext = symbolumRecruitsUntilNext(state.possession)}
 	{#if untilNext !== null}
-		<DetailRow label={m.wonders_recruits_until_next()} value={untilNext} />
+		<DetailRow
+			label={m.wonders_recruits_until_next()}
+			value={m.wonders_recruits_until_next_value({ count: untilNext })}
+		/>
 	{/if}
 	<p class="hint">{m.wonders_recruited_hint()}</p>
 {/if}

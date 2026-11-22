@@ -3426,6 +3426,7 @@
 	"wonders_active_label": "Active",
 	"wonders_recruited_label": "Recruited characters",
 	"wonders_recruits_until_next": "Recruits until next boost",
+	"wonders_recruits_until_next_value": "{count}",
 	"wonders_recruited_hint": "Enter the count shown in game. Collab characters and characters still in the crate don't count.",
 	"wonders_effects_title": "Effects",
 	"wonders_bonuses_title": "Bonuses",
