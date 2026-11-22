@@ -87,7 +87,7 @@
 
 	.category-name {
 		margin: 0;
-		font-size: $font-regular;
+		font-size: $font-small;
 		font-weight: $medium;
 		color: var(--text-secondary);
 	}
