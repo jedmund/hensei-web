@@ -73,6 +73,23 @@ export class WonderAdapter extends BaseAdapter {
 		})
 		return response.wonders ?? []
 	}
+
+	/**
+	 * Replaces a party's Wonders with its account's current collection, as a
+	 * new team's snapshot does. 403 when that collection isn't viewable, 422
+	 * when the team has no account.
+	 * @param partyId - the party's UUID
+	 */
+	async syncPartyWonders(
+		partyId: string,
+		headers?: Record<string, string>
+	): Promise<OwnedWonder[]> {
+		const response = await this.request<{ wonders: OwnedWonder[] }>(
+			`/parties/${partyId}/wonders/sync`,
+			{ method: 'POST', headers }
+		)
+		return response.wonders ?? []
+	}
 }
 
 export const wonderAdapter = new WonderAdapter(DEFAULT_ADAPTER_CONFIG)
