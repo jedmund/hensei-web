@@ -125,7 +125,7 @@ describe('visiblePartyWonders', () => {
 		expect(visible.map((j) => j.wonder.id)).toEqual([fireSeal.id, zhurong.id, shield.id])
 	})
 
-	it('orders leveled (most bonuses first), element, character-specific, then general Wonders', () => {
+	it('orders Wonders with bonuses (most first), element, character-specific, then general', () => {
 		const bonus = (n: number) =>
 			Array.from({ length: n }, (_, i) => ({ stat: `stat_${i}` as never, value: 1 }))
 		const eternals = { ...shield, id: 'w-eternals', requiredCharacterIds: ['3040030000'] }
@@ -147,7 +147,7 @@ describe('visiblePartyWonders', () => {
 		const ids = (element: number) =>
 			visiblePartyWonders({ ...team, element }, withEternals).map((j) => j.wonder.id)
 
-		expect(ids(6)).toEqual([ringOfDeath.id, eternals.id, shield.id, symbolum.id])
+		expect(ids(6)).toEqual([symbolum.id, ringOfDeath.id, eternals.id, shield.id])
 		const orderedLeveled = visiblePartyWonders(
 			{
 				...team,
@@ -156,7 +156,7 @@ describe('visiblePartyWonders', () => {
 			},
 			withEternals
 		).map((j) => j.wonder.id)
-		expect(orderedLeveled.slice(0, 2)).toEqual([zhurong.id, fireSeal.id])
+		expect(orderedLeveled.slice(0, 3)).toEqual([zhurong.id, fireSeal.id, symbolum.id])
 	})
 
 	it('drops Seals on a Unite and Fight team, and shows them again after the raid changes', () => {

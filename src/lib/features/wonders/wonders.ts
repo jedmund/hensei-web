@@ -127,27 +127,27 @@ export function joinWonders<Row extends OwnedWonder>(
 
 /**
  * Where a Wonder sits on a team, strongest effect first:
- * 0. leveled Wonders (Seals, Yupei), whose bonuses carry the most weight;
+ * 0. Wonders with bonus rows: the leveled ones (Seals, Yupei) and Symbolum;
  * 1. element Wonders (the Rings of Fate);
  * 2. character-specific Wonders (Eternals, Divine Generals, the story crew);
- * 3. the rest, which boost every team (Signum Heredis, Symbolum, …).
+ * 3. the rest, which boost every team (Signum Heredis, Oppressus Fragor, …).
  */
 function teamDisplayTier(wonder: Wonder): number {
-	if (wonder.kind === 'leveled') return 0
+	if (wonder.kind !== 'fixed') return 0
 	if (wonder.element != null) return 1
 	if ((wonder.requiredCharacterIds ?? []).length > 0) return 2
 	return 3
 }
 
 /**
- * Team display order: by tier, then leveled Wonders with more bonuses
- * first, then catalogue order.
+ * Team display order: by tier, then Wonders with more bonus rows first
+ * (Yupei, Seals, then Symbolum), then catalogue order.
  */
 export function compareTeamDisplayOrder(catalogue: WonderCatalogue) {
 	const byCatalogue = compareCatalogueOrder(catalogue)
 	return (a: JoinedWonder, b: JoinedWonder) =>
 		teamDisplayTier(a.wonder) - teamDisplayTier(b.wonder) ||
-		(a.wonder.kind === 'leveled' ? b.row.bonuses.length - a.row.bonuses.length : 0) ||
+		b.row.bonuses.length - a.row.bonuses.length ||
 		byCatalogue(a.wonder, b.wonder)
 }
 
