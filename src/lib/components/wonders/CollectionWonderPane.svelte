@@ -138,27 +138,6 @@
 		background-size: 420px 731px;
 		background-position: -20px -20px;
 		overflow: hidden;
-
-		// The same hover float as character and summon art in ItemHeader
-		&:hover :global(.wonder-image) {
-			animation: wonder-float 5s ease-in-out infinite;
-		}
-	}
-
-	@keyframes wonder-float {
-		0%,
-		100% {
-			transform: translateY(0);
-		}
-		50% {
-			transform: translateY(-3px);
-		}
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.wonder-header:hover :global(.wonder-image) {
-			animation: none;
-		}
 	}
 
 	.status {
