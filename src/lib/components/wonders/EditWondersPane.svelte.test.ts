@@ -1,6 +1,15 @@
 import { describe, it, expect, afterEach, vi } from 'vitest'
 import { flushSync, mount, unmount } from 'svelte'
 
+// jsdom has no ResizeObserver; the level Slider (bits-ui) reads it on mount
+vi.hoisted(() => {
+	globalThis.ResizeObserver ??= class {
+		observe() {}
+		unobserve() {}
+		disconnect() {}
+	} as unknown as typeof ResizeObserver
+})
+
 // One client for the file, in place of the app layout's provider
 const queries = vi.hoisted(() => ({
 	client: null as unknown as import('@tanstack/svelte-query').QueryClient
@@ -118,7 +127,8 @@ describe('EditWondersPane', () => {
 		const seal = row('Seal of the Blazing Bodhisattva')
 		expect(seal.textContent).toContain('Lvl 20')
 
-		seal.querySelector<HTMLButtonElement>('button[aria-label="Lower uncap"]')!.click()
+		// Tapping the third (filled) star empties it: uncap 3 -> 2
+		seal.querySelectorAll<HTMLButtonElement>('button.star-button')[2]!.click()
 		flushSync()
 		expect(seal.textContent).toContain('Lvl 18')
 
