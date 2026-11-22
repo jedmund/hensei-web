@@ -1,8 +1,8 @@
 <script lang="ts">
 	/**
-	 * WonderDetails - what a Wonder does: its bonuses (leveled and scaling
-	 * Wonders, computed by the API) or its effects (fixed Wonders, the
-	 * game's text), then its description.
+	 * WonderDetails - a Wonder's description (first, since every Wonder has
+	 * one), then what it does: its bonuses (leveled and scaling Wonders,
+	 * computed by the API) or its effects (fixed Wonders, the game's text).
 	 */
 	import { m } from '$lib/paraglide/messages'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
@@ -28,6 +28,12 @@
 	const description = $derived(wonderText(wonder.description))
 </script>
 
+{#if showDescription && description !== '—'}
+	<DetailsSection title={m.wonders_description_title()}>
+		<p class="description">{description}</p>
+	</DetailsSection>
+{/if}
+
 {#if bonuses.length > 0}
 	<DetailsSection title={m.wonders_bonuses_title()}>
 		<WonderBonusList {bonuses} />
@@ -41,12 +47,6 @@
 				<li>{effect}</li>
 			{/each}
 		</ul>
-	</DetailsSection>
-{/if}
-
-{#if showDescription && description !== '—'}
-	<DetailsSection title={m.wonders_description_title()}>
-		<p class="description">{description}</p>
 	</DetailsSection>
 {/if}
 
