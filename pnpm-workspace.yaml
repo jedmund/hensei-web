@@ -23,3 +23,11 @@ ignoredOptionalDependencies:
 overrides:
   # Via postcss (GHSA-68fv-2mgg-jv7q).
   source-map-js: ^1.2.2
+
+# Advisories `pnpm audit` should skip. Each needs a reason and a way out.
+auditConfig:
+  ignoreGhsas:
+    # SvelteKit remote functions `form` DoS. Only reachable through
+    # experimental remote functions, which this app doesn't enable or import
+    # ($app/server). The fix is SvelteKit 3.1.1; remove this with that upgrade.
+    - GHSA-3r8g-jcqq-3p5j
