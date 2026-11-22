@@ -7,7 +7,7 @@
  * - level caps from Seal evolution;
  * - the state a Wonder's kind allows, and its bonuses and image before the
  *   API has computed them (forms preview unsaved changes);
- * - the whole-set payload for `PUT /parties/:id/wonders`.
+ * - the whole-set payloads for `PUT /parties/:id/wonders`.
  *
  * @module features/wonders
  */
@@ -29,6 +29,7 @@ import type {
 interface PartyLike {
 	element?: number | null | undefined
 	raid?: { group?: { contentMode?: string | null } | null | undefined } | null | undefined
+	characters?: readonly { character?: { granblueId?: string | null } | null }[] | null | undefined
 }
 
 /** A team is Unite and Fight when its raid's group is. */
@@ -41,10 +42,21 @@ export interface WonderTeamContext {
 	/** The team's element; without one, only all-element Wonders show */
 	element?: number | null | undefined
 	uniteAndFight: boolean
+	/** Granblue ids of the team's characters; without them, character-specific Wonders don't show */
+	characterIds?: ReadonlySet<string> | undefined
 }
 
 export function teamContext(party: PartyLike): WonderTeamContext {
-	return { element: party.element ?? null, uniteAndFight: isUniteAndFightParty(party) }
+	const characterIds = new Set(
+		(party.characters ?? []).flatMap((gc) =>
+			gc.character?.granblueId ? [gc.character.granblueId] : []
+		)
+	)
+	return {
+		element: party.element ?? null,
+		uniteAndFight: isUniteAndFightParty(party),
+		characterIds
+	}
 }
 
 /** Hidden by the team's content mode: Seals on Unite and Fight teams. Silent, no note. */
@@ -52,14 +64,38 @@ export function hiddenByContentMode(wonder: Wonder, context: WonderTeamContext):
 	return context.uniteAndFight && wonder.hiddenInUniteAndFight
 }
 
+/** Whether a team has a character a character-specific Wonder boosts. Always true for the others. */
+export function hasRequiredCharacter(wonder: Wonder, context: WonderTeamContext): boolean {
+	// A catalogue cached from before the field existed has no list: no requirement
+	const required = wonder.requiredCharacterIds ?? []
+	if (required.length === 0) return true
+	return required.some((id) => context.characterIds?.has(id) ?? false)
+}
+
 /**
  * Whether a team shows a Wonder: its element is null (every element) or the
- * team's, and its content mode doesn't hide it. Element 0 is the Null
- * element, not "every element", so compare with null.
+ * team's, its content mode doesn't hide it, and a character-specific Wonder
+ * has one of its characters in the grid. Element 0 is the Null element, not
+ * "every element", so compare with null.
  */
 export function appliesToTeam(wonder: Wonder, context: WonderTeamContext): boolean {
-	if (hiddenByContentMode(wonder, context)) return false
-	return wonder.element == null || wonder.element === context.element
+	return !hiddenByContentMode(wonder, context) && teamHiddenReason(wonder, context) == null
+}
+
+/** Why a Wonder the edit pane offers doesn't show on the team. */
+export type TeamHiddenReason = 'element' | 'characters'
+
+/**
+ * Why the team leaves out a Wonder: it boosts another element, or none of
+ * the characters it boosts are in the grid. Null when it shows.
+ */
+export function teamHiddenReason(
+	wonder: Wonder,
+	context: WonderTeamContext
+): TeamHiddenReason | null {
+	if (wonder.element != null && wonder.element !== context.element) return 'element'
+	if (!hasRequiredCharacter(wonder, context)) return 'characters'
+	return null
 }
 
 /**
@@ -103,13 +139,41 @@ export function joinWonders<Row extends OwnedWonder>(
 		.sort((a, b) => compare(a.wonder, b.wonder))
 }
 
-/** A team's Wonders that apply to it, in catalogue order. */
+/**
+ * Where a Wonder sits on a team, strongest effect first:
+ * 0. Wonders with bonus rows: the leveled ones (Seals, Yupei) and Symbolum;
+ * 1. element Wonders (the Rings of Fate);
+ * 2. character-specific Wonders (Eternals, Divine Generals, the story crew);
+ * 3. the rest, which boost every team (Signum Heredis, Oppressus Fragor, …).
+ */
+function teamDisplayTier(wonder: Wonder): number {
+	if (wonder.kind !== 'fixed') return 0
+	if (wonder.element != null) return 1
+	if ((wonder.requiredCharacterIds ?? []).length > 0) return 2
+	return 3
+}
+
+/**
+ * Team display order: by tier, then Wonders with more bonus rows first
+ * (Yupei, Seals, then Symbolum), then catalogue order.
+ */
+export function compareTeamDisplayOrder(catalogue: WonderCatalogue) {
+	const byCatalogue = compareCatalogueOrder(catalogue)
+	return (a: JoinedWonder, b: JoinedWonder) =>
+		teamDisplayTier(a.wonder) - teamDisplayTier(b.wonder) ||
+		b.row.bonuses.length - a.row.bonuses.length ||
+		byCatalogue(a.wonder, b.wonder)
+}
+
+/** A team's Wonders that apply to it, in team display order. */
 export function visiblePartyWonders(
 	party: PartyLike & { wonders?: OwnedWonder[] | undefined },
 	catalogue: WonderCatalogue
 ): JoinedWonder[] {
 	const context = teamContext(party)
-	return joinWonders(party.wonders ?? [], catalogue).filter((j) => appliesToTeam(j.wonder, context))
+	return joinWonders(party.wonders ?? [], catalogue)
+		.filter((j) => appliesToTeam(j.wonder, context))
+		.sort(compareTeamDisplayOrder(catalogue))
 }
 
 export interface WonderGroup<T> {
@@ -261,60 +325,36 @@ export function wonderImageName(
 // ============================================================================
 
 /**
- * The whole set for `PUT /parties/:id/wonders`. The pane edits only the
- * Wonders that apply to the team; the rest (another element's, or Seals on
- * a Unite and Fight team) are kept as they were, since the snapshot keeps
- * them and the endpoint replaces the set.
- *
- * @param existing - the party's current Wonders
- * @param editable - ids of the Wonders the pane shows
- * @param selection - the pane's turned-on Wonders, by Wonder id
+ * The whole set for `PUT /parties/:id/wonders` after setting one Wonder's
+ * state: its row is replaced (or added, at the end), and every other row is
+ * kept as it was, including the ones the edit pane doesn't show (Seals on a
+ * Unite and Fight team), since the endpoint replaces the set.
  */
-export function partyWondersPayload(
+export function partyWondersWith(
 	existing: readonly OwnedWonder[],
-	editable: readonly Wonder[],
-	selection: Readonly<Record<string, WonderState>>
+	wonder: Wonder,
+	state: WonderState
 ): PartyWonderInput[] {
-	const editableIds = new Set(editable.map((w) => w.id))
-	const kept = existing
-		.filter((row) => !editableIds.has(row.wonderId))
-		.map((row) => ({
-			wonderId: row.wonderId,
-			level: row.level,
-			evolution: row.evolution,
-			possession: row.possession
-		}))
-	const edited = editable
-		.filter((wonder) => selection[wonder.id])
-		.map((wonder) => ({ wonderId: wonder.id, ...normalizeState(wonder, selection[wonder.id]!) }))
-	return [...kept, ...edited]
+	const row = { wonderId: wonder.id, ...normalizeState(wonder, state) }
+	const kept = existing.map(partyWonderInput)
+	const index = kept.findIndex((input) => input.wonderId === wonder.id)
+	if (index === -1) return [...kept, row]
+	return kept.map((input, i) => (i === index ? row : input))
 }
 
-/** The pane's starting selection: the party's Wonders among those it shows. */
-export function selectionFromParty(
+/** The whole set for `PUT /parties/:id/wonders` without one Wonder; the rest are kept. */
+export function partyWondersWithout(
 	existing: readonly OwnedWonder[],
-	editable: readonly Wonder[]
-): Record<string, WonderState> {
-	const rows = new Map(existing.map((row) => [row.wonderId, row]))
-	const selection: Record<string, WonderState> = {}
-	for (const wonder of editable) {
-		const row = rows.get(wonder.id)
-		if (row) selection[wonder.id] = stateOf(wonder, row)
-	}
-	return selection
+	wonderId: string
+): PartyWonderInput[] {
+	return existing.filter((row) => row.wonderId !== wonderId).map(partyWonderInput)
 }
 
-export function sameSelection(
-	a: Readonly<Record<string, WonderState>>,
-	b: Readonly<Record<string, WonderState>>
-): boolean {
-	const keys = Object.keys(a)
-	if (keys.length !== Object.keys(b).length) return false
-	return keys.every((key) => {
-		const x = a[key]
-		const y = b[key]
-		return (
-			!!y && x!.level === y.level && x!.evolution === y.evolution && x!.possession === y.possession
-		)
-	})
+function partyWonderInput(row: OwnedWonder): PartyWonderInput {
+	return {
+		wonderId: row.wonderId,
+		level: row.level,
+		evolution: row.evolution,
+		possession: row.possession
+	}
 }

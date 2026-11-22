@@ -12,7 +12,6 @@
 	import Button from '$lib/components/ui/Button.svelte'
 	import WonderCard from './WonderCard.svelte'
 	import { wonderQueries } from '$lib/api/queries/wonder.queries'
-	import { useUpdatePartyWonders } from '$lib/api/mutations/wonder.mutations'
 	import { visiblePartyWonders } from '$lib/features/wonders/wonders'
 	import { openEditWondersPane, openPartyWondersPane } from './openPartyWonderPanes'
 	import type { Party } from '$lib/types/api/party'
@@ -25,7 +24,6 @@
 	let { party, canEdit }: Props = $props()
 
 	const catalogueQuery = createQuery(() => wonderQueries.catalogue())
-	const mutation = useUpdatePartyWonders(() => party.id)
 
 	const visible = $derived(
 		catalogueQuery.data ? visiblePartyWonders(party, catalogueQuery.data) : []
@@ -39,7 +37,7 @@
 	}
 
 	function openEdit() {
-		openEditWondersPane(party, mutation)
+		openEditWondersPane(() => party)
 	}
 </script>
 
@@ -60,7 +58,7 @@
 		{#if visible.length > 0}
 			<div class="wonder-row">
 				{#each visible as { wonder, row } (row.id)}
-					<WonderCard {wonder} {row} size={48} showName={false} onclick={openDetails} />
+					<WonderCard {wonder} {row} size={60} showName={false} onclick={openDetails} />
 				{/each}
 			</div>
 		{:else}

@@ -7,28 +7,21 @@
 	import { m } from '$lib/paraglide/messages'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
 	import WonderBonusList from './WonderBonusList.svelte'
-	import { wonderText } from '$lib/features/wonders/labels'
+	import { wonderEffectTexts, wonderText } from '$lib/features/wonders/labels'
 	import type { Wonder, WonderBonus } from '$lib/types/api/wonder'
 
 	interface Props {
 		wonder: Wonder
 		bonuses: WonderBonus[]
-		/** Leave out the flavor text (the team pane lists several Wonders) */
-		showDescription?: boolean
 	}
 
-	let { wonder, bonuses, showDescription = true }: Props = $props()
+	let { wonder, bonuses }: Props = $props()
 
-	const effects = $derived(
-		[...wonder.effects]
-			.sort((a, b) => a.position - b.position)
-			.map((e) => wonderText(e.text))
-			.filter((text) => text !== '—')
-	)
+	const effects = $derived(wonderEffectTexts(wonder))
 	const description = $derived(wonderText(wonder.description))
 </script>
 
-{#if showDescription && description !== '—'}
+{#if description !== '—'}
 	<DetailsSection title={m.wonders_description_title()}>
 		<p class="description">{description}</p>
 	</DetailsSection>
@@ -54,12 +47,15 @@
 	@use '$src/themes/spacing' as *;
 	@use '$src/themes/typography' as *;
 
+	// No bullets or extra inset: lines up with the section title, like the
+	// description
 	.effects {
 		display: flex;
 		flex-direction: column;
 		gap: $unit;
 		margin: 0;
-		padding: 0 $unit-2x 0 calc($unit-2x + $unit-2x);
+		padding: 0 $unit;
+		list-style: none;
 		font-size: $font-regular;
 		color: var(--text-primary);
 	}

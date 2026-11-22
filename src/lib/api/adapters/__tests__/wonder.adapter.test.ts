@@ -69,7 +69,7 @@ describe('WonderAdapter', () => {
 
 		const result = await adapter.getCatalogue()
 
-		expect(lastCall().url).toBe(`${BASE}/wonders`)
+		expect(lastCall().url).toBe(`${BASE}/wonders?v=2`)
 		expect(result.categories[0]).toMatchObject({ granblueId: '4', categoryType: 2, sortOrder: 4 })
 		expect(result.wonders[0]).toMatchObject({
 			categoryId: 'c4',
@@ -164,5 +164,18 @@ describe('WonderAdapter', () => {
 			]
 		})
 		expect(result[0]!.wonderId).toBe('w-9008')
+	})
+
+	it('syncPartyWonders posts with no body and passes the edit key', async () => {
+		global.fetch = mockApiResponse({ wonders: [ownedRow] })
+
+		const result = await adapter.syncPartyWonders('party-1', { 'X-Edit-Key': 'key' })
+
+		const call = lastCall()
+		expect(call.url).toBe(`${BASE}/parties/party-1/wonders/sync`)
+		expect(call.method).toBe('POST')
+		expect(call.body).toBeUndefined()
+		expect(call.headers['X-Edit-Key']).toBe('key')
+		expect(result[0]).toMatchObject({ wonderId: 'w-9008', image: '9008_20' })
 	})
 })

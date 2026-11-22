@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
+	teamContext,
+	teamHiddenReason,
 	appliesToTeam,
 	computeBonuses,
 	defaultState,
@@ -10,9 +12,8 @@ import {
 	joinWonders,
 	maxLevelFor,
 	normalizeState,
-	partyWondersPayload,
-	sameSelection,
-	selectionFromParty,
+	partyWondersWith,
+	partyWondersWithout,
 	symbolumBonus,
 	symbolumRecruitsUntilNext,
 	visiblePartyWonders,
@@ -67,6 +68,42 @@ describe('appliesToTeam', () => {
 		expect(appliesToTeam(waterSeal, { element: 2, uniteAndFight: true })).toBe(false)
 		expect(appliesToTeam(shield, { element: 2, uniteAndFight: true })).toBe(true)
 	})
+
+	it('shows a character-specific Wonder only with one of its characters in the grid', () => {
+		const eternals = { ...shield, requiredCharacterIds: ['3040030000', '3040451000'] }
+		const withSeofon = teamContext({
+			element: 3,
+			characters: [{ character: { granblueId: '3040451000' } }]
+		})
+		const without = teamContext({
+			element: 3,
+			characters: [{ character: { granblueId: '3040999000' } }]
+		})
+
+		expect(appliesToTeam(eternals, withSeofon)).toBe(true)
+		expect(appliesToTeam(eternals, without)).toBe(false)
+		expect(appliesToTeam(eternals, { element: 3, uniteAndFight: false })).toBe(false)
+		expect(appliesToTeam(shield, without)).toBe(true)
+	})
+
+	it('treats a cached catalogue entry without the list as no requirement', () => {
+		const stale = { ...shield, requiredCharacterIds: undefined } as unknown as typeof shield
+		expect(appliesToTeam(stale, teamContext({ element: 3 }))).toBe(true)
+	})
+
+	it('still offers character-specific Wonders in the edit pane', () => {
+		const eternals = { ...shield, battleRelevant: true, requiredCharacterIds: ['3040030000'] }
+		expect(editableOnTeam(eternals, teamContext({ element: 3 }))).toBe(true)
+	})
+})
+
+describe('teamHiddenReason', () => {
+	it('names why the team leaves a Wonder out', () => {
+		const eternals = { ...shield, requiredCharacterIds: ['3040030000'] }
+		expect(teamHiddenReason(fireSeal, teamContext({ element: 2 }))).toBe('element')
+		expect(teamHiddenReason(eternals, teamContext({ element: 2 }))).toBe('characters')
+		expect(teamHiddenReason(fireSeal, teamContext({ element: 1 }))).toBeNull()
+	})
 })
 
 describe('editableOnTeam', () => {
@@ -93,14 +130,48 @@ describe('visiblePartyWonders', () => {
 		owned(zhurong, { level: 10, evolution: 0 })
 	]
 
-	it("keeps the team's element and all-element Wonders, in catalogue order", () => {
+	it("keeps the team's element and all-element Wonders, leveled ones first", () => {
 		const visible = visiblePartyWonders({ element: 1, wonders }, catalogue)
-		expect(visible.map((j) => j.wonder.id)).toEqual([fireSeal.id, shield.id, zhurong.id])
+		expect(visible.map((j) => j.wonder.id)).toEqual([fireSeal.id, zhurong.id, shield.id])
+	})
+
+	it('orders Wonders with bonuses (most first), element, character-specific, then general', () => {
+		const bonus = (n: number) =>
+			Array.from({ length: n }, (_, i) => ({ stat: `stat_${i}` as never, value: 1 }))
+		const eternals = { ...shield, id: 'w-eternals', requiredCharacterIds: ['3040030000'] }
+		const withEternals = { ...catalogue, wonders: [...catalogue.wonders, eternals] }
+		const rows = [
+			owned(symbolum, { possession: 900, bonuses: bonus(1) }),
+			owned(shield),
+			{ ...owned(eternals), id: 'owned-eternals' },
+			owned(ringOfDeath),
+			owned(waterSeal, { level: 20, evolution: 3, bonuses: bonus(7) }),
+			owned(zhurong, { level: 10, evolution: 0, bonuses: bonus(8) })
+		]
+		const team = {
+			element: null,
+			wonders: rows,
+			characters: [{ character: { granblueId: '3040030000' } }]
+		}
+		// Element null shows only all-element Wonders, so give each its element here
+		const ids = (element: number) =>
+			visiblePartyWonders({ ...team, element }, withEternals).map((j) => j.wonder.id)
+
+		expect(ids(6)).toEqual([symbolum.id, ringOfDeath.id, eternals.id, shield.id])
+		const orderedLeveled = visiblePartyWonders(
+			{
+				...team,
+				element: 1,
+				wonders: [...rows, owned(fireSeal, { level: 20, bonuses: bonus(7) })]
+			},
+			withEternals
+		).map((j) => j.wonder.id)
+		expect(orderedLeveled.slice(0, 3)).toEqual([zhurong.id, fireSeal.id, symbolum.id])
 	})
 
 	it('drops Seals on a Unite and Fight team, and shows them again after the raid changes', () => {
 		const onUaf = visiblePartyWonders({ element: 1, raid: uaf, wonders }, catalogue)
-		expect(onUaf.map((j) => j.wonder.id)).toEqual([shield.id, zhurong.id])
+		expect(onUaf.map((j) => j.wonder.id)).toEqual([zhurong.id, shield.id])
 
 		const moved = visiblePartyWonders({ element: 1, raid: { group: null }, wonders }, catalogue)
 		expect(moved.map((j) => j.wonder.id)).toContain(fireSeal.id)
@@ -261,38 +332,34 @@ describe('wonderImageName', () => {
 	})
 })
 
-describe('partyWondersPayload', () => {
-	const existing = [
-		owned(waterSeal, { level: 20, evolution: 3 }),
-		owned(fireSeal, { level: 18, evolution: 2 }),
-		owned(shield)
-	]
+describe('partyWondersWith', () => {
+	const existing = [owned(waterSeal, { level: 20, evolution: 3 }), owned(shield)]
 
-	it('keeps Wonders the pane does not show (Seals on a Unite and Fight team)', () => {
-		const editable = [shield, symbolum, zhurong]
-		const selection = {
-			[symbolum.id]: { level: null, evolution: null, possession: 650 }
-		}
-
-		expect(partyWondersPayload(existing, editable, selection)).toEqual([
-			{ wonderId: waterSeal.id, level: 20, evolution: 3, possession: null },
-			{ wonderId: fireSeal.id, level: 18, evolution: 2, possession: null },
-			{ wonderId: symbolum.id, level: null, evolution: null, possession: 650 }
+	it('replaces the Wonder in place and keeps the rest', () => {
+		expect(
+			partyWondersWith(existing, waterSeal, { level: 20, evolution: 0, possession: 5 })
+		).toEqual([
+			{ wonderId: waterSeal.id, level: 10, evolution: 0, possession: null },
+			{ wonderId: shield.id, level: null, evolution: null, possession: null }
 		])
 	})
 
-	it('normalizes edited rows', () => {
-		const payload = partyWondersPayload([], [waterSeal], {
-			[waterSeal.id]: { level: 20, evolution: 0, possession: 5 }
-		})
-		expect(payload).toEqual([{ wonderId: waterSeal.id, level: 10, evolution: 0, possession: null }])
+	it('adds a Wonder the team does not have at the end', () => {
+		expect(
+			partyWondersWith(existing, symbolum, { level: null, evolution: null, possession: 650 })
+		).toEqual([
+			{ wonderId: waterSeal.id, level: 20, evolution: 3, possession: null },
+			{ wonderId: shield.id, level: null, evolution: null, possession: null },
+			{ wonderId: symbolum.id, level: null, evolution: null, possession: 650 }
+		])
 	})
+})
 
-	it('round-trips through the starting selection unchanged', () => {
-		const editable = [fireSeal, shield, zhurong]
-		const selection = selectionFromParty(existing, editable)
-		expect(Object.keys(selection)).toEqual([fireSeal.id, shield.id])
-		expect(sameSelection(selection, selectionFromParty(existing, editable))).toBe(true)
-		expect(partyWondersPayload(existing, editable, selection)).toHaveLength(3)
+describe('partyWondersWithout', () => {
+	it('drops only that Wonder', () => {
+		const existing = [owned(waterSeal, { level: 20, evolution: 3 }), owned(shield)]
+		expect(partyWondersWithout(existing, shield.id)).toEqual([
+			{ wonderId: waterSeal.id, level: 20, evolution: 3, possession: null }
+		])
 	})
 })

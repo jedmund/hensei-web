@@ -13,6 +13,7 @@
 	import WeaponGrid from '$lib/components/grids/WeaponGrid.svelte'
 	import SummonGrid from '$lib/components/grids/SummonGrid.svelte'
 	import CharacterGrid from '$lib/components/grids/CharacterGrid.svelte'
+	import WondersTile from '$lib/components/wonders/WondersTile.svelte'
 	import JobSection from '$lib/components/job/JobSection.svelte'
 	import { Gender } from '$lib/utils/jobUtils'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -143,6 +144,10 @@
 					onRemoveGuidebook={handleRemoveGuidebook}
 					{collectionWeaponItems}
 				/>
+				<!-- Renders nothing when no Wonder applies and the viewer can't edit -->
+				<div class="wonders-section">
+					<WondersTile {party} canEdit={ctx.canEdit()} />
+				</div>
 			</div>
 		{:else if activeTab === GridType.Summon}
 			<SummonGrid summons={party.summons} {collectionSummonItems} />
@@ -186,8 +191,8 @@
 		<!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
 		{#snippet failed(error, reset)}
 			<div class="grid-error" role="alert">
-				<p>{m.party_grid_error()}</p>
-				<button onclick={reset}>{m.retry()}</button>
+				<p class="grid-error-message">{m.party_grid_error()}</p>
+				<Button variant="secondary" size="small" onclick={reset}>{m.retry()}</Button>
 			</div>
 		{/snippet}
 	</svelte:boundary>
@@ -195,6 +200,23 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/typography' as *;
+
+	.grid-error {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: $unit-2x;
+		padding: $unit-6x $unit-2x;
+		text-align: center;
+	}
+
+	.grid-error-message {
+		margin: 0;
+		font-size: $font-regular;
+		color: var(--text-secondary);
+	}
 
 	.party-content {
 		min-height: 400px;
@@ -207,6 +229,11 @@
 
 		:global(.calculator-notice) {
 			margin-bottom: $unit;
+		}
+
+		// Set the Wonders card apart from the weapon grid above it
+		.wonders-section {
+			margin-top: $unit-2x;
 		}
 	}
 </style>

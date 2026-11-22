@@ -1,12 +1,13 @@
 <script lang="ts">
 	/**
 	 * WonderCard - a Wonder's image with its name and level or bonus under
-	 * it, dimmed when inactive. Used on the profile (level as a badge on the
-	 * image, like artifact cards) and the team tile.
+	 * it, dimmed when inactive. Used on the profile and the team's edit pane
+	 * (level as a badge on the image, like artifact cards) and the team tile.
 	 */
 	import WonderImage from './WonderImage.svelte'
 	import { m } from '$lib/paraglide/messages'
 	import { wonderSummary, wonderText } from '$lib/features/wonders/labels'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import type { OwnedWonder, Wonder } from '$lib/types/api/wonder'
 
 	interface Props {
@@ -18,10 +19,20 @@
 		showName?: boolean
 		/** Show a leveled Wonder's level as a badge on the image */
 		levelBadge?: boolean
+		/** Why the Wonder doesn't show on the team: dims the card and becomes its tooltip */
+		hiddenNote?: string | null
 		onclick?: () => void
 	}
 
-	let { wonder, row, size = 80, showName = true, levelBadge = false, onclick }: Props = $props()
+	let {
+		wonder,
+		row,
+		size = 80,
+		showName = true,
+		levelBadge = false,
+		hiddenNote = null,
+		onclick
+	}: Props = $props()
 
 	const name = $derived(wonderText(wonder.name))
 	const badge = $derived(
@@ -31,30 +42,32 @@
 	)
 	// The level moves into the badge; Symbolum's bonus stays below
 	const summary = $derived(badge ? null : wonderSummary(wonder, row))
-	const inactive = $derived(row.active === false)
+	const inactive = $derived(row.active === false || hiddenNote != null)
 </script>
 
-<button
-	type="button"
-	class="wonder-card"
-	class:inactive
-	style:--wonder-card-width={`${size}px`}
-	title={showName ? undefined : name}
-	{onclick}
->
-	<span class="image">
-		<WonderImage image={row.image} alt={showName ? '' : name} {size} {inactive} />
-		{#if badge}
-			<span class="level-badge">{badge}</span>
+<!-- Hovering shows why a dimmed Wonder is hidden, or the name when it isn't visible -->
+<Tooltip content={hiddenNote ?? name} disabled={showName && hiddenNote == null}>
+	<button
+		type="button"
+		class="wonder-card"
+		class:inactive
+		style:--wonder-card-width={`${size}px`}
+		{onclick}
+	>
+		<span class="image">
+			<WonderImage image={row.image} alt={showName ? '' : name} {size} {inactive} />
+			{#if badge}
+				<span class="level-badge">{badge}</span>
+			{/if}
+		</span>
+		{#if showName}
+			<span class="name">{name}</span>
 		{/if}
-	</span>
-	{#if showName}
-		<span class="name">{name}</span>
-	{/if}
-	{#if summary}
-		<span class="summary">{summary}</span>
-	{/if}
-</button>
+		{#if summary}
+			<span class="summary">{summary}</span>
+		{/if}
+	</button>
+</Tooltip>
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;

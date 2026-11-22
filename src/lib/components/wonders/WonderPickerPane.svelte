@@ -1,60 +1,56 @@
 <script lang="ts">
 	/**
-	 * AddCollectionWonderPane - picks a Wonder to add to the owner's
-	 * collection: a grid of the Wonders they don't have, grouped by category.
-	 * Tapping a Wonder with something to set up (level, uncap or recruited
-	 * count) opens its setup pane; the others are selected and added with
-	 * the header's Add.
+	 * WonderPickerPane - picks a Wonder to add: a grid of the candidates,
+	 * grouped by category. Tapping a Wonder with something to set up (level,
+	 * uncap or recruited count) pushes WonderSetupPane, whose Add adds it;
+	 * the others are selected and added with the header's Add. Shared by the
+	 * collection and a team's Wonders; the caller adds, toasts and navigates.
 	 */
 	import { untrack } from 'svelte'
 	import { page } from '$app/stores'
-	import { toast } from 'svelte-sonner'
-	import { m } from '$lib/paraglide/messages'
 	import DetailsSection from '$lib/components/sidebar/details/DetailsSection.svelte'
+	import { m } from '$lib/paraglide/messages'
 	import WonderImage from './WonderImage.svelte'
-	import CollectionWonderEditPane from './CollectionWonderEditPane.svelte'
+	import WonderSetupPane from './WonderSetupPane.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import { useAddCollectionWonder } from '$lib/api/mutations/wonder.mutations'
-	import { compareCatalogueOrder, stateOf, wonderImageName } from '$lib/features/wonders/wonders'
+	import {
+		compareCatalogueOrder,
+		groupByCategory,
+		stateOf,
+		wonderImageName
+	} from '$lib/features/wonders/wonders'
 	import { wonderText } from '$lib/features/wonders/labels'
-	import { extractErrorMessage } from '$lib/utils/errors'
 	import { uuid } from '$lib/utils/uuid'
 	import type { UserCookie } from '$lib/types/UserCookie'
-	import type { Wonder, WonderCatalogue } from '$lib/types/api/wonder'
+	import type { Wonder, WonderCatalogue, WonderState } from '$lib/types/api/wonder'
 
 	interface Props {
 		/** Pane ID injected by PaneStack */
 		paneId?: string
 		catalogue: WonderCatalogue
-		/** Catalogue ids of the Wonders the owner already has */
-		ownedIds: string[]
+		/** The Wonders that can be added */
+		candidates: Wonder[]
+		/** Shown when there are no candidates */
+		emptyMessage: string
+		/** Whether the setup pane shows the Active switch */
+		showActive?: boolean
+		onAdd: (wonder: Wonder, state: WonderState, active: boolean) => Promise<void>
 	}
 
-	let { paneId, catalogue, ownedIds }: Props = $props()
-
-	const addMutation = useAddCollectionWonder()
+	let { paneId, catalogue, candidates, emptyMessage, showActive = true, onAdd }: Props = $props()
 
 	const currentUser = $derived($page.data?.currentUser as UserCookie | null)
 	const accentColor = $derived(
 		currentUser?.element ? `var(--${currentUser.element}-button-bg)` : 'var(--text-primary)'
 	)
 
-	const groups = $derived.by(() => {
-		const owned = new Set(ownedIds)
-		const available = catalogue.wonders
-			.filter((w) => !owned.has(w.id))
-			.sort(compareCatalogueOrder(catalogue))
-		return [...catalogue.categories]
-			.sort((a, b) => a.sortOrder - b.sortOrder)
-			.map((category) => ({
-				category,
-				wonders: available.filter((w) => w.categoryId === category.id)
-			}))
-			.filter((group) => group.wonders.length > 0)
-	})
+	const groups = $derived(
+		groupByCategory([...candidates].sort(compareCatalogueOrder(catalogue)), (w) => w, catalogue)
+	)
 
 	let selectedId = $state<string | null>(null)
-	const selected = $derived(catalogue.wonders.find((w) => w.id === selectedId) ?? null)
+	let pending = $state(false)
+	const selected = $derived(candidates.find((w) => w.id === selectedId) ?? null)
 
 	/** Leveled Wonders and Symbolum have something to set before adding */
 	function needsSetup(wonder: Wonder) {
@@ -70,47 +66,44 @@
 		sidebar.push({
 			id: uuid(),
 			title: wonderText(wonder.name),
-			component: CollectionWonderEditPane,
-			props: { catalogue, mode: { kind: 'add', wonderId: wonder.id } },
+			component: WonderSetupPane,
+			props: {
+				wonder,
+				showActive,
+				onSubmit: (state: WonderState, active: boolean) => onAdd(wonder, state, active)
+			},
 			scrollable: true
 		})
 	}
 
 	async function add() {
-		if (!selected || addMutation.isPending) return
-		const name = wonderText(selected.name)
+		if (!selected || pending) return
+		pending = true
 		try {
-			await addMutation.mutateAsync({
-				wonderId: selected.id,
-				active: true,
-				...stateOf(selected, null)
-			})
-			toast.success(m.wonders_added({ name }))
-			sidebar.close()
-		} catch (err: unknown) {
-			toast.error(extractErrorMessage(err, m.wonders_save_failed()))
+			await onAdd(selected, stateOf(selected, null), true)
+		} finally {
+			pending = false
 		}
 	}
 
 	$effect(() => {
-		const wonder = selected
-		const pending = addMutation.isPending
+		const enabled = !!selected && !pending
 		untrack(() => {
-			const action = !wonder || pending ? undefined : add
+			const action = enabled ? add : undefined
 			if (paneId) sidebar.setActionForPane(paneId, action, m.action_add())
 			else sidebar.setAction(action, m.action_add())
 		})
 	})
 </script>
 
-<div class="add-wonder" style:--accent-color={accentColor}>
+<div class="wonder-picker" style:--accent-color={accentColor}>
 	{#if groups.length === 0}
-		<p class="hint">{m.wonders_all_owned()}</p>
+		<p class="hint">{emptyMessage}</p>
 	{:else}
 		{#each groups as group (group.category.id)}
 			<DetailsSection title={wonderText(group.category.name)}>
 				<div class="grid">
-					{#each group.wonders as wonder (wonder.id)}
+					{#each group.items as wonder (wonder.id)}
 						{@const name = wonderText(wonder.name)}
 						<button
 							type="button"
@@ -135,7 +128,7 @@
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/effects' as *;
 
-	.add-wonder {
+	.wonder-picker {
 		display: flex;
 		flex-direction: column;
 		gap: $unit-3x;

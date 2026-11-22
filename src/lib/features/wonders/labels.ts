@@ -129,6 +129,14 @@ export function bonusLabel(bonus: WonderBonus): { label: string; value: string }
 }
 
 /** A Wonder's name or text in the app's language, falling back to the other. */
+/** A Wonder's effect lines in the viewer's language, in the game's order. Empty lines are dropped. */
+export function wonderEffectTexts(wonder: Pick<Wonder, 'effects'>): string[] {
+	return [...wonder.effects]
+		.sort((a, b) => a.position - b.position)
+		.map((e) => wonderText(e.text))
+		.filter((text) => text !== '—')
+}
+
 export function wonderText(text: WonderText | null | undefined): string {
 	if (!text) return '—'
 	return text[appLocale()] || text.en || text.ja || '—'

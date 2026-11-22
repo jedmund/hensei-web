@@ -3430,6 +3430,10 @@
 	"wonders_recruited_hint": "Enter the count shown in game. Collab characters and characters still in the crate don't count.",
 	"wonders_effects_title": "Effects",
 	"wonders_bonuses_title": "Bonuses",
+	"wonders_show_bonuses": "Show bonuses",
+	"wonders_hide_bonuses": "Hide bonuses",
+	"wonders_hidden_element": "Hidden: Only applies to {element} teams",
+	"wonders_hidden_characters": "Hidden: None of the affected characters are on this team",
 	"wonders_description_title": "Description",
 	"wonders_add_title": "Add Wonder",
 	"wonders_edit_title": "Edit Wonder",
@@ -3445,6 +3449,9 @@
 	"wonders_party_none": "No Wonders on this team",
 	"wonders_party_add": "Add Wonders",
 	"wonders_party_edit_title": "Edit wonders",
-	"wonders_party_none_apply": "No Wonders apply to this team.",
-	"wonders_party_save_failed": "Couldn't save the team's Wonders"
+	"wonders_party_save_failed": "Couldn't save the team's Wonders",
+	"wonders_party_all_added": "Every Wonder that can go on this team is already on it.",
+	"wonders_party_sync_confirm_title": "Sync Wonders from the collection?",
+	"wonders_party_sync_confirm_body": "This replaces this team's Wonders with the Wonders in the collection right now.",
+	"wonders_party_synced": "Synced this team's Wonders from the collection"
 }
