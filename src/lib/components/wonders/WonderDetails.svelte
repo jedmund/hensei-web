@@ -64,9 +64,10 @@
 		color: var(--text-primary);
 	}
 
+	// Lines up with the section title, which DetailsSection insets by $unit
 	.description {
 		margin: 0;
-		padding: 0 $unit-2x;
+		padding: 0 $unit;
 		font-size: $font-regular;
 		color: var(--text-secondary);
 		white-space: pre-line;
