@@ -125,13 +125,41 @@ export function joinWonders<Row extends OwnedWonder>(
 		.sort((a, b) => compare(a.wonder, b.wonder))
 }
 
-/** A team's Wonders that apply to it, in catalogue order. */
+/**
+ * Where a Wonder sits on a team, strongest effect first:
+ * 0. leveled Wonders (Seals, Yupei), whose bonuses carry the most weight;
+ * 1. element Wonders (the Rings of Fate);
+ * 2. character-specific Wonders (Eternals, Divine Generals, the story crew);
+ * 3. the rest, which boost every team (Signum Heredis, Symbolum, …).
+ */
+function teamDisplayTier(wonder: Wonder): number {
+	if (wonder.kind === 'leveled') return 0
+	if (wonder.element != null) return 1
+	if ((wonder.requiredCharacterIds ?? []).length > 0) return 2
+	return 3
+}
+
+/**
+ * Team display order: by tier, then leveled Wonders with more bonuses
+ * first, then catalogue order.
+ */
+export function compareTeamDisplayOrder(catalogue: WonderCatalogue) {
+	const byCatalogue = compareCatalogueOrder(catalogue)
+	return (a: JoinedWonder, b: JoinedWonder) =>
+		teamDisplayTier(a.wonder) - teamDisplayTier(b.wonder) ||
+		(a.wonder.kind === 'leveled' ? b.row.bonuses.length - a.row.bonuses.length : 0) ||
+		byCatalogue(a.wonder, b.wonder)
+}
+
+/** A team's Wonders that apply to it, in team display order. */
 export function visiblePartyWonders(
 	party: PartyLike & { wonders?: OwnedWonder[] | undefined },
 	catalogue: WonderCatalogue
 ): JoinedWonder[] {
 	const context = teamContext(party)
-	return joinWonders(party.wonders ?? [], catalogue).filter((j) => appliesToTeam(j.wonder, context))
+	return joinWonders(party.wonders ?? [], catalogue)
+		.filter((j) => appliesToTeam(j.wonder, context))
+		.sort(compareTeamDisplayOrder(catalogue))
 }
 
 export interface WonderGroup<T> {

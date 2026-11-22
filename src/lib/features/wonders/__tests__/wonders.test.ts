@@ -120,14 +120,48 @@ describe('visiblePartyWonders', () => {
 		owned(zhurong, { level: 10, evolution: 0 })
 	]
 
-	it("keeps the team's element and all-element Wonders, in catalogue order", () => {
+	it("keeps the team's element and all-element Wonders, leveled ones first", () => {
 		const visible = visiblePartyWonders({ element: 1, wonders }, catalogue)
-		expect(visible.map((j) => j.wonder.id)).toEqual([fireSeal.id, shield.id, zhurong.id])
+		expect(visible.map((j) => j.wonder.id)).toEqual([fireSeal.id, zhurong.id, shield.id])
+	})
+
+	it('orders leveled (most bonuses first), element, character-specific, then general Wonders', () => {
+		const bonus = (n: number) =>
+			Array.from({ length: n }, (_, i) => ({ stat: `stat_${i}` as never, value: 1 }))
+		const eternals = { ...shield, id: 'w-eternals', requiredCharacterIds: ['3040030000'] }
+		const withEternals = { ...catalogue, wonders: [...catalogue.wonders, eternals] }
+		const rows = [
+			owned(symbolum, { possession: 900, bonuses: bonus(1) }),
+			owned(shield),
+			{ ...owned(eternals), id: 'owned-eternals' },
+			owned(ringOfDeath),
+			owned(waterSeal, { level: 20, evolution: 3, bonuses: bonus(7) }),
+			owned(zhurong, { level: 10, evolution: 0, bonuses: bonus(8) })
+		]
+		const team = {
+			element: null,
+			wonders: rows,
+			characters: [{ character: { granblueId: '3040030000' } }]
+		}
+		// Element null shows only all-element Wonders, so give each its element here
+		const ids = (element: number) =>
+			visiblePartyWonders({ ...team, element }, withEternals).map((j) => j.wonder.id)
+
+		expect(ids(6)).toEqual([ringOfDeath.id, eternals.id, shield.id, symbolum.id])
+		const orderedLeveled = visiblePartyWonders(
+			{
+				...team,
+				element: 1,
+				wonders: [...rows, owned(fireSeal, { level: 20, bonuses: bonus(7) })]
+			},
+			withEternals
+		).map((j) => j.wonder.id)
+		expect(orderedLeveled.slice(0, 2)).toEqual([zhurong.id, fireSeal.id])
 	})
 
 	it('drops Seals on a Unite and Fight team, and shows them again after the raid changes', () => {
 		const onUaf = visiblePartyWonders({ element: 1, raid: uaf, wonders }, catalogue)
-		expect(onUaf.map((j) => j.wonder.id)).toEqual([shield.id, zhurong.id])
+		expect(onUaf.map((j) => j.wonder.id)).toEqual([zhurong.id, shield.id])
 
 		const moved = visiblePartyWonders({ element: 1, raid: { group: null }, wonders }, catalogue)
 		expect(moved.map((j) => j.wonder.id)).toContain(fireSeal.id)
