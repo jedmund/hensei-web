@@ -2,8 +2,9 @@
 	/**
 	 * AddCollectionWonderPane - picks a Wonder to add to the owner's
 	 * collection: a grid of the Wonders they don't have, grouped by category.
-	 * The header action is Add for Wonders with nothing to set up, or Next,
-	 * which pushes the setup pane (level, uncap or recruited count).
+	 * Tapping a Wonder with something to set up (level, uncap or recruited
+	 * count) opens its setup pane; the others are selected and added with
+	 * the header's Add.
 	 */
 	import { untrack } from 'svelte'
 	import { page } from '$app/stores'
@@ -60,17 +61,17 @@
 		return wonder.kind !== 'fixed'
 	}
 
-	function toggle(wonder: Wonder) {
-		selectedId = selectedId === wonder.id ? null : wonder.id
-	}
-
-	function next() {
-		if (!selected) return
+	function choose(wonder: Wonder) {
+		if (!needsSetup(wonder)) {
+			selectedId = selectedId === wonder.id ? null : wonder.id
+			return
+		}
+		selectedId = null
 		sidebar.push({
 			id: uuid(),
-			title: wonderText(selected.name),
+			title: wonderText(wonder.name),
 			component: CollectionWonderEditPane,
-			props: { catalogue, mode: { kind: 'add', wonderId: selected.id } },
+			props: { catalogue, mode: { kind: 'add', wonderId: wonder.id } },
 			scrollable: true
 		})
 	}
@@ -95,11 +96,9 @@
 		const wonder = selected
 		const pending = addMutation.isPending
 		untrack(() => {
-			const setup = !!wonder && needsSetup(wonder)
-			const action = !wonder || pending ? undefined : setup ? next : add
-			const label = setup ? m.action_next() : m.action_add()
-			if (paneId) sidebar.setActionForPane(paneId, action, label)
-			else sidebar.setAction(action, label)
+			const action = !wonder || pending ? undefined : add
+			if (paneId) sidebar.setActionForPane(paneId, action, m.action_add())
+			else sidebar.setAction(action, m.action_add())
 		})
 	})
 </script>
@@ -117,10 +116,10 @@
 							type="button"
 							class="wonder"
 							class:selected={selectedId === wonder.id}
-							aria-pressed={selectedId === wonder.id}
-							onclick={() => toggle(wonder)}
+							aria-pressed={needsSetup(wonder) ? undefined : selectedId === wonder.id}
+							onclick={() => choose(wonder)}
 						>
-							<WonderImage image={wonderImageName(wonder, stateOf(wonder, null))} size={64} />
+							<WonderImage image={wonderImageName(wonder, stateOf(wonder, null))} size={88} />
 							<span class="name">{name}</span>
 						</button>
 					{/each}
@@ -145,7 +144,7 @@
 
 	.grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
 		gap: $unit-2x $unit;
 		padding: 0 $unit;
 	}
@@ -190,11 +189,7 @@
 		font-weight: $medium;
 		color: var(--text-primary);
 		line-height: 1.3;
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
+		overflow-wrap: anywhere;
 	}
 
 	.hint {

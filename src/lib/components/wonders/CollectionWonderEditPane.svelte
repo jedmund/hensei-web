@@ -50,18 +50,21 @@
 	const current = $derived(wonder ? (fields ?? stateOf(wonder, initialRow)) : null)
 	const bonuses = $derived(wonder && current ? computeBonuses(wonder, current) : [])
 
-	const changed = $derived.by(() => {
-		if (!initialRow) return !!wonder
-		if (!current) return false
+	// Edited: differs from where the pane started (the saved row, or a new
+	// Wonder's defaults). Adding is allowed unedited; leaving unedited is
+	// never an unsaved change.
+	const edited = $derived.by(() => {
+		if (!wonder || !current) return false
+		const start = stateOf(wonder, initialRow)
 		return (
-			active !== (initialRow.active ?? true) ||
-			current.level !== initialRow.level ||
-			current.evolution !== initialRow.evolution ||
-			current.possession !== initialRow.possession
+			active !== (initialRow?.active ?? true) ||
+			current.level !== start.level ||
+			current.evolution !== start.evolution ||
+			current.possession !== start.possession
 		)
 	})
 	const pending = $derived(addMutation.isPending || updateMutation.isPending)
-	const canSave = $derived(changed && !pending)
+	const canSave = $derived((initialRow ? edited : !!wonder) && !pending)
 	const actionLabel = initialRow ? m.action_save() : m.action_add()
 
 	async function save() {
@@ -91,7 +94,7 @@
 		untrack(() => {
 			if (paneId) {
 				sidebar.setActionForPane(paneId, enabled ? save : undefined, actionLabel)
-				sidebar.paneStack.updatePaneById(paneId, { hasUnsavedChanges: () => changed })
+				sidebar.paneStack.updatePaneById(paneId, { hasUnsavedChanges: () => edited })
 			} else {
 				sidebar.setAction(enabled ? save : undefined, actionLabel)
 			}
