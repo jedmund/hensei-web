@@ -200,6 +200,18 @@ export function symbolumBonus(possession: number | null | undefined): number {
 	return tenths / 10
 }
 
+/**
+ * Recruits until Symbolum's next boost (the game's `next_upgrade` minus the
+ * count): to 300, to 600, then to the next 10. Null once capped at 1000.
+ */
+export function symbolumRecruitsUntilNext(possession: number | null | undefined): number | null {
+	const n = Math.max(0, Math.floor(possession ?? 0))
+	if (n < 300) return 300 - n
+	if (n < 600) return 600 - n
+	if (n >= 1000) return null
+	return 600 + (Math.floor((n - 600) / 10) + 1) * 10 - n
+}
+
 /** Rounds away float noise (0.1 + 0.2) so sums show as the game shows them. */
 function tidy(value: number): number {
 	return Math.round(value * 100) / 100

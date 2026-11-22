@@ -11,7 +11,12 @@
 	import Slider from '$lib/components/ui/Slider.svelte'
 	import UncapStar from '$lib/components/uncap/UncapStar.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
-	import { maxEvolutionFor, maxLevelFor, normalizeState } from '$lib/features/wonders/wonders'
+	import {
+		maxEvolutionFor,
+		maxLevelFor,
+		normalizeState,
+		symbolumRecruitsUntilNext
+	} from '$lib/features/wonders/wonders'
 	import type { Wonder, WonderState } from '$lib/types/api/wonder'
 
 	interface Props {
@@ -109,6 +114,10 @@
 			oninput={handlePossession}
 		/>
 	</DetailRow>
+	{@const untilNext = symbolumRecruitsUntilNext(state.possession)}
+	{#if untilNext !== null}
+		<DetailRow label={m.wonders_recruits_until_next()} value={untilNext} />
+	{/if}
 	<p class="hint">{m.wonders_recruited_hint()}</p>
 {/if}
 

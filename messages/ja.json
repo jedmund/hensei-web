@@ -3214,6 +3214,7 @@
 	"wonders_uncap_value": "{evolution} / {max}",
 	"wonders_active_label": "有効化",
 	"wonders_recruited_label": "仲間にしたキャラクター",
+	"wonders_recruits_until_next": "次の強化までの仲間",
 	"wonders_recruited_hint": "ゲーム内に表示される人数を入力してください。コラボキャラクターと未受け取りのキャラクターは含まれません。",
 	"wonders_effects_title": "効果",
 	"wonders_bonuses_title": "発動中の効果",

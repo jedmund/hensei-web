@@ -15,7 +15,7 @@
 	import CollectionWonderEditPane from './CollectionWonderEditPane.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { useRemoveCollectionWonder } from '$lib/api/mutations/wonder.mutations'
-	import { maxEvolutionFor } from '$lib/features/wonders/wonders'
+	import { maxEvolutionFor, symbolumRecruitsUntilNext } from '$lib/features/wonders/wonders'
 	import { wonderText } from '$lib/features/wonders/labels'
 	import { extractErrorMessage } from '$lib/utils/errors'
 	import { getBasePath } from '$lib/utils/images/core'
@@ -102,6 +102,10 @@
 		{:else if wonder.kind === 'scaling' && isOwner}
 			<!-- The count is the owner's; visitors see only the bonus it gives -->
 			<DetailRow label={m.wonders_recruited_label()} value={row.possession ?? '—'} />
+			{@const untilNext = symbolumRecruitsUntilNext(row.possession)}
+			{#if untilNext !== null}
+				<DetailRow label={m.wonders_recruits_until_next()} value={untilNext} />
+			{/if}
 		{/if}
 	</div>
 

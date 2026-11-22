@@ -14,6 +14,7 @@ import {
 	sameSelection,
 	selectionFromParty,
 	symbolumBonus,
+	symbolumRecruitsUntilNext,
 	visiblePartyWonders,
 	wonderImageName
 } from '../wonders'
@@ -155,6 +156,25 @@ describe('levels', () => {
 
 	it('starts new leveled Wonders fully uncapped', () => {
 		expect(defaultState(waterSeal)).toEqual({ level: 20, evolution: 3, possession: null })
+	})
+})
+
+describe('symbolumRecruitsUntilNext', () => {
+	it("counts to the game's next_upgrade", () => {
+		// Captures: 900 -> 910, 835 -> 840
+		expect(symbolumRecruitsUntilNext(900)).toBe(10)
+		expect(symbolumRecruitsUntilNext(835)).toBe(5)
+		expect(symbolumRecruitsUntilNext(756)).toBe(4)
+		expect(symbolumRecruitsUntilNext(0)).toBe(300)
+		expect(symbolumRecruitsUntilNext(299)).toBe(1)
+		expect(symbolumRecruitsUntilNext(300)).toBe(300)
+		expect(symbolumRecruitsUntilNext(600)).toBe(10)
+		expect(symbolumRecruitsUntilNext(999)).toBe(1)
+	})
+
+	it('is null once capped', () => {
+		expect(symbolumRecruitsUntilNext(1000)).toBeNull()
+		expect(symbolumRecruitsUntilNext(1200)).toBeNull()
 	})
 })
 
