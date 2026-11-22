@@ -18,6 +18,7 @@
 	import { maxEvolutionFor } from '$lib/features/wonders/wonders'
 	import { wonderText } from '$lib/features/wonders/labels'
 	import { extractErrorMessage } from '$lib/utils/errors'
+	import { getBasePath } from '$lib/utils/images/core'
 	import type { OwnedWonder, Wonder, WonderCatalogue } from '$lib/types/api/wonder'
 
 	interface Props {
@@ -62,6 +63,8 @@
 		}
 	}
 
+	const reliefBackgroundUrl = `${getBasePath()}/app/marketing/relief.png`
+
 	onMount(() => {
 		if (!isOwner || !paneId) return
 		sidebar.setActionForPane(paneId, openEdit, m.action_edit())
@@ -72,28 +75,34 @@
 </script>
 
 <div class="wonder-pane">
-	<div class="overview">
-		<WonderImage image={row.image} alt={name} size={96} {inactive} />
-		<div class="status">
-			<DetailRow label={m.wonders_active_label()} compact>
-				<Switch checked={!inactive} disabled size="small" />
-			</DetailRow>
-			{#if wonder.kind === 'leveled'}
-				{#if maxEvolutionFor(wonder) > 0}
-					<DetailRow
-						label={m.wonders_uncap_label()}
-						value={m.wonders_uncap_value({
-							evolution: row.evolution ?? 0,
-							max: maxEvolutionFor(wonder)
-						})}
-					/>
-				{/if}
-				<DetailRow label={m.wonders_level_label()} value={row.level ?? '—'} />
-			{:else if wonder.kind === 'scaling' && isOwner}
-				<!-- The count is the owner's; visitors see only the bonus it gives -->
-				<DetailRow label={m.wonders_recruited_label()} value={row.possession ?? '—'} />
+	<!-- The same relief header as the weapon and artifact panes -->
+	<div
+		class="wonder-header"
+		style:background-image="url({reliefBackgroundUrl}), linear-gradient(to right, #000, #484440,
+		#000)"
+	>
+		<WonderImage image={row.image} alt={name} size={120} {inactive} />
+	</div>
+
+	<div class="status">
+		<DetailRow label={m.wonders_active_label()} compact>
+			<Switch checked={!inactive} disabled size="small" />
+		</DetailRow>
+		{#if wonder.kind === 'leveled'}
+			{#if maxEvolutionFor(wonder) > 0}
+				<DetailRow
+					label={m.wonders_uncap_label()}
+					value={m.wonders_uncap_value({
+						evolution: row.evolution ?? 0,
+						max: maxEvolutionFor(wonder)
+					})}
+				/>
 			{/if}
-		</div>
+			<DetailRow label={m.wonders_level_label()} value={row.level ?? '—'} />
+		{:else if wonder.kind === 'scaling' && isOwner}
+			<!-- The count is the owner's; visitors see only the bonus it gives -->
+			<DetailRow label={m.wonders_recruited_label()} value={row.possession ?? '—'} />
+		{/if}
 	</div>
 
 	<WonderDetails {wonder} bonuses={row.bonuses} />
@@ -110,6 +119,7 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
+	@use '$src/themes/layout' as *;
 
 	.wonder-pane {
 		display: flex;
@@ -118,17 +128,21 @@
 		padding: $unit-2x 0;
 	}
 
-	.overview {
+	.wonder-header {
 		display: flex;
-		align-items: flex-start;
-		gap: $unit-2x;
-		padding: 0 $unit-2x;
+		align-items: center;
+		justify-content: center;
+		margin: 0 $unit-2x;
+		padding: $unit-3x 0;
+		border-radius: $card-corner;
+		background-size: 420px 731px;
+		background-position: -20px -20px;
+		overflow: hidden;
 	}
 
 	.status {
-		flex: 1;
-		min-width: 0;
 		display: flex;
 		flex-direction: column;
+		padding: 0 $unit;
 	}
 </style>
