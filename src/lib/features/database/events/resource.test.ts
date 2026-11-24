@@ -28,6 +28,7 @@ describe('events resource: list', () => {
 			['name', 'Name', false],
 			['kind', 'Kind', false],
 			['element', 'Element', false],
+			['second_element', 'Second element', true],
 			['starts_at', 'Starts (JST)', false],
 			['ends_at', 'Ends (JST)', false],
 			['raid_count', 'Raids', false],
