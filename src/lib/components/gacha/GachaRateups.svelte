@@ -63,37 +63,38 @@
 	{/if}
 	{#each rateups as rate (rate.identity)}
 		{@const item = itemFor(rate.identity)}
-		<div class="rateup">
-			{#if item}
+		<!-- A rate whose item isn't among the SSRs has nothing to show but its percentage -->
+		{#if item}
+			<div class="rateup">
 				<img src={gachaItemThumbnail(item)} alt="" />
 				<span class="rateup-name">{name(item)}</span>
-			{/if}
-			{#if readonly}
-				<span class="rateup-percent fixed">{rate.percent}%</span>
-			{:else}
-				<div class="rateup-percent">
-					<Input
-						contained
-						type="text"
-						inputmode="decimal"
-						aria-label={m.gacha_rate()}
-						bind:value={rate.percent}
+				{#if readonly}
+					<span class="rateup-percent fixed">{rate.percent}%</span>
+				{:else}
+					<div class="rateup-percent">
+						<Input
+							contained
+							type="text"
+							inputmode="decimal"
+							aria-label={m.gacha_rate()}
+							bind:value={rate.percent}
+							size="small"
+							alignRight
+						/>
+						<span>%</span>
+					</div>
+					<Button
+						variant="ghost"
 						size="small"
-						alignRight
+						iconOnly
+						icon="close"
+						aria-label={m.gacha_remove()}
+						type="button"
+						onclick={() => remove(rate.identity)}
 					/>
-					<span>%</span>
-				</div>
-				<Button
-					variant="ghost"
-					size="small"
-					iconOnly
-					icon="close"
-					aria-label={m.gacha_remove()}
-					type="button"
-					onclick={() => remove(rate.identity)}
-				/>
-			{/if}
-		</div>
+				{/if}
+			</div>
+		{/if}
 	{/each}
 </section>
 
