@@ -27,7 +27,7 @@ export interface GwEvent {
 	id: string
 	element: number // Boss element id (0-6)
 	/** The element crews bring against the boss: what a GW is called by (a Light-boss GW is a Dark GW) */
-	advantageElement?: number | null
+	advantageElement: number | null
 	startDate: string
 	endDate: string
 	eventNumber: number // GW #XX
@@ -140,7 +140,9 @@ export interface BatchIndividualScoresInput {
 
 export interface GwEventMinimal {
 	id: string
-	element: number
+	element: number // Boss element id
+	/** The element crews bring against the boss, which crew pages show */
+	advantageElement: number | null
 	eventNumber: number
 	startDate: string
 	endDate: string
