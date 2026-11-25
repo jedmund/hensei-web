@@ -2674,6 +2674,8 @@
 	"db_events_raids_empty": "No raids linked. Without raids, the event has no teams in the gallery.",
 	"db_events_raid_add": "Add raid",
 	"db_events_raid_remove": "Remove",
+	"db_events_field_raid_unlock_hour": "Raids open at (JST hour)",
+	"db_events_raid_unlock_hour_hint": "The hour, 0 to 23, that raids with an opening day open at on that day. Leave blank to open them whole days after the start time. New Unite and Fights get 0 and new Dread Barrages 19.",
 	"db_events_raid_unlock_day": "Opens after (days)",
 	"db_events_raid_unlock_day_hint": "The number beside each raid is how many days after the event starts it opens. Leave blank for raids open from the start; Unite and Fight and Dread Barrage raids are filled in from their usual schedule when linked.",
 	"db_events_raid_opens_after": [

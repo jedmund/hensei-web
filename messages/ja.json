@@ -2463,6 +2463,8 @@
 	"db_events_raids_empty": "クエストが登録されていません。登録しないとギャラリーに編成が表示されません。",
 	"db_events_raid_add": "クエストを追加",
 	"db_events_raid_remove": "削除",
+	"db_events_field_raid_unlock_hour": "クエスト解放時刻（JST・時）",
+	"db_events_raid_unlock_hour_hint": "解放日が設定されたクエストが、その日の何時（0〜23）に解放されるか。空欄の場合は開始時刻から日数分後に解放されます。新しい古戦場は0、ドレッドバラージュは19が入ります。",
 	"db_events_raid_unlock_day": "解放（開始から日数）",
 	"db_events_raid_unlock_day_hint": "各クエストの横の数字は、イベント開始から何日後に解放されるかです。最初から挑戦できるクエストは空欄のまま。古戦場とドレッドバラージュのクエストは、登録時に通常のスケジュールで入力されます。",
 	"db_events_raid_opens_after": "開始{count}日後に解放",

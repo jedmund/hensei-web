@@ -141,6 +141,21 @@ export const eventsResource = defineResource<AdminEventRow, GameEvent>({
 		},
 		jstTime('starts_at', m.db_events_field_starts_at, 'startsAt'),
 		jstTime('ends_at', m.db_events_field_ends_at, 'endsAt'),
+		// The JST hour raids with an opening day open at (GBF-286)
+		{
+			key: 'raid_unlock_hour',
+			kind: 'number',
+			label: m.db_events_field_raid_unlock_hour,
+			sublabel: m.db_events_raid_unlock_hour_hint,
+			int: true,
+			min: 0,
+			max: 23,
+			detail: {
+				sublabel: false,
+				hideWhenEmpty: true,
+				value: (e) => (e.raidUnlockHour == null ? '' : `${e.raidUnlockHour}:00`)
+			}
+		},
 		// External pages, as units have them (no gbf-wiki.com link for events)
 		{
 			key: 'wiki_en',
@@ -249,7 +264,8 @@ export const eventsResource = defineResource<AdminEventRow, GameEvent>({
 					'second_element',
 					'event_number',
 					'starts_at',
-					'ends_at'
+					'ends_at',
+					'raid_unlock_hour'
 				]
 			},
 			{

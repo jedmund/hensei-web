@@ -106,6 +106,7 @@
 		"starts_at": "scalar",
 		"ends_at": "scalar",
 		"event_number": "scalar",
+		"raid_unlock_hour": "scalar",
 		"wiki_en": "scalar",
 		"gamewith": "scalar",
 		"kamigame": "scalar",
@@ -263,6 +264,15 @@
 					"exo_corow_crucible",
 					"exo_diablo_crucible"
 				],
+				"allow_nil": true
+			}
+		],
+		"raid_unlock_hour": [
+			{
+				"kind": "numericality",
+				"only_integer": true,
+				"greater_than_or_equal_to": 0,
+				"less_than_or_equal_to": 23,
 				"allow_nil": true
 			}
 		],
