@@ -115,6 +115,7 @@ function decided(legacy: Record<string, unknown>) {
 		gamewith: null,
 		kamigame: null,
 		second_element: null,
+		raid_unlock_hour: null,
 		// GBF-286: each linked raid's opening day (none in these records)
 		raid_unlock_days: (legacy.raid_ids as string[]).length
 			? Object.fromEntries((legacy.raid_ids as string[]).map((id) => [id, null]))

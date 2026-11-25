@@ -50,7 +50,7 @@ export type EventScope = 'current' | 'upcoming' | 'past'
 export type EventRaid = RaidFull & {
 	/** Whole days after the event starts; null (or absent, from older APIs) when it opens with the event */
 	unlockDay?: number | null
-	/** ISO 8601: the start plus unlockDay */
+	/** ISO 8601: unlockDay days after the start, at the event's raidUnlockHour (JST) when it has one */
 	unlocksAt?: string | null
 }
 
@@ -87,6 +87,8 @@ export interface GameEvent {
 	gamewith?: string | null
 	kamigame?: string | null
 	raids: EventRaid[]
+	/** The JST hour raids with an unlockDay open at on that day; null opens them whole days after the start */
+	raidUnlockHour?: number | null
 	// Editor-only fields
 	eventNumber?: number | null
 	sourceRefs?: unknown
@@ -105,6 +107,8 @@ export interface EventPayload {
 	raidIds: string[]
 	/** The days the named raids open on, by raid id (days after the start, or null to open with the event) */
 	raidUnlockDays?: Record<string, number | null>
+	/** The JST hour those raids open at */
+	raidUnlockHour?: number | null
 	/** Unite and Fight number; null for other kinds */
 	eventNumber: number | null
 }
