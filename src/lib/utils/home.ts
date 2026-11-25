@@ -17,6 +17,38 @@ export function raidsWithParties(raids: HomeRaidSection[]): HomeRaidSection[] {
 	return raids.filter((r) => r.parties.length > 0)
 }
 
+/**
+ * The raid an event card opens on, by id: the one that opened most recently
+ * (a Guild War's NM200 on its day; the last listed when several open
+ * together), else the one with the most teams (the first, on a tie).
+ * Upcoming events go by teams alone.
+ */
+export function defaultEventRaid(
+	tabs: HomeRaidSection[],
+	event: Pick<GameEvent, 'raids'>,
+	now: number,
+	variant: 'current' | 'upcoming' = 'current'
+): string | null {
+	if (variant === 'current') {
+		const opened = new Map<string, number>()
+		for (const raid of event.raids ?? []) {
+			const at = raid.unlocksAt ? Date.parse(raid.unlocksAt) : NaN
+			if (!Number.isNaN(at) && at <= now) opened.set(raid.id, at)
+		}
+		let latest: { id: string; at: number } | null = null
+		for (const tab of tabs) {
+			const at = opened.get(tab.raid.id)
+			if (at !== undefined && (!latest || at >= latest.at)) latest = { id: tab.raid.id, at }
+		}
+		if (latest) return latest.id
+	}
+	const busiest = tabs.reduce<HomeRaidSection | undefined>(
+		(best, t) => (!best || t.parties.length > best.parties.length ? t : best),
+		undefined
+	)
+	return busiest?.raid.id ?? null
+}
+
 /** Whole days, hours and minutes until `target`, or null once it has passed */
 export function countdown(
 	target: string,

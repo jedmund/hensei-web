@@ -109,7 +109,8 @@
 		"wiki_en": "scalar",
 		"gamewith": "scalar",
 		"kamigame": "scalar",
-		"raid_ids": "array"
+		"raid_ids": "array",
+		"raid_unlock_days": "hash"
 	},
 	"enums": {
 		"kind": {

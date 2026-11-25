@@ -2,11 +2,13 @@ import { describe, it, expect } from 'vitest'
 import {
 	countdown,
 	countdownLabel,
+	defaultEventRaid,
 	eventThumbnailUrl,
 	exploreQuery,
 	raidsWithParties,
 	eventAdvantageElements
 } from '../home'
+import type { GameEvent } from '$lib/types/api/event'
 import type { HomeRaidSection } from '$lib/types/api/home'
 import { ElementId } from '$lib/utils/element'
 
@@ -35,6 +37,47 @@ describe('raidsWithParties', () => {
 			{ raid: { id: 'c' }, parties: [{}] }
 		] as unknown as HomeRaidSection[]
 		expect(raidsWithParties(raids).map((r) => r.raid.id)).toEqual(['a', 'c'])
+	})
+})
+
+describe('defaultEventRaid', () => {
+	// EX has the most teams; NM100 and NM150 open on day 3, NM200 on day 4
+	const tabs = [
+		{ raid: { id: 'ex' }, parties: [{}, {}, {}] },
+		{ raid: { id: 'nm100' }, parties: [{}] },
+		{ raid: { id: 'nm150' }, parties: [{}] },
+		{ raid: { id: 'nm200' }, parties: [] }
+	] as unknown as HomeRaidSection[]
+	const event = {
+		raids: [
+			{ id: 'ex', unlocksAt: null },
+			{ id: 'nm100', unlocksAt: '2026-10-19T10:00:00Z' },
+			{ id: 'nm150', unlocksAt: '2026-10-19T10:00:00Z' },
+			{ id: 'nm200', unlocksAt: '2026-10-20T10:00:00Z' }
+		]
+	} as unknown as GameEvent
+
+	it('opens on the busiest raid before any raid opens later', () => {
+		expect(defaultEventRaid(tabs, event, now)).toBe('ex')
+	})
+
+	it('opens on the raid that opened most recently, even without teams', () => {
+		expect(defaultEventRaid(tabs, event, Date.parse('2026-10-20T10:00:00Z'))).toBe('nm200')
+	})
+
+	it('takes the last listed of raids that opened together', () => {
+		expect(defaultEventRaid(tabs, event, Date.parse('2026-10-19T12:00:00Z'))).toBe('nm150')
+	})
+
+	it('goes by teams alone for upcoming events and older APIs', () => {
+		const later = Date.parse('2026-10-21T00:00:00Z')
+		expect(defaultEventRaid(tabs, event, later, 'upcoming')).toBe('ex')
+		const legacy = { raids: [{ id: 'ex' }, { id: 'nm200' }] } as unknown as GameEvent
+		expect(defaultEventRaid(tabs, legacy, later)).toBe('ex')
+	})
+
+	it('returns null without tabs', () => {
+		expect(defaultEventRaid([], event, now)).toBeNull()
 	})
 })
 

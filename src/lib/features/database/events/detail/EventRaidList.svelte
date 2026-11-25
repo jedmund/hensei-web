@@ -1,6 +1,8 @@
 <script lang="ts">
-	// An event's raids in order, each with its thumbnail; a remove button on
-	// each when `onRemove` is given (the forms)
+	// An event's raids in order, each with its thumbnail and the day it opens
+	// on. On the forms (`onRemove` given) each has a remove button, and a day
+	// input when `onDayChange` is given.
+	import type { Snippet } from 'svelte'
 	import { m } from '$lib/paraglide/messages'
 	import Button from '$lib/components/ui/Button.svelte'
 	import { getRaidImage } from '$lib/utils/images/raids'
@@ -9,10 +11,14 @@
 
 	interface Props {
 		raids: Pick<RaidFull, 'id' | 'slug' | 'name'>[]
+		/** Days after the event starts each raid opens, by id; missing or null: with the event */
+		days?: Record<string, number | null | undefined>
 		onRemove?: (id: string) => void
+		/** Draws a raid's day input on the forms */
+		dayInput?: Snippet<[string]>
 	}
 
-	let { raids, onRemove }: Props = $props()
+	let { raids, days = {}, onRemove, dayInput }: Props = $props()
 </script>
 
 {#if raids.length === 0}
@@ -23,6 +29,11 @@
 			<li>
 				<img src={getRaidImage(raid.slug)} alt="" class="thumb" />
 				<span class="name">{localizedName(raid.name)}</span>
+				{#if dayInput}
+					{@render dayInput(raid.id)}
+				{:else if days[raid.id]}
+					<span class="day">{m.db_events_raid_opens_after({ count: days[raid.id]! })}</span>
+				{/if}
 				{#if onRemove}
 					<Button variant="ghost" size="small" onclick={() => onRemove(raid.id)}>
 						{m.db_events_raid_remove()}
@@ -68,6 +79,11 @@
 	.name {
 		flex: 1;
 		min-width: 0;
+	}
+
+	.day {
+		font-size: typography.$font-small;
+		color: var(--text-secondary);
 	}
 
 	.hint {

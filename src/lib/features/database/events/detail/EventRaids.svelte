@@ -6,4 +6,7 @@
 	let { record }: { record: GameEvent } = $props()
 </script>
 
-<EventRaidList raids={record.raids ?? []} />
+<EventRaidList
+	raids={record.raids ?? []}
+	days={Object.fromEntries((record.raids ?? []).map((r) => [r.id, r.unlockDay]))}
+/>

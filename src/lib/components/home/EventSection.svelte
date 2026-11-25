@@ -23,6 +23,7 @@
 	import { formatDateJST } from '$lib/utils/date'
 	import {
 		countdownLabel,
+		defaultEventRaid,
 		eventAdvantageElements,
 		eventBanner,
 		exploreQuery,
@@ -31,10 +32,11 @@
 	import { galleryPath, newTeamPath } from '$lib/utils/browseRoutes'
 	import { escapeHtml } from '$lib/utils/safeHtml'
 	import EmptyTeams from '$lib/components/home/EmptyTeams.svelte'
+	import { eventRaidTabs } from '$lib/stores/eventRaidTabs.svelte'
 	import { localizeHref } from '$lib/paraglide/runtime'
 	import type { GameEvent } from '$lib/types/api/event'
 	import type { HomeRaidSection } from '$lib/types/api/home'
-	import type { Snippet } from 'svelte'
+	import { onMount, type Snippet } from 'svelte'
 	import { m } from '$lib/paraglide/messages'
 
 	interface Props {
@@ -58,27 +60,36 @@
 	// anyone has posted
 	const tabs = $derived(raids)
 	const hasTeams = $derived(raidsWithParties(raids).length > 0)
-	let selectedId = $state<string | null>(null)
-	// Opens on the raid with the most teams (the first, on a tie)
-	const busiest = $derived(
-		tabs.reduce<(typeof tabs)[number] | undefined>(
-			(best, t) => (!best || t.parties.length > best.parties.length ? t : best),
-			undefined
-		)
-	)
-	const selected = $derived(tabs.find((t) => t.raid.id === selectedId) ?? busiest)
-	const parties = $derived(selected?.parties.slice(0, maxCards) ?? [])
-
-	const title = $derived(localizedName(event.name))
-	// One element, or two for Records of the Ten's Fire and Dark run
-	const advantages = $derived(eventAdvantageElements(event))
-	// Ticks once a minute so the countdown stays current
+	// Ticks once a minute so the countdown and the default raid stay current
 	let now = $state(Date.now())
 	$effect(() => {
 		const timer = setInterval(() => (now = Date.now()), 60_000)
 		return () => clearInterval(timer)
 	})
 
+	// The reader's last pick for this event wins; until they pick, the card
+	// follows the schedule (the raid that opened most recently), else the
+	// raid with the most teams. Picks live in this browser, read once mounted
+	// so the server and first client render agree.
+	let mounted = $state(false)
+	onMount(() => (mounted = true))
+	const savedId = $derived(mounted ? eventRaidTabs.get(event.id) : undefined)
+	const defaultId = $derived(defaultEventRaid(tabs, event, now, variant))
+	const selected = $derived(
+		tabs.find((t) => t.raid.id === savedId) ?? tabs.find((t) => t.raid.id === defaultId)
+	)
+	const parties = $derived(selected?.parties.slice(0, maxCards) ?? [])
+
+	// The tab controls also report changes made from here (a new default, the
+	// event switcher), so only a different raid counts as the reader's pick
+	function pick(raidId: string | null | undefined) {
+		if (!raidId || raidId === selected?.raid.id) return
+		eventRaidTabs.set(event.id, raidId)
+	}
+
+	const title = $derived(localizedName(event.name))
+	// One element, or two for Records of the Ten's Fire and Dark run
+	const advantages = $derived(eventAdvantageElements(event))
 	const duration = $derived(
 		countdownLabel(variant === 'upcoming' ? event.startsAt : event.endsAt, now)
 	)
@@ -198,7 +209,7 @@
 						<Select
 							options={raidOptions}
 							value={selected?.raid.id}
-							onValueChange={(v) => (selectedId = v ?? null)}
+							onValueChange={pick}
 							fullWidth
 							contained
 							ariaLabel={m.home_raid_select_aria()}
@@ -212,7 +223,7 @@
 					<div class="raid-row tabs">
 						<SegmentedControl
 							value={selected?.raid.id}
-							onValueChange={(v) => (selectedId = v)}
+							onValueChange={pick}
 							variant="background"
 							size="small"
 							grow
