@@ -290,6 +290,7 @@ describe('toCrewHistoryChartData', () => {
 			{
 				id: '1',
 				element: 1,
+				advantageElement: 2,
 				startDate: '2025-01',
 				endDate: '2025-02',
 				eventNumber: 72,
@@ -298,6 +299,7 @@ describe('toCrewHistoryChartData', () => {
 			{
 				id: '2',
 				element: 2,
+				advantageElement: 3,
 				startDate: '2025-03',
 				endDate: '2025-04',
 				eventNumber: 73,
@@ -315,8 +317,24 @@ describe('toCrewHistoryChartData', () => {
 
 	it('sorts by event number', () => {
 		const events: GwEvent[] = [
-			{ id: '2', element: 2, startDate: '', endDate: '', eventNumber: 73, crewTotalScore: 100 },
-			{ id: '1', element: 1, startDate: '', endDate: '', eventNumber: 71, crewTotalScore: 200 }
+			{
+				id: '2',
+				element: 2,
+				advantageElement: 3,
+				startDate: '',
+				endDate: '',
+				eventNumber: 73,
+				crewTotalScore: 100
+			},
+			{
+				id: '1',
+				element: 1,
+				advantageElement: 2,
+				startDate: '',
+				endDate: '',
+				eventNumber: 71,
+				crewTotalScore: 200
+			}
 		]
 
 		const result = toCrewHistoryChartData(events, formatDate)
@@ -326,9 +344,25 @@ describe('toCrewHistoryChartData', () => {
 
 	it('filters out events with no/zero score', () => {
 		const events: GwEvent[] = [
-			{ id: '1', element: 1, startDate: '', endDate: '', eventNumber: 71 },
-			{ id: '2', element: 2, startDate: '', endDate: '', eventNumber: 72, crewTotalScore: 0 },
-			{ id: '3', element: 3, startDate: '', endDate: '', eventNumber: 73, crewTotalScore: 100 }
+			{ id: '1', element: 1, advantageElement: 2, startDate: '', endDate: '', eventNumber: 71 },
+			{
+				id: '2',
+				element: 2,
+				advantageElement: 3,
+				startDate: '',
+				endDate: '',
+				eventNumber: 72,
+				crewTotalScore: 0
+			},
+			{
+				id: '3',
+				element: 3,
+				advantageElement: 4,
+				startDate: '',
+				endDate: '',
+				eventNumber: 73,
+				crewTotalScore: 100
+			}
 		]
 
 		const result = toCrewHistoryChartData(events, formatDate)
@@ -343,7 +377,14 @@ describe('toPlayerHistoryChartData', () => {
 	it('marks in-crew events with score', () => {
 		const eventScores: EventScoreSummary[] = [
 			{
-				gwEvent: { id: '1', element: 1, eventNumber: 72, startDate: '2025-01', endDate: '2025-02' },
+				gwEvent: {
+					id: '1',
+					element: 1,
+					advantageElement: 2,
+					eventNumber: 72,
+					startDate: '2025-01',
+					endDate: '2025-02'
+				},
 				totalScore: 5000,
 				inCrew: true
 			}
@@ -357,7 +398,14 @@ describe('toPlayerHistoryChartData', () => {
 	it('marks gap events with null score', () => {
 		const eventScores: EventScoreSummary[] = [
 			{
-				gwEvent: { id: '1', element: 1, eventNumber: 72, startDate: '2025-01', endDate: '2025-02' },
+				gwEvent: {
+					id: '1',
+					element: 1,
+					advantageElement: 2,
+					eventNumber: 72,
+					startDate: '2025-01',
+					endDate: '2025-02'
+				},
 				totalScore: null,
 				inCrew: false
 			}
@@ -371,12 +419,26 @@ describe('toPlayerHistoryChartData', () => {
 	it('sorts by event number', () => {
 		const eventScores: EventScoreSummary[] = [
 			{
-				gwEvent: { id: '2', element: 1, eventNumber: 74, startDate: '', endDate: '' },
+				gwEvent: {
+					id: '2',
+					element: 1,
+					advantageElement: 2,
+					eventNumber: 74,
+					startDate: '',
+					endDate: ''
+				},
 				totalScore: 100,
 				inCrew: true
 			},
 			{
-				gwEvent: { id: '1', element: 1, eventNumber: 72, startDate: '', endDate: '' },
+				gwEvent: {
+					id: '1',
+					element: 1,
+					advantageElement: 2,
+					eventNumber: 72,
+					startDate: '',
+					endDate: ''
+				},
 				totalScore: 200,
 				inCrew: true
 			}
@@ -396,8 +458,7 @@ describe('gwTeamElement', () => {
 		expect(gwTeamElement({ element: 6, advantageElement: 5 })).toBe(5)
 	})
 
-	it('falls back to the boss element when no advantage element is sent', () => {
-		expect(gwTeamElement({ element: 2 })).toBe(2)
+	it('falls back to the boss element when the event has no advantage element', () => {
 		expect(gwTeamElement({ element: 2, advantageElement: null })).toBe(2)
 	})
 })
