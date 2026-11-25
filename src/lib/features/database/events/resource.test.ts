@@ -114,7 +114,11 @@ function decided(legacy: Record<string, unknown>) {
 		wiki_en: null,
 		gamewith: null,
 		kamigame: null,
-		second_element: null
+		second_element: null,
+		// GBF-286: each linked raid's opening day (none in these records)
+		raid_unlock_days: (legacy.raid_ids as string[]).length
+			? Object.fromEntries((legacy.raid_ids as string[]).map((id) => [id, null]))
+			: null
 	}
 }
 
@@ -132,6 +136,25 @@ describe('events resource: payload', () => {
 		expect(toPayload(def, { ...values, ends_at: '2026-11-15T23:30' }, 'edit').ends_at).toBe(
 			'2026-11-15T14:30:00.000Z'
 		)
+	})
+
+	it("writes each linked raid's opening day, leaving out unlinked raids", () => {
+		const event = {
+			...guildWar,
+			raids: guildWar.raids.map((r, i) => ({ ...r, unlockDay: i === 0 ? 3 : null }))
+		}
+		const values = fromRecord(def, event)
+		const [first, ...others] = values.raids as string[]
+		expect(values.raid_unlock_days).toEqual(
+			Object.fromEntries([[first, 3], ...others.map((id) => [id, null])])
+		)
+
+		const edited = {
+			...values,
+			raids: [first, 'r-new'],
+			raid_unlock_days: { ...(values.raid_unlock_days as object), [first!]: 2, 'r-gone': 1 }
+		}
+		expect(toPayload(def, edited, 'edit').raid_unlock_days).toEqual({ [first!]: 2 })
 	})
 
 	it('writes the raids as their ids, in order', () => {

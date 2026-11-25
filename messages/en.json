@@ -2674,6 +2674,18 @@
 	"db_events_raids_empty": "No raids linked. Without raids, the event has no teams in the gallery.",
 	"db_events_raid_add": "Add raid",
 	"db_events_raid_remove": "Remove",
+	"db_events_raid_unlock_day": "Opens after (days)",
+	"db_events_raid_unlock_day_hint": "The number beside each raid is how many days after the event starts it opens. Leave blank for raids open from the start; Unite and Fight and Dread Barrage raids are filled in from their usual schedule when linked.",
+	"db_events_raid_opens_after": [
+		{
+			"declarations": ["input count", "local countPlural = count: plural"],
+			"selectors": ["countPlural"],
+			"match": {
+				"countPlural=one": "Opens after {count} day",
+				"countPlural=other": "Opens after {count} days"
+			}
+		}
+	],
 	"db_events_image_hint": "PNG, WebP or JPEG, up to 2 MB.",
 	"db_events_save_failed": "Couldn't save the event.",
 	"db_events_saved": "Event saved",

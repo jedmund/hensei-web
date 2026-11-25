@@ -173,6 +173,26 @@ export const eventsResource = defineResource<AdminEventRow, GameEvent>({
 			write: 'raid_ids',
 			render: { input: 'eventRaids' }
 		},
+		// The day each linked raid opens on, edited beside it in the raid list
+		// (EventRaidsInput): { raid id: days after the start, or null }. Only
+		// linked raids are sent; a raid linked in the same save keeps the day
+		// the API's schedule gives it.
+		{
+			key: 'raid_unlock_days',
+			kind: 'custom',
+			label: m.db_events_raid_unlock_day,
+			read: (e) => Object.fromEntries((e.raids ?? []).map((r) => [r.id, r.unlockDay ?? null])),
+			write: {
+				value: (v, values) => {
+					const days = (v ?? {}) as Record<string, number | null>
+					const linked = (values.raids ?? []) as string[]
+					return Object.fromEntries(
+						linked.filter((id) => id in days).map((id) => [id, days[id] ?? null])
+					)
+				}
+			},
+			detail: false
+		},
 		// List only
 		{
 			key: 'raid_count',

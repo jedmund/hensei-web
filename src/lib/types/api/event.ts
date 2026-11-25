@@ -46,6 +46,14 @@ export type EventStatus = (typeof EVENT_STATUSES)[number]
 
 export type EventScope = 'current' | 'upcoming' | 'past'
 
+/** One of an event's raids, with the day it opens on */
+export type EventRaid = RaidFull & {
+	/** Whole days after the event starts; null (or absent, from older APIs) when it opens with the event */
+	unlockDay?: number | null
+	/** ISO 8601: the start plus unlockDay */
+	unlocksAt?: string | null
+}
+
 /** An event from EventBlueprint */
 export interface GameEvent {
 	id: string
@@ -78,7 +86,7 @@ export interface GameEvent {
 	wikiEn?: string | null
 	gamewith?: string | null
 	kamigame?: string | null
-	raids: RaidFull[]
+	raids: EventRaid[]
 	// Editor-only fields
 	eventNumber?: number | null
 	sourceRefs?: unknown
@@ -95,6 +103,8 @@ export interface EventPayload {
 	startsAt: string
 	endsAt: string
 	raidIds: string[]
+	/** The days the named raids open on, by raid id (days after the start, or null to open with the event) */
+	raidUnlockDays?: Record<string, number | null>
 	/** Unite and Fight number; null for other kinds */
 	eventNumber: number | null
 }
