@@ -2,6 +2,7 @@
  * Configuration for API adapters
  */
 import { PUBLIC_SIERO_API_URL, PUBLIC_SIERO_IMG_URL } from '$env/static/public'
+import { apiPathFor } from './apiPath'
 
 /**
  * Get the base URL for API requests
@@ -9,10 +10,7 @@ import { PUBLIC_SIERO_API_URL, PUBLIC_SIERO_IMG_URL } from '$env/static/public'
  */
 export function getApiBaseUrl(): string {
 	const base = PUBLIC_SIERO_API_URL || 'http://localhost:3000'
-	// Production uses api.granblue.team with /v1 path
-	// Local dev (including preview) uses localhost with /api/v1 path
-	const isDeployedApi = base.includes('granblue.team')
-	const apiPath = isDeployedApi ? '/v1' : '/api/v1'
+	const apiPath = apiPathFor(base)
 	const url = `${base}${apiPath}`
 	if (import.meta.env.DEV) console.log('[API Config]', { base, apiPath, url })
 	return url
