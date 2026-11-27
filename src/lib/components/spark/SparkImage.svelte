@@ -33,10 +33,13 @@
 	const COLUMN_PADDING = 12
 	const HEADING = 40
 	const FOOTER = 36
-	// The title's line, then the frame's padding again below it, so it sits
-	// evenly between the top edge and the columns
+	// The title sits evenly between the top edge and the columns, closer than
+	// the frame's padding so the tiles keep their height
 	const TITLE_LINE = 28
-	const TITLE = TITLE_LINE + PADDING
+	const TITLE_SPACE = 16
+	// The height the title takes from the columns: its line and the space
+	// below it, less what it gives back of the frame's top padding
+	const TITLE = TITLE_LINE + TITLE_SPACE * 2 - PADDING
 	const TILE_GAP = 6
 
 	// The spark's date and gacha across the top, when it has either
@@ -81,6 +84,7 @@
 	style:--heading="{HEADING}px"
 	style:--footer="{FOOTER}px"
 	style:--title-line="{TITLE_LINE}px"
+	style:--title-space="{TITLE_SPACE}px"
 	style:--wordmark={element ? `var(--${element}-text)` : undefined}
 	style:--tile-gap="{TILE_GAP}px"
 	style:--tile-width="{layout.tileWidth}px"
@@ -224,7 +228,7 @@
 	}
 
 	.title {
-		margin: 0 0 var(--padding);
+		margin: calc(var(--title-space) - var(--padding)) 0 var(--title-space);
 		font-size: $font-large;
 		font-weight: $bold;
 		line-height: var(--title-line);
