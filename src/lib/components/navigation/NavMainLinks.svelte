@@ -79,6 +79,9 @@
 					<a href={link.href} class:selected={nav.isNavSelected(link.href)}>{link.label()}</a>
 				{/if}
 			{/each}
+			{#if nav.isAuth}
+				<NotificationsJewel unreadCount={nav.notificationCount} element={nav.userElement} />
+			{/if}
 			<button
 				type="button"
 				class="nav-search-trigger"
@@ -87,9 +90,6 @@
 			>
 				<Icon name="search" size={16} />
 			</button>
-			{#if nav.isAuth}
-				<NotificationsJewel unreadCount={nav.notificationCount} element={nav.userElement} />
-			{/if}
 			<NavAccountMenu {nav} />
 		</li>
 	{/if}
