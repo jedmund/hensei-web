@@ -63,11 +63,14 @@ export function mainNavLinks(
 	return links
 }
 
-/** Secondary links (the desktop "more" menu). Database is for curators and up. */
+/**
+ * Secondary links (the desktop "more" menu, where Gacha gets its own
+ * section). Database is for curators and up.
+ */
 export function moreNavLinks(hrefs: NavHrefs, role: number | null): NavLink<MoreNavLinkId>[] {
 	const links: NavLink<MoreNavLinkId>[] = [
-		{ id: 'about', href: hrefs.about, label: () => m.nav_about() },
 		{ id: 'gacha', href: hrefs.gacha, label: () => m.nav_gacha() },
+		{ id: 'about', href: hrefs.about, label: () => m.nav_about() },
 		{ id: 'extension', href: hrefs.extension, label: () => m.nav_extension() }
 	]
 	if (isCurator(role)) {

@@ -3,7 +3,6 @@
 	import { cubicOut } from 'svelte/easing'
 	import { fly } from 'svelte/transition'
 	import { m } from '$lib/paraglide/messages'
-	import Icon from '../Icon.svelte'
 	import SlidingSelection from '../ui/SlidingSelection.svelte'
 	import NavAccountMenu from './NavAccountMenu.svelte'
 	import NavUserSearch from './NavUserSearch.svelte'
@@ -82,15 +81,7 @@
 			{#if nav.isAuth}
 				<NotificationsJewel unreadCount={nav.notificationCount} element={nav.userElement} />
 			{/if}
-			<button
-				type="button"
-				class="nav-search-trigger"
-				aria-label={m.nav_search_users_aria()}
-				onclick={openSearch}
-			>
-				<Icon name="search" size={16} />
-			</button>
-			<NavAccountMenu {nav} />
+			<NavAccountMenu {nav} onSearch={openSearch} />
 		</li>
 	{/if}
 </ul>
@@ -148,30 +139,6 @@
 		}
 	}
 
-	// Search trigger button — mirrors .nav-more-trigger
-	.nav-search-trigger {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		align-self: stretch;
-		padding: spacing.$unit calc(spacing.$unit * 1.5 + 1px);
-		border-radius: layout.$full-corner;
-		background-color: transparent;
-		color: var(--menu-text);
-		border: none;
-		cursor: pointer;
-		transition: background-color 0.2s ease;
-		outline: none;
-
-		&:hover {
-			background-color: var(--menu-bg-item-hover);
-		}
-
-		&:focus-visible {
-			box-shadow: 0 0 0 2px var(--accent-blue-focus);
-		}
-	}
-
 	// Search list-item: fills the pill so NavUserSearch can stretch
 	.nav-search {
 		flex: 1;
@@ -205,7 +172,7 @@
 		position: relative;
 
 		> a,
-		> button {
+		> :global(button) {
 			position: relative;
 			z-index: 1;
 		}

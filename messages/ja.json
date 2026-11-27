@@ -14,6 +14,7 @@
 	"nav_theme": "テーマ",
 	"nav_logout": "ログアウト",
 	"nav_account_aria": "アカウント",
+	"nav_search_users": "ユーザーを検索",
 	"nav_search_users_aria": "ユーザーを検索",
 	"nav_search_users_placeholder": "ユーザーを検索…",
 	"nav_search_no_results": "ユーザーが見つかりません",
