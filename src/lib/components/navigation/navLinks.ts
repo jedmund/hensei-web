@@ -17,6 +17,7 @@ export const NAV_PATHS = {
 	me: '/me',
 	about: '/about',
 	gacha: '/gacha',
+	spark: '/spark',
 	extension: '/extension',
 	database: '/database',
 	login: '/auth/login',
@@ -27,7 +28,7 @@ export const NAV_PATHS = {
 export type NavHrefs = Record<keyof typeof NAV_PATHS, string>
 
 export type MainNavLinkId = 'home' | 'gallery' | 'crew' | 'collection' | 'profile'
-export type MoreNavLinkId = 'about' | 'gacha' | 'extension' | 'database'
+export type MoreNavLinkId = 'about' | 'gacha' | 'spark' | 'extension' | 'database'
 export type TabBarLinkId = 'home' | 'gallery' | 'newTeam' | 'profile'
 export type SheetLinkId = 'crew' | 'collection' | MoreNavLinkId
 
@@ -64,12 +65,13 @@ export function mainNavLinks(
 }
 
 /**
- * Secondary links (the desktop "more" menu, where Gacha gets its own
- * section). Database is for curators and up.
+ * Secondary links (the desktop "more" menu, where the gacha tools get
+ * their own section). Database is for curators and up.
  */
 export function moreNavLinks(hrefs: NavHrefs, role: number | null): NavLink<MoreNavLinkId>[] {
 	const links: NavLink<MoreNavLinkId>[] = [
 		{ id: 'gacha', href: hrefs.gacha, label: () => m.nav_gacha() },
+		{ id: 'spark', href: hrefs.spark, label: () => m.nav_spark() },
 		{ id: 'about', href: hrefs.about, label: () => m.nav_about() },
 		{ id: 'extension', href: hrefs.extension, label: () => m.nav_extension() }
 	]

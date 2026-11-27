@@ -2,6 +2,7 @@
 
 <script lang="ts">
 	import ElementLabel from '$lib/components/labels/ElementLabel.svelte'
+	import StatTile from '$lib/components/ui/StatTile.svelte'
 	import { m } from '$lib/paraglide/messages'
 	import { getElementKey } from '$lib/utils/element'
 	import { getLocale } from '$lib/paraglide/runtime'
@@ -37,20 +38,16 @@
 	const amount = (value: string) => formatAmount(value, getLocale())
 </script>
 
-{#snippet tile(label: string, value: string)}
-	<div class="tile">
-		<span class="stat-label">{label}</span>
-		<span class="stat-value">{value}</span>
-	</div>
-{/snippet}
-
 <div class="stats" class:fill>
 	{#if operation === 'draw' && result.totals}
 		<div class="tiles" style:--columns={rateupCount > 0 ? 3 : 2}>
-			{@render tile(m.gacha_ssr_rate(), formatRate(result.totals.SSR, result.draws, getLocale()))}
-			{@render tile('SSR', amount(result.totals.SSR))}
+			<StatTile
+				label={m.gacha_ssr_rate()}
+				value={formatRate(result.totals.SSR, result.draws, getLocale())}
+			/>
+			<StatTile label="SSR" value={amount(result.totals.SSR)} />
 			{#if rateupCount > 0}
-				{@render tile(m.gacha_rateups_hit(), amount(String(rateupHits)))}
+				<StatTile label={m.gacha_rateups_hit()} value={amount(String(rateupHits))} />
 			{/if}
 		</div>
 	{:else if operation === 'until'}
@@ -85,24 +82,30 @@
 			</div>
 		{/if}
 		<div class="tiles" style:--columns="2">
-			{@render tile(m.gacha_sampled(), amount(result.draws))}
-			{@render tile(m.gacha_copies(), amount(result.copies ?? '0'))}
+			<StatTile label={m.gacha_sampled()} value={amount(result.draws)} />
+			<StatTile label={m.gacha_copies()} value={amount(result.copies ?? '0')} />
 		</div>
 	{:else if result.probability !== undefined}
 		<div class="tiles" style:--columns="2">
-			{@render tile(m.gacha_probability(), formatProbability(result.probability, getLocale()))}
+			<StatTile
+				label={m.gacha_probability()}
+				value={formatProbability(result.probability, getLocale())}
+			/>
 			{#if result.expected_copies !== undefined}
-				{@render tile(m.gacha_expected(), formatDecimal(result.expected_copies, getLocale()))}
+				<StatTile
+					label={m.gacha_expected()}
+					value={formatDecimal(result.expected_copies, getLocale())}
+				/>
 			{/if}
 		</div>
 		{#if result.thresholds}
 			<div class="tiles" style:--columns="3">
 				{#each ['50', '90', '95'] as level (level)}
 					{@const threshold = result.thresholds[level]}
-					{@render tile(
-						m.gacha_chance({ percent: level }),
-						threshold ? amount(threshold) : m.gacha_beyond()
-					)}
+					<StatTile
+						label={m.gacha_chance({ percent: level })}
+						value={threshold ? amount(threshold) : m.gacha_beyond()}
+					/>
 				{/each}
 			</div>
 		{/if}
@@ -128,30 +131,10 @@
 		width: 100%;
 	}
 
-	.tile {
-		display: flex;
-		flex-direction: column;
-		gap: $unit-half;
-		padding: $unit-2x;
-		border-radius: $card-corner;
-		background: var(--page-bg);
-	}
-
 	.stat-label {
 		color: var(--text-secondary);
 		font-size: $font-small;
 		font-weight: $medium;
-	}
-
-	.stat-value {
-		font-size: $font-xxlarge;
-		font-weight: $bold;
-		font-variant-numeric: tabular-nums;
-
-		// Three tiles share a row on phones
-		@media (max-width: 450px) {
-			font-size: $font-large;
-		}
 	}
 
 	.target {

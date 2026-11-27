@@ -305,13 +305,16 @@
 		}
 	}
 
+	// Red text at rest; on hover it fills like the solid destructive button,
+	// so it reads the same as the Delete in confirmation alerts
 	:global([data-button-root].destructive-ghost) {
 		background: transparent;
 		color: $error;
 
 		@media (hover: hover) {
 			&:hover:not(:disabled) {
-				background: $error--bg--light;
+				background: $error;
+				color: white;
 			}
 		}
 	}

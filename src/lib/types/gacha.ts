@@ -11,6 +11,8 @@ export interface CatalogueItem {
 	promotions: number[]
 	category?: 'characterWeapon' | 'weapon' | 'summon'
 	recruits?: {
+		/** The character's id, for adding it to a collection */
+		id?: string
 		granblue_id?: string
 		en: string
 		ja: string

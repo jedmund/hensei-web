@@ -35,14 +35,19 @@ describe('mainNavLinks', () => {
 
 describe('moreNavLinks', () => {
 	it('hides Database below curator', () => {
-		expect(moreNavLinks(hrefs, null).map((l) => l.id)).toEqual(['gacha', 'about', 'extension'])
+		expect(moreNavLinks(hrefs, null).map((l) => l.id)).toEqual([
+			'gacha',
+			'spark',
+			'about',
+			'extension'
+		])
 		expect(moreNavLinks(hrefs, CURATOR_ROLE - 1).map((l) => l.id)).not.toContain('database')
 	})
 
 	it('shows Database to curators and up', () => {
 		for (const role of [CURATOR_ROLE, EDITOR_ROLE]) {
 			const links = moreNavLinks(hrefs, role)
-			expect(links.map((l) => l.id)).toEqual(['gacha', 'about', 'extension', 'database'])
+			expect(links.map((l) => l.id)).toEqual(['gacha', 'spark', 'about', 'extension', 'database'])
 			expect(links.at(-1)?.href).toBe('/database')
 		}
 	})
@@ -71,7 +76,14 @@ describe('tabBarLinks', () => {
 describe('sheetLinks', () => {
 	it("links a signed-in user's collection under their profile", () => {
 		const links = sheetLinks(hrefs, true, 'siero', null)
-		expect(links.map((l) => l.id)).toEqual(['crew', 'collection', 'gacha', 'about', 'extension'])
+		expect(links.map((l) => l.id)).toEqual([
+			'crew',
+			'collection',
+			'gacha',
+			'spark',
+			'about',
+			'extension'
+		])
 		expect(links.find((l) => l.id === 'collection')?.href).toBe('/siero/collection')
 	})
 

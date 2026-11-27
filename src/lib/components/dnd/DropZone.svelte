@@ -1,15 +1,16 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte'
-	import type { GridItem, GridItemType } from '$lib/composables/drag-drop.svelte'
+	import type { DragItem } from '$lib/composables/drag-drop.svelte'
 	import { getDragDropContext } from '$lib/composables/drag-drop.svelte'
 
 	interface Props {
 		container: string
 		position: number
-		type: GridItemType
-		item?: GridItem | undefined
+		/** Drops are only valid between slots of the same type */
+		type: string
+		item?: DragItem | undefined
 		canDrop?: boolean | undefined
-		onDrop?: ((item: GridItem) => void) | undefined
+		onDrop?: ((item: DragItem) => void) | undefined
 		children?: Snippet
 	}
 
@@ -33,7 +34,7 @@
 		e.preventDefault()
 
 		// Sync Alt key state from drag event (keydown/keyup may not fire during HTML5 drag)
-		dragContext.state.isDuplicating = e.altKey
+		dragContext.setDuplicating(e.altKey)
 
 		e.dataTransfer!.dropEffect = dragContext.state.isDuplicating ? 'copy' : 'move'
 
@@ -74,7 +75,7 @@
 		e.stopPropagation()
 
 		// Final Alt key sync before processing the drop
-		dragContext.state.isDuplicating = e.altKey
+		dragContext.setDuplicating(e.altKey)
 
 		const target = { container, position, type }
 

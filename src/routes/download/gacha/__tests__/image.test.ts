@@ -77,7 +77,7 @@ beforeEach(() => {
 	renders.length = 0
 	busy = false
 	s3.clear()
-	gacha._resetImageCacheForTests()
+	gacha.shareImage.cache.reset()
 })
 
 describe('GET /download/gacha', () => {
@@ -156,7 +156,7 @@ describe('GET /download/gacha', () => {
 		const params = new URLSearchParams('seed=abc')
 		params.set('lang', 'en')
 		const request = gacha.parseImageRequest(params)!
-		const signed = new URL(gacha.signedImageUrl('http://localhost', request))
+		const signed = new URL(gacha.shareImage.signedUrl('http://localhost', request.canonical))
 
 		expect((await get(signed.search.slice(1))).status).toBe(200)
 
@@ -166,7 +166,7 @@ describe('GET /download/gacha', () => {
 
 	it('skips signing when no secret is configured', () => {
 		const request = gacha.parseImageRequest(new URLSearchParams('seed=abc'))!
-		expect(gacha.signedImageUrl('http://localhost', request)).not.toContain('sig=')
+		expect(gacha.shareImage.signedUrl('http://localhost', request.canonical)).not.toContain('sig=')
 	})
 
 	it('waits for queued simulations, up to a limit', async () => {

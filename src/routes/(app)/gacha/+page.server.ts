@@ -1,5 +1,5 @@
 import { getLocale } from '$lib/paraglide/runtime'
-import { parseImageRequest, signedImageUrl } from '$lib/server/gachaShareImage'
+import { parseImageRequest, shareImage } from '$lib/server/gachaShareImage'
 import type { PageServerLoad } from './$types'
 
 /**
@@ -10,5 +10,5 @@ export const load: PageServerLoad = ({ url }) => {
 	const params = new URLSearchParams(url.searchParams)
 	params.set('lang', getLocale() === 'ja' ? 'ja' : 'en')
 	const request = parseImageRequest(params)
-	return { ogImage: request ? signedImageUrl(url.origin, request) : null }
+	return { ogImage: request ? shareImage.signedUrl(url.origin, request.canonical) : null }
 }

@@ -7,7 +7,13 @@
 	import type { AddItemResult } from '$lib/types/api/search'
 	import { m } from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
-	import { gachaItemKind, gachaItemName, type GachaItemKind } from '$lib/utils/gacha'
+	import {
+		gachaItemKind,
+		gachaItemMatches,
+		gachaItemName,
+		newestGachaItemsFirst,
+		type GachaItemKind
+	} from '$lib/utils/gacha'
 	import type { CatalogueItem } from '$lib/types/gacha'
 
 	interface Props {
@@ -57,9 +63,7 @@
 	}
 	const weaponName = (item: CatalogueItem) => (getLocale() === 'ja' && item.name.ja) || item.name.en
 
-	// Newest releases first; undated items last, then by name
-	const newestFirst = (a: CatalogueItem, b: CatalogueItem) =>
-		(b.release_date ?? '').localeCompare(a.release_date ?? '') || name(a).localeCompare(name(b))
+	const newestFirst = $derived(newestGachaItemsFirst(getLocale()))
 	const LATEST_COUNT = 10
 
 	// With nothing typed: the latest releases as one mixed list. Typing
@@ -71,11 +75,7 @@
 				{ kind: 'latest', heading: '', items: [...items].sort(newestFirst).slice(0, LATEST_COUNT) }
 			]
 		}
-		const matches = items.filter((item) =>
-			[item.name.en, item.name.ja, item.granblue_id, item.recruits?.en, item.recruits?.ja].some(
-				(text) => text?.toLowerCase().includes(q)
-			)
-		)
+		const matches = items.filter((item) => gachaItemMatches(item, q))
 		const headings: Record<GachaItemKind, string> = {
 			character: m.collection_tab_characters(),
 			weapon: m.collection_tab_weapons(),

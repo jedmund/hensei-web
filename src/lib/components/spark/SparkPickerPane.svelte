@@ -1,0 +1,222 @@
+<!-- SparkPickerPane - Sidebar pane for adding to a spark: every SSR character, weapon and summon as art, newest first, in tabs with a search. A weapon adds its character. -->
+
+<script lang="ts">
+	import Input from '$lib/components/ui/Input.svelte'
+	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
+	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
+	import Segment from '$lib/components/ui/segmented-control/Segment.svelte'
+	import DraggableItem from '$lib/components/dnd/DraggableItem.svelte'
+	import SparkTile from '$lib/components/spark/SparkTile.svelte'
+	import { setDragDropContext } from '$lib/composables/drag-drop.svelte'
+	import {
+		itemDragType,
+		SPARK_PICKER,
+		type SparkDrag,
+		type SparkDragItem
+	} from '$lib/features/spark/drag'
+	import { m } from '$lib/paraglide/messages'
+	import { getLocale } from '$lib/paraglide/runtime'
+	import {
+		gachaItemKind,
+		gachaItemMatches,
+		gachaItemName,
+		newestGachaItemsFirst
+	} from '$lib/utils/gacha'
+	import { inPool } from '$lib/features/spark/pools'
+	import type { CatalogueItem } from '$lib/types/gacha'
+
+	interface Props {
+		/** The catalogue, read when it's needed, since it can still be loading */
+		items: () => CatalogueItem[]
+		loading: () => boolean
+		onAdd: (item: CatalogueItem) => void
+		/** The page's drag-and-drop context, so art drags from here into the spark */
+		drag: SparkDrag
+		/** The tab to open on: summons from a summon slot, characters otherwise */
+		initialTab?: 'character' | 'summon'
+		/** The pool and season the spark was on, to show only what they offer; read live */
+		pool: () => { pool: string | null; season: string | null }
+	}
+
+	let { items, loading, onAdd, drag, initialTab = 'character', pool }: Props = $props()
+
+	// The sidebar renders outside the page's component tree, so the context
+	// is set again here for DraggableItem to find it
+	// svelte-ignore state_referenced_locally
+	setDragDropContext(drag)
+
+	// Weapons are the characters' weapons, shown as the weapon's own art; the
+	// spark records the character either way
+	const dragItem = (item: CatalogueItem): SparkDragItem => ({ id: item.identity, item })
+
+	type Tab = 'character' | 'weapon' | 'summon'
+	// svelte-ignore state_referenced_locally
+	let tab = $state<Tab>(initialTab)
+	const kind = $derived(tab === 'summon' ? 'summon' : 'character')
+	const art = $derived(tab === 'weapon' ? 'weapon' : 'character')
+
+	// On the weapons tab the weapon's name leads and its character follows
+	const characterName = (item: CatalogueItem) => gachaItemName(item, getLocale())
+	function label(item: CatalogueItem) {
+		if (tab !== 'weapon') return characterName(item)
+		return (getLocale() === 'ja' && item.name.ja) || item.name.en
+	}
+	let query = $state('')
+	// Elements to show; none picked shows them all
+	let elements = $state<number[]>([])
+	let scrolled = $state(false)
+
+	const shown = $derived.by(() => {
+		const q = query.trim().toLowerCase()
+		return items()
+			.filter(
+				(item) =>
+					gachaItemKind(item) === kind &&
+					inPool(item, pool().pool, pool().season) &&
+					(elements.length === 0 || elements.includes(item.element)) &&
+					gachaItemMatches(item, q)
+			)
+			.sort(newestGachaItemsFirst(getLocale()))
+	})
+</script>
+
+<div class="spark-picker">
+	<div class="controls" class:scrolled>
+		<SegmentedControl
+			value={tab}
+			onValueChange={(value) => (tab = value as Tab)}
+			variant="background"
+			size="small"
+			grow
+		>
+			<Segment value="character">{m.collection_tab_characters()}</Segment>
+			<Segment value="weapon">{m.collection_tab_weapons()}</Segment>
+			<Segment value="summon">{m.collection_tab_summons()}</Segment>
+		</SegmentedControl>
+		<Input
+			bind:value={query}
+			type="text"
+			placeholder={m.search_placeholder()}
+			leftIcon="search"
+			contained
+			fullWidth
+			class="search-input"
+		/>
+		<div class="elements">
+			<ElementPicker
+				value={elements}
+				onValueChange={(value) => (elements = Array.isArray(value) ? value : [value])}
+				multiple
+				contained
+				size="small"
+			/>
+		</div>
+	</div>
+
+	<div class="results" onscroll={(event) => (scrolled = event.currentTarget.scrollTop > 0)}>
+		{#if loading()}
+			<p class="status">{m.spark_loading()}</p>
+		{:else if shown.length === 0}
+			<p class="status">{m.search_no_results()}</p>
+		{:else}
+			<ul>
+				{#each shown as item, index (item.identity)}
+					<li>
+						<DraggableItem
+							item={dragItem(item)}
+							container={SPARK_PICKER}
+							position={index}
+							type={itemDragType(item)}
+						>
+							<button type="button" aria-label={characterName(item)} onclick={() => onAdd(item)}>
+								<SparkTile
+									{item}
+									sparked={false}
+									lazy
+									{art}
+									tooltip={label(item)}
+									tooltipDetail={tab === 'weapon' ? characterName(item) : undefined}
+								/>
+							</button>
+						</DraggableItem>
+					</li>
+				{/each}
+			</ul>
+		{/if}
+	</div>
+</div>
+
+<style lang="scss">
+	@use '$src/themes/spacing' as *;
+	@use '$src/themes/typography' as *;
+	@use '$src/themes/layout' as *;
+	@use '$src/themes/effects' as *;
+
+	// Fills the sidebar; the controls stay put while the art scrolls
+	.spark-picker {
+		display: flex;
+		flex-direction: column;
+		height: calc(100dvh - 60px);
+		overflow: hidden;
+	}
+
+	.controls {
+		display: flex;
+		flex-direction: column;
+		gap: $unit;
+		flex-shrink: 0;
+		padding: 0 $unit-2x $unit-2x;
+		border-bottom: 1px solid var(--border-primary);
+		transition: box-shadow 0.2s ease;
+
+		&.scrolled {
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+		}
+
+		:global(.search-input) {
+			border-radius: $card-corner;
+		}
+
+		// As wide as its elements, not the pane
+		.elements {
+			align-self: flex-start;
+		}
+	}
+
+	.results {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		padding: $unit-2x;
+	}
+
+	ul {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: $unit-three-quarter;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	button {
+		all: unset;
+		display: block;
+		width: 100%;
+		border-radius: $item-corner-small;
+		cursor: pointer;
+
+		&:focus-visible {
+			outline: 3px solid var(--accent-blue);
+			outline-offset: 2px;
+		}
+	}
+
+	.status {
+		margin: 0;
+		padding: $unit-3x;
+		text-align: center;
+		color: var(--text-secondary);
+		font-size: $font-regular;
+	}
+</style>
