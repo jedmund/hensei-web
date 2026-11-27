@@ -159,7 +159,8 @@
 		align-items: center;
 		justify-content: space-between;
 		margin: 0;
-		font-size: $font-regular;
+		padding-bottom: $unit;
+		font-size: $font-small;
 		font-weight: $medium;
 
 		.count {
