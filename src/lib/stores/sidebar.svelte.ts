@@ -209,12 +209,14 @@ class SidebarStore {
 	 * @param label - Button label (defaults to 'Done')
 	 * @param element - Element type for styling
 	 * @param show - Whether to show the button at all (defaults to true if label provided)
+	 * @param icon - Shows an icon-only button, with the label as its tooltip
 	 */
 	setAction(
 		handler: (() => void) | undefined,
 		label?: string,
 		element?: ElementType,
-		show: boolean = true
+		show: boolean = true,
+		icon?: string
 	) {
 		const panes = this.paneStack.panes
 		const currentIndex = panes.length - 1
@@ -226,6 +228,7 @@ class SidebarStore {
 								label,
 								handler: handler ?? (() => {}),
 								element,
+								icon,
 								disabled: !handler
 							}
 						: undefined

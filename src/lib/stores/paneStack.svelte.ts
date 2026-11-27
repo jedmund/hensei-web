@@ -14,8 +14,11 @@ export type ElementType = 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 const PANE_STACK_CONTEXT_KEY = Symbol('pane-stack')
 
 export interface PaneAction {
+	/** The button's text, or with `icon` its tooltip and accessible name */
 	label: string
 	handler: () => void
+	/** Shows an icon-only button instead of text */
+	icon?: string
 	element?: ElementType
 	disabled?: boolean
 }

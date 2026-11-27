@@ -10,7 +10,6 @@
 	} from '$lib/api/mutations/notification.mutations'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
-	import Button from '$lib/components/ui/Button.svelte'
 	import NotificationList from './NotificationList.svelte'
 
 	const feed = createInfiniteQuery(() => notificationQueries.feed())
@@ -24,6 +23,17 @@
 	const notifications = $derived(feed.data?.pages.flatMap((page) => page.notifications) ?? [])
 	const hasUnread = $derived(notifications.some((n) => !n.read))
 
+	// "Mark all as read" is a check in the pane header, shown while anything is unread
+	$effect(() => {
+		sidebar.setAction(
+			markAllRead.isPending ? undefined : () => markAllRead.mutate(),
+			m.notifications_mark_all_read(),
+			undefined,
+			hasUnread,
+			'check'
+		)
+	})
+
 	let sentinelEl = $state<HTMLElement>()
 	const loader = useInfiniteLoader(
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any -- createInfiniteQuery result type doesn't match useInfiniteLoader generic exactly
@@ -35,19 +45,6 @@
 </script>
 
 <div class="notifications-pane">
-	{#if hasUnread}
-		<div class="pane-toolbar">
-			<Button
-				variant="ghost"
-				size="small"
-				onclick={() => markAllRead.mutate()}
-				disabled={markAllRead.isPending}
-			>
-				{m.notifications_mark_all_read()}
-			</Button>
-		</div>
-	{/if}
-
 	<NotificationList
 		{notifications}
 		isLoading={feed.isLoading}
@@ -68,11 +65,6 @@
 		flex-direction: column;
 		gap: spacing.$unit-half;
 		padding: spacing.$unit;
-	}
-
-	.pane-toolbar {
-		display: flex;
-		justify-content: flex-end;
 	}
 
 	.load-more-sentinel {
