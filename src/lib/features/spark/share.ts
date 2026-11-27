@@ -11,11 +11,11 @@ import { copyShareImage, saveShareImage } from '$lib/utils/shareImage'
 
 const FILENAME = 'spark.png'
 
-// Drawn in the viewer's current theme
 const siteTheme = () => (document.documentElement.dataset.theme === 'light' ? 'light' : 'dark')
 
-const imageUrl = (query: string) =>
-	`/download/spark?${query ? `${query}&` : ''}lang=${getLocale() === 'ja' ? 'ja' : 'en'}&theme=${siteTheme()}`
+// Drawn in the viewer's theme, with the wordmark in their element
+const imageUrl = (query: string, element?: string) =>
+	`/download/spark?${query ? `${query}&` : ''}lang=${getLocale() === 'ja' ? 'ja' : 'en'}&theme=${siteTheme()}${element ? `&element=${element}` : ''}`
 
 /** The page's address for a spark, which reopens it */
 export const sparkLink = (query: string) =>
@@ -31,16 +31,16 @@ export async function copySparkLink(query: string) {
 }
 
 /** Call straight from a click: Safari keeps the gesture only until the first await */
-export function copySparkImage(query: string) {
-	copyShareImage(imageUrl(query), FILENAME)
+export function copySparkImage(query: string, element?: string) {
+	copyShareImage(imageUrl(query, element), FILENAME)
 		.then((outcome) =>
 			toast.success(outcome === 'copied' ? m.toast_copied() : m.spark_image_saved())
 		)
 		.catch(() => toast.error(m.toast_copy_failed()))
 }
 
-export function saveSparkImage(query: string) {
-	saveShareImage(imageUrl(query), FILENAME)
+export function saveSparkImage(query: string, element?: string) {
+	saveShareImage(imageUrl(query, element), FILENAME)
 		.then(() => toast.success(m.spark_image_saved()))
 		.catch(() => toast.error(m.gacha_error()))
 }

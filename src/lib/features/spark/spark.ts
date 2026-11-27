@@ -33,6 +33,8 @@ export interface Spark {
 	/** The item that was sparked rather than drawn */
 	sparked: SparkMark | null
 	draws: number
+	/** The day of the spark, as YYYY-MM-DD with no time zone */
+	date: string | null
 	/** The gacha it was on: a pool from SPARK_POOLS and a season from SPARK_SEASONS */
 	pool: string | null
 	season: string | null
@@ -49,6 +51,7 @@ export const emptySpark = (): Spark => ({
 	summons: [],
 	sparked: null,
 	draws: DEFAULT_DRAWS,
+	date: null,
 	pool: null,
 	season: null
 })
@@ -78,12 +81,25 @@ function readMark(value: string | null, spark: Spark): SparkMark | null {
 	return { column, index }
 }
 
+/** A real day written as YYYY-MM-DD */
+function isDate(value: string): boolean {
+	const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+	if (!match) return false
+	const [year, month, day] = match.slice(1).map(Number) as [number, number, number]
+	const date = new Date(Date.UTC(year, month - 1, day))
+	return (
+		date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day
+	)
+}
+
 export function readSpark(params: URLSearchParams): Spark {
 	const spark = emptySpark()
 	for (const column of SPARK_COLUMNS) spark[column] = readList(params, column)
 	spark.sparked = readMark(params.get('spark'), spark)
 	const draws = params.get('draws') ?? ''
 	if (/^\d{1,5}$/.test(draws) && Number(draws) > 0) spark.draws = Number(draws)
+	const date = params.get('date') ?? ''
+	if (isDate(date)) spark.date = date
 	spark.pool = findPromotion(SPARK_POOLS, params.get('pool'))?.value ?? null
 	// Only pools that run seasons keep one
 	const season = findPromotion(SPARK_SEASONS, params.get('season'))?.value ?? null
@@ -103,6 +119,7 @@ export function writeSpark(spark: Spark): string {
 	}
 	if (spark.sparked) parts.push(`spark=${KEYS[spark.sparked.column]}${spark.sparked.index}`)
 	if (spark.draws !== DEFAULT_DRAWS) parts.push(`draws=${spark.draws}`)
+	if (spark.date) parts.push(`date=${spark.date}`)
 	if (spark.pool) parts.push(`pool=${spark.pool}`)
 	if (spark.season) parts.push(`season=${spark.season}`)
 	return parts.join('&')
@@ -278,7 +295,10 @@ export function resolveSpark(
 		data: {
 			columns,
 			sparked: cleaned.sparked,
-			draws: cleaned.draws
+			draws: cleaned.draws,
+			date: cleaned.date,
+			pool: cleaned.pool,
+			season: cleaned.season
 		}
 	}
 }

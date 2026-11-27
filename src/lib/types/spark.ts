@@ -11,4 +11,8 @@ export interface SparkRenderData {
 	columns: Record<SparkColumn, CatalogueItem[]>
 	sparked: SparkMark | null
 	draws: number
+	/** For the image's title: the spark's day and the gacha it was on */
+	date: string | null
+	pool: string | null
+	season: string | null
 }

@@ -66,7 +66,7 @@
 		<div class="frame" bind:clientWidth={width} style:height="{SPARK_IMAGE_HEIGHT * scale}px">
 			{#if data}
 				<div class="scaled" style:transform="scale({scale})">
-					<SparkImage {data} theme="site" />
+					<SparkImage {data} theme="site" element={userElement} />
 				</div>
 			{/if}
 		</div>
@@ -100,12 +100,15 @@
 					<DropdownMenuBase.Item class="dropdown-menu-item" onSelect={() => copySparkLink(query)}>
 						{m.spark_copy_link()}
 					</DropdownMenuBase.Item>
-					<DropdownMenuBase.Item class="dropdown-menu-item" onSelect={() => copySparkImage(query)}>
+					<DropdownMenuBase.Item
+						class="dropdown-menu-item"
+						onSelect={() => copySparkImage(query, userElement)}
+					>
 						{m.spark_copy_image()}
 					</DropdownMenuBase.Item>
 				{/snippet}
 			</DropdownMenu>
-			<Button variant="ghost" size="small" onclick={() => saveSparkImage(query)}>
+			<Button variant="ghost" size="small" onclick={() => saveSparkImage(query, userElement)}>
 				{m.spark_save_image()}
 			</Button>
 		{/snippet}

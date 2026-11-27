@@ -3315,5 +3315,6 @@
 	"spark_pool_name_classic_iii": "クラシックガチャIII",
 	"spark_clear_title": "この天井をクリアしますか？",
 	"spark_clear_message": "ボードからすべてのキャラクターと召喚石が削除されます。",
-	"spark_history_private": "自分だけに表示されます"
+	"spark_history_private": "自分だけに表示されます",
+	"spark_saved_title": "保存した天井"
 }

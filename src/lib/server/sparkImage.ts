@@ -33,11 +33,14 @@ const LOCALES = ['en', 'ja'] as const
 // The image is drawn in the viewer's theme when it's copied or saved; link
 // previews, which have no viewer, are dark
 const THEMES = ['dark', 'light'] as const
+// The viewer's element colors the wordmark; none leaves it gray
+const ELEMENTS = ['wind', 'fire', 'water', 'earth', 'light', 'dark'] as const
 
 export interface SparkImageRequest {
 	spark: Spark
 	locale: (typeof LOCALES)[number]
 	theme: (typeof THEMES)[number]
+	element: (typeof ELEMENTS)[number] | null
 	/** Query string every equivalent request reduces to; signed and hashed */
 	canonical: string
 	/** sha256 of `canonical`; names the cache entry */
@@ -50,15 +53,17 @@ export function parseSparkImageRequest(params: URLSearchParams): SparkImageReque
 	if (sparkItemCount(spark) === 0) return null
 	const locale = oneOf(params.get('lang'), LOCALES, 'en')
 	const theme = oneOf(params.get('theme'), THEMES, 'dark')
+	const element = ELEMENTS.find((value) => value === params.get('element')) ?? null
 	const canonical = [
 		writeSpark(spark),
 		`lang=${locale}`,
-		...(theme === 'dark' ? [] : [`theme=${theme}`])
+		...(theme === 'dark' ? [] : [`theme=${theme}`]),
+		...(element ? [`element=${element}`] : [])
 	].join('&')
 	const cacheKey = createHash('sha256')
 		.update(`${canonical}|design=${DESIGN_VERSION}`)
 		.digest('hex')
-	return { spark, locale, theme, canonical, cacheKey }
+	return { spark, locale, theme, element, canonical, cacheKey }
 }
 
 export const shareImage = createShareImage({

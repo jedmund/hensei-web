@@ -21,14 +21,22 @@ const spark: Spark = {
 	summons: ['2040000000'],
 	sparked: { column: 'characters', index: 1 },
 	draws: 280,
+	date: '2026-11-20',
 	pool: 'flash',
 	season: 'halloween'
 }
 
+// The API's saved spark: the spark's fields, with its date as sparkDate
 const saved: SavedSpark = {
 	id: 'spark-1',
 	sparkDate: '2026-11-20',
-	...spark,
+	characters: spark.characters,
+	moons: spark.moons,
+	summons: spark.summons,
+	sparked: spark.sparked,
+	draws: spark.draws,
+	pool: spark.pool,
+	season: spark.season,
 	createdAt: '2026-11-20T10:00:00Z',
 	updatedAt: '2026-11-20T10:00:00Z'
 }
@@ -95,7 +103,7 @@ describe('saved spark conversion', () => {
 	it('round-trips an empty spark and the default draws', () => {
 		const payload = toSavedSparkPayload(emptySpark(), '2026-01-01')
 		expect(fromSavedSpark({ ...saved, ...payload })).toEqual({
-			spark: emptySpark(),
+			spark: { ...emptySpark(), date: '2026-01-01' },
 			sparkDate: '2026-01-01'
 		})
 	})

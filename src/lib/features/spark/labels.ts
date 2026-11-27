@@ -13,23 +13,27 @@ export const SPARK_COLUMN_HEADINGS: Record<SparkColumn, () => string> = {
 /**
  * A saved spark's name: its date, then its season and pool in full, e.g.
  * "11/15/2026 Halloween Flash Gala". A season alone is on the Premium Gala;
- * with neither, the date stands alone.
+ * with neither, the date stands alone. Without a date, just the gacha.
  */
 export function savedSparkName(
-	sparkDate: string,
+	sparkDate: string | null,
 	pool: string | null,
 	season: string | null,
 	locale: string
 ): string {
+	const date = sparkDate ? formatSparkDate(sparkDate, locale) : undefined
+	const seasonEntry = findPromotion(SPARK_SEASONS, season)
+	const poolEntry = findPromotion(SPARK_POOLS, pool) ?? (seasonEntry ? SPARK_POOLS[0] : undefined)
+	return [date, seasonEntry?.name(), poolEntry?.name()].filter(Boolean).join(' ')
+}
+
+function formatSparkDate(sparkDate: string, locale: string): string {
 	const [year, month, day] = sparkDate.split('-').map(Number) as [number, number, number]
-	const date = new Intl.DateTimeFormat(locale, {
+	return new Intl.DateTimeFormat(locale, {
 		year: 'numeric',
 		month: 'numeric',
 		day: 'numeric'
 	}).format(new Date(year, month - 1, day))
-	const seasonEntry = findPromotion(SPARK_SEASONS, season)
-	const poolEntry = findPromotion(SPARK_POOLS, pool) ?? (seasonEntry ? SPARK_POOLS[0] : undefined)
-	return [date, seasonEntry?.name(), poolEntry?.name()].filter(Boolean).join(' ')
 }
 
 /** SSRs drawn: everything in the spark but the sparked item */

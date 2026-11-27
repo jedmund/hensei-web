@@ -31,11 +31,14 @@ describe('spark links', () => {
 			summons: [S],
 			sparked: { column: 'characters', index: 1 },
 			draws: 280,
+			date: '2026-11-15',
 			pool: 'flash',
 			season: 'halloween'
 		})
 		const query = writeSpark(original)
-		expect(query).toBe(`c=${A},${B}&m=${C}&s=${S}&spark=c1&draws=280&pool=flash&season=halloween`)
+		expect(query).toBe(
+			`c=${A},${B}&m=${C}&s=${S}&spark=c1&draws=280&date=2026-11-15&pool=flash&season=halloween`
+		)
 		expect(readSpark(new URLSearchParams(query))).toEqual(original)
 	})
 
@@ -48,6 +51,11 @@ describe('spark links', () => {
 			pool: 'classic',
 			season: null
 		})
+	})
+
+	it('drops dates that are not real days', () => {
+		expect(readSpark(new URLSearchParams({ date: '2026-02-30' })).date).toBeNull()
+		expect(readSpark(new URLSearchParams({ date: 'tomorrow' })).date).toBeNull()
 	})
 
 	it('leaves defaults out of the link', () => {

@@ -21,7 +21,6 @@
 	} from '$lib/api/adapters/savedSpark.adapter'
 	import { AuthenticationError, ValidationError } from '$lib/api/adapters/errors'
 	import SparkHistory from '$lib/components/spark/SparkHistory.svelte'
-	import { savedSparkName } from '$lib/features/spark/labels'
 	import SparkResultDialog from '$lib/components/spark/SparkResultDialog.svelte'
 	import type { SavedSpark } from '$lib/types/api/savedSpark'
 	import SparkBoard, { type SparkBoardTile } from '$lib/components/spark/SparkBoard.svelte'
@@ -51,11 +50,16 @@
 	import { gachaItemName } from '$lib/utils/gacha'
 	import { copySparkImage, copySparkLink, saveSparkImage } from '$lib/features/spark/share'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
+	import { MOBILE_QUERY } from '$lib/utils/viewport.svelte'
 	import type { CatalogueItem } from '$lib/types/gacha'
 
 	let { data } = $props()
 
-	const initial = readSpark(page.url.searchParams)
+	// A spark without a date is dated today
+	const initial = (() => {
+		const read = readSpark(page.url.searchParams)
+		return read.date ? read : { ...read, date: todaySparkDate() }
+	})()
 	let spark = $state<Spark>(initial)
 	let items = $state<CatalogueItem[]>([])
 	let loading = $state(true)
@@ -89,8 +93,6 @@
 	let owned = $state.raw<ReadonlySet<string>>(new Set())
 	// The field's own text, so clearing it to type a new number doesn't snap back
 	let drawsInput = $state<string | number>(initial.draws)
-	// The day of the spark; saved with it, so no later than today
-	let sparkDate = $state<string | null>(todaySparkDate())
 	const today = todaySparkDate()
 
 	// Saved sparks, for signed-in players: the one being edited, the list
@@ -125,7 +127,8 @@
 
 	onMount(() => {
 		mounted = true
-		openPicker()
+		// The sidebar would cover the board on a phone; there, slots open it
+		if (!window.matchMedia(MOBILE_QUERY).matches) openPicker()
 		const userId = page.data.account?.userId
 		if (userId) void loadSaved(1)
 		if (userId) {
@@ -226,6 +229,7 @@
 
 	/** Save the spark to the account: new the first time, then updates */
 	async function saveSpark() {
+		const sparkDate = spark.date
 		if (!sparkDate || !isSparkDate(sparkDate)) {
 			toast.error(m.spark_date_invalid())
 			return
@@ -256,7 +260,6 @@
 		const loaded = fromSavedSpark(row)
 		spark = loaded.spark
 		drawsInput = loaded.spark.draws
-		sparkDate = loaded.sparkDate
 		savedId = row.id
 		viewingOpen = false
 		window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -276,8 +279,14 @@
 
 	/** Start over: an empty spark, dated today, not tied to a saved one */
 	function clearSpark() {
-		spark = { ...spark, characters: [], moons: [], summons: [], sparked: null }
-		sparkDate = todaySparkDate()
+		spark = {
+			...spark,
+			characters: [],
+			moons: [],
+			summons: [],
+			sparked: null,
+			date: todaySparkDate()
+		}
 		savedId = null
 	}
 
@@ -338,7 +347,7 @@
 			<div class="date">
 				<DatePicker
 					label={m.spark_date()}
-					bind:value={sparkDate}
+					bind:value={() => spark.date, (date) => (spark = { ...spark, date: date ?? null })}
 					maxValue={today}
 					locale={getLocale()}
 					contained
@@ -406,7 +415,7 @@
 						</DropdownMenuBase.Item>
 						<DropdownMenuBase.Item
 							class="dropdown-menu-item"
-							onSelect={() => copySparkImage(query)}
+							onSelect={() => copySparkImage(query, userElement)}
 						>
 							{m.spark_copy_image()}
 						</DropdownMenuBase.Item>
@@ -416,7 +425,7 @@
 					variant={signedIn ? 'ghost' : 'primary'}
 					size="small"
 					disabled={!hasItems}
-					onclick={() => saveSparkImage(query)}
+					onclick={() => saveSparkImage(query, userElement)}
 				>
 					{m.spark_save_image()}
 				</Button>
@@ -470,9 +479,7 @@
 
 <SparkResultDialog
 	bind:open={viewingOpen}
-	title={viewing
-		? savedSparkName(viewing.sparkDate, viewing.pool, viewing.season, getLocale())
-		: ''}
+	title={m.spark_saved_title()}
 	data={viewing ? resolveSaved(viewing) : null}
 	onEdit={() => viewing && editSaved(viewing)}
 	onDelete={() => (viewing ? deleteSaved(viewing) : Promise.resolve())}

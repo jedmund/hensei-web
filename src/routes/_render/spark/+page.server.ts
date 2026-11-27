@@ -12,9 +12,11 @@ import type { SparkRenderData } from '$lib/types/spark'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = async ({ url }) => {
-	const data = consumePrefetch<{ spark: SparkRenderData; theme: 'dark' | 'light' }>(
-		url.searchParams.get('prefetch')
-	)
+	const data = consumePrefetch<{
+		spark: SparkRenderData
+		theme: 'dark' | 'light'
+		element: string | null
+	}>(url.searchParams.get('prefetch'))
 	if (!data) throw error(404, 'Not Found')
 	return data
 }

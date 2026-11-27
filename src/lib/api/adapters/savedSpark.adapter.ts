@@ -58,7 +58,7 @@ export function toSavedSparkPayload(spark: Spark, sparkDate: string): SavedSpark
  */
 export function fromSavedSpark(saved: SavedSpark): { spark: Spark; sparkDate: string } {
 	return {
-		spark: readSpark(new URLSearchParams(writeSpark(saved))),
+		spark: readSpark(new URLSearchParams(writeSpark({ ...saved, date: saved.sparkDate }))),
 		sparkDate: saved.sparkDate
 	}
 }
