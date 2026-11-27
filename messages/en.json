@@ -3530,7 +3530,6 @@
 	"spark_save_failed": "Your spark couldn't be saved",
 	"spark_date_invalid": "Pick the day you sparked",
 	"spark_history": "Saved sparks",
-	"spark_load_more": "Show more",
 	"spark_edit": "Edit",
 	"spark_delete": "Delete",
 	"spark_delete_title": "Delete this spark?",

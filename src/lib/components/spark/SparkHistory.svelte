@@ -1,7 +1,6 @@
 <!-- SparkHistory - The signed-in player's saved sparks, newest first; each row opens the spark in a dialog -->
 
 <script lang="ts">
-	import Button from '$lib/components/ui/Button.svelte'
 	import Icon from '$lib/components/Icon.svelte'
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import { drawnSsrCount, savedSparkName, sparkRate } from '$lib/features/spark/labels'
@@ -9,6 +8,7 @@
 	import { m } from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { gachaItemName, gachaItemThumbnail } from '$lib/utils/gacha'
+	import { IsInViewport } from 'runed'
 	import type { SavedSpark } from '$lib/types/api/savedSpark'
 	import type { SparkRenderData } from '$lib/types/spark'
 
@@ -17,7 +17,7 @@
 		/** A saved spark with its items resolved against the catalogue */
 		resolve: (saved: SavedSpark) => SparkRenderData
 		onOpen: (saved: SavedSpark) => void
-		/** More pages to load */
+		/** More pages to load; they load as the list scrolls */
 		hasMore: boolean
 		loadingMore: boolean
 		onLoadMore: () => void
@@ -29,6 +29,14 @@
 	const THUMBNAILS = 6
 
 	const count = (value: number) => new Intl.NumberFormat(getLocale()).format(value)
+
+	// The next page loads as the end of the list nears the viewport. A page
+	// that leaves the end still in view loads the next one too.
+	let sentinel = $state<HTMLElement>()
+	const nearEnd = new IsInViewport(() => sentinel, { rootMargin: '200px' })
+	$effect(() => {
+		if (nearEnd.current && hasMore && !loadingMore) onLoadMore()
+	})
 </script>
 
 <section class="history" aria-labelledby="spark-history-heading">
@@ -78,10 +86,10 @@
 		{/each}
 	</ol>
 	{#if hasMore}
-		<div class="more-row">
-			<Button variant="ghost" size="small" disabled={loadingMore} onclick={onLoadMore}>
-				{m.spark_load_more()}
-			</Button>
+		<div class="more-row" bind:this={sentinel}>
+			{#if loadingMore}
+				<span class="loading">{m.spark_loading()}</span>
+			{/if}
 		</div>
 	{/if}
 </section>
@@ -202,8 +210,15 @@
 		font-weight: $bold;
 	}
 
+	// Where the next page loads; tall enough to be seen before it's reached
 	.more-row {
 		display: flex;
 		justify-content: center;
+		min-height: $unit-4x;
+	}
+
+	.loading {
+		color: var(--text-secondary);
+		font-size: $font-small;
 	}
 </style>
