@@ -131,7 +131,7 @@
 							<BitsDatePicker.Grid class="grid">
 								<BitsDatePicker.GridHead>
 									<BitsDatePicker.GridRow class="grid-row">
-										{#each weekdays as day (day)}
+										{#each weekdays as day, i (i)}
 											<BitsDatePicker.HeadCell class="head-cell">
 												{day}
 											</BitsDatePicker.HeadCell>
@@ -202,7 +202,7 @@
 						<BitsDatePicker.Grid class="grid">
 							<BitsDatePicker.GridHead>
 								<BitsDatePicker.GridRow class="grid-row">
-									{#each weekdays as day (day)}
+									{#each weekdays as day, i (i)}
 										<BitsDatePicker.HeadCell class="head-cell">
 											{day}
 										</BitsDatePicker.HeadCell>
