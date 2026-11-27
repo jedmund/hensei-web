@@ -196,7 +196,8 @@
 				onAdd: add,
 				drag,
 				initialTab,
-				pool: () => ({ pool: spark.pool, season: spark.season })
+				pool: () => ({ pool: spark.pool, season: spark.season }),
+				userElement: () => userElement
 			},
 			{ scrollable: false }
 		)
