@@ -232,7 +232,6 @@
 
 <style lang="scss">
 	@use '$src/themes/spacing' as *;
-	@use '$src/themes/colors' as *;
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/mixins' as *;
@@ -284,18 +283,19 @@
 			outline: none;
 
 			&:focus {
-				background-color: $water-text-20;
+				background-color: var(--accent-blue);
 				color: white;
 			}
+		}
 
-			&[data-placeholder] {
-				color: var(--text-tertiary);
-			}
+		// Segment states as their own rules, like the day states below
+		:global(.segment[data-placeholder]) {
+			color: var(--text-tertiary);
+		}
 
-			&[data-segment='literal'] {
-				color: var(--text-secondary);
-				padding: 0;
-			}
+		:global(.segment[data-segment='literal']) {
+			color: var(--text-secondary);
+			padding: 0;
 		}
 
 		:global(.trigger) {
@@ -312,7 +312,7 @@
 			@include smooth-transition($duration-quick, background-color, color);
 
 			&:hover {
-				background-color: $grey-80;
+				background-color: var(--button-contained-bg-hover);
 				color: var(--text-primary);
 			}
 
@@ -326,11 +326,11 @@
 	// Portalled content - use specific class name to avoid conflicts
 	:global(.date-picker-content) {
 		z-index: $z-popover;
-		background-color: $grey-85;
+		background-color: var(--menu-bg);
 		border-radius: $card-corner;
 		padding: $unit-2x;
 		box-shadow: $dialog-elevation;
-		border: 1px solid $grey-80;
+		border: 1px solid var(--border-subtle);
 	}
 
 	:global(.date-picker-content .calendar) {
@@ -366,7 +366,7 @@
 		@include smooth-transition($duration-quick, background-color, color);
 
 		&:hover:not(:disabled) {
-			background-color: $grey-80;
+			background-color: var(--button-contained-bg-hover);
 			color: var(--text-primary);
 		}
 
@@ -417,33 +417,35 @@
 		@include smooth-transition($duration-quick, background-color, color);
 
 		&:hover:not(:disabled):not([data-selected]) {
-			background-color: $grey-80;
+			background-color: var(--button-contained-bg-hover);
 		}
+	}
 
-		&[data-today] {
-			font-weight: $medium;
-			color: $water-text-20;
-		}
+	// Day states as their own rules: nested &[data-…] inside a :global() block
+	// are dropped by the compiler
+	:global(.date-picker-content .day[data-today]) {
+		font-weight: $medium;
+		color: var(--accent-blue);
+	}
 
-		&[data-selected] {
-			background-color: $water-text-20;
-			color: white;
-			font-weight: $medium;
-		}
+	:global(.date-picker-content .day[data-selected]) {
+		background-color: var(--accent-blue);
+		color: white;
+		font-weight: $medium;
+	}
 
-		&[data-outside-month] {
-			color: var(--text-tertiary);
-			opacity: 0.5;
-		}
+	:global(.date-picker-content .day[data-outside-month]) {
+		color: var(--text-tertiary);
+		opacity: 0.5;
+	}
 
-		&[data-disabled] {
-			opacity: 0.3;
-			cursor: not-allowed;
-		}
+	:global(.date-picker-content .day[data-disabled]) {
+		opacity: 0.3;
+		cursor: not-allowed;
+	}
 
-		&[data-unavailable] {
-			text-decoration: line-through;
-			opacity: 0.3;
-		}
+	:global(.date-picker-content .day[data-unavailable]) {
+		text-decoration: line-through;
+		opacity: 0.3;
 	}
 </style>
