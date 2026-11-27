@@ -10,7 +10,7 @@
  * Add new templates as new card components ship.
  */
 
-export type RenderTemplateId = '_health' | 'user.support-summons' | 'gacha.result'
+export type RenderTemplateId = '_health' | 'user.support-summons' | 'gacha.result' | 'spark.image'
 // Adding a new id without adding the matching entry to TEMPLATES is a type
 // error.
 
@@ -85,6 +85,21 @@ export const TEMPLATES = {
 		},
 		viewport: { width: 1200, height: 630 },
 		s3Prefix: 'previews/gacha.result',
+		requiredParams: ['prefetch']
+	},
+	/**
+	 * Spark maker image, shared as a link preview and copied or saved as an
+	 * image. The public /download/spark endpoint resolves the spark against
+	 * the catalogue and hands it over with a prefetch token.
+	 */
+	'spark.image': {
+		internalPath: (params: Record<string, string>): string => {
+			const prefix = params.locale === 'ja' ? '/ja' : ''
+			const query = new URLSearchParams({ prefetch: params.prefetch ?? '' })
+			return `${prefix}/_render/spark?${query.toString()}`
+		},
+		viewport: { width: 1200, height: 630 },
+		s3Prefix: 'previews/spark.image',
 		requiredParams: ['prefetch']
 	}
 } as const satisfies Record<RenderTemplateId, RenderTemplate>

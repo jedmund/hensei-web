@@ -18,9 +18,10 @@
 	// The search field takes focus, so the menu mustn't hand it back to its trigger
 	let searching = false
 
-	// Gacha gets a section of its own, between search and the other links
-	const gachaLinks = $derived(nav.moreLinks.filter((link) => link.id === 'gacha'))
-	const otherLinks = $derived(nav.moreLinks.filter((link) => link.id !== 'gacha'))
+	// The gacha tools get a section of their own, between search and the other links
+	const isGachaLink = (link: { id: string }) => link.id === 'gacha' || link.id === 'spark'
+	const gachaLinks = $derived(nav.moreLinks.filter(isGachaLink))
+	const otherLinks = $derived(nav.moreLinks.filter((link) => !isGachaLink(link)))
 
 	function startSearch() {
 		searching = true
