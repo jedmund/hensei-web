@@ -118,7 +118,7 @@ describe('GET /download/spark', () => {
 	it('uses S3 for the cache when a bucket is configured', async () => {
 		env.RENDER_S3_BUCKET = 'renders'
 		await get('c=1040000100')
-		expect([...s3.keys()][0]).toMatch(/^previews\/spark\.image\/[0-9a-f]{64}\/1\.png$/)
+		expect([...s3.keys()][0]).toMatch(/^previews\/spark\.image\/[0-9a-f]{64}\/2\.png$/)
 	})
 
 	it('rate-limits unsigned cache misses per IP', async () => {

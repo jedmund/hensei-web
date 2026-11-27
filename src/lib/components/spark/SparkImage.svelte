@@ -1,16 +1,58 @@
-<!-- SparkImage - The exported spark image: new characters, gold moons and summons in three columns, at a fixed 1200x630. The page edits with SparkBoard instead. -->
+<!-- SparkImage - The exported spark image: new characters, gold moons and summons in three columns, 1200 wide and as tall as the fullest column needs (630 at least). The page edits with SparkBoard instead. -->
 
 <script lang="ts" module>
-	/** The image's size; the share render screenshots it at this size */
+	import { layoutSpark, type SparkColumn } from '$lib/features/spark/spark'
+
+	/** The image's width; its height grows with the fullest column */
 	export const SPARK_IMAGE_WIDTH = 1200
-	export const SPARK_IMAGE_HEIGHT = 630
+	/** The shortest the image gets, the usual link preview shape */
+	export const SPARK_IMAGE_MIN_HEIGHT = 630
+
+	const PADDING = 24
+	const COLUMN_GAP = 16
+	const COLUMN_PADDING = 12
+	const HEADING = 40
+	const FOOTER = 36
+	// The title sits evenly between the top edge and the columns, closer than
+	// the frame's padding
+	const TITLE_LINE = 28
+	const TITLE_SPACE = 16
+	// The height the title adds: its line and the space below it, less what
+	// it gives back of the frame's top padding
+	const TITLE = TITLE_LINE + TITLE_SPACE * 2 - PADDING
+	const TILE_GAP = 6
+
+	function layoutFor(counts: Record<SparkColumn, number>) {
+		return layoutSpark(counts, {
+			width: SPARK_IMAGE_WIDTH - PADDING * 2,
+			columnGap: COLUMN_GAP,
+			columnPadding: COLUMN_PADDING,
+			tileGap: TILE_GAP,
+			aspect: 280 / 160
+		})
+	}
+
+	/**
+	 * The image's height for a spark with these counts: tall enough for the
+	 * fullest column, and never shorter than a link preview
+	 */
+	export function sparkImageHeight(counts: Record<SparkColumn, number>, titled: boolean): number {
+		const content =
+			PADDING * 2 +
+			(titled ? TITLE : 0) +
+			COLUMN_PADDING * 2 +
+			HEADING +
+			layoutFor(counts).tilesHeight +
+			FOOTER
+		return Math.max(SPARK_IMAGE_MIN_HEIGHT, Math.ceil(content))
+	}
 </script>
 
 <script lang="ts">
 	import SparkTile from '$lib/components/spark/SparkTile.svelte'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { savedSparkName, SPARK_COLUMN_HEADINGS, sparkRateText } from '$lib/features/spark/labels'
-	import { layoutSpark, SPARK_COLUMNS, TILES_PER_ROW } from '$lib/features/spark/spark'
+	import { SPARK_COLUMNS, TILES_PER_ROW } from '$lib/features/spark/spark'
 	import type { SparkRenderData } from '$lib/types/spark'
 
 	interface Props {
@@ -26,49 +68,16 @@
 
 	let { data, theme = 'dark', element }: Props = $props()
 
-	// The frame less its padding, the headings and the footer is what the
-	// columns share; layoutSpark sizes the tiles to fit it
-	const PADDING = 24
-	const COLUMN_GAP = 16
-	const COLUMN_PADDING = 12
-	const HEADING = 40
-	const FOOTER = 36
-	// The title sits evenly between the top edge and the columns, closer than
-	// the frame's padding so the tiles keep their height
-	const TITLE_LINE = 28
-	const TITLE_SPACE = 16
-	// The height the title takes from the columns: its line and the space
-	// below it, less what it gives back of the frame's top padding
-	const TITLE = TITLE_LINE + TITLE_SPACE * 2 - PADDING
-	const TILE_GAP = 6
-
 	// The spark's date and gacha across the top, when it has either
 	const title = $derived(savedSparkName(data.date, data.pool, data.season, getLocale()))
 
-	const layout = $derived(
-		layoutSpark(
-			{
-				characters: data.columns.characters.length,
-				moons: data.columns.moons.length,
-				summons: data.columns.summons.length
-			},
-			{
-				width: SPARK_IMAGE_WIDTH - PADDING * 2,
-				height:
-					SPARK_IMAGE_HEIGHT -
-					PADDING * 2 -
-					(title ? TITLE : 0) -
-					FOOTER -
-					COLUMN_PADDING * 2 -
-					HEADING,
-				columnGap: COLUMN_GAP,
-				columnPadding: COLUMN_PADDING,
-				tileGap: TILE_GAP,
-				aspect: 280 / 160,
-				maxTileWidth: 240
-			}
-		)
-	)
+	const counts = $derived({
+		characters: data.columns.characters.length,
+		moons: data.columns.moons.length,
+		summons: data.columns.summons.length
+	})
+	const layout = $derived(layoutFor(counts))
+	const height = $derived(sparkImageHeight(counts, !!title))
 
 	const count = (value: number) => new Intl.NumberFormat(getLocale()).format(value)
 	const rate = $derived(sparkRateText(data, getLocale()))
@@ -78,6 +87,7 @@
 	class="spark-image"
 	class:dark={theme === 'dark'}
 	class:light={theme === 'light'}
+	style:height="{height}px"
 	style:--padding="{PADDING}px"
 	style:--column-gap="{COLUMN_GAP}px"
 	style:--column-padding="{COLUMN_PADDING}px"
@@ -128,7 +138,6 @@
 	.spark-image {
 		box-sizing: border-box;
 		width: 1200px;
-		height: 630px;
 		display: flex;
 		flex-direction: column;
 		padding: var(--padding);

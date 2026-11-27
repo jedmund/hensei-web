@@ -30,7 +30,7 @@
 	import { createSparkDrag } from '$lib/features/spark/drag'
 	import { collectionAdapter } from '$lib/api/adapters/collection.adapter'
 	import { useAddCharactersToCollection } from '$lib/api/mutations/collection.mutations'
-	import { SPARK_IMAGE_HEIGHT, SPARK_IMAGE_WIDTH } from '$lib/components/spark/SparkImage.svelte'
+	import { sparkImageHeight, SPARK_IMAGE_WIDTH } from '$lib/components/spark/SparkImage.svelte'
 	import { readJson } from '$lib/features/gacha/api'
 	import {
 		addItem,
@@ -329,7 +329,14 @@
 	description={m.page_desc_spark()}
 	image={data.ogImage ?? undefined}
 	imageWidth={SPARK_IMAGE_WIDTH}
-	imageHeight={SPARK_IMAGE_HEIGHT}
+	imageHeight={sparkImageHeight(
+		{
+			characters: initial.characters.length,
+			moons: initial.moons.length,
+			summons: initial.summons.length
+		},
+		!!(initial.date || initial.pool)
+	)}
 />
 
 {#snippet tile({ column, index, item, sparked, art }: SparkBoardTile)}

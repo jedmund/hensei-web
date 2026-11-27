@@ -244,16 +244,12 @@ export const TILES_PER_ROW = 2
 export interface SparkLayoutBox {
 	/** The space the columns share */
 	width: number
-	/** Height available to each column's tiles */
-	height: number
 	columnGap: number
 	/** Padding inside each column, on each side */
 	columnPadding: number
 	tileGap: number
 	/** Tile width over height */
 	aspect: number
-	/** Largest a tile gets, so a few items don't fill the image */
-	maxTileWidth: number
 }
 
 export interface SparkLayout {
@@ -261,26 +257,30 @@ export interface SparkLayout {
 	tileWidth: number
 	/** Every column is the same width */
 	columnWidth: number
+	/** Height of the fullest column's tiles */
+	tilesHeight: number
 }
 
 /**
- * Lay out a spark: equal columns of {@link TILES_PER_ROW} tiles per row, with
- * one tile size for every column, as large as the fullest column allows. A
- * pure function of the counts, so the page preview and the server render lay
- * out the same way.
+ * Lay out a spark: equal columns of {@link TILES_PER_ROW} tiles per row, the
+ * tiles filling each column's width so its padding is even on every side.
+ * The fullest column sets how tall the tiles run; the image grows to fit. A
+ * pure function of the counts, so the page and the server render agree.
  */
 export function layoutSpark(counts: Record<SparkColumn, number>, box: SparkLayoutBox): SparkLayout {
 	const columns = SPARK_COLUMNS.length
 	const columnWidth = Math.floor((box.width - box.columnGap * (columns - 1)) / columns)
 	const tiles = columnWidth - box.columnPadding * 2
-	const byWidth = (tiles - box.tileGap * (TILES_PER_ROW - 1)) / TILES_PER_ROW
+	const tileWidth = Math.max(
+		0,
+		Math.floor((tiles - box.tileGap * (TILES_PER_ROW - 1)) / TILES_PER_ROW)
+	)
 	const rows = Math.max(
 		1,
 		...SPARK_COLUMNS.map((column) => Math.ceil(counts[column] / TILES_PER_ROW))
 	)
-	const byHeight = ((box.height - box.tileGap * (rows - 1)) / rows) * box.aspect
-	const tileWidth = Math.max(0, Math.floor(Math.min(byWidth, byHeight, box.maxTileWidth)))
-	return { tileWidth, columnWidth }
+	const tilesHeight = rows * (tileWidth / box.aspect) + box.tileGap * (rows - 1)
+	return { tileWidth, columnWidth, tilesHeight }
 }
 
 // --- Resolving ---------------------------------------------------------------

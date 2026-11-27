@@ -218,12 +218,10 @@ describe('newCollectionCharacters', () => {
 describe('layoutSpark', () => {
 	const box = {
 		width: 1152,
-		height: 482,
 		columnGap: 16,
 		columnPadding: 12,
 		tileGap: 6,
-		aspect: 280 / 160,
-		maxTileWidth: 240
+		aspect: 280 / 160
 	}
 	const counts = (characters: number, moons: number, summons: number) => ({
 		characters,
@@ -231,35 +229,26 @@ describe('layoutSpark', () => {
 		summons
 	})
 
-	function expectFits(layout: ReturnType<typeof layoutSpark>, most: number) {
-		const rows = Math.ceil(most / TILES_PER_ROW)
-		const height = layout.tileWidth / box.aspect
-		expect(rows * height + (rows - 1) * box.tileGap).toBeLessThanOrEqual(box.height)
-		expect(
-			TILES_PER_ROW * layout.tileWidth + (TILES_PER_ROW - 1) * box.tileGap + box.columnPadding * 2
-		).toBeLessThanOrEqual(layout.columnWidth)
-		expect(layout.columnWidth * 3 + box.columnGap * 2).toBeLessThanOrEqual(box.width)
-	}
-
-	it('splits the width into equal columns of two tiles', () => {
+	it('fills each column with two tiles, padded evenly', () => {
 		const layout = layoutSpark(counts(1, 0, 1), box)
 		expect(layout.columnWidth).toBe(373)
-		// A small spark fills the column's width
 		expect(layout.tileWidth).toBe(171)
-		expectFits(layout, 1)
+		// What's left beside the tiles is the column's padding, give or take rounding
+		const side = (layout.columnWidth - TILES_PER_ROW * layout.tileWidth - box.tileGap) / 2
+		expect(side).toBeGreaterThanOrEqual(box.columnPadding)
+		expect(side).toBeLessThan(box.columnPadding + 1)
 	})
 
-	it('sizes every tile to the fullest column', () => {
-		const layout = layoutSpark(counts(12, 6, 5), box)
-		expectFits(layout, 12)
-		expect(layout.tileWidth).toBeLessThan(layoutSpark(counts(6, 6, 5), box).tileWidth)
+	it('keeps the tile size and grows with the fullest column', () => {
+		const few = layoutSpark(counts(2, 2, 0), box)
+		const many = layoutSpark(counts(2, 10, 0), box)
+		expect(many.tileWidth).toBe(few.tileWidth)
+		const tileHeight = few.tileWidth / box.aspect
+		expect(few.tilesHeight).toBeCloseTo(tileHeight)
+		expect(many.tilesHeight).toBeCloseTo(5 * tileHeight + 4 * box.tileGap)
 	})
 
-	it('fits full columns', () => {
-		for (const c of [counts(60, 60, 60), counts(25, 4, 3)]) {
-			const layout = layoutSpark(c, box)
-			expectFits(layout, Math.max(c.characters, c.moons, c.summons))
-			expect(layout.tileWidth).toBeGreaterThan(0)
-		}
+	it('counts an empty spark as one row', () => {
+		expect(layoutSpark(counts(0, 0, 0), box).tilesHeight).toBeCloseTo(171 / box.aspect)
 	})
 })

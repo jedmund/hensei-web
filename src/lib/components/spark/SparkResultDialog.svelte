@@ -18,7 +18,7 @@
 	import ModalFooter from '$lib/components/ui/ModalFooter.svelte'
 	import ModalHeader from '$lib/components/ui/ModalHeader.svelte'
 	import SparkImage, {
-		SPARK_IMAGE_HEIGHT,
+		sparkImageHeight,
 		SPARK_IMAGE_WIDTH
 	} from '$lib/components/spark/SparkImage.svelte'
 	import { m } from '$lib/paraglide/messages'
@@ -47,6 +47,18 @@
 	let deleting = $state(false)
 	// The image at its real size, scaled to fit the dialog
 	const scale = $derived(width > 0 ? Math.min(1, width / SPARK_IMAGE_WIDTH) : 1)
+	const imageHeight = $derived(
+		data
+			? sparkImageHeight(
+					{
+						characters: data.columns.characters.length,
+						moons: data.columns.moons.length,
+						summons: data.columns.summons.length
+					},
+					!!(data.date || data.pool)
+				)
+			: 0
+	)
 
 	async function remove() {
 		deleting = true
@@ -63,7 +75,7 @@
 <Dialog bind:open size="large" class="spark-result-dialog">
 	<ModalHeader {title} />
 	<ModalBody>
-		<div class="frame" bind:clientWidth={width} style:height="{SPARK_IMAGE_HEIGHT * scale}px">
+		<div class="frame" bind:clientWidth={width} style:height="{imageHeight * scale}px">
 			{#if data}
 				<div class="scaled" style:transform="scale({scale})">
 					<SparkImage {data} theme="site" element={userElement} />
@@ -129,7 +141,6 @@
 	@use '$src/themes/layout' as *;
 	@use '$src/themes/spacing' as *;
 
-	// As tall as the image, and no wider than it at full size
 	// The image's width plus the body's padding, so the image lines up with the
 	// title and footer
 	:global(.spark-result-dialog.dialog-content-large) {
