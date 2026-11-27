@@ -40,18 +40,18 @@
 
 	const count = (value: number) => new Intl.NumberFormat(getLocale()).format(value)
 
-	// Each section is a grid of slots: its tiles, then empty slots to drop
-	// into. It shows at least SLOT_ROWS rows (fewer where the sections stack,
-	// on phones) and always one free slot, so there's room to add at the end.
+	// Each section is a grid of slots: its tiles, then empty slots to drop into
 	const stacked = mobileQuery('(max-width: 640px)')
-	const slotRows = $derived(stacked.current ? 2 : 4)
-	const emptySlots = (filled: number) => {
-		const cells = Math.max(
-			Math.ceil((filled + 1) / TILES_PER_ROW) * TILES_PER_ROW,
-			slotRows * TILES_PER_ROW
-		)
-		return cells - filled
-	}
+	// Rows each section shows: enough for its tiles and one free slot, at least
+	// the minimum. Side by side, every section matches the fullest one, so they
+	// grow together; stacked on phones, each keeps its own.
+	const minRows = $derived(stacked.current ? 2 : 4)
+	const rowsFor = (filled: number) => Math.max(Math.ceil((filled + 1) / TILES_PER_ROW), minRows)
+	const sharedRows = $derived(
+		Math.max(...SPARK_COLUMNS.map((column) => rowsFor(data.columns[column].length)))
+	)
+	const emptySlots = (filled: number) =>
+		(stacked.current ? rowsFor(filled) : sharedRows) * TILES_PER_ROW - filled
 
 	const dragged = (column: SparkColumn, index: number, item: CatalogueItem): SparkDragItem => ({
 		id: `${column}:${index}`,

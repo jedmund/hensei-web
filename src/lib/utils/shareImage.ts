@@ -4,7 +4,9 @@
  */
 
 async function pngBlob(url: string): Promise<Blob> {
-	const response = await fetch(url)
+	// Revalidate: the image for a link can change (a new render, another theme),
+	// and a copy or save should get the current one, not the browser's cached copy
+	const response = await fetch(url, { cache: 'no-cache' })
 	if (!response.ok) throw new Error(`Image request failed (${response.status})`)
 	const blob = await response.blob()
 	return blob.type === 'image/png' ? blob : new Blob([blob], { type: 'image/png' })
