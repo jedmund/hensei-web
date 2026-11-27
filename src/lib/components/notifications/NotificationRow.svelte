@@ -7,7 +7,7 @@
 	import { goto } from '$app/navigation'
 	import { toast } from 'svelte-sonner'
 	import { m } from '$lib/paraglide/messages'
-	import { getLocale } from '$lib/paraglide/runtime'
+	import { getLocale, localizeHref } from '$lib/paraglide/runtime'
 	import {
 		useAcceptInvitation,
 		useRejectInvitation,
@@ -92,7 +92,7 @@
 				'Failed to accept invitation',
 				() => {
 					onNavigate?.()
-					goto('/crew')
+					goto(localizeHref('/crew'))
 				}
 			)
 		} else if (notification.crew && notification.phantom) {
