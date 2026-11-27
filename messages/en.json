@@ -3474,7 +3474,21 @@
 	"notifications_sticker_one": "Your team {team} got a “{sticker}” sticker",
 	"notifications_sticker_many": "Your team {team} got {count} stickers",
 	"notifications_remix_named": "{username} remixed your team {team}",
-	"notifications_remix_named_others": "{username} and {others} others remixed your team {team}",
+	"notifications_remix_named_others": [
+		{
+			"declarations": [
+				"input username",
+				"input team",
+				"input others",
+				"local othersPlural = others: plural"
+			],
+			"selectors": ["othersPlural"],
+			"match": {
+				"othersPlural=one": "{username} and {others} other remixed your team {team}",
+				"othersPlural=other": "{username} and {others} others remixed your team {team}"
+			}
+		}
+	],
 	"notifications_remix_someone": "Someone remixed your team {team}",
 	"notifications_remix_many": "Your team {team} was remixed {count} times",
 	"notifications_featured": "Your team {team} is a staff pick",

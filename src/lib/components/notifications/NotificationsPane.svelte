@@ -1,10 +1,13 @@
 <script lang="ts">
 	/** Every notification, a page at a time: the jewel's "View all" (GBF-82) */
 	import { createInfiniteQuery } from '@tanstack/svelte-query'
-	import { onDestroy } from 'svelte'
+	import { onDestroy, onMount } from 'svelte'
 	import { m } from '$lib/paraglide/messages'
 	import { notificationQueries } from '$lib/api/queries/notification.queries'
-	import { useMarkAllNotificationsRead } from '$lib/api/mutations/notification.mutations'
+	import {
+		useMarkAllNotificationsRead,
+		useMarkNotificationsSeen
+	} from '$lib/api/mutations/notification.mutations'
 	import { useInfiniteLoader } from '$lib/stores/loaderState.svelte'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
@@ -12,6 +15,11 @@
 
 	const feed = createInfiniteQuery(() => notificationQueries.feed())
 	const markAllRead = useMarkAllNotificationsRead()
+	const markSeen = useMarkNotificationsSeen()
+
+	// Opening the feed clears the badge, as opening the popover does (mobile
+	// only has this pane)
+	onMount(() => markSeen.mutate())
 
 	const notifications = $derived(feed.data?.pages.flatMap((page) => page.notifications) ?? [])
 	const hasUnread = $derived(notifications.some((n) => !n.read))

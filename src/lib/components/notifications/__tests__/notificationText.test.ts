@@ -54,6 +54,9 @@ describe('notificationMessage', () => {
 		expect(notificationMessage(notification({ kind: 'party_remixed', actor, count: 3 }))).toContain(
 			'2 others'
 		)
+		expect(notificationMessage(notification({ kind: 'party_remixed', actor, count: 2 }))).toContain(
+			'jed and 1 other remixed'
+		)
 	})
 
 	it('falls back to "Untitled team"', () => {
