@@ -134,6 +134,11 @@
 		max-width: 1232px;
 	}
 
+	// The footer's own padding is enough below the image
+	:global(.spark-result-dialog.dialog-content-large .modal-body) {
+		padding-bottom: 0;
+	}
+
 	// More room around the title than the default header
 	:global(.spark-result-dialog .modal-header) {
 		padding-top: $unit-3x;

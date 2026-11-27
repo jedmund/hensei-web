@@ -83,13 +83,27 @@ describe('GET /download/spark', () => {
 		expect(renders[0]?.path).toMatch(/^\/ja\/_render\/spark\?prefetch=/)
 
 		const token = new URL(`http://x${renders[0]?.path}`).searchParams.get('prefetch')
-		const data = consumePrefetch<{
-			columns: Record<string, { identity: string }[]>
-			sparked: unknown
+		const stored = consumePrefetch<{
+			spark: { columns: Record<string, { identity: string }[]>; sparked: unknown }
+			theme: string
 		}>(token)
+		const data = stored?.spark
 		expect(data?.columns.characters?.map((item) => item.identity)).toEqual(['Weapon:a', 'Weapon:b'])
 		expect(data?.columns.summons?.map((item) => item.identity)).toEqual(['Summon:s'])
 		expect(data?.sparked).toEqual({ column: 'characters', index: 1 })
+		// Dark unless a theme is asked for
+		expect(stored?.theme).toBe('dark')
+	})
+
+	it('draws in the theme it is asked for, cached apart', async () => {
+		await get('c=1040000100&theme=light')
+		const token = new URL(`http://x${renders[0]?.path}`).searchParams.get('prefetch')
+		expect(consumePrefetch<{ theme: string }>(token)?.theme).toBe('light')
+		await get('c=1040000100')
+		expect(renders).toHaveLength(2)
+		expect(
+			spark.parseSparkImageRequest(new URLSearchParams('c=1040000100&theme=pink'))?.theme
+		).toBe('dark')
 	})
 
 	it('serves repeat requests from the cache', async () => {

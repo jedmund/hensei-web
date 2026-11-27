@@ -52,7 +52,7 @@ export const GET: RequestHandler = async ({ url, request, fetch }) => {
 
 	const template = getTemplate(TEMPLATE_ID)
 	if (!template) throw error(500, 'Render template missing')
-	const prefetch = storePrefetch(data)
+	const prefetch = storePrefetch({ spark: data, theme: imageRequest.theme })
 
 	let image: Buffer
 	try {

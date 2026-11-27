@@ -15,8 +15,11 @@
 
 	interface Props {
 		data: SparkRenderData
-		/** The exported image is always dark; shown on the site, it can follow the site's theme */
-		theme?: 'dark' | 'site'
+		/**
+		 * Light or dark whatever the page's theme (for exports), or the site's
+		 * theme (shown on the page)
+		 */
+		theme?: 'dark' | 'light' | 'site'
 	}
 
 	let { data, theme = 'dark' }: Props = $props()
@@ -55,6 +58,7 @@
 <div
 	class="spark-image"
 	class:dark={theme === 'dark'}
+	class:light={theme === 'light'}
 	style:--padding="{PADDING}px"
 	style:--column-gap="{COLUMN_GAP}px"
 	style:--column-padding="{COLUMN_PADDING}px"
@@ -108,7 +112,17 @@
 		color: var(--text-primary);
 		font-family: var(--font-family);
 
-		// The export is dark whatever the theme of the page that asks for it
+		// An export keeps its theme whatever the theme of the page that asks for it
+		&.light {
+			--page-bg: #{colors.$page--bg--light};
+			--card-bg: #{colors.$grey-100};
+			--placeholder-bg: #{colors.$grey-80};
+			--accent-blue: #{colors.$accent--blue--light};
+			--text-primary: #{colors.$text--primary--color--light};
+			--text-secondary: #{colors.$text--secondary--color--light};
+			--text-tertiary: #{colors.$text--tertiary--color--light};
+		}
+
 		&.dark {
 			--page-bg: #{colors.$page--bg--dark};
 			--card-bg: #{colors.$grey-20};

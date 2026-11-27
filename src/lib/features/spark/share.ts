@@ -11,8 +11,11 @@ import { copyShareImage, saveShareImage } from '$lib/utils/shareImage'
 
 const FILENAME = 'spark.png'
 
+// Drawn in the viewer's current theme
+const siteTheme = () => (document.documentElement.dataset.theme === 'light' ? 'light' : 'dark')
+
 const imageUrl = (query: string) =>
-	`/download/spark?${query ? `${query}&` : ''}lang=${getLocale() === 'ja' ? 'ja' : 'en'}`
+	`/download/spark?${query ? `${query}&` : ''}lang=${getLocale() === 'ja' ? 'ja' : 'en'}&theme=${siteTheme()}`
 
 /** The page's address for a spark, which reopens it */
 export const sparkLink = (query: string) =>
