@@ -71,8 +71,8 @@
 			{/if}
 		</div>
 	</ModalBody>
-	<!-- Every action in the footer: Delete on its own at the left; Edit, then
-	     sharing, at the right. The header's close button stands in for cancel. -->
+	<!-- Every action in the footer: Delete on its own at the left; sharing, then
+	     Edit last, at the right. The header's close button stands in for cancel. -->
 	<ModalFooter
 		onCancel={() => (open = false)}
 		hideCancel
@@ -85,9 +85,11 @@
 			</Button>
 		{/snippet}
 		{#snippet extra()}
-			<Button variant="ghost" size="small" onclick={() => saveSparkImage(query)}>
-				{m.spark_save_image()}
-			</Button>
+			{#if canShare}
+				<Button variant="ghost" size="small" onclick={() => shareSpark(query, title)}>
+					{m.gacha_share()}
+				</Button>
+			{/if}
 			<DropdownMenu align="end">
 				{#snippet trigger({ props })}
 					<Button {...props} variant="ghost" size="small" rightIcon="chevron-down-small">
@@ -103,11 +105,9 @@
 					</DropdownMenuBase.Item>
 				{/snippet}
 			</DropdownMenu>
-			{#if canShare}
-				<Button variant="ghost" size="small" onclick={() => shareSpark(query, title)}>
-					{m.gacha_share()}
-				</Button>
-			{/if}
+			<Button variant="ghost" size="small" onclick={() => saveSparkImage(query)}>
+				{m.spark_save_image()}
+			</Button>
 		{/snippet}
 	</ModalFooter>
 </Dialog>
@@ -124,11 +124,20 @@
 
 <style lang="scss">
 	@use '$src/themes/layout' as *;
+	@use '$src/themes/spacing' as *;
 
 	// As tall as the image, and no wider than it at full size
+	// The image's width plus the body's padding, so the image lines up with the
+	// title and footer
 	:global(.spark-result-dialog.dialog-content-large) {
 		height: auto;
-		max-width: 1264px;
+		max-width: 1232px;
+	}
+
+	// More room around the title than the default header
+	:global(.spark-result-dialog .modal-header) {
+		padding-top: $unit-3x;
+		padding-bottom: $unit-2x;
 	}
 
 	// Never wider than the image, so its corners stay rounded

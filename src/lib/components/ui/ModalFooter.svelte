@@ -17,7 +17,7 @@
 		cancelDisabled?: boolean
 		primaryAction?: PrimaryAction
 		left?: Snippet
-		/** Actions after the primary one, at the right */
+		/** More actions at the right, before the primary one */
 		extra?: Snippet
 		/** Leave out the cancel button, e.g. when the dialog's close button is enough */
 		hideCancel?: boolean
@@ -49,6 +49,7 @@
 				>{m.modal_cancel()}</Button
 			>
 		{/if}
+		{@render extra?.()}
 		{#if primaryAction}
 			<Button
 				variant={primaryAction.destructive ? 'destructive' : 'primary'}
@@ -62,7 +63,6 @@
 				{primaryAction.label}
 			</Button>
 		{/if}
-		{@render extra?.()}
 	</div>
 </div>
 
