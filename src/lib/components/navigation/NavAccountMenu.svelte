@@ -9,9 +9,23 @@
 
 	interface Props {
 		nav: NavigationState
+		/** Opens the user search in the pill */
+		onSearch: () => void
 	}
 
-	const { nav }: Props = $props()
+	const { nav, onSearch }: Props = $props()
+
+	// The search field takes focus, so the menu mustn't hand it back to its trigger
+	let searching = false
+
+	// Gacha gets a section of its own, between search and the other links
+	const gachaLinks = $derived(nav.moreLinks.filter((link) => link.id === 'gacha'))
+	const otherLinks = $derived(nav.moreLinks.filter((link) => link.id !== 'gacha'))
+
+	function startSearch() {
+		searching = true
+		onSearch()
+	}
 </script>
 
 <!-- The "more" menu at the end of the desktop pill: secondary links, toggles and account actions -->
@@ -21,8 +35,28 @@
 	</DropdownMenu.Trigger>
 
 	<DropdownMenu.Portal>
-		<DropdownMenu.Content class="dropdown-content" sideOffset={5}>
-			{#each nav.moreLinks as link (link.id)}
+		<DropdownMenu.Content
+			class="dropdown-content"
+			sideOffset={5}
+			onCloseAutoFocus={(event) => {
+				if (searching) event.preventDefault()
+				searching = false
+			}}
+		>
+			<!-- The API only finds users for signed-in accounts -->
+			{#if nav.isAuth}
+				<DropdownItem onSelect={startSearch}>
+					<button type="button">{m.nav_search_users()}</button>
+				</DropdownItem>
+				<DropdownMenu.Separator class="dropdown-separator" />
+			{/if}
+			{#each gachaLinks as link (link.id)}
+				<DropdownItem>
+					<a href={link.href}>{link.label()}</a>
+				</DropdownItem>
+			{/each}
+			<DropdownMenu.Separator class="dropdown-separator" />
+			{#each otherLinks as link (link.id)}
 				<DropdownItem>
 					<a href={link.href}>{link.label()}</a>
 				</DropdownItem>

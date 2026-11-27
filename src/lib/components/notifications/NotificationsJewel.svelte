@@ -90,7 +90,7 @@
 	@use '$src/themes/spacing' as spacing;
 	@use '$src/themes/typography' as typography;
 
-	// Mirrors .nav-search-trigger / .nav-more-trigger
+	// Mirrors .nav-more-trigger
 	:global(.nav-jewel-trigger) {
 		position: relative;
 		display: flex;
