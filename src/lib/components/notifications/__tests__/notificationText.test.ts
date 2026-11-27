@@ -70,8 +70,8 @@ describe('notificationMessage', () => {
 describe('notificationHref', () => {
 	it('links a public remix, else the recipient’s own team', () => {
 		const remix = { shortcode: 'rmx', name: null }
-		expect(notificationHref(notification({ kind: 'party_remixed', remix }))).toContain('/p/rmx')
-		expect(notificationHref(notification({ kind: 'party_remixed' }))).toContain('/p/abc123')
+		expect(notificationHref(notification({ kind: 'party_remixed', remix }))).toContain('/teams/rmx')
+		expect(notificationHref(notification({ kind: 'party_remixed' }))).toContain('/teams/abc123')
 	})
 
 	it('sends crew notifications to the crew page', () => {

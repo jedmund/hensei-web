@@ -75,11 +75,11 @@ export function notificationStateLabel(state: NotificationState | null): string 
 export function notificationHref(notification: AppNotification): string | null {
 	switch (notification.kind) {
 		case 'party_remixed':
-			if (notification.remix) return localizeHref(`/p/${notification.remix.shortcode}`)
-			return notification.party ? localizeHref(`/p/${notification.party.shortcode}`) : null
+			if (notification.remix) return localizeHref(`/teams/${notification.remix.shortcode}`)
+			return notification.party ? localizeHref(`/teams/${notification.party.shortcode}`) : null
 		case 'sticker_received':
 		case 'party_featured':
-			return notification.party ? localizeHref(`/p/${notification.party.shortcode}`) : null
+			return notification.party ? localizeHref(`/teams/${notification.party.shortcode}`) : null
 		case 'crew_invited':
 		case 'phantom_assigned':
 			return localizeHref('/crew')
