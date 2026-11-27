@@ -6,7 +6,7 @@
 	import ThemeToggle from '../ThemeToggle.svelte'
 	import BottomSheet from '../ui/BottomSheet.svelte'
 	import NotificationBadge from '../ui/NotificationBadge.svelte'
-	import CrewNotificationDot from './CrewNotificationDot.svelte'
+	import { openNotificationsPane } from '../notifications/openNotificationsPane'
 	import NavUserSearch from './NavUserSearch.svelte'
 	import { sheetLinks } from './navLinks'
 	import { logout, type NavigationState } from './navigationState.svelte'
@@ -67,9 +67,6 @@
 				<li>
 					<a href={link.href} class:selected={nav.isNavSelected(link.href)}>
 						{link.label()}
-						{#if link.id === 'crew' && nav.notificationCount > 0}
-							<CrewNotificationDot element={nav.userElement} />
-						{/if}
 					</a>
 				</li>
 			{/each}
@@ -82,7 +79,7 @@
 						class="sheet-button-with-badge"
 						onclick={() => {
 							open = false
-							nav.invitationsModalOpen = true
+							openNotificationsPane()
 						}}
 					>
 						<span>{m.nav_notifications()}</span>

@@ -9,6 +9,7 @@
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import SidebarHeader from './SidebarHeader.svelte'
 	import Button from './Button.svelte'
+	import Tooltip from './Tooltip.svelte'
 
 	interface Props {
 		/** The pane stack store to use */
@@ -114,7 +115,19 @@
 				{/snippet}
 
 				{#snippet rightAccessory()}
-					{#if pane.action}
+					{#if pane.action?.icon}
+						<Tooltip content={pane.action.label}>
+							<Button
+								variant="ghost"
+								size="small"
+								iconOnly
+								icon={pane.action.icon}
+								onclick={pane.action.handler}
+								disabled={pane.action.disabled}
+								aria-label={pane.action.label}
+							/>
+						</Tooltip>
+					{:else if pane.action}
 						<Button
 							variant={pane.action.element ? 'element' : 'ghost'}
 							size="small"

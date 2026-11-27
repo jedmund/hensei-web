@@ -12,6 +12,7 @@
 import { useQueryClient, createMutation, type QueryClient } from '@tanstack/svelte-query'
 import { crewAdapter } from '$lib/api/adapters/crew.adapter'
 import { crewKeys } from '$lib/api/queries/crew.queries'
+import { notificationKeys } from '$lib/api/queries/notification.queries'
 import type {
 	CreateCrewInput,
 	UpdateCrewInput,
@@ -125,6 +126,7 @@ export function acceptInvitationOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (invitationId: string) => crewAdapter.acceptInvitation(invitationId),
 		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: notificationKeys.all })
 			queryClient.invalidateQueries({ queryKey: crewKeys.myCrew() })
 			queryClient.invalidateQueries({ queryKey: crewKeys.invitations.pending() })
 		}
@@ -135,6 +137,7 @@ export function rejectInvitationOptions(queryClient: QueryClient) {
 	return {
 		mutationFn: (invitationId: string) => crewAdapter.rejectInvitation(invitationId),
 		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: notificationKeys.all })
 			queryClient.invalidateQueries({ queryKey: crewKeys.invitations.pending() })
 		}
 	}
@@ -213,6 +216,7 @@ export function confirmPhantomClaimOptions(queryClient: QueryClient) {
 		mutationFn: ({ crewId, phantomId }: { crewId: string; phantomId: string }) =>
 			crewAdapter.confirmPhantomClaim(crewId, phantomId),
 		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: notificationKeys.all })
 			queryClient.invalidateQueries({ queryKey: crewKeys.membersAll() })
 			queryClient.invalidateQueries({ queryKey: crewKeys.phantomClaims.pending() })
 		}
@@ -224,6 +228,7 @@ export function declinePhantomClaimOptions(queryClient: QueryClient) {
 		mutationFn: ({ crewId, phantomId }: { crewId: string; phantomId: string }) =>
 			crewAdapter.declinePhantomClaim(crewId, phantomId),
 		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: notificationKeys.all })
 			queryClient.invalidateQueries({ queryKey: crewKeys.membersAll() })
 			queryClient.invalidateQueries({ queryKey: crewKeys.phantomClaims.pending() })
 		}

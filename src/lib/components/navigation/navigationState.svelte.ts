@@ -2,9 +2,8 @@ import { page } from '$app/state'
 import { goto } from '$app/navigation'
 import { createQuery, type CreateQueryResult } from '@tanstack/svelte-query'
 import { toast } from 'svelte-sonner'
-import { crewQueries } from '$lib/api/queries/crew.queries'
+import { notificationQueries } from '$lib/api/queries/notification.queries'
 import type { SettingsReturn } from '$lib/auth/socialResult'
-import type { CrewInvitation, PhantomPlayer } from '$lib/types/api/crew'
 import { localizeHref } from '$lib/paraglide/runtime'
 import { authStore } from '$lib/stores/auth.store.svelte'
 import type { UserCookie } from '$lib/types/UserCookie'
@@ -28,8 +27,7 @@ export interface NavigationProps {
 
 /**
  * State shared by the desktop and mobile navigation: who's signed in, which
- * link is selected, the crew notification queries and the settings and
- * notification modals. Create it once, during component init (it runs
+ * link is selected, the notification count and the settings modal. Create it once, during component init (it runs
  * queries and effects).
  */
 export class NavigationState {
@@ -72,35 +70,18 @@ export class NavigationState {
 	settingsSection = $state<string | undefined>(undefined)
 	socialResult = $state<SettingsReturn | null>(null)
 
-	// Notifications modal (invitations + phantom claims)
-	invitationsModalOpen = $state(false)
-
-	readonly pendingInvitations: CreateQueryResult<CrewInvitation[]>
-	readonly pendingPhantomClaims: CreateQueryResult<PhantomPlayer[]>
-	readonly notificationCount = $derived.by(() => {
-		if (!this.isAuth) return 0
-		const invitations = this.pendingInvitations.data?.length ?? 0
-		const claims = this.pendingPhantomClaims.data?.length ?? 0
-		return invitations + claims
-	})
+	// The notification jewel's badge (polled)
+	readonly unreadNotifications: CreateQueryResult<number>
+	get notificationCount(): number {
+		return this.isAuth ? (this.unreadNotifications.data ?? 0) : 0
+	}
 
 	constructor(props: () => NavigationProps) {
 		this.#props = props
 
-		// The user's crew decides whether phantom claims are fetched
-		const myCrew = createQuery(() => ({
-			...crewQueries.myCrew(),
+		this.unreadNotifications = createQuery(() => ({
+			...notificationQueries.unreadCount(),
 			enabled: this.isAuth
-		}))
-
-		this.pendingInvitations = createQuery(() => ({
-			...crewQueries.pendingInvitations(),
-			enabled: this.isAuth
-		}))
-
-		this.pendingPhantomClaims = createQuery(() => ({
-			...crewQueries.pendingPhantomClaims(),
-			enabled: this.isAuth && myCrew.data != null
 		}))
 
 		useSettingsReturn(

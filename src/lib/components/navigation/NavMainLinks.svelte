@@ -5,9 +5,9 @@
 	import { m } from '$lib/paraglide/messages'
 	import Icon from '../Icon.svelte'
 	import SlidingSelection from '../ui/SlidingSelection.svelte'
-	import CrewNotificationDot from './CrewNotificationDot.svelte'
 	import NavAccountMenu from './NavAccountMenu.svelte'
 	import NavUserSearch from './NavUserSearch.svelte'
+	import NotificationsJewel from '../notifications/NotificationsJewel.svelte'
 	import type { NavigationState } from './navigationState.svelte'
 
 	interface Props {
@@ -75,21 +75,13 @@
 						{/if}
 						<span>{nav.username}</span>
 					</a>
-				{:else if link.id === 'crew'}
-					<a
-						href={link.href}
-						class:selected={nav.isNavSelected(link.href)}
-						class:crew-link={nav.isAuth}
-					>
-						{link.label()}
-						{#if nav.notificationCount > 0}
-							<CrewNotificationDot element={nav.userElement} />
-						{/if}
-					</a>
 				{:else}
 					<a href={link.href} class:selected={nav.isNavSelected(link.href)}>{link.label()}</a>
 				{/if}
 			{/each}
+			{#if nav.isAuth}
+				<NotificationsJewel unreadCount={nav.notificationCount} element={nav.userElement} />
+			{/if}
 			<button
 				type="button"
 				class="nav-search-trigger"
@@ -140,13 +132,6 @@
 		&.nav-search {
 			gap: 0;
 		}
-	}
-
-	// Crew link with notification dot
-	.crew-link {
-		display: flex !important;
-		align-items: center;
-		gap: spacing.$unit-half;
 	}
 
 	// Profile link with avatar

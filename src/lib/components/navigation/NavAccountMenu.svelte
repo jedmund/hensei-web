@@ -5,7 +5,6 @@
 	import LanguageToggle from '../LanguageToggle.svelte'
 	import ThemeToggle from '../ThemeToggle.svelte'
 	import DropdownItem from '../ui/dropdown/DropdownItem.svelte'
-	import NotificationBadge from '../ui/NotificationBadge.svelte'
 	import { logout, type NavigationState } from './navigationState.svelte'
 
 	interface Props {
@@ -29,24 +28,6 @@
 				</DropdownItem>
 			{/each}
 			<DropdownMenu.Separator class="dropdown-separator" />
-			{#if nav.isAuth}
-				<DropdownItem>
-					<button
-						class="dropdown-button-with-badge"
-						onclick={() => (nav.invitationsModalOpen = true)}
-					>
-						<span>{m.nav_notifications()}</span>
-						{#if nav.notificationCount > 0}
-							<NotificationBadge
-								count={nav.notificationCount}
-								showCount
-								element={nav.userElement}
-							/>
-						{/if}
-					</button>
-				</DropdownItem>
-				<DropdownMenu.Separator class="dropdown-separator" />
-			{/if}
 			<LanguageToggle />
 			<ThemeToggle />
 			{#if nav.isAuth}
@@ -90,15 +71,6 @@
 		&:focus-visible {
 			box-shadow: 0 0 0 2px var(--accent-blue-focus);
 		}
-	}
-
-	// Notifications row: label left, badge right
-	:global(.dropdown-button-with-badge) {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		width: 100%;
-		gap: spacing.$unit;
 	}
 
 	:global(.dropdown-content) {

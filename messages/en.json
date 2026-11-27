@@ -943,7 +943,6 @@
 	"crew_invite_confirm": "Are you sure you want to invite {username} to join your crew?",
 	"crew_invite_hint": "They will receive the invitation and can choose to accept or decline.",
 	"crew_invite_sending": "Sending…",
-	"crew_notifications_title": "Notifications",
 	"crew_notifications_phantom_section": "Phantom Assignments",
 	"crew_notifications_phantom_desc": "Accept to inherit the phantom's GW scores and join date",
 	"crew_notifications_from_crew": "From crew {name}{tag}",
@@ -1116,9 +1115,8 @@
 	"favorites_load_error": "Failed to load favorites: {error}",
 	"favorites_empty": "No favorite teams yet",
 	"page_title_favorites": "{username}'s Favorites / granblue.team",
-	"notifications_loading": "Loading notifications",
-	"notifications_empty": "No pending notifications",
-	"notifications_empty_hint": "You'll see crew invitations and phantom assignments here.",
+	"notifications_empty": "No notifications yet",
+	"notifications_empty_hint": "Stickers, remixes and crew invites will show up here.",
 	"artifact_skills_loading": "Loading skills",
 	"artifact_skills_error": "Failed to load skills",
 	"artifact_skills_empty": "No skills available",
@@ -3467,5 +3465,38 @@
 	"wonders_party_all_added": "Every Wonder that can go on this team is already on it.",
 	"wonders_party_sync_confirm_title": "Sync Wonders from the collection?",
 	"wonders_party_sync_confirm_body": "This replaces this team's Wonders with the Wonders in the collection right now.",
-	"wonders_party_synced": "Synced this team's Wonders from the collection"
+	"wonders_party_synced": "Synced this team's Wonders from the collection",
+	"notifications_view_all": "View all",
+	"notifications_mark_all_read": "Mark all as read",
+	"notifications_load_failed": "Couldn't load notifications.",
+	"notifications_jewel_aria": "Notifications",
+	"notifications_jewel_aria_unread": "Notifications, {count} unread",
+	"notifications_sticker_one": "Your team {team} got a “{sticker}” sticker",
+	"notifications_sticker_many": "Your team {team} got {count} stickers",
+	"notifications_remix_named": "{username} remixed your team {team}",
+	"notifications_remix_named_others": [
+		{
+			"declarations": [
+				"input username",
+				"input team",
+				"input others",
+				"local othersPlural = others: plural"
+			],
+			"selectors": ["othersPlural"],
+			"match": {
+				"othersPlural=one": "{username} and {others} other remixed your team {team}",
+				"othersPlural=other": "{username} and {others} others remixed your team {team}"
+			}
+		}
+	],
+	"notifications_remix_someone": "Someone remixed your team {team}",
+	"notifications_remix_many": "Your team {team} was remixed {count} times",
+	"notifications_featured": "Your team {team} is a staff pick",
+	"notifications_featured_event": "Your team {team} is a staff pick for {event}",
+	"notifications_crew_invited": "{username} invited you to join {crew}",
+	"notifications_phantom_assigned": "{crew} assigned you to the phantom {name}",
+	"notifications_state_accepted": "Joined",
+	"notifications_state_rejected": "Declined",
+	"notifications_state_confirmed": "Accepted",
+	"notifications_state_unassigned": "No longer assigned"
 }
