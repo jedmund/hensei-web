@@ -11,6 +11,7 @@
 		type GachaArt
 	} from '$lib/utils/gacha'
 	import type { CatalogueItem } from '$lib/types/gacha'
+	import { getElementTypeKey } from '$lib/utils/element'
 
 	interface Props {
 		item: CatalogueItem
@@ -27,6 +28,9 @@
 
 	let { item, sparked, lazy = false, art = 'character', tooltip, tooltipDetail }: Props = $props()
 
+	// The sparked mark takes the item's element, like elemental buttons
+	const element = $derived(getElementTypeKey(item.element))
+
 	// One fallback attempt per image, so a missing fallback can't loop
 	function useFallback(event: Event) {
 		const img = event.currentTarget as HTMLImageElement
@@ -39,7 +43,11 @@
 </script>
 
 {#snippet tile()}
-	<div class="spark-tile" class:sparked>
+	<div
+		class="spark-tile"
+		class:sparked
+		style:--sparked={element ? `var(--${element}-button-bg)` : undefined}
+	>
 		<img
 			src={gachaItemImage(item, art)}
 			alt={gachaItemName(item, getLocale())}
@@ -97,7 +105,7 @@
 
 		// The sparked item stands apart from the ones that were drawn
 		&.sparked {
-			outline: 3px solid var(--accent-blue);
+			outline: 3px solid var(--sparked, var(--accent-blue));
 			outline-offset: -3px;
 		}
 
@@ -117,7 +125,7 @@
 		bottom: 4px;
 		padding: 0.15em 0.5em;
 		border-radius: $item-corner-small;
-		background: var(--accent-blue);
+		background: var(--sparked, var(--accent-blue));
 		color: white;
 		font-size: clamp(12px, 12cqi, 24px);
 		font-weight: $bold;
