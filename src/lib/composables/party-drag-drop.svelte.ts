@@ -1,4 +1,9 @@
-import { createDragDropContext, type DragOperation } from '$lib/composables/drag-drop.svelte'
+import {
+	createDragDropContext,
+	gridItemLabel,
+	isGridItemCollectionLinked,
+	type DragOperation
+} from '$lib/composables/drag-drop.svelte'
 import type { PartyMutations } from './party-mutations.svelte'
 import type { Party, GridWeapon, GridSummon } from '$lib/types/api/party'
 import { toast } from 'svelte-sonner'
@@ -191,6 +196,9 @@ export function usePartyDragDrop(opts: PartyDragDropOptions) {
 	}
 
 	const dragContext = createDragDropContext({
+		allowDuplicate: true,
+		itemLabel: gridItemLabel,
+		isCollectionLinked: isGridItemCollectionLinked,
 		onLocalUpdate: async (operation) => {
 			await handleDragOperation(operation)
 		},

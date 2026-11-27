@@ -1,29 +1,66 @@
+/**
+ * Drag and drop between slots in one or more containers: the party grids,
+ * the Solomonis unseal priority lists and the spark maker's sections. Mouse
+ * drags use HTML5 drag events, touch drags a long press, both through the
+ * shared DraggableItem and DropZone components.
+ *
+ * Items only need an id. Each source and target carries a type, and a drop
+ * is only valid between slots of the same type. Behavior specific to the
+ * party grid (Alt-drag duplicates, collection links) is opt-in.
+ */
+
 import type { GridCharacter, GridWeapon, GridSummon } from '$lib/types/api/party'
 import { uuid } from '$lib/utils/uuid'
+import { getLocale } from '$lib/paraglide/runtime'
 
 export type GridItemType = 'character' | 'weapon' | 'summon'
 export type GridItem = GridCharacter | GridWeapon | GridSummon
+
+/** The touch drag preview's label for a party grid item, in the page's language */
+export function gridItemLabel(item: GridItem): string {
+	const name =
+		'character' in item
+			? item.character.name
+			: 'weapon' in item
+				? item.weapon.name
+				: 'summon' in item
+					? item.summon.name
+					: undefined
+	return (getLocale() === 'ja' && name?.ja) || name?.en || 'Item'
+}
+
+/** Whether a party grid item is linked to the user's collection */
+export function isGridItemCollectionLinked(item: GridItem): boolean {
+	if ('weapon' in item) return !!(item as GridWeapon).collectionWeaponId
+	if ('summon' in item) return !!(item as GridSummon).collectionSummonId
+	return false
+}
+
+/** Anything that can be dragged */
+export interface DragItem {
+	id: string
+}
 
 export interface Position {
 	container: string
 	position: number
 }
 
-export interface DragSource extends Position {
-	type: GridItemType
+export interface DragSource<K extends string = GridItemType> extends Position {
+	type: K
 }
 
-export interface DraggedItem {
-	type: GridItemType
-	data: GridItem
-	source: DragSource
+export interface DraggedItem<T extends DragItem = GridItem, K extends string = GridItemType> {
+	type: K
+	data: T
+	source: DragSource<K>
 }
 
-export interface DropTarget extends Position {
-	type: GridItemType
+export interface DropTarget<K extends string = GridItemType> extends Position {
+	type: K
 }
 
-export interface DragOperation {
+export interface DragOperation<K extends string = GridItemType> {
 	id: string
 	type: 'move' | 'swap' | 'reorder' | 'duplicate'
 	timestamp: number
@@ -31,58 +68,61 @@ export interface DragOperation {
 		container: string
 		position: number
 		itemId: string
-		type?: GridItemType | undefined
+		type?: K | undefined
 		collectionLinked?: boolean | undefined
 	}
 	target: {
 		container: string
 		position: number
 		itemId?: string | undefined
-		type?: GridItemType | undefined
+		type?: K | undefined
 	}
 }
 
-export interface PendingDragData {
-	item: GridItem
+export interface PendingDragData<T extends DragItem = GridItem, K extends string = GridItemType> {
+	item: T
 	source: Position
-	type: GridItemType
+	type: K
 }
 
-export interface TouchState {
+export interface TouchState<T extends DragItem = GridItem, K extends string = GridItemType> {
 	touchStartPos: { x: number; y: number } | null
 	touchStartTime: number
 	longPressTimer: number | null
 	touchThreshold: number
 	longPressDuration: number
-	currentTouch: PendingDragData | null
+	currentTouch: PendingDragData<T, K> | null
 }
 
-export interface DragDropState {
+export interface DragDropState<T extends DragItem = GridItem, K extends string = GridItemType> {
 	isDragging: boolean
 	isDuplicating: boolean
-	draggedItem: DraggedItem | null
-	hoveredOver: DropTarget | null
+	draggedItem: DraggedItem<T, K> | null
+	hoveredOver: DropTarget<K> | null
 	validDrop: boolean
 	dragPreview: HTMLElement | null
 	lastError: Error | null
-	touchState: TouchState
+	touchState: TouchState<T, K>
 }
 
-export interface DragDropHandlers {
-	onDrop?: (from: DragSource, to: DropTarget, item: GridItem) => void
-	onSwap?: (from: DragSource, to: DropTarget, fromItem: GridItem, toItem: GridItem) => void
-	onValidate?: (from: DragSource, to: DropTarget) => boolean
-	onLocalUpdate?: (operation: DragOperation) => void
+export interface DragDropHandlers<T extends DragItem = GridItem, K extends string = GridItemType> {
+	onDrop?: (from: DragSource<K>, to: DropTarget<K>, item: T) => void
+	onSwap?: (from: DragSource<K>, to: DropTarget<K>, fromItem: T, toItem: T) => void
+	onValidate?: (from: DragSource<K>, to: DropTarget<K>) => boolean
+	onLocalUpdate?: (operation: DragOperation<K>) => void
+	/** The label on the touch drag preview */
+	itemLabel?: (item: T) => string
+	/** Alt-drag duplicates instead of moving. Off unless set. */
+	allowDuplicate?: boolean
+	/** Whether a duplicated item is linked to the user's collection */
+	isCollectionLinked?: (item: T) => boolean
 }
 
-function hasCollectionLink(item: GridItem): boolean {
-	if ('weapon' in item) return !!(item as GridWeapon).collectionWeaponId
-	if ('summon' in item) return !!(item as GridSummon).collectionSummonId
-	return false
-}
-
-export function createDragDropContext(handlers: DragDropHandlers = {}) {
-	const state = $state<DragDropState>({
+export function createDragDropContext<
+	T extends DragItem = GridItem,
+	K extends string = GridItemType
+>(handlers: DragDropHandlers<T, K> = {}) {
+	const state = $state<DragDropState<T, K>>({
 		isDragging: false,
 		isDuplicating: false,
 		draggedItem: null,
@@ -100,12 +140,7 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		}
 	})
 
-	function handlePointerDown(
-		e: PointerEvent,
-		item: GridItem,
-		source: Position,
-		type: GridItemType
-	) {
+	function handlePointerDown(e: PointerEvent, item: T, source: Position, type: K) {
 		if (e.pointerType === 'touch') {
 			initiateTouchDrag(e, item, source, type)
 		} else {
@@ -116,17 +151,13 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		}
 	}
 
-	function initiateTouchDrag(
-		e: PointerEvent,
-		item: GridItem,
-		source: Position,
-		type: GridItemType
-	) {
+	function initiateTouchDrag(e: PointerEvent, item: T, source: Position, type: K) {
 		state.touchState.touchStartPos = { x: e.clientX, y: e.clientY }
 		state.touchState.touchStartTime = Date.now()
 
+		const at = { x: e.clientX, y: e.clientY }
 		state.touchState.longPressTimer = window.setTimeout(() => {
-			startDrag(item, { ...source, type })
+			startDrag(item, { ...source, type }, { touchAt: at })
 			if ('vibrate' in navigator) {
 				navigator.vibrate(50)
 			}
@@ -155,7 +186,7 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		if (e.pointerType === 'mouse' && !state.isDragging && state.touchState.currentTouch) {
 			if (distance > state.touchState.touchThreshold) {
 				const { item, source, type } = state.touchState.currentTouch
-				state.isDuplicating = e.altKey
+				setDuplicating(e.altKey)
 				startDrag(item, { ...source, type })
 				state.touchState.currentTouch = null
 			}
@@ -171,8 +202,13 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		state.touchState.currentTouch = null
 	}
 
+	/** Alt-drag duplicates only where the caller allows it */
+	function setDuplicating(value: boolean) {
+		state.isDuplicating = value && !!handlers.allowDuplicate
+	}
+
 	function handleAltKeyDown(e: KeyboardEvent) {
-		if (e.key === 'Alt' && state.isDragging) {
+		if (e.key === 'Alt' && state.isDragging && handlers.allowDuplicate) {
 			state.isDuplicating = true
 			// Re-validate current hover target
 			if (state.hoveredOver && state.draggedItem) {
@@ -191,7 +227,16 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		}
 	}
 
-	function startDrag(item: GridItem, source: DragSource, options?: { altKey?: boolean }) {
+	/**
+	 * Start a drag. Mouse drags show the browser's own drag image; touch
+	 * drags have none, so they get a label that follows the finger, starting
+	 * where it pressed (`touchAt`).
+	 */
+	function startDrag(
+		item: T,
+		source: DragSource<K>,
+		options?: { altKey?: boolean; touchAt?: { x: number; y: number } }
+	) {
 		try {
 			if (import.meta.env.DEV) console.group('🚀 Drag Start')
 			if (import.meta.env.DEV) console.log('Item:', item)
@@ -199,53 +244,50 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 			if (import.meta.env.DEV) console.groupEnd()
 
 			state.isDragging = true
-			if (options?.altKey) state.isDuplicating = true
+			if (options?.altKey) setDuplicating(true)
 			state.draggedItem = {
 				type: source.type,
 				data: item,
 				source
 			}
-			createDragPreview(item)
+			if (options?.touchAt) createDragPreview(item, options.touchAt)
 
 			// Listen for Alt key toggles during drag
-			window.addEventListener('keydown', handleAltKeyDown)
-			window.addEventListener('keyup', handleAltKeyUp)
+			if (handlers.allowDuplicate) {
+				window.addEventListener('keydown', handleAltKeyDown)
+				window.addEventListener('keyup', handleAltKeyUp)
+			}
 		} catch (error) {
 			handleDragError(error as Error)
 		}
 	}
 
-	function createDragPreview(item: GridItem) {
+	function createDragPreview(item: T, at: { x: number; y: number }) {
 		const preview = document.createElement('div')
 		preview.className = 'drag-preview'
-		preview.style.position = 'fixed'
-		preview.style.pointerEvents = 'none'
-		preview.style.zIndex = '10000'
-		preview.style.opacity = '0.8'
-
-		const itemName =
-			'character' in item
-				? item.character.name
-				: 'weapon' in item
-					? item.weapon.name
-					: 'summon' in item
-						? item.summon.name
-						: 'Unknown'
-
+		// Styled like the app's menus, from the theme's variables
+		preview.style.cssText = [
+			'position: fixed',
+			'pointer-events: none',
+			'z-index: 10000',
+			'padding: 6px 10px',
+			'background: var(--menu-bg, var(--card-bg))',
+			'color: var(--text-primary)',
+			'border: 1px solid var(--border-subtle)',
+			'border-radius: 8px',
+			'box-shadow: var(--shadow-md)',
+			'font-family: var(--font-family)',
+			'font-size: 14px',
+			'white-space: nowrap'
+		].join('; ')
 		// Built with DOM nodes so catalogue names are never parsed as HTML.
-		const content = document.createElement('div')
-		content.className = 'drag-preview-content'
-		content.style.cssText =
-			'padding: 8px; background: white; border: 2px solid #ccc; border-radius: 4px;'
-		const label = document.createElement('span')
-		label.textContent = `${itemName || 'Item'}`
-		content.appendChild(label)
-		preview.appendChild(content)
+		preview.textContent = handlers.itemLabel?.(item) || 'Item'
 		document.body.appendChild(preview)
 		state.dragPreview = preview
+		updateDragPreviewPosition(at.x, at.y)
 	}
 
-	function updateHover(target: DropTarget | null) {
+	function updateHover(target: DropTarget<K> | null) {
 		state.hoveredOver = target
 
 		if (target && state.draggedItem) {
@@ -268,7 +310,7 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		return 'move'
 	}
 
-	function endDrag(targetItem?: GridItem) {
+	function endDrag(targetItem?: T) {
 		try {
 			if (import.meta.env.DEV) console.group('🏁 Drag End')
 			if (import.meta.env.DEV) console.log('Final state:', { ...state })
@@ -279,7 +321,7 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 					state.hoveredOver,
 					!!targetItem
 				)
-				const operation: DragOperation = {
+				const operation: DragOperation<K> = {
 					id: uuid(),
 					type: opType,
 					timestamp: Date.now(),
@@ -289,7 +331,9 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 						itemId: state.draggedItem.data.id,
 						type: state.draggedItem.source.type,
 						collectionLinked:
-							opType === 'duplicate' ? hasCollectionLink(state.draggedItem.data) : undefined
+							opType === 'duplicate'
+								? handlers.isCollectionLinked?.(state.draggedItem.data)
+								: undefined
 					},
 					target: {
 						container: state.hoveredOver.container,
@@ -343,7 +387,7 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		window.removeEventListener('keyup', handleAltKeyUp)
 	}
 
-	function validateDrop(source: DragSource, target: DropTarget): boolean {
+	function validateDrop(source: DragSource<K>, target: DropTarget<K>): boolean {
 		if (import.meta.env.DEV) console.group('🎯 Drop Validation')
 		if (import.meta.env.DEV) console.log('Source:', source)
 		if (import.meta.env.DEV) console.log('Target:', target)
@@ -376,7 +420,7 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 		return true
 	}
 
-	function handleDrop(target: DropTarget, targetItem?: GridItem) {
+	function handleDrop(target: DropTarget<K>, targetItem?: T) {
 		if (!state.draggedItem || !state.validDrop) {
 			if (import.meta.env.DEV) console.log('❌ Invalid drop attempt')
 			return false
@@ -418,6 +462,7 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 			return state
 		},
 		startDrag,
+		setDuplicating,
 		updateHover,
 		endDrag,
 		validateDrop,
@@ -429,7 +474,10 @@ export function createDragDropContext(handlers: DragDropHandlers = {}) {
 	}
 }
 
-export type DragDropContext = ReturnType<typeof createDragDropContext>
+export type DragDropContext<
+	T extends DragItem = GridItem,
+	K extends string = GridItemType
+> = ReturnType<typeof createDragDropContext<T, K>>
 
 // ============================================================================
 // Context API for child components
@@ -439,10 +487,16 @@ import { getContext, setContext } from 'svelte'
 
 const DRAG_DROP_KEY = Symbol('drag-drop')
 
-export function setDragDropContext(value: DragDropContext) {
+export function setDragDropContext<T extends DragItem, K extends string>(
+	value: DragDropContext<T, K>
+) {
 	setContext(DRAG_DROP_KEY, value)
 }
 
-export function getDragDropContext(): DragDropContext | undefined {
-	return getContext<DragDropContext | undefined>(DRAG_DROP_KEY)
+/**
+ * The context the nearest drag-and-drop owner set. DraggableItem and
+ * DropZone only pass items and types through, so they read it untyped.
+ */
+export function getDragDropContext(): DragDropContext<DragItem, string> | undefined {
+	return getContext<DragDropContext<DragItem, string> | undefined>(DRAG_DROP_KEY)
 }

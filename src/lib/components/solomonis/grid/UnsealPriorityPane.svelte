@@ -13,6 +13,7 @@
 	import { toast } from 'svelte-sonner'
 	import {
 		createDragDropContext,
+		gridItemLabel,
 		setDragDropContext,
 		type DragSource,
 		type DropTarget
@@ -79,6 +80,7 @@
 	}
 
 	const dragContext = createDragDropContext({
+		itemLabel: gridItemLabel,
 		onDrop: (from, to) => move(from, to),
 		onSwap: (from, to) => move(from, to),
 		onValidate: (from, to) => {

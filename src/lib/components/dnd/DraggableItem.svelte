@@ -1,14 +1,15 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
 	import type { Snippet } from 'svelte'
-	import type { GridItem, GridItemType } from '$lib/composables/drag-drop.svelte'
+	import type { DragItem } from '$lib/composables/drag-drop.svelte'
 	import { getDragDropContext } from '$lib/composables/drag-drop.svelte'
 
 	interface Props {
-		item: GridItem | undefined
+		item: DragItem | undefined
 		container: string
 		position: number
-		type: GridItemType
+		/** Drops are only valid between slots of the same type */
+		type: string
 		canDrag?: boolean
 		customPreview?: boolean
 		children?: Snippet
