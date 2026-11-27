@@ -251,7 +251,8 @@
 		box-shadow: var(--shadow-md);
 		padding: spacing.$unit-half;
 		min-width: calc(spacing.$unit * 22.5);
-		z-index: effects.$z-modal;
+		// Above dialogs, like DropdownMenu; these global rules must agree
+		z-index: effects.$z-modal + 2;
 	}
 
 	:global(.dropdown-menu-item) {

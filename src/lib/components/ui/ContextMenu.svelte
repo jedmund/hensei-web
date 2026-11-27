@@ -141,7 +141,8 @@
 		box-shadow: var(--shadow-md);
 		padding: $unit-half;
 		min-width: calc($unit * 22.5);
-		z-index: $z-modal;
+		// Above dialogs (z-modal + 1), like DropdownMenu; these global rules must agree
+		z-index: $z-modal + 2;
 		animation: slideIn $duration-quick ease-out;
 	}
 
@@ -199,7 +200,8 @@
 		box-shadow: var(--shadow-md);
 		padding: $unit-half;
 		min-width: calc($unit * 22.5);
-		z-index: $z-modal;
+		// Above dialogs (z-modal + 1), like DropdownMenu; these global rules must agree
+		z-index: $z-modal + 2;
 		animation: slideIn $duration-quick ease-out;
 	}
 
