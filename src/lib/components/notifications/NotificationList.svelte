@@ -16,7 +16,7 @@
 </script>
 
 {#if isLoading && notifications.length === 0}
-	<div class="list-state">
+	<div class="list-state loading">
 		<Icon name="loader-2" size={20} />
 	</div>
 {:else if isError && notifications.length === 0}
@@ -66,6 +66,19 @@
 		.hint {
 			font-size: typography.$font-tiny;
 			color: var(--text-tertiary);
+		}
+
+		&.loading :global(svg) {
+			animation: spin 1s linear infinite;
+		}
+	}
+
+	@keyframes spin {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
 		}
 	}
 </style>
