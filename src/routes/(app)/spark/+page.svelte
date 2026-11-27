@@ -112,6 +112,7 @@
 	let savedPage = $state(1)
 	let savedPages = $state(1)
 	let loadingSaved = $state(false)
+	let savedFailed = $state(false)
 	let viewing = $state<SavedSpark | null>(null)
 	let viewingOpen = $state(false)
 
@@ -212,6 +213,9 @@
 	/** A saved spark with its items resolved, for its thumbnails and image */
 	const resolveSaved = (row: SavedSpark) => resolveSpark(fromSavedSpark(row).spark, byId).data
 
+	/** Saved sparks load 15 at a time as the list scrolls */
+	const SAVED_PER_PAGE = 15
+
 	// Newest spark date first, as the API lists them
 	const bySparkDate = (a: SavedSpark, b: SavedSpark) =>
 		b.sparkDate.localeCompare(a.sparkDate) || b.createdAt.localeCompare(a.createdAt)
@@ -219,13 +223,15 @@
 	async function loadSaved(pageNumber: number) {
 		loadingSaved = true
 		try {
-			const response = await savedSparkAdapter.list({ page: pageNumber })
+			const response = await savedSparkAdapter.list({ page: pageNumber, perPage: SAVED_PER_PAGE })
 			const known = new Set(saved.map((row) => row.id))
 			saved = [...saved, ...response.results.filter((row) => !known.has(row.id))]
 			savedPage = pageNumber
 			savedPages = response.totalPages
 		} catch {
-			// The list is extra; the maker works without it
+			// The list is extra; the maker works without it. Stop loading pages,
+			// so the scroll doesn't retry over and over.
+			savedFailed = true
 		} finally {
 			loadingSaved = false
 		}
@@ -494,7 +500,7 @@
 				viewing = row
 				viewingOpen = true
 			}}
-			hasMore={savedPage < savedPages}
+			hasMore={savedPage < savedPages && !savedFailed}
 			loadingMore={loadingSaved}
 			onLoadMore={() => loadSaved(savedPage + 1)}
 		/>

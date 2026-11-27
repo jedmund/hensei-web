@@ -3296,7 +3296,6 @@
 	"spark_save_failed": "天井を保存できませんでした",
 	"spark_date_invalid": "天井した日を選んでください",
 	"spark_history": "保存した天井",
-	"spark_load_more": "もっと見る",
 	"spark_edit": "編集",
 	"spark_delete": "削除",
 	"spark_delete_title": "この天井を削除しますか？",
