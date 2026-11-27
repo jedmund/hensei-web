@@ -53,6 +53,7 @@
 	)
 
 	const count = (value: number) => new Intl.NumberFormat(getLocale()).format(value)
+	const rate = $derived(sparkRateText(data, getLocale()))
 </script>
 
 <div
@@ -91,7 +92,7 @@
 	</div>
 	<footer>
 		<span class="wordmark">granblue.team</span>
-		<span class="rate">{sparkRateText(data, getLocale())}</span>
+		<span class="rate"><strong>{rate.label}</strong> {rate.value}</span>
 	</footer>
 </div>
 
@@ -197,5 +198,11 @@
 
 	.rate {
 		font-variant-numeric: tabular-nums;
+
+		// The label in the wordmark's weight; the numbers stay regular
+		strong {
+			color: var(--text-tertiary);
+			font-weight: $medium;
+		}
 	}
 </style>

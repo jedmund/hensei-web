@@ -48,12 +48,18 @@ export function sparkRate(data: SparkRenderData, locale: string): string {
 	}).format(data.draws > 0 ? drawnSsrCount(data) / data.draws : 0)
 }
 
-/** The image's SSR rate line, e.g. "SSR rate 6.00% (18/300)" */
-export function sparkRateText(data: SparkRenderData, locale: string): string {
+/** The image's SSR rate line: its label, and the numbers, e.g. "6.00% (18/300)" */
+export function sparkRateText(
+	data: SparkRenderData,
+	locale: string
+): { label: string; value: string } {
 	const count = new Intl.NumberFormat(locale)
-	return m.spark_ssr_rate({
-		rate: sparkRate(data, locale),
-		ssrs: count.format(drawnSsrCount(data)),
-		draws: count.format(data.draws)
-	})
+	return {
+		label: m.spark_ssr_rate_label(),
+		value: m.spark_ssr_rate_value({
+			rate: sparkRate(data, locale),
+			ssrs: count.format(drawnSsrCount(data)),
+			draws: count.format(data.draws)
+		})
+	}
 }
