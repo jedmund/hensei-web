@@ -3548,5 +3548,6 @@
 	"spark_pool_name_classic_ii": "Classic II Gacha",
 	"spark_pool_name_classic_iii": "Classic III Gacha",
 	"spark_clear_title": "Clear this spark?",
-	"spark_clear_message": "Every character and summon is removed from the board."
+	"spark_clear_message": "Every character and summon is removed from the board.",
+	"spark_history_private": "Only you can see this"
 }

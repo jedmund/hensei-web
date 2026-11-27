@@ -2,6 +2,8 @@
 
 <script lang="ts">
 	import Button from '$lib/components/ui/Button.svelte'
+	import Icon from '$lib/components/Icon.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import { drawnSsrCount, savedSparkName, sparkRate } from '$lib/features/spark/labels'
 	import { SPARK_COLUMNS } from '$lib/features/spark/spark'
 	import { m } from '$lib/paraglide/messages'
@@ -30,7 +32,15 @@
 </script>
 
 <section class="history" aria-labelledby="spark-history-heading">
-	<h2 id="spark-history-heading">{m.spark_history()}</h2>
+	<h2 id="spark-history-heading">
+		{m.spark_history()}
+		<!-- Saved sparks are private to their owner -->
+		<Tooltip content={m.spark_history_private()}>
+			<span class="private" aria-label={m.spark_history_private()}>
+				<Icon name="lock" size={14} />
+			</span>
+		</Tooltip>
+	</h2>
 	<ol>
 		{#each sparks as saved (saved.id)}
 			{@const data = resolve(saved)}
@@ -92,11 +102,19 @@
 	}
 
 	h2 {
+		display: flex;
+		align-items: center;
+		gap: $unit-half;
 		margin: 0;
 		padding: 0 $unit-2x;
 		font-size: $font-regular;
 		font-weight: $medium;
 		color: var(--text-secondary);
+	}
+
+	.private {
+		display: flex;
+		color: var(--text-tertiary);
 	}
 
 	ol {
