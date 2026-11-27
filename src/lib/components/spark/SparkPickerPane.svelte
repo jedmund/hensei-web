@@ -91,8 +91,9 @@
 	})
 
 	// Keyboard: typing highlights the first result and Enter adds it; Down
-	// moves into the grid, where the arrows move, Enter adds, and Escape (or
-	// Up from the top row) goes back to the search
+	// moves into the grid, where the arrows move, Enter adds and goes back to
+	// a cleared search, and Escape (or Up from the top row) goes back to the
+	// search as it was
 	const COLUMNS = 3
 	let controls = $state<HTMLElement>()
 	let grid = $state<HTMLElement>()
@@ -155,7 +156,14 @@
 			ArrowUp: index - COLUMNS,
 			ArrowDown: index + COLUMNS
 		}
-		if (event.key === 'Escape' || (event.key === 'ArrowUp' && index < COLUMNS)) {
+		if (event.key === 'Enter') {
+			// Add it and start the next search, as Enter from the search does
+			event.preventDefault()
+			const item = shown[index]
+			if (item) onAdd(item)
+			query = ''
+			searchInput()?.focus()
+		} else if (event.key === 'Escape' || (event.key === 'ArrowUp' && index < COLUMNS)) {
 			event.preventDefault()
 			event.stopPropagation()
 			backToSearch()
