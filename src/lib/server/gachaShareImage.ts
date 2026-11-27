@@ -4,34 +4,18 @@
  * A result link carries the settings and seed (see gachaShare.ts), so the
  * image for it can be rebuilt on demand: resolve the link against the
  * catalogue, re-run the simulation through the API, and screenshot the
- * internal `_render/gacha/result` route.
- *
- * Anyone can mint new links, so every distinct link could mean a fresh
- * Playwright render. Three things keep that in check:
- * - renders are cached by a hash of the canonical query (S3 when
- *   RENDER_S3_BUCKET is set, otherwise a small in-memory cache);
- * - cache misses are rate-limited per IP, more loosely for signed URLs (the
- *   og:image the page emits for crawlers) than unsigned ones (the page's
- *   Copy image button);
- * - renderService caps concurrent renders globally.
+ * internal `_render/gacha/result` route. Caching, signing and rate limits
+ * are shared with the other share images (see shareImage.ts).
  */
 
 import { createHash } from 'node:crypto'
-import { env } from '$env/dynamic/private'
 import { getApiBaseUrl } from '$lib/api/adapters/config'
-import { getCachedRender, putRender } from '$lib/server/renderCache'
-import { createRateLimiter } from '$lib/server/rateLimit'
-import { s3KeyFor, TEMPLATES } from '$lib/server/renderRegistry'
-import {
-	appendRenderSignature,
-	extractRenderSignature,
-	verifyRenderRequest
-} from '$lib/server/renderSigning'
+import { createShareImage } from '$lib/server/shareImage'
 import { gachaIdentityFor } from '$lib/utils/gacha'
 import { oneOf, readShare, writeShare, type GachaShare } from '$lib/utils/gachaShare'
 import type { CatalogueItem, GachaRenderData, GachaResult } from '$lib/types/gacha'
 
-export const TEMPLATE_ID = 'gacha.result'
+export const TEMPLATE_ID = 'gacha.result' as const
 /** Bump to invalidate every cached share image (e.g. after a card redesign). */
 export const RENDER_VERSION = 1
 // Bump when the share image's design changes, so cached images re-render
@@ -79,104 +63,11 @@ export function parseImageRequest(params: URLSearchParams): ImageRequest | null 
 	return { share, art, currency, locale, canonical, cacheKey }
 }
 
-/**
- * Absolute, signed image URL for a result link, for its og:image. Signing is
- * skipped when RENDER_HMAC_SECRET isn't configured (local development).
- */
-export function signedImageUrl(origin: string, request: ImageRequest): string {
-	const url = new URL(`/download/gacha?${request.canonical}`, origin)
-	if (!env.RENDER_HMAC_SECRET) return url.toString()
-	return appendRenderSignature(
-		url,
-		TEMPLATE_ID,
-		{ query: request.canonical },
-		RENDER_VERSION
-	).toString()
-}
-
-export type SignatureCheck = 'signed' | 'unsigned' | 'invalid'
-
-/**
- * Signed URLs come from our own pages (the og:image), unsigned ones from the
- * Copy image button. Both are allowed; a present but wrong signature is not.
- */
-export function checkSignature(params: URLSearchParams, request: ImageRequest): SignatureCheck {
-	const { signature, version } = extractRenderSignature(params)
-	if (!signature) return 'unsigned'
-	if (!env.RENDER_HMAC_SECRET || version !== String(RENDER_VERSION)) return 'invalid'
-	return verifyRenderRequest(TEMPLATE_ID, { query: request.canonical }, RENDER_VERSION, signature)
-		? 'signed'
-		: 'invalid'
-}
-
-// Cache misses per IP per minute. Crawlers (Discord, Twitter, Slack) fetch
-// once per unfurl, so the signed allowance is generous; unsigned requests
-// come from people pressing Copy image.
-const MINUTE = 60_000
-export const signedLimiter = createRateLimiter({ limit: 30, windowMs: MINUTE })
-export const unsignedLimiter = createRateLimiter({ limit: 10, windowMs: MINUTE })
-
-// --- Cache -----------------------------------------------------------------
-
-const MEMORY_MAX_ENTRIES = 50
-const MEMORY_MAX_BYTES = 64 * 1024 * 1024
-const memory = new Map<string, Buffer>()
-let memoryBytes = 0
-
-function useS3(): boolean {
-	return !!env.RENDER_S3_BUCKET
-}
-
-function s3Key(cacheKey: string): string {
-	return s3KeyFor(TEMPLATES[TEMPLATE_ID], cacheKey, RENDER_VERSION)
-}
-
-export async function readCachedImage(cacheKey: string): Promise<Buffer | null> {
-	if (useS3()) {
-		try {
-			return await getCachedRender(s3Key(cacheKey))
-		} catch (err) {
-			console.error('[gachaShareImage] S3 cache read failed:', err)
-			return null
-		}
-	}
-	const hit = memory.get(cacheKey)
-	if (!hit) return null
-	// Refresh recency
-	memory.delete(cacheKey)
-	memory.set(cacheKey, hit)
-	return hit
-}
-
-export async function writeCachedImage(cacheKey: string, image: Buffer): Promise<void> {
-	if (useS3()) {
-		try {
-			await putRender(s3Key(cacheKey), image)
-		} catch (err) {
-			console.error('[gachaShareImage] S3 cache write failed:', err)
-		}
-		return
-	}
-	if (image.length > MEMORY_MAX_BYTES) return
-	const existing = memory.get(cacheKey)
-	if (existing) {
-		memoryBytes -= existing.length
-		memory.delete(cacheKey)
-	}
-	memory.set(cacheKey, image)
-	memoryBytes += image.length
-	for (const [key, value] of memory) {
-		if (memory.size <= MEMORY_MAX_ENTRIES && memoryBytes <= MEMORY_MAX_BYTES) break
-		memory.delete(key)
-		memoryBytes -= value.length
-	}
-}
-
-/** Test-only: empty the in-memory cache. */
-export function _resetImageCacheForTests(): void {
-	memory.clear()
-	memoryBytes = 0
-}
+export const shareImage = createShareImage({
+	templateId: TEMPLATE_ID,
+	renderVersion: RENDER_VERSION,
+	downloadPath: '/download/gacha'
+})
 
 // --- Simulation --------------------------------------------------------------
 

@@ -16,7 +16,8 @@
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { onMount } from 'svelte'
 	import { toast } from 'svelte-sonner'
-	import { copyResultImage, gachaImageUrl } from '$lib/utils/gachaImage'
+	import { gachaImageUrl } from '$lib/utils/gachaImage'
+	import { copyShareImage } from '$lib/utils/shareImage'
 	import { formatAmount } from '$lib/utils/gachaFormat'
 	import { gachaItemName } from '$lib/utils/gacha'
 	import type { CatalogueItem, GachaRenderData, GachaResult } from '$lib/types/gacha'
@@ -176,7 +177,7 @@
 			currency,
 			lang: getLocale() === 'ja' ? 'ja' : 'en'
 		})
-		copyResultImage(url)
+		copyShareImage(url, 'gacha-result.png')
 			.then((outcome) =>
 				toast.success(outcome === 'copied' ? m.toast_copied() : m.gacha_image_saved())
 			)
