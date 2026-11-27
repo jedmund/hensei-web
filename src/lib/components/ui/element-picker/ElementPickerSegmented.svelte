@@ -216,54 +216,25 @@
 		cursor: not-allowed;
 	}
 
-	// Element-specific hover and selected states
-	:global(.element-item[data-value='0']:hover:not(:disabled)) {
-		background-color: var(--null-nav-hover-bg);
-	}
-	:global(.element-item[data-value='0'][data-state='on']) {
-		background-color: var(--null-nav-selected-bg);
-	}
+	// Each element's hover and selected background, keyed by its number as in
+	// ELEMENT_KEYS (src/lib/utils/element.ts); 0 is Any
+	$element-numbers: (
+		0: 'null',
+		1: 'fire',
+		2: 'water',
+		3: 'earth',
+		4: 'wind',
+		5: 'light',
+		6: 'dark'
+	);
 
-	:global(.element-item[data-value='1']:hover:not(:disabled)) {
-		background-color: var(--wind-nav-hover-bg);
-	}
-	:global(.element-item[data-value='1'][data-state='on']) {
-		background-color: var(--wind-nav-selected-bg);
-	}
-
-	:global(.element-item[data-value='2']:hover:not(:disabled)) {
-		background-color: var(--fire-nav-hover-bg);
-	}
-	:global(.element-item[data-value='2'][data-state='on']) {
-		background-color: var(--fire-nav-selected-bg);
-	}
-
-	:global(.element-item[data-value='3']:hover:not(:disabled)) {
-		background-color: var(--water-nav-hover-bg);
-	}
-	:global(.element-item[data-value='3'][data-state='on']) {
-		background-color: var(--water-nav-selected-bg);
-	}
-
-	:global(.element-item[data-value='4']:hover:not(:disabled)) {
-		background-color: var(--earth-nav-hover-bg);
-	}
-	:global(.element-item[data-value='4'][data-state='on']) {
-		background-color: var(--earth-nav-selected-bg);
-	}
-
-	:global(.element-item[data-value='5']:hover:not(:disabled)) {
-		background-color: var(--dark-nav-hover-bg);
-	}
-	:global(.element-item[data-value='5'][data-state='on']) {
-		background-color: var(--dark-nav-selected-bg);
-	}
-
-	:global(.element-item[data-value='6']:hover:not(:disabled)) {
-		background-color: var(--light-nav-hover-bg);
-	}
-	:global(.element-item[data-value='6'][data-state='on']) {
-		background-color: var(--light-nav-selected-bg);
+	@each $number, $name in $element-numbers {
+		:global(.element-item[data-value='#{$number}']:hover:not(:disabled)) {
+			background-color: var(--#{$name}-nav-hover-bg);
+		}
+		:global(.element-item[data-value='#{$number}'][data-state='on']) {
+			background-color: var(--#{$name}-nav-selected-bg);
+		}
 	}
 
 	:global(.element-image) {
