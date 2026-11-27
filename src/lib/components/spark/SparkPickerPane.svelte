@@ -22,7 +22,7 @@
 		gachaItemName,
 		newestGachaItemsFirst
 	} from '$lib/utils/gacha'
-	import { inPool } from '$lib/features/spark/pools'
+	import { inPool, releasedBy } from '$lib/features/spark/pools'
 	import type { CatalogueItem } from '$lib/types/gacha'
 
 	interface Props {
@@ -34,8 +34,8 @@
 		drag: SparkDrag
 		/** The tab to open on: summons from a summon slot, characters otherwise */
 		initialTab?: 'character' | 'summon'
-		/** The pool and season the spark was on, to show only what they offer; read live */
-		pool: () => { pool: string | null; season: string | null }
+		/** The spark's pool, season and date, to show only what the gacha offered; read live */
+		pool: () => { pool: string | null; season: string | null; date: string | null }
 		/** The viewer's element, which colors the keyboard selection; read live */
 		userElement?: () => string | undefined
 	}
@@ -82,7 +82,8 @@
 			.filter(
 				(item) =>
 					gachaItemKind(item) === kind &&
-					inPool(item, pool().pool, pool().season) &&
+					releasedBy(item, pool().date) &&
+					inPool(item, pool().pool, pool().season, pool().date) &&
 					(elements.length === 0 || elements.includes(item.element)) &&
 					gachaItemMatches(item, q)
 			)

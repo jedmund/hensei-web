@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { inPool, poolTakesSeason } from '../pools'
+import { inPool, poolOpenOn, poolTakesSeason, releasedBy } from '../pools'
 import type { CatalogueItem } from '$lib/types/gacha'
 
 const item = (promotions: number[]) => ({ promotions }) as CatalogueItem
@@ -48,5 +48,45 @@ describe('inPool', () => {
 		expect(poolTakesSeason('legend')).toBe(true)
 		expect(poolTakesSeason('collab')).toBe(false)
 		expect(poolTakesSeason('classic_ii')).toBe(false)
+	})
+})
+
+describe('pools by date', () => {
+	const classicII = item([3])
+
+	it('opens each Classic pool on its day', () => {
+		expect(poolOpenOn('classic', '2022-03-09')).toBe(false)
+		expect(poolOpenOn('classic', '2022-03-10')).toBe(true)
+		expect(poolOpenOn('classic_ii', '2025-01-01')).toBe(true)
+		expect(poolOpenOn('classic_iii', '2025-01-01')).toBe(false)
+		expect(poolOpenOn('classic_iii', '2026-03-10')).toBe(true)
+	})
+
+	it('keeps other pools, no pool and no date open', () => {
+		expect(poolOpenOn('premium', '2015-01-01')).toBe(true)
+		expect(poolOpenOn(null, '2015-01-01')).toBe(true)
+		expect(poolOpenOn('classic', null)).toBe(true)
+	})
+
+	it('treats a Classic item as Premium before its pool opened', () => {
+		for (const pool of ['premium', 'flash', 'legend']) {
+			expect(inPool(classicII, pool, null, '2023-06-01')).toBe(true)
+		}
+		expect(inPool(classicII, 'premium', 'summer', '2023-06-01')).toBe(true)
+	})
+
+	it('keeps a Classic item to its pool once it opened', () => {
+		expect(inPool(classicII, 'premium', null, '2024-03-10')).toBe(false)
+		expect(inPool(classicII, 'classic_ii', null, '2024-03-10')).toBe(true)
+		// Without a date, the pools are as they are now
+		expect(inPool(classicII, 'premium')).toBe(false)
+	})
+
+	it('offers only what was released by the date', () => {
+		const released = { promotions: [1], release_date: '2020-05-01' } as CatalogueItem
+		expect(releasedBy(released, '2020-04-30')).toBe(false)
+		expect(releasedBy(released, '2020-05-01')).toBe(true)
+		expect(releasedBy(released, null)).toBe(true)
+		expect(releasedBy(item([1]), '2015-01-01')).toBe(true)
 	})
 })

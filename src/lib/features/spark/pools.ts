@@ -4,6 +4,10 @@
  * it (GachaSimulation::Configuration.eligible?): ordinary Premium items are in
  * every pool but Classic, limited items only in their own pool or season, and
  * Classic pools hold only their own items.
+ *
+ * It also follows the spark's date: nothing released after it, and each
+ * Classic pool only from the day it opened. Before then, its items were
+ * ordinary Premium items.
  */
 
 import { m } from '$lib/paraglide/messages'
@@ -76,6 +80,42 @@ export const SPARK_SEASONS: SparkPromotion[] = [
 
 const CLASSIC = new Set([Promotion.Classic, Promotion.ClassicII, Promotion.ClassicIII])
 
+/** The day each Classic pool opened (YYYY-MM-DD, as spark dates are) */
+export const CLASSIC_OPENED: Partial<Record<Promotion, string>> = {
+	[Promotion.Classic]: '2022-03-10',
+	[Promotion.ClassicII]: '2024-03-10',
+	[Promotion.ClassicIII]: '2026-03-10'
+}
+
+/** Whether a pool was running on a date; no pool or no date is always open */
+export function poolOpenOn(
+	pool: string | null | undefined,
+	date: string | null | undefined
+): boolean {
+	const entry = findPromotion(SPARK_POOLS, pool)
+	const opened = entry && CLASSIC_OPENED[entry.promotion]
+	return !opened || !date || date >= opened
+}
+
+/** Whether an item had been released by a date; no date offers everything */
+export const releasedBy = (item: CatalogueItem, date: string | null | undefined): boolean =>
+	!date || !item.release_date || item.release_date <= date
+
+/**
+ * An item's promotions on a date: a Classic promotion from before its pool
+ * opened counts as Premium, where the item was then
+ */
+function promotionsOn(item: CatalogueItem, date: string | null | undefined): number[] {
+	if (!date) return item.promotions
+	let moved = false
+	const kept = item.promotions.filter((promotion) => {
+		const opened = CLASSIC_OPENED[promotion as Promotion]
+		if (opened && date < opened) moved = true
+		return !(opened && date < opened)
+	})
+	return moved && !kept.includes(Promotion.Premium) ? [...kept, Promotion.Premium] : kept
+}
+
 export const findPromotion = (list: SparkPromotion[], value: string | null | undefined) =>
 	list.find((entry) => entry.value === value)
 
@@ -86,18 +126,21 @@ export function poolTakesSeason(pool: string | null | undefined): boolean {
 }
 
 /**
- * Whether an item can be drawn from a pool and season. No pool and no season
- * offers everything; a season with no pool means the Premium pool's season.
+ * Whether an item can be drawn from a pool and season on a date. No pool and
+ * no season offers everything; a season with no pool means the Premium
+ * pool's season.
  */
 export function inPool(
 	item: CatalogueItem,
 	pool: string | null | undefined,
-	season?: string | null
+	season?: string | null,
+	date?: string | null
 ): boolean {
+	const promotions = promotionsOn(item, date)
 	const seasonEntry = poolTakesSeason(pool) ? findPromotion(SPARK_SEASONS, season) : undefined
 	const poolEntry = findPromotion(SPARK_POOLS, pool) ?? (seasonEntry ? SPARK_POOLS[0] : undefined)
 	if (!poolEntry) return true
-	if (item.promotions.includes(poolEntry.promotion)) return true
-	if (seasonEntry && item.promotions.includes(seasonEntry.promotion)) return true
-	return !CLASSIC.has(poolEntry.promotion) && item.promotions.includes(Promotion.Premium)
+	if (promotions.includes(poolEntry.promotion)) return true
+	if (seasonEntry && promotions.includes(seasonEntry.promotion)) return true
+	return !CLASSIC.has(poolEntry.promotion) && promotions.includes(Promotion.Premium)
 }

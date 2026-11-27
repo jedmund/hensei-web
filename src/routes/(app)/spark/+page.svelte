@@ -11,7 +11,12 @@
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
-	import { poolTakesSeason, SPARK_POOLS, SPARK_SEASONS } from '$lib/features/spark/pools'
+	import {
+		poolOpenOn,
+		poolTakesSeason,
+		SPARK_POOLS,
+		SPARK_SEASONS
+	} from '$lib/features/spark/pools'
 	import DatePicker from '$lib/components/ui/DatePicker.svelte'
 	import {
 		fromSavedSpark,
@@ -71,10 +76,14 @@
 	let openTile = $state<string | null>(null)
 	// The pool and season the spark was on (part of the spark); the picker shows
 	// only what they offer
-	const poolOptions = [
+	// Classic pools appear from the day they opened
+	const poolOptions = $derived([
 		{ value: '', label: m.spark_pool_all() },
-		...SPARK_POOLS.map((entry) => ({ value: entry.value, label: entry.label() }))
-	]
+		...SPARK_POOLS.filter((entry) => poolOpenOn(entry.value, spark.date)).map((entry) => ({
+			value: entry.value,
+			label: entry.label()
+		}))
+	])
 	const seasonOptions = [
 		{ value: '', label: m.spark_season_none() },
 		...SPARK_SEASONS.map((entry) => ({ value: entry.value, label: entry.label() }))
@@ -85,6 +94,12 @@
 		const pool = value || null
 		// Classic and Collab pools have no seasons
 		spark = { ...spark, pool, season: poolTakesSeason(pool) ? spark.season : null }
+	}
+
+	// A date before the chosen Classic pool opened clears the pool
+	function setDate(value: string | null | undefined) {
+		const date = value ?? null
+		spark = { ...spark, date, pool: poolOpenOn(spark.pool, date) ? spark.pool : null }
 	}
 
 	function setSeason(value: string) {
@@ -196,7 +211,7 @@
 				onAdd: add,
 				drag,
 				initialTab,
-				pool: () => ({ pool: spark.pool, season: spark.season }),
+				pool: () => ({ pool: spark.pool, season: spark.season, date: spark.date }),
 				userElement: () => userElement
 			},
 			{ scrollable: false }
@@ -383,7 +398,7 @@
 			<div class="date">
 				<DatePicker
 					label={m.spark_date()}
-					bind:value={() => spark.date, (date) => (spark = { ...spark, date: date ?? null })}
+					bind:value={() => spark.date, setDate}
 					maxValue={today}
 					locale={getLocale()}
 					contained

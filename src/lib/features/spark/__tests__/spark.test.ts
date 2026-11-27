@@ -54,6 +54,13 @@ describe('spark links', () => {
 		})
 	})
 
+	it('drops a Classic pool from before it opened', () => {
+		expect(readSpark(new URLSearchParams({ date: '2021-06-01', pool: 'classic' })).pool).toBeNull()
+		expect(readSpark(new URLSearchParams({ date: '2022-06-01', pool: 'classic' })).pool).toBe(
+			'classic'
+		)
+	})
+
 	it('drops dates that are not real days', () => {
 		expect(readSpark(new URLSearchParams({ date: '2026-02-30' })).date).toBeNull()
 		expect(readSpark(new URLSearchParams({ date: 'tomorrow' })).date).toBeNull()

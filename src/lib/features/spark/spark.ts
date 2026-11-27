@@ -10,10 +10,11 @@
  */
 
 import {
-	findPromotion,
-	poolTakesSeason,
 	SPARK_POOLS,
-	SPARK_SEASONS
+	SPARK_SEASONS,
+	findPromotion,
+	poolOpenOn,
+	poolTakesSeason
 } from '$lib/features/spark/pools'
 import type { CatalogueItem } from '$lib/types/gacha'
 import type { SparkRenderData } from '$lib/types/spark'
@@ -100,7 +101,9 @@ export function readSpark(params: URLSearchParams): Spark {
 	if (/^\d{1,5}$/.test(draws) && Number(draws) > 0) spark.draws = Number(draws)
 	const date = params.get('date') ?? ''
 	if (isDate(date)) spark.date = date
-	spark.pool = findPromotion(SPARK_POOLS, params.get('pool'))?.value ?? null
+	// A Classic pool from before it opened is dropped
+	const pool = findPromotion(SPARK_POOLS, params.get('pool'))?.value ?? null
+	spark.pool = poolOpenOn(pool, spark.date) ? pool : null
 	// Only pools that run seasons keep one
 	const season = findPromotion(SPARK_SEASONS, params.get('season'))?.value ?? null
 	spark.season = poolTakesSeason(spark.pool) ? season : null
