@@ -7,6 +7,7 @@
 	import { toast } from 'svelte-sonner'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import Select from '$lib/components/ui/Select.svelte'
@@ -101,6 +102,7 @@
 	)
 	let savedId = $state<string | null>(null)
 	let saving = $state(false)
+	let confirmingClear = $state(false)
 	let saved = $state<SavedSpark[]>([])
 	let savedPage = $state(1)
 	let savedPages = $state(1)
@@ -377,7 +379,12 @@
 			</div>
 		</div>
 		<div class="actions">
-			<Button variant="ghost" size="small" disabled={!hasItems} onclick={clearSpark}>
+			<Button
+				variant="destructive-ghost"
+				size="small"
+				disabled={!hasItems}
+				onclick={() => (confirmingClear = true)}
+			>
 				{m.spark_clear()}
 			</Button>
 			<div class="buttons">
@@ -448,6 +455,18 @@
 		/>
 	{/if}
 </div>
+
+<ConfirmDialog
+	bind:open={confirmingClear}
+	title={m.spark_clear_title()}
+	message={m.spark_clear_message()}
+	confirmLabel={m.spark_clear()}
+	confirmVariant="destructive"
+	onconfirm={() => {
+		clearSpark()
+		confirmingClear = false
+	}}
+/>
 
 <SparkResultDialog
 	bind:open={viewingOpen}

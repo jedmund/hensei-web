@@ -3312,5 +3312,7 @@
 	"spark_pool_name_collab": "コラボガチャ",
 	"spark_pool_name_classic": "クラシックガチャ",
 	"spark_pool_name_classic_ii": "クラシックガチャII",
-	"spark_pool_name_classic_iii": "クラシックガチャIII"
+	"spark_pool_name_classic_iii": "クラシックガチャIII",
+	"spark_clear_title": "この天井をクリアしますか？",
+	"spark_clear_message": "ボードからすべてのキャラクターと召喚石が削除されます。"
 }
