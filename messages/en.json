@@ -3550,5 +3550,8 @@
 	"spark_clear_title": "Clear this spark?",
 	"spark_clear_message": "Every character and summon is removed from the board.",
 	"spark_history_private": "Only you can see this",
-	"spark_saved_title": "Saved spark"
+	"spark_saved_title": "Saved spark",
+	"spark_saved_collection": "Spark saved, and {count} new characters added to your collection",
+	"spark_saved_collection_one": "Spark saved, and 1 new character added to your collection",
+	"spark_collection_failed": "Spark saved, but its new characters couldn't be added to your collection"
 }

@@ -29,6 +29,7 @@
 	import { setDragDropContext } from '$lib/composables/drag-drop.svelte'
 	import { createSparkDrag } from '$lib/features/spark/drag'
 	import { collectionAdapter } from '$lib/api/adapters/collection.adapter'
+	import { useAddCharactersToCollection } from '$lib/api/mutations/collection.mutations'
 	import { SPARK_IMAGE_HEIGHT, SPARK_IMAGE_WIDTH } from '$lib/components/spark/SparkImage.svelte'
 	import { readJson } from '$lib/features/gacha/api'
 	import {
@@ -36,6 +37,7 @@
 		insertItem,
 		MAX_DRAWS,
 		moveItem,
+		newCollectionCharacters,
 		readSpark,
 		removeItem,
 		resolveSpark,
@@ -105,6 +107,7 @@
 	let savedId = $state<string | null>(null)
 	let saving = $state(false)
 	let confirmingClear = $state(false)
+	const addCharacters = useAddCharactersToCollection()
 	let saved = $state<SavedSpark[]>([])
 	let savedPage = $state(1)
 	let savedPages = $state(1)
@@ -241,7 +244,7 @@
 				: await savedSparkAdapter.create(spark, sparkDate)
 			savedId = row.id
 			saved = [row, ...saved.filter((entry) => entry.id !== row.id)].sort(bySparkDate)
-			toast.success(m.spark_saved())
+			await addNewCharacters()
 		} catch (error) {
 			// The API names the fields it rejected; only the date is the player's to fix
 			const errors =
@@ -252,6 +255,31 @@
 			else toast.error(errors?.spark_date ? m.spark_date_invalid() : m.spark_save_failed())
 		} finally {
 			saving = false
+		}
+	}
+
+	/**
+	 * After a save, add the spark's new characters to the collection; a player
+	 * owns each character once, so the API skips any already there
+	 */
+	async function addNewCharacters() {
+		const ids = newCollectionCharacters(spark, byId, owned)
+		if (ids.length === 0) {
+			toast.success(m.spark_saved())
+			return
+		}
+		try {
+			const added = await addCharacters.mutateAsync(ids.map((characterId) => ({ characterId })))
+			owned = new Set([...owned, ...added.map((entry) => entry.character.granblueId)])
+			toast.success(
+				added.length === 1
+					? m.spark_saved_collection_one()
+					: added.length > 1
+						? m.spark_saved_collection({ count: added.length })
+						: m.spark_saved()
+			)
+		} catch {
+			toast.error(m.spark_collection_failed())
 		}
 	}
 

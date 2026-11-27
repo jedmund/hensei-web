@@ -222,6 +222,23 @@ export function toggleSparked(spark: Spark, column: SparkColumn, index: number):
 // --- Layout ------------------------------------------------------------------
 
 /** Tiles per row in every column */
+/**
+ * The characters under New characters that the player doesn't own yet, as
+ * collection character ids, once each. Gold Moons were owned already.
+ */
+export function newCollectionCharacters(
+	spark: Spark,
+	byId: ReadonlyMap<string, CatalogueItem>,
+	owned: ReadonlySet<string>
+): string[] {
+	const ids = new Set<string>()
+	for (const granblueId of spark.characters) {
+		const recruit = byId.get(granblueId)?.recruits
+		if (recruit?.id && recruit.granblue_id && !owned.has(recruit.granblue_id)) ids.add(recruit.id)
+	}
+	return [...ids]
+}
+
 export const TILES_PER_ROW = 2
 
 export interface SparkLayoutBox {

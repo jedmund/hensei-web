@@ -10,6 +10,7 @@ import {
 	removeItem,
 	resolveSpark,
 	moveItem,
+	newCollectionCharacters,
 	toggleSparked,
 	writeSpark,
 	type Spark
@@ -186,6 +187,31 @@ describe('resolveSpark', () => {
 		expect(cleaned.characters).toEqual([A, C])
 		expect(cleaned.sparked).toEqual({ column: 'characters', index: 1 })
 		expect(data.columns.characters.map((item) => item.granblue_id)).toEqual([A, C])
+	})
+})
+
+describe('newCollectionCharacters', () => {
+	const recruit = (granblueId: string, id: string, recruits: string) =>
+		[granblueId, { granblue_id: granblueId, recruits: { id, granblue_id: recruits } }] as [
+			string,
+			CatalogueItem
+		]
+	const items = new Map([
+		recruit(A, 'char-a', '3040000100'),
+		recruit(B, 'char-b', '3040000200'),
+		recruit(C, 'char-c', '3040000300'),
+		[S, { granblue_id: S } as CatalogueItem]
+	])
+
+	it('lists new characters the player does not own, once each', () => {
+		const owned = new Set(['3040000200'])
+		expect(
+			newCollectionCharacters(spark({ characters: [A, B, A], moons: [C] }), items, owned)
+		).toEqual(['char-a'])
+	})
+
+	it('skips items without a recruited character', () => {
+		expect(newCollectionCharacters(spark({ characters: [S] }), items, new Set())).toEqual([])
 	})
 })
 
