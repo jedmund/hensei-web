@@ -185,6 +185,11 @@
 
 		:global(svg) {
 			opacity: 0;
+
+			// Touch screens can't hover to find it, so it's always there
+			@media (hover: none) {
+				opacity: 1;
+			}
 		}
 
 		&:hover,
