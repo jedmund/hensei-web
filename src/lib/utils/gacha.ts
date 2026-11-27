@@ -42,6 +42,25 @@ export function gachaGranblueIdFor(items: CatalogueItem[], identity: string): st
 	return items.find((item) => item.identity === identity)?.granblue_id ?? ''
 }
 
+/**
+ * Whether an item matches a search: its name, its recruit's name or its
+ * granblue_id contain the (lowercased, trimmed) query. An empty query
+ * matches everything.
+ */
+export function gachaItemMatches(item: CatalogueItem, query: string): boolean {
+	if (!query) return true
+	return [item.name.en, item.name.ja, item.granblue_id, item.recruits?.en, item.recruits?.ja].some(
+		(text) => text?.toLowerCase().includes(query)
+	)
+}
+
+/** Sorts newest releases first; undated items last, then by name */
+export function newestGachaItemsFirst(locale: string) {
+	return (a: CatalogueItem, b: CatalogueItem) =>
+		(b.release_date ?? '').localeCompare(a.release_date ?? '') ||
+		gachaItemName(a, locale).localeCompare(gachaItemName(b, locale))
+}
+
 /** Name shown for an item: the recruited character for character weapons */
 export function gachaItemName(item: CatalogueItem, locale: string): string {
 	const names = gachaItemKind(item) === 'character' && item.recruits ? item.recruits : item.name
