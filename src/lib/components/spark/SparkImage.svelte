@@ -13,7 +13,13 @@
 	import { layoutSpark, SPARK_COLUMNS, TILES_PER_ROW } from '$lib/features/spark/spark'
 	import type { SparkRenderData } from '$lib/types/spark'
 
-	let { data }: { data: SparkRenderData } = $props()
+	interface Props {
+		data: SparkRenderData
+		/** The exported image is always dark; shown on the site, it can follow the site's theme */
+		theme?: 'dark' | 'site'
+	}
+
+	let { data, theme = 'dark' }: Props = $props()
 
 	// The frame less its padding, the headings and the footer is what the
 	// columns share; layoutSpark sizes the tiles to fit it
@@ -48,6 +54,7 @@
 
 <div
 	class="spark-image"
+	class:dark={theme === 'dark'}
 	style:--padding="{PADDING}px"
 	style:--column-gap="{COLUMN_GAP}px"
 	style:--column-padding="{COLUMN_PADDING}px"
@@ -89,16 +96,7 @@
 	@use '$src/themes/typography' as *;
 	@use '$src/themes/layout' as *;
 
-	// The image is always dark, whatever the theme of the page that asks for it
 	.spark-image {
-		--page-bg: #{colors.$page--bg--dark};
-		--card-bg: #{colors.$grey-20};
-		--placeholder-bg: #{colors.$grey-40};
-		--accent-blue: #{colors.$accent--blue--dark};
-		--text-primary: #{colors.$text--primary--color--dark};
-		--text-secondary: #{colors.$text--secondary--color--dark};
-		--text-tertiary: #{colors.$text--tertiary--color--dark};
-
 		box-sizing: border-box;
 		width: 1200px;
 		height: 630px;
@@ -109,6 +107,17 @@
 		background: var(--page-bg);
 		color: var(--text-primary);
 		font-family: var(--font-family);
+
+		// The export is dark whatever the theme of the page that asks for it
+		&.dark {
+			--page-bg: #{colors.$page--bg--dark};
+			--card-bg: #{colors.$grey-20};
+			--placeholder-bg: #{colors.$grey-40};
+			--accent-blue: #{colors.$accent--blue--dark};
+			--text-primary: #{colors.$text--primary--color--dark};
+			--text-secondary: #{colors.$text--secondary--color--dark};
+			--text-tertiary: #{colors.$text--tertiary--color--dark};
+		}
 	}
 
 	.columns {

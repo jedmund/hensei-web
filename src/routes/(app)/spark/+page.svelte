@@ -95,6 +95,10 @@
 	// Saved sparks, for signed-in players: the one being edited, the list
 	// under the board, and the one open in the dialog
 	const signedIn = !!page.data.account?.userId
+	const userElement = $derived(
+		(data?.currentUser?.element as 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light') ??
+			undefined
+	)
 	let savedId = $state<string | null>(null)
 	let saving = $state(false)
 	let saved = $state<SavedSpark[]>([])
@@ -454,6 +458,7 @@
 	onEdit={() => viewing && editSaved(viewing)}
 	onDelete={() => (viewing ? deleteSaved(viewing) : Promise.resolve())}
 	query={viewing ? writeSpark(fromSavedSpark(viewing).spark) : ''}
+	{userElement}
 />
 
 <style lang="scss">

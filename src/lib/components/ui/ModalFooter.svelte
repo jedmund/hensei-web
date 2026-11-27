@@ -17,6 +17,10 @@
 		cancelDisabled?: boolean
 		primaryAction?: PrimaryAction
 		left?: Snippet
+		/** Actions after the primary one, at the right */
+		extra?: Snippet
+		/** Leave out the cancel button, e.g. when the dialog's close button is enough */
+		hideCancel?: boolean
 		showShadow?: boolean
 		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light'
 	}
@@ -26,6 +30,8 @@
 		cancelDisabled = false,
 		primaryAction,
 		left,
+		extra,
+		hideCancel = false,
 		showShadow = false,
 		userElement
 	}: Props = $props()
@@ -38,9 +44,11 @@
 		</div>
 	{/if}
 	<div class="actions">
-		<Button variant="ghost" onclick={onCancel} disabled={cancelDisabled} size="small"
-			>{m.modal_cancel()}</Button
-		>
+		{#if !hideCancel}
+			<Button variant="ghost" onclick={onCancel} disabled={cancelDisabled} size="small"
+				>{m.modal_cancel()}</Button
+			>
+		{/if}
 		{#if primaryAction}
 			<Button
 				variant={primaryAction.destructive ? 'destructive' : 'primary'}
@@ -54,6 +62,7 @@
 				{primaryAction.label}
 			</Button>
 		{/if}
+		{@render extra?.()}
 	</div>
 </div>
 

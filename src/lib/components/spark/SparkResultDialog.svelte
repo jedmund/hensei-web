@@ -33,9 +33,11 @@
 		onDelete: () => Promise<void>
 		/** The spark's query string, for its link and image */
 		query: string
+		/** The viewer's element, which colors Edit */
+		userElement?: 'wind' | 'fire' | 'water' | 'earth' | 'dark' | 'light' | undefined
 	}
 
-	let { open = $bindable(), title, data, onEdit, onDelete, query }: Props = $props()
+	let { open = $bindable(), title, data, onEdit, onDelete, query, userElement }: Props = $props()
 
 	let canShare = $state(false)
 	onMount(() => (canShare = canShareSheet()))
@@ -64,16 +66,28 @@
 		<div class="frame" bind:clientWidth={width} style:height="{SPARK_IMAGE_HEIGHT * scale}px">
 			{#if data}
 				<div class="scaled" style:transform="scale({scale})">
-					<SparkImage {data} />
+					<SparkImage {data} theme="site" />
 				</div>
 			{/if}
 		</div>
-		<div class="share">
-			{#if canShare}
-				<Button variant="ghost" size="small" onclick={() => shareSpark(query, title)}>
-					{m.gacha_share()}
-				</Button>
-			{/if}
+	</ModalBody>
+	<!-- Every action in the footer: Delete on its own at the left; Edit, then
+	     sharing, at the right. The header's close button stands in for cancel. -->
+	<ModalFooter
+		onCancel={() => (open = false)}
+		hideCancel
+		primaryAction={{ label: m.spark_edit(), onclick: onEdit }}
+		{userElement}
+	>
+		{#snippet left()}
+			<Button variant="destructive-ghost" size="small" onclick={() => (confirmingDelete = true)}>
+				{m.spark_delete()}
+			</Button>
+		{/snippet}
+		{#snippet extra()}
+			<Button variant="ghost" size="small" onclick={() => saveSparkImage(query)}>
+				{m.spark_save_image()}
+			</Button>
 			<DropdownMenu align="end">
 				{#snippet trigger({ props })}
 					<Button {...props} variant="ghost" size="small" rightIcon="chevron-down-small">
@@ -89,19 +103,11 @@
 					</DropdownMenuBase.Item>
 				{/snippet}
 			</DropdownMenu>
-			<Button variant="ghost" size="small" onclick={() => saveSparkImage(query)}>
-				{m.spark_save_image()}
-			</Button>
-		</div>
-	</ModalBody>
-	<ModalFooter
-		onCancel={() => (open = false)}
-		primaryAction={{ label: m.spark_edit(), onclick: onEdit }}
-	>
-		{#snippet left()}
-			<Button variant="ghost" size="small" onclick={() => (confirmingDelete = true)}>
-				{m.spark_delete()}
-			</Button>
+			{#if canShare}
+				<Button variant="ghost" size="small" onclick={() => shareSpark(query, title)}>
+					{m.gacha_share()}
+				</Button>
+			{/if}
 		{/snippet}
 	</ModalFooter>
 </Dialog>
@@ -118,7 +124,6 @@
 
 <style lang="scss">
 	@use '$src/themes/layout' as *;
-	@use '$src/themes/spacing' as *;
 
 	// As tall as the image, and no wider than it at full size
 	:global(.spark-result-dialog.dialog-content-large) {
@@ -133,15 +138,6 @@
 		margin: 0 auto;
 		overflow: hidden;
 		border-radius: $card-corner;
-	}
-
-	// Under the image, at its right edge
-	.share {
-		display: flex;
-		justify-content: flex-end;
-		gap: $unit;
-		max-width: 1200px;
-		margin: $unit auto 0;
 	}
 
 	.scaled {
