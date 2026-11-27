@@ -1,6 +1,7 @@
 <!-- SparkPickerPane - Sidebar pane for adding to a spark: every SSR character, weapon and summon as art, newest first, in tabs with a search. A weapon adds its character. -->
 
 <script lang="ts">
+	import { untrack } from 'svelte'
 	import Input from '$lib/components/ui/Input.svelte'
 	import ElementPicker from '$lib/components/ui/element-picker/ElementPicker.svelte'
 	import SegmentedControl from '$lib/components/ui/segmented-control/SegmentedControl.svelte'
@@ -100,10 +101,15 @@
 	/** The highlighted result while typing, or the focused one in the grid */
 	let active = $state(-1)
 
-	// A new search, tab or filter starts again from the first result
+	// A new search, tab, filter, pool or date, or the catalogue arriving,
+	// starts again from the first result. Keyed on those, not on the results, which are rebuilt whenever
+	// the spark changes (e.g. after each add) and would pull the selection back.
+	const searchKey = $derived(
+		JSON.stringify([query, tab, elements, pool().pool, pool().season, pool().date, loading()])
+	)
 	$effect(() => {
-		void shown
-		active = query.trim() && shown.length > 0 ? 0 : -1
+		void searchKey
+		active = untrack(() => (query.trim() && shown.length > 0 ? 0 : -1))
 	})
 
 	const searchInput = () => controls?.querySelector<HTMLInputElement>('input') ?? null
