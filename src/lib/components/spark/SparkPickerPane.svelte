@@ -36,9 +36,19 @@
 		initialTab?: 'character' | 'summon'
 		/** The pool and season the spark was on, to show only what they offer; read live */
 		pool: () => { pool: string | null; season: string | null }
+		/** The viewer's element, which colors the keyboard selection; read live */
+		userElement?: () => string | undefined
 	}
 
-	let { items, loading, onAdd, drag, initialTab = 'character', pool }: Props = $props()
+	let {
+		items,
+		loading,
+		onAdd,
+		drag,
+		initialTab = 'character',
+		pool,
+		userElement = () => undefined
+	}: Props = $props()
 
 	// The sidebar renders outside the page's component tree, so the context
 	// is set again here for DraggableItem to find it
@@ -122,6 +132,20 @@
 		}
 	}
 
+	// A click anywhere else in the pane focuses the pane, so the arrow keys
+	// pick up in the results
+	function onPaneKeydown(event: KeyboardEvent) {
+		if (event.target !== event.currentTarget || shown.length === 0) return
+		if (event.key.startsWith('Arrow')) {
+			event.preventDefault()
+			focusResult(Math.max(active, 0))
+		} else if (event.key === 'Escape') {
+			event.preventDefault()
+			event.stopPropagation()
+			backToSearch()
+		}
+	}
+
 	function onGridKeydown(event: KeyboardEvent, index: number) {
 		const last = shown.length - 1
 		const moves: Record<string, number> = {
@@ -143,7 +167,17 @@
 	}
 </script>
 
-<div class="spark-picker">
+<!-- The pane takes focus from a click on its background and hands the arrow
+     keys to the results, which are the real controls -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+<div
+	class="spark-picker"
+	role="group"
+	aria-label={m.spark_picker_title()}
+	tabindex="-1"
+	onkeydown={onPaneKeydown}
+	style:--selection={userElement() ? `var(--${userElement()}-button-bg)` : undefined}
+>
 	<div class="controls" class:scrolled bind:this={controls}>
 		<SegmentedControl
 			value={tab}
@@ -198,7 +232,11 @@
 								class:active={index === active}
 								tabindex={index === Math.max(active, 0) ? 0 : -1}
 								aria-label={characterName(item)}
-								onclick={() => onAdd(item)}
+								onclick={(event) => {
+									// Safari doesn't focus a clicked button; the keyboard carries on from here
+									event.currentTarget.focus()
+									onAdd(item)
+								}}
 								onkeydown={(event) => onGridKeydown(event, index)}
 								onfocus={() => {
 									active = index
@@ -229,6 +267,7 @@
 
 	// Fills the sidebar; the controls stay put while the art scrolls
 	.spark-picker {
+		outline: none;
 		display: flex;
 		flex-direction: column;
 		height: calc(100dvh - 60px);
@@ -265,6 +304,13 @@
 		padding: $unit-2x;
 	}
 
+	// The selected result sits above its neighbors, so its halo covers them
+	li:has(:global(.result.active)),
+	li:has(:global(.result:focus-visible)) {
+		position: relative;
+		z-index: 1;
+	}
+
 	ul {
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -281,11 +327,16 @@
 		border-radius: $item-corner-small;
 		cursor: pointer;
 
-		// The keyboard's place: the result Enter adds
+		// The keyboard's place, the result Enter adds, in the viewer's element
 		&:focus-visible,
 		&.active {
-			outline: 3px solid var(--accent-blue);
+			outline: 3px solid var(--selection, var(--accent-blue));
 			outline-offset: 2px;
+			// A halo in the page's color, white or dark, under the ring and just
+			// past it, so the ring stands apart from the art around it
+			box-shadow:
+				0 0 0 8px var(--card-bg),
+				0 0 12px 8px var(--card-bg);
 		}
 	}
 
