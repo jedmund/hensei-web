@@ -8,6 +8,7 @@
  * (see shareImage.ts).
  */
 
+import { fetchRateUps } from '$lib/features/spark/rateUps'
 import { createHash } from 'node:crypto'
 import { getApiBaseUrl } from '$lib/api/adapters/config'
 import {
@@ -24,7 +25,7 @@ import type { SparkRenderData } from '$lib/types/spark'
 
 export const TEMPLATE_ID = 'spark.image' as const
 /** Bump to invalidate every cached image and signature */
-export const RENDER_VERSION = 2
+export const RENDER_VERSION = 3
 // Bump when the image's design changes, so cached images re-render without
 // changing signatures on links that are already shared
 const DESIGN_VERSION = 1
@@ -102,5 +103,12 @@ export async function resolveSparkImage(
 	const body = (await response.json().catch(() => null)) as { items?: CatalogueItem[] } | null
 	if (!response.ok || !Array.isArray(body?.items)) throw new CatalogueError(502)
 	const byId = new Map(body.items.map((item) => [item.granblue_id, item]))
-	return resolveSpark(spark, byId).data
+	const rateUps = await fetchRateUps(
+		fetch,
+		getApiBaseUrl(),
+		spark.date,
+		spark.pool,
+		AbortSignal.timeout(10_000)
+	)
+	return { ...resolveSpark(spark, byId).data, rateUps }
 }

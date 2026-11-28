@@ -26,6 +26,14 @@ describe('gacha API proxy', () => {
 			expect.objectContaining({ body: '{"draws":"300"}', method: 'POST' })
 		)
 	})
+	it("passes the spark maker's rate-up lookups through", async () => {
+		const input = event('rate_ups')
+		await GET(input as unknown as Parameters<typeof GET>[0])
+		expect(input.fetch).toHaveBeenCalledWith(
+			'http://api.test/api/v1/gacha/rate_ups?mode=classic',
+			expect.objectContaining({ method: 'GET' })
+		)
+	})
 	it('restricts proxy paths and methods', async () => {
 		await expect(
 			GET(event('../users') as unknown as Parameters<typeof GET>[0])

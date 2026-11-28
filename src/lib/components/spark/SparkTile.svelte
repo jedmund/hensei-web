@@ -1,4 +1,4 @@
-<!-- SparkTile - One item's wide art, with the Sparked badge; fills the width it's given -->
+<!-- SparkTile - One item's wide art, with the Sparked badge and a frame for a rate-up; fills the width it's given -->
 
 <script lang="ts">
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
@@ -17,6 +17,8 @@
 	interface Props {
 		item: CatalogueItem
 		sparked: boolean
+		/** A rate-up on the banner the spark was drawn on */
+		rateUp?: boolean
 		/** Load the art when it scrolls near; the export loads it straight away */
 		lazy?: boolean
 		/** A character weapon's character art (the default), or the weapon's own */
@@ -27,7 +29,15 @@
 		tooltipDetail?: string
 	}
 
-	let { item, sparked, lazy = false, art = 'character', tooltip, tooltipDetail }: Props = $props()
+	let {
+		item,
+		sparked,
+		rateUp = false,
+		lazy = false,
+		art = 'character',
+		tooltip,
+		tooltipDetail
+	}: Props = $props()
 
 	// The sparked mark takes the item's element, like elemental buttons
 	const element = $derived(getElementTypeKey(item.element))
@@ -47,6 +57,7 @@
 	<div
 		class="spark-tile"
 		class:sparked
+		class:rate-up={rateUp}
 		style:--sparked={element ? `var(--${element}-button-bg)` : undefined}
 	>
 		<img
@@ -110,6 +121,26 @@
 		&.sparked {
 			outline: 3px solid var(--sparked, var(--accent-blue));
 			outline-offset: -3px;
+		}
+
+		// A rate-up gets a pink-to-violet frame (a placeholder for something
+		// better). On the sparked item it sits inside the element outline.
+		&.rate-up::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			border: 3px solid transparent;
+			border-radius: inherit;
+			background: linear-gradient(135deg, #ff4fa3, #8b5cff) border-box;
+			mask:
+				linear-gradient(#000 0 0) padding-box exclude,
+				linear-gradient(#000 0 0);
+			pointer-events: none;
+		}
+
+		&.sparked.rate-up::after {
+			inset: 3px;
+			border-radius: 0;
 		}
 
 		.art {

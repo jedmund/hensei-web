@@ -37,6 +37,7 @@
 	import { useAddCharactersToCollection } from '$lib/api/mutations/collection.mutations'
 	import { sparkImageHeight, SPARK_IMAGE_WIDTH } from '$lib/components/spark/SparkImage.svelte'
 	import { readJson } from '$lib/features/gacha/api'
+	import { fetchRateUps } from '$lib/features/spark/rateUps'
 	import {
 		addItem,
 		insertItem,
@@ -131,6 +132,18 @@
 	let savedFailed = $state(false)
 	let viewing = $state<SavedSpark | null>(null)
 	let viewingOpen = $state(false)
+	// The rate-ups for the saved spark open in the dialog
+	let viewingRateUps = $state<string[]>([])
+	$effect(() => {
+		if (!viewing) return
+		const { date, pool } = fromSavedSpark(viewing).spark
+		const controller = new AbortController()
+		viewingRateUps = []
+		void fetchRateUps(fetch, '/api', date, pool, controller.signal).then((ids) => {
+			if (!controller.signal.aborted) viewingRateUps = ids
+		})
+		return () => controller.abort()
+	})
 
 	// One drag-and-drop context for the board and the picker pane
 	const drag = createSparkDrag({
@@ -141,7 +154,18 @@
 	setDragDropContext(drag)
 
 	const byId = $derived(new Map(items.map((item) => [item.granblue_id, item])))
-	const resolved = $derived(resolveSpark(spark, byId).data)
+	// The rate-ups on the banner the spark was drawn on, for its date and pool
+	let rateUps = $state<string[]>([])
+	$effect(() => {
+		const { date, pool } = spark
+		const controller = new AbortController()
+		void fetchRateUps(fetch, '/api', date, pool, controller.signal).then((ids) => {
+			if (!controller.signal.aborted) rateUps = ids
+		})
+		return () => controller.abort()
+	})
+
+	const resolved = $derived({ ...resolveSpark(spark, byId).data, rateUps })
 	const query = $derived(writeSpark(spark))
 	const hasItems = $derived(sparkItemCount(spark) > 0)
 
@@ -547,7 +571,7 @@
 <SparkResultDialog
 	bind:open={viewingOpen}
 	title={m.spark_saved_title()}
-	data={viewing ? resolveSaved(viewing) : null}
+	data={viewing ? { ...resolveSaved(viewing), rateUps: viewingRateUps } : null}
 	onEdit={() => viewing && editSaved(viewing)}
 	onDelete={() => (viewing ? deleteSaved(viewing) : Promise.resolve())}
 	query={viewing ? writeSpark(fromSavedSpark(viewing).spark) : ''}

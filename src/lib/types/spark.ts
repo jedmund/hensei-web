@@ -15,4 +15,6 @@ export interface SparkRenderData {
 	date: string | null
 	pool: string | null
 	season: string | null
+	/** granblue_ids that were rate-ups on the banner the spark was drawn on */
+	rateUps: string[]
 }

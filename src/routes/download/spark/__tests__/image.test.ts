@@ -95,6 +95,25 @@ describe('GET /download/spark', () => {
 		expect(stored?.theme).toBe('dark')
 	})
 
+	it("marks the rate-ups of the spark's banner", async () => {
+		const calls: string[] = []
+		const fetch = vi.fn(async (input: string) => {
+			calls.push(String(input))
+			return String(input).includes('/gacha/rate_ups')
+				? Response.json({ banners: [], rate_ups: ['1040000200'] })
+				: Response.json({ items: ITEMS })
+		})
+
+		const res = await get('c=1040000100,1040000200&date=2026-11-17&pool=flash&lang=en', fetch)
+
+		expect(res.status).toBe(200)
+		expect(calls).toContain('http://api.test/api/v1/gacha/rate_ups?date=2026-11-17&pool=flash')
+		const token = new URL(`http://x${renders.at(-1)?.path}`).searchParams.get('prefetch')
+		expect(consumePrefetch<{ spark: { rateUps: string[] } }>(token)?.spark.rateUps).toEqual([
+			'1040000200'
+		])
+	})
+
 	it('draws in the theme it is asked for, cached apart', async () => {
 		await get('c=1040000100&theme=light')
 		const token = new URL(`http://x${renders[0]?.path}`).searchParams.get('prefetch')
@@ -118,7 +137,7 @@ describe('GET /download/spark', () => {
 	it('uses S3 for the cache when a bucket is configured', async () => {
 		env.RENDER_S3_BUCKET = 'renders'
 		await get('c=1040000100')
-		expect([...s3.keys()][0]).toMatch(/^previews\/spark\.image\/[0-9a-f]{64}\/2\.png$/)
+		expect([...s3.keys()][0]).toMatch(/^previews\/spark\.image\/[0-9a-f]{64}\/3\.png$/)
 	})
 
 	it('rate-limits unsigned cache misses per IP', async () => {

@@ -6,7 +6,7 @@ const proxy: RequestHandler = async ({ params, request, url, fetch }) => {
 	const path = params.path
 	const allowed =
 		request.method === 'GET'
-			? path === 'catalogue' || /^jobs\/[a-f0-9]{48}$/.test(path)
+			? ['catalogue', 'rate_ups'].includes(path) || /^jobs\/[a-f0-9]{48}$/.test(path)
 			: ['simulations', 'until', 'odds'].includes(path)
 	if (!allowed) error(404)
 	let response: Response
