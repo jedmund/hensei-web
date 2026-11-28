@@ -7,6 +7,7 @@
 	import { toast } from 'svelte-sonner'
 	import PageMeta from '$lib/components/PageMeta.svelte'
 	import Button from '$lib/components/ui/Button.svelte'
+	import Tooltip from '$lib/components/ui/Tooltip.svelte'
 	import ConfirmDialog from '$lib/components/ui/ConfirmDialog.svelte'
 	import DropdownMenu from '$lib/components/ui/DropdownMenu.svelte'
 	import Input from '$lib/components/ui/Input.svelte'
@@ -56,7 +57,7 @@
 	} from '$lib/features/spark/spark'
 	import { m } from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
-	import { gachaItemName } from '$lib/utils/gacha'
+	import { gachaItemName, gachaItemThumbnail, newestGachaItemsFirst } from '$lib/utils/gacha'
 	import { copySparkImage, copySparkLink, saveSparkImage } from '$lib/features/spark/share'
 	import { sidebar } from '$lib/stores/sidebar.svelte'
 	import { MOBILE_QUERY } from '$lib/utils/viewport.svelte'
@@ -166,6 +167,16 @@
 	})
 
 	const resolved = $derived({ ...resolveSpark(spark, byId).data, rateUps })
+
+	/** Rate-up thumbnails shown beside the date before the rest are counted */
+	const RATE_UP_THUMBNAILS = 10
+	// The rate-up items, newest first, characters before summons
+	const rateUpItems = $derived(
+		rateUps
+			.flatMap((id) => byId.get(id) ?? [])
+			.sort(newestGachaItemsFirst(getLocale()))
+			.sort((a, b) => Number(a.drawable_type === 'Summon') - Number(b.drawable_type === 'Summon'))
+	)
 	const query = $derived(writeSpark(spark))
 	const hasItems = $derived(sparkItemCount(spark) > 0)
 
@@ -434,7 +445,8 @@
 {#snippet configure()}
 	<!-- The spark's settings and actions, along the bottom of the card -->
 	<div class="configure">
-		<div class="settings">
+		<!-- The date, and the rate-ups of the banner running that day -->
+		<div class="date-row">
 			<div class="date">
 				<DatePicker
 					label={m.spark_date()}
@@ -444,6 +456,27 @@
 					contained
 				/>
 			</div>
+			<div class="rate-ups">
+				<span class="field-label">{m.spark_rate_ups()}</span>
+				{#if rateUpItems.length > 0}
+					<ul class="rate-up-items">
+						{#each rateUpItems.slice(0, RATE_UP_THUMBNAILS) as item (item.identity)}
+							<li>
+								<Tooltip content={gachaItemName(item, getLocale())}>
+									<img src={gachaItemThumbnail(item)} alt={gachaItemName(item, getLocale())} />
+								</Tooltip>
+							</li>
+						{/each}
+						{#if rateUpItems.length > RATE_UP_THUMBNAILS}
+							<li class="more">+{rateUpItems.length - RATE_UP_THUMBNAILS}</li>
+						{/if}
+					</ul>
+				{:else}
+					<span class="none">{m.spark_rate_ups_none()}</span>
+				{/if}
+			</div>
+		</div>
+		<div class="settings">
 			<div class="pool">
 				<Select
 					contained
@@ -600,11 +633,11 @@
 		margin-top: $unit-2x;
 	}
 
-	// Date, pool, season and draws in equal columns, labels lined up across the top;
-	// stacked on phones
-	.settings {
+	// The date in a column as wide as the fields below it, its rate-ups beside
+	// it; stacked on phones
+	.date-row {
 		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
+		grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
 		align-items: start;
 		gap: $unit-2x;
 
@@ -616,8 +649,79 @@
 		:global(.date > *) {
 			width: 100%;
 		}
+	}
 
-		// As tall as the date picker, which is the tallest of the four
+	.rate-ups {
+		display: flex;
+		flex-direction: column;
+		gap: $unit-half;
+		min-width: 0;
+	}
+
+	// As the date picker labels its field
+	.field-label {
+		color: var(--text-primary);
+		font-size: $font-small;
+		font-weight: $medium;
+		margin-bottom: $unit-half;
+	}
+
+	// One row as tall as the date field
+	.rate-up-items {
+		display: flex;
+		align-items: center;
+		gap: $unit-half;
+		min-height: calc($unit * 5.5);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		overflow: hidden;
+
+		img {
+			display: block;
+			width: calc($unit * 5);
+			height: calc($unit * 5);
+			border-radius: $item-corner-small;
+			object-fit: cover;
+		}
+	}
+
+	// The count past the thumbnails, in a tile the size of one
+	.more {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex: none;
+		width: calc($unit * 5);
+		height: calc($unit * 5);
+		border-radius: $item-corner-small;
+		background: var(--placeholder-bg);
+		color: var(--text-secondary);
+		font-size: $font-small;
+		font-weight: $bold;
+	}
+
+	.none {
+		display: flex;
+		align-items: center;
+		min-height: calc($unit * 5.5);
+		color: var(--text-secondary);
+		font-size: $font-small;
+	}
+
+	// Pool, season and draws in equal columns, labels lined up across the top;
+	// stacked on phones
+	.settings {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		align-items: start;
+		gap: $unit-2x;
+
+		@media (max-width: 640px) {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		// As tall as the date picker above them
 		.pool :global([data-select-trigger]),
 		.season :global([data-select-trigger]),
 		.draws :global(input) {
