@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 41 41" width="41" height="41">
+  <!-- Cerulean Spark crystal, drawn after the game's Cerulean Sparks panel (gacha parts sprite) -->
+  <defs>
+    <radialGradient id="crystal-halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#A7FAFD" stop-opacity="0.55"/>
+      <stop offset="0.7" stop-color="#45E7FB" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#45E7FB" stop-opacity="0"/>
+    </radialGradient>
+    <!-- The rim fades out from the disc, like a glow rather than an edge -->
+    <radialGradient id="crystal-rim" cx="50%" cy="50%" r="50%">
+      <stop offset="0.74" stop-color="#32CDEC"/>
+      <stop offset="0.86" stop-color="#45E7FB" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#45E7FB" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="crystal-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.4"/>
+    </filter>
+    <!-- A glowing ring around the core: brightest just outside the gap (radius
+         about 5), falling off through light blue by radius 7.2 -->
+    <radialGradient id="crystal-ring" cx="50%" cy="50%" r="50%">
+      <stop offset="0.6" stop-color="#F2FBFF" stop-opacity="0"/>
+      <stop offset="0.71" stop-color="#F2FBFF" stop-opacity="0.92"/>
+      <stop offset="0.83" stop-color="#9CCBFF" stop-opacity="0.4"/>
+      <stop offset="1" stop-color="#6FA8F5" stop-opacity="0"/>
+    </radialGradient>
+    <!-- A thin, soft halo farther out, peaking at radius 9.3 -->
+    <radialGradient id="crystal-outer-ring" cx="50%" cy="50%" r="50%">
+      <stop offset="0.76" stop-color="#E8FEFF" stop-opacity="0"/>
+      <stop offset="0.845" stop-color="#E8FEFF" stop-opacity="0.7"/>
+      <stop offset="0.93" stop-color="#A7FAFD" stop-opacity="0"/>
+    </radialGradient>
+    <!-- The core: solid in the middle, glowing out into the gap -->
+    <radialGradient id="crystal-core" cx="50%" cy="50%" r="50%">
+      <stop offset="0.55" stop-color="#FFFFFF"/>
+      <stop offset="0.8" stop-color="#FFFFFF" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Softens the facets so they blend into the band -->
+    <filter id="crystal-facet" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.22"/>
+    </filter>
+    <filter id="crystal-facet-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.8"/>
+    </filter>
+    <!-- The blue band: solid inside, lightening toward its edge into the cyan rim -->
+    <radialGradient id="crystal-band" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#3578E3"/>
+      <stop offset="0.68" stop-color="#3578E3"/>
+      <stop offset="0.9" stop-color="#3C96E8"/>
+      <stop offset="1" stop-color="#3FB4EA" stop-opacity="0.6"/>
+    </radialGradient>
+    <filter id="crystal-band-blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.6"/>
+    </filter>
+    <radialGradient id="crystal-inner-blue" cx="50%" cy="50%" r="50%">
+      <stop offset="0.45" stop-color="#3578E3" stop-opacity="0"/>
+      <stop offset="0.6" stop-color="#3578E3" stop-opacity="0.55"/>
+      <stop offset="0.85" stop-color="#3578E3" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#3578E3" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="crystal-gap-blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="0.45"/>
+    </filter>
+    <filter id="crystal-glow-wide" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.6"/>
+    </filter>
+  </defs>
+  <circle cx="20.5" cy="20.5" r="18" fill="url(#crystal-halo)"/>
+  <!-- Disc: a glowing cyan rim, blue band, light facets and deep-blue dashes -->
+  <path d="M20.50 6.40 L23.56 5.10 L25.90 7.47 L29.22 7.45 L30.47 10.53 L33.55 11.78 L33.53 15.10 L35.90 17.44 L34.60 20.50 L35.90 23.56 L33.53 25.90 L33.55 29.22 L30.47 30.47 L29.22 33.55 L25.90 33.53 L23.56 35.90 L20.50 34.60 L17.44 35.90 L15.10 33.53 L11.78 33.55 L10.53 30.47 L7.45 29.22 L7.47 25.90 L5.10 23.56 L6.40 20.50 L5.10 17.44 L7.47 15.10 L7.45 11.78 L10.53 10.53 L11.78 7.45 L15.10 7.47 L17.44 5.10 Z" fill="#45E7FB" opacity="0.6" filter="url(#crystal-glow)"/>
+  <path d="M20.50 6.40 L23.56 5.10 L25.90 7.47 L29.22 7.45 L30.47 10.53 L33.55 11.78 L33.53 15.10 L35.90 17.44 L34.60 20.50 L35.90 23.56 L33.53 25.90 L33.55 29.22 L30.47 30.47 L29.22 33.55 L25.90 33.53 L23.56 35.90 L20.50 34.60 L17.44 35.90 L15.10 33.53 L11.78 33.55 L10.53 30.47 L7.45 29.22 L7.47 25.90 L5.10 23.56 L6.40 20.50 L5.10 17.44 L7.47 15.10 L7.45 11.78 L10.53 10.53 L11.78 7.45 L15.10 7.47 L17.44 5.10 Z" fill="url(#crystal-rim)"/>
+  <circle cx="20.5" cy="20.5" r="12.6" fill="url(#crystal-band)" filter="url(#crystal-band-blur)"/>
+  <path d="M21.59 15.01 L21.50 10.35 L23.27 6.57 L23.46 10.74 Z M23.61 15.84 L25.31 11.51 L28.39 8.69 L26.97 12.61 Z M25.16 17.39 L28.39 14.03 L32.31 12.61 L29.49 15.69 Z M25.99 19.41 L30.26 17.54 L34.43 17.73 L30.65 19.50 Z M25.99 21.59 L30.65 21.50 L34.43 23.27 L30.26 23.46 Z M25.16 23.61 L29.49 25.31 L32.31 28.39 L28.39 26.97 Z M23.61 25.16 L26.97 28.39 L28.39 32.31 L25.31 29.49 Z M21.59 25.99 L23.46 30.26 L23.27 34.43 L21.50 30.65 Z M19.41 25.99 L19.50 30.65 L17.73 34.43 L17.54 30.26 Z M17.39 25.16 L15.69 29.49 L12.61 32.31 L14.03 28.39 Z M15.84 23.61 L12.61 26.97 L8.69 28.39 L11.51 25.31 Z M15.01 21.59 L10.74 23.46 L6.57 23.27 L10.35 21.50 Z M15.01 19.41 L10.35 19.50 L6.57 17.73 L10.74 17.54 Z M15.84 17.39 L11.51 15.69 L8.69 12.61 L12.61 14.03 Z M17.39 15.84 L14.03 12.61 L12.61 8.69 L15.69 11.51 Z M19.41 15.01 L17.54 10.74 L17.73 6.57 L19.50 10.35 Z" fill="#45E7FB" opacity="0.4" filter="url(#crystal-facet-glow)"/>
+  <path d="M21.59 15.01 L21.50 10.35 L23.27 6.57 L23.46 10.74 Z M23.61 15.84 L25.31 11.51 L28.39 8.69 L26.97 12.61 Z M25.16 17.39 L28.39 14.03 L32.31 12.61 L29.49 15.69 Z M25.99 19.41 L30.26 17.54 L34.43 17.73 L30.65 19.50 Z M25.99 21.59 L30.65 21.50 L34.43 23.27 L30.26 23.46 Z M25.16 23.61 L29.49 25.31 L32.31 28.39 L28.39 26.97 Z M23.61 25.16 L26.97 28.39 L28.39 32.31 L25.31 29.49 Z M21.59 25.99 L23.46 30.26 L23.27 34.43 L21.50 30.65 Z M19.41 25.99 L19.50 30.65 L17.73 34.43 L17.54 30.26 Z M17.39 25.16 L15.69 29.49 L12.61 32.31 L14.03 28.39 Z M15.84 23.61 L12.61 26.97 L8.69 28.39 L11.51 25.31 Z M15.01 21.59 L10.74 23.46 L6.57 23.27 L10.35 21.50 Z M15.01 19.41 L10.35 19.50 L6.57 17.73 L10.74 17.54 Z M15.84 17.39 L11.51 15.69 L8.69 12.61 L12.61 14.03 Z M17.39 15.84 L14.03 12.61 L12.61 8.69 L15.69 11.51 Z M19.41 15.01 L17.54 10.74 L17.73 6.57 L19.50 10.35 Z" fill="#45E7FB" filter="url(#crystal-facet)"/>
+  <path d="M23.18 14.03 L23.76 11.68 L25.02 9.60 L24.43 11.96 Z M25.45 15.55 L26.89 13.60 L28.84 12.16 L27.40 14.11 Z M26.97 17.82 L29.04 16.57 L31.40 15.98 L29.32 17.24 Z M27.50 20.50 L29.89 20.14 L32.30 20.50 L29.89 20.86 Z M26.97 23.18 L29.32 23.76 L31.40 25.02 L29.04 24.43 Z M25.45 25.45 L27.40 26.89 L28.84 28.84 L26.89 27.40 Z M23.18 26.97 L24.43 29.04 L25.02 31.40 L23.76 29.32 Z M20.50 27.50 L20.86 29.89 L20.50 32.30 L20.14 29.89 Z M17.82 26.97 L17.24 29.32 L15.98 31.40 L16.57 29.04 Z M15.55 25.45 L14.11 27.40 L12.16 28.84 L13.60 26.89 Z M14.03 23.18 L11.96 24.43 L9.60 25.02 L11.68 23.76 Z M13.50 20.50 L11.11 20.86 L8.70 20.50 L11.11 20.14 Z M14.03 17.82 L11.68 17.24 L9.60 15.98 L11.96 16.57 Z M15.55 15.55 L13.60 14.11 L12.16 12.16 L14.11 13.60 Z M17.82 14.03 L16.57 11.96 L15.98 9.60 L17.24 11.68 Z M20.50 13.50 L20.14 11.11 L20.50 8.70 L20.86 11.11 Z" fill="#2717C7" filter="url(#crystal-facet)"/>
+  <!-- Blue tint over the facets between the two halos -->
+  <circle cx="20.5" cy="20.5" r="9.6" fill="url(#crystal-inner-blue)"/>
+  <!-- A darker gap around the core, under the rays, so the core and its ring
+       stay apart at small sizes -->
+  <circle cx="20.5" cy="20.5" r="4.9" fill="#45A0EE" filter="url(#crystal-gap-blur)"/>
+  <!-- Rays over a soft glow: a faint wide layer and a brighter close one -->
+  <path d="M19.30 14.90 C19.30 10.88 17.70 9.81 17.70 7.13 C17.70 4.85 19.88 3.11 20.50 1.50 C21.12 3.11 23.30 4.85 23.30 7.13 C23.30 9.81 21.70 10.88 21.70 14.90 Z M26.10 19.30 C29.82 19.30 30.81 17.70 33.29 17.70 C35.40 17.70 37.01 19.88 38.50 20.50 C37.01 21.12 35.40 23.30 33.29 23.30 C30.81 23.30 29.82 21.70 26.10 21.70 Z M21.70 26.10 C21.70 30.12 23.30 31.19 23.30 33.87 C23.30 36.15 21.12 37.89 20.50 39.50 C19.88 37.89 17.70 36.15 17.70 33.87 C17.70 31.19 19.30 30.12 19.30 26.10 Z M14.90 21.70 C11.18 21.70 10.19 23.30 7.71 23.30 C5.60 23.30 3.99 21.12 2.50 20.50 C3.99 19.88 5.60 17.70 7.71 17.70 C10.19 17.70 11.18 19.30 14.90 19.30 Z" fill="#45E7FB" opacity="0.55" filter="url(#crystal-glow-wide)"/>
+  <path d="M19.70 14.90 C19.70 10.70 18.60 9.58 18.60 6.78 C18.60 4.40 20.08 2.58 20.50 0.90 C20.92 2.58 22.40 4.40 22.40 6.78 C22.40 9.58 21.30 10.70 21.30 14.90 Z M26.10 19.70 C30.00 19.70 31.04 18.60 33.64 18.60 C35.85 18.60 37.54 20.08 39.10 20.50 C37.54 20.92 35.85 22.40 33.64 22.40 C31.04 22.40 30.00 21.30 26.10 21.30 Z M21.30 26.10 C21.30 30.30 22.40 31.42 22.40 34.22 C22.40 36.60 20.92 38.42 20.50 40.10 C20.08 38.42 18.60 36.60 18.60 34.22 C18.60 31.42 19.70 30.30 19.70 26.10 Z M14.90 21.30 C11.00 21.30 9.96 22.40 7.36 22.40 C5.15 22.40 3.46 20.92 1.90 20.50 C3.46 20.08 5.15 18.60 7.36 18.60 C9.96 18.60 11.00 19.70 14.90 19.70 Z" fill="#A7FAFD" opacity="0.9" filter="url(#crystal-glow)"/>
+  <path d="M20.15 14.90 C20.15 10.70 19.25 9.58 19.25 6.78 C19.25 4.40 20.23 2.58 20.50 0.90 C20.77 2.58 21.75 4.40 21.75 6.78 C21.75 9.58 20.85 10.70 20.85 14.90 Z M26.10 20.15 C30.00 20.15 31.04 19.25 33.64 19.25 C35.85 19.25 37.54 20.23 39.10 20.50 C37.54 20.77 35.85 21.75 33.64 21.75 C31.04 21.75 30.00 20.85 26.10 20.85 Z M20.85 26.10 C20.85 30.30 21.75 31.42 21.75 34.22 C21.75 36.60 20.77 38.42 20.50 40.10 C20.23 38.42 19.25 36.60 19.25 34.22 C19.25 31.42 20.15 30.30 20.15 26.10 Z M14.90 20.85 C11.00 20.85 9.96 21.75 7.36 21.75 C5.15 21.75 3.46 20.77 1.90 20.50 C3.46 20.23 5.15 19.25 7.36 19.25 C9.96 19.25 11.00 20.15 14.90 20.15 Z" fill="#FFFFFF"/>
+  <!-- Core -->
+  <!-- A thin outer halo through the middle of the facets -->
+  <circle cx="20.5" cy="20.5" r="11" fill="url(#crystal-outer-ring)"/>
+  <!-- A glowing white ring around the gap, and the glowing core -->
+  <circle cx="20.5" cy="20.5" r="7.2" fill="url(#crystal-ring)"/>
+  <circle cx="20.5" cy="20.5" r="3.8" fill="url(#crystal-core)"/>
+</svg>
