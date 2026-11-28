@@ -9,7 +9,7 @@ import type { CatalogueItem } from '$lib/types/gacha'
  */
 export interface SparkRenderData {
 	columns: Record<SparkColumn, CatalogueItem[]>
-	sparked: SparkMark | null
+	sparked: SparkMark[]
 	draws: number
 	/** For the image's title: the spark's day and the gacha it was on */
 	date: string | null

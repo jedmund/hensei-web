@@ -1,7 +1,7 @@
 /**
  * Spark maker state: the SSRs someone pulled on their way to a spark, in
  * three lists (new characters, characters that came back as gold moons, and
- * summons), which one they sparked, and how many draws it took.
+ * summons), which of them they sparked, and how many draws it took.
  *
  * It lives in the URL so a spark can be shared as a link, and so the image
  * endpoint can rebuild it. Items are catalogue granblue_ids (the character's
@@ -31,8 +31,8 @@ export interface Spark {
 	characters: string[]
 	moons: string[]
 	summons: string[]
-	/** The item that was sparked rather than drawn */
-	sparked: SparkMark | null
+	/** The items that were sparked rather than drawn, in column order */
+	sparked: SparkMark[]
 	draws: number
 	/** The day of the spark, as YYYY-MM-DD with no time zone */
 	date: string | null
@@ -50,7 +50,7 @@ export const emptySpark = (): Spark => ({
 	characters: [],
 	moons: [],
 	summons: [],
-	sparked: null,
+	sparked: [],
 	draws: DEFAULT_DRAWS,
 	date: null,
 	pool: null,
@@ -73,13 +73,36 @@ function readList(params: URLSearchParams, column: SparkColumn): string[] {
 		.slice(0, MAX_PER_COLUMN)
 }
 
-function readMark(value: string | null, spark: Spark): SparkMark | null {
-	const match = value?.match(/^([cms])(\d{1,2})$/)
-	if (!match) return null
-	const column = SPARK_COLUMNS.find((key) => KEYS[key] === match[1])
-	const index = Number(match[2])
-	if (!column || index >= spark[column].length) return null
-	return { column, index }
+/** Marks in column order and then by index, each once */
+export function sortMarks(marks: readonly SparkMark[]): SparkMark[] {
+	const seen = new Set<string>()
+	return marks
+		.filter((mark) => {
+			const key = `${mark.column}:${mark.index}`
+			if (seen.has(key)) return false
+			seen.add(key)
+			return true
+		})
+		.sort(
+			(a, b) =>
+				SPARK_COLUMNS.indexOf(a.column) - SPARK_COLUMNS.indexOf(b.column) || a.index - b.index
+		)
+}
+
+export const isSparked = (marks: readonly SparkMark[], column: SparkColumn, index: number) =>
+	marks.some((mark) => mark.column === column && mark.index === index)
+
+/** `spark=c1,m3`: each mark a column key and an index; bad ones are dropped */
+function readMarks(value: string | null, spark: Spark): SparkMark[] {
+	const marks: SparkMark[] = []
+	for (const part of (value ?? '').split(',')) {
+		const match = part.match(/^([cms])(\d{1,2})$/)
+		if (!match) continue
+		const column = SPARK_COLUMNS.find((key) => KEYS[key] === match[1])
+		const index = Number(match[2])
+		if (column && index < spark[column].length) marks.push({ column, index })
+	}
+	return sortMarks(marks)
 }
 
 /** A real day written as YYYY-MM-DD */
@@ -96,7 +119,7 @@ function isDate(value: string): boolean {
 export function readSpark(params: URLSearchParams): Spark {
 	const spark = emptySpark()
 	for (const column of SPARK_COLUMNS) spark[column] = readList(params, column)
-	spark.sparked = readMark(params.get('spark'), spark)
+	spark.sparked = readMarks(params.get('spark'), spark)
 	const draws = params.get('draws') ?? ''
 	if (/^\d{1,5}$/.test(draws) && Number(draws) > 0) spark.draws = Number(draws)
 	const date = params.get('date') ?? ''
@@ -120,7 +143,10 @@ export function writeSpark(spark: Spark): string {
 	for (const column of SPARK_COLUMNS) {
 		if (spark[column].length > 0) parts.push(`${KEYS[column]}=${spark[column].join(',')}`)
 	}
-	if (spark.sparked) parts.push(`spark=${KEYS[spark.sparked.column]}${spark.sparked.index}`)
+	if (spark.sparked.length > 0) {
+		const marks = sortMarks(spark.sparked).map((mark) => `${KEYS[mark.column]}${mark.index}`)
+		parts.push(`spark=${marks.join(',')}`)
+	}
 	if (spark.draws !== DEFAULT_DRAWS) parts.push(`draws=${spark.draws}`)
 	if (spark.date) parts.push(`date=${spark.date}`)
 	if (spark.pool) parts.push(`pool=${spark.pool}`)
@@ -132,7 +158,7 @@ export const sparkItemCount = (spark: Spark) =>
 	spark.characters.length + spark.moons.length + spark.summons.length
 
 // --- Edits -------------------------------------------------------------------
-// Each returns a new spark, keeping the sparked mark on the same item.
+// Each returns a new spark, keeping the sparked marks on the same items.
 
 /**
  * Add an item where the game would put it: a summon with the summons; a
@@ -163,21 +189,20 @@ export function insertItem(spark: Spark, granblueId: string, to: SparkMark): Spa
 	const index = Math.min(Math.max(to.index, 0), spark[to.column].length)
 	const list = [...spark[to.column]]
 	list.splice(index, 0, granblueId)
-	let sparked = spark.sparked
-	if (sparked?.column === to.column && sparked.index >= index) {
-		sparked = { column: to.column, index: sparked.index + 1 }
-	}
-	return { ...spark, [to.column]: list, sparked }
+	const sparked = spark.sparked.map((mark) =>
+		mark.column === to.column && mark.index >= index ? { ...mark, index: mark.index + 1 } : mark
+	)
+	return { ...spark, [to.column]: list, sparked: sortMarks(sparked) }
 }
 
 export function removeItem(spark: Spark, column: SparkColumn, index: number): Spark {
 	const list = spark[column].filter((_, i) => i !== index)
-	let sparked = spark.sparked
-	if (sparked?.column === column) {
-		if (sparked.index === index) sparked = null
-		else if (sparked.index > index) sparked = { column, index: sparked.index - 1 }
-	}
-	return { ...spark, [column]: list, sparked }
+	const sparked = spark.sparked
+		.filter((mark) => !(mark.column === column && mark.index === index))
+		.map((mark) =>
+			mark.column === column && mark.index > index ? { ...mark, index: mark.index - 1 } : mark
+		)
+	return { ...spark, [column]: list, sparked: sortMarks(sparked) }
 }
 
 /**
@@ -193,11 +218,11 @@ export function moveItem(spark: Spark, from: SparkMark, to: SparkMark): Spark {
 	if (crossing && (from.column === 'summons' || to.column === 'summons')) return spark
 	if (crossing && spark[to.column].length >= MAX_PER_COLUMN) return spark
 
-	// Tag the sparked item so the mark follows it
+	// Tag the sparked items so their marks follow them
 	const tagged = (column: SparkColumn) =>
 		spark[column].map((value, index) => ({
 			id: value,
-			sparked: spark.sparked?.column === column && spark.sparked.index === index
+			sparked: isSparked(spark.sparked, column, index)
 		}))
 	const source = tagged(from.column)
 	const [moved] = source.splice(from.index, 1)
@@ -208,18 +233,23 @@ export function moveItem(spark: Spark, from: SparkMark, to: SparkMark): Spark {
 	const next: Spark = { ...spark, [from.column]: source.map((entry) => entry.id) }
 	next[to.column] = target.map((entry) => entry.id)
 	const columns = crossing ? [from.column, to.column] : [to.column]
+	const marks = spark.sparked.filter((mark) => !columns.includes(mark.column))
 	for (const column of columns) {
 		const list = column === from.column ? source : target
-		const index = list.findIndex((entry) => entry.sparked)
-		if (index >= 0) next.sparked = { column, index }
+		list.forEach((entry, index) => {
+			if (entry.sparked) marks.push({ column, index })
+		})
 	}
+	next.sparked = sortMarks(marks)
 	return next
 }
 
-/** Mark an item as the sparked one, or clear the mark if it already is */
+/** Mark an item as sparked, or clear its mark if it has one; others keep theirs */
 export function toggleSparked(spark: Spark, column: SparkColumn, index: number): Spark {
-	const same = spark.sparked?.column === column && spark.sparked.index === index
-	return { ...spark, sparked: same ? null : { column, index } }
+	const sparked = isSparked(spark.sparked, column, index)
+		? spark.sparked.filter((mark) => !(mark.column === column && mark.index === index))
+		: sortMarks([...spark.sparked, { column, index }])
+	return { ...spark, sparked }
 }
 
 // --- Layout ------------------------------------------------------------------
@@ -290,7 +320,7 @@ export function layoutSpark(counts: Record<SparkColumn, number>, box: SparkLayou
 
 /**
  * Resolve a spark's ids against the catalogue. Ids the catalogue doesn't have
- * are dropped, and the sparked mark follows its item (or is cleared with it).
+ * are dropped, and the sparked marks follow their items (or go with them).
  * Returns the resolved columns and the spark with only the ids that resolved.
  */
 export function resolveSpark(
@@ -298,13 +328,13 @@ export function resolveSpark(
 	byId: ReadonlyMap<string, CatalogueItem>
 ): { spark: Spark; data: SparkRenderData } {
 	const columns = { characters: [], moons: [], summons: [] } as SparkRenderData['columns']
-	const cleaned: Spark = { ...spark, characters: [], moons: [], summons: [], sparked: null }
+	const cleaned: Spark = { ...spark, characters: [], moons: [], summons: [], sparked: [] }
 	for (const column of SPARK_COLUMNS) {
 		spark[column].forEach((id, index) => {
 			const item = byId.get(id)
 			if (!item) return
-			if (spark.sparked?.column === column && spark.sparked.index === index) {
-				cleaned.sparked = { column, index: cleaned[column].length }
+			if (isSparked(spark.sparked, column, index)) {
+				cleaned.sparked.push({ column, index: cleaned[column].length })
 			}
 			cleaned[column].push(id)
 			columns[column].push(item)

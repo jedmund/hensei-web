@@ -13,7 +13,12 @@
 	import { m } from '$lib/paraglide/messages'
 	import { gachaItemName } from '$lib/utils/gacha'
 	import { mobileQuery } from '$lib/utils/viewport.svelte'
-	import { SPARK_COLUMNS, TILES_PER_ROW, type SparkColumn } from '$lib/features/spark/spark'
+	import {
+		isSparked,
+		SPARK_COLUMNS,
+		TILES_PER_ROW,
+		type SparkColumn
+	} from '$lib/features/spark/spark'
 	import type { CatalogueItem } from '$lib/types/gacha'
 	import type { SparkRenderData } from '$lib/types/spark'
 
@@ -77,7 +82,7 @@
 				</h2>
 				<ul>
 					{#each items as item, index (`${column}-${index}`)}
-						{@const sparked = data.sparked?.column === column && data.sparked.index === index}
+						{@const sparked = isSparked(data.sparked, column, index)}
 						{@const entry = dragged(column, index, item)}
 						{#snippet art()}
 							<SparkTile {item} {sparked} tooltip={gachaItemName(item, getLocale())} />

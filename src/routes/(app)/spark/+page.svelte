@@ -334,7 +334,7 @@
 			characters: [],
 			moons: [],
 			summons: [],
-			sparked: null,
+			sparked: [],
 			date: todaySparkDate()
 		}
 		savedId = null

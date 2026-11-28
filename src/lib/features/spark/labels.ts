@@ -36,11 +36,11 @@ function formatSparkDate(sparkDate: string, locale: string): string {
 	}).format(new Date(year, month - 1, day))
 }
 
-/** SSRs drawn: everything in the spark but the sparked item */
+/** SSRs drawn: everything in the spark but the sparked items */
 export function drawnSsrCount(data: SparkRenderData): number {
 	const total =
 		data.columns.characters.length + data.columns.moons.length + data.columns.summons.length
-	return total - (data.sparked ? 1 : 0)
+	return total - data.sparked.length
 }
 
 /** SSRs drawn over draws, as a percentage */

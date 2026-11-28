@@ -52,7 +52,7 @@
 	import SparkTile from '$lib/components/spark/SparkTile.svelte'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import { savedSparkName, SPARK_COLUMN_HEADINGS, sparkRateText } from '$lib/features/spark/labels'
-	import { SPARK_COLUMNS, TILES_PER_ROW } from '$lib/features/spark/spark'
+	import { isSparked, SPARK_COLUMNS, TILES_PER_ROW } from '$lib/features/spark/spark'
 	import type { SparkRenderData } from '$lib/types/spark'
 
 	interface Props {
@@ -114,10 +114,7 @@
 				<ul>
 					{#each items as item, index (`${column}-${index}`)}
 						<li>
-							<SparkTile
-								{item}
-								sparked={data.sparked?.column === column && data.sparked.index === index}
-							/>
+							<SparkTile {item} sparked={isSparked(data.sparked, column, index)} />
 						</li>
 					{/each}
 				</ul>

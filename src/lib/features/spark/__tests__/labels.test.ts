@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { savedSparkName } from '../labels'
+import type { CatalogueItem } from '$lib/types/gacha'
+import type { SparkRenderData } from '$lib/types/spark'
+import { drawnSsrCount, savedSparkName } from '../labels'
 
 describe('savedSparkName', () => {
 	it('names a spark by its date, season and pool', () => {
@@ -18,5 +20,23 @@ describe('savedSparkName', () => {
 			'11/15/2026 Summer Premium Gala'
 		)
 		expect(savedSparkName('2026-11-15', null, null, 'en-US')).toBe('11/15/2026')
+	})
+})
+
+describe('drawnSsrCount', () => {
+	const item = {} as CatalogueItem
+	it('leaves out every sparked item', () => {
+		const data = {
+			columns: { characters: [item, item, item], moons: [item], summons: [item] },
+			sparked: [
+				{ column: 'characters', index: 0 },
+				{ column: 'summons', index: 0 }
+			],
+			draws: 300,
+			date: null,
+			pool: null,
+			season: null
+		} as SparkRenderData
+		expect(drawnSsrCount(data)).toBe(3)
 	})
 })

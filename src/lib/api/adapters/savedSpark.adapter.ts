@@ -44,7 +44,7 @@ export function toSavedSparkPayload(spark: Spark, sparkDate: string): SavedSpark
 		characters: [...spark.characters],
 		moons: [...spark.moons],
 		summons: [...spark.summons],
-		sparked: spark.sparked ? { ...spark.sparked } : null,
+		sparkedMarks: spark.sparked.map((mark) => ({ ...mark })),
 		draws: spark.draws,
 		pool: spark.pool,
 		season: spark.season
@@ -58,7 +58,11 @@ export function toSavedSparkPayload(spark: Spark, sparkDate: string): SavedSpark
  */
 export function fromSavedSpark(saved: SavedSpark): { spark: Spark; sparkDate: string } {
 	return {
-		spark: readSpark(new URLSearchParams(writeSpark({ ...saved, date: saved.sparkDate }))),
+		spark: readSpark(
+			new URLSearchParams(
+				writeSpark({ ...saved, sparked: saved.sparkedMarks ?? [], date: saved.sparkDate })
+			)
+		),
 		sparkDate: saved.sparkDate
 	}
 }
