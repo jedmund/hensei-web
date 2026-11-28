@@ -146,12 +146,13 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: clamp(14px, 13cqi, 30px);
+		width: clamp(21px, 19.5cqi, 45px);
 		aspect-ratio: 1;
 		border: 1.5px solid white;
 		border-radius: 50%;
 		box-sizing: border-box;
-		background: linear-gradient(135deg, #ff4fa3, #8b5cff);
+		// The unit's element, like the sparked outline
+		background: var(--sparked, var(--accent-blue));
 		color: white;
 		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
 		pointer-events: none;
