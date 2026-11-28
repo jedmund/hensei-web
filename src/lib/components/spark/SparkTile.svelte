@@ -2,6 +2,7 @@
 
 <script lang="ts">
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
+	import ceruleanSpark from '$src/assets/icons/cerulean-spark.svg'
 	import { m } from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
 	import {
@@ -49,13 +50,15 @@
 		style:--sparked={element ? `var(--${element}-button-bg)` : undefined}
 	>
 		<img
+			class="art"
 			src={gachaItemImage(item, art)}
 			alt={gachaItemName(item, getLocale())}
 			loading={lazy ? 'lazy' : 'eager'}
 			onerror={useFallback}
 		/>
 		{#if sparked}
-			<span class="badge">{m.spark_sparked()}</span>
+			<!-- The game's Cerulean Spark crystal marks the sparked item -->
+			<img class="badge" src={ceruleanSpark} alt={m.spark_sparked()} />
 		{/if}
 	</div>
 {/snippet}
@@ -109,7 +112,7 @@
 			outline-offset: -3px;
 		}
 
-		img {
+		.art {
 			display: block;
 			width: 100%;
 			height: 100%;
@@ -118,18 +121,13 @@
 		}
 	}
 
-	// Sized with the tile, so it reads at any density
+	// Sized with the tile, in its bottom-right corner
 	.badge {
 		position: absolute;
-		right: 4px;
-		bottom: 4px;
-		padding: 0.15em 0.5em;
-		border-radius: $item-corner-small;
-		background: var(--sparked, var(--accent-blue));
-		color: white;
-		font-size: clamp(12px, 12cqi, 24px);
-		font-weight: $bold;
-		line-height: 1.2;
+		right: 1cqi;
+		bottom: 1cqi;
+		width: clamp(22px, 26cqi, 60px);
+		height: auto;
 		pointer-events: none;
 	}
 </style>
