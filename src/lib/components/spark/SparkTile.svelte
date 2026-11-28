@@ -1,7 +1,8 @@
-<!-- SparkTile - One item's wide art, with the Sparked badge and a frame for a rate-up; fills the width it's given -->
+<!-- SparkTile - One item's wide art, with the Sparked badge and a rate-up mark; fills the width it's given -->
 
 <script lang="ts">
 	import Tooltip from '$lib/components/ui/Tooltip.svelte'
+	import Icon from '$lib/components/Icon.svelte'
 	import ceruleanSpark from '$src/assets/icons/cerulean-spark.svg'
 	import { m } from '$lib/paraglide/messages'
 	import { getLocale } from '$lib/paraglide/runtime'
@@ -57,7 +58,6 @@
 	<div
 		class="spark-tile"
 		class:sparked
-		class:rate-up={rateUp}
 		style:--sparked={element ? `var(--${element}-button-bg)` : undefined}
 	>
 		<img
@@ -67,6 +67,12 @@
 			loading={lazy ? 'lazy' : 'eager'}
 			onerror={useFallback}
 		/>
+		{#if rateUp}
+			<!-- A rate-up on the spark's banner: an up arrow in the top-left corner -->
+			<span class="rate-up" role="img" aria-label={m.spark_rate_up()}>
+				<Icon name="arrow-up" size="60%" />
+			</span>
+		{/if}
 		{#if sparked}
 			<!-- The game's Cerulean Spark crystal marks the sparked item -->
 			<img class="badge" src={ceruleanSpark} alt={m.spark_sparked()} />
@@ -123,26 +129,6 @@
 			outline-offset: -3px;
 		}
 
-		// A rate-up gets a pink-to-violet frame (a placeholder for something
-		// better). On the sparked item it sits inside the element outline.
-		&.rate-up::after {
-			content: '';
-			position: absolute;
-			inset: 0;
-			border: 3px solid transparent;
-			border-radius: inherit;
-			background: linear-gradient(135deg, #ff4fa3, #8b5cff) border-box;
-			mask:
-				linear-gradient(#000 0 0) padding-box exclude,
-				linear-gradient(#000 0 0);
-			pointer-events: none;
-		}
-
-		&.sparked.rate-up::after {
-			inset: 3px;
-			border-radius: 0;
-		}
-
 		.art {
 			display: block;
 			width: 100%;
@@ -150,6 +136,25 @@
 			object-fit: cover;
 			background: var(--placeholder-bg);
 		}
+	}
+
+	// Sized with the tile, in its top-left corner
+	.rate-up {
+		position: absolute;
+		top: calc(1cqi + 2px);
+		left: calc(1cqi + 2px);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: clamp(14px, 13cqi, 30px);
+		aspect-ratio: 1;
+		border: 1.5px solid white;
+		border-radius: 50%;
+		box-sizing: border-box;
+		background: linear-gradient(135deg, #ff4fa3, #8b5cff);
+		color: white;
+		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+		pointer-events: none;
 	}
 
 	// Sized with the tile, in its bottom-right corner

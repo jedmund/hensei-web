@@ -25,7 +25,7 @@ import type { SparkRenderData } from '$lib/types/spark'
 
 export const TEMPLATE_ID = 'spark.image' as const
 /** Bump to invalidate every cached image and signature */
-export const RENDER_VERSION = 3
+export const RENDER_VERSION = 4
 // Bump when the image's design changes, so cached images re-render without
 // changing signatures on links that are already shared
 const DESIGN_VERSION = 1
