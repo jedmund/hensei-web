@@ -11,7 +11,7 @@
 import { BaseAdapter } from './base.adapter'
 import { DEFAULT_ADAPTER_CONFIG } from './config'
 import type { ApiPaginationMeta, PaginatedResponse, RequestOptions } from './types'
-import { readSpark, writeSpark, type Spark } from '$lib/features/spark/spark'
+import { fitMarks, readSpark, writeSpark, type Spark } from '$lib/features/spark/spark'
 import type { SavedSpark, SavedSparkPayload } from '$lib/types/api/savedSpark'
 
 const BASE = '/sparks'
@@ -44,7 +44,7 @@ export function toSavedSparkPayload(spark: Spark, sparkDate: string): SavedSpark
 		characters: [...spark.characters],
 		moons: [...spark.moons],
 		summons: [...spark.summons],
-		sparked: spark.sparked ? { ...spark.sparked } : null,
+		sparkedMarks: fitMarks(spark.sparked, spark.draws),
 		draws: spark.draws,
 		pool: spark.pool,
 		season: spark.season
@@ -58,7 +58,11 @@ export function toSavedSparkPayload(spark: Spark, sparkDate: string): SavedSpark
  */
 export function fromSavedSpark(saved: SavedSpark): { spark: Spark; sparkDate: string } {
 	return {
-		spark: readSpark(new URLSearchParams(writeSpark({ ...saved, date: saved.sparkDate }))),
+		spark: readSpark(
+			new URLSearchParams(
+				writeSpark({ ...saved, sparked: saved.sparkedMarks ?? [], date: saved.sparkDate })
+			)
+		),
 		sparkDate: saved.sparkDate
 	}
 }

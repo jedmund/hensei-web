@@ -11,7 +11,8 @@ export interface SavedSpark {
 	characters: string[]
 	moons: string[]
 	summons: string[]
-	sparked: SparkMark | null
+	/** The sparked items, in column order */
+	sparkedMarks: SparkMark[]
 	draws: number
 	/** The gacha it was on, as the spark maker's pool and season values */
 	pool: string | null
@@ -23,5 +24,5 @@ export interface SavedSpark {
 /** What create and update send (camelCase; the adapter snake-cases it) */
 export type SavedSparkPayload = Pick<
 	SavedSpark,
-	'sparkDate' | 'characters' | 'moons' | 'summons' | 'sparked' | 'draws' | 'pool' | 'season'
+	'sparkDate' | 'characters' | 'moons' | 'summons' | 'sparkedMarks' | 'draws' | 'pool' | 'season'
 >

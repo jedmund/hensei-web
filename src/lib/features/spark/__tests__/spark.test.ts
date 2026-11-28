@@ -10,6 +10,7 @@ import {
 	removeItem,
 	resolveSpark,
 	moveItem,
+	fitMarks,
 	newCollectionCharacters,
 	toggleSparked,
 	writeSpark,
@@ -30,15 +31,15 @@ describe('spark links', () => {
 			characters: [A, B],
 			moons: [C],
 			summons: [S],
-			sparked: { column: 'characters', index: 1 },
-			draws: 280,
+			sparked: [{ column: 'characters', index: 1 }],
+			draws: 600,
 			date: '2026-11-15',
 			pool: 'flash',
 			season: 'halloween'
 		})
 		const query = writeSpark(original)
 		expect(query).toBe(
-			`c=${A},${B}&m=${C}&s=${S}&spark=c1&draws=280&date=2026-11-15&pool=flash&season=halloween`
+			`c=${A},${B}&m=${C}&s=${S}&spark=c1&draws=600&date=2026-11-15&pool=flash&season=halloween`
 		)
 		expect(readSpark(new URLSearchParams(query))).toEqual(original)
 	})
@@ -84,7 +85,7 @@ describe('spark links', () => {
 
 	it('ignores a sparked mark past the end of its column, and bad draws', () => {
 		const read = readSpark(new URLSearchParams({ c: A, spark: 'c4', draws: '-3' }))
-		expect(read.sparked).toBeNull()
+		expect(read.sparked).toEqual([])
 		expect(read.draws).toBe(300)
 	})
 })
@@ -107,10 +108,10 @@ describe('spark edits', () => {
 	})
 
 	it('inserts a dragged-in item where it was dropped', () => {
-		const start = spark({ characters: [A, B], sparked: { column: 'characters', index: 1 } })
+		const start = spark({ characters: [A, B], sparked: [{ column: 'characters', index: 1 }] })
 		const inserted = insertItem(start, C, { column: 'characters', index: 1 })
 		expect(inserted.characters).toEqual([A, C, B])
-		expect(inserted.sparked).toEqual({ column: 'characters', index: 2 })
+		expect(inserted.sparked).toEqual([{ column: 'characters', index: 2 }])
 		// Past the end appends; a character can go straight to gold moons
 		expect(insertItem(start, C, { column: 'moons', index: 9 }).moons).toEqual([C])
 		// Ids must suit the column
@@ -118,20 +119,20 @@ describe('spark edits', () => {
 	})
 
 	it('keeps the sparked mark on its item as others are removed', () => {
-		const start = spark({ characters: [A, B, C], sparked: { column: 'characters', index: 2 } })
-		expect(removeItem(start, 'characters', 0).sparked).toEqual({ column: 'characters', index: 1 })
-		expect(removeItem(start, 'characters', 2).sparked).toBeNull()
+		const start = spark({ characters: [A, B, C], sparked: [{ column: 'characters', index: 2 }] })
+		expect(removeItem(start, 'characters', 0).sparked).toEqual([{ column: 'characters', index: 1 }])
+		expect(removeItem(start, 'characters', 2).sparked).toEqual([])
 	})
 
 	it('reorders within a column, keeping the sparked mark on its item', () => {
-		const start = spark({ characters: [A, B, C], sparked: { column: 'characters', index: 0 } })
+		const start = spark({ characters: [A, B, C], sparked: [{ column: 'characters', index: 0 }] })
 		const moved = moveItem(
 			start,
 			{ column: 'characters', index: 0 },
 			{ column: 'characters', index: 2 }
 		)
 		expect(moved.characters).toEqual([B, C, A])
-		expect(moved.sparked).toEqual({ column: 'characters', index: 2 })
+		expect(moved.sparked).toEqual([{ column: 'characters', index: 2 }])
 
 		const other = moveItem(
 			start,
@@ -139,19 +140,19 @@ describe('spark edits', () => {
 			{ column: 'characters', index: 1 }
 		)
 		expect(other.characters).toEqual([A, C, B])
-		expect(other.sparked).toEqual({ column: 'characters', index: 0 })
+		expect(other.sparked).toEqual([{ column: 'characters', index: 0 }])
 	})
 
 	it('moves characters between new characters and gold moons', () => {
 		const start = spark({
 			characters: [A, B],
 			moons: [C],
-			sparked: { column: 'characters', index: 1 }
+			sparked: [{ column: 'characters', index: 1 }]
 		})
 		const moved = moveItem(start, { column: 'characters', index: 1 }, { column: 'moons', index: 0 })
 		expect(moved.characters).toEqual([A])
 		expect(moved.moons).toEqual([B, C])
-		expect(moved.sparked).toEqual({ column: 'moons', index: 0 })
+		expect(moved.sparked).toEqual([{ column: 'moons', index: 0 }])
 
 		// Past the end appends
 		const appended = moveItem(
@@ -160,7 +161,7 @@ describe('spark edits', () => {
 			{ column: 'moons', index: 9 }
 		)
 		expect(appended.moons).toEqual([C, A])
-		expect(appended.sparked).toEqual({ column: 'characters', index: 0 })
+		expect(appended.sparked).toEqual([{ column: 'characters', index: 0 }])
 	})
 
 	it("doesn't move summons out of their column, or into a full one", () => {
@@ -176,8 +177,116 @@ describe('spark edits', () => {
 
 	it('toggles the sparked mark', () => {
 		const marked = toggleSparked(spark({ summons: [S] }), 'summons', 0)
-		expect(marked.sparked).toEqual({ column: 'summons', index: 0 })
-		expect(toggleSparked(marked, 'summons', 0).sparked).toBeNull()
+		expect(marked.sparked).toEqual([{ column: 'summons', index: 0 }])
+		expect(toggleSparked(marked, 'summons', 0).sparked).toEqual([])
+	})
+})
+
+describe('several sparked items', () => {
+	// Draws for three sparks, so the tests can add a third mark
+	const two = spark({
+		characters: [A, B, C],
+		moons: [C],
+		draws: 900,
+		sparked: [
+			{ column: 'moons', index: 0 },
+			{ column: 'characters', index: 1 }
+		]
+	})
+
+	it('writes and reads every mark, in column order', () => {
+		const query = writeSpark(two)
+		expect(query).toContain('spark=c1,m0')
+		expect(readSpark(new URLSearchParams(query)).sparked).toEqual([
+			{ column: 'characters', index: 1 },
+			{ column: 'moons', index: 0 }
+		])
+	})
+
+	it('still reads a link with one mark', () => {
+		const read = readSpark(new URLSearchParams({ c: `${A},${B}`, spark: 'c1' }))
+		expect(read.sparked).toEqual([{ column: 'characters', index: 1 }])
+	})
+
+	it('drops bad and repeated marks from a link', () => {
+		const read = readSpark(new URLSearchParams({ c: `${A},${B}`, spark: 'c1,c1,c9,x0,m0' }))
+		expect(read.sparked).toEqual([{ column: 'characters', index: 1 }])
+	})
+
+	it('adds a mark without clearing the others, and removes just one', () => {
+		const three = toggleSparked(two, 'characters', 2)
+		expect(three.sparked).toHaveLength(3)
+		expect(toggleSparked(three, 'characters', 1).sparked).toEqual([
+			{ column: 'characters', index: 2 },
+			{ column: 'moons', index: 0 }
+		])
+	})
+
+	it('keeps every mark on its item through removes and moves', () => {
+		expect(removeItem(two, 'characters', 0).sparked).toEqual([
+			{ column: 'characters', index: 0 },
+			{ column: 'moons', index: 0 }
+		])
+		// The sparked moon moves to the front of the new characters
+		const moved = moveItem(two, { column: 'moons', index: 0 }, { column: 'characters', index: 0 })
+		expect(moved.sparked).toEqual([
+			{ column: 'characters', index: 0 },
+			{ column: 'characters', index: 2 }
+		])
+	})
+})
+
+describe('sparks per 300 draws', () => {
+	const three = spark({ characters: [A, B, C] })
+
+	it('allows one mark per 300 draws', () => {
+		const at299 = toggleSparked({ ...three, draws: 299 }, 'characters', 0)
+		expect(at299.sparked).toEqual([])
+		const at300 = toggleSparked({ ...three, draws: 300 }, 'characters', 0)
+		expect(at300.sparked).toHaveLength(1)
+		expect(toggleSparked(at300, 'characters', 1).sparked).toHaveLength(1)
+		const at600 = toggleSparked({ ...at300, draws: 600 }, 'characters', 1)
+		expect(at600.sparked).toHaveLength(2)
+	})
+
+	it('still clears a mark when no more are allowed', () => {
+		const full = spark({
+			characters: [A],
+			draws: 300,
+			sparked: [{ column: 'characters', index: 0 }]
+		})
+		expect(toggleSparked(full, 'characters', 0).sparked).toEqual([])
+	})
+
+	it('drops marks a link has more of than its draws allow', () => {
+		const read = readSpark(new URLSearchParams({ c: `${A},${B}`, spark: 'c0,c1', draws: '400' }))
+		expect(read.sparked).toEqual([{ column: 'characters', index: 0 }])
+	})
+
+	it('keeps marks past the draws, showing them again when the draws allow', () => {
+		const marked = spark({
+			characters: [A, B],
+			draws: 600,
+			sparked: [
+				{ column: 'characters', index: 0 },
+				{ column: 'characters', index: 1 }
+			]
+		})
+		const lowered = { ...marked, draws: 300 }
+		expect(writeSpark(lowered)).toMatch(/spark=c0(&|$)/)
+		expect(writeSpark({ ...lowered, draws: 600 })).toMatch(/spark=c0,c1(&|$)/)
+		// Toggling starts from what's shown, so the hidden mark doesn't come back
+		const cleared = toggleSparked(lowered, 'characters', 0)
+		expect(cleared.sparked).toEqual([])
+	})
+
+	it('fits marks to fewer draws, keeping the first', () => {
+		const marks = [
+			{ column: 'moons', index: 0 },
+			{ column: 'characters', index: 1 }
+		] as const
+		expect(fitMarks([...marks], 300)).toEqual([{ column: 'characters', index: 1 }])
+		expect(fitMarks([...marks], 100)).toEqual([])
 	})
 })
 
@@ -188,11 +297,11 @@ describe('resolveSpark', () => {
 			[C, { granblue_id: C } as CatalogueItem]
 		])
 		const { spark: cleaned, data } = resolveSpark(
-			spark({ characters: [A, B, C], sparked: { column: 'characters', index: 2 } }),
+			spark({ characters: [A, B, C], sparked: [{ column: 'characters', index: 2 }] }),
 			items
 		)
 		expect(cleaned.characters).toEqual([A, C])
-		expect(cleaned.sparked).toEqual({ column: 'characters', index: 1 })
+		expect(cleaned.sparked).toEqual([{ column: 'characters', index: 1 }])
 		expect(data.columns.characters.map((item) => item.granblue_id)).toEqual([A, C])
 	})
 })

@@ -48,6 +48,7 @@
 		resolveSpark,
 		sparkItemCount,
 		toggleSparked,
+		canMarkSparked,
 		writeSpark,
 		type Spark,
 		type SparkMark
@@ -334,7 +335,7 @@
 			characters: [],
 			moons: [],
 			summons: [],
-			sparked: null,
+			sparked: [],
 			date: todaySparkDate()
 		}
 		savedId = null
@@ -342,6 +343,8 @@
 
 	function setDraws(value: string | number) {
 		const draws = Math.trunc(Number(value))
+		// Marks past what the draws allow are kept but not shown, so typing a
+		// new count doesn't lose them on the way
 		if (Number.isFinite(draws) && draws > 0) spark = { ...spark, draws: Math.min(draws, MAX_DRAWS) }
 	}
 </script>
@@ -385,6 +388,7 @@
 					<SparkTileMenuItems
 						variant="dropdown"
 						{sparked}
+						canMark={canMarkSparked(spark)}
 						onToggleSparked={toggle}
 						onRemove={remove}
 					/>
@@ -392,7 +396,13 @@
 			</DropdownMenu>
 		{/snippet}
 		{#snippet menu()}
-			<SparkTileMenuItems variant="context" {sparked} onToggleSparked={toggle} onRemove={remove} />
+			<SparkTileMenuItems
+				variant="context"
+				{sparked}
+				canMark={canMarkSparked(spark)}
+				onToggleSparked={toggle}
+				onRemove={remove}
+			/>
 		{/snippet}
 	</ContextMenuWrapper>
 {/snippet}

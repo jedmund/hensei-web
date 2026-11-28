@@ -19,8 +19,8 @@ const spark: Spark = {
 	characters: ['1040000000', '1040000100'],
 	moons: ['1040000200'],
 	summons: ['2040000000'],
-	sparked: { column: 'characters', index: 1 },
-	draws: 280,
+	sparked: [{ column: 'characters', index: 1 }],
+	draws: 600,
 	date: '2026-11-20',
 	pool: 'flash',
 	season: 'halloween'
@@ -33,7 +33,7 @@ const saved: SavedSpark = {
 	characters: spark.characters,
 	moons: spark.moons,
 	summons: spark.summons,
-	sparked: spark.sparked,
+	sparkedMarks: spark.sparked,
 	draws: spark.draws,
 	pool: spark.pool,
 	season: spark.season,
@@ -45,13 +45,13 @@ const saved: SavedSpark = {
 const apiSpark = {
 	id: 'spark-1',
 	spark_date: '2026-11-20',
-	draws: 280,
+	draws: 600,
 	pool: 'flash',
 	season: 'halloween',
 	characters: ['1040000000', '1040000100'],
 	moons: ['1040000200'],
 	summons: ['2040000000'],
-	sparked: { column: 'characters', index: 1 },
+	sparked_marks: [{ column: 'characters', index: 1 }],
 	created_at: '2026-11-20T10:00:00Z',
 	updated_at: '2026-11-20T10:00:00Z'
 }
@@ -63,8 +63,8 @@ describe('saved spark conversion', () => {
 			characters: ['1040000000', '1040000100'],
 			moons: ['1040000200'],
 			summons: ['2040000000'],
-			sparked: { column: 'characters', index: 1 },
-			draws: 280,
+			sparkedMarks: [{ column: 'characters', index: 1 }],
+			draws: 600,
 			pool: 'flash',
 			season: 'halloween'
 		})
@@ -73,12 +73,12 @@ describe('saved spark conversion', () => {
 	it('copies the lists so later edits to the spark do not leak in', () => {
 		const payload = toSavedSparkPayload(spark, '2026-11-20')
 		expect(payload.characters).not.toBe(spark.characters)
-		expect(payload.sparked).not.toBe(spark.sparked)
+		expect(payload.sparkedMarks).not.toBe(spark.sparked)
 	})
 
-	it('sends a null mark for a spark with nothing sparked', () => {
+	it('sends no marks for a spark with nothing sparked', () => {
 		expect(toSavedSparkPayload(emptySpark(), '2026-11-20')).toMatchObject({
-			sparked: null,
+			sparkedMarks: [],
 			characters: [],
 			draws: 300
 		})
@@ -94,9 +94,9 @@ describe('saved spark conversion', () => {
 			{ column: 'moons', index: 0 },
 			{ column: 'summons', index: 0 }
 		] as const) {
-			const payload = toSavedSparkPayload({ ...spark, sparked }, '2026-11-20')
+			const payload = toSavedSparkPayload({ ...spark, sparked: [sparked] }, '2026-11-20')
 			const back = fromSavedSpark({ ...saved, ...payload })
-			expect(back.spark.sparked).toEqual(sparked)
+			expect(back.spark.sparked).toEqual([sparked])
 		}
 	})
 
@@ -113,12 +113,12 @@ describe('saved spark conversion', () => {
 			...saved,
 			characters: ['1040000000', '2040000000', 'junk'],
 			summons: ['1040000000'],
-			sparked: { column: 'summons', index: 0 },
+			sparkedMarks: [{ column: 'summons', index: 0 }],
 			draws: 0
 		})
 		expect(read.characters).toEqual(['1040000000'])
 		expect(read.summons).toEqual([])
-		expect(read.sparked).toBeNull()
+		expect(read.sparked).toEqual([])
 		expect(read.draws).toBe(300)
 	})
 })
@@ -195,8 +195,8 @@ describe('SavedSparkAdapter', () => {
 				characters: ['1040000000', '1040000100'],
 				moons: ['1040000200'],
 				summons: ['2040000000'],
-				sparked: { column: 'characters', index: 1 },
-				draws: 280,
+				sparked_marks: [{ column: 'characters', index: 1 }],
+				draws: 600,
 				pool: 'flash',
 				season: 'halloween'
 			}
@@ -205,15 +205,15 @@ describe('SavedSparkAdapter', () => {
 	})
 
 	it('updates a spark', async () => {
-		respond({ spark: { ...apiSpark, sparked: null } })
+		respond({ spark: { ...apiSpark, sparked_marks: [] } })
 
-		const result = await adapter.update('spark-1', { ...spark, sparked: null }, '2026-11-20')
+		const result = await adapter.update('spark-1', { ...spark, sparked: [] }, '2026-11-20')
 
 		const [url, init] = lastCall()
 		expect(url).toBe('https://api.example.com/sparks/spark-1')
 		expect(init.method).toBe('PATCH')
-		expect(JSON.parse(init.body as string).spark.sparked).toBeNull()
-		expect(result.sparked).toBeNull()
+		expect(JSON.parse(init.body as string).spark.sparked_marks).toEqual([])
+		expect(result.sparkedMarks).toEqual([])
 	})
 
 	it('deletes a spark', async () => {

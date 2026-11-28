@@ -90,7 +90,7 @@ describe('GET /download/spark', () => {
 		const data = stored?.spark
 		expect(data?.columns.characters?.map((item) => item.identity)).toEqual(['Weapon:a', 'Weapon:b'])
 		expect(data?.columns.summons?.map((item) => item.identity)).toEqual(['Summon:s'])
-		expect(data?.sparked).toEqual({ column: 'characters', index: 1 })
+		expect(data?.sparked).toEqual([{ column: 'characters', index: 1 }])
 		// Dark unless a theme is asked for
 		expect(stored?.theme).toBe('dark')
 	})
