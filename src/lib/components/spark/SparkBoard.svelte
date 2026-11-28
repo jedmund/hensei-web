@@ -43,6 +43,8 @@
 
 	let { data, tile, onSlotClick, footer }: Props = $props()
 
+	const rateUps = $derived(new Set(data.rateUps))
+
 	const count = (value: number) => new Intl.NumberFormat(getLocale()).format(value)
 
 	// Each section is a grid of slots: its tiles, then empty slots to drop into
@@ -85,7 +87,12 @@
 						{@const sparked = isSparked(data.sparked, column, index)}
 						{@const entry = dragged(column, index, item)}
 						{#snippet art()}
-							<SparkTile {item} {sparked} tooltip={gachaItemName(item, getLocale())} />
+							<SparkTile
+								{item}
+								{sparked}
+								rateUp={rateUps.has(item.granblue_id)}
+								tooltip={gachaItemName(item, getLocale())}
+							/>
 						{/snippet}
 						<li>
 							<DropZone container={column} position={index} {type} item={entry}>

@@ -371,7 +371,9 @@ export function resolveSpark(
 			draws: cleaned.draws,
 			date: cleaned.date,
 			pool: cleaned.pool,
-			season: cleaned.season
+			season: cleaned.season,
+			// Filled in by whoever knows the banner (fetchRateUps)
+			rateUps: []
 		}
 	}
 }

@@ -3318,5 +3318,8 @@
 	"spark_saved_title": "保存した天井",
 	"spark_saved_collection": "天井を保存し、新規キャラクター{count}体をコレクションに追加しました",
 	"spark_saved_collection_one": "天井を保存し、新規キャラクター1体をコレクションに追加しました",
-	"spark_collection_failed": "天井は保存しましたが、新規キャラクターをコレクションに追加できませんでした"
+	"spark_collection_failed": "天井は保存しましたが、新規キャラクターをコレクションに追加できませんでした",
+	"spark_rate_ups": "ピックアップ",
+	"spark_rate_ups_none": "この日のピックアップはありません",
+	"spark_rate_up": "ピックアップ"
 }

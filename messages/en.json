@@ -3552,5 +3552,8 @@
 	"spark_saved_title": "Saved spark",
 	"spark_saved_collection": "Spark saved, and {count} new characters added to your collection",
 	"spark_saved_collection_one": "Spark saved, and 1 new character added to your collection",
-	"spark_collection_failed": "Spark saved, but its new characters couldn't be added to your collection"
+	"spark_collection_failed": "Spark saved, but its new characters couldn't be added to your collection",
+	"spark_rate_ups": "Rate-ups",
+	"spark_rate_ups_none": "None on this date",
+	"spark_rate_up": "Rate-up"
 }

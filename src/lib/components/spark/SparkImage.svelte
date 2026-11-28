@@ -80,6 +80,7 @@
 	const height = $derived(sparkImageHeight(counts, !!title))
 
 	const count = (value: number) => new Intl.NumberFormat(getLocale()).format(value)
+	const rateUps = $derived(new Set(data.rateUps))
 	const rate = $derived(sparkRateText(data, getLocale()))
 </script>
 
@@ -114,7 +115,11 @@
 				<ul>
 					{#each items as item, index (`${column}-${index}`)}
 						<li>
-							<SparkTile {item} sparked={isSparked(data.sparked, column, index)} />
+							<SparkTile
+								{item}
+								sparked={isSparked(data.sparked, column, index)}
+								rateUp={rateUps.has(item.granblue_id)}
+							/>
 						</li>
 					{/each}
 				</ul>
