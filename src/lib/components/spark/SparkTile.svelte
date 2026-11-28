@@ -124,8 +124,8 @@
 	// Sized with the tile, in its bottom-right corner
 	.badge {
 		position: absolute;
-		right: 1cqi;
-		bottom: 1cqi;
+		right: calc(1cqi + 2px);
+		bottom: calc(1cqi + 2px);
 		width: clamp(22px, 26cqi, 60px);
 		height: auto;
 		pointer-events: none;
