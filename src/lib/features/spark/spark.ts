@@ -89,6 +89,20 @@ export function sortMarks(marks: readonly SparkMark[]): SparkMark[] {
 		)
 }
 
+/** A spark is 300 draws, so a spark can mark one sparked item per 300 */
+export const DRAWS_PER_SPARK = 300
+export const sparksFor = (draws: number) => Math.floor(draws / DRAWS_PER_SPARK)
+
+/** Whether the draws allow marking another item */
+export const canMarkSparked = (spark: Spark) => spark.sparked.length < sparksFor(spark.draws)
+
+/**
+ * The marks the draws allow, in order; any past that are left out. The spark
+ * keeps them, so lowering the draws and raising them again brings them back.
+ */
+export const fitMarks = (marks: readonly SparkMark[], draws: number): SparkMark[] =>
+	sortMarks(marks).slice(0, sparksFor(draws))
+
 export const isSparked = (marks: readonly SparkMark[], column: SparkColumn, index: number) =>
 	marks.some((mark) => mark.column === column && mark.index === index)
 
@@ -122,6 +136,7 @@ export function readSpark(params: URLSearchParams): Spark {
 	spark.sparked = readMarks(params.get('spark'), spark)
 	const draws = params.get('draws') ?? ''
 	if (/^\d{1,5}$/.test(draws) && Number(draws) > 0) spark.draws = Number(draws)
+	spark.sparked = fitMarks(spark.sparked, spark.draws)
 	const date = params.get('date') ?? ''
 	if (isDate(date)) spark.date = date
 	// A Classic pool from before it opened is dropped
@@ -143,8 +158,9 @@ export function writeSpark(spark: Spark): string {
 	for (const column of SPARK_COLUMNS) {
 		if (spark[column].length > 0) parts.push(`${KEYS[column]}=${spark[column].join(',')}`)
 	}
-	if (spark.sparked.length > 0) {
-		const marks = sortMarks(spark.sparked).map((mark) => `${KEYS[mark.column]}${mark.index}`)
+	const fitted = fitMarks(spark.sparked, spark.draws)
+	if (fitted.length > 0) {
+		const marks = fitted.map((mark) => `${KEYS[mark.column]}${mark.index}`)
 		parts.push(`spark=${marks.join(',')}`)
 	}
 	if (spark.draws !== DEFAULT_DRAWS) parts.push(`draws=${spark.draws}`)
@@ -244,12 +260,19 @@ export function moveItem(spark: Spark, from: SparkMark, to: SparkMark): Spark {
 	return next
 }
 
-/** Mark an item as sparked, or clear its mark if it has one; others keep theirs */
+/**
+ * Mark an item as sparked, or clear its mark if it has one; others keep
+ * theirs. A new mark needs the draws for it (one per 300).
+ */
 export function toggleSparked(spark: Spark, column: SparkColumn, index: number): Spark {
-	const sparked = isSparked(spark.sparked, column, index)
-		? spark.sparked.filter((mark) => !(mark.column === column && mark.index === index))
-		: sortMarks([...spark.sparked, { column, index }])
-	return { ...spark, sparked }
+	// Starts from the marks the draws allow, so hidden ones don't reappear
+	const marks = fitMarks(spark.sparked, spark.draws)
+	if (isSparked(marks, column, index)) {
+		const sparked = marks.filter((mark) => !(mark.column === column && mark.index === index))
+		return { ...spark, sparked }
+	}
+	if (marks.length >= sparksFor(spark.draws)) return spark
+	return { ...spark, sparked: sortMarks([...marks, { column, index }]) }
 }
 
 // --- Layout ------------------------------------------------------------------
@@ -344,7 +367,7 @@ export function resolveSpark(
 		spark: cleaned,
 		data: {
 			columns,
-			sparked: cleaned.sparked,
+			sparked: fitMarks(cleaned.sparked, cleaned.draws),
 			draws: cleaned.draws,
 			date: cleaned.date,
 			pool: cleaned.pool,

@@ -20,7 +20,7 @@ const spark: Spark = {
 	moons: ['1040000200'],
 	summons: ['2040000000'],
 	sparked: [{ column: 'characters', index: 1 }],
-	draws: 280,
+	draws: 600,
 	date: '2026-11-20',
 	pool: 'flash',
 	season: 'halloween'
@@ -45,7 +45,7 @@ const saved: SavedSpark = {
 const apiSpark = {
 	id: 'spark-1',
 	spark_date: '2026-11-20',
-	draws: 280,
+	draws: 600,
 	pool: 'flash',
 	season: 'halloween',
 	characters: ['1040000000', '1040000100'],
@@ -64,7 +64,7 @@ describe('saved spark conversion', () => {
 			moons: ['1040000200'],
 			summons: ['2040000000'],
 			sparkedMarks: [{ column: 'characters', index: 1 }],
-			draws: 280,
+			draws: 600,
 			pool: 'flash',
 			season: 'halloween'
 		})
@@ -196,7 +196,7 @@ describe('SavedSparkAdapter', () => {
 				moons: ['1040000200'],
 				summons: ['2040000000'],
 				sparked_marks: [{ column: 'characters', index: 1 }],
-				draws: 280,
+				draws: 600,
 				pool: 'flash',
 				season: 'halloween'
 			}

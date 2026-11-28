@@ -10,6 +10,7 @@ import {
 	removeItem,
 	resolveSpark,
 	moveItem,
+	fitMarks,
 	newCollectionCharacters,
 	toggleSparked,
 	writeSpark,
@@ -31,14 +32,14 @@ describe('spark links', () => {
 			moons: [C],
 			summons: [S],
 			sparked: [{ column: 'characters', index: 1 }],
-			draws: 280,
+			draws: 600,
 			date: '2026-11-15',
 			pool: 'flash',
 			season: 'halloween'
 		})
 		const query = writeSpark(original)
 		expect(query).toBe(
-			`c=${A},${B}&m=${C}&s=${S}&spark=c1&draws=280&date=2026-11-15&pool=flash&season=halloween`
+			`c=${A},${B}&m=${C}&s=${S}&spark=c1&draws=600&date=2026-11-15&pool=flash&season=halloween`
 		)
 		expect(readSpark(new URLSearchParams(query))).toEqual(original)
 	})
@@ -182,9 +183,11 @@ describe('spark edits', () => {
 })
 
 describe('several sparked items', () => {
+	// Draws for three sparks, so the tests can add a third mark
 	const two = spark({
 		characters: [A, B, C],
 		moons: [C],
+		draws: 900,
 		sparked: [
 			{ column: 'moons', index: 0 },
 			{ column: 'characters', index: 1 }
@@ -230,6 +233,60 @@ describe('several sparked items', () => {
 			{ column: 'characters', index: 0 },
 			{ column: 'characters', index: 2 }
 		])
+	})
+})
+
+describe('sparks per 300 draws', () => {
+	const three = spark({ characters: [A, B, C] })
+
+	it('allows one mark per 300 draws', () => {
+		const at299 = toggleSparked({ ...three, draws: 299 }, 'characters', 0)
+		expect(at299.sparked).toEqual([])
+		const at300 = toggleSparked({ ...three, draws: 300 }, 'characters', 0)
+		expect(at300.sparked).toHaveLength(1)
+		expect(toggleSparked(at300, 'characters', 1).sparked).toHaveLength(1)
+		const at600 = toggleSparked({ ...at300, draws: 600 }, 'characters', 1)
+		expect(at600.sparked).toHaveLength(2)
+	})
+
+	it('still clears a mark when no more are allowed', () => {
+		const full = spark({
+			characters: [A],
+			draws: 300,
+			sparked: [{ column: 'characters', index: 0 }]
+		})
+		expect(toggleSparked(full, 'characters', 0).sparked).toEqual([])
+	})
+
+	it('drops marks a link has more of than its draws allow', () => {
+		const read = readSpark(new URLSearchParams({ c: `${A},${B}`, spark: 'c0,c1', draws: '400' }))
+		expect(read.sparked).toEqual([{ column: 'characters', index: 0 }])
+	})
+
+	it('keeps marks past the draws, showing them again when the draws allow', () => {
+		const marked = spark({
+			characters: [A, B],
+			draws: 600,
+			sparked: [
+				{ column: 'characters', index: 0 },
+				{ column: 'characters', index: 1 }
+			]
+		})
+		const lowered = { ...marked, draws: 300 }
+		expect(writeSpark(lowered)).toMatch(/spark=c0(&|$)/)
+		expect(writeSpark({ ...lowered, draws: 600 })).toMatch(/spark=c0,c1(&|$)/)
+		// Toggling starts from what's shown, so the hidden mark doesn't come back
+		const cleared = toggleSparked(lowered, 'characters', 0)
+		expect(cleared.sparked).toEqual([])
+	})
+
+	it('fits marks to fewer draws, keeping the first', () => {
+		const marks = [
+			{ column: 'moons', index: 0 },
+			{ column: 'characters', index: 1 }
+		] as const
+		expect(fitMarks([...marks], 300)).toEqual([{ column: 'characters', index: 1 }])
+		expect(fitMarks([...marks], 100)).toEqual([])
 	})
 })
 

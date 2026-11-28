@@ -7,17 +7,19 @@
 	interface Props {
 		variant: 'context' | 'dropdown'
 		sparked: boolean
+		/** Whether the draws allow another sparked item (one per 300) */
+		canMark: boolean
 		onToggleSparked: () => void
 		onRemove: () => void
 	}
 
-	let { variant, sparked, onToggleSparked, onRemove }: Props = $props()
+	let { variant, sparked, canMark, onToggleSparked, onRemove }: Props = $props()
 
 	const Item = $derived(variant === 'context' ? ContextMenu.Item : DropdownMenu.Item)
 	const itemClass = $derived(variant === 'context' ? 'context-menu-item' : 'dropdown-menu-item')
 </script>
 
-<Item class={itemClass} onSelect={onToggleSparked}>
+<Item class={itemClass} disabled={!sparked && !canMark} onSelect={onToggleSparked}>
 	{sparked ? m.spark_unmark_sparked() : m.spark_mark_sparked()}
 </Item>
 <Item class={itemClass} onSelect={onRemove}>
